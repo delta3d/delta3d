@@ -75,6 +75,12 @@ namespace dtQt
    {
       Q_OBJECT
    public:
+      struct LinkedPropertyData
+      {
+         dtCore::RefPtr<dtCore::PropertyContainer> propCon;
+         dtCore::ActorProperty*                    property;
+      };
+
       /**
       * Constructor
       */
@@ -131,6 +137,25 @@ namespace dtQt
       */
       virtual QWidget* createEditor(QWidget* parent, const QStyleOptionViewItem& option,
                const QModelIndex& index);
+
+      /**
+       *	Adds a linked property to the control.
+       *
+       * @param[in]  property  The linked property to add.
+       */
+      void AddLinkedProperty(dtCore::RefPtr<dtCore::PropertyContainer>& propCon, dtCore::ActorProperty* property);
+
+      /**
+       *	Gets the linked properties from this control.
+       */
+      std::vector<LinkedPropertyData>& GetLinkedProperties();
+      const std::vector<LinkedPropertyData>& GetLinkedProperties() const;
+
+      /**
+       *	Sets the value of all linked properties to the current value
+       * of the base property.
+       */
+      void CopyBaseValueToLinkedProperties();
 
       /**
       * Returns the parent of this control.  NULL if there is no parent.  All controls have
@@ -206,6 +231,11 @@ namespace dtQt
       * @return True if your control does custom paint and sizeHint() for this column.
       */
       virtual bool isControlDoesCustomPainting(int column);
+
+      /**
+       *	Returns true if the base property as well as all linked properties match.
+       */
+      virtual bool doPropertiesMatch();
 
       /**
       * This method allows you to do a custom paint on a specific column for a control.
@@ -317,16 +347,21 @@ namespace dtQt
       void OnPropertyChanged(dtCore::PropertyContainer& propCon, dtCore::ActorProperty& prop);
 
       /**
-      * Called when we should take the data out of the controls and put it into the
-      * actor.  This is typically trapped to a lost focus or return pressed or similar
-      * user event behavior.  This can also be called by the parent control at the
-      * moment we change selection.
-      * @return Returns true if any data was actually changed and sucessfully set on the control
-      * @Note - This is purely virtual
-      */
+       * Called when we should take the data out of the controls and put it into the
+       * actor.  This is typically trapped to a lost focus or return pressed or similar
+       * user event behavior.  This can also be called by the parent control at the
+       * moment we change selection.
+       * @return Returns true if any data was actually changed and sucessfully set on the control
+       * @Note - This is purely virtual
+       */
       virtual bool updateData(QWidget* widget) = 0;
 
       /**
+       * Called when the user presses the enter key on the editing widget.
+       */
+      virtual void enterPressed();
+
+     /**
       * This method is called by one of the Sub Widgets from DynamicSubWidgets.h from the
       * destructor of the passed in widget.  The intent is to work around the way editors
       * work in QT trees.  Since the editors are created only when the user should be editing the
@@ -366,7 +401,7 @@ namespace dtQt
       /**
        * Updates the enabled status of the control buttons after an update.
        */
-      void UpdateButtonStates();
+      virtual void UpdateButtonStates();
 
       // indicates whether the object has been initialized
       bool mInitialized;
@@ -374,6 +409,12 @@ namespace dtQt
 
       dtCore::RefPtr<dtCore::PropertyContainer> mPropContainer;
       dtCore::ActorProperty*                    mBaseProperty;
+
+      // Linked properties are a list of all other properties that are
+      // determined to "match" the base property by name, type, and category.
+      // These properties belong to any multiply selected property containers
+      // to be displayed within the property editor.
+      std::vector<LinkedPropertyData> mLinkedProperties;
 
       // The parent control of this control.  All controls have a parent except root level
       // controls which are likely to be groups

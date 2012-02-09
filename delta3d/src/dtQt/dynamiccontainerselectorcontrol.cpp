@@ -120,6 +120,8 @@ namespace dtQt
             mProperty->SetValue(result);
             dataChanged = true;
 
+            CopyBaseValueToLinkedProperties();
+
             refreshChildren();
          }
       }
@@ -191,7 +193,14 @@ namespace dtQt
    const QString DynamicContainerSelectorControl::getValueAsString()
    {
       DynamicAbstractControl::getValueAsString();
-      return QString(tr(mProperty->GetValue().c_str()));
+      if (doPropertiesMatch())
+      {
+         return QString(tr(mProperty->GetValue().c_str()));
+      }
+      else
+      {
+         return "<Multiple Values...>";
+      }
    }
 
    bool DynamicContainerSelectorControl::isEditable()
@@ -200,8 +209,52 @@ namespace dtQt
    }
 
    ////////////////////////////////////////////////////////////////////////////////
+   bool DynamicContainerSelectorControl::doPropertiesMatch()
+   {
+      NotifyParentOfPreUpdate();
+
+      // If there are no linked properties to compare with then
+      // there is no need to perform the test.
+      if (mLinkedProperties.empty())
+      {
+         return true;
+      }
+
+      // Retrieve the value of our base property.
+      std::string baseValue = mProperty->GetValue();
+
+      // Iterate through our linked properties and compare values.
+      int count = (int)mLinkedProperties.size();
+      for (int index = 0; index < count; ++index)
+      {
+         const LinkedPropertyData& data = mLinkedProperties[index];
+
+         dtCore::ContainerSelectorActorProperty* linkedProp =
+            dynamic_cast<dtCore::ContainerSelectorActorProperty*>(data.property);
+         if (linkedProp)
+         {
+            std::string linkedValue = linkedProp->GetValue();
+
+            // If at any time, one of the linked values do not match
+            // the base, then we contain multiple values.
+            if (baseValue != linkedValue)
+            {
+               return false;
+            }
+         }
+      }
+
+      return true;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
    void DynamicContainerSelectorControl::refreshChildren()
    {
+      if (!doPropertiesMatch())
+      {
+         return;
+      }
+
       // Clear all the current child controls.
       int childCount = getChildCount();
       PropertyEditorModel* model = GetModel();
@@ -227,6 +280,23 @@ namespace dtQt
                DynamicAbstractControl* element = GetDynamicControlFactory()->CreateDynamicControl(*prop);
                element->SetTreeView(mPropertyTree);
                element->SetDynamicControlFactory(GetDynamicControlFactory());
+
+               int linkCount = (int)mLinkedProperties.size();
+               for (int linkIndex = 0; linkIndex < linkCount; ++linkIndex)
+               {
+                  LinkedPropertyData& data = mLinkedProperties[linkIndex];
+                  dtCore::ContainerSelectorActorProperty* linkedProp =
+                     dynamic_cast<dtCore::ContainerSelectorActorProperty*>(data.property);
+                  if (linkedProp)
+                  {
+                     dtCore::RefPtr<dtCore::PropertyContainer> linkedCon = linkedProp->GetContainer();
+                     if (linkedCon)
+                     {
+                        element->AddLinkedProperty(linkedCon, linkedCon->GetProperty(prop->GetName()));
+                     }
+                  }
+               }
+
                element->InitializeData(this, GetModel(), propCon, prop);
                connect(element, SIGNAL(PropertyAboutToChange(dtCore::PropertyContainer&, dtCore::ActorProperty&,
                   const std::string&, const std::string&)),
@@ -235,6 +305,7 @@ namespace dtQt
 
                connect(element, SIGNAL(PropertyChanged(dtCore::PropertyContainer&, dtCore::ActorProperty&)),
                   this, SLOT(PropertyChangedPassThrough(dtCore::PropertyContainer&, dtCore::ActorProperty&)));
+
                mChildren.push_back(element);
             }
          }

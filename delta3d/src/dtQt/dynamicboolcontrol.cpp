@@ -179,9 +179,16 @@ namespace dtQt
    /////////////////////////////////////////////////////////////////////////////////
    const QString DynamicBoolControl::getValueAsString()
    {
-      DynamicAbstractControl::getValueAsString();
-      bool value = mProperty->GetValue();
-      return (value) ? TRUE_LABEL : FALSE_LABEL;
+      if (doPropertiesMatch())
+      {
+         DynamicAbstractControl::getValueAsString();
+         bool value = mProperty->GetValue();
+         return (value) ? TRUE_LABEL : FALSE_LABEL;
+      }
+      else
+      {
+         return "<Multiple Values...>";
+      }
    }
 
    bool DynamicBoolControl::isEditable()
@@ -199,6 +206,7 @@ namespace dtQt
       if (mTemporaryEditControl != NULL)
       {
          updateModelFromEditor(mWrapper);
+         CopyBaseValueToLinkedProperties();
       }
    }
 

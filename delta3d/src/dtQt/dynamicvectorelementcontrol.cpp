@@ -217,10 +217,6 @@ namespace dtQt
 
       if (widget != NULL && widget == mTemporaryEditControl)
       {
-         std::ostringstream ss;
-         ss << "Updating model for index " << mElementIndex;
-         LOGN_DEBUG("dynamicvectorelementcontrol.cpp", ss.str());
-
          // Note, don't use the temporary variable here.  It can cause errors with QT.
          SubQLineEdit* editBox = static_cast<SubQLineEdit*>(widget);
          bool success = false;
@@ -236,8 +232,7 @@ namespace dtQt
             QString newValue = editBox->text();
             if (doubleResult != getValue() && proxyValue != newValue)
             {
-               setValue(doubleResult);
-               dataChanged = true;
+               dataChanged = setValue(doubleResult);
             }
          }
          else
@@ -248,16 +243,6 @@ namespace dtQt
          // reselect all the text when we commit.
          // Gives the user visual feedback that something happened.
          editBox->selectAll();
-      }
-
-      // notify the world (mostly the viewports) that our property changed
-      if (dataChanged)
-      {
-         std::ostringstream ss;
-         ss << "Updating model (data changed) for index " << mElementIndex;
-         LOGN_DEBUG("dynamicvectorelementcontrol.cpp", ss.str());
-
-         emit PropertyChanged(*mPropContainer, *mActiveProp);
       }
 
       return dataChanged;
@@ -316,8 +301,15 @@ namespace dtQt
    {
       DynamicAbstractControl::getValueAsString();
 
-      double value = getValue();
-      return QString::number(value, 'f', NUM_DECIMAL_DIGITS_DOUBLE);
+      if (doPropertiesMatch())
+      {
+         double value = getValue();
+         return QString::number(value, 'f', NUM_DECIMAL_DIGITS_DOUBLE);
+      }
+      else
+      {
+         return "<Multiple Values...>";
+      }
    }
 
    /////////////////////////////////////////////////////////////////////////////////
@@ -326,8 +318,101 @@ namespace dtQt
       return !mActiveProp->IsReadOnly();
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   bool DynamicVectorElementControl::doPropertiesMatch()
+   {
+      std::vector<LinkedPropertyData>& linkedProperties = mParent->GetLinkedProperties();
+      if (linkedProperties.empty())
+      {
+         return true;
+      }
+
+      // Retrieve the value of our base property.
+      double baseValue = getValue();
+
+      // Iterate through our linked properties and compare values.
+      int count = (int)linkedProperties.size();
+      for (int index = 0; index < count; ++index)
+      {
+         const LinkedPropertyData& data = linkedProperties[index];
+
+         dtCore::ActorProperty* linkedProp = data.property;
+         if (linkedProp)
+         {
+            double linkedValue = 0.0;
+
+            switch (mWhichType)
+            {
+            case VEC2F:
+               {
+                  dtCore::Vec2fActorProperty* linkedProp =
+                     dynamic_cast<dtCore::Vec2fActorProperty*>(data.property);
+                  if (linkedProp)
+                  {
+                     linkedValue = linkedProp->GetValue()[mElementIndex];
+                  }
+               } break;
+            case VEC2D:
+               {
+                  dtCore::Vec2dActorProperty* linkedProp =
+                     dynamic_cast<dtCore::Vec2dActorProperty*>(data.property);
+                  if (linkedProp)
+                  {
+                     linkedValue = linkedProp->GetValue()[mElementIndex];
+                  }
+               } break;
+            case VEC3F:
+               {
+                  dtCore::Vec3fActorProperty* linkedProp =
+                     dynamic_cast<dtCore::Vec3fActorProperty*>(data.property);
+                  if (linkedProp)
+                  {
+                     linkedValue = linkedProp->GetValue()[mElementIndex];
+                  }
+               } break;
+            case VEC3D:
+               {
+                  dtCore::Vec3dActorProperty* linkedProp =
+                     dynamic_cast<dtCore::Vec3dActorProperty*>(data.property);
+                  if (linkedProp)
+                  {
+                     linkedValue = linkedProp->GetValue()[mElementIndex];
+                  }
+               } break;
+            case VEC4F:
+               {
+                  dtCore::Vec4fActorProperty* linkedProp =
+                     dynamic_cast<dtCore::Vec4fActorProperty*>(data.property);
+                  if (linkedProp)
+                  {
+                     linkedValue = linkedProp->GetValue()[mElementIndex];
+                  }
+               } break;
+            case VEC4D:
+               {
+                  dtCore::Vec4dActorProperty* linkedProp =
+                     dynamic_cast<dtCore::Vec4dActorProperty*>(data.property);
+                  if (linkedProp)
+                  {
+                     linkedValue = linkedProp->GetValue()[mElementIndex];
+                  }
+               } break;
+            }
+
+            // If at any time, one of the linked values do not match
+            // the base, then we contain multiple values.
+            if (baseValue != linkedValue)
+            {
+               return false;
+            }
+         }
+      }
+
+      return true;
+   }
+
    /////////////////////////////////////////////////////////////////////////////////
-   double DynamicVectorElementControl::getValue()
+   double DynamicVectorElementControl::getValue() const
    {
       double result = 0.0;
 
@@ -369,9 +454,9 @@ namespace dtQt
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   void DynamicVectorElementControl::setValue(double value)
+   bool DynamicVectorElementControl::setValue(double value)
    {
-      const std::string oldValue = mActiveProp->ToString();
+      std::string oldValue = mActiveProp->ToString();
 
       switch (mWhichType)
       {
@@ -413,9 +498,101 @@ namespace dtQt
          } break;
       }
 
+      std::string newValue = mActiveProp->ToString();
+
       // give undo manager the ability to create undo/redo events
       emit PropertyAboutToChange(*mPropContainer, *mActiveProp,
-         oldValue, mActiveProp->ToString());
+         oldValue, newValue);
+      emit PropertyChanged(*mPropContainer, *mActiveProp);
+
+      bool dataChanged = oldValue != newValue;
+
+      // Update the value change to all linked properties as well.
+      std::vector<LinkedPropertyData>& linkedProperties = mParent->GetLinkedProperties();
+      int linkCount = (int)linkedProperties.size();
+      for (int linkIndex = 0; linkIndex < linkCount; ++linkIndex)
+      {
+         LinkedPropertyData& data = linkedProperties[linkIndex];
+
+         oldValue = data.property->ToString();
+
+         switch (mWhichType)
+         {
+         case VEC2F:
+            {
+               dtCore::Vec2fActorProperty* vecProp =
+                  dynamic_cast<dtCore::Vec2fActorProperty*>(data.property);
+               if (vecProp)
+               {
+                  osg::Vec2f  linkedValue = vecProp->GetValue();
+                  linkedValue[mElementIndex] = value;
+                  vecProp->SetValue(linkedValue);
+               }
+            } break;
+         case VEC2D:
+            {
+               dtCore::Vec2dActorProperty* vecProp =
+                  dynamic_cast<dtCore::Vec2dActorProperty*>(data.property);
+               if (vecProp)
+               {
+                  osg::Vec2d  linkedValue = vecProp->GetValue();
+                  linkedValue[mElementIndex] = value;
+                  vecProp->SetValue(linkedValue);
+               }
+            } break;
+         case VEC3F:
+            {
+               dtCore::Vec3fActorProperty* vecProp =
+                  dynamic_cast<dtCore::Vec3fActorProperty*>(data.property);
+               if (vecProp)
+               {
+                  osg::Vec3f  linkedValue = vecProp->GetValue();
+                  linkedValue[mElementIndex] = value;
+                  vecProp->SetValue(linkedValue);
+               }
+            } break;
+         case VEC3D:
+            {
+               dtCore::Vec3dActorProperty* vecProp =
+                  dynamic_cast<dtCore::Vec3dActorProperty*>(data.property);
+               if (vecProp)
+               {
+                  osg::Vec3d  linkedValue = vecProp->GetValue();
+                  linkedValue[mElementIndex] = value;
+                  vecProp->SetValue(linkedValue);
+               }
+            } break;
+         case VEC4F:
+            {
+               dtCore::Vec4fActorProperty* vecProp =
+                  dynamic_cast<dtCore::Vec4fActorProperty*>(data.property);
+               if (vecProp)
+               {
+                  osg::Vec4f  linkedValue = vecProp->GetValue();
+                  linkedValue[mElementIndex] = value;
+                  vecProp->SetValue(linkedValue);
+               }
+            } break;
+         case VEC4D:
+            {
+               dtCore::Vec4dActorProperty* vecProp =
+                  dynamic_cast<dtCore::Vec4dActorProperty*>(data.property);
+               if (vecProp)
+               {
+                  osg::Vec4d linkedValue = vecProp->GetValue();
+                  linkedValue[mElementIndex] = value;
+                  vecProp->SetValue(linkedValue);
+               }
+            } break;
+         }
+
+         // give undo manager the ability to create undo/redo events
+         emit PropertyAboutToChange(*data.propCon.get(), *data.property,
+            oldValue, data.property->ToString());
+         emit PropertyChanged(*data.propCon.get(), *data.property);
+      }
+
+      return dataChanged;
    }
 
    /////////////////////////////////////////////////////////////////////////////////

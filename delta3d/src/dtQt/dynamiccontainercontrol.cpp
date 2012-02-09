@@ -152,7 +152,15 @@ namespace dtQt
    const QString DynamicContainerControl::getValueAsString()
    {
       DynamicAbstractControl::getValueAsString();
-      return getDescription();
+
+      if (doPropertiesMatch())
+      {
+         return getDescription();
+      }
+      else
+      {
+         return "<Multiple Values...>";
+      }
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -212,6 +220,18 @@ namespace dtQt
                {
                   propertyControl->SetTreeView(mPropertyTree);
                   propertyControl->SetDynamicControlFactory(GetDynamicControlFactory());
+
+                  int linkCount = (int)mLinkedProperties.size();
+                  for (int linkIndex = 0; linkIndex < linkCount; ++linkIndex)
+                  {
+                     LinkedPropertyData& data = mLinkedProperties[linkIndex];
+                     dtCore::RefPtr<dtCore::ContainerActorProperty> linkedProp = dynamic_cast<dtCore::ContainerActorProperty*>(data.property);
+                     if (linkedProp)
+                     {
+                        propertyControl->AddLinkedProperty(mPropContainer, linkedProp->GetProperty(index));
+                     }
+                  }
+
                   propertyControl->InitializeData(this, model, mPropContainer, propType);
 
                   connect(propertyControl, SIGNAL(PropertyAboutToChange(dtCore::PropertyContainer&, dtCore::ActorProperty&,
@@ -221,12 +241,13 @@ namespace dtQt
 
                   connect(propertyControl, SIGNAL(PropertyChanged(dtCore::PropertyContainer&, dtCore::ActorProperty&)),
                      this, SLOT(PropertyChangedPassThrough(dtCore::PropertyContainer&, dtCore::ActorProperty&)));
+
                   mChildren.push_back(propertyControl);
                }
             }
-         }
 
-         model->insertRows(0, size, model->IndexOf(this));
+            model->insertRows(0, size, model->IndexOf(this));
+         }
          return true;
       }
 

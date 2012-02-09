@@ -157,6 +157,8 @@ namespace dtQt
       mTemporaryEditControl->setValidator(validator);
       mTemporaryEditControl->setToolTip(getDescription());
 
+      connect(mTemporaryEditControl, SIGNAL(returnPressed()), this, SLOT(enterPressed()));
+
       mGridLayout->addWidget(mTemporaryEditControl, 0, 0, 1, 1);
       mGridLayout->setColumnMinimumWidth(0, mTemporaryEditControl->sizeHint().width() / 2);
       mGridLayout->setColumnStretch(0, 1);
@@ -187,8 +189,15 @@ namespace dtQt
    const QString DynamicFloatControl::getValueAsString()
    {
       DynamicAbstractControl::getValueAsString();
-      float floatValue = mProperty->GetValue();
-      return QString::number(floatValue, 'f', NUM_DECIMAL_DIGITS_FLOAT);
+      if (doPropertiesMatch())
+      {
+         float floatValue = mProperty->GetValue();
+         return QString::number(floatValue, 'f', NUM_DECIMAL_DIGITS_FLOAT);
+      }
+      else
+      {
+         return "<Multiple Values...>";
+      }
    }
 
    bool DynamicFloatControl::isEditable()

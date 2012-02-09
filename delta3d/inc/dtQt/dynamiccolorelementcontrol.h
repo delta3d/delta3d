@@ -118,7 +118,12 @@ namespace dtQt
          */
         virtual bool isEditable();
 
-        /**
+       /**
+        *	Returns true if the base property as well as all linked properties match.
+        */
+       virtual bool doPropertiesMatch();
+
+       /**
          * A convenience method to get the value from the associated
          * vector.  Which element is the 0 based index into the vector.
          */
@@ -127,7 +132,7 @@ namespace dtQt
         /**
          * Puts the passed in value into the appropriate vector at whichElement index
          */
-        void setValue(int value);
+        bool setValue(int value);
 
         /**
          * Convert the 0.0 to 1.0 float color value to the 0 to 255 int display range.

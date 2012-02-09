@@ -65,6 +65,23 @@ namespace dtQt
                   {
                      propertyControl->SetTreeView(mPropertyTree);
                      propertyControl->SetDynamicControlFactory(GetDynamicControlFactory());
+
+                     int linkCount = (int)mLinkedProperties.size();
+                     for (int linkIndex = 0; linkIndex < linkCount; ++linkIndex)
+                     {
+                        LinkedPropertyData& data = mLinkedProperties[linkIndex];
+                        dtCore::BasePropertyContainerActorProperty* linkedProp =
+                           dynamic_cast<dtCore::BasePropertyContainerActorProperty*>(data.property);
+                        if (linkedProp)
+                        {
+                           dtCore::RefPtr<dtCore::PropertyContainer> linkedCon = linkedProp->GetValue();
+                           if (linkedCon)
+                           {
+                              propertyControl->AddLinkedProperty(linkedCon, linkedCon->GetProperty(propType->GetName()));
+                           }
+                        }
+                     }
+
                      // Note using the new property container as the container for this sub control.
                      propertyControl->InitializeData(this, newModel, pc, propType);
 
@@ -75,6 +92,7 @@ namespace dtQt
 
                      connect(propertyControl, SIGNAL(PropertyChanged(dtCore::PropertyContainer&, dtCore::ActorProperty&)),
                               this, SLOT(PropertyChangedPassThrough(dtCore::PropertyContainer&, dtCore::ActorProperty&)));
+
                      mChildren.push_back(propertyControl);
                   }
                }
@@ -128,7 +146,14 @@ namespace dtQt
    const QString DynamicPropertyContainerControl::getValueAsString()
    {
       DynamicAbstractControl::getValueAsString();
-      return getDescription();
+      if (doPropertiesMatch())
+      {
+         return getDescription();
+      }
+      else
+      {
+         return "<Multiple Values...>";
+      }
    }
 
    bool DynamicPropertyContainerControl::isEditable()

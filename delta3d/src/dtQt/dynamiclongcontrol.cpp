@@ -153,6 +153,8 @@ namespace dtQt
       mTemporaryEditControl->setValidator(validator);
       mTemporaryEditControl->setToolTip(getDescription());
 
+      connect(mTemporaryEditControl, SIGNAL(returnPressed()), this, SLOT(enterPressed()));
+
       mGridLayout->addWidget(mTemporaryEditControl, 0, 0, 1, 1);
       mGridLayout->setColumnMinimumWidth(0, mTemporaryEditControl->sizeHint().width() / 2);
       mGridLayout->setColumnStretch(0, 1);
@@ -183,8 +185,15 @@ namespace dtQt
    const QString DynamicLongControl::getValueAsString()
    {
       DynamicAbstractControl::getValueAsString();
-      long longValue = mProperty->GetValue();
-      return QString::number(longValue);
+      if (doPropertiesMatch())
+      {
+         long longValue = mProperty->GetValue();
+         return QString::number(longValue);
+      }
+      else
+      {
+         return "<Multiple Values...>";
+      }
    }
 
    bool DynamicLongControl::isEditable()

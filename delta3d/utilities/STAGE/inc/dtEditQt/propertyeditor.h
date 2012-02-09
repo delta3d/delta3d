@@ -84,7 +84,7 @@ namespace dtEditQt
       void HandleActorsSelected(ActorProxyRefPtrVector&);
       void ActorPropertyChanged(ActorProxyRefPtr proxy, ActorPropertyRefPtr property);
    protected:
-      virtual void buildDynamicControls(dtCore::PropertyContainer& propCon, dtQt::DynamicGroupControl* parentControl);
+      virtual void buildDynamicControls();
 
       virtual QString GetGroupBoxLabelText(const QString& baseGroupBoxName);
 

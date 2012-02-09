@@ -124,6 +124,11 @@ namespace dtQt
        */
       dtCore::ArrayActorPropertyBase* GetProperty() const {return mProperty;}
 
+      /**
+       *	Tests whether the base and all linked property arrays match in array size.
+       */
+      bool doPropertiesMatchInArraySize();
+
    public slots:
       /**
        * Signal when the data is updated.
@@ -149,7 +154,7 @@ namespace dtQt
       /**
        * Updates the enabled status of the control buttons after an update.
        */
-      void UpdateButtonStates();
+      virtual void UpdateButtonStates();
 
       dtCore::RefPtr<dtCore::ArrayActorPropertyBase> mProperty;
 

@@ -102,6 +102,11 @@ namespace dtQt
       virtual bool isEditable();
 
       /**
+       *	Returns true if the base property as well as all linked properties match.
+       */
+      virtual bool doPropertiesMatch();
+
+      /**
        *	Refreshes the state of the child controls.
        */
       void refreshChildren();

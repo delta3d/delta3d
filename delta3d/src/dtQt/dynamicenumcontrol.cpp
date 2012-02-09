@@ -189,8 +189,15 @@ namespace dtQt
    const QString DynamicEnumControl::getValueAsString()
    {
       DynamicAbstractControl::getValueAsString();
-      dtUtil::Enumeration &value = mProperty->GetEnumValue();
-      return QString(value.GetName().c_str());
+      if (doPropertiesMatch())
+      {
+         dtUtil::Enumeration &value = mProperty->GetEnumValue();
+         return QString(value.GetName().c_str());
+      }
+      else
+      {
+         return "<Multiple Values...>";
+      }
    }
 
    /////////////////////////////////////////////////////////////////////////////////
@@ -207,6 +214,7 @@ namespace dtQt
    void DynamicEnumControl::itemSelected(int index)
    {
       updateModelFromEditor(mWrapper);
+      CopyBaseValueToLinkedProperties();
    }
 
    /////////////////////////////////////////////////////////////////////////////////

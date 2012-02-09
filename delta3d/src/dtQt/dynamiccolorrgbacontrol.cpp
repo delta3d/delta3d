@@ -87,6 +87,18 @@ namespace dtQt
          bElement = CreateElementControl(2, "Blue", newModel, newPC);
          // create A
          aElement = CreateElementControl(3, "Alpha", newModel, newPC);
+
+         // Let the child elements know about the linked properties.
+         int linkCount = mLinkedProperties.size();
+         for (int linkIndex = 0; linkIndex < linkCount; ++linkIndex)
+         {
+            LinkedPropertyData& data = mLinkedProperties[linkIndex];
+
+            rElement->AddLinkedProperty(data.propCon, data.property);
+            gElement->AddLinkedProperty(data.propCon, data.property);
+            bElement->AddLinkedProperty(data.propCon, data.property);
+            aElement->AddLinkedProperty(data.propCon, data.property);
+         }
       }
       else
       {
@@ -120,15 +132,23 @@ namespace dtQt
    const QString DynamicColorRGBAControl::getValueAsString()
    {
       DynamicAbstractControl::getValueAsString();
-      const osg::Vec4& vectorValue = mProperty->GetValue();
 
-      QString display;
-      display.sprintf("(R=%d, G=%d, B=%d, A=%d)",
-         DynamicColorElementControl::convertColorFloatToInt(vectorValue[0]),
-         DynamicColorElementControl::convertColorFloatToInt(vectorValue[1]),
-         DynamicColorElementControl::convertColorFloatToInt(vectorValue[2]),
-         DynamicColorElementControl::convertColorFloatToInt(vectorValue[3]));
-      return display;
+      if (doPropertiesMatch())
+      {
+         const osg::Vec4& vectorValue = mProperty->GetValue();
+
+         QString display;
+         display.sprintf("(R=%d, G=%d, B=%d, A=%d)",
+            DynamicColorElementControl::convertColorFloatToInt(vectorValue[0]),
+            DynamicColorElementControl::convertColorFloatToInt(vectorValue[1]),
+            DynamicColorElementControl::convertColorFloatToInt(vectorValue[2]),
+            DynamicColorElementControl::convertColorFloatToInt(vectorValue[3]));
+         return display;
+      }
+      else
+      {
+         return "<Multiple Values...>";
+      }
    }
 
    /////////////////////////////////////////////////////////////////////////////////
@@ -279,6 +299,8 @@ namespace dtQt
 
          // notify the world (mostly the viewports) that our property changed
          emit PropertyChanged(*mPropContainer, *mProperty);
+
+         CopyBaseValueToLinkedProperties();
       }
    }
 

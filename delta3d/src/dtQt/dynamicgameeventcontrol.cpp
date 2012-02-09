@@ -195,7 +195,14 @@ namespace dtQt
    const QString DynamicGameEventControl::getValueAsString()
    {
       DynamicAbstractControl::getValueAsString();
-      return mProperty->GetValue() != NULL ? QString(mProperty->GetValue()->GetName().c_str()) : QString("<None>");
+      if (doPropertiesMatch())
+      {
+         return mProperty->GetValue() != NULL ? QString(mProperty->GetValue()->GetName().c_str()) : QString("<None>");
+      }
+      else
+      {
+         return "<Multiple Values...>";
+      }
    }
 
    /////////////////////////////////////////////////////////////////////////////////
@@ -214,6 +221,7 @@ namespace dtQt
       if (mTemporaryEditControl != NULL)
       {
          updateModelFromEditor(mWrapper);
+         CopyBaseValueToLinkedProperties();
       }
    }
 

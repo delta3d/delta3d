@@ -157,15 +157,20 @@ namespace dtQt
       virtual bool isEditable();
 
       /**
+       *	Returns true if the base property as well as all linked properties match.
+       */
+      virtual bool doPropertiesMatch();
+
+      /**
        * A convenience method to get the value from the associated
        * vector.  Which element is the 0 based index into the vector.
        */
-      double getValue();
+      double getValue() const;
 
       /**
        * Puts the passed in value into the appropriate vector at whichElement index
        */
-      void setValue(double value);
+      bool setValue(double value);
 
    public slots:
 

@@ -80,7 +80,7 @@ namespace dtEditQt
 
       // Edit button
       ResourceUIPlugin* plugin = GetPlugin();
-      if (plugin)
+      if (plugin && doPropertiesMatch())
       {
          mTemporaryEditBtn = new dtQt::SubQToolButton(wrapper, this);
          mTemporaryEditBtn->setText("Edit");
