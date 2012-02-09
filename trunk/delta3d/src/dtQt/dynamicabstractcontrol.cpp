@@ -274,6 +274,52 @@ namespace dtQt
       return wrapper;
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   void DynamicAbstractControl::AddLinkedProperty(dtCore::RefPtr<dtCore::PropertyContainer>& propCon, dtCore::ActorProperty* property)
+   {
+      LinkedPropertyData data;
+      data.propCon = propCon;
+      data.property = property;
+      mLinkedProperties.push_back(data);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   std::vector<DynamicAbstractControl::LinkedPropertyData>& DynamicAbstractControl::GetLinkedProperties()
+   {
+      return mLinkedProperties;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   const std::vector<DynamicAbstractControl::LinkedPropertyData>& DynamicAbstractControl::GetLinkedProperties() const
+   {
+      return mLinkedProperties;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void DynamicAbstractControl::CopyBaseValueToLinkedProperties()
+   {
+      std::string baseValue = mBaseProperty->ToString();
+
+      int count = (int)mLinkedProperties.size();
+      for (int index = 0; index < count; ++index)
+      {
+         LinkedPropertyData& data = mLinkedProperties[index];
+
+         dtCore::ActorProperty* linkedProp = data.property;
+         if (linkedProp)
+         {
+            std::string oldValue = linkedProp->ToString();
+
+            if (oldValue != baseValue)
+            {
+               linkedProp->FromString(baseValue);
+               emit PropertyAboutToChange(*data.propCon, *linkedProp, oldValue, baseValue);
+               emit PropertyChanged(*data.propCon, *linkedProp);
+            }
+         }
+      }
+   }
+
    /////////////////////////////////////////////////////////////////////////////////
    DynamicAbstractControl* DynamicAbstractControl::getParent()
    {
@@ -318,6 +364,13 @@ namespace dtQt
    }
 
    ////////////////////////////////////////////////////////////////////////////////
+   void DynamicAbstractControl::enterPressed()
+   {
+      updateModelFromEditor(mWrapper);
+      CopyBaseValueToLinkedProperties();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
    void DynamicAbstractControl::OnChildPreUpdate(DynamicAbstractControl* child)
    {
       NotifyParentOfPreUpdate();
@@ -357,6 +410,44 @@ namespace dtQt
    bool DynamicAbstractControl::isControlDoesCustomPainting(int column)
    {
       return false;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   bool DynamicAbstractControl::doPropertiesMatch()
+   {
+      NotifyParentOfPreUpdate();
+
+      // If there are no linked properties to compare with then
+      // there is no need to perform the test.
+      if (mLinkedProperties.empty())
+      {
+         return true;
+      }
+
+      // Retrieve the value of our base property.
+      std::string baseValue = mBaseProperty->ToString();
+
+      // Iterate through our linked properties and compare values.
+      int count = (int)mLinkedProperties.size();
+      for (int index = 0; index < count; ++index)
+      {
+         const LinkedPropertyData& data = mLinkedProperties[index];
+
+         dtCore::ActorProperty* linkedProp = data.property;
+         if (linkedProp)
+         {
+            std::string linkedValue = linkedProp->ToString();
+
+            // If at any time, one of the linked values do not match
+            // the base, then we contain multiple values.
+            if (baseValue != linkedValue)
+            {
+               return false;
+            }
+         }
+      }
+
+      return true;
    }
 
    /////////////////////////////////////////////////////////////////////////////////
@@ -409,6 +500,8 @@ namespace dtQt
       emit PropertyAboutToChange(*mPropContainer, *mBaseProperty,
          oldValue, mBaseProperty->ToString());
       emit PropertyChanged(*mPropContainer, *mBaseProperty);
+
+      CopyBaseValueToLinkedProperties();
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -441,6 +534,25 @@ namespace dtQt
          emit PropertyAboutToChange(*mPropContainer, *arrayProp,
             oldValue, arrayProp->ToString());
          emit PropertyChanged(*mPropContainer, *arrayProp);
+
+         // Now perform the shift operation on each of the linked properties.
+         std::vector<LinkedPropertyData>& linkedProperties = parent->GetLinkedProperties();
+         int linkCount = (int)linkedProperties.size();
+         for (int linkIndex = 0; linkIndex < linkCount; ++linkIndex)
+         {
+            LinkedPropertyData& data = linkedProperties[linkIndex];
+            dtCore::ArrayActorPropertyBase* linkedProp =
+               dynamic_cast<dtCore::ArrayActorPropertyBase*>(data.property);
+            if (linkedProp)
+            {
+               oldValue = linkedProp->ToString();
+               linkedProp->Swap(mArrayIndex, mArrayIndex - 1);
+
+               emit PropertyAboutToChange(*data.propCon.get(), *linkedProp,
+                  oldValue, linkedProp->ToString());
+               emit PropertyChanged(*data.propCon.get(), *linkedProp);
+            }
+         }
 
          int nextIndex = mArrayIndex - 1;
          mPropertyTree->closeEditor(mWrapper, QAbstractItemDelegate::NoHint);
@@ -475,6 +587,25 @@ namespace dtQt
          emit PropertyAboutToChange(*mPropContainer, *arrayProp,
             oldValue, arrayProp->ToString());
          emit PropertyChanged(*mPropContainer, *arrayProp);
+
+         // Now perform the shift operation on each of the linked properties.
+         std::vector<LinkedPropertyData>& linkedProperties = parent->GetLinkedProperties();
+         int linkCount = (int)linkedProperties.size();
+         for (int linkIndex = 0; linkIndex < linkCount; ++linkIndex)
+         {
+            LinkedPropertyData& data = linkedProperties[linkIndex];
+            dtCore::ArrayActorPropertyBase* linkedProp =
+               dynamic_cast<dtCore::ArrayActorPropertyBase*>(data.property);
+            if (linkedProp)
+            {
+               oldValue = linkedProp->ToString();
+               linkedProp->Swap(mArrayIndex, mArrayIndex + 1);
+
+               emit PropertyAboutToChange(*data.propCon.get(), *linkedProp,
+                  oldValue, linkedProp->ToString());
+               emit PropertyChanged(*data.propCon.get(), *linkedProp);
+            }
+         }
 
          int nextIndex = mArrayIndex + 1;
          mPropertyTree->closeEditor(mWrapper, QAbstractItemDelegate::NoHint);
@@ -513,6 +644,26 @@ namespace dtQt
             oldValue, arrayProp->ToString());
          emit PropertyChanged(*mPropContainer, *arrayProp);
 
+         // Now perform the copy operation on each of the linked properties.
+         std::vector<LinkedPropertyData>& linkedProperties = parent->GetLinkedProperties();
+         int linkCount = (int)linkedProperties.size();
+         for (int linkIndex = 0; linkIndex < linkCount; ++linkIndex)
+         {
+            LinkedPropertyData& data = linkedProperties[linkIndex];
+            dtCore::ArrayActorPropertyBase* linkedProp =
+               dynamic_cast<dtCore::ArrayActorPropertyBase*>(data.property);
+            if (linkedProp)
+            {
+               oldValue = linkedProp->ToString();
+               linkedProp->Insert(mArrayIndex);
+               linkedProp->Copy(mArrayIndex + 1, mArrayIndex);
+
+               emit PropertyAboutToChange(*data.propCon.get(), *linkedProp,
+                  oldValue, linkedProp->ToString());
+               emit PropertyChanged(*data.propCon.get(), *linkedProp);
+            }
+         }
+
          int nextIndex = mArrayIndex;
          mPropertyTree->closeEditor(mWrapper, QAbstractItemDelegate::NoHint);
          parent->resizeChildren(false, true);
@@ -548,6 +699,25 @@ namespace dtQt
          emit PropertyAboutToChange(*mPropContainer, *arrayProp,
             oldValue, arrayProp->ToString());
          emit PropertyChanged(*mPropContainer, *arrayProp);
+
+         // Now perform the delete operation on each of the linked properties.
+         std::vector<LinkedPropertyData>& linkedProperties = parent->GetLinkedProperties();
+         int linkCount = (int)linkedProperties.size();
+         for (int linkIndex = 0; linkIndex < linkCount; ++linkIndex)
+         {
+            LinkedPropertyData& data = linkedProperties[linkIndex];
+            dtCore::ArrayActorPropertyBase* linkedProp =
+               dynamic_cast<dtCore::ArrayActorPropertyBase*>(data.property);
+            if (linkedProp)
+            {
+               oldValue = linkedProp->ToString();
+               linkedProp->Remove(mArrayIndex);
+
+               emit PropertyAboutToChange(*data.propCon.get(), *linkedProp,
+                  oldValue, linkedProp->ToString());
+               emit PropertyChanged(*data.propCon.get(), *linkedProp);
+            }
+         }
 
          int nextIndex = mArrayIndex;
          if (arrayProp->GetArraySize() <= nextIndex)
@@ -678,6 +848,20 @@ namespace dtQt
          if (arrayProp)
          {
             arrayProp->SetIndex(mArrayIndex);
+         }
+
+         // Update the index on all linked properties as well.
+         std::vector<LinkedPropertyData>& linkedProperties = parent->GetLinkedProperties();
+         int linkCount = (int)linkedProperties.size();
+         for (int linkIndex = 0; linkIndex < linkCount; ++linkIndex)
+         {
+            LinkedPropertyData& data = linkedProperties[linkIndex];
+            dtCore::ArrayActorPropertyBase* linkedArrayProp =
+               dynamic_cast<dtCore::ArrayActorPropertyBase*>(data.property);
+            if (linkedArrayProp)
+            {
+               linkedArrayProp->SetIndex(mArrayIndex);
+            }
          }
       }
    }

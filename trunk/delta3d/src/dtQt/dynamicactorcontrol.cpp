@@ -238,19 +238,26 @@ namespace dtQt
    {
       DynamicAbstractControl::getValueAsString();
 
-      dtCore::BaseActorObject* proxy = getActorProxy();
-      if (!proxy)
+      if (doPropertiesMatch())
       {
-         dtCore::ActorProperty* prop = getActorProperty();
-         if (prop && !prop->ToString().empty())
+         dtCore::BaseActorObject* proxy = getActorProxy();
+         if (!proxy)
          {
-            return "<Unknown>";
+            dtCore::ActorProperty* prop = getActorProperty();
+            if (prop && !prop->ToString().empty())
+            {
+               return "<Unknown>";
+            }
+
+            return "<None>";
          }
 
-         return "<None>";
+         return proxy->GetName().c_str();
       }
-
-      return proxy->GetName().c_str();
+      else
+      {
+         return "<Multiple Values...>";
+      }
    }
 
    /////////////////////////////////////////////////////////////////////////////////
@@ -269,6 +276,7 @@ namespace dtQt
       if (mTemporaryEditControl != NULL)
       {
          updateModelFromEditor(mWrapper);
+         CopyBaseValueToLinkedProperties();
       }
    }
 

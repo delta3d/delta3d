@@ -23,8 +23,7 @@
 #include <dtCore/bitmaskactorproperty.h>
 
 #include <dtCore/datatype.h>
-
-#include <sstream>
+#include <dtUtil/stringutils.h>
 
 namespace dtCore
 {
@@ -53,10 +52,7 @@ namespace dtCore
          return false;
       }
 
-      std::istringstream stream;
-      stream.str(value);
-      int i;
-      stream >> i;
+      unsigned int i = dtUtil::ToType<unsigned int>(value);
       SetValue(i);
       return true;
    }
@@ -64,9 +60,8 @@ namespace dtCore
    ////////////////////////////////////////////////////////////////////////////
    const std::string BitMaskActorProperty::ToString() const
    {
-      std::ostringstream stream;
-      stream << GetValue();
-      return stream.str();
+      std::string value = dtUtil::ToString(GetValue());
+      return value;
    }
 
    ////////////////////////////////////////////////////////////////////////////

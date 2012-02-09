@@ -94,22 +94,38 @@ namespace dtQt
    {
       if (widget == mWrapper && mTextLabel)
       {
-         // set the current value from our property
-         mTextLabel->setText(getHexString(getByteValue()));
-
-         int count = (int)mBitButtons.size();
-         for (int index = 0; index < count; ++index)
+         if (doPropertiesMatch())
          {
-            SubQToolButton* bitButton = mBitButtons[index];
-            if (bitButton)
+            // set the current value from our property
+            mTextLabel->setText(getHexString(getByteValue()));
+
+            int count = (int)mBitButtons.size();
+            for (int index = 0; index < count; ++index)
             {
-               bool toggled = getBitValue(index);
-               if (toggled)
+               SubQToolButton* bitButton = mBitButtons[index];
+               if (bitButton)
                {
-                  bitButton->setText("1");
-                  bitButton->setChecked(true);
+                  bool toggled = getBitValue(index);
+                  if (toggled)
+                  {
+                     bitButton->setText("1");
+                     bitButton->setChecked(true);
+                  }
+                  else
+                  {
+                     bitButton->setText("0");
+                     bitButton->setChecked(false);
+                  }
                }
-               else
+            }
+         }
+         else
+         {
+            int count = (int)mBitButtons.size();
+            for (int index = 0; index < count; ++index)
+            {
+               SubQToolButton* bitButton = mBitButtons[index];
+               if (bitButton)
                {
                   bitButton->setText("0");
                   bitButton->setChecked(false);
@@ -209,29 +225,36 @@ namespace dtQt
    {
       DynamicAbstractControl::getValueAsString();
 
-      QString result = getHexString(getByteValue());
-      result += " (";
-
-      int count = 8;
-      for (int index = 0; index < count; ++index)
+      if (doPropertiesMatch())
       {
-         if (index > 0)
-         {
-            result += ",";
-         }
+         QString result = getHexString(getByteValue());
+         result += " (";
 
-         if (getBitValue(index))
+         int count = 8;
+         for (int index = 0; index < count; ++index)
          {
-            result += "1";
+            if (index > 0)
+            {
+               result += ",";
+            }
+
+            if (getBitValue(index))
+            {
+               result += "1";
+            }
+            else
+            {
+               result += "0";
+            }
          }
-         else
-         {
-            result += "0";
-         }
+         result += ")";
+
+         return result;
       }
-      result += ")";
-
-      return result;
+      else
+      {
+         return "<Multiple Values...>";
+      }
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -361,6 +384,8 @@ namespace dtQt
                oldValue, mProperty->ToString());
 
             emit PropertyChanged(*mPropContainer, *mProperty);
+
+            CopyBaseValueToLinkedProperties();
          }
       }
    }

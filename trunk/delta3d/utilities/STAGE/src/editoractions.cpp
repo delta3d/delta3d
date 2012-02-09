@@ -1683,6 +1683,7 @@ namespace dtEditQt
          //EditorData::GetInstance().getUndoManager().endMultipleUndo();
       }
 
+      mActionGroupActors->setEnabled(true);
       mActionUngroupActors->setEnabled(false);
    }
 

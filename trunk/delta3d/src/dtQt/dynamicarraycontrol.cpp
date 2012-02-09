@@ -187,24 +187,31 @@ namespace dtQt
    {
       DynamicAbstractControl::getValueAsString();
 
-      if (mProperty.valid())
+      if (doPropertiesMatchInArraySize())
       {
-         int arrayCount = mProperty->GetArraySize();
-         int minCount   = mProperty->GetMinArraySize();
-         int maxCount   = mProperty->GetMaxArraySize();
+         if (mProperty.valid())
+         {
+            int arrayCount = mProperty->GetArraySize();
+            int minCount   = mProperty->GetMinArraySize();
+            int maxCount   = mProperty->GetMaxArraySize();
 
-         QString minText("0");
-         if (minCount >  0) { minText = QString::number(minCount); }
+            QString minText("0");
+            if (minCount >  0) { minText = QString::number(minCount); }
 
-         QString maxText("*");
-         if (maxCount > -1) { maxText = QString::number(maxCount); }
+            QString maxText("*");
+            if (maxCount > -1) { maxText = QString::number(maxCount); }
 
-         return QString::number(arrayCount) + " Elements (" + minText + "-" + maxText + ")";
+            return QString::number(arrayCount) + " Elements (" + minText + "-" + maxText + ")";
+         }
+         else
+         {
+            LOG_ERROR("Dynamic array control has an invalid property type");
+            return tr("");
+         }
       }
       else
       {
-         LOG_ERROR("Dynamic array control has an invalid property type");
-         return tr("");
+         return "<Multiple Sizes (Disabled)>";
       }
    }
 
@@ -217,6 +224,11 @@ namespace dtQt
    /////////////////////////////////////////////////////////////////////////////
    void DynamicArrayControl::resizeChildren(bool forceRefresh, bool isChild)
    {
+      if (!doPropertiesMatchInArraySize())
+      {
+         return;
+      }
+
       int childCount = getChildCount();
       int size = mProperty->GetArraySize();
 
@@ -250,6 +262,20 @@ namespace dtQt
                   element->SetTreeView(mPropertyTree);
                   element->SetDynamicControlFactory(GetDynamicControlFactory());
                   element->SetArrayIndex(childCount + childIndex);
+
+                  int linkCount = (int)mLinkedProperties.size();
+                  for (int linkIndex = 0; linkIndex < linkCount; ++linkIndex)
+                  {
+                     LinkedPropertyData& data = mLinkedProperties[linkIndex];
+                     dtCore::ArrayActorPropertyBase* linkedArrayProp =
+                        dynamic_cast<dtCore::ArrayActorPropertyBase*>(data.property);
+                     if (linkedArrayProp)
+                     {
+                        dtCore::ActorProperty* linkedPropType = linkedArrayProp->GetArrayProperty();
+                        element->AddLinkedProperty(data.propCon, linkedPropType);
+                     }
+                  }
+
                   element->InitializeData(this, GetModel(), mPropContainer.get(), propType);
                   connect(element, SIGNAL(PropertyAboutToChange(dtCore::PropertyContainer&, dtCore::ActorProperty&,
                      const std::string&, const std::string&)),
@@ -258,6 +284,7 @@ namespace dtQt
 
                   connect(element, SIGNAL(PropertyChanged(dtCore::PropertyContainer&, dtCore::ActorProperty&)),
                      this, SLOT(PropertyChangedPassThrough(dtCore::PropertyContainer&, dtCore::ActorProperty&)));
+
                   mChildren.push_back(element);
                }
             }
@@ -291,6 +318,43 @@ namespace dtQt
       }
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   bool DynamicArrayControl::doPropertiesMatchInArraySize()
+   {
+      // If there are no linked properties to compare with then
+      // there is no need to perform the test.
+      if (mLinkedProperties.empty())
+      {
+         return true;
+      }
+
+      // Retrieve the array size of the base property.
+      int baseSize = mProperty->GetArraySize();
+
+      // Iterate through our linked properties and compare values.
+      int count = (int)mLinkedProperties.size();
+      for (int index = 0; index < count; ++index)
+      {
+         const LinkedPropertyData& data = mLinkedProperties[index];
+
+         dtCore::ArrayActorPropertyBase* linkedProp =
+            dynamic_cast<dtCore::ArrayActorPropertyBase*>(data.property);
+         if (linkedProp)
+         {
+            int linkedSize = linkedProp->GetArraySize();
+
+            // If at any time, one of the linked values does not match
+            // with the base, then we do not match.
+            if (baseSize != linkedSize)
+            {
+               return false;
+            }
+         }
+      }
+
+      return true;
+   }
+
    /////////////////////////////////////////////////////////////////////////////////
    // SLOTS
    /////////////////////////////////////////////////////////////////////////////////
@@ -314,6 +378,24 @@ namespace dtQt
          oldValue, mProperty->ToString());
       PropertyChanged(*mPropContainer, *mProperty);
 
+      // Also add an index to all linked properties.
+      int linkCount = (int)mLinkedProperties.size();
+      for (int linkIndex = 0; linkIndex < linkCount; ++linkIndex)
+      {
+         LinkedPropertyData& data = mLinkedProperties[linkIndex];
+         dtCore::ArrayActorPropertyBase* arrayProp =
+            dynamic_cast<dtCore::ArrayActorPropertyBase*>(data.property);
+         if (arrayProp)
+         {
+            oldValue = arrayProp->ToString();
+            arrayProp->Insert(arrayProp->GetArraySize());
+
+            PropertyAboutToChange(*data.propCon.get(), *arrayProp,
+               oldValue, arrayProp->ToString());
+            PropertyChanged(*data.propCon.get(), *arrayProp);
+         }
+      }
+
       resizeChildren();
    }
 
@@ -329,6 +411,24 @@ namespace dtQt
          oldValue, mProperty->ToString());
       PropertyChanged(*mPropContainer, *mProperty);
 
+      // Also clear all linked properties.
+      int linkCount = (int)mLinkedProperties.size();
+      for (int linkIndex = 0; linkIndex < linkCount; ++linkIndex)
+      {
+         LinkedPropertyData& data = mLinkedProperties[linkIndex];
+         dtCore::ArrayActorPropertyBase* arrayProp =
+            dynamic_cast<dtCore::ArrayActorPropertyBase*>(data.property);
+         if (arrayProp)
+         {
+            oldValue = arrayProp->ToString();
+            arrayProp->Clear();
+
+            PropertyAboutToChange(*data.propCon.get(), *arrayProp,
+               oldValue, arrayProp->ToString());
+            PropertyChanged(*data.propCon.get(), *arrayProp);
+         }
+      }
+
       resizeChildren();
    }
 
@@ -338,9 +438,9 @@ namespace dtQt
       std::string oldValue = mProperty->ToString();
       DynamicAbstractParentControl::onResetClicked();
 
-      PropertyAboutToChange(*mPropContainer, *mProperty,
-         oldValue, mProperty->ToString());
-      PropertyChanged(*mPropContainer, *mProperty);
+      //PropertyAboutToChange(*mPropContainer, *mProperty,
+      //   oldValue, mProperty->ToString());
+      //PropertyChanged(*mPropContainer, *mProperty);
 
       resizeChildren();
    }
@@ -352,33 +452,47 @@ namespace dtQt
    /////////////////////////////////////////////////////////////////////////////
    void DynamicArrayControl::UpdateButtonStates()
    {
+      DynamicAbstractParentControl::UpdateButtonStates();
+
       // Don't do anything if we have no buttons.
       if (!mAddButton || !mClearButton)
       {
          return;
       }
 
-      // Check if we are at our max array size.
-      int curSize = mProperty->GetArraySize();
-      int maxSize = mProperty->GetMaxArraySize();
-      if (maxSize > -1 && curSize >= maxSize)
+      // If we are multiple selecting and the array size does not
+      // match on all selected, we cannot allow this property to
+      // be edited.
+      if (!doPropertiesMatchInArraySize())
       {
-         mAddButton->setDisabled(true);
+         mAddButton->setEnabled(false);
+         mClearButton->setEnabled(true);
+         mDefaultResetButton->setEnabled(false);
       }
       else
       {
-         mAddButton->setDisabled(false);
-      }
+         // Check if we are at our max array size.
+         int curSize = mProperty->GetArraySize();
+         int maxSize = mProperty->GetMaxArraySize();
+         if (maxSize > -1 && curSize >= maxSize)
+         {
+            mAddButton->setDisabled(true);
+         }
+         else
+         {
+            mAddButton->setDisabled(false);
+         }
 
-      // Check if we are at our min array size.
-      int minSize = mProperty->GetMinArraySize();
-      if (minSize > -1 && curSize <= minSize)
-      {
-         mClearButton->setDisabled(true);
-      }
-      else
-      {
-         mClearButton->setDisabled(false);
+         // Check if we are at our min array size.
+         int minSize = mProperty->GetMinArraySize();
+         if (minSize > -1 && curSize <= minSize)
+         {
+            mClearButton->setDisabled(true);
+         }
+         else
+         {
+            mClearButton->setDisabled(false);
+         }
       }
    }
 

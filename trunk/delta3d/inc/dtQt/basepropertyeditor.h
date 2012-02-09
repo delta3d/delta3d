@@ -141,8 +141,7 @@ namespace dtQt
       /**
        * Add all the dynamic controls for this proxy object.
        */
-      virtual void buildDynamicControls(dtCore::PropertyContainer& propertyContainer, DynamicGroupControl* parentControl = NULL);
-      void buildDynamicControls(dtCore::PropertyContainer& propertyContainer, const std::vector<dtCore::ActorProperty*>& propList, DynamicGroupControl* parentControl = NULL);
+      virtual void buildDynamicControls();
 
       virtual QString GetGroupBoxLabelText(const QString& baseGroupBoxName);
       virtual std::string GetContainerGroupName(dtCore::PropertyContainer* propertyContainer);

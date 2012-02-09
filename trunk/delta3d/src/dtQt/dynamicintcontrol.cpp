@@ -155,6 +155,8 @@ namespace dtQt
       mTemporaryEditControl->setValidator(validator);
       mTemporaryEditControl->setToolTip(getDescription());
 
+      connect(mTemporaryEditControl, SIGNAL(returnPressed()), this, SLOT(enterPressed()));
+
       mGridLayout->addWidget(mTemporaryEditControl, 0, 0, 1, 1);
       mGridLayout->setColumnMinimumWidth(0, mTemporaryEditControl->sizeHint().width() / 2);
       mGridLayout->setColumnStretch(0, 1);
@@ -185,8 +187,15 @@ namespace dtQt
    const QString DynamicIntControl::getValueAsString()
    {
       DynamicAbstractControl::getValueAsString();
-      int intValue = mProperty->GetValue();
-      return QString::number(intValue);
+      if (doPropertiesMatch())
+      {
+         int intValue = mProperty->GetValue();
+         return QString::number(intValue);
+      }
+      else
+      {
+         return "<Multiple Values...>";
+      }
    }
 
    bool DynamicIntControl::isEditable()

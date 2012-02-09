@@ -110,17 +110,7 @@ namespace dtQt
          // set our value to our object
          if (result != getValue())
          {
-            setValue(result);
-            dataChanged = true;
-         }
-      }
-
-      // notify the world (mostly the viewports) that our property changed
-      if (dataChanged)
-      {
-         if (mWhichType == RGBA)
-         {
-            emit PropertyChanged(*mPropContainer, *mColorRGBA);
+            dataChanged = setValue(result);
          }
       }
 
@@ -181,13 +171,52 @@ namespace dtQt
    const QString DynamicColorElementControl::getValueAsString()
    {
       DynamicAbstractControl::getValueAsString();
-      int value = getValue();
-      return QString::number(value);
+
+      if (doPropertiesMatch())
+      {
+         int value = getValue();
+         return QString::number(value);
+      }
+      else
+      {
+         return "<Multiple Values...>";
+      }
    }
 
    /////////////////////////////////////////////////////////////////////////////////
    bool DynamicColorElementControl::isEditable()
    {
+      return true;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   bool DynamicColorElementControl::doPropertiesMatch()
+   {
+      const std::vector<LinkedPropertyData>& linkedProperties = mParent->GetLinkedProperties();
+
+      osg::Vec4 baseValue = mColorRGBA->GetValue();
+
+      int linkCount = (int)linkedProperties.size();
+      for (int linkIndex = 0; linkIndex < linkCount; ++linkIndex)
+      {
+         const LinkedPropertyData& data = linkedProperties[linkIndex];
+
+         dtCore::ColorRgbaActorProperty* linkedProp =
+            dynamic_cast<dtCore::ColorRgbaActorProperty*>(data.property);
+
+         if (linkedProp)
+         {
+            osg::Vec4 linkedValue = linkedProp->GetValue();
+
+            // Compare the two property values for the specific vector index
+            // that this element represents.
+            if (baseValue[mElementIndex] != linkedValue[mElementIndex])
+            {
+               return false;
+            }
+         }
+      }
+
       return true;
    }
 
@@ -211,25 +240,53 @@ namespace dtQt
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   void DynamicColorElementControl::setValue(int value)
+   bool DynamicColorElementControl::setValue(int value)
    {
       if (mWhichType == RGBA)
       {
          std::string oldValue  = mColorRGBA->ToString();
          osg::Vec4 vectorValue = mColorRGBA->GetValue();
          double intermediate = DynamicColorElementControl::convertColorIntToFloat(value);
-         vectorValue[mElementIndex] = (double) intermediate;
+         vectorValue[mElementIndex] = (double)intermediate;
          mColorRGBA->SetValue(vectorValue);
 
          // give undo manager the ability to create undo/redo events
          emit PropertyAboutToChange(*mPropContainer, *mColorRGBA,
             oldValue, mColorRGBA->ToString());
+         emit PropertyChanged(*mPropContainer, *mColorRGBA);
+
+         // Copy the value change to all linked properties as well.
+         std::vector<LinkedPropertyData>& linkedProperties = getParent()->GetLinkedProperties();
+
+         int linkCount = (int)linkedProperties.size();
+         for (int linkIndex = 0; linkIndex < linkCount; ++linkIndex)
+         {
+            LinkedPropertyData& data = linkedProperties[linkIndex];
+
+            dtCore::ColorRgbaActorProperty* linkedProp =
+               dynamic_cast<dtCore::ColorRgbaActorProperty*>(data.property);
+
+            if (linkedProp)
+            {
+               oldValue = linkedProp->ToString();
+               osg::Vec4 linkedValue = linkedProp->GetValue();
+               linkedValue[mElementIndex] = (double)intermediate;
+               linkedProp->SetValue(linkedValue);
+
+               // give undo manager the ability to create undo/redo events
+               emit PropertyAboutToChange(*data.propCon.get(), *linkedProp,
+                  oldValue, linkedProp->ToString());
+               emit PropertyChanged(*data.propCon.get(), *linkedProp);
+            }
+         }
       }
       //else { // == RGB
       //    osg::Vec3 vectorValue = mColorRGB->getValue();
       //    vectorValue[mElementIndex] = value;
       //    mColorRGB->setValue(vectorValue);
       //}
+
+      return true;
    }
 
    /////////////////////////////////////////////////////////////////////////////////

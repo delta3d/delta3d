@@ -172,6 +172,8 @@ namespace dtQt
             mTemporaryEditControl->setMaxLength(mProperty->GetMaxLength());
          }
 
+         connect(mTemporaryEditControl, SIGNAL(returnPressed()), this, SLOT(enterPressed()));
+
          updateEditorFromModel(mWrapper);
 
          mGridLayout->addWidget(mTemporaryEditControl, 0, 0, 1, 1);
@@ -227,7 +229,14 @@ namespace dtQt
    const QString DynamicStringControl::getValueAsString()
    {
       DynamicAbstractControl::getValueAsString();
-      return QString(tr(mProperty->GetValue().c_str()));
+      if (doPropertiesMatch())
+      {
+         return QString(tr(mProperty->GetValue().c_str()));
+      }
+      else
+      {
+         return "<Multiple Values...>";
+      }
    }
 
    bool DynamicStringControl::isEditable()
@@ -259,6 +268,7 @@ namespace dtQt
       if (mTemporaryComboControl != NULL)
       {
          updateModelFromEditor(mWrapper);
+         CopyBaseValueToLinkedProperties();
       }
    }
 

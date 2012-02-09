@@ -117,20 +117,26 @@ namespace dtQt
    const QString DynamicResourceControl::getValueAsString()
    {
       DynamicAbstractControl::getValueAsString();
-
-      // if we have no current resource, show special text that indicates the type
-      dtCore::ResourceDescriptor resource = mProperty->GetValue();
-      QString resourceTag;
-      if (resource.IsEmpty())
+      if (doPropertiesMatch())
       {
-         resourceTag = QString(tr("<None>"));
+         // if we have no current resource, show special text that indicates the type
+         dtCore::ResourceDescriptor resource = mProperty->GetValue();
+         QString resourceTag;
+         if (resource.IsEmpty())
+         {
+            resourceTag = QString(tr("<None>"));
+         }
+         else
+         {
+            resourceTag = QString(tr(resource.GetDisplayName().c_str()));
+         }
+
+         return resourceTag;
       }
       else
       {
-         resourceTag = QString(tr(resource.GetDisplayName().c_str()));
+         return "<Multiple Values...>";
       }
-
-      return resourceTag;
    }
 
 
@@ -224,6 +230,8 @@ namespace dtQt
 
             emit PropertyChanged(*mPropContainer, *mProperty);
          }
+
+         CopyBaseValueToLinkedProperties();
 
          // Tell our resource selector what resource was selected
          if (qResult.isEmpty())

@@ -261,31 +261,38 @@ namespace dtQt
       typedef typename PropertyGetValueType::value_type VecNValueType;
       DynamicAbstractControl::getValueAsString();
 
-      const unsigned int NUM_DECIMAL_DIGITS =
-         sizeof(VecNValueType) == sizeof(float)
-         ? NUM_DECIMAL_DIGITS_FLOAT : NUM_DECIMAL_DIGITS_DOUBLE;
-
-      PropertyGetValueType vectorValue = mProperty->GetValue();
-
-      QString result = "(X="  + QString::number(vectorValue.x(), 'f', NUM_DECIMAL_DIGITS) +
-         ", Y=" + QString::number(vectorValue.y(), 'f', NUM_DECIMAL_DIGITS) ;
-
-      // Static if
-      if (PropertyGetValueType::num_components > 2)
+      if (doPropertiesMatch())
       {
-         //Had to use [] access because the code still must parse for vecs without a .z()
-         result += ", Z=" + QString::number(vectorValue[2], 'f', NUM_DECIMAL_DIGITS) ;
-      }
+         const unsigned int NUM_DECIMAL_DIGITS =
+            sizeof(VecNValueType) == sizeof(float)
+            ? NUM_DECIMAL_DIGITS_FLOAT : NUM_DECIMAL_DIGITS_DOUBLE;
 
-      // Static if
-      if (PropertyGetValueType::num_components > 3)
+         PropertyGetValueType vectorValue = mProperty->GetValue();
+
+         QString result = "(X="  + QString::number(vectorValue.x(), 'f', NUM_DECIMAL_DIGITS) +
+            ", Y=" + QString::number(vectorValue.y(), 'f', NUM_DECIMAL_DIGITS) ;
+
+         // Static if
+         if (PropertyGetValueType::num_components > 2)
+         {
+            //Had to use [] access because the code still must parse for vecs without a .z()
+            result += ", Z=" + QString::number(vectorValue[2], 'f', NUM_DECIMAL_DIGITS) ;
+         }
+
+         // Static if
+         if (PropertyGetValueType::num_components > 3)
+         {
+            //Had to use [] access because the code still must parse for vecs without a .w()
+            result += ", W=" + QString::number(vectorValue[3], 'f', NUM_DECIMAL_DIGITS);
+         }
+
+         result += ")";
+         return result;
+      }
+      else
       {
-         //Had to use [] access because the code still must parse for vecs without a .w()
-         result += ", W=" + QString::number(vectorValue[3], 'f', NUM_DECIMAL_DIGITS);
+         return "<Multiple Values...>";
       }
-
-      result += ")";
-      return result;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
