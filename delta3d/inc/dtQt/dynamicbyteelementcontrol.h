@@ -111,11 +111,6 @@ namespace dtQt
        */
       virtual void SetByteIndex(int index);
 
-      /**
-       * @see DynamicAbstractControl#isEditable
-       */
-      virtual bool isEditable();
-
 
    public slots:
 

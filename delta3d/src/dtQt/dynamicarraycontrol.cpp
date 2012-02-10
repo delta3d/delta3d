@@ -216,12 +216,6 @@ namespace dtQt
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   bool DynamicArrayControl::isEditable()
-   {
-      return !mProperty->IsReadOnly();
-   }
-
-   /////////////////////////////////////////////////////////////////////////////
    void DynamicArrayControl::resizeChildren(bool forceRefresh, bool isChild)
    {
       if (!doPropertiesMatchInArraySize())

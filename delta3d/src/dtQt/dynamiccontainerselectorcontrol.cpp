@@ -203,11 +203,6 @@ namespace dtQt
       }
    }
 
-   bool DynamicContainerSelectorControl::isEditable()
-   {
-      return !mProperty->IsReadOnly();
-   }
-
    ////////////////////////////////////////////////////////////////////////////////
    bool DynamicContainerSelectorControl::doPropertiesMatch()
    {

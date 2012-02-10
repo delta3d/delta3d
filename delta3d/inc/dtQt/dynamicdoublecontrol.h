@@ -99,11 +99,6 @@ namespace dtQt
          */
         virtual const QString getValueAsString();
 
-        /**
-         * @see DynamicAbstractControl#isEditable
-         */
-        virtual bool isEditable();
-
    public slots:
 
         /**

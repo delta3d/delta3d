@@ -164,12 +164,6 @@ namespace dtQt
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   bool DynamicContainerControl::isEditable()
-   {
-      return !mProperty->IsReadOnly();
-   }
-
-   ///////////////////////////////////////////////////////////////////////////////
    void DynamicContainerControl::handleSubEditDestroy(QWidget* widget,
       QAbstractItemDelegate::EndEditHint hint /*= QAbstractItemDelegate::NoHint*/)
    {

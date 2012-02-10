@@ -97,11 +97,6 @@ namespace dtQt
       virtual const QString getValueAsString();
 
       /**
-       * @see DynamicAbstractControl#isEditable
-       */
-      virtual bool isEditable();
-
-      /**
        *	Returns true if the base property as well as all linked properties match.
        */
       virtual bool doPropertiesMatch();

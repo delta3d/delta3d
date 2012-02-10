@@ -112,11 +112,6 @@ namespace dtQt
       virtual QWidget* createEditor(QWidget* parent, const QStyleOptionViewItem& option,
          const QModelIndex& index);
 
-      /**
-       * @see DynamicAbstractControl#isEditable
-       */
-      virtual bool isEditable();
-
       dtCore::ResourceActorProperty& GetProperty();
 
    public slots:

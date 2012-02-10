@@ -91,11 +91,6 @@ namespace dtQt
       virtual const QString getValueAsString();
 
       /**
-      * @see DynamicAbstractControl#isEditable
-      */
-      virtual bool isEditable();
-
-      /**
        * @see DynamicAbstractControl#handleSubEditDestroy
        */
       virtual void handleSubEditDestroy(QWidget* widget, QAbstractItemDelegate::EndEditHint hint = QAbstractItemDelegate::NoHint);

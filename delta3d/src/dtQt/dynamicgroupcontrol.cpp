@@ -82,6 +82,36 @@ namespace dtQt
    }
 
    /////////////////////////////////////////////////////////////////////////////////
+   void DynamicGroupControl::addChildControlSorted(DynamicAbstractControl* child, PropertyEditorModel* model)
+   {
+      // Note - if you change the propertyeditor so that it adds and removes rows instead of destroying
+      // the property editor, you need to work with the begin/endinsertrows methods of model.
+      if (child != NULL)
+      {
+         QString newChildName = child->getDisplayName();
+
+         // Sort the new control.
+         bool inserted = false;
+         int count = (int)mChildren.size();
+         for (int index = 0; index < count; ++index)
+         {
+            QString name = mChildren[index]->getDisplayName();
+            if (name > newChildName)
+            {
+               inserted = true;
+               mChildren.insert(mChildren.begin() + index, 1, child);
+               break;
+            }
+         }
+
+         if (!inserted)
+         {
+            mChildren.push_back(child);
+         }
+      }
+   }
+
+   /////////////////////////////////////////////////////////////////////////////////
    const QString DynamicGroupControl::getDisplayName()
    {
       QString name = DynamicAbstractControl::getDisplayName();
@@ -135,5 +165,11 @@ namespace dtQt
          (*itr)->actorPropertyChanged(propCon, property);
          ++itr;
       }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   bool DynamicGroupControl::isEditable()
+   {
+      return false;
    }
 } // namespace dtQt

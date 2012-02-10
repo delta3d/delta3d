@@ -18,7 +18,7 @@
  *
  * This software was developed by Alion Science and Technology Corporation under
  * circumstances in which the U. S. Government may have rights in the software.
- * 
+ *
  * David Guthrie
  */
 
@@ -66,11 +66,6 @@ namespace dtQt
        * @see DynamicAbstractControl#getValueAsString
        */
       virtual const QString getValueAsString();
-
-      /**
-       * @see DynamicAbstractControl#isEditable
-       */
-      virtual bool isEditable();
 
 
    public slots:

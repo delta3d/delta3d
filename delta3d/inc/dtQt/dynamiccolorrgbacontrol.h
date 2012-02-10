@@ -110,11 +110,6 @@ namespace dtQt
                const QModelIndex& index);
 
       /**
-       * @see DynamicAbstractControl#isEditable
-       */
-      virtual bool isEditable();
-
-      /**
        * @see DynamicAbstractControl#NeedsPersistentEditor
        */
       virtual bool NeedsPersistentEditor();
