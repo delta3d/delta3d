@@ -1,4 +1,4 @@
-SET(TARGET_SRC testmotionmodels.cpp readme.txt)
+SET(TARGET_SRC testmotionmodels.cpp readme.txt config.xml)
 
 INCLUDE_DIRECTORIES( ${CEGUI_INCLUDE_DIR} )
 
