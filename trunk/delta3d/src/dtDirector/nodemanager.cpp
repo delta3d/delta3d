@@ -299,8 +299,7 @@ namespace dtDirector
 
       // Now we know which registry to use, so tell the registry to
       // create the node and return it.
-      dtCore::RefPtr<Node> node = apr->CreateNode(nodeType, graph).get();
-      return node;
+      return apr->CreateNode(nodeType, graph);
    }
 
    /////////////////////////////////////////////////////////////////////////////
