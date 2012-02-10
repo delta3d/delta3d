@@ -108,6 +108,14 @@ namespace dtCore
          void SetReadOnly(bool readOnly) { mReadOnly = readOnly; }
 
          /**
+          *	Sets whether this property can be edited when there are multiple
+          * containers selected with this property.
+          */
+         void SetMultipleEdit(bool enabled) { mMultipleEdit = enabled; }
+
+         bool GetMultipleEdit() const { return mMultipleEdit; }
+
+         /**
           * Set the group name
           * @param name The desired group name
           */
@@ -176,6 +184,12 @@ namespace dtCore
           * Flag the identifies if a property is read only or read/write
           */
          bool mReadOnly;
+
+         /**
+          *	Flag that indicates whether this property is read only when there
+          * are multiple containers selected.
+          */
+         bool mMultipleEdit;
 
          /**
           * hidden copy constructor

@@ -41,6 +41,7 @@ namespace dtCore
       , mDescription(desc)
       , mNumberPrecision(16)
       , mReadOnly(readOnly)
+      , mMultipleEdit(true)
    {
       groupName->empty() ? SetGroupName("Base") : SetGroupName(groupName);
    }

@@ -148,50 +148,40 @@ namespace dtEditQt
 
       dtCore::BaseActorObject* proxy = dynamic_cast<dtCore::BaseActorObject*>(propCons[0]);
 
-      if (proxy != NULL)
-      {
-         dtQt::PropertyEditorModel* propertyEditorModel = &GetPropertyEditorModel();
-         // create the basic actor group
-         dtQt::DynamicGroupControl* baseGroupControl = new dtQt::DynamicGroupControl("Actor Information");
-         baseGroupControl->InitializeData(parent, propertyEditorModel, NULL, NULL);
-         parent->addChildControl(baseGroupControl, propertyEditorModel);
+      //if (proxy != NULL)
+      //{
+      //   dtQt::PropertyEditorModel* propertyEditorModel = &GetPropertyEditorModel();
+      //   // create the basic actor group
+      //   dtQt::DynamicGroupControl* baseGroupControl = new dtQt::DynamicGroupControl("Actor Information");
+      //   baseGroupControl->InitializeData(parent, propertyEditorModel, NULL, NULL);
+      //   parent->addChildControl(baseGroupControl, propertyEditorModel);
+      //
+      //   // name of actor
+      //   DynamicNameControl* nameControl = new DynamicNameControl();
+      //   nameControl->InitializeData(baseGroupControl, propertyEditorModel, proxy, NULL);
+      //   baseGroupControl->addChildControl(nameControl, propertyEditorModel);
 
-         // name of actor
-         DynamicNameControl* nameControl = new DynamicNameControl();
-         nameControl->InitializeData(baseGroupControl, propertyEditorModel, proxy, NULL);
-         baseGroupControl->addChildControl(nameControl, propertyEditorModel);
+      //   // Category of actor
+      //   dtQt::DynamicLabelControl* categoryLabelControl = new dtQt::DynamicLabelControl();
+      //   categoryLabelControl->InitializeData(baseGroupControl, propertyEditorModel, proxy, NULL);
+      //   categoryLabelControl->setDisplayValues("Actor Category", "The category of the Actor - visible in the Actor Browser",
+      //      QString(tr(proxy->GetActorType().GetCategory().c_str())));
+      //   baseGroupControl->addChildControl(categoryLabelControl, propertyEditorModel);
 
-         // Category of actor
-         dtQt::DynamicLabelControl* labelControl = new dtQt::DynamicLabelControl();
-         labelControl->InitializeData(baseGroupControl, propertyEditorModel, proxy, NULL);
-         labelControl->setDisplayValues("Actor Category", "The category of the Actor - visible in the Actor Browser",
-            QString(tr(proxy->GetActorType().GetCategory().c_str())));
-         baseGroupControl->addChildControl(labelControl, propertyEditorModel);
+      //   // Type of actor
+      //   dtQt::DynamicLabelControl* typeLabelControl = new dtQt::DynamicLabelControl();
+      //   typeLabelControl->InitializeData(baseGroupControl, propertyEditorModel, proxy, NULL);
+      //   typeLabelControl->setDisplayValues("Actor Type", "The actual type of the actor as defined in the by the imported library",
+      //      QString(tr(proxy->GetActorType().GetName().c_str())));
+      //   baseGroupControl->addChildControl(typeLabelControl, propertyEditorModel);
 
-         // Type of actor
-         labelControl = new dtQt::DynamicLabelControl();
-         labelControl->InitializeData(baseGroupControl, propertyEditorModel, proxy, NULL);
-         labelControl->setDisplayValues("Actor Type", "The actual type of the actor as defined in the by the imported library",
-            QString(tr(proxy->GetActorType().GetName().c_str())));
-         baseGroupControl->addChildControl(labelControl, propertyEditorModel);
-
-         // Class of actor
-         labelControl = new dtQt::DynamicLabelControl();
-         labelControl->InitializeData(baseGroupControl, propertyEditorModel, proxy, NULL);
-         labelControl->setDisplayValues("Actor Class", "The Delta3D C++ class name for this actor - useful if you are trying to reference this actor in code",
-            QString(tr(proxy->GetClassName().c_str())));
-         baseGroupControl->addChildControl(labelControl, propertyEditorModel);
-
-         int count = (int)propCons.size();
-         for (int index = 1; index < count; ++index)
-         {
-            dtCore::BaseActorObject* linkedProxy = dynamic_cast<dtCore::BaseActorObject*>(propCons[index]);
-            if (linkedProxy)
-            {
-               // TODO
-            }
-         }
-      }
+      //   // Class of actor
+      //   dtQt::DynamicLabelControl* classLabelControl = new dtQt::DynamicLabelControl();
+      //   classLabelControl->InitializeData(baseGroupControl, propertyEditorModel, proxy, NULL);
+      //   classLabelControl->setDisplayValues("Actor Class", "The Delta3D C++ class name for this actor - useful if you are trying to reference this actor in code",
+      //      QString(tr(proxy->GetClassName().c_str())));
+      //   baseGroupControl->addChildControl(classLabelControl, propertyEditorModel);
+      //}
 
       std::vector<dtCore::ActorProperty*> propList;
       proxy->GetPropertyList(propList);
@@ -235,10 +225,15 @@ namespace dtEditQt
             const std::string& oldValue, const std::string& newValue)
    {
       dtCore::BaseActorObject* proxy = dynamic_cast<dtCore::BaseActorObject*>(&propCon);
-      if (proxy != NULL)
+      if (prop.GetName() == "Actor Name")
+      {
+         EditorEvents::GetInstance().emitProxyNameChanged(*proxy, oldValue);
+      }
+      else if (proxy != NULL)
       {
          EditorEvents::GetInstance().emitActorPropertyAboutToChange(proxy, &prop, oldValue, newValue);
       }
+
    }
 
    /////////////////////////////////////////////////////////////////////////////////
