@@ -90,6 +90,21 @@ namespace dtCore
       BuildPropertyMap();
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   bool BaseActorObject::ShouldPropertySave(const dtCore::ActorProperty& prop) const
+   {
+      bool result = PropertyContainer::ShouldPropertySave(prop);
+
+      // Any properties in this group are saved elsewhere, therefore
+      // we ignore these properties.
+      if (prop.GetGroupName() == "Actor Information")
+      {
+         result = false;
+      }
+
+      return result;
+   }
+
    /////////////////////////////////////////////////////////////////////////////
    void BaseActorObject::SetClassName(const std::string& name)
    {
@@ -380,7 +395,40 @@ namespace dtCore
    {
       dtCore::DeltaDrawable* drawable = GetDrawable();
 
+      const std::string GROUP_INFORMATION("Actor Information");
       const std::string GROUP_DRAWABLE("DeltaDrawable");
+
+      StringActorProperty* nameProp = new StringActorProperty(
+         "Actor Name", "Actor Name",
+         StringActorProperty::SetFuncType(this, &BaseActorObject::SetName),
+         StringActorProperty::GetFuncType(this, &BaseActorObject::GetName),
+         "The Display Name of the Actor.", GROUP_INFORMATION);
+      nameProp->SetMultipleEdit(false);
+      AddProperty(nameProp);
+
+      StringActorProperty* categoryProp = new StringActorProperty(
+         "Actor Category", "Actor Category",
+         StringActorProperty::SetFuncType(),
+         StringActorProperty::GetFuncType(&GetActorType(), &ActorType::GetCategory),
+         "The Category Name of the Actor.", GROUP_INFORMATION);
+      categoryProp->SetReadOnly(true);
+      AddProperty(categoryProp);
+
+      StringActorProperty* typeProp = new StringActorProperty(
+         "Actor Type", "Actor Type",
+         StringActorProperty::SetFuncType(),
+         StringActorProperty::GetFuncType(&GetActorType(), &ActorType::GetName),
+         "The Type Name of the Actor.", GROUP_INFORMATION);
+      typeProp->SetReadOnly(true);
+      AddProperty(typeProp);
+
+      StringActorProperty* classProp = new StringActorProperty(
+         "Actor Class", "Actor Class",
+         StringActorProperty::SetFuncType(),
+         StringActorProperty::GetFuncType(this, &BaseActorObject::GetClassName),
+         "The Class Name of the Actor.", GROUP_INFORMATION);
+      classProp->SetReadOnly(true);
+      AddProperty(classProp);
 
       AddProperty(new StringActorProperty(
                   BaseActorObject::DESCRIPTION_PROPERTY.Get(),
