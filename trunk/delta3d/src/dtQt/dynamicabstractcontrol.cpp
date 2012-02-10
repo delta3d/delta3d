@@ -403,7 +403,12 @@ namespace dtQt
    /////////////////////////////////////////////////////////////////////////////////
    bool DynamicAbstractControl::isEditable()
    {
-      return false;
+      if (!mBaseProperty->GetMultipleEdit() && !mLinkedProperties.empty())
+      {
+         return false;
+      }
+
+      return !mBaseProperty->IsReadOnly();
    }
 
    /////////////////////////////////////////////////////////////////////////////////

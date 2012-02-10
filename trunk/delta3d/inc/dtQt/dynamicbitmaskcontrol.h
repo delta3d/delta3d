@@ -102,11 +102,6 @@ namespace dtQt
 
          const QString getHexString(unsigned int value);
 
-         /**
-          * @see DynamicAbstractControl#isEditable
-          */
-         virtual bool isEditable();
-
       public slots:
 
          /**

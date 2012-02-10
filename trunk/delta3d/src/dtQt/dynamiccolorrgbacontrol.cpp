@@ -212,12 +212,6 @@ namespace dtQt
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   bool DynamicColorRGBAControl::isEditable()
-   {
-      return !mProperty->IsReadOnly();
-   }
-
-   /////////////////////////////////////////////////////////////////////////////////
    bool DynamicColorRGBAControl::NeedsPersistentEditor()
    {
       // we want our color picker to always show up. Because it's less confusing that way.

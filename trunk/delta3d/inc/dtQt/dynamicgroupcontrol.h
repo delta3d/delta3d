@@ -76,6 +76,11 @@ namespace dtQt
        */
       void addChildControl(DynamicAbstractControl* child, PropertyEditorModel* model);
 
+      /**
+       * Adds a child to this group sorted in ABC order.
+       */
+      void addChildControlSorted(DynamicAbstractControl* child, PropertyEditorModel* model);
+
       // OVERRIDDEN METHODS FROM ABSTRACT BASE
 
       /**
@@ -88,7 +93,7 @@ namespace dtQt
        */
       virtual const QString getDisplayName();
 
-      /** 
+      /**
        * Overwritten to also check if all child Properties are Default.
        * @return True if all child ActorProperties are default, false otherwise
        */
@@ -104,6 +109,11 @@ namespace dtQt
        */
       virtual void actorPropertyChanged(dtCore::PropertyContainer& propCon,
                dtCore::ActorProperty& property);
+
+      /**
+       * @see DynamicAbstractControl#isEditable
+       */
+      virtual bool isEditable();
 
    public slots:
 

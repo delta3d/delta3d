@@ -347,7 +347,7 @@ namespace dtQt
                      {
                         groupControl = new DynamicGroupControl(groupName);
                         groupControl->InitializeData(parent, propertyModel, basePC, NULL);
-                        parent->addChildControl(groupControl, propertyModel);
+                        parent->addChildControlSorted(groupControl, propertyModel);
                      }
 
                      // add our new control to the group.

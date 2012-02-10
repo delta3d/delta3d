@@ -189,12 +189,6 @@ namespace dtQt
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   bool DynamicResourceControl::isEditable()
-   {
-      return !mProperty->IsReadOnly();
-   }
-
-   /////////////////////////////////////////////////////////////////////////////////
    dtCore::ResourceActorProperty& DynamicResourceControl::GetProperty()
    {
       return *mProperty;

@@ -101,11 +101,6 @@ namespace dtQt
       virtual const QString getValueAsString();
 
       /**
-       * @see DynamicAbstractControl#isEditable
-       */
-      virtual bool isEditable();
-
-      /**
        * Resize the number of children in the array based on the actual property.
        *
        * @param[in]  forceRefresh  True to force the UI to refresh.
