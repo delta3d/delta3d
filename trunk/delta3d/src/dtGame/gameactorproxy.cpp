@@ -116,7 +116,7 @@ void GameActorProxy::Init(const dtCore::ActorType& actorType)
    BuildInvokables();
    BuildActorComponents();
 
-   // The actor components are stored on the game actor, unlike the other stuff 
+   // The actor components are stored on the game actor, unlike the other stuff
    GameActor &ga = GetGameActor();
    ga.BuildActorComponents();
 }
@@ -171,7 +171,7 @@ public:
 void GameActorProxy::BuildPropertyMap()
 {
    GameActor& ga = GetGameActor();
-   
+
    dtCore::PhysicalActorProxy::BuildPropertyMap();
 
    static const dtUtil::RefString PROPERTY_IS_GAME_ACTOR("IsGameActor");
@@ -295,7 +295,7 @@ void GameActorProxy::NotifyFullActorUpdate()
 }
 
 /////////////////////////////////////////////////////////////////////////////
-void GameActorProxy::NotifyPartialActorUpdate(const std::vector<dtUtil::RefString>& propNames, 
+void GameActorProxy::NotifyPartialActorUpdate(const std::vector<dtUtil::RefString>& propNames,
                                               bool flagAsPartial /*=true*/)
 {
    if (GetGameManager() == NULL || IsRemote())
@@ -344,7 +344,7 @@ void GameActorProxy::PopulateActorUpdate(ActorUpdateMessage& update)
 }
 
 /////////////////////////////////////////////////////////////////////////////
-void GameActorProxy::PopulateActorUpdateImpl(ActorUpdateMessage& update, 
+void GameActorProxy::PopulateActorUpdateImpl(ActorUpdateMessage& update,
                                              const std::vector<dtUtil::RefString>& propNames)
 {
    update.SetName(GetName());
@@ -385,10 +385,16 @@ void GameActorProxy::PopulateActorUpdateImpl(ActorUpdateMessage& update,
          continue;
       }
 
+      // don't send the actor's name property as it is already sent earlier.
+      if (prop->GetName() == "Actor Name")
+      {
+         continue;
+      }
+
       try
       {
          MessageParameter* mp = update.AddUpdateParameter(prop->GetName(), prop->GetDataType());
-         if (mp != NULL) 
+         if (mp != NULL)
          {
             mp->SetFromProperty(*prop);
          }
