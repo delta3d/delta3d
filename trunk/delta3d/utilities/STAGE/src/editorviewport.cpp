@@ -52,6 +52,7 @@
 #include <dtCore/resourceactorproperty.h>
 #include <dtCore/transformableactorproxy.h>
 #include <dtCore/vectoractorproperties.h>
+#include <dtCore/compass.h>
 
 #include <dtUtil/exception.h>
 #include <dtUtil/mathdefines.h>
@@ -118,6 +119,17 @@ namespace dtEditQt
 
             mObjectMotionModel->SetCamera(mCamera->getDeltaCamera());
          }
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void EditorViewport::ShowCompass()
+   {
+      dtCore::Compass* compass = getCamera()->ShowCompass();
+      if (compass)
+      {
+         GetRootNode()->addChild(compass->GetOSGNode());
+         compass->GetOSGNode()->setNodeMask(mDisabledMask & 0x0000F000);
       }
    }
 

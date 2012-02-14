@@ -84,6 +84,11 @@ namespace dtEditQt {
       virtual void setScene(dtCore::Scene* scene);
 
       /**
+       *	Creates the compass actor to be shown within the viewport.
+       */
+      void ShowCompass();
+
+      /**
        * Refreshes the viewport with a new set of selected actors.
        *
        * @param[in]  actors  The list of all actors being selected.

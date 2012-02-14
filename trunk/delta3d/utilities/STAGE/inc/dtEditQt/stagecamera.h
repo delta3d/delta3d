@@ -38,6 +38,7 @@
 #include <list>
 #include <dtCore/refptr.h>
 #include <dtCore/camera.h>
+#include <dtCore/compass.h>
 
 #include <dtCore/transformableactorproxy.h>
 #include <dtEditQt/export.h>
@@ -69,7 +70,7 @@ namespace dtEditQt
        */
       void setPosition(const osg::Vec3& pos);
 
-      /** 
+      /**
        * Set the orientation of the camera to the supplied rotation.
        * @param rot The rotation to orient the camera
        */
@@ -249,6 +250,10 @@ namespace dtEditQt
        */
       void updateActorAttachments();
 
+      /**
+       *	Shows the compass actor to be shown within the camera's view.
+       */
+      dtCore::Compass* ShowCompass();
 
       /**
        * Returns a count of the number of actor proxies currently attached to this
@@ -303,6 +308,9 @@ namespace dtEditQt
 
       ///A list of transformable actor proxies currently attached to the camera.
       std::list<ActorAttachment> mAttachedProxies;
+
+      ///An optional compass actor to show the orientation of the camera.
+      dtCore::RefPtr<dtCore::Compass> mCompass;
    };
 
 } // namespace dtEditQt
