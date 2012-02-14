@@ -416,6 +416,7 @@ namespace dtEditQt
       mPerspView->setAutoInteractionMode(true);
       mPerspView->getCamera()->getDeltaCamera()->GetOSGCamera()->setCullMask(0x0F000001);  //magic number, based on ObjectMotionModel's mask
       mPerspView->GetRootNode()->setNodeMask(0x00000001);
+      mPerspView->ShowCompass();
 
       mTopView = (OrthoViewport*)vpMgr.createViewport("Top View (XY)",
          ViewportManager::ViewportType::ORTHOGRAPHIC);

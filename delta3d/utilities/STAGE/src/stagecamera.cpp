@@ -446,4 +446,14 @@ namespace dtEditQt
       }
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   dtCore::Compass* StageCamera::ShowCompass()
+   {
+      if (!mCompass.valid())
+      {
+         mCompass = new dtCore::Compass(getDeltaCamera());
+      }
+
+      return mCompass;
+   }
 } // namespace dtEditQt
