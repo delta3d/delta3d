@@ -1280,7 +1280,7 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   dtCore::RefPtr<dtCore::BaseActorObject> GameManager::CreateActorFromPrototype(const dtCore::UniqueId& uniqueID)
+   dtCore::RefPtr<dtCore::BaseActorObject> GameManager::CreateActorFromPrototype(const dtCore::UniqueId& uniqueID, bool isRemote /*= false*/)
    {
       dtCore::BaseActorObject* ourObject = FindPrototypeByID(uniqueID);
       if (ourObject != NULL)
@@ -1297,6 +1297,7 @@ namespace dtGame
             {
                gameActor->SetPrototypeName(ourObject->GetName());
             }
+            gap->SetRemote(isRemote);
          }
          return temp;
       }
