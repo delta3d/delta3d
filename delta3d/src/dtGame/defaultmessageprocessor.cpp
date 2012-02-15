@@ -154,7 +154,7 @@ namespace dtGame
          }
 
          gap = dynamic_cast<dtGame::GameActorProxy*>
-            (GetGameManager()->CreateActorFromPrototype(prototypeProxy->GetId()).get());
+            (GetGameManager()->CreateActorFromPrototype(prototypeProxy->GetId(), true).get());
       }
 
       // Regular create (ie no prototype)

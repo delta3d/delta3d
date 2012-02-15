@@ -213,8 +213,12 @@ namespace dtGame
       /// Deletes a single Template.
       void DeletePrototype(const dtCore::UniqueId& uniqueId);
 
-      /// Makes a new GameActorProxy, and returns it to the user
-      dtCore::RefPtr<dtCore::BaseActorObject> CreateActorFromPrototype(const dtCore::UniqueId& uniqueID);
+      /**
+       * Makes a new GameActorProxy, and returns it to the user
+       * @param uniqueID The unique id of the prototype to create an actor from.
+       * @param isRemote Whether the new actor should be marked as remote or not.
+       */
+      dtCore::RefPtr<dtCore::BaseActorObject> CreateActorFromPrototype(const dtCore::UniqueId& uniqueID, bool isRemote = false);
 
       template <typename T>
       void CreateActorFromPrototype(const dtCore::UniqueId& uniqueID,
