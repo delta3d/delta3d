@@ -212,8 +212,8 @@ bool STAGERTSCameraMotionModel::OnMouseMoved(float dx, float dy)
          // Reset the pitch so the translation is only on the x/y plane.
          osg::Vec3 hpr;
          transform.GetRotation(hpr);
-         hpr[1] -= dy * 0.1f * mViewport->getMouseSensitivity();
-         hpr[0] -= dx * 0.1f * mViewport->getMouseSensitivity();
+         hpr[1] -= dy * 0.2f;// * mViewport->getMouseSensitivity();
+         hpr[0] -= dx * 0.2f;// * mViewport->getMouseSensitivity();
 
          // Clamp the elevation so it does not go beyond its' limits.
          if (hpr[1] < -89.9f)    hpr[1] = -89.9f;
