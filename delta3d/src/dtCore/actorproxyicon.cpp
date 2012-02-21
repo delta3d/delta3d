@@ -35,7 +35,7 @@ namespace dtCore
 {
 
    //////////////////////////////////////////////////////////////////////////
-   std::string ActorProxyIcon::IMAGE_BILLBOARD_GENERIC("");
+   std::string ActorProxyIcon::IMAGE_BILLBOARD_GENERIC("billboards/question.png");
    std::string ActorProxyIcon::IMAGE_BILLBOARD_CHARACTER("billboards/animcharacter.png");
    std::string ActorProxyIcon::IMAGE_BILLBOARD_STATICMESH("billboards/staticmesh.png");
    std::string ActorProxyIcon::IMAGE_BILLBOARD_LIGHT("billboards/light.png");
