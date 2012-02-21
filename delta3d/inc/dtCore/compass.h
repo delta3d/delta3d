@@ -71,7 +71,7 @@ namespace dtCore
          ///@return returns a pointer to the current camera
                   dtCore::Camera*   GetCamera();
 
-         //@param stes the current camera
+         //@param sets the current camera
                   void              SetCamera( dtCore::Camera* cam );
 
       private:
