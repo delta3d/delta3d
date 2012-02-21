@@ -407,7 +407,7 @@ void ObjectViewer::OnApplyShader(const std::string& groupName, const std::string
 ////////////////////////////////////////////////////////////////////////////////
 void ObjectViewer::OnRemoveShader()
 {
-   dtCore::ShaderManager &shaderManager = dtCore::ShaderManager::GetInstance();
+   dtCore::ShaderManager& shaderManager = dtCore::ShaderManager::GetInstance();
    shaderManager.UnassignShaderFromNode(*mShadedScene);
 }
 

@@ -90,18 +90,18 @@ namespace dtCore
       InputDeviceFeature* GetFeature(int index);
 
       /**
-       * Returns the number of features (buttons, axes, etc.) contained in
+       * Returns the number of buttons contained in
        * this device.
        *
-       * @return the number of features contained in this device
+       * @return the number of buttons contained in this device
        */
       int GetButtonCount() const;
 
       /**
-       * Returns a pointer to the specified feature.
+       * Returns a pointer to the specified button.
        *
-       * @param index the index of the desired feature
-       * @return a pointer to the feature
+       * @param index the index of the desired button
+       * @return a pointer to the button
        */
       Button* GetButton(int index);
       const Button* GetButton(int index) const;
