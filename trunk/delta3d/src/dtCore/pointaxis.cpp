@@ -6,6 +6,7 @@
 #include <osg/Geometry>
 #include <osg/Switch>
 #include <osg/MatrixTransform>
+#include <osg/PolygonMode>
 #include <osgText/Text>
 
 #include <cassert>
@@ -508,8 +509,11 @@ void PointAxis::ctor(void)
    assert(ss);
 
    ss->setRenderBinDetails(20, "RenderBin");
-   ss->setMode(GL_LIGHTING, osg::StateAttribute::OFF);
+   ss->setMode(GL_LIGHTING, osg::StateAttribute::PROTECTED | osg::StateAttribute::OFF);
    ss->setMode(GL_DEPTH_TEST, osg::StateAttribute::OFF);
+
+   osg::PolygonMode* pm = new osg::PolygonMode(osg::PolygonMode::FRONT_AND_BACK, osg::PolygonMode::FILL);
+   ss->setAttributeAndModes(pm, osg::StateAttribute::PROTECTED | osg::StateAttribute::ON);
 
    LabelSetup(geode, mLabel[X].c_str(), mPoint[X], mLColor[X], GetLength(X));
 
@@ -523,8 +527,11 @@ void PointAxis::ctor(void)
    assert(ss);
 
    ss->setRenderBinDetails(20, "RenderBin");
-   ss->setMode(GL_LIGHTING, osg::StateAttribute::OFF);
+   ss->setMode(GL_LIGHTING, osg::StateAttribute::PROTECTED | osg::StateAttribute::OFF);
    ss->setMode(GL_DEPTH_TEST, osg::StateAttribute::OFF);
+
+   pm = new osg::PolygonMode(osg::PolygonMode::FRONT_AND_BACK, osg::PolygonMode::FILL);
+   ss->setAttributeAndModes(pm, osg::StateAttribute::PROTECTED | osg::StateAttribute::ON);
 
    LabelSetup(geode, mLabel[Y].c_str(), mPoint[Y], mLColor[Y], GetLength(Y));
 
@@ -538,8 +545,11 @@ void PointAxis::ctor(void)
    assert(ss);
 
    ss->setRenderBinDetails(20, "RenderBin");
-   ss->setMode(GL_LIGHTING, osg::StateAttribute::OFF);
+   ss->setMode(GL_LIGHTING, osg::StateAttribute::PROTECTED | osg::StateAttribute::OFF);
    ss->setMode(GL_DEPTH_TEST, osg::StateAttribute::OFF);
+
+   pm = new osg::PolygonMode(osg::PolygonMode::FRONT_AND_BACK, osg::PolygonMode::FILL);
+   ss->setAttributeAndModes(pm, osg::StateAttribute::PROTECTED | osg::StateAttribute::ON);
 
    LabelSetup(geode, mLabel[Z].c_str(), mPoint[Z], mLColor[Z], GetLength(Z));
 
@@ -573,8 +583,11 @@ PointAxis::AxesSetup(void)
       assert(ss);
 
       ss->setRenderBinDetails(20L, "RenderBin");
-      ss->setMode(GL_LIGHTING, osg::StateAttribute::OFF);
+      ss->setMode(GL_LIGHTING, osg::StateAttribute::PROTECTED | osg::StateAttribute::OFF);
       ss->setMode(GL_DEPTH_TEST, osg::StateAttribute::OFF);
+
+      osg::PolygonMode* pm = new osg::PolygonMode(osg::PolygonMode::FRONT_AND_BACK, osg::PolygonMode::FILL);
+      ss->setAttributeAndModes(pm, osg::StateAttribute::PROTECTED | osg::StateAttribute::ON);
    }
    else
    {

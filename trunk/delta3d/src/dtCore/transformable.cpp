@@ -467,23 +467,14 @@ void Transformable::RenderProxyNode(const bool enable)
       hints->setDetailRatio(0.5f);
 
       osg::ShapeDrawable* sd = new osg::ShapeDrawable(sphere, hints);
+      sd->setColor(osg::Vec4(1.0f, 0.0f, 1.0f, 0.5f));
 
       proxyGeode->addDrawable(sd);
 
-      osg::Material* mat = new osg::Material();
-      mat->setDiffuse(osg::Material::FRONT_AND_BACK, osg::Vec4(1.0f, 0.0f, 1.0f, 0.5f));
-      mat->setAmbient(osg::Material::FRONT_AND_BACK, osg::Vec4(1.0f, 0.0f, 1.0f, 1.0f));
-      mat->setEmission(osg::Material::FRONT_AND_BACK, osg::Vec4(0.0f, 0.0f, 0.0f, 1.0f));
-
-      osg::PolygonOffset* polyoffset = new osg::PolygonOffset;
-      polyoffset->setFactor(-1.0f);
-      polyoffset->setUnits(-1.0f);
-
-      osg::StateSet* ss = mImpl->mPointAxis->GetOSGNode()->getOrCreateStateSet();
-      ss->setAttributeAndModes(mat, osg::StateAttribute::OVERRIDE|osg::StateAttribute::ON);
-      ss->setMode(GL_BLEND, osg::StateAttribute::ON);
+      osg::StateSet* ss = proxyGeode->getOrCreateStateSet();
+      ss->setMode(GL_BLEND, osg::StateAttribute::PROTECTED | osg::StateAttribute::ON);
       ss->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
-      ss->setAttributeAndModes(polyoffset, osg::StateAttribute::OVERRIDE | osg::StateAttribute::ON);
+      ss->setMode(GL_LIGHTING, osg::StateAttribute::PROTECTED | osg::StateAttribute::OFF);
 
       AddChild(mImpl->mPointAxis.get());
       SetProxyNode(mImpl->mPointAxis->GetOSGNode());
