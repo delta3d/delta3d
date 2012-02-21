@@ -232,7 +232,7 @@ namespace dtEditQt
       //osg::StateSet* ss = mSelectionDecorator->getOrCreateStateSet();
 
       if (drawable == NULL || drawable->GetOSGNode() == NULL)
-      {         
+      {
          return;
       }
 
@@ -240,7 +240,7 @@ namespace dtEditQt
       {
          return;
       }
-      
+
       //if this is the Brush, then make the selectionDecorator visible through
       //other objects
       dtActors::VolumeEditActor* volEditActTest = dynamic_cast<dtActors::VolumeEditActor*>(drawable);
@@ -375,7 +375,12 @@ namespace dtEditQt
 
    ///////////////////////////////////////////////////////////////////////////////
    static const std::string COLOR_SHADER_FORMAT =
-      "void main (void) { gl_FragColor = vec4(%f, %f, %f, 1.0); }";
+      "uniform sampler2D baseTexture;\
+      void main (void)\
+      {\
+         vec4 finalColor = gl_Color * texture2D(baseTexture, gl_TexCoord[0].st);\
+         gl_FragColor = vec4(%f, %f, %f, 1.0) * finalColor;\
+      }";
    ///////////////////////////////////////////////////////////////////////////////
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -417,7 +422,7 @@ namespace dtEditQt
          ss->setAttributeAndModes(pm, turnOn);
          ss->setAttributeAndModes(po, turnOn);
 
-         ss->setMode(GL_BLEND,osg::StateAttribute::OVERRIDE | osg::StateAttribute::PROTECTED | osg::StateAttribute::OFF);
+         ss->setMode(GL_BLEND, osg::StateAttribute::OVERRIDE | osg::StateAttribute::PROTECTED | osg::StateAttribute::OFF);
       }
    }
 
