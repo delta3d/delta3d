@@ -76,7 +76,7 @@ void DeltaWin::CreateDeltaWindow(const DeltaWinTraits& windowTraits)
    mLastWindowedWidth  = osgTraits->width;
    mLastWindowedHeight = osgTraits->height;
 
-   ShowCursor(windowTraits.showCursor);
+   SetShowCursor(windowTraits.showCursor);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -120,7 +120,7 @@ DeltaWin::DeltaWin(const std::string& name, osgViewer::GraphicsWindow& gw)
    mOsgViewerGraphicsWindow = &gw;
 
    SetWindowTitle(name);
-   ShowCursor();
+   SetShowCursor(true);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -151,8 +151,14 @@ const std::string DeltaWin::GetWindowTitle() const
 ////////////////////////////////////////////////////////////////////////////////
 void DeltaWin::ShowCursor(bool show)
 {
-   mShowCursor = show;
-   mOsgViewerGraphicsWindow->useCursor(show);
+   SetShowCursor(show);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void dtCore::DeltaWin::SetShowCursor(bool shouldShow)
+{
+   mShowCursor = shouldShow;
+   mOsgViewerGraphicsWindow->useCursor(shouldShow);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
