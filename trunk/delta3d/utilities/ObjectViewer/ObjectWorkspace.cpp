@@ -612,6 +612,12 @@ void ObjectWorkspace::OnChangeContext()
    {
       mContextPath = newPath;
       SaveCurrentContextPath();
+
+      // Remove data from the current context
+      mResourceDock->ClearAll();
+
+      // Re-populate the list using the new context
+      UpdateResourceLists();
    }
 }
 

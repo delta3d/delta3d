@@ -70,6 +70,8 @@ public:
    void SetGeometry(const std::string& fullName, bool shouldDisplay) const;
    void SetGeometry(QTreeWidgetItem* geometryItem, bool shouldDisplay) const;
 
+   void ClearAll();
+
 signals:
 
    void LoadMap(const std::string& mapName);
