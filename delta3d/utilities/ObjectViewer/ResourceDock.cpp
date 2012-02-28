@@ -303,6 +303,16 @@ void ResourceDock::SetGeometry(QTreeWidgetItem* geometryItem, bool shouldDisplay
    geometryItem->setCheckState(0, (shouldDisplay) ? Qt::Checked : Qt::Unchecked);
 }
 
+////////////////////////////////////////////////////////////////////////////////
+void ResourceDock::ClearAll()
+{
+   mGeometryTreeWidget->clear();
+   mShaderTreeWidget->clear();
+
+   // Reset our default tree roots
+   InitGeometryTree();
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 void ResourceDock::OnNewMap(const std::string& mapName)
 {
@@ -1466,4 +1476,5 @@ QTreeWidgetItem* ResourceDock::CreateTreeItem(const QString& name, const QString
    item->setFlags(flags);
    return item;
 }
+
 
