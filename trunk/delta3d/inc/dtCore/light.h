@@ -64,10 +64,10 @@ namespace dtCore
        * @param name: a name for the light, defaulted to defaultLight
        * @param mode: specifys a lighting mode, GLOBAL effects whole scene, LOCAL only effects children
        */
-      Light( int number, const std::string& name = "defaultLight", LightingMode mode = GLOBAL );
+      Light(int number, const std::string& name = "defaultLight", LightingMode mode = GLOBAL);
 
       ///Copy constructor from an osg::LightSource
-      Light( const osg::LightSource& lightSource, const std::string& name = "defaultLight", LightingMode mode = GLOBAL );
+      Light(const osg::LightSource& lightSource, const std::string& name = "defaultLight", LightingMode mode = GLOBAL);
 
    protected:
 
@@ -85,12 +85,12 @@ namespace dtCore
       osg::LightSource* GetLightSource();
 
       ///Change lighting mode to GLOBAL or LOCAL mode
-      void SetLightingMode( LightingMode mode );
+      void SetLightingMode(LightingMode mode);
 
       LightingMode GetLightingMode() const { return mLightingMode; }
 
       ///Turn light on or off
-      void SetEnabled( bool enabled );
+      void SetEnabled(bool enabled);
 
       bool GetEnabled() { return mEnabled; }
 
@@ -101,42 +101,42 @@ namespace dtCore
        *
        * @param number : The OpenGL light number
        */
-      void SetNumber( int number );
+      void SetNumber(int number);
 
       ///Returns the number of the light as specified in the constructor
       int GetNumber() const;
 
       ///sets the ambient light color
-      void SetAmbient( float r, float g, float b, float a );
+      void SetAmbient(float r, float g, float b, float a);
       void SetAmbient(const osg::Vec4& rgba);
 
       ///gets the ambient light color
-      void GetAmbient( float& r, float& g, float& b, float& a ) const;
+      void GetAmbient(float& r, float& g, float& b, float& a) const;
       const osg::Vec4& GetAmbient() const;
 
       ///sets the diffuse light color
-      void SetDiffuse( float r, float g, float b, float a );
+      void SetDiffuse(float r, float g, float b, float a);
       void SetDiffuse(const osg::Vec4& rgba);
 
       ///Gets the diffuse light color
-      void GetDiffuse( float& r, float& g, float& b, float& a ) const;
+      void GetDiffuse(float& r, float& g, float& b, float& a) const;
       const osg::Vec4& GetDiffuse() const;
 
       ///sets the specular light color
-      void SetSpecular( float r, float g, float b, float a );
+      void SetSpecular(float r, float g, float b, float a);
       void SetSpecular(const osg::Vec4& rgba);
 
       ///gets the specular light color
-      void GetSpecular( float& r, float& g, float& b, float& a ) const;
+      void GetSpecular(float& r, float& g, float& b, float& a) const;
       const osg::Vec4& GetSpecular() const;
 
       ///adds the light to the root node of the scene
-      virtual void AddedToScene( Scene* scene );
+      virtual void AddedToScene(Scene* scene);
 
       ///adds a drawable as a child of this node
-      virtual bool AddChild( DeltaDrawable *child );
+      virtual bool AddChild(DeltaDrawable* child);
       ///removes a drawable as a child of this node
-      virtual void RemoveChild( DeltaDrawable *child );
+      virtual void RemoveChild(DeltaDrawable* child);
 
    protected:
 
