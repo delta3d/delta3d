@@ -95,7 +95,7 @@ namespace dtDirector
       dtCore::BaseActorObject* locationActor = GetActor("Spawn Location");
       if (locationActor)
       {
-         dtCore::Vec3ActorProperty* transProp = 
+         dtCore::Vec3ActorProperty* transProp =
             dynamic_cast<dtCore::Vec3ActorProperty*>(locationActor->GetProperty("Translation"));
          dtCore::Vec3ActorProperty* rotProp =
             dynamic_cast<dtCore::Vec3ActorProperty*>(locationActor->GetProperty("Rotation"));

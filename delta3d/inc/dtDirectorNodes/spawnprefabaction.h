@@ -71,7 +71,7 @@ namespace dtDirector
        *
        * @return     True if the current node should remain active.
        */
-      virtual bool Update(float simDelta, float delta, int input, bool firstUpdate);     
+      virtual bool Update(float simDelta, float delta, int input, bool firstUpdate);
 
       /**
        * Determines whether a value link on this node can connect
