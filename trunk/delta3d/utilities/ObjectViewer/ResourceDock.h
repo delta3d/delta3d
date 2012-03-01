@@ -88,7 +88,6 @@ signals:
    void AddLight();
    void RemoveLight(int id);
    void FixLights();
-   void SetCurrentLight(int id);
    void SetLightEnabled(int id, bool enabled);
    void SetLightType(int id, int type);
    void SetLightPosition(int id, const osg::Vec3& position);
