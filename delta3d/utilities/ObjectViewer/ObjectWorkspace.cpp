@@ -42,7 +42,6 @@ ObjectWorkspace::ObjectWorkspace()
 
    // Create all program actions
    CreateFileMenuActions();
-   CreateModeToolbarActions();
    CreateEditingToolbarAction();
    CreateDisplayToolbarActions();
    CreateShaderToolbarActions();
@@ -187,25 +186,6 @@ void ObjectWorkspace::CreateFileMenuActions()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ObjectWorkspace::CreateModeToolbarActions()
-{
-   QIcon lightModeIcon(":/images/lightMode.png");
-   QIcon objectModeIcon(":/images/objectMode.png");
-
-   QActionGroup *modeGroup = new QActionGroup(this);
-   modeGroup->setExclusive(true);
-
-   mObjectModeAction = modeGroup->addAction(objectModeIcon, "Object Mode");
-   mLightModeAction  = modeGroup->addAction(lightModeIcon, "Light Mode");
-
-   mObjectModeAction->setCheckable(true);
-   mObjectModeAction->setChecked(true);
-
-   mLightModeAction->setCheckable(true);
-   //mLightModeAction->setDisabled(true);
-}
-
-////////////////////////////////////////////////////////////////////////////////
 void ObjectWorkspace::CreateEditingToolbarAction()
 {
    QActionGroup* coordinateGroup = new QActionGroup(this);
@@ -289,10 +269,6 @@ void ObjectWorkspace::CreateShaderToolbarActions()
 ////////////////////////////////////////////////////////////////////////////////
 void ObjectWorkspace::CreateToolbars()
 {
-   mModeToolbar = addToolBar("Mode toolbar");
-   mModeToolbar->addAction(mObjectModeAction);
-   mModeToolbar->addAction(mLightModeAction);
-
    mCoordinateToolbar = addToolBar("Coordinate Toolbar");
    mCoordinateToolbar->addAction(mLocalSpaceAction);
    mCoordinateToolbar->addAction(mWorldSpaceAction);
@@ -808,8 +784,6 @@ void ObjectWorkspace::SetupConnectionsWithViewer()
    connect((QObject*)this->mShadedAction, SIGNAL(triggered()), mViewer, SLOT(OnSetShaded()));
    connect((QObject*)this->mWireframeAction, SIGNAL(triggered()), mViewer, SLOT(OnSetWireframe()));
    connect((QObject*)this->mShadedWireAction, SIGNAL(triggered()), mViewer, SLOT(OnSetShadedWireframe()));
-   connect((QObject*)this->mLightModeAction, SIGNAL(triggered()), mViewer, SLOT(OnEnterLightMode()));
-   connect((QObject*)this->mObjectModeAction, SIGNAL(triggered()), mViewer, SLOT(OnEnterObjectMode()));
 
    // Editing connections
    connect((QObject*)this->mWorldSpaceAction, SIGNAL(triggered()), mViewer, SLOT(OnWorldSpaceMode()));

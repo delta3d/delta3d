@@ -87,10 +87,6 @@ private:
    // Settings menu
    QAction* mGenerateTangentsAction;
 
-   // Mode Toolbar
-   QAction* mObjectModeAction;
-   QAction* mLightModeAction;
-
    // Coordinate Space Toolbar
    QAction* mWorldSpaceAction;
    QAction* mLocalSpaceAction;
@@ -125,7 +121,6 @@ private:
    void GetRecursiveFileInfoFromDir(const QString& rootDir, const QStringList& fileFilters, QFileInfoList& outList);
    void CreateMenus();
    void CreateFileMenuActions();
-   void CreateModeToolbarActions();
    void CreateEditingToolbarAction();
    void CreateDisplayToolbarActions();
    void CreateShaderToolbarActions();

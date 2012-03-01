@@ -102,10 +102,6 @@ public slots:
    void OnSetLightLinear(int id, float linear);
    void OnSetLightQuadratic(int id, float quadratic);
 
-   // Usage mode slots
-   void OnEnterObjectMode();
-   void OnEnterLightMode();
-
    // Editing mode slots
    void OnWorldSpaceMode();
    void OnLocalSpaceMode();
@@ -126,6 +122,7 @@ protected:
 
    void clearProxies( const std::map<dtCore::UniqueId, dtCore::RefPtr<dtCore::BaseActorObject> >& proxies);
 
+   virtual void EventTraversal(const double deltaSimTime);
    virtual void PostFrame(const double deltaFrameTime);
 
    void GenerateTangentsForObject(dtCore::Object* object);
