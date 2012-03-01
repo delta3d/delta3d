@@ -67,12 +67,12 @@ namespace dtDirector
          {
          case INPUT_SHOW:
             {
-               app->GetWindow()->ShowCursor(true);
+               app->GetWindow()->SetShowCursor(true);
                break;
             }
          case INPUT_HIDE:
             {
-               app->GetWindow()->ShowCursor(false);
+               app->GetWindow()->SetShowCursor(false);
                break;
             }
          }

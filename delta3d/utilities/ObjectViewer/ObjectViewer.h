@@ -88,7 +88,6 @@ public slots:
 
    // Lighting slots
    void OnFixLights();
-   void OnSetCurrentLight(int id);
    void OnSetLightEnabled(int id, bool enabled);
    void OnSetLightType(int id, int type);
    void OnSetLightPosition(int id, const osg::Vec3& position);
@@ -146,7 +145,6 @@ private:
    std::vector<dtCore::RefPtr<dtCore::Transformable> > mLightArrowTransformable;
    std::vector<dtCore::RefPtr<dtCore::Object> > mLightArrow;
 
-   int   mCurrentLight;
    bool  mShouldGenerateTangents;
 };
 
