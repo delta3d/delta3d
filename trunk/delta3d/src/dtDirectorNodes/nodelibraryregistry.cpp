@@ -232,8 +232,8 @@ namespace dtDirector
 
    // Values
    RefPtr<NodeType> NodeLibraryRegistry::REFERENCE_VALUE_NODE_TYPE(              new dtDirector::NodeType(dtDirector::NodeType::VALUE_NODE,  "Reference",                 "Core",        "Base",        "This will reference another value in the script.", NULL, Colors::VIOLET));
-   RefPtr<NodeType> NodeLibraryRegistry::PLAYER_VALUE_NODE_TYPE(                 new dtDirector::NodeType(dtDirector::NodeType::VALUE_NODE,  "Player",                    "Core",        "Actors",      "The player actor.", NULL, Colors::MANGENTA2, dtCore::DataType::ACTOR));
-   RefPtr<NodeType> NodeLibraryRegistry::OWNER_VALUE_NODE_TYPE(                  new dtDirector::NodeType(dtDirector::NodeType::VALUE_NODE,  "Owner",                     "Core",        "Actors",      "The owner actor of this script.", NULL, Colors::MANGENTA2, dtCore::DataType::ACTOR));
+   RefPtr<NodeType> NodeLibraryRegistry::PLAYER_VALUE_NODE_TYPE(                 new dtDirector::NodeType(dtDirector::NodeType::VALUE_NODE,  "Player",                    "Core",        "Actors",      "The player actor.", NULL, Colors::MANGENTA2));
+   RefPtr<NodeType> NodeLibraryRegistry::OWNER_VALUE_NODE_TYPE(                  new dtDirector::NodeType(dtDirector::NodeType::VALUE_NODE,  "Owner",                     "Core",        "Actors",      "The owner actor of this script.", NULL, Colors::MANGENTA2));
    RefPtr<NodeType> NodeLibraryRegistry::BOOLEAN_VALUE_NODE_TYPE(                new dtDirector::NodeType(dtDirector::NodeType::VALUE_NODE,  "Boolean",                   "General",     "Base",        "A boolean value.", NULL, Colors::RED, dtCore::DataType::BOOLEAN));
    RefPtr<NodeType> NodeLibraryRegistry::INT_VALUE_NODE_TYPE(                    new dtDirector::NodeType(dtDirector::NodeType::VALUE_NODE,  "Int",                       "General",     "Base",        "An integer value.", NULL, Colors::BLUE, dtCore::DataType::INT));
    RefPtr<NodeType> NodeLibraryRegistry::FLOAT_VALUE_NODE_TYPE(                  new dtDirector::NodeType(dtDirector::NodeType::VALUE_NODE,  "Float",                     "General",     "Base",        "A float value.", NULL, Colors::YELLOW, dtCore::DataType::FLOAT));
@@ -245,15 +245,15 @@ namespace dtDirector
    RefPtr<NodeType> NodeLibraryRegistry::VEC3_VALUE_NODE_TYPE(                   new dtDirector::NodeType(dtDirector::NodeType::VALUE_NODE,  "Vec3",                      "General",     "Base",        "An x,y,z vector value.", NULL, Colors::MANGENTA, dtCore::DataType::VEC3));
    RefPtr<NodeType> NodeLibraryRegistry::VEC4_VALUE_NODE_TYPE(                   new dtDirector::NodeType(dtDirector::NodeType::VALUE_NODE,  "Vec4",                      "General",     "Base",        "An x,y,z,w vector value.", NULL, Colors::MANGENTA, dtCore::DataType::VEC4));
 
-   RefPtr<NodeType> NodeLibraryRegistry::ACTOR_ARRAY_VALUE_NODE_TYPE(            new dtDirector::NodeType(dtDirector::NodeType::VALUE_NODE,  "Actor Array",               "General",     "Arrays",      "An array of actor values.", NULL, Colors::MANGENTA, dtCore::DataType::ACTOR));
-   RefPtr<NodeType> NodeLibraryRegistry::INT_ARRAY_VALUE_NODE_TYPE(              new dtDirector::NodeType(dtDirector::NodeType::VALUE_NODE,  "Int Array",                 "General",     "Arrays",      "An array of int values.", NULL, Colors::BLUE, dtCore::DataType::INT));
-   RefPtr<NodeType> NodeLibraryRegistry::STRING_ARRAY_VALUE_NODE_TYPE(           new dtDirector::NodeType(dtDirector::NodeType::VALUE_NODE,  "String Array",              "General",     "Arrays",      "An array of string values.", NULL, Colors::CYAN, dtCore::DataType::STRING));
-   RefPtr<NodeType> NodeLibraryRegistry::VEC2_ARRAY_VALUE_NODE_TYPE(             new dtDirector::NodeType(dtDirector::NodeType::VALUE_NODE,  "Vec2 Array",                "General",     "Arrays",      "An array of vec2 values.", NULL, Colors::MANGENTA, dtCore::DataType::VEC2));
-   RefPtr<NodeType> NodeLibraryRegistry::VEC3_ARRAY_VALUE_NODE_TYPE(             new dtDirector::NodeType(dtDirector::NodeType::VALUE_NODE,  "Vec3 Array",                "General",     "Arrays",      "An array of vec3 values.", NULL, Colors::MANGENTA, dtCore::DataType::VEC3));
-   RefPtr<NodeType> NodeLibraryRegistry::VEC4_ARRAY_VALUE_NODE_TYPE(             new dtDirector::NodeType(dtDirector::NodeType::VALUE_NODE,  "Vec4 Array",                "General",     "Arrays",      "An array of vec4 values.", NULL, Colors::MANGENTA, dtCore::DataType::VEC4));
+   RefPtr<NodeType> NodeLibraryRegistry::ACTOR_ARRAY_VALUE_NODE_TYPE(            new dtDirector::NodeType(dtDirector::NodeType::VALUE_NODE,  "Actor Array",               "General",     "Arrays",      "An array of actor values.", NULL, Colors::MANGENTA));
+   RefPtr<NodeType> NodeLibraryRegistry::INT_ARRAY_VALUE_NODE_TYPE(              new dtDirector::NodeType(dtDirector::NodeType::VALUE_NODE,  "Int Array",                 "General",     "Arrays",      "An array of int values.", NULL, Colors::BLUE));
+   RefPtr<NodeType> NodeLibraryRegistry::STRING_ARRAY_VALUE_NODE_TYPE(           new dtDirector::NodeType(dtDirector::NodeType::VALUE_NODE,  "String Array",              "General",     "Arrays",      "An array of string values.", NULL, Colors::CYAN));
+   RefPtr<NodeType> NodeLibraryRegistry::VEC2_ARRAY_VALUE_NODE_TYPE(             new dtDirector::NodeType(dtDirector::NodeType::VALUE_NODE,  "Vec2 Array",                "General",     "Arrays",      "An array of vec2 values.", NULL, Colors::MANGENTA));
+   RefPtr<NodeType> NodeLibraryRegistry::VEC3_ARRAY_VALUE_NODE_TYPE(             new dtDirector::NodeType(dtDirector::NodeType::VALUE_NODE,  "Vec3 Array",                "General",     "Arrays",      "An array of vec3 values.", NULL, Colors::MANGENTA));
+   RefPtr<NodeType> NodeLibraryRegistry::VEC4_ARRAY_VALUE_NODE_TYPE(             new dtDirector::NodeType(dtDirector::NodeType::VALUE_NODE,  "Vec4 Array",                "General",     "Arrays",      "An array of vec4 values.", NULL, Colors::MANGENTA));
 
-   RefPtr<NodeType> NodeLibraryRegistry::RANDOM_INT_VALUE_NODE_TYPE(             new dtDirector::NodeType(dtDirector::NodeType::VALUE_NODE,  "Random Int",                "General",     "Random",      "A random int value.", NULL, Colors::BLUE, dtCore::DataType::INT));
-   RefPtr<NodeType> NodeLibraryRegistry::RANDOM_FLOAT_VALUE_NODE_TYPE(           new dtDirector::NodeType(dtDirector::NodeType::VALUE_NODE,  "Random Float",              "General",     "Random",      "A random float value.", NULL, Colors::YELLOW, dtCore::DataType::FLOAT));
+   RefPtr<NodeType> NodeLibraryRegistry::RANDOM_INT_VALUE_NODE_TYPE(             new dtDirector::NodeType(dtDirector::NodeType::VALUE_NODE,  "Random Int",                "General",     "Random",      "A random int value.", NULL, Colors::BLUE));
+   RefPtr<NodeType> NodeLibraryRegistry::RANDOM_FLOAT_VALUE_NODE_TYPE(           new dtDirector::NodeType(dtDirector::NodeType::VALUE_NODE,  "Random Float",              "General",     "Random",      "A random float value.", NULL, Colors::YELLOW));
 
    // Links
    RefPtr<NodeType> NodeLibraryRegistry::INPUT_NODE_TYPE(                        new dtDirector::NodeType(dtDirector::NodeType::LINK_NODE,   "Input Link",                "Core",        "Base",        "This node creates an input link connector in its parent graph.", NULL, Colors::BEIGE));
@@ -411,7 +411,7 @@ namespace dtDirector
          nodeData.newCategory = "Cinematic";
 
          replacements.push_back(std::make_pair<std::string, NodeLibraryRegistry::NodeReplacementData>("Cinematic.Animate Actor", nodeData));
-      }      
+      }
 
       {
          NodeLibraryRegistry::NodeReplacementData nodeData;
