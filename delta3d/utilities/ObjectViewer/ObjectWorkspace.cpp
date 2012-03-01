@@ -726,9 +726,6 @@ void ObjectWorkspace::SetupConnectionsWithViewer()
    connect(this->GetResourceObject(), SIGNAL(FixLights()),
       mViewer, SLOT(OnFixLights()));
 
-   connect(this->GetResourceObject(), SIGNAL(SetCurrentLight(int)),
-      mViewer, SLOT(OnSetCurrentLight(int)));
-
    connect(this->GetResourceObject(), SIGNAL(SetLightEnabled(int, bool)),
       mViewer, SLOT(OnSetLightEnabled(int, bool)));
 
