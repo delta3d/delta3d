@@ -1659,7 +1659,9 @@ namespace dtDirector
    ////////////////////////////////////////////////////////////////////////////////
    void EditorScene::PaintItemChildren(QPainter* painter, QGraphicsItem* item, QStyleOptionGraphicsItem* options)
    {
-      painter->setOpacity(0.5f);
+      float scale = item->scale();
+      painter->setOpacity(item->opacity() * 0.75f);
+      painter->scale(scale, scale);
       item->paint(painter, options);
 
       int count = item->children().count();
@@ -1675,6 +1677,10 @@ namespace dtDirector
             painter->translate(-child->pos());
          }
       }
+
+      // Undo the previous scale amount.
+      scale = 1.0f / scale;
+      painter->scale(scale, scale);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
