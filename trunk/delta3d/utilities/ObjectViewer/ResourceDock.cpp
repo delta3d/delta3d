@@ -1038,37 +1038,7 @@ void ResourceDock::OnLightItemClicked(QTreeWidgetItem* item, int column)
 ////////////////////////////////////////////////////////////////////////////////
 void ResourceDock::OnLightItemChanged(QTreeWidgetItem* item, int column)
 {
-   if (column == 0)
-   {
-      if (item->checkState(0) == Qt::Checked)
-      {
-         int lightID = GetLightIDFromItem(item);
-         if (lightID == -1)
-         {
-            return;
-         }
-
-         QTreeWidgetItemIterator treeIter(mLightTreeWidget);
-
-         // Uncheck the previously checked item
-         while (*treeIter)
-         {
-            if ((*treeIter)->checkState(0) == Qt::Checked && (*treeIter) != item)
-            {
-               (*treeIter)->setCheckState(0, Qt::Unchecked);
-            }
-
-            ++treeIter;
-         }
-
-         emit SetCurrentLight(lightID);
-      }
-      else if (item->checkState(0) == Qt::Unchecked)
-      {
-         emit SetCurrentLight(-1);
-      }
-   }
-   else if (column == 1)
+   if (column == 1)
    {
       int lightID = GetLightIDFromItem(item);
       if (lightID == -1)
@@ -1270,7 +1240,6 @@ void ResourceDock::CreateLightItems()
       newLightItem->setFlags(Qt::ItemIsSelectable |
                              Qt::ItemIsUserCheckable |
                              Qt::ItemIsEnabled);
-      newLightItem->setCheckState(0, Qt::Unchecked);
 
       QTreeWidgetItem* type = new QTreeWidgetItem(newLightItem);
       type->setText(0, "Type");
@@ -1292,7 +1261,6 @@ void ResourceDock::CreateLightItems()
    // Set the default light to "on"
    QTreeWidgetItem* light0 = mLightItems[0].light;
    light0->setText(1, "Enabled");
-   light0->setCheckState(0, Qt::Checked);
 
    connect(mLightTreeWidget, SIGNAL(itemChanged(QTreeWidgetItem*, int)),
       this, SLOT(OnLightItemChanged(QTreeWidgetItem*, int)));

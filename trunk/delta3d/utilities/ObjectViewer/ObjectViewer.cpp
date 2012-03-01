@@ -47,8 +47,7 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 ObjectViewer::ObjectViewer()
-   : mCurrentLight(0)
-   , mShouldGenerateTangents(true)
+   : mShouldGenerateTangents(true)
 {
    mShadedScene   = new osg::Group;
    mUnShadedScene = new osg::Group;
@@ -471,32 +470,12 @@ void ObjectViewer::OnFixLights()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ObjectViewer::OnSetCurrentLight(int id)
-{
-   mCurrentLight = id;
-
-   if (!mModelMotion->IsEnabled())
-   {
-      for (int lightIndex = 0; lightIndex < dtCore::MAX_LIGHTS; lightIndex++)
-      {
-         if (id != lightIndex)
-         {
-            mLightMotion[lightIndex]->SetEnabled(false);
-         }
-         else
-         {
-            mLightMotion[lightIndex]->SetEnabled(true);
-         }
-      }
-   }
-}
-
-////////////////////////////////////////////////////////////////////////////////
 void ObjectViewer::OnSetLightEnabled(int id, bool enabled)
 {
    dtCore::Light* light = GetScene()->GetLight(id);
    light->SetEnabled(enabled);
    mLightArrow[id]->SetActive(enabled);
+   mLightMotion[id]->SetEnabled(enabled);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -778,10 +757,24 @@ void ObjectViewer::InitLights()
       light->Emancipate();
       lightArrowTransformable->AddChild(light);
 
-      // Copy the transform from the light to the attached transformable.
+      int halfMaxLights = dtCore::MAX_LIGHTS / 2;
+
+      // Set the lights to default position that do not overlap each so that
+      // the object motion model can be discenerible for each of them
+      float xOffset = (lightIndex % halfMaxLights) * 0.5f;
+
+      if (lightIndex >= halfMaxLights)
+      {
+         // Since light 0 is in the middle already, start with a -0.5f offset
+         xOffset = -0.5f + -1.0f * xOffset;
+      }
+
+      // Copy the transform from the light to the attached transformable and include offset mentioned above;
       dtCore::Transform transform;
       light->GetTransform(transform);
       light->SetTransform(dtCore::Transform());
+
+      transform.SetTranslation(xOffset, 0.0f, 0.0f);
       lightArrowTransformable->SetTransform(transform);
 
       dtCore::RefPtr<dtCore::ObjectMotionModel> lightMotion = new dtCore::ObjectMotionModel(GetView());
