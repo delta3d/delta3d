@@ -375,17 +375,18 @@ namespace dtDirector
       /**
        * Creates a path item for a connection link.
        *
-       * @param[in]  start        The starting position.
-       * @param[in]  end          The ending position.
-       * @param[in]  ownerNode    The owner that the line belongs to.
-       * @param[in]  targetNode   The target this line is connecting to, If any.
-       * @param[in]  height       The height of the node.
-       * @param[in]  drawReverse  Draws the link in reverse.
+       * @param[in]  start                    The starting position.
+       * @param[in]  end                      The ending position.
+       * @param[in]  ownerNode                The owner that the line belongs to.
+       * @param[in]  targetNode               The target this line is connecting to, If any.
+       * @param[in]  height                   The height of the node.
+       * @param[in]  drawReverse              Draws the link in reverse.
+       * @param[in]  connectingTwoValueLinks  True if we are connecting two value links together.
        *
        * @return     The resulting painter path.
        */
       QPainterPath CreateConnectionH(QPointF start, QPointF end, NodeItem* ownerNode, NodeItem* targetNode, bool drawReverse = false, bool building = false);
-      QPainterPath CreateConnectionV(QPointF start, QPointF end, bool drawReverse = false);
+      QPainterPath CreateConnectionV(QPointF start, QPointF end, bool drawReverse = false, bool connectingTwoValueLinks = false);
 
       /**
        * Event handlers when the user is moving this node.

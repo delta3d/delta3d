@@ -1228,7 +1228,7 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   QPainterPath NodeItem::CreateConnectionV(QPointF start, QPointF end, bool drawReverse)
+   QPainterPath NodeItem::CreateConnectionV(QPointF start, QPointF end, bool drawReverse, bool connectingTwoValueLinks)
    {
       // Modify the positions based on the translation of the background item.
       QPointF offset = mScene->GetTranslationItem()->scenePos();
@@ -1238,23 +1238,64 @@ namespace dtDirector
       float halfY = (start.y() + end.y()) / 2.0f;
 
       QPainterPath path;
-      if (start.y() < end.y())
+      // Draw a link from a Value Link to a Value Node.
+      if (!connectingTwoValueLinks)
       {
-         if (drawReverse)
+         // If the Value Link is above the Value Node, draw a normal
+         // 'S' curve between them.
+         if (start.y() < end.y())
          {
-            QPointF temp = start;
-            start = end;
-            end = temp;
-         }
+            // Sometimes we need to draw in reverse so the connection line looks like
+            // it is "pulling" out from our starting point.
+            if (drawReverse)
+            {
+               QPointF temp = start;
+               start = end;
+               end = temp;
+            }
 
-         path.moveTo(start);
-         path.cubicTo(
-            start.x(), halfY,
-            end.x(), halfY,
-            end.x(), end.y());
+            path.moveTo(start);
+            path.cubicTo(
+               start.x(), halfY,
+               end.x(), halfY,
+               end.x(), end.y());
+         }
+         // If the Value Link is below the Value Node, we need to
+         // draw a more complex curve.
+         else
+         {
+            // Sometimes we need to draw in reverse so the connection line looks like
+            // it is "pulling" out from our starting point.
+            if (drawReverse)
+            {
+               QPointF temp = start;
+               start = end;
+               end = temp;
+            }
+
+            // Calculate some guiding parameters for this line.
+            float bottomY = start.y() + (start.y() - end.y()) / 4;
+            float topY = end.y() - (start.y() - end.y()) / 4;
+
+            float halfX = (start.x() + end.x()) / 2.0f;
+
+            path.moveTo(start);
+            path.cubicTo(
+               start.x(), bottomY,
+               halfX, bottomY,
+               halfX, halfY);
+            path.cubicTo(
+               halfX, topY,
+               end.x(), topY,
+               end.x(), end.y());
+         }
       }
+      // If we are connecting two Value Links together, we want to draw
+      // a 'U' shaped curve between them.
       else
       {
+         // Sometimes we need to draw in reverse so the connection line looks like
+         // it is "pulling" out from our starting point.
          if (drawReverse)
          {
             QPointF temp = start;
@@ -1262,22 +1303,30 @@ namespace dtDirector
             end = temp;
          }
 
-         float bottomY = start.y() + (start.y() - end.y()) / 4;
-         float topY = end.y() - (start.y() - end.y()) / 4;
-
+         // Calculate some guiding parameters for this line.
+         float bottomY = start.y();
+         if (end.y() > bottomY)
+         {
+            bottomY = end.y();
+         }
+         bottomY += 50.0f;
          float halfX = (start.x() + end.x()) / 2.0f;
+         float outside = 20.0f;
+         if (start.x() < end.x())
+         {
+            outside = -20.0f;
+         }
 
          path.moveTo(start);
          path.cubicTo(
-            start.x(), bottomY,
-            halfX, bottomY,
-            halfX, halfY);
+            start.x(), bottomY - 20.0f,
+            start.x() + outside, bottomY,
+            halfX, bottomY);
          path.cubicTo(
-            halfX, topY,
-            end.x(), topY,
+            end.x() - outside, bottomY,
+            end.x(), bottomY - 20.0f,
             end.x(), end.y());
       }
-
       return path;
    }
 

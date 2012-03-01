@@ -365,6 +365,16 @@ namespace dtDirector
       virtual void hoverEnterEvent(QGraphicsSceneHoverEvent* event);
       virtual void hoverLeaveEvent(QGraphicsSceneHoverEvent* event);
 
+      /**
+       *	Creates a new Value Node and connects it to this link.
+       * This new node will automatically be linked to this link.
+       *
+       * @param[in]  newPos        The position to place the new node.
+       * @param[in]  refreshViews  Whether we want to refresh the editor views.
+       *
+       * @return     A pointer to the newly created value node item.
+       */
+      ValueNode* CreateValueNode(QPointF newPos, bool refreshViews);
 
       /**
        * Event handler when the user releases the mouse.
@@ -372,6 +382,13 @@ namespace dtDirector
        * @param[in]  mouseEvent  The mouse event.
        */
       void mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent);
+
+      /**
+       *	Event handler when the user double clicks the mouse.
+       *
+       * @param[in]  mouseEvent  The mouse event.
+       */
+      void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *mouseEvent);
 
       /**
        * Event handler when the user moves the mouse.

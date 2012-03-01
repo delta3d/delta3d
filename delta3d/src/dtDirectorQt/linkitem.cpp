@@ -25,8 +25,13 @@
 #include <dtDirectorQt/undomanager.h>
 #include <dtDirectorQt/undolinkevent.h>
 #include <dtDirectorQt/undolinkvisibilityevent.h>
+#include <dtDirectorQt/undocreateevent.h>
+#include <dtDirectorQt/undolinkevent.h>
+#include <dtDirectorQt/undopropertyevent.h>
+#include <dtDirectorQt/editorview.h>
 
 #include <dtDirector/outputlink.h>
+#include <dtDirector/nodemanager.h>
 
 #include <dtCore/datatype.h>
 
@@ -1428,7 +1433,159 @@ namespace dtDirector
       }
    }
 
-   //////////////////////////////////////////////////////////////////////////
+   ////////////////////////////////////////////////////////////////////////////////
+   ValueNode* ValueLinkItem::CreateValueNode(QPointF newPos, bool refreshViews)
+   {
+      ValueNode* newNode = NULL;
+
+      // Determine the type of node to create.
+      ValueLink* input = mNodeItem->GetValues()[mLinkIndex].link;
+      if (input)
+      {
+         DirectorGraph* graph = NULL;
+         if (mNodeItem->GetNode())
+         {
+            graph = mNodeItem->GetNode()->GetGraph();
+         }
+         else if (mNodeItem->GetMacro())
+         {
+            graph = mNodeItem->GetMacro()->GetParent();
+         }
+
+         dtCore::DataType* dataType = &input->GetPropertyType();
+         if (*dataType == dtCore::DataType::UNKNOWN)
+         {
+            if (input->GetDefaultProperty())
+            {
+               dataType = &input->GetDefaultProperty()->GetPropertyType();
+            }
+            else
+            {
+               // As a fallback, unknown data types will be considered strings
+               // as string form is more or less universal to all data types
+               // (eg ToString/FromString methods found on all properties).
+               dataType = &dtCore::DataType::STRING;
+            }
+         }
+
+         const dtDirector::NodeType* type = NodeManager::GetInstance().FindNodeType(*dataType);
+         if (type)
+         {
+            dtCore::RefPtr<Node> node =
+               NodeManager::GetInstance().CreateNode(*type, graph);
+            if (node.valid())
+            {
+               node->OnFinishedLoading();
+               if (graph->GetDirector() && graph->GetDirector()->HasStarted())
+               {
+                  node->OnStart();
+               }
+
+               // Get a position directly under the link.
+               node->SetPosition(osg::Vec2(newPos.x(), newPos.y()));
+
+               newNode = node->AsValueNode();
+               DirectorEditor* editor = mScene->GetEditor();
+
+               editor->GetUndoManager()->BeginMultipleEvents("Creation of Value Node \'" + type->GetName() + "\'.");
+
+               if (!input->AllowMultiple())
+               {
+                  Disconnect();
+               }
+
+               dtCore::RefPtr<UndoCreateEvent> event = new UndoCreateEvent(editor, node->GetID(), graph->GetID());
+               editor->GetUndoManager()->AddEvent(event);
+
+               // Create a new connection between this link and our new value node.
+               if (input->Connect(newNode))
+               {
+                  dtCore::RefPtr<UndoLinkEvent> event = new UndoLinkEvent(
+                     editor,
+                     UndoLinkEvent::VALUE_LINK,
+                     input->GetOwner()->GetID(),
+                     newNode->GetID(),
+                     input->GetName(),
+                     newNode->GetName(),
+                     true);
+                  editor->GetUndoManager()->AddEvent(event);
+                  emit LinkConnected();
+               }
+               // If for any reason we could not make the connection,
+               // undo our current operation and bail out.
+               else
+               {
+                  std::string error = "Failed to create Value Node \'";
+                  error += newNode->GetTypeName();
+                  error += "\' for Value Link \'";
+                  error += input->GetName();
+                  error += "\' because the Node could not connect to the Link.";
+                  LOG_ERROR(error);
+                  editor->GetUndoManager()->UndoCurrentMultipleEvent();
+                  return NULL;
+               }
+
+               // Now set the default value to the current value of the link.
+               if (input->GetDefaultProperty())
+               {
+                  std::string value = input->GetDefaultProperty()->ToString();
+
+                  std::string oldValue = newNode->GetString();
+                  newNode->SetString(value);
+
+                  dtCore::RefPtr<UndoPropertyEvent> event = new UndoPropertyEvent(
+                     editor,
+                     newNode->GetID(),
+                     "Value",
+                     oldValue,
+                     value);
+                  editor->GetUndoManager()->AddEvent(event);
+
+                  event = new UndoPropertyEvent(
+                     editor,
+                     newNode->GetID(),
+                     "Initial Value",
+                     oldValue,
+                     value);
+                  editor->GetUndoManager()->AddEvent(event);
+               }
+
+               editor->GetUndoManager()->EndMultipleEvents();
+
+               if (refreshViews)
+               {
+                  // Now refresh the all editors that view the same graph.
+                  int count = editor->GetGraphTabs()->count();
+                  for (int index = 0; index < count; index++)
+                  {
+                     EditorView* view = dynamic_cast<EditorView*>(editor->GetGraphTabs()->widget(index));
+                     if (view && view->GetScene())
+                     {
+                        if (view->GetScene()->GetGraph() == graph)
+                        {
+                           // First remember the position of the translation node.
+                           QPointF trans = view->GetScene()->GetTranslationItem()->pos();
+                           view->GetScene()->SetGraph(graph);
+                           view->GetScene()->GetTranslationItem()->setPos(trans);
+                        }
+                     }
+                  }
+                  editor->Refresh();
+               }
+            }
+            else
+            {
+               // If for any reason our node was not created, undo and bail out.
+               std::string error = "Failed to create Value Node of type \'";
+               error += type->GetName();
+               error += "\'.";
+               LOG_ERROR(error);
+            }
+         }
+      }
+
+      return newNode;
+   }
 
    //////////////////////////////////////////////////////////////////////////
    void ValueLinkItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent)
@@ -1443,6 +1600,8 @@ namespace dtDirector
       if (!mouseEvent) return;
 
       QPointF mousePos = mouseEvent->scenePos();
+
+      ValueLink* input = mNodeItem->GetValues()[mLinkIndex].link;
 
       // Find and highlight any output links being hovered over.
       QList<QGraphicsItem*> hoverList = mScene->items(mousePos.x(), mousePos.y(), 1, 1);
@@ -1462,11 +1621,12 @@ namespace dtDirector
             }
             else
             {
-               ValueNodeLinkItem* item = dynamic_cast<ValueNodeLinkItem*>(hoverList[index]);
-               if (item)
+               // Check if the user is attempting to directly connect two value links together.
+               ValueLinkItem* otherLink = dynamic_cast<ValueLinkItem*>(hoverList[index]);
+               if (otherLink && otherLink != this)
                {
-                  ValueLink* input = mNodeItem->GetValues()[mLinkIndex].link;
-                  ValueNode* output = item->mNodeItem->GetNode()->AsValueNode();
+                  ValueLink* output = otherLink->mNodeItem->GetValues()[otherLink->mLinkIndex].link;
+                  Node* otherNode = otherLink->mNodeItem->GetNode();
 
                   std::string undoDescription = "Connection of value link between ";
                   if (mNodeItem->GetNode())
@@ -1478,45 +1638,187 @@ namespace dtDirector
                      undoDescription += "Macro Node \'" + mNodeItem->GetMacro()->GetName() + "\' and ";
                   }
 
-                  undoDescription += "Value Node \'" + item->mNodeItem->GetNode()->GetTypeName() + "\'.";
-
-                  // If this link does not allow multiple connections, then
-                  // make sure we disconnect the link from any values first.
-                  if (!input->AllowMultiple())
+                  if (otherLink->mNodeItem->GetNode())
                   {
-                     mScene->GetEditor()->GetUndoManager()->BeginMultipleEvents(undoDescription);
-                     Disconnect();
+                     undoDescription += "Node \'" + otherLink->mNodeItem->GetNode()->GetTypeName() + "\'.";
+                  }
+                  else if (otherLink->mNodeItem->GetMacro())
+                  {
+                     undoDescription += "Macro Node \'" + otherLink->mNodeItem->GetMacro()->GetName() + "\'.";
                   }
 
-                  // Create a new connection between these two links.
-                  if (input->Connect(output))
+                  DirectorEditor* editor = mScene->GetEditor();
+
+                  // We are going to attempt multiple connections, so group these
+                  // events into a single undo.
+                  editor->GetUndoManager()->BeginMultipleEvents(undoDescription);
+
+                  // If our link does not allow multiple connections, we should start
+                  // by disconnecting whatever we currently have.
+                  if (!output->AllowMultiple())
+                  {
+                     otherLink->Disconnect();
+                  }
+
+                  // Find a position that is between both links.
+                  QPointF offset = mScene->GetTranslationItem()->scenePos();
+                  QPointF linkPos1 = mNodeItem->GetValues()[mLinkIndex].linkGraphic->scenePos() - offset;
+                  QPointF linkPos2 = otherLink->GetLinkGraphic()->scenePos() - offset;
+                  QPointF newPos;
+                  newPos.setX((linkPos1.x() + linkPos2.x()) * 0.5f - (MIN_NODE_WIDTH * 0.5f));
+                  if (linkPos1.y() > linkPos2.y())
+                  {
+                     newPos.setY(linkPos1.y() + 50.0f);
+                  }
+                  else
+                  {
+                     newPos.setY(linkPos2.y() + 50.0f);
+                  }
+
+                  // Create a new value node that can be used to connect the two
+                  // links together.
+                  ValueNode* newNode = CreateValueNode(newPos, false);
+                  if (!newNode)
+                  {
+                     editor->GetUndoManager()->UndoCurrentMultipleEvent();
+                     break;
+                  }
+
+                  // Create a new connection between our new value node
+                  // and the target link.
+                  if (output->Connect(newNode))
                   {
                      dtCore::RefPtr<UndoLinkEvent> event = new UndoLinkEvent(
-                        mScene->GetEditor(),
+                        editor,
                         UndoLinkEvent::VALUE_LINK,
-                        input->GetOwner()->GetID(),
-                        output->GetID(),
-                        input->GetName(),
+                        output->GetOwner()->GetID(),
+                        newNode->GetID(),
                         output->GetName(),
+                        newNode->GetName(),
                         true);
-                     event->SetDescription(undoDescription);
-                     mScene->GetEditor()->GetUndoManager()->AddEvent(event);
+                     editor->GetUndoManager()->AddEvent(event);
                      emit LinkConnected();
                   }
-
-                  if (!input->AllowMultiple())
+                  // If for any reason we could not make the connection,
+                  // undo our current operation and bail out.
+                  else
                   {
-                     mScene->GetEditor()->GetUndoManager()->EndMultipleEvents();
+                     std::string error = "Failed to create Value Node \'";
+                     error += newNode->GetTypeName();
+                     error += "\' for Value Link \'";
+                     error += output->GetName();
+                     error += "\' because the Node could not connect to the Link.";
+                     LOG_ERROR(error);
+                     editor->GetUndoManager()->UndoCurrentMultipleEvent();
+                     break;
                   }
 
-                  // Refresh the entire scene to make sure all nodes and links are
-                  // colored properly.
-                  mScene->Refresh();
+                  editor->GetUndoManager()->EndMultipleEvents();
+
+                  // Now refresh the all editors that view the same graph.
+                  DirectorGraph* graph = NULL;
+                  if (mNodeItem->GetNode())
+                  {
+                     graph = mNodeItem->GetNode()->GetGraph();
+                  }
+                  else if (mNodeItem->GetMacro())
+                  {
+                     graph = mNodeItem->GetMacro()->GetParent();
+                  }
+
+                  int count = editor->GetGraphTabs()->count();
+                  for (int index = 0; index < count; index++)
+                  {
+                     EditorView* view = dynamic_cast<EditorView*>(editor->GetGraphTabs()->widget(index));
+                     if (view && view->GetScene())
+                     {
+                        if (view->GetScene()->GetGraph() == graph)
+                        {
+                           // First remember the position of the translation node.
+                           QPointF trans = view->GetScene()->GetTranslationItem()->pos();
+                           view->GetScene()->SetGraph(graph);
+                           view->GetScene()->GetTranslationItem()->setPos(trans);
+                        }
+                     }
+                  }
+                  editor->Refresh();
                   break;
+               }
+               else
+               {
+                  ValueNodeLinkItem* item = dynamic_cast<ValueNodeLinkItem*>(hoverList[index]);
+                  if (item)
+                  {
+                     ValueNode* output = item->mNodeItem->GetNode()->AsValueNode();
+
+                     std::string undoDescription = "Connection of value link between ";
+                     if (mNodeItem->GetNode())
+                     {
+                        undoDescription += "Node \'" + mNodeItem->GetNode()->GetTypeName() + "\' and ";
+                     }
+                     else if (mNodeItem->GetMacro())
+                     {
+                        undoDescription += "Macro Node \'" + mNodeItem->GetMacro()->GetName() + "\' and ";
+                     }
+
+                     undoDescription += "Value Node \'" + item->mNodeItem->GetNode()->GetTypeName() + "\'.";
+
+                     // If this link does not allow multiple connections, then
+                     // make sure we disconnect the link from any values first.
+                     if (!input->AllowMultiple())
+                     {
+                        mScene->GetEditor()->GetUndoManager()->BeginMultipleEvents(undoDescription);
+                        Disconnect();
+                     }
+
+                     // Create a new connection between these two links.
+                     if (input->Connect(output))
+                     {
+                        dtCore::RefPtr<UndoLinkEvent> event = new UndoLinkEvent(
+                           mScene->GetEditor(),
+                           UndoLinkEvent::VALUE_LINK,
+                           input->GetOwner()->GetID(),
+                           output->GetID(),
+                           input->GetName(),
+                           output->GetName(),
+                           true);
+                        event->SetDescription(undoDescription);
+                        mScene->GetEditor()->GetUndoManager()->AddEvent(event);
+                        emit LinkConnected();
+                     }
+
+                     if (!input->AllowMultiple())
+                     {
+                        mScene->GetEditor()->GetUndoManager()->EndMultipleEvents();
+                     }
+
+                     // Refresh the entire scene to make sure all nodes and links are
+                     // colored properly.
+                     mScene->Refresh();
+                     break;
+                  }
                }
             }
          }
       }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void ValueLinkItem::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *mouseEvent)
+   {
+      if (!mouseEvent) return;
+
+      QPointF mousePos = mouseEvent->scenePos();
+
+      ValueLink* link = mNodeItem->GetValues()[mLinkIndex].link;
+
+      // Find a position that is between both links.
+      QPointF offset = mScene->GetTranslationItem()->scenePos();
+      QPointF linkPos = scenePos() - offset + QPointF(MIN_NODE_WIDTH * -0.5f, 50.0f);
+
+      // Create a new value node that can be used to connect the two
+      // links together.
+      CreateValueNode(linkPos, true);
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -1545,8 +1847,10 @@ namespace dtDirector
             }
             else
             {
-               start.setY(start.y() + LINK_LENGTH - LINK_SIZE/2);
+               start.setY(start.y() + LINK_LENGTH - LINK_SIZE / 2);
             }
+
+            bool connectingTwoValueLinks = false;
 
             // Find and highlight any output links being hovered over.
             QList<QGraphicsItem*> hoverList = mScene->items(mouseEvent->scenePos().x(), mouseEvent->scenePos().y(), 1, 1);
@@ -1563,10 +1867,30 @@ namespace dtDirector
                      end.setY(end.y() - LINK_LENGTH);
                      break;
                   }
+                  else
+                  {
+                     ValueLinkItem* valueLink = dynamic_cast<ValueLinkItem*>(hoverList[index]);
+                     if (valueLink && valueLink  != this)
+                     {
+                        // Snap the end position to the other value link.
+                        connectingTwoValueLinks = true;
+                        end = QPointF(valueLink->scenePos()) + offset;
+
+                        if (valueLink->GetNodeItem()->GetValues()[valueLink->mLinkIndex].link->IsOutLink())
+                        {
+                           end.setY(end.y() + LINK_LENGTH);
+                        }
+                        else
+                        {
+                           end.setY(end.y() + LINK_LENGTH - LINK_SIZE / 2);
+                        }
+                        break;
+                     }
+                  }
                }
             }
 
-            QPainterPath path = mNodeItem->CreateConnectionV(start, end, true);
+            QPainterPath path = mNodeItem->CreateConnectionV(start, end, true, connectingTwoValueLinks);
             mHighlight->setPath(path);
             mDrawing->setPath(path);
          }
