@@ -170,6 +170,23 @@ namespace dtDirector
       if (event->HasEvents()) AddEvent(event.get());
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   void UndoManager::UndoCurrentMultipleEvent()
+   {
+      if (mMultipleEventStack.empty())
+      {
+         dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
+            "Attempted to clear a multiple event stack when there is none started.");
+
+         return;
+      }
+
+      dtCore::RefPtr<UndoMultipleEvent> event = mMultipleEventStack.top();
+      mMultipleEventStack.pop();
+
+      event->Undo();
+   }
+
    //////////////////////////////////////////////////////////////////////////
    void UndoManager::AddEvent(UndoEvent* event)
    {

@@ -114,6 +114,12 @@ namespace dtDirector
       void EndMultipleEvents();
 
       /**
+       *	Undoes the contents of a currently active multiple event stack and
+       * removes that event from the manager.
+       */
+      void UndoCurrentMultipleEvent();
+
+      /**
        * Adds an undo event to the stack.
        *
        * @param[in]  event  The event to add.
