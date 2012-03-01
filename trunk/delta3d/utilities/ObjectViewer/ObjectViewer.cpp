@@ -106,8 +106,6 @@ void ObjectViewer::Config()
 
    OnSetShaded();
    OnToggleGrid(true);
-
-   OnEnterObjectMode();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -668,28 +666,6 @@ void ObjectViewer::OnSetLightQuadratic(int id, float quadratic)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ObjectViewer::OnEnterObjectMode()
-{
-   mModelMotion->SetEnabled(true);
-
-   for (int lightIndex = 0; lightIndex < dtCore::MAX_LIGHTS; lightIndex++)
-   {
-      mLightMotion[lightIndex]->SetEnabled(false);
-   }
-}
-
-////////////////////////////////////////////////////////////////////////////////
-void ObjectViewer::OnEnterLightMode()
-{
-   mModelMotion->SetEnabled(false);
-
-   if (mCurrentLight > -1 && mCurrentLight < dtCore::MAX_LIGHTS)
-   {
-      mLightMotion[mCurrentLight]->SetEnabled(true);
-   }
-}
-
-////////////////////////////////////////////////////////////////////////////////
 void ObjectViewer::OnWorldSpaceMode()
 {
    for (int lightIndex = 0; lightIndex < dtCore::MAX_LIGHTS; lightIndex++)
@@ -809,7 +785,7 @@ void ObjectViewer::InitLights()
       lightArrowTransformable->SetTransform(transform);
 
       dtCore::RefPtr<dtCore::ObjectMotionModel> lightMotion = new dtCore::ObjectMotionModel(GetView());
-      lightMotion->SetEnabled(false);
+      lightMotion->SetEnabled(enabled);
       lightMotion->SetTarget(lightArrowTransformable.get());
       lightMotion->SetScale(0.5f);
 
@@ -888,6 +864,28 @@ void ObjectViewer::clearProxies(const std::map<dtCore::UniqueId, dtCore::RefPtr<
          mWireDecorator->removeChild(drawable->GetOSGNode());
       }
    }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ObjectViewer::EventTraversal(const double deltaSimTime)
+{
+   dtABC::Application::EventTraversal(deltaSimTime);
+
+   // Are we trying to manipulate an object motion model for the lights?
+   size_t lightIndex = 0;
+   while (lightIndex < mLightMotion.size())
+   {
+      if (mLightMotion[lightIndex]->IsEnabled() &&
+          mLightMotion[lightIndex]->GetMotionType() != dtCore::ObjectMotionModel::ARROW_TYPE_MAX)
+      {
+         break;
+      }
+
+      ++lightIndex;
+   }
+
+   // If we're manipulating lights, disable orbit, otherwise enable
+   mModelMotion->SetEnabled(lightIndex == mLightMotion.size());
 }
 
 ////////////////////////////////////////////////////////////////////////////////
