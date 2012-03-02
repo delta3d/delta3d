@@ -1532,6 +1532,7 @@ namespace dtDirector
 
                   std::string oldValue = newNode->GetString();
                   newNode->SetString(value);
+                  newNode->SetString(value, "Initial Value");
 
                   dtCore::RefPtr<UndoPropertyEvent> event = new UndoPropertyEvent(
                      editor,
