@@ -2263,18 +2263,22 @@ namespace dtDirector
          dtGame::GameManager* gm = GetDirector()->GetGameManager();
          dtDAL::Map* map = GetDirector()->GetMap();
 
+         dtCore::RefPtr<Director> newDirector = NULL;
+
          DirectorTypeFactory* factory = DirectorTypeFactory::GetInstance();
          if (factory)
          {
-            SetDirector(factory->CreateDirector(scriptType));
+            newDirector = factory->CreateDirector(scriptType);
+            newDirector->Init(gm, map);
          }
 
-         if (!GetDirector())
+         if (!newDirector)
          {
-            SetDirector(new Director());
+            newDirector = new Director();
+            newDirector->Init(gm, map);
          }
 
-         GetDirector()->Init(gm, map);
+         SetDirector(newDirector);
          RefreshNodeScenes();
       }
 
