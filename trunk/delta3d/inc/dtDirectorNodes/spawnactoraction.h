@@ -64,6 +64,20 @@ namespace dtDirector
       virtual void BuildPropertyMap();
 
       /**
+       * This function queries the proxy with any properties not
+       * found in the property list. If a property was previously
+       * removed from the proxy, but is still important to load,
+       * then this function should return a temporary property of
+       * the appropriate type to be used when loading the map.
+       *
+       * @param[in]  name  The name of the property queried for.
+       *
+       * @return           A temporary property, or NULL if
+       *                   none is needed.
+       */
+      virtual dtCore::RefPtr<dtCore::ActorProperty> GetDeprecatedProperty(const std::string& name);
+
+      /**
        * Updates the node.
        * @note  Parent implementation will auto activate any trigger
        *        with the "Out" label by default.
@@ -75,7 +89,7 @@ namespace dtDirector
        *
        * @return     True if the current node should remain active.
        */
-      virtual bool Update(float simDelta, float delta, int input, bool firstUpdate);     
+      virtual bool Update(float simDelta, float delta, int input, bool firstUpdate);
 
       /**
        * Determines whether a value link on this node can connect
@@ -108,6 +122,7 @@ namespace dtDirector
       void SetActorType(const std::string& value);
       std::string GetActorType() const;
       std::vector<std::string> GetActorTypeList() const;
+      dtCore::PropertyContainer* GetActorContainer();
 
       void SetActorName(const std::string& value);
       std::string GetActorName() const;
@@ -134,8 +149,6 @@ namespace dtDirector
       osg::Vec3   mSpawnLocation;
 
       dtCore::RefPtr<dtCore::BaseActorObject>      mTemplateActor;
-      dtCore::ContainerActorProperty*              mContainerProp;
-      dtCore::RefPtr<dtCore::StringActorProperty>  mNameProp;
       dtCore::RefPtr<dtCore::BooleanActorProperty> mGhostProp;
    };
 }

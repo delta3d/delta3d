@@ -31,6 +31,7 @@
 #include <dtCore/actortype.h>
 #include <dtCore/librarymanager.h>
 #include <dtCore/vectoractorproperties.h>
+#include <dtCore/containerselectoractorproperty.h>
 
 #include <dtDirector/director.h>
 
@@ -41,7 +42,6 @@ namespace dtDirector
       : ActionNode()
       , mActorType("")
       , mTemplateActor(NULL)
-      , mContainerProp(NULL)
    {
       AddAuthor("Jeff P. Houde");
    }
@@ -64,25 +64,12 @@ namespace dtDirector
    {
       ActionNode::BuildPropertyMap();
 
-      dtCore::StringSelectorActorProperty* typeProp = new dtCore::StringSelectorActorProperty(
-         "Actor Type", "Actor Type",
-         dtCore::StringSelectorActorProperty::SetFuncType(this, &SpawnActorAction::SetActorType),
-         dtCore::StringSelectorActorProperty::GetFuncType(this, &SpawnActorAction::GetActorType),
-         dtCore::StringSelectorActorProperty::GetListFuncType(this, &SpawnActorAction::GetActorTypeList),
-         "The type of the actor to spawn.");
-      AddProperty(typeProp);
-
-      mNameProp = new dtCore::StringActorProperty(
-         "Name", "Name",
-         dtCore::StringSelectorActorProperty::SetFuncType(this, &SpawnActorAction::SetActorName),
-         dtCore::StringSelectorActorProperty::GetFuncType(this, &SpawnActorAction::GetActorName),
-         "Actor name.");
-
       mGhostProp = new dtCore::BooleanActorProperty(
          "Is Ghost", "Is Ghost",
          dtCore::BooleanActorProperty::SetFuncType(this, &SpawnActorAction::SetGhost),
          dtCore::BooleanActorProperty::GetFuncType(this, &SpawnActorAction::GetGhost),
-         "Is this proxy a ghost.");
+         "Is this proxy a ghost.", "Actor Information");
+      mGhostProp->SetReadOnly(true);
 
       dtCore::Vec3ActorProperty* spawnPosProp = new dtCore::Vec3ActorProperty(
          "Spawn Location", "Spawn Location",
@@ -91,12 +78,16 @@ namespace dtDirector
          "The location to spawn the new actor.");
       AddProperty(spawnPosProp);
 
-      mContainerProp = new dtCore::ContainerActorProperty(
-         "Actor Properties", "Actor Properties",
-         "The properties of the new actor to be spawned.", "");
-      AddProperty(mContainerProp);
+      dtCore::ContainerSelectorActorProperty* actorProp = new dtCore::ContainerSelectorActorProperty(
+         "Actor", "Actor",
+         dtCore::ContainerSelectorActorProperty::SetFuncType(this, &SpawnActorAction::SetActorType),
+         dtCore::ContainerSelectorActorProperty::GetFuncType(this, &SpawnActorAction::GetActorType),
+         dtCore::ContainerSelectorActorProperty::GetListFuncType(this, &SpawnActorAction::GetActorTypeList),
+         dtCore::ContainerSelectorActorProperty::GetContainerFuncType(this, &SpawnActorAction::GetActorContainer),
+         "The actor to spawn.");
+      AddProperty(actorProp);
 
-      dtCore::ActorIDActorProperty* actorProp = new dtCore::ActorIDActorProperty(
+      dtCore::ActorIDActorProperty* outActorProp = new dtCore::ActorIDActorProperty(
          "Out Actor", "Out Actor",
          dtCore::ActorIDActorProperty::SetFuncType(this, &SpawnActorAction::SetOutActor),
          dtCore::ActorIDActorProperty::GetFuncType(this, &SpawnActorAction::GetOutActor),
@@ -104,9 +95,59 @@ namespace dtDirector
 
       // This will expose the properties in the editor and allow
       // them to be connected to ValueNodes.
-      mValues.push_back(ValueLink(this, typeProp, false, false, true, false));
       mValues.push_back(ValueLink(this, spawnPosProp, false, false, false));
-      mValues.push_back(ValueLink(this, actorProp, true, true));
+      mValues.push_back(ValueLink(this, outActorProp, true, true));
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   dtCore::RefPtr<dtCore::ActorProperty> SpawnActorAction::GetDeprecatedProperty(const std::string& name)
+   {
+      dtCore::RefPtr<dtCore::ActorProperty> prop = ActionNode::GetDeprecatedProperty(name);
+
+      if (!prop.valid())
+      {
+         if (name == "Actor Type")
+         {
+            prop = new dtCore::StringSelectorActorProperty(
+               "Actor Type", "Actor Type",
+               dtCore::StringSelectorActorProperty::SetFuncType(this, &SpawnActorAction::SetActorType),
+               dtCore::StringSelectorActorProperty::GetFuncType(this, &SpawnActorAction::GetActorType),
+               dtCore::StringSelectorActorProperty::GetListFuncType(this, &SpawnActorAction::GetActorTypeList),
+               "The type of the actor to spawn.");
+         }
+         else if (name == "Actor Properties")
+         {
+            dtCore::RefPtr<dtCore::ContainerActorProperty> containerProp = new dtCore::ContainerActorProperty(
+               "Actor Properties", "Actor Properties",
+               "The properties of the new actor to be spawned.", "");
+            prop = containerProp;
+
+            // Copy all of the actors properties to this container.
+            if (mTemplateActor.valid())
+            {
+               dtCore::RefPtr<dtCore::StringActorProperty> nameProp = new dtCore::StringActorProperty(
+                  "Name", "Name",
+                  dtCore::StringActorProperty::SetFuncType(this, &SpawnActorAction::SetActorName),
+                  dtCore::StringActorProperty::GetFuncType(this, &SpawnActorAction::GetActorName),
+                  "The name of the actor.");
+               containerProp->AddProperty(nameProp);
+
+               std::vector<dtCore::ActorProperty*> propList;
+               mTemplateActor->GetPropertyList(propList);
+               int count = (int)propList.size();
+               for (int index = 0; index < count; ++index)
+               {
+                  dtCore::ActorProperty* prop = propList[index];
+                  if (prop && !prop->IsReadOnly())
+                  {
+                     containerProp->AddProperty(prop);
+                  }
+               }
+            }
+         }
+      }
+
+      return prop;
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -211,7 +252,7 @@ namespace dtDirector
    {
       ActionNode::OnLinkValueChanged(linkName);
 
-      if (linkName == "Actor Type")
+      if (linkName == "Actor")
       {
          UpdateTemplate();
       }
@@ -220,7 +261,6 @@ namespace dtDirector
    ////////////////////////////////////////////////////////////////////////////////
    void SpawnActorAction::UpdateTemplate()
    {
-      std::string actorType = GetString("Actor Type");
       std::string templateType;
 
       if (mTemplateActor.valid())
@@ -228,7 +268,16 @@ namespace dtDirector
          templateType = mTemplateActor->GetActorType().GetFullName();
       }
 
-      if (!actorType.empty() && templateType != actorType)
+      // If we have no actor type, then clear our template and bail.
+      if (mActorType.empty())
+      {
+         mTemplateActor = NULL;
+         return;
+      }
+
+      // If we do have an actor type, and it is different than what we already
+      // have, then we need to create an instance of this actor as our template.
+      if (templateType != mActorType)
       {
          std::string name;
          std::string category;
@@ -241,7 +290,7 @@ namespace dtDirector
             const dtCore::ActorType* type = types[index];
             if (type)
             {
-               if (type->GetFullName() == actorType)
+               if (type->GetFullName() == mActorType)
                {
                   name = type->GetName();
                   category = type->GetCategory();
@@ -252,33 +301,11 @@ namespace dtDirector
 
          if (!name.empty() && !category.empty())
          {
-            if (mTemplateActor.valid())
-            {
-               mContainerProp->ClearProperties();
-               mTemplateActor = NULL;
-               mName = "";
-            }
-
             mTemplateActor = dtCore::LibraryManager::GetInstance().CreateActor(category, name);
-            if (mTemplateActor.valid())
-            {
-               mContainerProp->AddProperty(mNameProp);
 
-               std::vector<dtCore::ActorProperty*> propList;
-               mTemplateActor->GetPropertyList(propList);
-               int count = (int)propList.size();
-               for (int index = 0; index < count; ++index)
-               {
-                  dtCore::ActorProperty* prop = propList[index];
-                  if (prop && !prop->IsReadOnly())
-                  {
-                     mContainerProp->AddProperty(prop);
-                  }
-               }
-
-               mTemplateActor->AddProperty(mGhostProp);
-               mName = mTemplateActor->GetActorType().GetFullName();
-            }
+            // Template actors must have this ghost property so it does not
+            // become visible in actor selection lists like inspector.
+            mTemplateActor->AddProperty(mGhostProp);
          }
       }
    }
@@ -322,6 +349,12 @@ namespace dtDirector
       }
 
       return list;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   dtCore::PropertyContainer* SpawnActorAction::GetActorContainer()
+   {
+      return mTemplateActor;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
