@@ -7,8 +7,8 @@
         <comment></comment>
         <copyright></copyright>
         <createTimestamp>2009-12-21T16:14:44-08:00</createTimestamp>
-        <lastUpdateTimestamp>2011-10-27T22:05:56-08:00</lastUpdateTimestamp>
-        <editorVersion>2.7.2</editorVersion>
+        <lastUpdateTimestamp>2011-12-15T13:32:10-08:00</lastUpdateTimestamp>
+        <editorVersion>2.7.3</editorVersion>
         <schemaVersion>1.0</schemaVersion>
     </header>
     <libraries>
@@ -1346,7 +1346,7 @@
             <property>
                 <name>Model Rotation</name>
                 <vec3>
-                    <value1>180.000000</value1>
+                    <value1>-180.000000</value1>
                     <value2>0.000000</value2>
                     <value3>-0.000000</value3>
                 </vec3>
@@ -3175,31 +3175,31 @@
         <presetCamera>
             <index>1</index>
             <perspectiveView>
-                <positionX>-8.317294</positionX>
-                <positionY>10.941849</positionY>
-                <positionZ>4.724237</positionZ>
-                <rotationX>-0.277161</rotationX>
-                <rotationY>0.274275</rotationY>
-                <rotationZ>-0.647718</rotationZ>
-                <rotationW>0.654535</rotationW>
+                <positionX>-8.317092</positionX>
+                <positionY>10.927827</positionY>
+                <positionZ>4.724241</positionZ>
+                <rotationX>-0.278165</rotationX>
+                <rotationY>0.273258</rotationY>
+                <rotationZ>-0.645315</rotationZ>
+                <rotationW>0.656904</rotationW>
             </perspectiveView>
             <topView>
-                <positionX>0.000000</positionX>
-                <positionY>0.000000</positionY>
-                <positionZ>0.000000</positionZ>
-                <zoom>1.000000</zoom>
+                <positionX>10.873669</positionX>
+                <positionY>9.263972</positionY>
+                <positionZ>-0.000000</positionZ>
+                <zoom>8.636088</zoom>
             </topView>
             <sideView>
-                <positionX>0.000000</positionX>
-                <positionY>0.000000</positionY>
-                <positionZ>0.000000</positionZ>
-                <zoom>1.000000</zoom>
+                <positionX>-0.000000</positionX>
+                <positionY>9.789291</positionY>
+                <positionZ>0.542865</positionZ>
+                <zoom>12.985484</zoom>
             </sideView>
             <frontView>
                 <positionX>0.000000</positionX>
                 <positionY>0.000000</positionY>
                 <positionZ>0.000000</positionZ>
-                <zoom>1.000000</zoom>
+                <zoom>9.703509</zoom>
             </frontView>
         </presetCamera>
         <presetCamera>

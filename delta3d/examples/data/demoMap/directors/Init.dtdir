@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <director xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="delta3dDirector" xsi:schemaLocation="delta3dDirector director.xsd">
     <header>
         <createTimestamp>2011-10-21T01:34:19-08:00</createTimestamp>
-        <lastUpdateTimestamp>2011-11-01T03:35:16-08:00</lastUpdateTimestamp>
-        <editorVersion>2.7.2</editorVersion>
-        <schemaVersion>1.0</schemaVersion>
+        <lastUpdateTimestamp>2012-03-02T09:27:01-08:00</lastUpdateTimestamp>
+        <editorVersion>2.7.4</editorVersion>
+        <schemaVersion>2.0</schemaVersion>
         <scriptType>Scenario</scriptType>
         <property>
             <name>Name</name>
@@ -38,8 +39,8 @@
         </library>
     </libraries>
     <graph>
-        <idIndex>0</idIndex>
-        <id>d3a1de40-fddb-47a3-ae9e-a5306f7a2330</id>
+        <idIndex>1</idIndex>
+        <id>fd1bf357-3dd5-4522-a373-624d6c9b1a68</id>
         <property>
             <name>Comment</name>
             <string></string>
@@ -262,6 +263,10 @@
                     <name>Radius</name>
                     <float>0.1</float>
                 </property>
+                <property>
+                    <name>Turn Speed</name>
+                    <float>50</float>
+                </property>
                 <inputlink>
                     <name>In</name>
                 </inputlink>
@@ -401,6 +406,10 @@
                     <container>
                         <property>
                             <name>Name</name>
+                            <string>Player</string>
+                        </property>
+                        <property>
+                            <name>Actor Name</name>
                             <string>Player</string>
                         </property>
                         <property>
@@ -661,6 +670,14 @@
                     <name>Name</name>
                     <string>Start Pos</string>
                 </property>
+                <property>
+                    <name>Initial Value</name>
+                    <vec3>
+                        <value1>0.000000</value1>
+                        <value2>0.000000</value2>
+                        <value3>0.000000</value3>
+                    </vec3>
+                </property>
                 <valuelink>
                     <name>Enabled</name>
                     <exposed>false</exposed>
@@ -703,6 +720,10 @@
                 <property>
                     <name>Name</name>
                     <string>Desired Height</string>
+                </property>
+                <property>
+                    <name>Initial Value</name>
+                    <float>0</float>
                 </property>
                 <valuelink>
                     <name>Enabled</name>
@@ -778,7 +799,7 @@
                     </vec2>
                 </property>
                 <property>
-                    <name>Value</name>
+                    <name>Initial Value</name>
                     <actorId>1af6ec4e-1270-44b3-b30b-20ebbfac269d</actorId>
                 </property>
                 <valuelink>
@@ -801,6 +822,14 @@
                 <property>
                     <name>Name</name>
                     <string>Start Rot</string>
+                </property>
+                <property>
+                    <name>Initial Value</name>
+                    <vec3>
+                        <value1>0.000000</value1>
+                        <value2>0.000000</value2>
+                        <value3>0.000000</value3>
+                    </vec3>
                 </property>
                 <valuelink>
                     <name>Enabled</name>
@@ -831,8 +860,8 @@
             </node>
         </valuenodes>
         <graph>
-            <idIndex>1</idIndex>
-            <id>da6fb892-429d-46c0-ae4c-25a74e6ab355</id>
+            <idIndex>0</idIndex>
+            <id>0401944f-b46e-429c-b41a-045ccd22ddd8</id>
             <property>
                 <name>Comment</name>
                 <string></string>
@@ -1134,7 +1163,7 @@
                         </vec2>
                     </property>
                     <property>
-                        <name>Value</name>
+                        <name>Initial Value</name>
                         <actorId>1af6ec4e-1270-44b3-b30b-20ebbfac269d</actorId>
                     </property>
                     <valuelink>
@@ -1155,7 +1184,7 @@
                         </vec2>
                     </property>
                     <property>
-                        <name>Value</name>
+                        <name>Initial Value</name>
                         <actorId>b2acefd8-12a5-47a1-8035-b6537de811d7</actorId>
                     </property>
                     <valuelink>
@@ -1178,6 +1207,14 @@
                     <property>
                         <name>Name</name>
                         <string>Start Pos</string>
+                    </property>
+                    <property>
+                        <name>Initial Value</name>
+                        <vec3>
+                            <value1>0.000000</value1>
+                            <value2>0.000000</value2>
+                            <value3>0.000000</value3>
+                        </vec3>
                     </property>
                     <valuelink>
                         <name>Enabled</name>
@@ -1271,7 +1308,7 @@
                         </vec2>
                     </property>
                     <property>
-                        <name>Value</name>
+                        <name>Initial Value</name>
                         <actorId>1af6ec4e-1270-44b3-b30b-20ebbfac269d</actorId>
                     </property>
                     <valuelink>
@@ -1311,7 +1348,7 @@
         </graph>
         <graph>
             <idIndex>2</idIndex>
-            <id>13b6b5b3-5937-462c-84e1-935720e412da</id>
+            <id>d0be2459-b8ea-4bdc-bf8e-9f2f8a271fcf</id>
             <property>
                 <name>Comment</name>
                 <string></string>
@@ -1579,7 +1616,7 @@
                     </property>
                     <property>
                         <name>DeltaTime</name>
-                        <float>0.135287</float>
+                        <float>0.0158691</float>
                     </property>
                     <inputlink>
                         <name>Start</name>
@@ -1667,7 +1704,7 @@
                         <string>Player Height</string>
                     </property>
                     <property>
-                        <name>Value</name>
+                        <name>Initial Value</name>
                         <float>1.5633301</float>
                     </property>
                     <valuelink>
@@ -1717,6 +1754,14 @@
                         <name>Name</name>
                         <string>Player Pos</string>
                     </property>
+                    <property>
+                        <name>Initial Value</name>
+                        <vec3>
+                            <value1>0.000000</value1>
+                            <value2>0.000000</value2>
+                            <value3>0.000000</value3>
+                        </vec3>
+                    </property>
                     <valuelink>
                         <name>Enabled</name>
                         <exposed>false</exposed>
@@ -1748,7 +1793,7 @@
         </graph>
         <graph>
             <idIndex>3</idIndex>
-            <id>42f56ee5-29ac-4967-81e5-b6fea60d030a</id>
+            <id>d739ad0c-a479-439d-b045-ff1f94c93d9c</id>
             <property>
                 <name>Comment</name>
                 <string></string>
@@ -1997,7 +2042,7 @@
         </graph>
         <graph>
             <idIndex>4</idIndex>
-            <id>5074ec40-0e32-417e-966e-3342e205a05c</id>
+            <id>c4f1df39-d7ca-4c9c-89e5-0466bd06d14b</id>
             <property>
                 <name>Comment</name>
                 <string></string>
@@ -2075,6 +2120,10 @@
                         <name>LoopPeriod</name>
                         <float>0.02</float>
                     </property>
+                    <property>
+                        <name>DeltaTime</name>
+                        <float>0.0197646</float>
+                    </property>
                     <inputlink>
                         <name>Start</name>
                     </inputlink>
@@ -2125,6 +2174,10 @@
                         <name>Global</name>
                         <boolean>true</boolean>
                     </property>
+                    <property>
+                        <name>Initial Value</name>
+                        <actorId></actorId>
+                    </property>
                     <valuelink>
                         <name>Enabled</name>
                         <exposed>false</exposed>
@@ -2149,6 +2202,12 @@
                     <property>
                         <name>Global</name>
                         <boolean>true</boolean>
+                    </property>
+                    <property>
+                        <name>InitialValueList</name>
+                        <array>
+                            <size>0</size>
+                        </array>
                     </property>
                     <valuelink>
                         <name>Enabled</name>
@@ -2175,6 +2234,12 @@
                         <name>Global</name>
                         <boolean>true</boolean>
                     </property>
+                    <property>
+                        <name>InitialValueList</name>
+                        <array>
+                            <size>0</size>
+                        </array>
+                    </property>
                     <valuelink>
                         <name>Enabled</name>
                         <exposed>false</exposed>
@@ -2183,7 +2248,7 @@
             </valuenodes>
             <graph>
                 <idIndex>5</idIndex>
-                <id>41a77f6a-f7d1-4f58-95e1-4cee1245d10d</id>
+                <id>30d3ed15-4ea2-4104-a04c-724306d86b3b</id>
                 <property>
                     <name>Comment</name>
                     <string></string>
@@ -2366,7 +2431,7 @@
             </graph>
             <graph>
                 <idIndex>6</idIndex>
-                <id>897212af-c4d4-4281-8fa9-acbd3f036352</id>
+                <id>f7fb2b5a-8dca-4027-90c1-f4c39032fe4f</id>
                 <property>
                     <name>Comment</name>
                     <string></string>
@@ -2842,6 +2907,10 @@
                                 <value2>225.614990</value2>
                             </vec2>
                         </property>
+                        <property>
+                            <name>Initial Value</name>
+                            <string></string>
+                        </property>
                         <valuelink>
                             <name>Enabled</name>
                             <exposed>false</exposed>
@@ -2862,6 +2931,10 @@
                         <property>
                             <name>Name</name>
                             <string>Rotation Value</string>
+                        </property>
+                        <property>
+                            <name>Initial Value</name>
+                            <integer>0</integer>
                         </property>
                         <valuelink>
                             <name>Enabled</name>
@@ -2910,6 +2983,10 @@
                                 <value1>301.500336</value1>
                                 <value2>636.365417</value2>
                             </vec2>
+                        </property>
+                        <property>
+                            <name>Initial Value</name>
+                            <string></string>
                         </property>
                         <valuelink>
                             <name>Enabled</name>
@@ -2974,7 +3051,7 @@
             </graph>
             <graph>
                 <idIndex>7</idIndex>
-                <id>b06b3fd0-3c1c-4b83-a19f-ad327a90418e</id>
+                <id>f7044e64-1ec1-4cc7-84a0-70e0f5782b79</id>
                 <property>
                     <name>Comment</name>
                     <string></string>
@@ -3257,7 +3334,7 @@
                         </property>
                         <property>
                             <name>DeltaTime</name>
-                            <float>0.126013</float>
+                            <float>0.0158691</float>
                         </property>
                         <inputlink>
                             <name>Start</name>
@@ -3523,6 +3600,14 @@
                             <name>Name</name>
                             <string>Object Position</string>
                         </property>
+                        <property>
+                            <name>Initial Value</name>
+                            <vec3>
+                                <value1>0.000000</value1>
+                                <value2>0.000000</value2>
+                                <value3>0.000000</value3>
+                            </vec3>
+                        </property>
                         <valuelink>
                             <name>Enabled</name>
                             <exposed>false</exposed>
@@ -3541,7 +3626,7 @@
                             </vec2>
                         </property>
                         <property>
-                            <name>Value</name>
+                            <name>Initial Value</name>
                             <double>5</double>
                         </property>
                         <valuelink>
@@ -3585,6 +3670,10 @@
                         <property>
                             <name>Name</name>
                             <string>Current Actor</string>
+                        </property>
+                        <property>
+                            <name>Initial Value</name>
+                            <actorId></actorId>
                         </property>
                         <valuelink>
                             <name>Enabled</name>
@@ -3653,7 +3742,7 @@
                             <string>Object Size</string>
                         </property>
                         <property>
-                            <name>Value</name>
+                            <name>Initial Value</name>
                             <double>0.75</double>
                         </property>
                         <valuelink>
@@ -3787,6 +3876,10 @@
                             <name>Name</name>
                             <string>Index</string>
                         </property>
+                        <property>
+                            <name>Initial Value</name>
+                            <integer>0</integer>
+                        </property>
                         <valuelink>
                             <name>Enabled</name>
                             <exposed>false</exposed>
@@ -3869,6 +3962,14 @@
                                 <value1>456.405273</value1>
                                 <value2>54.140793</value2>
                             </vec2>
+                        </property>
+                        <property>
+                            <name>Initial Value</name>
+                            <vec3>
+                                <value1>0.000000</value1>
+                                <value2>0.000000</value2>
+                                <value3>0.000000</value3>
+                            </vec3>
                         </property>
                         <valuelink>
                             <name>Enabled</name>
