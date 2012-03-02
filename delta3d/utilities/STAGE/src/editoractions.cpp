@@ -1535,11 +1535,8 @@ namespace dtEditQt
    //////////////////////////////////////////////////////////////////////////////
    void EditorActions::slotEditGroupActors()
    {
-      EditorData::GetInstance().getCurrentMap()->SetModified(true);
-      EditorEvents::GetInstance().emitProjectChanged();
-
       ViewportOverlay* overlay = ViewportManager::GetInstance().getViewportOverlay();
-      ViewportOverlay::ActorProxyList& selection = overlay->getCurrentActorSelection();
+      ViewportOverlay::ActorProxyList selection = overlay->getCurrentActorSelection();
 
       // Add all the selected actions into a new group.
       dtCore::Map* map = EditorData::GetInstance().getCurrentMap();
@@ -1548,60 +1545,6 @@ namespace dtEditQt
          // First ungroup all actors.
          EditorData::GetInstance().getUndoManager().beginMultipleUndo();
          slotEditUngroupActors();
-         //std::vector<dtCore::BaseActorObject*> groupActors;
-
-         //while (selection.size())
-         //{
-         //   // First check if this actor is in any groups.
-         //   dtCore::BaseActorObject* proxy = const_cast<dtCore::BaseActorObject*>(selection.back().get());
-
-         //   int groupIndex = map->FindGroupForActor(proxy);
-         //   if (groupIndex > -1)
-         //   {
-         //      // First we ungroup any groups they are already in.
-         //      int actorCount = map->GetGroupActorCount(groupIndex);
-         //      for (int actorIndex = 0; actorIndex < actorCount; actorIndex++)
-         //      {
-         //         proxy = map->GetActorFromGroup(groupIndex, 0);
-         //         map->RemoveActorFromGroups(proxy);
-
-         //         groupActors.push_back(proxy);
-
-         //         // Now remove this actor from the selection list.
-         //         for (int selectionIndex = 0; selectionIndex < (int)selection.size(); selectionIndex++)
-         //         {
-         //            if (selection[selectionIndex].get() == proxy)
-         //            {
-         //               selection.erase(selection.begin() + selectionIndex);
-         //               break;
-         //            }
-         //         }
-         //      }
-         //   }
-         //   else
-         //   {
-         //      selection.pop_back();
-         //      groupActors.push_back(proxy);
-         //   }
-         //}
-
-         //// Now group them in the order they were previously groupped.
-         //groupIndex = map->GetGroupCount();
-         //EditorData::GetInstance().getUndoManager().beginMultipleUndo();
-         //for (int index = 0; index < (int)groupActors.size(); index++)
-         //{
-         //   dtCore::BaseActorObject* proxy = groupActors[index];
-         //   map->AddActorToGroup(groupIndex, proxy);
-         //   EditorData::GetInstance().getUndoManager().groupActor(proxy);
-         //}
-         //EditorData::GetInstance().getUndoManager().endMultipleUndo();
-
-         //// Remove the current actors from any groups they are currently in.
-         //for (int index = 0; index < (int)selection.size(); index++)
-         //{
-         //   dtCore::BaseActorObject* proxy = selection[index].get();
-         //   map->RemoveActorFromGroups(proxy);
-         //}
 
          int groupIndex = map->GetGroupCount();
 
@@ -1616,15 +1559,14 @@ namespace dtEditQt
          EditorData::GetInstance().getUndoManager().endMultipleUndo();
       }
 
+      EditorData::GetInstance().getCurrentMap()->SetModified(true);
+      EditorEvents::GetInstance().emitProjectChanged();
       mActionGroupActors->setEnabled(false);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    void EditorActions::slotEditUngroupActors()
    {
-      EditorData::GetInstance().getCurrentMap()->SetModified(true);
-      EditorEvents::GetInstance().emitProjectChanged();
-
       ViewportOverlay* overlay = ViewportManager::GetInstance().getViewportOverlay();
       ViewportOverlay::ActorProxyList selection = overlay->getCurrentActorSelection();
 
@@ -1682,6 +1624,9 @@ namespace dtEditQt
          //}
          //EditorData::GetInstance().getUndoManager().endMultipleUndo();
       }
+
+      EditorData::GetInstance().getCurrentMap()->SetModified(true);
+      EditorEvents::GetInstance().emitProjectChanged();
 
       mActionGroupActors->setEnabled(true);
       mActionUngroupActors->setEnabled(false);
