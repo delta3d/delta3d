@@ -49,7 +49,8 @@ namespace dtQt
 
    ///////////////////////////////////////////////////////////////////////////////
    DynamicContainerSelectorControl::DynamicContainerSelectorControl()
-      : mProperty(NULL)
+      : DynamicGroupControl("ContainerSelectorControl")
+      , mProperty(NULL)
       , mTemporaryComboControl(NULL)
    {
    }
@@ -292,7 +293,31 @@ namespace dtQt
                   }
                }
 
-               element->InitializeData(this, GetModel(), propCon, prop);
+               // Retrieve the category in which this property belongs.
+               std::string catName = prop->GetGroupName();
+
+               DynamicGroupControl* catControl = getChildGroupControl(QString(catName.c_str()));
+
+               // If no category control currently exists, create one.
+               if (!catControl)
+               {
+                  catControl = new DynamicGroupControl(catName);
+                  catControl->InitializeData(this, GetModel(), propCon, NULL);
+                  addChildControlSorted(catControl, GetModel());
+               }
+
+               // Add our new control to this category.
+               if (catControl)
+               {
+                  element->InitializeData(catControl, GetModel(), propCon, prop);
+                  catControl->addChildControl(element, GetModel());
+               }
+               else
+               {
+                  element->InitializeData(this, GetModel(), propCon, prop);
+                  mChildren.push_back(element);
+               }
+
                connect(element, SIGNAL(PropertyAboutToChange(dtCore::PropertyContainer&, dtCore::ActorProperty&,
                   const std::string&, const std::string&)),
                   this, SLOT(PropertyAboutToChangePassThrough(dtCore::PropertyContainer&, dtCore::ActorProperty&,
@@ -300,8 +325,6 @@ namespace dtQt
 
                connect(element, SIGNAL(PropertyChanged(dtCore::PropertyContainer&, dtCore::ActorProperty&)),
                   this, SLOT(PropertyChangedPassThrough(dtCore::PropertyContainer&, dtCore::ActorProperty&)));
-
-               mChildren.push_back(element);
             }
          }
 

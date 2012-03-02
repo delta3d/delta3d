@@ -30,7 +30,7 @@
 #define DELTA_DYNAMICCONTAINERSELECTORCONTROL
 
 #include <dtQt/export.h>
-#include <dtQt/dynamicabstractparentcontrol.h>
+#include <dtQt/dynamicgroupcontrol.h>
 #include <dtQt/dynamicsubwidgets.h>
 
 namespace dtCore
@@ -44,7 +44,7 @@ namespace dtQt
     * @class DynamicContainerSelectorControl
     * @brief This is the dynamic control for the String data type - used in the property editor
     */
-   class DT_QT_EXPORT DynamicContainerSelectorControl : public DynamicAbstractParentControl
+   class DT_QT_EXPORT DynamicContainerSelectorControl : public DynamicGroupControl
    {
       Q_OBJECT
 
