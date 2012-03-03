@@ -200,12 +200,6 @@ namespace dtEditQt
       // do we show the goto?  This is only relevant if showActions is true
       bool mShowGoto;
 
-      // protect us from recursively emitting selection in the event it comes from us.
-      bool mRecurseProtectSendingSelection;
-      // protect us from recursive issues - someone else selects, we clear our list
-      // and then we emit a new blank selection.  Bad.
-      bool mRecurseProtectEmitSelectionChanged;
-
       //QGroupBox* searchGroup();
 
       QTreeWidget* mResultsTree;
