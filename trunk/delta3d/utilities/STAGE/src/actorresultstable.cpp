@@ -50,8 +50,6 @@ namespace dtEditQt
       : QWidget(parent)
       , mShowActions(showActions)
       , mShowGoto(showGoto)
-      , mRecurseProtectSendingSelection(false)
-      , mRecurseProtectEmitSelectionChanged(false)
    {
       // if we have a parent box, then we will use it later.
       mParentBox = dynamic_cast<QGroupBox*>(parent);
@@ -270,47 +268,43 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    void ActorResultsTable::sendSelection()
    {
-      if (!mRecurseProtectSendingSelection)
+      dtCore::Map* map = EditorData::GetInstance().getCurrentMap();
+      QList<QTreeWidgetItem*> list = mResultsTree->selectedItems();
+      QListIterator<QTreeWidgetItem*> iter(list);
+      std::vector< dtCore::RefPtr<dtCore::BaseActorObject> > proxyVector;
+
+      // move the objects to a vector for the message
+      while (iter.hasNext())
       {
-         dtCore::Map* map = EditorData::GetInstance().getCurrentMap();
-         QList<QTreeWidgetItem*> list = mResultsTree->selectedItems();
-         QListIterator<QTreeWidgetItem*> iter(list);
-         std::vector< dtCore::RefPtr<dtCore::BaseActorObject> > proxyVector;
+         ActorResultsTreeItem* item = static_cast<ActorResultsTreeItem*>(iter.next());
+         dtCore::RefPtr<dtCore::BaseActorObject> proxyPtr = item->getProxy();
+         proxyVector.push_back(proxyPtr);
 
-         // move the objects to a vector for the message
-         while (iter.hasNext())
+         // Also select all other proxies that belong to its group.
+         if (map)
          {
-            ActorResultsTreeItem* item = static_cast<ActorResultsTreeItem*>(iter.next());
-            dtCore::RefPtr<dtCore::BaseActorObject> proxyPtr = item->getProxy();
-            proxyVector.push_back(proxyPtr);
-
-            // Also select all other proxies that belong to its group.
-            if (map)
+            int groupIndex = map->FindGroupForActor(proxyPtr.get());
+            if (groupIndex > -1)
             {
-               int groupIndex = map->FindGroupForActor(proxyPtr.get());
-               if (groupIndex > -1)
+               int actorCount = map->GetGroupActorCount(groupIndex);
+               for (int actorIndex = 0; actorIndex < actorCount; actorIndex++)
                {
-                  int actorCount = map->GetGroupActorCount(groupIndex);
-                  for (int actorIndex = 0; actorIndex < actorCount; actorIndex++)
+                  dtCore::RefPtr<dtCore::BaseActorObject> proxy = map->GetActorFromGroup(groupIndex, actorIndex);
+                  if (proxy != proxyPtr)
                   {
-                     dtCore::RefPtr<dtCore::BaseActorObject> proxy = map->GetActorFromGroup(groupIndex, actorIndex);
-                     if (proxy != proxyPtr)
-                     {
-                        proxyVector.push_back(proxy);
-                     }
+                     proxyVector.push_back(proxy);
                   }
                }
             }
          }
-
-         // tell the world to select these items - handle several recursive cases
-         mRecurseProtectSendingSelection = true;
-         if (!mRecurseProtectEmitSelectionChanged)
-         {
-            EditorEvents::GetInstance().emitActorsSelected(proxyVector);
-         }
-         mRecurseProtectSendingSelection = false;
       }
+
+      // tell the world to select these items - handle several recursive cases
+      blockSignals(true);
+      mResultsTree->blockSignals(true);
+      EditorEvents::GetInstance().emitActorsSelected(proxyVector);
+      mResultsTree->blockSignals(false);
+      blockSignals(false);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -337,8 +331,8 @@ namespace dtEditQt
       // rest of the system. If out of sync, the user duplicates the WRONG objects!!!
       sendSelection();
 
-      // Protect from recursive issues.
-      mRecurseProtectEmitSelectionChanged = true;
+      blockSignals(true);
+      mResultsTree->blockSignals(true);
 
       // Go ahead and unselect all items now. That prevents a wierd recursive event effect.
       UnselectAllItemsManually(NULL);
@@ -346,7 +340,8 @@ namespace dtEditQt
       // duplicate the currently selected actors
       EditorActions::GetInstance().slotEditDuplicateActors();
 
-      mRecurseProtectEmitSelectionChanged = false;
+      mResultsTree->blockSignals(false);
+      blockSignals(false);
 
       updateResultsCount();
       doEnableButtons();
@@ -360,12 +355,14 @@ namespace dtEditQt
       sendSelection();
 
       // Protect from recursive issues.
-      mRecurseProtectEmitSelectionChanged = true;
+      blockSignals(true);
+      mResultsTree->blockSignals(true);
 
       // delete the currently selected actors
       EditorActions::GetInstance().slotEditDeleteActors();
 
-      mRecurseProtectEmitSelectionChanged = false;
+      mResultsTree->blockSignals(false);
+      blockSignals(false);
 
       updateResultsCount();
       doEnableButtons();
@@ -401,32 +398,40 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    void ActorResultsTable::onSelectionChanged()
    {
-      if (!mRecurseProtectSendingSelection)
-      {
-         // always change the real selection whenever our list selection changes
-         sendSelection();
-         doEnableButtons();
-      }
+      // always change the real selection whenever our list selection changes
+      sendSelection();
+      doEnableButtons();
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    void ActorResultsTable::selectedActors(std::vector< dtCore::RefPtr<dtCore::BaseActorObject> >& actors)
    {
-      if (!mRecurseProtectSendingSelection)
+      // Also, protect from recursive issues.
+      blockSignals(true);
+      mResultsTree->blockSignals(true);
+      UnselectAllItemsManually(NULL);
+
+      // Now select the same items as our selection.
+      int selectionCount = (int)actors.size();
+      for (int selectionIndex = 0; selectionIndex < selectionCount; ++selectionIndex)
       {
-         // if we get a selection event, just clear our selection.  We're not going to
-         // keep our selection in sync, since it's technically impossible.  Our list may
-         // not contain all the items, in which case the user is left in an ambiguous state
-         // So, just clear our selection and prevent any possible confusion.  No actions can
-         // occur with no selections, so...
+         dtCore::BaseActorObject* actor = actors[selectionIndex].get();
 
-         // Also, protect from recursive issues.
-         mRecurseProtectEmitSelectionChanged = true;
-         UnselectAllItemsManually(NULL);
-         mRecurseProtectEmitSelectionChanged = false;
-
-         doEnableButtons();
+         int listCount = mResultsTree->topLevelItemCount();
+         for (int listIndex = 0; listIndex < listCount; ++listIndex)
+         {
+            ActorResultsTreeItem* item = static_cast<ActorResultsTreeItem*>(mResultsTree->topLevelItem(listIndex));
+            dtCore::BaseActorObject* listProxy = item->getProxy().get();
+            if (listProxy == actor)
+            {
+               mResultsTree->setItemSelected(item, true);
+            }
+         }
       }
+      mResultsTree->blockSignals(false);
+      blockSignals(false);
+
+      doEnableButtons();
    }
 
    ///////////////////////////////////////////////////////////////////////////////
