@@ -253,6 +253,60 @@ namespace dtEditQt
       }
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   std::vector<dtCore::UniqueId> ActorResultsTable::getSelectedItems()
+   {
+      std::vector<dtCore::UniqueId> resultList;
+      QList<QTreeWidgetItem*> itemList = mResultsTree->selectedItems();
+
+      int count = itemList.count();
+      for (int index = 0; index < count; ++index)
+      {
+         ActorResultsTreeItem* item = dynamic_cast<ActorResultsTreeItem*>(itemList[index]);
+         if (item)
+         {
+            dtCore::RefPtr<dtCore::BaseActorObject> proxy = item->getProxy();
+            if (proxy.valid())
+            {
+               resultList.push_back(proxy->GetId());
+            }
+         }
+      }
+
+      return resultList;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void ActorResultsTable::setSelectedItems(const std::vector<dtCore::UniqueId>& items)
+   {
+      // Also, protect from recursive issues.
+      UnselectAllItemsManually(NULL);
+
+      // Now select the same items as our selection.
+      int selectionCount = (int)items.size();
+      for (int selectionIndex = 0; selectionIndex < selectionCount; ++selectionIndex)
+      {
+         dtCore::UniqueId proxyId = items[selectionIndex];
+
+         int itemCount = (int)mResultsTree->topLevelItemCount();
+         for (int itemIndex = 0; itemIndex < itemCount; ++itemIndex)
+         {
+            ActorResultsTreeItem* item = dynamic_cast<ActorResultsTreeItem*>(mResultsTree->topLevelItem(itemIndex));
+            if (item)
+            {
+               dtCore::RefPtr<dtCore::BaseActorObject> proxy = item->getProxy();
+               if (proxy.valid() && proxy->GetId() == proxyId)
+               {
+                  mResultsTree->setItemSelected(item, true);
+                  break;
+               }
+            }
+         }
+      }
+
+      doEnableButtons();
+   }
+
    ///////////////////////////////////////////////////////////////////////////////
    // SLOTS
    ///////////////////////////////////////////////////////////////////////////////
@@ -300,11 +354,9 @@ namespace dtEditQt
       }
 
       // tell the world to select these items - handle several recursive cases
-      blockSignals(true);
       mResultsTree->blockSignals(true);
       EditorEvents::GetInstance().emitActorsSelected(proxyVector);
       mResultsTree->blockSignals(false);
-      blockSignals(false);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -331,7 +383,6 @@ namespace dtEditQt
       // rest of the system. If out of sync, the user duplicates the WRONG objects!!!
       sendSelection();
 
-      blockSignals(true);
       mResultsTree->blockSignals(true);
 
       // Go ahead and unselect all items now. That prevents a wierd recursive event effect.
@@ -341,7 +392,6 @@ namespace dtEditQt
       EditorActions::GetInstance().slotEditDuplicateActors();
 
       mResultsTree->blockSignals(false);
-      blockSignals(false);
 
       updateResultsCount();
       doEnableButtons();
@@ -355,14 +405,12 @@ namespace dtEditQt
       sendSelection();
 
       // Protect from recursive issues.
-      blockSignals(true);
       mResultsTree->blockSignals(true);
 
       // delete the currently selected actors
       EditorActions::GetInstance().slotEditDeleteActors();
 
       mResultsTree->blockSignals(false);
-      blockSignals(false);
 
       updateResultsCount();
       doEnableButtons();
@@ -407,7 +455,6 @@ namespace dtEditQt
    void ActorResultsTable::selectedActors(std::vector< dtCore::RefPtr<dtCore::BaseActorObject> >& actors)
    {
       // Also, protect from recursive issues.
-      blockSignals(true);
       mResultsTree->blockSignals(true);
       UnselectAllItemsManually(NULL);
 
@@ -429,7 +476,6 @@ namespace dtEditQt
          }
       }
       mResultsTree->blockSignals(false);
-      blockSignals(false);
 
       doEnableButtons();
    }
