@@ -204,6 +204,9 @@ namespace dtEditQt
          mClassBox->removeItem(0);
       }
 
+      // Remember our currently selected actors.
+      std::vector<dtCore::UniqueId> selection = mResultsTable->getSelectedItems();
+
       // empty out our table, just in case (this MUST happen  when libraries are removed)
       mResultsTable->clearAll();
 
@@ -257,6 +260,9 @@ namespace dtEditQt
          EditorData::GetInstance().getMainWindow()->endWaitCursor();
 
          searchPressed();
+
+         // Now attempt to restore our current selection.
+         mResultsTable->setSelectedItems(selection);
       }
    }
 

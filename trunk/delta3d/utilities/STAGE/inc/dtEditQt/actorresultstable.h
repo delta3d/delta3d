@@ -123,6 +123,16 @@ namespace dtEditQt
        */
       void UnselectAllItemsManually(QTreeWidgetItem* item);
 
+      /**
+       *	Retrieves the currently selected items.
+       */
+      std::vector<dtCore::UniqueId> getSelectedItems();
+
+      /**
+       *	Sets the currently selected item list.
+       */
+      void setSelectedItems(const std::vector<dtCore::UniqueId>& items);
+
    public slots:
       /**
        * Clear out the table.  Removes all entries.
