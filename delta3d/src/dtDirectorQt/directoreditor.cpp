@@ -282,6 +282,11 @@ namespace dtDirector
 
          try
          {
+            if (!dtCore::Project::GetInstance().IsContextValid())
+            {
+               QMessageBox::warning(this, "Warning", "No project context has been set in STAGE.  Scripts may not load correctly.", QMessageBox::Ok);
+            }
+
             std::string contextDir = osgDB::convertFileNameToNativeStyle(dtDAL::Project::GetInstance().GetContext()+"/directors/");
             contextDir = osgDB::getRealPath(contextDir);
             mFullFileName = fileName;
