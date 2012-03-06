@@ -55,7 +55,7 @@ void dtInspectorQt::DeltaWinView::OnCursorToggle(int checked)
 {
    if (mOperateOn.valid())
    {
-      mOperateOn->ShowCursor(checked ? true : false);
+      mOperateOn->SetShowCursor(checked ? true : false);
    }
 }
 
