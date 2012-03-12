@@ -41,9 +41,9 @@ void KeyboardMouseHandler::SetMouse(Mouse* m)
    {
       mMouse->SetView(NULL);
    }
-   
+
    mMouse = m;
-   
+
    if (mMouse.valid())
    {
       mMouse->SetView(mView.get());
@@ -63,7 +63,7 @@ void KeyboardMouseHandler::SetView(dtCore::View* view)
 
 bool KeyboardMouseHandler::handle(const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& aa, osg::Object*, osg::NodeVisitor*)
 {
-   if(ea.getHandled()) 
+   if(ea.getHandled())
    {
       return false;
    }

@@ -160,9 +160,9 @@ namespace dtCore
       void CalcScale(osg::Vec3d& scale) const;
 
       /// Calculates the distance from this tranform to another
-      double CalcDistance(const dtCore::Transform& xform);
+      double CalcDistance(const dtCore::Transform& xform) const;
       /// Calculates the distance squared from this tranform to another
-      double CalcDistanceSquared(const dtCore::Transform& xform);
+      double CalcDistanceSquared(const dtCore::Transform& xform) const;
 
       /**
        * Does a polar decomposition (SLOW) on the matrix to get the scale and the unscaled rotation matrix,
