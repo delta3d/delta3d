@@ -63,6 +63,7 @@ namespace dtCore
          MOTION_TYPE_TRANSLATION,
          MOTION_TYPE_ROTATION,
          MOTION_TYPE_SCALE,
+         MOTION_TYPE_PLANE_TRANSLATION,
          MOTION_TYPE_MAX,
       };
 
@@ -298,6 +299,14 @@ namespace dtCore
       virtual osg::TriangleMesh* GenerateRing(float minRadius, float maxRadius, int segments);
 
       /**
+       *	Generates a triangle mesh used for the planar translation.
+       *
+       * @param[in]  inner  The length from the origin in which the plane will start.
+       * @param[in]  outer  The length from the origin in which the plane will end.
+       */
+      virtual osg::TriangleMesh* GeneratePlane(float inner, float outer);
+
+      /**
        * Does a collision test to see if the mouse has picked
        * one of the widgets of this motion model.
        * mMotionType and mHoverArrow will be set to
@@ -346,9 +355,10 @@ namespace dtCore
       /**
        * Updates Translation, Rotation, and Scale of the target object.
        */
-      void UpdateTranslation(void);
+      void UpdateTranslation();
       void UpdateRotation(void);
       void UpdateScale(void);
+      void UpdatePlanarTranslation(void);
 
       /**
        * This callback handles the actual translation of the target.
@@ -413,6 +423,7 @@ namespace dtCore
          dtCore::RefPtr<dtCore::Transformable>  translationTransform;
          dtCore::RefPtr<dtCore::Transformable>  rotationTransform;
          dtCore::RefPtr<dtCore::Transformable>  scaleTransform;
+         dtCore::RefPtr<dtCore::Transformable>  planarTransform;
 
          osg::ref_ptr<osg::Geode>               arrowGeode;
          osg::ref_ptr<osg::ShapeDrawable>       arrowCylinder;
@@ -425,8 +436,13 @@ namespace dtCore
          osg::ref_ptr<osg::Geode>               scaleGeode;
          osg::ref_ptr<osg::ShapeDrawable>       scaleBox;
 
+         osg::ref_ptr<osg::Geode>               planarGeode;
+         osg::ref_ptr<osg::Geode>               planarSelectionGeode;
+         osg::ref_ptr<osg::ShapeDrawable>       planarGeom;
+
          osg::Vec4                              arrowCylinderColor;
          osg::Vec4                              arrowConeColor;
+         osg::Vec4                              planarColor;
       };
 
       dtCore::RefPtr<dtCore::Transformable>     mScaleTransform;
