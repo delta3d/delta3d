@@ -2274,16 +2274,20 @@ namespace dtDirector
          if (factory)
          {
             newDirector = factory->CreateDirector(scriptType);
-            newDirector->Init(gm, map);
          }
 
          if (!newDirector)
          {
             newDirector = new Director();
-            newDirector->Init(gm, map);
          }
 
          SetDirector(newDirector);
+
+         if (newDirector)
+         {
+            newDirector->Init(gm, map);
+         }
+
          RefreshNodeScenes();
       }
 
