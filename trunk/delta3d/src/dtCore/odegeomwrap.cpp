@@ -913,6 +913,15 @@ dtCore::RefPtr<osg::Geode> dtCore::ODEGeomWrap::CreateRenderedCollisionGeometry(
       ss->setAttributeAndModes(pm,
          osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE);
    }
+   else
+   {
+      // JPH: Added this so that the debug rendered collision geometry
+      // (especially in STAGE) will still be transparent.
+      ss->setMode(GL_LIGHTING,
+         osg::StateAttribute::ON |
+         osg::StateAttribute::PROTECTED |
+         osg::StateAttribute::OVERRIDE);
+   }
 
    return geode;
 }
