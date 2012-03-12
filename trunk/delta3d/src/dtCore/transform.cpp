@@ -257,13 +257,13 @@ namespace dtCore
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   double Transform::CalcDistance(const dtCore::Transform& xform)
+   double Transform::CalcDistance(const dtCore::Transform& xform) const
    {
       return sqrt(CalcDistanceSquared(xform));
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   double Transform::CalcDistanceSquared(const dtCore::Transform& xform)
+   double Transform::CalcDistanceSquared(const dtCore::Transform& xform) const
    {
       osg::Vec3 positionOne, positionTwo;
       GetTranslation(positionOne);
