@@ -42,6 +42,7 @@
 #include <dtCore/project.h>
 #include <dtCore/transformableactorproxy.h>
 #include <dtCore/vectoractorproperties.h>
+#include <dtCore/booleanactorproperty.h>
 
 #include <dtEditQt/configurationmanager.h>
 #include <dtEditQt/dialogmapproperties.h>
@@ -1426,28 +1427,30 @@ namespace dtEditQt
          mShowingTriggerVolumes = true;
       }
 
+      EditorData::GetInstance().getUndoManager().beginMultipleUndo();
+
       for(size_t i = 0; i < actorProxies.size(); ++i)
       {
          if (actorProxies[i]->GetActorType().GetName() == "Trigger Volume Actor")
          {
-            dtCore::Transformable* actr =
-               dynamic_cast<dtCore::Transformable* >(actorProxies[i]->GetActor());
-
-            if (actr)
+            dtCore::BooleanActorProperty* renderCollisionProp =
+               dynamic_cast<dtCore::BooleanActorProperty*>(actorProxies[i]->GetProperty("Show Collision Geometry"));
+            if (renderCollisionProp)
             {
-               if (mShowingTriggerVolumes)
+               std::string oldValue = renderCollisionProp->ToString();
+               renderCollisionProp->SetValue(mShowingTriggerVolumes);
+               std::string newValue = renderCollisionProp->ToString();
+
+               if (oldValue != newValue)
                {
-                  //show trigger volumes
-                  actr->RenderCollisionGeometry(true, true);
-               }
-               else
-               {
-                  //hide trigger volumes
-                  actr->RenderCollisionGeometry(false);
+                  EditorEvents::GetInstance().emitActorPropertyAboutToChange(actorProxies[i], renderCollisionProp, oldValue, newValue);
+                  EditorEvents::GetInstance().emitActorPropertyChanged(actorProxies[i], renderCollisionProp);
                }
             }
          }
       }
+
+      EditorData::GetInstance().getUndoManager().endMultipleUndo();
 
       //update all view windows
       dtEditQt::ViewportManager::GetInstance().refreshAllViewports();

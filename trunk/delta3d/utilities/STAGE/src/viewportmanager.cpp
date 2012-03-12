@@ -571,10 +571,12 @@ namespace dtEditQt
       unsigned int billBoardIndex, actorIndex;
       const dtCore::BaseActorObject::RenderMode& renderMode = proxy->GetRenderMode();
       dtCore::ActorProxyIcon* billBoard = proxy->GetBillBoardIcon();
+      bool wasSelected = mViewportOverlay->isActorSelected(proxy);
 
       if (renderMode == dtCore::BaseActorObject::RenderMode::DRAW_BILLBOARD_ICON)
       {
          mMasterScene->RemoveChild(proxy->GetActor());
+
          mViewportOverlay->unSelect(proxy->GetActor());
          if (billBoard == NULL)
          {
@@ -587,7 +589,7 @@ namespace dtEditQt
             if (billBoardIndex == (unsigned)mMasterScene->GetNumberOfAddedDrawable())
             {
                mMasterScene->AddChild(billBoard->GetDrawable());
-               mViewportOverlay->select(billBoard->GetDrawable());
+               if (wasSelected) mViewportOverlay->select(billBoard->GetDrawable());
             }
          }
       }
@@ -607,7 +609,7 @@ namespace dtEditQt
          if (actorIndex == (unsigned)mMasterScene->GetNumberOfAddedDrawable())
          {
             mMasterScene->AddChild(proxy->GetActor());
-            mViewportOverlay->select(proxy->GetActor());
+            if (wasSelected) mViewportOverlay->select(proxy->GetActor());
          }
       }
       else if (renderMode == dtCore::BaseActorObject::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON)
@@ -623,7 +625,7 @@ namespace dtEditQt
             if (billBoardIndex == (unsigned)mMasterScene->GetNumberOfAddedDrawable())
             {
                mMasterScene->AddChild(billBoard->GetDrawable());
-               mViewportOverlay->select(billBoard->GetDrawable());
+               if (wasSelected) mViewportOverlay->select(billBoard->GetDrawable());
             }
          }
 
@@ -631,7 +633,7 @@ namespace dtEditQt
          if (actorIndex == (unsigned)mMasterScene->GetNumberOfAddedDrawable())
          {
             mMasterScene->AddChild(proxy->GetActor());
-            mViewportOverlay->select(proxy->GetActor());
+            if (wasSelected) mViewportOverlay->select(proxy->GetActor());
          }
       }
       else
