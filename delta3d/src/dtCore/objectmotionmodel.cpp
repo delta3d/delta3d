@@ -627,11 +627,11 @@ void ObjectMotionModel::InitArrows(void)
       mArrows[arrowIndex].rotationSelectionGeode = new osg::Geode();
       mArrows[arrowIndex].scaleGeode             = new osg::Geode();
 
-      osg::Cylinder* cylinder = new osg::Cylinder(osg::Vec3(0.0f, 0.0f, 0.07f), 0.005f, 0.15f);
-      osg::Cone*     cone     = new osg::Cone(osg::Vec3(0.0f, 0.0f, 0.15f), 0.015f, 0.02f);
+      osg::Cylinder* cylinder = new osg::Cylinder(osg::Vec3(0.0f, 0.0f, 0.09f), 0.005f, 0.14f);
+      osg::Cone*     cone     = new osg::Cone(osg::Vec3(0.0f, 0.0f, 0.165f), 0.015f, 0.02f);
       osg::Box*      box      = new osg::Box(osg::Vec3(0.0f, 0.0f, 0.2f), 0.015f, 0.015f, 0.015f);
 
-//      osg::Cylinder* ring     = new osg::Cylinder(osg::Vec3(0.0f, 0.0f, 0.0f), 0.07f, 0.001f);
+      //osg::Cylinder* ring     = new osg::Cylinder(osg::Vec3(0.0f, 0.0f, 0.0f), 0.07f, 0.001f);
       osg::TriangleMesh* ring = GenerateRing(ringRadius - ringVisibleThickness, ringRadius + ringVisibleThickness, 80);
       osg::TriangleMesh* selectionRing = GenerateRing(ringRadius - ringSelectionThickness, ringRadius + ringSelectionThickness, 80);
 
