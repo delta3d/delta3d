@@ -74,6 +74,20 @@ namespace dtCore
       typedef unsigned ContextSlot;
       static const ContextSlot DEFAULT_SLOT_VALUE = ~0U;
 
+      struct MapStructureData
+      {
+         void clear()
+         {
+            categoryName.clear();
+            mapList.clear();
+            subCategories.clear();
+         }
+
+         std::string                   categoryName;
+         mutable std::set<std::string> mapList;
+         std::vector<MapStructureData> subCategories;
+      };
+
       /**
        * @return the single instance of this class.
        */
