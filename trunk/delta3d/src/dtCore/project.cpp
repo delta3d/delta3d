@@ -1507,6 +1507,17 @@ namespace dtCore
       std::string fullPath = mContexts[slot] + dtUtil::FileUtils::PATH_SEPARATOR +
                GetMapsDirectory(mContexts[slot], true).fileName + dtUtil::FileUtils::PATH_SEPARATOR + map.GetFileName();
       std::string fullPathSaving = fullPath + ".saving";
+
+      //make sure the category directory exists.
+      std::string folderPath = fullPath;
+      size_t pos = folderPath.find_last_of(dtUtil::FileUtils::PATH_SEPARATOR);
+      if (pos < folderPath.length())
+      {
+         size_t count = folderPath.length() - pos;
+         folderPath.erase(pos, count);
+      }
+      fileUtils.MakeDirectoryEX(folderPath);
+
       //save the file to a separate name first so that
       //it won't blast the old one unless it is successful.
       dtCore::RefPtr<MapWriter> writer = new MapWriter();
