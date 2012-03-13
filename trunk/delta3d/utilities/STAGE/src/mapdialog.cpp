@@ -62,19 +62,25 @@ namespace dtEditQt
       gridLayout->addWidget(label,     0, 0);
       gridLayout->addWidget(mNameEdit, 0, 1);
 
+      label = new QLabel(tr("Category:"), groupBox);
+      label->setAlignment(Qt::AlignRight);
+      mCategoryEdit = new QLineEdit(groupBox);
+      gridLayout->addWidget(label,         1, 0);
+      gridLayout->addWidget(mCategoryEdit, 1, 1);
+
       label = new QLabel(tr("FileName:"), groupBox);
       label->setAlignment(Qt::AlignRight);
       mFileEdit = new QLineEdit(groupBox);
       mFileEdit->setEnabled(false);
       //fileEdit->setValidator(new QValidator(fileEdit));
-      gridLayout->addWidget(label,    1, 0);
-      gridLayout->addWidget(mFileEdit, 1, 1);
+      gridLayout->addWidget(label,    2, 0);
+      gridLayout->addWidget(mFileEdit, 2, 1);
 
       label = new QLabel(tr("Description:"), groupBox);
       label->setAlignment(Qt::AlignRight);
       mDescEdit = new QTextEdit(groupBox);
-      gridLayout->addWidget(label,     2, 0);
-      gridLayout->addWidget(mDescEdit, 2, 1);
+      gridLayout->addWidget(label,     3, 0);
+      gridLayout->addWidget(mDescEdit, 3, 1);
 
       // Create the buttons...
       mOkButton = new QPushButton(tr("OK"), this);
@@ -94,21 +100,43 @@ namespace dtEditQt
       mainLayout->addWidget(groupBox);
       mainLayout->addLayout(buttonLayout);
 
-      connect(mNameEdit, SIGNAL(textChanged(const QString&)), this, SLOT(edited(const QString&)));
+      connect(mNameEdit, SIGNAL(textChanged(const QString&)), this, SLOT(nameEdited(const QString&)));
+      connect(mCategoryEdit, SIGNAL(textChanged(const QString&)), this, SLOT(categoryEdited(const QString&)));
    }
 
    ///////////////////////// SLOTS ///////////////////////////////
-   void MapDialog::edited(const QString& newText)
+   void MapDialog::nameEdited(const QString& newText)
    {
-      QString text = newText;
-
-      text.replace('-', '_');
-      text.replace(' ', '_');
-
-      mFileEdit->setText(text);
+      updateFileName();
 
       // Enable the ok button now that we have text.
-      !text.isEmpty() ? mOkButton->setEnabled(true) : mOkButton->setEnabled(false);
+      !newText.isEmpty() ? mOkButton->setEnabled(true) : mOkButton->setEnabled(false);
+   }
+
+   void MapDialog::categoryEdited(const QString& newText)
+   {
+      updateFileName();
+   }
+
+   void MapDialog::updateFileName()
+   {
+      QString nameText = mNameEdit->text();
+      nameText.replace('-', '_');
+      nameText.replace(' ', '_');
+
+      QString categoryText = mCategoryEdit->text();
+      categoryText.replace('-', '_');
+      categoryText.replace(' ', '_');
+      categoryText.replace('.', '_');
+
+      if (categoryText.isEmpty())
+      {
+         mFileEdit->setText(nameText);
+      }
+      else
+      {
+         mFileEdit->setText(categoryText + dtUtil::FileUtils::PATH_SEPARATOR + nameText);
+      }
    }
 
    void MapDialog::applyChanges()

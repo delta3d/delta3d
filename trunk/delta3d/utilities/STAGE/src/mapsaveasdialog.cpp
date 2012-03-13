@@ -63,19 +63,25 @@ namespace dtEditQt
       gridLayout->addWidget(label,    0, 0);
       gridLayout->addWidget(nameEdit, 0, 1);
 
+      label = new QLabel(tr("Category:"),groupBox);
+      label->setAlignment(Qt::AlignRight);
+      categoryEdit = new QLineEdit(groupBox);
+      gridLayout->addWidget(label,        1, 0);
+      gridLayout->addWidget(categoryEdit, 1, 1);
+
       label = new QLabel(tr("FileName:"),groupBox);
       label->setAlignment(Qt::AlignRight);
       fileEdit = new QLineEdit(groupBox);
       fileEdit->setEnabled(false);
       //fileEdit->setValidator(new QValidator(fileEdit));
-      gridLayout->addWidget(label,    1, 0);
-      gridLayout->addWidget(fileEdit, 1, 1);
+      gridLayout->addWidget(label,    2, 0);
+      gridLayout->addWidget(fileEdit, 2, 1);
 
       label = new QLabel(tr("Description:"),groupBox);
       label->setAlignment(Qt::AlignRight);
       descEdit = new QTextEdit(groupBox);
-      gridLayout->addWidget(label,    2, 0);
-      gridLayout->addWidget(descEdit, 2, 1);
+      gridLayout->addWidget(label,    3, 0);
+      gridLayout->addWidget(descEdit, 3, 1);
 
       //Create the buttons...
       okButton = new QPushButton(tr("OK"),this);
@@ -95,21 +101,43 @@ namespace dtEditQt
       mainLayout->addWidget(groupBox);
       mainLayout->addLayout(buttonLayout);
 
-      connect(nameEdit, SIGNAL(textChanged(const QString&)), this, SLOT(edited(const QString&)));
+      connect(nameEdit,     SIGNAL(textChanged(const QString&)), this, SLOT(nameEdited(const QString&)));
+      connect(categoryEdit, SIGNAL(textChanged(const QString&)), this, SLOT(categoryEdited(const QString&)));
    }
 
    ///////////////////////// SLOTS ///////////////////////////////
-   void MapSaveAsDialog::edited(const QString& newText)
+   void MapSaveAsDialog::nameEdited(const QString& newText)
    {
-      QString text = newText;
-
-      text.replace('-', '_');
-      text.replace(' ', '_');
-
-      fileEdit->setText(text);
+      updateFileName();
 
       // Enable the ok button now that we have text.
-      !text.isEmpty() ? okButton->setEnabled(true) : okButton->setEnabled(false);
+      !newText.isEmpty() ? okButton->setEnabled(true) : okButton->setEnabled(false);
+   }
+
+   void MapSaveAsDialog::categoryEdited(const QString& newText)
+   {
+      updateFileName();
+   }
+
+   void MapSaveAsDialog::updateFileName()
+   {
+      QString nameText = nameEdit->text();
+      nameText.replace('-', '_');
+      nameText.replace(' ', '_');
+
+      QString categoryText = categoryEdit->text();
+      categoryText.replace('-', '_');
+      categoryText.replace(' ', '_');
+      categoryText.replace('.', '_');
+
+      if (categoryText.isEmpty())
+      {
+         fileEdit->setText(nameText);
+      }
+      else
+      {
+         fileEdit->setText(categoryText + dtUtil::FileUtils::PATH_SEPARATOR + nameText);
+      }
    }
 
    std::string MapSaveAsDialog::getMapName()

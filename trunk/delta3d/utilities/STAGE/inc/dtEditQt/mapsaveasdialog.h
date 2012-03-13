@@ -66,13 +66,18 @@ namespace dtEditQt
 
    public slots:
       /// slot for receiving the text changing signal
-      void edited(const QString& newText);
+      void nameEdited(const QString& newText);
+      void categoryEdited(const QString& newText);
 
    private:
+
+      void updateFileName();
+
       QPushButton* okButton;
       QLineEdit*   nameEdit;
       QTextEdit*   descEdit;
       QLineEdit*   fileEdit;
+      QLineEdit*   categoryEdit;
    };
 
 } // namespace dtEditQt

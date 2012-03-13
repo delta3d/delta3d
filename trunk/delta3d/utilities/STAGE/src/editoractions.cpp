@@ -607,7 +607,8 @@ namespace dtEditQt
          return;
       }
 
-      std::string strippedName = osgDB::getSimpleFileName(dlg.getMapFileName());
+      std::string strippedName = dlg.getMapFileName();
+      //std::string strippedName = osgDB::getSimpleFileName(dlg.getMapFileName());
       std::string name = osgDB::getStrippedName(strippedName);
 
       dtCore::Map* myMap = EditorData::GetInstance().getCurrentMap();
