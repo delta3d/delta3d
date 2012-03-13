@@ -60,7 +60,9 @@ namespace dtEditQt
 
    public slots:
       /// slot for receiving the text changing signal
-      void edited(const QString& newText);
+      void nameEdited(const QString& newText);
+      void categoryEdited(const QString& newText);
+      void updateFileName();
 
       /// slot for applying the changes made
       void applyChanges();
@@ -70,6 +72,7 @@ namespace dtEditQt
       QLineEdit*   mNameEdit;
       QTextEdit*   mDescEdit;
       QLineEdit*   mFileEdit;
+      QLineEdit*   mCategoryEdit;
       dtCore::Map*  mMap;
    };
 
