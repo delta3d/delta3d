@@ -92,7 +92,7 @@ namespace dtCore
          //make sure the maps get closed before
          //the library manager is deleted
          mOpenMaps.clear();
-
+         mMapStructure.clear();
       }
 
       std::vector<std::string> mContexts;
@@ -106,6 +106,7 @@ namespace dtCore
       typedef std::map<std::string, MapFileData> MapListType;
       MapListType mMapList; //< The list of maps by name mapped to the file names.
       mutable std::set<std::string> mMapNames; //< The list of map names.
+      dtCore::Project::MapStructureData mMapStructure;
 
       std::map<std::string, dtCore::RefPtr<Map> > mOpenMaps; //< A vector of the maps currently loaded.
       mutable dtUtil::tree<ResourceTreeNode> mResources; //< a tree of all the resources.  This is more of a cache.
@@ -154,6 +155,7 @@ namespace dtCore
       //Gets the list of backup map files.
       void GetBackupMapFilesList(dtUtil::DirectoryContents& toFill) const;
       void ListMapsForContextDir(Project::ContextSlot slot);
+      void ListMapsForDir(const std::string& mapsFolder, dtCore::Project::MapStructureData& structureData, dtUtil::FileExtensionList& extensions, dtCore::RefPtr<MapParser> parser, Project::ContextSlot slot);
 
       void GenerateMapList();
 
@@ -521,6 +523,7 @@ namespace dtCore
       //clear the references to all the open maps
       mImpl->mMapList.clear();
       mImpl->mMapNames.clear();
+      mImpl->mMapStructure.clear();
       GetMapNames();
 
       //clear out the list of mResources.
@@ -622,6 +625,7 @@ namespace dtCore
          dtUtil::FileExtensionList extensions; ///list of acceptable file extensions
          extensions.push_back(dtCore::Map::MAP_FILE_EXTENSION);
          extensions.push_back(".xml");
+         extensions.push_back(""); // allow for folder recursion.
 
          dtUtil::FileInfo fi = GetMapsDirectory(false);
          // It may not have a maps directory, so we have to check.
@@ -629,43 +633,8 @@ namespace dtCore
          {
             dtCore::RefPtr<MapParser> parser = new MapParser();
 
-            const dtUtil::DirectoryContents contents = fileUtils.DirGetFiles(fi.fileName, extensions);
-
-            for (dtUtil::DirectoryContents::const_iterator fileIter = contents.begin(); fileIter < contents.end(); ++fileIter)
-            {
-               const std::string& filename = *fileIter;
-
-               std::string fullPath = fi.fileName + dtUtil::FileUtils::PATH_SEPARATOR + filename;
-               if (fileUtils.GetFileInfo(fullPath).fileType == dtUtil::REGULAR_FILE)
-               {
-                  try
-                  {
-                     std::string mapName = parser->ParseMapName(fullPath);
-
-                     MapFileData fileData;
-                     fileData.mOrigName = mapName;
-                     fileData.mFileName = filename;
-                     fileData.mSlotId = slot;
-
-                     // resolve name collisions.
-                     std::string mapNameBuffer = mapName;
-                     int suffix = 1;
-                     while (mMapList.find(mapNameBuffer) != mMapList.end())
-                     {
-                        mapNameBuffer = mapName;
-                        dtUtil::MakeIndexString(suffix, mapNameBuffer, 0);
-                        ++suffix;
-                     }
-
-                     mMapList.insert(make_pair(mapNameBuffer, fileData));
-                  }
-                  catch (const dtUtil::Exception& e)
-                  {
-                     std::string error = "Unable to parse " + fullPath + " with error " + e.What();
-                     mLogger->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__, __LINE__, error.c_str());
-                  }
-               }
-            }
+            // Now recurse through this folder and all sub-folders for all maps.
+            ListMapsForDir(fi.fileName, mMapStructure, extensions, parser, slot);
          }
       }
       catch (const dtUtil::Exception& ex)
@@ -674,6 +643,83 @@ namespace dtCore
          throw ex;
       }
       fileUtils.PopDirectory();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void ProjectImpl::ListMapsForDir(const std::string& mapsFolder, dtCore::Project::MapStructureData& structureData, dtUtil::FileExtensionList& extensions, dtCore::RefPtr<MapParser> parser, Project::ContextSlot slot)
+   {
+      dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
+
+      std::string dirPath = mapsFolder;
+      if (!structureData.categoryName.empty())
+      {
+         dirPath += dtUtil::FileUtils::PATH_SEPARATOR + structureData.categoryName;
+      }
+
+      const dtUtil::DirectoryContents contents = fileUtils.DirGetFiles(dirPath, extensions);
+
+      for (dtUtil::DirectoryContents::const_iterator fileIter = contents.begin(); fileIter < contents.end(); ++fileIter)
+      {
+         const std::string& filename = *fileIter;
+         std::string filePath;
+         std::string fullPath;
+
+         if (!structureData.categoryName.empty())
+         {
+            filePath = structureData.categoryName + dtUtil::FileUtils::PATH_SEPARATOR + filename;
+         }
+         else
+         {
+            filePath = filename;
+         }
+
+         fullPath = mapsFolder + dtUtil::FileUtils::PATH_SEPARATOR + filePath;
+
+         dtUtil::FileType fileType = fileUtils.GetFileInfo(fullPath).fileType;
+
+         // If this is a regular file, assume it is a map and attempt to load it.
+         if (fileType == dtUtil::REGULAR_FILE)
+         {
+            try
+            {
+               std::string mapName = parser->ParseMapName(fullPath);
+
+               MapFileData fileData;
+               fileData.mOrigName = mapName;
+               fileData.mFileName = filePath;
+               fileData.mSlotId = slot;
+
+               // resolve name collisions.
+               std::string mapNameBuffer = mapName;
+               int suffix = 1;
+               while (mMapList.find(mapNameBuffer) != mMapList.end())
+               {
+                  mapNameBuffer = mapName;
+                  dtUtil::MakeIndexString(suffix, mapNameBuffer, 0);
+                  ++suffix;
+               }
+
+               mMapList.insert(make_pair(mapNameBuffer, fileData));
+
+               structureData.mapList.insert(mapName);
+            }
+            catch (const dtUtil::Exception& e)
+            {
+               std::string error = "Unable to parse " + filePath + " with error " + e.What();
+               mLogger->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__, __LINE__, error.c_str());
+            }
+         }
+         // If we found a sub-directory, recurse into it.
+         else if (fileType == dtUtil::DIRECTORY)
+         {
+            structureData.subCategories.push_back(dtCore::Project::MapStructureData());
+            dtCore::Project::MapStructureData& subData = structureData.subCategories.back();
+
+            subData.clear();
+            subData.categoryName = filePath;
+            ListMapsForDir(mapsFolder, subData, extensions, parser, slot);
+         }
+      }
    }
 
    ////////////////////////////////////////////////////////////////////////////////
