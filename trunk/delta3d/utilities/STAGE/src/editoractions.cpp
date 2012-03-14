@@ -590,8 +590,18 @@ namespace dtEditQt
    void EditorActions::slotFileSaveMapAs()
    {
       slotPauseAutosave();
+      dtCore::Map* myMap = EditorData::GetInstance().getCurrentMap();
+      if (myMap == NULL)
+      {
+         slotRestartAutosave();
+         return;
+      }
 
-      MapSaveAsDialog dlg;
+      std::string mapName = myMap->GetName();
+      std::string categoryName = osgDB::getFilePath(myMap->GetFileName());
+      std::string description = myMap->GetDescription();
+
+      MapSaveAsDialog dlg(mapName, categoryName, description);
       if (dlg.exec()== QDialog::Rejected)
       {
          slotRestartAutosave();
@@ -602,17 +612,10 @@ namespace dtEditQt
       //std::string strippedName = osgDB::getSimpleFileName(dlg.getMapFileName());
       std::string name = osgDB::getStrippedName(strippedName);
 
-      dtCore::Map* myMap = EditorData::GetInstance().getCurrentMap();
-      if (myMap == NULL)
-      {
-         slotRestartAutosave();
-         return;
-      }
-
       try
       {
-         myMap->SetDescription(dlg.getMapDescription());
          EditorData::GetInstance().getMainWindow()->startWaitCursor();
+         myMap->SetDescription(dlg.getMapDescription());
          dtCore::Project::GetInstance().SaveMapAs(*myMap, name, strippedName);
          EditorData::GetInstance().getMainWindow()->endWaitCursor();
       }

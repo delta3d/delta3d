@@ -50,7 +50,7 @@ namespace dtEditQt
 
    public:
       /// Constructor
-      MapSaveAsDialog(QWidget* parent = NULL);
+      MapSaveAsDialog(const std::string& mapName, const std::string& categoryName, const std::string& description, QWidget* parent = NULL);
 
       /// Destructor
       virtual ~MapSaveAsDialog() { }
