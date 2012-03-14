@@ -67,7 +67,7 @@ namespace dtCore
 {
    const std::string Project::LOG_NAME("project.cpp");
    const std::string Project::MAP_DIRECTORY("maps");
-   const std::string Project::MAP_BACKUP_SUB_DIRECTORY("backups");
+   const std::string Project::MAP_BACKUP_SUB_DIRECTORY(".backups");
 
    struct MapFileData
    {
@@ -692,10 +692,10 @@ namespace dtCore
 
          fullPath = mapsFolder + dtUtil::FileUtils::PATH_SEPARATOR + filePath;
 
-         dtUtil::FileType fileType = fileUtils.GetFileInfo(fullPath).fileType;
+         dtUtil::FileInfo fileInfo = fileUtils.GetFileInfo(fullPath);
 
          // If this is a regular file, assume it is a map and attempt to load it.
-         if (fileType == dtUtil::REGULAR_FILE)
+         if (fileInfo.fileType == dtUtil::REGULAR_FILE)
          {
             try
             {
@@ -727,7 +727,7 @@ namespace dtCore
             }
          }
          // If we found a sub-directory, recurse into it.
-         else if (fileType == dtUtil::DIRECTORY)
+         else if (fileInfo.fileType == dtUtil::DIRECTORY)
          {
             treeData.subCategories.push_back(dtCore::Project::MapTreeData());
             dtCore::Project::MapTreeData& subData = treeData.subCategories.back();
@@ -1600,9 +1600,16 @@ namespace dtCore
 
          std::string path = backupDir + dtUtil::FileUtils::PATH_SEPARATOR + map.GetFileName();
 
-         if (!fileUtils.DirExists(backupDir))
+         std::string dir = path;
+         size_t pos = dir.find_last_of(dtUtil::FileUtils::PATH_SEPARATOR);
+         if (pos < dir.length())
          {
-            fileUtils.MakeDirectory(backupDir);
+            dir.erase(pos, dir.length());
+         }
+
+         if (!fileUtils.DirExists(dir))
+         {
+            fileUtils.MakeDirectory(dir);
          }
 
          std::string fileName = path + ".backupsaving";
