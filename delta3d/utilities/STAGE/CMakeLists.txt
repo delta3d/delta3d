@@ -12,7 +12,7 @@ ADD_SUBDIRECTORY(plugins/STMassImporter)
 ADD_SUBDIRECTORY(plugins/STRandomActorGenerator)
 ADD_SUBDIRECTORY(plugins/STRTSCamera)
 
-SET(APP_NAME STAGE)
+SET(APP_NAME STAGE) 
  
 SET(SOURCE_PATH ${CMAKE_SOURCE_DIR}/utilities/${APP_NAME})
 file(GLOB PROG_HEADERS "inc/dtEditQt/*.h")

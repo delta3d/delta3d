@@ -58,6 +58,7 @@
 #include <dtEditQt/mainwindow.h>
 #include <dtEditQt/mapdialog.h>
 #include <dtEditQt/mapsaveasdialog.h>
+#include <dtEditQt/mapopendialog.h>
 #include <dtEditQt/prefabsaveasdialog.h>
 #include <dtEditQt/preferencesdialog.h>
 #include <dtEditQt/projectcontextdialog.h>
@@ -70,7 +71,6 @@
 #include <dtEditQt/viewportoverlay.h>
 #include "ui_positiondialog.h"
 
-#include <dtQt/dialoglistselection.h>
 #include <dtQt/docbrowser.h>
 #include <dtQt/librarypathseditor.h>
 
@@ -522,16 +522,7 @@ namespace dtEditQt
 
       slotPauseAutosave();
 
-      dtQt::DialogListSelection openMapDialog(EditorData::GetInstance().getMainWindow(), tr("Open Existing Map"), tr("Available Maps"));
-
-      QStringList listItems;
-      const std::set<std::string>& mapNames = dtCore::Project::GetInstance().GetMapNames();
-      for (std::set<std::string>::const_iterator i = mapNames.begin(); i != mapNames.end(); ++i)
-      {
-         listItems << i->c_str();
-      }
-
-      openMapDialog.SetListItems(listItems);
+      MapOpenDialog openMapDialog(EditorData::GetInstance().getMainWindow());
       if (openMapDialog.exec() == QDialog::Accepted)
       {
          dtCore::RefPtr<dtCore::Map> newMap;
@@ -541,7 +532,7 @@ namespace dtEditQt
          {
             EditorData::GetInstance().getMainWindow()->startWaitCursor();
 
-            const QString& mapName = openMapDialog.GetSelectedItem();
+            QString mapName = openMapDialog.GetMapName();
             newMap = &dtCore::Project::GetInstance().GetMap(mapName.toStdString());
 
             EditorData::GetInstance().getMainWindow()->endWaitCursor();
@@ -550,7 +541,7 @@ namespace dtEditQt
          {
             EditorData::GetInstance().getMainWindow()->endWaitCursor();
 
-            QString error = "An error occured while opening the map. ";
+            QString error = "An error occurred while opening the map. ";
             error += e.What().c_str();
             LOG_ERROR(error.toStdString());
             QMessageBox::critical((QWidget *)EditorData::GetInstance().getMainWindow(),
