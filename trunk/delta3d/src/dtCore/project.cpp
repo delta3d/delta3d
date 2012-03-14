@@ -92,7 +92,7 @@ namespace dtCore
          //make sure the maps get closed before
          //the library manager is deleted
          mOpenMaps.clear();
-         mMapStructure.clear();
+         mMapTree.clear();
       }
 
       std::vector<std::string> mContexts;
@@ -106,7 +106,7 @@ namespace dtCore
       typedef std::map<std::string, MapFileData> MapListType;
       MapListType mMapList; //< The list of maps by name mapped to the file names.
       mutable std::set<std::string> mMapNames; //< The list of map names.
-      dtCore::Project::MapStructureData mMapStructure;
+      dtCore::Project::MapTreeData mMapTree;
 
       std::map<std::string, dtCore::RefPtr<Map> > mOpenMaps; //< A vector of the maps currently loaded.
       mutable dtUtil::tree<ResourceTreeNode> mResources; //< a tree of all the resources.  This is more of a cache.
@@ -155,7 +155,7 @@ namespace dtCore
       //Gets the list of backup map files.
       void GetBackupMapFilesList(dtUtil::DirectoryContents& toFill) const;
       void ListMapsForContextDir(Project::ContextSlot slot);
-      void ListMapsForDir(const std::string& mapsFolder, dtCore::Project::MapStructureData& structureData, dtUtil::FileExtensionList& extensions, dtCore::RefPtr<MapParser> parser, Project::ContextSlot slot);
+      void ListMapsForDir(const std::string& mapsFolder, dtCore::Project::MapTreeData& treeData, dtUtil::FileExtensionList& extensions, dtCore::RefPtr<MapParser> parser, Project::ContextSlot slot);
 
       void GenerateMapList();
 
@@ -523,7 +523,7 @@ namespace dtCore
       //clear the references to all the open maps
       mImpl->mMapList.clear();
       mImpl->mMapNames.clear();
-      mImpl->mMapStructure.clear();
+      mImpl->mMapTree.clear();
       GetMapNames();
 
       //clear out the list of mResources.
@@ -581,6 +581,23 @@ namespace dtCore
    }
 
    ////////////////////////////////////////////////////////////////////////////////
+   const Project::MapTreeData& Project::GetMapTree()
+   {
+      if (!IsContextValid())
+      {
+         throw dtCore::ProjectInvalidContextException(
+            std::string("The context is not valid."), __FILE__, __LINE__);
+      }
+
+      if (mImpl->mMapList.empty())
+      {
+         mImpl->GenerateMapList();
+      }
+
+      return mImpl->mMapTree;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
    MapHeaderData Project::GetMapHeader(const std::string& mapName)
    {
       if (!IsContextValid())
@@ -634,7 +651,7 @@ namespace dtCore
             dtCore::RefPtr<MapParser> parser = new MapParser();
 
             // Now recurse through this folder and all sub-folders for all maps.
-            ListMapsForDir(fi.fileName, mMapStructure, extensions, parser, slot);
+            ListMapsForDir(fi.fileName, mMapTree, extensions, parser, slot);
          }
       }
       catch (const dtUtil::Exception& ex)
@@ -646,14 +663,14 @@ namespace dtCore
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void ProjectImpl::ListMapsForDir(const std::string& mapsFolder, dtCore::Project::MapStructureData& structureData, dtUtil::FileExtensionList& extensions, dtCore::RefPtr<MapParser> parser, Project::ContextSlot slot)
+   void ProjectImpl::ListMapsForDir(const std::string& mapsFolder, dtCore::Project::MapTreeData& treeData, dtUtil::FileExtensionList& extensions, dtCore::RefPtr<MapParser> parser, Project::ContextSlot slot)
    {
       dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
 
       std::string dirPath = mapsFolder;
-      if (!structureData.categoryName.empty())
+      if (!treeData.categoryName.empty())
       {
-         dirPath += dtUtil::FileUtils::PATH_SEPARATOR + structureData.categoryName;
+         dirPath += dtUtil::FileUtils::PATH_SEPARATOR + treeData.categoryName;
       }
 
       const dtUtil::DirectoryContents contents = fileUtils.DirGetFiles(dirPath, extensions);
@@ -664,9 +681,9 @@ namespace dtCore
          std::string filePath;
          std::string fullPath;
 
-         if (!structureData.categoryName.empty())
+         if (!treeData.categoryName.empty())
          {
-            filePath = structureData.categoryName + dtUtil::FileUtils::PATH_SEPARATOR + filename;
+            filePath = treeData.categoryName + dtUtil::FileUtils::PATH_SEPARATOR + filename;
          }
          else
          {
@@ -701,7 +718,7 @@ namespace dtCore
 
                mMapList.insert(make_pair(mapNameBuffer, fileData));
 
-               structureData.mapList.insert(mapName);
+               treeData.mapList.insert(mapName);
             }
             catch (const dtUtil::Exception& e)
             {
@@ -712,8 +729,8 @@ namespace dtCore
          // If we found a sub-directory, recurse into it.
          else if (fileType == dtUtil::DIRECTORY)
          {
-            structureData.subCategories.push_back(dtCore::Project::MapStructureData());
-            dtCore::Project::MapStructureData& subData = structureData.subCategories.back();
+            treeData.subCategories.push_back(dtCore::Project::MapTreeData());
+            dtCore::Project::MapTreeData& subData = treeData.subCategories.back();
 
             subData.clear();
             subData.categoryName = filePath;

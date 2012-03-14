@@ -74,7 +74,7 @@ namespace dtCore
       typedef unsigned ContextSlot;
       static const ContextSlot DEFAULT_SLOT_VALUE = ~0U;
 
-      struct MapStructureData
+      struct MapTreeData
       {
          void clear()
          {
@@ -85,7 +85,7 @@ namespace dtCore
 
          std::string                   categoryName;
          mutable std::set<std::string> mapList;
-         std::vector<MapStructureData> subCategories;
+         std::vector<MapTreeData>      subCategories;
       };
 
       /**
@@ -200,6 +200,8 @@ namespace dtCore
        * @throws ExceptionEnum::ProjectInvalidContext if the context is not set.
        */
       const std::set<std::string>& GetMapNames();
+
+      const MapTreeData& GetMapTree();
 
       MapHeaderData GetMapHeader(const std::string& mapName);
 
