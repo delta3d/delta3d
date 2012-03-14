@@ -742,6 +742,10 @@ namespace dtCore
    ////////////////////////////////////////////////////////////////////////////////
    void ProjectImpl::GenerateMapList()
    {
+      mMapList.clear();
+      mMapTree.clear();
+      mMapNames.clear();
+
       mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
          "The project is preparing to load the map list.");
 
@@ -1380,10 +1384,19 @@ namespace dtCore
    {
       mImpl->CheckMapValidity(map);
 
-      if (map.GetSavedName() == newName)
+      // JPH: Why not?  Sometimes we just want to change the description.
+      //if (map.GetSavedName() == newName)
+      //{
+      //   throw dtCore::ProjectException( std::string("Map named ")
+      //          + map.GetSavedName() + " cannot be saved again as the same name", __FILE__, __LINE__);
+      //}
+
+      // Unless we are overwriting our current map file, we must not allow
+      // the same named map to be saved as another file name (eg. in another category folder).
+      if (map.GetName() == newName && osgDB::getNameLessAllExtensions(map.GetFileName()) != newFileName)
       {
          throw dtCore::ProjectException( std::string("Map named ")
-                + map.GetSavedName() + " cannot be saved again as the same name", __FILE__, __LINE__);
+                + map.GetName() + " cannot be saved again as the same name while under a new category name", __FILE__, __LINE__);
       }
 
       //std::string newFileNameCopy(newFileName);
@@ -1397,24 +1410,29 @@ namespace dtCore
          slot = oldFileData.mSlotId;
       }
 
+      // JPH: Same as above, overwriting the same map should be allowed.
       //compare the file name without the extension.
-      if (currentFileName.substr(0, currentFileName.size() - Map::MAP_FILE_EXTENSION.size())
-          == newFileName && oldFileData.mSlotId == slot)
-      {
-         throw dtCore::ProjectException( std::string("Map named ") + map.GetSavedName()
-                + " cannot be saved as a different map with the same file name.", __FILE__, __LINE__);
-      }
+      //if (currentFileName.substr(0, currentFileName.size() - Map::MAP_FILE_EXTENSION.size())
+      //    == newFileName && oldFileData.mSlotId == slot)
+      //{
+      //   throw dtCore::ProjectException( std::string("Map named ") + map.GetSavedName()
+      //          + " cannot be saved as a different map with the same file name.", __FILE__, __LINE__);
+      //}
 
-      for (ProjectImpl::MapListType::const_iterator i = mImpl->mMapList.begin();
-           i != mImpl->mMapList.end(); ++i )
+      // If we are not changing our current maps file name, don't check for overwrite.
+      if (newFileName != osgDB::getNameLessAllExtensions(map.GetFileName()))
       {
-         const std::string& mapFileNameRef = i->second.mFileName;
-         if (newFileName == mapFileNameRef.substr(0, mapFileNameRef.size() - Map::MAP_FILE_EXTENSION.size())
-                  && i->second.mSlotId == slot)
+         for (ProjectImpl::MapListType::const_iterator i = mImpl->mMapList.begin();
+            i != mImpl->mMapList.end(); ++i )
          {
-            throw dtCore::ProjectException( std::string("Map named ")
-                   + map.GetSavedName() + " cannot be saved with file name "
-                   + newFileName + " because it matches another map.", __FILE__, __LINE__);
+            const std::string& mapFileNameRef = i->second.mFileName;
+            if (newFileName == mapFileNameRef.substr(0, mapFileNameRef.size() - Map::MAP_FILE_EXTENSION.size())
+               && i->second.mSlotId == slot)
+            {
+               throw dtCore::ProjectException( std::string("Map named ")
+                  + map.GetSavedName() + " cannot be saved with file name "
+                  + newFileName + " because it matches another map.", __FILE__, __LINE__);
+            }
          }
       }
 
@@ -1437,6 +1455,9 @@ namespace dtCore
          mImpl->mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__, "Error clearing map backups when saving %s as %s: %s",
                              oldMapName.c_str(), newName.c_str(), ex.What().c_str());
       }
+
+      // Now re-load our map listing.
+      mImpl->GenerateMapList();
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -1526,13 +1547,7 @@ namespace dtCore
       std::string fullPathSaving = fullPath + ".saving";
 
       //make sure the category directory exists.
-      std::string folderPath = fullPath;
-      size_t pos = folderPath.find_last_of(dtUtil::FileUtils::PATH_SEPARATOR);
-      if (pos < folderPath.length())
-      {
-         size_t count = folderPath.length() - pos;
-         folderPath.erase(pos, count);
-      }
+      std::string folderPath = osgDB::getFilePath(fullPath);
       fileUtils.MakeDirectoryEX(folderPath);
 
       //save the file to a separate name first so that
@@ -1600,13 +1615,7 @@ namespace dtCore
 
          std::string path = backupDir + dtUtil::FileUtils::PATH_SEPARATOR + map.GetFileName();
 
-         std::string dir = path;
-         size_t pos = dir.find_last_of(dtUtil::FileUtils::PATH_SEPARATOR);
-         if (pos < dir.length())
-         {
-            dir.erase(pos, dir.length());
-         }
-
+         std::string dir = osgDB::getFilePath(path);
          if (!fileUtils.DirExists(dir))
          {
             fileUtils.MakeDirectory(dir);

@@ -47,7 +47,7 @@
 namespace dtEditQt
 {
 
-   MapSaveAsDialog::MapSaveAsDialog(QWidget* parent)
+   MapSaveAsDialog::MapSaveAsDialog(const std::string& mapName, const std::string& categoryName, const std::string& description, QWidget* parent)
       : QDialog(parent)
    {
       setWindowTitle(tr("Save Map As"));
@@ -60,12 +60,14 @@ namespace dtEditQt
       label = new QLabel(tr("Name:"),groupBox);
       label->setAlignment(Qt::AlignRight);
       nameEdit = new QLineEdit(groupBox);
+      nameEdit->setText(mapName.c_str());
       gridLayout->addWidget(label,    0, 0);
       gridLayout->addWidget(nameEdit, 0, 1);
 
       label = new QLabel(tr("Category:"),groupBox);
       label->setAlignment(Qt::AlignRight);
       categoryEdit = new QLineEdit(groupBox);
+      categoryEdit->setText(categoryName.c_str());
       gridLayout->addWidget(label,        1, 0);
       gridLayout->addWidget(categoryEdit, 1, 1);
 
@@ -80,6 +82,7 @@ namespace dtEditQt
       label = new QLabel(tr("Description:"),groupBox);
       label->setAlignment(Qt::AlignRight);
       descEdit = new QTextEdit(groupBox);
+      descEdit->setText(description.c_str());
       gridLayout->addWidget(label,    3, 0);
       gridLayout->addWidget(descEdit, 3, 1);
 
@@ -96,6 +99,11 @@ namespace dtEditQt
 
       connect(okButton,     SIGNAL(clicked()), this, SLOT(accept()));
       connect(cancelButton, SIGNAL(clicked()), this, SLOT(reject()));
+
+      updateFileName();
+
+      // Enable the ok button now that we have text.
+      !mapName.empty() ? okButton->setEnabled(true) : okButton->setEnabled(false);
 
       QVBoxLayout* mainLayout = new QVBoxLayout(this);
       mainLayout->addWidget(groupBox);
