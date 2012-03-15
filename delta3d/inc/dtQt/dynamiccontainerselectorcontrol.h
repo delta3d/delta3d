@@ -44,7 +44,7 @@ namespace dtQt
     * @class DynamicContainerSelectorControl
     * @brief This is the dynamic control for the String data type - used in the property editor
     */
-   class DT_QT_EXPORT DynamicContainerSelectorControl : public DynamicGroupControl
+   class DT_QT_EXPORT DynamicContainerSelectorControl : public DynamicAbstractParentControl
    {
       Q_OBJECT
 
@@ -123,6 +123,18 @@ namespace dtQt
       void handleSubEditDestroy(QWidget* widget, QAbstractItemDelegate::EndEditHint hint = QAbstractItemDelegate::NoHint);
 
    protected:
+
+      /**
+       * Attempt to find a group control with the passed in name.  This is used primarily
+       * on the root object to find an existing group.  However, it could easily be used
+       * for nested groups once that is supported.
+       */
+      DynamicGroupControl* getChildGroupControl(QString name);
+
+      /**
+       * Adds a child to this group sorted in ABC order.
+       */
+      void addChildControlSorted(DynamicAbstractControl* child, PropertyEditorModel* model);
 
    private:
       dtCore::ContainerSelectorActorProperty* mProperty;
