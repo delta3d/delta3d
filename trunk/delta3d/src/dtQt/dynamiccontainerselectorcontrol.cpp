@@ -49,7 +49,7 @@ namespace dtQt
 
    ///////////////////////////////////////////////////////////////////////////////
    DynamicContainerSelectorControl::DynamicContainerSelectorControl()
-      : DynamicGroupControl("ContainerSelectorControl")
+      : DynamicAbstractParentControl()
       , mProperty(NULL)
       , mTemporaryComboControl(NULL)
    {
@@ -302,29 +302,45 @@ namespace dtQt
                if (!catControl)
                {
                   catControl = new DynamicGroupControl(catName);
-                  catControl->InitializeData(this, GetModel(), propCon, NULL);
+                  catControl->InitializeData(this, GetModel(), mPropContainer, NULL);
+
+                  connect(catControl, SIGNAL(PropertyAboutToChange(dtCore::PropertyContainer&, dtCore::ActorProperty&,
+                     const std::string&, const std::string&)),
+                     this, SLOT(PropertyAboutToChangePassThrough(dtCore::PropertyContainer&, dtCore::ActorProperty&,
+                     const std::string&, const std::string&)));
+
+                  connect(catControl, SIGNAL(PropertyChanged(dtCore::PropertyContainer&, dtCore::ActorProperty&)),
+                     this, SLOT(PropertyChangedPassThrough(dtCore::PropertyContainer&, dtCore::ActorProperty&)));
                   addChildControlSorted(catControl, GetModel());
                }
 
                // Add our new control to this category.
                if (catControl)
                {
-                  element->InitializeData(catControl, GetModel(), propCon, prop);
+                  element->InitializeData(catControl, GetModel(), mPropContainer, prop);
+
+                  connect(element, SIGNAL(PropertyAboutToChange(dtCore::PropertyContainer&, dtCore::ActorProperty&,
+                     const std::string&, const std::string&)),
+                     catControl, SLOT(PropertyAboutToChangePassThrough(dtCore::PropertyContainer&, dtCore::ActorProperty&,
+                     const std::string&, const std::string&)));
+
+                  connect(element, SIGNAL(PropertyChanged(dtCore::PropertyContainer&, dtCore::ActorProperty&)),
+                     catControl, SLOT(PropertyChangedPassThrough(dtCore::PropertyContainer&, dtCore::ActorProperty&)));
                   catControl->addChildControl(element, GetModel());
                }
                else
                {
-                  element->InitializeData(this, GetModel(), propCon, prop);
+                  element->InitializeData(this, GetModel(), mPropContainer, prop);
+
+                  connect(element, SIGNAL(PropertyAboutToChange(dtCore::PropertyContainer&, dtCore::ActorProperty&,
+                     const std::string&, const std::string&)),
+                     this, SLOT(PropertyAboutToChangePassThrough(dtCore::PropertyContainer&, dtCore::ActorProperty&,
+                     const std::string&, const std::string&)));
+
+                  connect(element, SIGNAL(PropertyChanged(dtCore::PropertyContainer&, dtCore::ActorProperty&)),
+                     this, SLOT(PropertyChangedPassThrough(dtCore::PropertyContainer&, dtCore::ActorProperty&)));
                   mChildren.push_back(element);
                }
-
-               connect(element, SIGNAL(PropertyAboutToChange(dtCore::PropertyContainer&, dtCore::ActorProperty&,
-                  const std::string&, const std::string&)),
-                  this, SLOT(PropertyAboutToChangePassThrough(dtCore::PropertyContainer&, dtCore::ActorProperty&,
-                  const std::string&, const std::string&)));
-
-               connect(element, SIGNAL(PropertyChanged(dtCore::PropertyContainer&, dtCore::ActorProperty&)),
-                  this, SLOT(PropertyChangedPassThrough(dtCore::PropertyContainer&, dtCore::ActorProperty&)));
             }
          }
 
@@ -372,4 +388,58 @@ namespace dtQt
       DynamicAbstractControl::handleSubEditDestroy(widget, hint);
    }
 
+   /////////////////////////////////////////////////////////////////////////////////
+   DynamicGroupControl* DynamicContainerSelectorControl::getChildGroupControl(QString name)
+   {
+      std::vector<DynamicAbstractControl*>::iterator childIter;
+      DynamicGroupControl* result = NULL;
+
+      // walk the children to find group controls.
+      for (childIter = mChildren.begin(); childIter != mChildren.end(); ++childIter)
+      {
+         DynamicAbstractControl* control = (*childIter);
+         if (control != NULL)
+         {
+            // for each group control, compare the name
+            DynamicGroupControl* group = dynamic_cast<DynamicGroupControl*>(control);
+            if (group != NULL && group->getDisplayName() == QString(name))
+            {
+               result = group;
+               break;
+            }
+         }
+      }
+
+      return result;
+   }
+
+   /////////////////////////////////////////////////////////////////////////////////
+   void DynamicContainerSelectorControl::addChildControlSorted(DynamicAbstractControl* child, PropertyEditorModel* model)
+   {
+      // Note - if you change the propertyeditor so that it adds and removes rows instead of destroying
+      // the property editor, you need to work with the begin/endinsertrows methods of model.
+      if (child != NULL)
+      {
+         QString newChildName = child->getDisplayName();
+
+         // Sort the new control.
+         bool inserted = false;
+         int count = (int)mChildren.size();
+         for (int index = 0; index < count; ++index)
+         {
+            QString name = mChildren[index]->getDisplayName();
+            if (name > newChildName)
+            {
+               inserted = true;
+               mChildren.insert(mChildren.begin() + index, 1, child);
+               break;
+            }
+         }
+
+         if (!inserted)
+         {
+            mChildren.push_back(child);
+         }
+      }
+   }
 } // namespace dtQt
