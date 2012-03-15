@@ -611,7 +611,7 @@ void ObjectMotionModel::InitArrows(void)
       mArrows[arrowIndex].planarGeode            = new osg::Geode();
       mArrows[arrowIndex].planarSelectionGeode   = new osg::Geode();
 
-      osg::Cylinder* cylinder = new osg::Cylinder(osg::Vec3(0.0f, 0.0f, 0.09f), 0.005f, 0.14f);
+      osg::Cylinder* cylinder = new osg::Cylinder(osg::Vec3(0.0f, 0.0f, 0.09f), 0.008f, 0.14f);
       osg::Cone*     cone     = new osg::Cone(osg::Vec3(0.0f, 0.0f, 0.165f), 0.015f, 0.02f);
       osg::Box*      box      = new osg::Box(osg::Vec3(0.0f, 0.0f, 0.2f), 0.015f, 0.015f, 0.015f);
 
@@ -619,7 +619,7 @@ void ObjectMotionModel::InitArrows(void)
       osg::TriangleMesh* selectionRing = GenerateRing(ringRadius - ringSelectionThickness, ringRadius + ringSelectionThickness, 80);
 
       osg::TriangleMesh* plane = GeneratePlane(0.035f, 0.04f);
-      osg::TriangleMesh* selectionPlane = GeneratePlane(0.0f, 0.06f);
+      osg::TriangleMesh* selectionPlane = GeneratePlane(0.03f, 0.045f);
 
       mArrows[arrowIndex].arrowCylinder = new osg::ShapeDrawable(cylinder);
       mArrows[arrowIndex].arrowCone     = new osg::ShapeDrawable(cone);
@@ -935,7 +935,7 @@ dtCore::DeltaDrawable* ObjectMotionModel::MousePick(void)
 
       if (isector->Update())
       {
-         // First only test for rotation and planar picking.
+         // Check for planar translation.
          const dtCore::BatchIsector::HitList& hitlist = isector->GetSingleISector(0).GetHitList();
          for (dtCore::BatchIsector::HitList::const_reverse_iterator hitItr = hitlist.rbegin();
             hitItr != hitlist.rend();
@@ -953,13 +953,29 @@ dtCore::DeltaDrawable* ObjectMotionModel::MousePick(void)
 
                for (int ArrowIndex = 0; ArrowIndex < ARROW_TYPE_MAX; ++ArrowIndex)
                {
+                  if (node == mArrows[ArrowIndex].planarTransform->GetOSGNode())
+                  {
+                     return mArrows[ArrowIndex].planarTransform.get();
+                  }
+               }
+            }
+         }
+
+         // Check for rotation.
+         for (dtCore::BatchIsector::HitList::const_reverse_iterator hitItr = hitlist.rbegin();
+            hitItr != hitlist.rend();
+            ++hitItr)
+         {
+            for (osg::NodePath::const_reverse_iterator nodeItr = hitItr->getNodePath().rbegin();
+                  nodeItr != hitItr->getNodePath().rend();
+                  ++nodeItr)
+            {
+               osg::Node* node = (*nodeItr);
+               for (int ArrowIndex = 0; ArrowIndex < ARROW_TYPE_MAX; ++ArrowIndex)
+               {
                   if (node == mArrows[ArrowIndex].rotationTransform->GetOSGNode())
                   {
                      return mArrows[ArrowIndex].rotationTransform.get();
-                  }
-                  else if (node == mArrows[ArrowIndex].planarTransform->GetOSGNode())
-                  {
-                     return mArrows[ArrowIndex].planarTransform.get();
                   }
                }
             }
