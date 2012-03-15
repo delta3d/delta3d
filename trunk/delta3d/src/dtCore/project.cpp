@@ -1393,7 +1393,7 @@ namespace dtCore
 
       // Unless we are overwriting our current map file, we must not allow
       // the same named map to be saved as another file name (eg. in another category folder).
-      if (map.GetName() == newName && osgDB::getNameLessAllExtensions(map.GetFileName()) != newFileName)
+      if (map.GetName() == newName && osgDB::getNameLessExtension(map.GetFileName()) != newFileName)
       {
          throw dtCore::ProjectException( std::string("Map named ")
                 + map.GetName() + " cannot be saved again as the same name while under a new category name", __FILE__, __LINE__);
@@ -1420,7 +1420,7 @@ namespace dtCore
       //}
 
       // If we are not changing our current maps file name, don't check for overwrite.
-      if (newFileName != osgDB::getNameLessAllExtensions(map.GetFileName()))
+      if (newFileName != osgDB::getNameLessExtension(map.GetFileName()))
       {
          for (ProjectImpl::MapListType::const_iterator i = mImpl->mMapList.begin();
             i != mImpl->mMapList.end(); ++i )
