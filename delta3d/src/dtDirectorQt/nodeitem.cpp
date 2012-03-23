@@ -170,10 +170,11 @@ namespace dtDirector
    const QColor NodeItem::LINE_COLOR(0, 0, 0, 50);
 
    //////////////////////////////////////////////////////////////////////////
-   NodeItem::NodeItem(Node* node, bool imported, QGraphicsItem* parent, EditorScene* scene)
+   NodeItem::NodeItem(Node* node, bool readOnly, bool imported, QGraphicsItem* parent, EditorScene* scene)
        : QGraphicsPolygonItem(parent, scene)
        , mScene(scene)
        , mLoading(true)
+       , mIsReadOnly(readOnly)
        , mIsImported(imported)
        , mTitle(NULL)
        , mTitleBG(NULL)
@@ -192,11 +193,11 @@ namespace dtDirector
        , mHasHiddenLinks(false)
        , mChainSelecting(false)
    {
-      setFlag(QGraphicsItem::ItemIsMovable, !imported);
+      setFlag(QGraphicsItem::ItemIsMovable, !imported && !readOnly);
       setFlag(QGraphicsItem::ItemIsSelectable, true);
 
 #if(QT_VERSION >= 0x00040600)
-      setFlag(QGraphicsItem::ItemSendsGeometryChanges, !imported);
+      setFlag(QGraphicsItem::ItemSendsGeometryChanges, !imported && !readOnly);
 #endif
    }
 
@@ -353,7 +354,7 @@ namespace dtDirector
          mTitleBG = new QGraphicsRectItem(this, scene());
          mTitle = new GraphicsTextItem(mTitleBG, scene());
 
-         if (mIsImported)
+         if (mIsReadOnly)
          {
             QFont font = mTitle->font();
             font = QFont(font.family(), font.pointSize(), font.weight(), false);
@@ -406,7 +407,7 @@ namespace dtDirector
       {
          mComment = new GraphicsTextItem(this, scene());
 
-         if (mIsImported)
+         if (mIsReadOnly)
          {
             QFont font = mComment->font();
             font = QFont(font.family(), font.pointSize(), font.weight(), false);
@@ -467,7 +468,7 @@ namespace dtDirector
             data.linkGraphic = new InputLinkItem(this, (int)mInputs.size()-1, this, mScene, data.link->GetComment());
             data.linkName = new GraphicsTextItem(data.linkGraphic, mScene);
             data.linkName->setAcceptHoverEvents(false);
-            if (mIsImported)
+            if (mIsReadOnly)
             {
                QFont font = data.linkName->font();
                font = QFont(font.family(), font.pointSize(), font.weight(), false);
@@ -492,7 +493,7 @@ namespace dtDirector
             data.linkGraphic = new OutputLinkItem(this, (int)mOutputs.size()-1, this, mScene, data.link->GetComment());
             data.linkName = new GraphicsTextItem(data.linkGraphic, mScene);
             data.linkName->setAcceptHoverEvents(false);
-            if (mIsImported)
+            if (mIsReadOnly)
             {
                QFont font = data.linkName->font();
                font = QFont(font.family(), font.pointSize(), font.weight(), false);
@@ -519,7 +520,7 @@ namespace dtDirector
             data.linkGraphic = new ValueLinkItem(this, (int)mValues.size()-1, this, mScene, data.link->GetComment());
             data.linkName = new GraphicsTextItem(data.linkGraphic, mScene);
             data.linkName->setAcceptHoverEvents(false);
-            if (mIsImported)
+            if (mIsReadOnly)
             {
                QFont font = data.linkName->font();
                font = QFont(font.family(), font.pointSize(), font.weight(), false);
@@ -1599,7 +1600,7 @@ namespace dtDirector
          }
       }
 
-      if (mIsImported)
+      if (mIsReadOnly)
       {
          color = color.light(150);
       }
@@ -1647,7 +1648,7 @@ namespace dtDirector
       QColor colorDark = nodeColor.dark(100);
 
       float height = mNodeHeight;
-      //if (mIsImported)
+      //if (mIsReadOnly)
       //{
       //   height = mNodeHeight * 0.5f;
       //   colorDark.setAlphaF(0.25f);
@@ -1666,7 +1667,7 @@ namespace dtDirector
    void NodeItem::SetDefaultPen()
    {
       QColor lineColor = LINE_COLOR;
-      if (mIsImported)
+      if (mIsReadOnly)
       {
          lineColor.setAlphaF(lineColor.alphaF() * 0.5f);
          lineColor = lineColor.light(150);

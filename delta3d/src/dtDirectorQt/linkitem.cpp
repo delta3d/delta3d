@@ -99,7 +99,7 @@ namespace dtDirector
       else
       {
          QPen drawPen = mLinkGraphicPen;
-         if (mNodeItem->IsImported())
+         if (mNodeItem->IsImported() || mNodeItem->IsReadOnly())
          {
             QColor color = drawPen.color();
             color.setAlphaF(color.alphaF() * 0.5f);

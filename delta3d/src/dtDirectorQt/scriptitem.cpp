@@ -42,8 +42,8 @@
 namespace dtDirector
 {
    //////////////////////////////////////////////////////////////////////////
-   ScriptItem::ScriptItem(Node* node, bool imported, QGraphicsItem* parent, EditorScene* scene)
-      : ActionItem(node, imported, parent, scene)
+   ScriptItem::ScriptItem(Node* node, bool readOnly, bool imported, QGraphicsItem* parent, EditorScene* scene)
+      : ActionItem(node, readOnly, imported, parent, scene)
    {
    }
 

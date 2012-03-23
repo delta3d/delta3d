@@ -189,7 +189,7 @@ namespace dtDirector
       for (int index = 0; index < count; index++)
       {
          Node* node = graph->GetEventNodes()[index].get();
-         ActionItem* item = new ActionItem(node, imported, mTranslationItem, this);
+         ActionItem* item = new ActionItem(node, node->IsReadOnly(), imported, mTranslationItem, this);
          if (item)
          {
             item->setZValue(10.0f);
@@ -206,18 +206,18 @@ namespace dtDirector
          // Special case for reference script nodes.
          if (IS_A(node, ReferenceScriptAction*))
          {
-            item = new ScriptItem(node, imported, mTranslationItem, this);
+            item = new ScriptItem(node, node->IsReadOnly(), imported, mTranslationItem, this);
             item->setZValue(10.0f);
          }
          // Special case for group frame nodes.
          else if (IS_A(node, GroupNode*))
          {
-            item = new GroupItem(node, imported, mTranslationItem, this);
+            item = new GroupItem(node, node->IsReadOnly(), imported, mTranslationItem, this);
             item->setZValue(0.0f);
          }
          else
          {
-            item = new ActionItem(node, imported, mTranslationItem, this);
+            item = new ActionItem(node, node->IsReadOnly(), imported, mTranslationItem, this);
             item->setZValue(10.0f);
          }
 
@@ -231,7 +231,7 @@ namespace dtDirector
       for (int index = 0; index < count; index++)
       {
          Node* node = graph->GetValueNodes()[index].get();
-         ValueItem* item = new ValueItem(node, imported, mTranslationItem, this);
+         ValueItem* item = new ValueItem(node, node->IsReadOnly(), imported, mTranslationItem, this);
          if (item)
          {
             item->setZValue(20.0f);
@@ -258,7 +258,7 @@ namespace dtDirector
             DirectorGraph* parentGraph = mGraph->GetGraph(id);
             if (parentGraph)
             {
-               MacroItem* item = new MacroItem(parentGraph, imported, mTranslationItem, this);
+               MacroItem* item = new MacroItem(parentGraph, parentGraph->IsReadOnly(), imported, mTranslationItem, this);
                if (item)
                {
                   item->setZValue(10.0f);
@@ -283,8 +283,8 @@ namespace dtDirector
       }
 
       // Don't snap imported nodes, because they are non-movable.
-      if ((item->GetNode() && item->GetNode()->IsImported()) ||
-         (item->GetMacro() && item->GetMacro()->IsImported()))
+      if ((item->GetNode() && (item->GetNode()->IsImported() || item->GetNode()->IsReadOnly())) ||
+         (item->GetMacro() && (item->GetMacro()->IsImported() || item->GetMacro()->IsReadOnly())))
       {
          return position;
       }

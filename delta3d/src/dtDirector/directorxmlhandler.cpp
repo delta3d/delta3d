@@ -289,6 +289,7 @@ namespace dtDirector
 
                   mGraphID.clear();
                   mIsGraphImported = false;
+                  mIsGraphReadOnly = false;
 
                   mPropSerializer->SetCurrentPropertyContainer(NULL);
 
@@ -342,6 +343,7 @@ namespace dtDirector
 
          mGraphID.clear();
          mIsGraphImported = false;
+         mIsGraphReadOnly = false;
 
          mPropSerializer->SetCurrentPropertyContainer(NULL);
 
@@ -804,6 +806,10 @@ namespace dtDirector
                {
                   mIsGraphImported = dtUtil::XMLStringConverter(chars).ToString() == "true"? true: false;
                }
+               else if (topEl == dtCore::MapXMLConstants::DIRECTOR_READ_ONLY)
+               {
+                  mIsGraphReadOnly = dtUtil::XMLStringConverter(chars).ToString() == "true"? true: false;
+               }
                else if (topEl == dtCore::MapXMLConstants::ID_INDEX_ELEMENT)
                {
                   mGraphID.index = dtUtil::ToType<int>(dtUtil::XMLStringConverter(chars).ToString());
@@ -832,6 +838,7 @@ namespace dtDirector
                      }
 
                      graph->SetID(mGraphID);
+                     graph->SetReadOnly(mIsGraphReadOnly);
                      mGraphs.push(graph);
                      mPropSerializer->SetCurrentPropertyContainer(graph);
                   }
@@ -857,6 +864,7 @@ namespace dtDirector
                         graph->SetIDIndex(mGraphID.index);
                      }
                      graph->SetID(mGraphID.id);
+                     graph->SetReadOnly(mIsGraphReadOnly);
                      mGraphs.push(graph);
                      mPropSerializer->SetCurrentPropertyContainer(graph);
                   }

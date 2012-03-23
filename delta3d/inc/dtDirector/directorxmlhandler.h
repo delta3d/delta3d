@@ -189,6 +189,7 @@ namespace dtDirector
 
       ID           mGraphID;
       bool         mIsGraphImported;
+      bool         mIsGraphReadOnly;
 
       struct ToLinkData
       {

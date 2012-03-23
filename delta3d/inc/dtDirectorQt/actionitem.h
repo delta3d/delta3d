@@ -38,11 +38,12 @@ namespace dtDirector
        * Constructor.
        *
        * @param[in]  node      The Director Node.
+       * @param[in]  readOnly  True if this node is read only.
        * @param[in]  imported  True if this node is an imported node.
        * @param[in]  parent    The parent item.
        * @param[in]  scene     The scene.
        */
-      ActionItem(Node* node, bool imported, QGraphicsItem* parent = 0, EditorScene* scene = 0);
+      ActionItem(Node* node, bool readOnly, bool imported, QGraphicsItem* parent = 0, EditorScene* scene = 0);
 
       /**
        * Draws the node.

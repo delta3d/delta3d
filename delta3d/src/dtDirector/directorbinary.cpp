@@ -36,7 +36,7 @@
 #include <dtUtil/datetime.h>
 #include <dtUtil/log.h>
 
-#define BINARY_SCRIPT_VERSION 4.0f
+#define BINARY_SCRIPT_VERSION 5.0f
 
 namespace dtDirector
 {
@@ -265,12 +265,19 @@ namespace dtDirector
       }
 
       bool isImported = false;
+      bool isReadOnly = false;
       ID id;
 
       // Imported.
       if (version >= 4.0f)
       {
          fread(&isImported, sizeof(bool), 1, file);
+      }
+
+      // Read Only.
+      if (version >= 5.0f)
+      {
+         fread(&isReadOnly, sizeof(bool), 1, file);
       }
 
       // Graph ID.
@@ -303,6 +310,7 @@ namespace dtDirector
          }
 
          graph->SetID(id);
+         graph->SetReadOnly(isReadOnly);
       }
       // Otherwise, create a new graph.
       else
@@ -324,6 +332,7 @@ namespace dtDirector
             graph->SetIDIndex(id.index);
          }
          graph->SetID(id.id);
+         graph->SetReadOnly(isReadOnly);
       }
 
       // Properties.
@@ -946,6 +955,10 @@ namespace dtDirector
       // Imported.
       bool isImported = graph->IsImported();
       fwrite(&isImported, sizeof(bool), 1, file);
+
+      // Read Only.
+      bool isReadOnly = graph->IsReadOnly();
+      fwrite(&isReadOnly, sizeof(bool), 1, file);
 
       // Graph ID.
       fwrite(&graph->GetID().index, sizeof(int), 1, file);

@@ -60,6 +60,7 @@ namespace dtCore
          static XMLCh* DIRECTOR_NAMESPACE;
          static XMLCh* DIRECTOR_SCRIPT_TYPE;
          static XMLCh* DIRECTOR_IMPORTED_SCRIPT;
+         static XMLCh* DIRECTOR_READ_ONLY;
 
          static XMLCh* HEADER_ELEMENT;
          static XMLCh* NAME_ELEMENT;

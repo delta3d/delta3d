@@ -61,6 +61,7 @@ namespace dtCore
    XMLCh* MapXMLConstants::DIRECTOR_NAMESPACE = NULL;
    XMLCh* MapXMLConstants::DIRECTOR_SCRIPT_TYPE = NULL;
    XMLCh* MapXMLConstants::DIRECTOR_IMPORTED_SCRIPT = NULL;
+   XMLCh* MapXMLConstants::DIRECTOR_READ_ONLY = NULL;
 
    XMLCh* MapXMLConstants::HEADER_ELEMENT = NULL;
    XMLCh* MapXMLConstants::NAME_ELEMENT = NULL;
@@ -213,6 +214,7 @@ namespace dtCore
       DIRECTOR_NAMESPACE = xercesc::XMLString::transcode("xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns=\"delta3dDirector\" xsi:schemaLocation=\"delta3dDirector director.xsd\"");
       DIRECTOR_SCRIPT_TYPE = xercesc::XMLString::transcode("scriptType");
       DIRECTOR_IMPORTED_SCRIPT = xercesc::XMLString::transcode("importedScript");
+      DIRECTOR_READ_ONLY = xercesc::XMLString::transcode("readOnly");
 
       HEADER_ELEMENT = xercesc::XMLString::transcode("header");
       NAME_ELEMENT = xercesc::XMLString::transcode("name");

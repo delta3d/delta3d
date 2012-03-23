@@ -443,6 +443,16 @@ namespace dtDirector
             EndElement(); // End Imported.
          }
 
+         // Read Only.
+         if (graph->IsReadOnly())
+         {
+            BeginElement(dtCore::MapXMLConstants::DIRECTOR_READ_ONLY);
+            {
+               AddCharacters("true");
+            }
+            EndElement(); // End Read Only.
+         }
+
          // Graph ID.
          BeginElement(dtCore::MapXMLConstants::ID_INDEX_ELEMENT);
          {
