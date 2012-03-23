@@ -131,11 +131,12 @@ namespace dtDirector
        * Constructor.
        *
        * @param[in]  node      The Director Node.
+       * @param[in]  readOnly  True if this node is read only.
        * @param[in]  imported  True if this node is an imported node.
        * @param[in]  parent    The parent item.
        * @param[in]  scene     The scene.
        */
-      NodeItem(Node* node, bool imported, QGraphicsItem* parent = 0, EditorScene* scene = 0);
+      NodeItem(Node* node, bool readOnly, bool imported, QGraphicsItem* parent = 0, EditorScene* scene = 0);
 
       /**
        * Destructor.
@@ -145,7 +146,7 @@ namespace dtDirector
       /**
        *	Retrieves whether this node is editable.
        */
-      virtual bool IsEditable() const {return !mIsImported;}
+      virtual bool IsEditable() const {return !mIsReadOnly;}
 
       /**
        * Draws the node.
@@ -414,6 +415,11 @@ namespace dtDirector
        */
       bool IsImported() const {return mIsImported;}
 
+      /**
+       * Retrieves whether this item is read only.
+       */
+      bool IsReadOnly() const {return mIsReadOnly;}
+
 
       static const QColor LINE_COLOR;
 
@@ -500,6 +506,7 @@ namespace dtDirector
 
       EditorScene* mScene;
       bool         mLoading;
+      bool         mIsReadOnly;
       bool         mIsImported;
 
       std::string  mOldPosition;

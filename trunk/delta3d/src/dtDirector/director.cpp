@@ -2474,6 +2474,7 @@ namespace dtDirector
                if (subDst)
                {
                   subDst->SetImported(true);
+                  subDst->SetReadOnly(true);
                   subDst->SetID(subSrc->GetID().id);
 
                   subDst->CopyPropertiesFrom(*subSrc);

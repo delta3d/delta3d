@@ -41,8 +41,8 @@
 namespace dtDirector
 {
    //////////////////////////////////////////////////////////////////////////
-   MacroItem::MacroItem(DirectorGraph* graph, bool imported, QGraphicsItem* parent, EditorScene* scene)
-       : NodeItem(NULL, imported, parent, scene)
+   MacroItem::MacroItem(DirectorGraph* graph, bool readOnly, bool imported, QGraphicsItem* parent, EditorScene* scene)
+       : NodeItem(NULL, readOnly, imported, parent, scene)
        , mGraph(graph)
    {
    }
@@ -292,7 +292,7 @@ namespace dtDirector
             data.linkGraphic = new InputLinkItem(this, (int)mInputs.size()-1, this, mScene, data.link->GetComment());
             data.linkName = new GraphicsTextItem(data.linkGraphic, mScene);
             data.linkName->setAcceptHoverEvents(false);
-            if (mIsImported)
+            if (mIsReadOnly)
             {
                QFont font = data.linkName->font();
                font = QFont(font.family(), font.pointSize(), font.weight(), false);
@@ -318,7 +318,7 @@ namespace dtDirector
             data.linkGraphic = new OutputLinkItem(this, (int)mOutputs.size()-1, this, mScene, data.link->GetComment());
             data.linkName = new GraphicsTextItem(data.linkGraphic, mScene);
             data.linkName->setAcceptHoverEvents(false);
-            if (mIsImported)
+            if (mIsReadOnly)
             {
                QFont font = data.linkName->font();
                font = QFont(font.family(), font.pointSize(), font.weight(), false);
@@ -344,7 +344,7 @@ namespace dtDirector
             data.linkGraphic = new ValueLinkItem(this, (int)mValues.size()-1, this, mScene, data.link->GetComment());
             data.linkName = new GraphicsTextItem(data.linkGraphic, mScene);
             data.linkName->setAcceptHoverEvents(false);
-            if (mIsImported)
+            if (mIsReadOnly)
             {
                QFont font = data.linkName->font();
                font = QFont(font.family(), font.pointSize(), font.weight(), false);
@@ -432,7 +432,7 @@ namespace dtDirector
          osg::Vec4 rgba = mGraph->GetColor();
          color.setRgbF(rgba.r(), rgba.g(), rgba.b(), rgba.a());
 
-         if (mIsImported)
+         if (mIsReadOnly)
          {
             color = color.light(150);
          }

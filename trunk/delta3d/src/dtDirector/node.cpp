@@ -49,6 +49,7 @@ namespace dtDirector
       : mLogNode(false)
       , mEnabled(true)
       , mIsEnabled(true)
+      , mIsReadOnly(false)
       , mDirector(NULL)
       , mGraph(NULL)
    {
@@ -1380,6 +1381,12 @@ namespace dtDirector
          return mDirector->IsImported();
       }
       return false;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   bool Node::IsReadOnly() const
+   {
+      return mIsReadOnly | IsImported();
    }
 
    ////////////////////////////////////////////////////////////////////////////////

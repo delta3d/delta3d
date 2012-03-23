@@ -78,38 +78,38 @@ namespace dtDirector
          return;
       }
 
-      // Make sure the base category exists.
-      NodeScene* scene = NULL;
-      int tabCount = count();
-      for (int tabIndex = 0; tabIndex < tabCount; ++tabIndex)
-      {
-         if (itemText(tabIndex).toStdString() == "Base")
-         {
-            QGraphicsView* view = dynamic_cast<QGraphicsView*>(widget(tabIndex));
-            if (view)
-            {
-               scene = dynamic_cast<NodeScene*>(view->scene());
-            }
-            break;
-         }
-      }
-
-      if (!scene)
-      {
-         scene = new NodeScene(mpEditor, mpGraph);
-         QGraphicsView* view = new QGraphicsView(scene);
-         connect(scene, SIGNAL(CreateNode(const QString&, const QString&, const QString&)),
-            this, SIGNAL(CreateNode(const QString&, const QString&, const QString&)));
-         view->setScene(scene);
-
-         insertItem(0, view, "Base");
-         setCurrentIndex(0);
-      }
-
       // In the case of showing Macro nodes, make sure we show our
       // standard Macro along with custom editor macros.
       if (nodeType == NodeType::MACRO_NODE)
       {
+         // Make sure the base category exists.
+         NodeScene* scene = NULL;
+         int tabCount = count();
+         for (int tabIndex = 0; tabIndex < tabCount; ++tabIndex)
+         {
+            if (itemText(tabIndex).toStdString() == "Base")
+            {
+               QGraphicsView* view = dynamic_cast<QGraphicsView*>(widget(tabIndex));
+               if (view)
+               {
+                  scene = dynamic_cast<NodeScene*>(view->scene());
+               }
+               break;
+            }
+         }
+
+         if (!scene)
+         {
+            scene = new NodeScene(mpEditor, mpGraph);
+            QGraphicsView* view = new QGraphicsView(scene);
+            connect(scene, SIGNAL(CreateNode(const QString&, const QString&, const QString&)),
+               this, SIGNAL(CreateNode(const QString&, const QString&, const QString&)));
+            view->setScene(scene);
+
+            insertItem(0, view, "Base");
+            setCurrentIndex(0);
+         }
+
          if (scene)
          {
             // Add our default empty macro.
@@ -146,7 +146,7 @@ namespace dtDirector
             if (node->GetNodeType() == nodeType)
             {
                // Make sure the category tab exists.
-               scene = NULL;
+               NodeScene* scene = NULL;
                int tabCount = count();
                for (int tabIndex = 0; tabIndex < tabCount; ++tabIndex)
                {
@@ -189,8 +189,8 @@ namespace dtDirector
          }
       }
 
-      scene = NULL;
-      tabCount = count();
+      NodeScene* scene = NULL;
+      int tabCount = count();
       for (int tabIndex = 0; tabIndex < tabCount; ++tabIndex)
       {
          QGraphicsView* view = dynamic_cast<QGraphicsView*>(widget(tabIndex));
@@ -202,6 +202,21 @@ namespace dtDirector
                scene->CenterNodes(view);
             }
          }
+      }
+
+      // If no nodes exists, we need to at least have one scene for it to
+      // render properly.
+      // Make sure the base category exists.
+      if (tabCount == 0)
+      {
+         scene = new NodeScene(mpEditor, mpGraph);
+         QGraphicsView* view = new QGraphicsView(scene);
+         connect(scene, SIGNAL(CreateNode(const QString&, const QString&, const QString&)),
+            this, SIGNAL(CreateNode(const QString&, const QString&, const QString&)));
+         view->setScene(scene);
+
+         insertItem(0, view, "Base");
+         setCurrentIndex(0);
       }
 
       layout()->setSpacing(0);

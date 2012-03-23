@@ -675,7 +675,12 @@ namespace dtDirector
       /**
        *	Retrieves whether this node is from an imported script.
        */
-      bool IsImported() const;
+      virtual bool IsImported() const;
+
+      /**
+       * Retrieves whether this node is read only.
+       */
+      virtual bool IsReadOnly() const;
 
       const Node* GetOriginalImportedNode() const;
 
@@ -742,6 +747,7 @@ namespace dtDirector
 
       bool               mEnabled;
       bool               mIsEnabled;
+      bool               mIsReadOnly;
 
       Director*          mDirector;
       DirectorGraph*     mGraph;

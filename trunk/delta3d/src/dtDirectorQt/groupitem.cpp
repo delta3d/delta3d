@@ -44,8 +44,8 @@
 namespace dtDirector
 {
    //////////////////////////////////////////////////////////////////////////
-   GroupItem::GroupItem(Node* node, bool imported, QGraphicsItem* parent, EditorScene* scene, bool inPalette)
-       : NodeItem(node, imported, parent, scene)
+   GroupItem::GroupItem(Node* node, bool readOnly, bool imported, QGraphicsItem* parent, EditorScene* scene, bool inPalette)
+       : NodeItem(node, readOnly, imported, parent, scene)
        , mInnerRect(NULL)
        , mInPalette(inPalette)
    {
@@ -460,7 +460,7 @@ namespace dtDirector
       QAction* sizeToFitAction = menu.addAction("Size to Fit Contents");
       connect(sizeToFitAction, SIGNAL(triggered()), this, SLOT(SizeToFit()));
 
-      if (IsImported())
+      if (IsImported() || IsReadOnly())
       {
          sizeToFitAction->setEnabled(false);
       }

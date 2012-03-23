@@ -45,11 +45,12 @@ namespace dtDirector
        * Constructor.
        *
        * @param[in]  graph     The Director Graph.
+       * @param[in]  readOnly  True if this node is read only.
        * @param[in]  imported  True if this node is an imported node.
        * @param[in]  parent    The parent item.
        * @param[in]  scene     The scene.
        */
-      MacroItem(DirectorGraph* graph, bool imported, QGraphicsItem* parent = 0, EditorScene* scene = 0);
+      MacroItem(DirectorGraph* graph, bool readOnly, bool imported, QGraphicsItem* parent = 0, EditorScene* scene = 0);
 
       /**
        * Draws the node.

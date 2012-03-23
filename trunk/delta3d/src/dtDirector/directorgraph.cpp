@@ -39,6 +39,7 @@ namespace dtDirector
       , mComment("")
       , mEditor("")
       , mIsImported(false)
+      , mIsReadOnly(false)
    {
       SetColorRGB(Colors::GREEN);
 
@@ -111,6 +112,7 @@ namespace dtDirector
 
       newGraph->SetID(mID);
       newGraph->SetImported(IsImported());
+      newGraph->SetReadOnly(IsReadOnly());
       newGraph->CopyPropertiesFrom(*this);
 
       parent->SetGraphRoot(newGraph);
@@ -132,6 +134,7 @@ namespace dtDirector
 
       newGraph->SetID(mID);
       newGraph->SetImported(IsImported());
+      newGraph->SetReadOnly(IsReadOnly());
       newGraph->CopyPropertiesFrom(*this);
 
       parent->AddGraph(newGraph);
@@ -378,7 +381,7 @@ namespace dtDirector
    ////////////////////////////////////////////////////////////////////////////////
    bool DirectorGraph::ShouldPropertySave(const dtCore::ActorProperty& prop) const
    {
-      return !IsImported();
+      return !IsReadOnly() && !IsImported();
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -955,7 +958,13 @@ namespace dtDirector
    ////////////////////////////////////////////////////////////////////////////////
    bool DirectorGraph::IsImported() const
    {
-      return mIsImported;// || mDirector->IsImported();
+      return mIsImported;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   bool DirectorGraph::IsReadOnly() const
+   {
+      return mIsReadOnly;
    }
 
    ////////////////////////////////////////////////////////////////////////////////

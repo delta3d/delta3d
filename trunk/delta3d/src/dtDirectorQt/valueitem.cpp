@@ -44,8 +44,8 @@
 namespace dtDirector
 {
    //////////////////////////////////////////////////////////////////////////
-   ValueItem::ValueItem(Node* node, bool imported, QGraphicsItem* parent, EditorScene* scene)
-       : NodeItem(node, imported, parent, scene)
+   ValueItem::ValueItem(Node* node, bool readOnly, bool imported, QGraphicsItem* parent, EditorScene* scene)
+       : NodeItem(node, readOnly, imported, parent, scene)
        , mValueText(NULL)
        , mValueLink(NULL)
    {
@@ -130,7 +130,7 @@ namespace dtDirector
          mTitle = new GraphicsTextItem(this, scene());
          mTitle->setTextWidth(MIN_NODE_WIDTH);
 
-         if (mIsImported)
+         if (mIsReadOnly)
          {
             QFont font = mTitle->font();
             font = QFont(font.family(), font.pointSize(), font.weight(), false);
@@ -200,7 +200,7 @@ namespace dtDirector
          mValueText = new GraphicsTextItem(this, scene());
          mValueText->setTextWidth(MIN_NODE_WIDTH);
 
-         if (mIsImported)
+         if (mIsReadOnly)
          {
             QFont font = mValueText->font();
             font = QFont(font.family(), font.pointSize(), font.weight(), false);

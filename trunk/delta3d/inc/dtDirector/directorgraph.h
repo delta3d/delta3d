@@ -296,6 +296,13 @@ namespace dtDirector
       bool IsImported() const;
       std::vector<DirectorGraph*> GetImportedGraphs();
 
+      /**
+       * Set read only status.
+       */
+      void SetReadOnly(bool readOnly) {mIsReadOnly = readOnly;}
+      bool IsReadOnly() const;
+
+
    private:
 
       void InternalClone(DirectorGraph* newGraph);
@@ -315,6 +322,7 @@ namespace dtDirector
       osg::Vec2   mPosition;
 
       bool        mIsImported;
+      bool        mIsReadOnly;
 
       std::vector<dtCore::RefPtr<DirectorGraph> > mSubGraphs;
 

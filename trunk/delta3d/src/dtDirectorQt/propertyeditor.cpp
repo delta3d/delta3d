@@ -135,7 +135,7 @@ namespace dtDirector
          Node* node = dynamic_cast<Node*>(propertyContainer);
          if (node)
          {
-            if (node->IsImported())
+            if (node->IsImported() || node->IsReadOnly())
             {
                editable = false;
                break;
@@ -146,7 +146,7 @@ namespace dtDirector
             DirectorGraph* graph = dynamic_cast<DirectorGraph*>(propertyContainer);
             if (graph)
             {
-               if (graph->IsImported())
+               if (graph->IsImported() || graph->IsReadOnly())
                {
                   editable = false;
                   break;

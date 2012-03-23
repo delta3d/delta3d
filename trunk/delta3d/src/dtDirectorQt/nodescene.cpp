@@ -75,14 +75,14 @@ namespace dtDirector
          case NodeType::MUTATOR_NODE:
          case NodeType::VALUE_NODE:
             {
-               item = new ValueItem(node, false, mpItem, NULL);
+               item = new ValueItem(node, false, false, mpItem, NULL);
                break;
             }
          case NodeType::MACRO_NODE:
             {
                if (IS_A(node.get(), ReferenceScriptAction*))
                {
-                  item = new ScriptItem(node, false, mpItem, NULL);
+                  item = new ScriptItem(node, false, false, mpItem, NULL);
                }
                else
                {
@@ -94,7 +94,7 @@ namespace dtDirector
             {
                if (IS_A(node.get(), GroupNode*))
                {
-                  item = new GroupItem(node, false, mpItem, NULL, true);
+                  item = new GroupItem(node, false, false, mpItem, NULL, true);
                   break;
                }
             }
@@ -102,10 +102,10 @@ namespace dtDirector
             {
                if (name == "Value Link" && category == "Core")
                {
-                  item = new ValueItem(node, false, mpItem, NULL);
+                  item = new ValueItem(node, false, false, mpItem, NULL);
                   break;
                }
-               item = new ActionItem(node, false, mpItem, NULL);
+               item = new ActionItem(node, false, false, mpItem, NULL);
                break;
             }
          }
@@ -121,6 +121,7 @@ namespace dtDirector
 #if(QT_VERSION >= 0x00040600)
             item->setFlag(QGraphicsItem::ItemSendsGeometryChanges, false);
 #endif
+
             item->Draw();
             mHeight += item->boundingRect().height();
             if (item->boundingRect().width() > mWidth)
@@ -151,7 +152,7 @@ namespace dtDirector
          graph->SetEditor(editor);
          graph->SetPosition(osg::Vec2(NODE_BUFFER, mHeight));
 
-         NodeItem* item = new MacroItem(graph, false, mpItem, NULL);
+         NodeItem* item = new MacroItem(graph, false, false, mpItem, NULL);
          if (item != NULL)
          {
             item->setFlag(QGraphicsItem::ItemIsMovable, false);
