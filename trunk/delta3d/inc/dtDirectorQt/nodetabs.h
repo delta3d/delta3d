@@ -51,6 +51,11 @@ namespace dtDirector
       NodeTabs(QWidget* parent);
 
       /**
+       * Returns whether this tab is empty of node types.
+       */
+      bool IsEmpty() const;
+
+      /**
        * Sets the editor.
        */
       void SetEditor(DirectorEditor* editor, dtDirector::Director* nodeSceneDirector);
@@ -87,6 +92,8 @@ namespace dtDirector
       void CreateNode(const QString& name, const QString& category, const QString& refName);
 
    private:
+
+      bool mIsEmpty;
 
       DirectorEditor* mpEditor;
       dtCore::RefPtr<dtDirector::Director> mpDirector;

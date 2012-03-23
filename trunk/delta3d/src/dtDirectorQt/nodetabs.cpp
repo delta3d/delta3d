@@ -36,9 +36,16 @@ namespace dtDirector
    ////////////////////////////////////////////////////////////////////////////////
    NodeTabs::NodeTabs(QWidget* parent)
       : QToolBox(parent)
+      , mIsEmpty(true)
       , mpEditor(NULL)
       , mpGraph(NULL)
    {
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   bool NodeTabs::IsEmpty() const
+   {
+      return mIsEmpty;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -56,6 +63,8 @@ namespace dtDirector
    ///////////////////////////////////////////////////////////////////////////////
    void NodeTabs::RefreshNodes(NodeType::NodeTypeEnum nodeType)
    {
+      mIsEmpty = true;
+
       // Clear out any previous items and re-add translation item
       for (int toolIndex = count() - 1; toolIndex >= 0; --toolIndex)
       {
@@ -69,38 +78,38 @@ namespace dtDirector
          return;
       }
 
+      // Make sure the base category exists.
+      NodeScene* scene = NULL;
+      int tabCount = count();
+      for (int tabIndex = 0; tabIndex < tabCount; ++tabIndex)
+      {
+         if (itemText(tabIndex).toStdString() == "Base")
+         {
+            QGraphicsView* view = dynamic_cast<QGraphicsView*>(widget(tabIndex));
+            if (view)
+            {
+               scene = dynamic_cast<NodeScene*>(view->scene());
+            }
+            break;
+         }
+      }
+
+      if (!scene)
+      {
+         scene = new NodeScene(mpEditor, mpGraph);
+         QGraphicsView* view = new QGraphicsView(scene);
+         connect(scene, SIGNAL(CreateNode(const QString&, const QString&, const QString&)),
+            this, SIGNAL(CreateNode(const QString&, const QString&, const QString&)));
+         view->setScene(scene);
+
+         insertItem(0, view, "Base");
+         setCurrentIndex(0);
+      }
+
       // In the case of showing Macro nodes, make sure we show our
       // standard Macro along with custom editor macros.
       if (nodeType == NodeType::MACRO_NODE)
       {
-         // Make sure the category tab exists.
-         NodeScene* scene = NULL;
-         int tabCount = count();
-         for (int tabIndex = 0; tabIndex < tabCount; ++tabIndex)
-         {
-            if (itemText(tabIndex).toStdString() == "Base")
-            {
-               QGraphicsView* view = dynamic_cast<QGraphicsView*>(widget(tabIndex));
-               if (view)
-               {
-                  scene = dynamic_cast<NodeScene*>(view->scene());
-               }
-               break;
-            }
-         }
-
-         if (!scene)
-         {
-            scene = new NodeScene(mpEditor, mpGraph);
-            QGraphicsView* view = new QGraphicsView(scene);
-            connect(scene, SIGNAL(CreateNode(const QString&, const QString&, const QString&)),
-               this, SIGNAL(CreateNode(const QString&, const QString&, const QString&)));
-            view->setScene(scene);
-
-            insertItem(0, view, "Base");
-            setCurrentIndex(0);
-         }
-
          if (scene)
          {
             // Add our default empty macro.
@@ -112,6 +121,7 @@ namespace dtDirector
             {
                const std::string& tool = tools[index];
                scene->CreateMacro(tool);
+               mIsEmpty = false;
             }
          }
       }
@@ -136,7 +146,7 @@ namespace dtDirector
             if (node->GetNodeType() == nodeType)
             {
                // Make sure the category tab exists.
-               NodeScene* scene = NULL;
+               scene = NULL;
                int tabCount = count();
                for (int tabIndex = 0; tabIndex < tabCount; ++tabIndex)
                {
@@ -173,13 +183,14 @@ namespace dtDirector
                if (scene)
                {
                   scene->CreateNode(nodeType, node->GetName(), node->GetCategory());
+                  mIsEmpty = false;
                }
             }
          }
       }
 
-      NodeScene* scene = NULL;
-      int tabCount = count();
+      scene = NULL;
+      tabCount = count();
       for (int tabIndex = 0; tabIndex < tabCount; ++tabIndex)
       {
          QGraphicsView* view = dynamic_cast<QGraphicsView*>(widget(tabIndex));
@@ -258,6 +269,7 @@ namespace dtDirector
             if (nodeTypeName.contains(searchText, Qt::CaseInsensitive))
             {
                scene->CreateNode(node->GetNodeType(), node->GetName(), node->GetCategory());
+               mIsEmpty = false;
             }
          }
       }
@@ -425,6 +437,7 @@ namespace dtDirector
       if (scene)
       {
          scene->CreateMacro(editor);
+         mIsEmpty = false;
       }
 
       scene->CenterNodes(view);
