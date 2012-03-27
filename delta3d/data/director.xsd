@@ -160,6 +160,7 @@
                 <xsd:element name="gameevent" type="xsd:string"/>
                 <xsd:element name="array" type="ArrayType"/>
                 <xsd:element name="container" type="ContainerType"/>
+                <xsd:element name="containerSelector" type="ContainerSelectorType"/>
                 <xsd:element name="bitMask" type="xsd:unsignedInt"/>
             </xsd:choice>
         </xsd:sequence>
@@ -183,6 +184,13 @@
 
     <xsd:complexType name="ContainerType">
         <xsd:sequence>
+            <xsd:element name="property" minOccurs="0" maxOccurs="unbounded" type="PropertyType"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="ContainerSelectorType">
+        <xsd:sequence>
+            <xsd:element name="type" type="xsd:string"/>
             <xsd:element name="property" minOccurs="0" maxOccurs="unbounded" type="PropertyType"/>
         </xsd:sequence>
     </xsd:complexType>
