@@ -638,8 +638,8 @@ void FPSMotionModel::UpdateMouse(const double deltaTime)
 
       osg::Matrix rot;
       transform.GetRotation(rot);
-      float deltaZ = rotationMovement[0] * mMaximumTurnSpeed * deltaTime;
-      float deltaX = rotationMovement[1] * mMaximumTurnSpeed * deltaTime;
+      float deltaZ = rotationMovement[0] * mMaximumTurnSpeed;
+      float deltaX = rotationMovement[1] * mMaximumTurnSpeed;
 
       osg::Vec3 upVector      = dtUtil::MatrixUtil::GetRow3(rot, 2);
       osg::Vec3 forwardVector = dtUtil::MatrixUtil::GetRow3(rot, 1);
