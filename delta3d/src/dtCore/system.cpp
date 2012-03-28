@@ -75,7 +75,7 @@ namespace dtCore
       /////////////////////////////////////////////////////////////////
       double EndStatTimer(const std::string& attribName, System::SystemStages systemStage)
       {
-         // Call this at the end of a section. Call StartStatTimer() first 
+         // Call this at the end of a section. Call StartStatTimer() first
          double elapsedTime = mTickClock.DeltaMil(mTimerStart, mTickClock.Tick());
          mTotalFrameTime += elapsedTime; // accumulate till frame end, then reset to 0 next frame.
 
@@ -85,7 +85,7 @@ namespace dtCore
             mStats->setAttribute(mStats->getLatestFrameNumber(), attribName, elapsedTime);
          }
 
-         // Update the system time value so it 
+         // Update the system time value so it
          mSystemStageTimes[systemStage] = elapsedTime;
 
          return elapsedTime;
@@ -94,7 +94,7 @@ namespace dtCore
       //////////////////////////////////////////////////////////////////
       void SetLastStatTimer(const std::string& attribName, System::SystemStages systemStage)
       {
-         // If we are in fixed time step and we are skipping a phase, 
+         // If we are in fixed time step and we are skipping a phase,
          // then use last frame's value.
          double lastTime = mSystemStageTimes[systemStage];
          mTotalFrameTime += lastTime; // accumulate till frame end, then reset to 0 next frame.
@@ -104,7 +104,7 @@ namespace dtCore
             mStats->setAttribute(mStats->getLatestFrameNumber(), attribName, lastTime);
          }
       }
-      
+
       //////////////////////////////////////////////////////////////////
       void FinishFrameStats()
       {
@@ -126,7 +126,7 @@ namespace dtCore
                double updateTime, renderTime;
                mStats->getAttribute(frameNumber, "Update traversal time taken", updateTime);
                mStats->getAttribute(frameNumber, "Rendering traversals time taken", renderTime);
- 
+
                double totalDrawTime = 1000.0 * (updateTime + renderTime);
                mStats->setAttribute(frameNumber, "UpdatePlusDrawTime", totalDrawTime);
                double frameTime = mSystemStageTimes[System::STAGE_FRAME];
@@ -276,6 +276,9 @@ namespace dtCore
    ////////////////////////////////////////////////////////////////////////////////
    void System::Destroy()
    {
+      delete SystemImpl::mSystem;
+      SystemImpl::mSystem = NULL;
+      SystemImpl::mInstanceFlag = false;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -493,7 +496,7 @@ namespace dtCore
          || (mRealClockTime - mLastDrawClockTime) > mMaxTimeBetweenDraws)
       {
          mLastDrawClockTime = mRealClockTime;
-         CameraSynch(simFrameTime, realFrameTime); 
+         CameraSynch(simFrameTime, realFrameTime);
          FrameSynch(simFrameTime, realFrameTime);
          Frame(simFrameTime, realFrameTime);
       }
