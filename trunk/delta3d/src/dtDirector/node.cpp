@@ -727,7 +727,7 @@ namespace dtDirector
             GetDirector()->GetGameManager()->FindActorById(id, proxy);
          }
 
-         else //if (!proxy)
+         if (!proxy)
          {
             proxy = actorIdProp->GetActorProxy();
          }
