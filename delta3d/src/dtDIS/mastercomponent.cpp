@@ -19,20 +19,22 @@ using namespace dtDIS;
 
 const std::string MasterComponent::DEFAULT_NAME = "dtDIS_MasterComponent";
 
+////////////////////////////////////////////////////////////////////////////////
 ///\todo what should set the network stream's endian type?  the SharedState's connection data?
 MasterComponent::MasterComponent(SharedState* config)
    : dtGame::GMComponent(DEFAULT_NAME)
    , mPluginManager()
    , mConnection()
    , mIncomingMessage()
-   , mOutgoingMessage(DIS::BIG, config->GetConnectionData().exercise_id )
-   , mConfig( config )
+   , mOutgoingMessage(DIS::BIG, config->GetConnectionData().exercise_id)
+   , mConfig(config)
    , mDefaultPlugin(new dtDIS::DefaultPlugin())
 {
    // add support for the network packets
-   LoadPlugins( mConfig->GetConnectionData().plug_dir );
+   LoadPlugins(mConfig->GetConnectionData().plug_dir);
 }
 
+////////////////////////////////////////////////////////////////////////////////
 MasterComponent::~MasterComponent()
 {
    delete mDefaultPlugin;
@@ -49,35 +51,37 @@ MasterComponent::~MasterComponent()
 //   return mPluginManager;
 //}
 
+////////////////////////////////////////////////////////////////////////////////
 void MasterComponent::OnAddedToGM()
 {
    const ConnectionData& connect_data = mConfig->GetConnectionData();
 
    // add the default "plugin"
-   mDefaultPlugin->Start( mIncomingMessage, mOutgoingMessage, GetGameManager(), mConfig );
+   mDefaultPlugin->Start(mIncomingMessage, mOutgoingMessage, GetGameManager(), mConfig);
 
    // initialize all the plugins
    typedef dtUtil::Functor<void,TYPELIST_1(PluginManager::LibraryRegistry::value_type&)> ForEachPluginFunctor;
    ForEachPluginFunctor func(this,&MasterComponent::OnPluginLoaded);
    PluginManager::LibraryRegistry& plugins = mPluginManager.GetRegistry();
    PluginManager::LibraryRegistry::iterator enditer = plugins.end();
-   std::for_each( plugins.begin(), plugins.end(), func );
+   std::for_each(plugins.begin(), plugins.end(), func);
 
    // make a connection to the DIS multicast network
    mConnection.Connect(connect_data.port, connect_data.ip.c_str(), connect_data.use_broadcast);
 }
 
+////////////////////////////////////////////////////////////////////////////////
 void MasterComponent::OnRemovedFromGM()
 {
    // add the default "plugin"
-   mDefaultPlugin->Finish( mIncomingMessage, mOutgoingMessage );
+   mDefaultPlugin->Finish(mIncomingMessage, mOutgoingMessage);
 
    // shutdown all the plugins
    typedef dtUtil::Functor<void,TYPELIST_1(PluginManager::LibraryRegistry::value_type&)> ForEachPluginFunctor;
    ForEachPluginFunctor func(this,&MasterComponent::OnPluginUnloaded);
    PluginManager::LibraryRegistry& plugins = mPluginManager.GetRegistry();
    PluginManager::LibraryRegistry::iterator enditer = plugins.end();
-   std::for_each( plugins.begin(), plugins.end(), func );
+   std::for_each(plugins.begin(), plugins.end(), func);
 
    ///\todo remove the controlled entities.
    // clear the state data
@@ -87,13 +91,14 @@ void MasterComponent::OnRemovedFromGM()
    mConnection.Disconnect();
 }
 
+////////////////////////////////////////////////////////////////////////////////
 void MasterComponent::LoadPlugins(const std::string& dir)
 {
    typedef std::list<std::string> StringList;
    StringList dyn_libs;
 
    dtDIS::details::DLLFinder filefinder;
-   filefinder( dir , dyn_libs );
+   filefinder(dir , dyn_libs);
 
 #ifdef WIN32
       char separator('\\');
@@ -106,28 +111,31 @@ void MasterComponent::LoadPlugins(const std::string& dir)
    StringList::iterator enditer = dyn_libs.end();
    for(; iter!=enditer; ++iter)
    {
-      mPluginManager.LoadPlugin( dir + separator + *iter );
+      mPluginManager.LoadPlugin(dir + separator + *iter);
    }
 }
 
+////////////////////////////////////////////////////////////////////////////////
 void MasterComponent::OnPluginLoaded(PluginManager::LibraryRegistry::value_type& entry)
 {
    dtGame::GameManager* gm = GetGameManager();
 
    // intialize the plugin
-   entry.second.mCreated->Start( mIncomingMessage, mOutgoingMessage, gm, mConfig );
+   entry.second.mCreated->Start(mIncomingMessage, mOutgoingMessage, gm, mConfig);
 }
 
+////////////////////////////////////////////////////////////////////////////////
 void MasterComponent::OnPluginUnloaded(PluginManager::LibraryRegistry::value_type& entry)
 {
-   entry.second.mCreated->Finish( mIncomingMessage, mOutgoingMessage );
+   entry.second.mCreated->Finish(mIncomingMessage, mOutgoingMessage);
 }
 
+////////////////////////////////////////////////////////////////////////////////
 ///\todo should it handle a pause message, by not updating the incoming or outgoing network classes?
 void MasterComponent::ProcessMessage(const dtGame::Message& msg)
 {
    const dtGame::MessageType& mt = msg.GetMessageType();
-   if( mt == dtGame::MessageType::TICK_LOCAL )
+   if(mt == dtGame::MessageType::TICK_LOCAL)
    {
       // read the incoming packets
       const unsigned int MTU = 1500;
@@ -136,13 +144,13 @@ void MasterComponent::ProcessMessage(const dtGame::Message& msg)
       recvd = mConnection.Receive(buffer , MTU);
       if (recvd != 0)
       {
-         mIncomingMessage.Process( buffer , recvd , DIS::BIG );
+         mIncomingMessage.Process(buffer , recvd , DIS::BIG);
       }
 
       // write the outgoing packets
       {
          OutgoingMessage::DataStreamContainer& streams = mOutgoingMessage.GetData();
-         
+
          while (!streams.empty())
          {
             const DIS::DataStream& ds = streams.front();
@@ -174,34 +182,39 @@ void MasterComponent::ProcessMessage(const dtGame::Message& msg)
          }
       }
    }
-
 }
 
+////////////////////////////////////////////////////////////////////////////////
 DIS::IncomingMessage& MasterComponent::GetIncomingMessage()
 {
    return mIncomingMessage;
 }
 
+////////////////////////////////////////////////////////////////////////////////
 const DIS::IncomingMessage& MasterComponent::GetIncomingMessage() const
 {
    return mIncomingMessage;
 }
 
+////////////////////////////////////////////////////////////////////////////////
 OutgoingMessage& MasterComponent::GetOutgoingMessage()
 {
    return mOutgoingMessage;
 }
 
+////////////////////////////////////////////////////////////////////////////////
 const OutgoingMessage& MasterComponent::GetOutgoingMessage() const
 {
    return mOutgoingMessage;
 }
 
+////////////////////////////////////////////////////////////////////////////////
 SharedState* MasterComponent::GetSharedState()
 {
    return mConfig;
 }
 
+////////////////////////////////////////////////////////////////////////////////
 const SharedState* MasterComponent::GetSharedState() const
 {
    return mConfig;

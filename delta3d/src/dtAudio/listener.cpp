@@ -12,10 +12,58 @@
 #include <dtUtil/mathdefines.h>
 
 // namespaces
-using namespace   dtAudio;
-using namespace   dtCore;
+using namespace dtAudio;
+using namespace dtCore;
 
-IMPLEMENT_MANAGEMENT_LAYER(Listener)
+////////////////////////////////////////////////////////////////////////////////
+std::vector<Listener*> Listener::instances;
+    void Listener::RegisterInstance(Listener* instance)
+{
+if (instance != NULL)
+    instances.push_back(instance);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void Listener::DeregisterInstance(Listener* instance)
+{
+   if (!instances.empty())
+   {
+      for (std::vector<Listener*>::iterator it = instances.begin();
+         it != instances.end();
+         ++it)
+      {
+         if ((*it) == instance)
+         {
+            instances.erase(it);
+            return;
+         }
+      }
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+int Listener::GetInstanceCount() { return instances.size(); }
+
+////////////////////////////////////////////////////////////////////////////////
+Listener* Listener::GetInstance(int index)
+{
+   return instances[index];
+}
+
+////////////////////////////////////////////////////////////////////////////////
+Listener* Listener::GetInstance(std::string name)
+{
+    for (std::vector<Listener*>::iterator it = instances.begin();
+        it != instances.end();
+        ++it)
+    {
+        if ((*it)->GetName() == name)
+        {
+            return *it;
+        }
+    }
+    return 0;
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 Listener::Listener()
@@ -23,7 +71,7 @@ Listener::Listener()
    SetName("Listener");
 
    Clear();
-   
+
    AddSender(&dtCore::System::GetInstance());
 
    RegisterInstance(this);
@@ -34,7 +82,8 @@ Listener::Listener()
 ////////////////////////////////////////////////////////////////////////////////
 Listener::~Listener()
 {
-    DeregisterInstance(this);
+   RemoveSender(&dtCore::System::GetInstance());
+   DeregisterInstance(this);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -60,7 +109,7 @@ void Listener::GetVelocity(osg::Vec3f& velocity) const
 void Listener::SetGain(float gain)
 {
    // force gain to range from zero to one
-   dtUtil::Clamp<float>( gain, 0.0f, 1.0f );
+   dtUtil::Clamp<float>(gain, 0.0f, 1.0f);
 
    alListenerf(AL_GAIN, gain);
    CheckForError("OpenAL Listener gain value changing", __FUNCTION__, __LINE__);
@@ -144,8 +193,8 @@ void Listener::Clear(void)
 
    ALfloat  pos[3L]  = { 0.0f, 0.0f, 0.0f };
 
-   alListenerfv( AL_POSITION, pos );
-   alListenerfv( AL_ORIENTATION, orient.ort );
+   alListenerfv(AL_POSITION, pos);
+   alListenerfv(AL_ORIENTATION, orient.ort);
    CheckForError("AL Listener value changing", __FUNCTION__, __LINE__);
 
    SetVelocity(osg::Vec3f(0.0f, 0.0f, 0.0f));
