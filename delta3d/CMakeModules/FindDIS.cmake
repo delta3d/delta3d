@@ -52,6 +52,7 @@ FIND_LIBRARY(${MYLIBRARY}
     NAMES ${MYLIBRARYNAME}
     PATHS
     ${DIS_INCLUDE_DIR}/../bin
+    ${DIS_INCLUDE_DIR}/../lib
     ${DIS_DIR}/lib
     $ENV{DIS_DIR}/lib
     $ENV{DIS_DIR}
