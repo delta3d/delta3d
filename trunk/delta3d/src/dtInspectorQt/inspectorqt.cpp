@@ -20,6 +20,12 @@ dtInspectorQt::InspectorQt::~InspectorQt()
 {
    mInspector->hide();
    mApp->exit();
+
+   delete mInspector;
+   mInspector = NULL;
+
+   delete mApp;
+   mApp = NULL;
 }
 
 //////////////////////////////////////////////////////////////////////////
