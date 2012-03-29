@@ -869,7 +869,7 @@ void ObjectViewer::EventTraversal(const double deltaSimTime)
    while (lightIndex < mLightMotion.size())
    {
       if (mLightMotion[lightIndex]->IsEnabled() &&
-          mLightMotion[lightIndex]->GetMotionType() != dtCore::ObjectMotionModel::ARROW_TYPE_MAX)
+          mLightMotion[lightIndex]->GetMotionType() != dtCore::ObjectMotionModel::MOTION_TYPE_MAX)
       {
          break;
       }
