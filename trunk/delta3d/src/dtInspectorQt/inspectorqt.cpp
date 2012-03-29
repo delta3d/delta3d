@@ -18,6 +18,8 @@ dtInspectorQt::InspectorQt::InspectorQt(int& argc, char **argv)
 //////////////////////////////////////////////////////////////////////////
 dtInspectorQt::InspectorQt::~InspectorQt()
 {
+   RemoveSender(&dtCore::System::GetInstance());
+
    mInspector->hide();
    mApp->exit();
 
