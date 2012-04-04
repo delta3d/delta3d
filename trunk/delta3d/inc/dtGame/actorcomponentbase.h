@@ -36,7 +36,7 @@ namespace dtGame
     * A simple component system for modularizing game actor functionality.
     * Each actor has a number of components that can be retrieved by type.
 
-    * GameActors can be extended with ActorComponentBase (using multiple inheritance) to 
+    * GameActors can be extended with ActorComponentBase (using multiple inheritance) to
     * include component functionality.
     */
    class DT_GAME_EXPORT ActorComponentBase : public ActorComponentContainer
@@ -44,12 +44,10 @@ namespace dtGame
    public:
 
       /** a map from component type strings to components */
-      typedef dtUtil::AssocVector<ActorComponent::ACType, dtCore::RefPtr<ActorComponent> > ActorComponentMap;
+      typedef std::vector< std::pair<ActorComponent::ACType, dtCore::RefPtr<ActorComponent> > > ActorComponentMap;
 
       //CTOR
       ActorComponentBase();
-
-      using ActorComponentContainer::GetComponent;
 
       /**
        * Allows performing an operation on each actor component.
@@ -58,12 +56,12 @@ namespace dtGame
       template <typename UnaryFunctor>
       void ForEachComponent(UnaryFunctor func) const;
 
-      /** 
-       * Get component by type string
+      /**
+       * Get all components matching this type string
        * @param type The type-string of the ActorComponent to get
-       * @return the selected ActorComponent (could be NULL if not found)
+       * @return the selected ActorComponents (will be empty if not found)
        */
-      ActorComponent* GetComponent(const ActorComponent::ACType& type) const;
+      virtual std::vector<ActorComponent*> GetComponents(const ActorComponent::ACType& type) const;
 
       /**
        * Fill the vector with all the actor components.
@@ -81,26 +79,26 @@ namespace dtGame
        * Add an ActorComponent. Only one ActorComponent of a given type can be added.
        * @param component The ActorComponent to try to add
        */
-      void AddComponent(ActorComponent& component);
-
-      /** 
-       * Remove component by type
-       * @param type The type-string of the ActorComponent to remove
-       */
-      void RemoveComponent(const ActorComponent::ACType& type);
+      virtual void AddComponent(ActorComponent& component);
 
       /**
        * Remove component by reference
-       * @param component : Pointer to the ActorComponent to remove
+       * @param component : Reference to the ActorComponent to remove
        */
-      void RemoveComponent(ActorComponent& component);
+      virtual void RemoveComponent(ActorComponent& component);
+
+      /**
+       * Removes all components with a particular type
+       * @param type The type-string of the ActorComponent to remove
+       */
+      void RemoveAllComponentsOfType(const ActorComponent::ACType& type);
 
       /**
        * Remove all contained ActorComponent
        */
       void RemoveAllComponents();
 
-      /** 
+      /**
        * Loop through all ActorComponents call their OnEnteredWorld()
        */
       void CallOnEnteredWorldForActorComponents();
@@ -116,23 +114,23 @@ namespace dtGame
       void BuildComponentPropertyMaps();
 
       /**
-       * Override this to get informed about newly added ActorComponent 
-       * @param component The ActorComponent just added 
+       * Override this to get informed about newly added ActorComponent
+       * @param component The ActorComponent just added
        */
       virtual void OnActorComponentAdded(ActorComponent& component) {};
 
-      /** 
+      /**
        * Override this to get informed about removed components
-       * @param component The ActorComponent just removed 
+       * @param component The ActorComponent just removed
        */
       virtual void OnActorComponentRemoved(ActorComponent& component) {};
 
    protected:
-     
+
       virtual ~ActorComponentBase();
 
    private:
-      
+
       ActorComponentMap mComponents;
 
    };

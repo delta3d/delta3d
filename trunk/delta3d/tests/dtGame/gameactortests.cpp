@@ -1039,7 +1039,8 @@ void GameActorTests::TestAddActorComponent()
 
       dtGame::GameActor* actor = &gap->GetGameActor();
 
-      bool notExists = (actor->GetComponent(TestActorComponent1::TYPE) == NULL);
+      std::vector<dtGame::ActorComponent*> components = actor->GetComponents(TestActorComponent1::TYPE);
+      bool notExists = components.empty();
       CPPUNIT_ASSERT_MESSAGE("Searching for an actor component not on the actor should return NULL.", notExists);
 
       dtCore::RefPtr<TestActorComponent1> component = new TestActorComponent1();
@@ -1050,8 +1051,16 @@ void GameActorTests::TestAddActorComponent()
       bool hascomp = actor->HasComponent(TestActorComponent1::TYPE);
       CPPUNIT_ASSERT_MESSAGE("Actor component not found after it was added!", hascomp);
 
-      bool found = (actor->GetComponent(TestActorComponent1::TYPE) == component.get());
+      components = actor->GetComponents(TestActorComponent1::TYPE);
+      bool found = !components.empty();
       CPPUNIT_ASSERT_MESSAGE("Could not retrieve actor component after it was added!", found);
+
+      dtCore::RefPtr<TestActorComponent1> component2 = new TestActorComponent1();
+      actor->AddComponent(*component2);
+
+      components = actor->GetComponents(TestActorComponent1::TYPE);
+      bool foundTwo = components.size() == 2;
+      CPPUNIT_ASSERT_MESSAGE("Could not retrieve both actor components after they were added!", foundTwo);
 
       TestActorComponent1* compare;
       if(!actor->GetComponent(compare))
@@ -1061,9 +1070,10 @@ void GameActorTests::TestAddActorComponent()
       bool foundtemplate = (compare == component);
       CPPUNIT_ASSERT_MESSAGE("Could not retrieve actor component after it was added!", foundtemplate);
 
-      actor->RemoveComponent(TestActorComponent1::TYPE);
+      actor->RemoveAllComponentsOfType(TestActorComponent1::TYPE);
 
-      bool notfound = (actor->GetComponent(TestActorComponent1::TYPE) == NULL);
+      components = actor->GetComponents(TestActorComponent1::TYPE);
+      bool notfound = components.empty();
       CPPUNIT_ASSERT_MESSAGE("Searching for removed actor component should return NULL.", notfound);
    }
    catch(const dtUtil::Exception& e)

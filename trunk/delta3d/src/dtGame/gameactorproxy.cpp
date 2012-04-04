@@ -882,11 +882,10 @@ dtCore::RefPtr<dtCore::ActorProperty> GameActorProxy::GetDeprecatedProperty(cons
    return prop;
 }
 
-
 ////////////////////////////////////////////////////////////////////////////////
-ActorComponent* GameActorProxy::GetComponent(const ActorComponent::ACType& type) const
+std::vector<ActorComponent*> GameActorProxy::GetComponents(const ActorComponent::ACType& type) const
 {
-   return GetGameActor().GetComponent(type);
+   return GetGameActor().GetComponents(type);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -906,16 +905,17 @@ void GameActorProxy::AddComponent(ActorComponent& component)
 {
    GetGameActor().AddComponent(component);
 }
-////////////////////////////////////////////////////////////////////////////////
-void GameActorProxy::RemoveComponent(const ActorComponent::ACType& type)
-{
-   GetGameActor().RemoveComponent(type);
-}
 
 ////////////////////////////////////////////////////////////////////////////////
 void GameActorProxy::RemoveComponent(ActorComponent& component)
 {
    GetGameActor().RemoveComponent(component);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void GameActorProxy::RemoveAllComponentsOfType(const ActorComponent::ACType& type)
+{
+   GetGameActor().RemoveAllComponentsOfType(type);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -27,6 +27,8 @@
 #include <dtGame/export.h>
 #include <dtGame/actorcomponent.h>
 #include <dtCore/refptr.h>
+#include <dtUtil/breakoverride.h>
+#include <dtUtil/deprecationmgr.h>
 
 #include <algorithm>
 #include <map>
@@ -53,10 +55,22 @@ namespace dtGame
        * @param compType pointer to be set to component
        * @return True if component of this type exists, else false
        */
+      ///deprecated 4/4/12
       template <typename TComp>
-      bool GetComponent(TComp*& compType) const
+      DEPRECATE_FUNC bool GetComponent(TComp*& compType) const
       {
-         compType = static_cast<TComp*>(GetComponent(TComp::TYPE));
+         DEPRECATE("bool ActorComponentContainer::GetComponent(TComp*&)",
+            "std::vector<ActorComponent*> ActorComponentContainer::GetComponents(const ActorComponent::ACType&)");
+
+         std::vector<ActorComponent*> components = GetComponents(TComp::TYPE);
+         if (!components.empty())
+         {
+            compType = static_cast<TComp*>(components[0]);
+         }
+         else
+         {
+            compType = NULL;
+         }
          return compType != NULL;
       }
 
@@ -70,10 +84,21 @@ namespace dtGame
        * @param compType pointer to be set to component
        * @return True if component of this type exists, else false
        */
+      ///deprecated 4/4/12
       template <typename TComp>
-      bool GetComponent(dtCore::RefPtr<TComp>& compType) const
+      DEPRECATE_FUNC bool GetComponent(dtCore::RefPtr<TComp>& compType) const
       {
-         compType = static_cast<TComp*>(GetComponent(TComp::TYPE));
+         DEPRECATE("bool ActorComponentContainer::GetComponent(TComp*&)",
+            "std::vector<ActorComponent*> ActorComponentContainer::GetComponents(const ActorComponent::ACType&)");
+         std::vector<ActorComponent*> components = GetComponents(TComp::TYPE);
+         if (!components.empty())
+         {
+            compType = static_cast<TComp*>(components[0]);
+         }
+         else
+         {
+            compType = NULL;
+         }
          return compType.valid();
       }
 
@@ -84,8 +109,11 @@ namespace dtGame
        * @endcode
        * @return The ActorComponent of that type, or NULL if it doesn't exist
        */
-      template <class T> T* GetComponent() const
+      ///deprecated 4/4/12
+      template <class T> DEPRECATE_FUNC T* GetComponent() const
       {
+         DEPRECATE("bool ActorComponentContainer::GetComponent(TComp*&)",
+            "std::vector<ActorComponent*> ActorComponentContainer::GetComponents(const ActorComponent::ACType&)");
          T* component = NULL;
          GetComponent(component);
          return component;
@@ -96,7 +124,18 @@ namespace dtGame
        * @param type The type-string of the ActorComponent to get
        * @return the selected ActorComponent (could be NULL if not found)
        */
-      virtual ActorComponent* GetComponent(const ActorComponent::ACType& type) const = 0;
+      //virtual ActorComponent* GetComponent(const ActorComponent::ACType& type) const = 0;
+   private:
+      // Override virtual std::vector<ActorComponent*> GetComponents(const ActorComponent::ACType& type) const instead
+      BREAK_OVERRIDE(GetComponent(const ActorComponent::ACType& type) const) ///deprecated 4/4/12
+   public:
+
+      /**
+       * Get all components matching this type string
+       * @param type The type-string of the ActorComponent to get
+       * @return the selected ActorComponents (will be empty if not found)
+       */
+      virtual std::vector<ActorComponent*> GetComponents(const ActorComponent::ACType& type) const = 0;
 
       /**
        * Fill the vector with all the actor components.
@@ -120,11 +159,20 @@ namespace dtGame
        * Remove component by type
        * @param type The type-string of the ActorComponent to remove
        */
-      virtual void RemoveComponent(const ActorComponent::ACType& type) = 0;
+   private:
+      // Override virtual void RemoveAllComponentsOfType(const ActorComponent::ACType& type) instead
+      BREAK_OVERRIDE(RemoveComponent(const ActorComponent::ACType& type)) ///deprecated 4/4/12
+   public:
+
+      /**
+       * Removes all components with a particular type
+       * @param type The type-string of the ActorComponent to remove
+       */
+      virtual void RemoveAllComponentsOfType(const ActorComponent::ACType& type) = 0;
 
       /**
        * Remove component by reference
-       * @param component : Pointer to the ActorComponent to remove
+       * @param component : Reference to the ActorComponent to remove
        */
       virtual void RemoveComponent(ActorComponent& component) = 0;
 
