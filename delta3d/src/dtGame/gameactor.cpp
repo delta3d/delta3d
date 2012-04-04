@@ -136,8 +136,8 @@ namespace dtGame
    void GameActor::SetShaderGroup(const std::string& groupName)
    {
       // Setting the shader group, when it didn't change can cause a massive
-      // hit on performance because it unassigns everything and will make a new 
-      // instance of the shader and all its params. Could also cause anomalies with 
+      // hit on performance because it unassigns everything and will make a new
+      // instance of the shader and all its params. Could also cause anomalies with
       // oscilating shader params.
       if (groupName != mShaderGroup)
       {
@@ -213,4 +213,51 @@ namespace dtGame
       return mPrototypeName;
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   void GameActor::AddComponent(ActorComponent& component)
+   {
+      ActorComponentBase::AddComponent(component);
+
+      // add actor component properties to the game actor itself
+      // note - the only reason we do this is to make other parts of the system work (like STAGE).
+      // In the future, STAGE (et al) should use the actor components directly and we won't add them to the game actor
+      // Remove the props from the game actor - This is temporary. See the note in AddComponent()
+      GetGameActorProxy().AddActorComponentProperties(component);
+
+      // initialize component
+      component.OnAddedToActor(*this);
+      OnActorComponentAdded(component);
+
+      // if base class is a game actor and the game actor is already instantiated in game:
+      if (GetGameActorProxy().IsInGM())
+      {
+         component.SetIsInGM(true);
+         component.OnEnteredWorld();
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void GameActor::RemoveComponent(ActorComponent& component)
+   {
+      GameActorProxy* proxy = NULL;
+      if (IsGameActorProxyValid())
+      {
+         proxy = &GetGameActorProxy();
+      }
+
+      if (component.GetIsInGM() || (proxy != NULL && proxy->IsInGM()))
+      {
+         component.SetIsInGM(false);
+         component.OnRemovedFromWorld();
+      }
+      component.OnRemovedFromActor(*this);
+
+      // Remove the props from the game actor - This is temporary. See the note in AddComponent()
+      if (proxy != NULL)
+      {
+         GetGameActorProxy().RemoveActorComponentProperties(component);
+      }
+
+      ActorComponentBase::RemoveComponent(component);
+   }
 }

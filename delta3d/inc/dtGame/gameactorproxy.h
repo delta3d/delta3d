@@ -427,14 +427,12 @@ namespace dtGame
       // accessing them from the GameActor.  Calling these methods should be fine since
       // they won't go away, but they may be moved around.
 
-      using ActorComponentContainer::GetComponent;
-
       /**
-       * Get component by type string
+       * Get all components matching this type string
        * @param type The type-string of the ActorComponent to get
-       * @return the selected ActorComponent (could be NULL if not found)
+       * @return the selected ActorComponents (will be empty if not found)
        */
-      virtual ActorComponent* GetComponent(const ActorComponent::ACType& type) const ;
+      virtual std::vector<ActorComponent*> GetComponents(const ActorComponent::ACType& type) const;
 
       /**
        * Fill the vector with all the actor components.
@@ -455,16 +453,16 @@ namespace dtGame
       virtual void AddComponent(ActorComponent& component);
 
       /**
-       * Remove component by type
-       * @param type The type-string of the ActorComponent to remove
-       */
-      virtual void RemoveComponent(const ActorComponent::ACType& type);
-
-      /**
        * Remove component by reference
        * @param component : Pointer to the ActorComponent to remove
        */
       virtual void RemoveComponent(ActorComponent& component);
+
+      /**
+       * Removes all components with a particular type
+       * @param type The type-string of the ActorComponent to remove
+       */
+      void RemoveAllComponentsOfType(const ActorComponent::ACType& type);
 
       /**
        * Remove all contained ActorComponent

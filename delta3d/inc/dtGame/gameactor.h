@@ -158,6 +158,18 @@ namespace dtGame
        */
       const std::string& GetPrototypeName() const;
 
+      /**
+       * Add an ActorComponent. Only one ActorComponent of a given type can be added.
+       * @param component The ActorComponent to try to add
+       */
+      virtual void AddComponent(ActorComponent& component);
+
+      /**
+       * Remove component by reference
+       * @param component : Reference to the ActorComponent to remove
+       */
+      virtual void RemoveComponent(ActorComponent& component);
+
    protected:
       /// Destructor
       virtual ~GameActor();
