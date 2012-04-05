@@ -22,6 +22,7 @@
  */
 
 #include <prefix/dtgameprefix.h>
+#include <list>
 #include <dtGame/actorcomponentbase.h>
 #include <dtUtil/exception.h>
 
