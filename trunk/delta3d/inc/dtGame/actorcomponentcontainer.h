@@ -103,19 +103,20 @@ namespace dtGame
       }
 
       /**
-       * Get a component by type. Usage:
+       * Gets the first component of the desired type added to the ActorComponentContainer.
+       * Usage:
        * @code
        * MyComponentClass* component = myComponentBase->GetComponent<MyComponentClass>();
        * @endcode
-       * @return The ActorComponent of that type, or NULL if it doesn't exist
+       * @return The first ActorComponent of the templated parameter type, or NULL if it doesn't exist
        */
-      ///deprecated 4/4/12
-      template <class T> DEPRECATE_FUNC T* GetComponent() const
+      template <class T> T* GetComponent() const
       {
-         DEPRECATE("bool ActorComponentContainer::GetComponent(TComp*&)",
-            "std::vector<ActorComponent*> ActorComponentContainer::GetComponents(const ActorComponent::ACType&)");
          T* component = NULL;
-         GetComponent(component);
+         if (HasComponent(T::TYPE))
+         {
+            component = static_cast<T*>(GetComponents(T::TYPE)[0]);
+         }
          return component;
       }
 
