@@ -55,7 +55,7 @@ namespace dtCore
       {
          osg::Vec3 eyePointLocal = cv->getEyeLocal();
          matrix.preMult(osg::Matrix::translate(eyePointLocal.x(),eyePointLocal.y(),eyePointLocal.z()));
-         matrix.preMult(osg::Matrix::rotate(osg::DegreesToRadians(mAzimuth-90.0f), 0.0f, 0.0f, 1.0f));
+         matrix.preMult(osg::Matrix::rotate(osg::DegreesToRadians(90.0f - mAzimuth), 0.0f, 0.0f, 1.0f));
       }
       return true;
    }
