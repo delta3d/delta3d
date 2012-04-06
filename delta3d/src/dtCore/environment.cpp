@@ -658,7 +658,8 @@ void dtCore::Environment::UpdateSkyLight()
    {
       if (InfiniteLight* sun = static_cast<InfiniteLight*>(mSkyLight.get()))
       {
-         sun->SetTransform(dtCore::Transform(0.0f, 0.0f, 0.0f, mSunAzimuth - 180.0f, mSunAltitude - 180.0f));
+         sun->SetTransform(dtCore::Transform(0.0f, 0.0f, 0.0f, 
+											 180.0f-mSunAzimuth, -mSunAltitude, 0.0f));
       }
    }
 }
