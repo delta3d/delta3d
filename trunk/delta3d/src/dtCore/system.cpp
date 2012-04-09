@@ -50,6 +50,7 @@ namespace dtCore
       , mFrameTime(1.0/60.0)
       , mTimeScale(1.0)
       , mMaxTimeBetweenDraws(30000)
+      , mMaxSimulationStep(1000000000)
       , mSystemStages(System::STAGES_DEFAULT)
       , mUseFixedTimeStep(false)
       , mRunning(false)
@@ -229,6 +230,7 @@ namespace dtCore
       double mFrameTime;
       double mTimeScale;
       double mMaxTimeBetweenDraws;
+      double mMaxSimulationStep;
 
       System::SystemStageFlags mSystemStages;
 
@@ -321,6 +323,18 @@ namespace dtCore
    void System::SetSimulationClockTime(const dtCore::Timer_t& newTime)
    {
       mSystemImpl->mSimulationClockTime = newTime;
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void System::SetMaxSimulationStep(double stepSize)
+   {
+      mSystemImpl->mMaxSimulationStep = stepSize;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   double System::GetMaxSimulationStep() const
+   {
+      return mSystemImpl->mMaxSimulationStep;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -541,7 +555,11 @@ namespace dtCore
             mWasPaused = false;
 
             // update simulation time variable(s)
-            const double simDT = realDT * mTimeScale;
+            double simDT = realDT * mTimeScale;
+            if (simDT > mMaxSimulationStep)
+            {
+               simDT = mMaxSimulationStep;
+            }
             mSimulationTime      += simDT;
             mSimTimeSinceStartup += simDT;
             mSimulationClockTime += Timer_t(simDT * 1000000);
