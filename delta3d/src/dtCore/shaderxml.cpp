@@ -272,7 +272,15 @@ namespace dtCore
 
          if (elemName.ToString() == ShaderXML::SHADER_ELEMENT)
          {
-            ParseShaderElement(element,*newGroup);
+            try 
+            {
+               ParseShaderElement(element,*newGroup);
+            } 
+            catch (ShaderSourceException& e) 
+            {
+               dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__,
+                  "Error loading shader: %s", e.What().c_str());
+            }
          }
          else
          {
