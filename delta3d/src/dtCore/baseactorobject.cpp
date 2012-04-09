@@ -406,21 +406,24 @@ namespace dtCore
       nameProp->SetMultipleEdit(false);
       AddProperty(nameProp);
 
-      StringActorProperty* categoryProp = new StringActorProperty(
-         "Actor Category", "Actor Category",
-         StringActorProperty::SetFuncType(),
-         StringActorProperty::GetFuncType(&GetActorType(), &ActorType::GetCategory),
-         "The Category Name of the Actor.", GROUP_INFORMATION);
-      categoryProp->SetReadOnly(true);
-      AddProperty(categoryProp);
+      if (mActorType)
+      {
+         StringActorProperty* categoryProp = new StringActorProperty(
+            "Actor Category", "Actor Category",
+            StringActorProperty::SetFuncType(),
+            StringActorProperty::GetFuncType(&GetActorType(), &ActorType::GetCategory),
+            "The Category Name of the Actor.", GROUP_INFORMATION);
+         categoryProp->SetReadOnly(true);
+         AddProperty(categoryProp);
 
-      StringActorProperty* typeProp = new StringActorProperty(
-         "Actor Type", "Actor Type",
-         StringActorProperty::SetFuncType(),
-         StringActorProperty::GetFuncType(&GetActorType(), &ActorType::GetName),
-         "The Type Name of the Actor.", GROUP_INFORMATION);
-      typeProp->SetReadOnly(true);
-      AddProperty(typeProp);
+         StringActorProperty* typeProp = new StringActorProperty(
+            "Actor Type", "Actor Type",
+            StringActorProperty::SetFuncType(),
+            StringActorProperty::GetFuncType(&GetActorType(), &ActorType::GetName),
+            "The Type Name of the Actor.", GROUP_INFORMATION);
+         typeProp->SetReadOnly(true);
+         AddProperty(typeProp);
+      }
 
       StringActorProperty* classProp = new StringActorProperty(
          "Actor Class", "Actor Class",
