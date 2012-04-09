@@ -323,6 +323,16 @@ namespace dtCore
        */
       void SetMaxTimeBetweenDraws(double newTime);
 
+      /** Set the maximum time to cover in a single simulation step.
+       *  @param stepSize The number of seconds to clamp the step to
+       */
+      void SetMaxSimulationStep(double stepSize);
+
+      /** Get the maximum time to cover in a single simulation step.
+       *  @return The number of seconds that the simulation step will be clamped to
+       */
+      double GetMaxSimulationStep() const;
+
       /// Set to make the system step by the fixed amount of time.
       void SetUseFixedTimeStep(bool value);
 
