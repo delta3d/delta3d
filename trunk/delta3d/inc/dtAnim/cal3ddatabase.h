@@ -47,6 +47,7 @@ namespace dtAnim
       public:
 
          static Cal3DDatabase& GetInstance();
+         static void Destroy();
 
          /// Try to parse a file as a character file
          bool IsFileValid(const std::string& filename);
