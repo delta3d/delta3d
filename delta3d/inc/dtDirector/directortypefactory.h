@@ -34,6 +34,7 @@ namespace dtDirector
    {
    public:
       static DirectorTypeFactory* GetInstance();
+      static void Destroy();
 
       /**
        * Creates an instance of the Director script class based on the

@@ -46,6 +46,13 @@ namespace dtDirector
    }
 
    ////////////////////////////////////////////////////////////////////////////////
+   void DirectorTypeFactory::Destroy()
+   {
+      delete mInstance;
+      mInstance = NULL;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
    DirectorTypeFactory::DirectorTypeFactory()
       : mFactory(new dtUtil::ObjectFactory<std::string, Director>)
       , mCurrentXMLParser(-1)
