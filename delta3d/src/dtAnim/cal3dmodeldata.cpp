@@ -62,6 +62,9 @@
       mAnimWrappers.clear();
       mAnimatables.clear();
 
+      delete mHardwareModel;
+      mHardwareModel = NULL;
+
       DestroySourceArrays();
    }
 
@@ -106,7 +109,7 @@
    {
       mModelName = name;
    }
-   
+
    ////////////////////////////////////////////////////////////////////////////////
    const std::string& Cal3DModelData::GetModelName() const
    {
@@ -151,7 +154,7 @@
    ////////////////////////////////////////////////////////////////////////////////
    float Cal3DModelData::GetScale() const
    {
-      return mScale;  
+      return mScale;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -264,7 +267,7 @@
 
    /////////////////////////////////////////////////////////////////////////////
    CalHardwareModel* Cal3DModelData::GetOrCreateCalHardwareModel()
-   {      
+   {
       if (!mHardwareModel)
       {
          // We need a core model to make the hardware model
@@ -306,7 +309,7 @@
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   osg::VertexBufferObject* Cal3DModelData::GetVertexBufferObject() 
+   osg::VertexBufferObject* Cal3DModelData::GetVertexBufferObject()
    {
       return mVertexBufferObject.get();
    }
@@ -364,7 +367,7 @@
    {
       mPoseMeshFilename = name;
    }
- 
+
    ////////////////////////////////////////////////////////////////////////////////
    unsigned Cal3DModelData::GetShaderMaxBones() const
    {
@@ -803,7 +806,7 @@
    unsigned Cal3DModelData::UnregisterFile(const std::string& file, StrArray* outObjectNames)
    {
       unsigned numNames = 0;
-      
+
       if (outObjectNames != NULL)
       {
          numNames = GetObjectNameListForFile(file, *outObjectNames);
@@ -885,7 +888,7 @@
    LODOptions::LODOptions():
       mStartDistance(10.0), mEndDistance(500.0), mMaxVisibleDistance(1000.0)
    {
-      
+
    }
 
    void LODOptions::SetStartDistance(double newDistance)
