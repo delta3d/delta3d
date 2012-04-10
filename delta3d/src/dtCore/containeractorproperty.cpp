@@ -66,6 +66,12 @@ namespace dtCore
    ////////////////////////////////////////////////////////////////////////////////
    bool ContainerActorProperty::FromString(const std::string& value)
    {
+      if (IsReadOnly())
+      {
+         LOG_WARNING("FromString has been called on a property that is read only.");
+         return false;
+      }
+
       if (mProperties.size() <= 0)
       {
          return false;

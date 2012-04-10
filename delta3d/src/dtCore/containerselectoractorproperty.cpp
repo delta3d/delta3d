@@ -69,6 +69,12 @@ namespace dtCore
    ////////////////////////////////////////////////////////////////////////////////
    bool ContainerSelectorActorProperty::FromString(const std::string& value)
    {
+      if (IsReadOnly())
+      {
+         LOG_WARNING("FromString has been called on a property that is read only.");
+         return false;
+      }
+
       std::string data = value;
       std::string token;
 
