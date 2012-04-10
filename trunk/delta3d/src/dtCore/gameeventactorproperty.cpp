@@ -49,6 +49,12 @@ namespace dtCore
    ////////////////////////////////////////////////////////////////////////////
    bool GameEventActorProperty::FromString(const std::string& value)
    {
+      if (IsReadOnly())
+      {
+         LOG_WARNING("FromString has been called on a property that is read only.");
+         return false;
+      }
+
       dtCore::UniqueId id = dtCore::UniqueId(value);
       GameEvent *event = NULL;
 

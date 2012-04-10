@@ -49,6 +49,12 @@ namespace dtCore
    ////////////////////////////////////////////////////////////////////////////
    bool GroupActorProperty::FromString(const std::string& value)
    {
+      if (IsReadOnly())
+      {
+         LOG_WARNING("FromString has been called on a property that is read only.");
+         return false;
+      }
+
       NamedGroupParameter param(GetName());
       bool result = param.FromString(value);
       if (result)
