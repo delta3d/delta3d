@@ -193,7 +193,7 @@ void ProxyTest::testProp(dtCore::BaseActorObject& proxy, dtCore::ActorProperty* 
 
    bool defaultExists = proxy.DoesDefaultExist(*prop);
    std::string defaultValue;
-   
+
    if (defaultExists)
    {
       proxy.ResetProperty(*prop);

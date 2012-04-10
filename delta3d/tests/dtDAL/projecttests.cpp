@@ -839,7 +839,7 @@ void ProjectTests::TestProject()
       dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
       std::string originalPathList = dtUtil::GetDataFilePathList();
 
-#ifdef DELTA3D_WIN32      
+#ifdef DELTA3D_WIN32
       std::string crapPath("/:%**/../^^jojo/funky/\\\\/,/,.uchor");
 #else
       std::string crapPath("/usr/:%**/../^^jojo/funky/\\\\/,/,.uchor");
@@ -1121,13 +1121,14 @@ void ProjectTests::TestMapSaveAsExceptions()
    dtCore::Map* map = &project.CreateMap(mapName, mapFileName);
    map->SetAuthor("unit test");
 
-   CPPUNIT_ASSERT_THROW_MESSAGE("Calling SaveAs on a map with the same name and filename should fail.",
-      project.SaveMapAs(*map, mapName, mapFileName),
-      dtUtil::Exception);
+   // JPH: Changes to the map load system should allow you to overwrite the same map with different data.
+   //CPPUNIT_ASSERT_THROW_MESSAGE("Calling SaveAs on a map with the same name and filename should fail.",
+   //   project.SaveMapAs(*map, mapName, mapFileName),
+   //   dtUtil::Exception);
 
-   CPPUNIT_ASSERT_THROW_MESSAGE("Calling SaveAs on a map with the same filename should fail.",
-      project.SaveMapAs(*map, "asdf", mapFileName),
-      dtUtil::Exception);
+   //CPPUNIT_ASSERT_THROW_MESSAGE("Calling SaveAs on a map with the same filename should fail.",
+   //   project.SaveMapAs(*map, "asdf", mapFileName),
+   //   dtUtil::Exception);
 
    CPPUNIT_ASSERT_THROW_MESSAGE("Calling SaveAs on a map with the same name should fail.",
       project.SaveMapAs(*map, mapName, "asdf"),
