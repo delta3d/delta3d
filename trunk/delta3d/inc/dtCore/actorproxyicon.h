@@ -151,7 +151,7 @@ namespace dtCore
       const dtCore::DeltaDrawable* GetDrawable() const;
 
       /**
-       *	Gets the perspective billboard transform.
+       *    Gets the perspective billboard transform.
        */
       dtCore::Transformable* GetPerspectiveTransform();
       const dtCore::Transformable* GetPerspectiveTransform() const;

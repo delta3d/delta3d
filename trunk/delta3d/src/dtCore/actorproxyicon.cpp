@@ -34,7 +34,7 @@
 namespace dtCore
 {
 
-   //////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    std::string ActorProxyIcon::IMAGE_BILLBOARD_GENERIC("billboards/question.png");
    std::string ActorProxyIcon::IMAGE_BILLBOARD_CHARACTER("billboards/animcharacter.png");
    std::string ActorProxyIcon::IMAGE_BILLBOARD_STATICMESH("billboards/staticmesh.png");
@@ -52,11 +52,11 @@ namespace dtCore
 
    std::string ActorProxyIcon::IMAGE_ARROW_HEAD("billboards/arrowhead.png");
    std::string ActorProxyIcon::IMAGE_ARROW_BODY("billboards/arrowbody.png");
-   //////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
 
 
 
-   //////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    ActorProxyIcon::ActorProxyIcon(const std::string& iconImageFilename)
       : mIconImageFile(iconImageFilename)
       , mIconNode(NULL)
@@ -67,7 +67,7 @@ namespace dtCore
       CreateBillBoard();
    }
 
-   //////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    ActorProxyIcon::ActorProxyIcon(const std::string& iconImageFilename,
                                   const ActorProxyIconConfig& pConfig)
       : mIconImageFile(iconImageFilename)
@@ -80,187 +80,191 @@ namespace dtCore
       CreateBillBoard();
    }
 
-   //////////////////////////////////////////////////////////////////////////
-   ActorProxyIcon &ActorProxyIcon::operator=(const ActorProxyIcon &rhs)
+   /////////////////////////////////////////////////////////////////////////////
+   ActorProxyIcon& ActorProxyIcon::operator=(const ActorProxyIcon& rhs)
    {
       return *this;
    }
 
-   //////////////////////////////////////////////////////////////////////////
-   ActorProxyIcon::ActorProxyIcon(const ActorProxyIcon &rhs)
+   /////////////////////////////////////////////////////////////////////////////
+   ActorProxyIcon::ActorProxyIcon(const ActorProxyIcon& rhs)
    {
    }
 
-
-   //////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    ActorProxyIcon::~ActorProxyIcon()
    {
 
    }
 
-   //////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    void ActorProxyIcon::CreateBillBoard()
    {
-      if (mBillBoard.valid())
-         return;
-
-      osg::StateAttribute::GLModeValue turnOn = osg::StateAttribute::ON |
-         osg::StateAttribute::PROTECTED |
-         osg::StateAttribute::OVERRIDE;
-      osg::StateAttribute::GLModeValue turnOff = osg::StateAttribute::OFF |
-         osg::StateAttribute::PROTECTED |
-         osg::StateAttribute::OVERRIDE;
-
-      //Create the quad geometry for our billboard.
-      mIconStateSet = new osg::StateSet();
-      osg::PolygonMode *pm = new osg::PolygonMode();
-      osg::Geometry *geom = CreateGeom(osg::Vec3(-1.0f,0.0f,-1.0f),
-                                       osg::Vec3(2.0f,0.0f,0.0f),osg::Vec3(0.0f,0.0f,2.0f));
-
-      pm->setMode(osg::PolygonMode::FRONT_AND_BACK,osg::PolygonMode::FILL);
-
-      mIconStateSet->setMode(GL_LIGHTING,turnOff);
-      mIconStateSet->setAttributeAndModes(pm,turnOn);
-      geom->setStateSet(mIconStateSet.get());
-
-      if (mConfig.mForwardVector)
+      if (!mBillBoard.valid())
       {
-         osg::Group *arrow = CreateOrientationArrow();
-         mArrowNode = new dtCore::Transformable();
-         mArrowNode->GetMatrixNode()->addChild(arrow);
+         osg::StateAttribute::GLModeValue turnOn = osg::StateAttribute::ON |
+            osg::StateAttribute::PROTECTED | osg::StateAttribute::OVERRIDE;
+
+         osg::StateAttribute::GLModeValue turnOff = osg::StateAttribute::OFF |
+            osg::StateAttribute::PROTECTED | osg::StateAttribute::OVERRIDE;
+
+         //Create the quad geometry for our billboard.
+         mIconStateSet = new osg::StateSet();
+         osg::PolygonMode* pm = new osg::PolygonMode();
+         osg::Geometry* geom = CreateGeom(osg::Vec3(-1.0f, 0.0f, -1.0f),
+            osg::Vec3(2.0f, 0.0f, 0.0f),osg::Vec3(0.0f, 0.0f, 2.0f));
+
+         pm->setMode(osg::PolygonMode::FRONT_AND_BACK,osg::PolygonMode::FILL);
+
+         mIconStateSet->setMode(GL_LIGHTING,turnOff);
+         mIconStateSet->setAttributeAndModes(pm, turnOn);
+         geom->setStateSet(mIconStateSet.get());
+
+         if (mConfig.mForwardVector)
+         {
+            osg::Group* arrow = CreateOrientationArrow();
+            mArrowNode = new dtCore::Transformable();
+            mArrowNode->GetMatrixNode()->addChild(arrow);
+         }
+
+         if (mConfig.mUpVector)
+         {
+            osg::Group* arrowUp = CreateOrientationArrow();
+            mArrowNodeUp = new dtCore::Transformable();
+            mArrowNodeUp->GetMatrixNode()->addChild(arrowUp);
+         }
+
+         mIconNode = new dtCore::Transformable();
+         osg::MatrixTransform* scaleMatrix = new osg::MatrixTransform();
+         scaleMatrix->setMatrix(osg::Matrix::scale(osg::Vec3(mConfig.mScale, mConfig.mScale, mConfig.mScale)));
+
+         osg::Geode* geode = new osg::Geode();
+         geode->addDrawable(geom);
+
+         dtCore::Transform transform;
+
+         transform.SetRotation(0.0f, -90.0f, 0.0f);
+         mTopTransform = new dtCore::Transformable();
+         mTopTransform->GetOSGNode()->asGroup()->addChild(geode);
+         mTopTransform->GetOSGNode()->setNodeMask(0x00001000);
+         mTopTransform->SetTransform(transform);
+         scaleMatrix->addChild(mTopTransform->GetOSGNode());
+
+         transform.SetRotation(90.0f, 0.0f, 0.0f);
+         mSideTransform = new dtCore::Transformable();
+         mSideTransform->GetOSGNode()->asGroup()->addChild(geode);
+         mSideTransform->GetOSGNode()->setNodeMask(0x00002000);
+         mSideTransform->SetTransform(transform);
+         scaleMatrix->addChild(mSideTransform->GetOSGNode());
+
+         transform.SetRotation(0.0f, 0.0f, 0.0f);
+         mFrontTransform = new dtCore::Transformable();
+         mFrontTransform->GetOSGNode()->asGroup()->addChild(geode);
+         mFrontTransform->GetOSGNode()->setNodeMask(0x00004000);
+         mFrontTransform->SetTransform(transform);
+         scaleMatrix->addChild(mFrontTransform->GetOSGNode());
+
+         mPerspTransform = new dtCore::Transformable();
+         mPerspTransform->GetOSGNode()->asGroup()->addChild(geode);
+         mPerspTransform->GetOSGNode()->setNodeMask(0x00008000);
+         scaleMatrix->addChild(mPerspTransform->GetOSGNode());
+
+         mIconNode->GetMatrixNode()->addChild(scaleMatrix);
+
+         mBillBoard = new BillBoardDrawable();
+         mBillBoard->AddChild(mIconNode.get());
+
+         if (mConfig.mForwardVector)
+         {
+            mBillBoard->AddChild(mArrowNode.get());
+         }
+
+         if (mConfig.mUpVector)
+         {
+            mBillBoard->AddChild(mArrowNodeUp.get());
+         }
+
+         SetActorRotation(osg::Vec3(0.0f, 0.0f, 0.0f));
       }
-
-      if (mConfig.mUpVector)
-      {
-         osg::Group *arrowUp = CreateOrientationArrow();
-         mArrowNodeUp = new dtCore::Transformable();
-         mArrowNodeUp->GetMatrixNode()->addChild(arrowUp);
-      }
-
-      mIconNode = new dtCore::Transformable();
-      osg::MatrixTransform* scaleMatrix = new osg::MatrixTransform();
-      scaleMatrix->setMatrix(osg::Matrix::scale(osg::Vec3(mConfig.mScale,mConfig.mScale,mConfig.mScale)));
-
-      osg::Geode* geode = new osg::Geode();
-      geode->addDrawable(geom);
-
-      dtCore::Transform transform;
-
-      transform.SetRotation(0.0f, -90.0f, 0.0f);
-      mTopTransform = new dtCore::Transformable();
-      mTopTransform->GetOSGNode()->asGroup()->addChild(geode);
-      mTopTransform->GetOSGNode()->setNodeMask(0x00001000);
-      mTopTransform->SetTransform(transform);
-      scaleMatrix->addChild(mTopTransform->GetOSGNode());
-
-      transform.SetRotation(90.0f, 0.0f, 0.0f);
-      mSideTransform = new dtCore::Transformable();
-      mSideTransform->GetOSGNode()->asGroup()->addChild(geode);
-      mSideTransform->GetOSGNode()->setNodeMask(0x00002000);
-      mSideTransform->SetTransform(transform);
-      scaleMatrix->addChild(mSideTransform->GetOSGNode());
-
-      transform.SetRotation(0.0f, 0.0f, 0.0f);
-      mFrontTransform = new dtCore::Transformable();
-      mFrontTransform->GetOSGNode()->asGroup()->addChild(geode);
-      mFrontTransform->GetOSGNode()->setNodeMask(0x00004000);
-      mFrontTransform->SetTransform(transform);
-      scaleMatrix->addChild(mFrontTransform->GetOSGNode());
-
-      mPerspTransform = new dtCore::Transformable();
-      mPerspTransform->GetOSGNode()->asGroup()->addChild(geode);
-      mPerspTransform->GetOSGNode()->setNodeMask(0x00008000);
-      scaleMatrix->addChild(mPerspTransform->GetOSGNode());
-
-      mIconNode->GetMatrixNode()->addChild(scaleMatrix);
-
-      mBillBoard = new BillBoardDrawable();
-      mBillBoard->AddChild(mIconNode.get());
-      if (mConfig.mForwardVector) mBillBoard->AddChild(mArrowNode.get());
-      if (mConfig.mUpVector) mBillBoard->AddChild(mArrowNodeUp.get());
-
-      SetActorRotation(osg::Vec3(0.0f, 0.0f, 0.0f));
    }
 
-   //////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    void ActorProxyIcon::LoadImages()
    {
       osg::StateAttribute::GLModeValue turnOn = osg::StateAttribute::ON |
-         osg::StateAttribute::PROTECTED |
-         osg::StateAttribute::OVERRIDE;
+         osg::StateAttribute::PROTECTED | osg::StateAttribute::OVERRIDE;
       osg::StateAttribute::GLModeValue turnOff = osg::StateAttribute::OVERRIDE |
-         osg::StateAttribute::PROTECTED |
-         osg::StateAttribute::OFF;
+         osg::StateAttribute::PROTECTED | osg::StateAttribute::OFF;
 
-      osg::Image *image = GetBillBoardImage();
+      osg::Image* image = GetBillBoardImage();
 
       // Create the texture object for our billboard
-      osg::Texture2D *texture = new osg::Texture2D();
+      osg::Texture2D* texture = new osg::Texture2D();
       texture->setImage(image);
       texture->setUnRefImageDataAfterApply(true);
-      mIconStateSet->setTextureAttributeAndModes(0,texture,turnOn);
+      mIconStateSet->setTextureAttributeAndModes(0, texture, turnOn);
 
       // Orientation Arrow
-      osg::TexMat *texMat = new osg::TexMat();
-      osg::Texture2D *tex;
+      osg::TexMat* texMat = new osg::TexMat();
+      osg::Texture2D* tex;
 
-      osg::PolygonMode *pm = new osg::PolygonMode();
+      osg::PolygonMode* pm = new osg::PolygonMode();
       pm->setMode(osg::PolygonMode::FRONT_AND_BACK,osg::PolygonMode::FILL);
 
       if (mConfig.mForwardVector)
       {
          image = osgDB::readImageFile(ActorProxyIcon::IMAGE_ARROW_HEAD);
          tex = new osg::Texture2D(image);
-         tex->setWrap(osg::Texture2D::WRAP_S,osg::Texture2D::CLAMP);
-         tex->setWrap(osg::Texture2D::WRAP_T,osg::Texture2D::CLAMP);
+         tex->setWrap(osg::Texture2D::WRAP_S, osg::Texture2D::CLAMP);
+         tex->setWrap(osg::Texture2D::WRAP_T, osg::Texture2D::CLAMP);
          tex->setFilter(osg::Texture2D::MIN_FILTER, osg::Texture2D::LINEAR_MIPMAP_NEAREST);
          tex->setFilter(osg::Texture2D::MAG_FILTER, osg::Texture2D::LINEAR);
-         mConeStateSet->setTextureAttributeAndModes(0,tex,turnOn);
-         mConeStateSet->setAttributeAndModes(pm,turnOn);
-         mConeStateSet->setMode(GL_LIGHTING,turnOff);
+         mConeStateSet->setTextureAttributeAndModes(0, tex, turnOn);
+         mConeStateSet->setAttributeAndModes(pm, turnOn);
+         mConeStateSet->setMode(GL_LIGHTING, turnOff);
       }
 
       if (mConfig.mUpVector)
       {
          image = osgDB::readImageFile(ActorProxyIcon::IMAGE_ARROW_BODY);
          tex = new osg::Texture2D(image);
-         texMat->setMatrix(osg::Matrix::scale(5,7,0.0f));
+         texMat->setMatrix(osg::Matrix::scale(5.0f, 7.0f, 0.0f));
          tex->setWrap(osg::Texture2D::WRAP_S,osg::Texture2D::CLAMP);
          tex->setWrap(osg::Texture2D::WRAP_T,osg::Texture2D::CLAMP);
          tex->setFilter(osg::Texture2D::MIN_FILTER, osg::Texture2D::LINEAR_MIPMAP_NEAREST);
          tex->setFilter(osg::Texture2D::MAG_FILTER, osg::Texture2D::LINEAR);
-         mCylinderStateSet->setTextureAttributeAndModes(0,tex,turnOn);
-         mCylinderStateSet->setAttributeAndModes(pm,turnOn);
-         mCylinderStateSet->setMode(GL_LIGHTING,turnOff);
+         mCylinderStateSet->setTextureAttributeAndModes(0, tex, turnOn);
+         mCylinderStateSet->setAttributeAndModes(pm, turnOn);
+         mCylinderStateSet->setMode(GL_LIGHTING, turnOff);
       }
    }
 
-   //////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    dtCore::DeltaDrawable* ActorProxyIcon::GetDrawable()
    {
       return mBillBoard.get();
    }
 
-   //////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    const dtCore::DeltaDrawable* ActorProxyIcon::GetDrawable() const
    {
       return mBillBoard.get();
    }
 
-   ////////////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    dtCore::Transformable* ActorProxyIcon::GetPerspectiveTransform()
    {
       return mPerspTransform;
    }
 
-   ////////////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    const dtCore::Transformable* ActorProxyIcon::GetPerspectiveTransform() const
    {
       return mPerspTransform;
    }
 
    //////////////////////////////////////////////////////////////////////////
-   bool ActorProxyIcon::OwnsDrawable(dtCore::DeltaDrawable *drawable) const
+   bool ActorProxyIcon::OwnsDrawable(dtCore::DeltaDrawable* drawable) const
    {
       return  mBillBoard->GetUniqueId() == drawable->GetUniqueId() ||
          mIconNode->GetUniqueId() == drawable->GetUniqueId();// || //is this really necessary
@@ -268,7 +272,7 @@ namespace dtCore
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void ActorProxyIcon::SetPosition(const osg::Vec3 &newPos)
+   void ActorProxyIcon::SetPosition(const osg::Vec3& newPos)
    {
       dtCore::Transform trans;
 
@@ -291,8 +295,8 @@ namespace dtCore
       }
    }
 
-   //////////////////////////////////////////////////////////////////////////
-   void ActorProxyIcon::SetRotation(const osg::Matrix &mat)
+   /////////////////////////////////////////////////////////////////////////////
+   void ActorProxyIcon::SetRotation(const osg::Matrix& mat)
    {
       dtCore::Transform tx;
       mPerspTransform->GetTransform(tx);
@@ -300,8 +304,8 @@ namespace dtCore
       mPerspTransform->SetTransform(tx);
    }
 
-   //////////////////////////////////////////////////////////////////////////
-   void ActorProxyIcon::SetActorRotation(const osg::Vec3 &hpr)
+   /////////////////////////////////////////////////////////////////////////////
+   void ActorProxyIcon::SetActorRotation(const osg::Vec3& hpr)
    {
       dtCore::Transform tx;
       if (mConfig.mForwardVector)
@@ -319,8 +323,8 @@ namespace dtCore
 
    }
 
-   //////////////////////////////////////////////////////////////////////////
-   void ActorProxyIcon::SetActorRotation(const osg::Matrix &mat)
+   /////////////////////////////////////////////////////////////////////////////
+   void ActorProxyIcon::SetActorRotation(const osg::Matrix& mat)
    {
       dtCore::Transform tx;
 
@@ -357,7 +361,7 @@ namespace dtCore
 
 
    //////////////////////////////////////////////////////////////////////////
-   osg::Image *ActorProxyIcon::GetBillBoardImage()
+   osg::Image* ActorProxyIcon::GetBillBoardImage()
    {
       if (mIconImageFile.empty())
       {
@@ -368,29 +372,26 @@ namespace dtCore
    }
 
    //////////////////////////////////////////////////////////////////////////
-   osg::Group *ActorProxyIcon::CreateOrientationArrow()
+   osg::Group* ActorProxyIcon::CreateOrientationArrow()
    {
-      if ( !mConeStateSet.valid() )
+      if (!mConeStateSet.valid())
       {
          mConeStateSet = new osg::StateSet();
       }
 
-      if ( !mCylinderStateSet.valid() )
+      if (!mCylinderStateSet.valid())
       {
          mCylinderStateSet = new osg::StateSet();
       }
 
-      osg::PolygonMode *pm = new osg::PolygonMode();
-      pm->setMode(osg::PolygonMode::FRONT_AND_BACK,osg::PolygonMode::FILL);
-
-      osg::TessellationHints *tessHints = new osg::TessellationHints();
+      osg::TessellationHints* tessHints = new osg::TessellationHints();
       tessHints->setDetailRatio(0.1f);
       tessHints->setCreateNormals(false);
       tessHints->setCreateTextureCoords(true);
 
-      osg::Geode *cylinderGeode = new osg::Geode();
-      osg::MatrixTransform *cylinderTx = new osg::MatrixTransform();
-      osg::ShapeDrawable *cylinder = new osg::ShapeDrawable(new osg::Cylinder(),tessHints);
+      osg::Geode* cylinderGeode = new osg::Geode();
+      osg::MatrixTransform* cylinderTx = new osg::MatrixTransform();
+      osg::ShapeDrawable* cylinder = new osg::ShapeDrawable(new osg::Cylinder(),tessHints);
 
       cylinderGeode->addDrawable(cylinder);
       cylinderGeode->setStateSet(mCylinderStateSet.get());
@@ -399,9 +400,9 @@ namespace dtCore
                             osg::Matrix::translate(osg::Vec3(0,1.1f,0)));
       cylinderTx->addChild(cylinderGeode);
 
-      osg::Geode *coneGeode = new osg::Geode();
-      osg::MatrixTransform *coneTx = new osg::MatrixTransform();
-      osg::ShapeDrawable *cone = new osg::ShapeDrawable(new osg::Cone(),tessHints);
+      osg::Geode* coneGeode = new osg::Geode();
+      osg::MatrixTransform* coneTx = new osg::MatrixTransform();
+      osg::ShapeDrawable* cone = new osg::ShapeDrawable(new osg::Cone(),tessHints);
 
       coneGeode->addDrawable(cone);
       coneGeode->setStateSet(mConeStateSet.get());
@@ -410,20 +411,20 @@ namespace dtCore
                         osg::Matrix::translate(osg::Vec3(0,2.1f,0)));
       coneTx->addChild(coneGeode);
 
-      osg::Group *group = new osg::Group();
+      osg::Group* group = new osg::Group();
       group->addChild(cylinderTx);
       group->addChild(coneTx);
       return group;
    }
 
-   //////////////////////////////////////////////////////////////////////////
-   osg::Geometry *ActorProxyIcon::CreateGeom(const osg::Vec3 &corner,
-                                             const osg::Vec3 &width,
-                                             const osg::Vec3 &height)
+   /////////////////////////////////////////////////////////////////////////////
+   osg::Geometry *ActorProxyIcon::CreateGeom(const osg::Vec3& corner,
+                                             const osg::Vec3& width,
+                                             const osg::Vec3& height)
    {
-      osg::Geometry *geom = new osg::Geometry;
+      osg::Geometry* geom = new osg::Geometry;
 
-      osg::Vec3Array *coords = new osg::Vec3Array(4);
+      osg::Vec3Array* coords = new osg::Vec3Array(4);
       (*coords)[0]=corner;
       (*coords)[1]=corner+width;
       (*coords)[2]=corner+width+height;
@@ -446,5 +447,4 @@ namespace dtCore
       geom->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::QUADS,0,4));
       return geom;
    }
-
 }
