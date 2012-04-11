@@ -301,7 +301,7 @@ namespace dtEditQt
          validDrag = true;
          ClearGhostProxy();
 
-         mGhostProxy = dtCore::LibraryManager::GetInstance().CreateActorProxy("dtcore.Game.Actors", "Game Mesh Actor");
+         mGhostProxy = dtCore::LibraryManager::GetInstance().CreateActorProxy("dtcore", "Static Mesh");
          if (mGhostProxy.valid())
          {
             ghostData = event->mimeData()->data("StaticMesh");
