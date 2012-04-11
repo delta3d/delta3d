@@ -56,41 +56,49 @@ namespace dtAnim
    public:
       typedef osg::Object BaseClass;
 
+      //////////////////////////////////////////////////////////////////////////
       CalOptions(Cal3DModelData& coreModelData)
          : mCoreModelData(&coreModelData)
       {}
 
+      //////////////////////////////////////////////////////////////////////////
       CalOptions(Cal3DModelData& coreModelData, const std::string objectName)
          : mCoreModelData(&coreModelData)
          , mObjectName(objectName)
       {
       }
 
+      //////////////////////////////////////////////////////////////////////////
       void SetObjectName(const std::string& name)
       {
          mObjectName = name;
       }
 
+      //////////////////////////////////////////////////////////////////////////
       const std::string& GetObjectName()
       {
          return mObjectName;
       }
 
+      //////////////////////////////////////////////////////////////////////////
       void SetFile(const std::string& file)
       {
          mFile = file;
       }
 
+      //////////////////////////////////////////////////////////////////////////
       const std::string& GetFile()
       {
          return mFile;
       }
 
+      //////////////////////////////////////////////////////////////////////////
       Cal3DModelData& GetCoreModelData()
       {
          return *mCoreModelData;
       }
 
+      //////////////////////////////////////////////////////////////////////////
       static dtCore::RefPtr<osgDB::ReaderWriter::Options>
          CreateOSGOptions(CalOptions& optionData)
       {
@@ -118,10 +126,12 @@ namespace dtAnim
       std::string mObjectName;
       std::string mFile;
 
+      //////////////////////////////////////////////////////////////////////////
       CalOptions()
          : mCoreModelData(NULL)
       {}
 
+      //////////////////////////////////////////////////////////////////////////
       CalOptions(const osg::Object& obj,const osg::CopyOp& copyop=osg::CopyOp::SHALLOW_COPY)
          : BaseClass(obj, copyop)
          , mCoreModelData(NULL)
@@ -142,6 +152,7 @@ namespace dtAnim
       class MemBuffer : public osg::Referenced
       {
       public:
+         //////////////////////////////////////////////////////////////////////////
          MemBuffer(std::istream& fin)
             : mBuffer(NULL)
             , mBufferLength(0)
@@ -158,17 +169,21 @@ namespace dtAnim
             }
          }
 
+         //////////////////////////////////////////////////////////////////////////
          void* GetBufferData() const
          {
             return mBuffer;
          }
 
+         //////////////////////////////////////////////////////////////////////////
          unsigned int GetBufferLength() const
          {
             return mBufferLength;
          }
 
       protected:
+
+         //////////////////////////////////////////////////////////////////////////
          virtual ~MemBuffer()
          {
             if (mBuffer != NULL)
@@ -287,24 +302,28 @@ namespace dtAnim
 
       typedef CalReaderWriter BaseClass;
 
+      //////////////////////////////////////////////////////////////////////////
       CalSkeletonReaderWriter()
       {
          supportsExtension("xsf","Cal3D Skeleton File (XML)");
          supportsExtension("csf","Cal3D Skeleton File (Binary)");
       }
 
+      //////////////////////////////////////////////////////////////////////////
       const char* className() const
       {
          return "Cal3D Skeleton Reader/Writer";
       }
 
 #if defined(CAL3D_VERSION) && CAL3D_VERSION >= 1300
+      //////////////////////////////////////////////////////////////////////////
       virtual bool LoadFile(const MemBuffer& buffer, CalOptions& options) const
       {
          return options.GetCoreModelData().LoadCoreSkeletonBuffer(
             buffer.GetBufferData(), options.GetFile(), options.GetObjectName());
       }
 #else
+      //////////////////////////////////////////////////////////////////////////
       virtual bool LoadFile(const std::string& file, CalOptions& options) const
       {
          options.GetCoreModelData().LoadCoreSkeleton(file);
@@ -326,24 +345,28 @@ namespace dtAnim
 
       typedef CalReaderWriter BaseClass;
 
+      //////////////////////////////////////////////////////////////////////////
       CalMaterialReaderWriter()
       {
          supportsExtension("xrf","Cal3D Material File (XML)");
          supportsExtension("crf","Cal3D Material File (Binary)");
       }
 
+      //////////////////////////////////////////////////////////////////////////
       const char* className() const
       {
          return "Cal3D Material Reader/Writer";
       }
 
 #if defined(CAL3D_VERSION) && CAL3D_VERSION >= 1300
+      //////////////////////////////////////////////////////////////////////////
       virtual bool LoadFile(const MemBuffer& buffer, CalOptions& options) const
       {
          return 0 <= options.GetCoreModelData().LoadCoreMaterialBuffer(
             buffer.GetBufferData(), options.GetFile(), options.GetObjectName());
       }
 #else
+      //////////////////////////////////////////////////////////////////////////
       virtual bool LoadFile(const std::string& file, CalOptions& options) const
       {
          return 0 <= options.GetCoreModelData().LoadCoreMaterial(file, options.GetObjectName());
@@ -364,24 +387,28 @@ namespace dtAnim
 
       typedef CalReaderWriter BaseClass;
 
+      //////////////////////////////////////////////////////////////////////////
       CalMeshReaderWriter()
       {
          supportsExtension("xmf","Cal3D Mesh File (XML)");
          supportsExtension("cmf","Cal3D Mesh File (Binary)");
       }
 
+      //////////////////////////////////////////////////////////////////////////
       const char* className() const
       {
          return "Cal3D Mesh Reader/Writer";
       }
 
 #if defined(CAL3D_VERSION) && CAL3D_VERSION >= 1300
+      //////////////////////////////////////////////////////////////////////////
       virtual bool LoadFile(const MemBuffer& buffer, CalOptions& options) const
       {
          return 0 <= options.GetCoreModelData().LoadCoreMeshBuffer(
             buffer.GetBufferData(), options.GetFile(), options.GetObjectName());
       }
 #else
+      //////////////////////////////////////////////////////////////////////////
       virtual bool LoadFile(const std::string& file, CalOptions& options) const
       {
          return 0 <= options.GetCoreModelData().LoadCoreMesh(file, options.GetObjectName());
@@ -402,24 +429,28 @@ namespace dtAnim
 
       typedef CalReaderWriter BaseClass;
 
+      //////////////////////////////////////////////////////////////////////////
       CalAnimReaderWriter()
       {
          supportsExtension("xaf","Cal3D Animation File (XML)");
          supportsExtension("caf","Cal3D Animation File (Binary)");
       }
 
+      //////////////////////////////////////////////////////////////////////////
       const char* className() const
       {
          return "Cal3D Animation Reader/Writer";
       }
 
 #if defined(CAL3D_VERSION) && CAL3D_VERSION >= 1300
+      //////////////////////////////////////////////////////////////////////////
       virtual bool LoadFile(const MemBuffer& buffer, CalOptions& options) const
       {
          return 0 <= options.GetCoreModelData().LoadCoreAnimationBuffer(
             buffer.GetBufferData(), options.GetFile(), options.GetObjectName());
       }
 #else
+      //////////////////////////////////////////////////////////////////////////
       virtual bool LoadFile(const std::string& file, CalOptions& options) const
       {
          return 0 <= options.GetCoreModelData().LoadCoreAnimation(file, options.GetObjectName());
@@ -444,14 +475,17 @@ namespace dtAnim
    public:
       typedef osg::Object BaseClass;
 
+      //////////////////////////////////////////////////////////////////////////
       WrapperOSGCharFileObject()
          : BaseClass()
       {}
 
+      //////////////////////////////////////////////////////////////////////////
       explicit WrapperOSGCharFileObject(bool threadSafeRefUnref)
          : BaseClass(threadSafeRefUnref)
       {}
 
+      //////////////////////////////////////////////////////////////////////////
       WrapperOSGCharFileObject(const osg::Object& obj,const osg::CopyOp& copyop=osg::CopyOp::SHALLOW_COPY)
          : BaseClass(obj, copyop)
       {}
@@ -472,6 +506,7 @@ namespace dtAnim
 
       typedef dtCore::BaseXMLReaderWriter<CalCoreModel, CharacterFileHandler, CharacterFileWriter> BaseClass;
 
+      //////////////////////////////////////////////////////////////////////////
       CharacterXMLReaderWriter()
       {
          supportsExtension("dtchar","Delta3D Character File (XML)");
@@ -479,11 +514,13 @@ namespace dtAnim
          SetSchemaFile("animationdefinition.xsd");
       }
 
+      //////////////////////////////////////////////////////////////////////////
       const char* className() const
       {
          return "Delta3D Character File Reader/Writer";
       }
 
+      //////////////////////////////////////////////////////////////////////////
       virtual osgDB::ReaderWriter::ReadResult BuildResult(
          const osgDB::ReaderWriter::ReadResult& result, CharacterFileHandler& handler) const
       {
@@ -596,8 +633,8 @@ namespace dtAnim
 
       if (handler.valid())
       {
-         CalCoreModel* coreModel = new CalCoreModel(handler->mName);
-         coreModelData = new Cal3DModelData(coreModel, filename);
+         coreModelData = new Cal3DModelData(handler->mName, filename);
+         CalCoreModel* coreModel = coreModelData->GetCoreModel();
 
          //load skeleton
          std::string skelFile(GetAbsolutePath(path + handler->mSkeletonFilename));

@@ -39,7 +39,7 @@
  namespace dtAnim
  {
    ////////////////////////////////////////////////////////////////////////////////
-   Cal3DModelData::Cal3DModelData(CalCoreModel* coreModel, const std::string& filename)
+   Cal3DModelData::Cal3DModelData(const std::string& modelName, const std::string& filename)
       : mScale(1.0f)
       , mFilename(filename)
       , mStride(-1)
@@ -47,18 +47,21 @@
       , mVertexArray(NULL)
       , mVertexBufferObject(NULL)
       , mElementBufferObject(NULL)
-      , mCoreModel(coreModel)
+      , mCoreModel(NULL)
       , mHardwareModel(NULL)
       , mAnimWrappers()
       , mAnimatables()
       , mShaderMaxBones(72)
    {
+      mCoreModel = new CalCoreModel(modelName);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    Cal3DModelData::~Cal3DModelData()
    {
-      mCoreModel = 0;
+      delete mCoreModel;
+      mCoreModel = NULL;
+
       mAnimWrappers.clear();
       mAnimatables.clear();
 
