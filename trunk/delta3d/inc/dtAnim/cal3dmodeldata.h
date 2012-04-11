@@ -91,7 +91,7 @@ namespace dtAnim
       };
 
    public:
-      Cal3DModelData(CalCoreModel* coreModel, const std::string& filename);
+      Cal3DModelData(const std::string& modelName, const std::string& filename);
 
       void Add(AnimationWrapper*);
       void Add(Animatable*);
