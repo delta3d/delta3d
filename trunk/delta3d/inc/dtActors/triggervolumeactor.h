@@ -54,14 +54,14 @@ namespace dtActors
       virtual void OnMessage(dtCore::Base::MessageData* data);
 
       /**
-      * Callback from Scene when a contact occurs. This normally is used to 
+      * Callback from Scene when a contact occurs. This normally is used to
       * filter out Transformables that you do not want to perform expensive
       * physics calculations on, but here we use it to fire our Trigger.
       */
       virtual bool FilterContact(dContact* contact, Transformable* collider);
 
       ///From dtCore::Transformable
-      virtual void PostPhysicsStepUpdate(); 
+      virtual void PostPhysicsStepUpdate();
 
       ///From DeltaDrawable
       virtual void AddedToScene(dtCore::Scene* scene);
@@ -99,6 +99,11 @@ namespace dtActors
       */
       bool IsActorInVolume(dtCore::Transformable* actor);
 
+
+      /**
+       *	Retrieves the occupancy list.
+       */
+      const std::set<dtCore::ObserverPtr<dtCore::Transformable> >& GetOccupants() const;
 
    protected:
 
