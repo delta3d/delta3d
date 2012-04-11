@@ -163,6 +163,14 @@ namespace dtAnim
       void SetElementBufferObject(osg::ElementBufferObject* ebo);
 
       /**
+       * @return the DrawElements objects used with the ElementBufferObject or 0 for none
+       */
+      osg::DrawElements* GetDrawElements() const;
+
+      /// Sets the DrawElements to use with the ElementBufferObject
+      void SetDrawElements(osg::DrawElements* drawElements);
+
+      /**
        * @see dtCore::ShaderManager
        * @return the shader group used to lookup the shader for this character model.
        */
@@ -331,6 +339,7 @@ namespace dtAnim
       osg::ref_ptr<osg::FloatArray> mVertexArray;
       osg::observer_ptr<osg::VertexBufferObject> mVertexBufferObject;
       osg::observer_ptr<osg::ElementBufferObject> mElementBufferObject;
+      osg::ref_ptr<osg::DrawElements> mElementBufferDrawElements;
 
       CalCoreModel* mCoreModel;
       CalHardwareModel* mHardwareModel;
