@@ -336,6 +336,24 @@
    }
 
    ////////////////////////////////////////////////////////////////////////////////
+   osg::DrawElements* Cal3DModelData::GetDrawElements() const
+   {
+      return mElementBufferDrawElements;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void Cal3DModelData::SetDrawElements(osg::DrawElements* drawElements)
+   {
+      // Osg does not hold a reference to drawElements, we must make sure to hold our own
+      if (mElementBufferObject.valid())
+      {
+         mElementBufferObject->addDrawElements(drawElements);
+      }
+
+      mElementBufferDrawElements = drawElements;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
    const std::string& Cal3DModelData::GetShaderGroupName() const
    {
       return mShaderGroupName;
@@ -886,24 +904,27 @@
       return numNames;
    }
 
-
-
+   /////////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    LODOptions::LODOptions():
       mStartDistance(10.0), mEndDistance(500.0), mMaxVisibleDistance(1000.0)
    {
 
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    void LODOptions::SetStartDistance(double newDistance)
    {
       mStartDistance = newDistance;
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    void LODOptions::SetEndDistance(double newDistance)
    {
       mEndDistance = newDistance;
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    void LODOptions::SetMaxVisibleDistance(double newDistance)
    {
       mMaxVisibleDistance = newDistance;

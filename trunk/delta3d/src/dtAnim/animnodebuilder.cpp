@@ -112,7 +112,7 @@ namespace dtAnim
 
    private:
       CreateGeometryDrawCallback* mCreateCB;
-      osg::ref_ptr<osg::Group> mGroupToAddTo;
+      osg::observer_ptr<osg::Group> mGroupToAddTo;
    };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -300,10 +300,14 @@ dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateHardware(Cal3DModelWrapper* pWr
          // Either both should be NULL, or both non NULL
          assert(indexEBO == NULL);
 
-         //const size_t stride = modelData->GetStride();
-
          vertexVBO = new osg::VertexBufferObject;
          indexEBO = new osg::ElementBufferObject;
+
+         vertexVBO->addArray(vertexArray);
+
+         // Store the buffers with the model data for possible re-use later
+         modelData->SetVertexBufferObject(vertexVBO);
+         modelData->SetElementBufferObject(indexEBO);
 
          osg::DrawElements* drawElements = NULL;
 
@@ -317,12 +321,7 @@ dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateHardware(Cal3DModelWrapper* pWr
             drawElements = new osg::DrawElementsUInt(GL_TRIANGLES, numIndices, (GLuint*)indexArray);
          }
 
-         vertexVBO->addArray(vertexArray);
-         indexEBO->addDrawElements(drawElements);
-
-         // Store the buffers with the model data for possible re-use later
-         modelData->SetVertexBufferObject(vertexVBO);
-         modelData->SetElementBufferObject(indexEBO);
+         modelData->SetDrawElements(drawElements);
       }
 
       dtCore::ShaderProgram* shadProg = LoadShaders(*modelData, *geode);
