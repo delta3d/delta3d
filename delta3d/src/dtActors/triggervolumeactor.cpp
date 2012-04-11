@@ -61,7 +61,7 @@ bool TriggerVolumeActor::FilterContact(dContact* contact, Transformable* collide
    {
       return false;
    }
- 
+
    //store this collision
    mNewCollisions.insert(collider);
 
@@ -141,6 +141,12 @@ bool TriggerVolumeActor::IsActorAnOccupant(dtCore::Transformable* actor)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+const std::set<dtCore::ObserverPtr<dtCore::Transformable> >& TriggerVolumeActor::GetOccupants() const
+{
+   return mOccupancyList;
+}
+
+////////////////////////////////////////////////////////////////////////////////
 void TriggerVolumeActor::TriggerEvent(dtCore::Transformable* instigator, TriggerEventType eventType)
 {
    // Increment the trigger count whenever an occupant has entered the volume.
@@ -177,13 +183,13 @@ void TriggerVolumeActor::TriggerEvent(dtCore::Transformable* instigator, Trigger
 ////////////////////////////////////////////////////////////////////////////////
 void dtActors::TriggerVolumeActor::PostPhysicsStepUpdate()
 {
-  
-   //what's in the new that isn't in the old: these are collidables that just entered the volume 
+
+   //what's in the new that isn't in the old: these are collidables that just entered the volume
    {
       CollidableContainer result;
 
       CollidableContainer::iterator itr;
-      std::set_difference(mNewCollisions.begin(), mNewCollisions.end(), 
+      std::set_difference(mNewCollisions.begin(), mNewCollisions.end(),
                           mOccupancyList.begin(), mOccupancyList.end(), std::inserter(result, result.begin()));
 
       CollidableContainer::iterator enteredItr = result.begin();
@@ -196,10 +202,10 @@ void dtActors::TriggerVolumeActor::PostPhysicsStepUpdate()
          }
          ++enteredItr;
       }
-      
+
    }
 
-   //what's in the old that isn't in the new: these are collidables that just left the volume 
+   //what's in the old that isn't in the new: these are collidables that just left the volume
    {
       CollidableContainer result;
       std::set_difference(mOccupancyList.begin(), mOccupancyList.end(),
@@ -225,7 +231,7 @@ void dtActors::TriggerVolumeActor::PostPhysicsStepUpdate()
    //Add the newly collided to the old
    mOccupancyList.insert(mNewCollisions.begin(), mNewCollisions.end());
 
-   dtGame::GameActor::PostPhysicsStepUpdate();   
+   dtGame::GameActor::PostPhysicsStepUpdate();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
