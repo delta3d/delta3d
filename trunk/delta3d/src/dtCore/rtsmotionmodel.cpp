@@ -33,82 +33,96 @@ RTSMotionModel::RTSMotionModel( dtCore::Keyboard *keyboard
    // JPH: This makes sure the camera does not rotate towards the sky.
    SetElevationMaxLimit(0.0f);
 
+   dtCore::ButtonAxisToAxis* azimuthMapping = new dtCore::ButtonAxisToAxis(
+      keyboard->GetButton(osgGA::GUIEventAdapter::KEY_Alt_L), mouse->GetAxis(0));
+
+   dtCore::ButtonAxisToAxis* elevationMapping = new dtCore::ButtonAxisToAxis(
+      keyboard->GetButton(osgGA::GUIEventAdapter::KEY_Alt_L), mouse->GetAxis(1));
+
+   mMiscAxisMappingList.push_back(azimuthMapping);
+   mMiscAxisMappingList.push_back(elevationMapping);
+
    // azimuth (left/right angle)
    SetAzimuthAxis(GetDefaultLogicalInputDevice()->AddAxis(
-      "orbit vertical",
-      new dtCore::ButtonAxisToAxis(
-         keyboard->GetButton(osgGA::GUIEventAdapter::KEY_Alt_L),
-         mouse->GetAxis(0))
-      ));
+      "orbit vertical",azimuthMapping));
+
    // elevation (up/down angle)
    SetElevationAxis(GetDefaultLogicalInputDevice()->AddAxis(
-      "orbit horizontal",
-      new dtCore::ButtonAxisToAxis(
-         keyboard->GetButton(osgGA::GUIEventAdapter::KEY_Alt_L),
-         mouse->GetAxis(1))
-      ));
+      "orbit horizontal", elevationMapping));
+
+   dtCore::DeltaButtonsToAxis* distanceButtonMapping = new dtCore::DeltaButtonsToAxis(
+      keyboard->GetButton('q'), keyboard->GetButton('e'), -0.05f, 0.05f);
+
+   dtCore::AxisToAxis* distanceMouseMapping = new dtCore::AxisToAxis(mouse->GetAxis(2), 0.05f, 0.0f);
+
+   dtCore::AxesToAxis* distanceMapping =  new dtCore::AxesToAxis(
+      GetDefaultLogicalInputDevice()->AddAxis("mouse wheel camera zoom", distanceMouseMapping),
+      GetDefaultLogicalInputDevice()->AddAxis("q/e keys zoom in/out", distanceButtonMapping));
+
+   mMiscAxisMappingList.push_back(distanceButtonMapping);
+   mMiscAxisMappingList.push_back(distanceMouseMapping);
+   mMiscAxisMappingList.push_back(distanceMapping);
 
    SetDistanceAxis(GetDefaultLogicalInputDevice()->AddAxis(
-         "translate left/right",
-         new dtCore::AxesToAxis(
-         GetDefaultLogicalInputDevice()->AddAxis(
-         "mouse wheel camera zoom",
-         new dtCore::AxisToAxis(
-         mouse->GetAxis(2),
-         0.05f,
-         0.0f)),
-         GetDefaultLogicalInputDevice()->AddAxis(
-         "q/e keys zoom in/out",
-         new dtCore::DeltaButtonsToAxis(
-         keyboard->GetButton('q'),
-         keyboard->GetButton('e'), -0.05f, 0.05f))
-         )));
+         "translate left/right", distanceMapping));
 
    if (useMouseScrolling)
    {
-      SetLeftRightTranslationAxis(GetDefaultLogicalInputDevice()->AddAxis(
-         "translate left/right",
-         new dtCore::AxesToAxis(
-         GetDefaultLogicalInputDevice()->AddAxis(
-         "left/right of screen translates left/right",
-         new dtCore::AxisToAxisTransformation(
-         mouse->GetAxis(0),
-         new dtUtil::EdgeStepFilter(-0.9f, 0.9f))),
-         GetDefaultLogicalInputDevice()->AddAxis(
-         "a/d keys translate left/right",
-         new dtCore::ButtonsToAxis(
+      dtCore::ButtonsToAxis* leftRightButtonMapping = new dtCore::ButtonsToAxis(
          keyboard->GetButton('a'),
-         keyboard->GetButton('d')))
-         )));
+         keyboard->GetButton('d'));
+
+      dtUtil::EdgeStepFilter* filter = new dtUtil::EdgeStepFilter(-0.9f, 0.9f);
+
+      dtCore::AxisToAxisTransformation* leftRightAxisTransformationMapping = new dtCore::AxisToAxisTransformation(
+         mouse->GetAxis(0), filter);
+
+      dtCore::AxesToAxis* leftRightTranslationMapping = new dtCore::AxesToAxis(
+         GetDefaultLogicalInputDevice()->AddAxis("left/right of screen translates left/right", leftRightAxisTransformationMapping),
+         GetDefaultLogicalInputDevice()->AddAxis("a/d keys translate left/right", leftRightButtonMapping));
+
+      mMiscAxisMappingList.push_back(leftRightButtonMapping);
+      mMiscAxisMappingList.push_back(leftRightAxisTransformationMapping);
+      mMiscAxisMappingList.push_back(leftRightTranslationMapping);
+
+      SetLeftRightTranslationAxis(GetDefaultLogicalInputDevice()->AddAxis(
+         "translate left/right", leftRightTranslationMapping));
+
+      dtCore::ButtonsToAxis* forwardBackButtonMapping = new dtCore::ButtonsToAxis(
+         keyboard->GetButton('s'), keyboard->GetButton('w'));
+
+      dtUtil::EdgeStepFilter* upDownFilter = new dtUtil::EdgeStepFilter(-0.9f, 0.9f);
+
+      dtCore::AxisToAxisTransformation* forwardBackwardAxisTransformMapping = new dtCore::AxisToAxisTransformation(
+         mouse->GetAxis(1), upDownFilter);
+
+      dtCore::AxesToAxis* forwardBackTranslationMapping = new dtCore::AxesToAxis(
+         GetDefaultLogicalInputDevice()->AddAxis("top/bottom of screen translates forward/back", forwardBackwardAxisTransformMapping),
+         GetDefaultLogicalInputDevice()->AddAxis("w/s keys translate forward/back", forwardBackButtonMapping));
+
+      mMiscAxisMappingList.push_back(forwardBackButtonMapping);
+      mMiscAxisMappingList.push_back(forwardBackwardAxisTransformMapping);
+      mMiscAxisMappingList.push_back(forwardBackTranslationMapping);
 
       SetUpDownTranslationAxis(GetDefaultLogicalInputDevice()->AddAxis(
-         "translate forward/back",
-         new dtCore::AxesToAxis(
-         GetDefaultLogicalInputDevice()->AddAxis(
-         "top/bottom of screen translates forward/back",
-         new dtCore::AxisToAxisTransformation(
-         mouse->GetAxis(1),
-         new dtUtil::EdgeStepFilter(-0.9f, 0.9f))),
-         GetDefaultLogicalInputDevice()->AddAxis(
-         "w/s keys translate forward/back",
-         new dtCore::ButtonsToAxis(
-         keyboard->GetButton('s'),
-         keyboard->GetButton('w')))
-         )));
+         "translate forward/back", forwardBackTranslationMapping));
    }
    else
    {
+      dtCore::ButtonsToAxis* leftRightMapping = new dtCore::ButtonsToAxis(
+         keyboard->GetButton('a'), keyboard->GetButton('d'));
+
       SetLeftRightTranslationAxis(GetDefaultLogicalInputDevice()->AddAxis(
-         "a/d keys translate left/right",
-         new dtCore::ButtonsToAxis(
-         keyboard->GetButton('a'),
-         keyboard->GetButton('d'))));
+         "a/d keys translate left/right", leftRightMapping));
+
+      dtCore::ButtonsToAxis* forwardBackMapping = new dtCore::ButtonsToAxis(
+         keyboard->GetButton('s'), keyboard->GetButton('w'));
 
       SetUpDownTranslationAxis(GetDefaultLogicalInputDevice()->AddAxis(
-         "w/s keys translate forward/back",
-         new dtCore::ButtonsToAxis(
-         keyboard->GetButton('s'),
-         keyboard->GetButton('w'))));
+         "w/s keys translate forward/back", forwardBackMapping));
+
+      mMiscAxisMappingList.push_back(leftRightMapping);
+      mMiscAxisMappingList.push_back(forwardBackMapping);
    }
 }
 

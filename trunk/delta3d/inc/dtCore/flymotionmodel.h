@@ -32,6 +32,7 @@
 namespace dtCore
 {
    class Axis;
+   class AxisMapping;
    class ButtonAxisToAxis;
    class ButtonsToAxis;
    class Keyboard;
@@ -261,50 +262,50 @@ namespace dtCore
          /**
           * The left button up/down mapping.
           */
-         ButtonAxisToAxis* mLeftButtonUpDownMapping;
+         dtCore::RefPtr<ButtonAxisToAxis> mLeftButtonUpDownMapping;
 
          /**
           * The left button right/left mapping.
           */
-         ButtonAxisToAxis* mLeftButtonLeftRightMapping;
+         dtCore::RefPtr<ButtonAxisToAxis> mLeftButtonLeftRightMapping;
 
          /**
           * The right button up/down mapping.
           */
-         ButtonAxisToAxis* mRightButtonUpDownMapping;
+         dtCore::RefPtr<ButtonAxisToAxis> mRightButtonUpDownMapping;
 
          /**
           * The right button left/right mapping.
           */
-         ButtonAxisToAxis* mRightButtonLeftRightMapping;
+         dtCore::RefPtr<ButtonAxisToAxis> mRightButtonLeftRightMapping;
 
          /**
           * The arrow key up/down mapping.
           */
-         ButtonsToAxis* mArrowKeysUpDownMapping;
+         dtCore::RefPtr<ButtonsToAxis> mArrowKeysUpDownMapping;
 
          /**
           * The arrow key left/right mapping.
           */
-         ButtonsToAxis* mArrowKeysLeftRightMapping;
+         dtCore::RefPtr<ButtonsToAxis> mArrowKeysLeftRightMapping;
 
          /**
           * The w/s key forward/backward mapping.
           */
-         ButtonsToAxis* mWSKeysUpDownMapping;
-         ButtonsToAxis* mWSKeysUpDownMappingCaps;
+         dtCore::RefPtr<ButtonsToAxis> mWSKeysUpDownMapping;
+         dtCore::RefPtr<ButtonsToAxis> mWSKeysUpDownMappingCaps;
 
          /**
           * The a/d key strafe left/right mapping.
           */
-         ButtonsToAxis* mADKeysLeftRightMapping;
-         ButtonsToAxis* mADKeysLeftRightMappingCaps;
+         dtCore::RefPtr<ButtonsToAxis> mADKeysLeftRightMapping;
+         dtCore::RefPtr<ButtonsToAxis> mADKeysLeftRightMappingCaps;
 
          /**
           * The q/e key fly up/down mapping.
           */
-         ButtonsToAxis* mQEKeysUpDownMapping;
-         ButtonsToAxis* mQEKeysUpDownMappingCaps;
+         dtCore::RefPtr<ButtonsToAxis> mQEKeysUpDownMapping;
+         dtCore::RefPtr<ButtonsToAxis> mQEKeysUpDownMappingCaps;
 
          /**
           * The default fly forward/backward axis.
@@ -355,6 +356,11 @@ namespace dtCore
           * The axis that turns the target up or down.
           */
          Axis* mTurnUpDownAxis;
+
+         /**
+          * A list of ref pointers to misc axis mappings created in this class.
+          */
+         std::vector<dtCore::RefPtr<AxisMapping> > mMiscAxisMappingList;
 
          /**
           * The maximum fly speed (meters per second).

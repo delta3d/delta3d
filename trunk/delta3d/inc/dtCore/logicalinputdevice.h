@@ -37,6 +37,7 @@ namespace dtCore
 {
    class LogicalButton;
    class ButtonMapping;
+   class ButtonToButton;
    class LogicalAxis;
    class AxisMapping;
 
@@ -118,6 +119,9 @@ namespace dtCore
 
       private:
 
+         std::vector<dtCore::RefPtr<ButtonToButton> > mOwnedButtonMappingList;
+         std::vector<dtCore::RefPtr<AxisMapping> > mOwnedAxisMappingList;
+
    };
 
    /**
@@ -167,7 +171,7 @@ namespace dtCore
           * The mapping that determines where this button gets its
           * state.
           */
-         RefPtr<ButtonMapping> mMapping;
+         ObserverPtr<ButtonMapping> mMapping;
    };
 
 
@@ -277,12 +281,12 @@ namespace dtCore
          /**
           * The source button.
           */
-         RefPtr<Button> mSourceButton;
+         ObserverPtr<Button> mSourceButton;
 
          /**
           * The target button.
           */
-         RefPtr<LogicalButton> mTargetButton;
+         ObserverPtr<LogicalButton> mTargetButton;
 
 
          /**
@@ -389,15 +393,15 @@ namespace dtCore
       /**
       * The source button.
       */
-      RefPtr<Button> mFirstButton;
-      RefPtr<Button> mSecondButton;
+      ObserverPtr<Button> mFirstButton;
+      ObserverPtr<Button> mSecondButton;
 
       /**
       * The target button.
       */
-      RefPtr<LogicalButton> mTargetButton;
+      ObserverPtr<LogicalButton> mTargetButton;
 
-      ButtonComboEnum       mFlag;
+      ButtonComboEnum  mFlag;
 
 
       /**
@@ -450,7 +454,7 @@ namespace dtCore
           * The mapping that determines where this axis gets its
           * state.
           */
-         RefPtr<AxisMapping> mMapping;
+         ObserverPtr<AxisMapping> mMapping;
    };
 
 
@@ -580,10 +584,10 @@ namespace dtCore
 
       private:
          /// The source axis.
-         RefPtr<Axis> mSourceAxis;
+         ObserverPtr<Axis> mSourceAxis;
 
          /// The target axis.
-         RefPtr<LogicalAxis> mTargetAxis;
+         ObserverPtr<LogicalAxis> mTargetAxis;
 
          /// The transformation scale.
          double mScale;
@@ -690,10 +694,10 @@ namespace dtCore
 
       private:
          /// The source axes.
-         std::vector< RefPtr<Axis> > mSourceAxes;
+         std::vector< ObserverPtr<Axis> > mSourceAxes;
 
          /// The target axis.
-         RefPtr<LogicalAxis> mTargetAxis;
+         ObserverPtr<LogicalAxis> mTargetAxis;
 
 
          /// Updates the state of the target axis.
@@ -826,13 +830,13 @@ namespace dtCore
          /**
           * The first source button.
           */
-         RefPtr<Button> mFirstSourceButton;
+         ObserverPtr<Button> mFirstSourceButton;
          /**
           * The second source button.
           */
-         RefPtr<Button> mSecondSourceButton;
+         ObserverPtr<Button> mSecondSourceButton;
          /// The target axis.
-         RefPtr<LogicalAxis> mTargetAxis;
+         ObserverPtr<LogicalAxis> mTargetAxis;
          /// The value corresponding to the first button.
          double mFirstButtonValue;
          /// The value corresponding to the second button.
@@ -994,13 +998,13 @@ namespace dtCore
 
       private:
          /// The source button.
-         RefPtr<Button> mSourceButton;
+         ObserverPtr<Button> mSourceButton;
 
          /// The source axis.
-         RefPtr<Axis> mSourceAxis;
+         ObserverPtr<Axis> mSourceAxis;
 
          /// The target axis.
-         RefPtr<LogicalAxis> mTargetAxis;
+         ObserverPtr<LogicalAxis> mTargetAxis;
 
          /// Updates the state of the target axis.
          bool UpdateTargetAxisState();
