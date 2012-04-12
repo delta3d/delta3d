@@ -132,25 +132,27 @@ void UFOMotionModel::SetDefaultMappings(Keyboard* keyboard, Mouse* mouse)
          )
       );
 
+      AxesToAxis* defaultFlyForwardBackwardMapping = new AxesToAxis(arrowKeysUpAndDown, leftButtonUpAndDown);
+      AxesToAxis* defaultFlyLeftRightMapping = new AxesToAxis(arrowKeysLeftAndRight, leftButtonLeftAndRight);
+      AxesToAxis* defaultFlyUpDownMapping = new AxesToAxis(wsKeysUpAndDown, rightButtonUpAndDown);
+      AxesToAxis* defaultTurnLeftRightMapping = new AxesToAxis(adKeysLeftAndRight, rightButtonLeftAndRight);
+
       mDefaultFlyForwardBackwardAxis = mDefaultInputDevice->AddAxis(
-         "default fly forward/backward",
-         new AxesToAxis(arrowKeysUpAndDown, leftButtonUpAndDown)
-      );
+         "default fly forward/backward", defaultFlyForwardBackwardMapping);
 
       mDefaultFlyLeftRightAxis = mDefaultInputDevice->AddAxis(
-         "default fly left/right",
-         new AxesToAxis(arrowKeysLeftAndRight, leftButtonLeftAndRight)
-      );
+         "default fly left/right", defaultFlyLeftRightMapping);
 
       mDefaultFlyUpDownAxis = mDefaultInputDevice->AddAxis(
-         "default fly up/down",
-         new AxesToAxis(wsKeysUpAndDown, rightButtonUpAndDown)
-      );
+         "default fly up/down", defaultFlyUpDownMapping);
 
       mDefaultTurnLeftRightAxis = mDefaultInputDevice->AddAxis(
-         "default turn left/right",
-         new AxesToAxis(adKeysLeftAndRight, rightButtonLeftAndRight)
-      );
+         "default turn left/right", defaultTurnLeftRightMapping);
+
+      mMiscAxisMappingList.push_back(defaultFlyForwardBackwardMapping);
+      mMiscAxisMappingList.push_back(defaultFlyLeftRightMapping);
+      mMiscAxisMappingList.push_back(defaultFlyUpDownMapping);
+      mMiscAxisMappingList.push_back(defaultTurnLeftRightMapping);
    }
    else
    {

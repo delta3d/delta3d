@@ -25,6 +25,7 @@
 #include <dtCore/orbitmotionmodel.h>
 #include <dtCore/refptr.h>
 #include <dtCore/deltadrawable.h>
+#include <dtCore/logicalinputdevice.h>
 
 
 namespace dtCore
@@ -76,6 +77,12 @@ namespace dtCore
       void SetMinGroundHeight(float val) { mMinGroundHeight = val;  }
 
    private:
+
+      /**
+       * A list of ref pointers to misc axis mappings created in this class.
+       */
+      std::vector<dtCore::RefPtr<AxisMapping> > mMiscAxisMappingList;
+
       dtCore::RefPtr<dtCore::DeltaDrawable> mTerrainDrawable;
       bool mUseSimTimeForSpeed;
       bool mShouldTranslate;

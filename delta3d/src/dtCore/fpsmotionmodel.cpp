@@ -224,64 +224,72 @@ void FPSMotionModel::SetDefaultMappings(Keyboard* keyboard, Mouse* mouse)
    {
       mDefaultInputDevice = new LogicalInputDevice("FPSLogicalInputDevice");
 
-      Axis* leftRightMouseMovement = mDefaultInputDevice->AddAxis(
-         "left/right mouse movement",
-          new AxisToAxis(mouse->GetAxis(0)));
-
-      Axis* upDownMouseMovement = mDefaultInputDevice->AddAxis(
-         "up/down mouse movement",
-          new AxisToAxis(mouse->GetAxis(1)));
-
+      AxisToAxis* leftRightMouseMapping = new AxisToAxis(mouse->GetAxis(0));
+      AxisToAxis* upDownMouseMapping = new AxisToAxis(mouse->GetAxis(1));
 
       AxesToAxis* forwardBack = new AxesToAxis();
       AxesToAxis* leftRight = new AxesToAxis();
 
+      Axis* leftRightMouseMovement = mDefaultInputDevice->AddAxis(
+         "left/right mouse movement",
+          leftRightMouseMapping);
+
+      Axis* upDownMouseMovement = mDefaultInputDevice->AddAxis(
+         "up/down mouse movement",
+          upDownMouseMapping);
+
+      mAxisMappingList.push_back(leftRightMouseMapping);
+      mAxisMappingList.push_back(upDownMouseMapping);
+      mAxisMappingList.push_back(forwardBack);
+      mAxisMappingList.push_back(leftRight);
+
       if (mUseWASD)
       {
-         Axis* forwardAndBackAxis1 = mDefaultInputDevice->AddAxis(
-            "s/w",
-            new ButtonsToAxis(keyboard->GetButton('s'), keyboard->GetButton('w'))
-         );
+         ButtonsToAxis* forwardBackMapping1 = new ButtonsToAxis(keyboard->GetButton('s'), keyboard->GetButton('w'));
+         ButtonsToAxis* forwardBackMapping2 = new ButtonsToAxis(keyboard->GetButton('S'), keyboard->GetButton('S'));
+         ButtonsToAxis* sideStepMapping1 = new ButtonsToAxis(keyboard->GetButton('a'), keyboard->GetButton('d'));
+         ButtonsToAxis* sideStepMapping2 = new ButtonsToAxis(keyboard->GetButton('A'), keyboard->GetButton('D'));
 
-         Axis* forwardAndBackAxis2 = mDefaultInputDevice->AddAxis(
-            "S/W",
-            new ButtonsToAxis(keyboard->GetButton('S'), keyboard->GetButton('W'))
-         );
-
-         Axis* sideStepAxis1 = mDefaultInputDevice->AddAxis(
-            "a/d",
-            new ButtonsToAxis(keyboard->GetButton('a'), keyboard->GetButton('d'))
-         );
-
-         Axis* sideStepAxis2 = mDefaultInputDevice->AddAxis(
-            "A/D",
-            new ButtonsToAxis(keyboard->GetButton('A'), keyboard->GetButton('D'))
-         );
+         Axis* forwardAndBackAxis1 = mDefaultInputDevice->AddAxis("s/w", forwardBackMapping1);
+         Axis* forwardAndBackAxis2 = mDefaultInputDevice->AddAxis("S/W", forwardBackMapping2);
+         Axis* sideStepAxis1 = mDefaultInputDevice->AddAxis("a/d", sideStepMapping1);
+         Axis* sideStepAxis2 = mDefaultInputDevice->AddAxis("A/D", sideStepMapping2);
 
          forwardBack->AddSourceAxis(forwardAndBackAxis1);
          forwardBack->AddSourceAxis(forwardAndBackAxis2);
          leftRight->AddSourceAxis(sideStepAxis1);
          leftRight->AddSourceAxis(sideStepAxis2);
+
+         // Since we allocated the memory here, we'll be responsible for it with ref pointers
+         mAxisMappingList.push_back(forwardBackMapping1);
+         mAxisMappingList.push_back(forwardBackMapping2);
+         mAxisMappingList.push_back(sideStepMapping1);
+         mAxisMappingList.push_back(sideStepMapping2);
+         mAxisMappingList.push_back(forwardBack);
+         mAxisMappingList.push_back(leftRight);
       }
 
       if (mUseArrowKeys)
       {
+         ButtonsToAxis* arrowKeysUpAndDownMapping = new ButtonsToAxis(
+            keyboard->GetButton(osgGA::GUIEventAdapter::KEY_Down),
+            keyboard->GetButton(osgGA::GUIEventAdapter::KEY_Up)
+            );
+
+         ButtonsToAxis* arrowKeysLeftAndRightMapping = new ButtonsToAxis(
+            keyboard->GetButton(osgGA::GUIEventAdapter::KEY_Left),
+            keyboard->GetButton(osgGA::GUIEventAdapter::KEY_Right)
+            );
 
          Axis* arrowKeysUpAndDown = mDefaultInputDevice->AddAxis(
-            "arrow keys up/down",
-            new ButtonsToAxis(
-               keyboard->GetButton(osgGA::GUIEventAdapter::KEY_Down),
-               keyboard->GetButton(osgGA::GUIEventAdapter::KEY_Up)
-            )
-         );
+            "arrow keys up/down", arrowKeysUpAndDownMapping);
 
          Axis* arrowKeysLeftAndRight = mDefaultInputDevice->AddAxis(
-            "arrow keys left/right",
-            new ButtonsToAxis(
-               keyboard->GetButton(osgGA::GUIEventAdapter::KEY_Left),
-               keyboard->GetButton(osgGA::GUIEventAdapter::KEY_Right)
-            )
-         );
+            "arrow keys left/right", arrowKeysLeftAndRightMapping);
+
+         // Since we allocated the memory here, we'll be responsible for it with ref pointers
+         mAxisMappingList.push_back(arrowKeysUpAndDownMapping);
+         mAxisMappingList.push_back(arrowKeysLeftAndRightMapping);
 
          forwardBack->AddSourceAxis(arrowKeysUpAndDown);
          leftRight->AddSourceAxis(arrowKeysLeftAndRight);
@@ -297,16 +305,18 @@ void FPSMotionModel::SetDefaultMappings(Keyboard* keyboard, Mouse* mouse)
          leftRight
       );
 
+      AxesToAxis* defaultLeftRightMouseMapping = new AxesToAxis(leftRightMouseMovement);
+      AxesToAxis* defaultUpDownMouseMapping = new AxesToAxis(upDownMouseMovement);
+
       mDefaultTurnLeftRightAxis = mDefaultInputDevice->AddAxis(
-         "default turn left/right",
-         new AxesToAxis(leftRightMouseMovement)
-      );
+         "default turn left/right", defaultLeftRightMouseMapping);
 
       mDefaultLookUpDownAxis = mDefaultInputDevice->AddAxis(
-         "default look up/down",
-         new AxesToAxis(upDownMouseMovement)
-      );
+         "default look up/down", defaultUpDownMouseMapping);
 
+      // Since we allocated the memory here, we'll be responsible for it with ref pointers
+      mAxisMappingList.push_back(defaultLeftRightMouseMapping);
+      mAxisMappingList.push_back(defaultUpDownMouseMapping);
    }
 
    SetWalkForwardBackwardAxis(mDefaultWalkForwardBackwardAxis.get());

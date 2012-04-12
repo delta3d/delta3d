@@ -86,10 +86,10 @@ namespace dtCore {
 
    private:
       /// The source axis.
-      RefPtr<Axis> mSourceAxis;
+      ObserverPtr<Axis> mSourceAxis;
 
       /// The target axis.
-      RefPtr<LogicalAxis> mTargetAxis;
+      ObserverPtr<LogicalAxis> mTargetAxis;
 
       /// The arbitrary transformation.
       dtUtil::Transformation<double>* mpTransformation;

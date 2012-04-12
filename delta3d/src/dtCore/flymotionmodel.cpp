@@ -25,8 +25,6 @@ IMPLEMENT_MANAGEMENT_LAYER(FlyMotionModel)
 //////////////////////////////////////////////////////////////////////////
 FlyMotionModel::FlyMotionModel(Keyboard* keyboard, Mouse* mouse, unsigned int options)
    : MotionModel("FlyMotionModel")
-   , mLeftButtonUpDownMapping(NULL)
-   , mLeftButtonLeftRightMapping(NULL)
    , mRightButtonUpDownMapping(NULL)
    , mRightButtonLeftRightMapping(NULL)
    , mArrowKeysUpDownMapping(NULL)
@@ -86,7 +84,8 @@ void FlyMotionModel::SetDefaultMappings(Keyboard* keyboard, Mouse* mouse)
    {
       mDefaultInputDevice = new LogicalInputDevice;
 
-      Axis *leftButtonUpAndDown, *leftButtonLeftAndRight;
+      Axis* leftButtonUpAndDown = NULL;
+      Axis* leftButtonLeftAndRight = NULL;
 
       if (HasOption(OPTION_REQUIRE_MOUSE_DOWN))
       {
@@ -107,15 +106,17 @@ void FlyMotionModel::SetDefaultMappings(Keyboard* keyboard, Mouse* mouse)
       }
       else
       {
+         AxisToAxis* leftButtonUpDownMapping = new AxisToAxis(mouse->GetAxis(1));
+         AxisToAxis* leftButtonLeftRightMapping = new AxisToAxis(mouse->GetAxis(0));
+
          leftButtonUpAndDown = mDefaultInputDevice->AddAxis(
-            "left mouse movement up/down",
-            new AxisToAxis(mouse->GetAxis(1))
-         );
+            "left mouse movement up/down", leftButtonUpDownMapping);
 
          leftButtonLeftAndRight = mDefaultInputDevice->AddAxis(
-            "left mouse movement left/right",
-            new AxisToAxis(mouse->GetAxis(0))
-         );
+            "left mouse movement left/right", leftButtonLeftRightMapping);
+
+         mMiscAxisMappingList.push_back(leftButtonUpDownMapping);
+         mMiscAxisMappingList.push_back(leftButtonLeftRightMapping);
       }
 
       Axis* rightButtonUpAndDown = mDefaultInputDevice->AddAxis(
@@ -152,27 +153,31 @@ void FlyMotionModel::SetDefaultMappings(Keyboard* keyboard, Mouse* mouse)
             )
             );
 
+         AxesToAxis* defaultTurnLeftRightMapping = new AxesToAxis(arrowKeysLeftAndRight, leftButtonLeftAndRight);
+         AxesToAxis* defaultTurnUpDownMapping = new AxesToAxis(arrowKeysUpAndDown, leftButtonUpAndDown);
+
          mDefaultTurnLeftRightAxis = mDefaultInputDevice->AddAxis(
-            "default turn left/right",
-            new AxesToAxis(arrowKeysLeftAndRight, leftButtonLeftAndRight)
-            );
+            "default turn left/right", defaultTurnLeftRightMapping);
 
          mDefaultTurnUpDownAxis = mDefaultInputDevice->AddAxis(
-            "default turn up/down",
-            new AxesToAxis(arrowKeysUpAndDown, leftButtonUpAndDown)
-            );
+            "default turn up/down", defaultTurnUpDownMapping);
+
+         mMiscAxisMappingList.push_back(defaultTurnLeftRightMapping);
+         mMiscAxisMappingList.push_back(defaultTurnUpDownMapping);
       }
       else
       {
+         AxisToAxis* defaultTurnLeftRightMapping = new AxisToAxis(mouse->GetAxis(0));
+         AxisToAxis* defaultTurnUpDownMapping = new AxisToAxis(mouse->GetAxis(1));
+
          mDefaultTurnLeftRightAxis = mDefaultInputDevice->AddAxis(
-            "default turn left/right",
-            new AxisToAxis(mouse->GetAxis(0))
-            );
+            "default turn left/right", defaultTurnLeftRightMapping);
 
          mDefaultTurnUpDownAxis = mDefaultInputDevice->AddAxis(
-            "default turn up/down",
-            new AxisToAxis(mouse->GetAxis(1))
-            );
+            "default turn up/down", defaultTurnUpDownMapping);
+
+         mMiscAxisMappingList.push_back(defaultTurnLeftRightMapping);
+         mMiscAxisMappingList.push_back(defaultTurnUpDownMapping);
       }
 
       Axis* wsKeysUpAndDown = mDefaultInputDevice->AddAxis(
@@ -228,15 +233,21 @@ void FlyMotionModel::SetDefaultMappings(Keyboard* keyboard, Mouse* mouse)
       mDefaultFlyForwardBackwardAxis = mDefaultInputDevice->AddAxis(
          "default fly forward/backward", axesMapping);
 
+      mMiscAxisMappingList.push_back(axesMapping);
+
       axesMapping = new AxesToAxis(adKeysStrafeLeftAndRight, adKeysStrafeLeftAndRightCaps);
       axesMapping->AddSourceAxis(rightButtonLeftAndRight);
       mDefaultFlyLeftRightAxis = mDefaultInputDevice->AddAxis(
          "default fly left/right", axesMapping);
 
+      mMiscAxisMappingList.push_back(axesMapping);
+
+      AxesToAxis* defaultFlyUpDownMapping = new AxesToAxis(qeKeysFlyUpAndDown, qeKeysFlyUpAndDownCaps);
+
       mDefaultFlyUpDownAxis = mDefaultInputDevice->AddAxis(
-         "default fly up/down",
-         new AxesToAxis(qeKeysFlyUpAndDown, qeKeysFlyUpAndDownCaps)
-      );
+         "default fly up/down", defaultFlyUpDownMapping);
+
+      mMiscAxisMappingList.push_back(defaultFlyUpDownMapping);
    }
    else
    {

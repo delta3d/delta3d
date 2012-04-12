@@ -61,7 +61,12 @@ namespace dtCore
                                                 Button* sourceButton,
                                                 int buttonSymbol)
    {
-      return AddButton(description, buttonSymbol, new ButtonToButton(sourceButton));
+      ButtonToButton* newButtonMapping = new ButtonToButton(sourceButton);
+
+      // Since we're allocating this memory, we take ownership with a ref pointer
+      mOwnedButtonMappingList.push_back(newButtonMapping);
+
+      return AddButton(description, buttonSymbol, newButtonMapping);
    }
 
    /**
@@ -100,7 +105,12 @@ namespace dtCore
    LogicalAxis* LogicalInputDevice::AddAxis(const std::string& description,
                                             Axis* sourceAxis)
    {
-      return AddAxis(description, new AxisToAxis(sourceAxis));
+      AxisToAxis* newAxisMapping = new AxisToAxis(sourceAxis);
+
+      // Since we're allocating this memory, we take ownership with a ref pointer
+      mOwnedAxisMappingList.push_back(newAxisMapping);
+
+      return AddAxis(description, newAxisMapping);
    }
 
    /**
@@ -786,12 +796,15 @@ namespace dtCore
 
    AxesToAxis::~AxesToAxis()
    {
-      for(std::vector< RefPtr<Axis> >::iterator it = mSourceAxes.begin();
+      for(std::vector<ObserverPtr<Axis> >::iterator it = mSourceAxes.begin();
           it != mSourceAxes.end();
           it++)
       {
-         (*it)->RemoveAxisHandler(this);
-         (*it)->RemoveAxisObserver(this);
+         if (it->valid())
+         {
+            (*it)->RemoveAxisHandler(this);
+            (*it)->RemoveAxisObserver(this);
+         }
       }
    }
 
@@ -817,7 +830,7 @@ namespace dtCore
     */
    void AxesToAxis::RemoveSourceAxis(Axis* sourceAxis)
    {
-      for(std::vector< RefPtr<Axis> >::iterator it = mSourceAxes.begin();
+      for(std::vector<ObserverPtr<Axis> >::iterator it = mSourceAxes.begin();
           it != mSourceAxes.end();
           it++)
       {

@@ -143,20 +143,22 @@ void WalkMotionModel::SetDefaultMappings(Keyboard* keyboard, Mouse* mouse)
          )
       );
 
+      AxesToAxis* arrowUpDownMapping = new AxesToAxis(arrowKeysUpAndDown, leftButtonUpAndDown);
+      AxesToAxis* arrowLeftRightMapping = new AxesToAxis(arrowKeysLeftAndRight, leftButtonLeftAndRight);
+      AxesToAxis* adLeftRightMapping = new AxesToAxis(adKeysLeftAndRight, rightButtonLeftAndRight);
+
       mDefaultWalkForwardBackwardAxis = mDefaultInputDevice->AddAxis(
-         "default walk forward/backward",
-         new AxesToAxis(arrowKeysUpAndDown, leftButtonUpAndDown)
-      );
+         "default walk forward/backward", arrowUpDownMapping);
 
       mDefaultTurnLeftRightAxis = mDefaultInputDevice->AddAxis(
-         "default turn left/right",
-         new AxesToAxis(arrowKeysLeftAndRight, leftButtonLeftAndRight)
-      );
+         "default turn left/right", arrowLeftRightMapping);
 
       mDefaultSidestepLeftRightAxis = mDefaultInputDevice->AddAxis(
-         "default sidestep left/right",
-         new AxesToAxis(adKeysLeftAndRight, rightButtonLeftAndRight)
-      );
+         "default sidestep left/right", adLeftRightMapping);
+
+      mMiscAxisMappingList.push_back(arrowUpDownMapping);
+      mMiscAxisMappingList.push_back(arrowLeftRightMapping);
+      mMiscAxisMappingList.push_back(adLeftRightMapping);
    }
    else
    {

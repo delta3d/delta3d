@@ -427,6 +427,11 @@ namespace dtCore
        */
       dtCore::RefPtr<Axis> mSidestepLeftRightAxis;
 
+      /**
+       * A list of ref pointers to misc axis mappings created in this class.
+       */
+      std::vector<dtCore::RefPtr<AxisMapping> > mAxisMappingList;
+
       FPSAxisHandler* mSidestepHandler;       ///<Side step Axis handler
       FPSAxisHandler* mForwardBackwardHandler;///<Forward/back Axis handler
       FPSAxisHandler* mLookLeftRightHandler;  ///<LeftRight Axis handler
