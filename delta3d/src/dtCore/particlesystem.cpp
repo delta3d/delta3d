@@ -144,16 +144,15 @@ class particleSystemHelper : public osg::Group
 public:
    particleSystemHelper(osg::Group* psGroup) : osg::Group(*psGroup)
    {
-      findGeodeVisitor* fg = new findGeodeVisitor();
-      accept(*fg);
-      std::vector<osg::Geode*> psGeodeVector = fg->getGeodeVector();
-
+      osg::ref_ptr<findGeodeVisitor> geodeFinder = new findGeodeVisitor();
+      accept(*geodeFinder);
+      std::vector<osg::Geode*> psGeodeVector = geodeFinder->getGeodeVector();
 
       // Use a transform that will allow a particle to be
       // translated to world space from the group's local space.
-      psGeodeXForm = new psGeodeTransform();
+      mGeodeTransform = new psGeodeTransform();
 
-      this->addChild(psGeodeXForm);
+      this->addChild(mGeodeTransform.get());
 
       for (std::vector<osg::Geode*>::iterator itr = psGeodeVector.begin();
          itr != psGeodeVector.end();
@@ -161,13 +160,12 @@ public:
       {
          // Pull particle out of group and place it into world space.
          this->removeChild(*itr);
-         psGeodeXForm->addChild(*itr);
+         mGeodeTransform->addChild(*itr);
       }
-
    }
 
 protected:
-   psGeodeTransform* psGeodeXForm;
+   osg::observer_ptr<psGeodeTransform> mGeodeTransform;
 };
 
 ////////////////////////////////////////////////////////////////////////////////
