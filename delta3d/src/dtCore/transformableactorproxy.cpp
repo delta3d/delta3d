@@ -51,32 +51,7 @@ namespace dtCore
    const dtUtil::RefString TransformableActorProxy::PROPERTY_COLLISION_CATEGORY_MASK("Collision Category Mask");
    const dtUtil::RefString TransformableActorProxy::PROPERTY_COLLISION_COLLIDE_MASK("Collision Collide Mask");
 
-   //////////////////////////////////////////////////////////////////////////
-   osg::Node* LoadAltCollisionMesh(const dtCore::ResourceDescriptor& resource)
-   {
-      osg::Node* node = NULL;
-
-      if (dtCore::Project::GetInstance().IsContextValid())
-      {
-         const std::string resourcePath = dtCore::Project::GetInstance().GetResourcePath(resource);
-         if (!resourcePath.empty())
-         {
-            node = dtUtil::FileUtils::GetInstance().ReadNode(resourcePath);
-            if (node == NULL)
-            {
-               LOG_ERROR("Can't load the alternate collision mesh: " + resource.GetDisplayName());
-            }
-         }
-      }
-      else
-      {
-         LOG_WARNING("No ProjectContext is set. Cannot resolve the alternate collision mesh ResourceDescriptor");
-      }
-
-      return node;
-   }
-
-   //////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    bool IsAltCollisionMeshSet(const dtCore::ResourceDescriptor& resource)
    {
       if (resource == dtCore::ResourceDescriptor::NULL_RESOURCE ||
@@ -88,7 +63,7 @@ namespace dtCore
       return true;
    }
 
-   //////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    TransformableActorProxy::TransformableActorProxy()
    : mHideDTCorePhysicsProps(false)
    , mAltCollisionMesh(dtCore::ResourceDescriptor::NULL_RESOURCE)
@@ -99,7 +74,7 @@ namespace dtCore
       mCollisionBoxDims = osg::Vec3(0,0,0);
    }
 
-   //////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    void TransformableActorProxy::BuildPropertyMap()
    {
       dtCore::BaseActorObject::BuildPropertyMap();
@@ -211,17 +186,17 @@ namespace dtCore
 
    }
 
-   //////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    void TransformableActorProxy::OnMapLoadEnd()
    {
       SetCollisionCategoryMask(GetCollisionCategoryMask());
       SetCollisionCollideMask(GetCollisionCollideMask());
    }
 
-   //////////////////////////////////////////////////////
-   void TransformableActorProxy::SetRotation(const osg::Vec3 &rotation)
+   /////////////////////////////////////////////////////////////////////////////
+   void TransformableActorProxy::SetRotation(const osg::Vec3& rotation)
    {
-      dtCore::Transformable *t = static_cast<dtCore::Transformable*>(GetActor());
+      dtCore::Transformable* t = static_cast<dtCore::Transformable*>(GetActor());
 
       osg::Vec3 hpr = rotation;
 
@@ -250,7 +225,7 @@ namespace dtCore
 
       //If we have a billboard update its rotation as well.
       if (GetRenderMode() == dtCore::BaseActorObject::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON ||
-               GetRenderMode() == dtCore::BaseActorObject::RenderMode::DRAW_BILLBOARD_ICON)
+          GetRenderMode() == dtCore::BaseActorObject::RenderMode::DRAW_BILLBOARD_ICON)
       {
          ActorProxyIcon *billBoard = GetBillBoardIcon();
          if (billBoard != NULL)
@@ -260,18 +235,18 @@ namespace dtCore
       OnRotation(osg::Vec3(oldValue[1], oldValue[2], oldValue[0]), hpr);
    }
 
-   ///////////////////////////////////////////////////////////////////////////////
-   void TransformableActorProxy::SetRotationFromMatrix(const osg::Matrix &rotation)
+   /////////////////////////////////////////////////////////////////////////////
+   void TransformableActorProxy::SetRotationFromMatrix(const osg::Matrix& rotation)
    {
       osg::Vec3 hpr;
       dtUtil::MatrixUtil::MatrixToHpr(hpr,rotation);
       SetRotation(osg::Vec3(hpr[1],hpr[2],hpr[0]));
    }
 
-   ///////////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    osg::Vec3 TransformableActorProxy::GetRotation() const
    {
-      const dtCore::Transformable *t = static_cast<const dtCore::Transformable*>(GetActor());
+      const dtCore::Transformable* t = static_cast<const dtCore::Transformable*>(GetActor());
 
       dtCore::Transform trans;
       t->GetTransform(trans, dtCore::Transformable::REL_CS);
@@ -282,10 +257,10 @@ namespace dtCore
       return osg::Vec3(hpr[1],hpr[2],hpr[0]);
    }
 
-   ///////////////////////////////////////////////////////////////////////////////
-   void TransformableActorProxy::SetTranslation(const osg::Vec3 &translation)
+   /////////////////////////////////////////////////////////////////////////////
+   void TransformableActorProxy::SetTranslation(const osg::Vec3& translation)
    {
-      dtCore::Transformable *t = static_cast<dtCore::Transformable*>(GetActor());
+      dtCore::Transformable* t = static_cast<dtCore::Transformable*>(GetActor());
 
       dtCore::Transform trans;
       t->GetTransform(trans, dtCore::Transformable::REL_CS);
@@ -298,18 +273,20 @@ namespace dtCore
       if (GetRenderMode() == dtCore::BaseActorObject::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON ||
                GetRenderMode() == dtCore::BaseActorObject::RenderMode::DRAW_BILLBOARD_ICON)
       {
-         ActorProxyIcon *billBoard = GetBillBoardIcon();
+         ActorProxyIcon* billBoard = GetBillBoardIcon();
          if (billBoard != NULL)
+         {
             billBoard->SetPosition(translation);
+         }
       }
 
       OnTranslation(oldTrans, translation);
    }
 
-   ///////////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    osg::Vec3 TransformableActorProxy::GetTranslation() const
    {
-      const dtCore::Transformable *t = static_cast<const dtCore::Transformable*>(GetActor());
+      const dtCore::Transformable* t = static_cast<const dtCore::Transformable*>(GetActor());
 
       dtCore::Transform trans;
       t->GetTransform(trans, dtCore::Transformable::REL_CS);
@@ -318,26 +295,26 @@ namespace dtCore
       return result;
    }
 
-   ///////////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    void TransformableActorProxy::SetRenderCollisionGeometry(bool enable)
    {
-      dtCore::Transformable *phys = static_cast<dtCore::Transformable*>(GetActor());
+      dtCore::Transformable* phys = static_cast<dtCore::Transformable*>(GetActor());
 
       phys->RenderCollisionGeometry(enable);
    }
 
-   ///////////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    bool TransformableActorProxy::GetRenderCollisionGeometry() const
    {
-      const dtCore::Transformable *phys = static_cast<const dtCore::Transformable*>(GetActor());
+      const dtCore::Transformable* phys = static_cast<const dtCore::Transformable*>(GetActor());
 
       return phys->GetRenderCollisionGeometry();
    }
 
-   ///////////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    void TransformableActorProxy::SetCollisionType(dtCore::Transformable::CollisionGeomType &type)
    {
-      dtCore::Transformable *phys = static_cast<dtCore::Transformable*>(GetActor());
+      dtCore::Transformable* phys = static_cast<dtCore::Transformable*>(GetActor());
 
       mCollisionType = &type;
       if (mCollisionType == &dtCore::Transformable::CollisionGeomType::NONE)
@@ -367,13 +344,13 @@ namespace dtCore
       }
    }
 
-   ///////////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    dtCore::Transformable::CollisionGeomType &TransformableActorProxy::GetCollisionType()
    {
       return *mCollisionType;
    }
 
-   ///////////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    void TransformableActorProxy::SetCollisionRadius(float radius)
    {
       //dtCore::Transformable *phys = static_cast<dtCore::Transformable*>(GetActor());
@@ -390,14 +367,14 @@ namespace dtCore
       }
    }
 
-   ///////////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    float TransformableActorProxy::GetCollisionRadius() const
    {
       return mCollisionRadius;
    }
 
-   ///////////////////////////////////////////////////////////////////////////////
-   void TransformableActorProxy::SetCollisionBoxDims(const osg::Vec3 &dims)
+   /////////////////////////////////////////////////////////////////////////////
+   void TransformableActorProxy::SetCollisionBoxDims(const osg::Vec3& dims)
    {
       //dtCore::Transformable *phys = static_cast<dtCore::Transformable*>(GetActor());
 
@@ -405,13 +382,13 @@ namespace dtCore
       SetBoxCollision();
    }
 
-   ///////////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    osg::Vec3 TransformableActorProxy::GetCollisionBoxDims() const
    {
       return mCollisionBoxDims;
    }
 
-   ///////////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    void TransformableActorProxy::SetCollisionLength(float length)
    {
       //dtCore::Transformable *phys = static_cast<dtCore::Transformable*>(GetActor());
@@ -428,29 +405,29 @@ namespace dtCore
       }
    }
 
-   ///////////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    float TransformableActorProxy::GetCollisionLength() const
    {
       return mCollisionLength;
    }
 
-   //////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    void TransformableActorProxy::SetCollisionCategoryMask(unsigned int mask)
    {
-      dtCore::Transformable *trans = static_cast<dtCore::Transformable*>(GetActor());
+      dtCore::Transformable* trans = static_cast<dtCore::Transformable*>(GetActor());
 
       trans->SetCollisionCategoryBits((unsigned long)mask);
    }
 
-   //////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    unsigned int TransformableActorProxy::GetCollisionCategoryMask() const
    {
-      const dtCore::Transformable *trans = static_cast<const dtCore::Transformable*>(GetActor());
+      const dtCore::Transformable* trans = static_cast<const dtCore::Transformable*>(GetActor());
 
       return (unsigned int)trans->GetCollisionCategoryBits();
    }
 
-   //////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    void TransformableActorProxy::SetCollisionCollideMask(unsigned int mask)
    {
       dtCore::Transformable *trans = static_cast<dtCore::Transformable*>(GetActor());
@@ -458,15 +435,15 @@ namespace dtCore
       trans->SetCollisionCollideBits((unsigned long)mask);
    }
 
-   //////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    unsigned int TransformableActorProxy::GetCollisionCollideMask() const
    {
-      const dtCore::Transformable *trans = static_cast<const dtCore::Transformable*>(GetActor());
+      const dtCore::Transformable* trans = static_cast<const dtCore::Transformable*>(GetActor());
 
       return (unsigned int)trans->GetCollisionCollideBits();
    }
 
-   //////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    void TransformableActorProxy::GetCollisionMaskList(std::vector<std::string>& names, std::vector<unsigned int>& values) const
    {
       names.push_back("Proximity Trigger");
@@ -524,43 +501,43 @@ namespace dtCore
       values.push_back(COLLISION_CATEGORY_MASK_ALL);
    }
 
-   ///////////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    void TransformableActorProxy::SetBoxCollision()
    {
-      if (mCollisionType != &dtCore::Transformable::CollisionGeomType::CUBE)
-         return;
-
-      dtCore::Transformable *trans = static_cast<dtCore::Transformable*>(GetActor());
-
-      trans->ClearCollisionGeometry();
-
-      if (mCollisionBoxDims.x() == 0.0f ||
-          mCollisionBoxDims.y() == 0.0f ||
-          mCollisionBoxDims.z() == 0.0f)
+      if (mCollisionType == &dtCore::Transformable::CollisionGeomType::CUBE)
       {
-         osg::Node* node = NULL;
-         if (IsAltCollisionMeshSet(GetAltCollisionMesh()))
+         dtCore::Transformable* trans = static_cast<dtCore::Transformable*>(GetActor());
+
+         trans->ClearCollisionGeometry();
+
+         if (mCollisionBoxDims.x() == 0.0f ||
+            mCollisionBoxDims.y() == 0.0f ||
+            mCollisionBoxDims.z() == 0.0f)
          {
-            node = LoadAltCollisionMesh(GetAltCollisionMesh());
-         }
+            osg::Node* node = NULL;
+            if (IsAltCollisionMeshSet(GetAltCollisionMesh()))
+            {
+               node = LoadAltCollisionMesh(GetAltCollisionMesh());
+            }
 
-         trans->SetCollisionBox(node);
-      }
-      else
-      {
-         trans->SetCollisionBox(mCollisionBoxDims.x(),
-                               mCollisionBoxDims.y(),
-                               mCollisionBoxDims.z());
+            trans->SetCollisionBox(node);
+         }
+         else
+         {
+            trans->SetCollisionBox(mCollisionBoxDims.x(),
+               mCollisionBoxDims.y(),
+               mCollisionBoxDims.z());
+         }
       }
    }
 
-   ///////////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    void TransformableActorProxy::SetSphereCollision()
    {
       if (mCollisionType != &dtCore::Transformable::CollisionGeomType::SPHERE)
          return;
 
-      dtCore::Transformable *trans = static_cast<dtCore::Transformable*>(GetActor());
+      dtCore::Transformable* trans = static_cast<dtCore::Transformable*>(GetActor());
 
       trans->ClearCollisionGeometry();
       if (mCollisionRadius == 0.0f)
@@ -579,7 +556,7 @@ namespace dtCore
       }
    }
 
-   ///////////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    void TransformableActorProxy::SetCapsuleCollision()
    {
       if (mCollisionType != &dtCore::Transformable::CollisionGeomType::CYLINDER ||
@@ -588,7 +565,7 @@ namespace dtCore
          return;
       }
 
-      dtCore::Transformable *trans = static_cast<dtCore::Transformable*>(GetActor());
+      dtCore::Transformable* trans = static_cast<dtCore::Transformable*>(GetActor());
 
       trans->ClearCollisionGeometry();
       if (mCollisionRadius == 0.0f || mCollisionLength == 0.0f)
@@ -608,25 +585,25 @@ namespace dtCore
       }
    }
 
-   ///////////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    void TransformableActorProxy::SetRayCollision()
    {
       if (mCollisionType != &dtCore::Transformable::CollisionGeomType::RAY)
          return;
 
-      dtCore::Transformable *phys = static_cast<dtCore::Transformable*>(GetActor());
+      dtCore::Transformable* phys = static_cast<dtCore::Transformable*>(GetActor());
 
       phys->ClearCollisionGeometry();
       phys->SetCollisionRay(mCollisionLength);
    }
 
-   ///////////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    void TransformableActorProxy::SetMeshCollision()
    {
       if (mCollisionType != &dtCore::Transformable::CollisionGeomType::MESH)
          return;
 
-      dtCore::Transformable *trans = static_cast<dtCore::Transformable*>(GetActor());
+      dtCore::Transformable* trans = static_cast<dtCore::Transformable*>(GetActor());
 
       trans->ClearCollisionGeometry();
 
@@ -640,17 +617,42 @@ namespace dtCore
       trans->SetCollisionMesh(node);
    }
 
-   //////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    void TransformableActorProxy::SetAltCollisionMesh(const dtCore::ResourceDescriptor& value)
    {
       mAltCollisionMesh = value;
       SetCollisionType(*mCollisionType);
    }
 
-   //////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    const dtCore::ResourceDescriptor& TransformableActorProxy::GetAltCollisionMesh() const
    {
       return mAltCollisionMesh;
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   osg::Node* TransformableActorProxy::LoadAltCollisionMesh(const dtCore::ResourceDescriptor& resource)
+   {
+      mAltCollisionGeometry = NULL;
+
+      if (dtCore::Project::GetInstance().IsContextValid())
+      {
+         const std::string resourcePath = dtCore::Project::GetInstance().GetResourcePath(resource);
+         if (!resourcePath.empty())
+         {
+            mAltCollisionGeometry = dtUtil::FileUtils::GetInstance().ReadNode(resourcePath);
+            if (mAltCollisionGeometry == NULL)
+            {
+               LOG_ERROR("Can't load the alternate collision mesh: " + resource.GetDisplayName());
+            }
+         }
+      }
+      else
+      {
+         LOG_WARNING("No ProjectContext is set. Cannot resolve the alternate collision mesh ResourceDescriptor");
+      }
+
+      return mAltCollisionGeometry.get();
    }
 
    DT_IMPLEMENT_ACCESSOR(TransformableActorProxy, bool, HideDTCorePhysicsProps);
