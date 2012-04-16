@@ -24,6 +24,7 @@
 
 #include <osg/Vec3>
 #include <osg/Matrix>
+#include <osg/Node>
 
 #include <dtCore/actorproxy.h>
 #include <dtCore/export.h>
@@ -226,7 +227,7 @@ namespace dtCore
           */
          DT_DECLARE_ACCESSOR(bool, HideDTCorePhysicsProps);
 
-         /** 
+         /**
           * An optional StaticMesh Resource which can be used for collision detection
           * geometry. If this is set, this mesh will be used instead of the Node
           * returned by GetOSGNode(). This mesh will not be rendered; only used
@@ -258,11 +259,14 @@ namespace dtCore
 
 
       private:
-      
+
          osg::Vec3 mCollisionBoxDims;
          float mCollisionRadius;
          float mCollisionLength;
-         dtCore::Transformable::CollisionGeomType *mCollisionType;
+         dtCore::Transformable::CollisionGeomType* mCollisionType;
+         osg::ref_ptr<osg::Node> mAltCollisionGeometry;
+
+         osg::Node* LoadAltCollisionMesh(const dtCore::ResourceDescriptor& resource);
    };
 }
 
