@@ -127,23 +127,27 @@ FPSMotionModel::~FPSMotionModel()
    if (mLookUpDownAxis.get())
    {
       mLookUpDownAxis->RemoveAxisHandler(mLookUpDownHandler);
-      delete mLookUpDownHandler;
    }
+
    if (mTurnLeftRightAxis.get())
    {
       mTurnLeftRightAxis->RemoveAxisHandler(mLookLeftRightHandler);
-      delete mLookLeftRightHandler;
    }
+
    if (mSidestepLeftRightAxis.get())
    {
       mSidestepLeftRightAxis->RemoveAxisHandler(mSidestepHandler);
-      delete mSidestepHandler;
    }
+
    if (mWalkForwardBackwardAxis.get())
    {
       mWalkForwardBackwardAxis->RemoveAxisHandler(mForwardBackwardHandler);
-      delete mForwardBackwardHandler;
    }
+
+   delete mForwardBackwardHandler;
+   delete mSidestepHandler;
+   delete mLookLeftRightHandler;
+   delete mLookUpDownHandler;
 
    DeregisterInstance(this);
 }
