@@ -117,6 +117,8 @@ namespace dtGame
       {
          if (iter->second == &component)
          {
+            // Clear the component's owner pointer
+            iter->second->SetOwner(NULL);
             mComponents.erase(iter);
             removedComponent = true;
             break;
