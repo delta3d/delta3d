@@ -40,8 +40,8 @@ namespace dtCore
    const ShaderParamOscillator::OscillationTrigger ShaderParamOscillator::OscillationTrigger::MANUAL("manual");
 
    ///////////////////////////////////////////////////////////////////////////////
-   ShaderParamOscillator::ShaderParamOscillator(const std::string &name) : 
-      ShaderParameter(name), 
+   ShaderParamOscillator::ShaderParamOscillator(const std::string &name) :
+      ShaderParameter(name),
       mValue(0.0),
       mOffset(0.0),
       mRangeMin(1.0),
@@ -63,12 +63,13 @@ namespace dtCore
    ///////////////////////////////////////////////////////////////////////////////
    ShaderParamOscillator::~ShaderParamOscillator()
    {
+      RemoveSender(&dtCore::System::GetInstance());
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    void ShaderParamOscillator::AttachToRenderState(osg::StateSet &stateSet)
    {
-      osg::Uniform *floatUniform = NULL;
+      osg::Uniform* floatUniform = NULL;
 
       if (IsShared())
       {
@@ -94,7 +95,7 @@ namespace dtCore
    ///////////////////////////////////////////////////////////////////////////////
    void ShaderParamOscillator::Update()
    {
-      // Update doesn't actually update the shader.  Instead, it resets the ranges and such 
+      // Update doesn't actually update the shader.  Instead, it resets the ranges and such
       // so that PreFrame can do it's thing.
 
       if (!IsDirty() || GetUniformParam() == NULL)
@@ -120,7 +121,7 @@ namespace dtCore
          mValue = mOffset;
          mCycleDirection = 1.0;
       }
-      else 
+      else
       {
          mValue = mCurrentRange + mOffset;
          mCycleDirection = -1.0;
@@ -177,7 +178,7 @@ namespace dtCore
    {
       if (data->message == dtCore::System::MESSAGE_PRE_FRAME)
       {
-         // If the oscillation needs to be 'triggered' to start, 
+         // If the oscillation needs to be 'triggered' to start,
          // only continue if it was already triggered.
          if (mOscillationTrigger == &OscillationTrigger::MANUAL && !mWasTriggered)
          {
@@ -190,7 +191,7 @@ namespace dtCore
             // timeChange[0] is sim time, [1] is real
             double* timeChange = (double*)data->userData;
             (mUseRealTime) ? DoShaderUpdate(timeChange[1]): DoShaderUpdate(timeChange[0]);
-         }   
+         }
       }
    }
 
@@ -205,7 +206,7 @@ namespace dtCore
    ///////////////////////////////////////////////////////////////////////////////
    void ShaderParamOscillator::DoShaderUpdate(float timeDelta)
    {
-      float timePercent = timeDelta/mCurrentCycleTime; 
+      float timePercent = timeDelta/mCurrentCycleTime;
       float cycleDelta = timePercent*mCurrentRange;
 
       // UP
@@ -219,7 +220,7 @@ namespace dtCore
             {
                float remainder = mValue - (mOffset + mCurrentRange);
                mValue = mOffset + remainder;
-            }      
+            }
             else
             {
                dtUtil::ClampMax(mValue, mOffset + mCurrentRange);
@@ -263,7 +264,7 @@ namespace dtCore
             {
                dtUtil::ClampMin(mValue, mOffset);
             }
-         } 
+         }
          else if (mValue > mOffset + mCurrentRange) // was going up.  Turn around
          {
             // Should we wrap around or clamp?
@@ -299,5 +300,5 @@ namespace dtCore
 
       return false;
    }
-   
+
 }
