@@ -76,6 +76,10 @@ namespace dtCore
       float GetMinGroundHeight() const   { return mMinGroundHeight; }
       void SetMinGroundHeight(float val) { mMinGroundHeight = val;  }
 
+   protected:
+
+      virtual ~RTSMotionModel();
+
    private:
 
       /**
