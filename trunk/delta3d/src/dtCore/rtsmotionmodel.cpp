@@ -127,6 +127,12 @@ RTSMotionModel::RTSMotionModel( dtCore::Keyboard *keyboard
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+dtCore::RTSMotionModel::~RTSMotionModel()
+{
+   RemoveSender(&dtCore::System::GetInstance());
+}
+
+////////////////////////////////////////////////////////////////////////////////
 
 bool RTSMotionModel::HandleAxisStateChanged(const dtCore::Axis *axis, double oldState, double newState, double delta)
 {
