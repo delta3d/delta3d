@@ -99,6 +99,7 @@
 #include <dtDirectorNodes/multiplymutator.h>
 #include <dtDirectorNodes/ormutator.h>
 #include <dtDirectorNodes/subtractmutator.h>
+#include <dtDirectorNodes/randommutator.h>
 
 // Values
 #include <dtDirectorNodes/actorarrayvalue.h>
@@ -222,6 +223,7 @@ namespace dtDirector
    RefPtr<NodeType> NodeLibraryRegistry::SUBTRACT_MUTATOR_NODE_TYPE(             new dtDirector::NodeType(dtDirector::NodeType::MUTATOR_NODE, "Subtract",                 "Mutator",     "Operations",  "Performs a subtraction between two values.", NULL, Colors::BLUE3));
    RefPtr<NodeType> NodeLibraryRegistry::MULTIPLY_MUTATOR_NODE_TYPE(             new dtDirector::NodeType(dtDirector::NodeType::MUTATOR_NODE, "Multiply",                 "Mutator",     "Operations",  "Performs a multiplication of two values.", NULL, Colors::BLUE3));
    RefPtr<NodeType> NodeLibraryRegistry::DIVIDE_MUTATOR_NODE_TYPE(               new dtDirector::NodeType(dtDirector::NodeType::MUTATOR_NODE, "Divide",                   "Mutator",     "Operations",  "Performs a division between two values.", NULL, Colors::BLUE3));
+   RefPtr<NodeType> NodeLibraryRegistry::RANDOM_MUTATOR_NODE_TYPE(               new dtDirector::NodeType(dtDirector::NodeType::MUTATOR_NODE, "Random",                   "Mutator",     "Operations",  "Retrieves a random value between two values.", NULL, Colors::BLUE3));
 
    RefPtr<NodeType> NodeLibraryRegistry::COMPARE_EQUALITY_MUTATOR_NODE_TYPE(     new dtDirector::NodeType(dtDirector::NodeType::MUTATOR_NODE, "Is Equal",                 "Mutator",     "Condition",   "Tests if two values are equal to each other.", NULL, Colors::BLUE3));
    RefPtr<NodeType> NodeLibraryRegistry::COMPARE_LESS_MUTATOR_NODE_TYPE(         new dtDirector::NodeType(dtDirector::NodeType::MUTATOR_NODE, "Less Than",                "Mutator",     "Condition",   "Tests if A is less than B.", NULL, Colors::BLUE3));
@@ -359,6 +361,7 @@ namespace dtDirector
       mNodeFactory->RegisterType<SubtractMutator>(SUBTRACT_MUTATOR_NODE_TYPE.get());
       mNodeFactory->RegisterType<MultiplyMutator>(MULTIPLY_MUTATOR_NODE_TYPE.get());
       mNodeFactory->RegisterType<DivideMutator>(DIVIDE_MUTATOR_NODE_TYPE.get());
+      mNodeFactory->RegisterType<RandomMutator>(RANDOM_MUTATOR_NODE_TYPE.get());
 
       mNodeFactory->RegisterType<CompareEqualityMutator>(COMPARE_EQUALITY_MUTATOR_NODE_TYPE.get());
       mNodeFactory->RegisterType<CompareLessMutator>(COMPARE_LESS_MUTATOR_NODE_TYPE.get());
