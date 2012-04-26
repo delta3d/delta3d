@@ -110,6 +110,7 @@ namespace dtDirector
       static dtCore::RefPtr<dtDirector::NodeType> SUBTRACT_MUTATOR_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> MULTIPLY_MUTATOR_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> DIVIDE_MUTATOR_NODE_TYPE;
+      static dtCore::RefPtr<dtDirector::NodeType> RANDOM_MUTATOR_NODE_TYPE;
 
       static dtCore::RefPtr<dtDirector::NodeType> COMPARE_EQUALITY_MUTATOR_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> COMPARE_LESS_MUTATOR_NODE_TYPE;
