@@ -452,6 +452,12 @@ namespace dtCore
       return *(LibraryManager::mInstance.get());
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   void LibraryManager::Destroy()
+   {
+      LibraryManager::mInstance = NULL;
+   }
+
    /////////////////////////////////////////////////////////////////////////////
    std::string LibraryManager::GetPlatformSpecificLibraryName(const std::string& libBase)
    {

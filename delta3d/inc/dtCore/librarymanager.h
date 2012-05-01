@@ -84,6 +84,12 @@ namespace dtCore
           */
          static LibraryManager& GetInstance();
 
+         /** 
+          * Destroy the singleton instance of LibraryManager, if one was created.
+          * Should only be called when the application is finished with it.
+          */
+         static void Destroy();
+
          /**
           * Loads an actor registry by loading a dynamic library
           * containing the actor registry implementation.
