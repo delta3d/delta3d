@@ -25,7 +25,7 @@
 
 namespace dtUtil
 {
-   /** 
+   /**
      * Pure virtual interface used to get and set name/value pairs of data,
      * typically used for configuration settings. Derive and provide an implementation
      * for the methods. Store the name/value pairs in a container for later lookup.
@@ -33,7 +33,7 @@ namespace dtUtil
    class ConfigProperties
    {
       public:
-         /** 
+         /**
            * Get the value corresponding to the supplied name. If the name isn't
            * found, the defaultValue should be returned.
            * @return a string value that is paired with the given name.
@@ -42,19 +42,22 @@ namespace dtUtil
            */
          virtual const std::string& GetConfigPropertyValue(const std::string& name, const std::string& defaultValue = "") const = 0;
 
-         /** 
+         /**
            * Sets the value of a given config property.
            * @param name The name of the configuration to set the value on
            * @param value The value to assign to the configuration
            */
          virtual void SetConfigPropertyValue(const std::string& name, const std::string& value) = 0;
 
-         /** 
+         /**
            * Removes the configuration with the given name.
            * @param name The name of the configuration to use. If not found, nothing
            * should happen.
            */
          virtual void RemoveConfigPropertyValue(const std::string& name) = 0;
+
+         /// Virtual destructor to prevent undefined behavior in derived classes
+         virtual ~ConfigProperties() = 0 {}
    };
 }
 
