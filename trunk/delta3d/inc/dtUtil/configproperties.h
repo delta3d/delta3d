@@ -57,7 +57,7 @@ namespace dtUtil
          virtual void RemoveConfigPropertyValue(const std::string& name) = 0;
 
          /// Virtual destructor to prevent undefined behavior in derived classes
-         virtual ~ConfigProperties() = 0 {}
+         virtual ~ConfigProperties() {};
    };
 }
 
