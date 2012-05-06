@@ -35,6 +35,8 @@ typedef unsigned short WORD;
 #define _tcsicmp stricmp
 #define _tcsncpy strncpy
 #define _tcsstr strstr
+#define _fileno fileno
+#define _getcwd getcwd
 #define INVALID_HANDLE_VALUE 0
 #ifndef _T
 #define _T(s) s
