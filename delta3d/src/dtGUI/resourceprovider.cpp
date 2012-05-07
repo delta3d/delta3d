@@ -22,11 +22,6 @@ ResourceProvider::ResourceProvider()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/** This will load the file with the supplied filename using the search paths
- *  find the files.
- *
- * @see SetDataFilePathList()
- */
 void ResourceProvider::loadRawDataContainer(const CEGUI::String& filename, CEGUI::RawDataContainer& output, const CEGUI::String& resourceGroup)
 {
    std::string strFilename(filename.c_str());
@@ -43,7 +38,7 @@ void ResourceProvider::loadRawDataContainer(const CEGUI::String& filename, CEGUI
       try
       {
          //pass to base class for reading
-         CEGUI::DefaultResourceProvider::loadRawDataContainer(filename, output, resourceGroup );
+         CEGUI::DefaultResourceProvider::loadRawDataContainer(filename, output, resourceGroup);
          found = true;
       }
       catch(CEGUI::Exception& e)
@@ -52,19 +47,19 @@ void ResourceProvider::loadRawDataContainer(const CEGUI::String& filename, CEGUI
       }
    }
 
-   if( ! found)
+   if(!found)
    {
       typedef std::pair<StrStrMultiMap::iterator, StrStrMultiMap::iterator> StrStrIterPair;
       StrStrIterPair range = mResGroupSearchSuffixMap.equal_range(strResGroup);
 
       std::string foundFilename(strFilename);
       StrStrMultiMap::iterator curIter = range.first;
-      for( ; curIter != range.second; ++curIter)
+      for(; curIter != range.second; ++curIter)
       {
          const std::string& path = curIter->second;
          const std::string combinedPath = dtUtil::FileUtils::ConcatPaths(path, strFilename);
          foundFilename = dtUtil::FindFileInPathList(combinedPath);
-         if( ! foundFilename.empty())
+         if(!foundFilename.empty())
          {
             break;
          }
@@ -72,7 +67,7 @@ void ResourceProvider::loadRawDataContainer(const CEGUI::String& filename, CEGUI
 
       if(foundFilename.empty())
       {
-         std::string errorStr = 
+         std::string errorStr =
             "dtGUI::ResourceProvider can't find file '" +
             std::string(filename.c_str()) + "'.";
 

@@ -37,19 +37,19 @@ using namespace dtGUI;
 IMPLEMENT_MANAGEMENT_LAYER(GUI)
 
 
-std::string GUIVertexShader = 
+std::string GUIVertexShader =
 " "
 "void main()"
 "{"
 "gl_Position = ftransform();"
 "}";
 
-std::string GUIFragmentShader = 
+std::string GUIFragmentShader =
 "uniform sampler2D GUITexture;"
 "uniform float ScreenWidth;"
 "uniform float ScreenHeight;"
 "void main ()"
-"{"   
+"{"
 "vec2 texCoords = vec2(gl_FragCoord.x / ScreenWidth, gl_FragCoord.y / ScreenHeight);"
 "vec4 result = texture2D(GUITexture, texCoords);"
 "gl_FragColor = result;"
@@ -147,7 +147,7 @@ osg::Node* _CreateQuad( osg::Texture2D *tex, int renderBin )
    if(tex != NULL)
    {
       osg::Vec2Array *tx = new osg::Vec2Array;
-      tx->push_back(osg::Vec2(0, 0)); 
+      tx->push_back(osg::Vec2(0, 0));
       tx->push_back(osg::Vec2(1, 0));
       tx->push_back(osg::Vec2(1, 1));
       tx->push_back(osg::Vec2(0, 1));
@@ -201,7 +201,7 @@ osg::Texture2D* _CreateTexture(int width, int height, bool mipmap)
 
 
 //////////////////////////////////////////////////////////////////////////
-//CEGUI Logger 
+//CEGUI Logger
 //////////////////////////////////////////////////////////////////////////
 class CEGUILogger : public CEGUI::Logger
 {
@@ -589,6 +589,7 @@ void GUI::DestroyWidget(Widget* widget)
 
 ////////////////////////////////////////////////////////////////////////////////
 Widget* GUI::CreateWidget(const std::string& typeName, const std::string& name)
+
 {
    CEGUI::Window* window = CEGUI::WindowManager::getSingleton().createWindow(typeName, name);
 

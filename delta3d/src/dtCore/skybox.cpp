@@ -31,8 +31,6 @@
 #include <osg/Group>
 #include <osg/Image>
 #include <osg/MatrixTransform>
-#include <osg/PolygonMode> ///for wireframe rendering
-#include <osg/Projection>
 #include <osg/ShapeDrawable>
 #include <osg/Vec3>
 #include <osg/GLExtensions>
