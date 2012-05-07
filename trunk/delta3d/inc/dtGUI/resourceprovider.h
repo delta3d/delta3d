@@ -20,7 +20,7 @@ namespace dtGUI
      *
      * @see SetDataFilePathList()
      */
-   class DT_GUI_EXPORT ResourceProvider :   public CEGUI::DefaultResourceProvider
+   class DT_GUI_EXPORT ResourceProvider : public CEGUI::DefaultResourceProvider
    {
    public:
       ResourceProvider();
