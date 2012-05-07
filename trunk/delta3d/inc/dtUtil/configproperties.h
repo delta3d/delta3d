@@ -22,6 +22,7 @@
 #define DELTA_CONFIGPROPERTIES
 
 #include <string>
+#include <dtUtil/export.h>
 
 namespace dtUtil
 {
@@ -30,7 +31,7 @@ namespace dtUtil
      * typically used for configuration settings. Derive and provide an implementation
      * for the methods. Store the name/value pairs in a container for later lookup.
      */
-   class ConfigProperties
+   class DT_UTIL_EXPORT ConfigProperties
    {
       public:
          /**
@@ -57,7 +58,7 @@ namespace dtUtil
          virtual void RemoveConfigPropertyValue(const std::string& name) = 0;
 
          /// Virtual destructor to prevent undefined behavior in derived classes
-         virtual ~ConfigProperties() {};
+         virtual ~ConfigProperties() = 0;
    };
 }
 
