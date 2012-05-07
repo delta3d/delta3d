@@ -8,6 +8,7 @@ SET(HEADER_PATH ${CMAKE_SOURCE_DIR}/inc/${LIB_NAME})
 SET(SOURCE_PATH ${CMAKE_SOURCE_DIR}/src/${LIB_NAME})
 
 SET( LIB_SOURCES 
+    ${SOURCE_PATH}/configproperties.cpp
     ${SOURCE_PATH}/coordinates.cpp
     ${SOURCE_PATH}/datapathutils.cpp
     ${SOURCE_PATH}/datastream.cpp
