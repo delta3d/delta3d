@@ -137,20 +137,20 @@ namespace dtGame
          return NULL;
       }
 
-      const std::string& prototypeName = msg.GetPrototypeName();
+      const dtCore::UniqueId& prototypeID = msg.GetPrototypeID();
 
       dtCore::RefPtr<dtGame::GameActorProxy> gap;
       dtCore::RefPtr<const dtCore::ActorType> type = msg.GetActorType();
 
       // If the message has a prototype, then use it to create the actor
-      if (!prototypeName.empty())
+      if (!prototypeID.ToString().empty())
       {
-         dtGame::GameActorProxy* prototypeProxy = NULL;
-         GetGameManager()->FindPrototypeByName(prototypeName, prototypeProxy);
+         dtCore::RefPtr<dtGame::GameActorProxy> prototypeProxy = NULL;
+         GetGameManager()->FindPrototypeByID(prototypeID, prototypeProxy);
          if (prototypeProxy == NULL)
          {
-            throw dtGame::InvalidParameterException( "The prototypeName parameter with value \""
-               + prototypeName + "\" is invalid. No such prototype exists. Remote actor will not be created.", __FILE__, __LINE__);
+            throw dtGame::InvalidParameterException( "The prototype with value name \""
+               + msg.GetPrototypeName() + "\" and UniqueId " + prototypeID.ToString() + " is invalid. No such prototype exists. Remote actor will not be created.", __FILE__, __LINE__);
          }
 
          gap = dynamic_cast<dtGame::GameActorProxy*>

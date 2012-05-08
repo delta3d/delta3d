@@ -350,6 +350,7 @@ void GameActorProxy::PopulateActorUpdateImpl(ActorUpdateMessage& update,
    update.SetName(GetName());
    update.SetActorType(GetActorType());
 
+   update.SetPrototypeID(GetGameActor().GetPrototypeID());
    update.SetPrototypeName(GetGameActor().GetPrototypeName());
 
    update.SetSendingActorId(GetId());

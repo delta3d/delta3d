@@ -48,6 +48,7 @@ namespace dtGame
       , mRemote(false)
       , mLogger(dtUtil::Log::GetInstance("gameactor.cpp"))
       , mPrototypeName("")
+      , mPrototypeID(dtCore::UniqueId(""))
    {
    }
 
@@ -211,6 +212,18 @@ namespace dtGame
    const std::string& GameActor::GetPrototypeName() const
    {
       return mPrototypeName;
+   }
+
+   //////////////////////////////////////////////////////////////////////////////
+   void GameActor::SetPrototypeID(const dtCore::UniqueId& prototypeID)
+   {
+      mPrototypeID = prototypeID;
+   }
+
+   //////////////////////////////////////////////////////////////////////////////
+   const dtCore::UniqueId& GameActor::GetPrototypeID() const
+   {
+      return mPrototypeID;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
