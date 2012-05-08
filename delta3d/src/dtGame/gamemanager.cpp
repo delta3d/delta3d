@@ -1295,6 +1295,7 @@ namespace dtGame
             dtGame::GameActor* gameActor = dynamic_cast<dtGame::GameActor*>(gap->GetActor());
             if (gameActor != NULL)
             {
+               gameActor->SetPrototypeID(ourObject->GetId());
                gameActor->SetPrototypeName(ourObject->GetName());
             }
             gap->SetRemote(isRemote);

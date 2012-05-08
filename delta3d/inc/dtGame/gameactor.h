@@ -145,18 +145,30 @@ namespace dtGame
 
       /**
        * See GetPrototypeName().
-       * @param prototypeName The prototype that was used to create this actor. Set by the GM.
+       * @param prototypeName The name of the prototype that was used to create this actor. Set by the GM.
        */
       void SetPrototypeName(const std::string& prototypeName);
+
+      /**
+       * This value is set automatically by the GM when an actor is created from prototype.
+       * @return The prototype that was used to create this actor. Set by the GM.
+       */
+      const std::string& GetPrototypeName() const;
+
+      /**
+       * See GetPrototypeID().
+       * @param prototypeID The unique id of the prototype that was used to create this actor. Set by the GM.
+       */
+      void SetPrototypeID(const dtCore::UniqueId& prototypeID);
 
       /**
        * This value is used for updating/creating remote actors that need to be recreated from prototype
        * This value is set automatically by the GM when an actor is created from prototype.
        * If the prototype is non-null, then when the actor is created by the message
        * processor, it will attempt to look up the prototype first. Extremely useful for networking.
-       * @return The prototype that was used to create this actor. Set by the GM.
+       * @return The id of the prototype that was used to create this actor. Set by the GM.
        */
-      const std::string& GetPrototypeName() const;
+      const dtCore::UniqueId& GetPrototypeID() const;
 
       /**
        * Add an ActorComponent. Only one ActorComponent of a given type can be added.
@@ -200,6 +212,7 @@ namespace dtGame
       std::string mShaderGroup;
       dtUtil::Log& mLogger;
       std::string mPrototypeName;
+      dtCore::UniqueId mPrototypeID;
    };
 
 } // namespace dtGame

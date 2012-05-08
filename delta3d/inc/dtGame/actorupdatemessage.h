@@ -48,6 +48,7 @@ namespace dtGame
          static const dtUtil::RefString ACTOR_TYPE_NAME_PARAMETER;
          static const dtUtil::RefString ACTOR_TYPE_CATEGORY_PARAMETER;
          static const dtUtil::RefString PROTOTYPE_NAME_PARAMETER;
+         static const dtUtil::RefString PROTOTYPE_ID_PARAMETER;
          static const dtUtil::RefString IS_PARTIAL_UPDATE_PARAMETER;
          static const dtUtil::RefString UPDATE_GROUP_PARAMETER;
 
@@ -162,10 +163,23 @@ namespace dtGame
          void SetActorType(const dtCore::ActorType& newActorType);
 
          /**
-          * This value is used for updating/creating remote actors that need to be recreated from prototype
+          * Gets the name of the prototype this actor was created from
           * @return The name of the prototype this actor is created from, if any. 
           */
          const std::string& GetPrototypeName() const;
+
+         /**
+         * This value comes from the actor, but is set automatically by the GM when an actor is created
+         * from a prototype.
+         * @param newName The name of the prototype this actor is created from, if any.
+         */
+         void SetPrototypeName(const std::string& newPrototypeName);
+
+                  /**
+          * This value is used for updating/creating remote actors that need to be recreated from prototype
+          * @return The name of the prototype this actor is created from, if any. 
+          */
+         const dtCore::UniqueId& GetPrototypeID() const;
 
          /**
          * This value is used for updating/creating remote actors that need to be recreated from prototype
@@ -174,7 +188,7 @@ namespace dtGame
          * processor, then it will attempt to look up the prototype first. Extremely useful for networking.
          * @param newName The name of the prototype this actor is created from, if any.
          */
-         void SetPrototypeName(const std::string& newPrototypeName);
+         void SetPrototypeID(const dtCore::UniqueId& newPrototypeID);
 
          /**
           * This templated function exposes the for each parameter on the update parameters data member.
