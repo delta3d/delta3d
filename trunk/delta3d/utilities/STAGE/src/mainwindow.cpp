@@ -115,14 +115,17 @@ namespace dtEditQt
                                                          CONF_MGR_STYLESHEET);
       if (styleSheetFile != "")
       {
+         dtUtil::FileInfo fileInfo = dtUtil::FileUtils::GetInstance().GetFileInfo(mSTAGEConfigFullPath);
+         std::string styleSheetURL = fileInfo.path + "/" + styleSheetFile;
+
          //check to see if the stylesheet is "just found" (we were given an absolute path)
-         if (! dtUtil::FileUtils::GetInstance().FileExists(styleSheetFile))
+         if (!dtUtil::FileUtils::GetInstance().FileExists(styleSheetURL))
          {
             //file not found, assume it's in STAGE's stylesheets directory
-            styleSheetFile = dtUtil::GetDeltaRootPath() + "/utilities/STAGE/style/" + styleSheetFile;
+            styleSheetURL = dtUtil::GetDeltaRootPath() + "/utilities/STAGE/style/" + styleSheetFile;
          }
 
-         QFile file(styleSheetFile.c_str());
+         QFile file(styleSheetURL.c_str());
          file.open(QFile::ReadOnly);
          QString ss = QString(file.readAll());
 
