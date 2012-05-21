@@ -43,7 +43,6 @@
 #include <dtEditQt/editorevents.h>
 #include <dtEditQt/editordata.h>
 #include <cmath>
-
 namespace dtEditQt
 {
 
@@ -196,7 +195,11 @@ namespace dtEditQt
       std::map<std::string, Viewport*>::iterator itor;
       for (itor = mViewportList.begin(); itor != mViewportList.end(); ++itor)
       {
-         if (itor->second->getAutoInteractionMode())
+         //std::cout << itor->first << "  -  " << ((itor->second->getAutoInteractionMode()) ? "on" : "off") << std::endl;
+
+         // MG Always refresh the Preview window to prevent visual lockups when using style sheets
+         // I don't know why this occurs but this hack at least keeps things going.
+         if (itor->first == "Preview" || itor->second->getAutoInteractionMode())
          {
             itor->second->refresh();
          }
