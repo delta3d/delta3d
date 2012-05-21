@@ -5,6 +5,7 @@
 
 FIND_PATH(3DS_INCLUDE_DIR max.h
           PATHS
+		  "$ENV{PROGRAMFILES(x86)}/Autodesk/maxsdk/include"
           "$ENV{PROGRAMFILES}/Autodesk/3ds Max 2010 SDK/maxsdk/include"
           "$ENV{PROGRAMFILES}/Autodesk/3ds Max 9 SDK/maxsdk/include"
           "$ENV{PROGRAMFILES}/Autodesk/3ds Max 2008 SDK/maxsdk/include"
@@ -15,6 +16,7 @@ MACRO (FIND_3DS_LIBRARY MYLIBRARY MYLIBRARYNAME)
   FIND_LIBRARY(${MYLIBRARY}
                NAMES ${MYLIBRARYNAME}
                PATHS 
+			   "$ENV{PROGRAMFILES(x86)}/Autodesk/maxsdk/lib"
                "$ENV{PROGRAMFILES}/Autodesk/3ds Max 2010 SDK/maxsdk/lib"
                "$ENV{PROGRAMFILES}/Autodesk/3ds Max 9 SDK/maxsdk/lib"
                "$ENV{PROGRAMFILES}/Autodesk/3ds Max 2008 SDK/maxsdk/lib"
