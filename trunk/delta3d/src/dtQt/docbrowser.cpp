@@ -73,21 +73,22 @@ namespace dtQt
       QTabWidget::mouseDoubleClickEvent(e);
 
       // Create a new page and set it to the home page.
-      mDocBrowser->OpenPage("", "", true);
-      mDocBrowser->OnHyperlinkClicked(mDocBrowser->GetHome().c_str());
+      mDocBrowser->OpenPage("", true);
+      mDocBrowser->OnHyperlinkClicked(mDocBrowser->GetHome());
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    DocBrowserText::DocBrowserText(QWidget* parent)
-      : QTextEdit(parent)
+      : QWebView(parent)
       , mWasOverHyperlink(false)
       , mCurrentPage(-1)
    {
       setMouseTracking(true);
+      page()->setLinkDelegationPolicy(QWebPage::DelegateAllLinks);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void DocBrowserText::SetPage(const QString& page, const QString& anchor)
+   void DocBrowserText::SetPage(const QString& page)
    {
       // First clear all history that is beyond our current page.
       // This removes all next pages if we have backed up any.
@@ -98,19 +99,17 @@ namespace dtQt
 
       DocHistory data;
       data.page = page;
-      data.anchor = anchor;
 
       mHistory.push_back(data);
       mCurrentPage = (int)mHistory.size() - 1;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   bool DocBrowserText::GetPage(QString& page, QString& anchor)
+   bool DocBrowserText::GetPage(QString& page)
    {
       if (mCurrentPage > -1 && mCurrentPage < (int)mHistory.size())
       {
          page = mHistory[mCurrentPage].page;
-         anchor = mHistory[mCurrentPage].anchor;
          return true;
       }
 
@@ -118,24 +117,24 @@ namespace dtQt
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   bool DocBrowserText::PrevPage(QString& page, QString& anchor)
+   bool DocBrowserText::PrevPage(QString& page)
    {
       if (IsPrevPageValid())
       {
          mCurrentPage--;
-         return GetPage(page, anchor);
+         return GetPage(page);
       }
 
       return false;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   bool DocBrowserText::NextPage(QString& page, QString& anchor)
+   bool DocBrowserText::NextPage(QString& page)
    {
       if (IsNextPageValid())
       {
          mCurrentPage++;
-         return GetPage(page, anchor);
+         return GetPage(page);
       }
 
       return false;
@@ -153,42 +152,6 @@ namespace dtQt
    {
       if (mCurrentPage > -1 && mCurrentPage < (int)mHistory.size() - 1) return true;
       return false;
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   void DocBrowserText::mouseMoveEvent(QMouseEvent *e)
-   {
-      QTextEdit::mouseMoveEvent(e);
-
-      QString hyperlink = anchorAt(e->pos());
-      if (!hyperlink.isEmpty())
-      {
-         if (!mWasOverHyperlink)
-         {
-            QApplication::setOverrideCursor(Qt::PointingHandCursor);
-            mWasOverHyperlink = true;
-         }
-      }
-      else if (mWasOverHyperlink)
-      {
-         QApplication::restoreOverrideCursor();
-         mWasOverHyperlink = false;
-      }
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   void DocBrowserText::mousePressEvent(QMouseEvent *e)
-   {
-      QTextEdit::mousePressEvent(e);
-
-      QString hyperlink = anchorAt(e->pos());
-      if (!hyperlink.isEmpty())
-      {
-         QApplication::restoreOverrideCursor();
-         mWasOverHyperlink = false;
-
-         emit OnHyperlinkClicked(hyperlink);
-      }
    }
 
 
@@ -270,8 +233,8 @@ namespace dtQt
 
       // Open our using help page, and also our home page.
       OpenUsingHelpPage(true);
-      OpenPage("", "", true);
-      OnHyperlinkClicked(mDocument->GetHome().c_str());
+      OpenPage("", true);
+      OnHyperlinkClicked(GetHome());
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -287,36 +250,36 @@ namespace dtQt
    ////////////////////////////////////////////////////////////////////////////////
    void DocBrowser::OpenUsingHelpPage(bool newPage)
    {
-      OpenPage("", "", newPage);
+      OpenPage("", newPage);
 
       DocBrowserText* doc = dynamic_cast<DocBrowserText*>(mDocumentTabs->currentWidget());
       if (doc)
       {
-         doc->SetPage(USING_HELP_TAG, "");
+         doc->SetPage(USING_HELP_TAG);
          mDocumentTabs->setTabText(mDocumentTabs->currentIndex(), USING_HELP_TAG);
 
          doc->setHtml(
-	         "<p align=\"left\">"
-		         "<font color=\"DarkBlue\"><h2>"
+            "<p align=\"left\">"
+               "<font color=\"DarkBlue\"><h2>"
                   "Using Help!"
-		         "</h2></font>"
-	         "</p>"
+               "</h2></font>"
+            "</p>"
             "<p align=\"center\">"
-		         "<table align=\"center\" cellpadding=\"2\" cellspacing=\"10\" border=\"0\" width=\"80%\">"
+               "<table align=\"center\" cellpadding=\"2\" cellspacing=\"10\" border=\"0\" width=\"80%\">"
                   "<tr><td>"
-			            "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;To navigate the help library, "
-			            "use the Table of Contents menu to the left of this window.  You "
+                     "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;To navigate the help library, "
+                     "use the Table of Contents menu to the left of this window.  You "
                      "may also manage multiple help pages by double clicking an empty "
                      "space on the tab bar above to create new tabs."
                   "</td></tr>"
-	            "</table>"
+               "</table>"
             "</p>"
          );
       }
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void DocBrowser::OpenPage(const QString& page, const QString& anchor, bool newTab, bool SetPage)
+   void DocBrowser::OpenPage(const QString& page, bool newTab, bool setPage)
    {
       // Create a new page if we are forcing a new page or
       // if we don't have any pages yet.
@@ -324,53 +287,25 @@ namespace dtQt
       {
          DocBrowserText* doc = new DocBrowserText(this);
 
-         doc->setTextInteractionFlags(Qt::TextBrowserInteraction);
-
-         connect(doc, SIGNAL(OnHyperlinkClicked(const QString&)),
-            this, SLOT(OnHyperlinkClicked(const QString&)));
-
-         //QScrollBar* scrollBar = doc->verticalScrollBar();
-         //if (scrollBar)
-         //{
-         //   connect(scrollBar, SIGNAL(valueChanged(int)),
-         //      this, SLOT(OnDocumentScrolled(int)));
-         //}
+         connect(doc, SIGNAL(linkClicked(const QUrl&)),
+            this, SLOT(OnHyperlinkClicked(const QUrl&)));
+         connect(doc, SIGNAL(loadFinished(bool)),
+            this, SLOT(OnPageLoadFinished(bool)));
 
          int index = mDocumentTabs->addTab(doc, "");
          mDocumentTabs->setCurrentIndex(index);
       }
 
+      // Now set up the current tab and page
       DocBrowserText* doc = dynamic_cast<DocBrowserText*>(mDocumentTabs->currentWidget());
       if (doc && !page.isEmpty())
       {
-         mDocumentTabs->setTabText(mDocumentTabs->currentIndex(), page);
-
-         if (SetPage)
+         if (setPage)
          {
-            doc->SetPage(page, anchor);
+            doc->SetPage(page);
          }
 
-         QFile file(mResourcePrefix + page);
-         if (!file.open(QFile::ReadOnly | QFile::Text))
-         {
-            doc->setPlainText("Could not locate file.");
-         }
-         else
-         {
-            QTextStream in(&file);
-            QString data = in.readAll();
-
-            // Prepend the resource prefix to all images referenced.
-            data.replace("<img src=\"", "<img src=\"" + mResourcePrefix, Qt::CaseInsensitive);
-
-            doc->setHtml(data);
-
-            // Scroll to an anchor if needed.
-            if (!anchor.isEmpty())
-            {
-               doc->scrollToAnchor(anchor);
-            }
-         }
+         doc->load("qrc:/" + mResourcePrefix + page);
       }
    }
 
@@ -382,12 +317,12 @@ namespace dtQt
       {
          if (doc->IsPrevPageValid())
          {
-            QString page, anchor;
-            doc->PrevPage(page, anchor);
-            OpenPage(page, anchor, false, false);
+            QString page;
+            doc->PrevPage(page);
+            OpenPage(page, false, false);
 
             // Search the table of contents for a page that references the same link location.
-            QTreeWidgetItem* item = FindTOC(page, anchor);
+            QTreeWidgetItem* item = FindTOC(page);
             if (item)
             {
                // If the page is listed in the table of contents, select that item.
@@ -407,12 +342,12 @@ namespace dtQt
       {
          if (doc->IsNextPageValid())
          {
-            QString page, anchor;
-            doc->NextPage(page, anchor);
-            OpenPage(page, anchor, false, false);
+            QString page;
+            doc->NextPage(page);
+            OpenPage(page, false, false);
 
             // Search the table of contents for a page that references the same link location.
-            QTreeWidgetItem* item = FindTOC(page, anchor);
+            QTreeWidgetItem* item = FindTOC(page);
             if (item)
             {
                // If the page is listed in the table of contents, select that item.
@@ -428,42 +363,24 @@ namespace dtQt
    void DocBrowser::OnHomeButton()
    {
       // Set the page to the home page.
-      OnHyperlinkClicked(mDocument->GetHome().c_str());
+      OnHyperlinkClicked(GetHome());
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void DocBrowser::OnHyperlinkClicked(const QString& link)
+   void DocBrowser::OnHyperlinkClicked(const QUrl& link)
    {
-      // First parse the link to make sure we are not selecting a web page.
-      if (link.contains("http:", Qt::CaseInsensitive))
+      // Make sure the link isn't empty
+      if (!link.isEmpty())
       {
-         // TODO: Open a web browser for this link.
-         return;
-      }
+         // If this is a local resource (starts with qrc:/ then strip that part out the relative path part
+         QString page = link.toString();
+         if (page.startsWith("qrc:/"))
+         {
+            page.remove(0, 5 + mResourcePrefix.length());
+         }
 
-      // Check if this link contains a bookmark.
-      QString page = link;
-      QString anchor = "";
-      int bookmark = page.indexOf("#");
-      if (bookmark > -1)
-      {
-         // Extract the page and anchor separately.
-         anchor = page;
-         anchor.remove(0, bookmark + 1);
-         page.chop(page.length() - bookmark);
-      }
-
-      // If the link doesn't contain a page, but does have an anchor,
-      // use the current page.
-      if (page.isEmpty() && !anchor.isEmpty())
-      {
-         page = mDocumentTabs->tabText(mDocumentTabs->currentIndex());
-      }
-
-      if (!page.isEmpty())
-      {
          // Search the table of contents for a page that references the same link location.
-         QTreeWidgetItem* item = FindTOC(page, anchor);
+         QTreeWidgetItem* item = FindTOC(page);
          if (item)
          {
             // If the page is listed in the table of contents, select that item.
@@ -473,7 +390,24 @@ namespace dtQt
          }
 
          // If the contents doesn't list this page, then just open it.
-         OpenPage(page, anchor);
+         OpenPage(page);
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void DocBrowser::OnPageLoadFinished(bool success)
+   {
+      DocBrowserText* doc = dynamic_cast<DocBrowserText*>(mDocumentTabs->currentWidget());
+      if (success && doc)
+      {
+         if (!doc->title().isEmpty())
+         {
+            mDocumentTabs->setTabText(mDocumentTabs->currentIndex(), doc->title());
+         }
+      }
+      else
+      {
+         mDocumentTabs->setTabText(mDocumentTabs->currentIndex(), "Failed to load help page...");
       }
    }
 
@@ -491,7 +425,6 @@ namespace dtQt
          }
 
          OnHyperlinkClicked(current->statusTip(0));
-         //OpenPage(current->statusTip(0));
       }
    }
 
@@ -504,11 +437,10 @@ namespace dtQt
          if (doc)
          {
             QString page;
-            QString anchor;
-            if (doc->GetPage(page, anchor) && !page.isEmpty())
+            if (doc->GetPage(page) && !page.isEmpty())
             {
                // Search the table of contents for a page that references the same link location.
-               QTreeWidgetItem* item = FindTOC(page, anchor);
+               QTreeWidgetItem* item = FindTOC(page);
                if (item)
                {
                   // If the page is listed in the table of contents, select that item.
@@ -530,67 +462,12 @@ namespace dtQt
          DocBrowserText* doc = dynamic_cast<DocBrowserText*>(mDocumentTabs->widget(index));
          if (doc)
          {
-            disconnect(doc, SIGNAL(OnHyperlinkClicked(const QString&)),
-               this, SLOT(OnHyperlinkClicked(const QString&)));
-
-            //QScrollBar* scrollBar = doc->verticalScrollBar();
-            //if (scrollBar)
-            //{
-            //   disconnect(scrollBar, SIGNAL(valueChanged(int)),
-            //      this, SLOT(OnDocumentScrolled(int)));
-            //}
+            disconnect(doc, SIGNAL(linkClicked(const QUrl&)),
+               this, SLOT(OnHyperlinkClicked(const QUrl&)));
 
             mDocumentTabs->removeTab(index);
          }
       }
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   void DocBrowser::OnDocumentScrolled(int value)
-   {
-      //// Find all anchors in the document up to our current position.
-      //DocBrowserText* doc = dynamic_cast<DocBrowserText*>(mDocumentTabs->currentWidget());
-      //if (doc)
-      //{
-      //   // Find all anchors.
-      //   QString tag = "<a name=\"";
-      //   //if (doc->find(tag, QTextDocument::FindBackward))
-      //   {
-      //      QString text = doc->toHtml();
-      //      if (!text.isEmpty())
-      //      {
-      //         // Get the anchor name.
-      //         QString anchor = text;
-      //         int loc = -1;
-      //         while (loc = text.indexOf(tag, loc, Qt::CaseInsensitive) > -1)
-      //         {
-      //            // make sure this anchor is above the current scroll position.
-      //            doc->
-
-      //            anchor.remove(0, loc + tag.length());
-
-      //            // Now chop it off at the end quote.
-      //            int endQuote = anchor.indexOf("\"");
-      //            if (endQuote > -1)
-      //            {
-      //               anchor.chop(anchor.length() - endQuote);
-      //            }
-      //         }
-
-      //         {
-      //            // Now find this anchor in our contents.
-      //            QTreeWidgetItem* item = FindTOC(mDocumentTabs->tabText(mDocumentTabs->currentIndex()), mAnchor, true);
-      //            if (item)
-      //            {
-      //               // If the page is listed in the table of contents, select that item.
-      //               mContentList->blockSignals(true);
-      //               mContentList->setCurrentItem(item);
-      //               mContentList->blockSignals(false);
-      //            }
-      //         }
-      //      }
-      //   }
-      //}
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -665,11 +542,11 @@ namespace dtQt
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   QTreeWidgetItem* DocBrowser::FindTOC(const QString& page, const QString& anchor, bool anchorMustMatch)
+   QTreeWidgetItem* DocBrowser::FindTOC(const QString& page)
    {
       for (int index = 0; index < mContentList->topLevelItemCount(); index++)
       {
-         QTreeWidgetItem* item = FindTOC(page, anchor, mContentList->topLevelItem(index), anchorMustMatch);
+         QTreeWidgetItem* item = FindTOC(page, mContentList->topLevelItem(index));
          if (item) return item;
       }
 
@@ -677,60 +554,23 @@ namespace dtQt
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   QTreeWidgetItem* DocBrowser::FindTOC(const QString& page, const QString& anchor, QTreeWidgetItem* parent, bool anchorMustMatch)
+   QTreeWidgetItem* DocBrowser::FindTOC(const QString& page, QTreeWidgetItem* parent)
    {
       if (!parent) return NULL;
 
-      QString link = parent->statusTip(0);
-
-      // Check if this link contains an anchor.
-      QString TOCPage = link;
-      QString TOCAnchor = "";
-      int bookmark = TOCPage.indexOf("#");
-      if (bookmark > -1)
+      // If this is it, we match
+      if (parent->statusTip(0) == page)
       {
-         // Extract the page and anchor separately.
-         TOCAnchor = TOCPage;
-         TOCAnchor.remove(0, bookmark + 1);
-         TOCPage.chop(TOCPage.length() - bookmark);
+         return parent;
       }
 
-      if (TOCPage == page)
-      {
-         // If both the page and anchor match exactly, return this result.
-         if (TOCAnchor == anchor)
-         {
-            return parent;
-         }
-
-         // If the anchor of the TOC does not match, check the children first.
-         for (int index = 0; index < parent->childCount(); index++)
-         {
-            QTreeWidgetItem* child = parent->child(index);
-            if (child)
-            {
-               QTreeWidgetItem* found = FindTOC(page, anchor, child, true);
-               if (found) return found;
-            }
-         }
-
-         // If we aren't enforcing an anchor match, then return this result
-         // as it is close enough.
-         if (!anchorMustMatch)
-         {
-            // return the closest page match, ignoring the anchor.
-            return parent;
-         }
-      }
-
-      // If we have not found a matching page yet, check the children.
+      // If this isn't it, then check our children
       for (int index = 0; index < parent->childCount(); index++)
       {
          QTreeWidgetItem* child = parent->child(index);
          if (child)
          {
-            QTreeWidgetItem* found = FindTOC(page, anchor, child, anchorMustMatch);
-
+            QTreeWidgetItem* found = FindTOC(page, child);
             if (found) return found;
          }
       }

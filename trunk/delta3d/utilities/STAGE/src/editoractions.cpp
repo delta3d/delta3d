@@ -88,6 +88,7 @@
 #include <QtGui/QIcon>
 #include <QtGui/QMainWindow>
 #include <QtGui/QMessageBox>
+#include <QtGui/QTextEdit>
 
 #include <sstream>
 

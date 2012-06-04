@@ -30,9 +30,9 @@
 #include <dtCore/refptr.h>
 
 #include <QtGui/QMainWindow>
-#include <QtGui/QTextEdit>
 #include <QtGui/QTreeWidget>
 #include <QtGui/QTabWidget>
+#include <QtWebKit/QWebView>
 
 class QAction;
 
@@ -91,14 +91,13 @@ namespace dtQt
    * @brief This is the help document text window,
    *        overloaded to provide functionality for hyperlinks.
    */
-   class DocBrowserText : public QTextEdit
+   class DocBrowserText : public QWebView
    {
       Q_OBJECT
 
       struct DocHistory
       {
          QString page;
-         QString anchor;
       };
 
    public:
@@ -115,39 +114,35 @@ namespace dtQt
       * current.
       *
       * @param[in]  page    The page.
-      * @param[in]  anchor  The anchor.
       */
-      void SetPage(const QString& page, const QString& anchor);
+      void SetPage(const QString& page);
 
       /**
       * Retrieves the data of the current page.
       *
       * @param[out]  page    The current page.
-      * @param[out]  anchor  The current anchor.
       */
-      bool GetPage(QString& page, QString& anchor);
+      bool GetPage(QString& page);
 
       /**
       * Retrieves the previous page data from the page history and
       * makes it the current.
       *
       * @param[out]  page    The previous page.
-      * @param[out]  anchor  The previous anchor.
       *
       * @return      Returns false if there is no previous page.
       */
-      bool PrevPage(QString& page, QString& anchor);
+      bool PrevPage(QString& page);
 
       /**
       * Retrieves the next page data from the page history
       * and makes it the current.
       *
       * @param[out]  page    The next page.
-      * @param[out]  anchor  The next anchor.
       *
       * @return      Returns false if there is no next page.
       */
-      bool NextPage(QString& page, QString& anchor);
+      bool NextPage(QString& page);
 
       /**
       * Retrieves whether there is a previous or next page.
@@ -162,19 +157,7 @@ namespace dtQt
       *
       * @param[in]  link  The location of the link.
       */
-      void OnHyperlinkClicked(const QString& link);
-
-   protected:
-      
-      /**
-      * Event handler when the mouse is moved.
-      */
-      virtual void mouseMoveEvent(QMouseEvent *e);
-
-      /**
-      * Event handler when the mouse is pressed.
-      */
-      virtual void mousePressEvent(QMouseEvent *e);
+      void OnHyperlinkClicked(const QUrl& link);
 
    private:
 
@@ -209,7 +192,7 @@ namespace dtQt
       /**
       * Retrieves the home page.
       */
-      std::string GetHome() {return mDocument->GetHome();}
+      QString GetHome() { return QString::fromStdString(mDocument->GetHome()); }
 
       /**
       * Loads the Using Help page.
@@ -217,16 +200,15 @@ namespace dtQt
       * @param[in]  newPage  True to create a new tab page.
       */
       void OpenUsingHelpPage(bool newPage = false);
-      
+
       /**
       * Loads a specified page.
       *
       * @param[in]  page     The name of the page to open.
-      * @param[in]  anchor   The anchor to scroll to.
       * @param[in]  newTab   True to create a new tab for this page.
       * @param[in]  SetPage  True if we want to set this page in the browser history.
       */
-      void OpenPage(const QString& page, const QString& anchor, bool newTab = false, bool SetPage = true);
+      void OpenPage(const QString& page, bool newTab = false, bool setPage = true);
 
    public slots:
 
@@ -250,7 +232,14 @@ namespace dtQt
       *
       * @param[in]  link  The location of the link.
       */
-      void OnHyperlinkClicked(const QString& link);
+      void OnHyperlinkClicked(const QUrl& link);
+
+      /**
+      * Event handler when a help page finishes loading
+      *
+      * @param[in]  success  Whether the page load succeeded or not.
+      */
+      void OnPageLoadFinished(bool success);
 
       /**
       * Event handler when the current item in the contents list is changed.
@@ -274,13 +263,6 @@ namespace dtQt
       */
       void OnDocumentTabClosed(int index);
 
-      /**
-      * Event handler when the document window scroll position has changed.
-      *
-      * @param[in]  value  The new scroll position.
-      */
-      void OnDocumentScrolled(int value);
-
    private:
 
       /**
@@ -293,13 +275,12 @@ namespace dtQt
       * Finds a table of contents entry that matches the given page.
       *
       * @param[in]  page    The page to find.
-      * @param[in]  anchor  The anchor of the page.
       * @param[in]  parent  The parent widget.
       *
       * @return     The tree widget item or NULL if not found.
       */
-      QTreeWidgetItem* FindTOC(const QString& page, const QString& anchor = "", bool anchorMustMatch = false);
-      QTreeWidgetItem* FindTOC(const QString& page, const QString& anchor, QTreeWidgetItem* parent, bool anchorMustMatch);
+      QTreeWidgetItem* FindTOC(const QString& page);
+      QTreeWidgetItem* FindTOC(const QString& page, QTreeWidgetItem* parent);
 
       QString              mResourcePrefix;
       QTreeWidget*         mContentList;
