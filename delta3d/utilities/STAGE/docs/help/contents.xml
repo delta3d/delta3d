@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <dtHelp version="1.0">
 	<title>STAGE Help</title>
-	<resource>:help/</resource>
+	<resource>help/</resource>
 	<home>tutorial.html</home>
 	<contents>
 		<section title="Tutorial" ref="tutorial.html" expanded="yes">
