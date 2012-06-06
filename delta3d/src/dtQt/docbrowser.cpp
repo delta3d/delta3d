@@ -202,8 +202,8 @@ namespace dtQt
       toolbar->addAction(mHomeAction);
 
       // Document splitter.
-      documentSplit->setStretchFactor(0, 1);
-      documentSplit->setStretchFactor(1, 2);
+      //documentSplit->setStretchFactor(0, 1);
+      //documentSplit->setStretchFactor(1, 2);
 
       // Document tabs.
       mDocumentTabs->setTabsClosable(true);
@@ -509,6 +509,18 @@ namespace dtQt
                mContentList->setCurrentItem(treeItem);
             }
          }
+      }
+
+      // Resize the splitter so the tree fits nicely
+      QSplitter* splitter = dynamic_cast<QSplitter*>(mContentList->parent());
+      if (splitter != NULL)
+      {
+         mContentList->resizeColumnToContents(0);
+         int treeWidth = mContentList->columnWidth(0) + mContentList->verticalScrollBar()->height();
+         QList<int> sizes;
+         sizes.push_back(treeWidth);
+         sizes.push_back(width() - splitter->handleWidth() - treeWidth);
+         splitter->setSizes(sizes);
       }
    }
 
