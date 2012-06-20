@@ -30,14 +30,20 @@ CEGUIKeyboardListener::~CEGUIKeyboardListener()
 ////////////////////////////////////////////////////////////////////////////////
 bool CEGUIKeyboardListener::HandleKeyPressed(const dtCore::Keyboard* keyboard, int key)
 {
+   bool handled(false);
    if( CEGUI::Key::Scan scanKey = KeyboardKeyToKeyScan(key) )
    {
       MakeCurrent();
-      CEGUI::System::getSingleton().injectKeyDown(scanKey);
+      handled = CEGUI::System::getSingleton().injectKeyDown(scanKey);
    }
 
-   MakeCurrent();
-   return CEGUI::System::getSingleton().injectChar( static_cast<CEGUI::utf32>(key) );
+   if (!handled)
+   {
+      MakeCurrent();
+      handled = CEGUI::System::getSingleton().injectChar( static_cast<CEGUI::utf32>(key) );
+   }
+
+   return handled;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
