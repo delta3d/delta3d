@@ -619,7 +619,7 @@ void FPSMotionModel::UpdateMouse(const double deltaTime)
    //}
 
    osg::Vec2 rotationMovement;
-   if (GetTurnLeftRightAxis())
+   if (mLookLeftRightCtrl != 0.0f && GetTurnLeftRightAxis())
    {
       rotationMovement.x() += GetTurnLeftRightAxis()->GetState();
       if (mShouldRecenterMouse)
@@ -627,7 +627,7 @@ void FPSMotionModel::UpdateMouse(const double deltaTime)
          GetTurnLeftRightAxis()->SetState(0.0f);
       }
    }
-   if (GetLookUpDownAxis())
+   if (mLookLeftRightCtrl != 0.0f && GetLookUpDownAxis())
    {
       rotationMovement.y() += GetLookUpDownAxis()->GetState();
       if (mShouldRecenterMouse)
