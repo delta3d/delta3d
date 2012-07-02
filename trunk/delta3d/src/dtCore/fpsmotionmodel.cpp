@@ -627,7 +627,7 @@ void FPSMotionModel::UpdateMouse(const double deltaTime)
          GetTurnLeftRightAxis()->SetState(0.0f);
       }
    }
-   if (mLookLeftRightCtrl != 0.0f && GetLookUpDownAxis())
+   if (mLookUpDownCtrl != 0.0f && GetLookUpDownAxis())
    {
       rotationMovement.y() += GetLookUpDownAxis()->GetState();
       if (mShouldRecenterMouse)
