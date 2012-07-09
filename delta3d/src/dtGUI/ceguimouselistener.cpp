@@ -7,34 +7,6 @@
 #include <CEGUI/CEGUIWindow.h>
 
 ////////////////////////////////////////////////////////////////////////////////
-bool verifyHandled(bool handled)
-{
-#if CEGUI_VERSION_MAJOR >= 0 && CEGUI_VERSION_MINOR >= 7 && CEGUI_VERSION_PATCH > 1
-   CEGUI::Window* w = CEGUI::System::getSingleton().getWindowContainingMouse();
-   while(w != NULL)
-   {
-      if(w->getParent() == NULL)
-      {
-         handled = false;
-         break;
-      }
-
-      if(w->isMouseInputPropagationEnabled())
-      {
-         w = w->getParent();
-      }
-      else
-      {
-         break;
-      }
-   }
-   return handled;
-#else
-   return handled;
-#endif
-}
-
-////////////////////////////////////////////////////////////////////////////////
 using namespace dtGUI;
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -71,8 +43,8 @@ void CEGUIMouseListener::SetWindowSize(unsigned int width, unsigned int height)
 {
    mWidth = width;
    mHeight = height;
-   mHalfWidth = width/2;
-   mHalfHeight = height/2;
+   mHalfWidth = width / 2;
+   mHalfHeight = height / 2;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -88,7 +60,7 @@ bool CEGUIMouseListener::HandleMouseMoved(const dtCore::Mouse* mouse, float x, f
 
    ///\todo document these magic constants from the CEUIDrawable-days.
    //return verifyHandled(CEGUI::System::getSingleton().injectMouseMove(xDelta * mHalfWidth, yDelta * -mHalfHeight));
-   return verifyHandled(CEGUI::System::getSingleton().injectMousePosition( ((x+1)*0.5f)*mWidth, ((-y+1)*0.5f)*mHeight));
+   return CEGUI::System::getSingleton().injectMousePosition( ((x+1)*0.5f)*mWidth, ((-y+1)*0.5f)*mHeight);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -118,7 +90,7 @@ bool CEGUIMouseListener::HandleButtonPressed(const dtCore::Mouse* mouse, dtCore:
       break;
    }
 
-   return verifyHandled(handled);
+   return handled;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -147,7 +119,7 @@ bool CEGUIMouseListener::HandleButtonReleased(const dtCore::Mouse* mouse, dtCore
       }  break;
    }
 
-   return verifyHandled(handled);
+   return handled;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -157,7 +129,7 @@ bool CEGUIMouseListener::HandleMouseScrolled(const dtCore::Mouse* mouse, int del
 
    UpdateWindowSize();
 
-   return verifyHandled(CEGUI::System::getSingleton().injectMouseWheelChange( (float)delta ));
+   return CEGUI::System::getSingleton().injectMouseWheelChange( (float)delta );
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -192,7 +164,7 @@ bool CEGUIMouseListener::HandleButtonClicked(const dtCore::Mouse* mouse, dtCore:
       }
    }
 
-   return verifyHandled(handled);
+   return handled;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
