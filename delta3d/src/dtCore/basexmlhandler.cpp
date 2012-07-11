@@ -192,11 +192,8 @@ namespace  dtCore
             dtUtil::XMLStringConverter(localname).ToString() + ").", dtUtil::Log::LOG_ERROR);
       }
 
-      if (!mCombinedCharacters.empty())
-      {
-         CombinedCharacters(mCombinedCharacters.c_str(), mCombinedCharacters.size());
-         mCombinedCharacters.clear();
-      }
+      CombinedCharacters(mCombinedCharacters.c_str(), mCombinedCharacters.size());
+      mCombinedCharacters.clear();
 
       ElementEnded(uri, localname, qname);
 
