@@ -186,7 +186,7 @@ namespace dtEditQt
       void onEditorInitiated();
 
       /**
-       *	Auto loads the last loaded map.
+       *    Auto loads the last loaded map.
        */
       void onAutoLoadMap();
 

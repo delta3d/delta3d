@@ -58,7 +58,7 @@ namespace dtEditQt
    const float MINFARCLIPDISTANCE = 50.0f;
    const float MAXFARCLIPDISTANCE = 100000.0f;
 
-   ///////////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    ViewportContainer::ViewportContainer(Viewport* vp, QWidget* parent)
       : QWidget(parent)
       , mLayout(new QVBoxLayout(this))
@@ -88,7 +88,7 @@ namespace dtEditQt
       }
    }
 
-   ///////////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    void ViewportContainer::setViewport(Viewport* viewPort)
    {
       mViewPort = viewPort;
@@ -114,7 +114,7 @@ namespace dtEditQt
    }
 
 
-   ///////////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    void ViewportContainer::createActions()
    {
       // First create our action group so the buttons will be mutually
@@ -151,7 +151,7 @@ namespace dtEditQt
               this, SLOT(setTexturesAndLightingView()));
    }
 
-   ///////////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    void ViewportContainer::createToolBar()
    {
       QToolButton* button = NULL;
@@ -247,7 +247,7 @@ namespace dtEditQt
       mLayout->addWidget(mToolBar);
    }
 
-   ///////////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    void ViewportContainer::SetCameraSpeed(int value)
    {
       //if someone else called this, then we'll update the widget to match
@@ -268,7 +268,7 @@ namespace dtEditQt
       }
    }
 
-   ////////////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    void ViewportContainer::SetClipDistance(int value)
    {
       // If someone else called this, then we'll update the widget to match.
@@ -296,19 +296,19 @@ namespace dtEditQt
       }
    }
 
-   //////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    int ViewportContainer::GetCameraSpeed() const
    {
       return mCameraSpeedSlider->value();
    }
 
-   ////////////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    int ViewportContainer::GetClipDistance() const
    {
       return mClipDistanceSlider->value();
    }
 
-   ///////////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    void ViewportContainer::onViewportRenderStyleChanged()
    {
       const Viewport::RenderStyle& currStyle = mViewPort->getRenderStyle();
@@ -331,7 +331,7 @@ namespace dtEditQt
       }
    }
 
-   //////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    void ViewportContainer::OnCameraMoved(double x, double y, double z)
    {
       mPositionEditWidgets.at(0)->setText(QString::number(x, 'f', 2));
@@ -339,19 +339,19 @@ namespace dtEditQt
       mPositionEditWidgets.at(2)->setText(QString::number(z, 'f', 2));
    }
 
-   //////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    void ViewportContainer::OnNewPositionEntered()
    {
       mViewPort->onGotoPosition(mPositionEditWidgets.at(0)->text().toDouble(),
-                                     mPositionEditWidgets.at(1)->text().toDouble(),
-                                     mPositionEditWidgets.at(2)->text().toDouble());
+                                mPositionEditWidgets.at(1)->text().toDouble(),
+                                mPositionEditWidgets.at(2)->text().toDouble());
    }
 
-   //////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    void ViewportContainer::SetupPositionWidgets(QBoxLayout* layout)
    {
-      const double minValue = -99999.99;
-      const double maxValue = 99999.99;
+      const double minValue = -FLT_MAX;
+      const double maxValue = FLT_MAX;
 
       QLineEdit* editX = new QLineEdit(this);
       editX->setToolTip(tr("X"));
@@ -380,7 +380,7 @@ namespace dtEditQt
       connect(editZ, SIGNAL(editingFinished()), this, SLOT(OnNewPositionEntered()));
    }
 
-   //////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    void ViewportContainer::OnMoveActorOrCameraTriggered(QAction* action)
    {
       QToolButton *widget = qobject_cast<QToolButton*>(sender());
@@ -398,7 +398,7 @@ namespace dtEditQt
       }
    }
 
-   //////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    QAbstractButton* ViewportContainer::CreateActorCameraAlignButton(QFrame* parent) const
    {
       //A QToolButton that has two Actions added to it. These actions pop up like a menu
