@@ -44,7 +44,6 @@ class QSlider;
 
 namespace dtEditQt
 {
-
    /**
     * The viewport is a higher level container widget used to house viewport widgets and
     * control their behavior.  The container has a toolbar in addition to the viewport
@@ -82,7 +81,7 @@ namespace dtEditQt
       int GetCameraSpeed() const;
 
       /**
-       *	Get the current camera speed setting associated with this viewport.
+       *    Get the current camera speed setting associated with this viewport.
        *
        * @return  The current value of the clip distance widget.
        */
@@ -154,7 +153,7 @@ namespace dtEditQt
       void SetCameraSpeed(int value);
 
       /**
-       *	Set the clipping distance of the camera for this ViewportContainer.
+       *    Set the clipping distance of the camera for this ViewportContainer.
        *
        * @param[in]  The value of the clip distance in the UI widget (not the actual clip distance)
        */
