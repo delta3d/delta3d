@@ -46,6 +46,7 @@ SET(DELTA3D_LIB_SEARCH_PATH
              $ENV{DELTA_LIB}
              $ENV{DELTA_ROOT}/lib
              $ENV{DELTA_ROOT}/build/lib
+             ${DELTA3D_LIB_DIR}
              /usr/local/lib
              /usr/lib
 )
