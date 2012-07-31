@@ -36,7 +36,7 @@ TriggerVolumeActor::TriggerVolumeActor(dtActors::TriggerVolumeActorProxy& proxy,
 void TriggerVolumeActor::OnMessage(dtCore::Base::MessageData* data)
 {
    // Do not send events in STAGE.
-   if (GetGameActorProxy().IsInSTAGE())
+   if (IsGameActorProxyValid() && GetGameActorProxy().IsInSTAGE())
    {
       return;
    }
@@ -57,7 +57,7 @@ bool TriggerVolumeActor::FilterContact(dContact* contact, Transformable* collide
    }
 
    // Do not send events in STAGE.
-   if (GetGameActorProxy().IsInSTAGE())
+   if (IsGameActorProxyValid() && GetGameActorProxy().IsInSTAGE())
    {
       return false;
    }
