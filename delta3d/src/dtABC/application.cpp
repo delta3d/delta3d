@@ -475,6 +475,12 @@ void Application::RemoveConfigPropertyValue(const std::string& name)
    mConfigProperties.erase(name);
 }
 
+////////////////////////////////////////////////////////////////////////////////
+bool dtABC::Application::IsConfigPropertyDefined(const std::string& name) const
+{
+   return mConfigProperties.find(name) != mConfigProperties.end();
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 bool Application::ParseConfigFile(const std::string& file, ApplicationConfigHandler& handler) const
 {
@@ -527,7 +533,6 @@ void dtABC::Application::SetNextStatisticsType()
 {
    mStats->SelectNextType();
 }
-
 
 ///////////////////////////////////////////////////////////////////////////////
 ApplicationConfigData Application::GetDefaultConfigData()

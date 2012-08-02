@@ -229,6 +229,9 @@ namespace dtABC
       /// Removes a property with the given name
       void RemoveConfigPropertyValue(const std::string& name);
 
+      /// Returns whether a config property exists or not
+      bool IsConfigPropertyDefined(const std::string& name) const;
+
       /// Add a view to the Viewer
       void AddView(dtCore::View& view);
 

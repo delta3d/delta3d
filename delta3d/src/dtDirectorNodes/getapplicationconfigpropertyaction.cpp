@@ -71,8 +71,11 @@ namespace dtDirector
    {
       const dtABC::Application& app = GetDirector()->GetGameManager()->GetApplication();
       std::string propName = GetString("PropertyName");
-      std::string result = app.GetConfigPropertyValue(propName);
-      SetValueNodeValue(result, "Result");
+      if (app.IsConfigPropertyDefined(propName))
+      {
+         std::string result = app.GetConfigPropertyValue(propName);
+         SetValueNodeValue(result, "Result");
+      }
 
       return ActionNode::Update(simDelta, delta, input, firstUpdate);
    }
