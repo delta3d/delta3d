@@ -56,6 +56,7 @@
     <xsd:complexType name="GraphType">
         <xsd:sequence>
             <xsd:element name="importedScript" minOccurs="0" maxOccurs="1" type="xsd:boolean"/>
+            <xsd:element name="readOnly"       minOccurs="0" maxOccurs="1" type="xsd:boolean"/>
             <xsd:element name="idIndex"        minOccurs="0" maxOccurs="1" type="xsd:int" />
             <xsd:element name="id"             minOccurs="0" maxOccurs="1" type="xsd:string"/>
             <xsd:element name="property"       minOccurs="0" maxOccurs="unbounded" type="PropertyType"/>
