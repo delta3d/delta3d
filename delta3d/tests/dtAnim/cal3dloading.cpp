@@ -395,6 +395,7 @@ void CAL3DLoadingTests::SceneAmbientColor()
    CalCoreModel* model = new CalCoreModel("testskel");
 
    bool result = model->loadCoreSkeleton(mMorphSkelFile);
+   CPPUNIT_ASSERT(result);
    CalVector kSceneAmbientColor(0.1f, 0.2f, 0.3f);
 
    const CalCoreSkeleton* skel = model->getCoreSkeleton();
@@ -412,6 +413,7 @@ void CAL3DLoadingTests::TestLoadMorphAnimation()
 {
    CalCoreModel* model = new CalCoreModel("testskel");
    bool result = model->loadCoreSkeleton(mMorphSkelFile); //need a skeleton to load an animation
+   CPPUNIT_ASSERT(result);
 
    const int morphID = model->loadCoreAnimatedMorph(mMorphAnimationFile);
 
@@ -429,6 +431,7 @@ void CAL3DLoadingTests::CorrectMorphAnimationData()
 {
    CalCoreModel* model = new CalCoreModel("testskel");
    bool result = model->loadCoreSkeleton(mMorphSkelFile); //need a skeleton to load an animation
+   CPPUNIT_ASSERT(result);
 
    const int morphID = model->loadCoreAnimatedMorph(mMorphAnimationFile);
 
@@ -476,6 +479,8 @@ void CAL3DLoadingTests::TestLoadMorphMesh()
 {
    CalCoreModel* model = new CalCoreModel("testskel");
    bool result = model->loadCoreSkeleton(mMorphSkelFile); //need a skeleton to load an animation
+   CPPUNIT_ASSERT(result);
+
    const int meshID = model->loadCoreMesh(mMorphMeshFile);
 
    CPPUNIT_ASSERT_EQUAL_MESSAGE("CalCoreModel didn't load the morph mesh file.",
@@ -544,7 +549,10 @@ void CAL3DLoadingTests::TestMorphWeights()
 {
    CalCoreModel* coreModel = new CalCoreModel("testskel");
    bool result = coreModel->loadCoreSkeleton(mMorphSkelFile); //need a skeleton to load an animation
-   const int meshID = coreModel->loadCoreMesh(mMorphMeshFile);
+   CPPUNIT_ASSERT(result);
+
+   //const int meshID =
+   coreModel->loadCoreMesh(mMorphMeshFile);
 
    CalModel* model = new CalModel(coreModel);
    model->attachMesh(0);
@@ -558,9 +566,9 @@ void CAL3DLoadingTests::TestMorphWeights()
 
    CalSubmesh* subMesh = mesh->getSubmesh(0);
 
-   const int weightCount = subMesh->getMorphTargetWeightCount();
+   //const int weightCount = subMesh->getMorphTargetWeightCount();
 
-   float baseWeight = subMesh->getBaseWeight();
+   //float baseWeight = subMesh->getBaseWeight();
 
    const std::vector<float> weights = subMesh->getVectorMorphTargetWeight();
 
@@ -571,7 +579,8 @@ void CAL3DLoadingTests::TestMorphWeights()
 
 
    float vertBuff[1000][3];
-   const int numverts = model->getPhysique()->calculateVertices(subMesh, &vertBuff[0][0]);
+   //const int numverts =
+   model->getPhysique()->calculateVertices(subMesh, &vertBuff[0][0]);
 
    CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("CalModel's unmoved vert is in the incorrect position",
       1057.13f, vertBuff[26][2], 0.001f);
@@ -599,7 +608,7 @@ void CAL3DLoadingTests::TestMorphWeights()
       1077.13f, vertBuff2[26][2], 0.001f);
 
    // get vertex vector of the core submesh
-   std::vector<CalCoreSubmesh::Vertex>& vectorVertex = subMesh->getCoreSubmesh()->getVectorVertex();
+   //std::vector<CalCoreSubmesh::Vertex>& vectorVertex = subMesh->getCoreSubmesh()->getVectorVertex();
 
 
    delete model;
@@ -611,7 +620,10 @@ void CAL3DLoadingTests::TestScaleMorphedMesh()
 {
    CalCoreModel* coreModel = new CalCoreModel("testskel");
    bool result = coreModel->loadCoreSkeleton(mMorphSkelFile); //need a skeleton to load an animation
-   const int meshID = coreModel->loadCoreMesh(mMorphMeshFile);
+   CPPUNIT_ASSERT(result);
+
+   //const int meshID =
+   coreModel->loadCoreMesh(mMorphMeshFile);
    coreModel->scale(0.001f);
 
    CalModel* model = new CalModel(coreModel);
@@ -621,10 +633,11 @@ void CAL3DLoadingTests::TestScaleMorphedMesh()
    model->update(0.1f);
 
    CalSubmesh* subMesh = mesh->getSubmesh(0);
-   std::vector<CalCoreSubmesh::Vertex>& vectorVertex = subMesh->getCoreSubmesh()->getVectorVertex();
+   //std::vector<CalCoreSubmesh::Vertex>& vectorVertex = subMesh->getCoreSubmesh()->getVectorVertex();
 
    float vertBuff[1000][3];
-   const int numverts = model->getPhysique()->calculateVertices(subMesh, &vertBuff[0][0]);
+   //const int numverts =
+   model->getPhysique()->calculateVertices(subMesh, &vertBuff[0][0]);
 
 
    const float setWeight = 1.f;
@@ -644,6 +657,8 @@ void CAL3DLoadingTests::TestPlayAnimatedMorph()
 {
    CalCoreModel* coreModel = new CalCoreModel("testskel");
    bool result = coreModel->loadCoreSkeleton(mMorphSkelFile); //need a skeleton to load an animation
+   CPPUNIT_ASSERT(result);
+
    const int coreMeshID = coreModel->loadCoreMesh(mMorphMeshFile);
 
    const int morphID = coreModel->loadCoreAnimatedMorph(mMorphAnimationFile);
