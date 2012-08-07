@@ -48,6 +48,7 @@ namespace dtDirector
       , mListenerRelative(false)
       , mLooping(false)
       , mpSound(NULL)
+      , mBlockThread(true)
    {
       AddAuthor("Michael Guerrero");
       AddAuthor("Eric R. Heine");
@@ -122,6 +123,12 @@ namespace dtDirector
          dtCore::BooleanActorProperty::GetFuncType(this, &SoundAction::GetLooping),
          "Whether the resource sound is looping or not."));
 
+      AddProperty(new dtCore::BooleanActorProperty(
+         "Block Thread", "Block Thread",
+         dtCore::BooleanActorProperty::SetFuncType(this, &SoundAction::SetBlockThread),
+         dtCore::BooleanActorProperty::GetFuncType(this, &SoundAction::GetBlockThread),
+         "Whether this node should block the Director thread until the sound is done playing or not."));
+
       // This will expose the properties in the editor and allow
       // them to be connected to ValueNodes.
       mValues.push_back(ValueLink(this, actorProp, true, true, true));
@@ -143,6 +150,7 @@ namespace dtDirector
 
                // Fire the "Out" link
                LatentActionNode::Update(simDelta, delta, input, firstUpdate);
+               shouldContinueUpdating = mBlockThread;
             }
             else
             {
@@ -253,6 +261,18 @@ namespace dtDirector
    bool SoundAction::GetLooping()
    {
       return mLooping;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void SoundAction::SetBlockThread(bool value)
+   {
+      mBlockThread = value;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   bool SoundAction::GetBlockThread()
+   {
+      return mBlockThread;
    }
 
    ////////////////////////////////////////////////////////////////////////////////

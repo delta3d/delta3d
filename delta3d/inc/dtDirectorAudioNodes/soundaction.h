@@ -108,6 +108,9 @@ namespace dtDirector
       void SetLooping(bool value);
       bool GetLooping();
 
+      void SetBlockThread(bool value);
+      bool GetBlockThread();
+
    protected:
 
       /**
@@ -124,6 +127,7 @@ namespace dtDirector
       bool mListenerRelative;
       bool mLooping;
       dtAudio::Sound* mpSound;
+      bool mBlockThread;
 
       void PlaySoundsOnActors();
       void PlaySoundResource();
