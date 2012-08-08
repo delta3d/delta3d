@@ -92,7 +92,7 @@ namespace dtDirector
       const ID& GetID() {return mID;}
 
       /**
-       *	Attempts to set the ID index for this node.
+       *   Attempts to set the ID index for this node.
        *
        * @param[in]  index  The new index.
        */
@@ -122,25 +122,27 @@ namespace dtDirector
       /**
        * Retrieves a list of nodes that are of a certain type.
        *
-       * @param[in]   name             The type name of the node.
-       * @param[in]   category         The type category of the node.
-       * @param[out]  outNodes         A list of nodes found.
-       * @param[in]   searchSubGraphs  True to recursively check sub graphs for nodes.
+       * @param[in]   name                   The type name of the node.
+       * @param[in]   category               The type category of the node.
+       * @param[out]  outNodes               A list of nodes found.
+       * @param[in]   searchSubGraphs        True to recursively check sub graphs for nodes.
+       * @param[in]   searchImportedScripts  Whether we should look through imported scripts or not.
        */
-      void GetNodes(const std::string& name, const std::string& category, std::vector<Node*>& outNodes, bool searchSubGraphs = true);
+      void GetNodes(const std::string& name, const std::string& category, std::vector<Node*>& outNodes, bool searchSubGraphs = true, bool searchImportedGraphs = false);
 
       /**
        * Retrieves a list of nodes that are of a certain type,
        * and contain a property with a given value.
        *
-       * @param[in]   name             The type name of the node.
-       * @param[in]   category         The type category of the node.
-       * @param[in]   property         The name of the property to find.
-       * @param[in]   value            The value of the property.
-       * @param[out]  outNodes         A list of nodes found.
-       * @param[in]   searchSubGraphs  True to recursively check sub graphs for nodes.
+       * @param[in]   name                   The type name of the node.
+       * @param[in]   category               The type category of the node.
+       * @param[in]   property               The name of the property to find.
+       * @param[in]   value                  The value of the property.
+       * @param[out]  outNodes               A list of nodes found.
+       * @param[in]   searchSubGraphs        True to recursively check sub graphs for nodes.
+       * @param[in]   searchImportedScripts  Whether we should look through imported scripts or not.
        */
-      void GetNodes(const std::string& name, const std::string& category, const std::string& property, const std::string& value, std::vector<Node*>& outNodes, bool searchSubGraphs = true);
+      void GetNodes(const std::string& name, const std::string& category, const std::string& property, const std::string& value, std::vector<Node*>& outNodes, bool searchSubGraphs = true, bool searchImportedGraphs = false);
 
       /**
        * Retrieves a list of all nodes in the graph.
@@ -290,7 +292,7 @@ namespace dtDirector
       const std::vector<dtCore::RefPtr<DirectorGraph> >& GetSubGraphs() const {return mSubGraphs;}
 
       /**
-       *	Set Imported status.
+       *   Set Imported status.
        */
       void SetImported(bool imported) {mIsImported = imported;}
       bool IsImported() const;

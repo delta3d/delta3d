@@ -526,23 +526,25 @@ namespace dtDirector
       /**
        * Retrieves a list of nodes that are of a certain type.
        *
-       * @param[in]   name      The type name of the node.
-       * @param[in]   category  The type category of the node.
-       * @param[out]  outNodes  A list of nodes found.
+       * @param[in]   name                   The type name of the node.
+       * @param[in]   category               The type category of the node.
+       * @param[out]  outNodes               A list of nodes found.
+       * @param[in]   searchImportedScripts  Whether we should look through imported scripts or not.
        */
-      void GetNodes(const std::string& name, const std::string& category, std::vector<Node*>& outNodes);
+      void GetNodes(const std::string& name, const std::string& category, std::vector<Node*>& outNodes, bool searchImportedScripts = false);
 
       /**
        * Retrieves a list of nodes that are of a certain type,
        * and contain a property with a given value.
        *
-       * @param[in]   name      The type name of the node.
-       * @param[in]   category  The type category of the node.
-       * @param[in]   property  The name of the property to find.
-       * @param[in]   value     The value of the property.
-       * @param[out]  outNodes  A list of nodes found.
+       * @param[in]   name                   The type name of the node.
+       * @param[in]   category               The type category of the node.
+       * @param[in]   property               The name of the property to find.
+       * @param[in]   value                  The value of the property.
+       * @param[out]  outNodes               A list of nodes found.
+       * @param[in]   searchImportedScripts  Whether we should look through imported scripts or not.
        */
-      void GetNodes(const std::string& name, const std::string& category, const std::string& property, const std::string& value, std::vector<Node*>& outNodes);
+      void GetNodes(const std::string& name, const std::string& category, const std::string& property, const std::string& value, std::vector<Node*>& outNodes, bool searchImportedScripts = false);
 
       /**
        * Retrieves a list of all nodes in the Director.
@@ -598,6 +600,20 @@ namespace dtDirector
        *	Cleans up all ID indexes.
        */
       void CleanIDs();
+
+      /**
+       * Sets whether this script is enabled or not.
+       *
+       * @param[in]  enabled  Whether this director script is enabled or not.
+       */
+      void SetEnabled(bool enabled);
+
+      /**
+       * Checks if this script is enabled.
+       *
+       * @return  Returns whether this script is enabled or not.
+       */
+      bool IsEnabled() const;
 
    protected:
 
@@ -819,6 +835,8 @@ namespace dtDirector
 
       int                              mMasterNodeFreeIndex;
       int                              mMasterGraphFreeIndex;
+
+      bool mEnabled;
 
       //friend class DirectorGraph;
       friend class Node;

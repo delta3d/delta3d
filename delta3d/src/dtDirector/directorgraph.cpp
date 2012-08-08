@@ -507,8 +507,22 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void DirectorGraph::GetNodes(const std::string& name, const std::string& category, std::vector<Node*>& outNodes, bool searchSubGraphs)
+   void DirectorGraph::GetNodes(const std::string& name, const std::string& category, std::vector<Node*>& outNodes, bool searchSubGraphs, bool searchImportedGraphs /*= false*/)
    {
+      if (searchImportedGraphs)
+      {
+         std::vector<DirectorGraph*> importedGraphs = GetImportedGraphs();
+         int count = (int)importedGraphs.size();
+         for (int index = 0; index < count; ++index)
+         {
+            DirectorGraph* importedGraph = importedGraphs[index];
+            if (importedGraph)
+            {
+               importedGraph->GetNodes(name, category, outNodes, searchSubGraphs, searchImportedGraphs);
+            }
+         }
+      }
+
       int count = (int)mEventNodes.size();
       for (int index = 0; index < count; index++)
       {
@@ -554,16 +568,28 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void DirectorGraph::GetNodes(const std::string& name, const std::string& category, const std::string& property, const std::string& value, std::vector<Node*>& outNodes, bool searchSubGraphs)
+   void DirectorGraph::GetNodes(const std::string& name, const std::string& category, const std::string& property, const std::string& value, std::vector<Node*>& outNodes, bool searchSubGraphs, bool searchImportedGraphs /*= false*/)
    {
+      if (searchImportedGraphs)
+      {
+         std::vector<DirectorGraph*> importedGraphs = GetImportedGraphs();
+         int count = (int)importedGraphs.size();
+         for (int index = 0; index < count; ++index)
+         {
+            DirectorGraph* importedGraph = importedGraphs[index];
+            if (importedGraph)
+            {
+               importedGraph->GetNodes(name, category, property, value, outNodes, searchSubGraphs, searchImportedGraphs);
+            }
+         }
+      }
+
       std::vector<Node*> nodes;
       GetNodes(name, category, nodes, searchSubGraphs);
-
       int count = (int)nodes.size();
       for (int index = 0; index < count; index++)
       {
          Node* node = nodes[index];
-
          dtCore::ActorProperty* prop = node->GetProperty(property);
          if (prop && prop->ToString() == value)
          {
