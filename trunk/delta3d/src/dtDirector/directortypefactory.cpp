@@ -137,6 +137,10 @@ namespace dtDirector
                   newDirector->mLoading = true;
                   newDirector->Init(gm, map);
                   newDirector->SetParent(parent);
+                  if (parent != NULL)
+                  {
+                     newDirector->SetScriptOwner(parent->GetScriptOwner());
+                  }
                   parser->Parse(newDirector, map, fileName);
                   newDirector->mMissingNodeTypes = parser->GetMissingNodeTypes();
                   newDirector->mMissingLibraries = parser->GetMissingLibraries();
@@ -165,6 +169,10 @@ namespace dtDirector
                   newDirector->mLoading = true;
                   newDirector->Init(gm, map);
                   newDirector->SetParent(parent);
+                  if (parent != NULL)
+                  {
+                     newDirector->SetScriptOwner(parent->GetScriptOwner());
+                  }
                   parser->Parse(newDirector, map, fileName);
                   newDirector->mMissingNodeTypes = parser->GetMissingNodeTypes();
                   newDirector->mMissingLibraries = parser->GetMissingLibraries();

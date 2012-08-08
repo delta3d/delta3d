@@ -153,18 +153,15 @@ namespace dtDirector
       int inputIndex = 0;
       for (int index = 0; index < count; index++)
       {
-         if (inputs[index]->IsEnabled())
+         EditorNotifier::GlowData* glowData =
+            notifier->GetGlowData(inputs[inputIndex]);
+         if (glowData && glowData->input > -1)
          {
-            EditorNotifier::GlowData* glowData =
-               notifier->GetGlowData(inputs[inputIndex]);
-            if (glowData && glowData->input > -1)
-            {
-               InputData& data = mInputs[index];
-               data.DrawGlow(glowData->inputGlow);
-            }
-
-            inputIndex++;
+            InputData& data = mInputs[index];
+            data.DrawGlow(glowData->inputGlow);
          }
+
+         inputIndex++;
       }
 
       std::vector<dtCore::RefPtr<ActionNode> > outputs = mGraph->GetOutputNodes();
@@ -172,18 +169,15 @@ namespace dtDirector
       int outputIndex = 0;
       for (int index = 0; index < count; index++)
       {
-         if (outputs[index]->IsEnabled())
+         EditorNotifier::GlowData* glowData =
+            notifier->GetGlowData(outputs[index]);
+         if (glowData && !glowData->outputGlows.empty())
          {
-            EditorNotifier::GlowData* glowData =
-               notifier->GetGlowData(outputs[index]);
-            if (glowData && !glowData->outputGlows.empty())
-            {
-               OutputData& data = mOutputs[outputIndex];
-               data.DrawGlow(glowData->outputGlows[0]);
-            }
-
-            outputIndex++;
+            OutputData& data = mOutputs[outputIndex];
+            data.DrawGlow(glowData->outputGlows[0]);
          }
+
+         outputIndex++;
       }
    }
 
@@ -280,25 +274,22 @@ namespace dtDirector
       int count = (int)inputs.size();
       for (int index = 0; index < count; index++)
       {
-         if (inputs[index]->IsEnabled())
+         mInputs.push_back(InputData());
+         InputData& data = mInputs.back();
+
+         data.node = this;
+         data.link = &inputs[index]->GetInputLinks()[0];
+         if (!data.link->GetVisible()) mHasHiddenLinks = true;
+
+         data.linkGraphic = new InputLinkItem(this, (int)mInputs.size()-1, this, mScene, data.link->GetComment());
+         data.linkName = new GraphicsTextItem(data.linkGraphic, mScene);
+         data.linkName->setAcceptHoverEvents(false);
+         if (mIsReadOnly)
          {
-            mInputs.push_back(InputData());
-            InputData& data = mInputs.back();
-
-            data.node = this;
-            data.link = &inputs[index]->GetInputLinks()[0];
-            if (!data.link->GetVisible()) mHasHiddenLinks = true;
-
-            data.linkGraphic = new InputLinkItem(this, (int)mInputs.size()-1, this, mScene, data.link->GetComment());
-            data.linkName = new GraphicsTextItem(data.linkGraphic, mScene);
-            data.linkName->setAcceptHoverEvents(false);
-            if (mIsReadOnly)
-            {
-               QFont font = data.linkName->font();
-               font = QFont(font.family(), font.pointSize(), font.weight(), false);
-               data.linkName->setFont(font);
-               data.linkName->setDefaultTextColor(Qt::darkGray);
-            }
+            QFont font = data.linkName->font();
+            font = QFont(font.family(), font.pointSize(), font.weight(), false);
+            data.linkName->setFont(font);
+            data.linkName->setDefaultTextColor(Qt::darkGray);
          }
       }
 
@@ -306,25 +297,22 @@ namespace dtDirector
       count = (int)outputs.size();
       for (int index = 0; index < count; index++)
       {
-         if (outputs[index]->IsEnabled())
+         mOutputs.push_back(OutputData());
+         OutputData& data = mOutputs.back();
+
+         data.node = this;
+         data.link = &outputs[index]->GetOutputLinks()[0];
+         if (!data.link->GetVisible()) mHasHiddenLinks = true;
+
+         data.linkGraphic = new OutputLinkItem(this, (int)mOutputs.size()-1, this, mScene, data.link->GetComment());
+         data.linkName = new GraphicsTextItem(data.linkGraphic, mScene);
+         data.linkName->setAcceptHoverEvents(false);
+         if (mIsReadOnly)
          {
-            mOutputs.push_back(OutputData());
-            OutputData& data = mOutputs.back();
-
-            data.node = this;
-            data.link = &outputs[index]->GetOutputLinks()[0];
-            if (!data.link->GetVisible()) mHasHiddenLinks = true;
-
-            data.linkGraphic = new OutputLinkItem(this, (int)mOutputs.size()-1, this, mScene, data.link->GetComment());
-            data.linkName = new GraphicsTextItem(data.linkGraphic, mScene);
-            data.linkName->setAcceptHoverEvents(false);
-            if (mIsReadOnly)
-            {
-               QFont font = data.linkName->font();
-               font = QFont(font.family(), font.pointSize(), font.weight(), false);
-               data.linkName->setFont(font);
-               data.linkName->setDefaultTextColor(Qt::darkGray);
-            }
+            QFont font = data.linkName->font();
+            font = QFont(font.family(), font.pointSize(), font.weight(), false);
+            data.linkName->setFont(font);
+            data.linkName->setDefaultTextColor(Qt::darkGray);
          }
       }
 
@@ -332,7 +320,7 @@ namespace dtDirector
       count = (int)values.size();
       for (int index = 0; index < count; index++)
       {
-         if (values[index]->IsEnabled() && values[index]->GetValueLinks()[0].GetExposed())
+         if (values[index]->GetValueLinks()[0].GetExposed())
          {
             mValues.push_back(ValueData());
             ValueData& data = mValues.back();
@@ -731,7 +719,7 @@ namespace dtDirector
       for (int index = 0; index < count; ++index)
       {
          ValueNode* valueNode = values[index];
-         if (valueNode && valueNode->IsEnabled() &&
+         if (valueNode &&
             !valueNode->GetValueLinks()[0].GetExposed())
          {
             menu->addAction(valueNode->GetValueLinks()[0].GetName().c_str());

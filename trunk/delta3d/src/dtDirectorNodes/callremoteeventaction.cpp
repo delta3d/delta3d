@@ -160,13 +160,13 @@ namespace dtDirector
          {
          case LOCAL_SCOPE:
             {
-               GetGraph()->GetNodes("Remote Event", "Core", "EventName", eventName, nodes);
+               GetGraph()->GetNodes("Remote Event", "Core", "EventName", eventName, nodes, true, true);
             }
             break;
 
          case SCRIPT_SCOPE:
             {
-               GetDirector()->GetNodes("Remote Event", "Core", "EventName", eventName, nodes);
+               GetDirector()->GetNodes("Remote Event", "Core", "EventName", eventName, nodes, true);
             }
             break;
 

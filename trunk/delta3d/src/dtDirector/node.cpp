@@ -417,7 +417,7 @@ namespace dtDirector
       // purposes.
       ////return GetBoolean("Enabled");
 
-      return mIsEnabled;
+      return mIsEnabled && GetDirector()->IsEnabled();
    }
 
    ////////////////////////////////////////////////////////////////////////////////

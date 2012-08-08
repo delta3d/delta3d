@@ -95,6 +95,13 @@ namespace dtDirector
       virtual void OnLinkValueChanged(const std::string& linkName);
 
       /**
+       * Sets the enabled status of the node.
+       *
+       * @param[in]  enabled   True to enable.
+       */
+      virtual void SetEnabled(bool enabled);
+
+      /**
        * Accessors for property values.
        */
       void SetDirectorResource(const dtCore::ResourceDescriptor& value);

@@ -65,6 +65,7 @@ namespace dtDirector
       , mMasterNodeFreeIndex(-1)
       , mMasterGraphFreeIndex(-1)
       , mActive(true)
+      , mEnabled(true)
    {
       mScriptOwner = "";
 
@@ -1344,15 +1345,37 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void Director::GetNodes(const std::string& name, const std::string& category, std::vector<Node*>& outNodes)
+   void Director::GetNodes(const std::string& name, const std::string& category, std::vector<Node*>& outNodes, bool searchImportedScripts /*= false*/)
    {
-      mGraph->GetNodes(name, category, outNodes);
+      mGraph->GetNodes(name, category, outNodes, searchImportedScripts);
+
+      if (searchImportedScripts)
+      {
+         for (size_t index = 0; index < mChildren.size(); ++index)
+         {
+            if (mChildren[index].valid())
+            {
+               mChildren[index]->GetNodes(name, category, outNodes, searchImportedScripts);
+            }
+         }
+      }
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void Director::GetNodes(const std::string& name, const std::string& category, const std::string& property, const std::string& value, std::vector<Node*>& outNodes)
+   void Director::GetNodes(const std::string& name, const std::string& category, const std::string& property, const std::string& value, std::vector<Node*>& outNodes, bool searchImportedScripts /*= false*/)
    {
-      mGraph->GetNodes(name, category, property, value, outNodes);
+      mGraph->GetNodes(name, category, property, value, outNodes, searchImportedScripts);
+
+      if (searchImportedScripts)
+      {
+         for (size_t index = 0; index < mChildren.size(); ++index)
+         {
+            if (mChildren[index].valid())
+            {
+               mChildren[index]->GetNodes(name, category, property, value, outNodes, searchImportedScripts);
+            }
+         }
+      }
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -1502,6 +1525,18 @@ namespace dtDirector
             }
          }
       }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void Director::SetEnabled(bool enabled)
+   {
+      mEnabled = enabled;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   bool Director::IsEnabled() const
+   {
+      return mEnabled;
    }
 
    //////////////////////////////////////////////////////////////////////////

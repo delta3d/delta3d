@@ -119,6 +119,22 @@ namespace dtDirector
                }
             }
          }
+
+         if (linkName == "Enabled")
+         {
+            mScript->SetEnabled(GetBoolean("Enabled"));
+         }
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void ReferenceScriptAction::SetEnabled(bool enabled)
+   {
+      ActionNode::SetEnabled(enabled);
+
+      if (mScript.valid())
+      {
+         mScript->SetEnabled(enabled);
       }
    }
 
@@ -181,30 +197,27 @@ namespace dtDirector
          int count = (int)inputs.size();
          for (int index = 0; index < count; index++)
          {
-            if (inputs[index]->IsEnabled())
+            InputLink* link = &inputs[index]->GetInputLinks()[0];
+            link->RedirectLink(NULL);
+
+            bool found = false;
+            int testCount = (int)oldInputs.size();
+            for (int testIndex = 0; testIndex < testCount; ++testIndex)
             {
-               InputLink* link = &inputs[index]->GetInputLinks()[0];
-               link->RedirectLink(NULL);
-
-               bool found = false;
-               int testCount = (int)oldInputs.size();
-               for (int testIndex = 0; testIndex < testCount; ++testIndex)
+               if (oldInputs[testIndex].GetName() == link->GetName())
                {
-                  if (oldInputs[testIndex].GetName() == link->GetName())
-                  {
-                     oldInputs[testIndex].RedirectLink(link);
-                     mInputs.push_back(oldInputs[testIndex]);
-                     found = true;
-                     break;
-                  }
+                  oldInputs[testIndex].RedirectLink(link);
+                  mInputs.push_back(oldInputs[testIndex]);
+                  found = true;
+                  break;
                }
+            }
 
-               if (!found)
-               {
-                  InputLink newLink = InputLink(this, link->GetName(), inputs[index]->GetComment());
-                  newLink.RedirectLink(link);
-                  mInputs.push_back(newLink);
-               }
+            if (!found)
+            {
+               InputLink newLink = InputLink(this, link->GetName(), inputs[index]->GetComment());
+               newLink.RedirectLink(link);
+               mInputs.push_back(newLink);
             }
          }
 
@@ -213,30 +226,27 @@ namespace dtDirector
          mOutputs.reserve(count);
          for (int index = 0; index < count; index++)
          {
-            if (outputs[index]->IsEnabled())
+            OutputLink* link = &outputs[index]->GetOutputLinks()[0];
+            link->RedirectLink(NULL);
+
+            bool found = false;
+            int testCount = (int)oldOutputs.size();
+            for (int testIndex = 0; testIndex < testCount; ++testIndex)
             {
-               OutputLink* link = &outputs[index]->GetOutputLinks()[0];
-               link->RedirectLink(NULL);
-
-               bool found = false;
-               int testCount = (int)oldOutputs.size();
-               for (int testIndex = 0; testIndex < testCount; ++testIndex)
+               if (oldOutputs[testIndex].GetName() == link->GetName())
                {
-                  if (oldOutputs[testIndex].GetName() == link->GetName())
-                  {
-                     mOutputs.push_back(oldOutputs[testIndex]);
-                     link->RedirectLink(&mOutputs.back());
-                     found = true;
-                     break;
-                  }
-               }
-
-               if (!found)
-               {
-                  OutputLink newLink = OutputLink(this, link->GetName(), outputs[index]->GetComment());
-                  mOutputs.push_back(newLink);
+                  mOutputs.push_back(oldOutputs[testIndex]);
                   link->RedirectLink(&mOutputs.back());
+                  found = true;
+                  break;
                }
+            }
+
+            if (!found)
+            {
+               OutputLink newLink = OutputLink(this, link->GetName(), outputs[index]->GetComment());
+               mOutputs.push_back(newLink);
+               link->RedirectLink(&mOutputs.back());
             }
          }
 
@@ -245,32 +255,29 @@ namespace dtDirector
          mValues.reserve(count + mCoreValueIndex);
          for (int index = 0; index < count; index++)
          {
-            if (values[index]->IsEnabled())
+            ValueLink* link = &values[index]->GetValueLinks()[0];
+            link->RedirectLink(NULL);
+
+            bool found = false;
+            int testCount = (int)oldValues.size();
+            for (int testIndex = 0; testIndex < testCount; ++testIndex)
             {
-               ValueLink* link = &values[index]->GetValueLinks()[0];
-               link->RedirectLink(NULL);
-
-               bool found = false;
-               int testCount = (int)oldValues.size();
-               for (int testIndex = 0; testIndex < testCount; ++testIndex)
+               if (oldValues[testIndex].GetName() == link->GetName())
                {
-                  if (oldValues[testIndex].GetName() == link->GetName())
-                  {
-                     mValues.push_back(oldValues[testIndex]);
-                     link->RedirectLink(&mValues.back());
-                     found = true;
-                     break;
-                  }
-               }
-
-               if (!found)
-               {
-                  ValueLink newLink = ValueLink(this, NULL, link->IsOutLink(), link->AllowMultiple(), link->IsTypeChecking(), true);
-                  newLink.SetComment(values[index]->GetComment());
-                  newLink.SetName(link->GetName());
-                  mValues.push_back(newLink);
+                  mValues.push_back(oldValues[testIndex]);
                   link->RedirectLink(&mValues.back());
+                  found = true;
+                  break;
                }
+            }
+
+            if (!found)
+            {
+               ValueLink newLink = ValueLink(this, NULL, link->IsOutLink(), link->AllowMultiple(), link->IsTypeChecking(), true);
+               newLink.SetComment(values[index]->GetComment());
+               newLink.SetName(link->GetName());
+               mValues.push_back(newLink);
+               link->RedirectLink(&mValues.back());
             }
          }
       }

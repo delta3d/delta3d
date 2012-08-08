@@ -731,7 +731,7 @@ namespace dtDirector
          title = mFileName.c_str();
       }
 
-      if (GetUndoManager()->IsModified() || GetDirector()->IsModified()) title += "*";
+      if (GetUndoManager()->IsModified() || (GetDirector() != NULL && GetDirector()->IsModified())) title += "*";
 
       if (GetDirector())
       {
@@ -888,7 +888,7 @@ namespace dtDirector
       }
 
       // Save button.
-      mUI.action_Save->setEnabled(GetUndoManager()->IsModified() || GetDirector()->IsModified());
+      mUI.action_Save->setEnabled(GetUndoManager()->IsModified() || (GetDirector() && GetDirector()->IsModified()));
       mUI.action_Save_as->setEnabled(true);
 
       // Parent button.
