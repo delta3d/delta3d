@@ -405,7 +405,7 @@ void ObjectWorkspace::UpdateGeometryList()
    QString staticMeshDir = QString(mContextPath.c_str()) + "/staticmeshes";
 
    QStringList staticMeshNameFilters;
-   staticMeshNameFilters << "*.ive" << "*.osg";
+   staticMeshNameFilters << "*.ive" << "*.osg" << "*.earth";
 
    QFileInfoList staticMeshFileList;
    GetRecursiveFileInfoFromDir(staticMeshDir, staticMeshNameFilters, staticMeshFileList);
@@ -538,7 +538,7 @@ void ObjectWorkspace::OnLoadGeometry()
    QString filename = QFileDialog::getOpenFileName(this,
                                                    tr("Load Geometry File"),
                                                    mContextPath.c_str(),
-                                                   tr("Geometry(*.osg *.ive *.flt *.3ds *.txp *.xml *)") );
+                                                   tr("Geometry(*.osg *.ive *.flt *.3ds *.txp *.xml *.earth *)") );
 
    QString statusMessage;
 

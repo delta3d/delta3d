@@ -1,20 +1,20 @@
-/* 
- * Delta3D Open Source Game and Simulation Engine 
- * Copyright (C) 2004-2005 MOVES Institute 
+/*
+ * Delta3D Open Source Game and Simulation Engine
+ * Copyright (C) 2004-2005 MOVES Institute
  *
  * This library is free software; you can redistribute it and/or modify it under
- * the terms of the GNU Lesser General Public License as published by the Free 
- * Software Foundation; either version 2.1 of the License, or (at your option) 
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
  * any later version.
  *
  * This library is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS 
- * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more 
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  *
- * You should have received a copy of the GNU Lesser General Public License 
- * along with this library; if not, write to the Free Software Foundation, Inc., 
- * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
 */
 
@@ -34,16 +34,16 @@
 
 namespace dtCore
 {
-   /** 
-    * A visual Object with physical properties. The Object represents a 
+   /**
+    * A visual Object with physical properties. The Object represents a
     * virtual object which is renderable, movable, and has physical properties.
     */
    class DT_CORE_EXPORT Object : public Loadable, public Physical
    {
       DECLARE_MANAGEMENT_LAYER(Object)
-         
+
       public:
-      
+
          Object(const std::string& name = "Object");
 
          /** Overloaded constructor will use the supplied node instead of
@@ -53,7 +53,7 @@ namespace dtCore
            * @param name : The name of this instance
            */
          Object(TransformableNode& node, const std::string& name = "Object");
-         
+
          /*!
           * Load a geometry from a file using any supplied data file paths set in
           * dtCore::SetDataFilePathList().  Additional calls to this method will replace
@@ -96,7 +96,7 @@ namespace dtCore
          * @param v3 the hpr
          */
          void SetModelRotation(const osg::Vec3& v3);
-         
+
          /**
          * Returns the scale vector
          * @return The scale
@@ -108,7 +108,7 @@ namespace dtCore
          * @param v3 the xyz
          */
          void SetModelTranslation(const osg::Vec3& v3);
-         
+
          /**
          * Returns the scale vector
          * @return The scale
@@ -126,7 +126,7 @@ namespace dtCore
          dtCore::RefPtr<Model> mModel;
 
          bool mRecenterGeometry;///<if we want to recenter the geometry of the object about the origin upon load
-   };   
+   };
 }
 
 #endif // DELTA_OBJECT
