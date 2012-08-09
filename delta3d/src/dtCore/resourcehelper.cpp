@@ -183,6 +183,7 @@ namespace dtCore
                extContainer.insert(std::make_pair("3ds","3D Studio Max."));
                extContainer.insert(std::make_pair("ai","Waypoint file."));
                extContainer.insert(std::make_pair("zip","Wrapping another file in a zip."));
+               extContainer.insert(std::make_pair("earth", "Earth file."));
 
                handler = new DefaultResourceTypeHandler(d, "Static Mesh Files", extContainer);
 

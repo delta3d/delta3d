@@ -436,7 +436,7 @@ void ResourceDock::OnSaveAs()
       QString filename = QFileDialog::getSaveFileName(this,
          tr("Save Geometry File"),
          fileInfo.filePath(),
-         tr("By Extension(*.*);;OpenFlight(*.flt);;OpenSceneGraph(*.osg *.ive);;Wavefront OBJ(*.obj)") );
+         tr("By Extension(*.*);;OpenFlight(*.flt);;OpenSceneGraph(*.osg *.ive);;GIS Earth(*.earth);;Wavefront OBJ(*.obj)") );
 
       if (!filename.isEmpty())
       {
