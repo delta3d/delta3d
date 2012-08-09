@@ -1070,6 +1070,28 @@ namespace dtDirector
    void Director::SetScriptOwner(const dtCore::UniqueId& owner)
    {
       mScriptOwner = owner;
+
+      // Tell any scripts that we are imported from about this change as well.
+      int count = (int)mImportedScriptList.size();
+      for (int index = 0; index < count; ++index)
+      {
+         Director* script = mImportedScriptList[index];
+         if (script)
+         {
+            script->SetScriptOwner(owner);
+         }
+      }
+
+      // Also iterate through all child-scripts and tell them of this.
+      count = (int)mChildren.size();
+      for (int index = 0; index < count; ++index)
+      {
+         Director* script = mChildren[index].get();
+         if (script)
+         {
+            script->SetScriptOwner(owner);
+         }
+      }
    }
 
    ////////////////////////////////////////////////////////////////////////////////
