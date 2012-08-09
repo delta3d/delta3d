@@ -1355,7 +1355,7 @@ namespace dtDirector
          {
             if (mChildren[index].valid())
             {
-               mChildren[index]->GetNodes(name, category, outNodes, true, searchImportedScripts);
+               mChildren[index]->GetNodes(name, category, outNodes, searchImportedScripts);
             }
          }
       }
@@ -1372,7 +1372,7 @@ namespace dtDirector
          {
             if (mChildren[index].valid())
             {
-               mChildren[index]->GetNodes(name, category, property, value, outNodes, true, searchImportedScripts);
+               mChildren[index]->GetNodes(name, category, property, value, outNodes, searchImportedScripts);
             }
          }
       }
