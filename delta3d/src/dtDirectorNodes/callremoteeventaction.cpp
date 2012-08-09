@@ -88,7 +88,7 @@ namespace dtDirector
       AddProperty(typeProp);
 
       dtDAL::ActorIDActorProperty* instigatorProp = new dtDAL::ActorIDActorProperty(
-         "Instigator", "Instigator", 
+         "Instigator", "Instigator",
          dtDAL::ActorIDActorProperty::SetFuncType(this, &CallRemoteEventAction::SetInstigator),
          dtDAL::ActorIDActorProperty::GetFuncType(this, &CallRemoteEventAction::GetInstigator),
          "", "An instigator for this event.");
@@ -555,7 +555,7 @@ namespace dtDirector
       for (int index = 0; index < count; index++)
       {
          const std::string& name = mParameterList[index].name;
-         
+
          // Make sure the name is not a core value link name.
          bool isNameValid = true;
          for (int testIndex = 0; testIndex < mOrignalValueCount; ++testIndex)

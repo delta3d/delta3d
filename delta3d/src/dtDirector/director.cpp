@@ -1370,53 +1370,18 @@ namespace dtDirector
    void Director::GetNodes(const std::string& name, const std::string& category, std::vector<Node*>& outNodes, bool searchImportedScripts /*= false*/)
    {
       mGraph->GetNodes(name, category, outNodes, true, searchImportedScripts);
-
-      if (searchImportedScripts)
-      {
-         for (size_t index = 0; index < mChildren.size(); ++index)
-         {
-            if (mChildren[index].valid())
-            {
-               mChildren[index]->GetNodes(name, category, outNodes, searchImportedScripts);
-            }
-         }
-      }
    }
 
    //////////////////////////////////////////////////////////////////////////
    void Director::GetNodes(const std::string& name, const std::string& category, const std::string& property, const std::string& value, std::vector<Node*>& outNodes, bool searchImportedScripts /*= false*/)
    {
       mGraph->GetNodes(name, category, property, value, outNodes, true, searchImportedScripts);
-
-      if (searchImportedScripts)
-      {
-         for (size_t index = 0; index < mChildren.size(); ++index)
-         {
-            if (mChildren[index].valid())
-            {
-               mChildren[index]->GetNodes(name, category, property, value, outNodes, searchImportedScripts);
-            }
-         }
-      }
    }
 
    //////////////////////////////////////////////////////////////////////////
    void Director::GetAllNodes(std::vector<Node*>& outNodes, bool includeImportedScripts)
    {
-      if (includeImportedScripts)
-      {
-         int count = (int)mImportedScriptList.size();
-         for (int index = 0; index < count; ++index)
-         {
-            Director* imported = mImportedScriptList[index];
-            if (imported)
-            {
-               imported->GetAllNodes(outNodes, true);
-            }
-         }
-      }
-
-      mGraph->GetAllNodes(outNodes);
+      mGraph->GetAllNodes(outNodes, true, includeImportedScripts);
    }
 
    //////////////////////////////////////////////////////////////////////////
