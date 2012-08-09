@@ -1347,7 +1347,7 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void Director::GetNodes(const std::string& name, const std::string& category, std::vector<Node*>& outNodes, bool searchImportedScripts /*= false*/)
    {
-      mGraph->GetNodes(name, category, outNodes, searchImportedScripts);
+      mGraph->GetNodes(name, category, outNodes, true, searchImportedScripts);
 
       if (searchImportedScripts)
       {
@@ -1355,7 +1355,7 @@ namespace dtDirector
          {
             if (mChildren[index].valid())
             {
-               mChildren[index]->GetNodes(name, category, outNodes, searchImportedScripts);
+               mChildren[index]->GetNodes(name, category, outNodes, true, searchImportedScripts);
             }
          }
       }
@@ -1364,7 +1364,7 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void Director::GetNodes(const std::string& name, const std::string& category, const std::string& property, const std::string& value, std::vector<Node*>& outNodes, bool searchImportedScripts /*= false*/)
    {
-      mGraph->GetNodes(name, category, property, value, outNodes, searchImportedScripts);
+      mGraph->GetNodes(name, category, property, value, outNodes, true, searchImportedScripts);
 
       if (searchImportedScripts)
       {
@@ -1372,7 +1372,7 @@ namespace dtDirector
          {
             if (mChildren[index].valid())
             {
-               mChildren[index]->GetNodes(name, category, property, value, outNodes, searchImportedScripts);
+               mChildren[index]->GetNodes(name, category, property, value, outNodes, true, searchImportedScripts);
             }
          }
       }

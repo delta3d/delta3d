@@ -126,7 +126,7 @@ namespace dtDirector
       bool IsCachedInstance() const;
 
       /**
-       *	Retrieves whether this script should be visible within Inspector.
+       *   Retrieves whether this script should be visible within Inspector.
        */
       bool IsVisibleInInspector() const;
 
@@ -162,7 +162,7 @@ namespace dtDirector
        *
        * @param[in]  child  The child to add.
        */
-      void AddChild(Director* child);
+      virtual void AddChild(Director* child);
 
       /**
        * Removes a child director script.
@@ -177,7 +177,7 @@ namespace dtDirector
       const std::vector<dtCore::ObserverPtr<Director> >& GetChildren() const;
 
       /**
-       *	Imports a script into this one.
+       *   Imports a script into this one.
        *
        * @param[in]  scriptResource  The resource of the script to import.
        *
@@ -186,7 +186,7 @@ namespace dtDirector
       Director* ImportScript(const std::string& scriptResource);
 
       /**
-       *	Removes a script that was imported.
+       *   Removes a script that was imported.
        *
        * @param[in]  scriptResource  The resource of the imported script to remove.
        *
@@ -195,7 +195,7 @@ namespace dtDirector
       bool RemoveImportedScript(const std::string& scriptResource);
 
       /**
-       *	Retrieves the imported script.
+       *   Retrieves the imported script.
        *
        * @param[in]  scriptResource  The resource of the imported script to retrieve.
        *
@@ -204,7 +204,7 @@ namespace dtDirector
       Director* GetImportedScript(const std::string& scriptResource);
 
       /**
-       *	Retrieves the list of inherited scripts.
+       *   Retrieves the list of inherited scripts.
        */
       const std::vector<dtCore::RefPtr<Director> >& GetImportedScriptList() const;
 
@@ -280,7 +280,7 @@ namespace dtDirector
       const std::vector<std::string>& GetMissingLibraries();
 
       /**
-       *	Retrieves all missing imported scripts.
+       *   Retrieves all missing imported scripts.
        */
       const std::vector<std::string>& GetMissingImportedScripts();
 
@@ -312,7 +312,7 @@ namespace dtDirector
       virtual void BuildPropertyMap();
 
       /**
-       *	Initializes the script when it starts.
+       *   Initializes the script when it starts.
        */
       virtual void OnStart();
 
@@ -438,7 +438,7 @@ namespace dtDirector
       dtDAL::BaseActorObject* GetScriptOwnerActor() const;
 
       /**
-       *	Sets this script as imported.
+       *   Sets this script as imported.
        */
       void SetImported(bool imported) {mIsImported = imported;}
       bool IsImported() const {return mIsImported;}
@@ -584,7 +584,7 @@ namespace dtDirector
       bool DeleteNode(const ID& id);
 
       /**
-       *	Retrieves whether this script has been modified during the loading process.
+       *   Retrieves whether this script has been modified during the loading process.
        */
       bool IsModified() const {return mModified;}
 
@@ -597,7 +597,7 @@ namespace dtDirector
       void StepDebugger();
 
       /**
-       *	Cleans up all ID indexes.
+       *   Cleans up all ID indexes.
        */
       void CleanIDs();
 
@@ -618,7 +618,7 @@ namespace dtDirector
    protected:
 
       /**
-       *	Protected Destructor.  dtCore::RefPtr will handle its destruction.
+       *   Protected Destructor.  dtCore::RefPtr will handle its destruction.
        */
       virtual ~Director();
 
@@ -678,7 +678,7 @@ namespace dtDirector
    private:
 
       /**
-       *	Adds or removes a node from the node master list.
+       *   Adds or removes a node from the node master list.
        *
        * @param[in]  node   The node to add or remove.
        * @param[in]  index  A desired index to place this node if possible.
@@ -687,7 +687,7 @@ namespace dtDirector
       bool MasterListRemoveNode(Node* node);
 
       /**
-       *	Adds or removes a graph from the graph master list.
+       *   Adds or removes a graph from the graph master list.
        *
        * @param[in]  graph  The graph to add or remove.
        */
