@@ -65,7 +65,7 @@ namespace dtHLAGM
 
    static const char* const HYPERSPACE="HyperSpace";
 
-   class RTI13AmbassadorImpl : public RTI::NullFederateAmbassador
+   class RTI13AmbassadorImpl : public NullFederateAmbassador
    {
    public:
       RTI13AmbassadorImpl()
