@@ -27,12 +27,9 @@
 // hlacomponent.h: Declaration of the HLACOMPONENT class.
 //
 ///////////////////////////////////////////////////////////////////////
-#ifndef RTI_USES_STD_FSTREAM
-#define RTI_USES_STD_FSTREAM
-#endif
-#include <RTI.hh>
-#include <NullFederateAmbassador.hh>
-#include <dtUtil/mswinmacros.h>
+
+#include <dtHLAGM/rtiambassador.h>
+#include <dtHLAGM/rtifederateambassador.h>
 
 #ifdef DELTA_WIN32
    #undef GetClassName
@@ -57,6 +54,9 @@
 #include <dtHLAGM/export.h>
 #include <dtHLAGM/objectruntimemappinginfo.h>
 #include <dtHLAGM/ddmregioncalculatorgroup.h>
+#include <dtHLAGM/rtihandle.h>
+#include <dtHLAGM/rtiregion.h>
+#include <dtHLAGM/rtiambassador.h>
 
 namespace dtCore
 {
@@ -90,7 +90,7 @@ namespace dtHLAGM
    class DDMRegionData;
    
    class DT_HLAGM_EXPORT HLAComponent : public dtGame::GMComponent,
-      public NullFederateAmbassador
+      public RTIFederateAmbassador
    {
       public:
          // Name of the HLA mapping object/interaction attribute that
@@ -132,14 +132,27 @@ namespace dtHLAGM
           * Creates/joins a federation execution.
           *
           * @param executionName the name of the federation execution to join
-          * @param fedFilename the fed filename
+          * @param fedFilenames a vector of fed file names.
           * @param federateName the name of this federate
           */
-         void JoinFederationExecution(const std::string& executionName = "dtCore",
+         void JoinFederationExecution(const std::string& executionName,
+                                      std::vector<std::string>& fedFilenames,
+                                      const std::string& federateName = "Participant",
+                                      const std::string& ridFile = "RTI.rid",
+                                      const std::string& rtiImplementationName = RTIAmbassador::RTI13_IMPLEMENTATION
+                                      );
+
+         inline void JoinFederationExecution(const std::string& executionName = "dtCore",
                                       const std::string& fedFilename = "jntc.fed",
                                       const std::string& federateName = "Participant",
-                                      const std::string& ridFile = "RTI.rid"
-                                      );
+                                      const std::string& ridFile = "RTI.rid",
+                                      const std::string& rtiImplementationName = RTIAmbassador::RTI13_IMPLEMENTATION
+                                      )
+         {
+            std::vector<std::string> fedFilenames;
+            fedFilenames.push_back(fedFilename);
+            JoinFederationExecution(executionName, fedFilenames, federateName, ridFile, rtiImplementationName);
+         }
 
          /**
           * Leaves/destroys the joined execution.
@@ -188,12 +201,9 @@ namespace dtHLAGM
           */
          void SetDDMEnabled(bool enable);
          
-         virtual void discoverObjectInstance(RTI::ObjectHandle theObject,
-                                             RTI::ObjectClassHandle theObjectClassHandle,
-                                             const char* theObjectName)
-            throw (RTI::CouldNotDiscover,
-                   RTI::ObjectClassNotKnown,
-                   RTI::FederateInternalError);
+         virtual void DiscoverObjectInstance(RTIObjectInstanceHandle& theObject,
+                                             RTIObjectClassHandle& theObjectClassHandle,
+                                             const std::string& theObjectName);
 
          /**
           * Invoked by the RTI ambassador to request that the federate provide
@@ -202,33 +212,8 @@ namespace dtHLAGM
           * @param theObject the handle of the object of interest
           * @param theAttributes the set of attributes to update
           */
-         virtual void provideAttributeValueUpdate(RTI::ObjectHandle theObject,
-                                                  const RTI::AttributeHandleSet& theAttributes)
-            throw (RTI::ObjectNotKnown,
-                   RTI::AttributeNotKnown,
-                   RTI::AttributeNotOwned,
-                   RTI::FederateInternalError);
-
-         /**
-          * Invoked by the RTI ambassador to notify the federate of updated object
-          * attribute values.
-          *
-          * @param theObject the handle of the modified object
-          * @param theAttributes the new attribute values
-          * @param theTime the event timestamp
-          * @param theTag the user-supplied tag associated with the event
-          * @param theHandle the event retraction handle
-          */
-         virtual void reflectAttributeValues(RTI::ObjectHandle theObject,
-                                             const RTI::AttributeHandleValuePairSet& theAttributes,
-                                             const RTI::FedTime& theTime,
-                                             const char* theTag,
-                                             RTI::EventRetractionHandle theHandle)
-            throw (RTI::ObjectNotKnown,
-                   RTI::AttributeNotKnown,
-                   RTI::FederateOwnsAttributes,
-                   RTI::InvalidFederationTime,
-                   RTI::FederateInternalError);
+         virtual void ProvideAttributeValueUpdate(RTIObjectInstanceHandle& theObject,
+                                                  const RTIAttributeHandleSet& theAttributes);
 
          /**
           * Invoked by the RTI ambassador to notify the federate of updated object
@@ -238,31 +223,10 @@ namespace dtHLAGM
           * @param theAttributes the new attribute values
           * @param theTag the user-supplied tag associated with the event
           */
-         virtual void reflectAttributeValues(RTI::ObjectHandle theObject,
-                                             const RTI::AttributeHandleValuePairSet& theAttributes,
-                                             const char* theTag)
-            throw (RTI::ObjectNotKnown,
-                   RTI::AttributeNotKnown,
-                   RTI::FederateOwnsAttributes,
-                   RTI::FederateInternalError);
+         virtual void ReflectAttributeValues(RTIObjectInstanceHandle& theObject,
+                                             const RTIAttributeHandleValueMap& theAttributes,
+                                             const std::string& theTag);
 
-
-         /**
-          * Invoked by the RTI ambassador to notify the federate of a deleted object
-          * instance.
-          *
-          * @param theObject the handle of the removed object
-          * @param theTime the event timestamp
-          * @param theTag the user-supplied tag associated with the event
-          * @param theHandle the event retraction handle
-          */
-         virtual void removeObjectInstance(RTI::ObjectHandle theObject,
-                                           const RTI::FedTime& theTime,
-                                           const char *theTag,
-                                           RTI::EventRetractionHandle theHandle)
-            throw (RTI::ObjectNotKnown,
-                   RTI::InvalidFederationTime,
-                   RTI::FederateInternalError);
 
          /**
           * Invoked by the RTI ambassador to notify the federate of a removed object
@@ -271,10 +235,8 @@ namespace dtHLAGM
           * @param theObject the handle of the removed object
           * @param theTag the user-supplied tag associated with the event
           */
-         virtual void removeObjectInstance(RTI::ObjectHandle theObject,
-                                           const char *theTag)
-            throw (RTI::ObjectNotKnown,
-                   RTI::FederateInternalError);
+         virtual void RemoveObjectInstance(RTIObjectInstanceHandle& theObject,
+                                           const std::string& theTag);
 
          /**
           * Invoked by the RTI ambassador to notify the federate of a received
@@ -284,12 +246,9 @@ namespace dtHLAGM
           * @param theParameters the parameters of the interaction
           * @param theTag the user-supplied tag associated with the event
           */
-         virtual void receiveInteraction(RTI::InteractionClassHandle,
-                                         const RTI::ParameterHandleValuePairSet& theParameters,
-                                         const char *theTag)
-            throw (RTI::InteractionClassNotKnown,
-                   RTI::InteractionParameterNotKnown,
-                   RTI::FederateInternalError);
+         virtual void ReceiveInteraction(RTIInteractionClassHandle& interactionClassHandle,
+                                         const RTIParameterHandleValueMap& theParameters,
+                                         const std::string& theTag);
 
          const ObjectToActor* GetActorMapping(const dtCore::ActorType &type) const;
          ObjectToActor* GetActorMapping(const dtCore::ActorType &type);
@@ -423,8 +382,8 @@ namespace dtHLAGM
          void GetDDMSubscriptionCalculatorRegions(std::vector<std::vector<const DDMRegionData*> >& toFill) const;
          
          ///@return the current RTIambassador instance.  This will return NULL if this component is not connected to the RTI.
-         RTI::RTIambassador* GetRTIAmbassador() { return mRTIAmbassador; }
-         const RTI::RTIambassador* GetRTIAmbassador() const { return mRTIAmbassador; }
+         RTIAmbassador* GetRTIAmbassador() { return mRTIAmbassador; }
+         const RTIAmbassador* GetRTIAmbassador() const { return mRTIAmbassador; }
 
          /**
           * Set the name of the HLA object attribute that is to be used as
@@ -464,7 +423,7 @@ namespace dtHLAGM
           * @param interactionToMessage the mapping object specifying the mapping information.
           */
          virtual void PrepareInteraction(const dtGame::Message& message,
-            RTI::ParameterHandleValuePairSet& interactionParams,
+            RTIParameterHandleValueMap& interactionParams,
             const InteractionToMessage& interactionToMessage);
 
          /**
@@ -477,7 +436,7 @@ namespace dtHLAGM
           *                  which means defaults should be sent for data not in the message.
           */
          virtual void PrepareUpdate(const dtGame::ActorUpdateMessage& message, 
-            RTI::AttributeHandleValuePairSet& updateParams,
+            RTIAttributeHandleValueMap& updateParams,
             const ObjectToActor& objectToActor, bool newObject);
 
          /**
@@ -511,7 +470,7 @@ namespace dtHLAGM
          ObjectRuntimeMappingInfo& GetRuntimeMappingInfo() { return mRuntimeMappings; }
 
          void PublishSubscribe();
-         void UnsubscribeRegion(const std::string& name, RTI::Region& region);
+         void UnsubscribeRegion(const std::string& name, RTIRegion& region);
 
          /**
           * Output an error message about a mapping that describes the mapping
@@ -522,13 +481,12 @@ namespace dtHLAGM
           */
          void LogMappingError( const dtHLAGM::OneToManyMapping& mapping, const std::string& reason );
 
-         virtual ~HLAComponent()
-           throw (RTI::FederateInternalError);
+         virtual ~HLAComponent();
 
       private:
 
-         ObjectToActor* GetBestObjectToActor(RTI::ObjectHandle theObject,
-                                                   const RTI::AttributeHandleValuePairSet& theAttributes,
+         ObjectToActor* GetBestObjectToActor(RTIObjectInstanceHandle& theObject,
+                                                   const RTIAttributeHandleValueMap& theAttributes,
                                                    bool& hadEntityTypeProperty);
 
          dtGame::MessageParameter* FindOrAddMessageParameter(const std::string& name, dtCore::DataType& type, dtGame::Message& msg);
@@ -552,28 +510,28 @@ namespace dtHLAGM
                                        const OneToManyMapping& mapping) const;
 
 
-         bool DoGetBestObjectToActor( dtCore::RefPtr<ObjectToActor> &bestObjectToActor,
-                                    RTI::ObjectHandle theObject, 
-                                    const RTI::AttributeHandleValuePairSet& theAttributes, 
+         bool DoGetBestObjectToActor( dtCore::RefPtr<ObjectToActor>& bestObjectToActor,
+                                    RTIObjectInstanceHandle& theObject,
+                                    const RTIAttributeHandleValueMap& theAttributes,
                                     const dtCore::UniqueId* currentActorId );
 
 
-         void AddActorIDToMap( const RTI::AttributeHandleValuePairSet &theAttributes,
+         void AddActorIDToMap( const RTIAttributeHandleValueMap& theAttributes,
                               dtCore::RefPtr<ObjectToActor> bestObjectToActor,
                               const dtCore::UniqueId* currentActorId );
 
 
          void SetDefaultParameters( std::vector<AttributeToPropertyList>::iterator vectorIterator, 
                                     bool bNewObject, 
-                                    dtGame::Message *msg );
+                                    dtGame::Message* msg );
 
          void PrepareSingleUpdateParameter(AttributeToPropertyList& curAttrToProp,
-               RTI::AttributeHandleValuePairSet& updateParams,
+               RTIAttributeHandleValueMap& updateParams,
                const dtGame::ActorUpdateMessage& message,
                bool newObject);
 
          void PrepareArrayUpdateParameter(AttributeToPropertyList& curAttrToProp,
-               RTI::AttributeHandleValuePairSet& updateParams,
+               RTIAttributeHandleValueMap& updateParams,
                const dtGame::ActorUpdateMessage& message,
                bool newObject);
 
@@ -582,7 +540,6 @@ namespace dtHLAGM
           * interaction parameters to game message parameters.
           *
           * @param paramNameBuffer Name of the interaction parameter.
-          * @param bufferLength Length of paramNameBuffer.
           * @param paramToParamMapping Mapping between interaction to game message parameters
           * @param message Game message to have parameters added.
           * @param addMissingParams Flag used to add parameters to the message if not found. (mostly for actor update messages)
@@ -590,8 +547,7 @@ namespace dtHLAGM
           * @return FALSE if any of the parameter mappings failed; TRUE othewise.
           */
          bool CreateMessageParameters( 
-            const char* paramNameBuffer,
-            unsigned long bufferLength,
+            const std::string& paramNameBuffer,
             const OneToManyMapping& paramToParamMapping, // Interaction to Message Parameter Mapping Object
             dtGame::Message& message, // Game message to have parameters added to it.
             bool addMissingParams = false, // 
@@ -605,8 +561,7 @@ namespace dtHLAGM
           * Same as #CreateMessageParameters but works when the values are stored in a NamedArrayParameter
           */
          bool CreateMessageParametersArray(
-           const char* paramNameBuffer,
-           unsigned long bufferLength,
+           const std::string& paramNameBuffer,
            const OneToManyMapping& paramToParamMapping,
            dtGame::Message& message,
            bool addMissingParams,
@@ -623,13 +578,13 @@ namespace dtHLAGM
           * @param outBufferLength Length of the attribute buffer that is returned; 0 if not found.
           * @return Buffer associated with the found attribute; NULL if not found.
           */
-         const char* GetAttributeBufferAndLength( const RTI::AttributeHandleValuePairSet& attributeSet,
-            AttributeToPropertyList& curAttrToProp, unsigned long& outBufferLength );
+         std::string GetAttributeBufferAndLength( const RTIAttributeHandleValueMap& attributeSet,
+            AttributeToPropertyList& curAttrToProp );
 
          /**
           * The RTI ambassador.
           */
-         RTI::RTIambassador* mRTIAmbassador;
+         dtCore::RefPtr<RTIAmbassador> mRTIAmbassador;
 
          /**
           * The named of the joined execution.

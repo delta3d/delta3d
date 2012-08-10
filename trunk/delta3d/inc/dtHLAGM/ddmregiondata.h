@@ -21,13 +21,12 @@
 #ifndef DELTA_DDM_REGION_DATA
 #define DELTA_DDM_REGION_DATA
 
-#ifndef RTI_USES_STD_FSTREAM
-#define RTI_USES_STD_FSTREAM
-#endif
-#include <RTI.hh>
+#include <dtHLAGM/rtiregion.h>
 
 #include <dtHLAGM/export.h>
 #include <osg/Referenced>
+
+#include <dtCore/refptr.h>
 
 #include <vector>
 
@@ -53,7 +52,7 @@ namespace dtHLAGM
          class DT_HLAGM_EXPORT DimensionValues
          {
             public:
-               DimensionValues():mMin(0), mMax(0) {}
+               DimensionValues():mMin(), mMax() {}
                std::string mName;
                unsigned long mMin;
                unsigned long mMax;
@@ -62,16 +61,16 @@ namespace dtHLAGM
                
          };
          
-         DDMRegionData(): mRegion(NULL) {}
+         DDMRegionData(): mRegion() {}
          
          /// Sets the region associated with this data class.
-         void SetRegion(RTI::Region* region) { mRegion = region; }  
+         void SetRegion(RTIRegion* region) { mRegion = region; }
          
          /// @return the region this data object supports. 
-         RTI::Region* GetRegion() { return mRegion; };
+         RTIRegion* GetRegion() { return mRegion; }
 
          /// @return the region this data object supports. 
-         const RTI::Region* GetRegion() const { return mRegion; };
+         const RTIRegion* GetRegion() const { return mRegion; }
          
          /// @return the number of dimensions/extents for this class.
          unsigned GetNumberOfExtents() const { return mDimensions.size(); }
@@ -85,7 +84,7 @@ namespace dtHLAGM
          
       private:
          //Note that this region must be deleted by the RTI.
-         RTI::Region* mRegion;
+         dtCore::RefPtr<RTIRegion> mRegion;
          std::vector<DimensionValues> mDimensions;
    };
 }

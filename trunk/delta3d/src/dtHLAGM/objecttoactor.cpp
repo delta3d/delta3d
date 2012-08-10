@@ -36,10 +36,7 @@ namespace dtHLAGM
    /////////////////////////////////////////////////////////////////////
    ObjectToActor::ObjectToActor(): 
       mLocalOrRemoteType(&ObjectToActor::LocalOrRemoteType::LOCAL_AND_REMOTE), 
-      mEntityTypeSet(false),
-      mObjectClassHandle(0), 
-      mEntityIdAttributeHandle(0), 
-      mEntityTypeAttributeHandle(0)
+      mEntityTypeSet(false)
    {}
 
    /////////////////////////////////////////////////////////////////////
@@ -91,19 +88,19 @@ namespace dtHLAGM
    }
 
    /////////////////////////////////////////////////////////////////////
-   const RTI::ObjectClassHandle ObjectToActor::GetObjectClassHandle() const
+   RTIObjectClassHandle* ObjectToActor::GetObjectClassHandle() const
    {
       return mObjectClassHandle;
    }
 
    /////////////////////////////////////////////////////////////////////
-   const RTI::AttributeHandle ObjectToActor::GetEntityIdAttributeHandle() const
+   RTIAttributeHandle* ObjectToActor::GetEntityIdAttributeHandle() const
    {
       return mEntityIdAttributeHandle;
    }
 
    /////////////////////////////////////////////////////////////////////
-   const RTI::AttributeHandle ObjectToActor::GetEntityTypeAttributeHandle() const
+   RTIAttributeHandle* ObjectToActor::GetEntityTypeAttributeHandle() const
    {
       return mEntityTypeAttributeHandle;
    }
@@ -171,19 +168,19 @@ namespace dtHLAGM
    }
 
    /////////////////////////////////////////////////////////////////////
-   void ObjectToActor::SetObjectClassHandle(const RTI::ObjectClassHandle& objClassHandle)
+   void ObjectToActor::SetObjectClassHandle(RTIObjectClassHandle* objClassHandle)
    {
       mObjectClassHandle = objClassHandle;
    }
 
    /////////////////////////////////////////////////////////////////////
-   void ObjectToActor::SetEntityIdAttributeHandle(const RTI::AttributeHandle newEntityIdAttributeHandle)
+   void ObjectToActor::SetEntityIdAttributeHandle(RTIAttributeHandle* newEntityIdAttributeHandle)
    {
       mEntityIdAttributeHandle = newEntityIdAttributeHandle;
    }
 
    /////////////////////////////////////////////////////////////////////
-   void ObjectToActor::SetEntityTypeAttributeHandle(const RTI::AttributeHandle newEntityTypeAttributeHandle)
+   void ObjectToActor::SetEntityTypeAttributeHandle(RTIAttributeHandle* newEntityTypeAttributeHandle)
    {
       mEntityTypeAttributeHandle = newEntityTypeAttributeHandle;
    }

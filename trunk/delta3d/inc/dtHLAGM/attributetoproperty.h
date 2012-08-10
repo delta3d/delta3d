@@ -25,14 +25,12 @@
 // attributetoproperty.h: Declaration of the AttributeToProperty class.
 //
 ///////////////////////////////////////////////////////////////////////
-#ifndef RTI_USES_STD_FSTREAM
-#define RTI_USES_STD_FSTREAM
-#endif
-#include <RTI.hh>
 
 #include <dtHLAGM/export.h>
 #include <dtHLAGM/onetoonemapping.h>
 #include <dtHLAGM/onetomanymapping.h>
+#include <dtHLAGM/rtihandle.h>
+#include <dtCore/refptr.h>
 
 namespace dtHLAGM
 {
@@ -40,8 +38,7 @@ namespace dtHLAGM
    {
       public:
 
-         AttributeToProperty():
-            mAttributeHandle(0)
+         AttributeToProperty()
          {}
 
          /**
@@ -67,34 +64,32 @@ namespace dtHLAGM
                                 gameType,
                                 defaultValue,
                                 requiredForGame,
-                                requiredForHLA),
-                             mAttributeHandle(0)
+                                requiredForHLA)
          {}
 
          virtual ~AttributeToProperty()
          {}
 
-         const RTI::AttributeHandle GetAttributeHandle() const
+         RTIAttributeHandle* GetAttributeHandle() const
          {
             return mAttributeHandle;
          }
 
-         void SetAttributeHandle(RTI::AttributeHandle attributeHandle)
+         void SetAttributeHandle(RTIAttributeHandle* attributeHandle)
          {
             mAttributeHandle = attributeHandle;
          }
 
       private:
 
-         RTI::AttributeHandle mAttributeHandle;
+         dtCore::RefPtr<RTIAttributeHandle> mAttributeHandle;
    };
 
    class DT_HLAGM_EXPORT AttributeToPropertyList : public OneToManyMapping
    {
       public:
 
-         AttributeToPropertyList():
-            mAttributeHandle(0)
+         AttributeToPropertyList()
          {}
 
          /**
@@ -108,26 +103,25 @@ namespace dtHLAGM
                              bool requiredForHLA):
                              OneToManyMapping(hlaName,
                                 attributeType,
-                                requiredForHLA),
-                             mAttributeHandle(0)
+                                requiredForHLA)
          {}
 
          virtual ~AttributeToPropertyList()
          {}
 
-         RTI::AttributeHandle GetAttributeHandle() const
+         RTIAttributeHandle* GetAttributeHandle() const
          {
             return mAttributeHandle;
          }
 
-         void SetAttributeHandle(RTI::AttributeHandle attributeHandle)
+         void SetAttributeHandle(RTIAttributeHandle* attributeHandle)
          {
             mAttributeHandle = attributeHandle;
          }
 
       private:
 
-         RTI::AttributeHandle mAttributeHandle;
+         dtCore::RefPtr<RTIAttributeHandle> mAttributeHandle;
    };
 
 }

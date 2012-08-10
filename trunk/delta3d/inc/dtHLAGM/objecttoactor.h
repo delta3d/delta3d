@@ -27,10 +27,8 @@
 // objecttoactor.h: Declaration of the ObjectToActor class.
 //
 ///////////////////////////////////////////////////////////////////////
-#ifndef RTI_USES_STD_FSTREAM
-#define RTI_USES_STD_FSTREAM
-#endif
-#include <RTI.hh>
+
+#include <dtHLAGM/rtiambassador.h>
 
 #include <string>
 #include <vector>
@@ -118,20 +116,20 @@ namespace dtHLAGM
           *
           * @return HLA Object Type Name
           */
-         const std::string &GetObjectClassName() const;
+         const std::string& GetObjectClassName() const;
 
          /**
           * Gets the HLA Object Class Handle from the Object to Actor mapping.
           *
           * @return HLA Object Class Handle
           */
-         const RTI::ObjectClassHandle GetObjectClassHandle() const;
+         RTIObjectClassHandle* GetObjectClassHandle() const;
 
          /// @return The attribute handle storing the entity id attribute.
-         const RTI::AttributeHandle GetEntityIdAttributeHandle() const;
+         RTIAttributeHandle* GetEntityIdAttributeHandle() const;
 
          /// @return The attribute handle storing the dis id attribute.
-         const RTI::AttributeHandle GetEntityTypeAttributeHandle() const;
+         RTIAttributeHandle* GetEntityTypeAttributeHandle() const;
 
          /**
           * Gets the Object DIS ID from the Object to Actor mapping
@@ -182,13 +180,13 @@ namespace dtHLAGM
           *
           * @param objClassHandle the HLA Object Class Handle
           */
-         void SetObjectClassHandle(const RTI::ObjectClassHandle& objClassHandle);
+         void SetObjectClassHandle(RTIObjectClassHandle* objClassHandle);
 
          /// Sets The attribute handle storing the entity id attribute.
-         void SetEntityIdAttributeHandle(const RTI::AttributeHandle newEntityIdAttributeHandle);
+         void SetEntityIdAttributeHandle(RTIAttributeHandle* newEntityIdAttributeHandle);
 
          /// Sets The attribute handle storing DIS Id attribute.
-         void SetEntityTypeAttributeHandle(const RTI::AttributeHandle newEntityTypeAttributeHandle);
+         void SetEntityTypeAttributeHandle(RTIAttributeHandle* newEntityTypeAttributeHandle);
 
          /**
           * Sets the Object DIS ID for this Object to Actor mapping.
@@ -252,10 +250,10 @@ namespace dtHLAGM
          bool mEntityTypeSet;
 
          /// The HLA Object Class Handle for this Object to Actor mapping.
-         RTI::ObjectClassHandle mObjectClassHandle;
+         dtCore::RefPtr<RTIObjectClassHandle> mObjectClassHandle;
 
          ///Entity identifier attribute handle.  This will be set after connection if the name is not empty.
-         RTI::AttributeHandle mEntityIdAttributeHandle;
+         dtCore::RefPtr<RTIAttributeHandle> mEntityIdAttributeHandle;
 
          //The name of the attribute used for the entity id.
          std::string mEntityIdAttribute;
@@ -264,7 +262,7 @@ namespace dtHLAGM
          std::string mEntityTypeAttribute;
 
          ///DIS Id attribute handle.  This will be set after connection if the name is not empty.
-         RTI::AttributeHandle mEntityTypeAttributeHandle;
+         dtCore::RefPtr<RTIAttributeHandle> mEntityTypeAttributeHandle;
 
          /// A vector of One to One mappings for this Object to Actor mapping.
          std::vector<AttributeToPropertyList> mOneToMany;

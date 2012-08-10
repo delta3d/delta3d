@@ -23,10 +23,7 @@
 #ifndef DELTA_INTERACTION_TO_MESSAGE
 #define DELTA_INTERACTION_TO_MESSAGE
 
-#ifndef RTI_USES_STD_FSTREAM
-#define RTI_USES_STD_FSTREAM
-#endif
-#include <RTI.hh>
+#include <dtHLAGM/rtihandle.h>
 
 #include <string>
 #include <vector>
@@ -44,8 +41,7 @@ namespace dtHLAGM
    {
       public:
 
-         InteractionToMessage(): mType(&dtGame::MessageType::UNKNOWN), 
-            mInteractionHandle(0)
+         InteractionToMessage(): mType(&dtGame::MessageType::UNKNOWN)
          {}
 
          /**
@@ -78,7 +74,7 @@ namespace dtHLAGM
             return mInteractionName;
          }
 
-         const RTI::InteractionClassHandle& GetInteractionClassHandle() const
+         RTIInteractionClassHandle* GetInteractionClassHandle() const
          {
             return mInteractionHandle;
          }
@@ -103,7 +99,7 @@ namespace dtHLAGM
             mInteractionName = interactionTypeName;
          }
 
-         void SetInteractionClassHandle(RTI::InteractionClassHandle interactionHandle)
+         void SetInteractionClassHandle(RTIInteractionClassHandle* interactionHandle)
          {
             mInteractionHandle = interactionHandle;
          }
@@ -169,7 +165,7 @@ namespace dtHLAGM
          // in the mapping XML .
          std::string mMappingName;
 
-         RTI::InteractionClassHandle mInteractionHandle;
+         dtCore::RefPtr<RTIInteractionClassHandle> mInteractionHandle;
          std::vector<ParameterToParameterList> mOneToMany;
    };
 }

@@ -2,6 +2,16 @@
 # Where is this and what do we need it for?
 #INCLUDE(ListHandle)
 
+  MACRO(READ_GCC_VERSION)
+     if (CMAKE_COMPILER_IS_GNUCC)
+        execute_process(COMMAND ${CMAKE_C_COMPILER} -dumpversion
+                        OUTPUT_VARIABLE GCC_VERSION)
+        string(REGEX MATCHALL "[0-9]+" GCC_VERSION_COMPONENTS ${GCC_VERSION})
+        list(GET GCC_VERSION_COMPONENTS 0 GCC_MAJOR)
+        list(GET GCC_VERSION_COMPONENTS 1 GCC_MINOR)
+     endif()
+  ENDMACRO(READ_GCC_VERSION)
+
 
   MACRO(FILTER_OUT FILTERS INPUTS OUTPUT)
        # Mimicks Gnu Make's $(filter-out) which removes elements 

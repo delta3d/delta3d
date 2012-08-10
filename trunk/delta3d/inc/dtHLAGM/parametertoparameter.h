@@ -28,11 +28,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef RTI_USES_STD_FSTREAM
-#define RTI_USES_STD_FSTREAM
-#endif
-#include <RTI.hh>
-
 #include <dtHLAGM/export.h>
 #include <dtHLAGM/onetoonemapping.h>
 #include <dtHLAGM/onetomanymapping.h>
@@ -76,24 +71,19 @@ namespace dtHLAGM
          virtual ~ParameterToParameter()
          {}
 
-         RTI::ParameterHandle GetParameterHandle()
+         RTIParameterHandle* GetParameterHandle()
          {
             return mParameterHandle;
          }
 
-         const RTI::ParameterHandle GetParameterHandle() const
-         {
-            return mParameterHandle;
-         }
-
-         void SetParameterHandle(RTI::ParameterHandle parameterHandle)
+         void SetParameterHandle(RTIParameterHandle* parameterHandle)
          {
             mParameterHandle = parameterHandle;
          }
 
       private:
 
-         RTI::ParameterHandle mParameterHandle;
+         dtCore::RefPtr<RTIParameterHandle> mParameterHandle;
    };
 
    class DT_HLAGM_EXPORT ParameterToParameterList : public OneToManyMapping
@@ -101,7 +91,6 @@ namespace dtHLAGM
       public:
 
          ParameterToParameterList()
-           :mParameterHandle(0)
          {}
 
          /**
@@ -116,27 +105,26 @@ namespace dtHLAGM
                              bool requiredForHLA, bool isArray = false):
                              OneToManyMapping(hlaName,
                                 attributeType,
-                                requiredForHLA, false, isArray),
-                             mParameterHandle(0)
+                                requiredForHLA, false, isArray)
          {}
 
 
          virtual ~ParameterToParameterList()
          {}
 
-         const RTI::ParameterHandle GetParameterHandle() const
+         RTIParameterHandle* GetParameterHandle() const
          {
             return mParameterHandle;
          }
 
-         void SetParameterHandle(RTI::ParameterHandle parameterHandle)
+         void SetParameterHandle(RTIParameterHandle* parameterHandle)
          {
             mParameterHandle = parameterHandle;
          }
 
       private:
 
-         RTI::ParameterHandle mParameterHandle;
+         dtCore::RefPtr<RTIParameterHandle> mParameterHandle;
    };
 
 }

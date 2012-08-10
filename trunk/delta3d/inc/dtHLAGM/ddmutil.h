@@ -31,14 +31,19 @@ namespace dtHLAGM
    class DT_HLAGM_EXPORT DDMUtil
    {
       public:
-         static const unsigned long HLAGM_MIN_EXTENT;
-         static const unsigned long HLAGM_MAX_EXTENT;
          
          static const std::string DDM_SPACE_LABEL;
          static const std::string DDM_SUBSPACE_EXTENT_LABEL;
          static const std::string DDM_FIRST_EXTENT_LABEL;
          static const std::string DDM_SECOND_EXTENT_LABEL;
          
+         //Since the hla libraries are loaded and not direct dependencies now, this has to be set
+         // on connection to the federation, so these allow that
+         static unsigned long GetMinExtent();
+         static void SetMinExtent(unsigned long);
+         static unsigned long GetMaxExtent();
+         static void SetMaxExtent(unsigned long);
+
          /**
           * Maps an enumerated value into the MIN_EXTENT MAX_EXTENT range given the known min and max.
           * @param value the value to map
@@ -64,7 +69,10 @@ namespace dtHLAGM
           */
          static unsigned long MapLinear(double value, double min, double max);
 
-         unsigned long MapAppSpaceValue(unsigned spaceNumber);
+      private:
+         static unsigned long mMinExtent;
+         static unsigned long mMaxExtent;
+
    };
 
 }

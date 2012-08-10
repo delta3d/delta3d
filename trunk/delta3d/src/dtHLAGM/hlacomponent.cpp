@@ -1,6 +1,7 @@
 /* -*-c++-*-
  * Delta3D Open Source Game and Simulation Engine
  * Copyright (C) 2006-2010, Alion Science and Technology, BMH Operation.
+ * Copyright (C) 2012, MASA Group Inc
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -32,6 +33,7 @@
 #include <dtHLAGM/ddmregioncalculator.h>
 #include <dtHLAGM/ddmregiondata.h>
 #include <dtHLAGM/exceptionenum.h>
+#include <dtHLAGM/rtiexception.h>
 
 #include <dtUtil/matrixutil.h>
 #include <dtUtil/mswinmacros.h>
@@ -101,7 +103,7 @@ namespace dtHLAGM
 
    /////////////////////////////////////////////////////////////////////////////////
    HLAComponent::HLAComponent(const std::string& name):
-      GMComponent(name),
+      dtGame::GMComponent(name),
       mRTIAmbassador(NULL),
       mLocalIPAddress(0x7f000001),
       mDDMEnabled(false),
@@ -119,7 +121,6 @@ namespace dtHLAGM
 
    /////////////////////////////////////////////////////////////////////////////////
    HLAComponent::~HLAComponent()
-      throw (RTI::FederateInternalError)
    {
       LeaveFederationExecution();
    }
@@ -146,35 +147,31 @@ namespace dtHLAGM
    void HLAComponent::RegisterObjectToActorWithRTI(ObjectToActor& objectToActor)
    {
       const std::string& thisObjectClassString = objectToActor.GetObjectClassName();
-      RTI::ObjectClassHandle thisObjectClassHandle(0);
+      dtCore::RefPtr<RTIObjectClassHandle> thisObjectClassHandle;
 
       try
       {
-         thisObjectClassHandle = mRTIAmbassador->getObjectClassHandle(thisObjectClassString.c_str());
+         thisObjectClassHandle = mRTIAmbassador->GetObjectClassHandle(thisObjectClassString);
       }
-      catch (const RTI::Exception& ex)
+      catch (const RTIException& ex)
       {
-         std::ostringstream ss;
-         //workaround for a strange namespace issue
-         ::operator<<(ss, ex);
          mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
                               "Could not find Object Class Name: %s - Message: %s",
-                              thisObjectClassString.c_str(), ss.str().c_str());
+                              thisObjectClassString.c_str(), ex.ToString().c_str());
          return;
       }
 
       if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
       {
          mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
-               "Object class handle of object class %s is %u.",
-               thisObjectClassString.c_str(), thisObjectClassHandle);
+               "Object class handle of object class %s is valid? %u.",
+               thisObjectClassString.c_str(), thisObjectClassHandle.valid());
       }
 
       objectToActor.SetObjectClassHandle(thisObjectClassHandle);
       std::vector<AttributeToPropertyList>& thisAttributeToPropertyListVector = objectToActor.GetOneToManyMappingVector();
 
-      RTI::AttributeHandleSet* ahs =
-            RTI::AttributeHandleSetFactory::create(thisAttributeToPropertyListVector.size());
+      RTIAttributeHandleSet ahs;
 
       std::vector<AttributeToPropertyList>::iterator attributeToPropertyListIterator = thisAttributeToPropertyListVector.begin();
 
@@ -183,29 +180,26 @@ namespace dtHLAGM
       {
          try
          {
-            RTI::AttributeHandle entityIdentifierAttributeHandle =
-               mRTIAmbassador->getAttributeHandle(objectToActor.GetEntityIdAttributeName().c_str(), thisObjectClassHandle);
+            dtCore::RefPtr<RTIAttributeHandle> entityIdentifierAttributeHandle =
+               mRTIAmbassador->GetAttributeHandle(objectToActor.GetEntityIdAttributeName(), *thisObjectClassHandle);
 
             if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
             {
                mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
-                                   "AttributeHandle for entity identifier on object class %s is %u.",
-                                   thisObjectClassString.c_str(), entityIdentifierAttributeHandle);
+                                   "AttributeHandle for entity identifier on object class %s is valid: %u.",
+                                   thisObjectClassString.c_str(), entityIdentifierAttributeHandle.valid());
             }
 
             objectToActor.SetEntityIdAttributeHandle(entityIdentifierAttributeHandle);
 
-            ahs->add(entityIdentifierAttributeHandle);
+            ahs.insert(entityIdentifierAttributeHandle);
          }
-         catch (const RTI::Exception& ex)
+         catch (const RTIException& ex)
          {
-            std::ostringstream ss;
-            //workaround for a strange namespace issue
-            ::operator<<(ss, ex);
             mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
                                 "Could not find Attribute '%s' for Object Class Name: '%s'. '%s'",
                                  objectToActor.GetEntityIdAttributeName().c_str(),
-                                 thisObjectClassString.c_str(), ss.str().c_str());
+                                 thisObjectClassString.c_str(), ex.ToString().c_str());
          }
 
       }
@@ -222,27 +216,24 @@ namespace dtHLAGM
 
          try
          {
-            RTI::AttributeHandle disIDAttributeHandle =
-                  mRTIAmbassador->getAttributeHandle(entityTypeAttrName.c_str(), thisObjectClassHandle);
+            dtCore::RefPtr<RTIAttributeHandle> disIDAttributeHandle =
+                  mRTIAmbassador->GetAttributeHandle(entityTypeAttrName, *thisObjectClassHandle);
 
             if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
                mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
-                                   "Attribute handle for DIS ID on object class %s is %u.",
-                                   thisObjectClassString.c_str(), disIDAttributeHandle);
+                                   "Attribute handle for DIS ID on object class %s is valid: %u.",
+                                   thisObjectClassString.c_str(), disIDAttributeHandle.valid());
 
             objectToActor.SetEntityTypeAttributeHandle(disIDAttributeHandle);
 
-            ahs->add(disIDAttributeHandle);
+            ahs.insert(disIDAttributeHandle);
          }
-         catch (const RTI::Exception& ex)
+         catch (const RTIException& ex)
          {
-            std::ostringstream ss;
-            //workaround for a strange namespace issue
-            ::operator<<(ss, ex);
             mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
                                  "Could not find Attribute '%s' for Object Class Name: '%s'. '%s'",
                                  entityTypeAttrName.c_str(),
-                                 thisObjectClassString.c_str(), ss.str().c_str());
+                                 thisObjectClassString.c_str(), ex.ToString().c_str());
          }
       }
 
@@ -272,30 +263,26 @@ namespace dtHLAGM
             {
                try
                {
-                  RTI::AttributeHandle entityIdentifierAttributeHandle =
-                     mRTIAmbassador->getAttributeHandle(thisAttributeHandleString.c_str(), thisObjectClassHandle);
+                  dtCore::RefPtr<RTIAttributeHandle> entityIdentifierAttributeHandle =
+                     mRTIAmbassador->GetAttributeHandle(thisAttributeHandleString, *thisObjectClassHandle);
 
                   if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
                      mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
-                                         "Attribute handle for %s on object class %s is %u.",
+                                         "Attribute handle for %s on object class %s is valid: %c.",
                                          thisAttributeHandleString.c_str(),
                                          thisObjectClassString.c_str(),
-                                         entityIdentifierAttributeHandle);
+                                         entityIdentifierAttributeHandle.valid());
 
                   thisAttributeToPropertyList.SetAttributeHandle(entityIdentifierAttributeHandle);
 
-                  if (!ahs->isMember(entityIdentifierAttributeHandle))
-                     ahs->add(entityIdentifierAttributeHandle);
+                  ahs.insert(entityIdentifierAttributeHandle);
                }
-               catch (const RTI::Exception& ex)
+               catch (const RTIException& ex)
                {
-                  std::ostringstream ss;
-                  //workaround for a strange namespace issue
-                  ::operator<<(ss, ex);
                   mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
                                        "Could not find Attribute '%s' for Object Class Name: '%s'. '%s'",
                                        thisAttributeHandleString.c_str(),
-                                       thisObjectClassString.c_str(), ss.str().c_str());
+                                       thisObjectClassString.c_str(), ex.ToString().c_str());
                }
             }
 
@@ -311,7 +298,7 @@ namespace dtHLAGM
          {
             if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
                mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
-                                   "Subscribing to object class \"%s\" handle %u.", thisObjectClassString.c_str(), thisObjectClassHandle);
+                                   "Subscribing to object class \"%s\".", thisObjectClassString.c_str());
             if (mDDMEnabled)
             {
                for (unsigned i = 0; i < mDDMSubscriptionRegions.size(); ++i)
@@ -325,16 +312,16 @@ namespace dtHLAGM
                   std::vector<dtCore::RefPtr<DDMRegionData> >& regionVector = mDDMSubscriptionRegions[i];
                   for (unsigned j = 0; j < regionVector.size(); ++j)
                   {
-                     RTI::Region* r = regionVector[j]->GetRegion();
+                     RTIRegion* r = regionVector[j]->GetRegion();
                      if (r != NULL)
                      {
                         if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
                         {
                            mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
-                                               "Subscribing to object class \"%s\" handle %u with region from calculator \"%s\"",
-                                               thisObjectClassString.c_str(), thisObjectClassHandle, mDDMSubscriptionCalculators[i]->GetName().c_str());
+                                               "Subscribing to object class \"%s\" with region from calculator \"%s\"",
+                                               thisObjectClassString.c_str(), mDDMSubscriptionCalculators[i]->GetName().c_str());
                         }
-                        mRTIAmbassador->subscribeObjectClassAttributesWithRegion(thisObjectClassHandle, *r, *ahs);
+                        mRTIAmbassador->SubscribeObjectClassAttributes(*thisObjectClassHandle, ahs, r);
                         subscribed = true;
                      }
                   }
@@ -342,24 +329,21 @@ namespace dtHLAGM
                   if (!subscribed && mLogger->IsLevelEnabled(dtUtil::Log::LOG_WARNING))
                   {
                      mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
-                                         "Subscribing to object class \"%s\" handle %u with region from calculator \"%s\" failed because no such calculator found.",
-                                         thisObjectClassString.c_str(), thisObjectClassHandle, mDDMSubscriptionCalculators[i]->GetName().c_str());
+                                         "Subscribing to object class \"%s\" with region from calculator \"%s\" failed because no such calculator found.",
+                                         thisObjectClassString.c_str(), mDDMSubscriptionCalculators[i]->GetName().c_str());
                   }
                }
             }
             else
             {
-               mRTIAmbassador->subscribeObjectClassAttributes(thisObjectClassHandle, *ahs);
+               mRTIAmbassador->SubscribeObjectClassAttributes(*thisObjectClassHandle, ahs);
             }
          }
-         catch (const RTI::Exception& ex)
+         catch (const RTIException& ex)
          {
             failed = true;
-            std::ostringstream ss;
-            //workaround for a strange namespace issue
-            ::operator<<(ss, ex);
             mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
-                                 "Error subscribing to object class \"%s\": \"%s\"", thisObjectClassString.c_str(), ss.str().c_str());
+                                 "Error subscribing to object class \"%s\": \"%s\"", thisObjectClassString.c_str(), ex.ToString().c_str());
          }
       }
 
@@ -368,42 +352,38 @@ namespace dtHLAGM
          if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
          {
             mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
-                                "Publishing object class \"%s\" handle %u.", thisObjectClassString.c_str(), thisObjectClassHandle);
+                                "Publishing object class \"%s\" handle valid: %u.", thisObjectClassString.c_str(), thisObjectClassHandle.valid());
          }
 
          try
          {
             //need to put regions on this.
-            mRTIAmbassador->publishObjectClass(thisObjectClassHandle, *ahs);
+            mRTIAmbassador->PublishObjectClass(*thisObjectClassHandle, ahs);
          }
-         catch (const RTI::Exception &ex)
+         catch (const RTIException& ex)
          {
-            std::ostringstream ss;
-            //workaround for a strange namespace issue
-            ::operator<<(ss, ex);
             mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
-                                 "Error publishing object class \"%s\": \"%s\"", thisObjectClassString.c_str(), ss.str().c_str());
+                                 "Error publishing object class \"%s\": \"%s\"", thisObjectClassString.c_str(), ex.ToString().c_str());
          }
       }
 
-      delete ahs;
    }
 
    /////////////////////////////////////////////////////////////////////////////////
    void HLAComponent::RegisterInteractionToMessageWithRTI(InteractionToMessage& interactionToMessage)
    {
       const std::string& thisInteractionClassString = interactionToMessage.GetInteractionName();
-      RTI::InteractionClassHandle thisInteractionClassHandle = 0;
+      dtCore::RefPtr<RTIInteractionClassHandle> thisInteractionClassHandle;
       try
       {
 
-         thisInteractionClassHandle = mRTIAmbassador->getInteractionClassHandle(thisInteractionClassString.c_str());
+         thisInteractionClassHandle = mRTIAmbassador->GetInteractionClassHandle(thisInteractionClassString);
 
          if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
             mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
-                                "interaction class \"%s\" has handle id %u.",
+                                "interaction class \"%s\" has handle id valid? \"%u\".",
                                 thisInteractionClassString.c_str(),
-                                thisInteractionClassHandle);
+                                thisInteractionClassHandle.valid());
 
          interactionToMessage.SetInteractionClassHandle(thisInteractionClassHandle);
          std::vector<ParameterToParameterList>& thisParameterToParameterListVector = interactionToMessage.GetOneToManyMappingVector();
@@ -422,29 +402,26 @@ namespace dtHLAGM
             }
             else // set the parameter handle as usual.
             {
-               RTI::ParameterHandle thisParameterHandle = mRTIAmbassador->getParameterHandle(thisParameterHandleString.c_str(), thisInteractionClassHandle);
+               dtCore::RefPtr<RTIParameterHandle> thisParameterHandle = mRTIAmbassador->GetParameterHandle(thisParameterHandleString, *thisInteractionClassHandle);
 
                if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
                   mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
-                                      "Parameter handle for \"%s\" on interaction class \"%s\" is %u.",
+                                      "Parameter handle for \"%s\" on interaction class \"%s\" is \"%u\".",
                                       thisParameterHandleString.c_str(),
                                       thisInteractionClassString.c_str(),
-                                      thisParameterHandle);
+                                      thisParameterHandle.valid());
 
                thisParameterToParameterList.SetParameterHandle(thisParameterHandle);
             }
             ++parameterToParameterIterator;
          }
       }
-      catch (const RTI::Exception& ex)
+      catch (const RTIException& ex)
       {
-         std::ostringstream ss;
-         //workaround for a strange namespace issue
-         ::operator<<(ss, ex);
          mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
                               "Could not register for interaction \"%s\" with error \"%s\"",
                               thisInteractionClassString.c_str(),
-                              ss.str().c_str());
+                              ex.ToString().c_str());
          return;
       }
 
@@ -470,16 +447,16 @@ namespace dtHLAGM
                std::vector<dtCore::RefPtr<DDMRegionData> >& regionVector = mDDMSubscriptionRegions[i];
                for (unsigned j = 0; j < regionVector.size(); ++j)
                {
-                  RTI::Region* r = regionVector[j]->GetRegion();
+                  RTIRegion* r = regionVector[j]->GetRegion();
                   if (r != NULL)
                   {
                      if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
                      {
                         mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
-                                            "Subscribing to interaction class \"%s\" handle %u with region from calculator \"%s\"",
-                                            thisInteractionClassString.c_str(), thisInteractionClassHandle, mDDMSubscriptionCalculators[i]->GetName().c_str());
+                                            "Subscribing to interaction class \"%s\" with region from calculator \"%s\"",
+                                            thisInteractionClassString.c_str(), mDDMSubscriptionCalculators[i]->GetName().c_str());
                      }
-                     mRTIAmbassador->subscribeInteractionClassWithRegion(thisInteractionClassHandle, *r);
+                     mRTIAmbassador->SubscribeInteractionClass(*thisInteractionClassHandle, r);
                      subscribed = true;
                   }
                }
@@ -487,17 +464,17 @@ namespace dtHLAGM
                if (!subscribed && mLogger->IsLevelEnabled(dtUtil::Log::LOG_WARNING))
                {
                   mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
-                                      "Subscribing to interaction class \"%s\" handle %u with region from calculator \"%s\" failed because no such calculator exists.",
-                                      thisInteractionClassString.c_str(), thisInteractionClassHandle, mDDMSubscriptionCalculators[i]->GetName().c_str());
+                                      "Subscribing to interaction class \"%s\" with region from calculator \"%s\" failed because no such calculator exists.",
+                                      thisInteractionClassString.c_str(), mDDMSubscriptionCalculators[i]->GetName().c_str());
                }
             }
          }
          else
          {
-            mRTIAmbassador->subscribeInteractionClass(thisInteractionClassHandle);
+            mRTIAmbassador->SubscribeInteractionClass(*thisInteractionClassHandle);
+            subscribed = true;
          }
 
-         subscribed = true;
 
          if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
          {
@@ -505,19 +482,19 @@ namespace dtHLAGM
                                 "Publishing to Interaction class %s.", thisInteractionClassString.c_str());
          }
          //Need to put regions on this.
-         mRTIAmbassador->publishInteractionClass(thisInteractionClassHandle);
+         mRTIAmbassador->PublishInteractionClass(*thisInteractionClassHandle);
       }
-      catch (const RTI::Exception&)
+      catch (const RTIException& ex)
       {
          if (!subscribed)
          {
             mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
-                                "Error subscribing to interaction class %s.", thisInteractionClassString.c_str());
+                                "Error subscribing to interaction class \"%s\".  Error: \"%s\".", thisInteractionClassString.c_str(), ex.ToString().c_str());
          }
          else
          {
             mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
-                                "Error publishing interaction class %s.", thisInteractionClassString.c_str());
+                                "Error publishing interaction class \"%s\".  Error \"%s\".", thisInteractionClassString.c_str(), ex.ToString().c_str());
          }
       }
    }
@@ -538,9 +515,10 @@ namespace dtHLAGM
 
    /////////////////////////////////////////////////////////////////////////////////
    void HLAComponent::JoinFederationExecution(const std::string& executionName,
-                                              const std::string& fedFilename,
+                                              std::vector<std::string>& fedFilenames,
                                               const std::string& federateName,
-                                              const std::string& ridFile)
+                                              const std::string& ridFile,
+                                              const std::string& rtiImplementationName)
    {
       dtUtil::FileInfo fi = dtUtil::FileUtils::GetInstance().GetFileInfo(ridFile);
       if (!ridFile.empty() && fi.fileType == dtUtil::FILE_NOT_FOUND)
@@ -610,38 +588,28 @@ namespace dtHLAGM
          }
       }
 
-      mRTIAmbassador = new RTI::RTIambassador();
+      mRTIAmbassador = RTIAmbassador::Create(rtiImplementationName);
 
       try
       {
-         std::string fedFile = dtUtil::FindFileInPathList(fedFilename).c_str();
-         mRTIAmbassador->createFederationExecution(executionName.c_str(), fedFile.c_str());
-         //some other rti's want the data in more of this format.
-         //mRTIAmbassador->createFederationExecution(osgDB::getStrippedName(fedFile).c_str(), ".fed");
+         // TODO read connection specific info from somewhere.
+         mRTIAmbassador->ConnectToRTI(*this, "");
+         for (unsigned i = 0; i < fedFilenames.size(); ++i)
+         {
+            fedFilenames[i] = dtUtil::FindFileInPathList(fedFilenames[i]);
+         }
+         mRTIAmbassador->CreateFederationExecution(executionName, fedFilenames);
+
+         mRTIAmbassador->JoinFederationExecution(federateName, executionName);
       }
-      catch(RTI::FederationExecutionAlreadyExists&)
+      catch(const RTIException& ex)
       {
-         //That's fine.  This is normal.
+         //TODO
+         mRTIAmbassador = NULL;
       }
 
       mEntityIdentifierCounter = 1;
       mEventIdentifierCounter = 1;
-
-      try
-      {
-         mRTIAmbassador->joinFederationExecution(federateName.c_str(),
-                                                 executionName.c_str(), this);
-      }
-      catch(const RTI::Exception& ex)
-      {
-         /// clean up the ambassador because we're busted now.
-         delete mRTIAmbassador;
-         mRTIAmbassador = NULL;
-
-         std::ostringstream ss;
-         ::operator<<(ss, ex);
-         throw dtUtil::Exception(ss.str(), __FILE__, __LINE__);
-      }
 
       mExecutionName = executionName;
 
@@ -689,52 +657,17 @@ namespace dtHLAGM
 
          try
          {
-            mRTIAmbassador->resignFederationExecution(RTI::DELETE_OBJECTS_AND_RELEASE_ATTRIBUTES);
+            mRTIAmbassador->ResignFederationExecution(mExecutionName);
          }
-         catch(RTI::RTIinternalError& ex)
+         catch(RTIException& ex)
          {
-            std::ostringstream ss;
-            //workaround for a strange namespace issue
-            ::operator<<(ss, ex);
             mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
-                                 "Could not resign from the federation execution: ", ss.str().c_str());
+                                 "Could not resign or destroy the federation execution: ", ex.ToString().c_str());
          }
 
-         try
-         {
-            mRTIAmbassador->destroyFederationExecution(mExecutionName.c_str());
-         }
-         catch(RTI::FederatesCurrentlyJoined& ex)
-         {
-            std::ostringstream ss;
-            //workaround for a strange namespace issue
-            ::operator<<(ss, ex);
-            mLogger->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__, __LINE__,
-                                 "Could not destroy the federation execution because other federates are still connected: ",
-                                 ss.str().c_str());
-         }
-         catch(RTI::FederationExecutionDoesNotExist& ex)
-         {
-            std::ostringstream ss;
-            //workaround for a strange namespace issue
-            ::operator<<(ss, ex);
-            mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
-                                 "Could not destroy the federation execution because it does not exist: ", ss.str().c_str());
-         }
-         catch(RTI::Exception& ex)
-         {
-            std::ostringstream ss;
-            //workaround for a strange namespace issue
-            ::operator<<(ss, ex);
-            mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
-                                 "Could not destroy federation execution because of an internal error: ",
-                                 ss.str().c_str());
-         }
 
          mExecutionName.clear();
       }
-
-      delete mRTIAmbassador;
 
       mRTIAmbassador = NULL;
    }
@@ -810,12 +743,8 @@ namespace dtHLAGM
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   void HLAComponent::provideAttributeValueUpdate(RTI::ObjectHandle theObject,
-                                                      const RTI::AttributeHandleSet& theAttributes)
-      throw (RTI::ObjectNotKnown,
-             RTI::AttributeNotKnown,
-             RTI::AttributeNotOwned,
-             RTI::FederateInternalError)
+   void HLAComponent::ProvideAttributeValueUpdate(RTIObjectInstanceHandle& theObject,
+            const RTIAttributeHandleSet& theAttributes)
    {
       const dtCore::UniqueId* actorId = mRuntimeMappings.GetId(theObject);
       if (actorId != NULL)
@@ -838,40 +767,9 @@ namespace dtHLAGM
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   void HLAComponent::reflectAttributeValues(RTI::ObjectHandle theObject,
-                                                 const RTI::AttributeHandleValuePairSet& theAttributes,
-                                                 const RTI::FedTime& theTime,
-                                                 const char *theTag,
-                                                 RTI::EventRetractionHandle theHandle)
-      throw (RTI::ObjectNotKnown,
-             RTI::AttributeNotKnown,
-             RTI::FederateOwnsAttributes,
-             RTI::InvalidFederationTime,
-             RTI::FederateInternalError)
+   void HLAComponent::RemoveObjectInstance(RTIObjectInstanceHandle& theObject,
+            const std::string& theTag)
    {
-      reflectAttributeValues(theObject, theAttributes, theTag);
-   }
-
-   /////////////////////////////////////////////////////////////////////////////////
-   void HLAComponent::removeObjectInstance(RTI::ObjectHandle theObject,
-                                               const RTI::FedTime& theTime,
-                                               const char *theTag,
-                                               RTI::EventRetractionHandle theHandle)
-      throw (RTI::ObjectNotKnown,
-             RTI::InvalidFederationTime,
-             RTI::FederateInternalError)
-   {
-      removeObjectInstance(theObject, theTag);
-   }
-
-   /////////////////////////////////////////////////////////////////////////////////
-   void HLAComponent::removeObjectInstance(RTI::ObjectHandle theObject,
-                                               const char *theTag)
-      throw (RTI::ObjectNotKnown,
-             RTI::FederateInternalError)
-   {
-      std::map<RTI::ObjectHandle, dtCore::UniqueId>::iterator hlaToActorIterator;
-
       const dtCore::UniqueId* actorId = mRuntimeMappings.GetId(theObject);
 
       if (actorId != NULL)
@@ -1206,7 +1104,7 @@ namespace dtHLAGM
    /////////////////////////////////////////////////////////////////////////////////
    void HLAComponent::RegisterMessageMapping(const dtGame::MessageType &type,
                                                  const std::string& interactionTypeName,
-                                                 std::vector<ParameterToParameterList> &oneToOneMessageVector)
+                                                 std::vector<ParameterToParameterList>& oneToOneMessageVector)
    {
       if (!mExecutionName.empty())
       {
@@ -1223,7 +1121,7 @@ namespace dtHLAGM
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   void HLAComponent::UnregisterMessageMapping(const dtGame::MessageType &type)
+   void HLAComponent::UnregisterMessageMapping(const dtGame::MessageType& type)
    {
       if (!mExecutionName.empty())
       {
@@ -1249,7 +1147,7 @@ namespace dtHLAGM
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   dtCore::RefPtr<InteractionToMessage> HLAComponent::InternalUnregisterMessageMapping(const dtGame::MessageType &type)
+   dtCore::RefPtr<InteractionToMessage> HLAComponent::InternalUnregisterMessageMapping(const dtGame::MessageType& type)
    {
       std::map<const dtGame::MessageType*, dtCore::RefPtr<InteractionToMessage> >::iterator messageToInteractionIterator;
       dtCore::RefPtr<InteractionToMessage> thisInteractionToMessage;
@@ -1404,13 +1302,9 @@ namespace dtHLAGM
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   void HLAComponent::reflectAttributeValues(RTI::ObjectHandle theObject,
-                                             const RTI::AttributeHandleValuePairSet& theAttributes,
-                                             const char *theTag)
-      throw (RTI::ObjectNotKnown,
-             RTI::AttributeNotKnown,
-             RTI::FederateOwnsAttributes,
-             RTI::FederateInternalError)
+   void HLAComponent::ReflectAttributeValues(RTIObjectInstanceHandle& theObject,
+            const RTIAttributeHandleValueMap& theAttributes,
+            const std::string& theTag)
    {
       try
       {
@@ -1498,8 +1392,7 @@ namespace dtHLAGM
             if( ! attributeString.empty() )
             {
                // Get ready to capture an attribute buffer and its length.
-               unsigned long length = 0;
-               const char* buf = NULL;
+               std::string buf;
 
                // Handle special cases...
                if( curAttrToProp->IsSpecial() )
@@ -1516,14 +1409,13 @@ namespace dtHLAGM
                   if( attributeString == ATTR_NAME_MAPPING_NAME )
                   {
                      const std::string& mappingName = bestObjectToActor->GetMappingName();
-                     length = mappingName.size() + 1;
-                     buf = mappingName.c_str();
+                     buf = mappingName;
                   }
                   // Is this the Entity Type?
                   // GetEntityType will not be NULL if Entity Types are being used.
                   else if( attributeString == ATTR_NAME_ENTITY_TYPE )
                   {
-                     buf = GetAttributeBufferAndLength( theAttributes, *curAttrToProp, length );
+                     buf = GetAttributeBufferAndLength( theAttributes, *curAttrToProp);
                   }
                   else
                   {
@@ -1542,17 +1434,17 @@ namespace dtHLAGM
                }
                else
                {
-                  buf = GetAttributeBufferAndLength( theAttributes, *curAttrToProp, length );
+                  buf = GetAttributeBufferAndLength( theAttributes, *curAttrToProp);
 
-                  matched = buf != NULL;
+                  matched = !buf.empty();
                }
 
                // If an attribute was found to match, its buffer and length will
                // have been obtained and can be used to create the message parameters.
-               if( buf != NULL )
+               if( matched && !buf.empty() )
                {
                   bool success = CreateMessageParameters(
-                     buf, length, *curAttrToProp, *msg, true );
+                     buf, *curAttrToProp, *msg, true );
 
                   if( ! success )
                   {
@@ -1589,39 +1481,40 @@ namespace dtHLAGM
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   const char* HLAComponent::GetAttributeBufferAndLength( const RTI::AttributeHandleValuePairSet& attributeSet,
-      AttributeToPropertyList& curAttrToProp, unsigned long& outBufferLength )
+   std::string HLAComponent::GetAttributeBufferAndLength( const RTIAttributeHandleValueMap& attributeSet,
+      AttributeToPropertyList& curAttrToProp )
    {
       if( ! curAttrToProp.GetParameterDefinitions().empty() )
       {
-         for( unsigned long i=0; i < attributeSet.size(); ++i )
+         RTIAttributeHandleValueMap::const_iterator i, iend;
+         i = attributeSet.begin();
+         iend = attributeSet.end();
+         for(; i != iend; ++i )
          {
-            RTI::AttributeHandle handle = attributeSet.getHandle(i);
+            RTIAttributeHandle* handle = i->first;
 
-            if( handle == curAttrToProp.GetAttributeHandle() )
+            if( handle != NULL && curAttrToProp.GetAttributeHandle() != NULL &&
+                     *handle == *curAttrToProp.GetAttributeHandle() )
             {
-               // Found the matching attribute.
-               // Get the length and return the associated attribute buffer.
-               return attributeSet.getValuePointer(i, outBufferLength);
+               return i->second.mData;
             }
          }
       }
 
       // The target attribute was not found.
-      outBufferLength = 0;
-      return NULL;
+      return std::string();
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   ObjectToActor* HLAComponent::GetBestObjectToActor(RTI::ObjectHandle theObject,
-      const RTI::AttributeHandleValuePairSet& theAttributes, bool& hadEntityTypeProperty)
+   ObjectToActor* HLAComponent::GetBestObjectToActor(RTIObjectInstanceHandle& theObject,
+      const RTIAttributeHandleValueMap& theAttributes, bool& hadEntityTypeProperty)
    {
       int bestRank = -1;
       ObjectToActor* bestObjectToActor = NULL;
 
-      RTI::ObjectClassHandle classHandle = mRTIAmbassador->getObjectClass(theObject);
+      dtCore::RefPtr<RTIObjectClassHandle> classHandle = mRTIAmbassador->GetObjectClassForInstance(theObject);
 
-      std::string classHandleString = mRTIAmbassador->getObjectClassName(classHandle);
+      std::string classHandleString = mRTIAmbassador->GetObjectClassName(*classHandle);
 
       static const std::string OBJECT_ROOT("ObjectRoot.");
       if (classHandleString.length() > OBJECT_ROOT.length() &&
@@ -1633,19 +1526,21 @@ namespace dtHLAGM
       hadEntityTypeProperty = false;
       EntityType currentEntityType;
 
-      for (unsigned int i=0; i < theAttributes.size(); ++i)
+      RTIAttributeHandleValueMap::const_iterator i, iend;
+      i = theAttributes.begin();
+      iend = theAttributes.end();
+      for (;i != iend; ++i)
       {
-         RTI::AttributeHandle handle = theAttributes.getHandle(i);
+         RTIAttributeHandle* handle = i->first;
 
-		   std::string attribName = std::string(mRTIAmbassador->getAttributeName(handle, classHandle));
+         std::string attribName = std::string(mRTIAmbassador->GetAttributeName(*handle, *classHandle));
 
          if (IsEntityTypeAttribute(attribName))
          {
-            unsigned long length;
-            char* buf = theAttributes.getValuePointer(i, length);
+            std::string buf = i->second.mData;
 
             hadEntityTypeProperty = true;
-            currentEntityType.Decode(buf);
+            currentEntityType.Decode(buf.c_str());
 
             std::pair<ObjectToActorMapIter, ObjectToActorMapIter> iterPair;
             iterPair = mObjectToActorMap.equal_range(classHandleString);
@@ -1735,9 +1630,9 @@ namespace dtHLAGM
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   bool HLAComponent::DoGetBestObjectToActor( dtCore::RefPtr<ObjectToActor> &bestObjectToActor,
-                                             RTI::ObjectHandle theObject,
-                                             const RTI::AttributeHandleValuePairSet& theAttributes,
+   bool HLAComponent::DoGetBestObjectToActor( dtCore::RefPtr<ObjectToActor>& bestObjectToActor,
+                                             RTIObjectInstanceHandle& theObject,
+                                             const RTIAttributeHandleValueMap& theAttributes,
                                              const dtCore::UniqueId* currentActorId )
    {
       bool hadEntityTypeProperty;
@@ -1749,8 +1644,9 @@ namespace dtHLAGM
          bool result = mRuntimeMappings.Put(theObject, *bestObjectToActor);
          if (result == false)
          {
+            std::string className = mRTIAmbassador->GetObjectClassNameForInstance(theObject);
             mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
-               "Unable to map in object (RTI handle %i). ObjectToActor struct may already be mapped or corrupt.", theObject);
+               "Unable to map in object with class \"%s\". ObjectToActor struct may already be mapped or corrupt.", className.c_str());
          }
       }
       else
@@ -1786,26 +1682,28 @@ namespace dtHLAGM
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   void HLAComponent::AddActorIDToMap( const RTI::AttributeHandleValuePairSet &theAttributes, dtCore::RefPtr<ObjectToActor> bestObjectToActor, const dtCore::UniqueId* currentActorId )
+   void HLAComponent::AddActorIDToMap( const RTIAttributeHandleValueMap& theAttributes, dtCore::RefPtr<ObjectToActor> bestObjectToActor, const dtCore::UniqueId* currentActorId )
    {
-      for (unsigned i=0; i < theAttributes.size(); ++i)
+      RTIAttributeHandleValueMap::const_iterator i, iend;
+      i = theAttributes.begin();
+      iend = theAttributes.end();
+      for (; i != iend; ++i)
       {
-         RTI::AttributeHandle handle = theAttributes.getHandle(i);
+         RTIAttributeHandle* handle = i->first;
          if (handle == bestObjectToActor->GetEntityIdAttributeHandle())
          {
             EntityIdentifier ei;
 
-            unsigned long length;
-            char* buffer = theAttributes.getValuePointer(i, length);
-            if (length < (unsigned long)(ei.EncodedLength()))
+            std::string buffer = i->second.mData;
+            if (buffer.length() < size_t(ei.EncodedLength()))
             {
                mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
                   "Expected Entity id attribute to have length %u, but it has length %u.  Id will be ignored",
-                  ei.EncodedLength(), length);
+                  ei.EncodedLength(), buffer.length());
             }
             else
             {
-               ei.Decode(buffer);
+               ei.Decode(buffer.c_str());
                mRuntimeMappings.Put(ei, *currentActorId);
                if(mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
                {
@@ -1820,18 +1718,15 @@ namespace dtHLAGM
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   void HLAComponent::discoverObjectInstance(RTI::ObjectHandle theObject,
-                                                 RTI::ObjectClassHandle theObjectClassHandle,
-                                                 const char* theObjectName)
-      throw (RTI::CouldNotDiscover,
-             RTI::ObjectClassNotKnown,
-             RTI::FederateInternalError)
+   void HLAComponent::DiscoverObjectInstance(RTIObjectInstanceHandle& theObject,
+            RTIObjectClassHandle& theObjectClassHandle,
+            const std::string& theObjectName)
    {
       dtCore::UniqueId newId;
       mRuntimeMappings.Put(theObject, newId);
 
       // Set an RTI ID mapping if the RTI ID is valid
-      if( theObjectName != NULL )
+      if (!theObjectName.empty())
       {
          std::string rtiId = theObjectName;
          if( !rtiId.empty() )
@@ -1884,24 +1779,14 @@ namespace dtHLAGM
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   void HLAComponent::receiveInteraction(RTI::InteractionClassHandle theInteraction,
-                                         const RTI::ParameterHandleValuePairSet& theParameters,
-                                         const char *theTag)
-      throw (RTI::InteractionClassNotKnown,
-             RTI::InteractionParameterNotKnown,
-             RTI::FederateInternalError)
+   void HLAComponent::ReceiveInteraction(RTIInteractionClassHandle& interactionClassHandle,
+            const RTIParameterHandleValueMap& theParameters,
+            const std::string& theTag)
    {
       try
       {
          // Compare RTI InteractionClassHandle to InteractionToMessageMap Class Handle
-         std::string classHandleString = mRTIAmbassador->getInteractionClassName(theInteraction);
-
-         static const std::string INTERACTION_ROOT("InteractionRoot.");
-         if (classHandleString.size() > INTERACTION_ROOT.size() &&
-                  classHandleString.substr(0, INTERACTION_ROOT.size()) == INTERACTION_ROOT)
-         {
-            classHandleString = classHandleString.substr(INTERACTION_ROOT.size());
-         }
+         std::string classHandleString = mRTIAmbassador->GetInteractionClassName(interactionClassHandle);
 
          std::map<std::string, dtCore::RefPtr<InteractionToMessage> >::iterator interactionToMessageIterator;
          interactionToMessageIterator = mInteractionToMessageMap.find(classHandleString);
@@ -1949,12 +1834,9 @@ namespace dtHLAGM
                }
 
                const std::string& mappingName = thisInteractionToMessage->GetMappingName();
-               const char* buf = mappingName.c_str();
-               unsigned long length = mappingName.size() + 1;
 
                CreateMessageParameters(
-                  buf,               // Interaction Parameter Name
-                  length,            // Interaction Parameter Name Length
+                  mappingName,       // Interaction Parameter Name
                   *curParamMapping,  // Interaction Param to Message Param Mapping Object
                   *message,          // Game Message to have parameters added
                   false,             // Do NOT add parameters that are not found
@@ -1964,18 +1846,19 @@ namespace dtHLAGM
             // Handle the parameters as normal.
             else
             {
-               for (unsigned int i = 0; i < theParameters.size(); ++i)
+               RTIParameterHandleValueMap::const_iterator i, iend;
+               i = theParameters.begin();
+               iend = theParameters.end();
+               for (; i != iend; ++i)
                {
-                  RTI::ParameterHandle handle = theParameters.getHandle(i);
-                  if (handle == curParamMapping->GetParameterHandle() &&
+                  RTIParameterHandle* handle = i->first;
+                  if (*handle == *curParamMapping->GetParameterHandle() &&
                         ! curParamMapping->GetParameterDefinitions().empty())
                   {
-                     unsigned long length;
-                     char* buf = theParameters.getValuePointer(i, length);
+                     std::string buf = i->second.mData;
 
                      CreateMessageParameters(
                         buf,               // Interaction Parameter Name
-                        length,            // Interaction Parameter Name Length
                         *curParamMapping,  // Interaction Param to Message Param Mapping Object
                         *message,          // Game Message to have parameters added
                         false,             // Do NOT add parameters that are not found
@@ -1989,7 +1872,7 @@ namespace dtHLAGM
          message->SetSource(*mMachineInfo);
          GetGameManager()->SendMessage(*message);
       }
-      catch (const RTI::Exception&)
+      catch (const RTIException&)
       {
          mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__, "RTI Error receiving interaction");
       }
@@ -2002,8 +1885,7 @@ namespace dtHLAGM
 
    /////////////////////////////////////////////////////////////////////////////////
     bool HLAComponent::CreateMessageParametersArray(
-      const char* paramNameBuffer,
-      unsigned long bufferLength,
+      const std::string& paramNameBuffer,
       const OneToManyMapping& paramToParamMapping,
       dtGame::Message& message,
       bool addMissingParams,
@@ -2052,9 +1934,9 @@ namespace dtHLAGM
           }
           else
           {
-             unsigned long remainder = bufferLength;
+             unsigned long remainder = paramNameBuffer.length();
              unsigned long perLength = paramToParamMapping.GetHLAType().GetEncodedLength();
-             const char* bufferPtr = paramNameBuffer;
+             const char* bufferPtr = paramNameBuffer.c_str();
 
              std::vector<dtCore::RefPtr<dtGame::MessageParameter> > messageParams;
 
@@ -2087,8 +1969,7 @@ namespace dtHLAGM
    }
    /////////////////////////////////////////////////////////////////////////////////
    bool HLAComponent::CreateMessageParameters(
-      const char* paramNameBuffer,
-      unsigned long bufferLength,
+      const std::string& paramNameBuffer,
       const OneToManyMapping& paramToParamMapping,
       dtGame::Message& message,
       bool addMissingParams,
@@ -2102,7 +1983,7 @@ namespace dtHLAGM
       if (paramToParamMapping.GetIsArray())
       {
          // Do the array and return.
-         success = CreateMessageParametersArray(paramNameBuffer, bufferLength,
+         success = CreateMessageParametersArray(paramNameBuffer,
                paramToParamMapping, message, addMissingParams, classHandleString);
          return success;
       }
@@ -2196,7 +2077,7 @@ namespace dtHLAGM
          messageParameter = NULL;
       }
 
-      MapToMessageParameters( paramNameBuffer, bufferLength,
+      MapToMessageParameters( paramNameBuffer.c_str(), paramNameBuffer.length(),
          messageParams, paramToParamMapping );
 
       if (aboutParameter.valid())
@@ -2217,32 +2098,24 @@ namespace dtHLAGM
    {
       // Delete HLA Object, and all Mappings referencing the Actor or the Object.
       const dtCore::UniqueId& actorId = message.GetAboutActorId();
-      const RTI::ObjectHandle* thisObjectHandle = mRuntimeMappings.GetHandle(actorId);
+      dtCore::RefPtr<RTIObjectInstanceHandle> thisObjectHandle = mRuntimeMappings.GetHandle(actorId);
 
-      if (thisObjectHandle != NULL)
+      if (thisObjectHandle.valid())
       {
-         // Capture the handle value prior to removing the object mappings.
-         // Removing the mappings will cause the handle pointer to no
-         // longer point to a valid value; the pointer is returned
-         // from the Actor-to-HLA mapping and will no longer be a
-         // valid pointer when the remove operation is performed.
-         RTI::ObjectHandle handleValue = *thisObjectHandle;
-
          // Removal of mappings should happen first just in case an exception
          // is thrown by the RTI ambassador.
          mRuntimeMappings.Remove(actorId);
 
          try
          {
-            mRTIAmbassador->deleteObjectInstance(handleValue, "");
+            mRTIAmbassador->DeleteObjectInstance(*thisObjectHandle);
          }
          // This should not happen unless RTI is broken some how.
-         catch( RTI::Exception& e )
+         catch( const RTIException& ex )
          {
             std::ostringstream ss;
-            ss << "RTI::Exception (" << e._name << "):\n\t"
-               << "Attempted delete on actor: \"" << actorId
-               << "\"\n\tHandle: " << handleValue;
+            ss << "RTI::Exception (" << ex.ToString() << "):\n\t"
+               << "Attempted delete on actor: \"" << actorId;
             mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__, ss.str().c_str());
          }
       }
@@ -2291,80 +2164,52 @@ namespace dtHLAGM
          return;
       }
 
-      //Create AttributeHandleValuePairSet to hold the attributes.
-      RTI::AttributeHandleValuePairSet* theAttributes =
-            RTI::AttributeSetFactory::create(thisObjectToActor->GetOneToManyMappingVector().size() + 2);
+      RTIAttributeHandleValueMap theAttributes;
+
+//      //Create AttributeHandleValuePairSet to hold the attributes.
+//      RTI::AttributeHandleValuePairSet* theAttributes =
+//            RTI::AttributeSetFactory::create(thisObjectToActor->GetOneToManyMappingVector().size() + 2);
 
       //Get ClassHandle from ObjectToActor
-      RTI::ObjectClassHandle classHandle = thisObjectToActor->GetObjectClassHandle();
+      dtCore::RefPtr<RTIObjectClassHandle> classHandle = thisObjectToActor->GetObjectClassHandle();
 
-      const RTI::ObjectHandle* tmpObjectHandle = mRuntimeMappings.GetHandle(actorID);
+      dtCore::RefPtr<RTIObjectInstanceHandle> tmpObjectHandle = mRuntimeMappings.GetHandle(actorID);
 
-      bool newObject = tmpObjectHandle == NULL;
+      bool newObject = !tmpObjectHandle.valid();
 
-      PrepareUpdate(aum, *theAttributes, *thisObjectToActor, newObject);
+      PrepareUpdate(aum, theAttributes, *thisObjectToActor, newObject);
 
-      RTI::ObjectHandle objectHandle;
+      dtCore::RefPtr<RTIObjectInstanceHandle> objectHandle;
 
       if (newObject)
       {
+         const std::string* rtiID = mRuntimeMappings.GetRTIId(actorID);
+         if (rtiID == NULL)
+         {
+            rtiID = &actorName;
+         }
+
          try
          {
-            const std::string* rtiID = mRuntimeMappings.GetRTIId(actorID);
-            if (rtiID == NULL)
-            {
-               rtiID = &actorName;
-            }
-            //Pass ClassHandle to registerObjectInstance
-            objectHandle = mRTIAmbassador->registerObjectInstance(classHandle, rtiID->c_str());
+            // The actor that sent an update has not yet been registered with the RTI.
+            objectHandle = mRTIAmbassador->RegisterObjectInstance(*classHandle, *rtiID);
          }
-         catch (RTI::ObjectClassNotDefined&)
+         catch (const RTIException& ex)
          {
             mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
-                                 "Could not find Object Class Named \"%s\"",
-                                 thisObjectToActor->GetObjectClassName().c_str());
-            return;
-
-         }
-         catch (RTI::ObjectClassNotPublished&)
-         {
-            mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
-                                 "Object Class Named \"%s\" was not published.",
-                                 thisObjectToActor->GetObjectClassName().c_str());
-
-            return;
-         }
-         catch (RTI::RTIinternalError&)
-         {
-            mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
-                                 "RTI internal exception trying to sent and update for object class: %s",
-                                 thisObjectToActor->GetObjectClassName().c_str());
-            return;
-         }
-         catch (RTI::ObjectAlreadyRegistered&)
-         {
-            mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
-               "RTI Object Already Registered Exception: Object \"%s\" already registered with class handle %i. Tryied to send and update for object class: %s",
-               actorName.c_str(), classHandle,
-               thisObjectToActor->GetObjectClassName().c_str());
-            return;
-         }
-         catch (RTI::Exception&)
-         {
-            mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
-                                 "RTI Exception trying to sent and update for object class: %s",
+                                 "RTI Exception trying to register a new object instance: %s",
                                  thisObjectToActor->GetObjectClassName().c_str());
             return;
          }
 
-         mRuntimeMappings.Put(objectHandle, actorID);
+         mRuntimeMappings.Put(*objectHandle, actorID);
       }
       else
       {
-         objectHandle = *tmpObjectHandle;
+         objectHandle = tmpObjectHandle;
       }
 
-      if (theAttributes->size() > 0)
+      if (!theAttributes.empty())
       {
          if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
          {
@@ -2375,27 +2220,22 @@ namespace dtHLAGM
 
          try
          {
-            mRTIAmbassador->updateAttributeValues(objectHandle,
-               *theAttributes,
+            mRTIAmbassador->UpdateAttributeValues(*objectHandle,
+               theAttributes,
                "");
          }
-         catch (const RTI::Exception& ex)
+         catch (const RTIException& ex)
          {
-            std::ostringstream ss;
-            ::operator<<(ss, ex);
-            mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__, ss.str().c_str());
+            mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__, ex.ToString());
 
          }
       }
 
-      delete theAttributes;
-      theAttributes = NULL;
    }
 
    /////////////////////////////////////////////////////////////////////////////////
    void HLAComponent::UpdateRegion(DDMRegionData& regionData)
    {
-      static const char* const HYPERSPACE="HyperSpace";
 
       if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
       {
@@ -2407,68 +2247,91 @@ namespace dtHLAGM
             if (dv == NULL)
                continue;
 
-            ss << "Extent: \"" << dv->mName << "\" "
-               << " min " << dv->mMin << " max " << dv->mMax;
+            ss << " Extent: \"" << dv->mName << "\" "
+               << " min " << dv->mMin << " max " << dv->mMax << std::endl;
          }
          mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, ss.str());
       }
 
-      RTI::SpaceHandle spaceHandle = mRTIAmbassador->getRoutingSpaceHandle(HYPERSPACE);
 
-      RTI::Region* r = regionData.GetRegion();
+      dtCore::RefPtr<RTIRegion> r = regionData.GetRegion();
 
-      if (r != NULL && r->getNumberOfExtents() != regionData.GetNumberOfExtents())
+      if (r != NULL && mRTIAmbassador->GetNumDimensions(*r) != regionData.GetNumberOfExtents())
       {
-         mRTIAmbassador->deleteRegion(r);
+         mRTIAmbassador->DeleteRegion(*r);
          //just to be safe.
          regionData.SetRegion(NULL);
          r = NULL;
       }
 
-      if (r == NULL)
+
+
+      if (r == NULL && regionData.GetNumberOfExtents() > 0)
       {
-         r = mRTIAmbassador->createRegion(spaceHandle, regionData.GetNumberOfExtents());
+         RTIDimensionHandleSet dimHandleSet;
+         for (unsigned i = 0; i < regionData.GetNumberOfExtents(); ++i)
+         {
+            const DDMRegionData::DimensionValues* dimension = regionData.GetDimensionValue(i);
+            if (dimension == NULL)
+            {
+               mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
+                     "Unable to create region dimension %u because the region data object has a NULL value", i);
+               continue;
+            }
+
+            try
+            {
+               dtCore::RefPtr<RTIDimensionHandle> dimHandle = mRTIAmbassador->GetDimensionHandle(dimension->mName);
+               dimHandleSet.insert(dimHandle);
+            }
+            catch (const RTIException& ex)
+            {
+               throw RTIException("Error getting dimension handle \"" + dimension->mName + "\": " + ex.ToString(), __FILE__, __LINE__);
+            }
+         }
+
+         r = mRTIAmbassador->CreateRegion(dimHandleSet);
          regionData.SetRegion(r);
       }
 
-      for (unsigned i = 0; i < regionData.GetNumberOfExtents(); ++i)
+      if (r != NULL)
       {
-         const DDMRegionData::DimensionValues* dimension = regionData.GetDimensionValue(i);
-         if (dimension == NULL)
+         RTIDimensionVector regionDimensions;
+         for (unsigned i = 0; i < regionData.GetNumberOfExtents(); ++i)
          {
-            mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
-                  "Unable to create region dimension %u because the region data object has a NULL value", i);
-            continue;
-         }
+            const DDMRegionData::DimensionValues* dimension = regionData.GetDimensionValue(i);
+            if (dimension == NULL)
+            {
+               mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
+                     "Unable to create region dimension %u because the region data object has a NULL value", i);
+               continue;
+            }
 
-         try
-         {
-            RTI::DimensionHandle dimHandle = mRTIAmbassador->getDimensionHandle(dimension->mName.c_str(), spaceHandle);
+            try
+            {
+               RTIDimensionData dimData;
+               dimData.mDimHandle = mRTIAmbassador->GetDimensionHandle(dimension->mName);
 
-            r->setRangeUpperBound(i, dimHandle, dimension->mMax);
-            r->setRangeLowerBound(i, dimHandle, dimension->mMin);
+               dimData.mMin = dimension->mMin;
+               dimData.mMax = dimension->mMax;
+            }
+            catch (const RTIException& ex)
+            {
+               throw RTIException("Error getting dimension handle \"" + dimension->mName + "\": " + ex.ToString(), __FILE__, __LINE__);
+            }
          }
-         catch (const RTI::Exception& ex)
-         {
-            std::ostringstream ss;
-            //workaround for a strange namespace issue
-            ::operator<<(ss, ex);
-            throw dtUtil::Exception("Error getting dimension handle \"" + dimension->mName + "\": " + ss.str(), __FILE__, __LINE__);
-         }
+         mRTIAmbassador->SetRegionDimensions(*r, regionDimensions);
       }
 
       if (regionData.GetRegion() != NULL)
       {
          try
          {
-            mRTIAmbassador->notifyAboutRegionModification(*regionData.GetRegion());
+            mRTIAmbassador->CommitRegionChanges(*regionData.GetRegion());
          }
-         catch (const RTI::Exception& ex)
+         catch (const RTIException& ex)
          {
-            std::ostringstream ss;
-            //workaround for a strange namespace issue
-            ::operator<<(ss, ex);
-            throw dtUtil::Exception("Error updating region: " + ss.str(), __FILE__, __LINE__);
+            throw RTIException("Error updating region: " + ex.ToString(), __FILE__, __LINE__);
          }
       }
    }
@@ -2525,7 +2388,7 @@ namespace dtHLAGM
                DDMRegionData& data = *regionVector[j];
                if (calc.UpdateRegionData(data))
                {
-                  RTI::Region* r = data.GetRegion();
+                  RTIRegion* r = data.GetRegion();
                   UpdateRegion(data);
                   if (r != data.GetRegion())
                   {
@@ -2565,18 +2428,15 @@ namespace dtHLAGM
 
             mDDMSubscriptionRegions[i] = regionVector;
          }
-         catch (const RTI::Exception& ex)
+         catch (const RTIException& ex)
          {
-            std::ostringstream ss;
-            //workaround for a strange namespace issue
-            ::operator<<(ss, ex);
-            throw dtUtil::Exception("Error creating region: " + ss.str(), __FILE__, __LINE__);
+            throw dtUtil::Exception("Error creating region: " + ex.ToString(), __FILE__, __LINE__);
          }
       }
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   void HLAComponent::UnsubscribeRegion(const std::string& name, RTI::Region& region)
+   void HLAComponent::UnsubscribeRegion(const std::string& name, RTIRegion& region)
    {
       std::multimap<std::string, dtCore::RefPtr<ObjectToActor> >::iterator objectToActorIterator
         = mObjectToActorMap.begin();
@@ -2589,15 +2449,12 @@ namespace dtHLAGM
          {
             try
             {
-               mRTIAmbassador->unsubscribeObjectClassWithRegion(thisObjectToActor.GetObjectClassHandle(), region);
+               mRTIAmbassador->UnsubscribeObjectClass(*thisObjectToActor.GetObjectClassHandle(), &region);
             }
-            catch(const RTI::Exception& ex)
+            catch(const RTIException& ex)
             {
-               std::ostringstream ss;
-               //workaround for a strange namespace issue
-               ::operator<<(ss, ex);
-               throw dtUtil::Exception("Error unsubscribing to region for object class "
-                     + thisObjectToActor.GetObjectClassName() + ": " + ss.str(), __FILE__, __LINE__);
+               throw RTIException("Error unsubscribing to region for object class "
+                     + thisObjectToActor.GetObjectClassName() + ": " + ex.ToString(), __FILE__, __LINE__);
             }
          }
 
@@ -2615,15 +2472,12 @@ namespace dtHLAGM
          {
             try
             {
-               mRTIAmbassador->unsubscribeInteractionClassWithRegion(thisInteractionToMessage.GetInteractionClassHandle(), region);
+               mRTIAmbassador->UnsubscribeInteractionClass(*thisInteractionToMessage.GetInteractionClassHandle(), &region);
             }
-            catch(const RTI::Exception& ex)
+            catch(const RTIException& ex)
             {
-               std::ostringstream ss;
-               //workaround for a strange namespace issue
-               ::operator<<(ss, ex);
                throw dtUtil::Exception("Error unsubscribing to region for object class "
-                     + thisInteractionToMessage.GetInteractionName() + ": " + ss.str(), __FILE__, __LINE__);
+                     + thisInteractionToMessage.GetInteractionName() + ": " + ex.ToString(), __FILE__, __LINE__);
             }
          }
 
@@ -2647,16 +2501,13 @@ namespace dtHLAGM
                try
                {
                   UnsubscribeRegion(mDDMSubscriptionCalculators[i]->GetName(), *regionVector[j]->GetRegion());
-                  mRTIAmbassador->deleteRegion(regionVector[j]->GetRegion());
+                  mRTIAmbassador->DeleteRegion(*regionVector[j]->GetRegion());
                }
-               catch (const RTI::Exception& ex)
+               catch (const RTIException& ex)
                {
-                  std::ostringstream ss;
-                  //workaround for a strange namespace issue
-                  ::operator<<(ss, ex);
                   mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
                                        "Error deleting region, possible memory leak: %s",
-                                       ss.str().c_str());
+                                       ex.ToString().c_str());
                }
             }
          }
@@ -2665,7 +2516,7 @@ namespace dtHLAGM
    }
 
    void HLAComponent::PrepareSingleUpdateParameter(AttributeToPropertyList& curAttrToProp,
-         RTI::AttributeHandleValuePairSet& updateParams,
+         RTIAttributeHandleValueMap& updateParams,
          const dtGame::ActorUpdateMessage& message,
          bool newObject)
    {
@@ -2789,7 +2640,11 @@ namespace dtHLAGM
          {
             MapFromMessageParameters( buffer, bufferSize, messageParameters, curAttrToProp );
             if (bufferSize > 0) // A parameter may decide not to send anything without throwing an exception
-               updateParams.add( curAttrToProp.GetAttributeHandle(), buffer, bufferSize );
+            {
+               RTIContainerValueData data;
+               data.mData.append(buffer, bufferSize);
+               updateParams.insert( std::make_pair(curAttrToProp.GetAttributeHandle(), data) );
+            }
 
             ParameterTranslator::DeallocateBuffer(buffer);
          }
@@ -2805,7 +2660,7 @@ namespace dtHLAGM
    }
 
    void HLAComponent::PrepareArrayUpdateParameter(AttributeToPropertyList& curAttrToProp,
-                        RTI::AttributeHandleValuePairSet& updateParams,
+                        RTIAttributeHandleValueMap& updateParams,
                         const dtGame::ActorUpdateMessage& message,
                         bool newObject)
    {
@@ -2940,7 +2795,11 @@ namespace dtHLAGM
          }
 
          if (totalSize > 0) // A parameter may decide not to send anything without throwing an exception
-            updateParams.add( curAttrToProp.GetAttributeHandle(), buffer, totalSize );
+         {
+            RTIContainerValueData data;
+            data.mData.append(buffer, totalSize);
+            updateParams.insert( std::make_pair(curAttrToProp.GetAttributeHandle(), data) );
+         }
 
          ParameterTranslator::DeallocateBuffer(buffer);
       }
@@ -2948,7 +2807,7 @@ namespace dtHLAGM
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   void HLAComponent::PrepareUpdate(const dtGame::ActorUpdateMessage& message, RTI::AttributeHandleValuePairSet& updateParams,
+   void HLAComponent::PrepareUpdate(const dtGame::ActorUpdateMessage& message, RTIAttributeHandleValueMap& updateParams,
       const ObjectToActor& objectToActor, bool newObject)
    {
       const dtCore::UniqueId& actorID = message.GetAboutActorId();
@@ -2997,9 +2856,9 @@ namespace dtHLAGM
 
          thisEntityId.Encode(buffer);
 
-         updateParams.add(objectToActor.GetEntityIdAttributeHandle(),
-                            buffer,
-                            bufferSize);
+         RTIContainerValueData data;
+         data.mData.append(buffer, bufferSize);
+         updateParams.insert( std::make_pair(objectToActor.GetEntityIdAttributeHandle(), data) );
 
          ParameterTranslator::DeallocateBuffer(buffer);
       }
@@ -3019,9 +2878,9 @@ namespace dtHLAGM
 
          objectToActor.GetEntityType()->Encode(buffer);
 
-         updateParams.add(objectToActor.GetEntityTypeAttributeHandle(),
-                            buffer,
-                            bufferSize);
+         RTIContainerValueData data;
+         data.mData.append(buffer, bufferSize);
+         updateParams.insert( std::make_pair(objectToActor.GetEntityTypeAttributeHandle(), data) );
 
          if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
          {
@@ -3089,7 +2948,7 @@ namespace dtHLAGM
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   void HLAComponent::PrepareInteraction(const dtGame::Message& message, RTI::ParameterHandleValuePairSet& interactionParams,
+   void HLAComponent::PrepareInteraction(const dtGame::Message& message, RTIParameterHandleValueMap& interactionParams,
       const InteractionToMessage& interactionToMessage)
    {
       interactionParams.empty();
@@ -3212,7 +3071,11 @@ namespace dtHLAGM
                //is in the works.  This vector always only has one item in it for now.
                MapFromMessageParameters(buffer, bufferSize, messageParameters, *paramMappingItor);
                if(bufferSize > 0)
-                  interactionParams.add(paramMappingItor->GetParameterHandle(), buffer, bufferSize);
+               {
+                  RTIContainerValueData data;
+                  data.mData.append(buffer, bufferSize);
+                  interactionParams.insert( std::make_pair(paramMappingItor->GetParameterHandle(), data));
+               }
 
                ParameterTranslator::DeallocateBuffer(buffer);
             }
@@ -3244,12 +3107,11 @@ namespace dtHLAGM
       }
 
       //Create ParameterHandleValuePairSet to hold the interaction parameters.
-      RTI::ParameterHandleValuePairSet* interactionParams =
-            RTI::ParameterSetFactory::create(interactionToMessage->GetOneToManyMappingVector().size());
+      RTIParameterHandleValueMap interactionParams;
 
-      PrepareInteraction(message, *interactionParams, *interactionToMessage);
+      PrepareInteraction(message, interactionParams, *interactionToMessage);
 
-      if (interactionParams->size() > 0)
+      if (interactionParams.size() > 0)
       {
          if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
          {
@@ -3259,13 +3121,10 @@ namespace dtHLAGM
             mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, ss.str().c_str());
          }
 
-         mRTIAmbassador->sendInteraction(interactionToMessage->GetInteractionClassHandle(),
-                                         *interactionParams,
+         mRTIAmbassador->SendInteraction(*interactionToMessage->GetInteractionClassHandle(),
+                                         interactionParams,
                                          "");
       }
-
-      delete interactionParams;
-      interactionParams = NULL;
 
    }
 
@@ -3290,14 +3149,11 @@ namespace dtHLAGM
                DispatchInteraction(message);
             }
          }
-         catch(const RTI::Exception& ex)
+         catch(const RTIException& ex)
          {
-            std::ostringstream ss;
-            //workaround for a strange namespace issue
-            ::operator<<(ss, ex);
             mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
                                  "RTI Exception thrown during network message dispatch! [%s]",
-                                  ss.str().c_str());
+                                  ex.ToString().c_str());
 
          }
       }
@@ -3316,16 +3172,13 @@ namespace dtHLAGM
                {
                   UpdateDDMSubscriptions();
                }
-               mRTIAmbassador->tick();
+               mRTIAmbassador->Tick();
             }
-            catch(const RTI::Exception& ex)
+            catch(const RTIException& ex)
             {
-               std::ostringstream ss;
-               //workaround for a strange namespace issue
-               ::operator<<(ss, ex);
                mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
                                     "Exception thrown during rti tick! [%s]",
-                                     ss.str().c_str());
+                                     ex.ToString().c_str());
 
             }
          }
