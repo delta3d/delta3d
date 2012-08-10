@@ -22,15 +22,15 @@
 #ifndef RTIRegion_H_
 #define RTIRegion_H_
 
+#include <dtHLAGM/export.h>
 #include <osg/Referenced>
-
 
 namespace dtHLAGM
 {
    /*
     *  This wraps an HLA region to hide different RTI api specs
     */
-   class RTIRegion : public osg::Referenced
+   class DT_HLAGM_EXPORT RTIRegion : public osg::Referenced
    {
    public:
       RTIRegion();
