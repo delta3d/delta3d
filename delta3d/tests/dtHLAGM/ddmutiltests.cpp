@@ -38,6 +38,7 @@ class DDMUtilTests : public CPPUNIT_NS::TestFixture
    CPPUNIT_TEST_SUITE(DDMUtilTests);
    
       CPPUNIT_TEST(TestLinear);
+      CPPUNIT_TEST(TestGetSetMaxExtent);
       CPPUNIT_TEST(TestEnumerated);
       CPPUNIT_TEST(TestPartitioned);
 
@@ -50,24 +51,34 @@ class DDMUtilTests : public CPPUNIT_NS::TestFixture
       
       void tearDown()
       {
+         dtHLAGM::DDMUtil::SetMaxExtent(ULONG_MAX);
+         dtHLAGM::DDMUtil::SetMinExtent(0ul);
       }
       
+      void TestGetSetMaxExtent()
+      {
+         dtHLAGM::DDMUtil::SetMaxExtent(5);
+         CPPUNIT_ASSERT_EQUAL(5ul, dtHLAGM::DDMUtil::GetMaxExtent());
+         dtHLAGM::DDMUtil::SetMinExtent(3);
+         CPPUNIT_ASSERT_EQUAL(3ul, dtHLAGM::DDMUtil::GetMinExtent());
+      }
+
       void TestLinear()
       {
          unsigned long result = dtHLAGM::DDMUtil::MapLinear(15.0, 0.0, 15.0);
-         CPPUNIT_ASSERT_EQUAL(dtHLAGM::DDMUtil::HLAGM_MAX_EXTENT, result);
+         CPPUNIT_ASSERT_EQUAL(dtHLAGM::DDMUtil::GetMaxExtent(), result);
          
          result = dtHLAGM::DDMUtil::MapLinear(0.0, 0.0, 15.0);
-         CPPUNIT_ASSERT_EQUAL(dtHLAGM::DDMUtil::HLAGM_MIN_EXTENT, result);
+         CPPUNIT_ASSERT_EQUAL(dtHLAGM::DDMUtil::GetMinExtent(), result);
 
          result = dtHLAGM::DDMUtil::MapLinear(5.0, 0.0, 15.0);
-         CPPUNIT_ASSERT_EQUAL(dtHLAGM::DDMUtil::HLAGM_MAX_EXTENT/3, result);
+         CPPUNIT_ASSERT_EQUAL(dtHLAGM::DDMUtil::GetMaxExtent()/3, result);
          
          result = dtHLAGM::DDMUtil::MapLinear(7.5, 0.0, 15.0);
-         CPPUNIT_ASSERT_EQUAL(dtHLAGM::DDMUtil::HLAGM_MAX_EXTENT/2, result);
+         CPPUNIT_ASSERT_EQUAL(dtHLAGM::DDMUtil::GetMaxExtent()/2, result);
 
          result = dtHLAGM::DDMUtil::MapLinear(10.0, 0.0, 15.0);
-         CPPUNIT_ASSERT_EQUAL(2 * (dtHLAGM::DDMUtil::HLAGM_MAX_EXTENT/3), result);
+         CPPUNIT_ASSERT_EQUAL(2 * (dtHLAGM::DDMUtil::GetMaxExtent()/3), result);
       }
       
       void TestEnumerated()
@@ -79,7 +90,7 @@ class DDMUtilTests : public CPPUNIT_NS::TestFixture
          CPPUNIT_ASSERT_EQUAL(134217727UL, result);
          
          result = dtHLAGM::DDMUtil::MapEnumerated(8, 0, 16);
-         CPPUNIT_ASSERT_EQUAL(dtHLAGM::DDMUtil::HLAGM_MAX_EXTENT/2, result);         
+         CPPUNIT_ASSERT_EQUAL(dtHLAGM::DDMUtil::GetMaxExtent()/2, result);
       }
 
       void TestPartitioned()
@@ -99,7 +110,7 @@ class DDMUtilTests : public CPPUNIT_NS::TestFixture
          partitionValues.push_back(17.0);
 
          result = dtHLAGM::DDMUtil::MapPartitioned(8.0, partitionValues);
-         CPPUNIT_ASSERT_EQUAL(dtHLAGM::DDMUtil::HLAGM_MAX_EXTENT/2, result);
+         CPPUNIT_ASSERT_EQUAL(dtHLAGM::DDMUtil::GetMaxExtent()/2, result);
       }
    
    private:

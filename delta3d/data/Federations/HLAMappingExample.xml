@@ -97,6 +97,56 @@
                 <gameRequired>true</gameRequired>
                 <default></default>
             </attrToProp>            
+            <!--attrToProp>
+                <hlaName>Spatial</hlaName>
+                <hlaDataType>SPATIAL_TYPE</hlaDataType>
+                <parameter>
+                    <gameName>Dead Reckoning Algorithm</gameName>
+                    <gameDataType>ENUMERATION</gameDataType>
+                    <default>Static</default>
+                    <enumerationMapping>
+                       <value id="1">Static</value>
+                       <value id="2">Velocity Only</value>
+                       <value id="3">Velocity and Acceleration</value>
+                       <value id="4">Velocity and Acceleration</value>
+                       <value id="5">Velocity and Acceleration</value>
+                       <value id="6">Velocity and Acceleration</value>
+                       <value id="7">Velocity and Acceleration</value>
+                       <value id="8">Velocity and Acceleration</value>
+                       <value id="10">Velocity Only</value>
+                    </enumerationMapping>
+                </parameter>
+                <parameter>
+                    <gameName>Frozen</gameName>
+                    <gameDataType>BOOLEAN</gameDataType>
+                    <default></default>
+                </parameter>
+                <parameter>
+                    <gameName>Translation</gameName>
+                    <gameDataType>VEC3</gameDataType>
+                    <default></default>
+                </parameter>
+                <parameter>
+                    <gameName>Rotation</gameName>
+                    <gameDataType>VEC3</gameDataType>
+                    <default></default>
+                </parameter>
+                <parameter>
+                   <gameName>Velocity Vector</gameName>
+                   <gameDataType>VEC3</gameDataType>
+                   <default></default>
+                </parameter>
+                <parameter>
+                   <gameName>Acceleration Vector</gameName>
+                   <gameDataType>VEC3</gameDataType>
+                   <default></default>
+                </parameter>
+                <parameter> 
+                    <gameName>Angular Velocity Vector</gameName>
+                    <gameDataType>VEC3</gameDataType>
+                    <default></default>
+                </parameter>
+            </attrToProp--> 
         </object>
 
         <object extends="BaseEntity" name="Test Tank">

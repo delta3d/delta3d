@@ -26,6 +26,7 @@
 #include <dtCore/uniqueid.h>
 #include <dtHLAGM/distypes.h>
 #include <dtHLAGM/objecttoactor.h>
+#include <dtHLAGM/rtihandle.h>
 
 namespace dtHLAGM
 {
@@ -52,7 +53,7 @@ namespace dtHLAGM
           * Bidirectionally maps the given object handle to the unique id.
           * @return false if either object is already involved in another like mapping.
           */
-         bool Put(const RTI::ObjectHandle handle, const dtCore::UniqueId& actorId);
+         bool Put(RTIObjectInstanceHandle& handle, const dtCore::UniqueId& actorId);
 
          /**
           * Bidirectionally maps the given entity id to the unique id.
@@ -64,10 +65,10 @@ namespace dtHLAGM
           * Maps the given object handle to the object to actor.
           * @return false if an object to actor is already mapped to the handle passed in.
           */
-         bool Put(const RTI::ObjectHandle handle, ObjectToActor& ota);
+         bool Put(RTIObjectInstanceHandle& handle, ObjectToActor& ota);
 
          ///@return the unique id that was mapped to given object handle or NULL if none has been mapped
-         const dtCore::UniqueId* GetId(const RTI::ObjectHandle handle) const;
+         const dtCore::UniqueId* GetId(RTIObjectInstanceHandle& handle) const;
       
          ///@return the unique id that was mapped to given entity id or NULL if none has been mapped
          const dtCore::UniqueId* GetId(const EntityIdentifier& entityId) const;
@@ -79,22 +80,22 @@ namespace dtHLAGM
          const std::string* GetRTIId(const dtCore::UniqueId& actorId) const;
 
          ///@return the object handle that was mapped to given unique id or NULL if none has been mapped
-         const RTI::ObjectHandle* GetHandle(const dtCore::UniqueId& actorId) const;
+         RTIObjectInstanceHandle* GetHandle(const dtCore::UniqueId& actorId) const;
 
          ///@return the entity id that was mapped to given unique id or NULL if none has been mapped
          const EntityIdentifier* GetEntityId(const dtCore::UniqueId& actorId) const;
 
          ///@return the object to actor that was mapped to given object handle or NULL if none has been mapped
-         const ObjectToActor* GetObjectToActor(const RTI::ObjectHandle handle) const;
+         const ObjectToActor* GetObjectToActor(RTIObjectInstanceHandle& handle) const;
 
          ///@return the object to actor that was mapped to given object handle or NULL if none has been mapped
-         ObjectToActor* GetObjectToActor(const RTI::ObjectHandle handle);
+         ObjectToActor* GetObjectToActor(RTIObjectInstanceHandle& handle);
 
          /**
           * Removes all mappings for the given handle including a unique id, an object to actor, 
           * and an entity id id mapped to the unique id.
           */ 
-         void Remove(const RTI::ObjectHandle handle);
+         void Remove(RTIObjectInstanceHandle& handle);
 
          /**
           * Removes the mapping to a unique id for the given entity id. 
@@ -121,11 +122,11 @@ namespace dtHLAGM
       private:
          std::map<dtCore::UniqueId, std::string> mActortoRTIIDMap;
          std::map<std::string, dtCore::UniqueId> mRTIIDtoActorMap;
-         std::map<RTI::ObjectHandle, dtCore::UniqueId> mHLAtoActorMap;
-         std::map<dtCore::UniqueId, RTI::ObjectHandle> mActorToHLAMap;
+         std::map<dtCore::RefPtr<RTIObjectInstanceHandle>, dtCore::UniqueId> mHLAtoActorMap;
+         std::map<dtCore::UniqueId, dtCore::RefPtr<RTIObjectInstanceHandle> > mActorToHLAMap;
          std::map<EntityIdentifier, dtCore::UniqueId> mEntityIdentifierToUniqueIdMap;
          std::map<dtCore::UniqueId, EntityIdentifier> mUniqueIdToEntityIdentifierMap;
-         std::map<RTI::ObjectHandle, dtCore::RefPtr<ObjectToActor> > mObjectHandleToClassMap;
+         std::map<dtCore::RefPtr<RTIObjectInstanceHandle>, dtCore::RefPtr<ObjectToActor> > mObjectHandleToClassMap;
    };
 }
 #endif
