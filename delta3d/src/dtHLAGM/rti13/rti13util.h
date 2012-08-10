@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
- * 
+ *
  * David Guthrie
  */
 
@@ -28,8 +28,6 @@
 #define RTI_USES_STD_FSTREAM
 #endif
 #include <RTI.hh>
-
-
 
 // This is a macro instead of a function so that the exception line numbers will work out.
 #define RethrowRTIException(ex) \

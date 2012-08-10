@@ -23,17 +23,14 @@ find_path(RTI1516e_INCLUDE_DIR
        /Applications/prti1516e
 )
 
-SET(LIBSUBDIR )
+SET(LIBSUBDIR ".")
 
 if (MSVC)
 else () 
     if (GCC_VERSION)
       set(LIBSUBDIR gcc${GCC_MAJOR}${GCC_MINOR})
-    endif()
-endif()
-
-
-message( ${LIBSUBDIR})
+    endif(GCC_VERSION)
+endif(MSVC)
 
 find_library(RTI1516e_LIBRARY
    NAMES

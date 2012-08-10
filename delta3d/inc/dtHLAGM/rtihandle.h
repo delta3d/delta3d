@@ -15,20 +15,21 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
- * 
+ *
  * David Guthrie
  */
 
 #ifndef RTIHANDLE_H_
 #define RTIHANDLE_H_
 
+#include <dtHLAGM/export.h>
 #include <osg/Referenced>
 #include <dtCore/refptr.h>
 #include <set>
 
 namespace dtHLAGM
 {
-   class RTIHandle : public osg::Referenced
+   class DT_HLAGM_EXPORT RTIHandle : public osg::Referenced
    {
    public:
       virtual bool operator==(RTIHandle&) = 0;

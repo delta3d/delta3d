@@ -15,13 +15,14 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
- * 
+ *
  * David Guthrie
  */
 
 #ifndef RTIAMBASSADOR_H_
 #define RTIAMBASSADOR_H_
 
+#include <dtHLAGM/export.h>
 #include <osg/Referenced>
 #include <vector>
 
@@ -37,7 +38,7 @@ namespace dtHLAGM
    /*
     * Wraps the actual RTI ambassador features to hide differences in the various API specs.
     */
-   class RTIAmbassador: public osg::Referenced
+   class DT_HLAGM_EXPORT RTIAmbassador: public osg::Referenced
    {
    public:
 

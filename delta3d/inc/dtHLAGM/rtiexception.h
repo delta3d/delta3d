@@ -15,13 +15,14 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
- * 
+ *
  * David Guthrie
  */
 
 #ifndef RTIEXCEPTION_H_
 #define RTIEXCEPTION_H_
 
+#include <dtHLAGM/export.h>
 #include <dtUtil/exception.h>
 
 namespace dtHLAGM
@@ -30,7 +31,7 @@ namespace dtHLAGM
    /**
     * Delta3D Exception to wrap the internal rti exceptions.
     */
-   class RTIException: public dtUtil::Exception
+   class DT_HLAGM_EXPORT RTIException: public dtUtil::Exception
    {
    public:
       RTIException(const std::string& message, const std::string& filename, unsigned int linenum);

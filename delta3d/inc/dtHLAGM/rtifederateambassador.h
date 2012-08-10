@@ -15,13 +15,14 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
- * 
+ *
  * David Guthrie
  */
 
 #ifndef FEDERATE_AMBASSADOR_H_
 #define FEDERATE_AMBASSADOR_H_
 
+#include <dtHLAGM/export.h>
 #include <osg/Referenced>
 
 #include <dtHLAGM/rtihandle.h>
@@ -30,7 +31,7 @@
 namespace dtHLAGM
 {
 
-   class RTIFederateAmbassador
+   class DT_HLAGM_EXPORT RTIFederateAmbassador
    {
    public:
       RTIFederateAmbassador() {}
