@@ -633,7 +633,9 @@ void CharacterFileHandler::AnimChannelCharacters(const XMLCh* const chars)
          std::string is_action = dtUtil::XMLStringConverter(chars).ToString();
          pChannel.mIsAction = dtUtil::ToType<bool>(is_action);
       }
-      else if (topEl != CFE::CHANNEL_ELEMENT && topEl != CFE::CHILDREN_ELEMENT)
+      else if (topEl != CFE::CHANNEL_ELEMENT && topEl != CFE::CHILDREN_ELEMENT &&
+               topEl != CFE::EVENT_ON_START_ELEMENT && topEl != CFE::EVENT_ON_TIME_ELEMENT &&
+               topEl != CFE::EVENT_ON_END_ELEMENT)
       {
          mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__,  __LINE__,
                               "Found characters for unknown element \"%s\" \"%s\"",
@@ -665,7 +667,9 @@ void CharacterFileHandler::AnimSequenceCharacters(const XMLCh* const chars)
 
    if (!AnimatableCharacters(chars, pSequence))
    {
-      if (topEl != CFE::SEQUENCE_ELEMENT && topEl != CFE::CHILDREN_ELEMENT)
+      if (topEl != CFE::SEQUENCE_ELEMENT && topEl != CFE::CHILDREN_ELEMENT &&
+          topEl != CFE::EVENT_ON_START_ELEMENT && topEl != CFE::EVENT_ON_TIME_ELEMENT &&
+          topEl != CFE::EVENT_ON_END_ELEMENT)
       {
          mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__,  __LINE__,
                               "Found characters for unknown element \"%s\" \"%s\"",
