@@ -33,6 +33,9 @@ namespace dtDirector
    class DT_DIRECTOR_EXPORT DirectorTypeFactory
    {
    public:
+      static const std::string DIRECTOR_EXTENSION_TEXT;
+      static const std::string DIRECTOR_EXTENSION_BINARY;
+
       static DirectorTypeFactory* GetInstance();
       static void Destroy();
 

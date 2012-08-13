@@ -190,11 +190,13 @@ namespace dtDirector
        */
       dtCore::RefPtr<Node> CreateNode(const NodeType& type, DirectorGraph* graph);
 
-   protected:
+
+   private:
 
       std::string mName;
       std::string mDescription;
 
+   protected:
       /**
        * Factory object which stores the node types and knows how to
        * create them.

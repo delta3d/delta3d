@@ -33,6 +33,9 @@
 
 namespace dtDirector
 {
+   const std::string DirectorTypeFactory::DIRECTOR_EXTENSION_TEXT("dtdir");
+   const std::string DirectorTypeFactory::DIRECTOR_EXTENSION_BINARY("dtdirb");
+
    DirectorTypeFactory* DirectorTypeFactory::mInstance(NULL);
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -99,11 +102,11 @@ namespace dtDirector
       std::string ext = osgDB::getLowerCaseFileExtension(scriptFile);
       if (ext.empty())
       {
-         ext = "dtdir";
+         ext = DIRECTOR_EXTENSION_TEXT;
       }
 
       bool binaryFormat = false;
-      if (ext.compare("dtdirb") == 0)
+      if (ext.compare(DIRECTOR_EXTENSION_BINARY) == 0)
       {
          binaryFormat = true;
       }
