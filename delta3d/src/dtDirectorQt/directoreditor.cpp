@@ -66,6 +66,9 @@
 
 #include <osgDB/FileNameUtils>
 #include <phonon/mediaobject.h>//for sounds
+
+#include "ui_directoreditor.h"
+
 namespace dtDirector
 {
    std::map<std::string, CustomEditorTool*> DirectorEditor::mCustomTools;
@@ -74,6 +77,7 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////////
    DirectorEditor::DirectorEditor(QWidget* parent)
       : QMainWindow(parent, Qt::Window)
+      , mUI(*new Ui::DirectorEditor)
       , mDocBrowser(NULL)
       , mPluginManager(NULL)
       , mUndoManager(NULL)
@@ -140,6 +144,7 @@ namespace dtDirector
       }
 
       delete mUndoManager;
+      delete &mUI;
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -244,6 +249,33 @@ namespace dtDirector
          setWindowTitle("No Director Script Loaded");
       }
    }
+
+
+   ////////////////////////////////////////////////////////////////////////////////
+   GraphTabs*  DirectorEditor::GetGraphTabs()
+   {
+      return mUI.graphTab;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   PropertyEditor*  DirectorEditor::GetPropertyEditor()
+   {
+      return mUI.propertyEditor;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   QAction*  DirectorEditor::GetParentAction()   { return mUI.action_Step_Out_Of_Graph; }
+   QAction*  DirectorEditor::GetUndoAction()     { return mUI.action_Undo; }
+   QAction*  DirectorEditor::GetRedoAction()     { return mUI.action_Redo; }
+   QAction*  DirectorEditor::GetCutAction()      { return mUI.action_Cut; }
+   QAction*  DirectorEditor::GetCopyAction()     { return mUI.action_Copy; }
+   QAction*  DirectorEditor::GetPasteAction()    { return mUI.action_Paste; }
+   QAction*  DirectorEditor::GetDeleteAction()   { return mUI.action_Delete; }
+   QAction*  DirectorEditor::GetSnapGridAction() { return mUI.action_Smart_Grid_snap; }
+   QAction*  DirectorEditor::GetShowLinkAction() { return mUI.action_Show_Links; }
+   QAction*  DirectorEditor::GetHideLinkAction() { return mUI.action_Hide_Links; }
+   QAction*  DirectorEditor::GetRefreshAction()  { return mUI.action_Refresh; }
+
 
    ////////////////////////////////////////////////////////////////////////////////
    bool DirectorEditor::IsDebugging() const

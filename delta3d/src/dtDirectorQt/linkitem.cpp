@@ -29,6 +29,7 @@
 #include <dtDirectorQt/undolinkevent.h>
 #include <dtDirectorQt/undopropertyevent.h>
 #include <dtDirectorQt/editorview.h>
+#include <dtDirectorQt/graphtabs.h>
 
 #include <dtDirector/outputlink.h>
 #include <dtDirector/nodemanager.h>
@@ -699,7 +700,7 @@ namespace dtDirector
                   SetHighlightConnector(mAlwaysHighlight || enable, connector, readOnly);
                }
             }
-            for (;i < (int)data.linkConnectors.size(); i++)
+            for (;i < (unsigned int)data.linkConnectors.size(); i++)
             {
                QGraphicsPathItem* connector = (i < data.linkConnectors.size()) ? data.linkConnectors[i] : NULL;
                if (connector)
@@ -726,7 +727,7 @@ namespace dtDirector
                   SetHighlightConnector(mAlwaysHighlight || enable, connector, readOnly);
                }
             }
-            for (;i < (int)data.linkConnectors.size(); i++)
+            for (;i < (unsigned int)data.linkConnectors.size(); i++)
             {
                QGraphicsPathItem* connector = (i < data.linkConnectors.size()) ? data.linkConnectors[i] : NULL;
                if (connector)
