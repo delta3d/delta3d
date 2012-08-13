@@ -48,6 +48,7 @@
 #include <dtDirectorNodes/createfpsmotionmodelaction.h>
 #include <dtDirectorNodes/createvectoraction.h>
 #include <dtDirectorNodes/delayaction.h>
+#include <dtDirectorNodes/deleteactoraction.h>
 #include <dtDirectorNodes/foraction.h>
 #include <dtDirectorNodes/foreachaction.h>
 #include <dtDirectorNodes/foreachactoraction.h>
@@ -192,6 +193,7 @@ namespace dtDirector
    RefPtr<NodeType> NodeLibraryRegistry::NORMALIZE_VECTOR_ACTION_NODE_TYPE(      new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Normalize Vector",          "General",     "Operations",  "Normalizes a vector.", NULL, Colors::BLUE));
    RefPtr<NodeType> NodeLibraryRegistry::CALCULATE_DISTANCE_ACTION_NODE_TYPE(    new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Calculate Distance",        "General",     "Operations",  "Calculates the distance between two vectors.", NULL, Colors::BLUE));
    RefPtr<NodeType> NodeLibraryRegistry::SPAWN_ACTOR_ACTION_NODE_TYPE(           new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Spawn Actor",               "Scene",       "Operations",  "Spawn a new actor.", NULL, Colors::BLUE));
+   RefPtr<NodeType> NodeLibraryRegistry::DELETE_ACTOR_ACTION_NODE_TYPE(          new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Delete Actor",              "Scene",       "Operations",  "Delete an existing actor.", NULL, Colors::BLUE));
    RefPtr<NodeType> NodeLibraryRegistry::SPAWN_PREFAB_ACTION_NODE_TYPE(          new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Spawn Prefab",              "Scene",       "Operations",  "Spawn a prefab actor.", NULL, Colors::BLUE));
    RefPtr<NodeType> NodeLibraryRegistry::CREATE_FPS_MOTION_MODEL_ACTION_NODE_TYPE(new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE,"Create FPS Motion Model",   "Scene",       "Operations",  "Creates an FPS motion model.", NULL, Colors::BLUE));
    RefPtr<NodeType> NodeLibraryRegistry::ATTACH_CAMERA_ACTION_NODE_TYPE(         new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Attach Camera",             "Scene",       "Operations",  "Attach the applications camera to an actor.", NULL, Colors::BLUE));
@@ -330,6 +332,7 @@ namespace dtDirector
       mNodeFactory->RegisterType<NormalizeVectorAction>(NORMALIZE_VECTOR_ACTION_NODE_TYPE.get());
       mNodeFactory->RegisterType<CalculateDistanceAction>(CALCULATE_DISTANCE_ACTION_NODE_TYPE.get());
       mNodeFactory->RegisterType<SpawnActorAction>(SPAWN_ACTOR_ACTION_NODE_TYPE.get());
+      mNodeFactory->RegisterType<DeleteActorAction>(DELETE_ACTOR_ACTION_NODE_TYPE.get());
       mNodeFactory->RegisterType<SpawnPrefabAction>(SPAWN_PREFAB_ACTION_NODE_TYPE.get());
       mNodeFactory->RegisterType<CreateFPSMotionModelAction>(CREATE_FPS_MOTION_MODEL_ACTION_NODE_TYPE.get());
       mNodeFactory->RegisterType<AttachCameraAction>(ATTACH_CAMERA_ACTION_NODE_TYPE.get());

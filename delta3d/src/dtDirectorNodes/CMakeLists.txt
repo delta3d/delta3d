@@ -30,6 +30,7 @@ SET(LIB_PUBLIC_HEADERS
     ${HEADER_PATH}/createfpsmotionmodelaction.h
     ${HEADER_PATH}/createvectoraction.h
     ${HEADER_PATH}/delayaction.h
+    ${HEADER_PATH}/deleteactoraction.h
     ${HEADER_PATH}/dividemutator.h
     ${HEADER_PATH}/doublevalue.h
     ${HEADER_PATH}/externalvaluenode.h
@@ -131,6 +132,7 @@ SET(LIB_SOURCES
     ${SOURCE_PATH}/createfpsmotionmodelaction.cpp
     ${SOURCE_PATH}/createvectoraction.cpp
     ${SOURCE_PATH}/delayaction.cpp
+    ${SOURCE_PATH}/deleteactoraction.cpp
     ${SOURCE_PATH}/dividemutator.cpp
     ${SOURCE_PATH}/doublevalue.cpp
     ${SOURCE_PATH}/externalvaluenode.cpp
