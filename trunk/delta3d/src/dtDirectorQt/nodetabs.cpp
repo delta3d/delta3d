@@ -29,6 +29,7 @@
 #include <dtDirectorQt/directoreditor.h>
 
 #include <QtGui/QGraphicsView>
+#include <QtGui/QLayout>
 
 
 namespace dtDirector

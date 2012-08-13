@@ -27,7 +27,8 @@
 #include <dtDirector/node.h>
 #include <dtDirector/director.h>
 
-#include "ui_directoreditor.h"
+#include <QtGui/QMainWindow>
+
 #include <phonon/phonon>
 
 class QAction;
@@ -35,6 +36,11 @@ class QMenuBar;
 class QToolBar;
 
 /// @cond DOXYGEN_SHOULD_SKIP_THIS
+namespace Ui
+{
+   class DirectorEditor;
+}
+
 namespace Phonon
 {
    class MediaObject;
@@ -142,12 +148,12 @@ namespace dtDirector
       /**
        * Accessor for the graph tab widget.
        */
-      GraphTabs* GetGraphTabs() { return mUI.graphTab; }
+      GraphTabs* GetGraphTabs();
 
       /**
        * Accessor for the Property Editor.
        */
-      PropertyEditor* GetPropertyEditor() {return mUI.propertyEditor;}
+      PropertyEditor* GetPropertyEditor();
 
       /**
        * Accessor for the Plugin Manager.
@@ -162,17 +168,17 @@ namespace dtDirector
       /**
        * Retrieves actions.
        */
-      QAction* GetParentAction()   { return mUI.action_Step_Out_Of_Graph; }
-      QAction* GetUndoAction()     { return mUI.action_Undo; }
-      QAction* GetRedoAction()     { return mUI.action_Redo; }
-      QAction* GetCutAction()      { return mUI.action_Cut; }
-      QAction* GetCopyAction()     { return mUI.action_Copy; }
-      QAction* GetPasteAction()    { return mUI.action_Paste; }
-      QAction* GetDeleteAction()   { return mUI.action_Delete; }
-      QAction* GetSnapGridAction() { return mUI.action_Smart_Grid_snap; }
-      QAction* GetShowLinkAction() { return mUI.action_Show_Links; }
-      QAction* GetHideLinkAction() { return mUI.action_Hide_Links; }
-      QAction* GetRefreshAction()  { return mUI.action_Refresh; }
+      QAction* GetParentAction();
+      QAction* GetUndoAction();
+      QAction* GetRedoAction();
+      QAction* GetCutAction();
+      QAction* GetCopyAction();
+      QAction* GetPasteAction();
+      QAction* GetDeleteAction();
+      QAction* GetSnapGridAction();
+      QAction* GetShowLinkAction();
+      QAction* GetHideLinkAction();
+      QAction* GetRefreshAction();
 
       /**
        * Refreshes the recent file listing.
@@ -648,7 +654,7 @@ namespace dtDirector
 
       dtCore::RefPtr<Director> mNodeSceneDirector;
 
-      Ui::DirectorEditor       mUI;
+      Ui::DirectorEditor&       mUI;
 
       dtQt::DocBrowser*        mDocBrowser;
       PluginManager*           mPluginManager;
