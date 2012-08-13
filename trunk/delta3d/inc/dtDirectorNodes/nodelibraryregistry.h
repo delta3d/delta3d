@@ -79,6 +79,7 @@ namespace dtDirector
       static dtCore::RefPtr<dtDirector::NodeType> NORMALIZE_VECTOR_ACTION_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> CALCULATE_DISTANCE_ACTION_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> SPAWN_ACTOR_ACTION_NODE_TYPE;
+      static dtCore::RefPtr<dtDirector::NodeType> DELETE_ACTOR_ACTION_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> SPAWN_PREFAB_ACTION_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> CREATE_FPS_MOTION_MODEL_ACTION_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> ATTACH_CAMERA_ACTION_NODE_TYPE;
