@@ -198,7 +198,7 @@ namespace dtCore
           */
          static void StaticShutdown();
       private:
-         //these are private because on one should cerate an instance of this class.
+         //these are private because no one should create an instance of this class.
          MapXMLConstants();
          ~MapXMLConstants();
          MapXMLConstants(const MapXMLConstants& handler);
