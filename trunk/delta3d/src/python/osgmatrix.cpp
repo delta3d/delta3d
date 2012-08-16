@@ -9,7 +9,7 @@
 // This software is provided "as is" without express or implied warranty,
 // and with no claim as to its suitability for any purpose.
 //
-// Updated for osg-0.9.6 to use doubles instead of floats, 
+// Updated for osg-0.9.6 to use doubles instead of floats,
 // Added a couple missing methods, and is matrix.set working?
 // Hardcoded for Matrixd, all args are doubles
 // updated for OSG CVS july 6th 2004 by brett hartshorn
@@ -188,7 +188,7 @@ void initOSGMatrix()
 	.def(init<const Matrixd&>())
 	.def(init<const Matrixf&>())
 	//.def(init<double, double, double, double, double, double, double, double, double, double, double, double, double, double, double>())
-	
+
 	.def("compare", &Matrix::compare)
 	.def("valid", &Matrix::valid)
 	.def("isNaN", &Matrix::isNaN)
@@ -226,18 +226,33 @@ void initOSGMatrix()
 		&Matrix::makeRotate)
 
 	.def("makeOrtho", &Matrix::makeOrtho)
-	.def("getOrtho", &Matrix::getOrtho)
+	.def("getOrtho",
+      (bool (Matrix::*)(double&, double&, double&, double&, double&, double&) const)
+      &Matrix::getOrtho)
+   .def("getOrtho",
+      (bool (Matrix::*)(float&, float&, float&, float&, float&, float&) const)
+      &Matrix::getOrtho)
 	.def("makeOrtho2D", &Matrix::makeOrtho2D)
 
 	.def("makeFrustum", &Matrix::makeFrustum)
-	.def("getFrustum", &Matrix::getFrustum)
+   .def("getFrustum",
+      (bool (Matrix::*)(double&, double&, double&, double&, double&, double&) const)
+      &Matrix::getFrustum)
+   .def("getFrustum",
+      (bool (Matrix::*)(float&, float&, float&, float&, float&, float&) const)
+      &Matrix::getFrustum)
 	.def("makePerspective", &Matrix::makePerspective)
-	.def("getPerspective", &Matrix::getPerspective)
-	
+   .def("getPerspective",
+      (bool (Matrix::*)(double&, double&, double&, double&) const)
+      &Matrix::getPerspective)
+   .def("getPerspective",
+      (bool (Matrix::*)(float&, float&, float&, float&) const)
+      &Matrix::getPerspective)
+
 	// hack? forcing to float Vec3 instead of Vec3d
 	.def("makeLookAt", (void (Matrix::*)(const osg::Vec3&, const osg::Vec3&, const osg::Vec3&))
 		&Matrix::makeLookAt)
-	
+
 	.def("getLookAt", (void (Matrix::*) (osg::Vec3d&,osg::Vec3d&,osg::Vec3d&, double) const)
 		&Matrix::getLookAt)
 
