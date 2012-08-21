@@ -9,5 +9,4 @@ ADD_EXECUTABLE(${APP_NAME} ${EXAMPLE_PATH}/testShaders.cpp
 TARGET_LINK_LIBRARIES(${APP_NAME} ${DTCORE_LIBRARIES}
                                   ${DTABC_LIBRARIES} 
                                   ${DTUTIL_LIBRARIES}
-                                  ${DTDAL_LIBRARIES} 
                       )

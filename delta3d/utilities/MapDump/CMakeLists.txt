@@ -14,7 +14,6 @@ ADD_EXECUTABLE(${APP_NAME}
 TARGET_LINK_LIBRARIES(${APP_NAME}
                       dtUtil
                       dtCore
-                      dtDAL
                      )
 
 
