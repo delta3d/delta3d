@@ -64,8 +64,8 @@ namespace dtDirector
       , mIsImported(false)
       , mMasterNodeFreeIndex(-1)
       , mMasterGraphFreeIndex(-1)
-      , mActive(true)
       , mEnabled(true)
+      , mActive(true)
    {
       mScriptOwner = "";
 

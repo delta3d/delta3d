@@ -19,7 +19,7 @@
  * Author: Eric R. Heine
  */
 #include <prefix/dtdirectornodesprefix.h>
-#include <dtDirectorNodes/Deleteactoraction.h>
+#include <dtDirectorNodes/deleteactoraction.h>
 
 #include <dtCore/actoridactorproperty.h>
 #include <dtDirector/director.h>
