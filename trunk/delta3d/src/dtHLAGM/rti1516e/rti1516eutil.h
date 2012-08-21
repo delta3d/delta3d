@@ -24,6 +24,7 @@
 
 #include <string>
 #include <dtHLAGM/rticontainers.h>
+#include <dtHLAGM/rtiexception.h>
 
 #include <RTI/RTI1516.h>
 
@@ -52,6 +53,11 @@ namespace dtHLAGM
    template<typename rtiHandleType, typename dtHandleType, typename dtCreateType>
    dtCore::RefPtr<dtHandleType> WrapHandle(rtiHandleType handle, std::map<rtiHandleType, dtCore::RefPtr<dtHandleType> > cache)
    {
+      if (!handle.isValid())
+      {
+         throw RTIException("Invalid handle returned by RTI.", __FILE__, __LINE__);
+      }
+
       dtCore::RefPtr<dtHandleType> wrappedHandle = cache[handle];
       if (!wrappedHandle.valid())
       {

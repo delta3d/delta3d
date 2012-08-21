@@ -40,7 +40,7 @@ namespace dtHLAGM
       virtual void Tick();
 
       virtual void ConnectToRTI(RTIFederateAmbassador& federateCallback, const std::string& rtiSpecificConnectData);
-      virtual bool CreateFederationExecution(const std::string& executionName, std::vector<std::string> fedFiles);
+      virtual bool CreateFederationExecution(const std::string& executionName, const std::vector<std::string>& fedFiles);
       virtual void JoinFederationExecution(const std::string& federateName, const std::string& executionName);
       virtual void ResignFederationExecution(const std::string& executionName = "");
 
@@ -61,6 +61,7 @@ namespace dtHLAGM
       virtual void PublishInteractionClass(RTIInteractionClassHandle& handle);
       virtual void UnsubscribeInteractionClass(RTIInteractionClassHandle& handle, RTIRegion* region = NULL);
 
+      virtual void ReserveObjectInstanceName(const std::string& nameToReserve);
       virtual dtCore::RefPtr<RTIObjectInstanceHandle> RegisterObjectInstance(RTIObjectClassHandle& clsHandle, const std::string& stringName);
       virtual void DeleteObjectInstance(RTIObjectInstanceHandle& instanceHandleToDelete);
 

@@ -25,7 +25,6 @@ LINK_WITH_VARIABLES(${LIB_NAME}
 
 TARGET_LINK_LIBRARIES(${LIB_NAME}
                       ${DTUTIL_LIBRARY}
-                      ${DTDAL_LIBRARY}
                       ${DTGAME_LIBRARY}
                       ${DTHLAGM_LIBRARY}
                       ${RTI1516e_LIBRARIES}

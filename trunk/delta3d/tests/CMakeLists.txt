@@ -4,7 +4,7 @@ SET(PROG_NAME     allTests)
 INCLUDE_DIRECTORIES( ${CMAKE_SOURCE_DIR}/examples
                      ${CMAKE_SOURCE_DIR}/utilities) 
 
-SET(DIRS dtABC dtAI dtActors dtCore dtDAL dtDirector dtGame dtLMS dtUtil)
+SET(DIRS dtABC dtAI dtActors dtCore dtDirector dtGame dtLMS dtUtil)
 
 IF(DTDIS_AVAILABLE)
   SET(DIRS ${DIRS} dtDIS)

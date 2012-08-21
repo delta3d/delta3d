@@ -322,6 +322,33 @@ void HLAConfigTests::TestBrokenHLAMappingOverloadedRemoteMapping()
             "It should fail to load the mapping file because two remote mappings share the same dis id and object class.");
 }
 
+void CreateSpatialMapping(dtHLAGM::AttributeToPropertyList& attrToProp)
+{
+   dtHLAGM::OneToManyMapping::ParameterDefinition pd0("Dead Reckoning Algorithm", dtCore::DataType::ENUMERATION, "Static", false);
+   pd0.AddEnumerationMapping("1", "Static");
+   pd0.AddEnumerationMapping("2", "Velocity Only");
+   pd0.AddEnumerationMapping("3", "Velocity and Acceleration");
+   pd0.AddEnumerationMapping("4", "Velocity and Acceleration");
+   pd0.AddEnumerationMapping("5", "Velocity and Acceleration");
+   pd0.AddEnumerationMapping("6", "Velocity and Acceleration");
+   pd0.AddEnumerationMapping("7", "Velocity and Acceleration");
+   pd0.AddEnumerationMapping("8", "Velocity and Acceleration");
+   pd0.AddEnumerationMapping("10", "Velocity Only");
+   attrToProp.GetParameterDefinitions().push_back(pd0);
+   dtHLAGM::OneToManyMapping::ParameterDefinition pd1("Frozen", dtCore::DataType::BOOLEAN, "", false);
+   attrToProp.GetParameterDefinitions().push_back(pd1);
+   dtHLAGM::OneToManyMapping::ParameterDefinition pd2("Last Known Translation", dtCore::DataType::VEC3, "", false);
+   attrToProp.GetParameterDefinitions().push_back(pd2);
+   dtHLAGM::OneToManyMapping::ParameterDefinition pd3("Last Known Rotation", dtCore::DataType::VEC3, "", false);
+   attrToProp.GetParameterDefinitions().push_back(pd3);
+   dtHLAGM::OneToManyMapping::ParameterDefinition pd4("Velocity Vector", dtCore::DataType::VEC3, "", false);
+   attrToProp.GetParameterDefinitions().push_back(pd4);
+   dtHLAGM::OneToManyMapping::ParameterDefinition pd5("Acceleration Vector", dtCore::DataType::VEC3, "", false);
+   attrToProp.GetParameterDefinitions().push_back(pd5);
+   dtHLAGM::OneToManyMapping::ParameterDefinition pd6("Angular Velocity Vector", dtCore::DataType::VEC3, "", false);
+   attrToProp.GetParameterDefinitions().push_back(pd6);
+}
+
 void HLAConfigTests::TestConfigure()
 {
    try
@@ -393,17 +420,10 @@ void HLAConfigTests::TestConfigure()
          }
 
          {
-            dtHLAGM::AttributeToPropertyList attrToProp("Orientation", dtHLAGM::RPRAttributeType::EULER_ANGLES_TYPE, true);
+            dtHLAGM::AttributeToPropertyList attrToProp("Spatial", dtHLAGM::RPRAttributeType::SPATIAL_TYPE, false);
 
-            dtHLAGM::OneToManyMapping::ParameterDefinition pd(dtCore::TransformableActorProxy::PROPERTY_ROTATION, dtCore::DataType::VEC3, "", true);
-            attrToProp.GetParameterDefinitions().push_back(pd);
-            props.push_back(attrToProp);
-         }
+            CreateSpatialMapping(attrToProp);
 
-         {
-            dtHLAGM::AttributeToPropertyList attrToProp("WorldLocation", dtHLAGM::RPRAttributeType::WORLD_COORDINATE_TYPE, true);
-            dtHLAGM::OneToManyMapping::ParameterDefinition pd(dtCore::TransformableActorProxy::PROPERTY_TRANSLATION, dtCore::DataType::VEC3, "", true);
-            attrToProp.GetParameterDefinitions().push_back(pd);
             props.push_back(attrToProp);
          }
 
@@ -485,23 +505,16 @@ void HLAConfigTests::TestConfigure()
          }
 
          {
-            dtHLAGM::AttributeToPropertyList attrToProp("Orientation", dtHLAGM::RPRAttributeType::EULER_ANGLES_TYPE, true);
+            dtHLAGM::AttributeToPropertyList attrToProp("Spatial", dtHLAGM::RPRAttributeType::SPATIAL_TYPE, false);
 
-            dtHLAGM::OneToManyMapping::ParameterDefinition pd(dtCore::TransformableActorProxy::PROPERTY_ROTATION, dtCore::DataType::VEC3, "", true);
-            attrToProp.GetParameterDefinitions().push_back(pd);
+            CreateSpatialMapping(attrToProp);
+
             props.push_back(attrToProp);
          }
 
          {
-            dtHLAGM::AttributeToPropertyList attrToProp("WorldLocation", dtHLAGM::RPRAttributeType::WORLD_COORDINATE_TYPE, true);
-            dtHLAGM::OneToManyMapping::ParameterDefinition pd(dtCore::TransformableActorProxy::PROPERTY_TRANSLATION, dtCore::DataType::VEC3, "", true);
-            attrToProp.GetParameterDefinitions().push_back(pd);
-            props.push_back(attrToProp);
-         }
-
-         {
-            dtHLAGM::AttributeToPropertyList attrToProp("VelocityVector", dtHLAGM::RPRAttributeType::VELOCITY_VECTOR_TYPE, false);
-            dtHLAGM::OneToManyMapping::ParameterDefinition pd("Velocity Vector", dtCore::DataType::VEC3D, "", false);
+            dtHLAGM::AttributeToPropertyList attrToProp("PowerPlantOn", dtHLAGM::RPRAttributeType::UNSIGNED_CHAR_TYPE, false);
+            dtHLAGM::OneToManyMapping::ParameterDefinition pd("EngineOn", dtCore::DataType::BOOLEAN, "", false);
             attrToProp.GetParameterDefinitions().push_back(pd);
             props.push_back(attrToProp);
          }
@@ -522,35 +535,12 @@ void HLAConfigTests::TestConfigure()
       }
 
       {
-         dtHLAGM::EntityType type(1, 2, 225, 0, 0, 0, 0);
          std::vector<dtHLAGM::AttributeToPropertyList> props;
          {
-            dtHLAGM::AttributeToPropertyList attrToProp("VelocityVector", dtHLAGM::RPRAttributeType::VELOCITY_VECTOR_TYPE, false);
-            dtHLAGM::OneToManyMapping::ParameterDefinition pd("Velocity Vector", dtCore::DataType::VEC3D, "", false);
-            attrToProp.GetParameterDefinitions().push_back(pd);
-            props.push_back(attrToProp);
-         }
+            dtHLAGM::AttributeToPropertyList attrToProp("Spatial", dtHLAGM::RPRAttributeType::SPATIAL_TYPE, false);
 
-         {
-            dtHLAGM::AttributeToPropertyList attrToProp("AccelerationVector", dtHLAGM::RPRAttributeType::VELOCITY_VECTOR_TYPE, false);
-            dtHLAGM::OneToManyMapping::ParameterDefinition pd0("accelX", dtCore::DataType::FLOAT, "", false);
-            attrToProp.GetParameterDefinitions().push_back(pd0);
-            dtHLAGM::OneToManyMapping::ParameterDefinition pd1("accelY", dtCore::DataType::FLOAT, "", false);
-            attrToProp.GetParameterDefinitions().push_back(pd1);
-            dtHLAGM::OneToManyMapping::ParameterDefinition pd2("accelZ", dtCore::DataType::FLOAT, "", false);
-            attrToProp.GetParameterDefinitions().push_back(pd2);
-            props.push_back(attrToProp);
-         }
+            CreateSpatialMapping(attrToProp);
 
-         CheckObjectToActorMapping("TestHLA", "Jet", "BaseEntity.PhysicalEntity.Platform.Aircraft", "", "", "", &type, true, false, props);
-      }
-      {
-         std::vector<dtHLAGM::AttributeToPropertyList> props;
-         {
-            dtHLAGM::AttributeToPropertyList attrToProp("Orientation", dtHLAGM::RPRAttributeType::EULER_ANGLES_TYPE, true);
-
-            dtHLAGM::OneToManyMapping::ParameterDefinition pd(dtCore::TransformableActorProxy::PROPERTY_ROTATION, dtCore::DataType::VEC3, "", true);
-            attrToProp.GetParameterDefinitions().push_back(pd);
             props.push_back(attrToProp);
          }
          // Test a NULL dis id.
@@ -561,9 +551,8 @@ void HLAConfigTests::TestConfigure()
       {
          std::vector<dtHLAGM::AttributeToPropertyList> props;
          {
-            dtHLAGM::AttributeToPropertyList attrToProp("Orientation", dtHLAGM::RPRAttributeType::EULER_ANGLES_TYPE, true);
-
-            dtHLAGM::OneToManyMapping::ParameterDefinition pd(dtCore::TransformableActorProxy::PROPERTY_ROTATION, dtCore::DataType::VEC3, "", true);
+            dtHLAGM::AttributeToPropertyList attrToProp("PowerPlantOn", dtHLAGM::RPRAttributeType::UNSIGNED_CHAR_TYPE, true);
+            dtHLAGM::OneToManyMapping::ParameterDefinition pd("EngineOn", dtCore::DataType::BOOLEAN, "", true);
             attrToProp.GetParameterDefinitions().push_back(pd);
             props.push_back(attrToProp);
          }
