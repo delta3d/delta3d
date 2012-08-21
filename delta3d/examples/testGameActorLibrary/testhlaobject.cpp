@@ -56,17 +56,6 @@ void TestHLAObjectProxy::BuildPropertyMap()
    }
 
    AddProperty(
-            new dtCore::Vec3ActorProperty("Last Known Translation", "Last Known Translation",
-                     dtCore::Vec3ActorProperty::SetFuncType(actor, &TestHLAObject::SetLastKnownTranslation),
-                     dtCore::Vec3ActorProperty::GetFuncType(actor, &TestHLAObject::GetLastKnownTranslation),
-                     "The last known correct position of this actor.  Used for remote actors only.", ""));
-
-   AddProperty(
-            new dtCore::Vec3ActorProperty("Last Known Rotation", "Last Known Rotation",
-                     dtCore::Vec3ActorProperty::SetFuncType(this, &TestHLAObjectProxy::SetLastKnownRotation),
-                     dtCore::Vec3ActorProperty::GetFuncType(this, &TestHLAObjectProxy::GetLastKnownRotation),
-                     "The last known correct rotation of this actor.  Used for remote actors only.", ""));
-   AddProperty(
             new dtCore::EnumActorProperty<TestHLAObject::DamageStateEnum>("Damage State", "Damage State",
                      dtCore::EnumActorProperty<TestHLAObject::DamageStateEnum>::SetFuncType(actor, &TestHLAObject::SetDamageState),
                      dtCore::EnumActorProperty<TestHLAObject::DamageStateEnum>::GetFuncType(actor, &TestHLAObject::GetDamageState),
@@ -85,35 +74,17 @@ void TestHLAObjectProxy::BuildInvokables()
    dtGame::GameActorProxy::BuildInvokables();
 }
 
+void TestHLAObjectProxy::BuildActorComponents()
+{
+   dtGame::GameActorProxy::BuildActorComponents();
+   AddComponent(*new dtGame::DeadReckoningHelper);
+}
+
 void TestHLAObjectProxy::CreateActor()
 {
    SetActor(*new TestHLAObject(*this));
 }
 
-void TestHLAObjectProxy::SetLastKnownRotation(const osg::Vec3& vec)
-{
-   TestHLAObject* e = dynamic_cast<TestHLAObject*> (GetActor());
-   if (e == NULL)
-   {
-      throw dtCore::InvalidActorException(
-      "Actor should be type TestHLAObject", __FILE__, __LINE__);
-   }
-
-   e->SetLastKnownRotation(osg::Vec3(vec.z(), vec.x(), vec.y()));
-}
-
-osg::Vec3 TestHLAObjectProxy::GetLastKnownRotation() const
-{
-   const TestHLAObject* e = dynamic_cast<const TestHLAObject*> (GetActor());
-   if (e == NULL)
-   {
-      throw dtCore::InvalidActorException(
-      "Actor should be type TestHLAObject", __FILE__, __LINE__);
-   }
-
-   const osg::Vec3& result = e->GetLastKnownRotation();
-   return osg::Vec3(result.y(), result.z(), result.x());
-}
 
 ////////////////////////////////////////////////////////////////////
 // Actor Code
@@ -142,16 +113,6 @@ void TestHLAObject::SetDamageState(TestHLAObject::DamageStateEnum& damageState)
 TestHLAObject::DamageStateEnum& TestHLAObject::GetDamageState() const
 {
    return *mDamageState;
-}
-
-void TestHLAObject::SetLastKnownTranslation(const osg::Vec3& vec)
-{
-   mDeadReckoningHelper->SetLastKnownTranslation(vec);
-}
-
-void TestHLAObject::SetLastKnownRotation(const osg::Vec3& vec)
-{
-   mDeadReckoningHelper->SetLastKnownRotation(vec);
 }
 
 void TestHLAObject::TestLoadTheMesh(const std::string& value)

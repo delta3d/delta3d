@@ -42,6 +42,7 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <list>
 #include <osg/Matrix>
 
 #include <dtUtil/coordinates.h>
@@ -136,7 +137,7 @@ namespace dtHLAGM
           * @param federateName the name of this federate
           */
          void JoinFederationExecution(const std::string& executionName,
-                                      std::vector<std::string>& fedFilenames,
+                                      const std::vector<std::string>& fedFilenames,
                                       const std::string& federateName = "Participant",
                                       const std::string& ridFile = "RTI.rid",
                                       const std::string& rtiImplementationName = RTIAmbassador::RTI13_IMPLEMENTATION
@@ -249,6 +250,10 @@ namespace dtHLAGM
          virtual void ReceiveInteraction(RTIInteractionClassHandle& interactionClassHandle,
                                          const RTIParameterHandleValueMap& theParameters,
                                          const std::string& theTag);
+
+         virtual void ObjectInstanceNameReservationSucceeded(const std::string& theObjectInstanceName);
+
+         virtual void ObjectInstanceNameReservationFailed(const std::string& theObjectInstanceName);
 
          const ObjectToActor* GetActorMapping(const dtCore::ActorType &type) const;
          ObjectToActor* GetActorMapping(const dtCore::ActorType &type);
@@ -614,6 +619,10 @@ namespace dtHLAGM
          dtUtil::Coordinates mCoordinates;
 
          ObjectRuntimeMappingInfo mRuntimeMappings;
+
+         typedef std::list< std::pair<std::string, dtCore::RefPtr<const dtGame::Message> > > ObjectRegQueue;
+         // In some RTI implementations, names must be registered and cleared with the RTI before object updates may be sent.
+         ObjectRegQueue mObjectRegQueue;
 
          std::map<dtCore::RefPtr<const dtCore::ActorType>, dtCore::RefPtr<ObjectToActor> > mActorToObjectMap;
          typedef std::multimap<std::string, dtCore::RefPtr<ObjectToActor> > ObjectToActorMap;

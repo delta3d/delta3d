@@ -279,6 +279,20 @@ namespace dtHLAGM
 
       }
 
+      virtual void objectInstanceNameReservationSucceeded (
+         std::wstring const & theObjectInstanceName)
+         throw (rti1516e::FederateInternalError)
+      {
+         mFedAmbassador->ObjectInstanceNameReservationSucceeded(WideToNarrow(theObjectInstanceName));
+      }
+
+      virtual void objectInstanceNameReservationFailed (
+         std::wstring const & theObjectInstanceName)
+         throw (rti1516e::FederateInternalError)
+      {
+         mFedAmbassador->ObjectInstanceNameReservationFailed(WideToNarrow(theObjectInstanceName));
+      }
+
       dtCore::RefPtr<RTIAttributeHandle> WrapAttrHandle(const rti1516e::ObjectClassHandle& objClass, const rti1516e::AttributeHandle& handle)
       {
          AttrHandleCacheKey cachekey(handle, objClass);
@@ -426,6 +440,14 @@ std::string RTI1516eAmbassador::GetObjectClassName(RTIObjectClassHandle& clsHand
    try
    {
       result = WideToNarrow(mImpl->mAmbassador->getObjectClassName(static_cast<RTI1516eObjectClassHandle&>(clsHandle).GetRTI1516eHandle()));
+      //Some RTIs return this prefix, so this chops it off to make it more consistent.
+      static const std::string OBJECT_ROOT("HLAobjectRoot.");
+
+      if (result.length() > OBJECT_ROOT.length() &&
+               result.substr(0, OBJECT_ROOT.length()) == OBJECT_ROOT)
+      {
+         result = result.substr(OBJECT_ROOT.size());
+      }
    }
    catch (const rti1516e::Exception& ex)
    {
@@ -576,8 +598,8 @@ std::string RTI1516eAmbassador::GetInteractionClassName(RTIInteractionClassHandl
    {
       result = WideToNarrow(mImpl->mAmbassador->getInteractionClassName(static_cast<RTI1516eInteractionClassHandle&>(intClsHandle).GetRTI1516eHandle()));
 
-      // strip off the InteractionRoot prefix because some rtis return that as part of the string.
-      static const std::string INTERACTION_ROOT("InteractionRoot.");
+      // strip off the InteractionRoot prefix because some RTIs return that as part of the string.
+      static const std::string INTERACTION_ROOT("HLAinteractionRoot.");
       if (result.size() > INTERACTION_ROOT.size() &&
                result.substr(0, INTERACTION_ROOT.size()) == INTERACTION_ROOT)
       {
@@ -711,7 +733,7 @@ void RTI1516eAmbassador::ConnectToRTI(RTIFederateAmbassador& federateCallback, c
    }
 }
 
-bool RTI1516eAmbassador::CreateFederationExecution(const std::string& executionName, std::vector<std::string> fedFiles)
+bool RTI1516eAmbassador::CreateFederationExecution(const std::string& executionName, const std::vector<std::string>& fedFiles)
 {
    if (fedFiles.empty())
    {
@@ -720,7 +742,6 @@ bool RTI1516eAmbassador::CreateFederationExecution(const std::string& executionN
    try
    {
       std::vector<std::wstring> fedFilesWide;
-      fedFilesWide.reserve(fedFiles.size());
       dtUtil::Functor<std::wstring, TYPELIST_1(const std::string&)> transformFunc(&dtHLAGM::NarrowToWide);
       fedFilesWide.resize(fedFiles.size(), std::wstring());
       std::transform(fedFiles.begin(), fedFiles.end(), fedFilesWide.begin(), transformFunc);
@@ -803,6 +824,19 @@ void RTI1516eAmbassador::DeleteObjectInstance(RTIObjectInstanceHandle& instanceH
 
 }
 
+void RTI1516eAmbassador::ReserveObjectInstanceName(const std::string& nameToReserve)
+{
+   try
+   {
+      mImpl->mAmbassador->reserveObjectInstanceName(NarrowToWide(nameToReserve));
+   }
+   catch (rti1516e::Exception& ex)
+   {
+      RethrowRTI1516eException(ex);
+   }
+}
+
+
 dtCore::RefPtr<RTIObjectInstanceHandle> RTI1516eAmbassador::RegisterObjectInstance(RTIObjectClassHandle& clsHandle, const std::string& stringName)
 {
    dtCore::RefPtr<RTIObjectInstanceHandle> result;
@@ -811,6 +845,42 @@ dtCore::RefPtr<RTIObjectInstanceHandle> RTI1516eAmbassador::RegisterObjectInstan
       //Pass ClassHandle to registerObjectInstance
       rti1516e::ObjectInstanceHandle objectHandle = mImpl->mAmbassador->registerObjectInstance(static_cast<RTI1516eObjectClassHandle*>(&clsHandle)->GetRTI1516eHandle(), NarrowToWide(stringName));
       result = WrapHandle<rti1516e::ObjectInstanceHandle, RTIObjectInstanceHandle, RTI1516eObjectInstanceHandle>(objectHandle, mImpl->mObjectInstanceHandleCache);
+   }
+   catch (rti1516e::ObjectInstanceNameInUse& ex)
+   {
+      RethrowRTI1516eException(ex);
+   }
+   catch (rti1516e::ObjectInstanceNameNotReserved& ex)
+   {
+      RethrowRTI1516eException(ex);
+   }
+   catch (rti1516e::ObjectClassNotPublished& ex)
+   {
+      RethrowRTI1516eException(ex);
+   }
+   catch (rti1516e::ObjectClassNotDefined& ex)
+   {
+      RethrowRTI1516eException(ex);
+   }
+   catch (rti1516e::SaveInProgress& ex)
+   {
+      RethrowRTI1516eException(ex);
+   }
+   catch (rti1516e::RestoreInProgress& ex)
+   {
+      RethrowRTI1516eException(ex);
+   }
+   catch (rti1516e::FederateNotExecutionMember& ex)
+   {
+      RethrowRTI1516eException(ex);
+   }
+   catch (rti1516e::NotConnected& ex)
+   {
+      RethrowRTI1516eException(ex);
+   }
+   catch (rti1516e::RTIinternalError& ex)
+   {
+      RethrowRTI1516eException(ex);
    }
    catch (rti1516e::Exception& ex)
    {

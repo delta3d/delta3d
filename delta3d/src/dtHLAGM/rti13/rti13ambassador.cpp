@@ -350,6 +350,15 @@ std::string RTI13Ambassador::GetObjectClassName(RTIObjectClassHandle& clsHandle)
    try
    {
       result = mImpl->mAmbassador->getObjectClassName(static_cast<RTI13ObjectClassHandle&>(clsHandle).GetRTI13Handle());
+
+      //Some RTIs return this prefix, so this chops it off to make it more consistent.
+      static const std::string OBJECT_ROOT("ObjectRoot.");
+
+      if (result.length() > OBJECT_ROOT.length() &&
+               result.substr(0, OBJECT_ROOT.length()) == OBJECT_ROOT)
+      {
+         result = result.substr(OBJECT_ROOT.size());
+      }
    }
    catch (const RTI::Exception& ex)
    {
@@ -611,7 +620,7 @@ void RTI13Ambassador::ConnectToRTI(RTIFederateAmbassador& federateCallback, cons
    mImpl->mFedAmbassador = &federateCallback;
 }
 
-bool RTI13Ambassador::CreateFederationExecution(const std::string& executionName, std::vector<std::string> fedFiles)
+bool RTI13Ambassador::CreateFederationExecution(const std::string& executionName, const std::vector<std::string>& fedFiles)
 {
    if (fedFiles.empty())
    {
@@ -696,6 +705,12 @@ void RTI13Ambassador::DeleteObjectInstance(RTIObjectInstanceHandle& instanceHand
       RethrowRTIException(ex);
    }
 
+}
+
+void RTI13Ambassador::ReserveObjectInstanceName(const std::string& nameToReserve)
+{
+   // This is not required in 13, so we just call succeeded.
+   mImpl->mFedAmbassador->ObjectInstanceNameReservationSucceeded(nameToReserve);
 }
 
 dtCore::RefPtr<RTIObjectInstanceHandle> RTI13Ambassador::RegisterObjectInstance(RTIObjectClassHandle& clsHandle, const std::string& stringName)

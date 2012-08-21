@@ -75,7 +75,7 @@ namespace dtHLAGM
        * @return true if the federation was created.  false if it already existed.
        * @throw RTIException if anything fails other than the federation already existing.
        */
-      virtual bool CreateFederationExecution(const std::string& executionName, std::vector<std::string> fedFiles) = 0;
+      virtual bool CreateFederationExecution(const std::string& executionName, const std::vector<std::string>& fedFiles) = 0;
 
       virtual void JoinFederationExecution(const std::string& federateName, const std::string& executionName) = 0;
 
@@ -109,6 +109,7 @@ namespace dtHLAGM
       virtual void PublishInteractionClass(RTIInteractionClassHandle& handle) = 0;
       virtual void UnsubscribeInteractionClass(RTIInteractionClassHandle& handle, RTIRegion* region = NULL) = 0;
 
+      virtual void ReserveObjectInstanceName(const std::string& nameToReserve) = 0;
       virtual dtCore::RefPtr<RTIObjectInstanceHandle> RegisterObjectInstance(RTIObjectClassHandle& clsHandle, const std::string& stringName) = 0;
       virtual void DeleteObjectInstance(RTIObjectInstanceHandle& instanceHandleToDelete) = 0;
 

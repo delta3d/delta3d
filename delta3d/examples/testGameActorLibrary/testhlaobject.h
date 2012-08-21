@@ -72,32 +72,6 @@ public:
     */
    TestHLAObject::DamageStateEnum& GetDamageState() const;
 
-   /**
-    * Sets this entity's last known translation.  This should
-    * only be set for remote actors.
-    *
-    * @param vec the new last position.
-    */
-   void SetLastKnownTranslation(const osg::Vec3 &vec);
-   
-   /**
-    * @return the last known position for this if it's a remote entity.
-    */
-   osg::Vec3 GetLastKnownTranslation() const { return mDeadReckoningHelper->GetLastKnownTranslation(); }
-   
-   /**
-    * Sets this entity's last known rotation.  This should
-    * only be set for remote actors.
-    *
-    * @param vec the new last rotation as yaw, pitch, roll.
-    */
-   void SetLastKnownRotation(const osg::Vec3 &vec);
-   
-   /**
-    * @return the last known rotation for this if it's a remote entity as yaw, pitch, roll.
-    */
-   osg::Vec3 GetLastKnownRotation() const { return mDeadReckoningHelper->GetLastKnownRotation(); }
-  
    ///This is a placeholder for the mesh property since we don't want to actually load anything.
    void TestLoadTheMesh(const std::string& value);
    
@@ -125,6 +99,10 @@ class DT_EXAMPLE_EXPORT TestHLAObjectProxy : public dtGame::GameActorProxy
        * Builds the invokable associated with this proxy.
        */
       virtual void BuildInvokables();
+
+
+      /// Builds the actor components needed to make this work.
+      virtual void BuildActorComponents();
              
       /**
        * Sets this entity's last known rotation.  This should

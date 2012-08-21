@@ -57,6 +57,7 @@
 #include <dtHLAGM/parametertoparameter.h>
 #include <dtHLAGM/rticontainers.h>
 #include <dtHLAGM/rtiexception.h>
+#include <dtHLAGM/spatial.h>
 
 #include <dtGame/actorupdatemessage.h>
 #include <dtGame/basemessages.h>
@@ -66,6 +67,7 @@
 #include <dtGame/gmcomponent.h>
 #include <dtGame/messagefactory.h>
 #include <dtGame/messagetype.h>
+#include <dtGame/deadreckoninghelper.h>
 
 #include <dtUtil/coordinates.h>
 #include <dtUtil/datapathutils.h>
@@ -129,6 +131,33 @@ class TestHLAComponent: public dtHLAGM::HLAComponent
       {
          return GetRuntimeMappingInfo();
       }
+
+      virtual void ObjectInstanceNameReservationSucceeded(const std::string& theObjectInstanceName)
+      {
+         HLAComponent::ObjectInstanceNameReservationSucceeded(theObjectInstanceName);
+         mNameRegSuccess.insert(std::make_pair(theObjectInstanceName, true));
+      }
+
+      virtual void ObjectInstanceNameReservationFailed(const std::string& theObjectInstanceName)
+      {
+         HLAComponent::ObjectInstanceNameReservationFailed(theObjectInstanceName);
+         mNameRegSuccess.insert(std::make_pair(theObjectInstanceName, false));
+      }
+
+      bool IsObjectInstanceNameReservationCompleted(const std::string& theObjectInstanceName, bool& success)
+      {
+         bool result = false;
+         std::map<std::string, bool>::const_iterator ci = mNameRegSuccess.find(theObjectInstanceName);
+         if (ci != mNameRegSuccess.end())
+         {
+            success = ci->second;
+            result = true;
+         }
+         return result;
+      }
+
+      std::map<std::string, bool> mNameRegSuccess;
+
 };
 
 
@@ -299,7 +328,8 @@ void HLAComponentTests::setUp()
 
    try
    {
-      const std::string fom = "RPR-FOM.fed";
+      const std::string fom = "rpr-2.0.fed";
+      //const std::string fom = "RPR-FOM.fed";
 
       /*std::vector<std::string> fedFiles;
       fedFiles.push_back("1516Fom/Area_Of_Interest_v1.0.1r3.xml");
@@ -323,6 +353,7 @@ void HLAComponentTests::setUp()
                              "\", make sure you install the Delta3D data package and set the DELTA_DATA environment var.",
                              !fedFile.empty());
       CPPUNIT_ASSERT(mHLAComponent->GetRTIAmbassador() == NULL);
+      // Must turn off DDM for HLA 1516e at the moment because it doesn't work right.
       //mHLAComponent->SetDDMEnabled(false);
       mHLAComponent->JoinFederationExecution("hla", fedFile, "delta3d", ridFile, dtHLAGM::RTIAmbassador::RTI13_IMPLEMENTATION);
       //mHLAComponent->JoinFederationExecution("hla", fedFiles, "delta3d", ridFile, dtHLAGM::RTIAmbassador::RTI1516e_IMPLEMENTATION);
@@ -374,6 +405,31 @@ void HLAComponentTests::BetweenTestSetUp()
 {
    dtHLAGM::RTIAmbassador* rtiamb = mHLAComponent->GetRTIAmbassador();
    CPPUNIT_ASSERT(rtiamb != NULL);
+
+   try
+   {
+      rtiamb->ReserveObjectInstanceName("TestObject1");
+      rtiamb->ReserveObjectInstanceName("TestObject2");
+      rtiamb->ReserveObjectInstanceName("TestObject3");
+      bool success1 = false, success2 = false, success3 = false;
+      while (!mHLAComponent->IsObjectInstanceNameReservationCompleted("TestObject1", success1)
+               || !mHLAComponent->IsObjectInstanceNameReservationCompleted("TestObject2", success2)
+               || !mHLAComponent->IsObjectInstanceNameReservationCompleted("TestObject3", success3)
+               )
+      {
+         dtCore::AppSleep(200);
+         rtiamb->Tick();
+      }
+      CPPUNIT_ASSERT_MESSAGE("Unable to reserve name TestObject1 to use for the tests.  Perhaps you should restart the federation.", success1);
+      CPPUNIT_ASSERT_MESSAGE("Unable to reserve name TestObject2 to use for the tests.  Perhaps you should restart the federation.", success2);
+      CPPUNIT_ASSERT_MESSAGE("Unable to reserve name TestObject3 to use for the tests.  Perhaps you should restart the federation.", success3);
+   }
+   catch (const dtHLAGM::RTIException& e)
+   {
+      std::ostringstream ss;
+      ss << "Unable to register names for object instances for the tests: " << e;
+      CPPUNIT_FAIL(ss.str());
+   }
 
    try
    {
@@ -821,28 +877,30 @@ void HLAComponentTests::TestSubscription()
       }
    }
 
-   std::vector<std::vector<const dtHLAGM::DDMRegionData*> > toFill;
-   mHLAComponent->GetDDMSubscriptionCalculatorRegions(toFill);
-   CPPUNIT_ASSERT(!toFill.empty());
-   CPPUNIT_ASSERT(toFill.size() == mHLAComponent->GetDDMSubscriptionCalculators().GetSize());
+   if (mHLAComponent->IsDDMEnabled())
+   {
+      std::vector<std::vector<const dtHLAGM::DDMRegionData*> > toFill;
+      mHLAComponent->GetDDMSubscriptionCalculatorRegions(toFill);
+      CPPUNIT_ASSERT(!toFill.empty());
+      CPPUNIT_ASSERT(toFill.size() == mHLAComponent->GetDDMSubscriptionCalculators().GetSize());
 
-   dtHLAGM::DDMCameraCalculatorGeographic* camCalc = dynamic_cast<dtHLAGM::DDMCameraCalculatorGeographic*>(mHLAComponent->GetDDMSubscriptionCalculators()[0]);
-   CPPUNIT_ASSERT(camCalc != NULL);
+      dtHLAGM::DDMCameraCalculatorGeographic* camCalc = dynamic_cast<dtHLAGM::DDMCameraCalculatorGeographic*>(mHLAComponent->GetDDMSubscriptionCalculators()[0]);
+      CPPUNIT_ASSERT(camCalc != NULL);
 
 
-   const dtHLAGM::DDMRegionData* data = toFill[0][0];
+      const dtHLAGM::DDMRegionData* data = toFill[0][0];
 
-   CPPUNIT_ASSERT_EQUAL(3U, data->GetNumberOfExtents());
+      CPPUNIT_ASSERT_EQUAL(3U, data->GetNumberOfExtents());
 
-   const dtHLAGM::DDMRegionData::DimensionValues* dv = data->GetDimensionValue(0);
-   CPPUNIT_ASSERT_EQUAL(camCalc->GetFirstDimensionName(), dv->mName);
+      const dtHLAGM::DDMRegionData::DimensionValues* dv = data->GetDimensionValue(0);
+      CPPUNIT_ASSERT_EQUAL(camCalc->GetFirstDimensionName(), dv->mName);
 
-   dv = data->GetDimensionValue(1);
-   CPPUNIT_ASSERT_EQUAL(camCalc->GetSecondDimensionName(), dv->mName);
+      dv = data->GetDimensionValue(1);
+      CPPUNIT_ASSERT_EQUAL(camCalc->GetSecondDimensionName(), dv->mName);
 
-   dv = data->GetDimensionValue(2);
-   CPPUNIT_ASSERT_EQUAL(camCalc->GetThirdDimensionName(), dv->mName);
-
+      dv = data->GetDimensionValue(2);
+      CPPUNIT_ASSERT_EQUAL(camCalc->GetThirdDimensionName(), dv->mName);
+   }
 }
 
 void HLAComponentTests::TestConfigurationLocking()
@@ -906,14 +964,17 @@ void HLAComponentTests::TestReflectAttributesNoEntityType()
    {
       dtHLAGM::RTIAttributeHandleValueMap ahs;
 
-      char encodedEulerAngles[sizeof(float) * 3];
-      dtHLAGM::EulerAngles rotation(2.0f, 1.1f, 3.14f);
-      rotation.Encode(encodedEulerAngles);
-      AddAttribute("Orientation",
+      dtHLAGM::Spatial spatial;
+      spatial.SetDeadReckoningAlgorithm(1);
+      char encodedSpatial[255];
+      spatial.GetOrientation().set(2.0f, 1.1f, 3.14f);
+      size_t actualSize = spatial.Encode(encodedSpatial, 255);
+      CPPUNIT_ASSERT(actualSize <= 255);
+      AddAttribute("Spatial",
                    *mClassHandle3,
                    ahs,
-                   encodedEulerAngles,
-                   rotation.EncodedLength());
+                   encodedSpatial,
+                   actualSize);
 
       mHLAComponent->DiscoverObjectInstance(*mObjectHandle3, *mClassHandle3, "testMapping");
       const dtCore::UniqueId* id = mHLAComponent->GetRuntimeMappings().GetId(*mObjectHandle3);
@@ -969,26 +1030,18 @@ void HLAComponentTests::TestReflectAttributesEntityTypeMissing()
 
       AddAttribute("DamageState", *mClassHandle1, ahs, encodedInt, sizeof(unsigned));
 
-      char encodedEulerAngles[sizeof(float) * 3];
-
-      dtHLAGM::EulerAngles rotation(2.0f, 1.1f, 3.14f);
-      rotation.Encode(encodedEulerAngles);
-      AddAttribute("Orientation",
-                   *mClassHandle1,
+      dtHLAGM::Spatial spatial;
+      spatial.SetDeadReckoningAlgorithm(1);
+      char encodedSpatial[255];
+      spatial.GetWorldCoordinate().set(1.0, 1.0, 1.0);
+      spatial.GetOrientation().set(2.0f, 1.1f, 3.14f);
+      size_t actualSize = spatial.Encode(encodedSpatial, 255);
+      CPPUNIT_ASSERT(actualSize <= 255);
+      AddAttribute("Spatial",
+                   *mClassHandle3,
                    ahs,
-                   encodedEulerAngles,
-                   rotation.EncodedLength());
-
-
-      char encodedWorldCoordinate[sizeof(double) * 3];
-      dtHLAGM::WorldCoordinate location(1.0, 1.0, 1.0);
-      location.Encode(encodedWorldCoordinate);
-
-      AddAttribute("WorldLocation",
-                   *mClassHandle1,
-                   ahs,
-                   encodedWorldCoordinate,
-                   location.EncodedLength());
+                   encodedSpatial,
+                   actualSize);
 
       mHLAComponent->DiscoverObjectInstance(*mObjectHandle1, *mClassHandle1, "");
       const dtCore::UniqueId* id = mHLAComponent->GetRuntimeMappings().GetId(*mObjectHandle1);
@@ -1061,6 +1114,18 @@ void HLAComponentTests::TestReflectAttributes()
       AddAttribute("AlternateEntityType", *mClassHandle1, ahs, encodedEntityType,
                    entityType.EncodedLength());
 
+      dtHLAGM::Spatial spatial;
+      spatial.SetDeadReckoningAlgorithm(1);
+      char encodedSpatial[255];
+      spatial.GetWorldCoordinate().set(1.0, 1.0, 1.0);
+      spatial.GetOrientation().set(2.0f, 1.1f, 3.14f);
+      size_t actualSize = spatial.Encode(encodedSpatial, 255);
+      CPPUNIT_ASSERT(actualSize <= 255);
+      AddAttribute("Spatial",
+                   *mClassHandle3,
+                   ahs,
+                   encodedSpatial,
+                   actualSize);
 
       // Add Damage State
       char encodedInt[sizeof(unsigned)];
@@ -1071,17 +1136,6 @@ void HLAComponentTests::TestReflectAttributes()
 
       AddAttribute("DamageState", *mClassHandle1, ahs, encodedInt, sizeof(unsigned));
 
-
-      // Add Orientation
-      char encodedEulerAngles[sizeof(float) * 3];
-
-      dtHLAGM::EulerAngles rotation(2.0f, 1.1f, 3.14f);
-      rotation.Encode(encodedEulerAngles);
-      AddAttribute("Orientation",
-                   *mClassHandle1,
-                   ahs,
-                   encodedEulerAngles,
-                   rotation.EncodedLength());
 
       dtHLAGM::ArticulatedParameter ap[] =
       {
@@ -1100,16 +1154,6 @@ void HLAComponentTests::TestReflectAttributes()
                    encodedArticulations,
                    ap[0].EncodedLength() * 3);
 
-      // Add World Location
-      char encodedWorldCoordinate[sizeof(double) * 3];
-      dtHLAGM::WorldCoordinate location(1.0, 1.0, 1.0);
-      location.Encode(encodedWorldCoordinate);
-
-      AddAttribute("WorldLocation",
-                   *mClassHandle1,
-                   ahs,
-                   encodedWorldCoordinate,
-                   location.EncodedLength());
 
 
       mHLAComponent->DiscoverObjectInstance(*mObjectHandle1, *mClassHandle1, "dumbstringname");
@@ -1196,19 +1240,19 @@ void HLAComponentTests::TestReflectAttributes()
       }
 
       osg::Vec3 expectedTranslation = mHLAComponent->GetCoordinateConverter().
-         ConvertToLocalTranslation(osg::Vec3d(location.GetX(),
-                                              location.GetY(),
-                                              location.GetZ()));
+         ConvertToLocalTranslation(osg::Vec3d(spatial.GetWorldCoordinate().GetX(),
+                  spatial.GetWorldCoordinate().GetY(),
+                  spatial.GetWorldCoordinate().GetZ()));
 
       osg::Vec3 expectedRotation = mHLAComponent->GetCoordinateConverter().
-         ConvertToLocalRotation(rotation.GetPsi(), rotation.GetTheta(), rotation.GetPhi());
+         ConvertToLocalRotation(spatial.GetOrientation().GetPsi(), spatial.GetOrientation().GetTheta(), spatial.GetOrientation().GetPhi());
 
-      dtCore::Transform xform;
-      proxy->GetGameActor().GetTransform(xform);
-      osg::Vec3 actualTranslation;
-      xform.GetTranslation(actualTranslation);
-      osg::Vec3 actualRotation;
-      xform.GetRotation(actualRotation);
+      dtCore::RefPtr<dtGame::DeadReckoningHelper> drHelper;
+      proxy->GetComponent(drHelper);
+      osg::Vec3 actualTranslation = drHelper->GetLastKnownTranslation();
+      osg::Vec3 actualRotation = drHelper->GetLastKnownRotation();
+      // If I don't set this to NULL here, I get an occasional crash - DG.
+      drHelper = NULL;
 
       CPPUNIT_ASSERT(osg::equivalent(actualTranslation[0], expectedTranslation[0], 1e-3f) &&
                      osg::equivalent(actualTranslation[1], expectedTranslation[1], 1e-3f) &&
@@ -1293,6 +1337,14 @@ void HLAComponentTests::TestDispatchUpdate()
       CPPUNIT_ASSERT(testTankType.valid());
 
       mHLAComponent->DispatchNetworkMessage(*testMsg);
+      bool nameSuccess = false;
+      while (!mHLAComponent->IsObjectInstanceNameReservationCompleted(testMsg->GetAboutActorId().ToString(), nameSuccess))
+      {
+         dtCore::AppSleep(200);
+         mHLAComponent->GetRTIAmbassador()->Tick();
+      }
+      CPPUNIT_ASSERT_MESSAGE("Reserving the name for the actor in the RTI should have succeeded.  Try restarting the federation.", nameSuccess);
+
       const std::string* rtiID = mHLAComponent->GetRuntimeMappings().GetRTIId(fakeActorId);
       const dtHLAGM::RTIObjectInstanceHandle* ptrHandle = mHLAComponent->GetRuntimeMappings().GetHandle(fakeActorId);
       CPPUNIT_ASSERT_MESSAGE("The RTI Object ID  string should be set when an object is first sent out via HLA",
@@ -1401,7 +1453,6 @@ void HLAComponentTests::TestPrepareUpdate()
 
          bool foundEntityTypeAttr = false;
          bool foundEntityIdAttr1 = false;
-         bool foundOrientationAttr = false;
          bool foundArrayAttr = false;
          bool foundDamageStateAttr = false;
 
@@ -1465,13 +1516,6 @@ void HLAComponentTests::TestPrepareUpdate()
                         CPPUNIT_ASSERT_EQUAL_MESSAGE("The damage state value should be 3 (Destroyed)", unsigned(3), actual);
 
                      }
-                     else if (dtCore::TransformableActorProxy::PROPERTY_ROTATION == paramDef.GetGameName())
-                     {
-                        foundOrientationAttr = true;
-                        CPPUNIT_ASSERT_MESSAGE("The mapped parameter for the orientation should be the size of three floats.",
-                           length == aToPList.GetHLAType().GetEncodedLength() && length == 3 * sizeof(float));
-                        //There are other tests that check the converter for rotation.
-                     }
                      else if ("Articulated Parameters Array" == paramDef.GetGameName())
                      {
                         foundArrayAttr = true;
@@ -1479,10 +1523,6 @@ void HLAComponentTests::TestPrepareUpdate()
                         CPPUNIT_ASSERT_MESSAGE("The mapped parameter for the articulated parameters should be the size of three articulated parameters.",
                            length == 3 * aToPList.GetHLAType().GetEncodedLength() && length == 3 * artParam.EncodedLength());
                         //There are other tests that check the converter for rotation.
-                     }
-                     else if (dtCore::TransformableActorProxy::PROPERTY_TRANSLATION == paramDef.GetGameName())
-                     {
-                        CPPUNIT_FAIL("The world coordinate should not have ended up in the output.  It doesn't have a default value.");
                      }
                   }
                }
@@ -1493,7 +1533,6 @@ void HLAComponentTests::TestPrepareUpdate()
             foundEntityIdAttr1);
          CPPUNIT_ASSERT(foundEntityTypeAttr);
          CPPUNIT_ASSERT(foundDamageStateAttr);
-         CPPUNIT_ASSERT(foundOrientationAttr);
       }
       else
       {
@@ -1615,7 +1654,7 @@ void HLAComponentTests::TestReceiveInteraction()
       try
       {
          classHandle1 = rtiamb->GetInteractionClassHandle(
-               "InteractionRoot.WeaponFire");
+               "WeaponFire");
       }
       catch (const dtHLAGM::RTIException& ex)
       {
@@ -1672,14 +1711,14 @@ void HLAComponentTests::TestGMLookup()
       CPPUNIT_ASSERT_EQUAL_MESSAGE("The default name should equal the constant",
          dtHLAGM::HLAComponent::DEFAULT_NAME, mHLAComponent->GetName());
 
-      dtGame::GMComponent *component =
+      dtGame::GMComponent* component =
          mGameManager->GetComponentByName(dtHLAGM::HLAComponent::DEFAULT_NAME);
 
       CPPUNIT_ASSERT(component != NULL);
       CPPUNIT_ASSERT_MESSAGE("The component found should match the component added to the GM",
          component == mHLAComponent.get());
    }
-   catch(const dtUtil::Exception &e)
+   catch(const dtUtil::Exception& e)
    {
       CPPUNIT_FAIL(e.What());
    }

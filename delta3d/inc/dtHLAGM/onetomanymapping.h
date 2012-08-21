@@ -166,6 +166,7 @@ namespace dtHLAGM
             mHLAName(hlaName),
             mHLAType(&attributeType),
             mRequiredForHLA(requiredForHLA),
+            mInvalid(false),
             mSpecial(special),
             mIsArray(array)
          {}

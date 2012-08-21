@@ -79,11 +79,11 @@
                     <value id="3">Destroyed</value>
                 </enumerationMapping>
             </attrToProp>            
-            <attrToProp>
+            <!--attrToProp>
                 <hlaName>Orientation</hlaName>
                 <hlaDataType>EULER_ANGLES_TYPE</hlaDataType>
                 <hlaRequired>true</hlaRequired>
-                <gameName>Rotation</gameName>
+                <gameName>Last Known Rotation</gameName>
                 <gameDataType>VEC3</gameDataType>
                 <gameRequired>true</gameRequired>
                 <default></default>
@@ -92,12 +92,12 @@
                 <hlaName>WorldLocation</hlaName>
                 <hlaDataType>WORLD_COORDINATE_TYPE</hlaDataType>
                 <hlaRequired>true</hlaRequired>
-                <gameName>Translation</gameName>
+                <gameName>Last Known Translation</gameName>
                 <gameDataType>VEC3</gameDataType>
                 <gameRequired>true</gameRequired>
                 <default></default>
-            </attrToProp>            
-            <!--attrToProp>
+            </attrToProp-->            
+            <attrToProp>
                 <hlaName>Spatial</hlaName>
                 <hlaDataType>SPATIAL_TYPE</hlaDataType>
                 <parameter>
@@ -122,12 +122,12 @@
                     <default></default>
                 </parameter>
                 <parameter>
-                    <gameName>Translation</gameName>
+                    <gameName>Last Known Translation</gameName>
                     <gameDataType>VEC3</gameDataType>
                     <default></default>
                 </parameter>
                 <parameter>
-                    <gameName>Rotation</gameName>
+                    <gameName>Last Known Rotation</gameName>
                     <gameDataType>VEC3</gameDataType>
                     <default></default>
                 </parameter>
@@ -146,7 +146,7 @@
                     <gameDataType>VEC3</gameDataType>
                     <default></default>
                 </parameter>
-            </attrToProp--> 
+            </attrToProp> 
         </object>
 
         <object extends="BaseEntity" name="Test Tank">
@@ -214,10 +214,10 @@
                 <extra>0</extra>
             </disEntityEnum>
             <attrToProp>
-                <hlaName>VelocityVector</hlaName>
-                <hlaDataType>VELOCITY_VECTOR_TYPE</hlaDataType>
-                <gameName>Velocity Vector</gameName>
-                <gameDataType>VEC3D</gameDataType>
+                <hlaName>PowerPlantOn</hlaName>
+                <hlaDataType>UNSIGNED_CHAR_TYPE</hlaDataType>
+                <gameName>EngineOn</gameName>
+                <gameDataType>BOOLEAN</gameDataType>
                 <default></default>
             </attrToProp>            
         </object>
@@ -238,10 +238,10 @@
             <ddmSpace>Another Space</ddmSpace>
             <entityIdAttributeName>EntityIdentifier</entityIdAttributeName>
             <attrToProp>
-                <hlaName>VelocityVector</hlaName>
-                <hlaDataType>VELOCITY_VECTOR_TYPE</hlaDataType>
-                <gameName>Velocity Vector</gameName>
-                <gameDataType>VEC3D</gameDataType>
+                <hlaName>PowerPlantOn</hlaName>
+                <hlaDataType>UNSIGNED_CHAR_TYPE</hlaDataType>
+                <gameName>EngineOn</gameName>
+                <gameDataType>BOOLEAN</gameDataType>
                 <default></default>
             </attrToProp>            
         </object>
@@ -254,46 +254,12 @@
             <ddmSpace>Another Space</ddmSpace>
             <entityIdAttributeName>EntityIdentifier</entityIdAttributeName>
             <attrToProp>
-                <hlaName>VelocityVector</hlaName>
-                <hlaDataType>VELOCITY_VECTOR_TYPE</hlaDataType>
-                <gameName>Velocity Vector</gameName>
-                <gameDataType>VEC3D</gameDataType>
+                <hlaName>PowerPlantOn</hlaName>
+                <hlaDataType>UNSIGNED_CHAR_TYPE</hlaDataType>
+                <gameName>EngineOn</gameName>
+                <gameDataType>BOOLEAN</gameDataType>
                 <default></default>
             </attrToProp>            
-        </object>
-
-        <object>
-            <objectClass>BaseEntity.PhysicalEntity.Platform.Aircraft</objectClass>
-            <actorType>TestHLA.Jet</actorType>
-            <remoteOnly>true</remoteOnly>
-            <entityType>1.2.225.0.0.0.0</entityType>
-            <attrToProp>
-                <hlaName>VelocityVector</hlaName>
-                <hlaDataType>VELOCITY_VECTOR_TYPE</hlaDataType>
-                <gameName>Velocity Vector</gameName>
-                <gameDataType>VEC3D</gameDataType>
-                <default></default>
-            </attrToProp>
-            <!-- this is an example for the unit tests 
-                 to handle.  The handler for VELOCITY_VECTOR_TYPE current 
-                 doesn't support having three parameters. SPATIAL_TYPE does,
-                 however, work with it.-->            
-            <attrToProp>
-                <hlaName>AccelerationVector</hlaName>
-                <hlaDataType>VELOCITY_VECTOR_TYPE</hlaDataType>
-                <parameter>
-                   <gameName>accelX</gameName>
-                   <gameDataType>FLOAT</gameDataType>
-                </parameter>
-                <parameter>
-                   <gameName>accelY</gameName>
-                   <gameDataType>FLOAT</gameDataType>
-                </parameter>
-                <parameter>
-                   <gameName>accelZ</gameName>
-                   <gameDataType>FLOAT</gameDataType>
-                </parameter>
-            </attrToProp>
         </object>
 
         <object>
@@ -303,14 +269,55 @@
             <!-- Every class must have a mapped attribute or it can't be
                  published or subscribed to -->
             <attrToProp>
-                <hlaName>Orientation</hlaName>
-                <hlaDataType>EULER_ANGLES_TYPE</hlaDataType>
-                <hlaRequired>true</hlaRequired>
-                <gameName>Rotation</gameName>
-                <gameDataType>VEC3</gameDataType>
-                <gameRequired>true</gameRequired>
-                <default></default>
-            </attrToProp>            
+                <hlaName>Spatial</hlaName>
+                <hlaDataType>SPATIAL_TYPE</hlaDataType>
+                <parameter>
+                    <gameName>Dead Reckoning Algorithm</gameName>
+                    <gameDataType>ENUMERATION</gameDataType>
+                    <default>Static</default>
+                    <enumerationMapping>
+                       <value id="1">Static</value>
+                       <value id="2">Velocity Only</value>
+                       <value id="3">Velocity and Acceleration</value>
+                       <value id="4">Velocity and Acceleration</value>
+                       <value id="5">Velocity and Acceleration</value>
+                       <value id="6">Velocity and Acceleration</value>
+                       <value id="7">Velocity and Acceleration</value>
+                       <value id="8">Velocity and Acceleration</value>
+                       <value id="10">Velocity Only</value>
+                    </enumerationMapping>
+                </parameter>
+                <parameter>
+                    <gameName>Frozen</gameName>
+                    <gameDataType>BOOLEAN</gameDataType>
+                    <default></default>
+                </parameter>
+                <parameter>
+                    <gameName>Last Known Translation</gameName>
+                    <gameDataType>VEC3</gameDataType>
+                    <default></default>
+                </parameter>
+                <parameter>
+                    <gameName>Last Known Rotation</gameName>
+                    <gameDataType>VEC3</gameDataType>
+                    <default></default>
+                </parameter>
+                <parameter>
+                   <gameName>Velocity Vector</gameName>
+                   <gameDataType>VEC3</gameDataType>
+                   <default></default>
+                </parameter>
+                <parameter>
+                   <gameName>Acceleration Vector</gameName>
+                   <gameDataType>VEC3</gameDataType>
+                   <default></default>
+                </parameter>
+                <parameter> 
+                    <gameName>Angular Velocity Vector</gameName>
+                    <gameDataType>VEC3</gameDataType>
+                    <default></default>
+                </parameter>
+            </attrToProp> 
         </object>
 
         <object>
@@ -320,11 +327,11 @@
             <!-- Every class must have a mapped attribute or it can't be
                  published or subscribed to -->
             <attrToProp>
-                <hlaName>Orientation</hlaName>
-                <hlaDataType>EULER_ANGLES_TYPE</hlaDataType>
+                <hlaName>PowerPlantOn</hlaName>
+                <hlaDataType>UNSIGNED_CHAR_TYPE</hlaDataType>
                 <hlaRequired>true</hlaRequired>
-                <gameName>Rotation</gameName>
-                <gameDataType>VEC3</gameDataType>
+                <gameName>EngineOn</gameName>
+                <gameDataType>BOOLEAN</gameDataType>
                 <gameRequired>true</gameRequired>
                 <default></default>
             </attrToProp>            

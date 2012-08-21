@@ -515,7 +515,7 @@ namespace dtHLAGM
 
    /////////////////////////////////////////////////////////////////////////////////
    void HLAComponent::JoinFederationExecution(const std::string& executionName,
-                                              std::vector<std::string>& fedFilenames,
+                                              const std::vector<std::string>& fedFilenames,
                                               const std::string& federateName,
                                               const std::string& ridFile,
                                               const std::string& rtiImplementationName)
@@ -594,18 +594,39 @@ namespace dtHLAGM
       {
          // TODO read connection specific info from somewhere.
          mRTIAmbassador->ConnectToRTI(*this, "");
+         std::vector<std::string> fedFilesFound;
+         fedFilesFound.reserve(fedFilenames.size());
          for (unsigned i = 0; i < fedFilenames.size(); ++i)
          {
-            fedFilenames[i] = dtUtil::FindFileInPathList(fedFilenames[i]);
+            fedFilesFound.push_back( dtUtil::FindFileInPathList(fedFilenames[i]) );
+            if (fedFilesFound.back().empty())
+            {
+               fedFilesFound.pop_back();
+            }
          }
-         mRTIAmbassador->CreateFederationExecution(executionName, fedFilenames);
 
+         if (fedFilesFound.empty())
+         {
+            throw dtUtil::Exception("Unable to create the federation.  No fed files were found.", __FILE__, __LINE__);
+         }
+
+         mRTIAmbassador->CreateFederationExecution(executionName, fedFilesFound);
+
+      }
+      catch(const RTIException&)
+      {
+         mRTIAmbassador = NULL;
+         throw;
+      }
+
+      try
+      {
          mRTIAmbassador->JoinFederationExecution(federateName, executionName);
       }
-      catch(const RTIException& ex)
+      catch(const RTIException&)
       {
-         //TODO
          mRTIAmbassador = NULL;
+         throw;
       }
 
       mEntityIdentifierCounter = 1;
@@ -649,6 +670,7 @@ namespace dtHLAGM
          }
          //drop all instance mapping data.
          mRuntimeMappings.Clear();
+         mObjectRegQueue.clear();
 
          if (mDDMEnabled)
          {
@@ -672,6 +694,7 @@ namespace dtHLAGM
       mRTIAmbassador = NULL;
    }
 
+   /////////////////////////////////////////////////////////////////////////////////
    void HLAComponent::PublishSubscribe()
    {
       // Clear it so we can collect all the valid names.
@@ -1516,13 +1539,6 @@ namespace dtHLAGM
 
       std::string classHandleString = mRTIAmbassador->GetObjectClassName(*classHandle);
 
-      static const std::string OBJECT_ROOT("ObjectRoot.");
-      if (classHandleString.length() > OBJECT_ROOT.length() &&
-               classHandleString.substr(0, OBJECT_ROOT.length()) == OBJECT_ROOT)
-      {
-         classHandleString = classHandleString.substr(OBJECT_ROOT.size());
-      }
-
       hadEntityTypeProperty = false;
       EntityType currentEntityType;
 
@@ -1728,9 +1744,7 @@ namespace dtHLAGM
       // Set an RTI ID mapping if the RTI ID is valid
       if (!theObjectName.empty())
       {
-         std::string rtiId = theObjectName;
-         if( !rtiId.empty() )
-            mRuntimeMappings.Put(rtiId, newId);
+         mRuntimeMappings.Put(theObjectName, newId);
       }
    }
 
@@ -1881,6 +1895,64 @@ namespace dtHLAGM
          ex.LogException(dtUtil::Log::LOG_ERROR, *mLogger);
       }
 
+   }
+
+   /////////////////////////////////////////////////////////////////////////////////
+   void HLAComponent::ObjectInstanceNameReservationSucceeded(const std::string& theObjectInstanceName)
+   {
+      ObjectRegQueue::iterator i, iend;
+      i = mObjectRegQueue.begin();
+      iend = mObjectRegQueue.end();
+      bool found = false;
+      while (i != iend)
+      {
+         if (i->first == theObjectInstanceName)
+         {
+            if (!found)
+            {
+               mRuntimeMappings.Put(theObjectInstanceName, i->second->GetAboutActorId());
+            }
+
+            DispatchNetworkMessage(*i->second);
+
+            ObjectRegQueue::iterator oldIter = i;
+            ++i;
+            mObjectRegQueue.erase(oldIter);
+            found = true;
+         }
+         else
+         {
+            ++i;
+         }
+      }
+   }
+
+   /////////////////////////////////////////////////////////////////////////////////
+   void HLAComponent::ObjectInstanceNameReservationFailed(const std::string& theObjectInstanceName)
+   {
+      // If the name is already taken, then this has to make up a new name based on a new unique id
+      // then try again.
+
+      ObjectRegQueue::iterator i;
+      i = mObjectRegQueue.begin();
+
+      dtCore::UniqueId replacementId;
+      mRTIAmbassador->ReserveObjectInstanceName(replacementId.ToString());
+
+      while (i != mObjectRegQueue.end())
+      {
+         if (i->first == theObjectInstanceName)
+         {
+            mObjectRegQueue.push_back(std::make_pair(replacementId.ToString(), i->second));
+            ObjectRegQueue::iterator oldIter = i;
+            ++i;
+            mObjectRegQueue.erase(oldIter);
+         }
+         else
+         {
+            ++i;
+         }
+      }
    }
 
    /////////////////////////////////////////////////////////////////////////////////
@@ -2130,9 +2202,25 @@ namespace dtHLAGM
    /////////////////////////////////////////////////////////////////////////////////
    void HLAComponent::DispatchUpdate(const dtGame::Message& message)
    {
+      if (mRuntimeMappings.GetRTIId(message.GetAboutActorId()) == NULL)
+      {
+         mObjectRegQueue.push_back(std::make_pair(message.GetAboutActorId().ToString(), &message));
+         mRTIAmbassador->ReserveObjectInstanceName(message.GetAboutActorId().ToString());
+         return;
+      }
+
       const dtGame::ActorUpdateMessage& aum = static_cast<const dtGame::ActorUpdateMessage&>(message);
       const dtCore::UniqueId& actorID = message.GetAboutActorId();
-      const std::string actorName = actorID.ToString();
+      const std::string* actorNamePtr = mRuntimeMappings.GetRTIId(actorID);
+
+      // This shouldn't get here, the calling code is supposed to make sure this is set beforehand.
+      if (actorNamePtr == NULL)
+      {
+         return;
+      }
+
+      const std::string actorName = *actorNamePtr;
+
 
       // Get Actor Type
       dtCore::RefPtr<const dtCore::ActorType> actorType = GetGameManager()->FindActorType(aum.GetActorTypeCategory(), aum.GetActorTypeName());
@@ -2164,35 +2252,21 @@ namespace dtHLAGM
          return;
       }
 
-      RTIAttributeHandleValueMap theAttributes;
-
-//      //Create AttributeHandleValuePairSet to hold the attributes.
-//      RTI::AttributeHandleValuePairSet* theAttributes =
-//            RTI::AttributeSetFactory::create(thisObjectToActor->GetOneToManyMappingVector().size() + 2);
 
       //Get ClassHandle from ObjectToActor
       dtCore::RefPtr<RTIObjectClassHandle> classHandle = thisObjectToActor->GetObjectClassHandle();
 
       dtCore::RefPtr<RTIObjectInstanceHandle> tmpObjectHandle = mRuntimeMappings.GetHandle(actorID);
-
       bool newObject = !tmpObjectHandle.valid();
-
-      PrepareUpdate(aum, theAttributes, *thisObjectToActor, newObject);
 
       dtCore::RefPtr<RTIObjectInstanceHandle> objectHandle;
 
       if (newObject)
       {
-         const std::string* rtiID = mRuntimeMappings.GetRTIId(actorID);
-         if (rtiID == NULL)
-         {
-            rtiID = &actorName;
-         }
-
          try
          {
             // The actor that sent an update has not yet been registered with the RTI.
-            objectHandle = mRTIAmbassador->RegisterObjectInstance(*classHandle, *rtiID);
+            objectHandle = mRTIAmbassador->RegisterObjectInstance(*classHandle, actorName);
          }
          catch (const RTIException& ex)
          {
@@ -2208,6 +2282,10 @@ namespace dtHLAGM
       {
          objectHandle = tmpObjectHandle;
       }
+
+      RTIAttributeHandleValueMap theAttributes;
+      PrepareUpdate(aum, theAttributes, *thisObjectToActor, newObject);
+
 
       if (!theAttributes.empty())
       {
@@ -3186,6 +3264,7 @@ namespace dtHLAGM
       else if (message.GetMessageType() == dtGame::MessageType::INFO_MAP_UNLOADED)
       {
          mRuntimeMappings.Clear();
+         mObjectRegQueue.clear();
       }
    }
 

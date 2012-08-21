@@ -119,6 +119,13 @@ namespace dtHLAGM
                                       const RTIParameterHandleValueMap& theParameters,
                                       const std::string& theTag) = 0;
 
+      /// Called if the object name registration succeeds, meaning the object may be registered with the rti using the given name.
+      virtual void ObjectInstanceNameReservationSucceeded (const std::string& theObjectInstanceName) = 0;
+
+      /// Called if the object name registration succeeds, meaning the object may NOT be registered with the rti using the given name.
+      virtual void ObjectInstanceNameReservationFailed (const std::string& theObjectInstanceName) = 0;
+
+
    private:
       // -----------------------------------------------------------------------
       //  Unimplemented constructors and operators
