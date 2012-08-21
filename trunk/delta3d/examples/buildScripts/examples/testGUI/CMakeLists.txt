@@ -9,7 +9,6 @@ ADD_EXECUTABLE(${APP_NAME} ${EXAMPLE_PATH}/testgui.cpp
 
 TARGET_LINK_LIBRARIES(${APP_NAME} ${DTCORE_LIBRARIES}
                                   ${DTABC_LIBRARIES}
-                                  ${DTDAL_LIBRARIES}
                                   ${DTUTIL_LIBRARIES}
                                   ${DTGUI_LIBRARIES}
                       )

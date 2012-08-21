@@ -10,5 +10,4 @@ TARGET_LINK_LIBRARIES(${APP_NAME} ${DTCORE_LIBRARIES}
                                   ${DTABC_LIBRARIES}
                                   ${DTUTIL_LIBRARIES}
                                   ${DTGUI_LIBRARIES}
-                                  ${DTDAL_LIBRARIES}
                       )

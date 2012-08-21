@@ -106,7 +106,6 @@ TARGET_LINK_LIBRARIES(${LIB_NAME}
                       ${MATH_LIBRARY}
                       ${DTUTIL_LIBRARY}
                       ${DTCORE_LIBRARY}
-                      ${DTDAL_LIBRARAY}
                       ${DTGAME_LIBRARY}
                       )
 

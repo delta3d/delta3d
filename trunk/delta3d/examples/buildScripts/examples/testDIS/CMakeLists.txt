@@ -18,6 +18,5 @@ TARGET_LINK_LIBRARIES(${APP_NAME} ${DTCORE_LIBRARIES}
                                   ${DTABC_LIBRARIES}  
                                   ${DTUTIL_LIBRARIES}
                                   ${DTGAME_LIBRARIES}
-                                  ${DTDAL_LIBRARIES}
                                   ${DTDIS_LIBRARIES}
                       )
