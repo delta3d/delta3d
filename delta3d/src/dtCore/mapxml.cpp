@@ -214,7 +214,7 @@ namespace dtCore
 
          bool result = false;
          //using this option will keep the parser from parsing the whole map
-         if(options != NULL && !(options->getPluginStringData("DELTA3D_PARSEMAPNAME").empty()))
+         if (options != NULL && !(options->getPluginStringData("DELTA3D_PARSEMAPNAME").empty()))
          {
             std::string name = ms->ParseMapName(fin);
             result = !name.empty();
@@ -224,7 +224,7 @@ namespace dtCore
             result = ms->ParseMap(fin);
          }
 
-         if(result)
+         if (result)
          {
             return osgDB::ReaderWriter::ReadResult(ms);
          }
