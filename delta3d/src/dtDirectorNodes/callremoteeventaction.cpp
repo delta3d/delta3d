@@ -60,6 +60,7 @@ namespace dtDirector
       mInputs.push_back(InputLink(this, "Call Event", "Executes the remote event."));
 
       mOutputs.clear();
+      mOutputs.push_back(OutputLink(this, "Out", "Activates after all remote events have been called, but before they all finish."));
       mOutputs.push_back(OutputLink(this, "Event Finished", "Activates after the entire chain connected to the remote event has finished."));
 
       SetEventName("");
@@ -237,6 +238,8 @@ namespace dtDirector
             }
          }
 
+         OutputLink* link = GetOutputLink("Out");
+         if (link) link->Activate();
          return true;
       }
       // Once we get back here again, it means we have finished calling
