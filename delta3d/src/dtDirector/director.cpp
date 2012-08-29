@@ -1523,7 +1523,12 @@ namespace dtDirector
    ////////////////////////////////////////////////////////////////////////////////
    bool Director::IsEnabled() const
    {
-      return mEnabled;
+      bool enabled = mEnabled;
+      if (GetParent() != NULL)
+      {
+         enabled = GetParent()->IsEnabled() && enabled;
+      }
+      return enabled;
    }
 
    //////////////////////////////////////////////////////////////////////////
