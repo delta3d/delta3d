@@ -1521,10 +1521,10 @@ namespace dtDirector
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   bool Director::IsEnabled() const
+   bool Director::IsEnabled(bool checkRecursively /*= true*/) const
    {
       bool enabled = mEnabled;
-      if (GetParent() != NULL)
+      if (checkRecursively && GetParent() != NULL)
       {
          enabled = GetParent()->IsEnabled() && enabled;
       }

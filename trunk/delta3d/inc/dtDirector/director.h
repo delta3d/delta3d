@@ -611,9 +611,10 @@ namespace dtDirector
       /**
        * Checks if this script is enabled.
        *
+       * @param[in]  checkRecursively  Whether we should check if all our parent scripts are enabled or not as well
        * @return  Returns whether this script is enabled or not.
        */
-      bool IsEnabled() const;
+      bool IsEnabled(bool checkRecursively = true) const;
 
    protected:
 
