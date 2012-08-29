@@ -132,7 +132,10 @@ namespace dtDirector
    ////////////////////////////////////////////////////////////////////////////////
    void GameMessageEvent::OnMessage(const dtGame::Message& message)
    {
-      // Trigger this event on this message.
-      Trigger("Out", &message.GetAboutActorId());
+      if (IsEnabled() && GetDirector()->IsEnabled())
+      {
+         // Trigger this event on this message.
+         Trigger("Out", &message.GetAboutActorId());
+      }
    }
 }
