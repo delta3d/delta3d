@@ -385,7 +385,7 @@
               <gameName>TestProp</gameName>
               <gameDataType>ENUMERATION</gameDataType>
               <gameRequired>true</gameRequired>
-              <default>LARGE EXPLOSION</default>
+              <default>LARGE BULLET</default>
               <enumerationMapping>
                  <value id="2 2 225 2 2 0 0">LARGE BULLET</value>
                  <value id="2 9 225 2 14 0 0">SHORT SMOKE</value>
