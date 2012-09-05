@@ -391,13 +391,20 @@ void HLAComponentTests::tearDown()
    dtCore::System::GetInstance().Stop();
    if (mGameManager.valid())
    {
-      mGameManager->RemoveComponent(*mHLAComponent);
-      mGameManager->RemoveComponent(*mTestComponent);
-      
-      mHLAComponent  = NULL;
-      mTestComponent = NULL;
-      mGameManager->UnloadActorRegistry(mTestGameActorLibrary);
-      mGameManager   = NULL;
+      try
+      {
+         mGameManager->RemoveComponent(*mHLAComponent);
+         mGameManager->RemoveComponent(*mTestComponent);
+
+         mHLAComponent  = NULL;
+         mTestComponent = NULL;
+         mGameManager->UnloadActorRegistry(mTestGameActorLibrary);
+         mGameManager   = NULL;
+      }
+      catch (const dtUtil::Exception& ex)
+      {
+         CPPUNIT_FAIL(ex.ToString());
+      }
    }
 }
 

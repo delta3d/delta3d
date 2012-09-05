@@ -588,7 +588,7 @@ void HLAConfigTests::TestConfigure()
          }
          {
             dtHLAGM::ParameterToParameterList paramToParam("MunitionType", dtHLAGM::RPRAttributeType::ENTITY_TYPE, true);
-            dtHLAGM::OneToManyMapping::ParameterDefinition pd("TestProp", dtCore::DataType::ENUMERATION, "LARGE EXPLOSION", true);
+            dtHLAGM::OneToManyMapping::ParameterDefinition pd("TestProp", dtCore::DataType::ENUMERATION, "LARGE BULLET", true);
 
             pd.AddEnumerationMapping("2 2 225 2 2 0 0", "LARGE BULLET");
             pd.AddEnumerationMapping("2 9 225 2 14 0 0", "SHORT SMOKE");

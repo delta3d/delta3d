@@ -111,7 +111,7 @@ namespace dtHLAGM
                RTI::InvalidFederationTime,
                RTI::FederateInternalError)
       {
-         reflectAttributeValues(theObject, theAttributes, theTag);
+          reflectAttributeValues(theObject, theAttributes, theTag);
       }
 
       virtual void reflectAttributeValues (
