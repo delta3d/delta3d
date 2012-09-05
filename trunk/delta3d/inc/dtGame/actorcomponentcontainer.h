@@ -55,13 +55,9 @@ namespace dtGame
        * @param compType pointer to be set to component
        * @return True if component of this type exists, else false
        */
-      ///deprecated 4/4/12
       template <typename TComp>
-      DEPRECATE_FUNC bool GetComponent(TComp*& compType) const
+      bool GetComponent(TComp*& compType) const
       {
-         DEPRECATE("bool ActorComponentContainer::GetComponent(TComp*&)",
-            "std::vector<ActorComponent*> ActorComponentContainer::GetComponents(const ActorComponent::ACType&)");
-
          std::vector<ActorComponent*> components = GetComponents(TComp::TYPE);
          if (!components.empty())
          {
@@ -84,12 +80,9 @@ namespace dtGame
        * @param compType pointer to be set to component
        * @return True if component of this type exists, else false
        */
-      ///deprecated 4/4/12
       template <typename TComp>
-      DEPRECATE_FUNC bool GetComponent(dtCore::RefPtr<TComp>& compType) const
+      bool GetComponent(dtCore::RefPtr<TComp>& compType) const
       {
-         DEPRECATE("bool ActorComponentContainer::GetComponent(TComp*&)",
-            "std::vector<ActorComponent*> ActorComponentContainer::GetComponents(const ActorComponent::ACType&)");
          std::vector<ActorComponent*> components = GetComponents(TComp::TYPE);
          if (!components.empty())
          {

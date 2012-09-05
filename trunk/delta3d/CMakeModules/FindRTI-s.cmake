@@ -33,6 +33,7 @@ FIND_PATH(RTI_INCLUDE_DIR RTI.hh
 
 IF (APPLE)
   SET(PATHLIST 
+        ${RTIS_ROOT_DIR}/lib/macintel_g++-4.2
         ${RTIS_ROOT_DIR}/lib/macintel_g++-4.0
         ${RTIS_ROOT_DIR}/lib/darwin_g++-4.0
         ${RTIS_ROOT_DIR}/lib/darwin_g++-3.3

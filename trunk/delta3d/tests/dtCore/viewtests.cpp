@@ -163,7 +163,7 @@ CPPUNIT_TEST_SUITE_REGISTRATION(ViewTests);
 
       CPPUNIT_ASSERT_EQUAL_MESSAGE("SHould be 2",
                                     size_t(2),
-                                    testPager->GetPagedLODList().size() );
+                                    size_t(testPager->GetPagedLODList().size()) );
 
       dtCore::RefPtr<TestPager> testPager2 = new TestPager();
       dtCore::RefPtr<dtCore::DatabasePager> pager2 = new dtCore::DatabasePager( *testPager2 );
@@ -171,7 +171,7 @@ CPPUNIT_TEST_SUITE_REGISTRATION(ViewTests);
 
       CPPUNIT_ASSERT_EQUAL_MESSAGE("Should be 2, and should have worked when setting the pager AFTER setting the scene.",
                                     size_t(2),
-                                    testPager2->GetPagedLODList().size() );
+                                    size_t(testPager2->GetPagedLODList().size()) );
    }
 
    //////////////////////////////////////////////////////////////////////////

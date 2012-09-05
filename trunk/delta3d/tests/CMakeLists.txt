@@ -113,10 +113,14 @@ IF (DTHLAGM_AVAILABLE)
   TARGET_LINK_LIBRARIES(${PROG_NAME}  
                         ${DTHLAGM_LIBRARY}
                         )
+
+  if (DTHLAGM_RTI1516E_LIB_BUILT)
+     add_Dependencies(${DTHLAGM_RTI1516E_LIB_BUILT})
+  endif()
+  if (DTHLAGM_RTI13_LIB_BUILT)
+     add_Dependencies(${DTHLAGM_RTI13_LIB_BUILT})
+  endif()
                         
-  TARGET_LINK_LIBRARIES(${PROG_NAME}
-                        ${RTI_LIBRARIES}
-                        )
 ENDIF (DTHLAGM_AVAILABLE)
 
 IF (BUILD_DEMOS AND NOT BUILD_WITH_OLD_CEGUI AND DTAUDIO_AVAILABLE AND DTGUI_AVAILABLE)

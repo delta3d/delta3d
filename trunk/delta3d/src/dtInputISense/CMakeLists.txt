@@ -16,14 +16,6 @@ SET(LIB_PUBLIC_HEADERS
        ${HEADER_PATH}/types.h
        )
        
-IF (APPLE)
-  SET( LIB_SOURCES ${LIB_SOURCES}
-         ${SOURCE_PATH}/dlcompat.c )
-         
-  SET( LIB_PUBLIC_HEADERS ${LIB_PUBLIC_HEADERS}
-         ${HEADER_PATH}/dlcompat.h )
-ENDIF (APPLE)
-
 #need to add inc/dtInputIsense to the header search path for isence.c can see isense.h
 INCLUDE_DIRECTORIES( BEFORE ${HEADER_PATH} )
 
