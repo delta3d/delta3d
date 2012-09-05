@@ -233,20 +233,23 @@ IF(APPLE)
    endif()
 
    if (NOT CMAKE_OSX_SYSROOT)
-     set(CMAKE_OSX_SYSROOT "/Developer/SDKs/MacOSX10.5.sdk" CACHE STRING "Build SDK root" FORCE )
+     set(CMAKE_OSX_SYSROOT "/Developer/SDKs/MacOSX10.6.sdk" CACHE STRING "Build SDK root" FORCE )
    endif()
 
    if (NOT CMAKE_OSX_DEPLOYMENT_TARGET)
-     # use 10.5 because osg atomics won't build on less.
+     # use 10.5 because that's the oldest that has atomics
      set(CMAKE_OSX_DEPLOYMENT_TARGET "10.5" CACHE STRING "Build SDK root" FORCE)
    endif()
 
-   SET(CMAKE_SHARED_LINKER_FLAGS "-Wl,-single_module -compatibility_version 3 -current_version 3" )
-   SET(CMAKE_CXX_FLAGS_DEBUG "-gdwarf-2")
-   SET(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O2 -gdwarf-2")
-   SET(CMAKE_C_FLAGS_DEBUG "-gdwarf-2")
-   SET(CMAKE_C_FLAGS_RELWITHDEBINFO "-O2 -gdwarf-2")
-   INCLUDE_DIRECTORIES(/usr/include/malloc)
+   SET(CMAKE_EXE_LINKER_FLAGS "-F/Library/Frameworks" )
+   SET(CMAKE_SHARED_LINKER_FLAGS "-Wl,-single_module -compatibility_version 3 -current_version 3 -F/Library/Frameworks" )
+   INCLUDE_DIRECTORIES(${CMAKE_OSX_SYSROOT}/usr/include/malloc)
+   # this is an ugly hack to fix what seems to be a problem on OS X 10.8
+   # when building with the 10.6 sdk.  Unfortunatly, this will break if
+   # building as x86_64.  Need to find a better solution for this.  Maybe
+   # they'll just fix the bug.  I have to build with the 10.6 sdk because of
+   # cegui, which also forces the 32 bit problem :-/
+   INCLUDE_DIRECTORIES(${CMAKE_OSX_SYSROOT}/usr/include/c++/4.2.1/i686-apple-darwin10)
 ELSE (APPLE)
    #We only want X11 if we are not running on OSX, but still with a unix-like environment
    IF(UNIX)

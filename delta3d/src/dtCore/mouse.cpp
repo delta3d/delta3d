@@ -14,7 +14,9 @@
 #ifdef DELTA_WIN32
 #include <osgViewer/api/Win32/GraphicsWindowWin32>
 #elif defined(__APPLE__)
-#include <osgViewer/api/Carbon/GraphicsWindowCarbon>
+  #if MAC_OS_X_VERSION_MIN_REQUIRED < 1060
+  #include <osgViewer/api/Carbon/GraphicsWindowCarbon>
+  #endif
 #include <ApplicationServices/ApplicationServices.h>
 #else
 #include <osgViewer/api/X11/GraphicsWindowX11>
@@ -301,13 +303,15 @@ bool Mouse::ButtonUp(float x, float y, MouseButton button)
 bool Mouse::GetHasFocus()
 {
    DeltaWin *win = mView->GetCamera()->GetWindow();
-#if defined(__APPLE__)
+#if defined(__APPLE__) && MAC_OS_X_VERSION_MIN_REQUIRED < 1060
 
    osgViewer::GraphicsWindowCarbon *carbon =
       dynamic_cast<osgViewer::GraphicsWindowCarbon*>(win->GetOsgViewerGraphicsWindow());
    if (carbon != NULL)
       return IsWindowActive(carbon->getNativeWindowRef());
-
+#elif defined(__APPLE__)
+   // Don't have a solution for Lion and Mountain Lion yet.
+   return true;
 #elif defined(DELTA_WIN32)
 
    osgViewer::GraphicsWindowWin32 *win32 =
