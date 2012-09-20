@@ -398,6 +398,7 @@ void HLAComponentTests::tearDown()
 
          mHLAComponent  = NULL;
          mTestComponent = NULL;
+         mGameManager->DeleteAllActors(true);
          mGameManager->UnloadActorRegistry(mTestGameActorLibrary);
          mGameManager   = NULL;
       }

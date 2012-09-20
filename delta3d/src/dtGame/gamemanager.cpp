@@ -87,7 +87,8 @@ namespace dtGame
 
    ///////////////////////////////////////////////////////////////////////////////
    GameManager::GameManager(dtCore::Scene& scene)
-      : mGMImpl(new GMImpl(scene))
+   : dtCore::Base("GameManager")
+   , mGMImpl(new GMImpl(scene))
    {
       AddSender(&dtCore::System::GetInstance());
 
@@ -112,7 +113,6 @@ namespace dtGame
    GameManager::~GameManager()
    {
       RemoveSender(&dtCore::System::GetInstance());
-
       delete mGMImpl;
    }
 
@@ -1474,38 +1474,24 @@ namespace dtGame
       mGMImpl->mRealTimeTimers.clear();
       mGMImpl->mSimulationTimers.clear();
 
+      while (!mGMImpl->mBaseActorObjectMap.empty())
+      {
+         DeleteActor(*mGMImpl->mBaseActorObjectMap.begin()->second);
+      }
+
+      for (GMImpl::GameActorMap::iterator i = mGMImpl->mGameActorProxyMap.begin();
+         i != mGMImpl->mGameActorProxyMap.end(); ++i)
+      {
+         DeleteActor(*i->second);
+      }
+
       if (immediate)
       {
-         mGMImpl->mScene->RemoveAllDrawables();
-
-         if (mGMImpl->mEnvironment.valid())
+         while (RemoveDeletedActors())
          {
-            static_cast<dtGame::IEnvGameActor&>(mGMImpl->mEnvironment->GetGameActor()).RemoveAllActors();
-            mGMImpl->mEnvironment = NULL;
+            // Process all the delete messages if actors delete other actors.
+            DoSendMessages();
          }
-
-         mGMImpl->mBaseActorObjectMap.clear();
-         mGMImpl->mGlobalMessageListeners.clear();
-         mGMImpl->mActorMessageListeners.clear();
-         mGMImpl->mGameActorProxyMap.clear();
-
-         // all the actors are deleted now, so the problems with clearing the list
-         // of deleted actors is not a problem.
-         mGMImpl->mDeleteList.clear();
-      }
-      else
-      {
-         while (!mGMImpl->mBaseActorObjectMap.empty())
-         {
-            DeleteActor(*mGMImpl->mBaseActorObjectMap.begin()->second);
-         }
-
-         for (GMImpl::GameActorMap::iterator i = mGMImpl->mGameActorProxyMap.begin();
-            i != mGMImpl->mGameActorProxyMap.end(); ++i)
-         {
-            DeleteActor(*i->second);
-         }
-
       }
 
       DeleteAllPrototypes();

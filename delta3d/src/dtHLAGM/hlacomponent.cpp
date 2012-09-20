@@ -1384,7 +1384,7 @@ namespace dtHLAGM
 
          std::vector<AttributeToPropertyList>::iterator vectorIterator;
 
-         dtCore::RefPtr<dtGame::GameManager> gameManager = GetGameManager();
+         dtGame::GameManager* gameManager = GetGameManager();
 
          dtGame::MessageFactory& factory = gameManager->GetMessageFactory();
 

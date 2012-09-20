@@ -128,7 +128,7 @@ void dtGame::GMImpl::ProcessTimers(GameManager& gm, std::set<TimerInfo>& listToP
 ////////////////////////////////////////////////////////////////////////////////
 void dtGame::GMImpl::RemoveActorFromScene(GameManager& gm, dtCore::BaseActorObject& proxy)
 {
-   dtCore::DeltaDrawable& dd = *proxy.GetActor();
+   dtCore::DeltaDrawable& dd = *proxy.GetDrawable();
 
    if (dd.GetSceneParent() != mScene.get())
    {

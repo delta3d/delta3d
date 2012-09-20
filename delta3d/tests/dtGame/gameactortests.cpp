@@ -707,7 +707,8 @@ void GameActorTests::TestAddRemoveFromEnvActor()
 
       mManager->DeleteAllActors(true);
       mManager->GetActorsInScene(drawables);
-      CPPUNIT_ASSERT(drawables.empty());
+      // It's 1 because the scene has 1 in it and the GM only deletes what was added.
+      CPPUNIT_ASSERT_EQUAL(size_t(1), drawables.size());
       // --- TEST GM REMOVAL --- END --- //
    }
    catch(const dtUtil::Exception& e)
@@ -879,7 +880,8 @@ void GameActorTests::TestSetEnvironmentActor()
       CPPUNIT_ASSERT_MESSAGE("The game manager should now have all the actors", drawables.size() - 1 == numActors);
       mManager->DeleteAllActors(true);
       mManager->GetActorsInScene(drawables);
-      CPPUNIT_ASSERT(drawables.empty());
+      // It's 1 because it starts out with 1 and the GM only deletes actors it added
+      CPPUNIT_ASSERT_EQUAL(size_t(1), drawables.size());
    }
    catch(const dtUtil::Exception& e)
    {
