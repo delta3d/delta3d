@@ -168,20 +168,24 @@ namespace dtGame
 
       GameActor* ga = NULL;
       GetOwner(ga);
-      GameActorProxy& act = ga->GetGameActorProxy();
-
-      act.GetGameManager()->
-         GetComponentByName(dtGame::DeadReckoningComponent::DEFAULT_NAME, drc);
-
-      if (drc != NULL)
+      // This is false in some delete cases.
+      //if (ga->IsGameActorProxyValid())
       {
-         drc->UnregisterActor(act);
-      }
-      else
-      {
-         dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
-            "Actor \"%s\"\"%s\" unable to find DeadReckoningComponent.",
-            act.GetName().c_str(), act.GetId().ToString().c_str());
+         GameActorProxy& act = ga->GetGameActorProxy();
+
+         act.GetGameManager()->
+            GetComponentByName(dtGame::DeadReckoningComponent::DEFAULT_NAME, drc);
+
+         if (drc != NULL)
+         {
+            drc->UnregisterActor(act);
+         }
+         else
+         {
+            dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
+               "Actor \"%s\"\"%s\" unable to find DeadReckoningComponent.",
+               act.GetName().c_str(), act.GetId().ToString().c_str());
+         }
       }
    }
 

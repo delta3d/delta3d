@@ -88,8 +88,22 @@
       }\
       \
 
+#define DT_IMPLEMENT_ACCESSOR_SETTER_WITH_STATEMENT(ClassName, PropertyType, PropertyName, Code) \
+      void ClassName::Set ## PropertyName(dtUtil::TypeTraits<PropertyType>::param_type value)\
+      {\
+         Code\
+         m ## PropertyName = value;\
+      }\
+      \
+
 #define DT_IMPLEMENT_ACCESSOR(ClassName, PropertyType, PropertyName) \
       DT_IMPLEMENT_ACCESSOR_SETTER(ClassName, PropertyType, PropertyName)\
+      \
+      DT_IMPLEMENT_ACCESSOR_GETTER(ClassName, PropertyType, PropertyName)\
+      \
+
+#define DT_IMPLEMENT_ACCESSOR_WITH_STATEMENT(ClassName, PropertyType, PropertyName, Code) \
+      DT_IMPLEMENT_ACCESSOR_SETTER_WITH_STATEMENT(ClassName, PropertyType, PropertyName, Code)\
       \
       DT_IMPLEMENT_ACCESSOR_GETTER(ClassName, PropertyType, PropertyName)\
       \

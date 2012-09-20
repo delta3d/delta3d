@@ -104,8 +104,15 @@ GameActorProxy::~GameActorProxy()
    GetActor(ga);
    if (ga != NULL)
    {
-      // Removed them all by hand because they need a callback.
-      ga->RemoveAllComponents();
+      try
+      {
+         // Removed them all by hand because they need a callback.
+         ga->RemoveAllComponents();
+      }
+      catch (const dtUtil::Exception& ex)
+      {
+         LOG_ERROR(ex.ToString());
+      }
    }
 }
 
