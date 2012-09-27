@@ -13,9 +13,13 @@ find_path(RTI1516e_INCLUDE_DIR
    NAMES
       RTI/RTI1516.h
    PATH_SUFFIXES 
+      include/1516e
       include
+      inc/1516e
       inc
    HINTS
+      $ENV{RTI_HOME}
+      ${RTIS_ROOT_DIR}
       $ENV{DELTA_ROOT}/../prti1516e
       $ENV{HLA1516_DIR}
       $ENV{PROGRAMFILES}/Pitch/prti1516e
@@ -23,25 +27,45 @@ find_path(RTI1516e_INCLUDE_DIR
        /Applications/prti1516e
 )
 
-SET(LIBSUBDIR ".")
+if (GCC_VERSION)
+  IF (APPLE)
+    SET(PATHLIST 
+        macintel_g++-${GCC_MAJOR}.${GCC_MINOR}
+        macintel64_g++-${GCC_MAJOR}.${GCC_MINOR}
+        darwin_g++-${GCC_MAJOR}.${GCC_MINOR}
+        gcc${GCC_MAJOR}${GCC_MINOR}
+    )
+  ELSE (APPLE)
+    IF (UNIX)
+       SET(PATHLIST    
+          linux_g++-${GCC_MAJOR}.${GCC_MINOR}
+          gcc${GCC_MAJOR}${GCC_MINOR}
+       )
+    ENDIF (UNIX)
+  ENDIF (APPLE)
+endif(GCC_VERSION)
 
-if (MSVC)
-else () 
-    if (GCC_VERSION)
-      set(LIBSUBDIR gcc${GCC_MAJOR}${GCC_MINOR})
-    endif(GCC_VERSION)
-endif(MSVC)
+
+IF (MSVC)
+     SET(PATHLIST 
+        winnt_vc++-8.0
+        winnt_vc++-7.1
+        winnt_vc++-9.0
+        winnt_vc++-10.0
+     )
+ENDIF (MSVC)
 
 find_library(RTI1516e_LIBRARY
    NAMES
       rti1516e
    PATH_SUFFIXES
-      lib
-      lib/${LIBSUBDIR}
+      ${PATHLIST}
    HINTS
-      $ENV{DELTA_ROOT}/../prti1516e
-      $ENV{PROGRAMFILES}/Pitch/prti1516e
-      $ENV{HLA1516_DIR}
+      $ENV{RTI_HOME}/lib
+      ${RTIS_ROOT_DIR}/lib
+      $ENV{DELTA_ROOT}/../prti1516e/lib
+      $ENV{PROGRAMFILES}/Pitch/prti1516e/lib
+      $ENV{HLA1516_DIR}/lib
    PATHS
       /Applications/prti1516e
 )
@@ -50,12 +74,13 @@ find_library(RTI1516e_FEDTIME_LIBRARY
    NAMES
       fedtime1516e
    PATH_SUFFIXES
-      lib
-      lib/${LIBSUBDIR}
+      ${PATHLIST}
    HINTS
-      $ENV{DELTA_ROOT}/../prti1516e
-      $ENV{PROGRAMFILES}/Pitch/prti1516e
-      $ENV{HLA1516_DIR}
+      $ENV{RTI_HOME}/lib
+      ${RTIS_ROOT_DIR}/lib
+      $ENV{DELTA_ROOT}/../prti1516e/lib
+      $ENV{PROGRAMFILES}/Pitch/prti1516e/lib
+      $ENV{HLA1516_DIR}/lib
    PATHS
       /Applications/prti1516e
 )

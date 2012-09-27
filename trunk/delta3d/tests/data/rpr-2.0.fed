@@ -794,7 +794,7 @@
       (parameter RequestingEntityIdentifier)
   )
 
-  (class MunitionDetonation best_effort receive Hyperspace
+  (class MunitionDetonation best_effort receive HyperSpace
      (parameter ArticulatedPartData)
       (parameter DetonationLocation)
       (parameter DetonationResultCode)
@@ -976,7 +976,7 @@
 
  )
 
-  (class WeaponFire best_effort receive Hyperspace
+  (class WeaponFire best_effort receive HyperSpace
      (parameter EventIdentifier)
       (parameter FireControlSolutionRange)
       (parameter FireMissionIndex)
