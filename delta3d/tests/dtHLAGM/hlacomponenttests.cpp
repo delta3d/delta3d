@@ -331,21 +331,21 @@ void HLAComponentTests::setUp()
       const std::string fom = "rpr-2.0.fed";
       //const std::string fom = "RPR-FOM.fed";
 
-      /*std::vector<std::string> fedFiles;
+      std::vector<std::string> fedFiles;
       fedFiles.push_back("1516Fom/Area_Of_Interest_v1.0.1r3.xml");
-      fedFiles.push_back("1516Fom/RPR2-Aggregate_v1.0.1.xml");
       fedFiles.push_back("1516Fom/RPR2-Base_v1.0.1r4.xml");
+      fedFiles.push_back("1516Fom/RPR2-Aggregate_v1.0.1.xml");
       fedFiles.push_back("1516Fom/RPR2-Communication_v1.0.1r2.xml");
       fedFiles.push_back("1516Fom/RPR2-DER_v1.0.1r1.xml");
       fedFiles.push_back("1516Fom/RPR2-Logistics_v1.0.1.xml");
-      fedFiles.push_back("1516Fom/RPR2-Minefield_v1.0.1r1.xml");
       fedFiles.push_back("1516Fom/RPR2-Physical_v1.0.1r2.xml");
       fedFiles.push_back("1516Fom/RPR2-SE_v1.1.0r1.xml");
+      fedFiles.push_back("1516Fom/RPR2-Minefield_v1.0.1r1.xml");
       fedFiles.push_back("1516Fom/RPR2-SIMAN_v1.0.1r1.xml");
       fedFiles.push_back("1516Fom/RPR2-UA_v1.0.1r1.xml");
       fedFiles.push_back("1516Fom/RPR2-Warfare_v1.0.1.xml");
       fedFiles.push_back("1516Fom/UniqueAggregate_v1.0.1r2.xml");
-      fedFiles.push_back("1516Fom/UniquePhysicalEntity_v1.0.1r1.xml");*/
+      fedFiles.push_back("1516Fom/UniquePhysicalEntity_v1.0.1r1.xml");
 
       const std::string fedFile = dtUtil::FindFileInPathList(fom);
       const std::string ridFile = dtUtil::FindFileInPathList("testRID.rid");
@@ -354,9 +354,9 @@ void HLAComponentTests::setUp()
                              !fedFile.empty());
       CPPUNIT_ASSERT(mHLAComponent->GetRTIAmbassador() == NULL);
       // Must turn off DDM for HLA 1516e at the moment because it doesn't work right.
-      //mHLAComponent->SetDDMEnabled(false);
-      mHLAComponent->JoinFederationExecution("hla", fedFile, "delta3d", ridFile, dtHLAGM::RTIAmbassador::RTI13_IMPLEMENTATION);
-      //mHLAComponent->JoinFederationExecution("hla", fedFiles, "delta3d", ridFile, dtHLAGM::RTIAmbassador::RTI1516e_IMPLEMENTATION);
+      mHLAComponent->SetDDMEnabled(false);
+      //mHLAComponent->JoinFederationExecution("hla", fedFile, "delta3d", ridFile, dtHLAGM::RTIAmbassador::RTI13_IMPLEMENTATION);
+      mHLAComponent->JoinFederationExecution("hla", fedFiles, "delta3d", ridFile, dtHLAGM::RTIAmbassador::RTI1516e_IMPLEMENTATION);
       CPPUNIT_ASSERT(mHLAComponent->GetRTIAmbassador() != NULL);
    }
    catch (const dtHLAGM::RTIException& ex)
