@@ -173,8 +173,14 @@ class HLAComponentTests : public CPPUNIT_NS::TestFixture
 
       //All the tests are run in one method
       //they all use the RTI, which takes a long time
-      //to start and stop it setup and teardown.
-      CPPUNIT_TEST(RunAllTests);
+      //to start and stop, so it is just started and stopped once for each hla api version.
+#ifdef DT_WITH_RTI13
+      CPPUNIT_TEST(RunAllTests13);
+#endif
+
+#ifdef DT_WITH_RTI1516E
+      CPPUNIT_TEST(RunAllTests1516e);
+#endif
 
       // 06/15/09
       //Temporarily removing this test from the suite due to a failing test
@@ -190,6 +196,8 @@ class HLAComponentTests : public CPPUNIT_NS::TestFixture
       void tearDown();
 
       void RunAllTests();
+      void RunAllTests13();
+      void RunAllTests1516e();
 
       void TestReflectAttributes();
       void TestReflectAttributesEntityTypeMissing();
@@ -325,51 +333,6 @@ void HLAComponentTests::setUp()
    {
       CPPUNIT_FAIL(ex.ToString());
    }
-
-   try
-   {
-      const std::string fom = "rpr-2.0.fed";
-      //const std::string fom = "RPR-FOM.fed";
-
-      std::vector<std::string> fedFiles;
-      fedFiles.push_back("1516Fom/Area_Of_Interest_v1.0.1r3.xml");
-      fedFiles.push_back("1516Fom/RPR2-Base_v1.0.1r4.xml");
-      fedFiles.push_back("1516Fom/RPR2-Aggregate_v1.0.1.xml");
-      fedFiles.push_back("1516Fom/RPR2-Communication_v1.0.1r2.xml");
-      fedFiles.push_back("1516Fom/RPR2-DER_v1.0.1r1.xml");
-      fedFiles.push_back("1516Fom/RPR2-Logistics_v1.0.1.xml");
-      fedFiles.push_back("1516Fom/RPR2-Physical_v1.0.1r2.xml");
-      fedFiles.push_back("1516Fom/RPR2-SE_v1.1.0r1.xml");
-      fedFiles.push_back("1516Fom/RPR2-Minefield_v1.0.1r1.xml");
-      fedFiles.push_back("1516Fom/RPR2-SIMAN_v1.0.1r1.xml");
-      fedFiles.push_back("1516Fom/RPR2-UA_v1.0.1r1.xml");
-      fedFiles.push_back("1516Fom/RPR2-Warfare_v1.0.1.xml");
-      fedFiles.push_back("1516Fom/UniqueAggregate_v1.0.1r2.xml");
-      fedFiles.push_back("1516Fom/UniquePhysicalEntity_v1.0.1r1.xml");
-
-      const std::string fedFile = dtUtil::FindFileInPathList(fom);
-      const std::string ridFile = dtUtil::FindFileInPathList("testRID.rid");
-      CPPUNIT_ASSERT_MESSAGE("Couldn't find \"" + fom +
-                             "\", make sure you install the Delta3D data package and set the DELTA_DATA environment var.",
-                             !fedFile.empty());
-      CPPUNIT_ASSERT(mHLAComponent->GetRTIAmbassador() == NULL);
-      // Must turn off DDM for HLA 1516e at the moment because it doesn't work right.
-      mHLAComponent->SetDDMEnabled(false);
-      //mHLAComponent->JoinFederationExecution("hla", fedFile, "delta3d", ridFile, dtHLAGM::RTIAmbassador::RTI13_IMPLEMENTATION);
-      mHLAComponent->JoinFederationExecution("hla", fedFiles, "delta3d", ridFile, dtHLAGM::RTIAmbassador::RTI1516e_IMPLEMENTATION);
-      CPPUNIT_ASSERT(mHLAComponent->GetRTIAmbassador() != NULL);
-   }
-   catch (const dtHLAGM::RTIException& ex)
-   {
-      std::ostringstream ss;
-      ss << ex;
-      CPPUNIT_FAIL(std::string("Error joining federation : ") + ss.str());
-   }
-   catch (const dtUtil::Exception& ex)
-   {
-      CPPUNIT_FAIL(std::string("Error joining federation : ") + ex.ToString());
-   }
-
 }
 
 // Called implicitly by CPPUNIT when the app terminates
@@ -502,8 +465,77 @@ void HLAComponentTests::BetweenTestTearDown()
    }
 }
 
+void HLAComponentTests::RunAllTests1516e()
+{
+   try
+   {
+      std::vector<std::string> fedFiles;
+      fedFiles.push_back("1516Fom/Area_Of_Interest_v1.0.1r3.xml");
+      fedFiles.push_back("1516Fom/RPR2-Base_v1.0.1r4.xml");
+      fedFiles.push_back("1516Fom/RPR2-Aggregate_v1.0.1.xml");
+      fedFiles.push_back("1516Fom/RPR2-Communication_v1.0.1r2.xml");
+      fedFiles.push_back("1516Fom/RPR2-DER_v1.0.1r1.xml");
+      fedFiles.push_back("1516Fom/RPR2-Logistics_v1.0.1.xml");
+      fedFiles.push_back("1516Fom/RPR2-Physical_v1.0.1r2.xml");
+      fedFiles.push_back("1516Fom/RPR2-SE_v1.1.0r1.xml");
+      fedFiles.push_back("1516Fom/RPR2-Minefield_v1.0.1r1.xml");
+      fedFiles.push_back("1516Fom/RPR2-SIMAN_v1.0.1r1.xml");
+      fedFiles.push_back("1516Fom/RPR2-UA_v1.0.1r1.xml");
+      fedFiles.push_back("1516Fom/RPR2-Warfare_v1.0.1.xml");
+      fedFiles.push_back("1516Fom/UniqueAggregate_v1.0.1r2.xml");
+      fedFiles.push_back("1516Fom/UniquePhysicalEntity_v1.0.1r1.xml");
+
+      const std::string ridFile = dtUtil::FindFileInPathList("testRID.rid");
+      CPPUNIT_ASSERT(mHLAComponent->GetRTIAmbassador() == NULL);
+      // Must turn off DDM for HLA 1516e at the moment because it doesn't work right.
+      mHLAComponent->SetDDMEnabled(false);
+      mHLAComponent->JoinFederationExecution("hla", fedFiles, "delta3d", ridFile, dtHLAGM::RTIAmbassador::RTI1516e_IMPLEMENTATION);
+      CPPUNIT_ASSERT(mHLAComponent->GetRTIAmbassador() != NULL);
+   }
+   catch (const dtHLAGM::RTIException& ex)
+   {
+      std::ostringstream ss;
+      ss << ex;
+      CPPUNIT_FAIL(std::string("Error joining federation : ") + ss.str());
+   }
+   catch (const dtUtil::Exception& ex)
+   {
+      CPPUNIT_FAIL(std::string("Error joining federation : ") + ex.ToString());
+   }
+
+}
+
+void HLAComponentTests::RunAllTests13()
+{
+   try
+   {
+      const std::string fom = "rpr-2.0.fed";
+
+      const std::string fedFile = dtUtil::FindFileInPathList(fom);
+      const std::string ridFile = dtUtil::FindFileInPathList("testRID.rid");
+      CPPUNIT_ASSERT_MESSAGE("Couldn't find \"" + fom +
+                             "\", make sure you install the Delta3D data package and set the DELTA_DATA environment var.",
+                             !fedFile.empty());
+      CPPUNIT_ASSERT(mHLAComponent->GetRTIAmbassador() == NULL);
+      // Must turn off DDM for HLA 1516e at the moment because it doesn't work right.
+      mHLAComponent->JoinFederationExecution("hla", fedFile, "delta3d", ridFile, dtHLAGM::RTIAmbassador::RTI13_IMPLEMENTATION);
+      CPPUNIT_ASSERT(mHLAComponent->GetRTIAmbassador() != NULL);
+   }
+   catch (const dtHLAGM::RTIException& ex)
+   {
+      std::ostringstream ss;
+      ss << ex;
+      CPPUNIT_FAIL(std::string("Error joining federation : ") + ss.str());
+   }
+   catch (const dtUtil::Exception& ex)
+   {
+      CPPUNIT_FAIL(std::string("Error joining federation : ") + ex.ToString());
+   }
+}
 void HLAComponentTests::RunAllTests()
 {
+
+
    try
    {
       //This is a quick, read-only test.
