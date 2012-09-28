@@ -101,6 +101,22 @@ namespace dtDirector
          std::string propName = GetString("PropertyName");
 
          dtCore::ActorProperty* prop = actor->GetProperty(propName);
+         if (!prop)
+         {
+            std::vector<dtCore::ActorProperty*> propList;
+            actor->GetPropertyList(propList);
+            int count = (int)propList.size();
+            for (int index = 0; index < count; ++index)
+            {
+               dtCore::ActorProperty* testProp = propList[index];
+               if (testProp && testProp->GetLabel() == propName)
+               {
+                  prop = testProp;
+                  break;
+               }
+            }
+         }
+
          if (prop)
          {
             CompareLessThanGreaterThan(prop);
