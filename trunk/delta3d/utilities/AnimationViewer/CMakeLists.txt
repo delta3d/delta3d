@@ -16,7 +16,7 @@ SET(PROG_HEADERS ${SOURCE_PATH}/AnimationTableWidget.h
                  ${SOURCE_PATH}/ResourceDialogs.h
                  ${SOURCE_PATH}/ResourceDelegates.h
                  ${SOURCE_PATH}/Viewer.h  )
-                 
+
 SET(PROG_SOURCES ${SOURCE_PATH}/AnimationTableWidget.cpp
                  ${SOURCE_PATH}/main.cpp
                  ${SOURCE_PATH}/MainWindow.cpp
@@ -35,6 +35,8 @@ qt4_wrap_cpp(MOC_SOURCES ${PROG_HEADERS})
 qt4_wrap_ui(UI_SOURCES PoseMeshProperties.ui
                        ResourceAddDialog.ui)
 
+SOURCE_GROUP("Generated Files" REGULAR_EXPRESSION qrc_.*cxx|moc_.*cxx)
+
 ADD_EXECUTABLE(${APP_NAME}
     ${PROG_HEADERS}
     ${PROG_SOURCES}
@@ -50,14 +52,14 @@ LINK_WITH_VARIABLES( ${APP_NAME}
                      OSGFX_LIBRARY
                      AGL_LIBRARY
                     )
-                     
+
 TARGET_LINK_LIBRARIES( ${APP_NAME}
                        ${DTUTIL_LIBRARY}
                        ${DTCORE_LIBRARY}
                        ${DTANIM_LIBRARY}
                        ${DTABC_LIBRARY}
                        ${DTQT_LIBRARY}
-                     )           
+                     )
 
 
 

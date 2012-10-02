@@ -33,10 +33,12 @@ INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_SOURCE_DIR}/utilities/Di
                     ${QT_INCLUDE_DIR}
                     ${CMAKE_CURRENT_BINARY_DIR} # for ui*.h files
                     ${DELTA3D_SOURCE_DIR}/ui/dtDirectorQt # for director editor ui*.h files
-					)
+)
 
 qt4_wrap_cpp(MOC_SOURCES ${LIB_HEADERS})
 QT4_WRAP_UI(UI_SOURCES dialogeditor.ui)
+
+SOURCE_GROUP("Generated Files" REGULAR_EXPRESSION qrc_.*cxx|moc_.*cxx)
 
 #put the binary into a "Director plugins" folder
 SETUP_PLUGIN_OUTPUT_DIRS(directorplugins)
