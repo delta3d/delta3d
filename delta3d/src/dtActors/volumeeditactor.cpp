@@ -62,13 +62,13 @@ VolumeEditActor::~VolumeEditActor()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-double VolumeEditActor::GetBaseLength()
+double VolumeEditActor::GetBaseLength() const
 {
    return mBaseLength;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-double VolumeEditActor::GetBaseRadius()
+double VolumeEditActor::GetBaseRadius() const
 {
    return mBaseRadius;
 }
@@ -82,7 +82,7 @@ osg::Vec3 VolumeEditActor::GetScale() const
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-VolumeEditActor::VolumeShapeType& VolumeEditActor::GetShape()
+VolumeEditActor::VolumeShapeType& VolumeEditActor::GetShape() const
 {
    if (mVolumeShape == NULL)
    {

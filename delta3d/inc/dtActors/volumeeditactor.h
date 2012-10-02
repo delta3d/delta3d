@@ -16,9 +16,9 @@ namespace dtCore
 //forward osg declarations
 /// @cond DOXYGEN_SHOULD_SKIP_THIS
 namespace osg
-{   
+{
    class Geode;
-   class Group;   
+   class Group;
    class Shape;
    class ShapeDrawable;
 }
@@ -48,7 +48,7 @@ public:
       static VolumeShapeType SPHERE;
       static VolumeShapeType CYLINDER;
       static VolumeShapeType CAPSULE;
-      static VolumeShapeType CONE;      
+      static VolumeShapeType CONE;
 
       private:
       VolumeShapeType(const std::string& name) : dtUtil::Enumeration(name)
@@ -60,10 +60,10 @@ public:
    VolumeEditActor();
    virtual ~VolumeEditActor();
 
-   double GetBaseLength();
-   double GetBaseRadius();   
+   double GetBaseLength() const;
+   double GetBaseRadius() const;
    osg::Vec3 GetScale() const;
-   VolumeShapeType& GetShape();
+   VolumeShapeType& GetShape() const;
 
    void SetScale(const osg::Vec3& xyz);
    void SetShape(const VolumeShapeType& shape);
@@ -72,9 +72,9 @@ public:
 
 private:
    void SetupWireOutline();
-   
+
    dtCore::RefPtr<osg::Group>          mVolumeGroup;
-   dtCore::RefPtr<osg::Group>          mShaderGroup;   
+   dtCore::RefPtr<osg::Group>          mShaderGroup;
    dtCore::RefPtr<osg::Geode>          mVolumeGeode;
    dtCore::RefPtr<osg::Shape>          mVolumeShape;
    dtCore::RefPtr<osg::ShapeDrawable>  mVolumeDrawable;
@@ -95,7 +95,7 @@ public:
    void CreateActor();
 
    void BuildPropertyMap();
-   
+
    VolumeEditActor::VolumeShapeType& GetShape();
    void SetShape(VolumeEditActor::VolumeShapeType& shape);
 };
