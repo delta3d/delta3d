@@ -8,7 +8,7 @@ INCLUDE_DIRECTORIES(${QT_INCLUDE_DIR}
 
 SET(SOURCE_PATH ${DELTA3D_SOURCE_DIR}/utilities/${APP_NAME})
 
-SET(PROG_HEADERS 
+SET(PROG_HEADERS
                 aicomponent.h
                 aipropertyeditor.h
                 aiutilityapp.h
@@ -24,7 +24,7 @@ SET(PROG_HEADERS
                 waypointselection.h
 )
 
-SET(PROG_SOURCES 
+SET(PROG_SOURCES
                 aicomponent.cpp
                 aipropertyeditor.cpp
                 aiutilityapp.cpp
@@ -41,11 +41,14 @@ SET(PROG_SOURCES
                 waypointselection.cpp
                 AIUtilityResources.qrc
 )
-    
+
 
 QT4_ADD_RESOURCES(RCC_SOURCES ${APP_NAME}Resources.qrc)
 qt4_wrap_cpp(MOC_SOURCES ${PROG_HEADERS})
 qt4_wrap_ui(UI_SOURCES mainwindow.ui waypointbrowser.ui)
+
+
+SOURCE_GROUP("Generated Files" REGULAR_EXPRESSION qrc_.*cxx|moc_.*cxx)
 
 ADD_EXECUTABLE(${APP_NAME}
     ${PROG_HEADERS}
@@ -69,7 +72,7 @@ TARGET_LINK_LIBRARIES( ${APP_NAME}
                        ${DTAI_LIBRARY}
                        ${DTGAME_LIBRARY}
                      )
-  
+
 
 INCLUDE(ModuleInstall OPTIONAL)
 

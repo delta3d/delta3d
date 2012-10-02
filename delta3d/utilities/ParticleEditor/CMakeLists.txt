@@ -7,12 +7,14 @@ file(GLOB PROG_SOURCES "src/*.cpp" "*.rc")
 list(REMOVE_ITEM PROG_SOURCES ${SOURCE_PATH}/precomp.cpp)
 
 INCLUDE_DIRECTORIES(${SOURCE_PATH}/inc ${QT_INCLUDE_DIR}
-                                  ${CMAKE_CURRENT_BINARY_DIR} # for ui*.h files
-                                  )
+                    ${CMAKE_CURRENT_BINARY_DIR} # for ui*.h files
+)
 
 qt4_wrap_cpp(MOC_SOURCES ${PROG_HEADERS})
 QT4_ADD_RESOURCES(RCC_SOURCES particleeditor.qrc)
 QT4_WRAP_UI(UI_SOURCES particleeditor.ui)
+
+SOURCE_GROUP("Generated Files" REGULAR_EXPRESSION qrc_.*cxx|moc_.*cxx)
 
 #ADD_PRECOMPILED_HEADER(${APP_NAME} prefix/dtcoreprefix.h prefix/dtdalprefix.cpp PROG_SOURCES)
 
@@ -31,16 +33,17 @@ LINK_WITH_VARIABLES(${APP_NAME}
                                          OSGFX_LIBRARY
                                          AGL_LIBRARY)
 
-TARGET_LINK_LIBRARIES(${APP_NAME} 
+TARGET_LINK_LIBRARIES(${APP_NAME}
                       ${DTUTIL_LIBRARY}
                       ${DTCORE_LIBRARY}
                       ${DTABC_LIBRARY}
                       ${DTQT_LIBRARY}
-                     )
+)
+
 IF(WIN32)
   TARGET_LINK_LIBRARIES(${APP_NAME} User32 Gdi32 shell32 Advapi32 ole32 Ws2_32 Comctl32)
 ENDIF(WIN32)
-                                              
+
 INCLUDE(ModuleInstall OPTIONAL)
 
 
