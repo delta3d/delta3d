@@ -21,6 +21,7 @@
 #include <prefix/dtcoreprefix.h>
 #include <dtCore/actorproxyicon.h>
 #include <dtCore/transform.h>
+#include <dtUtil/log.h>
 #include <osg/Geometry>
 #include <osg/Image>
 #include <osg/Texture2D>
@@ -269,6 +270,27 @@ namespace dtCore
       return  mBillBoard->GetUniqueId() == drawable->GetUniqueId() ||
          mIconNode->GetUniqueId() == drawable->GetUniqueId();// || //is this really necessary
          //mArrowNode->GetUniqueId() == drawable->GetUniqueId() || mArrowNodeUp->GetUniqueId() == drawable->GetUniqueId();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void ActorProxyIcon::SetImage(const std::string& iconImageFilename)
+   {
+      mIconImageFile = iconImageFilename;
+      osg::Image* image = GetBillBoardImage();
+
+      if (image)
+      {
+         // Create the texture object for our billboard
+         osg::Texture2D* texture = new osg::Texture2D();
+         texture->setImage(image);
+         texture->setUnRefImageDataAfterApply(true);
+
+         mIconStateSet->setTextureAttributeAndModes(0, texture, osg::StateAttribute::ON);
+      }
+      else
+      {
+         LOG_ERROR("Unable to load file: " + iconImageFilename);
+      }
    }
 
    //////////////////////////////////////////////////////////////////////////

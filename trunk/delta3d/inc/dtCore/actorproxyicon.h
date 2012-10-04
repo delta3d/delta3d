@@ -158,6 +158,7 @@ namespace dtCore
 
       bool OwnsDrawable(dtCore::DeltaDrawable* drawable) const;
 
+      void SetImage(const std::string& iconImageFilename);
       void SetPosition(const osg::Vec3& newPos);
       void SetRotation(const osg::Matrix& rotMat);
       void SetActorRotation(const osg::Vec3& hpr);
