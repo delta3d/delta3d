@@ -44,6 +44,7 @@ _CRTIMP extern int errno;
 #else
 #   include <sys/param.h>
 #   include <errno.h>
+#   include <unistd.h>
 #endif
 
 
