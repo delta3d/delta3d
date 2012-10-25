@@ -416,7 +416,7 @@ namespace dtDirector
          nodeData.newName = "Animate Actor";
          nodeData.newCategory = "Cinematic";
 
-         replacements.push_back(std::make_pair<std::string, NodeLibraryRegistry::NodeReplacementData>("Cinematic.Animate Actor", nodeData));
+         replacements.push_back(std::make_pair("Cinematic.Animate Actor", nodeData));
       }
 
       {
@@ -425,7 +425,7 @@ namespace dtDirector
          nodeData.newName = "Arithmetic Operation";
          nodeData.newCategory = "General";
 
-         replacements.push_back(std::make_pair<std::string, NodeLibraryRegistry::NodeReplacementData>("General.Binary Operation", nodeData));
+         replacements.push_back(std::make_pair("General.Binary Operation", nodeData));
       }
 
       {
@@ -434,7 +434,7 @@ namespace dtDirector
          nodeData.newName = "Vec3";
          nodeData.newCategory = "General";
 
-         replacements.push_back(std::make_pair<std::string, NodeLibraryRegistry::NodeReplacementData>("General.Vector", nodeData));
+         replacements.push_back(std::make_pair("General.Vector", nodeData));
       }
    }
 }

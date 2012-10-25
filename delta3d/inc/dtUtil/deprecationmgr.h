@@ -36,7 +36,7 @@
 #if defined( _DEBUG) && (defined DELTA_WIN32) && !defined(_WIN64)
    #define DEPRECATE(a,b) {                                            \
       void * fptr;                                                     \
-      _asm { mov fptr, ebp }                                           \
+      __asm { mov fptr, ebp }                                           \
       DeprecationMgr::GetInstance().AddDeprecatedFunction(a, b, fptr); \
    }
 #elif defined (_DEBUG) && defined (__GNUC__)

@@ -136,14 +136,14 @@ namespace dtDirector
       // Register the message type if it isn't.
       if (i == mRegisteredCallbacks.end())
       {
-         std::map<dtDirector::Node*, MsgFunc> msgList;
-         i = mRegisteredCallbacks.insert(mRegisteredCallbacks.end(), std::make_pair<std::string, std::map<dtDirector::Node*, MsgFunc> >(msgType, msgList));
+         i = mRegisteredCallbacks.insert(
+            mRegisteredCallbacks.end(), std::make_pair(msgType, std::map<dtDirector::Node*, MsgFunc>()));
       }
 
       // Register this callback for that message type.
       if (i != mRegisteredCallbacks.end())
       {
-         i->second.insert(i->second.end(), std::make_pair<dtDirector::Node*, MsgFunc>(node, callback));
+         i->second.insert(i->second.end(), std::make_pair(node, callback));
 
          // If this message type is queued to be removed, make sure we
          // no longer queue it because it is being registered again.
