@@ -30,6 +30,7 @@ using namespace dtABC;
 using namespace dtCore;
 using namespace dtAI;
 
+////////////////////////////////////////////////////////////////////////////////
 TestAI::TestAI(const std::string& pMapFilename, const std::string& configFilename)
    : Application(configFilename)
    , mMapFilename(pMapFilename)
@@ -42,11 +43,14 @@ TestAI::TestAI(const std::string& pMapFilename, const std::string& configFilenam
    }
 }
 
+////////////////////////////////////////////////////////////////////////////////
 TestAI::~TestAI()
 {
-
+   // Clean up so that so that dead references won't get called "atexit"
+   dtCore::Project::GetInstance().CloseAllMaps(true);
 }
 
+////////////////////////////////////////////////////////////////////////////////
 void TestAI::Config()
 {
    Application::Config();
@@ -132,6 +136,7 @@ void TestAI::Config()
    CreateHelpLabel();
 }
 
+////////////////////////////////////////////////////////////////////////////////
 bool TestAI::KeyPressed(const dtCore::Keyboard* keyboard, int key)
 {
    switch (key)
@@ -211,6 +216,7 @@ bool TestAI::KeyPressed(const dtCore::Keyboard* keyboard, int key)
    return false;
 }
 
+////////////////////////////////////////////////////////////////////////////////
 void TestAI::PreFrame(const double deltaFrameTime)
 {
    mCharacter->Update(float(deltaFrameTime));
@@ -224,12 +230,13 @@ void TestAI::PreFrame(const double deltaFrameTime)
    }
 }
 
+////////////////////////////////////////////////////////////////////////////////
 void TestAI::LoadDemoMap(const std::string& pStr)
 {
    try
    {
       std::string pContext = Project::GetInstance().GetContext();
-      Map &myMap = Project::GetInstance().GetMap(pStr);
+      Map& myMap = Project::GetInstance().GetMap(pStr);
 
       // Since we are in an Application we can simply call...
       LoadMap(myMap);
@@ -240,6 +247,7 @@ void TestAI::LoadDemoMap(const std::string& pStr)
    }
 }
 
+////////////////////////////////////////////////////////////////////////////////
 bool TestAI::GoToWaypoint(int pWaypointNum)
 {
    // loop through the waypoints and send our character to the one
@@ -266,6 +274,7 @@ bool TestAI::GoToWaypoint(int pWaypointNum)
    return false;
 }
 
+////////////////////////////////////////////////////////////////////////////////
 void TestAI::CreateHelpLabel()
 {
    mLabel = new dtABC::LabelActor();
@@ -283,6 +292,7 @@ void TestAI::CreateHelpLabel()
    AddDrawable(GetCamera());
 }
 
+////////////////////////////////////////////////////////////////////////////////
 std::string TestAI::CreateHelpLabelText()
 {
    std::string testString("");
