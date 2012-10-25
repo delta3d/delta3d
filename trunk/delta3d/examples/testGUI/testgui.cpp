@@ -58,11 +58,14 @@ using namespace dtGUI;
 class TestGUIApp : public dtABC::Application
 {
 public:
+
+   /////////////////////////////////////////////////////////////////////////////
    TestGUIApp(const std::string& configFilename = "")
       : Application(configFilename)
    {
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    virtual ~TestGUIApp()
    {
       CEGUI::ScriptModule* sm = CEGUI::System::getSingleton().getScriptingModule();
@@ -71,15 +74,18 @@ public:
          CEGUI::System::getSingleton().setScriptingModule(NULL);
          delete sm;
       }
+
+      dtCore::Project::GetInstance().CloseAllMaps(true);
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    virtual void Config()
    {
       dtABC::Application::Config();
 
       std::string contextName = dtUtil::GetDeltaRootPath() + "/examples/data/demoMap";
       dtCore::Project::GetInstance().SetContext(contextName, true);
-      dtCore::Map &myMap = dtCore::Project::GetInstance().GetMap("MyCoolMap");
+      dtCore::Map& myMap = dtCore::Project::GetInstance().GetMap("MyCoolMap");
 
       //Since we are in an Application we can simply call...
       LoadMap(myMap);
@@ -115,6 +121,7 @@ private:
    RefPtr<dtGUI::GUI> mGUI;
    RefPtr<dtCore::Camera> mRTTCamera;
 
+   /////////////////////////////////////////////////////////////////////////////
    void BuildGUI(void)
    {
       try
@@ -157,7 +164,7 @@ private:
       mRTTCamera->SetTransform(xform);
    }
 
-   //quit!
+   /////////////////////////////////////////////////////////////////////////////
    bool quitHandler(const CEGUI::EventArgs& e)
    {
       dtABC::Application::GetInstance(0)->Quit();
@@ -165,15 +172,18 @@ private:
    }
 
 protected:
+   /////////////////////////////////////////////////////////////////////////////
    virtual void PreFrame(const double deltaSimTime)
    { 
       // staticImage is unfortenately static and must be invalidated every frame to show animated models
       //TODO: if RTT-Scenes are added the imageWindow(s) should updated by/inside CEGUIDrawable
-      CEGUI::Window* imageWindow = mGUI->GetWidget( "camera1target" );
+      CEGUI::Window* imageWindow = mGUI->GetWidget("camera1target");
       if (imageWindow) {imageWindow->invalidate();}
    }
 };
 
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 
 int main(int argc, const char* argv[])
 {
