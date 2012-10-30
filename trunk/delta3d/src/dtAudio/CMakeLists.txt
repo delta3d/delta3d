@@ -13,9 +13,9 @@ INCLUDE_DIRECTORIES( ${OPENAL_INCLUDE_DIR} #for al.h
                      ${ALUT_INCLUDE_DIR}  #for alut.h
                    )
 
-ADD_LIBRARY(${LIB_NAME} SHARED                        
-    ${LIB_PUBLIC_HEADERS}                         
-    ${LIB_SOURCES}
+ADD_LIBRARY(${LIB_NAME} SHARED
+            ${LIB_PUBLIC_HEADERS}
+            ${LIB_SOURCES}
 )
 
 #Use the debug alut library, should it exist, otherwise, use the release version
@@ -32,8 +32,8 @@ LINK_WITH_VARIABLES(${LIB_NAME}
                         XERCES_LIBRARY
                     )
 
-TARGET_LINK_LIBRARIES( ${LIB_NAME}    
-                       ${OPENAL_LIBRARY} 
+TARGET_LINK_LIBRARIES( ${LIB_NAME}
+                       ${OPENAL_LIBRARY}
                        ${DTCORE_LIBRARY}
                        ${DTGAME_LIBRARY} #for SoundActorProxy
                        ${DTUTIL_LIBRARY}
