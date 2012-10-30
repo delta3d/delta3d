@@ -1112,7 +1112,7 @@ namespace dtDirector
          return false;
       }
 
-      mCustomTools.insert(std::make_pair<std::string, CustomEditorTool*>(tool->GetName(), tool));
+      mCustomTools.insert(std::make_pair(tool->GetName(), tool));
 
       // Notify all open editors of this new tool.
       int editorCount = (int)mEditorsOpen.size();
