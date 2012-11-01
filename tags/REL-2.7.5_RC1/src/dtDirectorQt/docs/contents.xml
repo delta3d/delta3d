@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dtHelp version="1.0">
+	<title>Director Help</title>
+	<resource>director/</resource>
+	<home>tutorial.html</home>
+	<contents>
+		<section title="Tutorial" ref="tutorial.html" expanded="yes">
+			<section title="1.1: Overview" ref="1.1_overview.html"/>
+			<section title="1.2: Nodes"    ref="1.2_nodes.html">
+				<section title="Event Nodes"  ref="1.2_nodes.html#EventNodes"/>
+				<section title="Action Nodes" ref="1.2_nodes.html#ActionNodes"/>
+				<section title="Value Nodes"  ref="1.2_nodes.html#ValueNodes"/>
+				<section title="Macros"       ref="1.2_nodes.html#Macros"/>
+				<section title="Link Nodes"   ref="1.2_nodes.html#LinkNodes"/>
+			</section>
+			<section title="1.3: Chaining" ref="1.3_chaining.html"/>
+		</section>
+	</contents>
+</dtHelp>
