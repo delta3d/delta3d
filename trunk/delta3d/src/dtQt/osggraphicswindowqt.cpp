@@ -52,7 +52,13 @@ namespace dtQt
       QGLWidget* sharedContextWidget = NULL;
       if (traits->sharedContext != NULL)
       {
+
+#if OSG_MIN_VERSION_REQUIRED(3, 1, 3)
          OSGGraphicsWindowQt* sharedWin = dynamic_cast<OSGGraphicsWindowQt*>(traits->sharedContext.get());
+#else
+         OSGGraphicsWindowQt* sharedWin = dynamic_cast<OSGGraphicsWindowQt*>(traits->sharedContext);
+#endif
+
          if (sharedWin != NULL)
          {
             sharedContextWidget = sharedWin->GetQGLWidget();
