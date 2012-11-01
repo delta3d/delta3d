@@ -27,23 +27,25 @@
  */
 
 #include <prefix/dtqtprefix.h>
+#include <dtQt/glwidgetfactory.h>
 #include <dtQt/osggraphicswindowqt.h>
 #include <dtQt/osgadapterwidget.h>
 #include <dtUtil/log.h>
-#include <dtQt/glwidgetfactory.h>
+
+#include <osg/Version>
 
 namespace dtQt
 {
-   ////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    OSGGraphicsWindowQt::OSGGraphicsWindowQt(osg::GraphicsContext::Traits* traits,
                                              dtQt::GLWidgetFactory* factory,
                                              dtQt::OSGAdapterWidget* adapter)
-   : BaseClass()
-   , mValid(false)
-   , mRealized(false)
-   , mCloseRequested(false)
-   , mQWidget(NULL)
-   , mCursorShape(Qt::ArrowCursor)
+                                             : BaseClass()
+                                             , mValid(false)
+                                             , mRealized(false)
+                                             , mCloseRequested(false)
+                                             , mQWidget(NULL)
+                                             , mCursorShape(Qt::ArrowCursor)
    {
       _traits = traits;
 
@@ -96,13 +98,13 @@ namespace dtQt
       SetQGLWidget(adapter);
    }
 
-   ////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    OSGGraphicsWindowQt::~OSGGraphicsWindowQt()
    {
       SetQGLWidget(NULL);
    }
 
-   ////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    void OSGGraphicsWindowQt::SetQGLWidget(QGLWidget* qwidget)
    {
       if (mQWidget != NULL && getState() != NULL)
@@ -120,55 +122,61 @@ namespace dtQt
           setState( new osg::State );
           getState()->setGraphicsContext(this);
 
-          if (_traits.valid() && _traits->sharedContext.get())
+#if OSG_MIN_VERSION_REQUIRED(3, 1, 3)
+          osg::GraphicsContext* sharedContext = _traits->sharedContext.get();
+#else
+          osg::GraphicsContext* sharedContext = _traits->sharedContext;
+#endif
+
+          if (_traits.valid() && sharedContext)
           {
-              getState()->setContextID( _traits->sharedContext->getState()->getContextID() );
-              incrementContextIDUsageCount( getState()->getContextID() );
+              getState()->setContextID(_traits->sharedContext->getState()->getContextID());
+              incrementContextIDUsageCount(getState()->getContextID());
           }
           else
           {
-              getState()->setContextID( osg::GraphicsContext::createNewContextID() );
+              getState()->setContextID(osg::GraphicsContext::createNewContextID());
           }
       }
    }
 
-   ////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    QGLWidget* OSGGraphicsWindowQt::GetQGLWidget()
    {
       return mQWidget;
    }
 
-   ////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    const QGLWidget* OSGGraphicsWindowQt::GetQGLWidget() const
    {
       return mQWidget;
    }
 
-   ////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    bool OSGGraphicsWindowQt::isSameKindAs(const Object* object) const
    {
-      return dynamic_cast<const OSGGraphicsWindowQt*>(object)!=0;
+      return dynamic_cast<const OSGGraphicsWindowQt*>(object) != 0;
    }
 
-   ////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    const char* OSGGraphicsWindowQt::libraryName() const
    {
       return "SteathQt";
    }
 
-   ////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    const char* OSGGraphicsWindowQt::className() const
    {
       return "OSGGraphicsWindowQt";
    }
 
-   ////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    bool OSGGraphicsWindowQt::valid() const
    {
       return mValid;
    }
 
-   ////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    bool OSGGraphicsWindowQt::realizeImplementation()
    {
       if (mQWidget != NULL)
@@ -183,13 +191,13 @@ namespace dtQt
       return mRealized;
    }
 
-   ////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    bool OSGGraphicsWindowQt::isRealizedImplementation() const
    {
       return mRealized;
    }
 
-   ////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    void OSGGraphicsWindowQt::closeImplementation()
    {
       if (mQWidget != NULL)
@@ -200,7 +208,7 @@ namespace dtQt
       }
    }
 
-   ////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    bool OSGGraphicsWindowQt::makeCurrentImplementation()
    {
       if (mQWidget != NULL)
@@ -216,7 +224,7 @@ namespace dtQt
       return false;
    }
 
-   ////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    bool OSGGraphicsWindowQt::releaseContextImplementation()
    {
       if (mQWidget != NULL)
@@ -227,7 +235,7 @@ namespace dtQt
       return false;
    }
 
-   ////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    void OSGGraphicsWindowQt::swapBuffersImplementation()
    {
       if (mQWidget != NULL)
@@ -236,14 +244,14 @@ namespace dtQt
       }
    }
 
-   ////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    void OSGGraphicsWindowQt::checkEvents()
    {
       if (mCloseRequested)
           getEventQueue()->closeWindow();
    }
 
-   ////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    void OSGGraphicsWindowQt::getWindowRectangle(int& x, int& y, int& width, int& height)
    {
       if (mQWidget != NULL)
@@ -257,7 +265,7 @@ namespace dtQt
    }
 
 
-   ////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    bool OSGGraphicsWindowQt::setWindowRectangleImplementation(int x, int y, int width, int height)
    {
       if (mQWidget != NULL)
@@ -268,7 +276,7 @@ namespace dtQt
       return false;
    }
 
-   ////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    bool OSGGraphicsWindowQt::setWindowDecorationImplementation(bool flag)
    {
       if (mQWidget != NULL)
@@ -281,7 +289,7 @@ namespace dtQt
       return false;
    }
 
-   ////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    void OSGGraphicsWindowQt::grabFocus()
    {
       if (mQWidget != NULL)
@@ -290,7 +298,7 @@ namespace dtQt
       }
    }
 
-   ////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    void OSGGraphicsWindowQt::grabFocusIfPointerInWindow()
    {
       //TODO fix this so it checks for the pointer.
@@ -300,13 +308,13 @@ namespace dtQt
       }
    }
 
-   ////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    void OSGGraphicsWindowQt::requestClose()
    {
       mCloseRequested = true;
    }
 
-   ////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    void OSGGraphicsWindowQt::resizedImplementation(int x, int y, int width, int height)
    {
       BaseClass::resizedImplementation(x, y, width, height);
@@ -316,7 +324,7 @@ namespace dtQt
       }
    }
 
-   ////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    void OSGGraphicsWindowQt::setWindowName (const std::string& name)
    {
       if (mQWidget != NULL)
@@ -325,7 +333,7 @@ namespace dtQt
       }
    }
 
-   ////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    void OSGGraphicsWindowQt::useCursor(bool cursorOn)
    {
       if (mQWidget != NULL)
@@ -342,7 +350,7 @@ namespace dtQt
    }
 
 
-   ////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    using osgViewer::GraphicsWindow;
    void OSGGraphicsWindowQt::setCursor(osgViewer::GraphicsWindow::MouseCursor mouseCursor)
    {
@@ -409,7 +417,7 @@ namespace dtQt
       }
    }
 
-   ////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    void OSGGraphicsWindowQt::requestWarpPointer(float x, float y)
    {
       mQWidget->cursor().setPos(mQWidget->mapToGlobal(QPoint(x,y)));
