@@ -100,7 +100,14 @@ void MapStatisticsPlugin::onCalculateButtonPressed()
 
          for (int proxyIndex = 0; proxyIndex < (int)proxies.size(); proxyIndex++)
          {
-             proxies[proxyIndex]->GetActor()->GetOSGNode()->accept(*statVisitor);
+            if (proxies[proxyIndex]->GetActor())
+            {
+               osg::Node* node =  proxies[proxyIndex]->GetActor()->GetOSGNode();
+               if (node)
+               {
+                  node->accept(*statVisitor);
+               }
+            }            
          }
 
          AddStatsToItem(*statVisitor, *sceneItem);
