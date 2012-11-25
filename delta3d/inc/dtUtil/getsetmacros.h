@@ -129,6 +129,11 @@
       \
       PROPERTY_MODIFIERS_SETTER void ClearAll ## AccessorNamePlural(); \
       \
+      template <typename Func> \
+      void ForEach ## AccessorName (Func functor) \
+      { \
+         std::for_each(m ## AccessorNamePlural.begin(), m ## AccessorNamePlural.end(), functor); \
+      }
 
 #define DT_IMPLEMENT_ARRAY_ACCESSOR(ClassName, AccessorType, AccessorName, AccessorNamePlural, DefaultNewValue) \
       void ClassName :: Set ## AccessorName(unsigned idx, dtUtil::TypeTraits<AccessorType>::param_type value)\

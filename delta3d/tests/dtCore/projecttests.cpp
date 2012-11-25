@@ -403,7 +403,16 @@ void ProjectTests::TestCreateContextWithMapsDir()
          varPtr->Set ## accessor(testVal); \
          CPPUNIT_ASSERT_EQUAL(testVal, varPtr->Get ## accessor()); \
 
-
+namespace dtTest
+{
+   struct AddWorking
+   {
+      void operator() (dtCore::ContextData& c)
+      {
+         c.SetPath("Working" + c.GetPath());
+      }
+   };
+}
 void ProjectTests::TestSetupFromProjectConfig()
 {
    dtCore::RefPtr<dtCore::ProjectConfig> pconfig = new dtCore::ProjectConfig;
@@ -414,8 +423,12 @@ void ProjectTests::TestSetupFromProjectConfig()
    TEST_ACCESSOR(pconfig, Copyright, std::string(), std::string("Grumpy4"));
    TEST_ACCESSOR(pconfig, ReadOnly, false, true);
 
-   pconfig->AddContextData(dtCore::ContextData("WorkingProject"));
-   pconfig->AddContextData(dtCore::ContextData("WorkingProject2"));
+   pconfig->AddContextData(dtCore::ContextData("Project"));
+   pconfig->AddContextData(dtCore::ContextData("Project2"));
+
+   dtTest::AddWorking addWorkingFunc;
+   // If this fails, the SetupFromProjectConfig wil fail and the paths will be incorrect below.
+   pconfig->ForEachContextData(addWorkingFunc);
 
    try
    {
@@ -434,6 +447,7 @@ void ProjectTests::TestSetupFromProjectConfig()
       CPPUNIT_ASSERT(p.IsContextValid(1));
       CPPUNIT_ASSERT(!p.IsContextValid(2));
 
+      // If the paths don't match here, it may be that the ForEachContextData failed above.
       CPPUNIT_ASSERT_EQUAL(fileUtils.GetAbsolutePath(pconfig->GetContextData(0).GetPath()), p.GetContext(0));
       CPPUNIT_ASSERT_EQUAL(fileUtils.GetAbsolutePath(pconfig->GetContextData(1).GetPath()), p.GetContext(1));
    }
