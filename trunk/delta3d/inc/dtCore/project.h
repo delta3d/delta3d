@@ -177,6 +177,11 @@ namespace dtCore
       const std::string& GetContext(ContextSlot slot = DEFAULT_SLOT_VALUE) const;
 
       /**
+       * @return the number of context slots currently in the project.
+       */
+      size_t GetContextSlotCount() const;
+
+      /**
        * @return the current context.  This will be empty if no valid context is set.
        */
       ContextSlot GetContextSlot(const std::string& path) const;

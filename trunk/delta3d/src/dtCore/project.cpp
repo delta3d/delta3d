@@ -349,7 +349,7 @@ namespace dtCore
          return !mImpl->mContexts.empty();
       }
 
-      return slot >= 0 && mImpl->mContexts.size() > slot;
+      return slot >= 0 && GetContextSlotCount()  > slot;
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -452,7 +452,7 @@ namespace dtCore
    /////////////////////////////////////////////////////////////////////////////
    void Project::RemoveContext(ContextSlot slot)
    {
-      if (slot < mImpl->mContexts.size())
+      if (slot < GetContextSlotCount() )
       {
          mImpl->InternalRemoveContext(slot);
          Refresh();
@@ -503,13 +503,20 @@ namespace dtCore
          slot = 0U;
       }
 
-      if (slot < mImpl->mContexts.size())
+      if (slot < GetContextSlotCount())
       {
          return mImpl->mContexts[slot];
       }
 
       return ProjectImpl::EMPTY_STRING;
    }
+
+   /////////////////////////////////////////////////////////////////////////////
+   size_t Project::GetContextSlotCount() const
+   {
+      return mImpl->mContexts.size();
+   }
+
 
    /////////////////////////////////////////////////////////////////////////////
    void Project::Refresh()
@@ -2304,7 +2311,7 @@ namespace dtCore
       if (slot == Project::DEFAULT_SLOT_VALUE)
       {
          first = 0;
-         last = mImpl->mContexts.size();
+         last = GetContextSlotCount();
       }
 
       dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
