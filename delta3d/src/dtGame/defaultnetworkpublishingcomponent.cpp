@@ -33,19 +33,19 @@ namespace dtGame
 {
    const std::string DefaultNetworkPublishingComponent::DEFAULT_NAME = "DefaultNetworkPublishingComponent";
 
-   /////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    DefaultNetworkPublishingComponent::DefaultNetworkPublishingComponent(const std::string& name) : GMComponent(name)
    {
       mLogger = &dtUtil::Log::GetInstance("defaultnetworkpublishingcomponent.cpp");
    }
 
-   /////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    DefaultNetworkPublishingComponent::~DefaultNetworkPublishingComponent()
    {
    }
 
-   /////////////////////////////////////////////
-   void DefaultNetworkPublishingComponent::ProcessMessage(const Message &msg)
+   /////////////////////////////////////////////////////////////////////////////
+   void DefaultNetworkPublishingComponent::ProcessMessage(const Message& msg)
    {
       if (GetGameManager() == NULL)
       {
@@ -63,13 +63,13 @@ namespace dtGame
          }
          else if (msg.GetMessageType() == MessageType::INFO_ACTOR_DELETED)
          {
-            GameActorProxy *ga = GetGameManager()->FindGameActorById(msg.GetAboutActorId());
+            GameActorProxy* ga = GetGameManager()->FindGameActorById(msg.GetAboutActorId());
             if (ga != NULL && ga->IsPublished())
                ProcessDeleteActor(msg);
          }
          else if (msg.GetMessageType() == MessageType::INFO_ACTOR_UPDATED)
          {
-            GameActorProxy *ga = GetGameManager()->FindGameActorById(msg.GetAboutActorId());
+            GameActorProxy* ga = GetGameManager()->FindGameActorById(msg.GetAboutActorId());
             if (ga != NULL && ga->IsPublished())
                ProcessUpdateActor(static_cast<const ActorUpdateMessage&>(msg));
          }
@@ -91,8 +91,8 @@ namespace dtGame
       }
    }
 
-   /////////////////////////////////////////////
-   void DefaultNetworkPublishingComponent::DispatchNetworkMessage(const Message &msg)
+   /////////////////////////////////////////////////////////////////////////////
+   void DefaultNetworkPublishingComponent::DispatchNetworkMessage(const Message& msg)
    {
       if (GetGameManager() == NULL)
       {
@@ -101,19 +101,19 @@ namespace dtGame
       }
    }
 
-   /////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    bool DefaultNetworkPublishingComponent::PublishesAdditionalMessageType(const MessageType& type) const
    {
       return mMessageTypesToPublish.find(&type) != mMessageTypesToPublish.end();
    }
 
-   /////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    void DefaultNetworkPublishingComponent::AddMessageTypeToPublish(const MessageType& type)
    {
       mMessageTypesToPublish.insert(&type);
    }
 
-   /////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    void DefaultNetworkPublishingComponent::RemoveMessageTypeToPublish(const MessageType& type)
    {
       std::set<const MessageType*>::iterator i = mMessageTypesToPublish.find(&type);
@@ -123,7 +123,7 @@ namespace dtGame
       }
    }
 
-   /////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    void DefaultNetworkPublishingComponent::ProcessPublishActor(const Message& msg, GameActorProxy& gap)
    {
       if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_INFO))
@@ -137,25 +137,25 @@ namespace dtGame
       GetGameManager()->SendNetworkMessage(*newMsg);
    }
 
-   /////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    void DefaultNetworkPublishingComponent::ProcessDeleteActor(const Message& msg)
    {
       GetGameManager()->SendNetworkMessage(msg);
    }
 
-   /////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    void DefaultNetworkPublishingComponent::ProcessUpdateActor(const ActorUpdateMessage& msg)
    {
       GetGameManager()->SendNetworkMessage(msg);
    }
 
-   /////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    void DefaultNetworkPublishingComponent::ProcessUnhandledLocalMessage(const Message& msg)
    {
 
    }
 
-   /////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    void DefaultNetworkPublishingComponent::ProcessUnhandledRemoteMessage(const Message &msg)
    {
 

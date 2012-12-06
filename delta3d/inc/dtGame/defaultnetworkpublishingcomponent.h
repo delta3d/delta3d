@@ -48,13 +48,13 @@ namespace dtGame
           * @param The message to process
           * @see dtGame::GameManager
           */
-         virtual void ProcessMessage(const Message &msg);
+         virtual void ProcessMessage(const Message& msg);
 
          /**
           * Sends a message
           * @param The message to send
           */
-         virtual void DispatchNetworkMessage(const Message &msg);
+         virtual void DispatchNetworkMessage(const Message& msg);
 
          /// @return true if the given type has been added a type to publish, aside from the default behavior.
          bool PublishesAdditionalMessageType(const MessageType& type) const;
