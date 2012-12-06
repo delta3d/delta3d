@@ -107,9 +107,7 @@ namespace dtActors
 
    protected:
 
-       virtual ~TriggerVolumeActor() {}
-
-   private:
+      virtual ~TriggerVolumeActor() {}
 
       struct RegisterData
       {
