@@ -51,7 +51,7 @@ namespace dtHLAGM
    void ConvertPHVMToRTI1516ePHVM(const RTIParameterHandleValueMap& dtHandleValueMap, rti1516e::ParameterHandleValueMap& toFill);
 
    template<typename rtiHandleType, typename dtHandleType, typename dtCreateType>
-   dtCore::RefPtr<dtHandleType> WrapHandle(rtiHandleType handle, std::map<rtiHandleType, dtCore::RefPtr<dtHandleType> > cache)
+   dtCore::RefPtr<dtHandleType> WrapHandle(rtiHandleType handle, std::map<rtiHandleType, dtCore::RefPtr<dtHandleType> >& cache)
    {
       if (!handle.isValid())
       {
