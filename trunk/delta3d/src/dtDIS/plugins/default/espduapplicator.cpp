@@ -27,15 +27,15 @@
 using namespace dtDIS::details;
 
 //////////////////////////////////////////////////////////////////////////
-std::string EntityTypeToString(const DIS::EntityType &entityType) 
+std::string EntityTypeToString(const DIS::EntityType &entityType)
 {
    std::string entTypeStr;
-   entTypeStr += dtUtil::ToString<unsigned short>(entityType.getEntityKind()) + 
+   entTypeStr += dtUtil::ToString<unsigned short>(entityType.getEntityKind()) +
       "/" + dtUtil::ToString<unsigned short>(entityType.getDomain()) +
-      "/" + dtUtil::ToString<unsigned short>(entityType.getCountry()) + 
-      "/" + dtUtil::ToString<unsigned short>(entityType.getCategory()) + 
+      "/" + dtUtil::ToString<unsigned short>(entityType.getCountry()) +
+      "/" + dtUtil::ToString<unsigned short>(entityType.getCategory()) +
       "/" + dtUtil::ToString<unsigned short>(entityType.getSubcategory()) +
-      "/" + dtUtil::ToString<unsigned short>(entityType.getSpecific()) + 
+      "/" + dtUtil::ToString<unsigned short>(entityType.getSpecific()) +
       "/" + dtUtil::ToString<unsigned short>(entityType.getExtra());
 
    return entTypeStr;
@@ -56,7 +56,7 @@ void FullApplicator::operator ()(const DIS::EntityStatePdu& source,
    if (mp != NULL)
    {
       dtCore::NamedStringParameter* strAP = static_cast<dtCore::NamedStringParameter*>(mp);
-      
+
       strAP->SetValue(source.getMarking().getCharacters());
    }
 
@@ -91,7 +91,7 @@ void FullApplicator::operator ()(const DIS::EntityStatePdu& source,
       default:
          enumValue = "OTHER"; break;
       };
-      
+
       eAP->SetValue(enumValue);
    }
 
@@ -142,7 +142,7 @@ void FullApplicator::operator ()(const DIS::EntityStatePdu& source,
          if (mp != NULL)
          {
             dtCore::NamedEnumParameter* ep = static_cast<dtCore::NamedEnumParameter*>(mp);
-            ep->SetValue(domainStr);        
+            ep->SetValue(domainStr);
          }
       }
    }
@@ -183,7 +183,7 @@ void FullApplicator::operator ()(const dtGame::ActorUpdateMessage& source,
       dest.setEntityLocation(loc);
    }
 
-   if (const dtGame::MessageParameter* mp = source.GetUpdateParameter(dtDIS::EnginePropertyName::ENTITY_ORIENTATION)) 
+   if (const dtGame::MessageParameter* mp = source.GetUpdateParameter(dtDIS::EnginePropertyName::ENTITY_ORIENTATION))
    {
       // DIS EntityState actor property
       const dtGame::Vec3MessageParameter* v3mp = static_cast<const dtGame::Vec3MessageParameter*>(mp);
@@ -286,7 +286,7 @@ void FullApplicator::operator ()(const dtGame::ActorUpdateMessage& source,
 ///\todo implement dtHLAGM::RPRParameterTranslator::MapFromAngularVelocityVectorToMessageParam for ANGULAR_VELOCITY.
 void PartialApplicator::operator ()(const DIS::EntityStatePdu& source,
                                     dtGame::ActorUpdateMessage& dest,
-                                    dtDIS::SharedState* config) 
+                                    dtDIS::SharedState* config)
 {
    dtCore::NamedParameter* mp ;
 
@@ -299,7 +299,7 @@ void PartialApplicator::operator ()(const DIS::EntityStatePdu& source,
       v3 = config->GetCoordinateConverter().ConvertToLocalTranslation(v3);
    }
 
-   // dtDIS Actor Property Name 
+   // dtDIS Actor Property Name
    if ((mp = dest.AddUpdateParameter(dtDIS::EnginePropertyName::LAST_KNOWN_LOCATION, dtCore::DataType::VEC3)))
    {
       dtGame::Vec3MessageParameter* v3mp = static_cast<dtGame::Vec3MessageParameter*>(mp);
@@ -307,16 +307,19 @@ void PartialApplicator::operator ()(const DIS::EntityStatePdu& source,
    }
 
    // euler angles //
-   osg::Vec3 xyzRot;
+   osg::Vec3 hprRot, xyzRot;
 
    const DIS::Orientation& orie = source.getEntityOrientation();
-   xyzRot[0] = osg::RadiansToDegrees(orie.getPsi());
-   xyzRot[1] = osg::RadiansToDegrees(orie.getTheta());
-   xyzRot[2] = osg::RadiansToDegrees(orie.getPhi());
+   hprRot[0] = orie.getPsi();
+   hprRot[1] = orie.getTheta();
+   hprRot[2] = orie.getPhi();
 
    if (config != NULL)
    {
-      xyzRot = config->GetCoordinateConverter().ConvertToLocalRotation(xyzRot);
+      hprRot = config->GetCoordinateConverter().ConvertToLocalRotation(hprRot);
+      xyzRot[0] = hprRot[1]; // Pitch rotates around x-axis
+      xyzRot[1] = hprRot[2]; // Roll rotates around y-axis
+      xyzRot[2] = hprRot[0]; // Heading rotates around z-axis
    }
 
    // dtDIS Actor Property Name
@@ -353,7 +356,7 @@ void PartialApplicator::operator ()(const DIS::EntityStatePdu& source,
          else
          {
             boolAP->SetValue(false);
-         }         
+         }
       }
    }
 
@@ -371,7 +374,7 @@ void PartialApplicator::operator ()(const DIS::EntityStatePdu& source,
          else
          {
             boolAP->SetValue(false);
-         }         
+         }
       }
    }
 
