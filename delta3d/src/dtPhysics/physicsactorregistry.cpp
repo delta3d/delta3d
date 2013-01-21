@@ -1,0 +1,52 @@
+/* -*-c++-*-
+* Delta3D Open Source Game and Simulation Engine
+* Copyright (C) 2007, Alion Science and Technology, BMH Operation
+*
+* This library is free software; you can redistribute it and/or modify it under
+* the terms of the GNU Lesser General Public License as published by the Free
+* Software Foundation; either version 2.1 of the License, or (at your option)
+* any later version.
+*
+* This library is distributed in the hope that it will be useful, but WITHOUT
+* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+* FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+* details.
+*
+* You should have received a copy of the GNU Lesser General Public License
+* along with this library; if not, write to the Free Software Foundation, Inc.,
+* 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+*
+* @author Allen Danklefsen
+*/
+#include <dtPhysics/physicsactorregistry.h>
+#include <dtPhysics/physicsmaterialactor.h>
+
+namespace dtPhysics
+{
+   dtCore::RefPtr<dtDAL::ActorType> PhysicsActorRegistry::PHYSICS_MATERIAL_ACTOR_TYPE(new dtDAL::ActorType
+      ("Physics Material", "Physics Actors", "Friction, restitution, and other physics material properties - assign this to other actors to get material properties.")); 
+
+   ////////////////////////////////////////////////////////////////////////////
+   extern "C" DT_PHYSICS_EXPORT dtDAL::ActorPluginRegistry* CreatePluginRegistry()
+   {
+      return new dtPhysics::PhysicsActorRegistry;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   extern "C" DT_PHYSICS_EXPORT void DestroyPluginRegistry(dtDAL::ActorPluginRegistry *registry)
+   {
+      delete registry;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   PhysicsActorRegistry::PhysicsActorRegistry() : dtDAL::ActorPluginRegistry("dtPhysics", "This library will store Physics Material actors")
+   {
+      
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   void PhysicsActorRegistry::RegisterActorTypes()
+   {
+      mActorFactory->RegisterType<MaterialActorProxy>(PHYSICS_MATERIAL_ACTOR_TYPE.get());
+   }
+}
