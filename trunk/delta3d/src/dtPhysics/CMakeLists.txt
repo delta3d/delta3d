@@ -41,10 +41,6 @@ ADD_LIBRARY(${LIB_NAME} SHARED
 ADD_DEPENDENCIES(${LIB_NAME} PAL)
 
 LINK_WITH_VARIABLES(${LIB_NAME}
-                                   DTUTIL_LIBRARY
-                                   DTCORE_LIBRARY
-                                   DTABC_LIBRARY
-                                   DTGAME_LIBRARY
                                    OSG_LIBRARY
                                    OSGGA_LIBRARY
                                    OSGVIEWER_LIBRARY
