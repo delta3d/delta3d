@@ -758,9 +758,11 @@ namespace dtPhysics
       }
 
       std::string engineName = GetEngineName();
+      std::locale loc;
       for (unsigned i = 0; i < engineName.length(); ++i)
       {
-         engineName[i] = std::tolower(engineName[i]);
+
+         engineName[i] = std::tolower(engineName[i], loc);
       }
 
       finalPath += "/" + engineName + "/" + PAL_PLUGIN_ARCH_PATH;
