@@ -95,6 +95,12 @@ MACRO(ADD_DELTA3D_SUBFOLDERS)
       SET(DTTERRAIN_AVAILABLE "YES")
    ENDIF (BUILD_TERRAIN)
 
+   IF (BUILD_DTPHYSICS)
+      FIND_PACKAGE(Pal)
+      ADD_SUBDIRECTORY(src/dtPhysics)
+      SET(DTPHYSICS_AVAILABLE "YES")
+   ENDIF (BUILD_DTPHYSICS)
+
    ADD_SUBDIRECTORY(src/dtActors)
    ADD_SUBDIRECTORY(src/dtUtil)
    ADD_SUBDIRECTORY(src/dtCore)
@@ -148,8 +154,9 @@ OPTION(BUILD_BINDINGS      "Enabled the building of the bindings (requires Pytho
 OPTION(BUILD_DIS           "Enables the building of dtDIS (requires DIS-cpp,HawkNL)" ON)
 OPTION(BUILD_GUI           "Enables the building of dtGUI (requires CEGUI)" ON)
 OPTION(BUILD_HLA           "Enables the building of dtHLA related projects (requires RTI)" OFF)
-OPTION(BUILD_PLIB          "Enabes the building of dtInputPLIB (requires PLIB)" ON)
+OPTION(BUILD_PLIB          "Enables the building of dtInputPLIB (requires PLIB)" ON)
 OPTION(BUILD_NET           "Enables the building of dtNet/dtNetGM (requires HawkNL,GNE,Boost)" OFF)
+OPTION(BUILD_DTPHYSICS     "Enables the building of dtPhysics (requires PAL)" OFF)
 OPTION(BUILD_TERRAIN       "Enables the building of dtTerrain (requires GDAL)" ON)
 OPTION(BUILD_TESTS         "Enables the building of the unit tests (requires CPPUNIT)" ON)
 
@@ -237,12 +244,13 @@ IF(APPLE)
    endif()
 
    if (NOT CMAKE_OSX_DEPLOYMENT_TARGET)
-     # use 10.5 because that's the oldest that has atomics
-     set(CMAKE_OSX_DEPLOYMENT_TARGET "10.5" CACHE STRING "Build SDK root" FORCE)
+     # use 10.6 because that's the oldest that has atomics
+     set(CMAKE_OSX_DEPLOYMENT_TARGET "10.6" CACHE STRING "Build SDK root" FORCE)
    endif()
 
    SET(CMAKE_EXE_LINKER_FLAGS "-F/Library/Frameworks" )
    SET(CMAKE_SHARED_LINKER_FLAGS "-Wl,-single_module -compatibility_version 3 -current_version 3 -F/Library/Frameworks" )
+   SET(CMAKE_MODULE_LINKER_FLAGS "-F/Library/Frameworks" )
    INCLUDE_DIRECTORIES(${CMAKE_OSX_SYSROOT}/usr/include/malloc)
    # this is an ugly hack to fix what seems to be a problem on OS X 10.8
    # when building with the 10.6 sdk.  Unfortunatly, this will break if

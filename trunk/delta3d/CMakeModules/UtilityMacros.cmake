@@ -1,6 +1,18 @@
-
 # Where is this and what do we need it for?
 #INCLUDE(ListHandle)
+
+  macro(MacroEmptyExternalProject proj dependencies)
+ 
+    ExternalProject_Add(${proj}
+      DOWNLOAD_COMMAND ""
+      CONFIGURE_COMMAND ""
+      BUILD_COMMAND ""
+      INSTALL_COMMAND ""
+      DEPENDS
+        ${dependencies}
+      )
+ 
+  endmacro()
 
   MACRO(READ_GCC_VERSION)
      if (CMAKE_COMPILER_IS_GNUCC)
