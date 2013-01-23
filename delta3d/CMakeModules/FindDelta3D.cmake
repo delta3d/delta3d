@@ -10,7 +10,7 @@
 #
 # Created by David Guthrie. 
 
-FIND_PATH(DELTA_DIR inc/dtCore/dt.h
+FIND_PATH(DELTA_DIR NAMES inc/dtCore/dt.h include/dtCore/dt.h
     HINTS
     ${CMAKE_SOURCE_DIR}
     $ENV{DELTA_ROOT}
@@ -40,10 +40,12 @@ FIND_PATH( DELTA3D_LIB_DIR NAMES libdtCore.so libdtCore.dylib dtCore.lib .
     HINTS
        ${DELTA_DIR}
     PATH_SUFFIXES
+       build/lib
        Build/lib
        Debug/lib
        Release/lib
        lib
+    NO_DEFAULT_PATH
 )
 
 #where to find the Delta3D "ext" folder.  Look for one of the headers that might be in there.
