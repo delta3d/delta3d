@@ -173,13 +173,15 @@ namespace dtCore
                extContainer.insert(std::make_pair("3dc","3D Canvas file"));
                extContainer.insert(std::make_pair("ac","AC3D geometry format"));
                extContainer.insert(std::make_pair("dxf","AutoCAD file"));
-               extContainer.insert(std::make_pair("ive","Open Scene Graph binary scene data."));
+               extContainer.insert(std::make_pair("ive","Open Scene Graph binary scene data (old)."));
                extContainer.insert(std::make_pair("lwo","LightWave Object"));
                extContainer.insert(std::make_pair("md2","Quake model file"));
                extContainer.insert(std::make_pair("mdl","MDL"));
                extContainer.insert(std::make_pair("obj","Wavefront Technologies OBJ format"));
                extContainer.insert(std::make_pair("flt","Open-Flight model."));
-               extContainer.insert(std::make_pair("osg","Open Scene Graph ascii scene data."));
+               extContainer.insert(std::make_pair("osg","Open Scene Graph ascii scene data (old)."));
+               extContainer.insert(std::make_pair("osgt","Open Scene Graph ascii scene data."));
+               extContainer.insert(std::make_pair("osgb","Open Scene Graph binary scene data."));
                extContainer.insert(std::make_pair("3ds","3D Studio Max."));
                extContainer.insert(std::make_pair("ai","Waypoint file."));
                extContainer.insert(std::make_pair("zip","Wrapping another file in a zip."));
@@ -216,7 +218,7 @@ namespace dtCore
             {
                description = "Static Mesh Terrain Files";
 
-               extFilter.insert(std::make_pair("ive","Open Scene Graph binary terrain."));
+               extFilter.insert(std::make_pair("ive","Open Scene Graph binary terrain (old)."));
                handler = new DefaultResourceTypeHandler(d, "Open Scene Graph binary terrain.", extFilter);
                extMap.insert(std::make_pair("ive", dtCore::RefPtr<ResourceTypeHandler>(handler)));
 
@@ -228,10 +230,14 @@ namespace dtCore
                handler = new DefaultResourceTypeHandler(d, "Open Scene Graph binary scene data.", extFilter);
                extMap.insert(std::make_pair("osgb", dtCore::RefPtr<ResourceTypeHandler>(handler)));
 
-               extFilter.clear();
-               extFilter.insert(std::make_pair("osg","Open Scene Graph ascii scene data."));
-               handler = new DefaultResourceTypeHandler(d, "Open Scene Graph ascii scene data.", extFilter);
+               extFilter.insert(std::make_pair("osg","Open Scene Graph ascii scene data (old)."));
+               handler = new DefaultResourceTypeHandler(d, "Open Scene Graph ascii scene data (old).", extFilter);
                extMap.insert(std::make_pair("osg", dtCore::RefPtr<ResourceTypeHandler>(handler)));
+
+               extFilter.clear();
+               extFilter.insert(std::make_pair("flt","Open flight scene data."));
+               handler = new DefaultResourceTypeHandler(d, "Open Flight scene data.", extFilter);
+               extMap.insert(std::make_pair("flt", dtCore::RefPtr<ResourceTypeHandler>(handler)));
 
                extFilter.clear();
                extFilter.insert(std::make_pair("zip","Wrapping another file in a zip."));
