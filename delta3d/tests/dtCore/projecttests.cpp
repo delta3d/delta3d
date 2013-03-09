@@ -643,7 +643,7 @@ void ProjectTests::TestResources()
       std::vector<const dtCore::ResourceTypeHandler* > handlers;
 
       p.GetHandlersForDataType(dtCore::DataType::TERRAIN, handlers);
-      CPPUNIT_ASSERT_MESSAGE("There should be 8 terrain type handlers",  handlers.size() == 8);
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("There should be 9 terrain type handlers", size_t(9),  handlers.size());
 
       std::string testResult;
 
