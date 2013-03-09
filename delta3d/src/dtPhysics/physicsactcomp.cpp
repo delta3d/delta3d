@@ -641,6 +641,10 @@ namespace dtPhysics
    /// hiding copy constructor and operator=
    PhysicsActComp::PhysicsActComp(const PhysicsActComp&)
    : dtGame::ActorComponent(PhysicsActComp::TYPE)
+   , mMaterialActorId("")
+   , mMass(0.0f)
+   , mDefaultCollisionGroup(0)
+   , mDefaultPrimitiveType(&PrimitiveType::BOX)
    {
    }
 
