@@ -703,6 +703,7 @@ namespace dtAnim
             while (animItr != handler->mAnimations.end())
             {
                std::string filename(GetAbsolutePath(path + (*animItr).mFileName));
+			   std::string animName = (*animItr).mName.empty() ? filename : (*animItr).mName;
 
                if (!filename.empty())
                {
@@ -714,8 +715,6 @@ namespace dtAnim
                   {
                      if (fileUtils.ReadObject(filename, options.get()) != NULL)
                      {
-                        std::string animName = (*animItr).mName.empty() ? filename : (*animItr).mName;
-
                         // Retrieve the animation we just loaded to store in the cache
                         int id = coreModel->getCoreAnimationId(animName);
 
@@ -734,9 +733,9 @@ namespace dtAnim
                   else
                   {
                      int id = coreModel->addCoreAnimation(cachedAnimIter->second.get());
-                     coreModel->addAnimationName(cachedAnimIter->second->getName(), id);
+					 coreModel->addAnimationName(animName, id);
 
-                     coreModelData->RegisterFile(filename, (*animItr).mName);
+                     coreModelData->RegisterFile(filename, animName);
                   }
                }
                else
