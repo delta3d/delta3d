@@ -1127,7 +1127,11 @@ namespace dtGame
       void InvokeForActorInvokables(const Message& message, GameActorProxy& aboutActor);
       void InvokeOtherActorInvokables(const Message& message);
 
-      /// Removes all actors from the list of deleted actors and returns true if any actors.
+      /** Removes all actors from the list of deleted actors and returns true if no actors were deleted by other actors.
+       * That is, if an actor deletes another actor, messages will be left sitting in the queue, and these messages 
+       * must be processed before the actors can be removed from the deleted list, otherwise some things in the system
+       * won't work correctly.
+       */ 
       bool RemoveDeletedActors();
 
    private:

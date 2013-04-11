@@ -467,7 +467,7 @@ namespace dtGame
          SendMessage(*tickRemote);
          DoSendMessages();
 
-         while (RemoveDeletedActors())
+         while (!RemoveDeletedActors())
          {
             // Process all the delete messages if actors delete other actors.
             DoSendMessages();
@@ -492,11 +492,12 @@ namespace dtGame
    ///////////////////////////////////////////////////////////////////////////////
    bool GameManager::RemoveDeletedActors()
    {
-      bool result = false;
       // DELETE ACTORS
-      // IT IS CRUCIAL TO NOT SAVE OFF THE SIZE OR CHANGE THIS TO AN ITERATOR
+      // IT IS CRUCIAL TO SAVE OFF THE SIZE OR CHANGE THIS TO AN ITERATOR
       // BECAUSE ACTORS CAN DELETE OTHER ACTORS IN THE ON REMOVED FROM WORLD
-      for (unsigned int i = 0; i < mGMImpl->mDeleteList.size(); ++i)
+      // AND THEY MESSAGES MUST BE HANDLED BEFORE ACTUALLY DELETING THEM.
+      unsigned deleteSize = mGMImpl->mDeleteList.size();
+      for (unsigned int i = 0; i < deleteSize; ++i)
       {
          GameActorProxy& gameActorProxy = *mGMImpl->mDeleteList[i];
 
@@ -518,11 +519,10 @@ namespace dtGame
          }
 
          gameActorProxy.SetGameManager(NULL);
-         result = true;
       }
 
-      mGMImpl->mDeleteList.clear();
-      return result;
+      mGMImpl->mDeleteList.erase(mGMImpl->mDeleteList.begin(), mGMImpl->mDeleteList.begin() + deleteSize);
+      return mGMImpl->mDeleteList.empty();
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -1487,7 +1487,7 @@ namespace dtGame
 
       if (immediate)
       {
-         while (RemoveDeletedActors())
+         while (!RemoveDeletedActors())
          {
             // Process all the delete messages if actors delete other actors.
             DoSendMessages();
@@ -2187,8 +2187,12 @@ namespace dtGame
       // flush all the deleted messages
       DoSendMessages();
       DoSendNetworkMessages();
-      // remove all the actors.
-      RemoveDeletedActors();
+      
+      // remove all the actors // 
+      while (!RemoveDeletedActors())
+      {
+         DoSendMessages();
+      }
 
       //tell all the components they've been removed
       GMImpl::GMComponentContainer::iterator compItr = mGMImpl->mComponentList.begin();
