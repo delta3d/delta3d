@@ -2268,7 +2268,7 @@ namespace dtHLAGM
             // The actor that sent an update has not yet been registered with the RTI.
             objectHandle = mRTIAmbassador->RegisterObjectInstance(*classHandle, actorName);
          }
-         catch (const RTIException& ex)
+         catch (const RTIException& /*ex*/)
          {
             mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
                                  "RTI Exception trying to register a new object instance: %s",
