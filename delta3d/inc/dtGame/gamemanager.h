@@ -483,6 +483,7 @@ namespace dtGame
        * @param The actor to remove
        */
       void DeleteActor(dtCore::BaseActorObject& actorProxy);
+      void DeleteActor(const dtCore::UniqueId& id);
 
       /**
        * Removes all game actors and actors from the game manager

@@ -62,6 +62,7 @@
 #include <dtGame/messagefactory.h>
 #include <dtGame/messageparameter.h>
 #include <dtGame/messagetype.h>
+#include <dtGame/cascadingdeleteactorcomponent.h>
 
 #include <dtUtil/datapathutils.h>
 #include <dtUtil/datastream.h>
@@ -95,7 +96,7 @@ class GameManagerTests : public CPPUNIT_NS::TestFixture
         CPPUNIT_TEST(TestAddActor);
         CPPUNIT_TEST(TestAddActorNullID);
         CPPUNIT_TEST(TestAddActorCrash);
-
+        CPPUNIT_TEST(TestCascadedDelete);
         CPPUNIT_TEST(TestCreateRemoteActor);
         CPPUNIT_TEST(TestComplexScene);
         CPPUNIT_TEST(TestAddRemoveComponents);
@@ -134,6 +135,7 @@ public:
    void TestAddActor();
    void TestAddActorNullID();
    void TestAddActorCrash();
+   void TestCascadedDelete();
 
    void TestCreateRemoteActor();
    void TestComplexScene();
@@ -1118,17 +1120,109 @@ void GameManagerTests::TestAddActor()
 }
 
 /////////////////////////////////////////////////
+// This tests actors deleting other actors AND it tests the cascading delete actor component.
+void GameManagerTests::TestCascadedDelete()
+{
+   dtCore::RefPtr<dtGame::DefaultNetworkPublishingComponent> dnpc = new dtGame::DefaultNetworkPublishingComponent();
+   dtCore::RefPtr<dtGame::DefaultMessageProcessor> dmc = new dtGame::DefaultMessageProcessor();
+
+   dtCore::RefPtr<TestComponent> tc = new TestComponent;
+   mManager->AddComponent(*tc, dtGame::GameManager::ComponentPriority::NORMAL);
+   mManager->AddComponent(*dnpc, dtGame::GameManager::ComponentPriority::NORMAL);
+   mManager->AddComponent(*dmc, dtGame::GameManager::ComponentPriority::HIGHEST);
+
+   std::vector< dtCore::RefPtr<dtGame::GameActorProxy> > actors;
+
+   for (unsigned i = 0; i < 10; ++i)
+   {
+      dtCore::RefPtr<dtGame::GameActorProxy> newActor;
+      mManager->CreateActor("ExampleActors", "Test1Actor", newActor);
+      if (i > 0)
+      {
+         dtGame::CascadingDeleteActorComponent::Connect(*newActor, *actors.back());
+      }
+      actors.push_back(newActor);
+   }
+
+   CPPUNIT_ASSERT(actors.size() == 10);
+   for (unsigned i = 0; i < actors.size(); ++i)
+   {
+      //Add game actors as published
+      mManager->AddActor(*actors[i], false, true);
+      CPPUNIT_ASSERT(actors[i]->IsPublished());
+   }
+
+   dtCore::System::GetInstance().Step();
+
+   // Deleting the last should delete all of them when I step once.
+   mManager->DeleteActor(*actors.back());
+
+   dtCore::System::GetInstance().Step();
+
+   std::vector< dtCore::RefPtr<dtGame::GameActorProxy> > backup = actors;
+
+   std::vector<dtCore::RefPtr<const dtGame::Message> > messages = tc->GetReceivedProcessMessages();
+   for (unsigned m = 0 ; m < messages.size(); ++m)
+   {
+      if (messages[m]->GetMessageType() == dtGame::MessageType::INFO_ACTOR_DELETED)
+      {
+         bool foundDeleteForOneActorThisIteration = false;
+         for (unsigned a = 0; a < actors.size(); ++a)
+         {
+            if (actors[a]->GetId() == messages[m]->GetAboutActorId())
+            {
+               actors.erase(actors.begin() + a);
+               foundDeleteForOneActorThisIteration = true;
+            }
+         }
+         CPPUNIT_ASSERT(foundDeleteForOneActorThisIteration);
+      }
+   }
+   // All should have been
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("All of the actors should have been accounted for with delete message in the main queue in the first tick "
+                          "This means either not all actor got deleted, or not all messages got sent",
+                          actors.size(), size_t(0));
+
+   // Network messages get dispatched the next tick
+   dtCore::System::GetInstance().Step();
+
+   // Get the actor list back for a second pass to look at network dispatch.
+   actors = backup;
+
+   messages = tc->GetReceivedDispatchNetworkMessages();
+   for (unsigned m = 0 ; m < messages.size(); ++m)
+   {
+      if (messages[m]->GetMessageType() == dtGame::MessageType::INFO_ACTOR_DELETED)
+      {
+         bool foundDeleteForOneActorThisIteration = false;
+         for (unsigned a = 0; a < actors.size(); ++a)
+         {
+            if (actors[a]->GetId() == messages[m]->GetAboutActorId())
+            {
+               actors.erase(actors.begin() + a);
+               foundDeleteForOneActorThisIteration = true;
+            }
+         }
+         CPPUNIT_ASSERT(foundDeleteForOneActorThisIteration);
+      }
+   }
+   // All should have been
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("All of the actors should have been accounted for with delete messages in the network dispatch queue since they were all published "
+                          "This means either not all actor got deleted, not all messages got processed, or actors were removed before their messages were processed "
+                          "the first tick.",
+                          size_t(0), actors.size());
+}
+
+/////////////////////////////////////////////////
 void GameManagerTests::TestComplexScene()
 {
-   dtCore::RefPtr<const dtCore::ActorType> type = mManager->FindActorType("ExampleActors", "Test1Actor");
-
-   CPPUNIT_ASSERT(type != NULL);
-
    std::vector< dtCore::RefPtr<dtGame::GameActorProxy> > proxies;
 
    for (unsigned i = 0; i < 10; ++i)
    {
-      proxies.push_back(dynamic_cast<dtGame::GameActorProxy*>(mManager->CreateActor(*type).get()));
+      dtCore::RefPtr<dtGame::GameActorProxy> newActor;
+      mManager->CreateActor("ExampleActors", "Test1Actor", newActor);
+      proxies.push_back(newActor);
    }
 
    CPPUNIT_ASSERT(proxies.size() == 10);

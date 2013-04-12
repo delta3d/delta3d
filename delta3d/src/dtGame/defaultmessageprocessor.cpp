@@ -193,14 +193,7 @@ namespace dtGame
    ///////////////////////////////////////////////////////////////////////////////
    void DefaultMessageProcessor::ProcessRemoteDeleteActor(const Message& msg)
    {
-      dtGame::GameActorProxy* ap = GetGameManager()->FindGameActorById(msg.GetAboutActorId());
-      if (ap == NULL)
-      {
-         LOG_WARNING("Actor deleted msg does not specify a valid actor.");
-         return;
-      }
-
-      GetGameManager()->DeleteActor(*ap);
+      GetGameManager()->DeleteActor(msg.GetAboutActorId());
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -277,7 +270,7 @@ namespace dtGame
       }
       else
       {
-         LOG_DEBUG("Message received for an unknown proxy");
+         LOGN_INFO("DefaultMessageProcessor", "Delete Message received for an unknown actor with ID " + msg.GetAboutActorId().ToString());
          return;
       }
    }

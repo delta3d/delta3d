@@ -465,13 +465,14 @@ namespace dtGame
          GetMessageFactory().CreateMessage(MessageType::TICK_REMOTE, tickRemote);
          PopulateTickMessage(*tickRemote, deltaSimTime, deltaRealTime, simulationTime);
          SendMessage(*tickRemote);
-         DoSendMessages();
 
-         while (!RemoveDeletedActors())
+         do
          {
             // Process all the delete messages if actors delete other actors.
             DoSendMessages();
-         }
+         }while (!RemoveDeletedActors());
+
+         DoSendMessages();
 
          dtCore::RefPtr<TickMessage> tickEnd;
          GetMessageFactory().CreateMessage(MessageType::TICK_END_OF_FRAME, tickEnd);
@@ -493,9 +494,10 @@ namespace dtGame
    bool GameManager::RemoveDeletedActors()
    {
       // DELETE ACTORS
-      // IT IS CRUCIAL TO SAVE OFF THE SIZE OR CHANGE THIS TO AN ITERATOR
-      // BECAUSE ACTORS CAN DELETE OTHER ACTORS IN THE ON REMOVED FROM WORLD
-      // AND THEY MESSAGES MUST BE HANDLED BEFORE ACTUALLY DELETING THEM.
+      // IT IS CRUCIAL TO SAVE OFF THE SIZE BECAUSE ACTORS CAN DELETE OTHER ACTORS IN THE OnRemovedFromWorld
+      // AND THEIR INFO_ACTOR_DELETED MESSAGES MUST BE HANDLED BEFORE ACTUALLY DELETING THEM.
+      // This means that the function can only remove the actors that are in the vector at the time the function stars
+      // even though the vector can grow during the execution.
       unsigned deleteSize = mGMImpl->mDeleteList.size();
       for (unsigned int i = 0; i < deleteSize; ++i)
       {
@@ -1396,52 +1398,51 @@ namespace dtGame
       SendMessage(*msg);
    }
 
+
    ///////////////////////////////////////////////////////////////////////////////
-   void GameManager::DeleteActor(dtCore::BaseActorObject& actorProxy)
+   void GameManager::DeleteActor(const dtCore::UniqueId& id)
    {
-      // Is it an environment actor proxy?
-      IEnvGameActorProxy* eap = dynamic_cast<IEnvGameActorProxy*>(&actorProxy);
-      if (eap != NULL && mGMImpl->mScene->GetChildIndex(eap->GetActor()) != mGMImpl->mScene->GetNumberOfAddedDrawable())
-      {
-         // First we have to remove all of the actors from it
-         IEnvGameActor* e = dynamic_cast<IEnvGameActor*>(&eap->GetGameActor());
-         std::vector<dtCore::DeltaDrawable*> actors;
-         e->GetAllActors(actors);
-         e->RemoveAllActors();
-
-         // Now that all the old actors are removed add them back to the scene
-         // Also invalidate the delete environment parent by calling Emancipate
-         for (size_t i = 0; i < actors.size(); ++i)
-         {
-            mGMImpl->mScene->AddChild(actors[i]);
-         }
-
-         // Are we deleting the environment pointer?
-         if (eap == mGMImpl->mEnvironment.get())
-         {
-            mGMImpl->mEnvironment = NULL;
-         }
-      }
-
-      GMImpl::GameActorMap::iterator itor = mGMImpl->mGameActorProxyMap.find(actorProxy.GetId());
-
-      dtCore::UniqueId id;
+      GMImpl::GameActorMap::iterator itor = mGMImpl->mGameActorProxyMap.find(id);
       if (itor == mGMImpl->mGameActorProxyMap.end())
       {
          // it's not in the game manager as a game actor proxy, maybe it's in there
          // as a regular actor proxy.
-         GMImpl::ActorMap::iterator itor = mGMImpl->mBaseActorObjectMap.find(actorProxy.GetId());
+         GMImpl::ActorMap::iterator itor = mGMImpl->mBaseActorObjectMap.find(id);
 
          if (itor != mGMImpl->mBaseActorObjectMap.end())
          {
-            mGMImpl->RemoveActorFromScene(*this, actorProxy);
+            mGMImpl->RemoveActorFromScene(*this, *itor->second);
             mGMImpl->mBaseActorObjectMap.erase(itor);
          }
       }
       else
       {
-         id = itor->first;
          GameActorProxy& gameActorProxy = *itor->second;
+
+         // Is it an environment actor proxy?
+         IEnvGameActorProxy* eap = dynamic_cast<IEnvGameActorProxy*>(&gameActorProxy);
+         if (eap != NULL && mGMImpl->mScene->GetChildIndex(eap->GetActor()) != mGMImpl->mScene->GetNumberOfAddedDrawable())
+         {
+            // First we have to remove all of the actors from it
+            IEnvGameActor* e = dynamic_cast<IEnvGameActor*>(&eap->GetGameActor());
+            std::vector<dtCore::DeltaDrawable*> actors;
+            e->GetAllActors(actors);
+            e->RemoveAllActors();
+
+            // Now that all the old actors are removed add them back to the scene
+            // Also invalidate the delete environment parent by calling Emancipate
+            for (size_t i = 0; i < actors.size(); ++i)
+            {
+               mGMImpl->mScene->AddChild(actors[i]);
+            }
+
+            // Are we deleting the environment pointer?
+            if (eap == mGMImpl->mEnvironment.get())
+            {
+               mGMImpl->mEnvironment = NULL;
+            }
+         }
+
          if (gameActorProxy.IsInGM())
          {
             mGMImpl->mDeleteList.push_back(itor->second);
@@ -1466,6 +1467,12 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
+   void GameManager::DeleteActor(dtCore::BaseActorObject& actorProxy)
+   {
+      DeleteActor(actorProxy.GetId());
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
    void GameManager::DeleteAllActors(bool immediate)
    {
       // Clear all the timers first so the delete actor calls don't have to
@@ -1482,16 +1489,21 @@ namespace dtGame
       for (GMImpl::GameActorMap::iterator i = mGMImpl->mGameActorProxyMap.begin();
          i != mGMImpl->mGameActorProxyMap.end(); ++i)
       {
-         DeleteActor(*i->second);
+         DeleteActor(i->first);
       }
 
       if (immediate)
       {
-         while (!RemoveDeletedActors())
+         do
          {
             // Process all the delete messages if actors delete other actors.
             DoSendMessages();
          }
+         while (!RemoveDeletedActors());
+         // Other places this is done, another DoSend is called, but it's not necessary here because
+         // this is just a helper function mainly for unit tests, and the messages sent now won't be related
+         // to a new actor that is currently being deleted, but rather one that would be gone already anyway.
+         // so just let it wait until the next frame.
       }
 
       DeleteAllPrototypes();
@@ -1899,7 +1911,7 @@ namespace dtGame
          iend = proxies.end();
          for (; i != iend; ++i)
          {
-            DeleteActor(**i);
+            DeleteActor((*i)->GetId());
          }
 
          // delete from the list of loaded map on the GM
@@ -2184,15 +2196,20 @@ namespace dtGame
 
       // Delete the actors
       DeleteAllActors();
+
       // flush all the deleted messages
+      do
+      {
+         // Process all the delete messages if actors delete other actors.
+         DoSendMessages();
+         DoSendNetworkMessages();
+      }
+      while (!RemoveDeletedActors());
+
+      // Just make sure to flush the last of the messages in case the last set of deletes
+      // happened to send a messages that wasn't related to deleting an actor.
       DoSendMessages();
       DoSendNetworkMessages();
-      
-      // remove all the actors // 
-      while (!RemoveDeletedActors())
-      {
-         DoSendMessages();
-      }
 
       //tell all the components they've been removed
       GMImpl::GMComponentContainer::iterator compItr = mGMImpl->mComponentList.begin();
