@@ -261,12 +261,11 @@ namespace dtGame
       //float mMaxUpdateSendRate; - part of the property macro
       float mVelocityMagThreshold;
       float mVelocityDotThreshold;
-      float mInstantaneousVelocityWeight;
       float mPrevFrameDeltaTime;
 
       bool mForceUpdateNextChance;
 
-      bool mUseVelocityInDRUpdateDecision: 1;
+      bool mUseVelocityInDRUpdateDecision;
 
       //members for sending updates on a local actor.
       float mMaxRotationError;
