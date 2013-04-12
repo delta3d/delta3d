@@ -17,6 +17,7 @@ SET(LIB_PUBLIC_HEADERS
     ${HEADER_PATH}/baseinputcomponent.h
     ${HEADER_PATH}/basemessages.h
     ${HEADER_PATH}/binarylogstream.h
+    ${HEADER_PATH}/cascadingdeleteactorcomponent.h
     ${HEADER_PATH}/deadreckoningcomponent.h
     ${HEADER_PATH}/deadreckoninghelper.h
     ${HEADER_PATH}/defaultgroundclamper.h
@@ -66,6 +67,7 @@ SET(LIB_SOURCES
     ${SOURCE_PATH}/baseinputcomponent.cpp
     ${SOURCE_PATH}/basemessages.cpp
     ${SOURCE_PATH}/binarylogstream.cpp
+    ${SOURCE_PATH}/cascadingdeleteactorcomponent.cpp
     ${SOURCE_PATH}/deadreckoningcomponent.cpp
     ${SOURCE_PATH}/deadreckoninghelper.cpp
     ${SOURCE_PATH}/defaultgroundclamper.cpp
