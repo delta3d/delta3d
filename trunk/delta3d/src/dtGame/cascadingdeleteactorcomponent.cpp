@@ -18,7 +18,7 @@
  * 
  * David Guthrie
  */
-
+#include <prefix/dtgameprefix.h>
 #include <dtGame/cascadingdeleteactorcomponent.h>
 #include <dtGame/gameactor.h>
 #include <dtGame/gameactorproxy.h>
