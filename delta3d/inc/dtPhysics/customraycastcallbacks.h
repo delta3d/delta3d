@@ -55,17 +55,20 @@ namespace dtPhysics
       /////////////////////////////////////////////////////////////////////////////////////////////
       virtual Float AddHit(palRayHit& hit)
       {
-         ++mHitCount;
-         dtPhysics::PhysicsObject* physObject = reinterpret_cast<dtPhysics::PhysicsObject*>(hit.m_pBody->GetUserData());
-
-         // Ignore the hit if it is an object in this helper.
-         if (physObject != NULL && physObject->GetUserData() != mOwnerToIgnore)
+         if (hit.m_pBody != NULL)
          {
-            if (!mGotAHit || mClosestHit.m_fDistance > hit.m_fDistance)
+            ++mHitCount;
+            dtPhysics::PhysicsObject* physObject = reinterpret_cast<dtPhysics::PhysicsObject*>(hit.m_pBody->GetUserData());
+
+            // Ignore the hit if it is an object in this helper.
+            if (physObject != NULL && physObject->GetUserData() != mOwnerToIgnore)
             {
-               mGotAHit = true;
-               mClosestHit = hit;
-               mRayLength = mClosestHit.m_fDistance;
+               if (!mGotAHit || mClosestHit.m_fDistance > hit.m_fDistance)
+               {
+                  mGotAHit = true;
+                  mClosestHit = hit;
+                  mRayLength = mClosestHit.m_fDistance;
+               }
             }
          }
 
@@ -96,7 +99,7 @@ namespace dtPhysics
       /////////////////////////////////////////////////////////////////////////////////////////////
       virtual Float AddHit(palRayHit& hit)
       {
-         if (hit.m_pBody != NULL) // This seems wrong....
+         if (hit.m_pBody != NULL)
          {
             dtPhysics::PhysicsObject* physObject = reinterpret_cast<dtPhysics::PhysicsObject*>(hit.m_pBody->GetUserData());
 
