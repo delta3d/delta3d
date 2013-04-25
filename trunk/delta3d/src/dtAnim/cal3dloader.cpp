@@ -811,7 +811,8 @@ namespace dtAnim
       std::string filename(file);
 
       std::string path(osgDB::getFilePath(filename));
-      path += '/';
+      if (!path.empty()) { path += '/'; }
+      else { path = "./"; }
 
       dtCore::RefPtr<CharacterFileHandler> handler;
       outCoreModelData = GetCoreModelData(handler, filename, path);
