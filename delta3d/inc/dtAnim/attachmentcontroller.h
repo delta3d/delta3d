@@ -62,7 +62,7 @@ namespace dtAnim
        * attachment each time the skeleton is updated.
        * @see dtCore::HotSpotAttachment
        */
-      void AddAttachment(dtCore::Transformable& actor, dtUtil::HotSpotDefinition& spot);
+      void AddAttachment(dtCore::Transformable& actor, const dtUtil::HotSpotDefinition& spot);
 
       /**
        * Removes a previously added hot spot attachment.  If the spot is not
@@ -73,6 +73,9 @@ namespace dtAnim
 
       /// @return an immutable container holding the current set of hot spots.
       const AttachmentContainer& GetAttachments() const;
+
+      /// Remove all attachments
+      void Clear();
 
       /**
        * Update the attachments to the new positions based on the model.

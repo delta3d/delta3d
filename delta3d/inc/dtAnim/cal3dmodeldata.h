@@ -30,6 +30,8 @@
 
 #include <cal3d/global.h>
 
+#include <dtUtil/hotspotdefinition.h>
+
 #include <vector>
 
 /// @cond DOXYGEN_SHOULD_SKIP_THIS
@@ -79,6 +81,7 @@ namespace dtAnim
       typedef std::vector<dtCore::RefPtr<dtAnim::AnimationWrapper> > AnimationWrapperArray;
       // we will hold a vector of animatables for each CalCoreModel
       typedef std::vector<dtCore::RefPtr<dtAnim::Animatable> > AnimatableArray;
+      typedef std::vector<std::pair<dtUtil::HotSpotDefinition, std::string> > AttachmentArray;
 
       enum CalFileType
       {
@@ -93,11 +96,21 @@ namespace dtAnim
    public:
       Cal3DModelData(const std::string& modelName, const std::string& filename);
 
+      /// Add a low level animation wrapper.
       void Add(AnimationWrapper*);
+      /// Add a higher level animatable such as a sequence or an animation channel.
       void Add(Animatable*);
+      /**
+       * Adds a non-skinned attachment to a bone for this character data.  Often this is just an invisible transformable to attach something.
+       */
+      void Add(const std::pair<dtUtil::HotSpotDefinition, std::string>& attachment);
 
       void Remove(AnimationWrapper*);
       void Remove(Animatable*);
+      /**
+       * Removes a non-skinned attachment to a bone from this character data.
+       */
+      void Remove(unsigned int which);
 
       void SetFilename(const std::string& file);
       const std::string& GetFilename() const;
@@ -122,6 +135,11 @@ namespace dtAnim
 
       AnimatableArray& GetAnimatables();
       const AnimatableArray& GetAnimatables() const;
+
+      /// @return the list of non-character bone attachments
+      AttachmentArray& GetAttachments();
+      /// @return the list of non-character bone attachments as const
+      const AttachmentArray& GetAttachments() const;
 
       CalHardwareModel* GetOrCreateCalHardwareModel();
 
@@ -345,6 +363,7 @@ namespace dtAnim
       CalHardwareModel* mHardwareModel;
       AnimationWrapperArray mAnimWrappers;
       AnimatableArray mAnimatables;
+      AttachmentArray mAttachments;
 
       unsigned mShaderMaxBones;
 

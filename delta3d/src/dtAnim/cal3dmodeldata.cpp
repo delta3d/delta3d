@@ -84,6 +84,12 @@
    }
 
    ////////////////////////////////////////////////////////////////////////////////
+   void Cal3DModelData::Add(const std::pair<dtUtil::HotSpotDefinition, std::string>& attachment)
+   {
+      mAttachments.push_back(attachment);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
    void Cal3DModelData::Remove(AnimationWrapper* wrapper)
    {
       mAnimWrappers.erase(std::remove(mAnimWrappers.begin(), mAnimWrappers.end(), wrapper));
@@ -93,6 +99,12 @@
    void Cal3DModelData::Remove(Animatable* anim)
    {
       mAnimatables.erase(std::remove(mAnimatables.begin(), mAnimatables.end(), anim));
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void Cal3DModelData::Remove(unsigned int which)
+   {
+      mAttachments.erase(mAttachments.begin() + which);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -266,6 +278,18 @@
    const Cal3DModelData::AnimatableArray& Cal3DModelData::GetAnimatables() const
    {
       return mAnimatables;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   Cal3DModelData::AttachmentArray& Cal3DModelData::GetAttachments()
+   {
+      return mAttachments;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   const Cal3DModelData::AttachmentArray& Cal3DModelData::GetAttachments() const
+   {
+      return mAttachments;
    }
 
    /////////////////////////////////////////////////////////////////////////////

@@ -45,7 +45,7 @@ namespace dtAnim
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   void AttachmentController::AddAttachment(dtCore::Transformable& actor, dtUtil::HotSpotDefinition& spot)
+   void AttachmentController::AddAttachment(dtCore::Transformable& actor, const dtUtil::HotSpotDefinition& spot)
    {
       mAttachments.push_back(std::make_pair(&actor, spot));
    }
@@ -78,6 +78,12 @@ namespace dtAnim
    }
 
    /////////////////////////////////////////////////////////////////////////////////
+   void AttachmentController::Clear()
+   {
+      mAttachments.clear();
+   }
+
+   /////////////////////////////////////////////////////////////////////////////////
    void AttachmentController::Update(Cal3DModelWrapper& model)
    {
       AttachmentMover mover(model);
@@ -85,28 +91,33 @@ namespace dtAnim
    }
 
 
+   /////////////////////////////////////////////////////////////////////////////////
    AttachmentMover::AttachmentMover(const dtAnim::Cal3DModelWrapper& model)
       : mModel(&model)
    {
    }
 
+   /////////////////////////////////////////////////////////////////////////////////
    AttachmentMover::AttachmentMover(const AttachmentMover& same)
       : mModel(same.mModel)
    {
    }
 
+   /////////////////////////////////////////////////////////////////////////////////
    AttachmentMover& AttachmentMover::operator =(const AttachmentMover& same)
    {
       mModel = same.mModel;
       return *this;
    }
 
+   /////////////////////////////////////////////////////////////////////////////////
    void AttachmentMover::operator()(dtCore::RefPtr<dtCore::HotSpotAttachment>& attachment)
    {
       AttachmentPair aPair(dtCore::RefPtr<dtCore::Transformable>(attachment.get()), attachment->GetDefinition());
       operator()(aPair);
    }
 
+   /////////////////////////////////////////////////////////////////////////////////
    void AttachmentMover::operator()(AttachmentPair& attachment)
    {
       dtCore::Transformable& actor = *attachment.first;

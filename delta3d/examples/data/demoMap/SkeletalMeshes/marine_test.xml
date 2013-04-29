@@ -13,6 +13,7 @@
    <material fileName="BODY.crf" name="Body Material" />
    <material fileName="Helmet.crf" name="Helmet Material" />
    <material fileName="M16m80.crf" name="M16 Material" />
+   <attachmentPoint bone="Bip02 R Hand" name="attachment1" x="-0.1" y="0.1" z="0.3" rx="90" ry="-90" rz="0.01" />
    <LOD>
       <lodStartDistance>1.75</lodStartDistance>
       <lodEndDistance>43.6</lodEndDistance>

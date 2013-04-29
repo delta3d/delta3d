@@ -418,7 +418,9 @@ void Viewer::OnAttachmentSettingsChanged(const std::string& bone, float x, float
    hsd.mName = "HotSpot";
    hsd.mParentName = bone;
    hsd.mLocalTranslation = osg::Vec3(x, y, z);
-   hsd.mLocalRotation = osg::Quat(rotx, osg::Vec3(1, 0, 0), roty, osg::Vec3(0, 1, 0), rotz, osg::Vec3(0, 0, 1));
+   hsd.mLocalRotation = osg::Quat(osg::DegreesToRadians(rotx), osg::Vec3(1, 0, 0),
+            osg::DegreesToRadians(roty), osg::Vec3(0, 1, 0),
+            osg::DegreesToRadians(rotz), osg::Vec3(0, 0, 1));
    mAttachmentController->RemoveAttachment(*mAttachmentObject.get());
    mAttachmentController->AddAttachment(*mAttachmentObject.get(), hsd);
 }

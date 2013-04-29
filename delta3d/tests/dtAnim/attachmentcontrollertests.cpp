@@ -127,6 +127,7 @@ namespace dtAnim
          void TestAddRemove()
          {
             CPPUNIT_ASSERT(&mAnimHelper->GetAttachmentController() == mAttach.get());
+            mAnimHelper->GetAttachmentController().Clear(); // clear out what is loaded from the file.
 
             dtCore::RefPtr<dtCore::Transformable> attachment = new dtCore::Transformable("TestAttachment");
             dtUtil::HotSpotDefinition spotDef;

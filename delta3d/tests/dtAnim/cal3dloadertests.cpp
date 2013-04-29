@@ -43,8 +43,11 @@
 #include <dtCore/project.h>
 #include <dtUtil/datapathutils.h>
 #include <dtUtil/refstring.h>
+#include <dtUtil/mathdefines.h>
 
 #include <cal3d/model.h>
+
+#include <osg/io_utils>
 
 #include <osg/Geode>
 
@@ -158,9 +161,33 @@ namespace dtAnim
             childNames.push_back("IdleAction");
             TestLoadedAnimationSequence(actionSequence, childNames);
 
+            const dtAnim::AttachmentController& attachCon = mHelper->GetAttachmentController();
+            CPPUNIT_ASSERT_EQUAL(1U, unsigned(attachCon.GetAttachments().size()));
+
+
+            const dtUtil::HotSpotDefinition& hotSpotDef = attachCon.GetAttachments()[0].second;
+            CPPUNIT_ASSERT_EQUAL(std::string("attachment1"), hotSpotDef.mName);
+            CPPUNIT_ASSERT_EQUAL(std::string("Bip02 R Hand"), hotSpotDef.mParentName);
+
+            CPPUNIT_ASSERT_DOUBLES_EQUAL(-0.1f, hotSpotDef.mLocalTranslation.x(), 0.01f);
+            CPPUNIT_ASSERT_DOUBLES_EQUAL(0.1f, hotSpotDef.mLocalTranslation.y(), 0.01f);
+            CPPUNIT_ASSERT_DOUBLES_EQUAL(0.3f, hotSpotDef.mLocalTranslation.z(), 0.01f);
+
+            osg::Quat q;
+            q.makeRotate ( osg::DegreesToRadians(90.0), osg::Vec3(1.0, 0.0, 0.0),
+                              osg::DegreesToRadians(-90.0), osg::Vec3(0.0, 1.0, 0.0),
+                              osg::DegreesToRadians(0.01), osg::Vec3(0.0, 0.0, 1.0));
+
+            std::ostringstream oss;
+            oss << q << " - " << hotSpotDef.mLocalRotation << std::endl;
+
+            CPPUNIT_ASSERT_MESSAGE(oss.str(), dtUtil::Equivalent(q, hotSpotDef.mLocalRotation, 4U, 0.1));
+
             //Test unloading.
             CPPUNIT_ASSERT_NO_THROW(mHelper->LoadModel(""));
             TestEmptyHelper();
+
+
          }
 
          void TestLODOptions()
