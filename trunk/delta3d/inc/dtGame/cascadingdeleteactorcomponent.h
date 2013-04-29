@@ -22,6 +22,7 @@
 #ifndef CASCADINGDELETEACTORCOMPONENT_H_
 #define CASCADINGDELETEACTORCOMPONENT_H_
 
+#include <dtGame/export.h>
 #include <dtGame/actorcomponent.h>
 #include <dtCore/uniqueid.h>
 
@@ -38,7 +39,7 @@ namespace dtGame
     * A simple actor component that allows other actors to be deleted as a result
     * of the owner being deleted.
     */
-   class CascadingDeleteActorComponent: public dtGame::ActorComponent
+   class DT_GAME_EXPORT CascadingDeleteActorComponent: public dtGame::ActorComponent
    {
    public:
       // set the type of the actor component
