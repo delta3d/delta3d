@@ -43,6 +43,7 @@ namespace dtAnim
       static const dtUtil::RefString MATERIAL_ELEMENT;
       static const dtUtil::RefString ANIMATION_ELEMENT;
       static const dtUtil::RefString MORPH_ANIMATION_ELEMENT;
+      static const dtUtil::RefString ATTACHMENT_POINT_ELEMENT;
 
       // File Reference Tag Attributes
       static const dtUtil::RefString NAME_ELEMENT;
@@ -91,6 +92,16 @@ namespace dtAnim
       // Sequence Tag Attributes
       static const dtUtil::RefString EVENT_ATTR;
       static const dtUtil::RefString OFFSET_ATTR;
+
+      static const dtUtil::RefString BONE_NAME_ATTR;
+      static const dtUtil::RefString OFFSET_X_ATTR;
+      static const dtUtil::RefString OFFSET_Y_ATTR;
+      static const dtUtil::RefString OFFSET_Z_ATTR;
+      static const dtUtil::RefString OFFSET_RX_ATTR;
+      static const dtUtil::RefString OFFSET_RY_ATTR;
+      static const dtUtil::RefString OFFSET_RZ_ATTR;
+      static const dtUtil::RefString RESOURCE_ATTR;
+
 
    private:
       CharacterFileElements(){}

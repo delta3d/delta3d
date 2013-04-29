@@ -36,6 +36,7 @@ namespace dtAnim
    const dtUtil::RefString CharacterFileElements::MATERIAL_ELEMENT("material");
    const dtUtil::RefString CharacterFileElements::ANIMATION_ELEMENT("animation");
    const dtUtil::RefString CharacterFileElements::MORPH_ANIMATION_ELEMENT("morph");
+   const dtUtil::RefString CharacterFileElements::ATTACHMENT_POINT_ELEMENT("attachmentPoint");
 
    // File Reference Tag Attributes
    const dtUtil::RefString CharacterFileElements::NAME_ELEMENT("name");
@@ -84,6 +85,16 @@ namespace dtAnim
    // Sequence Tag Attributes
    const dtUtil::RefString CharacterFileElements::EVENT_ATTR("event");
    const dtUtil::RefString CharacterFileElements::OFFSET_ATTR("offset");
+
+   const dtUtil::RefString CharacterFileElements::BONE_NAME_ATTR("bone");
+   const dtUtil::RefString CharacterFileElements::OFFSET_X_ATTR("x");
+   const dtUtil::RefString CharacterFileElements::OFFSET_Y_ATTR("y");
+   const dtUtil::RefString CharacterFileElements::OFFSET_Z_ATTR("z");
+   const dtUtil::RefString CharacterFileElements::OFFSET_RX_ATTR("rx");
+   const dtUtil::RefString CharacterFileElements::OFFSET_RY_ATTR("ry");
+   const dtUtil::RefString CharacterFileElements::OFFSET_RZ_ATTR("rz");
+   const dtUtil::RefString CharacterFileElements::RESOURCE_ATTR("resource");
+
 
 
 } // namespace dtAnim

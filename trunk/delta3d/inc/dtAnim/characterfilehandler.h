@@ -27,6 +27,7 @@
 #include <dtAnim/export.h>
 #include <dtUtil/mswinmacros.h>
 #include <dtUtil/xercesutils.h>
+#include <dtUtil/hotspotdefinition.h>
 #include <dtCore/refptr.h>
 #include <dtCore/basexmlhandler.h>
 #include <vector>
@@ -193,6 +194,7 @@ namespace dtAnim
       std::string mName;                            ///<The name of this animated entity
       std::vector<AnimationStruct> mAnimations;     ///<Container of animation structs
       std::vector<MorphAnimationStruct> mMorphAnimations;     ///<Container of MorphAnimation structs
+      std::vector<std::pair<dtUtil::HotSpotDefinition, std::string> > mAttachmentPoints;     ///<Container of AttachmentPoint structs
       std::vector<MaterialStruct> mMaterials;       ///<Container of material structs
       std::vector<MeshStruct> mMeshes;              ///<Container of mesh structs
       ///Shader information for hardware skinning. these value work with the shader manager.

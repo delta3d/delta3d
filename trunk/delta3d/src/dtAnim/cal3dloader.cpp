@@ -30,8 +30,12 @@
 #include <dtAnim/animationchannel.h>
 #include <dtAnim/animationsequence.h>
 #include <dtAnim/characterfilewriter.h>
+
 #include <dtCore/basexmlhandler.h>
 #include <dtCore/basexmlreaderwriter.h>
+#include <dtCore/hotspotattachment.h>
+
+#include <dtUtil/hotspotdefinition.h>
 #include <dtUtil/datapathutils.h>
 #include <dtUtil/fileutils.h>
 #include <dtUtil/xercesparser.h>
@@ -638,7 +642,7 @@ namespace dtAnim
 
          //load skeleton
          std::string skelFile(GetAbsolutePath(path + handler->mSkeletonFilename));
-         if (!skelFile.empty())
+         if (!skelFile.empty() && fileUtils.FileExists(skelFile))
          {
             dtCore::RefPtr<CalOptions> calOptions = new CalOptions(*coreModelData, "skeleton");
             dtCore::RefPtr<osgDB::ReaderWriter::Options> options = CalOptions::CreateOSGOptions(*calOptions);
@@ -1105,6 +1109,17 @@ namespace dtAnim
    }
 
    /////////////////////////////////////////////////////////////////////////////
+   static void CreateAttachments(dtAnim::CharacterFileHandler& handler, Cal3DModelData& modelData)
+   {
+      for (unsigned i = 0; i < handler.mAttachmentPoints.size(); ++i)
+      {
+
+         modelData.Add(handler.mAttachmentPoints[i]);
+
+      }
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
    void Cal3DLoader::LoadModelData(dtAnim::CharacterFileHandler& handler, Cal3DModelData& modelData)
    {
       CalCoreModel& model = *modelData.GetCoreModel();
@@ -1263,6 +1278,10 @@ namespace dtAnim
          }
       }
 
+      if (!handler.mAttachmentPoints.empty())
+      {
+         CreateAttachments(handler, modelData);
+      }
    }
 
    /////////////////////////////////////////////////////////////////////////////

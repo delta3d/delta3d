@@ -8,6 +8,7 @@
             <xs:element ref="morph" minOccurs="0" maxOccurs="unbounded" />
             <xs:element ref="mesh" minOccurs="0" maxOccurs="unbounded" />
             <xs:element ref="material" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element ref="attachmentPoint" minOccurs="0" maxOccurs="unbounded" />
             <xs:element ref="LOD" />
             <xs:element ref="scale" />
             <xs:element ref="skinningShader" />
@@ -46,6 +47,55 @@
          <xs:attribute name="name" use="optional">
             <xs:simpleType>
                <xs:restriction base="xs:normalizedString" />
+            </xs:simpleType>
+         </xs:attribute>
+      </xs:complexType>
+   </xs:element>
+   <xs:element name="attachmentPoint">
+      <xs:complexType>
+         <xs:attribute name="bone" use="required">
+            <xs:simpleType>
+               <xs:restriction base="xs:normalizedString" />
+            </xs:simpleType>
+         </xs:attribute>
+         <xs:attribute name="name" use="optional">
+            <xs:simpleType>
+               <xs:restriction base="xs:normalizedString" />
+            </xs:simpleType>
+         </xs:attribute>
+         <xs:attribute name="resource" use="optional">
+            <xs:simpleType>
+               <xs:restriction base="xs:normalizedString" />
+            </xs:simpleType>
+         </xs:attribute>
+         <xs:attribute name="x" use="optional">
+            <xs:simpleType>
+               <xs:restriction base="xs:float" />
+            </xs:simpleType>
+         </xs:attribute>
+         <xs:attribute name="y" use="optional">
+            <xs:simpleType>
+               <xs:restriction base="xs:float" />
+            </xs:simpleType>
+         </xs:attribute>
+         <xs:attribute name="z" use="optional">
+            <xs:simpleType>
+               <xs:restriction base="xs:float" />
+            </xs:simpleType>
+         </xs:attribute>
+         <xs:attribute name="rx" use="optional">
+            <xs:simpleType>
+               <xs:restriction base="xs:float" />
+            </xs:simpleType>
+         </xs:attribute>
+         <xs:attribute name="ry" use="optional">
+            <xs:simpleType>
+               <xs:restriction base="xs:float" />
+            </xs:simpleType>
+         </xs:attribute>
+         <xs:attribute name="rz" use="optional">
+            <xs:simpleType>
+               <xs:restriction base="xs:float" />
             </xs:simpleType>
          </xs:attribute>
       </xs:complexType>

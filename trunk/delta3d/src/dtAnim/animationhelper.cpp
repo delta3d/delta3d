@@ -36,6 +36,9 @@
 #include <dtCore/actorproperty.h>
 #include <dtCore/actorproxy.h>
 #include <dtCore/datatype.h>
+#include <dtCore/project.h>
+#include <dtCore/exceptionenum.h>
+#include <dtCore/object.h>
 #include <dtCore/resourceactorproperty.h>
 
 #include <dtUtil/log.h>
@@ -163,6 +166,37 @@ bool AnimationHelper::LoadModel(const std::string& pFilename, bool immediate)
 
          RegisterAnimations(*modelData);
 
+         const Cal3DModelData::AttachmentArray& attachments = modelData->GetAttachments();
+
+
+         Cal3DModelData::AttachmentArray::const_iterator i,iend;
+         i = attachments.begin();
+         iend = attachments.end();
+         for (; i != iend; ++i)
+         {
+            dtUtil::HotSpotDefinition hsd = i->first;
+            dtCore::RefPtr<dtCore::HotSpotAttachment> newAttachment = new dtCore::HotSpotAttachment(hsd);
+            if (!i->second.empty())
+            {
+               std::string pathToLoad = i->second;
+               if (pathToLoad.find(dtCore::ResourceDescriptor::DESCRIPTOR_SEPARATOR) != std::string::npos)
+               {
+                  try
+                  {
+                     pathToLoad = dtCore::Project::GetInstance().GetResourcePath(dtCore::ResourceDescriptor(pathToLoad));
+                  }
+                  catch (const dtCore::ProjectFileNotFoundException& pfe)
+                  {
+                     LOG_ERROR(std::string("Error loading attached resource for \"") + pFilename + "\" character file: " + i->second);
+                  }
+               }
+               dtCore::RefPtr<dtCore::Object> obj = new dtCore::Object(hsd.mName);
+               obj->LoadFile(pathToLoad, true);
+               newAttachment->AddChild(obj);
+            }
+            mAttachmentController->AddAttachment(*newAttachment, i->first);
+         }
+
          // Notify observers that the model has been loaded
          ModelLoadedSignal();
       }
@@ -177,6 +211,7 @@ bool AnimationHelper::LoadModel(const std::string& pFilename, bool immediate)
       mAnimator = NULL;
       mNode = NULL;
       mSequenceMixer->ClearRegisteredAnimations();
+      mAttachmentController->Clear();
    }
    return true;
 }
