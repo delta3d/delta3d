@@ -18,6 +18,8 @@
  *
  * @author David Guthrie
  */
+#include <prefix/unittestprefix.h>
+
 #include <cppunit/extensions/HelperMacros.h>
 
 #include <dtPhysics/palphysicsworld.h>
@@ -29,6 +31,8 @@
 #include <dtUtil/fileutils.h>
 #include <dtUtil/datapathutils.h>
 #include <dtCore/system.h>
+
+#include <cctype>
 
 static std::vector<std::string> PhysicsEngines;
 
