@@ -1845,7 +1845,7 @@ void MainWindow::CreateDockWidget_Tools()
       mAttachmentRotXSpinner = new QDoubleSpinBox();
       mAttachmentRotXSpinner->setSingleStep(0.01);
       mAttachmentRotXSpinner->setToolTip(tr("Rotation Axis X"));
-      mAttachmentRotXSpinner->setRange(-5.0, 5.0);
+      mAttachmentRotXSpinner->setRange(-180.0, 180.0);
       layout->addWidget(mAttachmentRotXSpinner, 5, 1);
       connect(mAttachmentRotXSpinner, SIGNAL(valueChanged(double)), this, SLOT(OnChangeAttachmentSettings()));
 
@@ -1855,7 +1855,7 @@ void MainWindow::CreateDockWidget_Tools()
       mAttachmentRotYSpinner = new QDoubleSpinBox(this);
       mAttachmentRotYSpinner->setSingleStep(0.01);
       mAttachmentRotYSpinner->setToolTip(tr("Rotation Axis Y"));
-      mAttachmentRotYSpinner->setRange(-5.0, 5.0);
+      mAttachmentRotYSpinner->setRange(-180.0, 180.0);
       layout->addWidget(mAttachmentRotYSpinner, 6, 1);
       connect(mAttachmentRotYSpinner, SIGNAL(valueChanged(double)), this, SLOT(OnChangeAttachmentSettings()));
 
@@ -1865,7 +1865,7 @@ void MainWindow::CreateDockWidget_Tools()
       mAttachmentRotZSpinner = new QDoubleSpinBox(this);
       mAttachmentRotZSpinner->setSingleStep(0.01);
       mAttachmentRotZSpinner->setToolTip(tr("Rotation Axis Z"));
-      mAttachmentRotZSpinner->setRange(-5.0, 5.0);
+      mAttachmentRotZSpinner->setRange(-180.0, 180.0);
       layout->addWidget(mAttachmentRotZSpinner, 7, 1);
       connect(mAttachmentRotZSpinner, SIGNAL(valueChanged(double)), this, SLOT(OnChangeAttachmentSettings()));
    }
