@@ -121,7 +121,7 @@
       \
       PROPERTY_MODIFIERS_SETTER void Add ## AccessorName(dtUtil::TypeTraits<AccessorType>::param_type value);\
       \
-      PROPERTY_MODIFIERS_SETTER void Insert ## AccessorName(unsigned idx, dtUtil::TypeTraits<AccessorType>::param_type value);\
+      PROPERTY_MODIFIERS_SETTER void InsertWithValue ## AccessorName(unsigned idx, dtUtil::TypeTraits<AccessorType>::param_type value);\
       \
       PROPERTY_MODIFIERS_SETTER void Insert ## AccessorName(unsigned idx);\
       \
@@ -158,14 +158,14 @@
          m ## AccessorNamePlural.push_back(value);\
       }\
       \
-      void ClassName :: Insert ## AccessorName(unsigned idx, dtUtil::TypeTraits<AccessorType>::param_type value)\
+      void ClassName :: InsertWithValue ## AccessorName (unsigned idx, dtUtil::TypeTraits<AccessorType>::param_type value)\
       {\
          m ## AccessorNamePlural.insert(m ## AccessorNamePlural.begin() + idx, value);\
       }\
       \
       void ClassName :: Insert ## AccessorName(unsigned idx)\
       {\
-         Insert ## AccessorName(idx, (DefaultNewValue) );\
+         InsertWithValue ## AccessorName(idx, (DefaultNewValue) );\
       }\
       \
       void ClassName :: Remove ## AccessorName(unsigned idx)\
