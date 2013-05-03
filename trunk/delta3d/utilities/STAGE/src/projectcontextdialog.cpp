@@ -62,19 +62,21 @@ namespace dtEditQt
       QGroupBox*   group  = new QGroupBox(tr("Properties"),this);
       QGridLayout* grid   = new QGridLayout(group);
       QHBoxLayout* buttons= new QHBoxLayout;
-      QPushButton* select = new QPushButton(tr("..."),group);
+      QPushButton* selectDir = new QPushButton(tr("Dir"),group);
+      QPushButton* selectProj = new QPushButton(tr(".dtproj"),group);
       QPushButton* cancel = new QPushButton(tr("Cancel"),this);
       mPathEdit           = new QLineEdit(group);
       mApplyButton        = new QPushButton(tr("Apply"),this);
 
       QLabel*      desc   = new QLabel(tr("A project holds all related maps, files, and "
-                                          "resources.  Please select a directory where your project files will be "
+                                          "resources.  Please select a directory or dtproj file pointing to where your project files will be "
                                           "stored."),group);
 
       desc->setWordWrap(true);
       grid->addWidget(new QLabel(tr("Path:")), 0, 0);
       grid->addWidget(mPathEdit, 0, 1);
-      grid->addWidget(select, 0, 2);
+      grid->addWidget(selectDir, 0, 2);
+      grid->addWidget(selectProj, 0, 3);
       grid->addWidget(desc, 1, 0, 1, 3, Qt::AlignTop);
       vLay->addWidget(group);
 
@@ -85,42 +87,61 @@ namespace dtEditQt
 
       vLay->addLayout(buttons);
 
-      connect(select,       SIGNAL(clicked()), this, SLOT(spawnFileBrowser()));
+      connect(selectDir,       SIGNAL(clicked()), this, SLOT(OpenDirBrowser()));
+      connect(selectProj,       SIGNAL(clicked()), this, SLOT(OpenFileBrowser()));
       connect(mApplyButton, SIGNAL(clicked()), this, SLOT(accept()));
       connect(cancel,       SIGNAL(clicked()), this, SLOT(reject()));
 
       mApplyButton->setEnabled(false);
       mPathEdit->setDisabled(true);
       mPathEdit->setText(tr(EditorData::GetInstance().getCurrentProjectContext().c_str()));
-      setMinimumSize(530, 100);
+      //setMinimumSize(530, 100);
    }
 
+   ///////////////////////////////////////////////////////////////////
    ProjectContextDialog::~ProjectContextDialog()
    {
 
    }
 
-   QString ProjectContextDialog::getProjectPath() const
+   ///////////////////////////////////////////////////////////////////
+   QString ProjectContextDialog::GetProjectPath() const
    {
       return mPathEdit->text();
    }
 
    ///////////////////////// SLOTS ////////////////////////////////////
-   void ProjectContextDialog::spawnFileBrowser()
+   void ProjectContextDialog::OpenDirBrowser()
+   {
+      OpenFileBrowser(true);
+   }
+
+   ///////////////////////////////////////////////////////////////////
+   void ProjectContextDialog::OpenFileBrowser(bool directory)
    {
       const std::string currentContext = EditorData::GetInstance().getCurrentProjectContext();
+      QString path;
+      if (!directory)
+      {
+         path = QFileDialog::getOpenFileName(this,
+                                     tr("Select a dt Project file."),
+                                     QString::fromStdString(currentContext),
+                                     QString("Project Files (*.dtproj)"));
+      }
+      else
+      {
+         path = QFileDialog::getExistingDirectory(this,
+                                     tr("Select a project context directory ."),
+                                     QString::fromStdString(currentContext));
+      }
 
-      QString dir = QFileDialog::getExistingDirectory(this,
-                                  tr("Select a project context"),
-                                  QString::fromStdString(currentContext));
-
-      if (dir.isEmpty())
+      if (path.isEmpty())
       {
          mApplyButton->setEnabled(false);
          return;
       }
 
-      std::string strippedName = dir.toStdString();
+      std::string strippedName = path.toStdString();
       if ((*strippedName.rbegin()) == '\\' || (*strippedName.rbegin()) == '/')
       {
          strippedName = strippedName.substr(0, strippedName.size() - 1);

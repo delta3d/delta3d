@@ -40,6 +40,7 @@
 #include <dtCore/map.h>
 #include <dtCore/mapxml.h>
 #include <dtCore/project.h>
+#include <dtCore/projectconfig.h>
 #include <dtCore/transformableactorproxy.h>
 #include <dtCore/vectoractorproperties.h>
 #include <dtCore/booleanactorproperty.h>
@@ -1644,7 +1645,7 @@ namespace dtEditQt
       ProjectContextDialog dialog((QWidget*)EditorData::GetInstance().getMainWindow());
       if (dialog.exec() == QDialog::Accepted)
       {
-         const std::string contextName = dialog.getProjectPath().toStdString();
+         const std::string contextName = dialog.GetProjectPath().toStdString();
          SlotChangeProjectContext(contextName);
       }
 
@@ -1664,8 +1665,15 @@ namespace dtEditQt
       try
       {
          changeMaps(EditorData::GetInstance().getCurrentMap(), NULL);
-         dtCore::Project::GetInstance().CreateContext(path);
-         dtCore::Project::GetInstance().SetContext(path);
+         if (dtUtil::FileUtils::GetInstance().DirExists(path))
+         {
+            dtCore::Project::GetInstance().CreateContext(path);
+            dtCore::Project::GetInstance().SetContext(path);
+         }
+         else
+         {
+            dtCore::Project::GetInstance().SetupFromProjectConfigFile(path);
+         }
       }
       catch (dtUtil::Exception& e)
       {
