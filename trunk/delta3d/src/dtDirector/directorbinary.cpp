@@ -109,7 +109,8 @@ namespace dtDirector
 
       try
       {
-         float version = ParseHeader(NULL, file);
+         //float version =
+         ParseHeader(NULL, file);
          fclose(file);
       }
       catch (dtUtil::Exception& ex)
