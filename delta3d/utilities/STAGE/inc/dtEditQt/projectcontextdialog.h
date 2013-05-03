@@ -51,12 +51,13 @@ namespace dtEditQt
 
       /**
        * Returns the path to the new project specified by the user.
-       * @return The directory path.
+       * @return The directory or dtproj path
        */
-      QString getProjectPath() const;
+      QString GetProjectPath() const;
 
    public slots:
-      void spawnFileBrowser();
+      void OpenDirBrowser();
+      void OpenFileBrowser(bool directory = false);
 
    private:
       QPushButton* mApplyButton;
