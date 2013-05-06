@@ -62,17 +62,22 @@ namespace dtAnim
        * attachment each time the skeleton is updated.
        * @see dtCore::HotSpotAttachment
        */
-      void AddAttachment(dtCore::Transformable& actor, const dtUtil::HotSpotDefinition& spot);
+      void AddAttachment(dtCore::Transformable& attachment, const dtUtil::HotSpotDefinition& spot);
 
       /**
        * Removes a previously added hot spot attachment.  If the spot is not
        * in the container, this call is a no-op.
        * @see dtCore::HotSpotAttachment
        */
-      void RemoveAttachment(const dtCore::Transformable& actor);
+      void RemoveAttachment(const dtCore::Transformable& attachment);
 
       /// @return an immutable container holding the current set of hot spots.
       const AttachmentContainer& GetAttachments() const;
+
+      // @return a given attachment.
+      AttachmentPair* GetAttachment(unsigned which);
+
+      unsigned GetNumAttachments() const;
 
       /// Remove all attachments
       void Clear();
