@@ -17,6 +17,7 @@
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
  * Bradley Anderegg 03/30/2007
+ * David Guthrie
  */
 
 #include <dtAnim/animationhelper.h>
@@ -102,6 +103,7 @@ void AnimationHelper::Update(float dt)
          mNode = database.GetNodeBuilder().CreateNode(newWrapper);
 
          RegisterAnimations(*modelData);
+         CreateAttachments(*modelData);
 
          // Done loading, clear the file to load string
          mAsynchFile.clear();
@@ -145,6 +147,40 @@ void AnimationHelper::ClearAll(float fadeOut)
 }
 
 /////////////////////////////////////////////////////////////////////////////////
+void AnimationHelper::CreateAttachments(const Cal3DModelData& modelData)
+{
+   const Cal3DModelData::AttachmentArray& attachments = modelData.GetAttachments();
+
+   Cal3DModelData::AttachmentArray::const_iterator i,iend;
+   i = attachments.begin();
+   iend = attachments.end();
+   for (; i != iend; ++i)
+   {
+      dtUtil::HotSpotDefinition hsd = i->first;
+      dtCore::RefPtr<dtCore::HotSpotAttachment> newAttachment = new dtCore::HotSpotAttachment(hsd);
+      if (!i->second.empty())
+      {
+         std::string pathToLoad = i->second;
+         if (pathToLoad.find(dtCore::ResourceDescriptor::DESCRIPTOR_SEPARATOR) != std::string::npos)
+         {
+            try
+            {
+               pathToLoad = dtCore::Project::GetInstance().GetResourcePath(dtCore::ResourceDescriptor(pathToLoad));
+            }
+            catch (const dtCore::ProjectFileNotFoundException& pfe)
+            {
+               LOG_ERROR(std::string("Error loading attached resource for \"") + modelData.GetFilename() + "\" character file: " + i->second  + " : " + pfe.ToString());
+            }
+         }
+         dtCore::RefPtr<dtCore::Object> obj = new dtCore::Object(hsd.mName);
+         obj->LoadFile(pathToLoad, true);
+         newAttachment->AddChild(obj);
+      }
+      mAttachmentController->AddAttachment(*newAttachment, i->first);
+   }
+}
+
+/////////////////////////////////////////////////////////////////////////////////
 bool AnimationHelper::LoadModel(const std::string& pFilename, bool immediate)
 {
    if (!pFilename.empty())
@@ -165,38 +201,7 @@ bool AnimationHelper::LoadModel(const std::string& pFilename, bool immediate)
          }
 
          RegisterAnimations(*modelData);
-
-         const Cal3DModelData::AttachmentArray& attachments = modelData->GetAttachments();
-
-
-         Cal3DModelData::AttachmentArray::const_iterator i,iend;
-         i = attachments.begin();
-         iend = attachments.end();
-         for (; i != iend; ++i)
-         {
-            dtUtil::HotSpotDefinition hsd = i->first;
-            dtCore::RefPtr<dtCore::HotSpotAttachment> newAttachment = new dtCore::HotSpotAttachment(hsd);
-            if (!i->second.empty())
-            {
-               std::string pathToLoad = i->second;
-               if (pathToLoad.find(dtCore::ResourceDescriptor::DESCRIPTOR_SEPARATOR) != std::string::npos)
-               {
-                  try
-                  {
-                     pathToLoad = dtCore::Project::GetInstance().GetResourcePath(dtCore::ResourceDescriptor(pathToLoad));
-                  }
-                  catch (const dtCore::ProjectFileNotFoundException& pfe)
-                  {
-                     LOG_ERROR(std::string("Error loading attached resource for \"") + pFilename + "\" character file: " + i->second);
-                  }
-               }
-               dtCore::RefPtr<dtCore::Object> obj = new dtCore::Object(hsd.mName);
-               obj->LoadFile(pathToLoad, true);
-               newAttachment->AddChild(obj);
-            }
-            mAttachmentController->AddAttachment(*newAttachment, i->first);
-         }
-
+         CreateAttachments(*modelData);
          // Notify observers that the model has been loaded
          ModelLoadedSignal();
       }

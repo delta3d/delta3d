@@ -449,6 +449,7 @@ namespace dtAnim
       AnimCommandArray mCommands;
 
       void RegisterAnimations(const Cal3DModelData& sourceData);
+      void CreateAttachments(const Cal3DModelData& modelData);
    };
 
 } // namespace dtAnim
