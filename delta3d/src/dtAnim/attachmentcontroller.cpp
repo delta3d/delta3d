@@ -78,6 +78,20 @@ namespace dtAnim
    }
 
    /////////////////////////////////////////////////////////////////////////////////
+   AttachmentPair* AttachmentController::GetAttachment(unsigned which)
+   {
+      if (which >= mAttachments.size()) { return NULL; }
+      return &mAttachments[which];
+   }
+
+   /////////////////////////////////////////////////////////////////////////////////
+   unsigned AttachmentController::GetNumAttachments() const
+   {
+      return mAttachments.size();
+   }
+
+
+   /////////////////////////////////////////////////////////////////////////////////
    void AttachmentController::Clear()
    {
       mAttachments.clear();
