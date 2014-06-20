@@ -174,13 +174,13 @@ namespace dtAnim
          return int(mMeshes.size());
       }
 
-   protected:
-      virtual ~BaseInterfaceObjectCache() {}
-
       typedef std::map<std::string, dtCore::RefPtr<T_Anim> > AnimMap;
       typedef std::map<std::string, dtCore::RefPtr<T_Bone> > BoneMap;
       typedef std::map<std::string, dtCore::RefPtr<T_Material> > MaterialMap;
       typedef std::map<std::string, dtCore::RefPtr<T_Mesh> > MeshMap;
+
+   protected:
+      virtual ~BaseInterfaceObjectCache() {}
 
       dtCore::ObserverPtr<T_ModelWrapper> mModel;
       dtCore::RefPtr<T_Skeleton> mSkel;

@@ -32,9 +32,9 @@ namespace dtAnim
 
       OsgRigTransformHardware(dtAnim::OsgModelWrapper& modelWrapper, bool boneModeQuat)
          : BaseClass()
-         , mModelWrapper(&modelWrapper)
          , mBoneModeQuat(boneModeQuat)
          , mScale(new osg::Uniform(osg::Uniform::FLOAT, "scale", 1))
+         , mModelWrapper(&modelWrapper)
       {
          _bonesPerVertex = Constants::DEFAULT_BONES_PER_VERTEX;
 
@@ -161,7 +161,6 @@ namespace dtAnim
                geom.setVertexAttribArray(attribIndex + i, getVertexAttrib(i));
            }
 
-           int numBonesPerVertex = getNumBonesPerVertex();
            osg::StateSet* ss = geom.getOrCreateStateSet();
            ss->addUniform(_uniformMatrixPalette);
            ss->addUniform(mScale);
