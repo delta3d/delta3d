@@ -1,30 +1,20 @@
+
+#include <dtAnim/basemodelwrapper.h>
+#include <dtAnim/chardrawable.h>
+#include <dtCore/system.h>
+#include <dtUtil/log.h>
 #include <osg/MatrixTransform>
 #include <osg/Node>
 #include <osg/Timer>
 #include <osg/Texture2D> //Cal3DLoader needs this
 
-#include <dtAnim/submesh.h>
-#include <dtAnim/chardrawable.h>
-#include <dtAnim/cal3dmodelwrapper.h>
-#include <dtAnim/cal3danimator.h>
-#include <dtAnim/cal3dmodeldata.h>
-#include <dtAnim/cal3ddatabase.h>
-#include <dtAnim/animnodebuilder.h>
-#include <dtCore/system.h>
-#include <dtUtil/log.h>
 #include <cassert>
-
-
-#include <cal3d/corematerial.h>
-
-#include <dtAnim/ical3ddriver.h>
 
 using namespace dtAnim;
 
 ////////////////////////////////////////////////////////////////////////////////
-CharDrawable::CharDrawable(Cal3DModelWrapper* wrapper)
+CharDrawable::CharDrawable(dtAnim::BaseModelWrapper* wrapper)
    : dtCore::Transformable()
-   , mAnimator(new Cal3DAnimator(wrapper))
    , mNode(new osg::Node())
    , mLastMeshCount(0)
 {
@@ -32,7 +22,7 @@ CharDrawable::CharDrawable(Cal3DModelWrapper* wrapper)
 
    GetMatrixNode()->addChild(mNode.get());
 
-   SetCal3DWrapper(wrapper);
+   SetModelWrapper(wrapper);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -42,28 +32,51 @@ CharDrawable::~CharDrawable()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-Cal3DModelWrapper* CharDrawable::GetCal3DWrapper()
-{
-   return mAnimator->GetWrapper();
-}
-
-////////////////////////////////////////////////////////////////////////////////
 void CharDrawable::OnMessage(dtCore::Base::MessageData* data)
 {
-   assert(mAnimator.get());
-
    // tick the animation
    if (data->message == dtCore::System::MESSAGE_PRE_FRAME)
    {
-      double dt = *static_cast<double*>(data->userData);
-      mAnimator->Update(dt);
-
-      Cal3DModelWrapper* wrapper = mAnimator->GetWrapper();
-      if (mLastMeshCount != wrapper->GetMeshCount())
+      if (mModel.valid())
       {
-         //there are a different number of meshes, better rebuild our drawables
-         RebuildSubmeshes();
-         mLastMeshCount = wrapper->GetMeshCount();
+         dtAnim::AnimationUpdaterInterface* animator = mModel->GetAnimator();
+         if (animator != NULL)
+         {
+            double dt = *static_cast<double*>(data->userData);
+            animator->Update(dt);
+         }
+
+         if (mLastMeshCount != mModel->GetMeshCount())
+         {
+            //there are a different number of meshes, better rebuild our drawables
+            RebuildSubmeshes();
+            mLastMeshCount = mModel->GetMeshCount();
+         }
+      }
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+osg::Node* CharDrawable::GetNode() const
+{
+   return mNode.get();
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void CharDrawable::SetNode(osg::Node* node)
+{
+   if (mNode != node)
+   {
+      if (mNode.valid())
+      {
+         GetMatrixNode()->removeChild(mNode.get());
+      }
+
+      mNode = node;
+
+      if (mNode.valid())
+      {
+         GetMatrixNode()->addChild(mNode.get());
       }
    }
 }
@@ -71,17 +84,42 @@ void CharDrawable::OnMessage(dtCore::Base::MessageData* data)
 ////////////////////////////////////////////////////////////////////////////////
 osg::Node* CharDrawable::RebuildSubmeshes()
 {
-   GetMatrixNode()->removeChild(mNode.get());
-   mNode = Cal3DDatabase::GetInstance().GetNodeBuilder().CreateNode(mAnimator->GetWrapper());
-   GetMatrixNode()->addChild(mNode.get());
+   if (mModel.valid())
+   {
+      SetNode(mModel->CreateDrawableNode(false));
+   }
+
    return mNode.get();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void CharDrawable::SetCal3DWrapper(Cal3DModelWrapper* wrapper)
+void CharDrawable::SetModelWrapper(dtAnim::BaseModelWrapper* wrapper)
 {
-   mAnimator->SetWrapper(wrapper);
-   RebuildSubmeshes();
-   mLastMeshCount = wrapper->GetMeshCount();
+   if (mModel.get() != wrapper)
+   {
+      mModel = wrapper;
+
+      if (mModel.valid())
+      {
+         if (mModel->GetDrawableNode() != NULL)
+         {
+            SetNode(mModel->GetDrawableNode());
+         }
+         else
+         {
+            RebuildSubmeshes();
+         }
+         mLastMeshCount = mModel->GetMeshCount();
+      }
+      else
+      {
+         mLastMeshCount = 0;
+      }
+   }
 }
 
+////////////////////////////////////////////////////////////////////////////////
+dtAnim::BaseModelWrapper* CharDrawable::GetModelWrapper()
+{
+   return mModel.get();
+}

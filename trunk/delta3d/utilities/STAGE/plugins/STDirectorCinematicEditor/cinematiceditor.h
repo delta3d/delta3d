@@ -36,7 +36,6 @@
 
 #include <dtCore/transform.h>
 
-#include <dtAnim/animationwrapper.h>
 #include <dtAnim/animationchannel.h>
 
 #include <QtGui/QWidget>

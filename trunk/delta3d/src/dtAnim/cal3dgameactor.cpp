@@ -22,8 +22,8 @@
 #include <dtAnim/cal3dgameactor.h>
 
 #include <dtAnim/cal3danimator.h>
-#include <dtAnim/cal3ddatabase.h>
 #include <dtAnim/cal3dmodelwrapper.h>
+#include <dtAnim/modeldatabase.h>
 #include <dtAnim/skeletaldrawable.h>
 #include <dtAnim/submesh.h>
 
@@ -85,7 +85,9 @@ namespace dtAnim
 
    void Cal3DGameActor::SetModel(const std::string& modelFile)
    {
-      dtCore::RefPtr<dtAnim::Cal3DModelWrapper> newModel = dtAnim::Cal3DDatabase::GetInstance().Load(modelFile);
+      dtCore::RefPtr<dtAnim::BaseModelWrapper> newBaseModel = dtAnim::ModelDatabase::GetInstance().Load(modelFile);
+      dtCore::RefPtr<dtAnim::Cal3DModelWrapper> newModel
+         = dynamic_cast<dtAnim::Cal3DModelWrapper*>(newBaseModel.get());
 
       // If we successfully loaded the model, give it to the animator
       if (newModel.valid())
@@ -98,23 +100,38 @@ namespace dtAnim
          // support to draw the mesh
          if (newModel->BeginRenderingQuery())
          {
-            int meshCount = newModel->GetMeshCount();
+            dtAnim::MeshArray meshes;
+            newModel->GetMeshes(meshes);
 
-            for (int meshId = 0; meshId < meshCount; ++meshId)
+            dtAnim::Cal3dMesh* curMesh = NULL;
+            dtAnim::MeshArray::iterator curIter = meshes.begin();
+            dtAnim::MeshArray::iterator endIter = meshes.end();
+            for ( ; curIter != endIter; ++curIter)
             {
-               int submeshCount = newModel->GetSubmeshCount(meshId);
+               curMesh = dynamic_cast<dtAnim::Cal3dMesh*>(curIter->get());
 
-               for (int submeshId = 0; submeshId < submeshCount; ++submeshId)
+               dtAnim::SubmeshArray submeshes;
+               curMesh->GetSubmeshes(submeshes);
+
+               dtAnim::SubmeshInterface* curSubmesh = NULL;
+               dtAnim::SubmeshArray::iterator curSubmeshIter = submeshes.begin();
+               dtAnim::SubmeshArray::iterator endSubmeshIter = submeshes.end();
+               for (int submeshID = 0; curSubmeshIter != endSubmeshIter; ++submeshID, ++curSubmeshIter)
                {
-                  dtAnim::SubmeshDrawable *submesh = new dtAnim::SubmeshDrawable(newModel.get(), meshId, submeshId);
+                  curSubmesh = curSubmeshIter->get();
+
+                  dtCore::RefPtr<dtAnim::SubmeshDrawable> submesh
+                     = new dtAnim::SubmeshDrawable(newModel.get(), curMesh->GetID(), submeshID);
+
                   mModelGeode->addDrawable(submesh);
                }
             }
+
             newModel->EndRenderingQuery();
          }
 
          /// Force generation of first mesh
-         newModel->Update(0);
+         newModel->UpdateAnimations(0.0f);
       }
    }
 
@@ -277,7 +294,15 @@ namespace dtAnim
                }
 
                dtAnim::Cal3DModelWrapper* wrapper = mAnimator->GetWrapper();
-               wrapper->BlendCycle(idparam->GetValue(), wparam->GetValue(), delay);
+               dtAnim::AnimationInterface* anim = wrapper->GetAnimationByIndex(idparam->GetValue());
+               if (anim != NULL)
+               {
+                  anim->PlayCycle(wparam->GetValue(), delay);
+               }
+               else
+               {
+                  LOG_ERROR("Unable to access animation at index ");
+               }
             }
          }
       }

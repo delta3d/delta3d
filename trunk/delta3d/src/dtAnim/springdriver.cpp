@@ -21,32 +21,27 @@
 
 #include <dtAnim/springdriver.h>
 
-#include <cal3d/model.h>
-#include <cal3d/springsystem.h>
-
 
 namespace dtAnim
 {
 
-SpringDriver::SpringDriver(Cal3DModelWrapper* pWrapper)
-: mWrapper(pWrapper)
+SpringDriver::SpringDriver(Cal3DAnimator* animator)
+: mAnimator(animator)
 {
 }
-
 
 SpringDriver::~SpringDriver()
 {
 }
 
-
 void SpringDriver::Update(double dt)
 {
-   mWrapper->UpdateSpringSystem(float(dt));
+   mAnimator->UpdateSpringSystem(float(dt));
 }
 
-void SpringDriver::SetWrapper(Cal3DModelWrapper* pWrapper)
+void SpringDriver::SetAnimator(Cal3DAnimator* animator)
 {
-   mWrapper = pWrapper;
+   mAnimator = animator;
 }
 
 

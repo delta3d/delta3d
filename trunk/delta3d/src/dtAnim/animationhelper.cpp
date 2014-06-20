@@ -25,12 +25,10 @@
 #include <dtAnim/animationchannel.h>
 #include <dtAnim/animationgameactor.h>
 #include <dtAnim/animationsequence.h>
-#include <dtAnim/animationwrapper.h>
+#include <dtAnim/animationupdaterinterface.h>
 #include <dtAnim/animnodebuilder.h>
-#include <dtAnim/cal3ddatabase.h>
-#include <dtAnim/cal3dmodeldata.h>
-#include <dtAnim/cal3dmodelwrapper.h>
-#include <dtAnim/ical3ddriver.h>
+#include <dtAnim/basemodeldata.h>
+#include <dtAnim/modeldatabase.h>
 
 #include <dtCore/hotspotattachment.h>
 
@@ -72,9 +70,8 @@ AnimationHelper::AnimationHelper()
    , mEnableCommands(false)
    , mLastUpdateTime(0.0)
    , mNode(NULL)
-   , mAnimator(NULL)
    , mSequenceMixer(new SequenceMixer())
-   , mAttachmentController(new AttachmentController())
+   , mAttachmentController(NULL)
 {
    ModelLoadedSignal.connect_slot(this, &AnimationHelper::OnLoadCompleted);
    ModelUnloadedSignal.connect_slot(this, &AnimationHelper::OnUnloadCompleted);
@@ -104,34 +101,38 @@ void AnimationHelper::OnRemovedFromWorld()
 /////////////////////////////////////////////////////////////////////////////////
 void AnimationHelper::Update(float dt)
 {
-   if (mAnimator.valid())
+   dtAnim::AnimationUpdaterInterface* animator = mModelWrapper->GetAnimator();
+   if (animator != NULL)
    {
       mLastUpdateTime = mSequenceMixer->GetRootSequence().GetElapsedTime();
       CollectCommands(mLastUpdateTime, mLastUpdateTime + dt);
 
       mSequenceMixer->Update(dt);
-      mAnimator->Update(dt);
-      mAttachmentController->Update(*GetModelWrapper());
+      animator->Update(dt);
+      if (mAttachmentController.valid())
+      {
+         mAttachmentController->Update(*GetModelWrapper());
+      }
    }
 
    if (IsLoadingAsynchronously())
    {
-      Cal3DDatabase& database = Cal3DDatabase::GetInstance();
-
       // See if the data is ready yet
-      Cal3DModelData* modelData = database.GetModelData(mAsyncFile);
+      dtAnim::BaseModelData* modelData = mModelLoader->GetLoadedModelData();
 
-      if (modelData)
+      if (modelData != NULL)
       {
          // Now that we have the data, create the model wrapper
-         CalModel* model = new CalModel(modelData->GetCoreModel());
-         dtAnim::Cal3DModelWrapper* newWrapper = new Cal3DModelWrapper(model);
+         mModelWrapper = mModelLoader->CreateModel(*modelData);
+         mNode = mModelWrapper->GetDrawableNode();
 
-         mAnimator = new Cal3DAnimator(newWrapper);
-         mNode = database.GetNodeBuilder().CreateNode(newWrapper);
+         if (mAttachmentController.valid())
+         {
+            mAttachmentController->Clear();
+         }
+         mAttachmentController = mModelLoader->GetAttachmentController();
 
          RegisterAnimations(*modelData);
-         CreateAttachments(*modelData);
 
          // Done loading, clear the file to load string
          mAsyncFile.clear();
@@ -149,7 +150,7 @@ void AnimationHelper::PlayAnimation(const std::string& pAnim)
 
    if (anim != NULL)
    {
-      dtCore::RefPtr<Animatable> clonedAnim = anim->Clone(mAnimator->GetWrapper());
+      dtCore::RefPtr<Animatable> clonedAnim = anim->Clone(mModelWrapper.get());
       mSequenceMixer->PlayAnimation(clonedAnim.get());
    }
    else
@@ -169,40 +170,6 @@ void AnimationHelper::ClearAnimation(const std::string& pAnim, float fadeOutTime
 void AnimationHelper::ClearAll(float fadeOut)
 {
    mSequenceMixer->ClearActiveAnimations(fadeOut);
-}
-
-/////////////////////////////////////////////////////////////////////////////////
-void AnimationHelper::CreateAttachments(const Cal3DModelData& modelData)
-{
-   const Cal3DModelData::AttachmentArray& attachments = modelData.GetAttachments();
-
-   Cal3DModelData::AttachmentArray::const_iterator i,iend;
-   i = attachments.begin();
-   iend = attachments.end();
-   for (; i != iend; ++i)
-   {
-      dtUtil::HotSpotDefinition hsd = i->first;
-      dtCore::RefPtr<dtCore::HotSpotAttachment> newAttachment = new dtCore::HotSpotAttachment(hsd);
-      if (!i->second.empty())
-      {
-         std::string pathToLoad = i->second;
-         if (pathToLoad.find(dtCore::ResourceDescriptor::DESCRIPTOR_SEPARATOR) != std::string::npos)
-         {
-            try
-            {
-               pathToLoad = dtCore::Project::GetInstance().GetResourcePath(dtCore::ResourceDescriptor(pathToLoad));
-            }
-            catch (const dtCore::ProjectFileNotFoundException& pfe)
-            {
-               LOG_ERROR(std::string("Error loading attached resource for \"") + modelData.GetFilename() + "\" character file: " + i->second  + " : " + pfe.ToString());
-            }
-         }
-         dtCore::RefPtr<dtCore::Object> obj = new dtCore::Object(hsd.mName);
-         obj->LoadFile(pathToLoad, true);
-         newAttachment->AddChild(obj);
-      }
-      mAttachmentController->AddAttachment(*newAttachment, i->first);
-   }
 }
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -256,9 +223,11 @@ void AnimationHelper::LoadSkeletalMesh()
 /////////////////////////////////////////////////////////////////////////////////
 void AnimationHelper::UnloadModel()
 {
-   mAnimator = NULL;
    mSequenceMixer->ClearRegisteredAnimations();
-   mAttachmentController->Clear();
+   if (mAttachmentController.valid())
+   {
+      mAttachmentController->Clear();
+   }
    ModelUnloadedSignal(this);
    // Set node to null after so that it can be accessed in the callback.
    mNode = NULL;
@@ -273,23 +242,26 @@ bool AnimationHelper::LoadModel(const std::string& pFilename, bool immediate)
       {
          UnloadModel();
       }
-      Cal3DDatabase& database = Cal3DDatabase::GetInstance();
-      dtCore::RefPtr<Cal3DModelWrapper> newModel = database.Load(pFilename);
+
+      mModelLoader = new dtAnim::ModelLoader;
+      dtCore::RefPtr<dtAnim::BaseModelWrapper> newModel = mModelLoader->LoadModel(pFilename);
 
       if (newModel.valid())
       {
-         mAnimator = new Cal3DAnimator(newModel.get());
-         mNode = database.GetNodeBuilder().CreateNode(newModel.get(), immediate);
-
-         const Cal3DModelData*  modelData = database.GetModelData(*newModel);
-         if (modelData == NULL)
+         mModelWrapper = newModel;
+         mNode = mModelWrapper->CreateDrawableNode(immediate);
+         
+         // Acquire a new attachment controller if one exists.
+         if (mAttachmentController.valid())
          {
-            LOG_ERROR("ModelData not found for Character XML '" + pFilename + "'");
-            return false;
+            mAttachmentController->Clear();
          }
+         mAttachmentController = mModelLoader->GetAttachmentController();
+
+         dtAnim::BaseModelData* modelData = mModelWrapper->GetModelData();
 
          RegisterAnimations(*modelData);
-         CreateAttachments(*modelData);
+
          // Notify observers that the model has been loaded
          ModelLoadedSignal(this);
       }
@@ -317,9 +289,7 @@ bool AnimationHelper::LoadModelAsynchronously(const std::string& pFilename)
          UnloadModel();
       }
 
-      Cal3DDatabase& database = Cal3DDatabase::GetInstance();
-
-      database.LoadAsynchronously(pFilename);
+      mModelLoader->LoadModelAsynchronously(pFilename);
 
       // Store the filename so that we can poll for load completion
       mAsyncFile = pFilename;
@@ -424,35 +394,27 @@ const osg::Node* AnimationHelper::GetNode() const
 }
 
 /////////////////////////////////////////////////////////////////////////////////
-Cal3DAnimator* AnimationHelper::GetAnimator()
+dtAnim::AnimationUpdaterInterface* AnimationHelper::GetAnimator()
 {
-   return mAnimator.get();
+   return mModelWrapper->GetAnimator();
 }
 
 /////////////////////////////////////////////////////////////////////////////////
-const Cal3DModelWrapper* AnimationHelper::GetModelWrapper() const
+const dtAnim::AnimationUpdaterInterface* AnimationHelper::GetAnimator() const
 {
-   if (!mAnimator.valid())
-   {
-      return NULL;
-   }
-   return mAnimator->GetWrapper();
+   return mModelWrapper->GetAnimator();
 }
 
 /////////////////////////////////////////////////////////////////////////////////
-Cal3DModelWrapper* AnimationHelper::GetModelWrapper()
+const dtAnim::BaseModelWrapper* AnimationHelper::GetModelWrapper() const
 {
-   if (!mAnimator.valid())
-   {
-      return NULL;
-   }
-   return mAnimator->GetWrapper();
+   return mModelWrapper;
 }
 
 /////////////////////////////////////////////////////////////////////////////////
-const Cal3DAnimator* AnimationHelper::GetAnimator() const
+dtAnim::BaseModelWrapper* AnimationHelper::GetModelWrapper()
 {
-   return mAnimator.get();
+   return mModelWrapper;
 }
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -480,24 +442,24 @@ void AnimationHelper::SetGroundClamp(bool b)
 }
 
 /////////////////////////////////////////////////////////////////////////////////
-AttachmentController& AnimationHelper::GetAttachmentController()
+AttachmentController* AnimationHelper::GetAttachmentController()
 {
-   return *mAttachmentController;
+   return mAttachmentController.get();
 }
 
 /////////////////////////////////////////////////////////////////////////////////
-void AnimationHelper::SetAttachmentController(AttachmentController& newController)
+void AnimationHelper::SetAttachmentController(AttachmentController* newController)
 {
-   mAttachmentController = &newController;
+   mAttachmentController = newController;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void AnimationHelper::RegisterAnimations(const Cal3DModelData& sourceData)
+void AnimationHelper::RegisterAnimations(const dtAnim::BaseModelData& sourceData)
 {
-   const Cal3DModelData::AnimatableArray& animatables = sourceData.GetAnimatables();
+   const dtAnim::AnimatableArray& animatables = sourceData.GetAnimatables();
 
-   Cal3DModelData::AnimatableArray::const_iterator iter = animatables.begin();
-   Cal3DModelData::AnimatableArray::const_iterator end = animatables.end();
+   dtAnim::AnimatableArray::const_iterator iter = animatables.begin();
+   dtAnim::AnimatableArray::const_iterator end = animatables.end();
 
    for (;iter != end; ++iter)
    {

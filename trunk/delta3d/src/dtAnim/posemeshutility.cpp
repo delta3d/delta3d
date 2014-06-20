@@ -20,12 +20,13 @@
 #include <dtAnim/posemeshutility.h>
 #include <dtAnim/posemesh.h>
 #include <dtAnim/posemath.h>
-#include <dtAnim/cal3dmodelwrapper.h>
+#include <dtAnim/basemodelwrapper.h>
 
 #include <dtUtil/mathdefines.h>
 #include <dtUtil/log.h>
 
 #include <algorithm>
+#include <cassert>
 
 using namespace dtAnim;
 
@@ -47,24 +48,26 @@ PoseMeshUtility::~PoseMeshUtility()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void PoseMeshUtility::ClearPoses(const PoseMesh* poseMesh, dtAnim::Cal3DModelWrapper* model, float delay)
+void PoseMeshUtility::ClearPoses(const PoseMesh* poseMesh, dtAnim::BaseModelWrapper* model, float delay)
 {
    const PoseMesh::VertexVector& verts = poseMesh->GetVertices();
 
    for (size_t vertIndex = 0; vertIndex < verts.size(); ++vertIndex)
    {
-      model->BlendCycle(verts[vertIndex]->mAnimID, 0.0f, delay);
+      dtAnim::AnimationInterface* anim = model->GetAnimationByIndex(verts[vertIndex]->mAnimID);
+      anim->PlayCycle(0.0f, delay);
    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 void PoseMeshUtility::BlendPoses(const PoseMesh* poseMesh,
-                                 dtAnim::Cal3DModelWrapper* model,
+                                 dtAnim::BaseModelWrapper* model,
                                  const PoseMesh::TargetTriangle& targetTriangle,
                                  float blendDelay)
 {
    osg::Vec3 weights;
    unsigned int animIDs[3];
+   dtAnim::AnimationInterface* anims[3];
 
    // grab the animation ids now that we know which polygon we are using
    const PoseMesh::TriangleVector& triangles = poseMesh->GetTriangles();
@@ -72,6 +75,9 @@ void PoseMeshUtility::BlendPoses(const PoseMesh* poseMesh,
    animIDs[0] = poly.mVertices[0]->mAnimID;
    animIDs[1] = poly.mVertices[1]->mAnimID;
    animIDs[2] = poly.mVertices[2]->mAnimID;
+   anims[0] = model->GetAnimationByIndex(animIDs[0]);
+   anims[1] = model->GetAnimationByIndex(animIDs[1]);
+   anims[2] = model->GetAnimationByIndex(animIDs[2]);
 
    const PoseMesh::Barycentric2DVector& barySpaceVector = poseMesh->GetBarySpaces();
    dtUtil::BarycentricSpace<osg::Vec3>* barySpace = barySpaceVector[targetTriangle.mTriangleID];
@@ -80,9 +86,9 @@ void PoseMeshUtility::BlendPoses(const PoseMesh* poseMesh,
    weights = barySpace->Transform(osg::Vec3(targetTriangle.mAzimuth, targetTriangle.mElevation, 0.0f));
 
    //now play the 3 animationIDs with the associated weights
-   model->BlendCycle(animIDs[0], weights[0], blendDelay);
-   model->BlendCycle(animIDs[1], weights[1], blendDelay);
-   model->BlendCycle(animIDs[2], weights[2], blendDelay);
+   anims[0]->PlayCycle(weights[0], blendDelay);
+   anims[1]->PlayCycle(weights[1], blendDelay);
+   anims[2]->PlayCycle(weights[2], blendDelay);
 
    // turn off the animations for the rest of the celestial points
    const PoseMesh::VertexVector& vertices = poseMesh->GetVertices();
@@ -97,14 +103,19 @@ void PoseMeshUtility::BlendPoses(const PoseMesh* poseMesh,
           anim_id != animIDs[2])
       {
          float weight= 0.f;  // only want to turn off these animations.
-         model->BlendCycle(anim_id, weight, blendDelay);
+         dtAnim::AnimationInterface* anim = model->GetAnimationByIndex(anim_id);
+
+         if (anim != NULL)
+         {
+            anim->PlayCycle(weight, blendDelay);
+         }
       }
    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 void PoseMeshUtility::SetBaseReferencePoses(std::vector<BaseReferencePose>* poseList,
-                                            const dtAnim::Cal3DModelWrapper* model)
+                                            const dtAnim::BaseModelWrapper* model)
 {
    assert(AreBaseReferencePosesValid(poseList));
    assert(model);
@@ -114,16 +125,20 @@ void PoseMeshUtility::SetBaseReferencePoses(std::vector<BaseReferencePose>* pose
    std::sort(mPoseList->begin(), mPoseList->end(), BaseReferencePredicate);
 
    // TODO - don't make assumptions about this bone facing forward
-   int headID = model->GetCoreBoneID("Bip01 Head");
+   dtAnim::BoneInterface* headBone = model->GetBone("Bip01 Head");
 
    // Calculate the forward direction for each pose
+   int curAnimID = 0;
+   dtAnim::AnimationInterface* curAnim = NULL;
    for (size_t poseIndex = 0; poseIndex < mPoseList->size(); ++poseIndex)
    {
-      int currentAnimID = (*mPoseList)[poseIndex].first;
-      assert(currentAnimID != -1);
+      curAnimID = (*mPoseList)[poseIndex].first;
+      curAnim = model->GetAnimationByIndex(curAnimID);
+
+      assert(curAnim != NULL);
 
       // TODO - Don't assume 30 frames!
-      osg::Quat boneRotation  = model->GetBoneAbsoluteRotationForKeyFrame(currentAnimID, headID, 30);
+      osg::Quat boneRotation  = headBone->GetAbsoluteRotationForKeyframe(*curAnim, 30);
       osg::Vec3 poseDirection = boneRotation * osg::Y_AXIS;
 
       poseDirection.normalize();

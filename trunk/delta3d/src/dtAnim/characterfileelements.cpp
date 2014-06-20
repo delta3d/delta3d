@@ -31,6 +31,7 @@ namespace dtAnim
    const dtUtil::RefString CharacterFileElements::CHARACTER_ELEMENT("character");
 
    // File Reference Tags
+   const dtUtil::RefString CharacterFileElements::MIXED_RESOURCE_ELEMENT("mixedResource");
    const dtUtil::RefString CharacterFileElements::SKELETON_ELEMENT("skeleton");
    const dtUtil::RefString CharacterFileElements::MESH_ELEMENT("mesh");
    const dtUtil::RefString CharacterFileElements::MATERIAL_ELEMENT("material");

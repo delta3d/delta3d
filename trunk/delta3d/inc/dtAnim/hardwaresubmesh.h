@@ -22,9 +22,9 @@
 #ifndef DELTA_HARDWARE_SUBMESH
 #define DELTA_HARDWARE_SUBMESH
 
-#include <osg/Drawable>
 #include <dtAnim/export.h>
 #include <dtCore/refptr.h>
+#include <osg/Drawable>
 
 
 class CalHardwareModel;
@@ -69,6 +69,7 @@ namespace dtAnim
 
       dtCore::RefPtr<Cal3DModelWrapper> mWrapper;
       CalHardwareModel* mHardwareModel;
+      dtCore::RefPtr<osg::Uniform> mScale;
       dtCore::RefPtr<osg::Uniform> mBoneTransforms;
       std::string mBoneUniformName;
       osg::BoundingBox mBoundingBox;

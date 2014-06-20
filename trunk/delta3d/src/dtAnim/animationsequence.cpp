@@ -21,7 +21,7 @@
 
 #include <dtAnim/animationsequence.h>
 #include <dtAnim/animatable.h>
-#include <dtAnim/cal3dmodelwrapper.h>
+#include <dtAnim/basemodelwrapper.h>
 #include <dtCore/refptr.h>
 #include <dtUtil/log.h>
 #include <dtUtil/mathdefines.h>
@@ -64,7 +64,7 @@ private:
 class CloneFunctor
 {
 public:
-   CloneFunctor(AnimationSequence* pSeq, Cal3DModelWrapper* pWrapper) : mSequence(pSeq), mWrapper(pWrapper) {}
+   CloneFunctor(AnimationSequence* pSeq, BaseModelWrapper* pWrapper) : mSequence(pSeq), mWrapper(pWrapper) {}
    template<typename T>
    void operator()(T& pChild)
    {
@@ -74,7 +74,7 @@ public:
 
 private:
    AnimationSequence* mSequence;
-   Cal3DModelWrapper* mWrapper;
+   BaseModelWrapper* mWrapper;
 };
 
 
@@ -264,7 +264,7 @@ AnimationSequence::~AnimationSequence()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-AnimationSequence::AnimationSequence(const AnimationSequence& pSeq, Cal3DModelWrapper* wrapper)
+AnimationSequence::AnimationSequence(const AnimationSequence& pSeq, BaseModelWrapper* wrapper)
    : Animatable(pSeq)
    , mChildAnimations()
 {
@@ -277,7 +277,7 @@ AnimationSequence::AnimationSequence(const AnimationSequence& pSeq, Cal3DModelWr
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-dtCore::RefPtr<Animatable> AnimationSequence::Clone(Cal3DModelWrapper* wrapper) const
+dtCore::RefPtr<Animatable> AnimationSequence::Clone(BaseModelWrapper* wrapper) const
 {
    return new AnimationSequence(*this, wrapper);
 }

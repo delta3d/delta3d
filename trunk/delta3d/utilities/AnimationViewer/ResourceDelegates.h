@@ -1,6 +1,6 @@
 
-#ifndef DELTA_CHARACTER_RESOURCE_MODEL
-#define DELTA_CHARACTER_RESOURCE_MODEL
+#ifndef __RESOURCE_DELEGATES_H__
+#define __RESOURCE_DELEGATES_H__
 
 ////////////////////////////////////////////////////////////////////////////////
 // INCLUDE DIRECTIVES
@@ -8,8 +8,8 @@
 #include <QtGui/QItemDelegate>
 #include <QtGui/QWidget>
 #include <dtCore/observerptr.h>
-#include <dtAnim/cal3dmodeldata.h>
-#include <dtAnim/cal3dmodelwrapper.h>
+#include <dtAnim/basemodeldata.h>
+#include <dtAnim/basemodelwrapper.h>
 #include <osg/Texture2D>
 
 
@@ -65,13 +65,13 @@ public:
 
    void Reset();
 
-   void SetCharModelData(dtAnim::Cal3DModelData* data);
-   dtAnim::Cal3DModelData* GetCharModelData();
-   const dtAnim::Cal3DModelData* GetCharModelData() const;
+   void SetCharModelData(dtAnim::BaseModelData* data);
+   dtAnim::BaseModelData* GetCharModelData();
+   const dtAnim::BaseModelData* GetCharModelData() const;
 
-   void SetCharModelWrapper(dtAnim::Cal3DModelWrapper* wrapper);
-   dtAnim::Cal3DModelWrapper* GetCharModelWrapper();
-   const dtAnim::Cal3DModelWrapper* GetCharModelWrapper() const;
+   void SetCharModelWrapper(dtAnim::BaseModelWrapper* wrapper);
+   dtAnim::BaseModelWrapper* GetCharModelWrapper();
+   const dtAnim::BaseModelWrapper* GetCharModelWrapper() const;
 
    bool IsDataValid(const QString& data) const;
 
@@ -102,18 +102,18 @@ public slots:
    void OnRemoveFile() const;
 
 private:
-   bool ReplaceFile(dtAnim::Cal3DModelData& modelData, dtAnim::Cal3DModelWrapper& modelWrapper,
+   bool ReplaceFile(dtAnim::BaseModelData& modelData, dtAnim::BaseModelWrapper& modelWrapper,
       const std::string& objectName, const std::string& oldFile, const std::string& newFile) const;
 
-   void LoadMaterial(dtAnim::Cal3DModelData& modelData, int materialId) const;
+   void LoadMaterial(dtAnim::BaseModelWrapper& model, const std::string& materialName) const;
 
    mutable int mFileType;
    mutable QPushButton* mButton;
    mutable std::string mObjectName;
    mutable QString mNewValue;
    mutable QString mPrevValue;
-   mutable dtCore::ObserverPtr<dtAnim::Cal3DModelData> mCharData;
-   mutable dtCore::ObserverPtr<dtAnim::Cal3DModelWrapper> mCharWrapper;
+   mutable dtCore::ObserverPtr<dtAnim::BaseModelData> mCharData;
+   mutable dtCore::ObserverPtr<dtAnim::BaseModelWrapper> mCharWrapper;
 
    typedef std::map<std::string, dtCore::RefPtr<osg::Texture2D> > TextureMap;
    mutable TextureMap mTextures;
@@ -134,13 +134,13 @@ public:
 
    void Reset();
 
-   void SetCharModelData(dtAnim::Cal3DModelData* data);
-   dtAnim::Cal3DModelData* GetCharModelData();
-   const dtAnim::Cal3DModelData* GetCharModelData() const;
+   void SetCharModelData(dtAnim::BaseModelData* data);
+   dtAnim::BaseModelData* GetCharModelData();
+   const dtAnim::BaseModelData* GetCharModelData() const;
 
-   void SetCharModelWrapper(dtAnim::Cal3DModelWrapper* wrapper);
-   dtAnim::Cal3DModelWrapper* GetCharModelWrapper();
-   const dtAnim::Cal3DModelWrapper* GetCharModelWrapper() const;
+   void SetCharModelWrapper(dtAnim::BaseModelWrapper* wrapper);
+   dtAnim::BaseModelWrapper* GetCharModelWrapper();
+   const dtAnim::BaseModelWrapper* GetCharModelWrapper() const;
 
    bool IsDataValid(const QString& data) const;
 
@@ -169,8 +169,8 @@ private:
 
    mutable int mFileType;
    mutable QString mPrevValue;
-   mutable dtCore::ObserverPtr<dtAnim::Cal3DModelData> mCharData;
-   mutable dtCore::ObserverPtr<dtAnim::Cal3DModelWrapper> mCharWrapper;
+   mutable dtCore::ObserverPtr<dtAnim::BaseModelData> mCharData;
+   mutable dtCore::ObserverPtr<dtAnim::BaseModelWrapper> mCharWrapper;
 };
 
 #endif

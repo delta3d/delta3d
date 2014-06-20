@@ -25,8 +25,10 @@
 #include <osg/Referenced>
 
 #include <dtCore/refptr.h>
+#include <dtCore/observerptr.h>
 
 #include <dtAnim/export.h>
+#include <dtAnim/basemodelwrapper.h>
 #include <dtUtil/hotspotdefinition.h>
 #include <vector>
 
@@ -39,8 +41,6 @@ namespace dtCore
 
 namespace dtAnim
 {
-   class Cal3DModelWrapper;
-
    typedef std::pair<dtCore::RefPtr<dtCore::Transformable>, dtUtil::HotSpotDefinition >
       AttachmentPair;
 
@@ -87,7 +87,7 @@ namespace dtAnim
        *
        * This may be overridden in a subclass to modify or update the behavior.
        */
-      virtual void Update(Cal3DModelWrapper& model);
+      virtual void Update(dtAnim::BaseModelWrapper& model);
 
    protected:
       virtual ~AttachmentController();
@@ -103,7 +103,7 @@ namespace dtAnim
    class AttachmentMover
    {
    public:
-      AttachmentMover(const dtAnim::Cal3DModelWrapper& model);
+      AttachmentMover(const dtAnim::BaseModelWrapper& model);
 
       AttachmentMover(const AttachmentMover& same);
 
@@ -124,8 +124,11 @@ namespace dtAnim
        */
       void operator()(AttachmentPair& attachment);
 
+      // HACK:
+      //dtCore::ObserverPtr<osg::Node> mOsgNode;
+
    private:
-      const dtAnim::Cal3DModelWrapper* mModel;
+      dtCore::ObserverPtr<dtAnim::BaseModelWrapper> mModel;
    };
 } // namespace dtAnim
 

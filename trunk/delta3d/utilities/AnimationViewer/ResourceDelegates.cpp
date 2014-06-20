@@ -21,9 +21,10 @@
 #include <cal3d/coreskeleton.h>
 #if defined(CAL3D_VERSION) && CAL3D_VERSION >= 1300
 #include <cal3d/coreanimatedmorph.h>
+#include <dtAnim/cal3dmodeldata.h>
 #endif
 // Delta3D
-#include <dtAnim/animationwrapper.h>
+#include <dtAnim/animatable.h>
 #include <dtUtil/log.h>
 
 
@@ -33,6 +34,26 @@
 /////////////////////////////////////////////////////////////////////////////////
 static const int COLUMN_NAME = 0;
 static const int COLUMN_FILE = 1;
+
+
+
+/////////////////////////////////////////////////////////////////////////////////
+// HELPER FUNCTIONS
+/////////////////////////////////////////////////////////////////////////////////
+#if defined(CAL3D_VERSION) && CAL3D_VERSION >= 1300
+CalCoreModel* GetCoreModel(dtAnim::BaseModelData& modelData)
+{
+   CalCoreModel* coreModel = NULL;
+
+   dtAnim::Cal3DModelData* calData = dynamic_cast<dtAnim::Cal3DModelData*>(&modelData);
+   if (calData != NULL)
+   {
+      coreModel = calData->GetCoreModel();
+   }
+
+   return coreModel;
+}
+#endif
 
 
 
@@ -88,7 +109,7 @@ void FileButtonsEditor::OnClickedRemove()
 ////////////////////////////////////////////////////////////////////////////////
 FileItemDelegate::FileItemDelegate(QObject* parent)
    : BaseClass(parent)
-   , mFileType(dtAnim::Cal3DModelData::NO_FILE)
+   , mFileType(dtAnim::NO_FILE)
    , mButton(NULL)
 {
 }
@@ -101,13 +122,13 @@ void FileItemDelegate::Reset()
    mPrevValue = tr("");
    mNewValue = tr("");
    mObjectName = "";
-   mFileType = dtAnim::Cal3DModelData::NO_FILE;
+   mFileType = dtAnim::NO_FILE;
 
    mTextures.clear();
 }
 
 /////////////////////////////////////////////////////////////////////////////////
-void FileItemDelegate::SetCharModelData(dtAnim::Cal3DModelData* data)
+void FileItemDelegate::SetCharModelData(dtAnim::BaseModelData* data)
 {
    if(mCharData != data)
    {
@@ -117,13 +138,13 @@ void FileItemDelegate::SetCharModelData(dtAnim::Cal3DModelData* data)
 }
 
 /////////////////////////////////////////////////////////////////////////////////
-dtAnim::Cal3DModelData* FileItemDelegate::GetCharModelData()
+dtAnim::BaseModelData* FileItemDelegate::GetCharModelData()
 {
    return mCharData.get();
 }
 
 /////////////////////////////////////////////////////////////////////////////////
-const dtAnim::Cal3DModelData* FileItemDelegate::GetCharModelData() const
+const dtAnim::BaseModelData* FileItemDelegate::GetCharModelData() const
 {
    return mCharData.get();
 }
@@ -135,19 +156,19 @@ bool FileItemDelegate::IsDataValid(const QString& data) const
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void FileItemDelegate::SetCharModelWrapper(dtAnim::Cal3DModelWrapper* wrapper)
+void FileItemDelegate::SetCharModelWrapper(dtAnim::BaseModelWrapper* wrapper)
 {
    mCharWrapper = wrapper;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-dtAnim::Cal3DModelWrapper* FileItemDelegate::GetCharModelWrapper()
+dtAnim::BaseModelWrapper* FileItemDelegate::GetCharModelWrapper()
 {
    return mCharWrapper.get();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-const dtAnim::Cal3DModelWrapper* FileItemDelegate::GetCharModelWrapper() const
+const dtAnim::BaseModelWrapper* FileItemDelegate::GetCharModelWrapper() const
 {
    return mCharWrapper.get();
 }
@@ -161,9 +182,9 @@ void FileItemDelegate::OnOpenFile() const
    mFileType = mCharData->GetFileType(file);
 
    // Determine the filter by file type.
-   QString filter = Cal3DResourceFilters::GetFilterForFileType(mFileType);
+   QString filter = ModelResourceFilters::GetFilterForFileType(mFileType);
 
-   if (mFileType != Cal3DModelData::NO_FILE) // This case should not be possible.
+   if (mFileType != dtAnim::NO_FILE) // This case should not be possible.
    {
       // Notify the application that a resource is about to change.
       emit SignalResourceEditStart(mFileType, mObjectName);
@@ -179,7 +200,7 @@ void FileItemDelegate::OnOpenFile() const
       {
          // Update the button text with the file name registered on the model data.
          QString newText(mCharData->GetFileForObjectName(
-            dtAnim::Cal3DModelData::CalFileType(mFileType), mObjectName).c_str());
+            dtAnim::ModelResourceType(mFileType), mObjectName).c_str());
          mButton->setText(newText);
       }
 
@@ -218,21 +239,21 @@ bool FileItemDelegate::IsFileRemovalAllowed(const std::string& file) const
    using namespace dtAnim;
    bool allowed = true;
 
-   Cal3DModelData::CalFileType fileType = mCharData->GetFileType(file);
+   dtAnim::ModelResourceType fileType = mCharData->GetFileType(file);
    switch (fileType)
    {
-   case Cal3DModelData::SKEL_FILE:
+   case dtAnim::SKEL_FILE:
       allowed = AskUser("Remove Skeleton?", "The character will not be visible without a skeleton. Are you sure you want to remove it?");
       break;
 
-   case Cal3DModelData::MESH_FILE:
+   case dtAnim::MESH_FILE:
       if (mCharData->GetFileCount(fileType) == 1)
       {
          allowed = AskUser("Remove Mesh?", "The character needs at least one mesh to render. Are you sure you want to remove it?");
       }
       break;
 
-   case Cal3DModelData::MAT_FILE:
+   case dtAnim::MAT_FILE:
       if (mCharData->GetFileCount(fileType) == 1)
       {
          allowed = AskUser("Remove Material?", "The character needs at least one material to render. Are you sure you want to remove it?");
@@ -319,7 +340,7 @@ bool FileItemDelegate::ApplyData(const QString& data) const
 /////////////////////////////////////////////////////////////////////////////////
 bool FileItemDelegate::AskUser(const std::string& promptTitle, const std::string& question) const
 {
-   bool ansewer = false;
+   bool answer = false;
 
    QString qTitle(promptTitle.c_str());
    QString qMessage(question.c_str());
@@ -333,113 +354,64 @@ bool FileItemDelegate::AskUser(const std::string& promptTitle, const std::string
    // If OK...
    if (retCode == QMessageBox::Ok)
    {
-      ansewer = true;
+      answer = true;
    }
 
-   return ansewer;
+   return answer;
 }
 
 /////////////////////////////////////////////////////////////////////////////////
-bool FileItemDelegate::ReplaceFile(dtAnim::Cal3DModelData& modelData, dtAnim::Cal3DModelWrapper& modelWrapper,
+bool FileItemDelegate::ReplaceFile(dtAnim::BaseModelData& modelData, dtAnim::BaseModelWrapper& modelWrapper,
                  const std::string& objectName, const std::string& oldFile, const std::string& newFile) const
 {
    using namespace dtAnim;
 
    bool success = false;
 
-   CalCoreModel* model = modelData.GetCoreModel();
-   Cal3DModelData::CalFileType calFileType = modelData.GetFileType(oldFile);
-
-   modelData.UnregisterObjectName(objectName, oldFile);
-
-   switch(calFileType)
+   dtAnim::ModelResourceType fileType = modelData.GetFileType(oldFile);
+   
+   bool wasCycle = false;
+   bool wasAction = false;
+   if (fileType == dtAnim::ANIM_FILE)
    {
-   case Cal3DModelData::SKEL_FILE:
-#if defined(CAL3D_VERSION) && CAL3D_VERSION >= 1300
-      success = !newFile.empty() && modelData.LoadCoreSkeleton(newFile, objectName);
-#else
-      success = !newFile.empty() && modelData.LoadCoreSkeleton(newFile);
-#endif
-      break;
-
-   case Cal3DModelData::ANIM_FILE:
+      // Stop any instance of the animation on the model instance (wrapper).
+      dtAnim::AnimationInterface* anim = modelWrapper.GetAnimation(objectName);
+      if (anim != NULL)
       {
-         // Stop any instance of the animation on the model instance (wrapper).
-         bool wasCycle = false;
-         bool wasAction = false;
-         int animId = model->getCoreAnimationId(objectName);
-         if (modelWrapper.HasAnimation(animId))
+         wasCycle = anim->ClearCycle(0.0f);
+         if (!wasCycle)
          {
-            wasCycle = modelWrapper.ClearCycle(animId, 0.0f);
-            if (!wasCycle)
-            {
-               wasAction = modelWrapper.RemoveAction(animId);
-            }
-
-            // Force any internal callbacks to complete.
-            modelWrapper.UpdateAnimation(0.001f);
+            wasAction = anim->ClearAction();
          }
 
-         // Remove the animation resource from the central model data.
-         if (-1 < model->unloadCoreAnimation(animId))
-         {
-            if (!newFile.empty())
-            {
-               animId = modelData.LoadCoreAnimation(newFile, objectName);
-               success = -1 < animId;
-            }
-         }
+         // Force any internal callbacks to complete.
+         modelWrapper.GetAnimator()->Update(0.001f);
+      }
+   }
 
-         if (success)
-         {
-            AnimationWrapper* wrapper = modelData.GetAnimationWrapperByName(objectName);
-            if (wrapper != NULL)
-            {
-               wrapper->SetID(animId);
-            }
+   int result = modelData.UnloadResource(fileType, objectName);
 
+   if (!newFile.empty())
+   {
+      success = 0 <= modelData.LoadResource(fileType, newFile, objectName);
+      modelWrapper.HandleModelResourceUpdate(fileType);
+
+      if (success && fileType == dtAnim::ANIM_FILE)
+      {
+         dtAnim::AnimationInterface* anim = modelWrapper.GetAnimation(objectName);
+         if (anim != NULL)
+         {
             if (wasCycle)
             {
-               modelWrapper.BlendCycle(animId, 1.0f, 0.0f);
+               anim->PlayCycle(1.0f, 0.0f);
             }
             else if (wasAction)
             {
-               modelWrapper.ExecuteAction(animId, 0.0f, 0.0f);
+               anim->PlayAction(0.0f, 0.0f);
             }
          }
       }
-      break;
 
-   case Cal3DModelData::MESH_FILE:
-      if (-1 < model->unloadCoreMesh(model->getCoreMeshId(objectName)))
-      {
-         success = !newFile.empty() && -1 < modelData.LoadCoreMesh(newFile, objectName);
-      }
-      break;
-
-   case Cal3DModelData::MAT_FILE:
-      if (-1 < model->unloadCoreMaterial(model->getCoreMaterialId(objectName)))
-      {
-         int id = newFile.empty() ? -1 : modelData.LoadCoreMaterial(newFile, objectName);
-         success = -1 < id;
-         if (success)
-         {
-            //LoadMaterial(modelData, id);
-         }
-      }
-      break;
-
-   case Cal3DModelData::MORPH_FILE:
-#if defined(CAL3D_VERSION) && CAL3D_VERSION >= 1300
-      /*if (-1 < model->unloadCoreAnimatedMorph(model->getCoreAnimatedMorphId(objectName)))
-      {
-         success = !newFile.empty() && -1 < modelData.LoadCoreMorph(newFile, objectName);
-      }*/
-#endif
-      break;
-
-   default:
-      break;
    }
 
    return success;
@@ -447,25 +419,26 @@ bool FileItemDelegate::ReplaceFile(dtAnim::Cal3DModelData& modelData, dtAnim::Ca
 
 /////////////////////////////////////////////////////////////////////////////////
 // Implementation borrowed from dtAnim::Cal3DLoader::LoadAllTextures
-void FileItemDelegate::LoadMaterial(dtAnim::Cal3DModelData& modelData, int materialId) const
+void FileItemDelegate::LoadMaterial(dtAnim::BaseModelWrapper& model, const std::string& materialName) const
 {
-   CalCoreModel& coreModel = *modelData.GetCoreModel();
+   dtAnim::BaseModelData* modelData = model.GetModelData();
 
    // get the core material
-   CalCoreMaterial* pCoreMaterial = coreModel.getCoreMaterial(materialId);
+   dtAnim::MaterialInterface* material = model.GetMaterial(materialName);
 
    // loop through all maps of the core material
-   for (int mapId = 0; mapId < pCoreMaterial->getMapCount(); ++mapId)
+   int numMaps = material->GetTextureCount();
+   for (int mapId = 0; mapId < numMaps; ++mapId)
    {
       // get the filename of the texture
-      std::string strFilename(pCoreMaterial->getMapFilename(mapId));
+      std::string strFilename(material->GetTextureFile(mapId));
 
       TextureMap::iterator textureIterator = mTextures.find(strFilename);
 
       if (textureIterator == mTextures.end())
       {
          // load the texture from the file
-         std::string path(osgDB::getFilePath(modelData.GetFilename()));
+         std::string path(osgDB::getFilePath(modelData->GetFilename()));
          dtCore::RefPtr<osg::Image> img = osgDB::readImageFile(path + "/" + strFilename);
 
          if (!img.valid())
@@ -481,11 +454,11 @@ void FileItemDelegate::LoadMaterial(dtAnim::Cal3DModelData& modelData, int mater
          mTextures[strFilename] = texture.get();
 
          // store the opengl texture id in the user data of the map
-         pCoreMaterial->setMapUserData(mapId, (Cal::UserData)texture);
+         material->SetTexture(mapId, texture);
       }
       else
       {
-         pCoreMaterial->setMapUserData(mapId, (Cal::UserData)((*textureIterator).second.get()));
+         material->SetTexture(mapId, (*textureIterator).second.get());
       }
    }
 
@@ -501,10 +474,10 @@ void FileItemDelegate::LoadMaterial(dtAnim::Cal3DModelData& modelData, int mater
    // material set and the material thread stored in the core model parts.
 
    // create the a material thread
-   coreModel.createCoreMaterialThread(materialId);
+//   coreModel.createCoreMaterialThread(materialId);
 
    // initialize the material thread
-   coreModel.setCoreMaterialId(materialId, 0, materialId);
+//   coreModel.setCoreMaterialId(materialId, 0, materialId);
 }
 
 
@@ -514,7 +487,7 @@ void FileItemDelegate::LoadMaterial(dtAnim::Cal3DModelData& modelData, int mater
 ////////////////////////////////////////////////////////////////////////////////
 ObjectNameItemDelegate::ObjectNameItemDelegate(QObject* parent)
    : BaseClass(parent)
-   , mFileType(dtAnim::Cal3DModelData::NO_FILE)
+   , mFileType(dtAnim::NO_FILE)
 {
 }
 
@@ -523,11 +496,11 @@ void ObjectNameItemDelegate::Reset()
 {
    mCharWrapper = NULL;
    mPrevValue = tr("");
-   mFileType = dtAnim::Cal3DModelData::NO_FILE;
+   mFileType = dtAnim::NO_FILE;
 }
 
 /////////////////////////////////////////////////////////////////////////////////
-void ObjectNameItemDelegate::SetCharModelData(dtAnim::Cal3DModelData* data)
+void ObjectNameItemDelegate::SetCharModelData(dtAnim::BaseModelData* data)
 {
    if(mCharData != data)
    {
@@ -537,31 +510,31 @@ void ObjectNameItemDelegate::SetCharModelData(dtAnim::Cal3DModelData* data)
 }
 
 /////////////////////////////////////////////////////////////////////////////////
-dtAnim::Cal3DModelData* ObjectNameItemDelegate::GetCharModelData()
+dtAnim::BaseModelData* ObjectNameItemDelegate::GetCharModelData()
 {
    return mCharData.get();
 }
 
 /////////////////////////////////////////////////////////////////////////////////
-const dtAnim::Cal3DModelData* ObjectNameItemDelegate::GetCharModelData() const
+const dtAnim::BaseModelData* ObjectNameItemDelegate::GetCharModelData() const
 {
    return mCharData.get();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ObjectNameItemDelegate::SetCharModelWrapper(dtAnim::Cal3DModelWrapper* wrapper)
+void ObjectNameItemDelegate::SetCharModelWrapper(dtAnim::BaseModelWrapper* wrapper)
 {
    mCharWrapper = wrapper;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-dtAnim::Cal3DModelWrapper* ObjectNameItemDelegate::GetCharModelWrapper()
+dtAnim::BaseModelWrapper* ObjectNameItemDelegate::GetCharModelWrapper()
 {
    return mCharWrapper.get();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-const dtAnim::Cal3DModelWrapper* ObjectNameItemDelegate::GetCharModelWrapper() const
+const dtAnim::BaseModelWrapper* ObjectNameItemDelegate::GetCharModelWrapper() const
 {
    return mCharWrapper.get();
 }
@@ -633,30 +606,30 @@ bool ObjectNameItemDelegate::ApplyData(const QString& data) const
       std::string newName(data.trimmed().toStdString());
 
       // Update the object name.
-      Cal3DModelData::CalFileType calFileType = Cal3DModelData::CalFileType(mFileType);
-      if (mCharData->ReplaceObjectName(calFileType, oldName, newName))
+      dtAnim::ModelResourceType fileType = dtAnim::ModelResourceType(mFileType);
+      if (mCharData->ReplaceObjectName(fileType, oldName, newName))
       {
-         switch(calFileType)
+         switch(fileType)
          {
-         case Cal3DModelData::SKEL_FILE:
+         case dtAnim::SKEL_FILE:
             RenameSkeleton(oldName, newName);
             break;
-         case Cal3DModelData::ANIM_FILE:
+         case dtAnim::ANIM_FILE:
             RenameAnimations(oldName, newName);
             break;
-         case Cal3DModelData::MESH_FILE:
+         case dtAnim::MESH_FILE:
             RenameMeshes(oldName, newName);
             break;
-         case Cal3DModelData::MAT_FILE:
+         case dtAnim::MAT_FILE:
             RenameMaterials(oldName, newName);
             break;
-         case Cal3DModelData::MORPH_FILE:
+         case dtAnim::MORPH_FILE:
             RenameMorphs(oldName, newName);
             break;
          default:
             break;
          }
-         success = calFileType != Cal3DModelData::NO_FILE;
+         success = fileType != dtAnim::NO_FILE;
 
          if (success)
          {
@@ -680,7 +653,7 @@ bool ObjectNameItemDelegate::ApplyData(const QString& data) const
 void ObjectNameItemDelegate::RenameSkeleton(const std::string& oldName, const std::string& newName) const
 {
 #if defined(CAL3D_VERSION) && CAL3D_VERSION >= 1300
-   CalCoreModel* model = mCharData->GetCoreModel();
+   CalCoreModel* model = GetCoreModel(*mCharData);
    CalCoreSkeleton* skel = model->getCoreSkeleton();
    if (skel != NULL)
    {
@@ -692,61 +665,73 @@ void ObjectNameItemDelegate::RenameSkeleton(const std::string& oldName, const st
 ////////////////////////////////////////////////////////////////////////////////
 void ObjectNameItemDelegate::RenameAnimations(const std::string& oldName, const std::string& newName) const
 {
-   typedef dtAnim::Cal3DModelData::AnimationWrapperArray AnimWrapperArray;
+   typedef dtAnim::AnimatableArray AnimatableArray;
 
    // Change the names of the registered Animation Wrappers,
    // the objects that represent the animation files.
-   dtAnim::AnimationWrapper* animWrapper = NULL;
-   AnimWrapperArray& animWrappers = mCharData->GetAnimationWrappers();
-   AnimWrapperArray::iterator curIter = animWrappers.begin();
-   AnimWrapperArray::iterator endIter = animWrappers.end();
+   dtAnim::Animatable* animatable = NULL;
+   AnimatableArray& animWrappers = mCharData->GetAnimatables();
+   AnimatableArray::iterator curIter = animWrappers.begin();
+   AnimatableArray::iterator endIter = animWrappers.end();
    for (; curIter != endIter; ++curIter)
    {
-      animWrapper = curIter->get();
-      if (animWrapper->GetName() == oldName)
+      animatable = curIter->get();
+      if (animatable->GetName() == oldName)
       {
-         animWrapper->SetName(newName);
+         animatable->SetName(newName);
       }
    }
+
+   // Rebuild the mapping on animation object names.
+   mCharWrapper->HandleModelResourceUpdate(dtAnim::ANIM_FILE);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 void ObjectNameItemDelegate::RenameMeshes(const std::string& oldName, const std::string& newName) const
 {
-   CalCoreModel* model = mCharData->GetCoreModel();
-   CalCoreMesh* mesh = NULL;
-   int numMeshes = model->getCoreMeshCount();
+   dtAnim::MeshArray meshes;
+   mCharWrapper->GetMeshes(meshes);
+
+   dtAnim::MeshInterface* mesh = NULL;
+   int numMeshes = int(meshes.size());
    for (int i = 0; i < numMeshes; ++i)
    {
-      mesh = model->getCoreMesh(i);
-      if (mesh->getName() == oldName)
+      mesh = meshes[i].get();
+      if (mesh->GetName() == oldName)
       {
-         mesh->setName(newName);
+         mesh->SetName(newName);
       }
    }
+
+   // Rebuild the mapping on animation object names.
+   mCharWrapper->HandleModelResourceUpdate(dtAnim::MESH_FILE);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 void ObjectNameItemDelegate::RenameMaterials(const std::string& oldName, const std::string& newName) const
 {
-   CalCoreModel* model = mCharData->GetCoreModel();
-   CalCoreMaterial* material = NULL;
-   int numMaterials = model->getCoreMaterialCount();
+   dtAnim::MaterialArray materials;
+   mCharWrapper->GetMaterials(materials);
+
+   dtAnim::MaterialInterface* material = NULL;
+   int numMaterials = int(materials.size());
    for (int i = 0; i < numMaterials; ++i)
    {
-      material = model->getCoreMaterial(i);
-      if (material->getName() == oldName)
+      material = materials[i].get();
+      if (material->GetName() == oldName)
       {
-         material->setName(newName);
+         material->SetName(newName);
       }
    }
+
+   mCharWrapper->HandleModelResourceUpdate(dtAnim::MAT_FILE);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 void ObjectNameItemDelegate::RenameMorphs(const std::string& oldName, const std::string& newName) const
 {
 #if defined(CAL3D_VERSION) && CAL3D_VERSION >= 1300
-   CalCoreModel* model = mCharData->GetCoreModel();
+   CalCoreModel* model = GetCoreModel(*mCharData);
    CalCoreAnimatedMorph* morph = NULL;
    int numMorphs = model->getNumCoreAnimatedMorphs();
    for (int i = 0; i < numMorphs; ++i)

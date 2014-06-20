@@ -20,12 +20,10 @@
  */
 
 #include <dtAnim/characterwrapper.h>
-#include <osg/Math>
 #include <dtCore/isector.h>
 #include <dtCore/transform.h>
 #include <dtUtil/matrixutil.h>
 #include <dtAnim/sequencemixer.h>
-#include <osg/MatrixTransform>
 #include <dtAnim/cal3danimator.h>
 #include <dtAnim/attachmentcontroller.h>
 #include <dtAnim/animationsequence.h>
@@ -33,6 +31,8 @@
 #include <dtAnim/ical3ddriver.h>
 #include <dtAnim/animationhelper.h>
 #include <dtUtil/hotspotdefinition.h>
+#include <osg/Math>
+#include <osg/MatrixTransform>
 
 
 namespace dtAnim

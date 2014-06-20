@@ -10,7 +10,6 @@
 #include <dtUtil/xercesparser.h>
 #include <dtCore/project.h>
 #include <dtCore/map.h>
-#include <dtAnim/cal3ddatabase.h>
 #include <dtCore/deltawin.h>
 
 #include <QtGui/QMenuBar>

@@ -26,6 +26,7 @@
 #include <vector>
 #include <dtCore/refptr.h>
 #include <dtAnim/export.h>
+#include <dtAnim/cal3danimator.h>
 
 namespace dtCore
 {
@@ -42,10 +43,10 @@ namespace dtAnim
    public:
       typedef std::vector<dtCore::RefPtr<dtCore::HotSpotAttachment> > HotSpotContainer;
 
-      HotSpotDriver(const dtAnim::Cal3DModelWrapper* model);
+      HotSpotDriver(dtAnim::Cal3DAnimator* animator);
 
       void Update(double dt);
-      void SetWrapper(dtAnim::Cal3DModelWrapper* model);
+      void SetAnimator(dtAnim::Cal3DAnimator* animator);
 
       void AddHotSpot(dtCore::HotSpotAttachment* spot);
       void RemoveHotSpot(const dtCore::HotSpotAttachment* spot);
@@ -59,7 +60,7 @@ namespace dtAnim
       HotSpotDriver(const HotSpotDriver&);  ///< not implemented by design
       HotSpotDriver& operator=(const HotSpotDriver&);  ///< not implemented by design
 
-      const dtAnim::Cal3DModelWrapper* mModel;
+      dtCore::RefPtr<dtAnim::Cal3DAnimator> mAnimator;
       HotSpotContainer mHotSpots;
    };
 }

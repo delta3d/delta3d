@@ -24,7 +24,6 @@
 #include <dtGame/gameactor.h>
 #include <dtAnim/export.h>
 #include <dtAnim/cal3danimator.h>
-#include <dtAnim/cal3ddatabase.h>
 #include <dtCore/namedgroupparameter.h>  // for function signatures
 #include <string>                  // for static constants
 
@@ -103,7 +102,6 @@ namespace dtAnim
 
       dtCore::RefPtr<osg::Geode>            mModelGeode;
       dtCore::RefPtr<osg::Geode>            mSkeletalGeode;   ///< support to visualize the skeletal.
-      dtCore::RefPtr<dtAnim::Cal3DDatabase> mModelLoader;
       dtCore::RefPtr<dtAnim::Cal3DAnimator> mAnimator;
 
       typedef unsigned char RenderModeBitContainer;

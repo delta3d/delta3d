@@ -278,7 +278,7 @@ void TestAnim::InitializeAnimationActor(dtAnim::AnimationGameActorProxy* gamePro
             attRot *= osg::Matrix::rotate(osg::DegreesToRadians(180.f), osg::Vec3(0.f,0.f,1.f));
             hotspotDef.mLocalRotation = attRot.getRotate();
 
-            mAnimationHelper->GetAttachmentController().AddAttachment(*attachment, hotspotDef);
+            mAnimationHelper->GetAttachmentController()->AddAttachment(*attachment, hotspotDef);
             tx->AddChild(attachment.get());
 
             mAnimationHelper->ModelLoadedSignal.connect_slot(this, &TestAnim::PlayerLoadCallback);

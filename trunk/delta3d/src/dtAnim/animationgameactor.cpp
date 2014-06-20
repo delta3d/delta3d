@@ -50,7 +50,7 @@ namespace dtAnim
    /////////////////////////////////////////////////////////////////////////////
    osg::BoundingBox AnimationGameActor::GetBoundingBox()
    {
-      Cal3DModelWrapper* wrapper = GetComponent<AnimationHelper>()->GetModelWrapper();
+      dtAnim::BaseModelWrapper* wrapper = GetComponent<AnimationHelper>()->GetModelWrapper();
       if (wrapper != NULL)
       {
          return wrapper->GetBoundingBox();

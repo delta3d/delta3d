@@ -23,19 +23,19 @@
 #define __DELTA_ANIMATIONCHANNEL_H__
 
 #include <dtAnim/export.h>
+#include <dtCore/observerptr.h>
 #include <dtCore/refptr.h>
 #include <dtAnim/animatable.h>
 
 namespace dtAnim
 {
-   class AnimationWrapper;
-   class Cal3DModelWrapper;
+   class BaseModelWrapper;
 
 /**
 * AnimationChannel derives from Animatable and holds an AnimationWrapper, and
 * contains semantics for playing an animation using the Cal3DModelWrapper API.
 */
-class DT_ANIM_EXPORT AnimationChannel: public Animatable
+class DT_ANIM_EXPORT AnimationChannel : public Animatable
 {
 
 public:
@@ -51,35 +51,33 @@ public:
     * @param the model wrapper used to play animations with
     * @param the animation wrapper to specify which animation to play
     */
-   AnimationChannel(Cal3DModelWrapper* pModelWrapper, AnimationWrapper* pAnimationWrapper);
-
-
-   /**
-    * This function associates this channel with the supplied animation wrapper
-    * @param the animation wrapper this channel will play
-    */
-   void SetAnimation(AnimationWrapper* pAnimation);
-
-   AnimationWrapper* GetAnimation();
-   const AnimationWrapper* GetAnimation() const;
+   AnimationChannel(BaseModelWrapper* modelWrapper);
 
    /// @return the model wrapper assigned to this channel.
-   Cal3DModelWrapper* GetModel();
+   BaseModelWrapper* GetModel();
 
    /// @return the const model wrapper assigned to this channel.
-   const Cal3DModelWrapper* GetModel() const;
+   const BaseModelWrapper* GetModel() const;
+
+   /// @return the animation object associated with this object.
+   dtAnim::AnimationInterface* GetAnimation();
+   const dtAnim::AnimationInterface* GetAnimation() const;
+
+   /// @return the name that refers to the associated animation object.
+   void SetAnimationName(const std::string& name);
+   const std::string& GetAnimationName() const;
 
    /**
     * This function sets the model wrapper used to make the calls to play the animation.
     * @param the associated model wrapper
     */
-   void SetModel(Cal3DModelWrapper* pWrapper);
+   void SetModel(BaseModelWrapper* modelWrapper);
 
    /**
     * This function copies the animation channel
     * @param
     */
-   virtual dtCore::RefPtr<Animatable> Clone(Cal3DModelWrapper* wrapper) const;
+   virtual dtCore::RefPtr<Animatable> Clone(BaseModelWrapper* modelWrapper) const;
 
    /**
     * If an animation is not looping then it will be considered an action
@@ -94,6 +92,13 @@ public:
     */
    bool IsAction() const;
    void SetAction(bool b);
+
+   /**
+    * The duration of an animation is defined to be the amount of time
+    * it takes to play through a single cycle
+    */
+   float GetDuration() const;
+   void SetDuration(float duration);
 
    /**
     * The Max Duration will allow a user to set the amount of time this animation
@@ -161,17 +166,17 @@ protected:
 
 
 private:
-
    bool mIsAction;
    bool mIsLooping;
+   float mDuration;
    float mMaxDuration;
    float mLastWeight;
+   dtUtil::RefString mAnimName;
+   
+   mutable dtCore::ObserverPtr<dtAnim::AnimationInterface> mAnim;
 
    // todo, verify holding a refptr to the model wrapper is ok
-   dtCore::RefPtr<Cal3DModelWrapper> mModelWrapper;
-   dtCore::RefPtr<AnimationWrapper> mAnimationWrapper;
-
-
+   dtCore::RefPtr<BaseModelWrapper> mModelWrapper;
 };
 
 } // namespace dtAnim

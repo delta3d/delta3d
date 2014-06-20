@@ -1,8 +1,9 @@
 #include <dtAnim/posemesh.h>
 #include <dtAnim/posemath.h>
-
 #include <dtUtil/mathdefines.h>
 #include <osg/Quat>
+
+
 
 ////////////////////////////////////////////////////////////////////////////////
 void dtAnim::GetCelestialCoordinates(osg::Vec3 target,

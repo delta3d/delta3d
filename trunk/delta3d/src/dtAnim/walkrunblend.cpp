@@ -11,23 +11,24 @@ namespace dtAnim
 
    static dtUtil::Log& WRB_LOG_INSTANCE = dtUtil::Log::GetInstance("walkrunblend.cpp");
 
+   ///////////////////////////////////////////////////////
    WalkRunBlend::WalkRunBlend(dtCore::VelocityInterface& mi)
    {
       mWRController = new WRController(*this, mi);
       SetController(mWRController.get());
    }
 
-   WalkRunBlend::WalkRunBlend(WalkRunBlend::WRController& controller)
-      : mWRController(&controller)
-
-   {
-      SetController(mWRController.get());
-   }
-
+   ///////////////////////////////////////////////////////
    void WalkRunBlend::SetAnimations(dtAnim::Animatable* stand, dtAnim::Animatable* walk, dtAnim::Animatable* run)
    {
-      AddAnimation(stand);
-      AddAnimation(walk);
+      if (stand != NULL)
+      {
+         AddAnimation(stand);
+      }
+      if (walk != NULL)
+      {
+         AddAnimation(walk);
+      }
       if (run != NULL)
       {
          AddAnimation(run);
@@ -35,36 +36,53 @@ namespace dtAnim
       mWRController->SetAnimations(stand, walk, run);
    }
 
-   void WalkRunBlend::Setup(float inherentSpeed, float inherentRunSpeed)
+   ///////////////////////////////////////////////////////
+   void WalkRunBlend::Setup(float inherentWalkSpeed, float inherentRunSpeed)
    {
-      mWRController->SetInherentSpeeds(inherentSpeed, inherentRunSpeed);
+      // If the animations haven't be setup yet.
+      if (mWRController->GetAnimationCount() < 4)
+      {
+         return;
+      }
+      mWRController->SetAnimationInherentSpeed(1, inherentWalkSpeed * 0.618);
+      mWRController->SetAnimationInherentSpeed(2, inherentWalkSpeed);
+      mWRController->SetAnimationInherentSpeed(3, inherentRunSpeed);
    }
 
+   ///////////////////////////////////////////////////////
    WalkRunBlend::WRController& WalkRunBlend::GetWalkRunController()
    {
       return *mWRController;
    }
 
-   dtCore::RefPtr<dtAnim::Animatable> WalkRunBlend::Clone(dtAnim::Cal3DModelWrapper* modelWrapper) const
+   ///////////////////////////////////////////////////////
+   dtCore::RefPtr<dtAnim::Animatable> WalkRunBlend::Clone(dtAnim::BaseModelWrapper* modelWrapper) const
    {
-      WalkRunBlend* wrb = new WalkRunBlend(*mWRController->CloneDerived());
-      wrb->mWRController->CloneAnimations(modelWrapper);
+      WalkRunBlend* wrb = new WalkRunBlend(*mWRController->GetMotionSpeedSource());
+
+      dtCore::RefPtr<Animatable> stand, walk, run;
+
+      stand = mWRController->GetAnimation(0) != NULL ? mWRController->GetAnimation(0)->Clone(modelWrapper) : dtCore::RefPtr<Animatable>();
+      walk = mWRController->GetAnimation(2) != NULL ? mWRController->GetAnimation(2)->Clone(modelWrapper) : dtCore::RefPtr<Animatable>();
+      run = mWRController->GetAnimation(3) != NULL ? mWRController->GetAnimation(3)->Clone(modelWrapper) : dtCore::RefPtr<Animatable>();
+
+      wrb->SetAnimations(stand, walk, run);
 
       for (unsigned i = 0; i < mWRController->GetAnimationCount(); ++i)
       {
-         dtAnim::Animatable* anim = mWRController->GetAnimation(i);
-         if (anim != NULL)
-            wrb->AddAnimation(anim);
+         wrb->GetWalkRunController().SetAnimationInherentSpeed(i, mWRController->GetAnimationInherentSpeed(i));
       }
 
       return wrb;
    }
 
+   ///////////////////////////////////////////////////////
    WalkRunBlend::~WalkRunBlend()
    {
       mWRController = 0;
    }
 
+   ///////////////////////////////////////////////////////
    WalkRunBlend::WRController::AnimData::AnimData(dtAnim::Animatable* anim, float inherentSpeed, float initialWeight)
    :  mAnim(anim)
    ,  mInherentSpeed(inherentSpeed)
@@ -78,6 +96,7 @@ namespace dtAnim
    }
 
 
+   ///////////////////////////////////////////////////////
    WalkRunBlend::WRController::WRController(WalkRunBlend& pWR, dtCore::VelocityInterface& mi)
    : BaseClass(pWR)
    , mSpeed(0.0f)
@@ -86,6 +105,7 @@ namespace dtAnim
    {
    }
 
+   ///////////////////////////////////////////////////////
    WalkRunBlend::WRController::WRController(const WalkRunBlend::WRController& pWR)
    : BaseClass(pWR)
    , mSpeed(pWR.mSpeed)
@@ -96,11 +116,12 @@ namespace dtAnim
 
    }
 
+   ///////////////////////////////////////////////////////
    void WalkRunBlend::WRController::SetAnimations(dtAnim::Animatable* stand, dtAnim::Animatable* walk, dtAnim::Animatable* run)
    {
       mAnimations.push_back(AnimData(stand, 0.0f, 1.0f));
       // small stride walk - blend of walk and stand 38.2 to 61.8 (golden ratio)
-      mAnimations.push_back(AnimData(NULL, 0.5f, 0.0f));
+      mAnimations.push_back(AnimData(NULL, 0.618f, 0.0f));
       mAnimations.push_back(AnimData(walk, 1.0f, 0.0f));
       mAnimations.push_back(AnimData(run, 2.0f, 0.0f));
       if (stand != NULL)
@@ -111,39 +132,26 @@ namespace dtAnim
          run->SetCurrentWeight(0.0f);
    }
 
-   //this sets the basic necessary blend values, the others get expected values
-   void WalkRunBlend::WRController::SetInherentSpeeds(float inherentWalkSpeed, float inherentRunSpeed)
-   {
-      if (mAnimations.size() >= 2)
-      {
-         mAnimations[1].mInherentSpeed = inherentWalkSpeed * 0.618;
-         if (mAnimations.size() >= 3)
-         {
-            mAnimations[2].mInherentSpeed = inherentWalkSpeed;
-            if (mAnimations.size() >= 4)
-            {
-               mAnimations[3].mInherentSpeed = inherentRunSpeed;
-            }
-         }
-      }
-   }
-
+   ///////////////////////////////////////////////////////
    float WalkRunBlend::WRController::GetCurrentSpeed() const
    {
       return mSpeed;
    }
 
+   ///////////////////////////////////////////////////////
    void WalkRunBlend::WRController::SetCurrentSpeed(float pSpeed)
    {
       mSpeed = pSpeed;
    }
 
+   ///////////////////////////////////////////////////////
    void WalkRunBlend::WRController::AnimData::SetLastWeight(float newWeight)
    {
       mWeightChanged = !dtUtil::Equivalent(mLastWeight, newWeight, 0.001f);
       mLastWeight = newWeight;
    }
 
+   ///////////////////////////////////////////////////////
    void WalkRunBlend::WRController::AnimData::ApplyWeightChange()
    {
       // Only assign the weight if it hasn't changed since last frame.  This gets rid of some glitches.
@@ -153,6 +161,7 @@ namespace dtAnim
       }
    }
 
+   ///////////////////////////////////////////////////////
    /*virtual*/ void WalkRunBlend::WRController::Update(float dt)
    {
       //update our velocity vector
@@ -259,41 +268,41 @@ namespace dtAnim
             }
          }
       }
-
    }
 
+   ///////////////////////////////////////////////////////
+   float WalkRunBlend::WRController::GetAnimationInherentSpeed(unsigned i) const
+   {
+      return mAnimations[i].mInherentSpeed;
+   }
+
+   ///////////////////////////////////////////////////////
+   void WalkRunBlend::WRController::SetAnimationInherentSpeed(unsigned i, float speed)
+   {
+      mAnimations[i].mInherentSpeed = speed;
+   }
+
+   ///////////////////////////////////////////////////////
    dtAnim::Animatable* WalkRunBlend::WRController::GetAnimation(unsigned i)
    {
       return mAnimations[i].mAnim;
    }
 
+   ///////////////////////////////////////////////////////
    unsigned WalkRunBlend::WRController::GetAnimationCount() const
    {
       return mAnimations.size();
    }
 
-
-   dtCore::RefPtr<WalkRunBlend::WRController> WalkRunBlend::WRController::CloneDerived() const
+   ///////////////////////////////////////////////////////
+   dtCore::VelocityInterface* WalkRunBlend::WRController::GetMotionSpeedSource()
    {
-      dtCore::RefPtr<WalkRunBlend::WRController> result = new WRController(*this);
-      return result;
+      return mMotionSpeedSource.get();
    }
 
-   void WalkRunBlend::WRController::CloneAnimations(dtAnim::Cal3DModelWrapper* modelWrapper)
-   {
-      for (unsigned i = 0 ; i < mAnimations.size(); ++i)
-      {
-         if (mAnimations[i].mAnim.valid())
-         {
-            mAnimations[i].mAnim = mAnimations[i].mAnim->Clone(modelWrapper);
-         }
-      }
-   }
-
-
+   ///////////////////////////////////////////////////////
    WalkRunBlend::WRController::~WRController()
    {
-
    }
 
 }

@@ -21,18 +21,14 @@
 
 #include <dtAnim/physiquedriver.h>
 
-#include <cal3d/model.h>
-#include <cal3d/physique.h>
-
 
 namespace dtAnim
 {
 
-PhysiqueDriver::PhysiqueDriver(Cal3DModelWrapper* pWrapper)
-: mWrapper(pWrapper)
+PhysiqueDriver::PhysiqueDriver(Cal3DAnimator* animator)
+: mAnimator(animator)
 {
 }
-
 
 PhysiqueDriver::~PhysiqueDriver()
 {
@@ -40,12 +36,12 @@ PhysiqueDriver::~PhysiqueDriver()
 
 void PhysiqueDriver::Update(double dt)
 {
-   mWrapper->GetCalModel()->getPhysique()->update();
+   mAnimator->UpdatePhysique(dt);
 }
 
-void PhysiqueDriver::SetWrapper(Cal3DModelWrapper* pWrapper)
+void PhysiqueDriver::SetAnimator(Cal3DAnimator* animator)
 {
-   mWrapper = pWrapper;
+   mAnimator = animator;
 }
 
 }//namespace dtAnim

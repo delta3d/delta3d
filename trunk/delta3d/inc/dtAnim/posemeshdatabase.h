@@ -33,7 +33,7 @@
 
 namespace dtAnim 
 {
-   class Cal3DModelWrapper; 
+   class BaseModelWrapper; 
    class PoseMesh;
 
    /// manager of the HotSpotData resources
@@ -42,7 +42,7 @@ namespace dtAnim
    public:
       typedef std::vector<PoseMesh*> PoseMeshList;
 
-      PoseMeshDatabase(dtAnim::Cal3DModelWrapper* model);
+      PoseMeshDatabase(dtAnim::BaseModelWrapper* model);
       ~PoseMeshDatabase();
 
       /*
@@ -58,7 +58,7 @@ namespace dtAnim
 
    private:
       PoseMeshList mMeshes;
-      osg::ref_ptr<dtAnim::Cal3DModelWrapper> mModel;
+      osg::ref_ptr<dtAnim::BaseModelWrapper> mModel;
    };
 }
 

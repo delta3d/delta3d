@@ -38,6 +38,7 @@
 
 namespace dtAnim
 {
+   class BaseModelWrapper;
    class PoseMeshDatabase;
    class PoseMeshUtility;
 }
@@ -80,7 +81,7 @@ public:
    /* virtual */ void AddedToScene(dtCore::Scene* scene);
 
    /// Get the animation model
-   dtAnim::Cal3DModelWrapper* GetModelWrapper();
+   dtAnim::BaseModelWrapper* GetModelWrapper();
 
 protected:
    /// Destructor

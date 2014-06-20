@@ -2,20 +2,15 @@
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
    <xs:element name="character">
       <xs:complexType>
-         <xs:choice maxOccurs="unbounded">
-            <xs:element ref="skeleton" />
-            <xs:element ref="animation" minOccurs="0" maxOccurs="unbounded" />
-            <xs:element ref="morph" minOccurs="0" maxOccurs="unbounded" />
-            <xs:element ref="mesh" minOccurs="0" maxOccurs="unbounded" />
-            <xs:element ref="material" minOccurs="0" maxOccurs="unbounded" />
+          <xs:sequence>
+            <xs:choice>
+              <xs:group ref="resourceFileGroupExplicit" />
+              <xs:group ref="resourceFileGroupGeneric" />
+            </xs:choice>
             <xs:element ref="attachmentPoint" minOccurs="0" maxOccurs="unbounded" />
-            <xs:element ref="LOD" />
-            <xs:element ref="scale" />
-            <xs:element ref="skinningShader" />
-            <xs:element ref="animationChannel" minOccurs="0" maxOccurs="unbounded" />
-            <xs:element ref="animationSequence" minOccurs="0" maxOccurs="unbounded" />
-            <xs:element ref="poseMesh" minOccurs="0" maxOccurs="1" />
-         </xs:choice>
+            <xs:group ref="parametersGroup" />
+            <xs:group ref="animationGroup" />
+          </xs:sequence>
          <xs:attribute name="name" use="optional">
             <xs:simpleType>
                <xs:restriction base="xs:normalizedString" />
@@ -23,34 +18,67 @@
          </xs:attribute>
       </xs:complexType>
    </xs:element>
-   <xs:element name="animation">
-      <xs:complexType>
-         <xs:attribute name="fileName" use="required">
-            <xs:simpleType>
-               <xs:restriction base="xs:normalizedString" />
-            </xs:simpleType>
-         </xs:attribute>
-         <xs:attribute name="name" use="optional">
-            <xs:simpleType>
-               <xs:restriction base="xs:normalizedString" />
-            </xs:simpleType>
-         </xs:attribute>
-      </xs:complexType>
-   </xs:element>
-   <xs:element name="morph">
-      <xs:complexType>
-         <xs:attribute name="fileName" use="required">
-            <xs:simpleType>
-               <xs:restriction base="xs:normalizedString" />
-            </xs:simpleType>
-         </xs:attribute>
-         <xs:attribute name="name" use="optional">
-            <xs:simpleType>
-               <xs:restriction base="xs:normalizedString" />
-            </xs:simpleType>
-         </xs:attribute>
-      </xs:complexType>
-   </xs:element>
+
+  
+  
+   <!-- TYPE DEFINITIONS -->
+   <xs:complexType name="typeResourceFile">
+     <xs:attribute name="fileName" use="required">
+       <xs:simpleType>
+         <xs:restriction base="xs:normalizedString" />
+       </xs:simpleType>
+     </xs:attribute>
+     <xs:attribute name="name" use="optional">
+       <xs:simpleType>
+         <xs:restriction base="xs:normalizedString" />
+       </xs:simpleType>
+     </xs:attribute>
+   </xs:complexType>
+
+  
+  
+  <!-- GROUPING DEFINITIONS -->
+  <xs:group name="resourceFileGroupGeneric">
+    <xs:sequence>
+      <xs:element ref="mixedResource" />
+    </xs:sequence>
+  </xs:group>
+  
+  <xs:group name="resourceFileGroupExplicit">
+    <xs:sequence>
+      <xs:element ref="skeleton" />
+      <xs:element ref="animation" minOccurs="0" maxOccurs="unbounded" />
+      <xs:element ref="morph" minOccurs="0" maxOccurs="unbounded" />
+      <xs:element ref="mesh" minOccurs="0" maxOccurs="unbounded" />
+      <xs:element ref="material" minOccurs="0" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:group>
+
+  <xs:group name="parametersGroup">
+    <xs:sequence>
+      <xs:element ref="LOD" minOccurs="0" maxOccurs="1"/>
+      <xs:element ref="skinningShader" minOccurs="0" maxOccurs="1" />
+      <xs:element ref="scale" minOccurs="0" maxOccurs="1"/>
+    </xs:sequence>
+  </xs:group>
+
+  <xs:group name="animationGroup">
+    <xs:sequence>
+      <xs:element ref="animationChannel" minOccurs="0" maxOccurs="unbounded" />
+      <xs:element ref="animationSequence" minOccurs="0" maxOccurs="unbounded" />
+      <xs:element ref="poseMesh" minOccurs="0" maxOccurs="1" />
+    </xs:sequence>
+  </xs:group>
+
+  
+  
+  <!-- ELEMENT DEFINITIONS -->
+   <xs:element name="mixedResource" type="typeResourceFile"/>
+   
+   <xs:element name="animation" type="typeResourceFile"/>
+  
+   <xs:element name="morph" type="typeResourceFile"/>
+  
    <xs:element name="attachmentPoint">
       <xs:complexType>
          <xs:attribute name="bone" use="required">
@@ -100,29 +128,19 @@
          </xs:attribute>
       </xs:complexType>
    </xs:element>
-   <xs:element name="material">
-      <xs:complexType>
-         <xs:attribute name="name" type="xs:normalizedString" use="optional" />
-         <xs:attribute name="fileName" use="required" type="xs:normalizedString"/>
-      </xs:complexType>
-   </xs:element>
-   <xs:element name="mesh">
-      <xs:complexType>
-         <xs:attribute name="name" type="xs:normalizedString" use="optional" />
-         <xs:attribute name="fileName" use="required" type="xs:normalizedString" />
-      </xs:complexType>
-   </xs:element>
-   <xs:element name="skeleton">
-      <xs:complexType>
-         <xs:attribute name="name" type="xs:normalizedString" use="optional" />
-         <xs:attribute name="fileName" use="required" type="xs:normalizedString"/>
-      </xs:complexType>
-   </xs:element>
+  
+   <xs:element name="material" type="typeResourceFile"/>
+
+   <xs:element name="mesh" type="typeResourceFile"/>
+  
+   <xs:element name="skeleton" type="typeResourceFile"/>
+  
    <xs:element name="poseMesh">
       <xs:complexType>         
          <xs:attribute name="fileName" use="required" type="xs:normalizedString"/>
       </xs:complexType>
    </xs:element>
+  
    <xs:element name="LOD">
       <xs:complexType>
          <xs:sequence>
@@ -132,6 +150,7 @@
          </xs:sequence>
       </xs:complexType>
    </xs:element>
+  
    <xs:element name="scale">
       <xs:complexType>
          <xs:sequence>
@@ -139,6 +158,7 @@
          </xs:sequence>
       </xs:complexType>
    </xs:element>
+  
    <xs:element name="skinningShader">
       <xs:complexType>
          <xs:sequence>
@@ -169,12 +189,12 @@
          <xs:sequence>
             <xs:element name="name" type="xs:normalizedString" />
             <xs:element name="animationName" type="xs:normalizedString" />
-            <xs:element name="startDelay" type="xs:float" />
-            <xs:element name="fadeIn" type="xs:float" />
-            <xs:element name="fadeOut" type="xs:float" />
-            <xs:element name="speed" type="xs:float" />
-            <xs:element name="baseWeight" type="xs:float" />
-            <xs:element name="maxDuration" type="xs:float" />
+            <xs:element name="startDelay" type="xs:float" minOccurs="0"/>
+            <xs:element name="fadeIn" type="xs:float" minOccurs="0"/>
+            <xs:element name="fadeOut" type="xs:float" minOccurs="0"/>
+            <xs:element name="speed" type="xs:float" minOccurs="0"/>
+            <xs:element name="baseWeight" type="xs:float" minOccurs="0"/>
+            <xs:element name="maxDuration" type="xs:float" minOccurs="0"/>
             <xs:element name="isAction" type="xs:boolean" />
             <xs:element name="isLooping" type="xs:boolean" />
             <xs:element name="eventOnStart" type="event" minOccurs="0" maxOccurs="unbounded" />

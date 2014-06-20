@@ -1,5 +1,5 @@
-#ifndef __ANIMATIONTABLEWIDGET_H__
-#define __ANIMATIONTABLEWIDGET_H__
+#ifndef __ANIMATION_TABLE_WIDGET_H__
+#define __ANIMATION_TABLE_WIDGET_H__
 
 #include <QtGui/QTableWidget>
 

@@ -57,7 +57,7 @@
 
 #include <dtCore/scene.h>
 #include <dtAnim/chardrawable.h>
-#include <dtAnim/cal3ddatabase.h>
+#include <dtAnim/modeldatabase.h>
 
 #include <dtUtil/log.h>
 #include <dtUtil/nodeprintout.h>
@@ -268,7 +268,7 @@ namespace dtEditQt
                meshScene->AddChild(previewObject.get());
             }
 
-            dtCore::RefPtr<dtAnim::Cal3DModelWrapper> animWrap = dtAnim::Cal3DDatabase::GetInstance().Load(file.toStdString());
+            dtCore::RefPtr<dtAnim::BaseModelWrapper> animWrap = dtAnim::ModelDatabase::GetInstance().Load(file.toStdString());
 
             if (animWrap.valid())
             {
@@ -279,14 +279,14 @@ namespace dtEditQt
                }
                else
                {
-                  previewObject->SetCal3DWrapper(animWrap);
+                  previewObject->SetModelWrapper(animWrap);
                }
             }
             else
             {
                if (previewObject.valid())
                {
-                  previewObject->SetCal3DWrapper(NULL);
+                  previewObject->SetModelWrapper(NULL);
                }
             }
             // Load the new file.

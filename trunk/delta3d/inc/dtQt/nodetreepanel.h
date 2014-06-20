@@ -62,6 +62,9 @@ namespace dtQt
       void SetNode(osg::Node* node, bool updateUI = true);
       osg::Node* GetNode() const;
 
+   public slots:
+      void UpdateColumns();
+
    protected:
       virtual void CreateConnections();
 

@@ -23,13 +23,13 @@
 #define __DELTA_ANIMNODEBUILDER_H__
 
 #include <dtAnim/export.h>
+#include <dtAnim/basemodelwrapper.h>
+#include <dtAnim/nodebuilderinterface.h>
 #include <dtCore/refptr.h>
 #include <dtUtil/functor.h>
 
 #include <osg/Referenced>
 #include <osg/Node> // needed for the bounding sphere callback
-
-#include <cal3d/global.h>
 
 /// @cond DOXYGEN_SHOULD_SKIP_THIS
 namespace osg
@@ -44,13 +44,10 @@ namespace dtCore
    class ShaderProgram;
 }
 
-class CalHardwareModel;
-
 
 namespace dtAnim
 {
-   class Cal3DModelWrapper;
-   class Cal3DModelData;
+   class BaseModelData;
    class Array;
 
    /**
@@ -66,24 +63,17 @@ namespace dtAnim
       /**
        * Prototype of the Create method.  Returns the Node containing the animated
        * character's geometry.
-       * @code dtCore::RefPtr<osg::Node> MyCreateFunc(osg::Geode& geode, Cal3DModelWrapper* wrapper);
+       * @code dtCore::RefPtr<osg::Node> MyCreateFunc(osg::Geode& geode, BaseModelWrapper* wrapper);
        * @endcode
        * @see CreateNode()
        */
-      typedef dtUtil::Functor<dtCore::RefPtr<osg::Node>, TYPELIST_1(Cal3DModelWrapper*)> CreateFunc;
-
-      class DT_ANIM_EXPORT Cal3DBoundingSphereCalculator : public osg::Node::ComputeBoundingSphereCallback
-      {
-        public:
-          Cal3DBoundingSphereCalculator(Cal3DModelWrapper& wrapper);
-
-          /*virtual*/ osg::BoundingSphere computeBound(const osg::Node&) const;
-        private:
-          dtCore::RefPtr<Cal3DModelWrapper> mWrapper;
-      };
+      typedef dtUtil::Functor<dtCore::RefPtr<osg::Node>, TYPELIST_1(dtAnim::BaseModelWrapper*)> CreateFunc;
 
       AnimNodeBuilder(); //creates default builder
       AnimNodeBuilder(const CreateFunc& pCreate); //uses custom builder
+      
+      dtCore::RefPtr<dtAnim::NodeBuilderInterface> CreateNodeBuilder(const std::string& charSystem);
+      dtCore::RefPtr<dtAnim::NodeBuilderInterface> CreateNodeBuilder(dtAnim::BaseModelWrapper& wrapper);
 
       /// @return the create function
       CreateFunc& GetCreate();
@@ -100,7 +90,7 @@ namespace dtAnim
        * Create the node that holds the animated character's geometry.  Will return
        * a valid Node which contains temporary geometry.  Actual character geometry
        * might not be present until the returned node is rendered in a Scene.
-       * @param pWrapper : Pointer to the Cal3DModelWrapper to be used when building
+       * @param pWrapper : Pointer to the BaseModelWrapper to be used when building
        * the geometry.
        *
        * @param immediate : Optional parameter, when set to true, will immediately
@@ -111,12 +101,12 @@ namespace dtAnim
        * geometry is a osg::Group with a child osg::Geode which contains one osg::Drawable
        * that has a Drawcallback assigned to it.
        */
-      dtCore::RefPtr<osg::Node> CreateNode(Cal3DModelWrapper* pWrapper, bool immediate = false);
+      dtCore::RefPtr<osg::Node> CreateNode(dtAnim::BaseModelWrapper* wrapper, bool immediate = false);
 
-      virtual dtCore::RefPtr<osg::Node> CreateSoftware(Cal3DModelWrapper* pWrapper);
-      virtual dtCore::RefPtr<osg::Node> CreateSoftwareNoVBO(Cal3DModelWrapper* pWrapper);
-      virtual dtCore::RefPtr<osg::Node> CreateHardware(Cal3DModelWrapper* pWrapper);
-      virtual dtCore::RefPtr<osg::Node> CreateNULL(Cal3DModelWrapper* pWrapper);
+      virtual dtCore::RefPtr<osg::Node> CreateSoftware(dtAnim::BaseModelWrapper* wrapper);
+      virtual dtCore::RefPtr<osg::Node> CreateSoftwareNoVBO(dtAnim::BaseModelWrapper* wrapper);
+      virtual dtCore::RefPtr<osg::Node> CreateHardware(dtAnim::BaseModelWrapper* wrapper);
+      virtual dtCore::RefPtr<osg::Node> CreateNULL(dtAnim::BaseModelWrapper* wrapper);
 
 
       ///Does the hardware support hardware skinning?
@@ -130,9 +120,7 @@ namespace dtAnim
       AnimNodeBuilder(const AnimNodeBuilder&);
       AnimNodeBuilder& operator=(const AnimNodeBuilder&);
 
-      dtCore::ShaderProgram* LoadShaders(Cal3DModelData& modelData, osg::Geode& geode) const;
-
-      virtual dtCore::RefPtr<osg::Node> CreateSoftwareInternal(Cal3DModelWrapper* pWrapper, bool vbo);
+      dtCore::ShaderProgram* LoadShaders(dtAnim::BaseModelData& modelData, osg::Geode& geode) const;
 
    private:
       template <typename T>
@@ -161,9 +149,6 @@ namespace dtAnim
       };
 
       CreateFunc mCreateFunc;
-
-      void CalcNumVertsAndIndices(Cal3DModelWrapper* pWrapper,
-                                  int& numVerts, int& numIndices);
 
       ///Does the hardware support vertex buffers?
       bool SupportsVertexBuffers() const;

@@ -34,7 +34,7 @@
 namespace dtAnim
 {
    class AnimationController;
-   class Cal3DModelWrapper;
+   class BaseModelWrapper;
 /**
  * AnimationSequence derives from Animatable and contains a child list of
  * animations to play. The animations can be AnimationChannels or other
@@ -176,7 +176,7 @@ public:
    /**
     * This function copies sequence and all child Animatables
     */
-   virtual dtCore::RefPtr<Animatable> Clone(Cal3DModelWrapper* modelWrapper) const;
+   virtual dtCore::RefPtr<Animatable> Clone(BaseModelWrapper* modelWrapper) const;
 
    /**
     * Recalculate is called on PlayAnimation()
@@ -211,7 +211,7 @@ protected:
    /*virtual*/ ~AnimationSequence();
 
    /// No one should be calling the copy canstructor except the clone method.
-   AnimationSequence(const AnimationSequence&, Cal3DModelWrapper* wrapper);
+   AnimationSequence(const AnimationSequence&, BaseModelWrapper* wrapper);
 
    /// Hide this to prevent assigning
    AnimationSequence& operator=(const AnimationSequence&);

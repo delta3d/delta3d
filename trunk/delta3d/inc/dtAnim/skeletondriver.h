@@ -24,8 +24,8 @@
 
 #include <dtAnim/export.h>
 #include <dtCore/refptr.h>
+#include <dtAnim/cal3danimator.h>
 #include <dtAnim/ical3ddriver.h>
-#include <dtAnim/cal3dmodelwrapper.h>
 
 namespace dtAnim
 {
@@ -34,17 +34,17 @@ class DT_ANIM_EXPORT SkeletonDriver: public ICal3DDriver
 {
 
 public:
-   SkeletonDriver(Cal3DModelWrapper* pWrapper);
+   SkeletonDriver(Cal3DAnimator* animator);
 
    void Update(double dt);
-   void SetWrapper(Cal3DModelWrapper*);
+   void SetAnimator(Cal3DAnimator* animator);
 
 protected:
    virtual ~SkeletonDriver();
 
 private:
 
-      dtCore::RefPtr<Cal3DModelWrapper> mWrapper;
+      dtCore::RefPtr<Cal3DAnimator> mAnimator;
 
 };
 

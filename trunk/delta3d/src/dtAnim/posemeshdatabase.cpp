@@ -18,18 +18,19 @@
  *
  * Michael Guerrero
  */
-
+// DELTA3D
 #include <dtAnim/posemeshdatabase.h>
 #include <dtAnim/posemeshloader.h>
 #include <dtAnim/posemesh.h>
 #include <dtAnim/posemath.h>
-#include <dtAnim/cal3dmodelwrapper.h>
+#include <dtAnim/basemodelwrapper.h>
 #include <dtUtil/log.h>
 #include <dtUtil/exception.h>
 
 #include <algorithm>
 #include <cstddef>
 #include <istream>
+#include <cassert>
 
 using namespace dtAnim;
 
@@ -37,7 +38,7 @@ using namespace dtAnim;
 template<typename ContainerT>
 struct PoseBuilderFunctor
 {
-   PoseBuilderFunctor(dtAnim::Cal3DModelWrapper* model, ContainerT* container)
+   PoseBuilderFunctor(dtAnim::BaseModelWrapper* model, ContainerT* container)
       : mModel(model)
       , mContainer(container)
    {}
@@ -51,7 +52,7 @@ struct PoseBuilderFunctor
 private:
    PoseBuilderFunctor();
 
-   dtAnim::Cal3DModelWrapper* mModel;
+   dtAnim::BaseModelWrapper* mModel;
    ContainerT* mContainer;
 };
 
@@ -80,7 +81,7 @@ struct DeletePointer
 };
 
 ////////////////////////////////////////////////////////////////////////////////
-PoseMeshDatabase::PoseMeshDatabase(dtAnim::Cal3DModelWrapper* model)
+PoseMeshDatabase::PoseMeshDatabase(dtAnim::BaseModelWrapper* model)
    : mMeshes()
    , mModel(model)
 {

@@ -36,7 +36,7 @@ namespace dtCore
 namespace dtAnim
 {
    class AnimationHelper;
-   class Cal3DAnimator;
+   class AnimationUpdaterInterface;
 
 
    /**

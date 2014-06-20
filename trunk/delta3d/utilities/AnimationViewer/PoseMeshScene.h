@@ -1,5 +1,5 @@
-#ifndef _POSEMESH_SCENE_H_
-#define _POSEMESH_SCENE_H_
+#ifndef __POSEMESH_SCENE_H__
+#define __POSEMESH_SCENE_H__
 
 #include <QtGui/QGraphicsScene>
 #include <QtCore/QTimer>

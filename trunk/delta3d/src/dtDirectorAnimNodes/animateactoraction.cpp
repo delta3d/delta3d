@@ -32,8 +32,8 @@
 #include <dtAnim/animationgameactor.h>
 #include <dtAnim/animationchannel.h>
 #include <dtAnim/animationhelper.h>
+#include <dtAnim/cal3dmodelwrapper.h>
 #include <dtAnim/sequencemixer.h>
-#include <dtAnim/animationwrapper.h>
 
 #include <cal3d/model.h>
 #include <cal3d/mixer.h>
@@ -242,7 +242,15 @@ namespace dtDirector
                if (actor)
                {
 #ifdef MANUAL_ANIMATIONS
-                  CalMixer* calMixer = actor->GetComponent<dtAnim::AnimationHelper>()->GetModelWrapper()->GetCalModel()->getMixer();
+                  dtAnim::Cal3DModelWrapper* calWrapper
+                     = dynamic_cast<dtAnim::Cal3DModelWrapper*>(actor->GetComponent<dtAnim::AnimationHelper>()->GetModelWrapper()); 
+
+                  if (calWrapper == NULL)
+                  {
+                     return false;
+                  }
+
+                  CalMixer* calMixer = calWrapper->GetCalModel()->getMixer();
                   dtAnim::SequenceMixer& mixer = actor->GetComponent<dtAnim::AnimationHelper>()->GetSequenceMixer();
 
                   int animCount = (int)mAnimList.size();
@@ -399,19 +407,25 @@ namespace dtDirector
                {
                      // Clear all animations currently playing in this actor.
 #ifdef MANUAL_ANIMATIONS
-                  CalMixer* calMixer = actor->GetComponent<dtAnim::AnimationHelper>()->GetModelWrapper()->GetCalModel()->getMixer();
+                  dtAnim::Cal3DModelWrapper* calWrapper = dynamic_cast<dtAnim::Cal3DModelWrapper*>
+                     (actor->GetComponent<dtAnim::AnimationHelper>()->GetModelWrapper());
 
-                  int animCount = (int)mAnimList.size();
-                  for (int animIndex = 0; animIndex < animCount; ++animIndex)
+                  if (calWrapper != NULL)
                   {
-                     AnimData& data = mAnimList[animIndex];
+                     CalMixer* calMixer = calWrapper->GetCalModel()->getMixer();
 
-                     // Turn off the animation if it is still valid.
-                     if (data.mAnimation > -1)
+                     int animCount = (int)mAnimList.size();
+                     for (int animIndex = 0; animIndex < animCount; ++animIndex)
                      {
-                        calMixer->removeManualAnimation(data.mAnimation);
-                        actor->GetComponent<dtAnim::AnimationHelper>()->Update(0.0f);
-                        data.mAnimation = -1;
+                        AnimData& data = mAnimList[animIndex];
+
+                        // Turn off the animation if it is still valid.
+                        if (data.mAnimation > -1)
+                        {
+                           calMixer->removeManualAnimation(data.mAnimation);
+                           actor->GetComponent<dtAnim::AnimationHelper>()->Update(0.0f);
+                           data.mAnimation = -1;
+                        }
                      }
                   }
 #else

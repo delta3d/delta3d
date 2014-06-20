@@ -9,8 +9,8 @@
 
 namespace dtAnim
 {
-   HotSpotDriver::HotSpotDriver(const dtAnim::Cal3DModelWrapper* model): 
-      mModel(model), 
+   HotSpotDriver::HotSpotDriver(Cal3DAnimator* animator)
+      : mAnimator(animator), 
       mHotSpots()
    {
    }
@@ -21,13 +21,13 @@ namespace dtAnim
 
    void HotSpotDriver::Update(double dt)
    {
-      AttachmentMover mover( *mModel );
+      AttachmentMover mover( *mAnimator->GetWrapper() );
       std::for_each( mHotSpots.begin(), mHotSpots.end(), mover);
    }
 
-   void HotSpotDriver::SetWrapper(dtAnim::Cal3DModelWrapper* model)
+   void HotSpotDriver::SetAnimator(dtAnim::Cal3DAnimator* animator)
    {
-      mModel = model;
+      mAnimator = animator;
    }
 
    void HotSpotDriver::AddHotSpot(dtCore::HotSpotAttachment* spot)

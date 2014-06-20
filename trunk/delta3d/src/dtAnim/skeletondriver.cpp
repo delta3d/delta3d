@@ -21,31 +21,26 @@
 
 #include <dtAnim/skeletondriver.h>
 
-#include <cal3d/model.h>
-#include <cal3d/mixer.h>
-
 namespace dtAnim
 {
 
-SkeletonDriver::SkeletonDriver(Cal3DModelWrapper* pWrapper)
-: mWrapper(pWrapper)
+SkeletonDriver::SkeletonDriver(Cal3DAnimator* animator)
+: mAnimator(animator)
 {
 }
-
 
 SkeletonDriver::~SkeletonDriver()
 {
 }
 
-
 void SkeletonDriver::Update(double dt)
 {
-   mWrapper->UpdateSkeleton();
+   mAnimator->UpdateSkeleton(float(dt));
 }
 
-void SkeletonDriver::SetWrapper(Cal3DModelWrapper* pWrapper)
+void SkeletonDriver::SetAnimator(Cal3DAnimator* animator)
 {
-   mWrapper = pWrapper;
+   mAnimator = animator;
 }
 
 }//namespace dtAnim

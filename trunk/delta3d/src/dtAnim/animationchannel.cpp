@@ -20,12 +20,12 @@
  */
 
 #include <dtAnim/animationchannel.h>
-#include <dtAnim/animationwrapper.h>
 
-#include <dtAnim/cal3dmodelwrapper.h>
-#include <osg/Math>
+#include <dtAnim/basemodelwrapper.h>
+#include <dtAnim/animationinterface.h>
 #include <dtUtil/log.h>
-#include <dtUtil/mathdefines.h>
+
+#include <osg/Math>
 
 namespace dtAnim
 {
@@ -34,21 +34,21 @@ namespace dtAnim
 AnimationChannel::AnimationChannel()
    : mIsAction(false)
    , mIsLooping(true)
+   , mDuration(0.0f)
    , mMaxDuration(0.0f)
    , mLastWeight(0.0f)
    , mModelWrapper(NULL)
-   , mAnimationWrapper(NULL)
 {
 }
 
 /////////////////////////////////////////////////////////////////////////////////
-AnimationChannel::AnimationChannel(Cal3DModelWrapper* pModelWrapper, AnimationWrapper* pAnimationWrapper)
+AnimationChannel::AnimationChannel(BaseModelWrapper* modelWrapper)
    : mIsAction(false)
    , mIsLooping(true)
+   , mDuration(0.0f)
    , mMaxDuration(0.0f)
    , mLastWeight(0.0f)
-   , mModelWrapper(pModelWrapper)
-   , mAnimationWrapper(pAnimationWrapper)
+   , mModelWrapper(modelWrapper)
 {
 }
 
@@ -58,33 +58,36 @@ AnimationChannel::~AnimationChannel()
 }
 
 /////////////////////////////////////////////////////////////////////////////////
-AnimationChannel::AnimationChannel(const AnimationChannel& pChannel)
-   : Animatable(pChannel)
-   , mIsAction(pChannel.IsAction())
-   , mIsLooping(pChannel.IsLooping())
-   , mMaxDuration(pChannel.GetMaxDuration())
+AnimationChannel::AnimationChannel(const AnimationChannel& channel)
+   : Animatable(channel)
+   , mIsAction(channel.mIsAction)
+   , mIsLooping(channel.mIsLooping)
+   , mMaxDuration(channel.mMaxDuration)
    , mLastWeight(0.0f)
-   , mModelWrapper(pChannel.mModelWrapper)
-   , mAnimationWrapper(pChannel.mAnimationWrapper)
+   , mAnimName(channel.mAnimName)
+   , mAnim(channel.mAnim)
+   , mModelWrapper(channel.mModelWrapper)
 {
 }
 
 /////////////////////////////////////////////////////////////////////////////////
-AnimationChannel& AnimationChannel::operator=(const AnimationChannel& pChannel)
+AnimationChannel& AnimationChannel::operator=(const AnimationChannel& channel)
 {
-   Animatable::operator=(pChannel);
+   Animatable::operator=(channel);
 
-   mIsAction         = pChannel.IsAction();
-   mIsLooping        = pChannel.IsLooping();
-   mMaxDuration      = pChannel.GetMaxDuration();
+   mIsAction         = channel.mIsAction;
+   mIsLooping        = channel.mIsLooping;
+   mDuration         = channel.mDuration;
+   mMaxDuration      = channel.mMaxDuration;
    mLastWeight       = 0.0f;
-   mModelWrapper     = pChannel.mModelWrapper;
-   mAnimationWrapper = pChannel.mAnimationWrapper;
+   mAnimName         = channel.mAnimName;
+   mAnim             = channel.mAnim;
+   mModelWrapper     = channel.mModelWrapper;
    return *this;
 }
 
 /////////////////////////////////////////////////////////////////////////////////
-dtCore::RefPtr<Animatable> AnimationChannel::Clone(Cal3DModelWrapper* wrapper) const
+dtCore::RefPtr<Animatable> AnimationChannel::Clone(BaseModelWrapper* wrapper) const
 {
    dtCore::RefPtr<AnimationChannel> channel = new AnimationChannel(*this);
    channel->SetModel(wrapper);
@@ -92,92 +95,95 @@ dtCore::RefPtr<Animatable> AnimationChannel::Clone(Cal3DModelWrapper* wrapper) c
 }
 
 /////////////////////////////////////////////////////////////////////////////////
-void AnimationChannel::SetAnimation(AnimationWrapper* pAnimation)
-{
-   mAnimationWrapper = pAnimation;
-}
-
-/////////////////////////////////////////////////////////////////////////////////
-AnimationWrapper* AnimationChannel::GetAnimation()
-{
-   return mAnimationWrapper.get();
-}
-
-/////////////////////////////////////////////////////////////////////////////////
-const AnimationWrapper* AnimationChannel::GetAnimation() const
-{
-   return mAnimationWrapper.get();
-}
-
-/////////////////////////////////////////////////////////////////////////////////
-Cal3DModelWrapper* AnimationChannel::GetModel()
+BaseModelWrapper* AnimationChannel::GetModel()
 {
    return mModelWrapper.get();
 }
 
 /////////////////////////////////////////////////////////////////////////////////
-const Cal3DModelWrapper* AnimationChannel::GetModel() const
+const BaseModelWrapper* AnimationChannel::GetModel() const
 {
    return mModelWrapper.get();
 }
 
 /////////////////////////////////////////////////////////////////////////////////
-void AnimationChannel::SetModel(Cal3DModelWrapper* pWrapper)
+dtAnim::AnimationInterface* AnimationChannel::GetAnimation()
 {
-   mModelWrapper = pWrapper;
+   if (mModelWrapper.valid())
+   {
+      mAnim = mModelWrapper->GetAnimation(GetAnimationName());
+   }
+   return mAnim.get();
 }
 
+/////////////////////////////////////////////////////////////////////////////////
+const dtAnim::AnimationInterface* AnimationChannel::GetAnimation() const
+{
+   if (mModelWrapper.valid())
+   {
+      mAnim = mModelWrapper->GetAnimation(GetAnimationName());
+   }
+   return mAnim.get();
+}
+
+/////////////////////////////////////////////////////////////////////////////////
+void AnimationChannel::SetAnimationName(const std::string& name)
+{
+   mAnimName = name;
+}
+
+/////////////////////////////////////////////////////////////////////////////////
+const std::string& AnimationChannel::GetAnimationName() const
+{
+   return mAnimName.Get();
+}
+
+/////////////////////////////////////////////////////////////////////////////////
+void AnimationChannel::SetModel(BaseModelWrapper* modelWrapper)
+{
+   mModelWrapper = modelWrapper;
+}
 
 /////////////////////////////////////////////////////////////////////////////////
 void AnimationChannel::Update(float dt)
 {
    if (!mModelWrapper.valid())
    {
-      LOG_ERROR("AnimationChannel '" + GetName() + "' does not have a valid Cal3DModelWrapper.");
+      LOG_ERROR("AnimationChannel '" + GetName() + "' does not have a valid ModelWrapper.");
       return;
+   }
+   
+   if (!mAnim.valid())
+   {
+      mAnim = GetAnimation();
    }
 
    if (GetEndTime() > 0.0f && GetElapsedTime() >= GetEndTime())
    {
       SetPrune(true);
-      mLastWeight = 0.0f;
    }
    else if (!IsActive())
    {
       if (IsAction())
       {
-         mModelWrapper->ExecuteAction(mAnimationWrapper->GetID(), GetFadeIn(), GetFadeOut(), GetBaseWeight());
+         mAnim->PlayAction(GetFadeIn(), GetFadeOut(), GetBaseWeight());
       }
       else
       {
-         mModelWrapper->BlendCycle(mAnimationWrapper->GetID(), GetCurrentWeight(), 0.0);
-         if (!dtUtil::Equivalent(GetSpeed(), 1.0f))
-            mModelWrapper->SetSpeedFactor(mAnimationWrapper->GetID(), GetSpeed());
+         mAnim->PlayCycle(GetCurrentWeight(), 0.0f);
          mLastWeight = GetCurrentWeight();
-         mAnimationWrapper->SetSpeed(GetSpeed());
       }
 
       SetActive(true);
    }
    else
    {
-      bool forceSpeedUpdate = false;
-      if (!IsAction() && !dtUtil::Equivalent(mLastWeight, GetCurrentWeight()))
+      if (!IsAction() && !osg::equivalent(mLastWeight, GetCurrentWeight()))
       {
-         mModelWrapper->BlendCycle(mAnimationWrapper->GetID(), GetCurrentWeight(), 0.0);
+         mAnim->PlayCycle(GetCurrentWeight(), 0.0f);
          mLastWeight = GetCurrentWeight();
-         forceSpeedUpdate = true;
-      }
-      if (!IsAction() && (forceSpeedUpdate || !dtUtil::Equivalent(GetSpeed(), mAnimationWrapper->GetSpeed())))
-      {
-         if (!dtUtil::Equivalent(GetSpeed(), 1.0f))
-         {
-            mModelWrapper->SetSpeedFactor(mAnimationWrapper->GetID(), GetSpeed());
-         }
-         mAnimationWrapper->SetSpeed(GetSpeed());
       }
    }
-
 
 }
 
@@ -190,18 +196,19 @@ void AnimationChannel::Recalculate()
    }
    else if (IsAction() && !mIsLooping)
    {
-      SetEndTime(GetStartTime() + mAnimationWrapper->GetDuration());
+      SetEndTime(GetStartTime() + GetDuration());
    }
    else
    {
       SetEndTime(0.0f);
    }
+
 }
 
 /////////////////////////////////////////////////////////////////////////////////
 float AnimationChannel::CalculateDuration() const
 {
-   float duration = mAnimationWrapper.valid() ? mAnimationWrapper->GetDuration() /*/ mAnimationWrapper->GetSpeed()*/ : mMaxDuration;
+   float duration = mDuration > 0.0f ? mDuration : mMaxDuration;
    
    if (IsLooping() && mMaxDuration <= 0.0f)
    {
@@ -221,13 +228,20 @@ void AnimationChannel::Prune()
 {
    if (IsActive())
    {
-      if (IsAction())
+      if ( ! mAnim.valid())
       {
-         mModelWrapper->RemoveAction(mAnimationWrapper->GetID());
+         LOG_ERROR("Animation reference \"" + GetName() + "\" is invalid. Cannot complete Prune.");
       }
-      else
+      else // valid animation reference
       {
-         mModelWrapper->ClearCycle(mAnimationWrapper->GetID(), 0.0f);
+         if (IsAction())
+         {
+            mAnim->ClearAction();
+         }
+         else
+         {
+            mAnim->ClearCycle(0.0f);
+         }
       }
 
       SetActive(false);
@@ -244,7 +258,14 @@ void AnimationChannel::ForceFadeOut(float time)
    // we will do a remove action if necessary on prune
    if (!mIsAction)
    {
-      mModelWrapper->ClearCycle(mAnimationWrapper->GetID(), time);
+      if ( ! mAnim.valid())
+      {
+         LOG_ERROR("Animation reference \"" + GetName() + "\" is invalid. Cannot complete ForceFadeOut.");
+      }
+      else // valid animation reference
+      {
+         mAnim->ClearCycle(time);
+      }
    }
 }
 
@@ -273,6 +294,18 @@ void AnimationChannel::SetAction(bool b)
 }
 
 /////////////////////////////////////////////////////////////////////////////////
+float AnimationChannel::GetDuration() const
+{
+   return mDuration;
+}
+
+/////////////////////////////////////////////////////////////////////////////////
+void AnimationChannel::SetDuration(float duration)
+{
+   mDuration = duration;
+}
+
+/////////////////////////////////////////////////////////////////////////////////
 float AnimationChannel::GetMaxDuration() const
 {
    return mMaxDuration;
@@ -287,7 +320,7 @@ void AnimationChannel::SetMaxDuration(float seconds)
 ////////////////////////////////////////////////////////////////////////////////
 float AnimationChannel::ConvertToRelativeTimeInAnimationScope(double timeToConvert) const
 {
-   float duration = mAnimationWrapper.valid() ? mAnimationWrapper->GetDuration() / mAnimationWrapper->GetSpeed() : 0.0f;
+   float duration = mDuration > 0.0f ? mDuration : 0.0f;
 
    // Get what the the Base Class would set as the relative time.
    float elapsedTime = BaseClass::ConvertToRelativeTimeInAnimationScope(timeToConvert);

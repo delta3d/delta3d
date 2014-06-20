@@ -100,7 +100,7 @@ namespace dtAnim
             
             mAnimHelper = new AnimationHelper();
             mAttach = new AttachmentControllerExtended();
-            mAnimHelper->SetAttachmentController(*mAttach);
+            mAnimHelper->SetAttachmentController(mAttach);
 
             std::string context = dtUtil::GetDeltaRootPath() + "/examples/data/demoMap/SkeletalMeshes/";
             std::string filename = "marine_test.xml";
@@ -116,7 +116,7 @@ namespace dtAnim
 
          void TestUpdate()
          {
-            CPPUNIT_ASSERT(&mAnimHelper->GetAttachmentController() == mAttach.get());
+            CPPUNIT_ASSERT(mAnimHelper->GetAttachmentController() == mAttach.get());
 
             mAnimHelper->Update(50);
             CPPUNIT_ASSERT(mAttach->mUpdated);
@@ -126,8 +126,8 @@ namespace dtAnim
 
          void TestAddRemove()
          {
-            CPPUNIT_ASSERT(&mAnimHelper->GetAttachmentController() == mAttach.get());
-            mAnimHelper->GetAttachmentController().Clear(); // clear out what is loaded from the file.
+            CPPUNIT_ASSERT(mAnimHelper->GetAttachmentController() == mAttach.get());
+            mAnimHelper->GetAttachmentController()->Clear(); // clear out what is loaded from the file.
 
             dtCore::RefPtr<dtCore::Transformable> attachment = new dtCore::Transformable("TestAttachment");
             dtUtil::HotSpotDefinition spotDef;
@@ -192,19 +192,17 @@ namespace dtAnim
             spotDef.mName = "jojo";
             
             std::vector<std::string> names;
-            Cal3DModelWrapper* wrapper = mAnimHelper->GetModelWrapper();
-            wrapper->GetCoreBoneNames(names);
+            BaseModelWrapper* wrapper = mAnimHelper->GetModelWrapper();
 
-            //std::copy(names.begin(), names.end(), std::ostream_iterator<std::string>(std::cout, "\n"));
-
-            spotDef.mParentName = names[0];
-            int boneId = wrapper->GetCoreBoneID(names[0]);
+            dtAnim::BoneArray bones;
+            wrapper->GetBones(bones);
+            dtAnim::BoneInterface* bone = bones.front().get();
 
             mAttach->AddAttachment(*attachment, spotDef);
 
             mAnimHelper->Update(50);
-            osg::Quat boneRot = wrapper->GetBoneAbsoluteRotation(boneId);
-            osg::Vec3 boneTrans = wrapper->GetBoneAbsoluteTranslation(boneId);
+            osg::Quat boneRot = bone->GetAbsoluteRotation();
+            osg::Vec3 boneTrans = bone->GetAbsoluteTranslation();
 
             osg::Quat expectedRot = spotDef.mLocalRotation * boneRot;
             osg::Vec3 expectedPos = boneTrans + (boneRot * spotDef.mLocalTranslation);

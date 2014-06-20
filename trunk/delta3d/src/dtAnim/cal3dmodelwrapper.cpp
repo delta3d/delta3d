@@ -20,7 +20,14 @@
 ////////////////////////////////////////////////////////////////////////////////
 // INCLUDE DIRECTIVES
 ////////////////////////////////////////////////////////////////////////////////
+// DELTA3D
 #include <dtAnim/cal3dmodelwrapper.h>
+#include <dtAnim/animnodebuilder.h>
+#include <dtAnim/cal3danimator.h>
+#include <dtAnim/cal3dobjects.h>
+#include <dtAnim/modeldatabase.h>
+#include <dtUtil/log.h>
+// CAL3D
 #include <cal3d/cal3d.h>
 #include <cal3d/coretrack.h>
 #include <cal3d/corekeyframe.h>
@@ -28,37 +35,160 @@
 #include <cassert>
 #include <algorithm>
 
-//#include <dtUtil/stringutils.h>
-//#include <dtUtil/log.h>
+
 
 namespace dtAnim
 {
    /////////////////////////////////////////////////////////////////////////////
-   // CONSTANTS
+   // CLASS CODE
    /////////////////////////////////////////////////////////////////////////////
-   const float Cal3DModelWrapper::DEFAULT_MINIMUM_BLEND_TIME = 0.1f;
+   Cal3dInterfaceObjectCache::Cal3dInterfaceObjectCache(Cal3DModelWrapper& model)
+      : BaseClass(model)
+   {}
 
-
-
-   /////////////////////////////////////////////////////////////////////////////
-   // CLASS VARIABLES
-   /////////////////////////////////////////////////////////////////////////////
-   bool Cal3DModelWrapper::sAllowBindPose = false;
-
-
-
-   /////////////////////////////////////////////////////////////////////////////
-   // CLASS METHODS
-   /////////////////////////////////////////////////////////////////////////////
-   void Cal3DModelWrapper::SetAllowBindPose(bool allow)
+   Cal3dInterfaceObjectCache::~Cal3dInterfaceObjectCache()
    {
-      sAllowBindPose = allow;
+      Clear();
    }
 
-   /////////////////////////////////////////////////////////////////////////////
-   bool Cal3DModelWrapper::GetAllowBindPose()
+   void Cal3dInterfaceObjectCache::UpdateAnimations()
    {
-      return sAllowBindPose;
+      mAnims.clear();
+      mIDAnimMap.clear();
+
+      CalCoreModel* model = mModel->GetCalModel()->getCoreModel();
+
+      std::string name;
+      CalCoreAnimation* anim = NULL;
+      int limit = model->getCoreAnimationCount();
+      for (int id = 0; id < limit; ++id)
+      {
+         anim = model->getCoreAnimation(id);
+         name = anim->getName();
+
+         dtCore::RefPtr<dtAnim::Cal3dAnimation> newAnim = new dtAnim::Cal3dAnimation(*mModel, *anim);
+         mAnims.insert(std::make_pair(name, newAnim));
+
+         mIDAnimMap.insert(std::make_pair(id, newAnim));
+      }
+   }
+
+   void Cal3dInterfaceObjectCache::UpdateBones()
+   {
+      mBones.clear();
+      mIDBoneMap.clear();
+
+      CalSkeleton* skel = mModel->GetCalModel()->getSkeleton();
+
+      std::string name;
+      CalBone* bone = NULL;
+      int limit = int(skel->getCoreSkeleton()->getVectorCoreBone().size());
+      for (int id = 0; id < limit; ++id)
+      {
+         bone = skel->getBone(id);
+         name = bone->getCoreBone()->getName();
+
+         dtCore::RefPtr<dtAnim::Cal3dBone> newBone = new dtAnim::Cal3dBone(*mModel, *bone);
+         mBones.insert(std::make_pair(name, newBone));
+
+         mIDBoneMap.insert(std::make_pair(id, newBone));
+      }
+   }
+
+   void Cal3dInterfaceObjectCache::UpdateMaterials()
+   {
+      mMaterials.clear();
+
+      CalCoreModel* model = mModel->GetCalModel()->getCoreModel();
+
+      std::string name;
+      CalCoreMaterial* material = NULL;
+      int limit = model->getCoreMaterialCount();
+      for (int id = 0; id < limit; ++id)
+      {
+         material = model->getCoreMaterial(id);
+         name = material->getName();
+         mMaterials.insert(std::make_pair(name, new dtAnim::Cal3dMaterial(*mModel, *material)));
+      }
+   }
+
+   void Cal3dInterfaceObjectCache::UpdateMeshes()
+   {
+      mMeshes.clear();
+
+      CalModel* model = mModel->GetCalModel();
+      Cal3DModelData* modelData = mModel->GetCalModelData();
+      CalHardwareModel* hardwareModel = modelData->GetCalHardwareModel();
+
+      std::string name;
+      CalMesh* mesh = NULL;
+      int limit = model->getCoreModel()->getCoreMeshCount();
+
+      if (hardwareModel != NULL)
+      {
+         limit = hardwareModel->getHardwareMeshCount();
+      }
+
+      for (int id = 0; id < limit; ++id)
+      {
+         mesh = model->getMesh(id);
+         if (hardwareModel != NULL)
+         {
+            name = model->getCoreModel()->getCoreMesh(id)->getName();
+            dtCore::RefPtr<dtAnim::Cal3dHardwareMesh> newMesh = new dtAnim::Cal3dHardwareMesh(*mModel, *hardwareModel, id);
+            newMesh->SetName(name);
+            mMeshes.insert(std::make_pair(name, newMesh));
+         }
+         else if (mesh != NULL)
+         {
+            name = mesh->getCoreMesh()->getName();
+            mMeshes.insert(std::make_pair(name, new dtAnim::Cal3dMesh(*mModel, *mesh)));
+         }
+      }
+   }
+
+   void Cal3dInterfaceObjectCache::UpdateSkeleton()
+   {
+      CalSkeleton* skel = mModel->GetCalModel()->getSkeleton();
+      mSkel = new dtAnim::Cal3dSkeleton(*mModel, *skel);
+   }
+
+   void Cal3dInterfaceObjectCache::Clear()
+   {
+      mIDAnimMap.clear();
+      mIDBoneMap.clear();
+
+      mAnims.clear();
+      mBones.clear();
+      mMaterials.clear();
+      mMeshes.clear();
+      mSkel = NULL;
+   }
+
+   dtAnim::Cal3dAnimation* Cal3dInterfaceObjectCache::GetAnimationByID(int id)
+   {
+      dtAnim::Cal3dAnimation* anim = NULL;
+      
+      IDAnimMap::iterator foundIter = mIDAnimMap.find(id);
+      if (foundIter != mIDAnimMap.end())
+      {
+         anim = foundIter->second;
+      }
+
+      return anim;
+   }
+
+   dtAnim::Cal3dBone* Cal3dInterfaceObjectCache::GetBoneByID(int id)
+   {
+      dtAnim::Cal3dBone* bone = NULL;
+      
+      IDBoneMap::iterator foundIter = mIDBoneMap.find(id);
+      if (foundIter != mIDBoneMap.end())
+      {
+         bone = foundIter->second;
+      }
+
+      return bone;
    }
 
 
@@ -66,51 +196,275 @@ namespace dtAnim
    /////////////////////////////////////////////////////////////////////////////
    // CLASS CODE
    /////////////////////////////////////////////////////////////////////////////
-   Cal3DModelWrapper::Cal3DModelWrapper(CalModel* model)
-      : mScale(1.0f)
-      , mMinBlendTime(DEFAULT_MINIMUM_BLEND_TIME)
-      , mCalModel(model)
+   Cal3DModelWrapper::Cal3DModelWrapper(dtAnim::Cal3DModelData& modelData)
+      : BaseClass(modelData)
+      , mScale(1.0f)
+      , mCalModel(NULL)
       , mRenderer(NULL)
-      , mMixer(NULL)
-      , mHardwareModel(NULL)
+      , mSelectedMeshID(-1)
+      , mSelectedSubmeshID(-1)
    {
-      assert(mCalModel != NULL);
+      CalCoreModel* coreModel = modelData.GetCoreModel();
+      mCalModel = new CalModel(coreModel);
 
       mRenderer = mCalModel->getRenderer();
-      mMixer    = mCalModel->getMixer();
+      mCache = new dtAnim::Cal3dInterfaceObjectCache(*this);
 
-      if (model)
+      // attach all meshes to the model
+      if (coreModel)
       {
-         CalCoreModel* coreModel = model->getCoreModel();
+         // Update the interface object cache.
+         // This can be done since it has access to the
+         // passed-in model object.
+         mCache->Update();
 
-         // attach all meshes to the model
-         if (coreModel)
+         for (int meshId = 0; meshId < coreModel->getCoreMeshCount(); ++meshId)
          {
-            for (int meshId = 0; meshId < coreModel->getCoreMeshCount(); ++meshId)
+            // If the mesh is currently loaded
+            CalCoreMesh* coreMesh = coreModel->getCoreMesh(meshId);
+            if (coreMesh != NULL)
             {
-               // If the mesh is currently loaded
-               if (coreModel->getCoreMesh(meshId))
+               AttachMesh(meshId);
+
+               dtAnim::MeshInterface* mesh = GetMesh(coreMesh->getName());
+               if (mesh != NULL)
                {
-                  AttachMesh(meshId);
-                  ShowMesh(meshId);
+                  mesh->SetVisible(true);
                }
             }
          }
       }
+      
+      UpdateInterfaceObjects();
+      mAnimator = new Cal3DAnimator(this);
    }
 
    /////////////////////////////////////////////////////////////////////////////
    Cal3DModelWrapper::~Cal3DModelWrapper()
    {
+      // Clear the cache to prevent circular references.
+      mCache->Clear();
+      mCache = NULL;
+
+      Cal3DAnimator* calAnimator = dynamic_cast<Cal3DAnimator*>(mAnimator.get());
+      calAnimator->SetWrapper(NULL);
+      calAnimator = NULL;
+      mAnimator = NULL;
+      mDrawable = NULL;
+
       delete mCalModel;
-      delete mHardwareModel;
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   dtCore::RefPtr<osg::Node> Cal3DModelWrapper::CreateDrawableNode(bool immediate)
+   {
+      mDrawable = dtAnim::ModelDatabase::GetInstance().CreateNode(*this, immediate);
+      return mDrawable.get();
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   osg::Node* Cal3DModelWrapper::GetDrawableNode()
+   {
+      return mDrawable.get();
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   dtAnim::Cal3DModelData* Cal3DModelWrapper::GetCalModelData()
+   {
+      return dynamic_cast<Cal3DModelData*>(GetModelData());
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   dtAnim::AnimationUpdaterInterface* Cal3DModelWrapper::GetAnimator()
+   {
+      return mAnimator.get();
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   dtAnim::Cal3DAnimator* Cal3DModelWrapper::GetCalAnimator()
+   {
+      return mAnimator.get();
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   dtAnim::AnimationInterface* Cal3DModelWrapper::GetAnimation(const std::string& name) const
+   {
+      return mCache->GetAnimation(name);
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   int Cal3DModelWrapper::GetAnimations(dtAnim::AnimationArray& outAnims) const
+   {
+      return mCache->GetAnimations(outAnims);
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   dtAnim::BoneInterface* Cal3DModelWrapper::GetBone(const std::string& name) const
+   {
+      return mCache->GetBone(name);
+   }
+   
+   /////////////////////////////////////////////////////////////////////////////
+   int Cal3DModelWrapper::GetBones(dtAnim::BoneArray& outBones) const
+   {
+      return mCache->GetBones(outBones);
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   dtAnim::MaterialInterface* Cal3DModelWrapper::GetMaterial(const std::string& name) const
+   {
+      return mCache->GetMaterial(name);
+   }
+   
+   /////////////////////////////////////////////////////////////////////////////
+   int Cal3DModelWrapper::GetMaterials(dtAnim::MaterialArray& outMaterials) const
+   {
+      return mCache->GetMaterials(outMaterials);
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   dtAnim::MeshInterface* Cal3DModelWrapper::GetMesh(const std::string& name) const
+   {
+      return mCache->GetMesh(name);
+   }
+   
+   /////////////////////////////////////////////////////////////////////////////
+   int Cal3DModelWrapper::GetMeshes(dtAnim::MeshArray& outMeshes) const
+   {
+      return mCache->GetMeshes(outMeshes);
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   dtAnim::SkeletonInterface* Cal3DModelWrapper::GetSkeleton()
+   {
+      return mCache->GetSkeleton();
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   const dtAnim::SkeletonInterface* Cal3DModelWrapper::GetSkeleton() const
+   {
+      return mCache->GetSkeleton();
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   int Cal3DModelWrapper::GetAnimationCount() const
+   {
+      return (int) mCache->mAnims.size();
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   int Cal3DModelWrapper::GetBoneCount() const
+   {
+      return (int) mCache->mBones.size();
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   int Cal3DModelWrapper::GetMaterialCount() const
+   {
+      return (int) mCache->mMaterials.size();
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   int Cal3DModelWrapper::GetMeshCount() const
+   {
+      return (int) mCache->mMeshes.size();
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   dtAnim::AnimationInterface* Cal3DModelWrapper::GetAnimationByIndex(int index) const
+   {
+      return mCache->GetAnimationByID(index);
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   dtAnim::BoneInterface* Cal3DModelWrapper::GetBoneByIndex(int id) const
+   {
+      return mCache->GetBoneByID(id);
+   }
+   
+   /////////////////////////////////////////////////////////////////////////////
+   dtAnim::Cal3dBaseMesh* Cal3DModelWrapper::GetMeshByIndex(int id) const
+   {
+      CalMesh* mesh = mCalModel->getMesh(id);
+      return mesh == NULL ? NULL : mCache->GetMesh(mesh->getCoreMesh()->getName());
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   int Cal3DModelWrapper::GetRootBones(dtAnim::BoneArray& outBones) const
+   {
+      int count = 0;
+
+      if (mCalModel != NULL)
+      {
+         typedef std::vector<int> IntArray;
+         IntArray ids = mCalModel->getCoreModel()->getCoreSkeleton()->getVectorRootCoreBoneId();
+
+         dtAnim::BoneInterface* bone = NULL;
+         int limit = int(ids.size());
+         for (int i = 0; i < limit; ++i)
+         {
+            bone = GetBoneByIndex(i);
+            if (bone != NULL)
+            {
+               outBones.push_back(bone);
+               ++count;
+            }
+         }
+      }
+
+      return count;
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void Cal3DModelWrapper::UpdateInterfaceObjects()
+   {
+      UpdateBoneInterfaceObjects();
+      UpdateMaterialInterfaceObjects();
+      UpdateMeshInterfaceObjects();
+      UpdateAnimationInterfaceObjects();
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void Cal3DModelWrapper::UpdateAnimationInterfaceObjects()
+   {
+      mCache->UpdateAnimations();
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void Cal3DModelWrapper::UpdateBoneInterfaceObjects()
+   {
+      mCache->UpdateSkeleton();
+      mCache->UpdateBones();
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void Cal3DModelWrapper::UpdateMaterialInterfaceObjects()
+   {
+      mCache->UpdateMaterials();
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void Cal3DModelWrapper::UpdateMeshInterfaceObjects()
+   {
+      mCache->UpdateMeshes();
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void Cal3DModelWrapper::ClearInterfaceObjects()
+   {
+      mCache->Clear();
    }
 
    /////////////////////////////////////////////////////////////////////////////
    bool Cal3DModelWrapper::AttachMesh(int meshID)
    {
       bool success = mCalModel->attachMesh(meshID);
-      mCalModel->setMaterialSet(0);
+
+      if (success)
+      {
+         mCalModel->setMaterialSet(0);
+         UpdateMeshInterfaceObjects();
+      }
 
       return success;
    }
@@ -118,42 +472,22 @@ namespace dtAnim
    /////////////////////////////////////////////////////////////////////////////
    bool Cal3DModelWrapper::DetachMesh(int meshID)
    {
-      return mCalModel->detachMesh(meshID);
+      bool success = mCalModel->detachMesh(meshID);
+
+      if (success)
+      {
+         UpdateMeshInterfaceObjects();
+      }
+
+      return success;
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void Cal3DModelWrapper::ShowMesh(int meshID)
+   int Cal3DModelWrapper::GetAttachedMeshCount() const
    {
-      if (meshID >= GetMeshCount())
-      {
-         return;
-      }
-
-      mMeshVisibility[meshID] = true;
+      return mRenderer->getMeshCount();
    }
-
-   /////////////////////////////////////////////////////////////////////////////
-   void Cal3DModelWrapper::HideMesh(int meshID)
-   {
-      if (meshID >= GetMeshCount())
-      {
-         return;
-      }
-
-      mMeshVisibility[meshID] = false;
-   }
-
-   /////////////////////////////////////////////////////////////////////////////
-   bool Cal3DModelWrapper::IsMeshVisible(int meshID)
-   {
-      if (meshID >= GetMeshCount())
-      {
-         return false;
-      }
-
-      return mMeshVisibility[meshID];
-   }
-
+   
    /////////////////////////////////////////////////////////////////////////////
    void Cal3DModelWrapper::SetCalModel(CalModel* model)
    {
@@ -161,75 +495,19 @@ namespace dtAnim
 
       mCalModel = model;
       mRenderer = mCalModel->getRenderer();
-      mMixer    = mCalModel->getMixer();
-   }
 
-   /////////////////////////////////////////////////////////////////////////////
-   bool Cal3DModelWrapper::BlendCycle(int id, float weight, float delay)
-   {
-      float fadeTime = delay < mMinBlendTime ? mMinBlendTime : delay;
-      return mMixer->blendCycle(id, weight, fadeTime);
-   }
+      mSelectedMeshID = -1;
+      mSelectedSubmeshID = -1;
 
-   /////////////////////////////////////////////////////////////////////////////
-   void Cal3DModelWrapper::SetSpeedFactor(int id, float speedFactor)
-   {
-      if (mMixer->getAnimationVector().size() > id && mMixer->getAnimationVector()[id] != NULL)
-      {
-         CalAnimationCycle* cac = dynamic_cast<CalAnimationCycle*>(mMixer->getAnimationVector()[id]);
-         if (cac != NULL)
-         {
-            if (cac->getState() != CalAnimation::STATE_ASYNC)
-            {
-               float duration = cac->getCoreAnimation()->getDuration() / speedFactor;
-               cac->setAsync(cac->getTime(), duration);
-            }
-            else
-            {
-               cac->setTimeFactor(speedFactor);
-            }
-         }
-      }
+      Cal3DAnimator* calAnimator = dynamic_cast<Cal3DAnimator*>(mAnimator.get());
+      calAnimator->SetWrapper(this);
+      mCache->Update();
    }
-
+   
    /////////////////////////////////////////////////////////////////////////////
-   bool Cal3DModelWrapper::ClearCycle(int id, float delay)
+   void Cal3DModelWrapper::ClearAllAnimations(float delay)
    {
-      return mMixer->clearCycle(id, delay);
-   }
-
-   /////////////////////////////////////////////////////////////////////////////
-   void Cal3DModelWrapper::ClearAll(float delay)
-   {
-      std::vector<CalAnimation*>& animList = mMixer->getAnimationVector();
-      for (size_t animIndex = 0; animIndex < animList.size(); ++animIndex)
-      {
-         CalAnimation* currentAnim = animList[animIndex];
-         if (currentAnim)
-         {
-            if (currentAnim->getType() == CalAnimation::TYPE_CYCLE)
-            {
-               ClearCycle(animIndex, delay);
-            }
-            else if (currentAnim->getType() == CalAnimation::TYPE_ACTION)
-            {
-               RemoveAction(animIndex);
-            }
-         }
-      }
-   }
-
-   /////////////////////////////////////////////////////////////////////////////
-   bool Cal3DModelWrapper::ExecuteAction(int id, float delayIn, float delayOut,
-         float weightTgt/*=1.f*/, bool autoLock/*=false*/)
-   {
-      return mMixer->executeAction(id, delayIn, delayOut, weightTgt, autoLock);
-   }
-
-   /////////////////////////////////////////////////////////////////////////////
-   bool Cal3DModelWrapper::RemoveAction(int id)
-   {
-      return mMixer->removeAction(id);
+      mAnimator->ClearAll(delay);
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -245,327 +523,9 @@ namespace dtAnim
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   int Cal3DModelWrapper::GetCoreAnimationCount() const
+   CalRenderer* Cal3DModelWrapper::GetCalRenderer()
    {
-      return mCalModel->getCoreModel()->getCoreAnimationCount();
-   }
-
-   /////////////////////////////////////////////////////////////////////////////
-   osg::Quat Cal3DModelWrapper::GetCoreTrackKeyFrameQuat(unsigned int animid, unsigned int boneid, unsigned int keyframeindex) const
-   {
-      CalCoreTrack* cct = mCalModel->getCoreModel()->getCoreAnimation(animid)->getCoreTrack(boneid);
-      assert(cct);
-
-      if (cct)
-      {
-         CalCoreKeyframe* calKeyFrame = cct->getCoreKeyframe(keyframeindex);
-         const CalQuaternion& calQuat = calKeyFrame->getRotation();
-         return osg::Quat(calQuat.x, calQuat.y, calQuat.z, -calQuat.w);
-      }
-
-      return osg::Quat();
-   }
-
-   /////////////////////////////////////////////////////////////////////////////
-   osg::Quat Cal3DModelWrapper::GetBoneAbsoluteRotationForKeyFrame(int animID, int boneID, unsigned int keyframeindex) const
-   {
-      osg::Quat accumulatedRotation;
-      osg::Quat relativeRotation;
-
-      do
-      {
-         int parentBoneID = GetParentBoneID(boneID);
-
-         // If the animation has altered this bone rotation,
-         // use it, otherwise use the normal bone rotation
-         if (HasTrackForBone(animID, boneID))
-         {
-            // Make sure this is a valid keyframe
-            unsigned int keyframecount = GetCoreAnimationKeyframeCountForTrack(animID, boneID);
-            assert(keyframeindex < keyframecount);
-
-            // Get the rotation for the bone at the desired keyframe
-            relativeRotation = GetCoreTrackKeyFrameQuat(animID, boneID, keyframeindex);
-         }
-         else
-         {
-           relativeRotation = GetBoneRelativeRotation(boneID);
-         }
-
-         // Accumulate the rotation
-         accumulatedRotation = accumulatedRotation * relativeRotation;
-
-         // Move on to the next bone
-         boneID = parentBoneID;
-
-      } while (boneID != dtAnim::Cal3DModelWrapper::NULL_BONE);
-
-      return accumulatedRotation;
-   }
-
-   /////////////////////////////////////////////////////////////////////////////
-   osg::Quat Cal3DModelWrapper::GetBoneAbsoluteRotation(unsigned int boneID) const
-   {
-      CalBone* bone = mCalModel->getSkeleton()->getBone(boneID);
-      assert(bone);
-
-      if (bone)
-      {
-         const CalQuaternion& calQuat = bone->getRotationAbsolute();
-         osg::Quat FixedQuat(-calQuat.x, -calQuat.y, -calQuat.z, calQuat.w);
-         return FixedQuat;
-      }
-
-      return osg::Quat();
-   }
-
-   /////////////////////////////////////////////////////////////////////////////
-   osg::Vec3 Cal3DModelWrapper::GetBoneAbsoluteTranslation(unsigned int boneID) const
-   {
-      CalBone* bone = mCalModel->getSkeleton()->getBone(boneID);
-      assert(bone);
-
-      if (bone)
-      {
-         const CalVector& calvec = bone->getTranslationAbsolute();
-         return osg::Vec3(calvec.x, calvec.y, calvec.z);
-      }
-
-      return osg::Vec3();
-   }
-
-   /////////////////////////////////////////////////////////////////////////////
-   osg::Quat Cal3DModelWrapper::GetBoneRelativeRotation(unsigned int boneID) const
-   {
-      CalBone* bone = mCalModel->getSkeleton()->getBone(boneID);
-      assert(bone);
-
-      if (bone)
-      {
-         const CalQuaternion& calQuat = bone->getRotation();
-         return osg::Quat(-calQuat.x, -calQuat.y, -calQuat.z, calQuat.w);
-      }
-
-      return osg::Quat();
-   }
-
-   /////////////////////////////////////////////////////////////////////////////
-   int Cal3DModelWrapper::GetCoreBoneID(const std::string& name) const
-   {
-      CalCoreBone* corebone = mCalModel->getCoreModel()->getCoreSkeleton()->getCoreBone(name);
-      if (corebone == NULL)
-      {
-         return Cal3DModelWrapper::NULL_BONE;
-      }
-
-      return mCalModel->getCoreModel()->getCoreSkeleton()->getCoreBoneId(name);
-   }
-
-   ///@cond DOXYGEN_SHOULD_SKIP_THIS
-   namespace details
-   {
-      struct ReturnBoneName
-      {
-         std::string operator ()(CalCoreBone* bone) const
-         {
-            return bone->getName();
-         }
-      };
-   }
-   ///@endcond
-
-   /////////////////////////////////////////////////////////////////////////////
-   void Cal3DModelWrapper::GetCoreBoneNames(std::vector<std::string>& toFill) const
-   {
-      CalCoreSkeleton* skel = mCalModel->getCoreModel()->getCoreSkeleton();
-      std::vector<CalCoreBone*> boneVec = skel->getVectorCoreBone();
-
-      if (boneVec.empty()) { return; }
-
-      toFill.resize(boneVec.size());
-      std::transform(boneVec.begin(), boneVec.end(), toFill.begin(), details::ReturnBoneName());
-   }
-
-   /////////////////////////////////////////////////////////////////////////////
-   bool Cal3DModelWrapper::HasTrackForBone(unsigned int animID, int boneID) const
-   {
-      return (mCalModel->getCoreModel()->getCoreAnimation(animID)->getCoreTrack(boneID) != NULL);
-   }
-
-   /////////////////////////////////////////////////////////////////////////////
-   bool Cal3DModelWrapper::HasBone(int boneID) const
-   {
-      return(mCalModel->getSkeleton()->getBone(boneID) != NULL);
-   }
-
-   /////////////////////////////////////////////////////////////////////////////
-   bool Cal3DModelWrapper::HasAnimation(int animID) const
-   {
-      std::vector<CalAnimation*>& animationList = mCalModel->getMixer()->getAnimationVector();
-      return animID < (int)animationList.size() && animationList[animID];
-   }
-
-   /////////////////////////////////////////////////////////////////////////////
-   const std::string& Cal3DModelWrapper::GetCoreAnimationName(int animID) const
-   {
-      return mCalModel->getCoreModel()->getCoreAnimation(animID)->getName();
-   }
-
-   /////////////////////////////////////////////////////////////////////////////
-   int Cal3DModelWrapper::GetCoreAnimationIDByName(const std::string& name) const
-   {
-      return mCalModel->getCoreModel()->getCoreAnimationId(name);
-   }
-
-   /////////////////////////////////////////////////////////////////////////////
-   unsigned int Cal3DModelWrapper::GetCoreAnimationTrackCount(int animID) const
-   {
-      return mCalModel->getCoreModel()->getCoreAnimation(animID)->getTrackCount();
-   }
-
-   /////////////////////////////////////////////////////////////////////////////
-   int Cal3DModelWrapper::GetParentBoneID(unsigned int boneID) const
-   {
-      //CalBone* currentBone = const_cast<CalBone*>(mCalModel->getSkeleton()->getBone(boneID));
-      CalCoreBone* coreBone = const_cast<CalCoreBone*>(mCalModel->getCoreModel()->getCoreSkeleton()->getCoreBone(boneID));
-
-      if (coreBone)
-      {
-         //CalCoreBone* coreBone = currentBone->getCoreBone();
-         return coreBone->getParentId();
-      }
-
-      return NULL_BONE;
-   }
-
-   /////////////////////////////////////////////////////////////////////////////
-   void Cal3DModelWrapper::GetCoreBoneChildrenIDs(int parentCoreBoneID, std::vector<int>& toFill) const
-   {
-      std::list<int> childIdList = mCalModel->getCoreModel()->getCoreSkeleton()->getCoreBone(parentCoreBoneID)->getListChildId();
-
-      // prefer a container that is contiguous
-      toFill.clear();
-      std::list<int>::iterator listEnd=childIdList.end();
-      for (std::list<int>::iterator listIndex=childIdList.begin(); listIndex!=listEnd; ++listIndex)
-      {
-         toFill.push_back(*listIndex);
-      }
-   }
-
-   /////////////////////////////////////////////////////////////////////////////
-   void Cal3DModelWrapper::GetRootBoneIDs(std::vector<int>& toFill) const
-   {
-      toFill = mCalModel->getCoreModel()->getCoreSkeleton()->getVectorRootCoreBoneId();
-   }
-
-   /////////////////////////////////////////////////////////////////////////////
-   unsigned int Cal3DModelWrapper::GetCoreAnimationKeyframeCount(int animID) const
-   {
-      return mCalModel->getCoreModel()->getCoreAnimation(animID)->getTotalNumberOfKeyframes();
-   }
-
-   /////////////////////////////////////////////////////////////////////////////
-   unsigned int Cal3DModelWrapper::GetCoreAnimationKeyframeCountForTrack(int animID, int boneID) const
-   {
-      CalCoreAnimation* pAnimation = mCalModel->getCoreModel()->getCoreAnimation(animID);
-      assert(pAnimation);
-
-      CalCoreTrack* pTrack = pAnimation->getCoreTrack(boneID);
-      assert(pTrack);
-
-      return pTrack->getCoreKeyframeCount();
-   }
-
-   /////////////////////////////////////////////////////////////////////////////
-   float Cal3DModelWrapper::GetCoreAnimationDuration(int animID) const
-   {
-      return mCalModel->getCoreModel()->getCoreAnimation(animID)->getDuration();
-   }
-
-   /////////////////////////////////////////////////////////////////////////////
-   const std::string& Cal3DModelWrapper::GetCoreMeshName(int meshID) const
-   {
-      return mCalModel->getCoreModel()->getCoreMesh(meshID)->getName();
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   int Cal3DModelWrapper::GetCoreMeshID(const std::string& name) const
-   {
-      return mCalModel->getCoreModel()->getCoreMeshId(name);
-   }
-
-   /////////////////////////////////////////////////////////////////////////////
-   int Cal3DModelWrapper::GetCoreMaterialCount() const
-   {
-      return mCalModel->getCoreModel()->getCoreMaterialCount();
-   }
-
-   /////////////////////////////////////////////////////////////////////////////
-   CalCoreMaterial* Cal3DModelWrapper::GetCoreMaterial(int matID)
-   {
-      return mCalModel->getCoreModel()->getCoreMaterial(matID);
-   }
-
-   /////////////////////////////////////////////////////////////////////////////
-   osg::Vec4 Cal3DModelWrapper::GetCoreMaterialDiffuse(int matID) const
-   {
-      osg::Vec4 retColor;
-
-      CalCoreMaterial* mat = mCalModel->getCoreModel()->getCoreMaterial(matID);
-      if (mat != NULL)
-      {
-         CalCoreMaterial::Color color = mat->getDiffuseColor();
-         retColor.set(color.red, color.green, color.blue, color.alpha);
-      }
-
-      return retColor;
-   }
-
-   /////////////////////////////////////////////////////////////////////////////
-   osg::Vec4 Cal3DModelWrapper::GetCoreMaterialAmbient(int matID) const
-   {
-      osg::Vec4 retColor;
-
-      CalCoreMaterial* mat = mCalModel->getCoreModel()->getCoreMaterial(matID);
-
-      if (mat != NULL)
-      {
-         CalCoreMaterial::Color color = mat->getAmbientColor();
-         retColor.set(color.red, color.green, color.blue, color.alpha);
-      }
-
-      return retColor;
-   }
-
-   /////////////////////////////////////////////////////////////////////////////
-   osg::Vec4 Cal3DModelWrapper::GetCoreMaterialSpecular(int matID) const
-   {
-      osg::Vec4 retColor;
-
-      CalCoreMaterial* mat = mCalModel->getCoreModel()->getCoreMaterial(matID);
-
-      if (mat != NULL)
-      {
-         CalCoreMaterial::Color color = mat->getSpecularColor();
-         retColor.set(color.red, color.green, color.blue, color.alpha);
-      }
-
-      return retColor;
-   }
-
-   /////////////////////////////////////////////////////////////////////////////
-   float Cal3DModelWrapper::GetCoreMaterialShininess(int matID) const
-   {
-      CalCoreMaterial* mat = mCalModel->getCoreModel()->getCoreMaterial(matID);
-
-      if (mat != NULL)
-      {
-         return mat->getShininess();
-      }
-      else
-      {
-         return 0.f;
-      }
+      return mRenderer;
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -581,47 +541,17 @@ namespace dtAnim
    /////////////////////////////////////////////////////////////////////////////
    void Cal3DModelWrapper::SetScale(float scale)
    {
-      // Ensure scale never goes to 0, to prevent the NAN plague.
-      if(scale <= 0.0f)
-      {
-         scale = 0.001f;
-      }
+      // TODO: Change this to work per instance
+      // rather than on a shared model.
 
-      float prevScale = mScale;
+      GetModelData()->SetScale(scale);
       mScale = scale;
-
-      // If the previous scale was not 1...
-      if(prevScale != 1.0f)
-      {
-         // ...reverse its effect by 1/prevScale and then apply the new scale.
-         scale = 1.0f/prevScale * scale;
-      }
-
-      mCalModel->getCoreModel()->scale(scale);
    }
 
    /////////////////////////////////////////////////////////////////////////////
    float Cal3DModelWrapper::GetScale() const
    {
       return mScale;
-   }
-
-   /////////////////////////////////////////////////////////////////////////////
-   void Cal3DModelWrapper::ApplyCoreModelScaleFactor(float scaleFactor)
-   {
-      SetScale(mScale * scaleFactor);
-   }
-
-   /////////////////////////////////////////////////////////////////////////////
-   void Cal3DModelWrapper::SetAnimationTime(float time)
-   {
-      mMixer->setAnimationTime(time);
-   }
-
-   /////////////////////////////////////////////////////////////////////////////
-   float Cal3DModelWrapper::GetAnimationTime()
-   {
-      return mMixer->getAnimationTime();
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -637,33 +567,10 @@ namespace dtAnim
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void Cal3DModelWrapper::Update(float deltaTime)
+   void Cal3DModelWrapper::UpdateAnimations(float deltaTime)
    {
-      mCalModel->update(deltaTime);
-   }
-
-   /////////////////////////////////////////////////////////////////////////////
-   void Cal3DModelWrapper::UpdateAnimation(float deltaTime)
-   {
-      mCalModel->getMixer()->updateAnimation(deltaTime);
-   }
-
-   /////////////////////////////////////////////////////////////////////////////
-   void Cal3DModelWrapper::UpdateMorphTargetMixer(float deltaTime)
-   {
-      mCalModel->getMorphTargetMixer()->update(deltaTime);
-   }
-
-   /////////////////////////////////////////////////////////////////////////////
-   void Cal3DModelWrapper::UpdatePhysique()
-   {
-      mCalModel->getPhysique()->update();
-   }
-
-   /////////////////////////////////////////////////////////////////////////////
-   void Cal3DModelWrapper::UpdateSpringSystem(float deltaTime)
-   {
-      mCalModel->getSpringSystem()->update(deltaTime);
+      //mCalModel->update(deltaTime);
+      mAnimator->Update(deltaTime);
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -681,133 +588,87 @@ namespace dtAnim
    /////////////////////////////////////////////////////////////////////////////
    bool Cal3DModelWrapper::SelectMeshSubmesh(int meshID, int submeshID)
    {
+      mSelectedMeshID = meshID;
+      mSelectedSubmeshID = submeshID;
       return mRenderer->selectMeshSubmesh(meshID, submeshID);
-   }
-
-   /////////////////////////////////////////////////////////////////////////////
-   int Cal3DModelWrapper::GetVertexCount()
-   {
-      return mRenderer->getVertexCount();
-   }
-
-   /////////////////////////////////////////////////////////////////////////////
-   int Cal3DModelWrapper::GetFaceCount()
-   {
-      return mRenderer->getFaceCount();
-   }
-
-   /////////////////////////////////////////////////////////////////////////////
-   int Cal3DModelWrapper::GetMapCount()
-   {
-      return mRenderer->getMapCount();
-   }
-
-   /////////////////////////////////////////////////////////////////////////////
-   int Cal3DModelWrapper::GetMeshCount() const
-   {
-      return mRenderer->getMeshCount();
-   }
-
-   /////////////////////////////////////////////////////////////////////////////
-   int Cal3DModelWrapper::GetSubmeshCount(int submeshID)
-   {
-      return mRenderer->getSubmeshCount(submeshID);
-   }
-
-   /////////////////////////////////////////////////////////////////////////////
-   int Cal3DModelWrapper::GetCoreMeshCount() const
-   {
-      return mCalModel->getCoreModel()->getCoreMeshCount();
-   }
-
-   /////////////////////////////////////////////////////////////////////////////
-   int Cal3DModelWrapper::GetFaces(CalIndex* faces)
-   {
-      return mRenderer->getFaces((CalIndex*)faces);
-   }
-
-   /////////////////////////////////////////////////////////////////////////////
-   int Cal3DModelWrapper::GetNormals(float* normals, int stride)
-   {
-      return mRenderer->getNormals(normals, stride);
-   }
-
-   /////////////////////////////////////////////////////////////////////////////
-   int Cal3DModelWrapper::GetTextureCoords(int mapID, float* coords, int stride)
-   {
-      return mRenderer->getTextureCoordinates(mapID, coords, stride);
-   }
-
-   /////////////////////////////////////////////////////////////////////////////
-   int Cal3DModelWrapper::GetVertices(float* vertBuffer, int stride)
-   {
-      return mRenderer->getVertices(vertBuffer, stride);
-   }
-
-   /////////////////////////////////////////////////////////////////////////////
-   void Cal3DModelWrapper::GetAmbientColor(unsigned char* colorBuffer)
-   {
-      mRenderer->getAmbientColor(colorBuffer);
-   }
-
-   /////////////////////////////////////////////////////////////////////////////
-   void Cal3DModelWrapper::GetDiffuseColor(unsigned char* colorBuffer)
-   {
-      mRenderer->getDiffuseColor(colorBuffer);
-   }
-
-   /////////////////////////////////////////////////////////////////////////////
-   void Cal3DModelWrapper::GetSpecularColor(unsigned char* colorBuffer)
-   {
-      mRenderer->getSpecularColor(colorBuffer);
-   }
-
-   /////////////////////////////////////////////////////////////////////////////
-   float Cal3DModelWrapper::GetShininess()
-   {
-      return mRenderer->getShininess();
-   }
-
-   /////////////////////////////////////////////////////////////////////////////
-   void* Cal3DModelWrapper::GetMapUserData(int mapID)
-   {
-      return mRenderer->getMapUserData(mapID);
-   }
-
-   /////////////////////////////////////////////////////////////////////////////
-   const std::string& Cal3DModelWrapper::GetCoreMaterialName(int matID) const
-   {
-      return mCalModel->getCoreModel()->getCoreMaterial(matID)->getName();
-   }
-
-   /////////////////////////////////////////////////////////////////////////////
-   void Cal3DModelWrapper::UpdateSkeleton()
-   {
-      if(CanUpdate())
-      {
-         mCalModel->getMixer()->updateSkeleton();
-      }
-   }
-
-   /////////////////////////////////////////////////////////////////////////////
-   bool Cal3DModelWrapper::CanUpdate() const
-   {
-      CalMixer* mixer = mCalModel->getMixer();
-      return ! mixer->getAnimationActionList().empty()
-         || ! mixer->getAnimationCycle().empty()
-         || GetAllowBindPose();
-   }
-
-   /////////////////////////////////////////////////////////////////////////////
-   void Cal3DModelWrapper::SetMinimumBlendTime(float seconds)
-   {
-      mMinBlendTime = seconds;
    }
    
    /////////////////////////////////////////////////////////////////////////////
-   float Cal3DModelWrapper::GetMinimumBlendTime() const
+   dtCore::RefPtr<dtAnim::Cal3dSubmesh> Cal3DModelWrapper::GetSelectedSubmesh()
    {
-      return mMinBlendTime;
+      dtCore::RefPtr<dtAnim::Cal3dSubmesh> submesh;
+      CalSubmesh* calSubmesh = NULL;
+
+      if (mSelectedMeshID >= 0 && mSelectedSubmeshID >= 0)
+      {
+         CalMesh* mesh = mCalModel->getMesh(mSelectedMeshID);
+         calSubmesh = mesh == NULL ? NULL : mesh->getSubmesh(mSelectedSubmeshID);
+
+         if (calSubmesh != NULL)
+         {
+            submesh = new dtAnim::Cal3dSubmesh(*this, *calSubmesh);
+         }
+      }
+
+      return submesh;
+   }
+   
+   /////////////////////////////////////////////////////////////////////////////
+   dtCore::RefPtr<dtAnim::Cal3dMaterial> Cal3DModelWrapper::GetSelectedSubmeshMaterial()
+   {
+      dtAnim::Cal3dMaterial* material = NULL;
+
+      if (mSelectedMeshID >= 0)
+      {
+         CalMesh* mesh = mCalModel->getMesh(mSelectedMeshID);
+         if (mesh != NULL)
+         {
+            CalSubmesh* calSubmesh = mesh->getSubmesh(mSelectedSubmeshID);
+            if (calSubmesh != NULL)
+            {
+               int materialID = calSubmesh->getCoreMaterialId();
+               dtAnim::MaterialArray materials;
+               mCache->GetMaterials(materials);
+
+               if (materialID >= 0 && materialID < int(materials.size()))
+               {
+                  material = dynamic_cast<dtAnim::Cal3dMaterial*>(materials[materialID].get());
+               }
+            }
+         }
+      }
+
+      return material;
+   }
+
+   void Cal3DModelWrapper::HandleModelResourceUpdate(dtAnim::ModelResourceType resourceType)
+   {
+      switch (resourceType)
+      {
+      case dtAnim::SKEL_FILE:
+         UpdateBoneInterfaceObjects();
+         break;
+
+      case dtAnim::MAT_FILE:
+         UpdateMaterialInterfaceObjects();
+         break;
+
+      case dtAnim::MESH_FILE:
+         UpdateMeshInterfaceObjects();
+         break;
+
+      case dtAnim::ANIM_FILE:
+         UpdateAnimationInterfaceObjects();
+         break;
+
+      default:
+         break;
+      }
+   }
+
+   void Cal3DModelWrapper::HandleModelUpdated()
+   {
+      UpdateInterfaceObjects();
    }
 
    /////////////////////////////////////////////////////////////////////////////

@@ -21,31 +21,26 @@
 
 #include <dtAnim/animdriver.h>
 
-#include <cal3d/model.h>
-#include <cal3d/mixer.h>
-
 namespace dtAnim
 {
 
-AnimDriver::AnimDriver(Cal3DModelWrapper* pWrapper)
-: mWrapper(pWrapper)
+AnimDriver::AnimDriver(Cal3DAnimator* animator)
+: mAnimator(animator)
 {
 }
-
 
 AnimDriver::~AnimDriver()
 {
 }
 
-
 void AnimDriver::Update(double dt)
 {
-   mWrapper->UpdateAnimation(float(dt));
+   mAnimator->UpdateAnimation(float(dt));
 }
 
-void AnimDriver::SetWrapper(Cal3DModelWrapper* pWrapper)
+void AnimDriver::SetAnimator(Cal3DAnimator* animator)
 {
-   mWrapper = pWrapper;
+   mAnimator = animator;
 }
 
 }//namespace dtAnim

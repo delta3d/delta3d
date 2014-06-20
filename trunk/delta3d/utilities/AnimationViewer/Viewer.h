@@ -1,5 +1,5 @@
-#ifndef DELTA_ANIMVIEW_VIEWER
-#define DELTA_ANIMVIEW_VIEWER
+#ifndef __ANIMATION_VIEWER_H__
+#define __ANIMATION_VIEWER_H__
 
 #include <QtCore/QObject>
 #include <QtCore/QTimer>
@@ -13,6 +13,7 @@
 #include <dtAnim/posemeshutility.h>
 #include <dtAnim/posemesh.h>
 #include <dtAnim/attachmentcontroller.h>
+#include <dtAnim/modelloader.h>
 
 #include <vector>
 
@@ -34,9 +35,8 @@ namespace osg
 
 namespace dtAnim
 {
-   class Cal3DDatabase;
-   class Cal3DModelData;
-   class Cal3DModelWrapper;
+   class BaseModelData;
+   class BaseModelWrapper;
    class CharDrawable;
    class PoseMeshDatabase;
 }
@@ -50,6 +50,8 @@ public:
    Viewer();
 
    virtual void Config();
+
+   osg::Node* GetRootNode();
 
 public slots:
 
@@ -83,7 +85,7 @@ public slots:
    /// Hide the mesh on CalModel from view
    void OnHideMesh(int meshID);
 
-   void OnMorphChanged(int meshID, int subMeshID, int morphID, float weight);
+   void OnMorphChanged(const QString& meshName, int subMeshID, int morphID, float weight);
    void OnPlayMorphAnimation(int morphAnimID, float weight, float delayIn, float delayOut, bool looping);
    void OnStopMorphAnimation(int morphAnimID, float delay);
 
@@ -98,9 +100,10 @@ signals:
 
    void ClearCharacterData();
 
-   void MeshLoaded(int meshID, const QString& meshName, const std::vector<std::string>& boneNames);
+   void MeshLoaded(int meshID, const QString& meshName, const std::vector<std::string>& boneNames,
+      bool visible, int vertCount, int faceCount, int submeshCount);
 
-   void SubMorphTargetLoaded(int meshID, int subMeshID, int morphID, const QString& morphName);
+   void SubMorphTargetLoaded(const QString& meshName, int subMeshID, int morphID, const QString& morphName);
 
    void PoseMeshLoaded(const dtAnim::PoseMesh& poseMesh);
 
@@ -111,7 +114,7 @@ signals:
                        const QColor& diffuse, const QColor& ambient, const QColor& specular,
                        float shininess);
    
-   void CharacterDataLoaded(dtAnim::Cal3DModelData* modelData, dtAnim::Cal3DModelWrapper* wrapper);
+   void CharacterDataLoaded(dtAnim::BaseModelData* modelData, dtAnim::BaseModelWrapper* wrapper);
 
    void ErrorOccured(const QString& msg);
 
@@ -125,7 +128,7 @@ protected:
    virtual void PostFrame(const double deltaFrameTime);
 
 private:
-
+   dtCore::RefPtr<dtAnim::ModelLoader>          mModelLoader;
    dtCore::RefPtr<dtAnim::CharDrawable>         mCharacter;
    dtCore::RefPtr<dtAnim::AttachmentController> mAttachmentController;
 
@@ -140,7 +143,6 @@ private:
 
    dtCore::RefPtr<dtAnim::PoseMeshDatabase> mPoseDatabase;
    dtCore::RefPtr<dtAnim::PoseMeshUtility>  mPoseUtility;
-   dtCore::RefPtr<dtAnim::Cal3DDatabase>    mCalDatabase; ///<Need to keep this around since it holds our textures
 
    std::vector<dtAnim::PoseMesh*>* mPoseMeshes;
 

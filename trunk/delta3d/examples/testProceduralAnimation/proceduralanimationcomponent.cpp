@@ -25,10 +25,10 @@
 
 #include <dtABC/application.h>
 #include <dtGame/basemessages.h>
+#include <dtAnim/basemodelwrapper.h>
+#include <dtAnim/basemodeldata.h>
 #include <dtGame/messagetype.h>
-#include <dtAnim/cal3dmodelwrapper.h>
-#include <dtAnim/cal3dmodeldata.h>
-#include <dtAnim/cal3ddatabase.h>
+#include <dtAnim/modeldatabase.h>
 #include <dtActors/staticmeshactorproxy.h>
 #include <dtActors/engineactorregistry.h>
 #include <dtUtil/mathdefines.h>
@@ -267,23 +267,19 @@ void ProceduralAnimationComponent::InitializePerformanceTest()
 /// is important in a real application that has more than one core model
 dtAnim::PoseMeshDatabase* ProceduralAnimationComponent::GetPoseMeshDatabaseForActor(ProceduralAnimationActor* actor)
 {
-   dtAnim::Cal3DDatabase& calDatabase = dtAnim::Cal3DDatabase::GetInstance();
+   dtAnim::ModelDatabase& database = dtAnim::ModelDatabase::GetInstance();
 
-   dtAnim::Cal3DModelWrapper* wrapper = actor->GetComponent<dtAnim::AnimationHelper>()->GetModelWrapper();
-
-   CalCoreModel* coreModel = wrapper->GetCalModel()->getCoreModel();
+   dtAnim::BaseModelWrapper* wrapper = actor->GetComponent<dtAnim::AnimationHelper>()->GetModelWrapper();
 
    // See if this core model already has a pose mesh database that can be shared
-   std::map<CalCoreModel*, IKDatabase>::iterator mapIter;
-   mapIter = mPoseMeshMap.find(coreModel);
-
+   PoseMeshMap::iterator mapIter = mPoseMeshMap.find(wrapper);
    if (mapIter != mPoseMeshMap.end())
    {
       return mapIter->second.get();
    }
 
    // Get access to the pose mesh file name
-   dtAnim::Cal3DModelData* modelData = calDatabase.GetModelData(*wrapper);
+   dtAnim::BaseModelData* modelData = wrapper->GetModelData();
 
    if (!modelData->GetPoseMeshFilename().empty())
    {
@@ -291,7 +287,7 @@ dtAnim::PoseMeshDatabase* ProceduralAnimationComponent::GetPoseMeshDatabaseForAc
       dtAnim::PoseMeshDatabase* newPoseDatabase = new dtAnim::PoseMeshDatabase(wrapper);
       newPoseDatabase->LoadFromFile(modelData->GetPoseMeshFilename());
 
-      mPoseMeshMap.insert(std::make_pair(coreModel, newPoseDatabase));
+      mPoseMeshMap.insert(std::make_pair(wrapper, newPoseDatabase));
 
       return newPoseDatabase;
    }

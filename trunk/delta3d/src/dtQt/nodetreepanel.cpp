@@ -202,6 +202,11 @@ namespace dtQt
          mUI->mTree, SLOT(expandAll()));
       connect(mUI->mButtonCollapseAll, SIGNAL(clicked()),
          mUI->mTree, SLOT(collapseAll()));
+
+      connect(mUI->mButtonExpandAll, SIGNAL(clicked()),
+         this, SLOT(UpdateColumns()));
+      connect(mUI->mButtonCollapseAll, SIGNAL(clicked()),
+         this, SLOT(UpdateColumns()));
    }
 
    void NodeTreePanel::UpdateUI()
@@ -215,7 +220,15 @@ namespace dtQt
 
          QString qstr = QString::number(builder.GetNodeCount());
          mUI->mNodeCount->setText(qstr);
+
+         UpdateColumns();
       }
+   }
+
+   void NodeTreePanel::UpdateColumns()
+   {
+      mUI->mTree->resizeColumnToContents(0);
+      mUI->mTree->resizeColumnToContents(1);
    }
 
    void NodeTreePanel::SetNode(osg::Node* node, bool updateUI)
@@ -229,6 +242,8 @@ namespace dtQt
             UpdateUI();
 
             mUI->mTree->expandAll();
+            
+            UpdateColumns();
          }
       }
    }
