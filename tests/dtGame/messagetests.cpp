@@ -263,8 +263,8 @@ void MessageTests::createActors(dtCore::Map& map)
    actorTypes.push_back(dtActors::EngineActorRegistry::WAYPOINT_VOLUME_ACTOR_TYPE.get());
    actorTypes.push_back(dtActors::EngineActorRegistry::DISTANCE_SENSOR_ACTOR_TYPE.get());
 
-   actorTypes.push_back(TestGameActorLibrary::TEST_TANK_GAME_ACTOR_PROXY_TYPE.get());
-   actorTypes.push_back(TestGameActorLibrary::TEST_GAME_ACTOR_CRASH_PROXY_TYPE.get());
+   actorTypes.push_back(TestGameActorLibrary::TEST_TANK_GAME_ACTOR_TYPE.get());
+   actorTypes.push_back(TestGameActorLibrary::TEST_GAME_ACTOR_CRASH_TYPE.get());
 
    for (unsigned int i = 0; i < actorTypes.size(); ++i)
    {
@@ -630,7 +630,7 @@ void MessageTests::TestMessageDelivery()
       dtCore::RefPtr<dtGame::GameActorProxy> gap;
       mGameManager->CreateActor(*type, gap);
 
-      CPPUNIT_ASSERT(gap->IsGameActorProxy());
+      CPPUNIT_ASSERT(gap->IsGameActor());
       mGameManager->AddActor(*gap, false, false);
       std::set<const dtCore::ActorType*> typeSet;
       mGameManager->GetUsedActorTypes(typeSet);
@@ -716,7 +716,7 @@ void MessageTests::TestActorPublish()
       CPPUNIT_ASSERT(type != NULL);
       dtCore::RefPtr<dtCore::BaseActorObject> ap = mGameManager->CreateActor(*type);
 
-      CPPUNIT_ASSERT(ap->IsGameActorProxy());
+      CPPUNIT_ASSERT(ap->IsGameActor());
       dtCore::RefPtr<dtGame::GameActorProxy> gap = dynamic_cast<dtGame::GameActorProxy*>(ap.get());
       CPPUNIT_ASSERT(gap != NULL);
 
@@ -1166,8 +1166,8 @@ void MessageTests::CheckMapNames(const dtGame::MapMessage& mapLoadedMsg,
 void MessageTests::RemoveOneProxy(dtCore::Map& map)
 {
    std::vector<dtCore::RefPtr<dtCore::BaseActorObject> > toFill;
-   map.FindProxies(toFill, "", TestGameActorLibrary::TEST_TANK_GAME_ACTOR_PROXY_TYPE->GetCategory(),
-         TestGameActorLibrary::TEST_TANK_GAME_ACTOR_PROXY_TYPE->GetName());
+   map.FindProxies(toFill, "", TestGameActorLibrary::TEST_TANK_GAME_ACTOR_TYPE->GetCategory(),
+         TestGameActorLibrary::TEST_TANK_GAME_ACTOR_TYPE->GetName());
 
    CPPUNIT_ASSERT(!toFill.empty());
    map.RemoveProxy(*toFill[0]);
@@ -1485,7 +1485,7 @@ void MessageTests::TestDefaultMessageProcessorWithLocalOrRemoteActorUpdates(bool
    CPPUNIT_ASSERT(type != NULL);
    dtCore::RefPtr<dtCore::BaseActorObject> ap = mGameManager->CreateActor(*type);
 
-   CPPUNIT_ASSERT(ap->IsGameActorProxy());
+   CPPUNIT_ASSERT(ap->IsGameActor());
    dtCore::RefPtr<dtGame::GameActorProxy> gap = dynamic_cast<dtGame::GameActorProxy*>(ap.get());
    CPPUNIT_ASSERT(gap != NULL);
 
@@ -1642,7 +1642,7 @@ void MessageTests::TestDefaultMessageProcessorWithLocalOrRemoteActorDeletes(bool
    CPPUNIT_ASSERT(type != NULL);
    dtCore::RefPtr<dtCore::BaseActorObject> ap = mGameManager->CreateActor(*type);
 
-   CPPUNIT_ASSERT(ap->IsGameActorProxy());
+   CPPUNIT_ASSERT(ap->IsGameActor());
    dtCore::RefPtr<dtGame::GameActorProxy> gap = dynamic_cast<dtGame::GameActorProxy*>(ap.get());
    CPPUNIT_ASSERT(gap != NULL);
 
@@ -1694,7 +1694,7 @@ void MessageTests::TestDefaultMessageProcessorWithLocalOrRemoteActorCreates(bool
    CPPUNIT_ASSERT(type != NULL);
    dtCore::RefPtr<dtCore::BaseActorObject> ap = mGameManager->CreateActor(*type);
 
-   CPPUNIT_ASSERT(ap->IsGameActorProxy());
+   CPPUNIT_ASSERT(ap->IsGameActor());
    dtCore::RefPtr<dtGame::GameActorProxy> gap = dynamic_cast<dtGame::GameActorProxy*>(ap.get());
    CPPUNIT_ASSERT(gap != NULL);
 
@@ -1780,11 +1780,11 @@ void MessageTests::TestRemoteActorCreatesFromPrototype()
    mGameManager->CreateActor(*type.get(), prototypeProxy);
    CPPUNIT_ASSERT(prototypeProxy != NULL);
    dtCore::RefPtr<TestGameActor1> prototypeActor = dynamic_cast<TestGameActor1*>(prototypeProxy->GetDrawable());
-   prototypeActor->SetName("Test1Prototype");
+   prototypeProxy->SetName("Test1Prototype");
    prototypeActor->SetTickLocals(59);
    prototypeActor->SetTickRemotes(41);
    dtCore::UniqueId prototypeId = dtCore::UniqueId("ABCDEFG");
-   prototypeActor->SetUniqueId(prototypeId);
+   prototypeProxy->SetId(prototypeId);
    mGameManager->AddActorAsAPrototype(*prototypeProxy.get());
 
    // Now we need to actually create an actor from our prototype. Use that to populate a create message.
@@ -1793,9 +1793,9 @@ void MessageTests::TestRemoteActorCreatesFromPrototype()
    dtCore::RefPtr<dtGame::GameActorProxy> tempBogusGameProxy = dynamic_cast<dtGame::GameActorProxy*>(tempBogusPrototype.get());
    dtCore::RefPtr<TestGameActor1> tempBogusActor = dynamic_cast<TestGameActor1*>(tempBogusPrototype->GetDrawable());
    tempBogusActor->SetTickLocals(11);
-   tempBogusActor->SetName("MyUpdateActor");
+   tempBogusGameProxy->SetName("MyUpdateActor");
    dtCore::UniqueId createdId = dtCore::UniqueId("1234567890");
-   tempBogusActor->SetUniqueId(createdId);
+   tempBogusGameProxy->SetId(createdId);
 
    // Create an actor update message to simulate the creation process from a remote system
    // To do that, we populate the TickLocal property (plus name and Id).
@@ -1900,7 +1900,7 @@ void MessageTests::DoTestOfPartialUpdateDoesNotCreateActor(bool testWithPartial)
    CPPUNIT_ASSERT(type != NULL);
    dtCore::RefPtr<dtCore::BaseActorObject> ap = mGameManager->CreateActor(*type);
 
-   CPPUNIT_ASSERT(ap->IsGameActorProxy());
+   CPPUNIT_ASSERT(ap->IsGameActor());
    dtCore::RefPtr<dtGame::GameActorProxy> gap = dynamic_cast<dtGame::GameActorProxy*>(ap.get());
    CPPUNIT_ASSERT(gap != NULL);
 

@@ -74,9 +74,9 @@ namespace dtActors
       BaseClass::BuildPropertyMap();
 
       PrefabActor* actor = NULL;
-      GetActor(actor);
+      GetDrawable(actor);
 
-      AddProperty(new dtCore::ResourceActorProperty(*this, dtCore::DataType::PREFAB,
+      AddProperty(new dtCore::ResourceActorProperty(dtCore::DataType::PREFAB,
          "PrefabResource", "Prefab",
          dtCore::ResourceActorProperty::SetFuncType(this, &PrefabActorProxy::SetPrefab),
          "Defines the Prefab resource to use.", "Prefab"));
@@ -106,7 +106,7 @@ namespace dtActors
          if (actor)
          {
             dtCore::DeltaDrawable* childDrawable = NULL;
-            actor->GetActor(childDrawable);
+            actor->GetDrawable(childDrawable);
 
             if (childDrawable)
             {
@@ -131,7 +131,7 @@ namespace dtActors
                dtCore::BaseActorObject* actor = mActors[idx].get();
 
                dtCore::DeltaDrawable* childDrawable = NULL;
-               actor->GetActor(childDrawable);
+               actor->GetDrawable(childDrawable);
 
                if (childDrawable)
                {

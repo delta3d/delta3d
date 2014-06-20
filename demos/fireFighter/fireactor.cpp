@@ -61,24 +61,24 @@ void FireActorProxy::BuildPropertyMap()
 {
    GameItemActorProxy::BuildPropertyMap();
 
-   FireActor& fa = static_cast<FireActor&>(GetGameActor());
+   FireActor& fa = *GetDrawable<FireActor>();
 
-   AddProperty(new dtCore::ResourceActorProperty(*this, dtCore::DataType::PARTICLE_SYSTEM,
+   AddProperty(new dtCore::ResourceActorProperty(dtCore::DataType::PARTICLE_SYSTEM,
       "FlameFileName", "FlameFileName",
       dtCore::ResourceActorProperty::SetFuncType(&fa, &FireActor::SetFlameFilename),
       "Sets the flame file name"));
 
-   AddProperty(new dtCore::ResourceActorProperty(*this, dtCore::DataType::PARTICLE_SYSTEM,
+   AddProperty(new dtCore::ResourceActorProperty(dtCore::DataType::PARTICLE_SYSTEM,
       "SparkFileName", "SparkFileName",
       dtCore::ResourceActorProperty::SetFuncType(&fa, &FireActor::SetSparkFilename),
       "Sets the spark file name"));
 
-   AddProperty(new dtCore::ResourceActorProperty(*this, dtCore::DataType::PARTICLE_SYSTEM,
+   AddProperty(new dtCore::ResourceActorProperty(dtCore::DataType::PARTICLE_SYSTEM,
       "SmokeFileName", "SmokeFileName",
       dtCore::ResourceActorProperty::SetFuncType(&fa, &FireActor::SetSmokeFilename),
       "Sets the smoke file name"));
 
-   AddProperty(new dtCore::ResourceActorProperty(*this, dtCore::DataType::PARTICLE_SYSTEM,
+   AddProperty(new dtCore::ResourceActorProperty(dtCore::DataType::PARTICLE_SYSTEM,
       "SmokeCeilingFileName", "SmokeCeilingFileName",
       dtCore::ResourceActorProperty::SetFuncType(&fa, &FireActor::SetSmokeCeilingFilename),
       "Sets the smoke ceiling file name"));
@@ -120,7 +120,7 @@ dtCore::ActorProxyIcon* FireActorProxy::GetBillBoardIcon()
 
 void FireActorProxy::OnEnteredWorld()
 {
-   FireActor& fa = static_cast<FireActor&>(GetGameActor());
+   FireActor& fa = *GetDrawable<FireActor>();
 
    dtGame::Invokable* playSoundInvoke = new dtGame::Invokable("PlaySound",
       dtUtil::MakeFunctor(&FireActor::PlayFireSound, fa));

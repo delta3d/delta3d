@@ -474,12 +474,12 @@ namespace dtActors
          /**
           * Wrapper for the actor method
           */
-         float GetPassingScore() const { return static_cast<const TaskActor&>(GetGameActor()).GetPassingScore(); }
+         float GetPassingScore() const { return GetDrawable<TaskActor>()->GetPassingScore(); }
 
          /**
           * Wrapper for the actor method
           */
-         float GetScore() const { return static_cast<const TaskActor&>(GetGameActor()).GetScore(); }
+         float GetScore() const { return GetDrawable<TaskActor>()->GetScore(); }
 
          /**
           * Gets the billboard used to represent static mesh if this proxy's

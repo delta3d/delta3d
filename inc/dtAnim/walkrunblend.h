@@ -27,6 +27,8 @@
 #include <dtCore/observerptr.h>
 #include <dtCore/refptr.h>
 #include <dtCore/motioninterface.h>
+#include <vector>
+#include <limits>
 
 namespace dtAnim
 {
@@ -44,48 +46,47 @@ namespace dtAnim
 
             WRController(const WRController& pWR);
 
-            void SetAnimations(dtAnim::Animatable* stand, dtAnim::Animatable* walk, dtAnim::Animatable* run);
+            void SetAnimations(dtAnim::Animatable* stand, dtAnim::Animatable* walk, dtAnim::Animatable* run = NULL);
 
             //this sets the basic necessary blend values, the others get expected values
-            void SetRunWalkBasic(float inherentWalkSpeed, float walkFade, float runFade);
+            void SetInherentSpeeds(float inherentWalkSpeed, float inherentRunSpeed = std::numeric_limits<float>::max());
 
-            void SetStand(float start, float fadeIn, float stop, float fadeOut);
-
-            //customize the walk
-            void SetWalk(float start, float fadeIn, float stop, float fadeOut);
-
-            //customize the run
-            void SetRun(float start, float fadeIn, float stop, float fadeOut);
+            float GetCurrentSpeed() const;
 
             void SetCurrentSpeed(float pSpeed);
 
             /*virtual*/ void Update(float dt);
 
-            dtAnim::Animatable* GetStand();
-
-            dtAnim::Animatable* GetWalk();
-
-            dtAnim::Animatable* GetRun();
+            dtAnim::Animatable* GetAnimation(unsigned i);
+            unsigned GetAnimationCount() const;
 
             dtCore::RefPtr<WRController> CloneDerived() const;
 
+            void CloneAnimations(dtAnim::Cal3DModelWrapper* modelWrapper);
+
          protected:
             ~WRController();
-
-            float ComputeWeight(dtAnim::Animatable* pAnim, float startSpeed, float fadeIn, float stopSpeed, float fadeOut);
-
+         private:
             float mSpeed;
-            float mStandStart, mStandFadeIn, mStandStop, mStandFadeOut;
-            float mWalkStart, mWalkFadeIn, mWalkStop, mWalkFadeOut;
-            float mRunStart, mRunFadeIn, mRunStop, mRunFadeOut;
 
+            unsigned int mLastActive;
 
             dtCore::ObserverPtr<dtCore::VelocityInterface> mMotionSpeedSource;
-            dtCore::RefPtr<dtAnim::Animatable> mStand;
-            dtCore::RefPtr<dtAnim::Animatable> mWalk;
-            dtCore::RefPtr<dtAnim::Animatable> mRun;
-         };
 
+            struct AnimData
+            {
+               AnimData(dtAnim::Animatable*, float inherentSpeed, float initialWeight);
+               dtCore::RefPtr<dtAnim::Animatable> mAnim;
+               float mInherentSpeed;
+               float mLastWeight;
+               void SetLastWeight(float newWeight);
+               void ApplyWeightChange();
+               bool mWeightChanged;
+            private:
+            };
+
+            std::vector<AnimData> mAnimations;
+         };
 
          WalkRunBlend(dtCore::VelocityInterface& mi);
 
@@ -93,7 +94,11 @@ namespace dtAnim
 
          void SetAnimations(dtAnim::Animatable* stand, dtAnim::Animatable* walk, dtAnim::Animatable* run);
 
-         void SetupWithWalkSpeed(float inherentSpeed);
+         /**
+          * Configures the walk and run blend based on their inherent speeds, i.e. the motion speed
+          * implied by the animation at a speed factor of 1.0.
+          */
+         void Setup(float inherentSpeed, float inherentRunSpeed = std::numeric_limits<float>::max());
 
          WRController& GetWalkRunController();
 
@@ -101,6 +106,9 @@ namespace dtAnim
 
    protected:
       ~WalkRunBlend();
+
+      //not implemented
+      WalkRunBlend& operator=(const WalkRunBlend&);
 
       dtCore::RefPtr<WRController> mWRController;
    };

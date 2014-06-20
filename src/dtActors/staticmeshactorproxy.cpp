@@ -26,7 +26,6 @@
 
 #include <dtActors/staticmeshactorproxy.h>
 
-
 #include <dtCore/resourceactorproperty.h>
 #include <dtCore/resourcedescriptor.h>
 #include <dtCore/actorproxyicon.h>
@@ -187,23 +186,28 @@ namespace dtActors
    ///////////////////////////////////////////////////////////////////////////////
    void StaticMeshActorProxy::BuildPropertyMap()
    {
-      const std::string &GROUPNAME = "Mesh";
+      const std::string GROUPNAME = "Mesh";
       DeltaObjectActorProxy::BuildPropertyMap();
 
-      //dtCore::Object *obj = static_cast<dtCore::Object*>(GetActor());
-
-      AddProperty(new dtCore::ResourceActorProperty(*this, dtCore::DataType::STATIC_MESH,
-         "static mesh", "Static Mesh", dtCore::ResourceActorProperty::SetFuncType(this, &StaticMeshActorProxy::LoadFile),
+      AddProperty(new dtCore::ResourceActorProperty(dtCore::DataType::STATIC_MESH,
+         "static mesh", "Static Mesh",
+         dtCore::ResourceActorProperty::SetDescFuncType(this, &StaticMeshActorProxy::SetStaticMesh),
+         dtCore::ResourceActorProperty::GetDescFuncType(this, &StaticMeshActorProxy::GetStaticMesh),
          "The static mesh resource that defines the geometry", GROUPNAME));
    }
 
-   ///////////////////////////////////////////////////////////////////////////////
-   void StaticMeshActorProxy::LoadFile(const std::string &fileName)
+   DT_IMPLEMENT_ACCESSOR_GETTER(StaticMeshActorProxy, dtCore::ResourceDescriptor, StaticMesh)
+
+   void StaticMeshActorProxy::SetStaticMesh(const dtCore::ResourceDescriptor& rd)
    {
-      dtCore::Object *obj = static_cast<dtCore::Object*>(GetDrawable());
+      mStaticMesh = rd;
+      std::string fileName =  dtCore::ResourceActorProperty::GetResourcePath(rd);
+
+      dtCore::Object *obj = NULL;
+      GetDrawable(obj);
 
       //First load the mesh (with cacheing on).
-      if (obj->LoadFile(fileName,true) == NULL)
+      if (obj != NULL && obj->LoadFile(fileName,true) == NULL)
       {
          if (!fileName.empty())
          {
@@ -216,45 +220,13 @@ namespace dtActors
       //properties get updated properly.
       SetCollisionType(GetCollisionType());
 
-      //std::cout << "Writing node file." << std::endl;
-      //osgDB::writeNodeFile(*obj->GetOSGNode(),"testtextures.osg");
-      //std::cout << "Done writing node file." << std::endl;
-
-      //Next, run our visitor over the loaded mesh and extract the texture slots.
-//       const std::string texGroupName = "Textures";
-//       const std::string texPropBaseName = "Channel";
-//       ExtractTexturesVisitor tv;
-//       obj->GetOSGNode()->accept(tv);
-//
-//       //Now dynamically add each texture attribute as a resource property.
-//       ExtractTexturesVisitor::TextureList &texList = tv.GetTextureList();
-//       ExtractTexturesVisitor::TextureList::iterator texItor;
-//
-//       std::ostringstream ss;
-//       std::cout << "NumTextures: " << texList.size() << std::endl;
-//       std::cout << "NumTexCoords: " << tv.GetMaxTexCoordCount() << std::endl;
-
-//       for (texItor=texList.begin(); texItor!=texList.end(); ++texItor)
-//       {
-//          ss.clear();
-//          ss.str("");
-//          ss << texPropBaseName << count++;
-//
-//          //First see if we already have a resource
-//
-//          TextureEntry* texEntry = new TextureEntry(const_cast<osg::Texture2D *>(texItor->get()));
-//          this->mTextureSlots.push_back(texEntry);
-//          ss << texPropBaseName << count++;
-//          AddProperty(new dtCore::ResourceActorProperty(*this,dtCore::DataType::TEXTURE,
-//             ss.str(),"Texture",dtCore::SetFuncType(texEntry,&TextureEntry::LoadFile),
-//             "A texture slot in the static mesh.",texGroupName));
-//       }
    }
+
 
    ///////////////////////////////////////////////////////////////////////////////
    const dtCore::BaseActorObject::RenderMode& StaticMeshActorProxy::GetRenderMode()
    {
-      dtCore::ResourceDescriptor resource = GetResource("static mesh");
+      dtCore::ResourceDescriptor resource = GetStaticMesh();
       if (resource.IsEmpty() == false)
       {
          if (resource.GetResourceIdentifier().empty() || GetDrawable()->GetOSGNode() == NULL)

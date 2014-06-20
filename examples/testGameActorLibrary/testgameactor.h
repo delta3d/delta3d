@@ -39,8 +39,8 @@ public:
 
    TestActorComponent1();
 
-   virtual void OnAddedToActor(dtGame::GameActor& actor);
-   virtual void OnRemovedFromActor(dtGame::GameActor& actor);
+   virtual void OnAddedToActor(dtCore::BaseActorObject& /*actor*/);
+   virtual void OnRemovedFromActor(dtCore::BaseActorObject& /*actor*/);
 
    virtual void OnEnteredWorld();
    virtual void OnRemovedFromWorld();
@@ -59,8 +59,8 @@ public:
 
    TestActorComponent2();
 
-   virtual void OnAddedToActor(dtGame::GameActor& actor);
-   virtual void OnRemovedFromActor(dtGame::GameActor& actor);
+   virtual void OnAddedToActor(dtCore::BaseActorObject& /*actor*/);
+   virtual void OnRemovedFromActor(dtCore::BaseActorObject& /*actor*/);
    virtual void OnEnteredWorld();
    virtual void OnRemovedFromWorld();
 

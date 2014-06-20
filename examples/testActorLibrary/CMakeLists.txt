@@ -14,5 +14,8 @@ TARGET_LINK_LIBRARIES(${LIB_NAME}
                       ${DTACTORS_LIBRARY}
                       ${DTABC_LIBRARY}
                       )
+
 SET_TARGET_PROPERTIES(${LIB_NAME}
                      PROPERTIES DEFINE_SYMBOL DT_PLUGIN)
+
+include(ModuleInstall OPTIONAL)

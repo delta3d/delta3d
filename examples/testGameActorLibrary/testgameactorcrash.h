@@ -65,8 +65,6 @@ public:
 
 protected:
    virtual void CreateDrawable();
-private:
-   bool ticksEnabled;
 };
 
 

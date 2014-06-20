@@ -121,11 +121,11 @@ namespace dtGame
          /**
           * Apply the articulation support
           * @param helper the instance containing the articulation data.
-          * @param gameActor the instance to be articulated.
+          * @param xformable the instance to be articulated.
           * @param tickMessage the time data to be used when interpolating.
           */
          void DoArticulation(dtGame::DeadReckoningHelper& helper,
-            const dtGame::GameActor& gameActor,
+            const dtCore::Transformable& xformable,
             const dtGame::TickMessage& tickMessage) const;
 
          /**

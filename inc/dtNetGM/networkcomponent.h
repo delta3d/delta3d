@@ -280,6 +280,8 @@ namespace dtNetGM
 
       virtual void OnReceivedNetworkMessage(const dtGame::Message& message, NetworkBridge& networkBridge);
 
+      virtual void ForwardMessage(const dtGame::Message& message, NetworkBridge& networkBridge);
+
       /**
        * This is called when the component is ready to send a message to the game manager so the user.
        * can decide what to do with it.  By default, the message is sent unless the gm is waiting for

@@ -30,6 +30,25 @@
 namespace dtAnim
 {
     /////////////////////////////////////////////////////////////////////////////////
+    // ANIM CLIP CALLBACK
+    /////////////////////////////////////////////////////////////////////////////////
+    class AnimClipCallback : public osg::Referenced
+    {
+    public:
+        virtual void onTimeEvent(double time) = 0;
+
+        void operator() (double time)
+        {
+            onTimeEvent(time);
+        }
+
+    protected:
+        virtual ~AnimClipCallback() {}
+    };
+
+
+
+    /////////////////////////////////////////////////////////////////////////////////
     // ANIM CLIP PATH
     /////////////////////////////////////////////////////////////////////////////////
     class DT_ANIM_EXPORT AnimClipPath : public osg::AnimationPath
@@ -51,15 +70,30 @@ namespace dtAnim
          */
         virtual bool getInterpolatedControlPoint(double time, ControlPoint& controlPoint) const;
 
-        void setBeginTime(double tm);
+        void setTimeOffset(double time);
+        double getTimeOffset() const;
+
+        void setBeginTime(double time);
         double getBeginTime() const;
 
-        void setEndTime(double tm);
+        void setEndTime(double time);
         double getEndTime() const;
+
+        double getClipTimeOffset(double time) const;
+
+        void setLoopLimit(int loopLimit);
+        int getLoopLimit() const;
+
+        int getLoopCount() const;
+
+        void reset();
 
     private:
         double _beginTime;
         mutable double _endTime;
+        mutable double _timeOffset;
+        mutable int _loopLimit;
+        mutable int _loopCount;
     };
 
 
@@ -80,6 +114,10 @@ namespace dtAnim
         void SetPaused(bool paused);
 
         void SetSpeed(double speed);
+
+        void SetTimeOffset(double timeOffset);
+
+        void SetLoopLimit(int loopLimit);
 
         void SetPlayMode(osg::AnimationPath::LoopMode curPlayMode);
 

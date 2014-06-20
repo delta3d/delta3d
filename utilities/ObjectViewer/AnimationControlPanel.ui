@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>327</width>
-    <height>510</height>
+    <width>325</width>
+    <height>652</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -21,13 +21,13 @@
   </property>
   <property name="minimumSize">
    <size>
-    <width>327</width>
-    <height>509</height>
+    <width>325</width>
+    <height>652</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
-    <width>327</width>
+    <width>600</width>
     <height>16777215</height>
    </size>
   </property>
@@ -46,7 +46,7 @@
      <x>10</x>
      <y>30</y>
      <width>309</width>
-     <height>475</height>
+     <height>551</height>
     </rect>
    </property>
    <layout class="QVBoxLayout" name="mLayoutMain">
@@ -135,6 +135,12 @@
         </item>
         <item>
          <widget class="QDoubleSpinBox" name="mAnimFrameBegin">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="maximum">
            <double>999999.000000000000000</double>
           </property>
@@ -153,6 +159,12 @@
         </item>
         <item>
          <widget class="QDoubleSpinBox" name="mAnimFrameEnd">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="maximum">
            <double>999999.000000000000000</double>
           </property>
@@ -160,6 +172,40 @@
         </item>
        </layout>
       </item>
+      <item>
+       <layout class="QVBoxLayout" name="verticalLayout_5">
+        <item>
+         <widget class="QLabel" name="mLabelAnimFrameBeginOffset">
+          <property name="text">
+           <string>Begin Offset</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QDoubleSpinBox" name="mAnimFrameBeginOffset">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="maximum">
+           <double>999999.000000000000000</double>
+          </property>
+          <property name="singleStep">
+           <double>0.100000000000000</double>
+          </property>
+          <property name="value">
+           <double>0.000000000000000</double>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout_10">
       <item>
        <layout class="QVBoxLayout" name="verticalLayout_4">
         <item>
@@ -171,6 +217,12 @@
         </item>
         <item>
          <widget class="QDoubleSpinBox" name="mAnimSpeed">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="maximum">
            <double>999999.000000000000000</double>
           </property>
@@ -179,6 +231,27 @@
           </property>
           <property name="value">
            <double>1.000000000000000</double>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QVBoxLayout" name="verticalLayout_6">
+        <item>
+         <widget class="QLabel" name="mLabelAnimLoopLimit">
+          <property name="text">
+           <string>Loop Limit</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QSpinBox" name="mAnimLoopLimit">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
           </property>
          </widget>
         </item>
@@ -354,7 +427,58 @@
      </layout>
     </item>
     <item>
-     <widget class="QListWidget" name="mListAnimations"/>
+     <widget class="QTableWidget" name="mTableAnimations">
+      <property name="editTriggers">
+       <set>QAbstractItemView::NoEditTriggers</set>
+      </property>
+      <property name="selectionBehavior">
+       <enum>QAbstractItemView::SelectRows</enum>
+      </property>
+      <property name="columnCount">
+       <number>7</number>
+      </property>
+      <attribute name="horizontalHeaderDefaultSectionSize">
+       <number>80</number>
+      </attribute>
+      <attribute name="verticalHeaderDefaultSectionSize">
+       <number>25</number>
+      </attribute>
+      <column>
+       <property name="text">
+        <string>Name</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Begin</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>End</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Offset</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Speed</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Mode</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Limit</string>
+       </property>
+      </column>
+     </widget>
     </item>
    </layout>
   </widget>

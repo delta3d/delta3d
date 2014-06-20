@@ -139,6 +139,12 @@ namespace dtGame
        */
       DT_DECLARE_ACCESSOR(int, VelocityAverageFrameCount);
 
+      /**
+       * Velocity clamping.  If the magnitude of the velocity is less than this
+       * it will just make it 0 for publishing.
+       */
+      DT_DECLARE_ACCESSOR(float, VelocityClampMagnitude);
+
       /// The max number of times per second an update may be sent if it exceeds the dead reckoning tolerances
       DT_DECLARE_ACCESSOR(float, MaxUpdateSendRate);
 
@@ -158,6 +164,13 @@ namespace dtGame
       DT_DECLARE_ACCESSOR(bool, PublishAngularVelocity);
       bool IsPublishAngularVelocity() const { return GetPublishAngularVelocity(); }
 
+
+      /**
+       * Assigns a source for things like velocity, angular velocity, etc, so that this doesn't have to calculate them.
+       */
+      DT_DECLARE_ACCESSOR(dtCore::RefPtr<dtCore::VelocityInterface>, VelocitySource);
+      DT_DECLARE_ACCESSOR(dtCore::RefPtr<dtCore::AccelerationInterface>, AccelSource);
+      DT_DECLARE_ACCESSOR(dtCore::RefPtr<dtCore::AngularVelocityInterface>, AngVelSource);
 
       /**
        * Sets the current velocity. This is calculated each frame and is different
@@ -220,7 +233,7 @@ namespace dtGame
       void ResetFullUpdateTimer(bool doRandomOffset = false);
 
       /// The Dead Reckoning Helper is part of the actor and is a requirement to use this actor comp.
-      dtGame::DeadReckoningHelper& GetDeadReckoningHelper();
+      dtGame::DeadReckoningHelper* GetDeadReckoningHelper();
       void SetDeadReckoningHelper(dtGame::DeadReckoningHelper* drHelper);
       /// Since GetDeadReckoningHelper returns a reference, you MUST call this method first.
       bool IsDeadReckoningHelperValid() const;
@@ -236,17 +249,18 @@ namespace dtGame
        float GetPercentageChangeDifference(float startValue, float newValue) const;
 
        /**
-        * Computes and assigns the current velocity using a moving average.
+        * Calculates and assigns the current velocity using a moving average.
         * @see SetVelocityAverageFrameCount
         */
-       virtual void ComputeCurrentVelocity(float deltaTime, const osg::Vec3& pos, const osg::Vec3& rot);
+       virtual void CalculateCurrentVelocity(float deltaTime, const osg::Vec3& pos, const osg::Vec3& rot);
 
    private:
+       dtCore::RefPtr<Invokable> mTickInvokable;
       /// Do we insist a DR helper is set? If yes, log error if missing. Default is true on construction
       bool mRequiresDRHelper; 
       float mTimeUntilNextFullUpdate;
 
-      // Current values - not published or directly settable
+      // Current values - not published or directly set-able
       osg::Vec3 mVelocity;
       osg::Vec3 mAcceleration;
       osg::Vec3 mAngularVelocity;
@@ -263,7 +277,6 @@ namespace dtGame
       //float mMaxUpdateSendRate; - part of the property macro
       float mVelocityMagThreshold;
       float mVelocityDotThreshold;
-      float mPrevFrameDeltaTime;
 
       bool mForceUpdateNextChance;
 

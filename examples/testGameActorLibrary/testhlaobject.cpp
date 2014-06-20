@@ -62,7 +62,7 @@ void TestHLAObjectProxy::BuildPropertyMap()
                      "The general amount of damage sustained by the object.", ""));
 
    AddProperty(
-            new dtCore::ResourceActorProperty(*this, dtCore::DataType::STATIC_MESH,
+            new dtCore::ResourceActorProperty(dtCore::DataType::STATIC_MESH,
                      "Mesh", "Mesh",
                      dtCore::ResourceActorProperty::SetFuncType(actor, &TestHLAObject::TestLoadTheMesh),
                      "", ""));

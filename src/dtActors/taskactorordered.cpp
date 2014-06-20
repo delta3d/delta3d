@@ -72,15 +72,15 @@ namespace dtActors
    void TaskActorOrderedProxy::BuildPropertyMap()
    {
       TaskActorProxy::BuildPropertyMap();
-      TaskActorOrdered& task = static_cast<TaskActorOrdered&>(GetGameActor());
+      TaskActorOrdered* task = GetDrawable<TaskActorOrdered>();
 
       const std::string GROUPNAME = "Order Properties";
 
       //Add the failure type enumeration property.
       AddProperty(new dtCore::EnumActorProperty<TaskActorOrdered::FailureType>("Order Enforcement",
                   "Order Enforcement",
-                  dtCore::EnumActorProperty<TaskActorOrdered::FailureType>::SetFuncType(&task,&TaskActorOrdered::SetFailureType),
-                  dtCore::EnumActorProperty<TaskActorOrdered::FailureType>::GetFuncType(&task,&TaskActorOrdered::GetFailureType),
+                  dtCore::EnumActorProperty<TaskActorOrdered::FailureType>::SetFuncType(task,&TaskActorOrdered::SetFailureType),
+                  dtCore::EnumActorProperty<TaskActorOrdered::FailureType>::GetFuncType(task,&TaskActorOrdered::GetFailureType),
                   "Sets the way in which the ordered task actor handles out of order task updates.",
                   GROUPNAME));
    }
@@ -95,7 +95,7 @@ namespace dtActors
       bool result = false;
 
       // If we're already failed, then no way are we approving the request.
-      GetActor(myActor);
+      GetDrawable(myActor);
       if (myActor->IsFailed())
          return false;
 
@@ -107,7 +107,7 @@ namespace dtActors
 
          //If we encounter a task before the task in question that has not yet been
          //completed, we cannot continue.
-         bool completed = static_cast<const TaskActor*>(task.GetActor())->IsComplete();
+         bool completed = task.GetDrawable<TaskActor>()->IsComplete();
          bool idsMatch  = task.GetId() == childTask.GetId();
          if (!completed && !idsMatch)
          {
@@ -217,7 +217,7 @@ namespace dtActors
             }
 
             // If we find an incomplete task before the child in question, then we are done.
-            bool completed = static_cast<const TaskActor*>(task.GetActor())->IsComplete();
+            bool completed = task.GetDrawable<TaskActor>()->IsComplete();
             if (!completed)
             {
                break;

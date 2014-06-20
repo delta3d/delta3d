@@ -123,7 +123,7 @@ namespace dtActors
    /////////////////////////////////////////////////////////////////////////////
    void WeatherEnvironmentActorProxy::BuildInvokables()
    {
-      //WeatherEnvironmentActor *env = static_cast<WeatherEnvironmentActor*>(GetActor());
+      //WeatherEnvironmentActor *env = static_cast<WeatherEnvironmentActor*>(GetDrawable());
 
       dtGame::GameActorProxy::BuildInvokables();
    }

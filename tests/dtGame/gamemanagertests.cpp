@@ -228,6 +228,7 @@ void GameManagerTests::setUp()
       //logger->SetLogLevel(dtUtil::Log::LOG_DEBUG);
 
       mManager = new dtGame::GameManager(*GetGlobalApplication().GetScene());
+      CPPUNIT_ASSERT(!mManager->IsShuttingDown());
       //some tests depend on the application not being set.
       //mManager->SetApplication(GetGlobalApplication());
       mManager->LoadActorRegistry(mTestGameActorLibrary);
@@ -248,11 +249,12 @@ void GameManagerTests::tearDown()
    {
       try
       {
-         dtCore::System::GetInstance().Stop();
-         mManager->DeleteAllActors(true);
+         mManager->Shutdown();
+         CPPUNIT_ASSERT(mManager->IsShuttingDown());
          mManager->UnloadActorRegistry(mTestGameActorLibrary);
          mManager->UnloadActorRegistry(mTestActorLibrary);
          mManager = NULL;
+         dtCore::System::GetInstance().Stop();
       }
       catch (const dtUtil::Exception& e)
       {
@@ -703,7 +705,7 @@ void GameManagerTests::TestActorSearching()
       for (unsigned int i = 0; i < typeVec.size(); ++i)
       {
          dtCore::RefPtr<dtCore::BaseActorObject> p = gm.CreateActor(*typeVec[i]);
-         if (p->IsGameActorProxy())
+         if (p->IsGameActor())
          {
             gap = dynamic_cast<dtGame::GameActorProxy*> (p.get());
             if (gap != NULL)
@@ -976,12 +978,12 @@ void GameManagerTests::TestAddActor()
       CPPUNIT_ASSERT_MESSAGE("Proxy should have a valid GM on it", proxy->GetGameManager() != NULL);
       CPPUNIT_ASSERT_MESSAGE("Proxy, the result of a dynamic_cast to dtGame::GameActorProxy, should not be NULL",
             proxy != NULL);
-      CPPUNIT_ASSERT_MESSAGE("IsGameActorProxy should return true", proxy->IsGameActorProxy());
+      CPPUNIT_ASSERT_MESSAGE("IsGameActorProxy should return true", proxy->IsGameActor());
 
       mManager->CreateActor(type->GetCategory(), type->GetName(), proxy);
       CPPUNIT_ASSERT_MESSAGE("Proxy, the result of a dynamic_cast to dtGame::GameActorProxy, should not be NULL",
             proxy != NULL);
-      CPPUNIT_ASSERT_MESSAGE("IsGameActorProxy should return true", proxy->IsGameActorProxy());
+      CPPUNIT_ASSERT_MESSAGE("IsGameActorProxy should return true", proxy->IsGameActor());
 
       if (x % 3 == 0)
       {
@@ -1369,7 +1371,7 @@ void GameManagerTests::TestTimersGetDeleted()
    mManager->CreateActor("ExampleActors","Test2Actor", proxy);
 
    CPPUNIT_ASSERT_MESSAGE("Proxy, the result of a dynamic_cast to dtGame::GameActorProxy, should not be NULL", proxy != NULL);
-   CPPUNIT_ASSERT_MESSAGE("IsGameActorProxy should return true", proxy->IsGameActorProxy());
+   CPPUNIT_ASSERT_MESSAGE("IsGameActorProxy should return true", proxy->IsGameActor());
 
 
    mManager->AddActor(*proxy, false, false);
@@ -1442,7 +1444,7 @@ void GameManagerTests::TestTimers()
    mManager->CreateActor("ExampleActors","Test2Actor", proxy);
 
    CPPUNIT_ASSERT_MESSAGE("Proxy, the result of a dynamic_cast to dtGame::GameActorProxy, should not be NULL", proxy != NULL);
-   CPPUNIT_ASSERT_MESSAGE("IsGameActorProxy should return true", proxy->IsGameActorProxy());
+   CPPUNIT_ASSERT_MESSAGE("IsGameActorProxy should return true", proxy->IsGameActor());
 
    mManager->AddActor(*proxy, false, false);
 
@@ -1694,9 +1696,13 @@ void GameManagerTests::TestGMShutdown()
 
       dtCore::ObserverPtr<dtCore::Map> mapPtr = &m;
 
+      CPPUNIT_ASSERT(!mManager->IsShuttingDown());
+
       mManager->Shutdown();
 
       CPPUNIT_ASSERT_MESSAGE("The map should have been closed on shutdown.", !mapPtr.valid());
+
+      CPPUNIT_ASSERT(mManager->IsShuttingDown());
 
       CPPUNIT_ASSERT_MESSAGE("Shutdown of the game manager should have flipped the removed from GM flag on the component",
          tc->mWasOnRemovedFromGMCalled);

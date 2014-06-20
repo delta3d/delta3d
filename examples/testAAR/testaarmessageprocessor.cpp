@@ -385,7 +385,7 @@ void TestAARMessageProcessor::Reset()
       LOG_ERROR("The \"Move Camera\" actor was found but it is not a task.  The application will likely fail.");
       return;
    }
-   mTaskMoveCamera = &static_cast<dtActors::TaskActor&>(mTaskMoveCameraProxy->GetGameActor());
+   mTaskMoveCamera = mTaskMoveCameraProxy->GetDrawable<dtActors::TaskActor>();
 }
 
 //////////////////////////////////////////////////////////////////////////

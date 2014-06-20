@@ -26,6 +26,8 @@
 #include <dtAI/export.h>
 #include <dtCore/actorproxy.h>
 #include <dtCore/deltadrawable.h>
+#include <dtCore/resourcedescriptor.h>
+#include <dtUtil/getsetmacros.h>
 
 namespace dtAI
 {
@@ -70,6 +72,8 @@ namespace dtAI
        * @param fileName The file to load
        */
       void LoadFile(const std::string& fileName);
+
+      DT_DECLARE_ACCESSOR(dtCore::ResourceDescriptor, AIFile)
 
       /*virtual*/ bool IsPlaceable() const;
 

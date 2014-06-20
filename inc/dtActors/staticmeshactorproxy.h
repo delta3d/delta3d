@@ -24,6 +24,7 @@
 #include <osg/Texture2D>
 #include <dtCore/plugin_export.h>
 #include <dtActors/deltaobjectactorproxy.h>
+#include <dtUtil/getsetmacros.h>
 
 /// @cond DOXYGEN_SHOULD_SKIP_THIS
 namespace osg
@@ -89,12 +90,7 @@ namespace dtActors
          */
         virtual void BuildPropertyMap();
 
-        /**
-         * Loads a mesh file and dynamically generates texture slots so the textures
-         * in the mesh can be specified by the user.
-         * @param fileName The filename of the mesh to load.
-         */
-        virtual void LoadFile(const std::string &fileName);
+        DT_DECLARE_ACCESSOR(dtCore::ResourceDescriptor, StaticMesh);
 
         /**
          * Gets the method by which this static mesh is rendered.

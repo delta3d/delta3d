@@ -196,7 +196,7 @@ void TestAnim::OnStartup(dtABC::BaseABC& app, dtGame::GameManager& gameManager)
             {
                gameManager.AddActor(*proxy);
 
-               dtAnim::AnimationGameActor* actor = dynamic_cast<dtAnim::AnimationGameActor*>(&proxy->GetGameActor());
+               dtAnim::AnimationGameActor* actor = proxy->GetDrawable<dtAnim::AnimationGameActor>();
                actor->GetComponent<dtAnim::AnimationHelper>()->SetSkeletalMesh(dtCore::ResourceDescriptor("SkeletalMeshes:marine.xml"));
                InitializeAnimationActor(proxy.get(), mAnimationComponent, false, app.GetCamera());
 

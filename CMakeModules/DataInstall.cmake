@@ -83,4 +83,27 @@ INSTALL (
    PATTERN  *~  EXCLUDE
 )
 
+file(GLOB CMAKE_MODULE_FILES "${CMAKE_SOURCE_DIR}/CMakeModules/*.cmake" "${CMAKE_SOURCE_DIR}/CMakeModules/*.cmake.in")
 
+
+if("${CMAKE_SYSTEM}" MATCHES "Linux")
+   INSTALL (
+      FILES    ${CMAKE_MODULE_FILES}
+      DESTINATION  share/cmake/Modules
+      COMPONENT    delta3d
+   )
+else ()
+   INSTALL (
+      FILES    ${CMAKE_MODULE_FILES}
+      DESTINATION  CMakeModules
+      COMPONENT    delta3d
+   )
+endif()
+
+if (BUILD_HLA)
+   INSTALL (
+      DIRECTORY    ${CMAKE_SOURCE_DIR}/RTIPlugins
+      DESTINATION  .
+      COMPONENT    delta3d-rtiplugin-src
+   )
+endif()

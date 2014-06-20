@@ -567,7 +567,7 @@ bool CookMesh(DrawableVisitor<TriangleRecorder>& mv, const std::string& fileName
 
 
 ////////////////////////////////////////////////////////////////
-void CookPhysicsFromNode(osg::Node* node)
+void CookPhysicsFromNode(osg::Node* node, float maxPerMesh)
 {
    /**
    * This will export each material as a separate physics object
@@ -591,9 +591,9 @@ void CookPhysicsFromNode(osg::Node* node)
       if ( materialName.empty() ) materialName = "_default_";
 
       //if we have too much geometry break it into multiple pieces
-      if(mv.mFunctor.mData.mFaces->size() > 300000)
+      if(mv.mFunctor.mData.mFaces->size() > maxPerMesh)
       {
-         int exportCount = 1 + (mv.mFunctor.mData.mFaces->size() / 300000);
+         int exportCount = 1 + (mv.mFunctor.mData.mFaces->size() / maxPerMesh);
          std::cout << "Splitting material \"" << materialName << "\" into " << exportCount
                    << " pieces because it contains " << mv.mFunctor.mData.mFaces->size()
                    << " triangles, which exceeds the maximum size." << std::endl;
@@ -603,7 +603,7 @@ void CookPhysicsFromNode(osg::Node* node)
          gc.mSpecificDescription = (*iter);
          node->accept(gc);
 
-         for(int i = 0; i < exportCount; ++i)
+         for(int i = 0; i <= exportCount; ++i)
          {
             DrawableVisitor<TriangleRecorder> mv2;
             mv2.mExportSpecificMaterial = true;
@@ -675,6 +675,9 @@ int main(int argc, char** argv)
    parser.getApplicationUsage()->addCommandLineOption("--defaultMaterial", "The name of material to use by default.");
    parser.getApplicationUsage()->addCommandLineOption("--directoryName", "The name of directory within the Terrains folder to save the physics files.");
    parser.getApplicationUsage()->addCommandLineOption("--filePrefix", "The prefix to use for each file saved out, the prefix will be followed directly by the material name.");
+   parser.getApplicationUsage()->addCommandLineOption("--maxPerMesh", "The number of triangles we try to put into each output file: default 300000.");
+
+   int maxPerMesh = 300000;
 
    if (parser.argc()<=1)
    {
@@ -746,8 +749,14 @@ int main(int argc, char** argv)
       return 1;
    }
 
+   int tempInt = -1;
+   if(parser.read("--maxPerMesh", tempInt))
+   {
+       maxPerMesh = tempInt;
+   }
+
    osg::Node* ourNode = loadFile(parser[1]);
-   CookPhysicsFromNode(ourNode);
+   CookPhysicsFromNode(ourNode,maxPerMesh);
 
    return 0;
 }

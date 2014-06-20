@@ -1085,6 +1085,11 @@ namespace dtGame
        */
       void Shutdown();
 
+      /**
+       * @return true if the GM in the process of shutting down.
+       */
+      bool IsShuttingDown() const;
+
       ///@return the GMSettings class. You can change this directly.
       GMSettings& GetGMSettings();
 

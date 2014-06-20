@@ -242,7 +242,7 @@ namespace dtGame
             continue;
          }
 
-         if (aProxy.IsGameActorProxy())
+         if (aProxy.IsGameActor())
          {
             GameActorProxy* gameProxy = dynamic_cast<GameActorProxy*>(&aProxy);
             if (gameProxy != NULL)

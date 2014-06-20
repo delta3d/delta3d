@@ -111,6 +111,7 @@ namespace dtCore
       Top().ClearParameterValues();
    }
 
+   //////////////////////////////////////////////////////////////////////////
    bool ActorPropertySerializer::HasPropertyContainer()
    {
       return Top().mPropertyContainer.valid();

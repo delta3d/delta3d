@@ -3,14 +3,111 @@
 // INCLUDE DIRECTIVES
 ////////////////////////////////////////////////////////////////////////////////
 #include "AnimationControlDock.h"
-// DELTA3D
-#include <dtAnim/animclippath.h>
 // QT
-#include <QtGui/QListWidgetItem>
+#include <QtGui/QTableWidgetItem>
 
 
 
 using namespace dtAnim;
+
+
+
+/////////////////////////////////////////////////////////////////////////////////
+// ANIMATION PARAMS STRUCT CODE
+/////////////////////////////////////////////////////////////////////////////////
+AnimParams::AnimParams()
+   : mBeginFrame(0.0)
+   , mEndFrame(0.0)
+   , mBeginFrameOffset(0.0)
+   , mSpeed(1.0)
+   , mLoopLimit(0)
+   , mPlayMode(osg::AnimationPath::NO_LOOPING)
+{}
+
+
+
+/////////////////////////////////////////////////////////////////////////////////
+// ANIMATION PARAMS TABLE ROW CLASS CODE
+/////////////////////////////////////////////////////////////////////////////////
+AnimationParamsTableRow::AnimationParamsTableRow()
+{
+}
+
+void AnimationParamsTableRow::InsertValuesToTable(QTableWidget& table, int rowIndex)
+{
+   for (int col = 0; col < MAX_COLUMNS; ++col)
+   {
+      table.setItem(rowIndex, col, new QTableWidgetItem);
+   }
+
+   SetRowValues(table, rowIndex);
+}
+
+void AnimationParamsTableRow::SetRowValues(QTableWidget& table, int rowIndex)
+{
+   QString curStr;
+   QTableWidgetItem* curItem = NULL;
+   for (int col = 0; col < MAX_COLUMNS; ++col)
+   {
+      curItem = table.item(rowIndex, col);
+
+      switch (col)
+      {
+      case NAME:
+         curStr = mParams.mName.c_str();
+         curItem->setText(curStr);
+         break;
+      case BEGIN: 
+         curStr = QString::number(mParams.mBeginFrame);
+         curItem->setText(curStr);
+         break;
+      case END: 
+         curStr = QString::number(mParams.mEndFrame);
+         curItem->setText(curStr);
+         break;
+      case OFFSET: 
+         curStr = QString::number(mParams.mBeginFrameOffset);
+         curItem->setText(curStr);
+         break;
+      case SPEED: 
+         curStr = QString::number(mParams.mSpeed);
+         curItem->setText(curStr);
+         break;
+      case LIMIT:
+         curStr = QString::number(mParams.mLoopLimit);
+         curItem->setText(curStr);
+         break;
+      case PLAYMODE:
+         curStr = "ONCE";
+
+         if (mParams.mPlayMode == osg::AnimationPath::LOOP)
+         {
+            curStr = "LOOP";
+         }
+         else if (mParams.mPlayMode == osg::AnimationPath::SWING)
+         {
+            curStr = "SWING";
+         }
+
+         curItem->setText(curStr);
+         break;
+      default:
+         break;
+      }
+   }
+
+   table.update();
+}
+
+AnimParams& AnimationParamsTableRow::GetParams()
+{
+   return mParams;
+}
+
+const AnimParams& AnimationParamsTableRow::GetParams() const
+{
+   return mParams;
+}
 
 
 
@@ -44,9 +141,11 @@ void AnimationControlDock::CreateConnections()
 
    // SPINNERS
    connect(mUI.mAnimSpeed, SIGNAL(editingFinished()), this, SLOT(OnSpeedChanged()));
-   
-   // LIST ITEMS
-   connect(mUI.mListAnimations, SIGNAL(itemClicked(QListWidgetItem*)), this, SLOT(OnItemSelect(QListWidgetItem*)));
+   connect(mUI.mAnimFrameBeginOffset, SIGNAL(editingFinished()), this, SLOT(OnBeginOffsetChanged()));
+   connect(mUI.mAnimLoopLimit, SIGNAL(editingFinished()), this, SLOT(OnLoopLimitChanged()));
+
+   // TABLE ITEMS
+   connect(mUI.mTableAnimations, SIGNAL(cellClicked(int, int)), this, SLOT(OnItemSelect(int, int)));
 }
 
 void AnimationControlDock::ResetUI()
@@ -57,9 +156,12 @@ void AnimationControlDock::ResetUI()
    mUI.mOutputFrameTotal->setText(tr("0"));
    mUI.mAnimFrameBegin->setValue(0.0);
    mUI.mAnimFrameEnd->setValue(0.0);
-   mUI.mListAnimations->clear();
+   mUI.mAnimFrameBeginOffset->setValue(0.0);
+   mUI.mAnimSpeed->setValue(1.0);
+   mUI.mAnimLoopLimit->setValue(0);
+   mUI.mTableAnimations->clear();
 
-   mParamsMap.clear();
+   mAnimParams.clear();
 }
 
 void AnimationControlDock::UpdateUI()
@@ -95,10 +197,6 @@ void AnimationControlDock::UpdateUI()
          }
       }
 
-      mCurrentParams.mName = "Default";
-      mCurrentParams.mBeginFrame = timeEarliest;
-      mCurrentParams.mEndFrame = timeLatest;
-
       QString str;
       str = str.number(visitor.GetAnimCallbacks().size());
       mUI.mOutputObjectCount->setText(str);
@@ -108,10 +206,63 @@ void AnimationControlDock::UpdateUI()
       mUI.mOutputFrameTotal->setText(str);
 
       str.clear();
-      double period = mCurrentParams.mEndFrame - mCurrentParams.mBeginFrame;
+      double period = timeLatest - timeEarliest;
       str = str.number(period);
       mUI.mOutputTotalSeconds->setText(str);
    }
+}
+
+void AnimationControlDock::SetPlayMode(int playMode) const
+{
+   osg::AnimationPath::LoopMode loopMode = ConvertToPlayMode(playMode);
+
+   if (loopMode != GetPlayMode())
+   {
+      if (loopMode == osg::AnimationPath::LOOP)
+      {
+         mUI.mRadioPlayMode_Loop->setChecked(true);
+      }
+      else if (loopMode == osg::AnimationPath::SWING)
+      {
+         mUI.mRadioPlayMode_Swing->setChecked(true);
+      }
+      else
+      {
+         mUI.mRadioPlayMode_Once->setChecked(true);
+      }
+   }
+}
+
+osg::AnimationPath::LoopMode AnimationControlDock::GetPlayMode() const
+{
+   osg::AnimationPath::LoopMode playMode = osg::AnimationPath::NO_LOOPING; // ONCE
+   if (mUI.mRadioPlayMode_Loop->isChecked())
+   {
+      playMode = osg::AnimationPath::LOOP;
+   }
+   else if (mUI.mRadioPlayMode_Swing->isChecked())
+   {
+      playMode = osg::AnimationPath::SWING;
+   }
+
+   return playMode;
+}
+
+osg::AnimationPath::LoopMode AnimationControlDock::ConvertToPlayMode(int playMode) const
+{
+   osg::AnimationPath::LoopMode loopMode = osg::AnimationPath::NO_LOOPING; // ONCE
+   switch (playMode)
+   {
+   case osg::AnimationPath::LOOP:
+      loopMode = osg::AnimationPath::LOOP;
+      break;
+   case osg::AnimationPath::SWING:
+      loopMode = osg::AnimationPath::SWING;
+      break;
+   default:
+      break;
+   }
+   return loopMode;
 }
 
 void AnimationControlDock::ApplyAnimationParameters(dtAnim::AnimCallbackVisitor& visitor)
@@ -125,7 +276,11 @@ void AnimationControlDock::ApplyAnimationParameters(dtAnim::AnimCallbackVisitor&
       curPath = dynamic_cast<AnimClipPath*>(iter->get()->getAnimationPath());
       curPath->setBeginTime(mUI.mAnimFrameBegin->value());
       curPath->setEndTime(mUI.mAnimFrameEnd->value());
+      curPath->setTimeOffset(mUI.mAnimFrameBeginOffset->value());
+      curPath->setLoopLimit(mUI.mAnimLoopLimit->value());
+      curPath->setLoopMode(GetPlayMode());
    }
+   visitor.SetSpeed(mUI.mAnimSpeed->value());
 }
 
 osg::Node* AnimationControlDock::GetRootNode()
@@ -154,13 +309,13 @@ void AnimationControlDock::InternalPause()
 
 void AnimationControlDock::OnPlay()
 {
-    InternalPlay(false);
+    InternalPlay(true);
 }
 
 void AnimationControlDock::InternalPlay(bool reset)
 {
    osg::Node* node = GetRootNode();
-   if (node != NULL && mPaused)
+   if (node != NULL)
    {
       AnimCallbackVisitor visitor;
       node->accept(visitor);
@@ -189,6 +344,37 @@ void AnimationControlDock::OnReset()
    }
 }
 
+std::string AnimationControlDock::GetRowID(int rowIndex) const
+{
+   std::string name;
+   QTableWidgetItem* item = mUI.mTableAnimations->item(rowIndex, AnimationParamsTableRow::NAME);
+   if (item != NULL)
+   {
+      name = item->text().toStdString();
+   }
+
+   return name;
+}
+
+int AnimationControlDock::GetRowIndex(const std::string& animName) const
+{
+   int rowIndex = -1;
+   
+   QTableWidgetItem* curItem = NULL;
+   int numRows = mUI.mTableAnimations->rowCount();
+   for (int i = 0; i < numRows; ++i)
+   {
+      curItem = mUI.mTableAnimations->item(i, AnimationParamsTableRow::NAME);
+      if (curItem->text().toStdString() == animName)
+      {
+         rowIndex = i;
+         break;
+      }
+   }
+
+   return rowIndex;
+}
+
 void AnimationControlDock::OnAdd()
 {
    QString animName(mUI.mAnimName->text().trimmed());
@@ -198,24 +384,34 @@ void AnimationControlDock::OnAdd()
 
    if (valid)
    {
+      // Determine if an animation has already be specified.
+      AnimParamRows::iterator foundIter = mAnimParams.find(animName.toStdString());
+      bool createRow = foundIter == mAnimParams.end();
+
+      // Gather the parameters from the UI.
       AnimParams params;
-      params.mName = mUI.mAnimName->text().toStdString();
-      params.mBeginFrame = mUI.mAnimFrameBegin->value();
-      params.mEndFrame = mUI.mAnimFrameEnd->value();
+      UpdateAnimParamsFromUI(params);
 
-      QString str(animName);
-      str += ": ";
-      str += mUI.mAnimFrameBegin->text();
-      str += " to ";
-      str += mUI.mAnimFrameEnd->text();
+      // Create or modify the parameters of the specified animation.
+      dtCore::RefPtr<AnimationParamsTableRow> row;
+      row = createRow ? new AnimationParamsTableRow() : foundIter->second.get();
+      row->GetParams() = params;
 
-      QListWidgetItem* item = new QListWidgetItem;
-      item->setText(str);
-      mUI.mListAnimations->addItem(item);
-
-      if (mParamsMap.find(str.toStdString()) == mParamsMap.end())
+      if (createRow)
       {
-         mParamsMap.insert(std::make_pair(str.toStdString(), params));
+         int rowIndex = mUI.mTableAnimations->rowCount();
+         mUI.mTableAnimations->insertRow(rowIndex);
+         row->InsertValuesToTable(*mUI.mTableAnimations, rowIndex);
+
+         mAnimParams.insert(std::make_pair(params.mName, row));
+      }
+      else
+      {
+         int rowIndex = GetRowIndex(animName.toStdString());
+         if (rowIndex >= 0)
+         {
+            row->SetRowValues(*mUI.mTableAnimations, rowIndex);
+         }
       }
    }
 }
@@ -224,12 +420,48 @@ void AnimationControlDock::OnRemove()
 {
    InternalPause();
 
-   typedef QList<QListWidgetItem *> ItemList;
-   ItemList items = mUI.mListAnimations->selectedItems();
+   typedef QList<QTableWidgetItem *> ItemList;
+   ItemList items = mUI.mTableAnimations->selectedItems();
+
+   std::set<int> rows;
+   
+   QTableWidgetItem* curItem = NULL;
    while (!items.empty())
    {
-      mUI.mListAnimations->removeItemWidget(items.first());
+      curItem = items.front();
+      int rowIndex = mUI.mTableAnimations->row(curItem);
+
+      if (rows.find(rowIndex) == rows.end())
+      {
+         rows.insert(rowIndex);
+      }
+
+      // Clear the item from the list of removable items.
       items.removeFirst();
+   }
+
+   while(!rows.empty())
+   {
+      // Remove the last selected row, then remove upward.
+      int rowIndex = *rows.rbegin();
+
+      if (rowIndex >= 0)
+      {
+         // Remove the object containg the parameter data.
+         std::string rowID = GetRowID(rowIndex);
+         AnimParamRows::iterator foundIter = mAnimParams.find(rowID);
+         if (foundIter != mAnimParams.end())
+         {
+            mAnimParams.erase(foundIter);
+         }
+
+         // Remove the row from the table UI.
+         mUI.mTableAnimations->removeRow(rowIndex);
+      }
+
+      // Clear the index from the remove list so that subsequent
+      // rows in the table are not accidentally removed.
+      rows.erase(rowIndex);
    }
 }
 
@@ -245,6 +477,30 @@ void AnimationControlDock::OnSpeedChanged()
    }
 }
 
+void AnimationControlDock::OnBeginFrameOffsetChanged()
+{
+   osg::Node* node = GetRootNode();
+   if (node != NULL && mUI.mAnimSpeed->value() != 0.0)
+   {
+      AnimCallbackVisitor visitor;
+      node->accept(visitor);
+
+      visitor.SetTimeOffset(mUI.mAnimFrameBeginOffset->value());
+   }
+}
+
+void AnimationControlDock::OnLoopLimitChanged()
+{
+   osg::Node* node = GetRootNode();
+   if (node != NULL && mUI.mAnimSpeed->value() != 0.0)
+   {
+      AnimCallbackVisitor visitor;
+      node->accept(visitor);
+
+      visitor.SetLoopLimit(mUI.mAnimLoopLimit->value());
+   }
+}
+
 void AnimationControlDock::OnPlayModeChanged(bool checked)
 {
     osg::Node* node = GetRootNode();
@@ -254,36 +510,29 @@ void AnimationControlDock::OnPlayModeChanged(bool checked)
         node->accept(visitor);
     }
     
-    osg::AnimationPath::LoopMode curPlayMode = osg::AnimationPath::NO_LOOPING; // ONCE
-    if (mUI.mRadioPlayMode_Loop->isChecked())
-    {
-        curPlayMode = osg::AnimationPath::LOOP;
-    }
-    else if (mUI.mRadioPlayMode_Swing->isChecked())
-    {
-        curPlayMode = osg::AnimationPath::SWING;
-    }
+    osg::AnimationPath::LoopMode curPlayMode = GetPlayMode();
 
     visitor.SetPlayMode(curPlayMode);
 }
 
-void AnimationControlDock::OnItemSelect(QListWidgetItem* item)
+void AnimationControlDock::OnItemSelect(int row, int column)
 {
-   if (item != NULL)
+   std::string name = GetRowID(row);
+   AnimParamRows::iterator foundIter = mAnimParams.find(name);
+
+   if (foundIter != mAnimParams.end())
    {
-      AnimParamMap::iterator foundIter = mParamsMap.find(item->text().toStdString());
+      AnimationParamsTableRow* rowObject = foundIter->second.get();
 
-      if (foundIter != mParamsMap.end())
+      InternalPause();
+
+      AnimParams& params = rowObject->GetParams();
+
+      UpdateUIFromAnimParams(params);
+
+      if (mUI.mChkPlayOnClick->checkState() == Qt::Checked)
       {
-         InternalPause();
-
-         AnimParams& params = foundIter->second;
-         SetOutput(params);
-
-         if (mUI.mChkPlayOnClick->checkState() == Qt::Checked)
-         {
-             InternalPlay(true);
-         }
+         InternalPlay(true);
       }
    }
 }
@@ -327,10 +576,35 @@ void AnimationControlDock::OnGeometryLoaded(dtCore::Object* object)
    }
 }
 
-void AnimationControlDock::SetOutput(const AnimParams& params)
+void AnimationControlDock::UpdateAnimParamsFromUI(AnimParams& outParams)
+{
+   outParams.mName = mUI.mAnimName->text().toStdString();
+   outParams.mBeginFrame = mUI.mAnimFrameBegin->value();
+   outParams.mEndFrame = mUI.mAnimFrameEnd->value();
+   outParams.mBeginFrameOffset = mUI.mAnimFrameBeginOffset->value();
+   outParams.mSpeed = mUI.mAnimSpeed->value();
+   outParams.mLoopLimit = mUI.mAnimLoopLimit->value();
+   outParams.mPlayMode = GetPlayMode();
+
+   outParams.mPlayMode = osg::AnimationPath::NO_LOOPING; // ONCE
+   if(mUI.mRadioPlayMode_Loop->isChecked())
+   {
+      outParams.mPlayMode = osg::AnimationPath::LOOP;
+   }
+   else if(mUI.mRadioPlayMode_Swing->isChecked())
+   {
+      outParams.mPlayMode = osg::AnimationPath::SWING;
+   }
+}
+
+void AnimationControlDock::UpdateUIFromAnimParams(const AnimParams& params)
 {
    mUI.mOutputAnimClipName->setText(tr(params.mName.c_str()));
    mUI.mAnimName->setText(tr(params.mName.c_str()));
    mUI.mAnimFrameBegin->setValue(params.mBeginFrame);
    mUI.mAnimFrameEnd->setValue(params.mEndFrame);
+   mUI.mAnimFrameBeginOffset->setValue(params.mBeginFrameOffset);
+   mUI.mAnimSpeed->setValue(params.mSpeed);
+   mUI.mAnimLoopLimit->setValue(params.mLoopLimit);
+   SetPlayMode(params.mPlayMode);
 }

@@ -48,6 +48,7 @@ namespace dtEditQt
       , mProjType(PERSPECTIVE)
       , mDeltaCamera(new dtCore::Camera("StageCamera"))
    {
+      mDeltaCamera->SetupBackwardCompatibleStateset();
       resetRotation();
       setPosition(osg::Vec3(0, 0, 0));
       mDeltaCamera->SetNearFarCullingMode(dtCore::Camera::NO_AUTO_NEAR_FAR);

@@ -184,12 +184,12 @@ void BackdropActorProxy::BuildPropertyMap()
             dtCore::Vec3ActorProperty::GetFuncType(actor, &BackdropActor::GetScale),
             "Scales", "Transformable"));
 
-   AddProperty(new dtCore::ResourceActorProperty(*this, dtCore::DataType::TEXTURE,
+   AddProperty(new dtCore::ResourceActorProperty(dtCore::DataType::TEXTURE,
             "Front Texture", "Front Texture",
             dtCore::ResourceActorProperty::SetFuncType(this, &BackdropActorProxy::SetFrontTexture),
             "Sets the texture on the front of the backdrop", GROUPNAME));
 
-   AddProperty(new dtCore::ResourceActorProperty(*this, dtCore::DataType::TEXTURE,
+   AddProperty(new dtCore::ResourceActorProperty(dtCore::DataType::TEXTURE,
             "Back Texture", "Back Texture",
             dtCore::ResourceActorProperty::SetFuncType(this, &BackdropActorProxy::SetBackTexture),
             "Sets the texture on the back of the backdrop", GROUPNAME));

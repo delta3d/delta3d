@@ -25,6 +25,11 @@
 #include <dtCore/gameevent.h>
 #include <dtGame/message.h>
 
+namespace dtGame
+{
+   class GameEventMessage;
+}
+
 namespace dtActors
 {
    /**
@@ -103,9 +108,9 @@ namespace dtActors
           * the number of times fired is incremented.  If the number of times
           * fired is equal to the min occurances property, the task will
           * attempt to set itself complete.
-          * @param msg The message contained the game event.
+          * @param eventMsg The message contained the game event.
           */
-         void HandleGameEvent(const dtGame::Message &msg);
+         void HandleGameEvent(const dtGame::GameEventMessage& eventMsg);
 
       protected:
 

@@ -349,21 +349,21 @@ void KillableTargetActorProxy::BuildPropertyMap()
    const std::string GROUP = "KillableTarget";
 
    dtActors::GameMeshActorProxy::BuildPropertyMap();
-   KillableTargetActor& actor = dynamic_cast<KillableTargetActor&>(GetGameActor());
+   KillableTargetActor* actor = GetDrawable<KillableTargetActor>();
 
    // override the default behavior on initial creation. This can be overridden by the user in the map
-   actor.SetUseCache(false);
+   actor->SetUseCache(false);
 
    // "Max Health" property
    AddProperty(new dtCore::IntActorProperty("Max Health", "Max Health",
-      dtCore::IntActorProperty::SetFuncType(&actor, &KillableTargetActor::SetMaxHealth),
-      dtCore::IntActorProperty::GetFuncType(&actor, &KillableTargetActor::GetMaxHealth),
+      dtCore::IntActorProperty::SetFuncType(actor, &KillableTargetActor::SetMaxHealth),
+      dtCore::IntActorProperty::GetFuncType(actor, &KillableTargetActor::GetMaxHealth),
       "Sets/gets the target max health (i.e. the damaged it can sustain before going boom)", GROUP));
 
    // "Current Health" property
    AddProperty(new dtCore::IntActorProperty("Current Health", "Current Health",
-      dtCore::IntActorProperty::SetFuncType(&actor, &KillableTargetActor::SetCurrentHealth),
-      dtCore::IntActorProperty::GetFuncType(&actor, &KillableTargetActor::GetCurrentHealth),
+      dtCore::IntActorProperty::SetFuncType(actor, &KillableTargetActor::SetCurrentHealth),
+      dtCore::IntActorProperty::GetFuncType(actor, &KillableTargetActor::GetCurrentHealth),
       "Sets/gets the target current health", GROUP));
 }
 

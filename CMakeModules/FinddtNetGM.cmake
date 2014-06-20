@@ -38,4 +38,5 @@ INCLUDE(FindPackageHandleStandardArgs)
 FIND_PACKAGE_HANDLE_STANDARD_ARGS(dtNetGM DEFAULT_MSG DELTA3D_INCLUDE_DIR DTNETGM_LIBRARY
                                                       GNE_INCLUDE_DIR     GNE_LIBRARY
                                                       HAWKNL_INCLUDE_DIR  HAWKNL_LIBRARY
+                                                      Boost_INCLUDE_DIR
                                   )

@@ -233,7 +233,7 @@ void TestPlayerProxy::BuildPropertyMap()
    dtGame::GameActorProxy::BuildPropertyMap();
 
    TestPlayer* player = NULL;
-   GetActor(player);
+   GetDrawable(player);
 
    AddProperty(new dtCore::StringActorProperty("mesh","mesh",
       dtCore::StringActorProperty::SetFuncType(player,&TestPlayer::SetModel),
@@ -261,10 +261,10 @@ void TestPlayerProxy::OnEnteredWorld()
    {
       mEnteredBefore = true;
 
-      TestPlayer &actor = static_cast<TestPlayer&>(GetGameActor());
+      TestPlayer* actor = GetDrawable<TestPlayer>();
 
       //std::cout << "Here in on entered world.  Attempting to ground clamp." << std::endl;
-      actor.HandleTick(1.0,true);
+      actor->HandleTick(1.0,true);
 
       //enable receiving tick messages.
       if (IsRemote())

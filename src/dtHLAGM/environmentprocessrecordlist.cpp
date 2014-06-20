@@ -744,7 +744,7 @@ namespace dtHLAGM
          mRecords.reserve(numberOfRecords);
 
          result = true;
-         for (unsigned i = 0; i < numberOfRecords; ++i)
+         for (int i = 0; i < numberOfRecords; ++i)
          {
             EnvironmentProcessRecord& rec = AddRecord();
             if (!rec.Decode(ds, mCoordConverter))

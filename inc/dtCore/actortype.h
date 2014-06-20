@@ -23,11 +23,36 @@
 
 #include <dtCore/export.h>
 #include <dtCore/objecttype.h>
+#include <dtUtil/refstring.h>
+#include <set>
 
 namespace dtCore
 {
 
    class BaseActorObject;
+
+   class SharedClassInfo: public osg::Referenced
+   {
+   public:
+      typedef std::set<dtUtil::RefString> ClassHierarchyType;
+
+      void SetClassName(const dtUtil::RefString& name);
+
+      const dtUtil::RefString& GetClassName() const;
+
+      /**
+       * Returns if one object is an instance of another
+       * Instead of using this functionality, use the similar set on the actor type.
+       * @param name The name of the object to check against
+       * @return true if it is, false if not
+       */
+      bool IsInstanceOf(const dtUtil::RefString& name) const;
+
+      /// Set of class names
+      ClassHierarchyType mClassHierarchy;
+   private:
+      dtUtil::RefString mClassName;
+   };
 
    /**
     * This class is more or less a simple data class that has information
@@ -65,6 +90,8 @@ namespace dtCore
        */
       const ActorType* GetParentActorType() const;
 
+      SharedClassInfo& GetSharedClassInfo() const;
+      void MergeSharedClassInfo(SharedClassInfo& clsInfo) const;
 
    protected:
 
@@ -72,6 +99,7 @@ namespace dtCore
       virtual ~ActorType();
 
    private:
+      mutable dtCore::RefPtr<SharedClassInfo> mClassInfo;
    };
 }
 

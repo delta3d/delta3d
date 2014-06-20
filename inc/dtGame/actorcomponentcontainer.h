@@ -30,6 +30,8 @@
 #include <dtUtil/breakoverride.h>
 #include <dtUtil/deprecationmgr.h>
 
+#include <dtUtil/referencedinterface.h>
+
 #include <algorithm>
 #include <map>
 
@@ -118,10 +120,10 @@ namespace dtGame
        * @param type The type-string of the ActorComponent to get
        * @return the selected ActorComponent (could be NULL if not found)
        */
-      //virtual ActorComponent* GetComponent(const ActorComponent::ACType& type) const = 0;
+      //virtual ActorComponent* GetComponent(ActorComponent::ACType type) const = 0;
    private:
-      // Override virtual std::vector<ActorComponent*> GetComponents(const ActorComponent::ACType& type) const instead
-      BREAK_OVERRIDE(GetComponent(const ActorComponent::ACType&) const) ///deprecated 4/4/12
+      // Override virtual std::vector<ActorComponent*> GetComponents(ActorComponent::ACType type) const instead
+      BREAK_OVERRIDE(GetComponent(ActorComponent::ACType) const) ///deprecated 4/4/12
    public:
 
       /**
@@ -129,7 +131,7 @@ namespace dtGame
        * @param type The type-string of the ActorComponent to get
        * @return the selected ActorComponents (will be empty if not found)
        */
-      virtual std::vector<ActorComponent*> GetComponents(const ActorComponent::ACType& type) const = 0;
+      virtual std::vector<ActorComponent*> GetComponents(ActorComponent::ACType type) const = 0;
 
       /**
        * Fill the vector with all the actor components.
@@ -141,7 +143,7 @@ namespace dtGame
        * @param type The type-string of the ActorComponent to query
        * @return true if ActorComponent is found, false otherwise
        */
-      virtual bool HasComponent(const ActorComponent::ACType& type) const = 0;
+      virtual bool HasComponent(ActorComponent::ACType type) const = 0;
 
       /**
        * Add an ActorComponent. Only one ActorComponent of a given type can be added.
@@ -154,15 +156,15 @@ namespace dtGame
        * @param type The type-string of the ActorComponent to remove
        */
    private:
-      // Override virtual void RemoveAllComponentsOfType(const ActorComponent::ACType& type) instead
-      BREAK_OVERRIDE(RemoveComponent(const ActorComponent::ACType&)) ///deprecated 4/4/12
+      // Override virtual void RemoveAllComponentsOfType(ActorComponent::ACType type) instead
+      BREAK_OVERRIDE(RemoveComponent(ActorComponent::ACType)) ///deprecated 4/4/12
    public:
 
       /**
        * Removes all components with a particular type
        * @param type The type-string of the ActorComponent to remove
        */
-      virtual void RemoveAllComponentsOfType(const ActorComponent::ACType& type) = 0;
+      virtual void RemoveAllComponentsOfType(ActorComponent::ACType type) = 0;
 
       /**
        * Remove component by reference

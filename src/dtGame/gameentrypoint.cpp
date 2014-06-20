@@ -18,7 +18,7 @@
  * 
  * David Guthrie
  */
-
+#include <prefix/dtgameprefix.h>
 #include <dtGame/gameentrypoint.h>
 #include <dtABC/application.h>
 #include <dtCore/keyboard.h>

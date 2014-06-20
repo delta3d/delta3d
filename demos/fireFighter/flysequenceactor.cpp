@@ -162,7 +162,7 @@ void FlySequenceActor::OnTickLocal(const dtGame::TickMessage& msg)
       {
          // Verify movement not too great to miss way point
          double vel = speed * static_cast<const dtGame::TickMessage&>(msg).GetDeltaSimTime() * 100.0;
-         vel > delta ? vel = delta : vel = vel;
+         if (vel > delta) vel = delta;
 
          actPos[0] += dirOfTransit[0] * vel;
          actPos[1] += dirOfTransit[1] * vel;

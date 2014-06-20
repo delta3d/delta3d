@@ -33,6 +33,11 @@ class QAction;
 class QToolBar;
 class QHBoxLayout;
 
+namespace dtQt
+{
+   class NodeTreePanel;
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 
 class ObjectViewer;
@@ -67,6 +72,7 @@ public slots:
    void OnInitialization();
    void OnToggleResourceDock();
    void OnToggleAnimationControlDock();
+   void OnToggleNodeToolsDock();
    void OnToggleShadingToolbar();
    void OnToggleGenerateTangents();
    void OnRecompileClicked();
@@ -110,6 +116,7 @@ private:
    // View Menu
    QAction* mToggleDockResources;
    QAction* mToggleDockAnimationControl;
+   QAction* mToggleDockNodeTools;
 
    QToolBar* mCoordinateToolbar;
    QToolBar* mDisplayToolbar;
@@ -118,6 +125,8 @@ private:
 
    AnimationControlDock* mAnimationControlDock;
    ResourceDock* mResourceDock;
+   QDockWidget* mNodeToolsDock;
+   dtQt::NodeTreePanel* mNodeTree;
 
    std::string mContextPath;
    QString mShaderDefinitionName;

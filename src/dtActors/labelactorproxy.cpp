@@ -34,7 +34,7 @@ namespace dtActors
       BaseClass::BuildPropertyMap();
 
       dtABC::LabelActor* actor = NULL;
-      GetActor(actor);
+      GetDrawable(actor);
 
       // Get the properties for the actor.
       dtABC::LabelActor::ActorPropertyArray properties;

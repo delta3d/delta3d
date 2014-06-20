@@ -98,7 +98,7 @@ namespace dtActors
 
       // Get the actor's interface.
       BaseWaterActor* actor = NULL;
-      GetActor(actor);
+      GetDrawable(actor);
 
       const std::string GROUP_WATER("Water");
 

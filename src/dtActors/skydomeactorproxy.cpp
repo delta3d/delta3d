@@ -40,7 +40,7 @@ namespace dtActors
        dtActors::EnvEffectActorProxy::BuildPropertyMap();
        
        const std::string &GROUPNAME = "Sky";
-        //SkyDome *sd = static_cast<SkyDome*> (GetActor());
+        //SkyDome *sd = static_cast<SkyDome*> (GetDrawable());
 
         AddProperty(new Vec3ActorProperty("Base Color", "Base Color",
                  Vec3ActorProperty::SetFuncType(this, &SkyDomeActorProxy::SetBaseColor),

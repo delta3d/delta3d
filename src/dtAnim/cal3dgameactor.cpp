@@ -185,9 +185,9 @@ namespace dtAnim
       dtGame::GameActorProxy::BuildPropertyMap();
 
       Cal3DGameActor* myActor = NULL;
-      GetActor(myActor);
+      GetDrawable(myActor);
 
-      AddProperty(new dtCore::ResourceActorProperty(*this, dtCore::DataType::SKELETAL_MESH,
+      AddProperty(new dtCore::ResourceActorProperty(dtCore::DataType::SKELETAL_MESH,
          "Skeletal Mesh", "Skeletal Mesh",
          dtCore::ResourceActorProperty::SetFuncType(myActor, &Cal3DGameActor::SetModel),
          "The model resource that defines the skeletal mesh", GROUPNAME));
@@ -218,7 +218,7 @@ namespace dtAnim
 
    const dtCore::BaseActorObject::RenderMode& Cal3DGameActorProxy::GetRenderMode()
    {
-      dtCore::ResourceDescriptor resource = GetResource("Skeletal Mesh");
+      dtCore::ResourceDescriptor resource = dynamic_cast<dtCore::ResourceActorProperty*>(GetProperty("Skeletal Mesh"))->GetValue();
       if (resource.IsEmpty() == false)
       {
          if (resource.GetResourceIdentifier().empty() || GetDrawable()->GetOSGNode() == NULL)

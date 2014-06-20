@@ -43,7 +43,7 @@ namespace dtGame
    {
    public:
       // set the type of the actor component
-      static const ActorComponent::ACType TYPE;
+      static const dtGame::ActorComponent::ACType TYPE;
       typedef dtGame::ActorComponent BaseClass;
 
       CascadingDeleteActorComponent();

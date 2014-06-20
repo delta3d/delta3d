@@ -213,7 +213,8 @@ namespace  dtCore
          {
             if (mInActor)
             {
-               mPropSerializer->ElementStarted(localname);
+               if (!mIgnoreCurrentActor)
+                  mPropSerializer->ElementStarted(localname);
             }
             else if (XMLString::compareString(localname, MapXMLConstants::ACTOR_ELEMENT) == 0)
             {
@@ -826,7 +827,7 @@ namespace  dtCore
       {
          EndActorElement();
       }
-      else if (mInActor)
+      else if (mInActor && !mIgnoreCurrentActor)
       {
          EndActorPropertySection(localname);
       }

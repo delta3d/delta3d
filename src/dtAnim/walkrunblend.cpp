@@ -3,10 +3,13 @@
 #include <dtUtil/log.h>
 #include <dtUtil/mathdefines.h>
 #include <dtUtil/stringutils.h>
+#include <limits>
 #include <cfloat>
 
 namespace dtAnim
 {
+
+   static dtUtil::Log& WRB_LOG_INSTANCE = dtUtil::Log::GetInstance("walkrunblend.cpp");
 
    WalkRunBlend::WalkRunBlend(dtCore::VelocityInterface& mi)
    {
@@ -32,9 +35,9 @@ namespace dtAnim
       mWRController->SetAnimations(stand, walk, run);
    }
 
-   void WalkRunBlend::SetupWithWalkSpeed(float inherentSpeed)
+   void WalkRunBlend::Setup(float inherentSpeed, float inherentRunSpeed)
    {
-      mWRController->SetRunWalkBasic(inherentSpeed, inherentSpeed* 0.5, inherentSpeed * 0.5);
+      mWRController->SetInherentSpeeds(inherentSpeed, inherentRunSpeed);
    }
 
    WalkRunBlend::WRController& WalkRunBlend::GetWalkRunController()
@@ -45,11 +48,15 @@ namespace dtAnim
    dtCore::RefPtr<dtAnim::Animatable> WalkRunBlend::Clone(dtAnim::Cal3DModelWrapper* modelWrapper) const
    {
       WalkRunBlend* wrb = new WalkRunBlend(*mWRController->CloneDerived());
+      wrb->mWRController->CloneAnimations(modelWrapper);
 
-      if(mWRController->GetWalk() && mWRController->GetRun())
+      for (unsigned i = 0; i < mWRController->GetAnimationCount(); ++i)
       {
-         wrb->SetAnimations(mWRController->GetStand()->Clone(modelWrapper).get(), mWRController->GetWalk()->Clone(modelWrapper).get(), mWRController->GetRun()->Clone(modelWrapper).get());
+         dtAnim::Animatable* anim = mWRController->GetAnimation(i);
+         if (anim != NULL)
+            wrb->AddAnimation(anim);
       }
+
       return wrb;
    }
 
@@ -58,22 +65,23 @@ namespace dtAnim
       mWRController = 0;
    }
 
+   WalkRunBlend::WRController::AnimData::AnimData(dtAnim::Animatable* anim, float inherentSpeed, float initialWeight)
+   :  mAnim(anim)
+   ,  mInherentSpeed(inherentSpeed)
+   ,  mLastWeight(initialWeight)
+   ,  mWeightChanged(true) // To make it try to update the first frame
+   {
+      if (mAnim.valid())
+      {
+         mAnim->SetCurrentWeight(initialWeight);
+      }
+   }
+
 
    WalkRunBlend::WRController::WRController(WalkRunBlend& pWR, dtCore::VelocityInterface& mi)
    : BaseClass(pWR)
    , mSpeed(0.0f)
-   , mStandStart(0.000000f)//in m/s
-   , mStandFadeIn(0.0f)
-   , mStandStop(0.25) // in m/s
-   , mStandFadeOut(0.15f)
-   , mWalkStart(0.000001f)//in m/s
-   , mWalkFadeIn(0.15f)
-   , mWalkStop(1.5f)//in m/s
-   , mWalkFadeOut(0.15f)
-   , mRunStart(1.35f)//in m/s
-   , mRunFadeIn(0.15f)
-   , mRunStop(std::numeric_limits<float>::max()) //we don't want to stop running
-   , mRunFadeOut(0.0f)
+   , mLastActive(0)
    , mMotionSpeedSource(&mi)
    {
    }
@@ -81,70 +89,48 @@ namespace dtAnim
    WalkRunBlend::WRController::WRController(const WalkRunBlend::WRController& pWR)
    : BaseClass(pWR)
    , mSpeed(pWR.mSpeed)
-   , mStandStart(pWR.mStandStart)
-   , mStandFadeIn(pWR.mStandFadeIn)
-   , mStandStop(pWR.mStandStop)
-   , mStandFadeOut(pWR.mStandFadeOut)
-   , mWalkStart(pWR.mWalkStart)
-   , mWalkFadeIn(pWR.mWalkFadeIn)
-   , mWalkStop(pWR.mWalkStop)
-   , mWalkFadeOut(pWR.mWalkFadeOut)
-   , mRunStart(pWR.mRunStart)
-   , mRunFadeIn(pWR.mRunFadeIn)
-   , mRunStop(pWR.mRunStop)
-   , mRunFadeOut(pWR.mRunFadeOut)
+   , mLastActive(pWR.mLastActive)
    , mMotionSpeedSource(pWR.mMotionSpeedSource)
+   , mAnimations(pWR.mAnimations)
    {
 
    }
 
    void WalkRunBlend::WRController::SetAnimations(dtAnim::Animatable* stand, dtAnim::Animatable* walk, dtAnim::Animatable* run)
    {
-      mStand = stand;
-      mRun = run;
-      mWalk = walk;
+      mAnimations.push_back(AnimData(stand, 0.0f, 1.0f));
+      // small stride walk - blend of walk and stand 38.2 to 61.8 (golden ratio)
+      mAnimations.push_back(AnimData(NULL, 0.5f, 0.0f));
+      mAnimations.push_back(AnimData(walk, 1.0f, 0.0f));
+      mAnimations.push_back(AnimData(run, 2.0f, 0.0f));
+      if (stand != NULL)
+         stand->SetCurrentWeight(1.0f);
+      if (walk != NULL)
+         walk->SetCurrentWeight(0.0f);
+      if (run != NULL)
+         run->SetCurrentWeight(0.0f);
    }
 
    //this sets the basic necessary blend values, the others get expected values
-   void WalkRunBlend::WRController::SetRunWalkBasic(float inherentWalkSpeed, float walkFade, float runFade)
+   void WalkRunBlend::WRController::SetInherentSpeeds(float inherentWalkSpeed, float inherentRunSpeed)
    {
-      mStandStart = 0.0f;
-      mStandFadeOut = walkFade;
-      mStandStop = walkFade;
-      mWalkStart = FLT_EPSILON;
-      mWalkFadeIn = walkFade;
-      mWalkStop= inherentWalkSpeed * 2.0f;
-      mWalkFadeOut = walkFade;
-      mRunStart = inherentWalkSpeed * 1.05;
-      mRunFadeIn = runFade;
-      mRunStop = std::numeric_limits<float>::max();
-      mRunFadeOut = 0.0f;
+      if (mAnimations.size() >= 2)
+      {
+         mAnimations[1].mInherentSpeed = inherentWalkSpeed * 0.618;
+         if (mAnimations.size() >= 3)
+         {
+            mAnimations[2].mInherentSpeed = inherentWalkSpeed;
+            if (mAnimations.size() >= 4)
+            {
+               mAnimations[3].mInherentSpeed = inherentRunSpeed;
+            }
+         }
+      }
    }
 
-   void WalkRunBlend::WRController::SetStand(float start, float fadeIn, float stop, float fadeOut)
+   float WalkRunBlend::WRController::GetCurrentSpeed() const
    {
-      mStandStart = start;
-      mStandFadeIn = fadeIn;
-      mStandStop = stop;
-      mStandFadeOut = fadeOut;
-   }
-
-   //customize the walk
-   void WalkRunBlend::WRController::SetWalk(float start, float fadeIn, float stop, float fadeOut)
-   {
-      mWalkStart = start;
-      mWalkFadeIn = fadeIn;
-      mWalkStop = stop;
-      mWalkFadeOut = fadeOut;
-   }
-
-   //customize the run
-   void WalkRunBlend::WRController::SetRun(float start, float fadeIn, float stop, float fadeOut)
-   {
-      mRunStart = start;
-      mRunFadeIn = fadeIn;
-      mRunStop = stop;
-      mRunFadeOut = fadeOut;
+      return mSpeed;
    }
 
    void WalkRunBlend::WRController::SetCurrentSpeed(float pSpeed)
@@ -152,107 +138,162 @@ namespace dtAnim
       mSpeed = pSpeed;
    }
 
+   void WalkRunBlend::WRController::AnimData::SetLastWeight(float newWeight)
+   {
+      mWeightChanged = !dtUtil::Equivalent(mLastWeight, newWeight, 0.001f);
+      mLastWeight = newWeight;
+   }
+
+   void WalkRunBlend::WRController::AnimData::ApplyWeightChange()
+   {
+      // Only assign the weight if it hasn't changed since last frame.  This gets rid of some glitches.
+      if (mAnim != NULL && !mWeightChanged)
+      {
+         mAnim->SetCurrentWeight(mLastWeight);
+      }
+   }
+
    /*virtual*/ void WalkRunBlend::WRController::Update(float dt)
    {
-      if (!mStand.valid() || !mWalk.valid() || !mRun.valid())
-      {
-         //A warning was already printed out that this won't work, so just make sure we don't crash.
-         return;
-      }
-
       //update our velocity vector
       if(mMotionSpeedSource.valid())
       {
-         mSpeed = mMotionSpeedSource->GetVelocity().length();
+           mSpeed = mMotionSpeedSource->GetVelocity().length();
       }
       else
       {
-         LOG_ERROR("Controller has no valid parent pointer");
+         WRB_LOG_INSTANCE.LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__, "Controller has no valid velocity source.");
       }
 
-
-      float standWeight = ComputeWeight(mStand.get(), mStandStart, mStandFadeIn, mStandStop, mStandFadeOut);
-      float walkWeight = ComputeWeight(mWalk.get(), mWalkStart, mWalkFadeIn, mWalkStop, mWalkFadeOut);
-      float runWeight = ComputeWeight(mRun.get(), mRunStart, mRunFadeIn, mRunStop, mRunFadeOut);
-
-      if (standWeight <= FLT_EPSILON && walkWeight <= FLT_EPSILON && runWeight <= FLT_EPSILON)
+      if (dtUtil::Equivalent(mSpeed, 0.0f, 0.008f))
       {
-         walkWeight = 1.0f;
-         LOG_ERROR("dtCore::VelocityInterface with all 0 weights");
-      }
-
-      LOGN_DEBUG("walkrunblend.cpp", "Animiation Speed: " + dtUtil::ToString(mSpeed) + " weights "
-            + " " + dtUtil::ToString(standWeight)
-      + " " + dtUtil::ToString(walkWeight)
-      + " " + dtUtil::ToString(runWeight)
-      );
-
-      mStand->SetCurrentWeight(standWeight);
-      mWalk->SetCurrentWeight(walkWeight);
-
-      mStand->Update(dt);
-
-      if (mRun == NULL)
-      {
-         walkWeight = walkWeight + runWeight;
-         dtUtil::Clamp(walkWeight, 0.0f, 1.0f);
+         if (mAnimations[0].mAnim.valid())
+         {
+            mAnimations[0].SetLastWeight(1.0f);
+            for (unsigned i = 1; i < mAnimations.size(); ++i)
+            {
+               mAnimations[i].SetLastWeight(0.0f);
+            }
+         }
       }
       else
       {
-         mRun->Update(dt);
+         mAnimations[0].SetLastWeight(0.0f);
+
+         bool foundBest = false;
+         for (unsigned i = 1; i < mAnimations.size(); ++i)
+         {
+            if (!foundBest)
+            {
+               if (i < mAnimations.size()-1)
+               {
+                  float nSpeed = mAnimations[i].mInherentSpeed;
+                  float np1Speed = mAnimations[i+1].mInherentSpeed;
+                  bool np1Active = mAnimations[i+1].mLastWeight > FLT_EPSILON;
+                  // The difference between and n and n+1 speeds
+                  float diff = np1Speed - nSpeed;
+                  float midPoint =  diff / 2.0f;
+                  // The threshold to switch over from one animation channel to the next is the golden ratio.
+                  float diffPct  = diff * 0.618f;
+
+                  bool pickClosest = (mSpeed < nSpeed + midPoint && !np1Active);
+                  bool switchDown = mSpeed < np1Speed - diffPct;
+                  // Check mWeightChanged so that it won't allow a discontinuity to push it up to the next speed.
+                  bool stickyDown = (mSpeed < nSpeed + diffPct && !mAnimations[i].mWeightChanged && mAnimations[i].mLastWeight > FLT_EPSILON);
+
+                  if (pickClosest || switchDown || stickyDown )
+                  {
+                     mAnimations[i].SetLastWeight(1.0f);
+                     foundBest = true;
+                     WRB_LOG_INSTANCE.LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, "Found best animation idx: " + dtUtil::ToString(i) );
+                  }
+                  else
+                  {
+                     mAnimations[i].SetLastWeight(0.0f);
+                  }
+               }
+               else
+               {
+                  mAnimations[i].SetLastWeight(1.0f);
+               }
+            }
+            else
+            {
+               mAnimations[i].SetLastWeight(0.0f);
+            }
+            WRB_LOG_INSTANCE.LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, " idx "
+                  + dtUtil::ToString(i) + " Body Speed: " + dtUtil::ToString(mSpeed) + " weight "
+                  + dtUtil::ToString(mAnimations[i].mLastWeight));
+         }
+
       }
 
-      mWalk->Update(dt);
+      // Anim 1, for now, is a smaller stride walk that blends stand and walk.
+      if (mAnimations[1].mLastWeight > 0.0f && !mAnimations[1].mWeightChanged)
+      {
+         // Have to short circuit the weight changed logic a bit here.
+         mAnimations[0].mLastWeight = 0.382f;
+         mAnimations[2].mLastWeight = 0.618f;
+         for (unsigned i = 0; i < 3; i+=2)
+         {
+            mAnimations[i].mWeightChanged = false;
+            mAnimations[i].mAnim->SetCurrentWeight(mAnimations[i].mLastWeight);
+            // the 1 is correct here, just in case it catches your eye.
+            mAnimations[i].mAnim->SetSpeed(mSpeed/mAnimations[1].mInherentSpeed);
+            mAnimations[i].mAnim->Update(dt);
+         }
+      }
+      else
+      {
+         for (unsigned i = 0; i < mAnimations.size(); ++i)
+         {
+            if (mAnimations[i].mAnim.valid())
+            {
+               float playSpeed = mAnimations[i].mInherentSpeed > FLT_EPSILON ? mSpeed/mAnimations[i].mInherentSpeed : 1.0f;
+
+               WRB_LOG_INSTANCE.LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, + " idx "
+                     + dtUtil::ToString(i) + " Animation Play Speed: " + dtUtil::ToString(playSpeed) + " wgt " + dtUtil::ToString(mAnimations[i].mLastWeight));
+               mAnimations[i].ApplyWeightChange();
+               mAnimations[i].mAnim->SetSpeed(playSpeed);
+               mAnimations[i].mAnim->Update(dt);
+            }
+         }
+      }
 
    }
 
-   dtAnim::Animatable* WalkRunBlend::WRController::GetStand()
+   dtAnim::Animatable* WalkRunBlend::WRController::GetAnimation(unsigned i)
    {
-      return mStand.get();
+      return mAnimations[i].mAnim;
    }
 
-   dtAnim::Animatable* WalkRunBlend::WRController::GetWalk()
+   unsigned WalkRunBlend::WRController::GetAnimationCount() const
    {
-      return mWalk.get();
+      return mAnimations.size();
    }
 
-   dtAnim::Animatable* WalkRunBlend::WRController::GetRun()
-   {
-      return mRun.get();
-   }
 
    dtCore::RefPtr<WalkRunBlend::WRController> WalkRunBlend::WRController::CloneDerived() const
    {
-      return new WRController(*this);
+      dtCore::RefPtr<WalkRunBlend::WRController> result = new WRController(*this);
+      return result;
    }
+
+   void WalkRunBlend::WRController::CloneAnimations(dtAnim::Cal3DModelWrapper* modelWrapper)
+   {
+      for (unsigned i = 0 ; i < mAnimations.size(); ++i)
+      {
+         if (mAnimations[i].mAnim.valid())
+         {
+            mAnimations[i].mAnim = mAnimations[i].mAnim->Clone(modelWrapper);
+         }
+      }
+   }
+
 
    WalkRunBlend::WRController::~WRController()
    {
 
-   }
-
-   float WalkRunBlend::WRController::ComputeWeight(dtAnim::Animatable* pAnim, float startSpeed, float fadeIn, float stopSpeed, float fadeOut)
-   {
-      //we will have the default imply mSpeed is between startSpeed and stopSpeed
-      //which basically just saves us another if check
-      float weight = 1.0f;
-
-      //if we are out of bounds
-      if(mSpeed < startSpeed || mSpeed > stopSpeed)
-      {
-         weight = 0.00f;
-      }
-      else if(mSpeed < startSpeed + fadeIn) //else if we are fading in
-      {
-         weight = (mSpeed - startSpeed) / fadeIn;
-      }
-      else if(mSpeed > (stopSpeed - fadeOut)) //else we are fading out
-      {
-         weight = (stopSpeed - mSpeed) / fadeOut;
-      }
-
-      dtUtil::Clamp(weight, 0.0f, 1.0f);
-      return weight;
    }
 
 }

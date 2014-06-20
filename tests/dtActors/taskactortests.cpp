@@ -376,7 +376,7 @@ void TaskActorTests::TestTaskSubTasks()
 
       for (unsigned i = 0; i < children2.size(); ++i)
       {
-         mParentProxy->RemoveSubTask(children2[i]->GetGameActor().GetName());
+         mParentProxy->RemoveSubTask(children2[i]->GetName());
          CPPUNIT_ASSERT_MESSAGE("Child's parent task should be NULL after removing it by name.",
             children2[i]->GetParentTask() == NULL);
       }

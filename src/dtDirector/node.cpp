@@ -765,6 +765,7 @@ namespace dtDirector
          return resourceProp->GetValue();
       }
 
+
       std::string resourceIdentifier = prop->ToString();
       if (!resourceIdentifier.empty())
       {

@@ -201,49 +201,50 @@ namespace dtActors
    {
       const std::string GROUPNAME = "BaseTask";
 
+      SetHideDTCorePhysicsProps(true);
       dtGame::GameActorProxy::BuildPropertyMap();
-      TaskActor &task = static_cast<TaskActor &>(GetGameActor());
+      TaskActor* task = GetDrawable<TaskActor>();
 
       //DisplayName...
       AddProperty(new dtCore::StringActorProperty("DisplayName","Display Name",
-         dtCore::StringActorProperty::SetFuncType(&task,&TaskActor::SetDisplayName),
-         dtCore::StringActorProperty::GetFuncType(&task,&TaskActor::GetDisplayName),
+         dtCore::StringActorProperty::SetFuncType(task,&TaskActor::SetDisplayName),
+         dtCore::StringActorProperty::GetFuncType(task,&TaskActor::GetDisplayName),
          "Sets/gets the display name (ie. user viewable) of this task.",GROUPNAME));
 
       //Passing Score...
       AddProperty(new dtCore::FloatActorProperty("PassingScore","Passing Score",
-         dtCore::FloatActorProperty::SetFuncType(&task,&TaskActor::SetPassingScore),
-         dtCore::FloatActorProperty::GetFuncType(&task,&TaskActor::GetPassingScore),
+         dtCore::FloatActorProperty::SetFuncType(task,&TaskActor::SetPassingScore),
+         dtCore::FloatActorProperty::GetFuncType(task,&TaskActor::GetPassingScore),
          "Sets/gets the passing score for this task.",GROUPNAME));
 
       //Score...
       AddProperty(new dtCore::FloatActorProperty("Score","Score",
-         dtCore::FloatActorProperty::SetFuncType(&task,&TaskActor::SetScore),
-         dtCore::FloatActorProperty::GetFuncType(&task,&TaskActor::GetScore),
+         dtCore::FloatActorProperty::SetFuncType(task,&TaskActor::SetScore),
+         dtCore::FloatActorProperty::GetFuncType(task,&TaskActor::GetScore),
          "Sets/gets the current score of this task.",GROUPNAME));
 
       //Weight...
       AddProperty(new dtCore::FloatActorProperty("Weight","Weight",
-         dtCore::FloatActorProperty::SetFuncType(&task,&TaskActor::SetWeight),
-         dtCore::FloatActorProperty::GetFuncType(&task,&TaskActor::GetWeight),
+         dtCore::FloatActorProperty::SetFuncType(task,&TaskActor::SetWeight),
+         dtCore::FloatActorProperty::GetFuncType(task,&TaskActor::GetWeight),
          "Sets/gets the current weight assigned to this task.",GROUPNAME));
 
       //Complete...
       AddProperty(new dtCore::BooleanActorProperty("Complete","Complete",
-         dtCore::BooleanActorProperty::SetFuncType(&task,&TaskActor::SetComplete),
-         dtCore::BooleanActorProperty::GetFuncType(&task,&TaskActor::IsComplete),
+         dtCore::BooleanActorProperty::SetFuncType(task,&TaskActor::SetComplete),
+         dtCore::BooleanActorProperty::GetFuncType(task,&TaskActor::IsComplete),
          "Gets the complete status of this task.",GROUPNAME));
 
       //NotifyLMSOnUpdate
       AddProperty(new dtCore::BooleanActorProperty("NotifyLMSOnUpdate","Notify LMS On Update",
-         dtCore::BooleanActorProperty::SetFuncType(&task,&TaskActor::SetNotifyLMSOnUpdate),
-         dtCore::BooleanActorProperty::GetFuncType(&task,&TaskActor::GetNotifyLMSOnUpdate),
+         dtCore::BooleanActorProperty::SetFuncType(task,&TaskActor::SetNotifyLMSOnUpdate),
+         dtCore::BooleanActorProperty::GetFuncType(task,&TaskActor::GetNotifyLMSOnUpdate),
          "Sets/gets the flag that determines if this task should notify an LMS when it is updated.",GROUPNAME));
 
       //Completed time...
       AddProperty(new dtCore::DoubleActorProperty("CompleteTime","Complete Time",
-                  dtCore::DoubleActorProperty::SetFuncType(&task,&TaskActor::SetCompletedTimeStamp),
-                  dtCore::DoubleActorProperty::GetFuncType(&task,&TaskActor::GetCompletedTimeStamp),
+                  dtCore::DoubleActorProperty::SetFuncType(task,&TaskActor::SetCompletedTimeStamp),
+                  dtCore::DoubleActorProperty::GetFuncType(task,&TaskActor::GetCompletedTimeStamp),
                   "Gets the simulation time in which this task was completed.",GROUPNAME));
 
       //IsTopLevel...
@@ -273,7 +274,7 @@ namespace dtActors
       AddProperty(new dtCore::GameEventActorProperty(*this,
          TaskActorProxy::PROPERTY_EVENT_NOTIFY_COMPLETED,
          "Notify Completed Event",
-         dtCore::GameEventActorProperty::SetFuncType(&task, &TaskActor::SetNotifyCompletedEvent),
+         dtCore::GameEventActorProperty::SetFuncType(task, &TaskActor::SetNotifyCompletedEvent),
          dtUtil::MakeFunctor<dtCore::GameEvent* (TaskActor::*)(), TaskActor> // djmc new attempt
             (&TaskActor::GetNotifyCompletedEvent, task),
          "Sets and gets the game event that will be sent when this task completes.",GROUPNAME));
@@ -282,7 +283,7 @@ namespace dtActors
       AddProperty(new dtCore::GameEventActorProperty(*this,
          TaskActorProxy::PROPERTY_EVENT_NOTIFY_FAILED,
          "Notify Failed Event",
-         dtCore::GameEventActorProperty::SetFuncType(&task, &TaskActor::SetNotifyFailedEvent),
+         dtCore::GameEventActorProperty::SetFuncType(task, &TaskActor::SetNotifyFailedEvent),
          dtUtil::MakeFunctor<dtCore::GameEvent* (TaskActor::*)(), TaskActor>
             (&TaskActor::GetNotifyFailedEvent, task),
          "Sets and gets the game event that will be sent when this task fails.",GROUPNAME));
@@ -295,15 +296,6 @@ namespace dtActors
       RemoveProperty(dtCore::TransformableActorProxy::PROPERTY_NORMAL_RESCALING);
       RemoveProperty("Render Proxy Node");
       RemoveProperty("Show Collision Geometry"); //"ODE Show Collision Geometry"
-      RemoveProperty(dtCore::TransformableActorProxy::PROPERTY_COLLISION_TYPE);
-      RemoveProperty(dtCore::TransformableActorProxy::PROPERTY_COLLISION_RADIUS);
-      RemoveProperty(dtCore::TransformableActorProxy::PROPERTY_COLLISION_LENGTH);
-      RemoveProperty(dtCore::TransformableActorProxy::PROPERTY_COLLISION_BOX);
-      RemoveProperty(dtCore::TransformableActorProxy::PROPERTY_ENABLE_COLLISION);
-      RemoveProperty("Enable Dynamics"); // "ODE Enable Dynamics"
-      RemoveProperty("Mass"); // "ODE Mass"
-      RemoveProperty("Center of Gravity"); // "ODE Center of Gravity"
-      RemoveProperty("ShaderGroup");
    }
 
    //////////////////////////////////////////////////////////////////////////////
@@ -378,7 +370,7 @@ namespace dtActors
    bool TaskActorProxy::RequestScoreChange(const TaskActorProxy &childTask, const TaskActorProxy &origTask)
    {
       TaskActor *taskActor;
-      GetActor(taskActor);
+      GetDrawable(taskActor);
 
       // If we are failed, then the request is denied.
       if (taskActor->IsFailed())
@@ -411,7 +403,7 @@ namespace dtActors
       // Default implementation goes on the premise that a task is considered mutable if
       // if it not already complete or failed and if our parent says we're allowed to change.
       TaskActor *taskActor;
-      GetActor(taskActor);
+      GetDrawable(taskActor);
       bool bResult = !taskActor->IsComplete() && !taskActor->IsFailed() && IsChildTaskAllowedToChange(*this);
 
       return bResult;
@@ -421,7 +413,7 @@ namespace dtActors
    bool TaskActorProxy::IsChildTaskAllowedToChange(const TaskActorProxy &childTask) const
    {
       const TaskActor *myActor;
-      GetActor(myActor);
+      GetDrawable(myActor);
 
       // Note, our child is allowed to change if we are complete, since a passing score could
       // be improved, but not if we are failed, since we want to hold failure steady.
@@ -440,9 +432,9 @@ namespace dtActors
    }
 
    //////////////////////////////////////////////////////////////////////////////
-   void TaskActorProxy::AddSubTask(TaskActorProxy &subTask)
+   void TaskActorProxy::AddSubTask(TaskActorProxy& subTask)
    {
-      if (FindSubTask(subTask.GetGameActor().GetUniqueId()) != NULL)
+      if (FindSubTask(subTask.GetId()) != NULL)
       {
          throw dtGame::InvalidParameterException(
             "Cannot add a duplicate sub task." , __FILE__, __LINE__);
@@ -495,8 +487,8 @@ namespace dtActors
 
       if (itor == mSubTasks.end())
       {
-         LOG_WARNING("Task: " + subTask.GetGameActor().GetName() + " is not a sub task of task: " +
-            GetGameActor().GetName() + "  Cannot remove.");
+         LOG_WARNING("Task: " + subTask.GetName() + " is not a sub task of task: " +
+            GetName() + "  Cannot remove.");
       }
       else
       {
@@ -526,7 +518,7 @@ namespace dtActors
       if (itor == mSubTasks.end())
       {
          LOG_WARNING("Task: " + name + " is not a sub task of task: " +
-            GetGameActor().GetName() + "  Cannot remove.");
+            GetName() + "  Cannot remove.");
       }
       else if (actor)
       {

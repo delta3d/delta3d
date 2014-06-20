@@ -197,7 +197,7 @@ dtCore::Transformable* ProceduralAnimationComponent::GetTerrain()
    if (terrainProxy)
    {
       dtCore::Transformable* terrain = NULL;
-      terrainProxy->GetActor(terrain);
+      terrainProxy->GetDrawable(terrain);
 
       return terrain;
    }

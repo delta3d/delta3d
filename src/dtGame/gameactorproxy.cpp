@@ -37,6 +37,7 @@
 #include <dtGame/invokable.h>
 #include <dtGame/messagefactory.h>
 #include <dtGame/messagetype.h>
+#include <dtGame/shaderactorcomponent.h>
 
 #include <dtUtil/functor.h>
 #include <dtUtil/log.h>
@@ -90,6 +91,9 @@ GameActorProxy::GameActorProxy()
 , mLocalActorUpdatePolicy(&GameActorProxy::LocalActorUpdatePolicy::ACCEPT_ALL)
 , mLogger(dtUtil::Log::GetInstance("gameactor.cpp"))
 , mIsInGM(false)
+, mPublished(false)
+, mRemote(false)
+
 {
    SetClassName("dtGame::GameActor");
 }
@@ -97,19 +101,14 @@ GameActorProxy::GameActorProxy()
 /////////////////////////////////////////////////////////////////////////////
 GameActorProxy::~GameActorProxy()
 {
-   GameActor* ga = NULL;
-   GetActor(ga);
-   if (ga != NULL)
+   try
    {
-      try
-      {
-         // Removed them all by hand because they need a callback.
-         ga->RemoveAllComponents();
-      }
-      catch (const dtUtil::Exception& ex)
-      {
-         LOG_ERROR(ex.ToString());
-      }
+      // Removed them all by hand because they need a callback.
+      RemoveAllComponents();
+   }
+   catch (const dtUtil::Exception& ex)
+   {
+      LOG_ERROR(ex.ToString());
    }
 }
 
@@ -120,9 +119,9 @@ void GameActorProxy::Init(const dtCore::ActorType& actorType)
    BuildInvokables();
    BuildActorComponents();
 
-   // The actor components are stored on the game actor, unlike the other stuff
-   GameActor &ga = GetGameActor();
-   ga.BuildActorComponents();
+   GameActor* ga = GetDrawable<GameActor>();
+   if (ga != NULL)
+      ga->BuildActorComponents();
 }
 
 
@@ -174,8 +173,6 @@ public:
 /////////////////////////////////////////////////////////////////////////////
 void GameActorProxy::BuildPropertyMap()
 {
-   GameActor& ga = GetGameActor();
-
    dtCore::PhysicalActorProxy::BuildPropertyMap();
 
    static const dtUtil::RefString PROPERTY_IS_GAME_ACTOR("IsGameActor");
@@ -183,7 +180,7 @@ void GameActorProxy::BuildPropertyMap()
    static const dtUtil::RefString PROPERTY_IS_GAME_ACTOR_DESC("Read only property that always returns true, used to show in STAGE");
    dtCore::BooleanActorProperty *bap = new dtCore::BooleanActorProperty(PROPERTY_IS_GAME_ACTOR, PROPERTY_IS_GAME_ACTOR_LABEL,
       dtCore::BooleanActorProperty::SetFuncType(),
-      dtCore::BooleanActorProperty::GetFuncType(this, &GameActorProxy::IsGameActorProxy),
+      dtCore::BooleanActorProperty::GetFuncType(this, &GameActorProxy::IsGameActor),
       PROPERTY_IS_GAME_ACTOR_DESC, "");
    bap->SetReadOnly(true);
    AddProperty(bap);
@@ -228,30 +225,31 @@ void GameActorProxy::BuildPropertyMap()
    static const dtUtil::RefString PROPERTY_SHADER_GROUP_DESC("Sets the shader group on the game actor.");
    static const dtUtil::RefString GROUPNAME("ShaderParams");
 
-   AddProperty(new dtCore::StringActorProperty(PROPERTY_SHADER_GROUP, PROPERTY_SHADER_GROUP,
-      dtCore::StringActorProperty::SetFuncType(&ga, &GameActor::SetShaderGroup),
-      dtCore::StringActorProperty::GetFuncType(&ga, &GameActor::GetShaderGroup),
-      PROPERTY_SHADER_GROUP_DESC,GROUPNAME));
-
-   // CURT - Remove this stuff.
-   ///** let game actor components add their properties */
-   //ga.BuildComponentPropertyMaps();
-
-   //AddPropsFunc addAllProps;
-   //addAllProps.gap = this;
-   //ga.ForEachComponent(addAllProps);
+   GameActor* ga = GetDrawable<GameActor>();
+   if (ga != NULL)
+   {
+      AddProperty(new dtCore::StringActorProperty(PROPERTY_SHADER_GROUP, PROPERTY_SHADER_GROUP,
+         dtCore::StringActorProperty::SetFuncType(ga, &GameActor::SetShaderGroup),
+         dtCore::StringActorProperty::GetFuncType(ga, &GameActor::GetShaderGroup),
+         PROPERTY_SHADER_GROUP_DESC,GROUPNAME));
+   }
 }
 
 /////////////////////////////////////////////////////////////////////////////
 void GameActorProxy::BuildActorComponents()
 {
+   AddComponent(*new ShaderActorComponent());
 }
 
 /////////////////////////////////////////////////////////////////////////////
 GameActor& GameActorProxy::GetGameActor()
 {
    GameActor* ga;
-   GetActor(ga);
+   GetDrawable(ga);
+   if (ga == NULL)
+   {
+      throw dtGame::InvalidActorStateException("The Drawable is not of type GameActor, but the code called GetGameActor().", __FILE__, __LINE__);
+   }
    return *ga;
 }
 
@@ -259,7 +257,11 @@ GameActor& GameActorProxy::GetGameActor()
 const GameActor& GameActorProxy::GetGameActor() const
 {
    const GameActor* ga;
-   GetActor(ga);
+   GetDrawable(ga);
+   if (ga == NULL)
+   {
+      throw dtGame::InvalidActorStateException("The Drawable is not of type GameActor, but the code called GetGameActor().", __FILE__, __LINE__);
+   }
    return *ga;
 }
 
@@ -354,8 +356,12 @@ void GameActorProxy::PopulateActorUpdateImpl(ActorUpdateMessage& update,
    update.SetName(GetName());
    update.SetActorType(GetActorType());
 
-   update.SetPrototypeID(GetGameActor().GetPrototypeID());
-   update.SetPrototypeName(GetGameActor().GetPrototypeName());
+   dtCore::RefPtr<dtCore::BaseActorObject> proto = GetPrototype();
+   if (proto.valid())
+   {
+      update.SetPrototypeID(proto->GetId());
+      update.SetPrototypeName(proto->GetName());
+   }
 
    update.SetSendingActorId(GetId());
    update.SetAboutActorId(GetId());
@@ -571,13 +577,13 @@ void GameActorProxy::ApplyActorUpdate(const ActorUpdateMessage& msg, bool checkL
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 bool GameActorProxy::IsRemote() const
 {
-   return GetGameActor().IsRemote();
+   return mRemote;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 bool GameActorProxy::IsPublished() const
 {
-   return GetGameActor().IsPublished();
+   return mPublished;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -641,14 +647,18 @@ void GameActorProxy::RemoveInvokable(Invokable* inv)
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 void GameActorProxy::BuildInvokables()
 {
-   AddInvokable(*new Invokable(TICK_LOCAL_INVOKABLE,
-            dtUtil::MakeFunctor(&GameActor::OnTickLocal, &GetGameActor())));
+   dtGame::GameActor* ga = GetDrawable<GameActor>();
+   if (ga != NULL)
+   {
+      AddInvokable(*new Invokable(TICK_LOCAL_INVOKABLE,
+               dtUtil::MakeFunctor(&GameActor::OnTickLocal, ga)));
 
-   AddInvokable(*new Invokable(TICK_REMOTE_INVOKABLE,
-            dtUtil::MakeFunctor(&GameActor::OnTickRemote, &GetGameActor())));
+      AddInvokable(*new Invokable(TICK_REMOTE_INVOKABLE,
+               dtUtil::MakeFunctor(&GameActor::OnTickRemote, ga)));
 
-   AddInvokable(*new Invokable(PROCESS_MSG_INVOKABLE,
-            dtUtil::MakeFunctor(&GameActor::ProcessMessage, &GetGameActor())));
+      AddInvokable(*new Invokable(PROCESS_MSG_INVOKABLE,
+               dtUtil::MakeFunctor(&GameActor::ProcessMessage, ga)));
+   }
 }
 
 Invokable* GameActorProxy::GetInvokable(const std::string& name)
@@ -790,15 +800,13 @@ void GameActorProxy::UnregisterForMessagesAboutSelf(const MessageType& type, con
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 void GameActorProxy::SetRemote(bool remote)
 {
-   GameActor& ga = GetGameActor();
-   ga.SetRemote(remote);
+   mRemote = remote;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 void GameActorProxy::SetPublished(bool published)
 {
-   GameActor& ga = GetGameActor();
-   ga.SetPublished(published);
+   mPublished = published;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -808,12 +816,13 @@ void GameActorProxy::InvokeEnteredWorld()
    * We will perform a check to make sure this actor actually is a GameActor
    */
 
-   GameActor* ga = dynamic_cast<GameActor*>(GetDrawable());
+   GameActor* ga = NULL;
+   GetDrawable(ga);
    if (ga == NULL)
    {
       // throw exception
       throw dtGame::GeneralGameManagerException(
-         "ERROR: Actor has the type of a GameActor, but casting it to a GameActorProxy failed.", __FILE__, __LINE__);
+         "ERROR: Actor has the type of a GameActor, but casting it to one failed.", __FILE__, __LINE__);
    }
 
    ga->OnEnteredWorld();
@@ -872,7 +881,7 @@ dtCore::RefPtr<dtCore::ActorProperty> GameActorProxy::GetDeprecatedProperty(cons
    {
       // Check all of our actor components to see if one of them can support it
       std::vector<ActorComponent*> components;
-      GetGameActor().GetAllComponents(components);
+      GetAllComponents(components);
       unsigned int size = components.size();
       for (unsigned int i = 0; i < size; i ++)
       {
@@ -888,61 +897,50 @@ dtCore::RefPtr<dtCore::ActorProperty> GameActorProxy::GetDeprecatedProperty(cons
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-std::vector<ActorComponent*> GameActorProxy::GetComponents(const ActorComponent::ACType& type) const
-{
-   return GetGameActor().GetComponents(type);
-}
-
-////////////////////////////////////////////////////////////////////////////////
-void GameActorProxy::GetAllComponents(std::vector<ActorComponent*>& toFill)
-{
-   GetGameActor().GetAllComponents(toFill);
-}
-
-////////////////////////////////////////////////////////////////////////////////
-bool GameActorProxy::HasComponent(const ActorComponent::ACType& type) const
-{
-   return GetGameActor().HasComponent(type);
-}
-
-////////////////////////////////////////////////////////////////////////////////
 void GameActorProxy::AddComponent(ActorComponent& component)
 {
-   GetGameActor().AddComponent(component);
+   ActorComponentBase::AddComponent(component);
+
+   // add actor component properties to the game actor itself
+   // note - the only reason we do this is to make other parts of the system work (like STAGE).
+   // In the future, STAGE (et al) should use the actor components directly and we won't add them to the game actor
+   // Remove the props from the game actor - This is temporary. See the note in AddComponent()
+   AddActorComponentProperties(component);
+
+   // initialize component
+   component.OnAddedToActor(*this);
+   OnActorComponentAdded(component);
+
+   GameActor* ga = GetDrawable<GameActor>();
+   if (ga != NULL)
+      component.OnAddedToActor(*ga);
+
+   // if base class is a game actor and the game actor is already instantiated in game:
+   if (IsInGM())
+   {
+      component.SetIsInGM(true);
+      component.OnEnteredWorld();
+   }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 void GameActorProxy::RemoveComponent(ActorComponent& component)
 {
-   GetGameActor().RemoveComponent(component);
+   if (component.GetIsInGM() || IsInGM())
+   {
+      component.SetIsInGM(false);
+      component.OnRemovedFromWorld();
+   }
+   GameActor* ga = GetDrawable<GameActor>();
+   if (ga != NULL)
+      component.OnRemovedFromActor(*ga);
+
+   component.OnRemovedFromActor(*this);
+
+   RemoveActorComponentProperties(component);
+
+   ActorComponentBase::RemoveComponent(component);
 }
 
-////////////////////////////////////////////////////////////////////////////////
-void GameActorProxy::RemoveAllComponentsOfType(const ActorComponent::ACType& type)
-{
-   GetGameActor().RemoveAllComponentsOfType(type);
-}
-
-////////////////////////////////////////////////////////////////////////////////
-void GameActorProxy::RemoveAllComponents()
-{
-   GetGameActor().RemoveAllComponents();
-}
-
-////////////////////////////////////////////////////////////////////////////////
-void GameActorProxy::CallOnEnteredWorldForActorComponents()
-{
-   GetGameActor().CallOnEnteredWorldForActorComponents();
-}
-////////////////////////////////////////////////////////////////////////////////
-void GameActorProxy::CallOnRemovedFromWorldForActorComponents()
-{
-   GetGameActor().CallOnRemovedFromWorldForActorComponents();
-}
-////////////////////////////////////////////////////////////////////////////////
-void GameActorProxy::BuildComponentPropertyMaps()
-{
-   GetGameActor().BuildComponentPropertyMaps();
-}
 
 }

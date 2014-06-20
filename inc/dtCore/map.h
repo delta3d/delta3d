@@ -331,7 +331,7 @@ namespace dtCore
          /**
           * @return a set of all the names of the classes the proxies in this map wrap or inherit from.
           */
-         const std::set<std::string>& GetProxyActorClasses() const;
+         const std::set<dtUtil::RefString>& GetProxyActorClasses() const;
 
          /**
           * rebuilds the list of classes of the actor proxies since items are not removed when
@@ -580,7 +580,7 @@ namespace dtCore
          std::vector<MapGroupData> mActorGroups;
 
          //all of the classes used by the proxies in the map.
-         mutable std::set<std::string> mProxyActorClasses;
+         mutable std::set<dtUtil::RefString> mProxyActorClasses;
 
          std::vector<PresetCameraData> mPresetCameras;
 

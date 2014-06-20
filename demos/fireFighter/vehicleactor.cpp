@@ -42,7 +42,7 @@ void VehicleActorProxy::BuildPropertyMap()
 {
    dtGame::GameActorProxy::BuildPropertyMap();
 
-   VehicleActor& va = static_cast<VehicleActor&>(GetGameActor());
+   VehicleActor* va = GetDrawable<VehicleActor>();
    AddProperty(new dtCore::EnumActorProperty<VehicleActor::CoordSys>("CoordinateSystem", "CoordinateSystem",
       dtUtil::MakeFunctor(&VehicleActor::SetCoordSys, va),
       dtUtil::MakeFunctor(&VehicleActor::GetCoordSys, va),

@@ -64,7 +64,7 @@ namespace dtPhysics
    class DT_PHYSICS_EXPORT PhysicsActComp: public dtGame::ActorComponent
    {
       public:
-         static const dtUtil::RefString TYPE;
+         static const dtGame::ActorComponent::ACType TYPE;
 
          static const dtUtil::RefString PROPERTY_PHYSICS_NAME;
          static const dtUtil::RefString PROPERTY_PHYSICS_MASS;

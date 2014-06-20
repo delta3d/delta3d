@@ -43,13 +43,11 @@ namespace dtGame
    class DataCentricActorComponent: public dtGame::ActorComponent
    {
    public:
-      DataCentricActorComponent(const std::string& type)
+      DataCentricActorComponent(dtGame::ActorComponent::ACType type)
       : dtGame::ActorComponent(type)
       , mAutoRegisterWithGMComponent(true)
       {
       }
-
-      virtual ~DataCentricActorComponent() {}
 
       DT_DECLARE_ACCESSOR_INLINE(bool, AutoRegisterWithGMComponent);
 
@@ -71,34 +69,34 @@ namespace dtGame
 
       virtual void Update(float dt) = 0;
    protected:
+      virtual ~DataCentricActorComponent() {}
 
       void RegisterWithGMComponent(bool unregister)
       {
          GMComponentType* gmComp = NULL;
 
-         dtGame::GameActor* ga = NULL;
-         GetOwner(ga);
-         dtGame::GameActorProxy& act = ga->GetGameActorProxy();
+         dtGame::GameActorProxy* act;
+         GetOwner(act);
 
-         act.GetGameManager()->
+         act->GetGameManager()->
                   GetComponentByName(GMComponentType::DEFAULT_NAME, gmComp);
 
          if (gmComp != NULL)
          {
             if (!unregister)
             {
-               gmComp->RegisterActor(act, *static_cast<ActorComponentType*>(this));
+               gmComp->RegisterActor(*act, *static_cast<ActorComponentType*>(this));
             }
             else
             {
-               gmComp->UnregisterActor(act.GetId());
+               gmComp->UnregisterActor(act->GetId());
             }
          }
          else
          {
             dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
                      "Actor \"%s\"\"%s\" unable to find component: %s",
-                     act.GetName().c_str(), act.GetId().ToString().c_str(), GMComponentType::DEFAULT_NAME.c_str());
+                     act->GetName().c_str(), act->GetId().ToString().c_str(), GMComponentType::DEFAULT_NAME.c_str());
          }
       }
    };

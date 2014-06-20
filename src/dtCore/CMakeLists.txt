@@ -207,6 +207,7 @@ SET(LIB_PUBLIC_HEADERS
                 ${HEADER_PATH}/stringselectoractorproperty.h
                 ${HEADER_PATH}/sunlightshader.h
                 ${HEADER_PATH}/system.h
+                ${HEADER_PATH}/systemcomponenttype.h
                 ${HEADER_PATH}/timer.h
                 ${HEADER_PATH}/transform.h
                 ${HEADER_PATH}/transformable.h
@@ -387,6 +388,7 @@ SET(LIB_SOURCES
                 ${SOURCE_PATH}/stringselectoractorproperty.cpp
                 ${SOURCE_PATH}/sunlightshader.cpp
                 ${SOURCE_PATH}/system.cpp
+                ${SOURCE_PATH}/systemcomponenttype.cpp
                 ${SOURCE_PATH}/transformableactorproxy.cpp
                 ${SOURCE_PATH}/timer.cpp
                 ${SOURCE_PATH}/transform.cpp

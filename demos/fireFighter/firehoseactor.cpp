@@ -46,9 +46,10 @@ void FireHoseActorProxy::BuildPropertyMap()
 {
    GameItemActorProxy::BuildPropertyMap();
 
-   FireHoseActor &fha = static_cast<FireHoseActor&>(GetGameActor());
+   FireHoseActor* fha;
+   GetDrawable(fha);
 
-   AddProperty(new dtCore::ResourceActorProperty(*this, dtCore::DataType::PARTICLE_SYSTEM,
+   AddProperty(new dtCore::ResourceActorProperty(dtCore::DataType::PARTICLE_SYSTEM,
       "StreamFile", "StreamFile",
       dtUtil::MakeFunctor(&FireHoseActor::SetStreamFilename, fha),
       "Sets the stream file particle system"));

@@ -58,7 +58,9 @@ namespace dtAnim
 /////////////////////////////////////////////////////////////////////////////////
 const std::string AnimationHelper::PROPERTY_SKELETAL_MESH("Skeletal Mesh");
 
-const dtGame::ActorComponent::ACType AnimationHelper::TYPE("AnimationActorComponent");
+const dtGame::ActorComponent::ACType AnimationHelper::TYPE(new dtCore::ActorType("AnimationActorComponent", "ActorComponents",
+       "Encapsulates skeletal mesh support and control.",
+       dtGame::ActorComponent::BaseActorComponentType));
 
 /////////////////////////////////////////////////////////////////////////////////
 AnimationHelper::AnimationHelper()
@@ -339,12 +341,12 @@ void AnimationHelper::AttachNodeToDrawable(osg::Group* parent)
    {
       if (parent == NULL)
       {
-         dtGame::GameActor* ga;
-         GetOwner(ga);
-         if (ga != NULL)
+         dtGame::GameActorProxy* gap;
+         GetOwner(gap);
+         if (gap != NULL)
          {
             // This really should make a drawable and add it.
-            ga->GetMatrixNode()->addChild(node);
+            gap->GetDrawable()->GetOSGNode()->asGroup()->addChild(node);
          }
       }
       else

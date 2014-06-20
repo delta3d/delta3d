@@ -103,9 +103,9 @@ namespace dtPhysics
 
          bool operator()(dtCore::RefPtr<PhysicsActComp>& actComp)
          {
-            dtGame::GameActor* ga = NULL;
-            actComp->GetOwner(ga);
-            if (ga != NULL && ga->GetUniqueId() == mId)
+            dtGame::GameActorProxy* act = NULL;
+            actComp->GetOwner(act);
+            if (act != NULL && act->GetId() == mId)
             {
                actComp->CleanUp();
                return true;
@@ -328,19 +328,19 @@ namespace dtPhysics
    void PhysicsComponent::AddMaterialActor(MaterialActorProxy& materialActor)
    {
       PhysicsMaterials& materials = mImpl->GetMaterials();
-      MaterialActor* actorObject = NULL;
-      materialActor.GetActor(actorObject);
+      MaterialActor* drawable = NULL;
+      materialActor.GetDrawable(drawable);
 
-      Material* uniqueMaterial = materials.GetMaterial(actorObject->GetName());
+      Material* uniqueMaterial = materials.GetMaterial(drawable->GetName());
       if (uniqueMaterial != NULL)
       {
          // If the material already exists, the definition of said material may be changed by setting the materials
          // interaction with itself. This is weird, and should really be rethought out. -DG
-         materials.SetMaterialInteraction(actorObject->GetName(), actorObject->GetName(), actorObject->GetMateralDef());
+         materials.SetMaterialInteraction(materialActor.GetName(), materialActor.GetName(), drawable->GetMateralDef());
       }
       else
       {
-         materials.NewMaterial(actorObject->GetName(), actorObject->GetMateralDef());
+         materials.NewMaterial(materialActor.GetName(), drawable->GetMateralDef());
       }
    }
 

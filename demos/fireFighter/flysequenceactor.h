@@ -144,8 +144,6 @@ class FIRE_FIGHTER_EXPORT FlySequenceActorProxy : public dtGame::GameActorProxy
       virtual ~FlySequenceActorProxy();
 
    private:
-
-       dtCore::RefPtr<dtCore::ActorProxyIcon> mBillBoardIcon;
 };
 
 

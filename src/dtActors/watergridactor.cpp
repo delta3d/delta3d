@@ -1211,7 +1211,7 @@ namespace dtActors
    {
       BaseClass::BuildInvokables();
 
-      WaterGridActor& wga = static_cast<WaterGridActor&>(GetGameActor());
+      WaterGridActor* wga = GetDrawable<WaterGridActor>();
 
       AddInvokable(*new dtGame::Invokable(INVOKABLE_MAP_LOADED,
          dtUtil::MakeFunctor(&WaterGridActor::Init, wga)));
@@ -1241,16 +1241,16 @@ namespace dtActors
 
       BaseClass::BuildPropertyMap();
 
-      WaterGridActor& actor = static_cast<WaterGridActor&>(GetGameActor());
+      WaterGridActor* actor = GetDrawable<WaterGridActor>();
 
       AddProperty(new dtCore::ColorRgbaActorProperty(PROPERTY_WATER_COLOR, PROPERTY_WATER_COLOR,
-         dtCore::ColorRgbaActorProperty::SetFuncType(&actor, &WaterGridActor::SetWaterColor),
-         dtCore::ColorRgbaActorProperty::GetFuncType(&actor,&WaterGridActor::GetWaterColor),
+         dtCore::ColorRgbaActorProperty::SetFuncType(actor, &WaterGridActor::SetWaterColor),
+         dtCore::ColorRgbaActorProperty::GetFuncType(actor,&WaterGridActor::GetWaterColor),
          "Sets the color of the water.", GROUPNAME));
 
       AddProperty(new dtCore::EnumActorProperty<WaterGridActor::ChoppinessSettings>(PROPERTY_CHOPPINESS, PROPERTY_CHOPPINESS,
-         dtCore::EnumActorProperty<WaterGridActor::ChoppinessSettings>::SetFuncType(&actor, &WaterGridActor::SetChoppiness),
-         dtCore::EnumActorProperty<WaterGridActor::ChoppinessSettings>::GetFuncType(&actor, &WaterGridActor::GetChoppiness),
+         dtCore::EnumActorProperty<WaterGridActor::ChoppinessSettings>::SetFuncType(actor, &WaterGridActor::SetChoppiness),
+         dtCore::EnumActorProperty<WaterGridActor::ChoppinessSettings>::GetFuncType(actor, &WaterGridActor::GetChoppiness),
          "Sets the choppiness for the water.", GROUPNAME));
 
       AddProperty(new dtCore::StringActorProperty(PROPERTY_SCENE_CAMERA, PROPERTY_SCENE_CAMERA,
@@ -1298,7 +1298,7 @@ namespace dtActors
    void WaterGridActorProxy::ResetSceneCamera()
    {
       WaterGridActor* waterActor;
-      GetActor(waterActor);
+      GetDrawable(waterActor);
 
       dtCore::Camera* sceneCamera = dtCore::Camera::GetInstance(mSceneCameraName);
 

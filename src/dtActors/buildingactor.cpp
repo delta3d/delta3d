@@ -1363,7 +1363,7 @@ namespace dtActors
       BaseClass::BuildPropertyMap();
 
       BuildingActor* actor = NULL;
-      GetActor(actor);
+      GetDrawable(actor);
 
       // Roof Texture.
       dtCore::ResourceActorProperty* roofTextureProp =

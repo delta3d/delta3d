@@ -24,33 +24,6 @@
  * circumstances in which the U. S. Government may have rights in the software.
  *
  * David Guthrie
- */
-/* -*-c++-*-
- * GameStart - main (.h & .cpp) - Using 'The MIT License'
- * Copyright (C) 2006-2008, Alion Science and Technology Corporation
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- *
- * This software was developed by Alion Science and Technology Corporation under
- * circumstances in which the U. S. Government may have rights in the software.
- *
- * David Guthrie
  * energonquest (forum id)
  */
 
@@ -64,6 +37,7 @@
 #include <iostream>
 #include <cstdlib>
 #include <osg/ArgumentParser>
+#include <osgDB/FileNameUtils>
 #include <sstream>
 
 void ParseCLI(int& argc, char** argv, std::string& configFileName, std::string& appToLoad, std::string& logFileName)
@@ -91,15 +65,11 @@ void ParseCLI(int& argc, char** argv, std::string& configFileName, std::string& 
    arguments.read("--configFileName", configFileName);
    arguments.read("--logFileName", logFileName);
 
-   int pos;
-   for (pos = 1; pos<arguments.argc(); ++pos)
+   // After removing all options, the library must be the first remaining parameter.
+   if (!arguments.isOption(1))
    {
-      if (arguments.isOption(pos) == false)
-      {
-         appToLoad = arguments[pos];
-         arguments.remove(pos);
-         break;
-      }
+      appToLoad = arguments[1];
+      arguments.remove(1,1);
    }
 
    if (appToLoad.empty())
@@ -111,7 +81,17 @@ void ParseCLI(int& argc, char** argv, std::string& configFileName, std::string& 
 
 int main(int argc, char** argv)
 {
-   std::string appToLoad;
+   std::string appToLoad = argv[0];
+   // If you don't pass an app name, it will use the name of the executable as
+   // the name of the library to load.
+   appToLoad = osgDB::getSimpleFileName(appToLoad);
+   appToLoad = osgDB::getNameLessExtension(appToLoad);
+
+   // We don't want to try to load a library named "GameStart"
+   if (appToLoad == "GameStart")
+   {
+      appToLoad.clear();
+   }
 
    std::string configFileName("config.xml");
 

@@ -39,14 +39,17 @@
 
 namespace dtGame
 {
-   const dtGame::ActorComponent::ACType DRPublishingActComp::TYPE("DRPublishingActComp");
+   const ActorComponent::ACType DRPublishingActComp::TYPE(new dtCore::ActorType("DRPublishingActComp", "ActorComponents",
+         "Times and publishes network updates based on velocity, acceleration, and other dead-reckoning related features.  It works best with a Dead-Reckoning Actor Component",
+         ActorComponent::BaseActorComponentType));
 
    const float DRPublishingActComp::TIME_BETWEEN_UPDATES(10.0f);
 
    ////////////////////////////////////////////////////////////////////////////////
    DRPublishingActComp::DRPublishingActComp(bool requiresDRHelper/*=true*/)
       : ActorComponent(TYPE)
-      , mVelocityAverageFrameCount(1U)
+      , mVelocityAverageFrameCount(1)
+      , mVelocityClampMagnitude(0.1f)
       , mMaxUpdateSendRate(5.0f)
       , mPublishLinearVelocity(true)
       , mPublishAngularVelocity(true)
@@ -55,13 +58,12 @@ namespace dtGame
       , mSecsSinceLastUpdateSent(0.0f)
       , mVelocityMagThreshold(1.0f)
       , mVelocityDotThreshold(0.9f)
-      , mPrevFrameDeltaTime(0.0f)
       , mForceUpdateNextChance(false)
       , mUseVelocityInDRUpdateDecision(false)
       , mMaxRotationError(1.0f) // 2.0
-      , mMaxRotationError2(1.0f) // 4.0
+      , mMaxRotationError2(mMaxRotationError * mMaxRotationError)
       , mMaxTranslationError(0.02f)//(0.15f)
-      , mMaxTranslationError2(0.0004f)//(0.0225f)
+      , mMaxTranslationError2(mMaxTranslationError * mMaxTranslationError)
    {
    }
 
@@ -75,6 +77,12 @@ namespace dtGame
    // PROPERTY MACROS
    // These macros define the Getter and Setter method body for each property
    ////////////////////////////////////////////////////////////////////////////////
+
+   DT_IMPLEMENT_ACCESSOR(DRPublishingActComp, dtCore::RefPtr<dtCore::VelocityInterface>, VelocitySource);
+   DT_IMPLEMENT_ACCESSOR(DRPublishingActComp, dtCore::RefPtr<dtCore::AccelerationInterface>, AccelSource);
+   DT_IMPLEMENT_ACCESSOR(DRPublishingActComp, dtCore::RefPtr<dtCore::AngularVelocityInterface>, AngVelSource);
+
+   DT_IMPLEMENT_ACCESSOR(DRPublishingActComp, float, VelocityClampMagnitude);
 
    DT_IMPLEMENT_ACCESSOR(DRPublishingActComp, int, VelocityAverageFrameCount);
 
@@ -95,7 +103,7 @@ namespace dtGame
       {
          osg::Vec3 zeroAngularVelocity;
          SetAngularVelocity(zeroAngularVelocity);
-         GetDeadReckoningHelper().SetLastKnownAngularVelocity(zeroAngularVelocity);
+         GetDeadReckoningHelper()->SetLastKnownAngularVelocity(zeroAngularVelocity);
       }
    }
 
@@ -123,18 +131,25 @@ namespace dtGame
       mTimeUntilNextFullUpdate -= elapsedTime;
       mSecsSinceLastUpdateSent += elapsedTime; // We can only send out an update so many times a second.
 
-      dtGame::GameActor* actor;
+      dtGame::GameActorProxy* actor = NULL;
       GetOwner(actor);
 
+      dtCore::Transformable* tx = NULL;
+      actor->GetDrawable(tx);
+
       dtCore::Transform xform;
-      actor->GetTransform(xform);
+      tx->GetTransform(xform);
       osg::Vec3 rot;
       xform.GetRotation(rot);
       osg::Vec3 pos;
       xform.GetTranslation(pos);
 
       // Have to update instant velocity even if we don't publish
-      ComputeCurrentVelocity(elapsedTime, pos, rot);
+      CalculateCurrentVelocity(elapsedTime, pos, rot);
+      if (mAngVelSource.valid())
+      {
+         SetAngularVelocity(mAngVelSource->GetAngularVelocity());
+      }
 
       if (mTimeUntilNextFullUpdate <= 0.0f)
       {
@@ -143,12 +158,12 @@ namespace dtGame
       }
 
       // If the extra settings on DR Helper changed (like flying), then we need a full update
-      if (IsDeadReckoningHelperValid() && GetDeadReckoningHelper().IsExtraDataUpdated())
+      if (IsDeadReckoningHelperValid() && GetDeadReckoningHelper()->IsExtraDataUpdated())
       {
          forceUpdate = true;
          fullUpdate = true;
 
-         GetDeadReckoningHelper().SetExtraDataUpdated(false);
+         GetDeadReckoningHelper()->SetExtraDataUpdated(false);
       }
 
       // Check for update
@@ -188,11 +203,11 @@ namespace dtGame
             // Reset our timer.
             ResetFullUpdateTimer(false);
 
-            actor->GetGameActorProxy().NotifyFullActorUpdate();
+            actor->NotifyFullActorUpdate();
          }
          else
          {
-            actor->GetGameActorProxy().NotifyPartialActorUpdate();
+            actor->NotifyPartialActorUpdate();
          }
       }
 
@@ -201,23 +216,15 @@ namespace dtGame
    ////////////////////////////////////////////////////////////////////////////////
    void DRPublishingActComp::OnEnteredWorld()
    {
-      dtGame::GameActor* actor = NULL;
+      dtGame::GameActorProxy* actor = NULL;
       GetOwner(actor);
 
       // LOCAL ACTOR -  do our setup
       if (!actor->IsRemote())
       {
-         // We used to register for tick local
-         //RegisterForTicks();
          // Now we register for tick remote, so that we guarantee it happens AFTER our actor 
          // It also needs to run AFTER the DeadReckoningComponent
-         std::string tickInvokable = "Tick Remote " + GetType().Get();
-         if (actor->GetGameActorProxy().GetInvokable(tickInvokable) == NULL)
-         {
-            actor->GetGameActorProxy().AddInvokable(*new dtGame::Invokable(tickInvokable, 
-               dtUtil::MakeFunctor(&DRPublishingActComp::OnTickRemote, this)));
-         }
-         actor->GetGameActorProxy().RegisterForMessages(dtGame::MessageType::TICK_REMOTE, tickInvokable);
+         mTickInvokable = actor->RegisterForMessages(dtGame::MessageType::TICK_REMOTE, dtUtil::MakeFunctor(&DRPublishingActComp::OnTickRemote, this));
 
 
          ResetFullUpdateTimer(true);
@@ -227,7 +234,7 @@ namespace dtGame
       // This flag allows developers to use the DRPublishing component to JUST do heartbeats, without actual Dead reckoning
       if (mRequiresDRHelper && !IsDeadReckoningHelperValid())
       {
-         dtGame::DeadReckoningHelper* deadReckoningHelper;
+         dtGame::DeadReckoningHelper* deadReckoningHelper = NULL;
          actor->GetComponent(deadReckoningHelper);
          mDeadReckoningHelper = deadReckoningHelper;
          if (!mDeadReckoningHelper.valid())
@@ -246,17 +253,13 @@ namespace dtGame
    ////////////////////////////////////////////////////////////////////////////////
    void DRPublishingActComp::OnRemovedFromWorld()
    {
-      dtGame::GameActor* actor;
+      dtGame::GameActorProxy* actor = NULL;
       GetOwner(actor);
 
       // LOCAL ACTOR - cleanup
-      if (!actor->IsRemote())
+      if (mTickInvokable.valid())
       {
-         //UnregisterForTicks();
-         // Our tick local now happens on tick remote. See OnEnteredWorld() for more info
-         std::string tickInvokable = "Tick Remote " + GetType().Get();
-         actor->GetGameActorProxy().UnregisterForMessages(dtGame::MessageType::TICK_REMOTE, tickInvokable);
-         actor->GetGameActorProxy().RemoveInvokable(tickInvokable);
+         actor->UnregisterForMessages(dtGame::MessageType::TICK_REMOTE, mTickInvokable->GetName());
       }
 
       mDeadReckoningHelper = NULL;
@@ -317,7 +320,7 @@ namespace dtGame
       {
          // Note - AlwaysUseFixedSmoothingTime is controlled via the BaseEntity and a config option
          float updateRate = dtUtil::Max(0.01f, dtUtil::Min(1.0f, 1.00f/maxUpdateSendRate));
-         GetDeadReckoningHelper().SetFixedSmoothingTime(updateRate);
+         GetDeadReckoningHelper()->SetFixedSmoothingTime(updateRate);
       }
 
    }
@@ -453,9 +456,9 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////////
-   dtGame::DeadReckoningHelper& DRPublishingActComp::GetDeadReckoningHelper() 
+   dtGame::DeadReckoningHelper* DRPublishingActComp::GetDeadReckoningHelper()
    { 
-      return *mDeadReckoningHelper; 
+      return mDeadReckoningHelper.get();
    }
 
    ///////////////////////////////////////////////////////////////////////////////////
@@ -480,8 +483,8 @@ namespace dtGame
          return; 
       }
 
-      GetDeadReckoningHelper().SetLastKnownTranslation(pos);
-      GetDeadReckoningHelper().SetLastKnownRotation(rot);
+      GetDeadReckoningHelper()->SetLastKnownTranslation(pos);
+      GetDeadReckoningHelper()->SetLastKnownRotation(rot);
 
 
       // Linear Velocity & acceleration - push the current value to the Last Known
@@ -489,11 +492,7 @@ namespace dtGame
       {
          // VELOCITY 
          osg::Vec3 velocity = GetVelocity();
-         if (velocity.length() < 0.0001) // If close to 0, set to 0 to prevent wiggling/shaking
-         {
-            velocity = osg::Vec3(0.f, 0.f, 0.f);
-         }
-         GetDeadReckoningHelper().SetLastKnownVelocity(velocity);
+         GetDeadReckoningHelper()->SetLastKnownVelocity(velocity);
 
 
          // ACCELERATION
@@ -511,83 +510,97 @@ namespace dtGame
          mAccelerationCalculatedForLastPublish = curAccel; // Hold for next time (pre-normalized)
 
          // Acceleration is paired with velocity
-         GetDeadReckoningHelper().SetLastKnownAcceleration(GetAcceleration());
+         GetDeadReckoningHelper()->SetLastKnownAcceleration(GetAcceleration());
       }
 
       // Angular Velocity - push the current value to the Last Known
       if (mPublishAngularVelocity)
       {
          osg::Vec3 angularVelocity = GetAngularVelocity();
-         if (angularVelocity.length() < 0.001)  // If close to 0, set to 0 to prevent wiggling/shaking
+         if (angularVelocity.length2() < 0.00001)  // If close to 0, set to 0 to prevent wiggling/shaking
          {
             angularVelocity = osg::Vec3(0.f, 0.f, 0.f);
          }
-         GetDeadReckoningHelper().SetLastKnownAngularVelocity(angularVelocity);
+         GetDeadReckoningHelper()->SetLastKnownAngularVelocity(angularVelocity);
       }
 
    }
 
    ///////////////////////////////////////////////////////////////////////////////////
-   void DRPublishingActComp::ComputeCurrentVelocity(float deltaTime, const osg::Vec3& pos, const osg::Vec3& rot)
+   void DRPublishingActComp::CalculateCurrentVelocity(float deltaTime, const osg::Vec3& pos, const osg::Vec3& rot)
    {
+      if (deltaTime <= FLT_EPSILON)
+      {
+         return;
+      }
+
       // We can't do this without a helper. Reported as an error in OnEnteredWorld().
       if (!IsDeadReckoningHelperValid())
       {
          return; 
       }
 
-
       if (mPublishLinearVelocity) // If not publishing, then don't do anything.
       {
-         if (mPrevFrameDeltaTime > 0.0f && mLastPos.length2() > 0.0) // ignore first time.
-         {
-            // Note - we used to grab the velocity from the physics engines, but there were sometimes 
-            // discontinuities reported by the various engines, so that was removed in favor of a simple
-            // differential of position. 
-            osg::Vec3 distanceMoved = pos - mLastPos;
-            osg::Vec3 instantVelocity = distanceMoved / mPrevFrameDeltaTime;
+         osg::Vec3 previousAccumulatedLinearVelocity = mAccumulatedLinearVelocity;
 
-            osg::Vec3 previousAccumulatedLinearVelocity = mAccumulatedLinearVelocity;
+         if (mVelocitySource.valid())
+         {
+            mAccumulatedLinearVelocity = mVelocitySource->GetVelocity();
+         }
+         else
+         {
+            // Note - we used to grab the velocity from the physics engines, but there were sometimes
+            // discontinuities reported by the various engines, so that was removed in favor of a simple
+            // differential of position.
+            osg::Vec3 distanceMoved = pos - mLastPos;
+            osg::Vec3 instantVelocity = distanceMoved / deltaTime;
 
             // Compute Vel - either the instant Vel or a blended value over a couple of frames. Blended Velocities tend to make acceleration less useful
-            if (mVelocityAverageFrameCount == 1)
+            if (mVelocityAverageFrameCount <= 1)
             {
                mAccumulatedLinearVelocity = instantVelocity;
             }
-            else 
+            else
             {
                float instantVelWeight = 1.0f / float(mVelocityAverageFrameCount);
                mAccumulatedLinearVelocity = instantVelocity * instantVelWeight + mAccumulatedLinearVelocity * (1.0f - instantVelWeight);
             }
 
-            // Sometimes, the physics engines will oscillate when they are moving extremely slowly (or 'sitting still')
-            // Calc'ing the vel/accel will magnify this effect, so we clamp it.
-            float velMagnitude2 = mAccumulatedLinearVelocity.length2();
-            if (velMagnitude2 < 0.01f)
+            if (mVelocityClampMagnitude > FLT_EPSILON)
             {
-               mAccumulatedLinearVelocity = osg::Vec3(0.0f, 0.0f, 0.0f);
+               // Clamping to provide some better stability at low speeds.
+               float velMagnitude2 = mAccumulatedLinearVelocity.length2();
+               if (velMagnitude2 < mVelocityClampMagnitude * mVelocityClampMagnitude)
+               {
+                  mAccumulatedLinearVelocity = osg::Vec3(0.0f, 0.0f, 0.0f);
+               }
             }
-
-            // Compute our acceleration as the instantaneous differential of the velocity
-            // Acceleration is dampened before publication - see SetLastKnownValuesBeforePublish().
-            // Note - if you know your REAL acceleration due to vehicle dynamics, override the method
-            // and make your own call to SetAcceleration().
-            osg::Vec3 changeInVelocity = mAccumulatedLinearVelocity - previousAccumulatedLinearVelocity; /*instantVelocity - mAccumulatedLinearVelocity*/;
-            mAccumulatedAcceleration = changeInVelocity / mPrevFrameDeltaTime;
-
-            // Many vehicles get a slight jitter up/down while running. If you allow the z acceleration to 
-            // be published, the vehicle will go all over the place nutty. So, we zero it out. 
-            // This is not an ideal solution, but is workable because vehicles that really do have a lot of
-            // z acceleration are probably flying and by definition are not as close to other objects so the z accel
-            // is less visually apparent.
-            mAccumulatedAcceleration.z() = 0.0f; 
-
-            SetAcceleration(mAccumulatedAcceleration);
-            SetVelocity(mAccumulatedLinearVelocity);
          }
 
+         if (mAccelSource.valid())
+         {
+            mAccumulatedAcceleration = mAccelSource->GetAcceleration();
+         }
+         else
+         {
+            // Compute our acceleration as the instantaneous differential of the velocity
+            // Acceleration is dampened before publication - see SetLastKnownValuesBeforePublish().
+            osg::Vec3 changeInVelocity = mAccumulatedLinearVelocity - previousAccumulatedLinearVelocity; /*instantVelocity - mAccumulatedLinearVelocity*/;
+            mAccumulatedAcceleration = changeInVelocity / deltaTime;
+         }
+
+         // Many vehicles get a slight jitter up/down while running. If you allow the z acceleration to
+         // be published, the vehicle will go all over the place nutty. So, we zero it out.
+         // This is not an ideal solution, but is workable because vehicles that really do have a lot of
+         // z acceleration are probably flying and by definition are not as close to other objects so the z accel
+         // is less visually apparent.
+         //mAccumulatedAcceleration.z() = 0.0f;  // Removed because we use this for more than vehicles.
+
+         SetVelocity(mAccumulatedLinearVelocity);
+         SetAcceleration(mAccumulatedAcceleration);
+
          mLastPos = pos; 
-         mPrevFrameDeltaTime = deltaTime; // The passed in Delta is actually the time for the next computation
       }
    }
 
@@ -614,11 +627,11 @@ namespace dtGame
          }
          
          // If no DR is occuring, then we don't want to check.
-         else if (GetDeadReckoningHelper().GetDeadReckoningAlgorithm() != dtGame::DeadReckoningAlgorithm::NONE)
+         else if (GetDeadReckoningHelper()->GetDeadReckoningAlgorithm() != dtGame::DeadReckoningAlgorithm::NONE)
          {
             // check to see if it's moved or turned enough to warrant one.
-            osg::Vec3 distanceMoved = pos - GetDeadReckoningHelper().GetCurrentDeadReckonedTranslation();
-            osg::Vec3 distanceTurned = rot - GetDeadReckoningHelper().GetCurrentDeadReckonedRotation();
+            osg::Vec3 distanceMoved = pos - GetDeadReckoningHelper()->GetCurrentDeadReckonedTranslation();
+            osg::Vec3 distanceTurned = rot - GetDeadReckoningHelper()->GetCurrentDeadReckonedRotation();
             if (distanceMoved.length2() > mMaxTranslationError2 || distanceTurned.length2() > mMaxRotationError2)
             {
                // Note the rotation check isn't perfect (ie, not a quaternion), so you might get
@@ -628,7 +641,7 @@ namespace dtGame
             // We passed pos/rot check, now check velocity
             else if (GetUseVelocityInDRUpdateDecision())
             {
-               osg::Vec3 oldVel = GetDeadReckoningHelper().GetLastKnownVelocity();
+               osg::Vec3 oldVel = GetDeadReckoningHelper()->GetLastKnownVelocity();
                osg::Vec3 curVel = GetVelocity();
                float oldMag = oldVel.normalize();
                float curMag = curVel.normalize();
