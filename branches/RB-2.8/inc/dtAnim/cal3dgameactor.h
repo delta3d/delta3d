@@ -73,7 +73,7 @@ namespace dtAnim
       * Constructs a Cal3DGameActor actor.
       * @param proxy The actor proxy owning this task actor.
       */
-      Cal3DGameActor(dtGame::GameActorProxy &proxy);
+      Cal3DGameActor(dtGame::GameActorProxy& parent);
 
       /**
       * Loads a model file.

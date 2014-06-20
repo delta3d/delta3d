@@ -1171,7 +1171,7 @@ namespace dtGame
             IEnvGameActor* ea = dynamic_cast<IEnvGameActor*>(mGMImpl->mEnvironment->GetDrawable());
             if (ea == NULL)
             {
-               LOG_ERROR("An environment actor proxy has an invalid actor");
+               LOG_ERROR("An environment actor has an invalid drawable");
                return;
             }
             if (hasNoParent)
@@ -1294,6 +1294,24 @@ namespace dtGame
       mGMImpl->mPrototypeActors.insert(std::make_pair(gameActorProxy.GetId(), &gameActorProxy));
    }
 
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void GameManager::CreateActorsFromPrefab(const dtCore::ResourceDescriptor& rd, std::vector<dtCore::RefPtr<dtCore::BaseActorObject> >& actorsOut, bool isRemote)
+   {
+      dtCore::Project::GetInstance().LoadPrefab(rd, actorsOut);
+      std::vector<dtCore::RefPtr<dtCore::BaseActorObject> >::iterator i, iend;
+      i = actorsOut.begin();
+      iend = actorsOut.end();
+      for (; i != iend; ++i)
+      {
+         if ((*i)->IsGameActorProxy())
+         {
+            dtGame::GameActorProxy* gap = static_cast<dtGame::GameActorProxy*>(i->get());
+            gap->SetRemote(isRemote);
+         }
+      }
+   }
+
    ///////////////////////////////////////////////////////////////////////////////
    dtCore::RefPtr<dtCore::BaseActorObject> GameManager::CreateActorFromPrototype(const dtCore::UniqueId& uniqueID, bool isRemote /*= false*/)
    {
@@ -1328,7 +1346,7 @@ namespace dtGame
          // Already set? No-Op
          if (mGMImpl->mEnvironment == envActor)
          {
-            LOG_WARNING("Tried to set the internal environment proxy pointer to itself");
+            LOG_WARNING("Tried to set the internal environment actor pointer to itself");
             return;
          }
 
@@ -1366,7 +1384,7 @@ namespace dtGame
          ea = dynamic_cast<IEnvGameActor*>(mGMImpl->mEnvironment->GetDrawable());
          if (ea == NULL)
          {
-            LOG_ERROR("The environment actor proxy parameter has an invalid actor");
+            LOG_ERROR("The environment actor parameter has an invalid drawable");
             return;
          }
       }
@@ -1476,8 +1494,8 @@ namespace dtGame
       GMImpl::GameActorMap::iterator itor = mGMImpl->mGameActorProxyMap.find(id);
       if (itor == mGMImpl->mGameActorProxyMap.end())
       {
-         // it's not in the game manager as a game actor proxy, maybe it's in there
-         // as a regular actor proxy.
+         // it's not in the game manager as a game actor, maybe it's in there
+         // as a regular actor
          GMImpl::ActorMap::iterator itor = mGMImpl->mBaseActorObjectMap.find(id);
 
          if (itor != mGMImpl->mBaseActorObjectMap.end())
@@ -1490,7 +1508,7 @@ namespace dtGame
       {
          GameActorProxy& gameActorProxy = *itor->second;
 
-         // Is it an environment actor proxy?
+         // Is it an environment actor?
          IEnvGameActorProxy* eap = dynamic_cast<IEnvGameActorProxy*>(&gameActorProxy);
          if (eap != NULL && mGMImpl->mScene->GetChildIndex(eap->GetDrawable()) != mGMImpl->mScene->GetNumberOfAddedDrawable())
          {
@@ -1710,9 +1728,9 @@ namespace dtGame
       {
       }
 
-      bool operator()(dtCore::BaseActorObject& proxy)
+      bool operator()(dtCore::BaseActorObject& actor)
       {
-         const std::string& name = proxy.GetName();
+         const std::string& name = actor.GetName();
          return dtUtil::Match(const_cast<char*>(mName.c_str()), const_cast<char*>(name.c_str()));
       }
 
@@ -1737,9 +1755,9 @@ namespace dtGame
       {
       }
 
-      bool operator()(dtCore::BaseActorObject& proxy)
+      bool operator()(dtCore::BaseActorObject& actor)
       {
-         return proxy.GetActorType().InstanceOf(mType);
+         return actor.GetActorType().InstanceOf(mType);
       }
 
       const dtCore::ActorType& mType;
@@ -1763,9 +1781,9 @@ namespace dtGame
       {
       }
 
-      bool operator()(dtCore::BaseActorObject& proxy)
+      bool operator()(dtCore::BaseActorObject& actor)
       {
-         return proxy.IsInstanceOf(mType);
+         return actor.IsInstanceOf(mType);
       }
 
       const std::string& mType;
@@ -2024,10 +2042,10 @@ namespace dtGame
 
 
    ///////////////////////////////////////////////////////////////////////////////
-   void GameManager::ClearTimer(const std::string& name, const GameActorProxy* proxy)
+   void GameManager::ClearTimer(const std::string& name, const GameActorProxy* actor)
    {
-      mGMImpl->ClearTimerSingleSet(mGMImpl->mRealTimeTimers, name, proxy);
-      mGMImpl->ClearTimerSingleSet(mGMImpl->mSimulationTimers, name, proxy);
+      mGMImpl->ClearTimerSingleSet(mGMImpl->mRealTimeTimers, name, actor);
+      mGMImpl->ClearTimerSingleSet(mGMImpl->mSimulationTimers, name, actor);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -2045,7 +2063,7 @@ namespace dtGame
 
       while (itor != msgTypeMatches.second)
       {
-         // add the game actor proxy and invokable name to a new pair in the vector.
+         // add the game actor and invokable name to a new pair in the vector.
          if (itor->second.first.valid())
          {
             toFill.push_back(std::make_pair(itor->second.first.get(), itor->second.second));
@@ -2082,14 +2100,14 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   static void ValidateMessageType(const MessageType& type, GameActorProxy& proxy,
+   static void ValidateMessageType(const MessageType& type, GameActorProxy& actor,
             const std::string& invokableName)
    {
       if (type == MessageType::TICK_END_OF_FRAME)
       {
          std::ostringstream ss;
          ss << "Unable to register globally for MessageType \"" << MessageType::TICK_END_OF_FRAME.GetName() << " for Actor \""
-            << proxy.GetActorType() << "\" "
+            << actor.GetActorType() << "\" "
             << " using invokable named \"" << invokableName << "\".  Only components may register for that message type.";
 
          throw dtUtil::Exception(ss.str(), __FILE__, __LINE__);
@@ -2097,19 +2115,19 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void GameManager::RegisterForMessages(const MessageType& type, GameActorProxy& proxy,
+   void GameManager::RegisterForMessages(const MessageType& type, GameActorProxy& actor,
          const std::string& invokableName)
    {
-      ValidateMessageType(type, proxy, invokableName);
+      ValidateMessageType(type, actor, invokableName);
 
       mGMImpl->mGlobalMessageListeners.insert(
             std::make_pair(&type,
-                  std::make_pair(dtCore::RefPtr<GameActorProxy>(&proxy), invokableName)));
+                  std::make_pair(dtCore::RefPtr<GameActorProxy>(&actor), invokableName)));
 
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void GameManager::UnregisterForMessages(const MessageType& type, GameActorProxy& proxy,
+   void GameManager::UnregisterForMessages(const MessageType& type, GameActorProxy& actor,
                                            const std::string& invokableName)
    {
       typedef std::pair<GMImpl::GlobalMessageListenerMap::iterator, GMImpl::GlobalMessageListenerMap::iterator> IterPair;
@@ -2117,12 +2135,12 @@ namespace dtGame
       //find all matches of MessageType
       IterPair msgTypeMatches = mGMImpl->mGlobalMessageListeners.equal_range(&type);
 
-      //NULL out the one that also match the supplied proxy and invokableName
+      //NULL out the one that also match the supplied actor and invokableName
       for (GMImpl::GlobalMessageListenerMap::iterator itor = msgTypeMatches.first;
                                               itor != msgTypeMatches.second;
                                               ++itor)
       {
-         if (itor->second.first.get() == &proxy &&
+         if (itor->second.first.get() == &actor &&
              itor->second.second == invokableName)
          {
             //we'll actually erase this item next time it's invoked
@@ -2135,18 +2153,18 @@ namespace dtGame
 
    ///////////////////////////////////////////////////////////////////////////////
    void GameManager::RegisterForMessagesAboutActor(const MessageType& type,
-         const dtCore::UniqueId& targetActorId, GameActorProxy& proxy,
+         const dtCore::UniqueId& targetActorId, GameActorProxy& actor,
          const std::string& invokableName)
    {
-      ValidateMessageType(type, proxy, invokableName);
+      ValidateMessageType(type, actor, invokableName);
 
       GMImpl::ProxyInvokableMap& mapForType = mGMImpl->mActorMessageListeners[&type];
-      mapForType.insert(std::make_pair(targetActorId, std::make_pair(dtCore::RefPtr<GameActorProxy>(&proxy), invokableName)));
+      mapForType.insert(std::make_pair(targetActorId, std::make_pair(dtCore::RefPtr<GameActorProxy>(&actor), invokableName)));
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    void GameManager::UnregisterForMessagesAboutActor(const MessageType& type,
-         const dtCore::UniqueId& targetActorId, GameActorProxy& proxy,
+         const dtCore::UniqueId& targetActorId, GameActorProxy& actor,
          const std::string& invokableName)
    {
       GMImpl::ActorMessageListenerMap::iterator itor = mGMImpl->mActorMessageListeners.find(&type);
@@ -2158,8 +2176,8 @@ namespace dtGame
          while (itorInner != itor->second.end() && itorInner->first == targetActorId)
          {
             //second is a pair.
-            //second.first is the game actor proxy to receive the message second.second is the name of the invokable
-            if (itorInner->second.first.get() == &proxy && itorInner->second.second == invokableName)
+            //second.first is the game actor to receive the message second.second is the name of the invokable
+            if (itorInner->second.first.get() == &actor && itorInner->second.second == invokableName)
             {
                GMImpl::ProxyInvokableMap::iterator toDelete = itorInner;
                ++itorInner;
@@ -2174,14 +2192,14 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void GameManager::UnregisterAllMessageListenersForActor(GameActorProxy& proxy)
+   void GameManager::UnregisterAllMessageListenersForActor(GameActorProxy& actor)
    {
       for (GMImpl::GlobalMessageListenerMap::iterator i = mGMImpl->mGlobalMessageListeners.begin();
            i != mGMImpl->mGlobalMessageListeners.end();)
       {
          GMImpl::GlobalMessageListenerMap::iterator toDelete = i;
          ++i;
-         if (toDelete->second.first.get() == &proxy)
+         if (toDelete->second.first.get() == &actor)
          {
             mGMImpl->mGlobalMessageListeners.erase(toDelete);
          }
@@ -2193,7 +2211,7 @@ namespace dtGame
          {
             GMImpl::ProxyInvokableMap::iterator toDelete = j;
             ++j;
-            if (toDelete->first == proxy.GetId() || toDelete->second.first.get() == &proxy)
+            if (toDelete->first == actor.GetId() || toDelete->second.first.get() == &actor)
             {
                i->second.erase(toDelete);
             }

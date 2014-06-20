@@ -25,8 +25,12 @@
 #ifndef glwidgetfactory_h__
 #define glwidgetfactory_h__
 
+#include <dtUtil/warningdisable.h>
+DT_DISABLE_WARNING_ALL_START
 #include <QtOpenGL/QGLWidget>
 #include <osg/Referenced>
+DT_DISABLE_WARNING_END
+
 #include <dtUtil/breakoverride.h>
 
 namespace dtQt
@@ -45,16 +49,16 @@ namespace dtQt
          }
 
          ///Override to generate a custom OSGAdapterWidget
-         virtual OSGAdapterWidget* CreateWidget(const QGLFormat& format, bool drawOnSeparateThread, QWidget* parent = NULL,
-                                                const QGLWidget* shareWidget = NULL, Qt::WindowFlags f = NULL) 
+         virtual OSGAdapterWidget* CreateWidget(const QGLFormat& /*format*/, bool /*drawOnSeparateThread*/, QWidget* /*parent*/ = NULL,
+                                                const QGLWidget* /*shareWidget*/ = NULL, Qt::WindowFlags /*f*/ = NULL)
          {
             return NULL;
          }
 
          /// This is the old, deprecated version.  Deprecated 4/5/2010.
          /// Overwrite OSGAdapterWidget* CreateWidget(const QGLFormat&,bool,QWidget*,const QGLWidget*,Qt::WindowFlags) instead
-         BREAK_OVERRIDE(CreateWidget(bool drawOnSeparateThread,  QWidget* parent = NULL,
-                                     const QGLWidget* shareWidget = NULL, Qt::WindowFlags f = NULL))
+         BREAK_OVERRIDE(CreateWidget(bool,  QWidget*,
+                                     const QGLWidget*, Qt::WindowFlags))
 
       protected:
          ~GLWidgetFactory()

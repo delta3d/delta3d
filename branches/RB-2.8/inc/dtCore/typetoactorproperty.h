@@ -100,7 +100,6 @@ namespace dtCore
          typedef typename value_type::SetFuncType SetFuncType;
       };
       //TODO- ActorActor (DEPRECATED ANYWAY), and ColorRGBA (Which uses a vec4, so there is no way to distinguish it)
-      // ResourceActorProperty is in the list, but it needs work in the property macros to set the type
 
       template <typename T>
       struct _TypeToActorProperty_<false, bool, T>

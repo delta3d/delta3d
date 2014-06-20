@@ -33,7 +33,7 @@
 namespace dtActors
 {
    //////////////////////////////////////////////////////////////////////////////
-   TaskActorGameEvent::TaskActorGameEvent(dtGame::GameActorProxy &proxy) : TaskActor(proxy), mGameEvent(NULL)
+   TaskActorGameEvent::TaskActorGameEvent(dtGame::GameActorProxy& parent) : TaskActor(parent), mGameEvent(NULL)
    {
       Reset();
    }
@@ -89,10 +89,10 @@ namespace dtActors
       //If we got here we have a game event we were looking for.  So, all we need to do
       //is track the number of times we got the event, and if it reaches the min occurances
       //attempt to mark ourselves complete.
-      TaskActorProxy &proxy = static_cast<TaskActorProxy&>(GetGameActorProxy());
+      TaskActorProxy& owner = static_cast<TaskActorProxy&>(GetGameActorProxy());
       if (!IsComplete() && !IsFailed())
       {
-         if (proxy.RequestScoreChange(proxy,proxy))
+         if (owner.RequestScoreChange(owner,owner))
          {
             if ( isFailEvent ) // Fail event
             {
@@ -109,8 +109,8 @@ namespace dtActors
             }
 
             // Notify the system that the task state has changed.
-            proxy.NotifyScoreChanged(proxy);
-            proxy.NotifyFullActorUpdate();
+            owner.NotifyScoreChanged(owner);
+            owner.NotifyFullActorUpdate();
          }
       }
    }

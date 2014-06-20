@@ -29,9 +29,18 @@ namespace dtCore
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   GameEvent::GameEvent(const std::string &name, const std::string &desc) : dtCore::Base(name),
+   GameEvent::GameEvent(const std::string& name, const dtUtil::RefString& desc) : dtCore::Base(name),
       mDescription(desc)
    {
    }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   bool GameEvent::operator==(const GameEvent& toCompare) const
+   {
+      return GetUniqueId() == toCompare.GetUniqueId();
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   DT_IMPLEMENT_ACCESSOR(GameEvent, dtUtil::RefString, Description);
 
 }

@@ -175,41 +175,52 @@ class TimingListener : public CppUnit::TestListener
        bool mFailure;
 };
 
+#ifndef TEST_ROOT
+#define TEST_ROOT ../
+#endif
+
+#define _GET_PATH(testpath) #testpath
+#define GET_PATH(testpath) _GET_PATH(testpath)
+
 
 int main(int argc, char* argv[])
 {
    const std::string executable = argv[0];
+   bool changeDir = true;
    std::string singleSuiteName;
    std::string singleTestName;
 
-   // Get the test name from args.
-   if (argc > 1)
+   std::string currArg;
+   for (int arg = 1; arg < argc; ++arg)
    {
-      singleSuiteName = argv[1];
-   }
-   if (argc > 2)
-   {
-      singleTestName = argv[2];
+      currArg = argv[arg];
+      if (currArg == "-nochdir")
+      {
+         changeDir = false;
+      }
+      else if (singleSuiteName.empty())
+      {
+         singleSuiteName = currArg;
+      }
+      else if (singleSuiteName.empty())
+      {
+         singleTestName = currArg;
+      }
+      else
+      {
+         std::cerr << "Ignoring argument: " << currArg << std::endl;
+      }
    }
 
-   // We need to change our directory based on the executable
-   dtUtil::FileInfo info = dtUtil::FileUtils::GetInstance().GetFileInfo(executable);
-   if (info.fileType == dtUtil::FILE_NOT_FOUND)
+   if (changeDir)
    {
-      LOG_ERROR(std::string("Unable to change to the directory of application \"")
-         + executable + "\": file not found.");
-   }
-   else
-   {
-      std::string path = info.path;
-      LOG_ALWAYS(std::string("Changing to directory \"") + info.path + "\".");
+      std::string path = GET_PATH(TEST_ROOT);
+      LOG_ALWAYS("The test root is: " + path);
+      LOG_ALWAYS(std::string("Changing to directory \"") + path + dtUtil::FileUtils::PATH_SEPARATOR + "tests\".");
 
       try
       {
-         if (!info.path.empty())
-         {
-            dtUtil::FileUtils::GetInstance().ChangeDirectory(info.path);
-         }
+         dtUtil::FileUtils::GetInstance().ChangeDirectory(path + dtUtil::FileUtils::PATH_SEPARATOR + "tests");
       }
       catch(const dtUtil::Exception& ex)
       {

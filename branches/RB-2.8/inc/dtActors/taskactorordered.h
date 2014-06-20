@@ -70,7 +70,7 @@ namespace dtActors
           * Constructs the ordered task actor.
           * @param proxy Proxy owning this actor.
           */
-         TaskActorOrdered(dtGame::GameActorProxy &proxy);
+         TaskActorOrdered(dtGame::GameActorProxy& parent);
 
          /**
           * Sets the failure type for this ordered task.

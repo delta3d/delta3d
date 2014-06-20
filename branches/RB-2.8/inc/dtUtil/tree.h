@@ -70,7 +70,7 @@ private:
         if (this->out_ != NULL) {
 
             // this->out_ is going to be called alot in succession "register" it
-            register tree *out = this->out_;
+            tree *out = this->out_;
 
             // Decrement the size of the outter level
             --(out->size_);
@@ -436,7 +436,7 @@ public:
         // that way Disconnect fails immediately -- much faster
 
         if (this->size() > 0) {
-            register tree *cur = this->in_, *prev = this->in_->prev_;
+            tree *cur = this->in_, *prev = this->in_->prev_;
 
             // Delete the head node
             prev->out_ = NULL;
@@ -499,7 +499,7 @@ public:
         // right before we destroy it set it's out_ to NULL
         // that way disconnect_ fails immediately, much faster
         if (this->size() > 0) {
-            register tree *cur = this->in_, *prev = this->in_->prev_;
+            tree *cur = this->in_, *prev = this->in_->prev_;
 
             // Delete the head node
             prev->out_ = NULL;
@@ -663,8 +663,8 @@ public:
    { return tree_find_depth(inT, iterator(*this->in_), obj); }
 
     //////////////////////////////////////////////////////////////////////////
-   iterator tree_find_breadth(const T &/*inT*/) const
-   { return tree_find_breadth(in, iterator(*this->in_)); }
+   iterator tree_find_breadth(const T &inT) const
+   { return tree_find_breadth(inT, iterator(*this->in_)); }
 
     //////////////////////////////////////////////////////////////////////////
    iterator tree_find_breadth(const T &inT, bool (*obj)(const T&, const T&)) const

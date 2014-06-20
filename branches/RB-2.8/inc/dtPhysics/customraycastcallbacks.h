@@ -103,7 +103,7 @@ namespace dtPhysics
          {
             dtPhysics::PhysicsObject* physObject = reinterpret_cast<dtPhysics::PhysicsObject*>(hit.m_pBody->GetUserData());
 
-            if (physObject != NULL && physObject->GetUserData() != mOwnerToIgnore)
+            if (physObject != NULL && (physObject->GetUserData() == NULL || physObject->GetUserData() != mOwnerToIgnore))
             {
                dtPhysics::RayCast::Report report;
                dtPhysics::PalRayHitToRayCastReport(report, hit);

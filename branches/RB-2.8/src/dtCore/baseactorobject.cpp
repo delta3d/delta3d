@@ -48,8 +48,12 @@ namespace dtCore
    const BaseActorObject::RenderMode BaseActorObject::RenderMode::DRAW_BILLBOARD_ICON("DRAW_BILLBOARD_ICON");
    const BaseActorObject::RenderMode BaseActorObject::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON("DRAW_ACTOR_AND_BILLBOARD_ICON");
    const BaseActorObject::RenderMode BaseActorObject::RenderMode::DRAW_AUTO("DRAW_AUTO");
-   const dtUtil::RefString BaseActorObject::DESCRIPTION_PROPERTY("Description");
-   const dtUtil::RefString BaseActorObject::ACTIVE_PROPERTY("IsActive");
+   const dtUtil::RefString BaseActorObject::PROPERTY_NAME("Name");
+   const dtUtil::RefString BaseActorObject::PROPERTY_TYPE_CATEGORY("Type Category");
+   const dtUtil::RefString BaseActorObject::PROPERTY_TYPE_NAME("Type Name");
+   const dtUtil::RefString BaseActorObject::PROPERTY_CLASS_NAME("Class Name");
+   const dtUtil::RefString BaseActorObject::PROPERTY_DESCRIPTION("Description");
+   const dtUtil::RefString BaseActorObject::PROPERTY_ACTIVE("IsActive");
    /////////////////////////////////////////////////////////////////////////////
 
    /////////////////////////////////////////////////////////////////////////////
@@ -242,7 +246,7 @@ namespace dtCore
       {
          throw dtUtil::Exception("The ActorType on an BaseActorObject is NULL.  The only way this could happen is "
                   "if the actor was created with the new operator rather than via "
-                  "dtCore::LibraryManager::GetInstance().CreateActorProxy().",
+                  "dtCore::LibraryManager::GetInstance().CreateActor().",
                   __FILE__, __LINE__);
       }
    }
@@ -284,7 +288,7 @@ namespace dtCore
       {
          throw dtUtil::Exception("The Actor on an BaseActorObject is NULL.  The only ways this could happen is "
                   "if the actor was created with the new operator rather than via "
-                  "dtCore::LibraryManager::GetInstance().CreateActorProxy "
+                  "dtCore::LibraryManager::GetInstance().CreateActor "
                   "or the CreateActor method on the proxy subclass did not call SetActor() with a valid actor.",
                   __FILE__, __LINE__);
       }
@@ -371,11 +375,11 @@ namespace dtCore
    {
       dtCore::DeltaDrawable* drawable = GetDrawable();
 
-      const std::string GROUP_INFORMATION("Actor Information");
+      const std::string GROUP_INFORMATION("Taxonomy");
       const std::string GROUP_DRAWABLE("DeltaDrawable");
 
       StringActorProperty* nameProp = new StringActorProperty(
-         "Actor Name", "Actor Name",
+         PROPERTY_NAME, PROPERTY_NAME,
          StringActorProperty::SetFuncType(this, &BaseActorObject::SetName),
          StringActorProperty::GetFuncType(this, &BaseActorObject::GetName),
          "The Display Name of the Actor.", GROUP_INFORMATION);
@@ -385,7 +389,7 @@ namespace dtCore
       if (mActorType)
       {
          StringActorProperty* categoryProp = new StringActorProperty(
-            "Actor Category", "Actor Category",
+            PROPERTY_TYPE_CATEGORY, PROPERTY_TYPE_NAME,
             StringActorProperty::SetFuncType(),
             StringActorProperty::GetFuncType(&GetActorType(), &ActorType::GetCategory),
             "The Category Name of the Actor.", GROUP_INFORMATION);
@@ -393,7 +397,7 @@ namespace dtCore
          AddProperty(categoryProp);
 
          StringActorProperty* typeProp = new StringActorProperty(
-            "Actor Type", "Actor Type",
+            PROPERTY_TYPE_NAME, PROPERTY_TYPE_NAME,
             StringActorProperty::SetFuncType(),
             StringActorProperty::GetFuncType(&GetActorType(), &ActorType::GetName),
             "The Type Name of the Actor.", GROUP_INFORMATION);
@@ -410,15 +414,15 @@ namespace dtCore
       AddProperty(classProp);
 
       AddProperty(new StringActorProperty(
-                  BaseActorObject::DESCRIPTION_PROPERTY.Get(),
-                  "Description",
+                  BaseActorObject::PROPERTY_DESCRIPTION,
+                  BaseActorObject::PROPERTY_DESCRIPTION,
                   StringActorProperty::SetFuncType(drawable, &dtCore::DeltaDrawable::SetDescription),
                   StringActorProperty::GetFuncType(drawable, &dtCore::DeltaDrawable::GetDescription),
                   "Generic text field used to describe this object",
                   GROUP_DRAWABLE));
 
       AddProperty(new dtCore::BooleanActorProperty(
-                  BaseActorObject::ACTIVE_PROPERTY.Get(), "IsActive",
+                  BaseActorObject::PROPERTY_ACTIVE, BaseActorObject::PROPERTY_ACTIVE,
                   dtCore::BooleanActorProperty::SetFuncType(drawable, &dtCore::DeltaDrawable::SetActive),
                   dtCore::BooleanActorProperty::GetFuncType(drawable, &dtCore::DeltaDrawable::GetActive),
                   "Determines whether the drawable will render.", GROUP_DRAWABLE));

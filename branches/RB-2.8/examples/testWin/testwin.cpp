@@ -89,7 +89,7 @@ void TestWinApp::BuildGUI(DeltaWin::ResolutionVec& resolutions,
 
       //overwrite the default search path, to found our local layout file.
       mGUI->SetResourceGroupDirectory("layouts", dtUtil::GetDeltaRootPath() + "/examples/testWin/");
-      CEGUI::Window* sheet = mGUI->LoadLayout("testWinLayout.xml");
+      mGUI->LoadLayout("testWinLayout.xml");
       CEGUI::MultiColumnList* list = static_cast<CEGUI::MultiColumnList*>(mGUI->GetWidget("List"));
 
       int rowNum = 0;

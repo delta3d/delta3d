@@ -69,8 +69,12 @@ namespace dtCore
       DECLARE_MANAGEMENT_LAYER(BaseActorObject)
 
    public:
-      static const dtUtil::RefString DESCRIPTION_PROPERTY;
-      static const dtUtil::RefString ACTIVE_PROPERTY;
+      static const dtUtil::RefString PROPERTY_NAME;
+      static const dtUtil::RefString PROPERTY_TYPE_CATEGORY;
+      static const dtUtil::RefString PROPERTY_TYPE_NAME;
+      static const dtUtil::RefString PROPERTY_CLASS_NAME;
+      static const dtUtil::RefString PROPERTY_DESCRIPTION;
+      static const dtUtil::RefString PROPERTY_ACTIVE;
 
       /**
        * This enumeration defines the different ways an actor proxy can

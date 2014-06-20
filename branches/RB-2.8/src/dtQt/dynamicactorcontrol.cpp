@@ -197,7 +197,7 @@ namespace dtQt
 
       if (mIdProperty)
       {
-         return mIdProperty->GetActorProxy();
+         return mIdProperty->GetActor();
       }
 
       return NULL;

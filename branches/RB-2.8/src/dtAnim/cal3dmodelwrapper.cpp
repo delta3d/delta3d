@@ -551,7 +551,7 @@ namespace dtAnim
    void Cal3DModelWrapper::SetScale(float scale)
    {
       // Ensure scale never goes to 0, to prevent the NAN plague.
-      if(scale == 0.0f)
+      if(scale <= 0.0f)
       {
          scale = 0.001f;
       }

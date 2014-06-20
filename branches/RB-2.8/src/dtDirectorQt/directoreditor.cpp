@@ -306,6 +306,11 @@ namespace dtDirector
          {
             AssignFileNameVars(fileName);
 
+            if (mFileName.empty())
+            {
+               throw dtUtil::FileNotFoundException(fileName + " does not exist or could not be accessed.", __FILE__, __LINE__);
+            }
+
             RemoveRecentFile();
 
             DirectorTypeFactory* factory = DirectorTypeFactory::GetInstance();

@@ -222,16 +222,18 @@ namespace dtABC
         * @param defaultValue The default value to use if name isn't found
         * @return a string value that is paired with the given name.  The default is returned if the property is not set.
        */
-      const std::string& GetConfigPropertyValue(const std::string& name, const std::string& defaultValue = "") const;
+      /*override*/ const std::string& GetConfigPropertyValue(const std::string& name, const std::string& defaultValue = "") const;
+
+      /*override*/ void GetConfigPropertiesWithPrefix(const std::string& prefix, std::vector<std::pair<std::string,std::string> >& resultOut, bool removePrefix = true) const;
 
       /// Sets the value of a given config property.
-      void SetConfigPropertyValue(const std::string& name, const std::string& value);
+      /*override*/ void SetConfigPropertyValue(const std::string& name, const std::string& value);
 
       /// Removes a property with the given name
-      void RemoveConfigPropertyValue(const std::string& name);
+      /*override*/ void RemoveConfigPropertyValue(const std::string& name);
 
       /// Returns whether a config property exists or not
-      bool IsConfigPropertyDefined(const std::string& name) const;
+      /*override*/ bool IsConfigPropertyDefined(const std::string& name) const;
 
       /// Add a view to the Viewer
       void AddView(dtCore::View& view);

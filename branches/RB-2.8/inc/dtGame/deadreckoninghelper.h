@@ -35,6 +35,7 @@
 #include <dtCore/transform.h>
 #include <dtGame/basegroundclamper.h>
 #include <dtGame/actorcomponent.h>
+#include <dtCore/motioninterface.h>
 
 namespace dtCore
 {
@@ -77,9 +78,11 @@ namespace dtGame
     * Note - this class and its behavior are described in extensive detail in an article in 
     * Game Engine Gems 2 (Mar '11) entitled, 'Believable Dead Reckoning for Networked Games' 
     */
-   class DT_GAME_EXPORT DeadReckoningHelper : public dtGame::ActorComponent
+   class DT_GAME_EXPORT DeadReckoningHelper : public dtGame::ActorComponent , public dtCore::MotionInterface
    {
       public:
+         DT_DECLARE_VIRTUAL_REF_INTERFACE_INLINE
+
          static const float DEFAULT_MAX_SMOOTHING_TIME_ROT;
          static const float DEFAULT_MAX_SMOOTHING_TIME_POS;
 
@@ -428,13 +431,13 @@ namespace dtGame
           * @return the velocity vector
           */
          const osg::Vec3& GetLastKnownVelocity() const { return mTranslation.mLastVelocity; }
-
          /** 
           * For moving objects, the DR helper computes the instantaneous velocity each frame. This
           * exposes that value to classes like the DR Component.
           * @return the instantaneous velocity
           */
          const osg::Vec3& GetCurrentInstantVelocity() const;
+         /*override MotionInterface*/ osg::Vec3 GetVelocity() const { return GetCurrentInstantVelocity(); }
 
          /**
           * Sets this entity's DIS/RPR-FOM acceleration vector.
@@ -447,6 +450,7 @@ namespace dtGame
           * @return the acceleration vector
           */
          const osg::Vec3& GetLastKnownAcceleration() const { return mTranslation.mAcceleration; }
+         /*override MotionInterface*/ osg::Vec3 GetAcceleration() const { return GetLastKnownAcceleration(); }
 
          /**
           * Sets this entity's DIS/RPR-FOM angular velocity vector.
@@ -459,6 +463,7 @@ namespace dtGame
           * @return the angular velocity vector
           */
          const osg::Vec3& GetLastKnownAngularVelocity() const { return mAngularVelocityVector; }
+         /*override MotionInterface*/ osg::Vec3 GetAngularVelocity() const { return GetLastKnownAngularVelocity(); }
 
          ///@return the total amount of time to use when smoothing the translation for this last update.
          float GetTranslationEndSmoothingTime() const { return mTranslation.mEndSmoothingTime; }

@@ -81,7 +81,7 @@ namespace dtAnim
       void ignorableWhitespace(const XMLCh* const chars, const unsigned int length) {}
 #else
       void characters(const XMLCh* const chars, const XMLSize_t length);
-      void ignorableWhitespace(const XMLCh* const chars, const XMLSize_t length) {}
+      void ignorableWhitespace(const XMLCh* const /*chars*/, const XMLSize_t /*length*/) {}
 #endif
 
       void startElement(const XMLCh* const uri,const XMLCh* const localname,
@@ -90,11 +90,11 @@ namespace dtAnim
       void endElement(const XMLCh* const uri,const XMLCh* const localname,const XMLCh* const qname);
 
       // Required functions
-      void processingInstruction(const XMLCh* const target, const XMLCh* const data) {}
-      void setDocumentLocator(const XERCES_CPP_NAMESPACE_QUALIFIER Locator* const locator) {}
-      void startPrefixMapping(const XMLCh* const prefix, const XMLCh* const uri) {};
-      void endPrefixMapping(const XMLCh* const prefix) {};
-      void skippedEntity(const XMLCh* const name) {};
+      void processingInstruction(const XMLCh* const /*target*/, const XMLCh* const /*data*/) {}
+      void setDocumentLocator(const XERCES_CPP_NAMESPACE_QUALIFIER Locator* const /*locator*/) {}
+      void startPrefixMapping(const XMLCh* const /*prefix*/, const XMLCh* const /*uri*/) {};
+      void endPrefixMapping(const XMLCh* const /*prefix*/) {};
+      void skippedEntity(const XMLCh* const /*name*/) {};
       void startDocument() {}
       void endDocument() {}
 

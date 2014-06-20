@@ -38,6 +38,7 @@
 #include <dtUtil/datastream.h>
 #include <dtGame/messageparameter.h>
 #include <dtGame/messagetype.h>
+#include <dtCore/librarymanager.h>
 
 dtCore::RefPtr<dtCore::ActorType> TestGameActorLibrary::TEST1_GAME_ACTOR_PROXY_TYPE(
       new dtCore::ActorType("Test1Actor", "ExampleActors", "These are example actors"));

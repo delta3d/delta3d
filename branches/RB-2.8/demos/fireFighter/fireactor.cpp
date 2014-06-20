@@ -138,8 +138,8 @@ void FireActorProxy::OnEnteredWorld()
 }
 
 /////////////////////////////////////////////////
-FireActor::FireActor(dtGame::GameActorProxy& proxy)
-   : GameItemActor(proxy)
+FireActor::FireActor(dtGame::GameActorProxy& parent)
+   : GameItemActor(parent)
    , mFlameSystem(new dtCore::ParticleSystem)
    , mSparkSystem(new dtCore::ParticleSystem)
    , mSmokeSystem(new dtCore::ParticleSystem)

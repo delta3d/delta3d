@@ -121,17 +121,20 @@ namespace dtUtil
 #else
          // dlopen will not work with files in the current directory unless
          // they are prefaced with './'  (DB - Nov 5, 2003).
-         string localLibraryName;
-         if (fullLibraryName == osgDB::getSimpleFileName(fullLibraryName))
+
+#ifdef __APPLE__
+         handle = dlopen(("@executable_path/../lib/" + fullLibraryName).c_str(), RTLD_LAZY | RTLD_GLOBAL);
+#endif
+         if (handle == NULL)
          {
-            localLibraryName = "./" + fullLibraryName;
-         }
-         else
-         {
-            localLibraryName = fullLibraryName;
+            handle = dlopen(("./" + fullLibraryName).c_str(), RTLD_LAZY | RTLD_GLOBAL);
          }
 
-         handle = dlopen(localLibraryName.c_str(), RTLD_LAZY | RTLD_GLOBAL);
+         if (handle == NULL)
+         {
+            handle = dlopen(fullLibraryName.c_str(), RTLD_LAZY | RTLD_GLOBAL);
+         }
+
          if (handle == NULL)
          {
             LOG_ERROR("Error loading library \"" + fullLibraryName + "\" with dlopen(): " + dlerror());
@@ -140,7 +143,7 @@ namespace dtUtil
 #endif
          if (handle != NULL)
          {
-       return new InternalLibraryHandle(fullLibraryName, handle, close);
+             return new InternalLibraryHandle(fullLibraryName, handle, close);
          }
 
          return NULL;

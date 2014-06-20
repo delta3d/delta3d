@@ -152,8 +152,8 @@ namespace dtActors
    /////////////////////////////////////////////////////
    // Actor code
    /////////////////////////////////////////////////////
-   CoordinateConfigActor::CoordinateConfigActor(dtGame::GameActorProxy& proxy)
-      : GameActor(proxy)
+   CoordinateConfigActor::CoordinateConfigActor(dtGame::GameActorProxy& parent)
+      : GameActor(parent)
       , mUseGeoOrigin(false)
    {
 

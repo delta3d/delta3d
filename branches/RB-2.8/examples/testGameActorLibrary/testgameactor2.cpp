@@ -87,7 +87,7 @@ void TestGameActorProxy2::CreateDrawable()
 /////////////////////////////////////////////////////
 // Actor code
 /////////////////////////////////////////////////////
-TestGameActor2::TestGameActor2(dtGame::GameActorProxy& proxy): dtGame::GameActor(proxy), mActorDeletedCount(0), mActorPublishedCount(0),
+TestGameActor2::TestGameActor2(dtGame::GameActorProxy& parent): dtGame::GameActor(parent), mActorDeletedCount(0), mActorPublishedCount(0),
    mMapLoadedCount(0)
 {
 

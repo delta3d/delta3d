@@ -107,8 +107,8 @@ void HatchActorProxy::BuildInvokables()
 
 ////////////////////////////////////////////////
 
-HatchActor::HatchActor(dtGame::GameActorProxy& proxy)
-   : GameItemActor(proxy)
+HatchActor::HatchActor(dtGame::GameActorProxy& parent)
+   : GameItemActor(parent)
    , mHatchNode(NULL)
    , mGameMapLoaded(false)
 {

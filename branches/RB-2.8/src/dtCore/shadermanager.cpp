@@ -350,6 +350,7 @@ namespace dtCore
       std::vector<dtCore::RefPtr<ShaderParameter> > params;
       std::vector<dtCore::RefPtr<ShaderParameter> >::iterator currParam;
       dtCore::RefPtr<osg::StateSet> stateSet = node.getOrCreateStateSet();
+      stateSet->setDataVariance(osg::Object::DYNAMIC);
 
       if (newShader->GetShaderProgram() == NULL)
       {

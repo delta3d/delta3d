@@ -554,7 +554,7 @@ namespace dtEditQt
 
          // recreate the actor!
          dtCore::RefPtr<dtCore::BaseActorObject> proxy =
-            dtCore::LibraryManager::GetInstance().CreateActorProxy(*actorType.get()).get();
+            dtCore::LibraryManager::GetInstance().CreateActor(*actorType.get()).get();
          if (proxy.valid())
          {
             // Tell the proxy that it is loading.

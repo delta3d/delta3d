@@ -59,8 +59,8 @@ void FireHoseActorProxy::BuildInvokables()
    GameItemActorProxy::BuildInvokables();
 }
 
-FireHoseActor::FireHoseActor(dtGame::GameActorProxy &proxy) :
-   GameItemActor(proxy),
+FireHoseActor::FireHoseActor(dtGame::GameActorProxy& parent) :
+   GameItemActor(parent),
    mParticleSystem(new dtCore::ParticleSystem)
 {
    mItemUseSnd->SetLooping(true);

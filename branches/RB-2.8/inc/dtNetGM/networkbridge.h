@@ -87,13 +87,13 @@ namespace dtNetGM
        * Returns if the networkbridge is connected
        * @return network connected
        */
-      const bool IsNetworkConnected();
+      bool IsNetworkConnected();
 
       /**
        * Returns if the networkbridge is connected as an accepted client to a server
        * @return is connected client
        */
-      const bool IsConnectedClient() const;
+      bool IsConnectedClient() const;
 
       /**
        * Sets if the networkbridge is an accepted client
@@ -105,7 +105,7 @@ namespace dtNetGM
        * Sends a DataStream across the network
        * @param The messagepacket
        */
-      void SendDataStream(dtUtil::DataStream& dataStream);
+      void SendDataStream(dtUtil::DataStream& dataStream, bool allowBestEffort);
 
       /**
        * Disconnects the current connection

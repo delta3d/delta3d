@@ -64,7 +64,7 @@ namespace dtNetGM
       return *mMachineInfo;
    }
 
-   const bool NetworkBridge::IsNetworkConnected()
+   bool NetworkBridge::IsNetworkConnected()
    {
       if (mGneConnection != NULL)
       {
@@ -73,7 +73,7 @@ namespace dtNetGM
       return false;
    }
 
-   const bool NetworkBridge::IsConnectedClient() const
+   bool NetworkBridge::IsConnectedClient() const
    {
       return mConnectedClient;
    }
@@ -199,8 +199,11 @@ namespace dtNetGM
       }
    }
 
-   void NetworkBridge::SendDataStream(dtUtil::DataStream& dataStream)
+   void NetworkBridge::SendDataStream(dtUtil::DataStream& dataStream, bool allowBestEffort)
    {
+      // Unreliable;
+      bool reliable = allowBestEffort && mGneConnection->getStats(0).openSockets == 0;
+
       static unsigned int streamId = 0;
       // create packets
       ++streamId;
@@ -240,8 +243,8 @@ namespace dtNetGM
 
             packet.SetPacketCount(packetCount);
 
-            // write packet to reliablestream
-            mGneConnection->stream().writePacket(packet, true);
+            // write packet to reliable stream
+            mGneConnection->stream().writePacket(packet, reliable);
          }
          LOG_DEBUG("Send DataStream[" + dtUtil::ToString(streamId) + "] in " + dtUtil::ToString(packetCount) + " packet(s) to " + GetHostDescription());
       }

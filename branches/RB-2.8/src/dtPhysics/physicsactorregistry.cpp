@@ -20,11 +20,16 @@
 */
 #include <dtPhysics/physicsactorregistry.h>
 #include <dtPhysics/physicsmaterialactor.h>
+// For the autoreg
+#include <dtCore/librarymanager.h>
 
 namespace dtPhysics
 {
    dtCore::RefPtr<dtCore::ActorType> PhysicsActorRegistry::PHYSICS_MATERIAL_ACTOR_TYPE(new dtCore::ActorType
       ("Physics Material", "Physics Actors", "Friction, restitution, and other physics material properties - assign this to other actors to get material properties.")); 
+
+   // Must be after the types or it will crash.
+   //dtCore::AutoLibraryRegister<PhysicsActorRegistry> gAutoReg("dtPhysics");
 
    ////////////////////////////////////////////////////////////////////////////
    extern "C" DT_PHYSICS_EXPORT dtCore::ActorPluginRegistry* CreatePluginRegistry()
@@ -33,7 +38,7 @@ namespace dtPhysics
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   extern "C" DT_PHYSICS_EXPORT void DestroyPluginRegistry(dtCore::ActorPluginRegistry *registry)
+   extern "C" DT_PHYSICS_EXPORT void DestroyPluginRegistry(dtCore::ActorPluginRegistry* registry)
    {
       delete registry;
    }

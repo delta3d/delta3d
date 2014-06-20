@@ -229,7 +229,23 @@ namespace dtCore
        */
       Map& GetMap(const std::string& name);
 
+      /**
+       * Checks to see if the named map is loaded in memory.
+       * @param name the name of the map to check.
+       */
+      bool IsMapOpen(const std::string& name);
+
       std::vector<Map*> GetOpenMaps();
+
+      /**
+       * Loads a prefab
+       * @param rd Resource pointing to the prefab
+       * @throws MapParsingException if an error occurs reading the prefab
+       * @throws FileNotFoundException if the prefab doesn't exist.
+       * @throws ProjectInvalidContextException if the context is not set.
+       */
+      void LoadPrefab(const dtCore::ResourceDescriptor& rd, std::vector<dtCore::RefPtr<dtCore::BaseActorObject> >& actorsOut);
+
 
       /**
        * returns the last backup save of the map with the given name.

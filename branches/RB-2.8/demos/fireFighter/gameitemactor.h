@@ -31,7 +31,7 @@ class FIRE_FIGHTER_EXPORT GameItemActor : public dtActors::GameMeshActor
    public:
       
       /// Constructor
-      GameItemActor(dtGame::GameActorProxy &proxy);
+      GameItemActor(dtGame::GameActorProxy& parent);
 
       /**
        * Base class method for activating a game item

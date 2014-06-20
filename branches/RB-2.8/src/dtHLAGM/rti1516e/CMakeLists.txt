@@ -15,31 +15,24 @@ rti1516eregion.cpp
 rti1516eutil.cpp
 )
 
-ADD_LIBRARY(${LIB_NAME} SHARED
-    ${LIB_PUBLIC_HEADERS}
-    ${LIB_SOURCES}
+set(LIB_EXTERNAL_DEPS
+   OSGSIM_LIBRARY
+   OPENTHREADS_LIBRARY
 )
 
-LINK_WITH_VARIABLES(${LIB_NAME}
-                     OSGSIM_LIBRARY
-                     OPENTHREADS_LIBRARY
-                   )
+set(LIB_DEPS
+   ${DTUTIL_LIBRARY}
+   ${DTGAME_LIBRARY}
+   ${DTHLAGM_LIBRARY}
+  ${RTI1516e_LIBRARIES}
+ )
 
-TARGET_LINK_LIBRARIES(${LIB_NAME}
-                      ${DTUTIL_LIBRARY}
-                      ${DTGAME_LIBRARY}
-                      ${DTHLAGM_LIBRARY}
-                      ${RTI1516e_LIBRARIES}
-                     )
+
+DELTA3D_ADD_LIBRARY(${LIB_NAME} NONE SHARED)
 
 IF (WIN32)
    TARGET_LINK_LIBRARIES(${LIB_NAME} wsock32)
 ENDIF (WIN32)
-
-#SET_TARGET_PROPERTIES(${LIB_NAME}
-#                     PROPERTIES DEFINE_SYMBOL DT_HLAGM_LIBRARY)
-
-INCLUDE(ModuleInstall OPTIONAL)
 
 IF (MSVC_IDE)
   SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4290") #ignore the C4290 warning

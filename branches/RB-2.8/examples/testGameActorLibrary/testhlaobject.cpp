@@ -94,7 +94,7 @@ TestHLAObject::DamageStateEnum TestHLAObject::DamageStateEnum::NO_DAMAGE("No Dam
 TestHLAObject::DamageStateEnum TestHLAObject::DamageStateEnum::DAMAGED("Damaged");
 TestHLAObject::DamageStateEnum TestHLAObject::DamageStateEnum::DESTROYED("Destroyed");
 
-TestHLAObject::TestHLAObject(dtGame::GameActorProxy& proxy): dtGame::GameActor(proxy),
+TestHLAObject::TestHLAObject(dtGame::GameActorProxy& parent): dtGame::GameActor(parent),
                                                              mDeadReckoningHelper(new dtGame::DeadReckoningHelper),
                                                              mDamageState(&TestHLAObject::DamageStateEnum::NO_DAMAGE)
 {

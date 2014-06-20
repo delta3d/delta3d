@@ -33,8 +33,8 @@ namespace dtActors
    // ACTOR CODE
    //////////////////////////////////////////////////////////////////////////
 
-   BaseWaterActor::BaseWaterActor(BaseWaterActorProxy& proxy)
-      : dtGame::GameActor(proxy)
+   BaseWaterActor::BaseWaterActor(BaseWaterActorProxy& parent)
+      : dtGame::GameActor(parent)
       , mWaterHeight(0.0f)
    {
    }

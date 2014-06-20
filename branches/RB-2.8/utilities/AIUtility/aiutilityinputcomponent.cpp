@@ -21,7 +21,7 @@
 
 #include "aiutilityinputcomponent.h"
 #include "waypointselection.h"
-
+#include <dtCore/flymotionmodel.h>
 #include <dtABC/application.h>
 #include <dtAI/aidebugdrawable.h>
 #include <dtAI/waypointgraph.h>
@@ -30,6 +30,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 AIUtilityInputComponent::AIUtilityInputComponent(const std::string &name /*= "AIUtilityInputComponent"*/)
 : dtGame::BaseInputComponent(name)
+, mpAIInterface(NULL)
+, mCameraSpeed(5.0f)
+, mCameraMotionModel(NULL)
 , mPickDistanceBuffer(0.5f)
 , mSelectBrushMode(false)
 , mSelectBrushSize(1.0)
@@ -39,6 +42,56 @@ AIUtilityInputComponent::AIUtilityInputComponent(const std::string &name /*= "AI
 ////////////////////////////////////////////////////////////////////////////////
 AIUtilityInputComponent::~AIUtilityInputComponent()
 {
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void AIUtilityInputComponent::SetCameraMotionModel(dtCore::FlyMotionModel& fm)
+{
+    mCameraMotionModel = &fm;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+bool AIUtilityInputComponent::HandleKeyPressed(const dtCore::Keyboard* keyboard, int key)
+{
+   switch (key)
+   {
+
+   case '-':
+      {
+         mCameraSpeed -= 10.0f;
+
+         if(mCameraSpeed <= 5.0f)
+         {
+            mCameraSpeed = 5.0f;
+         }
+
+         if(mCameraMotionModel.valid())
+         {
+            mCameraMotionModel->SetMaximumFlySpeed(mCameraSpeed);
+            return true;
+         }
+      }
+      break;
+
+   case '=':
+      {
+         mCameraSpeed += 10.0f;
+
+         if(mCameraSpeed > 250.0f)
+         {
+            mCameraSpeed = 250.0f;
+         }
+
+         if(mCameraMotionModel.valid())
+         {
+            mCameraMotionModel->SetMaximumFlySpeed(mCameraSpeed);
+            return true;
+         }
+      }
+      break;
+   }
+      
+   return false;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -84,15 +137,19 @@ bool AIUtilityInputComponent::HandleButtonPressed(const dtCore::Mouse* mouse, dt
             {
                WaypointSelection::GetInstance().ToggleWaypointSelection(waypointInterface);
                handled = true;
+               mCameraMotionModel->SetEnabled(false);
             }
          }
+
+         if(!handled)
+            mCameraMotionModel->SetEnabled(true);  
 
          break;
       }
       default:
          break;
    }
-
+   
    return handled;
 }
 

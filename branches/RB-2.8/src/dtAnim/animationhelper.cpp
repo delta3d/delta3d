@@ -233,8 +233,9 @@ void AnimationHelper::LoadSkeletalMesh()
 {
    try
    {
-      std::string path = dtCore::Project::GetInstance().GetResourcePath(mSkeletalMesh);
-      if (mLoadModelAsynchronously)
+      dtCore::Project& proj = dtCore::Project::GetInstance();
+      std::string path = proj.GetResourcePath(mSkeletalMesh);
+      if (mLoadModelAsynchronously && !proj.GetEditMode())
       {
          LoadModelAsynchronously(path);
       }

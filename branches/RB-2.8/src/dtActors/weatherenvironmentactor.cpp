@@ -190,12 +190,11 @@ namespace dtActors
    WeatherEnvironmentActor::WindDirectionEnum WeatherEnvironmentActor::WindDirectionEnum::WIND_DIRECTION_NORTH_WEST("Wind Direction North West", dtABC::Weather::WIND_DIRECTION_NORTH_WEST);
 
    /////////////////////////////////////////////////////////////////////////////
-   WeatherEnvironmentActor::WeatherEnvironmentActor(dtGame::GameActorProxy& proxy)
-      : dtGame::IEnvGameActor(proxy)
+   WeatherEnvironmentActor::WeatherEnvironmentActor(dtGame::GameActorProxy& parent)
+      : dtGame::IEnvGameActor(parent)
       , mIsCloudPlaneEnabled(false)
       , mWeather(new dtABC::Weather)
       , mCloudPlane(new dtCore::CloudPlane(6, 0.5f, 6, 1, 0.3f, 0.96f, 512, 1400.0f))
-      , mWeatherTheme(dtABC::Weather::THEME_CLEAR)
    {
       AddChild(mWeather->GetEnvironment());
       EnableFog(false);
@@ -364,22 +363,6 @@ namespace dtActors
    /////////////////////////////////////////////////////////////////////////////
    void WeatherEnvironmentActor::EnableCloudPlane(bool enable)
    {
-      /*if (enable == false && mIsCloudPlaneEnabled)
-      {
-         mWeatherTheme = mWeather->GetTheme();
-      }
-
-      mIsCloudPlaneEnabled = enable;
-
-      if (mIsCloudPlaneEnabled)
-      {
-         mWeather->SetTheme(mWeatherTheme);
-      }
-      else
-      {
-         mWeather->SetTheme(dtABC::Weather::THEME_CLEAR);
-      }
-      */
       mIsCloudPlaneEnabled = enable;
 
       if (mIsCloudPlaneEnabled)

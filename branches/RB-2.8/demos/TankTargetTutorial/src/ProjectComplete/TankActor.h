@@ -48,7 +48,7 @@ class TUTORIAL_TANK_EXPORT TankActor : public dtActors::GameMeshActor
       static const std::string EVENT_HANDLER_NAME;
 
       // Constructs the tank actor.
-      TankActor(dtGame::GameActorProxy& proxy);
+      TankActor(dtGame::GameActorProxy& parent);
 
       /**
        * This method is an invokable for when a local object receives a tick.

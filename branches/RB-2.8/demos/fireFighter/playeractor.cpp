@@ -85,8 +85,8 @@ void PlayerActorProxy::OnRemovedFromWorld()
 }
 
 //////////////////////////////////////////////////////////////
-PlayerActor::PlayerActor(dtGame::GameActorProxy& proxy)
-   : dtGame::GameActor(proxy)
+PlayerActor::PlayerActor(dtGame::GameActorProxy& parent)
+   : dtGame::GameActor(parent)
    , mIsector(new dtCore::Isector)
    , mIsCrouched(false)
    , mFireHose(new dtCore::ParticleSystem)

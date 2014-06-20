@@ -43,7 +43,7 @@ class FIRE_FIGHTER_EXPORT FireActor : public GameItemActor
    public:
 
       /// Constructor
-      FireActor(dtGame::GameActorProxy& proxy);
+      FireActor(dtGame::GameActorProxy& parent);
 
       /**
        * Sets the filename of the flame particle system.

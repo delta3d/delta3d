@@ -80,7 +80,7 @@ void ESPduProcessor::SendPartialUpdate(const DIS::EntityStatePdu& pdu, const dtC
    mGM->SendMessage( *msg );
 }
 
-void ESPduProcessor::ApplyFullUpdateToProxy(const DIS::EntityStatePdu& pdu, dtGame::GameActorProxy& proxy)
+void ESPduProcessor::ApplyFullUpdateToProxy(const DIS::EntityStatePdu& pdu, dtGame::GameActorProxy& parent)
 {
    // make a message
    dtCore::RefPtr<dtGame::ActorUpdateMessage> msg;

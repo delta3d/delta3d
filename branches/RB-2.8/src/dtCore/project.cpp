@@ -133,6 +133,8 @@ namespace dtCore
       //internal handling for loading a map.
       Map& InternalLoadMap(const MapFileData& fileData, bool backup, bool clearModified);
 
+      void InternalLoadPrefab(const std::string& fullPath, std::vector<dtCore::RefPtr<dtCore::BaseActorObject> >& actorsOut);
+
       //internal handling of closing a sincle map.
       void InternalCloseMap(Map& map, bool unloadLibraries);
 
@@ -783,6 +785,44 @@ namespace dtCore
    }
 
    /////////////////////////////////////////////////////////////////////////////
+   void ProjectImpl::InternalLoadPrefab(const std::string& fullPath, std::vector<dtCore::RefPtr<dtCore::BaseActorObject> >& actorsOut)
+   {
+      //create the parser after setting the context.
+      //because the parser looks for map.xsd in the constructor.
+      //that way users can put map.xsd in the project and not need
+      //a "data" path.
+      if (!mParser.valid())
+      {
+         mParser = new MapParser();
+      }
+
+      try
+      {
+         dtCore::RefPtr<Map> mapToUse;
+         if (mOpenMaps.empty())
+         {
+            mapToUse = new Map("blah", "blah");
+         }
+
+         if (!mParser->ParsePrefab(fullPath, actorsOut, mapToUse))
+         {
+            throw dtCore::MapParsingException(
+               "Prefab loading didn't throw an exception, but the result is NULL", __FILE__, __LINE__);
+         }
+      }
+      catch (const dtUtil::Exception& e)
+      {
+         mParser = NULL;
+         std::string error = "Unable to parse \"" + fullPath + "\" with error \"" + e.What() + "\"";
+         mLogger->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__, __LINE__, error.c_str());
+         throw e;
+      }
+
+      mParser = NULL; //done using this MapParser, delete it
+
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
    Map& ProjectImpl::InternalLoadMap(const MapFileData& fileData, bool backup, bool clearModified)
    {
       dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
@@ -890,6 +930,12 @@ namespace dtCore
 
       map.SetFileName(fileData.mFileName);
       return map;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   bool Project::IsMapOpen(const std::string& name)
+   {
+      return mImpl->mOpenMaps.find(name) != mImpl->mOpenMaps.end();
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -1004,6 +1050,21 @@ namespace dtCore
       return *map;
 
    }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void Project::LoadPrefab(const dtCore::ResourceDescriptor& rd, std::vector<dtCore::RefPtr<dtCore::BaseActorObject> >& actorsOut)
+   {
+      if (!IsContextValid())
+      {
+         throw dtCore::ProjectInvalidContextException(
+         std::string("The context is not valid."), __FILE__, __LINE__);
+      }
+
+      std::string fullPath = GetResourcePath(rd);
+
+      mImpl->InternalLoadPrefab(fullPath, actorsOut);
+   }
+
 
    /////////////////////////////////////////////////////////////////////////////
    Map& Project::LoadMapIntoScene(const std::string& name, dtCore::Scene& scene, bool addBillBoards)

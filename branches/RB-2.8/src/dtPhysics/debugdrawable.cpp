@@ -202,7 +202,7 @@ namespace dtPhysics
       {
          osg::Vec3Array* vertices_lookup = vertices.get();
          osg::Vec3Array* vertices_expanded = new osg::Vec3Array;
-         for (int i = 0; i < debugGeom.m_vIndices.size(); i++)
+         for (unsigned i = 0; i < debugGeom.m_vIndices.size(); ++i)
          {
             int index = debugGeom.m_vIndices[i];
             vertices_expanded->push_back((*vertices_lookup)[index]);

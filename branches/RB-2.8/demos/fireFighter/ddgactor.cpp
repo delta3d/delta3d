@@ -58,8 +58,8 @@ void DDGActorProxy::BuildInvokables()
 }
 
 /////////////////////////////////////////////////
-DDGActor::DDGActor(dtGame::GameActorProxy& proxy)
-   : ShipActor(proxy)
+DDGActor::DDGActor(dtGame::GameActorProxy& parent)
+   : ShipActor(parent)
    , forwardStackEngaged(true)
    , afterStackEngaged(true)
 {

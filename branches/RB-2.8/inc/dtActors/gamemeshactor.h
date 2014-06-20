@@ -57,7 +57,7 @@ namespace dtActors
        * @param proxy The actor proxy owning this task actor.
        * @param desc An optional description of this task actor.
        */
-      GameMeshActor(dtGame::GameActorProxy& proxy);
+      GameMeshActor(dtGame::GameActorProxy& parent);
 
       /**
        * Loads a mesh file.

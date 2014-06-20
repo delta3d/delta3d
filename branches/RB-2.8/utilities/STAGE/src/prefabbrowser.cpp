@@ -1,24 +1,24 @@
 /*
-* Delta3D Open Source Game and Simulation Engine
-* Simulation, Training, and Game Editor (STAGE)
-* Copyright (C) 2005, BMH Associates, Inc.
-*
-* This program is free software; you can redistribute it and/or modify it under
-* the terms of the GNU General Public License as published by the Free
-* Software Foundation; either version 2 of the License, or (at your option)
-* any later version.
-*
-* This program is distributed in the hope that it will be useful, but WITHOUT
-* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
-* details.
-*
-* You should have received a copy of the GNU General Public License
-* along with this library; if not, write to the Free Software Foundation, Inc.,
-* 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-*
-* Jeffrey P. Houde
-*/
+ * Delta3D Open Source Game and Simulation Engine
+ * Simulation, Training, and Game Editor (STAGE)
+ * Copyright (C) 2005, BMH Associates, Inc.
+ *
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this library; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ *
+ * Jeffrey P. Houde
+ */
 
 #include <prefix/stageprefix.h>
 #include <dtEditQt/prefabbrowser.h>
@@ -74,21 +74,21 @@ namespace dtEditQt
 {
    ///////////////////////////////////////////////////////////////////////////////
    PrefabBrowser::PrefabBrowser(QWidget* parent)
-      : QWidget(parent)
-      , mCurrentDir("")
-      , mPopupMenu(this)    
-      , mExportNewPrefabAction(new QAction("Export New Prefab", this))
-      , mDeleteShortcut(QKeySequence(Qt::Key_Delete), this, SLOT(deleteKeyPushedSlot()))
+   : QWidget(parent)
+   , mCurrentDir("")
+   , mPopupMenu(this)
+   , mExportNewPrefabAction(new QAction("Export New Prefab", this))
+   , mDeleteShortcut(QKeySequence(Qt::Key_Delete), this, SLOT(deleteKeyPushedSlot()))
    {
       setupGUI();
 
       connect(&EditorEvents::GetInstance(), SIGNAL(projectChanged()),
-         this, SLOT(refreshPrefabs()));
-      
+            this, SLOT(refreshPrefabs()));
+
       connect(&EditorActions::GetInstance(), SIGNAL(PrefabExported()),
-         this, SLOT(refreshPrefabs()));
-     
-      mPopupMenu.addAction("Add Category", this, SLOT(addCategorySlot()));            
+            this, SLOT(refreshPrefabs()));
+
+      mPopupMenu.addAction("Add Category", this, SLOT(addCategorySlot()));
       mPopupMenu.addAction(mExportNewPrefabAction);
       connect(mExportNewPrefabAction, SIGNAL(triggered()), this, SLOT(exportNewPrefabSlot()));
    }
@@ -126,13 +126,13 @@ namespace dtEditQt
 
       if(selectedWidget != NULL && selectedWidget->isResource())
       {
-            //enable the button      
-            mCreatePrefabBtn->setEnabled(true);
-            mCreateInstanceBtn->setEnabled(true);
+         //enable the button
+         mCreatePrefabBtn->setEnabled(true);
+         mCreateInstanceBtn->setEnabled(true);
 
-            // Set the current resource.
-            EditorData::GetInstance().setCurrentResource(dtCore::DataType::PREFAB, selectedWidget->getResourceDescriptor());
-            return;
+         // Set the current resource.
+         EditorData::GetInstance().setCurrentResource(dtCore::DataType::PREFAB, selectedWidget->getResourceDescriptor());
+         return;
       }
 
       // disable the button if we got here.
@@ -155,8 +155,8 @@ namespace dtEditQt
       while (!validCategory)
       {
          newCategoryName = QInputDialog::getText(this, tr("Category Name"),
-                                    tr("Enter New Category Name:"), QLineEdit::Normal,
-                                    tr(""), &ok);
+               tr("Enter New Category Name:"), QLineEdit::Normal,
+               tr(""), &ok);
 
          //Pushed OK button?
          if (!ok || newCategoryName == "")
@@ -168,18 +168,18 @@ namespace dtEditQt
          if (newCategoryName.contains(QRegExp("[\\\\/:\\*\\?\"<>|]")))
          {
             QMessageBox::critical(this, tr("Invalid Characters"),
-                   tr("category names cannot contain any of these characters\n \\/\"*?<>|"),
-                   tr("OK"));
+                  tr("category names cannot contain any of these characters\n \\/\"*?<>|"),
+                  tr("OK"));
 
             continue; //category name isn't valid
          }
 
-         newCatFullPath = mCurrentDir + "/" + newCategoryName.toStdString();         
+         newCatFullPath = mCurrentDir + "/" + newCategoryName.toStdString();
 
          if (fileUtils.DirExists(newCatFullPath))
          {
             QMessageBox::critical(this, tr("Category Already Exists"), 
-               tr("Category Already Exists"), tr("OK"));
+                  tr("Category Already Exists"), tr("OK"));
             continue; //category isn't valid
          }     
 
@@ -194,8 +194,8 @@ namespace dtEditQt
       {
          QString reason("Unable to create category.\n This reason was given:\n\n");
          reason += e.ToString().c_str();
-   
-      	QMessageBox::critical(this, tr("Unable to Create Category"), reason, tr("OK"));
+
+         QMessageBox::critical(this, tr("Unable to Create Category"), reason, tr("OK"));
 
          return;
       }
@@ -225,9 +225,9 @@ namespace dtEditQt
       }
 
       EditorActions::GetInstance().SaveNewPrefab(dlg.getPrefabCategory(),
-                                                 dlg.getPrefabFileName(),
-                                                 dlg.GetPrefabIconFileName(),
-                                                 dlg.getPrefabDescription());
+            dlg.getPrefabFileName(),
+            dlg.GetPrefabIconFileName(),
+            dlg.getPrefabDescription());
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -252,7 +252,7 @@ namespace dtEditQt
    {
       QGroupBox*   groupBox = new QGroupBox(tr("Prefabs"));
       QGridLayout* grid     = new QGridLayout(groupBox);
-      
+
       mListWidget = new ResourceDragListWidget(groupBox);
       mListWidget->setResourceName("Prefab");
       mListWidget->setAutoScroll(true);
@@ -263,9 +263,9 @@ namespace dtEditQt
       // connect signals
       connect(mListWidget, SIGNAL(itemSelectionChanged()), this, SLOT(listSelectionChanged()));
       connect(mListWidget, SIGNAL(itemActivated(QListWidgetItem *)), this,
-         SLOT(listSelectionDoubleClicked(QListWidgetItem*)));
+            SLOT(listSelectionDoubleClicked(QListWidgetItem*)));
       connect(mListWidget, SIGNAL(customContextMenuRequested(const QPoint &)), this,
-         SLOT(rightClickMenu(const QPoint &)));      
+            SLOT(rightClickMenu(const QPoint &)));
 
       // Checkbox for auto preview
       grid->addWidget(mListWidget, 1, 0);
@@ -306,26 +306,21 @@ namespace dtEditQt
 
       if (selectedWidget && selectedWidget->isResource())
       {
-         dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
-         fileUtils.PushDirectory(dtCore::Project::GetInstance().GetContext());
-
          dtCore::ResourceDescriptor descriptor = selectedWidget->getResourceDescriptor();
-         std::string fullPath = dtCore::Project::GetInstance().GetResourcePath(descriptor);
-
          try
          {
             EditorData::GetInstance().getMainWindow()->startWaitCursor();
             EditorEvents::GetInstance().emitBeginChangeTransaction();
 
-            dtCore::RefPtr<dtCore::Map> currMap = EditorData::GetInstance().getCurrentMap();
-            std::vector<dtCore::RefPtr<dtCore::BaseActorObject> > proxyList;
-            dtCore::RefPtr<dtCore::MapParser> parser = new dtCore::MapParser;
-            parser->ParsePrefab(fullPath, proxyList, currMap.get());
+            std::vector<dtCore::RefPtr<dtCore::BaseActorObject> > actors;
+            dtCore::Project::GetInstance().LoadPrefab(descriptor, actors);
 
             // Auto select all of the proxies.
             ViewportOverlay::ActorProxyList selection = ViewportManager::GetInstance().getViewportOverlay()->getCurrentActorSelection();
             ViewportOverlay* overlay = ViewportManager::GetInstance().getViewportOverlay();
 
+
+            dtCore::RefPtr<dtCore::Map> currMap = EditorData::GetInstance().getCurrentMap();
             // Make sure we have valid data.
             if (!currMap.valid())
             {
@@ -356,25 +351,25 @@ namespace dtEditQt
 
             int groupIndex = currMap->GetGroupCount();
 
-            for (int proxyIndex = 0; proxyIndex < (int)proxyList.size(); proxyIndex++)
+            for (unsigned proxyIndex = 0; proxyIndex < actors.size(); proxyIndex++)
             {
-               dtCore::BaseActorObject* proxy = proxyList[proxyIndex].get();
+               dtCore::BaseActorObject* actor = actors[proxyIndex].get();
 
-               currMap->AddProxy(*proxy, true);
-               currMap->AddActorToGroup(groupIndex, proxy);
+               currMap->AddProxy(*actor, true);
+               currMap->AddActorToGroup(groupIndex, actor);
 
                // Notify the creation of the proxies.
-               EditorEvents::GetInstance().emitActorProxyCreated(proxy, false);
+               EditorEvents::GetInstance().emitActorProxyCreated(actor, false);
 
                dtCore::TransformableActorProxy* tProxy =
-                  dynamic_cast<dtCore::TransformableActorProxy*>(proxy);
+                     dynamic_cast<dtCore::TransformableActorProxy*>(actor);
 
                if (tProxy)
                {
                   if (proxyIndex == 0)
                   {
-                     ViewportManager::GetInstance().placeProxyInFrontOfCamera(proxy);
-                     
+                     ViewportManager::GetInstance().placeProxyInFrontOfCamera(actor);
+
                      offset = tProxy->GetTranslation();
                   }
                   else
@@ -386,7 +381,7 @@ namespace dtEditQt
 
             // Finally set the proxies in the prefab to be the current selection.
             ViewportManager::GetInstance().getViewportOverlay()->setMultiSelectMode(true);
-            EditorEvents::GetInstance().emitActorsSelected(proxyList);
+            EditorEvents::GetInstance().emitActorsSelected(actors);
             EditorEvents::GetInstance().emitEndChangeTransaction();
 
             EditorData::GetInstance().getMainWindow()->endWaitCursor();
@@ -399,7 +394,6 @@ namespace dtEditQt
 
             EditorData::GetInstance().getMainWindow()->endWaitCursor();
          }
-         fileUtils.PopDirectory();
       }
    }
 
@@ -407,7 +401,7 @@ namespace dtEditQt
    void PrefabBrowser::createPrefabInstancePressed()
    {
       ResourceListWidgetItem* selectedWidget = getSelectedPrefabWidget();
-      
+
       // if we have an actor type, then create the proxy and emit the signal
       if (selectedWidget && selectedWidget->isResource())
       {
@@ -415,7 +409,7 @@ namespace dtEditQt
 
          // create our new object
          dtCore::RefPtr<dtCore::BaseActorObject> proxy =
-            dtCore::LibraryManager::GetInstance().CreateActorProxy("dtActors", "Prefab");
+               dtCore::LibraryManager::GetInstance().CreateActor("dtActors", "Prefab");
 
          if (proxy.valid())
          {
@@ -478,7 +472,7 @@ namespace dtEditQt
          std::string informative = "Deleting this Category will delete all Prefabs in the Category.\n";
          informative += "Ensure that none of your maps use these Prefabs before deleting this Category.\n";
          informative += "\nAre you sure you want to delete this Category?";
-         
+
          msgBox.setWindowTitle("Delete All Prefabs in this Category?");
          msgBox.setText(informative.c_str());
          msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
@@ -578,7 +572,7 @@ namespace dtEditQt
    {
       //disable "Export Prefab" menu Action if there are no actors selected:
       dtEditQt::ViewportOverlay::ActorProxyList& selectionList = 
-         dtEditQt::ViewportManager::GetInstance().getViewportOverlay()->getCurrentActorSelection();
+            dtEditQt::ViewportManager::GetInstance().getViewportOverlay()->getCurrentActorSelection();
       if(selectionList.size() < 1)
       {
          mExportNewPrefabAction->setEnabled(false);
@@ -587,7 +581,7 @@ namespace dtEditQt
       {
          mExportNewPrefabAction->setEnabled(true);
       }
-         
+
       mPopupMenu.exec(QCursor::pos());
    }
 
@@ -595,7 +589,7 @@ namespace dtEditQt
    void PrefabBrowser::refreshPrefabs()
    {
       unsigned int numCategories = 0;      
-      
+
       // resets everything and marks the current expansion
       clearPrefabTree();
 
@@ -619,10 +613,10 @@ namespace dtEditQt
       QIcon folderIcon;
       folderIcon.addPixmap(QPixmap(UIResources::ICON_TINY_FOLDER_OPEN.c_str()), QIcon::Normal, QIcon::On);
       folderIcon.addPixmap(QPixmap(UIResources::ICON_TINY_FOLDER.c_str()), QIcon::Normal, QIcon::Off);
-      
-      std::string contextDir = dtEditQt::EditorData::GetInstance().getCurrentProjectContext();
+
+      std::string contextDir = dtCore::Project::GetInstance().GetContext(0);
       std::string iconDir = contextDir + "/" +
-                         dtEditQt::EditorActions::PREFAB_DIRECTORY + "/icons";
+            dtEditQt::EditorActions::PREFAB_DIRECTORY + "/icons";
 
       std::string prefabDir = contextDir + "/" + dtEditQt::EditorActions::PREFAB_DIRECTORY;
 
@@ -650,18 +644,18 @@ namespace dtEditQt
       std::string nextFileFullPath;
       std::string nextIconFullPath;
       bool isFolder = false;
-      
+
       if (!dtUtil::FileUtils::GetInstance().IsSameFile(mCurrentDir, mTopPrefabDir))      
       {
          //Show a "Go up a folder" icon
          nextIconFullPath = UIResources::ICON_UP_FOLDER;
          ResourceListWidgetItem* aWidget = new ResourceListWidgetItem(
-                                           dtCore::ResourceDescriptor(),
-                                           QIcon(nextIconFullPath.c_str()),
-                                           "Up");         
+               dtCore::ResourceDescriptor(),
+               QIcon(nextIconFullPath.c_str()),
+               "Up");
 
          std::string prevDir =
-             dtUtil::FileUtils::GetInstance().GetAbsolutePath(mCurrentDir + "/..");
+               dtUtil::FileUtils::GetInstance().GetAbsolutePath(mCurrentDir + "/..");
          aWidget->setCategoryFullName(prevDir.c_str());
 
          mListWidget->addItem(aWidget);
@@ -685,7 +679,7 @@ namespace dtEditQt
          {
             //Don't want to see the icons folder
             if(dtUtil::FileUtils::GetInstance().IsSameFile(mCurrentDir, mTopPrefabDir) &&
-               nextFile == "icons")            
+                  nextFile == "icons")
             {
                continue;
             }
@@ -706,7 +700,7 @@ namespace dtEditQt
 
             dtCore::RefPtr<dtCore::MapParser> parser = new dtCore::MapParser;            
             std::string iconFileName = parser->GetPrefabIconFileName(nextFileFullPath);            
-            
+
             nextIconFullPath = "";
             if (iconFileName != "")
             {
@@ -717,23 +711,23 @@ namespace dtEditQt
                   nextIconFullPath = "";
                }
             }   
-            
+
             if(nextIconFullPath == "")
             {
                nextIconFullPath = UIResources::ICON_NO_ICON.c_str();
             }            
          }
-         
+
          nextFile = nextFile.substr(0, nextFile.rfind(".dtprefab")); //truncate dtprefab extension         
          //nextFile = nextFile.substr(0, 16);  //truncate to 16 characters         
-         
+
          //folders go to the front of the list
          if (isFolder)
          { 
             //If this is a folder, DON'T give this a ResourceDescriptor:
             ResourceListWidgetItem* aWidget = new ResourceListWidgetItem(
-               dtCore::ResourceDescriptor(),                              
-               QIcon(nextIconFullPath.c_str()), nextFile.c_str());
+                  dtCore::ResourceDescriptor(),
+                  QIcon(nextIconFullPath.c_str()), nextFile.c_str());
             aWidget->setCategoryFullName(nextFileFullPath.c_str());            
 
             //want "Up a folder" to be first on all but the top level
@@ -750,12 +744,12 @@ namespace dtEditQt
          else 
          {
             ResourceListWidgetItem* aWidget = new ResourceListWidgetItem(
-               createResDescriptorFromPath(nextFileFullPath),                              
-               QIcon(nextIconFullPath.c_str()), nextFile.c_str());
+                  createResDescriptorFromPath(nextFileFullPath),
+                  QIcon(nextIconFullPath.c_str()), nextFile.c_str());
             mListWidget->addItem(aWidget);
          }
       } // end for
-                                                                                
+
       EditorData::GetInstance().getMainWindow()->endWaitCursor();
    }
 

@@ -38,7 +38,7 @@
 namespace dtAudio
 {
    class Sound;
-   class SoundActorProxy;
+   class SoundActor;
    class SoundInfo;
 
 
@@ -59,7 +59,7 @@ namespace dtAudio
       typedef std::map<std::string, dtCore::RefPtr<dtAudio::SoundInfo> > SoundInfoMap;
       typedef std::vector<dtAudio::SoundInfo*> SoundInfoArray;
       typedef std::vector<dtAudio::Sound*> SoundArray;
-      typedef std::vector<dtCore::RefPtr<dtAudio::SoundActorProxy> > SoundProxyRefArray;
+      typedef std::vector<dtCore::RefPtr<dtAudio::SoundActor> > SoundActorRefArray;
 
 
 
@@ -281,7 +281,7 @@ namespace dtAudio
       SoundInfoMap mSoundMap;
 
       /// Array to temporarily evacuate Sound Actors from the Game Manager.
-      SoundProxyRefArray mSoundProxyArray;
+      SoundActorRefArray mSoundActorArray;
    };
 } // namespace dtAudio
 

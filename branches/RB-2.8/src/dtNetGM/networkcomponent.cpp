@@ -272,6 +272,16 @@ namespace dtNetGM
       if (code == MessageActionCode::SEND)
       {
          GetGameManager()->SendMessage(msg);
+         // forward the message to any other connections
+         dtUtil::DataStream dataStream = CreateDataStream(msg);
+         for (std::vector<dtNetGM::NetworkBridge*>::iterator iter = mConnections.begin(); iter != mConnections.end(); iter++)
+         {
+            dtNetGM::NetworkBridge* bridge = *iter;
+            if (bridge->IsConnectedClient() && bridge->GetMachineInfo() != msg.GetSource())
+            {
+               bridge->SendDataStream(dataStream, true);
+            }
+         }
       }
       else if (code == MessageActionCode::WAIT)
       {
@@ -678,7 +688,7 @@ namespace dtNetGM
          {
             if ((*iter)->GetMachineInfo() == *(message.GetDestination()))
             {
-               (*iter)->SendDataStream(dataStream);
+               (*iter)->SendDataStream(dataStream, true);
                return;
             }
          }
@@ -691,7 +701,7 @@ namespace dtNetGM
             {
                if ((*iter)->IsConnectedClient())
                {
-                  (*iter)->SendDataStream(dataStream);
+                  (*iter)->SendDataStream(dataStream, true);
                }
             }
          } // DestinationType::ALL_CLIENTS
@@ -702,7 +712,7 @@ namespace dtNetGM
             {
                if (!(*iter)->IsConnectedClient())
                {
-                  (*iter)->SendDataStream(dataStream);
+                  (*iter)->SendDataStream(dataStream, true);
                }
             }
          } // DestinationType::ALL_NOT_CLIENTS

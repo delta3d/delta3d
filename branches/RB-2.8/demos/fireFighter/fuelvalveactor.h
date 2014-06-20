@@ -29,7 +29,7 @@ class FIRE_FIGHTER_EXPORT FuelValveActor : public GameItemActor
    public:
 
       /// Constructor
-      FuelValveActor(dtGame::GameActorProxy &proxy);
+      FuelValveActor(dtGame::GameActorProxy& parent);
 
       /**
        * Activates this game item

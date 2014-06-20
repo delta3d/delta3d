@@ -83,7 +83,7 @@ namespace dtEditQt
       /**
        * Simple enumeration of the types of viewports the manager can create.
        */
-      class ViewportType : public dtUtil::Enumeration
+      class DT_EDITQT_EXPORT ViewportType : public dtUtil::Enumeration
       {
          DECLARE_ENUM(ViewportType);
 

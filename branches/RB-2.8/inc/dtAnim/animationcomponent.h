@@ -68,7 +68,7 @@ public:
    /**
     * Overridden to handle callback functions
     */
-   /*virtual*/ bool RegisterActor(dtGame::GameActorProxy& proxy, dtAnim::AnimationHelper& helper);
+   /*virtual*/ bool RegisterActor(dtGame::GameActorProxy& actor, dtAnim::AnimationHelper& helper);
 
    /**
     * Overridden to clear callback functions

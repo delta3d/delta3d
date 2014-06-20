@@ -89,9 +89,9 @@ class TestLmsComponent : public dtLMS::LmsComponent
          return dtLMS::LmsComponent::GetNeedValidSocket();
       }
 
-      void SendLmsUpdate(dtGame::GameActorProxy& proxy)
+      void SendLmsUpdate(dtGame::GameActorProxy& actor)
       {
-         dtLMS::LmsComponent::SendLmsUpdate(proxy);
+         dtLMS::LmsComponent::SendLmsUpdate(actor);
       }
 
    protected:

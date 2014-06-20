@@ -33,7 +33,7 @@ namespace dtActors
    TaskActorOrdered::FailureType TaskActorOrdered::FailureType::BLOCK("BLOCK");
 
    //////////////////////////////////////////////////////////////////////////////
-   TaskActorOrdered::TaskActorOrdered(dtGame::GameActorProxy &proxy) : TaskActor(proxy)
+   TaskActorOrdered::TaskActorOrdered(dtGame::GameActorProxy& parent) : TaskActor(parent)
    {
       Reset();
    }

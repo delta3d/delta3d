@@ -156,7 +156,7 @@ namespace dtCore
        */
       void SavePrefab(std::vector<dtCore::RefPtr<BaseActorObject> > actorList,
                       const std::string& filePath, const std::string& description,
-                      const std::string& iconFile = "");
+                      const std::string& iconFile = std::string());
 
    protected:
       virtual ~MapWriter(); ///Protected destructor so that this could be subclassed.
@@ -164,9 +164,9 @@ namespace dtCore
    private:
 
       //disable copy constructor
-      MapWriter(const MapWriter& toCopy): BaseXMLWriter(toCopy) {}
+      MapWriter(const MapWriter& toCopy): BaseXMLWriter(toCopy), mPropSerializer(NULL) {}
       //disable operator =
-      MapWriter& operator=(const MapWriter&) { return *this;}
+      MapWriter& operator=(const MapWriter&) { return *this; }
 
       void WriteHierarchyBranch(dtCore::ActorHierarchyNode* hierNode);
 

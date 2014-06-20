@@ -39,8 +39,8 @@ namespace dtGame
    //////////////////////////////////////////////////////////////
    // Actor code
    //////////////////////////////////////////////////////////////
-   IEnvGameActor::IEnvGameActor(GameActorProxy& proxy) :
-      GameActor(proxy, "IEnvGameActor")
+   IEnvGameActor::IEnvGameActor(GameActorProxy& parent) :
+      GameActor(parent, "IEnvGameActor")
    {
 
    }

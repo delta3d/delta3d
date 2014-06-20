@@ -48,7 +48,7 @@ class FIRE_FIGHTER_EXPORT PlayerActor : public dtGame::GameActor
    public:
 
       /// Constructor
-      PlayerActor(dtGame::GameActorProxy& proxy);
+      PlayerActor(dtGame::GameActorProxy& parent);
 
       /// Override
       void OnTickLocal(const dtGame::TickMessage& tickMessage);

@@ -71,6 +71,8 @@ public:
 
    virtual void Config();
 
+   dtCore::Object* GetDeltaObject() {return mObject.get();}
+
 public slots:
 
    void OnLoadShaderFile(const QString& filename);
@@ -128,7 +130,6 @@ protected:
    void GenerateTangentsForObject(dtCore::Object* object);
 
 private:
-
    dtCore::RefPtr<dtCore::Map> mMap;
    dtCore::RefPtr<dtCore::Object> mObject;
    dtCore::RefPtr<dtAnim::CharDrawable> mCharacter;

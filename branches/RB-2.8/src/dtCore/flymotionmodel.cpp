@@ -45,8 +45,8 @@ FlyMotionModel::FlyMotionModel(Keyboard* keyboard, Mouse* mouse, unsigned int op
    , mFlyUpDownAxis(NULL)
    , mTurnLeftRightAxis(NULL)
    , mTurnUpDownAxis(NULL)
-   , mMaximumFlySpeed(100.0f)
-   , mMaximumTurnSpeed(90.0f)
+   , mMaximumFlySpeed(80.0f)
+   , mMaximumTurnSpeed(60.0f)
    , mMouse(mouse)
    , mOptions(options)
 {

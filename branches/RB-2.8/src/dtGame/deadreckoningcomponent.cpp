@@ -213,15 +213,6 @@ namespace dtGame
    }
 
    //////////////////////////////////////////////////////////////////////
-   const DeadReckoningHelper* DeadReckoningComponent::GetHelperForProxy(dtGame::GameActorProxy &proxy) const
-   {
-      std::map<dtCore::UniqueId,
-         dtCore::RefPtr<DeadReckoningHelper> >::const_iterator itor = mRegisteredActors.find(proxy.GetId());
-
-      return itor == mRegisteredActors.end() ? NULL : itor->second.get();
-   }
-
-   //////////////////////////////////////////////////////////////////////
    bool DeadReckoningComponent::IsRegisteredActor(dtGame::GameActorProxy& gameActorProxy)
    {
       std::map<dtCore::UniqueId, dtCore::RefPtr<DeadReckoningHelper> >::iterator itor;

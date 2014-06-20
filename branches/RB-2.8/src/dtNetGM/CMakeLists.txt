@@ -17,30 +17,21 @@ SET(LIB_SOURCES
    servernetworkcomponent.cpp
 )
 
-list(REMOVE_ITEM LIB_SOURCES ${SOURCE_PATH}/precomp.cpp)
+INCLUDE_DIRECTORIES( ${GNE_INCLUDE_DIR}
+   ${HAWKNL_INCLUDE_DIR}
+   ${Boost_INCLUDE_DIR})
 
-INCLUDE_DIRECTORIES( ${GNE_INCLUDE_DIR}  
-                                    ${HAWKNL_INCLUDE_DIR}
-                                    ${Boost_INCLUDE_DIR})
+SET(LIB_EXTERNAL_DEPS
+   GNE_LIBRARY
+   HAWKNL_LIBRARY
+   CURSES_LIBRARY)
 
-ADD_LIBRARY(${LIB_NAME} SHARED
-    ${LIB_PUBLIC_HEADERS}
-    ${LIB_SOURCES}
+SET(LIB_DEPS
+  ${DTGAME_LIBRARY}
 )
 
-LINK_WITH_VARIABLES(${LIB_NAME}
-                        GNE_LIBRARY
-                        HAWKNL_LIBRARY
-                        CURSES_LIBRARY)
-                        
-TARGET_LINK_LIBRARIES( ${LIB_NAME}
-                       ${DTGAME_LIBRARY}
-                     )
-                                   
+DELTA3D_ADD_LIBRARY(${LIB_NAME} DT_NETGM_LIBRARY)
+
 IF (WIN32)
 TARGET_LINK_LIBRARIES(${LIB_NAME} wsock32)
 ENDIF (WIN32)
-
-DELTA3D_ADD_LIBRARY_PROPERTIES(${LIB_NAME} DT_NETGM_LIBRARY ${LIB_PUBLIC_HEADERS})
-
-INCLUDE(ModuleInstall OPTIONAL)

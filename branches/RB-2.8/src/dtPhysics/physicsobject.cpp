@@ -283,7 +283,9 @@ namespace dtPhysics
       typedef dtCore::PropertyRegHelper<PhysicsObject&, PhysicsObject> PropRegType;
       PropRegType propRegHelper(*this, this, GROUP);
 
-      std::string generatedName(GetName());
+      std::string generatedName;
+      generatedName.reserve(GetName().size() + 20);
+      generatedName = GetName();
       generatedName.append(": ");
       generatedName.append("Collision Group");
 

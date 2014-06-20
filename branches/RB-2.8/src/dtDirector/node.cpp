@@ -718,21 +718,21 @@ namespace dtDirector
       dtCore::ActorIDActorProperty* actorIdProp = dynamic_cast<dtCore::ActorIDActorProperty*>(prop);
       if (actorIdProp)
       {
-         dtCore::BaseActorObject* proxy = NULL;
+         dtCore::BaseActorObject* actor = NULL;
 
          dtCore::UniqueId id = actorIdProp->GetValue();
 
          if (GetDirector()->GetGameManager())
          {
-            GetDirector()->GetGameManager()->FindActorById(id, proxy);
+            GetDirector()->GetGameManager()->FindActorById(id, actor);
          }
 
-         if (!proxy)
+         if (actor == NULL)
          {
-            proxy = actorIdProp->GetActorProxy();
+            actor = actorIdProp->GetActor();
          }
 
-         return proxy;
+         return actor;
       }
 
       return NULL;
@@ -742,7 +742,7 @@ namespace dtDirector
    dtCore::GameEvent* Node::GetGameEvent(const std::string& name, int index)
    {
       dtCore::ActorProperty* prop = GetProperty(name, index);
-      if (!prop) return NULL;
+      if (prop == NULL) return NULL;
 
       dtCore::GameEventActorProperty* eventProp = dynamic_cast<dtCore::GameEventActorProperty*>(prop);
       if (eventProp)

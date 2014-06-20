@@ -9,8 +9,8 @@
 #include <dtGame/messagetype.h>
 
 ////////////////////////////////////////////////////////////////////////////////
-ComponentGameActor::ComponentGameActor(dtGame::GameActorProxy& proxy)
-: dtActors::GameMeshActor(proxy)
+ComponentGameActor::ComponentGameActor(dtGame::GameActorProxy& parent)
+: dtActors::GameMeshActor(parent)
 {
 }
 

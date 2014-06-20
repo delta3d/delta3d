@@ -279,7 +279,7 @@ namespace dtTerrain
          int mDetailNoiseSize;
          int mDetailNoiseBits;
          float mDetailVerticalResolution;
-         float mDetailHorizonalResolution;
+         //float mDetailHorizonalResolution;
          
          ///Texture map holding the base gradient texture used
          ///to light the terrain.

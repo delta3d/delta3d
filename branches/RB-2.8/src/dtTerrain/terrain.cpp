@@ -491,7 +491,7 @@ namespace dtTerrain
          {
             try
             {
-               GeoCoordinates c = currTile->GetGeoCoordinates();
+               /*GeoCoordinates c =*/ currTile->GetGeoCoordinates();
                layerItor->second->OnTerrainTileResident(*currTile);   
             }
             catch (dtUtil::Exception &ex)

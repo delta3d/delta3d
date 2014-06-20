@@ -40,8 +40,8 @@ namespace dtActors
    //////////////////////////////////////////////////////////////////////////////
 
    //////////////////////////////////////////////////////////////////////////////
-   GameMeshActor::GameMeshActor(dtGame::GameActorProxy& proxy)
-      : dtGame::GameActor(proxy)
+   GameMeshActor::GameMeshActor(dtGame::GameActorProxy& parent)
+      : dtGame::GameActor(parent)
       , mUseCache(true)
       , mModel(new dtCore::Model)
       , mMeshNode(NULL)

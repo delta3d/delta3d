@@ -23,7 +23,7 @@
 namespace dtActors
 {
    //////////////////////////////////////////////////////////////////////////////
-   TaskActorRollup::TaskActorRollup(dtGame::GameActorProxy& proxy) : TaskActor(proxy)
+   TaskActorRollup::TaskActorRollup(dtGame::GameActorProxy& parent) : TaskActor(parent)
    {
       Reset();
    }

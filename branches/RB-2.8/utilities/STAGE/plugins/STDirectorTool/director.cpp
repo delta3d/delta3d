@@ -196,7 +196,7 @@ bool DirectorToolEditor::OnContextValueNode(dtCore::RefPtr<dtDirector::Node> nod
       if (prop)
       {
          bool hasDefault = false;
-         mProxy = prop->GetActorProxy();
+         mProxy = prop->GetActor();
          if (mProxy)
          {
             QAction* gotoActorAction = menu.addAction("Go to Referenced Actor");
@@ -223,7 +223,7 @@ bool DirectorToolEditor::OnDoubleClickValueNode(dtCore::RefPtr<dtDirector::Node>
       dtCore::ActorIDActorProperty* prop = dynamic_cast<dtCore::ActorIDActorProperty*>(node->GetProperty("Value"));
       if (prop)
       {
-         mProxy = prop->GetActorProxy();
+         mProxy = prop->GetActor();
          if (mProxy)
          {
             OnGotoActor();

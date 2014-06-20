@@ -249,17 +249,24 @@ namespace dtPhysics
    /////////////////////////////////////////////////////////
    void dtPhysicsTests::setUp()
    {
-      mLogger = &dtUtil::Log::GetInstance("dtPhysicsTests.cpp");
+      try
+      {
+         mLogger = &dtUtil::Log::GetInstance("dtPhysicsTests.cpp");
 
-      dtCore::System::GetInstance().SetShutdownOnWindowClose(false);
-      dtCore::System::GetInstance().Start();
+         dtCore::System::GetInstance().SetShutdownOnWindowClose(false);
+         dtCore::System::GetInstance().Start();
 
-      mGM = new dtGame::GameManager(*GetGlobalApplication().GetScene());
-      mGM->SetApplication(GetGlobalApplication());
-      mGM->LoadActorRegistry(DTPHYSICS_REGISTRY);
+         mGM = new dtGame::GameManager(*GetGlobalApplication().GetScene());
+         mGM->SetApplication(GetGlobalApplication());
+         mGM->LoadActorRegistry(DTPHYSICS_REGISTRY);
 
-      dtCore::System::GetInstance().Step();
-      //SimCore::MessageType::RegisterMessageTypes(mGM->GetMessageFactory());
+         dtCore::System::GetInstance().Step();
+         //SimCore::MessageType::RegisterMessageTypes(mGM->GetMessageFactory());
+      }
+      catch(const dtUtil::Exception& ex)
+      {
+         CPPUNIT_FAIL(ex.ToString());
+      }
 
    }
 
@@ -863,11 +870,18 @@ namespace dtPhysics
    void dtPhysicsTests::testPhysicsObjectWithOffset(const std::string& engine)
    {
       ChangeEngine(engine);
-      testPhysicsObjectWithOffsetAndShape(PrimitiveType::BOX);
-      testPhysicsObjectWithOffsetAndShape(PrimitiveType::SPHERE);
-      testPhysicsObjectWithOffsetAndShape(PrimitiveType::CYLINDER);
-      testPhysicsObjectWithOffsetAndShape(PrimitiveType::CONVEX_HULL);
-      testPhysicsObjectWithOffsetAndShape(PrimitiveType::TRIANGLE_MESH);
+      try
+      {
+         testPhysicsObjectWithOffsetAndShape(PrimitiveType::BOX);
+         testPhysicsObjectWithOffsetAndShape(PrimitiveType::SPHERE);
+         testPhysicsObjectWithOffsetAndShape(PrimitiveType::CYLINDER);
+         testPhysicsObjectWithOffsetAndShape(PrimitiveType::CONVEX_HULL);
+         testPhysicsObjectWithOffsetAndShape(PrimitiveType::TRIANGLE_MESH);
+      }
+      catch(dtUtil::Exception& ex)
+      {
+         CPPUNIT_FAIL(ex.ToString());
+      }
    }
 
    void dtPhysicsTests::testPhysicsObjectKinematic(const std::string& engine)

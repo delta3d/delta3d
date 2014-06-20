@@ -137,6 +137,9 @@ HardwareSubmeshDrawable::HardwareSubmeshDrawable(Cal3DModelWrapper* wrapper, Cal
    osg::StateSet* ss = getOrCreateStateSet();
    ss->addUniform(mBoneTransforms.get());
    ss->setAttributeAndModes(new osg::CullFace);
+   ss->setDataVariance(osg::Object::DYNAMIC);
+
+   mBoneTransforms->setDataVariance(osg::Object::DYNAMIC);
 
    if (mHardwareModel == NULL)
    {

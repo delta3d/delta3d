@@ -44,7 +44,7 @@
 #include <osgDB/ReadFile>
 
 //////////////////////////////////////////////////////////////////////////////
-TestPlayer::TestPlayer(dtGame::GameActorProxy& proxy): dtGame::GameActor(proxy),
+TestPlayer::TestPlayer(dtGame::GameActorProxy& parent): dtGame::GameActor(parent),
                                                        mIsector(new dtCore::Isector())
 {
    mVelocity = 0.0f;

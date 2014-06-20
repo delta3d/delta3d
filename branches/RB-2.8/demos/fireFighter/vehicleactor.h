@@ -57,7 +57,7 @@ class FIRE_FIGHTER_EXPORT VehicleActor : public dtGame::GameActor
       };
 
       /// Constructor
-      VehicleActor(dtGame::GameActorProxy &proxy);
+      VehicleActor(dtGame::GameActorProxy& parent);
 
       virtual void TimeUpdate(double deltaTime) { }
       void StartEngines();

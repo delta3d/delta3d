@@ -37,8 +37,8 @@
 namespace dtAnim
 {
    /////////////////////////////////////////////////////////////////////////////
-   AnimationGameActor::AnimationGameActor(dtGame::GameActorProxy& proxy)
-      : dtGame::GameActor(proxy)
+   AnimationGameActor::AnimationGameActor(dtGame::GameActorProxy& parent)
+      : dtGame::GameActor(parent)
       , mHelper(new dtAnim::AnimationHelper())
    {
    }

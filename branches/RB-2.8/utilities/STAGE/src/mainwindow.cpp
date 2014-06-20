@@ -29,6 +29,8 @@
 #include <prefix/stageprefix.h>
 #include <dtEditQt/mainwindow.h>
 
+#include <dtUtil/warningdisable.h>
+DT_DISABLE_WARNING_ALL_START
 #include <QtCore/QFile>
 #include <QtGui/QApplication>
 #include <QtGui/QIcon>
@@ -42,6 +44,7 @@
 #include <QtGui/QCloseEvent>
 #include <QtGui/QActionGroup>
 #include <QtCore/QTimer>
+DT_DISABLE_WARNING_END
 
 #include <dtActors/volumeeditactor.h>
 #include <dtCore/deltawin.h>
@@ -82,20 +85,25 @@ namespace dtEditQt
    MainWindow::MainWindow(const std::string& stageConfigFile)
       : mPluginManager(new PluginManager(this))
       , mSTAGEConfigFullPath(stageConfigFile)
-      , mVolEditActorProxy(NULL)
-      , mPerspView(NULL)
-      , mFileMenu(NULL)
-      , mEditMenu(NULL)
-      , mProjectMenu(NULL)
-      , mWindowMenu(NULL)
-      , mHelpMenu(NULL)
-      , mRecentProjs(NULL)
-      , mRecentMaps(NULL)
-      , mToolsMenu(NULL)
-      , mPropertyWindow(NULL)
-      , mActorDockWidg(NULL)
-      , mActorSearchDockWidg(NULL)
-      , mResourceBrowser(NULL)
+      , mVolEditActorProxy()
+      , mFileMenu()
+      , mEditMenu()
+      , mProjectMenu()
+      , mWindowMenu()
+      , mHelpMenu()
+      , mRecentProjs()
+      , mRecentMaps()
+      , mToolsMenu()
+      , mToolModeActionGroup()
+      , mNormalToolMode()
+      , mPerspView()
+      , mTopView()
+      , mSideView()
+      , mFrontView()
+      , mPropertyWindow()
+      , mActorDockWidg()
+      , mActorSearchDockWidg()
+      , mResourceBrowser()
    {
       //Read STAGE configuration file
       if (stageConfigFile != "")
@@ -511,7 +519,7 @@ namespace dtEditQt
    {
       //The persistent pseudo-actor that is used for special-purpose editing
       mVolEditActorProxy =
-         dynamic_cast<dtActors::VolumeEditActorProxy*>(dtCore::LibraryManager::GetInstance().CreateActorProxy("dtutil", "Volume Edit").get());
+         dynamic_cast<dtActors::VolumeEditActorProxy*>(dtCore::LibraryManager::GetInstance().CreateActor("dtutil", "Volume Edit").get());
       ViewportManager::GetInstance().getMasterScene()->AddChild(mVolEditActorProxy->GetDrawable());
 
       //move the VolumeEditActor away from the Perspective camera so we can see it.
@@ -696,16 +704,8 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    bool MainWindow::MapDoesNotExist( const std::string& mapToLoad )
    {
-      bool exists = true;
-      try
-      {
-         dtCore::Map& m = dtCore::Project::GetInstance().GetMap(mapToLoad);
-      }
-      catch (const dtCore::ProjectFileNotFoundException& pfe)
-      {
-         exists = false;
-      }
-      return !exists;
+      const std::set<std::string>& mapNames = dtCore::Project::GetInstance().GetMapNames();
+      return mapNames.find(mapToLoad) != mapNames.end();
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -1218,7 +1218,7 @@ namespace dtEditQt
                {
                   dtUtil::FileUtils::GetInstance().MakeDirectory(path);
                }
-               catch (dtUtil::Exception& e)
+               catch (dtUtil::Exception&)
                {
                   doFileCopy = false;
                   LOG_ERROR("Unable to create directory for default.ini");
@@ -1230,7 +1230,7 @@ namespace dtEditQt
                {
                   dtUtil::FileUtils::GetInstance().FileCopy(src, dest, false);
                }
-               catch (dtUtil::Exception& e)
+               catch (dtUtil::Exception&)
                {
                   LOG_ERROR("Unable to copy default.ini to user preferences folder.");
                }
@@ -1526,7 +1526,7 @@ namespace dtEditQt
       {
          hasBackup = dtCore::Project::GetInstance().HasBackup(str);
       }
-      catch (dtUtil::Exception& e)
+      catch (dtUtil::Exception&)
       {
          //must not have a valid backup
          hasBackup = false;
@@ -1590,7 +1590,7 @@ namespace dtEditQt
             currentMap = EditorData::GetInstance().getCurrentMap();
             EditorData::GetInstance().addRecentMap(currentMap->GetName());
          }
-         catch (dtUtil::Exception& e)
+         catch (dtUtil::Exception&)
          {
             QMessageBox::critical(this, tr("Failed to load map"),
                tr("Failed to load previous map at: \n") +

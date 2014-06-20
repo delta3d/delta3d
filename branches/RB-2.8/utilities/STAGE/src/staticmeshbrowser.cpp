@@ -391,7 +391,7 @@ namespace dtEditQt
          if (meshActor != NULL)
          {
             dtCore::RefPtr<dtCore::BaseActorObject> proxy =
-               dtCore::LibraryManager::GetInstance().CreateActorProxy(*meshActor).get();
+               dtCore::LibraryManager::GetInstance().CreateActor(*meshActor).get();
 
             // check to make sure both the mesh actor and the proxy are valid.
             // If the user has somehow modified the above hard coded static mesh object

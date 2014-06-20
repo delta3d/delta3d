@@ -10,8 +10,8 @@
 
 using namespace dtActors;
 
-SkyDomeEnvironmentActor::SkyDomeEnvironmentActor( dtGame::GameActorProxy &proxy ):
-dtGame::IEnvGameActor(proxy),
+SkyDomeEnvironmentActor::SkyDomeEnvironmentActor( dtGame::GameActorProxy& parent ):
+dtGame::IEnvGameActor(parent),
 mEnv(new dtCore::Environment()),
 mSkyDome(NULL)
 {

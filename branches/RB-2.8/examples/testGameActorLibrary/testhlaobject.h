@@ -53,7 +53,7 @@ public:
    };
 
    /// Constructor
-   TestHLAObject(dtGame::GameActorProxy& proxy);
+   TestHLAObject(dtGame::GameActorProxy& parent);
       
    /// Destructor
    virtual ~TestHLAObject();

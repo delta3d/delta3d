@@ -9,26 +9,18 @@ file(GLOB LIB_PUBLIC_HEADERS "${HEADER_PATH}/*.h")
 file(GLOB LIB_SOURCES "*.cpp")
 list(REMOVE_ITEM LIB_SOURCES ${SOURCE_PATH}/precomp.cpp)
 
-ADD_LIBRARY(${LIB_NAME} SHARED                        
-    ${LIB_PUBLIC_HEADERS}                         
-    ${LIB_SOURCES}
-)
+set(LIB_EXTERNAL_DEPS
+      OSG_LIBRARY
+      OSGDB_LIBRARY
+      GDAL_LIBRARY
+  )
 
-LINK_WITH_VARIABLES(${LIB_NAME}
-                        OSG_LIBRARY
-                        OSGDB_LIBRARY
-                        GDAL_LIBRARY
-                    )
+set(LIB_DEPS
+ ${OPENGL_LIBRARY}
+ ${MATH_LIBRARY}
+ ${DTUTIL_LIBRARY}
+ ${DTCORE_LIBRARY}
+ )
 
-TARGET_LINK_LIBRARIES(${LIB_NAME} 
-                      ${OPENGL_LIBRARY}
-                      ${MATH_LIBRARY}
-                      ${DTUTIL_LIBRARY}
-                      ${DTCORE_LIBRARY}                     
-                      )
-
-DELTA3D_ADD_LIBRARY_PROPERTIES(${LIB_NAME} DT_TERRAIN_LIBRARY ${LIB_PUBLIC_HEADERS})
-
-
-INCLUDE(ModuleInstall OPTIONAL)
+DELTA3D_ADD_LIBRARY(${LIB_NAME} DT_TERRAIN_LIBRARY)
 
