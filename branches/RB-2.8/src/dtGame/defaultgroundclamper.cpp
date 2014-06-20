@@ -75,7 +75,7 @@ namespace dtGame
    
    /////////////////////////////////////////////////////////////////////////////
    void DefaultGroundClamper::CalculateAndSetBoundingBox(osg::Vec3& modelDimensions,
-         dtCore::TransformableActorProxy& proxy, GroundClampingData& data)
+         dtCore::TransformableActorProxy& actor, GroundClampingData& data)
    {
       if (GetLogger().IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
       {
@@ -83,16 +83,16 @@ namespace dtGame
                "Determining Actor dimensions via Bounding Box visitor.");
       }
 
-      dtCore::Transformable* actor = NULL;
-      proxy.GetActor(actor);
+      dtCore::Transformable* txable = NULL;
+      actor.GetDrawable(txable);
 
-      osg::Matrix oldMatrix = actor->GetMatrix();
-      actor->SetMatrix(osg::Matrix::identity());
+      osg::Matrix oldMatrix = txable->GetMatrix();
+      txable->SetMatrix(osg::Matrix::identity());
 
       dtUtil::BoundingBoxVisitor bbv;
-      actor->GetOSGNode()->accept(bbv);
+      txable->GetOSGNode()->accept(bbv);
 
-      actor->SetMatrix(oldMatrix);
+      txable->SetMatrix(oldMatrix);
 
       modelDimensions.x() = bbv.mBoundingBox.xMax() - bbv.mBoundingBox.xMin();
       modelDimensions.y() = bbv.mBoundingBox.yMax() - bbv.mBoundingBox.yMin();
@@ -102,7 +102,7 @@ namespace dtGame
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   bool DefaultGroundClamper::GetClosestHit( const dtCore::TransformableActorProxy& proxy,
+   bool DefaultGroundClamper::GetClosestHit( const dtCore::TransformableActorProxy& actor,
       GroundClampingData& data, dtCore::BatchIsector::SingleISector& single, float pointZ,
       osg::Vec3& outHit, osg::Vec3& outNormal)
    {
@@ -179,14 +179,14 @@ namespace dtGame
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void DefaultGroundClamper::GetActorDetectionPoints(dtCore::TransformableActorProxy& proxy,
+   void DefaultGroundClamper::GetActorDetectionPoints(dtCore::TransformableActorProxy& actor,
       GroundClampingData& data, osg::Vec3 outPoints[3])
    {
       osg::Vec3 modelDimensions = data.GetModelDimensions();
 
       if(!data.UseModelDimensions())
       {
-         CalculateAndSetBoundingBox(modelDimensions, proxy, data);
+         CalculateAndSetBoundingBox(modelDimensions, actor, data);
       }
 
       if(GetLogger().IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
@@ -230,7 +230,7 @@ namespace dtGame
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void DefaultGroundClamper::GetSurfacePoints(const dtCore::TransformableActorProxy& proxy,
+   void DefaultGroundClamper::GetSurfacePoints(const dtCore::TransformableActorProxy& actor,
       GroundClampingData& data, const dtCore::Transform& xform, osg::Vec3 inOutPoints[3])
    {
       dtUtil::Log& logger = GetLogger();
@@ -252,7 +252,7 @@ namespace dtGame
             {
                logger.LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__, __LINE__, 
                   "Intersect point has parts that are NAN, no ground clamping will be performed "
-                  "on actor named \"%s\".", proxy.GetName().c_str());
+                  "on actor named \"%s\".", actor.GetName().c_str());
             } 
             return;
          }
@@ -273,7 +273,7 @@ namespace dtGame
             dtCore::BatchIsector::SingleISector& single = mTripleIsector->EnableAndGetISector(i);
             osg::Vec3 hp(inOutPoints[i]), normal;
 
-            if (GetClosestHit( proxy, data, single, inOutPoints[i].z(), hp, normal))
+            if (GetClosestHit( actor, data, single, inOutPoints[i].z(), hp, normal))
             {
                if(debugEnabled)
                {
@@ -313,7 +313,7 @@ namespace dtGame
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void DefaultGroundClamper::FinalizeSurfacePoints(dtCore::TransformableActorProxy& proxy,
+   void DefaultGroundClamper::FinalizeSurfacePoints(dtCore::TransformableActorProxy& actor,
       GroundClampingData& data, osg::Vec3 inOutPoints[3])
    {
       // No implementation for this class but this method is a placeholder
@@ -322,7 +322,7 @@ namespace dtGame
 
    /////////////////////////////////////////////////////////////////////////////
    void DefaultGroundClamper::ClampToGroundThreePoint(dtCore::Transform& xform,
-      dtCore::TransformableActorProxy& proxy, GroundClampingData& data,
+      dtCore::TransformableActorProxy& actor, GroundClampingData& data,
       DefaultGroundClamper::RuntimeData& runtimeData)
    {
       dtUtil::Log& logger = GetLogger();
@@ -339,7 +339,7 @@ namespace dtGame
 
       // Get the 3 surface points based on the actors bounding box.
       osg::Vec3 points[3];
-      GetActorDetectionPoints(proxy, data, points);
+      GetActorDetectionPoints(actor, data, points);
 
       // Convert points from actor-relative space to world space.
       osg::Matrix transformMatrix;
@@ -348,11 +348,11 @@ namespace dtGame
       points[1] = points[1] * transformMatrix;
       points[2] = points[2] * transformMatrix;
 
-      GetSurfacePoints(proxy, data, xform, points);
+      GetSurfacePoints(actor, data, xform, points);
 
       // Allow any sub-classes to adjust the final clamp points,
       // in case the terrain is not completely rigid; for example mud, water, sand, etc.
-      FinalizeSurfacePoints(proxy, data, points);
+      FinalizeSurfacePoints(actor, data, points);
       
       float averageZ = 0;
       for(unsigned i = 0; i < 3; ++i)
@@ -386,14 +386,14 @@ namespace dtGame
    /////////////////////////////////////////////////////////////////////////////
    void DefaultGroundClamper::ClampToGroundIntermittent(double currentTime,
             dtCore::Transform& xform,
-            dtCore::TransformableActorProxy& proxy, GroundClampingData& data,
+            dtCore::TransformableActorProxy& actor, GroundClampingData& data,
             DefaultGroundClamper::RuntimeData& runtimeData)
    {
       //probably need some smoothing code here.
       if( (runtimeData.GetLastClampedTime() + GetIntermittentGroundClampingTimeDelta() )<= currentTime)
       {
          runtimeData.SetLastClampedTime(currentTime);
-         mGroundClampBatch.push_back(std::make_pair(xform, std::make_pair(&proxy, &data)));
+         mGroundClampBatch.push_back(std::make_pair(xform, std::make_pair(&actor, &data)));
          if(mGroundClampBatch.size() == 32)
          {
             RunClampBatch();
@@ -415,7 +415,7 @@ namespace dtGame
 
          position.z() += runtimeData.GetLastClampedOffset();
          xform.SetTranslation(position);
-         static_cast<dtCore::Transformable*>(proxy.GetDrawable())->SetTransform(xform, dtCore::Transformable::REL_CS);
+         static_cast<dtCore::Transformable*>(actor.GetDrawable())->SetTransform(xform, dtCore::Transformable::REL_CS);
       }
 
    }
@@ -487,12 +487,12 @@ namespace dtGame
 
          dtCore::BatchIsector::SingleISector& single = mIsector->EnableAndGetISector(index);
 
-         dtCore::TransformableActorProxy* proxy = i->second.first;
+         dtCore::TransformableActorProxy* actor = i->second.first;
          GroundClampingData* gcData = i->second.second;
 
-         // Get the proxy's actor since it has the transform data.
-         dtCore::Transformable* actor = NULL;
-         proxy->GetActor(actor);
+         // Get the actor's transformable since it has the transform data.
+         dtCore::Transformable* txable = NULL;
+         actor->GetDrawable(txable);
 
          // Check if user runtime data is valid.
          RuntimeData& runtimeData = GetOrCreateRuntimeData(*gcData);
@@ -500,7 +500,7 @@ namespace dtGame
          // Default the hit point.
          hp.set(singlePoint.x(), singlePoint.y(), 0.0f);
 
-         if(GetClosestHit(*proxy, *gcData, single, singlePoint.z(), hp, normal))
+         if(GetClosestHit(*actor, *gcData, single, singlePoint.z(), hp, normal))
          {
             if(debugEnabled)
             {
@@ -522,12 +522,12 @@ namespace dtGame
                xform.Set(hp, rotation);
             }
 
-            actor->SetTransform(xform, dtCore::Transformable::REL_CS);
+            txable->SetTransform(xform, dtCore::Transformable::REL_CS);
          }
          else
          {
             runtimeData.SetLastClampedOffset(0);
-            actor->SetTransform(xform, dtCore::Transformable::REL_CS);
+            txable->SetTransform(xform, dtCore::Transformable::REL_CS);
          }
       }
       mGroundClampBatch.clear();
@@ -535,12 +535,12 @@ namespace dtGame
 
    /////////////////////////////////////////////////////////////////////////////
    void DefaultGroundClamper::ClampToGround(DefaultGroundClamper::GroundClampRangeType& type,
-      double currentTime, dtCore::Transform& xform, dtCore::TransformableActorProxy& proxy,
+      double currentTime, dtCore::Transform& xform, dtCore::TransformableActorProxy& actor,
       GroundClampingData& data, bool transformChanged, const osg::Vec3& velocity)
    {
       // Get the actor that has the transform data.
-      dtCore::Transformable* actor = NULL;
-      proxy.GetActor(actor);
+      dtCore::Transformable* txable = NULL;
+      actor.GetDrawable(txable);
 
       // Get or create the Runtime Data and make sure it exists for any subsequent methods
       // that expect it to be in the Ground Clamping Data.
@@ -549,14 +549,14 @@ namespace dtGame
       // Determine if a different clamp type should be used based on the object and
       // other factors such as transform change or velocity.
       DefaultGroundClamper::GroundClampRangeType* clampType
-         = &GetBestClampType(type, proxy, data, transformChanged, velocity);
+         = &GetBestClampType(type, actor, data, transformChanged, velocity);
 
       // Avoid any further processing on certain conditions.
       if(!HasValidSurface() || *clampType == DefaultGroundClamper::GroundClampRangeType::NONE
          || data.GetGroundClampType() == GroundClampTypeEnum::NONE)
       {
          // If no terrain, just set the position and exit.
-         actor->SetTransform(xform, dtCore::Transformable::REL_CS);
+         txable->SetTransform(xform, dtCore::Transformable::REL_CS);
 
          return;
       }
@@ -574,7 +574,7 @@ namespace dtGame
 
       if(debugEnabled)
       {
-         logger.LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, "Ground clamping actor.");
+         logger.LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, "Ground clamping txable.");
       }
 
       if(*clampType == DefaultGroundClamper::GroundClampRangeType::RANGED)
@@ -588,7 +588,7 @@ namespace dtGame
                   && GetLowResGroundClampingRange() > 0.0f
                   && distanceToEyeSqr > GetLowResGroundClampingRange2()))
          {
-            ClampToGroundIntermittent(currentTime, xform, proxy, data, runtimeData);
+            ClampToGroundIntermittent(currentTime, xform, actor, data, runtimeData);
          }
          else if( ! data.GetAdjustRotationToGround() || 
                (GetEyePointActor() != NULL
@@ -596,7 +596,7 @@ namespace dtGame
                   && distanceToEyeSqr > GetHighResGroundClampingRange2()))
          {
             // this should be moved.
-            mGroundClampBatch.push_back(std::make_pair(xform, std::make_pair(&proxy, &data)));
+            mGroundClampBatch.push_back(std::make_pair(xform, std::make_pair(&actor, &data)));
             if (mGroundClampBatch.size() == 32)
             {
                RunClampBatch();
@@ -604,7 +604,7 @@ namespace dtGame
          }
          else
          {
-            ClampToGroundThreePoint(xform, proxy, data, runtimeData);
+            ClampToGroundThreePoint(xform, actor, data, runtimeData);
             //position has changed, so get it again.
             xform.GetTranslation(position);
 
@@ -616,7 +616,7 @@ namespace dtGame
                logger.LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, ss.str().c_str());
             }
 
-            actor->SetTransform(xform, dtCore::Transformable::REL_CS);
+            txable->SetTransform(xform, dtCore::Transformable::REL_CS);
 
             // Update the runtime data with the last time the object was clamped.
             runtimeData.SetLastClampedTime(currentTime);
@@ -624,14 +624,14 @@ namespace dtGame
       }
       else if(*clampType == DefaultGroundClamper::GroundClampRangeType::INTERMITTENT_SAVE_OFFSET)
       {
-         ClampToGroundIntermittent(currentTime, xform, proxy, data, runtimeData);
+         ClampToGroundIntermittent(currentTime, xform, actor, data, runtimeData);
       }
    }
 
    /////////////////////////////////////////////////////////////////////////////
    DefaultGroundClamper::GroundClampRangeType& DefaultGroundClamper::GetBestClampType(
       DefaultGroundClamper::GroundClampRangeType& suggestedClampType,
-      const dtCore::TransformableActorProxy& proxy, const GroundClampingData& data,
+      const dtCore::TransformableActorProxy& actor, const GroundClampingData& data,
       bool transformChanged, const osg::Vec3& velocity) const
    {
       // The Default Ground Clamper will not make any assumptions in this case.

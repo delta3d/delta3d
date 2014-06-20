@@ -314,16 +314,10 @@ namespace dtAnim
       ProxyContainer::iterator iter, end;
       for (iter = proxies.begin(), end = proxies.end(); iter != end; ++iter)
       {
-         dtGame::GameActorProxy* gameProxy = dynamic_cast<dtGame::GameActorProxy*>(*iter);
-         if (gameProxy)
+         dtGame::GameActorProxy* actor = dynamic_cast<dtGame::GameActorProxy*>(*iter);
+         if (actor)
          {
-            dtAnim::AnimationGameActor* actor =
-               dynamic_cast<dtAnim::AnimationGameActor*>(&gameProxy->GetGameActor());
-
-               if (actor)
-               {
-                  actor->GetComponent<dtAnim::AnimationHelper>()->SetGroundClamp(true);
-               }
+            actor->GetComponent<dtAnim::AnimationHelper>()->SetGroundClamp(true);
          }
       }
 
@@ -338,16 +332,10 @@ namespace dtAnim
       timerStart = timer.Tick();
       for (iter = proxies.begin(), end = proxies.end(); iter != end; ++iter)
       {
-         dtGame::GameActorProxy* gameProxy = dynamic_cast<dtGame::GameActorProxy*>(*iter);
-         if (gameProxy)
+         dtGame::GameActorProxy* actor = dynamic_cast<dtGame::GameActorProxy*>(*iter);
+         if (actor)
          {
-            dtAnim::AnimationGameActor* actor =
-               dynamic_cast<dtAnim::AnimationGameActor*>(&gameProxy->GetGameActor());
-
-            if (actor)
-            {
-               actor->GetComponent<dtAnim::AnimationHelper>()->PlayAnimation("Walk");
-            }
+            actor->GetComponent<dtAnim::AnimationHelper>()->PlayAnimation("Walk");
          }
       }
       timerEnd = timer.Tick();
@@ -431,16 +419,10 @@ namespace dtAnim
       timerStart = timer.Tick();
       for (iter = proxies.begin(), end = proxies.end(); iter != end; ++iter)
       {
-         dtGame::GameActorProxy* gameProxy = dynamic_cast<dtGame::GameActorProxy*>((*iter));
-         if (gameProxy)
+         dtGame::GameActorProxy* actor = dynamic_cast<dtGame::GameActorProxy*>((*iter));
+         if (actor)
          {
-            dtAnim::AnimationGameActor* actor
-               = dynamic_cast<dtAnim::AnimationGameActor*>(&gameProxy->GetGameActor());
-
-            if (actor)
-            {
-               actor->GetComponent<dtAnim::AnimationHelper>()->ClearAnimation("Walk", 0.0);
-            }
+            actor->GetComponent<dtAnim::AnimationHelper>()->ClearAnimation("Walk", 0.0);
          }
       }
       timerEnd = timer.Tick();

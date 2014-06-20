@@ -179,7 +179,7 @@ namespace dtEditQt
    {
       std::vector<const dtCore::ActorType*> actorTypes;
       std::vector<const dtCore::ActorType*>::const_iterator actorTypesIter;
-      std::set<std::string>::const_iterator setIter;
+      std::set<dtUtil::RefString>::const_iterator setIter;
       dtCore::Map* map = EditorData::GetInstance().getCurrentMap();
       QStringList categoryList;
       QStringList typeList;
@@ -246,10 +246,10 @@ namespace dtEditQt
          mTypeBox->setCurrentIndex(0);
 
          // fill up the class box
-         std::set<std::string> classSet = map->GetProxyActorClasses();
+         std::set<dtUtil::RefString> classSet = map->GetProxyActorClasses();
          for (setIter = classSet.begin(); setIter != classSet.end(); ++setIter)
          {
-            std::string className = (*setIter);
+            dtUtil::RefString className = (*setIter);
             mClassList.append(QString::fromStdString(className));
          }
          mClassList.sort();
@@ -317,10 +317,10 @@ namespace dtEditQt
    {
       EditorData::GetInstance().getMainWindow()->startWaitCursor();
 
-      std::set<std::string>::const_iterator setIter;
+      std::set<dtUtil::RefString>::const_iterator setIter;
       bool addedClasses = false;
 
-      const std::set<std::string>& actorClasses = proxy->GetClassHierarchy();
+      const std::set<dtUtil::RefString>& actorClasses = proxy->GetActorType().GetSharedClassInfo().mClassHierarchy;
 
       // walk through the class hierarchy of the new object
       for (setIter = actorClasses.begin(); setIter != actorClasses.end(); ++setIter)

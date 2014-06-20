@@ -8,6 +8,7 @@
 #ifndef PALUTIL_H_
 #define PALUTIL_H_
 
+#include <dtUtil/warningdisable.h>
 #include <dtUtil/mswin.h>
 #include <pal/palMath.h>
 #include <pal/palCollision.h>

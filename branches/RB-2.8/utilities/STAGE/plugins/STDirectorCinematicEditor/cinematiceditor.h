@@ -201,6 +201,7 @@ public slots:
     */
    void OnRemoveTransform();
 
+
    /**
     * Event handler when one of the edit boxes for the transform info is changed.
     *
@@ -399,6 +400,10 @@ private:
 
       KeyFrameEvent*       mEvent;
    };
+   /**
+    * Updates the transform and scale and refreshes the viewports
+    */
+   void UpdateTransform(TransformData* data);
 
    // Animation Data
    struct AnimationData

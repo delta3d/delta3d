@@ -46,8 +46,9 @@ namespace dtActors
       DeltaObjectActorProxy::BuildPropertyMap();
 
 
-      AddProperty(new dtCore::ResourceActorProperty(*this, dtCore::DataType::TERRAIN,
-            "terrain mesh", "Terrain Mesh", dtCore::ResourceActorProperty::SetFuncType(this, &MeshTerrainActorProxy::LoadFile),
+      AddProperty(new dtCore::ResourceActorProperty(dtCore::DataType::TERRAIN,
+            "terrain mesh", "Terrain Mesh",
+            dtCore::ResourceActorProperty::SetFuncType(this, &MeshTerrainActorProxy::LoadFile),
             "The mesh that defines the geometry of the terrain.", GROUPNAME));
    }
 
@@ -58,7 +59,7 @@ namespace dtActors
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void MeshTerrainActorProxy::LoadFile(const std::string &fileName)
+   void MeshTerrainActorProxy::LoadFile(const std::string& fileName)
    {
       dtCore::Object *obj = static_cast<dtCore::Object*>(GetDrawable());
 
@@ -79,7 +80,7 @@ namespace dtActors
    ///////////////////////////////////////////////////////////////////////////////
    const dtCore::BaseActorObject::RenderMode& MeshTerrainActorProxy::GetRenderMode()
    {
-      dtCore::ResourceDescriptor resource = GetResource("terrain mesh");
+      dtCore::ResourceDescriptor resource = dynamic_cast<dtCore::ResourceActorProperty*>(GetProperty("terrain mesh"))->GetValue();
       if (resource.IsEmpty() == false)
       {
          if (resource.GetResourceIdentifier().empty() || GetDrawable()->GetOSGNode() == NULL)

@@ -60,7 +60,7 @@ namespace dtActors
       GameActorProxy::BuildPropertyMap();
 
       DistanceSensorActor* actor;
-      GetActor(actor);
+      GetDrawable(actor);
 
       static const dtUtil::RefString GROUP("Distance Sensor");
       static const dtUtil::RefString EMPTY;

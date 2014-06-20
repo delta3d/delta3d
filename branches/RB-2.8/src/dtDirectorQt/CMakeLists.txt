@@ -103,7 +103,7 @@ SET(LIB_SOURCES ${SOURCE_PATH}/actionitem.cpp
     ${SOURCE_PATH}/valueitem.cpp
 )
 
-SET(QT_UI_SOURCES
+qt4_wrap_ui(UI_SOURCES
     ${UI_PATH}/directoreditor.ui
 	${UI_PATH}/plugindialog.ui
 )
@@ -113,14 +113,13 @@ QT4_ADD_RESOURCES(RCC_SOURCES
 	directorqt.qrc
 	docs/help.qrc
 )
-QT4_WRAP_UI_COPY(UI_SOURCES ${QT_UI_SOURCES})
 
 ############### SOURCE FILE ORGANIZATION #################
 SOURCE_GROUP("Auto-Generated" FILES ${MOC_SOURCES})
 SOURCE_GROUP("Auto-Generated" FILES ${RCC_SOURCES})
 SOURCE_GROUP("Auto-Generated" FILES ${UI_SOURCES})
 
-SOURCE_GROUP("UI Files" FILES ${QT_UI_SOURCES})
+SOURCE_GROUP("UI Files" FILES ${UI_SOURCES})
 ##########################################################
 
 INCLUDE_DIRECTORIES(

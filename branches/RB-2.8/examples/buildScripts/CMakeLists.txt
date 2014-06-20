@@ -1,30 +1,28 @@
 #used to generate the project files only for the Delta3D Examples
 
-CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
+CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
+cmake_policy(VERSION 2.8)
+
 SET(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/../../CMakeModules) #where the Find*.cmake files are
 
 PROJECT(Delta3D_Examples)
 
-FIND_PACKAGE(dtABC REQUIRED)
-FIND_PACKAGE(dtActors REQUIRED)
-FIND_PACKAGE(dtAI REQUIRED)
-FIND_PACKAGE(dtAnim REQUIRED)
-FIND_PACKAGE(dtAudio REQUIRED)
-FIND_PACKAGE(dtCore REQUIRED)
-FIND_PACKAGE(dtDIS) #optional
-FIND_PACKAGE(dtDirector REQUIRED)
-FIND_PACKAGE(dtGame REQUIRED)
-FIND_PACKAGE(dtGUI REQUIRED)
-FIND_PACKAGE(dtInputPLIB REQUIRED)
+FIND_PACKAGE(Delta3D COMPONENTS dtUtil dtCore dtGame dtABC dtAudio dtAnim dtInputPLIB dtGUI dtDirector dtNetGM REQUIRED)
+FIND_PACKAGE(Delta3D COMPONENTS dtDIS)
+SET(CMAKE_MODULE_PATH "${DELTA_DIR}/CMakeModules;${CMAKE_MODULE_PATH}")
+
 FIND_PACKAGE(Qt4)
 IF (QT4_FOUND)
-   FIND_PACKAGE(dtQt REQUIRED)
+   FIND_PACKAGE(Delta3D COMPONENTS dtQt REQUIRED)
 ENDIF (QT4_FOUND)
-FIND_PACKAGE(dtUtil REQUIRED)
-FIND_PACKAGE(dtTerrain REQUIRED)
 
-FIND_PACKAGE(Boost) #dtNetGM apps need this
-FIND_PACKAGE(dtNetGM REQUIRED) #dtNetGM needs Boost found first
+#look for module loaders in delta3d CMakeModules
+
+IF (DELTA3D_FOUND)
+
+   include(PlatformConfiguration)
+
+ENDIF(DELTA3D_FOUND)
 
 
 

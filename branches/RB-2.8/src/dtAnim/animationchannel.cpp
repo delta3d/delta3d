@@ -25,6 +25,7 @@
 #include <dtAnim/cal3dmodelwrapper.h>
 #include <osg/Math>
 #include <dtUtil/log.h>
+#include <dtUtil/mathdefines.h>
 
 namespace dtAnim
 {
@@ -139,6 +140,7 @@ void AnimationChannel::Update(float dt)
    if (GetEndTime() > 0.0f && GetElapsedTime() >= GetEndTime())
    {
       SetPrune(true);
+      mLastWeight = 0.0f;
    }
    else if (!IsActive())
    {
@@ -148,20 +150,34 @@ void AnimationChannel::Update(float dt)
       }
       else
       {
-         mModelWrapper->BlendCycle(mAnimationWrapper->GetID(), GetCurrentWeight(), 0.0f);
+         mModelWrapper->BlendCycle(mAnimationWrapper->GetID(), GetCurrentWeight(), 0.0);
+         if (!dtUtil::Equivalent(GetSpeed(), 1.0f))
+            mModelWrapper->SetSpeedFactor(mAnimationWrapper->GetID(), GetSpeed());
          mLastWeight = GetCurrentWeight();
+         mAnimationWrapper->SetSpeed(GetSpeed());
       }
 
       SetActive(true);
    }
    else
    {
-      if (!IsAction() && !osg::equivalent(mLastWeight, GetCurrentWeight()))
+      bool forceSpeedUpdate = false;
+      if (!IsAction() && !dtUtil::Equivalent(mLastWeight, GetCurrentWeight()))
       {
-         mModelWrapper->BlendCycle(mAnimationWrapper->GetID(), GetCurrentWeight(), 0.0f);
+         mModelWrapper->BlendCycle(mAnimationWrapper->GetID(), GetCurrentWeight(), 0.0);
          mLastWeight = GetCurrentWeight();
+         forceSpeedUpdate = true;
+      }
+      if (!IsAction() && (forceSpeedUpdate || !dtUtil::Equivalent(GetSpeed(), mAnimationWrapper->GetSpeed())))
+      {
+         if (!dtUtil::Equivalent(GetSpeed(), 1.0f))
+         {
+            mModelWrapper->SetSpeedFactor(mAnimationWrapper->GetID(), GetSpeed());
+         }
+         mAnimationWrapper->SetSpeed(GetSpeed());
       }
    }
+
 
 }
 
@@ -180,13 +196,12 @@ void AnimationChannel::Recalculate()
    {
       SetEndTime(0.0f);
    }
-
 }
 
 /////////////////////////////////////////////////////////////////////////////////
 float AnimationChannel::CalculateDuration() const
 {
-   float duration = mAnimationWrapper.valid() ? mAnimationWrapper->GetDuration() : mMaxDuration;
+   float duration = mAnimationWrapper.valid() ? mAnimationWrapper->GetDuration() /*/ mAnimationWrapper->GetSpeed()*/ : mMaxDuration;
    
    if (IsLooping() && mMaxDuration <= 0.0f)
    {
@@ -272,7 +287,7 @@ void AnimationChannel::SetMaxDuration(float seconds)
 ////////////////////////////////////////////////////////////////////////////////
 float AnimationChannel::ConvertToRelativeTimeInAnimationScope(double timeToConvert) const
 {
-   float duration = mAnimationWrapper.valid() ? mAnimationWrapper->GetDuration() : 0.0f;
+   float duration = mAnimationWrapper.valid() ? mAnimationWrapper->GetDuration() / mAnimationWrapper->GetSpeed() : 0.0f;
 
    // Get what the the Base Class would set as the relative time.
    float elapsedTime = BaseClass::ConvertToRelativeTimeInAnimationScope(timeToConvert);

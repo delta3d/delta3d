@@ -3,6 +3,7 @@
 #include "ResourceDock.h"
 #include "ObjectViewer.h"
 
+#include <dtQt/nodetreepanel.h>
 #include <dtQt/osggraphicswindowqt.h>
 #include <dtQt/projectcontextdialog.h>
 #include <dtUtil/fileutils.h>
@@ -43,6 +44,13 @@ ObjectWorkspace::ObjectWorkspace()
 
    mAnimationControlDock = new AnimationControlDock;
    addDockWidget(Qt::RightDockWidgetArea, mAnimationControlDock);
+
+   mNodeToolsDock = new QDockWidget;
+   addDockWidget(Qt::LeftDockWidgetArea, mNodeToolsDock);
+
+   // Additional dock object setup
+   mNodeTree = new dtQt::NodeTreePanel();
+   mNodeToolsDock->setWidget(mNodeTree);
 
    // Create all program actions
    CreateFileMenuActions();
@@ -169,12 +177,16 @@ void ObjectWorkspace::CreateMenus()
 
    viewMenu->addAction(mToggleDockAnimationControl);
    viewMenu->addAction(mToggleDockResources);
+   viewMenu->addAction(mToggleDockNodeTools);
    
    connect(mToggleDockAnimationControl, SIGNAL(toggled(bool)), mAnimationControlDock, SLOT(setVisible(bool)));
    connect(mAnimationControlDock, SIGNAL(visibilityChanged(bool)), mToggleDockAnimationControl, SLOT(setChecked(bool)));
 
    connect(mToggleDockResources, SIGNAL(toggled(bool)), mResourceDock, SLOT(setVisible(bool)));
    connect(mResourceDock, SIGNAL(visibilityChanged(bool)), mToggleDockResources, SLOT(setChecked(bool)));
+
+   connect(mToggleDockNodeTools, SIGNAL(toggled(bool)), mNodeToolsDock, SLOT(setVisible(bool)));
+   connect(mNodeToolsDock, SIGNAL(visibilityChanged(bool)), mToggleDockNodeTools, SLOT(setChecked(bool)));
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -204,6 +216,10 @@ void ObjectWorkspace::CreateFileMenuActions()
    mToggleDockResources = new QAction(tr("Resources"), this);
    mToggleDockResources->setCheckable(true);
    mToggleDockResources->setChecked(true);
+
+   mToggleDockNodeTools = new QAction(tr("Node Tools"), this);
+   mToggleDockNodeTools->setCheckable(true);
+   mToggleDockNodeTools->setChecked(true);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -366,6 +382,19 @@ void ObjectWorkspace::OnToggleAnimationControlDock()
    else
    {
       mAnimationControlDock->hide();
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ObjectWorkspace::OnToggleNodeToolsDock()
+{
+   if (mNodeToolsDock->isHidden())
+   {
+      mNodeToolsDock->show();
+   }
+   else
+   {
+      mNodeToolsDock->hide();
    }
 }
 
@@ -625,6 +654,8 @@ void ObjectWorkspace::OnLoadGeometry(const std::string &fullName)
       }
 
       mAnimationControlDock->OnGeometryLoaded(mViewer->GetDeltaObject());
+
+      mNodeTree->SetNode(mViewer->GetDeltaObject()->GetOSGNode());
    }
 }
 
@@ -643,6 +674,8 @@ void ObjectWorkspace::OnChangeContext()
 
       // Re-populate the list using the new context
       UpdateResourceLists();
+
+      mNodeTree->SetNode(NULL);
    }
 }
 

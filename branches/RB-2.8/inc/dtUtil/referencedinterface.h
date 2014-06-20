@@ -18,6 +18,8 @@
 *
 * David Guthrie
 */
+#ifndef REFERENCED_INTERFACE
+#define REFERENCED_INTERFACE
 
 #include <osg/Observer>
 
@@ -50,3 +52,5 @@ namespace dtUtil
       virtual void unref() { osg::Referenced::unref(); }\
       virtual void unref_nodelete() { osg::Referenced::unref_nodelete(); }\
       virtual osg::ObserverSet* getOrCreateObserverSet() { return osg::Referenced::getOrCreateObserverSet(); }
+
+#endif //REFERENCED_INTERFACE

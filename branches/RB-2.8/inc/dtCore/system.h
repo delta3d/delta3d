@@ -209,9 +209,10 @@ namespace dtCore
        * GUI package (QT, FLTK, etc.)
        * Emits the "preframe", "frame", and "postframe" messages.  Requires the
        * Start() method is called first.
+       * @param dt the change in time in seconds to use as the update time.  This overrides the real dt if it's > 0.0f
        * @see SetSystemStages()
        */
-      void Step();
+      void Step(float realDt = 0.0f);
 
       /**
        * Performs one complete System frame step and performs DeltaWin processing.  This is

@@ -1526,26 +1526,26 @@ namespace dtAnim
       // Ensure the events for the animation have been loaded and set
       // on the registered animation and not the copied active animation.
       Animatable::EventNameArray eventArray;
-      CPPUNIT_ASSERT(regAnim->GetEvents(0.0f, eventArray) == 3);
-      CPPUNIT_ASSERT(eventArray.size() == 3);
+      CPPUNIT_ASSERT_EQUAL(3U, regAnim->GetEvents(0.0f, eventArray));
+      CPPUNIT_ASSERT_EQUAL(3U, unsigned(eventArray.size()));
       CPPUNIT_ASSERT(eventArray[0] == eventStart1);
       CPPUNIT_ASSERT(eventArray[1] == eventStart2);
       CPPUNIT_ASSERT(eventArray[2] == eventStart3);
       eventArray.clear();
 
-      CPPUNIT_ASSERT(regAnim->GetEvents(0.25f, eventArray) == 2);
-      CPPUNIT_ASSERT(eventArray.size() == 2);
+      CPPUNIT_ASSERT_EQUAL(2U, regAnim->GetEvents(0.25f, eventArray));
+      CPPUNIT_ASSERT_EQUAL(2U, unsigned(eventArray.size()));
       CPPUNIT_ASSERT(eventArray[0] == eventMid1);
       CPPUNIT_ASSERT(eventArray[1] == eventMid2);
       eventArray.clear();
 
-      CPPUNIT_ASSERT(regAnim->GetEvents(0.5f, eventArray) == 1);
-      CPPUNIT_ASSERT(eventArray.size() == 1);
+      CPPUNIT_ASSERT_EQUAL(1U, regAnim->GetEvents(0.5f, eventArray));
+      CPPUNIT_ASSERT_EQUAL(1U, unsigned(eventArray.size()));
       CPPUNIT_ASSERT(eventArray[0] == eventMid3);
       eventArray.clear();
 
-      CPPUNIT_ASSERT(regAnim->GetEvents(duration, eventArray) == 3);
-      CPPUNIT_ASSERT(eventArray.size() == 3);
+      CPPUNIT_ASSERT_EQUAL(3U, regAnim->GetEvents(duration, eventArray));
+      CPPUNIT_ASSERT_EQUAL(3U, unsigned(eventArray.size()));
       CPPUNIT_ASSERT(eventArray[0] == eventEnd1);
       CPPUNIT_ASSERT(eventArray[1] == eventEnd2);
       CPPUNIT_ASSERT(eventArray[2] == eventEnd3);

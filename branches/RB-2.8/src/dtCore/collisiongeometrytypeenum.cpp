@@ -19,6 +19,7 @@
  * David Guthrie
  */
 
+#include "prefix/dtcoreprefix.h"
 #include <dtCore/collisiongeometrytypeenum.h>
 
 namespace dtCore

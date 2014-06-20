@@ -36,7 +36,9 @@
 
 namespace dtGame
 {
-   const dtGame::ActorComponent::ACType DeadReckoningHelper::TYPE("DeadReckoningActComp");
+   const ActorComponent::ACType DeadReckoningHelper::TYPE(new dtCore::ActorType("DeadReckoningActComp", "ActorComponents",
+         "Moves, rotates, and ground-clamps actors based on dead-reckoning data.  It also receives the updates from the network.",
+         ActorComponent::BaseActorComponentType));
 
    IMPLEMENT_ENUM(DeadReckoningAlgorithm);
    DeadReckoningAlgorithm DeadReckoningAlgorithm::NONE("None");
@@ -98,7 +100,6 @@ namespace dtGame
    , mRotationUpdated(false)
    //, mFlying(false)
    , mRotationResolved(true)
-   , mUseCubicSplineTransBlend(false)
    , mExtraDataUpdated(false)
    , mForceUprightRotation(false)
    , mCurTimeDelta(0.0f)
@@ -142,22 +143,21 @@ namespace dtGame
    {
       dtGame::DeadReckoningComponent* drc = NULL;
 
-      GameActor* ga = NULL;
-      GetOwner(ga);
-      GameActorProxy& act = ga->GetGameActorProxy();
+      GameActorProxy* act = NULL;
+      GetOwner(act);
 
-      act.GetGameManager()->
+      act->GetGameManager()->
          GetComponentByName(dtGame::DeadReckoningComponent::DEFAULT_NAME, drc);
 
       if (drc != NULL)
       {
-         drc->RegisterActor(act, *this);
+         drc->RegisterActor(*act, *this);
       }
       else
       {
          dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
             "Actor \"%s\"\"%s\" unable to find DeadReckoningComponent.",
-            act.GetName().c_str(), act.GetId().ToString().c_str());
+            act->GetName().c_str(), act->GetId().ToString().c_str());
       }
    }
 
@@ -166,25 +166,23 @@ namespace dtGame
    {
       dtGame::DeadReckoningComponent* drc = NULL;
 
-      GameActor* ga = NULL;
-      GetOwner(ga);
+      GameActorProxy* act = NULL;
+      GetOwner(act);
       // This is false in some delete cases.
-      //if (ga->IsGameActorProxyValid())
+      if (act != NULL)
       {
-         GameActorProxy& act = ga->GetGameActorProxy();
-
-         act.GetGameManager()->
+         act->GetGameManager()->
             GetComponentByName(dtGame::DeadReckoningComponent::DEFAULT_NAME, drc);
 
          if (drc != NULL)
          {
-            drc->UnregisterActor(act);
+            drc->UnregisterActor(*act);
          }
          else
          {
             dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
                "Actor \"%s\"\"%s\" unable to find DeadReckoningComponent.",
-               act.GetName().c_str(), act.GetId().ToString().c_str());
+               act->GetName().c_str(), act->GetId().ToString().c_str());
          }
       }
    }
@@ -552,9 +550,6 @@ namespace dtGame
    ////////////////////////////////////////////////////////////////////////////////
    void DeadReckoningHelper::BuildPropertyMap()
    {
-      dtGame::GameActor* actor;
-      GetOwner(actor);
-
       static const dtUtil::RefString DEADRECKONING_GROUP = "Dead Reckoning";
       typedef dtCore::PropertyRegHelper<DeadReckoningHelper&, DeadReckoningHelper> PropRegType;
       PropRegType propRegHelper(*this, this, DEADRECKONING_GROUP);//"Dead Reckoning");
@@ -613,7 +608,7 @@ namespace dtGame
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   void DeadReckoningHelper::IncrementTimeSinceUpdate(float simTimeDelta, float curSimulationTime)
+   void DeadReckoningHelper::IncrementTimeSinceUpdate(float simTimeDelta, double curSimulationTime)
    {
       //Pretend we were updated on the last tick so we have time delta to work with
       //when calculating movement.
@@ -644,7 +639,7 @@ namespace dtGame
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   bool DeadReckoningHelper::DoDR(GameActor& gameActor, dtCore::Transform& xform,
+   bool DeadReckoningHelper::DoDR(dtCore::Transformable& txable, dtCore::Transform& xform,
          dtUtil::Log* pLogger, BaseGroundClamper::GroundClampRangeType*& gcType)
    {
       bool returnValue = false; // indicates we changed the transform
@@ -669,7 +664,7 @@ namespace dtGame
                   "Dead Reckoning Algorithm set to NONE, "
                   "setting the transform to match the actor's current position.");
          }
-         gameActor.GetTransform(xform, dtCore::Transformable::REL_CS);
+         txable.GetTransform(xform, dtCore::Transformable::REL_CS);
          // It's set to NONE, so no ground clamping..
          gcType = &BaseGroundClamper::GroundClampRangeType::NONE;
       }
@@ -677,20 +672,24 @@ namespace dtGame
       {
          if (IsUpdated())
          {
-            DRStatic(gameActor, xform, pLogger);
+            DRStatic(txable, xform, pLogger);
             returnValue = true;
+         }
+         else if (mTranslation.mPreviousInstantVel.length2() > FLT_EPSILON)
+         {
+            mTranslation.mPreviousInstantVel.set(0.0f, 0.0f, 0.0f);
          }
       }
       else
       {
-         returnValue = DRVelocityAcceleration(gameActor, xform, pLogger);
+         returnValue = DRVelocityAcceleration(txable, xform, pLogger);
       }
 
       return returnValue;
    }
 
    //////////////////////////////////////////////////////////////////////
-   void DeadReckoningHelper::DRStatic(GameActor& gameActor, dtCore::Transform& xform, dtUtil::Log* pLogger)
+   void DeadReckoningHelper::DRStatic(dtCore::Transformable& txable, dtCore::Transform& xform, dtUtil::Log* pLogger)
    {
       if (pLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
       {
@@ -703,9 +702,9 @@ namespace dtGame
       xform.SetTranslation(mTranslation.mLastValue);
       xform.SetRotation(mLastRotationMatrix);
 
+      mTranslation.mPreviousInstantVel = mCurTimeDelta <= 0.0 ?  mTranslation.mPreviousInstantVel : (mTranslation.mLastValue - mTranslation.mValueBeforeLastUpdate) / mCurTimeDelta;
       mTranslation.mValueBeforeLastUpdate = mTranslation.mLastValue;
       mTranslation.mCurrentDeadReckonedValue = mTranslation.mLastValue;
-      mTranslation.mPreviousInstantVel.set(0.0f, 0.0f, 0.0f);
 
       mRotQuatBeforeLastUpdate = mLastQuatRotation;
       mRotationResolved = true;
@@ -716,7 +715,7 @@ namespace dtGame
    }
 
    //////////////////////////////////////////////////////////////////////
-   bool DeadReckoningHelper::DRVelocityAcceleration(GameActor& gameActor, dtCore::Transform& xform, dtUtil::Log* pLogger)
+   bool DeadReckoningHelper::DRVelocityAcceleration(dtCore::Transformable& txable, dtCore::Transform& xform, dtUtil::Log* pLogger)
    {
       bool returnValue = false; // indicates that we made a change to the transform
       osg::Vec3 pos;
@@ -745,21 +744,21 @@ namespace dtGame
          {
             CalculateSmoothingTimes(xform);
 
-            // If doing Cubic splines, we have to pre-compute some values
-            if (mUseCubicSplineTransBlend && GetDeadReckoningAlgorithm() == DeadReckoningAlgorithm::VELOCITY_AND_ACCELERATION)
-            {  // Use Accel
-               mTranslation.RecomputeTransSplineValues(mTranslation.mAcceleration);
-            }
-            else if (mUseCubicSplineTransBlend) // No accel
-            {
-               osg::Vec3 zeroAccel;
-               mTranslation.RecomputeTransSplineValues(zeroAccel);
-            }
+//            // If doing Cubic splines, we have to pre-compute some values
+//            if (mUseCubicSplineTransBlend && GetDeadReckoningAlgorithm() == DeadReckoningAlgorithm::VELOCITY_AND_ACCELERATION)
+//            {  // Use Accel
+//               //mTranslation.RecomputeTransSplineValues(mTranslation.mAcceleration);
+//            }
+//            else if (mUseCubicSplineTransBlend) // No accel
+//            {
+//               osg::Vec3 zeroAccel;
+//               mTranslation.RecomputeTransSplineValues(zeroAccel);
+//            }
 
             if (pLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
             {
                std::ostringstream ss;
-               ss << "Actor " << gameActor.GetUniqueId() << " - " << gameActor.GetName() << " got an update " << std::endl
+               ss << "Actor " << txable.GetUniqueId() << " - " << txable.GetName() << " got an update " << std::endl
                   << "      Rotation \"" << mLastRotation  << "\" " << std::endl
                   << "      Position \"" << mTranslation.mLastValue << "\" " << std::endl;
                pLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, ss.str().c_str());
@@ -767,12 +766,12 @@ namespace dtGame
          }
 
          // RESOLVE ROTATION
-         DeadReckonTheRotation(xform);
+         DeadReckonRotation(xform);
 
          // POSITION SMOOTHING
          bool useAcceleration = GetDeadReckoningAlgorithm() == DeadReckoningAlgorithm::VELOCITY_AND_ACCELERATION;
-         mTranslation.DeadReckonThePosition(pos, pLogger, gameActor, 
-            useAcceleration, mCurTimeDelta, mUseCubicSplineTransBlend);
+         mTranslation.DeadReckonPosition(pos, pLogger, txable,
+            useAcceleration, mCurTimeDelta);
          xform.SetTranslation(pos);
 
          returnValue = true;
@@ -845,7 +844,7 @@ namespace dtGame
    }
 
    //////////////////////////////////////////////////////////////////////
-   void DeadReckoningHelper::DeadReckonTheRotation(dtCore::Transform& xform)
+   void DeadReckoningHelper::DeadReckonRotation(dtCore::Transform& xform)
    {
       osg::Quat newRot;
       osg::Quat drQuat = mLastQuatRotation; // velocity only just uses the last.
@@ -999,12 +998,12 @@ namespace dtGame
       // Clamp the instant velocity to never be more than 4x the last velocity. 
       // This prevents a rare issue that occurs when toggling between 
       // different DR modes where the values are bogus and it shoots WAY off. 
-      float lengthInstantVel = mPreviousInstantVel.length();
-      float lengthLastVelocity = mLastVelocity.length();
-      if (lengthInstantVel > 0.01f && lengthInstantVel > 4.0f * lengthLastVelocity)
+      float lengthInstantVel2 = mPreviousInstantVel.length2();
+      float lengthLastVelocity2 = mLastVelocity.length2();
+      if (lengthInstantVel2 > 0.0001f && lengthInstantVel2 > 16.0f * lengthLastVelocity2)
       {
-         // Tamp the velocity down so it's not so extreme.
-         mVelocityBeforeLastUpdate = mPreviousInstantVel * 2.0f * (lengthLastVelocity / lengthInstantVel); 
+         // Cut it down to twice the magnitude of the new velocity at most.
+         mVelocityBeforeLastUpdate = mPreviousInstantVel * 2.0f * std::sqrt(lengthLastVelocity2 / lengthInstantVel2);
       }
       else 
       {
@@ -1023,14 +1022,14 @@ namespace dtGame
    {
       //the average of the last average and the current time since an update.
       float timeDelta = float(newUpdatedTime - mLastUpdatedTime);
-      mAvgTimeBetweenUpdates = 0.5f * timeDelta + 0.5f * mAvgTimeBetweenUpdates;
+      mAvgTimeBetweenUpdates = 0.5f * (timeDelta + mAvgTimeBetweenUpdates);
       mLastUpdatedTime = newUpdatedTime;
    }
 
    //////////////////////////////////////////////////////////////////////
-   void DeadReckoningHelper::DRVec3Util::DeadReckonThePosition
-      (osg::Vec3& pos, dtUtil::Log* pLogger, GameActor& gameActor,
-         bool useAcceleration, float curTimeDelta, bool useSplines)
+   void DeadReckoningHelper::DRVec3Util::DeadReckonPosition
+      (osg::Vec3& pos, dtUtil::Log* pLogger, dtCore::Transformable& txable,
+         bool useAcceleration, float curTimeDelta)
    {
       // Do we just need to project or do we need more smoothing?
       bool pastTheSmoothingTime = (mEndSmoothingTime <= 0.0f) || 
@@ -1043,20 +1042,15 @@ namespace dtGame
          osg::Vec3 accelerationEffect;
          if (useAcceleration)
          {
-            accelerationEffect = (mAcceleration * 0.5f) * (mElapsedTimeSinceUpdate * mElapsedTimeSinceUpdate); 
+            accelerationEffect = mAcceleration * 0.5f * mElapsedTimeSinceUpdate * mElapsedTimeSinceUpdate;
          }
          pos = mLastValue + mLastVelocity * mElapsedTimeSinceUpdate + accelerationEffect;
 
       }
-      // Still Smoothing - SPLINES
-      else if (useSplines)
-      {
-         DeadReckonUsingSplines(pos, pLogger, gameActor);
-      }
       // Still Smoothing - PROJECTIVE VELOCITY BLENDING
       else 
       {
-         DeadReckonUsingLinearBlend(pos, pLogger, gameActor, useAcceleration);
+         DeadReckonUsingLinearBlend(pos, pLogger, txable, useAcceleration);
       }
 
       // Compute our instantaneous velocity for this frame == change in pos / time. Used when we get a new vel update.
@@ -1072,7 +1066,7 @@ namespace dtGame
       if (pLogger != NULL && pLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
       {
          std::ostringstream ss;
-         ss << "Actor " << gameActor.GetUniqueId() << " - " << gameActor.GetName() << " current pos "
+         ss << "Actor " << txable.GetUniqueId() << " - " << txable.GetName() << " current pos "
             << "\"" << pos << "\", temp\"" << mLastUpdatedTime + mElapsedTimeSinceUpdate << "\"";
          pLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, ss.str().c_str());
       }
@@ -1080,7 +1074,7 @@ namespace dtGame
 
    //////////////////////////////////////////////////////////////////////
    void DeadReckoningHelper::DRVec3Util::DeadReckonUsingLinearBlend
-      (osg::Vec3& pos, dtUtil::Log* pLogger, GameActor& gameActor, bool useAcceleration)
+      (osg::Vec3& pos, dtUtil::Log* pLogger, dtCore::Transformable& txable, bool useAcceleration)
    {
       float smoothingFactor = mElapsedTimeSinceUpdate/mEndSmoothingTime;
 
@@ -1102,185 +1096,115 @@ namespace dtGame
       // ADD ACCEL - do at end because it applies to both projections anyway.
       if (useAcceleration)
       {
-         pos += ((mAcceleration * 0.5f) * (mElapsedTimeSinceUpdate * mElapsedTimeSinceUpdate));
+         pos += mAcceleration * 0.5f * mElapsedTimeSinceUpdate * mElapsedTimeSinceUpdate;
       }
 
       if (pLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
       {
          std::ostringstream ss;
-         ss << "Actor \"" << gameActor.GetUniqueId() << " - " << gameActor.GetName() << "\" has pos " << "\"" << pos << "\"";
+         ss << "Actor \"" << txable.GetUniqueId() << " - " << txable.GetName() << "\" has pos " << "\"" << pos << "\"";
          pLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, ss.str().c_str());
       }
    }
 
+   ////////////////////////////////////////////////////////////////////////////////////////////////////////
+   // Splines (Below) don't work very well with dead-reckoning, and they are much more expensive mathematically.
+   ////////////////////////////////////////////////////////////////////////////////////////////////////////
+
    //////////////////////////////////////////////////////////////////////
-   void DeadReckoningHelper::DRVec3Util::DeadReckonUsingSplines
-      (osg::Vec3& pos, dtUtil::Log* pLogger, GameActor& gameActor)
-   {
-      //////////////////////////////////////////////////
-      // With cubic splines, we work with 4 points and several pre-computed values
-      // Then, we interpret along the cubic spline based on time T. 
-      // See RecomputeTransSplineValues() for the actual algorithm
-      //////////////////////////////////////////////////
-
-      // The formula for X, Y, and Z is ... x = A*t^3 + B*t^2 + C*t + D.
-      // Note - t is normalized between 0 and 1. 
-      // Note - Acceleration is accounted for in RecomputeTransSplineValues()
-      // Note - if mTranslationEndSmoothingTime changes often, this may cause anomalies
-      // due to the velocity of the changes in T. Set mRotationEndSmoothingTime to improve.
-      float timeT = mElapsedTimeSinceUpdate/(mEndSmoothingTime);
-      float timeTT = timeT * timeT;
-      float timeTTT = timeTT * timeT;
-
-      // The following is for Bezier Cubic Splines
-      float timeTInverse = (1.0f - timeT);
-      float timeTTInverse = timeTInverse * timeTInverse;
-      float timeTTTInverse = timeTInverse * timeTTInverse;
-      pos.x() = timeTTTInverse * mPosSplineXA + 3.0f * timeTTInverse * timeT * mPosSplineXB + 
-         3.0f * timeTInverse * timeTT * mPosSplineXC + timeTTT * mPosSplineXD;
-      pos.y() = timeTTTInverse * mPosSplineYA + 3.0f * timeTTInverse * timeT * mPosSplineYB + 
-         3.0f * timeTInverse * timeTT * mPosSplineYC + timeTTT * mPosSplineYD;
-      pos.z() = timeTTTInverse * mPosSplineZA + 3.0f * timeTTInverse * timeT * mPosSplineZB + 
-         3.0f * timeTInverse * timeTT * mPosSplineZC + timeTTT * mPosSplineZD;
-
-      // The following is left for testing with Catmull-Rom Cubic Splines to DR the trans.
-      /*
-      pos.x() = mPosSplineXA * timeTTT + mPosSplineXD +
-         mPosSplineXB * timeTT + mPosSplineXC * timeT;
-      pos.y() = mPosSplineYA * timeTTT + mPosSplineYD +
-         mPosSplineYB * timeTT + mPosSplineYC * timeT;
-      pos.z() = mPosSplineZA * timeTTT + mPosSplineZD +
-         mPosSplineZB * timeTT + mPosSplineZC * timeT;
-      */
-
-      if (pLogger != NULL && pLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
-      {
-         std::ostringstream ss;
-         ss << "Actor \"" << gameActor.GetUniqueId() << " - " << gameActor.GetName() << "\" has pos " << "\"" << pos << "\"";
-         pLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, ss.str().c_str());
-      }
-
-      // Note - at the end of the bezier cubic spline, it should match the mLastVelocity. 
-   }
-
- 
-   //////////////////////////////////////////////////////////////////////
-   void DeadReckoningHelper::DRVec3Util::RecomputeTransSplineValues(const osg::Vec3& currentAccel)
-   {        
-      //const osg::Vec3& transBeforeLastUpdate, const osg::Vec3& velBeforeLastUpdate,
-      //   const osg::Vec3& lastTrans, const osg::Vec3& lastVel, float transEndSmoothingTime,;
-      //mTranslation.mValueBeforeLastUpdate,
-      //   mTranslation.mVelocityBeforeLastUpdate, mTranslation.mLastValue, 
-      //   mTranslation.mLastVelocity, mTranslation.mEndSmoothingTime, ;;
-
-      osg::Vec3 distanceFromAcceleration = currentAccel * 0.5f * mEndSmoothingTime * mEndSmoothingTime;
-      osg::Vec3 projectForwardDistance = distanceFromAcceleration + mLastVelocity * mEndSmoothingTime;
-      osg::Vec3 splineEndLocation = mLastValue + projectForwardDistance;
-
-      ///////////////////////////////////////////////////
-      // CUBIC BEZIER SPLINE IMPLEMENTATION
-      float velNormalizer = (mEndSmoothingTime > 0.0f) ? 1.0 * mEndSmoothingTime : 1.0f;
-      osg::Vec3 coord0; // Start pos
-      osg::Vec3 coord1; // First Control - Start Pos + 1/3 velBeforeLastUpdate 
-      osg::Vec3 coord3; // End Pos
-      osg::Vec3 coord2; // Second Control - End Pos - 1/3 lastvel
-      coord0 = mValueBeforeLastUpdate;
-      coord1 = mValueBeforeLastUpdate + (mVelocityBeforeLastUpdate * velNormalizer) * 0.33333f;
-      coord3 = splineEndLocation; //mValueBeforeLastUpdate + projectForwardDistance;
-      osg::Vec3 estimatedVel = mLastVelocity + currentAccel * mEndSmoothingTime;
-      coord2 = coord3 - (estimatedVel * velNormalizer * 0.33333f);
-
-      // Note, the use XA, XB, XC, is no longer directly needed, but is setup that way 
-      // to support multiple algorithms... (see below)
-      mPosSplineXA = coord0.x();
-      mPosSplineXB = coord1.x();
-      mPosSplineXC = coord2.x();
-      mPosSplineXD = coord3.x();
-
-      mPosSplineYA = coord0.y();
-      mPosSplineYB = coord1.y();
-      mPosSplineYC = coord2.y();
-      mPosSplineYD = coord3.y();
-
-      mPosSplineZA = coord0.z();
-      mPosSplineZB = coord1.z();
-      mPosSplineZC = coord2.z();
-      mPosSplineZD = coord3.z();
-
-
-      /// Below are 2 alternate methods that were fully implemented but discarded because the above
-      // technique works better. 
-
-      /////////////////////////////////////////////////
-      // CATMULL-ROM SPLINE Implementation
-      // The following method is an implementation of Catmull-Rom splines. 
-      // We will pre-compute four values, ABCD, and use them in a simple equation: 
-      //    pos = A*t^3 + B*t^2 + C*t + D;
-      // This equation should interpret between coord 1 and coord 2 along a smooth curve which 
-      // factors in coord0 and coord 3. 
-      // Note that coord 0 and coord 3 are complicated to compute - required to get the incoming and outgoing
-      // velocity to be fairly close.  
-      /*
-      osg::Vec3 coord0; // Start pos - mLastVelocity
-      coord0 = mNextSplineStartLocation;//mValueBeforeLastUpdate - mVelocityBeforeLastUpdate * mEndSmoothingTime; // mNextSplineStartLocation; // 
-      osg::Vec3 coord1; // Start Pos
-      coord1 = mValueBeforeLastUpdate;
-      // Coord 2 and 3 will seem wierd because we also project forward along our velocity to 
-      // where we 'should' be at this time. We don't want to be chasing behind
-      osg::Vec3 coord2 = splineEndLocation; //mLastValue + projectForwardDistance; //End Pos (desired)
-      osg::Vec3 coord3 = coord2 + projectForwardDistance + distanceFromAcceleration * 4.0f; // End Pos plus projected (again)
-
-      // Given these 4 coords, we can compute the 12 parameters to our parametric equation.
-      mPosSplineXA = 0.5f * (-coord0.x() + 3.0f * coord1.x() - 3.0f * coord2.x() + coord3.x());
-      mPosSplineXB = coord0.x() - 2.5f*coord1.x() + 2.0f*coord2.x() - 0.5f*coord3.x();
-      mPosSplineXC = 0.5f * (-coord0.x() + coord2.x());
-      mPosSplineXD = coord1.x();
-
-      mPosSplineYA = 0.5f * (-coord0.y() + 3.0f * coord1.y() - 3.0f * coord2.y() + coord3.y());
-      mPosSplineYB = coord0.y() - 2.5f*coord1.y() + 2.0f*coord2.y() - 0.5f*coord3.y();
-      mPosSplineYC = 0.5f * (-coord0.y() + coord2.y());
-      mPosSplineYD = coord1.y();
-
-      mPosSplineZA = 0.5f * (-coord0.z() + 3.0f * coord1.z() - 3.0f * coord2.z() + coord3.z());
-      mPosSplineZB = coord0.z() - 2.5f*coord1.z() + 2.0f*coord2.z() - 0.5f*coord3.z();
-      mPosSplineZC = 0.5f * (-coord0.z() + coord2.z());
-      mPosSplineZD = coord1.z();
-
-      mNextSplineStartLocation = mLastValue - distanceFromAcceleration;
-      */
-
-      /* 
-      Alternate method 2 - has smooth curves, but the curves have visual discontinuities between them
-      This technique uses 4 coordinates from a start point and initial velocity and an end point and final vel. 
-      The following link goes over the math along with visuals. It explains the process pretty well:
-      http://local.wasp.uwa.edu.au/~pbourke/miscellaneous/interpolation/
-      */
-
-      /*
-      // A 2nd alternate method follows. This is the bezier cubic spline method from the following
-      // articles. It is basically what was used above, but doesn't work out quite as nicely.
-      // 1) Nick Caldwell from Gamedev.net entitled 'Defeating Lag with Cubic Splines' published 2/14/2000.
-      // 2) http://www.tinaja.com/glib/cubemath.pdf - 'The Math Behind Bezier Cubic Splines'
-      // Note - There are some minor typos/math errors in Nick Caldwells paper
-
-      // we re-normalize the velocity based on the smoothing time & a weight, else the control points become too strong
-      float velNormalizer = (mEndSmoothingTime > 0.0f) ? 0.1 * mEndSmoothingTime : 1.0f;
-      osg::Vec3 distanceFromAcceleration = currentAccel * 0.5f * mEndSmoothingTime * mEndSmoothingTime;
-      osg::Vec3 coord0; // Start pos
-      coord0 = mValueBeforeLastUpdate;
-      osg::Vec3 coord1; // Start Pos + mVelocityBeforeLastUpdate
-      coord1 = mValueBeforeLastUpdate + mVelocityBeforeLastUpdate * velNormalizer;
-      osg::Vec3 coord2; // coord3 - (lastvel * time)    // 
-      coord2 = mLastValue + distanceFromAcceleration;
-      osg::Vec3 coord3; // End Pos = last trans + (lastvel * time) + distanceFromAcceleration. //project forward
-      coord3 = coord2 + mLastVelocity * velNormalizer;
-      // Given these 4 coords, we can compute the 12 parameters to our parametric equation.
-      mPosSplineXA = coord3.x() - 3.0f * coord2.x() + 3.0f * coord1.x() - coord0.x();
-      mPosSplineXB = 3.0f * coord2.x() - 6.0f * coord1.x() + 3.0f * coord0.x();
-      mPosSplineXC = 3.0f * coord1.x() - 3.0f * coord0.x();
-      mPosSplineXD = coord0.x();
-      // etc for YA, YB, ... ZA, ZB, ...
-      */
-   }
+//   void DeadReckoningHelper::DRVec3Util::DeadReckonUsingSplines
+//      (osg::Vec3& pos, dtUtil::Log* pLogger, dtCore::Transformable& txable)
+//   {
+//      //////////////////////////////////////////////////
+//      // With cubic splines, we work with 4 points and several pre-computed values
+//      // Then, we interpret along the cubic spline based on time T.
+//      // See RecomputeTransSplineValues() for the actual algorithm
+//      //////////////////////////////////////////////////
+//
+//      // The formula for X, Y, and Z is ... x = A*t^3 + B*t^2 + C*t + D.
+//      // Note - t is normalized between 0 and 1.
+//      // Note - Acceleration is accounted for in RecomputeTransSplineValues()
+//      // Note - if mTranslationEndSmoothingTime changes often, this may cause anomalies
+//      // due to the velocity of the changes in T. Set mRotationEndSmoothingTime to improve.
+//      float timeT = mElapsedTimeSinceUpdate/(mEndSmoothingTime);
+//      float timeTT = timeT * timeT;
+//      float timeTTT = timeTT * timeT;
+//
+//      // The following is for Bezier Cubic Splines
+//      float timeTInverse = (1.0f - timeT);
+//      float timeTTInverse = timeTInverse * timeTInverse;
+//      float timeTTTInverse = timeTInverse * timeTTInverse;
+//      pos.x() = timeTTTInverse * mPosSplineXA + 3.0f * timeTTInverse * timeT * mPosSplineXB +
+//         3.0f * timeTInverse * timeTT * mPosSplineXC + timeTTT * mPosSplineXD;
+//      pos.y() = timeTTTInverse * mPosSplineYA + 3.0f * timeTTInverse * timeT * mPosSplineYB +
+//         3.0f * timeTInverse * timeTT * mPosSplineYC + timeTTT * mPosSplineYD;
+//      pos.z() = timeTTTInverse * mPosSplineZA + 3.0f * timeTTInverse * timeT * mPosSplineZB +
+//         3.0f * timeTInverse * timeTT * mPosSplineZC + timeTTT * mPosSplineZD;
+//
+//      // The following is left for testing with Catmull-Rom Cubic Splines to DR the trans.
+//      /*
+//      pos.x() = mPosSplineXA * timeTTT + mPosSplineXD +
+//         mPosSplineXB * timeTT + mPosSplineXC * timeT;
+//      pos.y() = mPosSplineYA * timeTTT + mPosSplineYD +
+//         mPosSplineYB * timeTT + mPosSplineYC * timeT;
+//      pos.z() = mPosSplineZA * timeTTT + mPosSplineZD +
+//         mPosSplineZB * timeTT + mPosSplineZC * timeT;
+//      */
+//
+//      if (pLogger != NULL && pLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+//      {
+//         std::ostringstream ss;
+//         ss << "Actor \"" << txable.GetUniqueId() << " - " << txable.GetName() << "\" has pos " << "\"" << pos << "\"";
+//         pLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, ss.str().c_str());
+//      }
+//
+//      // Note - at the end of the bezier cubic spline, it should match the mLastVelocity.
+//   }
+//
+//
+//   //////////////////////////////////////////////////////////////////////
+//   void DeadReckoningHelper::DRVec3Util::RecomputeTransSplineValues(const osg::Vec3& currentAccel)
+//   {
+//      //const osg::Vec3& transBeforeLastUpdate, const osg::Vec3& velBeforeLastUpdate,
+//      //   const osg::Vec3& lastTrans, const osg::Vec3& lastVel, float transEndSmoothingTime,;
+//      //mTranslation.mValueBeforeLastUpdate,
+//      //   mTranslation.mVelocityBeforeLastUpdate, mTranslation.mLastValue,
+//      //   mTranslation.mLastVelocity, mTranslation.mEndSmoothingTime, ;;
+//
+//      osg::Vec3 distanceFromAcceleration = currentAccel * 0.5f * mEndSmoothingTime * mEndSmoothingTime;
+//      osg::Vec3 projectForwardDistance = distanceFromAcceleration + mLastVelocity * mEndSmoothingTime;
+//      osg::Vec3 splineEndLocation = mLastValue + projectForwardDistance;
+//
+//      ///////////////////////////////////////////////////
+//      // CUBIC BEZIER SPLINE IMPLEMENTATION
+//      float velNormalizer = (mEndSmoothingTime > 0.0f) ? 1.0 * mEndSmoothingTime : 1.0f;
+//      osg::Vec3 coord0; // Start pos
+//      osg::Vec3 coord1; // First Control - Start Pos + 1/3 velBeforeLastUpdate
+//      osg::Vec3 coord3; // End Pos
+//      osg::Vec3 coord2; // Second Control - End Pos - 1/3 lastvel
+//      coord0 = mValueBeforeLastUpdate;
+//      coord1 = mValueBeforeLastUpdate + (mVelocityBeforeLastUpdate * velNormalizer) * 0.33333f;
+//      coord3 = splineEndLocation; //mValueBeforeLastUpdate + projectForwardDistance;
+//      osg::Vec3 estimatedVel = mLastVelocity + currentAccel * mEndSmoothingTime;
+//      coord2 = coord3 - (estimatedVel * velNormalizer * 0.33333f);
+//
+//      // Note, the use XA, XB, XC, is no longer directly needed, but is setup that way
+//      // to support multiple algorithms... (see below)
+//      mPosSplineXA = coord0.x();
+//      mPosSplineXB = coord1.x();
+//      mPosSplineXC = coord2.x();
+//      mPosSplineXD = coord3.x();
+//
+//      mPosSplineYA = coord0.y();
+//      mPosSplineYB = coord1.y();
+//      mPosSplineYC = coord2.y();
+//      mPosSplineYD = coord3.y();
+//
+//      mPosSplineZA = coord0.z();
+//      mPosSplineZB = coord1.z();
+//      mPosSplineZC = coord2.z();
+//      mPosSplineZD = coord3.z();
+//
+//   }
 
 }

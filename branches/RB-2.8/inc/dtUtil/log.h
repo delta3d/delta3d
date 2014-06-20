@@ -208,6 +208,11 @@ namespace dtUtil
 
       /*
        * Retrieve singleton instance of the log class for a give string name.
+       *
+       * WARNING:  If the log instance does not exist yet, it will be created, but the creation is not thread safe.
+       *           If you intend to use a log instance in multithreaded code, which I hope you do, make sure to create
+       *           the instance ahead of time by calling get instance.
+       *
        * @param name logger name
        */
       static Log& GetInstance(const std::string& name = LogFile::LOG_DEFAULT_NAME);

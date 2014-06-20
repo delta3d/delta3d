@@ -40,44 +40,44 @@
 #include <dtGame/messagetype.h>
 #include <dtCore/librarymanager.h>
 
-dtCore::RefPtr<dtCore::ActorType> TestGameActorLibrary::TEST1_GAME_ACTOR_PROXY_TYPE(
+dtCore::RefPtr<dtCore::ActorType> TestGameActorLibrary::TEST1_GAME_ACTOR_TYPE(
       new dtCore::ActorType("Test1Actor", "ExampleActors", "These are example actors"));
 
-dtCore::RefPtr<dtCore::ActorType> TestGameActorLibrary::TEST2_GAME_ACTOR_PROXY_TYPE(
+dtCore::RefPtr<dtCore::ActorType> TestGameActorLibrary::TEST2_GAME_ACTOR_TYPE(
       new dtCore::ActorType("Test2Actor", "ExampleActors", "These are example actors"));
 
-dtCore::RefPtr<dtCore::ActorType> TestGameActorLibrary::TEST_GAME_ACTOR_CRASH_PROXY_TYPE(
+dtCore::RefPtr<dtCore::ActorType> TestGameActorLibrary::TEST_GAME_ACTOR_CRASH_TYPE(
       new dtCore::ActorType("TestCrash","ExampleActors", "An actor that throws an exception as it enters the world."));
 
-dtCore::RefPtr<dtCore::ActorType> TestGameActorLibrary::TEST_PLAYER_GAME_ACTOR_PROXY_TYPE(
+dtCore::RefPtr<dtCore::ActorType> TestGameActorLibrary::TEST_PLAYER_GAME_ACTOR_TYPE(
       new dtCore::ActorType("TestPlayer","ExampleActors", "Simple player actor."));
 
-dtCore::RefPtr<dtCore::ActorType> TestGameActorLibrary::TEST_TASK_GAME_ACTOR_PROXY_TYPE(
+dtCore::RefPtr<dtCore::ActorType> TestGameActorLibrary::TEST_TASK_GAME_ACTOR_TYPE(
       new dtCore::ActorType("Task Actor","dtcore.Tasks"));
 
-dtCore::RefPtr<dtCore::ActorType> TestGameActorLibrary::TEST_COUNTER_TASK_GAME_ACTOR_PROXY_TYPE(
+dtCore::RefPtr<dtCore::ActorType> TestGameActorLibrary::TEST_COUNTER_TASK_GAME_ACTOR_TYPE(
       new dtCore::ActorType("Counter Task","ExampleActors", ""
-            "task actor that provides a simple counter of something happening.", TEST_TASK_GAME_ACTOR_PROXY_TYPE.get()));
+            "task actor that provides a simple counter of something happening.", TEST_TASK_GAME_ACTOR_TYPE.get()));
 
-dtCore::RefPtr<dtCore::ActorType> TestGameActorLibrary::TEST_TANK_GAME_ACTOR_PROXY_TYPE(
+dtCore::RefPtr<dtCore::ActorType> TestGameActorLibrary::TEST_TANK_GAME_ACTOR_TYPE(
       new dtCore::ActorType("Tank", "TestHLA", "These are test HLA mapping actors"));
 
-dtCore::RefPtr<dtCore::ActorType> TestGameActorLibrary::TEST_JET_GAME_ACTOR_PROXY_TYPE(
+dtCore::RefPtr<dtCore::ActorType> TestGameActorLibrary::TEST_JET_GAME_ACTOR_TYPE(
       new dtCore::ActorType("Jet", "TestHLA", "These are test HLA mapping actors"));
 
-dtCore::RefPtr<dtCore::ActorType> TestGameActorLibrary::TEST_CULTURAL_FEATURE_GAME_ACTOR_PROXY_TYPE(
+dtCore::RefPtr<dtCore::ActorType> TestGameActorLibrary::TEST_CULTURAL_FEATURE_GAME_ACTOR_TYPE(
       new dtCore::ActorType("CulturalFeature", "TestHLA", "These are test HLA mapping actors"));
 
-dtCore::RefPtr<dtCore::ActorType> TestGameActorLibrary::TEST_SENSOR_GAME_ACTOR_PROXY_TYPE(
+dtCore::RefPtr<dtCore::ActorType> TestGameActorLibrary::TEST_SENSOR_GAME_ACTOR_TYPE(
       new dtCore::ActorType("Sensor", "TestHLA", "These are test HLA mapping actors"));
 
-dtCore::RefPtr<dtCore::ActorType> TestGameActorLibrary::TEST_HELICOPTER_GAME_ACTOR_PROXY_TYPE(
+dtCore::RefPtr<dtCore::ActorType> TestGameActorLibrary::TEST_HELICOPTER_GAME_ACTOR_TYPE(
       new dtCore::ActorType("Helicopter", "TestHLA", "These are test HLA mapping actors"));
 
-dtCore::RefPtr<dtCore::ActorType> TestGameActorLibrary::TEST_ENVIRONMENT_GAME_ACTOR_PROXY_TYPE(
+dtCore::RefPtr<dtCore::ActorType> TestGameActorLibrary::TEST_ENVIRONMENT_GAME_ACTOR_TYPE(
       new dtCore::ActorType("TestEnvironmentActor", "ExampleActors", "These are example actors"));
 
-dtCore::RefPtr<dtCore::ActorType> TestGameActorLibrary::TEST_GAME_PROPERTY_PROXY_TYPE(
+dtCore::RefPtr<dtCore::ActorType> TestGameActorLibrary::TEST_GAME_PROPERTY_TYPE(
       new dtCore::ActorType("TestGamePropertyActor", "ExampleActors", "Has an example of most property types"));
 
 
@@ -99,19 +99,19 @@ TestGameActorLibrary::TestGameActorLibrary() : dtCore::ActorPluginRegistry("Test
 
 void TestGameActorLibrary::RegisterActorTypes()
 {
-   mActorFactory->RegisterType<TestGameActorProxy1> (TEST1_GAME_ACTOR_PROXY_TYPE.get());
-   mActorFactory->RegisterType<TestGameActorProxy2> (TEST2_GAME_ACTOR_PROXY_TYPE.get());      
-   mActorFactory->RegisterType<TestGameActorCrashProxy> (TEST_GAME_ACTOR_CRASH_PROXY_TYPE.get());      
-   mActorFactory->RegisterType<TestPlayerProxy>(TEST_PLAYER_GAME_ACTOR_PROXY_TYPE.get());
+   mActorFactory->RegisterType<TestGameActorProxy1> (TEST1_GAME_ACTOR_TYPE.get());
+   mActorFactory->RegisterType<TestGameActorProxy2> (TEST2_GAME_ACTOR_TYPE.get());      
+   mActorFactory->RegisterType<TestGameActorCrashProxy> (TEST_GAME_ACTOR_CRASH_TYPE.get());      
+   mActorFactory->RegisterType<TestPlayerProxy>(TEST_PLAYER_GAME_ACTOR_TYPE.get());
    
    //This is the actor type for the task actor located in dtActors.  All custom
    //subclasses should at the very least be a sub actor type of this one.
-   mActorFactory->RegisterType<CounterTaskActorProxy>(TEST_COUNTER_TASK_GAME_ACTOR_PROXY_TYPE.get());
-   mActorFactory->RegisterType<TestHLAObjectProxy> (TEST_TANK_GAME_ACTOR_PROXY_TYPE.get());      
-   mActorFactory->RegisterType<TestHLAObjectProxy> (TEST_JET_GAME_ACTOR_PROXY_TYPE.get());      
-   mActorFactory->RegisterType<TestHLAObjectProxy> (TEST_CULTURAL_FEATURE_GAME_ACTOR_PROXY_TYPE.get());      
-   mActorFactory->RegisterType<TestHLAObjectProxy> (TEST_SENSOR_GAME_ACTOR_PROXY_TYPE.get());      
-   mActorFactory->RegisterType<TestHLAObjectProxy> (TEST_HELICOPTER_GAME_ACTOR_PROXY_TYPE.get());      
-   mActorFactory->RegisterType<TestGameEnvironmentActorProxy> (TEST_ENVIRONMENT_GAME_ACTOR_PROXY_TYPE.get());
-   mActorFactory->RegisterType<TestGamePropertyActor> (TEST_GAME_PROPERTY_PROXY_TYPE.get());
+   mActorFactory->RegisterType<CounterTaskActorProxy>(TEST_COUNTER_TASK_GAME_ACTOR_TYPE.get());
+   mActorFactory->RegisterType<TestHLAObjectProxy> (TEST_TANK_GAME_ACTOR_TYPE.get());      
+   mActorFactory->RegisterType<TestHLAObjectProxy> (TEST_JET_GAME_ACTOR_TYPE.get());      
+   mActorFactory->RegisterType<TestHLAObjectProxy> (TEST_CULTURAL_FEATURE_GAME_ACTOR_TYPE.get());      
+   mActorFactory->RegisterType<TestHLAObjectProxy> (TEST_SENSOR_GAME_ACTOR_TYPE.get());      
+   mActorFactory->RegisterType<TestHLAObjectProxy> (TEST_HELICOPTER_GAME_ACTOR_TYPE.get());      
+   mActorFactory->RegisterType<TestGameEnvironmentActorProxy> (TEST_ENVIRONMENT_GAME_ACTOR_TYPE.get());
+   mActorFactory->RegisterType<TestGamePropertyActor> (TEST_GAME_PROPERTY_TYPE.get());
 }

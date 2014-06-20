@@ -134,13 +134,14 @@ namespace dtUtil
    void LogFile::SetFileName(const std::string& name)
    {
       //std::cout << "LogFile try to change files to " << name << std::endl;
+      bool sameName = name == sLogFileName;
 
       sLogFileName = name;
       if (LOG_MANAGER == NULL)
       {
          LOG_MANAGER = new LogManager;
       }
-      else
+      else if (!sameName)
       {
          // reset open failed if the file name changes.
          LOG_MANAGER->mLogObserverFile->mOpenFailed = false;

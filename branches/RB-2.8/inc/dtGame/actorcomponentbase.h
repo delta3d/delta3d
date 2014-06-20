@@ -61,7 +61,7 @@ namespace dtGame
        * @param type The type-string of the ActorComponent to get
        * @return the selected ActorComponents (will be empty if not found)
        */
-      virtual std::vector<ActorComponent*> GetComponents(const ActorComponent::ACType& type) const;
+      virtual std::vector<ActorComponent*> GetComponents(ActorComponent::ACType type) const;
 
       /**
        * Fill the vector with all the actor components.
@@ -73,7 +73,7 @@ namespace dtGame
        * @param type The type-string of the ActorComponent to query
        * @return true if ActorComponent is found, false otherwise
        */
-      bool HasComponent(const ActorComponent::ACType& type) const;
+      bool HasComponent(ActorComponent::ACType type) const;
 
       /**
        * Add an ActorComponent. Only one ActorComponent of a given type can be added.
@@ -91,7 +91,7 @@ namespace dtGame
        * Removes all components with a particular type
        * @param type The type-string of the ActorComponent to remove
        */
-      void RemoveAllComponentsOfType(const ActorComponent::ACType& type);
+      void RemoveAllComponentsOfType(ActorComponent::ACType type);
 
       /**
        * Remove all contained ActorComponent

@@ -129,7 +129,7 @@ namespace dtActors
 
       dtCore::TransformableActorProxy::BuildPropertyMap();
       WaypointVolumeActor* volume = NULL;
-      GetActor(volume);
+      GetDrawable(volume);
 
       //Description...
       AddProperty(new dtCore::FloatActorProperty("name","label",

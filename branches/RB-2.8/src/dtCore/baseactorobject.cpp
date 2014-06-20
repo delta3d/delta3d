@@ -58,9 +58,8 @@ namespace dtCore
 
    /////////////////////////////////////////////////////////////////////////////
    BaseActorObject::BaseActorObject()
+   : mActorType(new ActorType(std::string()))
    {
-      SetClassName("dtCore::DeltaDrawable");
-
       RegisterInstance(this);
    }
 
@@ -75,6 +74,25 @@ namespace dtCore
    {
       DeregisterInstance(this);
    }
+
+   /////////////////////////////////////////////////////////////////////////////
+   BaseActorObject* BaseActorObject::GetPrototype()
+   {
+      return mPrototype.get();
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   const BaseActorObject* BaseActorObject::GetPrototype() const
+   {
+      return mPrototype.get();
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void BaseActorObject::SetPrototype(BaseActorObject* proto)
+   {
+      mPrototype = proto;
+   }
+
 
    /////////////////////////////////////////////////////////////////////////////
    BaseActorObject& BaseActorObject::operator=(const BaseActorObject& rhs)
@@ -116,10 +134,27 @@ namespace dtCore
    }
 
    /////////////////////////////////////////////////////////////////////////////
+   const std::string& BaseActorObject::GetClassName() const
+   {
+      return GetActorType().GetSharedClassInfo().GetClassName();
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   bool BaseActorObject::IsInstanceOf(const dtUtil::RefString& clsname) const
+   {
+      return GetActorType().GetSharedClassInfo().IsInstanceOf(clsname);
+   }
+
+
+   /////////////////////////////////////////////////////////////////////////////
    void BaseActorObject::SetClassName(const std::string& name)
    {
-      mClassName = name;
-      mClassNameSet.insert(mClassName);
+      if (!mActorType.valid())
+      {
+         // This sets a stub one so the code will work setting this in the constructor.
+         SetActorType(*new ActorType(std::string()));
+      }
+      GetActorType().GetSharedClassInfo().SetClassName(name);
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -140,33 +175,41 @@ namespace dtCore
       RefStringInsert insertFunc;
       std::set<std::string> hierarchy;
       insertFunc.toFill = &hierarchy;
-      std::for_each(mClassNameSet.begin(), mClassNameSet.end(), insertFunc);
+      std::for_each(GetActorType().GetSharedClassInfo().mClassHierarchy.begin(), GetActorType().GetSharedClassInfo().mClassHierarchy.end(), insertFunc);
       return hierarchy;
    }
 
    /////////////////////////////////////////////////////////////////////////////
    const dtCore::UniqueId& BaseActorObject::GetId() const
    {
-      return GetDrawable()->GetUniqueId();
+      return mId;
    }
 
    /////////////////////////////////////////////////////////////////////////////
    void BaseActorObject::SetId(const dtCore::UniqueId& newId)
    {
-      GetDrawable()->SetUniqueId(newId);
+      mId = newId;
+      if (GetDrawable() != NULL)
+      {
+         GetDrawable()->SetUniqueId(newId);
+      }
    }
 
 
    /////////////////////////////////////////////////////////////////////////////
    const std::string& BaseActorObject::GetName() const
    {
-      return GetDrawable()->GetName();
+      return mName;
    }
 
    /////////////////////////////////////////////////////////////////////////////
    void BaseActorObject::SetName(const std::string& name)
    {
-      GetDrawable()->SetName(name);
+      mName = name;
+      if (GetDrawable() != NULL)
+      {
+         GetDrawable()->SetName(name);
+      }
       if (mBillBoardIcon.valid())
       {
          mBillBoardIcon->GetDrawable()->SetName(name);
@@ -182,65 +225,23 @@ namespace dtCore
    /////////////////////////////////////////////////////////////////////////////
    ResourceDescriptor BaseActorObject::GetResource(const std::string& name)
    {
-      ResourceMapType::iterator itor = mResourceMap.find(name);
-      return itor != mResourceMap.end() ? itor->second : dtCore::ResourceDescriptor::NULL_RESOURCE;
+      return ResourceDescriptor::NULL_RESOURCE;
    }
 
    /////////////////////////////////////////////////////////////////////////////
    const ResourceDescriptor BaseActorObject::GetResource(const std::string& name) const
    {
-      ResourceMapType::const_iterator itor = mResourceMap.find(name);
-      return itor != mResourceMap.end() ? itor->second : dtCore::ResourceDescriptor::NULL_RESOURCE;
-   }
-
-   /////////////////////////////////////////////////////////////////////////////
-   void BaseActorObject::SetResource(const std::string& name, ResourceDescriptor* source)
-   {
-      DEPRECATE("void BaseActorObject::SetResource(const std::string&, ResourceDescriptor*)",
-                "void BaseActorObject::SetResource(const std::string&, const ResourceDescriptor&)");
-
-      if (source != NULL)
-      {
-         SetResource(name, *source);
-      }
-      else
-      {
-         SetResource(name, dtCore::ResourceDescriptor::NULL_RESOURCE);
-      }
+      return ResourceDescriptor::NULL_RESOURCE;
    }
 
    /////////////////////////////////////////////////////////////////////////////
    void BaseActorObject::SetResource(const std::string& name, const ResourceDescriptor& source)
    {
-      //TODO Should probably deprecate this functionality.  The ResourceDescripter value should
-      //be stored in the Actor, not generically in the BaseActorObject.
-
-      if (source.IsEmpty())
-      {
-         mResourceMap.erase(name);
-      }
-      else
-      {
-         //attempt to insert the value
-         std::pair<ResourceMapType::iterator, bool> result = mResourceMap.insert(std::make_pair(name, source));
-         // result.second tells me if it was inserted
-         if (!result.second)
-         {
-            // if not, first of the result is the iterator to the map entry, so just change the map value.
-            result.first->second = source;
-         }
-      }
 
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void BaseActorObject::SetLinkedActor(const std::string& name, BaseActorObject* newValue)
-   {
-   }
-
-
-   /////////////////////////////////////////////////////////////////////////////
-   static void CheckDrawableType(const dtCore::ActorType* actorType)
+   static void CheckActorType(const dtCore::ActorType* actorType)
    {
       if (actorType == NULL)
       {
@@ -254,7 +255,7 @@ namespace dtCore
    /////////////////////////////////////////////////////////////////////////////
    const ActorType& BaseActorObject::GetActorType() const
    {
-      CheckDrawableType(mActorType.get());
+      CheckActorType(mActorType.get());
       return *mActorType;
    }
 
@@ -282,29 +283,29 @@ namespace dtCore
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   static void CheckDrawable(const dtCore::DeltaDrawable* actor)
-   {
-      if (actor == NULL)
-      {
-         throw dtUtil::Exception("The Actor on an BaseActorObject is NULL.  The only ways this could happen is "
-                  "if the actor was created with the new operator rather than via "
-                  "dtCore::LibraryManager::GetInstance().CreateActor "
-                  "or the CreateActor method on the proxy subclass did not call SetActor() with a valid actor.",
-                  __FILE__, __LINE__);
-      }
-   }
+//   static void CheckDrawable(const dtCore::DeltaDrawable* actor)
+//   {
+//      if (actor == NULL)
+//      {
+//         throw dtUtil::Exception("The Actor on an BaseActorObject is NULL.  The only ways this could happen is "
+//                  "if the actor was created with the new operator rather than via "
+//                  "dtCore::LibraryManager::GetInstance().CreateActor "
+//                  "or the CreateActor method on the proxy subclass did not call SetActor() with a valid actor.",
+//                  __FILE__, __LINE__);
+//      }
+//   }
 
    /////////////////////////////////////////////////////////////////////////////
    dtCore::DeltaDrawable* BaseActorObject::GetDrawable()
    {
-      CheckDrawable(mDrawable.get());
+      //CheckDrawable(mDrawable.get());
       return mDrawable.get();
    }
 
    /////////////////////////////////////////////////////////////////////////////
    const dtCore::DeltaDrawable* BaseActorObject::GetDrawable() const
    {
-      CheckDrawable(mDrawable.get());
+      //CheckDrawable(mDrawable.get());
       return mDrawable.get();
    }
 
@@ -312,6 +313,8 @@ namespace dtCore
    void BaseActorObject::SetDrawable(dtCore::DeltaDrawable& drawable)
    {
       mDrawable = &drawable;
+      mId = drawable.GetUniqueId();
+      mName = drawable.GetName();
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -346,6 +349,8 @@ namespace dtCore
    //////////////////////////////////////////////////////////////////////////////
    void BaseActorObject::SetActorType(const ActorType& type)
    {
+      if (mActorType.valid())
+         type.MergeSharedClassInfo(mActorType->GetSharedClassInfo());
       mActorType = &type;
    }
 

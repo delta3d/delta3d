@@ -156,10 +156,10 @@ namespace dtPhysics
    }
 
    ////////////////////////////////////////////////////////
-   static void Convert(int& i, const int newi)
+   /*static void Convert(int& i, const int newi)
    {
       i = newi;
-   }
+   }*/
 
    template <typename ArrayType, typename PalElemType>
       void UpdateArray(dtCore::RefPtr<ArrayType>& array, const PAL_VECTOR<PalElemType>& palArray)

@@ -2,7 +2,7 @@
 SET(LIB_NAME testGameActorComponents)
 
 
-ADD_LIBRARY(${LIB_NAME} SHARED
+set(TARGET_SRC
             componentgameactor.cpp
             componentgameactor.h
             readme.txt
@@ -14,13 +14,12 @@ ADD_LIBRARY(${LIB_NAME} SHARED
             textlabelcomponent.h
 )
 
-TARGET_LINK_LIBRARIES(${LIB_NAME}
+BUILD_LIB_EXAMPLE(${LIB_NAME} TEST_GA_COMPONENTS_LIBRARY
                       ${DTUTIL_LIBRARY}
                       ${DTCORE_LIBRARY}
                       ${DTABC_LIBRARY}
                       ${DTGAME_LIBRARY}
                       ${DTACTORS_LIBRARY}
-                   )
+                      )
 
-SET_TARGET_PROPERTIES(${LIB_NAME}
-                     PROPERTIES DEFINE_SYMBOL TEST_GA_COMPONENTS_LIBRARY)
+

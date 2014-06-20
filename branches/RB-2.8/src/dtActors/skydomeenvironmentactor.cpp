@@ -155,7 +155,7 @@ void SkyDomeEnvironmentActorProxy::BuildPropertyMap()
    dtGame::GameActorProxy::BuildPropertyMap();
 
    SkyDomeEnvironmentActor *env;
-   this->GetActor(env);
+   this->GetDrawable(env);
 
    AddProperty(new BooleanActorProperty("Enable Fog", "Enable Fog",
       BooleanActorProperty::SetFuncType(env, &SkyDomeEnvironmentActor::SetFogEnable),

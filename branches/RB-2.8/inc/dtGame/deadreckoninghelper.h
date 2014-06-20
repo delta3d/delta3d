@@ -188,16 +188,16 @@ namespace dtGame
                void SetLastKnownVelocity(const osg::Vec3& vec);
                /// @see DeadReckoningHelper::SetLastTranslationUpdatedTime()
                void SetLastUpdatedTime(double newUpdatedTime);
-               /// Used by DeadReckonThePosition for straight blend.
-               void DeadReckonUsingLinearBlend(osg::Vec3& pos, dtUtil::Log* pLogger, GameActor& gameActor, bool useAcceleration);
-               /// Used by DeadReckonThePosition if we are using splines -- OLD WAY
-               void DeadReckonUsingSplines(osg::Vec3& pos, dtUtil::Log* pLogger, GameActor& gameActor);
+               /// Used by DeadReckonPosition for straight blend.
+               void DeadReckonUsingLinearBlend(osg::Vec3& pos, dtUtil::Log* pLogger, dtCore::Transformable& txable, bool useAcceleration);
+               /// Used by DeadReckonPosition if we are using splines -- OLD WAY
+               //void DeadReckonUsingSplines(osg::Vec3& pos, dtUtil::Log* pLogger, dtCore::Transformable& txable);
                /// Called when the trans or vel changes to recompute the parametric values used during spline blending.  
-               void RecomputeTransSplineValues(const osg::Vec3& currentAccel);
+               //void RecomputeTransSplineValues(const osg::Vec3& currentAccel);
 
                /// Computes the new position for the object. Splines or linear, but not static.
-               void DeadReckonThePosition(osg::Vec3& pos, dtUtil::Log* pLogger, 
-                  GameActor& gameActor, bool useAcceleration, float curTimeDelta, bool useSplines);
+               void DeadReckonPosition(osg::Vec3& pos, dtUtil::Log* pLogger,
+                  dtCore::Transformable& txable, bool useAcceleration, float curTimeDelta);
 
 
                ///the simulation time this was last updated.
@@ -241,11 +241,11 @@ namespace dtGame
                bool mInitialized;
                //bool mTranslationUpdated;
                bool mUpdated;
-
-               // The following variables are used to compute the 'cubic spline' that represents the blended position
-               float mPosSplineXA, mPosSplineXB, mPosSplineXC, mPosSplineXD; // x spline pre-compute values
-               float mPosSplineYA, mPosSplineYB, mPosSplineYC, mPosSplineYD; // y spline pre-compute values
-               float mPosSplineZA, mPosSplineZB, mPosSplineZC, mPosSplineZD; // z spline pre-compute values
+//
+//               // The following variables are used to compute the 'cubic spline' that represents the blended position
+//               float mPosSplineXA, mPosSplineXB, mPosSplineXC, mPosSplineXD; // x spline pre-compute values
+//               float mPosSplineYA, mPosSplineYB, mPosSplineYC, mPosSplineYD; // y spline pre-compute values
+//               float mPosSplineZA, mPosSplineZB, mPosSplineZC, mPosSplineZD; // z spline pre-compute values
          };
 
 
@@ -295,7 +295,7 @@ namespace dtGame
           * @param simTimeDelta the amount of time to increment (sim time elapsed this frame)
           * @param curSimulationTime the simulationTime from the TickMessage (or from asking the GM). 
           */
-         virtual void IncrementTimeSinceUpdate(float simTimeDelta, float curSimulationTime);
+         virtual void IncrementTimeSinceUpdate(float simTimeDelta, double curSimulationTime);
 
          /**
           * This function is responsible for manipulating the internal data types to do the actual
@@ -306,7 +306,7 @@ namespace dtGame
           * @param gcType The type of ground clamping to do.  Will be NONE if it is not set.
           * @return Return true if you think you changed the Transform, false if you did not.
           */
-         virtual bool DoDR(GameActor& gameActor, dtCore::Transform& xform,
+         virtual bool DoDR(dtCore::Transformable& txable, dtCore::Transform& xform,
                   dtUtil::Log* pLogger, BaseGroundClamper::GroundClampRangeType*& gcType);
 
          /**
@@ -434,9 +434,15 @@ namespace dtGame
          /** 
           * For moving objects, the DR helper computes the instantaneous velocity each frame. This
           * exposes that value to classes like the DR Component.
+          * It does compute an instant velocity for STATIC as well, but keep in mind that this
+          * value is really only useful in systems that update the position every frame.
           * @return the instantaneous velocity
           */
          const osg::Vec3& GetCurrentInstantVelocity() const;
+
+         /**
+          * This tries to return a reasonable velocity for this frame.
+          */
          /*override MotionInterface*/ osg::Vec3 GetVelocity() const { return GetCurrentInstantVelocity(); }
 
          /**
@@ -534,22 +540,6 @@ namespace dtGame
          const GroundClampingData& GetGroundClampingData() const { return mGroundClampingData; }
 
          /**
-          * When this is true, the DR algorithm uses a Cartmull-Rom Cubic Spline to interpret 
-          * between points. It accounts for vel and accel. If false, it uses the older, straight 
-          * forward linear blend of pos and vel.  This has no effect on rotation. Defaults to true.
-          * @return true if currently using the cubic spline blend. False if using simple linear blend. 
-          */
-         bool GetUseCubicSplineTransBlend() const { return mUseCubicSplineTransBlend; }
-
-         /**
-         * When set to true, the DR algorithm uses a Cartmull-Rom Cubic Spline to interpret 
-         * between points. It accounts for vel and accel. If set to false, it uses the older, straight 
-         * forward linear blend of pos and vel.  This has no effect on rotation. Defaults to true.
-         * @param newValue (default) True to use cartmull-rom splines. False for simple linear blend.
-         */
-         void SetUseCubicSplineTransBlend(bool newValue) { mUseCubicSplineTransBlend = newValue; }
-
-         /**
           * @return true if maintaining constant smoothing time, false (default) if using avg update time.
           */
          bool GetUseFixedSmoothingTime() const { return mUseFixedSmoothingTime; }
@@ -581,13 +571,13 @@ namespace dtGame
          virtual ~DeadReckoningHelper();// {}
 
          ///perform static dead-reckoning, which means applying the new position directly and ground clamping.  xform will be updated.
-         virtual void DRStatic(GameActor& gameActor, dtCore::Transform& xform, dtUtil::Log* pLogger);
+         virtual void DRStatic(dtCore::Transformable& txable, dtCore::Transform& xform, dtUtil::Log* pLogger);
 
          /**
           * perform velocity + acceleration dead-reckoning.  Acceleration may be ignored.  xform will be updated.
           * @return returns true if it thinks it made a change, false otherwise.
           */
-         virtual bool DRVelocityAcceleration(GameActor& gameActor, dtCore::Transform& xform, dtUtil::Log* pLogger);
+         virtual bool DRVelocityAcceleration(dtCore::Transformable& txable, dtCore::Transform& xform, dtUtil::Log* pLogger);
 
          /*
           * Simple dumps out a log that we have started dead reckoning with lots of information.  Pulled out
@@ -599,7 +589,7 @@ namespace dtGame
           * Computes the new rotation for the object.  This method handles VELOCITY_ONLY and
           * VELOCITY_AND_ACCELERATION, but not static. This is called DRVelocityAcceleration().
           */
-         void DeadReckonTheRotation(dtCore::Transform& xform);
+         void DeadReckonRotation(dtCore::Transform& xform);
 
 
       private:
@@ -675,8 +665,6 @@ namespace dtGame
          //bool mFlying; // Deprecated now - use GroundClampType instead
          // if the rotation has been resolved to the last updated version.
          bool mRotationResolved;
-         bool mUseCubicSplineTransBlend; // true is NEW WAY (default) - should we use simple linear or cubic spline blend?
-
          bool mExtraDataUpdated; // set to true when an important non-positional related property is changed. 
 
          bool mForceUprightRotation; // Used to keep characters (et al) from wierd leaning over, regardless of the source data

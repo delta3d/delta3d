@@ -287,7 +287,7 @@ namespace dtQt
    //////////////////////////////////////////////////////////////////////////////////
    void OSGAdapterWidget::keyReleaseEvent( QKeyEvent* event )
    {
-      if (mGraphicsWindow.valid())
+      if (mGraphicsWindow.valid() && !event->isAutoRepeat())
       {
          int value = STATIC_KEY_MAP.remapKey(event);
          mGraphicsWindow->getEventQueue()->keyRelease( value );

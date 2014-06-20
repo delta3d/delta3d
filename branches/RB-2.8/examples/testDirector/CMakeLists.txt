@@ -1,20 +1,19 @@
 SET(LIB_NAME testDirector)
 
-SET(LIB_SOURCES
+SET(TARGET_SRC
     directorcomponent.cpp
-	 directorcomponent.h	 
-	 testdirectorentrypoint.h	 
 	 testdirectorentrypoint.cpp
-	 testdirectorexport.h	
     readme.txt
 )
 
+set(TARGET_H
+    directorcomponent.h  
+    testdirectorentrypoint.h
+    testdirectorexport.h
+    )
 
-ADD_LIBRARY(${LIB_NAME} SHARED
-            ${LIB_SOURCES}
-)
 
-SET(LIBS_TO_LINK      ${LIB_NAME}
+SET(LIBS_TO_LINK
                       ${DTUTIL_LIBRARY}
                       ${DTCORE_LIBRARY}
                       ${DTABC_LIBRARY}
@@ -27,11 +26,11 @@ IF (QT4_FOUND)
                        dtInspectorQt)
 ENDIF (QT4_FOUND)
 
-TARGET_LINK_LIBRARIES(${LIBS_TO_LINK})
-
-SET_TARGET_PROPERTIES(${LIB_NAME}
-                     PROPERTIES DEFINE_SYMBOL TEST_DIRECTOR_LIBRARY)
-
 IF (QT4_FOUND) 
    ADD_DEFINITIONS(-DUSE_INSPECTOR)
 ENDIF (QT4_FOUND)
+
+BUILD_LIB_EXAMPLE(${LIB_NAME} TEST_DIRECTOR_LIBRARY
+                      ${LIBS_TO_LINK}
+                      )
+

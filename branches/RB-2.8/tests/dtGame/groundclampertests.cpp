@@ -227,7 +227,7 @@ namespace dtGame
             CPPUNIT_ASSERT_MESSAGE("Game Manager must be able create an Infinite Terrain Actor.",
                outProxy.valid());
 
-            outProxy->GetActor(outTerrain);
+            outProxy->GetDrawable(outTerrain);
             CPPUNIT_ASSERT_MESSAGE("Infinite Terrain Proxy must return a valid Infinite Terrain drawable.",
                outTerrain != NULL );
 
@@ -285,7 +285,7 @@ namespace dtGame
             CPPUNIT_ASSERT(!mGroundClamper->HasValidSurface());
 
             mGM->AddActor(*mTestGameActor, false, false);
-            dtCore::Transformable* terrain = &mTestGameActor->GetGameActor();
+            dtCore::Transformable* terrain = mTestGameActor->GetDrawable<dtCore::Transformable>();
 
             mGroundClamper->SetTerrainActor(terrain);
 
@@ -301,7 +301,7 @@ namespace dtGame
 
             mGM->AddActor(*mTestGameActor, false, false);
 
-            dtCore::Transformable* eyePointActor = &mTestGameActor->GetGameActor();
+            dtCore::Transformable* eyePointActor = mTestGameActor->GetDrawable<dtCore::Transformable>();
 
             osg::Vec3 expectedEyePoint(3.3f, 3.2f, 97.2233f);
             dtCore::Transform xform;
@@ -598,9 +598,9 @@ namespace dtGame
             resultDetectPoints[2].set(-(testDimensions[0] / 2), -(testDimensions[1] / 2), 0.0f);
 
             // Position and orient the actor.
-            dtCore::Transformable* actor = NULL;
-            mTestGameActor->GetActor(actor);
-            CPPUNIT_ASSERT(actor != NULL);
+            dtCore::Transformable* txformable = NULL;
+            mTestGameActor->GetDrawable(txformable);
+            CPPUNIT_ASSERT(txformable != NULL);
 
             osg::Vec3 testPosition(-98.7, 6.54f, -12.3f);
             osg::Vec3 testHPR(30.0f, -60.0f, 45.0f);
@@ -610,7 +610,7 @@ namespace dtGame
             dtCore::Transform xform;
             xform.SetRotation(testHPR);
             xform.SetTranslation(testPosition);
-            actor->SetTransform(xform);
+            txformable->SetTransform(xform);
 
             // Test access to the actor's detection points.
             // --- With model dimensions already set.
@@ -626,7 +626,7 @@ namespace dtGame
 
             // --- Ensure the actor position and orientation
             //     have not been modified unexpectedly.
-            actor->GetTransform(xform);
+            txformable->GetTransform(xform);
             xform.GetTranslation(testPosition);
             xform.GetRotation(testHPR);
             CPPUNIT_ASSERT(resultPosition == testPosition);
@@ -752,9 +752,9 @@ namespace dtGame
             osg::Vec3 resultPositionA;
             osg::Vec3 resultPositionB;
             dtCore::Transform xform;
-            dtCore::Transformable* actor = NULL;
-            mTestGameActor->GetActor(actor);
-            actor->GetTransform(xform);
+            dtCore::Transformable* txformable = NULL;
+            mTestGameActor->GetDrawable(txformable);
+            txformable->GetTransform(xform);
 
             // Track the clamping difference.
             float terrainHeight   = 0.0f;
@@ -765,7 +765,7 @@ namespace dtGame
             // check clamping at 2 points.
             // --- Test at point A.
             xform.SetTranslation(positionA);
-            actor->SetTransform(xform);
+            txformable->SetTransform(xform);
             terrainHeight = terrain->GetHeight(positionA.x(), positionA.y());
             mGroundClamper->ClampToGroundThreePoint(xform, *mTestGameActor, clampData, *runtimeData);
             xform.GetTranslation(resultPositionA);
@@ -777,7 +777,7 @@ namespace dtGame
 
             // --- Test at point B.
             xform.SetTranslation(positionB);
-            actor->SetTransform(xform);
+            txformable->SetTransform(xform);
             terrainHeight = terrain->GetHeight(positionB.x(), positionB.y());
             mGroundClamper->ClampToGroundThreePoint(xform, *mTestGameActor, clampData, *runtimeData);
             xform.GetTranslation(resultPositionB);
@@ -797,22 +797,22 @@ namespace dtGame
             mGroundClamper->SetIntermittentGroundClampingTimeDelta(clampTimeStep);
 
             // Create more than one test actor.
-            dtCore::RefPtr<GameActorProxy> proxy1;
-            dtCore::RefPtr<GameActorProxy> proxy2;
-            mGM->CreateActor(*dtActors::EngineActorRegistry::GAME_MESH_ACTOR_TYPE, proxy1);
-            mGM->CreateActor(*dtActors::EngineActorRegistry::GAME_MESH_ACTOR_TYPE, proxy2);
-            CPPUNIT_ASSERT(proxy1.valid());
-            CPPUNIT_ASSERT(proxy2.valid());
+            dtCore::RefPtr<GameActorProxy> actor1;
+            dtCore::RefPtr<GameActorProxy> actor2;
+            mGM->CreateActor(*dtActors::EngineActorRegistry::GAME_MESH_ACTOR_TYPE, actor1);
+            mGM->CreateActor(*dtActors::EngineActorRegistry::GAME_MESH_ACTOR_TYPE, actor2);
+            CPPUNIT_ASSERT(actor1.valid());
+            CPPUNIT_ASSERT(actor2.valid());
             // --- Get the newly created actors.
-            dtCore::Transformable* actor1 = NULL;
-            dtCore::Transformable* actor2 = NULL;
-            proxy1->GetActor(actor1);
-            proxy2->GetActor(actor2);
+            dtCore::Transformable* txfm1 = NULL;
+            dtCore::Transformable* txfm2 = NULL;
+            actor1->GetDrawable(txfm1);
+            actor2->GetDrawable(txfm2);
 
             // Create terrain.
-            dtCore::RefPtr<dtActors::InfiniteTerrainActorProxy> terrainProxy;
+            dtCore::RefPtr<dtActors::InfiniteTerrainActorProxy> terrainActor;
             dtCore::InfiniteTerrain* terrain = NULL;
-            CreateTestTerrain(terrainProxy, terrain);
+            CreateTestTerrain(terrainActor, terrain);
             mGroundClamper->SetTerrainActor(terrain);
 
             // Create position variables
@@ -832,8 +832,8 @@ namespace dtGame
             // Set actor positions.
             xform1.SetTranslation(pos1);
             xform2.SetTranslation(pos2);
-            actor1->SetTransform(xform1);
-            actor2->SetTransform(xform2);
+            txfm1->SetTransform(xform1);
+            txfm2->SetTransform(xform2);
 
             // Create Ground Clamp Data.
             GroundClampingData clampData1;
@@ -851,12 +851,12 @@ namespace dtGame
 
             // Test clamping on first call.
             mGroundClamper->ClampToGroundIntermittent(
-               currentTime, xform1, *proxy1, clampData1, *runtimeData1);
+               currentTime, xform1, *actor1, clampData1, *runtimeData1);
             mGroundClamper->ClampToGroundIntermittent(
-               currentTime, xform2, *proxy2, clampData2, *runtimeData2);
+               currentTime, xform2, *actor2, clampData2, *runtimeData2);
             // --- Get the actor positions.
-            actor1->GetTransform(xform1);
-            actor2->GetTransform(xform2);
+            txfm1->GetTransform(xform1);
+            txfm2->GetTransform(xform2);
             xform1.GetTranslation(pos1);
             xform2.GetTranslation(pos2);
             CPPUNIT_ASSERT(pos1.z() == 0.0f);
@@ -869,12 +869,12 @@ namespace dtGame
             // Trigger batch insertion by a time change.
             currentTime += clampTimeStep;
             mGroundClamper->ClampToGroundIntermittent(
-               currentTime, xform1, *proxy1, clampData1, *runtimeData1);
+               currentTime, xform1, *actor1, clampData1, *runtimeData1);
             mGroundClamper->ClampToGroundIntermittent(
-               currentTime, xform2, *proxy2, clampData2, *runtimeData2);
+               currentTime, xform2, *actor2, clampData2, *runtimeData2);
             // --- Get the actor positions.
-            actor1->GetTransform(xform1);
-            actor2->GetTransform(xform2);
+            txfm1->GetTransform(xform1);
+            txfm2->GetTransform(xform2);
             xform1.GetTranslation(pos1);
             xform2.GetTranslation(pos2);
             // NOTE: The clamping should not have triggered yet.
@@ -896,8 +896,8 @@ namespace dtGame
             //     clamp batch operation.
             CPPUNIT_ASSERT(mGroundClamper->GetClampBatchSize() == 0);
             // --- Get the actor positions.
-            actor1->GetTransform(xform1);
-            actor2->GetTransform(xform2);
+            txfm1->GetTransform(xform1);
+            txfm2->GetTransform(xform2);
             xform1.GetTranslation(pos1);
             xform2.GetTranslation(pos2);
             CPPUNIT_ASSERT(pos1.z() != 0.0f);
@@ -915,12 +915,12 @@ namespace dtGame
 
             // Create the test actor.
             dtCore::Transform xform;
-            dtCore::RefPtr<GameActorProxy> proxy;
-            mGM->CreateActor(*dtActors::EngineActorRegistry::GAME_MESH_ACTOR_TYPE, proxy);
-            CPPUNIT_ASSERT(proxy.valid());
+            dtCore::RefPtr<GameActorProxy> actor;
+            mGM->CreateActor(*dtActors::EngineActorRegistry::GAME_MESH_ACTOR_TYPE, actor);
+            CPPUNIT_ASSERT(actor.valid());
             // --- Get the newly created actors.
-            dtCore::Transformable* actor = NULL;
-            proxy->GetActor(actor);
+            dtCore::Transformable* txformable = NULL;
+            actor->GetDrawable(txformable);
 
             // Create the terrain.
             dtCore::RefPtr<dtActors::InfiniteTerrainActorProxy> terrainProxy;
@@ -935,8 +935,8 @@ namespace dtGame
 
             // Verify that the actor is not already at the height.
             xform.SetTranslation(pos);
-            actor->SetTransform(xform);
-            actor->GetTransform(xform);
+            txformable->SetTransform(xform);
+            txformable->GetTransform(xform);
             xform.GetTranslation(pos);
             CPPUNIT_ASSERT(pos != resultPos);
 
@@ -954,13 +954,13 @@ namespace dtGame
             data.SetGroundClampType(dtGame::GroundClampTypeEnum::FULL); // make it clamp down
 
             mGroundClamper->ClampToGround(*clampRangeType, curTime,
-               xform, *proxy, data, true);
+               xform, *actor, data, true);
             mGroundClamper->FinishUp();
 
             // Verify that the actor is now clamped.
             float errorThreshold = 0.1;
             osg::Matrix rotation;
-            actor->GetTransform(xform);
+            txformable->GetTransform(xform);
             xform.GetTranslation(pos);
             xform.GetRotation(rotation);
             CPPUNIT_ASSERT_DOUBLES_EQUAL(resultPos.x(), pos.x(), errorThreshold);
@@ -972,15 +972,15 @@ namespace dtGame
             // Clamp again without the transform flagged as changed.
             rotation.makeRotate(30.0f, osg::Vec3(0.0f,0.0f,1.0f));
             xform.SetRotation(rotation);
-            actor->SetTransform(xform);
+            txformable->SetTransform(xform);
             osg::Matrix forcedRotation(rotation);
             curTime += 5.0;
             mGroundClamper->ClampToGround(*clampRangeType, curTime,
-               xform, *proxy, data, false);
+               xform, *actor, data, false);
             mGroundClamper->FinishUp();
 
             // Verify that the actor is now clamped, but the transform unchanged.
-            actor->GetTransform(xform);
+            txformable->GetTransform(xform);
             xform.GetTranslation(pos);
             xform.GetRotation(rotation);
             CPPUNIT_ASSERT_DOUBLES_EQUAL(resultPos.x(), pos.x(), errorThreshold);
@@ -994,13 +994,13 @@ namespace dtGame
             // Clamp again with the transform flagged as changed, to ensure the clamper is not broken.
             curTime += 5.0;
             xform.SetRotation(forcedRotation);
-            actor->SetTransform(xform);
+            txformable->SetTransform(xform);
             mGroundClamper->ClampToGround(*clampRangeType, curTime,
-               xform, *proxy, data, true);
+               xform, *actor, data, true);
             mGroundClamper->FinishUp();
 
             // Verify that the actor is now clamped, with the transform changed to the forced rotation.
-            actor->GetTransform(xform);
+            txformable->GetTransform(xform);
             xform.GetTranslation(pos);
             xform.GetRotation(rotation);
             CPPUNIT_ASSERT_DOUBLES_EQUAL(resultPos.x(), pos.x(), errorThreshold);
@@ -1013,14 +1013,14 @@ namespace dtGame
             curTime += 5.0;
             forcedRotation.makeRotate(37.0f, osg::Vec3(0.0f,0.0f,1.0f));
             xform.SetRotation(forcedRotation);
-            actor->SetTransform(xform);
+            txformable->SetTransform(xform);
             data.SetAdjustRotationToGround(false);
             mGroundClamper->ClampToGround(*clampRangeType, curTime,
-               xform, *proxy, data, false);
+               xform, *actor, data, false);
             mGroundClamper->FinishUp();
 
             // Verify that the actor is now clamped, with the transform changed to the forced rotation.
-            actor->GetTransform(xform);
+            txformable->GetTransform(xform);
             xform.GetTranslation(pos);
             xform.GetRotation(rotation);
             CPPUNIT_ASSERT_DOUBLES_EQUAL(resultPos.x(), pos.x(), errorThreshold);

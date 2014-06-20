@@ -457,7 +457,7 @@ void TankActor::OnEnteredWorld()
    mIsector->SetScene(&(GetGameActorProxy().GetGameManager()->GetScene()));
 
    //Collect all of the Transform Nodes off of the Model
-   dtCore::RefPtr<dtUtil::NodeCollector> mOSGCollector = new dtUtil::NodeCollector(GetGameActorProxy().GetGameActor().GetOSGNode(), dtUtil::NodeCollector::DOFTransformFlag);
+   dtCore::RefPtr<dtUtil::NodeCollector> mOSGCollector = new dtUtil::NodeCollector(GetOSGNode(), dtUtil::NodeCollector::DOFTransformFlag);
 
    mDOFTran = mOSGCollector->GetDOFTransform("dof_turret_01");
    mDOFTran->addChild(mCannonShot.get()->GetOSGNode());
@@ -484,18 +484,18 @@ void TankActorProxy::BuildPropertyMap()
    const std::string GROUP = "HoverTank";
 
    dtActors::GameMeshActorProxy::BuildPropertyMap();
-   TankActor& actor = dynamic_cast<TankActor&>(GetGameActor());
+   TankActor* actor = GetDrawable<TankActor>();
 
    // "Velocity" property
    AddProperty(new dtCore::FloatActorProperty("Velocity","Velocity",
-      dtCore::FloatActorProperty::SetFuncType(&actor, &TankActor::SetVelocity),
-      dtCore::FloatActorProperty::GetFuncType(&actor, &TankActor::GetVelocity),
+      dtCore::FloatActorProperty::SetFuncType(actor, &TankActor::SetVelocity),
+      dtCore::FloatActorProperty::GetFuncType(actor, &TankActor::GetVelocity),
       "Sets/gets the hover tank's velocity.", GROUP));
 
    // "Turnrate" property
    AddProperty(new dtCore::FloatActorProperty("Turnrate","Turn Rate",
-      dtCore::FloatActorProperty::SetFuncType(&actor, &TankActor::SetTurnRate),
-      dtCore::FloatActorProperty::GetFuncType(&actor, &TankActor::GetTurnRate),
+      dtCore::FloatActorProperty::SetFuncType(actor, &TankActor::SetTurnRate),
+      dtCore::FloatActorProperty::GetFuncType(actor, &TankActor::GetTurnRate),
       "Sets/gets the hover tank's turn rate in degrees per second.", GROUP));
 }
 

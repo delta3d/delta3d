@@ -47,7 +47,6 @@ namespace dtAnim
       virtual osg::BoundingBox GetBoundingBox();
 
    protected:
-      dtCore::RefPtr<dtAnim::AnimationHelper> mHelper;
 
       /// Destroys this actor.
       virtual ~AnimationGameActor();

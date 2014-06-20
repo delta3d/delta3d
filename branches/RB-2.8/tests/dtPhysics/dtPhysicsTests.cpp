@@ -739,7 +739,7 @@ namespace dtPhysics
       mGM->CreateActor(*dtPhysics::PhysicsActorRegistry::PHYSICS_MATERIAL_ACTOR_TYPE, mat);
       mat->SetName("Steel");
       dtPhysics::MaterialActor* matDD = NULL;
-      mat->GetActor(matDD);
+      mat->GetDrawable(matDD);
       CPPUNIT_ASSERT(mat != NULL);
 
       PhysicsMaterials& materials = PhysicsWorld::GetInstance().GetMaterials();

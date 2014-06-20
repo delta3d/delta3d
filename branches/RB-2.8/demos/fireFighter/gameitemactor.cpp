@@ -47,14 +47,14 @@ void GameItemActorProxy::BuildPropertyMap()
 {
    dtActors::GameMeshActorProxy::BuildPropertyMap();
 
-   GameItemActor& gia = static_cast<GameItemActor&>(GetGameActor());
+   GameItemActor& gia = *GetDrawable<GameItemActor>();
 
-   AddProperty(new dtCore::ResourceActorProperty(*this, dtCore::DataType::SOUND,
+   AddProperty(new dtCore::ResourceActorProperty(dtCore::DataType::SOUND,
       "InventorySound", "InventorySound",
       dtUtil::MakeFunctor(&GameItemActor::SetInventoryAddSnd, gia),
       "Sets the inventory sound for this item"));
 
-   AddProperty(new dtCore::ResourceActorProperty(*this, dtCore::DataType::SOUND,
+   AddProperty(new dtCore::ResourceActorProperty(dtCore::DataType::SOUND,
       "ItemUseSound", "ItemUseSound",
       dtUtil::MakeFunctor(&GameItemActor::SetItemUseSnd, gia),
       "Sets the inventory sound for this item"));

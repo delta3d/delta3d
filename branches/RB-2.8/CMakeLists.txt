@@ -2,9 +2,7 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8.1 FATAL_ERROR)
 
 # see cmake --help-policy C/0003 for more information
-IF(COMMAND cmake_policy)
-   CMAKE_POLICY(SET CMP0003 NEW)
-ENDIF(COMMAND cmake_policy)
+cmake_policy(VERSION 2.8.1)
 
 MACRO(ADD_DELTA3D_SUBFOLDERS)
    #optional external dependencies
@@ -44,48 +42,12 @@ MACRO(ADD_DELTA3D_SUBFOLDERS)
    ENDIF (BUILD_GUI)
 
    IF (BUILD_HLA)
-      IF (USE_HLA_1516e)
-         FIND_PACKAGE(HLA1516e REQUIRED)
-      else()
-         unset(RTI1516e_INCLUDE_DIR CACHE)
-         unset(RTI1516e_LIBRARIES CACHE)
-      endif()
-
-      IF (USE_RTIS)
-         FIND_PACKAGE(RTI-s REQUIRED) #for dtHLAGM
-      ELSE (USE_RTIS)
-         IF (USE_CERTI)
-            FIND_PACKAGE(RTICERTI REQUIRED)
-         ELSE (USE_CERTI)
-            IF (USE_MAK)
-              FIND_PACKAGE(RTIMAK REQUIRED)
-            ELSE  (USE_MAK)
-              IF (USE_PORTICO)
-                FIND_PACKAGE(RTIPortico REQUIRED)
-              ELSE (USE_PORTICO)
-                 unset(RTI_INCLUDE_DIR CACHE)
-                 unset(RTI_LIBRARIES CACHE)
-                 if (NOT USE_HLA_1516e)
-                    MESSAGE("No HLA RTI selected, choose USE_CERTI, USE_RTIS, USE_PORTICO, USE_MAK, or USE_HLA_1516e.  HLA 1516 can be compiled as the same time as one of the others.")
-                 ENDIF(NOT USE_HLA_1516e)
-              ENDIF (USE_PORTICO)
-            ENDIF (USE_MAK)
-         ENDIF (USE_CERTI)
-      ENDIF (USE_RTIS)
-
-
       ADD_SUBDIRECTORY(src/dtHLAGM)
-      if (RTI_INCLUDE_DIR AND (USE_RTIS OR USE_CERTI OR USE_MAK OR USE_PORTICO))
-         ADD_SUBDIRECTORY(src/dtHLAGM/rti13)
-      endif()
-      if (USE_HLA_1516e)
-         ADD_SUBDIRECTORY(src/dtHLAGM/rti1516e)
-      endif()
       SET(DTHLAGM_AVAILABLE "YES")
    ENDIF (BUILD_HLA)
 
    IF (BUILD_PLIB)
-      FIND_PACKAGE(PLIB) #for dtInputPLIB
+      #FIND_PACKAGE(PLIB) #for dtInputPLIB
       ADD_SUBDIRECTORY(src/dtInputPLIB)
    ENDIF(BUILD_PLIB)
 
@@ -166,7 +128,7 @@ OPTION(BUILD_BINDINGS      "Enabled the building of the bindings (requires Pytho
 OPTION(BUILD_DIS           "Enables the building of dtDIS (requires DIS-cpp,HawkNL)" ON)
 OPTION(BUILD_GUI           "Enables the building of dtGUI (requires CEGUI)" ON)
 OPTION(BUILD_HLA           "Enables the building of dtHLA related projects (requires RTI)" OFF)
-OPTION(BUILD_PLIB          "Enables the building of dtInputPLIB (requires PLIB)" ON)
+OPTION(BUILD_PLIB          "Enables the building of dtInputPLIB (Uses internal plib code)" ON)
 OPTION(BUILD_NET           "Enables the building of dtNet/dtNetGM (requires HawkNL,GNE,Boost)" OFF)
 OPTION(BUILD_DTPHYSICS     "Enables the building of dtPhysics (requires PAL)" OFF)
 OPTION(BUILD_TERRAIN       "Enables the building of dtTerrain (requires GDAL)" ON)
@@ -181,15 +143,6 @@ MARK_AS_ADVANCED(BUILD_WITH_PCH)
 
 OPTION(BUILD_WITH_MULTITHREAD_FIX_HACK_BREAKS_CEGUI "Fixes a multithreading problem that only affect some machine.  THE FIX BREAKS CEGUI!")
 MARK_AS_ADVANCED(BUILD_WITH_MULTITHREAD_FIX_HACK_BREAKS_CEGUI)
-
-IF (BUILD_HLA)
-   OPTION(USE_RTIS "Use RTI-s for the RTI implementation" OFF)
-   OPTION(USE_CERTI "Use CERTI for the RTI implementation" OFF)
-   OPTION(USE_MAK "Use MAK for the RTI implementation" OFF)
-   OPTION(USE_PORTICO "Use Portico for the RTI implementation" OFF)
-   OPTION(USE_HLA_1516e "Use an implementation of RTI 1516e (headers and library names are standardized.)" OFF)
-ENDIF (BUILD_HLA)
-
 
 # We want to build SONAMES shared libraries
 # TODO This does nothing yet.

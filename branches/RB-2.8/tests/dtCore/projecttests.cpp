@@ -50,6 +50,10 @@
 #include <dtCore/map.h>
 #include <dtCore/exceptionenum.h>
 
+// Resource Actor Property has a helper function to make it easier to get a resource path, so it's easiest to test it with
+// project.
+#include <dtCore/resourceactorproperty.h>
+
 #include <cppunit/extensions/HelperMacros.h>
 
 namespace dtCore
@@ -776,10 +780,14 @@ void ProjectTests::TestResources()
 
       testResult = p.GetResourcePath(rd);
 
-      CPPUNIT_ASSERT_EQUAL_MESSAGE("Getting the resource path returned the wrong value",
-            testResult, p.GetContext(0) + dtUtil::FileUtils::PATH_SEPARATOR + dtCore::DataType::STATIC_MESH.GetName() + dtUtil::FileUtils::PATH_SEPARATOR
+      std::string expectedPath = p.GetContext(0) + dtUtil::FileUtils::PATH_SEPARATOR + dtCore::DataType::STATIC_MESH.GetName() + dtUtil::FileUtils::PATH_SEPARATOR
             + "fun" + dtUtil::FileUtils::PATH_SEPARATOR + "bigmamajama"
-            + dtUtil::FileUtils::PATH_SEPARATOR + "flatdirt.ive");
+            + dtUtil::FileUtils::PATH_SEPARATOR + "flatdirt.ive";
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("Getting the resource path returned the wrong value",
+            testResult, expectedPath);
+
+      CPPUNIT_ASSERT(dtCore::ResourceActorProperty::GetResourcePath(dtCore::ResourceDescriptor::NULL_RESOURCE).empty());
+      CPPUNIT_ASSERT_EQUAL(dtCore::ResourceActorProperty::GetResourcePath(rd), expectedPath);
 
 #ifndef DELTA_WIN32
       std::string rdVal = rd.GetResourceIdentifier();

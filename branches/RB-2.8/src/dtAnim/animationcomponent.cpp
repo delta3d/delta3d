@@ -191,7 +191,7 @@ void AnimationComponent::GroundClamp(BaseClass::ActorCompMapping& item)
    if (pProxy != NULL)
    {
       dtCore::Transform xform;
-      pProxy->GetGameActor().GetTransform(xform, dtCore::Transformable::REL_CS);
+      pProxy->GetDrawable<dtCore::Transformable>()->GetTransform(xform, dtCore::Transformable::REL_CS);
 
       mGroundClamper->ClampToGround(dtGame::BaseGroundClamper::GroundClampRangeType::RANGED,
                0.0, xform, *pProxy, gcData, true);

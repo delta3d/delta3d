@@ -66,7 +66,7 @@ namespace dtActors
          "Sets if a partical system is relative to its parent, if any. ", GROUPNAME));
 
       // This property enables the loading of a particle resource file.
-      AddProperty(new ResourceActorProperty(*this, DataType::PARTICLE_SYSTEM, "Particle(s) File",
+      AddProperty(new ResourceActorProperty(DataType::PARTICLE_SYSTEM, "Particle(s) File",
          "particle file", ResourceActorProperty::SetFuncType(this, &ParticleSystemActorProxy::LoadFile),
          "Sets the resource file of this particle system", GROUPNAME));
    }

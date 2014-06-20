@@ -61,7 +61,7 @@ void TestGameActorProxy2::BuildPropertyMap()
    dtGame::GameActorProxy::BuildPropertyMap();
 
    TestGameActor2* actor = NULL;
-   GetActor(actor);
+   GetDrawable(actor);
 
    AddProperty(new dtCore::IntActorProperty("Actor Deleted Count", "The number of Actor Deleted message received", 
       dtCore::IntActorProperty::SetFuncType(actor, &TestGameActor2::SetActorDeletedCount),

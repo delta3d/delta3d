@@ -35,7 +35,9 @@
 
 namespace dtPhysics
 {
-   const dtUtil::RefString PhysicsActComp::TYPE("PhysicsActComp");
+   const dtGame::ActorComponent::ACType PhysicsActComp::TYPE(new dtCore::ActorType("PhysicsActComp", "ActorComponents",
+          "Physics subsystem actor component.  Requires a GM level PhysicsComponent",
+          dtGame::ActorComponent::BaseActorComponentType));
 
    const dtUtil::RefString PhysicsActComp::PROPERTY_PHYSICS_NAME("Physics Name");
    const dtUtil::RefString PhysicsActComp::PROPERTY_PHYSICS_MASS("Physics Mass");
@@ -106,11 +108,10 @@ namespace dtPhysics
    {
       PhysicsComponent* comp = NULL;
 
-      dtGame::GameActor* ga = NULL;
-      GetOwner(ga);
-      dtGame::GameActorProxy& act = ga->GetGameActorProxy();
+      dtGame::GameActorProxy* act = NULL;
+      GetOwner(act);
 
-      act.GetGameManager()->
+      act->GetGameManager()->
          GetComponentByName(PhysicsComponent::DEFAULT_NAME, comp);
 
       if (comp != NULL)
@@ -121,7 +122,7 @@ namespace dtPhysics
       {
          dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
             "Actor \"%s\"\"%s\" unable to find PhysicsComponent.",
-            act.GetName().c_str(), act.GetId().ToString().c_str());
+            act->GetName().c_str(), act->GetId().ToString().c_str());
       }
    }
 
@@ -130,11 +131,10 @@ namespace dtPhysics
    {
       PhysicsComponent* comp = NULL;
 
-      dtGame::GameActor* ga = NULL;
-      GetOwner(ga);
-      dtGame::GameActorProxy& act = ga->GetGameActorProxy();
+      dtGame::GameActorProxy* act = NULL;
+      GetOwner(act);
 
-      act.GetGameManager()->
+      act->GetGameManager()->
          GetComponentByName(PhysicsComponent::DEFAULT_NAME, comp);
 
       if (comp != NULL)
@@ -145,7 +145,7 @@ namespace dtPhysics
       {
          dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
             "Actor \"%s\"\"%s\" unable to find PhysicsComponent.",
-            act.GetName().c_str(), act.GetId().ToString().c_str());
+            act->GetName().c_str(), act->GetId().ToString().c_str());
       }
    }
 
@@ -368,11 +368,11 @@ namespace dtPhysics
       const MaterialActor* result = NULL;
       if (!GetMaterialActor().ToString().empty() )
       {
-          dtGame::GameActor* ga = NULL;
-          GetOwner(ga);
-          if (ga != NULL)
+          dtGame::GameActorProxy* gap = NULL;
+          GetOwner(gap);
+          if (gap != NULL)
           {
-              ga->GetGameActorProxy().GetGameManager()->FindActorById(GetMaterialActor(), result);
+              gap->GetGameManager()->FindActorById(GetMaterialActor(), result);
           }
       }
       return result;

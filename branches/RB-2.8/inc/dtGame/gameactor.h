@@ -61,6 +61,9 @@ namespace dtGame
        */
       GameActor(GameActorProxy& parent, TransformableNode& node, const std::string& name = "GameActor");
 
+
+      /*override*/ void SetName(const std::string& name);
+
       /**
        * @return the GameActorProxy for this game actor.
        */
@@ -79,19 +82,19 @@ namespace dtGame
         * Note - actor components do the BuildPropertyMap during the AddComponent method, so set
         * your default values after you that.
         */
-      virtual void BuildActorComponents();
+      DEPRECATE_FUNC virtual void BuildActorComponents();
 
       /**
        * Returns if the actor is remote
        * @return True is the actor is remote, false if not
        */
-      inline bool IsRemote() const { return mRemote; }
+      bool IsRemote() const;
 
       /**
        * Returns is the actor is published
        * @return True is the actor is published, false if not
        */
-      inline bool IsPublished() const { return mPublished; }
+      bool IsPublished() const;
 
       /**
        * Method for handling local ticks.  This will called by the "Tick Local" invokable.
@@ -103,7 +106,7 @@ namespace dtGame
       virtual void OnTickLocal(const TickMessage& tickMessage);
 
       ///Deprecated, override the one that takes a TickMessage;
-      virtual void TickLocal(const Message& tickMessage);
+      DEPRECATE_FUNC virtual void TickLocal(const Message& tickMessage);
 
       /**
        * Method for handling remote ticks.  This will called by the "Tick Remote" invokable
@@ -115,16 +118,11 @@ namespace dtGame
       virtual void OnTickRemote(const TickMessage& tickMessage);
 
       ///Deprecated, override the one that takes a TickMessage;
-      virtual void TickRemote(const Message& tickMessage);
+      DEPRECATE_FUNC virtual void TickRemote(const Message& tickMessage);
 
       /**
-       * Default invokable for handling messages. This is only called if you register
-       * a message using the default PROCESS_MSG_INVOKABLE name. To use this, override it
-       * and handle any messages that you want. Then, in the OnEnteredWorld() method on your
-       * proxy, add a line, something either of these:
-       *    RegisterForMessages(dtGame::MessageType::INFO_GAME_EVENT);
-       *    RegisterForMessages(dtGame::MessageType::INFO_GAME_EVENT, PROCESS_MSG_INVOKABLE);
-       * @param message the actual message
+       * This is going away.  It is still the default for the invokable, but
+       * it will be removed.  Make your invokables call another function.
        */
       virtual void ProcessMessage(const Message& message);
 
@@ -144,22 +142,10 @@ namespace dtGame
       virtual void OnShaderGroupChanged();
 
       /**
-       * See GetPrototypeName().
-       * @param prototypeName The name of the prototype that was used to create this actor. Set by the GM.
-       */
-      void SetPrototypeName(const std::string& prototypeName);
-
-      /**
        * This value is set automatically by the GM when an actor is created from prototype.
        * @return The prototype that was used to create this actor. Set by the GM.
        */
-      const std::string& GetPrototypeName() const;
-
-      /**
-       * See GetPrototypeID().
-       * @param prototypeID The unique id of the prototype that was used to create this actor. Set by the GM.
-       */
-      void SetPrototypeID(const dtCore::UniqueId& prototypeID);
+      DEPRECATE_FUNC std::string GetPrototypeName() const;
 
       /**
        * This value is used for updating/creating remote actors that need to be recreated from prototype
@@ -168,20 +154,72 @@ namespace dtGame
        * processor, it will attempt to look up the prototype first. Extremely useful for networking.
        * @return The id of the prototype that was used to create this actor. Set by the GM.
        */
-      const dtCore::UniqueId& GetPrototypeID() const;
+      DEPRECATE_FUNC dtCore::UniqueId GetPrototypeID() const;
+
+      //////////////////////////////
+      // Actor Components have been moved to BaseActorObject or
+      // To a dtGame subclass of it.  Some of the accessor methods for them are
+      // here to make that transition easier, that is, to make code written to use them
+      // from GameActorProxy still build and allow people to transition away from
+      // accessing them from the GameActor.  Calling these methods should be fine since
+      // they won't go away, but they may be moved around.
+
+      /**
+       * Get all components matching this type string
+       * @param type The type-string of the ActorComponent to get
+       * @return the selected ActorComponents (will be empty if not found)
+       */
+      DEPRECATE_FUNC virtual std::vector<ActorComponent*> GetComponents(ActorComponent::ACType type) const;
+
+      /**
+       * Fill the vector with all the actor components.
+       */
+      DEPRECATE_FUNC virtual void GetAllComponents(std::vector<ActorComponent*>& toFill);
+
+      /**
+       * Does base contain a component of given type?
+       * @param type The type-string of the ActorComponent to query
+       * @return true if ActorComponent is found, false otherwise
+       */
+      DEPRECATE_FUNC virtual bool HasComponent(ActorComponent::ACType type) const ;
 
       /**
        * Add an ActorComponent. Only one ActorComponent of a given type can be added.
        * @param component The ActorComponent to try to add
        */
-      virtual void AddComponent(ActorComponent& component);
+      DEPRECATE_FUNC virtual void AddComponent(ActorComponent& component);
 
       /**
        * Remove component by reference
-       * @param component : Reference to the ActorComponent to remove
+       * @param component : Pointer to the ActorComponent to remove
        */
-      virtual void RemoveComponent(ActorComponent& component);
+      DEPRECATE_FUNC virtual void RemoveComponent(ActorComponent& component);
 
+      /**
+       * Removes all components with a particular type
+       * @param type The type-string of the ActorComponent to remove
+       */
+      DEPRECATE_FUNC void RemoveAllComponentsOfType(ActorComponent::ACType type);
+
+      /**
+       * Remove all contained ActorComponent
+       */
+      DEPRECATE_FUNC virtual void RemoveAllComponents();
+
+      /**
+       * Loop through all ActorComponents call their OnEnteredWorld()
+       */
+      DEPRECATE_FUNC virtual void CallOnEnteredWorldForActorComponents();
+
+      /**
+       * Loop through all ActorComponents call their OnRemovedWorld()
+       */
+      DEPRECATE_FUNC virtual void CallOnRemovedFromWorldForActorComponents();
+
+      /**
+       * Call the BuildPropertyMap() method of all registered ActorComponent
+       */
+      DEPRECATE_FUNC virtual void BuildComponentPropertyMaps();
    protected:
       /// Destructor
       virtual ~GameActor();
@@ -207,12 +245,8 @@ namespace dtGame
 
       friend class GameActorProxy;
       dtCore::ObserverPtr<GameActorProxy> mOwner;
-      bool mPublished;
-      bool mRemote;
       std::string mShaderGroup;
       dtUtil::Log& mLogger;
-      std::string mPrototypeName;
-      dtCore::UniqueId mPrototypeID;
    };
 
 } // namespace dtGame

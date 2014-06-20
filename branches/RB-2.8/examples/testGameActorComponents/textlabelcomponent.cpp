@@ -9,7 +9,10 @@
 
 #include <osg/Geode>
 
-const dtGame::ActorComponent::ACType TextLabelComponent::TYPE("TextLabelComponent");
+const dtGame::ActorComponent::ACType TextLabelComponent::TYPE(new dtCore::ActorType("TextLabelComponent", "ActorComponents",
+       "Physics subsystem actor component.  Requires a GM level PhysicsComponent",
+       dtGame::ActorComponent::BaseActorComponentType));
+
 
 ////////////////////////////////////////////////////////////////////////////////
 TextLabelComponent::TextLabelComponent()

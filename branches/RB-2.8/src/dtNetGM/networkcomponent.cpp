@@ -271,17 +271,8 @@ namespace dtNetGM
 
       if (code == MessageActionCode::SEND)
       {
+         //printf("Sending internal Message: %s\n", msg.GetMessageType().GetName().c_str());
          GetGameManager()->SendMessage(msg);
-         // forward the message to any other connections
-         dtUtil::DataStream dataStream = CreateDataStream(msg);
-         for (std::vector<dtNetGM::NetworkBridge*>::iterator iter = mConnections.begin(); iter != mConnections.end(); iter++)
-         {
-            dtNetGM::NetworkBridge* bridge = *iter;
-            if (bridge->IsConnectedClient() && bridge->GetMachineInfo() != msg.GetSource())
-            {
-               bridge->SendDataStream(dataStream, true);
-            }
-         }
       }
       else if (code == MessageActionCode::WAIT)
       {
@@ -515,8 +506,8 @@ namespace dtNetGM
          // Read MessageType::mId for special case
          dataStream.Rewind();
          unsigned short msgId = 0;
-            dataStream.Read(msgId);
-            dataStream.Rewind();
+         dataStream.Read(msgId);
+         dataStream.Rewind();
 
          if (msgId == dtGame::MessageType::NETCLIENT_REQUEST_CONNECTION.GetId()
             || msgId == dtGame::MessageType::NETSERVER_ACCEPT_CONNECTION.GetId())
@@ -550,6 +541,31 @@ namespace dtNetGM
       if (message.valid())
       {
          OnReceivedNetworkMessage(*message, networkBridge);
+         ForwardMessage(*message, networkBridge);
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void NetworkComponent::ForwardMessage(const dtGame::Message& message, NetworkBridge& networkBridge)
+   {
+      if (message.GetDestination() == NULL ||
+            (*message.GetDestination() != GetGameManager()->GetMachineInfo()))
+      {
+//         if (message.GetDestination() != NULL)
+//         {
+//            LOG_ALWAYS(std::string("Dest: ") + message.GetDestination()->GetUniqueId().ToString() + std::string("  LocalMachine: ") + GetGameManager()->GetMachineInfo().GetUniqueId().ToString());
+//         }
+
+         // forward the message to any other connections
+         dtUtil::DataStream dataStreamFwd = CreateDataStream(message);
+         for (std::vector<dtNetGM::NetworkBridge*>::iterator iter = mConnections.begin(); iter != mConnections.end(); iter++)
+         {
+            dtNetGM::NetworkBridge* bridge = *iter;
+            if (bridge != &networkBridge && bridge->IsConnectedClient() && bridge->GetMachineInfo() != message.GetSource())
+            {
+               bridge->SendDataStream(dataStreamFwd, true);
+            }
+         }
       }
    }
 
@@ -817,7 +833,7 @@ namespace dtNetGM
          msg->SetDestination(GetMachineInfo(dtCore::UniqueId(szUniqueId)));
       }
 
-   // Sending Actor
+      // Sending Actor
       dataStream.Read(szUniqueId);
       msg->SetSendingActorId(dtCore::UniqueId(szUniqueId));
 

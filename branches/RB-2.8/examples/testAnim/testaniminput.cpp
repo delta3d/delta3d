@@ -176,7 +176,7 @@ bool TestAnimInput::HandleKeyReleased(const dtCore::Keyboard* keyboard, int key)
             //gm->CreateActor(*dtAnim::AnimActorRegistry::ANIMATION_ACTOR_TYPE, animProxy);
 
             //dtAnim::AnimationGameActor* dynamicActor;
-            //dynamicActor = dynamic_cast<dtAnim::AnimationGameActor*>(animProxy->GetActor());
+            //dynamicActor = dynamic_cast<dtAnim::AnimationGameActor*>(animProxy->GetDrawable());
             //dynamicActor->SetModel("yourModelURL");
 
             //dtCore::Transform newTransform;
@@ -236,7 +236,7 @@ void TestAnimInput::TickLocal(float dt)
       return;
    }
 
-   dtGame::GameActor* pActor = &mPlayer->GetGameActor();
+   dtCore::Transformable* pDrawable = mPlayer->GetDrawable<dtCore::Transformable>();
 
    dtCore::Transform trans;
    osg::Matrix mat;
@@ -245,7 +245,7 @@ void TestAnimInput::TickLocal(float dt)
 
    if (mIsWalking || mIsTurning)
    {
-      pActor->GetTransform(trans);
+      pDrawable->GetTransform(trans);
       trans.Get(mat);
 
       up = dtUtil::MatrixUtil::GetRow3(mat, 2);
@@ -274,7 +274,7 @@ void TestAnimInput::TickLocal(float dt)
 
    if (mIsWalking || mIsTurning)
    {
-      pActor->SetTransform(trans, dtCore::Transformable::REL_CS);
+      pDrawable->SetTransform(trans, dtCore::Transformable::REL_CS);
    }
 }
 

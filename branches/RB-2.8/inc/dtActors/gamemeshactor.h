@@ -27,6 +27,7 @@
 #include <dtCore/plugin_export.h>
 #include <dtCore/loadable.h>
 #include <dtCore/model.h>
+#include <dtUtil/getsetmacros.h>
 
 //#include <map>
 //#include <vector>
@@ -232,6 +233,8 @@ namespace dtActors
        * @return
        */
       virtual dtCore::ActorProxyIcon* GetBillBoardIcon();
+
+      DT_DECLARE_ACCESSOR(dtCore::ResourceDescriptor, MeshResource);
 
    protected:
 

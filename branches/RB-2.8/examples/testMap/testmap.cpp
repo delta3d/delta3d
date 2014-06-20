@@ -114,7 +114,7 @@ public:
       //   if (!proxies.empty())
       //   {
       //      Transformable* startPoint;
-      //      proxies[0]->GetActor(startPoint);
+      //      proxies[0]->GetDrawable(startPoint);
 
       //      if (startPoint != NULL)
       //      {
@@ -154,7 +154,7 @@ public:
       if (!proxies.empty())
       {
          BezierController* controller;
-         proxies[0]->GetActor(controller);
+         proxies[0]->GetDrawable(controller);
 
          if (controller != NULL)
          {

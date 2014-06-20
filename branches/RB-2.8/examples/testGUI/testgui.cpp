@@ -97,7 +97,7 @@ public:
          if (!proxies.empty())
          {
             dtCore::Transformable *startPoint;
-            proxies[0]->GetActor(startPoint);
+            proxies[0]->GetDrawable(startPoint);
 
             if (startPoint != NULL)
             {

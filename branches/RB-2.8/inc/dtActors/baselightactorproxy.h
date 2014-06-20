@@ -97,7 +97,7 @@ namespace dtActors
         ///Sets the light number of the light actor.
         void SetNumber(int num)
         {
-            dtCore::Light* l = static_cast<dtCore::Light*>(GetDrawable());
+            dtCore::Light* l = GetDrawable<dtCore::Light>();
 
             l->SetNumber(num);
         }
@@ -105,7 +105,7 @@ namespace dtActors
         ///Sets the ambient color of the light actor.
         void SetAmbient(const osg::Vec4 &color)
         {
-            dtCore::Light* l = static_cast<dtCore::Light *>(GetDrawable());
+            dtCore::Light* l = GetDrawable<dtCore::Light>();
 
             l->SetAmbient(color[0],color[1],color[2],color[3]);
         }
@@ -113,7 +113,7 @@ namespace dtActors
         ///Gets the ambient color of the light actor.
         osg::Vec4 GetAmbient() const
         {
-            const dtCore::Light* l = static_cast<const dtCore::Light*>(GetActor());
+            const dtCore::Light* l = GetDrawable<dtCore::Light>();
 
             float r,g,b,a;
             l->GetAmbient(r,g,b,a);
@@ -123,7 +123,7 @@ namespace dtActors
         ///Sets the diffuse color of the light actor.
         void SetDiffuse(const osg::Vec4& color)
         {
-            dtCore::Light* l = static_cast<dtCore::Light*>(GetDrawable());
+            dtCore::Light* l = GetDrawable<dtCore::Light>();
 
             l->SetDiffuse(color[0],color[1],color[2],color[3]);
         }
@@ -131,7 +131,7 @@ namespace dtActors
         ///Gets the diffuse color of the light actor.
         osg::Vec4 GetDiffuse() const
         {
-            const dtCore::Light* l = static_cast<const dtCore::Light*>(GetActor());
+            const dtCore::Light* l = GetDrawable<dtCore::Light>();
 
             float r,g,b,a;
             l->GetDiffuse(r,g,b,a);
@@ -141,7 +141,7 @@ namespace dtActors
         ///Sets the specular color of the light actor.
         void SetSpecular(const osg::Vec4& color)
         {
-            dtCore::Light* l = static_cast<dtCore::Light*>(GetDrawable());
+            dtCore::Light* l = GetDrawable<dtCore::Light>();
 
             l->SetSpecular(color[0],color[1],color[2],color[3]);
         }
@@ -149,7 +149,7 @@ namespace dtActors
         ///Gets the specular color of the light actor.
         osg::Vec4 GetSpecular() const
         {
-            const dtCore::Light* l = static_cast<const dtCore::Light*>(GetActor());
+            const dtCore::Light* l = GetDrawable<dtCore::Light>();
 
             float r,g,b,a;
             l->GetSpecular(r,g,b,a);
@@ -159,7 +159,7 @@ namespace dtActors
         ///Sets the lighting mode for this light actor.
         void SetLightingMode(LightModeEnum& mode)
         {
-            dtCore::Light* l = static_cast<dtCore::Light *>(GetDrawable());
+            dtCore::Light* l = GetDrawable<dtCore::Light>();
 
             if (mode == LightModeEnum::GLOBAL)
             {
@@ -174,7 +174,7 @@ namespace dtActors
         ///Gets the lighting mode for this light actor.
         LightModeEnum& GetLightingMode() const
         {
-            const dtCore::Light* l = static_cast<const dtCore::Light*>(GetActor());
+            const dtCore::Light* l = GetDrawable<dtCore::Light>();
 
             if (l->GetLightingMode() == dtCore::Light::GLOBAL)
             {

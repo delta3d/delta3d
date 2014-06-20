@@ -154,6 +154,39 @@ function(DELTA3D_FIND_LIBRARY module library)
    endif()
 endfunction(DELTA3D_FIND_LIBRARY module library)
 
+function (BUILD_GAME_START libraryTargetName linkBool)
+   set(SOURCE_PATH ${CMAKE_SOURCE_DIR}/utilities/GameStart)
+   set(PROG_SOURCES "${SOURCE_PATH}/Main.cpp")
+   
+   set(APP_NAME ${libraryTargetName}_START)
+   
+   ADD_EXECUTABLE(${libraryTargetName}_START
+       ${PROG_SOURCES}
+   )
+
+   SET_TARGET_PROPERTIES(${libraryTargetName}_START PROPERTIES OUTPUT_NAME ${libraryTargetName})
+
+   TARGET_LINK_LIBRARIES(${libraryTargetName}_START
+                         ${DTUTIL_LIBRARIES}
+                         ${DTCORE_LIBRARIES}
+                         ${DTABC_LIBRARIES}
+                         ${DTGAME_LIBRARIES}
+                        )
+
+   if (linkBool)
+      TARGET_LINK_LIBRARIES(${libraryTargetName}_START
+                            ${libraryTargetName}
+                        )
+   endif()
+
+   INCLUDE(ProgramInstall OPTIONAL)
+   
+   IF (MSVC)
+     SET_TARGET_PROPERTIES(${libraryTargetName}_START PROPERTIES LINK_FLAGS "/LARGEADDRESSAWARE")
+     SET_TARGET_PROPERTIES(${libraryTargetName}_START PROPERTIES DEBUG_POSTFIX "${CMAKE_DEBUG_POSTFIX}")
+   ENDIF (MSVC)
+endfunction (BUILD_GAME_START libraryTargetName)
+
 MACRO (SETUP_PLUGIN_OUTPUT_DIRS SUBFOLDER)
     #put the binary into a "STAGE plugins" folder
     if (WIN32)

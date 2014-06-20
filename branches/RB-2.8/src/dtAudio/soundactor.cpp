@@ -130,7 +130,7 @@ namespace dtAudio
    ///////////////////////////////////////////////////////////////////////////////
    SoundActor::~SoundActor()
    {
-      dtAudio::Sound* snd = static_cast<SoundDrawable&>(GetGameActor()).GetSound();
+      dtAudio::Sound* snd = GetDrawable<SoundDrawable>()->GetSound();
 
       if (snd != NULL)
       {
@@ -468,7 +468,7 @@ namespace dtAudio
    dtAudio::Sound* SoundActor::GetSound()
    {
       SoundDrawable* actor = NULL;
-      GetActor(actor);
+      GetDrawable(actor);
       return actor->GetSound();
    }
 
@@ -476,7 +476,7 @@ namespace dtAudio
    const dtAudio::Sound* SoundActor::GetSound() const
    {
       const SoundDrawable* actor = NULL;
-      GetActor(actor);
+      GetDrawable(actor);
       return actor->GetSound();
    }
 

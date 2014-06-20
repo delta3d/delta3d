@@ -51,7 +51,7 @@ void TripodActorProxy::CreateDrawable()
    ss << "Tripod" << actorCount++;
    SetName(ss.str());
 
-   //Tripod* tripod = static_cast<Tripod*>(GetActor());
+   //Tripod* tripod = static_cast<Tripod*>(GetDrawable());
 }
 
 ///////////////////////////////////////////////////////////////////////////////////
@@ -61,7 +61,7 @@ void TripodActorProxy::BuildPropertyMap()
 
    static const std::string GROUPNAME = "Tripod";
 
-   //Tripod* tripod = static_cast<Tripod*>(GetActor());
+   //Tripod* tripod = static_cast<Tripod*>(GetDrawable());
 
    AddProperty(new ActorActorProperty(*this, "Child", "Child",
       ActorActorProperty::SetFuncType(this,&TripodActorProxy::SetChild),

@@ -157,8 +157,6 @@ class FIRE_FIGHTER_EXPORT GameItemActorProxy : public dtActors::GameMeshActorPro
       virtual ~GameItemActorProxy();
 
    private:
-
-      dtCore::RefPtr<dtCore::ActorProxyIcon> mBillBoardIcon; 
 };
 
 #endif

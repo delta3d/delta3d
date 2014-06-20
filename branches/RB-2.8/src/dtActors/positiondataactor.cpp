@@ -79,7 +79,7 @@ namespace dtActors
       dtCore::Transform transformSource;
       dtCore::Transform transformTarget;
 
-      static_cast<const dtCore::Transformable*>(GetActor())->GetTransform(transformSource);
+      GetDrawable<dtCore::Transformable>()->GetTransform(transformSource);
       transformable->GetTransform(transformTarget);
 
       if (mChangeTranslation)

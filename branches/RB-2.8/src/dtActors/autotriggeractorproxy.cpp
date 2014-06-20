@@ -46,7 +46,7 @@ namespace dtActors
       dtCore::BaseActorObject::BuildPropertyMap();
 
       AutoTrigger* trigger = NULL;
-      GetActor(trigger);
+      GetDrawable(trigger);
 
       AddProperty(new ActorActorProperty(*this, "Action","Action",
                ActorActorProperty::SetFuncType(this ,&AutoTriggerActorProxy::SetAction),

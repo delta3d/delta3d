@@ -69,13 +69,18 @@ namespace dtGame
          }
       }
 
-      if (msg.GetMessageType() == MessageType::INFO_ACTOR_CREATED)
+      if (msg.GetMessageType() == MessageType::TICK_LOCAL ||
+            msg.GetMessageType() == MessageType::TICK_REMOTE)
       {
-         ProcessCreateActor(static_cast<const ActorUpdateMessage&>(msg));
+         ProcessTick(static_cast<const TickMessage&>(msg));
       }
       else if (msg.GetMessageType() == MessageType::INFO_ACTOR_UPDATED)
       {
          ProcessUpdateActor(static_cast<const ActorUpdateMessage&>(msg));
+      }
+      else if (msg.GetMessageType() == MessageType::INFO_ACTOR_CREATED)
+      {
+         ProcessCreateActor(static_cast<const ActorUpdateMessage&>(msg));
       }
       else if (msg.GetMessageType() == MessageType::INFO_ACTOR_DELETED)
       {
@@ -84,11 +89,6 @@ namespace dtGame
       else if (msg.GetMessageType() == MessageType::INFO_PLAYER_ENTERED_WORLD)
       {
          ProcessPlayerEnteredWorldMessage(msg);
-      }
-      else if (msg.GetMessageType() == MessageType::TICK_LOCAL ||
-            msg.GetMessageType() == MessageType::TICK_REMOTE)
-      {
-         ProcessTick(static_cast<const TickMessage&>(msg));
       }
       else
       {

@@ -102,7 +102,7 @@ public:
    {
       if (actor.GetName().find("helo") != std::string::npos)
       {
-         if (actor.IsGameActorProxy())
+         if (actor.IsGameActor())
          {
             return static_cast<dtGame::GameActorProxy&>(actor).IsPublished();
          }
@@ -121,7 +121,7 @@ void TestDISApp::FindActorsAndAddComponents()
    while (itr != mActorsToPublish.end())
    {
       EntityTypeActorComponent* entityTypeComp = new EntityTypeActorComponent(1,1,222,1,2,2);
-      static_cast<dtGame::GameActorProxy*>((*itr))->GetGameActor().AddComponent(*entityTypeComp);
+      static_cast<dtGame::GameActorProxy*>((*itr))->AddComponent(*entityTypeComp);
 
       ++itr;
    }    

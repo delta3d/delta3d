@@ -23,6 +23,8 @@
 
 #include "ui_AnimationControlPanel.h"
 #include <QtGui/QDockWidget>
+// DELTA3D
+#include <dtAnim/animclippath.h>
 #include <dtCore/observerptr.h>
 #include <dtCore/object.h>
 
@@ -31,7 +33,7 @@
 /////////////////////////////////////////////////////////////////////////////////
 // FORWARD DECLARATIONS
 /////////////////////////////////////////////////////////////////////////////////
-class QListWidgetItem;
+class QTableWidgetItem;
 
 namespace Ui
 {
@@ -46,18 +48,55 @@ namespace dtAnim
 
 
 /////////////////////////////////////////////////////////////////////////////////
+// ANIMATION PARAMS STRUCT CODE
+/////////////////////////////////////////////////////////////////////////////////
+struct AnimParams
+{
+   std::string mName;
+   double mBeginFrame;
+   double mEndFrame;
+   double mBeginFrameOffset;
+   double mSpeed;
+   int mLoopLimit;
+   int mPlayMode;
+
+   AnimParams();
+};
+
+
+
+/////////////////////////////////////////////////////////////////////////////////
+// ANIMATION PARAMS TABLE ROW CLASS CODE
+/////////////////////////////////////////////////////////////////////////////////
+class AnimationParamsTableRow : public osg::Referenced
+{
+public:
+   enum Column{NAME, BEGIN, END, OFFSET, SPEED, PLAYMODE, LIMIT, MAX_COLUMNS};
+
+   AnimationParamsTableRow();
+
+   void InsertValuesToTable(QTableWidget& table, int rowIndex);
+
+   void SetRowValues(QTableWidget& table, int rowIndex);
+
+   AnimParams& GetParams();
+   const AnimParams& GetParams() const;
+
+protected:
+   virtual ~AnimationParamsTableRow() {}
+
+private:
+   AnimParams mParams;
+};
+
+
+
+/////////////////////////////////////////////////////////////////////////////////
 // ANIMATION CONTROL DOCK CLASS CODE
 /////////////////////////////////////////////////////////////////////////////////
 class AnimationControlDock : public QDockWidget
 {
    Q_OBJECT
-
-   struct AnimParams
-   {
-      std::string mName;
-      double mBeginFrame;
-      double mEndFrame;
-   };
 
 public:
    typedef QDockWidget BaseClass;
@@ -66,6 +105,11 @@ public:
 
    void UpdateUI();
 
+   void SetPlayMode(int playMode) const;
+   osg::AnimationPath::LoopMode GetPlayMode() const;
+
+   osg::AnimationPath::LoopMode ConvertToPlayMode(int playMode) const;
+
 public slots:
    void OnPause();
    void OnPlay();
@@ -73,8 +117,10 @@ public slots:
    void OnAdd();
    void OnRemove();
    void OnSpeedChanged();
+   void OnBeginFrameOffsetChanged();
+   void OnLoopLimitChanged();
    void OnPlayModeChanged(bool checked);
-   void OnItemSelect(QListWidgetItem*);
+   void OnItemSelect(int row, int column);
    void OnGeometryLoaded(dtCore::Object* object);
 
 protected:
@@ -83,21 +129,24 @@ protected:
 
    void ApplyAnimationParameters(dtAnim::AnimCallbackVisitor& visitor);
 
-   void SetOutput(const AnimParams& params);
+   void UpdateAnimParamsFromUI(AnimParams& outParams);
+
+   void UpdateUIFromAnimParams(const AnimParams& params);
 
    osg::Node* GetRootNode();
 
    void InternalPlay(bool reset);
    void InternalPause();
 
+   std::string GetRowID(int rowIndex) const;
+   int GetRowIndex(const std::string& animName) const;
+
 private:
    Ui::AnimationControlPanel mUI;
    dtCore::ObserverPtr<dtCore::Object> mObject;
 
-   typedef std::map<std::string, AnimParams> AnimParamMap;
-   AnimParamMap mParamsMap;
-
-   AnimParams mCurrentParams;
+   typedef std::map<std::string, dtCore::RefPtr<AnimationParamsTableRow> > AnimParamRows;
+   AnimParamRows mAnimParams;
 
    bool mPaused;
 };

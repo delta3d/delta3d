@@ -510,7 +510,8 @@ int TestAARHUD::RecursivelyAddTasks(const std::string& indent, int curIndex,
    if (curIndex < (int) mTaskTextList.size())
    {
       // update the text for this task
-      const dtActors::TaskActor* task = dynamic_cast<const dtActors::TaskActor*>(&(taskProxy->GetGameActor()));
+      const dtActors::TaskActor* task = NULL;
+      taskProxy->GetDrawable(task);
       if (task->IsComplete())
       {
          numCompleted ++;

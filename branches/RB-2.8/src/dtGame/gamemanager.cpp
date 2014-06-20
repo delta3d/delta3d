@@ -1304,7 +1304,7 @@ namespace dtGame
       iend = actorsOut.end();
       for (; i != iend; ++i)
       {
-         if ((*i)->IsGameActorProxy())
+         if ((*i)->IsGameActor())
          {
             dtGame::GameActorProxy* gap = static_cast<dtGame::GameActorProxy*>(i->get());
             gap->SetRemote(isRemote);
@@ -1319,18 +1319,11 @@ namespace dtGame
       if (ourObject != NULL)
       {
          dtCore::RefPtr<dtCore::BaseActorObject> temp = ourObject->Clone().get();
+         temp->SetPrototype(ourObject);
          dtGame::GameActorProxy* gap = dynamic_cast<dtGame::GameActorProxy*>(temp.get());
          if (gap != NULL)
          {
             gap->SetGameManager(this);
-            // Actors created from prototype hold onto the prototype name - for use
-            // across networks, via replay, and so forth.
-            dtGame::GameActor* gameActor = dynamic_cast<dtGame::GameActor*>(gap->GetDrawable());
-            if (gameActor != NULL)
-            {
-               gameActor->SetPrototypeID(ourObject->GetId());
-               gameActor->SetPrototypeName(ourObject->GetName());
-            }
             gap->SetRemote(isRemote);
          }
          return temp;
@@ -1513,7 +1506,8 @@ namespace dtGame
          if (eap != NULL && mGMImpl->mScene->GetChildIndex(eap->GetDrawable()) != mGMImpl->mScene->GetNumberOfAddedDrawable())
          {
             // First we have to remove all of the actors from it
-            IEnvGameActor* e = dynamic_cast<IEnvGameActor*>(&eap->GetGameActor());
+            IEnvGameActor* e = NULL;
+            eap->GetDrawable(e);
             std::vector<dtCore::DeltaDrawable*> actors;
             e->GetAllActors(actors);
             e->RemoveAllActors();
@@ -2211,8 +2205,13 @@ namespace dtGame
          {
             GMImpl::ProxyInvokableMap::iterator toDelete = j;
             ++j;
-            if (toDelete->first == actor.GetId() || toDelete->second.first.get() == &actor)
+            if (toDelete->first == actor.GetId()  ||  toDelete->second.first.get() == &actor )
             {
+               i->second.erase(toDelete);
+            }
+            else if (actor.GetDrawable() != NULL && toDelete->first == actor.GetDrawable()->GetUniqueId())
+            {
+               LOG_WARNING("Actor Object and drawable have different IDs and found a message registration for the drawable, not the actor.");
                i->second.erase(toDelete);
             }
          }
@@ -2314,6 +2313,13 @@ namespace dtGame
 
       mGMImpl->mShuttingDown = true;
    }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   bool GameManager::IsShuttingDown() const
+   {
+      return mGMImpl->mShuttingDown;
+   }
+
 
    ///////////////////////////////////////////////////////////////////////////////
    GMSettings& GameManager::GetGMSettings()
