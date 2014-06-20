@@ -42,10 +42,10 @@ class ProceduralAnimationActor;
 class ProceduralAnimationComponent : public dtGame::BaseInputComponent
 {
 public:
-   static const std::string& NAME;
+   static const dtCore::RefPtr<dtCore::SystemComponentType> TYPE;
 
    /// Constructor
-   ProceduralAnimationComponent(const std::string& name = NAME);
+   ProceduralAnimationComponent();
 
    /**
     * Handles incoming messages

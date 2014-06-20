@@ -40,11 +40,14 @@
 namespace dtGame
 {
    //////////////////////////////////////////////////////////////////////
-   const std::string DeadReckoningComponent::DEFAULT_NAME("Dead Reckoning Component");
+   const dtCore::RefPtr<dtCore::SystemComponentType> DeadReckoningComponent::TYPE(new dtCore::SystemComponentType("DeadReckoning","GMComponents",
+         "Dead-reckons actors.  It can be used on remote controlled actors, and it can be used to calculate dead-reckoning on local actors so it can use that to decide to send updates",
+         dtGame::GMComponent::BaseGMComponentType));
+   const std::string DeadReckoningComponent::DEFAULT_NAME(TYPE->GetName());
 
    //////////////////////////////////////////////////////////////////////
-   DeadReckoningComponent::DeadReckoningComponent(const std::string& name)
-      : dtGame::GMComponent(name)
+   DeadReckoningComponent::DeadReckoningComponent(dtCore::SystemComponentType& type)
+      : dtGame::GMComponent(type)
       , mGroundClamper(new DefaultGroundClamper)
       , mArticSmoothTime(0.5f)
    {

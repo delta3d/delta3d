@@ -51,6 +51,7 @@ namespace dtAudio
       ///////////////////////////////////////////////////////////////////////
       // CLASS CONSTANTS
       ///////////////////////////////////////////////////////////////////////
+      static const dtCore::RefPtr<dtCore::SystemComponentType> TYPE;
       static const dtUtil::RefString DEFAULT_NAME;
 
       ///////////////////////////////////////////////////////////////////////
@@ -63,7 +64,7 @@ namespace dtAudio
 
 
 
-      SoundComponent(const std::string& name = DEFAULT_NAME.Get());
+      SoundComponent(dtCore::SystemComponentType& type = *TYPE);
 
       /**
        * Called when this component is removed from the game manager

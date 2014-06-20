@@ -34,7 +34,20 @@
 namespace dtNetGM
 {
 
-   const std::string ClientNetworkComponent::DEFAULT_NAME = "ClientNetworkComponent";
+   const dtCore::RefPtr<dtCore::SystemComponentType> ClientNetworkComponent::TYPE(new dtCore::SystemComponentType("ClientNetworkComponent","GMComponents",
+         "Handles a the client side of a Client-server network component.", dtNetGM::NetworkComponent::TYPE));
+   const std::string ClientNetworkComponent::DEFAULT_NAME(TYPE->GetName());
+
+   ////////////////////////////////////////////////////////////////////
+   ClientNetworkComponent::ClientNetworkComponent(dtCore::SystemComponentType& type)
+   : NetworkComponent(type)
+   , mAcceptedClient(false)
+   , mNumSyncsExpectingPerFrame(0.0f)
+   , mNumSyncsCurrentlyNeeded(0.0f)
+   , mNumSyncsLeftInBackLog(0)
+   , mNumTimesWithoutAFrameSync(0)
+   {
+   }
 
    ////////////////////////////////////////////////////////////////////
    ClientNetworkComponent::ClientNetworkComponent(const std::string& gameName, const int gameVersion, const std::string& logFile)

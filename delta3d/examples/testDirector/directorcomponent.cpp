@@ -31,12 +31,13 @@
    #include <dtInspectorQt/inspectorqt.h>
 #endif
 
-const std::string& DirectorComponent::NAME = "DirectorComponent";
+const dtCore::RefPtr<dtCore::SystemComponentType> DirectorComponent::TYPE(new dtCore::SystemComponentType("TestDirectorComponent","GMComponents",
+      "", dtGame::GMComponent::BaseGMComponentType));
 
 ////////////////////////////////////////////////////////////////////////////////
 
-DirectorComponent::DirectorComponent(const std::string& name)
-   : dtGame::BaseInputComponent(name)
+DirectorComponent::DirectorComponent()
+   : dtGame::BaseInputComponent(*TYPE)
 {
 #if defined(USE_INSPECTOR)
    int argc = 0;

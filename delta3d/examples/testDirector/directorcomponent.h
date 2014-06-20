@@ -34,10 +34,10 @@ class DirectorComponent : public dtGame::BaseInputComponent
 {
 public:
 
-   static const std::string& NAME;
+   static const dtCore::RefPtr<dtCore::SystemComponentType> TYPE;
 
    /// Constructor
-   DirectorComponent(const std::string& name = NAME);
+   DirectorComponent();
 
    /**
     * Handles incoming messages

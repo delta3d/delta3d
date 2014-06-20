@@ -35,12 +35,14 @@
 
 #include <cal3d/model.h>
 
-const std::string& ProceduralAnimationComponent::NAME = "ProceduralAnimationComponent";
+const dtCore::RefPtr<dtCore::SystemComponentType> ProceduralAnimationComponent::TYPE(new dtCore::SystemComponentType("ProceduralAnimationComponent","GMComponents",
+      "Test component that demos procedural animation.",
+      dtGame::BaseInputComponent::DEFAULT_TYPE));
 
 ////////////////////////////////////////////////////////////////////////////////
 
-ProceduralAnimationComponent::ProceduralAnimationComponent(const std::string& name)
-   : dtGame::BaseInputComponent(name)
+ProceduralAnimationComponent::ProceduralAnimationComponent()
+   : dtGame::BaseInputComponent(*TYPE)
 {
    // nada
 }

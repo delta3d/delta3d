@@ -42,8 +42,10 @@ class TEST_ANIM_EXPORT TestAnimInput : public dtGame::BaseInputComponent
 {
    public:
 
+      static const dtCore::RefPtr<dtCore::SystemComponentType> TYPE;
+
       // Constructor
-      TestAnimInput(const std::string& name);
+      TestAnimInput();
 
       // We're going to handle key presses!
       virtual bool HandleKeyPressed(const dtCore::Keyboard* keyboard, int key);

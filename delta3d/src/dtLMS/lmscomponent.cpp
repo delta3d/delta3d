@@ -33,10 +33,13 @@
 
 namespace dtLMS
 {
-   const std::string LmsComponent::DEFAULT_NAME = "LmsComponent";
+   const dtCore::RefPtr<dtCore::SystemComponentType> LmsComponent::TYPE(new dtCore::SystemComponentType("LmsComponent","GMComponents",
+         "Integration with Learning Management Systems.",
+         dtGame::GMComponent::BaseGMComponentType));
+   const std::string LmsComponent::DEFAULT_NAME(TYPE->GetName());
 
-   LmsComponent::LmsComponent(const std::string& name)
-      : dtGame::TaskComponent(name)
+   LmsComponent::LmsComponent(dtCore::SystemComponentType& type)
+      : dtGame::TaskComponent(type)
       , mClientSocket(NULL)
       , mHost("localhost")
       , mPort(4444)
@@ -47,7 +50,7 @@ namespace dtLMS
 
    ///////////////////////////////////////////////////////////////////////
    LmsComponent::LmsComponent(const std::string& host, int port, bool reverseBytes)
-      : dtGame::TaskComponent(LmsComponent::DEFAULT_NAME)
+      : dtGame::TaskComponent(*TYPE)
       , mClientSocket(NULL)
       , mHost(host)
       , mPort(port)

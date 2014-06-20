@@ -57,8 +57,8 @@ class TestLmsComponent : public dtLMS::LmsComponent
 {
    public:
 
-      TestLmsComponent(const std::string& name)
-         : dtLMS::LmsComponent(name)
+      TestLmsComponent()
+         : dtLMS::LmsComponent()
       {
 
       }
@@ -178,7 +178,8 @@ void LMSTests::TestLmsMessage()
 
 void LMSTests::TestLmsComponentHelperMethods()
 {
-   dtCore::RefPtr<TestLmsComponent> lmsComp = new TestLmsComponent("TestLmsComponent");
+   dtCore::RefPtr<TestLmsComponent> lmsComp = new TestLmsComponent();
+   lmsComp->Init(lmsComp->GetType());
    CPPUNIT_ASSERT(lmsComp.valid());
 
    std::string id("1"), senderId("2");
@@ -218,8 +219,9 @@ void LMSTests::TestLmsComponentHelperMethods()
 
 void LMSTests::TestLmsComponentMessaging()
 {
-   dtCore::RefPtr<TestLmsComponent> lmsComp = new TestLmsComponent("TestLmsComponent");
+   dtCore::RefPtr<TestLmsComponent> lmsComp = new TestLmsComponent();
    CPPUNIT_ASSERT(lmsComp.valid());
+   lmsComp->Init(lmsComp->GetType());
    mGameManager->AddComponent(*lmsComp, dtGame::GameManager::ComponentPriority::NORMAL);
 
    CPPUNIT_ASSERT(lmsComp->GetLmsClientSocket() == NULL);

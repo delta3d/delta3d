@@ -66,8 +66,7 @@ class TUTORIAL_TANK_EXPORT HUDComponent : public dtGame::GMComponent
 {
 public:
    // Constructor
-   HUDComponent(dtABC::BaseABC& app,
-                const std::string& name);
+   HUDComponent(dtABC::BaseABC& app);
 
 protected:
    // Destructor

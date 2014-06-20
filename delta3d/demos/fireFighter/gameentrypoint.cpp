@@ -109,8 +109,8 @@ void FireFighterGameEntryPoint::OnStartup(dtABC::BaseABC& app, dtGame::GameManag
    // Create the components and add them to the game manager
    RefPtr<HUDComponent>   hudComp   = new HUDComponent(app);
    RefPtr<InputComponent> inputComp = new InputComponent;
-   RefPtr<dtGame::DefaultMessageProcessor> dmp = new dtGame::DefaultMessageProcessor("DefaultMessageProcessor");
-   mLmsComponent = new dtLMS::LmsComponent("LMSComponent");
+   RefPtr<dtGame::DefaultMessageProcessor> dmp = new dtGame::DefaultMessageProcessor();
+   mLmsComponent = new dtLMS::LmsComponent();
 
    gameManager.AddComponent(*hudComp,       dtGame::GameManager::ComponentPriority::HIGHER);
    gameManager.AddComponent(*inputComp,     dtGame::GameManager::ComponentPriority::NORMAL);

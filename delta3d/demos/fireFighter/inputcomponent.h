@@ -50,10 +50,10 @@ class FIRE_FIGHTER_EXPORT InputComponent : public dtGame::BaseInputComponent
 {
    public:
 
-      static const std::string NAME;
+      static const dtCore::RefPtr<dtCore::SystemComponentType> NAME;
 
       /// Constructor
-      InputComponent(const std::string& name = NAME);
+      InputComponent(dtCore::SystemComponentType& type = *NAME);
 
       /**
        * Handles key presses

@@ -31,12 +31,13 @@
 
 namespace dtGame
 {
-   const std::string DefaultNetworkPublishingComponent::DEFAULT_NAME = "DefaultNetworkPublishingComponent";
-
    /////////////////////////////////////////////////////////////////////////////
-   DefaultNetworkPublishingComponent::DefaultNetworkPublishingComponent(const std::string& name) : GMComponent(name)
+   DefaultNetworkPublishingComponent::DefaultNetworkPublishingComponent(dtCore::SystemComponentType& type)
+   : GMComponent(type)
    {
       mLogger = &dtUtil::Log::GetInstance("defaultnetworkpublishingcomponent.cpp");
+      //Set the name so subclasses get the same name.
+      SetName(DEFAULT_NAME);
    }
 
    /////////////////////////////////////////////////////////////////////////////

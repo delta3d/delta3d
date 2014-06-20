@@ -57,8 +57,8 @@ namespace dtTest
    class CatcherComponent : public dtGame::GMComponent
    {
    public:
-      CatcherComponent(const dtGame::MessageType* mt, const std::string& name="catcher")
-         : dtGame::GMComponent(name)
+      CatcherComponent(const dtGame::MessageType* mt)
+         : dtGame::GMComponent("catcher")
          , mCaught( false )
          , mMT( NULL )
       {

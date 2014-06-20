@@ -22,8 +22,9 @@ static const osg::Vec3 TARGET_XYZ(0, 6, 5);
 class TestInput : public dtGame::BaseInputComponent
 {
 public:
+   static const dtCore::RefPtr<dtCore::SystemComponentType> TYPE;
 
-   TestInput() : dtGame::BaseInputComponent("TestInput") { }
+   TestInput() : dtGame::BaseInputComponent(*TYPE) { }
 
    virtual bool HandleKeyPressed(const dtCore::Keyboard* keyboard, int key)
    {
@@ -67,6 +68,8 @@ public:
       return false;
    }
 };
+
+const dtCore::RefPtr<dtCore::SystemComponentType> TestInput::TYPE(new dtCore::SystemComponentType("TestInput","GMComponents", "",dtGame::GMComponent::BaseGMComponentType));
 
 
 class TEST_GA_COMPONENTS_EXPORT TestGameActorComponents : public dtGame::GameEntryPoint

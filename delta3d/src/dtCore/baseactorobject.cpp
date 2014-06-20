@@ -378,18 +378,20 @@ namespace dtCore
    /////////////////////////////////////////////////////////////////////////////
    void BaseActorObject::BuildPropertyMap()
    {
-      dtCore::DeltaDrawable* drawable = GetDrawable();
-
       const std::string GROUP_INFORMATION("Taxonomy");
       const std::string GROUP_DRAWABLE("DeltaDrawable");
 
-      StringActorProperty* nameProp = new StringActorProperty(
-         PROPERTY_NAME, PROPERTY_NAME,
-         StringActorProperty::SetFuncType(this, &BaseActorObject::SetName),
-         StringActorProperty::GetFuncType(this, &BaseActorObject::GetName),
-         "The Display Name of the Actor.", GROUP_INFORMATION);
-      nameProp->SetMultipleEdit(false);
-      AddProperty(nameProp);
+      if (!IsSystemComponent())
+      {
+         // Leave this off for now on components because dtEditQt does weird things with the names.
+         StringActorProperty* nameProp = new StringActorProperty(
+            PROPERTY_NAME, PROPERTY_NAME,
+            StringActorProperty::SetFuncType(this, &BaseActorObject::SetName),
+            StringActorProperty::GetFuncType(this, &BaseActorObject::GetName),
+            "The Display Name of the Actor.", GROUP_INFORMATION);
+         nameProp->SetMultipleEdit(false);
+         AddProperty(nameProp);
+      }
 
       if (mActorType)
       {
@@ -418,19 +420,23 @@ namespace dtCore
       classProp->SetReadOnly(true);
       AddProperty(classProp);
 
-      AddProperty(new StringActorProperty(
-                  BaseActorObject::PROPERTY_DESCRIPTION,
-                  BaseActorObject::PROPERTY_DESCRIPTION,
-                  StringActorProperty::SetFuncType(drawable, &dtCore::DeltaDrawable::SetDescription),
-                  StringActorProperty::GetFuncType(drawable, &dtCore::DeltaDrawable::GetDescription),
-                  "Generic text field used to describe this object",
-                  GROUP_DRAWABLE));
+      dtCore::DeltaDrawable* drawable = GetDrawable();
+      if (drawable != NULL)
+      {
+         AddProperty(new StringActorProperty(
+                     BaseActorObject::PROPERTY_DESCRIPTION,
+                     BaseActorObject::PROPERTY_DESCRIPTION,
+                     StringActorProperty::SetFuncType(drawable, &dtCore::DeltaDrawable::SetDescription),
+                     StringActorProperty::GetFuncType(drawable, &dtCore::DeltaDrawable::GetDescription),
+                     "Generic text field used to describe this object",
+                     GROUP_DRAWABLE));
 
-      AddProperty(new dtCore::BooleanActorProperty(
-                  BaseActorObject::PROPERTY_ACTIVE, BaseActorObject::PROPERTY_ACTIVE,
-                  dtCore::BooleanActorProperty::SetFuncType(drawable, &dtCore::DeltaDrawable::SetActive),
-                  dtCore::BooleanActorProperty::GetFuncType(drawable, &dtCore::DeltaDrawable::GetActive),
-                  "Determines whether the drawable will render.", GROUP_DRAWABLE));
+         AddProperty(new dtCore::BooleanActorProperty(
+                     BaseActorObject::PROPERTY_ACTIVE, BaseActorObject::PROPERTY_ACTIVE,
+                     dtCore::BooleanActorProperty::SetFuncType(drawable, &dtCore::DeltaDrawable::SetActive),
+                     dtCore::BooleanActorProperty::GetFuncType(drawable, &dtCore::DeltaDrawable::GetActive),
+                     "Determines whether the drawable will render.", GROUP_DRAWABLE));
+      }
    }
 
    /////////////////////////////////////////////////////////////////////////////

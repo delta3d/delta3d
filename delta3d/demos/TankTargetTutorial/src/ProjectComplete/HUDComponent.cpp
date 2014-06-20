@@ -37,9 +37,8 @@
 #include <CEGUI/CEGUIPropertyHelper.h>
 #include <CEGUI/CEGUIExceptions.h>
 //////////////////////////////////////////////////////////////////////////
-HUDComponent::HUDComponent(dtABC::BaseABC& app,
-                           const std::string& name)
-   : dtGame::GMComponent(name)
+HUDComponent::HUDComponent(dtABC::BaseABC& app)
+   : dtGame::GMComponent("Hud")
    , mUnHandledMessages(0)
 {
    SetupGUI(app);

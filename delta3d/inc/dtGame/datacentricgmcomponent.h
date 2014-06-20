@@ -72,6 +72,11 @@ namespace dtGame
       typedef typename AllocType_::value_type ActorCompMapping;
       typedef typename ActorCompMap::iterator ActorCompIter;
 
+      DataCentricGMComponent(dtCore::SystemComponentType& type)
+      : BaseClass(type)
+      {
+      }
+
       DataCentricGMComponent(const std::string& name)
       : BaseClass(name)
       {

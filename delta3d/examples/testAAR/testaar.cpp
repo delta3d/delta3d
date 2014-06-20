@@ -66,7 +66,7 @@ extern "C" TEST_AAR_EXPORT void DestroyGameEntryPoint(dtGame::GameEntryPoint* en
 
 //////////////////////////////////////////////////////////////////////////
 TestAAR::TestAAR()
-   : mLmsComponent(new dtLMS::LmsComponent("TestAARLmsComponent"))
+   : mLmsComponent(new dtLMS::LmsComponent())
    , mUseLMS(false)
 {
 
@@ -116,12 +116,12 @@ void TestAAR::OnStartup(dtABC::BaseABC& app, dtGame::GameManager& gameManager)
    }
 
    // Add Component - Input Component
-   dtCore::RefPtr<dtGame::LogController> logCtrl = new dtGame::LogController("LogController");
+   dtCore::RefPtr<dtGame::LogController> logCtrl = new dtGame::LogController();
    dtCore::RefPtr<dtGame::BinaryLogStream> logStream = new dtGame::BinaryLogStream(gameManager.GetMessageFactory());
-   dtCore::RefPtr<dtGame::ServerLoggerComponent> srvrLog = new dtGame::ServerLoggerComponent(*logStream, "ServerLogger");
+   dtCore::RefPtr<dtGame::ServerLoggerComponent> srvrLog = new dtGame::ServerLoggerComponent(*logStream);
    dtCore::RefPtr<TestAARHUD> hudComp = new TestAARHUD(app, *logCtrl, *mLmsComponent, *srvrLog);
 
-   dtCore::RefPtr<TestAARInput> inputComp = new TestAARInput("TestInputComponent", *logCtrl, *hudComp);
+   dtCore::RefPtr<TestAARInput> inputComp = new TestAARInput(*logCtrl, *hudComp);
    dtCore::RefPtr<TestAARMessageProcessor> mp = new TestAARMessageProcessor(*mLmsComponent, *logCtrl, *srvrLog);
 
    gameManager.AddComponent(*mp, dtGame::GameManager::ComponentPriority::HIGHEST);

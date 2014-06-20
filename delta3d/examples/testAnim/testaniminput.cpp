@@ -43,10 +43,13 @@
 #include <osg/Vec3>
 #include <dtGame/logtag.h>
 
+const dtCore::RefPtr<dtCore::SystemComponentType> TestAnimInput::TYPE(new dtCore::SystemComponentType("TestAnimInput","GMComponents",
+      "Test dtAnim input component",
+      dtGame::BaseInputComponent::DEFAULT_TYPE));
 
 ////////////////////////////////////////////////////////////////////
-TestAnimInput::TestAnimInput(const std::string& name)
-   : dtGame::BaseInputComponent(name)
+TestAnimInput::TestAnimInput()
+   : dtGame::BaseInputComponent(*TYPE)
    , mSpeed(2.0f)
    , mTurnRate(1.01f)
    , mTurnDirection(1.0f)
@@ -87,7 +90,6 @@ bool TestAnimInput::HandleKeyPressed(const dtCore::Keyboard* keyBoard, int key)
             GetGameManager()->GetApplication().Quit();
             return true;
          }
-
       case osgGA::GUIEventAdapter::KEY_Right:
          {
             mIsTurning = true;
@@ -129,6 +131,7 @@ bool TestAnimInput::HandleKeyPressed(const dtCore::Keyboard* keyBoard, int key)
          {
             dtABC::Application& app = GetGameManager()->GetApplication();
             app.SetNextStatisticsType();
+            return true;
          }
       default:
          break;

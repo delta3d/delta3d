@@ -99,15 +99,17 @@ namespace dtHLAGM
    const std::string HLAComponent::ATTR_NAME_ENTITY_TYPE_DEFAULT("EntityType"); // Objects
    const std::string HLAComponent::ABOUT_ACTOR_ID("aboutActorId");
    const std::string HLAComponent::SENDING_ACTOR_ID("sendingActorId");
+   const dtCore::RefPtr<dtCore::SystemComponentType> HLAComponent::TYPE(new dtCore::SystemComponentType("HLAComponent","GMComponents",
+         "Loads an RTI and converts delta3d messages back and forth with HLA"));
    const std::string HLAComponent::DEFAULT_NAME("HLAComponent");
 
    /////////////////////////////////////////////////////////////////////////////////
-   HLAComponent::HLAComponent(const std::string& name):
-      dtGame::GMComponent(name),
-      mRTIAmbassador(NULL),
-      mLocalIPAddress(0x7f000001),
-      mDDMEnabled(false),
-      mMachineInfo(new dtGame::MachineInfo)
+   HLAComponent::HLAComponent(dtCore::SystemComponentType& type)
+   : dtGame::GMComponent(type)
+   , mRTIAmbassador(NULL)
+   , mLocalIPAddress(0x7f000001)
+   , mDDMEnabled(false)
+   , mMachineInfo(new dtGame::MachineInfo)
    {
       mLogger = &dtUtil::Log::GetInstance("hlacomponent.cpp");
 

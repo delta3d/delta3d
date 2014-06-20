@@ -38,6 +38,7 @@
 #include <OpenThreads/ScopedLock>
 #include <OpenThreads/Atomic>
 
+#include <dtCore/propertymacros.h>
 
 namespace dtNetGM
 {
@@ -90,33 +91,51 @@ namespace dtNetGM
 
    NetworkComponent::DestinationType::~DestinationType() {}
 
+   const dtCore::RefPtr<dtCore::SystemComponentType> NetworkComponent::TYPE(new dtCore::SystemComponentType("NetworkComponent","GMComponents",
+         "Base Client-Server networking component",
+         dtGame::GMComponent::BaseGMComponentType));
+
    const NetworkComponent::DestinationType NetworkComponent::DestinationType::DESTINATION("Destination");
    const NetworkComponent::DestinationType NetworkComponent::DestinationType::ALL_CLIENTS("All Clients");
    const NetworkComponent::DestinationType NetworkComponent::DestinationType::ALL_NOT_CLIENTS("All Not Clients");
 
    IMPLEMENT_MANAGEMENT_LAYER(NetworkComponent);
 
+   NetworkComponent::NetworkComponent(dtCore::SystemComponentType& type)
+   : dtGame::GMComponent(*TYPE)
+   , mShuttingDown(false)
+   , mReliable(true)
+   , mRateOut(0)
+   , mRateIn(0)
+   , mMapChangeInProcess(false)
+   , mFrameSyncIsEnabled(false)
+   , mFrameSyncNumPerSecond(60)
+   , mFrameSyncMaxWaitTime(4.0f)
+   {
+
+   }
+
    ////////////////////////////////////////////////////////////////////////////////
    NetworkComponent::NetworkComponent(const std::string& gameName, const int gameVersion, const std::string& logFile)
-      : dtGame::GMComponent("NetworkComponent")
-      , mShuttingDown(false)
-      , mReliable(true)
-      , mRateOut(0)
-      , mRateIn(0)
-      , mMapChangeInProcess(false)
-      , mFrameSyncIsEnabled(false)
-      , mFrameSyncNumPerSecond(60)
-      , mFrameSyncMaxWaitTime(4.0f)
+   : dtGame::GMComponent(*TYPE)
+   , mShuttingDown(false)
+   , mReliable(true)
+   , mRateOut(0)
+   , mRateIn(0)
+   , mMapChangeInProcess(false)
+   , mFrameSyncIsEnabled(false)
+   , mFrameSyncNumPerSecond(60)
+   , mFrameSyncMaxWaitTime(4.0f)
+   , mGameName(gameName)
+   , mGameVersion(gameVersion)
+   , mGNELogFile(logFile)
    {
-      mConnections.clear();
-
       if (GetInstanceCount() == 0)
       {
          mGneInitialized = false;
       }
       RegisterInstance(this);
 
-      InitializeNetwork(gameName, gameVersion, logFile);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -128,22 +147,42 @@ namespace dtNetGM
    }
 
    ////////////////////////////////////////////////////////////////////////////////
+   DT_IMPLEMENT_ACCESSOR(NetworkComponent, std::string, GameName);
+   DT_IMPLEMENT_ACCESSOR(NetworkComponent, int, GameVersion);
+   DT_IMPLEMENT_ACCESSOR(NetworkComponent, std::string, GNELogFile);
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void NetworkComponent::BuildPropertyMap()
+   {
+      BaseClass::BuildPropertyMap();
+      dtUtil::RefString NETWORK_SETTINGS_GROUP("Network Settings");
+      typedef dtCore::PropertyRegHelper<NetworkComponent&, NetworkComponent> RegHelperType;
+      RegHelperType propReg(*this, this, NETWORK_SETTINGS_GROUP);
+
+      DT_REGISTER_PROPERTY(GameName, "The Name of this game from the perspective or the networking.", RegHelperType, propReg);
+      DT_REGISTER_PROPERTY(GameVersion, "The version this game from the perspective or the networking.", RegHelperType, propReg);
+      DT_REGISTER_PROPERTY(GNELogFile, "The log file for the GNE networking library.", RegHelperType, propReg);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
    void NetworkComponent::OnAddedToGM()
    {
-//      // Just check the first message to see if it was registered.  Unless someone writes code to manually register of
-//      // of the other types in the this method but not the first, this check should prevent double registration.
-//      if (!GetGameManager()->GetMessageFactory().IsMessageTypeSupported(dtGame::MessageType::NETCLIENT_REQUEST_CONNECTION))
-//      {
-//         // Register Network specific messages
-//         GetGameManager()->GetMessageFactory().RegisterMessageType<MachineInfoMessage>(dtGame::MessageType::NETCLIENT_REQUEST_CONNECTION);
-//         GetGameManager()->GetMessageFactory().RegisterMessageType<MachineInfoMessage>(dtGame::MessageType::INFO_CLIENT_CONNECTED);
-//
-//         GetGameManager()->GetMessageFactory().RegisterMessageType<MachineInfoMessage>(dtGame::MessageType::NETSERVER_ACCEPT_CONNECTION);
-//         GetGameManager()->GetMessageFactory().RegisterMessageType<MachineInfoMessage>(dtGame::MessageType::NETCLIENT_NOTIFY_DISCONNECT);
-//
-//         GetGameManager()->GetMessageFactory().RegisterMessageType<ServerSyncControlMessage>(dtGame::MessageType::NETSERVER_SYNC_CONTROL);
-//         GetGameManager()->GetMessageFactory().RegisterMessageType<ServerFrameSyncMessage>(dtGame::MessageType::NETSERVER_FRAME_SYNC);
-//      }
+      InitializeNetwork(GetGameName(), GetGameVersion(), GetGNELogFile());
+
+      //      // Just check the first message to see if it was registered.  Unless someone writes code to manually register of
+      //      // of the other types in the this method but not the first, this check should prevent double registration.
+      //      if (!GetGameManager()->GetMessageFactory().IsMessageTypeSupported(dtGame::MessageType::NETCLIENT_REQUEST_CONNECTION))
+      //      {
+      //         // Register Network specific messages
+      //         GetGameManager()->GetMessageFactory().RegisterMessageType<MachineInfoMessage>(dtGame::MessageType::NETCLIENT_REQUEST_CONNECTION);
+      //         GetGameManager()->GetMessageFactory().RegisterMessageType<MachineInfoMessage>(dtGame::MessageType::INFO_CLIENT_CONNECTED);
+      //
+      //         GetGameManager()->GetMessageFactory().RegisterMessageType<MachineInfoMessage>(dtGame::MessageType::NETSERVER_ACCEPT_CONNECTION);
+      //         GetGameManager()->GetMessageFactory().RegisterMessageType<MachineInfoMessage>(dtGame::MessageType::NETCLIENT_NOTIFY_DISCONNECT);
+      //
+      //         GetGameManager()->GetMessageFactory().RegisterMessageType<ServerSyncControlMessage>(dtGame::MessageType::NETSERVER_SYNC_CONTROL);
+      //         GetGameManager()->GetMessageFactory().RegisterMessageType<ServerFrameSyncMessage>(dtGame::MessageType::NETSERVER_FRAME_SYNC);
+      //      }
 
       dtCore::RefPtr<DispatchTask> task = new DispatchTask;
       mDispatchTask = task;
@@ -327,7 +366,7 @@ namespace dtNetGM
          GNE::GNEProtocolVersionNumber num = GNE::getGNEProtocolVersion();
 
          dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,
-             "Using GNE protocol: %d.%d.%d", num.version, num.subVersion, num.build );
+               "Using GNE protocol: %d.%d.%d", num.version, num.subVersion, num.build );
 
 #ifdef _DEBUG
          if (dtUtil::Log::GetInstance().GetLogLevel() == dtUtil::Log::LOG_DEBUG && !logFile.empty())
@@ -426,7 +465,7 @@ namespace dtNetGM
          else
          {
             LOG_ERROR("Waited 100 milliseconds for the background message task to complete before sending any "
-                     "remaining messages, but it timed out.  ");
+                  "remaining messages, but it timed out.  ");
          }
 
       }
@@ -510,7 +549,7 @@ namespace dtNetGM
          dataStream.Rewind();
 
          if (msgId == dtGame::MessageType::NETCLIENT_REQUEST_CONNECTION.GetId()
-            || msgId == dtGame::MessageType::NETSERVER_ACCEPT_CONNECTION.GetId())
+               || msgId == dtGame::MessageType::NETSERVER_ACCEPT_CONNECTION.GetId())
          {
             message = CreateMessage(dataStream, networkBridge);
             if (message.valid())
@@ -525,7 +564,7 @@ namespace dtNetGM
             else
             {
                LOGN_ERROR("networkcomponent.cpp", "Received either a NETCLIENT_REQUEST_CONNECTION or NETCLIENT_ACCEPT_CONNECTION message, "
-                        "but was unable to create the message from the stream data.  This is serious.");
+                     "but was unable to create the message from the stream data.  This is serious.");
             }
 
             dataStream.Rewind();
@@ -551,10 +590,10 @@ namespace dtNetGM
       if (message.GetDestination() == NULL ||
             (*message.GetDestination() != GetGameManager()->GetMachineInfo()))
       {
-//         if (message.GetDestination() != NULL)
-//         {
-//            LOG_ALWAYS(std::string("Dest: ") + message.GetDestination()->GetUniqueId().ToString() + std::string("  LocalMachine: ") + GetGameManager()->GetMachineInfo().GetUniqueId().ToString());
-//         }
+         //         if (message.GetDestination() != NULL)
+         //         {
+         //            LOG_ALWAYS(std::string("Dest: ") + message.GetDestination()->GetUniqueId().ToString() + std::string("  LocalMachine: ") + GetGameManager()->GetMachineInfo().GetUniqueId().ToString());
+         //         }
 
          // forward the message to any other connections
          dtUtil::DataStream dataStreamFwd = CreateDataStream(message);
@@ -579,7 +618,7 @@ namespace dtNetGM
       if (!acceptMessage)
       {
          if (message.GetMessageType() == dtGame::MessageType::NETCLIENT_REQUEST_CONNECTION
-            || message.GetMessageType() == dtGame::MessageType::NETSERVER_ACCEPT_CONNECTION)
+               || message.GetMessageType() == dtGame::MessageType::NETSERVER_ACCEPT_CONNECTION)
          {
             acceptMessage = true;
 
@@ -792,7 +831,7 @@ namespace dtNetGM
          if (mUnknownMessages.insert(msgId).second)
          {
             LOGN_WARNING("networkcomponent.cpp", "Received an unsupported message "
-                     "(You will only get the log message once per message type). MessageId = " + dtUtil::ToString(msgId));
+                  "(You will only get the log message once per message type). MessageId = " + dtUtil::ToString(msgId));
          }
          return NULL;
       }
@@ -803,8 +842,8 @@ namespace dtNetGM
          // the code above just tried to do that, and if it had failed, it wouldn't have made it here.
          // plus this is a really unusual case with no known cause.
          LOGN_ERROR("networkcomponent.cpp",
-                  "Unknown error creating message with message type \""
-                  + gm->GetMessageFactory().GetMessageTypeById(msgId).GetName() + "\"");
+               "Unknown error creating message with message type \""
+               + gm->GetMessageFactory().GetMessageTypeById(msgId).GetName() + "\"");
          return NULL;
       }
 
@@ -952,7 +991,7 @@ namespace dtNetGM
          SetFrameSyncValuesAreDirty(true);
       }
    }
-     
+
    ////////////////////////////////////////////////////////////////////////////////
    unsigned int NetworkComponent::GetFrameSyncNumPerSecond()
    { 

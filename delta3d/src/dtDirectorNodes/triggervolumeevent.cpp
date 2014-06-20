@@ -112,7 +112,7 @@ namespace dtDirector
             if (proxy)
             {
                dtActors::TriggerVolumeActor* volume = NULL;
-               proxy->GetActor(volume);
+               proxy->GetDrawable(volume);
                if (volume)
                {
                   mVolumes.push_back(volume);

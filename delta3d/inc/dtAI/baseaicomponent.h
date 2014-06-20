@@ -35,10 +35,11 @@ namespace dtAI
    class DT_AI_EXPORT BaseAIComponent : public dtGame::GMComponent
    {
    public:
+      static const dtCore::RefPtr<dtCore::SystemComponentType> TYPE;
       static const std::string DEFAULT_NAME;
 
       /// Constructor
-      BaseAIComponent(const std::string& name = DEFAULT_NAME);
+      BaseAIComponent(dtCore::SystemComponentType& type = *TYPE);
 
       /*virtual*/ void ProcessMessage(const dtGame::Message& message);
 

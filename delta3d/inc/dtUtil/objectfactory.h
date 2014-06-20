@@ -84,6 +84,23 @@ namespace dtUtil
       }
 
       /**
+       * Registers a new type of object with the factory.
+       * This is version assumes that a static constant named TYPE is declared on the class.
+       * @return false if the type is a duplicate.
+       */
+      template<typename DerivedType>
+      bool RegisterType()
+      {
+         if (this->objectTypeMap.find(DerivedType::TYPE.get()) != this->objectTypeMap.end())
+         {
+            return false;
+         }
+
+         this->objectTypeMap[DerivedType::TYPE.get()] = &construct<BaseType,DerivedType>;
+         return true;
+      }
+
+      /**
        * Removes an existing object type from the factory's known list
        * of object types.
        */

@@ -51,9 +51,11 @@ class TestAARHUD;
 class TEST_AAR_EXPORT TestAARInput : public dtGame::BaseInputComponent
 {
    public:
+      static const dtCore::RefPtr<dtCore::SystemComponentType> TYPE;
+
 
       // Constructor
-      TestAARInput(const std::string& name, dtGame::LogController& logCtrl, TestAARHUD& hudComp);
+      TestAARInput(dtGame::LogController& logCtrl, TestAARHUD& hudComp);
 
       // We're going to handle key presses!
       virtual bool HandleKeyPressed(const dtCore::Keyboard* keyboard, int key);

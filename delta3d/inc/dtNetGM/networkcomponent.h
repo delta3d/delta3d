@@ -89,6 +89,7 @@ namespace dtNetGM
    {
       DECLARE_MANAGEMENT_LAYER(NetworkComponent);
    public:
+      static const dtCore::RefPtr<dtCore::SystemComponentType> TYPE;
       /**
        * @class DestinationType
        * @brief enumeration class to address different stored connections
@@ -115,16 +116,23 @@ namespace dtNetGM
        * @param gameVersion The game version
        * @param logFile The logfile name
        */
-      NetworkComponent(const std::string& gameName, const int gameVersion, const std::string& logFile = "");
+      NetworkComponent(const std::string& gameName, int gameVersion, const std::string& logFile = "");
+      NetworkComponent(dtCore::SystemComponentType& type = *TYPE);
+
+      DT_DECLARE_ACCESSOR(std::string, GameName);
+      DT_DECLARE_ACCESSOR(int, GameVersion);
+      DT_DECLARE_ACCESSOR(std::string, GNELogFile);
 
       /**
        * Called immediately after a component is added to the GM. Used to register
        * 'additional' Network Messages on the GameManager
        */
-      virtual void OnAddedToGM();
+      /*override*/ void OnAddedToGM();
 
       /// Overridden to handle shutdown.
-      virtual void OnRemovedFromGM();
+      /*override*/ void OnRemovedFromGM();
+
+      /*override*/ void BuildPropertyMap();
 
       /**
        * Function called by a GameManager to process Messages. This function forwards the connection related
@@ -303,7 +311,7 @@ namespace dtNetGM
        * Is GNE already initialized
        * @return GNE initialization
        */
-      const bool& IsGneInitialized() const { return mGneInitialized; };
+      static const bool& IsGneInitialized() { return mGneInitialized; };
 
       /**
        * Is this NetworkComponent a server?

@@ -66,6 +66,20 @@
 #include <dtActors/directoractorproxy.h>
 #include <dtActors/positiondataactor.h>
 
+
+#include <dtGame/defaultnetworkpublishingcomponent.h>
+#include <dtGame/defaultmessageprocessor.h>
+#include <dtGame/logcontroller.h>
+#include <dtGame/serverloggercomponent.h>
+#include <dtGame/taskcomponent.h>
+#include <dtGame/deadreckoningcomponent.h>
+
+
+#include <dtGame/cascadingdeleteactorcomponent.h>
+#include <dtGame/shaderactorcomponent.h>
+#include <dtGame/deadreckoninghelper.h>
+#include <dtGame/drpublishingactcomp.h>
+
 namespace dtActors
 { // "display name", "category", "description/tooltip"
    dtCore::RefPtr<dtCore::ActorType> EngineActorRegistry::TASK_ACTOR_TYPE(new dtCore::ActorType("Task Actor", "dtcore.Tasks","Generic task actor."));
@@ -210,12 +224,25 @@ namespace dtActors
       mActorFactory->RegisterType<GameMeshActorProxy>(GAME_MESH_ACTOR_TYPE.get());
 
       mActorFactory->RegisterType<DistanceSensorActorProxy>(DISTANCE_SENSOR_ACTOR_TYPE.get());
+
+      mActorFactory->RegisterType<dtGame::DeadReckoningComponent>();
+      mActorFactory->RegisterType<dtGame::DefaultNetworkPublishingComponent>();
+      mActorFactory->RegisterType<dtGame::DefaultMessageProcessor>();
+      mActorFactory->RegisterType<dtGame::LogController>();
+      //mActorFactory->RegisterType<dtGame::ServerLoggerComponent>();
+      mActorFactory->RegisterType<dtGame::TaskComponent>();
+
+      mActorFactory->RegisterType<dtGame::DeadReckoningHelper>();
+      mActorFactory->RegisterType<dtGame::ShaderActorComponent>();
+      mActorFactory->RegisterType<dtGame::DRPublishingActComp>();
+      mActorFactory->RegisterType<dtGame::CascadingDeleteActorComponent>();
+
    }
 
    //////////////////////////////////////////////////////////////////////////
    void EngineActorRegistry::GetReplacementActorTypes(dtCore::ActorPluginRegistry::ActorTypeReplacements &replacements) const
    {
-      replacements.push_back(std::make_pair(ENVIRONMENT_ACTOR_TYPE->GetFullName(), WEATHER_ENVIRONMENT_ACTOR_TYPE->GetFullName()));
-      replacements.push_back(std::make_pair(ENV_ACTOR_TYPE->GetFullName(), SKY_DOME_ACTOR_TYPE->GetFullName()));
+      replacements.push_back(std::make_pair(ENVIRONMENT_ACTOR_TYPE->GetName(), WEATHER_ENVIRONMENT_ACTOR_TYPE->GetName()));
+      replacements.push_back(std::make_pair(ENV_ACTOR_TYPE->GetName(), SKY_DOME_ACTOR_TYPE->GetName()));
    }
 } // namespace dtActors

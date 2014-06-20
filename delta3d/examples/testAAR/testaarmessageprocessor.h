@@ -30,6 +30,7 @@
 #define DELTA_TEST_AAR_MESSAGE_PROCESSOR
 
 #include <dtGame/defaultmessageprocessor.h>
+#include <dtCore/sigslot.h>
 #include "export.h"
 
 // Foward declarations
@@ -61,7 +62,7 @@ namespace dtLMS
 
 class TestAARHUD;
 
-class TEST_AAR_EXPORT TestAARMessageProcessor : public dtGame::DefaultMessageProcessor
+class TEST_AAR_EXPORT TestAARMessageProcessor : public dtGame::DefaultMessageProcessor, public sigslot::has_slots<>
 {
    public:
 

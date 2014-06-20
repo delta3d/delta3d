@@ -24,6 +24,7 @@
 
 #include <string>
 #include <dtGame/gamemanager.h>
+#include <dtCore/systemcomponenttype.h>
 #include <dtCore/base.h>
 
 namespace dtGame
@@ -31,18 +32,37 @@ namespace dtGame
 
    class Message;
 
-   class DT_GAME_EXPORT GMComponent : public dtCore::Base
+   class DT_GAME_EXPORT GMComponent : public dtCore::BaseActorObject
    {
    public:
+      typedef dtCore::BaseActorObject BaseClass;
+
+      /// All derived gm component types must pass this or a descendant as a parent type.
+      static const dtCore::RefPtr<dtCore::SystemComponentType> BaseGMComponentType;
+
       /// Constructor
-      /// @param name client code must supply a unique name for this instance.
+      /// @param type code must supply a component type for this
+      GMComponent(dtCore::SystemComponentType& type);
+
+      /**
+       * With this constructor, a custom actor type object will be generated to stub in its place
+       * This will allow one to create a component that only exists in code using the older method of creating it.
+       * This will not work for components that can be loaded from a map.
+       */
       GMComponent(const std::string& name);
+
+      const dtCore::SystemComponentType& GetType() const;
+
+      /*implemented*/ bool IsPlaceable() const;
 
    protected:
       /// Destructor
       virtual ~GMComponent();
 
    public:
+
+      /*override*/ bool IsSystemComponent() const { return true; }
+
       /**
        * handles a sent a message
        * @param The message
@@ -60,20 +80,24 @@ namespace dtGame
        * @return The game manager
        * @see dtGame::GameManager
        */
-      const GameManager* GetGameManager() const { return mParent; }
+      const GameManager* GetGameManager() const { return mParent.get(); }
 
       /**
        * Gets the game manager that owns this component
        * @return The game manager
        * @see dtGame::GameManager
        */
-      GameManager* GetGameManager() { return mParent; }
+      GameManager* GetGameManager() { return mParent.get(); }
 
       /**
-       * Get the priority of this component.
-       * @return the value of the priority.  It is only valid when GetGameManager() is not NULL.
+       * Get the priority of this component.  This can be set as a property and the value will be used
+       * when the map is loaded into the GM.  The priority translates to the order components receive messages.
+       * Higher priorities get messages sooner.
+       * @return the value of the priority.
        */
-      const GameManager::ComponentPriority& GetComponentPriority() const;
+      DT_DECLARE_ACCESSOR(dtUtil::EnumerationPointer<GameManager::ComponentPriority>, ComponentPriority);
+
+      /*override*/ void BuildPropertyMap();
 
       /**
        * Called immediately after a component is added to the GM. Override this
@@ -91,21 +115,21 @@ namespace dtGame
        */
       virtual void OnRemovedFromGM();
 
-   private:
-      friend class GameManager;
+      /*override*/ void Init(const dtCore::ActorType& actorType);
+
       /**
        * Sets the game manager that owns this component
+       * Only the GameManager should set this or things won't work.
        * @see dtGame::GameManager
        */
       void SetGameManager(GameManager* gameManager);
-      /**
-       * Sets the component priority on this component.
-       * @see dtGame::GameManager::ComponentPriority
-       */
-      void SetComponentPriority(const GameManager::ComponentPriority& newPriority);
+   private:
 
-      GameManager* mParent;
-      const GameManager::ComponentPriority* mPriority;
+
+      dtCore::RefPtr<dtCore::SystemComponentType> mType;
+
+      dtCore::ObserverPtr<GameManager> mParent;
+      bool mInitialized;
 
       // -----------------------------------------------------------------------
       //  Unimplemented constructors and operators

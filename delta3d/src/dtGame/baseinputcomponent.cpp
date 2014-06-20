@@ -26,8 +26,6 @@
 
 namespace dtGame
 {
-   const std::string BaseInputComponent::DEFAULT_NAME = "BaseInputComponent";
-
    ////////////////////////////////////////////////////////////////////
    ////////////////////////////////////////////////////////////////////
    ////////////////////////////////////////////////////////////////////
@@ -134,9 +132,11 @@ namespace dtGame
    ////////////////////////////////////////////////////////////////////
 
    ////////////////////////////////////////////////////////////////////
-   BaseInputComponent::BaseInputComponent(const std::string &name) :
-      dtGame::GMComponent(name)
+   BaseInputComponent::BaseInputComponent(dtCore::SystemComponentType& type) :
+      dtGame::GMComponent(type)
    {
+      SetName(DEFAULT_NAME);
+
       mMouseListener = new InputComponentMouseListener(*this);
       mKeyboardListener = new InputComponentKeyboardListener(*this);
    }

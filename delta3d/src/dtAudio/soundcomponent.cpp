@@ -39,11 +39,10 @@ namespace dtAudio
    /////////////////////////////////////////////////////////////////////////////
    // SOUND COMPONENT CODE
    /////////////////////////////////////////////////////////////////////////////
-   const dtUtil::RefString SoundComponent::DEFAULT_NAME("SoundComponent");
 
    /////////////////////////////////////////////////////////////////////////////
-   SoundComponent::SoundComponent(const std::string& name)
-      : dtGame::GMComponent(name)
+   SoundComponent::SoundComponent(dtCore::SystemComponentType& type)
+      : dtGame::GMComponent(type)
    {
    }
 

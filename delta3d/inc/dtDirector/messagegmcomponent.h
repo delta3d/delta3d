@@ -46,9 +46,11 @@ namespace dtDirector
 
       typedef dtUtil::Functor<void, TYPELIST_1(const dtGame::Message&)> MsgFunc;
 
+      static const dtCore::RefPtr<dtCore::SystemComponentType> TYPE;
+
       /// Constructor
       /// @param name client code must supply a unique name for this instance.
-      MessageGMComponent();
+      MessageGMComponent(dtCore::SystemComponentType& type = *TYPE);
 
    protected:
       /// Destructor

@@ -40,8 +40,9 @@ namespace dtGame
    class DT_GAME_EXPORT LogController : public GMComponent
    {
    public:
+      static const dtCore::RefPtr<dtCore::SystemComponentType> TYPE;
       static const std::string DEFAULT_NAME;
-      LogController(const std::string& name = DEFAULT_NAME);
+      LogController(dtCore::SystemComponentType& type = *TYPE);
 
       virtual void ProcessMessage(const Message& message);
 

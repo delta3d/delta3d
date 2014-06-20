@@ -1658,13 +1658,10 @@ namespace dtPhysics
       mPhysicsComp->RegisterActorComp(*tehVoodoo1.get());
       mPhysicsComp->RegisterActorComp(*tehVoodoo2.get());
 
-      // sleep for 20 to make sure the physics engine actually steps.
-      dtCore::AppSleep(20);
-
       int steps = dtPhysics::PhysicsWorld::GetInstance().GetNumStepsSinceStartup();
       // Quick check to make sure the physics didn't step.
       mPhysicsComp->SetSteppingEnabled(false);
-      dtCore::System::GetInstance().Step();
+      dtCore::System::GetInstance().Step(0.016667);
       int stepsNext = dtPhysics::PhysicsWorld::GetInstance().GetNumStepsSinceStartup();
       CPPUNIT_ASSERT_EQUAL(steps, stepsNext);
       CPPUNIT_ASSERT(!cb1.HasCalledPre());
@@ -1674,9 +1671,8 @@ namespace dtPhysics
       CPPUNIT_ASSERT(!cb2.HasCalledPost());
       CPPUNIT_ASSERT(!cb2.HasCalledAction());
 
-      dtCore::AppSleep(20);
       mPhysicsComp->SetSteppingEnabled(true);
-      dtCore::System::GetInstance().Step();
+      dtCore::System::GetInstance().Step(0.016667);
       stepsNext = dtPhysics::PhysicsWorld::GetInstance().GetNumStepsSinceStartup();
       CPPUNIT_ASSERT(steps < stepsNext);
       CPPUNIT_ASSERT(cb1.HasCalledPre());
@@ -1698,7 +1694,7 @@ namespace dtPhysics
       tehVoodoo2->SetPostPhysicsCallback(PhysicsActComp::UpdateCallback());
       tehVoodoo2->SetActionUpdateCallback(PhysicsActComp::ActionUpdateCallback());
 
-      dtCore::System::GetInstance().Step();
+      dtCore::System::GetInstance().Step(0.016667);
 
       CPPUNIT_ASSERT(!cb1.HasCalledPre());
       CPPUNIT_ASSERT(!cb1.HasCalledPost());

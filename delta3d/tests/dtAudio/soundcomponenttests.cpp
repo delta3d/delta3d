@@ -98,7 +98,7 @@ void SoundComponentTests::setUp()
       dtCore::System::GetInstance().SetShutdownOnWindowClose(false);
       dtCore::System::GetInstance().Start();
 
-      mSndComp = new dtAudio::SoundComponent("TestSoundComponent");
+      mSndComp = new dtAudio::SoundComponent();
       mGM->AddComponent(*mSndComp, dtGame::GameManager::ComponentPriority::NORMAL);
    }
    catch (const dtUtil::Exception& e)

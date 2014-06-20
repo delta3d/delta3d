@@ -171,8 +171,8 @@ private:
 class TestOrderComponent: public dtGame::GMComponent
 {
    public:
-      TestOrderComponent(const std::string& name = "TestOrder")
-         : dtGame::GMComponent(name)
+      TestOrderComponent()
+         : dtGame::GMComponent("order")
       {}
 
       virtual void ProcessMessage(const dtGame::Message& msg)
@@ -407,8 +407,8 @@ void GameManagerTests::TestPrototypeActors()
       testCreatePrototype.valid());
    mManager->AddActor(*testCreatePrototype, false, false);
 
-   CPPUNIT_ASSERT_MESSAGE("I don't care what initial ownership it is changed to, that could change, an actor created"
-         "as a prototype should not still be marked as such once it is added to the world.",
+   CPPUNIT_ASSERT_MESSAGE("I don't care what initial ownership it is changed to, that could change over time, but an actor created"
+         "as a prototype should not continue to be marked as such once it is added to the world.",
          testCreatePrototype->GetInitialOwnership() != dtGame::GameActorProxy::Ownership::PROTOTYPE);
    mManager->DeleteActor(*testCreatePrototype);
    dtCore::System::GetInstance().Step();
@@ -738,8 +738,8 @@ void GameManagerTests::TestAddRemoveComponents()
    dtCore::RefPtr<dtGame::DefaultMessageProcessor> dmc = new dtGame::DefaultMessageProcessor();
 
    //check default names.
-   CPPUNIT_ASSERT(rc->GetName() == dtGame::DefaultNetworkPublishingComponent::DEFAULT_NAME);
-   CPPUNIT_ASSERT(dmc->GetName() == dtGame::DefaultMessageProcessor::DEFAULT_NAME);
+   CPPUNIT_ASSERT_EQUAL(rc->GetName(), dtGame::DefaultNetworkPublishingComponent::DEFAULT_NAME);
+   CPPUNIT_ASSERT_EQUAL(dmc->GetName(), dtGame::DefaultMessageProcessor::DEFAULT_NAME);
 
    rc->SetName("rulesComp");
    dmc->SetName("defaultComp");
@@ -748,8 +748,8 @@ void GameManagerTests::TestAddRemoveComponents()
    CPPUNIT_ASSERT(rc->GetName() == "rulesComp");
    CPPUNIT_ASSERT(dmc->GetName() == "defaultComp");
 
-   CPPUNIT_ASSERT(!rc->GetUniqueId().ToString().empty());
-   CPPUNIT_ASSERT(!dmc->GetUniqueId().ToString().empty());
+   CPPUNIT_ASSERT(!rc->GetId().ToString().empty());
+   CPPUNIT_ASSERT(!dmc->GetId().ToString().empty());
 
    CPPUNIT_ASSERT(rc->GetGameManager() == NULL);
    CPPUNIT_ASSERT(dmc->GetGameManager() == NULL);
@@ -838,7 +838,8 @@ void GameManagerTests::TestComponentPriority()
    {
       std::ostringstream ss;
       ss << "testOrder" << i;
-      tocList.push_back(new TestOrderComponent(ss.str()));
+      tocList.push_back(new TestOrderComponent());
+      tocList[i]->SetName(ss.str());
 
       CPPUNIT_ASSERT(tocList[i]->GetComponentPriority() == dtGame::GameManager::ComponentPriority::NORMAL);
    }
@@ -1036,9 +1037,7 @@ void GameManagerTests::TestAddActor()
 
          CPPUNIT_ASSERT_MESSAGE("The proxy should still be in the game manager", mManager->FindGameActorById(proxy->GetId()) != NULL);
          CPPUNIT_ASSERT_MESSAGE("The proxy should not have the GameManager pointer set to NULL", proxy->GetGameManager() != NULL);
-         //have to send a from event to make the actor get deleted
-         dtCore::AppSleep(10);
-         dtCore::System::GetInstance().Step();
+         dtCore::System::GetInstance().Step(0.01666f);
 
          CPPUNIT_ASSERT_MESSAGE("The actor should not be in the scene.",
             mManager->GetScene().GetChildIndex(proxy->GetDrawable()) == mManager->GetScene().GetNumberOfAddedDrawable());
@@ -1087,8 +1086,7 @@ void GameManagerTests::TestAddActor()
          CPPUNIT_ASSERT_MESSAGE("The actor should still be in the scene.",
             mManager->GetScene().GetChildIndex(proxy->GetDrawable()) != mManager->GetScene().GetNumberOfAddedDrawable());
          //have to send a from event to make the actor get deleted
-         dtCore::AppSleep(10);
-         dtCore::System::GetInstance().Step();
+         dtCore::System::GetInstance().Step(0.01666f);
 
          CPPUNIT_ASSERT_MESSAGE("The actor should not still be in the scene.",
             mManager->GetScene().GetChildIndex(proxy->GetDrawable()) == mManager->GetScene().GetNumberOfAddedDrawable());
@@ -1110,17 +1108,19 @@ void GameManagerTests::TestAddActor()
          CPPUNIT_ASSERT(proxyFound != NULL);
          CPPUNIT_ASSERT(proxyFound.get() == proxy.get());
          dtCore::RefPtr<dtGame::GameActorProxy> gameProxyFound = mManager->FindGameActorById(proxy->GetId());
-         CPPUNIT_ASSERT_MESSAGE("The actor should not have been added as a game actor", gameProxyFound == NULL);
+         CPPUNIT_ASSERT_MESSAGE("The actor should have been added as a game actor", gameProxyFound->GetId() == proxy->GetId());
          CPPUNIT_ASSERT_MESSAGE("The actor should have been added to the scene.",
             mManager->GetScene().GetChildIndex(proxy->GetDrawable()) != mManager->GetScene().GetNumberOfAddedDrawable());
 
 
-         CPPUNIT_ASSERT_THROW_MESSAGE("An actor may not be published if it's not added as a game actor.",
-                                       mManager->PublishActor(*proxy), dtGame::InvalidActorStateException);
+         CPPUNIT_ASSERT_NO_THROW_MESSAGE("An actor may be published because it should be detected as a game actor.",
+                                       mManager->PublishActor(*proxy));
 
          mManager->DeleteActor(static_cast<dtCore::BaseActorObject&>(*proxy));
-         CPPUNIT_ASSERT_MESSAGE("The proxy should not still be in the game manager", mManager->FindActorById(proxy->GetId()) == NULL);
-         CPPUNIT_ASSERT_MESSAGE("The actor should not still be in the scene.",
+         CPPUNIT_ASSERT_MESSAGE("The proxy not should still be in the game manager", mManager->FindActorById(proxy->GetId()) != NULL);
+         dtCore::System::GetInstance().Step(0.01666f);
+         CPPUNIT_ASSERT_MESSAGE("The proxy not should still be in the game manager", mManager->FindActorById(proxy->GetId()) == NULL);
+         CPPUNIT_ASSERT_MESSAGE("The actor not should still be in the scene.",
             mManager->GetScene().GetChildIndex(proxy->GetDrawable()) == mManager->GetScene().GetNumberOfAddedDrawable());
       }
    }
@@ -1223,111 +1223,120 @@ void GameManagerTests::TestCascadedDelete()
 /////////////////////////////////////////////////
 void GameManagerTests::TestComplexScene()
 {
-   std::vector< dtCore::RefPtr<dtGame::GameActorProxy> > proxies;
+   //aka RemoveActorFromScene
+   std::vector< dtCore::RefPtr<dtGame::GameActorProxy> > actors;
 
    for (unsigned i = 0; i < 10; ++i)
    {
       dtCore::RefPtr<dtGame::GameActorProxy> newActor;
       mManager->CreateActor("ExampleActors", "Test1Actor", newActor);
-      proxies.push_back(newActor);
+      actors.push_back(newActor);
    }
 
-   CPPUNIT_ASSERT(proxies.size() == 10);
-   for (unsigned i = 0; i < proxies.size(); ++i)
+   CPPUNIT_ASSERT(actors.size() == 10);
+   for (unsigned i = 0; i < actors.size(); ++i)
    {
-      CPPUNIT_ASSERT_MESSAGE("Proxy, the result of a dynamic_cast to dtGame::GameActorProxy, should not be NULL", proxies[i] != NULL);
+      CPPUNIT_ASSERT_MESSAGE("Proxy, the result of a dynamic_cast to dtGame::GameActorProxy, should not be NULL", actors[i] != NULL);
       //Add regular actors
       if (i < 5)
       {
-         mManager->AddActor(*proxies[i]);
+         mManager->AddActor(*actors[i]);
       }
       else
       {
          //Add game actors
-         mManager->AddActor(*proxies[i], false, false);
+         mManager->AddActor(*actors[i], false, false);
       }
 
       CPPUNIT_ASSERT_MESSAGE("Actor should be in the scene.",
-         mManager->GetScene().GetChildIndex(proxies[i]->GetDrawable()) != mManager->GetScene().GetNumberOfAddedDrawable());
+         mManager->GetScene().GetChildIndex(actors[i]->GetDrawable()) != mManager->GetScene().GetNumberOfAddedDrawable());
 
    }
 
    dtCore::Scene& scene = mManager->GetScene();
 
-   scene.RemoveChild(proxies[0]->GetDrawable());
-   scene.RemoveChild(proxies[1]->GetDrawable());
-   scene.RemoveChild(proxies[2]->GetDrawable());
-   scene.RemoveChild(proxies[6]->GetDrawable());
-   scene.RemoveChild(proxies[7]->GetDrawable());
-   scene.RemoveChild(proxies[8]->GetDrawable());
-   scene.RemoveChild(proxies[9]->GetDrawable());
+   scene.RemoveChild(actors[0]->GetDrawable());
+   scene.RemoveChild(actors[1]->GetDrawable());
+   scene.RemoveChild(actors[2]->GetDrawable());
+   scene.RemoveChild(actors[6]->GetDrawable());
+   scene.RemoveChild(actors[7]->GetDrawable());
+   scene.RemoveChild(actors[8]->GetDrawable());
+   scene.RemoveChild(actors[9]->GetDrawable());
 
-   //Add the regular actors as children to the first game actor.
-   proxies[5]->GetDrawable()->AddChild(proxies[0]->GetDrawable());
-   proxies[5]->GetDrawable()->AddChild(proxies[1]->GetDrawable());
-   proxies[5]->GetDrawable()->AddChild(proxies[2]->GetDrawable());
+   //Add the regular actor drawables as children to the first game actor drawable.
+   actors[5]->GetDrawable()->AddChild(actors[0]->GetDrawable());
+   actors[5]->GetDrawable()->AddChild(actors[1]->GetDrawable());
+   actors[5]->GetDrawable()->AddChild(actors[2]->GetDrawable());
 
    //create a plain actor so we can make sure it doesn't get moved up.
    dtCore::RefPtr<dtCore::Physical> ph = new dtCore::Physical;
 
    //Add the game actors removed as a child to a regular actor.
-   proxies[0]->GetDrawable()->AddChild(proxies[6]->GetDrawable());
-   proxies[0]->GetDrawable()->AddChild(proxies[7]->GetDrawable());
-   proxies[0]->GetDrawable()->AddChild(ph.get());
+   actors[0]->GetDrawable()->AddChild(actors[6]->GetDrawable());
+   actors[0]->GetDrawable()->AddChild(actors[7]->GetDrawable());
+   actors[0]->GetDrawable()->AddChild(ph.get());
 
-   proxies[1]->GetDrawable()->AddChild(proxies[8]->GetDrawable());
-   proxies[1]->GetDrawable()->AddChild(proxies[9]->GetDrawable());
+   actors[1]->GetDrawable()->AddChild(actors[8]->GetDrawable());
+   actors[1]->GetDrawable()->AddChild(actors[9]->GetDrawable());
 
    //remove proxy 0 to make it's children move up one.
-   mManager->DeleteActor(*proxies[0]);
+   mManager->DeleteActor(*actors[0]);
 
-   dtCore::AppSleep(2);
-   dtCore::System::GetInstance().Step();
+   dtCore::System::GetInstance().Step(0.016);
 
    //check current children.
    CPPUNIT_ASSERT_MESSAGE("proxy 0 should not be a child of proxy 5.",
-      proxies[5]->GetDrawable()->GetChildIndex(proxies[0]->GetDrawable()) == proxies[5]->GetDrawable()->GetNumChildren());
+      actors[5]->GetDrawable()->GetChildIndex(actors[0]->GetDrawable()) == actors[5]->GetDrawable()->GetNumChildren());
    CPPUNIT_ASSERT_MESSAGE("proxy 1 should still be a child of proxy 5.",
-      proxies[5]->GetDrawable()->GetChildIndex(proxies[1]->GetDrawable()) != proxies[5]->GetDrawable()->GetNumChildren());
+      actors[5]->GetDrawable()->GetChildIndex(actors[1]->GetDrawable()) != actors[5]->GetDrawable()->GetNumChildren());
    CPPUNIT_ASSERT_MESSAGE("proxy 0 should not be in the scene.",
-      proxies[0]->GetDrawable()->GetSceneParent() == NULL);
+      actors[0]->GetDrawable()->GetSceneParent() == NULL);
 
    //check that old children of 0 were moved up when they are supposed to.
    CPPUNIT_ASSERT_MESSAGE("proxy 6 should now be a child of proxy 5.",
-      proxies[5]->GetDrawable()->GetChildIndex(proxies[6]->GetDrawable()) != proxies[5]->GetDrawable()->GetNumChildren());
+      actors[5]->GetDrawable()->GetChildIndex(actors[6]->GetDrawable()) != actors[5]->GetDrawable()->GetNumChildren());
    CPPUNIT_ASSERT_MESSAGE("proxy 7 should now be a child of proxy 5.",
-      proxies[5]->GetDrawable()->GetChildIndex(proxies[7]->GetDrawable()) != proxies[5]->GetDrawable()->GetNumChildren());
+      actors[5]->GetDrawable()->GetChildIndex(actors[7]->GetDrawable()) != actors[5]->GetDrawable()->GetNumChildren());
    CPPUNIT_ASSERT_MESSAGE("The physical actor should not be a child of proxy 5.",
-      proxies[5]->GetDrawable()->GetChildIndex(ph.get()) == proxies[5]->GetDrawable()->GetNumChildren());
+      actors[5]->GetDrawable()->GetChildIndex(ph.get()) == actors[5]->GetDrawable()->GetNumChildren());
 
    //remove proxy 5 to make it's children move up one.
-   mManager->DeleteActor(*proxies[5]);
+   mManager->DeleteActor(*actors[5]);
 
-   dtCore::AppSleep(2);
-   dtCore::System::GetInstance().Step();
+   dtCore::System::GetInstance().Step(0.016);
 
    unsigned currentInScene[] = { 1, 2, 3, 4, 6, 7 };
 
    //check current children.
    CPPUNIT_ASSERT_MESSAGE("proxy 5 should not be in the scene.",
-      proxies[5]->GetDrawable()->GetSceneParent() == NULL);
+      actors[5]->GetDrawable()->GetSceneParent() == NULL);
    CPPUNIT_ASSERT_MESSAGE("proxy 0 should not be in the scene.",
-      proxies[0]->GetDrawable()->GetSceneParent() == NULL);
+      actors[0]->GetDrawable()->GetSceneParent() == NULL);
 
    for (int i = 0; i < 6; ++i)
    {
       std::ostringstream ss;
       ss << "proxy[" << i << "] should be in the root of the scene.";
       CPPUNIT_ASSERT_MESSAGE(ss.str(),
-         scene.GetChildIndex(proxies[currentInScene[i]]->GetDrawable()) != scene.GetNumberOfAddedDrawable());
+         scene.GetChildIndex(actors[currentInScene[i]]->GetDrawable()) != scene.GetNumberOfAddedDrawable());
    }
 
    //check that children of 1 are still that way.
    CPPUNIT_ASSERT_MESSAGE("proxy 8 should still be a child of proxy 1.",
-      proxies[1]->GetDrawable()->GetChildIndex(proxies[8]->GetDrawable()) != proxies[1]->GetDrawable()->GetNumChildren());
+      actors[1]->GetDrawable()->GetChildIndex(actors[8]->GetDrawable()) != actors[1]->GetDrawable()->GetNumChildren());
    CPPUNIT_ASSERT_MESSAGE("proxy 9 should still be a child of proxy 1.",
-      proxies[1]->GetDrawable()->GetChildIndex(proxies[9]->GetDrawable()) != proxies[1]->GetDrawable()->GetNumChildren());
+      actors[1]->GetDrawable()->GetChildIndex(actors[9]->GetDrawable()) != actors[1]->GetDrawable()->GetNumChildren());
 
+   actors[1]->GetDrawable()->Emancipate();
+
+   mManager->DeleteActor(*actors[1]);
+   dtCore::System::GetInstance().Step(0.016);
+
+   //check that children of 1 are still that way, and that the GM didn't crash or try to add these drawables as children of something else.
+    CPPUNIT_ASSERT_MESSAGE("proxy 8 should still be a child of proxy 1.",
+       actors[1]->GetDrawable()->GetChildIndex(actors[8]->GetDrawable()) != actors[1]->GetDrawable()->GetNumChildren());
+    CPPUNIT_ASSERT_MESSAGE("proxy 9 should still be a child of proxy 1.",
+       actors[1]->GetDrawable()->GetChildIndex(actors[9]->GetDrawable()) != actors[1]->GetDrawable()->GetNumChildren());
 }
 
 /////////////////////////////////////////////////

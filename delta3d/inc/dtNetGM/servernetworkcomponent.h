@@ -40,7 +40,7 @@ namespace dtNetGM
    class DT_NETGM_EXPORT ServerNetworkComponent : public NetworkComponent
    {
    public:
-      // Use this name when constructing your component - component names are unique
+      static const dtCore::RefPtr<dtCore::SystemComponentType> TYPE;
       static const dtUtil::RefString DEFAULT_NAME;
       // Frame Sync config properties. To override the config or default values, call the Sets AFTER adding to the GM
       static const dtUtil::RefString CONFIG_PROP_FRAMESYNC_ISENABLED;
@@ -51,8 +51,14 @@ namespace dtNetGM
 
 
       /**
+       * Main constructor.  The optional parameter is for subclasses to make a new type.
+       */
+      ServerNetworkComponent(dtCore::SystemComponentType& type = *TYPE);
+
+      /**
        * Construct a ServerNetworkComponent with a game name and version to be used by GNE
        * Calls base class constructor to initialize GNE
+       * @note calling the other constructor is preferred.
        * @param gameName The game name
        * @param gameVersion The game version
        * @param logFile The logfile name

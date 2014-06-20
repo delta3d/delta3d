@@ -96,19 +96,19 @@ namespace dtGame
          DECLARE_ENUM(ComponentPriority);
       public:
          ///Highest possible priority.  Components with this priority will get messages first.
-         static const ComponentPriority HIGHEST;
+         static ComponentPriority HIGHEST;
 
          ///Higher priority.  Components with this priority will get messages after HIGHEST, but before any others.
-         static const ComponentPriority HIGHER;
+         static ComponentPriority HIGHER;
 
          ///Normal priority.  Components with this priority will get messages after any HIGHER priority, but before LOWER.
-         static const ComponentPriority NORMAL;
+         static ComponentPriority NORMAL;
 
          ///Lower priority.  Components with this priority will get messages after any NORMAL or HIGHER priority, but before LOWEST.
-         static const ComponentPriority LOWER;
+         static ComponentPriority LOWER;
 
          ///Lowest priority.  Components with this priority will get messages after all others.
-         static const ComponentPriority LOWEST;
+         static ComponentPriority LOWEST;
 
          ///@return the order id.  The higher the priority, the lower the number.
          unsigned int GetOrderId() const;
@@ -312,7 +312,7 @@ namespace dtGame
        * @param priority the priority of the component.  This translates into the order of message delivery.
        * @throw dtGame::ExceptionEnum::INVALID_PARAMETER if the component lacks a unique name
        */
-      void AddComponent(GMComponent& component, const ComponentPriority& priority = ComponentPriority::NORMAL);
+      void AddComponent(GMComponent& component, ComponentPriority& priority = ComponentPriority::NORMAL);
 
       /**
        * Removes a component to the list of components the game mananger

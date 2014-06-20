@@ -223,14 +223,14 @@ namespace dtDirector
             int count = GetPropertyCount("Actor");
             for (int index = 0; index < count; index++)
             {
-               dtCore::BaseActorObject* proxy = GetActor("Actor", index);
-               if (proxy)
+               dtCore::BaseActorObject* actor = GetActor("Actor", index);
+               if (actor)
                {
-                  dtCore::Object* actor = NULL;
-                  proxy->GetActor(actor);
-                  if (actor)
+                  dtCore::Object* object = NULL;
+                  actor->GetDrawable(object);
+                  if (object)
                   {
-                     actor->SetScale(osg::Vec3(newScale.x(), newScale.y(), newScale.z()));
+                     object->SetScale(osg::Vec3(newScale.x(), newScale.y(), newScale.z()));
                   }
                }
             }

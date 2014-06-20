@@ -61,7 +61,7 @@ namespace dtGame
        */
       typedef dtCore::RefPtr<const dtCore::ActorType> ACType;
 
-      ///b All derived actor component types must pass this or a decendent as a parent type.
+      ///b All derived actor component types must pass this or a descendant as a parent type.
       static const ACType BaseActorComponentType;
 
       /**

@@ -1938,7 +1938,7 @@ void GMLoggerTests::TestLoggerStatusMessage()
 class TestServerLoggerComponent : public dtGame::ServerLoggerComponent
 {
 public:
-   TestServerLoggerComponent(dtGame::LogStream& logStream, const std::string& name = "TestServerLoggerComponent");
+   TestServerLoggerComponent(dtGame::LogStream& logStream);
 
    int RequestDeletePlaybackActors();
 
@@ -1947,8 +1947,8 @@ protected:
 
 };
 
-TestServerLoggerComponent::TestServerLoggerComponent(dtGame::LogStream& logStream, const std::string& name)
-   : ServerLoggerComponent(logStream, name)
+TestServerLoggerComponent::TestServerLoggerComponent(dtGame::LogStream& logStream)
+   : ServerLoggerComponent(logStream)
 {
 }
 

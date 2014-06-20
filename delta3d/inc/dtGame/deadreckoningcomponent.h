@@ -46,127 +46,128 @@ namespace dtGame
 
    class DT_GAME_EXPORT DeadReckoningComponent : public dtGame::GMComponent
    {
-      public:
-         ///The default component name, used when looking it up on the GM. 
-         static const std::string DEFAULT_NAME;
+   public:
+      static const dtCore::RefPtr<dtCore::SystemComponentType> TYPE;
 
-         DeadReckoningComponent(const std::string& name = DEFAULT_NAME);
+      static const std::string DEFAULT_NAME;
 
-         /**
-          * handles a processed a message
-          * @see dtGame::GMComponent#ProcessMessage
-          * @param The message
-          */
-         virtual void ProcessMessage(const dtGame::Message& message);
+      DeadReckoningComponent(dtCore::SystemComponentType& type = *TYPE);
 
-         /**
-          * Registers an actor with this component.  To simplify coding in the actor, specifically when it comes
-          * to setting properties on the helper, the actor should create it's own helper and pass it in when registering.
-          * @param toRegister the actor to register.
-          * @param helper the preconfigured helper object to use.
-          * @throws dtUtil::Exception if this actor is already registered with the component.
-          */
-         void RegisterActor(dtGame::GameActorProxy& toRegister, DeadReckoningHelper& helper);
+      /**
+       * handles a processed a message
+       * @see dtGame::GMComponent#ProcessMessage
+       * @param The message
+       */
+      virtual void ProcessMessage(const dtGame::Message& message);
 
-         /**
-          * Registers an actor with this component.  To simplify coding in the actor, specifically when it comes
-          * to setting properties on the helper, the actor should create it's own helper and pass it in when registering.
-          * @param toRegister the actor to register.
-          * @param helper the preconfigured helper object to use.
-          */
-         void UnregisterActor(dtGame::GameActorProxy& toRegister);
+      /**
+       * Registers an actor with this component.  To simplify coding in the actor, specifically when it comes
+       * to setting properties on the helper, the actor should create it's own helper and pass it in when registering.
+       * @param toRegister the actor to register.
+       * @param helper the preconfigured helper object to use.
+       * @throws dtUtil::Exception if this actor is already registered with the component.
+       */
+      void RegisterActor(dtGame::GameActorProxy& toRegister, DeadReckoningHelper& helper);
 
-         /**
-          * @return true if the given actor is registered with this component.
-          */
-         bool IsRegisteredActor(dtGame::GameActorProxy& gameActorProxy);
+      /**
+       * Registers an actor with this component.  To simplify coding in the actor, specifically when it comes
+       * to setting properties on the helper, the actor should create it's own helper and pass it in when registering.
+       * @param toRegister the actor to register.
+       * @param helper the preconfigured helper object to use.
+       */
+      void UnregisterActor(dtGame::GameActorProxy& toRegister);
 
-         ///@return the terrain actor using the given name.  If it has not yet been queried, the query will run when this is called.
-         dtCore::Transformable* GetTerrainActor();
+      /**
+       * @return true if the given actor is registered with this component.
+       */
+      bool IsRegisteredActor(dtGame::GameActorProxy& gameActorProxy);
 
-         ///@return the terrain actor using the given name.  If it has not yet been queried, the query will run when this is called.
-         const dtCore::Transformable* GetTerrainActor() const;
+      ///@return the terrain actor using the given name.  If it has not yet been queried, the query will run when this is called.
+      dtCore::Transformable* GetTerrainActor();
 
-         ///changes the actor to use for the terrain.
-         void SetTerrainActor(dtCore::Transformable* newTerrain);
+      ///@return the terrain actor using the given name.  If it has not yet been queried, the query will run when this is called.
+      const dtCore::Transformable* GetTerrainActor() const;
 
-         ///@return the actor to use as an eye point for ground clamping.  This determines which LOD to clamp to. 
-         dtCore::Transformable* GetEyePointActor();
+      ///changes the actor to use for the terrain.
+      void SetTerrainActor(dtCore::Transformable* newTerrain);
 
-         ///@return the actor to use as an eye point for ground clamping.  This determines which LOD to clamp to. 
-         const dtCore::Transformable* GetEyePointActor() const;
+      ///@return the actor to use as an eye point for ground clamping.  This determines which LOD to clamp to.
+      dtCore::Transformable* GetEyePointActor();
 
-         ///changes the actor to use for the terrain.
-         void SetEyePointActor(dtCore::Transformable* newEyePointActor);
+      ///@return the actor to use as an eye point for ground clamping.  This determines which LOD to clamp to.
+      const dtCore::Transformable* GetEyePointActor() const;
 
-         /**
-          * Set the time over which this component should smooth articulations between two DR DOF targets.
-          */
-         void SetArticulationSmoothTime( float smoothTime );
+      ///changes the actor to use for the terrain.
+      void SetEyePointActor(dtCore::Transformable* newEyePointActor);
 
-         float GetArticulationSmoothTime() const { return mArticSmoothTime; }
+      /**
+       * Set the time over which this component should smooth articulations between two DR DOF targets.
+       */
+      void SetArticulationSmoothTime( float smoothTime );
 
-         /// Set the ground clamper responsible for clamping animated objects.
-         void SetGroundClamper( dtGame::BaseGroundClamper& clamper );
-         
-         /// @return the ground clamping utility class
-         const BaseGroundClamper& GetGroundClamper() const;
+      float GetArticulationSmoothTime() const { return mArticSmoothTime; }
 
-         /// @return the ground clamping utility class
-         BaseGroundClamper& GetGroundClamper();
-         
-      protected:
-         virtual ~DeadReckoningComponent();
+      /// Set the ground clamper responsible for clamping animated objects.
+      void SetGroundClamper( dtGame::BaseGroundClamper& clamper );
 
-         /**
-          * Apply the articulation support
-          * @param helper the instance containing the articulation data.
-          * @param xformable the instance to be articulated.
-          * @param tickMessage the time data to be used when interpolating.
-          */
-         void DoArticulation(dtGame::DeadReckoningHelper& helper,
+      /// @return the ground clamping utility class
+      const BaseGroundClamper& GetGroundClamper() const;
+
+      /// @return the ground clamping utility class
+      BaseGroundClamper& GetGroundClamper();
+
+   protected:
+      virtual ~DeadReckoningComponent();
+
+      /**
+       * Apply the articulation support
+       * @param helper the instance containing the articulation data.
+       * @param xformable the instance to be articulated.
+       * @param tickMessage the time data to be used when interpolating.
+       */
+      void DoArticulation(dtGame::DeadReckoningHelper& helper,
             const dtCore::Transformable& xformable,
             const dtGame::TickMessage& tickMessage) const;
 
-         /**
-          * Move the articulation DOF between the current position and next
-          * position over a certain time step.
-          * @param dofxform DOF transform for the current articulation.
-          * @param currLocation Current positional or rotational value on the DOF.
-          * @param nextLocation The target positional or rotational value of the DOF.
-          * @param simTimeDelta Simulation time step for the current frame.
-          * @param isPositionChange Flag to differentiate the data from rotational to
-          *        positional DOF value modifications. Most articulations are rotational.
-          */
-         void DoArticulationSmooth(osgSim::DOFTransform& dofxform,
+      /**
+       * Move the articulation DOF between the current position and next
+       * position over a certain time step.
+       * @param dofxform DOF transform for the current articulation.
+       * @param currLocation Current positional or rotational value on the DOF.
+       * @param nextLocation The target positional or rotational value of the DOF.
+       * @param simTimeDelta Simulation time step for the current frame.
+       * @param isPositionChange Flag to differentiate the data from rotational to
+       *        positional DOF value modifications. Most articulations are rotational.
+       */
+      void DoArticulationSmooth(osgSim::DOFTransform& dofxform,
             const osg::Vec3& currLocation, const osg::Vec3& nextLocation,
             float simTimeDelta, bool isPositionChange = false) const;
 
-         /**
-          * Move the articulation DOF from the current position to the next
-          * based on the rate of movement and simulation time step.
-          * @param dofxform DOF transform for the current articulation.
-          * @param currLocation Current positional or rotational value on the DOF.
-          * @param currentRate Rate of change in the DOF value per second.
-          * @param simTimeDelta Simulation time step for the current frame.
-          * @param isPositionChange Flag to differentiate the data from rotational to
-          *        positional DOF value modifications. Most articulations are rotational.
-          */
-         void DoArticulationPrediction(osgSim::DOFTransform& dofxform,
+      /**
+       * Move the articulation DOF from the current position to the next
+       * based on the rate of movement and simulation time step.
+       * @param dofxform DOF transform for the current articulation.
+       * @param currLocation Current positional or rotational value on the DOF.
+       * @param currentRate Rate of change in the DOF value per second.
+       * @param simTimeDelta Simulation time step for the current frame.
+       * @param isPositionChange Flag to differentiate the data from rotational to
+       *        positional DOF value modifications. Most articulations are rotational.
+       */
+      void DoArticulationPrediction(osgSim::DOFTransform& dofxform,
             const osg::Vec3& currLocation, const osg::Vec3& currentRate,
             float simTimeDelta, bool isPositional = false) const;
 
-         std::map<dtCore::UniqueId, dtCore::RefPtr<DeadReckoningHelper> > mRegisteredActors;
-         dtCore::RefPtr<dtGame::BaseGroundClamper> mGroundClamper;
-         
-         dtUtil::Log* mLogger;
+      std::map<dtCore::UniqueId, dtCore::RefPtr<DeadReckoningHelper> > mRegisteredActors;
+      dtCore::RefPtr<dtGame::BaseGroundClamper> mGroundClamper;
 
-         float mArticSmoothTime;
+      dtUtil::Log* mLogger;
 
-         void TickRemote(const dtGame::TickMessage& tickMessage);
+      float mArticSmoothTime;
+
+      void TickRemote(const dtGame::TickMessage& tickMessage);
 
    };
-   
+
 }
 
 #endif 

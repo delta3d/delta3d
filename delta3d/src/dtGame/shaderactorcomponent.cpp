@@ -31,10 +31,6 @@
 
 namespace dtGame
 {
-   const ActorComponent::ACType ShaderActorComponent::TYPE(new dtCore::ActorType("ShaderActorComponent", "ActorComponents",
-         "Moves, rotates, and ground-clamps actors based on dead-reckoning data.  It also receives the updates from the network.",
-         ActorComponent::BaseActorComponentType));
-
    ////////////////////////////////////////////////////////////////////////////////
    ShaderActorComponent::ShaderActorComponent()
    : ActorComponent(TYPE),

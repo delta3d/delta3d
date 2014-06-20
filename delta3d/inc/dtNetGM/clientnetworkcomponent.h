@@ -38,9 +38,15 @@ namespace dtNetGM
    class DT_NETGM_EXPORT ClientNetworkComponent : public NetworkComponent
    {
    public:
+      static const dtCore::RefPtr<dtCore::SystemComponentType> TYPE;
       static const std::string DEFAULT_NAME;
 
       typedef NetworkComponent BaseClass;
+
+      /**
+       * Main constructor.  Takes an optional type, but this is more for subclasses.
+       */
+      ClientNetworkComponent(dtCore::SystemComponentType& type = *TYPE);
 
       /**
        * Construct a ClientNetworkComponent with a game name and version to be used by GNE
