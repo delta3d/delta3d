@@ -28,20 +28,20 @@
 #include <dtCore/actorproxyicon.h>
 #include <dtCore/floatactorproperty.h>
 #include <dtCore/functor.h>
+#include <dtCore/collisiongeometrytypeenum.h>
 
 #include <sstream>
 
 using namespace dtABC;
 using namespace dtCore;
-using namespace dtCore;
 
 namespace dtActors
 {
    ///////////////////////////////////////////////////////////////////////////////
-   void ProximityTriggerActorProxy::CreateActor()
+   void ProximityTriggerActorProxy::CreateDrawable()
    {
       ProximityTrigger* trigger = new ProximityTrigger;
-      SetActor(*trigger);
+      SetDrawable(*trigger);
 
       InitializeTrigger( *trigger );
    }
@@ -55,23 +55,23 @@ namespace dtActors
       SetName(ss.str());
 
       // Find & set default collision shape and dimensions.
-      Transformable::CollisionGeomType* type = trigger.GetCollisionGeomType();
+      CollisionGeomType* type = trigger.GetCollisionGeomType();
 
       std::vector<float> dimensions;
       trigger.GetCollisionGeomDimensions(dimensions);
 
-      if (type == &Transformable::CollisionGeomType::SPHERE &&
+      if (type == &CollisionGeomType::SPHERE &&
          dimensions.size() == 1)
       {
          SetCollisionRadius(dimensions[0]);
       }
-      else if (type == &Transformable::CollisionGeomType::CYLINDER &&
+      else if (type == &CollisionGeomType::CYLINDER &&
          dimensions.size() == 2)
       {
          SetCollisionRadius(dimensions[0]);
          SetCollisionLength(dimensions[1]);
       }
-      else if (type == &Transformable::CollisionGeomType::CUBE &&
+      else if (type == &CollisionGeomType::CUBE &&
          dimensions.size() == 3)
       {
          if ((dimensions[0] == dimensions[1]) &&
@@ -95,7 +95,7 @@ namespace dtActors
 
       TransformableActorProxy::BuildPropertyMap();
 
-      ProximityTrigger* trigger = static_cast<ProximityTrigger*>(GetActor());
+      ProximityTrigger* trigger = static_cast<ProximityTrigger*>(GetDrawable());
 
       AddProperty(new ActorActorProperty(*this, "Action","Action",
          ActorActorProperty::SetFuncType(this ,&ProximityTriggerActorProxy::SetAction),
@@ -128,14 +128,13 @@ namespace dtActors
    //////////////////////////////////////////////////////////////////////////
    void ProximityTriggerActorProxy::SetAction( BaseActorObject* action )
    {
-      SetLinkedActor("Action", action);
-
-      ProximityTrigger* proximityTrigger = static_cast<ProximityTrigger*>(GetActor());
+      ProximityTrigger* proximityTrigger;
+      GetDrawable(proximityTrigger);
 
       Action* a = NULL;
-      if (action)
+      if (action != NULL)
       {
-         a = dynamic_cast<Action*>(action->GetActor());
+         action->GetDrawable(a);
       }
 
       proximityTrigger->GetTrigger()->SetAction(a);
@@ -143,7 +142,7 @@ namespace dtActors
 
    DeltaDrawable* ProximityTriggerActorProxy::GetAction()
    {
-      ProximityTrigger* proximityTrigger = static_cast<ProximityTrigger*>(GetActor());
+      ProximityTrigger* proximityTrigger = static_cast<ProximityTrigger*>(GetDrawable());
 
       return proximityTrigger->GetTrigger()->GetAction();
    }

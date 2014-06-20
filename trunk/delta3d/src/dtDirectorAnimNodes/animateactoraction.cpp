@@ -238,153 +238,149 @@ namespace dtDirector
             count = GetPropertyCount("Actor");
             for (int index = 0; index < count; ++index)
             {
-               dtCore::BaseActorObject* proxy = GetActor("Actor", index);
-               if (proxy)
+               dtAnim::AnimationGameActorProxy* actor = dynamic_cast<dtAnim::AnimationGameActorProxy*>(GetActor("Actor", index));
+               if (actor)
                {
-                  dtAnim::AnimationGameActor* actor = dynamic_cast<dtAnim::AnimationGameActor*>(proxy->GetActor());
-                  if (actor)
-                  {
 #ifdef MANUAL_ANIMATIONS
-                     CalMixer* calMixer = actor->GetHelper()->GetModelWrapper()->GetCalModel()->getMixer();
-                     dtAnim::SequenceMixer& mixer = actor->GetHelper()->GetSequenceMixer();
+                  CalMixer* calMixer = actor->GetComponent<dtAnim::AnimationHelper>()->GetModelWrapper()->GetCalModel()->getMixer();
+                  dtAnim::SequenceMixer& mixer = actor->GetComponent<dtAnim::AnimationHelper>()->GetSequenceMixer();
 
-                     int animCount = (int)mAnimList.size();
-                     for (int animIndex = 0; animIndex < animCount; ++animIndex)
+                  int animCount = (int)mAnimList.size();
+                  for (int animIndex = 0; animIndex < animCount; ++animIndex)
+                  {
+                     AnimData& data = mAnimList[animIndex];
+
+                     if (data.mTime <= curTime && data.mTime + data.mDuration >= curTime)
                      {
-                        AnimData& data = mAnimList[animIndex];
-
-                        if (data.mTime <= curTime && data.mTime + data.mDuration >= curTime)
+                        CalAnimationAction* calAnim = NULL;
+                        if (data.mAnimation > -1)
                         {
-                           CalAnimationAction* calAnim = NULL;
-                           if (data.mAnimation > -1)
-                           {
-                              calAnim = calMixer->animationActionFromCoreAnimationId(data.mAnimation);;
-                           }
-
-                           if (!calAnim)
-                           {
-                              // Create the animation.
-                              const dtAnim::AnimationChannel* anim = dynamic_cast<const dtAnim::AnimationChannel*>(mixer.GetRegisteredAnimation(data.mName));
-                              if (anim)
-                              {
-                                 data.mAnimation = anim->GetAnimation()->GetID();
-
-                                 calMixer->addManualAnimation(data.mAnimation);
-                                 calAnim = calMixer->animationActionFromCoreAnimationId(data.mAnimation);
-                                 if (calAnim)
-                                 {
-                                    calMixer->setManualAnimationOn(calAnim, true);
-                                    calMixer->setManualAnimationWeight(calAnim, data.mWeight);
-                                    calMixer->setManualAnimationCompositionFunction(calAnim, CalAnimation::CompositionFunctionAverage);
-                                 }
-                              }
-                           }
-
-                           if (calAnim)
-                           {
-                              float animTime = curTime - data.mTime;
-
-                              // Update the animation weight.
-                              float weight = data.mWeight;
-
-                              // Blending in.
-                              if (data.mBlendInTime > 0.0f && animTime < data.mBlendInTime)
-                              {
-                                 weight *= animTime / data.mBlendInTime;
-                              }
-                              // Blending out.
-                              else if (data.mBlendOutTime > 0.0f && data.mDuration - animTime < data.mBlendOutTime)
-                              {
-                                 weight *= (data.mDuration - animTime) / data.mBlendOutTime;
-                              }
-
-                              animTime *= data.mSpeed;
-                              animTime += data.mStartOffset;
-
-                              // Update the animation.
-                              calMixer->setManualAnimationTime(calAnim, animTime);
-                              calMixer->setManualAnimationWeight(calAnim, weight);
-                           }
-
-                           actor->GetHelper()->Update(0.0f);
+                           calAnim = calMixer->animationActionFromCoreAnimationId(data.mAnimation);;
                         }
-                        else
+
+                        if (!calAnim)
                         {
-                           // Turn off the animation if it is still valid.
-                           if (data.mAnimation > -1)
+                           // Create the animation.
+                           const dtAnim::AnimationChannel* anim = dynamic_cast<const dtAnim::AnimationChannel*>(mixer.GetRegisteredAnimation(data.mName));
+                           if (anim)
                            {
-                              calMixer->removeManualAnimation(data.mAnimation);
-                              actor->GetHelper()->Update(0.0f);
-                              data.mAnimation = -1;
+                              data.mAnimation = anim->GetAnimation()->GetID();
+
+                              calMixer->addManualAnimation(data.mAnimation);
+                              calAnim = calMixer->animationActionFromCoreAnimationId(data.mAnimation);
+                              if (calAnim)
+                              {
+                                 calMixer->setManualAnimationOn(calAnim, true);
+                                 calMixer->setManualAnimationWeight(calAnim, data.mWeight);
+                                 calMixer->setManualAnimationCompositionFunction(calAnim, CalAnimation::CompositionFunctionAverage);
+                              }
                            }
+                        }
+
+                        if (calAnim)
+                        {
+                           float animTime = curTime - data.mTime;
+
+                           // Update the animation weight.
+                           float weight = data.mWeight;
+
+                           // Blending in.
+                           if (data.mBlendInTime > 0.0f && animTime < data.mBlendInTime)
+                           {
+                              weight *= animTime / data.mBlendInTime;
+                           }
+                           // Blending out.
+                           else if (data.mBlendOutTime > 0.0f && data.mDuration - animTime < data.mBlendOutTime)
+                           {
+                              weight *= (data.mDuration - animTime) / data.mBlendOutTime;
+                           }
+
+                           animTime *= data.mSpeed;
+                           animTime += data.mStartOffset;
+
+                           // Update the animation.
+                           calMixer->setManualAnimationTime(calAnim, animTime);
+                           calMixer->setManualAnimationWeight(calAnim, weight);
+                        }
+
+                        actor->GetComponent<dtAnim::AnimationHelper>()->Update(0.0f);
+                     }
+                     else
+                     {
+                        // Turn off the animation if it is still valid.
+                        if (data.mAnimation > -1)
+                        {
+                           calMixer->removeManualAnimation(data.mAnimation);
+                           actor->GetComponent<dtAnim::AnimationHelper>()->Update(0.0f);
+                           data.mAnimation = -1;
                         }
                      }
+                  }
 
 #else
-                     // First clear all animations currently playing in this actor.
-                     dtAnim::SequenceMixer& mixer = actor->GetHelper()->GetSequenceMixer();
-                     mixer.ClearActiveAnimations(0.0f);
-                     mixer.Update(0.0f);
+                  // First clear all animations currently playing in this actor.
+                  dtAnim::SequenceMixer& mixer = actor->GetComponent<dtAnim::AnimationHelper>()->GetSequenceMixer();
+                  mixer.ClearActiveAnimations(0.0f);
+                  mixer.Update(0.0f);
 
-                     float elapsedTime = 0.0f;
-                     int animCount = (int)playList.size();
-                     for (int animIndex = 0; animIndex < animCount; ++animIndex)
+                  float elapsedTime = 0.0f;
+                  int animCount = (int)playList.size();
+                  for (int animIndex = 0; animIndex < animCount; ++animIndex)
+                  {
+                     AnimData& data = playList[animIndex];
+
+                     float startTime = data.mTime - data.mStartOffset;
+                     if (startTime < elapsedTime)
                      {
-                        AnimData& data = playList[animIndex];
-
-                        float startTime = data.mTime - data.mStartOffset;
-                        if (startTime < elapsedTime)
-                        {
-                           elapsedTime = startTime;
-                        }
-
-                        if (elapsedTime < startTime)
-                        {
-                           float increment = startTime - elapsedTime;
-                           elapsedTime = startTime;
-
-                           actor->GetHelper()->Update(increment);
-                        }
-
-                        // Update the animation weight.
-                        float weight = data.mWeight;
-
-                        // Blending in.
-                        float animTime = curTime - data.mTime;
-                        if (data.mBlendInTime > 0.0f && animTime < data.mBlendInTime)
-                        {
-                           weight *= animTime / data.mBlendInTime;
-                        }
-                        // Blending out.
-                        else if (data.mBlendOutTime > 0.0f && data.mDuration - animTime < data.mBlendOutTime)
-                        {
-                           weight *= (data.mDuration - animTime) / data.mBlendOutTime;
-                        }
-
-                        // Create the animation.
-                        const dtAnim::AnimationChannel* anim = dynamic_cast<const dtAnim::AnimationChannel*>(mixer.GetRegisteredAnimation(data.mName));
-                        if (anim)
-                        {
-                           dtCore::RefPtr<dtAnim::AnimationChannel> newAnim = NULL;
-                           newAnim = dynamic_cast<dtAnim::AnimationChannel*>(anim->Clone(actor->GetHelper()->GetModelWrapper()).get());
-                           newAnim->SetLooping(false);
-                           newAnim->SetAction(true);
-                           newAnim->SetBaseWeight(weight);
-
-                           mixer.PlayAnimation(newAnim);
-                        }
+                        elapsedTime = startTime;
                      }
 
-                     if (elapsedTime <= curTime)
+                     if (elapsedTime < startTime)
                      {
-                        float increment = curTime - elapsedTime;
-                        elapsedTime = curTime;
+                        float increment = startTime - elapsedTime;
+                        elapsedTime = startTime;
 
-                        actor->GetHelper()->Update(increment);
+                        actor->GetComponent<dtAnim::AnimationHelper>()->Update(increment);
                      }
-#endif
+
+                     // Update the animation weight.
+                     float weight = data.mWeight;
+
+                     // Blending in.
+                     float animTime = curTime - data.mTime;
+                     if (data.mBlendInTime > 0.0f && animTime < data.mBlendInTime)
+                     {
+                        weight *= animTime / data.mBlendInTime;
+                     }
+                     // Blending out.
+                     else if (data.mBlendOutTime > 0.0f && data.mDuration - animTime < data.mBlendOutTime)
+                     {
+                        weight *= (data.mDuration - animTime) / data.mBlendOutTime;
+                     }
+
+                     // Create the animation.
+                     const dtAnim::AnimationChannel* anim = dynamic_cast<const dtAnim::AnimationChannel*>(mixer.GetRegisteredAnimation(data.mName));
+                     if (anim)
+                     {
+                        dtCore::RefPtr<dtAnim::AnimationChannel> newAnim = NULL;
+                        newAnim = dynamic_cast<dtAnim::AnimationChannel*>(anim->Clone(actor->GetComponent<dtAnim::AnimationHelper>()->GetModelWrapper()).get());
+                        newAnim->SetLooping(false);
+                        newAnim->SetAction(true);
+                        newAnim->SetBaseWeight(weight);
+
+                        mixer.PlayAnimation(newAnim);
+                     }
                   }
-               }
+
+                  if (elapsedTime <= curTime)
+                  {
+                     float increment = curTime - elapsedTime;
+                     elapsedTime = curTime;
+
+                     actor->GetComponent<dtAnim::AnimationHelper>()->Update(increment);
+                  }
+#endif
+                }
             }
 
             return true;
@@ -398,35 +394,31 @@ namespace dtDirector
             int count = GetPropertyCount("Actor");
             for (int index = 0; index < count; ++index)
             {
-               dtCore::BaseActorObject* proxy = GetActor("Actor", index);
-               if (proxy)
+               dtAnim::AnimationGameActorProxy* actor = dynamic_cast<dtAnim::AnimationGameActorProxy*>(GetActor("Actor", index));
+               if (actor)
                {
-                  dtAnim::AnimationGameActor* actor = dynamic_cast<dtAnim::AnimationGameActor*>(proxy->GetActor());
-                  if (actor)
-                  {
                      // Clear all animations currently playing in this actor.
 #ifdef MANUAL_ANIMATIONS
-                     CalMixer* calMixer = actor->GetHelper()->GetModelWrapper()->GetCalModel()->getMixer();
+                  CalMixer* calMixer = actor->GetComponent<dtAnim::AnimationHelper>()->GetModelWrapper()->GetCalModel()->getMixer();
 
-                     int animCount = (int)mAnimList.size();
-                     for (int animIndex = 0; animIndex < animCount; ++animIndex)
+                  int animCount = (int)mAnimList.size();
+                  for (int animIndex = 0; animIndex < animCount; ++animIndex)
+                  {
+                     AnimData& data = mAnimList[animIndex];
+
+                     // Turn off the animation if it is still valid.
+                     if (data.mAnimation > -1)
                      {
-                        AnimData& data = mAnimList[animIndex];
-
-                        // Turn off the animation if it is still valid.
-                        if (data.mAnimation > -1)
-                        {
-                           calMixer->removeManualAnimation(data.mAnimation);
-                           actor->GetHelper()->Update(0.0f);
-                           data.mAnimation = -1;
-                        }
+                        calMixer->removeManualAnimation(data.mAnimation);
+                        actor->GetComponent<dtAnim::AnimationHelper>()->Update(0.0f);
+                        data.mAnimation = -1;
                      }
-#else
-                     dtAnim::SequenceMixer& mixer = actor->GetHelper()->GetSequenceMixer();
-                     mixer.ClearActiveAnimations(0.0f);
-                     actor->GetHelper()->Update(0.0f);
-#endif
                   }
+#else
+                  dtAnim::SequenceMixer& mixer = actor->GetComponent<dtAnim::AnimationHelper>()->GetSequenceMixer();
+                  mixer.ClearActiveAnimations(0.0f);
+                  actor->GetComponent<dtAnim::AnimationHelper>()->Update(0.0f);
+#endif
                }
             }
 

@@ -18,6 +18,7 @@
  *
  * Matthew W. Campbell
  * Erik Johnson
+ * David Guthrie
  */
 #ifndef DELTA_LOG
 #define DELTA_LOG
@@ -27,13 +28,14 @@
 #include <vector>
 
 #include <osg/Referenced>
-#include <dtCore/refptr.h>
+#include <osg/ref_ptr>
 #include <dtUtil/export.h>
 
 namespace dtUtil
 {
    // Fwd declaration
    class LogObserver;
+   class LogTimeProvider;
 
    class DT_UTIL_EXPORT LogFile
    {
@@ -47,7 +49,7 @@ namespace dtUtil
       static const std::string GetFileName();
 
       /// change the title string used in HTML
-      /// defaults to "Delta 3D Engine Log File" or "Delta 3D Engine Log File (Debug Libs)"
+      /// defaults to "delta3d Engine Log File" or "delta3d Engine Log File (Debug Libs)"
       static void SetTitle(const std::string& title);
 
       ///Get the current HTML title string.
@@ -206,6 +208,11 @@ namespace dtUtil
 
       /*
        * Retrieve singleton instance of the log class for a give string name.
+       *
+       * WARNING:  If the log instance does not exist yet, it will be created, but the creation is not thread safe.
+       *           If you intend to use a log instance in multithreaded code, which I hope you do, make sure to create
+       *           the instance ahead of time by calling get instance.
+       *
        * @param name logger name
        */
       static Log& GetInstance(const std::string& name = LogFile::LOG_DEFAULT_NAME);
@@ -218,6 +225,13 @@ namespace dtUtil
         *  @see SetLogLevel()
         */
       static void SetAllLogLevels(LogMessageType newLevel);
+
+      /**
+       * This sets a Log time source.  This allows another part of the system to update and provide
+       * both a time and a frame number, as needed.  Otherwise, the time will be set on the log data every
+       * time log is called.
+       */
+      static void SetLogTimeProvider(LogTimeProvider* ltp);
 
       /**
         *  Add an observer that receives all log messages via callback.  The
@@ -236,7 +250,7 @@ namespace dtUtil
         */
       void RemoveObserver(LogObserver& observer);
 
-      typedef std::vector<dtCore::RefPtr<LogObserver> > LogObserverContainer;
+      typedef std::vector<osg::ref_ptr<LogObserver> > LogObserverContainer;
 
       /**
         *  Get all registered LogObservers that are registered to receive log messages.
@@ -276,12 +290,7 @@ namespace dtUtil
       ///Returns the name of this logger.
       const std::string& GetName() const;
 
-
-      ///Deprecate 4/6/2011.  Use LogMessage(const std::string&, const std::string&, int, const std::string&, LogMessageType)
-      void LogMessage(const std::string& source, int line, const std::string& msg,
-                      LogMessageType msgType = LOG_INFO) const;
-
-   //Constructor and destructor are both protected since this is a singleton.
+      //Constructor and destructor are both protected since this is a singleton.
    protected:
       /**
        * Opens the log file and writes the html header information.
@@ -298,6 +307,20 @@ namespace dtUtil
       LogImpl* mImpl;
    };
 
+
+   /**
+    * Scoped variable to turn off logging (except for always) for a block.
+    * This is useful for the tests
+    */
+   class DT_UTIL_EXPORT LoggingOff
+   {
+   public:
+      LoggingOff(const std::string& name = LogFile::LOG_DEFAULT_NAME);
+      ~LoggingOff();
+   private:
+      dtUtil::Log& mLog;
+      Log::LogMessageType mOldLevel;
+   };
 } // namespace dtUtil
 
 #endif // DELTA_LOG

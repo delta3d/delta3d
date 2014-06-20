@@ -163,7 +163,7 @@ namespace dtActors
       /**
       * Creates the Actor for this Proxy.
       */
-      virtual void CreateActor();
+      virtual void CreateDrawable();
 
       /**
       * Builds all properties for this Proxy.

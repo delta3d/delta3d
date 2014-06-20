@@ -76,24 +76,22 @@ namespace dtUtil
          std::string GetFileOutput() const;
 
          /// Dumps a node to an osg file
-         void PrintNodeToOSGFile(const osg::Node& node, const std::string &fileName);
+         void PrintNodeToOSGFile(const osg::Node& node, const std::string& fileName);
 
-         /// Dumps a node to a stream in osg formate
-         void PrintNodeToOSGFile(const osg::Node& node, std::ostringstream &oss);
+         /// Dumps a node to a stream in osgb format or the old .osg format if requested
+         void PrintNodeToOSGFile(const osg::Node& node, std::ostringstream& oss, bool oldOsgFormat = false);
 
       protected:
          /// Called from printoutnode user should never call
-         void Analyze(const osg::Node& nd, const std::string &indent, unsigned int nodeMask);
+         void Analyze(const osg::Node& nd, const std::string& indent, unsigned int nodeMask);
 
          /// Called from Analyze user should never call
-         void AnalyzeGeode(const osg::Geode& geode, const std::string &indent);
+         void AnalyzeGeode(const osg::Geode& geode, const std::string& indent);
 
          /// Called from AnalyzeGeode user should never call
-         void AnalyzePrimSet(const osg::PrimitiveSet& prset, const osg::Vec3Array& verts, const std::string &indent);
+         void AnalyzePrimSet(const osg::PrimitiveSet& prset, const osg::Vec3Array& verts, const std::string& indent);
 
       private:
-         /// to keep track for file* sake
-         unsigned int mTabAmount;
 
          /// What is used to print open close etc
          FILE* mFile;

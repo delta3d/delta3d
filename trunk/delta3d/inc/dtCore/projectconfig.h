@@ -51,12 +51,17 @@ namespace dtCore
    public:
       ProjectConfig();
 
+      /// The base path is root from which the relative paths of the context data are calculated.
+      DT_DECLARE_ACCESSOR(std::string, BasePath)
+
       DT_DECLARE_ACCESSOR(std::string, Name)
       DT_DECLARE_ACCESSOR(std::string, Description)
       DT_DECLARE_ACCESSOR(std::string, Author)
       DT_DECLARE_ACCESSOR(std::string, Comment)
       DT_DECLARE_ACCESSOR(std::string, Copyright)
       DT_DECLARE_ACCESSOR(bool, ReadOnly)
+
+      void ConvertContextDataToRelativeOfBasePath();
 
       DT_DECLARE_ARRAY_ACCESSOR(ContextData, ContextData, ContextData)
    private:

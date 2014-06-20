@@ -25,6 +25,11 @@
 #include <dtCore/gameevent.h>
 #include <dtGame/message.h>
 
+namespace dtGame
+{
+   class GameEventMessage;
+}
+
 namespace dtActors
 {
    /**
@@ -42,7 +47,7 @@ namespace dtActors
           * Constructs the task game event actor.
           * @param proxy Proxy owning this actor.
           */
-         TaskActorGameEvent(dtGame::GameActorProxy &proxy);
+         TaskActorGameEvent(dtGame::GameActorProxy& parent);
 
          /**
           * Sets this task back to its default state.
@@ -103,9 +108,9 @@ namespace dtActors
           * the number of times fired is incremented.  If the number of times
           * fired is equal to the min occurances property, the task will
           * attempt to set itself complete.
-          * @param msg The message contained the game event.
+          * @param eventMsg The message contained the game event.
           */
-         void HandleGameEvent(const dtGame::Message &msg);
+         void HandleGameEvent(const dtGame::GameEventMessage& eventMsg);
 
       protected:
 
@@ -161,7 +166,7 @@ namespace dtActors
          /**
           * Create the underlying game event task actor to be managed by this proxy.
           */
-         virtual void CreateActor();
+         virtual void CreateDrawable();
 
          /**
           * Called just after the proxy has entered the world or added to the game manager.

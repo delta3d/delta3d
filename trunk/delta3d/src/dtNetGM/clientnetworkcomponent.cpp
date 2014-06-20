@@ -80,7 +80,7 @@ namespace dtNetGM
 
       if (!address.isValid())
       {
-         LOGN_ERROR("ClientNetworkComponent.cpp", "Address invalid");
+         LOGN_ERROR("ClientNetworkComponent.cpp", "Address " + address.toString() + " invalid for host \"" + host + "\"");
          //EXCEPT(NetworkComponent::NetworkComponentException::INVALID_HOSTNAME, std::string("Address invalid."));
          return false;
       }

@@ -39,7 +39,7 @@ class FIRE_FIGHTER_EXPORT FireHoseActor : public GameItemActor
    public:
 
       /// Constructor
-      FireHoseActor(dtGame::GameActorProxy &proxy);
+      FireHoseActor(dtGame::GameActorProxy& parent);
 
       virtual void Activate(bool enable = true);
 
@@ -79,7 +79,7 @@ class FIRE_FIGHTER_EXPORT FireHoseActorProxy : public GameItemActorProxy
       virtual void BuildInvokables();
 
       /// Creates the actor
-      virtual void CreateActor() { SetActor(*new FireHoseActor(*this)); }
+      virtual void CreateDrawable() { SetDrawable(*new FireHoseActor(*this)); }
 
    protected:
 

@@ -95,7 +95,7 @@ void MapExporterPlugin::onExportButtonPressed()
                   AddResourcesFromProperty(properties[propIndex], packager);
                }
 
-               dtCore::DeltaDrawable* drawable = proxy->GetActor();
+               dtCore::DeltaDrawable* drawable = proxy->GetDrawable();
                if (drawable)
                {
                   AddResourcesFromNode(drawable->GetOSGNode(), packager);

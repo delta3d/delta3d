@@ -269,13 +269,13 @@ namespace dtDirector
 
 
    //////////////////////////////////////////////////////////////////////////
-   extern "C" NODE_LIBRARY_EXPORT dtDirector::NodePluginRegistry* CreatePluginRegistry()
+   extern "C" NODE_LIBRARY_EXPORT dtDirector::NodePluginRegistry* CreateNodePluginRegistry()
    {
       return new NodeLibraryRegistry;
    }
 
    //////////////////////////////////////////////////////////////////////////
-   extern "C" NODE_LIBRARY_EXPORT void DestroyPluginRegistry(dtDirector::NodePluginRegistry* registry)
+   extern "C" NODE_LIBRARY_EXPORT void DestroyNodePluginRegistry(dtDirector::NodePluginRegistry* registry)
    {
       delete registry;
    }

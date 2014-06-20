@@ -231,6 +231,7 @@ namespace dtEditQt
        * Constructor
        */
       AddCategoryDialog(QWidget* parent)
+      : QDialog(parent)
       {
          setWindowTitle(tr("Create New Category"));
          setModal(true);

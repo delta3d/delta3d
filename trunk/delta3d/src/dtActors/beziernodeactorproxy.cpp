@@ -34,7 +34,7 @@ namespace dtActors
    int BezierNodeActorProxy::mNumNodes = 0;
 
 
-   void BezierNodeActorProxy::CreateActor()
+   void BezierNodeActorProxy::CreateDrawable()
    {
       SetDrawable(*new dtABC::BezierNode);
 
@@ -87,9 +87,8 @@ namespace dtActors
 
    void BezierNodeActorProxy::SetBezierEntryControlPoint(dtCore::BaseActorObject* controlPoint)
    {
-      dtCore::BaseActorObject* old = GetLinkedActor("Entry Control Point");
-      //set the linked actor proxy for safe-keeping
-      SetLinkedActor("Entry Control Point", controlPoint);
+      dtCore::BaseActorObject* old = mEntryCp;
+      mEntryCp = controlPoint;
 
       if (old != NULL)
       {
@@ -101,8 +100,6 @@ namespace dtActors
          }
          else
          {
-            //clear out old the old proxy's bezier node to make sure we don't recurse
-            old->SetLinkedActor("Bezier Node", NULL);
             //set the value to NULL to clear out the internal data.
             static_cast<dtCore::ActorActorProperty*>(old->GetProperty("Bezier Node"))->SetValue(NULL);
          }
@@ -134,9 +131,7 @@ namespace dtActors
 
    void BezierNodeActorProxy::SetBezierExitControlPoint(dtCore::BaseActorObject* controlPoint)
    {
-      dtCore::BaseActorObject* old = GetLinkedActor("Exit Control Point");
-      //set the linked actor proxy for safe-keeping
-      SetLinkedActor("Exit Control Point", controlPoint);
+      dtCore::BaseActorObject* old = mExitCp;
 
       if (old != NULL)
       {
@@ -148,8 +143,6 @@ namespace dtActors
          }
          else
          {
-            //clear out old the old proxy's bezier node to make sure we don't recurse
-            old->SetLinkedActor("Bezier Node", NULL);
             //set the value to NULL to clear out the internal data.
             static_cast<dtCore::ActorActorProperty*>(old->GetProperty("Bezier Node"))->SetValue(NULL);
          }
@@ -182,8 +175,8 @@ namespace dtActors
 
    void BezierNodeActorProxy::SetNextBezierNode(dtCore::BaseActorObject* node)
    {
-      dtCore::BaseActorObject* old = GetLinkedActor("Next Bezier Node");
-      SetLinkedActor("Next Bezier Node", node);
+      dtCore::BaseActorObject* old = mNextBezierNode;
+      mNextBezierNode = node;
 
       if (old != NULL)
       {
@@ -195,8 +188,6 @@ namespace dtActors
          }
          else
          {
-            //clear out old the control point to make sure we don't recurse
-            old->SetLinkedActor("Previous Bezier Node", NULL);
             //set the value to NULL to clear out the internal data.
             static_cast<dtCore::ActorActorProperty*>(old->GetProperty("Previous Bezier Node"))->SetValue(NULL);
          }
@@ -231,9 +222,9 @@ namespace dtActors
    void BezierNodeActorProxy::SetPreviousBezierNode(dtCore::BaseActorObject* node)
    {
 
-      dtCore::BaseActorObject* old = GetLinkedActor("Previous Bezier Node");
+      dtCore::BaseActorObject* old = mPrevBezierNode;
       //set the linked actor proxy for safe-keeping
-      SetLinkedActor("Previous Bezier Node", node);
+      mPrevBezierNode = node;
 
       if (old != NULL)
       {
@@ -246,8 +237,6 @@ namespace dtActors
          else
          {
 
-            //clear out old the control point to make sure we don't recurse
-            old->SetLinkedActor("Next Bezier Node", NULL);
             //set the value to NULL to clear out the internal data.
             static_cast<dtCore::ActorActorProperty*>(old->GetProperty("Next Bezier Node"))->SetValue(NULL);
          }
@@ -307,7 +296,7 @@ namespace dtActors
    //////////////////////////////////////////////////////////////////////////
    const dtCore::BaseActorObject::RenderMode& BezierNodeActorProxy::GetRenderMode()
    {
-         return dtCore::BaseActorObject::RenderMode::DRAW_BILLBOARD_ICON;
+      return dtCore::BaseActorObject::RenderMode::DRAW_BILLBOARD_ICON;
    }
 
    //////////////////////////////////////////////////////////////////////////

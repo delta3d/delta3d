@@ -9,8 +9,8 @@ file(GLOB LIB_SOURCES "*.cpp")
 list(REMOVE_ITEM LIB_SOURCES ${SOURCE_PATH}/precomp.cpp)
 
 INCLUDE_DIRECTORIES( ${GNE_INCLUDE_DIR}  
-                                    ${HAWKNL_INCLUDE_DIR}
-                                    ${Boost_INCLUDE_DIR})
+                     ${HAWKNL_INCLUDE_DIR}
+                     ${Boost_INCLUDE_DIR})
 
 ADD_LIBRARY(${LIB_NAME} STATIC
     ${LIB_PUBLIC_HEADERS}

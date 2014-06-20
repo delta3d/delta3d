@@ -23,9 +23,9 @@ namespace dtActors
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void LabelActorProxy::CreateActor()
+   void LabelActorProxy::CreateDrawable()
    {
-      SetActor(*new dtABC::LabelActor);
+      SetDrawable(*new dtABC::LabelActor);
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -34,7 +34,7 @@ namespace dtActors
       BaseClass::BuildPropertyMap();
 
       dtABC::LabelActor* actor = NULL;
-      GetActor(actor);
+      GetDrawable(actor);
 
       // Get the properties for the actor.
       dtABC::LabelActor::ActorPropertyArray properties;

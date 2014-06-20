@@ -103,7 +103,7 @@ SET(LIB_SOURCES ${SOURCE_PATH}/actionitem.cpp
     ${SOURCE_PATH}/valueitem.cpp
 )
 
-SET(QT_UI_SOURCES
+qt4_wrap_ui(UI_SOURCES
     ${UI_PATH}/directoreditor.ui
 	${UI_PATH}/plugindialog.ui
 )
@@ -113,14 +113,13 @@ QT4_ADD_RESOURCES(RCC_SOURCES
 	directorqt.qrc
 	docs/help.qrc
 )
-QT4_WRAP_UI_COPY(UI_SOURCES ${QT_UI_SOURCES})
 
 ############### SOURCE FILE ORGANIZATION #################
 SOURCE_GROUP("Auto-Generated" FILES ${MOC_SOURCES})
 SOURCE_GROUP("Auto-Generated" FILES ${RCC_SOURCES})
 SOURCE_GROUP("Auto-Generated" FILES ${UI_SOURCES})
 
-SOURCE_GROUP("UI Files" FILES ${QT_UI_SOURCES})
+SOURCE_GROUP("UI Files" FILES ${UI_SOURCES})
 ##########################################################
 
 INCLUDE_DIRECTORIES(
@@ -130,34 +129,25 @@ INCLUDE_DIRECTORIES(
 
 ADD_PRECOMPILED_HEADER(${LIB_NAME} prefix/dtdirectorqtprefix.h prefix/dtdirectorqtprefix.cpp LIB_SOURCES)
 
-
-
-ADD_LIBRARY(${LIB_NAME} SHARED
-    ${LIB_PUBLIC_HEADERS}
+set(LIB_SOURCES
     ${LIB_SOURCES}
     ${MOC_SOURCES}
     ${RCC_SOURCES}
     ${UI_SOURCES}
 )
 
+SET(LIB_EXTERNAL_DEPS
+  QT_QTCORE_LIBRARY
+  QT_QTGUI_LIBRARY
+  QT_QTOPENGL_LIBRARY
+  QT_PHONON_LIBRARY
+ )
 
+SET(LIB_DEPS
+     ${DTDIRECTOR_LIBRARY}
+     dtDirectorNodes # need a macro for this.
+     ${DTQT_LIBRARY}
+   )
 
-LINK_WITH_VARIABLES(${LIB_NAME}
-                    QT_QTCORE_LIBRARY
-                    QT_QTGUI_LIBRARY
-                    QT_QTOPENGL_LIBRARY
-                    QT_PHONON_LIBRARY
-                   )
-
-TARGET_LINK_LIBRARIES( ${LIB_NAME}
-                       ${DTDIRECTOR_LIBRARY}
-                       dtDirectorNodes # need a macro for this.
-                       ${DTQT_LIBRARY}
-                     )
-
-SET_TARGET_PROPERTIES(${LIB_NAME}
-                     PROPERTIES DEFINE_SYMBOL DIRECTOR_QT_LIBRARY)
-
-
-INCLUDE(ModuleInstall OPTIONAL)
+DELTA3D_ADD_LIBRARY(${LIB_NAME} DIRECTOR_QT_LIBRARY)
 

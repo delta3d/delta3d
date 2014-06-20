@@ -111,9 +111,13 @@ namespace dtCore
    osgDB::ReaderWriter::ReadResult ProjectConfigReaderWriter::readObject(const std::string& fileName,const osgDB::ReaderWriter::Options* options) const
    {
       std::string ext = osgDB::getLowerCaseFileExtension(fileName);
+      std::string path = osgDB::getFilePath(fileName);
+
+      dtUtil::FileUtils& fileutils = dtUtil::FileUtils::GetInstance();
+
       if (!acceptsExtension(ext)) return ReadResult::FILE_NOT_HANDLED;
 
-      if (!dtUtil::FileUtils::GetInstance().FileExists(fileName))
+      if (!fileutils.FileExists(fileName))
       {
          return osgDB::ReaderWriter::ReadResult(osgDB::ReaderWriter::ReadResult::FILE_NOT_FOUND);
       }
@@ -125,7 +129,11 @@ namespace dtCore
          return osgDB::ReaderWriter::ReadResult(osgDB::ReaderWriter::ReadResult::ERROR_IN_READING_FILE);
       }
 
-      return readObject(confStream, options);
+      osgDB::ReaderWriter::ReadResult result = osgDB::ReaderWriter::ReadResult::ERROR_IN_READING_FILE;
+
+      dtUtil::DirectoryPush dPush(path);
+      result = readObject(confStream, options);
+      return result;
    }
 
    //////////////////////////////////////////////////////////////////////////////////
@@ -135,6 +143,9 @@ namespace dtCore
 
       dtCore::RefPtr<ProjectConfig> projConfig;
       pcxml->Parse(fin, projConfig);
+      // sadly, this won't work right if you call this function yourself and don't set the current
+      // directory to the one where the project config file sits.
+      projConfig->SetBasePath(dtUtil::FileUtils::GetInstance().CurrentDirectory());
 
       if (projConfig != NULL)
       {

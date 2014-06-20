@@ -33,7 +33,7 @@
 #include <dtCore/scene.h>
 #include <dtCore/camera.h>
 #include <dtABC/application.h>
-#include <dtDAL/enginepropertytypes.h>
+#include <dtCore/enginepropertytypes.h>
 #include <dtGame/messagetype.h>
 #include <dtGame/environmentactor.h>
 #include <algorithm>
@@ -103,9 +103,9 @@ namespace dtPhysics
 
          bool operator()(dtCore::RefPtr<PhysicsActComp>& actComp)
          {
-            dtGame::GameActor* ga = NULL;
-            actComp->GetOwner(ga);
-            if (ga != NULL && ga->GetUniqueId() == mId)
+            dtGame::GameActorProxy* act = NULL;
+            actComp->GetOwner(act);
+            if (act != NULL && act->GetId() == mId)
             {
                actComp->CleanUp();
                return true;
@@ -128,13 +128,13 @@ namespace dtPhysics
       }
       else if (message.GetMessageType() == dtGame::MessageType::SYSTEM_POST_FRAME)
       {
-         const dtGame::TickMessage& tm = static_cast<const dtGame::TickMessage&>(message);
-         WaitUntilUpdateCompletes(tm);
+         //const dtGame::TickMessage& tm = static_cast<const dtGame::TickMessage&>(message);
+         WaitUntilUpdateCompletes();
       }
       else if (message.GetMessageType() == dtGame::MessageType::INFO_ACTOR_CREATED)
       {
          const dtGame::ActorUpdateMessage& aum = dynamic_cast<const dtGame::ActorUpdateMessage&>(message);
-         const dtDAL::ActorType* atype = aum.GetActorType();
+         const dtCore::ActorType* atype = aum.GetActorType();
          if (atype != NULL && *atype == *PhysicsActorRegistry::PHYSICS_MATERIAL_ACTOR_TYPE)
          {
             MaterialActorProxy* materialActor = NULL;
@@ -195,7 +195,7 @@ namespace dtPhysics
          mDebDraw->SetActive(false);
       }
 
-      dtDAL::ActorProxy* EnvActor = GetGameManager()->GetEnvironmentActor();
+      dtCore::ActorProxy* EnvActor = GetGameManager()->GetEnvironmentActor();
       if (EnvActor == NULL)
       {
          bool enable = !mDebDraw->GetActive();
@@ -208,18 +208,18 @@ namespace dtPhysics
 
          static osg::Vec4 oldClearColor;
 
-         if (EnvActor->GetActor()->GetActive())
+         if (EnvActor->GetDrawable()->GetActive())
          {
             cam->GetClearColor(oldClearColor);
          }
 
          bool physicsDrawActive = !GetPhysicsWorld().GetDebugDrawEnabled() ||
-                  !EnvActor->GetActor()->GetActive();
+                  !EnvActor->GetDrawable()->GetActive();
          bool worldActive = dtPhysics::PhysicsWorld::GetInstance().GetDebugDrawEnabled();
 
          dtPhysics::PhysicsWorld::GetInstance().SetDebugDrawEnabled(physicsDrawActive);
          mDebDraw->SetActive(physicsDrawActive);
-         EnvActor->GetActor()->SetActive(worldActive);
+         EnvActor->GetDrawable()->SetActive(worldActive);
 
          if (!worldActive)
          {
@@ -308,10 +308,10 @@ namespace dtPhysics
    /////////////////////////////////////////////////////////////////////////////
    void PhysicsComponent::UpdateMaterials()
    {
-      std::vector<dtDAL::ActorProxy*> toFill;
+      std::vector<dtCore::ActorProxy*> toFill;
       GetGameManager()->FindActorsByType(*PhysicsActorRegistry::PHYSICS_MATERIAL_ACTOR_TYPE, toFill);
 
-      std::vector<dtDAL::ActorProxy*>::iterator i, iend;
+      std::vector<dtCore::ActorProxy*>::iterator i, iend;
       i = toFill.begin();
       iend = toFill.end();
       for (; i != iend; ++i)
@@ -328,19 +328,19 @@ namespace dtPhysics
    void PhysicsComponent::AddMaterialActor(MaterialActorProxy& materialActor)
    {
       PhysicsMaterials& materials = mImpl->GetMaterials();
-      MaterialActor* actorObject = NULL;
-      materialActor.GetActor(actorObject);
+      MaterialActor* drawable = NULL;
+      materialActor.GetDrawable(drawable);
 
-      Material* uniqueMaterial = materials.GetMaterial(actorObject->GetName());
+      Material* uniqueMaterial = materials.GetMaterial(drawable->GetName());
       if (uniqueMaterial != NULL)
       {
          // If the material already exists, the definition of said material may be changed by setting the materials
          // interaction with itself. This is weird, and should really be rethought out. -DG
-         materials.SetMaterialInteraction(actorObject->GetName(), actorObject->GetName(), actorObject->GetMateralDef());
+         materials.SetMaterialInteraction(materialActor.GetName(), materialActor.GetName(), drawable->GetMateralDef());
       }
       else
       {
-         materials.NewMaterial(actorObject->GetName(), actorObject->GetMateralDef());
+         materials.NewMaterial(materialActor.GetName(), drawable->GetMateralDef());
       }
    }
 
@@ -448,7 +448,7 @@ namespace dtPhysics
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void PhysicsComponent::WaitUntilUpdateCompletes(const dtGame::TickMessage& tm)
+   void PhysicsComponent::WaitUntilUpdateCompletes()
    {
       if (mSteppingEnabled && mStepInBackground)
       {

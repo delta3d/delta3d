@@ -179,10 +179,10 @@ bool CheckForError(const std::string& userMessage,
          errorStringToPrint = std::string("description unavailable - OpenAL code: ") + dtUtil::ToString(error);
       }
 
-      finalStream << "User Message: [" << userMessage << "] OpenAL Message: [" << errorStringToPrint << "]";
+      finalStream << "User Message: \"" << userMessage << "\" - OpenAL Message: \"" << errorStringToPrint << "\"";
       dtUtil::Log::GetInstance("audiomanager.cpp").LogMessage(dtUtil::Log::LOG_WARNING, msgFunction, lineNumber, finalStream.str().c_str());
 
-      return AL_TRUE;
+      return true;
    }
    else
    {
@@ -191,12 +191,12 @@ bool CheckForError(const std::string& userMessage,
       if (alutError != ALUT_ERROR_NO_ERROR)
       {
          std::ostringstream finalStream;
-         finalStream << "User Message: [" << userMessage << "] " << "Alut Message: [" << alutGetErrorString(alutError) << "] Line " << lineNumber;
+         finalStream << "User Message: \"" << userMessage << "\" " << " - Alut Message: \"" << alutGetErrorString(alutError) << "\" Line " << lineNumber;
          dtUtil::Log::GetInstance("audiomanager.cpp").LogMessage(dtUtil::Log::LOG_WARNING, msgFunction, lineNumber, finalStream.str().c_str());
-         return AL_TRUE;
+         return true;
       }
    }
-   return AL_FALSE;
+   return false;
 }
 
 } //namespace dtAudio
@@ -223,7 +223,7 @@ AudioManager::AudioManager(const std::string& name /*= "audiomanager"*/,
    {
       if (alutInit(NULL, NULL) == AL_FALSE)
       {
-         std::cout << "Error initializing alut" << std::cout;
+         std::cout << "Error initializing alut" << std::endl;
          CheckForError("alutInit(NULL, NULL)", __FUNCTION__, __LINE__);
       }
       CheckForError(ERROR_CLEARING_STRING, __FUNCTION__, __LINE__);
@@ -238,7 +238,7 @@ AudioManager::AudioManager(const std::string& name /*= "audiomanager"*/,
    {
       if(alutInitWithoutContext(NULL, NULL) == AL_FALSE)
       {
-         std::cout << "Error initializing alut" << std::cout;
+         std::cout << "Error initializing alut" << std::endl;
          CheckForError("alutInit(NULL, NULL)", __FUNCTION__, __LINE__);
       }
       CheckForError(ERROR_CLEARING_STRING, __FUNCTION__, __LINE__);
@@ -911,8 +911,8 @@ bool AudioManager::ReleaseSoundBuffer(ALuint bufferHandle, const std::string& er
    }
    else
    {
-      dtUtil::Log::GetInstance("audiomanager.cpp").LogMessage(callerFunctionName,
-         callerFunctionLineNum, "Sound buffer was invalid.", dtUtil::Log::LOG_WARNING);
+      dtUtil::Log::GetInstance("audiomanager.cpp").LogMessage(dtUtil::Log::LOG_WARNING, callerFunctionName,
+         callerFunctionLineNum, "Sound buffer was invalid.");
    }
 
    return success;

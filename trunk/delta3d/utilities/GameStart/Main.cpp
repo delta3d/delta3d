@@ -24,6 +24,7 @@
  * circumstances in which the U. S. Government may have rights in the software.
  *
  * David Guthrie
+ * energonquest (forum id)
  */
 
 #include <dtCore/refptr.h>
@@ -35,71 +36,87 @@
 
 #include <iostream>
 #include <cstdlib>
+#include <osg/ArgumentParser>
+#include <osgDB/FileNameUtils>
+#include <sstream>
 
-void ShowUsageAndExit()
+void ParseCLI(int& argc, char** argv, std::string& configFileName, std::string& appToLoad, std::string& logFileName)
 {
-   std::cerr << "Usage: GameStart [--configFileName <file>] <AppLibraryName> [App Library args]\n";
-   std::cerr << "   Note: AppLibraryName should not have the extension or Unix library prefix on it.\n";
-   std::cerr << "   For example libMyApp.so, MyApp.dll, or libMyApp.dylib would all be loaded as 'GameStart MyApp'." << std::endl;
-   exit(1);
+   osg::ArgumentParser arguments(&argc, argv);
+
+   arguments.getApplicationUsage()->setApplicationName("GameStart");
+   arguments.getApplicationUsage()->setDescription("GameStart is the application that loads an entry point.");
+   std::ostringstream msg;
+   msg << arguments.getApplicationName() << " [AppLibraryName] [options] parameter ...\n"
+         << "  Note: AppLibraryName should not have the extension or Unix library prefix on it.\n"
+         << "  For example libMyApp.so, MyApp.dll, or libMyApp.dylib would all be loaded as 'GameStart MyApp'.";
+   arguments.getApplicationUsage()->setCommandLineUsage(msg.str());
+
+   arguments.getApplicationUsage()->addCommandLineOption("--configFileName <filename>","Load application configuration file, if not present default config.xml.");
+   arguments.getApplicationUsage()->addCommandLineOption("--logFileName <filename>","The name of the log file to use.  Defaults to [AppLibraryName]_log.html");
+   arguments.getApplicationUsage()->addCommandLineOption("--help","Show usage.");
+
+   if (arguments.read("--help") == true)
+   {
+      arguments.getApplicationUsage()->write(std::cout);
+      exit(1);
+   }
+
+   arguments.read("--configFileName", configFileName);
+   arguments.read("--logFileName", logFileName);
+
+   // After removing all options, the library must be the first remaining parameter.
+   if (!arguments.isOption(1))
+   {
+      appToLoad = arguments[1];
+      arguments.remove(1,1);
+   }
+
+   if (appToLoad.empty())
+   {
+      arguments.getApplicationUsage()->write(std::cout);
+      exit(1);
+   }
 }
 
 int main(int argc, char** argv)
 {
-   bool showUsage = false;
+   std::string appToLoad = argv[0];
+   // If you don't pass an app name, it will use the name of the executable as
+   // the name of the library to load.
+   appToLoad = osgDB::getSimpleFileName(appToLoad);
+   appToLoad = osgDB::getNameLessExtension(appToLoad);
 
-   std::string appToLoad;
+   // We don't want to try to load a library named "GameStart"
+   if (appToLoad == "GameStart")
+   {
+      appToLoad.clear();
+   }
 
-   int curArg = 1;
    std::string configFileName("config.xml");
 
-   while (!showUsage && appToLoad.empty() && curArg < argc)
+   std::string logFileName;
+
+   ParseCLI(argc, argv, configFileName, appToLoad, logFileName);
+
+   if (logFileName.empty())
    {
-      std::string curArgv = argv[curArg];
-      if (!curArgv.empty())
-      {
-         if (curArgv == "--configFileName")
-         {
-            ++curArg;
-            if (curArg < argc)
-            {
-               configFileName = argv[curArg];
-            }
-            else
-            {
-               showUsage = true;
-            }
-         }
-         else if (curArgv[0] == '-')
-         {
-            std::cerr << "Unknown option: " << curArgv << std::endl;
-            showUsage = true;
-         }
-         else
-         {
-            appToLoad = curArgv;
-         }
-      }
-      ++curArg;
+      logFileName = appToLoad + "_log.html";
    }
 
-   //The loop always overruns by one, so subtract it back off.
-   --curArg;
+   dtUtil::LogFile::SetFileName(logFileName);
+#ifdef _DEBUG
+   dtUtil::LogFile::SetTitle(appToLoad + " Log File (Debug Libs)");
+#else
+   dtUtil::LogFile::SetTitle(appToLoad + " Log File");
+#endif
 
-   if (appToLoad.empty() || showUsage)
-   {
-      ShowUsageAndExit();
-   }
-
-   argc -= curArg;
-   argv = argv + curArg;
    try
    {
-      dtCore::RefPtr<dtGame::GameApplication> app = new dtGame::GameApplication(argc, argv, configFileName);
-      app->SetGameLibraryName(appToLoad);
-      app->Config();
-      app->Run();
-      app = NULL;
+      dtGame::GameApplicationLoader loader(argc, argv);
+      loader.SetGameLibraryName(appToLoad);
+      loader.Config(configFileName);
+      loader.Run();
 
       std::cerr << "The Game Manager is now shutting down ... " << std::endl;
    }

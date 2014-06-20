@@ -11,9 +11,9 @@ SampleGameActorProxy::~SampleGameActorProxy()
 {
 }
 
-void SampleGameActorProxy::CreateActor()
+void SampleGameActorProxy::CreateDrawable()
 {
-   SetActor( *(new dtGame::GameActor(*this)) );
+   SetDrawable( *(new dtGame::GameActor(*this)) );
 }
 
 void SampleGameActorProxy::BuildPropertyMap()

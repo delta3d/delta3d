@@ -29,7 +29,7 @@
 #include <dtCore/actorproxy.h>
 #include <dtCore/export.h>
 #include <dtCore/resourcedescriptor.h>
-#include <dtCore/transformable.h>
+#include <dtCore/collisiongeometrytypeenum.h>
 
 #include <dtUtil/getsetmacros.h>
 
@@ -118,14 +118,14 @@ namespace dtCore
           * @param oldValue The previous value
           * @param newValue The new value
           */
-         virtual void OnRotation(const osg::Vec3 &oldValue, const osg::Vec3 &newValue) { }
+         virtual void OnRotation(const osg::Vec3& /*oldValue*/, const osg::Vec3& /*newValue*/) { }
 
          /**
           * Called when the SetTranslation function is called
           * @param oldValue The previous value
           * @param newValue The new value
           */
-         virtual void OnTranslation(const osg::Vec3 &oldValue, const osg::Vec3 &newValue) { }
+         virtual void OnTranslation(const osg::Vec3& /*oldValue*/, const osg::Vec3& /*newValue*/) { }
 
 
          /**
@@ -144,13 +144,13 @@ namespace dtCore
           * Sets the type of collision geometry to use for this object.
           * @param type Enumeration depicting the type of collision to use.
           */
-         void SetCollisionType(dtCore::Transformable::CollisionGeomType &type);
+         void SetCollisionType(dtCore::CollisionGeomType& type);
 
          /**
           * Gets the current collision geometry type.
           * @return An enumeration of the type of geometry.
           */
-         dtCore::Transformable::CollisionGeomType &GetCollisionType();
+         dtCore::CollisionGeomType& GetCollisionType();
 
          /**
           * Sets the collision radius.  This is used if either sphere or cylinder collision
@@ -263,7 +263,7 @@ namespace dtCore
          osg::Vec3 mCollisionBoxDims;
          float mCollisionRadius;
          float mCollisionLength;
-         dtCore::Transformable::CollisionGeomType* mCollisionType;
+         dtCore::CollisionGeomType* mCollisionType;
          osg::ref_ptr<osg::Node> mAltCollisionGeometry;
 
          osg::Node* LoadAltCollisionMesh(const dtCore::ResourceDescriptor& resource);

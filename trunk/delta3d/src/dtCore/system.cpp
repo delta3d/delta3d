@@ -195,7 +195,7 @@ namespace dtCore
       void CameraFrame();
 
       ///One System frame
-      void SystemStep();
+      void SystemStep(float realDt = 0.0f);
 
       /// A passthough hack so impl methods can send messages
       void SendMessage(const std::string& message = "", void* data = NULL)
@@ -526,12 +526,16 @@ namespace dtCore
 
    ////////////////////////////////////////////////////////////////////////////////
    ///private
-   void SystemImpl::SystemStep()
+   void SystemImpl::SystemStep(float realDeltaOverride)
    {
-      const Timer_t lastClockTime  = mTickClockTime;
-      mTickClockTime = mClock.Tick();
+      double realDT = realDeltaOverride;
+      if (realDeltaOverride < FLT_EPSILON)
+      {
+         const Timer_t lastClockTime  = mTickClockTime;
+         mTickClockTime = mClock.Tick();
 
-      const double realDT = mClock.DeltaSec(lastClockTime, mTickClockTime);
+         realDT = mClock.DeltaSec(lastClockTime, mTickClockTime);
+      }
 
       // update real time variable(s)
       mRealClockTime += Timer_t(realDT * 1000000);
@@ -648,7 +652,7 @@ namespace dtCore
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void System::Step()
+   void System::Step(float realDt)
    {
       static bool first = true;
 
@@ -663,7 +667,7 @@ namespace dtCore
          first = false;
       }
 
-      mSystemImpl->SystemStep();
+      mSystemImpl->SystemStep(realDt);
    }
 
    ////////////////////////////////////////////////////////////////////////////////

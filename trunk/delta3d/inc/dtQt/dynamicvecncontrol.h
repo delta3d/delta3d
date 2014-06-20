@@ -57,7 +57,7 @@ namespace dtQt
     * @class DynamicVecNControl
     * @brief This is the dynamic control for the N dimensional vector data type -
     * used in the property editor
-    * @Note It adds a group of child elements to the tree, since you can't edit multiple things
+    * @note It adds a group of child elements to the tree, since you can't edit multiple things
     * in one control easily.
     */
    template <typename PropertyType>

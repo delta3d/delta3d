@@ -146,10 +146,20 @@ namespace dtGame
    //////////////////////////////////////////////////////////////////////
    void DeadReckoningComponent::RegisterActor(dtGame::GameActorProxy& toRegister, DeadReckoningHelper& helper)
    {
+      dtCore::Transformable* xformable = NULL;
+      toRegister.GetDrawable(xformable);
+      if (xformable == NULL)
+      {
+         throw dtGame::DeadReckoningException(
+               "Actor \"" + toRegister.GetName() +
+               "\" Is not transformable, so it may not be dead-reckoned \"" +
+               GetName() +  ".\"" , __FILE__, __LINE__);
+      }
+
       DeadReckoningHelper::UpdateMode* updateMode = &helper.GetUpdateMode();
       if (*updateMode == DeadReckoningHelper::UpdateMode::AUTO)
       {
-         if (toRegister.GetGameActor().IsRemote())
+         if (toRegister.IsRemote())
          {
             updateMode = &DeadReckoningHelper::UpdateMode::CALCULATE_AND_MOVE_ACTOR;
          }
@@ -168,14 +178,17 @@ namespace dtGame
       }
       else if (helper.IsUpdated())
       {
-         if (helper.GetEffectiveUpdateMode(toRegister.GetGameActor().IsRemote())
+         if (helper.GetEffectiveUpdateMode(toRegister.IsRemote())
             == DeadReckoningHelper::UpdateMode::CALCULATE_AND_MOVE_ACTOR)
          {
             dtCore::Transform xform;
-            toRegister.GetGameActor().GetTransform(xform, dtCore::Transformable::REL_CS);
-            xform.SetTranslation(helper.GetLastKnownTranslation());
-            xform.SetRotation(helper.GetLastKnownRotation());
-            toRegister.GetGameActor().SetTransform(xform, dtCore::Transformable::REL_CS);
+            if (xformable != NULL)
+            {
+               xformable->GetTransform(xform, dtCore::Transformable::REL_CS);
+               xform.SetTranslation(helper.GetLastKnownTranslation());
+               xform.SetRotation(helper.GetLastKnownRotation());
+               xformable->SetTransform(xform, dtCore::Transformable::REL_CS);
+            }
             helper.SetTranslationBeforeLastUpdate( helper.GetLastKnownTranslation() );
             helper.SetRotationBeforeLastUpdate( helper.GetLastKnownRotationByQuaternion() );
          }
@@ -183,11 +196,11 @@ namespace dtGame
 
       // If the actor is local, don't move it, and force the
       // helper to match as if it was just updated.
-      if (helper.GetEffectiveUpdateMode(toRegister.GetGameActor().IsRemote())
+      if (helper.GetEffectiveUpdateMode(toRegister.IsRemote())
          == DeadReckoningHelper::UpdateMode::CALCULATE_ONLY)
       {
          dtCore::Transform xform;
-         toRegister.GetGameActor().GetTransform(xform, dtCore::Transformable::REL_CS);
+         xformable->GetTransform(xform, dtCore::Transformable::REL_CS);
 
          osg::Vec3 pos;
          xform.GetTranslation(pos);
@@ -213,15 +226,6 @@ namespace dtGame
    }
 
    //////////////////////////////////////////////////////////////////////
-   const DeadReckoningHelper* DeadReckoningComponent::GetHelperForProxy(dtGame::GameActorProxy &proxy) const
-   {
-      std::map<dtCore::UniqueId,
-         dtCore::RefPtr<DeadReckoningHelper> >::const_iterator itor = mRegisteredActors.find(proxy.GetId());
-
-      return itor == mRegisteredActors.end() ? NULL : itor->second.get();
-   }
-
-   //////////////////////////////////////////////////////////////////////
    bool DeadReckoningComponent::IsRegisteredActor(dtGame::GameActorProxy& gameActorProxy)
    {
       std::map<dtCore::UniqueId, dtCore::RefPtr<DeadReckoningHelper> >::iterator itor;
@@ -238,21 +242,22 @@ namespace dtGame
          i != mRegisteredActors.end(); ++i)
       {
 
-         dtGame::GameActorProxy* gameActorProxy = GetGameManager()->FindGameActorById(i->first);
-         if (gameActorProxy == NULL)
+         dtGame::GameActorProxy* actor = GetGameManager()->FindGameActorById(i->first);
+         if (actor == NULL)
          {
             continue;
          }
 
-         dtGame::GameActor& gameActor = gameActorProxy->GetGameActor();
+         dtGame::GameActor* drawable = NULL;
+         actor->GetDrawable(drawable);
          DeadReckoningHelper& helper = *i->second;
 
          if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
          {
             mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
                "Dead Reckoning actor named \"%s\" with ID \"%s\" and type \"%s.\"",
-               gameActor.GetName().c_str(), gameActor.GetUniqueId().ToString().c_str(),
-               gameActorProxy->GetActorType().GetFullName().c_str());
+               actor->GetName().c_str(), actor->GetId().ToString().c_str(),
+               actor->GetActorType().GetFullName().c_str());
          }
 
          dtCore::Transform xform;
@@ -268,12 +273,12 @@ namespace dtGame
 
          // Actual dead reckoning code moved into the helper..
          BaseGroundClamper::GroundClampRangeType* groundClampingType = &BaseGroundClamper::GroundClampRangeType::NONE;
-         bool transformChanged = helper.DoDR(gameActor, xform, mLogger, groundClampingType);
+         bool transformChanged = helper.DoDR(*drawable, xform, mLogger, groundClampingType);
 
          if (helper.GetDeadReckoningAlgorithm() != DeadReckoningAlgorithm::NONE)
          {
             // Only ground clamp and move remote objects.
-            if (helper.GetEffectiveUpdateMode(gameActor.IsRemote())
+            if (helper.GetEffectiveUpdateMode(actor->IsRemote())
                   == DeadReckoningHelper::UpdateMode::CALCULATE_AND_MOVE_ACTOR)
             {
                osg::Vec3 velocity(helper.GetCurrentInstantVelocity()); //  helper.GetLastKnownVelocity() + helper.GetLastKnownAcceleration() * simTimeDelta );
@@ -281,13 +286,13 @@ namespace dtGame
                // Call the ground clamper for the current object. The ground clamper should 
                // be smart enough to know what to do with the supplied values.
                mGroundClamper->ClampToGround(*groundClampingType, tickMessage.GetSimulationTime(),
-                        xform, gameActor.GetGameActorProxy(),
+                        xform, *actor,
                         helper.GetGroundClampingData(), transformChanged, velocity);
 
                if(mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
                {
                   std::ostringstream ss;
-                  ss << "Actor " << gameActor.GetUniqueId() << " - " << gameActor.GetName() << " has attitude "
+                  ss << "Actor " << actor->GetId() << " - " << actor->GetName() << " has attitude "
                      << "\"" << helper.GetCurrentDeadReckonedRotation() << "\" and position \"" << helper.GetCurrentDeadReckonedTranslation() << "\" at time "
                      << helper.GetLastRotationUpdatedTime() +  helper.GetRotationElapsedTimeSinceUpdate() << "";
                   mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
@@ -295,7 +300,7 @@ namespace dtGame
                }
             }
 
-            DoArticulation(helper, gameActor, tickMessage);
+            DoArticulation(helper, *drawable, tickMessage);
          }
          // Clear the updated flag.
          helper.ClearUpdated();
@@ -306,7 +311,7 @@ namespace dtGame
    }
 
    void DeadReckoningComponent::DoArticulation(dtGame::DeadReckoningHelper& helper,
-                                               const dtGame::GameActor& gameActor,
+                                               const dtCore::Transformable& xformable,
                                                const dtGame::TickMessage& tickMessage) const
    {
       if(helper.GetNodeCollector() == NULL)

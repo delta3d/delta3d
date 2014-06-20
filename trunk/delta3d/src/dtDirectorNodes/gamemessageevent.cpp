@@ -21,8 +21,8 @@
 #include <prefix/dtdirectornodesprefix.h>
 #include <dtDirectorNodes/gamemessageevent.h>
 
-#include <dtDAL/stringactorproperty.h>
-#include <dtDAL/actorproxy.h>
+#include <dtCore/stringactorproperty.h>
+#include <dtCore/actorproxy.h>
 
 #include <dtDirector/director.h>
 #include <dtDirector/messagegmcomponent.h>
@@ -49,10 +49,10 @@ namespace dtDirector
    {
       EventNode::BuildPropertyMap();
 
-      dtDAL::StringActorProperty* messageTypeProp = new dtDAL::StringActorProperty(
+      dtCore::StringActorProperty* messageTypeProp = new dtCore::StringActorProperty(
          "Message Type", "Message Type",
-         dtDAL::StringActorProperty::SetFuncType(this, &GameMessageEvent::SetMessageType),
-         dtDAL::StringActorProperty::GetFuncType(this, &GameMessageEvent::GetMessageType),
+         dtCore::StringActorProperty::SetFuncType(this, &GameMessageEvent::SetMessageType),
+         dtCore::StringActorProperty::GetFuncType(this, &GameMessageEvent::GetMessageType),
          "The name of the message type.");
       AddProperty(messageTypeProp);
 

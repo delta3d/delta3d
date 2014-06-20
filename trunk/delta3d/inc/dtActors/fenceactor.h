@@ -436,7 +436,7 @@ namespace dtActors
       /**
       * Creates the default actor associated with this proxy.
       */
-      void CreateActor();
+      void CreateDrawable();
 
       /**
       * Builds the property map.

@@ -529,7 +529,7 @@ namespace dtTerrain
    //////////////////////////////////////////////////////////////////////////
    void SoarXDrawable::CheckChildren1(Index index, unsigned int shift)
    {
-      Index t(index);
+      //Index t(index);
       unsigned int w = 1 << (shift-1);
 
       index <<= shift;
@@ -812,7 +812,10 @@ namespace dtTerrain
    void SoarXDrawable::TurnCorner()
    {
        if (mActiveIndexArray != NULL)
-         mActiveIndexArray[mIAIndex++] = mActiveIndexArray[mIAIndex-2];
+       {
+          mActiveIndexArray[mIAIndex] = mActiveIndexArray[mIAIndex-2];
+          mIAIndex++;
+       }
    }
 
    //////////////////////////////////////////////////////////////////////////

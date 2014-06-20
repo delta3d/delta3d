@@ -60,7 +60,7 @@ namespace dtActors
 
       PrefabActorProxy();
 
-      virtual void CreateActor();
+      virtual void CreateDrawable();
 
       virtual void BuildPropertyMap();
 
@@ -74,7 +74,7 @@ namespace dtActors
       virtual ~PrefabActorProxy();
 
    private:
-      std::vector<dtCore::RefPtr<dtCore::BaseActorObject> > mProxies;
+      std::vector<dtCore::RefPtr<dtCore::BaseActorObject> > mActors;
 
       dtCore::RefPtr<dtCore::Map> mMap;
    };

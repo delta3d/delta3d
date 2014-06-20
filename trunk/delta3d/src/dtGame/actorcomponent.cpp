@@ -23,58 +23,61 @@
 
 #include <prefix/dtgameprefix.h>
 #include <dtGame/actorcomponent.h>
-#include <cassert>
 #include <dtGame/gameactor.h>
 #include <dtGame/gameactorproxy.h>
 #include <dtGame/invokable.h>
 #include <dtGame/messagetype.h>
 #include <dtGame/message.h>
 #include <dtGame/basemessages.h> //for TickMessage
+#include <dtUtil/log.h>
+#include <stdexcept>
 
-using namespace dtGame;
+namespace dtGame
+{
+
+const ActorComponent::ACType ActorComponent::BaseActorComponentType(new dtCore::ActorType("Base", "ActorComponents", "A base type so that all actor component types should set as a parent"));
+
 
 ////////////////////////////////////////////////////////////////////////////////
-dtGame::ActorComponent::ActorComponent(const ACType& type) 
+ActorComponent::ActorComponent(ActorComponent::ACType type)
   : mOwner(NULL)
-  , mType(type)  
+  , mType(type)
   , mInitialized(false)
   , mIsInGM(false)
 {
-
 }
 
 
 ////////////////////////////////////////////////////////////////////////////////
-dtGame::ActorComponent::~ActorComponent()
+ActorComponent::~ActorComponent()
 {
 
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-const dtGame::ActorComponent::ACType& dtGame::ActorComponent::GetType() const
+ActorComponent::ACType ActorComponent::GetType() const
 {
    return mType;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-ActorComponentContainer* dtGame::ActorComponent::GetOwner() const
+ActorComponentContainer* ActorComponent::GetOwner() const
 {
    return mOwner;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void dtGame::ActorComponent::SetOwner(ActorComponentContainer* owner)
+void ActorComponent::SetOwner(ActorComponentContainer* owner)
 {
    mOwner = owner;
 }
 
 //////////////////////////////////////////////////////////////////////////
-void dtGame::ActorComponent::Init()
+void ActorComponent::Init(const dtCore::ActorType& actorType)
 {
    if (!mInitialized)
    {
-      BuildPropertyMap();
-
+      BaseClass::Init(actorType);
       mInitialized = true;
    }
 }
@@ -82,27 +85,34 @@ void dtGame::ActorComponent::Init()
 //////////////////////////////////////////////////////////////////////////
 void ActorComponent::RegisterForTicks()
 {
-   assert(GetOwner() != NULL);
-   GameActor* owner;
+   GameActorProxy* owner = NULL;
    GetOwner(owner);
-   std::string tickInvokable = "Tick Local " + GetType().Get();
-   if(!owner->GetGameActorProxy().GetInvokable(tickInvokable))
+   std::string tickInvokable = "Tick Local " + GetType()->GetFullName();
+   if(!owner->GetInvokable(tickInvokable))
    {
-      owner->GetGameActorProxy().AddInvokable(*new Invokable(tickInvokable, dtUtil::MakeFunctor(&ActorComponent::OnTickLocal, this)));
+      owner->AddInvokable(*new Invokable(tickInvokable, dtUtil::MakeFunctor(&ActorComponent::OnTickLocal, this)));
    }
-   owner->GetGameActorProxy().RegisterForMessages(MessageType::TICK_LOCAL, tickInvokable);
+   owner->RegisterForMessages(MessageType::TICK_LOCAL, tickInvokable);
 }
 
 //////////////////////////////////////////////////////////////////////////
 void ActorComponent::UnregisterForTicks()
 {
-   assert(GetOwner() != NULL);
-   GameActor* owner;
+   GameActorProxy* owner = NULL;
    GetOwner(owner);
-   std::string tickInvokable = "Tick Local " + GetType().Get();
-   owner->GetGameActorProxy().UnregisterForMessages(MessageType::TICK_LOCAL, tickInvokable);
-   owner->GetGameActorProxy().RemoveInvokable(tickInvokable);
+   std::string tickInvokable = "Tick Local " + GetType()->GetFullName();
+   owner->UnregisterForMessages(MessageType::TICK_LOCAL, tickInvokable);
+   owner->RemoveInvokable(tickInvokable);
 }
+
+////////////////////////////////////////////////////////////////////////////
+//void ActorComponent::GetOwner(GameActor* ga) const
+//{
+//   LOG_ERROR("Error, you called the GetOwner template, but expected a type derived from GameActor.  "
+//         "This is no longer supported, you need to fix your code.  This will assert in Debug so you can find it more easily.");
+//   throw std::bad_cast();
+//}
 
 //////////////////////////////////////////////////////////////////////////
 DT_IMPLEMENT_ACCESSOR(ActorComponent, bool, IsInGM);
+}

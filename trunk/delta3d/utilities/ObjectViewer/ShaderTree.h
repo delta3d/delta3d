@@ -26,8 +26,8 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 /**
-/* @class ShaderTree
-/* @brief This class contains the context menu support for the shader tree.
+ * @class ShaderTree
+ * @brief This class contains the context menu support for the shader tree.
  */
 class ShaderTree : public QTreeWidget
 {

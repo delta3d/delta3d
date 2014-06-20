@@ -222,13 +222,13 @@ void NetMgr::OnListenSuccess()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void NetMgr::OnListenFailure(const GNE::Error& error, const GNE::Address& from, const GNE::ConnectionListener::sptr& listener)
+void NetMgr::OnListenFailure(const GNE::Error&, const GNE::Address&, const GNE::ConnectionListener::sptr& )
 {
    LOG_ERROR("onListenFailure")
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void NetMgr::OnDisconnect(GNE::Connection& conn)
+void NetMgr::OnDisconnect(GNE::Connection&)
 {
    LOG_DEBUG("onDisconnect");
 }
@@ -290,13 +290,13 @@ void NetMgr::OnReceive(GNE::Connection& conn)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void NetMgr::OnFailure(GNE::Connection& conn, const GNE::Error& error)
+void NetMgr::OnFailure(GNE::Connection&, const GNE::Error&)
 {
    LOG_DEBUG("onFailure");
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void NetMgr::OnError(GNE::Connection& conn, const GNE::Error& error)
+void NetMgr::OnError(GNE::Connection&, const GNE::Error&)
 {
    LOG_DEBUG("onError");
 }

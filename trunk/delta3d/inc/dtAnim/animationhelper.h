@@ -26,9 +26,13 @@
 #include <dtAnim/cal3danimator.h>
 #include <dtAnim/sequencemixer.h>
 #include <dtAnim/attachmentcontroller.h>
+#include <dtAnim/animationcomponent.h>
+
+#include <dtGame/datacentricactorcomponent.h>
 
 #include <dtCore/refptr.h>
 #include <dtCore/sigslot.h>
+#include <dtCore/resourcedescriptor.h>
 
 #include <dtUtil/command.h>
 #include <dtUtil/enumeration.h>
@@ -53,6 +57,7 @@ namespace dtCore
    class BaseActorObject;
 }
 
+
 namespace dtAnim
 {
    class Cal3DModelWrapper;
@@ -60,6 +65,7 @@ namespace dtAnim
    class Cal3DDatabase;
    class AnimNodeBuilder;
    class AnimationGameActor;
+   class AnimationComponent;
 
 
 
@@ -83,12 +89,15 @@ namespace dtAnim
     * to an articulated entity, it provides support for loading, rendering and
     * animating.
     */
-   class DT_ANIM_EXPORT AnimationHelper: public osg::Referenced
+   class DT_ANIM_EXPORT AnimationHelper: public dtGame::DataCentricActorComponent<AnimationComponent, AnimationHelper>
    {
    public:
+      typedef dtGame::DataCentricActorComponent<dtAnim::AnimationComponent, AnimationHelper> BaseClass;
+      static const dtGame::ActorComponent::ACType TYPE;
+
       static const std::string PROPERTY_SKELETAL_MESH;
 
-      typedef dtUtil::Functor<void, TYPELIST_0()> AsynchLoadCompletionCallback;
+      typedef dtUtil::Functor<void, TYPELIST_1(AnimationHelper*)> AsyncLoadCompletionCallback;
 
       /**
        * The constructor constructs a default AnimNodeBuilder, the Cal3DModelWrapper,
@@ -97,11 +106,33 @@ namespace dtAnim
        */
       AnimationHelper();
 
+      DT_DECLARE_ACCESSOR(bool, AutoRegisterWithGMComponent);
+
+      /// Called when the parent actor enters the "world".
+      virtual void OnEnteredWorld();
+      /// Called when the parent actor leaves the "world".
+      virtual void OnRemovedFromWorld();
+
+      /**
+       * This function is used to create the proper actor properties this actor component
+       */
+      virtual void BuildPropertyMap();
+
       /**
        * The user should call Update() on a per frame basis
        * this function updates the sequence mixer and the Cal3DAnimator
        */
       virtual void Update(float dt);
+
+      DT_DECLARE_ACCESSOR(dtCore::ResourceDescriptor, SkeletalMesh);
+
+      DT_DECLARE_ACCESSOR(bool, LoadModelAsynchronously);
+
+      /**
+       * If you want to change the way the skeletal mesh node is assigned
+       * to the drawable, set this to false and hook to the ModelLoadedSignal.
+       */
+      DT_DECLARE_ACCESSOR(bool, EnableAttachingNodeToDrawable);
 
       /**
        * This function loads a character XML (.dtChar) file.  On loading it
@@ -116,22 +147,29 @@ namespace dtAnim
        */
       bool LoadModel(const std::string& pFilename, bool immediate = false);
 
+      /// Unloads the character model and calls related callbacks.  Should be the same as LoadModel("");
+      void UnloadModel();
+
       /**
        * This function enqueues a character XML file from string where it
        * will be loaded in the background to create a Cal3DAnimator with
        * the Cal3DModelWrapper and then calls CreateGeode() on the AnimNodeBuilder
        *
        * @param the name of the file to load
-       * @param the osg node to add created geometry to
        * @return whether or not we successfully loaded the file
        */
-      bool LoadModelAsynchronously(const std::string& pFilename, AsynchLoadCompletionCallback completionCallback);
+      bool LoadModelAsynchronously(const std::string& pFilename);
+
+      ///@return true is this is still loading a model on a background thread
+      bool IsLoadingAsynchronously() const;
 
       /**
        * Emits a signal when the model files have been loaded but before OSG
-       * has had a chance to create the geometry.
+       * has had a chance to create the geometry.  It's also worth noting that this
+       * is called upon completion of an async load.
        */
-      sigslot::signal0<> ModelLoadedSignal;
+      sigslot::signal1<AnimationHelper*> ModelLoadedSignal;
+      sigslot::signal1<AnimationHelper*> ModelUnloadedSignal;
 
       /**
        * This function plays the specified animation defined within the character XML
@@ -198,17 +236,6 @@ namespace dtAnim
        * animations
        */
       const SequenceMixer& GetSequenceMixer() const;
-
-      /**
-       * This function is used to create the proper actor properties for an
-       * animated entity after calling this function the user must iterate
-       * through the vector and add each property to its proxy.
-       *
-       * @param the actor proxy
-       * @param an empty vector to fill of actor properties
-       */
-      virtual void GetActorProperties(dtCore::BaseActorObject& pProxy,
-            std::vector<dtCore::RefPtr<dtCore::ActorProperty> >& pFillVector);
 
       /**
        * This flag is used by the AnimationComponent to determine
@@ -352,8 +379,19 @@ namespace dtAnim
        */
       float GetAnimationDuration(const std::string& animName) const;
 
+      /**
+       * Attach skeletal mesh node to a parent drawable. You may pass in a node, or it will just attach it to the drawable
+       * of the actor that owns this actor component.
+       */
+      virtual void AttachNodeToDrawable(osg::Group* parent = NULL);
+
+      /// Detaches the skeletal mesh node from all osg node parents.
+      virtual void DetachNodeFromDrawable();
    protected:
       virtual ~AnimationHelper();
+
+      virtual void OnLoadCompleted(AnimationHelper*);
+      virtual void OnUnloadCompleted(AnimationHelper*);
 
    private:
 
@@ -434,8 +472,8 @@ namespace dtAnim
       bool mGroundClamp;
       bool mEnableCommands;
       double mLastUpdateTime;
-      std::string mAsynchFile;
-      AsynchLoadCompletionCallback mAsynchCompletionCallback;
+      std::string mAsyncFile;
+      AsyncLoadCompletionCallback mAsyncCompletionCallback;
       dtCore::RefPtr<osg::Group> mParent;
       dtCore::RefPtr<osg::Node> mNode;
       dtCore::RefPtr<Cal3DAnimator> mAnimator;
@@ -450,6 +488,8 @@ namespace dtAnim
 
       void RegisterAnimations(const Cal3DModelData& sourceData);
       void CreateAttachments(const Cal3DModelData& modelData);
+      // this gets the resource path for the skeletal mesh and calls the configured load functionality.
+      void LoadSkeletalMesh();
    };
 
 } // namespace dtAnim

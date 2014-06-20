@@ -70,7 +70,7 @@ namespace dtActors
           * Constructs the ordered task actor.
           * @param proxy Proxy owning this actor.
           */
-         TaskActorOrdered(dtGame::GameActorProxy &proxy);
+         TaskActorOrdered(dtGame::GameActorProxy& parent);
 
          /**
           * Sets the failure type for this ordered task.
@@ -180,7 +180,7 @@ namespace dtActors
          /**
           * Create the underlying rollup task actor to be managed by this proxy.
           */
-         virtual void CreateActor();
+         virtual void CreateDrawable();
 
          /**
           * Sets the last known task that attempted to change its status out of order.
@@ -191,7 +191,6 @@ namespace dtActors
       private:
          friend class TaskActorOrdered;
 
-         bool mAlwaysFail;
          const TaskActorProxy *mFailingTask;
    };
 }

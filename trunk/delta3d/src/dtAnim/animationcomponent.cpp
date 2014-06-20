@@ -27,26 +27,11 @@
 #include <dtGame/messagetype.h>
 #include <dtGame/gameactorproxy.h>
 #include <dtGame/gameactor.h>
+#include <dtUtil/functor.h>
 #include <dtUtil/log.h>
 
 namespace dtAnim
 {
-
-
-/////////////////////////////////////////////////////////////
-AnimationComponent::AnimCompUpdateTask::AnimCompUpdateTask()
-: mUpdateDT(0.0)
-{
-}
-
-/////////////////////////////////////////////////////////////
-void AnimationComponent::AnimCompUpdateTask::operator()()
-{
-   for (unsigned i = 0; i < mAnimActorComps.size(); ++i)
-   {
-      mAnimActorComps[i]->Update(mUpdateDT);
-   }
-}
 
 
 /////////////////////////////////////////////////////////////
@@ -55,7 +40,6 @@ const std::string AnimationComponent::DEFAULT_NAME("Animation Component");
 /////////////////////////////////////////////////////////////////////////////////
 AnimationComponent::AnimationComponent(const std::string& name)
    : BaseClass(name)
-   , mRegisteredActors()
    , mGroundClamper(new dtGame::DefaultGroundClamper)
 {
    mGroundClamper->SetHighResGroundClampingRange(0.01);
@@ -70,16 +54,10 @@ AnimationComponent::~AnimationComponent()
 /////////////////////////////////////////////////////////////////////////////////
 void AnimationComponent::ProcessMessage(const dtGame::Message& message)
 {
-   if (message.GetMessageType() == dtGame::MessageType::TICK_LOCAL)
-   {
-      const dtGame::TickMessage& mess = static_cast<const dtGame::TickMessage&>(message);
-      TickLocal(mess.GetDeltaSimTime());
-   }
-   else if (message.GetMessageType() == dtGame::MessageType::INFO_ACTOR_DELETED)
-   {
-      // TODO Write unit tests for the delete message.
-      UnregisterActor(message.GetAboutActorId());
+   BaseClass::ProcessMessage(message);
 
+   if (message.GetMessageType() == dtGame::MessageType::INFO_ACTOR_DELETED)
+   {
       if (GetTerrainActor() != NULL && GetTerrainActor()->GetUniqueId() == message.GetAboutActorId())
       {
          SetTerrainActor(NULL);
@@ -88,131 +66,48 @@ void AnimationComponent::ProcessMessage(const dtGame::Message& message)
    else if (message.GetMessageType() == dtGame::MessageType::INFO_MAP_UNLOADED)
    {
       SetTerrainActor(NULL);
-      mRegisteredActors.clear();
    }
 }
 
-/////////////////////////////////////////////////////////////////////////////////
-void AnimationComponent::BuildThreadWorkerTasks()
-{
-   unsigned threads = dtUtil::ThreadPool::GetNumImmediateWorkerThreads();
-
-
-   for (unsigned i = 0; i < threads; ++i)
-   {
-      mThreadTasks.push_back(new AnimCompUpdateTask);
-      mThreadTasks.back()->mAnimActorComps.reserve(mRegisteredActors.size() + 1);
-   }
-
-   AnimCompIter iter = mRegisteredActors.begin();
-   AnimCompIter end = mRegisteredActors.end();
-
-   while (iter != end)
-   {
-      for (unsigned i = 0; i < threads && iter != end; ++i)
-      {
-         AnimCompMapping& current = *iter;
-         mThreadTasks[i]->mAnimActorComps.push_back(current.second.mAnimActorComp);
-         ++iter;
-      }
-   }
-}
 
 /////////////////////////////////////////////////////////////////////////////////
 void AnimationComponent::TickLocal(float dt)
 {
-   if (mThreadTasks.empty())
+   BaseClass::TickLocal(dt);
+
+   if (mGroundClamper->GetTerrainActor() != NULL)
    {
-      BuildThreadWorkerTasks();
+      ForEachActorComponent(dtUtil::MakeFunctor(&AnimationComponent::GroundClamp, this));
    }
 
-   for (unsigned i = 0; i < mThreadTasks.size(); ++i)
-   {
-      if (!mThreadTasks[i]->mAnimActorComps.empty())
-      {
-         mThreadTasks[i]->mUpdateDT = dt;
-         dtUtil::ThreadPool::AddTask(*mThreadTasks[i]);
-      }
-   }
-
-   GroundClamp();
-
-   dtUtil::ThreadPool::ExecuteTasks();
-
-   // Go to each helper and execute any commands that they have queued up.
-   AnimationHelper* curHelper = NULL;
-   AnimCompMap::iterator curIter = mRegisteredActors.begin();
-   AnimCompMap::iterator endIter = mRegisteredActors.end();
-   for (; curIter != endIter; ++curIter)
-   {
-      // Track the current actor that may be sending any game events.
-      mCurrentSendingActorId = curIter->first;
-
-      // Get the associated helper and execute any of its commands that
-      // it gathered for the current frame. Some of the commands may
-      // fire game events and subsequently call OnAnimationEvent to fire
-      // a Game Event Message.
-      curHelper = curIter->second.mAnimActorComp.get();
-      curHelper->ExecuteCommands();
-   }
+   ForEachActorComponent(dtUtil::MakeFunctor(&AnimationComponent::ExecuteCommands, this));
 }
 
 /////////////////////////////////////////////////////////////////////////////////
-const dtAnim::AnimationHelper* AnimationComponent::GetHelperForProxy(dtGame::GameActorProxy& proxy) const
+bool AnimationComponent::RegisterActor(dtGame::GameActorProxy& actor, dtAnim::AnimationHelper& helper)
 {
-   const AnimCompMap::const_iterator iter = mRegisteredActors.find(proxy.GetId());
-   if (iter == mRegisteredActors.end())
+   bool result = BaseClass::RegisterActor(actor, helper);
+   if (result)
    {
-      return NULL;
-   }
-
-   return (*iter).second.mAnimActorComp.get();
-}
-
-/////////////////////////////////////////////////////////////////////////////////
-void AnimationComponent::RegisterActor(dtGame::GameActorProxy& proxy, dtAnim::AnimationHelper& helper)
-{
-   AnimCompData data;
-   data.mAnimActorComp = &helper;
-   //if the insert fails, log a message.
-   if (!mRegisteredActors.insert(AnimCompMapping(proxy.GetId(), data)).second)
-   {
-      LOG_ERROR("GameActor already registered with Animation Component.");
-   }
-   else
-   {
-      mThreadTasks.clear();
-
       // Register the event firing callbacks that the helper will call
       // when any animatable reaches a particular state.
       AnimEventCallback callback(this, &AnimationComponent::OnAnimationEvent);
       helper.SetSendEventCallback(callback);
    }
+   return result;
 }
 
 /////////////////////////////////////////////////////////////////////////////////
-void AnimationComponent::UnregisterActor(dtGame::GameActorProxy& proxy)
+bool AnimationComponent::UnregisterActor(const dtCore::UniqueId& actorId)
 {
-   UnregisterActor(proxy.GetId());
-}
-
-/////////////////////////////////////////////////////////////////////////////////
-void AnimationComponent::UnregisterActor(const dtCore::UniqueId& actorId)
-{
-   AnimCompIter iter = mRegisteredActors.find(actorId);
-   if (iter != mRegisteredActors.end())
+   AnimationHelper* actorComp = GetComponentForActor(actorId);
+   if (actorComp != NULL)
    {
-      mRegisteredActors.erase(iter);
-      mThreadTasks.clear();
+      actorComp->SetSendEventCallback(AnimEventCallback());
    }
+   return BaseClass::UnregisterActor(actorId);
 }
 
-/////////////////////////////////////////////////////////////////////////////////
-bool AnimationComponent::IsRegisteredActor(dtGame::GameActorProxy& proxy)
-{
-   AnimCompIter iter = mRegisteredActors.find(proxy.GetId());
-   return iter != mRegisteredActors.end();
-}
 
 /////////////////////////////////////////////////////////////////////////////////
 dtCore::Transformable* AnimationComponent::GetTerrainActor()
@@ -268,37 +163,38 @@ const dtGame::BaseGroundClamper& AnimationComponent::GetGroundClamper() const
    return *mGroundClamper;
 }
 
+
 /////////////////////////////////////////////////////////////////////////////////
-void AnimationComponent::GroundClamp()
+void AnimationComponent::ExecuteCommands(BaseClass::ActorCompMapping& item)
 {
-   if (mGroundClamper->GetTerrainActor() != NULL)
+   // Track the current actor that may be sending any game events.
+   //mCurrentSendingActorId = item.first;
+
+   // Get the associated helper and execute any of its commands that
+   // it gathered for the current frame. Some of the commands may
+   // fire game events and subsequently call OnAnimationEvent to fire
+   // a Game Event Message.
+   dtAnim::AnimationHelper* curHelper = item.second.mActorComp.get();
+   curHelper->ExecuteCommands();
+}
+
+/////////////////////////////////////////////////////////////////////////////////
+void AnimationComponent::GroundClamp(BaseClass::ActorCompMapping& item)
+{
+   dtGame::GameManager* gm = GetGameManager();
+
+   dtGame::GroundClampingData gcData;
+   gcData.SetAdjustRotationToGround(false);
+   gcData.SetUseModelDimensions(false);
+
+   dtGame::GameActorProxy* pProxy = gm->FindGameActorById(item.first);
+   if (pProxy != NULL)
    {
-      dtGame::GameManager* gm = GetGameManager();
+      dtCore::Transform xform;
+      pProxy->GetDrawable<dtCore::Transformable>()->GetTransform(xform, dtCore::Transformable::REL_CS);
 
-      AnimCompIter end = mRegisteredActors.end();
-      AnimCompIter iter = mRegisteredActors.begin();
-
-      while (iter != end)
-      {
-         dtGame::GroundClampingData gcData;
-         gcData.SetAdjustRotationToGround(false);
-         gcData.SetUseModelDimensions(false);
-
-         for (; iter != end; ++iter)
-         {
-            dtGame::GameActorProxy* pProxy = gm->FindGameActorById((*iter).first);
-            if (pProxy != NULL)
-            {
-               dtCore::Transform xform;
-               pProxy->GetGameActor().GetTransform(xform, dtCore::Transformable::REL_CS);
-
-               mGroundClamper->ClampToGround(dtGame::BaseGroundClamper::GroundClampRangeType::RANGED,
-                        0.0, xform, *pProxy, gcData, true);
-            } // if
-         } // for
-
-         mGroundClamper->FinishUp();
-      } // while
+      mGroundClamper->ClampToGround(dtGame::BaseGroundClamper::GroundClampRangeType::RANGED,
+               0.0, xform, *pProxy, gcData, true);
    } // if
 }
 

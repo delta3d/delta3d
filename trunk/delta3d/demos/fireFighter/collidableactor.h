@@ -30,7 +30,7 @@ class FIRE_FIGHTER_EXPORT CollidableActor : public dtGame::GameActor
    public:
 
       /// Constructor
-      CollidableActor(dtGame::GameActorProxy &proxy);
+      CollidableActor(dtGame::GameActorProxy& parent);
 
    protected:
 
@@ -54,7 +54,7 @@ class FIRE_FIGHTER_EXPORT CollidableActorProxy : public dtGame::GameActorProxy
       virtual void BuildInvokables();
 
       /// Creates the actor
-      virtual void CreateActor() { SetActor(*new CollidableActor(*this)); }
+      virtual void CreateDrawable() { SetDrawable(*new CollidableActor(*this)); }
 
       /**
        * Gets the billboard used to represent static meshes if this proxy's

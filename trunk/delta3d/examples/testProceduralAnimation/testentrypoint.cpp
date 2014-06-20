@@ -65,7 +65,7 @@ TestProceduralAnimation::~TestProceduralAnimation()
 }
 
 //////////////////////////////////////////////////////////////////////////
-void TestProceduralAnimation::Initialize(dtGame::GameApplication& app, int argc, char** argv)
+void TestProceduralAnimation::Initialize(dtABC::BaseABC& app, int argc, char** argv)
 {
    if (argc > 1)
    {
@@ -103,7 +103,7 @@ void TestProceduralAnimation::Initialize(dtGame::GameApplication& app, int argc,
 }
 
 //////////////////////////////////////////////////////////////////////////
-void TestProceduralAnimation::OnStartup(dtGame::GameApplication& app)
+void TestProceduralAnimation::OnStartup(dtABC::BaseABC& app, dtGame::GameManager& gameManager)
 {
    std::string dataPath = dtUtil::GetDeltaDataPathList();
    dtUtil::SetDataFilePathList(dataPath + ";" + dtUtil::GetDeltaRootPath() +
@@ -114,11 +114,12 @@ void TestProceduralAnimation::OnStartup(dtGame::GameApplication& app)
    ProxyContainer groundActor;
 
    // Make sure the game manager knows about IK actors
-   dtGame::GameManager& gameManager = *app.GetGameManager();
    gameManager.LoadActorRegistry("testProceduralAnimation");
 
    ProceduralAnimationComponent* animationComponent = new ProceduralAnimationComponent();
    gameManager.AddComponent(*animationComponent, dtGame::GameManager::ComponentPriority::NORMAL);
+
+   gameManager.AddComponent(*new dtAnim::AnimationComponent, dtGame::GameManager::ComponentPriority::NORMAL);
 
    try
    {
@@ -149,5 +150,4 @@ void TestProceduralAnimation::OnStartup(dtGame::GameApplication& app)
       e.LogException(dtUtil::Log::LOG_ERROR);
    }
 
-   app.SetNextStatisticsType();
 }

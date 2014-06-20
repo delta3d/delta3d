@@ -10,6 +10,7 @@ find_path(RTI_INCLUDE_DIR
    PATHS
       $ENV{DELTA_ROOT}/../makRti3.3.1/include
 )
+MARK_AS_ADVANCED(RTI_INCLUDE_DIR)
 
 find_library(RTI_LIBRARY
    NAMES
@@ -17,6 +18,7 @@ find_library(RTI_LIBRARY
    PATHS
       $ENV{DELTA_ROOT}/../makRti3.3.1/lib
 )
+MARK_AS_ADVANCED(RTI_LIBRARY)
 
 set(RTI_FOUND "NO")
 if(RTI_LIBRARY AND RTI_INCLUDE_DIR)

@@ -62,9 +62,6 @@ namespace dtCore
          /**
           * Sets the value of this property by calling the set functor
           * assigned to this property.
-          * Hack for the resource class
-          * @param value the value to set or NULL to clear it.  The passed in pointer is
-          * not stored.  The values are extracted and stored in a separate object.
           */
          void SetValue(BaseActorObject* value);
 
@@ -81,17 +78,6 @@ namespace dtCore
          void SetShowPrototypes(bool enabled) {mShowPrototypes = enabled;}
          bool GetShowPrototypes() const {return mShowPrototypes;}
 
-         /**
-          * Gets the drawable that this property is representing
-          * @return The actor
-          */
-         dtCore::DeltaDrawable* GetRealActor();
-
-         /**
-          * Gets the drawable that this property is representing
-          * @return The actor
-          */
-         const dtCore::DeltaDrawable* GetRealActor() const;
          /**
 
           * Sets the value of the property based on a string.
@@ -116,8 +102,8 @@ namespace dtCore
       private:
          BaseActorObject* mProxy;
          SetFuncType SetPropFunctor;
-         GetFuncType GetActorFunctor;
          dtUtil::RefString mDesiredActorClass;
+         dtCore::RefPtr<BaseActorObject> mLastValue;
          bool mShowPrototypes;
 
       protected:

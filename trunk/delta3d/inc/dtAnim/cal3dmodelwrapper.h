@@ -27,7 +27,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 #include <dtAnim/export.h>
 #include <dtUtil/deprecationmgr.h>
+#include <dtUtil/warningdisable.h>
 
+DT_DISABLE_WARNING_ALL_START
 #include <cal3d/model.h>
 #include <cal3d/hardwaremodel.h>
 #include <cal3d/coremodel.h>
@@ -44,6 +46,8 @@
 #include <osg/BoundingBox>
 
 #include <cal3d/global.h>
+DT_DISABLE_WARNING_END
+
 
 #include <vector>                     // for param type
 
@@ -82,6 +86,7 @@ namespace dtAnim
    {
    public:
       static const int NULL_BONE = -1;
+      static const float DEFAULT_MINIMUM_BLEND_TIME;
 
       Cal3DModelWrapper(CalModel* model);
 
@@ -294,6 +299,8 @@ namespace dtAnim
        */
       bool BlendCycle(int id, float weight, float delay);
 
+      void SetSpeedFactor(int id, float speedFactor);
+
       /**
        * @param id : a valid ID of an animation already being blended (0 based)
        * @param delay : how long it takes to fade this animation out (seconds)
@@ -340,6 +347,13 @@ namespace dtAnim
       bool CanUpdate() const;
 
       /**
+       * Sets the minimum amount of time to blend/fade
+       * another animation into the contained mixer object.
+       */
+      void SetMinimumBlendTime(float seconds);
+      float GetMinimumBlendTime() const;
+
+      /**
        * Globally set whether characters should be allowed to go back to bind pose
        * when animations have completed.
        */
@@ -351,6 +365,7 @@ namespace dtAnim
 
    private:
       float mScale;
+      float mMinBlendTime;
       CalModel*    mCalModel;
       CalRenderer* mRenderer;
       CalMixer*    mMixer;

@@ -24,10 +24,10 @@
 
 #include <dtAI/export.h>
 #include <dtAI/basenpc.h>
+#include <osgDB/fstream>
 
 #include <string>
 #include <vector>
-#include <fstream>
 
 namespace dtAI
 {
@@ -123,7 +123,7 @@ namespace dtAI
 
       mutable unsigned mLineNumber;
       std::string mCurrentTask;
-      std::ifstream mFileStream;
+      osgDB::ifstream mFileStream;
    };
 } // namespace dtAI
 

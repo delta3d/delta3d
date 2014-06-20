@@ -280,7 +280,7 @@ namespace dtCore
                              "Caught Exception \"%s\" while attempting to save project config \"%s\".",
                              ex.What().c_str(), projConf.GetName().c_str());
          mFormatTarget.SetOutputStream(NULL);
-         throw ex;
+         throw;
       }
       catch (...)
       {

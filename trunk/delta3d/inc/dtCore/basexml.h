@@ -141,7 +141,7 @@ namespace dtCore
       BaseXMLWriter();
 
       /**
-       * @Note  Create your own Save functions in your inherited classes.
+       * @note  Create your own Save functions in your inherited classes.
        */
 
       dtUtil::Log* mLogger;
@@ -203,9 +203,9 @@ namespace dtCore
       void AddIndent();
 
       //disable copy constructor
-      BaseXMLWriter(const BaseXMLWriter& toCopy): mFormatter("UTF-8", NULL, &mFormatTarget, xercesc::XMLFormatter::NoEscapes, xercesc::XMLFormatter::DefaultUnRep) {}
+      BaseXMLWriter(const BaseXMLWriter& /*toCopy*/): mFormatter("UTF-8", NULL, &mFormatTarget, xercesc::XMLFormatter::NoEscapes, xercesc::XMLFormatter::DefaultUnRep) {}
       //disable operator =
-      BaseXMLWriter& operator=(const BaseXMLWriter& assignTo) { return *this;}
+      BaseXMLWriter& operator=(const BaseXMLWriter& /*assignTo*/) { return *this;}
    };
 
 }

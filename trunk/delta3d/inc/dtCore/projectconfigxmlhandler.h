@@ -125,7 +125,7 @@ namespace dtCore
       //disable copy constructor
       ProjectConfigXMLWriter(const ProjectConfigXMLWriter& toCopy): BaseXMLWriter(toCopy) {}
       //disable operator =
-      ProjectConfigXMLWriter& operator=(const ProjectConfigXMLWriter& assignTo) { return *this;}
+      ProjectConfigXMLWriter& operator=(const ProjectConfigXMLWriter&) { return *this;}
    };
 
 }

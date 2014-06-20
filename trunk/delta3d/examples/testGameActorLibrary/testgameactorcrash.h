@@ -35,7 +35,7 @@
 class TestGameActorCrash : public dtGame::GameActor
 {
 public:
-   TestGameActorCrash(dtGame::GameActorProxy& proxy);
+   TestGameActorCrash(dtGame::GameActorProxy& parent);
 protected:
    virtual ~TestGameActorCrash();
 };
@@ -64,9 +64,7 @@ public:
    virtual void OnEnteredWorld();
 
 protected:
-   virtual void CreateActor();
-private:
-   bool ticksEnabled;
+   virtual void CreateDrawable();
 };
 
 

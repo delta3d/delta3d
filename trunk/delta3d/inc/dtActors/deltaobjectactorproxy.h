@@ -44,27 +44,27 @@ namespace dtActors
          */
          virtual void BuildPropertyMap();
 
-         /**
-         * This method is responsible for loading a mesh file and any other
-         * associated data.  This method is abstract to ensure that more specific
-         * classes are created from this one.  A Delta3D object is very generic
-         * therefore, even if the subclass does something as simple as loading a mesh,
-         * at least it can be identified in a more concrete manor.
-         * @param fileName The path to the file to load.
-         * @note
-         *  This method could be as simple as merely calling the dtCore::Object::LoadFile,
-         *  or could be complicated.  For an example of a more detailed LoadFile
-         *  implementation see the StaticMeshActorProxy.
-         * @see StaticMeshActorProxy
-         */
-         virtual void LoadFile(const std::string &fileName) = 0;
+//         /**
+//         * This method is responsible for loading a mesh file and any other
+//         * associated data.  This method is abstract to ensure that more specific
+//         * classes are created from this one.  A Delta3D object is very generic
+//         * therefore, even if the subclass does something as simple as loading a mesh,
+//         * at least it can be identified in a more concrete manor.
+//         * @param fileName The path to the file to load.
+//         * @note
+//         *  This method could be as simple as merely calling the dtCore::Object::LoadFile,
+//         *  or could be complicated.  For an example of a more detailed LoadFile
+//         *  implementation see the StaticMeshActorProxy.
+//         * @see StaticMeshActorProxy
+//         */
+//         virtual void LoadFile(const std::string& fileName) = 0;
 
       protected:
         
          /**
          * Creates a Delta3D object actor.
          */
-         virtual void CreateActor();
+         virtual void CreateDrawable();
 
          /**
          * Destructor

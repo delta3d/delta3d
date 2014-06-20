@@ -413,7 +413,7 @@ namespace dtDirector
                              "Caught Exception \"%s\" while attempting to save Director script \"%s\".",
                              ex.What().c_str(), director->GetName().c_str());
          mFormatTarget.SetOutputStream(NULL);
-         throw ex;
+         throw;
       }
       catch (...)
       {

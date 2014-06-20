@@ -21,8 +21,8 @@
  */
 
 //Must include this before pal.
-#include <dtDAL/enginepropertytypes.h>
-#include <dtDAL/propertymacros.h>
+#include <dtCore/enginepropertytypes.h>
+#include <dtCore/propertymacros.h>
 
 #include <dtPhysics/physicsobject.h>
 #include <dtPhysics/physicsmaterialactor.h>
@@ -275,15 +275,17 @@ namespace dtPhysics
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void PhysicsObject::BuildPropertyMap(std::vector<dtCore::RefPtr<dtDAL::ActorProperty> >& toFillIn)
+   void PhysicsObject::BuildPropertyMap(std::vector<dtCore::RefPtr<dtCore::ActorProperty> >& toFillIn)
    {
       // Don't make this static since it's generated.
       const dtUtil::RefString GROUP("PhysicsObject-" + GetName());
 
-      typedef dtDAL::PropertyRegHelper<PhysicsObject&, PhysicsObject> PropRegType;
+      typedef dtCore::PropertyRegHelper<PhysicsObject&, PhysicsObject> PropRegType;
       PropRegType propRegHelper(*this, this, GROUP);
 
-      std::string generatedName(GetName());
+      std::string generatedName;
+      generatedName.reserve(GetName().size() + 20);
+      generatedName = GetName();
       generatedName.append(": ");
       generatedName.append("Collision Group");
 
@@ -408,12 +410,12 @@ namespace dtPhysics
                "Artifical angular body damping. 0 means off, 1 means pretty much don't move."
                , PropRegType, propRegHelper);
 
-      std::vector<dtDAL::ActorProperty *> propList;
+      std::vector<dtCore::ActorProperty *> propList;
       GetPropertyList(propList);
 
       toFillIn.reserve(propList.size());
 
-      std::vector<dtDAL::ActorProperty *>::iterator i, iend;
+      std::vector<dtCore::ActorProperty *>::iterator i, iend;
       i = propList.begin();
       iend = propList.end();
       for (; i != iend; ++i)

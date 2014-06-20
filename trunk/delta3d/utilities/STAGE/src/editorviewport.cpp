@@ -288,7 +288,7 @@ namespace dtEditQt
          validDrag = true;
          ClearGhostProxy();
 
-         mGhostProxy = dtCore::LibraryManager::GetInstance().CreateActorProxy("dtActors", "Prefab");
+         mGhostProxy = dtCore::LibraryManager::GetInstance().CreateActor("dtActors", "Prefab");
          if (mGhostProxy.valid())
          {
             ghostData = event->mimeData()->data("Prefab");
@@ -301,7 +301,7 @@ namespace dtEditQt
          validDrag = true;
          ClearGhostProxy();
 
-         mGhostProxy = dtCore::LibraryManager::GetInstance().CreateActorProxy("dtcore", "Static Mesh");
+         mGhostProxy = dtCore::LibraryManager::GetInstance().CreateActor("dtcore", "Static Mesh");
          if (mGhostProxy.valid())
          {
             ghostData = event->mimeData()->data("StaticMesh");
@@ -314,7 +314,7 @@ namespace dtEditQt
          validDrag = true;
          ClearGhostProxy();
 
-         mGhostProxy = dtCore::LibraryManager::GetInstance().CreateActorProxy("dtanim", "AnimationGameActor");
+         mGhostProxy = dtCore::LibraryManager::GetInstance().CreateActor("dtanim", "AnimationGameActor");
          if (mGhostProxy.valid())
          {
             ghostData = event->mimeData()->data("SkeletalMesh");
@@ -327,7 +327,7 @@ namespace dtEditQt
          validDrag = true;
          ClearGhostProxy();
 
-         mGhostProxy = dtCore::LibraryManager::GetInstance().CreateActorProxy("dtcore", "Particle System");
+         mGhostProxy = dtCore::LibraryManager::GetInstance().CreateActor("dtcore", "Particle System");
          if (mGhostProxy.valid())
          {
             ghostData = event->mimeData()->data("Particle");
@@ -340,7 +340,7 @@ namespace dtEditQt
          validDrag = true;
          ClearGhostProxy();
 
-         mGhostProxy = dtCore::LibraryManager::GetInstance().CreateActorProxy("dtcore.Environment", "Sound Actor");
+         mGhostProxy = dtCore::LibraryManager::GetInstance().CreateActor("dtcore.Environment", "Sound Actor");
          if (mGhostProxy.valid())
          {
             ghostData = event->mimeData()->data("Sound");
@@ -358,7 +358,7 @@ namespace dtEditQt
          QString category, name;
          dataStream >> category >> name;
 
-         mGhostProxy = dtCore::LibraryManager::GetInstance().CreateActorProxy(category.toStdString(), name.toStdString());
+         mGhostProxy = dtCore::LibraryManager::GetInstance().CreateActor(category.toStdString(), name.toStdString());
          if (mGhostProxy.valid())
          {
             mGhostProxy->GetActor(drawable);
@@ -370,7 +370,7 @@ namespace dtEditQt
          validDrag = true;
          ClearGhostProxy();
 
-         mGhostProxy = dtCore::LibraryManager::GetInstance().CreateActorProxy("dtActors", "Director Actor");
+         mGhostProxy = dtCore::LibraryManager::GetInstance().CreateActor("dtActors", "Director Actor");
          if (mGhostProxy.valid())
          {
             ghostData = event->mimeData()->data("Director");
@@ -467,7 +467,7 @@ namespace dtEditQt
                osg::Vec3 pos = mCamera->getPosition();
                osg::Vec3 viewDir = mCamera->getViewDir();
 
-               const osg::BoundingSphere& bs = mGhostProxy->GetActor()->GetOSGNode()->getBound();
+               const osg::BoundingSphere& bs = mGhostProxy->GetDrawable()->GetOSGNode()->getBound();
 
                float actorCreationOffset = EditorData::GetInstance().GetActorCreationOffset();
                float offset = (bs.radius() < 1000.0f) ? bs.radius() : 1.0f;
@@ -1012,7 +1012,7 @@ namespace dtEditQt
 
                if (transProxy)
                {
-                  dtCore::Transformable *t = static_cast<dtCore::Transformable*>(transProxy->GetActor());
+                  dtCore::Transformable *t = static_cast<dtCore::Transformable*>(transProxy->GetDrawable());
                   t->SetTransform(camXform);
                }
             }

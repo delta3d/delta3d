@@ -1991,7 +1991,7 @@ void ObjectMotionModel::OnRotate(float delta, const osg::Vec3& axis)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ObjectMotionModel::OnScale(const osg::Vec3& delta)
+void ObjectMotionModel::OnScale(const osg::Vec3& /*delta*/)
 {
 }
 

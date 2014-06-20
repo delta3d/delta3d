@@ -61,7 +61,7 @@
 
 #include <vector>
 
-#include "../dtGame/testcomponent.h"
+#include <dtGame/testcomponent.h>
 
 extern dtABC::Application& GetGlobalApplication();
 
@@ -109,7 +109,7 @@ class TaskActorTests : public CPPUNIT_NS::TestFixture
       void CreateParentChildProxies();
       dtCore::GameEventManager* mEventMgr;
       dtCore::RefPtr<dtGame::GameManager> mGameManager;
-      dtCore::RefPtr<TestComponent> mTestComp;
+      dtCore::RefPtr<dtGame::TestComponent> mTestComp;
       static const std::string mTestGameActorLibrary;
       static const std::string mTestActorLibrary;
       dtCore::RefPtr<dtActors::TaskActorProxy> mParentProxy;
@@ -139,7 +139,7 @@ void TaskActorTests::setUp()
       mGameManager->LoadActorRegistry(mTestGameActorLibrary);
 
       // Setup the Test Component.
-      mTestComp = new TestComponent("TestComponent");
+      mTestComp = new dtGame::TestComponent("TestComponent");
       mGameManager->AddComponent(*mTestComp, dtGame::GameManager::ComponentPriority::NORMAL);
 
       // Start/restart the system.
@@ -285,7 +285,7 @@ void TaskActorTests::TestTaskActorDefaultValues()
       CPPUNIT_ASSERT(task->GetNotifyCompletedEvent() == mNotifyCompletedEvent.get());
       CPPUNIT_ASSERT(task->GetNotifyFailedEvent() == mNotifyFailedEvent.get());
 
-      dtActors::TaskActor* actor = dynamic_cast<dtActors::TaskActor*>(proxy->GetActor());
+      dtActors::TaskActor* actor = dynamic_cast<dtActors::TaskActor*>(proxy->GetDrawable());
       CPPUNIT_ASSERT_MESSAGE("Complete should be false.", !actor->IsComplete());
       CPPUNIT_ASSERT_MESSAGE("Failed should be false.", !actor->IsFailed());
       CPPUNIT_ASSERT_MESSAGE("Initial completed time should be -1.0.", actor->GetCompletedTimeStamp() == -1.0);
@@ -376,7 +376,7 @@ void TaskActorTests::TestTaskSubTasks()
 
       for (unsigned i = 0; i < children2.size(); ++i)
       {
-         mParentProxy->RemoveSubTask(children2[i]->GetGameActor().GetName());
+         mParentProxy->RemoveSubTask(children2[i]->GetName());
          CPPUNIT_ASSERT_MESSAGE("Child's parent task should be NULL after removing it by name.",
             children2[i]->GetParentTask() == NULL);
       }
@@ -679,7 +679,9 @@ void TaskActorTests::TestRollupTaskActor()
          CPPUNIT_ASSERT_MESSAGE("Could not create game event task actor proxy.",eventTaskProxy.valid());
 
          eventTaskProxy->GetProperty("GameEvent")->FromString(gameEvent->GetUniqueId().ToString());
-         eventTaskProxy->GetProperty("Weight")->FromString("0.2f");
+         eventTaskProxy->GetProperty("Weight")->FromString("0.2");
+
+         CPPUNIT_ASSERT_EQUAL(std::string("0.2"), eventTaskProxy->GetProperty("Weight")->ToString());
 
          rollupTaskProxy->AddSubTask(*eventTaskProxy);
          mGameManager->AddActor(*eventTaskProxy,false,false);
@@ -704,7 +706,7 @@ void TaskActorTests::TestRollupTaskActor()
          dtCore::System::GetInstance().Step();
 
          CPPUNIT_ASSERT_MESSAGE("Rollup task score was not calculated correctly.  The score was: " +
-               dtUtil::ToString(prop->GetValue()),osg::equivalent(prop->GetValue(),((float)i+1.0f) * 0.2f,0.001f));
+               dtUtil::ToString(prop->GetValue()),osg::equivalent(prop->GetValue(),(float(i)+1.0f) * 0.2f,0.001f));
       }
 
       CPPUNIT_ASSERT_MESSAGE("Rollup task should have been marked complete.",
@@ -712,11 +714,11 @@ void TaskActorTests::TestRollupTaskActor()
 
 
       // Reset the event and rollup tasks..
-      dtActors::TaskActor* actor = dynamic_cast<dtActors::TaskActor*>(rollupTaskProxy->GetActor());
+      dtActors::TaskActor* actor = dynamic_cast<dtActors::TaskActor*>(rollupTaskProxy->GetDrawable());
       actor->Reset();
       for (i = 0; i < 5; ++i)
       {
-         actor = dynamic_cast<dtActors::TaskActor*>(eventProxyList[i]->GetActor());
+         actor = dynamic_cast<dtActors::TaskActor*>(eventProxyList[i]->GetDrawable());
          actor->Reset();
       }
 
@@ -804,7 +806,9 @@ void TaskActorTests::TestOrderedTaskActor()
          CPPUNIT_ASSERT_MESSAGE("Could not create game event task actor proxy.",eventTaskProxy.valid());
 
          eventTaskProxy->GetProperty("GameEvent")->FromString(gameEvent->GetUniqueId().ToString());
-         eventTaskProxy->GetProperty("Weight")->FromString("0.2f");
+         eventTaskProxy->GetProperty("Weight")->FromString("0.2");
+
+         CPPUNIT_ASSERT_EQUAL(std::string("0.2"), eventTaskProxy->GetProperty("Weight")->ToString());
 
          rollupTaskProxy->AddSubTask(*eventTaskProxy);
          mGameManager->AddActor(*eventTaskProxy,false,false);
@@ -894,7 +898,7 @@ void TaskActorTests::TestFailedAndComplete()
       mGameManager->CreateActor(*taskActorType, proxy);
       CPPUNIT_ASSERT_MESSAGE("Could not create task actor proxy.",proxy.valid());
 
-      dtActors::TaskActor* actor = dynamic_cast<dtActors::TaskActor*>(proxy->GetActor());
+      dtActors::TaskActor* actor = dynamic_cast<dtActors::TaskActor*>(proxy->GetDrawable());
 
       // Add notify events to the root task.
       CPPUNIT_ASSERT(SetNotifyEventsOnTask(*proxy));
@@ -1034,8 +1038,8 @@ void TaskActorTests::TestMutable()
       CPPUNIT_ASSERT_MESSAGE("Could not create ordered task actor proxy.", orderedTaskProxy.valid());
       mGameManager->AddActor(*orderedTaskProxy,false,false);
 
-      dtActors::TaskActor* childActor1 = dynamic_cast<dtActors::TaskActor*>(childProxy1->GetActor());
-      dtActors::TaskActor* childActor2 = dynamic_cast<dtActors::TaskActor*>(childProxy2->GetActor());
+      dtActors::TaskActor* childActor1 = dynamic_cast<dtActors::TaskActor*>(childProxy1->GetDrawable());
+      dtActors::TaskActor* childActor2 = dynamic_cast<dtActors::TaskActor*>(childProxy2->GetDrawable());
 
       CPPUNIT_ASSERT_MESSAGE("Should be mutable on creation.", childProxy1->IsCurrentlyMutable());
 

@@ -123,7 +123,7 @@ namespace dtAI
    {
       WaypointID id = from->GetID();
 
-      std::pair<NavMeshContainer::iterator, NavMeshContainer::iterator> rangeElements = mNavMesh.equal_range(from->GetID());
+      //std::pair<NavMeshContainer::iterator, NavMeshContainer::iterator> rangeElements = mNavMesh.equal_range(from->GetID());
       
       //before we delete these paths, lets see if these are bi-directional
       NavMeshContainer::iterator iter = mNavMesh.begin();

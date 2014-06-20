@@ -42,6 +42,9 @@
 #include <dtCore/object.h>
 #include <dtCore/resourceactorproperty.h>
 
+#include <dtGame/gameactorproxy.h>
+#include <dtGame/gameactor.h>
+
 #include <dtUtil/log.h>
 #include <dtUtil/mathdefines.h>
 
@@ -55,9 +58,17 @@ namespace dtAnim
 /////////////////////////////////////////////////////////////////////////////////
 const std::string AnimationHelper::PROPERTY_SKELETAL_MESH("Skeletal Mesh");
 
+const dtGame::ActorComponent::ACType AnimationHelper::TYPE(new dtCore::ActorType("AnimationActorComponent", "ActorComponents",
+       "Encapsulates skeletal mesh support and control.",
+       dtGame::ActorComponent::BaseActorComponentType));
+
 /////////////////////////////////////////////////////////////////////////////////
 AnimationHelper::AnimationHelper()
-   : mGroundClamp(false)
+   : BaseClass(TYPE)
+   , mAutoRegisterWithGMComponent(true)
+   , mLoadModelAsynchronously(false)
+   , mEnableAttachingNodeToDrawable(true)
+   , mGroundClamp(false)
    , mEnableCommands(false)
    , mLastUpdateTime(0.0)
    , mNode(NULL)
@@ -65,12 +76,29 @@ AnimationHelper::AnimationHelper()
    , mSequenceMixer(new SequenceMixer())
    , mAttachmentController(new AttachmentController())
 {
-
+   ModelLoadedSignal.connect_slot(this, &AnimationHelper::OnLoadCompleted);
+   ModelUnloadedSignal.connect_slot(this, &AnimationHelper::OnUnloadCompleted);
 }
 
 /////////////////////////////////////////////////////////////////////////////////
 AnimationHelper::~AnimationHelper()
 {
+}
+
+//////////////////////////////////////////////////////////////////////
+void AnimationHelper::OnEnteredWorld()
+{
+   BaseClass::OnEnteredWorld();
+   if (!GetSkeletalMesh().IsEmpty())
+   {
+      LoadSkeletalMesh();
+   }
+}
+
+//////////////////////////////////////////////////////////////////////
+void AnimationHelper::OnRemovedFromWorld()
+{
+   BaseClass::OnRemovedFromWorld();
 }
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -86,12 +114,12 @@ void AnimationHelper::Update(float dt)
       mAttachmentController->Update(*GetModelWrapper());
    }
 
-   if (!mAsynchFile.empty())
+   if (IsLoadingAsynchronously())
    {
       Cal3DDatabase& database = Cal3DDatabase::GetInstance();
 
       // See if the data is ready yet
-      Cal3DModelData* modelData = database.GetModelData(mAsynchFile);
+      Cal3DModelData* modelData = database.GetModelData(mAsyncFile);
 
       if (modelData)
       {
@@ -106,13 +134,10 @@ void AnimationHelper::Update(float dt)
          CreateAttachments(*modelData);
 
          // Done loading, clear the file to load string
-         mAsynchFile.clear();
-
-         // Alert the caller via the functor passed in on the load call
-         mAsynchCompletionCallback();
+         mAsyncFile.clear();
 
          // Notify observers that the model has been loaded
-         ModelLoadedSignal();
+         ModelLoadedSignal(this);
       }
    }
 }
@@ -181,10 +206,73 @@ void AnimationHelper::CreateAttachments(const Cal3DModelData& modelData)
 }
 
 /////////////////////////////////////////////////////////////////////////////////
+DT_IMPLEMENT_ACCESSOR(AnimationHelper, bool, LoadModelAsynchronously);
+/////////////////////////////////////////////////////////////////////////////////
+DT_IMPLEMENT_ACCESSOR(AnimationHelper, bool, EnableAttachingNodeToDrawable);
+/////////////////////////////////////////////////////////////////////////////////
+DT_IMPLEMENT_ACCESSOR_GETTER(AnimationHelper, dtCore::ResourceDescriptor, SkeletalMesh);
+/////////////////////////////////////////////////////////////////////////////////
+void AnimationHelper::SetSkeletalMesh(const dtCore::ResourceDescriptor& rd)
+{
+   if (rd != mSkeletalMesh)
+   {
+      mSkeletalMesh = rd;
+
+      dtCore::Project& proj = dtCore::Project::GetInstance();
+      if (!rd.IsEmpty() && (GetIsInGM() || proj.GetEditMode()))
+      {
+         LoadSkeletalMesh();
+      }
+      else
+      {
+         LoadModel("");
+      }
+   }
+}
+
+/////////////////////////////////////////////////////////////////////////////////
+void AnimationHelper::LoadSkeletalMesh()
+{
+   try
+   {
+      dtCore::Project& proj = dtCore::Project::GetInstance();
+      std::string path = proj.GetResourcePath(mSkeletalMesh);
+      if (mLoadModelAsynchronously && !proj.GetEditMode())
+      {
+         LoadModelAsynchronously(path);
+      }
+      else
+      {
+         LoadModel(path, false);
+      }
+   }
+   catch (const dtUtil::Exception& ex)
+   {
+      ex.LogException(dtUtil::Log::LOG_ERROR);
+      // don't throw, it could break the code setting the property.
+   }
+}
+
+/////////////////////////////////////////////////////////////////////////////////
+void AnimationHelper::UnloadModel()
+{
+   mAnimator = NULL;
+   mSequenceMixer->ClearRegisteredAnimations();
+   mAttachmentController->Clear();
+   ModelUnloadedSignal(this);
+   // Set node to null after so that it can be accessed in the callback.
+   mNode = NULL;
+}
+
+/////////////////////////////////////////////////////////////////////////////////
 bool AnimationHelper::LoadModel(const std::string& pFilename, bool immediate)
 {
    if (!pFilename.empty())
    {
+      if (mNode.valid())
+      {
+         UnloadModel();
+      }
       Cal3DDatabase& database = Cal3DDatabase::GetInstance();
       dtCore::RefPtr<Cal3DModelWrapper> newModel = database.Load(pFilename);
 
@@ -203,7 +291,7 @@ bool AnimationHelper::LoadModel(const std::string& pFilename, bool immediate)
          RegisterAnimations(*modelData);
          CreateAttachments(*modelData);
          // Notify observers that the model has been loaded
-         ModelLoadedSignal();
+         ModelLoadedSignal(this);
       }
       else
       {
@@ -213,49 +301,113 @@ bool AnimationHelper::LoadModel(const std::string& pFilename, bool immediate)
    }
    else
    {
-      mAnimator = NULL;
-      mNode = NULL;
-      mSequenceMixer->ClearRegisteredAnimations();
-      mAttachmentController->Clear();
-   }
+      UnloadModel();
+  }
+
    return true;
 }
 
 /////////////////////////////////////////////////////////////////////////////////
-bool AnimationHelper::LoadModelAsynchronously(const std::string& pFilename, AsynchLoadCompletionCallback completionCallback)
+bool AnimationHelper::LoadModelAsynchronously(const std::string& pFilename)
 {
    if (!pFilename.empty())
    {
+      if (mNode.valid())
+      {
+         UnloadModel();
+      }
+
       Cal3DDatabase& database = Cal3DDatabase::GetInstance();
 
       database.LoadAsynchronously(pFilename);
 
       // Store the filename so that we can poll for load completion
-      mAsynchFile = pFilename;
+      mAsyncFile = pFilename;
 
-      // Store the function used to alert the caller of completion
-      mAsynchCompletionCallback = completionCallback;
    }
    else
    {
-      mAnimator = NULL;
-      mNode = NULL;
+      UnloadModel();
    }
 
    return true;
 }
 
+/////////////////////////////////////////////////////////////////////////////
+void AnimationHelper::AttachNodeToDrawable(osg::Group* parent)
+{
+   osg::Node* node = GetNode();
+   if (node != NULL)
+   {
+      if (parent == NULL)
+      {
+         dtGame::GameActorProxy* gap;
+         GetOwner(gap);
+         if (gap != NULL)
+         {
+            // This really should make a drawable and add it.
+            gap->GetDrawable()->GetOSGNode()->asGroup()->addChild(node);
+         }
+      }
+      else
+      {
+         parent->addChild(node);
+      }
+   }
+}
+
+/////////////////////////////////////////////////////////////////////////////
+void AnimationHelper::DetachNodeFromDrawable()
+{
+   osg::Node* node = GetNode();
+   if (node != NULL)
+   {
+      for (unsigned i = 0; i < node->getNumParents(); ++i)
+      {
+         // This really should make a drawable and add it.
+         node->getParent(i)->removeChild(node);
+      }
+   }
+}
+
+
+/////////////////////////////////////////////////////////////////////////////
+void AnimationHelper::OnLoadCompleted(AnimationHelper*)
+{
+   if (mEnableAttachingNodeToDrawable)
+   {
+      AttachNodeToDrawable();
+   }
+}
+
+/////////////////////////////////////////////////////////////////////////////
+void AnimationHelper::OnUnloadCompleted(AnimationHelper*)
+{
+   if (mEnableAttachingNodeToDrawable)
+   {
+      DetachNodeFromDrawable();
+   }
+}
+
+
 /////////////////////////////////////////////////////////////////////////////////
-void AnimationHelper::GetActorProperties(dtCore::BaseActorObject& pProxy,
-      std::vector< dtCore::RefPtr<dtCore::ActorProperty> >& pFillVector)
+bool AnimationHelper::IsLoadingAsynchronously() const
+{
+   return !mAsyncFile.empty();
+}
+
+
+/////////////////////////////////////////////////////////////////////////////////
+void AnimationHelper::BuildPropertyMap()
 {
    static const std::string ANIMATION_MODEL_GROUP("AnimationModel");
 
    static const std::string PROPERTY_SKELETAL_MESH_DESC
       ("The model resource that defines the skeletal mesh");
-   pFillVector.push_back(new dtCore::ResourceActorProperty(pProxy, dtCore::DataType::SKELETAL_MESH,
+   AddProperty(new dtCore::ResourceActorProperty(dtCore::DataType::SKELETAL_MESH,
       PROPERTY_SKELETAL_MESH, PROPERTY_SKELETAL_MESH,
-      dtCore::ResourceActorProperty::SetFuncType(this, (void (AnimationHelper::*)(const std::string&))(&AnimationHelper::LoadModel)),
+      dtCore::ResourceActorProperty::SetDescFuncType(this, &AnimationHelper::SetSkeletalMesh),
+      dtCore::ResourceActorProperty::GetDescFuncType(this, &AnimationHelper::GetSkeletalMesh),
       PROPERTY_SKELETAL_MESH_DESC, ANIMATION_MODEL_GROUP));
 }
 

@@ -48,7 +48,7 @@ class FIRE_FIGHTER_EXPORT PlayerActor : public dtGame::GameActor
    public:
 
       /// Constructor
-      PlayerActor(dtGame::GameActorProxy& proxy);
+      PlayerActor(dtGame::GameActorProxy& parent);
 
       /// Override
       void OnTickLocal(const dtGame::TickMessage& tickMessage);
@@ -158,7 +158,7 @@ class FIRE_FIGHTER_EXPORT PlayerActorProxy : public dtGame::GameActorProxy
       virtual void BuildInvokables();
 
       /// Creates the actor
-      virtual void CreateActor() { SetActor(*new PlayerActor(*this)); }
+      virtual void CreateDrawable() { SetDrawable(*new PlayerActor(*this)); }
 
       // Used in STAGE
       dtCore::ActorProxyIcon* GetBillBoardIcon();
@@ -176,8 +176,6 @@ class FIRE_FIGHTER_EXPORT PlayerActorProxy : public dtGame::GameActorProxy
       virtual ~PlayerActorProxy();
 
    private:
-
-      dtCore::RefPtr<dtCore::ActorProxyIcon> mBillBoardIcon;
 };
 
 #endif

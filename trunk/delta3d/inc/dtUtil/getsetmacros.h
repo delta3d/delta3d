@@ -135,12 +135,14 @@
          std::for_each(m ## AccessorNamePlural.begin(), m ## AccessorNamePlural.end(), functor); \
       }
 
-#define DT_IMPLEMENT_ARRAY_ACCESSOR(ClassName, AccessorType, AccessorName, AccessorNamePlural, DefaultNewValue) \
+#define DT_IMPLEMENT_ARRAY_ACCESSOR_WITH_ON_ADD_REMOVE(ClassName, AccessorType, AccessorName, AccessorNamePlural, DefaultNewValue, OnAddCode, OnRemoveCode) \
       void ClassName :: Set ## AccessorName(unsigned idx, dtUtil::TypeTraits<AccessorType>::param_type value)\
       {\
          if (m ## AccessorNamePlural.size() > idx)\
          {\
+            OnRemoveCode \
             m ## AccessorNamePlural[idx] = value;\
+            OnAddCode \
          }\
       }\
       \
@@ -156,11 +158,13 @@
       void ClassName :: Add ## AccessorName(dtUtil::TypeTraits<AccessorType>::param_type value)\
       {\
          m ## AccessorNamePlural.push_back(value);\
+         OnAddCode \
       }\
       \
       void ClassName :: InsertWithValue ## AccessorName (unsigned idx, dtUtil::TypeTraits<AccessorType>::param_type value)\
       {\
          m ## AccessorNamePlural.insert(m ## AccessorNamePlural.begin() + idx, value);\
+         OnAddCode \
       }\
       \
       void ClassName :: Insert ## AccessorName(unsigned idx)\
@@ -170,6 +174,9 @@
       \
       void ClassName :: Remove ## AccessorName(unsigned idx)\
       {\
+         /* Use the result of the macro m ## AccessorNamePlural [idx]; if you want to access the variable */ \
+         /* Just as a hint, you COULD call return if you want to veto the remove. */ \
+         OnRemoveCode \
          m ## AccessorNamePlural.erase(m ## AccessorNamePlural.begin() + idx);\
       }\
       \
@@ -178,5 +185,8 @@
          m ## AccessorNamePlural.clear();\
       }\
       \
+
+#define DT_IMPLEMENT_ARRAY_ACCESSOR(ClassName, AccessorType, AccessorName, AccessorNamePlural, DefaultNewValue) \
+      DT_IMPLEMENT_ARRAY_ACCESSOR_WITH_ON_ADD_REMOVE(ClassName, AccessorType, AccessorName, AccessorNamePlural, DefaultNewValue,,)
 
 #endif

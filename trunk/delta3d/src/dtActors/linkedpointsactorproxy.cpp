@@ -659,10 +659,10 @@ namespace dtActors
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void LinkedPointsActorProxy::CreateActor()
+   void LinkedPointsActorProxy::CreateDrawable()
    {
       LinkedPointsActor* actor = new LinkedPointsActor(this);
-      SetActor(*actor);
+      SetDrawable(*actor);
       actor->Initialize();
    }
 
@@ -672,7 +672,7 @@ namespace dtActors
       BaseClass::BuildPropertyMap();
 
       LinkedPointsActor* actor = NULL;
-      GetActor(actor);
+      GetDrawable(actor);
 
       dtCore::ContainerActorProperty* pointProp = new dtCore::ContainerActorProperty(
          "Point", "Point", "The value of the point.", "Points");
@@ -717,7 +717,7 @@ namespace dtActors
 
       // Once we have finished loading, we can visualize the actor.
       LinkedPointsActor* actor = NULL;
-      GetActor(actor);
+      GetDrawable(actor);
 
       return actor->Visualize();
    }
@@ -732,7 +732,7 @@ namespace dtActors
    dtCore::RefPtr<dtCore::Transformable> LinkedPointsActorProxy::GetDefaultPoint(void)
    {
       LinkedPointsActor* actor = NULL;
-      GetActor(actor);
+      GetDrawable(actor);
 
       return actor->CreatePointDrawable(osg::Vec3());
    }
@@ -741,7 +741,7 @@ namespace dtActors
    std::vector<dtCore::RefPtr<dtCore::Transformable> > LinkedPointsActorProxy::GetPointArray(void)
    {
       LinkedPointsActor* actor = NULL;
-      GetActor(actor);
+      GetDrawable(actor);
 
       return actor->GetPointList();
    }
@@ -750,7 +750,7 @@ namespace dtActors
    void LinkedPointsActorProxy::SetPointArray(const std::vector<dtCore::RefPtr<dtCore::Transformable> >& value)
    {
       LinkedPointsActor* actor = NULL;
-      GetActor(actor);
+      GetDrawable(actor);
 
       if (actor)
       {
@@ -762,7 +762,7 @@ namespace dtActors
    void LinkedPointsActorProxy::SetPointPosition(const osg::Vec3& value)
    {
       LinkedPointsActor* actor = NULL;
-      GetActor(actor);
+      GetDrawable(actor);
 
       if (actor)
       {
@@ -774,7 +774,7 @@ namespace dtActors
    osg::Vec3 LinkedPointsActorProxy::GetPointPosition(void)
    {
       LinkedPointsActor* actor = NULL;
-      GetActor(actor);
+      GetDrawable(actor);
 
       if (actor)
       {
@@ -788,7 +788,7 @@ namespace dtActors
    void LinkedPointsActorProxy::SetPointRotation(const osg::Vec3& value)
    {
       LinkedPointsActor* actor = NULL;
-      GetActor(actor);
+      GetDrawable(actor);
 
       if (actor)
       {
@@ -800,7 +800,7 @@ namespace dtActors
    osg::Vec3 LinkedPointsActorProxy::GetPointRotation(void)
    {
       LinkedPointsActor* actor = NULL;
-      GetActor(actor);
+      GetDrawable(actor);
 
       if (actor)
       {

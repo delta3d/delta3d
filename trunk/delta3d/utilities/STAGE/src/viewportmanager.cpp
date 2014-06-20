@@ -233,7 +233,7 @@ namespace dtEditQt
          {
             mMasterScene->RemoveChild(billBoard->GetDrawable());
          }
-         mMasterScene->RemoveChild(proxy->GetActor());
+         mMasterScene->RemoveChild(proxy->GetDrawable());
       }
    }
 
@@ -578,9 +578,9 @@ namespace dtEditQt
 
       if (renderMode == dtCore::BaseActorObject::RenderMode::DRAW_BILLBOARD_ICON)
       {
-         mMasterScene->RemoveChild(proxy->GetActor());
+         mMasterScene->RemoveChild(proxy->GetDrawable());
 
-         mViewportOverlay->unSelect(proxy->GetActor());
+         mViewportOverlay->unSelect(proxy->GetDrawable());
          if (billBoard == NULL)
          {
             LOG_ERROR("Proxy [" + proxy->GetName() + "] billboard was NULL.");
@@ -608,11 +608,11 @@ namespace dtEditQt
             mMasterScene->RemoveChild(billBoard->GetDrawable());
          }
 
-         actorIndex = mMasterScene->GetChildIndex(proxy->GetActor());
+         actorIndex = mMasterScene->GetChildIndex(proxy->GetDrawable());
          if (actorIndex == (unsigned)mMasterScene->GetNumberOfAddedDrawable())
          {
-            mMasterScene->AddChild(proxy->GetActor());
-            if (wasSelected) mViewportOverlay->select(proxy->GetActor());
+            mMasterScene->AddChild(proxy->GetDrawable());
+            if (wasSelected) mViewportOverlay->select(proxy->GetDrawable());
          }
       }
       else if (renderMode == dtCore::BaseActorObject::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON)
@@ -632,11 +632,11 @@ namespace dtEditQt
             }
          }
 
-         actorIndex = mMasterScene->GetChildIndex(proxy->GetActor());
+         actorIndex = mMasterScene->GetChildIndex(proxy->GetDrawable());
          if (actorIndex == (unsigned)mMasterScene->GetNumberOfAddedDrawable())
          {
-            mMasterScene->AddChild(proxy->GetActor());
-            if (wasSelected) mViewportOverlay->select(proxy->GetActor());
+            mMasterScene->AddChild(proxy->GetDrawable());
+            if (wasSelected) mViewportOverlay->select(proxy->GetDrawable());
          }
       }
       else
@@ -690,11 +690,11 @@ namespace dtEditQt
       }
       else if (renderMode == dtCore::BaseActorObject::RenderMode::DRAW_ACTOR)
       {
-         scene->AddChild(proxy->GetActor());
+         scene->AddChild(proxy->GetDrawable());
       }
       else if (renderMode == dtCore::BaseActorObject::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON)
       {
-         scene->AddChild(proxy->GetActor());
+         scene->AddChild(proxy->GetDrawable());
 
          billBoard = proxy->GetBillBoardIcon();
 
@@ -718,7 +718,7 @@ namespace dtEditQt
       {
          // If we got here, then the proxy wishes the system to determine how to display
          // the proxy. Currently, not implemented, defaults to DRAW_ACTOR).
-         scene->AddChild(proxy->GetActor());
+         scene->AddChild(proxy->GetDrawable());
       }
 
       // update the viewports unless we're getting lots of changes back to back, in which
@@ -747,7 +747,7 @@ namespace dtEditQt
 
          if (tProxy != NULL && prop != NULL)
          {
-            const osg::BoundingSphere& bs = tProxy->GetActor()->GetOSGNode()->getBound();
+            const osg::BoundingSphere& bs = tProxy->GetDrawable()->GetOSGNode()->getBound();
 
             // Position it along the camera's view direction.  The distance from
             // the camera is the object's bounding volume so it appears

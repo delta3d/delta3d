@@ -54,8 +54,8 @@ namespace dtHLAGM
             public:
                DimensionValues():mMin(), mMax() {}
                std::string mName;
-               unsigned long mMin;
-               unsigned long mMax;
+               unsigned int mMin;
+               unsigned int mMax;
                
                bool operator==(const DimensionValues& toComp) const;
                

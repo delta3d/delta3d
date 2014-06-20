@@ -31,11 +31,11 @@
 #include <dtQt/propertyeditormodel.h>
 #include <dtQt/propertyeditortreeview.h>
 #include <dtQt/propertyeditordelegate.h>
-#include <QtCore/qdebug.h>
+#include <QtCore/QDebug>
 #include <QtGui/QItemDelegate>
-#include <QtGui/qheaderview.h>
-#include <QtGui/qpainter.h>
-#include <QtGui/qscrollbar.h>
+#include <QtGui/QHeaderView>
+#include <QtGui/QPainter>
+#include <QtGui/QScrollBar>
 #include <QtCore/QAbstractItemModel>
 
 namespace dtQt

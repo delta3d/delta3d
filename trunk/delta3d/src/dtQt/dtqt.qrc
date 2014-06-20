@@ -7,5 +7,11 @@
       <file>icons/subtract.png</file>
       <file>icons/trashcan.png</file>
       <file>icons/resetproperty.png</file>
+      <file>icons/nodes/bone.png</file>
+      <file>icons/nodes/geode.png</file>
+      <file>icons/nodes/group.png</file>
+      <file>icons/nodes/matrix.png</file>
+      <file>icons/nodes/skeleton.png</file>
+      <file>icons/nodes/stateset.png</file>
 </qresource>
 </RCC>

@@ -25,6 +25,8 @@
 #ifndef OSGADAPTERWIDGET_H_
 #define OSGADAPTERWIDGET_H_
 
+#include <dtUtil/warningdisable.h>
+DT_DISABLE_WARNING_ALL_START
 #include <QtCore/QString>
 #include <QtCore/QTimer>
 #include <QtGui/QKeyEvent>
@@ -32,6 +34,7 @@
 #include <QtOpenGL/QGLWidget>
 #include <QtOpenGL/QGLContext>
 #include <dtQt/export.h>
+DT_DISABLE_WARNING_END
 
 #include <dtCore/refptr.h>
 

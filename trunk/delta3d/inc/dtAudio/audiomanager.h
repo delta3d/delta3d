@@ -50,7 +50,8 @@
 namespace dtAudio
 {
 
-   /** dtAudio::AudioManager
+   /**
+    * dtAudio::AudioManager
     *
     * dtAudio::AudioManager is the interface to the underlying audio-
     * engine; OpenAL.

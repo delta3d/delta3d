@@ -146,18 +146,18 @@ namespace dtGame
          unsigned GetClampBatchSize() const;
 
          /**
-          * Calculates the bounding box for the given proxy, stores it in the data object, and populates the Vec3.
+          * Calculates the bounding box for the given actor, stores it in the data object, and populates the Vec3.
           * @param modelDimensions Capture the calculated box dimensions which is also set on data.
-          * @param proxy Actor that should have its bounding box calculated.
+          * @param actor Actor that should have its bounding box calculated.
           */
          virtual void CalculateAndSetBoundingBox(osg::Vec3& modelDimensions,
-            dtCore::TransformableActorProxy& proxy, GroundClampingData& data);
+            dtCore::TransformableActorProxy& actor, GroundClampingData& data);
          
          /**
           * Gets the ground clamping hit that is closest to the Z value.
-          * @param proxy Actor proxy that is to be clamped. This parameter may help
+          * @param actor Actor that is to be clamped. This parameter may help
           *              sub-classes of Ground Clamper make better determinations.
-          * @param data Ground Clamping Data associated with the proxy.
+          * @param data Ground Clamping Data associated with the actor.
           * @param single Isector containing points to be checked.
           * @param pointZ Z value to compare against the Isector points.
           * @param outHit Point to capture the values of the point that is the closest match.
@@ -165,44 +165,29 @@ namespace dtGame
           * @return TRUE if a hit point was detected, otherwise FALSE if there are no points
           *         contained in the specified Isector, or
           */
-         virtual bool GetClosestHit(const dtCore::TransformableActorProxy& proxy,
+         virtual bool GetClosestHit(const dtCore::TransformableActorProxy& actor,
             GroundClampingData& data,
             dtCore::BatchIsector::SingleISector& single, float pointZ,
             osg::Vec3& outHit, osg::Vec3& outNormal);
 
          /**
-          * Calculate an improvised surface point and normal closest to the Z value.
-          * This method is called if GetClosestHit returns FALSE.
-          * @param proxy Actor proxy that is to be clamped. This parameter may help
-          *              sub-classes of Ground Clamper make better determinations.
-          * @param data Ground Clamping Data associated with the proxy.
-          * @param pointZ Z value to compare against the Isector points.
-          * @param outHit Point to capture the values of the point that is the closest match.
-          * @param outNormal Normal to capture values of the matched hit point's normal.
-          * @return TRUE if a hit point was calculated, otherwise FALSE if it could not be calculated.
-          */
-//         virtual bool GetMissingHit(const dtCore::TransformableActorProxy& proxy,
-//            GroundClampingData& data,
-//            float pointZ, osg::Vec3& outHit, osg::Vec3& outNormal);
-
-         /**
           * Get the surface points of the specified actor based on its model dimensions.
-          * @param proxy Actor proxy to have its bounding box calculated.
+          * @param actor Actor to have its bounding box calculated.
           * @param data Ground Clamping Data containing model bounding box values to be updated.
           * @param outPoints Container to capture 3 detection points calculated by the actor's bounding box.
           */
-         void GetActorDetectionPoints(dtCore::TransformableActorProxy& proxy,
+         void GetActorDetectionPoints(dtCore::TransformableActorProxy& actor,
             GroundClampingData& data, osg::Vec3 outPoints[3]);
 
          /**
           * Calculate the surface points from the specified location and detection points.
-          * @param proxy Actor that owns the specified transform.
-          * @param data Ground Clamping Data associated with the proxy.
+          * @param actor Actor that owns the specified transform.
+          * @param data Ground Clamping Data associated with the actor.
           * @param xform Transform that has the location and rotation in world space.
           * @param inOutPoints IN: detection points in world space.
           *                    OUT: surface points.
           */
-         virtual void GetSurfacePoints( const dtCore::TransformableActorProxy& proxy,
+         virtual void GetSurfacePoints( const dtCore::TransformableActorProxy& actor,
             GroundClampingData& data, const dtCore::Transform& xform,
             osg::Vec3 inOutPoints[3]);
 
@@ -212,13 +197,13 @@ namespace dtGame
           * @param type Ground clamping type to perform.
           * @param currentTime Current simulation time. Used for intermittent ground clamping.
           * @param xform Current absolute transform of the actor.
-          * @param proxy Actor to be clamped and is passed in case collision geometry is needed.
+          * @param actor Actor to be clamped and is passed in case collision geometry is needed.
           * @param data Ground Clamping Data containing clamping options.
           * @param transformChanged Flag to help the clamper to determine if it should perform a clamp or not.
           * @param velocity The transformable's instantaneous velocity for the current frame.
           */
          virtual void ClampToGround(GroundClampRangeType& type, double currentTime,
-            dtCore::Transform& xform, dtCore::TransformableActorProxy& proxy,
+            dtCore::Transform& xform, dtCore::TransformableActorProxy& actor,
             GroundClampingData& data, bool transformChanged = false,
             const osg::Vec3& velocity = osg::Vec3());
 
@@ -227,14 +212,14 @@ namespace dtGame
           * This method allows a sub-class clamper to change the clamp type for optimization
           * based on factors such as velocity, transformation change and special-case objects.
           * @param suggestedClampType Clamp type sent into ClampToGround for the specified object.
-          * @param proxy Actor to be clamped and is passed in case collision geometry is needed.
+          * @param actor Actor to be clamped and is passed in case collision geometry is needed.
           * @param data Ground Clamping Data containing clamping options and runtime data.
           * @param tranformChanged Flag to make a better determination for clamping.
           * @param velocity Instantaneous velocity of the object for the current frame.
           * @return suggestedClampType is returned for the default behavior.
           */
          virtual GroundClampRangeType& GetBestClampType(GroundClampRangeType& suggestedClampType,
-            const dtCore::TransformableActorProxy& proxy, const GroundClampingData& data,
+            const dtCore::TransformableActorProxy& actor, const GroundClampingData& data,
             bool transformChanged, const osg::Vec3& velocity) const;
 
          /**
@@ -274,25 +259,25 @@ namespace dtGame
           * detected. Override this method to extend or change the point modification procedures.
           * This is handy for modifying points so that the terrain appears to be soft, like sand,
           * mud, or water.
-          * @param proxy Actor proxy that is being clamped. This is passed in case a sub-class of
+          * @param actor Actor that is being clamped. This is passed in case a sub-class of
           *              ground clamper needs to make any determinations based on the actor.
           * @param data Ground clamping data that may have some data fields modified. This may
           *             be used to maintain inertial data per clamp point or rotation velocity.
           * @param inOutPoints IN: Surface points that MAY be modified.
           *                    OUT: Points modified to their final positions.
           */
-         virtual void FinalizeSurfacePoints(dtCore::TransformableActorProxy& proxy,
+         virtual void FinalizeSurfacePoints(dtCore::TransformableActorProxy& actor,
             GroundClampingData& data, osg::Vec3 inOutPoints[3]);
 
          /**
           * Version of clamping that uses three intersection points to calculate the height and the rotation.
           * @param xform the current absolute transform of the actor.
-          * @param proxy the actual actor.  This is passed case collision geometry is needed.
+          * @param actor the actual actor.  This is passed case collision geometry is needed.
           * @param data Ground Clamping Data containing clamping options.
           * @param runtimeData Set of values to be updated based on the ground clamp operation.
           */
          void ClampToGroundThreePoint(dtCore::Transform& xform,
-            dtCore::TransformableActorProxy& proxy, GroundClampingData& data,
+            dtCore::TransformableActorProxy& actor, GroundClampingData& data,
             RuntimeData& runtimeData);
          
          /**
@@ -300,12 +285,12 @@ namespace dtGame
           * the offset.
           * @param currentTime the current simulation time. 
           * @param xform the current absolute transform of the actor.
-          * @param proxy the actual actor.  This is passed case collision geometry is needed.
+          * @param actor the actual actor.  This is passed case collision geometry is needed.
           * @param data Ground Clamping Data containing clamping options.
           * @param runtimeData Set of values to be updated based on the ground clamp operation.
           */
          void ClampToGroundIntermittent(double currentTime,
-                  dtCore::Transform& xform, dtCore::TransformableActorProxy& proxy,
+                  dtCore::Transform& xform, dtCore::TransformableActorProxy& actor,
                   GroundClampingData& data, RuntimeData& runtimeData);
 
          /**

@@ -57,7 +57,7 @@ namespace dtHLAGM
    {
    }
 
-   unsigned long DDMAppSpaceCalculator::MapAppSpaceValue(unsigned spaceNumber) const
+   unsigned int DDMAppSpaceCalculator::MapAppSpaceValue(unsigned spaceNumber) const
    {
       return DDMUtil::MapEnumerated(spaceNumber, mAppSpaceMin, mAppSpaceMax);
    }

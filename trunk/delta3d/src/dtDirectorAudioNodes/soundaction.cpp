@@ -23,7 +23,7 @@
 
 #include <dtAudio/audiomanager.h>
 #include <dtAudio/sound.h>
-#include <dtAudio/soundactorproxy.h>
+#include <dtAudio/soundactor.h>
 
 #include <dtCore/transform.h>
 #include <dtCore/transformable.h>
@@ -282,12 +282,12 @@ namespace dtDirector
 
       for (int index = 0; index < count; index++)
       {
-         dtAudio::SoundActorProxy* proxy =
-            dynamic_cast<dtAudio::SoundActorProxy*>(GetActor("Actor", index));
+         dtAudio::SoundActor* sndActor =
+            dynamic_cast<dtAudio::SoundActor*>(GetActor("Actor", index));
 
-         if (proxy)
+         if (sndActor)
          {
-            dtAudio::Sound* actorSound = proxy->GetSound();
+            dtAudio::Sound* actorSound = sndActor->GetSound();
 
             if (!actorSound->IsPlaying())
             {
@@ -323,12 +323,12 @@ namespace dtDirector
 
       for (int index = 0; index < count; index++)
       {
-         dtAudio::SoundActorProxy* proxy =
-            dynamic_cast<dtAudio::SoundActorProxy*>(GetActor("Actor", index));
+         dtAudio::SoundActor* sndActor =
+            dynamic_cast<dtAudio::SoundActor*>(GetActor("Actor", index));
 
-         if (proxy)
+         if (sndActor)
          {
-            dtAudio::Sound* actorSound = proxy->GetSound();
+            dtAudio::Sound* actorSound = sndActor->GetSound();
 
             if (actorSound->IsPlaying())
             {
@@ -356,12 +356,12 @@ namespace dtDirector
 
       for (int index = 0; index < count; index++)
       {
-         dtAudio::SoundActorProxy* proxy =
-            dynamic_cast<dtAudio::SoundActorProxy*>(GetActor("Actor", index));
+         dtAudio::SoundActor* sndActor =
+            dynamic_cast<dtAudio::SoundActor*>(GetActor("Actor", index));
 
-         if (proxy)
+         if (sndActor)
          {
-            dtAudio::Sound* actorSound = proxy->GetSound();
+            dtAudio::Sound* actorSound = sndActor->GetSound();
 
             if (actorSound->IsPlaying())
             {
@@ -397,12 +397,12 @@ namespace dtDirector
 
       for (int index = 0; index < count; index++)
       {
-         dtAudio::SoundActorProxy* proxy =
-            dynamic_cast<dtAudio::SoundActorProxy*>(GetActor("Actor", index));
+         dtAudio::SoundActor* sndActor =
+            dynamic_cast<dtAudio::SoundActor*>(GetActor("Actor", index));
 
-         if (proxy)
+         if (sndActor)
          {
-            dtAudio::Sound* actorSound = proxy->GetSound();
+            dtAudio::Sound* actorSound = sndActor->GetSound();
 
             if (actorSound->IsPlaying())
             {

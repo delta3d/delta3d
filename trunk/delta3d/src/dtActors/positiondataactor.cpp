@@ -36,9 +36,9 @@ namespace dtActors
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void PositionDataActorProxy::CreateActor()
+   void PositionDataActorProxy::CreateDrawable()
    { 
-      SetActor(*new dtCore::Transformable()); 
+      SetDrawable(*new dtCore::Transformable()); 
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -60,7 +60,7 @@ namespace dtActors
    //////////////////////////////////////////////////////////////////////////
    void PositionDataActorProxy::ApplyDataTo(dtCore::BaseActorObject* actorProxy) const
    {
-      ApplyDataTo(actorProxy->GetActor());
+      ApplyDataTo(actorProxy->GetDrawable());
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -79,7 +79,7 @@ namespace dtActors
       dtCore::Transform transformSource;
       dtCore::Transform transformTarget;
 
-      static_cast<const dtCore::Transformable*>(GetActor())->GetTransform(transformSource);
+      GetDrawable<dtCore::Transformable>()->GetTransform(transformSource);
       transformable->GetTransform(transformTarget);
 
       if (mChangeTranslation)

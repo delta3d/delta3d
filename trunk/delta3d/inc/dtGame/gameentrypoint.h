@@ -22,19 +22,25 @@
 #ifndef DELTA_GAME_ENTRY_POINT
 #define DELTA_GAME_ENTRY_POINT
 #include <dtGame/export.h>
+#include <dtCore/refptr.h>
+
+namespace dtABC
+{
+   class BaseABC;
+}
 
 namespace dtGame
 {
-   class GameApplication;
+   class GameManager;
 
    /**
     * @class GameEntryPoint
     * A class for specifying the entry point into a Game so that the entire game can be defined in a
     * Game library and loaded at runtime.  Typically, a derivative of this
     * class is compiled into a dynamic library, which gets loaded by a
-    * dtGame::GameApplication instance.
+    * dtGame::GameApplicationLoader instance.
     *
-    * Note: If a dtGame::GameApplication is used to load this as a dynamic
+    * Note: If a dtGame::GameApplicationLoader is used to load this as a dynamic
     * library, be sure to implement the two C functions as shown, typically
     * in the .cpp file:
     * @code
@@ -48,7 +54,7 @@ namespace dtGame
     *   delete entryPoint;
     * }
     * @endcode
-    * @see dtGame::GameApplication::Config()
+    * @see dtGame::GameApplicationLoader::Config()
     */
    class DT_GAME_EXPORT GameEntryPoint
    {
@@ -63,19 +69,20 @@ namespace dtGame
       }
 
       /**
+       * Override this to create the application differently or use a different class.
+       */
+      virtual dtCore::RefPtr<dtABC::BaseABC> CreateApplication(const std::string& configFileName);
+
+      /**
        * Called to initialize the game application.  This gets called from the
        * dtGame::GameApplication::Config() method, but before
        * dtABC::Application::Config().  This allows some defining of the
        * default Camera and Window, such as setting up stencil buffers.
-       * Note: If you want to replace the GameManager the GameApplication
-       * uses, this is a good place to hand it off.
        * @param app the current application
        * @param argc number of startup arguments.
        * @param argv array of string pointers to the arguments.
-       * @see dtGame::GameApplication::SetGameManager()
        */
-      virtual void Initialize(GameApplication& app, int argc, char **argv) { }
-
+      virtual void Initialize(dtABC::BaseABC& /*app*/, int /*argc*/, char ** /*argv*/) { }
 
       /**
        * Called after all startup related code is run.  At this point, the
@@ -83,7 +90,7 @@ namespace dtGame
        * Override this method to perform any specific start up functionality that
        * the GameEntryPoint needs to do.
        */
-      virtual void OnStartup(GameApplication &app) = 0;
+      virtual void OnStartup(dtABC::BaseABC& app, dtGame::GameManager& gamemanager) = 0;
 
       /**
        * This is the notice to the GameEntryPoint that the application is
@@ -91,7 +98,7 @@ namespace dtGame
        * @note This is called from the GameApplication destructor and is followed
        * by the GameEntryPoint destructor.
        */
-      virtual void OnShutdown(GameApplication &app) { }
+      virtual void OnShutdown(dtABC::BaseABC& /*app*/, dtGame::GameManager& /*gamemanager*/) { }
 
    };
 

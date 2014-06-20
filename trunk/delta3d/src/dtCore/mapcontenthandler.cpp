@@ -175,7 +175,7 @@ namespace  dtCore
                }
             }
 
-            IEnvironmentActor *ea = dynamic_cast<IEnvironmentActor*>(proxy->GetActor());
+            IEnvironmentActor *ea = dynamic_cast<IEnvironmentActor*>(proxy->GetDrawable());
             if (ea == NULL)
             {
                throw dtCore::InvalidActorException(
@@ -213,7 +213,8 @@ namespace  dtCore
          {
             if (mInActor)
             {
-               mPropSerializer->ElementStarted(localname);
+               if (!mIgnoreCurrentActor)
+                  mPropSerializer->ElementStarted(localname);
             }
             else if (XMLString::compareString(localname, MapXMLConstants::ACTOR_ELEMENT) == 0)
             {
@@ -378,50 +379,43 @@ namespace  dtCore
       {
          if (mInHeader)
          {
-            if (topEl == MapXMLConstants::NAME_ELEMENT)
+            if (!mLoadingPrefab)
             {
-               mMap->SetName(dtUtil::XMLStringConverter(chars).ToString());
-               //this flag is only used when the parser is just looking for the map name.
-               mFoundMapName = true;
-            }            
-            else if (topEl == MapXMLConstants::DESCRIPTION_ELEMENT)
-            {
-               // if we are loading a prefab, this description does not matter.
-               if (!mLoadingPrefab)
+               if (topEl == MapXMLConstants::NAME_ELEMENT)
+               {
+                  mMap->SetName(dtUtil::XMLStringConverter(chars).ToString());
+                  //this flag is only used when the parser is just looking for the map name.
+                  mFoundMapName = true;
+               }
+               else if (topEl == MapXMLConstants::DESCRIPTION_ELEMENT)
                {
                   mMap->SetDescription(dtUtil::XMLStringConverter(chars).ToString());
                }
-            }
-            else if (topEl == MapXMLConstants::AUTHOR_ELEMENT)
-            {
-               mMap->SetAuthor(dtUtil::XMLStringConverter(chars).ToString());
-            }
-            else if (topEl == MapXMLConstants::COMMENT_ELEMENT)
-            {
-               mMap->SetComment(dtUtil::XMLStringConverter(chars).ToString());
-            }
-            else if (topEl == MapXMLConstants::COPYRIGHT_ELEMENT)
-            {
-               mMap->SetCopyright(dtUtil::XMLStringConverter(chars).ToString());
-            }
-            else if (topEl == MapXMLConstants::CREATE_TIMESTAMP_ELEMENT)
-            {
-               mMap->SetCreateDateTime(dtUtil::XMLStringConverter(chars).ToString());
-            }
-            else if (topEl == MapXMLConstants::LAST_UPDATE_TIMESTAMP_ELEMENT)
-            {
-               //ignored for now
-            }
-            else if (topEl == MapXMLConstants::EDITOR_VERSION_ELEMENT)
-            {
-               if (!mLoadingPrefab)
+               else if (topEl == MapXMLConstants::AUTHOR_ELEMENT)
+               {
+                  mMap->SetAuthor(dtUtil::XMLStringConverter(chars).ToString());
+               }
+               else if (topEl == MapXMLConstants::COMMENT_ELEMENT)
+               {
+                  mMap->SetComment(dtUtil::XMLStringConverter(chars).ToString());
+               }
+               else if (topEl == MapXMLConstants::COPYRIGHT_ELEMENT)
+               {
+                  mMap->SetCopyright(dtUtil::XMLStringConverter(chars).ToString());
+               }
+               else if (topEl == MapXMLConstants::CREATE_TIMESTAMP_ELEMENT)
+               {
+                  mMap->SetCreateDateTime(dtUtil::XMLStringConverter(chars).ToString());
+               }
+               else if (topEl == MapXMLConstants::LAST_UPDATE_TIMESTAMP_ELEMENT)
                {
                   //ignored for now
                }
-            }
-            else if (topEl == MapXMLConstants::SCHEMA_VERSION_ELEMENT)
-            {
-               if (!mLoadingPrefab)
+               else if (topEl == MapXMLConstants::EDITOR_VERSION_ELEMENT)
+               {
+                  //ignored for now
+               }
+               else if (topEl == MapXMLConstants::SCHEMA_VERSION_ELEMENT)
                {
                   //ignored - the schema checks this value
                }
@@ -833,7 +827,7 @@ namespace  dtCore
       {
          EndActorElement();
       }
-      else if (mInActor)
+      else if (mInActor && !mIgnoreCurrentActor)
       {
          EndActorPropertySection(localname);
       }

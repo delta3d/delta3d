@@ -72,12 +72,7 @@ SET_TARGET_PROPERTIES(${APP_NAME}
 
 #MESSAGE(STATUS ${QT_LIBRARIES})
 
-#Not Sure if this is needed
-#IF(WIN32)
-#TARGET_LINK_LIBRARIES(${APP_NAME} User32 Gdi32 shell32 Advapi32 ole32 )
-#ENDIF(WIN32)
-
-INCLUDE(ModuleInstall OPTIONAL)
+INCLUDE(ProgramInstall OPTIONAL)
 
 # export symbols so plugins get access
 SET_TARGET_PROPERTIES(${APP_NAME} PROPERTIES ENABLE_EXPORTS true)

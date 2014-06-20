@@ -50,7 +50,7 @@
 
 #include <dtActors/engineactorregistry.h>
 
-#include "testcomponent.h"
+#include <dtGame/testcomponent.h>
 
 #include <cppunit/extensions/HelperMacros.h>
 

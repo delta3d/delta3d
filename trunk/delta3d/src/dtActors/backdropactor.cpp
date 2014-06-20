@@ -171,7 +171,7 @@ void BackdropActorProxy::BuildPropertyMap()
    static const dtUtil::RefString GROUPNAME = "Backdrop";
 
    // Make sure our actor is valid
-   BackdropActor *actor = dynamic_cast<BackdropActor*> (GetActor());
+   BackdropActor *actor = dynamic_cast<BackdropActor*> (GetDrawable());
    if(!actor)
    {
       LOG_ERROR("BackdropActor was initialized incorrectly");
@@ -184,12 +184,12 @@ void BackdropActorProxy::BuildPropertyMap()
             dtCore::Vec3ActorProperty::GetFuncType(actor, &BackdropActor::GetScale),
             "Scales", "Transformable"));
 
-   AddProperty(new dtCore::ResourceActorProperty(*this, dtCore::DataType::TEXTURE,
+   AddProperty(new dtCore::ResourceActorProperty(dtCore::DataType::TEXTURE,
             "Front Texture", "Front Texture",
             dtCore::ResourceActorProperty::SetFuncType(this, &BackdropActorProxy::SetFrontTexture),
             "Sets the texture on the front of the backdrop", GROUPNAME));
 
-   AddProperty(new dtCore::ResourceActorProperty(*this, dtCore::DataType::TEXTURE,
+   AddProperty(new dtCore::ResourceActorProperty(dtCore::DataType::TEXTURE,
             "Back Texture", "Back Texture",
             dtCore::ResourceActorProperty::SetFuncType(this, &BackdropActorProxy::SetBackTexture),
             "Sets the texture on the back of the backdrop", GROUPNAME));
@@ -199,7 +199,7 @@ void BackdropActorProxy::BuildPropertyMap()
 void BackdropActorProxy::SetFrontTexture(const std::string &path)
 {
    dtActors::BackdropActor *backdropA =
-      dynamic_cast<dtActors::BackdropActor *>(GetActor());
+      dynamic_cast<dtActors::BackdropActor *>(GetDrawable());
 
    if (backdropA == NULL)
    {
@@ -214,7 +214,7 @@ void BackdropActorProxy::SetFrontTexture(const std::string &path)
 void BackdropActorProxy::SetBackTexture(const std::string &path)
 {
    dtActors::BackdropActor *backdropA =
-      dynamic_cast<dtActors::BackdropActor *>(GetActor());
+      dynamic_cast<dtActors::BackdropActor *>(GetDrawable());
 
    if (backdropA == NULL)
    {
@@ -226,10 +226,10 @@ void BackdropActorProxy::SetBackTexture(const std::string &path)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void BackdropActorProxy::CreateActor()
+void BackdropActorProxy::CreateDrawable()
 {
    BackdropActor* actor = new BackdropActor();
-   SetActor(*actor);   
+   SetDrawable(*actor);   
 }
 
 }//dtActors

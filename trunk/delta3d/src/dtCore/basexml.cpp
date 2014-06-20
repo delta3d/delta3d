@@ -157,11 +157,11 @@ namespace dtCore
    {
       mSchemaFile = schemaFile;
 
-      // NOTE: The folling implementation was copied from dtUtil::XercesParser.
+      // NOTE: The following implementation was copied from dtUtil::XercesParser.
 
       if (!schemaFile.empty())
       {
-         std::string schema = osgDB::findDataFile(schemaFile);
+         std::string schema = dtUtil::FindFileInPathList(schemaFile);
 
          if (schema.empty())
          {
@@ -177,7 +177,7 @@ namespace dtCore
             mXercesParser->setFeature(XMLUni::fgXercesSchema, true);                  // enables schema checking.
             mXercesParser->setFeature(XMLUni::fgSAX2CoreValidation, true);            // posts validation errors.
             mXercesParser->setFeature(XMLUni::fgXercesValidationErrorAsFatal, true);  // does not allow parsing if schema is not fulfilled.
-            mXercesParser->loadGrammar(schema.c_str(), Grammar::SchemaGrammarType);
+            mXercesParser->loadGrammar(schema.c_str(), Grammar::SchemaGrammarType, true);
             XMLCh* SCHEMA = XMLString::transcode(schema.c_str());
             mXercesParser->setFeature(XMLUni::fgXercesSchema, true);
             mXercesParser->setProperty(XMLUni::fgXercesSchemaExternalNoNameSpaceSchemaLocation, SCHEMA);

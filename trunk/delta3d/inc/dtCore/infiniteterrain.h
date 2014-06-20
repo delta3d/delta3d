@@ -185,7 +185,7 @@ namespace dtCore
          /**
           * We want we collision to happen by default with this class.
           */
-         virtual bool FilterContact(dContact* contact, Transformable* collider) { return true; }
+         virtual bool FilterContact(dContact*, Transformable*) { return true; }
 
          /**
           * Given pointOne and pointTwo, both in world space and with all coordinates

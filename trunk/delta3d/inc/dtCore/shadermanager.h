@@ -179,7 +179,7 @@ namespace dtCore
           * Searches the shader manager for the specified shader group prototype. The returned value
           * is a prototype for a shader group. You can look for a specific shader prototype and then 
           * assign it to your node using AssignShaderFromPrototype().  
-          * @Note This version returns a non-const pointer which will let you modify the group. 
+          * @note This version returns a non-const pointer which will let you modify the group. 
           *    Changes will only affect the prototype itself, not any cloned instances. 
           * @param name Name of the shader group prototype to find.
           * @return A pointer to the shader group prototype or NULL if it could not be found.

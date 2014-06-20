@@ -73,7 +73,7 @@ class FIRE_FIGHTER_EXPORT ShipActor : public VehicleActor
       };
 
       /// Constructor
-      ShipActor(dtGame::GameActorProxy &proxy);
+      ShipActor(dtGame::GameActorProxy& parent);
 
       virtual void TimeUpdate(double deltaTime);
 
@@ -269,7 +269,7 @@ class FIRE_FIGHTER_EXPORT ShipActorProxy : public VehicleActorProxy
       virtual void BuildInvokables();
 
       /// Instantiates the actor itself
-      virtual void CreateActor() { SetActor(*new ShipActor(*this)); }
+      virtual void CreateDrawable() { SetDrawable(*new ShipActor(*this)); }
 
    protected:
 

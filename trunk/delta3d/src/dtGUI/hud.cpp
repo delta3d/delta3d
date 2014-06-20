@@ -2,6 +2,8 @@
 #include <dtGUI/ceguirenderer.h>
 #include <dtGUI/ceguitexture.h>
 
+#include <dtUtil/warningdisable.h>
+DT_DISABLE_WARNING_ALL_START
 #include <CEGUI/CEGUI.h>
 #include <CEGUI/CEGUIDefaultResourceProvider.h>
 #include <CEGUI/CEGUIPropertySet.h>
@@ -17,6 +19,13 @@
 #include <CEGUI/CEGUIPropertyHelper.h>
 #include <CEGUI/CEGUISchemeManager.h>
 
+#include <osg/GraphicsContext>
+#include <osg/State>
+#include <osg/Camera>
+#include <osg/Texture2D>
+#include <osg/Geode>
+DT_DISABLE_WARNING_END
+
 #include <dtCore/system.h>
 #include <dtCore/mouse.h>
 #include <dtCore/camera.h>
@@ -24,11 +33,6 @@
 #include <dtCore/deltadrawable.h>
 #include <dtUtil/log.h>
 
-#include <osg/GraphicsContext>
-#include <osg/State>
-#include <osg/Camera>
-#include <osg/Texture2D>
-#include <osg/Geode>
 
 #include <sstream>
 

@@ -120,6 +120,7 @@ namespace dtCore
       void createPerlinTexture();
       virtual void OnMessage(MessageData* data);
       void Update(const double deltaFrameTime);
+      void UpdateColors(const osg::Vec4& fog, const osg::Vec4& black);
       osg::Geometry* createPlane(float, float);
 
       int mOctaves;

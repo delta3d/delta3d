@@ -57,7 +57,7 @@ class TestGameEnvironmentApp : public dtABC::Application
             LOG_ERROR("Failed to create the infinite terrain proxy. Aborting.");
             Quit();
          }
-         mTerrain = static_cast<dtCore::InfiniteTerrain*>(proxy->GetActor());
+         mTerrain = static_cast<dtCore::InfiniteTerrain*>(proxy->GetDrawable());
 
          mGM->AddActor(*proxy);
 
@@ -68,7 +68,7 @@ class TestGameEnvironmentApp : public dtABC::Application
             Quit();
          }
 
-         mEnvironmentActor = static_cast<dtActors::WeatherEnvironmentActor*>(mEnvironmentActorProxy->GetActor());
+         mEnvironmentActor = static_cast<dtActors::WeatherEnvironmentActor*>(mEnvironmentActorProxy->GetDrawable());
 
          mGM->SetEnvironmentActor(mEnvironmentActorProxy.get());
 

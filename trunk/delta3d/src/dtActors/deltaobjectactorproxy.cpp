@@ -31,9 +31,9 @@
 namespace dtActors
 {
    ///////////////////////////////////////////////////////////////////////////////
-   void DeltaObjectActorProxy::CreateActor()
+   void DeltaObjectActorProxy::CreateDrawable()
    {
-     SetActor(*new dtCore::Object);
+     SetDrawable(*new dtCore::Object);
      //std::cout << "Creating actor proxy." << std::endl;
    }
 
@@ -43,7 +43,7 @@ namespace dtActors
       PhysicalActorProxy::BuildPropertyMap();
 
       dtCore::Object *actor = NULL;
-      GetActor(actor);
+      GetDrawable(actor);
 
       AddProperty(new dtCore::Vec3ActorProperty("Scale", "Scale",
          dtCore::Vec3ActorProperty::SetFuncType(actor, &dtCore::Object::SetScale),

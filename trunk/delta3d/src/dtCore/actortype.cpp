@@ -23,19 +23,47 @@
 
 namespace dtCore
 {
+   /////////////////////////////////////////////////////////////////////////////
+   const dtUtil::RefString& SharedClassInfo::GetClassName() const { return mClassName; }
+
+   /////////////////////////////////////////////////////////////////////////////
+   bool SharedClassInfo::IsInstanceOf(const dtUtil::RefString& name) const
+   {
+      return mClassHierarchy.find(name) != mClassHierarchy.end();
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void SharedClassInfo::SetClassName(const dtUtil::RefString& name)
+   {
+      mClassName = name;
+      mClassHierarchy.insert(mClassName);
+   }
 
    //////////////////////////////////////////////////////////////////////////
    ActorType::ActorType(const std::string& name,
             const std::string& category,
             const std::string& desc,
             const ActorType* parentType)
-   : ObjectType(name, category, desc, parentType) {}
-
+   : ObjectType(name, category, desc, parentType)
+   , mClassInfo(new SharedClassInfo)
+   {}
 
    //////////////////////////////////////////////////////////////////////////
    const ActorType* ActorType::GetParentActorType() const
    {
       return dynamic_cast<const ActorType*>(GetParentType());
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   SharedClassInfo& ActorType::GetSharedClassInfo() const
+   {
+      return *mClassInfo;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void ActorType::MergeSharedClassInfo(SharedClassInfo& clsInfo) const
+   {
+      mClassInfo->mClassHierarchy.insert(clsInfo.mClassHierarchy.begin(), clsInfo.mClassHierarchy.end());
    }
 
    //////////////////////////////////////////////////////////////////////////

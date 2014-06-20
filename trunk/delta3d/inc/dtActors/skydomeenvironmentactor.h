@@ -16,7 +16,7 @@ namespace dtActors
    class DT_PLUGIN_EXPORT SkyDomeEnvironmentActor : public dtGame::IEnvGameActor
    {
    public:
-      SkyDomeEnvironmentActor(dtGame::GameActorProxy& proxy);
+      SkyDomeEnvironmentActor(dtGame::GameActorProxy& parent);
       virtual ~SkyDomeEnvironmentActor();
 
 
@@ -105,7 +105,7 @@ namespace dtActors
       SkyDomeEnvironmentActorProxy();
 
      virtual void BuildPropertyMap();
-     virtual void CreateActor();
+     virtual void CreateDrawable();
 
    protected:
       virtual ~SkyDomeEnvironmentActorProxy();

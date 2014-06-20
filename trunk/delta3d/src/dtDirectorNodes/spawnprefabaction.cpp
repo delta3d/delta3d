@@ -26,15 +26,19 @@
 #include <dtCore/baseactorobject.h>
 
 #include <dtCore/resourceactorproperty.h>
+#include <dtCore/booleanactorproperty.h>
 #include <dtCore/vectoractorproperties.h>
 
 #include <dtDirector/director.h>
+#include <dtActors/prefabactorproxy.h>
 
 namespace dtDirector
 {
    /////////////////////////////////////////////////////////////////////////////
    SpawnPrefabAction::SpawnPrefabAction()
       : ActionNode()
+      , mNewActor("")
+      , mCreateAsPrefab(false)
       , mPrefab("")
    {
       AddAuthor("Jeff P. Houde");
@@ -76,7 +80,16 @@ namespace dtDirector
          "Out Actor", "Out Actor",
          dtCore::ActorIDActorProperty::SetFuncType(this, &SpawnPrefabAction::SetNewActor),
          dtCore::ActorIDActorProperty::GetFuncType(this, &SpawnPrefabAction::GetNewActor),
-         "", "The actor that was spawned.");
+         "The actor that was spawned.");
+
+      AddProperty(actorProp);
+
+      dtCore::BooleanActorProperty* createAsPrefab = new dtCore::BooleanActorProperty(
+         "CreateAsPrefab", "Create As Prefab",
+         dtCore::BooleanActorProperty::SetFuncType(this, &SpawnPrefabAction::SetCreateAsPrefab),
+         dtCore::BooleanActorProperty::GetFuncType(this, &SpawnPrefabAction::GetCreateAsPrefab),
+         "If it should create it as a prefab or extract the actors.  The first actor will be the result.");
+      AddProperty(createAsPrefab);
 
       // This will expose the properties in the editor and allow
       // them to be connected to ValueNodes.
@@ -96,9 +109,9 @@ namespace dtDirector
       if (locationActor)
       {
          dtCore::Vec3ActorProperty* transProp =
-            dynamic_cast<dtCore::Vec3ActorProperty*>(locationActor->GetProperty("Translation"));
+            dynamic_cast<dtCore::Vec3ActorProperty*>(locationActor->GetProperty(dtCore::TransformableActorProxy::PROPERTY_TRANSLATION));
          dtCore::Vec3ActorProperty* rotProp =
-            dynamic_cast<dtCore::Vec3ActorProperty*>(locationActor->GetProperty("Rotation"));
+            dynamic_cast<dtCore::Vec3ActorProperty*>(locationActor->GetProperty(dtCore::TransformableActorProxy::PROPERTY_ROTATION));
 
          if (transProp)
          {
@@ -112,13 +125,14 @@ namespace dtDirector
 
       if (gm && !prefab.IsEmpty())
       {
-         dtCore::RefPtr<dtCore::BaseActorObject> proxy = gm->CreateActor("dtActors", "Prefab");
-         if (proxy.valid())
+         dtCore::RefPtr<dtActors::PrefabActorProxy> prefabActor;
+         gm->CreateActor("dtActors", "Prefab", prefabActor);
+         if (prefabActor.valid())
          {
             dtCore::Vec3ActorProperty* transProp =
-               dynamic_cast<dtCore::Vec3ActorProperty*>(proxy->GetProperty("Translation"));
+               dynamic_cast<dtCore::Vec3ActorProperty*>(prefabActor->GetProperty(dtCore::TransformableActorProxy::PROPERTY_TRANSLATION));
             dtCore::Vec3ActorProperty* rotProp =
-               dynamic_cast<dtCore::Vec3ActorProperty*>(proxy->GetProperty("Rotation"));
+               dynamic_cast<dtCore::Vec3ActorProperty*>(prefabActor->GetProperty(dtCore::TransformableActorProxy::PROPERTY_ROTATION));
 
             if (transProp)
             {
@@ -129,16 +143,45 @@ namespace dtDirector
                rotProp->SetValue(spawnRotation);
             }
 
-            gm->AddActor(*proxy);
-
             dtCore::ResourceActorProperty* resourceProp = NULL;
-            resourceProp = dynamic_cast<dtCore::ResourceActorProperty*>(proxy->GetProperty("PrefabResource"));
+            resourceProp = dynamic_cast<dtCore::ResourceActorProperty*>(prefabActor->GetProperty("PrefabResource"));
             if (resourceProp)
             {
                resourceProp->SetValue(prefab);
             }
 
-            SetActorID(proxy->GetId(), "Out Actor");
+            if (GetCreateAsPrefab())
+            {
+               gm->AddActor(*prefabActor);
+               SetActorID(prefabActor->GetId(), "Out Actor");
+            }
+            else
+            {
+               bool setResult = false;
+               std::vector<dtCore::RefPtr<dtCore::BaseActorObject> >& actors = prefabActor->GetPrefabProxies();
+               std::vector<dtCore::RefPtr<dtCore::BaseActorObject> >::iterator i, iend;
+               i = actors.begin();
+               iend = actors.end();
+               for (; i != iend; ++i)
+               {
+                  dtCore::RefPtr<dtCore::BaseActorObject> actor = *i;
+                  dtGame::GameActorProxy* gap = dynamic_cast<dtGame::GameActorProxy*>(actor.get());
+                  if (gap != NULL)
+                  {
+                     gm->AddActor(*gap, false, false);
+                  }
+                  else
+                  {
+                     gm->AddActor(*actor);
+                  }
+
+                  if (!setResult)
+                  {
+                     SetActorID(actor->GetId(), "Out Actor");
+                     setResult = true;
+                  }
+               }
+            }
             return ActionNode::Update(simDelta, delta, input, firstUpdate);
          }
       }
@@ -190,18 +233,9 @@ namespace dtDirector
       return mSpawnLocation;
    }
 
-   /////////////////////////////////////////////////////////////////////////////
-   void SpawnPrefabAction::SetNewActor(const dtCore::UniqueId& value)
-   {
-   }
+   DT_IMPLEMENT_ACCESSOR(SpawnPrefabAction, dtCore::UniqueId, NewActor)
+   DT_IMPLEMENT_ACCESSOR(SpawnPrefabAction, bool, CreateAsPrefab)
 
-   /////////////////////////////////////////////////////////////////////////////
-   dtCore::UniqueId SpawnPrefabAction::GetNewActor()
-   {
-      dtCore::UniqueId id;
-      id = "";
-      return id;
-   }
 }
 
 ////////////////////////////////////////////////////////////////////////////////

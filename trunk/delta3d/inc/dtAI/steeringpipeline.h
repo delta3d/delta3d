@@ -76,6 +76,8 @@ namespace dtAI
       typedef dtUtil::Functor<bool, TYPELIST_1(const PathType&)> CheckConstraintFunctor;
       typedef dtUtil::Functor<bool, TYPELIST_3(const PathType&, const StateType&, GoalStateType&)> FixConstraintFunctor;
 
+      virtual ~Constraint() {}
+
       virtual bool WillViolate(const PathType& pathToFollow) const = 0;
       virtual void Suggest(const PathType& pathToFollow, const StateType& current_state, GoalStateType& result) const = 0;
    };
@@ -108,7 +110,7 @@ namespace dtAI
 
       void operator()(const Decomposer<State_, GoalState_>& target)
       {
-         return target.Decompose(mState, mGoal);
+         target.Decompose(mState, mGoal);
       }
 
       const typename BaseClass::StateType& mState;
@@ -212,11 +214,12 @@ namespace dtAI
             if(cont.WillViolate(p))
             {
                cont.Suggest(p, state, g);
-               FindGoal(g, entityToStep, output, --maxAttempts);
+               return FindGoal(g, entityToStep, output, --maxAttempts);
             }
          }
 
          entityToStep.OutputControl(p, state, output);
+
          return true;
       }
 

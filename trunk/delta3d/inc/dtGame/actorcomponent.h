@@ -25,7 +25,9 @@
 #define actorcomponent_h__
 
 #include <dtGame/export.h>
-#include <dtCore/propertycontainer.h>
+#include <dtCore/baseactorobject.h>
+#include <dtCore/actortype.h>
+#include <dtCore/sigslot.h>
 #include <dtUtil/refstring.h>
 #include <dtUtil/getsetmacros.h>
 
@@ -47,42 +49,61 @@ namespace dtGame
     * actor component until the OnEnteredWorld() method. This gives each actor component a chance
     * to initialize and get properties from the map regardless of order.
     */
-   class DT_GAME_EXPORT ActorComponent : public dtCore::PropertyContainer
+   class DT_GAME_EXPORT ActorComponent : public dtCore::BaseActorObject, public sigslot::has_slots<>
    {
 
    public:
 
+      typedef dtCore::BaseActorObject BaseClass;
+
       /**
        *  String used to identify component.
        */
-      typedef dtUtil::RefString ACType;
+      typedef dtCore::RefPtr<const dtCore::ActorType> ACType;
+
+      ///b All derived actor component types must pass this or a decendent as a parent type.
+      static const ACType BaseActorComponentType;
 
       /**
        * Constructor.
        * @param type Type string to identify component class
        */
-      ActorComponent(const ACType& type);
+      ActorComponent(ACType type);
 
       /**
        * Get type string of this component
        * @return The type string of this ActorComponent
        */
-      const ACType& GetType() const;
+      ACType GetType() const;
 
       /** 
        * Called when this ActorComponent gets added to an GameActor.  Overwrite 
        * to perform any custom initialization.
-       * @param actor The GameActor this ActorComponent has been added to.
+       * @param actor The Actor this ActorComponent has been added to.
        */ 
-      virtual void OnAddedToActor(dtGame::GameActor& actor) {};
+      DEPRECATE_FUNC virtual void OnAddedToActor(dtGame::GameActor& /*drawable*/) {};
 
       /** 
        * Called when this ActorComponent is removed from the parent actor.
-       * @param actor The GameActor this ActorComponent has just been removed from
+       * @param actor The Actor this ActorComponent has just been removed from
        */
-      virtual void OnRemovedFromActor(dtGame::GameActor& actor) {};
+      DEPRECATE_FUNC virtual void OnRemovedFromActor(dtGame::GameActor& /*drawable*/) {};
 
       /** 
+       * Called when this ActorComponent gets added to an GameActor.  Overwrite
+       * to perform any custom initialization.
+       * @param actor The Actor this ActorComponent has been added to.
+       */
+      virtual void OnAddedToActor(dtCore::BaseActorObject& /*actor*/) {};
+
+      /**
+       * Called when this ActorComponent is removed from the parent actor.
+       * @param actor The Actor this ActorComponent has just been removed from
+       */
+      virtual void OnRemovedFromActor(dtCore::BaseActorObject& /*actor*/) {};
+
+
+      /**
        * Called when the parent actor enters the "world".
        */
       virtual void OnEnteredWorld() {};
@@ -113,10 +134,21 @@ namespace dtGame
        * mycomponent->GetOwner(owner);
        * @endcode
        */
-      template <typename TActorPtr>
-      void GetOwner(TActorPtr& actorType) const
+      template <typename TOwnerPtr>
+      void GetOwner(TOwnerPtr& ownerPtr) const
       {
-         actorType = dynamic_cast<TActorPtr>(mOwner);
+         if (mOwner == NULL)
+         {
+            ownerPtr = NULL;
+         }
+         else
+         {   
+            ownerPtr = dynamic_cast<TOwnerPtr>(mOwner);
+            if (ownerPtr == NULL)
+            {
+               throw std::bad_cast();
+            }
+         }
       }
 
       /**
@@ -130,7 +162,7 @@ namespace dtGame
        * For now, this is called from the AddComponent on the ActorComponentContainer.
        * In the future, this should be called from library initialization behavior, like with Actors
        */
-      virtual void Init();
+      virtual void Init(const dtCore::ActorType& actorType);
 
    protected:
 
@@ -152,15 +184,17 @@ namespace dtGame
        * Default update method. Override to execute stuff for
        * each physics step. Call RegisterForTicks() to let this get called.
        */
-      virtual void OnTickLocal(const TickMessage& tickMessage) {};
+      virtual void OnTickLocal(const TickMessage& /*tickMessage*/) {};
+
+      virtual bool IsPlaceable() const { return false; }
 
    private: 
 
       /** The ComponentBase this component is a part of */
       ActorComponentContainer* mOwner;
 
-      /** type string of component */
-      const ACType mType;
+      // temporary type.
+      ACType mType;
 
       /// Have we built our property maps, etc.
       bool mInitialized;

@@ -23,12 +23,12 @@
 
 #include <cppunit/extensions/HelperMacros.h>
 
-#include <dtDAL/project.h>
-#include <dtDAL/datatype.h>
-#include <dtDAL/map.h>
-#include <dtDAL/gameeventmanager.h>
-#include <dtDAL/gameevent.h>
-#include <dtDAL/actortype.h>
+#include <dtCore/project.h>
+#include <dtCore/datatype.h>
+#include <dtCore/map.h>
+#include <dtCore/gameeventmanager.h>
+#include <dtCore/gameevent.h>
+#include <dtCore/actortype.h>
 
 #include <dtGame/gamemanager.h>
 #include <dtGame/message.h>
@@ -249,17 +249,24 @@ namespace dtPhysics
    /////////////////////////////////////////////////////////
    void dtPhysicsTests::setUp()
    {
-      mLogger = &dtUtil::Log::GetInstance("dtPhysicsTests.cpp");
+      try
+      {
+         mLogger = &dtUtil::Log::GetInstance("dtPhysicsTests.cpp");
 
-      dtCore::System::GetInstance().SetShutdownOnWindowClose(false);
-      dtCore::System::GetInstance().Start();
+         dtCore::System::GetInstance().SetShutdownOnWindowClose(false);
+         dtCore::System::GetInstance().Start();
 
-      mGM = new dtGame::GameManager(*GetGlobalApplication().GetScene());
-      mGM->SetApplication(GetGlobalApplication());
-      mGM->LoadActorRegistry(DTPHYSICS_REGISTRY);
+         mGM = new dtGame::GameManager(*GetGlobalApplication().GetScene());
+         mGM->SetApplication(GetGlobalApplication());
+         mGM->LoadActorRegistry(DTPHYSICS_REGISTRY);
 
-      dtCore::System::GetInstance().Step();
-      //SimCore::MessageType::RegisterMessageTypes(mGM->GetMessageFactory());
+         dtCore::System::GetInstance().Step();
+         //SimCore::MessageType::RegisterMessageTypes(mGM->GetMessageFactory());
+      }
+      catch(const dtUtil::Exception& ex)
+      {
+         CPPUNIT_FAIL(ex.ToString());
+      }
 
    }
 
@@ -382,7 +389,7 @@ namespace dtPhysics
    {
       try
       {
-         //std::string path = dtDAL::Project::GetInstance().GetResourcePath(dtDAL::ResourceDescriptor("StaticMeshes:physics_crate.ive"));
+         //std::string path = dtCore::Project::GetInstance().GetResourcePath(dtCore::ResourceDescriptor("StaticMeshes:physics_crate.ive"));
          std::string path = "../examples/data/models/physics_crate.ive";
          path = dtUtil::FindFileInPathList(path);
          dtCore::RefPtr<osgDB::ReaderWriter::Options> options = new osgDB::ReaderWriter::Options;
@@ -732,7 +739,7 @@ namespace dtPhysics
       mGM->CreateActor(*dtPhysics::PhysicsActorRegistry::PHYSICS_MATERIAL_ACTOR_TYPE, mat);
       mat->SetName("Steel");
       dtPhysics::MaterialActor* matDD = NULL;
-      mat->GetActor(matDD);
+      mat->GetDrawable(matDD);
       CPPUNIT_ASSERT(mat != NULL);
 
       PhysicsMaterials& materials = PhysicsWorld::GetInstance().GetMaterials();
@@ -863,11 +870,18 @@ namespace dtPhysics
    void dtPhysicsTests::testPhysicsObjectWithOffset(const std::string& engine)
    {
       ChangeEngine(engine);
-      testPhysicsObjectWithOffsetAndShape(PrimitiveType::BOX);
-      testPhysicsObjectWithOffsetAndShape(PrimitiveType::SPHERE);
-      testPhysicsObjectWithOffsetAndShape(PrimitiveType::CYLINDER);
-      testPhysicsObjectWithOffsetAndShape(PrimitiveType::CONVEX_HULL);
-      testPhysicsObjectWithOffsetAndShape(PrimitiveType::TRIANGLE_MESH);
+      try
+      {
+         testPhysicsObjectWithOffsetAndShape(PrimitiveType::BOX);
+         testPhysicsObjectWithOffsetAndShape(PrimitiveType::SPHERE);
+         testPhysicsObjectWithOffsetAndShape(PrimitiveType::CYLINDER);
+         testPhysicsObjectWithOffsetAndShape(PrimitiveType::CONVEX_HULL);
+         testPhysicsObjectWithOffsetAndShape(PrimitiveType::TRIANGLE_MESH);
+      }
+      catch(dtUtil::Exception& ex)
+      {
+         CPPUNIT_FAIL(ex.ToString());
+      }
    }
 
    void dtPhysicsTests::testPhysicsObjectKinematic(const std::string& engine)
@@ -1017,7 +1031,7 @@ namespace dtPhysics
       ChangeEngine(engine);
       try
       {
-         //std::string path = dtDAL::Project::GetInstance().GetResourcePath(dtDAL::ResourceDescriptor("StaticMeshes:physics_crate.ive"));
+         //std::string path = dtCore::Project::GetInstance().GetResourcePath(dtCore::ResourceDescriptor("StaticMeshes:physics_crate.ive"));
          std::string path = "../examples/data/models/physics_crate.ive";
          path = dtUtil::FindFileInPathList(path);
          dtCore::RefPtr<osgDB::ReaderWriter::Options> options = new osgDB::ReaderWriter::Options;
@@ -1415,7 +1429,7 @@ namespace dtPhysics
       // just call this to create the properties.
       testAC->BuildPropertyMap();
 
-      dtCore::RefPtr<dtDAL::ActorProperty> tempProp;
+      dtCore::RefPtr<dtCore::ActorProperty> tempProp;
 
       tempProp = testAC->GetDeprecatedProperty("MassForAgeia");
       CPPUNIT_ASSERT_MESSAGE("A deprecated property should exist for MassForAgeia", tempProp.valid());
@@ -1469,7 +1483,7 @@ namespace dtPhysics
       CPPUNIT_ASSERT(dtPhysics::VertexData::FindCachedData(cachingString) == NULL);
       try
       {
-         //std::string path = dtDAL::Project::GetInstance().GetResourcePath(dtDAL::ResourceDescriptor("StaticMeshes:physics_crate.ive"));
+         //std::string path = dtCore::Project::GetInstance().GetResourcePath(dtCore::ResourceDescriptor("StaticMeshes:physics_crate.ive"));
          std::string path = "../examples/data/models/physics_crate.ive";
          path = dtUtil::FindFileInPathList(path);
          dtCore::RefPtr<osgDB::ReaderWriter::Options> options = new osgDB::ReaderWriter::Options;
@@ -1707,7 +1721,7 @@ namespace dtPhysics
       CPPUNIT_ASSERT(mat.valid());
 
       // make sure the actor is valid
-      dtCore::RefPtr<dtPhysics::MaterialActor> matActor = dynamic_cast<dtPhysics::MaterialActor*>(mat->GetActor());
+      dtCore::RefPtr<dtPhysics::MaterialActor> matActor = dynamic_cast<dtPhysics::MaterialActor*>(mat->GetDrawable());
       CPPUNIT_ASSERT_MESSAGE("Failed to create material actor", matActor != NULL);
 
       CPPUNIT_ASSERT_EQUAL_MESSAGE("The Default is wrong", matActor->GetMateralDef().GetRestitution(), 0.2f);
@@ -1776,17 +1790,17 @@ namespace dtPhysics
 
       for(i = 0; i < 100; ++i)
       {         
-         CPPUNIT_ASSERT_EQUAL(data.mFaces->at(i), i);
+         CPPUNIT_ASSERT_EQUAL(i, data.mFaces->at(i));
       }
 
       for(;i < 200; ++i)
       {
-         CPPUNIT_ASSERT_EQUAL(data.mMaterialFlags->at(i - 100), i);
+         CPPUNIT_ASSERT_EQUAL(i, data.mMaterialFlags->at(i - 100));
       }
 
       for(;i < 300; ++i)
       {
-         CPPUNIT_ASSERT_EQUAL(data.mVertices->at(i - 200), osg::Vec3(0.0f, 0.0f, i));         
+         CPPUNIT_ASSERT_EQUAL(osg::Vec3(0.0f, 0.0f, i), data.mVertices->at(i - 200));
       }
 
    }

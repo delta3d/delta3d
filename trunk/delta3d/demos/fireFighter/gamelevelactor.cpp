@@ -47,7 +47,7 @@ void GameLevelActorProxy::BuildPropertyMap()
 {
    dtGame::GameActorProxy::BuildPropertyMap();
 
-   GameLevelActor& gla = static_cast<GameLevelActor&>(GetGameActor());
+   GameLevelActor& gla = *GetDrawable<GameLevelActor>();
 
    AddProperty(new dtCore::ResourceActorProperty(*this, dtCore::DataType::STATIC_MESH,
       "Model", "Model",
@@ -73,7 +73,7 @@ void GameLevelActorProxy::OnEnteredWorld()
 {
    dtGame::Invokable* invoke = new dtGame::Invokable("ResetCollisionMesh",
       dtUtil::MakeFunctor(&GameLevelActor::ResetCollisionMesh,
-         static_cast<GameLevelActor&>(GetGameActor())));
+            GetDrawable<GameLevelActor>()));
 
    AddInvokable(*invoke);
 
@@ -82,8 +82,8 @@ void GameLevelActorProxy::OnEnteredWorld()
 }
 
 /////////////////////////////////////////////////////////////////
-GameLevelActor::GameLevelActor(dtGame::GameActorProxy& proxy)
-   : dtGame::GameActor(proxy)
+GameLevelActor::GameLevelActor(dtGame::GameActorProxy& parent)
+   : dtGame::GameActor(parent)
    , mAmbientSound(NULL)
 {
 
@@ -142,7 +142,7 @@ void GameLevelActor::LoadFile(const std::string& filename)
 void GameLevelActor::ResetCollisionMesh(const dtGame::Message& msg)
 {
    dtGame::GameActorProxy* gap = GetGameActorProxy().GetGameManager()->FindGameActorById(msg.GetAboutActorId());
-   HatchActor* ha = dynamic_cast<HatchActor*>(&gap->GetGameActor());
+   HatchActor* ha = gap->GetDrawable<HatchActor>();
    if (ha == NULL)
    {
       return;

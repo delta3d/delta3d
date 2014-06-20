@@ -14,6 +14,10 @@
 #include <osg/Vec3>
 #include <osg/Matrix>
 
+
+namespace dtEditQt {
+
+
 IMPLEMENT_MANAGEMENT_LAYER(STAGEObjectMotionModel)
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -230,5 +234,7 @@ void STAGEObjectMotionModel::OnScale(const osg::Vec3& delta)
       }
    }
 }
+
+}//namespace dtEditQt
 
 ////////////////////////////////////////////////////////////////////////////////

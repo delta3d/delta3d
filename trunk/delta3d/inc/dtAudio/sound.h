@@ -28,6 +28,8 @@
 #include <queue>
 
 #include <dtCore/transformable.h>
+#include <dtCore/motioninterface.h>
+#include <dtCore/resourcedescriptor.h>
 #include <dtAudio/export.h>
 
 #ifdef __APPLE__
@@ -90,10 +92,12 @@ namespace dtAudio
     * may be working.  An application was not developed to explicitly
     * test these functions due to lack of time.
     */
-   class DT_AUDIO_EXPORT Sound : public dtCore::Transformable
+   class DT_AUDIO_EXPORT Sound : public dtCore::Transformable, virtual public dtCore::VelocityInterface
    {
       DECLARE_MANAGEMENT_LAYER(Sound)
    public:
+      DT_DECLARE_VIRTUAL_REF_INTERFACE_INLINE
+
       typedef void (*CallBack)(Sound* sound, void* param);  ///callback function type
 
       class FrameData : public osg::Referenced
@@ -195,6 +199,7 @@ namespace dtAudio
        * @param file the name of the file to load
        */
       void LoadFile(const char* file);
+      void LoadResource(const dtCore::ResourceDescriptor& rd);
 
       /**
        * Unloads the specified sound file.
@@ -222,7 +227,7 @@ namespace dtAudio
        *
        * @return the name of the loaded file
        */
-      const char* GetFilename() { return mFilename.c_str(); }
+      const char* GetFilename() { return mFileName.c_str(); }
       /// Returns the OpenAL Source ID associated with the loaded Delta3d Sound object.
       ALuint GetSource() { return mSource; }
 
@@ -478,7 +483,7 @@ namespace dtAudio
       void GetVelocity(osg::Vec3& velocity) const;
 
       /// Returns the velocity vector of the Sound.
-      osg::Vec3 GetVelocity();
+      /* implements velocity interface */ osg::Vec3 GetVelocity() const;
 
       /**
        * Sets the distance where there will no longer be any attenuation of
@@ -594,7 +599,7 @@ namespace dtAudio
       float GetDurationOfPlay() const;
 
    protected:
-      std::string mFilename;
+      std::string mFileName;
       CallBack    mPlayCB;
       void*       mPlayCBData;
       CallBack    mStopCB;

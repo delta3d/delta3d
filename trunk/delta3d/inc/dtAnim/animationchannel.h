@@ -164,7 +164,6 @@ private:
 
    bool mIsAction;
    bool mIsLooping;
-   float mDuration;
    float mMaxDuration;
    float mLastWeight;
 

@@ -9,6 +9,7 @@
 #include <dtCore/scene.h>    ///<\todo needs to be included because of some issue with BaseABC.
 
 #include <dtUtil/datapathutils.h>
+#include <dtUtil/exception.h>
 
 #if !defined(__APPLE__) && !defined(_WIN32) && !defined(WIN32) && !defined(__WIN32__)
 #include "X11/Xlib.h"
@@ -68,8 +69,13 @@ void Widget::Config(const WinData* d /*= NULL*/)
 
    if (d != NULL)
    {
-      WindowData* inheritedWindowData = new WindowData(d->hwnd);
 
+#ifdef __APPLE__
+      WindowData* inheritedWindowData = NULL;
+      throw dtUtil::Exception("OSX doesn't support creating an ABC widget with an existing window handle.", __FILE__, __LINE__);
+#else
+      WindowData* inheritedWindowData = new WindowData(d->hwnd);
+#endif
       dtCore::DeltaWin::DeltaWinTraits traits;
       traits.name = "Widget";
       traits.x = d->pos_x;
@@ -109,23 +115,23 @@ void Widget::SetPath(const std::string& path)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void Widget::PreFrame(const double deltaFrameTime)
+void Widget::PreFrame(const double /*deltaFrameTime*/)
 {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void Widget::Frame(const double deltaFrameTime)
+void Widget::Frame(const double /*deltaFrameTime*/)
 {
    mCompositeViewer->frame();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void Widget::PostFrame(const double deltaFrameTime)
+void Widget::PostFrame(const double /*deltaFrameTime*/)
 {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void Widget::Pause(const double deltaRealTime)
+void Widget::Pause(const double /*deltaRealTime*/)
 {
 }
 

@@ -31,7 +31,7 @@
 ////////////////////////////////////////////////////////////////////
 // Proxy Code
 ////////////////////////////////////////////////////////////////////
-TestGameActorCrashProxy::TestGameActorCrashProxy():ticksEnabled(false)
+TestGameActorCrashProxy::TestGameActorCrashProxy()
 {
    SetClassName("TestGameActorCrash");
 }
@@ -52,9 +52,9 @@ void TestGameActorCrashProxy::BuildInvokables()
 }
 
 ////////////////////////////////////////////////////////////////////
-void TestGameActorCrashProxy::CreateActor()
+void TestGameActorCrashProxy::CreateDrawable()
 {
-   SetActor(*new TestGameActorCrash(*this));
+   SetDrawable(*new TestGameActorCrash(*this));
 }
 
 ////////////////////////////////////////////////////////////////////
@@ -66,7 +66,7 @@ void TestGameActorCrashProxy::OnEnteredWorld()
 ////////////////////////////////////////////////////////////////////
 // Actor Code
 ////////////////////////////////////////////////////////////////////
-TestGameActorCrash::TestGameActorCrash(dtGame::GameActorProxy& proxy): dtGame::GameActor(proxy)
+TestGameActorCrash::TestGameActorCrash(dtGame::GameActorProxy& parent): dtGame::GameActor(parent)
 {
 }
 

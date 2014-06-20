@@ -24,7 +24,7 @@ void MultiClickButton::mousePressEvent(QMouseEvent* myEvent )
 
    if (myEvent->button() == Qt::LeftButton)
    {
-      mDragStartPosition = myEvent->pos();    
+      mDragStartPosition = myEvent->pos();
    }
 }
 
@@ -39,13 +39,14 @@ void MultiClickButton::mouseMoveEvent(QMouseEvent* myEvent)
 
       std::string uid = nb->GetActorID();
       QByteArray itemData(uid.c_str());
-      QDataStream dataStream(&itemData, QIODevice::WriteOnly);      
-      QMimeData *mimeData = new QMimeData;     
+      QDataStream dataStream(&itemData, QIODevice::WriteOnly);
+      QMimeData *mimeData = new QMimeData;
 
-      mimeData->setData("Node", itemData);      
-      drag->setMimeData(mimeData);      
+      mimeData->setData("Node", itemData);
+      drag->setMimeData(mimeData);
       
-      Qt::DropAction dropAction = drag->exec(Qt::MoveAction);
+      //Qt::DropAction dropAction =
+      drag->exec(Qt::MoveAction);
    }
 }
 

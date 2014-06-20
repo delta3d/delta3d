@@ -11,7 +11,7 @@
       #include <osg/Group>
    #else //_MSC_VER
       #include <stddef.h>
-      #include <QtGui/qwidget.h>      
+      #include <QtGui/QWidget>      
    #endif //_MSC_VER
 
 #endif //DT_USE_PCH

@@ -30,9 +30,9 @@ using namespace dtCore;
 
 namespace dtActors
 {
-   void SpotlightActorProxy::CreateActor()
+   void SpotlightActorProxy::CreateDrawable()
    {
-      SetActor(*new dtCore::SpotLight(0));
+      SetDrawable(*new dtCore::SpotLight(0));
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -41,7 +41,7 @@ namespace dtActors
       const std::string &GROUPNAME = "Light";
       PositionalLightActorProxy::BuildPropertyMap();
 
-      SpotLight *sl = static_cast<SpotLight*>(GetActor());
+      SpotLight *sl = static_cast<SpotLight*>(GetDrawable());
 
       // This property manipulates the cutoff oa spotlight. It uses
       // a float type to represent the cutoff factor.

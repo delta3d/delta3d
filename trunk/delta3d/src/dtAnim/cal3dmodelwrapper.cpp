@@ -28,19 +28,27 @@
 #include <cassert>
 #include <algorithm>
 
-
+//#include <dtUtil/stringutils.h>
+//#include <dtUtil/log.h>
 
 namespace dtAnim
 {
    /////////////////////////////////////////////////////////////////////////////
-   // STATIC VARIABLES
+   // CONSTANTS
+   /////////////////////////////////////////////////////////////////////////////
+   const float Cal3DModelWrapper::DEFAULT_MINIMUM_BLEND_TIME = 0.1f;
+
+
+
+   /////////////////////////////////////////////////////////////////////////////
+   // CLASS VARIABLES
    /////////////////////////////////////////////////////////////////////////////
    bool Cal3DModelWrapper::sAllowBindPose = false;
 
 
 
    /////////////////////////////////////////////////////////////////////////////
-   // STATIC METHODS
+   // CLASS METHODS
    /////////////////////////////////////////////////////////////////////////////
    void Cal3DModelWrapper::SetAllowBindPose(bool allow)
    {
@@ -60,6 +68,7 @@ namespace dtAnim
    /////////////////////////////////////////////////////////////////////////////
    Cal3DModelWrapper::Cal3DModelWrapper(CalModel* model)
       : mScale(1.0f)
+      , mMinBlendTime(DEFAULT_MINIMUM_BLEND_TIME)
       , mCalModel(model)
       , mRenderer(NULL)
       , mMixer(NULL)
@@ -158,7 +167,29 @@ namespace dtAnim
    /////////////////////////////////////////////////////////////////////////////
    bool Cal3DModelWrapper::BlendCycle(int id, float weight, float delay)
    {
-      return mMixer->blendCycle(id, weight, delay);
+      float fadeTime = delay < mMinBlendTime ? mMinBlendTime : delay;
+      return mMixer->blendCycle(id, weight, fadeTime);
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void Cal3DModelWrapper::SetSpeedFactor(int id, float speedFactor)
+   {
+      if (mMixer->getAnimationVector().size() > id && mMixer->getAnimationVector()[id] != NULL)
+      {
+         CalAnimationCycle* cac = dynamic_cast<CalAnimationCycle*>(mMixer->getAnimationVector()[id]);
+         if (cac != NULL)
+         {
+            if (cac->getState() != CalAnimation::STATE_ASYNC)
+            {
+               float duration = cac->getCoreAnimation()->getDuration() / speedFactor;
+               cac->setAsync(cac->getTime(), duration);
+            }
+            else
+            {
+               cac->setTimeFactor(speedFactor);
+            }
+         }
+      }
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -551,7 +582,7 @@ namespace dtAnim
    void Cal3DModelWrapper::SetScale(float scale)
    {
       // Ensure scale never goes to 0, to prevent the NAN plague.
-      if(scale == 0.0f)
+      if(scale <= 0.0f)
       {
          scale = 0.001f;
       }
@@ -765,6 +796,18 @@ namespace dtAnim
       return ! mixer->getAnimationActionList().empty()
          || ! mixer->getAnimationCycle().empty()
          || GetAllowBindPose();
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void Cal3DModelWrapper::SetMinimumBlendTime(float seconds)
+   {
+      mMinBlendTime = seconds;
+   }
+   
+   /////////////////////////////////////////////////////////////////////////////
+   float Cal3DModelWrapper::GetMinimumBlendTime() const
+   {
+      return mMinBlendTime;
    }
 
    /////////////////////////////////////////////////////////////////////////////

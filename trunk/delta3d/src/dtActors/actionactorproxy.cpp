@@ -13,7 +13,7 @@ namespace dtActors
 
       const std::string GROUPNAME = "Action";
 
-      dtABC::Action* a = static_cast<dtABC::Action*>(GetActor());
+      dtABC::Action* a = static_cast<dtABC::Action*>(GetDrawable());
 
       AddProperty(new dtCore::FloatActorProperty("Time Step","Time Step",
          dtCore::FloatActorProperty::SetFuncType(a,&dtABC::Action::SetTimeStep),

@@ -81,7 +81,7 @@ namespace dtActors
          */
         void SetAttenuation(const osg::Vec3 &atten)
         {
-            dtCore::PositionalLight *pl = dynamic_cast<dtCore::PositionalLight*>(GetActor());
+            dtCore::PositionalLight *pl = dynamic_cast<dtCore::PositionalLight*>(GetDrawable());
             if (!pl)
             {
                 throw dtCore::InvalidActorException(
@@ -97,7 +97,7 @@ namespace dtActors
          */
         osg::Vec3 GetAttenuation()
         {
-            dtCore::PositionalLight *pl = dynamic_cast<dtCore::PositionalLight*>(GetActor());
+            dtCore::PositionalLight *pl = dynamic_cast<dtCore::PositionalLight*>(GetDrawable());
             if (!pl)
             {
                 throw dtCore::InvalidActorException(
@@ -114,7 +114,7 @@ namespace dtActors
         /**
          * Initializes the actor.
          */
-        virtual void CreateActor();
+        virtual void CreateDrawable();
 
         /**
          * Destructor.

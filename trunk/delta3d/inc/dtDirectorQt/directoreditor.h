@@ -283,8 +283,8 @@ namespace dtDirector
        *
        * @return  The current actor selection.
        */
-      virtual std::vector<dtDAL::BaseActorObject*> GetActorSelection()
-      {return std::vector<dtDAL::BaseActorObject*>();}
+      virtual std::vector<dtCore::BaseActorObject*> GetActorSelection()
+      {return std::vector<dtCore::BaseActorObject*>();}
 
       /**
        * Registers a custom editor tool.
@@ -651,6 +651,14 @@ namespace dtDirector
        *	Restores the geometry of the window.
        */
       void RestoreWindow();
+
+      /**
+       * Sets the file name related variables.
+       */
+      void AssignFileNameVars(const std::string& fileName);
+
+      void UpdateRecentFiles();
+      void RemoveRecentFile();
 
       dtCore::RefPtr<Director> mNodeSceneDirector;
 

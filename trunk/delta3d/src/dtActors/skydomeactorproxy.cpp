@@ -29,9 +29,9 @@ using namespace dtCore;
 
 namespace dtActors 
 {
-    void SkyDomeActorProxy::CreateActor()
+    void SkyDomeActorProxy::CreateDrawable()
     {
-        SetActor(*new dtCore::SkyDome);
+        SetDrawable(*new dtCore::SkyDome);
     }
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -40,7 +40,7 @@ namespace dtActors
        dtActors::EnvEffectActorProxy::BuildPropertyMap();
        
        const std::string &GROUPNAME = "Sky";
-        //SkyDome *sd = static_cast<SkyDome*> (GetActor());
+        //SkyDome *sd = static_cast<SkyDome*> (GetDrawable());
 
         AddProperty(new Vec3ActorProperty("Base Color", "Base Color",
                  Vec3ActorProperty::SetFuncType(this, &SkyDomeActorProxy::SetBaseColor),
@@ -51,7 +51,7 @@ namespace dtActors
     ///////////////////////////////////////////////////////////////////////////////
     osg::Vec3 SkyDomeActorProxy::GetBaseColor()
     {
-        SkyDome *sd = static_cast<SkyDome*> (GetActor());
+        SkyDome *sd = static_cast<SkyDome*> (GetDrawable());
 
         osg::Vec3 color;
         sd->GetBaseColor(color);
@@ -61,7 +61,7 @@ namespace dtActors
     ///////////////////////////////////////////////////////////////////////////////
     void SkyDomeActorProxy::SetBaseColor(const osg::Vec3 &color)
     {
-        SkyDome *sd = static_cast<SkyDome*> (GetActor());
+        SkyDome *sd = static_cast<SkyDome*> (GetDrawable());
         
         sd->SetBaseColor(color);
     }

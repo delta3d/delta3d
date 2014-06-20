@@ -49,7 +49,7 @@ namespace dtQt
    /**
      * @class DynamicColorRGBAControl
      * @brief This is the dynamic control for the an RGBA Color picker - used in the property editor
-     * @Note It adds a group of child elements to the tree, since you can't edit 3 things
+     * @note It adds a group of child elements to the tree, since you can't edit 3 things
      * in one control easily.
      */
    class DT_QT_EXPORT DynamicColorRGBAControl : public DynamicAbstractParentControl

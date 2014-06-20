@@ -129,12 +129,10 @@ void LogTests::TestLogMessage1()
          mSource = "f";
 
          //test with empty strings
-         mLogger->LogMessage("", 1, "");
-         mLogger->LogMessage("", 1, "", logType);
+         mLogger->LogMessage(logType, "", 1, "");
 
          //test with one character
-         mLogger->LogMessage(mSource, 1, mMsgStr);
-         mLogger->LogMessage(mSource, 1, mMsgStr, logType);
+         mLogger->LogMessage(logType, mSource, 1, mMsgStr);
 
          //test with max characters
          //for (unsigned i=0; i<=MAX_LENGTH-1; i++)
@@ -142,14 +140,13 @@ void LogTests::TestLogMessage1()
             mMsgStr += "stuff";
             mSource += "foo";
          }
-         mLogger->LogMessage(mSource, 1, mMsgStr);
-         mLogger->LogMessage(mSource, 1, mMsgStr, logType);
+         mLogger->LogMessage(logType, mSource, 1, mMsgStr);
       }
       mLogger->LogHorizRule();
    }
    catch (const dtUtil::Exception& e)
    {
-      CPPUNIT_FAIL(std::string("Error: ") + e.What());
+      CPPUNIT_FAIL(e.ToString());
    }
    catch (const std::exception& e)
    {

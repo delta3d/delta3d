@@ -333,6 +333,7 @@ namespace dtAnim
       // have to lock for this entire call because the load function is not thread safe
       // plus it also prevents anyone from adding data to the cache unless they just loaded it.
       OpenThreads::ScopedLock<OpenThreads::Mutex> lockLoad(mLoadingLock);
+
       {
          OpenThreads::ScopedLock<OpenThreads::Mutex> lock(mAsynchronousLoadLock);
          data_in = Find(filename);

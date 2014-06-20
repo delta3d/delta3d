@@ -67,8 +67,8 @@ namespace dtAnim
    //////////////////////////////////////////////////////////////////////////////
 
    //////////////////////////////////////////////////////////////////////////////
-   Cal3DGameActor::Cal3DGameActor(dtGame::GameActorProxy& proxy)
-      : dtGame::GameActor(proxy)
+   Cal3DGameActor::Cal3DGameActor(dtGame::GameActorProxy& parent)
+      : dtGame::GameActor(parent)
       , mModelGeode(new osg::Geode)
       , mSkeletalGeode(new osg::Geode)
       , mAnimator(NULL)
@@ -185,9 +185,9 @@ namespace dtAnim
       dtGame::GameActorProxy::BuildPropertyMap();
 
       Cal3DGameActor* myActor = NULL;
-      GetActor(myActor);
+      GetDrawable(myActor);
 
-      AddProperty(new dtCore::ResourceActorProperty(*this, dtCore::DataType::SKELETAL_MESH,
+      AddProperty(new dtCore::ResourceActorProperty(dtCore::DataType::SKELETAL_MESH,
          "Skeletal Mesh", "Skeletal Mesh",
          dtCore::ResourceActorProperty::SetFuncType(myActor, &Cal3DGameActor::SetModel),
          "The model resource that defines the skeletal mesh", GROUPNAME));
@@ -218,10 +218,10 @@ namespace dtAnim
 
    const dtCore::BaseActorObject::RenderMode& Cal3DGameActorProxy::GetRenderMode()
    {
-      dtCore::ResourceDescriptor resource = GetResource("Skeletal Mesh");
+      dtCore::ResourceDescriptor resource = dynamic_cast<dtCore::ResourceActorProperty*>(GetProperty("Skeletal Mesh"))->GetValue();
       if (resource.IsEmpty() == false)
       {
-         if (resource.GetResourceIdentifier().empty() || GetActor()->GetOSGNode() == NULL)
+         if (resource.GetResourceIdentifier().empty() || GetDrawable()->GetOSGNode() == NULL)
          {
             return dtCore::BaseActorObject::RenderMode::DRAW_BILLBOARD_ICON;
          }
@@ -247,9 +247,9 @@ namespace dtAnim
    }
 
    //////////////////////////////////////////////////////////////////////////////
-   void Cal3DGameActorProxy::CreateActor()
+   void Cal3DGameActorProxy::CreateDrawable()
    {
-      SetActor(*new Cal3DGameActor(*this));
+      SetDrawable(*new Cal3DGameActor(*this));
    }
 
    void Cal3DGameActor::ApplyAnimationGroup(const dtCore::NamedGroupParameter& prop)

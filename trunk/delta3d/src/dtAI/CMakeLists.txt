@@ -89,20 +89,11 @@ SET(LIB_SOURCES
     ${SOURCE_PATH}/worldstate.cpp
 )
 
-ADD_LIBRARY(${LIB_NAME} SHARED
-    ${LIB_PUBLIC_HEADERS} 
-    ${LIB_SOURCES}
-)
-                        
-TARGET_LINK_LIBRARIES( ${LIB_NAME}
+SET(LIB_DEPS
              ${DTUTIL_LIBRARY}
              ${DTCORE_LIBRARY}
              ${DTGAME_LIBRARY}
              ${OPENGL_LIBRARY}
-             )                        
+             )
 
-SET_TARGET_PROPERTIES(${LIB_NAME}
-                     PROPERTIES DEFINE_SYMBOL DT_AI_LIBRARY)
-
-
-INCLUDE(ModuleInstall OPTIONAL)
+DELTA3D_ADD_LIBRARY(${LIB_NAME} DT_AI_LIBRARY SHARED)

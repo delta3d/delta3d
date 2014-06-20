@@ -54,35 +54,35 @@ TestDirector::~TestDirector()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void TestDirector::Initialize(dtGame::GameApplication& app, int argc, char** argv)
+void TestDirector::Initialize(dtABC::BaseABC& app, int argc, char** argv)
 {
    std::string context = dtUtil::GetDeltaRootPath() + "/examples/data/demoMap";
    dtCore::Project::GetInstance().SetContext(context, true);
 
-   std::vector<std::string> mapNames;
 
    // Attempt to retrieve the map name through the command arguments.
    if (argc >= 2)
    {
-      mapNames.push_back(argv[1]);
+      mMapNames.push_back(argv[1]);
    }
    else
    {
-      mapNames.push_back("TestDirector");
+      mMapNames.push_back("TestDirector");
    }
 
-   app.GetGameManager()->ChangeMapSet(mapNames);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void TestDirector::OnStartup(dtGame::GameApplication& app)
+void TestDirector::OnStartup(dtABC::BaseABC& app, dtGame::GameManager& gameManager)
 {
+   gameManager.ChangeMapSet(mMapNames);
+
    std::string dataPath = dtUtil::GetDeltaDataPathList();
    dtUtil::SetDataFilePathList(dataPath + ";" + dtUtil::GetDeltaRootPath() + "/examples/data" + ";"); 
 
    // The game manager will hold a ref pointer to all gm components
    DirectorComponent* directorComponent = new DirectorComponent();
-   app.GetGameManager()->AddComponent(*directorComponent, dtGame::GameManager::ComponentPriority::NORMAL);
+   gameManager.AddComponent(*directorComponent, dtGame::GameManager::ComponentPriority::NORMAL);
 
    try
    {

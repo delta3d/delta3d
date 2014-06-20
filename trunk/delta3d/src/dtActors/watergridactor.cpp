@@ -173,8 +173,8 @@ namespace dtActors
    ////////////////////////////////////////////////////////////////////////////////
    //WATER GRID ACTOR
    ////////////////////////////////////////////////////////////////////////////////
-   WaterGridActor::WaterGridActor(WaterGridActorProxy& proxy)
-      : BaseClass(proxy)
+   WaterGridActor::WaterGridActor(WaterGridActorProxy& owner)
+      : BaseClass(owner)
       , mElapsedTime(0.0f)
       , mDeltaTime(0.0f)
       , mRenderWaveTexture(false)
@@ -557,10 +557,12 @@ namespace dtActors
       //set the elapsed time
       osg::Uniform* elapsedTime = ss->getOrCreateUniform(UNIFORM_ELAPSED_TIME, osg::Uniform::FLOAT);
       elapsedTime->set(mElapsedTime);
+      elapsedTime->setDataVariance(osg::Object::DYNAMIC);
 
       //set the wave direction modifier
       osg::Uniform* waveDirModifier = ss->getOrCreateUniform(UNIFORM_WAVE_DIRECTION, osg::Uniform::FLOAT);
       waveDirModifier->set(mModForDirectionInDegrees);
+      waveDirModifier->setDataVariance(osg::Object::DYNAMIC);
 
       //set the max distance
       osg::Uniform* maxComputedDistance = ss->getOrCreateUniform(UNIFORM_MAX_COMPUTED_DISTANCE, osg::Uniform::FLOAT);
@@ -572,6 +574,7 @@ namespace dtActors
 
       //update vertex wave uniforms
       osg::Uniform* waveArray = ss->getOrCreateUniform(UNIFORM_WAVE_ARRAY, osg::Uniform::FLOAT_VEC4, MAX_WAVES * 2);
+      waveArray->setDataVariance(osg::Object::DYNAMIC);
 
       // Update the
       osg::Uniform* centerOffset = ss->getOrCreateUniform(UNIFORM_CENTER_OFFSET, osg::Uniform::FLOAT_VEC3);
@@ -595,16 +598,20 @@ namespace dtActors
       //set the FOV Modifier - uses the value from DetermineCurrentWaveSet()
       osg::Uniform* fovModifier = ss->getOrCreateUniform("modForFOV", osg::Uniform::FLOAT);
       fovModifier->set(mCameraFoVScalar * mModForFOV);
+      fovModifier->setDataVariance(osg::Object::DYNAMIC);
 
       //set the TextureWaveChopModifier, changes the range of angles used to compute the wave directions
       osg::Uniform* twcModifier = ss->getOrCreateUniform("textureWaveChopModifier", osg::Uniform::FLOAT);
       twcModifier->set(mChoppinessEnum->mTextureWaveModifier);
+      twcModifier->setDataVariance(osg::Object::DYNAMIC);
 
       //update texture wave uniforms
       osg::Uniform* textureWaveAmp = ss->getOrCreateUniform(UNIFORM_TEXTURE_WAVE_AMP, osg::Uniform::FLOAT);
       textureWaveAmp->set(mTextureWaveAmpOverLength);
+      textureWaveAmp->setDataVariance(osg::Object::DYNAMIC);
 
       osg::Uniform* textureWaveArray = ss->getOrCreateUniform(UNIFORM_TEXTURE_WAVE_ARRAY, osg::Uniform::FLOAT_VEC4, MAX_TEXTURE_WAVES);
+      textureWaveArray->setDataVariance(osg::Object::DYNAMIC);
 
       TextureWaveArray::iterator tw_iter = mTextureWaves.begin();
       TextureWaveArray::iterator tw_endIter = mTextureWaves.end();
@@ -1014,6 +1021,7 @@ namespace dtActors
    {
       osg::StateSet* ss = pCamera.GetOSGCamera()->getOrCreateStateSet();
       osg::Uniform* waterFOVUniform = ss->getOrCreateUniform("waterPlaneFOV", osg::Uniform::FLOAT);
+      waterFOVUniform->setDataVariance(osg::Object::DYNAMIC);
 
       dtCore::Transform xform;
       osg::Vec3d waterCenter, screenPosOut, camPos, waterPos;
@@ -1142,6 +1150,7 @@ namespace dtActors
    {
       osg::StateSet* ss = pCamera.GetOSGCamera()->getOrCreateStateSet();
       osg::Uniform* waterHeightScreenSpace = ss->getOrCreateUniform("waterHeightScreenSpace", osg::Uniform::FLOAT_VEC3);
+      waterHeightScreenSpace->setDataVariance(osg::Object::DYNAMIC);
 
       dtCore::Transform xform;
       osg::Vec3d waterCenter, screenPosOut, camPos;
@@ -1184,10 +1193,10 @@ namespace dtActors
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void WaterGridActorProxy::CreateActor()
+   void WaterGridActorProxy::CreateDrawable()
    {
       WaterGridActor* actor = new WaterGridActor(*this);
-      SetActor(*actor);
+      SetDrawable(*actor);
 
       //if (IsInSTAGE())
       //{
@@ -1202,7 +1211,7 @@ namespace dtActors
    {
       BaseClass::BuildInvokables();
 
-      WaterGridActor& wga = static_cast<WaterGridActor&>(GetGameActor());
+      WaterGridActor* wga = GetDrawable<WaterGridActor>();
 
       AddInvokable(*new dtGame::Invokable(INVOKABLE_MAP_LOADED,
          dtUtil::MakeFunctor(&WaterGridActor::Init, wga)));
@@ -1232,16 +1241,16 @@ namespace dtActors
 
       BaseClass::BuildPropertyMap();
 
-      WaterGridActor& actor = static_cast<WaterGridActor&>(GetGameActor());
+      WaterGridActor* actor = GetDrawable<WaterGridActor>();
 
       AddProperty(new dtCore::ColorRgbaActorProperty(PROPERTY_WATER_COLOR, PROPERTY_WATER_COLOR,
-         dtCore::ColorRgbaActorProperty::SetFuncType(&actor, &WaterGridActor::SetWaterColor),
-         dtCore::ColorRgbaActorProperty::GetFuncType(&actor,&WaterGridActor::GetWaterColor),
+         dtCore::ColorRgbaActorProperty::SetFuncType(actor, &WaterGridActor::SetWaterColor),
+         dtCore::ColorRgbaActorProperty::GetFuncType(actor,&WaterGridActor::GetWaterColor),
          "Sets the color of the water.", GROUPNAME));
 
       AddProperty(new dtCore::EnumActorProperty<WaterGridActor::ChoppinessSettings>(PROPERTY_CHOPPINESS, PROPERTY_CHOPPINESS,
-         dtCore::EnumActorProperty<WaterGridActor::ChoppinessSettings>::SetFuncType(&actor, &WaterGridActor::SetChoppiness),
-         dtCore::EnumActorProperty<WaterGridActor::ChoppinessSettings>::GetFuncType(&actor, &WaterGridActor::GetChoppiness),
+         dtCore::EnumActorProperty<WaterGridActor::ChoppinessSettings>::SetFuncType(actor, &WaterGridActor::SetChoppiness),
+         dtCore::EnumActorProperty<WaterGridActor::ChoppinessSettings>::GetFuncType(actor, &WaterGridActor::GetChoppiness),
          "Sets the choppiness for the water.", GROUPNAME));
 
       AddProperty(new dtCore::StringActorProperty(PROPERTY_SCENE_CAMERA, PROPERTY_SCENE_CAMERA,
@@ -1289,7 +1298,7 @@ namespace dtActors
    void WaterGridActorProxy::ResetSceneCamera()
    {
       WaterGridActor* waterActor;
-      GetActor(waterActor);
+      GetDrawable(waterActor);
 
       dtCore::Camera* sceneCamera = dtCore::Camera::GetInstance(mSceneCameraName);
 

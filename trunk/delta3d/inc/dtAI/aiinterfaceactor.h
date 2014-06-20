@@ -26,6 +26,8 @@
 #include <dtAI/export.h>
 #include <dtCore/actorproxy.h>
 #include <dtCore/deltadrawable.h>
+#include <dtCore/resourcedescriptor.h>
+#include <dtUtil/getsetmacros.h>
 
 namespace dtAI
 {
@@ -71,6 +73,8 @@ namespace dtAI
        */
       void LoadFile(const std::string& fileName);
 
+      DT_DECLARE_ACCESSOR(dtCore::ResourceDescriptor, AIFile)
+
       /*virtual*/ bool IsPlaceable() const;
 
       // Use the AIPluginInterface object to interface with dtAI through this actor
@@ -80,7 +84,7 @@ namespace dtAI
       const AIPluginInterface* GetAIInterface() const;
 
    protected:
-     /*virtual*/ void CreateActor();
+     /*virtual*/ void CreateDrawable();
 
      /**
       * This is called from CreateActor

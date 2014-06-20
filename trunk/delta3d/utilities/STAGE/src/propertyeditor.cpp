@@ -136,7 +136,7 @@ namespace dtEditQt
    ////////////////////////////////////////////////////////////////////////////////
    void PropertyEditor::buildDynamicControls()
    {
-      dtQt::DynamicGroupControl* parent = GetRootControl();
+      //dtQt::DynamicGroupControl* parent = GetRootControl();
 
       std::vector<dtCore::PropertyContainer*> propCons;
       GetSelectedPropertyContainers(propCons);

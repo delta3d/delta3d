@@ -51,13 +51,13 @@ namespace dtEditQt
       : mMainWindow(NULL)
       , mGroupUIRegistry(new GroupUIRegistry)
       , mGridSize(16)
+      , mNumRecentProjects(5)
       , mLoadLastProject(true)
       , mLoadLastMap(true)
       , mRigidCamera(true)
       , mUseGlobalOrientationForViewportWidget(false)
       , mActorCreationDistance(5.f)
       , mSelectionColor(Qt::red)
-      , mNumRecentProjects(5)
    {
       LOG_DEBUG("Initializing Editor Data.");
 

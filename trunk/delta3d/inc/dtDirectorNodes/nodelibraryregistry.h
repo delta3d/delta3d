@@ -165,7 +165,7 @@ namespace dtDirector
 
       /**
        * Retrieves the type of node library this is.
-       * @Note: This should be overloaded if the nodes that belong
+       * @note: This should be overloaded if the nodes that belong
        * to the library are of a specific type.
        */
       virtual std::string GetNodeLibraryType() const

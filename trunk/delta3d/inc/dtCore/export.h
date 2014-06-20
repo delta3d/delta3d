@@ -39,8 +39,6 @@
 #   endif 
 #endif
 
-#ifndef dtDAL
-#define dtDAL dtCore
-#endif
+#include <dtUtil/warningdisable.h>
 
 #endif // DELTA_CORE_EXPORT

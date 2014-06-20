@@ -120,6 +120,10 @@ Application::Application(const std::string& configFilename, dtCore::DeltaWin* wi
       //create instances using the default values
       CreateInstances(GetDefaultConfigData());
    }
+
+   dtUtil::Log::SetLogTimeProvider(this);
+
+   GetCamera()->SetupBackwardCompatibleStateset();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -132,14 +136,15 @@ void Application::Config()
    //keep a context valid throughout the whole frame.  This is a bit of a crutch
    //for applications upgrading to OSG 2.6.0 that are crashing due to openGL
    //context issues.  Users should not rely on this.
-#if defined(OPENSCENEGRAPH_MAJOR_VERSION) && OPENSCENEGRAPH_MAJOR_VERSION >= 2 && defined(OPENSCENEGRAPH_MINOR_VERSION) && OPENSCENEGRAPH_MINOR_VERSION >= 6
+
+
+#if OSG_VERSION_GREATER_THAN(2,6,0)
    char* deltaReleaseContext = getenv("DELTA_RELEASE_CONTEXT");
    if (deltaReleaseContext)
    {
       GetCompositeViewer()->setReleaseContextAtEndOfFrameHint(false);
    }
 #endif
-
    ReadSystemProperties();
 }
 
@@ -226,8 +231,14 @@ void Application::EventTraversal(const double deltaSimTime)
 
    if(!mFirstFrame || !mCompositeViewer->done())
    {
-     mCompositeViewer->eventTraversal();
+      mCompositeViewer->eventTraversal();
    }
+
+   // The clock time is in GMT, so I have to change the DateTime to GMT, then assign the time,
+   // then switch it back to local.
+   mCurrentFrameTime.SetGMTOffset(0, false);
+   mCurrentFrameTime.SetTime(dtCore::System::GetInstance().GetRealClockTime() / 1000000);
+   mCurrentFrameTime.AdjustTimeZone(dtUtil::DateTime::GetLocalGMTOffset(true));
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -444,6 +455,7 @@ void Application::CreateInstances(const ApplicationConfigData& data)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+DT_DISABLE_WARNING_START_CLANG("-Wreturn-stack-address")
 const std::string& Application::GetConfigPropertyValue(
          const std::string& name, const std::string& defaultValue) const
 {
@@ -457,16 +469,36 @@ const std::string& Application::GetConfigPropertyValue(
       return i->second;
    }
 }
+DT_DISABLE_WARNING_END
+
+///////////////////////////////////////////////////////////////////////////////
+void Application::GetConfigPropertiesWithPrefix(const std::string& prefix, std::vector<std::pair<std::string,std::string> >& resultOut, bool removePrefix) const
+{
+   size_t prefLen = prefix.length();
+   AppConfigPropertyMap::const_iterator i,iend;
+   i = mConfigProperties.begin();
+   iend = mConfigProperties.end();
+   for (;i != iend; ++i)
+   {
+      const std::string& key = i->first;
+      if (key.length() >= prefLen && key.substr(0, prefLen) == prefix)
+      {
+         if (removePrefix)
+         {
+            resultOut.push_back(std::make_pair(key.substr(prefLen), i->second));
+         }
+         else
+         {
+            resultOut.push_back(std::make_pair(key, i->second));
+         }
+      }
+   }
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 void Application::SetConfigPropertyValue(const std::string& name, const std::string& value)
 {
-   if (!mConfigProperties.insert(std::make_pair(name, value)).second)
-   {
-      AppConfigPropertyMap::iterator i = mConfigProperties.find(name);
-      // "i" can't be the "end()" because the insert returned false, meaning it does have that key.
-      i->second = value;
-   }
+   mConfigProperties[name] = value;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -532,6 +564,24 @@ std::string dtABC::Application::GenerateDefaultConfigFile(const std::string& fil
 void dtABC::Application::SetNextStatisticsType()
 {
    mStats->SelectNextType();
+}
+
+///////////////////////////////////////////////////////////////////////////////
+const dtUtil::DateTime& dtABC::Application::GetDateTime()
+{
+	return mCurrentFrameTime;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+unsigned dtABC::Application::GetFrameNumber()
+{
+	return GetCompositeViewer()->getFrameStamp()->getFrameNumber();
+}
+
+///////////////////////////////////////////////////////////////////////////////
+osg::Referenced* dtABC::Application::AsReferenced()
+{
+	return this;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -645,11 +695,11 @@ bool AppXMLApplicator::operator ()(const ApplicationConfigData& data, dtABC::App
    //via the constructor of DeltaWin
    //dwin->SetWindowTitle(data.WINDOW_NAME);
    //dwin->SetPosition(data.WINDOW_X, data.WINDOW_Y, data.RESOLUTION.width, data.RESOLUTION.height);
-   //dwin->ShowCursor(data.SHOW_CURSOR);
+   //dwin->SetShowCursor(data.SHOW_CURSOR);
    //dwin->SetFullScreenMode(data.FULL_SCREEN);
 
    // change the resolution if needed and valid
-   if (data.CHANGE_RESOLUTION)
+   if (data.CHANGE_RESOLUTION && data.FULL_SCREEN)
    {
       if (dwin->IsValidResolution(data.RESOLUTION))
       {

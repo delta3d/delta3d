@@ -275,8 +275,8 @@ namespace dtCore
 
       if (mProxyMap.insert(std::make_pair(proxy.GetId(), dtCore::RefPtr<BaseActorObject>(&proxy))).second)
       {
-         const std::set<std::string>& hierarchy = proxy.GetClassHierarchy();
-         mProxyActorClasses.insert(proxy.GetClassName());
+         const std::set<dtUtil::RefString>& hierarchy = proxy.GetActorType().GetSharedClassInfo().mClassHierarchy;
+         mProxyActorClasses.insert(proxy.GetActorType().GetSharedClassInfo().GetClassName());
          mProxyActorClasses.insert(hierarchy.begin(), hierarchy.end());
          mModified = true;
       }
@@ -365,8 +365,8 @@ namespace dtCore
       for (std::map<dtCore::UniqueId, dtCore::RefPtr<BaseActorObject> >::const_iterator i = mProxyMap.begin(); i != mProxyMap.end(); ++i)
       {
          const BaseActorObject& proxy = *(i->second);
-         const std::set<std::string>& hierarchy = proxy.GetClassHierarchy();
-         mProxyActorClasses.insert(proxy.GetClassName());
+         const std::set<dtUtil::RefString>& hierarchy = proxy.GetActorType().GetSharedClassInfo().mClassHierarchy;
+         mProxyActorClasses.insert(proxy.GetActorType().GetSharedClassInfo().GetClassName());
          mProxyActorClasses.insert(hierarchy.begin(), hierarchy.end());
       }
    }
@@ -485,7 +485,7 @@ namespace dtCore
          return;
       }
 
-      IEnvironmentActor *ea = dynamic_cast<IEnvironmentActor*>(envActor->GetActor());
+      IEnvironmentActor *ea = dynamic_cast<IEnvironmentActor*>(envActor->GetDrawable());
       if (ea == NULL)
       {
          LOG_ERROR("The actor specified is not an EnvironmentActor. Ignoring.");
@@ -742,7 +742,7 @@ namespace dtCore
    }
 
    //////////////////////////////////////////////////////////////////////////
-   const std::set<std::string>& Map::GetProxyActorClasses() const
+   const std::set<dtUtil::RefString>& Map::GetProxyActorClasses() const
    {
       return mProxyActorClasses;
    }

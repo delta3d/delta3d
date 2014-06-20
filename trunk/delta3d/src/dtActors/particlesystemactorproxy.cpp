@@ -32,9 +32,9 @@ using namespace dtCore;
 
 namespace dtActors
 {
-   void ParticleSystemActorProxy::CreateActor()
+   void ParticleSystemActorProxy::CreateDrawable()
    {
-      SetActor(*new dtCore::ParticleSystem);
+      SetDrawable(*new dtCore::ParticleSystem);
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -43,7 +43,7 @@ namespace dtActors
       const std::string &GROUPNAME = "Particle System";
       TransformableActorProxy::BuildPropertyMap();
 
-      ParticleSystem *ps = static_cast<ParticleSystem*>(GetActor());
+      ParticleSystem *ps = static_cast<ParticleSystem*>(GetDrawable());
 
       // This property toggles the enabling of a Particle System.
       // A value of true enables the particle system, which in turn
@@ -66,7 +66,7 @@ namespace dtActors
          "Sets if a partical system is relative to its parent, if any. ", GROUPNAME));
 
       // This property enables the loading of a particle resource file.
-      AddProperty(new ResourceActorProperty(*this, DataType::PARTICLE_SYSTEM, "Particle(s) File",
+      AddProperty(new ResourceActorProperty(DataType::PARTICLE_SYSTEM, "Particle(s) File",
          "particle file", ResourceActorProperty::SetFuncType(this, &ParticleSystemActorProxy::LoadFile),
          "Sets the resource file of this particle system", GROUPNAME));
    }

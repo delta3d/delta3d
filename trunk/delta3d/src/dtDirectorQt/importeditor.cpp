@@ -26,7 +26,7 @@
 #include <dtDirectorQt/undoaddimportevent.h>
 #include <dtDirectorQt/undoremoveimportevent.h>
 
-#include <dtDAL/project.h>
+#include <dtCore/project.h>
 
 #include <dtDirector/director.h>
 #include <dtDirector/directorgraph.h>
@@ -83,7 +83,7 @@ namespace dtDirector
       mainLayout->addWidget(groupBox);
       mainLayout->addLayout(buttonLayout);
 
-      mCurrentDir = osgDB::convertFileNameToNativeStyle(dtDAL::Project::GetInstance().GetContext()+"/directors/").c_str();
+      mCurrentDir = osgDB::convertFileNameToNativeStyle(dtCore::Project::GetInstance().GetContext()+"/directors/").c_str();
       mCurrentDir = osgDB::getRealPath(mCurrentDir.toStdString()).c_str();
       mCurrentDir.replace('\\', '/');
 

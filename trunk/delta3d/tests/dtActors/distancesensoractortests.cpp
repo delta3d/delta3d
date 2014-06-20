@@ -114,12 +114,10 @@ namespace dtActors
          mDSProxy1->GetProperty(DistanceSensorActorProxy::PROPERTY_ATTACH_TO_ACTOR, aap);
          CPPUNIT_ASSERT(aap != NULL);
          CPPUNIT_ASSERT(aap->GetValue() == NULL);
-         CPPUNIT_ASSERT(aap->GetRealActor() == NULL);
 
          aap->SetValue(mParentProxy.get());
 
          CPPUNIT_ASSERT(aap->GetValue() == mParentProxy.get());
-         CPPUNIT_ASSERT(aap->GetRealActor() == mParentProxy->GetActor());
       }
 
       ///////////////////////////////////////////////////////////////////////////////
@@ -152,7 +150,7 @@ namespace dtActors
             mGameManager->AddActor(*mParentProxy, false, false);
             mGameManager->AddActor(*mDSProxy1, false, false);
 
-            CPPUNIT_ASSERT(mDSProxy1->GetActor()->GetParent() == mParentProxy->GetActor());
+            CPPUNIT_ASSERT(mDSProxy1->GetDrawable()->GetParent() == mParentProxy->GetDrawable());
          }
          catch (const dtUtil::Exception& ex)
          {

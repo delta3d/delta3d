@@ -214,7 +214,7 @@ void InputComponent::IsActorInGameMap(T*& actor, bool throwException)
 
    for (unsigned int i = 0; i < proxies.size(); i++)
    {
-      actor = dynamic_cast<T*>(proxies[i]->GetActor());
+      actor = dynamic_cast<T*>(proxies[i]->GetDrawable());
       if (actor != NULL)
       {
          break;

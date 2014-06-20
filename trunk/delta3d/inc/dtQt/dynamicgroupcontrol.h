@@ -105,7 +105,7 @@ namespace dtQt
        * or is moving an actor in the viewport, then it is possible that they will also
        * be sitting on the editor for one of the affected values. This gives us a chance
        * to reflect the change in our editor.
-       * @Note The default implementation does nothing.
+       * @note The default implementation does nothing.
        */
       virtual void actorPropertyChanged(dtCore::PropertyContainer& propCon,
                dtCore::ActorProperty& property);

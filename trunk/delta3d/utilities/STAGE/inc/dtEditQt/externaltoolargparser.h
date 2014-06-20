@@ -9,7 +9,7 @@ namespace dtEditQt
    {
    public:
       ExternalToolArgParser();
-      ~ExternalToolArgParser();
+      virtual ~ExternalToolArgParser();
 
       virtual QString ExpandArguments(const QString& args) const = 0;
 

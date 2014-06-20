@@ -24,7 +24,7 @@
 #define DELTA_NAMED_ENUM_PARAMETER
 
 #include <dtCore/namedstringparameter.h>
-
+#include <dtUtil/enumeration.h>
 namespace dtCore
 {
    /**
@@ -36,6 +36,8 @@ namespace dtCore
    {
       public:
          NamedEnumParameter(const dtUtil::RefString& name, const std::string& defaultValue = "", bool isList=false);
+
+         NamedEnumParameter(const dtUtil::RefString& name, const dtUtil::Enumeration& enumValues);
 
          virtual void SetFromProperty(const dtCore::ActorProperty& property);
          virtual void ApplyValueToProperty(dtCore::ActorProperty& property) const;

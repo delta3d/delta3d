@@ -27,7 +27,7 @@
  */
 
 #include <prefix/unittestprefix.h>
-#include "testcomponent.h"
+#include <dtGame/testcomponent.h>
 
 #include <testGameActorLibrary/testgameactorlibrary.h>
 #include <testGameActorLibrary/testgameenvironmentactor.h>
@@ -94,9 +94,6 @@ class GameActorTests : public CPPUNIT_NS::TestFixture
       CPPUNIT_TEST(TestMessageProcessingPerformance);
       CPPUNIT_TEST(TestActorIsInGM);
       CPPUNIT_TEST(TestOnRemovedActor);
-      CPPUNIT_TEST(TestAddActorComponent);
-      CPPUNIT_TEST(TestActorComponentInitialized);
-      CPPUNIT_TEST(TestGetAllActorComponents);
       CPPUNIT_TEST(TestUnregisterNextInvokable);
 
    CPPUNIT_TEST_SUITE_END();
@@ -119,9 +116,6 @@ public:
    void TestMessageProcessingPerformance();
    void TestActorIsInGM();
    void TestOnRemovedActor();
-   void TestAddActorComponent();
-   void TestActorComponentInitialized();
-   void TestGetAllActorComponents();
    void TestUnregisterNextInvokable();
 
 private:
@@ -201,12 +195,13 @@ void GameActorTests::TestGameActorProxy()
       mManager->CreateActor("ExampleActors", "Test1Actor", gap);
 
       CPPUNIT_ASSERT_MESSAGE("GameActorProxy should not be NULL", gap != NULL);
-      CPPUNIT_ASSERT_MESSAGE("GameActor should have a reference to the proxy", &gap->GetGameActor().GetGameActorProxy() == gap.get());
+      CPPUNIT_ASSERT_MESSAGE("GameActor should have a reference to the proxy", &gap->GetDrawable<dtGame::GameActor>()->GetGameActorProxy() == gap.get());
 
-      dtGame::GameActor* p = &gap->GetGameActor();
+      dtGame::GameActor* p = NULL;
+      gap->GetDrawable(p);
 
       CPPUNIT_ASSERT_MESSAGE("Actor should not be NULL", p != NULL);
-      CPPUNIT_ASSERT_MESSAGE("IsGameActor should always return true", gap->IsGameActorProxy());
+      CPPUNIT_ASSERT_MESSAGE("IsGameActor should always return true", gap->IsGameActor());
       CPPUNIT_ASSERT_MESSAGE("Game Actor should not initially be published", !gap->IsPublished());
       CPPUNIT_ASSERT_MESSAGE("Game Actor should not initially be remote", !gap->IsRemote());
 
@@ -225,6 +220,10 @@ void GameActorTests::TestGameActorProxy()
 
       CPPUNIT_ASSERT_MESSAGE("GameActorProxy local actor update policy should now be IGNORE_ALL",
                gap->GetLocalActorUpdatePolicy() == dtGame::GameActorProxy::LocalActorUpdatePolicy::IGNORE_ALL);
+
+      CPPUNIT_ASSERT(gap->GetPrototype() == NULL);
+      CPPUNIT_ASSERT(gap->GetDrawable<dtGame::GameActor>()->GetPrototypeID().ToString().empty());
+      CPPUNIT_ASSERT(gap->GetDrawable<dtGame::GameActor>()->GetPrototypeName().empty());
    }
    catch (const dtUtil::Exception& e)
    {
@@ -524,8 +523,8 @@ void GameActorTests::TestGlobalInvokableMessageRegistration()
       std::vector< std::pair<dtGame::GameActorProxy*, std::string> > toFill;
 
       mManager->GetRegistrantsForMessages(dtGame::MessageType::INFO_MAP_LOADED, toFill);
-      CPPUNIT_ASSERT_MESSAGE("There should be one registered global listener for the Map Loaded message",
-            toFill.size() == 1);
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("There should be one registered global listener for the Map Loaded message",
+            size_t(1), toFill.size());
 
       mManager->GetRegistrantsForMessagesAboutActor(dtGame::MessageType::INFO_ACTOR_PUBLISHED,
             gap1->GetId(), toFill);
@@ -552,8 +551,8 @@ void GameActorTests::TestGlobalInvokableMessageRegistration()
       //std::cout << gap1->GetId() << std::endl;
 
       mManager->GetRegistrantsForMessages(dtGame::MessageType::INFO_MAP_LOADED, toFill);
-      CPPUNIT_ASSERT_MESSAGE("There should be one registered global listener for the Map Loaded message",
-            toFill.size() == 1);
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("There should be one registered global listener for the Map Loaded message",
+            size_t(1), toFill.size());
 
       mManager->GetRegistrantsForMessagesAboutActor(dtGame::MessageType::INFO_ACTOR_PUBLISHED,
             gap1->GetId(), toFill);
@@ -630,7 +629,7 @@ void GameActorTests::TestAddRemoveFromEnvActor()
 
       dtCore::RefPtr<TestGameEnvironmentActorProxy> eap = dynamic_cast<TestGameEnvironmentActorProxy*>(ap.get());
       CPPUNIT_ASSERT_MESSAGE("The dynamic cast should not have returned NULL", eap != NULL);
-      dtCore::RefPtr<TestGameEnvironmentActor> ea = dynamic_cast<TestGameEnvironmentActor*>(eap->GetActor());
+      dtCore::RefPtr<TestGameEnvironmentActor> ea = dynamic_cast<TestGameEnvironmentActor*>(eap->GetDrawable());
       CPPUNIT_ASSERT_MESSAGE("Should have been able to cast the environment proxy's actor to an environment actor", ea != NULL);
 
       // SET ENVIRONMENT ACTOR TESTS
@@ -656,20 +655,20 @@ void GameActorTests::TestAddRemoveFromEnvActor()
          ea->GetNumEnvironmentChildren() == 2);
 
       // Remove actor 2
-      ea->RemoveActor(*ap2->GetActor());
-      CPPUNIT_ASSERT_MESSAGE("The actor 2 should be removed from the scene", ! ea->ContainsActor(*ap2->GetActor()) );
+      ea->RemoveActor(*ap2->GetDrawable());
+      CPPUNIT_ASSERT_MESSAGE("The actor 2 should be removed from the scene", ! ea->ContainsActor(*ap2->GetDrawable()) );
       CPPUNIT_ASSERT_MESSAGE("The game manager should have 1 actor in its scene",
          ea->GetNumEnvironmentChildren() == 1);
 
       // Add actor 2 as child to actor 1
-      ap->GetActor()->AddChild(ap2->GetActor());
+      ap->GetDrawable()->AddChild(ap2->GetDrawable());
 
       // Delete actor 1 from GM
       mManager->DeleteActor(*ap);
       dtCore::System::GetInstance().Step();
 
       // Ensure environment contains actor 2.
-      CPPUNIT_ASSERT_MESSAGE("The environment actor should have actor 2 as a child", ea->ContainsActor(*ap2->GetActor()) );
+      CPPUNIT_ASSERT_MESSAGE("The environment actor should have actor 2 as a child", ea->ContainsActor(*ap2->GetDrawable()) );
 
       std::vector<dtCore::DeltaDrawable*> actors;
       std::vector<dtCore::DeltaDrawable*> drawables;
@@ -694,7 +693,7 @@ void GameActorTests::TestAddRemoveFromEnvActor()
       dtCore::System::GetInstance().Step();
 
       // Ensure environment has removed actor 2.
-      CPPUNIT_ASSERT_MESSAGE("The environment actor should have removed actor 2", ! ea->ContainsActor(*ap2->GetActor()) );
+      CPPUNIT_ASSERT_MESSAGE("The environment actor should have removed actor 2", ! ea->ContainsActor(*ap2->GetDrawable()) );
 
       // Ensure all actors are removed from the environment
       ea->GetAllActors(actors);
@@ -726,7 +725,7 @@ void GameActorTests::TestSetEnvironmentActor()
       //One cannot enable paging without a window.
       //mManager->GetScene().EnablePaging();
       //CPPUNIT_ASSERT(mManager->GetScene().IsPagingEnabled());
-      dtCore::RefPtr<TestComponent> tc = new TestComponent("name");
+      dtCore::RefPtr<dtGame::TestComponent> tc = new dtGame::TestComponent("name");
       CPPUNIT_ASSERT(tc.valid());
       mManager->AddComponent(*tc, dtGame::GameManager::ComponentPriority::NORMAL);
       dtCore::RefPtr<const dtCore::ActorType> type = mManager->FindActorType("ExampleActors", "TestEnvironmentActor");
@@ -736,7 +735,7 @@ void GameActorTests::TestSetEnvironmentActor()
 
       dtCore::RefPtr<TestGameEnvironmentActorProxy> eap = dynamic_cast<TestGameEnvironmentActorProxy*>(ap.get());
       CPPUNIT_ASSERT_MESSAGE("The dynamic cast should not have returned NULL", eap != NULL);
-      dtCore::RefPtr<TestGameEnvironmentActor> ea = dynamic_cast<TestGameEnvironmentActor*>(eap->GetActor());
+      dtCore::RefPtr<TestGameEnvironmentActor> ea = dynamic_cast<TestGameEnvironmentActor*>(eap->GetDrawable());
       CPPUNIT_ASSERT_MESSAGE("Should have been able to cast the environment proxy's actor to an environment actor", ea != NULL);
 
       std::vector<dtCore::DeltaDrawable*> actors;
@@ -824,7 +823,7 @@ void GameActorTests::TestSetEnvironmentActor()
       CPPUNIT_ASSERT(ap.valid());
       dtCore::RefPtr<dtGame::IEnvGameActorProxy> eap2 = dynamic_cast<dtGame::IEnvGameActorProxy*>(ap.get());
       CPPUNIT_ASSERT(eap2 != NULL);
-      dtCore::RefPtr<dtGame::IEnvGameActor>      ea2  = dynamic_cast<dtGame::IEnvGameActor*>(eap2->GetActor());
+      dtCore::RefPtr<dtGame::IEnvGameActor>      ea2  = dynamic_cast<dtGame::IEnvGameActor*>(eap2->GetDrawable());
       CPPUNIT_ASSERT(ea2 != NULL);
       mManager->SetEnvironmentActor(eap.get());
       //One cannot enable paging without a window.
@@ -900,29 +899,29 @@ void GameActorTests::TestStaticGameActorTypes()
    const unsigned int size = 8;
    dtCore::RefPtr<dtCore::ActorType> types[size] =
    {
-      TestGameActorLibrary::TEST1_GAME_ACTOR_PROXY_TYPE,
-      TestGameActorLibrary::TEST2_GAME_ACTOR_PROXY_TYPE,
-      TestGameActorLibrary::TEST_PLAYER_GAME_ACTOR_PROXY_TYPE,
-      TestGameActorLibrary::TEST_TASK_GAME_ACTOR_PROXY_TYPE,
-      TestGameActorLibrary::TEST_COUNTER_TASK_GAME_ACTOR_PROXY_TYPE,
-      TestGameActorLibrary::TEST_TANK_GAME_ACTOR_PROXY_TYPE,
-      TestGameActorLibrary::TEST_JET_GAME_ACTOR_PROXY_TYPE,
-      TestGameActorLibrary::TEST_HELICOPTER_GAME_ACTOR_PROXY_TYPE/*,
+      TestGameActorLibrary::TEST1_GAME_ACTOR_TYPE,
+      TestGameActorLibrary::TEST2_GAME_ACTOR_TYPE,
+      TestGameActorLibrary::TEST_PLAYER_GAME_ACTOR_TYPE,
+      TestGameActorLibrary::TEST_TASK_GAME_ACTOR_TYPE,
+      TestGameActorLibrary::TEST_COUNTER_TASK_GAME_ACTOR_TYPE,
+      TestGameActorLibrary::TEST_TANK_GAME_ACTOR_TYPE,
+      TestGameActorLibrary::TEST_JET_GAME_ACTOR_TYPE,
+      TestGameActorLibrary::TEST_HELICOPTER_GAME_ACTOR_TYPE/*,
       TestGameActorLibrary::TEST_ENVIRONMENT_GAME_ACTOR_PROXY_TYPE*/
    };
    for (unsigned int i = 0; i < size; ++i)
    {
       dtCore::RefPtr<dtCore::BaseActorObject> proxy = mManager->CreateActor(*types[i]);
       CPPUNIT_ASSERT_MESSAGE("The proxy should not be NULL", proxy.valid());
-      CPPUNIT_ASSERT_MESSAGE("The proxy's actor should not be NULL", proxy->GetActor() != NULL);
+      CPPUNIT_ASSERT_MESSAGE("The proxy's actor should not be NULL", proxy->GetDrawable() != NULL);
    }
 }
 
 void GameActorTests::TestEnvironmentTimeConversions()
 {
-   dtCore::RefPtr<dtCore::BaseActorObject> proxy = mManager->CreateActor(*TestGameActorLibrary::TEST_ENVIRONMENT_GAME_ACTOR_PROXY_TYPE);
+   dtCore::RefPtr<dtCore::BaseActorObject> proxy = mManager->CreateActor(*TestGameActorLibrary::TEST_ENVIRONMENT_GAME_ACTOR_TYPE);
    CPPUNIT_ASSERT(proxy.valid());
-   dtCore::RefPtr<TestGameEnvironmentActor> envActor = dynamic_cast<TestGameEnvironmentActor*>(proxy->GetActor());
+   dtCore::RefPtr<TestGameEnvironmentActor> envActor = dynamic_cast<TestGameEnvironmentActor*>(proxy->GetDrawable());
    CPPUNIT_ASSERT(envActor.valid());
    std::string testTime = "2006-04-20T18:04:09";
    envActor->SetTimeAndDateString(testTime);
@@ -1030,138 +1029,6 @@ void GameActorTests::TestOnRemovedActor()
    CPPUNIT_ASSERT_MESSAGE("Proxy should BE marked as 'RemovedFromWorld'", proxy1->IsRemovedFromWorld());
 }
 
-//////////////////////////////////////////////////////
-void GameActorTests::TestAddActorComponent()
-{
-   try
-   {
-      dtCore::RefPtr<const dtCore::ActorType> actorType = mManager->FindActorType("ExampleActors", "Test1Actor");
-      dtCore::RefPtr<dtCore::BaseActorObject> proxy = mManager->CreateActor(*actorType);
-      dtCore::RefPtr<dtGame::GameActorProxy> gap = dynamic_cast<dtGame::GameActorProxy*>(proxy.get());
-
-      dtGame::GameActor* actor = &gap->GetGameActor();
-
-      std::vector<dtGame::ActorComponent*> components = actor->GetComponents(TestActorComponent1::TYPE);
-      bool notExists = components.empty();
-      CPPUNIT_ASSERT_MESSAGE("Searching for an actor component not on the actor should return NULL.", notExists);
-
-      dtCore::RefPtr<TestActorComponent1> component = new TestActorComponent1();
-      actor->AddComponent(*component);
-
-      CPPUNIT_ASSERT_MESSAGE("Actor owner not set", component->GetOwner() == actor);
-
-      bool hascomp = actor->HasComponent(TestActorComponent1::TYPE);
-      CPPUNIT_ASSERT_MESSAGE("Actor component not found after it was added!", hascomp);
-
-      components = actor->GetComponents(TestActorComponent1::TYPE);
-      bool found = !components.empty();
-      CPPUNIT_ASSERT_MESSAGE("Could not retrieve actor component after it was added!", found);
-
-      dtCore::RefPtr<TestActorComponent1> component2 = new TestActorComponent1();
-      actor->AddComponent(*component2);
-
-      components = actor->GetComponents(TestActorComponent1::TYPE);
-      bool foundTwo = components.size() == 2;
-      CPPUNIT_ASSERT_MESSAGE("Could not retrieve both actor components after they were added!", foundTwo);
-
-      TestActorComponent1* compare;
-      if(!actor->GetComponent(compare))
-      {
-         CPPUNIT_FAIL("Could not retrieve actor component after it was added");
-      }
-      bool foundtemplate = (compare == component);
-      CPPUNIT_ASSERT_MESSAGE("Could not retrieve actor component after it was added!", foundtemplate);
-
-      actor->RemoveAllComponentsOfType(TestActorComponent1::TYPE);
-
-      components = actor->GetComponents(TestActorComponent1::TYPE);
-      bool notfound = components.empty();
-      CPPUNIT_ASSERT_MESSAGE("Searching for removed actor component should return NULL.", notfound);
-   }
-   catch(const dtUtil::Exception& e)
-   {
-      CPPUNIT_FAIL(e.What());
-   }
-}
-
-
-
-//////////////////////////////////////////////////////
-void GameActorTests::TestActorComponentInitialized()
-{
-   try
-   {
-      dtCore::RefPtr<const dtCore::ActorType> actorType = mManager->FindActorType("ExampleActors", "Test1Actor");
-      dtCore::RefPtr<dtCore::BaseActorObject> proxy = mManager->CreateActor(*actorType);
-      dtCore::RefPtr<dtGame::GameActorProxy> gap = dynamic_cast<dtGame::GameActorProxy*>(proxy.get());
-      dtGame::GameActor* actor = &gap->GetGameActor();
-
-      dtCore::RefPtr<TestActorComponent1> component1 = new TestActorComponent1();
-      actor->AddComponent(*component1);
-      CPPUNIT_ASSERT_EQUAL_MESSAGE("ActorComponent didn't get called when added to actor", true, component1->mWasAdded);
-
-
-      mManager->AddActor(*gap, true, false);
-
-      //component 1 should have entered the world now
-      CPPUNIT_ASSERT_EQUAL_MESSAGE("ActorComponent didn't enter the world, after being added to the GM", true, component1->mEnteredWorld);
-
-      dtCore::RefPtr<TestActorComponent2> component2 = new TestActorComponent2();
-      CPPUNIT_ASSERT_EQUAL_MESSAGE("ActorComponent shouldn't have been added to Actor yet", false, component2->mWasAdded);
-
-      actor->AddComponent(*component2);
-      CPPUNIT_ASSERT_EQUAL_MESSAGE("ActorComponent didn't get added to an actor which is already in the world",true, component2->mWasAdded);
-      CPPUNIT_ASSERT_EQUAL_MESSAGE("ActorComponent didn't enter the world, after being added to an Actor already in the world", true, component2->mEnteredWorld);
-
-      actor->RemoveComponent(*component2);
-      CPPUNIT_ASSERT_MESSAGE("Actor component2 should have been removed from world when removed from actor!", component2->mLeftWorld);
-      CPPUNIT_ASSERT_MESSAGE("Actor component2 should be de-initialized when removed from actor!", component2->mWasRemoved);
-
-      CPPUNIT_ASSERT_MESSAGE("Actor component should not be removed yet!", !component1->mWasRemoved);
-      mManager->DeleteActor(*gap);
-
-      dtCore::System::GetInstance().Step();
-
-      CPPUNIT_ASSERT_MESSAGE("Actor component should have left the world!", component1->mLeftWorld);
-
-      // Make sure the actor is deleted
-      gap = NULL;
-      proxy = NULL;
-      // Actor should be removed by now.
-      CPPUNIT_ASSERT_MESSAGE("Actor component should have been removed when the actor is deleted from memory!", component1->mWasRemoved);
-   }
-   catch (const dtUtil::Exception& e)
-   {
-      CPPUNIT_FAIL(e.What());
-   }
-}
-
-////////////////////////////////////////////////////////////////////////////////
-void GameActorTests::TestGetAllActorComponents()
-{
-   dtCore::RefPtr<const dtCore::ActorType> actorType = mManager->FindActorType("ExampleActors", "Test1Actor");
-   dtCore::RefPtr<dtCore::BaseActorObject> proxy = mManager->CreateActor(*actorType);
-   dtCore::RefPtr<dtGame::GameActorProxy> gap = dynamic_cast<dtGame::GameActorProxy*>(proxy.get());
-   mManager->AddActor(*gap, true, false);
-   dtGame::GameActor* actor = &gap->GetGameActor();
-
-
-   std::vector<dtGame::ActorComponent*> components;
-   actor->GetAllComponents(components);
-   const size_t startingSize = components.size();
-
-
-   dtCore::RefPtr<TestActorComponent1> component1 = new TestActorComponent1();
-   dtCore::RefPtr<TestActorComponent2> component2 = new TestActorComponent2();
-   actor->AddComponent(*component1);
-   actor->AddComponent(*component2);
-
-   //wipe out any old remnants
-   components = std::vector<dtGame::ActorComponent*>();
-   actor->GetAllComponents(components);
-   CPPUNIT_ASSERT_EQUAL_MESSAGE("Actor didn't return back the number of added ActorComponents",
-                                startingSize + 2, components.size());
-}
 
 ////////////////////////////////////////////////////////////////////////////////
 void GameActorTests::TestUnregisterNextInvokable()

@@ -146,8 +146,8 @@ namespace dtEditQt
       virtual ~EditorSettings();
 
    private:
-      EditorSettings& operator=(const EditorSettings& rhs) { return *this; }
-      EditorSettings(const EditorSettings& rhs) {}
+      EditorSettings& operator=(const EditorSettings&) { return *this; }
+      EditorSettings(const EditorSettings&) {}
    };
 
 } // namespace dtEditQt

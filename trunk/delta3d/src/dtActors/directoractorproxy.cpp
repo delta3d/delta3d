@@ -186,9 +186,9 @@ namespace dtActors
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void DirectorActorProxy::CreateActor()
+   void DirectorActorProxy::CreateDrawable()
    {
-      SetActor(*new DirectorActor(*this));
+      SetDrawable(*new DirectorActor(*this));
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -197,7 +197,7 @@ namespace dtActors
       BaseClass::BuildPropertyMap();
 
       DirectorActor* actor = NULL;
-      GetActor(actor);
+      GetDrawable(actor);
 
       AddProperty(new dtCore::BooleanActorProperty(
          "NodeLogging", "Node Logging",
@@ -245,7 +245,7 @@ namespace dtActors
       if (!IsInSTAGE())
       {
          DirectorActor* actor = NULL;
-         GetActor(actor);
+         GetDrawable(actor);
 
          AddInvokable(*new dtGame::Invokable("Map Loaded",
             dtUtil::MakeFunctor(&DirectorActor::OnLoadDirectors, *actor)));

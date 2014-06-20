@@ -109,7 +109,7 @@ namespace dtLMS
           *
           * @param proxy The GameActorProxy containing the task that has been updated.
           */
-         void SendLmsUpdate(dtGame::GameActorProxy& proxy);
+         void SendLmsUpdate(dtGame::GameActorProxy& parent);
 
          /**
           * This utility method creates an 'OBJECTIVE_COMPLETION' type LmsMessage object that can be

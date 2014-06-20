@@ -22,17 +22,17 @@
 #ifndef _PHYSICS_ACTOR_REGISTRY_
 #define _PHYSICS_ACTOR_REGISTRY_
 
-#include <dtDAL/actorpluginregistry.h>
+#include <dtCore/actorpluginregistry.h>
 #include <dtPhysics/physicsexport.h>
 #include <dtCore/refptr.h>
 
 namespace dtPhysics
 {
-   class DT_PHYSICS_EXPORT PhysicsActorRegistry : public dtDAL::ActorPluginRegistry
+   class DT_PHYSICS_EXPORT PhysicsActorRegistry : public dtCore::ActorPluginRegistry
    {
    public:
 
-      static dtCore::RefPtr<dtDAL::ActorType> PHYSICS_MATERIAL_ACTOR_TYPE;
+      static dtCore::RefPtr<dtCore::ActorType> PHYSICS_MATERIAL_ACTOR_TYPE;
 
       // constructor
       PhysicsActorRegistry();

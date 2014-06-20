@@ -16,6 +16,7 @@ find_path(RTI_INCLUDE_DIR
    PATHS
        $ENV{PROGRAMFILES}/Portico/portico-1.0.2
 )
+MARK_AS_ADVANCED(RTI_INCLUDE_DIR)
 
 find_library(RTI_LIBRARY
    NAMES
@@ -29,6 +30,7 @@ find_library(RTI_LIBRARY
    PATHS
       $ENV{PROGRAMFILES}/Portico/portico-1.0.2
 )
+MARK_AS_ADVANCED(RTI_LIBRARY)
 
 find_library(RTI_FEDTIME_LIBRARY
    NAMES
@@ -42,6 +44,7 @@ find_library(RTI_FEDTIME_LIBRARY
    PATHS
       $ENV{PROGRAMFILES}/Portico/portico-1.0.2      
 )
+MARK_AS_ADVANCED(RTI_FEDTIME_LIBRARY)
 
 set(RTI_FOUND "NO")
 if(RTI_LIBRARY AND RTI_INCLUDE_DIR)

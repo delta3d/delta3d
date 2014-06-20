@@ -23,13 +23,23 @@ CameraCallbackContainer::~CameraCallbackContainer()
 //////////////////////////////////////////////////////////////////////////
 void CameraCallbackContainer::operator()(osg::RenderInfo& renderInfo) const
 {
-   std::vector<RefPtr<CameraDrawCallback> >::const_iterator itr = mCallbacks.begin();
+   // conceptually, this function should be locked because osg calls post draw callbacks on multiple threads
+   // but since this is only every added to a single camera that is only used at the top level, then
+   // it's only going to get called once per frame.
+   std::vector<ObserverPtr<CameraDrawCallback> >::iterator itr = mCallbacks.begin();
 
    // Fire all recurring callbacks
    while (itr != mCallbacks.end())
    {
-      (*(*itr))(*mCamera, renderInfo);
-      ++itr;
+      if (itr->valid())
+      {
+         (*(*itr))(*mCamera, renderInfo);
+         ++itr;
+      }
+      else
+      {
+         itr = mCallbacks.erase(itr);
+      }
    }
 
    // Fire and remove all single shot callbacks
@@ -63,7 +73,7 @@ void CameraCallbackContainer::AddCallback(CameraDrawCallback& cb, bool singleFir
 //////////////////////////////////////////////////////////////////////////
 void CameraCallbackContainer::RemoveCallback(CameraDrawCallback &cb)
 {
-   std::vector<RefPtr<CameraDrawCallback> >::iterator itr = mCallbacks.begin();
+   std::vector<ObserverPtr<CameraDrawCallback> >::iterator itr = mCallbacks.begin();
 
    while (itr != mCallbacks.end())
    {
@@ -99,7 +109,16 @@ std::vector<RefPtr<CameraDrawCallback> > CameraCallbackContainer::GetCallbacks()
    CallbackList allCallbacks;
    std::back_insert_iterator<CallbackList> cbIter(allCallbacks);
 
-   std::copy(mCallbacks.begin(), mCallbacks.end(), cbIter);
+   std::vector<ObserverPtr<CameraDrawCallback> >::const_iterator itr = mCallbacks.begin();
+
+
+   // Have to use a loop on these because the types don't quite match.
+   while (itr != mCallbacks.end())
+   {
+      allCallbacks.push_back(itr->get());
+      ++itr;
+   }
+
    std::copy(mSingleFireCallbacks.begin(), mSingleFireCallbacks.end(), cbIter);
 
    return allCallbacks;

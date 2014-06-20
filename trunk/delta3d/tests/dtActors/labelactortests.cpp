@@ -76,18 +76,20 @@ void LabelActorTests::setUp()
 {
    try
    {
+      // Start/restart the system.
+      dtCore::System::GetInstance().SetShutdownOnWindowClose(false);
+      dtCore::System::GetInstance().Start();
+      // Make sure we have an active context
+      dtCore::System::GetInstance().Step();
       // Create the actor for testing.
       dtCore::RefPtr<dtCore::BaseActorObject> proxy = dtCore::LibraryManager::GetInstance()
-         .CreateActorProxy(*dtActors::EngineActorRegistry::LABEL_ACTOR_TYPE);
+         .CreateActor(*dtActors::EngineActorRegistry::LABEL_ACTOR_TYPE);
       mLabelProxy = dynamic_cast<dtActors::LabelActorProxy*>(proxy.get());
 
       // Validate the proxy.
       CPPUNIT_ASSERT_MESSAGE("Library Manager should be able to create a Label Actor Proxy",
          mLabelProxy.valid());
 
-      // Start/restart the system.
-      dtCore::System::GetInstance().SetShutdownOnWindowClose(false);
-      dtCore::System::GetInstance().Start();
    }
    catch (const dtUtil::Exception& e)
    {

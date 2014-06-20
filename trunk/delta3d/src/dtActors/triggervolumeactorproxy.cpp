@@ -44,9 +44,9 @@ TriggerVolumeActorProxy::~TriggerVolumeActorProxy()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void TriggerVolumeActorProxy::CreateActor()
+void TriggerVolumeActorProxy::CreateDrawable()
 {
-   SetActor(*new TriggerVolumeActor(*this));
+   SetDrawable(*new TriggerVolumeActor(*this));
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -56,7 +56,7 @@ void TriggerVolumeActorProxy::BuildPropertyMap()
 
    // Get the actor's interface.
    TriggerVolumeActor* actor = NULL;
-   GetActor(actor);
+   GetDrawable(actor);
 
    const std::string GROUP_TRIGGER("Trigger");
 

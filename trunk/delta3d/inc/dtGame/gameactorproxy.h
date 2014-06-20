@@ -25,7 +25,10 @@
 
 #include <dtGame/export.h>
 #include <dtCore/physicalactorproxy.h>
-#include <dtGame/actorcomponentcontainer.h>
+#include <dtGame/actorcomponentbase.h>
+#include <dtGame/invokable.h>
+#include <dtGame/messagetype.h>
+#include <dtUtil/getsetmacros.h>
 
 namespace dtUtil
 {
@@ -36,9 +39,7 @@ namespace dtGame
 {
    class GameManager;
    class GameActor;
-   class Invokable;
    class ActorUpdateMessage;
-   class MessageType;
    class ActorComponent;
 
    /**
@@ -49,21 +50,28 @@ namespace dtGame
     * @see dtGame::GameManager
     */
    class DT_GAME_EXPORT GameActorProxy : public dtCore::PhysicalActorProxy,
-      public dtGame::ActorComponentContainer
+      public dtGame::ActorComponentBase
    {
    public:
       typedef dtCore::PhysicalActorProxy BaseClass;
 
       /**
-       * Name is intended to become a property, so this constant exists for that and for the LocalActorUpdatePolicy
-       * filter property list.
+       * DEPRECATED  Put all your message handling logic on you subclass of GameActorProxy (name change pending) and call that
+       * your actor.  The class that is a descendent of DeltaDrawable or GameActor (slated for eventual remove) is your drawable
+       * and should do only rendering related things.
        */
-      static const dtUtil::RefString PROPERTY_NAME;
-
-      /// Use this when you register a message type and want to receive it in ProcessMessage()
       static const std::string PROCESS_MSG_INVOKABLE;
-      /// invokables for tick local and remote - will call TickLocal() and TickRemote();
+      /**
+       * DEPRECATED  Put all your message handling logic on you subclass of GameActorProxy (name change pending) and call that
+       * your actor.  The class that is a descendent of DeltaDrawable or GameActor (slated for eventual remove) is your drawable
+       * and should do only rendering related things.
+       */
       static const std::string TICK_LOCAL_INVOKABLE;
+      /**
+       * DEPRECATED  Put all your message handling logic on you subclass of GameActorProxy (name change pending) and call that
+       * your actor.  The class that is a descendent of DeltaDrawable or GameActor (slated for eventual remove) is your drawable
+       * and should do only rendering related things.
+       */
       static const std::string TICK_REMOTE_INVOKABLE;
 
       /// Internal class to represent the ownership of an actor proxy
@@ -122,7 +130,7 @@ namespace dtGame
        * This is a shortcut to avoid having to dynamic cast to a GameActorProxy.
        * @return true always
        */
-      virtual bool IsGameActorProxy() const { return true; }
+      virtual bool IsGameActor() const { return true; }
 
       /**
        * @return a const pointer to the parent game manager that owns this actor.
@@ -133,18 +141,6 @@ namespace dtGame
        * @return a pointer to the parent game manager that owns this actor.
        */
       GameManager* GetGameManager() { return mParent; }
-
-      /**
-       * Retrieves the game actor that this proxy represents.
-       * @return The Game Actor
-       */
-      GameActor& GetGameActor();
-
-      /**
-       * Retrieves the game actor that this proxy represents.
-       * @return The Game Actor
-       */
-      const GameActor& GetGameActor() const;
 
       /**
        * Creates the properties associated with this proxy
@@ -323,75 +319,126 @@ namespace dtGame
       void SetLocalActorUpdatePolicy(LocalActorUpdatePolicy& newPolicy);
 
       /**
+       * Registers to receive a specific type of message.  You will receive
+       * all instances of this message.  It will create an invokable for you.
+       * @see dtGame::GameActorProxy::RegisterForMessagesAboutOtherActor
+       * @see dtGame::GameActorProxy::RegisterForMessagesAboutSelf
+       *
+       * A call to this should look like.
+       *
+       * RegisterForMessages(dtGame::MessageType::INFO_TICK_LOCAL, dtUtil::MakeFunctor(this, &SomeActor::OnTickLocal));
+       *
+       * It returns the invokable, so you can use that in subsequent calls to Unregister and Register if you want to
+       * do that.
+       *
+       * Your function may take the actual message class, not just dtGame::Message.
+       *
+       * @return The invokable created so you unregister it.
+       */
+      template<typename Message_T>
+      dtCore::RefPtr<Invokable> RegisterForMessages(const MessageType& type, dtUtil::Functor<void, TYPELIST_1(const Message_T&)> func)
+      {
+         std::string invokableName = type.GetName() + dtCore::UniqueId().ToString();
+         dtCore::RefPtr<Invokable> inv = new Invokable(invokableName, func);
+         AddInvokable(*inv);
+         RegisterForMessages(type, invokableName);
+         return inv;
+      }
+
+      /**
+       * This is like RegisterForMessages, but you will only receive messages with an aboutActorId that matches the given ID.
+       * @see dtGame::GameActorProxy::RegisterForMessages
+       * @see dtGame::GameActorProxy::RegisterForMessagesAboutSelf
+       * @return The invokable created so you unregister it if need be.
+       */
+      template<typename Message_T>
+      dtCore::RefPtr<Invokable> RegisterForMessagesAboutOtherActor(const MessageType& type,
+            const dtCore::UniqueId& targetActorId,
+            dtUtil::Functor<void, TYPELIST_1(const Message_T&)> func)
+      {
+         std::string invokableName = type.GetName() + "-Other-" + dtCore::UniqueId().ToString();
+         dtCore::RefPtr<Invokable> inv = new Invokable(invokableName, func);
+         AddInvokable(*inv);
+         RegisterForMessagesAboutOtherActor(type, targetActorId, invokableName);
+         return inv;
+
+      }
+
+      /**
+       * This is like RegisterForMessages, but you will only receive messages with an aboutActorId that matches this actor.
+       * @see dtGame::GameActorProxy::RegisterForMessages
+       * @see dtGame::GameActorProxy::RegisterForMessagesAboutSelf
+       * @return The invokable created so you unregister it if need be.
+       */
+      template<typename Message_T>
+      dtCore::RefPtr<Invokable> RegisterForMessagesAboutSelf(const MessageType& type,
+            dtUtil::Functor<void, TYPELIST_1(const Message_T&)> func)
+      {
+         std::string invokableName = type.GetName() + "-Self-" + dtCore::UniqueId().ToString();
+         dtCore::RefPtr<Invokable> inv = new Invokable(invokableName, func);
+         AddInvokable(*inv);
+         RegisterForMessagesAboutSelf(type, invokableName);
+         return inv;
+      }
+
+      /**
        * Registers to receive a specific type of message from the GM.  You will receive
        * all instances of this message, regardless of whether you are the about actor or not.
-       * By default, it will use the ProcessMessage() invokable on GameActor (PROCESS_MSG_INVOKABLE)
        * @see dtGame::GameActorProxy::RegisterForMessagesAboutOtherActor
        * @see dtGame::GameActorProxy::RegisterForMessagesAboutSelf
        * @see dtGame::GameActor::ProcessMessage
-       * @see dtGame::GameActorProxy::PROCESS_MSG_INVOKABLE
        */
       void RegisterForMessages(const MessageType& type,
-               const std::string& invokableName = PROCESS_MSG_INVOKABLE);
+               const std::string& invokableName);
 
       /**
-       * Registers to receive a specific type of message from the GM.  You will ONLY receive
+       * Registers to receive a specific type of message from the GM.  IT will ONLY receive
        * messages about this other actor.  Use this when you want to track interactions with
-       * other actors - such as a player listening for when a vehicle he is in gets damaged.
-       * By default, it will use the ProcessMessage() invokable on GameActor (PROCESS_MSG_INVOKABLE)
+       * other actors - such as a player actor listening for when the vehicle being driven receive damage.
        * @see dtGame::GameActorProxy::RegisterForMessages
        * @see dtGame::GameActorProxy::RegisterForMessagesAboutSelf
        * @see dtGame::GameActor::ProcessMessage
-       * @see dtGame::GameActorProxy::PROCESS_MSG_INVOKABLE
        */
       void RegisterForMessagesAboutOtherActor(const MessageType& type,
                const dtCore::UniqueId& targetActorId,
-               const std::string& invokableName = PROCESS_MSG_INVOKABLE);
+               const std::string& invokableName);
 
       /**
-       * Registers to receive a specific type of message from the GM.  You will ONLY receive
-       * messages about yourself. This is the normal use case for registering for messages.
-       * Typically, you only want to know when YOU have fired a weapon, or when YOU have been
-       * shot. Not when another player is shot.
-       * By default, it will use the ProcessMessage() invokable on GameActor (PROCESS_MSG_INVOKABLE)
+       * Registers to receive a specific type of message from the GM.  It will ONLY receive
+       * messages with an AboutActorId that equals the current actor instance.
+       * This is really only applicable if another actor sends a message about this actor or a message
+       * comes in from the network about this actor.
        * @see dtGame::GameActorProxy::RegisterForMessages
        * @see dtGame::GameActorProxy::RegisterForMessagesAboutOtherActor
        * @see dtGame::GameActor::ProcessMessage
-       * @see dtGame::GameActorProxy::PROCESS_MSG_INVOKABLE
        */
       void RegisterForMessagesAboutSelf(const MessageType& type,
-               const std::string& invokableName = PROCESS_MSG_INVOKABLE);
+               const std::string& invokableName);
 
       /**
        * Unregisters the invokable for a specific type of message from the GM.  This is the
-       * reverse of RegisterForMessages for global messages. By default, it will unregister the
-       * ProcessMessage() invokable on GameActor (PROCESS_MSG_INVOKABLE)
+       * reverse of RegisterForMessages for global messages.
        * @see dtGame::GameActorProxy::RegisterForMessages
-       * @see dtGame::GameActorProxy::PROCESS_MSG_INVOKABLE
        */
       void UnregisterForMessages(const MessageType& type,
-               const std::string& invokableName = PROCESS_MSG_INVOKABLE);
+               const std::string& invokableName);
 
       /**
        * Unregisters the invokable for a specific type of message for a specific Actor.  This
-       * is the reverse of RegisterForMessagesAboutOtherActor. By default, it will unregister the
-       * ProcessMessage() invokable on GameActor (PROCESS_MSG_INVOKABLE)
+       * is the reverse of RegisterForMessagesAboutOtherActor.
        * @see dtGame::GameActorProxy::RegisterForMessagesAboutOtherActor
-       * @see dtGame::GameActorProxy::PROCESS_MSG_INVOKABLE
        */
       void UnregisterForMessagesAboutOtherActor(const MessageType& type,
                const dtCore::UniqueId& targetActorId,
-               const std::string& invokableName = PROCESS_MSG_INVOKABLE);
+               const std::string& invokableName);
 
       /**
        * Unregisters the invokable for a specific type of message from the GM.  This is the
-       * reverse of RegisterForMessagesAboutSelf. By default, it will unregister the
-       * ProcessMessage() invokable on GameActor (PROCESS_MSG_INVOKABLE)
+       * reverse of RegisterForMessagesAboutSelf.
        * @see dtGame::GameActorProxy::RegisterForMessagesAboutSelf
-       * @see dtGame::GameActorProxy::PROCESS_MSG_INVOKABLE
        */
       void UnregisterForMessagesAboutSelf(const MessageType& type,
-               const std::string& invokableName = PROCESS_MSG_INVOKABLE);
+               const std::string& invokableName);
 
       /**
        * @return True if this GameActorProxy has been added to the GameManager yet,
@@ -419,72 +466,106 @@ namespace dtGame
        */
       virtual dtCore::RefPtr<dtCore::ActorProperty> GetDeprecatedProperty(const std::string& name);
 
-      //////////////////////////////
-      // Actor Components are being moved over to BaseActorObject or
-      // To a dtGame subclass of it.  Some of the accessor methods for them are
-      // here to make that transition easier, that is, to make code written to use them
-      // from GameActorProxy still build and allow people to transition away from
-      // accessing them from the GameActor.  Calling these methods should be fine since
-      // they won't go away, but they may be moved around.
-
       /**
-       * Get all components matching this type string
-       * @param type The type-string of the ActorComponent to get
-       * @return the selected ActorComponents (will be empty if not found)
-       */
-      virtual std::vector<ActorComponent*> GetComponents(const ActorComponent::ACType& type) const;
-
-      /**
-       * Fill the vector with all the actor components.
-       */
-      virtual void GetAllComponents(std::vector<ActorComponent*>& toFill);
-
-      /**
-       * Does base contain a component of given type?
-       * @param type The type-string of the ActorComponent to query
-       * @return true if ActorComponent is found, false otherwise
-       */
-      virtual bool HasComponent(const ActorComponent::ACType& type) const ;
-
-      /**
-       * Add an ActorComponent. Only one ActorComponent of a given type can be added.
+       * Add an ActorComponent.
        * @param component The ActorComponent to try to add
        */
       virtual void AddComponent(ActorComponent& component);
 
       /**
        * Remove component by reference
-       * @param component : Pointer to the ActorComponent to remove
+       * @param component : Reference to the ActorComponent to remove
        */
       virtual void RemoveComponent(ActorComponent& component);
 
-      /**
-       * Removes all components with a particular type
-       * @param type The type-string of the ActorComponent to remove
-       */
-      void RemoveAllComponentsOfType(const ActorComponent::ACType& type);
 
       /**
-       * Remove all contained ActorComponent
+       * @see dtGame::GameActorProxy::PROCESS_MSG_INVOKABLE
+       * This is deprecated because the whole GameActor class being deprecated.
+       * In addition, registering for individual messages, then catching them in big if block
+       * in one function is just a bad pattern.  Call the one that takes a functor and make a function
+       * for each message type you want to receive.
        */
-      virtual void RemoveAllComponents();
+      DEPRECATE_FUNC void RegisterForMessages(const MessageType& type)
+      {
+         RegisterForMessages(type, PROCESS_MSG_INVOKABLE);
+      }
 
       /**
-       * Loop through all ActorComponents call their OnEnteredWorld()
+       * @see dtGame::GameActorProxy::PROCESS_MSG_INVOKABLE
+       * This is deprecated because the whole GameActor class being deprecated.
+       * In addition, registering for individual messages, then catching them in big if block
+       * in one function is just a bad and inefficient pattern.  Call the one that takes a functor and make a function
+       * for each message type you want to receive.
        */
-      virtual void CallOnEnteredWorldForActorComponents();
+      DEPRECATE_FUNC void RegisterForMessagesAboutOtherActor(const MessageType& type,
+               const dtCore::UniqueId& targetActorId)
+      {
+         RegisterForMessagesAboutOtherActor(type, targetActorId, PROCESS_MSG_INVOKABLE);
+      }
 
       /**
-       * Loop through all ActorComponents call their OnRemovedWorld()
+       * @see dtGame::GameActorProxy::PROCESS_MSG_INVOKABLE
+       * This is deprecated because the whole GameActor class being deprecated.
+       * In addition, registering for individual messages, then catching them in big if block
+       * in one function is just a bad and inefficent pattern.  Call the one that takes a functor and make a function
+       * for each message type you want to receive.
        */
-      virtual void CallOnRemovedFromWorldForActorComponents();
+      DEPRECATE_FUNC void RegisterForMessagesAboutSelf(const MessageType& type)
+      {
+         RegisterForMessagesAboutSelf(type, PROCESS_MSG_INVOKABLE);
+      }
 
       /**
-       * Call the BuildPropertyMap() method of all registered ActorComponent
+       * @see dtGame::GameActorProxy::PROCESS_MSG_INVOKABLE
+       * This is deprecated because the whole GameActor class being deprecated.
+       * In addition, registering for individual messages, then catching them in big if block
+       * in one function is just a bad and inefficient pattern.  Call the one that takes a functor and make a function
+       * for each message type you want to receive.
        */
-      virtual void BuildComponentPropertyMaps();
+      DEPRECATE_FUNC void UnregisterForMessages(const MessageType& type)
+      {
+         UnregisterForMessages(type, PROCESS_MSG_INVOKABLE);
+      }
 
-      /////////////////////////////
+      /**
+       * @see dtGame::GameActorProxy::PROCESS_MSG_INVOKABLE
+       * This is deprecated because the whole GameActor class being deprecated.
+       * In addition, registering for individual messages, then catching them in big if block
+       * in one function is just a bad pattern.  Call the one that takes a functor and make a function
+       * for each message type you want to receive.
+       */
+      DEPRECATE_FUNC void UnregisterForMessagesAboutOtherActor(const MessageType& type,
+               const dtCore::UniqueId& targetActorId)
+      {
+         UnregisterForMessagesAboutOtherActor(type, targetActorId, PROCESS_MSG_INVOKABLE);
+      }
+
+      /**
+       * @see dtGame::GameActorProxy::PROCESS_MSG_INVOKABLE
+       * This is deprecated because the whole GameActor class being deprecated.
+       * In addition, registering for individual messages, then catching them in big if block
+       * in one function is just a bad pattern.  Call the one that takes a functor and make a function
+       * for each message type you want to receive.
+       */
+      DEPRECATE_FUNC void UnregisterForMessagesAboutSelf(const MessageType& type)
+      {
+         UnregisterForMessagesAboutSelf(type, PROCESS_MSG_INVOKABLE);
+      }
+
+      /**
+       * DEPRECATED  Call GetDrawable<DrawableType>()
+       * Retrieves the game actor that this represents, which may not be a GameActor.
+       * @return The Game Actor
+       */
+      DEPRECATE_FUNC GameActor& GetGameActor();
+
+      /**
+       * DEPRECATED  Call GetDrawable<DrawableType>()
+       * Retrieves the game actor that this represents, which may not be a GameActor.
+       * @return The Game Actor
+       */
+      DEPRECATE_FUNC const GameActor& GetGameActor() const;
 
    protected:
       /// Destructor
@@ -558,6 +639,9 @@ namespace dtGame
       void SetIsInGM(bool value);
 
       friend class GameManager;
+
+      std::string mPrototypeName;
+      dtCore::UniqueId mPrototypeID;
       GameManager* mParent;
       Ownership* mOwnership;
       LocalActorUpdatePolicy* mLocalActorUpdatePolicy;
@@ -566,6 +650,9 @@ namespace dtGame
       std::multimap<const MessageType*, dtCore::RefPtr<Invokable> > mMessageHandlers;
       std::set<dtUtil::RefString> mLocalUpdatePropertyAcceptList;
       bool mIsInGM;
+      bool mPublished;
+      bool mRemote;
+
    };
 }
 

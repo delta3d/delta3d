@@ -60,6 +60,9 @@ namespace dtABC
       ///configure the internal components
       virtual void Config();
 
+      /// Run the application
+      virtual void Run() = 0;
+
       ///Quit the application (call's system quit)
       virtual void Quit();
 
@@ -121,21 +124,21 @@ namespace dtABC
       /// @param name The name of the map to load.
       /// @param addBillBoards pass true to add the billboards for any proxies that have the drawmode set to add the billboards.
       /// @return the map that was loaded into the scene.
-      /// @throws ExceptionEnum::MapLoadParsingError if an error occurs reading the map file.
+      /// @throws MapParsingException if an error occurs reading the map file.
       /// @throws ExceptionEnum::ProjectFileNotFound if the map does not exist.
-      /// @throws ExceptionEnum::ProjectInvalidContext if the context is not set.
+      /// @throws ProjectInvalidContextException if the context is not set.
       dtCore::Map& LoadMap(const std::string& name, bool addBillBoards = false);
 
       /// Loads a map into the scene held by BaseABC. If there is a Camera contained within your Map, the default
       /// Camera in BaseABC will be disabled.
       /// @param map The map to load into the scene
       /// @param addBillBoards pass true to add the billboards for any proxies that have the drawmode set to add the billboards.
-      /// @throws ExceptionEnum::ProjectInvalidContext if the context is not set.
+      /// @throws ProjectInvalidContextException if the context is not set.
       void LoadMap(dtCore::Map& map, bool addBillBoards = false);
 
    protected:
 
-      virtual void EventTraversal(const double deltaSimTime){};
+      virtual void EventTraversal(const double /*deltaSimTime*/){};
 
       ///Override for preframe
       virtual void PreFrame(const double deltaSimTime) = 0;

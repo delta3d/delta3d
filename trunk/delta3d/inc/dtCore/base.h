@@ -89,7 +89,7 @@ namespace dtCore
        *
        * @param name the new name
        */
-      void SetName(const std::string& name);
+      virtual void SetName(const std::string& name);
 
       /**
        * Returns the name of this instance.

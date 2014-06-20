@@ -77,7 +77,7 @@ namespace dtAI
    bool WaypointReaderWriter::LoadWaypointFile(const std::string& filename)
    {
       bool read_file_ok = false;
-      osgDB::fstream infile;
+      osgDB::ifstream infile;
 
       //we have to hold all the edges until all the waypoints are added
       typedef std::vector<std::pair<WaypointID, WaypointID> > EdgeArray;
@@ -296,9 +296,9 @@ namespace dtAI
    /////////////////////////////////////////////////////////////////////////////
    bool WaypointReaderWriter::SaveWaypointFile(const std::string& filename)
    {
-      osgDB::fstream outfile;
+      osgDB::ofstream outfile;
 
-      outfile.open(filename.c_str(), osgDB::fstream::ios_base::binary | osgDB::fstream::out);
+      outfile.open(filename.c_str(), std::fstream::ios_base::binary | std::fstream::out);
       if (outfile.fail())
       {
          return false;

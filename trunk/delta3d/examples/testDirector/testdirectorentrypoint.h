@@ -26,6 +26,8 @@
 #include <dtCore/refptr.h>
 #include <dtCore/observerptr.h>
 
+#include <vector>
+
 #include "testdirectorexport.h"
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -44,13 +46,15 @@ public:
    /**
     * Called to initialize the game application.  You can pull any command line params here.
     */
-   virtual void Initialize(dtGame::GameApplication& app, int argc, char** argv);
+   virtual void Initialize(dtABC::BaseABC& app, int argc, char** argv);
 
    /**
     * Called just before your application's game loop starts.  This is your main
     * opportunity to create components, load maps, create unique actors, etc...
     */
-   virtual void OnStartup(dtGame::GameApplication& app);
+   virtual void OnStartup(dtABC::BaseABC& app, dtGame::GameManager& gameManager);
+private:
+   std::vector<std::string> mMapNames;
 };
 
 #endif // TEST_DIRECTOR_ENTRY_POINT

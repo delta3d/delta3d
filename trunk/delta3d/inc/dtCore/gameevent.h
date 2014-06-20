@@ -26,6 +26,8 @@
 #include <dtCore/export.h>
 #include <dtCore/base.h>
 
+#include <dtUtil/getsetmacros.h>
+
 namespace dtCore
 {
    /**
@@ -52,32 +54,15 @@ namespace dtCore
           * @param name The name to give to this event.
           * @param description An optional description to give to the event.
           */
-         GameEvent(const std::string &name, const std::string &description="");
+         GameEvent(const std::string& name, const dtUtil::RefString& description=dtUtil::RefString());
 
-         /**
-          * Sets the description of this game event.
-          * @param desc The description given for this game event.  Note, descriptions
-          *    are optional, however, they may be useful to have in certain applications.
-          */
-         void SetDescription(const std::string &desc) { mDescription = desc; }
+         DT_DECLARE_ACCESSOR(dtUtil::RefString, Description);
 
-         /**
-          * Gets the description of this game event.
-          * @return Gets the description of the game event.
-          */
-         const std::string &GetDescription() const { return mDescription; }
-
-         bool operator==(const GameEvent& toCompare) const
-         {
-            return GetUniqueId() == toCompare.GetUniqueId();
-         }
+         bool operator==(const GameEvent& toCompare) const;
 
       protected: 
          /// Destructor
          virtual ~GameEvent() { }
-
-      private:
-         std::string mDescription;
    };
 }
 

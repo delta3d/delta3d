@@ -32,7 +32,42 @@ namespace dtCore
 
          ObserverPtr(const osg::observer_ptr<T>& rp):
             osg::observer_ptr<T>(rp) {}
+
+         // added specifically for Delta3D
+         template <typename TSub>
+         ObserverPtr(const osg::observer_ptr<TSub>& rp):osg::observer_ptr<T>(rp.get()) {}
+
+         // added specifically for Delta3D
+         friend inline std::ostream& operator<<(std::ostream& os, const ObserverPtr& rp)
+         {
+            os << rp.get();
+            return os;
+         }
+
+         // added specifically for Delta3D
+         template <typename TSub>
+         ObserverPtr& operator = (const osg::observer_ptr<TSub>& rp)
+         {
+            *this = rp.get();
+            return *this;
+         }
    };
+
+   template <class T>
+   class ConvertToObserverPointerUnary
+   {
+   public:
+      T* operator()(dtCore::ObserverPtr<T>& ptr) const
+      {
+         return ptr.get();
+      }
+
+      const T* operator()(const dtCore::ObserverPtr<T>& ptr) const
+      {
+         return ptr.get();
+      }
+   };
+
 }
 
 #endif

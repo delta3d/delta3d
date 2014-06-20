@@ -297,7 +297,7 @@ namespace dtCore
 
       if(isBackupExt || fileExt == "xml")
       {
-         std::string filename = osgDB::findDataFile(path);
+         std::string filename = dtUtil::FindFileInPathList(path);
          if(!filename.empty())
          {
             dtCore::RefPtr<MapReaderWriter> mrw = new MapReaderWriter();
@@ -475,7 +475,7 @@ namespace dtCore
       //this is a temporary workaround and should be deprecated
       if(osgDB::getLowerCaseFileExtension(path) == "xml")
       {
-         std::string filename = osgDB::findDataFile(path);
+         std::string filename = dtUtil::FindFileInPathList(path);
          if(!filename.empty())
          {
             dtCore::RefPtr<MapReaderWriter> mrw = new MapReaderWriter();
@@ -515,10 +515,16 @@ namespace dtCore
    dtCore::MapHeaderData MapParser::ParseMapHeaderData(const std::string& mapFilename) const
    {
       dtCore::RefPtr<MapHeaderHandler> handler = new MapHeaderHandler();
-      if (!ParseFileByToken(mapFilename, handler))
+      try
       {
-         //error
-         throw dtCore::MapParsingException( "Could not parse the Map's header data.", __FILE__, __LINE__);
+         if (!ParseFileByToken(mapFilename, handler))
+         {
+            throw dtCore::MapParsingException( "Could not parse the Map's header data.", __FILE__, __LINE__);
+         }
+      }
+      catch (dtCore::XMLLoadParsingException& ex)
+      {
+         throw dtCore::MapParsingException( "Could not parse the Map's header data with dtCore::XMLLoadParsingException: " + ex.ToString(), __FILE__, __LINE__);
       }
 
       return handler->GetHeaderData();
@@ -703,7 +709,6 @@ namespace dtCore
                continue;
 
             mPropSerializer->SetCurrentPropertyContainer(i->second.get());
-
 
             BeginElement(MapXMLConstants::ACTOR_ELEMENT);
             BeginElement(MapXMLConstants::ACTOR_TYPE_ELEMENT);
@@ -917,7 +922,7 @@ namespace dtCore
                              ex.What().c_str(), map.GetName().c_str());
          mFormatTarget.SetOutputStream(NULL);
          mPropSerializer->SetMap(NULL);
-         throw ex;
+         throw;
       }
       catch (...)
       {
@@ -1100,7 +1105,7 @@ namespace dtCore
             "Caught Exception \"%s\" while attempting to save prefab \"%s\".",
             ex.What().c_str(), filePath.c_str());
          mFormatTarget.SetOutputStream(NULL);
-         throw ex;
+         throw;
       }
       catch (...)
       {

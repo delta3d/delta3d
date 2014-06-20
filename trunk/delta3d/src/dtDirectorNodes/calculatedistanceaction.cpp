@@ -24,6 +24,8 @@
 
 #include <dtDirector/director.h>
 
+#include <dtCore/transformable.h>
+
 #include <dtCore/doubleactorproperty.h>
 #include <dtCore/vectoractorproperties.h>
 
@@ -151,8 +153,8 @@ namespace dtDirector
          //Get the transforms of the actors
          dtCore::Transform firstTransform;
          dtCore::Transform secondTransform;
-         GetActor("A")->GetActor()->AsTransformable()->GetTransform(firstTransform);
-         GetActor("B")->GetActor()->AsTransformable()->GetTransform(secondTransform);
+         GetActor("A")->GetDrawable()->AsTransformable()->GetTransform(firstTransform);
+         GetActor("B")->GetDrawable()->AsTransformable()->GetTransform(secondTransform);
 
          //Get the translations
          osg::Vec3f firstTranslation;

@@ -150,7 +150,7 @@ void MassImporterPlugin::CreateActorFromMesh(const dtCore::ActorType& type, cons
    if(proxies.empty())
    {
       // create new actor
-      proxy = dtCore::LibraryManager::GetInstance().CreateActorProxy(type);
+      proxy = dtCore::LibraryManager::GetInstance().CreateActor(type);
       
       proxy->SetName(actorName);
 

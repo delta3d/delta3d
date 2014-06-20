@@ -48,6 +48,7 @@ namespace dtEditQt
       , mProjType(PERSPECTIVE)
       , mDeltaCamera(new dtCore::Camera("StageCamera"))
    {
+      mDeltaCamera->SetupBackwardCompatibleStateset();
       resetRotation();
       setPosition(osg::Vec3(0, 0, 0));
       mDeltaCamera->SetNearFarCullingMode(dtCore::Camera::NO_AUTO_NEAR_FAR);
@@ -360,7 +361,7 @@ namespace dtEditQt
       else
       {
          dtCore::Transformable* transformable =
-            dynamic_cast<dtCore::Transformable*>(proxy->GetActor());
+            dynamic_cast<dtCore::Transformable*>(proxy->GetDrawable());
 
          if (transformable != NULL)
          {

@@ -29,9 +29,9 @@ using namespace dtCore;
 
 namespace dtActors
 {
-   void CloudDomeActorProxy::CreateActor()
+   void CloudDomeActorProxy::CreateDrawable()
    {
-      SetActor(*new CloudDome(6, 1, 6.f, 1.f, 0.3f, 0.96f, 256.f, 1800));
+      SetDrawable(*new CloudDome(6, 1, 6.f, 1.f, 0.3f, 0.96f, 256.f, 1800));
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -39,7 +39,7 @@ namespace dtActors
    {
       dtActors::EnvEffectActorProxy::BuildPropertyMap();
 
-      CloudDome* cd = static_cast<dtCore::CloudDome*>(GetActor());
+      CloudDome* cd = static_cast<dtCore::CloudDome*>(GetDrawable());
       const std::string GROUPNAME = "dtCore_CloudPlane";
 
       AddProperty(new FloatActorProperty("Scale", "Scale",
@@ -86,7 +86,7 @@ namespace dtActors
    ///////////////////////////////////////////////////////////////////////////////
    void CloudDomeActorProxy::SetCloudColor(const osg::Vec3 &color)
    {
-      CloudDome *cd = static_cast<CloudDome*> (GetActor());
+      CloudDome *cd = static_cast<CloudDome*> (GetDrawable());
 
       cd->SetCloudColor(color);
    }
@@ -94,7 +94,7 @@ namespace dtActors
    ///////////////////////////////////////////////////////////////////////////////
    osg::Vec3 CloudDomeActorProxy::GetCloudColor()
    {
-      CloudDome *cd = static_cast<CloudDome*> (GetActor());
+      CloudDome *cd = static_cast<CloudDome*> (GetDrawable());
 
       return cd->GetCloudColor();
    }

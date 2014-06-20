@@ -74,10 +74,10 @@ namespace dtAI
     }
 
     ////////////////////////////////////////////////////////////////////////////
-    void AIInterfaceActorProxy::CreateActor()
+    void AIInterfaceActorProxy::CreateDrawable()
     {
        AIInterfaceActor* actor = new AIInterfaceActor();
-       SetActor(*actor);
+       SetDrawable(*actor);
 
        mAIInterface = CreateAIInterface();
 
@@ -100,11 +100,19 @@ namespace dtAI
 
        const dtUtil::RefString GROUPNAME = "AIInterface";
 
-       AddProperty(new dtCore::ResourceActorProperty(*this, dtCore::DataType::STATIC_MESH,
+       AddProperty(new dtCore::ResourceActorProperty(dtCore::DataType::STATIC_MESH,
                    PROPERTY_WAYPOINT_FILE_NAME,
                    PROPERTY_WAYPOINT_FILE_NAME,
-                   dtCore::ResourceActorProperty::SetFuncType(this, &AIInterfaceActorProxy::LoadFile),
+                   dtCore::ResourceActorProperty::SetDescFuncType(this, &AIInterfaceActorProxy::SetAIFile),
+                   dtCore::ResourceActorProperty::GetDescFuncType(this, &AIInterfaceActorProxy::GetAIFile),
                    "Loads the waypoint and connectivity graph.", GROUPNAME));
+    }
+
+    DT_IMPLEMENT_ACCESSOR_GETTER(AIInterfaceActorProxy, dtCore::ResourceDescriptor, AIFile);
+    void AIInterfaceActorProxy::SetAIFile(const dtCore::ResourceDescriptor& rd)
+    {
+       mAIFile = rd;
+       LoadFile(dtCore::ResourceActorProperty::GetResourcePath(rd));
     }
 
     ////////////////////////////////////////////////////////////////////////////

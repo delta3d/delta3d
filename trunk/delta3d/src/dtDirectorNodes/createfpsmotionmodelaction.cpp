@@ -255,7 +255,7 @@ namespace dtDirector
             model->GetFPSCollider().SetCollisionBitsForTorso(GetUInt("Torso Collision"));
             model->GetFPSCollider().SetCollisionBitsForFeet(GetUInt("Feet Collision"));
 
-            dtDAL::ActorProxy* proxy = GetActor("Actor");
+            dtCore::ActorProxy* proxy = GetActor("Actor");
             if (proxy)
             {
                dtCore::Transformable* actor = NULL;

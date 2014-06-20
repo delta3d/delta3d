@@ -32,6 +32,7 @@
 #include <dtQt/export.h>
 #include <QtCore/Qt>
 #include <QtCore/QObject>
+#include <osg/Version>
 #include <osgViewer/GraphicsWindow>
 
 class QGLWidget;
@@ -80,8 +81,11 @@ namespace dtQt
       virtual void swapBuffersImplementation();
 
       /** Check to see if any events have been generated.*/
+#if OSG_VERSION_LESS_THAN(3,2,0)
       virtual void checkEvents();
-
+#else
+      virtual bool checkEvents();
+#endif
       /** Get the window's position and size.*/
       virtual void getWindowRectangle(int& x, int& y, int& width, int& height);
 

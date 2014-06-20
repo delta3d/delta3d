@@ -21,12 +21,12 @@
 #include <prefix/dtdirectornodesprefix.h>
 #include <dtDirectorNodes/callremoteeventaction.h>
 
-#include <dtDAL/stringselectoractorproperty.h>
-#include <dtDAL/booleanactorproperty.h>
-#include <dtDAL/actoridactorproperty.h>
-#include <dtDAL/containeractorproperty.h>
-#include <dtDAL/arrayactorpropertybase.h>
-#include <dtDAL/arrayactorproperty.h>
+#include <dtCore/stringselectoractorproperty.h>
+#include <dtCore/booleanactorproperty.h>
+#include <dtCore/actoridactorproperty.h>
+#include <dtCore/containeractorproperty.h>
+#include <dtCore/arrayactorpropertybase.h>
+#include <dtCore/arrayactorproperty.h>
 
 #include <dtDirector/director.h>
 #include <dtDirectorNodes/remoteevent.h>
@@ -72,52 +72,52 @@ namespace dtDirector
       LatentActionNode::BuildPropertyMap();
 
       // Create our value links.
-      dtDAL::StringSelectorActorProperty* eventNameProp = new dtDAL::StringSelectorActorProperty(
+      dtCore::StringSelectorActorProperty* eventNameProp = new dtCore::StringSelectorActorProperty(
          "EventName", "Remote Event Name",
-         dtDAL::StringSelectorActorProperty::SetFuncType(this, &CallRemoteEventAction::SetEventName),
-         dtDAL::StringSelectorActorProperty::GetFuncType(this, &CallRemoteEventAction::GetEventName),
-         dtDAL::StringSelectorActorProperty::GetListFuncType(this, &CallRemoteEventAction::GetEventList),
+         dtCore::StringSelectorActorProperty::SetFuncType(this, &CallRemoteEventAction::SetEventName),
+         dtCore::StringSelectorActorProperty::GetFuncType(this, &CallRemoteEventAction::GetEventName),
+         dtCore::StringSelectorActorProperty::GetListFuncType(this, &CallRemoteEventAction::GetEventList),
          "The name of the remote event to call.", "", true);
       AddProperty(eventNameProp);
 
-      dtDAL::StringSelectorActorProperty* typeProp = new dtDAL::StringSelectorActorProperty(
+      dtCore::StringSelectorActorProperty* typeProp = new dtCore::StringSelectorActorProperty(
          "Event Scope", "Event Scope",
-         dtDAL::StringSelectorActorProperty::SetFuncType(this, &CallRemoteEventAction::SetEventScope),
-         dtDAL::StringSelectorActorProperty::GetFuncType(this, &CallRemoteEventAction::GetEventScope),
-         dtDAL::StringSelectorActorProperty::GetListFuncType(this, &CallRemoteEventAction::GetEventScopeList),
+         dtCore::StringSelectorActorProperty::SetFuncType(this, &CallRemoteEventAction::SetEventScope),
+         dtCore::StringSelectorActorProperty::GetFuncType(this, &CallRemoteEventAction::GetEventScope),
+         dtCore::StringSelectorActorProperty::GetListFuncType(this, &CallRemoteEventAction::GetEventScopeList),
          "The scope in which this action will search for Remote Events.");
       AddProperty(typeProp);
 
-      dtDAL::ActorIDActorProperty* instigatorProp = new dtDAL::ActorIDActorProperty(
+      dtCore::ActorIDActorProperty* instigatorProp = new dtCore::ActorIDActorProperty(
          "Instigator", "Instigator",
-         dtDAL::ActorIDActorProperty::SetFuncType(this, &CallRemoteEventAction::SetInstigator),
-         dtDAL::ActorIDActorProperty::GetFuncType(this, &CallRemoteEventAction::GetInstigator),
+         dtCore::ActorIDActorProperty::SetFuncType(this, &CallRemoteEventAction::SetInstigator),
+         dtCore::ActorIDActorProperty::GetFuncType(this, &CallRemoteEventAction::GetInstigator),
          "", "An instigator for this event.");
       AddProperty(instigatorProp);
 
-      dtDAL::StringActorProperty* paramNameProp = new dtDAL::StringActorProperty(
+      dtCore::StringActorProperty* paramNameProp = new dtCore::StringActorProperty(
          "Param Name", "Param Name",
-         dtDAL::StringActorProperty::SetFuncType(this, &CallRemoteEventAction::SetParamName),
-         dtDAL::StringActorProperty::GetFuncType(this, &CallRemoteEventAction::GetParamName),
+         dtCore::StringActorProperty::SetFuncType(this, &CallRemoteEventAction::SetParamName),
+         dtCore::StringActorProperty::GetFuncType(this, &CallRemoteEventAction::GetParamName),
          "The name of this parameter.");
 
-      dtDAL::StringActorProperty* paramValueProp = new dtDAL::StringActorProperty(
+      dtCore::StringActorProperty* paramValueProp = new dtCore::StringActorProperty(
          "Param Value", "Param Value",
-         dtDAL::StringActorProperty::SetFuncType(this, &CallRemoteEventAction::SetParamValue),
-         dtDAL::StringActorProperty::GetFuncType(this, &CallRemoteEventAction::GetParamValue),
+         dtCore::StringActorProperty::SetFuncType(this, &CallRemoteEventAction::SetParamValue),
+         dtCore::StringActorProperty::GetFuncType(this, &CallRemoteEventAction::GetParamValue),
          "The value of this parameter.");
 
-      dtDAL::ContainerActorProperty* paramProp = new dtDAL::ContainerActorProperty(
+      dtCore::ContainerActorProperty* paramProp = new dtCore::ContainerActorProperty(
          "Parameter", "Parameter", "Custom parameter", "");
       paramProp->AddProperty(paramNameProp);
       paramProp->AddProperty(paramValueProp);
 
-      dtDAL::ArrayActorPropertyBase* paramListProp = new dtDAL::ArrayActorProperty<ParamData>(
+      dtCore::ArrayActorPropertyBase* paramListProp = new dtCore::ArrayActorProperty<ParamData>(
          "Parameters", "Parameters", "Custom parameters to be sent and received from any corresponding Remote Events.",
-         dtDAL::ArrayActorProperty<ParamData>::SetIndexFuncType(this, &CallRemoteEventAction::SetParameterIndex),
-         dtDAL::ArrayActorProperty<ParamData>::GetDefaultFuncType(this, &CallRemoteEventAction::GetDefaultParameter),
-         dtDAL::ArrayActorProperty<ParamData>::GetArrayFuncType(this, &CallRemoteEventAction::GetParameterList),
-         dtDAL::ArrayActorProperty<ParamData>::SetArrayFuncType(this, &CallRemoteEventAction::SetParameterList),
+         dtCore::ArrayActorProperty<ParamData>::SetIndexFuncType(this, &CallRemoteEventAction::SetParameterIndex),
+         dtCore::ArrayActorProperty<ParamData>::GetDefaultFuncType(this, &CallRemoteEventAction::GetDefaultParameter),
+         dtCore::ArrayActorProperty<ParamData>::GetArrayFuncType(this, &CallRemoteEventAction::GetParameterList),
+         dtCore::ArrayActorProperty<ParamData>::SetArrayFuncType(this, &CallRemoteEventAction::SetParameterList),
          paramProp, "");
       AddProperty(paramListProp);
 
@@ -129,14 +129,14 @@ namespace dtDirector
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   dtCore::RefPtr<dtDAL::ActorProperty> CallRemoteEventAction::GetDeprecatedProperty(const std::string& name)
+   dtCore::RefPtr<dtCore::ActorProperty> CallRemoteEventAction::GetDeprecatedProperty(const std::string& name)
    {
       if (name == "Local Event")
       {
-         dtDAL::BooleanActorProperty* localProp = new dtDAL::BooleanActorProperty(
+         dtCore::BooleanActorProperty* localProp = new dtCore::BooleanActorProperty(
             "Local Event", "Local Event",
-            dtDAL::BooleanActorProperty::SetFuncType(this, &CallRemoteEventAction::SetLocalEvent),
-            dtDAL::BooleanActorProperty::GetFuncType(this, &CallRemoteEventAction::IsLocalEvent),
+            dtCore::BooleanActorProperty::SetFuncType(this, &CallRemoteEventAction::SetLocalEvent),
+            dtCore::BooleanActorProperty::GetFuncType(this, &CallRemoteEventAction::IsLocalEvent),
             "False to search the entire Director script for these events.  True to only search the current graph and sub-graphs.");
          return localProp;
       }
@@ -576,10 +576,10 @@ namespace dtDirector
 
          if (isNameValid)
          {
-            mParameterList[index].displayProp = new dtDAL::StringActorProperty(
+            mParameterList[index].displayProp = new dtCore::StringActorProperty(
                name, name,
-               dtDAL::StringActorProperty::SetFuncType(&mParameterList[index], &ParamData::SetValue),
-               dtDAL::StringActorProperty::GetFuncType(&mParameterList[index], &ParamData::GetValue),
+               dtCore::StringActorProperty::SetFuncType(&mParameterList[index], &ParamData::SetValue),
+               dtCore::StringActorProperty::GetFuncType(&mParameterList[index], &ParamData::GetValue),
                "The value of this parameter.");
 
             bool found = false;

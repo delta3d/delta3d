@@ -31,8 +31,9 @@
 
 #include <dtCore/refptr.h>
 #include <dtCore/observerptr.h>
-#include <dtDAL/actorproperty.h>
-#include <dtDAL/propertycontainer.h>
+#include <dtCore/actorproperty.h>
+#include <dtCore/propertycontainer.h>
+#include <dtCore/motioninterface.h>
 #include <dtUtil/getsetmacros.h>
 
 namespace dtPhysics
@@ -48,9 +49,11 @@ namespace dtPhysics
    // Class:
    // Notes:
    /////////////////////////////////////////////////////////////////////////////
-   class DT_PHYSICS_EXPORT PhysicsObject: public dtDAL::PropertyContainer
+   class DT_PHYSICS_EXPORT PhysicsObject: public dtCore::PropertyContainer, virtual public dtCore::VelocityInterface, virtual public dtCore::AngularVelocityInterface
    {
    public:
+      DT_DECLARE_VIRTUAL_REF_INTERFACE_INLINE
+
       PhysicsObject();//name will be generated
       PhysicsObject(const std::string& name);
 
@@ -174,7 +177,8 @@ namespace dtPhysics
       void SetAngularVelocity(const VectorType& velocity_rad);
 
       VectorType GetLinearVelocity() const;
-      VectorType GetAngularVelocity() const;
+      /*override MotionInterface*/ osg::Vec3 GetVelocity() const { return GetLinearVelocity(); }
+      /*implements MotionInterface*/ VectorType GetAngularVelocity() const;
 
       /// Gets the velocity of a point relative to the body based on the linear and angular velocity.
       VectorType GetLinearVelocityAtLocalPoint(const VectorType& relPos) const;
@@ -212,6 +216,10 @@ namespace dtPhysics
       void SetMass(Real);
       Real GetMass() const;
 
+      /**
+       * The X,Y, and Z extents.  For objects that need fewer than 3, only the relevant axes are read.
+       * Spheres just use [0].  Cylinders use x and z for width and height.
+       */
       void SetExtents(const VectorType& v);
       VectorType GetExtents() const;
 
@@ -270,7 +278,7 @@ namespace dtPhysics
 
       //////////////////////////////////////////////////////
       // Build our property functions
-      virtual void BuildPropertyMap(std::vector<dtCore::RefPtr<dtDAL::ActorProperty> >& toFillIn);
+      virtual void BuildPropertyMap(std::vector<dtCore::RefPtr<dtCore::ActorProperty> >& toFillIn);
 
       /// forces the automatic activate and deactivate state.  The physics engine normally controls this.
       void SetActive(bool active);

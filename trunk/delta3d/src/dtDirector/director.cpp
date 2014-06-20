@@ -21,9 +21,9 @@
 
 #include <dtCore/timer.h>
 
-#include <dtDAL/project.h>
-#include <dtDAL/actorproperty.h>
-#include <dtDAL/stringactorproperty.h>
+#include <dtCore/project.h>
+#include <dtCore/actorproperty.h>
+#include <dtCore/stringactorproperty.h>
 
 #include <dtDirector/director.h>
 #include <dtDirector/nodemanager.h>
@@ -69,7 +69,7 @@ namespace dtDirector
    {
       mScriptOwner = "";
 
-      mResource = dtDAL::ResourceDescriptor::NULL_RESOURCE;
+      mResource = dtCore::ResourceDescriptor::NULL_RESOURCE;
 
       DirectorTypeFactory* factory = DirectorTypeFactory::GetInstance();
       if (factory)
@@ -159,7 +159,7 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void Director::Init(dtGame::GameManager* gm, dtDAL::Map* map)
+   void Director::Init(dtGame::GameManager* gm, dtCore::Map* map)
    {
       mGameManager = gm;
 
@@ -199,13 +199,13 @@ namespace dtDirector
       // Reset our graph data.
       mGraph = new DirectorGraph(this);
       mGraph->BuildPropertyMap(true);
-      SetName("Director Script");
+      SetName("Untitled");
       SetComment("");
       SetDescription("");
       SetAuthor("");
       SetCopyright("");
 
-      mResource = dtDAL::ResourceDescriptor::NULL_RESOURCE;
+      mResource = dtCore::ResourceDescriptor::NULL_RESOURCE;
 
       mLibraries.clear();
       mLibraryVersionMap.clear();
@@ -477,13 +477,13 @@ namespace dtDirector
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   dtDAL::Map* Director::GetMap()
+   dtCore::Map* Director::GetMap()
    {
       return mMap;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void Director::SetMap(dtDAL::Map* map)
+   void Director::SetMap(dtCore::Map* map)
    {
       mMap = map;
    }
@@ -584,34 +584,34 @@ namespace dtDirector
    ////////////////////////////////////////////////////////////////////////////////
    void Director::BuildPropertyMap()
    {
-      AddProperty(new dtDAL::StringActorProperty(
+      AddProperty(new dtCore::StringActorProperty(
          "Name", "Name",
-         dtDAL::StringActorProperty::SetFuncType(this, &Director::SetName),
-         dtDAL::StringActorProperty::GetFuncType(this, &Director::GetName),
+         dtCore::StringActorProperty::SetFuncType(this, &Director::SetName),
+         dtCore::StringActorProperty::GetFuncType(this, &Director::GetName),
          "The Name of the Director script."));
 
-      AddProperty(new dtDAL::StringActorProperty(
+      AddProperty(new dtCore::StringActorProperty(
          "Description", "Description",
-         dtDAL::StringActorProperty::SetFuncType(this, &Director::SetDescription),
-         dtDAL::StringActorProperty::GetFuncType(this, &Director::GetDescription),
+         dtCore::StringActorProperty::SetFuncType(this, &Director::SetDescription),
+         dtCore::StringActorProperty::GetFuncType(this, &Director::GetDescription),
          "The Description of the Director script."));
 
-      AddProperty(new dtDAL::StringActorProperty(
+      AddProperty(new dtCore::StringActorProperty(
          "Author", "Author",
-         dtDAL::StringActorProperty::SetFuncType(this, &Director::SetAuthor),
-         dtDAL::StringActorProperty::GetFuncType(this, &Director::GetAuthor),
+         dtCore::StringActorProperty::SetFuncType(this, &Director::SetAuthor),
+         dtCore::StringActorProperty::GetFuncType(this, &Director::GetAuthor),
          "The Author of the Director script."));
 
-      AddProperty(new dtDAL::StringActorProperty(
+      AddProperty(new dtCore::StringActorProperty(
          "Comment", "Comment",
-         dtDAL::StringActorProperty::SetFuncType(this, &Director::SetComment),
-         dtDAL::StringActorProperty::GetFuncType(this, &Director::GetComment),
+         dtCore::StringActorProperty::SetFuncType(this, &Director::SetComment),
+         dtCore::StringActorProperty::GetFuncType(this, &Director::GetComment),
          "Comment"));
 
-      AddProperty(new dtDAL::StringActorProperty(
+      AddProperty(new dtCore::StringActorProperty(
          "Copyright", "Copyright",
-         dtDAL::StringActorProperty::SetFuncType(this, &Director::SetCopyright),
-         dtDAL::StringActorProperty::GetFuncType(this, &Director::GetCopyright),
+         dtCore::StringActorProperty::SetFuncType(this, &Director::SetCopyright),
+         dtCore::StringActorProperty::GetFuncType(this, &Director::GetCopyright),
          "Copyright information."));
    }
 
@@ -1036,12 +1036,12 @@ namespace dtDirector
    ////////////////////////////////////////////////////////////////////////////////
    bool Director::IsLibraryTypeSupported(const std::string& libraryType) const
    {
-      if (libraryType == "Core")
-      {
-         return true;
-      }
+      //if (libraryType == "Core")
+      //{
+      //   return true;
+      //}
 
-      return false;
+      return true;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -1057,7 +1057,7 @@ namespace dtDirector
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   dtDAL::BaseActorObject* Director::GetPlayerActor() const
+   dtCore::BaseActorObject* Director::GetPlayerActor() const
    {
       if (mGameManager)
       {
@@ -1101,7 +1101,7 @@ namespace dtDirector
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   dtDAL::BaseActorObject* Director::GetScriptOwnerActor() const
+   dtCore::BaseActorObject* Director::GetScriptOwnerActor() const
    {
       if (mGameManager)
       {

@@ -63,9 +63,9 @@ namespace dtActors
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void PrefabActorProxy::CreateActor()
+   void PrefabActorProxy::CreateDrawable()
    {
-      SetActor(*new PrefabActor());
+      SetDrawable(*new PrefabActor());
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -74,9 +74,9 @@ namespace dtActors
       BaseClass::BuildPropertyMap();
 
       PrefabActor* actor = NULL;
-      GetActor(actor);
+      GetDrawable(actor);
 
-      AddProperty(new dtCore::ResourceActorProperty(*this, dtCore::DataType::PREFAB,
+      AddProperty(new dtCore::ResourceActorProperty(dtCore::DataType::PREFAB,
          "PrefabResource", "Prefab",
          dtCore::ResourceActorProperty::SetFuncType(this, &PrefabActorProxy::SetPrefab),
          "Defines the Prefab resource to use.", "Prefab"));
@@ -91,31 +91,31 @@ namespace dtActors
    ///////////////////////////////////////////////////////////////////////////////
    void PrefabActorProxy::SetPrefab(const std::string& fileName)
    {
-      PrefabActor* actor = NULL;
-      GetActor(actor);
+      PrefabActor* drawable = NULL;
+      GetDrawable(drawable);
 
-      if (!actor)
+      if (drawable == NULL)
       {
          return;
       }
 
       // First remove the current actors from any previous Prefabs...
-      for (int proxyIndex = 0; proxyIndex < (int)mProxies.size(); proxyIndex++)
+      for (int proxyIndex = 0; proxyIndex < (int)mActors.size(); proxyIndex++)
       {
-         dtCore::BaseActorObject* proxy = mProxies[proxyIndex].get();
-         if (proxy)
+         dtCore::BaseActorObject* actor = mActors[proxyIndex].get();
+         if (actor)
          {
-            dtCore::DeltaDrawable* proxyActor = NULL;
-            proxy->GetActor(proxyActor);
+            dtCore::DeltaDrawable* childDrawable = NULL;
+            actor->GetDrawable(childDrawable);
 
-            if (proxyActor)
+            if (childDrawable)
             {
-               actor->RemoveChild(proxyActor);
+               drawable->RemoveChild(childDrawable);
             }
          }
       }
 
-      mProxies.clear();
+      mActors.clear();
 
       if (!fileName.empty())
       {
@@ -124,18 +124,18 @@ namespace dtActors
          try
          {
             dtCore::RefPtr<dtCore::MapParser> parser = new dtCore::MapParser;
-            parser->ParsePrefab(fileName, mProxies, mMap.get());
+            parser->ParsePrefab(fileName, mActors, mMap.get());
 
-            for (int proxyIndex = 0; proxyIndex < (int)mProxies.size(); proxyIndex++)
+            for (int idx = 0; idx < (int)mActors.size(); idx++)
             {
-               dtCore::BaseActorObject* proxy = mProxies[proxyIndex].get();
+               dtCore::BaseActorObject* actor = mActors[idx].get();
 
-               dtCore::DeltaDrawable* proxyActor = NULL;
-               proxy->GetActor(proxyActor);
+               dtCore::DeltaDrawable* childDrawable = NULL;
+               actor->GetDrawable(childDrawable);
 
-               if (proxyActor)
+               if (childDrawable)
                {
-                  actor->AddChild(proxyActor);
+                  drawable->AddChild(childDrawable);
                }
             }
          }
@@ -150,6 +150,6 @@ namespace dtActors
    ////////////////////////////////////////////////////////////////////////////////
    std::vector<dtCore::RefPtr<dtCore::BaseActorObject> >& PrefabActorProxy::GetPrefabProxies()
    {
-      return mProxies;
+      return mActors;
    }
 }

@@ -19,7 +19,8 @@ IF (APPLE)
        /Library/Frameworks/CEGUIBase.framework/Headers
        ~/Library/Frameworks/CEGUI.framework/Headers
        /Library/Frameworks/CEGUI.framework/Headers
-)
+   )
+   MARK_AS_ADVANCED(CEGUI_FRAMEWORK_DIR)
 ENDIF (APPLE)
 
 FIND_PATH(CEGUI_INCLUDE_DIR NAMES CEGUI/CEGUI.h CEGUI.h
@@ -42,7 +43,7 @@ FIND_PATH(CEGUI_INCLUDE_DIR NAMES CEGUI/CEGUI.h CEGUI.h
     /opt/include
     /usr/freeware/include
 )
-
+MARK_AS_ADVANCED(CEGUI_INCLUDE_DIR)
 
 IF (CEGUI_FRAMEWORK_DIR)
    SET(CEGUI_INCLUDE_DIR ${CEGUI_INCLUDE_DIR} ${CEGUI_FRAMEWORK_DIR})
@@ -74,6 +75,8 @@ MACRO(FIND_CEGUI_LIBRARY MYLIBRARY MYLIBRARYNAMES)
         [HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\Session\ Manager\\Environment;CEGUI_ROOT]/lib
         /usr/freeware/lib64
     )
+
+    MARK_AS_ADVANCED(${MYLIBRARY})
 
 ENDMACRO(FIND_CEGUI_LIBRARY LIBRARY LIBRARYNAME)
 

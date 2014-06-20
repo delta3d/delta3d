@@ -33,8 +33,8 @@ namespace dtActors
    // ACTOR CODE
    //////////////////////////////////////////////////////////////////////////
 
-   BaseWaterActor::BaseWaterActor(BaseWaterActorProxy& proxy)
-      : dtGame::GameActor(proxy)
+   BaseWaterActor::BaseWaterActor(BaseWaterActorProxy& parent)
+      : dtGame::GameActor(parent)
       , mWaterHeight(0.0f)
    {
    }
@@ -86,9 +86,9 @@ namespace dtActors
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void BaseWaterActorProxy::CreateActor()
+   void BaseWaterActorProxy::CreateDrawable()
    {
-      SetActor(*new BaseWaterActor(*this));
+      SetDrawable(*new BaseWaterActor(*this));
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -98,7 +98,7 @@ namespace dtActors
 
       // Get the actor's interface.
       BaseWaterActor* actor = NULL;
-      GetActor(actor);
+      GetDrawable(actor);
 
       const std::string GROUP_WATER("Water");
 

@@ -22,7 +22,7 @@
 #include <dtCore/scene.h>
 #include <dtCore/system.h>
 #include <dtABC/application.h>
-#include <dtDAL/project.h>
+#include <dtCore/project.h>
 #include <dtGame/gamemanager.h>
 #include <dtUtil/log.h>
 #include <dtUtil/stringutils.h>
@@ -35,7 +35,7 @@
 #include <dtUtil/fileutils.h>
 #include <dtUtil/datapathutils.h>
 
-#include <dtDAL/project.h>
+#include <dtCore/project.h>
 
 #include <cmath>
 
@@ -145,7 +145,7 @@ public:
       mGM = new dtGame::GameManager(*mScene);
       mGM->SetApplication(*mApp);
 
-      dtDAL::Project::GetInstance().SetContext(context, true);
+      dtCore::Project::GetInstance().SetContext(context, true);
    }
 
    dtPhysics::MaterialIndex GetMaterialID(const std::string& commentFlag)
@@ -154,7 +154,7 @@ public:
 
       if(!commentFlag.empty())
       {
-         typedef std::vector<dtDAL::ActorProxy* > ProxyContainer;
+         typedef std::vector<dtCore::ActorProxy* > ProxyContainer;
          ProxyContainer proxies;
 
          mGM->FindActorsByType(*dtPhysics::PhysicsActorRegistry::PHYSICS_MATERIAL_ACTOR_TYPE, proxies);
@@ -167,7 +167,7 @@ public:
 
             for(;iter != iterEnd && notFound; ++iter)
             {
-               dtPhysics::MaterialActor* actor = dynamic_cast<dtPhysics::MaterialActor*>((*iter)->GetActor());
+               dtPhysics::MaterialActor* actor = dynamic_cast<dtPhysics::MaterialActor*>((*iter)->GetDrawable());
                if(actor != NULL && actor->GetName() == commentFlag)
                {
                   index = dtPhysics::MaterialIndex(actor->GetMateralDef().GetMaterialIndex());
@@ -221,17 +221,17 @@ public:
 
       if (!dir.empty())
       {
-         mSaveDirectory = dtDAL::Project::GetInstance().GetContext() + "/Terrains/" + dir;
+         mSaveDirectory = dtCore::Project::GetInstance().GetContext() + "/Terrains/" + dir;
 
          if(!dtUtil::FileUtils::GetInstance().DirExists(mSaveDirectory))
          {
-            std::cout << "Directory \"" << mSaveDirectory << "\" does not exist. Create directory y/n?" << std::endl;
+            std::cerr << "Directory \"" << mSaveDirectory << "\" does not exist. Create directory y/n?" << std::endl;
             char yesOrNo = 'n';
             std::cin >> yesOrNo;
             if(yesOrNo == 'y' || yesOrNo == 'Y')
             {
                dtUtil::FileUtils::GetInstance().MakeDirectory(mSaveDirectory);
-               std::cout << "Directory \"" << mSaveDirectory << "\" has been created." << std::endl;
+               std::cerr << "Directory \"" << mSaveDirectory << "\" has been created." << std::endl;
                success = true;
             }
          }
@@ -372,7 +372,7 @@ public:
          std::ostringstream ss;
          ss << "Found non-finite triangle data.  The three vertices of the triangle are \"";
          ss << tv1 << "\", \"" << tv2 << "\", and \"" << tv3 << "\".";
-         std::cout << ss.str() << std::endl;
+         std::cerr << ss.str() << std::endl;
       }
    }
 };
@@ -567,7 +567,7 @@ bool CookMesh(DrawableVisitor<TriangleRecorder>& mv, const std::string& fileName
 
 
 ////////////////////////////////////////////////////////////////
-void CookPhysicsFromNode(osg::Node* node)
+void CookPhysicsFromNode(osg::Node* node, float maxPerMesh)
 {
    /**
    * This will export each material as a separate physics object
@@ -591,9 +591,9 @@ void CookPhysicsFromNode(osg::Node* node)
       if ( materialName.empty() ) materialName = "_default_";
 
       //if we have too much geometry break it into multiple pieces
-      if(mv.mFunctor.mData.mFaces->size() > 300000)
+      if(mv.mFunctor.mData.mFaces->size() > maxPerMesh)
       {
-         int exportCount = 1 + (mv.mFunctor.mData.mFaces->size() / 300000);
+         int exportCount = 1 + (mv.mFunctor.mData.mFaces->size() / maxPerMesh);
          std::cout << "Splitting material \"" << materialName << "\" into " << exportCount
                    << " pieces because it contains " << mv.mFunctor.mData.mFaces->size()
                    << " triangles, which exceeds the maximum size." << std::endl;
@@ -603,7 +603,7 @@ void CookPhysicsFromNode(osg::Node* node)
          gc.mSpecificDescription = (*iter);
          node->accept(gc);
 
-         for(int i = 0; i < exportCount; ++i)
+         for(int i = 0; i <= exportCount; ++i)
          {
             DrawableVisitor<TriangleRecorder> mv2;
             mv2.mExportSpecificMaterial = true;
@@ -675,21 +675,23 @@ int main(int argc, char** argv)
    parser.getApplicationUsage()->addCommandLineOption("--defaultMaterial", "The name of material to use by default.");
    parser.getApplicationUsage()->addCommandLineOption("--directoryName", "The name of directory within the Terrains folder to save the physics files.");
    parser.getApplicationUsage()->addCommandLineOption("--filePrefix", "The prefix to use for each file saved out, the prefix will be followed directly by the material name.");
+   parser.getApplicationUsage()->addCommandLineOption("--maxPerMesh", "The number of triangles we try to put into each output file: default 300000.");
 
-   //the first two arguments are reserved
-   if (parser.argc()<=1 || parser.isOption(1))
+   int maxPerMesh = 300000;
+
+   if (parser.argc()<=1)
    {
-      parser.getApplicationUsage()->write(std::cout, osg::ApplicationUsage::COMMAND_LINE_OPTION);
+      parser.getApplicationUsage()->write(std::cerr, osg::ApplicationUsage::COMMAND_LINE_OPTION);
       return 1;
    }
    else if (parser.errors())
    {
-      parser.writeErrorMessages(std::cout);
+      parser.writeErrorMessages(std::cerr);
       return 1;
    }
    else if(parser.read("-h") || parser.read("--help") || parser.read("-?") || parser.read("--?"))
    {
-      parser.getApplicationUsage()->write(std::cout);
+      parser.getApplicationUsage()->write(std::cerr);
       return 1;
    }
 
@@ -703,7 +705,7 @@ int main(int argc, char** argv)
    }
    else
    {
-      std::cout << "Error: no project path specified." << std::endl;
+      std::cerr << "Error: no project path specified." << std::endl;
       return 1;
    }
 
@@ -713,7 +715,7 @@ int main(int argc, char** argv)
    }
    else
    {
-      std::cout << "Error: no material map specified" << std::endl;
+      std::cerr << "Error: no material map specified" << std::endl;
       return 1;
    }
 
@@ -733,7 +735,7 @@ int main(int argc, char** argv)
    }
    else
    {
-      std::cout << "Error: no save directory specified, refers to a directory in the Terrains folder, e.g. \"--directoryName Physics\"" << std::endl;
+      std::cerr << "Error: no save directory specified, refers to a directory in the Terrains folder, e.g. \"--directoryName Physics\"" << std::endl;
       return 1;
    }
 
@@ -743,12 +745,18 @@ int main(int argc, char** argv)
    }
    else
    {
-      std::cout << "Error: no file prefix specified, e.g. \"--filePrefix Terrain\"" << std::endl;
+      std::cerr << "Error: no file prefix specified, e.g. \"--filePrefix Terrain\"" << std::endl;
       return 1;
    }
 
+   int tempInt = -1;
+   if(parser.read("--maxPerMesh", tempInt))
+   {
+       maxPerMesh = tempInt;
+   }
+
    osg::Node* ourNode = loadFile(parser[1]);
-   CookPhysicsFromNode(ourNode);
+   CookPhysicsFromNode(ourNode,maxPerMesh);
 
    return 0;
 }

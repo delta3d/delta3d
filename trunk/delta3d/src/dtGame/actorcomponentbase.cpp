@@ -47,21 +47,21 @@ namespace dtGame
    //////////////////////////////////////////////////////////////////////////
    void ActorComponentBase::AddComponent(ActorComponent& component)
    {
-      // store component
-      mComponents.push_back(std::pair< ActorComponent::ACType, dtCore::RefPtr<ActorComponent> >(component.GetType(), &component));
-
       // pass the component a pointer to its owner
       component.SetOwner(this);
 
       // The call to Init should eventually move to an actor component library behavior
       // like actors have, but until then, this is the only other place to do it.
-      component.Init();
+      component.Init(*component.GetType());
+
+      // store component
+      mComponents.push_back(std::pair<ActorComponent::ACType, dtCore::RefPtr<ActorComponent> >(component.GetType(), &component));
 
       OnActorComponentAdded(component);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   std::vector<ActorComponent*> ActorComponentBase::GetComponents(const ActorComponent::ACType& type) const
+   std::vector<ActorComponent*> ActorComponentBase::GetComponents(ActorComponent::ACType type) const
    {
       std::vector<ActorComponent*> foundComponents;
 
@@ -92,7 +92,7 @@ namespace dtGame
    }
 
    //////////////////////////////////////////////////////////////////////////
-   bool ActorComponentBase::HasComponent(const ActorComponent::ACType& type) const
+   bool ActorComponentBase::HasComponent(ActorComponent::ACType type) const
    {
       ActorComponentMap::const_iterator iter = mComponents.begin();
       while (iter != mComponents.end())
@@ -133,7 +133,7 @@ namespace dtGame
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void ActorComponentBase::RemoveAllComponentsOfType(const ActorComponent::ACType& type)
+   void ActorComponentBase::RemoveAllComponentsOfType(ActorComponent::ACType type)
    {
       for (int componentIndex = mComponents.size() - 1; componentIndex >= 0; --componentIndex)
       {

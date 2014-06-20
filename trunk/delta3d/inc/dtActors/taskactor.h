@@ -72,7 +72,7 @@ namespace dtActors
           * @param proxy The actor proxy owning this task actor.
           * @param desc An optional description of this task actor.
           */
-         TaskActor(dtGame::GameActorProxy &proxy);
+         TaskActor(dtGame::GameActorProxy& parent);
 
          /**
           * Sets the description of this task.
@@ -385,13 +385,13 @@ namespace dtActors
           * Gets a const pointer to the parent of this task.
           * @return The parent task or NULL if this task is not a subtask of another.
           */
-         const TaskActorProxy* GetParentTask() const { return mParentTaskProxy; }
+         const TaskActorProxy* GetParentTask() const { return mParentTask; }
 
          /**
           * Gets a pointer to the parent of this task.
           * @return The parent task or NULL if this task is not a subtask of another.
           */
-         TaskActorProxy* GetParentTask() { return mParentTaskProxy; }
+         TaskActorProxy* GetParentTask() { return mParentTask; }
 
          /**
           * Adds a new sub task to this task.  If the subtask is already a subtask
@@ -446,7 +446,7 @@ namespace dtActors
          /**
           * Gets the proxy for the given Id
           */
-         TaskActorProxy* GetProxyById(dtCore::UniqueId id) const;
+         TaskActorProxy* GetTaskById(dtCore::UniqueId id) const;
 
          /**
           * Fills the specified vector with all of this task's direct children.
@@ -469,17 +469,17 @@ namespace dtActors
           * with no parent.
           * @return True if this is a top level task (i.e. This task has no parent.)
           */
-         bool IsTopLevelTask() const { return mParentTaskProxy == NULL; }
+         bool IsTopLevelTask() const { return mParentTask == NULL; }
 
          /**
           * Wrapper for the actor method
           */
-         float GetPassingScore() const { return static_cast<const TaskActor&>(GetGameActor()).GetPassingScore(); }
+         float GetPassingScore() const { return GetDrawable<TaskActor>()->GetPassingScore(); }
 
          /**
           * Wrapper for the actor method
           */
-         float GetScore() const { return static_cast<const TaskActor&>(GetGameActor()).GetScore(); }
+         float GetScore() const { return GetDrawable<TaskActor>()->GetScore(); }
 
          /**
           * Gets the billboard used to represent static mesh if this proxy's
@@ -534,7 +534,7 @@ namespace dtActors
           * Called by the game manager during creation of the proxy.  This method
           * creates a TaskActor and returns it.
           */
-         virtual void CreateActor();
+         virtual void CreateDrawable();
 
          /**
           * Called when the proxy has been added to the game manager.
@@ -550,7 +550,7 @@ namespace dtActors
           * Sets the parent task to this one.  Called when a subtask is added.
           * @param The parent task.
           */
-         void SetParentTaskProxy(TaskActorProxy* parent) { mParentTaskProxy = parent; }
+         void SetParentTask(TaskActorProxy* parent) { mParentTask = parent; }
 
          /**
           * Set and Get functors for the Task Actor property.
@@ -568,7 +568,7 @@ namespace dtActors
 
       private:
          // Parent task if this task is a subtask of another.
-         TaskActorProxy* mParentTaskProxy;
+         TaskActorProxy* mParentTask;
 
          // List of subtasks or child tasks of this task.
          std::vector<dtCore::UniqueId>                mSubTasks;

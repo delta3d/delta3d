@@ -26,12 +26,15 @@ find_path(RTI1516e_INCLUDE_DIR
    PATHS
        /Applications/prti1516e
 )
+MARK_AS_ADVANCED(RTI1516e_INCLUDE_DIR)
 
 if (GCC_VERSION)
   IF (APPLE)
     SET(PATHLIST 
         macintel_g++-${GCC_MAJOR}.${GCC_MINOR}
+        macintel_g++-unknown
         macintel64_g++-${GCC_MAJOR}.${GCC_MINOR}
+        macintel64_g++-unknown
         darwin_g++-${GCC_MAJOR}.${GCC_MINOR}
         gcc${GCC_MAJOR}${GCC_MINOR}
     )
@@ -69,6 +72,7 @@ find_library(RTI1516e_LIBRARY
    PATHS
       /Applications/prti1516e
 )
+MARK_AS_ADVANCED(RTI1516e_LIBRARY)
 
 find_library(RTI1516e_FEDTIME_LIBRARY
    NAMES
@@ -84,6 +88,7 @@ find_library(RTI1516e_FEDTIME_LIBRARY
    PATHS
       /Applications/prti1516e
 )
+MARK_AS_ADVANCED(RTI1516e_FEDTIME_LIBRARY)
 
 set(RTI_FOUND "NO")
 if(RTI1516e_LIBRARY AND RTI1516e_INCLUDE_DIR)

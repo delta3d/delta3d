@@ -78,7 +78,7 @@ namespace dtActors
         /**
         * Initializes the actor
         */
-        virtual void CreateActor();
+        virtual void CreateDrawable();
 
         /**
          * Destructor

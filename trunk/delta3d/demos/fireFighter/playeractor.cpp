@@ -76,17 +76,17 @@ dtCore::ActorProxyIcon* PlayerActorProxy::GetBillBoardIcon()
 
 void PlayerActorProxy::OnRemovedFromWorld()
 {
-   PlayerActor &pa = static_cast<PlayerActor&>(GetGameActor());
+   PlayerActor* pa = GetDrawable<PlayerActor>();
 
-   if (dtAudio::AudioManager::GetInstance().IsInitialized() && pa.mFireHoseSound != NULL)
+   if (dtAudio::AudioManager::GetInstance().IsInitialized() && pa->mFireHoseSound != NULL)
    {
-      dtAudio::AudioManager::GetInstance().FreeSound(pa.mFireHoseSound);
+      dtAudio::AudioManager::GetInstance().FreeSound(pa->mFireHoseSound);
    }
 }
 
 //////////////////////////////////////////////////////////////
-PlayerActor::PlayerActor(dtGame::GameActorProxy& proxy)
-   : dtGame::GameActor(proxy)
+PlayerActor::PlayerActor(dtGame::GameActorProxy& parent)
+   : dtGame::GameActor(parent)
    , mIsector(new dtCore::Isector)
    , mIsCrouched(false)
    , mFireHose(new dtCore::ParticleSystem)

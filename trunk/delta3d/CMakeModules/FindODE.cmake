@@ -10,46 +10,28 @@
 # Created by David Guthrie.  Based on code by Robert Osfield 
 
 FIND_PATH(ODE_INCLUDE_DIR ode/ode.h
+    HINTS
     ${ODE_DIR}/include
     $ENV{ODE_DIR}/include
     $ENV{ODE_DIR}
     ${DELTA3D_EXT_DIR}/inc
     $ENV{DELTA_ROOT}/ext/inc
-    ~/Library/Frameworks
-    /Library/Frameworks
-    /usr/local/include
-    /usr/include
-    /usr/include/cal3d
-    /sw/include # Fink
-    /opt/local/include # DarwinPorts
-    /opt/csw/include # Blastwave
-    /opt/include
-    [HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\Session\ Manager\\Environment;OSG_ROOT]/include
-    /usr/freeware/include
 )
-
+MARK_AS_ADVANCED(ODE_INCLUDE_DIR)
 
 MACRO(FIND_ODE_LIBRARY MYLIBRARY MYLIBRARYNAME)
 
 FIND_LIBRARY(${MYLIBRARY}
     NAMES ${MYLIBRARYNAME}
-    PATHS
+    HINTS
     ${ODE_DIR}/lib
     $ENV{ODE_DIR}/lib
     $ENV{ODE_DIR}
     ${DELTA3D_EXT_DIR}/lib
     $ENV{DELTA_ROOT}/ext/lib
-    ~/Library/Frameworks
-    /Library/Frameworks
-    /usr/local/lib
-    /usr/lib
-    /sw/lib
-    /opt/local/lib
-    /opt/csw/lib
-    /opt/lib
-    [HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\Session\ Manager\\Environment;OSG_ROOT]/lib
-    /usr/freeware/lib64
 )
+MARK_AS_ADVANCED(${MYLIBRARY})
+ADD_DEFINITIONS(-DdSINGLE)
 
 ENDMACRO(FIND_ODE_LIBRARY MYLIBRARY MYLIBRARYNAME)
 

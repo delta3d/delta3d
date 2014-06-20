@@ -21,7 +21,12 @@
 #define NETMGR_INCLUDED
 
 #include <dtCore/base.h>
+
+#include <dtUtil/warningdisable.h>
+DT_DISABLE_WARNING_ALL_START
 #include <gnelib.h>
+DT_DISABLE_WARNING_END
+
 #include <dtUtil/log.h>
 
 namespace dtNet

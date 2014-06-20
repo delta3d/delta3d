@@ -90,15 +90,13 @@ namespace dtActors
 
    void MotionActionActorProxy::SetActorTargetObject(dtCore::BaseActorObject* node)
    {
-      SetLinkedActor("Target Object", node);
-
       dtABC::MotionAction* ma = static_cast<dtABC::MotionAction*>(GetDrawable());
 
       dtCore::Transformable* trans  = NULL;
 
       if (node != NULL)
       {
-          trans = static_cast<dtCore::Transformable*>(node->GetDrawable());
+          node->GetDrawable(trans);
       }
 
       ma->SetTargetObject(trans);
@@ -106,15 +104,13 @@ namespace dtActors
 
    void MotionActionActorProxy::SetActorParentObject(dtCore::BaseActorObject* actor)
    {
-      SetLinkedActor("Parent Object", actor);
-
       dtABC::MotionAction* ma = static_cast<dtABC::MotionAction*>(GetDrawable());
 
       dtCore::Transformable* trans  = NULL;
 
       if (actor != NULL)
       {
-         trans = static_cast<dtCore::Transformable*>(actor->GetDrawable());
+         actor->GetDrawable(trans);
       }
 
       ma->SetParent(trans);

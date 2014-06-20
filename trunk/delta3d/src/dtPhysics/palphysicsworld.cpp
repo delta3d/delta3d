@@ -274,6 +274,8 @@ namespace dtPhysics
    const std::string PhysicsWorld::CONFIG_SOLVER_ITERATION_COUNT("dtPhysics.SolverIterationCount");
    const std::string PhysicsWorld::CONFIG_TICKS_PER_SECOND("dtPhysics.TicksPerSecond");
    const std::string PhysicsWorld::CONFIG_DEBUG_DRAW_RANGE("dtPhysics.DebugDrawRange");
+   const std::string PhysicsWorld::CONFIG_PRINT_ENGINE_PROPERTY_DOCUMENTATION("dtPhysics.PrintEnginePropertyDocumentation");
+
 
    //////////////////////////////////////////////////////////////////////////
    PhysicsWorld& PhysicsWorld::GetInstance()
@@ -304,6 +306,23 @@ namespace dtPhysics
       Ctor();
    }
 
+   //////////////////////////////////////////////////////////////////////////
+   void PhysicsWorld::PrintEnginePropertyDocumentation()
+   {
+      PAL_MAP<PAL_STRING, PAL_STRING> propertyDocs;
+      mImpl->mPalPhysicsScene->GetPropertyDocumentation(propertyDocs);
+
+      dtUtil::Log& logger = dtUtil::Log::GetInstance("palphysicsworld.cpp");
+      logger.LogMessage(dtUtil::Log::LOG_ALWAYS, __FUNCTION__, __LINE__, "Engine \"%s\" accepted engine properties (prefix with pal. in config.xml):", mImpl->mEngineName.c_str());
+
+      PAL_MAP<PAL_STRING, PAL_STRING>::const_iterator i,iend;
+      i = propertyDocs.begin();
+      iend = propertyDocs.end();
+      for (; i != iend; ++i)
+      {
+         logger.LogMessage(dtUtil::Log::LOG_ALWAYS, __FUNCTION__, __LINE__, "\t%s\t%s", i->first.c_str(), i->second.c_str());
+      }
+   }
    //////////////////////////////////////////////////////////////////////////
    void PhysicsWorld::Ctor()
    {
@@ -348,6 +367,7 @@ namespace dtPhysics
       {
          unsigned processingElements = OpenThreads::GetNumberOfProcessors();
          bool useHardware = true;
+         bool printPalEngineSettingsHelp = false;
          float iterCount = 10.0f;
 
          mImpl->mStepTime = 1.0 / dtCore::System::GetInstance().GetFrameRate();
@@ -359,6 +379,8 @@ namespace dtPhysics
 
             const std::string useHardwareStr = mImpl->mConfig->GetConfigPropertyValue(
                      CONFIG_ENABLE_HARDWARE_PHYSICS, "true");
+
+            printPalEngineSettingsHelp = dtUtil::ToType<bool>(mImpl->mConfig->GetConfigPropertyValue(CONFIG_PRINT_ENGINE_PROPERTY_DOCUMENTATION, "false"));
 
             useHardware = dtUtil::ToType<bool>(useHardwareStr);
 
@@ -398,6 +420,11 @@ namespace dtPhysics
             }
          }
 
+         if (printPalEngineSettingsHelp)
+         {
+            PrintEnginePropertyDocumentation();
+         }
+
          mImpl->mSolver = new SolverWrapper(*tempSolver);
          mImpl->mSolver->SetProcessingElements(processingElements);
          mImpl->mSolver->SetHardware(useHardware);
@@ -424,10 +451,9 @@ namespace dtPhysics
    //////////////////////////////////////////////////////////////////////////
    void PhysicsWorld::Init()
    {
-      VectorType gravity(mImpl->mGravity);
-      // init with gravity
       palPhysicsDesc desc;
 
+      // init with gravity
       for (unsigned i = 0; i < 3; ++i)
       {
          desc.m_vGravity._vec[i] = mImpl->mGravity[i];
@@ -435,6 +461,22 @@ namespace dtPhysics
 
       desc.m_nUpAxis = PAL_Z_AXIS;
       desc.m_Properties["ODE_NoInitOrShutdown"] = "true";
+      desc.m_Properties["Bullet_UseInternalEdgeUtility"] = "true";
+
+      if (mImpl->mConfig != NULL)
+      {
+         std::vector<std::pair<std::string, std::string> > props;
+         mImpl->mConfig->GetConfigPropertiesWithPrefix("pal.", props);
+
+         std::vector<std::pair<std::string, std::string> >::const_iterator i,iend;
+         i = props.begin();
+         iend = props.end();
+         for (; i != iend; ++i)
+         {
+            desc.m_Properties[i->first] = i->second;
+         }
+      }
+
 
       mImpl->mPalPhysicsScene->Init(desc);
 
@@ -472,11 +514,15 @@ namespace dtPhysics
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void PhysicsWorld::TraceRay(RayCast& ray, std::vector<RayCast::Report>& hits)
+   void PhysicsWorld::TraceRay(RayCast& ray, std::vector<RayCast::Report>& hits, bool sortResults)
    {
       FindAllHitsCallback callback(ray.GetDirection().length());
       PhysicsWorld::GetInstance().TraceRay(ray, callback);
       hits = callback.mHits;
+      if (sortResults)
+      {
+         std::sort(hits.begin(), hits.end());
+      }
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -544,7 +590,7 @@ namespace dtPhysics
          // If I can't step it, then decrement, otherwise the physics on the other thread will
          // decrement it when it's done.
          --mImpl->mStepping;
-         LOG_WARNING("Attempted to step the physics, but it is already running.");
+         LOGN_WARNING("palphysicsworld.cpp", "Attempted to step the physics, but it is already running.");
       }
    }
 
@@ -561,7 +607,7 @@ namespace dtPhysics
       {
          if (!mImpl->mBackgroundStepTask->WaitUntilComplete(100000))
          {
-            LOG_ERROR("Waited for the physics step to complete for 100 seconds, but it never completed.");
+            LOGN_ERROR("palphysicsworld.cpp", "Waited for the physics step to complete for 100 seconds, but it never completed.");
          }
       }
    }
@@ -764,9 +810,11 @@ namespace dtPhysics
 
          engineName[i] = std::tolower(engineName[i], loc);
       }
-
+#ifndef PAL_PLUGIN_ARCH_PATH
+      finalPath += "/" + engineName;
+#else
       finalPath += "/" + engineName + "/" + PAL_PLUGIN_ARCH_PATH;
-
+#endif
       if (!mImpl->mPathSuffix.empty())
       {
          finalPath.append("/");

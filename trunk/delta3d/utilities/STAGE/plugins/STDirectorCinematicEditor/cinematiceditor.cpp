@@ -35,11 +35,11 @@
 #include <dtDirectorAnimNodes/animateactoraction.h>
 
 #include <dtCore/object.h>
-#include <dtDAL/arrayactorpropertybase.h>
-#include <dtDAL/containeractorproperty.h>
-#include <dtDAL/stringactorproperty.h>
-#include <dtDAL/floatactorproperty.h>
-#include <dtDAL/booleanactorproperty.h>
+#include <dtCore/arrayactorpropertybase.h>
+#include <dtCore/containeractorproperty.h>
+#include <dtCore/stringactorproperty.h>
+#include <dtCore/floatactorproperty.h>
+#include <dtCore/booleanactorproperty.h>
 
 #include <QtCore/QTimeLine>
 
@@ -175,7 +175,7 @@ void DirectorCinematicEditorPlugin::ResetUI()
    int count = (int)mActorData.size();
    for (int index = 0; index < count; ++index)
    {
-      dtDAL::BaseActorObject* proxy = mActorData[index].mActor.get();
+      dtCore::BaseActorObject* proxy = mActorData[index].mActor.get();
       if (proxy)
       {
          QString name = proxy->GetName().c_str();
@@ -243,11 +243,10 @@ void DirectorCinematicEditorPlugin::ResetUI()
       mUI.mAddAnimationButton->setEnabled(false);
       mUI.mRemoveAnimationButton->setEnabled(false);
 
-      dtAnim::AnimationGameActor* actor = NULL;
-      mActorData[mSelectedActor].mActor->GetActor(actor);
-      if (actor)
+      dtGame::GameActorProxy* animActor = dynamic_cast<dtGame::GameActorProxy*>(mActorData[mSelectedActor].mActor.get());
+      if (animActor)
       {
-         dtAnim::AnimationHelper* helper = actor->GetHelper();
+         dtAnim::AnimationHelper* helper = animActor->GetComponent<dtAnim::AnimationHelper>();
          if (helper)
          {
             dtAnim::SequenceMixer& mixer = helper->GetSequenceMixer();
@@ -312,7 +311,7 @@ void DirectorCinematicEditorPlugin::ResetUI()
 
    if (!NEAR_EQUAL(mUI.mTotalTimeEdit->value(), mTotalTime)) mUI.mTotalTimeEdit->setValue(mTotalTime);
 
-   std::vector<dtDAL::BaseActorObject*> selection;
+   std::vector<dtCore::BaseActorObject*> selection;
    EditorData::GetInstance().GetSelectedActors(selection);
 
    mUI.mAddActorButton->setEnabled(!selection.empty());
@@ -349,14 +348,14 @@ void DirectorCinematicEditorPlugin::Close()
    for (int index = 0; index < count; ++index)
    {
       dtCore::Transformable* actor = NULL;
-      mActorData[index].mActor->GetActor(actor);
+      mActorData[index].mActor->GetDrawable(actor);
 
       dtAnim::AnimationGameActor* animActor = dynamic_cast<dtAnim::AnimationGameActor*>(actor);
       if (animActor)
       {
-         dtAnim::SequenceMixer& mixer = animActor->GetHelper()->GetSequenceMixer();
+         dtAnim::SequenceMixer& mixer = animActor->GetComponent<dtAnim::AnimationHelper>()->GetSequenceMixer();
          mixer.ClearActiveAnimations(0.0f);
-         animActor->GetHelper()->Update(0.0f);
+         animActor->GetComponent<dtAnim::AnimationHelper>()->Update(0.0f);
          refresh = true;
       }
    }
@@ -377,7 +376,7 @@ void DirectorCinematicEditorPlugin::Destroy()
 }
 
 //////////////////////////////////////////////////////////////////////////
-void DirectorCinematicEditorPlugin::closeEvent(QCloseEvent* event)
+void DirectorCinematicEditorPlugin::closeEvent(QCloseEvent* /*event*/)
 {
    Close();
 }
@@ -389,10 +388,10 @@ void DirectorCinematicEditorPlugin::OnUpdate()
    //for (int index = 0; index < count; ++index)
    //{
    //   dtAnim::AnimationGameActor* animActor = NULL;
-   //   animActor = dynamic_cast<dtAnim::AnimationGameActor*>(mActorData[index].mActor->GetActor());
+   //   animActor = dynamic_cast<dtAnim::AnimationGameActor*>(mActorData[index].mActor->GetDrawable());
    //   if (animActor)
    //   {
-   //      animActor->GetHelper()->Update(0.0f);
+   //      animActor->GetComponent<dtAnim::AnimationHelper>()->Update(0.0f);
    //   }
    //}
 }
@@ -408,7 +407,7 @@ void DirectorCinematicEditorPlugin::onActorsSelected(ActorProxyRefPtrVector& act
       int count = (int)mActorData.size();
       for (int index = 0; index < count; ++index)
       {
-         dtDAL::BaseActorObject* proxy = mActorData[index].mActor.get();
+         dtCore::BaseActorObject* proxy = mActorData[index].mActor.get();
          if (proxy == actors[0].get())
          {
             mSelectedActor = index;
@@ -421,7 +420,7 @@ void DirectorCinematicEditorPlugin::onActorsSelected(ActorProxyRefPtrVector& act
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void DirectorCinematicEditorPlugin::onEndActorMode(Viewport* vp, QMouseEvent* e, bool* overrideDefault)
+void DirectorCinematicEditorPlugin::onEndActorMode(Viewport* /*vp*/, QMouseEvent* /*e*/, bool* /*overrideDefault*/)
 {
    if (mSelectedActor == -1 || !mTransformEvent) return;
 
@@ -429,15 +428,15 @@ void DirectorCinematicEditorPlugin::onEndActorMode(Viewport* vp, QMouseEvent* e,
    TransformData* data = GetTransformData(mTransformEvent);
    if (data)
    {
-      dtCore::Transformable* actor = NULL;
-      mActorData[mSelectedActor].mActor->GetActor(actor);
-      if (actor)
+      dtCore::Transformable* txable = NULL;
+      mActorData[mSelectedActor].mActor->GetDrawable(txable);
+      if (txable)
       {
          dtCore::Transform transform;
-         actor->GetTransform(transform);
+         txable->GetTransform(transform);
          data->mTransform = transform;
 
-         dtCore::Object* obj = dynamic_cast<dtCore::Object*>(actor);
+         dtCore::Object* obj = dynamic_cast<dtCore::Object*>(txable);
          if (obj)
          {
             data->mScale = obj->GetScale();
@@ -466,7 +465,7 @@ void DirectorCinematicEditorPlugin::OnActorComboChanged(int index)
 ////////////////////////////////////////////////////////////////////////////////
 void DirectorCinematicEditorPlugin::OnAddActor()
 {
-   std::vector<dtDAL::BaseActorObject*> selection;
+   std::vector<dtCore::BaseActorObject*> selection;
    EditorData::GetInstance().GetSelectedActors(selection);
 
    int addCount = (int)selection.size();
@@ -476,7 +475,7 @@ void DirectorCinematicEditorPlugin::OnAddActor()
       int count = (int)mActorData.size();
       for (int index = 0; index < count; ++index)
       {
-         dtDAL::BaseActorObject* proxy = mActorData[index].mActor.get();
+         dtCore::BaseActorObject* proxy = mActorData[index].mActor.get();
          if (proxy == selection[addIndex])
          {
             canAdd = false;
@@ -495,17 +494,17 @@ void DirectorCinematicEditorPlugin::OnAddActor()
             mActorData.push_back(data);
 
             // Add our root transform event.
-            dtCore::Transformable* actor = NULL;
-            data.mActor->GetActor(actor);
-            if (actor)
+            dtCore::Transformable* txable = NULL;
+            data.mActor->GetDrawable(txable);
+            if (txable)
             {
                dtCore::Transform transform;
                osg::Vec3 scale = osg::Vec3(1, 1, 1);
 
-               actor->GetTransform(transform);
+               txable->GetTransform(transform);
 
                bool canScale = false;
-               dtCore::Object* obj = dynamic_cast<dtCore::Object*>(actor);
+               dtCore::Object* obj = dynamic_cast<dtCore::Object*>(txable);
                if (obj)
                {
                   scale = obj->GetScale();
@@ -530,19 +529,19 @@ void DirectorCinematicEditorPlugin::OnRemoveActor()
    if (mSelectedActor == -1) return;
 
    // Make sure we clear all animations on the removed skeletal mesh actor.
-   dtCore::Transformable* actor = NULL;
-   mActorData[mSelectedActor].mActor->GetActor(actor);
+   dtCore::Transformable* txable = NULL;
+   mActorData[mSelectedActor].mActor->GetDrawable(txable);
 
-   dtAnim::AnimationGameActor* animActor = dynamic_cast<dtAnim::AnimationGameActor*>(actor);
+   dtAnim::AnimationGameActor* animActor = dynamic_cast<dtAnim::AnimationGameActor*>(txable);
    if (animActor)
    {
-      dtAnim::SequenceMixer& mixer = animActor->GetHelper()->GetSequenceMixer();
+      dtAnim::SequenceMixer& mixer = animActor->GetComponent<dtAnim::AnimationHelper>()->GetSequenceMixer();
       mixer.ClearActiveAnimations(0.0f);
-      animActor->GetHelper()->Update(0.0f);
+      animActor->GetComponent<dtAnim::AnimationHelper>()->Update(0.0f);
       ViewportManager::GetInstance().refreshAllViewports();
    }
 
-   //dtDAL::BaseActorObject* proxy = mActorData[mSelectedActor].mActor.get();
+   //dtCore::BaseActorObject* proxy = mActorData[mSelectedActor].mActor.get();
    mActorData.erase(mActorData.begin() + mSelectedActor);
    if (mSelectedActor >= (int)mActorData.size())
    {
@@ -571,17 +570,17 @@ void DirectorCinematicEditorPlugin::OnTransformEnabled(int state)
       if (data.mTransformData.empty())
       {
          // Add our root transform event.
-         dtCore::Transformable* actor = NULL;
-         data.mActor->GetActor(actor);
-         if (actor)
+         dtCore::Transformable* txable = NULL;
+         data.mActor->GetDrawable(txable);
+         if (txable)
          {
             dtCore::Transform transform;
             osg::Vec3 scale = osg::Vec3(1, 1, 1);
 
-            actor->GetTransform(transform);
+            txable->GetTransform(transform);
 
             bool canScale = false;
-            dtCore::Object* obj = dynamic_cast<dtCore::Object*>(actor);
+            dtCore::Object* obj = dynamic_cast<dtCore::Object*>(txable);
             if (obj)
             {
                scale = obj->GetScale();
@@ -667,7 +666,7 @@ void DirectorCinematicEditorPlugin::OnTransformEventSelected(BaseEvent* event)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void DirectorCinematicEditorPlugin::OnTransformEventTimesChanged(int start, int end)
+void DirectorCinematicEditorPlugin::OnTransformEventTimesChanged(int start, int /*end*/)
 {
    int index = -1;
    TransformData* data = GetTransformData(mTransformEvent, &index);
@@ -703,20 +702,20 @@ void DirectorCinematicEditorPlugin::OnAddTransform()
 
    int time = mUI.mTimeSlider->value();
 
-   dtDAL::BaseActorObject* proxy = mActorData[mSelectedActor].mActor.get();
-   if (proxy)
+   dtCore::BaseActorObject* actor = mActorData[mSelectedActor].mActor.get();
+   if (actor)
    {
-      dtCore::Transformable* actor = NULL;
-      proxy->GetActor(actor);
-      if (actor)
+      dtCore::Transformable* txable = NULL;
+      actor->GetDrawable(txable);
+      if (txable)
       {
          dtCore::Transform transform;
          osg::Vec3 scale = osg::Vec3(1, 1, 1);
 
-         actor->GetTransform(transform);
+         txable->GetTransform(transform);
 
          bool canScale = false;
-         dtCore::Object* obj = dynamic_cast<dtCore::Object*>(actor);
+         dtCore::Object* obj = dynamic_cast<dtCore::Object*>(txable);
          if (obj)
          {
             canScale = true;
@@ -741,6 +740,27 @@ void DirectorCinematicEditorPlugin::OnRemoveTransform()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+void DirectorCinematicEditorPlugin::UpdateTransform(TransformData* data)
+{
+   dtCore::Transformable* txable = NULL;
+   mActorData[mSelectedActor].mActor->GetDrawable(txable);
+   if (txable)
+   {
+      txable->SetTransform(data->mTransform);
+      ViewportManager::GetInstance().refreshAllViewports();
+   }
+
+   dtCore::Object* obj = NULL;
+   mActorData[mSelectedActor].mActor->GetDrawable(obj);
+   if (obj != NULL)
+   {
+      obj->SetScale(data->mScale);
+      ViewportManager::GetInstance().refreshAllViewports();
+   }
+
+}
+
+////////////////////////////////////////////////////////////////////////////////
 void DirectorCinematicEditorPlugin::OnPosXChanged(QString value)
 {
    TransformData* data = GetTransformData(mTransformEvent);
@@ -750,13 +770,8 @@ void DirectorCinematicEditorPlugin::OnPosXChanged(QString value)
       pos.x() = dtUtil::ToType<float>(value.toStdString());
       data->mTransform.SetTranslation(pos);
 
-      dtCore::Transformable* actor = NULL;
-      mActorData[mSelectedActor].mActor->GetActor(actor);
-      if (actor)
-      {
-         actor->SetTransform(data->mTransform);
-         ViewportManager::GetInstance().refreshAllViewports();
-      }
+      UpdateTransform(data);
+
    }
 }
 
@@ -770,13 +785,7 @@ void DirectorCinematicEditorPlugin::OnPosYChanged(QString value)
       pos.y() = dtUtil::ToType<float>(value.toStdString());
       data->mTransform.SetTranslation(pos);
 
-      dtCore::Transformable* actor = NULL;
-      mActorData[mSelectedActor].mActor->GetActor(actor);
-      if (actor)
-      {
-         actor->SetTransform(data->mTransform);
-         ViewportManager::GetInstance().refreshAllViewports();
-      }
+      UpdateTransform(data);
    }
 }
 
@@ -790,13 +799,7 @@ void DirectorCinematicEditorPlugin::OnPosZChanged(QString value)
       pos.z() = dtUtil::ToType<float>(value.toStdString());
       data->mTransform.SetTranslation(pos);
 
-      dtCore::Transformable* actor = NULL;
-      mActorData[mSelectedActor].mActor->GetActor(actor);
-      if (actor)
-      {
-         actor->SetTransform(data->mTransform);
-         ViewportManager::GetInstance().refreshAllViewports();
-      }
+      UpdateTransform(data);
    }
 }
 
@@ -810,13 +813,7 @@ void DirectorCinematicEditorPlugin::OnRotXChanged(QString value)
       rot.x() = dtUtil::ToType<float>(value.toStdString());
       data->mTransform.SetRotation(rot);
 
-      dtCore::Transformable* actor = NULL;
-      mActorData[mSelectedActor].mActor->GetActor(actor);
-      if (actor)
-      {
-         actor->SetTransform(data->mTransform);
-         ViewportManager::GetInstance().refreshAllViewports();
-      }
+      UpdateTransform(data);
    }
 }
 
@@ -830,13 +827,7 @@ void DirectorCinematicEditorPlugin::OnRotYChanged(QString value)
       rot.y() = dtUtil::ToType<float>(value.toStdString());
       data->mTransform.SetRotation(rot);
 
-      dtCore::Transformable* actor = NULL;
-      mActorData[mSelectedActor].mActor->GetActor(actor);
-      if (actor)
-      {
-         actor->SetTransform(data->mTransform);
-         ViewportManager::GetInstance().refreshAllViewports();
-      }
+      UpdateTransform(data);
    }
 }
 
@@ -850,13 +841,7 @@ void DirectorCinematicEditorPlugin::OnRotZChanged(QString value)
       rot.z() = dtUtil::ToType<float>(value.toStdString());
       data->mTransform.SetRotation(rot);
 
-      dtCore::Transformable* actor = NULL;
-      mActorData[mSelectedActor].mActor->GetActor(actor);
-      if (actor)
-      {
-         actor->SetTransform(data->mTransform);
-         ViewportManager::GetInstance().refreshAllViewports();
-      }
+      UpdateTransform(data);
    }
 }
 
@@ -868,17 +853,7 @@ void DirectorCinematicEditorPlugin::OnScaleXChanged(QString value)
    {
       data->mScale.x() = dtUtil::ToType<float>(value.toStdString());
 
-      dtCore::Transformable* actor = NULL;
-      mActorData[mSelectedActor].mActor->GetActor(actor);
-      if (actor)
-      {
-         dtCore::Object* obj = dynamic_cast<dtCore::Object*>(actor);
-         if (obj)
-         {
-            obj->SetScale(data->mScale);
-            ViewportManager::GetInstance().refreshAllViewports();
-         }
-      }
+      UpdateTransform(data);
    }
 }
 
@@ -890,17 +865,7 @@ void DirectorCinematicEditorPlugin::OnScaleYChanged(QString value)
    {
       data->mScale.y() = dtUtil::ToType<float>(value.toStdString());
 
-      dtCore::Transformable* actor = NULL;
-      mActorData[mSelectedActor].mActor->GetActor(actor);
-      if (actor)
-      {
-         dtCore::Object* obj = dynamic_cast<dtCore::Object*>(actor);
-         if (obj)
-         {
-            obj->SetScale(data->mScale);
-            ViewportManager::GetInstance().refreshAllViewports();
-         }
-      }
+      UpdateTransform(data);
    }
 }
 
@@ -912,17 +877,7 @@ void DirectorCinematicEditorPlugin::OnScaleZChanged(QString value)
    {
       data->mScale.z() = dtUtil::ToType<float>(value.toStdString());
 
-      dtCore::Transformable* actor = NULL;
-      mActorData[mSelectedActor].mActor->GetActor(actor);
-      if (actor)
-      {
-         dtCore::Object* obj = dynamic_cast<dtCore::Object*>(actor);
-         if (obj)
-         {
-            obj->SetScale(data->mScale);
-            ViewportManager::GetInstance().refreshAllViewports();
-         }
-      }
+      UpdateTransform(data);
    }
 }
 
@@ -1006,7 +961,7 @@ void DirectorCinematicEditorPlugin::OnAnimationEventSelected(BaseEvent* event)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void DirectorCinematicEditorPlugin::OnAnimationEventTimesChanged(int start, int end)
+void DirectorCinematicEditorPlugin::OnAnimationEventTimesChanged(int start, int /*end*/)
 {
    int index = -1;
    AnimationData* data = GetAnimationData(mAnimationEvent, &index);
@@ -1043,22 +998,18 @@ void DirectorCinematicEditorPlugin::OnAddAnimation()
 
    int time = mUI.mTimeSlider->value();
 
-   dtDAL::BaseActorObject* proxy = mActorData[mSelectedActor].mActor.get();
-   if (proxy)
+   dtCore::BaseActorObject* actor = mActorData[mSelectedActor].mActor.get();
+   if (actor)
    {
-      dtCore::Transformable* actor = NULL;
-      proxy->GetActor(actor);
-      if (actor)
+      dtAnim::AnimationGameActor* animDraw = NULL;
+      actor->GetDrawable(animDraw);
+      if (animDraw)
       {
-         dtAnim::AnimationGameActor* animActor = dynamic_cast<dtAnim::AnimationGameActor*>(actor);
-         if (animActor)
-         {
-            // Always default to the first animation in the combo list.
-            std::string animName = mUI.mAnimationCombo->itemText(0).toStdString();
+         // Always default to the first animation in the combo list.
+         std::string animName = mUI.mAnimationCombo->itemText(0).toStdString();
 
-            mAnimationEvent = InsertAnimation(time, animName);
-            OnAnimationEventSelected(mAnimationEvent);
-         }
+         mAnimationEvent = InsertAnimation(time, animName);
+         OnAnimationEventSelected(mAnimationEvent);
       }
    }
 }
@@ -1083,18 +1034,18 @@ void DirectorCinematicEditorPlugin::OnAnimationComboChanged(int index)
    std::string animName = mUI.mAnimationCombo->itemText(index).toStdString();
 
    dtAnim::AnimationGameActor* animActor = NULL;
-   dtCore::Transformable* actor = NULL;
-   mActorData[mSelectedActor].mActor->GetActor(actor);
-   if (actor)
+   dtCore::Transformable* txable = NULL;
+   mActorData[mSelectedActor].mActor->GetDrawable(txable);
+   if (txable)
    {
-      animActor = dynamic_cast<dtAnim::AnimationGameActor*>(actor);
+      animActor = dynamic_cast<dtAnim::AnimationGameActor*>(txable);
       if (!animActor)
       {
          return;
       }
    }
 
-   dtAnim::SequenceMixer& mixer = animActor->GetHelper()->GetSequenceMixer();
+   dtAnim::SequenceMixer& mixer = animActor->GetComponent<dtAnim::AnimationHelper>()->GetSequenceMixer();
    const dtAnim::AnimationChannel* anim = dynamic_cast<const dtAnim::AnimationChannel*>(mixer.GetRegisteredAnimation(animName));
    if (anim)
    {
@@ -1119,9 +1070,9 @@ void DirectorCinematicEditorPlugin::OnAnimationComboChanged(int index)
 #ifdef MANUAL_ANIMATIONS
          if (data->mAnimation > -1)
          {
-            CalMixer* calMixer = animActor->GetHelper()->GetModelWrapper()->GetCalModel()->getMixer();
+            CalMixer* calMixer = animActor->GetComponent<dtAnim::AnimationHelper>()->GetModelWrapper()->GetCalModel()->getMixer();
             calMixer->removeManualAnimation(data->mAnimation);
-            animActor->GetHelper()->Update(0.0f);
+            animActor->GetComponent<dtAnim::AnimationHelper>()->Update(0.0f);
             data->mAnimation = -1;
 
             LerpActors(mUI.mTimeSlider->value());
@@ -1353,7 +1304,7 @@ void DirectorCinematicEditorPlugin::OnOutputEventSelected(BaseEvent* event)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void DirectorCinematicEditorPlugin::OnOutputEventTimesChanged(int start, int end)
+void DirectorCinematicEditorPlugin::OnOutputEventTimesChanged(int start, int /*end*/)
 {
    int index = -1;
    OutputData* data = GetOutputData(mOutputEvent, &index);
@@ -1662,13 +1613,13 @@ void DirectorCinematicEditorPlugin::OnLoad()
                {
                   actorData.mActor = node->GetActor("Actor");
 
-                  dtCore::Transformable* actor = NULL;
-                  actorData.mActor->GetActor(actor);
-                  if (actor)
+                  dtCore::Transformable* txable = NULL;
+                  actorData.mActor->GetDrawable(txable);
+                  if (txable)
                   {
-                     actor->GetTransform(lastTransform);
+                     txable->GetTransform(lastTransform);
 
-                     dtCore::Object* obj = dynamic_cast<dtCore::Object*>(actor);
+                     dtCore::Object* obj = dynamic_cast<dtCore::Object*>(txable);
                      if (obj)
                      {
                         lastScale = obj->GetScale();
@@ -1678,10 +1629,10 @@ void DirectorCinematicEditorPlugin::OnLoad()
                }
 
                dtAnim::AnimationGameActor* animActor = NULL;
-               animActor = dynamic_cast<dtAnim::AnimationGameActor*>(actorData.mActor->GetActor());
+               animActor = dynamic_cast<dtAnim::AnimationGameActor*>(actorData.mActor->GetDrawable());
                if (animActor)
                {
-                  dtAnim::SequenceMixer& mixer = animActor->GetHelper()->GetSequenceMixer();
+                  dtAnim::SequenceMixer& mixer = animActor->GetComponent<dtAnim::AnimationHelper>()->GetSequenceMixer();
 
                   dtDirector::AnimateActorAction* animNode =
                      dynamic_cast<dtDirector::AnimateActorAction*>(node);
@@ -1728,13 +1679,13 @@ void DirectorCinematicEditorPlugin::OnLoad()
                {
                   actorData.mActor = node->GetActor("Actor");
 
-                  dtCore::Transformable* actor = NULL;
-                  actorData.mActor->GetActor(actor);
-                  if (actor)
+                  dtCore::Transformable* txable = NULL;
+                  actorData.mActor->GetDrawable(txable);
+                  if (txable)
                   {
-                     actor->GetTransform(lastTransform);
+                     txable->GetTransform(lastTransform);
 
-                     dtCore::Object* obj = dynamic_cast<dtCore::Object*>(actor);
+                     dtCore::Object* obj = dynamic_cast<dtCore::Object*>(txable);
                      if (obj)
                      {
                         lastScale = obj->GetScale();
@@ -1766,13 +1717,13 @@ void DirectorCinematicEditorPlugin::OnLoad()
                {
                   actorData.mActor = node->GetActor("Actor");
 
-                  dtCore::Transformable* actor = NULL;
-                  actorData.mActor->GetActor(actor);
-                  if (actor)
+                  dtCore::Transformable* txable = NULL;
+                  actorData.mActor->GetDrawable(txable);
+                  if (txable)
                   {
-                     actor->GetTransform(lastTransform);
+                     txable->GetTransform(lastTransform);
 
-                     dtCore::Object* obj = dynamic_cast<dtCore::Object*>(actor);
+                     dtCore::Object* obj = dynamic_cast<dtCore::Object*>(txable);
                      if (obj)
                      {
                         lastScale = obj->GetScale();
@@ -1804,14 +1755,14 @@ void DirectorCinematicEditorPlugin::OnLoad()
                {
                   actorData.mActor = node->GetActor("Actor");
 
-                  dtCore::Transformable* actor = NULL;
-                  actorData.mActor->GetActor(actor);
-                  if (actor)
+                  dtCore::Transformable* txable = NULL;
+                  actorData.mActor->GetDrawable(txable);
+                  if (txable)
                   {
-                     actor->GetTransform(lastTransform);
+                     txable->GetTransform(lastTransform);
                   }
 
-                  dtCore::Object* obj = dynamic_cast<dtCore::Object*>(actor);
+                  dtCore::Object* obj = dynamic_cast<dtCore::Object*>(txable);
                   if (obj)
                   {
                      lastScale = obj->GetScale();
@@ -2212,7 +2163,7 @@ void DirectorCinematicEditorPlugin::GotoSelectedActor()
 {
    if (mSelectedActor > -1)
    {
-      std::vector<dtCore::RefPtr<dtDAL::BaseActorObject> > selected;
+      std::vector<dtCore::RefPtr<dtCore::BaseActorObject> > selected;
       selected.push_back(mActorData[mSelectedActor].mActor.get());
       EditorEvents::GetInstance().emitActorsSelected(selected);
       //EditorEvents::GetInstance().emitGotoActor(selected[0]);
@@ -2360,18 +2311,18 @@ AnimationEvent* DirectorCinematicEditorPlugin::InsertAnimation(int time, const s
    if (mSelectedActor == -1) return NULL;
 
    dtAnim::AnimationGameActor* animActor = NULL;
-   dtCore::Transformable* actor = NULL;
-   mActorData[mSelectedActor].mActor->GetActor(actor);
-   if (actor)
+   dtCore::Transformable* txable = NULL;
+   mActorData[mSelectedActor].mActor->GetDrawable(txable);
+   if (txable)
    {
-      animActor = dynamic_cast<dtAnim::AnimationGameActor*>(actor);
+      animActor = dynamic_cast<dtAnim::AnimationGameActor*>(txable);
       if (!animActor)
       {
          return NULL;
       }
    }
 
-   dtAnim::SequenceMixer& mixer = animActor->GetHelper()->GetSequenceMixer();
+   dtAnim::SequenceMixer& mixer = animActor->GetComponent<dtAnim::AnimationHelper>()->GetSequenceMixer();
    const dtAnim::AnimationChannel* anim = dynamic_cast<const dtAnim::AnimationChannel*>(mixer.GetRegisteredAnimation(animName));
    if (anim)
    {
@@ -2468,9 +2419,9 @@ void DirectorCinematicEditorPlugin::LerpActors(int time)
       ActorData& actorData = mActorData[actorIndex];
       if (!actorData.mActor.valid()) continue;
 
-      dtCore::Transformable* actor = NULL;
-      actorData.mActor->GetActor(actor);
-      if (!actor) continue;
+      dtCore::Transformable* txable = NULL;
+      actorData.mActor->GetDrawable(txable);
+      if (!txable) continue;
 
       // Transformation
       if (actorData.mTransformEnabled)
@@ -2535,12 +2486,12 @@ void DirectorCinematicEditorPlugin::LerpActors(int time)
 
             // Apply new transform
             dtCore::Transform transform;
-            actor->GetTransform(transform);
+            txable->GetTransform(transform);
             transform.SetTranslation(newPos);
             transform.SetRotation(lerpRot);
-            actor->SetTransform(transform);
+            txable->SetTransform(transform);
 
-            dtCore::Object* obj = dynamic_cast<dtCore::Object*>(actor);
+            dtCore::Object* obj = dynamic_cast<dtCore::Object*>(txable);
             if (obj) obj->SetScale(newScale);
          }
       }
@@ -2549,11 +2500,11 @@ void DirectorCinematicEditorPlugin::LerpActors(int time)
 #ifdef MANUAL_ANIMATIONS
       {
          dtAnim::AnimationGameActor* animActor = NULL;
-         animActor = dynamic_cast<dtAnim::AnimationGameActor*>(actor);
+         animActor = dynamic_cast<dtAnim::AnimationGameActor*>(txable);
          if (animActor)
          {
-            CalMixer* calMixer = animActor->GetHelper()->GetModelWrapper()->GetCalModel()->getMixer();
-            dtAnim::SequenceMixer& mixer = animActor->GetHelper()->GetSequenceMixer();
+            CalMixer* calMixer = animActor->GetComponent<dtAnim::AnimationHelper>()->GetModelWrapper()->GetCalModel()->getMixer();
+            dtAnim::SequenceMixer& mixer = animActor->GetComponent<dtAnim::AnimationHelper>()->GetSequenceMixer();
 
             int count = (int)actorData.mAnimationData.size();
             for (int index = 0; index < count; ++index)
@@ -2615,7 +2566,7 @@ void DirectorCinematicEditorPlugin::LerpActors(int time)
                      calMixer->setManualAnimationWeight(calAnim, weight);
                   }
 
-                  animActor->GetHelper()->Update(0.0f);
+                  animActor->GetComponent<dtAnim::AnimationHelper>()->Update(0.0f);
                }
                else
                {
@@ -2623,7 +2574,7 @@ void DirectorCinematicEditorPlugin::LerpActors(int time)
                   if (data.mAnimation > -1)
                   {
                      calMixer->removeManualAnimation(data.mAnimation);
-                     animActor->GetHelper()->Update(0.0f);
+                     animActor->GetComponent<dtAnim::AnimationHelper>()->Update(0.0f);
                      data.mAnimation = -1;
                   }
                }
@@ -2633,18 +2584,18 @@ void DirectorCinematicEditorPlugin::LerpActors(int time)
 #else
       {
          dtAnim::AnimationGameActor* animActor = NULL;
-         animActor = dynamic_cast<dtAnim::AnimationGameActor*>(actor);
+         animActor = dynamic_cast<dtAnim::AnimationGameActor*>(txable);
          if (animActor)
          {
             // Morph Target stuff.
-            //Cal3DModelWrapper* wrapper = animActor->GetHelper()->GetModelWrapper();
+            //Cal3DModelWrapper* wrapper = animActor->GetComponent<dtAnim::AnimationHelper>()->GetModelWrapper();
             //CalMesh* mesh = wrapper->GetCalModel()->getMesh(0);
             //CalSubmesh *subMesh = mesh->getSubmesh(0);
             //if (subMesh)
             //{
             //   subMesh->setMorphTargetWeight(0, 1);
             //}
-            dtAnim::SequenceMixer& mixer = animActor->GetHelper()->GetSequenceMixer();
+            dtAnim::SequenceMixer& mixer = animActor->GetComponent<dtAnim::AnimationHelper>()->GetSequenceMixer();
             mixer.ClearActiveAnimations(0.0f);
             mixer.Update(0.0f);
             int elapsedTime = 0;
@@ -2671,7 +2622,7 @@ void DirectorCinematicEditorPlugin::LerpActors(int time)
                      float increment = (startTime - elapsedTime) * 0.001f;
                      elapsedTime = startTime;
 
-                     animActor->GetHelper()->Update(increment);
+                     animActor->GetComponent<dtAnim::AnimationHelper>()->Update(increment);
                   }
 
                   // Update the animation weight.
@@ -2695,7 +2646,7 @@ void DirectorCinematicEditorPlugin::LerpActors(int time)
                   if (anim)
                   {
                      dtCore::RefPtr<dtAnim::AnimationChannel> newAnim = NULL;
-                     newAnim = dynamic_cast<dtAnim::AnimationChannel*>(anim->Clone(animActor->GetHelper()->GetModelWrapper()).get());
+                     newAnim = dynamic_cast<dtAnim::AnimationChannel*>(anim->Clone(animActor->GetComponent<dtAnim::AnimationHelper>()->GetModelWrapper()).get());
                      newAnim->SetLooping(false);
                      newAnim->SetAction(true);
                      newAnim->SetBaseWeight(weight);
@@ -2711,7 +2662,7 @@ void DirectorCinematicEditorPlugin::LerpActors(int time)
                float increment = (time - elapsedTime) * 0.001f;
                elapsedTime = time;
 
-               animActor->GetHelper()->Update(increment);
+               animActor->GetComponent<dtAnim::AnimationHelper>()->Update(increment);
             }
          }
       }

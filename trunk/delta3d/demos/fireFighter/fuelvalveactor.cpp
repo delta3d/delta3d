@@ -50,8 +50,8 @@ void FuelValveActorProxy::BuildInvokables()
 }
 
 ////////////////////////////////////////////////////////
-FuelValveActor::FuelValveActor(dtGame::GameActorProxy& proxy)
-   : GameItemActor(proxy)
+FuelValveActor::FuelValveActor(dtGame::GameActorProxy& parent)
+   : GameItemActor(parent)
 {
 
 }

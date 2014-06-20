@@ -174,21 +174,21 @@ namespace dtEditQt
       /**
        * This slot registers the selection variable whenever an item from the tree
        * has been selected.
-       * @Note The selectionChanged slot sets the selection variable to the currently
+       * @note The selectionChanged slot sets the selection variable to the currently
        *       selected ResourceTreeWidget.
        */
       virtual void selectionChanged();
 
       /**
        * This slot registers the double click event
-       * @Note the doubleClickEvent slot informs the resource browsers that they
+       * @note the doubleClickEvent slot informs the resource browsers that they
        * should be able to preview a selection
        */
       virtual void doubleClickEvent();
 
       /**
        * This slot registers a deleted item event
-       * @Note This slot is used to inform the resource browsers that a deletion
+       * @note This slot is used to inform the resource browsers that a deletion
        * has occurred.
        */
       virtual void deleteItemEvent();

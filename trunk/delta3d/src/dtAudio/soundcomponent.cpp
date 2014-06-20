@@ -25,7 +25,7 @@
 #include <dtAudio/soundcomponent.h>
 #include <dtAudio/audiomanager.h>
 #include <dtAudio/audioactorregistry.h>
-#include <dtAudio/soundactorproxy.h>
+#include <dtAudio/soundactor.h>
 #include <dtAudio/soundinfo.h>
 #include <dtCore/project.h>
 #include <dtUtil/datapathutils.h>
@@ -373,12 +373,12 @@ namespace dtAudio
       dtGame::GameManager* gm = GetGameManager();
       gm->FindActorsByType(*dtAudio::AudioActorRegistry::SOUND_ACTOR_TYPE, proxyArray);
 
-      ProxyArray::iterator curProxy = proxyArray.begin();
-      ProxyArray::iterator endProxyList = proxyArray.end();
-      for (; curProxy != endProxyList; ++curProxy)
+      ProxyArray::iterator curActor = proxyArray.begin();
+      ProxyArray::iterator endActorList = proxyArray.end();
+      for (; curActor != endActorList; ++curActor)
       {
-         mSoundProxyArray.push_back(static_cast<dtAudio::SoundActorProxy*>(*curProxy));
-         gm->DeleteActor(*(*curProxy));
+         mSoundActorArray.push_back(static_cast<dtAudio::SoundActor*>(*curActor));
+         gm->DeleteActor(*(*curActor));
       }
    }
 
@@ -388,11 +388,11 @@ namespace dtAudio
       // Evacuate all the sound actors.
       dtGame::GameManager* gm = GetGameManager();
 
-      SoundProxyRefArray::iterator curProxy = mSoundProxyArray.begin();
-      SoundProxyRefArray::iterator endProxyArray = mSoundProxyArray.end();
-      for (; curProxy != endProxyArray; ++curProxy)
+      SoundActorRefArray::iterator curActor = mSoundActorArray.begin();
+      SoundActorRefArray::iterator endActorArray = mSoundActorArray.end();
+      for (; curActor != endActorArray; ++curActor)
       {
-         gm->AddActor(*(*curProxy), false, false);
+         gm->AddActor(*(*curActor), false, false);
       }
 
       ClearSoundActorArray();
@@ -401,30 +401,32 @@ namespace dtAudio
    /////////////////////////////////////////////////////////////////////////////
    void SoundComponent::ClearSoundActorArray()
    {
-      mSoundProxyArray.clear();
+      mSoundActorArray.clear();
    }
 
    /////////////////////////////////////////////////////////////////////////////
    void SoundComponent::GetSoundActorSounds(SoundArray& outArray)
    {
-      typedef std::vector<dtCore::BaseActorObject*> ProxyArray;
-      ProxyArray proxyArray;
-      GetGameManager()->FindActorsByType(*dtAudio::AudioActorRegistry::SOUND_ACTOR_TYPE, proxyArray);
+      typedef std::vector<dtCore::BaseActorObject*> ActorArray;
+      ActorArray actorArray;
+      GetGameManager()->FindActorsByType(*dtAudio::AudioActorRegistry::SOUND_ACTOR_TYPE, actorArray);
 
-      dtAudio::SoundActor* soundActor = NULL;
-      ProxyArray::iterator curProxy = proxyArray.begin();
-      ProxyArray::iterator endProxyArray = proxyArray.end();
-      for (; curProxy != endProxyArray; ++curProxy)
+      ActorArray::iterator curActor = actorArray.begin();
+      ActorArray::iterator endActorArray = actorArray.end();
+      for (; curActor != endActorArray; ++curActor)
       {
-         (*curProxy)->GetActor(soundActor);
-         outArray.push_back(soundActor->GetSound());
+         dtAudio::SoundActor* sndActor = dynamic_cast<dtAudio::SoundActor*>(*curActor);
+         if (sndActor != NULL)
+         {
+            outArray.push_back(sndActor->GetSound());
+         }
       }
    }
 
    /////////////////////////////////////////////////////////////////////////////
    int SoundComponent::GetSoundActorContainedCount() const
    {
-      return int(mSoundProxyArray.size());
+      return int(mSoundActorArray.size());
    }
 
 }

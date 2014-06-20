@@ -735,7 +735,7 @@ namespace dtHLAGM
       size_t baseSize = GetBaseSize();
       if (size >= baseSize)
       {
-         size_t numberOfRecords = 0;
+         int numberOfRecords = 0;
          ds >> numberOfRecords;
          // skip 4 bytes
          ds.Seekg(4U, dtUtil::DataStream::SeekTypeEnum::CURRENT);
@@ -744,7 +744,7 @@ namespace dtHLAGM
          mRecords.reserve(numberOfRecords);
 
          result = true;
-         for (unsigned i = 0; i < numberOfRecords; ++i)
+         for (int i = 0; i < numberOfRecords; ++i)
          {
             EnvironmentProcessRecord& rec = AddRecord();
             if (!rec.Decode(ds, mCoordConverter))

@@ -22,7 +22,7 @@
 #include <prefix/unittestprefix.h>
 #include <cppunit/extensions/HelperMacros.h>
 
-#include <dtAudio/soundactorproxy.h>
+#include <dtAudio/soundactor.h>
 #include <dtActors/engineactorregistry.h>
 
 #include <dtAudio/audiomanager.h>
@@ -71,7 +71,7 @@ class SoundComponentTests : public CPPUNIT_NS::TestFixture
 
       dtCore::RefPtr<dtGame::GameManager> mGM;
       dtCore::RefPtr<dtAudio::SoundComponent> mSndComp;
-      dtAudio::SoundComponent::SoundProxyRefArray mSndProxyArray;
+      dtAudio::SoundComponent::SoundActorRefArray mSndProxyArray;
       dtCore::RefPtr<const dtCore::ActorType> mSndActorType;
 };
 
@@ -135,18 +135,18 @@ void SoundComponentTests::CreateSoundActors(int proxyTotal, bool addToGM)
 {
    mSndProxyArray.reserve(proxyTotal);
 
-   dtCore::RefPtr<dtAudio::SoundActorProxy> curProxy;
+   dtCore::RefPtr<dtAudio::SoundActor> curActor;
    for (int i = 0; i < proxyTotal; ++i)
    {
-      mGM->CreateActor(*mSndActorType, curProxy);
-      mSndProxyArray.push_back(curProxy.get());
+      mGM->CreateActor(*mSndActorType, curActor);
+      mSndProxyArray.push_back(curActor.get());
 
       if (addToGM)
       {
-         mGM->AddActor(*curProxy, false, false);
+         mGM->AddActor(*curActor, false, false);
       }
 
-      curProxy = NULL;
+      curActor = NULL;
    }
 }
 
@@ -537,15 +537,15 @@ void SoundComponentTests::TestSoundCommands()
 void SoundComponentTests::TestSoundPosition()
 {
    const std::string testSoundFile = dtUtil::GetDeltaRootPath() + "/tests/data/Sounds/silence.wav";
-   dtCore::RefPtr<dtAudio::SoundActorProxy> sndActorProxy;
+   dtCore::RefPtr<dtAudio::SoundActor> sndActor;
 
-   mGM->CreateActor(*mSndActorType, sndActorProxy);
-   mGM->AddActor(*sndActorProxy, false, false);
+   mGM->CreateActor(*mSndActorType, sndActor);
+   mGM->AddActor(*sndActor, false, false);
 
-   dtAudio::Sound* snd = sndActorProxy->GetSound();
+   dtAudio::Sound* snd = sndActor->GetSound();
 
    osg::Vec3 actorTrans = osg::Vec3(33.1f, 78.2f, 193.7f);
-   sndActorProxy->SetTranslation(actorTrans);
+   sndActor->SetTranslation(actorTrans);
 
    CPPUNIT_ASSERT(actorTrans != snd->GetPosition());
 
