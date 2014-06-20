@@ -157,7 +157,15 @@ namespace dtTest
    public:
       typedef dtABC::Application BaseClass;
 
-      TestApp(int key): BaseClass(),
+      TestApp(int key): BaseClass("config.xml"),
+         mPressedHit(false),
+         mReleasedHit(false),
+         mKey(key)
+      {
+         GetKeyboardListener()->SetReleasedCallback(dtCore::GenericKeyboardListener::CallbackType(this,&TestApp::KeyReleased));
+      }
+
+      TestApp(const std::string& config, int key): BaseClass(config),
          mPressedHit(false),
          mReleasedHit(false),
          mKey(key)
@@ -353,7 +361,7 @@ namespace dtTest
       dtABC::ApplicationConfigData truth;
       truth.CHANGE_RESOLUTION = false;
       truth.FULL_SCREEN = false;
-      truth.REALIZE_UPON_CREATE = true;
+      truth.REALIZE_UPON_CREATE = false;
 
       truth.RESOLUTION.bitDepth = 16;
       truth.RESOLUTION.height = 32;
@@ -406,7 +414,7 @@ namespace dtTest
       CompareConfigData(truth, handler.mConfigData);
 
       //create an app to parse the config and actually load the values
-      dtCore::RefPtr<dtABC::Application> app = new dtABC::Application(mConfigName);
+      dtCore::RefPtr<dtABC::Application> app = new dtTest::TestApp(mConfigName, 0);
 
       // Can't write the default to the config file or it will overwrite all other log values.
       // Behavior tested in TestConfigLogLevelDefaultOverride.
@@ -736,7 +744,7 @@ namespace dtTest
    ////////////////////////////////////////////////////////////////////////////////
    void ApplicationTests::TestRemovingView()
    {
-      dtCore::RefPtr<dtABC::Application> app = new dtABC::Application();
+      dtCore::RefPtr<dtABC::Application> app = new dtTest::TestApp("config.xml", 0);
       dtCore::RefPtr<dtCore::View> view = new dtCore::View("testView");
       dtCore::ObserverPtr<dtCore::View> viewObserver = view.get();
 

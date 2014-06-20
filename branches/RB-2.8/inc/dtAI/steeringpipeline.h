@@ -76,6 +76,8 @@ namespace dtAI
       typedef dtUtil::Functor<bool, TYPELIST_1(const PathType&)> CheckConstraintFunctor;
       typedef dtUtil::Functor<bool, TYPELIST_3(const PathType&, const StateType&, GoalStateType&)> FixConstraintFunctor;
 
+      virtual ~Constraint() {}
+
       virtual bool WillViolate(const PathType& pathToFollow) const = 0;
       virtual void Suggest(const PathType& pathToFollow, const StateType& current_state, GoalStateType& result) const = 0;
    };

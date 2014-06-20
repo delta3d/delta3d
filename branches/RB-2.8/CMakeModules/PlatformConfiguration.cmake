@@ -7,7 +7,7 @@ IF(APPLE)
    SET(CMAKE_C_FLAGS "-pipe -Wnewline-eof")
 
    if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
-      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pipe -stdlib=libc++ -std=c++11 -O3 -Wall -Wextra -Wnewline-eof")
+      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pipe -stdlib=libc++ -std=c++11 -Wall -Wextra -Wnewline-eof")
 
       if (NOT CMAKE_OSX_ARCHITECTURES)
          set(CMAKE_OSX_ARCHITECTURES "i386;x86_64" CACHE STRING "Build architectures for OSX" FORCE)
@@ -18,7 +18,7 @@ IF(APPLE)
       endif()
 
       if (NOT CMAKE_OSX_DEPLOYMENT_TARGET)
-         # use 10.6 because that's the oldest that has atomics
+         # use 10.7 because it's pretty old now.  10.8 is probably a good choice now that Mavericks is out.
          set(CMAKE_OSX_DEPLOYMENT_TARGET "10.7" CACHE STRING "Build SDK root" FORCE)
       endif()
 

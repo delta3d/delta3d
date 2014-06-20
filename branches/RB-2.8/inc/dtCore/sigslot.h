@@ -133,6 +133,7 @@ namespace sigslot {
    class _connection_base0
    {
    public:
+      virtual ~_connection_base0() {}
       virtual has_slots<mt_policy>* getdest() const = 0;
       virtual void cleardest() = 0;
       virtual void emit_signal() = 0;
@@ -257,6 +258,7 @@ namespace sigslot {
    {
    public:
       _signal_base() : mIterating(false) {}
+      ~_signal_base() {}
       virtual void slot_disconnect(has_slots<mt_policy>* pslot) = 0;
       virtual void slot_duplicate(const has_slots<mt_policy>* poldslot, has_slots<mt_policy>* pnewslot) = 0;
    protected:

@@ -198,7 +198,7 @@ namespace dtAI
    /////////////////////////////////////////////////////////////////////////////
    bool WaypointManager::WriteFile(const std::string& pFileToWrite)
    {
-      osgDB::fstream outfile;
+      osgDB::ofstream outfile;
 
       outfile.open(pFileToWrite.c_str(), std::ofstream::out);
       if (outfile.fail())
@@ -262,7 +262,7 @@ namespace dtAI
 
       bool read_file_ok = false;
 
-      osgDB::fstream infile;
+      osgDB::ifstream infile;
 
       infile.open(pFileToRead.c_str());
       if (infile.is_open())
