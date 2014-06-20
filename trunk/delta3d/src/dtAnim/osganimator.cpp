@@ -226,7 +226,7 @@ namespace dtAnim
             if (curTimer < 0.0f)
             {
                // DEBUG:
-               printf("Clearing anim: \"%s\" with %f\n", curAnim->GetName().c_str(), fadeTime);
+               //printf("Clearing anim: \"%s\" with %f\n", curAnim->GetName().c_str(), fadeTime);
 
                FadeOutAnimation(*curAnim, fadeTime);
             }
@@ -386,7 +386,7 @@ namespace dtAnim
       mCycleInfos.push_back(info);
 
       // DEBUG:
-      printf("Playing cycle: %s of %d\n\n", anim.GetName().c_str(), mCycleInfos.size());
+      //printf("Playing cycle: %s of %d\n\n", anim.GetName().c_str(), (int)mCycleInfos.size());
 
       StartTimeline(*timeline);
 
@@ -403,7 +403,7 @@ namespace dtAnim
       if (isAction)
       {
          // DEBUG:
-         printf("Clearing action: \"%s\" with %f\n\n", anim.GetName().c_str(), 0.0f);
+         //printf("Clearing action: \"%s\" with %f\n\n", anim.GetName().c_str(), 0.0f);
 
          success = FadeOutAnimation(anim, 0.0f);
       }
@@ -423,7 +423,7 @@ namespace dtAnim
          }
 
          // DEBUG:
-         printf("Clearing cycle: \"%s\" with %f\n\n", anim.GetName().c_str(), fadeOutTime);
+         //printf("Clearing cycle: \"%s\" with %f\n\n", anim.GetName().c_str(), fadeOutTime);
 
          if (fadeOutTime > 0.0f)
          {
@@ -672,17 +672,17 @@ namespace dtAnim
                if (foundIter != mActionClearTimers.end())
                {
                   // DEBUG:
-                  printf("Removing action: %s [%s]\n", curAction->getName().c_str(), curAction->className());
+                  //printf("Removing action: %s [%s]\n", curAction->getName().c_str(), curAction->className());
 
                   curAnim = foundIter->second->mAnim;
                   if (RemoveCycle(*curAnim))
                   {
                      // DEBUG:
-                     printf("\tCycle removed: %s\n", curAnim->GetName().c_str());
+                     //printf("\tCycle removed: %s\n", curAnim->GetName().c_str());
                   }
 
                   // DEBUG:
-                  printf("\n");
+                  //printf("\n");
 
                   mActionClearTimers.erase(foundIter);
 
@@ -697,12 +697,12 @@ namespace dtAnim
             int numActions = GetActiveAnimationCount();
 
             // DEBUG:
-            printf("Animator flush actions: %d\n", numActions);
+            //printf("Animator flush actions: %d\n", numActions);
 
             timeline->stop();
 
             // DEBUG:
-            printf("Animator stopped.\n\n");
+            //printf("Animator stopped.\n\n");
          }
       }
    }
@@ -771,8 +771,8 @@ namespace dtAnim
                float oldWeight = curAnim->getWeight();
 
                // DEBUG:
-               printf("Setting animation weight: \"%s\" - %f to %f\n\n",
-                  curAnim->getName().c_str(), oldWeight, curInfo->mAnim->GetOriginalWeight()/numCycles);
+               //printf("Setting animation weight: \"%s\" - %f to %f\n\n",
+               //   curAnim->getName().c_str(), oldWeight, curInfo->mAnim->GetOriginalWeight()/numCycles);
 
                curAnim->setDuration(averageDuration);
                curAnim->setWeight(curInfo->mAnim->GetOriginalWeight()/numCycles);
@@ -787,9 +787,9 @@ namespace dtAnim
       if (timeline.getStatus() == osgAnimation::Timeline::Stop)
       {
          // DEBUG:
-         int curFrame = timeline.getCurrentFrame();
-         double curTime = timeline.getCurrentTime();
-         printf("Animator timeline: PLAY @ %d, %f\n", curFrame, curTime);
+         //int curFrame = timeline.getCurrentFrame();
+         //double curTime = timeline.getCurrentTime();
+         //printf("Animator timeline: PLAY @ %d, %f\n", curFrame, curTime);
 
          timeline.play();
       }

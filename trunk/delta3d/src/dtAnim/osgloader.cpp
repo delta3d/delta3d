@@ -47,7 +47,6 @@ namespace dtAnim
    {
       dtCore::RefPtr<OsgModelData> modelData;
 
-      const std::string& filename = handler.mFilename;
       const std::string& path = handler.mPath;
 
       dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
