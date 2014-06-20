@@ -57,6 +57,7 @@ SET(LIB_PUBLIC_HEADERS
                 ${HEADER_PATH}/cloudplane.h
                 ${HEADER_PATH}/collisioncategorydefaults.h
                 ${HEADER_PATH}/collisionmotionmodel.h
+                ${HEADER_PATH}/collisiongeometrytypeenum.h
                 ${HEADER_PATH}/colorrgbaactorproperty.h
                 ${HEADER_PATH}/compass.h
                 ${HEADER_PATH}/containeractorproperty.h
@@ -251,6 +252,7 @@ SET(LIB_SOURCES
                 ${SOURCE_PATH}/clouddome.cpp
                 ${SOURCE_PATH}/cloudplane.cpp
                 ${SOURCE_PATH}/collisionmotionmodel.cpp
+                ${SOURCE_PATH}/collisiongeometrytypeenum.cpp
                 ${SOURCE_PATH}/colorrgbaactorproperty.cpp
                 ${SOURCE_PATH}/compass.cpp
                 ${SOURCE_PATH}/containeractorproperty.cpp
@@ -451,6 +453,5 @@ ENDIF(WIN32)
 
 INCLUDE(ModuleInstall OPTIONAL)
 
-IF (MSVC_IDE)
-  SET_TARGET_PROPERTIES(${LIB_NAME} PROPERTIES DEFINE_SYMBOL DT_CORE_LIBRARY)
-ENDIF (MSVC_IDE)
+DELTA3D_ADD_LIBRARY_PROPERTIES(${LIB_NAME} DT_CORE_LIBRARY ${LIB_PUBLIC_HEADERS})
+

@@ -32,7 +32,7 @@ namespace dtActors
 
       TriggerVolumeActorProxy();
 
-      virtual void CreateActor();
+      virtual void CreateDrawable();
 
       virtual void BuildPropertyMap();
 

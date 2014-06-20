@@ -52,7 +52,7 @@ void TestGameActorProxy2::BuildInvokables()
    GameActorProxy::BuildInvokables();
 
    AddInvokable(*new dtGame::Invokable("Test Message Listener", 
-      dtUtil::MakeFunctor(&TestGameActor2::LogMessage, static_cast<TestGameActor2*>(GetActor()))));
+      dtUtil::MakeFunctor(&TestGameActor2::LogMessage, static_cast<TestGameActor2*>(GetDrawable()))));
    
 }
 
@@ -79,9 +79,9 @@ void TestGameActorProxy2::BuildPropertyMap()
       "A property marking the number of Map Loaded message received.", ""));
 }
 
-void TestGameActorProxy2::CreateActor()
+void TestGameActorProxy2::CreateDrawable()
 {
-   SetActor(*new TestGameActor2(*this));
+   SetDrawable(*new TestGameActor2(*this));
 }
 
 /////////////////////////////////////////////////////

@@ -647,7 +647,7 @@ namespace dtEditQt
          osg::Vec3 viewDir = getCamera()->getViewDir();
 
          osg::Vec3 translation = tProxy->GetTranslation();
-         const osg::BoundingSphere& bs = tProxy->GetActor()->GetOSGNode()->getBound();
+         const osg::BoundingSphere& bs = tProxy->GetDrawable()->GetOSGNode()->getBound();
          float actorCreationOffset = EditorData::GetInstance().GetActorCreationOffset();
          float offset = (bs.radius() < 1000.0f) ? bs.radius() : 1.0f;
          if (offset <= 0.0f)

@@ -106,6 +106,12 @@ namespace dtCore
    }
 
    /////////////////////////////////////////////////////////////////////////////
+   void BaseActorObject::CreateDrawable()
+   {
+      CreateActor();
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
    void BaseActorObject::SetClassName(const std::string& name)
    {
       mClassName = name;
@@ -224,38 +230,8 @@ namespace dtCore
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   const BaseActorObject* BaseActorObject::GetLinkedActor(const std::string& name) const
-   {
-      BaseActorObjectMapType::const_iterator itor = mBaseActorObjectMap.find(name);
-      return itor != mBaseActorObjectMap.end() ? itor->second.get() : NULL;
-   }
-
-   /////////////////////////////////////////////////////////////////////////////
-   BaseActorObject* BaseActorObject::GetLinkedActor(const std::string& name)
-   {
-      BaseActorObjectMapType::iterator itor = mBaseActorObjectMap.find(name);
-      return itor != mBaseActorObjectMap.end() ? itor->second.get() : NULL;
-   }
-
-   /////////////////////////////////////////////////////////////////////////////
    void BaseActorObject::SetLinkedActor(const std::string& name, BaseActorObject* newValue)
    {
-      if (newValue == NULL)
-      {
-         mBaseActorObjectMap.erase(name);
-      }
-      else
-      {
-         //attempt to insert the value
-         std::pair<BaseActorObjectMapType::iterator, bool> result =
-            mBaseActorObjectMap.insert(std::make_pair(name, newValue));
-         // result.second tells me if it was inserted
-         if (!result.second)
-         {
-            // if not, first of the result is the iterator to the map entry, so just change the map value.
-            result.first->second = newValue;
-         }
-      }
    }
 
 
@@ -375,7 +351,7 @@ namespace dtCore
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   const bool BaseActorObject::IsInSTAGE() const
+   bool BaseActorObject::IsInSTAGE() const
    {
       return dtCore::Project::GetInstance().GetEditMode();
    }

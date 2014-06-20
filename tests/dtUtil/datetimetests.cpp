@@ -147,6 +147,21 @@ namespace dtUtil
       CompareTimes(dt_local, dt_test);
 
       CompareTimes(DateTime(dt_local.GetGMTTime()), dt_gmt);
+
+      // mt_isdst works differently on different platforms, but what we do know is that
+      // it's 0 when it's not dst;
+      float adjust = local.tm_isdst != 0 ? 1.0 : 0.0f;
+
+	  CPPUNIT_ASSERT_DOUBLES_EQUAL(DateTime::GetLocalGMTOffset(true) - adjust,  DateTime::GetLocalGMTOffset(), 0.01f);
+
+#ifdef DELTA_WIN32
+      local.tm_isdst = -1;
+#else
+      local.tm_isdst = 1;
+#endif
+      float GMTOffset1 = DateTime::CalcGMTOffset(local, true);
+      float GMTOffset2 = DateTime::CalcGMTOffset(local, false);
+      CPPUNIT_ASSERT_DOUBLES_EQUAL(GMTOffset1 - 1.0, GMTOffset2, 0.01f);
    }
 
    void DateTimeTests::CompareTimes(const DateTime& lhs, const DateTime& rhs)

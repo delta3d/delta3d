@@ -55,7 +55,7 @@ namespace dtActors
       protected:
          virtual ~DistanceSensorActorProxy();
 
-         virtual void CreateActor();
+         virtual void CreateDrawable();
    };
 
    class DT_PLUGIN_EXPORT DistanceSensorActor: public dtGame::GameActor

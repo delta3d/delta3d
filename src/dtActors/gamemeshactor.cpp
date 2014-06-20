@@ -258,9 +258,9 @@ namespace dtActors
    }
 
    //////////////////////////////////////////////////////////////////////////////
-   void GameMeshActorProxy::CreateActor()
+   void GameMeshActorProxy::CreateDrawable()
    {
-      SetActor(*new GameMeshActor(*this));
+      SetDrawable(*new GameMeshActor(*this));
 
       //// set the default name of this object so they show up somewhat nicely in STAGE
       //// obviously, it's not guaranteed to be unique
@@ -276,7 +276,7 @@ namespace dtActors
       dtCore::ResourceDescriptor resource = GetResource("static mesh");
       if (resource.IsEmpty() == false)
       {
-         if (resource.GetResourceIdentifier().empty() || GetActor()->GetOSGNode() == NULL)
+         if (resource.GetResourceIdentifier().empty() || GetDrawable()->GetOSGNode() == NULL)
          {
                return dtCore::BaseActorObject::RenderMode::DRAW_BILLBOARD_ICON;
          }

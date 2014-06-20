@@ -112,6 +112,7 @@ signals:
    void LightUpdate(const LightInfo& lightInfo);
 
 protected:
+   void CountPrimitives ( osg::Node& mesh, const std::string& filename );
    void InitWireDecorator();
    void InitGridPlanes();
    void InitLights();

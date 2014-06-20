@@ -570,8 +570,11 @@ namespace dtAnim
    // HELPER FUNCTION
    std::string GetAbsolutePath(const std::string& filePath)
    {
-      return dtUtil::FileUtils::GetInstance().IsAbsolutePath(filePath)
-         ? filePath
+      dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
+      dtUtil::FileInfo fi = fileUtils.GetFileInfo(filePath, true);
+
+      return fi.fileType == dtUtil::REGULAR_FILE
+         ? fi.fileName
          : dtUtil::FindFileInPathList(filePath);
    }
 
@@ -707,7 +710,7 @@ namespace dtAnim
             while (animItr != handler->mAnimations.end())
             {
                std::string filename(GetAbsolutePath(path + (*animItr).mFileName));
-			   std::string animName = (*animItr).mName.empty() ? filename : (*animItr).mName;
+               std::string animName = (*animItr).mName.empty() ? filename : (*animItr).mName;
 
                if (!filename.empty())
                {
@@ -737,7 +740,7 @@ namespace dtAnim
                   else
                   {
                      int id = coreModel->addCoreAnimation(cachedAnimIter->second.get());
-					 coreModel->addAnimationName(animName, id);
+                     coreModel->addAnimationName(animName, id);
 
                      coreModelData->RegisterFile(filename, animName);
                   }

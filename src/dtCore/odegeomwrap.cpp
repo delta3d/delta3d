@@ -14,15 +14,6 @@
 
 using namespace dtCore;
 
-IMPLEMENT_ENUM(CollisionGeomType)
-CollisionGeomType CollisionGeomType::NONE("NONE");
-CollisionGeomType CollisionGeomType::SPHERE("SPHERE");
-CollisionGeomType CollisionGeomType::CYLINDER("CYLINDER");
-CollisionGeomType CollisionGeomType::CCYLINDER("CCYLINDER");
-CollisionGeomType CollisionGeomType::CUBE("CUBE");
-CollisionGeomType CollisionGeomType::RAY("RAY");
-CollisionGeomType CollisionGeomType::MESH("MESH");
-
 //////////////////////////////////////////////////////////////////////////
 dtCore::ODEGeomWrap::ODEGeomWrap()
    : mGeomID(NULL)

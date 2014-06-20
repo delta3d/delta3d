@@ -64,7 +64,7 @@ namespace dtActors
          /**
          * Creates a Delta3D object actor.
          */
-         virtual void CreateActor();
+         virtual void CreateDrawable();
 
          /**
          * Destructor

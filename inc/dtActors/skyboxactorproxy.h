@@ -67,7 +67,7 @@ namespace dtActors
       /// Sets the texture on the top of the sky box
       void SetTopTexture(const std::string &path)
       {
-         dtCore::SkyBox *skyBox = dynamic_cast<dtCore::SkyBox *>(GetActor());
+         dtCore::SkyBox *skyBox = dynamic_cast<dtCore::SkyBox *>(GetDrawable());
          if (skyBox == NULL)
             throw dtCore::BaseException(
             "Expected a skybox actor.", __FILE__, __LINE__);
@@ -78,7 +78,7 @@ namespace dtActors
       /// Sets the texture on the bottom of the sky box
       void SetBottomTexture(const std::string& path)
       {
-         dtCore::SkyBox *skyBox = dynamic_cast<dtCore::SkyBox *>(GetActor());
+         dtCore::SkyBox *skyBox = dynamic_cast<dtCore::SkyBox *>(GetDrawable());
          if (skyBox == NULL)
             throw dtCore::BaseException(
             "Expected a skybox actor.", __FILE__, __LINE__);
@@ -89,7 +89,7 @@ namespace dtActors
       /// Sets the texture on the front of the sky box
       void SetFrontTexture(const std::string &path)
       {
-         dtCore::SkyBox *skyBox = dynamic_cast<dtCore::SkyBox *>(GetActor());
+         dtCore::SkyBox *skyBox = dynamic_cast<dtCore::SkyBox *>(GetDrawable());
          if (skyBox == NULL)
             throw dtCore::BaseException(
             "Expected a skybox actor.", __FILE__, __LINE__);
@@ -100,7 +100,7 @@ namespace dtActors
       /// Sets the texture on the back of the sky box
       void SetBackTexture(const std::string& path)
       {
-         dtCore::SkyBox *skyBox = dynamic_cast<dtCore::SkyBox *>(GetActor());
+         dtCore::SkyBox *skyBox = dynamic_cast<dtCore::SkyBox *>(GetDrawable());
          if (skyBox == NULL)
             throw dtCore::BaseException(
             "Expected a skybox actor.", __FILE__, __LINE__);
@@ -111,7 +111,7 @@ namespace dtActors
       /// Sets the texture on the left of the sky box
       void SetLeftTexture(const std::string& path)
       {
-         dtCore::SkyBox *skyBox = dynamic_cast<dtCore::SkyBox *>(GetActor());
+         dtCore::SkyBox *skyBox = dynamic_cast<dtCore::SkyBox *>(GetDrawable());
          if (skyBox == NULL)
             throw dtCore::BaseException(
             "Expected a skybox actor.", __FILE__, __LINE__);
@@ -122,7 +122,7 @@ namespace dtActors
       /// Sets the texture on the right of the sky box
       void SetRightTexture(const std::string& path)
       {
-         dtCore::SkyBox *skyBox = dynamic_cast<dtCore::SkyBox *>(GetActor());
+         dtCore::SkyBox *skyBox = dynamic_cast<dtCore::SkyBox *>(GetDrawable());
          if (skyBox == NULL)
             throw dtCore::BaseException(
             "Expected a skybox actor.", __FILE__, __LINE__);
@@ -145,7 +145,7 @@ namespace dtActors
 
       virtual ~SkyBoxActorProxy() {}
 
-      virtual void CreateActor();
+      virtual void CreateDrawable();
    };
 }
 

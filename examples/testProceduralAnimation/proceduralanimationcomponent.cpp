@@ -91,18 +91,19 @@ void ProceduralAnimationComponent::CreateIKActorGrid(const osg::Vec3& startPos,
 
       for (int j = 0; j < sideCount; ++j)
       {
-         dtCore::RefPtr<ProceduralAnimationActorProxy> proxy;
-         gameManager.CreateActor(*TestActorLibraryRegistry::IK_ACTOR_TYPE, proxy);
-         if (proxy.valid())
+         dtCore::RefPtr<ProceduralAnimationActorProxy> actor;
+         gameManager.CreateActor(*TestActorLibraryRegistry::IK_ACTOR_TYPE, actor);
+         if (actor.valid())
          {
-            gameManager.AddActor(*proxy, false, false);
+            gameManager.AddActor(*actor, false, false);
 
-            ProceduralAnimationActor* actor = dynamic_cast<ProceduralAnimationActor*>(&proxy->GetGameActor());
-            actor->SetModel("SkeletalMeshes/PoseMeshMarine/Eye_Marine_with_posemesh.xml");
+            actor->GetComponent<dtAnim::AnimationHelper>()->SetSkeletalMesh(dtCore::ResourceDescriptor("SkeletalMeshes:PoseMeshMarine:Eye_Marine_with_posemesh.xml"));
 
-            proxy->SetTranslation(currentPosition);
+            actor->SetTranslation(currentPosition);
 
-            mActorList.push_back(actor);
+            ProceduralAnimationActor* drawable;
+            actor->GetDrawable(drawable);
+            mActorList.push_back(drawable);
          }
 
          currentPosition += forwardDirection;
@@ -268,7 +269,8 @@ dtAnim::PoseMeshDatabase* ProceduralAnimationComponent::GetPoseMeshDatabaseForAc
 {
    dtAnim::Cal3DDatabase& calDatabase = dtAnim::Cal3DDatabase::GetInstance();
 
-   dtAnim::Cal3DModelWrapper* wrapper = actor->GetHelper()->GetModelWrapper();
+   dtAnim::Cal3DModelWrapper* wrapper = actor->GetComponent<dtAnim::AnimationHelper>()->GetModelWrapper();
+
    CalCoreModel* coreModel = wrapper->GetCalModel()->getCoreModel();
 
    // See if this core model already has a pose mesh database that can be shared

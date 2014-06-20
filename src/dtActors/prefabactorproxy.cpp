@@ -63,9 +63,9 @@ namespace dtActors
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void PrefabActorProxy::CreateActor()
+   void PrefabActorProxy::CreateDrawable()
    {
-      SetActor(*new PrefabActor());
+      SetDrawable(*new PrefabActor());
    }
 
    /////////////////////////////////////////////////////////////////////////////

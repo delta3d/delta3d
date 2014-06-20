@@ -144,10 +144,10 @@ namespace dtAudio
     }
 
     ///////////////////////////////////////////////////////////////////////////////
-    void SoundActorProxy::CreateActor()
+    void SoundActorProxy::CreateDrawable()
     {
        SoundActor* actor = new SoundActor(*this);
-       SetActor(*actor);
+       SetDrawable(*actor);
     }
 
     ///////////////////////////////////////////////////////////////////////

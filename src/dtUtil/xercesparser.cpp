@@ -104,7 +104,7 @@ bool XercesParser::Parse(const std::string& datafile,
 
       if (!schemafile.empty())
       {
-         std::string schema = osgDB::findDataFile(schemafile);
+         std::string schema = dtUtil::FindFileInPathList(schemafile);
 
          if (schema.empty())
          {

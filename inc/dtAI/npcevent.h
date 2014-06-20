@@ -23,7 +23,6 @@
 #define __DELTA_NPCEVENT_H__
 
 #include <dtAI/export.h>
-#include <osg/Referenced>
 #include <dtUtil/enumeration.h>
 
 namespace dtAI

@@ -115,7 +115,7 @@ namespace dtActors
 
             // If we're a ORDERED Failing task, then we just failed.
             // Note, we don't fail the child. Though it is recorded as the failing task proxy
-            if (static_cast<TaskActorOrdered*>(GetActor())->GetFailureType() ==
+            if (static_cast<TaskActorOrdered*>(GetDrawable())->GetFailureType() ==
                 TaskActorOrdered::FailureType::CAUSE_FAILURE)
             {
                myActor->SetFailed(true);
@@ -155,12 +155,12 @@ namespace dtActors
 
       for (itor=subTasks.begin(); itor!=subTasks.end(); ++itor)
       {
-         const TaskActor *subTask = dynamic_cast<const TaskActor *>((*itor)->GetActor());
+         const TaskActor *subTask = dynamic_cast<const TaskActor *>((*itor)->GetDrawable());
          totalWeightedScore += (subTask->GetScore() * subTask->GetWeight());
          totalWeight += subTask->GetWeight();
       }
 
-      taskActor = dynamic_cast<TaskActor *>(GetActor());
+      taskActor = dynamic_cast<TaskActor *>(GetDrawable());
 
       //We actually do not need to request a score change in the case of the
       //rollup task.  A rollup task's score can only change if one of its
@@ -228,9 +228,9 @@ namespace dtActors
    }
 
    //////////////////////////////////////////////////////////////////////////////
-   void TaskActorOrderedProxy::CreateActor()
+   void TaskActorOrderedProxy::CreateDrawable()
    {
-      SetActor(*new TaskActorOrdered(*this));
+      SetDrawable(*new TaskActorOrdered(*this));
    }
 
 }

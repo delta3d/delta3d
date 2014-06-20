@@ -66,7 +66,7 @@
 #include <testGameActorLibrary/testgameactorlibrary.h>
 #include <testGameActorLibrary/testgameactor.h>
 
-#include "testcomponent.h"
+#include <dtGame/testcomponent.h>
 
 #include <cppunit/extensions/HelperMacros.h>
 
@@ -616,7 +616,7 @@ void MessageTests::TestMessageDelivery()
 {
    try
    {
-      dtCore::RefPtr<TestComponent> tc = new TestComponent("name");
+      dtCore::RefPtr<dtGame::TestComponent> tc = new dtGame::TestComponent("name");
 
       mGameManager->AddComponent(*tc, dtGame::GameManager::ComponentPriority::NORMAL);
 
@@ -702,7 +702,7 @@ void MessageTests::TestActorPublish()
 {
    try
    {
-      TestComponent* tc = new TestComponent("name");
+      dtGame::TestComponent* tc = new dtGame::TestComponent("name");
       dtGame::DefaultNetworkPublishingComponent* rc = new dtGame::DefaultNetworkPublishingComponent();
 
       mGameManager->AddComponent(*tc, dtGame::GameManager::ComponentPriority::NORMAL);
@@ -796,7 +796,7 @@ void MessageTests::TestActorPublish()
 //////////////////////////////////////////////////////////////////////////
 void MessageTests::TestPauseResume()
 {
-   TestComponent* tc = new TestComponent("name");
+   dtGame::TestComponent* tc = new dtGame::TestComponent("name");
    mGameManager->AddComponent(*tc, dtGame::GameManager::ComponentPriority::NORMAL);
    CPPUNIT_ASSERT_MESSAGE("The Game Manager should not start out paused.", !mGameManager->IsPaused());
 
@@ -858,7 +858,7 @@ void MessageTests::TestPauseResumeSystem()
 {
    try
    {
-      TestComponent* tc = new TestComponent("name");
+      dtGame::TestComponent* tc = new dtGame::TestComponent("name");
       mGameManager->AddComponent(*tc, dtGame::GameManager::ComponentPriority::NORMAL);
       CPPUNIT_ASSERT_MESSAGE("The Game Manager should not start out paused.", !mGameManager->IsPaused());
 
@@ -899,7 +899,7 @@ void MessageTests::TestPauseResumeSystem()
 //////////////////////////////////////////////////////////////////////////
 void MessageTests::TestRejectMessage()
 {
-   TestComponent* tc = new TestComponent("name");
+   dtGame::TestComponent* tc = new dtGame::TestComponent("name");
    mGameManager->AddComponent(*tc, dtGame::GameManager::ComponentPriority::NORMAL);
    tc->reset();
 
@@ -962,7 +962,7 @@ void MessageTests::TestRejectMessage()
 
 void MessageTests::TestTimeScaling()
 {
-   TestComponent* tc = new TestComponent("name");
+   dtGame::TestComponent* tc = new dtGame::TestComponent("name");
    mGameManager->AddComponent(*tc, dtGame::GameManager::ComponentPriority::NORMAL);
    CPPUNIT_ASSERT_MESSAGE("The Game Manager should not start out paused.", !mGameManager->IsPaused());
 
@@ -1023,7 +1023,7 @@ void MessageTests::TestTimeScaling()
 
 void MessageTests::TestTimeChange()
 {
-   TestComponent* tc = new TestComponent("name");
+   dtGame::TestComponent* tc = new dtGame::TestComponent("name");
    mGameManager->AddComponent(*tc, dtGame::GameManager::ComponentPriority::NORMAL);
    CPPUNIT_ASSERT_MESSAGE("The Game Manager should not start out paused.", !mGameManager->IsPaused());
 
@@ -1237,7 +1237,7 @@ void MessageTests::TestChangeMap()
       project.SaveMap(*map2B);
       project.CloseMap(*map2B);
 
-      TestComponent& tc = *new TestComponent("name");
+      dtGame::TestComponent& tc = *new dtGame::TestComponent("name");
       mGameManager->AddComponent(tc, dtGame::GameManager::ComponentPriority::NORMAL);
 
       //change the map set using the first set of Maps
@@ -1779,7 +1779,7 @@ void MessageTests::TestRemoteActorCreatesFromPrototype()
    dtCore::RefPtr<TestGameActorProxy1> prototypeProxy;
    mGameManager->CreateActor(*type.get(), prototypeProxy);
    CPPUNIT_ASSERT(prototypeProxy != NULL);
-   dtCore::RefPtr<TestGameActor1> prototypeActor = dynamic_cast<TestGameActor1*>(prototypeProxy->GetActor());
+   dtCore::RefPtr<TestGameActor1> prototypeActor = dynamic_cast<TestGameActor1*>(prototypeProxy->GetDrawable());
    prototypeActor->SetName("Test1Prototype");
    prototypeActor->SetTickLocals(59);
    prototypeActor->SetTickRemotes(41);
@@ -1791,7 +1791,7 @@ void MessageTests::TestRemoteActorCreatesFromPrototype()
    // Note, we don't actually add our temp actor to the GM. It acts like a 'remote' actor on another system.
    dtCore::RefPtr<dtCore::BaseActorObject> tempBogusPrototype = mGameManager->CreateActorFromPrototype(prototypeId);
    dtCore::RefPtr<dtGame::GameActorProxy> tempBogusGameProxy = dynamic_cast<dtGame::GameActorProxy*>(tempBogusPrototype.get());
-   dtCore::RefPtr<TestGameActor1> tempBogusActor = dynamic_cast<TestGameActor1*>(tempBogusPrototype->GetActor());
+   dtCore::RefPtr<TestGameActor1> tempBogusActor = dynamic_cast<TestGameActor1*>(tempBogusPrototype->GetDrawable());
    tempBogusActor->SetTickLocals(11);
    tempBogusActor->SetName("MyUpdateActor");
    dtCore::UniqueId createdId = dtCore::UniqueId("1234567890");
@@ -1820,7 +1820,7 @@ void MessageTests::TestRemoteActorCreatesFromPrototype()
 
 
    dtCore::RefPtr<dtGame::GameActorProxy> gapRemote = mGameManager->FindGameActorById(createdId);
-   dtCore::RefPtr<TestGameActor1> gapRemoteActor = dynamic_cast<TestGameActor1*> (gapRemote->GetActor());
+   dtCore::RefPtr<TestGameActor1> gapRemoteActor = dynamic_cast<TestGameActor1*> (gapRemote->GetDrawable());
 
    CPPUNIT_ASSERT_MESSAGE("The remote actor should have been created.", gapRemote != NULL);
    CPPUNIT_ASSERT_MESSAGE("The remote actor should have the same actor type as our prototype.",
@@ -1851,7 +1851,7 @@ void MessageTests::TestRemoteActorCreatesFromPrototype()
 
 void MessageTests::TestActorEnteredWorldMessage()
 {
-   dtCore::RefPtr<TestComponent> tc = new TestComponent("name");
+   dtCore::RefPtr<dtGame::TestComponent> tc = new dtGame::TestComponent("name");
    CPPUNIT_ASSERT(tc.valid());
    mGameManager->AddComponent(*tc, dtGame::GameManager::ComponentPriority::HIGHEST);
    std::vector<dtCore::RefPtr<const dtGame::Message> > msgs;
@@ -1860,7 +1860,7 @@ void MessageTests::TestActorEnteredWorldMessage()
    CPPUNIT_ASSERT(proxy.valid());
    dtGame::GameActorProxy* gap = dynamic_cast<dtGame::GameActorProxy*>(proxy.get());
    CPPUNIT_ASSERT_MESSAGE("A Test1Actor actor was created. The dynamic_cast to a GameActorProxy should not be NULL", gap != NULL);
-   dtCore::Scene* scene = gap->GetActor()->GetSceneParent();
+   dtCore::Scene* scene = gap->GetDrawable()->GetSceneParent();
    CPPUNIT_ASSERT_MESSAGE("The game actor proxy has not yet been added to the game manager, its scene parent pointer should be NULL", scene == NULL);
 
    mGameManager->AddActor(*gap, false, false);
@@ -1876,7 +1876,7 @@ void MessageTests::TestActorEnteredWorldMessage()
    }
 
    CPPUNIT_ASSERT_MESSAGE("An actor created message should have been sent", receivedCreateMsg);
-   scene = gap->GetActor()->GetSceneParent();
+   scene = gap->GetDrawable()->GetSceneParent();
    CPPUNIT_ASSERT_MESSAGE("Now that the game actor proxy was added to the game manager, its scene parent should not be NULL", scene != NULL);
 }
 

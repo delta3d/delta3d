@@ -264,7 +264,7 @@ namespace sigslot {
    };
 
    template<class  mt_policy = SIGSLOT_DEFAULT_MT_POLICY>
-   class has_slots : public mt_policy
+   class DT_CORE_EXPORT has_slots : public mt_policy
    {
    private:
       typedef typename std::set<_signal_base<mt_policy> *> sender_set;

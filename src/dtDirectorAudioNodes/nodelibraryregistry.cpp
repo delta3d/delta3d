@@ -58,13 +58,13 @@ namespace dtDirector
    // Values
 
    //////////////////////////////////////////////////////////////////////////
-   extern "C" AUDIO_NODE_LIBRARY_EXPORT dtDirector::NodePluginRegistry* CreatePluginRegistry()
+   extern "C" AUDIO_NODE_LIBRARY_EXPORT dtDirector::NodePluginRegistry* CreateNodePluginRegistry()
    {
       return new NodeLibraryRegistry;
    }
 
    //////////////////////////////////////////////////////////////////////////
-   extern "C" AUDIO_NODE_LIBRARY_EXPORT void DestroyPluginRegistry(dtDirector::NodePluginRegistry* registry)
+   extern "C" AUDIO_NODE_LIBRARY_EXPORT void DestroyNodePluginRegistry(dtDirector::NodePluginRegistry* registry)
    {
       delete registry;
    }

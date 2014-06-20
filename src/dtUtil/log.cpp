@@ -24,8 +24,12 @@
 #include <dtUtil/logobserver.h>
 #include <dtUtil/logobserverconsole.h>
 #include <dtUtil/logobserverfile.h>
-#include <dtCore/refptr.h>
+#include <dtUtil/logtimeprovider.h>
+#include <osg/ref_ptr>
+#include <osg/observer_ptr>
 #include <osgDB/FileNameUtils>
+
+
 
 #include <OpenThreads/Mutex>
 #include <OpenThreads/ScopedLock>
@@ -33,7 +37,6 @@
 #include <algorithm>
 #include <cstdarg>
 //#include <cstdio>
-#include <ctime>
 #include <dtUtil/hashmap.h>
 
 namespace dtUtil
@@ -49,7 +52,7 @@ namespace dtUtil
    //forward declaration
    class LogManager;
 
-   static dtCore::RefPtr<LogManager> LOG_MANAGER(NULL);
+   static osg::ref_ptr<LogManager> LOG_MANAGER(NULL);
    static Log::LogMessageType DEFAULT_LOG_LEVEL(Log::LOG_WARNING);
 
 
@@ -57,13 +60,16 @@ namespace dtUtil
    class LogManager: public osg::Referenced
    {
    public:
-      dtCore::RefPtr<LogObserver> mLogObserverConsole; ///writes to console
-      dtCore::RefPtr<LogObserverFile> mLogObserverFile; ///writes to file
+      osg::ref_ptr<LogObserver> mLogObserverConsole; ///writes to console
+      osg::ref_ptr<LogObserverFile> mLogObserverFile; ///writes to file
+      osg::observer_ptr<osg::Referenced> mLogTimeProviderAsRef;
+      LogTimeProvider* mLogTimeProvider;
 
       ////////////////////////////////////////////////////////////////
       LogManager()
       : mLogObserverConsole(new LogObserverConsole())
       , mLogObserverFile(new LogObserverFile())
+      , mLogTimeProvider(NULL)
       {
       }
 
@@ -78,13 +84,13 @@ namespace dtUtil
       ////////////////////////////////////////////////////////////////
       bool AddInstance(const std::string& name, Log* log)
       {
-         return mInstances.insert(std::make_pair(name, dtCore::RefPtr<Log>(log))).second;
+         return mInstances.insert(std::make_pair(name, osg::ref_ptr<Log>(log))).second;
       }
 
       ////////////////////////////////////////////////////////////////
       Log* GetInstance(const std::string& name)
       {
-         dtUtil::HashMap<std::string, dtCore::RefPtr<Log> >::iterator i = mInstances.find(name);
+         dtUtil::HashMap<std::string, osg::ref_ptr<Log> >::iterator i = mInstances.find(name);
          if (i == mInstances.end())
          {
             return NULL;
@@ -95,7 +101,7 @@ namespace dtUtil
       ////////////////////////////////////////////////////////////////
       void SetAllLogLevels(const Log::LogMessageType &newLevel)
       {
-         dtUtil::HashMap<std::string, dtCore::RefPtr<Log> >::iterator i, iend;
+         dtUtil::HashMap<std::string, osg::ref_ptr<Log> >::iterator i, iend;
 
          i = mInstances.begin();
          iend = mInstances.end();
@@ -107,9 +113,14 @@ namespace dtUtil
          }
       }
 
+      bool IsLogTimeProviderValid() const
+      {
+    	  return mLogTimeProviderAsRef.valid() && mLogTimeProvider != NULL;
+      }
+
       OpenThreads::Mutex mMutex;
    private:
-      dtUtil::HashMap<std::string, dtCore::RefPtr<Log> > mInstances;
+      dtUtil::HashMap<std::string, osg::ref_ptr<Log> > mInstances;
    };
 
    ////////////////////////////////////////////////////////////////////
@@ -209,18 +220,22 @@ namespace dtUtil
          return;
       }
 
-      struct tm *t;
-      time_t cTime;
-
-      time(&cTime);
-      t = localtime(&cTime);
-
 
       OpenThreads::ScopedLock<OpenThreads::Mutex> lock(LOG_MANAGER->mMutex);
+      bool hasLogTimeProvider = LOG_MANAGER->IsLogTimeProviderValid();
 
       LogObserver::LogData logData;
+      if (hasLogTimeProvider)
+      {
+    	  logData.frameNumber = LOG_MANAGER->mLogTimeProvider->GetFrameNumber();
+    	  logData.time = LOG_MANAGER->mLogTimeProvider->GetDateTime();
+      }
+      else
+      {
+    	  logData.time.SetToLocalTime();
+      }
+
       logData.type = msgType;
-      logData.time = *t;
       logData.logName = mImpl->mName;
       logData.file = osgDB::getSimpleFileName(file);
       logData.method = method;
@@ -420,6 +435,29 @@ namespace dtUtil
       {
          LOG_MANAGER->SetAllLogLevels(newLevel);
       }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void Log::SetLogTimeProvider(LogTimeProvider* ltp)
+   {
+	  if (LOG_MANAGER.valid())
+	  {
+		 LOG_MANAGER->mLogTimeProvider = ltp;
+		 if (ltp != NULL)
+		 {
+			 LOG_MANAGER->mLogTimeProviderAsRef = ltp->AsReferenced();
+		 }
+		 else
+		 {
+			 LOG_MANAGER->mLogTimeProviderAsRef = NULL;
+		 }
+
+		 if (ltp != NULL && !LOG_MANAGER->IsLogTimeProviderValid())
+		 {
+			 LOG_ERROR("Unable to assign log time provider because it did not provide a referenced object as a key for deletion");
+			 LOG_MANAGER->mLogTimeProvider = NULL;
+		 }
+	  }
    }
 
    ////////////////////////////////////////////////////////////////////////////////

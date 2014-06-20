@@ -424,7 +424,6 @@ namespace dtPhysics
    //////////////////////////////////////////////////////////////////////////
    void PhysicsWorld::Init()
    {
-      VectorType gravity(mImpl->mGravity);
       // init with gravity
       palPhysicsDesc desc;
 
@@ -435,6 +434,7 @@ namespace dtPhysics
 
       desc.m_nUpAxis = PAL_Z_AXIS;
       desc.m_Properties["ODE_NoInitOrShutdown"] = "true";
+      desc.m_Properties["Bullet_UseInternalEdgeUtility"] = "true";
 
       mImpl->mPalPhysicsScene->Init(desc);
 
@@ -764,9 +764,11 @@ namespace dtPhysics
 
          engineName[i] = std::tolower(engineName[i], loc);
       }
-
+#ifndef PAL_PLUGIN_ARCH_PATH
+      finalPath += "/" + engineName;
+#else
       finalPath += "/" + engineName + "/" + PAL_PLUGIN_ARCH_PATH;
-
+#endif
       if (!mImpl->mPathSuffix.empty())
       {
          finalPath.append("/");

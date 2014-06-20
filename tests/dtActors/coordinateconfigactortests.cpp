@@ -65,7 +65,7 @@ class CoordinateConfigActorTests : public CPPUNIT_NS::TestFixture
             CreateActorProxy(*dtActors::EngineActorRegistry::COORDINATE_CONFIG_ACTOR_TYPE);
 
          mCoordinateProxy = dynamic_cast<dtActors::CoordinateConfigActorProxy*>(proxy.get());
-         mCoordinateConfigActor = dynamic_cast<dtActors::CoordinateConfigActor*>(proxy->GetActor());
+         mCoordinateConfigActor = dynamic_cast<dtActors::CoordinateConfigActor*>(proxy->GetDrawable());
       }
 
       void tearDown()

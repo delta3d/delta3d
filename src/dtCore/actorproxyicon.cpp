@@ -82,13 +82,13 @@ namespace dtCore
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   ActorProxyIcon& ActorProxyIcon::operator=(const ActorProxyIcon& rhs)
+   ActorProxyIcon& ActorProxyIcon::operator=(const ActorProxyIcon&)
    {
       return *this;
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   ActorProxyIcon::ActorProxyIcon(const ActorProxyIcon& rhs)
+   ActorProxyIcon::ActorProxyIcon(const ActorProxyIcon&)
    {
    }
 

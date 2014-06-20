@@ -39,7 +39,7 @@
 #   endif
 #endif
 
-#ifdef _WIN32
+#ifdef _MSC_VER
 #   pragma warning (disable: 4251)
 #   pragma warning(disable : 4355) // 'this' used in initializer list
 #endif

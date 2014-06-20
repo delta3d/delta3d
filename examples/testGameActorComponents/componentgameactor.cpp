@@ -28,7 +28,7 @@ void ComponentGameActorProxy::BuildPropertyMap()
 {
    dtActors::GameMeshActorProxy::BuildPropertyMap();  
 
-   ComponentGameActor* actor = static_cast<ComponentGameActor*>(GetActor());
+   ComponentGameActor* actor = static_cast<ComponentGameActor*>(GetDrawable());
 
    static const std::string GROUPNAME = "ComponentGameActor";
 
@@ -40,7 +40,7 @@ void ComponentGameActorProxy::BuildPropertyMap()
 
 
 ////////////////////////////////////////////////////////////////////////////////
-void ComponentGameActorProxy::CreateActor() 
+void ComponentGameActorProxy::CreateDrawable() 
 {
    ComponentGameActor* actor = new ComponentGameActor(*this);
 
@@ -48,5 +48,5 @@ void ComponentGameActorProxy::CreateActor()
    // are accessible in STAGE.
    actor->AddComponent(*new TextLabelComponent());
 
-   SetActor(*actor); 
+   SetDrawable(*actor); 
 }

@@ -49,7 +49,7 @@ void TestHLAObjectProxy::BuildPropertyMap()
 {
    dtGame::GameActorProxy::BuildPropertyMap();
 
-   TestHLAObject* actor = dynamic_cast<TestHLAObject*> (GetActor());
+   TestHLAObject* actor = dynamic_cast<TestHLAObject*> (GetDrawable());
    if (actor == NULL)
    {
       throw dtCore::InvalidActorException( "Actor should be type TestHLAObject", __FILE__, __LINE__);
@@ -80,9 +80,9 @@ void TestHLAObjectProxy::BuildActorComponents()
    AddComponent(*new dtGame::DeadReckoningHelper);
 }
 
-void TestHLAObjectProxy::CreateActor()
+void TestHLAObjectProxy::CreateDrawable()
 {
-   SetActor(*new TestHLAObject(*this));
+   SetDrawable(*new TestHLAObject(*this));
 }
 
 

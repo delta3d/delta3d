@@ -27,7 +27,7 @@
  */
 
 #include <prefix/unittestprefix.h>
-#include "testcomponent.h"
+#include <dtGame/testcomponent.h>
 
 #include <testGameActorLibrary/testgameactorlibrary.h>
 #include <testGameActorLibrary/testgameenvironmentactor.h>
@@ -630,7 +630,7 @@ void GameActorTests::TestAddRemoveFromEnvActor()
 
       dtCore::RefPtr<TestGameEnvironmentActorProxy> eap = dynamic_cast<TestGameEnvironmentActorProxy*>(ap.get());
       CPPUNIT_ASSERT_MESSAGE("The dynamic cast should not have returned NULL", eap != NULL);
-      dtCore::RefPtr<TestGameEnvironmentActor> ea = dynamic_cast<TestGameEnvironmentActor*>(eap->GetActor());
+      dtCore::RefPtr<TestGameEnvironmentActor> ea = dynamic_cast<TestGameEnvironmentActor*>(eap->GetDrawable());
       CPPUNIT_ASSERT_MESSAGE("Should have been able to cast the environment proxy's actor to an environment actor", ea != NULL);
 
       // SET ENVIRONMENT ACTOR TESTS
@@ -656,20 +656,20 @@ void GameActorTests::TestAddRemoveFromEnvActor()
          ea->GetNumEnvironmentChildren() == 2);
 
       // Remove actor 2
-      ea->RemoveActor(*ap2->GetActor());
-      CPPUNIT_ASSERT_MESSAGE("The actor 2 should be removed from the scene", ! ea->ContainsActor(*ap2->GetActor()) );
+      ea->RemoveActor(*ap2->GetDrawable());
+      CPPUNIT_ASSERT_MESSAGE("The actor 2 should be removed from the scene", ! ea->ContainsActor(*ap2->GetDrawable()) );
       CPPUNIT_ASSERT_MESSAGE("The game manager should have 1 actor in its scene",
          ea->GetNumEnvironmentChildren() == 1);
 
       // Add actor 2 as child to actor 1
-      ap->GetActor()->AddChild(ap2->GetActor());
+      ap->GetDrawable()->AddChild(ap2->GetDrawable());
 
       // Delete actor 1 from GM
       mManager->DeleteActor(*ap);
       dtCore::System::GetInstance().Step();
 
       // Ensure environment contains actor 2.
-      CPPUNIT_ASSERT_MESSAGE("The environment actor should have actor 2 as a child", ea->ContainsActor(*ap2->GetActor()) );
+      CPPUNIT_ASSERT_MESSAGE("The environment actor should have actor 2 as a child", ea->ContainsActor(*ap2->GetDrawable()) );
 
       std::vector<dtCore::DeltaDrawable*> actors;
       std::vector<dtCore::DeltaDrawable*> drawables;
@@ -694,7 +694,7 @@ void GameActorTests::TestAddRemoveFromEnvActor()
       dtCore::System::GetInstance().Step();
 
       // Ensure environment has removed actor 2.
-      CPPUNIT_ASSERT_MESSAGE("The environment actor should have removed actor 2", ! ea->ContainsActor(*ap2->GetActor()) );
+      CPPUNIT_ASSERT_MESSAGE("The environment actor should have removed actor 2", ! ea->ContainsActor(*ap2->GetDrawable()) );
 
       // Ensure all actors are removed from the environment
       ea->GetAllActors(actors);
@@ -726,7 +726,7 @@ void GameActorTests::TestSetEnvironmentActor()
       //One cannot enable paging without a window.
       //mManager->GetScene().EnablePaging();
       //CPPUNIT_ASSERT(mManager->GetScene().IsPagingEnabled());
-      dtCore::RefPtr<TestComponent> tc = new TestComponent("name");
+      dtCore::RefPtr<dtGame::TestComponent> tc = new dtGame::TestComponent("name");
       CPPUNIT_ASSERT(tc.valid());
       mManager->AddComponent(*tc, dtGame::GameManager::ComponentPriority::NORMAL);
       dtCore::RefPtr<const dtCore::ActorType> type = mManager->FindActorType("ExampleActors", "TestEnvironmentActor");
@@ -736,7 +736,7 @@ void GameActorTests::TestSetEnvironmentActor()
 
       dtCore::RefPtr<TestGameEnvironmentActorProxy> eap = dynamic_cast<TestGameEnvironmentActorProxy*>(ap.get());
       CPPUNIT_ASSERT_MESSAGE("The dynamic cast should not have returned NULL", eap != NULL);
-      dtCore::RefPtr<TestGameEnvironmentActor> ea = dynamic_cast<TestGameEnvironmentActor*>(eap->GetActor());
+      dtCore::RefPtr<TestGameEnvironmentActor> ea = dynamic_cast<TestGameEnvironmentActor*>(eap->GetDrawable());
       CPPUNIT_ASSERT_MESSAGE("Should have been able to cast the environment proxy's actor to an environment actor", ea != NULL);
 
       std::vector<dtCore::DeltaDrawable*> actors;
@@ -824,7 +824,7 @@ void GameActorTests::TestSetEnvironmentActor()
       CPPUNIT_ASSERT(ap.valid());
       dtCore::RefPtr<dtGame::IEnvGameActorProxy> eap2 = dynamic_cast<dtGame::IEnvGameActorProxy*>(ap.get());
       CPPUNIT_ASSERT(eap2 != NULL);
-      dtCore::RefPtr<dtGame::IEnvGameActor>      ea2  = dynamic_cast<dtGame::IEnvGameActor*>(eap2->GetActor());
+      dtCore::RefPtr<dtGame::IEnvGameActor>      ea2  = dynamic_cast<dtGame::IEnvGameActor*>(eap2->GetDrawable());
       CPPUNIT_ASSERT(ea2 != NULL);
       mManager->SetEnvironmentActor(eap.get());
       //One cannot enable paging without a window.
@@ -914,7 +914,7 @@ void GameActorTests::TestStaticGameActorTypes()
    {
       dtCore::RefPtr<dtCore::BaseActorObject> proxy = mManager->CreateActor(*types[i]);
       CPPUNIT_ASSERT_MESSAGE("The proxy should not be NULL", proxy.valid());
-      CPPUNIT_ASSERT_MESSAGE("The proxy's actor should not be NULL", proxy->GetActor() != NULL);
+      CPPUNIT_ASSERT_MESSAGE("The proxy's actor should not be NULL", proxy->GetDrawable() != NULL);
    }
 }
 
@@ -922,7 +922,7 @@ void GameActorTests::TestEnvironmentTimeConversions()
 {
    dtCore::RefPtr<dtCore::BaseActorObject> proxy = mManager->CreateActor(*TestGameActorLibrary::TEST_ENVIRONMENT_GAME_ACTOR_PROXY_TYPE);
    CPPUNIT_ASSERT(proxy.valid());
-   dtCore::RefPtr<TestGameEnvironmentActor> envActor = dynamic_cast<TestGameEnvironmentActor*>(proxy->GetActor());
+   dtCore::RefPtr<TestGameEnvironmentActor> envActor = dynamic_cast<TestGameEnvironmentActor*>(proxy->GetDrawable());
    CPPUNIT_ASSERT(envActor.valid());
    std::string testTime = "2006-04-20T18:04:09";
    envActor->SetTimeAndDateString(testTime);

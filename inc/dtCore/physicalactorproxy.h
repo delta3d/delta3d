@@ -23,7 +23,6 @@
 
 #include <dtCore/export.h>
 #include <dtCore/transformableactorproxy.h>
-#include <dtCore/physical.h>
 
 namespace dtCore
 {

@@ -84,7 +84,7 @@ namespace dtActors
         /**
          * Creates a new trigger actor.
          */
-        virtual void CreateActor();
+        virtual void CreateDrawable();
 
         /**
          * Performs specific setup for the created ProximityTrigger instance.

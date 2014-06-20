@@ -120,6 +120,8 @@ Application::Application(const std::string& configFilename, dtCore::DeltaWin* wi
       //create instances using the default values
       CreateInstances(GetDefaultConfigData());
    }
+
+   dtUtil::Log::SetLogTimeProvider(this);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -226,8 +228,14 @@ void Application::EventTraversal(const double deltaSimTime)
 
    if(!mFirstFrame || !mCompositeViewer->done())
    {
-     mCompositeViewer->eventTraversal();
+      mCompositeViewer->eventTraversal();
    }
+
+   // The clock time is in GMT, so I have to change the DateTime to GMT, then assign the time,
+   // then switch it back to local.
+   mCurrentFrameTime.SetGMTOffset(0, false);
+   mCurrentFrameTime.SetTime(dtCore::System::GetInstance().GetRealClockTime() / 1000000);
+   mCurrentFrameTime.AdjustTimeZone(dtUtil::DateTime::GetLocalGMTOffset(true));
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -532,6 +540,24 @@ std::string dtABC::Application::GenerateDefaultConfigFile(const std::string& fil
 void dtABC::Application::SetNextStatisticsType()
 {
    mStats->SelectNextType();
+}
+
+///////////////////////////////////////////////////////////////////////////////
+const dtUtil::DateTime& dtABC::Application::GetDateTime()
+{
+	return mCurrentFrameTime;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+unsigned dtABC::Application::GetFrameNumber()
+{
+	return GetCompositeViewer()->getFrameStamp()->getFrameNumber();
+}
+
+///////////////////////////////////////////////////////////////////////////////
+osg::Referenced* dtABC::Application::AsReferenced()
+{
+	return this;
 }
 
 ///////////////////////////////////////////////////////////////////////////////

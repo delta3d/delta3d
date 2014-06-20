@@ -29,7 +29,7 @@
 
 #include <dtCore/refptr.h>
 
-#include <dtGame/gmcomponent.h>
+#include <dtGame/datacentricgmcomponent.h>
 
 #include <dtAnim/animationhelper.h>
 #include <dtUtil/threadpool.h>
@@ -45,74 +45,35 @@ namespace dtGame
 
 namespace dtAnim
 {
+class AnimationHelper;
 
-class DT_ANIM_EXPORT AnimationComponent: public dtGame::GMComponent
+class DT_ANIM_EXPORT AnimationComponent: public dtGame::DataCentricGMComponent<AnimationHelper>
 {
 public:
 
-   class AnimCompUpdateTask: public dtUtil::ThreadPoolTask
-   {
-   public:
-      AnimCompUpdateTask();
-      virtual void operator()();
-      float mUpdateDT;
-      std::vector<dtCore::RefPtr<dtAnim::AnimationHelper> > mAnimActorComps;
-   };
+   typedef dtGame::DataCentricGMComponent<AnimationHelper> BaseClass;
 
-   struct AnimCompData
-   {
-      dtCore::RefPtr<dtAnim::AnimationHelper> mAnimActorComp;
-   };
-
-   typedef dtGame::GMComponent BaseClass;
-   typedef std::map<dtCore::UniqueId, AnimCompData > AnimCompMap;
-   typedef AnimCompMap::allocator_type::value_type AnimCompMapping;
-   typedef AnimCompMap::iterator AnimCompIter;
-
-public:
    ///The default component name, used when looking it up on the GM.
    static const std::string DEFAULT_NAME;
 
    AnimationComponent(const std::string& name = DEFAULT_NAME);
 
    /**
-    * handles a processed a message
+    * Overridden to handle clearing the terrain actor is some cases.
     * @see dtGame::GMComponent#ProcessMessage
     * @param The message
     */
-   /*virtual*/ void ProcessMessage(const dtGame::Message &message);
+   /*virtual*/ void ProcessMessage(const dtGame::Message& message);
 
    /**
-    * Gets the helper registered for an actor
-    * @param proxy The proxy to get the helper for
-    * @return A pointer to the helper, or NULL if the proxy is not registered
+    * Overridden to handle callback functions
     */
-   const dtAnim::AnimationHelper* GetHelperForProxy(dtGame::GameActorProxy &proxy) const;
+   /*virtual*/ bool RegisterActor(dtGame::GameActorProxy& proxy, dtAnim::AnimationHelper& helper);
 
    /**
-    * Registers an actor with this component.  To simplify coding in the actor, specifically when it comes
-    * to setting properties on the helper, the actor should create it's own helper and pass it in when registering.
-    * @param toRegister the actor to register.
-    * @param helper the preconfigured helper object to use.
-    * @throws dtUtil::Exception if this actor is already registered with the component.
+    * Overridden to clear callback functions
     */
-   void RegisterActor(dtGame::GameActorProxy& toRegister, dtAnim::AnimationHelper& helper);
-
-   /**
-    * Registers an actor with this component.  To simplify coding in the actor, specifically when it comes
-    * to setting properties on the helper, the actor should create it's own helper and pass it in when registering.
-    * @param toRegister the actor to register.
-    * @param helper the preconfigured helper object to use.
-    */
-   void UnregisterActor(dtGame::GameActorProxy& toRegister);
-
-   /// alternate unregister that just tasks the actor id
-   void UnregisterActor(const dtCore::UniqueId& actorId);
-
-   /**
-    * @return true if the given actor is registered with this component.
-    */
-   bool IsRegisteredActor(dtGame::GameActorProxy& gameActorProxy);
+   /*virtual*/ bool UnregisterActor(const dtCore::UniqueId& actorId);
 
    ///@return the terrain actor using the given name.  If it has not yet been queried, the query will run when this is called.
    dtCore::Transformable* GetTerrainActor();
@@ -141,7 +102,7 @@ public:
 
    /**
     * Called from helpers when an animatable has reached a point when
-    * an event should be fire, if one is specified.
+    * an event should be fired, if one is specified.
     * This method is registered as a callback to Animation Helpers.
     * @param eventName The name of the event to be fired.
     */
@@ -153,16 +114,14 @@ protected:
    virtual void TickLocal(float dt);
    void BuildThreadWorkerTasks();
    // creates batches of isector queries
-   void GroundClamp();
+   void GroundClamp(BaseClass::ActorCompMapping&);
+   void ExecuteCommands(BaseClass::ActorCompMapping&);
 
 private:
    AnimationComponent(const AnimationComponent&);               //not implemented
    AnimationComponent& operator=(const AnimationComponent&);    //not implemented
 
-   AnimCompMap mRegisteredActors;
-
    dtCore::RefPtr<dtGame::BaseGroundClamper> mGroundClamper;
-   std::vector<dtCore::RefPtr<AnimCompUpdateTask> > mThreadTasks;
 
    // A field used exclusively for the event sending code.
    // This tracks the current actor that whose helper's commands

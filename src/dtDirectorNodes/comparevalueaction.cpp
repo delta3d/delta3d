@@ -148,8 +148,8 @@ namespace dtDirector
    ////////////////////////////////////////////////////////////////////////////////
    void CompareValueAction::CompareAsStrings()
    {
-      std::string valueA = GetString("A");
-      std::string valueB = GetString("B");
+      const std::string& valueA = GetString("A");
+      const std::string& valueB = GetString("B");
 
       OutputLink* link = NULL;
       OutputLink* inequalityLink = NULL;
@@ -169,12 +169,12 @@ namespace dtDirector
          inequalityLink = GetOutputLink("A != B");
       }
 
-      if (link)
+      if (link != NULL)
       {
          link->Activate();
       }
 
-      if (inequalityLink)
+      if (inequalityLink != NULL)
       {
          inequalityLink->Activate();
       }

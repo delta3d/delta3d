@@ -248,10 +248,10 @@ VolumeEditActorProxy::~VolumeEditActorProxy()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void VolumeEditActorProxy::CreateActor()
+void VolumeEditActorProxy::CreateDrawable()
 {
    //defaults to box, but the properties should allow a switch to other shapes
-   SetActor(*new dtActors::VolumeEditActor());
+   SetDrawable(*new dtActors::VolumeEditActor());
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -264,7 +264,7 @@ void VolumeEditActorProxy::BuildPropertyMap()
    TransformableActorProxy::BuildPropertyMap();
 
    // Make sure our actor is valid
-   VolumeEditActor *actor = dynamic_cast<VolumeEditActor*> (GetActor());
+   VolumeEditActor *actor = dynamic_cast<VolumeEditActor*> (GetDrawable());
    if(!actor)
    {
       LOG_ERROR("VolumeEditActor was initialized incorrectly");
@@ -287,13 +287,13 @@ void VolumeEditActorProxy::BuildPropertyMap()
 ////////////////////////////////////////////////////////////////////////////////
 VolumeEditActor::VolumeShapeType& VolumeEditActorProxy::GetShape()
 {
-   return dynamic_cast<VolumeEditActor*>(GetActor())->GetShape();
+   return dynamic_cast<VolumeEditActor*>(GetDrawable())->GetShape();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 void VolumeEditActorProxy::SetShape(VolumeEditActor::VolumeShapeType& shape)
 {
-   dynamic_cast<VolumeEditActor*>(GetActor())->SetShape(shape);
+   dynamic_cast<VolumeEditActor*>(GetDrawable())->SetShape(shape);
 }
 
 } //end namespace dtActors

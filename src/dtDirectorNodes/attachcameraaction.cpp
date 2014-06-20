@@ -91,7 +91,7 @@ namespace dtDirector
       if (proxy && app)
       {
          dtCore::Camera* camera = app->GetCamera();
-         dtCore::DeltaDrawable* actor = proxy->GetActor();
+         dtCore::DeltaDrawable* actor = proxy->GetDrawable();
          if (camera && actor)
          {
             camera->SetTransform(dtCore::Transform(), dtCore::Transformable::REL_CS);

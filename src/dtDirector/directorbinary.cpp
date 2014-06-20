@@ -84,7 +84,7 @@ namespace dtDirector
             "Caught Exception \"%s\" while attempting to load Director script \"%s\".",
             ex.What().c_str(), filePath.c_str());
          fclose(file);
-         throw ex;
+         throw;
       }
       catch (...)
       {
@@ -119,7 +119,7 @@ namespace dtDirector
             "Caught Exception \"%s\" while attempting to load Director script \"%s\".",
             ex.What().c_str(), filePath.c_str());
          fclose(file);
-         throw ex;
+         throw;
       }
       catch (...)
       {
@@ -872,7 +872,7 @@ namespace dtDirector
 
          fclose(file);
 
-         throw ex;
+         throw;
       }
       catch (...)
       {

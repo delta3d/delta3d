@@ -161,7 +161,7 @@ namespace dtActors
          /**
           * Create the underlying game event task actor to be managed by this proxy.
           */
-         virtual void CreateActor();
+         virtual void CreateDrawable();
 
          /**
           * Called just after the proxy has entered the world or added to the game manager.

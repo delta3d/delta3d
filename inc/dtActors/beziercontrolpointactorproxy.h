@@ -80,7 +80,7 @@ namespace dtActors
          }
 
          /// Creates the actor this proxy abstracts
-         void CreateActor();
+         void CreateDrawable();
 
 
          static int mNumControlPoints;

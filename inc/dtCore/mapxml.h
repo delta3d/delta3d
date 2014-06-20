@@ -166,7 +166,7 @@ namespace dtCore
       //disable copy constructor
       MapWriter(const MapWriter& toCopy): BaseXMLWriter(toCopy) {}
       //disable operator =
-      MapWriter& operator=(const MapWriter& assignTo) { return *this;}
+      MapWriter& operator=(const MapWriter&) { return *this;}
 
       void WriteHierarchyBranch(dtCore::ActorHierarchyNode* hierNode);
 

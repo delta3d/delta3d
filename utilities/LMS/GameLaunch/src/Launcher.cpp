@@ -94,12 +94,10 @@ void Launcher::Launch()
    //set Delta3D data path
    dtUtil::SetDataFilePathList(mParser->GetDataDirectory());
 
-   //launch game application library
-   dtCore::RefPtr<dtGame::GameApplication> app = new dtGame::GameApplication(mArgc, mArgv);
-
-   app->SetGameLibraryName(mParser->GetApplicationLibraryFile());
-   app->Config();
-   app->Run();
+   dtGame::GameApplicationLoader loader(mArgc, mArgv);
+   loader.SetGameLibraryName(mParser->GetApplicationLibraryFile());
+   loader.Config();
+   loader.Run();
 }
 
 Launcher::~Launcher()

@@ -167,7 +167,7 @@ namespace dtAnim
       * Called by the game manager during creation of the proxy.  This method
       * creates the real actor and returns it.
       */
-      virtual void CreateActor();
+      virtual void CreateDrawable();
 
    private:
    };

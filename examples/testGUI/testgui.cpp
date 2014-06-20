@@ -109,7 +109,7 @@ public:
       }
 
       ///lets hide the stock cursor and just use CEGUI's rendered cursor
-      GetWindow()->ShowCursor(false);
+      GetWindow()->SetShowCursor(false);
 
       mGUI = new dtGUI::GUI(GetCamera(), GetKeyboard(), GetMouse());
 

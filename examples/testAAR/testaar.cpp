@@ -82,7 +82,7 @@ TestAAR::~TestAAR()
 }
 
 //////////////////////////////////////////////////////////////////////////
-void TestAAR::Initialize(dtGame::GameApplication& app, int argc, char** argv)
+void TestAAR::Initialize(dtABC::BaseABC& app, int argc, char** argv)
 {
    ParseCommandLineOptions(argc, argv);
    srand((unsigned int)(time(0)));
@@ -97,7 +97,7 @@ void TestAAR::Initialize(dtGame::GameApplication& app, int argc, char** argv)
 
 
 //////////////////////////////////////////////////////////////////////////
-void TestAAR::OnStartup(dtGame::GameApplication& app)
+void TestAAR::OnStartup(dtABC::BaseABC& app, dtGame::GameManager& gameManager)
 {
    std::string dataPath = dtUtil::GetDeltaDataPathList();
    dtUtil::SetDataFilePathList(dtUtil::GetDeltaRootPath() + "/examples/data/;" +
@@ -114,8 +114,6 @@ void TestAAR::OnStartup(dtGame::GameApplication& app)
    {
       LOG_ERROR("Can't find the project context: " + e.What());
    }
-
-   dtGame::GameManager& gameManager = *app.GetGameManager();
 
    // Add Component - Input Component
    dtCore::RefPtr<dtGame::LogController> logCtrl = new dtGame::LogController("LogController");

@@ -368,10 +368,10 @@ void KillableTargetActorProxy::BuildPropertyMap()
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-void KillableTargetActorProxy::CreateActor()
+void KillableTargetActorProxy::CreateDrawable()
 {
    KillableTargetActor* actor = new KillableTargetActor(*this);
-   SetActor(*actor);
+   SetDrawable(*actor);
 }
 
 ///////////////////////////////////////////////////////////////////////////////

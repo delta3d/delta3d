@@ -31,9 +31,9 @@
 namespace dtActors
 {
    ///////////////////////////////////////////////////////////////////////////////
-   void DeltaObjectActorProxy::CreateActor()
+   void DeltaObjectActorProxy::CreateDrawable()
    {
-     SetActor(*new dtCore::Object);
+     SetDrawable(*new dtCore::Object);
      //std::cout << "Creating actor proxy." << std::endl;
    }
 

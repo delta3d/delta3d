@@ -42,7 +42,7 @@ namespace dtUtil
       return toTrim;
    }
 
-  /////////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    int StrCompare(const std::string& one, const std::string& two, bool caseSensitive)
    {
       int result = 0;
@@ -57,6 +57,23 @@ namespace dtUtil
       return result;
    }
 
+   /////////////////////////////////////////////////////////////////////////////
+   void ToLowerCase(std::string& str)
+   {
+      for (unsigned i = 0 ; i < str.size(); ++i)
+      {
+         str[i] = tolower(str[i]);
+      }
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void ToUpperCase(std::string& str)
+   {
+      for (unsigned i = 0 ; i < str.size(); ++i)
+      {
+         str[i] = toupper(str[i]);
+      }
+   }
 
    /////////////////////////////////////////////////////////////////////////////
    static bool Scan(const char*& wildCards, const char*& str)

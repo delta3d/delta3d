@@ -33,7 +33,7 @@ namespace dtActors
   int BezierControlPointActorProxy::mNumControlPoints = 0;
 
 
-   void BezierControlPointActorProxy::CreateActor()
+   void BezierControlPointActorProxy::CreateDrawable()
    {
       SetDrawable(*new dtABC::BezierControlPoint);
 
@@ -45,42 +45,13 @@ namespace dtActors
    void BezierControlPointActorProxy::SetBezierNode(dtCore::BaseActorObject* node)
    {
 
-      //BaseActorObject* old = GetLinkedActor("Bezier Node");
-      //set the linked actor proxy for safe-keeping
-      SetLinkedActor("Bezier Node", node);
-
-      //if (old != NULL)
-      //{
-      //   if (old == node)
-      //   {
-      //      //only return if the node is not NULL because if it is NULL
-      //      //we want to make sure the actor is NULL too.
-      //      return;
-      //   }
-      //   else
-      //   {
-      //      //clear out old the proxy's control point to make sure we don't recurse
-      //      old->SetLinkedActor("Control Point", NULL);
-      //      //set the value to NULL to clear out the internal data.
-      //      static_cast<dtCore::ActorActorProperty*>(old->GetProperty("Control Point"))->SetValue(NULL);
-      //   }
-      //}
-
-      ////old and node are both non-NULL but are different.
-      //if (node != NULL)
-      //{
-      //   static_cast<dtCore::ActorActorProperty*>(node->GetProperty("Control Point"))->SetValue(this);
-
-      //}
-
-      //Get our actual actor te set
-      dtABC::BezierControlPoint *bcp = static_cast<dtABC::BezierControlPoint*> (GetActor());
+      dtABC::BezierControlPoint *bcp = static_cast<dtABC::BezierControlPoint*> (GetDrawable());
 
       dtABC::BezierNode* bn = NULL;
 
       if (node != NULL)
       {
-         bn = static_cast<dtABC::BezierNode*> (node->GetActor());
+         bn = static_cast<dtABC::BezierNode*> (node->GetDrawable());
       }
 
       //set the actual node on the control point.
@@ -90,14 +61,14 @@ namespace dtActors
 
    dtCore::DeltaDrawable* BezierControlPointActorProxy::GetBezierNode()
    {
-      dtABC::BezierControlPoint* bcp = static_cast<dtABC::BezierControlPoint*>( GetActor() );
+      dtABC::BezierControlPoint* bcp = static_cast<dtABC::BezierControlPoint*>( GetDrawable() );
 
       return bcp->GetParent();
    }
 
    void BezierControlPointActorProxy::BuildPropertyMap()
    {
-      //dtABC::BezierControlPoint *bcp = static_cast<dtABC::BezierControlPoint*> (GetActor());
+      //dtABC::BezierControlPoint *bcp = static_cast<dtABC::BezierControlPoint*> (GetDrawable());
 
       dtCore::TransformableActorProxy::BuildPropertyMap();
 
@@ -126,9 +97,9 @@ namespace dtActors
    }
 
 
-   void BezierControlPointActorProxy::OnScale(const osg::Vec3 &oldValue, const osg::Vec3 &newValue)
+   void BezierControlPointActorProxy::OnScale(const osg::Vec3& oldValue, const osg::Vec3& newValue)
    {
-      dtABC::BezierControlPoint *bcp = static_cast<dtABC::BezierControlPoint*> (GetActor());
+      dtABC::BezierControlPoint *bcp = static_cast<dtABC::BezierControlPoint*> (GetDrawable());
 
       if (bcp->GetParent() != NULL)
       {
@@ -136,9 +107,9 @@ namespace dtActors
       }
    }
 
-   void BezierControlPointActorProxy::OnRotation(const osg::Vec3 &oldValue, const osg::Vec3 &newValue)
+   void BezierControlPointActorProxy::OnRotation(const osg::Vec3& oldValue, const osg::Vec3& newValue)
    {
-      dtABC::BezierControlPoint *bcp = static_cast<dtABC::BezierControlPoint*> (GetActor());
+      dtABC::BezierControlPoint *bcp = static_cast<dtABC::BezierControlPoint*> (GetDrawable());
 
       if (bcp->GetParent() != NULL)
       {
@@ -146,9 +117,9 @@ namespace dtActors
       }
    }
 
-   void BezierControlPointActorProxy::OnTranslation(const osg::Vec3 &oldValue, const osg::Vec3 &newValue)
+   void BezierControlPointActorProxy::OnTranslation(const osg::Vec3& oldValue, const osg::Vec3& newValue)
    {
-      dtABC::BezierControlPoint *bcp = static_cast<dtABC::BezierControlPoint*> (GetActor());
+      dtABC::BezierControlPoint *bcp = static_cast<dtABC::BezierControlPoint*> (GetDrawable());
 
       if (bcp->GetParent() != NULL)
       {

@@ -139,7 +139,7 @@ void HUDComponent::ProcessMessage(const dtGame::Message& msg)
       if (!msg.GetAboutActorId().ToString().empty())
       {
          dtGame::GameActorProxy* proxy = GetGameManager()->FindGameActorById(msg.GetAboutActorId());
-         if (dynamic_cast<FireActor*>(proxy->GetActor()) == NULL)
+         if (dynamic_cast<FireActor*>(proxy->GetDrawable()) == NULL)
          {
             ShowGameItemImage();
          }
@@ -156,23 +156,23 @@ void HUDComponent::ProcessMessage(const dtGame::Message& msg)
    else if (msg.GetMessageType() == FireFighterMessageType::ITEM_ACQUIRED)
    {
       dtGame::GameActorProxy* proxy = GetGameManager()->FindGameActorById(msg.GetAboutActorId());
-      AddItemToHUD(dynamic_cast<GameItemActor*>(proxy->GetActor()));
+      AddItemToHUD(dynamic_cast<GameItemActor*>(proxy->GetDrawable()));
    }
    else if (msg.GetMessageType() == FireFighterMessageType::ITEM_SELECTED)
    {
       dtGame::GameActorProxy* proxy = GetGameManager()->FindGameActorById(msg.GetAboutActorId());
-      SetSelectedItem(dynamic_cast<GameItemActor*>(proxy->GetActor()));
+      SetSelectedItem(dynamic_cast<GameItemActor*>(proxy->GetDrawable()));
    }
    else if (msg.GetMessageType() == FireFighterMessageType::ITEM_ACTIVATED)
    {
       dtGame::GameActorProxy* proxy = GetGameManager()->FindGameActorById(msg.GetAboutActorId());
-      SetActivatedItem(dynamic_cast<GameItemActor*>(proxy->GetActor()));
+      SetActivatedItem(dynamic_cast<GameItemActor*>(proxy->GetDrawable()));
       UpdateHUDBackground();
    }
    else if (msg.GetMessageType() == FireFighterMessageType::ITEM_DEACTIVATED)
    {
       dtGame::GameActorProxy* proxy = GetGameManager()->FindGameActorById(msg.GetAboutActorId());
-      SetDeactivatedItem(dynamic_cast<GameItemActor*>(proxy->GetActor()));
+      SetDeactivatedItem(dynamic_cast<GameItemActor*>(proxy->GetDrawable()));
       UpdateHUDBackground();
    }
    else if (msg.GetMessageType() == dtGame::MessageType::TICK_LOCAL)
@@ -596,7 +596,7 @@ void HUDComponent::Refresh()
 
 void HUDComponent::ShowMouse(bool enable)
 {
-   GetGameManager()->GetApplication().GetWindow()->ShowCursor(enable);
+   GetGameManager()->GetApplication().GetWindow()->SetShowCursor(enable);
 }
 
 void HUDComponent::AddItemToHUD(GameItemActor* item)
@@ -755,7 +755,7 @@ unsigned int HUDComponent::RecursivelyAddTasks(const std::string& indent,
    if (curIndex < mTaskTextList.size())
    {
       // update the text for this task
-      const dtActors::TaskActor* task = static_cast<const dtActors::TaskActor*>(taskProxy->GetActor());
+      const dtActors::TaskActor* task = static_cast<const dtActors::TaskActor*>(taskProxy->GetDrawable());
       if (task->IsComplete())
       {
          numCompleted++;

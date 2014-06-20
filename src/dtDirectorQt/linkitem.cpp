@@ -1628,7 +1628,7 @@ namespace dtDirector
                if (otherLink && otherLink != this)
                {
                   ValueLink* output = otherLink->mNodeItem->GetValues()[otherLink->mLinkIndex].link;
-                  Node* otherNode = otherLink->mNodeItem->GetNode();
+                  //Node* otherNode = otherLink->mNodeItem->GetNode();
 
                   std::string undoDescription = "Connection of value link between ";
                   if (mNodeItem->GetNode())
@@ -1812,7 +1812,7 @@ namespace dtDirector
 
       QPointF mousePos = mouseEvent->scenePos();
 
-      ValueLink* link = mNodeItem->GetValues()[mLinkIndex].link;
+      //ValueLink* link = mNodeItem->GetValues()[mLinkIndex].link;
 
       // Find a position that is between both links.
       QPointF offset = mScene->GetTranslationItem()->scenePos();

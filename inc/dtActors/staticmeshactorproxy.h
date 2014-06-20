@@ -117,7 +117,7 @@ namespace dtActors
         /**
          * Creates a dtCore::Object and assigns a default name to it.
          */
-        virtual void CreateActor();
+        virtual void CreateDrawable();
 
         /**
          * Destructor

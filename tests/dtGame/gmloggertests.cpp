@@ -56,7 +56,7 @@
 #include <dtCore/librarymanager.h>
 #include <dtCore/actorproxy.h>
 
-#include "testcomponent.h"
+#include <dtGame/testcomponent.h>
 
 #include <dtABC/application.h>
 extern dtABC::Application& GetGlobalApplication();
@@ -957,7 +957,7 @@ void GMLoggerTests::TestPlaybackRecordCycle()
       mGameManager->AddComponent(*serverController, dtGame::GameManager::ComponentPriority::NORMAL);
       mGameManager->AddComponent(*logController, dtGame::GameManager::ComponentPriority::NORMAL);
       mGameManager->AddComponent(*(new dtGame::DefaultMessageProcessor()), dtGame::GameManager::ComponentPriority::HIGHEST);
-      dtCore::RefPtr<TestComponent> tc = new TestComponent();
+      dtCore::RefPtr<dtGame::TestComponent> tc = new dtGame::TestComponent();
       dtCore::RefPtr<TestControllerSignal> testSignal = new TestControllerSignal();
       mGameManager->AddComponent(*tc, dtGame::GameManager::ComponentPriority::NORMAL);
       testSignal->RegisterSignals(*logController);
@@ -1964,7 +1964,7 @@ void GMLoggerTests::TestLoggerActorIDLists()
    dtCore::RefPtr<dtGame::BinaryLogStream> stream = new dtGame::BinaryLogStream(msgFactory);
    dtCore::RefPtr<dtGame::LogController> logController = new dtGame::LogController();
    dtCore::RefPtr<TestServerLoggerComponent> serverLoggerComp = new TestServerLoggerComponent(*stream);
-   dtCore::RefPtr<TestComponent> tc = new TestComponent();
+   dtCore::RefPtr<dtGame::TestComponent> tc = new dtGame::TestComponent();
    dtCore::RefPtr<TestControllerSignal> msgSignal = new TestControllerSignal();
 
    mGameManager->AddComponent(*tc, dtGame::GameManager::ComponentPriority::HIGHEST);
@@ -2246,7 +2246,7 @@ void GMLoggerTests::TestLogControllerComponent()
 {
    try
    {
-      dtCore::RefPtr<TestComponent> tc = new TestComponent();
+      dtCore::RefPtr<dtGame::TestComponent> tc = new dtGame::TestComponent();
       dtCore::RefPtr<dtGame::LogController> logController = new dtGame::LogController();
       mGameManager->AddComponent(*tc, dtGame::GameManager::ComponentPriority::NORMAL);
       mGameManager->AddComponent(*logController, dtGame::GameManager::ComponentPriority::NORMAL);
@@ -2450,7 +2450,7 @@ void GMLoggerTests::TestServerLogger()
       dtCore::RefPtr<dtGame::ServerLoggerComponent> serverController =
          new dtGame::ServerLoggerComponent(*testStream.get());
       dtCore::RefPtr<dtGame::LogController> logController = new dtGame::LogController();
-      dtCore::RefPtr<TestComponent> tc = new TestComponent();
+      dtCore::RefPtr<dtGame::TestComponent> tc = new dtGame::TestComponent();
       dtCore::RefPtr<TestControllerSignal> testSignal = new TestControllerSignal();
       mGameManager->AddComponent(*logController, dtGame::GameManager::ComponentPriority::NORMAL);
       mGameManager->AddComponent(*serverController, dtGame::GameManager::ComponentPriority::NORMAL);
@@ -2635,7 +2635,7 @@ void GMLoggerTests::TestServerLogger2()
       dtCore::RefPtr<dtGame::ServerLoggerComponent> serverController =
          new dtGame::ServerLoggerComponent(*testStream.get());
       dtCore::RefPtr<dtGame::LogController> logController = new dtGame::LogController();
-      dtCore::RefPtr<TestComponent> tc = new TestComponent();
+      dtCore::RefPtr<dtGame::TestComponent> tc = new dtGame::TestComponent();
       dtCore::RefPtr<TestControllerSignal> testSignal = new TestControllerSignal();
       mGameManager->AddComponent(*logController, dtGame::GameManager::ComponentPriority::NORMAL);
       mGameManager->AddComponent(*serverController, dtGame::GameManager::ComponentPriority::NORMAL);

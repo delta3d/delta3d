@@ -247,7 +247,7 @@ void DirectorCinematicEditorPlugin::ResetUI()
       mActorData[mSelectedActor].mActor->GetActor(actor);
       if (actor)
       {
-         dtAnim::AnimationHelper* helper = actor->GetHelper();
+         dtAnim::AnimationHelper* helper = actor->GetComponent<dtAnim::AnimationHelper>();
          if (helper)
          {
             dtAnim::SequenceMixer& mixer = helper->GetSequenceMixer();
@@ -354,9 +354,9 @@ void DirectorCinematicEditorPlugin::Close()
       dtAnim::AnimationGameActor* animActor = dynamic_cast<dtAnim::AnimationGameActor*>(actor);
       if (animActor)
       {
-         dtAnim::SequenceMixer& mixer = animActor->GetHelper()->GetSequenceMixer();
+         dtAnim::SequenceMixer& mixer = animActor->GetComponent<dtAnim::AnimationHelper>()->GetSequenceMixer();
          mixer.ClearActiveAnimations(0.0f);
-         animActor->GetHelper()->Update(0.0f);
+         animActor->GetComponent<dtAnim::AnimationHelper>()->Update(0.0f);
          refresh = true;
       }
    }
@@ -392,7 +392,7 @@ void DirectorCinematicEditorPlugin::OnUpdate()
    //   animActor = dynamic_cast<dtAnim::AnimationGameActor*>(mActorData[index].mActor->GetActor());
    //   if (animActor)
    //   {
-   //      animActor->GetHelper()->Update(0.0f);
+   //      animActor->GetComponent<dtAnim::AnimationHelper>()->Update(0.0f);
    //   }
    //}
 }
@@ -536,9 +536,9 @@ void DirectorCinematicEditorPlugin::OnRemoveActor()
    dtAnim::AnimationGameActor* animActor = dynamic_cast<dtAnim::AnimationGameActor*>(actor);
    if (animActor)
    {
-      dtAnim::SequenceMixer& mixer = animActor->GetHelper()->GetSequenceMixer();
+      dtAnim::SequenceMixer& mixer = animActor->GetComponent<dtAnim::AnimationHelper>()->GetSequenceMixer();
       mixer.ClearActiveAnimations(0.0f);
-      animActor->GetHelper()->Update(0.0f);
+      animActor->GetComponent<dtAnim::AnimationHelper>()->Update(0.0f);
       ViewportManager::GetInstance().refreshAllViewports();
    }
 
@@ -1094,7 +1094,7 @@ void DirectorCinematicEditorPlugin::OnAnimationComboChanged(int index)
       }
    }
 
-   dtAnim::SequenceMixer& mixer = animActor->GetHelper()->GetSequenceMixer();
+   dtAnim::SequenceMixer& mixer = animActor->GetComponent<dtAnim::AnimationHelper>()->GetSequenceMixer();
    const dtAnim::AnimationChannel* anim = dynamic_cast<const dtAnim::AnimationChannel*>(mixer.GetRegisteredAnimation(animName));
    if (anim)
    {
@@ -1119,9 +1119,9 @@ void DirectorCinematicEditorPlugin::OnAnimationComboChanged(int index)
 #ifdef MANUAL_ANIMATIONS
          if (data->mAnimation > -1)
          {
-            CalMixer* calMixer = animActor->GetHelper()->GetModelWrapper()->GetCalModel()->getMixer();
+            CalMixer* calMixer = animActor->GetComponent<dtAnim::AnimationHelper>()->GetModelWrapper()->GetCalModel()->getMixer();
             calMixer->removeManualAnimation(data->mAnimation);
-            animActor->GetHelper()->Update(0.0f);
+            animActor->GetComponent<dtAnim::AnimationHelper>()->Update(0.0f);
             data->mAnimation = -1;
 
             LerpActors(mUI.mTimeSlider->value());
@@ -1678,10 +1678,10 @@ void DirectorCinematicEditorPlugin::OnLoad()
                }
 
                dtAnim::AnimationGameActor* animActor = NULL;
-               animActor = dynamic_cast<dtAnim::AnimationGameActor*>(actorData.mActor->GetActor());
+               animActor = dynamic_cast<dtAnim::AnimationGameActor*>(actorData.mActor->GetDrawable());
                if (animActor)
                {
-                  dtAnim::SequenceMixer& mixer = animActor->GetHelper()->GetSequenceMixer();
+                  dtAnim::SequenceMixer& mixer = animActor->GetComponent<dtAnim::AnimationHelper>()->GetSequenceMixer();
 
                   dtDirector::AnimateActorAction* animNode =
                      dynamic_cast<dtDirector::AnimateActorAction*>(node);
@@ -2371,7 +2371,7 @@ AnimationEvent* DirectorCinematicEditorPlugin::InsertAnimation(int time, const s
       }
    }
 
-   dtAnim::SequenceMixer& mixer = animActor->GetHelper()->GetSequenceMixer();
+   dtAnim::SequenceMixer& mixer = animActor->GetComponent<dtAnim::AnimationHelper>()->GetSequenceMixer();
    const dtAnim::AnimationChannel* anim = dynamic_cast<const dtAnim::AnimationChannel*>(mixer.GetRegisteredAnimation(animName));
    if (anim)
    {
@@ -2552,8 +2552,8 @@ void DirectorCinematicEditorPlugin::LerpActors(int time)
          animActor = dynamic_cast<dtAnim::AnimationGameActor*>(actor);
          if (animActor)
          {
-            CalMixer* calMixer = animActor->GetHelper()->GetModelWrapper()->GetCalModel()->getMixer();
-            dtAnim::SequenceMixer& mixer = animActor->GetHelper()->GetSequenceMixer();
+            CalMixer* calMixer = animActor->GetComponent<dtAnim::AnimationHelper>()->GetModelWrapper()->GetCalModel()->getMixer();
+            dtAnim::SequenceMixer& mixer = animActor->GetComponent<dtAnim::AnimationHelper>()->GetSequenceMixer();
 
             int count = (int)actorData.mAnimationData.size();
             for (int index = 0; index < count; ++index)
@@ -2615,7 +2615,7 @@ void DirectorCinematicEditorPlugin::LerpActors(int time)
                      calMixer->setManualAnimationWeight(calAnim, weight);
                   }
 
-                  animActor->GetHelper()->Update(0.0f);
+                  animActor->GetComponent<dtAnim::AnimationHelper>()->Update(0.0f);
                }
                else
                {
@@ -2623,7 +2623,7 @@ void DirectorCinematicEditorPlugin::LerpActors(int time)
                   if (data.mAnimation > -1)
                   {
                      calMixer->removeManualAnimation(data.mAnimation);
-                     animActor->GetHelper()->Update(0.0f);
+                     animActor->GetComponent<dtAnim::AnimationHelper>()->Update(0.0f);
                      data.mAnimation = -1;
                   }
                }
@@ -2637,14 +2637,14 @@ void DirectorCinematicEditorPlugin::LerpActors(int time)
          if (animActor)
          {
             // Morph Target stuff.
-            //Cal3DModelWrapper* wrapper = animActor->GetHelper()->GetModelWrapper();
+            //Cal3DModelWrapper* wrapper = animActor->GetComponent<dtAnim::AnimationHelper>()->GetModelWrapper();
             //CalMesh* mesh = wrapper->GetCalModel()->getMesh(0);
             //CalSubmesh *subMesh = mesh->getSubmesh(0);
             //if (subMesh)
             //{
             //   subMesh->setMorphTargetWeight(0, 1);
             //}
-            dtAnim::SequenceMixer& mixer = animActor->GetHelper()->GetSequenceMixer();
+            dtAnim::SequenceMixer& mixer = animActor->GetComponent<dtAnim::AnimationHelper>()->GetSequenceMixer();
             mixer.ClearActiveAnimations(0.0f);
             mixer.Update(0.0f);
             int elapsedTime = 0;
@@ -2671,7 +2671,7 @@ void DirectorCinematicEditorPlugin::LerpActors(int time)
                      float increment = (startTime - elapsedTime) * 0.001f;
                      elapsedTime = startTime;
 
-                     animActor->GetHelper()->Update(increment);
+                     animActor->GetComponent<dtAnim::AnimationHelper>()->Update(increment);
                   }
 
                   // Update the animation weight.
@@ -2695,7 +2695,7 @@ void DirectorCinematicEditorPlugin::LerpActors(int time)
                   if (anim)
                   {
                      dtCore::RefPtr<dtAnim::AnimationChannel> newAnim = NULL;
-                     newAnim = dynamic_cast<dtAnim::AnimationChannel*>(anim->Clone(animActor->GetHelper()->GetModelWrapper()).get());
+                     newAnim = dynamic_cast<dtAnim::AnimationChannel*>(anim->Clone(animActor->GetComponent<dtAnim::AnimationHelper>()->GetModelWrapper()).get());
                      newAnim->SetLooping(false);
                      newAnim->SetAction(true);
                      newAnim->SetBaseWeight(weight);
@@ -2711,7 +2711,7 @@ void DirectorCinematicEditorPlugin::LerpActors(int time)
                float increment = (time - elapsedTime) * 0.001f;
                elapsedTime = time;
 
-               animActor->GetHelper()->Update(increment);
+               animActor->GetComponent<dtAnim::AnimationHelper>()->Update(increment);
             }
          }
       }

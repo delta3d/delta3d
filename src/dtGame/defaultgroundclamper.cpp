@@ -415,7 +415,7 @@ namespace dtGame
 
          position.z() += runtimeData.GetLastClampedOffset();
          xform.SetTranslation(position);
-         static_cast<dtCore::Transformable*>(proxy.GetActor())->SetTransform(xform, dtCore::Transformable::REL_CS);
+         static_cast<dtCore::Transformable*>(proxy.GetDrawable())->SetTransform(xform, dtCore::Transformable::REL_CS);
       }
 
    }

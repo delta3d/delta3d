@@ -162,8 +162,13 @@ endfunction(DELTA3D_FIND_LIBRARY module library)
 
 MACRO (SETUP_PLUGIN_OUTPUT_DIRS SUBFOLDER)
     #put the binary into a "STAGE plugins" folder
-    SET(OUTPUT_BINDIR ${PROJECT_BINARY_DIR}/bin/${SUBFOLDER})
-    SET(OUTPUT_LIBDIR ${PROJECT_BINARY_DIR}/lib)
+    if (WIN32)
+       # This design only makes sense on windows because there is no bin dir for libraries.
+       SET(OUTPUT_BINDIR ${PROJECT_BINARY_DIR}/bin/${SUBFOLDER})
+       SET(OUTPUT_LIBDIR ${PROJECT_BINARY_DIR}/lib)
+    else()
+       SET(OUTPUT_LIBDIR ${PROJECT_BINARY_DIR}/lib/${SUBFOLDER})
+    endif()
     
     SET (CMAKE_ARCHIVE_OUTPUT_DIRECTORY  ${OUTPUT_LIBDIR})
     SET (CMAKE_RUNTIME_OUTPUT_DIRECTORY  ${OUTPUT_BINDIR})

@@ -80,7 +80,7 @@ namespace dtAI
       const AIPluginInterface* GetAIInterface() const;
 
    protected:
-     /*virtual*/ void CreateActor();
+     /*virtual*/ void CreateDrawable();
 
      /**
       * This is called from CreateActor

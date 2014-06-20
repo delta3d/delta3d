@@ -56,7 +56,7 @@ class FIRE_FIGHTER_EXPORT FuelValveActorProxy : public GameItemActorProxy
       virtual void BuildInvokables();
 
       /// Creates the actor
-      virtual void CreateActor() { SetActor(*new FuelValveActor(*this)); }
+      virtual void CreateDrawable() { SetDrawable(*new FuelValveActor(*this)); }
 
    protected:
 

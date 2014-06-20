@@ -28,9 +28,8 @@
 #include <gnelib/ConnectionListener.h>
 #include <gnelib/SmartPtr.h>
 
-#ifdef _MSC_VER
-   #pragma warning( disable:4276 )  
-#endif
+#include <dtUtil/warningdisable.h>
+DT_DISABLE_WARNING_START_MSVC(4276)
 
 namespace dtNet
 {
@@ -81,6 +80,7 @@ namespace dtNet
    };
 }
 
+DT_DISABLE_WARNING_END
 
 #endif //CONNECTIONSERVER_INCLUDE
 

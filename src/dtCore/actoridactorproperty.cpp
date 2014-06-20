@@ -39,7 +39,6 @@ namespace dtCore
       const dtUtil::RefString& desc,
       const dtUtil::RefString& groupName)
       : ActorProperty(DataType::ACTOR, name, label, desc, groupName)
-      , mProxy(&actorProxy)
       , SetIdFunctor(Set)
       , GetIdFunctor(Get)
       , mDesiredActorClass(desiredActorClass)
@@ -57,7 +56,6 @@ namespace dtCore
       const dtUtil::RefString& desc,
       const dtUtil::RefString& groupName)
       : ActorProperty(DataType::ACTOR, name, label, desc, groupName)
-      , mProxy(NULL)
       , SetIdFunctor(Set)
       , GetIdFunctor(Get)
       , mDesiredActorClass(desiredActorClass)
@@ -96,30 +94,6 @@ namespace dtCore
    dtCore::UniqueId ActorIDActorProperty::GetValue() const
    {
       return GetIdFunctor();
-   }
-
-   ////////////////////////////////////////////////////////////////////////////
-   dtCore::DeltaDrawable* ActorIDActorProperty::GetRealActor()
-   {
-      dtCore::BaseActorObject* proxy = GetActorProxy();
-      if (proxy != NULL)
-      {
-         return proxy->GetActor();
-      }
-
-      return NULL;
-   }
-
-   ////////////////////////////////////////////////////////////////////////////
-   const dtCore::DeltaDrawable* ActorIDActorProperty::GetRealActor() const
-   {
-      const dtCore::BaseActorObject* proxy = GetActorProxy();
-      if (proxy != NULL)
-      {
-         return proxy->GetActor();
-      }
-
-      return NULL;
    }
 
    ////////////////////////////////////////////////////////////////////////////////

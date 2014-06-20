@@ -19,17 +19,17 @@ class ActorProxyWrap : public ActorProxy, public wrapper<ActorProxy>
 		   if( override GetActor = this->get_override("GetActor") )
 		   {
             #if defined( _MSC_VER ) && ( _MSC_VER == 1400 ) // MSVC 8.0
-            return call<dtCore::DeltaDrawable*>( GetActor.ptr() );
+            return call<dtCore::DeltaDrawable*>( GetDrawable.ptr() );
             #else
             return GetActor();
             #endif
 		   }
-		   return ActorProxy::GetActor();
+		   return ActorProxy::GetDrawable();
 	   }
 
 	   dtCore::DeltaDrawable* DefaultGetActor()
 	   {
-		   return this->ActorProxy::GetActor();
+		   return this->ActorProxy::GetDrawable();
 	   }
 
       const dtCore::DeltaDrawable* GetActor() const
@@ -37,7 +37,7 @@ class ActorProxyWrap : public ActorProxy, public wrapper<ActorProxy>
 		   if( override GetActor = this->get_override("GetActor") )
 		   {
             #if defined( _MSC_VER ) && ( _MSC_VER == 1400 ) // MSVC 8.0
-            return call<const dtCore::DeltaDrawable*>( GetActor.ptr() );            
+            return call<const dtCore::DeltaDrawable*>( GetDrawable.ptr() );            
             #else
 			   return GetActor();
             #endif
@@ -60,12 +60,9 @@ void initActorProxyBindings()
    ActorProperty* (ActorProxy::*GetPropertyNonConst)( const std::string& ) = &ActorProxy::GetProperty;
    const ActorProperty* (ActorProxy::*GetPropertyConst)( const std::string& ) const = &ActorProxy::GetProperty;
 
-   ActorProxy* (ActorProxy::*GetLinkedActorNonConst)( const std::string& ) = &ActorProxy::GetLinkedActor;
-   const ActorProxy* (ActorProxy::*GetLinkedActorConst)( const std::string& ) const = &ActorProxy::GetLinkedActor;
-
    void (ActorProxy::*GetPropertyListNonConst)( ActorPropertyVector& ) = &ActorProxy::GetPropertyList;
 
-   dtCore::DeltaDrawable* (ActorProxy::*GetActorNonConst)() = &ActorProxy::GetActor;
+   dtCore::DeltaDrawable* (ActorProxy::*GetActorNonConst)() = &ActorProxy::GetDrawable;
    const dtCore::DeltaDrawable* (ActorProxy::*GetActorConst)() const = &ActorProxy::GetActor;
 
    dtCore::DeltaDrawable* (ActorProxyWrap::*DefaultGetActorNonConst)() = &ActorProxyWrap::DefaultGetActor;
@@ -80,9 +77,6 @@ void initActorProxyBindings()
       .def( "AddProperty", &ActorProxy::AddProperty, with_custodian_and_ward<1, 2>() )
       .def( "GetProperty", GetPropertyNonConst, return_internal_reference<>() )
       .def( "GetProperty", GetPropertyConst, return_internal_reference<>() )
-		.def( "GetLinkedActor", GetLinkedActorNonConst, return_internal_reference<>() )
-      .def( "GetLinkedActor", GetLinkedActorConst, return_internal_reference<>() )
-      .def( "SetLinkedActor", &ActorProxy::SetLinkedActor, with_custodian_and_ward< 1, 2 >() )
 		.def( "GetPropertyList", GetPropertyListNonConst )
 		.def( "GetActor", GetActorNonConst, DefaultGetActorNonConst, return_internal_reference<>() )
       .def( "GetActor", GetActorConst, DefaultGetActorConst, return_internal_reference<>() )

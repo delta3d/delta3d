@@ -121,7 +121,7 @@ namespace dtGame
           * @note The "update parameters" are stored in an internal GroupMessageParameter and
           * will not be returned when calling ActorUpdateMessage::GetParameter().
           */
-         dtCore::NamedParameter* GetUpdateParameter(const std::string &name);
+         dtCore::NamedParameter* GetUpdateParameter(const std::string& name);
 
          /**
           * Retrieves the dtCore::NamedParameter for this actor update message for the given name.
@@ -149,6 +149,34 @@ namespace dtGame
           * will not be returned when calling ActorUpdateMessage::GetParameter().
           */
          void GetUpdateParameters(std::vector<const MessageParameter*> &toFill) const;
+
+         /**
+          * Include dtCore/namedgroupparameter.inl to use this function
+          */
+         template <typename T>
+         inline void AddValue(const dtUtil::RefString& name, const T& value)
+         {
+            mUpdateParameters->AddValue(name, value);
+         }
+
+         /**
+          * Include dtCore/namedgroupparameter.inl to use this function
+          */
+         template <typename T>
+         inline void SetValue(const dtUtil::RefString& name, const T& value)
+         {
+            mUpdateParameters->SetValue(name, value);
+         }
+
+         /**
+          * Include dtCore/namedgroupparameter.inl to use this function
+          */
+         template <typename T>
+         inline const T& GetValue(const dtUtil::RefString& name, const T& defaultVal) const
+         {
+            return mUpdateParameters->GetValue(name, defaultVal);
+         }
+
 
          /**
           * Gets the actor type that this message is about

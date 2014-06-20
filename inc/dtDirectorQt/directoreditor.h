@@ -652,6 +652,14 @@ namespace dtDirector
        */
       void RestoreWindow();
 
+      /**
+       * Sets the file name related variables.
+       */
+      void AssignFileNameVars(const std::string& fileName);
+
+      void UpdateRecentFiles();
+      void RemoveRecentFile();
+
       dtCore::RefPtr<Director> mNodeSceneDirector;
 
       Ui::DirectorEditor&       mUI;

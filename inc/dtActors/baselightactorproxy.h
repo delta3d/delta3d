@@ -97,7 +97,7 @@ namespace dtActors
         ///Sets the light number of the light actor.
         void SetNumber(int num)
         {
-            dtCore::Light* l = static_cast<dtCore::Light*>(GetActor());
+            dtCore::Light* l = static_cast<dtCore::Light*>(GetDrawable());
 
             l->SetNumber(num);
         }
@@ -105,7 +105,7 @@ namespace dtActors
         ///Sets the ambient color of the light actor.
         void SetAmbient(const osg::Vec4 &color)
         {
-            dtCore::Light* l = static_cast<dtCore::Light *>(GetActor());
+            dtCore::Light* l = static_cast<dtCore::Light *>(GetDrawable());
 
             l->SetAmbient(color[0],color[1],color[2],color[3]);
         }
@@ -123,7 +123,7 @@ namespace dtActors
         ///Sets the diffuse color of the light actor.
         void SetDiffuse(const osg::Vec4& color)
         {
-            dtCore::Light* l = static_cast<dtCore::Light*>(GetActor());
+            dtCore::Light* l = static_cast<dtCore::Light*>(GetDrawable());
 
             l->SetDiffuse(color[0],color[1],color[2],color[3]);
         }
@@ -141,7 +141,7 @@ namespace dtActors
         ///Sets the specular color of the light actor.
         void SetSpecular(const osg::Vec4& color)
         {
-            dtCore::Light* l = static_cast<dtCore::Light*>(GetActor());
+            dtCore::Light* l = static_cast<dtCore::Light*>(GetDrawable());
 
             l->SetSpecular(color[0],color[1],color[2],color[3]);
         }
@@ -159,7 +159,7 @@ namespace dtActors
         ///Sets the lighting mode for this light actor.
         void SetLightingMode(LightModeEnum& mode)
         {
-            dtCore::Light* l = static_cast<dtCore::Light *>(GetActor());
+            dtCore::Light* l = static_cast<dtCore::Light *>(GetDrawable());
 
             if (mode == LightModeEnum::GLOBAL)
             {
@@ -191,7 +191,7 @@ namespace dtActors
         /**
          * Initializes the actor
          */
-        virtual void CreateActor() = 0;
+        virtual void CreateDrawable() = 0;
 
         ///Protected since this object is wrapped with a smart pointer.
         virtual ~BaseLightActorProxy() { }

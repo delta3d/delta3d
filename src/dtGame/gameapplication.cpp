@@ -1,5 +1,5 @@
 /*
-  * Delta3D Open Source Game and Simulation Engine
+ * Delta3D Open Source Game and Simulation Engine
  * Copyright (C) 2005, BMH Associates, Inc.
  *
  * This library is free software; you can redistribute it and/or modify it under
@@ -19,17 +19,19 @@
  * @author David Guthrie
  */
 #include <prefix/dtgameprefix.h>
+#include <dtGame/gameapplication.h>
+
 #include <dtUtil/log.h>
+#include <dtUtil/exception.h>
 
 #include <dtGame/gamemanager.h>
-#include <dtGame/gameapplication.h>
 #include <dtCore/deltawin.h>
 #include <dtCore/shadermanager.h>
+#include <dtCore/keyboardmousehandler.h>
 
 #include <dtGame/gameentrypoint.h>
 #include <dtGame/exceptionenum.h>
 
-#include <dtUtil/exception.h>
 #include <dtCore/scene.h>
 #include <osgViewer/CompositeViewer> // for parent class's forward declaration
 #include <dtCore/keyboard.h>
@@ -39,28 +41,23 @@
 
 namespace dtGame
 {
-   IMPLEMENT_MANAGEMENT_LAYER(GameApplication)
-
-   GameApplication::GameApplication(int argc, char** argv, const std::string& configFileName, dtCore::DeltaWin* window)
-      : dtABC::Application(configFileName, window)
-      , mArgc(argc)
+   GameApplicationLoader::GameApplicationLoader(int argc, char** argv)
+      : mArgc(argc)
       , mArgv(argv)
       , mEntryPoint(NULL)
       , mCreateFunction(NULL)
       , mDestroyFunction(NULL)
    {
-      RegisterInstance(this);
-      GetKeyboard()->RemoveKeyboardListener(GetKeyboardListener());
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   GameApplication::~GameApplication()
+   GameApplicationLoader::~GameApplicationLoader()
    {
       if (mEntryPoint != NULL)
       {
          try
          {
-            mEntryPoint->OnShutdown(*this);
+            mEntryPoint->OnShutdown(*mApplication, *this->GetGameManager());
          }
          catch (const dtUtil::Exception& e)
          {
@@ -68,13 +65,14 @@ namespace dtGame
          }
          catch (...)
          {
-            LOG_ALWAYS("Unknown exception caught in the destructor of GameApplication");
+            LOG_ALWAYS("Unknown exception caught in the destructor of GameApplicationLoader");
          }
       }
 
-      DeregisterInstance(this);
-
-      GetScene()->RemoveAllDrawables();
+      if (mApplication.valid())
+      {
+         mApplication->GetScene()->RemoveAllDrawables();
+      }
 
       dtCore::ShaderManager::GetInstance().Clear();
 
@@ -93,7 +91,7 @@ namespace dtGame
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void GameApplication::Config()
+   void GameApplicationLoader::Config(const std::string& configFileName)
    {
       dtUtil::LibrarySharingManager& lsm = dtUtil::LibrarySharingManager::GetInstance();
       std::string libName = GetGameLibraryName();
@@ -157,7 +155,14 @@ namespace dtGame
 
       try
       {
-         mGameManager = new dtGame::GameManager(*GetScene());
+         mApplication = mEntryPoint->CreateApplication(configFileName);
+         if (!mApplication.valid())
+         {
+            mApplication = new dtABC::Application(configFileName);
+         }
+
+
+         mGameManager = new dtGame::GameManager(*mApplication->GetScene());
          if (mGameManager == NULL)
          {
             msg.str("");
@@ -165,12 +170,19 @@ namespace dtGame
             exit(-1);
          }
 
-         mEntryPoint->Initialize(*this, mArgc, mArgv);
-         Application::Config();
+         mEntryPoint->Initialize(*mApplication, mArgc, mArgv);
+         mApplication->Config();
          //GetCompositeViewer()->setUpThreading();
 
-         mGameManager->SetApplication(*this);
-         mEntryPoint->OnStartup(*this);
+         dtABC::Application* appObj = dynamic_cast<dtABC::Application*>(mApplication.get());
+         // TODO need to fix this whole type thing.  Making the Base ABC have the features we need would help.
+         if (appObj != NULL)
+         {
+            appObj->GetKeyboard()->RemoveKeyboardListener(appObj->GetKeyboardListener());
+
+            mGameManager->SetApplication(*appObj);
+         }
+         mEntryPoint->OnStartup(*mApplication, *this->GetGameManager());
       }
       catch (const dtGame::GameApplicationConfigException& ex)
       {
@@ -191,9 +203,18 @@ namespace dtGame
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void GameApplication::SetGameManager(dtGame::GameManager& gameManager)
+   void GameApplicationLoader::Run()
    {
-      mGameManager = &gameManager;
+      if (mApplication.valid())
+      {
+         mApplication->Run();
+      }
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void GameApplicationLoader::SetGameManager(dtGame::GameManager* gameManager)
+   {
+      mGameManager = gameManager;
    }
 
 } // namespace dtGame

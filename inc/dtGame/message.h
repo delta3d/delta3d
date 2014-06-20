@@ -209,8 +209,8 @@ namespace dtGame
           */
          void SetMessageType(const MessageType& msgType) { mMessageType = &msgType; }
 
-         Message(const Message& rhs) { }
-         Message& operator=(const Message& rhs) { return *this; }
+         Message(const Message&) { }
+         Message& operator=(const Message&) { return *this; }
          
          const MessageType* mMessageType;
          dtCore::RefPtr<const MachineInfo> mSource;

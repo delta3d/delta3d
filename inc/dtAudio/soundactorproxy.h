@@ -261,7 +261,7 @@ namespace dtAudio
       /**
       * Creates a new positional sound.
       */
-      virtual void CreateActor();
+      virtual void CreateDrawable();
 
       /**
       * Destructor

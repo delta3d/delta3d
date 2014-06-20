@@ -51,7 +51,7 @@ namespace dtCore
    private:
       /** Deprecated 1/27/11.  Use HandleButtonStateChanged instead.
        */
-      BREAK_OVERRIDE(ButtonStateChanged(const Button* button, bool oldState, bool newState))
+      BREAK_OVERRIDE(ButtonStateChanged(const Button* , bool, bool))
    };
 }
 

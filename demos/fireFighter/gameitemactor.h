@@ -141,7 +141,7 @@ class FIRE_FIGHTER_EXPORT GameItemActorProxy : public dtActors::GameMeshActorPro
       virtual void BuildInvokables();
 
       /// Instantiates the actor
-      virtual void CreateActor() { SetActor(*new GameItemActor(*this)); }
+      virtual void CreateDrawable() { SetDrawable(*new GameItemActor(*this)); }
 
       // Used in STAGE
       dtCore::ActorProxyIcon* GetBillBoardIcon();

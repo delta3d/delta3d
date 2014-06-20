@@ -105,7 +105,7 @@ namespace dtActors
       SkyDomeEnvironmentActorProxy();
 
      virtual void BuildPropertyMap();
-     virtual void CreateActor();
+     virtual void CreateDrawable();
 
    protected:
       virtual ~SkyDomeEnvironmentActorProxy();

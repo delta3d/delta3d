@@ -38,8 +38,8 @@ namespace dtCore
       : ActorProperty(DataType::ACTOR, name, label, desc, groupName)
       , mProxy(&actorProxy)
       , SetPropFunctor(Set)
-      , GetActorFunctor(Get)
       , mDesiredActorClass(desiredActorClass)
+      , mLastValue()
       , mShowPrototypes(false)
    {
    }
@@ -68,27 +68,14 @@ namespace dtCore
          return;
       }
 
+      mLastValue = value;
       SetPropFunctor(value);
    }
 
    ////////////////////////////////////////////////////////////////////////////
    BaseActorObject* ActorActorProperty::GetValue() const
    {
-      if (!mProxy) return NULL;
-
-      return mProxy->GetLinkedActor(GetName());
-   }
-
-   ////////////////////////////////////////////////////////////////////////////
-   dtCore::DeltaDrawable* ActorActorProperty::GetRealActor()
-   {
-      return GetActorFunctor();
-   }
-
-   ////////////////////////////////////////////////////////////////////////////
-   const dtCore::DeltaDrawable* ActorActorProperty::GetRealActor() const
-   {
-      return GetActorFunctor();
+      return mLastValue;
    }
 
    ////////////////////////////////////////////////////////////////////////////

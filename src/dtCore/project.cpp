@@ -169,7 +169,7 @@ namespace dtCore
 
       dtUtil::FileInfo GetMapsDirectory(const std::string& contextPath, bool createIfNeeded);
 
-      dtUtil::FileInfo GetMapsDirectory(bool createIfNeeded);
+      //dtUtil::FileInfo GetMapsDirectory(bool createIfNeeded);
 
       // for the get context method.
       static const std::string EMPTY_STRING;
@@ -216,16 +216,18 @@ namespace dtCore
 
       try
       {
+         dtUtil::DirectoryPush dPush(config.GetBasePath());
+         // Should be relative to the base path.
          for (unsigned i = 0; i < config.GetNumContextData(); ++i)
          {
             AddContext(config.GetContextData(i).GetPath());
          }
       }
-      catch (const dtUtil::Exception& ex)
+      catch (const dtUtil::Exception&)
       {
          // Clear everything if any part of the config fails.
          ClearAllContexts();
-         throw ex;
+         throw;
       }
    }
 
@@ -251,7 +253,7 @@ namespace dtCore
       dtCore::RefPtr<osgDB::ReaderWriter::Options> options = NULL;
       if (osgDB::Registry::instance()->getOptions() != NULL)
       {
-         dynamic_cast<osgDB::ReaderWriter::Options*>(osgDB::Registry::instance()->getOptions()->clone(osg::CopyOp::DEEP_COPY_ALL));
+         options = dynamic_cast<osgDB::ReaderWriter::Options*>(osgDB::Registry::instance()->getOptions()->clone(osg::CopyOp::DEEP_COPY_ALL));
       }
       else
       {
@@ -284,7 +286,7 @@ namespace dtCore
       dtCore::RefPtr<osgDB::ReaderWriter::Options> options = NULL;
       if (osgDB::Registry::instance()->getOptions() != NULL)
       {
-         dynamic_cast<osgDB::ReaderWriter::Options*>(osgDB::Registry::instance()->getOptions()->clone(osg::CopyOp::DEEP_COPY_ALL));
+         options = dynamic_cast<osgDB::ReaderWriter::Options*>(osgDB::Registry::instance()->getOptions()->clone(osg::CopyOp::DEEP_COPY_ALL));
       }
       else
       {
@@ -349,7 +351,7 @@ namespace dtCore
          return !mImpl->mContexts.empty();
       }
 
-      return slot >= 0 && GetContextSlotCount()  > slot;
+      return GetContextSlotCount()  > slot;
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -401,49 +403,40 @@ namespace dtCore
          pPath.erase(last);
       }
 
-      fileUtils.PushDirectory(path);
+      GetMapsDirectory(path, false);
 
-      try
+      dtUtil::DirectoryPush dp(path);
+
+      // Check not to see that the resource directories exist, but that they aren't regular files
+      // and can therefore be created if needed.
+      dtCore::DataType::EnumerateListType::const_iterator i, iend;
+      i = dtCore::DataType::EnumerateType().begin();
+      iend = dtCore::DataType::EnumerateType().end();
+      for (;i != iend; ++i)
       {
-         GetMapsDirectory(false);
-
-         // Check not to see that the resource directories exist, but that they aren't regular files
-         // and can therefore be created if needed.
-         dtCore::DataType::EnumerateListType::const_iterator i, iend;
-         i = dtCore::DataType::EnumerateType().begin();
-         iend = dtCore::DataType::EnumerateType().end();
-         for (;i != iend; ++i)
+         dtCore::DataType& dt = **i;
+         if (dt.IsResource())
          {
-            dtCore::DataType& dt = **i;
-            if (dt.IsResource())
+            if (fileUtils.GetFileInfo(dt.GetName()).fileType == dtUtil::REGULAR_FILE)
             {
-               if (fileUtils.GetFileInfo(dt.GetName()).fileType == dtUtil::REGULAR_FILE)
-               {
-                  std::string s(path);
-                  s.append(" is not a valid project directory.  The ");
-                  s.append(dt.GetName());
-                  s.append(" file is not a directory.  It doesn't have to exist, but it may not be a regular file.");
-               }
+               std::string s(path);
+               s.append(" is not a valid project directory.  The ");
+               s.append(dt.GetName());
+               s.append(" file is not a directory.  It doesn't have to exist, but it may not be a regular file.");
             }
          }
-
-         mContexts.push_back(dtUtil::FileUtils::GetInstance().CurrentDirectory());
-         const std::string& context = mContexts.back();
-         std::string searchPath = dtUtil::GetDataFilePathList();
-
-         if (searchPath.empty())
-         {
-            searchPath = dtUtil::GetDeltaDataPathList();
-         }
-
-         dtUtil::SetDataFilePathList(searchPath + ':' + context);
       }
-      catch (const dtUtil::Exception& ex)
+
+      mContexts.push_back(dtUtil::FileUtils::GetInstance().CurrentDirectory());
+      const std::string& context = mContexts.back();
+      std::string searchPath = dtUtil::GetDataFilePathList();
+
+      if (searchPath.empty())
       {
-         dtUtil::FileUtils::GetInstance().PopDirectory();
-         throw ex;
+         searchPath = dtUtil::GetDeltaDataPathList();
       }
-      dtUtil::FileUtils::GetInstance().PopDirectory();
+
+      dtUtil::SetDataFilePathList(searchPath + ':' + context);
 
       return mContexts.size() - 1U;
 
@@ -465,6 +458,8 @@ namespace dtCore
       if (slot < mContexts.size())
       {
          //remove the old context from the data file path list.
+         // TODO, this has a potential threading issue.  The get and set data path lock internally, but it could
+         // be changed while the string manipulation is happening.
          std::string searchPath = dtUtil::GetDataFilePathList();
          const std::string& oldContext = mContexts[slot];
          size_t index = oldContext.empty() ? std::string::npos : searchPath.find(oldContext);
@@ -496,7 +491,7 @@ namespace dtCore
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   const std::string& Project::GetContext(ContextSlot slot) const
+   const std::string& Project::GetContext(Project::ContextSlot slot) const
    {
       if (slot == DEFAULT_SLOT_VALUE)
       {
@@ -517,6 +512,38 @@ namespace dtCore
       return mImpl->mContexts.size();
    }
 
+   /////////////////////////////////////////////////////////////////////////////
+   Project::ContextSlot Project::GetContextSlotForPath(const std::string& path) const
+   {
+      ContextSlot result = DEFAULT_SLOT_VALUE;
+
+      dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
+      std::string pathAbs = path;
+      if (!fileUtils.IsAbsolutePath(path))
+      {
+         pathAbs = fileUtils.GetAbsolutePath(path);
+      }
+
+      unsigned slotCount = GetContextSlotCount();
+
+      for (unsigned i = 0; i < slotCount; ++i)
+      {
+         const std::string& curCont = mImpl->mContexts[i];
+         if (pathAbs.size() >= curCont.size() && pathAbs.substr(0, curCont.size()) == curCont)
+         {
+            // The context is a substr, we just have to make sure the next character is a separator
+            // because /dir/dir2/dir3/hello.png is not a subpath to /dir/dir2/dir, but it would pass
+            // the above check.  Another way to handle this would be to tokenize both paths, but why bother.
+            if (pathAbs.size() == curCont.size() ||
+                     (pathAbs[curCont.size()] == '/' || pathAbs[curCont.size()] == dtUtil::FileUtils::PATH_SEPARATOR))
+            {
+               result = i;
+               break;
+            }
+         }
+      }
+      return result;
+   }
 
    /////////////////////////////////////////////////////////////////////////////
    void Project::Refresh()
@@ -641,32 +668,20 @@ namespace dtCore
    /////////////////////////////////////////////////////////////////////////////
    void ProjectImpl::ListMapsForContextDir(Project::ContextSlot slot)
    {
-      dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
-      fileUtils.PushDirectory(mContexts[slot]);
+      dtUtil::FileExtensionList extensions; ///list of acceptable file extensions
+      extensions.push_back(dtCore::Map::MAP_FILE_EXTENSION);
+      extensions.push_back(".xml");
+      extensions.push_back(""); // allow for folder recursion.
 
-      try
+      dtUtil::FileInfo fi = GetMapsDirectory(mContexts[slot], false);
+      // It may not have a maps directory, so we have to check.
+      if (fi.fileType == dtUtil::DIRECTORY)
       {
-         dtUtil::FileExtensionList extensions; ///list of acceptable file extensions
-         extensions.push_back(dtCore::Map::MAP_FILE_EXTENSION);
-         extensions.push_back(".xml");
-         extensions.push_back(""); // allow for folder recursion.
+         dtCore::RefPtr<MapParser> parser = new MapParser();
 
-         dtUtil::FileInfo fi = GetMapsDirectory(false);
-         // It may not have a maps directory, so we have to check.
-         if (fi.fileType == dtUtil::DIRECTORY)
-         {
-            dtCore::RefPtr<MapParser> parser = new MapParser();
-
-            // Now recurse through this folder and all sub-folders for all maps.
-            ListMapsForDir(fi.fileName, mMapTree, extensions, parser, slot);
-         }
+         // Now recurse through this folder and all sub-folders for all maps.
+         ListMapsForDir(fi.fileName, mMapTree, extensions, parser, slot);
       }
-      catch (const dtUtil::Exception& ex)
-      {
-         fileUtils.PopDirectory();
-         throw ex;
-      }
-      fileUtils.PopDirectory();
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -767,11 +782,9 @@ namespace dtCore
    /////////////////////////////////////////////////////////////////////////////
    Map& ProjectImpl::InternalLoadMap(const MapFileData& fileData, bool backup, bool clearModified)
    {
-      std::string fullPath = mContexts[fileData.mSlotId] + dtUtil::FileUtils::PATH_SEPARATOR;
-
       dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
 
-      fullPath += GetMapsDirectory(mContexts[fileData.mSlotId], true).fileName;
+      std::string fullPath = GetMapsDirectory(mContexts[fileData.mSlotId], true).fileName;
 
       if (backup)
       {
@@ -1042,7 +1055,7 @@ namespace dtCore
             if (renderMode == BaseActorObject::RenderMode::DRAW_ACTOR ||
                 renderMode == BaseActorObject::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON)
             {
-               scene.AddChild(proxy.GetActor());
+               scene.AddChild(proxy.GetDrawable());
             }
 
 
@@ -1052,16 +1065,16 @@ namespace dtCore
                //the proxy. (Currently defaults to DRAW_ACTOR.
                if (map.GetEnvironmentActor() != NULL)
                {
-                  IEnvironmentActor *ea = dynamic_cast<IEnvironmentActor*>(map.GetEnvironmentActor()->GetActor());
+                  IEnvironmentActor *ea = dynamic_cast<IEnvironmentActor*>(map.GetEnvironmentActor()->GetDrawable());
                   if (ea == NULL)
                      throw dtCore::InvalidActorException(
                      "Actor should be of type dtCore::EnvironmentActor", __FILE__, __LINE__);
 
-                  ea->AddActor(*proxy.GetActor());
+                  ea->AddActor(*proxy.GetDrawable());
                }
                else
                {
-                  scene.AddChild(proxy.GetActor());
+                  scene.AddChild(proxy.GetDrawable());
                }
             }
          }
@@ -1070,7 +1083,7 @@ namespace dtCore
             //if we aren't drawing billboards, then the actors should always be in the scene.
             if (map.GetEnvironmentActor() != NULL)
             {
-               IEnvironmentActor *ea = dynamic_cast<IEnvironmentActor*>(map.GetEnvironmentActor()->GetActor());
+               IEnvironmentActor *ea = dynamic_cast<IEnvironmentActor*>(map.GetEnvironmentActor()->GetDrawable());
                if (ea == NULL)
                {
                   throw dtCore::InvalidActorException(
@@ -1078,21 +1091,21 @@ namespace dtCore
                }
 
                // Hack to ensure the environment doesn't add itself from the map
-               if (proxy.GetActor() != dynamic_cast<dtCore::DeltaDrawable*>(ea))
+               if (proxy.GetDrawable() != dynamic_cast<dtCore::DeltaDrawable*>(ea))
                {
-                  ea->AddActor(*proxy.GetActor());
+                  ea->AddActor(*proxy.GetDrawable());
                }
             }
             else
             {
-               scene.AddChild(proxy.GetActor());
+               scene.AddChild(proxy.GetDrawable());
             }
          }
       }
 
       if (map.GetEnvironmentActor() != NULL)
       {
-         scene.AddChild(map.GetEnvironmentActor()->GetActor());
+         scene.AddChild(map.GetEnvironmentActor()->GetDrawable());
       }
    }
 
@@ -1339,25 +1352,16 @@ namespace dtCore
       ReloadMapNames();
 
       dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
-      fileUtils.PushDirectory(mContexts[mapFileData.mSlotId] + dtUtil::FileUtils::PATH_SEPARATOR + Project::MAP_DIRECTORY);
-      try
+      dtUtil::DirectoryPush dp(mContexts[mapFileData.mSlotId] + dtUtil::FileUtils::PATH_SEPARATOR + Project::MAP_DIRECTORY);
+      if (fileUtils.FileExists(mapFileData.mFileName))
       {
-         if (fileUtils.FileExists(mapFileData.mFileName))
-         {
-            fileUtils.FileDelete(mapFileData.mFileName);
-         }
-         else
-         {
-            mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
-                                "Specified map was part of the project, but the map file did not exist.");
-         }
+         fileUtils.FileDelete(mapFileData.mFileName);
       }
-      catch (const dtUtil::Exception& ex)
+      else
       {
-         fileUtils.PopDirectory();
-         throw ex;
+         mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
+                             "Specified map was part of the project, but the map file did not exist.");
       }
-      fileUtils.PopDirectory();
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -1549,8 +1553,7 @@ namespace dtCore
       }
 
       dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
-      std::string fullPath = mContexts[slot] + dtUtil::FileUtils::PATH_SEPARATOR +
-               GetMapsDirectory(mContexts[slot], true).fileName + dtUtil::FileUtils::PATH_SEPARATOR + map.GetFileName();
+      std::string fullPath = GetMapsDirectory(mContexts[slot], true).fileName + dtUtil::FileUtils::PATH_SEPARATOR + map.GetFileName();
       std::string fullPathSaving = fullPath + ".saving";
 
       //make sure the category directory exists.
@@ -1615,38 +1618,28 @@ namespace dtCore
 
       dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
 
-      fileUtils.PushDirectory(mImpl->mContexts[slot]);
-      try
+      //dtUtil::DirectoryPush dp();
+      std::string backupDir = mImpl->GetMapsDirectory(mImpl->mContexts[slot], true).fileName + dtUtil::FileUtils::PATH_SEPARATOR + mImpl->GetBackupDir();
+
+      std::string path = backupDir + dtUtil::FileUtils::PATH_SEPARATOR + map.GetFileName();
+
+      std::string dir = osgDB::getFilePath(path);
+      if (!fileUtils.DirExists(dir))
       {
-         std::string backupDir = mImpl->GetMapsDirectory(true).fileName + dtUtil::FileUtils::PATH_SEPARATOR + mImpl->GetBackupDir();
-
-         std::string path = backupDir + dtUtil::FileUtils::PATH_SEPARATOR + map.GetFileName();
-
-         std::string dir = osgDB::getFilePath(path);
-         if (!fileUtils.DirExists(dir))
-         {
-            fileUtils.MakeDirectory(dir);
-         }
-
-         std::string fileName = path + ".backupsaving";
-         std::string finalFileName = path + ".backup";
-
-         //save the file to a "saving" file so that if it blows or is killed while saving, the data
-         //will not be lost.
-         dtCore::RefPtr<MapWriter> writer = new MapWriter();
-         writer->Save(map, fileName);
-
-
-         //when it completes, move the file to the final name.
-         fileUtils.FileMove(fileName, finalFileName, true);
+         fileUtils.MakeDirectory(dir);
       }
-      catch (const dtUtil::Exception& e)
-      {
-         mImpl->mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__, e.What().c_str());
-         fileUtils.PopDirectory();
-         throw e;
-      }
-      fileUtils.PopDirectory();
+
+      std::string fileName = path + ".backupsaving";
+      std::string finalFileName = path + ".backup";
+
+      //save the file to a "saving" file so that if it blows or is killed while saving, the data
+      //will not be lost.
+      dtCore::RefPtr<MapWriter> writer = new MapWriter();
+      writer->Save(map, fileName);
+
+
+      //when it completes, move the file to the final name.
+      fileUtils.FileMove(fileName, finalFileName, true);
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -1679,8 +1672,7 @@ namespace dtCore
       dtUtil::FileInfo fi = mImpl->GetMapsDirectory(mImpl->mContexts[found->second.mSlotId], false);
       if (fi.fileType == dtUtil::DIRECTORY)
       {
-         std::string backupDir =  mImpl->mContexts[found->second.mSlotId] + dtUtil::FileUtils::PATH_SEPARATOR
-                  + fi.fileName + dtUtil::FileUtils::PATH_SEPARATOR + mImpl->GetBackupDir();
+         std::string backupDir =  fi.fileName + dtUtil::FileUtils::PATH_SEPARATOR + mImpl->GetBackupDir();
 
          const std::string& backupFileName = backupDir + dtUtil::FileUtils::PATH_SEPARATOR + fileName + ".backup";
 
@@ -1722,8 +1714,7 @@ namespace dtCore
          return;
       }
 
-      std::string backupDir = mImpl->mContexts[found->second.mSlotId] + dtUtil::FileUtils::PATH_SEPARATOR +
-                fiMaps.fileName + dtUtil::FileUtils::PATH_SEPARATOR + mImpl->GetBackupDir();
+      std::string backupDir = fiMaps.fileName + dtUtil::FileUtils::PATH_SEPARATOR + mImpl->GetBackupDir();
 
       dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
 
@@ -1914,67 +1905,48 @@ namespace dtCore
    /////////////////////////////////////////////////////////////////////////////
    dtUtil::FileInfo ProjectImpl::GetMapsDirectory(const std::string& contextPath, bool createIfNeeded)
    {
-      dtUtil::FileInfo result;
-
-      dtUtil::FileUtils::GetInstance().PushDirectory(contextPath);
-      try
-      {
-         result = GetMapsDirectory(createIfNeeded);
-      }
-      catch (const dtUtil::Exception& ex)
-      {
-         dtUtil::FileUtils::GetInstance().PopDirectory();
-         throw ex;
-      }
-      dtUtil::FileUtils::GetInstance().PopDirectory();
-
-      return result;
-   }
-
-   /////////////////////////////////////////////////////////////////////////////
-   dtUtil::FileInfo ProjectImpl::GetMapsDirectory(bool createIfNeeded)
-   {
       dtUtil::FileInfo fileInfo;
 
       dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
 
       dtUtil::StrCompareFunc cmpfunc(Project::MAP_DIRECTORY, false);
 
-      const dtUtil::DirectoryContents contents = fileUtils.DirGetFiles(".");
+      const dtUtil::DirectoryContents contents = fileUtils.DirGetFiles(contextPath);
 
       dtUtil::DirectoryContents::const_iterator dirIt = std::find_if(contents.begin(), contents.end(), cmpfunc);
       bool hasMapsDir = dirIt != contents.end();
 
       if (!hasMapsDir)
       {
+         std::string mapsDirFull = contextPath + dtUtil::FileUtils::PATH_SEPARATOR + Project::MAP_DIRECTORY;
          if (createIfNeeded)
          {
             try
             {
-               fileUtils.MakeDirectory(Project::MAP_DIRECTORY);
-               fileInfo = fileUtils.GetFileInfo(Project::MAP_DIRECTORY);
+               fileUtils.MakeDirectory(mapsDirFull);
+               fileInfo = fileUtils.GetFileInfo(mapsDirFull);
             }
             catch(const dtUtil::Exception& ex)
             {
                std::ostringstream ss;
-               ss << "Unable to create directory " << Project::MAP_DIRECTORY << ". Error: " << ex.What();
+               ss << "Unable to create directory " << mapsDirFull << ". Error: " << ex.What();
                throw dtCore::ProjectInvalidContextException(
-                  ss.str(), __FILE__, __LINE__);
+                        ss.str(), __FILE__, __LINE__);
             }
          }
          else
          {
             // Should result in a file not found fileInfo.
-            fileInfo = fileUtils.GetFileInfo(Project::MAP_DIRECTORY);
+            fileInfo = fileUtils.GetFileInfo(mapsDirFull);
          }
       }
       else
       {
-         fileInfo = fileUtils.GetFileInfo(*dirIt);
+         fileInfo = fileUtils.GetFileInfo(contextPath + dtUtil::FileUtils::PATH_SEPARATOR + *dirIt);
 
          if (fileInfo.fileType != dtUtil::DIRECTORY)
          {
-            std::string s(fileUtils.CurrentDirectory());
+            std::string s(contextPath + dtUtil::FileUtils::PATH_SEPARATOR);
             s.append(" is not a valid project directory.  The file \"");
             s.append(*dirIt);
             s.append("\" is not a directory.  Delete or rename the file.");
@@ -2010,52 +1982,34 @@ namespace dtCore
 
       //for proper error handling.
       bool foundADir = false;
-      std::string pathContext;
+
+      dtUtil::FileInfo resultInfo;
 
       std::vector<std::string>::const_iterator i, iend;
       i = mImpl->mContexts.begin();
       iend = mImpl->mContexts.end();
       for (; i != iend && ftype != expectedType; ++i)
       {
-         fileUtils.PushDirectory(*i);
+         resultInfo = fileUtils.GetFileInfo(*i + dtUtil::FileUtils::PATH_SEPARATOR + path, true);
+         ftype = resultInfo.fileType;
 
-         try
+         if (ftype == dtUtil::DIRECTORY)
          {
-            ftype = fileUtils.GetFileInfo(path).fileType;
-            if (ftype == dtUtil::DIRECTORY)
+            if (!isCategory)
             {
-               if (!isCategory)
-               {
-                  // didn't find the resource, but found a directory with that same name.
-                  // This is only an error if no file is found in a later path.
-                  foundADir = true;
-               }
-               else
-               {
-                  pathContext = *i + dtUtil::FileUtils::PATH_SEPARATOR;
-               }
-            }
-
-            if (ftype == dtUtil::REGULAR_FILE)
-            {
-               if (!isCategory)
-               {
-                  pathContext = *i + dtUtil::FileUtils::PATH_SEPARATOR;
-               }
-               else
-               {
-                  break;
-               }
+               // didn't find the resource, but found a directory with that same name.
+               // This is only an error if no file is found in a later path.
+               foundADir = true;
             }
          }
-         catch (const dtUtil::Exception&)
+
+         if (ftype == dtUtil::REGULAR_FILE)
          {
-            //we have to make sure this happens before excepting
-            fileUtils.PopDirectory();
-            // eat the exception because we'll go on to the next directory and then
-            // throw at the end.
+            if (isCategory)
+            {
+               break;
+            }
          }
-         fileUtils.PopDirectory();
       }
 
       if (ftype != expectedType)
@@ -2090,7 +2044,7 @@ namespace dtCore
 
       }
 
-      return pathContext + path;
+      return resultInfo.fileName;
    }
 
 
@@ -2100,13 +2054,13 @@ namespace dtCore
       if (!IsContextValid(slot))
       {
          throw dtCore::ProjectInvalidContextException(
-         std::string("The context is not valid."), __FILE__, __LINE__);
+                  std::string("The context is not valid."), __FILE__, __LINE__);
       }
 
       if (IsReadOnly())
       {
          throw dtCore::ProjectReadOnlyException(
-         std::string("The project is readonly."), __FILE__, __LINE__);
+                  std::string("The project is readonly."), __FILE__, __LINE__);
       }
 
       if (!type.IsResource())
@@ -2115,7 +2069,6 @@ namespace dtCore
                 + ". It is not a resource type.", __FILE__, __LINE__);
       }
 
-      dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
       std::vector<std::string>::const_iterator i, iend;
       if (slot == Project::DEFAULT_SLOT_VALUE)
       {
@@ -2132,28 +2085,17 @@ namespace dtCore
       ContextSlot curSlot = 0;
       for (; i != iend; ++i)
       {
-         fileUtils.PushDirectory(*i);
+         dtUtil::DirectoryPush dt(*i);
+         dtUtil::tree<ResourceTreeNode>* categoryInTree;
+         dtUtil::tree<ResourceTreeNode>* dataTypeTree = NULL;
 
-         try
+         if (mImpl->mResourcesIndexed)
          {
-            dtUtil::tree<ResourceTreeNode>* categoryInTree;
-            dtUtil::tree<ResourceTreeNode>* dataTypeTree = NULL;
-
-            if (mImpl->mResourcesIndexed)
-            {
-               dataTypeTree = &mImpl->GetResourcesOfType(type);
-            }
-
-            // TODO see what this does if it thinks it has this resource already.
-            mImpl->mResourceHelper.CreateResourceCategory(category, type, curSlot, dataTypeTree, categoryInTree);
+            dataTypeTree = &mImpl->GetResourcesOfType(type);
          }
-         catch (const dtUtil::Exception& ex)
-         {
-            //we have to make sure this happens before excepting
-            fileUtils.PopDirectory();
-            throw ex;
-         }
-         fileUtils.PopDirectory();
+
+         // TODO see what this does if it thinks it has this resource already.
+         mImpl->mResourceHelper.CreateResourceCategory(category, type, curSlot, dataTypeTree, categoryInTree);
          ++curSlot;
       }
    }
@@ -2181,7 +2123,6 @@ namespace dtCore
                 + ". It is not a resource type.", __FILE__, __LINE__);
       }
 
-      dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
       std::vector<std::string>::const_iterator i, iend;
       if (slot == Project::DEFAULT_SLOT_VALUE)
       {
@@ -2204,26 +2145,15 @@ namespace dtCore
 
       for (; i != iend; ++i)
       {
-         fileUtils.PushDirectory(*i);
-
-         try
+         dtUtil::DirectoryPush dp(*i);
+         dtUtil::tree<ResourceTreeNode>* dataTypeTree = NULL;
+         if (mImpl->mResourcesIndexed)
          {
-            dtUtil::tree<ResourceTreeNode>* dataTypeTree = NULL;
-            if (mImpl->mResourcesIndexed)
-            {
-               dataTypeTree = &mImpl->GetResourcesOfType(type);
-            }
+            dataTypeTree = &mImpl->GetResourcesOfType(type);
+         }
 
-            // TODO see what it does if it things it's already removed it.
-            result = result && mImpl->mResourceHelper.RemoveResourceCategory(category, type, recursive, dataTypeTree);
-         }
-         catch (const dtUtil::Exception& ex)
-         {
-            //we have to make sure this happens before excepting
-            fileUtils.PopDirectory();
-            throw ex;
-         }
-         fileUtils.PopDirectory();
+         // TODO see what it does if it things it's already removed it.
+         result = result && mImpl->mResourceHelper.RemoveResourceCategory(category, type, recursive, dataTypeTree);
       }
       return result;
 
@@ -2267,26 +2197,13 @@ namespace dtCore
                 + ". It is not a resource type.", __FILE__, __LINE__);
       }
 
-      dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
-      fileUtils.PushDirectory(mImpl->mContexts[slot]);
-
+      dtUtil::DirectoryPush dp(mImpl->mContexts[slot]);
       ResourceDescriptor result;
-      try
-      {
-         dtUtil::tree<ResourceTreeNode>* dataTypeTree = NULL;
-         if (mImpl->mResourcesIndexed)
-            dataTypeTree = &mImpl->GetResourcesOfType(type);
+      dtUtil::tree<ResourceTreeNode>* dataTypeTree = NULL;
+      if (mImpl->mResourcesIndexed)
+         dataTypeTree = &mImpl->GetResourcesOfType(type);
 
-         result = mImpl->mResourceHelper.AddResource(newName, pathToFile, category, type, dataTypeTree, slot);
-
-      }
-      catch (const dtUtil::Exception& ex)
-      {
-         //we have to make sure this happens before excepting
-         fileUtils.PopDirectory();
-         throw ex;
-      }
-      fileUtils.PopDirectory();
+      result = mImpl->mResourceHelper.AddResource(newName, pathToFile, category, type, dataTypeTree, slot);
 
       return result;
    }
@@ -2314,27 +2231,16 @@ namespace dtCore
          last = GetContextSlotCount();
       }
 
-      dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
       for (ContextSlot i = first; i < last; ++i)
       {
-         fileUtils.PushDirectory(mImpl->mContexts[i]);
-         try
+         dtUtil::DirectoryPush dp(mImpl->mContexts[i]);
+         dtUtil::tree<ResourceTreeNode>* resourceTree = NULL;
+         if (mImpl->mResourcesIndexed)
          {
-
-            dtUtil::tree<ResourceTreeNode>* resourceTree = NULL;
-            if (mImpl->mResourcesIndexed)
-            {
-               resourceTree = &mImpl->mResources;
-            }
-
-            mImpl->mResourceHelper.RemoveResource(resource, resourceTree);
+            resourceTree = &mImpl->mResources;
          }
-         catch (const dtUtil::Exception& ex)
-         {
-            fileUtils.PopDirectory();
-            throw ex;
-         }
-         fileUtils.PopDirectory();
+
+         mImpl->mResourceHelper.RemoveResource(resource, resourceTree);
       }
    }
 
@@ -2348,21 +2254,11 @@ namespace dtCore
 
       mResources.clear();
 
-      dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
       for (Project::ContextSlot i = 0; i != mContexts.size(); ++i)
       {
-         fileUtils.PushDirectory(mContexts[i]);
-         try
-         {
-            // TODO ? break up the resources somehow by context rather than merging them all?
-            mResourceHelper.IndexResources(mResources, i);
-         }
-         catch (const dtUtil::Exception& ex)
-         {
-            fileUtils.PopDirectory();
-            throw ex;
-         }
-         fileUtils.PopDirectory();
+         dtUtil::DirectoryPush dp(mContexts[i]);
+         // TODO ? break up the resources somehow by context rather than merging them all?
+         mResourceHelper.IndexResources(mResources, i);
       }
 
       mResourcesIndexed = true;

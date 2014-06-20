@@ -82,7 +82,7 @@ class DT_EXAMPLE_EXPORT TestGameActorProxy2 : public dtGame::GameActorProxy
       */
       virtual void BuildInvokables();
    protected:
-      virtual void CreateActor();
+      virtual void CreateDrawable();
 
 };
 #endif

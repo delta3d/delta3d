@@ -60,6 +60,9 @@ namespace dtABC
       ///configure the internal components
       virtual void Config();
 
+      /// Run the application
+      virtual void Run() = 0;
+
       ///Quit the application (call's system quit)
       virtual void Quit();
 

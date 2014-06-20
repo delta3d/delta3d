@@ -30,8 +30,8 @@
 #include <dtCore/basexml.h>
 #include <dtCore/basexmlhandler.h>
 #include <dtCore/basexmlreaderwriter.h>
+#include <dtCore/exceptionenum.h>
 #include <dtUtil/fileutils.h>
-
 #include <sstream>
 
 
@@ -327,9 +327,17 @@ namespace dtCore
       InitParser(*parser, *handler);
 
       ReadResult result = ReadResult::ERROR_IN_READING_FILE;
-      if (parser->Parse(fin))
+      try
       {
-         result = ReadResult::FILE_LOADED;
+         if (parser->Parse(fin))
+         {
+            result = ReadResult::FILE_LOADED;
+         }
+      }
+      catch(const dtCore::XMLLoadParsingException& ex)
+      {
+         // Log the exception, but eat it because we need to return a read result.
+         ex.LogException(dtUtil::Log::LOG_WARNING);
       }
 
       return BuildResult(result, *handler);

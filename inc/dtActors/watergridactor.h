@@ -265,7 +265,7 @@ namespace dtActors
 
       WaterGridActorProxy();
 
-      void CreateActor();
+      void CreateDrawable();
 
       void BuildPropertyMap();
       void BuildInvokables();

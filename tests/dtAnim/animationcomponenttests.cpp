@@ -33,6 +33,7 @@
 #include <dtAnim/animationhelper.h>
 #include <dtAnim/animnodebuilder.h>
 #include <dtAnim/cal3ddatabase.h>
+#include <dtAnim/animactorregistry.h>
 
 #include <dtCore/refptr.h>
 #include <dtCore/system.h>
@@ -82,6 +83,7 @@ namespace dtAnim
          CPPUNIT_TEST(TestRegisterUnregister);
          CPPUNIT_TEST(TestRegisterMapUnload);
          CPPUNIT_TEST(TestAnimationEventFiring);
+         CPPUNIT_TEST(TestAnimationActorComponentInit);
       CPPUNIT_TEST_SUITE_END();
 
    public:
@@ -97,6 +99,7 @@ namespace dtAnim
       void TestRegisterUnregister();
       void TestRegisterMapUnload();
       void TestAnimationEventFiring();
+      void TestAnimationActorComponentInit();
 
       // Helper methods.
       dtCore::RefPtr<AnimationHelper> CreateRealAnimationHelper();
@@ -158,10 +161,11 @@ namespace dtAnim
       mAnimComp = new AnimationComponent();
       mGM->AddComponent(*mAnimComp, dtGame::GameManager::ComponentPriority::NORMAL);
 
-      mGM->CreateActor(*dtActors::EngineActorRegistry::GAME_MESH_ACTOR_TYPE, mTestGameActor);
+      mGM->CreateActor(*dtAnim::AnimActorRegistry::ANIMATION_ACTOR_TYPE, mTestGameActor);
       CPPUNIT_ASSERT(mTestGameActor.valid());
 
-      dtCore::RefPtr<TestAnimHelper> mHelper = new TestAnimHelper();
+      mTestGameActor->GetComponent(mHelper);
+      CPPUNIT_ASSERT(mHelper.valid());
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -182,26 +186,63 @@ namespace dtAnim
    /////////////////////////////////////////////////////////////////////////////
    void AnimationComponentTests::TestRegisterUnregister()
    {
-      dtCore::RefPtr<TestAnimHelper> mHelper = new TestAnimHelper();
-      mAnimComp->RegisterActor(*mTestGameActor, *mHelper);
-      CPPUNIT_ASSERT(mAnimComp->IsRegisteredActor(*mTestGameActor));
+      CPPUNIT_ASSERT(!mAnimComp->IsRegisteredActor(*mTestGameActor));
       mGM->AddActor(*mTestGameActor, false, false);
+      CPPUNIT_ASSERT_MESSAGE("Addding the actor to the gm should auto register with the gm component",
+               mAnimComp->IsRegisteredActor(*mTestGameActor));
 
       mGM->DeleteActor(*mTestGameActor);
       dtCore::System::GetInstance().Step();
-      CPPUNIT_ASSERT(!mAnimComp->IsRegisteredActor(*mTestGameActor));
+      CPPUNIT_ASSERT_MESSAGE("Removing the actor should auto unregister with the gm component",
+               !mAnimComp->IsRegisteredActor(*mTestGameActor));
    }
 
    /////////////////////////////////////////////////////////////////////////////
    void AnimationComponentTests::TestRegisterMapUnload()
    {
-      dtCore::RefPtr<TestAnimHelper> mHelper = new TestAnimHelper();
-      mAnimComp->RegisterActor(*mTestGameActor, *mHelper);
-      CPPUNIT_ASSERT(mAnimComp->IsRegisteredActor(*mTestGameActor));
       mGM->AddActor(*mTestGameActor, false, false);
-
+      CPPUNIT_ASSERT(mAnimComp->IsRegisteredActor(*mTestGameActor));
       SimulateMapUnloaded();
       CPPUNIT_ASSERT(!mAnimComp->IsRegisteredActor(*mTestGameActor));
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void AnimationComponentTests::TestAnimationActorComponentInit()
+   {
+      dtCore::ObserverPtr<dtAnim::AnimationHelper> animAC = mTestGameActor->GetComponent<dtAnim::AnimationHelper>();
+
+      CPPUNIT_ASSERT_EQUAL(false, animAC->GetLoadModelAsynchronously());
+      CPPUNIT_ASSERT_EQUAL(true, animAC->GetEnableAttachingNodeToDrawable());
+
+      animAC->SetLoadModelAsynchronously(false);
+      animAC->SetEnableAttachingNodeToDrawable(false);
+      CPPUNIT_ASSERT_EQUAL(false, animAC->GetLoadModelAsynchronously());
+      CPPUNIT_ASSERT_EQUAL(false, animAC->GetEnableAttachingNodeToDrawable());
+
+      animAC->SetSkeletalMesh(dtCore::ResourceDescriptor("SkeletalMeshes:marine.xml"));
+      CPPUNIT_ASSERT(animAC->GetNode() == NULL);
+      mGM->AddActor(*mTestGameActor, false, false);
+      CPPUNIT_ASSERT(animAC->GetNode() != NULL);
+      CPPUNIT_ASSERT(animAC->GetNode()->getNumParents() == 0);
+      animAC->AttachNodeToDrawable();
+      CPPUNIT_ASSERT_EQUAL(1U, animAC->GetNode()->getNumParents());
+      CPPUNIT_ASSERT(animAC->GetNode()->getParent(0) == mTestGameActor->GetDrawable()->GetOSGNode());
+      animAC->DetachNodeFromDrawable();
+      CPPUNIT_ASSERT(animAC->GetNode()->getNumParents() == 0);
+
+      animAC->AttachNodeToDrawable();
+      CPPUNIT_ASSERT_EQUAL(1U, animAC->GetNode()->getNumParents());
+      animAC->SetEnableAttachingNodeToDrawable(true);
+
+      dtCore::RefPtr<osg::Node> nodeBackup = animAC->GetNode();
+      animAC->SetSkeletalMesh(dtCore::ResourceDescriptor());
+      CPPUNIT_ASSERT(animAC->GetNode() == NULL);
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("Setting the resource to null with AttachingNoteToDrawable enabled should unparent the node.",
+               0U, nodeBackup->getNumParents());
+      animAC->SetSkeletalMesh(dtCore::ResourceDescriptor("SkeletalMeshes:marine.xml"));
+      CPPUNIT_ASSERT_EQUAL(1U, animAC->GetNode()->getNumParents());
+      CPPUNIT_ASSERT(animAC->GetNode()->getParent(0) == mTestGameActor->GetDrawable()->GetOSGNode());
+
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -212,8 +253,6 @@ namespace dtAnim
       mAnimComp->RegisterActor(*mTestGameActor, *mHelper);
 
       CPPUNIT_ASSERT(mAnimComp->IsRegisteredActor(*mTestGameActor));
-
-      CPPUNIT_ASSERT(mAnimComp->GetHelperForProxy(*mTestGameActor) == mHelper.get());
 
       dtCore::System::GetInstance().Step();
 
@@ -283,8 +322,7 @@ namespace dtAnim
 
                if (actor)
                {
-                  mAnimComp->RegisterActor(*gameProxy, *actor->GetHelper());
-                  actor->GetHelper()->SetGroundClamp(true);
+                  actor->GetComponent<dtAnim::AnimationHelper>()->SetGroundClamp(true);
                }
          }
       }
@@ -308,7 +346,7 @@ namespace dtAnim
 
             if (actor)
             {
-               actor->GetHelper()->PlayAnimation("Walk");
+               actor->GetComponent<dtAnim::AnimationHelper>()->PlayAnimation("Walk");
             }
          }
       }
@@ -356,7 +394,7 @@ namespace dtAnim
          if (proxy)
          {
             dtCore::Transformable* transform
-               = dynamic_cast<dtCore::Transformable*>(proxy->GetActor());
+               = dynamic_cast<dtCore::Transformable*>(proxy->GetDrawable());
             if (transform)
             {
                mAnimComp->SetTerrainActor(transform);
@@ -401,7 +439,7 @@ namespace dtAnim
 
             if (actor)
             {
-               actor->GetHelper()->ClearAnimation("Walk", 0.0);
+               actor->GetComponent<dtAnim::AnimationHelper>()->ClearAnimation("Walk", 0.0);
             }
          }
       }

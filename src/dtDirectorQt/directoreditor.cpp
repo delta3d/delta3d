@@ -215,14 +215,7 @@ namespace dtDirector
 
       if (mDirector.valid())
       {
-         mFullFileName = mDirector->GetScriptName();
-         std::string contextDir = osgDB::convertFileNameToNativeStyle(dtDAL::Project::GetInstance().GetContext()+"/directors/");
-         contextDir = osgDB::getRealPath(contextDir);
-         if (!mFullFileName.empty())
-         {
-            mFullFileName = osgDB::getRealPath(mFullFileName);
-         }
-         mFileName = dtUtil::FileUtils::GetInstance().RelativePath(contextDir, mFullFileName);
+         AssignFileNameVars(mDirector->GetScriptName());
 
          mUI.graphBrowser->BuildGraphList(mDirector->GetGraphRoot());
 
@@ -309,26 +302,11 @@ namespace dtDirector
          mUI.graphTab->clear();
          GetUndoManager()->Clear();
 
-         mFileName.clear();
-         mFullFileName.clear();
-
          try
          {
-            if (!dtCore::Project::GetInstance().IsContextValid())
-            {
-               QMessageBox::warning(this, "Warning", "No project context has been set in STAGE.  Scripts may not load correctly.", QMessageBox::Ok);
-            }
+            AssignFileNameVars(fileName);
 
-            std::string contextDir = osgDB::convertFileNameToNativeStyle(dtDAL::Project::GetInstance().GetContext()+"/directors/");
-            contextDir = osgDB::getRealPath(contextDir);
-            mFullFileName = fileName;
-            mFileName = dtUtil::FileUtils::GetInstance().RelativePath(contextDir, fileName);
-
-            // Remove this entry from the recent file listing.
-            QSettings settings("MOVES", "Director Editor");
-            QStringList files = settings.value("recentFileList").toStringList();
-            files.removeAll(mFileName.c_str());
-            settings.setValue("recentFileList", files);
+            RemoveRecentFile();
 
             DirectorTypeFactory* factory = DirectorTypeFactory::GetInstance();
             if (factory)
@@ -430,15 +408,7 @@ namespace dtDirector
                messageBox.exec();
             }
 
-            // Update the recent file listing to have the
-            // currently loaded item inserted to the front.
-            files.prepend(mFileName.c_str());
-            while (files.size() > 5)
-            {
-               files.removeLast();
-            }
-
-            settings.setValue("recentFileList", files);
+            UpdateRecentFiles();
             RefreshRecentFiles();
 
             // Create a single tab with the default graph.
@@ -2097,10 +2067,10 @@ namespace dtDirector
             }
          }
 
-         std::string contextDir = osgDB::convertFileNameToNativeStyle(dtDAL::Project::GetInstance().GetContext()+"/directors/");
-         contextDir = osgDB::getRealPath(contextDir);
+         //std::string contextDir = osgDB::convertFileNameToNativeStyle(dtDAL::Project::GetInstance().GetContext()+"/directors/");
+         //contextDir = osgDB::getRealPath(contextDir);
 
-         std::string fileName = contextDir + action->text().toStdString();
+         std::string fileName = action->text().toStdString();
 
          LoadScript(fileName);
       }
@@ -2339,23 +2309,30 @@ namespace dtDirector
          showFiles = true;
       }
 
-      std::string contextDir = osgDB::convertFileNameToNativeStyle(dtDAL::Project::GetInstance().GetContext()+"/directors/");
-      contextDir = osgDB::getRealPath(contextDir);
-
       std::string fullFileName = mFullFileName;
+
+      QSettings settings("MOVES", "Director Editor");
 
       if (showFiles)
       {
          QString filter = tr(".dtdir");
 
+         std::string contextDir = settings.value(QString("lastSavePath")).toString().toStdString();
+         if (dtCore::Project::GetInstance().IsContextValid(0))
+         {
+            contextDir = dtCore::Project::GetInstance().GetContext(0) + "/Directors";
+         }
+
          QFileDialog dialog;
          QFileInfo filePath = dialog.getSaveFileName(
-            this, tr("Save a Director Script File"), tr(contextDir.c_str()), tr("XML Director Scripts (*.dtdir);;Binary Director Scripts (*.dtdirb)"), &filter);
+            this, tr("Save a Director Script File"), QString(contextDir.c_str()), tr("XML Director Scripts (*.dtdir);;Binary Director Scripts (*.dtdirb)"), &filter);
 
          if (filePath.fileName().isEmpty())
          {
             return false;
          }
+
+         settings.setValue(QString("lastSavePath"), dialog.directory().absolutePath());
 
          fullFileName = osgDB::convertFileNameToNativeStyle(
             filePath.absolutePath().toStdString() + "/" + filePath.fileName().toStdString());
@@ -2363,13 +2340,6 @@ namespace dtDirector
 
       if (!fullFileName.empty())
       {
-         std::string fileName = dtUtil::FileUtils::GetInstance().RelativePath(contextDir, fullFileName);
-
-         // Remove this file from the recent file listing.
-         QSettings settings("MOVES", "Director Editor");
-         QStringList files = settings.value("recentFileList").toStringList();
-         files.removeAll(fileName.c_str());
-
          GetDirector()->SaveScript(fullFileName);
 
          // We only set the current edited file and save the undo manager
@@ -2377,22 +2347,16 @@ namespace dtDirector
          // referenced on the original script.
          if (!IsDebugging() || mFullFileName == fullFileName)
          {
-            mFullFileName = fullFileName;
-            mFileName = fileName;
+            AssignFileNameVars(fullFileName);
+
+            RemoveRecentFile();
 
             GetUndoManager()->OnSaved();
          }
 
          RefreshButtonStates();
 
-         // Input the new file to the recent file list.
-         files.prepend(fileName.c_str());
-         while (files.size() > 5)
-         {
-            files.removeLast();
-         }
-
-         settings.setValue("recentFileList", files);
+         UpdateRecentFiles();
          RefreshRecentFiles();
 
          dtDAL::ResourceDescriptor resource = GetDirector()->GetResource();
@@ -2402,16 +2366,15 @@ namespace dtDirector
          // that was saved and only refresh scripts using that resource.
          if (mFullFileName != fullFileName)
          {
-            std::string id = resource.GetResourceIdentifier();
-
+            std::string tempFileName = mFileName;
             size_t pos = 0;
-            while ((pos = fileName.find("\\", pos)) != std::string::npos)
+            while ((pos = tempFileName.find("\\", pos)) != std::string::npos)
             {
-               fileName.replace(pos, 1, ":");
+               tempFileName.replace(pos, 1, ":");
                pos++;
             }
 
-            resource = dtDAL::ResourceDescriptor(std::string("Directors:") + fileName);
+            resource = dtDAL::ResourceDescriptor(std::string("Directors:") + tempFileName);
          }
 
          // If we are dealing with a resourced script, make sure we go through
@@ -2533,8 +2496,15 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    bool DirectorEditor::LoadScript()
    {
-      std::string contextDir = osgDB::convertFileNameToNativeStyle(dtDAL::Project::GetInstance().GetContext()+"/directors/");
-      contextDir = osgDB::getRealPath(contextDir);
+      QSettings settings("MOVES", "Director Editor");
+
+      std::string contextDir = settings.value(QString("lastSavePath")).toString().toStdString();
+      if (dtCore::Project::GetInstance().IsContextValid(0))
+      {
+         contextDir = dtCore::Project::GetInstance().GetContext(0) + "/Directors";
+         contextDir = osgDB::convertFileNameToNativeStyle(contextDir);
+         contextDir = osgDB::getRealPath(contextDir);
+      }
 
       QFileDialog dialog;
       QFileInfo filePath = dialog.getOpenFileName(
@@ -2544,6 +2514,8 @@ namespace dtDirector
       {
          return false;
       }
+
+      settings.setValue(QString("lastSavePath"), dialog.directory().absolutePath());
 
       std::string fullFileName  = osgDB::convertFileNameToNativeStyle(
          filePath.absolutePath().toStdString() + "/" + filePath.fileName().toStdString());
@@ -2715,6 +2687,68 @@ namespace dtDirector
          mClickSound->stop();
       }
    }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void DirectorEditor::AssignFileNameVars(const std::string& fileName)
+   {
+      mFileName.clear();
+      mFullFileName.clear();
+
+      dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
+      dtCore::Project& project = dtCore::Project::GetInstance();
+      if (!fileName.empty() && fileUtils.FileExists(fileName))
+      {
+         try
+         {
+            mFullFileName = fileUtils.GetAbsolutePath(fileName);
+            dtCore::Project::ContextSlot cs = project.GetContextSlotForPath(mFullFileName);
+            if (cs != dtCore::Project::DEFAULT_SLOT_VALUE)
+            {
+               std::string contextDir = project.GetContext(cs) + "/Directors";
+               mFileName = fileUtils.RelativePath(contextDir, mFullFileName);
+            }
+            else
+            {
+               mFileName = osgDB::getSimpleFileName(mFullFileName);
+            }
+         }
+         catch (const dtUtil::Exception& ex)
+         {
+            // this shouldn't happen because I made precautions above, but just to be safe.
+            ex.LogException(dtUtil::Log::LOG_ERROR);
+            mFileName.clear();
+            mFullFileName.clear();
+         }
+      }
+
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void DirectorEditor::UpdateRecentFiles()
+   {
+      QSettings settings("MOVES", "Director Editor");
+      QStringList files = settings.value("recentFileList").toStringList();
+      // Update the recent file listing to have the
+      // currently loaded item inserted to the front.
+      files.prepend(mFullFileName.c_str());
+      while (files.size() > 5)
+      {
+         files.removeLast();
+      }
+
+      settings.setValue("recentFileList", files);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void DirectorEditor::RemoveRecentFile()
+   {
+      // Remove this entry from the recent file listing.
+      QSettings settings("MOVES", "Director Editor");
+      QStringList files = settings.value("recentFileList").toStringList();
+      files.removeAll(mFullFileName.c_str());
+      settings.setValue("recentFileList", files);
+   }
+
 
 } // namespace dtDirector
 

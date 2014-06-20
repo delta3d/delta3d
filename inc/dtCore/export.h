@@ -39,6 +39,7 @@
 #   endif 
 #endif
 
+#include <dtUtil/warningdisable.h>
 #ifndef dtDAL
 #define dtDAL dtCore
 #endif

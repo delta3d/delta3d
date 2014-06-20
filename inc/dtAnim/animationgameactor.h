@@ -44,15 +44,6 @@ namespace dtAnim
        */
       AnimationGameActor(dtGame::GameActorProxy& proxy);
 
-      /**
-       * Loads a model file.
-       * @param modelFile The filename of the model to load.
-       */
-      virtual void SetModel(const std::string& modelFile);
-
-      dtAnim::AnimationHelper* GetHelper();
-      const dtAnim::AnimationHelper* GetHelper() const;
-
       virtual osg::BoundingBox GetBoundingBox();
 
    protected:
@@ -60,9 +51,6 @@ namespace dtAnim
 
       /// Destroys this actor.
       virtual ~AnimationGameActor();
-
-      /// Attaches newly loaded geometry to the scene
-      virtual void OnAsynchLoadCompleted();
    };
 
    /**
@@ -83,6 +71,11 @@ namespace dtAnim
        * wrap the specified properties located in the actor.
        */
       virtual void BuildPropertyMap();
+
+      /**
+       * Overridden to add the animation helper as an actor component.
+       */
+      virtual void BuildActorComponents();
 
       /**
        * Gets the method by which this static mesh is rendered. This is used by STAGE.
@@ -108,7 +101,7 @@ namespace dtAnim
        * Called by the game manager during creation of the proxy.  This method
        * creates the real actor and returns it.
        */
-      virtual void CreateActor();
+      virtual void CreateDrawable();
    };
 
 } // namespace dtAnim

@@ -32,6 +32,7 @@
 
 #include <dtCore/refptr.h>
 #include <dtCore/observerptr.h>
+#include <dtUtil/warningdisable.h>
 #include <dtUtil/mswinmacros.h>
 
 namespace dtCore
@@ -270,14 +271,9 @@ namespace dtDirector
 
       ValueLink* mRedirector;
 
-#if defined DELTA_WIN32
-#pragma warning (push)
-#pragma warning (disable:4251)
-#endif //DELTA_WIN32
+DT_DISABLE_WARNING_START_MSVC(4251)
       std::vector<ValueNode*> mLinks;
-#if defined DELTA_WIN32
-#pragma warning (pop)
-#endif //DELTA_WIN32
+DT_DISABLE_WARNING_END
 
       dtCore::RefPtr<dtCore::ActorProperty> mDefaultProperty;
 

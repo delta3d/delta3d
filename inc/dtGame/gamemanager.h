@@ -465,13 +465,24 @@ namespace dtGame
       void PublishActor(GameActorProxy& gameActorProxy);
 
       /**
+       * Changes an actor to local by calling OnRemovedFromWorld, changing the actor setting to local,
+       * and then calling OnEnteredWorld.  The actor must be able to cleanup and reset, and any ramifications are up to the application.
+       * The actor is reset if it's already local
+       */
+      void SwitchActorToLocal(GameActorProxy& gameActorProxy, bool publish = false);
+
+      /**
+       * Changes an actor to local by calling OnRemovedFromWorld, changing the actor setting to remote,
+       * and then calling OnEnteredWorld.  The actor must be able to cleanup and reset, and any ramifications are up to the application.
+       * The actor is reset if it's already remote
+       */
+      void SwitchActorToRemote(GameActorProxy& gameActorProxy);
+
+      /**
        * Removes all game actors and actors from the game manager
        * Currently all actors are removed immediately, but this should not be
        * assumed to be true going forward.
-       * INFO_ACTOR_DELETE messages are only sent for local actors.
-       * @note This method causes delete messages to be sent for all actors
-       *    that need to be deleted.  If an immediate delete or clear of the
-       *    game manager is required call this method with a true flag.
+       * INFO_ACTOR_DELETE messages are sent for all actors.
        */
       void DeleteAllActors() { DeleteAllActors(false); }
 
@@ -681,18 +692,6 @@ namespace dtGame
       {
          proxy = dynamic_cast<ProxyType*>(FindActorById(id));
       }
-
-      /**
-       * Saves the game state
-       * @return True if saved successfully, false if error
-       */
-      bool SaveGameState();
-
-      /**
-       * Loads a game state
-       * @return True if loaded successfully, false if error
-       */
-      bool LoadGameState();
 
       /**
        * Loads a single map, closing any currenly opened maps.  For loading multiple maps together, you should
@@ -1134,6 +1133,11 @@ namespace dtGame
        * won't work correctly.
        */ 
       bool RemoveDeletedActors();
+
+      /**
+       * SwitchActorToLocal and SwitchActorToRemote call this so the code can be shared.
+       */
+      void SwitchActorToLocalOrRemote(GameActorProxy& gameActorProxy, bool local, bool publish);
 
    private:
       GMImpl* mGMImpl; // Pimple pattern for private data

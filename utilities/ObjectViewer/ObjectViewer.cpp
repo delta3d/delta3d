@@ -1,3 +1,12 @@
+/**
+ * \file ObjectViewer.cpp
+ *
+ * \page objectviewer Object Viewer
+ *
+ * The object viewer allows a user to view OpenSceneGraph mesh files,
+ * shaders, and Delta3D maps interactively.
+ */
+
 /// Included above ObjectViewer.h to avoid a compile error in linux
 #include <QtCore/QDir>
 #include <QtCore/QDebug>
@@ -39,11 +48,173 @@
 #include <osg/PolygonOffset>
 #include <osg/Material>
 #include <osg/MatrixTransform>
+#include <osg/PrimitiveSet>
 #include <osgUtil/TangentSpaceGenerator>
+#include <osgUtil/Statistics>
 
 #include <osgViewer/CompositeViewer>
 
 #include <assert.h>
+
+/**
+ * \brief Visitor to count triangles as simply as possible.
+ */
+class CountTrianglesVisitor : public osg::NodeVisitor
+{
+public:
+    typedef osg::NodeVisitor BaseClass;
+
+    CountTrianglesVisitor() :
+        BaseClass ( osg::NodeVisitor::TRAVERSE_ALL_CHILDREN ),
+        numTriangles(0),
+        numDrawablesSkipped(0),
+        numPrimitivesSkipped(0),
+        numEmptyPrimitiveSets(0)
+    {}
+
+    CountTrianglesVisitor ( TraversalMode tm ) :
+        BaseClass ( tm ),
+        numTriangles(0),
+        numDrawablesSkipped(0),
+        numPrimitivesSkipped(0),
+        numEmptyPrimitiveSets(0)
+    {}
+
+    virtual ~CountTrianglesVisitor() {};
+
+    virtual const char* className() { return "CountTrianglesVisitor"; }
+
+    virtual const char* libraryName() { return "Delta3D Object Viewer"; }
+
+    virtual void apply ( osg::Node &node )
+    {
+        traverse ( node );
+        return;
+    }
+
+    virtual void apply ( osg::LOD &node )
+    {
+        // Count only the nearest (presumably most complex) level of detail.
+        const osg::LOD::RangeList& ranges = node.getRangeList();
+        // Find which range is closest
+        int closeIndex = -1;
+        float minDist = FLT_MAX;
+        for ( unsigned int i=0; i<ranges.size(); i++ )
+        {
+            if ( ranges[i].first < minDist )
+            {
+                minDist = ranges[i].first;
+                closeIndex = int(i);
+            }
+        }
+
+        if ( closeIndex >= 0 )
+        {
+            traverse ( *( node.getChild ( closeIndex ) ) );
+        }
+        return;
+    }
+
+    virtual void apply ( osg::Geode &node )
+    {
+        // Get all drawables and count their triangles.
+        for ( unsigned int i=0; i<node.getNumDrawables(); i++ )
+        {
+            const osg::Drawable* d = node.getDrawable ( i );
+            const osg::Geometry* geom = d->asGeometry();
+            if ( geom != NULL )
+            {
+                // Count triangles
+                const osg::Geometry::PrimitiveSetList& pList ( geom->getPrimitiveSetList() );
+                for ( unsigned int j=0; j<pList.size(); j++ )
+                {
+                    osg::ref_ptr<const osg::PrimitiveSet> pSet ( geom->getPrimitiveSet ( j ) );
+                    GLenum mode ( pSet->getMode() );
+                    unsigned int numIndices ( pSet->getNumIndices() );
+
+                    switch ( mode )
+                    {
+                        // Can't do anything with these types.
+                    case osg::PrimitiveSet::POINTS:
+                    case osg::PrimitiveSet::LINES:
+                    case osg::PrimitiveSet::LINE_STRIP:
+                    case osg::PrimitiveSet::LINE_LOOP:
+                        numPrimitivesSkipped++;
+                        break;
+
+                    case osg::PrimitiveSet::TRIANGLES:
+                        if ( numIndices >= 3 )
+                        {
+                            numTriangles += numIndices/3;
+                        }
+                        else
+                        {
+                            numEmptyPrimitiveSets++;
+                        }
+                        break;
+
+                    case osg::PrimitiveSet::TRIANGLE_STRIP:
+                        if ( numIndices >= 3 )
+                        {
+                            numTriangles += numIndices - 2;
+                        }
+                        else
+                        {
+                            numEmptyPrimitiveSets++;
+                        }
+                        break;
+
+                    case osg::PrimitiveSet::QUADS:
+                        if ( numIndices >= 4 )
+                        {
+                            numTriangles += numIndices / 2;
+                        }
+                        else
+                        {
+                            numEmptyPrimitiveSets++;
+                        }
+                        break;
+
+                    case osg::PrimitiveSet::QUAD_STRIP:
+                        if ( numIndices >= 4 )
+                        {
+                            numTriangles += numIndices - 3;
+                        }
+                        else
+                        {
+                            numEmptyPrimitiveSets++;
+                        }
+                        break;
+
+                    case osg::PrimitiveSet::POLYGON:
+                    case osg::PrimitiveSet::TRIANGLE_FAN:
+                        if ( numIndices >= 3 )
+                        {
+                            numTriangles += numIndices - 2;
+                        }
+                        else
+                        {
+                            numEmptyPrimitiveSets++;
+                        }
+                        break;
+                    }
+                }
+
+            }
+            else
+            {
+                numDrawablesSkipped++;
+            }
+        }
+        traverse ( node );
+    }
+
+public:
+    unsigned int numTriangles;
+    unsigned int numDrawablesSkipped;
+    unsigned int numPrimitivesSkipped;
+    unsigned int numEmptyPrimitiveSets;
+};
 
 ////////////////////////////////////////////////////////////////////////////////
 ObjectViewer::ObjectViewer()
@@ -222,7 +393,7 @@ void ObjectViewer::OnLoadMapFile(const std::string& filename)
       {
          dtCore::BaseActorObject *proxy = const_cast<dtCore::BaseActorObject*>(itor->second.get());
 
-         dtCore::DeltaDrawable* drawable = proxy->GetActor();
+         dtCore::DeltaDrawable* drawable = proxy->GetDrawable();
          if (drawable)
          {
             mShadeDecorator->addChild(drawable->GetOSGNode());
@@ -284,6 +455,88 @@ void ObjectViewer::OnLoadMapFile(const std::string& filename)
    }
 }
 
+void ObjectViewer::CountPrimitives ( osg::Node& mesh, const std::string& filename )
+{
+    // Count triangles in model.
+    CountTrianglesVisitor visit;
+    mesh.accept(visit);
+
+    std::cout << filename << " contains" <<std::endl;
+    osgUtil::StatsVisitor statVis;
+    (mObject->GetOSGNode())->accept(statVis);
+    unsigned int numTriangles  = 0;
+    unsigned int numTriStrips  = 0;
+    unsigned int numQuads      = 0;
+    unsigned int numQuadStrips = 0;
+    unsigned int numPolygons   = 0;
+    unsigned int numTriFans    = 0;
+    unsigned int numOthers     = 0;
+    unsigned int numPrimSets   = 0;
+    const osgUtil::Statistics::PrimitiveCountMap& pcMap ( statVis._instancedStats.getPrimitiveCountMap() );
+    osgUtil::Statistics::PrimitiveCountMap::const_iterator mapEntry = pcMap.begin();
+    for ( ; mapEntry != pcMap.end(); mapEntry++ )
+    {
+        numPrimSets += mapEntry->second;
+        switch ( mapEntry->first )
+        {
+        case osg::PrimitiveSet::POINTS:
+        case osg::PrimitiveSet::LINES:
+        case osg::PrimitiveSet::LINE_STRIP:
+        case osg::PrimitiveSet::LINE_LOOP:
+            numOthers += mapEntry->second;
+            break;
+
+        case osg::PrimitiveSet::TRIANGLES:
+            numTriangles  += mapEntry->second;
+            break;
+
+        case osg::PrimitiveSet::TRIANGLE_STRIP:
+            numTriStrips  += mapEntry->second;
+            break;
+
+        case osg::PrimitiveSet::QUADS:
+            numQuads      += mapEntry->second;
+            break;
+
+        case osg::PrimitiveSet::QUAD_STRIP:
+            numQuadStrips += mapEntry->second;
+            break;
+
+        case osg::PrimitiveSet::POLYGON:
+            numPolygons   += mapEntry->second;
+            break;
+
+        case osg::PrimitiveSet::TRIANGLE_FAN:
+            numTriFans    += mapEntry->second;
+            break;
+
+        default:
+            numOthers     += mapEntry->second;
+            break;
+        }
+    }
+
+    //unsigned int primCount = statVis._instancedStats._primitiveCount.size();
+
+    std::cout << statVis._instancedStats._vertexCount << " vertices, " << std::endl;
+    std::cout << numPrimSets << " total primitives." << std::endl;
+
+    if ( numTriangles > 0 )                std::cout << numTriangles  << " triangle primitives" << std::endl;
+    if ( numTriStrips > 0 )                std::cout << numTriStrips  << " triangles in strips" << std::endl;
+    if ( numQuads > 0 )                    std::cout << numQuads      << " quads"               << std::endl;
+    if ( numQuadStrips > 0 )               std::cout << numQuadStrips << " quads in strips"     << std::endl;
+    if ( numPolygons > 0 )                 std::cout << numPolygons   << " polygons"            << std::endl;
+    if ( numTriFans > 0 )                  std::cout << numTriFans    << " triangles in fans"   << std::endl;
+    if ( numOthers > 0 )                   std::cout << numOthers     << " skipped"             << std::endl;
+
+    if ( visit.numDrawablesSkipped > 0 )   std::cout << visit.numDrawablesSkipped << " drawables skipped"<< std::endl;
+    if ( visit.numPrimitivesSkipped > 0 )  std::cout << visit.numPrimitivesSkipped <<" primitive sets skipped"<< std::endl;
+    if ( visit.numEmptyPrimitiveSets > 0 ) std::cout << visit.numEmptyPrimitiveSets << " empty PrimitiveSets" << std::endl;
+
+    std::cout << visit.numTriangles << " triangles in closest LOD." << std::endl;
+
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 void ObjectViewer::OnLoadGeometryFile(const std::string& filename)
 {
@@ -291,11 +544,36 @@ void ObjectViewer::OnLoadGeometryFile(const std::string& filename)
 
    QString qtFilename(filename.c_str());
 
-   // If this is a static mesh
-   if (!qtFilename.endsWith(".dtMap") && !qtFilename.endsWith(".dtChar"))
+   if (qtFilename.endsWith(".dtMap") || qtFilename.endsWith(".dtChar"))
    {
+      QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
+
+      dtCore::RefPtr<dtAnim::Cal3DModelWrapper> wrapper =
+         dtAnim::Cal3DDatabase::GetInstance().Load(filename);
+
+      if (wrapper.valid())
+      {
+         mCharacter = new dtAnim::CharDrawable(wrapper.get());
+
+         // set up the ObjectViewer's scene graph
+         mShadeDecorator->addChild(mCharacter->GetOSGNode());
+         mWireDecorator->addChild(mCharacter->GetOSGNode());
+      }
+      else
+      {
+         emit ErrorOccured(QString("Unable to load %1").arg(filename.c_str()));
+      }
+
+      QApplication::restoreOverrideCursor();
+   }
+   else
+   {
+       // If this is a static mesh
       mObject = new dtCore::Object;
       mObject->LoadFile(filename);
+
+      //print out stats
+      CountPrimitives ( *(mObject->GetOSGNode()), filename );
 
       // set up the ObjectViewer's scene graph
       mShadeDecorator->addChild(mObject->GetOSGNode());
@@ -317,28 +595,6 @@ void ObjectViewer::OnLoadGeometryFile(const std::string& filename)
             GenerateTangentsForObject(mObject.get());
          }
       }
-   }
-   else
-   {
-      QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
-
-      dtCore::RefPtr<dtAnim::Cal3DModelWrapper> wrapper =
-         dtAnim::Cal3DDatabase::GetInstance().Load(filename);
-
-      if (wrapper.valid())
-      {
-         mCharacter = new dtAnim::CharDrawable(wrapper.get());
-
-         // set up the ObjectViewer's scene graph
-         mShadeDecorator->addChild(mCharacter->GetOSGNode());
-         mWireDecorator->addChild(mCharacter->GetOSGNode());
-      }
-      else
-      {
-         emit ErrorOccured(QString("Unable to load %1").arg(filename.c_str()));
-      }
-
-      QApplication::restoreOverrideCursor();
    }
 }
 
@@ -850,7 +1106,7 @@ void ObjectViewer::clearProxies(const std::map<dtCore::UniqueId, dtCore::RefPtr<
    {
       dtCore::BaseActorObject* proxy = const_cast<dtCore::BaseActorObject*>(itor->second.get());
 
-      dtCore::DeltaDrawable* drawable = proxy->GetActor();
+      dtCore::DeltaDrawable* drawable = proxy->GetDrawable();
       if (drawable)
       {
          mShadeDecorator->removeChild(drawable->GetOSGNode());

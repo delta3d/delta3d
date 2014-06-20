@@ -243,9 +243,9 @@ void TestGamePropertyActor::BuildPropertyMap()
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void TestGamePropertyActor::CreateActor()
+void TestGamePropertyActor::CreateDrawable()
 {
-   SetActor(*new dtGame::GameActor(*this));
+   SetDrawable(*new dtGame::GameActor(*this));
 }
 
 //////////////////////////////////////////////////////////////////////////////

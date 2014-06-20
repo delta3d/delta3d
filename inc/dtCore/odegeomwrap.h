@@ -8,6 +8,7 @@
 #include <dtCore/export.h>
 #include <dtCore/refptr.h>
 #include <dtUtil/enumeration.h>
+#include <dtCore/collisiongeometrytypeenum.h>
 
 /// @cond DOXYGEN_SHOULD_SKIP_THIS
 namespace osg
@@ -20,31 +21,6 @@ namespace osg
 namespace dtCore
 {
    class Transform;
-
-   /**
-    * We need an enumeration to allow the user to set which type
-    * of collision geometry to use.  The other properties in this
-    * proxy such as radius, length, etc. affect the current type
-    * of collision geometry.
-    */
-   class DT_CORE_EXPORT CollisionGeomType : public dtUtil::Enumeration
-   {
-      DECLARE_ENUM(CollisionGeomType);
-   public:
-      static CollisionGeomType NONE;     ///<No shape
-      static CollisionGeomType SPHERE;   ///<Sphere
-      static CollisionGeomType CYLINDER; ///<Flat ended cylinder
-      static CollisionGeomType CCYLINDER;///<A capsule
-      static CollisionGeomType CUBE;     ///<Cube
-      static CollisionGeomType RAY;      ///<Ray
-      static CollisionGeomType MESH;     ///<triangle mesh
-
-   private:
-      CollisionGeomType(const std::string& name) : dtUtil::Enumeration(name)
-      {
-         AddInstance(this);
-      }
-   };
 
 
    /** Class used to wrap up the functionality of the ODE Geom.  Used by Transformable

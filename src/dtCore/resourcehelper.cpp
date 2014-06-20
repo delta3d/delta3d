@@ -235,11 +235,6 @@ namespace dtCore
                extMap.insert(std::make_pair("osg", dtCore::RefPtr<ResourceTypeHandler>(handler)));
 
                extFilter.clear();
-               extFilter.insert(std::make_pair("flt","Open flight scene data."));
-               handler = new DefaultResourceTypeHandler(d, "Open Flight scene data.", extFilter);
-               extMap.insert(std::make_pair("flt", dtCore::RefPtr<ResourceTypeHandler>(handler)));
-
-               extFilter.clear();
                extFilter.insert(std::make_pair("zip","Wrapping another file in a zip."));
                handler = new DefaultResourceTypeHandler(d, "Wrapping another file in a zip.", extFilter);
                extMap.insert(std::make_pair("zip", dtCore::RefPtr<ResourceTypeHandler>(handler)));
@@ -979,7 +974,7 @@ namespace dtCore
             catch (const dtUtil::Exception& ex)
             {
                fileUtils.PopDirectory();
-               throw ex;
+               throw;
             }
             fileUtils.PopDirectory();
          }
@@ -1108,7 +1103,7 @@ namespace dtCore
       catch (const dtUtil::Exception& ex)
       {
          fileUtils.PopDirectory();
-         throw ex;
+         throw;
       }
       fileUtils.PopDirectory();
    }

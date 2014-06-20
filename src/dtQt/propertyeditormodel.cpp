@@ -29,7 +29,7 @@
 
 #include <prefix/dtqtprefix.h>
 #include <dtQt/propertyeditormodel.h>
-#include <QtCore/qdebug.h>
+#include <QtCore/QDebug>
 
 namespace dtQt
 {

@@ -467,7 +467,7 @@ namespace dtEditQt
                osg::Vec3 pos = mCamera->getPosition();
                osg::Vec3 viewDir = mCamera->getViewDir();
 
-               const osg::BoundingSphere& bs = mGhostProxy->GetActor()->GetOSGNode()->getBound();
+               const osg::BoundingSphere& bs = mGhostProxy->GetDrawable()->GetOSGNode()->getBound();
 
                float actorCreationOffset = EditorData::GetInstance().GetActorCreationOffset();
                float offset = (bs.radius() < 1000.0f) ? bs.radius() : 1.0f;
@@ -1012,7 +1012,7 @@ namespace dtEditQt
 
                if (transProxy)
                {
-                  dtCore::Transformable *t = static_cast<dtCore::Transformable*>(transProxy->GetActor());
+                  dtCore::Transformable *t = static_cast<dtCore::Transformable*>(transProxy->GetDrawable());
                   t->SetTransform(camXform);
                }
             }

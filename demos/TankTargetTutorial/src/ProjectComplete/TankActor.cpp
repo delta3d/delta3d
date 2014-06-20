@@ -338,7 +338,7 @@ void TankActor::CheckForNewTarget()
       // Find the dtUtil::Absolute distance from the center of the target to the plane.
       float distance(dtUtil::Abs(plane.distance(targetPosition)));
       // Find the radius of the target's bounding sphere.
-      float radius((*iter)->GetActor()->GetOSGNode()->getBound().radius());
+      float radius((*iter)->GetDrawable()->GetOSGNode()->getBound().radius());
 
       // However, at this point we do not know if the target is in front of the tank
       // or behind the tank. We'll check for this by seeing if the dot product between
@@ -356,7 +356,7 @@ void TankActor::CheckForNewTarget()
          {
             foundTarget     = true;
             closestDistance = distance;
-            closestId       = (*iter)->GetActor()->GetUniqueId();
+            closestId       = (*iter)->GetDrawable()->GetUniqueId();
          }
       }
    }
@@ -500,9 +500,9 @@ void TankActorProxy::BuildPropertyMap()
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-void TankActorProxy::CreateActor()
+void TankActorProxy::CreateDrawable()
 {
-   SetActor(*new TankActor(*this));
+   SetDrawable(*new TankActor(*this));
 }
 
 ///////////////////////////////////////////////////////////////////////////////

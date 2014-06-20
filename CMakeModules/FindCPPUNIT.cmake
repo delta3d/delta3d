@@ -9,40 +9,31 @@
 # Created by Robert Osfield. 
 
 FIND_PATH(CPPUNIT_INCLUDE_DIR cppunit/extensions/HelperMacros.h
+  HINTS
     $ENV{CPPUNIT_DIR}/include
     $ENV{CPPUNIT_DIR}
     ${DELTA3D_EXT_DIR}/inc
     $ENV{DELTA_ROOT}/ext/inc
+  PATHS
     ~/Library/Frameworks
     /Library/Frameworks
     /usr/local/include
     /usr/include
-    /sw/include # Fink
-    /opt/local/include # DarwinPorts
-    /opt/csw/include # Blastwave
-    /opt/include
-    [HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\Session\ Manager\\Environment;OSG_ROOT]/include
-    /usr/freeware/include
 )
 
 MACRO(FIND_CPPUNIT_LIBRARY MYLIBRARY MYLIBRARYNAMES)
 FIND_LIBRARY(${MYLIBRARY}
-    NAMES ${MYLIBRARYNAMES}
-    PATHS
+  NAMES ${MYLIBRARYNAMES}
+  HINTS
     $ENV{CPPUNIT_DIR}/lib
     $ENV{CPPUNIT_DIR}
     ${DELTA3D_EXT_DIR}/lib
     $ENV{DELTA_ROOT}/ext/lib
+  PATHS
     ~/Library/Frameworks
     /Library/Frameworks
     /usr/local/lib
     /usr/lib
-    /sw/lib
-    /opt/local/lib
-    /opt/csw/lib
-    /opt/lib
-    [HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\Session\ Manager\\Environment;OSG_ROOT]/lib
-    /usr/freeware/lib64
 )
 ENDMACRO(FIND_CPPUNIT_LIBRARY MYLIBRARY MYLIBRARYNAMES)
 

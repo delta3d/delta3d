@@ -89,9 +89,9 @@ TARGET_LINK_LIBRARIES(${LIB_NAME}
                       ${DTGAME_LIBRARY}
                       ${CARBON_LIBRARY}
                       )                                         
-                                                
-SET_TARGET_PROPERTIES(${LIB_NAME}
-                     PROPERTIES DEFINE_SYMBOL DT_DIS_LIBRARY COMPILE_FLAGS -DDT_DIS_DEFAULT_PLUGIN)         
+
+DELTA3D_ADD_LIBRARY_PROPERTIES(${LIB_NAME} DT_DIS_LIBRARY ${LIB_PUBLIC_HEADERS})
+ADD_DEFINITIONS(-DDT_DIS_DEFAULT_PLUGIN)
 
 
 

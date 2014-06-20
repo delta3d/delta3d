@@ -41,7 +41,7 @@ namespace dtCore
 
       template <typename ParameterContainer >
       NamedPropertyContainerParameter(const dtUtil::RefString& name, const ParameterContainer& parameters)
-      : NamedGroupParameter(dtCore::DataType::GROUP, name, false)
+      : NamedGroupParameter(dtCore::DataType::GROUP, name)
       {
          typename ParameterContainer::const_iterator i, iend;
          i = parameters.begin();

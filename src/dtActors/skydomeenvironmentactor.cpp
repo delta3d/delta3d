@@ -173,9 +173,9 @@ void SkyDomeEnvironmentActorProxy::BuildPropertyMap()
       "Adjusts the max visibility distance (meters)"));
 }
 
-void SkyDomeEnvironmentActorProxy::CreateActor()
+void SkyDomeEnvironmentActorProxy::CreateDrawable()
 {
    dtActors::SkyDomeEnvironmentActor *env = new dtActors::SkyDomeEnvironmentActor( *this );
-   SetActor( *env );
+   SetDrawable( *env );
 }
 

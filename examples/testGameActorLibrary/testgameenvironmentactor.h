@@ -81,7 +81,7 @@ class DT_EXAMPLE_EXPORT TestGameEnvironmentActorProxy : public dtGame::IEnvGameA
 
       TestGameEnvironmentActorProxy() { SetClassName("TestGameEnvironmentActorProxy"); }
 
-      virtual void CreateActor()      { SetActor(*new TestGameEnvironmentActor(*this)); }
+      virtual void CreateDrawable()      { SetDrawable(*new TestGameEnvironmentActor(*this)); }
 
       virtual void BuildPropertyMap() { dtGame::GameActorProxy::BuildPropertyMap(); }
 

@@ -26,6 +26,7 @@
 
 #include <dtGame/export.h>
 #include <dtCore/propertycontainer.h>
+#include <dtCore/sigslot.h>
 #include <dtUtil/refstring.h>
 #include <dtUtil/getsetmacros.h>
 
@@ -47,7 +48,7 @@ namespace dtGame
     * actor component until the OnEnteredWorld() method. This gives each actor component a chance
     * to initialize and get properties from the map regardless of order.
     */
-   class DT_GAME_EXPORT ActorComponent : public dtCore::PropertyContainer
+   class DT_GAME_EXPORT ActorComponent : public dtCore::PropertyContainer, public sigslot::has_slots<>
    {
 
    public:
@@ -74,13 +75,13 @@ namespace dtGame
        * to perform any custom initialization.
        * @param actor The GameActor this ActorComponent has been added to.
        */ 
-      virtual void OnAddedToActor(dtGame::GameActor& actor) {};
+      virtual void OnAddedToActor(dtGame::GameActor& /*actor*/) {};
 
       /** 
        * Called when this ActorComponent is removed from the parent actor.
        * @param actor The GameActor this ActorComponent has just been removed from
        */
-      virtual void OnRemovedFromActor(dtGame::GameActor& actor) {};
+      virtual void OnRemovedFromActor(dtGame::GameActor& /*actor*/) {};
 
       /** 
        * Called when the parent actor enters the "world".
@@ -152,7 +153,7 @@ namespace dtGame
        * Default update method. Override to execute stuff for
        * each physics step. Call RegisterForTicks() to let this get called.
        */
-      virtual void OnTickLocal(const TickMessage& tickMessage) {};
+      virtual void OnTickLocal(const TickMessage& /*tickMessage*/) {};
 
    private: 
 

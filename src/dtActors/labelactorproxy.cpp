@@ -23,9 +23,9 @@ namespace dtActors
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void LabelActorProxy::CreateActor()
+   void LabelActorProxy::CreateDrawable()
    {
-      SetActor(*new dtABC::LabelActor);
+      SetDrawable(*new dtABC::LabelActor);
    }
 
    /////////////////////////////////////////////////////////////////////////////

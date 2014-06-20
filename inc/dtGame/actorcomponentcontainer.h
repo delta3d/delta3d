@@ -121,7 +121,7 @@ namespace dtGame
       //virtual ActorComponent* GetComponent(const ActorComponent::ACType& type) const = 0;
    private:
       // Override virtual std::vector<ActorComponent*> GetComponents(const ActorComponent::ACType& type) const instead
-      BREAK_OVERRIDE(GetComponent(const ActorComponent::ACType& type) const) ///deprecated 4/4/12
+      BREAK_OVERRIDE(GetComponent(const ActorComponent::ACType&) const) ///deprecated 4/4/12
    public:
 
       /**
@@ -155,7 +155,7 @@ namespace dtGame
        */
    private:
       // Override virtual void RemoveAllComponentsOfType(const ActorComponent::ACType& type) instead
-      BREAK_OVERRIDE(RemoveComponent(const ActorComponent::ACType& type)) ///deprecated 4/4/12
+      BREAK_OVERRIDE(RemoveComponent(const ActorComponent::ACType&)) ///deprecated 4/4/12
    public:
 
       /**
@@ -194,13 +194,13 @@ namespace dtGame
        * Override this to get informed about newly added ActorComponent
        * @param component The ActorComponent just added
        */
-      virtual void OnActorComponentAdded(ActorComponent& component) {};
+      virtual void OnActorComponentAdded(ActorComponent& /*component*/) {};
 
       /**
        * Override this to get informed about removed components
        * @param component The ActorComponent just removed
        */
-      virtual void OnActorComponentRemoved(ActorComponent& component) {};
+      virtual void OnActorComponentRemoved(ActorComponent& /*component*/) {};
 
    protected:
       virtual ~ActorComponentContainer() {}

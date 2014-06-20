@@ -90,7 +90,7 @@ CEGUI::Event::Connection dtGUI::ScriptModule::subscribeEvent(CEGUI::EventSet* wi
                                                              const CEGUI::String& eventName,
                                                              const CEGUI::String& subscriberName)
 {
-   return subscribeEvent(window, eventName, NULL, subscriberName);
+   return subscribeEvent(window, eventName, 0, subscriberName);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

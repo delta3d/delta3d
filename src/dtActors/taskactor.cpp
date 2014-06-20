@@ -369,9 +369,9 @@ namespace dtActors
    }
 
    //////////////////////////////////////////////////////////////////////////////
-   void TaskActorProxy::CreateActor()
+   void TaskActorProxy::CreateDrawable()
    {
-      SetActor(*new TaskActor(*this));
+      SetDrawable(*new TaskActor(*this));
    }
 
    //////////////////////////////////////////////////////////////////////////////
@@ -706,14 +706,16 @@ namespace dtActors
    {
       mSubTaskIndex = index;
 
-      // Get the actor at the current index and put it into the non-index slot.
-      std::string name = "Task";
-      name += dtUtil::ToString(mSubTaskIndex);
-      dtCore::BaseActorObject* proxy = GetLinkedActor(name);
-      if (proxy)
-      {
-         SetLinkedActor("Task", proxy);
-      }
+      // This can't be necessary because there are no actor actor properties and nothing else is calling the
+      // link.
+//      // Get the actor at the current index and put it into the non-index slot.
+//      std::string name = "Task";
+//      name += dtUtil::ToString(mSubTaskIndex);
+//      dtCore::BaseActorObject* proxy = GetLinkedActor(name);
+//      if (proxy)
+//      {
+//         SetLinkedActor("Task", proxy);
+//      }
    }
 
    ////////////////////////////////////////////////////////////////////////////////

@@ -1006,8 +1006,8 @@ void PoseMeshItem::AssertZeroErrorAtVertices()
                                        vertList[vertIndex]->mData.y(),
                                        trianglePick);
 
-      osg::Vec3 debugDirection = vertList[vertIndex]->mDebugData;
-      osg::Quat debugRotation  = vertList[vertIndex]->mDebugRotation;
+      //osg::Vec3 debugDirection = vertList[vertIndex]->mDebugData;
+      //osg::Quat debugRotation  = vertList[vertIndex]->mDebugRotation;
 
       //int animID = vertList[vertIndex]->mAnimID;
 

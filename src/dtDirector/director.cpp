@@ -199,7 +199,7 @@ namespace dtDirector
       // Reset our graph data.
       mGraph = new DirectorGraph(this);
       mGraph->BuildPropertyMap(true);
-      SetName("Director Script");
+      SetName("Untitled");
       SetComment("");
       SetDescription("");
       SetAuthor("");
@@ -1036,12 +1036,12 @@ namespace dtDirector
    ////////////////////////////////////////////////////////////////////////////////
    bool Director::IsLibraryTypeSupported(const std::string& libraryType) const
    {
-      if (libraryType == "Core")
-      {
-         return true;
-      }
+      //if (libraryType == "Core")
+      //{
+      //   return true;
+      //}
 
-      return false;
+      return true;
    }
 
    ////////////////////////////////////////////////////////////////////////////////

@@ -297,7 +297,7 @@ namespace dtCore
 
       if(isBackupExt || fileExt == "xml")
       {
-         std::string filename = osgDB::findDataFile(path);
+         std::string filename = dtUtil::FindFileInPathList(path);
          if(!filename.empty())
          {
             dtCore::RefPtr<MapReaderWriter> mrw = new MapReaderWriter();
@@ -475,7 +475,7 @@ namespace dtCore
       //this is a temporary workaround and should be deprecated
       if(osgDB::getLowerCaseFileExtension(path) == "xml")
       {
-         std::string filename = osgDB::findDataFile(path);
+         std::string filename = dtUtil::FindFileInPathList(path);
          if(!filename.empty())
          {
             dtCore::RefPtr<MapReaderWriter> mrw = new MapReaderWriter();
@@ -917,7 +917,7 @@ namespace dtCore
                              ex.What().c_str(), map.GetName().c_str());
          mFormatTarget.SetOutputStream(NULL);
          mPropSerializer->SetMap(NULL);
-         throw ex;
+         throw;
       }
       catch (...)
       {
@@ -1100,7 +1100,7 @@ namespace dtCore
             "Caught Exception \"%s\" while attempting to save prefab \"%s\".",
             ex.What().c_str(), filePath.c_str());
          mFormatTarget.SetOutputStream(NULL);
-         throw ex;
+         throw;
       }
       catch (...)
       {

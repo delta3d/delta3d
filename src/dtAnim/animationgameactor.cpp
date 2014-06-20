@@ -49,58 +49,12 @@ namespace dtAnim
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   dtAnim::AnimationHelper* AnimationGameActor::GetHelper()
-   {
-      return mHelper.get();
-   }
-
-   /////////////////////////////////////////////////////////////////////////////
-   const dtAnim::AnimationHelper* AnimationGameActor::GetHelper() const
-   {
-      return mHelper.get();
-   }
-
-   /////////////////////////////////////////////////////////////////////////////
-   void AnimationGameActor::SetModel(const std::string& modelFile)
-   {
-      GetMatrixNode()->removeChildren(0, GetMatrixNode()->getNumChildren());
-
-      if (!modelFile.empty())
-      {
-         // Default to synch'ed loading, example left for setting it to asynch
-         if (1)
-         {
-            //the helper handles an empty model file name.
-            mHelper->LoadModel(modelFile);
-            if (!modelFile.empty())
-            {
-               osg::Node* node = mHelper->GetNode();
-               GetMatrixNode()->addChild(node);
-            }
-         }
-         else
-         {
-            dtUtil::Functor<void, TYPELIST_0()> loadCallback =
-               dtUtil::MakeFunctor(&AnimationGameActor::OnAsynchLoadCompleted, this);
-
-            mHelper->LoadModelAsynchronously(modelFile, loadCallback);
-         }
-      }
-   }
-
-   /////////////////////////////////////////////////////////////////////////////
-   void AnimationGameActor::OnAsynchLoadCompleted()
-   {
-      osg::Node* node = mHelper->GetNode();
-      GetMatrixNode()->addChild(node);
-   }
-
-   /////////////////////////////////////////////////////////////////////////////
    osg::BoundingBox AnimationGameActor::GetBoundingBox()
    {
-      if (GetHelper()->GetModelWrapper())
+      Cal3DModelWrapper* wrapper = GetComponent<AnimationHelper>()->GetModelWrapper();
+      if (wrapper != NULL)
       {
-         return GetHelper()->GetModelWrapper()->GetBoundingBox();
+         return wrapper->GetBoundingBox();
       }
       return osg::BoundingBox();
    }
@@ -120,32 +74,30 @@ namespace dtAnim
    void AnimationGameActorProxy::BuildPropertyMap()
    {
       dtGame::GameActorProxy::BuildPropertyMap();
-
-      typedef std::vector< dtCore::RefPtr<dtCore::ActorProperty> > APVector;
-      APVector pFillVector;
-
-      AnimationGameActor& actor = static_cast<AnimationGameActor&>(GetGameActor());
-
-      AddProperty(new dtCore::ResourceActorProperty(*this, dtCore::DataType::SKELETAL_MESH,
-         "Skeletal Mesh", "Skeletal Mesh",
-         dtCore::ResourceActorProperty::SetFuncType(&actor, &AnimationGameActor::SetModel),
-         "The model resource that defines the skeletal mesh", "AnimationBase"));
    }
+
+   //////////////////////////////////////////////////////////////////////////////
+   void AnimationGameActorProxy::BuildActorComponents()
+   {
+      dtGame::GameActorProxy::BuildActorComponents();
+
+      dtCore::RefPtr<AnimationHelper> animAC = new dtAnim::AnimationHelper();
+      AddComponent(*animAC);
+   }
+
 
    /////////////////////////////////////////////////////////////////////////////
    const dtCore::BaseActorObject::RenderMode& AnimationGameActorProxy::GetRenderMode()
    {
-      dtCore::ResourceDescriptor resource = GetResource("Skeletal Mesh");
-      if (resource.IsEmpty() == false)
+      AnimationHelper* animHelper = GetComponent<AnimationHelper>();
+      dtCore::ResourceDescriptor resource;
+      if (animHelper != NULL)
       {
-         if (resource.GetResourceIdentifier().empty() || GetActor()->GetOSGNode() == NULL)
-         {
-            return dtCore::BaseActorObject::RenderMode::DRAW_BILLBOARD_ICON;
-         }
-         else
-         {
-            return dtCore::BaseActorObject::RenderMode::DRAW_ACTOR;
-         }
+         resource = animHelper->GetSkeletalMesh();
+      }
+      if ( ! resource.IsEmpty())
+      {
+         return dtCore::BaseActorObject::RenderMode::DRAW_ACTOR;
       }
       else
       {
@@ -165,9 +117,9 @@ namespace dtAnim
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void AnimationGameActorProxy::CreateActor()
+   void AnimationGameActorProxy::CreateDrawable()
    {
-      SetActor(*new AnimationGameActor(*this));
+      SetDrawable(*new AnimationGameActor(*this));
    }
 
 } // namespace dtAnim

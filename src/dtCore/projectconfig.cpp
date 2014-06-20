@@ -25,6 +25,7 @@
 #include <prefix/dtcoreprefix.h>
 #include <dtCore/projectconfig.h>
 #include <dtUtil/exception.h>
+#include <dtUtil/fileutils.h>
 
 namespace dtCore
 {
@@ -54,6 +55,32 @@ namespace dtCore
    ProjectConfig::~ProjectConfig()
    {
    }
+
+   void ProjectConfig::ConvertContextDataToRelativeOfBasePath()
+   {
+      if (mBasePath.empty()) { return; }
+
+      dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
+      if (!fileUtils.DirExists(mBasePath))
+      {
+         return;
+      }
+
+
+      // reusable temp string.
+      std::string contextPath;
+      for (unsigned i = 0; i < mContextData.size(); ++i)
+      {
+         contextPath = mContextData[i].GetPath();
+         contextPath = fileUtils.GetAbsolutePath(contextPath);
+
+         // Using current directory instead of the mBasePath because that will automatically be the absolute.
+         mContextData[i] = fileUtils.RelativePath(fileUtils.GetAbsolutePath(mBasePath), contextPath);
+      }
+   }
+
+
+   DT_IMPLEMENT_ACCESSOR(ProjectConfig, std::string, BasePath)
 
    DT_IMPLEMENT_ACCESSOR(ProjectConfig, std::string, Name)
    DT_IMPLEMENT_ACCESSOR(ProjectConfig, std::string, Description)

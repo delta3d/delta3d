@@ -60,7 +60,7 @@ namespace dtActors
 
       PrefabActorProxy();
 
-      virtual void CreateActor();
+      virtual void CreateDrawable();
 
       virtual void BuildPropertyMap();
 

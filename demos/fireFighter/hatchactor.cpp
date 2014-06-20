@@ -217,7 +217,7 @@ void HatchActor::OnMapLoaded(const dtGame::Message& msg)
          // Find the game level actor and search with its node
          std::vector<dtCore::BaseActorObject*> proxies;
          GetGameActorProxy().GetGameManager()->FindActorsByType(*EntityActorRegistry::TYPE_GAME_LEVEL_ACTOR, proxies);
-         GameLevelActor* gla = dynamic_cast<GameLevelActor*>(proxies[0]->GetActor());
+         GameLevelActor* gla = dynamic_cast<GameLevelActor*>(proxies[0]->GetDrawable());
          if (gla == NULL)
          {
             LOG_ERROR("Failed to find the game level actor in the map. Unable to open or close the hatch door");

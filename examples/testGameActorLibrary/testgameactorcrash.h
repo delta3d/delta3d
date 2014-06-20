@@ -64,7 +64,7 @@ public:
    virtual void OnEnteredWorld();
 
 protected:
-   virtual void CreateActor();
+   virtual void CreateDrawable();
 private:
    bool ticksEnabled;
 };

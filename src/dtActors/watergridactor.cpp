@@ -1184,10 +1184,10 @@ namespace dtActors
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void WaterGridActorProxy::CreateActor()
+   void WaterGridActorProxy::CreateDrawable()
    {
       WaterGridActor* actor = new WaterGridActor(*this);
-      SetActor(*actor);
+      SetDrawable(*actor);
 
       //if (IsInSTAGE())
       //{

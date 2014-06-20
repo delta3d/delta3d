@@ -114,7 +114,7 @@ namespace dtCore
       {
          newEntry.lib = lsm.LoadSharedLibrary(libName);
       }
-      catch (dtUtil::Exception)
+      catch (const dtUtil::Exception&)
       {
          msg.clear();
          msg.str("");
@@ -492,7 +492,7 @@ namespace dtCore
       {
          LoadActorRegistry(libName);
       }
-      catch (dtUtil::Exception)
+      catch (const dtUtil::Exception&)
       {
          //this shouldn't happen, but if it does (corrupt file, etc) then
          //try to handle this quietly since its not critical.

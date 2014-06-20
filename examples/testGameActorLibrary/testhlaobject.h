@@ -118,7 +118,7 @@ class DT_EXAMPLE_EXPORT TestHLAObjectProxy : public dtGame::GameActorProxy
        */
       osg::Vec3 GetLastKnownRotation() const;
    protected:
-      virtual void CreateActor();
+      virtual void CreateDrawable();
    private:
 };
 

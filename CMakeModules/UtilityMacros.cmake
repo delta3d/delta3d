@@ -1,19 +1,6 @@
 # Where is this and what do we need it for?
 #INCLUDE(ListHandle)
 
-  macro(MacroEmptyExternalProject proj dependencies)
- 
-    ExternalProject_Add(${proj}
-      DOWNLOAD_COMMAND ""
-      CONFIGURE_COMMAND ""
-      BUILD_COMMAND ""
-      INSTALL_COMMAND ""
-      DEPENDS
-        ${dependencies}
-      )
- 
-  endmacro()
-
   MACRO(READ_GCC_VERSION)
      if (CMAKE_COMPILER_IS_GNUCC)
         execute_process(COMMAND ${CMAKE_C_COMPILER} -dumpversion
@@ -24,6 +11,19 @@
      endif()
   ENDMACRO(READ_GCC_VERSION)
 
+
+macro(MacroEmptyExternalProject proj dependencies)
+ 
+    ExternalProject_Add(${proj}
+      DOWNLOAD_COMMAND ""
+      CONFIGURE_COMMAND ""
+      BUILD_COMMAND ""
+      INSTALL_COMMAND ""
+      DEPENDS
+        ${dependencies}
+      )
+ 
+endmacro()
 
   MACRO(FILTER_OUT FILTERS INPUTS OUTPUT)
        # Mimicks Gnu Make's $(filter-out) which removes elements 
@@ -274,3 +274,22 @@ MACRO(FIND_OSG_VERSION)
                                     CACHE INTERNAL "The version of OSG which was detected")                
     ENDIF()
 ENDMACRO(FIND_OSG_VERSION)
+
+MACRO(DELTA3D_ADD_LIBRARY_PROPERTIES LIB_NAME EXPORT_SYMBOL)
+   if (MSVC_IDE)
+      SET_TARGET_PROPERTIES(${LIB_NAME}
+                     PROPERTIES DEFINE_SYMBOL ${EXPORT_SYMBOL})
+   endif (MSVC_IDE)
+
+   if (APPLE AND COMPILE_INSTALL_NAME_DIR)
+      set(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
+      set(CMAKE_INSTALL_RPATH "${COMPILE_INSTALL_NAME_DIR}")
+#      Message(${LIB_NAME} ${COMPILE_INSTALL_NAME_DIR})
+#      SET_TARGET_PROPERTIES(${LIB_NAME} PROPERTIES
+#         FRAMEWORK TRUE
+#         FRAMEWORK_VERSION ${OPENSCENEGRAPH_SOVERSION}
+#         PUBLIC_HEADER  "${ARGN}"
+#         INSTALL_NAME_DIR "${COMPILE_INSTALL_NAME_DIR}"
+#      )
+   endif()
+ENDMACRO()

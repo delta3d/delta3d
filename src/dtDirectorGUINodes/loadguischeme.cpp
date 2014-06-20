@@ -74,7 +74,7 @@ namespace dtDirector
                }
                catch(CEGUI::Exception& e)
                {
-                  e;
+                  LOG_ERROR(std::string("Error loading cegui scheme: ") + e.getMessage().c_str() + " " + e.getFileName().c_str() + ":" + dtUtil::ToString(e.getLine()));
                }
             }
          }

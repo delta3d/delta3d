@@ -163,8 +163,10 @@ public:
 
    void BuildInvokables();
 
+   void BuildActorComponents();
+
    /// Creates the actor
-   void CreateActor();
+   void CreateDrawable();
 
    /// Insert into game
    void RegisterWithGameManager(dtGame::GameManager* gm);

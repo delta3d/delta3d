@@ -74,10 +74,10 @@ namespace dtAI
     }
 
     ////////////////////////////////////////////////////////////////////////////
-    void AIInterfaceActorProxy::CreateActor()
+    void AIInterfaceActorProxy::CreateDrawable()
     {
        AIInterfaceActor* actor = new AIInterfaceActor();
-       SetActor(*actor);
+       SetDrawable(*actor);
 
        mAIInterface = CreateAIInterface();
 
