@@ -118,8 +118,9 @@ namespace dtCore
    class SimplePropertyContainerActorProperty : public PropertyContainerActorProperty<T>
    {
    public:
-      typedef typename PropertyContainerActorProperty<T>::SetFuncType SetFuncType;
-      typedef typename PropertyContainerActorProperty<T>::GetFuncType GetFuncType;
+	  typedef PropertyContainerActorProperty<T> BaseClass;
+      typedef typename BaseClass::SetFuncType SetFuncType;
+      typedef typename BaseClass::GetFuncType GetFuncType;
 
       SimplePropertyContainerActorProperty(
                const dtUtil::RefString& name,
@@ -132,8 +133,9 @@ namespace dtCore
       {
       }
 
-      virtual void CreateNew() { SetValue(new T); }
-
+      virtual void CreateNew() { BaseClass::SetValue(new T); }
+   protected:
+      virtual ~SimplePropertyContainerActorProperty() {}
    };
 
 

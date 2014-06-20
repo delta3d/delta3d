@@ -510,11 +510,11 @@ namespace dtEditQt
       //The persistent pseudo-actor that is used for special-purpose editing
       mVolEditActorProxy =
          dynamic_cast<dtActors::VolumeEditActorProxy*>(dtCore::LibraryManager::GetInstance().CreateActorProxy("dtutil", "Volume Edit").get());
-      ViewportManager::GetInstance().getMasterScene()->AddChild(mVolEditActorProxy->GetActor());
+      ViewportManager::GetInstance().getMasterScene()->AddChild(mVolEditActorProxy->GetDrawable());
 
       //move the VolumeEditActor away from the Perspective camera so we can see it.
       dtActors::VolumeEditActor* volEditAct =
-            dynamic_cast<dtActors::VolumeEditActor*>(mVolEditActorProxy->GetActor());
+            dynamic_cast<dtActors::VolumeEditActor*>(mVolEditActorProxy->GetDrawable());
       if(volEditAct != NULL)
       {
          dtCore::Transform xForm;
@@ -1144,7 +1144,7 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    dtActors::VolumeEditActor* MainWindow::GetVolumeEditActor()
    {
-      return dynamic_cast<dtActors::VolumeEditActor*>(mVolEditActorProxy.get()->GetActor());
+      return dynamic_cast<dtActors::VolumeEditActor*>(mVolEditActorProxy.get()->GetDrawable());
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -1188,7 +1188,7 @@ namespace dtEditQt
                {
                   dtUtil::FileUtils::GetInstance().MakeDirectory(path);
                }
-               catch (dtUtil::Exception e)
+               catch (dtUtil::Exception& e)
                {
                   doFileCopy = false;
                   LOG_ERROR("Unable to create directory for default.ini");
@@ -1200,7 +1200,7 @@ namespace dtEditQt
                {
                   dtUtil::FileUtils::GetInstance().FileCopy(src, dest, false);
                }
-               catch (dtUtil::Exception e)
+               catch (dtUtil::Exception& e)
                {
                   LOG_ERROR("Unable to copy default.ini to user preferences folder.");
                }
@@ -1496,7 +1496,7 @@ namespace dtEditQt
       {
          hasBackup = dtCore::Project::GetInstance().HasBackup(str);
       }
-      catch (dtUtil::Exception e)
+      catch (dtUtil::Exception& e)
       {
          //must not have a valid backup
          hasBackup = false;
@@ -1556,7 +1556,7 @@ namespace dtEditQt
                EditorData::GetInstance().getCurrentMap(), &m);
             EditorData::GetInstance().addRecentMap(m.GetName());
          }
-         catch (dtUtil::Exception e)
+         catch (dtUtil::Exception& e)
          {
             QMessageBox::critical(this, tr("Failed to load map"),
                tr("Failed to load previous map at: \n") +
@@ -1652,7 +1652,12 @@ namespace dtEditQt
 
       if (pluginPath.empty())
       {
+#ifdef DELTA_WIN32
          pluginPath = QCoreApplication::applicationDirPath().toStdString() + "/stplugins";
+#else
+         // 64bit linux should probably look in ../lib64, hmm.  Maybe it should be compiled in from cmake.
+         pluginPath = QCoreApplication::applicationDirPath().toStdString() + "/../lib/stplugins";
+#endif
       }
 
       #ifdef DELTA_WIN32
@@ -1666,7 +1671,7 @@ namespace dtEditQt
       if (!dtUtil::FileUtils::GetInstance().DirExists(pluginPath))
       {
          //no plugin path found...lets not try to load any plugins
-         LOG_INFO("No plugin path was found. No plugins will be loaded.");
+         LOG_WARNING("Plugin path \"" + pluginPath + "\" was found. No plugins will be loaded.");
          return;
       }
 

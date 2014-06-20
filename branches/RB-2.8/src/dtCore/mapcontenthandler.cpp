@@ -175,7 +175,7 @@ namespace  dtCore
                }
             }
 
-            IEnvironmentActor *ea = dynamic_cast<IEnvironmentActor*>(proxy->GetActor());
+            IEnvironmentActor *ea = dynamic_cast<IEnvironmentActor*>(proxy->GetDrawable());
             if (ea == NULL)
             {
                throw dtCore::InvalidActorException(

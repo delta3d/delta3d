@@ -216,27 +216,12 @@ namespace dtCore
       void SetResource(const std::string& name, const ResourceDescriptor& source);
 
       /**
-       * Gets a property of the requested name.
-       * @param name Name of the actor actor property to retrieve.
-       * @return A pointer to the BaseActorObject or NULL if it
-       * is not found.
+       * The WAS used by the ActorActorProperty, also deprecated.  Now this function does nothing
+       * but it exists so old code will still compile.  It's also not necessary for the AAP, so
+       * it's okay that it does nothing.  If you were using this for something else, it won't
+       * work any longer.
        */
-      const BaseActorObject* GetLinkedActor(const std::string& name) const;
-
-      /**
-       * Gets a property of the requested name.
-       * @param name Name of the actor actor property to retrieve.
-       * @return A pointer to the BaseActorObject or NULL if it
-       * is not found.
-       */
-      BaseActorObject* GetLinkedActor(const std::string& name);
-
-      /**
-       * Sets an actor proxy in the map
-       * @param name The name of the property to set
-       * @param value The pointer to new proxy value
-       */
-      void SetLinkedActor(const std::string& name, BaseActorObject* newValue);
+      DEPRECATE_FUNC void SetLinkedActor(const std::string& name, BaseActorObject* newValue);
 
       /**
        * Gets the actor type that represents this actor proxy.
@@ -252,7 +237,7 @@ namespace dtCore
       dtCore::DeltaDrawable* GetDrawable();
 
       /// Call GetDrawable
-      dtCore::DeltaDrawable* GetActor() { return GetDrawable(); }
+      DEPRECATE_FUNC dtCore::DeltaDrawable* GetActor() { return GetDrawable(); }
 
 
       /** Templated version of GetDrawable() that static casts the actor to the type passed in.
@@ -407,7 +392,7 @@ namespace dtCore
        * Returns true if called from STAGE
        * @return true if STAGE is running, false if not
        */
-      const bool IsInSTAGE() const;
+      bool IsInSTAGE() const;
 
       /**
        * Allow access to the ActorPluginRegistry.  This is so it can set the
@@ -426,14 +411,14 @@ namespace dtCore
          return !(*this == rhs);
       }
 
-      protected:
+   protected:
 
       /**
        * Sets the actor on this proxy. This should be only called from subclasses
        * @param actor The actor to set
        */
       void SetDrawable(dtCore::DeltaDrawable& drawable);
-      void SetActor(dtCore::DeltaDrawable& drawable) { SetDrawable(drawable); }
+      DEPRECATE_FUNC void SetActor(dtCore::DeltaDrawable& drawable) { SetDrawable(drawable); }
 
       ///Keep the destructor protected since we use dtCore::RefPtr to
       ///track any object created.
@@ -447,12 +432,12 @@ namespace dtCore
        * {
        *    MyDrawable* draw = new MyDrawable();
        *    assert(draw);
-       *    SetActor(*Drawable);
+       *    SetDrawable(*Drawable);
        * }
        * @endcode
        */
-      virtual void CreateDrawable() { CreateActor(); }
-      virtual void CreateActor() {}
+      virtual void CreateDrawable();
+      DEPRECATE_FUNC virtual void CreateActor() {}
 
       /**
        * Set the class name
@@ -470,7 +455,6 @@ namespace dtCore
 
       private:
       typedef std::map<dtUtil::RefString, ResourceDescriptor> ResourceMapType;
-      typedef std::map<dtUtil::RefString, dtCore::RefPtr<BaseActorObject> > BaseActorObjectMapType;
       typedef std::set<dtUtil::RefString> ClassHierarchyType;
 
       ///Pointer to the Delta3D object (Actor) this proxy is wrapping.
@@ -478,9 +462,6 @@ namespace dtCore
 
       /// Map of property names to resource values
       ResourceMapType mResourceMap;
-
-      /// Map of property names to actor proxy values
-      BaseActorObjectMapType mBaseActorObjectMap;
 
       /// Set of class names
       ClassHierarchyType mClassNameSet;

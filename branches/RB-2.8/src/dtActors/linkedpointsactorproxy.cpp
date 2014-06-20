@@ -659,10 +659,10 @@ namespace dtActors
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void LinkedPointsActorProxy::CreateActor()
+   void LinkedPointsActorProxy::CreateDrawable()
    {
       LinkedPointsActor* actor = new LinkedPointsActor(this);
-      SetActor(*actor);
+      SetDrawable(*actor);
       actor->Initialize();
    }
 

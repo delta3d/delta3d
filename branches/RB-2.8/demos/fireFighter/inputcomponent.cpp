@@ -132,7 +132,7 @@ void InputComponent::ProcessMessage(const dtGame::Message& message)
    {
       if (!message.GetAboutActorId().ToString().empty())
       {
-         mCurrentIntersectedItem = dynamic_cast<GameItemActor*>(GetGameManager()->FindGameActorById(message.GetAboutActorId())->GetActor());
+         mCurrentIntersectedItem = dynamic_cast<GameItemActor*>(GetGameManager()->FindGameActorById(message.GetAboutActorId())->GetDrawable());
       }
       else
       {

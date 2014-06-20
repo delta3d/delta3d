@@ -26,7 +26,7 @@ public:
    virtual void BuildPropertyMap();
 
    /// Instantiates the actor
-   virtual void CreateActor();
+   virtual void CreateDrawable();
 
 };
 

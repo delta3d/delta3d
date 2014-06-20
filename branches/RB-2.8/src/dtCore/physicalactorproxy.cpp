@@ -27,6 +27,7 @@
 
 #include <dtCore/floatactorproperty.h>
 #include <dtCore/vectoractorproperties.h>
+#include <dtCore/physical.h>
 
 namespace dtCore
 {
@@ -42,7 +43,7 @@ namespace dtCore
 
       if (!GetHideDTCorePhysicsProps())
       {
-         dtCore::Physical* phys = static_cast<dtCore::Physical*>(GetActor());
+         dtCore::Physical* phys = static_cast<dtCore::Physical*>(GetDrawable());
 
          static const dtUtil::RefString ODE_PREFIX("ODE ");
          //PHYSICS PROPS...
@@ -61,7 +62,7 @@ namespace dtCore
    /////////////////////////////////////////////////////////////////////////////
    void PhysicalActorProxy::SetMass(float mass)
    {
-      dtCore::Physical* phys = static_cast<dtCore::Physical*>(GetActor());
+      dtCore::Physical* phys = static_cast<dtCore::Physical*>(GetDrawable());
 
       phys->SetMass(mass);
    }
@@ -77,7 +78,7 @@ namespace dtCore
    /////////////////////////////////////////////////////////////////////////////
    void PhysicalActorProxy::SetCenterOfGravity(const osg::Vec3& g)
    {
-      dtCore::Physical* phys = static_cast<dtCore::Physical*>(GetActor());
+      dtCore::Physical* phys = static_cast<dtCore::Physical*>(GetDrawable());
 
       phys->SetCenterOfGravity(g);
    }

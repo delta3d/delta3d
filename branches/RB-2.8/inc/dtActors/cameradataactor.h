@@ -24,6 +24,7 @@
 #include <dtCore/plugin_export.h>
 #include <osg/Vec4>
 #include <dtCore/transformableactorproxy.h>
+#include <dtCore/transformable.h>
 #include <dtUtil/getsetmacros.h>
 
 namespace dtCore
@@ -110,7 +111,7 @@ namespace dtActors
         void ApplyDataTo(dtCore::Camera& camera);
 
       protected:
-        virtual void CreateActor();
+        virtual void CreateDrawable();
    };
 }
 #endif

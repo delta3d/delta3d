@@ -1222,7 +1222,7 @@ namespace dtUtil
       int   northingNum;
 
       // resolution must be 0-5
-      if (resolution < 0 || resolution > 5)
+      if (resolution > 5)
       {
          throw CoordinateConversionInvalidInput("The resolution for the mgrs conversion must be between 0 and 5 inclusive.", __FILE__, __LINE__);
       }

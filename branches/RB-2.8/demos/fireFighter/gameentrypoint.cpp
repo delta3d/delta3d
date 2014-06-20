@@ -64,7 +64,7 @@ FireFighterGameEntryPoint::~FireFighterGameEntryPoint()
    dtAudio::AudioManager::Destroy();
 }
 
-void FireFighterGameEntryPoint::Initialize(dtGame::GameApplication& app, int argc, char** argv)
+void FireFighterGameEntryPoint::Initialize(dtABC::BaseABC& app, int argc, char** argv)
 {
    // Parse the command line options
    osg::ArgumentParser parser(&argc, argv);
@@ -101,9 +101,8 @@ void FireFighterGameEntryPoint::Initialize(dtGame::GameApplication& app, int arg
                               dtUtil::GetDataFilePathList() + ";");
 }
 
-void FireFighterGameEntryPoint::OnStartup(dtGame::GameApplication& app)
+void FireFighterGameEntryPoint::OnStartup(dtABC::BaseABC& app, dtGame::GameManager& gameManager)
 {
-   dtGame::GameManager& gameManager = *app.GetGameManager();
    // Make sure we can hear audio
    app.GetCamera()->AddChild(dtAudio::AudioManager::GetListener());
 
@@ -146,7 +145,7 @@ void FireFighterGameEntryPoint::OnStartup(dtGame::GameApplication& app)
    app.GetWindow()->SetPosition(app.GetWindow()->GetPosition());
 }
 
-void FireFighterGameEntryPoint::OnShutdown(dtGame::GameApplication& app)
+void FireFighterGameEntryPoint::OnShutdown(dtABC::BaseABC& app, dtGame::GameManager& gameManager)
 {
    if (mUseLMS && mLmsComponent.valid())
    {
@@ -155,7 +154,4 @@ void FireFighterGameEntryPoint::OnShutdown(dtGame::GameApplication& app)
 
    dtCore::Map &map = dtCore::Project::GetInstance().GetMap("GameMap");
    dtCore::Project::GetInstance().CloseMap(map, true);
-
-   app.GetGameManager()->CloseCurrentMap();
-   app.GetGameManager()->Shutdown();
 }

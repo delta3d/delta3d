@@ -33,9 +33,9 @@ using namespace dtCore;
 
 namespace dtActors
 {
-   void AutoTriggerActorProxy::CreateActor()
+   void AutoTriggerActorProxy::CreateDrawable()
    {
-      SetActor(*new AutoTrigger);
+      SetDrawable(*new AutoTrigger);
 
       SetName("AutoTrigger");
    }
@@ -62,21 +62,19 @@ namespace dtActors
 
    DeltaDrawable* AutoTriggerActorProxy::GetAction()
    {
-      AutoTrigger* autoTrigger = static_cast<AutoTrigger*>(GetActor());
+      AutoTrigger* autoTrigger = static_cast<AutoTrigger*>(GetDrawable());
 
       return autoTrigger->GetTrigger()->GetAction();
    }
 
    void AutoTriggerActorProxy::SetAction(BaseActorObject* action)
    {
-      SetLinkedActor("Action", action);
-
-      AutoTrigger* autoTrigger = static_cast<AutoTrigger*>(GetActor());
+      AutoTrigger* autoTrigger = static_cast<AutoTrigger*>(GetDrawable());
 
       Action* a = NULL;
       if (action)
       {
-         a = dynamic_cast<Action*>(action->GetActor());
+         a = dynamic_cast<Action*>(action->GetDrawable());
       }
 
       autoTrigger->GetTrigger()->SetAction(a);

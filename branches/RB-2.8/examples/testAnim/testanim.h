@@ -29,6 +29,7 @@
 #include <dtCore/refptr.h>
 #include <dtCore/observerptr.h>
 #include <dtCore/tripod.h>
+#include <dtCore/sigslot.h>
 #include "export.h"
 #include "testaniminput.h"
 
@@ -53,7 +54,7 @@ namespace dtAnim
 }
 
 
-class TEST_ANIM_EXPORT TestAnim : public dtGame::GameEntryPoint
+class TEST_ANIM_EXPORT TestAnim : public dtGame::GameEntryPoint, public sigslot::has_slots<>
 {
 
    public:
@@ -64,15 +65,15 @@ class TEST_ANIM_EXPORT TestAnim : public dtGame::GameEntryPoint
       /**
        * Called to initialize the game application.  You can pull any command line params here.
        */
-      virtual void Initialize(dtGame::GameApplication& app, int argc, char **argv);
+      virtual void Initialize(dtABC::BaseABC& app, int argc, char **argv);
 
       /**
        * Called just before your application's game loop starts.  This is your main 
        * opportunity to create components, load maps, create unique actors, etc...
        */
-      virtual void OnStartup(dtGame::GameApplication& app);
+      virtual void OnStartup(dtABC::BaseABC& app, dtGame::GameManager& gamemanager);
 
-      virtual void OnShutdown(dtGame::GameApplication& app);
+      virtual void OnShutdown(dtABC::BaseABC& app, dtGame::GameManager& gamemanager);
 
    private:
 
@@ -81,6 +82,10 @@ class TEST_ANIM_EXPORT TestAnim : public dtGame::GameEntryPoint
                                     dtCore::Camera *camera);
 
       void CreateAdditionalWindows();
+
+      void PlayerLoadCallback(dtAnim::AnimationHelper* helper);
+      void NonPlayerLoadCallback(dtAnim::AnimationHelper* helper);
+
 
       dtCore::ObserverPtr<dtAnim::AnimationHelper> mAnimationHelper;
       dtCore::RefPtr<dtCore::FlyMotionModel> mFMM;

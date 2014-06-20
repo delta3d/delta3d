@@ -208,18 +208,18 @@ namespace dtPhysics
 
          static osg::Vec4 oldClearColor;
 
-         if (EnvActor->GetActor()->GetActive())
+         if (EnvActor->GetDrawable()->GetActive())
          {
             cam->GetClearColor(oldClearColor);
          }
 
          bool physicsDrawActive = !GetPhysicsWorld().GetDebugDrawEnabled() ||
-                  !EnvActor->GetActor()->GetActive();
+                  !EnvActor->GetDrawable()->GetActive();
          bool worldActive = dtPhysics::PhysicsWorld::GetInstance().GetDebugDrawEnabled();
 
          dtPhysics::PhysicsWorld::GetInstance().SetDebugDrawEnabled(physicsDrawActive);
          mDebDraw->SetActive(physicsDrawActive);
-         EnvActor->GetActor()->SetActive(worldActive);
+         EnvActor->GetDrawable()->SetActive(worldActive);
 
          if (!worldActive)
          {

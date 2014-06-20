@@ -52,15 +52,15 @@ namespace dtActors
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void MeshTerrainActorProxy::CreateActor()
+   void MeshTerrainActorProxy::CreateDrawable()
    {
-      SetActor(*new MeshTerrainActor);
+      SetDrawable(*new MeshTerrainActor);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    void MeshTerrainActorProxy::LoadFile(const std::string &fileName)
    {
-      dtCore::Object *obj = static_cast<dtCore::Object*>(GetActor());
+      dtCore::Object *obj = static_cast<dtCore::Object*>(GetDrawable());
 
       if (obj->LoadFile(fileName, false) == NULL)
       {
@@ -82,7 +82,7 @@ namespace dtActors
       dtCore::ResourceDescriptor resource = GetResource("terrain mesh");
       if (resource.IsEmpty() == false)
       {
-         if (resource.GetResourceIdentifier().empty() || GetActor()->GetOSGNode() == NULL)
+         if (resource.GetResourceIdentifier().empty() || GetDrawable()->GetOSGNode() == NULL)
             return dtCore::BaseActorObject::RenderMode::DRAW_BILLBOARD_ICON;
          else
             return dtCore::BaseActorObject::RenderMode::DRAW_ACTOR;

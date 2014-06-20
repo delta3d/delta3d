@@ -171,7 +171,7 @@ void FireActor::PlayFireSound(const dtGame::Message& msg)
       return;
    }
 
-   HatchActor* ha = dynamic_cast<HatchActor*>(proxy->GetActor());
+   HatchActor* ha = dynamic_cast<HatchActor*>(proxy->GetDrawable());
    if (ha == NULL)
    {
       return;

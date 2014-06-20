@@ -1,7 +1,7 @@
 /* -*-c++-*-
  * Delta3D Open Source Game and Simulation Engine
  * Copyright (C) 2006-2010, Alion Science and Technology, BMH Operation.
- * Copyright (C) 2012, MASA Group Inc
+ * Copyright (C) 2012, David Guthrie
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -607,7 +607,15 @@ namespace dtHLAGM
 
          if (fedFilesFound.empty())
          {
-            throw dtUtil::Exception("Unable to create the federation.  No fed files were found.", __FILE__, __LINE__);
+            mRTIAmbassador = NULL;
+
+            std::ostringstream oss;
+            for (unsigned i = 0; i < fedFilenames.size(); ++i)
+            {
+               oss << " \"" << fedFilenames[i] << "\"";
+            }
+
+            throw dtUtil::Exception(std::string("Unable to create the federation.  No fed files were found in list: ") + oss.str(), __FILE__, __LINE__);
          }
 
          mRTIAmbassador->CreateFederationExecution(executionName, fedFilesFound);

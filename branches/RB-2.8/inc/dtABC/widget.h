@@ -34,9 +34,9 @@
 typedef HWND WindowHandle;
 typedef osgViewer::GraphicsWindowWin32::WindowData WindowData;
 #elif defined(__APPLE__)
-#include <osgViewer/api/Carbon/GraphicsWindowCarbon>
-typedef WindowRef WindowHandle;
-typedef osgViewer::GraphicsWindowCarbon::WindowData WindowData;
+// passing in a window handle doesn't work on OSX.
+typedef void* WindowHandle;
+typedef osg::Referenced WindowData;
 #else // all other unix
 #include <osgViewer/api/X11/GraphicsWindowX11>
 typedef Window WindowHandle;

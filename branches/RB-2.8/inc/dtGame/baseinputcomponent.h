@@ -100,7 +100,7 @@ namespace dtGame
           * Keyboard calling this function is responsbile for using this
           * return value or not.
           */
-         virtual bool HandleKeyReleased(const dtCore::Keyboard* keyboard, int key) 
+         virtual bool HandleKeyReleased(const dtCore::Keyboard* /*keyboard*/, int /*key*/) 
          { 
             return false; 
          }
@@ -117,7 +117,7 @@ namespace dtGame
           * Keyboard calling this function is responsbile for using this
           * return value or not.
           */
-         virtual bool HandleKeyTyped(const dtCore::Keyboard* keyboard, int key) 
+         virtual bool HandleKeyTyped(const dtCore::Keyboard* /*keyboard*/, int /*key*/) 
          { 
             return false; 
          }
@@ -133,7 +133,7 @@ namespace dtGame
           * Mouse calling this function is responsbile for using this
           * return value or not.
           */
-         virtual bool HandleButtonPressed(const dtCore::Mouse* mouse, dtCore::Mouse::MouseButton button)
+         virtual bool HandleButtonPressed(const dtCore::Mouse* /*mouse*/, dtCore::Mouse::MouseButton /*button*/)
          {
             return false;
          }
@@ -149,7 +149,7 @@ namespace dtGame
           * Mouse calling this function is responsbile for using this
           * return value or not.
           */
-         virtual bool HandleButtonReleased(const dtCore::Mouse* mouse, dtCore::Mouse::MouseButton button)
+         virtual bool HandleButtonReleased(const dtCore::Mouse* /*mouse*/, dtCore::Mouse::MouseButton /*button*/)
          {
             return false;
          }
@@ -166,7 +166,7 @@ namespace dtGame
           * Mouse calling this function is responsbile for using this
           * return value or not.
           */
-         virtual bool HandleButtonClicked(const dtCore::Mouse* mouse, dtCore::Mouse::MouseButton button, int clickCount)
+         virtual bool HandleButtonClicked(const dtCore::Mouse* /*mouse*/, dtCore::Mouse::MouseButton /*button*/, int /*clickCount*/)
          {
             return false;
          }
@@ -183,7 +183,7 @@ namespace dtGame
           * Mouse calling this function is responsbile for using this
           * return value or not.
           */
-         virtual bool HandleMouseMoved(const dtCore::Mouse* mouse, float x, float y)
+         virtual bool HandleMouseMoved(const dtCore::Mouse* /*mouse*/, float /*x*/, float /*y*/)
          {
             return false;
          }
@@ -200,7 +200,7 @@ namespace dtGame
           * Mouse calling this function is responsbile for using this
           * return value or not.
           */
-         virtual bool HandleMouseDragged(const dtCore::Mouse* mouse, float x, float y)
+         virtual bool HandleMouseDragged(const dtCore::Mouse* /*mouse*/, float /*x*/, float /*y*/)
          {
             return false;
          }
@@ -216,7 +216,7 @@ namespace dtGame
           * Mouse calling this function is responsbile for using this
           * return value or not.
           */
-         virtual bool HandleMouseScrolled(const dtCore::Mouse* mouse, int delta)
+         virtual bool HandleMouseScrolled(const dtCore::Mouse* /*mouse*/, int /*delta*/)
          {
             return false;
          }

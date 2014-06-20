@@ -109,7 +109,7 @@ namespace dtEditQt
       {
          libHandle = lsm.LoadSharedLibrary(baseLibName, true);
       }
-      catch (Exception)
+      catch (const Exception&)
       {
          std::ostringstream msg;
          msg << "Unable to load plugin " << baseLibName;

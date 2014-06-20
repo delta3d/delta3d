@@ -153,7 +153,7 @@ namespace dtUtil
 
          virtual ~DateTime();
 
-         static float GetLocalGMTOffset();
+         static float GetLocalGMTOffset(bool accountForDST = false);
 
          ///changes time to be system local time
          void SetToLocalTime();
@@ -260,7 +260,7 @@ namespace dtUtil
           *        should be obtained from the system clock, setting true will increment the GMTOffset by one hour
           *        if your system is currently on daylight savings.
           */
-         void SetGMTOffset(tm& timeParts, bool factorLocalDayLightSavingsIntoGMTOffset);
+         static float CalcGMTOffset(tm& timeParts, bool factorLocalDayLightSavingsIntoGMTOffset);
 
          /**
           * Calculates the GMTOffset using a lattitude and longitude, not 100% correct due to regional time zone boundaries
@@ -344,8 +344,8 @@ namespace dtUtil
 
       private:
          void ResetToDefaultValues();
-         void GetGMTTime(time_t* t, tm& timeParts) const;
-         void GetLocalTime(time_t* t, tm& timeParts) const;
+         static void GetGMTTime(time_t* t, tm& timeParts);
+         static void GetLocalTime(time_t* t, tm& timeParts);
 
 
          float mGMTOffset;

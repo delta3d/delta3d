@@ -360,7 +360,7 @@ namespace dtEditQt
       else
       {
          dtCore::Transformable* transformable =
-            dynamic_cast<dtCore::Transformable*>(proxy->GetActor());
+            dynamic_cast<dtCore::Transformable*>(proxy->GetDrawable());
 
          if (transformable != NULL)
          {

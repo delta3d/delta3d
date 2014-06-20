@@ -18,7 +18,7 @@ namespace dtActors
 
       LabelActorProxy();
 
-      virtual void CreateActor();
+      virtual void CreateDrawable();
 
       virtual void BuildPropertyMap();
 

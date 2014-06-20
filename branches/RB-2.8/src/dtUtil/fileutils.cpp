@@ -106,8 +106,20 @@ namespace dtUtil
    const char FileUtils::PATH_SEPARATOR = '/';
 #endif
 
+   // copy of function from osg to make osg 2.8 still work
+   static std::string GetPathRoot(const std::string& path)
+   {
+       // Test for unix root
+       if (path.empty()) return "";
+       if (path[0] == '/') return "/";
+       // Now test for Windows root
+       if (path.length()<2) return "";
+       if (path[1] == ':') return path.substr(0, 2);        // We should check that path[0] is a letter, but as ':' is invalid in paths in other cases, that's not
+       return "";
+   }
+
    // temporary copy of osgDB::makeDirectory because of some bugs in it.
-   bool iMakeDirectory(const std::string& path)
+   static bool iMakeDirectory(const std::string& path)
    {
       if (path.empty())
       {
@@ -175,9 +187,9 @@ namespace dtUtil
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   bool FileUtils::FileExists(const std::string& strFile) const
+   bool FileUtils::FileExists(const std::string& strFile, bool caseInsensitive) const
    {
-      return GetFileInfo(strFile).fileType != FILE_NOT_FOUND;
+      return GetFileInfo(strFile, caseInsensitive).fileType != FILE_NOT_FOUND;
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -285,16 +297,16 @@ namespace dtUtil
                fclose(pDestFile);
                fclose(pSrcFile);
             }
-            catch (dtUtil::Exception& ex1)
+            catch (dtUtil::Exception&)
             {
                fclose(pDestFile);
-               throw ex1;
+               throw;
             }
          }
-         catch (dtUtil::Exception& ex)
+         catch (dtUtil::Exception&)
          {
             fclose(pSrcFile);
-            throw ex;
+            throw;
          }
 
       }
@@ -398,7 +410,7 @@ namespace dtUtil
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   const struct FileInfo FileUtils::GetFileInfo(const std::string& strFile) const
+   const struct FileInfo FileUtils::GetFileInfo(const std::string& strFile, bool caseInsensitive) const
    {
       struct FileInfo info;
 
@@ -415,11 +427,11 @@ namespace dtUtil
                 filename = ArchiveRelativeToAbsolute(filename);
              }
 
-            info = GetFileInfo_Internal(filename);
+            info = GetFileInfo_Internal(filename, caseInsensitive);
          }
          else
          {
-            info = GetFileInfo_Internal(filename);
+            info = GetFileInfo_Internal(filename, caseInsensitive);
          }
       }
       return info;
@@ -476,7 +488,7 @@ namespace dtUtil
    }
 
    //-----------------------------------------------------------------------
-   const struct FileInfo FileUtils::GetFileInfo_Internal(const std::string& strFile) const
+   const struct FileInfo FileUtils::GetFileInfo_Internal(const std::string& strFile, bool caseInsensitive) const
    {
       struct FileInfo info;
       struct stat tagStat;
@@ -507,6 +519,11 @@ namespace dtUtil
                                     strFile[strFile.size() - 1] == '/'))
          {
             choppedStr = strFile.substr(0, strFile.length() - 1);
+         }
+
+         if (caseInsensitive)
+         {
+            choppedStr = osgDB::findFileInDirectory(choppedStr, "", osgDB::CASE_INSENSITIVE);
          }
 
          if (stat(choppedStr.c_str(), &tagStat) != 0)
@@ -579,14 +596,6 @@ namespace dtUtil
    {
       // just in case, make sure we are using a valid path
       CleanupFileString(strFileOrDir);
-
-      //todo- fix this, getfileinfo calls this so we have a cyclic problem
-      //so this had to be commented out
-      /*dtUtil::FileInfo info = GetFileInfo(strFileOrDir);
-      if (info.fileType == dtUtil::FILE_NOT_FOUND)
-      {
-         return false;
-      }*/
 
       // handle unix-style paths
       if (strFileOrDir.length() > 0 && strFileOrDir[0] == '/')
@@ -789,35 +798,41 @@ namespace dtUtil
    const std::string FileUtils::GetAbsolutePath(const std::string& relativePath) const
    {
       //todo- add archive support here
+
+      FileInfo fi = GetFileInfo(relativePath);
+      if (fi.fileType == FILE_NOT_FOUND)
+      {
+         throw dtUtil::FileNotFoundException( std::string("Cannot open file or directory ") + relativePath, __FILE__, __LINE__);
+      }
+      else if (fi.fileType == ARCHIVE || fi.isInArchive)
+      {
+         throw dtUtil::FileUtilIOException( std::string("Unable to get the absolute path to a file in an archive. ") + relativePath, __FILE__, __LINE__);
+      }
+
+      std::string dir = relativePath;
+      if (fi.fileType == REGULAR_FILE)
+      {
+         dir = fi.path;
+      }
+
+      if (dir.empty())
+      {
+         dir =".";
+      }
+
       std::string result;
-      std::string old = mCurrentDirectory;
-      try
+      DirectoryPush dp(dir);
+      if (dp.GetSucceeded())
       {
-         if (chdir(relativePath.c_str()) == -1)
+         result = mCurrentDirectory;
+         if (fi.fileType == REGULAR_FILE)
          {
-            throw dtUtil::FileNotFoundException( std::string("Cannot open directory ") + relativePath, __FILE__, __LINE__);
+            result += PATH_SEPARATOR + fi.baseName;
          }
-         char buf[512];
-         char* bufAddress = getcwd(buf, 512);
-         if (bufAddress != buf)
-         {
-            throw dtUtil::FileUtilIOException( std::string("Cannot get current working directory"), __FILE__, __LINE__);
-         }
-         result = buf;
       }
-      catch (const dtUtil::Exception& ex)
+      else
       {
-         if (chdir(old.c_str()) == -1)
-         {
-            mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
-                                "Attempting to reset current directory to \"%s\", but an error occured doing so.", old.c_str());
-         }
-         throw ex;
-      }
-      if (chdir(old.c_str()) == -1)
-      {
-         mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
-                             "Attempting to reset current directory to \"%s\", but an error occured doing so.", old.c_str());
+         throw dtUtil::FileUtilIOException( std::string("Cannot get absolute path for file.  Cannot enter directory: ") + relativePath, __FILE__, __LINE__);
       }
       return result;
    }
@@ -1102,10 +1117,10 @@ namespace dtUtil
             {
                RecursDeleteDir(true);
             }
-            catch(const dtUtil::Exception& ex)
+            catch(const dtUtil::Exception&)
             {
                PopDirectory();
-               throw ex;
+               throw;
             }
 
             PopDirectory();
@@ -1126,9 +1141,9 @@ namespace dtUtil
                return true;
            }
          }
-         catch (const dtUtil::Exception& ex)
+         catch (const dtUtil::Exception&)
          {
-            throw ex;
+            throw;
          }
       }
       else
@@ -1195,32 +1210,72 @@ namespace dtUtil
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   bool FileUtils::DirExists(const std::string& strDir) const
+   bool FileUtils::DirExists(const std::string& strDir, bool caseInsensitive) const
    {
-      return GetFileInfo(strDir).fileType == DIRECTORY;
+      return GetFileInfo(strDir, caseInsensitive).fileType == DIRECTORY;
    }
 
    /////////////////////////////////////////////////////////////////////////////
    std::string FileUtils::RelativePath(const std::string& absolutePath, const std::string& file) const
    {
+      if (!IsAbsolutePath(absolutePath) || !IsAbsolutePath(file))
+      {
+         return file;
+      }
+
       std::string relativePath;
 
-      for (size_t i = 0; i < file.size(); i++)
+      if (file.empty() || absolutePath.empty())
       {
-         if (file[i] != absolutePath[i])
-         {
-            if (file[i] == '/')
-            {
-               relativePath = file.substr(i + 1);
-            }
-            else
-            {
-               relativePath = file.substr(i);
-            }
+         return file;
+      }
 
+      const std::string PS(PATH_SEPARATOR, 1);
+
+      std::string root1, root2;
+      root1 = GetPathRoot(file);
+      root2 = GetPathRoot(absolutePath);
+
+      if (root1 != root2)
+      {
+         return file;
+      }
+
+      std::vector<std::string> absPathVec, filePathVec;
+      IsPathSeparator pathSepFunc;
+
+      dtUtil::StringTokenizer<IsPathSeparator>::tokenize(absPathVec, absolutePath, pathSepFunc);
+      dtUtil::StringTokenizer<IsPathSeparator>::tokenize(filePathVec, file, pathSepFunc);
+
+      size_t pointOfDivergence = 0;
+
+      for (size_t i = 0; i < filePathVec.size() && i < absPathVec.size(); ++i)
+      {
+         if (filePathVec[i] != absPathVec[i])
+         {
             break;
          }
+         ++pointOfDivergence;
       }
+
+      // Add ../ for each of the rest of the items in the absolute path.
+      for (size_t i = pointOfDivergence; i < absPathVec.size(); ++i)
+      {
+         relativePath.append("../");
+      }
+
+      // Add the non matching items from the file path.
+      for (size_t i = pointOfDivergence; i < filePathVec.size(); ++i)
+      {
+         relativePath.append(filePathVec[i]);
+         // only put the slash in if it's not the last one.
+         if (i < filePathVec.size() - 1)
+         {
+            relativePath.append("/");
+         }
+      }
+
+
 
       return relativePath;
    }
@@ -1804,5 +1859,42 @@ namespace dtUtil
       : dtUtil::Exception(message, filename, linenum)
    {
    }
+
+   /////////////////////////////////////////////////////////////////////////////
+   DirectoryPush::DirectoryPush(const std::string& dir)
+   : mSucceeded(false)
+   {
+      try
+      {
+         FileUtils::GetInstance().PushDirectory(dir);
+         mSucceeded = true;
+      }
+      catch(FileNotFoundException& ex)
+      {
+         // Eat it because we have a bool to say if it passed.
+         mError = ex.ToString();
+      }
+   }
+   /////////////////////////////////////////////////////////////////////////////
+   DirectoryPush::~DirectoryPush()
+   {
+      if (mSucceeded)
+      {
+         FileUtils::GetInstance().PopDirectory();
+      }
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   bool DirectoryPush::GetSucceeded()
+   {
+      return mSucceeded;
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   const std::string& DirectoryPush::GetError()
+   {
+      return mError;
+   }
+
 
 } // namespace dtUtil

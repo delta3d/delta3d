@@ -134,7 +134,7 @@ namespace dtEditQt
          }
          else if (renderMode == dtCore::BaseActorObject::RenderMode::DRAW_ACTOR)
          {
-            select(actors[i]->GetActor());
+            select(actors[i]->GetDrawable());
          }
          else if (renderMode == dtCore::BaseActorObject::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON)
          {
@@ -148,11 +148,11 @@ namespace dtEditQt
                LOG_ERROR("BaseActorObject: " + actors[i]->GetName() + " has NULL billboard.");
             }
 
-            select(actors[i]->GetActor());
+            select(actors[i]->GetDrawable());
          }
          else
          {
-            select(actors[i]->GetActor());
+            select(actors[i]->GetDrawable());
          }
 
          mCurrentActorSelection.push_back(actors[i]);
@@ -334,7 +334,7 @@ namespace dtEditQt
       }
       else if (renderMode == dtCore::BaseActorObject::RenderMode::DRAW_ACTOR)
       {
-         unSelect(proxy->GetActor());
+         unSelect(proxy->GetDrawable());
       }
       else if (renderMode == dtCore::BaseActorObject::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON)
       {
@@ -348,11 +348,11 @@ namespace dtEditQt
             LOG_ERROR("BaseActorObject: " + proxy->GetName() + " has NULL billboard.");
          }
 
-         unSelect(proxy->GetActor());
+         unSelect(proxy->GetDrawable());
       }
       else
       {
-         unSelect(proxy->GetActor());
+         unSelect(proxy->GetDrawable());
       }
 
       //Finally remove the actor proxy from the selection list.

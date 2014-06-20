@@ -52,9 +52,9 @@ void TestGameActorCrashProxy::BuildInvokables()
 }
 
 ////////////////////////////////////////////////////////////////////
-void TestGameActorCrashProxy::CreateActor()
+void TestGameActorCrashProxy::CreateDrawable()
 {
-   SetActor(*new TestGameActorCrash(*this));
+   SetDrawable(*new TestGameActorCrash(*this));
 }
 
 ////////////////////////////////////////////////////////////////////

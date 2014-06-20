@@ -26,6 +26,7 @@
 #include <dtCore/librarymanager.h>
 #include <dtCore/stringactorproperty.h>
 #include <dtCore/stringselectoractorproperty.h>
+#include <dtCore/deltadrawable.h>
 #include <dtDirector/director.h>
 
 namespace dtDirector
@@ -88,7 +89,7 @@ namespace dtDirector
       // If we've found the actor, try to get its parent
       if (actorToGet)
       {
-         parent = actorToGet->GetActor()->GetParent();
+         parent = actorToGet->GetDrawable()->GetParent();
       }
 
       // Set the parent if we found it

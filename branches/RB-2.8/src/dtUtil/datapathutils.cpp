@@ -95,7 +95,7 @@ namespace dtUtil
    {
       OpenThreads::ScopedLock<OpenThreads::Mutex> lock(gDatapathMutex);
 
-      std::string filePath = osgDB::findDataFile(fileName);
+      std::string filePath = osgDB::findDataFile(fileName, osgDB::CASE_INSENSITIVE);
       
       // In some cases, filePath will contain a url that is
       // relative to the current working directory so for

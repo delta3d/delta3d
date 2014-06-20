@@ -9,7 +9,7 @@ namespace __gnu_cxx
      struct hash<std::string>
      {
       size_t operator()(const std::string& string) const
-        { return __gnu_cxx::__stl_hash_string(string.c_str()); }
+        { return dtUtil::__hash_string(string.c_str()); }
      };
 }
 #elif defined(_MSC_VER)

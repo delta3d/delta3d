@@ -197,11 +197,13 @@ namespace dtUtil
    private:
       string mLibName;
       HANDLE mHandle;
+DT_DISABLE_WARNING_START_CLANG("-Wunused-private-field")
       bool mClose;
+DT_DISABLE_WARNING_END
       /// disable default constructor.
-      InternalLibraryHandle(): LibrarySharingManager::LibraryHandle()  {}
+      InternalLibraryHandle(): LibrarySharingManager::LibraryHandle(), mHandle(0), mClose(false) {}
       /// disable copy constructor.
-      InternalLibraryHandle(const InternalLibraryHandle&): LibrarySharingManager::LibraryHandle()  {}
+      InternalLibraryHandle(const InternalLibraryHandle&): LibrarySharingManager::LibraryHandle(), mHandle(0), mClose(false) {}
       /// disable copy operator.
       InternalLibraryHandle& operator=(const InternalLibraryHandle&) { return *this; }
    };

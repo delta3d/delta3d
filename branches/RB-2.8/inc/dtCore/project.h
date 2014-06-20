@@ -111,6 +111,7 @@ namespace dtCore
       /**
        * @see SetupFromProjectConfig
        * Works the same as SetupFromProjectConfig, but it loads it from file.  It also
+       * returns the ProjecConfig object for convenience.
        */
       dtCore::RefPtr<ProjectConfig> SetupFromProjectConfigFile(const std::string& path);
 
@@ -151,7 +152,7 @@ namespace dtCore
        * @param path the file path of to the project
        * @param openReadOnly optional parameter that defaults to false.  If true, the class will not attempt to modify
        * the project directory.  This parameter essentially now will override the project global setting.
-       * @throw ExceptionEnum::ProjectInvalidContext if the path specified is invalid.
+       * @throw ProjectInvalidContextException if the path specified is invalid.
        */
       void SetContext(const std::string& path, bool openReadOnly = false);
 
@@ -165,7 +166,7 @@ namespace dtCore
 
       /**
        * Removes a context from the list based on the slot number given.
-       * @throw ExceptionEnum::ProjectInvalidContext if the id specified is invalid.
+       * @throw ProjectInvalidContextException if the id specified is invalid.
        */
       void RemoveContext(ContextSlot slot);
 
@@ -182,9 +183,10 @@ namespace dtCore
       size_t GetContextSlotCount() const;
 
       /**
-       * @return the current context.  This will be empty if no valid context is set.
+       * @return The context slot that is or contains this path.  This will be DEFAULT_SLOT_VALUE if none match.
+       * @throw dtUtil::FileNotFoundException
        */
-      ContextSlot GetContextSlot(const std::string& path) const;
+      ContextSlot GetContextSlotForPath(const std::string& path) const;
 
       /**
        * In the process of opening and using a project, lists of resources, maps, etc, are created
@@ -202,7 +204,7 @@ namespace dtCore
 
       /**
        * @return a vector with the names of the maps currently in the project.
-       * @throws ExceptionEnum::ProjectInvalidContext if the context is not set.
+       * @throws ProjectInvalidContextException if the context is not set.
        */
       const std::set<std::string>& GetMapNames();
 

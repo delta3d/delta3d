@@ -158,7 +158,7 @@ class FIRE_FIGHTER_EXPORT PlayerActorProxy : public dtGame::GameActorProxy
       virtual void BuildInvokables();
 
       /// Creates the actor
-      virtual void CreateActor() { SetActor(*new PlayerActor(*this)); }
+      virtual void CreateDrawable() { SetDrawable(*new PlayerActor(*this)); }
 
       // Used in STAGE
       dtCore::ActorProxyIcon* GetBillBoardIcon();

@@ -120,7 +120,9 @@ namespace dtActors
          }
 
          /// Creates the actor that this proxy abstracts
-         virtual void CreateActor();
+         virtual void CreateDrawable();
+
+         dtCore::RefPtr<BaseActorObject> mBezierNode, mEntryCp, mExitCp, mNextBezierNode, mPrevBezierNode;
 
          static int mNumNodes;
    };

@@ -25,9 +25,9 @@
 
 namespace dtActors 
 {
-   void CloudPlaneActorProxy::CreateActor()
+   void CloudPlaneActorProxy::CreateDrawable()
    {
-       SetActor(*new dtCore::CloudPlane(6, 0.5f, 6, 1.f, 0.3f, 0.96f, 256, 1800.f));
+       SetDrawable(*new dtCore::CloudPlane(6, 0.5f, 6, 1.f, 0.3f, 0.96f, 256, 1800.f));
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -36,7 +36,7 @@ namespace dtActors
       const std::string& GROUPNAME = "Cloud Plane";
       dtActors::EnvEffectActorProxy::BuildPropertyMap();
 
-      dtCore::CloudPlane* cp = static_cast<dtCore::CloudPlane*>(GetActor());
+      dtCore::CloudPlane* cp = static_cast<dtCore::CloudPlane*>(GetDrawable());
 
       AddProperty(new dtCore::Vec2fActorProperty("Wind Vector", "Wind Vector",
          dtCore::Vec2ActorProperty::SetFuncType(this, &dtActors::CloudPlaneActorProxy::SetWindVector),
@@ -47,7 +47,7 @@ namespace dtActors
 
    void CloudPlaneActorProxy::SetWindVector(osg::Vec2 wv)
    {
-      dtCore::CloudPlane* cp = static_cast<dtCore::CloudPlane*>(GetActor());
+      dtCore::CloudPlane* cp = static_cast<dtCore::CloudPlane*>(GetDrawable());
 
       cp->SetWind(wv);
    }  

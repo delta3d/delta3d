@@ -231,6 +231,10 @@ void TestAnimInput::ProcessMessage(const dtGame::Message& message)
 ////////////////////////////////////////////////////////////////////////
 void TestAnimInput::TickLocal(float dt)
 {
+   if (!mPlayer.valid())
+   {
+      return;
+   }
 
    dtGame::GameActor* pActor = &mPlayer->GetGameActor();
 

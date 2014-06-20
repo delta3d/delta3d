@@ -79,7 +79,7 @@ class DT_EXAMPLE_EXPORT TestPlayerProxy : public dtGame::GameActorProxy
 
    protected:
       virtual ~TestPlayerProxy();
-      virtual void CreateActor();
+      virtual void CreateDrawable();
       virtual void OnEnteredWorld();
 
    private:

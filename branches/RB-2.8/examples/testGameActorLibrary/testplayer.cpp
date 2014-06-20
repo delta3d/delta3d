@@ -281,7 +281,7 @@ void TestPlayerProxy::OnEnteredWorld()
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void TestPlayerProxy::CreateActor()
+void TestPlayerProxy::CreateDrawable()
 {
-   SetActor(*new TestPlayer(*this));
+   SetDrawable(*new TestPlayer(*this));
 }

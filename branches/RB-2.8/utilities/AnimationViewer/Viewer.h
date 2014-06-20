@@ -115,7 +115,7 @@ signals:
 
    void ErrorOccured(const QString& msg);
 
-   void BlendUpdate(const std::vector<float>& animWeightList, const std::vector<float>& morphWeightList);
+   void BlendUpdate(const std::vector<std::pair<float, float> >& animWeightTimeList, const std::vector<float>& morphWeightList);
 
    void SignalError(const std::string& title, const std::string& message);
 

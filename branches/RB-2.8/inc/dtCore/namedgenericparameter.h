@@ -206,7 +206,7 @@ namespace dtCore
          }
 
          virtual const std::string ToString() const { return std::string(); }
-         virtual bool FromString(const std::string& value) { return false; }
+         virtual bool FromString(const std::string& /*value*/) { return false; }
 
          virtual bool operator==(const NamedParameter& toCompare) const
          {

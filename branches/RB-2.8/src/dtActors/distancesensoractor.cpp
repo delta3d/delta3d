@@ -81,22 +81,21 @@ namespace dtActors
    ////////////////////////////////////////////////////
    void DistanceSensorActorProxy::SetAttachToProxy(dtCore::BaseActorObject* newAttachToProxy)
    {
-      SetLinkedActor(DistanceSensorActorProxy::PROPERTY_ATTACH_TO_ACTOR, newAttachToProxy);
       DistanceSensorActor* actor;
-      GetActor(actor);
+      GetDrawable(actor);
       if (newAttachToProxy == NULL)
       {
          actor->SetAttachToActor(NULL);
       }
       else
       {
-         actor->SetAttachToActor(newAttachToProxy->GetActor());
+         actor->SetAttachToActor(newAttachToProxy->GetDrawable());
       }
    }
    ////////////////////////////////////////////////////
-   void DistanceSensorActorProxy::CreateActor()
+   void DistanceSensorActorProxy::CreateDrawable()
    {
-      SetActor(*new DistanceSensorActor(*this));
+      SetDrawable(*new DistanceSensorActor(*this));
    }
 
    ////////////////////////////////////////////////////

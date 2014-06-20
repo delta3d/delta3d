@@ -119,7 +119,7 @@ class DT_PLUGIN_EXPORT TestDALEnvironmentActorProxy : public dtCore::BaseActorOb
 
       virtual ~TestDALEnvironmentActorProxy();
 
-      virtual void CreateActor() { SetActor(*new TestDALEnvironmentActor); }
+      virtual void CreateDrawable() { SetDrawable(*new TestDALEnvironmentActor); }
 
       virtual void BuildPropertyMap();
 

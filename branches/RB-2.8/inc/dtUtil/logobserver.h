@@ -24,6 +24,7 @@
 #include <dtUtil/export.h>
 #include <dtUtil/log.h>
 #include <dtUtil/breakoverride.h>
+#include <dtUtil/datetime.h>
 
 namespace dtUtil
 {
@@ -36,10 +37,14 @@ namespace dtUtil
    public:
       struct LogData
       {
-         LogData() {};
+         LogData()
+         : type(Log::LOG_DEBUG)
+         , frameNumber()
+         , line(){};
       	
          Log::LogMessageType type; ///<Log level
-         struct tm time;           ///<Time of message
+         dtUtil::DateTime time;    ///<Time of message
+         unsigned frameNumber;
          std::string logName;      ///<The name of the Log instance (could be empty)
          std::string file;         ///<The source file of the message
          std::string method;       ///<The callng method of the message

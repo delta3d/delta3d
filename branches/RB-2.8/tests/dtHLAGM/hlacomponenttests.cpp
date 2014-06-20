@@ -30,7 +30,7 @@
 #include <prefix/unittestprefix.h>
 
 //Defined in the dtgame unit tests.
-#include "../dtGame/testcomponent.h"
+#include <dtGame/testcomponent.h>
 
 #include <dtABC/application.h>
 
@@ -274,7 +274,7 @@ class HLAComponentTests : public CPPUNIT_NS::TestFixture
 
       dtCore::RefPtr<dtGame::GameManager> mGameManager;
       dtCore::RefPtr<TestHLAComponent> mHLAComponent;
-      dtCore::RefPtr<TestComponent> mTestComponent;
+      dtCore::RefPtr<dtGame::TestComponent> mTestComponent;
 
       dtCore::RefPtr<dtHLAGM::RTIObjectClassHandle> mClassHandle1, mClassHandle2, mClassHandle3;
       dtCore::RefPtr<dtHLAGM::RTIObjectInstanceHandle> mObjectHandle1, mObjectHandle2, mObjectHandle3;
@@ -306,7 +306,7 @@ void HLAComponentTests::setUp()
 
       dtCore::RefPtr<dtGame::DefaultMessageProcessor> defMsgComp = new dtGame::DefaultMessageProcessor();
       mGameManager->AddComponent(*defMsgComp, dtGame::GameManager::ComponentPriority::HIGHEST);
-      mTestComponent = new TestComponent("name");
+      mTestComponent = new dtGame::TestComponent("name");
       mGameManager->AddComponent(*mTestComponent, dtGame::GameManager::ComponentPriority::NORMAL);
       dtCore::System::GetInstance().SetShutdownOnWindowClose(false);
       dtCore::System::GetInstance().Start();

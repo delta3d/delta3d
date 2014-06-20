@@ -63,12 +63,12 @@ namespace dtActors
 
       for (itor=subTasks.begin(); itor!=subTasks.end(); ++itor)
       {
-         const TaskActor *subTask = dynamic_cast<const TaskActor *>((*itor)->GetActor());
+         const TaskActor *subTask = dynamic_cast<const TaskActor *>((*itor)->GetDrawable());
          totalWeightedScore += (subTask->GetScore() * subTask->GetWeight());
          totalWeight += subTask->GetWeight();
       }
 
-      taskActor = dynamic_cast<TaskActor *>(GetActor());
+      taskActor = dynamic_cast<TaskActor *>(GetDrawable());
 
       //We actually do not need to request a score change in the case of the
       //rollup task.  A rollup task's score can only change if one of its
@@ -85,9 +85,9 @@ namespace dtActors
    }
 
    //////////////////////////////////////////////////////////////////////////////
-   void TaskActorRollupProxy::CreateActor()
+   void TaskActorRollupProxy::CreateDrawable()
    {
-      SetActor(*new TaskActorRollup(*this));
+      SetDrawable(*new TaskActorRollup(*this));
    }
 
 }

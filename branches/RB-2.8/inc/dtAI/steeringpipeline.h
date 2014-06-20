@@ -108,7 +108,7 @@ namespace dtAI
 
       void operator()(const Decomposer<State_, GoalState_>& target)
       {
-         return target.Decompose(mState, mGoal);
+         target.Decompose(mState, mGoal);
       }
 
       const typename BaseClass::StateType& mState;
@@ -212,11 +212,12 @@ namespace dtAI
             if(cont.WillViolate(p))
             {
                cont.Suggest(p, state, g);
-               FindGoal(g, entityToStep, output, --maxAttempts);
+               return FindGoal(g, entityToStep, output, --maxAttempts);
             }
          }
 
          entityToStep.OutputControl(p, state, output);
+
          return true;
       }
 

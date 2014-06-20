@@ -98,6 +98,8 @@ namespace dtActors
       */
       virtual void Visualize(void);
 
+      /*override*/ virtual void SetTransform(const dtCore::Transform& xform, dtCore::Transformable::CoordSysEnum cs = ABS_CS);
+
       /**
       * This will update the visuals on a single point.
       *
@@ -384,7 +386,7 @@ namespace dtActors
       /**
       * Creates the default actor associated with this proxy.
       */
-      void CreateActor();
+      void CreateDrawable();
 
       /**
       * Builds the property map.
@@ -403,21 +405,6 @@ namespace dtActors
       * @return           A property, or NULL if none is needed.
       */
       dtCore::RefPtr<dtCore::ActorProperty> GetDeprecatedProperty(const std::string& name);
-
-      /**
-      * Called when the SetRotation function is called.  The rotation will
-      * be passed in using x,y,z order (p,r,h)
-      * @param oldValue The previous value
-      * @param newValue The new value
-      */
-      void OnRotation(const osg::Vec3 &oldValue, const osg::Vec3 &newValue);
-
-      /**
-      * Called when the SetScale function is called
-      * @param oldValue The previous value
-      * @param newValue The new value
-      */
-      void OnTranslation(const osg::Vec3 &oldValue, const osg::Vec3 &newValue);
 
       /**
       * Sets the current attached actor index.

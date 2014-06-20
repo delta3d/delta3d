@@ -186,9 +186,9 @@ namespace dtActors
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void DirectorActorProxy::CreateActor()
+   void DirectorActorProxy::CreateDrawable()
    {
-      SetActor(*new DirectorActor(*this));
+      SetDrawable(*new DirectorActor(*this));
    }
 
    /////////////////////////////////////////////////////////////////////////////

@@ -482,9 +482,9 @@ namespace dtActors
          /**
            * Creates the actor associated with this proxy
            */
-         virtual void CreateActor()
+         virtual void CreateDrawable()
          {
-            SetActor(*new WeatherEnvironmentActor(*this));
+            SetDrawable(*new WeatherEnvironmentActor(*this));
          }
 
          /**

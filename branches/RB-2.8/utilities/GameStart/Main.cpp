@@ -64,6 +64,7 @@ int main(int argc, char** argv)
             if (curArg < argc)
             {
                configFileName = argv[curArg];
+               LOG_ALWAYS ( "Using configuration file " + configFileName );
             }
             else
             {
@@ -95,11 +96,10 @@ int main(int argc, char** argv)
    argv = argv + curArg;
    try
    {
-      dtCore::RefPtr<dtGame::GameApplication> app = new dtGame::GameApplication(argc, argv, configFileName);
-      app->SetGameLibraryName(appToLoad);
-      app->Config();
-      app->Run();
-      app = NULL;
+      dtGame::GameApplicationLoader loader(argc, argv);
+      loader.SetGameLibraryName(appToLoad);
+      loader.Config(configFileName);
+      loader.Run();
 
       std::cerr << "The Game Manager is now shutting down ... " << std::endl;
    }

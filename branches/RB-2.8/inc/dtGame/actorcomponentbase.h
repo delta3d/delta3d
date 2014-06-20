@@ -117,13 +117,13 @@ namespace dtGame
        * Override this to get informed about newly added ActorComponent
        * @param component The ActorComponent just added
        */
-      virtual void OnActorComponentAdded(ActorComponent& component) {};
+      virtual void OnActorComponentAdded(ActorComponent& /*component*/) {};
 
       /**
        * Override this to get informed about removed components
        * @param component The ActorComponent just removed
        */
-      virtual void OnActorComponentRemoved(ActorComponent& component) {};
+      virtual void OnActorComponentRemoved(ActorComponent& /*component*/) {};
 
    protected:
 

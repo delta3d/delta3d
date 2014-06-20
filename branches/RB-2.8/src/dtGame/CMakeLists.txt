@@ -79,6 +79,7 @@ SET(LIB_SOURCES
     ${SOURCE_PATH}/gameactor.cpp
     ${SOURCE_PATH}/gameactorproxy.cpp
     ${SOURCE_PATH}/gameapplication.cpp
+    ${SOURCE_PATH}/gameentrypoint.cpp
     ${SOURCE_PATH}/gamemanager.cpp
     ${SOURCE_PATH}/gmcomponent.cpp
     ${SOURCE_PATH}/gmsettings.cpp
@@ -121,8 +122,4 @@ TARGET_LINK_LIBRARIES(${LIB_NAME}
 
 INCLUDE(ModuleInstall OPTIONAL)
 
-
-IF (MSVC_IDE)
-  SET_TARGET_PROPERTIES(${LIB_NAME}
-                     PROPERTIES DEFINE_SYMBOL DT_GAME_LIBRARY) 
-ENDIF (MSVC_IDE)
+DELTA3D_ADD_LIBRARY_PROPERTIES(${LIB_NAME} DT_GAME_LIBRARY ${LIB_PUBLIC_HEADERS})

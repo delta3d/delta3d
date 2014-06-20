@@ -106,7 +106,7 @@ namespace dtCore
        * Because the sax parser may give a contiguous set of characters in multiple calls to characters, one should
        * override this function instead of "characters" get all the data
        */
-      virtual void CombinedCharacters(const XMLCh* const chars, size_t length) {}
+      virtual void CombinedCharacters(const XMLCh* const /*chars*/, size_t /*length*/) {}
 
       /**
        * @see DocumentHandler#processingInstruction

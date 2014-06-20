@@ -46,22 +46,22 @@ CameraDataActor::ProjectionMode CameraDataActor::ProjectionMode::PERSPECTIVE("Pe
 //////////////////////////////////////////////////////////////////////////
 void CameraDataActorProxy::ApplyDataTo(dtCore::Camera& camera)
 {
-   CameraDataActor *actor = static_cast<CameraDataActor*>(GetActor());
+   CameraDataActor *actor = static_cast<CameraDataActor*>(GetDrawable());
 
    actor->ApplyDataTo(camera);
 }
 
 //////////////////////////////////////////////////////////////////////////
-void CameraDataActorProxy::CreateActor()
+void CameraDataActorProxy::CreateDrawable()
 {
-   SetActor(*new CameraDataActor("CameraData"));
+   SetDrawable(*new CameraDataActor("CameraData"));
 }
 
 //////////////////////////////////////////////////////////////////////////
 void CameraDataActorProxy::BuildPropertyMap()
 {
    TransformableActorProxy::BuildPropertyMap();
-   CameraDataActor *actor = static_cast<CameraDataActor*>(GetActor());
+   CameraDataActor *actor = static_cast<CameraDataActor*>(GetDrawable());
 
    // Clear Color 
    AddProperty( new BooleanActorProperty("changeClearColor", "Change Clear Color",

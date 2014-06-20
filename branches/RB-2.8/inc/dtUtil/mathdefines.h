@@ -34,7 +34,12 @@
 
 namespace dtUtil
 {
-
+   /// @return the sign of the variable
+   template <typename T> 
+   T Sign(T val) {
+      return T(T(0) < val) - T(val < T(0));
+   }
+    
    template <typename Real>
    Real Min(Real a, Real b)
    {

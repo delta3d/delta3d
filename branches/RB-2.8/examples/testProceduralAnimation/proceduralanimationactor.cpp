@@ -63,10 +63,17 @@ void ProceduralAnimationActorProxy::BuildPropertyMap()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ProceduralAnimationActorProxy::CreateActor()
+void ProceduralAnimationActorProxy::BuildActorComponents()
+{
+   dtAnim::AnimationGameActorProxy::BuildActorComponents();
+   GetComponent<dtAnim::AnimationHelper>()->SetLoadModelAsynchronously(false);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ProceduralAnimationActorProxy::CreateDrawable()
 {
    ProceduralAnimationActor* pActor = new ProceduralAnimationActor(*this);
-   SetActor(*pActor);
+   SetDrawable(*pActor);
 }
 
 //////////////////////////////////////////////////////////
@@ -172,8 +179,9 @@ void ProceduralAnimationActor::OnTickLocal(const dtGame::TickMessage& tickMessag
    // inverse kinematics
    TickIK(dt);
 
+   // The component handles this...
    // canned animation update
-   GetHelper()->GetModelWrapper()->Update(dt);
+   //GetHelper()->GetModelWrapper()->Update(dt);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -231,10 +239,10 @@ void ProceduralAnimationActor::TickIK(float dt)
       torsoMesh->GetTargetTriangleData(remAzimuth, remElevation, torsoTarget);
 
       // Use the pose mesh util to apply the blends
-      mPoseMeshUtil->BlendPoses(eyeMesh1, GetHelper()->GetModelWrapper(), eyeTarget1, mBlendTime);
-      mPoseMeshUtil->BlendPoses(eyeMesh2, GetHelper()->GetModelWrapper(), eyeTarget2, mBlendTime);
-      mPoseMeshUtil->BlendPoses(headMesh, GetHelper()->GetModelWrapper(), headTarget, mBlendTime);
-      mPoseMeshUtil->BlendPoses(torsoMesh, GetHelper()->GetModelWrapper(), torsoTarget, mBlendTime);
+      mPoseMeshUtil->BlendPoses(eyeMesh1, GetModelWrapper(), eyeTarget1, mBlendTime);
+      mPoseMeshUtil->BlendPoses(eyeMesh2, GetModelWrapper(), eyeTarget2, mBlendTime);
+      mPoseMeshUtil->BlendPoses(headMesh, GetModelWrapper(), headTarget, mBlendTime);
+      mPoseMeshUtil->BlendPoses(torsoMesh,GetModelWrapper(), torsoTarget, mBlendTime);
    }
    else // we are aiming
    {
@@ -247,7 +255,7 @@ void ProceduralAnimationActor::TickIK(float dt)
       dtAnim::PoseMesh::TargetTriangle& gunTarget = mMarinePoseData.mTargetTriangles[ProceduralAnimationData::GUN];
 
       gunMesh->GetTargetTriangleData(remAzimuth, remElevation, gunTarget);
-      mPoseMeshUtil->BlendPoses(gunMesh, GetHelper()->GetModelWrapper(), gunTarget, mBlendTime);
+      mPoseMeshUtil->BlendPoses(gunMesh, GetModelWrapper(), gunTarget, mBlendTime);
 
       // Only shoot when in sight and standing still
       if (gunTarget.mIsInside)
@@ -287,7 +295,7 @@ void ProceduralAnimationActor::AddedToScene(dtCore::Scene* scene)
 ////////////////////////////////////////////////////////////////////////////////
 osg::Vec3 ProceduralAnimationActor::GetPoseMeshEndEffectorDirection(const dtAnim::PoseMesh* poseMesh) const
 {
-   const dtAnim::Cal3DModelWrapper* modelWrapper = GetHelper()->GetModelWrapper();
+   const dtAnim::Cal3DModelWrapper* modelWrapper = GetComponent<dtAnim::AnimationHelper>()->GetModelWrapper();
 
    // If we have the ik system attached
    if (poseMesh != NULL)
@@ -315,7 +323,7 @@ osg::Vec3 ProceduralAnimationActor::GetPoseMeshEndEffectorDirection(const dtAnim
 ////////////////////////////////////////////////////////////////////////////////
 dtAnim::Cal3DModelWrapper* ProceduralAnimationActor::GetModelWrapper()
 {
-   return GetHelper()->GetModelWrapper();
+   return GetComponent<dtAnim::AnimationHelper>()->GetModelWrapper();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -356,7 +364,7 @@ osg::Vec3 ProceduralAnimationActor::GetGunDirection() const
 ////////////////////////////////////////////////////////////////////////////////
 osg::Vec3 ProceduralAnimationActor::GetGunPosition() const
 {
-   const dtAnim::Cal3DModelWrapper* modelWrapper = GetHelper()->GetModelWrapper();
+   const dtAnim::Cal3DModelWrapper* modelWrapper = GetComponent<dtAnim::AnimationHelper>()->GetModelWrapper();
    dtAnim::PoseMesh* gunMesh = mMarinePoseData.mPoseMeshes[ProceduralAnimationData::GUN];
 
    dtCore::Transform transform;
@@ -395,7 +403,7 @@ osg::Vec3 ProceduralAnimationActor::GetWorldPosition() const
 ////////////////////////////////////////////////////////////////////////////////
 osg::Vec3 ProceduralAnimationActor::GetHeadPosition() const
 {
-   const dtAnim::Cal3DModelWrapper* modelWrapper = GetHelper()->GetModelWrapper();
+   const dtAnim::Cal3DModelWrapper* modelWrapper = GetComponent<dtAnim::AnimationHelper>()->GetModelWrapper();
    dtAnim::PoseMesh* headMesh = mMarinePoseData.mPoseMeshes[ProceduralAnimationData::HEAD];
 
    dtCore::Transform transform;

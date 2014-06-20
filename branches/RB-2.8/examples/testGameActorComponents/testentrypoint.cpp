@@ -51,7 +51,7 @@ public:
             {
                // get the game actor
                ComponentGameActor* actor;
-               (*proxyIter)->GetActor(actor);
+               (*proxyIter)->GetDrawable(actor);
 
                // get its text label component
                TextLabelComponent* textComp;
@@ -75,7 +75,7 @@ public:
 
    TestGameActorComponents() {}
    
-   virtual void Initialize(dtGame::GameApplication& app, int argc, char** argv)
+   virtual void Initialize(dtABC::BaseABC& app, int argc, char** argv)
    {
       // add a motion model
       dtCore::OrbitMotionModel* motionModel = new dtCore::OrbitMotionModel(app.GetKeyboard(), app.GetMouse());
@@ -84,12 +84,11 @@ public:
       motionModel->SetFocalPoint(TARGET_XYZ);
    }
 
-   virtual void OnStartup(dtGame::GameApplication& app)
+   virtual void OnStartup(dtABC::BaseABC& app, dtGame::GameManager& gameManager)
    {
       std::string dataPath = dtUtil::GetDeltaDataPathList();
       dtUtil::SetDataFilePathList(dataPath + ";" + dtUtil::GetDeltaRootPath() + "/examples/data"); 
 
-      dtGame::GameManager& gameManager = *app.GetGameManager();
       gameManager.LoadActorRegistry("testGameActorComponents");
 
       try
@@ -132,11 +131,11 @@ public:
 
       // create a component game actor
       dtCore::RefPtr<ComponentGameActorProxy> proxy;
-      app.GetGameManager()->CreateActor(*TestActorLibraryRegistry::COMPONENT_GAME_ACTOR_TYPE.get(), proxy);
+      gameManager.CreateActor(*TestActorLibraryRegistry::COMPONENT_GAME_ACTOR_TYPE.get(), proxy);
       
       // set mesh property and translation of component game actor
       ComponentGameActor* actor;
-      proxy->GetActor(actor);
+      proxy->GetDrawable(actor);
       actor->SetMesh("models/physics_happy_sphere.ive");
       dtCore::Transform xform;
       xform.SetTranslation(TARGET_XYZ);
@@ -151,7 +150,7 @@ public:
 
       // WARNING: if you call AddACtor without the boolean arguments,
       // the OnEnteredWorld method of the game actor is not called!
-      app.GetGameManager()->AddActor(*proxy.get(),false, false);
+      gameManager.AddActor(*proxy.get(),false, false);
    }
 
 };

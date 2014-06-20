@@ -297,14 +297,20 @@ GUI::~GUI()
       mRootSheet = NULL;
    }
 
-   CEGUI::OpenGLRenderer* renderer = static_cast<CEGUI::OpenGLRenderer*>(CEGUI::System::getSingletonPtr()->getRenderer());
-   CEGUI::System::destroy();
-   if (renderer)
+   // Need to do this BEFORE the instance count call below, otherwise it will fail to delete anything.
+   DeregisterInstance(this);
+
+   // Don't shutdown CEGUI unless all GUI instances are destroyed.
+   if (GetInstanceCount() == 0)
    {
-      CEGUI::OpenGLRenderer::destroy(*renderer);
+      CEGUI::OpenGLRenderer* renderer = static_cast<CEGUI::OpenGLRenderer*>(CEGUI::System::getSingletonPtr()->getRenderer());
+      CEGUI::System::destroy();
+      if (renderer)
+      {
+         CEGUI::OpenGLRenderer::destroy(*renderer);
+      }
    }
 
-   DeregisterInstance(this);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

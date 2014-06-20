@@ -22,7 +22,7 @@ int BezierControllerActorProxy::mNumControllers = 0;
 //   return dtCore::BaseActorObject::RenderMode::DRAW_AUTO;
 //}
 
-void BezierControllerActorProxy::CreateActor()
+void BezierControllerActorProxy::CreateDrawable()
 {
    SetDrawable(*new BezierController());
    static_cast<BezierController*>(GetDrawable())->RenderProxyNode(true);
@@ -70,8 +70,6 @@ dtCore::DeltaDrawable* BezierControllerActorProxy::GetActorStartNode()
 
 void BezierControllerActorProxy::SetActorStartNode(dtCore::BaseActorObject* node)
 {
-
-   SetLinkedActor("Start Node", node);
 
    BezierNode* bNode = NULL;
    if (node)

@@ -61,7 +61,7 @@ namespace dtDirector
                mouse = app->GetMouse();
             }
 
-            dtGUI::GUI* gui = new dtGUI::GUI(camera, keyboard, mouse);
+            return new dtGUI::GUI(camera, keyboard, mouse);
          }
          catch(CEGUI::Exception& e)
          {

@@ -46,7 +46,7 @@ public:
 protected:
    /*virtual*/ ~BezierControllerActorProxy() {}
 
-   /*virtual*/ void CreateActor();
+   /*virtual*/ void CreateDrawable();
    static int mNumControllers;
 
 };

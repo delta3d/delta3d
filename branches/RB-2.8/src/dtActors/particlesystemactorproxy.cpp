@@ -32,9 +32,9 @@ using namespace dtCore;
 
 namespace dtActors
 {
-   void ParticleSystemActorProxy::CreateActor()
+   void ParticleSystemActorProxy::CreateDrawable()
    {
-      SetActor(*new dtCore::ParticleSystem);
+      SetDrawable(*new dtCore::ParticleSystem);
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -43,7 +43,7 @@ namespace dtActors
       const std::string &GROUPNAME = "Particle System";
       TransformableActorProxy::BuildPropertyMap();
 
-      ParticleSystem *ps = static_cast<ParticleSystem*>(GetActor());
+      ParticleSystem *ps = static_cast<ParticleSystem*>(GetDrawable());
 
       // This property toggles the enabling of a Particle System.
       // A value of true enables the particle system, which in turn

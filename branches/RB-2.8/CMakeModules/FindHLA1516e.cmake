@@ -31,7 +31,9 @@ if (GCC_VERSION)
   IF (APPLE)
     SET(PATHLIST 
         macintel_g++-${GCC_MAJOR}.${GCC_MINOR}
+        macintel_g++-unknown
         macintel64_g++-${GCC_MAJOR}.${GCC_MINOR}
+        macintel64_g++-unknown
         darwin_g++-${GCC_MAJOR}.${GCC_MINOR}
         gcc${GCC_MAJOR}${GCC_MINOR}
     )

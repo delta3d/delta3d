@@ -131,14 +131,14 @@ void PoseMeshProperties::OnItemExpanded(QTreeWidgetItem* item)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-void PoseMeshProperties::OnBlendUpdate(const std::vector<float>& weightList)
+void PoseMeshProperties::OnBlendUpdate(const std::vector<std::pair<float, float> >& weightList)
 {
    for (size_t vertIndex = 0; vertIndex < mVertProperties.size(); ++vertIndex)
    {
       unsigned int animID = mVertProperties[vertIndex]->data(0, Qt::UserRole).toUInt();
       assert(animID < weightList.size());
 
-      mVertProperties[vertIndex]->setText(2, QString("%%1").arg(weightList[animID]));
+      mVertProperties[vertIndex]->setText(2, QString("%%1").arg(weightList[animID].first));
    }
 }
 

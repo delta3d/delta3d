@@ -43,8 +43,8 @@
 #include <QtGui/QComboBox>
 #include <QtGui/QPushButton>
 
-#include <QtGui/qdrawutil.h>
-#include <QtCore/qdebug.h>
+#include <QtGui/QTileRules>
+#include <QtCore/QDebug>
 #include <limits.h>
 
 #ifdef KeyPress

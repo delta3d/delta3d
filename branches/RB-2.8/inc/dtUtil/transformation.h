@@ -13,6 +13,7 @@ namespace dtUtil
    {
    public:
       virtual T operator()(T) const = 0;
+      virtual ~Transformation() {};
    };
 
    ////////////////////////////////////////////////////////////////////////////////

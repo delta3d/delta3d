@@ -94,7 +94,7 @@ namespace dtActors
          /**
           * Creates a mesh terrain instance.
           */
-         virtual void CreateActor();
+         virtual void CreateDrawable();
 
          virtual ~MeshTerrainActorProxy() {}
    };

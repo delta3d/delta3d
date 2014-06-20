@@ -42,7 +42,7 @@ namespace dtActors
    {
       const std::string GROUPNAME = "Light";
 
-      dtCore::Light* light = static_cast<dtCore::Light*>(GetActor());
+      dtCore::Light* light = static_cast<dtCore::Light*>(GetDrawable());
 
       //Now, add all of the properties for the actor.
       AddProperty(new dtCore::BooleanActorProperty("Enable","Enabled",

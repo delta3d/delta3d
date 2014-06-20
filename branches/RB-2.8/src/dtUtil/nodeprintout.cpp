@@ -38,8 +38,7 @@ namespace dtUtil
 {
 
    NodePrintOut::NodePrintOut()
-      : mTabAmount(0)
-      , mFile(NULL)
+      : mFile(NULL)
       , mPrintingVerts(false)
    {
    }
@@ -82,13 +81,13 @@ namespace dtUtil
    //////////////////////////////////////////////////////////////////////////
    void NodePrintOut::Analyze(const osg::Node& nd, const std::string& indent, unsigned int nodeMask)
    {
-      if (dtUtil::Bits::Has(nd.getNodeMask(), nodeMask) == false)
+      if ((nd.getNodeMask() & nodeMask) == 0U)
       {
          return;
       }
 
-      mOutputStream[0] << indent << "Node - Class Name [" <<  nd.className() <<
-         "], Node Name [" << nd.getName() << "], Node Mask [0x" << std::hex <<
+      mOutputStream[0] << indent << nd.libraryName() << "::" <<  nd.className() <<
+         " - Node Name [" << nd.getName() << "], Node Mask [0x" << std::hex <<
          nd.getNodeMask() << "]" << std::endl;
 
       const osg::Geode* geode = dynamic_cast<const osg::Geode*>(&nd);
@@ -192,10 +191,15 @@ namespace dtUtil
       }
    }
 
-   void NodePrintOut::PrintNodeToOSGFile(const osg::Node& node, std::ostringstream& oss)
+   void NodePrintOut::PrintNodeToOSGFile(const osg::Node& node, std::ostringstream& oss, bool oldOsgFormat)
    {
       oss.str("");
-      const std::string &tempFile = "temp.osg";
+      std::string tempFile = "temp.osgt";
+      if (oldOsgFormat)
+      {
+         tempFile = "temp.osg";
+      }
+
       osgDB::writeNodeFile(node, tempFile);
 
       std::ifstream in(tempFile.c_str());

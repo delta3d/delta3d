@@ -85,7 +85,7 @@ void MapStatisticsPlugin::onCalculateButtonPressed()
 
          for (size_t selectIndex = 0; selectIndex < selectedList.size(); ++selectIndex)
          {
-            selectedList[selectIndex]->GetActor()->GetOSGNode()->accept(*statVisitor);
+            selectedList[selectIndex]->GetDrawable()->GetOSGNode()->accept(*statVisitor);
          }
 
          AddStatsToItem(*statVisitor, *selectedItem);
@@ -100,9 +100,9 @@ void MapStatisticsPlugin::onCalculateButtonPressed()
 
          for (int proxyIndex = 0; proxyIndex < (int)proxies.size(); proxyIndex++)
          {
-            if (proxies[proxyIndex]->GetActor())
+            if (proxies[proxyIndex]->GetDrawable())
             {
-               osg::Node* node =  proxies[proxyIndex]->GetActor()->GetOSGNode();
+               osg::Node* node =  proxies[proxyIndex]->GetDrawable()->GetOSGNode();
                if (node)
                {
                   node->accept(*statVisitor);
@@ -122,7 +122,7 @@ void MapStatisticsPlugin::GetGeometryMetrics(dtCore::BaseActorObject* actor, uns
 {
    if (actor)
    {
-      dtCore::DeltaDrawable* drawable = actor->GetActor();
+      dtCore::DeltaDrawable* drawable = actor->GetDrawable();
       if (drawable)
       {
          dtCore::RefPtr<dtUtil::NodeCollector> nc = new dtUtil::NodeCollector;
@@ -210,14 +210,21 @@ void MapStatisticsPlugin::AddStatsToItem(osgUtil::StatsVisitor& statsVisitor, QT
 
    QTreeWidgetItem* instanceWidget = new QTreeWidgetItem(&item, QStringList("instance"));
 
-   QTreeWidgetItem* instanceStateWidget = new QTreeWidgetItem(instanceWidget, QStringList("StateSets"));
-   QTreeWidgetItem* instanceGroupWidget = new QTreeWidgetItem(instanceWidget, QStringList("Groups"));
-   QTreeWidgetItem* instanceTransformWidget = new QTreeWidgetItem(instanceWidget, QStringList("Transforms"));
-   QTreeWidgetItem* instanceLODWidget = new QTreeWidgetItem(instanceWidget, QStringList("LOD"));
-   QTreeWidgetItem* instanceSwitchWidget = new QTreeWidgetItem(instanceWidget, QStringList("Switch"));
-   QTreeWidgetItem* instanceeGeodeWidget = new QTreeWidgetItem(instanceWidget, QStringList("Geode"));
+   //QTreeWidgetItem* instanceStateWidget =
+   new QTreeWidgetItem(instanceWidget, QStringList("StateSets"));
+   //QTreeWidgetItem* instanceGroupWidget =
+   new QTreeWidgetItem(instanceWidget, QStringList("Groups"));
+   //QTreeWidgetItem* instanceTransformWidget =
+   new QTreeWidgetItem(instanceWidget, QStringList("Transforms"));
+   //QTreeWidgetItem* instanceLODWidget =
+   new QTreeWidgetItem(instanceWidget, QStringList("LOD"));
+   //QTreeWidgetItem* instanceSwitchWidget =
+   new QTreeWidgetItem(instanceWidget, QStringList("Switch"));
+   //QTreeWidgetItem* instanceeGeodeWidget =
+   new QTreeWidgetItem(instanceWidget, QStringList("Geode"));
    QTreeWidgetItem* instanceeDrawableWidget = new QTreeWidgetItem(instanceWidget, QStringList("Drawable"));
-   QTreeWidgetItem* instanceeGeometryWidget = new QTreeWidgetItem(instanceWidget, QStringList("Geometry"));
+   //QTreeWidgetItem* instanceeGeometryWidget =
+   new QTreeWidgetItem(instanceWidget, QStringList("Geometry"));
 
    uniqueStateWidget->setText(1, dtUtil::ToString(statsVisitor._numInstancedStateSet).c_str());
    uniqueGroupWidget->setText(1, dtUtil::ToString(statsVisitor._numInstancedGroup).c_str());
@@ -229,7 +236,8 @@ void MapStatisticsPlugin::AddStatsToItem(osgUtil::StatsVisitor& statsVisitor, QT
    uniqueGeometryWidget->setText(1, dtUtil::ToString(statsVisitor._numInstancedDrawable).c_str());
 
 #if defined(OSG_VERSION_MAJOR) && OSG_VERSION_MAJOR >= 3
-   QTreeWidgetItem* instanceFastGeometryWidget = new QTreeWidgetItem(instanceWidget, QStringList("Fast Geometry"));
+   //QTreeWidgetItem* instanceFastGeometryWidget =
+   new QTreeWidgetItem(instanceWidget, QStringList("Fast Geometry"));
    uniqueFastGeometryWidget->setText(1, dtUtil::ToString(statsVisitor._numInstancedFastGeometry).c_str());
 #endif
 }
@@ -256,7 +264,7 @@ namespace MapStatistics
    class DT_MAP_STATISTICS_EXPORT PluginFactory : public dtEditQt::PluginFactory
    {
    public:
-      PluginFactory() {}
+      PluginFactory(): mPlugin(NULL) {}
       ~PluginFactory() {}
 
       /** get the name of the plugin */

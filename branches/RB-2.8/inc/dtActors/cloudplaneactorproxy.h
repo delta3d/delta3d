@@ -55,7 +55,7 @@ namespace dtActors
         /**
          * Creates the cloud plane actor.
          */
-        virtual void CreateActor();
+        virtual void CreateDrawable();
 
         /**
          * Destructor

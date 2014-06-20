@@ -44,9 +44,9 @@ TriggerVolumeActorProxy::~TriggerVolumeActorProxy()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void TriggerVolumeActorProxy::CreateActor()
+void TriggerVolumeActorProxy::CreateDrawable()
 {
-   SetActor(*new TriggerVolumeActor(*this));
+   SetDrawable(*new TriggerVolumeActor(*this));
 }
 
 ////////////////////////////////////////////////////////////////////////////////

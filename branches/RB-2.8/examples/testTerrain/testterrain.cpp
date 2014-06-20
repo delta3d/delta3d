@@ -589,8 +589,6 @@ private:
 
    bool  mTerrainClamp;
    bool  mFlyFast;
-   bool  mSkyBoxEnable;
-   float mFogNear;
    bool  mEnableVegetation;
 };
 

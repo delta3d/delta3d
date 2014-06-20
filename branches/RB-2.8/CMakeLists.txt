@@ -1,6 +1,7 @@
-CMAKE_MINIMUM_REQUIRED(VERSION 2.6.2 FATAL_ERROR)
+#It may work on an older version, but it hasn't been tested.
+CMAKE_MINIMUM_REQUIRED(VERSION 2.8.1 FATAL_ERROR)
 
-# see cmake --help-policy CMP0003 for more information
+# see cmake --help-policy C/0003 for more information
 IF(COMMAND cmake_policy)
    CMAKE_POLICY(SET CMP0003 NEW)
 ENDIF(COMMAND cmake_policy)
@@ -69,8 +70,12 @@ MACRO(ADD_DELTA3D_SUBFOLDERS)
 
 
       ADD_SUBDIRECTORY(src/dtHLAGM)
-      ADD_SUBDIRECTORY(src/dtHLAGM/rti13)
-      ADD_SUBDIRECTORY(src/dtHLAGM/rti1516e)
+      if (USE_RTIS OR USE_CERTI OR USE_MAK OR USE_PORTICO)
+         ADD_SUBDIRECTORY(src/dtHLAGM/rti13)
+      endif()
+      if (USE_HLA_1516e)
+         ADD_SUBDIRECTORY(src/dtHLAGM/rti1516e)
+      endif()
       SET(DTHLAGM_AVAILABLE "YES")
    ENDIF (BUILD_HLA)
 
@@ -179,16 +184,6 @@ IF (BUILD_HLA)
 ENDIF (BUILD_HLA)
 
 
-IF (WIN32)
-   SET(CMAKE_DEBUG_POSTFIX  "d")
-
-   OPTION(BUILD_WITH_MP "Enables the /MP multi-processor compiler option for Visual Studio 2005 and above" ON)
-   MARK_AS_ADVANCED(BUILD_WITH_MP)
-   IF(BUILD_WITH_MP)
-      SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP")
-   ENDIF(BUILD_WITH_MP)
-ENDIF (WIN32)
-
 # We want to build SONAMES shared libraries
 SET(DELTA32_SONAMES TRUE)
 
@@ -218,106 +213,7 @@ endif (BUILD_WITH_MULTITHREAD_FIX_HACK_BREAKS_CEGUI)
 SET(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)
 SET(LIBRARY_OUTPUT_PATH ${PROJECT_BINARY_DIR}/lib)
 
-IF(APPLE)
-   OPTION(BUILD_FOR_IOS OFF)
-
-   READ_GCC_VERSION()
-
-   MESSAGE("GCC VERSION: " ${GCC_VERSION})
-   FIND_LIBRARY(CARBON_LIBRARY Carbon)
-   FIND_LIBRARY(APPSERVICES_LIBRARY ApplicationServices)
-   FIND_LIBRARY(IOKIT_LIBRARY IOKit)
-   FIND_LIBRARY(COREFOUNDATION_LIBRARY CoreFoundation)
-   FIND_LIBRARY(AGL_LIBRARY AGL)
-   FIND_LIBRARY(COCOA_LIBRARY Cocoa)
-
-   SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wnewline-eof -pipe")
-
-   SET(CMAKE_C_FLAGS "-pipe -Wnewline-eof")
-
-   if (NOT CMAKE_OSX_ARCHITECTURES)
-     set(CMAKE_OSX_ARCHITECTURES "i386" CACHE STRING "Build architectures for OSX" FORCE)
-   endif()
-
-   if (NOT CMAKE_OSX_SYSROOT)
-     set(CMAKE_OSX_SYSROOT "/Developer/SDKs/MacOSX10.6.sdk" CACHE STRING "Build SDK root" FORCE )
-   endif()
-
-   if (NOT CMAKE_OSX_DEPLOYMENT_TARGET)
-     # use 10.6 because that's the oldest that has atomics
-     set(CMAKE_OSX_DEPLOYMENT_TARGET "10.6" CACHE STRING "Build SDK root" FORCE)
-   endif()
-
-   SET(CMAKE_EXE_LINKER_FLAGS "-F/Library/Frameworks" )
-   SET(CMAKE_SHARED_LINKER_FLAGS "-Wl,-single_module -compatibility_version 3 -current_version 3 -F/Library/Frameworks" )
-   SET(CMAKE_MODULE_LINKER_FLAGS "-F/Library/Frameworks" )
-   INCLUDE_DIRECTORIES(${CMAKE_OSX_SYSROOT}/usr/include/malloc)
-   # this is an ugly hack to fix what seems to be a problem on OS X 10.8
-   # when building with the 10.6 sdk.  Unfortunatly, this will break if
-   # building as x86_64.  Need to find a better solution for this.  Maybe
-   # they'll just fix the bug.  I have to build with the 10.6 sdk because of
-   # cegui, which also forces the 32 bit problem :-/
-   INCLUDE_DIRECTORIES(${CMAKE_OSX_SYSROOT}/usr/include/c++/4.2.1/i686-apple-darwin10)
-ELSE (APPLE)
-   #We only want X11 if we are not running on OSX, but still with a unix-like environment
-   IF(UNIX)
-      READ_GCC_VERSION()
-      FIND_PACKAGE(X11)
-      FIND_LIBRARY(XXF86VM_LIBRARY Xxf86vm)
-      SET(X11_LIBRARIES
-          ${X11_LIBRARIES}
-          ${XXF86VM_LIBRARY})
-   ENDIF(UNIX)
-ENDIF(APPLE)
-
-IF(UNIX)
-   # Some Unicies need explicit linkage to the Math library or the build fails.
-   FIND_LIBRARY(MATH_LIBRARY m)
-
-   SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wno-non-virtual-dtor -Wreturn-type")
-ENDIF (UNIX)
-
-# Common global definitions
-
-# Platform specific definitions
-
-IF(WIN32)
-   ADD_DEFINITIONS(-D_SCL_SECURE_NO_WARNINGS)
-   ADD_DEFINITIONS(-D_CRT_SECURE_NO_DEPRECATE)
-   #needed for net plugin
-   SET (DELTA3D_SOCKET_LIBS wsock32)
-   ADD_DEFINITIONS(-DNOMINMAX)
-
-########################################################################################################
-# the foolowing options are MSVC specific,
-# the first DELTA3D_MSVC_VERSIONED_DLL activate a custom build-time layout that should allow to run examples and application
-# fron bin folder without requiring installation step.
-# it also prepend "osg${OPENSCENEGRAPH_SOVERSION}-" to only .dll files, leaving .lib files untouched in lib
-# it also use a hack to get rid of Debug and Release folder in MSVC projects
-# all the .dll and .pdb are in bin and all the .lib and .exp are in lib
-#
-# the second option disable incremental linking in debug build , that is enabled by default by CMake
-##########################################################################################################
-
-   IF(MSVC)
-      IF(${CMAKE_MAJOR_VERSION} EQUAL 2 AND ${CMAKE_MINOR_VERSION} EQUAL 4 AND ${CMAKE_PATCH_VERSION} LESS 7)
-         MESSAGE("Warning:  disabling versioned options 2.4.6 exibits inconsintencies in .pdb naming, at least under MSVC, suggested upgrading at least to 2.4.7")
-         SET(DELTA3D_MSVC_VERSIONED_DLL OFF)
-         SET(DELTA3D_MSVC_DEBUG_INCREMENTAL_LINK ON)
-      ELSE(${CMAKE_MAJOR_VERSION} EQUAL 2 AND ${CMAKE_MINOR_VERSION} EQUAL 4 AND ${CMAKE_PATCH_VERSION} LESS 7)
-         OPTION(DELTA3D_MSVC_VERSIONED_DLL "Set to ON to build OpenSceneGraph with versioned dll names" ON)
-         MARK_AS_ADVANCED(DELTA3D_MSVC_VERSIONED_DLL)
-         OPTION(DELTA3D_MSVC_DEBUG_INCREMENTAL_LINK "Set to OFF to build OpenSceneGraph without incremental linking in debug (release is off by default)" ON)
-         MARK_AS_ADVANCED(DELTA3D_MSVC_DEBUG_INCREMENTAL_LINK)
-         IF(NOT DELTA3D_MSVC_DEBUG_INCREMENTAL_LINK)
-            SET(CMAKE_MODULE_LINKER_FLAGS_DEBUG "/debug /INCREMENTAL:NO")
-            SET(CMAKE_SHARED_LINKER_FLAGS_DEBUG "/debug /INCREMENTAL:NO")
-            SET(CMAKE_EXE_LINKER_FLAGS_DEBUG "/debug /INCREMENTAL:NO")
-         ENDIF(NOT DELTA3D_MSVC_DEBUG_INCREMENTAL_LINK)
-      ENDIF(${CMAKE_MAJOR_VERSION} EQUAL 2 AND ${CMAKE_MINOR_VERSION} EQUAL 4 AND ${CMAKE_PATCH_VERSION} LESS 7)
-   ENDIF(MSVC)
-ENDIF(WIN32)
-
+include(PlatformConfiguration)
 
 ################################################################################
 
@@ -358,13 +254,7 @@ IF (BUILD_WITH_QT)
 ENDIF (BUILD_WITH_QT)
 
 
-#MESSAGE(STATUS "${Boost_INCLUDE_DIR} ${Boost_PYTHON_INCLUDE_DIR} ${PYTHON_INCLUDE_PATH}")
-
-
-LINK_DIRECTORIES( ${DELTA3D_EXT_DIR}/lib )
-
-################################################################################
-# Create bin and lib directories if required
+LINK_DIRECTORIES( ${DELTA3D_EXT_DIR}/lib )# Create bin and lib directories if required
 
 IF("${CMAKE_SOURCE_DIR}" STREQUAL "${CMAKE_BINARY_DIR}")
    FILE(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/bin ${CMAKE_BINARY_DIR}/lib )
@@ -433,59 +323,6 @@ SET(CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH} CACHE STRING "You may add additiona
 # This is unofficial so this may be removed or changed at anytime.
 SET(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} CACHE STRING "(EXPERIMENTAL) You may add additional search paths here. Use ; to separate multiple paths.")
 
-
-
-
-# This is for an advanced option to give aggressive warnings
-# under different compilers. If yours is not implemented, this option
-# will not be made available.
-IF(CMAKE_COMPILER_IS_GNUCXX)
-   # To be complete, we might also do GNUCC flags,
-   # but everything here is C++ code.
-   # -Wshadow and -Woverloaded-virtual are also interesting flags, but OSG
-   # returns too many hits.
-   # FYI, if we do implement GNUCC, then -Wmissing-prototypes in another
-   # interesting C-specific flag.
-   # Also, there is a bug in gcc 4.0. Under C++, -pedantic will create
-   # errors instead of warnings for certain issues, including superfluous
-   # semicolons and commas, and the use of long long. -fpermissive seems
-   # to be the workaround.
-   SET(DELTA3D_AGGRESSIVE_WARNING_FLAGS "-Wall -Wparentheses -Wformat=2 -Wno-long-long -Wno-import -pedantic -Wreturn-type -Wmissing-braces -Wunknown-pragmas -Wunused -fpermissive")
-ELSE(CMAKE_COMPILER_IS_GNUCXX)
-   IF(MSVC)
-      # FIXME: What are good aggressive warning flags for Visual Studio?
-      # And do we need to further subcase this for different versions of VS?
-      # CMake variables: MSVC60, MSVC70, MSVC71, MSVC80, CMAKE_COMPILER_2005
-      SET(DELTA3D_AGGRESSIVE_WARNING_FLAGS "/Wall /W4")
-   ELSE(MSVC)
-      # CMake lacks an elseif, so other non-gcc, non-VS compilers need
-      # to be listed below. If unhandled, DELTA3D_AGGRESSIVE_WARNING_FLAGS should
-      # remain unset.
-   ENDIF(MSVC)
-ENDIF(CMAKE_COMPILER_IS_GNUCXX)
-
-# This part is for the CMake menu option to toggle the warnings on/off.
-# This will only be made available if we set values for DELTA3D_AGGRESSIVE_WARNING_FLAGS.
-IF(DELTA3D_AGGRESSIVE_WARNING_FLAGS)
-   OPTION(DELTA3D_USE_AGGRESSIVE_WARNINGS "Enable to activate aggressive warnings" OFF)
-   MARK_AS_ADVANCED(DELTA3D_USE_AGGRESSIVE_WARNINGS)
-
-   IF(DELTA3D_USE_AGGRESSIVE_WARNINGS)
-      IF(NOT "${OLD_CMAKE_CXX_FLAGS_WAS_SET}")
-         SET(OLD_CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}" CACHE INTERNAL "Old CXX flags")
-         SET(OLD_CMAKE_CXX_FLAGS_WAS_SET 1 CACHE INTERNAL "Old CXX flags was set")
-         SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${DELTA3D_AGGRESSIVE_WARNING_FLAGS}" CACHE STRING "Flags used by the compiler during all build types." FORCE)
-      ENDIF(NOT "${OLD_CMAKE_CXX_FLAGS_WAS_SET}")
-   ELSE(DELTA3D_USE_AGGRESSIVE_WARNINGS)
-      # FIXME: This will lose any changes made after OLD_CMAKE_CXX_FLAGS was
-      # set. The better way would be to parse the string and remove each
-      # option explicitly.
-      IF("${OLD_CMAKE_CXX_FLAGS_WAS_SET}")
-         SET(CMAKE_CXX_FLAGS "${OLD_CMAKE_CXX_FLAGS}" CACHE STRING "Flags used by the compiler during all build types." FORCE)
-         SET(OLD_CMAKE_CXX_FLAGS_WAS_SET 0 CACHE INTERNAL "Old CXX flags was set")
-      ENDIF("${OLD_CMAKE_CXX_FLAGS_WAS_SET}")
-   ENDIF(DELTA3D_USE_AGGRESSIVE_WARNINGS)
-ENDIF(DELTA3D_AGGRESSIVE_WARNING_FLAGS)
 
 # This needs to be run very last so other parts of the scripts can take
 # advantage of this.

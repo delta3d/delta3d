@@ -1716,7 +1716,7 @@ void MapTests::TestLoadEnvironmentMapIntoScene()
    scene->RemoveAllDrawables();
    CPPUNIT_ASSERT(scene->GetNumberOfAddedDrawable() == 0);
 
-   dtCore::IEnvironmentActor *tea = dynamic_cast<dtCore::IEnvironmentActor*>(envProxy->GetActor());
+   dtCore::IEnvironmentActor *tea = dynamic_cast<dtCore::IEnvironmentActor*>(envProxy->GetDrawable());
    CPPUNIT_ASSERT(tea != NULL);
    unsigned int numChildren = tea->GetNumEnvironmentChildren();
    CPPUNIT_ASSERT(numChildren == 0);
@@ -1735,7 +1735,7 @@ class OverriddenActorProxy : public dtCore::TransformableActorProxy
    //dtCore::RefPtr<dtCore::Transformable> mActor;
 public:
    OverriddenActorProxy() {SetClassName("OverriddenActorProxy");}
-   void CreateActor(){SetActor(*new dtCore::Transformable());}
+   void CreateDrawable(){SetDrawable(*new dtCore::Transformable());}
    bool RemoveTheProperty(std::string& stringToRemove)
    {
       // not in the list
@@ -1756,7 +1756,7 @@ void MapTests::TestActorProxyRemoveProperties()
    std::string NameToRemove = dtCore::TransformableActorProxy::PROPERTY_ROTATION;
    std::string DoesntExist = "TeagueHasAHawtMom";
    CPPUNIT_ASSERT_MESSAGE("Tried to remove a property before initialized should have returned false", actorProxy->RemoveTheProperty(NameToRemove) == false );
-   actorProxy->CreateActor();
+   actorProxy->CreateDrawable();
    actorProxy->BuildPropertyMap();
    CPPUNIT_ASSERT_MESSAGE("Tried to remove a property after initialized should have returned true", actorProxy->RemoveTheProperty(NameToRemove) == true );
    CPPUNIT_ASSERT_MESSAGE("Tried to remove a property after initialized for a second time should have returned false", actorProxy->RemoveTheProperty(NameToRemove) == false );

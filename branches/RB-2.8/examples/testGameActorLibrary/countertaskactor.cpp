@@ -85,7 +85,7 @@ void CounterTaskActorProxy::SetCounter(int value)
    mCounter = value;
    if (mCounter >= mTarget)
    {
-      dtActors::TaskActor *task = dynamic_cast<dtActors::TaskActor *>(GetActor());
+      dtActors::TaskActor *task = dynamic_cast<dtActors::TaskActor *>(GetDrawable());
       task->SetComplete(true);
    }
    

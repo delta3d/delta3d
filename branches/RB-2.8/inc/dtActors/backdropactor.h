@@ -85,7 +85,7 @@ public:
 
 protected:   
    /// Initializes the Actor
-   void CreateActor();
+   void CreateDrawable();
 
 };
 

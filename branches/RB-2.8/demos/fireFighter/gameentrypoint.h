@@ -41,19 +41,19 @@ class FIRE_FIGHTER_EXPORT FireFighterGameEntryPoint : public dtGame::GameEntryPo
        * Called to initialize the game application.
        * @param app the current application
        */
-      virtual void Initialize(dtGame::GameApplication& app, int argc, char **argv);
+      virtual void Initialize(dtABC::BaseABC& app, int argc, char **argv);
 
       /**
        * Called after all startup related code is run.
        * @param app the current application
        */
-      virtual void OnStartup(dtGame::GameApplication& app);
+      virtual void OnStartup(dtABC::BaseABC& app, dtGame::GameManager& gamemanager);
 
       /**
        * Called when it is time to shut'r down
        * @param The gm to shut down
        */
-      virtual void OnShutdown(dtGame::GameApplication& app);
+      virtual void OnShutdown(dtABC::BaseABC& app, dtGame::GameManager& gamemanager);
 
    protected:
 

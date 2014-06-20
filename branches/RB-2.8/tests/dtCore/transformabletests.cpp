@@ -255,7 +255,7 @@ void TransformableTests::TestSetCollisionBox()
       mTransformable->GetCollisionDetection() == false);
 
    CPPUNIT_ASSERT_MESSAGE("Collision geometry type should be NONE without a collision shape",
-      mTransformable->GetCollisionGeomType() == &Transformable::CollisionGeomType::NONE);
+      mTransformable->GetCollisionGeomType() == &CollisionGeomType::NONE);
 
    mTransformable->SetCollisionBox(mBoxLengths[0], mBoxLengths[1], mBoxLengths[2]);
 
@@ -267,7 +267,7 @@ void TransformableTests::TestSetCollisionBox()
       mTransformable->GetCollisionDetection() == true);
 
    CPPUNIT_ASSERT_MESSAGE("Collision geometry type should be CUBE",
-      mTransformable->GetCollisionGeomType() == &Transformable::CollisionGeomType::CUBE);
+      mTransformable->GetCollisionGeomType() == &CollisionGeomType::CUBE);
 }
 
 void TransformableTests::TestODEInSyncOnSetTransform()

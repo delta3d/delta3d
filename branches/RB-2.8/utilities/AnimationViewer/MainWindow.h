@@ -110,7 +110,7 @@ public slots:
 
    void OnCharacterDataLoaded(dtAnim::Cal3DModelData* modelData, dtAnim::Cal3DModelWrapper* wrapper);
 
-   void OnBlendUpdate(const std::vector<float>& animWeightList, const std::vector<float>& morphWeightList);
+   void OnBlendUpdate(const std::vector<std::pair<float, float> >& animWeightTimeList, const std::vector<float>& morphWeightList);
 
    void OnAnimationClicked(QTableWidgetItem* item);
    void OnMorphAnimationClicked(QTableWidgetItem* item);

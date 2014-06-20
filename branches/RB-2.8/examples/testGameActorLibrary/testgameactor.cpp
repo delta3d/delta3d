@@ -196,9 +196,9 @@ void TestGameActorProxy1::BuildInvokables()
    ticksEnabled = true;
 }
 
-void TestGameActorProxy1::CreateActor()
+void TestGameActorProxy1::CreateDrawable()
 {
-   SetActor(*new TestGameActor1(*this));
+   SetDrawable(*new TestGameActor1(*this));
 }
 
 void TestGameActorProxy1::ToggleTicks(const dtGame::Message& message)

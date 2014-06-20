@@ -21,7 +21,6 @@
 #include <prefix/dtutilprefix.h>
 #include <dtUtil/logobserverfile.h>
 #include <iostream>
-#include <ctime>
 #include <iomanip>
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -78,10 +77,10 @@ void dtUtil::LogObserverFile::OpenFile()
    logFile << "<html><title>" << LogFile::GetTitle() <<"</title><body>" << std::endl;
    logFile << "<h1 align=\"center\">" << LogFile::GetTitle() << "</h1><hr>" << std::endl;
    logFile << "<pre><h3 align=\"center\""
-      "<font color=#808080><b>  Debug     </b></font>"
-      "<font color=#008080><b>  Information     </b></font>"
-      "<font color=#808000><b>  Warning  </b></font>"
-      "<font color=#FF0000><b>  Error   </b></font></h3></pre><hr>"
+      "<font color=#A000A0><b>  Debug     </b></font>"
+      "<font color=#00A000><b>  Information     </b></font>"
+      "<font color=#CF6F00><b>  Warning  </b></font>"
+      "<font color=#C00000><b>  Error   </b></font></h3></pre><hr>"
       << std::endl;
 
    TimeTag("Started at ");
@@ -92,19 +91,8 @@ void dtUtil::LogObserverFile::OpenFile()
 ////////////////////////////////////////////////////////////////////////////////
 void dtUtil::LogObserverFile::TimeTag(std::string prefix)
 {
-   struct tm *t;
-   time_t cTime;
-
-   time(&cTime);
-   t = localtime(&cTime);
-   logFile << prefix
-      << std::setw(2) << std::setfill('0') << (1900+t->tm_year) << "/"
-      << std::setw(2) << std::setfill('0') << t->tm_mon+1 << "/"
-      << std::setw(2) << std::setfill('0') << t->tm_mday << " "
-      << std::setw(2) << std::setfill('0') << t->tm_hour << ":"
-      << std::setw(2) << std::setfill('0') << t->tm_min << ":"
-      << std::setw(2) << std::setfill('0') << t->tm_sec << "<br>"
-      << std::endl;
+   dtUtil::DateTime dt;
+   logFile << prefix << dt.ToString(dtUtil::DateTime::TimeFormat::CLOCK_TIME_24_HOUR_FORMAT) << std::endl;
    logFile.flush();
 }
 
@@ -125,24 +113,24 @@ void dtUtil::LogObserverFile::LogMessage(const LogData& logData)
    switch (logData.type)
    {
    case Log::LOG_DEBUG:
-      color = "<b><font color=#808080>";
-      break;
+	   color = "<b><font color=#A000A0>";
+	   break;
 
    case Log::LOG_INFO:
-      color = "<b><font color=#008080>";
-      break;
+	   color = "<b><font color=#00A000>";
+	   break;
 
    case Log::LOG_ERROR:
-      color = "<b><font color=#FF0000>";
-      break;
+	   color = "<b><font color=#C00000>";
+	   break;
 
    case Log::LOG_WARNING:
-      color = "<b><font color=#CCCC00>";
-      break;
+	   color = "<b><font color=#CF6F00>";
+	   break;
 
    case Log::LOG_ALWAYS:
-      color = "<b><font color=#000000>";
-      break;
+	   color = "<b><font color=#000000>";
+	   break;
    }
 
    static const std::string htmlNewline ("<br>\n");
@@ -156,10 +144,14 @@ void dtUtil::LogObserverFile::LogMessage(const LogData& logData)
       lineEnd += htmlNewline.size() + 1;
    }
    
-   logFile << color << "[" << std::setw(2) << std::setfill('0') << logData.time.tm_hour << ":"
-      << std::setw(2) << std::setfill('0') << logData.time.tm_min << ":"
-      << std::setw(2) << std::setfill('0') << logData.time.tm_sec 
-      << " " << Log::GetLogLevelString(logData.type) << "] ";
+   logFile << color << "[" << logData.time.ToString(dtUtil::DateTime::TimeFormat::CLOCK_TIME_24_HOUR_FORMAT);
+
+   if (logData.frameNumber > 0)
+   {
+	   logFile << " Frm&#35; " << logData.frameNumber;
+   }
+
+   logFile << " " << Log::GetLogLevelString(logData.type) << "] ";
 
    logFile << htmlMsg << " [";
 

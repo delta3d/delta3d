@@ -503,13 +503,19 @@ void CameraTests::TestAddingThreeCallbacks()
    CPPUNIT_ASSERT_EQUAL_MESSAGE("The CameraCallbackContainer didn't get the first callback removed.",
                                 numInitialCallbacks - 1, cont->GetCallbacks().size());
 
-   cam->RemovePostDrawCallback(*cb2);
-   CPPUNIT_ASSERT_EQUAL_MESSAGE("The CameraCallbackContainer didn't get the second callback removed.",
-                                numInitialCallbacks - 2, cont->GetCallbacks().size());
-
+   // Remove 3 first because the step below will remove both, but that functionality is tested elsewhere.
    cam->RemovePostDrawCallback(*cb3);
    CPPUNIT_ASSERT_EQUAL_MESSAGE("The CameraCallbackContainer didn't get the third callback removed.",
-      numInitialCallbacks - 3, cont->GetCallbacks().size());
+      numInitialCallbacks - 2, cont->GetCallbacks().size());
+
+   cb2 = NULL;
+
+   osg::RenderInfo riTemp;
+   (*cont)(riTemp);
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("The CameraCallbackContainer didn't get the second callback auto removed.",
+                                numInitialCallbacks - 3, cont->GetCallbacks().size());
+
+
 }
 
 //////////////////////////////////////////////////////////////////////////

@@ -35,16 +35,16 @@ using namespace dtCore;
 using namespace dtActors;
 
 ///////////////////////////////////////////////////////////////////////////////
-void CameraActorProxy::CreateActor()
+void CameraActorProxy::CreateDrawable()
 {
-   SetActor(*new dtCore::Camera);
+   SetDrawable(*new dtCore::Camera);
 
    static int actorCount = 0;
    std::ostringstream ss;
    ss << "Camera" << actorCount++;
    SetName(ss.str());
 
-   Camera *cam = static_cast<Camera*>(GetActor());
+   Camera *cam = static_cast<Camera*>(GetDrawable());
 
    cam->SetEnabled(false);
 }
@@ -55,7 +55,7 @@ void CameraActorProxy::BuildPropertyMap()
    const std::string& GROUPNAME = "Camera";
    TransformableActorProxy::BuildPropertyMap();
 
-   Camera* cam = static_cast<Camera*>(GetActor());
+   Camera* cam = static_cast<Camera*>(GetDrawable());
 
    AddProperty(new BooleanActorProperty("Enable", "Enabled",
       BooleanActorProperty::SetFuncType(cam, &dtCore::Camera::SetEnabled),
@@ -87,7 +87,7 @@ dtCore::ActorProxyIcon* CameraActorProxy::GetBillBoardIcon()
 ///////////////////////////////////////////////////////////////////////////////
 osg::Vec4f CameraActorProxy::GetClearColor()
 {
-   Camera *cam = static_cast<Camera*>(GetActor());
+   Camera *cam = static_cast<Camera*>(GetDrawable());
 
    osg::Vec4 color;
    cam->GetClearColor(color);
@@ -97,7 +97,7 @@ osg::Vec4f CameraActorProxy::GetClearColor()
 ///////////////////////////////////////////////////////////////////////////////
 void CameraActorProxy::SetClearColor(const osg::Vec4 &color)
 {
-   Camera *cam = static_cast<Camera*>(GetActor());
+   Camera *cam = static_cast<Camera*>(GetDrawable());
 
    cam->SetClearColor(color);
 }

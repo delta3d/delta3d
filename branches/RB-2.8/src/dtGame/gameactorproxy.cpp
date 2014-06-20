@@ -811,7 +811,7 @@ void GameActorProxy::InvokeEnteredWorld()
    * We will perform a check to make sure this actor actually is a GameActor
    */
 
-   GameActor* ga = dynamic_cast<GameActor*>(GetActor());
+   GameActor* ga = dynamic_cast<GameActor*>(GetDrawable());
    if (ga == NULL)
    {
       // throw exception
@@ -832,7 +832,7 @@ void GameActorProxy::InvokeRemovedFromWorld()
    * We will perform a check to make sure this actor actually is a GameActor
    */
 
-   GameActor* ga = dynamic_cast<GameActor*>(GetActor());
+   GameActor* ga = dynamic_cast<GameActor*>(GetDrawable());
    if (ga == NULL)
    {
       // throw exception

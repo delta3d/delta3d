@@ -18,6 +18,7 @@
  *
  * Matthew W. Campbell
  * Erik Johnson
+ * David Guthrie
  */
 #ifndef DELTA_LOG
 #define DELTA_LOG
@@ -27,13 +28,14 @@
 #include <vector>
 
 #include <osg/Referenced>
-#include <dtCore/refptr.h>
+#include <osg/ref_ptr>
 #include <dtUtil/export.h>
 
 namespace dtUtil
 {
    // Fwd declaration
    class LogObserver;
+   class LogTimeProvider;
 
    class DT_UTIL_EXPORT LogFile
    {
@@ -220,6 +222,13 @@ namespace dtUtil
       static void SetAllLogLevels(LogMessageType newLevel);
 
       /**
+       * This sets a Log time source.  This allows another part of the system to update and provide
+       * both a time and a frame number, as needed.  Otherwise, the time will be set on the log data every
+       * time log is called.
+       */
+      static void SetLogTimeProvider(LogTimeProvider* ltp);
+
+      /**
         *  Add an observer that receives all log messages via callback.  The
         *  TO_OBSERVER OutputStreamOptions bit must be set in order for LogObservers
         *  to get triggered.
@@ -236,7 +245,7 @@ namespace dtUtil
         */
       void RemoveObserver(LogObserver& observer);
 
-      typedef std::vector<dtCore::RefPtr<LogObserver> > LogObserverContainer;
+      typedef std::vector<osg::ref_ptr<LogObserver> > LogObserverContainer;
 
       /**
         *  Get all registered LogObservers that are registered to receive log messages.

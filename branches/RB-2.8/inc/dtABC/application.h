@@ -27,6 +27,7 @@
 #include <dtCore/generickeyboardlistener.h>
 #include <dtCore/genericmouselistener.h>
 #include <dtUtil/configproperties.h>
+#include <dtUtil/logtimeprovider.h>
 
 #include <string>
 #include <map>
@@ -71,7 +72,7 @@ namespace dtABC
     * app->Run();
     * \endcode
     */
-   class DT_ABC_EXPORT Application : public dtABC::BaseABC, public dtUtil::ConfigProperties
+   class DT_ABC_EXPORT Application : public dtABC::BaseABC, public dtUtil::ConfigProperties, public dtUtil::LogTimeProvider
    {
       DECLARE_MANAGEMENT_LAYER(Application)
       typedef dtABC::BaseABC BaseClass;
@@ -259,6 +260,13 @@ namespace dtABC
       /// @return the instance of the osgViewer::CompositeViewer
       osgViewer::CompositeViewer* GetCompositeViewer() { return mCompositeViewer.get(); }
 
+      /******** Log Time Provider functions ********/
+	  /*override*/ const dtUtil::DateTime& GetDateTime();
+	  /*override*/ unsigned GetFrameNumber();
+	  /*override*/ osg::Referenced* AsReferenced();
+      /******** Log Time Provider functions end ********/
+
+
    protected:
       virtual ~Application();
 
@@ -319,6 +327,9 @@ namespace dtABC
 
       dtCore::StatsHandler *mStats; ///<for stats rendering/controlling
       ViewList mViewsToDelete; ///<list of Views to be removed at the end of the frame
+
+      // Used to provide to the logger
+      dtUtil::DateTime mCurrentFrameTime;
    };
 
 } // namespace dtABC

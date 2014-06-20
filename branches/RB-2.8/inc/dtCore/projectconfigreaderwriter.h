@@ -25,6 +25,9 @@
 #ifndef PROJECTCONFIGREADERWRITER_H_
 #define PROJECTCONFIGREADERWRITER_H_
 
+
+#include <dtCore/export.h>
+
 #include <osgDB/ReaderWriter>
 
 #include <dtCore/projectconfig.h>
@@ -34,13 +37,17 @@
 namespace dtCore
 {
 
-   class ProjectConfigReaderWriter : public osgDB::ReaderWriter
+   class DT_CORE_EXPORT ProjectConfigReaderWriter : public osgDB::ReaderWriter
    {
    public:
       ProjectConfigReaderWriter();
       virtual ~ProjectConfigReaderWriter();
 
       virtual osgDB::ReaderWriter::ReadResult readObject(const std::string& /*fileName*/,const osgDB::ReaderWriter::Options*) const;
+      /**
+       * You need to set the current directory to the one where the file exists before calling this
+       * because relative paths in the file are assumed to be relative to the file.
+       */
       virtual osgDB::ReaderWriter::ReadResult readObject(std::istream& /*fin*/,const osgDB::ReaderWriter::Options*) const;
 
       virtual osgDB::ReaderWriter::WriteResult writeObject(const osg::Object& /*obj*/,const std::string& /*fileName*/,const osgDB::ReaderWriter::Options*) const;

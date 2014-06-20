@@ -302,8 +302,8 @@ bool Mouse::ButtonUp(float x, float y, MouseButton button)
 
 bool Mouse::GetHasFocus()
 {
-   DeltaWin *win = mView->GetCamera()->GetWindow();
 #if defined(__APPLE__) && MAC_OS_X_VERSION_MIN_REQUIRED < 1060
+   DeltaWin *win = mView->GetCamera()->GetWindow();
 
    osgViewer::GraphicsWindowCarbon *carbon =
       dynamic_cast<osgViewer::GraphicsWindowCarbon*>(win->GetOsgViewerGraphicsWindow());
@@ -313,6 +313,7 @@ bool Mouse::GetHasFocus()
    // Don't have a solution for Lion and Mountain Lion yet.
    return true;
 #elif defined(DELTA_WIN32)
+   DeltaWin *win = mView->GetCamera()->GetWindow();
 
    osgViewer::GraphicsWindowWin32 *win32 =
       dynamic_cast<osgViewer::GraphicsWindowWin32*>(win->GetOsgViewerGraphicsWindow());
@@ -322,6 +323,7 @@ bool Mouse::GetHasFocus()
    }
 
 #else
+   DeltaWin *win = mView->GetCamera()->GetWindow();
 
    osgViewer::GraphicsWindowX11 *x11 =
       dynamic_cast<osgViewer::GraphicsWindowX11*>(win->GetOsgViewerGraphicsWindow());

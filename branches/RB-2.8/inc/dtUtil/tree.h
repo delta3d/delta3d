@@ -393,7 +393,7 @@ public:
     //////////////////////////////////////////////////////////////////////////
     // operator==, expects operator== has been written for both t and u
     //////////////////////////////////////////////////////////////////////////
-    const bool operator==(const tree &inTree) const
+    bool operator==(const tree &inTree) const
     {
         if (this->data_ == inTree.data_) return true;
         return false;
@@ -663,7 +663,7 @@ public:
    { return tree_find_depth(inT, iterator(*this->in_), obj); }
 
     //////////////////////////////////////////////////////////////////////////
-   iterator tree_find_breadth(const T &inT) const
+   iterator tree_find_breadth(const T &/*inT*/) const
    { return tree_find_breadth(in, iterator(*this->in_)); }
 
     //////////////////////////////////////////////////////////////////////////

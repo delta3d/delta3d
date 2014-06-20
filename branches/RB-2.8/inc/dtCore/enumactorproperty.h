@@ -69,7 +69,7 @@ namespace dtCore
             dtUtil::Enumeration* e = T::GetValueForName(name);
             if (e != NULL)
             {
-               SetValue(*static_cast<T*>(e));
+               BaseClass::SetValue(*static_cast<T*>(e));
                return true;
             }
 
@@ -86,7 +86,7 @@ namespace dtCore
             T* val = dynamic_cast<T*>(&value);
             if (val != NULL)
             {
-               SetValue(*val);
+               BaseClass::SetValue(*val);
             }
          }
 

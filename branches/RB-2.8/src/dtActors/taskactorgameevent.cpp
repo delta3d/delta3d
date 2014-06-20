@@ -182,9 +182,9 @@ namespace dtActors
    }
 
    //////////////////////////////////////////////////////////////////////////////
-   void TaskActorGameEventProxy::CreateActor()
+   void TaskActorGameEventProxy::CreateDrawable()
    {
-      SetActor(*new TaskActorGameEvent(*this));
+      SetDrawable(*new TaskActorGameEvent(*this));
    }
 
    //////////////////////////////////////////////////////////////////////////////

@@ -174,9 +174,9 @@ namespace dtActors
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void StaticMeshActorProxy::CreateActor()
+   void StaticMeshActorProxy::CreateDrawable()
    {
-      SetActor(*new dtCore::Object);
+      SetDrawable(*new dtCore::Object);
 
       static int actorCount = 0;
       std::ostringstream ss;
@@ -200,7 +200,7 @@ namespace dtActors
    ///////////////////////////////////////////////////////////////////////////////
    void StaticMeshActorProxy::LoadFile(const std::string &fileName)
    {
-      dtCore::Object *obj = static_cast<dtCore::Object*>(GetActor());
+      dtCore::Object *obj = static_cast<dtCore::Object*>(GetDrawable());
 
       //First load the mesh (with cacheing on).
       if (obj->LoadFile(fileName,true) == NULL)
@@ -257,7 +257,7 @@ namespace dtActors
       dtCore::ResourceDescriptor resource = GetResource("static mesh");
       if (resource.IsEmpty() == false)
       {
-         if (resource.GetResourceIdentifier().empty() || GetActor()->GetOSGNode() == NULL)
+         if (resource.GetResourceIdentifier().empty() || GetDrawable()->GetOSGNode() == NULL)
          {
             return dtCore::BaseActorObject::RenderMode::DRAW_BILLBOARD_ICON;
          }

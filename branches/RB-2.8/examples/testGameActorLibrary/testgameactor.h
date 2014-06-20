@@ -134,7 +134,7 @@ class DT_EXAMPLE_EXPORT TestGameActorProxy1 : public dtGame::GameActorProxy
       void ToggleTicks(const dtGame::Message& message);
 
    protected:
-      virtual void CreateActor();
+      virtual void CreateDrawable();
    private:
       bool ticksEnabled;
 };

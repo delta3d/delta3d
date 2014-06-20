@@ -27,23 +27,6 @@ IMPLEMENT_MANAGEMENT_LAYER(Transformable)
 
 const std::string Transformable::COLLISION_GEODE_ID("__DELTA3D_COLLISION_GEOMETRY__");
 
-///////////////////////////////////////////////////////////////////////////////
-IMPLEMENT_ENUM(Transformable::CollisionGeomType)
-Transformable::CollisionGeomType
-Transformable::CollisionGeomType::NONE("NONE");
-Transformable::CollisionGeomType
-Transformable::CollisionGeomType::SPHERE("SPHERE");
-Transformable::CollisionGeomType
-Transformable::CollisionGeomType::CYLINDER("CYLINDER");
-Transformable::CollisionGeomType
-Transformable::CollisionGeomType::CCYLINDER("CCYLINDER");
-Transformable::CollisionGeomType
-Transformable::CollisionGeomType::CUBE("CUBE");
-Transformable::CollisionGeomType
-Transformable::CollisionGeomType::RAY("RAY");
-Transformable::CollisionGeomType
-Transformable::CollisionGeomType::MESH("MESH");
-
 
 namespace dtCore
 {
@@ -523,42 +506,42 @@ bool Transformable::GetNormalRescaling() const
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-Transformable::CollisionGeomType* Transformable::GetCollisionGeomType() const
+CollisionGeomType* Transformable::GetCollisionGeomType() const
 {
    //ugly bit of code used to convert the ODEGeomWrap enums to Transformable enums.
    //This is here to keep from breaking existing Transformable clients.
 
    if (mImpl->mGeomWrap->GetCollisionGeomType() == &dtCore::CollisionGeomType::NONE)
    {
-      return &dtCore::Transformable::CollisionGeomType::NONE;
+      return &dtCore::CollisionGeomType::NONE;
    }
    else if (mImpl->mGeomWrap->GetCollisionGeomType() == &dtCore::CollisionGeomType::SPHERE)
    {
-      return &dtCore::Transformable::CollisionGeomType::SPHERE;
+      return &dtCore::CollisionGeomType::SPHERE;
    }
    else if (mImpl->mGeomWrap->GetCollisionGeomType() == &dtCore::CollisionGeomType::CYLINDER)
    {
-      return &dtCore::Transformable::CollisionGeomType::CYLINDER;
+      return &dtCore::CollisionGeomType::CYLINDER;
    }
    else if (mImpl->mGeomWrap->GetCollisionGeomType() == &dtCore::CollisionGeomType::CCYLINDER)
    {
-      return &dtCore::Transformable::CollisionGeomType::CCYLINDER;
+      return &dtCore::CollisionGeomType::CCYLINDER;
    }
    else if (mImpl->mGeomWrap->GetCollisionGeomType() == &dtCore::CollisionGeomType::CUBE)
    {
-      return &dtCore::Transformable::CollisionGeomType::CUBE;
+      return &dtCore::CollisionGeomType::CUBE;
    }
    else if (mImpl->mGeomWrap->GetCollisionGeomType() == &dtCore::CollisionGeomType::RAY)
    {
-      return &dtCore::Transformable::CollisionGeomType::RAY;
+      return &dtCore::CollisionGeomType::RAY;
    }
    else if (mImpl->mGeomWrap->GetCollisionGeomType() == &dtCore::CollisionGeomType::MESH)
    {
-      return &dtCore::Transformable::CollisionGeomType::MESH;
+      return &dtCore::CollisionGeomType::MESH;
    }
    else
    {
-      return &dtCore::Transformable::CollisionGeomType::NONE;
+      return &dtCore::CollisionGeomType::NONE;
    }
 }
 

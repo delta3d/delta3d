@@ -26,11 +26,11 @@ class ENTRY_POINT_EXPORT [!output PROJECT_NAME]EntryPoint : public dtGame::GameE
 public:
    [!output PROJECT_NAME]EntryPoint();
 
-   virtual void Initialize(dtGame::GameApplication& app, int argc, char **argv);
+   virtual void Initialize(dtABC::BaseABC& app, int argc, char **argv);
 
-   virtual void OnStartup(dtGame::GameApplication &app);
+   virtual void OnStartup(dtABC::BaseABC& app, dtGame::GameManager& gm);
 
-   virtual void OnShutdown(dtGame::GameApplication &app);
+   virtual void OnShutdown(dtABC::BaseABC& app, dtGame::GameManager& gm);
 
 protected:
    virtual ~[!output PROJECT_NAME]EntryPoint();

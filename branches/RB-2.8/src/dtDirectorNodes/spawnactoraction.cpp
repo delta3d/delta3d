@@ -215,7 +215,7 @@ namespace dtDirector
                dtABC::Application* app = dtABC::Application::GetInstance(0);
                if (app)
                {
-                  app->GetScene()->AddChild(proxy->GetActor());
+                  app->GetScene()->AddChild(proxy->GetDrawable());
                }
             }
 

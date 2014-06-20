@@ -115,7 +115,6 @@ namespace dtCore {
       private:
          const DataType* mDataType;
          std::map<std::string, std::string> mFilters;
-         dtUtil::Log* mLogger;
          const std::string mDescription;
          const std::string mMasterFile;
          const std::string mExtension;

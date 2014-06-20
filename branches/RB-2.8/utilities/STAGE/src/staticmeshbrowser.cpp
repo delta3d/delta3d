@@ -35,6 +35,7 @@
 #include <QtGui/QIcon>
 #include <QtGui/QTextEdit>
 #include <QtGui/QScrollBar>
+#include <QtGui/QMessageBox>
 
 #include <dtEditQt/staticmeshbrowser.h>
 #include <dtEditQt/resourcetreewidget.h>
@@ -454,7 +455,7 @@ namespace dtEditQt
          osg::Node* node = obj->LoadFile(fileName);
 
          // If the file was successfully loaded, continue
-         if (node)
+         if (node != NULL)
          {
             dtCore::RefPtr<dtUtil::NodePrintOut> nodepo = new dtUtil::NodePrintOut;
 
@@ -476,47 +477,60 @@ namespace dtEditQt
    /////////////////////////////////////////////////////////////////////////////////
    void StaticMeshBrowser::viewOSGContents()
    {
-      QString resourceName;
-      // Make sure we have a valid resource
-      if (mSelection->isResource())
+      try
       {
-         QDialog dlg(this);
-         dlg.setModal(true);
-         dlg.setWindowTitle(tr("OSG Hierarchy"));
-         dlg.setMinimumSize(400, 400);
-         dlg.setSizeGripEnabled(true);
-
-         QVBoxLayout* vLayout = new QVBoxLayout(&dlg);
-         QTextEdit*   text    = new QTextEdit(&dlg);
-         QPushButton* close   = new QPushButton(tr("Close"), &dlg);
-
-         text->addScrollBarWidget(new QScrollBar(this), Qt::AlignRight);
-
-         dtCore::ResourceDescriptor& rd = mSelection->getResourceDescriptor();
-         const std::string fileName = dtCore::Project::GetInstance().GetResourcePath(rd);
-
-         dtCore::RefPtr<dtCore::Object> obj = new dtCore::Object;
-         osg::Node* node = obj->LoadFile(fileName);
-
-         // If the file was successfully loaded, continue
-         if (node)
+         QString resourceName;
+         // Make sure we have a valid resource
+         if (mSelection->isResource())
          {
-            std::ostringstream oss;
-            dtCore::RefPtr<dtUtil::NodePrintOut> nodepo = new dtUtil::NodePrintOut;
-            nodepo->PrintNodeToOSGFile(*node, oss);
+            QDialog dlg(this);
+            dlg.setModal(true);
+            dlg.setWindowTitle(tr("OSG Hierarchy"));
+            dlg.setMinimumSize(400, 400);
+            dlg.setSizeGripEnabled(true);
 
-            std::string osgOutput = oss.str();
-            text->setText(tr(oss.str().c_str()));
+            QVBoxLayout* vLayout = new QVBoxLayout(&dlg);
+            QTextEdit*   text    = new QTextEdit(&dlg);
+            QPushButton* close   = new QPushButton(tr("Close"), &dlg);
 
-            obj = NULL;
-            nodepo = NULL;
+            text->addScrollBarWidget(new QScrollBar(this), Qt::AlignRight);
 
-            vLayout->addWidget(text);
-            vLayout->addWidget(close);
+            dtCore::ResourceDescriptor& rd = mSelection->getResourceDescriptor();
+            const std::string fileName = dtCore::Project::GetInstance().GetResourcePath(rd);
 
-            connect(close, SIGNAL(clicked()), &dlg, SLOT(close()));
-            dlg.exec();
+            dtCore::RefPtr<dtCore::Object> obj = new dtCore::Object;
+            osg::Node* node = obj->LoadFile(fileName);
+
+            // If the file was successfully loaded, continue
+            if (node)
+            {
+               std::ostringstream oss;
+               dtCore::RefPtr<dtUtil::NodePrintOut> nodepo = new dtUtil::NodePrintOut;
+               nodepo->PrintNodeToOSGFile(*node, oss);
+
+               std::string osgOutput = oss.str();
+               text->setText(tr(oss.str().c_str()));
+
+               obj = NULL;
+               nodepo = NULL;
+
+               vLayout->addWidget(text);
+               vLayout->addWidget(close);
+
+               connect(close, SIGNAL(clicked()), &dlg, SLOT(close()));
+               dlg.exec();
+            }
          }
+      }
+      catch (const dtUtil::Exception& ex)
+      {
+         ex.LogException(dtUtil::Log::LOG_ERROR);
+         QMessageBox::critical(this, tr("Error"), tr("Error creating osg text file: ") + ex.ToString().c_str());
+      }
+      catch(...)
+      {
+         LOG_ERROR("Unknown exception caught while trying to create osg text buffer.");
+         QMessageBox::critical(this, tr("Error"), tr("Unknown exception thrown creating osg text file."));
       }
    }
 

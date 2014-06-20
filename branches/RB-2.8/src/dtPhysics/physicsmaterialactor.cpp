@@ -56,7 +56,7 @@ namespace dtPhysics
    //////////////////////////////////////////////////////////
    void MaterialActorProxy::CreateActor()
    {
-      SetActor(*new MaterialActor());
+      SetDrawable(*new MaterialActor());
    }
 
    //////////////////////////////////////////////////////////
@@ -64,7 +64,7 @@ namespace dtPhysics
    {
       static const dtUtil::RefString GROUP = "Material";
 
-      MaterialActor* actor = dynamic_cast<MaterialActor*>(GetActor());
+      MaterialActor* actor = dynamic_cast<MaterialActor*>(GetDrawable());
 
       typedef dtDAL::PropertyRegHelper<MaterialActorProxy&, MaterialDef> PropRegType;
       PropRegType propRegHelper(*this, &actor->GetMateralDef(), GROUP);

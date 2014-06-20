@@ -73,9 +73,6 @@ void initActorPropertyBindings()
 
    ActorProxy* (ActorActorProperty::*GetValueConst)() const = &ActorActorProperty::GetValue;
 
-   dtCore::DeltaDrawable* (ActorActorProperty::*GetRealActorNonConst)() = &ActorActorProperty::GetRealActor;
-   const dtCore::DeltaDrawable* (ActorActorProperty::*GetRealActorConst)() const = &ActorActorProperty::GetRealActor;
-
    class_<  ActorActorProperty, 
             bases< ActorProperty >,
             dtCore::RefPtr< ActorActorProperty >, 
@@ -83,8 +80,6 @@ void initActorPropertyBindings()
       .def( "SetValue", &ActorActorProperty::SetValue, with_custodian_and_ward< 1, 2 >() )
       //.def( "GetValue", GetValueNonConst, return_internal_reference<>() )
       .def( "GetValue", GetValueConst, return_internal_reference<>() )
-      .def( "GetRealActor", GetRealActorNonConst, return_internal_reference<>() )
-      .def( "GetRealActor", GetRealActorConst, return_internal_reference<>() )
       .def( "GetDesiredActorClass", &ActorActorProperty::GetDesiredActorClass, return_value_policy<copy_const_reference>() )
       ;
 

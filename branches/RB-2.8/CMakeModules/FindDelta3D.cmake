@@ -11,21 +11,14 @@
 # Created by David Guthrie. 
 
 FIND_PATH(DELTA_DIR NAMES inc/dtCore/dt.h include/dtCore/dt.h
-    HINTS
+  HINTS
     ${CMAKE_SOURCE_DIR}
     $ENV{DELTA_ROOT}
     $ENV{DELTA_INC}
-    PATHS
+  PATHS
     ~/Library/Frameworks
     /Library/Frameworks
     /usr/local
-    /usr
-    /sw # Fink
-    /opt/local # DarwinPorts
-    /opt/csw # Blastwave
-    /opt
-    [HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControl\\Control\\Session\ Manager\\Environment;DELTA_ROOT]
-    /usr/freeware/include
 )
 
 FIND_PATH(DELTA3D_INCLUDE_DIR NAMES dtCore/dt.h
@@ -49,12 +42,13 @@ FIND_PATH( DELTA3D_LIB_DIR NAMES libdtCore.so libdtCore.dylib dtCore.lib .
 )
 
 #where to find the Delta3D "ext" folder.  Look for one of the headers that might be in there.
-SET(DELTA3D_EXT_DIR ${DELTA3D_ROOT}/ext CACHE PATH "The root of the Delta3D external dependency folder")
+SET(DELTA3D_EXT_DIR ${DELTA_DIR}/ext CACHE PATH "The root of the Delta3D external dependency folder")
 
 IF(DELTA3D_EXT_DIR)
   #for aiding FIND_FILE() and FIND_PATH() searches
-  SET(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} ${DELTA3D_EXT_DIR})
-  SET(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} ${DELTA3D_EXT_DIR}/inc)
+  list(APPEND CMAKE_PREFIX_PATH ${DELTA3D_EXT_DIR})
+  list(APPEND CMAKE_FRAMEWORK_PATH ${DELTA3D_EXT_DIR}/Frameworks)
+  list(APPEND CMAKE_INCLUDE_PATH ${DELTA3D_EXT_DIR}/inc)
 ENDIF(DELTA3D_EXT_DIR)
 
 SET(DTUTIL_LIBRARY dtUtil)

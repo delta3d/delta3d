@@ -121,7 +121,7 @@ namespace dtDirector
       {
          newEntry.lib = lsm.LoadSharedLibrary(libName);
       }
-      catch (dtUtil::Exception)
+      catch (const dtUtil::Exception&)
       {
          msg.clear();
          msg.str("");
@@ -131,26 +131,47 @@ namespace dtDirector
 
       dtUtil::LibrarySharingManager::LibraryHandle::SYMBOL_ADDRESS createFn;
       dtUtil::LibrarySharingManager::LibraryHandle::SYMBOL_ADDRESS destroyFn;
-      createFn = newEntry.lib->FindSymbol("CreatePluginRegistry");
-      destroyFn = newEntry.lib->FindSymbol("DestroyPluginRegistry");
+      createFn = newEntry.lib->FindSymbol("CreateNodePluginRegistry");
+      destroyFn = newEntry.lib->FindSymbol("DestroyNodePluginRegistry");
+
+
+      //////////////////////////// Start deprecation handling ////////////////////////////
+      if (createFn == NULL)
+      {
+         createFn = newEntry.lib->FindSymbol("CreatePluginRegistry");
+         if (createFn != NULL)
+         {
+            LOG_WARNING("Loading Node library using deprecated symbol CreatePluginRegistry, please change this to CreateNodePluginRegistry.");
+         }
+      }
+
+      if (destroyFn == NULL)
+      {
+         destroyFn = newEntry.lib->FindSymbol("DestroyPluginRegistry");
+         if (destroyFn != NULL)
+         {
+             LOG_WARNING("Loading Node library using deprecated symbol DestroyPluginRegistry, please change this to DestroyNodePluginRegistry.");
+         }
+       }
+      //////////////////////////// End deprecation handling ////////////////////////////
 
       // Make sure the plugin actually implemented these functions and they
       // have been exported.
-      if (!createFn)
+      if (createFn == NULL)
       {
          msg.clear();
          msg.str("");
          msg << "Node plugin libraries must implement the function " <<
-            " CreatePluginRegistry.";
+            " CreateNodePluginRegistry.";
          throw dtCore::ProjectResourceErrorException( msg.str(), __FILE__, __LINE__);
       }
 
-      if (!destroyFn)
+      if (destroyFn == NULL)
       {
          msg.clear();
          msg.str("");
          msg << "Node plugin libraries must implement the function " <<
-            " DestroyPluginRegistry.";
+            " DestroyNodePluginRegistry.";
          throw dtCore::ProjectResourceErrorException(msg.str(), __FILE__, __LINE__);
       }
 
@@ -480,7 +501,7 @@ namespace dtDirector
       {
          return LoadNodeRegistry(libName);
       }
-      catch (dtUtil::Exception)
+      catch (const dtUtil::Exception&)
       {
          //this shouldn't happen, but if it does (corrupt file, etc) then
          //try to handle this quietly since its not critical.

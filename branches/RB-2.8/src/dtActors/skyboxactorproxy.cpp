@@ -41,9 +41,9 @@ namespace dtActors
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void SkyBoxActorProxy::CreateActor()
+   void SkyBoxActorProxy::CreateDrawable()
    {
-      SetActor(*new dtCore::SkyBox("skybox"));
+      SetDrawable(*new dtCore::SkyBox("skybox"));
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -115,7 +115,7 @@ namespace dtActors
          newProfile = dtCore::SkyBox::RP_DEFAULT;
       }
 
-      dtCore::DeltaDrawable* actor = GetActor();
+      dtCore::DeltaDrawable* actor = GetDrawable();
 
       if (actor)
       {

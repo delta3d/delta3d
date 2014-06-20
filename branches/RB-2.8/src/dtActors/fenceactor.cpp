@@ -1175,10 +1175,10 @@ namespace dtActors
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void FenceActorProxy::CreateActor()
+   void FenceActorProxy::CreateDrawable()
    {
       LinkedPointsActor* actor = new FenceActor(this);
-      SetActor(*actor);
+      SetDrawable(*actor);
       actor->Initialize();
    }
 

@@ -221,7 +221,7 @@ namespace dtAnim
       dtCore::ResourceDescriptor resource = GetResource("Skeletal Mesh");
       if (resource.IsEmpty() == false)
       {
-         if (resource.GetResourceIdentifier().empty() || GetActor()->GetOSGNode() == NULL)
+         if (resource.GetResourceIdentifier().empty() || GetDrawable()->GetOSGNode() == NULL)
          {
             return dtCore::BaseActorObject::RenderMode::DRAW_BILLBOARD_ICON;
          }
@@ -247,9 +247,9 @@ namespace dtAnim
    }
 
    //////////////////////////////////////////////////////////////////////////////
-   void Cal3DGameActorProxy::CreateActor()
+   void Cal3DGameActorProxy::CreateDrawable()
    {
-      SetActor(*new Cal3DGameActor(*this));
+      SetDrawable(*new Cal3DGameActor(*this));
    }
 
    void Cal3DGameActor::ApplyAnimationGroup(const dtCore::NamedGroupParameter& prop)

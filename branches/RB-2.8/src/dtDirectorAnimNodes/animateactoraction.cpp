@@ -241,12 +241,12 @@ namespace dtDirector
                dtCore::BaseActorObject* proxy = GetActor("Actor", index);
                if (proxy)
                {
-                  dtAnim::AnimationGameActor* actor = dynamic_cast<dtAnim::AnimationGameActor*>(proxy->GetActor());
+                  dtAnim::AnimationGameActor* actor = dynamic_cast<dtAnim::AnimationGameActor*>(proxy->GetDrawable());
                   if (actor)
                   {
 #ifdef MANUAL_ANIMATIONS
-                     CalMixer* calMixer = actor->GetHelper()->GetModelWrapper()->GetCalModel()->getMixer();
-                     dtAnim::SequenceMixer& mixer = actor->GetHelper()->GetSequenceMixer();
+                     CalMixer* calMixer = actor->GetComponent<dtAnim::AnimationHelper>()->GetModelWrapper()->GetCalModel()->getMixer();
+                     dtAnim::SequenceMixer& mixer = actor->GetComponent<dtAnim::AnimationHelper>()->GetSequenceMixer();
 
                      int animCount = (int)mAnimList.size();
                      for (int animIndex = 0; animIndex < animCount; ++animIndex)
@@ -306,7 +306,7 @@ namespace dtDirector
                               calMixer->setManualAnimationWeight(calAnim, weight);
                            }
 
-                           actor->GetHelper()->Update(0.0f);
+                           actor->GetComponent<dtAnim::AnimationHelper>()->Update(0.0f);
                         }
                         else
                         {
@@ -314,7 +314,7 @@ namespace dtDirector
                            if (data.mAnimation > -1)
                            {
                               calMixer->removeManualAnimation(data.mAnimation);
-                              actor->GetHelper()->Update(0.0f);
+                              actor->GetComponent<dtAnim::AnimationHelper>()->Update(0.0f);
                               data.mAnimation = -1;
                            }
                         }
@@ -322,7 +322,7 @@ namespace dtDirector
 
 #else
                      // First clear all animations currently playing in this actor.
-                     dtAnim::SequenceMixer& mixer = actor->GetHelper()->GetSequenceMixer();
+                     dtAnim::SequenceMixer& mixer = actor->GetComponent<dtAnim::AnimationHelper>()->GetSequenceMixer();
                      mixer.ClearActiveAnimations(0.0f);
                      mixer.Update(0.0f);
 
@@ -343,7 +343,7 @@ namespace dtDirector
                            float increment = startTime - elapsedTime;
                            elapsedTime = startTime;
 
-                           actor->GetHelper()->Update(increment);
+                           actor->GetComponent<dtAnim::AnimationHelper>()->Update(increment);
                         }
 
                         // Update the animation weight.
@@ -366,7 +366,7 @@ namespace dtDirector
                         if (anim)
                         {
                            dtCore::RefPtr<dtAnim::AnimationChannel> newAnim = NULL;
-                           newAnim = dynamic_cast<dtAnim::AnimationChannel*>(anim->Clone(actor->GetHelper()->GetModelWrapper()).get());
+                           newAnim = dynamic_cast<dtAnim::AnimationChannel*>(anim->Clone(actor->GetComponent<dtAnim::AnimationHelper>()->GetModelWrapper()).get());
                            newAnim->SetLooping(false);
                            newAnim->SetAction(true);
                            newAnim->SetBaseWeight(weight);
@@ -380,7 +380,7 @@ namespace dtDirector
                         float increment = curTime - elapsedTime;
                         elapsedTime = curTime;
 
-                        actor->GetHelper()->Update(increment);
+                        actor->GetComponent<dtAnim::AnimationHelper>()->Update(increment);
                      }
 #endif
                   }
@@ -401,12 +401,12 @@ namespace dtDirector
                dtCore::BaseActorObject* proxy = GetActor("Actor", index);
                if (proxy)
                {
-                  dtAnim::AnimationGameActor* actor = dynamic_cast<dtAnim::AnimationGameActor*>(proxy->GetActor());
+                  dtAnim::AnimationGameActor* actor = dynamic_cast<dtAnim::AnimationGameActor*>(proxy->GetDrawable());
                   if (actor)
                   {
                      // Clear all animations currently playing in this actor.
 #ifdef MANUAL_ANIMATIONS
-                     CalMixer* calMixer = actor->GetHelper()->GetModelWrapper()->GetCalModel()->getMixer();
+                     CalMixer* calMixer = actor->GetComponent<dtAnim::AnimationHelper>()->GetModelWrapper()->GetCalModel()->getMixer();
 
                      int animCount = (int)mAnimList.size();
                      for (int animIndex = 0; animIndex < animCount; ++animIndex)
@@ -417,14 +417,14 @@ namespace dtDirector
                         if (data.mAnimation > -1)
                         {
                            calMixer->removeManualAnimation(data.mAnimation);
-                           actor->GetHelper()->Update(0.0f);
+                           actor->GetComponent<dtAnim::AnimationHelper>()->Update(0.0f);
                            data.mAnimation = -1;
                         }
                      }
 #else
-                     dtAnim::SequenceMixer& mixer = actor->GetHelper()->GetSequenceMixer();
+                     dtAnim::SequenceMixer& mixer = actor->GetComponent<dtAnim::AnimationHelper>()->GetSequenceMixer();
                      mixer.ClearActiveAnimations(0.0f);
-                     actor->GetHelper()->Update(0.0f);
+                     actor->GetComponent<dtAnim::AnimationHelper>()->Update(0.0f);
 #endif
                   }
                }

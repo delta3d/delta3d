@@ -29,7 +29,7 @@ public slots:
    void OnItemDoubleClicked(QTreeWidgetItem* item, int column);
    void OnItemToggled(QTreeWidgetItem* item, int column);
    void OnItemExpanded(QTreeWidgetItem* item);
-   void OnBlendUpdate(const std::vector<float>& weightList);
+   void OnBlendUpdate(const std::vector<std::pair<float, float> >& weightTimeList);
    void OnItemAdded(const PoseMeshItem* meshItem);
    void OnNewItemBlend(const dtAnim::PoseMesh* posemesh, float itemAzimuth, float itemElevation);
 

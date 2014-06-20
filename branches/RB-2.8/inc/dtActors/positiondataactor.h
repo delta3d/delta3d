@@ -22,6 +22,7 @@
  
 #include <dtCore/plugin_export.h>
 #include <dtCore/transformableactorproxy.h>
+#include <dtCore/transformable.h>
 #include <dtUtil/getsetmacros.h>
 
 
@@ -31,7 +32,7 @@ namespace dtActors
    {
       public:
          PositionDataActorProxy();
-         virtual void CreateActor();
+         virtual void CreateDrawable();
          virtual dtCore::ActorProxyIcon* GetBillBoardIcon();
          virtual void BuildPropertyMap();
          virtual const dtCore::BaseActorObject::RenderMode& GetRenderMode();

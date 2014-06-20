@@ -27,10 +27,9 @@ TARGET_LINK_LIBRARIES( ${LIB_NAME}
                        ${DTCORE_LIBRARY}
                        optimized ${PYTHON_LIBRARY} debug ${PYTHON_DEBUG}
                       )
-                      
-SET_TARGET_PROPERTIES(${LIB_NAME}
-                     PROPERTIES DEFINE_SYMBOL DT_SCRIPT_LIBRARY)
 
+DELTA3D_ADD_LIBRARY_PROPERTIES(${LIB_NAME} DT_SCRIPT_LIBRARY ${LIB_PUBLIC_HEADERS})
+                      
 
 INCLUDE(ModuleInstall OPTIONAL)
 

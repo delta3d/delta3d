@@ -1707,7 +1707,7 @@ namespace dtPhysics
       CPPUNIT_ASSERT(mat.valid());
 
       // make sure the actor is valid
-      dtCore::RefPtr<dtPhysics::MaterialActor> matActor = dynamic_cast<dtPhysics::MaterialActor*>(mat->GetActor());
+      dtCore::RefPtr<dtPhysics::MaterialActor> matActor = dynamic_cast<dtPhysics::MaterialActor*>(mat->GetDrawable());
       CPPUNIT_ASSERT_MESSAGE("Failed to create material actor", matActor != NULL);
 
       CPPUNIT_ASSERT_EQUAL_MESSAGE("The Default is wrong", matActor->GetMateralDef().GetRestitution(), 0.2f);

@@ -381,7 +381,7 @@ public:
 
       osg::Vec3 gravity;
       GetScene()->GetGravity(gravity);
-      mMotionModels.push_back(new CollisionMotionModel(1.5f, 0.4f, 0.25f, 0.1f, GetScene(), GetKeyboard(), GetMouse()));
+      mMotionModels.push_back(new CollisionMotionModel(1.5f, 0.4f, 0.1f, GetScene(), GetKeyboard(), GetMouse()));
 
       mMotionModels.push_back(new RTSMotionModel(GetKeyboard(), GetMouse()));
 
@@ -520,7 +520,7 @@ private:
       //turn off cursor for FPS motion model
       bool show_cursor = (index != dtExample::FPS) &&
                          (index != dtExample::COLLISION);
-      GetWindow()->ShowCursor(show_cursor);
+      GetWindow()->SetShowCursor(show_cursor);
    }
 
    /// The Town.

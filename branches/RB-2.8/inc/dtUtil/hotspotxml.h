@@ -27,8 +27,10 @@
 #include <stack>
 #include <dtUtil/hotspotdefinition.h>
 #include <dtUtil/export.h>
+#include <dtUtil/warningdisable.h>
 #include <osg/Vec3>
 
+DT_DISABLE_WARNING_START_CLANG("-Woverloaded-virtual");
 namespace dtUtil
 {
 
@@ -87,5 +89,5 @@ namespace dtUtil
       NodeStack mNodeStack;
    };
 }
-
+DT_DISABLE_WARNING_END
 #endif // __DTUTIL_HOT_SPOT_XML_H__

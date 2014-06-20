@@ -93,7 +93,7 @@ void RandomActorGeneratorPlugin::OnGeneratePushed()
    }
 
    //Don't want to just make a bunch of copies of the volume editor:
-   if(selectionList[0]->GetActor() == volEditActor)
+   if(selectionList[0]->GetDrawable() == volEditActor)
    {
       QMessageBox::warning(this, tr("No actor selected."),
          tr("Please select an actor to be generated."), QMessageBox::Ok);
@@ -184,7 +184,7 @@ void RandomActorGeneratorPlugin::NewActorProxyInsideVolumeEditor(dtCore::BaseAct
 
    //spawn a copy of the currently selected actor:
    dtCore::RefPtr<dtCore::BaseActorObject> aCloneProxy = proxyToCopy->Clone();
-   dtCore::Transformable *aClonePtr = dynamic_cast<dtCore::Transformable*>(aCloneProxy->GetActor());
+   dtCore::Transformable *aClonePtr = dynamic_cast<dtCore::Transformable*>(aCloneProxy->GetDrawable());
    if(aClonePtr == NULL)
    {
       //TODO change this to a Qt error dialog
@@ -200,7 +200,7 @@ void RandomActorGeneratorPlugin::NewActorProxyInsideVolumeEditor(dtCore::BaseAct
    //(scale has already been copied during the clone step)
    dtCore::Transform cloneXForm;
    aClonePtr->GetTransform(cloneXForm);
-   dtCore::Transformable* originalTransformable = dynamic_cast<dtCore::Transformable*>(proxyToCopy->GetActor());
+   dtCore::Transformable* originalTransformable = dynamic_cast<dtCore::Transformable*>(proxyToCopy->GetDrawable());
    dtCore::Transform originalTransform;
    originalTransformable->GetTransform(originalTransform);
    float h,p,r;
