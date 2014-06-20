@@ -11,6 +11,7 @@
 #   with revisions by the Delta3D team.
 
 FIND_PATH(OPENTHREADS_INCLUDE_DIR OpenThreads/Thread
+    HINTS
     ${OPENTHREADS_DIR}/include
     $ENV{OPENTHREADS_DIR}/include
     $ENV{OPENTHREADS_DIR}
@@ -19,23 +20,14 @@ FIND_PATH(OPENTHREADS_INCLUDE_DIR OpenThreads/Thread
     $ENV{DELTA_ROOT}
     $ENV{OSG_DIR}/include
     $ENV{OSG_ROOT}/include
-    ~/Library/Frameworks
-    /Library/Frameworks
-    /usr/local/include
-    /usr/include
-    /sw/include # Fink
-    /opt/local/include # DarwinPorts
-    /opt/csw/include # Blastwave
-    /opt/include
-    [HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\Session\ Manager\\Environment;OSG_ROOT]/include
-    /usr/freeware/include
 )
+MARK_AS_ADVANCED(OPENTHREADS_INCLUDE_DIR)
 
- MACRO(FIND_OPENTHREADS_LIBRARY MYLIBRARY MYLIBRARYNAME)
+MACRO(FIND_OPENTHREADS_LIBRARY MYLIBRARY MYLIBRARYNAME)
  
 FIND_LIBRARY(${MYLIBRARY} 
     NAMES ${MYLIBRARYNAME}
-    PATHS
+    HINTS
     ${OPENTHREADS_DIR}/lib
     $ENV{OPENTHREADS_DIR}/lib
     $ENV{OPENTHREADS_DIR}/lib64
@@ -49,19 +41,11 @@ FIND_LIBRARY(${MYLIBRARY}
     $ENV{OSG_DIR}/build/lib
     $ENV{OSG_ROOT}/lib
     $ENV{OSG_ROOT}/build/lib
-    ~/Library/Frameworks
-    /Library/Frameworks
-    /usr/local/lib
-    /usr/lib
-    /sw/lib
-    /opt/local/lib
-    /opt/csw/lib
-    /opt/lib
-    [HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\Session\ Manager\\Environment;OSG_ROOT]/lib
-    /usr/freeware/lib64
 )
 
- ENDMACRO(FIND_OPENTHREADS_LIBRARY MYLIBRARY MYLIBRARYNAME)
+MARK_AS_ADVANCED(${MYLIBRARY})
+
+ENDMACRO(FIND_OPENTHREADS_LIBRARY MYLIBRARY MYLIBRARYNAME)
  
  FIND_OPENTHREADS_LIBRARY(OPENTHREADS_LIBRARY OpenThreads OpenThreadsWin32)
  FIND_OPENTHREADS_LIBRARY(OPENTHREADS_LIBRARY_DEBUG OpenThreadsd)

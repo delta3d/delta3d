@@ -515,10 +515,16 @@ namespace dtCore
    dtCore::MapHeaderData MapParser::ParseMapHeaderData(const std::string& mapFilename) const
    {
       dtCore::RefPtr<MapHeaderHandler> handler = new MapHeaderHandler();
-      if (!ParseFileByToken(mapFilename, handler))
+      try
       {
-         //error
-         throw dtCore::MapParsingException( "Could not parse the Map's header data.", __FILE__, __LINE__);
+         if (!ParseFileByToken(mapFilename, handler))
+         {
+            throw dtCore::MapParsingException( "Could not parse the Map's header data.", __FILE__, __LINE__);
+         }
+      }
+      catch (dtCore::XMLLoadParsingException& ex)
+      {
+         throw dtCore::MapParsingException( "Could not parse the Map's header data with dtCore::XMLLoadParsingException: " + ex.ToString(), __FILE__, __LINE__);
       }
 
       return handler->GetHeaderData();

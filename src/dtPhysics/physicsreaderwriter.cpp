@@ -33,7 +33,7 @@
 #include <dtUtil/exception.h>
 #include <dtUtil/fileutils.h>
 #include <dtUtil/refstring.h>
-#include <dtDAL/exceptionenum.h>
+#include <dtCore/exceptionenum.h>
 
 #include <fstream>
 
@@ -275,7 +275,7 @@ namespace dtPhysics
             }
             else
             {
-               throw dtDAL::BaseException(
+               throw dtCore::BaseException(
                   "Error reading Physics file '" + filename + ".", __FILE__, __LINE__);
             }
 
@@ -283,7 +283,7 @@ namespace dtPhysics
             ds.Read(fileStart);
             if(fileStart != PhysicsFileHeader::FILE_START_END_CHAR)
             {
-               throw dtDAL::BaseException(
+               throw dtCore::BaseException(
                   "Error reading Physics file '" + filename + ".", __FILE__, __LINE__);
             }
 
@@ -301,7 +301,7 @@ namespace dtPhysics
 
    };
 
-   REGISTER_OSGPLUGIN(dtphys, PhysicsOSGReaderWriterPlugin)
+   REGISTER_OSGPLUGIN(dtphys, PhysicsOSGReaderWriterPlugin);
 
 
 
@@ -336,7 +336,7 @@ namespace dtPhysics
       
       
       //vertex data
-      ds.Write(triangleData.mVertices->size());    
+      ds.Write(unsigned(triangleData.mVertices->size()));
       {
          osg::Vec3Array::const_iterator iter = triangleData.mVertices->begin();
          osg::Vec3Array::const_iterator iterEnd = triangleData.mVertices->end();
@@ -347,7 +347,7 @@ namespace dtPhysics
       }
 
       //triangle data
-      ds.Write(triangleData.mFaces->size());
+      ds.Write(unsigned(triangleData.mFaces->size()));
       {
          osg::UIntArray::const_iterator iter = triangleData.mFaces->begin();
          osg::UIntArray::const_iterator iterEnd = triangleData.mFaces->end();
@@ -358,7 +358,7 @@ namespace dtPhysics
       }
 
       //material data
-      ds.Write(triangleData.mMaterialFlags->size());
+      ds.Write(unsigned(triangleData.mMaterialFlags->size()));
       {
          osg::UIntArray::const_iterator iter = triangleData.mMaterialFlags->begin();
          osg::UIntArray::const_iterator iterEnd = triangleData.mMaterialFlags->end();

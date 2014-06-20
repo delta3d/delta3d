@@ -735,7 +735,7 @@ namespace dtHLAGM
       size_t baseSize = GetBaseSize();
       if (size >= baseSize)
       {
-         size_t numberOfRecords = 0;
+         int numberOfRecords = 0;
          ds >> numberOfRecords;
          // skip 4 bytes
          ds.Seekg(4U, dtUtil::DataStream::SeekTypeEnum::CURRENT);

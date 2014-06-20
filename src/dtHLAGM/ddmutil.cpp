@@ -24,16 +24,16 @@
 
 namespace dtHLAGM
 {
-   unsigned long DDMUtil::mMinExtent = 0;
-   unsigned long DDMUtil::mMaxExtent = ULONG_MAX;
+   unsigned int DDMUtil::mMinExtent = 0;
+   unsigned int DDMUtil::mMaxExtent = UINT_MAX;
 
-   unsigned long DDMUtil::GetMinExtent() { return mMinExtent; }
-   void DDMUtil::SetMinExtent(unsigned long val) { mMinExtent = val; }
-   unsigned long DDMUtil::GetMaxExtent() { return mMaxExtent; }
-   void DDMUtil::SetMaxExtent(unsigned long val) { mMaxExtent = val; }
+   unsigned int DDMUtil::GetMinExtent() { return mMinExtent; }
+   void DDMUtil::SetMinExtent(unsigned int val) { mMinExtent = val; }
+   unsigned int DDMUtil::GetMaxExtent() { return mMaxExtent; }
+   void DDMUtil::SetMaxExtent(unsigned int val) { mMaxExtent = val; }
 
 
-   unsigned long DDMUtil::MapEnumerated(unsigned value, unsigned min, unsigned max)
+   unsigned int DDMUtil::MapEnumerated(unsigned value, unsigned min, unsigned max)
    {
       dtUtil::Clamp(value, min, max);
       
@@ -49,10 +49,10 @@ namespace dtHLAGM
       // center of the appropriate bin.  the last part of the following
       // equation (scale/2) moves the value into the center of that bin.
       double result = double(mMinExtent) + scale * double(value-min) + scale/2.0;
-      return (unsigned long)(result);
+      return (unsigned int)(result);
    }
 
-   unsigned long DDMUtil::MapPartitioned(double value, const std::vector<double> partitionValues)
+   unsigned int DDMUtil::MapPartitioned(double value, const std::vector<double> partitionValues)
    {
       for (unsigned i = 0; i < partitionValues.size() - 1; ++i)
       {
@@ -62,7 +62,7 @@ namespace dtHLAGM
       return 0;
    }
    
-   unsigned long DDMUtil::MapLinear(double value, double min, double max)
+   unsigned int DDMUtil::MapLinear(double value, double min, double max)
    {
       // Crop to valid range..    for linear mappings, we clip all
       // values outside the range to either the min or max..
@@ -74,6 +74,6 @@ namespace dtHLAGM
 
       double result = double(mMinExtent) + scale*(value-min);
       
-      return (unsigned long)(result);
+      return (unsigned int)(result);
    }
 }

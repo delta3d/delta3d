@@ -58,7 +58,7 @@ namespace dtQt
         /**
          * Constructor - For the ColorRgbaActorProperty property
          *
-         * @Note - We can put data in the constructor because aren't using the factory for this.
+         * @note - We can put data in the constructor because aren't using the factory for this.
          */
         DynamicColorElementControl(dtCore::ColorRgbaActorProperty* colorRGBA, int whichIndex,
             const std::string& newLabel);
@@ -66,7 +66,7 @@ namespace dtQt
         /**
          * Constructor - For the ColorRgbAActorProperty property
          *
-         * @Note - We can put data in the constructor because aren't using the factory for this.
+         * @note - We can put data in the constructor because aren't using the factory for this.
          */
         //DynamicColorElementControl(dtCore::Vec4ActorProperty* newVectorProp, int whichIndex,
         //    const std::string& newLabel);

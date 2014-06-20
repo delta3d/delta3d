@@ -49,7 +49,7 @@ namespace dtUtil
       static const std::string GetFileName();
 
       /// change the title string used in HTML
-      /// defaults to "Delta 3D Engine Log File" or "Delta 3D Engine Log File (Debug Libs)"
+      /// defaults to "delta3d Engine Log File" or "delta3d Engine Log File (Debug Libs)"
       static void SetTitle(const std::string& title);
 
       ///Get the current HTML title string.
@@ -285,12 +285,7 @@ namespace dtUtil
       ///Returns the name of this logger.
       const std::string& GetName() const;
 
-
-      ///Deprecate 4/6/2011.  Use LogMessage(const std::string&, const std::string&, int, const std::string&, LogMessageType)
-      void LogMessage(const std::string& source, int line, const std::string& msg,
-                      LogMessageType msgType = LOG_INFO) const;
-
-   //Constructor and destructor are both protected since this is a singleton.
+      //Constructor and destructor are both protected since this is a singleton.
    protected:
       /**
        * Opens the log file and writes the html header information.
@@ -307,6 +302,20 @@ namespace dtUtil
       LogImpl* mImpl;
    };
 
+
+   /**
+    * Scoped variable to turn off logging (except for always) for a block.
+    * This is useful for the tests
+    */
+   class DT_UTIL_EXPORT LoggingOff
+   {
+   public:
+      LoggingOff(const std::string& name = LogFile::LOG_DEFAULT_NAME);
+      ~LoggingOff();
+   private:
+      dtUtil::Log& mLog;
+      Log::LogMessageType mOldLevel;
+   };
 } // namespace dtUtil
 
 #endif // DELTA_LOG

@@ -70,6 +70,7 @@ public:
 
       Transform xform(0.f, 00.f, 30.f, 0.f, 10.f, 0.f);
       GetCamera()->SetTransform(xform);
+      GetCamera()->SetNearFarCullingMode(dtCore::Camera::BOUNDING_VOLUME_NEAR_FAR);
 
       orbit = new OrbitMotionModel(GetKeyboard(), GetMouse());
       orbit->SetTarget(GetCamera());

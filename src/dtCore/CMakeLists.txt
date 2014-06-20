@@ -69,7 +69,6 @@ SET(LIB_PUBLIC_HEADERS
                 ${HEADER_PATH}/deltawin.h
                 ${HEADER_PATH}/directoryresourcetypehandler.h
                 ${HEADER_PATH}/doubleactorproperty.h
-                ${HEADER_PATH}/dt.h
                 ${HEADER_PATH}/effectmanager.h
                 ${HEADER_PATH}/enginepropertytypes.h
                 ${HEADER_PATH}/enumactorproperty.h

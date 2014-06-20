@@ -7,7 +7,7 @@ IF(APPLE)
    SET(CMAKE_C_FLAGS "-pipe -Wnewline-eof")
 
    if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
-      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pipe -stdlib=libc++ -std=c++11 -Wall -Wextra -Wnewline-eof")
+      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pipe -Wall -Wextra -Wnewline-eof")
 
       if (NOT CMAKE_OSX_ARCHITECTURES)
          set(CMAKE_OSX_ARCHITECTURES "i386;x86_64" CACHE STRING "Build architectures for OSX" FORCE)
@@ -53,9 +53,16 @@ IF(APPLE)
 
 
    FIND_LIBRARY(APPSERVICES_LIBRARY ApplicationServices)
+   MARK_AS_ADVANCED(APPSERVICES_LIBRARY)
+
    FIND_LIBRARY(IOKIT_LIBRARY IOKit)
+   MARK_AS_ADVANCED(IOKIT_LIBRARY)
+
    FIND_LIBRARY(COREFOUNDATION_LIBRARY CoreFoundation)
+   MARK_AS_ADVANCED(COREFOUNDATION_LIBRARY)
+
    FIND_LIBRARY(COCOA_LIBRARY Cocoa)
+   MARK_AS_ADVANCED(COCOA_LIBRARY)
 
    SET(CMAKE_EXE_LINKER_FLAGS "-F/Library/Frameworks" )
    SET(CMAKE_SHARED_LINKER_FLAGS "-Wl,-single_module -compatibility_version 4 -current_version 4 -F/Library/Frameworks" )
@@ -65,11 +72,14 @@ elseif(UNIX)
    READ_GCC_VERSION()
    FIND_PACKAGE(X11)
    FIND_LIBRARY(XXF86VM_LIBRARY Xxf86vm)
+   MARK_AS_ADVANCED(XXF86VM_LIBRARY)
+
    SET(X11_LIBRARIES
      ${X11_LIBRARIES}
      ${XXF86VM_LIBRARY})
    # Some Unicies need explicit linkage to the Math library or the build fails.
    FIND_LIBRARY(MATH_LIBRARY m)
+   MARK_AS_ADVANCED(MATH_LIBRARY)
 
    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wno-non-virtual-dtor -Wreturn-type")
 endif()

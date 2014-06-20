@@ -40,8 +40,10 @@
 #include <dtUtil/datetime.h>
 #include <dtUtil/fileutils.h>
 #include <dtUtil/datapathutils.h>
+#include <dtUtil/version.h>
 
 #include <dtCore/mapxml.h>
+#include <dtCore/mapxmlconstants.h>
 #include <dtCore/datatype.h>
 #include <dtCore/project.h>
 #include <dtCore/projectconfig.h>
@@ -64,6 +66,7 @@ class ProjectTests : public CPPUNIT_NS::TestFixture
    CPPUNIT_TEST(TestReadonlyFailure);
    CPPUNIT_TEST(TestCreateContextWithMapsDir);
    CPPUNIT_TEST(TestProject);
+   CPPUNIT_TEST(TestGetMapHeader);
    CPPUNIT_TEST(TestSetupFromProjectConfig);
    CPPUNIT_TEST(TestLoadProjectConfigFromFile);
    CPPUNIT_TEST(TestCategories);
@@ -83,6 +86,7 @@ class ProjectTests : public CPPUNIT_NS::TestFixture
       void tearDown();
 
       void TestProject();
+      void TestGetMapHeader();
       void TestSetupFromProjectConfig();
       void TestLoadProjectConfigFromFile();
       void TestFileIO();
@@ -396,6 +400,52 @@ void ProjectTests::TestCreateContextWithMapsDir()
    //    {
    //        CPPUNIT_FAIL(ex.what());
    //    }
+}
+
+void ProjectTests::TestGetMapHeader()
+{
+   dtCore::Project& p = dtCore::Project::GetInstance();
+   p.ClearAllContexts();
+   CPPUNIT_ASSERT_THROW(p.GetMapHeader("blah"), dtCore::ProjectInvalidContextException);
+   try
+   {
+      p.CreateContext(TEST_PROJECT_DIR, false);
+      p.AddContext(TEST_PROJECT_DIR);
+      // Upper case maps to test on case sensitive systems
+      dtUtil::FileUtils::GetInstance().MakeDirectory(TEST_PROJECT_DIR + "/Maps");
+      dtCore::Map& testMeMap = p.CreateMap("TestMe", "TestMe.dtmap");
+      testMeMap.SetAuthor("Joe");
+      testMeMap.SetDescription("Frank is Joe's friend");
+      testMeMap.SetComment("Frank is an odd fella.");
+      testMeMap.SetCopyright("No matter");
+      p.SaveMap(testMeMap);
+      p.CloseMap(testMeMap);
+
+      dtCore::MapHeaderData headerData = p.GetMapHeader("TestMe");
+      CPPUNIT_ASSERT_EQUAL(std::string("Joe"), headerData.mAuthor);
+      CPPUNIT_ASSERT_EQUAL(std::string("Frank is Joe's friend"), headerData.mDescription);
+      CPPUNIT_ASSERT_EQUAL(std::string("Frank is an odd fella."), headerData.mComment);
+      CPPUNIT_ASSERT_EQUAL(std::string("No matter"), headerData.mCopyright);
+      CPPUNIT_ASSERT_EQUAL(std::string(dtCore::MapXMLConstants::SCHEMA_VERSION), headerData.mSchemaVersion);
+      CPPUNIT_ASSERT_EQUAL(std::string(Delta3DGetVersion()), headerData.mEditorVersion);
+      CPPUNIT_ASSERT_EQUAL(std::string("TestMe"), headerData.mName);
+      CPPUNIT_ASSERT(!headerData.mLastUpdateTime.empty());
+      CPPUNIT_ASSERT(!headerData.mCreateTime.empty());
+
+      // Blast the directory
+      dtUtil::FileUtils::GetInstance().DirDelete(TEST_PROJECT_DIR + "/Maps", true);
+
+      // It thinks the file is there, but it will fail to load.
+      CPPUNIT_ASSERT_THROW(p.GetMapHeader("TestMe"), dtCore::MapParsingException);
+      // It knows the file is not there
+      CPPUNIT_ASSERT_THROW(p.GetMapHeader("NoSuchMap"), dtUtil::FileNotFoundException);
+
+   }
+   catch (const dtUtil::Exception& ex)
+   {
+      CPPUNIT_FAIL(ex.ToString());
+   }
+
 }
 
 #define TEST_ACCESSOR(varPtr, accessor, defaultVal, testVal) \

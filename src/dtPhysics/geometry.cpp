@@ -346,7 +346,7 @@ namespace dtPhysics
       palConcaveGeometry* convGeom = palFactory::GetInstance()->CreateConcaveGeometry();
       if(convGeom == NULL)
       {
-         LOG_ERROR("Failed to create convex geometry.");
+         LOG_ERROR("Failed to create triangle mesh/concave geometry.");
       }
 
       geometry->mImpl->mGeom = convGeom;

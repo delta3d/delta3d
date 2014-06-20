@@ -170,9 +170,6 @@ namespace dtCore
       bool CalcWindowCoords(float pixel_x, float pixel_y, float& x, float& y) const;
       bool CalcWindowCoords(const osg::Vec2& pixel_xy, osg::Vec2& window_xy) const;
 
-      /** Deprecated 2/23/2012. Call SetShowCursor() instead. */
-      DEPRECATE_FUNC void ShowCursor(bool show = true);
-
       ///Draw the cursor or not
       void SetShowCursor(bool shouldShow);
 

@@ -55,6 +55,8 @@
 #include <osgViewer/Viewer>
 #include <osg/io_utils>
 #include <osg/Version>
+#include <osg/BlendFunc>
+#include <osg/Material>
 #include <osg/DisplaySettings>
 #include <osgDB/Registry>
 
@@ -122,6 +124,28 @@ Application::Application(const std::string& configFilename, dtCore::DeltaWin* wi
    }
 
    dtUtil::Log::SetLogTimeProvider(this);
+
+
+   // set the expected defaults for the underlying Delta3D applications, the same as osg283, 
+   // mainly a fallback for fixed pipeline materials
+   {
+      osg::StateSet* pSS = GetCamera()->GetOSGCamera()->getOrCreateStateSet();
+
+      osg::ref_ptr<osg::TexEnv> texenv = new osg::TexEnv;
+      texenv->setMode(osg::TexEnv::MODULATE);
+      osg::ref_ptr<osg::Material> material = new osg::Material;
+      material->setColorMode(osg::Material::AMBIENT_AND_DIFFUSE);
+
+      pSS->setTextureAttribute(0, texenv);
+      pSS->setAttribute(new osg::BlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
+      pSS->setMode(GL_BLEND, osg::StateAttribute::OFF);
+      pSS->setAttributeAndModes(material, osg::StateAttribute::ON);
+      pSS->setRenderingHint(osg::StateSet::DEFAULT_BIN);
+      pSS->setRenderBinToInherit();
+
+      // required by osg 320, cheers.
+      pSS->setMode(GL_DEPTH_TEST, osg::StateAttribute::ON);
+   }
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -134,14 +158,15 @@ void Application::Config()
    //keep a context valid throughout the whole frame.  This is a bit of a crutch
    //for applications upgrading to OSG 2.6.0 that are crashing due to openGL
    //context issues.  Users should not rely on this.
-#if defined(OPENSCENEGRAPH_MAJOR_VERSION) && OPENSCENEGRAPH_MAJOR_VERSION >= 2 && defined(OPENSCENEGRAPH_MINOR_VERSION) && OPENSCENEGRAPH_MINOR_VERSION >= 6
+
+
+#if OSG_VERSION_GREATER_THAN(2,6,0)
    char* deltaReleaseContext = getenv("DELTA_RELEASE_CONTEXT");
    if (deltaReleaseContext)
    {
       GetCompositeViewer()->setReleaseContextAtEndOfFrameHint(false);
    }
 #endif
-
    ReadSystemProperties();
 }
 
@@ -469,12 +494,7 @@ const std::string& Application::GetConfigPropertyValue(
 ///////////////////////////////////////////////////////////////////////////////
 void Application::SetConfigPropertyValue(const std::string& name, const std::string& value)
 {
-   if (!mConfigProperties.insert(std::make_pair(name, value)).second)
-   {
-      AppConfigPropertyMap::iterator i = mConfigProperties.find(name);
-      // "i" can't be the "end()" because the insert returned false, meaning it does have that key.
-      i->second = value;
-   }
+   mConfigProperties[name] = value;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -671,11 +691,11 @@ bool AppXMLApplicator::operator ()(const ApplicationConfigData& data, dtABC::App
    //via the constructor of DeltaWin
    //dwin->SetWindowTitle(data.WINDOW_NAME);
    //dwin->SetPosition(data.WINDOW_X, data.WINDOW_Y, data.RESOLUTION.width, data.RESOLUTION.height);
-   //dwin->ShowCursor(data.SHOW_CURSOR);
+   //dwin->SetShowCursor(data.SHOW_CURSOR);
    //dwin->SetFullScreenMode(data.FULL_SCREEN);
 
    // change the resolution if needed and valid
-   if (data.CHANGE_RESOLUTION)
+   if (data.CHANGE_RESOLUTION && data.FULL_SCREEN)
    {
       if (dwin->IsValidResolution(data.RESOLUTION))
       {

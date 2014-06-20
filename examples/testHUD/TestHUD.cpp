@@ -28,7 +28,7 @@ void TestHUD::Config()
    _ConfigScene();
 
    //configure window
-   GetWindow()->ShowCursor(false);
+   GetWindow()->SetShowCursor(false);
    GetWindow()->SetWindowTitle("delta-window");
 
    //setup a hud:

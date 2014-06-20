@@ -451,10 +451,10 @@ struct ApplyActorUpdateFunc
       }
       if (!property.valid())
       {
-         LOG_WARNING(("Property \"" + paramName +
+         mLogger.LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__, "Property \"" + paramName +
             "\" was not found on actor type \"" +
             mGAP.GetActorType().GetFullName() +
-            "\""));
+            "\"");
          return;
       }
 

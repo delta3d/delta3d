@@ -125,7 +125,7 @@ namespace dtQt
       * @return Returns true if the model was successfully changed.  ie, the data was different
       * and there were no errors.
       *
-      * @Note It would be nice if the caller of this method would generate the event message.
+      * @note It would be nice if the caller of this method would generate the event message.
       * However, since it can be called from a variety of places, we have to generate the
       * property changed event from inside here.  So, don't forget :)
       */
@@ -325,7 +325,7 @@ namespace dtQt
       * or is moving an actor in the viewport, then it is possible that they will also
       * be sitting on the editor for one of the affected values. This gives us a chance
       * to reflect the change in our editor.
-      * @Note The default implementation does nothing.
+      * @note The default implementation does nothing.
       */
       virtual void actorPropertyChanged(dtCore::PropertyContainer& propCon, dtCore::ActorProperty& property);
 
@@ -352,7 +352,7 @@ namespace dtQt
        * user event behavior.  This can also be called by the parent control at the
        * moment we change selection.
        * @return Returns true if any data was actually changed and sucessfully set on the control
-       * @Note - This is purely virtual
+       * @note - This is purely virtual
        */
       virtual bool updateData(QWidget* widget) = 0;
 

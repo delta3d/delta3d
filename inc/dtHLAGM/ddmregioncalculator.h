@@ -114,7 +114,7 @@ namespace dtHLAGM
           * @param min  the minimum extent value
           * @param max the maximum extent value
           */
-         static bool UpdateDimension(DDMRegionData& ddmData, unsigned index, const std::string& name, unsigned long min, unsigned long max);
+         static bool UpdateDimension(DDMRegionData& ddmData, unsigned index, const std::string& name, unsigned int min, unsigned int max);
 
          std::string GetFirstDimensionNameByCopy() const { return mFirstDimensionName; }
          std::string GetSecondDimensionNameByCopy() const { return mSecondDimensionName; }

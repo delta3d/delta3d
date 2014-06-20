@@ -84,14 +84,14 @@ namespace dtUtil
       FileInfo(): size(0), lastModified(0), fileType(FILE_NOT_FOUND), isInArchive(false) {}
    };
 
-   class FileUtilIOException : public dtUtil::Exception
+   class DT_UTIL_EXPORT FileUtilIOException : public dtUtil::Exception
    {
    public:
      FileUtilIOException(const std::string& message, const std::string& filename, unsigned int linenum);
      virtual ~FileUtilIOException() {};
    };
 
-   class FileNotFoundException : public dtUtil::Exception
+   class DT_UTIL_EXPORT FileNotFoundException : public dtUtil::Exception
    {
    public:
      FileNotFoundException(const std::string& message, const std::string& filename, unsigned int linenum);

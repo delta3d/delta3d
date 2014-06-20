@@ -911,8 +911,8 @@ bool AudioManager::ReleaseSoundBuffer(ALuint bufferHandle, const std::string& er
    }
    else
    {
-      dtUtil::Log::GetInstance("audiomanager.cpp").LogMessage(callerFunctionName,
-         callerFunctionLineNum, "Sound buffer was invalid.", dtUtil::Log::LOG_WARNING);
+      dtUtil::Log::GetInstance("audiomanager.cpp").LogMessage(dtUtil::Log::LOG_WARNING, callerFunctionName,
+         callerFunctionLineNum, "Sound buffer was invalid.");
    }
 
    return success;

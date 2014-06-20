@@ -52,7 +52,7 @@ namespace dtCore
    private:
       /** Deprecated 1/27/11.  Use HandleAxisStateChanged instead.
        */
-      BREAK_OVERRIDE(AxisStateChanged(const Axis* axis, double oldState, double newState, double delta))
+      BREAK_OVERRIDE(AxisStateChanged(const Axis* /*axis*/, double /*oldState*/, double /*newState*/, double /*delta*/))
    };
 }
 

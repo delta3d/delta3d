@@ -109,7 +109,7 @@ namespace dtHLAGM
       //   return false;
       dtUtil::Log& logger = dtUtil::Log::GetInstance("ddmmultienumeratedcalculator.cpp");
 
-      unsigned long mappedValue = MapAppSpaceValue(GetDefaultAppSpace());
+      unsigned int mappedValue = MapAppSpaceValue(GetDefaultAppSpace());
 
       if (logger.IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
       {

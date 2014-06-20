@@ -117,6 +117,20 @@ namespace dtEditQt
    }
 
    ///////////////////////////////////////////////////////////////////////////////
+   void EditorEvents::emitCurrentMapSaved()
+   {
+      LOG_INFO("Emitting UI event - [emitCurrentMapSaved]");
+      emit currentMapSaved();
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void EditorEvents::emitResetWindows()
+   {
+      LOG_INFO("Emitting UI event - [emitResetWindows]");
+      emit resetWindows();
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
    void EditorEvents::emitViewportsChanged()
    {
       LOG_INFO("Emitting UI event - [viewportsChanged]");

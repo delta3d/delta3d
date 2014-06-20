@@ -63,7 +63,7 @@ namespace dtQt
       /**
        * Constructor - For the Vec2f property
        *
-       * @Note - We can put data in the constructor because aren't using the factory for this.
+       * @note - We can put data in the constructor because aren't using the factory for this.
        */
       DynamicVectorElementControl(dtCore::Vec2fActorProperty* newVectorProp, int whichIndex,
          const std::string& newLabel);
@@ -71,7 +71,7 @@ namespace dtQt
       /**
        * Constructor - For the Vec2d property
        *
-       * @Note - We can put data in the constructor because aren't using the factory for this.
+       * @note - We can put data in the constructor because aren't using the factory for this.
        */
       DynamicVectorElementControl(dtCore::Vec2dActorProperty* newVectorProp, int whichIndex,
          const std::string& newLabel);
@@ -79,7 +79,7 @@ namespace dtQt
       /**
        * Constructor - For the Vec3f property
        *
-       * @Note - We can put data in the constructor because aren't using the factory for this.
+       * @note - We can put data in the constructor because aren't using the factory for this.
        */
       DynamicVectorElementControl(dtCore::Vec3fActorProperty* newVectorProp, int whichIndex,
          const std::string& newLabel);
@@ -87,7 +87,7 @@ namespace dtQt
       /**
        * Constructor - For the Vec3d property
        *
-       * @Note - We can put data in the constructor because aren't using the factory for this.
+       * @note - We can put data in the constructor because aren't using the factory for this.
        */
       DynamicVectorElementControl(dtCore::Vec3dActorProperty* newVectorProp, int whichIndex,
          const std::string& newLabel);
@@ -96,7 +96,7 @@ namespace dtQt
       /**
        * Constructor - For the Vec4f property
        *
-       * @Note - We can put data in the constructor because aren't using the factory for this.
+       * @note - We can put data in the constructor because aren't using the factory for this.
        */
       DynamicVectorElementControl(dtCore::Vec4fActorProperty* newVectorProp, int whichIndex,
          const std::string& newLabel);
@@ -104,7 +104,7 @@ namespace dtQt
       /**
        * Constructor - For the Vec4d property
        *
-       * @Note - We can put data in the constructor because aren't using the factory for this.
+       * @note - We can put data in the constructor because aren't using the factory for this.
        */
       DynamicVectorElementControl(dtCore::Vec4dActorProperty* newVectorProp, int whichIndex,
          const std::string& newLabel);

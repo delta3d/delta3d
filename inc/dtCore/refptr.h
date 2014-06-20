@@ -30,10 +30,6 @@
 // Had to add this to disable a few warnings on clang.
 #include <dtUtil/warningdisable.h>
 
-#ifndef dtDAL
-#define dtDAL dtCore
-#endif
-
 namespace dtCore
 {
 

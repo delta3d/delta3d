@@ -291,7 +291,7 @@ namespace dtCore
           * set this but you can find out which direction it is currently going.
           * @return 1.0 if going up, -1.0 if going down.
           */
-         const float GetCycleDirection() const{ return mCycleDirection; }
+         float GetCycleDirection() const{ return mCycleDirection; }
 
          /**
           * Called by the dtCore::Base class - used to get timer updates

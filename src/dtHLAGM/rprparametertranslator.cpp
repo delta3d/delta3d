@@ -1848,7 +1848,7 @@ namespace dtHLAGM
       }
       else if (parameterDataType == dtCore::DataType::ULONGINT)
       {
-         static_cast<dtGame::UnsignedLongIntMessageParameter&>(parameter).SetValue((unsigned long)(value));
+         static_cast<dtGame::UnsignedLongIntMessageParameter&>(parameter).SetValue((unsigned long long)(value));
       }
       else if (parameterDataType == dtCore::DataType::USHORTINT)
       {

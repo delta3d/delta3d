@@ -71,21 +71,12 @@ function(DELTA3D_FIND_PATH module header)
        HINTS
             $ENV{${module_uc}_DIR}
             $ENV{DELTA_ROOT}
-       PATH_SUFFIXES include inc
-       PATHS
-            /sw # Fink
-            /opt/local # DarwinPorts
-            /opt/csw # Blastwave
-            /opt
-            /usr/freeware
-            /usr
-            /usr/include
-            /usr/local/include
             ${DELTA3D_EXT_DIR} #defined in delta3d_common.cmake
             $ENV{OSG_DIR}
             $ENV{OSG_ROOT}
-
+       PATH_SUFFIXES include inc
    )
+   MARK_AS_ADVANCED(${module_uc}_INCLUDE_DIR)
 endfunction(DELTA3D_FIND_PATH module header)
 
 
@@ -100,13 +91,6 @@ function(DELTA3D_FIND_LIBRARY module library)
             $ENV{${module_uc}_DIR}
             $ENV{DELTA_ROOT}
        PATH_SUFFIXES lib64 lib
-       PATHS
-            /sw # Fink
-            /opt/local # DarwinPorts
-            /opt/csw # Blastwave
-            /opt
-            /usr/freeware
-            /usr/lib
             ${DELTA3D_EXT_DIR}/lib
             ${DELTA3D_EXT_DIR}/lib64
             $ENV{DELTA_ROOT}/ext/lib
@@ -117,24 +101,19 @@ function(DELTA3D_FIND_LIBRARY module library)
             $ENV{OSG_ROOT}
    )
 
+   MARK_AS_ADVANCED(${module_uc}_LIBRARY)
+
    #Modify each entry to tack on "d" and "_d" for the debug file name
-   FOREACH(debug_lib ${library})
-     LIST(APPEND debug_list ${debug_lib}d ${debug_lib}_d ${debug_lib}_debug)
-   ENDFOREACH(debug_lib ${library})
+   if (WIN32)
+      FOREACH(debug_lib ${library})
+        LIST(APPEND debug_list ${debug_lib}d ${debug_lib}_d ${debug_lib}_debug)
+      ENDFOREACH(debug_lib ${library})
     
-   find_library(${module_uc}_LIBRARY_DEBUG
-       NAMES ${debug_list}
-       HINTS
+      find_library(${module_uc}_LIBRARY_DEBUG
+         NAMES ${debug_list}
+         HINTS
             $ENV{${module_uc}_DIR}
             $ENV{DELTA_ROOT}
-       PATH_SUFFIXES lib64 lib
-       PATHS
-            /sw # Fink
-            /opt/local # DarwinPorts
-            /opt/csw # Blastwave
-            /opt
-            /usr/freeware
-            /usr/lib
             ${DELTA3D_EXT_DIR}/lib
             ${DELTA3D_EXT_DIR}/lib64
             $ENV{DELTA_ROOT}/ext/lib
@@ -143,7 +122,10 @@ function(DELTA3D_FIND_LIBRARY module library)
             $ENV{OSG_ROOT}/build  
             $ENV{OSG_DIR}
             $ENV{OSG_ROOT}
-    )
+         PATH_SUFFIXES lib64 lib
+       )
+       MARK_AS_ADVANCED(${module_uc}_LIBRARY_DEBUG)
+   endif()
 
    if(NOT ${module_uc}_LIBRARY_DEBUG)
       # They don't have a debug library

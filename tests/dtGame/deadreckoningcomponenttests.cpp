@@ -425,7 +425,7 @@ namespace dtGame
             const osg::Vec3& expectedRotation, float errorTolerance)
          {
             osg::Vec3 dofRotation(dof.getCurrentHPR());
-            osg::Vec3 differences(dofRotation - expectedRotation);
+            //osg::Vec3 differences(dofRotation - expectedRotation);
 
             CPPUNIT_ASSERT_DOUBLES_EQUAL(expectedRotation.x(), dofRotation.x(), errorTolerance);
             CPPUNIT_ASSERT_DOUBLES_EQUAL(expectedRotation.y(), dofRotation.y(), errorTolerance);

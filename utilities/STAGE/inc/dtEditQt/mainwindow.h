@@ -252,7 +252,7 @@ namespace dtEditQt
        * Starts a new wait cursor.  You MUST call endWaitCursor() for each
        * startWaitCursor().
        *
-       * @Note - This behavior is extremely trivial, but is pulled to mainWindow for
+       * @note - This behavior is extremely trivial, but is pulled to mainWindow for
        * future expansion
        */
       void startWaitCursor();
@@ -260,7 +260,7 @@ namespace dtEditQt
       /**
        * Ends a previously started wait cursor.  You must call this for each startWaitCursor().
        *
-       * @Note - This behavior is extremely trivial, but is pulled to mainWindow for
+       * @note - This behavior is extremely trivial, but is pulled to mainWindow for
        * future expansion
        */
       void endWaitCursor();
@@ -389,6 +389,12 @@ namespace dtEditQt
       void setupVolumeEditActor();
 
       void checkAndLoadBackup(const std::string& str);
+
+      /**
+       * Check on filesystem if a map does not exist.
+       * @return TRUE if the specified map does not exist.
+       */
+      bool MapDoesNotExist( const std::string& mapToLoad );
 
       /**
        * Reset the splitters to equally divide the screen.

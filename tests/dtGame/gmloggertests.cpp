@@ -213,7 +213,7 @@ class TestLogStream : public dtGame::LogStream
          mGameManager = newGameManager;
          mExceptionEnabled = false;
       }
-      void Create(const std::string& logsPath, const std::string& logResourceName) { DoException(); }
+      void Create(const std::string&, const std::string&) { DoException(); }
       void Close()
       {
          // Note, real close doesn't throw exception at the moment, but left in

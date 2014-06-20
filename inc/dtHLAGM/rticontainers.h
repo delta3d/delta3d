@@ -51,7 +51,8 @@ namespace dtHLAGM
       // Apparently algorthms have been written to convert 1.3DDM to 1516, that could be used internally
       // though it would probably be better to configure a 1516 DDM scheme in a 1516 way.  In this case
       // mMin would always be 0.
-      unsigned long mMin, mMax;
+      // It uses unsigned int not long because the rti 1.3 actually wants it to be 32 bit.
+      unsigned int mMin, mMax;
    };
 
    typedef std::vector<RTIDimensionData> RTIDimensionVector;

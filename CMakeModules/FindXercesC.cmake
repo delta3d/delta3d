@@ -28,6 +28,7 @@ FIND_PATH(XERCES_INCLUDE_DIR xercesc
     [HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\Session\ Manager\\Environment;OSG_ROOT]/include
     /usr/freeware/include
 )
+MARK_AS_ADVANCED(XERCES_INCLUDE_DIR)
 
 MACRO(FIND_XERCES_LIBRARY MYLIBRARY MYLIBRARYNAME)
 
@@ -52,7 +53,7 @@ FIND_LIBRARY(${MYLIBRARY}
     [HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\Session\ Manager\\Environment;OSG_ROOT]/lib
     /usr/freeware/lib64
 )
-
+MARK_AS_ADVANCED(${MYLIBRARY})
 ENDMACRO(FIND_XERCES_LIBRARY MYLIBRARY MYLIBRARYNAME)
 
 SET(XERCES_LIST Xerces xerces-c xerces-c_2 xerces-c_3)

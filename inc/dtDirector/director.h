@@ -28,14 +28,14 @@
 #include <dtDirector/directornotifier.h>
 #include <dtDirector/node.h>
 
-#include <dtDAL/map.h>
+#include <dtCore/map.h>
 
 #include <dtGame/gamemanager.h>
 
 #include <dtCore/base.h>
 #include <dtCore/observerptr.h>
 #include <dtUtil/getsetmacros.h>
-#include <dtDAL/resourcedescriptor.h>
+#include <dtCore/resourcedescriptor.h>
 
 #include <cstdio>
 
@@ -58,7 +58,7 @@ namespace dtDirector
     *      the NodeManager. If they are not created in this fashion,
     *      the node types will not be set correctly.
     */
-   class DT_DIRECTOR_EXPORT Director: public dtDAL::PropertyContainer
+   class DT_DIRECTOR_EXPORT Director: public dtCore::PropertyContainer
    {
    private:
       struct ThreadData;
@@ -90,7 +90,7 @@ namespace dtDirector
        *
        * @param[in]  map  The current map.
        */
-      virtual void Init(dtGame::GameManager* gm = NULL, dtDAL::Map* map = NULL);
+      virtual void Init(dtGame::GameManager* gm = NULL, dtCore::Map* map = NULL);
 
       /**
        * Loads our default set of node libraries.
@@ -220,14 +220,14 @@ namespace dtDirector
        *
        * @return  The map.
        */
-      dtDAL::Map* GetMap();
+      dtCore::Map* GetMap();
 
       /**
        * Sets the map.
        *
        * @param[in]  map  The current map.
        */
-      void SetMap(dtDAL::Map* map);
+      void SetMap(dtCore::Map* map);
 
       /**
        * Retrieves the Messaging GM component.
@@ -252,8 +252,8 @@ namespace dtDirector
       /**
        * Access to the script resource descriptor.
        */
-      void SetResource(const dtDAL::ResourceDescriptor& resource) {mResource = resource;}
-      dtDAL::ResourceDescriptor GetResource() const {return mResource;}
+      void SetResource(const dtCore::ResourceDescriptor& resource) {mResource = resource;}
+      dtCore::ResourceDescriptor GetResource() const {return mResource;}
 
       /**
        * Loads a Director script.  An exception will occur on error.
@@ -422,7 +422,7 @@ namespace dtDirector
        * Retrieves the player.
        */
       dtCore::UniqueId GetPlayer() const;
-      dtDAL::BaseActorObject* GetPlayerActor() const;
+      dtCore::BaseActorObject* GetPlayerActor() const;
 
       /**
        * Sets the owner of this script.
@@ -435,7 +435,7 @@ namespace dtDirector
        * Retrieves the owner of this script.
        */
       dtCore::UniqueId GetScriptOwner() const;
-      dtDAL::BaseActorObject* GetScriptOwnerActor() const;
+      dtCore::BaseActorObject* GetScriptOwnerActor() const;
 
       /**
        *   Sets this script as imported.
@@ -784,9 +784,9 @@ namespace dtDirector
 
       bool mIsVisibleInInspector;
 
-      dtDAL::ResourceDescriptor mResource;
+      dtCore::ResourceDescriptor mResource;
 
-      dtCore::RefPtr<dtDAL::Map> mMap;
+      dtCore::RefPtr<dtCore::Map> mMap;
       bool        mModified;
       bool        mStarted;
       bool        mLoading;

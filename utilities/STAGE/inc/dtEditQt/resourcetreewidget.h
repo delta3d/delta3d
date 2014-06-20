@@ -50,7 +50,7 @@ namespace dtEditQt
    class ResourceTree : public QTreeWidget
    {
    public:
-      ResourceTree(QWidget* parent = 0) {}
+      ResourceTree(QWidget* parent = 0): QTreeWidget(parent) {}
       virtual ~ResourceTree() {}
    };
 

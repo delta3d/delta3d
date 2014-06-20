@@ -31,8 +31,8 @@
 
 #include <dtCore/refptr.h>
 #include <dtCore/observerptr.h>
-#include <dtDAL/actorproperty.h>
-#include <dtDAL/propertycontainer.h>
+#include <dtCore/actorproperty.h>
+#include <dtCore/propertycontainer.h>
 #include <dtUtil/getsetmacros.h>
 
 namespace dtPhysics
@@ -48,7 +48,7 @@ namespace dtPhysics
    // Class:
    // Notes:
    /////////////////////////////////////////////////////////////////////////////
-   class DT_PHYSICS_EXPORT PhysicsObject: public dtDAL::PropertyContainer
+   class DT_PHYSICS_EXPORT PhysicsObject: public dtCore::PropertyContainer
    {
    public:
       PhysicsObject();//name will be generated
@@ -270,7 +270,7 @@ namespace dtPhysics
 
       //////////////////////////////////////////////////////
       // Build our property functions
-      virtual void BuildPropertyMap(std::vector<dtCore::RefPtr<dtDAL::ActorProperty> >& toFillIn);
+      virtual void BuildPropertyMap(std::vector<dtCore::RefPtr<dtCore::ActorProperty> >& toFillIn);
 
       /// forces the automatic activate and deactivate state.  The physics engine normally controls this.
       void SetActive(bool active);

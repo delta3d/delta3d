@@ -444,12 +444,12 @@ public:
     * This templated method is used to test each of the different message
     * parameters when using their list form.
     */
-   template <typename ParameterType, typename ValueType>
-   void TestParameterList(ValueType defaultValue, ValueType t1, ValueType t2,
-      ValueType t3, ValueType t4)
+   template <typename ParameterType>
+   void TestParameterList(typename ParameterType::value_type defaultValue, typename ParameterType::value_type t1, typename ParameterType::value_type t2,
+      typename ParameterType::value_type t3, typename ParameterType::value_type t4)
    {
-      std::vector<ValueType> valueList;
-      std::vector<ValueType> testList;
+      std::vector<typename ParameterType::value_type> valueList;
+      std::vector<typename ParameterType::value_type> testList;
 
       dtCore::RefPtr<ParameterType> param =
          new ParameterType("a",defaultValue,true);
@@ -461,42 +461,24 @@ public:
       CPPUNIT_ASSERT_MESSAGE("First element should be \"defaultValue\"",
          testList[0] == defaultValue);
 
-      try
-      {
-         param->GetValue();
-         CPPUNIT_FAIL("Should not be allowed to get a single value from a parameter "
-            "that contains a list.");
-      }
-      catch (dtUtil::Exception&)
-      {
+      CPPUNIT_ASSERT_THROW_MESSAGE("Should not be allowed to get a single value from a parameter "
+            "that contains a list.", param->GetValue(), dtUtil::Exception);
 
+      {
+         //This quick test ensures that we cannot copy a parameter with a single value
+         //into a parameter supporting a list of values.  Only parameters that
+         //both contain a list of values my be copied.
+         dtCore::RefPtr<ParameterType> paramSingleValue =
+            new ParameterType("a");
+         CPPUNIT_ASSERT_THROW_MESSAGE("Should not be allowed to copy a list parameter into a single value parameter.",
+               paramSingleValue->CopyFrom(*param), dtUtil::Exception);
       }
 
-      //This quick test ensures that we cannot copy a parameter with a single value
-      //into a parameter supporting a list of values.  Only parameters that
-      //both contain a list of values my be copied.
-      try
       {
          dtCore::RefPtr<ParameterType> paramSingleValue =
             new ParameterType("a");
-         paramSingleValue->CopyFrom(*param);
-         CPPUNIT_FAIL("Should not be allowed to copy a list parameter into a single value parameter.");
-      }
-      catch (dtUtil::Exception&)
-      {
-
-      }
-
-      try
-      {
-         dtCore::RefPtr<ParameterType> paramSingleValue =
-            new ParameterType("a");
-         param->CopyFrom(*paramSingleValue);
-         CPPUNIT_FAIL("Should not be allowed to copy a list parameter into a single value parameter.");
-      }
-      catch (dtUtil::Exception&)
-      {
-
+         CPPUNIT_ASSERT_THROW_MESSAGE("Should not be allowed to copy a single value parameter into a list parameter.",
+               param->CopyFrom(*paramSingleValue), dtUtil::Exception);
       }
 
       valueList.push_back(t1);
@@ -842,7 +824,7 @@ void NamedParameterTests::TestNamedStringParameter()
       CPPUNIT_ASSERT(param->GetValue() == param3->GetValue());
 
       //Test the list version of the message parameter.
-      TestParameterList<dtCore::NamedStringParameter,std::string>(
+      TestParameterList<dtCore::NamedStringParameter>(
          "defaultValue","hello","from","the","stringlist");
    }
    catch (const dtUtil::Exception& e)
@@ -886,7 +868,7 @@ void NamedParameterTests::TestNamedEnumParameter()
       CPPUNIT_ASSERT(param->GetValue() == param3->GetValue());
 
       //Test the list version of the message parameter.
-      TestParameterList<dtCore::NamedEnumParameter,std::string>(
+      TestParameterList<dtCore::NamedEnumParameter>(
          "defaultValue","enum1","enum2","enum3","enum4");
    }
    catch (const dtUtil::Exception& e)
@@ -936,7 +918,7 @@ void NamedParameterTests::TestNamedBooleanParameter()
       CPPUNIT_ASSERT(param->GetValue() == param3->GetValue());
 
       //Test the list version of the message parameter.
-      TestParameterList<dtCore::NamedBooleanParameter,bool>(
+      TestParameterList<dtCore::NamedBooleanParameter>(
          true,false,true,false,true);
    }
    catch (const dtUtil::Exception& e)
@@ -980,7 +962,7 @@ void NamedParameterTests::TestNamedUnsignedCharParameter()
       CPPUNIT_ASSERT(param->GetValue() == param3->GetValue());
 
       //Test the list version of the message parameter.
-      TestParameterList<dtCore::NamedUnsignedCharParameter,unsigned char>(
+      TestParameterList<dtCore::NamedUnsignedCharParameter>(
          100,1,3,4,232);
    }
    catch (const dtUtil::Exception& e)
@@ -1024,7 +1006,7 @@ void NamedParameterTests::TestNamedUnsignedIntParameter()
       CPPUNIT_ASSERT(param->GetValue() == param3->GetValue());
 
       //Test the list version of the message parameter.
-      TestParameterList<dtCore::NamedUnsignedIntParameter,unsigned int>(
+      TestParameterList<dtCore::NamedUnsignedIntParameter>(
          100,1,3,4,232);
    }
    catch (const dtUtil::Exception& e)
@@ -1068,7 +1050,7 @@ void NamedParameterTests::TestNamedIntParameter()
       CPPUNIT_ASSERT(param->GetValue() == param3->GetValue());
 
       //Test the list version of the message parameter.
-      TestParameterList<dtCore::NamedIntParameter,int>(
+      TestParameterList<dtCore::NamedIntParameter>(
          -100,-1,-3,-4,-232);
    }
    catch (const dtUtil::Exception& e)
@@ -1112,7 +1094,7 @@ void NamedParameterTests::TestNamedUnsignedLongIntParameter()
       CPPUNIT_ASSERT(param->GetValue() == param3->GetValue());
 
       //Test the list version of the message parameter.
-      TestParameterList<dtCore::NamedUnsignedLongIntParameter,unsigned long>(
+      TestParameterList<dtCore::NamedUnsignedLongIntParameter>(
          10089,167,3784,4456323,23264);
    }
    catch (const dtUtil::Exception& e)
@@ -1156,7 +1138,7 @@ void NamedParameterTests::TestNamedLongIntParameter()
       CPPUNIT_ASSERT(param->GetValue() == param3->GetValue());
 
       //Test the list version of the message parameter.
-      TestParameterList<dtCore::NamedLongIntParameter,long>(
+      TestParameterList<dtCore::NamedLongIntParameter>(
          -10089,-167,-3784,-4456323,-23264);
    }
    catch (const dtUtil::Exception& e)
@@ -1200,7 +1182,7 @@ void NamedParameterTests::TestNamedUnsignedShortIntParameter()
       CPPUNIT_ASSERT(param->GetValue() == param3->GetValue());
 
       //Test the list version of the message parameter.
-      TestParameterList<dtCore::NamedUnsignedShortIntParameter,unsigned short>(
+      TestParameterList<dtCore::NamedUnsignedShortIntParameter>(
          100,1000,10000,2000,3000);
    }
    catch (const dtUtil::Exception& e)
@@ -1244,7 +1226,7 @@ void NamedParameterTests::TestNamedShortIntParameter()
       CPPUNIT_ASSERT(param->GetValue() == param3->GetValue());
 
       //Test the list version of the message parameter.
-      TestParameterList<dtCore::NamedShortIntParameter,short>(
+      TestParameterList<dtCore::NamedShortIntParameter>(
          -10089,-167,-3784,-423,-23264);
    }
    catch (const dtUtil::Exception& e)
@@ -1293,7 +1275,7 @@ void NamedParameterTests::TestNamedFloatParameter()
       CPPUNIT_ASSERT(osg::equivalent(param->GetValue(), param3->GetValue(), 1e-2f));
 
       //Test the list version of the message parameter.
-      TestParameterList<dtCore::NamedFloatParameter,float>(
+      TestParameterList<dtCore::NamedFloatParameter>(
          -10089.0f,167.5f,-3784.24f,-4456323.3456f,-23264.0f);
    }
    catch (const dtUtil::Exception& e)
@@ -1341,7 +1323,7 @@ void NamedParameterTests::TestNamedDoubleParameter()
       CPPUNIT_ASSERT(osg::equivalent(param->GetValue(), param3->GetValue(), 1e-2));
 
       //Test the list version of the message parameter.
-      TestParameterList<dtCore::NamedDoubleParameter,double>(
+      TestParameterList<dtCore::NamedDoubleParameter>(
          -10089.0, -167.5, 3784.24, -4456323.3456, 23264.0);
    }
    catch (const dtUtil::Exception& e)
@@ -1516,7 +1498,7 @@ void NamedParameterTests::TestNamedActorParameter()
       dtCore::UniqueId id3 = dtCore::UniqueId();
       dtCore::UniqueId id4 = dtCore::UniqueId();
       dtCore::UniqueId id5 = dtCore::UniqueId();
-      TestParameterList<dtCore::NamedActorParameter,dtCore::UniqueId>(
+      TestParameterList<dtCore::NamedActorParameter>(
          id1,id2,id3,id4,id5);
    }
    catch (const dtUtil::Exception& e)

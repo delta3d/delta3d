@@ -478,7 +478,7 @@ namespace dtUtil
           * @param latitude the latitude position for the zone.
           * @param longitude the longitude position for the zone.
           * @param ewZone the east west zone number.  This the normal UTM zone used in calculations.
-          * @praam nsZone the north-south zone letter.
+          * @param nsZone the north-south zone letter.
           */
          static void CalculateUTMZone(double latitude, double longitude, unsigned& ewZone, char& nsZone);
 
@@ -553,7 +553,7 @@ namespace dtUtil
           * @param lambda the geodetic longitude in radians
           * @param elevation the geodetic elevation
           * @param x the location in which to store the geocentric x coordinate
-          * @parma y the location in which to store the geocentric y coordinate
+          * @param y the location in which to store the geocentric y coordinate
           * @param z the location in which to store the geocentric z coordinate
           */
          static void GeodeticToGeocentric(double phi, double lambda, double elevation,

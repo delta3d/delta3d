@@ -92,7 +92,7 @@ namespace dtHLAGM
       DDMCalculatorGeographic::DDMObjectKind& kind = GetCalculatorObjectKind();
 
       std::pair<DDMCalculatorGeographic::RegionCalculationType*, long> appSpacePair = GetAppSpaceValues(force, kind);
-      unsigned long mappedValue = MapAppSpaceValue(appSpacePair.second);
+      unsigned int mappedValue = MapAppSpaceValue(appSpacePair.second);
 
       if (logger.IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
       {

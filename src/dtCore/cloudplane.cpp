@@ -15,6 +15,7 @@
 #include <osg/TexMat>
 #include <osg/Vec2>
 #include <osg/Vec3>
+#include <osg/Version>
 
 #include <osgDB/Registry>
 #include <osgDB/ReadFile>
@@ -297,10 +298,11 @@ void CloudPlane::Repaint(const osg::Vec3& skyColor,
    {
       mCloudColor.set(1.0f, 1.0f, 1.0f, 1.0f);
    }
-
-   (*mColors)[0].set(fogColor[0], fogColor[1], fogColor[2], 0.0f);
-   (*mColors)[1].set((mCloudColor)[0], (mCloudColor)[1], (mCloudColor)[2], 1);
-
+   
+   osg::Vec4 fog_color(fogColor, 0.f);
+   osg::Vec4 cloud_color(mCloudColor);
+   cloud_color[3] = 1.f;
+   UpdateColors(fog_color,cloud_color);
    mPlane->setColorArray(mColors);
 }
 
@@ -341,7 +343,7 @@ osg::Geometry* CloudPlane::createPlane(float size, float height)
    /**                    **/
    /** Vertex Coordinates **/
    /**    16 vertices     **/
-   osg::Vec3Array* coords = new osg::Vec3Array;
+   osg::ref_ptr<osg::Vec3Array> coords = new osg::Vec3Array;
 
    for (int y = 0; y < 4; ++y)
       for (int x = 0; x < 4; ++x)
@@ -352,7 +354,7 @@ osg::Geometry* CloudPlane::createPlane(float size, float height)
    /** Coordinate Indices **/
    /**                    **/
    int numIndicesPerRow=numTilesX + 1;
-   osg::UByteArray* coordIndices = new osg::UByteArray;
+   osg::ref_ptr<osg::UByteArray> coordIndices = new osg::UByteArray;
 
    for (int iy=0;iy<numTilesY;++iy)
    {
@@ -395,28 +397,10 @@ osg::Geometry* CloudPlane::createPlane(float size, float height)
       }
    }
 
-
-   /**                     **/
-   /** Colors & Color Indices **/
-   /**                        **/
-   mColors = new osg::Vec4Array;
-   osg::UByteArray* colorIndices = new osg::UByteArray();
-
-   mColors->push_back(osg::Vec4(0.2f,0.2f,0.4f,0.0f)); // fog color - alpha=0
-   mColors->push_back(osg::Vec4(1.0f,1.0f,1.0f,1.f));  // black    - alpha=1
-
-   int _color[36] = {  0,0,0,1,
-                  1,0,0,1,
-                  1,0,0,0,
-                  0,0,1,1,
-                  1,1,1,1,
-                  1,1,0,0,
-                  0,0,1,0,
-                  0,1,1,0,
-                  0,1,0,0};
-
-   for (int c=0; c<36; ++c)
-      colorIndices->push_back(_color[c]);
+   mColors = new osg::Vec4Array(36);
+   osg::Vec4 fog_color(0.2f,0.2f,0.4f,0.0f);
+   osg::Vec4 black_color(1.0f,1.0f,1.0f,1.f);
+   UpdateColors(fog_color, black_color);
 
    /**                    **/
    /** Normals Array      **/
@@ -428,12 +412,24 @@ osg::Geometry* CloudPlane::createPlane(float size, float height)
 
 
    // Set Arrays
-   geom->setVertexArray(coords);
-   geom->setVertexIndices(coordIndices);
+   //this was modified for the osg upgrade to 3.2, where we can no longer set the index array
+   {
+      osg::Vec3Array* coords_lookup = coords;
+      osg::Vec3Array* coords_expanded = new osg::Vec3Array;
+      for (unsigned i = 0; i < coordIndices->size(); i++)
+      {
+         int index = (*coordIndices)[i];
+         coords_expanded->push_back((*coords_lookup)[index]);
+      }
+      geom->setVertexArray(coords_expanded);
+   }
 
+#if OSG_VERSION_LESS_THAN(3,2,0)
    geom->setColorArray(mColors);
-   geom->setColorIndices(colorIndices);
-   geom->setColorBinding(osg::Geometry::BIND_PER_VERTEX);  // To get the correct smoothing at the edges
+   geom->setColorBinding(osg::Geometry::BIND_PER_VERTEX);  
+#else
+   geom->setColorArray(mColors, osg::Array::BIND_PER_VERTEX);
+#endif 
 
    geom->setNormalArray(normals);
    geom->setNormalBinding(osg::Geometry::BIND_OVERALL);
@@ -444,6 +440,27 @@ osg::Geometry* CloudPlane::createPlane(float size, float height)
 
    return geom;
 }
+
+////////////////////////////////////////////////////////////////////////////////
+void dtCore::CloudPlane::UpdateColors( const osg::Vec4& fog, const osg::Vec4& black )
+{
+   if (!mColors)
+      return;
+
+   int _color[36] = {  0,0,0,1,
+      1,0,0,1,
+      1,0,0,0,
+      0,0,1,1,
+      1,1,1,1,
+      1,1,0,0,
+      0,0,1,0,
+      0,1,1,0,
+      0,1,0,0};
+
+   for (int c=0; c<36; ++c)
+      (*mColors)[c] =  _color[c] ? black : fog;
+}
+
 
 ////////////////////////////////////////////////////////////////////////////////
 void CloudPlane::FilterTexture()

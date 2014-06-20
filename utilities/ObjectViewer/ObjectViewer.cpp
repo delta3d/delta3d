@@ -1188,7 +1188,8 @@ void ObjectViewer::GenerateTangentsForObject(dtCore::Object* object)
 
       if (!geom->getVertexAttribArray(6))
       {
-         geom->setVertexAttribData(6, osg::Geometry::ArrayData(tsg->getTangentArray(), osg::Geometry::BIND_PER_VERTEX, GL_FALSE));
+         //geom->setVertexAttribData(6, osg::Geometry::ArrayData(tsg->getTangentArray(), osg::Geometry::BIND_PER_VERTEX, GL_FALSE));
+         geom->setVertexAttribArray(6, tsg->getTangentArray());
       }
    }
 }

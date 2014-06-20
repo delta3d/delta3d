@@ -27,29 +27,20 @@ FIND_PATH(GNE_INCLUDE_DIR gnelib.h
     [HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\Session\ Manager\\Environment;OSG_ROOT]/include
     /usr/freeware/include
 )
+MARK_AS_ADVANCED(GNE_INCLUDE_DIR)
 
 MACRO(FIND_GNE_LIBRARY MYLIBRARY MYLIBRARYNAME)
 
 FIND_LIBRARY(${MYLIBRARY} 
     NAMES ${MYLIBRARYNAME}
-    PATHS
+    HINTS
     ${GNE_DIR}/lib
     $ENV{GNE_DIR}/lib
     $ENV{GNE_DIR}
     ${DELTA3D_EXT_DIR}/lib
     $ENV{DELTA_ROOT}/ext/lib
-    ~/Library/Frameworks
-    /Library/Frameworks
-    /usr/local/lib
-    /usr/lib
-    /sw/lib
-    /opt/local/lib
-    /opt/csw/lib
-    /opt/lib
-    [HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\Session\ Manager\\Environment;OSG_ROOT]/lib
-    /usr/freeware/lib64
 )
-
+MARK_AS_ADVANCED(${MYLIBRARY})
 ENDMACRO(FIND_GNE_LIBRARY MYLIBRARY MYLIBRARYNAME)
 
 SET(GNELIBLIST gne gnelib)

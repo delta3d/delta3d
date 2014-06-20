@@ -45,7 +45,7 @@ namespace dtHLAGM
    }
 
    //////////////////////////////////////////////////////////////
-   bool DDMRegionCalculator::UpdateDimension(DDMRegionData& ddmData, unsigned index, const std::string& name, unsigned long min, unsigned long max)
+   bool DDMRegionCalculator::UpdateDimension(DDMRegionData& ddmData, unsigned index, const std::string& name, unsigned int min, unsigned int max)
    {
       const DDMRegionData::DimensionValues* dv = ddmData.GetDimensionValue(index);
       bool result = false;

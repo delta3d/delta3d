@@ -22,10 +22,10 @@
 #include <dtDirector/eventnode.h>
 #include <dtDirector/colors.h>
 
-#include <dtDAL/actoridactorproperty.h>
-#include <dtDAL/actorproperty.h>
-#include <dtDAL/actorproxy.h>
-#include <dtDAL/intactorproperty.h>
+#include <dtCore/actoridactorproperty.h>
+#include <dtCore/actorproperty.h>
+#include <dtCore/actorproxy.h>
+#include <dtCore/intactorproperty.h>
 
 #include <dtDirector/director.h>
 #include <dtDirector/messagegmcomponent.h>
@@ -68,28 +68,28 @@ namespace dtDirector
    {
       Node::BuildPropertyMap();
 
-      dtDAL::IntActorProperty* triggerCountProp =
-         new dtDAL::IntActorProperty("TriggerCount", "Max Trigger Count",
-         dtDAL::IntActorProperty::SetFuncType(this, &EventNode::SetTriggerCount),
-         dtDAL::IntActorProperty::GetFuncType(this, &EventNode::GetTriggerCount),
+      dtCore::IntActorProperty* triggerCountProp =
+         new dtCore::IntActorProperty("TriggerCount", "Max Trigger Count",
+         dtCore::IntActorProperty::SetFuncType(this, &EventNode::SetTriggerCount),
+         dtCore::IntActorProperty::GetFuncType(this, &EventNode::GetTriggerCount),
          "The maximum number of times this event can be triggered before it is disabled (Zero = no limit).");
       AddProperty(triggerCountProp);
       mValues.push_back(ValueLink(this, triggerCountProp, false, false, true, false));
 
-      mInstigatorProp = new dtDAL::ActorIDActorProperty(
+      mInstigatorProp = new dtCore::ActorIDActorProperty(
          "Instigator", "Instigator",
-         dtDAL::ActorIDActorProperty::SetFuncType(this, &EventNode::SetInstigator),
-         dtDAL::ActorIDActorProperty::GetFuncType(this, &EventNode::GetInstigator),
+         dtCore::ActorIDActorProperty::SetFuncType(this, &EventNode::SetInstigator),
+         dtCore::ActorIDActorProperty::GetFuncType(this, &EventNode::GetInstigator),
          "", "The Instigator that can trigger this event.");
       mValues.push_back(ValueLink(this, mInstigatorProp.get(), true, true, true, false));
 
       // Create the actor filters property.
       if (UsesActorFilters())
       {
-         dtDAL::ActorIDActorProperty* filterProp = new dtDAL::ActorIDActorProperty(
+         dtCore::ActorIDActorProperty* filterProp = new dtCore::ActorIDActorProperty(
             "ActorFilters", "Actor Filters",
-            dtDAL::ActorIDActorProperty::SetFuncType(this, &EventNode::SetActorFilters),
-            dtDAL::ActorIDActorProperty::GetFuncType(this, &EventNode::GetActorFilters),
+            dtCore::ActorIDActorProperty::SetFuncType(this, &EventNode::SetActorFilters),
+            dtCore::ActorIDActorProperty::GetFuncType(this, &EventNode::GetActorFilters),
             "", "The actors that need to cause this event to fire the output.");
 
          mValues.push_back(ValueLink(this, filterProp, false, true, true));

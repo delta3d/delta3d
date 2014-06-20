@@ -10,28 +10,15 @@
 using namespace dtGUI;
 
 ////////////////////////////////////////////////////////////////////////////////
-#if CEGUI_VERSION_MAJOR >= 0 && CEGUI_VERSION_MINOR >= 7
-CEGUIMouseListener::CEGUIMouseListener():
-mWidth(0)
-,mHeight(0)
-,mHalfWidth(0)
-,mHalfHeight(0)
-,mMouseX(0)
-,mMouseY(0)
+CEGUIMouseListener::CEGUIMouseListener()
+: mWidth(0)
+, mHeight(0)
+, mHalfWidth(0)
+, mHalfHeight(0)
+, mMouseX(0)
+, mMouseY(0)
 {
 }
-#else
-CEGUIMouseListener::CEGUIMouseListener(HUD *pGui):
-m_pGUI(pGui)
-,mWidth(0)
-,mHeight(0)
-,mHalfWidth(0)
-,mHalfHeight(0)
-,mMouseX(0)
-,mMouseY(0)
-{
-}
-#endif
 
 ////////////////////////////////////////////////////////////////////////////////
 CEGUIMouseListener::~CEGUIMouseListener()
@@ -48,7 +35,7 @@ void CEGUIMouseListener::SetWindowSize(unsigned int width, unsigned int height)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-bool CEGUIMouseListener::HandleMouseMoved(const dtCore::Mouse* mouse, float x, float y)
+bool CEGUIMouseListener::HandleMouseMoved(const dtCore::Mouse* /*mouse*/, float x, float y)
 {
    MakeCurrent();
 
@@ -70,7 +57,7 @@ bool CEGUIMouseListener::HandleMouseDragged(const dtCore::Mouse* mouse, float x,
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-bool CEGUIMouseListener::HandleButtonPressed(const dtCore::Mouse* mouse, dtCore::Mouse::MouseButton button)
+bool CEGUIMouseListener::HandleButtonPressed(const dtCore::Mouse* /*mouse*/, dtCore::Mouse::MouseButton button)
 {
    MakeCurrent();
 
@@ -94,7 +81,7 @@ bool CEGUIMouseListener::HandleButtonPressed(const dtCore::Mouse* mouse, dtCore:
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-bool CEGUIMouseListener::HandleButtonReleased(const dtCore::Mouse* mouse, dtCore::Mouse::MouseButton button)
+bool CEGUIMouseListener::HandleButtonReleased(const dtCore::Mouse* /*mouse*/, dtCore::Mouse::MouseButton button)
 {
    MakeCurrent();
 
@@ -123,7 +110,7 @@ bool CEGUIMouseListener::HandleButtonReleased(const dtCore::Mouse* mouse, dtCore
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-bool CEGUIMouseListener::HandleMouseScrolled(const dtCore::Mouse* mouse, int delta)
+bool CEGUIMouseListener::HandleMouseScrolled(const dtCore::Mouse* /*mouse*/, int delta)
 {
    MakeCurrent();
 
@@ -133,7 +120,7 @@ bool CEGUIMouseListener::HandleMouseScrolled(const dtCore::Mouse* mouse, int del
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-bool CEGUIMouseListener::HandleButtonClicked(const dtCore::Mouse* mouse, dtCore::Mouse::MouseButton button, int clickCount)
+bool CEGUIMouseListener::HandleButtonClicked(const dtCore::Mouse* /*mouse*/, dtCore::Mouse::MouseButton button, int clickCount)
 {
    CEGUI::System& system = CEGUI::System::getSingleton();
    bool handled = false;

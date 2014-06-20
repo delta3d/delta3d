@@ -77,7 +77,8 @@ namespace dtActors
       mSegGeom->setColorBinding(osg::Geometry::BIND_OVERALL);
 
       mSegGeom->setNormalArray(mSegNormalList.get());
-      mSegGeom->setNormalBinding(osg::Geometry::BIND_PER_PRIMITIVE);
+      //mSegGeom->setNormalBinding(osg::Geometry::BIND_PER_PRIMITIVE);
+      mSegGeom->setNormalBinding(osg::Geometry::BIND_PER_PRIMITIVE_SET);
 
       // Create a texture object to use for the segment.
       mSegTexture = new osg::Texture2D();

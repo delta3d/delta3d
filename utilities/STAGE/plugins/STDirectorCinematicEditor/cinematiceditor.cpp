@@ -35,11 +35,11 @@
 #include <dtDirectorAnimNodes/animateactoraction.h>
 
 #include <dtCore/object.h>
-#include <dtDAL/arrayactorpropertybase.h>
-#include <dtDAL/containeractorproperty.h>
-#include <dtDAL/stringactorproperty.h>
-#include <dtDAL/floatactorproperty.h>
-#include <dtDAL/booleanactorproperty.h>
+#include <dtCore/arrayactorpropertybase.h>
+#include <dtCore/containeractorproperty.h>
+#include <dtCore/stringactorproperty.h>
+#include <dtCore/floatactorproperty.h>
+#include <dtCore/booleanactorproperty.h>
 
 #include <QtCore/QTimeLine>
 
@@ -175,7 +175,7 @@ void DirectorCinematicEditorPlugin::ResetUI()
    int count = (int)mActorData.size();
    for (int index = 0; index < count; ++index)
    {
-      dtDAL::BaseActorObject* proxy = mActorData[index].mActor.get();
+      dtCore::BaseActorObject* proxy = mActorData[index].mActor.get();
       if (proxy)
       {
          QString name = proxy->GetName().c_str();
@@ -312,7 +312,7 @@ void DirectorCinematicEditorPlugin::ResetUI()
 
    if (!NEAR_EQUAL(mUI.mTotalTimeEdit->value(), mTotalTime)) mUI.mTotalTimeEdit->setValue(mTotalTime);
 
-   std::vector<dtDAL::BaseActorObject*> selection;
+   std::vector<dtCore::BaseActorObject*> selection;
    EditorData::GetInstance().GetSelectedActors(selection);
 
    mUI.mAddActorButton->setEnabled(!selection.empty());
@@ -377,7 +377,7 @@ void DirectorCinematicEditorPlugin::Destroy()
 }
 
 //////////////////////////////////////////////////////////////////////////
-void DirectorCinematicEditorPlugin::closeEvent(QCloseEvent* event)
+void DirectorCinematicEditorPlugin::closeEvent(QCloseEvent* /*event*/)
 {
    Close();
 }
@@ -408,7 +408,7 @@ void DirectorCinematicEditorPlugin::onActorsSelected(ActorProxyRefPtrVector& act
       int count = (int)mActorData.size();
       for (int index = 0; index < count; ++index)
       {
-         dtDAL::BaseActorObject* proxy = mActorData[index].mActor.get();
+         dtCore::BaseActorObject* proxy = mActorData[index].mActor.get();
          if (proxy == actors[0].get())
          {
             mSelectedActor = index;
@@ -421,7 +421,7 @@ void DirectorCinematicEditorPlugin::onActorsSelected(ActorProxyRefPtrVector& act
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void DirectorCinematicEditorPlugin::onEndActorMode(Viewport* vp, QMouseEvent* e, bool* overrideDefault)
+void DirectorCinematicEditorPlugin::onEndActorMode(Viewport* /*vp*/, QMouseEvent* /*e*/, bool* /*overrideDefault*/)
 {
    if (mSelectedActor == -1 || !mTransformEvent) return;
 
@@ -466,7 +466,7 @@ void DirectorCinematicEditorPlugin::OnActorComboChanged(int index)
 ////////////////////////////////////////////////////////////////////////////////
 void DirectorCinematicEditorPlugin::OnAddActor()
 {
-   std::vector<dtDAL::BaseActorObject*> selection;
+   std::vector<dtCore::BaseActorObject*> selection;
    EditorData::GetInstance().GetSelectedActors(selection);
 
    int addCount = (int)selection.size();
@@ -476,7 +476,7 @@ void DirectorCinematicEditorPlugin::OnAddActor()
       int count = (int)mActorData.size();
       for (int index = 0; index < count; ++index)
       {
-         dtDAL::BaseActorObject* proxy = mActorData[index].mActor.get();
+         dtCore::BaseActorObject* proxy = mActorData[index].mActor.get();
          if (proxy == selection[addIndex])
          {
             canAdd = false;
@@ -542,7 +542,7 @@ void DirectorCinematicEditorPlugin::OnRemoveActor()
       ViewportManager::GetInstance().refreshAllViewports();
    }
 
-   //dtDAL::BaseActorObject* proxy = mActorData[mSelectedActor].mActor.get();
+   //dtCore::BaseActorObject* proxy = mActorData[mSelectedActor].mActor.get();
    mActorData.erase(mActorData.begin() + mSelectedActor);
    if (mSelectedActor >= (int)mActorData.size())
    {
@@ -667,7 +667,7 @@ void DirectorCinematicEditorPlugin::OnTransformEventSelected(BaseEvent* event)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void DirectorCinematicEditorPlugin::OnTransformEventTimesChanged(int start, int end)
+void DirectorCinematicEditorPlugin::OnTransformEventTimesChanged(int start, int /*end*/)
 {
    int index = -1;
    TransformData* data = GetTransformData(mTransformEvent, &index);
@@ -703,7 +703,7 @@ void DirectorCinematicEditorPlugin::OnAddTransform()
 
    int time = mUI.mTimeSlider->value();
 
-   dtDAL::BaseActorObject* proxy = mActorData[mSelectedActor].mActor.get();
+   dtCore::BaseActorObject* proxy = mActorData[mSelectedActor].mActor.get();
    if (proxy)
    {
       dtCore::Transformable* actor = NULL;
@@ -1006,7 +1006,7 @@ void DirectorCinematicEditorPlugin::OnAnimationEventSelected(BaseEvent* event)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void DirectorCinematicEditorPlugin::OnAnimationEventTimesChanged(int start, int end)
+void DirectorCinematicEditorPlugin::OnAnimationEventTimesChanged(int start, int /*end*/)
 {
    int index = -1;
    AnimationData* data = GetAnimationData(mAnimationEvent, &index);
@@ -1043,7 +1043,7 @@ void DirectorCinematicEditorPlugin::OnAddAnimation()
 
    int time = mUI.mTimeSlider->value();
 
-   dtDAL::BaseActorObject* proxy = mActorData[mSelectedActor].mActor.get();
+   dtCore::BaseActorObject* proxy = mActorData[mSelectedActor].mActor.get();
    if (proxy)
    {
       dtCore::Transformable* actor = NULL;
@@ -1353,7 +1353,7 @@ void DirectorCinematicEditorPlugin::OnOutputEventSelected(BaseEvent* event)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void DirectorCinematicEditorPlugin::OnOutputEventTimesChanged(int start, int end)
+void DirectorCinematicEditorPlugin::OnOutputEventTimesChanged(int start, int /*end*/)
 {
    int index = -1;
    OutputData* data = GetOutputData(mOutputEvent, &index);
@@ -2212,7 +2212,7 @@ void DirectorCinematicEditorPlugin::GotoSelectedActor()
 {
    if (mSelectedActor > -1)
    {
-      std::vector<dtCore::RefPtr<dtDAL::BaseActorObject> > selected;
+      std::vector<dtCore::RefPtr<dtCore::BaseActorObject> > selected;
       selected.push_back(mActorData[mSelectedActor].mActor.get());
       EditorEvents::GetInstance().emitActorsSelected(selected);
       //EditorEvents::GetInstance().emitGotoActor(selected[0]);

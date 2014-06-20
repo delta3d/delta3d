@@ -27,7 +27,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 #include <dtAnim/export.h>
 #include <dtUtil/deprecationmgr.h>
+#include <dtUtil/warningdisable.h>
 
+DT_DISABLE_WARNING_ALL_START
 #include <cal3d/model.h>
 #include <cal3d/hardwaremodel.h>
 #include <cal3d/coremodel.h>
@@ -44,6 +46,8 @@
 #include <osg/BoundingBox>
 
 #include <cal3d/global.h>
+DT_DISABLE_WARNING_END
+
 
 #include <vector>                     // for param type
 

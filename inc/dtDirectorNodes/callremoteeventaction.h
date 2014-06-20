@@ -26,8 +26,8 @@
 
 #include <dtDirector/latentactionnode.h>
 #include <dtDirectorNodes/nodelibraryexport.h>
-#include <dtDAL/actorproperty.h>
-#include <dtDAL/stringactorproperty.h>
+#include <dtCore/actorproperty.h>
+#include <dtCore/stringactorproperty.h>
 
 namespace dtDirector
 {
@@ -81,7 +81,7 @@ namespace dtDirector
        * @return           A temporary property, or NULL if
        *                   none is needed.
        */
-      virtual dtCore::RefPtr<dtDAL::ActorProperty> GetDeprecatedProperty(const std::string& name);
+      virtual dtCore::RefPtr<dtCore::ActorProperty> GetDeprecatedProperty(const std::string& name);
 
       /**
        * Updates the node.
@@ -194,7 +194,7 @@ namespace dtDirector
             return value;
          }
 
-         dtCore::RefPtr<dtDAL::ActorProperty> displayProp;
+         dtCore::RefPtr<dtCore::ActorProperty> displayProp;
          std::string name;
          std::string value;
       };

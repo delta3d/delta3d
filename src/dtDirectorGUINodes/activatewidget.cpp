@@ -22,7 +22,7 @@
 #include <dtDirectorGUINodes/activatewidget.h>
 #include <dtDirectorGUINodes/guinodemanager.h>
 
-#include <dtDAL/stringactorproperty.h>
+#include <dtCore/stringactorproperty.h>
 
 #include <dtGUI/gui.h>
 #include <CEGUI/CEGUIWindow.h>
@@ -56,10 +56,10 @@ namespace dtDirector
    {
       ActionNode::BuildPropertyMap();
 
-      dtDAL::StringActorProperty* widgetProp = new dtDAL::StringActorProperty(
+      dtCore::StringActorProperty* widgetProp = new dtCore::StringActorProperty(
          "Widget", "Widget",
-         dtDAL::StringActorProperty::SetFuncType(this, &ActivateWidget::SetWidget),
-         dtDAL::StringActorProperty::GetFuncType(this, &ActivateWidget::GetWidget),
+         dtCore::StringActorProperty::SetFuncType(this, &ActivateWidget::SetWidget),
+         dtCore::StringActorProperty::GetFuncType(this, &ActivateWidget::GetWidget),
          "The Widget to activate.");
       AddProperty(widgetProp);
 

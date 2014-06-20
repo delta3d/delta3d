@@ -27,8 +27,8 @@ namespace dtCore
 {
    ///////////////////////////////////////////////////////////////////////////////
    NamedUnsignedLongIntParameter::NamedUnsignedLongIntParameter(const dtUtil::RefString& name,
-      unsigned long defaultValue, bool isList)
-      : NamedPODParameter<unsigned long>(dtCore::DataType::ULONGINT, name, defaultValue, isList)
+      unsigned long long defaultValue, bool isList)
+      : NamedPODParameter<unsigned long long>(dtCore::DataType::ULONGINT, name, defaultValue, isList)
    {
    }
 

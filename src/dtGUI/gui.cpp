@@ -211,19 +211,19 @@ class CEGUILogger : public CEGUI::Logger
 
       if(logLevel == CEGUI::Errors)
       {
-         log.LogMessage(__FUNCTION__, __LINE__, message.c_str(), dtUtil::Log::LOG_ERROR);
+         log.LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__, message.c_str());
       }
       else if(logLevel == CEGUI::Warnings)
       {
-         log.LogMessage(__FUNCTION__, __LINE__, message.c_str(), dtUtil::Log::LOG_WARNING);
+         log.LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__, message.c_str());
       }
       else if(logLevel == CEGUI::Standard)
       {
-         log.LogMessage(__FUNCTION__, __LINE__, message.c_str(), dtUtil::Log::LOG_INFO);
+         log.LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__, __LINE__, message.c_str());
       }
       else
       {
-         log.LogMessage(__FUNCTION__, __LINE__, message.c_str(), dtUtil::Log::LOG_DEBUG);
+         log.LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, message.c_str());
       }
 
    }
