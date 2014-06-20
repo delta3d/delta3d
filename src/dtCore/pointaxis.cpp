@@ -7,6 +7,7 @@
 #include <osg/Switch>
 #include <osg/MatrixTransform>
 #include <osg/PolygonMode>
+#include <osg/Version>
 #include <osgText/Text>
 
 #include <cassert>
@@ -609,8 +610,21 @@ PointAxis::AxesSetup(void)
    };
 
    geome->setVertexArray(new osg::Vec3Array(6, vertices));
+#if OSG_VERSION_LESS_THAN(3,2,0)
    geome->setColorArray(new osg::Vec4Array(3, mColor));
    geome->setColorBinding(osg::Geometry::BIND_PER_PRIMITIVE);
+#else
+   {
+	   osg::Vec4Array* color = new osg::Vec4Array(6);
+	   (*color)[0] = mColor[0];
+	   (*color)[1] = mColor[0];
+	   (*color)[2] = mColor[1];
+	   (*color)[3] = mColor[1];
+	   (*color)[4] = mColor[2];
+	   (*color)[5] = mColor[2];
+	   geome->setColorArray(color, osg::Array::BIND_PER_VERTEX);
+   }
+#endif
 
    if(geome->getPrimitiveSetList().empty())
    {

@@ -473,7 +473,7 @@ namespace dtPhysics
          mDataMembers->mGenericBody = dynamic_cast<GenericBodyWrapper*>(mDataMembers->mBaseBody.get());
 
          if (mDataMembers->mGenericBody.valid())
-         {
+         {            
             mDataMembers->mGenericBody->Init();
 
             AddGeometry(geometry);

@@ -7,7 +7,7 @@
 UnitTestApplication::UnitTestApplication():
 dtABC::Application("config.xml")
 {
-#if defined(OPENSCENEGRAPH_MAJOR_VERSION) && OPENSCENEGRAPH_MAJOR_VERSION >= 2 && defined(OPENSCENEGRAPH_MINOR_VERSION) && OPENSCENEGRAPH_MINOR_VERSION >= 6
+#if OSG_VERSION_GREATER_OR_EQUAL(2,6,0)
    /** Little temporary hack to get the unit tests operational with OSG 2.6.0,
     *  which by default, will release the OpenGL context after every frame.
     *  This disables that feature and allows the unit tests to assume there is
