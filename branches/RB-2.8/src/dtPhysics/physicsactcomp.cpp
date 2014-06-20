@@ -1,0 +1,737 @@
+/* -*-c++-*-
+ * Delta3D Open Source Game and Simulation Engine
+ * Copyright (C) 2006, Alion Science and Technology, BMH Operation
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ *
+ * Allen Danklefsen
+ */
+
+#include <dtPhysics/physicsactcomp.h>
+#include <dtPhysics/physicsmaterialactor.h>
+#include <dtPhysics/palphysicsworld.h>
+#include <dtPhysics/action.h>
+#include <dtPhysics/raycast.h>
+#include <dtPhysics/palutil.h>
+#include <dtGame/gameactor.h>
+#include <dtDAL/enginepropertytypes.h>
+
+#include <dtPhysics/physicscomponent.h>
+
+#include <dtPhysics/customraycastcallbacks.h>
+
+namespace dtPhysics
+{
+   const dtUtil::RefString PhysicsActComp::TYPE("PhysicsActComp");
+
+   const dtUtil::RefString PhysicsActComp::PROPERTY_PHYSICS_NAME("Physics Name");
+   const dtUtil::RefString PhysicsActComp::PROPERTY_PHYSICS_MASS("Physics Mass");
+   const dtUtil::RefString PhysicsActComp::PROPERTY_PHYSICS_DIMENSIONS("Physics Dimensions");
+   const dtUtil::RefString PhysicsActComp::PROPERTY_COLLISION_GROUP("Default Collision Group");
+   const dtUtil::RefString PhysicsActComp::PROPERTY_MATERIAL_ACTOR("Material Actor");
+
+   /////////////////////////////////////////////////////////////////////////////
+   class PhysicsActCompAction : public Action
+   {
+   public:
+      PhysicsActCompAction(PhysicsActComp& helper)
+      : mHelper(helper)
+      {
+      }
+
+      virtual void operator()(Real timeStep)
+      {
+         mHelper.ActionUpdate(timeStep);
+      }
+
+      PhysicsActComp& mHelper;
+   };
+
+   /////////////////////////////////////////////////////////////////////////////
+   PhysicsActComp::PhysicsActComp()
+   : dtGame::ActorComponent(PhysicsActComp::TYPE)
+   , mMaterialActorId("")
+   , mMass(0.0f)
+   , mDefaultCollisionGroup(0)
+   , mDefaultPrimitiveType(&PrimitiveType::BOX)
+   {
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   PhysicsActComp::~PhysicsActComp()
+   {
+      // Cleanup now happens in OnRemovedFromWorld.  It can't happen here because it's virtual.
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void PhysicsActComp::SetName(const dtUtil::RefString& n)
+   {
+      mName = n;
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   const dtUtil::RefString& PhysicsActComp::GetName() const
+   {
+      return mName;
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void PhysicsActComp::OnEnteredWorld()
+   {
+      RegisterWithGMComponent();
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void PhysicsActComp::OnRemovedFromWorld()
+   {
+      UnregisterWithGMComponent();
+      CleanUp();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void PhysicsActComp::RegisterWithGMComponent()
+   {
+      PhysicsComponent* comp = NULL;
+
+      dtGame::GameActor* ga = NULL;
+      GetOwner(ga);
+      dtGame::GameActorProxy& act = ga->GetGameActorProxy();
+
+      act.GetGameManager()->
+         GetComponentByName(PhysicsComponent::DEFAULT_NAME, comp);
+
+      if (comp != NULL)
+      {
+         comp->RegisterActorComp(*this);
+      }
+      else
+      {
+         dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
+            "Actor \"%s\"\"%s\" unable to find PhysicsComponent.",
+            act.GetName().c_str(), act.GetId().ToString().c_str());
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void PhysicsActComp::UnregisterWithGMComponent()
+   {
+      PhysicsComponent* comp = NULL;
+
+      dtGame::GameActor* ga = NULL;
+      GetOwner(ga);
+      dtGame::GameActorProxy& act = ga->GetGameActorProxy();
+
+      act.GetGameManager()->
+         GetComponentByName(PhysicsComponent::DEFAULT_NAME, comp);
+
+      if (comp != NULL)
+      {
+         comp->UnregisterActorComp(*this);
+      }
+      else
+      {
+         dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
+            "Actor \"%s\"\"%s\" unable to find PhysicsComponent.",
+            act.GetName().c_str(), act.GetId().ToString().c_str());
+      }
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void PhysicsActComp::BuildPropertyMap()
+   {
+      static const dtUtil::RefString GROUP("PhysicsActComp");
+
+      AddProperty(new dtDAL::ActorIDActorProperty(PROPERTY_MATERIAL_ACTOR, PROPERTY_MATERIAL_ACTOR,
+               dtDAL::ActorIDActorProperty::SetFuncType(this, &PhysicsActComp::SetMaterialActor),
+               dtDAL::ActorIDActorProperty::GetFuncType(this, &PhysicsActComp::GetMaterialActor),
+               dtUtil::RefString("dtPhysics::MaterialActor"),
+               dtUtil::RefString("The actor that defines the material properties of this physics helper."), GROUP));
+
+      static const dtUtil::RefString PROPERTY_PHYSICS_NAME_DESC("The physics reference name.");
+      AddProperty(new dtDAL::StringActorProperty(PROPERTY_PHYSICS_NAME, PROPERTY_PHYSICS_NAME, //ActorName
+               dtDAL::StringActorProperty::SetFuncType(this, &PhysicsActComp::SetNameByString),
+               dtDAL::StringActorProperty::GetFuncType(this, &PhysicsActComp::GetNameAsString),
+               PROPERTY_PHYSICS_NAME_DESC, GROUP));
+
+      static const dtUtil::RefString PROPERTY_PHYSICS_MASS_DESC("The physics mass.  This is a configuration value, "
+               "and can be use however the developer intends.");
+      AddProperty(new dtDAL::FloatActorProperty(PROPERTY_PHYSICS_MASS, PROPERTY_PHYSICS_MASS, //ActorName
+               dtDAL::FloatActorProperty::SetFuncType(this, &PhysicsActComp::SetMass),
+               dtDAL::FloatActorProperty::GetFuncType(this, &PhysicsActComp::GetMass),
+               PROPERTY_PHYSICS_MASS_DESC, GROUP));
+
+      static const dtUtil::RefString PROPERTY_PHYSICS_DIMESNIONS_DESC("The collision dimensions.  This is a configuration value, "
+               "and can be use however the developer intends.");
+      AddProperty(new dtDAL::Vec3ActorProperty(PROPERTY_PHYSICS_DIMENSIONS, PROPERTY_PHYSICS_DIMENSIONS, //ActorName
+               dtDAL::Vec3ActorProperty::SetFuncType(this, &PhysicsActComp::SetDimensions),
+               dtDAL::Vec3ActorProperty::GetFuncType(this, &PhysicsActComp::GetDimensions),
+               PROPERTY_PHYSICS_DIMESNIONS_DESC, GROUP));
+
+      static const dtUtil::RefString PROPERTY_PHYSICS_COLLISION_GROUP_DESC("The default group to use for the physics "
+               "objects.  This is a configuration value, and can be use however the developer intends.");
+      AddProperty(new dtDAL::IntActorProperty(PROPERTY_COLLISION_GROUP, PROPERTY_COLLISION_GROUP,
+               dtDAL::IntActorProperty::SetFuncType(this, &PhysicsActComp::SetDefaultCollisionGroup),
+               dtDAL::IntActorProperty::GetFuncType(this, &PhysicsActComp::GetDefaultCollisionGroup),
+               PROPERTY_PHYSICS_COLLISION_GROUP_DESC, GROUP));
+
+      std::vector<dtCore::RefPtr<dtDAL::ActorProperty> > physicsObjectProps;
+      {
+         //Get properties for the physics objects.
+         PhysicsObjectArray::iterator i, iend;
+         i = mPhysicsObjects.begin();
+         iend = mPhysicsObjects.end();
+         for(; i != iend; ++i)
+         {
+            PhysicsObject& physObj = **i;
+            physObj.BuildPropertyMap(physicsObjectProps);
+         }
+      }
+
+      {
+         std::vector<dtCore::RefPtr<dtDAL::ActorProperty> >::iterator i, iend;
+         i = physicsObjectProps.begin();
+         iend = physicsObjectProps.end();
+         for (; i != iend; ++i)
+         {
+            AddProperty((*i).get());
+         }
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////
+   dtCore::RefPtr<dtDAL::ActorProperty> PhysicsActComp::GetDeprecatedProperty(const std::string& name)
+   {
+      dtCore::RefPtr<dtDAL::ActorProperty> result;
+      dtPhysics::PhysicsObject* po = GetMainPhysicsObject();
+      if (name == "Collision Group")
+      {
+         if (po != NULL)
+         {
+            std::string generatedName(po->GetName());
+            generatedName.append(": ");
+            generatedName.append("Collision Group");
+
+            result = GetProperty(generatedName);
+         }
+         else
+         {
+            result = GetProperty(PROPERTY_COLLISION_GROUP);
+         }
+      }
+      else if (name == "MassForAgeia")
+      {
+         if (po != NULL)
+         {
+            std::string generatedName(po->GetName());
+            generatedName.append(": ");
+            generatedName.append("Mass");
+
+            result = GetProperty(generatedName);
+         }
+         else
+         {
+            result = GetProperty(PROPERTY_PHYSICS_MASS);
+         }
+      }
+      else if (name == "Dimensions")
+      {
+         if (po != NULL)
+         {
+            std::string generatedName(po->GetName());
+            generatedName.append(": ");
+            generatedName.append("Dimensions");
+
+            result = GetProperty(generatedName);
+         }
+         else
+         {
+            result = GetProperty(PROPERTY_PHYSICS_DIMENSIONS);
+         }
+      }
+      else if (name == "IsActorKinematic")
+      {
+         result = new dtDAL::BooleanActorProperty("IsActorKinematic", "IsActorKinematic",
+                  dtDAL::BooleanActorProperty::SetFuncType(this, &PhysicsActComp::SetKinematic),
+                  dtDAL::BooleanActorProperty::GetFuncType(this, &PhysicsActComp::IsKinematic),
+                  "If actor is kinematic it is almost static, but has physics properties when it updates.", "");
+      }
+      return result;
+   }
+
+   //////////////////////////////////////////////////////////////////
+   void PhysicsActComp::SetPrePhysicsCallback(const UpdateCallback& uc)
+   {
+      mPrePhysicsUpdate = uc;
+   }
+
+   //////////////////////////////////////////////////////////////////
+   void PhysicsActComp::SetPostPhysicsCallback(const UpdateCallback& uc)
+   {
+      mPostPhysicsUpdate = uc;
+   }
+
+   //////////////////////////////////////////////////////////////////
+   void PhysicsActComp::SetActionUpdateCallback(const ActionUpdateCallback& uc)
+   {
+      mActionUpdate = uc;
+   }
+
+   //////////////////////////////////////////////////////////////////
+   bool PhysicsActComp::IsPrePhysicsCallbackValid() const
+   {
+      return mPrePhysicsUpdate.valid();
+   }
+
+   //////////////////////////////////////////////////////////////////
+   bool PhysicsActComp::IsPostPhysicsCallbackValid() const
+   {
+      return mPostPhysicsUpdate.valid();
+   }
+
+   //////////////////////////////////////////////////////////////////
+   bool PhysicsActComp::IsActionCallbackValid() const
+   {
+      return mActionUpdate.valid();
+   }
+
+   //////////////////////////////////////////////////////////////////
+   void PhysicsActComp::PrePhysicsUpdate()
+   {
+      if (mPrePhysicsUpdate.valid())
+         mPrePhysicsUpdate();
+
+      // Update the action in pre physics for several reasons.
+      // Creating the helper and/or setting the callback for the action update may happen
+      // in STAGE or another time when the world has not been initalized.
+      // When PrePhysicsUpdate is called, that should all be sorted out, and this way
+      // any changes will get picked up on the next tick, or immediately if done in prephysics
+      if (mActionUpdate.valid())
+      {
+         if (!mHelperAction.valid())
+         {
+            mHelperAction = new PhysicsActCompAction(*this);
+            PhysicsWorld::GetInstance().AddAction(*mHelperAction);
+         }
+      }
+      else
+      {
+         if (mHelperAction.valid())
+         {
+            PhysicsWorld::GetInstance().RemoveAction(*mHelperAction);
+            mHelperAction = NULL;
+         }
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////
+   void PhysicsActComp::PostPhysicsUpdate()
+   {
+      if (mPostPhysicsUpdate.valid())
+         mPostPhysicsUpdate();
+   }
+
+   //////////////////////////////////////////////////////////////////
+   void PhysicsActComp::ActionUpdate(Real dt)
+   {
+      if (mActionUpdate.valid())
+         mActionUpdate(dt);
+   }
+
+   //////////////////////////////////////////////////////////////////
+   void  PhysicsActComp::SetMaterialActor(const dtCore::UniqueId& id)
+   {
+      mMaterialActorId = id;
+   }
+
+   //////////////////////////////////////////////////////////////////
+   const dtCore::UniqueId& PhysicsActComp::GetMaterialActor() const
+   {
+      return mMaterialActorId;
+   }
+
+   //////////////////////////////////////////////////////////////////
+   const MaterialActor* PhysicsActComp::LookupMaterialActor()
+   {
+      const MaterialActor* result = NULL;
+      if (!GetMaterialActor().ToString().empty() )
+      {
+          dtGame::GameActor* ga = NULL;
+          GetOwner(ga);
+          if (ga != NULL)
+          {
+              ga->GetGameActorProxy().GetGameManager()->FindActorById(GetMaterialActor(), result);
+          }
+      }
+      return result;
+   }
+
+   //////////////////////////////////////////////////////////////////
+   void PhysicsActComp::SetMass(Real mass)
+   {
+      mMass = mass;
+   }
+
+   //////////////////////////////////////////////////////////////////
+   Real PhysicsActComp::GetMass() const
+   {
+      return mMass;
+   }
+
+   //////////////////////////////////////////////////////////////////
+   void PhysicsActComp::SetDimensions(const VectorType& dim)
+   {
+      mDimensions = dim;
+   }
+
+   //////////////////////////////////////////////////////////////////
+   const VectorType& PhysicsActComp::GetDimensions() const
+   {
+      return mDimensions;
+   }
+
+   //////////////////////////////////////////////////////////////////
+   CollisionGroup PhysicsActComp::GetDefaultCollisionGroup() const
+   {
+      return mDefaultCollisionGroup;
+   }
+
+   //////////////////////////////////////////////////////////////////
+   void PhysicsActComp::SetDefaultCollisionGroup(CollisionGroup group)
+   {
+      mDefaultCollisionGroup = group;
+   }
+
+   //////////////////////////////////////////////////////////////////
+   void PhysicsActComp::SetDefaultPrimitiveType(PrimitiveType& p)
+   {
+      mDefaultPrimitiveType = &p;
+   }
+
+   //////////////////////////////////////////////////////////////////
+   PrimitiveType& PhysicsActComp::GetDefaultPrimitiveType() const
+   {
+      return *mDefaultPrimitiveType;
+   }
+
+   //////////////////////////////////////////////////////////////////
+   void PhysicsActComp::AddPhysicsObject(PhysicsObject& po, bool makeMain)
+   {
+      if (po.GetUserData() != NULL)
+      {
+         // Should this throw an exception?
+         LOG_ERROR(std::string("The user data on the passed in physics object nameed \"") +
+                  po.GetName() +
+                  "\" is not NULL.  Either it already is added to a helper, "
+                  "or it has a custom user data. Value will be overwritten.");
+      }
+
+      po.SetUserData(this);
+      if (makeMain)
+      {
+         mPhysicsObjects.insert(mPhysicsObjects.begin(), &po);
+      }
+      else
+      {
+         mPhysicsObjects.push_back(&po);
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////
+   const PhysicsObject* PhysicsActComp::GetMainPhysicsObject() const
+   {
+      if (mPhysicsObjects.size() > 0)
+      {
+         return mPhysicsObjects.front().get();
+      }
+      else
+      {
+         return NULL;
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////
+   PhysicsObject* PhysicsActComp::GetMainPhysicsObject()
+   {
+      if (!mPhysicsObjects.empty())
+      {
+         return mPhysicsObjects.front().get();
+      }
+      else
+      {
+         return NULL;
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////
+   const PhysicsObject* PhysicsActComp::GetPhysicsObject(const std::string& name) const
+   {
+      PhysicsObjectArray::const_iterator iter, iend;
+      iter = mPhysicsObjects.begin();
+      iend =  mPhysicsObjects.end();
+      for(; iter != iend; ++iter)
+      {
+         if((*iter)->GetName() == name)
+            return (*iter).get();
+      }
+      return NULL;
+   }
+
+   //////////////////////////////////////////////////////////////////
+   PhysicsObject* PhysicsActComp::GetPhysicsObject(const std::string& name)
+   {
+      PhysicsObjectArray::iterator iter, iend;
+      iter = mPhysicsObjects.begin();
+      iend = mPhysicsObjects.end();
+      for(; iter != iend; ++iter)
+      {
+         if((*iter)->GetName() == name)
+            return (*iter).get();
+      }
+      return NULL;
+   }
+
+   //////////////////////////////////////////////////////////////////
+   void PhysicsActComp::RemovePhysicsObject(const std::string& name)
+   {
+      PhysicsObjectArray::iterator iter, iend;
+      iter = mPhysicsObjects.begin();
+      iend = mPhysicsObjects.end();
+      for(; iter != iend; ++iter)
+      {
+         PhysicsObject& po = **iter;
+         if (po.GetName() == name)
+         {
+            po.SetUserData(NULL);
+            mPhysicsObjects.erase(iter);
+            return;
+         }
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////
+   void PhysicsActComp::RemovePhysicsObject(const PhysicsObject& objectToRemove)
+   {
+      PhysicsObjectArray::iterator iter, iend;
+      iter = mPhysicsObjects.begin();
+      iend = mPhysicsObjects.end();
+      for(; iter != iend; ++iter)
+      {
+         PhysicsObject& po = **iter;
+         if (&po == &objectToRemove)
+         {
+            po.SetUserData(NULL);
+            mPhysicsObjects.erase(iter);
+            return;
+         }
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////
+   void PhysicsActComp::ClearAllPhysicsObjects()
+   {
+      mPhysicsObjects.clear();
+   }
+
+   //////////////////////////////////////////////////////////////////
+   void PhysicsActComp::GetAllPhysicsObjects(std::vector<PhysicsObject*>& toFill)
+   {
+      toFill.reserve(mPhysicsObjects.size() + toFill.size());
+      PhysicsObjectArray::iterator i, iend;
+      i = mPhysicsObjects.begin();
+      iend = mPhysicsObjects.end();
+      for (; i != iend; ++i)
+      {
+         toFill.push_back(i->get());
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////
+   void PhysicsActComp::SetMultiBodyTransform(const TransformType& xform)
+   {
+      PhysicsObject* po = GetMainPhysicsObject();
+      if (po != NULL)
+      {
+         po->SetTransform(xform);
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////
+   void PhysicsActComp::GetMultiBodyTransform(TransformType& xform)
+   {
+      PhysicsObject* po = GetMainPhysicsObject();
+      if (po != NULL)
+      {
+         po->GetTransform(xform);
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////
+   void PhysicsActComp::SetMultiBodyTransformAsVisual(const TransformType& xform)
+   {
+      PhysicsObjectArray::iterator i, iend;
+      i = mPhysicsObjects.begin();
+      iend = mPhysicsObjects.end();
+      for (; i != iend; ++i)
+      {
+         PhysicsObject& po = **i;
+         po.SetTransformAsVisual(xform);
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////
+   void PhysicsActComp::GetMultiBodyTransformAsVisual(TransformType& xform)
+   {
+      PhysicsObject* po = GetMainPhysicsObject();
+      if (po != NULL)
+      {
+         po->GetTransformAsVisual(xform);
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////
+   void PhysicsActComp::CleanUp()
+   {
+      PhysicsObjectArray::iterator i, iend;
+      i = mPhysicsObjects.begin();
+      iend = mPhysicsObjects.end();
+      for (; i != iend; ++i)
+      {
+         PhysicsObject* curPo = *i;
+         if (curPo->GetBaseBodyWrapper() != NULL)
+         {
+            if (PhysicsWorld::GetInstance().IsBackgroundUpdateStepRunning())
+            {
+               LOG_ERROR("Cleaning up physics actor component while physics stepping");
+            }
+         }
+         curPo->CleanUp();
+      }
+
+      if (mHelperAction.valid())
+      {
+         PhysicsWorld::GetInstance().RemoveAction(*mHelperAction);
+         mHelperAction = NULL;
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////
+   void PhysicsActComp::SetNameByString(const std::string& name)
+   {
+      mName = name;
+   }
+
+   //////////////////////////////////////////////////////////////////
+   const std::string& PhysicsActComp::GetNameAsString() const
+   {
+      return mName;
+   }
+
+   /// hiding copy constructor and operator=
+   PhysicsActComp::PhysicsActComp(const PhysicsActComp&)
+   : dtGame::ActorComponent(PhysicsActComp::TYPE)
+   , mMaterialActorId("")
+   , mMass(0.0f)
+   , mDefaultCollisionGroup(0)
+   , mDefaultPrimitiveType(&PrimitiveType::BOX)
+   {
+   }
+
+   /// hiding copy constructor and operator=
+   const PhysicsActComp& PhysicsActComp::operator=(const PhysicsActComp&)
+   {
+      return *this;
+   }
+
+   //////////////////////////////////////////////////////////////////
+   void PhysicsActComp::TraceRay(RayCast& ray, std::vector<RayCast::Report>& hits)
+   {
+      // Create a raycast that should ignore this vehicle.
+      // Pass in the game actor owner of our physics helper so we don't intersect with ourself!
+      FindAllHitsCallback callback(ray.GetDirection().length(), this);
+      PhysicsWorld::GetInstance().TraceRay(ray, callback);
+      hits = callback.mHits;
+   }
+
+   //////////////////////////////////////////////////////////////////
+   float PhysicsActComp::TraceRay(RayCast& ray, RayCast::Report& report)
+   {
+      float closestHitDistance = 0.0f;
+
+      // Create a raycast that should ignore this vehicle.
+      // Pass in the game actor owner of our physics helper so we don't intersect with ourself!
+      FindClosestHitCallback closestHitCallback(ray.GetDirection().length(), this);
+      PhysicsWorld::GetInstance().TraceRay(ray, closestHitCallback);
+
+      if (closestHitCallback.mGotAHit)
+      {
+         PalRayHitToRayCastReport(report, closestHitCallback.mClosestHit);
+         closestHitDistance = closestHitCallback.mClosestHit.m_fDistance;
+      }
+
+      // Returns 0 if no hit or distance to closest hit.  Actual hit loc is in outPoint
+      return closestHitDistance;
+   }
+
+   //////////////////////////////////////////////////////////////////
+   float PhysicsActComp::TraceRay(const VectorType& location,
+      const VectorType& direction , VectorType& outPoint, CollisionGroupFilter groupFlags)
+   {
+      dtPhysics::RayCast ray;
+      ray.SetOrigin(location);
+      ray.SetDirection(direction * 10000.0); // basically, we want it to go out to infinity - should be a parameter probably.
+      ray.SetCollisionGroupFilter(groupFlags);
+
+      dtPhysics::RayCast::Report report;
+
+      // Returns 0 if no hit or distance to closest hit.  Actual hit loc is in outPoint
+      float result = TraceRay(ray, report);
+      if (result > 0.0f)
+      {
+         outPoint = report.mHitPos;
+      }
+      return result;
+   }
+
+   //////////////////////////////////////////////////////////////////
+   void PhysicsActComp::SetKinematic(bool isKinematic)
+   {
+      dtPhysics::PhysicsObject* po = GetMainPhysicsObject();
+
+      if (po != NULL)
+      {
+         if (isKinematic)
+         {
+            po->SetMechanicsType(dtPhysics::MechanicsType::KINEMATIC);
+         }
+         else
+         {
+            po->SetMechanicsType(dtPhysics::MechanicsType::DYNAMIC);
+         }
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////
+   bool PhysicsActComp::IsKinematic() const
+   {
+      const dtPhysics::PhysicsObject* po = GetMainPhysicsObject();
+      if (po != NULL)
+      {
+         return po->GetMechanicsType() == dtPhysics::MechanicsType::KINEMATIC;
+      }
+      return false;
+   }
+
+
+} // namespace dtPhysics

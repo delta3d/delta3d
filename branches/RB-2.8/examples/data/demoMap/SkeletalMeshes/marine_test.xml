@@ -1,0 +1,163 @@
+<character name="marine">
+   <skeleton fileName="Skeleton.csf" />
+   <animation fileName="LowWalk.caf" name="LowWalk" />
+   <animation fileName="LowWalk_Wpn.caf" name="LowWalk with weapon" />
+   <animation fileName="Breath.caf" name="Idle" />
+   <animation fileName="Run.caf" name="Run" />
+   <animation fileName="Walk.caf" name="Walk" />
+   <mesh fileName="HEAD.cmf" name="Head" />
+   <mesh fileName="BODY.cmf" name="Body" />
+   <mesh fileName="Helmet.cmf" name="Helmet" />
+   <mesh fileName="M16m80.cmf" name="M16" />
+   <material fileName="HEAD.crf" name="Head Material" />
+   <material fileName="BODY.crf" name="Body Material" />
+   <material fileName="Helmet.crf" name="Helmet Material" />
+   <material fileName="M16m80.crf" name="M16 Material" />
+   <attachmentPoint bone="Bip02 R Hand" name="attachment1" x="-0.1" y="0.1" z="0.3" rx="90" ry="-90" rz="0.01" />
+   <LOD>
+      <lodStartDistance>1.75</lodStartDistance>
+      <lodEndDistance>43.6</lodEndDistance>
+      <maxVisibleDistance>401.0</maxVisibleDistance>
+   </LOD>
+   <skinningShader>
+      <shaderGroup>HardwareSkinning</shaderGroup>
+      <shaderName>Default</shaderName>
+      <maxBones>71</maxBones>
+   </skinningShader>
+   <animationChannel>
+      <name>Run</name>
+      <animationName>Run</animationName>
+      <startDelay>0.0</startDelay>
+      <fadeIn>0.0</fadeIn>
+      <fadeOut>0.0</fadeOut>
+      <speed>1.0</speed>
+      <baseWeight>1.0</baseWeight>
+      <maxDuration>0.0</maxDuration>
+      <isAction>0</isAction>
+      <isLooping>1</isLooping>
+   </animationChannel>
+   <animationChannel>
+      <name>RunAction</name>
+      <animationName>Run</animationName>
+      <startDelay>0.0</startDelay>
+      <fadeIn>0.0</fadeIn>
+      <fadeOut>0.0</fadeOut>
+      <speed>1.0</speed>
+      <baseWeight>1.0</baseWeight>
+      <maxDuration>0.0</maxDuration>
+      <isAction>1</isAction>
+      <isLooping>0</isLooping>
+   </animationChannel>
+   <animationChannel>
+      <name>Walk</name>
+      <animationName>Walk</animationName>
+      <startDelay>0.0</startDelay>
+      <fadeIn>0.0</fadeIn>
+      <fadeOut>0.0</fadeOut>
+      <speed>1.0</speed>
+      <baseWeight>1.0</baseWeight>
+      <maxDuration>0.0</maxDuration>
+      <isAction>0</isAction>
+      <isLooping>1</isLooping>
+   </animationChannel>
+   <animationChannel>
+      <name>Idle</name>
+      <animationName>Idle</animationName>
+      <startDelay>0.0</startDelay>
+      <fadeIn>0.0</fadeIn>
+      <fadeOut>0.0</fadeOut>
+      <speed>1.0</speed>
+      <baseWeight>1.0</baseWeight>
+      <maxDuration>0.0</maxDuration>
+      <isAction>0</isAction>
+      <isLooping>1</isLooping>
+   </animationChannel>
+   <animationChannel>
+      <name>IdleAction</name>
+      <animationName>Idle</animationName>
+      <startDelay>0.1</startDelay>
+      <fadeIn>0.2</fadeIn>
+      <fadeOut>0.3</fadeOut>
+      <speed>1.1</speed>
+      <baseWeight>0.9</baseWeight>
+      <maxDuration>4.5</maxDuration>
+      <isAction>1</isAction>
+      <isLooping>0</isLooping>
+   </animationChannel>
+   <animationSequence>
+      <name>RunWalk</name>
+      <startDelay>0.1</startDelay>
+      <fadeIn>0.2</fadeIn>
+      <fadeOut>0.2</fadeOut>
+      <speed>1.0</speed>
+      <baseWeight>1.0</baseWeight>
+      <children>
+         <child>Run</child>
+         <child>Walk</child>
+      </children>
+   </animationSequence>
+   <animationChannel>
+      <name>TestEventsAction</name>
+      <animationName>Idle</animationName>
+      <startDelay>0.0</startDelay>
+      <fadeIn>0.0</fadeIn>
+      <fadeOut>0.0</fadeOut>
+      <speed>1.0</speed>
+      <baseWeight>1.0</baseWeight>
+      <maxDuration>4.5</maxDuration>
+      <isAction>1</isAction>
+      <isLooping>0</isLooping>
+      <eventOnStart event="startEvent1"/>
+      <eventOnStart event="startEvent2"/>
+      <eventOnTime offset="0.0" event="startEvent3"/>
+      <eventOnTime offset="0.25" event="midEvent1"/>
+      <eventOnTime offset="0.25" event="midEvent2"/>
+      <eventOnTime offset="0.5" event="midEvent3"/>
+      <eventOnTime offset="-1.0" event="endEvent1"/>
+      <eventOnEnd event="endEvent2"/>
+      <eventOnEnd event="endEvent3"/>
+   </animationChannel>
+   <animationSequence>
+      <name>ActionSequence</name>
+      <startDelay>0.1</startDelay>
+      <fadeIn>0.2</fadeIn>
+      <fadeOut>0.2</fadeOut>
+      <speed>1.0</speed>
+      <baseWeight>1.0</baseWeight>
+      <children>
+         <child>
+            <name>RunAction</name>
+         </child>
+         <child>
+            <name>IdleAction</name>
+            <followPrevious>1</followPrevious>
+         </child>
+      </children>
+   </animationSequence>
+   <animationSequence>
+      <name>ActionSequence2</name>
+      <startDelay>0.0</startDelay>
+      <fadeIn>0.0</fadeIn>
+      <fadeOut>0.0</fadeOut>
+      <speed>1.0</speed>
+      <baseWeight>1.0</baseWeight>
+      <children>
+         <child>
+            <name>RunAction</name>
+         </child>
+         <child>
+            <name>IdleAction</name>
+            <followPrevious>1</followPrevious>
+         </child>
+      </children>
+      <eventOnStart event="seq_startEvent1"/>
+      <eventOnStart event="seq_startEvent2"/>
+      <eventOnTime offset="0.0" event="seq_startEvent3"/>
+      <eventOnTime offset="0.25" event="seq_midEvent1"/>
+      <eventOnTime offset="0.25" event="seq_midEvent2"/>
+      <eventOnTime offset="0.5" event="seq_midEvent3"/>
+      <eventOnTime offset="-1.0" event="seq_endEvent1"/>
+      <eventOnEnd event="seq_endEvent2"/>
+      <eventOnEnd event="seq_endEvent3"/>
+   </animationSequence>
+</character>

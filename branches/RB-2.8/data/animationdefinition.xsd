@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+   <xs:element name="character">
+      <xs:complexType>
+         <xs:choice maxOccurs="unbounded">
+            <xs:element ref="skeleton" />
+            <xs:element ref="animation" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element ref="morph" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element ref="mesh" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element ref="material" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element ref="attachmentPoint" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element ref="LOD" />
+            <xs:element ref="scale" />
+            <xs:element ref="skinningShader" />
+            <xs:element ref="animationChannel" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element ref="animationSequence" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element ref="poseMesh" minOccurs="0" maxOccurs="1" />
+         </xs:choice>
+         <xs:attribute name="name" use="optional">
+            <xs:simpleType>
+               <xs:restriction base="xs:normalizedString" />
+            </xs:simpleType>
+         </xs:attribute>
+      </xs:complexType>
+   </xs:element>
+   <xs:element name="animation">
+      <xs:complexType>
+         <xs:attribute name="fileName" use="required">
+            <xs:simpleType>
+               <xs:restriction base="xs:normalizedString" />
+            </xs:simpleType>
+         </xs:attribute>
+         <xs:attribute name="name" use="optional">
+            <xs:simpleType>
+               <xs:restriction base="xs:normalizedString" />
+            </xs:simpleType>
+         </xs:attribute>
+      </xs:complexType>
+   </xs:element>
+   <xs:element name="morph">
+      <xs:complexType>
+         <xs:attribute name="fileName" use="required">
+            <xs:simpleType>
+               <xs:restriction base="xs:normalizedString" />
+            </xs:simpleType>
+         </xs:attribute>
+         <xs:attribute name="name" use="optional">
+            <xs:simpleType>
+               <xs:restriction base="xs:normalizedString" />
+            </xs:simpleType>
+         </xs:attribute>
+      </xs:complexType>
+   </xs:element>
+   <xs:element name="attachmentPoint">
+      <xs:complexType>
+         <xs:attribute name="bone" use="required">
+            <xs:simpleType>
+               <xs:restriction base="xs:normalizedString" />
+            </xs:simpleType>
+         </xs:attribute>
+         <xs:attribute name="name" use="optional">
+            <xs:simpleType>
+               <xs:restriction base="xs:normalizedString" />
+            </xs:simpleType>
+         </xs:attribute>
+         <xs:attribute name="resource" use="optional">
+            <xs:simpleType>
+               <xs:restriction base="xs:normalizedString" />
+            </xs:simpleType>
+         </xs:attribute>
+         <xs:attribute name="x" use="optional">
+            <xs:simpleType>
+               <xs:restriction base="xs:float" />
+            </xs:simpleType>
+         </xs:attribute>
+         <xs:attribute name="y" use="optional">
+            <xs:simpleType>
+               <xs:restriction base="xs:float" />
+            </xs:simpleType>
+         </xs:attribute>
+         <xs:attribute name="z" use="optional">
+            <xs:simpleType>
+               <xs:restriction base="xs:float" />
+            </xs:simpleType>
+         </xs:attribute>
+         <xs:attribute name="rx" use="optional">
+            <xs:simpleType>
+               <xs:restriction base="xs:float" />
+            </xs:simpleType>
+         </xs:attribute>
+         <xs:attribute name="ry" use="optional">
+            <xs:simpleType>
+               <xs:restriction base="xs:float" />
+            </xs:simpleType>
+         </xs:attribute>
+         <xs:attribute name="rz" use="optional">
+            <xs:simpleType>
+               <xs:restriction base="xs:float" />
+            </xs:simpleType>
+         </xs:attribute>
+      </xs:complexType>
+   </xs:element>
+   <xs:element name="material">
+      <xs:complexType>
+         <xs:attribute name="name" type="xs:normalizedString" use="optional" />
+         <xs:attribute name="fileName" use="required" type="xs:normalizedString"/>
+      </xs:complexType>
+   </xs:element>
+   <xs:element name="mesh">
+      <xs:complexType>
+         <xs:attribute name="name" type="xs:normalizedString" use="optional" />
+         <xs:attribute name="fileName" use="required" type="xs:normalizedString" />
+      </xs:complexType>
+   </xs:element>
+   <xs:element name="skeleton">
+      <xs:complexType>
+         <xs:attribute name="name" type="xs:normalizedString" use="optional" />
+         <xs:attribute name="fileName" use="required" type="xs:normalizedString"/>
+      </xs:complexType>
+   </xs:element>
+   <xs:element name="poseMesh">
+      <xs:complexType>         
+         <xs:attribute name="fileName" use="required" type="xs:normalizedString"/>
+      </xs:complexType>
+   </xs:element>
+   <xs:element name="LOD">
+      <xs:complexType>
+         <xs:sequence>
+            <xs:element name="lodStartDistance" type="xs:float" />
+            <xs:element name="lodEndDistance" type="xs:float" />
+            <xs:element name="maxVisibleDistance" type="xs:float" minOccurs="0" />
+         </xs:sequence>
+      </xs:complexType>
+   </xs:element>
+   <xs:element name="scale">
+      <xs:complexType>
+         <xs:sequence>
+            <xs:element name="scalingFactor" type="xs:float" />
+         </xs:sequence>
+      </xs:complexType>
+   </xs:element>
+   <xs:element name="skinningShader">
+      <xs:complexType>
+         <xs:sequence>
+            <xs:element name="shaderGroup" type="xs:normalizedString" />
+            <xs:element name="shaderName" type="xs:normalizedString" minOccurs="0" />
+            <xs:element name="maxBones" type="xs:unsignedInt" minOccurs="0"/>
+         </xs:sequence>
+      </xs:complexType>
+   </xs:element>
+
+   <xs:attributeGroup name="eventAttrGroup">
+      <xs:attribute name="event" type="xs:normalizedString" use="required"/>
+   </xs:attributeGroup>
+   <xs:attributeGroup name="eventTimedAttrGroup">
+      <xs:attribute name="offset" type="xs:float"/>
+      <xs:attributeGroup ref="eventAttrGroup"/>
+   </xs:attributeGroup>
+
+   <xs:complexType name="event">
+      <xs:attributeGroup ref="eventAttrGroup"/>
+   </xs:complexType>
+   <xs:complexType name="eventTimed">
+      <xs:attributeGroup ref="eventTimedAttrGroup"/>
+   </xs:complexType>
+   
+   <xs:element name="animationChannel">
+      <xs:complexType>
+         <xs:sequence>
+            <xs:element name="name" type="xs:normalizedString" />
+            <xs:element name="animationName" type="xs:normalizedString" />
+            <xs:element name="startDelay" type="xs:float" />
+            <xs:element name="fadeIn" type="xs:float" />
+            <xs:element name="fadeOut" type="xs:float" />
+            <xs:element name="speed" type="xs:float" />
+            <xs:element name="baseWeight" type="xs:float" />
+            <xs:element name="maxDuration" type="xs:float" />
+            <xs:element name="isAction" type="xs:boolean" />
+            <xs:element name="isLooping" type="xs:boolean" />
+            <xs:element name="eventOnStart" type="event" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element name="eventOnTime" type="eventTimed" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element name="eventOnEnd" type="event" minOccurs="0" maxOccurs="unbounded" />
+         </xs:sequence>
+      </xs:complexType>
+   </xs:element>
+   <xs:element name="animationSequence">
+      <xs:complexType>
+         <xs:sequence>
+            <xs:element name="name" type="xs:normalizedString" />
+            <xs:element name="startDelay" type="xs:float" />
+            <xs:element name="fadeIn" type="xs:float" />
+            <xs:element name="fadeOut" type="xs:float" />
+            <xs:element name="speed" type="xs:float" />
+            <xs:element name="baseWeight" type="xs:float" />
+            <xs:element name="children">
+              <xs:complexType>
+                <xs:sequence>
+                   <xs:choice>
+                     <xs:element name="child" minOccurs="1" maxOccurs="unbounded">
+                        <xs:complexType mixed="true">
+                           <xs:sequence>
+                              <xs:element name="name" type="xs:normalizedString" minOccurs="0" maxOccurs="1"/>
+                              <xs:element name="startDelay" type="xs:float" minOccurs="0" maxOccurs="1"/>
+                              <xs:element name="fadeIn" type="xs:float" minOccurs="0" maxOccurs="1"/>
+                              <xs:element name="fadeOut" type="xs:float" minOccurs="0" maxOccurs="1"/>
+                              <xs:element name="crossFade" type="xs:float" minOccurs="0" maxOccurs="1"/>
+                              <xs:choice minOccurs="0" maxOccurs="1">
+                                 <xs:element name="followPrevious" type="xs:integer" />
+                                 <xs:element name="follows" type="xs:normalizedString" />
+                              </xs:choice>
+                              <xs:element name="eventOnStart" type="event" minOccurs="0" maxOccurs="1"/>
+                              <xs:element name="eventOnTime" type="eventTimed" minOccurs="0" maxOccurs="unbounded" />
+                              <xs:element name="eventOnEnd" type="event" minOccurs="0" maxOccurs="1"/>
+                           </xs:sequence>
+                        </xs:complexType>
+                     </xs:element>
+                   </xs:choice>
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+            <xs:element name="eventOnStart" type="event" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element name="eventOnTime" type="eventTimed" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element name="eventOnEnd" type="event" minOccurs="0" maxOccurs="unbounded" />
+         </xs:sequence>
+      </xs:complexType>
+   </xs:element>
+</xs:schema>
