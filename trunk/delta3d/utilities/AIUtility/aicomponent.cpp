@@ -42,11 +42,9 @@
 #include <dtAI/waypointgraph.h>
 #include <dtAI/navmesh.h>
 
-const std::string AIComponent::DEFAULT_NAME("AIComponent");
-
 /////////////////////////////////////////////////////////////
-AIComponent::AIComponent(const std::string& name)
-   : dtAI::BaseAIComponent(name)
+AIComponent::AIComponent()
+   : dtAI::BaseAIComponent()
 {
 
 }

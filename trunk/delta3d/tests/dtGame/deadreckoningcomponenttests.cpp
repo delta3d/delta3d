@@ -70,7 +70,7 @@ namespace dtGame
       public:
          typedef DeadReckoningComponent BaseClass;
 
-         TestDeadReckoningComponent(): DeadReckoningComponent("DeadReckoningComponent") {}
+         TestDeadReckoningComponent(): DeadReckoningComponent() {}
 
          const osg::Vec3& GetLastUsedEyePoint() const
          {

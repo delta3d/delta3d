@@ -152,7 +152,7 @@ void MyGameEntryPoint::OnStartup(dtABC::BaseABC& app, dtGame::GameManager& gamem
    gamemanager.AddComponent(*dnp,dtGame::GameManager::ComponentPriority::HIGHEST);
 
    // Add Component - Input Component
-   dtCore::RefPtr<InputComponent> inputComp = new InputComponent("InputComponent", mInPlaybackMode);
+   dtCore::RefPtr<InputComponent> inputComp = new InputComponent(mInPlaybackMode);
    gamemanager.AddComponent(*inputComp, dtGame::GameManager::ComponentPriority::NORMAL);
 
 #ifdef HLA
@@ -191,8 +191,7 @@ void MyGameEntryPoint::OnStartup(dtABC::BaseABC& app, dtGame::GameManager& gamem
 #endif
 
    // Add Component - HUD Component
-   dtCore::RefPtr<HUDComponent> hudComp = new HUDComponent(app,
-                                                           "HUDComponent");
+   dtCore::RefPtr<HUDComponent> hudComp = new HUDComponent(app);
    gamemanager.AddComponent(*hudComp, dtGame::GameManager::ComponentPriority::NORMAL);
 
    // offset our camera a little back and above the tank.
@@ -223,8 +222,8 @@ void MyGameEntryPoint::OnStartup(dtABC::BaseABC& app, dtGame::GameManager& gamem
 
    // Add the AAR behaviors.
    dtGame::BinaryLogStream* logStream = new dtGame::BinaryLogStream(gamemanager.GetMessageFactory());
-   mServerLogger = new dtGame::ServerLoggerComponent(*logStream, "ServerLoggerComponent");
-   mLogController = new dtGame::LogController("LogController");
+   mServerLogger = new dtGame::ServerLoggerComponent(*logStream);
+   mLogController = new dtGame::LogController();
    gamemanager.AddComponent(*mServerLogger, dtGame::GameManager::ComponentPriority::NORMAL);
    gamemanager.AddComponent(*mLogController, dtGame::GameManager::ComponentPriority::NORMAL);
    if (mInPlaybackMode)

@@ -49,9 +49,11 @@
 
 #include <iostream>
 
+const dtCore::RefPtr<dtCore::SystemComponentType> TestAARInput::TYPE(new dtCore::SystemComponentType("TestAARInput", "GMComponents", "Test AAR Input", dtGame::BaseInputComponent::DEFAULT_TYPE));
+
 ////////////////////////////////////////////////////////////////////
-TestAARInput::TestAARInput(const std::string& name, dtGame::LogController& logCtrl, TestAARHUD& hudComp)
-   : dtGame::BaseInputComponent(name)
+TestAARInput::TestAARInput(dtGame::LogController& logCtrl, TestAARHUD& hudComp)
+   : dtGame::BaseInputComponent(*TYPE)
    , mKeyIsPressed(false)
    , mSimSpeedFactor(1.0)
    , mHudGUI(&hudComp)

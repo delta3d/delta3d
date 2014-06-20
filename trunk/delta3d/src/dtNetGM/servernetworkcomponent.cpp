@@ -34,7 +34,10 @@
 
 namespace dtNetGM
 {
-   const dtUtil::RefString ServerNetworkComponent::DEFAULT_NAME("ServerNetworkComponent");
+   const dtCore::RefPtr<dtCore::SystemComponentType> ServerNetworkComponent::TYPE(new dtCore::SystemComponentType("ServerNetworkComponent","GMComponents",
+         "Server component for client-server networking.",
+         dtNetGM::NetworkComponent::TYPE));
+   const dtUtil::RefString ServerNetworkComponent::DEFAULT_NAME(TYPE->GetName());
 
    // Config settings for the Frame Sync behavior. Initially read during the OnAddedToGM() method. 
    // To override the config settings or the defaults, call the Set methods AFTER adding it to the GM.
@@ -42,11 +45,17 @@ namespace dtNetGM
    const dtUtil::RefString ServerNetworkComponent::CONFIG_PROP_FRAMESYNC_NUMPERSECOND("dtNetGM.FrameSyncNumPerSecond");
    const dtUtil::RefString ServerNetworkComponent::CONFIG_PROP_FRAMESYNC_MAXWAITTIME("dtNetGM.FrameSyncMaxWaitTime");
 
+   ////////////////////////////////////////////////////////////////////////////////
+   ServerNetworkComponent::ServerNetworkComponent(dtCore::SystemComponentType& type)
+   : NetworkComponent(type)
+   , mAcceptClients(true)
+   {
+   }
 
    ////////////////////////////////////////////////////////////////////////////////
    ServerNetworkComponent::ServerNetworkComponent(const std::string& gameName, const int gameVersion, const std::string& logFile)
-      : NetworkComponent(gameName, gameVersion, logFile)
-      , mAcceptClients(true)
+   : NetworkComponent(gameName, gameVersion, logFile)
+   , mAcceptClients(true)
    {
       SetName(DEFAULT_NAME);
    }

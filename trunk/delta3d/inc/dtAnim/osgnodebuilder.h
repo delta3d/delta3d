@@ -27,7 +27,7 @@ namespace dtAnim
       virtual dtCore::RefPtr<osg::Node> CreateSoftwareNoVBO(dtAnim::OsgModelWrapper* wrapper);
       virtual dtCore::RefPtr<osg::Node> CreateHardware(dtAnim::OsgModelWrapper* wrapper);
       
-      dtCore::RefPtr<osg::Node> OsgNodeBuilder::CreateNode(dtAnim::OsgModelWrapper& wrapper);
+      dtCore::RefPtr<osg::Node> CreateNode(dtAnim::OsgModelWrapper& wrapper);
 
       // Returns TRUE if the mode has changed.
       bool EnsureMode(dtAnim::OsgModelWrapper& wrapper, osg::Node& modelNode, bool hardware);

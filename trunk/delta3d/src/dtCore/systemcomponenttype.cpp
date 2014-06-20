@@ -25,6 +25,8 @@
 namespace dtCore
 {
 
+   const SystemComponentType SystemComponentType::BaseSystemComponentType("Base", "SystemComponents", "Base type for system components.", NULL);
+
    SystemComponentType::SystemComponentType(const std::string& name,
          const std::string& component,
          const std::string& desc,

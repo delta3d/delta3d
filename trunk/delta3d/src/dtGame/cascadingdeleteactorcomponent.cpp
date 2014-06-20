@@ -29,7 +29,6 @@
 
 namespace dtGame
 {
-   const ActorComponent::ACType CascadingDeleteActorComponent::TYPE( new dtCore::ActorType("CascadingDeleteActorComponent", "ActorComponents", "", dtGame::ActorComponent::BaseActorComponentType));
 
    ////////////////////////////////////////////////////////////////////////////////
    CascadingDeleteActorComponent::CascadingDeleteActorComponent()

@@ -15,14 +15,16 @@
 #include <dtGame/message.h>
 #include <dtGame/messagetype.h>
 
-using namespace dtDIS;
+namespace dtDIS
+{
+const dtCore::RefPtr<dtCore::SystemComponentType> MasterComponent::TYPE(new dtCore::SystemComponentType("DISComponent","GMComponents", dtGame::GMComponent::BaseGMComponentType));
 
-const std::string MasterComponent::DEFAULT_NAME = "dtDIS_MasterComponent";
+const std::string MasterComponent::DEFAULT_NAME = TYPE->GetName();
 
 ////////////////////////////////////////////////////////////////////////////////
 ///\todo what should set the network stream's endian type?  the SharedState's connection data?
 MasterComponent::MasterComponent(SharedState* config)
-   : dtGame::GMComponent(DEFAULT_NAME)
+   : dtGame::GMComponent(*TYPE)
    , mPluginManager()
    , mConnection()
    , mIncomingMessage()

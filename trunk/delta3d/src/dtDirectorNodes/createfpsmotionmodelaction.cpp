@@ -255,12 +255,12 @@ namespace dtDirector
             model->GetFPSCollider().SetCollisionBitsForTorso(GetUInt("Torso Collision"));
             model->GetFPSCollider().SetCollisionBitsForFeet(GetUInt("Feet Collision"));
 
-            dtCore::ActorProxy* proxy = GetActor("Actor");
-            if (proxy)
+            dtCore::ActorProxy* actor = GetActor("Actor");
+            if (actor)
             {
-               dtCore::Transformable* actor = NULL;
-               proxy->GetActor(actor);
-               model->SetTarget(actor);
+               dtCore::Transformable* xformable = NULL;
+               actor->GetDrawable(xformable);
+               model->SetTarget(xformable);
             }
 
             return ActionNode::Update(simDelta, delta, input, firstUpdate);
@@ -284,12 +284,12 @@ namespace dtDirector
             model->GetFPSCollider().SetCollisionBitsForFeet(GetUInt("Feet Collision"));
             model->SetScene(app->GetScene());
 
-            dtCore::ActorProxy* proxy = GetActor("Actor");
-            if (proxy)
+            dtCore::ActorProxy* actor = GetActor("Actor");
+            if (actor)
             {
-               dtCore::Transformable* actor = NULL;
-               proxy->GetActor(actor);
-               model->SetTarget(actor);
+               dtCore::Transformable* xformable = NULL;
+               actor->GetDrawable(xformable);
+               model->SetTarget(xformable);
             }
 
             return ActionNode::Update(simDelta, delta, input, firstUpdate);

@@ -41,8 +41,10 @@
 class TUTORIAL_TANK_EXPORT InputComponent : public dtGame::BaseInputComponent
 {
 public:
+   static const dtCore::RefPtr<dtCore::SystemComponentType> TYPE;
+
    // Constructor
-   InputComponent(const std::string& name, bool inPlaybackMode);
+   InputComponent(bool inPlaybackMode);
 
    // Find our GameEvents after the map is loaded
    void SetupEvents();

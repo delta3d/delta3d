@@ -48,6 +48,7 @@ namespace dtAnim
    class AnimationGameActorProxy;
 }
 
+
 ////////////////////////////////////////////////////////////////////////////////
 class TEST_ANIM_EXPORT TestProceduralAnimation : public dtGame::GameEntryPoint
 {

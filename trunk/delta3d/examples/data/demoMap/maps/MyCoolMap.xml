@@ -8,59 +8,33 @@
         <comment></comment>
         <copyright></copyright>
         <createTimestamp>2005-07-20T15:24:07.0-05:00</createTimestamp>
-        <lastUpdateTimestamp>2010-03-29T18:14:55-08:00</lastUpdateTimestamp>
-        <editorVersion>2.5.0</editorVersion>
+        <lastUpdateTimestamp>2014-06-20T15:51:36-05:00</lastUpdateTimestamp>
+        <editorVersion>2.8.0</editorVersion>
         <schemaVersion>1.0</schemaVersion>
     </header>
     <libraries></libraries>
     <actors>
         <actor>
+            <type>GMComponents.AnimationComponent</type>
+            <id>0770AA04-E01F-4561-8FA0-F27427186D6A</id>
+            <name>AnimationComponent_01</name>
+        </actor>
+        <actor>
+            <type>GMComponents.DeadReckoning</type>
+            <id>1A0DA440-2E11-4168-B639-34AEF0E9C504</id>
+            <name>GMComponents.DeadReckoning</name>
+        </actor>
+        <actor>
             <type>dtcore.Action.Bezier Controller</type>
             <id>2b67341e-1c25-4f8f-92d6-7a57fc082d1e</id>
             <name>Controller0</name>
-            <property>
-                <name>Description</name>
-                <string></string>
-            </property>
-            <property>
-                <name>IsActive</name>
-                <boolean>true</boolean>
-            </property>
             <property>
                 <name>Time Step</name>
                 <float>0.0099999998</float>
             </property>
             <property>
-                <name>Tick Once Per Frame</name>
-                <boolean>false</boolean>
-            </property>
-            <property>
                 <name>Target Object</name>
                 <actorId>39c7f896-d8a9-493f-87dd-4d155cdf13b3</actorId>
-            </property>
-            <property>
-                <name>Parent Object</name>
-                <actorId></actorId>
-            </property>
-            <property>
-                <name>Parent Relation</name>
-                <enumerated>NO_RELATION</enumerated>
-            </property>
-            <property>
-                <name>Rotation</name>
-                <vec3>
-                    <value1>0.000000</value1>
-                    <value2>0.000000</value2>
-                    <value3>0.000000</value3>
-                </vec3>
-            </property>
-            <property>
-                <name>Translation</name>
-                <vec3>
-                    <value1>0.000000</value1>
-                    <value2>0.000000</value2>
-                    <value3>0.000000</value3>
-                </vec3>
             </property>
             <property>
                 <name>Start Node</name>
@@ -70,33 +44,21 @@
                 <name>Render Path</name>
                 <boolean>false</boolean>
             </property>
-            <property>
-                <name>Follow Path</name>
-                <boolean>false</boolean>
-            </property>
-            <property>
-                <name>Set Looping</name>
-                <boolean>false</boolean>
-            </property>
         </actor>
         <actor>
             <type>dtcore.Curve.Bezier Control Point</type>
             <id>33013719-065f-4369-ab49-d17ba5b851c3</id>
             <name>ControlPoint1</name>
             <property>
-                <name>Description</name>
-                <string></string>
-            </property>
-            <property>
-                <name>IsActive</name>
-                <boolean>true</boolean>
+                <name>Name</name>
+                <string>ControlPoint1</string>
             </property>
             <property>
                 <name>Rotation</name>
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-29.399965</value3>
+                    <value3>-29.399939</value3>
                 </vec3>
             </property>
             <property>
@@ -108,44 +70,8 @@
                 </vec3>
             </property>
             <property>
-                <name>Normal Rescaling</name>
-                <boolean>true</boolean>
-            </property>
-            <property>
-                <name>Show Collision Geometry</name>
-                <boolean>false</boolean>
-            </property>
-            <property>
-                <name>Collision Type</name>
-                <enumerated>NONE</enumerated>
-            </property>
-            <property>
-                <name>Collision Radius</name>
-                <float>0</float>
-            </property>
-            <property>
-                <name>Collision Length</name>
-                <float>0</float>
-            </property>
-            <property>
-                <name>Collision Box</name>
-                <vec3>
-                    <value1>0.000000</value1>
-                    <value2>0.000000</value2>
-                    <value3>0.000000</value3>
-                </vec3>
-            </property>
-            <property>
-                <name>Enable Collision</name>
-                <boolean>false</boolean>
-            </property>
-            <property>
-                <name>Render Proxy Node</name>
-                <boolean>false</boolean>
-            </property>
-            <property>
                 <name>Bezier Node</name>
-                <actorId>b44ce00a-3b08-40e7-b366-884de5ff559f</actorId>
+                <actorId>3d2da066-2fea-4980-acf8-4c74db250795</actorId>
             </property>
         </actor>
         <actor>
@@ -153,98 +79,32 @@
             <id>39c7f896-d8a9-493f-87dd-4d155cdf13b3</id>
             <name>helo</name>
             <property>
-                <name>Description</name>
-                <string></string>
-            </property>
-            <property>
-                <name>IsActive</name>
-                <boolean>true</boolean>
+                <name>Name</name>
+                <string>helo</string>
             </property>
             <property>
                 <name>Rotation</name>
                 <vec3>
-                    <value1>-0.533537</value1>
-                    <value2>3.112463</value2>
-                    <value3>-1.097492</value3>
+                    <value1>0.000011</value1>
+                    <value2>-0.000016</value2>
+                    <value3>-111.696182</value3>
                 </vec3>
             </property>
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>23.261152</value1>
-                    <value2>-45.428703</value2>
-                    <value3>4.127718</value3>
+                    <value1>8.349057</value1>
+                    <value2>-50.911324</value2>
+                    <value3>1.966280</value3>
                 </vec3>
-            </property>
-            <property>
-                <name>Normal Rescaling</name>
-                <boolean>true</boolean>
-            </property>
-            <property>
-                <name>Show Collision Geometry</name>
-                <boolean>false</boolean>
-            </property>
-            <property>
-                <name>Collision Type</name>
-                <enumerated>NONE</enumerated>
-            </property>
-            <property>
-                <name>Collision Radius</name>
-                <float>0</float>
-            </property>
-            <property>
-                <name>Collision Length</name>
-                <float>0</float>
-            </property>
-            <property>
-                <name>Collision Box</name>
-                <vec3>
-                    <value1>0.000000</value1>
-                    <value2>0.000000</value2>
-                    <value3>0.000000</value3>
-                </vec3>
-            </property>
-            <property>
-                <name>Enable Collision</name>
-                <boolean>false</boolean>
-            </property>
-            <property>
-                <name>Render Proxy Node</name>
-                <boolean>false</boolean>
-            </property>
-            <property>
-                <name>Enable Dynamics</name>
-                <boolean>false</boolean>
             </property>
             <property>
                 <name>Mass</name>
                 <float>4.1887898</float>
             </property>
             <property>
-                <name>Center of Gravity</name>
-                <vec3>
-                    <value1>0.000000</value1>
-                    <value2>0.000000</value2>
-                    <value3>0.000000</value3>
-                </vec3>
-            </property>
-            <property>
                 <name>Initial Ownership</name>
                 <enumerated>Server+Published</enumerated>
-            </property>
-            <property>
-                <name>Local Actor Update Policy</name>
-                <enumerated>ACCEPT_ALL</enumerated>
-            </property>
-            <property>
-                <name>ShaderGroup</name>
-                <string></string>
-            </property>
-            <property>
-                <name>CurrentShader</name>
-                <resourceType>Shaders</resourceType>
-                <resourceDisplayName></resourceDisplayName>
-                <resource></resource>
             </property>
             <property>
                 <name>static mesh</name>
@@ -252,30 +112,14 @@
                 <resourceDisplayName>StaticMeshes::uh-1n.ive</resourceDisplayName>
                 <resource>StaticMeshes::uh-1n.ive</resource>
             </property>
-            <property>
-                <name>use cache object</name>
-                <boolean>true</boolean>
-            </property>
-            <property>
-                <name>Scale</name>
-                <vec3>
-                    <value1>1.000000</value1>
-                    <value2>1.000000</value2>
-                    <value3>1.000000</value3>
-                </vec3>
-            </property>
         </actor>
         <actor>
             <type>dtcore.Curve.Bezier Node</type>
             <id>3d2da066-2fea-4980-acf8-4c74db250795</id>
             <name>BezierNode1</name>
             <property>
-                <name>Description</name>
-                <string></string>
-            </property>
-            <property>
-                <name>IsActive</name>
-                <boolean>true</boolean>
+                <name>Name</name>
+                <string>BezierNode1</string>
             </property>
             <property>
                 <name>Rotation</name>
@@ -292,42 +136,6 @@
                     <value2>-12.483970</value2>
                     <value3>7.000000</value3>
                 </vec3>
-            </property>
-            <property>
-                <name>Normal Rescaling</name>
-                <boolean>true</boolean>
-            </property>
-            <property>
-                <name>Show Collision Geometry</name>
-                <boolean>false</boolean>
-            </property>
-            <property>
-                <name>Collision Type</name>
-                <enumerated>NONE</enumerated>
-            </property>
-            <property>
-                <name>Collision Radius</name>
-                <float>0</float>
-            </property>
-            <property>
-                <name>Collision Length</name>
-                <float>0</float>
-            </property>
-            <property>
-                <name>Collision Box</name>
-                <vec3>
-                    <value1>0.000000</value1>
-                    <value2>0.000000</value2>
-                    <value3>0.000000</value3>
-                </vec3>
-            </property>
-            <property>
-                <name>Enable Collision</name>
-                <boolean>false</boolean>
-            </property>
-            <property>
-                <name>Render Proxy Node</name>
-                <boolean>false</boolean>
             </property>
             <property>
                 <name>Time to Next</name>
@@ -359,12 +167,8 @@
             <id>3ee83bce-267b-441e-ba2a-59b55c9c3373</id>
             <name>StaticMesh1</name>
             <property>
-                <name>Description</name>
-                <string></string>
-            </property>
-            <property>
-                <name>IsActive</name>
-                <boolean>true</boolean>
+                <name>Name</name>
+                <string>StaticMesh1</string>
             </property>
             <property>
                 <name>Rotation</name>
@@ -383,80 +187,8 @@
                 </vec3>
             </property>
             <property>
-                <name>Normal Rescaling</name>
-                <boolean>true</boolean>
-            </property>
-            <property>
-                <name>Show Collision Geometry</name>
-                <boolean>false</boolean>
-            </property>
-            <property>
-                <name>Collision Type</name>
-                <enumerated>NONE</enumerated>
-            </property>
-            <property>
-                <name>Collision Radius</name>
-                <float>0</float>
-            </property>
-            <property>
-                <name>Collision Length</name>
-                <float>0</float>
-            </property>
-            <property>
-                <name>Collision Box</name>
-                <vec3>
-                    <value1>0.000000</value1>
-                    <value2>0.000000</value2>
-                    <value3>0.000000</value3>
-                </vec3>
-            </property>
-            <property>
-                <name>Enable Collision</name>
-                <boolean>false</boolean>
-            </property>
-            <property>
-                <name>Render Proxy Node</name>
-                <boolean>false</boolean>
-            </property>
-            <property>
-                <name>Enable Dynamics</name>
-                <boolean>false</boolean>
-            </property>
-            <property>
                 <name>Mass</name>
                 <float>4.1887898</float>
-            </property>
-            <property>
-                <name>Center of Gravity</name>
-                <vec3>
-                    <value1>0.000000</value1>
-                    <value2>0.000000</value2>
-                    <value3>0.000000</value3>
-                </vec3>
-            </property>
-            <property>
-                <name>Scale</name>
-                <vec3>
-                    <value1>1.000000</value1>
-                    <value2>1.000000</value2>
-                    <value3>1.000000</value3>
-                </vec3>
-            </property>
-            <property>
-                <name>Model Rotation</name>
-                <vec3>
-                    <value1>-0.000000</value1>
-                    <value2>0.000000</value2>
-                    <value3>-0.000000</value3>
-                </vec3>
-            </property>
-            <property>
-                <name>Model Translation</name>
-                <vec3>
-                    <value1>0.000000</value1>
-                    <value2>0.000000</value2>
-                    <value3>0.000000</value3>
-                </vec3>
             </property>
             <property>
                 <name>static mesh</name>
@@ -470,12 +202,8 @@
             <id>44a9a42f-46be-423e-849c-01cfb62eab87</id>
             <name>ControlPoint3</name>
             <property>
-                <name>Description</name>
-                <string></string>
-            </property>
-            <property>
-                <name>IsActive</name>
-                <boolean>true</boolean>
+                <name>Name</name>
+                <string>ControlPoint3</string>
             </property>
             <property>
                 <name>Rotation</name>
@@ -494,42 +222,6 @@
                 </vec3>
             </property>
             <property>
-                <name>Normal Rescaling</name>
-                <boolean>true</boolean>
-            </property>
-            <property>
-                <name>Show Collision Geometry</name>
-                <boolean>false</boolean>
-            </property>
-            <property>
-                <name>Collision Type</name>
-                <enumerated>NONE</enumerated>
-            </property>
-            <property>
-                <name>Collision Radius</name>
-                <float>0</float>
-            </property>
-            <property>
-                <name>Collision Length</name>
-                <float>0</float>
-            </property>
-            <property>
-                <name>Collision Box</name>
-                <vec3>
-                    <value1>0.000000</value1>
-                    <value2>0.000000</value2>
-                    <value3>0.000000</value3>
-                </vec3>
-            </property>
-            <property>
-                <name>Enable Collision</name>
-                <boolean>false</boolean>
-            </property>
-            <property>
-                <name>Render Proxy Node</name>
-                <boolean>false</boolean>
-            </property>
-            <property>
                 <name>Bezier Node</name>
                 <actorId>a6999cb5-af09-4cf3-bc55-14b0424218f6</actorId>
             </property>
@@ -539,12 +231,8 @@
             <id>4f0db0e3-80ab-4171-a446-168a8838dabb</id>
             <name>SkyBox</name>
             <property>
-                <name>Description</name>
-                <string></string>
-            </property>
-            <property>
-                <name>IsActive</name>
-                <boolean>true</boolean>
+                <name>Name</name>
+                <string>SkyBox</string>
             </property>
             <property>
                 <name>Top Texture</name>
@@ -588,12 +276,8 @@
             <id>658c6682-2808-4863-bdfc-c61a2f118915</id>
             <name>BezierNode2</name>
             <property>
-                <name>Description</name>
-                <string></string>
-            </property>
-            <property>
-                <name>IsActive</name>
-                <boolean>true</boolean>
+                <name>Name</name>
+                <string>BezierNode2</string>
             </property>
             <property>
                 <name>Rotation</name>
@@ -610,42 +294,6 @@
                     <value2>-40.343292</value2>
                     <value3>4.673883</value3>
                 </vec3>
-            </property>
-            <property>
-                <name>Normal Rescaling</name>
-                <boolean>true</boolean>
-            </property>
-            <property>
-                <name>Show Collision Geometry</name>
-                <boolean>false</boolean>
-            </property>
-            <property>
-                <name>Collision Type</name>
-                <enumerated>NONE</enumerated>
-            </property>
-            <property>
-                <name>Collision Radius</name>
-                <float>0</float>
-            </property>
-            <property>
-                <name>Collision Length</name>
-                <float>0</float>
-            </property>
-            <property>
-                <name>Collision Box</name>
-                <vec3>
-                    <value1>0.000000</value1>
-                    <value2>0.000000</value2>
-                    <value3>0.000000</value3>
-                </vec3>
-            </property>
-            <property>
-                <name>Enable Collision</name>
-                <boolean>false</boolean>
-            </property>
-            <property>
-                <name>Render Proxy Node</name>
-                <boolean>false</boolean>
             </property>
             <property>
                 <name>Time to Next</name>
@@ -677,14 +325,6 @@
             <id>803a511a-3228-4c99-967d-2102220c4f2a</id>
             <name>ControlPoint0</name>
             <property>
-                <name>Description</name>
-                <string></string>
-            </property>
-            <property>
-                <name>IsActive</name>
-                <boolean>true</boolean>
-            </property>
-            <property>
                 <name>Rotation</name>
                 <vec3>
                     <value1>0.000000</value1>
@@ -701,42 +341,6 @@
                 </vec3>
             </property>
             <property>
-                <name>Normal Rescaling</name>
-                <boolean>true</boolean>
-            </property>
-            <property>
-                <name>Show Collision Geometry</name>
-                <boolean>false</boolean>
-            </property>
-            <property>
-                <name>Collision Type</name>
-                <enumerated>NONE</enumerated>
-            </property>
-            <property>
-                <name>Collision Radius</name>
-                <float>0</float>
-            </property>
-            <property>
-                <name>Collision Length</name>
-                <float>0</float>
-            </property>
-            <property>
-                <name>Collision Box</name>
-                <vec3>
-                    <value1>0.000000</value1>
-                    <value2>0.000000</value2>
-                    <value3>0.000000</value3>
-                </vec3>
-            </property>
-            <property>
-                <name>Enable Collision</name>
-                <boolean>false</boolean>
-            </property>
-            <property>
-                <name>Render Proxy Node</name>
-                <boolean>false</boolean>
-            </property>
-            <property>
                 <name>Bezier Node</name>
                 <actorId>b44ce00a-3b08-40e7-b366-884de5ff559f</actorId>
             </property>
@@ -745,14 +349,6 @@
             <type>dtcore.Triggers.AutoTrigger</type>
             <id>a1c5a74e-86cc-4957-99bd-d44a5e06229d</id>
             <name>AutoTrigger</name>
-            <property>
-                <name>Description</name>
-                <string></string>
-            </property>
-            <property>
-                <name>IsActive</name>
-                <boolean>true</boolean>
-            </property>
             <property>
                 <name>Action</name>
                 <actorId>2b67341e-1c25-4f8f-92d6-7a57fc082d1e</actorId>
@@ -767,104 +363,8 @@
             <id>a215ea47-5c0b-4b47-8320-1eb943384bba</id>
             <name>terrain</name>
             <property>
-                <name>Description</name>
-                <string></string>
-            </property>
-            <property>
-                <name>IsActive</name>
-                <boolean>true</boolean>
-            </property>
-            <property>
-                <name>Rotation</name>
-                <vec3>
-                    <value1>0.000000</value1>
-                    <value2>0.000000</value2>
-                    <value3>0.000000</value3>
-                </vec3>
-            </property>
-            <property>
-                <name>Translation</name>
-                <vec3>
-                    <value1>0.000000</value1>
-                    <value2>0.000000</value2>
-                    <value3>0.000000</value3>
-                </vec3>
-            </property>
-            <property>
-                <name>Normal Rescaling</name>
-                <boolean>true</boolean>
-            </property>
-            <property>
-                <name>Show Collision Geometry</name>
-                <boolean>false</boolean>
-            </property>
-            <property>
-                <name>Collision Type</name>
-                <enumerated>NONE</enumerated>
-            </property>
-            <property>
-                <name>Collision Radius</name>
-                <float>0</float>
-            </property>
-            <property>
-                <name>Collision Length</name>
-                <float>0</float>
-            </property>
-            <property>
-                <name>Collision Box</name>
-                <vec3>
-                    <value1>0.000000</value1>
-                    <value2>0.000000</value2>
-                    <value3>0.000000</value3>
-                </vec3>
-            </property>
-            <property>
-                <name>Enable Collision</name>
-                <boolean>false</boolean>
-            </property>
-            <property>
-                <name>Render Proxy Node</name>
-                <boolean>false</boolean>
-            </property>
-            <property>
-                <name>Enable Dynamics</name>
-                <boolean>false</boolean>
-            </property>
-            <property>
-                <name>Mass</name>
-                <float>4.1887903</float>
-            </property>
-            <property>
-                <name>Center of Gravity</name>
-                <vec3>
-                    <value1>0.000000</value1>
-                    <value2>0.000000</value2>
-                    <value3>0.000000</value3>
-                </vec3>
-            </property>
-            <property>
-                <name>Scale</name>
-                <vec3>
-                    <value1>1.000000</value1>
-                    <value2>1.000000</value2>
-                    <value3>1.000000</value3>
-                </vec3>
-            </property>
-            <property>
-                <name>Model Rotation</name>
-                <vec3>
-                    <value1>-0.000000</value1>
-                    <value2>0.000000</value2>
-                    <value3>-0.000000</value3>
-                </vec3>
-            </property>
-            <property>
-                <name>Model Translation</name>
-                <vec3>
-                    <value1>0.000000</value1>
-                    <value2>0.000000</value2>
-                    <value3>0.000000</value3>
-                </vec3>
+                <name>Name</name>
+                <string>terrain</string>
             </property>
             <property>
                 <name>static mesh</name>
@@ -878,12 +378,8 @@
             <id>a6999cb5-af09-4cf3-bc55-14b0424218f6</id>
             <name>BezierNode8</name>
             <property>
-                <name>Description</name>
-                <string></string>
-            </property>
-            <property>
-                <name>IsActive</name>
-                <boolean>true</boolean>
+                <name>Name</name>
+                <string>BezierNode8</string>
             </property>
             <property>
                 <name>Rotation</name>
@@ -902,42 +398,6 @@
                 </vec3>
             </property>
             <property>
-                <name>Normal Rescaling</name>
-                <boolean>true</boolean>
-            </property>
-            <property>
-                <name>Show Collision Geometry</name>
-                <boolean>false</boolean>
-            </property>
-            <property>
-                <name>Collision Type</name>
-                <enumerated>NONE</enumerated>
-            </property>
-            <property>
-                <name>Collision Radius</name>
-                <float>0</float>
-            </property>
-            <property>
-                <name>Collision Length</name>
-                <float>0</float>
-            </property>
-            <property>
-                <name>Collision Box</name>
-                <vec3>
-                    <value1>0.000000</value1>
-                    <value2>0.000000</value2>
-                    <value3>0.000000</value3>
-                </vec3>
-            </property>
-            <property>
-                <name>Enable Collision</name>
-                <boolean>false</boolean>
-            </property>
-            <property>
-                <name>Render Proxy Node</name>
-                <boolean>false</boolean>
-            </property>
-            <property>
                 <name>Time to Next</name>
                 <float>4</float>
             </property>
@@ -950,14 +410,6 @@
                 <actorId>44a9a42f-46be-423e-849c-01cfb62eab87</actorId>
             </property>
             <property>
-                <name>Exit Control Point</name>
-                <actorId></actorId>
-            </property>
-            <property>
-                <name>Next Bezier Node</name>
-                <actorId></actorId>
-            </property>
-            <property>
                 <name>Previous Bezier Node</name>
                 <actorId>658c6682-2808-4863-bdfc-c61a2f118915</actorId>
             </property>
@@ -966,14 +418,6 @@
             <type>dtcore.Curve.Bezier Node</type>
             <id>b44ce00a-3b08-40e7-b366-884de5ff559f</id>
             <name>BezierNode0</name>
-            <property>
-                <name>Description</name>
-                <string></string>
-            </property>
-            <property>
-                <name>IsActive</name>
-                <boolean>true</boolean>
-            </property>
             <property>
                 <name>Rotation</name>
                 <vec3>
@@ -991,52 +435,12 @@
                 </vec3>
             </property>
             <property>
-                <name>Normal Rescaling</name>
-                <boolean>true</boolean>
-            </property>
-            <property>
-                <name>Show Collision Geometry</name>
-                <boolean>false</boolean>
-            </property>
-            <property>
-                <name>Collision Type</name>
-                <enumerated>NONE</enumerated>
-            </property>
-            <property>
-                <name>Collision Radius</name>
-                <float>0</float>
-            </property>
-            <property>
-                <name>Collision Length</name>
-                <float>0</float>
-            </property>
-            <property>
-                <name>Collision Box</name>
-                <vec3>
-                    <value1>0.000000</value1>
-                    <value2>0.000000</value2>
-                    <value3>0.000000</value3>
-                </vec3>
-            </property>
-            <property>
-                <name>Enable Collision</name>
-                <boolean>false</boolean>
-            </property>
-            <property>
-                <name>Render Proxy Node</name>
-                <boolean>false</boolean>
-            </property>
-            <property>
                 <name>Time to Next</name>
                 <float>4</float>
             </property>
             <property>
                 <name>Time Step</name>
                 <float>0.02</float>
-            </property>
-            <property>
-                <name>Entry Control Point</name>
-                <actorId></actorId>
             </property>
             <property>
                 <name>Exit Control Point</name>
@@ -1046,27 +450,19 @@
                 <name>Next Bezier Node</name>
                 <actorId>3d2da066-2fea-4980-acf8-4c74db250795</actorId>
             </property>
-            <property>
-                <name>Previous Bezier Node</name>
-                <actorId></actorId>
-            </property>
         </actor>
         <actor>
             <type>dtcore.Player Start</type>
             <id>c56e759a-c5ec-4597-868e-0a55035ac1e0</id>
             <name>startPosition</name>
             <property>
-                <name>Description</name>
-                <string></string>
-            </property>
-            <property>
-                <name>IsActive</name>
-                <boolean>true</boolean>
+                <name>Name</name>
+                <string>startPosition</string>
             </property>
             <property>
                 <name>Rotation</name>
                 <vec3>
-                    <value1>-7.399708</value1>
+                    <value1>-7.399734</value1>
                     <value2>0.000011</value2>
                     <value3>8.800031</value3>
                 </vec3>
@@ -1079,54 +475,14 @@
                     <value3>11.011871</value3>
                 </vec3>
             </property>
-            <property>
-                <name>Normal Rescaling</name>
-                <boolean>true</boolean>
-            </property>
-            <property>
-                <name>Show Collision Geometry</name>
-                <boolean>false</boolean>
-            </property>
-            <property>
-                <name>Collision Type</name>
-                <enumerated>NONE</enumerated>
-            </property>
-            <property>
-                <name>Collision Radius</name>
-                <float>0</float>
-            </property>
-            <property>
-                <name>Collision Length</name>
-                <float>0</float>
-            </property>
-            <property>
-                <name>Collision Box</name>
-                <vec3>
-                    <value1>0.000000</value1>
-                    <value2>0.000000</value2>
-                    <value3>0.000000</value3>
-                </vec3>
-            </property>
-            <property>
-                <name>Enable Collision</name>
-                <boolean>false</boolean>
-            </property>
-            <property>
-                <name>Render Proxy Node</name>
-                <boolean>false</boolean>
-            </property>
         </actor>
         <actor>
             <type>dtcore.Curve.Bezier Control Point</type>
             <id>f5e207ef-b4ba-4647-98a1-79ab291dbba5</id>
             <name>ControlPoint2</name>
             <property>
-                <name>Description</name>
-                <string></string>
-            </property>
-            <property>
-                <name>IsActive</name>
-                <boolean>true</boolean>
+                <name>Name</name>
+                <string>ControlPoint2</string>
             </property>
             <property>
                 <name>Rotation</name>
@@ -1145,47 +501,12 @@
                 </vec3>
             </property>
             <property>
-                <name>Normal Rescaling</name>
-                <boolean>true</boolean>
-            </property>
-            <property>
-                <name>Show Collision Geometry</name>
-                <boolean>false</boolean>
-            </property>
-            <property>
-                <name>Collision Type</name>
-                <enumerated>NONE</enumerated>
-            </property>
-            <property>
-                <name>Collision Radius</name>
-                <float>0</float>
-            </property>
-            <property>
-                <name>Collision Length</name>
-                <float>0</float>
-            </property>
-            <property>
-                <name>Collision Box</name>
-                <vec3>
-                    <value1>0.000000</value1>
-                    <value2>0.000000</value2>
-                    <value3>0.000000</value3>
-                </vec3>
-            </property>
-            <property>
-                <name>Enable Collision</name>
-                <boolean>false</boolean>
-            </property>
-            <property>
-                <name>Render Proxy Node</name>
-                <boolean>false</boolean>
-            </property>
-            <property>
                 <name>Bezier Node</name>
                 <actorId>658c6682-2808-4863-bdfc-c61a2f118915</actorId>
             </property>
         </actor>
     </actors>
     <groups></groups>
+    <drawablehierarchy></drawablehierarchy>
     <presetCameras></presetCameras>
 </map>

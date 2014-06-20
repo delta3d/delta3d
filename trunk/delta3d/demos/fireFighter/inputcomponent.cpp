@@ -57,10 +57,10 @@
 
 using dtCore::RefPtr;
 
-const std::string InputComponent::NAME = "InputComponent";
+const RefPtr<dtCore::SystemComponentType> InputComponent::NAME(new dtCore::SystemComponentType("InputComponent", "GMComponents", "Firefighter input", dtGame::BaseInputComponent::DEFAULT_TYPE));
 
-InputComponent::InputComponent(const std::string& name)
-   : dtGame::BaseInputComponent(name)
+InputComponent::InputComponent(dtCore::SystemComponentType& type)
+   : dtGame::BaseInputComponent(type)
    , mCurrentState(&GameState::STATE_UNKNOWN)
    , mPlayer(NULL)
    , mMotionModel(NULL)

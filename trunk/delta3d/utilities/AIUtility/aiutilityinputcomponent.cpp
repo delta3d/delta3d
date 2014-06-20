@@ -27,9 +27,15 @@
 #include <dtAI/waypointgraph.h>
 
 #include <iostream>
+
+const dtCore::RefPtr<dtCore::SystemComponentType> AIUtilityInputComponent::TYPE(new dtCore::SystemComponentType("AIUtilityInputComponent","GMComponents",
+      "Internal input component for the AI Utility.",
+      dtGame::BaseInputComponent::DEFAULT_TYPE));
+
+
 ////////////////////////////////////////////////////////////////////////////////
-AIUtilityInputComponent::AIUtilityInputComponent(const std::string &name /*= "AIUtilityInputComponent"*/)
-: dtGame::BaseInputComponent(name)
+AIUtilityInputComponent::AIUtilityInputComponent()
+: dtGame::BaseInputComponent(*TYPE)
 , mpAIInterface(NULL)
 , mCameraSpeed(5.0f)
 , mCameraMotionModel(NULL)

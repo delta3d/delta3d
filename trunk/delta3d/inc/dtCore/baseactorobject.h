@@ -204,6 +204,11 @@ namespace dtCore
       virtual bool IsGameActor() const { return false; }
 
       /**
+       * If this actor represents a high level system component.  The code may chose to handle this differently.
+       */
+      virtual bool IsSystemComponent() const { return false; }
+
+      /**
        * Does nothing
        */
       DEPRECATE_FUNC virtual ResourceDescriptor GetResource(const std::string& name);

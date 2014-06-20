@@ -33,10 +33,9 @@
 
 namespace dtGame
 {
-   const std::string TaskComponent::DEFAULT_NAME = "TaskComponent";
-
    //////////////////////////////////////////////////////////////////////////
-   TaskComponent::TaskComponent(const std::string &name) : GMComponent(name)
+   TaskComponent::TaskComponent(dtCore::SystemComponentType& type)
+   : GMComponent(type)
    {
    }
 

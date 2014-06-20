@@ -59,25 +59,25 @@ namespace dtAnim
 
       T_Anim* GetAnimation(const std::string& name)
       {
-         AnimMap::iterator iter = mAnims.find(name);
+         typename AnimMap::iterator iter = mAnims.find(name);
          return iter != mAnims.end() ? iter->second.get() : NULL;
       }
 
       T_Bone* GetBone(const std::string& name)
       {
-         BoneMap::iterator iter = mBones.find(name);
+         typename BoneMap::iterator iter = mBones.find(name);
          return iter != mBones.end() ? iter->second.get() : NULL;
       }
 
       T_Material* GetMaterial(const std::string& name)
       {
-         MaterialMap::iterator iter = mMaterials.find(name);
+         typename MaterialMap::iterator iter = mMaterials.find(name);
          return iter != mMaterials.end() ? iter->second.get() : NULL;
       }
 
       T_Mesh* GetMesh(const std::string& name)
       {
-         MeshMap::iterator iter = mMeshes.find(name);
+         typename MeshMap::iterator iter = mMeshes.find(name);
          return iter != mMeshes.end() ? iter->second.get() : NULL;
       }
 
@@ -92,8 +92,8 @@ namespace dtAnim
          // The array may or may not contain other items.
          int results = 0;
 
-         AnimMap::iterator curIter = mAnims.begin();
-         AnimMap::iterator endIter = mAnims.end();
+         typename AnimMap::iterator curIter = mAnims.begin();
+         typename AnimMap::iterator endIter = mAnims.end();
          for (; curIter != endIter; ++curIter)
          {
             outAnims.push_back(curIter->second.get());
@@ -109,8 +109,8 @@ namespace dtAnim
          // The array may or may not contain other items.
          int results = 0;
       
-         BoneMap::iterator curIter = mBones.begin();
-         BoneMap::iterator endIter = mBones.end();
+         typename BoneMap::iterator curIter = mBones.begin();
+         typename BoneMap::iterator endIter = mBones.end();
          for (; curIter != endIter; ++curIter)
          {
             outBones.push_back(curIter->second.get());
@@ -126,8 +126,8 @@ namespace dtAnim
          // The array may or may not contain other items.
          int results = 0;
       
-         MaterialMap::iterator curIter = mMaterials.begin();
-         MaterialMap::iterator endIter = mMaterials.end();
+         typename MaterialMap::iterator curIter = mMaterials.begin();
+         typename MaterialMap::iterator endIter = mMaterials.end();
          for (; curIter != endIter; ++curIter)
          {
             outMaterials.push_back(curIter->second.get());
@@ -143,8 +143,8 @@ namespace dtAnim
          // The array may or may not contain other items.
          int results = 0;
       
-         MeshMap::iterator curIter = mMeshes.begin();
-         MeshMap::iterator endIter = mMeshes.end();
+         typename MeshMap::iterator curIter = mMeshes.begin();
+         typename MeshMap::iterator endIter = mMeshes.end();
          for (; curIter != endIter; ++curIter)
          {
             outMeshes.push_back(curIter->second.get());

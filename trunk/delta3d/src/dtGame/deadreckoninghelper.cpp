@@ -36,10 +36,6 @@
 
 namespace dtGame
 {
-   const ActorComponent::ACType DeadReckoningHelper::TYPE(new dtCore::ActorType("DeadReckoningActComp", "ActorComponents",
-         "Moves, rotates, and ground-clamps actors based on dead-reckoning data.  It also receives the updates from the network.",
-         ActorComponent::BaseActorComponentType));
-
    IMPLEMENT_ENUM(DeadReckoningAlgorithm);
    DeadReckoningAlgorithm DeadReckoningAlgorithm::NONE("None");
    DeadReckoningAlgorithm DeadReckoningAlgorithm::STATIC("Static");

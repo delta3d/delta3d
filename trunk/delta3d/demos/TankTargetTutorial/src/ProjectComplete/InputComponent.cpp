@@ -33,9 +33,12 @@
 #include <dtGame/messagetype.h>
 #include <dtGame/messagefactory.h>
 
+const dtCore::RefPtr<dtCore::SystemComponentType> InputComponent::TYPE(new dtCore::SystemComponentType("InputComponent-Tank", "GMComponents", "Tank Target input", dtGame::BaseInputComponent::DEFAULT_TYPE));
+
+
 ////////////////////////////////////////////////////////////////////
-InputComponent::InputComponent(const std::string& name, bool inPlaybackMode)
-   : dtGame::BaseInputComponent(name)
+InputComponent::InputComponent(bool inPlaybackMode)
+   : dtGame::BaseInputComponent(*TYPE)
    , mToggleEngineEvent(0)
    , mSpeedBoost(0)
    , mTankFired(0)

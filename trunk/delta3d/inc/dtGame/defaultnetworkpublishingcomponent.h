@@ -36,71 +36,72 @@ namespace dtGame
 
    class DT_GAME_EXPORT DefaultNetworkPublishingComponent : public GMComponent
    {
-      public:
+   public:
 
-         static const std::string DEFAULT_NAME;
+      static const dtCore::RefPtr<dtCore::SystemComponentType> TYPE;
+      static const std::string DEFAULT_NAME;
 
-         /// Constructor
-         DefaultNetworkPublishingComponent(const std::string& name = DEFAULT_NAME);
+      /// Constructor
+      DefaultNetworkPublishingComponent(dtCore::SystemComponentType& type = *TYPE);
 
-         /**
-          * Processes messages sent from the Game Manager
-          * @param The message to process
-          * @see dtGame::GameManager
-          */
-         virtual void ProcessMessage(const Message& msg);
+      /**
+       * Processes messages sent from the Game Manager
+       * @param The message to process
+       * @see dtGame::GameManager
+       */
+      virtual void ProcessMessage(const Message& msg);
 
-         /**
-          * Sends a message
-          * @param The message to send
-          */
-         virtual void DispatchNetworkMessage(const Message& msg);
+      /**
+       * Sends a message
+       * @param The message to send
+       */
+      virtual void DispatchNetworkMessage(const Message& msg);
 
-         /// @return true if the given type has been added a type to publish, aside from the default behavior.
-         bool PublishesAdditionalMessageType(const MessageType& type) const;
-         /// Adds a message type to publish over the network.
-         void AddMessageTypeToPublish(const MessageType& type);
-         /// Removes a message type to publish over the network.
-         void RemoveMessageTypeToPublish(const MessageType& type);
+      /// @return true if the given type has been added a type to publish, aside from the default behavior.
+      bool PublishesAdditionalMessageType(const MessageType& type) const;
+      /// Adds a message type to publish over the network.
+      void AddMessageTypeToPublish(const MessageType& type);
+      /// Removes a message type to publish over the network.
+      void RemoveMessageTypeToPublish(const MessageType& type);
 
-      protected:
+   protected:
 
-         /// Destructor
-         virtual ~DefaultNetworkPublishingComponent();
+      /// Destructor
+      virtual ~DefaultNetworkPublishingComponent();
 
-         /**
-          * Processes an incoming actor published message
-          * @param The message
-          */
-         virtual void ProcessPublishActor(const Message& msg, GameActorProxy& gap);
+      /**
+       * Processes an incoming actor published message
+       * @param The message
+       */
+      virtual void ProcessPublishActor(const Message& msg, GameActorProxy& gap);
 
-         /**
-          * Processes an incoming actor deleted message
-          * @param The message
-          */
-         virtual void ProcessDeleteActor(const Message& msg);
+      /**
+       * Processes an incoming actor deleted message
+       * @param The message
+       */
+      virtual void ProcessDeleteActor(const Message& msg);
 
-         /**
-          * Processes an incoming actor update message
-          * @param The message
-          */
-         virtual void ProcessUpdateActor(const ActorUpdateMessage& msg);
+      /**
+       * Processes an incoming actor update message
+       * @param The message
+       */
+      virtual void ProcessUpdateActor(const ActorUpdateMessage& msg);
 
-         /**
-          * Processes an unhandled local message
-          * @param The message
-          */
-         virtual void ProcessUnhandledLocalMessage(const Message& msg);
+      /**
+       * Processes an unhandled local message
+       * @param The message
+       */
+      virtual void ProcessUnhandledLocalMessage(const Message& msg);
 
-         /**
-          * Processes an unhandled remote message
-          * @param The message
-          */
-         virtual void ProcessUnhandledRemoteMessage(const Message& msg);
+      /**
+       * Processes an unhandled remote message
+       * @param The message
+       */
+      virtual void ProcessUnhandledRemoteMessage(const Message& msg);
 
-         dtUtil::Log* mLogger;
-      private:
-         std::set<const MessageType*> mMessageTypesToPublish;
+      dtUtil::Log* mLogger;
+   private:
+      std::set<const MessageType*> mMessageTypesToPublish;
    };
 }
 

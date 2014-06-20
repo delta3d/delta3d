@@ -146,6 +146,23 @@ namespace dtAnim
 
       osgAnimation::ActionStripAnimation* GetActionForAnimation(osgAnimation::Animation& anim);
 
+      class ActionTimer : public osg::Referenced
+      {
+      public:
+         ActionTimer(float timer = 0.0f, osgAnimation::Action* action = NULL,
+            osgAnimation::Animation* osgAnim = NULL,
+            dtAnim::OsgAnimation* anim = NULL);
+
+         dtCore::RefPtr<osgAnimation::Action> mAction;
+         dtCore::RefPtr<osgAnimation::Animation> mOsgAnim;
+         dtCore::RefPtr<dtAnim::OsgAnimation> mAnim;
+         float mTimer;
+
+      protected:
+         virtual ~ActionTimer() {}
+      };
+
+
    private:
       bool mPaused;
       int mNumCyclesSynced;
@@ -172,21 +189,6 @@ namespace dtAnim
       typedef std::vector<dtCore::RefPtr<CycleInfo> > CycleInfoArray;
       CycleInfoArray mCycleInfos;
 
-      class ActionTimer : public osg::Referenced
-      {
-      public:
-         ActionTimer(float timer = 0.0f, osgAnimation::Action* action = NULL,
-            osgAnimation::Animation* osgAnim = NULL,
-            dtAnim::OsgAnimation* anim = NULL);
-
-         dtCore::RefPtr<osgAnimation::Action> mAction;
-         dtCore::RefPtr<osgAnimation::Animation> mOsgAnim;
-         dtCore::RefPtr<dtAnim::OsgAnimation> mAnim;
-         float mTimer;
-
-      protected:
-         virtual ~ActionTimer() {}
-      };
 
       typedef std::map<osgAnimation::Action*, dtCore::RefPtr<ActionTimer> > ActionTimeMap;
       ActionTimeMap mActionClearTimers;

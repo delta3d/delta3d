@@ -32,13 +32,11 @@ namespace dtAI
 class AIComponent : public dtAI::BaseAIComponent
 {
 public:
-   static const std::string DEFAULT_NAME;
-
    static const unsigned int SUGGESTED_MAX_RENDERABLE_WAYPOINTS_WITH_TEXT = 50000;
    static const unsigned int SUGGESTED_MAX_RENDERABLE_EDGES = 50000;
 
    /// Constructor
-   AIComponent(const std::string& name = DEFAULT_NAME);
+   AIComponent();
 
    /**
     * Handles incoming messages

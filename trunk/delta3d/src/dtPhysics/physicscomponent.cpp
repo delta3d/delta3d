@@ -1,25 +1,25 @@
 /* -*-c++-*-
-* Delta3D Open Source Game and Simulation Engine
-* Copyright (C) 2006, Alion Science and Technology, BMH Operation
-*
-* This library is free software; you can redistribute it and/or modify it under
-* the terms of the GNU Lesser General Public License as published by the Free
-* Software Foundation; either version 2.1 of the License, or (at your option)
-* any later version.
-*
-* This library is distributed in the hope that it will be useful, but WITHOUT
-* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-* FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
-* details.
-*
-* You should have received a copy of the GNU Lesser General Public License
-* along with this library; if not, write to the Free Software Foundation, Inc.,
-* 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-*
-* @author Brad Anderegg
-* @author Allen Danklefsen
-* @author David Guthrie
-*/
+ * Delta3D Open Source Game and Simulation Engine
+ * Copyright (C) 2006, Alion Science and Technology, BMH Operation
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ *
+ * @author Brad Anderegg
+ * @author Allen Danklefsen
+ * @author David Guthrie
+ */
 #include <dtPhysics/physicscomponent.h>
 
 #include <dtPhysics/palphysicsworld.h>
@@ -44,17 +44,32 @@
 
 namespace dtPhysics
 {
+   const dtCore::RefPtr<dtCore::SystemComponentType> PhysicsComponent::TYPE(new dtCore::SystemComponentType("PhysicsComponent","GMComponents",
+         "Maintains the physics worlds and the updating of them."));
 
-   const std::string PhysicsComponent::DEFAULT_NAME = "PhysicsComponent";
+   const std::string PhysicsComponent::DEFAULT_NAME(TYPE->GetName());
+
+   /////////////////////////////////////////////////////////////////////////////
+   PhysicsComponent::PhysicsComponent(dtCore::SystemComponentType& type)
+   : GMComponent(type)
+   , mStepInBackground(false)
+   , mSteppingEnabled(true)
+   , mImpl(NULL)
+   , mClearOnMapchange(true)
+   , mOverrodeStepInBackground(false)
+   {
+      // Impl...
+   }
 
    /////////////////////////////////////////////////////////////////////////////
    PhysicsComponent::PhysicsComponent(dtPhysics::PhysicsWorld& world, bool debugPhysics,
-      const std::string& componentName) : GMComponent(componentName)
-      , mStepInBackground(false)
-      , mSteppingEnabled(true)
-      , mImpl(&world)
-      , mClearOnMapchange(true)
-      , mOverrodeStepInBackground(false)
+         dtCore::SystemComponentType& type)
+   : GMComponent(type)
+   , mStepInBackground(false)
+   , mSteppingEnabled(true)
+   , mImpl(&world)
+   , mClearOnMapchange(true)
+   , mOverrodeStepInBackground(false)
    {
    }
 
@@ -66,55 +81,55 @@ namespace dtPhysics
    /////////////////////////////////////////////////////////////////////////////
    class PhysicsComponentPreUpdateFunc
    {
-      public:
-         PhysicsComponentPreUpdateFunc()
-         {}
+   public:
+      PhysicsComponentPreUpdateFunc()
+   {}
 
-         void operator()(dtCore::RefPtr<PhysicsActComp>& helper)
-         {
-            helper->PrePhysicsUpdate();
-         }
+      void operator()(dtCore::RefPtr<PhysicsActComp>& helper)
+      {
+         helper->PrePhysicsUpdate();
+      }
 
-      private:
+   private:
    };
 
    /////////////////////////////////////////////////////////////////////////////
    class PhysicsComponentPostUpdateFunc
    {
-      public:
-         PhysicsComponentPostUpdateFunc()
-         {}
+   public:
+      PhysicsComponentPostUpdateFunc()
+   {}
 
-         void operator()(dtCore::RefPtr<PhysicsActComp>& helper)
-         {
-            helper->PostPhysicsUpdate();
-         }
+      void operator()(dtCore::RefPtr<PhysicsActComp>& helper)
+      {
+         helper->PostPhysicsUpdate();
+      }
 
-      private:
+   private:
    };
 
    /////////////////////////////////////////////////////////////////////////////
    class PhysicsComponentRemoveFunc
    {
-      public:
-         PhysicsComponentRemoveFunc(const dtCore::UniqueId& id):
-            mId(id)
-         {}
+   public:
+      PhysicsComponentRemoveFunc(const dtCore::UniqueId& id):
+         mId(id)
+   {}
 
-         bool operator()(dtCore::RefPtr<PhysicsActComp>& actComp)
+      bool operator()(dtCore::RefPtr<PhysicsActComp>& actComp)
+      {
+         dtGame::GameActorProxy* act = NULL;
+         actComp->GetOwner(act);
+         if (act != NULL && act->GetId() == mId)
          {
-            dtGame::GameActorProxy* act = NULL;
-            actComp->GetOwner(act);
-            if (act != NULL && act->GetId() == mId)
-            {
-               actComp->CleanUp();
-               return true;
-            }
-            return false;
+            actComp->CleanUp();
+            return true;
          }
+         return false;
+      }
 
-      private:
-         const dtCore::UniqueId& mId;
+   private:
+      const dtCore::UniqueId& mId;
    };
 
    /////////////////////////////////////////////////////////////////////////////
@@ -148,9 +163,9 @@ namespace dtPhysics
       else if (message.GetMessageType() == dtGame::MessageType::INFO_ACTOR_DELETED)
       {
          mRegisteredActorComps.erase(
-                  std::remove_if(mRegisteredActorComps.begin(), mRegisteredActorComps.end(),
+               std::remove_if(mRegisteredActorComps.begin(), mRegisteredActorComps.end(),
                      PhysicsComponentRemoveFunc(message.GetAboutActorId())),
-                  mRegisteredActorComps.end());
+                     mRegisteredActorComps.end());
       }
       else if(message.GetMessageType() == dtGame::MessageType::INFO_MAP_LOADED)
       {
@@ -214,7 +229,7 @@ namespace dtPhysics
          }
 
          bool physicsDrawActive = !GetPhysicsWorld().GetDebugDrawEnabled() ||
-                  !EnvActor->GetDrawable()->GetActive();
+               !EnvActor->GetDrawable()->GetActive();
          bool worldActive = dtPhysics::PhysicsWorld::GetInstance().GetDebugDrawEnabled();
 
          dtPhysics::PhysicsWorld::GetInstance().SetDebugDrawEnabled(physicsDrawActive);
@@ -365,7 +380,7 @@ namespace dtPhysics
       if (!mOverrodeStepInBackground)
       {
          std::string enableStepInBackground = GetGameManager()->GetConfiguration().
-            GetConfigPropertyValue("dtPhysics.EnableStepPhysicsInBackground", "false");
+               GetConfigPropertyValue("dtPhysics.EnableStepPhysicsInBackground", "false");
          if (dtUtil::ToType<bool>(enableStepInBackground))
          {
             SetStepInBackground(true);

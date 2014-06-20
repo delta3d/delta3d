@@ -47,6 +47,7 @@ namespace dtDIS
    class DT_DIS_EXPORT MasterComponent : public dtGame::GMComponent
    {
    public:
+      static const dtCore::RefPtr<dtCore::SystemComponentType> TYPE;
       static const std::string DEFAULT_NAME;
 
       /// supply the configuration files needed to support DIS.

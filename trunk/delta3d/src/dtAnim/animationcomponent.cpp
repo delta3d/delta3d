@@ -33,14 +33,10 @@
 namespace dtAnim
 {
 
-
-/////////////////////////////////////////////////////////////
-const std::string AnimationComponent::DEFAULT_NAME("Animation Component");
-
 /////////////////////////////////////////////////////////////////////////////////
-AnimationComponent::AnimationComponent(const std::string& name)
-   : BaseClass(name)
-   , mGroundClamper(new dtGame::DefaultGroundClamper)
+AnimationComponent::AnimationComponent(dtCore::SystemComponentType& type)
+: BaseClass(type)
+, mGroundClamper(new dtGame::DefaultGroundClamper)
 {
    mGroundClamper->SetHighResGroundClampingRange(0.01);
    mGroundClamper->SetLowResGroundClampingRange(0.1);

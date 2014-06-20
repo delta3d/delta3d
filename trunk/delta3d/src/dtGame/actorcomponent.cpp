@@ -35,9 +35,6 @@
 namespace dtGame
 {
 
-const ActorComponent::ACType ActorComponent::BaseActorComponentType(new dtCore::ActorType("Base", "ActorComponents", "A base type so that all actor component types should set as a parent"));
-
-
 ////////////////////////////////////////////////////////////////////////////////
 ActorComponent::ActorComponent(ActorComponent::ACType type)
   : mOwner(NULL)

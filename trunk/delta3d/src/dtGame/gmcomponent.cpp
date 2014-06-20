@@ -21,18 +21,47 @@
 #include <prefix/dtgameprefix.h>
 #include <dtGame/gmcomponent.h>
 #include <dtGame/message.h>
+#include <dtCore/propertymacros.h>
 
 namespace dtGame
 {
    //////////////////////////////////////////////
-   GMComponent::GMComponent(const std::string& name) : dtCore::Base(name), mParent(NULL),
-      mPriority(&GameManager::ComponentPriority::NORMAL)
+   GMComponent::GMComponent(dtCore::SystemComponentType& type)
+   : BaseClass()
+   , mComponentPriority(&GameManager::ComponentPriority::NORMAL)
+   , mType(&type)
+   , mParent(NULL)
+   , mInitialized(false)
    {
+      SetName(type.GetName());
+   }
+
+   //////////////////////////////////////////////
+   GMComponent::GMComponent(const std::string& name)
+   : BaseClass()
+   , mComponentPriority(&GameManager::ComponentPriority::NORMAL)
+   , mType(new dtCore::SystemComponentType(name, "GMComponents", "An In-code type", BaseGMComponentType))
+   , mParent(NULL)
+   , mInitialized(false)
+   {
+      SetName(name);
    }
 
    //////////////////////////////////////////////
    GMComponent::~GMComponent()
    {
+   }
+
+   //////////////////////////////////////////////
+   const dtCore::SystemComponentType& GMComponent::GetType() const
+   {
+      return *mType;
+   }
+
+   //////////////////////////////////////////////
+   bool GMComponent::IsPlaceable() const
+   {
+      return false;
    }
 
    //////////////////////////////////////////////
@@ -45,17 +74,22 @@ namespace dtGame
    {
    }
 
+   DT_IMPLEMENT_ACCESSOR(GMComponent, dtUtil::EnumerationPointer<GameManager::ComponentPriority>, ComponentPriority)
+
    //////////////////////////////////////////////
-   const GameManager::ComponentPriority& GMComponent::GetComponentPriority() const
+   /*override*/ void GMComponent::BuildPropertyMap()
    {
-      return *mPriority;
+      BaseClass::BuildPropertyMap();
+
+      const dtUtil::RefString GM_COMP_GROUP("GMComponent");
+      typedef dtCore::PropertyRegHelper<GMComponent&, GMComponent> RegHelperType;
+      RegHelperType propReg(*this, this, GM_COMP_GROUP);
+
+      DT_REGISTER_PROPERTY(ComponentPriority,
+            "The priority translates to the order components receive messages.  Higher priorities get messages before lower priority components.",
+            RegHelperType, propReg);
    }
 
-   //////////////////////////////////////////////
-   void GMComponent::OnAddedToGM() {}
-
-   //////////////////////////////////////////////
-   void GMComponent::OnRemovedFromGM() {}
 
    //////////////////////////////////////////////
    void GMComponent::SetGameManager(GameManager* gameManager)
@@ -63,14 +97,28 @@ namespace dtGame
       mParent = gameManager;
    }
 
-   //////////////////////////////////////////////
-   void GMComponent::SetComponentPriority(const GameManager::ComponentPriority& newPriority)
+   //////////////////////////////////////////////////////////////////////////
+   void GMComponent::Init(const dtCore::ActorType& actorType)
    {
-      mPriority = &newPriority;
+      if (!mInitialized)
+      {
+         BaseClass::Init(actorType);
+         mInitialized = true;
+      }
    }
 
    //////////////////////////////////////////////
+   void GMComponent::OnAddedToGM()
+   {
+      Init(*mType);
+   }
+
+   //////////////////////////////////////////////
+   void GMComponent::OnRemovedFromGM() {}
+
+   //////////////////////////////////////////////
    GMComponent::GMComponent(const GMComponent&)
+   : mComponentPriority(&GameManager::ComponentPriority::NORMAL)
    {
    }
 

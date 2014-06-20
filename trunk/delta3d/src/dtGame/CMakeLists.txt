@@ -68,6 +68,7 @@ SET(LIB_SOURCES
     ${SOURCE_PATH}/basemessages.cpp
     ${SOURCE_PATH}/binarylogstream.cpp
     ${SOURCE_PATH}/cascadingdeleteactorcomponent.cpp
+    ${SOURCE_PATH}/componenttypestatics.cpp
     ${SOURCE_PATH}/deadreckoningcomponent.cpp
     ${SOURCE_PATH}/deadreckoninghelper.cpp
     ${SOURCE_PATH}/defaultgroundclamper.cpp

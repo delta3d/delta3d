@@ -36,7 +36,9 @@ class AIUtilityInputComponent : public QObject, public dtGame::BaseInputComponen
 {
    Q_OBJECT
 public:
-   AIUtilityInputComponent(const std::string &name = "AIUtilityInputComponent");
+   static const dtCore::RefPtr<dtCore::SystemComponentType> TYPE;
+
+   AIUtilityInputComponent();
 
    /**
     * MouseListener call back - Called when a button is pressed.

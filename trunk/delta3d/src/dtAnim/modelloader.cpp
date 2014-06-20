@@ -38,7 +38,7 @@ namespace dtAnim
          if (modelData == NULL)
          {
             LOG_ERROR("ModelData not found for Character XML '" + filename + "'");
-            return false;
+            return NULL;
          }
 
          mAttachmentController = new dtAnim::AttachmentController;

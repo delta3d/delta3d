@@ -28,7 +28,7 @@
 #include <dtGame/messagefactory.h>
 
 EchoMessageProcessor::EchoMessageProcessor()
-   : dtGame::DefaultMessageProcessor("EchoMessageProcessor")
+   : dtGame::DefaultMessageProcessor()
 {
 }
 

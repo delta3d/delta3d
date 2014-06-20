@@ -76,14 +76,11 @@ namespace dtGame
    {
       AddInstance(this);
    }
-   const GameManager::ComponentPriority GameManager::ComponentPriority::HIGHEST("HIGHEST", 1);
-   const GameManager::ComponentPriority GameManager::ComponentPriority::HIGHER("HIGHER", 2);
-   const GameManager::ComponentPriority GameManager::ComponentPriority::NORMAL("NORMAL", 3);
-   const GameManager::ComponentPriority GameManager::ComponentPriority::LOWER("LOWER", 4);
-   const GameManager::ComponentPriority GameManager::ComponentPriority::LOWEST("LOWEST", 5);
-
-
-
+   GameManager::ComponentPriority GameManager::ComponentPriority::HIGHEST("HIGHEST", 1);
+   GameManager::ComponentPriority GameManager::ComponentPriority::HIGHER("HIGHER", 2);
+   GameManager::ComponentPriority GameManager::ComponentPriority::NORMAL("NORMAL", 3);
+   GameManager::ComponentPriority GameManager::ComponentPriority::LOWER("LOWER", 4);
+   GameManager::ComponentPriority GameManager::ComponentPriority::LOWEST("LOWEST", 5);
 
    ///////////////////////////////////////////////////////////////////////////////
    GameManager::GameManager(dtCore::Scene& scene)
@@ -630,7 +627,7 @@ namespace dtGame
                mGMImpl->mGMStatistics.mStatsTickClock.DeltaSec(frameTickStartCurrent,
                                                                mGMImpl->mGMStatistics.mStatsTickClock.Tick());
 
-            mGMImpl->mGMStatistics.UpdateDebugStats(component->GetUniqueId(),
+            mGMImpl->mGMStatistics.UpdateDebugStats(component->GetId(),
                                                     component->GetName(),
                                                     frameTickDelta, true, isATickLocalMessage);
          }
@@ -972,7 +969,7 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void GameManager::AddComponent(GMComponent& component, const GameManager::ComponentPriority& priority)
+   void GameManager::AddComponent(GMComponent& component, GameManager::ComponentPriority& priority)
    {
       if (GetComponentByName(component.GetName()) != NULL)
       {
@@ -1154,44 +1151,103 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void GameManager::AddActor(dtCore::BaseActorObject& actorProxy)
+   void GameManager::AddActor(dtCore::BaseActorObject& actor)
    {
-      if (actorProxy.GetId().ToString().empty())
+      if (actor.GetId().ToString().empty())
       {
          throw dtGame::InvalidActorStateException(
             "Actors may not be added the GM with an empty unique id", __FILE__, __LINE__);
       }
 
-      bool hasNoParent = actorProxy.GetDrawable()->GetParent() == NULL;
-
-      if (mGMImpl->mEnvironment.valid())
+      if (actor.IsSystemComponent())
       {
-         if (mGMImpl->mEnvironment.get() != &actorProxy)
+         dtGame::GMComponent* sysComp = dynamic_cast<dtGame::GMComponent*>(&actor);
+         if (sysComp != NULL)
          {
-            IEnvGameActor* ea = dynamic_cast<IEnvGameActor*>(mGMImpl->mEnvironment->GetDrawable());
-            if (ea == NULL)
-            {
-               LOG_ERROR("An environment actor has an invalid drawable");
-               return;
-            }
-            if (hasNoParent)
-            {
-               ea->AddActor(*actorProxy.GetDrawable());
-            }
-            mGMImpl->mBaseActorObjectMap.insert(std::make_pair(actorProxy.GetId(), &actorProxy));
+            AddComponent(*sysComp, sysComp->GetComponentPriority());
          }
          else
          {
-            mGMImpl->mBaseActorObjectMap.insert(std::make_pair(mGMImpl->mEnvironment->GetId(), mGMImpl->mEnvironment.get()));
-            mGMImpl->SendEnvironmentChangedMessage(*this, mGMImpl->mEnvironment.get());
+            throw dtGame::InvalidActorStateException(
+               std::string("Actor has the type of a SystemComponent, but casting it to a GMComponent failed.  ") +
+               "Actor \""+actor.GetName()+"\" of type \"" + actor.GetActorType().GetFullName() + "\" will not be added to the game manager.",
+               __FILE__, __LINE__);
+
          }
+      }
+      else if (actor.IsGameActor())
+      {
+         GameActorProxy* gameActor = dynamic_cast<GameActorProxy*>(&actor);
+         if (gameActor != NULL)
+         {
+            if (gameActor->GetInitialOwnership() == GameActorProxy::Ownership::PROTOTYPE)
+            {
+               AddActorAsAPrototype(*gameActor);
+            }
+            else
+            {
+               bool isRemote = gameActor->IsRemote();
+               bool shouldPublish = !isRemote && gameActor->GetInitialOwnership() == GameActorProxy::Ownership::SERVER_PUBLISHED;
+
+               bool isClient = GetGMSettings().IsClientRole();
+               bool isServer = GetGMSettings().IsServerRole();
+               bool shouldAddActor = isRemote ||
+                  (isClient && gameActor->GetInitialOwnership() == GameActorProxy::Ownership::CLIENT_LOCAL)
+                  || ((isClient || isServer) && gameActor->GetInitialOwnership() == GameActorProxy::Ownership::CLIENT_AND_SERVER_LOCAL)
+                  || (isServer && gameActor->GetInitialOwnership() == GameActorProxy::Ownership::SERVER_PUBLISHED)
+                  || (isServer && gameActor->GetInitialOwnership() == GameActorProxy::Ownership::SERVER_LOCAL);
+
+               if (shouldAddActor)
+               {
+                  AddActor(*gameActor, isRemote, shouldPublish);
+               }
+            }
+         }
+         else
+         {
+            throw dtGame::InvalidActorStateException(
+               std::string("Actor has the type of a GameActor, but casting it to a GameActorProxy failed.  ") +
+               "Actor \""+actor.GetName()+"\" of type \"" + actor.GetActorType().GetFullName() + "\" will not be added to the game manager.",
+               __FILE__, __LINE__);
+         }
+
       }
       else
       {
-         mGMImpl->mBaseActorObjectMap.insert(std::make_pair(actorProxy.GetId(), &actorProxy));
-         if (hasNoParent)
+
+         bool hasDrawable = actor.GetDrawable() != NULL;
+
+         bool hasNoParent = hasDrawable && actor.GetDrawable()->GetParent() == NULL;
+
+         if (hasDrawable && mGMImpl->mEnvironment.valid())
          {
-            mGMImpl->mScene->AddChild(actorProxy.GetDrawable());
+            if (mGMImpl->mEnvironment.get() != &actor)
+            {
+               IEnvGameActor* ea = dynamic_cast<IEnvGameActor*>(mGMImpl->mEnvironment->GetDrawable());
+               if (ea == NULL)
+               {
+                  LOG_ERROR("An environment actor has an invalid drawable");
+                  return;
+               }
+               if (hasNoParent)
+               {
+                  ea->AddActor(*actor.GetDrawable());
+               }
+               mGMImpl->mBaseActorObjectMap.insert(std::make_pair(actor.GetId(), &actor));
+            }
+            else
+            {
+               mGMImpl->mBaseActorObjectMap.insert(std::make_pair(mGMImpl->mEnvironment->GetId(), mGMImpl->mEnvironment.get()));
+               mGMImpl->SendEnvironmentChangedMessage(*this, mGMImpl->mEnvironment.get());
+            }
+         }
+         else
+         {
+            mGMImpl->mBaseActorObjectMap.insert(std::make_pair(actor.GetId(), &actor));
+            if (hasDrawable && hasNoParent)
+            {
+               mGMImpl->mScene->AddChild(actor.GetDrawable());
+            }
          }
       }
    }
@@ -1221,9 +1277,11 @@ namespace dtGame
       gameActorProxy.SetGameManager(this);
       gameActorProxy.SetRemote(isRemote);
 
-      bool hasNoParent = gameActorProxy.GetDrawable()->GetParent() == NULL;
+      bool hasDrawable = gameActorProxy.GetDrawable() != NULL;
 
-      if (mGMImpl->mEnvironment.valid())
+      bool hasNoParent = hasDrawable && gameActorProxy.GetDrawable()->GetParent() == NULL;
+
+      if (hasDrawable && mGMImpl->mEnvironment.valid())
       {
          if (mGMImpl->mEnvironment.get() != &gameActorProxy)
          {
@@ -1237,7 +1295,7 @@ namespace dtGame
          else
          {
             mGMImpl->mGameActorProxyMap.insert(std::make_pair(mGMImpl->mEnvironment->GetId(), mGMImpl->mEnvironment.get()));
-            if (hasNoParent)
+            if (hasDrawable && hasNoParent)
             {
                mGMImpl->mScene->AddChild(mGMImpl->mEnvironment->GetDrawable());
             }
@@ -1247,7 +1305,7 @@ namespace dtGame
       else
       {
          mGMImpl->mGameActorProxyMap.insert(std::make_pair(gameActorProxy.GetId(), &gameActorProxy));
-         if (hasNoParent)
+         if (hasDrawable && hasNoParent)
          {
             mGMImpl->mScene->AddChild(gameActorProxy.GetDrawable());
          }

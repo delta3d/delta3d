@@ -39,10 +39,6 @@
 
 namespace dtGame
 {
-   const ActorComponent::ACType DRPublishingActComp::TYPE(new dtCore::ActorType("DRPublishingActComp", "ActorComponents",
-         "Times and publishes network updates based on velocity, acceleration, and other dead-reckoning related features.  It works best with a Dead-Reckoning Actor Component",
-         ActorComponent::BaseActorComponentType));
-
    const float DRPublishingActComp::TIME_BETWEEN_UPDATES(10.0f);
 
    ////////////////////////////////////////////////////////////////////////////////

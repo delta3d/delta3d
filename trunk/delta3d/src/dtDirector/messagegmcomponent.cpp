@@ -25,9 +25,13 @@
 
 namespace dtDirector
 {
+
+   const dtCore::RefPtr<dtCore::SystemComponentType> MessageGMComponent::TYPE(new dtCore::SystemComponentType("DirectorMessageComponent", "GMComponents",
+         "Passes messages back and forth between dtDirector and the Game Manager."));
+
    //////////////////////////////////////////////
-   MessageGMComponent::MessageGMComponent()
-      : dtGame::GMComponent("DirectorMessageGMComponent")
+   MessageGMComponent::MessageGMComponent(dtCore::SystemComponentType& type)
+      : dtGame::GMComponent(type)
       , mIsProcessingMessages(false)
    {
    }

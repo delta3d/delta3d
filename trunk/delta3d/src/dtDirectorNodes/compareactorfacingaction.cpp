@@ -108,7 +108,7 @@ namespace dtDirector
       if (actor)
       {
          dtCore::Transformable* transformable = NULL;
-         actor->GetActor(transformable);
+         actor->GetDrawable(transformable);
          if (transformable)
          {
             transformable->GetTransform(transform);

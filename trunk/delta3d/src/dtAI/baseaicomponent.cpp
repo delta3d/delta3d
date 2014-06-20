@@ -33,23 +33,23 @@
 
 namespace dtAI
 {
-   const std::string BaseAIComponent::DEFAULT_NAME = "BaseAIComponent";
 
-
-   BaseAIComponent::BaseAIComponent(const std::string& name)
-      : dtGame::GMComponent(name)
+   BaseAIComponent::BaseAIComponent(dtCore::SystemComponentType& type)
+   : dtGame::GMComponent(type)
    {
-
+      // Set to make sure all subclasses use the base name.
+      SetName(DEFAULT_NAME);
    }
    /////////////////////////////////////////////////////////////
    void BaseAIComponent::OnAddedToGM()
    {
-
+      dtGame::GMComponent::OnAddedToGM();
    }
 
    /////////////////////////////////////////////////////////////
    void BaseAIComponent::OnRemovedFromGM()
    {
+      dtGame::GMComponent::OnRemovedFromGM();
       CleanUp();
    }
 

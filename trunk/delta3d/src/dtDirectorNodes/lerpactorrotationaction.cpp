@@ -225,17 +225,17 @@ namespace dtDirector
             int count = GetPropertyCount("Actor");
             for (int index = 0; index < count; index++)
             {
-               dtCore::BaseActorObject* proxy = GetActor("Actor", index);
-               if (proxy)
+               dtCore::BaseActorObject* actor = GetActor("Actor", index);
+               if (actor)
                {
-                  dtCore::Transformable* actor = NULL;
-                  proxy->GetActor(actor);
-                  if (actor)
+                  dtCore::Transformable* drawable = NULL;
+                  actor->GetActor(drawable);
+                  if (drawable)
                   {
                      dtCore::Transform transform;
-                     actor->GetTransform(transform);
+                     drawable->GetTransform(transform);
                      transform.SetRotation(newRot);
-                     actor->SetTransform(transform);
+                     drawable->SetTransform(transform);
                   }
                }
             }

@@ -1631,13 +1631,15 @@ void MapTests::TestLoadMapIntoScene()
             }
         }
 
-        std::ostringstream ostream;
-        ostream << "All drawables should have been found in the delta 3d list of drawables and removed. There are " << ids.size() <<
-        "not found.";
+        std::set<dtCore::UniqueId>::iterator idItr,idItrEnd;
+        idItr = ids.begin();
+        idItrEnd = ids.end();
 
-        //Make sure all drawables have been removed.
-        CPPUNIT_ASSERT_MESSAGE(ostream.str() ,
-            ids.size() == 0);
+        for (; idItr != idItrEnd; ++idItr)
+        {
+           dtCore::BaseActorObject* actTmp = map.GetProxyById(*idItr);
+           CPPUNIT_ASSERT_MESSAGE("All actors in the map not found in the scene should not have drawables.", actTmp->GetDrawable() == NULL);
+        }
 
     }
     catch (dtUtil::Exception& ex)

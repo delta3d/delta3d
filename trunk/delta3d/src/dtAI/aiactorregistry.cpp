@@ -22,6 +22,8 @@
 #include <dtAI/aiactorregistry.h>
 #include <dtAI/aiinterfaceactor.h>
 
+#include <dtAI/baseaicomponent.h>
+
 namespace dtAI
 {
 
@@ -40,6 +42,11 @@ namespace dtAI
 
    dtCore::RefPtr<dtCore::ActorType> AIActorRegistry::AI_INTERFACE_ACTOR_TYPE(
       new dtCore::ActorType("AI Interface Actor", "dtai.AIInterface","Interface to the AI Library"));
+
+   const dtCore::RefPtr<dtCore::SystemComponentType> BaseAIComponent::TYPE(new dtCore::SystemComponentType("BaseAIComponent","GMComponents",
+         "Base component for dealing with system-wide AI.", dtGame::GMComponent::BaseGMComponentType));
+   const std::string BaseAIComponent::DEFAULT_NAME(TYPE->GetName());
+
 
    AIActorRegistry::AIActorRegistry()
       : dtCore::ActorPluginRegistry("AIActors")

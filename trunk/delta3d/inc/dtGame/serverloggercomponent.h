@@ -49,14 +49,21 @@ namespace dtGame
    class DT_GAME_EXPORT ServerLoggerComponent : public GMComponent
    {
    public:
-      static const std::string AUTO_KEYFRAME_TIMER_NAME;
+      static const dtCore::RefPtr<dtCore::SystemComponentType> TYPE;
       static const std::string DEFAULT_NAME;
+      static const std::string AUTO_KEYFRAME_TIMER_NAME;
 
       /**
        * Constructs the logger component.
        * @param logStream The stream with which to serialize game and other state data.
        */
-      ServerLoggerComponent(LogStream& logStream, const std::string& name = DEFAULT_NAME);
+      ServerLoggerComponent(LogStream& logStream, dtCore::SystemComponentType& type = *TYPE);
+
+      /*
+       * Constructor that only takes a type.  This constructor allows setup of the stream later.
+       * This is a TODO so this component can be created in a map.
+       */
+      //ServerLoggerComponent(dtCore::SystemComponentType& type = *TYPE);
 
       /**
        * Called when a message arrives at the Game Manager.  In most cases the message is

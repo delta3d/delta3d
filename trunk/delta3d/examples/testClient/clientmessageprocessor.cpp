@@ -29,9 +29,8 @@
 #include <dtGame/messagetype.h>
 
 ClientMessageProcessor::ClientMessageProcessor()
-   : dtGame::DefaultMessageProcessor("ClientMessageProcessor")
+   : dtGame::DefaultMessageProcessor()
 {
-   SetName("ClientMessageProcessor");
 }
 
 ClientMessageProcessor::~ClientMessageProcessor()

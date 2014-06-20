@@ -128,7 +128,7 @@ void TestAnim::OnStartup(dtABC::BaseABC& app, dtGame::GameManager& gameManager)
    gameManager.AddComponent(*mMessageProcComponent,dtGame::GameManager::ComponentPriority::HIGHEST);
    gameManager.AddComponent(*mAnimationComponent, dtGame::GameManager::ComponentPriority::NORMAL);
 
-   mInputComponent = new TestAnimInput("TestAnimInput");
+   mInputComponent = new TestAnimInput();
    gameManager.AddComponent(*mInputComponent, dtGame::GameManager::ComponentPriority::NORMAL);
 
    app.GetWindow()->SetWindowTitle("TestAnim");

@@ -34,6 +34,7 @@
 #include <dtGame/basemessages.h>
 #include <dtGame/messagefactory.h>
 #include <dtGame/gmsettings.h>
+#include <dtGame/gmcomponent.h>
 
 #include <dtCore/system.h>
 namespace dtGame
@@ -241,59 +242,19 @@ namespace dtGame
          {
             continue;
          }
-
-         if (aProxy.IsGameActor())
-         {
-            GameActorProxy* gameProxy = dynamic_cast<GameActorProxy*>(&aProxy);
-            if (gameProxy != NULL)
-            {
-               gameProxy->SetGameManager(mGameManager.get());
-               if (gameProxy->GetInitialOwnership() == GameActorProxy::Ownership::PROTOTYPE)
-               {
-                  mGameManager->AddActorAsAPrototype(*gameProxy);
-               }
-               else
-               {
-
-                  bool shouldPublish = gameProxy->GetInitialOwnership() == GameActorProxy::Ownership::SERVER_PUBLISHED;
-
-                  bool isClient = mGameManager->GetGMSettings().IsClientRole();
-                  bool isServer = mGameManager->GetGMSettings().IsServerRole();
-                  bool shouldAddActor = 
-                     (isClient && gameProxy->GetInitialOwnership() == GameActorProxy::Ownership::CLIENT_LOCAL)
-                     || ((isClient || isServer) && gameProxy->GetInitialOwnership() == GameActorProxy::Ownership::CLIENT_AND_SERVER_LOCAL)
-                     || (isServer && gameProxy->GetInitialOwnership() == GameActorProxy::Ownership::SERVER_PUBLISHED)
-                     || (isServer && gameProxy->GetInitialOwnership() == GameActorProxy::Ownership::SERVER_LOCAL);
-
-                  // neither sends create messages nor adds to the scene when
-                  // this object is not in IDLE state :-)
-                  try
-                  {
-                     if (shouldAddActor)
-                     {
-                        mGameManager->AddActor(*gameProxy, false, shouldPublish);
-                     }
-                  }
-                  catch (const dtUtil::Exception& ex)
-                  {
-                     dtUtil::Log::GetInstance("mapchangestatedata.cpp").LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
-                           "A problem occurred adding Actor with name \"%s\" of type \"%s\" to the GameManager.",
-                           gameProxy->GetName().c_str(), gameProxy->GetActorType().GetFullName().c_str());
-                     ex.LogException(dtUtil::Log::LOG_ERROR, dtUtil::Log::GetInstance("mapchangestatedata.cpp"));
-                  }
-               }
-            }
-            else
-            {
-               dtUtil::Log::GetInstance("mapchangestatedata.cpp").LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
-                  "Actor has the type of a GameActor, but casting it to a GameActorProxy failed.  "
-                  "Actor \"%s\" of type \"%s\" will not be added to the scene.",
-                  gameProxy->GetName().c_str(), gameProxy->GetActorType().GetFullName().c_str());
-            }
-         }
          else
          {
-            mGameManager->AddActor(aProxy);
+            try
+            {
+               mGameManager->AddActor(aProxy);
+            }
+            catch (const dtUtil::Exception& ex)
+            {
+               dtUtil::Log::GetInstance("mapchangestatedata.cpp").LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
+                     "A problem occurred adding Actor with name \"%s\" of type \"%s\" to the GameManager.",
+                     aProxy.GetName().c_str(), aProxy.GetActorType().GetFullName().c_str());
+               ex.LogException(dtUtil::Log::LOG_ERROR, dtUtil::Log::GetInstance("mapchangestatedata.cpp"));
+            }
          }
       }
    }
