@@ -46,21 +46,22 @@ namespace dtActors
       DeltaObjectActorProxy::BuildPropertyMap();
 
 
-      AddProperty(new dtCore::ResourceActorProperty(*this, dtCore::DataType::TERRAIN,
-            "terrain mesh", "Terrain Mesh", dtCore::ResourceActorProperty::SetFuncType(this, &MeshTerrainActorProxy::LoadFile),
+      AddProperty(new dtCore::ResourceActorProperty(dtCore::DataType::TERRAIN,
+            "terrain mesh", "Terrain Mesh",
+            dtCore::ResourceActorProperty::SetFuncType(this, &MeshTerrainActorProxy::LoadFile),
             "The mesh that defines the geometry of the terrain.", GROUPNAME));
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void MeshTerrainActorProxy::CreateActor()
+   void MeshTerrainActorProxy::CreateDrawable()
    {
-      SetActor(*new MeshTerrainActor);
+      SetDrawable(*new MeshTerrainActor);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void MeshTerrainActorProxy::LoadFile(const std::string &fileName)
+   void MeshTerrainActorProxy::LoadFile(const std::string& fileName)
    {
-      dtCore::Object *obj = static_cast<dtCore::Object*>(GetActor());
+      dtCore::Object *obj = static_cast<dtCore::Object*>(GetDrawable());
 
       if (obj->LoadFile(fileName, false) == NULL)
       {
@@ -79,10 +80,10 @@ namespace dtActors
    ///////////////////////////////////////////////////////////////////////////////
    const dtCore::BaseActorObject::RenderMode& MeshTerrainActorProxy::GetRenderMode()
    {
-      dtCore::ResourceDescriptor resource = GetResource("terrain mesh");
+      dtCore::ResourceDescriptor resource = dynamic_cast<dtCore::ResourceActorProperty*>(GetProperty("terrain mesh"))->GetValue();
       if (resource.IsEmpty() == false)
       {
-         if (resource.GetResourceIdentifier().empty() || GetActor()->GetOSGNode() == NULL)
+         if (resource.GetResourceIdentifier().empty() || GetDrawable()->GetOSGNode() == NULL)
             return dtCore::BaseActorObject::RenderMode::DRAW_BILLBOARD_ICON;
          else
             return dtCore::BaseActorObject::RenderMode::DRAW_ACTOR;

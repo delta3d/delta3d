@@ -132,9 +132,6 @@ namespace dtCore
       bool shaders_enabled;
       float mRadius;
       int mSegments;
-      int mWidth;
-      int mHeight;
-      int mSlices;
 
       std::vector< dtCore::RefPtr<osg::Program> >     mProgList;
       dtCore::RefPtr<osg::Program>                    mCloudProg;

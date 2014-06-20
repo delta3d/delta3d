@@ -1,1 +1,0 @@
-#include <dtCore/namedarrayparameter.h>

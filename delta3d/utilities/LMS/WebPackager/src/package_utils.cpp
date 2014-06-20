@@ -465,7 +465,7 @@ std::string ResolveEnvironmentVariables(std::string path)
    std::string endToken = ")";
 
    // find first opening environment variable token
-   unsigned startPos = path.find(startToken, 0);
+   size_t startPos = path.find(startToken, 0);
    if (startPos == std::string::npos)
    {
       // no environment variable starting with "$(" found; return inputString unchanged
@@ -473,7 +473,7 @@ std::string ResolveEnvironmentVariables(std::string path)
    }
 
    // find first closing environment variable token
-   unsigned endPos = path.find(endToken, startPos);
+   size_t endPos = path.find(endToken, startPos);
    if (endPos == std::string::npos)
    {
       // no ending parenthesis ")" found; return inputString unchanged
@@ -491,7 +491,7 @@ std::string ResolveEnvironmentVariables(std::string path)
    // should throw an error because there is no closing parenthesis after $(DELTA_ROOT
 
    // check that closing parenthesis is found before next directory forward slash (linux-style)
-   unsigned nextSlash = path.find("/", startPos);
+   size_t nextSlash = path.find("/", startPos);
    if (nextSlash != std::string::npos && nextSlash < endPos)
    {
       std::cout << "Invalid environment variable: no closing parenthesis before forward slash" << std::endl;
@@ -499,7 +499,7 @@ std::string ResolveEnvironmentVariables(std::string path)
    }
 
    // check that closing parenthesis is found before next directory back slash (windows-style)
-   unsigned nextBackslash = path.find("\\", startPos);
+   size_t nextBackslash = path.find("\\", startPos);
    if (nextBackslash != std::string::npos && nextBackslash < endPos)
    {
       std::cout << "Invalid environment variable: no closing parenthesis before back slash" << std::endl;
@@ -507,7 +507,7 @@ std::string ResolveEnvironmentVariables(std::string path)
    }
 
    // check that closing parenthesis is found before next environment variable opening token
-   unsigned nextEnvVarToken = path.find(startToken, startPos + startToken.length());
+   size_t nextEnvVarToken = path.find(startToken, startPos + startToken.length());
    if (nextEnvVarToken != std::string::npos && nextEnvVarToken <= endPos)
    {
       std::cout << "Invalid environment variable: no closing parenthesis before start of next environment variable" << std::endl;

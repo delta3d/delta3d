@@ -88,7 +88,7 @@ namespace dtGame
       void ClearTimerSingleSet(std::set<TimerInfo>& timerSet,
                                const std::string& name, const GameActorProxy* proxy);
 
-      void ClearTimersForActor(std::set<TimerInfo>& timerSet, const GameActorProxy& proxy);
+      void ClearTimersForActor(std::set<TimerInfo>& timerSet, const GameActorProxy& parent);
 
       /**
        * Helper method to process the timers. This is called from PreFrame

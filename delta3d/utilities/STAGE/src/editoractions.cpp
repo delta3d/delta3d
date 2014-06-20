@@ -481,6 +481,32 @@ namespace dtEditQt
    {
    }
 
+   ///////////////////////////////////////////////////////////////////////////////
+   void EditorActions::createNewEmptyMap( const std::string& mapToLoad )
+   {
+      int saveResult = SaveCurrentMapChanges(true);
+      if (saveResult == QMessageBox::Cancel || saveResult == QMessageBox::Abort)
+         return;
+
+      slotPauseAutosave();
+      dtCore::Map* newMap = NULL;
+      try
+      {
+         newMap = &dtCore::Project::GetInstance().CreateMap(mapToLoad, mapToLoad);
+      }
+      catch(dtUtil::Exception& e)
+      {
+         newMap = NULL;
+      }
+      if (newMap)
+      {
+         newMap->SetDescription("New STAGE Map");
+         changeMaps(EditorData::GetInstance().getCurrentMap(), newMap);
+         EditorData::GetInstance().addRecentMap(newMap->GetName());
+      }
+      slotRestartAutosave();
+   }
+
    //////////////////////////////////////////////////////////////////////////////
    void EditorActions::slotFileNewMap()
    {
@@ -984,7 +1010,7 @@ namespace dtEditQt
             const_cast<dtCore::BaseActorObject*>(selection.back().get());
 
          //don't allow the main Volume Brush to be deleted:
-         if (proxy->GetActor() ==
+         if (proxy->GetDrawable() ==
                EditorData::GetInstance().getMainWindow()->GetVolumeEditActor())
          {
             selection.pop_back();
@@ -1052,7 +1078,7 @@ namespace dtEditQt
          if (envProxy == proxy)
          {
             dtCore::IEnvironmentActor* envActor =
-               dynamic_cast<dtCore::IEnvironmentActor*>(envProxy->GetActor());
+               dynamic_cast<dtCore::IEnvironmentActor*>(envProxy->GetDrawable());
             std::vector<dtCore::DeltaDrawable*> drawables;
             envActor->GetAllActors(drawables);
             envActor->RemoveAllActors();
@@ -1078,7 +1104,7 @@ namespace dtEditQt
       if (proxy != NULL && scene != NULL)
       {
          dtCore::RefPtr<dtCore::BaseActorObject> tempRef = proxy;
-         scene->RemoveChild(proxy->GetActor());
+         scene->RemoveChild(proxy->GetDrawable());
          if (proxy->GetBillBoardIcon()!= NULL)
          {
             scene->RemoveChild(proxy->GetBillBoardIcon()->GetDrawable());
@@ -1103,7 +1129,7 @@ namespace dtEditQt
    void EditorActions::slotOnActorCreated(ActorProxyRefPtr actor, bool forceNoAdjustments)
    {
       dtCore::IEnvironmentActor* envActor =
-         dynamic_cast<dtCore::IEnvironmentActor*>(actor->GetActor());
+         dynamic_cast<dtCore::IEnvironmentActor*>(actor->GetDrawable());
       if (envActor == NULL)
       {
          return;
@@ -1130,7 +1156,7 @@ namespace dtEditQt
          {
             dtCore::Scene* scene = ViewportManager::GetInstance().getMasterScene();
             dtCore::IEnvironmentActor* env =
-               dynamic_cast<dtCore::IEnvironmentActor*>(envProxy->GetActor());
+               dynamic_cast<dtCore::IEnvironmentActor*>(envProxy->GetDrawable());
             if (env != NULL)
             {
                env->RemoveAllActors();
@@ -1488,7 +1514,7 @@ namespace dtEditQt
             if (proxy)
             {
                // ignore both our own geometry and the geometry of our icon if they exist
-               dtCore::DeltaDrawable* drawable = proxy->GetActor();
+               dtCore::DeltaDrawable* drawable = proxy->GetDrawable();
                dtCore::DeltaDrawable* billBoardDrawable = proxy->GetBillBoardIcon()->GetDrawable();
                if (drawable) {ignoredDrawables.push_back(drawable);}
                if (billBoardDrawable) {ignoredDrawables.push_back(billBoardDrawable);}
@@ -1961,12 +1987,14 @@ namespace dtEditQt
             dtCore::Project::GetInstance().SaveMap(*currMap);
             ((QMainWindow*)EditorData::GetInstance().getMainWindow())->setWindowTitle(
                getWindowName().c_str());
+
+            EditorEvents::GetInstance().emitCurrentMapSaved();
             EditorData::GetInstance().getMainWindow()->endWaitCursor();
          }
          catch (dtUtil::Exception& e)
          {
             EditorData::GetInstance().getMainWindow()->endWaitCursor();
-            QString error = "An error occured while saving the map. ";
+            QString error = "An error occurred while saving the map. ";
             error += e.What().c_str();
             LOG_ERROR(error.toStdString());
             QMessageBox::critical((QWidget *)EditorData::GetInstance().getMainWindow(),

@@ -109,16 +109,23 @@ namespace dtEditQt
 
       if (mapItem && mapItem->isMap)
       {
-         // Find the description of this map.
-         dtCore::MapHeaderData header = dtCore::Project::GetInstance().GetMapHeader(mapItem->text(0).toStdString());
+         try
+         {
+            // Find the description of this map.
+            dtCore::MapHeaderData header = dtCore::Project::GetInstance().GetMapHeader(mapItem->text(0).toStdString());
 
-         if (header.mDescription.empty())
-         {
-            mDescription->setText("<No Description>");
+            if (header.mDescription.empty())
+            {
+               mDescription->setText("<No Description>");
+            }
+            else
+            {
+               mDescription->setText(header.mDescription.c_str());
+            }
          }
-         else
+         catch(const dtUtil::Exception& ex)
          {
-            mDescription->setText(header.mDescription.c_str());
+            mDescription->setText(ex.ToString().c_str());
          }
 
          mOkButton->setEnabled(true);

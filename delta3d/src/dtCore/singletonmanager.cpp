@@ -17,6 +17,6 @@ dtCore::SingletonManager::~SingletonManager()
 ////////////////////////////////////////////////////////////////////////////////
 void dtCore::SingletonManager::Destroy()
 {
-   ShaderManager::Destroy();   
+   ShaderManager::Destroy();
 }
 

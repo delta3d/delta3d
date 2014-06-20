@@ -30,12 +30,10 @@
 #include <iosfwd>
 #include <dtUtil/export.h>
 
+#include <dtUtil/warningdisable.h>
 //Disable visual C++ compiler warnings that seem to indicate the compiler is
 //getting confused when compiling an enumeration.
-#if _MSC_VER
-#  pragma warning(push)
-#  pragma warning(disable:4251)
-#endif
+DT_DISABLE_WARNING_START_MSVC(4276)
 
 namespace dtUtil
 {
@@ -264,9 +262,7 @@ public:
 
 
 
-#ifdef _MSC_VER
-#   pragma warning(pop)
-#endif
+DT_DISABLE_WARNING_END
 
 ////////////////////////////////////////////////////////////////////////////////
 

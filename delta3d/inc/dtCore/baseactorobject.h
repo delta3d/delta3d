@@ -34,6 +34,7 @@
 #include <dtUtil/deprecationmgr.h>
 #include <dtCore/uniqueid.h>
 #include <dtCore/refptr.h>
+#include <dtCore/observerptr.h>
 #include <dtCore/export.h>
 #include <dtCore/propertycontainer.h>
 #include <dtUtil/macros.h>
@@ -51,26 +52,32 @@ namespace dtCore
    class ResourceDescriptor;
    class ActorProxyIcon;
 
+
+   class PrototypeInfo : public osg::Referenced
+   {
+   public:
+      std::string mPrototypeName;
+      dtCore::UniqueId mPrototypeId;
+   };
+
    /**
-    * This is the base class for all actor proxy objects.  The proxy's
-    * main purpose is to expose the attributes of an actor class (or
-    * Delta3D object) via a list of properties.
+    * This is the base class for all actor.
     * @note
-    *      Proxy objects must be created through the ActorPluginRegistry or
+    *      Actor objects must be created through the ActorPluginRegistry or
     *      the LibraryManager. If they are not created in this fashion,
     *      the actor types will not be set correctly.
-    *  @note
-    *      Client-side applications may or may not wish to use the proxy
-    *      interface for accessing actor objects.  However, the actor proxy
-    *      is the only way to expose actors to the Delta3D Level Editor.
     */
    class DT_CORE_EXPORT BaseActorObject : public PropertyContainer
    {
       DECLARE_MANAGEMENT_LAYER(BaseActorObject)
 
    public:
-      static const dtUtil::RefString DESCRIPTION_PROPERTY;
-      static const dtUtil::RefString ACTIVE_PROPERTY;
+      static const dtUtil::RefString PROPERTY_NAME;
+      static const dtUtil::RefString PROPERTY_TYPE_CATEGORY;
+      static const dtUtil::RefString PROPERTY_TYPE_NAME;
+      static const dtUtil::RefString PROPERTY_CLASS_NAME;
+      static const dtUtil::RefString PROPERTY_DESCRIPTION;
+      static const dtUtil::RefString PROPERTY_ACTIVE;
 
       /**
        * This enumeration defines the different ways an actor proxy can
@@ -163,80 +170,61 @@ namespace dtCore
 
       /**
        * Retrieve the class name
+       * @note consider not using this, but just use the actor type.
        * @return The class name
        */
-      const std::string& GetClassName() const { return mClassName; }
+      const std::string& GetClassName() const;
 
       /**
        * Returns if one object is an instance of another
+       *
+       * @note Consider using the similar functionality where actor types can have parent types instead of this.
+       #
        * @param name The name of the object to check against
        * @return true if it is, false if not
        */
-      bool IsInstanceOf(const std::string& name) const
-      {
-         return mClassNameSet.find(name) != mClassNameSet.end();
-      }
+      bool IsInstanceOf(const dtUtil::RefString& name) const;
 
       /**
        * Returns an alphabetically ordered list of strings corresponding to the list of
        * ancestor classes from which this derives.
+       * @deprecated look on the actor type
        * @return a const STL set by value.
        */
-      const std::set<std::string> GetClassHierarchy() const;
+      DEPRECATE_FUNC const std::set<std::string> GetClassHierarchy() const;
+
+      /// Call IsGameActor
+      DEPRECATE_FUNC bool IsGameActorProxy() const { return IsGameActor(); }
 
       /**
        * This is a shortcut to avoid having to dynamic cast to a ActorObject.
        * It should only be overridded by dtGame::ActorObject.
        * @return true if this proxy is an instance of dtGame::ActorObject
        */
-      virtual bool IsGameActorProxy() const { return false; }
+      virtual bool IsGameActor() const { return false; }
 
       /**
-       * Gets a ResourceDescriptor of the requested property name.
-       * @param name Name of the resource to retrieve.
-       * @return A pointer to the ResourceDescriptor.  Check ResourceDescripter.IsEmpty()
-       * to see if it's valid.
+       * Does nothing
        */
-      virtual ResourceDescriptor GetResource(const std::string& name);
+      DEPRECATE_FUNC virtual ResourceDescriptor GetResource(const std::string& name);
 
       /**
-       * Gets a ResourceDescriptor of the requested property name.
-       * @param name Name of the resource to retrieve.
-       * @return A pointer to the ResourceDescriptor. Check ResourceDescripter.IsEmpty()
-       * to see if it's valid.
+       * Does nothing
        */
-      virtual const ResourceDescriptor GetResource(const std::string& name) const;
+      DEPRECATE_FUNC virtual const ResourceDescriptor GetResource(const std::string& name) const;
 
       /**
-       * Sets a resource in the map
-       * @param name The name of the resource
-       * @param source The pointer to resource descriptor
+       * Does nothing
        */
-      DEPRECATE_FUNC void SetResource(const std::string& name, ResourceDescriptor* source); ///Deprecated 12/11/09
-      void SetResource(const std::string& name, const ResourceDescriptor& source);
+      DEPRECATE_FUNC void SetResource(const std::string& name, const ResourceDescriptor& source);
 
       /**
-       * Gets a property of the requested name.
-       * @param name Name of the actor actor property to retrieve.
-       * @return A pointer to the BaseActorObject or NULL if it
-       * is not found.
+       * The WAS used by the ActorActorProperty, also deprecated.  Now this function does nothing
+       * but it exists so old code will still compile.  It's also not necessary for the AAP, so
+       * it's okay that it does nothing.  If you were using this for something else, it won't
+       * work any longer.
        */
-      const BaseActorObject* GetLinkedActor(const std::string& name) const;
-
-      /**
-       * Gets a property of the requested name.
-       * @param name Name of the actor actor property to retrieve.
-       * @return A pointer to the BaseActorObject or NULL if it
-       * is not found.
-       */
-      BaseActorObject* GetLinkedActor(const std::string& name);
-
-      /**
-       * Sets an actor proxy in the map
-       * @param name The name of the property to set
-       * @param value The pointer to new proxy value
-       */
-      void SetLinkedActor(const std::string& name, BaseActorObject* newValue);
+      DEPRECATE_FUNC void SetLinkedActor(const std::string& name, BaseActorObject* newValue);
 
       /**
        * Gets the actor type that represents this actor proxy.
@@ -247,31 +235,24 @@ namespace dtCore
       const ActorType& GetActorType() const;
 
       /**
-       * Gets the drawable who's properties are modeled by this proxy.
+       * Gets the drawable associated with this actor.
        */
       dtCore::DeltaDrawable* GetDrawable();
 
-      /// Call GetDrawable
-      dtCore::DeltaDrawable* GetActor() { return GetDrawable(); }
+      /// Templated version of GetDrawable that returns the drawable with a dynamic cast to the type requested.
+      template <typename TPtr>
+      TPtr* GetDrawable() { return dynamic_cast<TPtr*>(GetDrawable()); }
 
-
-      /** Templated version of GetDrawable() that static casts the actor to the type passed in.
+      /** Templated version of GetDrawable() that dynamic casts the actor to the type passed in.
        *  @note Make sure the supplied pointer is of the correct type which
-       *  matches the proxy!
+       *  matches this actor!
        * @code
        * dtCore::InfiniteLight *light;
-       * proxy->GetDrawable(light);
+       * actor->GetDrawable(light);
        * @endcode
        */
       template <typename TPtr>
       void GetDrawable(TPtr& drawableType)
-      {
-         drawableType = dynamic_cast<TPtr>(GetDrawable());
-      }
-
-      /// Call GetDrawable
-      template <typename TPtr>
-      void GetActor(TPtr& drawableType)
       {
          drawableType = dynamic_cast<TPtr>(GetDrawable());
       }
@@ -290,19 +271,12 @@ namespace dtCore
          drawable = static_cast<T*>(GetDrawable());
       }
 
-      /// Call GetDrawable
-      template <typename T>
-      void GetActor(dtCore::RefPtr<T>& drawable)
-      {
-         drawable = static_cast<T*>(GetDrawable());
-      }
-
+      /// Templated version of GetDrawable that returns the drawable with a dynamic cast to the type requested.
+      template <typename TPtr>
+      const TPtr* GetDrawable() const { return dynamic_cast<const TPtr*>(GetDrawable()); }
 
       /// Const version of GetDrawable()
       const dtCore::DeltaDrawable* GetDrawable() const;
-
-      /// Call GetDrawable
-      const dtCore::DeltaDrawable* GetActor() const { return GetDrawable(); }
 
       /// Templated version of GetDrawable() const that static casts the actor to the type passed in.
       template <typename TPtr>
@@ -311,12 +285,6 @@ namespace dtCore
          drawable = static_cast<TPtr>(GetDrawable());
       }
 
-      /// Templated version of GetDrawable() const that static casts the actor to the type passed in.
-      template <typename TPtr>
-      void GetActor(TPtr& drawable) const
-      {
-         drawable = static_cast<TPtr>(GetDrawable());
-      }
 
       /**
        * Sets the billboard icon used to represent this actor proxy.
@@ -407,7 +375,7 @@ namespace dtCore
        * Returns true if called from STAGE
        * @return true if STAGE is running, false if not
        */
-      const bool IsInSTAGE() const;
+      bool IsInSTAGE() const;
 
       /**
        * Allow access to the ActorPluginRegistry.  This is so it can set the
@@ -426,14 +394,19 @@ namespace dtCore
          return !(*this == rhs);
       }
 
-      protected:
+      /// This api may be temporary just to remove it from the drawable.
+      /// This may be the object from which it was cloned, or it may be a prefab
+      BaseActorObject* GetPrototype();
+      const BaseActorObject* GetPrototype() const;
+      void SetPrototype(BaseActorObject* proto);
+
+   protected:
 
       /**
        * Sets the actor on this proxy. This should be only called from subclasses
        * @param actor The actor to set
        */
       void SetDrawable(dtCore::DeltaDrawable& drawable);
-      void SetActor(dtCore::DeltaDrawable& drawable) { SetDrawable(drawable); }
 
       ///Keep the destructor protected since we use dtCore::RefPtr to
       ///track any object created.
@@ -447,12 +420,12 @@ namespace dtCore
        * {
        *    MyDrawable* draw = new MyDrawable();
        *    assert(draw);
-       *    SetActor(*Drawable);
+       *    SetDrawable(*Drawable);
        * }
        * @endcode
        */
-      virtual void CreateDrawable() { CreateActor(); }
-      virtual void CreateActor() {}
+      virtual void CreateDrawable();
+      DEPRECATE_FUNC virtual void CreateActor() {}
 
       /**
        * Set the class name
@@ -468,28 +441,19 @@ namespace dtCore
        */
       dtCore::RefPtr<ActorProxyIcon> mBillBoardIcon;
 
-      private:
-      typedef std::map<dtUtil::RefString, ResourceDescriptor> ResourceMapType;
-      typedef std::map<dtUtil::RefString, dtCore::RefPtr<BaseActorObject> > BaseActorObjectMapType;
-      typedef std::set<dtUtil::RefString> ClassHierarchyType;
+   private:
+
 
       ///Pointer to the Delta3D object (Actor) this proxy is wrapping.
       dtCore::RefPtr<dtCore::DeltaDrawable> mDrawable;
-
-      /// Map of property names to resource values
-      ResourceMapType mResourceMap;
-
-      /// Map of property names to actor proxy values
-      BaseActorObjectMapType mBaseActorObjectMap;
-
-      /// Set of class names
-      ClassHierarchyType mClassNameSet;
-
       ///ActorType corresponding to this proxy.
       dtCore::RefPtr<const ActorType> mActorType;
+      // This needs to be converted to a reference
+      dtCore::ObserverPtr<BaseActorObject> mPrototype;
+      dtUtil::RefString mName;
+      dtCore::UniqueId mId;
 
-      /// The current class name
-      dtUtil::RefString mClassName;
+
 
       ///Simple method for setting the actor type.
       void SetActorType(const ActorType& type);
@@ -499,6 +463,31 @@ namespace dtCore
 
       ///Hidden assignment operator.
       BaseActorObject& operator=(const BaseActorObject&);
+   public:
+      //Deprecated stuff
+      /// Call GetDrawable
+      DEPRECATE_FUNC dtCore::DeltaDrawable* GetActor() { return GetDrawable(); }
+      /// Call GetDrawable
+      template <typename TPtr>
+      DEPRECATE_FUNC void GetActor(TPtr& drawableType)
+      {
+         drawableType = dynamic_cast<TPtr>(GetDrawable());
+      }
+      /// Call GetDrawable
+      template <typename T>
+      DEPRECATE_FUNC void GetActor(dtCore::RefPtr<T>& drawable)
+      {
+         drawable = static_cast<T*>(GetDrawable());
+      }
+      /// Call GetDrawable
+      DEPRECATE_FUNC const dtCore::DeltaDrawable* GetActor() const { return GetDrawable(); }
+      /// Templated version of GetDrawable() const that static casts the actor to the type passed in.
+      template <typename TPtr>
+      DEPRECATE_FUNC void GetActor(TPtr& drawable) const
+      {
+         drawable = static_cast<TPtr>(GetDrawable());
+      }
+
    };
 }
 

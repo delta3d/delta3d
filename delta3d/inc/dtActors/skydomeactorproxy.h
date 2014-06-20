@@ -63,7 +63,7 @@ namespace dtActors
         /**
          * Creates the sky dome actor.
          */
-        virtual void CreateActor();
+        virtual void CreateDrawable();
 
         /**
          * Destructor

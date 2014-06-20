@@ -25,6 +25,8 @@
 #include <dtUtil/log.h>
 #include <dtUtil/bits.h>
 
+#include <dtUtil/warningdisable.h>
+DT_DISABLE_WARNING_ALL_START
 #include <osg/Node>
 #include <osg/MatrixTransform>
 #include <osgSim/DOFTransform>
@@ -33,7 +35,9 @@
 #include <osg/Drawable>
 #include <osg/Geode>
 #include <osg/LOD>
+DT_DISABLE_WARNING_END
 
+DT_DISABLE_WARNING_START_CLANG("-Woverloaded-virtual")
 
 namespace dtUtil
 {
@@ -687,3 +691,5 @@ namespace dtUtil
    }
 
  }//namespace dtUtil
+
+ DT_DISABLE_WARNING_END

@@ -26,6 +26,7 @@
 #include <string>
 #include <vector>
 
+
 #include <dtDirector/export.h>
 #include <dtDirector/nodetype.h>
 
@@ -36,6 +37,7 @@
 #include <dtCore/uniqueid.h>
 #include <dtCore/refptr.h>
 
+#include <dtUtil/warningdisable.h>
 #include <dtUtil/stringutils.h>
 #include <dtUtil/mswinmacros.h>
 
@@ -752,15 +754,9 @@ namespace dtDirector
       Director*          mDirector;
       DirectorGraph*     mGraph;
 
-#if defined DELTA_WIN32
-#pragma warning (push)
-#pragma warning (disable:4251)
-#endif //DELTA_WIN32
+DT_DISABLE_WARNING_START_MSVC(4276)
       dtCore::RefPtr<const NodeType>   mType;
-#if defined DELTA_WIN32
-#pragma warning (pop)
-#endif //DELTA_WIN32
-
+DT_DISABLE_WARNING_END
       friend class Director;
       friend class DirectorGraph;
    };

@@ -163,7 +163,7 @@ void BaseABC::LoadMap(dtCore::Map& map, bool addBillBoards)
         iter != proxies.end();
         iter++)
    {
-      if (dtCore::Camera* camera = dynamic_cast<dtCore::Camera*>((*iter)->GetActor()))
+      if (dtCore::Camera* camera = dynamic_cast<dtCore::Camera*>((*iter)->GetDrawable()))
       {
          camera->SetWindow(GetWindow());
 
@@ -176,7 +176,7 @@ void BaseABC::LoadMap(dtCore::Map& map, bool addBillBoards)
         iter != proxies.end();
         iter++)
    {
-      if (dtCore::View* view = dynamic_cast<dtCore::View*>((*iter)->GetActor()))
+      if (dtCore::View* view = dynamic_cast<dtCore::View*>((*iter)->GetDrawable()))
       {
           view->SetScene(GetScene());
       }

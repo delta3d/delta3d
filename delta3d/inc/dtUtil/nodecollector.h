@@ -24,7 +24,11 @@
 
 #include <dtCore/refptr.h>
 #include <dtUtil/export.h>
+
+#include <dtUtil/warningdisable.h>
+DT_DISABLE_WARNING_ALL_START
 #include <osg/Referenced>
+DT_DISABLE_WARNING_END
 #include <map>
 #include <string>
 

@@ -82,7 +82,6 @@ namespace dtCore
          virtual ~NamedResourceParameter();
 
       private:
-         const dtCore::DataType* mDataType;
          std::vector<dtCore::ResourceDescriptor>* mValueList;
          dtCore::ResourceDescriptor mDescriptor;
    };

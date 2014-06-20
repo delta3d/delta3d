@@ -694,20 +694,22 @@ void Viewer::OnTimeout()
       std::vector<CalAnimation*> animVec = rapper->GetCalModel()->getMixer()->getAnimationVector();
       std::vector<CalAnimation*>::iterator animItr = animVec.begin();
 
-      std::vector<float> animWeightList;
-      animWeightList.reserve(animVec.size());
+      std::vector<std::pair<float, float> > animWeightTimeList;
+      animWeightTimeList.reserve(animVec.size());
 
       while (animItr != animVec.end())
       {
          CalAnimation* anim = *(animItr);
          float weight = 0.f;
+         float time = 0.f;
 
          if (anim!=NULL)
          {
             weight = anim->getWeight();
+            time = anim->getTime();
          }
 
-         animWeightList.push_back(weight);
+         animWeightTimeList.push_back(std::make_pair(weight, time));
 
          ++animItr;
       }
@@ -725,7 +727,7 @@ void Viewer::OnTimeout()
       }
 #endif
 
-      emit BlendUpdate(animWeightList, morphWeightList);
+      emit BlendUpdate(animWeightTimeList, morphWeightList);
    }
 }
 

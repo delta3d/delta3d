@@ -28,6 +28,7 @@
 #include <dtGame/actorcomponentbase.h>
 #include <dtCore/refptr.h>
 #include <dtCore/observerptr.h>
+#include <dtCore/motioninterface.h>
 #include <dtUtil/getsetmacros.h>
 #include <dtGame/gameactor.h>
 #include <dtGame/deadreckoninghelper.h>
@@ -40,10 +41,11 @@ namespace dtGame
     * publish for local entities that are using dead reckoning. This actor component
     * expects your actor to also have a dead reckoning actor component (aka helper).
     */
-   class DT_GAME_EXPORT DRPublishingActComp : public dtGame::ActorComponent
+   class DT_GAME_EXPORT DRPublishingActComp : public dtGame::ActorComponent, public dtCore::MotionInterface
    {
 
    public:
+      DT_DECLARE_VIRTUAL_REF_INTERFACE_INLINE
 
       // set the type of the actor component
       static const ActorComponent::ACType TYPE;
@@ -137,6 +139,12 @@ namespace dtGame
        */
       DT_DECLARE_ACCESSOR(int, VelocityAverageFrameCount);
 
+      /**
+       * Velocity clamping.  If the magnitude of the velocity is less than this
+       * it will just make it 0 for publishing.
+       */
+      DT_DECLARE_ACCESSOR(float, VelocityClampMagnitude);
+
       /// The max number of times per second an update may be sent if it exceeds the dead reckoning tolerances
       DT_DECLARE_ACCESSOR(float, MaxUpdateSendRate);
 
@@ -158,19 +166,26 @@ namespace dtGame
 
 
       /**
-       * Sets the CURRENT velocity. This is calculated each frame and is different
+       * Assigns a source for things like velocity, angular velocity, etc, so that this doesn't have to calculate them.
+       */
+      DT_DECLARE_ACCESSOR(dtCore::RefPtr<dtCore::VelocityInterface>, VelocitySource);
+      DT_DECLARE_ACCESSOR(dtCore::RefPtr<dtCore::AccelerationInterface>, AccelSource);
+      DT_DECLARE_ACCESSOR(dtCore::RefPtr<dtCore::AngularVelocityInterface>, AngVelSource);
+
+      /**
+       * Sets the current velocity. This is calculated each frame and is different
        * from the LastKnownVelocityVector (which is the last published DR value).
        * By default, this is taken care of for you, but you can call this directly 
        * if you want more specific control and it will bypass the calc'ed value. 
        * @param vec the velocity vector to copy
        */
-      void SetCurrentVelocity(const osg::Vec3& vec);
+      void SetVelocity(const osg::Vec3& vec);
       /** 
         * Gets the CURRENT velocity. This is different from LastKnownVelocity.  
-        * @see #SetCurrentVelocity()
+        * @see #SetVelocity()
         * @return the most recently calculated instantaneous velocity.
         */
-      osg::Vec3 GetCurrentVelocity() const;
+      virtual osg::Vec3 GetVelocity() const;
 
       /**
        * Sets the CURRENT acceleration. This is calculated each frame and is different 
@@ -179,14 +194,14 @@ namespace dtGame
        * if you want more specific control and it will bypass the calc'ed value.
        * @param vec the new value
        */
-      void SetCurrentAcceleration(const osg::Vec3& vec);
+      void SetAcceleration(const osg::Vec3& vec);
 
       /**
        * Gets the CURRENT acceleration. This is different from the LastKnownAcceleration.
-       * @see #SetCurrentAcceleration()
+       * @see #SetAcceleration()
        * @return the most recently calculated instantaneous acceleration
        */
-      osg::Vec3 GetCurrentAcceleration() const;
+      virtual osg::Vec3 GetAcceleration() const;
 
       /**
        * Sets the CURRENT acceleration. This is different from LastKnownAngulageVelocity. 
@@ -194,13 +209,13 @@ namespace dtGame
        * your physics engine or know it for some other reason, then you should set it.
        * @param vec the new value
        */
-      void SetCurrentAngularVelocity(const osg::Vec3& vec);
+      void SetAngularVelocity(const osg::Vec3& vec);
       /**
        * Sets the CURRENT acceleration. This is different from LastKnownAngulageVelocity. 
-       * @see #SetCurrentAngularVelocity()
+       * @see #SetAngularVelocity()
        * @return the current angular velocity that was set at the start of the frame.
        */
-      osg::Vec3 GetCurrentAngularVelocity() const;
+      virtual osg::Vec3 GetAngularVelocity() const;
 
       /// Set - The threshold for the translation from last update before deciding to publish 
       void SetMaxTranslationError(float distance);
@@ -218,7 +233,7 @@ namespace dtGame
       void ResetFullUpdateTimer(bool doRandomOffset = false);
 
       /// The Dead Reckoning Helper is part of the actor and is a requirement to use this actor comp.
-      dtGame::DeadReckoningHelper& GetDeadReckoningHelper();
+      dtGame::DeadReckoningHelper* GetDeadReckoningHelper();
       void SetDeadReckoningHelper(dtGame::DeadReckoningHelper* drHelper);
       /// Since GetDeadReckoningHelper returns a reference, you MUST call this method first.
       bool IsDeadReckoningHelperValid() const;
@@ -234,20 +249,21 @@ namespace dtGame
        float GetPercentageChangeDifference(float startValue, float newValue) const;
 
        /**
-        * Computes and assigns the current velocity using a moving average.
+        * Calculates and assigns the current velocity using a moving average.
         * @see SetVelocityAverageFrameCount
         */
-       virtual void ComputeCurrentVelocity(float deltaTime, const osg::Vec3& pos, const osg::Vec3& rot);
+       virtual void CalculateCurrentVelocity(float deltaTime, const osg::Vec3& pos, const osg::Vec3& rot);
 
    private:
+       dtCore::RefPtr<Invokable> mTickInvokable;
       /// Do we insist a DR helper is set? If yes, log error if missing. Default is true on construction
       bool mRequiresDRHelper; 
       float mTimeUntilNextFullUpdate;
 
-      // Current values - not published or directly settable
-      osg::Vec3 mCurrentVelocity;
-      osg::Vec3 mCurrentAcceleration;
-      osg::Vec3 mCurrentAngularVelocity;
+      // Current values - not published or directly set-able
+      osg::Vec3 mVelocity;
+      osg::Vec3 mAcceleration;
+      osg::Vec3 mAngularVelocity;
 
       osg::Vec3 mLastPos;
       osg::Vec3 mAccumulatedLinearVelocity;
@@ -261,7 +277,6 @@ namespace dtGame
       //float mMaxUpdateSendRate; - part of the property macro
       float mVelocityMagThreshold;
       float mVelocityDotThreshold;
-      float mPrevFrameDeltaTime;
 
       bool mForceUpdateNextChance;
 

@@ -143,12 +143,14 @@ namespace dtUtil
       return ToString();
    }
 
-   float DateTime::GetLocalGMTOffset()
+   ////////////////////////////////////////////////////////////////////
+   float DateTime::GetLocalGMTOffset(bool accountForDST)
    {
-      //There should be a faster way to do this, but
-      //it's probably not worth the effort.
-      DateTime dt(TimeOrigin::LOCAL_TIME);
-      return dt.GetGMTOffset();
+	  time_t t = time(NULL);
+	  struct tm timeParts;
+	  GetLocalTime(&t, timeParts);
+	  float offset = CalcGMTOffset(timeParts, accountForDST);
+	  return offset;
    }
 
    ////////////////////////////////////////////////////////////////////
@@ -183,7 +185,7 @@ namespace dtUtil
       GetLocalTime(&t, timeParts);
       SetTime(timeParts);
       mFractionalSeconds = 0.0f;
-      SetGMTOffset(timeParts, false);
+      mGMTOffset = CalcGMTOffset(timeParts, false);
    }
 
    ////////////////////////////////////////////////////////////////////
@@ -373,31 +375,33 @@ namespace dtUtil
    }
 
    ////////////////////////////////////////////////////////////////////
-   void DateTime::SetGMTOffset(tm& timeParts, bool factorLocalDayLightSavingsIntoGMTOffset)
+   float DateTime::CalcGMTOffset(tm& timeParts, bool factorLocalDayLightSavingsIntoGMTOffset)
    {
+	  float result = 0.0f;
       #ifdef DELTA_WIN32
-            _tzset();
-            long tz = timezone * -1;
-            mGMTOffset = tz / 3600.0f;
-            if (factorLocalDayLightSavingsIntoGMTOffset)
-            {
-               mGMTOffset += timeParts.tm_isdst;
-            }
+	     _tzset();
+	     long tz = timezone * -1;
+	     result = tz / 3600.0f;
+	     if (factorLocalDayLightSavingsIntoGMTOffset)
+	     {
+	        result += timeParts.tm_isdst;
+	     }
       #else
-            // If we are in daylight saving time, the gmt offset already accounts for that
-            // But the dateTime wants the value without it taken into account, so we have to
-            // subtract it back out.
-            long tz = timeParts.tm_gmtoff;
-            mGMTOffset = tz / 3600.0f;
-            if (!factorLocalDayLightSavingsIntoGMTOffset)
-            {
-               mGMTOffset -= timeParts.tm_isdst;
-            }
+         // If we are in daylight saving time, the gmt offset already accounts for that
+	     // But the dateTime wants the value without it taken into account, so we have to
+	     // subtract it back out.
+	     long tz = timeParts.tm_gmtoff;
+	     result = tz / 3600.0f;
+	     if (!factorLocalDayLightSavingsIntoGMTOffset)
+	     {
+	    	 result -= timeParts.tm_isdst;
+	     }
       #endif
+	  return result;
    }
 
    ////////////////////////////////////////////////////////////////////
-   void DateTime::SetGMTOffset(double lattitude, double longitude, bool dayLightSavings)
+   void DateTime::SetGMTOffset(double /*latitude*/, double longitude, bool dayLightSavings)
    {
       double offset = 7.5;
       if (longitude < 0.0f) { offset = -offset; }
@@ -617,7 +621,7 @@ namespace dtUtil
 
 
 
-   void DateTime::GetGMTTime(time_t* t, tm& timeParts) const
+   void DateTime::GetGMTTime(time_t* t, tm& timeParts)
    {
       if (t != NULL)
       {
@@ -633,7 +637,7 @@ namespace dtUtil
    }
 
 
-   void DateTime::GetLocalTime(time_t* t, tm& timeParts) const
+   void DateTime::GetLocalTime(time_t* t, tm& timeParts)
    {
       if (t != NULL)
       {

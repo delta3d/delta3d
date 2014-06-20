@@ -50,8 +50,8 @@ void PrimaryHalonActorProxy::BuildInvokables()
 }
 
 ////////////////////////////////////////////////////////
-PrimaryHalonActor::PrimaryHalonActor(dtGame::GameActorProxy& proxy)
-   : GameItemActor(proxy)
+PrimaryHalonActor::PrimaryHalonActor(dtGame::GameActorProxy& parent)
+   : GameItemActor(parent)
 {
 
 }
@@ -110,8 +110,8 @@ void SecondaryHalonActorProxy::BuildInvokables()
 }
 
 ////////////////////////////////////////////////////////
-SecondaryHalonActor::SecondaryHalonActor(dtGame::GameActorProxy& proxy) :
-   GameItemActor(proxy)
+SecondaryHalonActor::SecondaryHalonActor(dtGame::GameActorProxy& parent) :
+   GameItemActor(parent)
 {
 
 }

@@ -1,7 +1,7 @@
 /* -*-c++-*-
  * Delta3D Open Source Game and Simulation Engine
  * Copyright (C) 2006-2010, Alion Science and Technology, BMH Operation.
- * Copyright (C) 2012, MASA Group Inc
+ * Copyright (C) 2012, David Guthrie
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -607,7 +607,15 @@ namespace dtHLAGM
 
          if (fedFilesFound.empty())
          {
-            throw dtUtil::Exception("Unable to create the federation.  No fed files were found.", __FILE__, __LINE__);
+            mRTIAmbassador = NULL;
+
+            std::ostringstream oss;
+            for (unsigned i = 0; i < fedFilenames.size(); ++i)
+            {
+               oss << " \"" << fedFilenames[i] << "\"";
+            }
+
+            throw dtUtil::Exception(std::string("Unable to create the federation.  No fed files were found in list: ") + oss.str(), __FILE__, __LINE__);
          }
 
          mRTIAmbassador->CreateFederationExecution(executionName, fedFilesFound);
@@ -767,7 +775,7 @@ namespace dtHLAGM
 
    /////////////////////////////////////////////////////////////////////////////////
    void HLAComponent::ProvideAttributeValueUpdate(RTIObjectInstanceHandle& theObject,
-            const RTIAttributeHandleSet& theAttributes)
+            const RTIAttributeHandleSet& /*theAttributes*/)
    {
       const dtCore::UniqueId* actorId = mRuntimeMappings.GetId(theObject);
       if (actorId != NULL)
@@ -791,7 +799,7 @@ namespace dtHLAGM
 
    /////////////////////////////////////////////////////////////////////////////////
    void HLAComponent::RemoveObjectInstance(RTIObjectInstanceHandle& theObject,
-            const std::string& theTag)
+            const std::string& /*theTag*/)
    {
       const dtCore::UniqueId* actorId = mRuntimeMappings.GetId(theObject);
 
@@ -1327,7 +1335,7 @@ namespace dtHLAGM
    /////////////////////////////////////////////////////////////////////////////////
    void HLAComponent::ReflectAttributeValues(RTIObjectInstanceHandle& theObject,
             const RTIAttributeHandleValueMap& theAttributes,
-            const std::string& theTag)
+            const std::string& /*theTag*/)
    {
       try
       {
@@ -1735,7 +1743,7 @@ namespace dtHLAGM
 
    /////////////////////////////////////////////////////////////////////////////////
    void HLAComponent::DiscoverObjectInstance(RTIObjectInstanceHandle& theObject,
-            RTIObjectClassHandle& theObjectClassHandle,
+            RTIObjectClassHandle& /*theObjectClassHandle*/,
             const std::string& theObjectName)
    {
       dtCore::UniqueId newId;
@@ -1795,7 +1803,7 @@ namespace dtHLAGM
    /////////////////////////////////////////////////////////////////////////////////
    void HLAComponent::ReceiveInteraction(RTIInteractionClassHandle& interactionClassHandle,
             const RTIParameterHandleValueMap& theParameters,
-            const std::string& theTag)
+            const std::string& /*theTag*/)
    {
       try
       {

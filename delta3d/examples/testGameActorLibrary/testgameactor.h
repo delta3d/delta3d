@@ -39,8 +39,8 @@ public:
 
    TestActorComponent1();
 
-   virtual void OnAddedToActor(dtGame::GameActor& actor);
-   virtual void OnRemovedFromActor(dtGame::GameActor& actor);
+   virtual void OnAddedToActor(dtCore::BaseActorObject& /*actor*/);
+   virtual void OnRemovedFromActor(dtCore::BaseActorObject& /*actor*/);
 
    virtual void OnEnteredWorld();
    virtual void OnRemovedFromWorld();
@@ -59,8 +59,8 @@ public:
 
    TestActorComponent2();
 
-   virtual void OnAddedToActor(dtGame::GameActor& actor);
-   virtual void OnRemovedFromActor(dtGame::GameActor& actor);
+   virtual void OnAddedToActor(dtCore::BaseActorObject& /*actor*/);
+   virtual void OnRemovedFromActor(dtCore::BaseActorObject& /*actor*/);
    virtual void OnEnteredWorld();
    virtual void OnRemovedFromWorld();
 
@@ -74,7 +74,7 @@ class DT_EXAMPLE_EXPORT TestGameActor1 : public dtGame::GameActor
 {
    public:
       /// Constructor
-      TestGameActor1(dtGame::GameActorProxy& proxy);
+      TestGameActor1(dtGame::GameActorProxy& parent);
 
       /// Destructor
       virtual ~TestGameActor1();
@@ -134,7 +134,7 @@ class DT_EXAMPLE_EXPORT TestGameActorProxy1 : public dtGame::GameActorProxy
       void ToggleTicks(const dtGame::Message& message);
 
    protected:
-      virtual void CreateActor();
+      virtual void CreateDrawable();
    private:
       bool ticksEnabled;
 };

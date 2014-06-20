@@ -53,7 +53,7 @@ namespace dtEditQt
     *  The viewports themselves have methods to control their behavior, therefore, this
     *  class acts as a UI interface to that functionality.
     */
-   class ViewportContainer : public QWidget
+   class DT_EDITQT_EXPORT ViewportContainer : public QWidget
    {
       Q_OBJECT
 

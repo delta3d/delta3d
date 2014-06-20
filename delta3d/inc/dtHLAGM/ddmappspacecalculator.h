@@ -46,7 +46,7 @@ namespace dtHLAGM
          long GetDefaultAppSpace() const { return mDefaultAppSpace; }
          void SetDefaultAppSpace(long newSpace) { mDefaultAppSpace = newSpace; }
          
-         unsigned long MapAppSpaceValue(unsigned spaceNumber) const;
+         unsigned int MapAppSpaceValue(unsigned spaceNumber) const;
          
          DDMAppSpaceCalculator();
          virtual ~DDMAppSpaceCalculator();

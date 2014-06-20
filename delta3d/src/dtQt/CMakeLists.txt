@@ -38,6 +38,7 @@ dynamicresourcecontrol.cpp
 dynamicstringcontrol.cpp
 dynamicvectorelementcontrol.cpp
 librarypathseditor.cpp
+nodetreepanel.cpp
 osgadapterwidget.cpp
 osggraphicswindowqt.cpp
 projectcontextdialog.cpp
@@ -51,8 +52,10 @@ viewwindow.cpp
 )
 
 INCLUDE_DIRECTORIES(${QT_INCLUDE_DIR}
+                    ${CMAKE_CURRENT_BINARY_DIR} # for ui*.h files
                    )
-
+				   
+qt4_wrap_ui(UI_SOURCES nodetreepanel.ui)
 QT4_WRAP_CPP(MOC_SOURCES ${LIB_PUBLIC_HEADERS})
 
 QT4_ADD_RESOURCES(RCC_SOURCES
@@ -61,23 +64,26 @@ QT4_ADD_RESOURCES(RCC_SOURCES
 
 ADD_PRECOMPILED_HEADER(${LIB_NAME} prefix/dtqtprefix.h prefix/dtqtprefix.cpp LIB_SOURCES)
 
-ADD_LIBRARY(${LIB_NAME} SHARED
-    ${LIB_PUBLIC_HEADERS} 
+SET(LIB_SOURCES 
     ${LIB_SOURCES}
     ${MOC_SOURCES}
     ${RCC_SOURCES}
+    ${UI_SOURCES}
+    )
+
+
+set(LIB_EXTERNAL_DEPS
+  QT_QTCORE_LIBRARY
+  QT_QTGUI_LIBRARY
+  QT_QTOPENGL_LIBRARY
+  QT_QTWEBKIT_LIBRARY
+ )
+
+set(LIB_DEPS
+  ${DTCORE_LIBRARY}
 )
 
-LINK_WITH_VARIABLES(${LIB_NAME}
-                    QT_QTCORE_LIBRARY
-                    QT_QTGUI_LIBRARY
-                    QT_QTOPENGL_LIBRARY
-                    QT_QTWEBKIT_LIBRARY
-                   )
-
-TARGET_LINK_LIBRARIES( ${LIB_NAME}
-            ${DTCORE_LIBRARY}
-            )
+DELTA3D_ADD_LIBRARY(${LIB_NAME} DT_QT_LIBRARY)
 
 if (X11_FOUND)
    TARGET_LINK_LIBRARIES( ${LIB_NAME}
@@ -86,10 +92,5 @@ endif (X11_FOUND)
 
 
 
-INCLUDE(ModuleInstall OPTIONAL)
 
-IF (MSVC_IDE)
-  SET_TARGET_PROPERTIES(${LIB_NAME}
-                     PROPERTIES DEFINE_SYMBOL DT_QT_LIBRARY)
-ENDIF (MSVC_IDE)
 

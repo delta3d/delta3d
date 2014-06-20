@@ -36,7 +36,7 @@ class FIRE_FIGHTER_EXPORT GameLevelActor : public dtGame::GameActor, public dtCo
    public:
 
       /// Constructor
-      GameLevelActor(dtGame::GameActorProxy &proxy);
+      GameLevelActor(dtGame::GameActorProxy& parent);
 
       /**
        * Loads the game level file
@@ -79,7 +79,7 @@ class FIRE_FIGHTER_EXPORT GameLevelActorProxy : public dtGame::GameActorProxy
       virtual void BuildInvokables();
 
       /// Creates the actor
-      virtual void CreateActor() { SetActor(*new GameLevelActor(*this)); }
+      virtual void CreateDrawable() { SetDrawable(*new GameLevelActor(*this)); }
 
       /**
        * Gets the billboard used to represent static meshes if this proxy's

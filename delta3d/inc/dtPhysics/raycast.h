@@ -50,6 +50,7 @@ namespace dtPhysics
             VectorType mHitNormal;
             bool mHasHitObject;
             dtCore::ObserverPtr<PhysicsObject> mHitObject;
+            bool operator<(const Report& other) const { return this->mDistance < other.mDistance; }
          };
 
          typedef dtUtil::Functor<bool, TYPELIST_1(const Report&)> RayCastCallback;

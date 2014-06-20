@@ -8,7 +8,7 @@ class ComponentGameActor : public dtActors::GameMeshActor
   
 public:
 
-   ComponentGameActor(dtGame::GameActorProxy& proxy);
+   ComponentGameActor(dtGame::GameActorProxy& parent);
 
    virtual void Interaction();
 
@@ -26,7 +26,7 @@ public:
    virtual void BuildPropertyMap();
 
    /// Instantiates the actor
-   virtual void CreateActor();
+   virtual void CreateDrawable();
 
 };
 

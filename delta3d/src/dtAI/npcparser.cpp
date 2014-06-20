@@ -26,8 +26,7 @@
 #include <dtUtil/log.h>
 #include <dtUtil/stringutils.h>
 
-#include <osgDB/FileUtils>
-
+#include <dtUtil/datapathutils.h>
 #include <iostream>
 
 namespace dtAI
@@ -64,7 +63,7 @@ namespace dtAI
 
    bool NPCParser::LoadScript(const std::string& pFilename, BaseNPC* pNPC)
    {
-      std::string file = osgDB::findDataFile(pFilename);
+      std::string file = dtUtil::FindFileInPathList(pFilename);
 
       if (file.empty())
       {

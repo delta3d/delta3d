@@ -21,7 +21,7 @@
  */
 
 #include <dtPhysics/physicsmaterialactor.h>
-#include <dtDAL/enginepropertytypes.h>
+#include <dtCore/enginepropertytypes.h>
 #include <dtUtil/funtraits.h>
 #include <dtUtil/typetraits.h>
 
@@ -56,7 +56,7 @@ namespace dtPhysics
    //////////////////////////////////////////////////////////
    void MaterialActorProxy::CreateActor()
    {
-      SetActor(*new MaterialActor());
+      SetDrawable(*new MaterialActor());
    }
 
    //////////////////////////////////////////////////////////
@@ -64,9 +64,9 @@ namespace dtPhysics
    {
       static const dtUtil::RefString GROUP = "Material";
 
-      MaterialActor* actor = dynamic_cast<MaterialActor*>(GetActor());
+      MaterialActor* actor = dynamic_cast<MaterialActor*>(GetDrawable());
 
-      typedef dtDAL::PropertyRegHelper<MaterialActorProxy&, MaterialDef> PropRegType;
+      typedef dtCore::PropertyRegHelper<MaterialActorProxy&, MaterialDef> PropRegType;
       PropRegType propRegHelper(*this, &actor->GetMateralDef(), GROUP);
 
       DT_REGISTER_PROPERTY(KineticFriction, "Material Setting - coefficient of kinetic friction -- should be in [0, +inf]. If set to greater than staticFriction, "

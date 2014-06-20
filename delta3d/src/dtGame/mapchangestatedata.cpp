@@ -128,8 +128,18 @@ namespace dtGame
    //////////////////////////////////////////////////////////////////////////
    void MapChangeStateData::CloseSingleMap(const std::string& mapName, bool deleteLibraries )
    {
-      dtCore::Map& oldMap = dtCore::Project::GetInstance().GetMap(mapName);
+      if (!dtCore::Project::GetInstance().IsMapOpen(mapName)
+            && (!mGameManager->GetRemoveGameEventsOnMapChange() || dtCore::GameEventManager::GetInstance().GetNumEvents() == 0))
+      {
+         return;
+      }
 
+      if (!dtCore::Project::GetInstance().IsMapOpen(mapName))
+      {
+         LOG_WARNING("Forced to reopen map \"" + mapName + "\" to remove the map's game events from the main game event manager on map close.");
+      }
+
+      dtCore::Map& oldMap = dtCore::Project::GetInstance().GetMap(mapName);
       // Clear out all the game events that came from the old map
       if (mGameManager->GetRemoveGameEventsOnMapChange())
       {
@@ -232,7 +242,7 @@ namespace dtGame
             continue;
          }
 
-         if (aProxy.IsGameActorProxy())
+         if (aProxy.IsGameActor())
          {
             GameActorProxy* gameProxy = dynamic_cast<GameActorProxy*>(&aProxy);
             if (gameProxy != NULL)

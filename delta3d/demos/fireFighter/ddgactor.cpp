@@ -44,9 +44,9 @@ void DDGActorProxy::BuildPropertyMap()
 {
    ShipActorProxy::BuildPropertyMap();
 
-   DDGActor& ddg = static_cast<DDGActor&>(GetGameActor());
+   DDGActor& ddg = *GetDrawable<DDGActor>();
 
-   AddProperty(new dtCore::ResourceActorProperty(*this, dtCore::DataType::STATIC_MESH,
+   AddProperty(new dtCore::ResourceActorProperty(dtCore::DataType::STATIC_MESH,
       "Model", "Model",
       dtCore::ResourceActorProperty::SetFuncType(&ddg, &DDGActor::LoadFile),
       "Loads the model file for the ship"));
@@ -58,8 +58,8 @@ void DDGActorProxy::BuildInvokables()
 }
 
 /////////////////////////////////////////////////
-DDGActor::DDGActor(dtGame::GameActorProxy& proxy)
-   : ShipActor(proxy)
+DDGActor::DDGActor(dtGame::GameActorProxy& parent)
+   : ShipActor(parent)
    , forwardStackEngaged(true)
    , afterStackEngaged(true)
 {

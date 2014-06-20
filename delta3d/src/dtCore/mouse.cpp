@@ -14,10 +14,10 @@
 #ifdef DELTA_WIN32
 #include <osgViewer/api/Win32/GraphicsWindowWin32>
 #elif defined(__APPLE__)
-  #if MAC_OS_X_VERSION_MIN_REQUIRED < 1060
+  #if defined(MAC_OS_X_VERSION_MIN_REQUIRED) && MAC_OS_X_VERSION_MIN_REQUIRED < 1060
   #include <osgViewer/api/Carbon/GraphicsWindowCarbon>
   #endif
-#include <ApplicationServices/ApplicationServices.h>
+  #include <ApplicationServices/ApplicationServices.h>
 #else
 #include <osgViewer/api/X11/GraphicsWindowX11>
 #endif
@@ -38,8 +38,10 @@ Mouse::Mouse(const std::string& name) : InputDevice(name)
    AddFeature(new Button(this, MiddleButton, "middle mouse button"));
    AddFeature(new Button(this, RightButton, "right mouse button"));
 #ifdef __APPLE__
-      //fixes the mouse jerk issue
-      CGSetLocalEventsSuppressionInterval(0);
+   //fixes the mouse jerk issue
+   CGEventSourceRef sourceRef =
+   CGEventSourceCreate(kCGEventSourceStateCombinedSessionState);
+   CGEventSourceSetLocalEventsSuppressionInterval(sourceRef, 0);
 #endif
 }
 
@@ -55,8 +57,10 @@ Mouse::Mouse(dtCore::View * view, const std::string& name) : InputDevice(name), 
    AddFeature(new Button(this, RightButton, "right mouse button"));
 
 #ifdef __APPLE__
-      //fixes the mouse jerk issue
-      CGSetLocalEventsSuppressionInterval(0);
+   //fixes the mouse jerk issue
+   CGEventSourceRef sourceRef =
+   CGEventSourceCreate(kCGEventSourceStateCombinedSessionState);
+   CGEventSourceSetLocalEventsSuppressionInterval(sourceRef, 0);
 #endif
 
 }
@@ -302,8 +306,8 @@ bool Mouse::ButtonUp(float x, float y, MouseButton button)
 
 bool Mouse::GetHasFocus()
 {
-   DeltaWin *win = mView->GetCamera()->GetWindow();
 #if defined(__APPLE__) && MAC_OS_X_VERSION_MIN_REQUIRED < 1060
+   DeltaWin *win = mView->GetCamera()->GetWindow();
 
    osgViewer::GraphicsWindowCarbon *carbon =
       dynamic_cast<osgViewer::GraphicsWindowCarbon*>(win->GetOsgViewerGraphicsWindow());
@@ -313,6 +317,7 @@ bool Mouse::GetHasFocus()
    // Don't have a solution for Lion and Mountain Lion yet.
    return true;
 #elif defined(DELTA_WIN32)
+   DeltaWin *win = mView->GetCamera()->GetWindow();
 
    osgViewer::GraphicsWindowWin32 *win32 =
       dynamic_cast<osgViewer::GraphicsWindowWin32*>(win->GetOsgViewerGraphicsWindow());
@@ -322,6 +327,7 @@ bool Mouse::GetHasFocus()
    }
 
 #else
+   DeltaWin *win = mView->GetCamera()->GetWindow();
 
    osgViewer::GraphicsWindowX11 *x11 =
       dynamic_cast<osgViewer::GraphicsWindowX11*>(win->GetOsgViewerGraphicsWindow());

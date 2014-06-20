@@ -123,6 +123,7 @@ namespace dtPhysics
       static const std::string CONFIG_SOLVER_ITERATION_COUNT;
       static const std::string CONFIG_TICKS_PER_SECOND;
       static const std::string CONFIG_DEBUG_DRAW_RANGE;
+      static const std::string CONFIG_PRINT_ENGINE_PROPERTY_DOCUMENTATION;
 
    public:
       /**
@@ -164,7 +165,7 @@ namespace dtPhysics
       bool TraceRay(RayCast& ray, dtPhysics::RayCast::Report& report);
 
       /// Do a raycast and return all hits.
-      void TraceRay(RayCast& ray, std::vector<RayCast::Report>& hits);
+      void TraceRay(RayCast& ray, std::vector<RayCast::Report>& hits, bool sortResults = true);
 
       /// Does a complex raycast using a pal callback to allow a closest, all, any, or custom algorithm to be performed.
       void TraceRay(RayCast& ray, palRayHitCallback& rayHitCallback);
@@ -200,6 +201,14 @@ namespace dtPhysics
        * and the step time has been constant since the first dtCore::System::Step.
        */
       unsigned GetNumStepsSinceStartup() const;
+
+      /**
+       * There are settings that may be configured for each engine.  Once the engine has been configured, calling this
+       * function will make it print out the internal documentation for the settings available to LOG_ALWAYS.
+       * An setting printed can be configured by adding them to the dtUtil::Configuration that is passed into the physics
+       * world constructor BUT PREFIXED with "pal." .
+       */
+      void PrintEnginePropertyDocumentation();
 
       /**
        * After the physics interface was been assigned an engine, the solver interface

@@ -39,4 +39,6 @@
 #   endif 
 #endif
 
+// I want this included everywhere.  It sets some global warning pragmas and it's mostly macros.
+#include <dtUtil/warningdisable.h>
 #endif // DELTA_UTIL_EXPORT

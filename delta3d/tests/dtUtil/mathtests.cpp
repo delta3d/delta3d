@@ -1,6 +1,7 @@
 /* -*-c++-*-
  * allTests - This source file (.h & .cpp) - Using 'The MIT License'
  * Copyright (C) 2006-2008, MOVES Institute
+ * Copyright (C) 2013, David Guthrie
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -47,6 +48,7 @@ namespace dtUtil
    class MathTests : public CPPUNIT_NS::TestFixture
    {
       CPPUNIT_TEST_SUITE(MathTests);
+         CPPUNIT_TEST(TestSign);
          CPPUNIT_TEST(TestFiniteAndNAN);
          CPPUNIT_TEST(TestVecFinite);
          CPPUNIT_TEST(TestNormalizer);
@@ -67,6 +69,7 @@ namespace dtUtil
       void setUp();
       void tearDown();
 
+      void TestSign();
       void TestFiniteAndNAN();
       void TestVecFinite();
       void TestNormalizer();
@@ -96,6 +99,21 @@ namespace dtUtil
 
    void MathTests::tearDown()
    {
+   }
+   
+   void MathTests::TestSign()
+   {
+      CPPUNIT_ASSERT_EQUAL(float(-1.0), dtUtil::Sign<float>(-93.0));
+      CPPUNIT_ASSERT_EQUAL(double(-1.0), dtUtil::Sign<double>(-0.003));
+      CPPUNIT_ASSERT_EQUAL(int(-1), dtUtil::Sign<int>(-5000));
+
+      CPPUNIT_ASSERT_EQUAL(float(0.0), dtUtil::Sign<float>(-0.0));
+      CPPUNIT_ASSERT_EQUAL(double(0.0), dtUtil::Sign<double>(0.0));
+      CPPUNIT_ASSERT_EQUAL(int(0), dtUtil::Sign<int>(0));
+      
+      CPPUNIT_ASSERT_EQUAL(float(1.0), dtUtil::Sign<float>(93.0));
+      CPPUNIT_ASSERT_EQUAL(double(1.0), dtUtil::Sign<double>(0.003));
+      CPPUNIT_ASSERT_EQUAL(int(1), dtUtil::Sign<int>(5000));
    }
 
    void MathTests::TestVecFinite()

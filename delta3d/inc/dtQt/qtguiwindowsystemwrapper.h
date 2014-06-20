@@ -38,6 +38,7 @@ namespace dtQt
    {
    public:
       static void EnableQtGUIWrapper();
+      static void DisableQtGUIWrapper();
 
       QtGuiWindowSystemWrapper(osg::GraphicsContext::WindowingSystemInterface& oldInterface);
 

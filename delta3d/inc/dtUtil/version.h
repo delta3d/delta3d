@@ -29,12 +29,12 @@ extern "C"
 {
 
 #define DELTA3D_VERSION_MAJOR 2
-#define DELTA3D_VERSION_MINOR 7
-#define DELTA3D_VERSION_PATCH 5
+#define DELTA3D_VERSION_MINOR 8
+#define DELTA3D_VERSION_PATCH 0
 
 /**
   * delta3DGetVersion() returns the library version number.
- *  Numbering convention : Delta3D 1.4.0 will return "1.4.0" from delta3DGetVersion.
+ *  Numbering convention : Delta3D 2.8.0 will return "2.8.0" from delta3DGetVersion.
   *
   * This C function can be also used to check for the existence of the Delta3D
   * library using autoconf and its m4 macro AC_CHECK_LIB.

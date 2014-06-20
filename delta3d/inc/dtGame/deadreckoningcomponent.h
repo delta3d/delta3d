@@ -60,13 +60,6 @@ namespace dtGame
          virtual void ProcessMessage(const dtGame::Message& message);
 
          /**
-          * Gets the helper registered for an actor
-          * @param proxy The proxy to get the helper for
-          * @return A pointer to the helper, or NULL if the proxy is not registered
-          */
-         const DeadReckoningHelper* GetHelperForProxy(dtGame::GameActorProxy &proxy) const;
-
-         /**
           * Registers an actor with this component.  To simplify coding in the actor, specifically when it comes
           * to setting properties on the helper, the actor should create it's own helper and pass it in when registering.
           * @param toRegister the actor to register.
@@ -128,11 +121,11 @@ namespace dtGame
          /**
           * Apply the articulation support
           * @param helper the instance containing the articulation data.
-          * @param gameActor the instance to be articulated.
+          * @param xformable the instance to be articulated.
           * @param tickMessage the time data to be used when interpolating.
           */
          void DoArticulation(dtGame::DeadReckoningHelper& helper,
-            const dtGame::GameActor& gameActor,
+            const dtCore::Transformable& xformable,
             const dtGame::TickMessage& tickMessage) const;
 
          /**

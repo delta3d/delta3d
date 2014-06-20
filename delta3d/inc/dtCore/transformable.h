@@ -24,6 +24,7 @@
 #include <ode/common.h>
 #include <dtCore/deltadrawable.h>
 #include <dtUtil/enumeration.h>
+#include <dtCore/collisiongeometrytypeenum.h>
 
 // Must include because it's a typedef
 #include <osg/Matrix>
@@ -59,33 +60,6 @@ namespace dtCore
    class DT_CORE_EXPORT Transformable : public DeltaDrawable
    {
    public:
-      /**
-       * We need an enumeration to allow the user to set which type
-       * of collision geometry to use.  The other properties in this
-       * proxy such as radius, length, etc. affect the current type
-       * of collision geometry.
-       * Ideally, this enum shouldn't be here, but rather in the collision class.
-       * Its left here for backward compatibility.
-       */
-      class DT_CORE_EXPORT CollisionGeomType : public dtUtil::Enumeration
-      {
-         DECLARE_ENUM(CollisionGeomType);
-
-      public:
-         static CollisionGeomType NONE;
-         static CollisionGeomType SPHERE;
-         static CollisionGeomType CYLINDER;
-         static CollisionGeomType CCYLINDER;
-         static CollisionGeomType CUBE;
-         static CollisionGeomType RAY;
-         static CollisionGeomType MESH;
-
-      private:
-         CollisionGeomType(const std::string& name) : dtUtil::Enumeration(name)
-         {
-            AddInstance(this);
-         }
-      };
 
       DECLARE_MANAGEMENT_LAYER(Transformable)
 
@@ -217,7 +191,7 @@ namespace dtCore
        *
        * @return the object's collision geometry type
        */
-      Transformable::CollisionGeomType* GetCollisionGeomType() const;
+      CollisionGeomType* GetCollisionGeomType() const;
 
       /**
        * Returns the dimensions of collision geometry associated with this

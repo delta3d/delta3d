@@ -60,8 +60,8 @@ ShipActor::ThrottlePosition ShipActor::ThrottlePosition::AHEAD_STANDARD("AHEAD_S
 ShipActor::ThrottlePosition ShipActor::ThrottlePosition::AHEAD_FULL("AHEAD_FULL",  8);
 ShipActor::ThrottlePosition ShipActor::ThrottlePosition::AHEAD_FLANK("AHEAD_FLANK", 9);
 
-ShipActor::ShipActor(dtGame::GameActorProxy &proxy)
-   : VehicleActor(proxy)
+ShipActor::ShipActor(dtGame::GameActorProxy& parent)
+   : VehicleActor(parent)
    , shaftEngaged(true)
    , position(0.0f, 0.0f, 100.0f)
    , course(0.0f)

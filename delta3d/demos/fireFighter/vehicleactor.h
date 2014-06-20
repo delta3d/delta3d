@@ -57,7 +57,7 @@ class FIRE_FIGHTER_EXPORT VehicleActor : public dtGame::GameActor
       };
 
       /// Constructor
-      VehicleActor(dtGame::GameActorProxy &proxy);
+      VehicleActor(dtGame::GameActorProxy& parent);
 
       virtual void TimeUpdate(double deltaTime) { }
       void StartEngines();
@@ -91,7 +91,7 @@ class FIRE_FIGHTER_EXPORT VehicleActorProxy : public dtGame::GameActorProxy
       virtual void BuildInvokables();
 
       /// Instantiates the actor itself
-      virtual void CreateActor() { SetActor(*new VehicleActor(*this)); }
+      virtual void CreateDrawable() { SetDrawable(*new VehicleActor(*this)); }
 
       /**
        * Gets the billboard used to represent static meshes if this proxy's

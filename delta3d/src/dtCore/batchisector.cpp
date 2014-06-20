@@ -254,6 +254,30 @@ namespace dtCore
    //////////////////////////////////////////////////////////////////////////////////////
 
    ///////////////////////////////////////////////////////////////////////////////
+   BatchIsector::SingleISector::SingleISector(const int idForISector, const std::string& nameForISector, bool checkClosestDrawables)
+   {
+      mCheckClosestDrawables = checkClosestDrawables;
+      mNameForReference = nameForISector;
+      mIDForReference = idForISector;
+      mClosestDrawable = NULL;
+      mLineSegment = new osg::LineSegment();
+      mIsOn = false;
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   BatchIsector::SingleISector::SingleISector(const int idForISector, bool checkClosestDrawables)
+   {
+      mCheckClosestDrawables = checkClosestDrawables;
+      mIDForReference = idForISector;
+      mClosestDrawable = NULL;
+      mLineSegment = new osg::LineSegment();
+      mIsOn = false;
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   BatchIsector::SingleISector::~SingleISector() {} 
+
+   ///////////////////////////////////////////////////////////////////////////////
    void BatchIsector::SingleISector::GetHitPoint(osg::Vec3& xyz, int pointNum) const
    {
       if (pointNum >= (int) GetNumberOfHits()) { return; }

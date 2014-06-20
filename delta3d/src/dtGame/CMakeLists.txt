@@ -79,6 +79,7 @@ SET(LIB_SOURCES
     ${SOURCE_PATH}/gameactor.cpp
     ${SOURCE_PATH}/gameactorproxy.cpp
     ${SOURCE_PATH}/gameapplication.cpp
+    ${SOURCE_PATH}/gameentrypoint.cpp
     ${SOURCE_PATH}/gamemanager.cpp
     ${SOURCE_PATH}/gmcomponent.cpp
     ${SOURCE_PATH}/gmsettings.cpp
@@ -103,26 +104,15 @@ SET(LIB_SOURCES
 
 ADD_PRECOMPILED_HEADER(${LIB_NAME} prefix/dtgameprefix.h prefix/dtgameprefix.cpp LIB_SOURCES)
 
-ADD_LIBRARY(${LIB_NAME} SHARED
-    ${LIB_PUBLIC_HEADERS}
-    ${LIB_SOURCES}
-)
 
-LINK_WITH_VARIABLES(${LIB_NAME}
-                    OSGSIM_LIBRARY)
+SET(LIB_EXTERNAL_DEPS
+     OSGSIM_LIBRARY)
 
-TARGET_LINK_LIBRARIES(${LIB_NAME}  
-                      ${CARBON_LIBRARY}
-                      ${DTUTIL_LIBRARY}
-                      ${DTCORE_LIBRARY}
-                      ${DTABC_LIBRARY}
-                      )
+SET(LIB_DEPS
+    ${CARBON_LIBRARY}
+    ${DTUTIL_LIBRARY}
+    ${DTCORE_LIBRARY}
+    ${DTABC_LIBRARY}
+    )
 
-
-INCLUDE(ModuleInstall OPTIONAL)
-
-
-IF (MSVC_IDE)
-  SET_TARGET_PROPERTIES(${LIB_NAME}
-                     PROPERTIES DEFINE_SYMBOL DT_GAME_LIBRARY) 
-ENDIF (MSVC_IDE)
+DELTA3D_ADD_LIBRARY(${LIB_NAME} DT_GAME_LIBRARY)

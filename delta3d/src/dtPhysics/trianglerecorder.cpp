@@ -34,8 +34,11 @@ namespace dtPhysics
             for(size_t i=0; i<node.getNumDrawables(); i++)
             {
                osg::Drawable* d = node.getDrawable(i);
+               if (!d)
+                  continue;
+/*
                osg::Geometry* geom = d->asGeometry();
-
+               
                bool wroteWithGeom = false;
                if (geom != NULL)
                {
@@ -113,16 +116,19 @@ namespace dtPhysics
                {
                   return;
                }
-
+*/
                if (d->supports(mFunctor))
                {
                   osg::NodePath nodePath = getNodePath();
                   mFunctor.SetMatrix(osg::computeLocalToWorld(nodePath));
                   d->accept(mFunctor);
                }
+               else
+                  LOG_WARNING("Geometry "+d->getName()+" does not support conversion.")
             }
          }
 
+      public:
          osg::TriangleFunctor<T> mFunctor;
    };
 

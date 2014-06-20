@@ -27,6 +27,7 @@
 #include <dtCore/plugin_export.h>
 #include <dtCore/loadable.h>
 #include <dtCore/model.h>
+#include <dtUtil/getsetmacros.h>
 
 //#include <map>
 //#include <vector>
@@ -57,7 +58,7 @@ namespace dtActors
        * @param proxy The actor proxy owning this task actor.
        * @param desc An optional description of this task actor.
        */
-      GameMeshActor(dtGame::GameActorProxy& proxy);
+      GameMeshActor(dtGame::GameActorProxy& parent);
 
       /**
        * Loads a mesh file.
@@ -233,6 +234,8 @@ namespace dtActors
        */
       virtual dtCore::ActorProxyIcon* GetBillBoardIcon();
 
+      DT_DECLARE_ACCESSOR(dtCore::ResourceDescriptor, MeshResource);
+
    protected:
 
       /**
@@ -244,7 +247,7 @@ namespace dtActors
        * Called by the game manager during creation of the proxy.  This method
        * creates the real actor and returns it.
        */
-      virtual void CreateActor();
+      virtual void CreateDrawable();
 
    private:
    };

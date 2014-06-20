@@ -58,7 +58,7 @@ namespace dtActors
          * Subclasses corresponding to concrete environmental effects need to
          * implement this method.
          */
-        virtual void CreateActor() = 0;
+        virtual void CreateDrawable() = 0;
 
         /**
          * Destructor

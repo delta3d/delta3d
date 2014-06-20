@@ -50,7 +50,7 @@ namespace dtActors
         /**
          * Creates an infinite terrain actor.
          */
-        virtual void CreateActor();
+        virtual void CreateDrawable();
 
         /**
          * Destructor

@@ -43,7 +43,9 @@
 // Actor Component Code
 ////////////////////////////////////////////////////////////////////
 
-const dtGame::ActorComponent::ACType TestActorComponent1::TYPE("TestActorComponent1");
+const dtGame::ActorComponent::ACType TestActorComponent1::TYPE(new dtCore::ActorType("TestActorComponent1", "ActorComponents",
+       "Test1",
+       dtGame::ActorComponent::BaseActorComponentType));
 
 TestActorComponent1::TestActorComponent1()
 : dtGame::ActorComponent(TYPE)
@@ -54,12 +56,12 @@ TestActorComponent1::TestActorComponent1()
 {
 }
 
-void TestActorComponent1::OnAddedToActor(dtGame::GameActor& actor)
+void TestActorComponent1::OnAddedToActor(dtCore::BaseActorObject& /*actor*/)
 {
    mWasAdded = true;
 }
 
-void TestActorComponent1::OnRemovedFromActor(dtGame::GameActor& actor)
+void TestActorComponent1::OnRemovedFromActor(dtCore::BaseActorObject& /*actor*/)
 {
    mWasRemoved = true;
 }
@@ -75,7 +77,9 @@ void TestActorComponent1::OnRemovedFromWorld()
 {
    mLeftWorld = true;
 }
-const dtGame::ActorComponent::ACType TestActorComponent2::TYPE("TestActorComponent2");
+const dtGame::ActorComponent::ACType TestActorComponent2::TYPE(new dtCore::ActorType("TestActorComponent2", "ActorComponents",
+       "Test2",
+       dtGame::ActorComponent::BaseActorComponentType));
 
 TestActorComponent2::TestActorComponent2()
 : dtGame::ActorComponent(TYPE)
@@ -86,12 +90,12 @@ TestActorComponent2::TestActorComponent2()
 {
 }
 
-void TestActorComponent2::OnAddedToActor(dtGame::GameActor& actor)
+void TestActorComponent2::OnAddedToActor(dtCore::BaseActorObject& /*actor*/)
 {
    mWasAdded = true;
 }
 
-void TestActorComponent2::OnRemovedFromActor(dtGame::GameActor& actor)
+void TestActorComponent2::OnRemovedFromActor(dtCore::BaseActorObject& /*actor*/)
 {
    mWasRemoved = true;
 }
@@ -110,7 +114,7 @@ void TestActorComponent2::OnRemovedFromWorld()
 ////////////////////////////////////////////////////////////////////
 // Proxy Code
 ////////////////////////////////////////////////////////////////////
-TestGameActorProxy1::TestGameActorProxy1():ticksEnabled(false)
+TestGameActorProxy1::TestGameActorProxy1()
 {
    SetClassName("TestGameActor1");
 }
@@ -125,7 +129,7 @@ void TestGameActorProxy1::BuildPropertyMap()
    dtGame::GameActorProxy::BuildPropertyMap();
 
    TestGameActor1* actor = NULL;
-   GetActor(actor);
+   GetDrawable(actor);
 
    static const dtUtil::RefString PROPERTY_HAS_FIRED("Has Fired");
    static const dtUtil::RefString PROPERTY_HAS_FIRED_LABEL("Has this actor fired");
@@ -174,7 +178,7 @@ void TestGameActorProxy1::BuildInvokables()
    dtGame::GameActorProxy::BuildInvokables();
 
    TestGameActor1* actor = NULL;
-   GetActor(actor);
+   GetDrawable(actor);
 
    AddInvokable(*new dtGame::Invokable("Fire One",
       dtUtil::MakeFunctor(&TestGameActor1::FireOne, *actor)));
@@ -196,9 +200,9 @@ void TestGameActorProxy1::BuildInvokables()
    ticksEnabled = true;
 }
 
-void TestGameActorProxy1::CreateActor()
+void TestGameActorProxy1::CreateDrawable()
 {
-   SetActor(*new TestGameActor1(*this));
+   SetDrawable(*new TestGameActor1(*this));
 }
 
 void TestGameActorProxy1::ToggleTicks(const dtGame::Message& message)
@@ -223,7 +227,7 @@ void TestGameActorProxy1::ToggleTicks(const dtGame::Message& message)
 ////////////////////////////////////////////////////////////////////
 // Actor Code
 ////////////////////////////////////////////////////////////////////
-TestGameActor1::TestGameActor1(dtGame::GameActorProxy& proxy): dtGame::GameActor(proxy), fired(false), tickLocals(0), tickRemotes(0)
+TestGameActor1::TestGameActor1(dtGame::GameActorProxy& parent): dtGame::GameActor(parent), fired(false), tickLocals(0), tickRemotes(0)
 {
 }
 

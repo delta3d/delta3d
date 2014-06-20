@@ -29,7 +29,7 @@ class FIRE_FIGHTER_EXPORT SCBAActor : public GameItemActor
    public:
 
       /// Constructor
-      SCBAActor(dtGame::GameActorProxy &proxy);
+      SCBAActor(dtGame::GameActorProxy& parent);
 
       virtual void Activate(bool enable = true);
 
@@ -56,7 +56,7 @@ class FIRE_FIGHTER_EXPORT SCBAActorProxy : public GameItemActorProxy
       virtual void BuildInvokables();
 
       /// Instantiates the actor
-      virtual void CreateActor() { SetActor(*new SCBAActor(*this)); }
+      virtual void CreateDrawable() { SetDrawable(*new SCBAActor(*this)); }
 
    protected:
 

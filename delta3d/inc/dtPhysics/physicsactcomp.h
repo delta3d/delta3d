@@ -44,7 +44,7 @@ namespace dtCore
    class DeltaDrawable;
 }
 
-namespace dtDAL
+namespace dtCore
 {
    class BaseActorObject;
 }
@@ -64,7 +64,7 @@ namespace dtPhysics
    class DT_PHYSICS_EXPORT PhysicsActComp: public dtGame::ActorComponent
    {
       public:
-         static const dtUtil::RefString TYPE;
+         static const dtGame::ActorComponent::ACType TYPE;
 
          static const dtUtil::RefString PROPERTY_PHYSICS_NAME;
          static const dtUtil::RefString PROPERTY_PHYSICS_MASS;
@@ -118,13 +118,13 @@ namespace dtPhysics
           * to support whatever system you need to to make the bodies warp to a new position
           * correctly.  You may also chose to zero out some forces, reset some states, etc.
           *
-          * @Note By default it just sets the transform on the main physics object.
+          * @note By default it just sets the transform on the main physics object.
           */
          virtual void SetMultiBodyTransform(const TransformType& xform);
 
          /**
           * @return the multi-body transform, the origin of this group of bodies.
-          * @Note By default it just gets the transform on the main physics object.
+          * @note By default it just gets the transform on the main physics object.
           */
          virtual void GetMultiBodyTransform(TransformType& xform);
 
@@ -214,7 +214,7 @@ namespace dtPhysics
          virtual void BuildPropertyMap();
 
          /// For now, this is used to make dtPhysX properties map in.
-         virtual dtCore::RefPtr<dtDAL::ActorProperty> GetDeprecatedProperty(const std::string& name);
+         virtual dtCore::RefPtr<dtCore::ActorProperty> GetDeprecatedProperty(const std::string& name);
 
          //////////////////////////////////////////////////////////////////////////////////////
          //                                    Utilities                                     //

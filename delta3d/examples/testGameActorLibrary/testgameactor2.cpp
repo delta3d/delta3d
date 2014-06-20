@@ -52,7 +52,7 @@ void TestGameActorProxy2::BuildInvokables()
    GameActorProxy::BuildInvokables();
 
    AddInvokable(*new dtGame::Invokable("Test Message Listener", 
-      dtUtil::MakeFunctor(&TestGameActor2::LogMessage, static_cast<TestGameActor2*>(GetActor()))));
+      dtUtil::MakeFunctor(&TestGameActor2::LogMessage, static_cast<TestGameActor2*>(GetDrawable()))));
    
 }
 
@@ -61,7 +61,7 @@ void TestGameActorProxy2::BuildPropertyMap()
    dtGame::GameActorProxy::BuildPropertyMap();
 
    TestGameActor2* actor = NULL;
-   GetActor(actor);
+   GetDrawable(actor);
 
    AddProperty(new dtCore::IntActorProperty("Actor Deleted Count", "The number of Actor Deleted message received", 
       dtCore::IntActorProperty::SetFuncType(actor, &TestGameActor2::SetActorDeletedCount),
@@ -79,15 +79,15 @@ void TestGameActorProxy2::BuildPropertyMap()
       "A property marking the number of Map Loaded message received.", ""));
 }
 
-void TestGameActorProxy2::CreateActor()
+void TestGameActorProxy2::CreateDrawable()
 {
-   SetActor(*new TestGameActor2(*this));
+   SetDrawable(*new TestGameActor2(*this));
 }
 
 /////////////////////////////////////////////////////
 // Actor code
 /////////////////////////////////////////////////////
-TestGameActor2::TestGameActor2(dtGame::GameActorProxy& proxy): dtGame::GameActor(proxy), mActorDeletedCount(0), mActorPublishedCount(0),
+TestGameActor2::TestGameActor2(dtGame::GameActorProxy& parent): dtGame::GameActor(parent), mActorDeletedCount(0), mActorPublishedCount(0),
    mMapLoadedCount(0)
 {
 

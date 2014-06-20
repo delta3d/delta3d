@@ -28,9 +28,9 @@ using namespace dtCore;
 
 namespace dtActors
 {
-   void InfiniteTerrainActorProxy::CreateActor()
+   void InfiniteTerrainActorProxy::CreateDrawable()
    {
-      SetActor(*new dtCore::InfiniteTerrain);
+      SetDrawable(*new dtCore::InfiniteTerrain);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -44,7 +44,7 @@ namespace dtActors
       RemoveProperty(dtCore::TransformableActorProxy::PROPERTY_COLLISION_LENGTH);
       RemoveProperty(dtCore::TransformableActorProxy::PROPERTY_COLLISION_BOX);
 
-      InfiniteTerrain *ter = static_cast<InfiniteTerrain*>(GetActor());
+      InfiniteTerrain *ter = static_cast<InfiniteTerrain*>(GetDrawable());
 
       // This property manipulates the segment size of an InfiniteTerrain.
       // Uses a float type to represent the segment size.

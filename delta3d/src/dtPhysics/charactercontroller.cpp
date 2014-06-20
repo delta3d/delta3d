@@ -21,7 +21,7 @@
 #include <dtPhysics/charactercontroller.h>
 
 #include <dtPhysics/palutil.h>
-#include <dtDAL/enginepropertytypes.h>
+#include <dtCore/enginepropertytypes.h>
 #include <dtUtil/exception.h>
 
 #include <pal/palCharacter.h>
@@ -57,7 +57,7 @@ namespace dtPhysics
    , mJumpSpeed(Real(20.00))
    , mFallSpeed(Real(55.00))
    , mStepHeight(Real(0.3))
-   , mMaxInclineAngle(Real(0.45))
+   , mMaxInclineAngle(Real(45.0))
    , mSkinWidth(Real(0.04))
    , mCollisionGroup(0)
    , mImpl(new CharacterControllerImpl(shape))

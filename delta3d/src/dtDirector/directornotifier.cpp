@@ -35,17 +35,17 @@ namespace dtDirector
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void DirectorNotifier::Update(bool pause, bool step)
+   void DirectorNotifier::Update(bool /*pause*/, bool /*step*/)
    {
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void DirectorNotifier::OnNodeExecution(Node* node, const std::string& input, const std::vector<std::string>& outputs)
+   void DirectorNotifier::OnNodeExecution(Node* /*node*/, const std::string& /*input*/, const std::vector<std::string>& /*outputs*/)
    {
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void DirectorNotifier::OnValueChanged(Node* node)
+   void DirectorNotifier::OnValueChanged(Node* /*node*/)
    {
    }
 
@@ -65,13 +65,13 @@ namespace dtDirector
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   bool DirectorNotifier::ShouldBreak(Node* node)
+   bool DirectorNotifier::ShouldBreak(Node* /*node*/)
    {
       return false;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void DirectorNotifier::BreakNode(Node* node, bool shouldFocus)
+   void DirectorNotifier::BreakNode(Node* /*node*/, bool /*shouldFocus*/)
    {
    }
 }

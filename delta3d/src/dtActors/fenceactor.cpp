@@ -77,7 +77,8 @@ namespace dtActors
       mSegGeom->setColorBinding(osg::Geometry::BIND_OVERALL);
 
       mSegGeom->setNormalArray(mSegNormalList.get());
-      mSegGeom->setNormalBinding(osg::Geometry::BIND_PER_PRIMITIVE);
+      //mSegGeom->setNormalBinding(osg::Geometry::BIND_PER_PRIMITIVE);
+      mSegGeom->setNormalBinding(osg::Geometry::BIND_PER_PRIMITIVE_SET);
 
       // Create a texture object to use for the segment.
       mSegTexture = new osg::Texture2D();
@@ -1175,10 +1176,10 @@ namespace dtActors
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void FenceActorProxy::CreateActor()
+   void FenceActorProxy::CreateDrawable()
    {
       LinkedPointsActor* actor = new FenceActor(this);
-      SetActor(*actor);
+      SetDrawable(*actor);
       actor->Initialize();
    }
 
@@ -1188,7 +1189,7 @@ namespace dtActors
       BaseClass::BuildPropertyMap();
 
       FenceActor* actor = NULL;
-      GetActor(actor);
+      GetDrawable(actor);
 
       // Post Resources Array
       dtCore::ResourceActorProperty* postResourceProp = new dtCore::ResourceActorProperty(dtCore::DataType::STATIC_MESH,
@@ -1407,7 +1408,7 @@ namespace dtActors
    void FenceActorProxy::SetPostMesh(const dtCore::ResourceDescriptor& value)
    {
       FenceActor* actor = NULL;
-      GetActor(actor);
+      GetDrawable(actor);
 
       std::vector<dtCore::ResourceDescriptor> postArray = actor->GetPostResourceArray();
       if (mPostResourceIndex >= 0 && mPostResourceIndex < (int)postArray.size())
@@ -1421,7 +1422,7 @@ namespace dtActors
    dtCore::ResourceDescriptor FenceActorProxy::GetPostMesh()
    {
       FenceActor* actor = NULL;
-      GetActor(actor);
+      GetDrawable(actor);
 
       std::vector<dtCore::ResourceDescriptor> postArray = actor->GetPostResourceArray();
       if (mPostResourceIndex >= 0 && mPostResourceIndex < (int)postArray.size())
@@ -1436,7 +1437,7 @@ namespace dtActors
    void FenceActorProxy::SetSegmentTexture(const dtCore::ResourceDescriptor& value)
    {
       FenceActor* actor = NULL;
-      GetActor(actor);
+      GetDrawable(actor);
 
       std::vector<dtCore::ResourceDescriptor> segmentArray = actor->GetSegmentResourceArray();
       if (mSegmentResourceIndex >= 0 && mSegmentResourceIndex < (int)segmentArray.size())
@@ -1450,7 +1451,7 @@ namespace dtActors
    dtCore::ResourceDescriptor FenceActorProxy::GetSegmentTexture()
    {
       FenceActor* actor = NULL;
-      GetActor(actor);
+      GetDrawable(actor);
 
       std::vector<dtCore::ResourceDescriptor> segmentArray = actor->GetSegmentResourceArray();
       if (mSegmentResourceIndex >= 0 && mSegmentResourceIndex < (int)segmentArray.size())
@@ -1489,7 +1490,7 @@ namespace dtActors
    int FenceActorProxy::GetPointIndex()
    {
       FenceActor* actor = NULL;
-      GetActor(actor);
+      GetDrawable(actor);
 
       std::vector<FenceActor::ResourceIDData> resourceArray = actor->GetResourceIDArray();
       if (mResourceIDIndex < (int)resourceArray.size())
@@ -1504,7 +1505,7 @@ namespace dtActors
    void FenceActorProxy::SetPointIndex(int value)
    {
       FenceActor* actor = NULL;
-      GetActor(actor);
+      GetDrawable(actor);
 
       std::vector<FenceActor::ResourceIDData> resourceArray = actor->GetResourceIDArray();
       if (mResourceIDIndex < (int)resourceArray.size())
@@ -1518,7 +1519,7 @@ namespace dtActors
    int FenceActorProxy::GetSegmentIndex()
    {
       FenceActor* actor = NULL;
-      GetActor(actor);
+      GetDrawable(actor);
 
       std::vector<FenceActor::ResourceIDData> resourceArray = actor->GetResourceIDArray();
       if (mResourceIDIndex < (int)resourceArray.size())
@@ -1533,7 +1534,7 @@ namespace dtActors
    void FenceActorProxy::SetSegmentIndex(int value)
    {
       FenceActor* actor = NULL;
-      GetActor(actor);
+      GetDrawable(actor);
 
       std::vector<FenceActor::ResourceIDData> resourceArray = actor->GetResourceIDArray();
       if (mResourceIDIndex < (int)resourceArray.size())
@@ -1547,7 +1548,7 @@ namespace dtActors
    int FenceActorProxy::GetPostID()
    {
       FenceActor* actor = NULL;
-      GetActor(actor);
+      GetDrawable(actor);
 
       std::vector<FenceActor::ResourceIDData> resourceArray = actor->GetResourceIDArray();
       if (mResourceIDIndex < (int)resourceArray.size())
@@ -1562,7 +1563,7 @@ namespace dtActors
    void FenceActorProxy::SetPostID(int value)
    {
       FenceActor* actor = NULL;
-      GetActor(actor);
+      GetDrawable(actor);
 
       std::vector<FenceActor::ResourceIDData> resourceArray = actor->GetResourceIDArray();
       if (mResourceIDIndex < (int)resourceArray.size())
@@ -1576,7 +1577,7 @@ namespace dtActors
    int FenceActorProxy::GetSegmentID()
    {
       FenceActor* actor = NULL;
-      GetActor(actor);
+      GetDrawable(actor);
 
       std::vector<FenceActor::ResourceIDData> resourceArray = actor->GetResourceIDArray();
       if (mResourceIDIndex < (int)resourceArray.size())
@@ -1591,7 +1592,7 @@ namespace dtActors
    void FenceActorProxy::SetSegmentID(int value)
    {
       FenceActor* actor = NULL;
-      GetActor(actor);
+      GetDrawable(actor);
 
       std::vector<FenceActor::ResourceIDData> resourceArray = actor->GetResourceIDArray();
       if (mResourceIDIndex < (int)resourceArray.size())
@@ -1605,7 +1606,7 @@ namespace dtActors
    osg::Vec2 FenceActorProxy::GetSegmentPoint()
    {
       FenceActor* actor = NULL;
-      GetActor(actor);
+      GetDrawable(actor);
 
       std::vector<FenceActor::SegmentPointData> pointArray = actor->GetSegmentPointArray();
       if (mSegmentPointIndex < (int)pointArray.size())
@@ -1620,7 +1621,7 @@ namespace dtActors
    void FenceActorProxy::SetSegmentPoint(const osg::Vec2& value)
    {
       FenceActor* actor = NULL;
-      GetActor(actor);
+      GetDrawable(actor);
 
       std::vector<FenceActor::SegmentPointData> pointArray = actor->GetSegmentPointArray();
       if (mSegmentPointIndex < (int)pointArray.size())
@@ -1634,7 +1635,7 @@ namespace dtActors
    float FenceActorProxy::GetSegmentPointTextureHeight()
    {
       FenceActor* actor = NULL;
-      GetActor(actor);
+      GetDrawable(actor);
 
       std::vector<FenceActor::SegmentPointData> pointArray = actor->GetSegmentPointArray();
       if (mSegmentPointIndex < (int)pointArray.size())
@@ -1649,7 +1650,7 @@ namespace dtActors
    void FenceActorProxy::SetSegmentPointTextureHeight(float value)
    {
       FenceActor* actor = NULL;
-      GetActor(actor);
+      GetDrawable(actor);
 
       std::vector<FenceActor::SegmentPointData> pointArray = actor->GetSegmentPointArray();
       if (mSegmentPointIndex < (int)pointArray.size())

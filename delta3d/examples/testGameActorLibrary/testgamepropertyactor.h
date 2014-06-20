@@ -432,7 +432,7 @@ class DT_EXAMPLE_EXPORT TestGamePropertyActor : public dtGame::GameActorProxy
 
       virtual void BuildPropertyMap();
 
-      virtual void CreateActor();
+      virtual void CreateDrawable();
       virtual void OnEnteredWorld();
 
       void SetRegisterListeners(bool registerListeners) { mRegisterListeners = registerListeners; }

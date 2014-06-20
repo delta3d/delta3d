@@ -20,7 +20,7 @@ typedef HWND                Hwnd;
 #else
 
 typedef unsigned char       BYTE;
-typedef unsigned long       DWORD;  
+typedef unsigned int        DWORD;
 typedef long                LONG;
 typedef long                Bool;
 typedef unsigned short      WORD;

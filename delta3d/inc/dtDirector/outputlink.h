@@ -27,7 +27,7 @@
 #include <vector>
 
 #include <dtDirector/export.h>
-#include <dtUtil/mswinmacros.h>
+#include <dtUtil/warningdisable.h>
 
 namespace dtDirector
 {
@@ -173,14 +173,9 @@ namespace dtDirector
 
       OutputLink*  mRedirector;
 
-#if defined DELTA_WIN32
-#pragma warning (push)
-#pragma warning (disable:4251)
-#endif //DELTA_WIN32
+DT_DISABLE_WARNING_START_MSVC(4251)
       std::vector<InputLink*> mLinks;
-#if defined DELTA_WIN32
-#pragma warning (pop)
-#endif //DELTA_WIN32
+DT_DISABLE_WARNING_END
 
    };
 }

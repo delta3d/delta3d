@@ -42,7 +42,7 @@ class DT_EXAMPLE_EXPORT CounterTaskActor : public dtActors::TaskActor
 {
    public:
    
-      CounterTaskActor(dtGame::GameActorProxy &proxy);
+      CounterTaskActor(dtGame::GameActorProxy& parent);
       
    protected:
    

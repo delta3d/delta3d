@@ -25,16 +25,18 @@
 // stageobjectmotionmodel.h: Declaration of the STAGEObjectMotionModel class.
 //
 ////////////////////////////////////////////////////////////////////////////////
-
+#include "export.h"
 #include <dtCore/objectmotionmodel.h>
 #include <dtCore/transformableactorproxy.h>
 
 ////////////////////////////////////////////////////////////////////////////////
 
+namespace dtEditQt {
+
 /**
  * A motion model used to manipulate object positioning (used in STAGE).
  */
-class STAGEObjectMotionModel : public dtCore::ObjectMotionModel
+class DT_EDITQT_EXPORT STAGEObjectMotionModel : public dtCore::ObjectMotionModel
 {
    DECLARE_MANAGEMENT_LAYER(STAGEObjectMotionModel)
 
@@ -145,6 +147,8 @@ class STAGEObjectMotionModel : public dtCore::ObjectMotionModel
 
       std::vector<dtCore::TransformableActorProxy*> mTargets;
 };
+
+}//namespace dtEditQt 
 
 ////////////////////////////////////////////////////////////////////////////////
 

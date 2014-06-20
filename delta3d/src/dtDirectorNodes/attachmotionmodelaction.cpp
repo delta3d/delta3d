@@ -83,12 +83,12 @@ namespace dtDirector
    /////////////////////////////////////////////////////////////////////////////
    bool AttachMotionModelAction::Update(float simDelta, float delta, int input, bool firstUpdate)
    {
-      dtCore::ActorProxy* proxy = GetActor("Actor");
-      dtCore::Transformable* actor = NULL;
+      dtCore::BaseActorObject* actor = GetActor("Actor");
+      dtCore::Transformable* txable = NULL;
 
-      if (proxy)
+      if (actor)
       {
-         proxy->GetActor(actor);
+         actor->GetDrawable(txable);
       }
 
       std::string modelName = GetString("Motion Model");
@@ -97,7 +97,7 @@ namespace dtDirector
          dtCore::MotionModel* model = dtCore::MotionModel::GetInstance(modelName);
          if (model)
          {
-            model->SetTarget(actor);
+            model->SetTarget(txable);
             return ActionNode::Update(simDelta, delta, input, firstUpdate);
          }
       }

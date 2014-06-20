@@ -106,28 +106,16 @@ namespace dtCore
       bool GetShowPrototypes() const {return mShowPrototypes;}
 
       /**
-      * Gets the drawable that this property is representing
-      * @return The actor
+      * Gets the actor proxy that this property is representing
+      * @return The actor proxy.
       */
-      dtCore::DeltaDrawable* GetRealActor();
-
-      /**
-      * Gets the drawable that this property is representing
-      * @return The actor
-      */
-      const dtCore::DeltaDrawable* GetRealActor() const;
+      dtCore::BaseActorObject* GetActor();
 
       /**
       * Gets the actor proxy that this property is representing
       * @return The actor proxy.
       */
-      dtCore::BaseActorObject* GetActorProxy();
-
-      /**
-      * Gets the actor proxy that this property is representing
-      * @return The actor proxy.
-      */
-      const dtCore::BaseActorObject* GetActorProxy() const;
+      const dtCore::BaseActorObject* GetActor() const;
 
       /**
       * Sets the value of the property based on a string.
@@ -155,7 +143,6 @@ namespace dtCore
       const std::string& GetDesiredActorClass() const;
 
    private:
-      BaseActorObject* mProxy;
       SetFuncType SetIdFunctor;
       GetFuncType GetIdFunctor;
       dtUtil::RefString mDesiredActorClass;

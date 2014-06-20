@@ -26,8 +26,8 @@
 #include <dtPhysics/physicsexport.h>
 #include <dtPhysics/physicstypes.h>
 #include <dtCore/deltadrawable.h>
-#include <dtDAL/actorproxy.h>
-#include <dtDAL/propertymacros.h>
+#include <dtCore/actorproxy.h>
+#include <dtCore/propertymacros.h>
 #include <dtPhysics/physicsmaterials.h>
 #include <dtUtil/refstring.h>
 #include <osg/Node>
@@ -74,7 +74,7 @@ namespace dtPhysics
    * It holds the restitution, static friction, and dynamic friction coefficients (see
    * the properties for more information).
    */
-   class DT_PHYSICS_EXPORT  MaterialActorProxy : public dtDAL::ActorProxy
+   class DT_PHYSICS_EXPORT  MaterialActorProxy : public dtCore::ActorProxy
    {
    public:
       static const dtUtil::RefString PROPERTY_KINETIC_FRICTION;

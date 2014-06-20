@@ -24,7 +24,7 @@
 
 #include <dtDirector/node.h>
 #include <dtDirector/export.h>
-#include <dtDAL/actorproperty.h>
+#include <dtCore/actorproperty.h>
 
 namespace dtDirector
 {
@@ -149,7 +149,7 @@ namespace dtDirector
       dtCore::UniqueId mInstigator;
       dtCore::UniqueId mActorFilter;
 
-      dtCore::RefPtr<dtDAL::ActorProperty> mInstigatorProp;
+      dtCore::RefPtr<dtCore::ActorProperty> mInstigatorProp;
   };
 }
 

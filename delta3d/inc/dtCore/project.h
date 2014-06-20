@@ -111,6 +111,7 @@ namespace dtCore
       /**
        * @see SetupFromProjectConfig
        * Works the same as SetupFromProjectConfig, but it loads it from file.  It also
+       * returns the ProjecConfig object for convenience.
        */
       dtCore::RefPtr<ProjectConfig> SetupFromProjectConfigFile(const std::string& path);
 
@@ -151,7 +152,7 @@ namespace dtCore
        * @param path the file path of to the project
        * @param openReadOnly optional parameter that defaults to false.  If true, the class will not attempt to modify
        * the project directory.  This parameter essentially now will override the project global setting.
-       * @throw ExceptionEnum::ProjectInvalidContext if the path specified is invalid.
+       * @throw ProjectInvalidContextException if the path specified is invalid.
        */
       void SetContext(const std::string& path, bool openReadOnly = false);
 
@@ -165,7 +166,7 @@ namespace dtCore
 
       /**
        * Removes a context from the list based on the slot number given.
-       * @throw ExceptionEnum::ProjectInvalidContext if the id specified is invalid.
+       * @throw ProjectInvalidContextException if the id specified is invalid.
        */
       void RemoveContext(ContextSlot slot);
 
@@ -182,9 +183,10 @@ namespace dtCore
       size_t GetContextSlotCount() const;
 
       /**
-       * @return the current context.  This will be empty if no valid context is set.
+       * @return The context slot that is or contains this path.  This will be DEFAULT_SLOT_VALUE if none match.
+       * @throw dtUtil::FileNotFoundException
        */
-      ContextSlot GetContextSlot(const std::string& path) const;
+      ContextSlot GetContextSlotForPath(const std::string& path) const;
 
       /**
        * In the process of opening and using a project, lists of resources, maps, etc, are created
@@ -202,25 +204,48 @@ namespace dtCore
 
       /**
        * @return a vector with the names of the maps currently in the project.
-       * @throws ExceptionEnum::ProjectInvalidContext if the context is not set.
+       * @throws ProjectInvalidContextException if the context is not set.
        */
       const std::set<std::string>& GetMapNames();
 
       const MapTreeData& GetMapTree();
 
+      /**
+       * Parses and returns the map header data for the given map.  This is the metadata for the map.
+       * @return the MapHeaderData
+       * @throws ProjectInvalidContextException if there is no context.
+       * @throws MapParsingException if the map fails to load.
+       * @throws FileNotFoundException if the map does not exist.
+       */
       MapHeaderData GetMapHeader(const std::string& mapName);
 
       /**
        * returns the map with the given name.
        * @param name the name of the map as specified by the getMapNames() vector.
        * @return the opened map
-       * @throws ExceptionEnum::MapLoadParsingError if an error occurs reading the map file.
-       * @throws FileExceptionEnum::FileNotFound if the map does not exist.
-       * @throws ExceptionEnum::ProjectInvalidContext if the context is not set.
+       * @throws MapParsingException if an error occurs reading the map file.
+       * @throws FileNotFoundException if the map does not exist.
+       * @throws ProjectInvalidContextException if the context is not set.
        */
       Map& GetMap(const std::string& name);
 
+      /**
+       * Checks to see if the named map is loaded in memory.
+       * @param name the name of the map to check.
+       */
+      bool IsMapOpen(const std::string& name);
+
       std::vector<Map*> GetOpenMaps();
+
+      /**
+       * Loads a prefab
+       * @param rd Resource pointing to the prefab
+       * @throws MapParsingException if an error occurs reading the prefab
+       * @throws FileNotFoundException if the prefab doesn't exist.
+       * @throws ProjectInvalidContextException if the context is not set.
+       */
+      void LoadPrefab(const dtCore::ResourceDescriptor& rd, std::vector<dtCore::RefPtr<dtCore::BaseActorObject> >& actorsOut);
+
 
       /**
        * returns the last backup save of the map with the given name.
@@ -228,9 +253,9 @@ namespace dtCore
        *       found exception.
        * @param name the name of the map as specified by the getMapNames() vector.
        * @return the opened map
-       * @throws ExceptionEnum::MapLoadParsingError if an error occurs reading the map file.
-       * @throws FileExceptionEnum::FileNotFound if a backup does not exist.
-       * @throws ExceptionEnum::ProjectInvalidContext if the context is not set.
+       * @throws MapParsingException if an error occurs reading the map file.
+       * @throws FileNotFoundException if a backup does not exist.
+       * @throws ProjectInvalidContextException if the context is not set.
        */
       Map& OpenMapBackup(const std::string& name);
 
@@ -242,9 +267,9 @@ namespace dtCore
        * @param scene The application to add the proxy objects to.
        * @param addBillBoards pass true to add the billboards for any proxies that have the drawmode set to add the billboards.
        * @return the map that was loaded into the scene.
-       * @throws ExceptionEnum::MapLoadParsingError if an error occurs reading the map file.
-       * @throws FileExceptionEnum::FileNotFound if the map does not exist.
-       * @throws ExceptionEnum::ProjectInvalidContext if the context is not set.
+       * @throws MapParsingException if an error occurs reading the map file.
+       * @throws FileNotFoundException if the map does not exist.
+       * @throws ProjectInvalidContextException if the context is not set.
        */
       Map& LoadMapIntoScene(const std::string& name, dtCore::Scene& scene, bool addBillBoards = false);
 
@@ -254,7 +279,7 @@ namespace dtCore
        * @param map The map to load into the scene
        * @param scene the scene to load the map into
        * @param addBillBoards pass true to add the billboards for any proxies that have the drawmode set to add the billboards.
-       * @throws ExceptionEnum::ProjectInvalidContext if the context is not set.
+       * @throws ProjectInvalidContextException if the context is not set.
        */
       void LoadMapIntoScene(Map& map, dtCore::Scene& scene, bool addBillBoards = false);
 
@@ -265,7 +290,7 @@ namespace dtCore
        * @param fileName the name of the map file.
        * @param slot the id of the context slot to store the map in.  The default is the first slot.
        * @return The new map.
-       * @throws ExceptionEnum::ProjectInvalidContext if the context is not set.
+       * @throws ProjectInvalidContextException if the context is not set.
        * @throws ExceptionEnum::ProjectReadOnly if the project is read only.
        * @throws ExceptionEnum::ProjectException if a map by that name or fileName already exists.
        * @throws ExceptionEnum::MapSaveError if the new map could not be saved.
@@ -280,7 +305,7 @@ namespace dtCore
        *       end up in a bad state.
        * @param map the map the close.
        * @param unloadLibraries unload all libraries not used by other open maps. This is dangerous.
-       * @throws ExceptionEnum::ProjectInvalidContext if the context is not set.
+       * @throws ProjectInvalidContextException if the context is not set.
        */
       void CloseMap(Map& map, bool unloadLibraries = false);
 
@@ -290,7 +315,7 @@ namespace dtCore
        *       from your scene and deleted any memory that may have been allocated by the maps or you can
        *       end up in a bad state.
        * @param unloadLibraries unload all libraries not used by other open maps. This is dangerous.
-       * @throws ExceptionEnum::ProjectInvalidContext if the context is not set.
+       * @throws ProjectInvalidContextException if the context is not set.
        */
       void CloseAllMaps(bool unloadLibraries = false);
 
@@ -301,7 +326,7 @@ namespace dtCore
        *       end up in a bad state.
        * @param map the map the delete.
        * @param unloadLibraries unload all libraries not used by other open maps. This is dangerous.
-       * @throws ExceptionEnum::ProjectInvalidContext if the context is not set.
+       * @throws ProjectInvalidContextException if the context is not set.
        * @throws ExceptionEnum::ProjectReadOnly if the context is read only.
        */
       void DeleteMap(Map& map, bool unloadLibraries = false);
@@ -313,7 +338,7 @@ namespace dtCore
        *       end up in a bad state.
        * @param mapName the name of the map to delete.
        * @param unloadLibraries unload all libraries not used by other open maps. This is dangerous.
-       * @throws ExceptionEnum::ProjectInvalidContext if the context is not set.
+       * @throws ProjectInvalidContextException if the context is not set.
        * @throws ExceptionEnum::ProjectReadOnly if the context is read only.
        */
       void DeleteMap(const std::string& mapName, bool unloadLibraries = false);
@@ -322,7 +347,7 @@ namespace dtCore
        * Saves the given map whether it has changed or not.
        * @param map the map to save.
        * @throws ExceptionEnum::ProjectException if you change the name to match another map.
-       * @throws ExceptionEnum::ProjectInvalidContext if the context is not set or the Map is not part of the project.
+       * @throws ProjectInvalidContextException if the context is not set or the Map is not part of the project.
        * @throws ExceptionEnum::ProjectReadOnly if the context is read only.
        * @throws ExceptionEnum::MapSaveError if the new map could not be saved.
        */
@@ -336,7 +361,7 @@ namespace dtCore
        * @param newFileName the new file name of the map to save.
        * @param slot the id of the context slot to store the map in.  The default is the same as the map being re-saved
        * @throws ExceptionEnum::ProjectException if a map by that name or fileName already exists.
-       * @throws ExceptionEnum::ProjectInvalidContext if the context is not set or the Map is not part of the project.
+       * @throws ProjectInvalidContextException if the context is not set or the Map is not part of the project.
        * @throws ExceptionEnum::ProjectReadOnly if the context is read only.
        * @throws ExceptionEnum::MapSaveError if the new map could not be saved.
        */
@@ -351,7 +376,7 @@ namespace dtCore
        * @param newFileName the new file name of the map to save.
        * @param slot the id of the context slot to store the map in.  The default is the same as the map being re-saved
        * @throws ExceptionEnum::ProjectException if a map by that name or fileName already exists.
-       * @throws ExceptionEnum::ProjectInvalidContext if the context is not set or the Map is not part of the project.
+       * @throws ProjectInvalidContextException if the context is not set or the Map is not part of the project.
        * @throws ExceptionEnum::ProjectReadOnly if the context is read only.
        * @throws ExceptionEnum::MapSaveError if the new map could not be saved.
        */
@@ -361,7 +386,7 @@ namespace dtCore
        * Saves the given map whether it has changed or not.  If the map has not been loaded, but exists, this
        * call is a NOOP.
        * @param map the map to save.
-       * @throws ExceptionEnum::ProjectInvalidContext if the context is not set.
+       * @throws ProjectInvalidContextException if the context is not set.
        * @throws ExceptionEnum::ProjectReadOnly if the context is read only.
        * @throws ExceptionEnum::MapSaveError if the new map could not be saved.
        */
@@ -370,7 +395,7 @@ namespace dtCore
       /**
        * Saves a new backup of the map.
        * @param map the map to save a backup of.
-       * @throws ExceptionEnum::ProjectInvalidContext if the context is not set.
+       * @throws ProjectInvalidContextException if the context is not set.
        * @throws ExceptionEnum::ProjectReadOnly if the context is read only.
        * @throws ExceptionEnum::MapSaveError if the new map could not be saved.
        */
@@ -471,9 +496,9 @@ namespace dtCore
        *                   and the code will skip those categories until it finds the file, and also most code when using this
        *                   call is looking for a file, and a category would mean that there is an error.
        * @return The path to load a resource.
-       * @throws ExceptionEnum::ProjectInvalidContext if the context is not set.
+       * @throws ProjectInvalidContextException if the context is not set.
        * @throws ExceptionEnum::ProjectResourceError if the string representation is invalid.
-       * @throws FileExceptionEnum::FileNotFound if the file was not found.
+       * @throws FileNotFoundException if the file was not found.
        */
       const std::string GetResourcePath(const ResourceDescriptor& resource, bool isCategory = false) const;
 
@@ -485,10 +510,10 @@ namespace dtCore
        * @param type the resounce datatype of the resource.  This must be one of the enums that define a resource.
        * @param slot the id of the context slot to store the map in.
        * @return the resource's unique identifier string.
-       * @throws ExceptionEnum::ProjectInvalidContext if the context is not set.
+       * @throws ProjectInvalidContextException if the context is not set.
        * @throws FileExceptionEnum::IOException if the could not complete because of some sort of IO exception.
        * @throws ExceptionEnum::ProjectReadOnly if the project is read only.
-       * @throws FileExceptionEnum::FileNotFound if the file to import does not exist.
+       * @throws FileNotFoundException if the file to import does not exist.
        * @throws ExceptionEnum::ProjectResourceError if the file could not be imported if the Datatype is not a resource type.
        */
       const ResourceDescriptor AddResource(const std::string& newName, const std::string& pathToFile, const std::string& category, const DataType& type, ContextSlot slot = DEFAULT_SLOT_VALUE);
@@ -498,7 +523,7 @@ namespace dtCore
        * call will be a noop.  This call is not guaranteed to check all actors to make sure the resource is not in use.
        * @param resource The resource descriptor object.
        * @param slot the default slot
-       * @throws ExceptionEnum::ProjectInvalidContext if the context is not set.
+       * @throws ProjectInvalidContextException if the context is not set.
        * @throws ExceptionEnum::ProjectReadOnly if the project is read only.
        * @throws FileExceptionEnum::IOException if the could not complete because of some sort of IO exception.
        * @throws ExceptionEnum::ProjectResourceError if the resource could not be removed for reasons other than file io.
@@ -511,7 +536,7 @@ namespace dtCore
        * @param category the category to create.
        * @param type the data type to add the category into.
        * @param slot the id of the context to create the resource category in.  The default is the first
-       * @throws ExceptionEnum::ProjectInvalidContext if the context is not set.
+       * @throws ProjectInvalidContextException if the context is not set.
        * @throws ExceptionEnum::ProjectReadOnly if the project is read only.
        * @throws FileExceptionEnum::IOException if the operation could not complete because of some sort of IO exception.
        * @throws ExceptionEnum::ProjectResourceError if type is not a resource type.
@@ -526,11 +551,11 @@ namespace dtCore
        * @param slot the id of the context to remove the resource category from.  The default is all of them.
        * @return true if the category was removed, or didn't exist.  false if the category could not be removed because
        *         recursive was false and the category was not empty.
-       * @throws ExceptionEnum::ProjectInvalidContext if the context is not set.
+       * @throws ProjectInvalidContextException if the context is not set.
        * @throws ExceptionEnum::ProjectReadOnly if the project is read only.
        * @throws FileExceptionEnum::IOException if the operation could not complete because of some sort of IO exception.
        * @throws ExceptionEnum::ProjectResourceError if the resource could not be removed for reasons other than file io.
-       * @throws FileExceptionEnum::FileNotFound on rare occasion, this could possibly be thrown if the file contents
+       * @throws FileNotFoundException on rare occasion, this could possibly be thrown if the file contents
        *              are changed while the recusive delete is occuring.
        */
       bool RemoveResourceCategory(const std::string& category, const DataType& type, bool recursive, ContextSlot slot = DEFAULT_SLOT_VALUE);
@@ -561,7 +586,7 @@ namespace dtCore
 
       /**
        * @return true if the current project context is stored in an archive.
-       * @throws ExceptionEnum::ProjectInvalidContext if the context is not set.
+       * @throws ProjectInvalidContextException if the context is not set.
        */
       bool IsArchive() const;
 

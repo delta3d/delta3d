@@ -8,6 +8,7 @@
 #include <dtCore/scene.h>
 #include <dtCore/system.h>
 #include <dtCore/transform.h>
+#include <dtCore/project.h>
 #include <dtCore/collisioncategorydefaults.h>
 #include <dtUtil/mathdefines.h>
 #include <dtUtil/serializer.h>
@@ -73,7 +74,7 @@ ALint IsSource(ALuint source)
 ////////////////////////////////////////////////////////////////////////////////
 Sound::Sound()
    : Transformable("Sound")
-   , mFilename("")
+   , mFileName("")
    , mPlayCB(NULL)
    , mPlayCBData(NULL)
    , mStopCB(NULL)
@@ -98,7 +99,7 @@ Sound::Sound()
 {
    RegisterInstance(this);
 
-   AddSender(&dtCore::System::GetInstance());   
+   AddSender(&dtCore::System::GetInstance());
 
    SetPosition(osg::Vec3(0.0f, 0.0f, 0.0f));
    SetDirection(osg::Vec3(0.0f, 0.0f, 0.0f));
@@ -291,7 +292,14 @@ bool Sound::RestoreSource()
 ////////////////////////////////////////////////////////////////////////////////
 void Sound::LoadFile(const char* file)
 {
-   mFilename = file;
+   mFileName = file;
+   SendMessage(kCommand[LOAD], this);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void Sound::LoadResource(const dtCore::ResourceDescriptor& rd)
+{
+   mFileName = dtCore::Project::GetInstance().GetResourcePath(rd);
    SendMessage(kCommand[LOAD], this);
 }
 
@@ -304,7 +312,7 @@ void Sound::UnloadFile()
 ////////////////////////////////////////////////////////////////////////////////
 void Sound::Clear()
 {
-   mFilename = "";
+   mFileName = "";
    mUserDefinedSource = false;
  
    //clear out command queue
@@ -818,7 +826,7 @@ void Sound::GetVelocity(osg::Vec3& vel) const
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-osg::Vec3 Sound::GetVelocity()
+osg::Vec3 Sound::GetVelocity() const
 {
    return mVelocity;
 }

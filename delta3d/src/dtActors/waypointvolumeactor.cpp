@@ -24,7 +24,7 @@
 
 #include <dtCore/datatype.h>
 #include <dtCore/floatactorproperty.h>
-
+#include <dtCore/collisiongeometrytypeenum.h>
 #include <assert.h>
 
 namespace dtActors
@@ -46,14 +46,14 @@ namespace dtActors
    //////////////////////////////////////////////////////////////////////////////
    bool WaypointVolumeActor::IsPointInVolume(float x, float y, float z)
    {
-      Transformable::CollisionGeomType *type = GetCollisionGeomType();
+      dtCore::CollisionGeomType* type = GetCollisionGeomType();
 
       std::vector<float> dimensions;
       GetCollisionGeomDimensions(dimensions);
 
       osg::Vec3 point(x, y, z);
 
-      if (type == &Transformable::CollisionGeomType::CUBE)
+      if (type == &dtCore::CollisionGeomType::CUBE)
       {
          float halfWidth  = dimensions[0] * 0.5f;
          float halfLength = dimensions[1] * 0.5f;
@@ -83,7 +83,7 @@ namespace dtActors
             return true;
          }
       }
-      else if (type == &Transformable::CollisionGeomType::SPHERE)
+      else if (type == &dtCore::CollisionGeomType::SPHERE)
       {
          dtCore::Transform transform;
          GetTransform(transform);
@@ -129,7 +129,7 @@ namespace dtActors
 
       dtCore::TransformableActorProxy::BuildPropertyMap();
       WaypointVolumeActor* volume = NULL;
-      GetActor(volume);
+      GetDrawable(volume);
 
       //Description...
       AddProperty(new dtCore::FloatActorProperty("name","label",
@@ -144,8 +144,8 @@ namespace dtActors
    }
 
    //////////////////////////////////////////////////////////////////////////////
-   void WaypointVolumeActorProxy::CreateActor()
+   void WaypointVolumeActorProxy::CreateDrawable()
    {
-      SetActor(*new WaypointVolumeActor);
+      SetDrawable(*new WaypointVolumeActor);
    }
 }

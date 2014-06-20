@@ -35,8 +35,8 @@ class DT_EXAMPLE_EXPORT TestGameEnvironmentActor : public dtGame::IEnvGameActor
 {
    public:
 
-      TestGameEnvironmentActor(dtGame::GameActorProxy &proxy) :
-         dtGame::IEnvGameActor(proxy), mYear(0), mMonth(0), mDay(0), mHour(0), mMin(0), mSec(0) { }
+      TestGameEnvironmentActor(dtGame::GameActorProxy& parent) :
+         dtGame::IEnvGameActor(parent), mYear(0), mMonth(0), mDay(0), mHour(0), mMin(0), mSec(0) { }
 
       virtual void AddActor(dtCore::DeltaDrawable &dd);
 
@@ -81,7 +81,7 @@ class DT_EXAMPLE_EXPORT TestGameEnvironmentActorProxy : public dtGame::IEnvGameA
 
       TestGameEnvironmentActorProxy() { SetClassName("TestGameEnvironmentActorProxy"); }
 
-      virtual void CreateActor()      { SetActor(*new TestGameEnvironmentActor(*this)); }
+      virtual void CreateDrawable()      { SetDrawable(*new TestGameEnvironmentActor(*this)); }
 
       virtual void BuildPropertyMap() { dtGame::GameActorProxy::BuildPropertyMap(); }
 

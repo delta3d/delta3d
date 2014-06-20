@@ -85,7 +85,7 @@ void ExampleTestPropertyProxy::BuildPropertyMap()
 {
    DeltaObjectActorProxy::BuildPropertyMap();
 
-   Object* obj = dynamic_cast<Object*>(GetActor());
+   Object* obj = dynamic_cast<Object*>(GetDrawable());
    if (obj == NULL)
    {
       throw dtCore::InvalidActorException( "Actor should be type dtCore::Object", __FILE__, __LINE__);

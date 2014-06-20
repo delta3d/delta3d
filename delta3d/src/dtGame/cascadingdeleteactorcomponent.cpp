@@ -29,7 +29,7 @@
 
 namespace dtGame
 {
-   const dtGame::ActorComponent::ACType CascadingDeleteActorComponent::TYPE("CascadingDeleteActorComponent");
+   const ActorComponent::ACType CascadingDeleteActorComponent::TYPE( new dtCore::ActorType("CascadingDeleteActorComponent", "ActorComponents", "", dtGame::ActorComponent::BaseActorComponentType));
 
    ////////////////////////////////////////////////////////////////////////////////
    CascadingDeleteActorComponent::CascadingDeleteActorComponent()
@@ -70,14 +70,14 @@ namespace dtGame
    ////////////////////////////////////////////////////////////////////////////////
    void CascadingDeleteActorComponent::OnRemovedFromWorld()
    {
-      dtGame::GameActor* actor = NULL;
+      dtGame::GameActorProxy* actor = NULL;
       GetOwner(actor);
       std::vector<dtCore::UniqueId>::iterator i, iend;
       i = mActorsToDelete.begin();
       iend = mActorsToDelete.end();
       for (; i != iend; ++i)
       {
-         actor->GetGameActorProxy().GetGameManager()->DeleteActor(*i);
+         actor->GetGameManager()->DeleteActor(*i);
       }
    }
 

@@ -149,12 +149,6 @@ const std::string DeltaWin::GetWindowTitle() const
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void DeltaWin::ShowCursor(bool show)
-{
-   SetShowCursor(show);
-}
-
-////////////////////////////////////////////////////////////////////////////////
 void dtCore::DeltaWin::SetShowCursor(bool shouldShow)
 {
    mShowCursor = shouldShow;

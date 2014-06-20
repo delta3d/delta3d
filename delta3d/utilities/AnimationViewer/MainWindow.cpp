@@ -158,7 +158,7 @@ MainWindow::MainWindow()
    resize(1024, 800);
 
    mAnimListWidget = new AnimationTableWidget(this);
-   mAnimListWidget->setColumnCount(6);
+   mAnimListWidget->setColumnCount(7);
    mAnimListWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
 
    connect(mAnimListWidget, SIGNAL(itemClicked(QTableWidgetItem*)), this, SLOT(OnAnimationClicked(QTableWidgetItem*)));
@@ -166,7 +166,7 @@ MainWindow::MainWindow()
    connect(mAnimListWidget, SIGNAL(itemDoubleClicked(QTableWidgetItem*)), this, SLOT(OnItemDoubleClicked(QTableWidgetItem*)));
 
    QStringList headers;
-   headers << "Name" << "Weight (L)" << "Delay (L)" << "Delay In (A)" << "Delay Out (A)" << "Mixer Blend";
+   headers << "Name" << "Weight (L)" << "Delay (L)" << "Delay In (A)" << "Delay Out (A)" << "Mixer Blend" << "Frame Time";
    mAnimListWidget->setHorizontalHeaderLabels(headers);
 
    mMeshListWidget = new QListWidget(this);
@@ -541,6 +541,12 @@ void MainWindow::OnNewAnimation(unsigned int id, const QString& animationName,
       mAnimListWidget->setCellWidget(id, 5, mixerBlend);
    }
 
+   { //frame time
+      QTableWidgetItem* item = new QTableWidgetItem(tr("0.0"));
+      item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+      mAnimListWidget->setItem(id, 6, item);
+   }
+
    mAnimListWidget->resizeColumnToContents(0);
 }
 
@@ -820,13 +826,14 @@ void MainWindow::OnCharacterDataLoaded(dtAnim::Cal3DModelData* modelData,
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void MainWindow::OnBlendUpdate(const std::vector<float>& animWeightList, const std::vector<float>& morphWeightList)
+void MainWindow::OnBlendUpdate(const std::vector<std::pair<float, float> >& animWeightTimeList, const std::vector<float>& morphWeightList)
 {
    // Animation Progress bars.
-   for (size_t rowIndex = 0; rowIndex < animWeightList.size(); ++rowIndex)
+   for (size_t rowIndex = 0; rowIndex < animWeightTimeList.size(); ++rowIndex)
    {
       // Show progress as a whole number
-      float newValue = animWeightList[rowIndex] * 100.0f;
+      float newValue = animWeightTimeList[rowIndex].first * 100.0f;
+      float time =  animWeightTimeList[rowIndex].second;
 
       QProgressBar* meter = (QProgressBar*)mAnimListWidget->cellWidget(rowIndex, 5);
 
@@ -841,7 +848,7 @@ void MainWindow::OnBlendUpdate(const std::vector<float>& animWeightList, const s
             // Update the weight display only when the box is checked
             // This will allow a user to manually enter a weight while unchecked
             disconnect(mAnimListWidget, SIGNAL(itemChanged(QTableWidgetItem*)), this, SLOT(OnItemChanged(QTableWidgetItem*)));
-            mAnimListWidget->item(rowIndex, 1)->setData(Qt::DisplayRole, QString("%1").arg(animWeightList[rowIndex]));
+            mAnimListWidget->item(rowIndex, 1)->setData(Qt::DisplayRole, QString("%1").arg(animWeightTimeList[rowIndex].first));
             connect(mAnimListWidget, SIGNAL(itemChanged(QTableWidgetItem*)), this, SLOT(OnItemChanged(QTableWidgetItem*)));
 
             if (!newValue)
@@ -857,7 +864,9 @@ void MainWindow::OnBlendUpdate(const std::vector<float>& animWeightList, const s
             // mark them as turned on in the animation table
             mAnimListWidget->item(rowIndex, 0)->setCheckState(Qt::Checked);
          }
+
       }
+      mAnimListWidget->item(rowIndex, 6)->setText(QString::number(time));
    }
 
    // Morph Animation Progress bars.
@@ -873,7 +882,7 @@ void MainWindow::OnBlendUpdate(const std::vector<float>& animWeightList, const s
    // Allow the IK tab to update it's blend display if it exists
    if (mPoseMeshProperties)
    {
-      mPoseMeshProperties->OnBlendUpdate(animWeightList);
+      mPoseMeshProperties->OnBlendUpdate(animWeightTimeList);
    }
 
    // Allow the pose scene to update in response to the blend
@@ -1686,7 +1695,8 @@ void MainWindow::SetupConnectionsWithViewer()
    connect(this, SIGNAL(ScaleFactorChanged(float)), mViewer, SLOT(OnScaleFactorChanged(float)));
 
    //connect(&mTimer, SIGNAL(timeout()), mViewer, SLOT(OnTimeout()));
-   connect(mViewer, SIGNAL(BlendUpdate(const std::vector<float>&, const std::vector<float>&)), this, SLOT(OnBlendUpdate(const std::vector<float>&, const std::vector<float>&)));
+   connect(mViewer, SIGNAL(BlendUpdate(const std::vector<std::pair<float, float> >&, const std::vector<float>&)),
+            this, SLOT(OnBlendUpdate(const std::vector<std::pair<float, float> >&, const std::vector<float>&)));
 
    connect(this->mShadedAction, SIGNAL(triggered()), mViewer, SLOT(OnSetShaded()));
    connect(this->mWireframeAction, SIGNAL(triggered()), mViewer, SLOT(OnSetWireframe()));

@@ -5,36 +5,27 @@ SET(HEADER_PATH ${DELTA3D_SOURCE_DIR}/inc/${LIB_NAME})
 SET(SOURCE_PATH ${DELTA3D_SOURCE_DIR}/src/${LIB_NAME})
 file(GLOB LIB_PUBLIC_HEADERS "${HEADER_PATH}/*.h")
 file(GLOB LIB_SOURCES "*.cpp")
-list(REMOVE_ITEM LIB_SOURCES ${SOURCE_PATH}/precomp.cpp)
+file(GLOB PLIB_SOURCES "*.cxx")
+list(APPEND LIB_SOURCES ${PLIB_SOURCES})
 
-INCLUDE_DIRECTORIES( ${PLIB_INCLUDE_DIR} )
+#INCLUDE_DIRECTORIES( ${PLIB_INCLUDE_DIR} )
 
-ADD_LIBRARY(${LIB_NAME} SHARED                        
-    ${LIB_PUBLIC_HEADERS}                         
-    ${LIB_SOURCES}
+
+SET(LIB_EXTERNAL_DEPS
+  OSG_LIBRARY
+#internal now.
+#  PLIB_JS_LIBRARY
+#  PLIB_UL_LIBRARY
+  IOKIT_LIBRARY 
+  )
+
+SET(LIB_DEPS
+  ${DTCORE_LIBRARY}
 )
 
-LINK_WITH_VARIABLES(${LIB_NAME}                        
-                    OSG_LIBRARY
-                    PLIB_JS_LIBRARY
-                    PLIB_UL_LIBRARY
-                    IOKIT_LIBRARY 
-                    )
-                    
-TARGET_LINK_LIBRARIES( ${LIB_NAME}
-                       ${DTCORE_LIBRARY}
-                     )
-                    
-                        
+DELTA3D_ADD_LIBRARY(${LIB_NAME} DT_INPUT_PLIB_LIBRARY)
+
 IF (WIN32)
    TARGET_LINK_LIBRARIES(${LIB_NAME} winmm)
    SET(CMAKE_SHARED_LINKER_FLAGS "/NODEFAULTLIB:libcmt;libcmtd")
 ENDIF (WIN32)
-
-SET_TARGET_PROPERTIES(${LIB_NAME}
-                     PROPERTIES DEFINE_SYMBOL DT_INPUT_PLIB_LIBRARY)    
-           
-           
-
-INCLUDE(ModuleInstall OPTIONAL)
-

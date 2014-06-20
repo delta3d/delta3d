@@ -48,7 +48,7 @@ class TUTORIAL_TANK_EXPORT TankActor : public dtActors::GameMeshActor
       static const std::string EVENT_HANDLER_NAME;
 
       // Constructs the tank actor.
-      TankActor(dtGame::GameActorProxy& proxy);
+      TankActor(dtGame::GameActorProxy& parent);
 
       /**
        * This method is an invokable for when a local object receives a tick.
@@ -152,7 +152,7 @@ protected:
    virtual ~TankActorProxy() {}
 
    // Creates an instance of our hover tank actor
-   virtual void CreateActor();
+   virtual void CreateDrawable();
 
    // Called when this proxy is added to the game manager (ie, the "world")
    // You can respond to OnEnteredWorld on either the proxy or actor or both.

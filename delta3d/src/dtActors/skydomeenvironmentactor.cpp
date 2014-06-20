@@ -10,8 +10,8 @@
 
 using namespace dtActors;
 
-SkyDomeEnvironmentActor::SkyDomeEnvironmentActor( dtGame::GameActorProxy &proxy ):
-dtGame::IEnvGameActor(proxy),
+SkyDomeEnvironmentActor::SkyDomeEnvironmentActor( dtGame::GameActorProxy& parent ):
+dtGame::IEnvGameActor(parent),
 mEnv(new dtCore::Environment()),
 mSkyDome(NULL)
 {
@@ -155,7 +155,7 @@ void SkyDomeEnvironmentActorProxy::BuildPropertyMap()
    dtGame::GameActorProxy::BuildPropertyMap();
 
    SkyDomeEnvironmentActor *env;
-   this->GetActor(env);
+   this->GetDrawable(env);
 
    AddProperty(new BooleanActorProperty("Enable Fog", "Enable Fog",
       BooleanActorProperty::SetFuncType(env, &SkyDomeEnvironmentActor::SetFogEnable),
@@ -173,9 +173,9 @@ void SkyDomeEnvironmentActorProxy::BuildPropertyMap()
       "Adjusts the max visibility distance (meters)"));
 }
 
-void SkyDomeEnvironmentActorProxy::CreateActor()
+void SkyDomeEnvironmentActorProxy::CreateDrawable()
 {
    dtActors::SkyDomeEnvironmentActor *env = new dtActors::SkyDomeEnvironmentActor( *this );
-   SetActor( *env );
+   SetDrawable( *env );
 }
 

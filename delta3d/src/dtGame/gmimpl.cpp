@@ -23,11 +23,12 @@
 #include <dtGame/basemessages.h>
 #include <dtGame/messagetype.h>
 
-
+namespace dtGame
+{
 //////////////////////////////////////////////////////////////////////////
-void dtGame::GMImpl::ClearTimerSingleSet(std::set<TimerInfo> &timerSet, 
+void GMImpl::ClearTimerSingleSet(std::set<TimerInfo> &timerSet,
                                          const std::string &name,
-                                         const dtGame::GameActorProxy *proxy)
+                                         const GameActorProxy *proxy)
 {
    std::set<TimerInfo>::iterator i = timerSet.begin();
    while (i != timerSet.end())
@@ -48,14 +49,14 @@ void dtGame::GMImpl::ClearTimerSingleSet(std::set<TimerInfo> &timerSet,
 }
 
 //////////////////////////////////////////////////////////////////////////
-void dtGame::GMImpl::ClearTimersForActor(std::set<TimerInfo>& timerSet, const GameActorProxy& proxy)
+void GMImpl::ClearTimersForActor(std::set<TimerInfo>& timerSet, const GameActorProxy& actor)
 {
    std::set<TimerInfo>::iterator i = timerSet.begin();
    while (i != timerSet.end())
    {
       std::set<TimerInfo>::iterator toDelete;
       const TimerInfo& timer = *i;
-      if (timer.aboutActor == proxy.GetId())
+      if (timer.aboutActor == actor.GetId())
       {
          toDelete = i;
          ++i;
@@ -69,7 +70,7 @@ void dtGame::GMImpl::ClearTimersForActor(std::set<TimerInfo>& timerSet, const Ga
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-dtGame::GMImpl::GMImpl(dtCore::Scene& scene) : mGMStatistics()
+GMImpl::GMImpl(dtCore::Scene& scene) : mGMStatistics()
 , mMachineInfo( new MachineInfo())
 , mEnvironment(NULL)
 //, mSendCreatesAndDeletes(true)
@@ -86,7 +87,7 @@ dtGame::GMImpl::GMImpl(dtCore::Scene& scene) : mGMStatistics()
 
 }
 ////////////////////////////////////////////////////////////////////////////////
-void dtGame::GMImpl::ProcessTimers(GameManager& gm, std::set<TimerInfo>& listToProcess, dtCore::Timer_t clockTime)
+void GMImpl::ProcessTimers(GameManager& gm, std::set<TimerInfo>& listToProcess, dtCore::Timer_t clockTime)
 {
    std::set<TimerInfo>::iterator itor;
    std::set<TimerInfo> repeatingTimers;
@@ -126,7 +127,7 @@ void dtGame::GMImpl::ProcessTimers(GameManager& gm, std::set<TimerInfo>& listToP
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void dtGame::GMImpl::RemoveActorFromScene(GameManager& gm, dtCore::BaseActorObject& proxy)
+void GMImpl::RemoveActorFromScene(GameManager& gm, dtCore::BaseActorObject& proxy)
 {
    dtCore::DeltaDrawable& dd = *proxy.GetDrawable();
 
@@ -156,7 +157,7 @@ void dtGame::GMImpl::RemoveActorFromScene(GameManager& gm, dtCore::BaseActorObje
       // put all the children in the base scene.
       for (size_t i = 0; i < childrenToMove.size(); ++i)
       {
-         mScene->AddChild(childrenToMove[i]->GetActor());
+         mScene->AddChild(childrenToMove[i]->GetDrawable());
       }
    }
    else
@@ -164,7 +165,7 @@ void dtGame::GMImpl::RemoveActorFromScene(GameManager& gm, dtCore::BaseActorObje
       // add all the children to the parent drawable.
       for (size_t i = 0; i < childrenToMove.size(); ++i)
       {
-         dtCore::DeltaDrawable* child = childrenToMove[i]->GetActor();
+         dtCore::DeltaDrawable* child = childrenToMove[i]->GetDrawable();
          child->Emancipate();
          dd.GetParent()->AddChild(child);
       }
@@ -174,10 +175,11 @@ void dtGame::GMImpl::RemoveActorFromScene(GameManager& gm, dtCore::BaseActorObje
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void dtGame::GMImpl::SendEnvironmentChangedMessage(GameManager& gm, IEnvGameActorProxy* envActor)
+void GMImpl::SendEnvironmentChangedMessage(GameManager& gm, IEnvGameActorProxy* envActor)
 {
    dtCore::RefPtr<Message> msg = mFactory.CreateMessage(MessageType::INFO_ENVIRONMENT_CHANGED);
-   msg->SetAboutActorId(mEnvironment.valid() ? envActor->GetActor()->GetUniqueId() : dtCore::UniqueId(""));
+   msg->SetAboutActorId(mEnvironment.valid() ? envActor->GetDrawable()->GetUniqueId() : dtCore::UniqueId(""));
    msg->SetSource(*mMachineInfo);
    gm.SendMessage(*msg);
+}
 }

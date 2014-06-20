@@ -10,28 +10,20 @@
 # Created David Guthrie with code by Robert Osfield. 
 
 FIND_PATH(PLIB_INCLUDE_DIR plib/js.h
+    HINTS
     $ENV{PLIB_DIR}/include
     $ENV{PLIB_DIR}
     $ENV{PLIB_ROOT}/include
     ${DELTA3D_EXT_DIR}/inc
     $ENV{DELTA_ROOT}/ext/inc
-    ~/Library/Frameworks
-    /Library/Frameworks
-    /usr/local/include
-    /usr/include
-    /sw/include # Fink
-    /opt/local/include # DarwinPorts
-    /opt/csw/include # Blastwave
-    /opt/include
-    [HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\Session\ Manager\\Environment;PLIB_ROOT]/include
-    /usr/freeware/include
 )
+MARK_AS_ADVANCED(PLIB_INCLUDE_DIR)
 
 MACRO(FIND_PLIB_LIBRARY MYLIBRARY MYLIBRARYNAMES)
 
     FIND_LIBRARY(${MYLIBRARY}
         NAMES ${MYLIBRARYNAMES}
-        PATHS
+        HINTS
         $ENV{PLIB_DIR}/lib
         $ENV{PLIB_DIR}
         $ENV{OSGDIR}/lib
@@ -39,17 +31,8 @@ MACRO(FIND_PLIB_LIBRARY MYLIBRARY MYLIBRARYNAMES)
         $ENV{PLIB_ROOT}/lib
         ${DELTA3D_EXT_DIR}/lib
         $ENV{DELTA_ROOT}/ext/lib
-        ~/Library/Frameworks
-        /Library/Frameworks
-        /usr/local/lib
-        /usr/lib
-        /sw/lib
-        /opt/local/lib
-        /opt/csw/lib
-        /opt/lib
-        [HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\Session\ Manager\\Environment;PLIB_ROOT]/lib
-        /usr/freeware/lib64
     )
+    MARK_AS_ADVANCED(${MYLIBRARY})
 
 ENDMACRO(FIND_PLIB_LIBRARY MYLIBRARY MYLIBRARYNAMES)
 

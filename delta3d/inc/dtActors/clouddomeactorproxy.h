@@ -64,7 +64,7 @@ namespace dtActors
         /**
          * Creates the cloud dome actor.
          */
-        virtual void CreateActor();
+        virtual void CreateDrawable();
 
         /**
          * Destructor

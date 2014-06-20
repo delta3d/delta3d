@@ -211,19 +211,19 @@ class CEGUILogger : public CEGUI::Logger
 
       if(logLevel == CEGUI::Errors)
       {
-         log.LogMessage(__FUNCTION__, __LINE__, message.c_str(), dtUtil::Log::LOG_ERROR);
+         log.LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__, message.c_str());
       }
       else if(logLevel == CEGUI::Warnings)
       {
-         log.LogMessage(__FUNCTION__, __LINE__, message.c_str(), dtUtil::Log::LOG_WARNING);
+         log.LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__, message.c_str());
       }
       else if(logLevel == CEGUI::Standard)
       {
-         log.LogMessage(__FUNCTION__, __LINE__, message.c_str(), dtUtil::Log::LOG_INFO);
+         log.LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__, __LINE__, message.c_str());
       }
       else
       {
-         log.LogMessage(__FUNCTION__, __LINE__, message.c_str(), dtUtil::Log::LOG_DEBUG);
+         log.LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, message.c_str());
       }
 
    }
@@ -297,14 +297,20 @@ GUI::~GUI()
       mRootSheet = NULL;
    }
 
-   CEGUI::OpenGLRenderer* renderer = static_cast<CEGUI::OpenGLRenderer*>(CEGUI::System::getSingletonPtr()->getRenderer());
-   CEGUI::System::destroy();
-   if (renderer)
+   // Need to do this BEFORE the instance count call below, otherwise it will fail to delete anything.
+   DeregisterInstance(this);
+
+   // Don't shutdown CEGUI unless all GUI instances are destroyed.
+   if (GetInstanceCount() == 0)
    {
-      CEGUI::OpenGLRenderer::destroy(*renderer);
+      CEGUI::OpenGLRenderer* renderer = static_cast<CEGUI::OpenGLRenderer*>(CEGUI::System::getSingletonPtr()->getRenderer());
+      CEGUI::System::destroy();
+      if (renderer)
+      {
+         CEGUI::OpenGLRenderer::destroy(*renderer);
+      }
    }
 
-   DeregisterInstance(this);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -348,6 +354,18 @@ void GUI::SetCamera(dtCore::Camera* camera)
       mCamera->GetOSGCamera()->addChild(mInternalGraph.get());
    }
 
+}
+
+////////////////////////////////////////////////////////////////////////////////
+dtCore::Camera* GUI::GetCamera()
+{
+    return mCamera.get();
+}
+
+////////////////////////////////////////////////////////////////////////////////
+const dtCore::Camera* GUI::GetCamera() const
+{
+    return mCamera.get();
 }
 
 ////////////////////////////////////////////////////////////////////////////////

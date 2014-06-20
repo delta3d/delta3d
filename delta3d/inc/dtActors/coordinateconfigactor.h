@@ -35,7 +35,7 @@ namespace dtActors
       public:
 
          /// Constructor
-         CoordinateConfigActor(dtGame::GameActorProxy &proxy);
+         CoordinateConfigActor(dtGame::GameActorProxy& parent);
 
          /**
           * Gets the dtUtil::Coordinates that this actor is wrapping
@@ -190,7 +190,7 @@ namespace dtActors
          CoordinateConfigActorProxy();
 
          /// Create the actual actor this proxy encapsulates
-         void CreateActor() { SetActor(*new CoordinateConfigActor(*this)); }
+         void CreateDrawable() { SetDrawable(*new CoordinateConfigActor(*this)); }
 
          /// Builds the properties associated with this actor proxy
          void BuildPropertyMap();

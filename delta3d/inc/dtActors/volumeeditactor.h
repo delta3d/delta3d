@@ -92,7 +92,7 @@ public:
    VolumeEditActorProxy();
    virtual ~VolumeEditActorProxy();
 
-   void CreateActor();
+   void CreateDrawable();
 
    void BuildPropertyMap();
 

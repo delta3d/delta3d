@@ -49,7 +49,7 @@ void TestHLAObjectProxy::BuildPropertyMap()
 {
    dtGame::GameActorProxy::BuildPropertyMap();
 
-   TestHLAObject* actor = dynamic_cast<TestHLAObject*> (GetActor());
+   TestHLAObject* actor = dynamic_cast<TestHLAObject*> (GetDrawable());
    if (actor == NULL)
    {
       throw dtCore::InvalidActorException( "Actor should be type TestHLAObject", __FILE__, __LINE__);
@@ -62,7 +62,7 @@ void TestHLAObjectProxy::BuildPropertyMap()
                      "The general amount of damage sustained by the object.", ""));
 
    AddProperty(
-            new dtCore::ResourceActorProperty(*this, dtCore::DataType::STATIC_MESH,
+            new dtCore::ResourceActorProperty(dtCore::DataType::STATIC_MESH,
                      "Mesh", "Mesh",
                      dtCore::ResourceActorProperty::SetFuncType(actor, &TestHLAObject::TestLoadTheMesh),
                      "", ""));
@@ -80,9 +80,9 @@ void TestHLAObjectProxy::BuildActorComponents()
    AddComponent(*new dtGame::DeadReckoningHelper);
 }
 
-void TestHLAObjectProxy::CreateActor()
+void TestHLAObjectProxy::CreateDrawable()
 {
-   SetActor(*new TestHLAObject(*this));
+   SetDrawable(*new TestHLAObject(*this));
 }
 
 
@@ -94,7 +94,7 @@ TestHLAObject::DamageStateEnum TestHLAObject::DamageStateEnum::NO_DAMAGE("No Dam
 TestHLAObject::DamageStateEnum TestHLAObject::DamageStateEnum::DAMAGED("Damaged");
 TestHLAObject::DamageStateEnum TestHLAObject::DamageStateEnum::DESTROYED("Destroyed");
 
-TestHLAObject::TestHLAObject(dtGame::GameActorProxy& proxy): dtGame::GameActor(proxy),
+TestHLAObject::TestHLAObject(dtGame::GameActorProxy& parent): dtGame::GameActor(parent),
                                                              mDeadReckoningHelper(new dtGame::DeadReckoningHelper),
                                                              mDamageState(&TestHLAObject::DamageStateEnum::NO_DAMAGE)
 {

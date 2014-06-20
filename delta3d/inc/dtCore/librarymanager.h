@@ -63,8 +63,9 @@ namespace dtCore
           * Simple structure for grouping the data corresponding to a
           * registry entry.
           */
-         struct RegistryEntry
+         struct DT_CORE_EXPORT RegistryEntry
          {
+            RegistryEntry();
             ActorPluginRegistry* registry;
             dtCore::RefPtr<dtUtil::LibrarySharingManager::LibraryHandle> lib;
             CreatePluginRegistryFn createFn;
@@ -162,7 +163,6 @@ namespace dtCore
           * is unknown.
           */
          dtCore::RefPtr<BaseActorObject> CreateActor(const ActorType& actorType);
-         dtCore::RefPtr<BaseActorObject> CreateActorProxy(const ActorType& actorType) { return CreateActor(actorType); }
 
          /**
           * Creates a new actor object.  The actor type is used by the library
@@ -175,8 +175,6 @@ namespace dtCore
           * is unknown.
           */
          dtCore::RefPtr<BaseActorObject> CreateActor(const std::string& category, const std::string& name);
-         dtCore::RefPtr<BaseActorObject> CreateActorProxy(const std::string& category, const std::string& name)
-         { return CreateActor(category, name); }
 
          /**
           * Gets a registry currently loaded by the library manager.
@@ -251,6 +249,34 @@ namespace dtCore
          RegistryMap mRegistries;
 
          dtUtil::Log* mLogger;
+   };
+
+   template<typename RegistryClass>
+   class AutoLibraryRegister
+   {
+   public:
+      AutoLibraryRegister(const std::string& regName)
+      : mRegistry(NULL)
+      , mRegName(regName)
+      {
+         LibraryManager::RegistryEntry entry;
+         mRegistry = new RegistryClass;
+         entry.registry = mRegistry;
+         LibraryManager::GetInstance().AddRegistryEntry(mRegName, entry);
+      }
+
+      ~AutoLibraryRegister()
+      {
+         LibraryManager& lm = LibraryManager::GetInstance();
+         if (lm.GetRegistry(mRegName) == mRegistry)
+         {
+            lm.UnloadActorRegistry(mRegName);
+         }
+         delete mRegistry;
+      }
+   private:
+      RegistryClass* mRegistry;
+      const std::string mRegName;
    };
 }
 

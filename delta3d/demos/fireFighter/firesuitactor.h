@@ -29,7 +29,7 @@ class FIRE_FIGHTER_EXPORT FireSuitActor : public GameItemActor
    public:
 
       /// Constructor
-      FireSuitActor(dtGame::GameActorProxy &proxy);
+      FireSuitActor(dtGame::GameActorProxy& parent);
 
       /**
        * Activates this game item
@@ -56,7 +56,7 @@ class FIRE_FIGHTER_EXPORT FireSuitActorProxy : public GameItemActorProxy
       virtual void BuildInvokables();
 
       /// Instantiates the actor
-      virtual void CreateActor() { SetActor(*new FireSuitActor(*this)); }
+      virtual void CreateDrawable() { SetDrawable(*new FireSuitActor(*this)); }
 
    protected:
 

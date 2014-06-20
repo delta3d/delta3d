@@ -24,11 +24,13 @@
 #include <dtAnim/export.h>
 #include <dtCore/refptr.h>
 
+DT_DISABLE_WARNING_ALL_START
 #include <osg/Array>
 #include <osg/Referenced>
 #include <osg/observer_ptr>
 
 #include <cal3d/global.h>
+DT_DISABLE_WARNING_END
 
 #include <dtUtil/hotspotdefinition.h>
 

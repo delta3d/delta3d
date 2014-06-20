@@ -80,9 +80,11 @@ namespace dtActors
       mWallGeom[1]->setColorBinding(osg::Geometry::BIND_OVERALL);
 
       mWallGeom[0]->setNormalArray(mWallNormalList.get());
-      mWallGeom[0]->setNormalBinding(osg::Geometry::BIND_PER_PRIMITIVE);
+      //mWallGeom[0]->setNormalBinding(osg::Geometry::BIND_PER_PRIMITIVE);
+      mWallGeom[0]->setNormalBinding(osg::Geometry::BIND_PER_PRIMITIVE_SET);
       mWallGeom[1]->setNormalArray(mWallNormalList.get());
-      mWallGeom[1]->setNormalBinding(osg::Geometry::BIND_PER_PRIMITIVE);
+      //mWallGeom[1]->setNormalBinding(osg::Geometry::BIND_PER_PRIMITIVE);
+      mWallGeom[1]->setNormalBinding(osg::Geometry::BIND_PER_PRIMITIVE_SET);
 
       // Now Set the primitive sets for the three sides of the segment.
       mWallGeom[0]->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::QUADS, 0, 4));
@@ -229,6 +231,13 @@ namespace dtActors
 
       AddPoint(osg::Vec3());
       return true;
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void BuildingActor::SetTransform(const dtCore::Transform& xform, dtCore::Transformable::CoordSysEnum cs)
+   {
+      BaseClass::SetTransform(xform, cs);
+      Visualize();
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -653,80 +662,6 @@ namespace dtActors
 
       return point;
    }
-
-   ////////////////////////////////////////////////////////
-   //void BuildingActor::OnRotation(const osg::Vec3 &oldValue, const osg::Vec3 &newValue)
-   //{
-   //   // Re-visualize geometry when this actor has been rotated.
-   //   Visualize();
-
-   //   dtCore::Transform transform;
-   //   GetTransform(transform);
-   //   osg::Vec3 center = transform.GetTranslation();
-
-   //   osg::Vec3 diff;
-   //   diff.x() = newValue.z() - oldValue.z();
-   //   //diff.y() = newValue.x() - oldValue.x();
-   //   //diff.z() = newValue.y() - oldValue.y();
-
-   //   // Rotate all attached actors with the building.
-   //   for (int index = 0; index < (int)mAttachedActorPointers.size(); index++)
-   //   {
-   //      dtCore::Transformable* actor = mAttachedActorPointers[index];
-   //      if (actor)
-   //      {
-   //         actor->GetTransform(transform);
-   //         osg::Vec3 offset = transform.GetTranslation() - center;
-   //         osg::Vec3 hpr;
-   //         transform.GetRotation(hpr);
-   //         hpr += diff;
-   //         transform.SetRotation(hpr);
-
-   //         //dtCore::Transform rotation;
-   //         //rotation.SetRotation(hpr);
-
-   //         //osg::Vec3 newPos = (offset * rotation) + center;
-   //         actor->SetTransform(transform);
-
-   //         //osg::Matrix matrix = actor->GetMatrix();
-   //         //osg::Vec3 offset = matrix.getTrans() - center;
-   //         //matrix = matrix
-   //         //matrix = matrix.rotate(oldValue, newValue);
-   //         //actor->SetMatrix(matrix);
-
-
-
-   //         //osg::Vec3 offset = matrix.getTrans() - center;
-
-   //         ////matrix = rotation.rotate(oldValue, newValue);
-   //         ////matrix.setTrans(0.0f, 0.0f, 0.0f);
-   //         //osg::Vec3 newPos = (offset * rotation) + center;
-   //         //matrix.setTrans(newPos);
-   //         //actor->SetMatrix(matrix);
-   //      }
-   //   }
-   //}
-
-   //////////////////////////////////////////////////////////////////////////////////
-   //void BuildingActor::OnTranslation(const osg::Vec3 &oldValue, const osg::Vec3 &newValue)
-   //{
-   //   // Re-visualize geometry when this actor has been translated.
-   //   Visualize();
-
-   //   // Translate all attached actors with the building.
-   //   osg::Vec3 offset = newValue - oldValue;
-   //   for (int index = 0; index < (int)mAttachedActorPointers.size(); index++)
-   //   {
-   //      dtCore::Transformable* actor = mAttachedActorPointers[index];
-   //      if (actor)
-   //      {
-   //         dtCore::Transform transform;
-   //         actor->GetTransform(transform);
-   //         transform.SetTranslation(transform.GetTranslation() + offset);
-   //         actor->SetTransform(transform);
-   //      }
-   //   }
-   //}
 
    /////////////////////////////////////////////////////////////////////////////
    void BuildingActor::PlaceWall(int pointIndex, osg::Vec3 start, osg::Vec3 end)
@@ -1415,10 +1350,10 @@ namespace dtActors
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void BuildingActorProxy::CreateActor()
+   void BuildingActorProxy::CreateDrawable()
    {
       LinkedPointsActor* actor = new BuildingActor(this);
-      SetActor(*actor);
+      SetDrawable(*actor);
       actor->Initialize();
    }
 
@@ -1428,23 +1363,7 @@ namespace dtActors
       BaseClass::BuildPropertyMap();
 
       BuildingActor* actor = NULL;
-      GetActor(actor);
-
-      //// Attached Actors.
-      //dtCore::ActorIDActorProperty* attachedActorProp = new dtCore::ActorIDActorProperty(
-      //   *this, "AttachedActor", "Attached Actor",
-      //   dtCore::ActorIDActorProperty::SetFuncType(this, &BuildingActorProxy::SetAttachedActor),
-      //   dtCore::ActorIDActorProperty::GetFuncType(this, &BuildingActorProxy::GetAttachedActor),
-      //   "", "An attached actor.", "Internal");
-
-      //dtCore::ArrayActorPropertyBase* attachedActorArrayProp = new dtCore::ArrayActorProperty<dtCore::UniqueId>(
-      //   "AttachedActors", "Attached Actors", "The list actors that are attached.",
-      //   dtCore::SetFuncType(this, &BuildingActorProxy::SetAttachedActorIndex),
-      //   dtCore::GetFuncType(*this, &BuildingActorProxy::GetDefaultAttachedActor),
-      //   dtCore::GetFuncType(*actor, &BuildingActor::GetAttachedList),
-      //   dtCore::SetFuncType(actor, &BuildingActor::SetAttachedList),
-      //   attachedActorProp, "Internal");
-      //AddProperty(attachedActorArrayProp);
+      GetDrawable(actor);
 
       // Roof Texture.
       dtCore::ResourceActorProperty* roofTextureProp =
@@ -1537,70 +1456,5 @@ namespace dtActors
 
       return prop;
    }
-
-   /////////////////////////////////////////////////////////////////////////////
-   void BuildingActorProxy::OnRotation(const osg::Vec3 &oldValue, const osg::Vec3 &newValue)
-   {
-      BaseClass::OnRotation(oldValue, newValue);
-
-      // Re-visualize geometry when this actor has been rotated.
-      BuildingActor* actor = NULL;
-      GetActor(actor);
-      actor->Visualize();
-      //actor->OnRotation(oldValue, newValue);
-   }
-
-   /////////////////////////////////////////////////////////////////////////////
-   void BuildingActorProxy::OnTranslation(const osg::Vec3 &oldValue, const osg::Vec3 &newValue)
-   {
-      BaseClass::OnTranslation(oldValue, newValue);
-
-      // Re-visualize geometry when this actor has been translated.
-      BuildingActor* actor = NULL;
-      GetActor(actor);
-      actor->Visualize();
-      //actor->OnTranslation(oldValue, newValue);
-   }
-
-   /////////////////////////////////////////////////////////////////////////////
-   //void BuildingActorProxy::SetAttachedActorIndex(int index)
-   //{
-   //   mAttachedActorIndex = index;
-   //}
-
-   /////////////////////////////////////////////////////////////////////////////
-   //dtCore::UniqueId BuildingActorProxy::GetDefaultAttachedActor()
-   //{
-   //   return dtCore::UniqueId();
-   //}
-
-   /////////////////////////////////////////////////////////////////////////////
-   //void BuildingActorProxy::SetAttachedActor(dtCore::UniqueId value)
-   //{
-   //   BuildingActor* actor = NULL;
-   //   GetActor(actor);
-
-   //   std::vector<dtCore::UniqueId> attachedActors = actor->GetAttachedList();
-   //   if (mAttachedActorIndex < (int)attachedActors.size())
-   //   {
-   //      attachedActors[mAttachedActorIndex] = value;
-   //      actor->SetAttachedList(attachedActors);
-   //   }
-   //}
-
-   /////////////////////////////////////////////////////////////////////////////
-   //dtCore::UniqueId BuildingActorProxy::GetAttachedActor()
-   //{
-   //   BuildingActor* actor = NULL;
-   //   GetActor(actor);
-
-   //   std::vector<dtCore::UniqueId> attachedActors = actor->GetAttachedList();
-   //   if (mAttachedActorIndex < (int)attachedActors.size())
-   //   {
-   //      return attachedActors[mAttachedActorIndex];
-   //   }
-
-   //   return GetDefaultAttachedActor();
-   //}
 }
 ////////////////////////////////////////////////////////////////////////////////

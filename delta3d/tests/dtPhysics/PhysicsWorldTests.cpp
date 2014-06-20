@@ -33,6 +33,7 @@
 #include <dtCore/system.h>
 
 #include <cctype>
+#include <cmath>
 
 static std::vector<std::string> PhysicsEngines;
 
@@ -123,6 +124,7 @@ namespace dtPhysics
       void TestPhysicsBasics();
       void TestPhysicsStep();
       void TestRayCast();
+      void TestRayCastSorted();
 
       void TestSolver();
       void TestActions();
@@ -187,6 +189,7 @@ namespace dtPhysics
          TestPhysicsBasics();
          TestPhysicsStep();
          TestRayCast();
+         TestRayCastSorted();
       }
    }
 
@@ -239,9 +242,11 @@ namespace dtPhysics
       {
          basePath = dtUtil::FileUtils::GetInstance().CurrentDirectory();
       }
-      
       std::string expectedPath = basePath + PhysicsWorld::DIRECTORY_NAME
-         + "/" + engineLower + "/" + PAL_PLUGIN_ARCH_PATH + "/";
+               + "/" + engineLower + "/";
+#ifdef PAL_PLUGIN_ARCH_PATH
+      expectedPath += PAL_PLUGIN_ARCH_PATH + "/";
+#endif
 #if defined(DELTA_WIN32) && defined(_DEBUG)
       expectedPath += "debug/";
 #elif defined(DELTA_WIN32)
@@ -293,6 +298,19 @@ namespace dtPhysics
       return true;
    }
 
+   static dtCore::RefPtr<PhysicsObject> CreateTestPhysObject(const std::string& name, PrimitiveType& type, const VectorType& extents, const VectorType& pos, CollisionGroup g)
+   {
+      dtCore::RefPtr<PhysicsObject> obj = new PhysicsObject(name);
+      obj->SetPrimitiveType(type);
+      obj->SetExtents(extents);
+      obj->CreateFromProperties();
+      obj->SetCollisionGroup(g);
+      dtCore::Transform xform;
+      xform.SetTranslation(pos);
+      obj->SetTransform(xform);
+      return obj;
+   }
+
    /////////////////////////////////////////////////////////
    void PhysicsWorldTests::TestRayCast()
    {
@@ -301,24 +319,11 @@ namespace dtPhysics
       ray.SetOrigin(VectorType(0.0, 0.0, 0.0));
       ray.SetDirection(VectorType(0.0, 3.0, 1.0));
 
-      dtCore::RefPtr<PhysicsObject> obj = new PhysicsObject("Jo");
-      obj->SetPrimitiveType(PrimitiveType::BOX);
-      obj->SetExtents(VectorType(10.0, 10.0, 10.0));
-      obj->CreateFromProperties();
-      obj->SetCollisionGroup(4);
-      VectorType pos(0.0, 12.0, 0.0);
-      dtCore::Transform xform;
-      xform.SetTranslation(pos);
-      obj->SetTransform(xform);
+      dtCore::RefPtr<PhysicsObject> obj = CreateTestPhysObject("Jo", PrimitiveType::BOX, VectorType(10.0, 10.0, 10.0),
+            VectorType(0.0, 12.0, 0.0), 4);
 
-      dtCore::RefPtr<PhysicsObject> obj2 = new PhysicsObject("Bo");
-      obj2->SetPrimitiveType(PrimitiveType::CYLINDER);
-      obj2->SetExtents(VectorType(5.0, 5.0, 10.0));
-      obj2->CreateFromProperties();
-      obj2->SetCollisionGroup(9);
-      pos.set(0.0, 20.0, 0.0);
-      xform.SetTranslation(pos);
-      obj2->SetTransform(xform);
+      dtCore::RefPtr<PhysicsObject> obj2 = CreateTestPhysObject("Bo", PrimitiveType::CYLINDER, VectorType(5.0, 5.0, 10.0),
+            VectorType(0.0, 20.0, 0.0), 9);
 
       RayCast::Report report;
       CPPUNIT_ASSERT_MESSAGE("The ray should NOT be long enough to hit.", !world.TraceRay(ray, report));
@@ -368,6 +373,42 @@ namespace dtPhysics
       RayCallbackTest(report);
       CPPUNIT_ASSERT(testCustomCallback2.mClosestHitsObject == obj.get());
    }
+
+   /////////////////////////////////////////////////////////
+   void PhysicsWorldTests::TestRayCastSorted()
+   {
+      PhysicsWorld& world = PhysicsWorld::GetInstance();
+      std::vector<RayCast::Report> hits;
+
+      // Three spheres one inside another, so the results are not sorted propertly (probably).
+      dtCore::RefPtr<PhysicsObject> obj = CreateTestPhysObject("Jo", PrimitiveType::SPHERE, VectorType(10.0, 0.0, 0.0),
+            VectorType(20.0, 20.0, 20.0), 4);
+
+      dtCore::RefPtr<PhysicsObject> obj2 = CreateTestPhysObject("Bo", PrimitiveType::SPHERE, VectorType(5.0, 0.0, 0.0),
+            VectorType(22.0, 22.0, 22.0), 9);
+
+      dtCore::RefPtr<PhysicsObject> obj3 = CreateTestPhysObject("Mo", PrimitiveType::SPHERE, VectorType(2.0, 0.0, 0.0),
+            VectorType(23.0, 22.0, 24.0), 10);
+
+      // Ray to go clean through
+      RayCast ray;
+      ray.SetOrigin(VectorType(0.0, 0.0, 0.0));
+      ray.SetDirection(VectorType(46.0, 44.0, 48.0));
+
+      world.TraceRay(ray, hits, false);
+
+      CPPUNIT_ASSERT_EQUAL(size_t(3), hits.size());
+
+#if !defined(_MSC_VER) || _MSC_VER >= 1600
+      CPPUNIT_ASSERT(!std::is_sorted(hits.begin(), hits.end()));
+      hits.clear();
+      world.TraceRay(ray, hits, true);
+      CPPUNIT_ASSERT_EQUAL(size_t(3), hits.size());
+      CPPUNIT_ASSERT(std::is_sorted(hits.begin(), hits.end()));
+      CPPUNIT_ASSERT_DOUBLES_EQUAL(std::sqrt(20.0f * 20.0f * 3.0f) - 10.0f, hits[0].mDistance, 0.5f);
+#endif
+   }
+
 
    /////////////////////////////////////////////////////////
    void PhysicsWorldTests::TestSolver()

@@ -53,7 +53,7 @@ class TUTORIAL_TANK_EXPORT KillableTargetActor : public dtActors::GameMeshActor
 
 public:
    // Constructs the tank actor.
-   KillableTargetActor(dtGame::GameActorProxy& proxy);
+   KillableTargetActor(dtGame::GameActorProxy& parent);
 
    /**
     * This method is an invokable called when an object is local and
@@ -128,7 +128,7 @@ protected:
    virtual ~KillableTargetActorProxy() {}
 
    // Creates an instance of our hover tank actor
-   virtual void CreateActor();
+   virtual void CreateDrawable();
 
    // Called when this proxy is added to the game manager (ie, the "world")
    // You can respond to OnEnteredWorld on either the proxy or actor or both.

@@ -1345,7 +1345,7 @@ void ProxyTest::TestProxies()
    {
       RefPtr<dtCore::BaseActorObject> proxy;
 
-      proxy = libMgr.CreateActorProxy(*ExampleActorLib::TEST_ACTOR_PROPERTY_TYPE).get();
+      proxy = libMgr.CreateActor(*ExampleActorLib::TEST_ACTOR_PROPERTY_TYPE).get();
       CPPUNIT_ASSERT(proxy != NULL);
       proxies.push_back(proxy.get());
 
@@ -1382,15 +1382,15 @@ void ProxyTest::TestBezierProxies()
       RefPtr<const dtCore::ActorType>  at    = libMgr.FindActorType("dtcore.Curve", "Bezier Node");
       CPPUNIT_ASSERT(at != NULL);
 
-      RefPtr<dtCore::BaseActorObject> one   = libMgr.CreateActorProxy(*at);
-      RefPtr<dtCore::BaseActorObject> two   = libMgr.CreateActorProxy(*at);
-      RefPtr<dtCore::BaseActorObject> three = libMgr.CreateActorProxy(*at);
+      RefPtr<dtCore::BaseActorObject> one   = libMgr.CreateActor(*at);
+      RefPtr<dtCore::BaseActorObject> two   = libMgr.CreateActor(*at);
+      RefPtr<dtCore::BaseActorObject> three = libMgr.CreateActor(*at);
 
       at = libMgr.FindActorType("dtcore.Curve", "Bezier Control Point");
       CPPUNIT_ASSERT(at != NULL);
 
-      RefPtr<dtCore::BaseActorObject> entryBCP = libMgr.CreateActorProxy(*at);
-      RefPtr<dtCore::BaseActorObject> exitBCP = libMgr.CreateActorProxy(*at);
+      RefPtr<dtCore::BaseActorObject> entryBCP = libMgr.CreateActor(*at);
+      RefPtr<dtCore::BaseActorObject> exitBCP = libMgr.CreateActor(*at);
 
       dtCore::ActorActorProperty* prevProp1    = static_cast<dtCore::ActorActorProperty*>(one->GetProperty("Previous Bezier Node"));
       CPPUNIT_ASSERT_MESSAGE("Actor type should not be NULL", prevProp1 != NULL);
@@ -1441,10 +1441,8 @@ void ProxyTest::TestBezierProxies()
       exitCtrlPntProp1->SetValue(exitBCP.get());
 
       CPPUNIT_ASSERT_MESSAGE("The first node's next should be the second", nextProp1->GetValue() == two.get());
-      CPPUNIT_ASSERT_MESSAGE("The first next property's real actor should be the node", nextProp1->GetRealActor() == nextProp1->GetValue()->GetActor());
 
       CPPUNIT_ASSERT_MESSAGE("The second node's next should be the third", nextProp2->GetValue() == three.get());
-      CPPUNIT_ASSERT_MESSAGE("The second next property's real actor should be the node", nextProp2->GetRealActor() == nextProp2->GetValue()->GetActor());
 
       CPPUNIT_ASSERT_MESSAGE("The third node's next should be NULL", nextProp3->GetValue() == NULL);
 
@@ -1454,9 +1452,6 @@ void ProxyTest::TestBezierProxies()
 
       prevProp3->SetValue(two.get());
       prevProp2->SetValue(one.get());
-
-      CPPUNIT_ASSERT_MESSAGE("The third node's previous should be the node", prevProp3->GetRealActor() == prevProp3->GetValue()->GetActor());
-      CPPUNIT_ASSERT_MESSAGE("The second node's previous should be the node", prevProp2->GetRealActor() == prevProp2->GetValue()->GetActor());
 
       CPPUNIT_ASSERT_MESSAGE("The third's previous should still be the second", prevProp3->GetValue() == two.get());
       CPPUNIT_ASSERT_MESSAGE("The second's previous should still be the first", prevProp2->GetValue() == one.get());

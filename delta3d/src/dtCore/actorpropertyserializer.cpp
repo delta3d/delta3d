@@ -111,6 +111,7 @@ namespace dtCore
       Top().ClearParameterValues();
    }
 
+   //////////////////////////////////////////////////////////////////////////
    bool ActorPropertySerializer::HasPropertyContainer()
    {
       return Top().mPropertyContainer.valid();
@@ -411,7 +412,7 @@ namespace dtCore
 
          if (mData.empty())
          {
-            LOG_ERROR("Data stack is empty when completing a property container element.  This stack should never be empty.");
+        	 LOG_ERROR("Data stack is empty when completing a property container element in map \"" + mMap->GetName() + "\". This stack should never be empty.");
          }
       }
       else if (data.mInGroupProperty)

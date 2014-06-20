@@ -57,6 +57,7 @@ SET(LIB_PUBLIC_HEADERS
                 ${HEADER_PATH}/cloudplane.h
                 ${HEADER_PATH}/collisioncategorydefaults.h
                 ${HEADER_PATH}/collisionmotionmodel.h
+                ${HEADER_PATH}/collisiongeometrytypeenum.h
                 ${HEADER_PATH}/colorrgbaactorproperty.h
                 ${HEADER_PATH}/compass.h
                 ${HEADER_PATH}/containeractorproperty.h
@@ -68,7 +69,6 @@ SET(LIB_PUBLIC_HEADERS
                 ${HEADER_PATH}/deltawin.h
                 ${HEADER_PATH}/directoryresourcetypehandler.h
                 ${HEADER_PATH}/doubleactorproperty.h
-                ${HEADER_PATH}/dt.h
                 ${HEADER_PATH}/effectmanager.h
                 ${HEADER_PATH}/enginepropertytypes.h
                 ${HEADER_PATH}/enumactorproperty.h
@@ -114,6 +114,7 @@ SET(LIB_PUBLIC_HEADERS
                 ${HEADER_PATH}/mapxml.h
                 ${HEADER_PATH}/mapxmlconstants.h
                 ${HEADER_PATH}/model.h
+                ${HEADER_PATH}/motioninterface.h
                 ${HEADER_PATH}/motionmodel.h
                 ${HEADER_PATH}/mouse.h
                 ${HEADER_PATH}/moveearthtransform.h
@@ -206,6 +207,7 @@ SET(LIB_PUBLIC_HEADERS
                 ${HEADER_PATH}/stringselectoractorproperty.h
                 ${HEADER_PATH}/sunlightshader.h
                 ${HEADER_PATH}/system.h
+                ${HEADER_PATH}/systemcomponenttype.h
                 ${HEADER_PATH}/timer.h
                 ${HEADER_PATH}/transform.h
                 ${HEADER_PATH}/transformable.h
@@ -251,6 +253,7 @@ SET(LIB_SOURCES
                 ${SOURCE_PATH}/clouddome.cpp
                 ${SOURCE_PATH}/cloudplane.cpp
                 ${SOURCE_PATH}/collisionmotionmodel.cpp
+                ${SOURCE_PATH}/collisiongeometrytypeenum.cpp
                 ${SOURCE_PATH}/colorrgbaactorproperty.cpp
                 ${SOURCE_PATH}/compass.cpp
                 ${SOURCE_PATH}/containeractorproperty.cpp
@@ -385,6 +388,7 @@ SET(LIB_SOURCES
                 ${SOURCE_PATH}/stringselectoractorproperty.cpp
                 ${SOURCE_PATH}/sunlightshader.cpp
                 ${SOURCE_PATH}/system.cpp
+                ${SOURCE_PATH}/systemcomponenttype.cpp
                 ${SOURCE_PATH}/transformableactorproxy.cpp
                 ${SOURCE_PATH}/timer.cpp
                 ${SOURCE_PATH}/transform.cpp
@@ -399,44 +403,34 @@ SET(LIB_SOURCES
                 ${SOURCE_PATH}/view.cpp
                 ${SOURCE_PATH}/walkmotionmodel.cpp
                 ${SOURCE_PATH}/windowresizecontainer.cpp
+                ${PlatformSources}
                 )
-
-#LIST(REMOVE_ITEM LIB_SOURCES 
-#   ${SOURCE_PATH}/deltawin_win32.cpp 
-#   ${SOURCE_PATH}/uniqueid_win32.cpp 
-#   ${SOURCE_PATH}/deltawin_carbon.cpp 
-#   ${SOURCE_PATH}/uniqueid_macosx.cpp 
-#   ${SOURCE_PATH}/deltawin_x11.cpp 
-#   ${SOURCE_PATH}/uniqueid_linux.cpp)
 
 ADD_PRECOMPILED_HEADER(${LIB_NAME} prefix/dtcoreprefix.h prefix/dtcoreprefix.cpp LIB_SOURCES)
 
-ADD_LIBRARY(${LIB_NAME} SHARED
-    ${LIB_PUBLIC_HEADERS} 
-    ${LIB_SOURCES}
-    ${PlatformSources}
-)
+SET(LIB_EXTERNAL_DEPS 
+     OSG_LIBRARY
+     OSGTEXT_LIBRARY
+     OSGDB_LIBRARY
+     OSGGA_LIBRARY
+     OSGVIEWER_LIBRARY
+     OSGPARTICLE_LIBRARY
+     OSGUTIL_LIBRARY
+     OPENTHREADS_LIBRARY
+     ODE_LIBRARY
+     XERCES_LIBRARY
+     UUID_LIBRARY)
 
-LINK_WITH_VARIABLES(${LIB_NAME}
-                    OSG_LIBRARY
-                    OSGTEXT_LIBRARY
-                    OSGDB_LIBRARY
-                    OSGGA_LIBRARY
-                    OSGVIEWER_LIBRARY
-                    OSGPARTICLE_LIBRARY
-                    OSGUTIL_LIBRARY
-                    OPENTHREADS_LIBRARY
-                    ODE_LIBRARY
-                    XERCES_LIBRARY
-                    UUID_LIBRARY)
+SET(LIB_DEPS 
+   ${DTUTIL_LIBRARY}
+   ${OPENGL_LIBRARY} 
+   ${MATH_LIBRARY}
+   ${APPSERVICES_LIBRARY}
+   )
 
-TARGET_LINK_LIBRARIES( ${LIB_NAME}
-            ${DTUTIL_LIBRARY}
-            ${OPENGL_LIBRARY} 
-            ${MATH_LIBRARY}
-            ${CARBON_LIBRARY}
-            ${APPSERVICES_LIBRARY}
-            )
+
+
+DELTA3D_ADD_LIBRARY(${LIB_NAME} DT_CORE_LIBRARY)
 
 if (X11_FOUND)
    TARGET_LINK_LIBRARIES( ${LIB_NAME}
@@ -447,10 +441,3 @@ IF (WIN32)
    TARGET_LINK_LIBRARIES(${LIB_NAME} Rpcrt4)
 ENDIF(WIN32)
 
-
-
-INCLUDE(ModuleInstall OPTIONAL)
-
-IF (MSVC_IDE)
-  SET_TARGET_PROPERTIES(${LIB_NAME} PROPERTIES DEFINE_SYMBOL DT_CORE_LIBRARY)
-ENDIF (MSVC_IDE)

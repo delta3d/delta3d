@@ -40,13 +40,19 @@
 #include <dtUtil/datetime.h>
 #include <dtUtil/fileutils.h>
 #include <dtUtil/datapathutils.h>
+#include <dtUtil/version.h>
 
 #include <dtCore/mapxml.h>
+#include <dtCore/mapxmlconstants.h>
 #include <dtCore/datatype.h>
 #include <dtCore/project.h>
 #include <dtCore/projectconfig.h>
 #include <dtCore/map.h>
 #include <dtCore/exceptionenum.h>
+
+// Resource Actor Property has a helper function to make it easier to get a resource path, so it's easiest to test it with
+// project.
+#include <dtCore/resourceactorproperty.h>
 
 #include <cppunit/extensions/HelperMacros.h>
 
@@ -64,6 +70,7 @@ class ProjectTests : public CPPUNIT_NS::TestFixture
    CPPUNIT_TEST(TestReadonlyFailure);
    CPPUNIT_TEST(TestCreateContextWithMapsDir);
    CPPUNIT_TEST(TestProject);
+   CPPUNIT_TEST(TestGetMapHeader);
    CPPUNIT_TEST(TestSetupFromProjectConfig);
    CPPUNIT_TEST(TestLoadProjectConfigFromFile);
    CPPUNIT_TEST(TestCategories);
@@ -83,6 +90,7 @@ class ProjectTests : public CPPUNIT_NS::TestFixture
       void tearDown();
 
       void TestProject();
+      void TestGetMapHeader();
       void TestSetupFromProjectConfig();
       void TestLoadProjectConfigFromFile();
       void TestFileIO();
@@ -171,7 +179,7 @@ void ProjectTests::tearDown()
 
    dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
 
-   fileUtils.FileDelete("testConfig.dtproj");
+   fileUtils.DirDelete("temp", true);
    fileUtils.FileDelete("terrain_simple.ive");
    fileUtils.FileDelete("flatdirt.ive");
    fileUtils.DirDelete("Testing", true);
@@ -398,6 +406,52 @@ void ProjectTests::TestCreateContextWithMapsDir()
    //    }
 }
 
+void ProjectTests::TestGetMapHeader()
+{
+   dtCore::Project& p = dtCore::Project::GetInstance();
+   p.ClearAllContexts();
+   CPPUNIT_ASSERT_THROW(p.GetMapHeader("blah"), dtCore::ProjectInvalidContextException);
+   try
+   {
+      p.CreateContext(TEST_PROJECT_DIR, false);
+      p.AddContext(TEST_PROJECT_DIR);
+      // Upper case maps to test on case sensitive systems
+      dtUtil::FileUtils::GetInstance().MakeDirectory(TEST_PROJECT_DIR + "/Maps");
+      dtCore::Map& testMeMap = p.CreateMap("TestMe", "TestMe.dtmap");
+      testMeMap.SetAuthor("Joe");
+      testMeMap.SetDescription("Frank is Joe's friend");
+      testMeMap.SetComment("Frank is an odd fella.");
+      testMeMap.SetCopyright("No matter");
+      p.SaveMap(testMeMap);
+      p.CloseMap(testMeMap);
+
+      dtCore::MapHeaderData headerData = p.GetMapHeader("TestMe");
+      CPPUNIT_ASSERT_EQUAL(std::string("Joe"), headerData.mAuthor);
+      CPPUNIT_ASSERT_EQUAL(std::string("Frank is Joe's friend"), headerData.mDescription);
+      CPPUNIT_ASSERT_EQUAL(std::string("Frank is an odd fella."), headerData.mComment);
+      CPPUNIT_ASSERT_EQUAL(std::string("No matter"), headerData.mCopyright);
+      CPPUNIT_ASSERT_EQUAL(std::string(dtCore::MapXMLConstants::SCHEMA_VERSION), headerData.mSchemaVersion);
+      CPPUNIT_ASSERT_EQUAL(std::string(Delta3DGetVersion()), headerData.mEditorVersion);
+      CPPUNIT_ASSERT_EQUAL(std::string("TestMe"), headerData.mName);
+      CPPUNIT_ASSERT(!headerData.mLastUpdateTime.empty());
+      CPPUNIT_ASSERT(!headerData.mCreateTime.empty());
+
+      // Blast the directory
+      dtUtil::FileUtils::GetInstance().DirDelete(TEST_PROJECT_DIR + "/Maps", true);
+
+      // It thinks the file is there, but it will fail to load.
+      CPPUNIT_ASSERT_THROW(p.GetMapHeader("TestMe"), dtCore::MapParsingException);
+      // It knows the file is not there
+      CPPUNIT_ASSERT_THROW(p.GetMapHeader("NoSuchMap"), dtUtil::FileNotFoundException);
+
+   }
+   catch (const dtUtil::Exception& ex)
+   {
+      CPPUNIT_FAIL(ex.ToString());
+   }
+
+}
+
 #define TEST_ACCESSOR(varPtr, accessor, defaultVal, testVal) \
          CPPUNIT_ASSERT_EQUAL(defaultVal, varPtr->Get ## accessor()); \
          varPtr->Set ## accessor(testVal); \
@@ -447,6 +501,13 @@ void ProjectTests::TestSetupFromProjectConfig()
       CPPUNIT_ASSERT(p.IsContextValid(1));
       CPPUNIT_ASSERT(!p.IsContextValid(2));
 
+      CPPUNIT_ASSERT_EQUAL(dtCore::Project::ContextSlot(0), p.GetContextSlotForPath(p.GetContext(0)));
+      CPPUNIT_ASSERT_EQUAL(dtCore::Project::ContextSlot(1), p.GetContextSlotForPath(p.GetContext(1)));
+      CPPUNIT_ASSERT_EQUAL(dtCore::Project::ContextSlot(0), p.GetContextSlotForPath(p.GetContext(0)+"/hi/joe.png"));
+      CPPUNIT_ASSERT_EQUAL(dtCore::Project::ContextSlot(1), p.GetContextSlotForPath(p.GetContext(1)+"/hi/joe.png"));
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("A garbage path should not be found as being in any project context.", dtCore::Project::ContextSlot(dtCore::Project::DEFAULT_SLOT_VALUE), p.GetContextSlotForPath("/hello/mom"));
+
+
       // If the paths don't match here, it may be that the ForEachContextData failed above.
       CPPUNIT_ASSERT_EQUAL(fileUtils.GetAbsolutePath(pconfig->GetContextData(0).GetPath()), p.GetContext(0));
       CPPUNIT_ASSERT_EQUAL(fileUtils.GetAbsolutePath(pconfig->GetContextData(1).GetPath()), p.GetContext(1));
@@ -481,11 +542,17 @@ void ProjectTests::TestLoadProjectConfigFromFile()
       p.CreateContext("WorkingProject");
       p.CreateContext("WorkingProject2");
 
-      p.SaveProjectConfigFile(*pconfig, "testConfig.dtproj");
-      CPPUNIT_ASSERT(fileUtils.FileExists("testConfig.dtproj"));
-      CPPUNIT_ASSERT_THROW_MESSAGE("It should not allow saving over a file.", p.SaveProjectConfigFile(*pconfig, "testConfig.dtproj"), dtUtil::Exception);
+      fileUtils.MakeDirectory("temp");
+      pconfig->SetBasePath("temp");
+      pconfig->ConvertContextDataToRelativeOfBasePath();
+      CPPUNIT_ASSERT_EQUAL(std::string("../WorkingProject"), pconfig->GetContextData(0).GetPath());
+      CPPUNIT_ASSERT_EQUAL(std::string("../WorkingProject2"), pconfig->GetContextData(1).GetPath());
 
-      dtCore::RefPtr<dtCore::ProjectConfig> loadedConfig = p.LoadProjectConfigFile("testConfig.dtproj");
+      p.SaveProjectConfigFile(*pconfig, "temp/testConfig.dtproj");
+      CPPUNIT_ASSERT(fileUtils.FileExists("temp/testConfig.dtproj"));
+      CPPUNIT_ASSERT_THROW_MESSAGE("It should not allow saving over a file.", p.SaveProjectConfigFile(*pconfig, "temp/testConfig.dtproj"), dtUtil::Exception);
+
+      dtCore::RefPtr<dtCore::ProjectConfig> loadedConfig = p.LoadProjectConfigFile("temp/testConfig.dtproj");
 
       // Just check the values, not change them.
       TEST_ACCESSOR(loadedConfig, Name, pconfig->GetName(), pconfig->GetName());
@@ -713,10 +780,25 @@ void ProjectTests::TestResources()
 
       testResult = p.GetResourcePath(rd);
 
-      CPPUNIT_ASSERT_EQUAL_MESSAGE("Getting the resource path returned the wrong value",
-            testResult, p.GetContext(0) + dtUtil::FileUtils::PATH_SEPARATOR + dtCore::DataType::STATIC_MESH.GetName() + dtUtil::FileUtils::PATH_SEPARATOR
+      std::string expectedPath = p.GetContext(0) + dtUtil::FileUtils::PATH_SEPARATOR + dtCore::DataType::STATIC_MESH.GetName() + dtUtil::FileUtils::PATH_SEPARATOR
             + "fun" + dtUtil::FileUtils::PATH_SEPARATOR + "bigmamajama"
-            + dtUtil::FileUtils::PATH_SEPARATOR + "flatdirt.ive");
+            + dtUtil::FileUtils::PATH_SEPARATOR + "flatdirt.ive";
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("Getting the resource path returned the wrong value",
+            testResult, expectedPath);
+
+      CPPUNIT_ASSERT(dtCore::ResourceActorProperty::GetResourcePath(dtCore::ResourceDescriptor::NULL_RESOURCE).empty());
+      CPPUNIT_ASSERT_EQUAL(dtCore::ResourceActorProperty::GetResourcePath(rd), expectedPath);
+
+#ifndef DELTA_WIN32
+      std::string rdVal = rd.GetResourceIdentifier();
+
+      dtUtil::ToUpperCase(rdVal);
+      dtCore::ResourceDescriptor rdUpperCase(rdVal);
+
+      std::string testResultUpper;
+      testResultUpper = p.GetResourcePath(rdUpperCase);
+      CPPUNIT_ASSERT_EQUAL(testResult, testResultUpper);
+#endif
 
       for (std::set<std::string>::const_iterator i = mapNames.begin(); i != mapNames.end(); i++)
       {
@@ -894,6 +976,13 @@ void ProjectTests::TestProject()
       } catch (const dtUtil::Exception& e) {
          CPPUNIT_FAIL(std::string(std::string("Project should have been able to Set context. Exception: ") + e.ToString()).c_str());
       }
+
+      CPPUNIT_ASSERT_THROW_MESSAGE("passing a non-absolute path with a file that doesn't exist throws an exception.", p.GetContextSlotForPath(TEST_PROJECT_DIR+"/hi/joe.png"), dtUtil::FileNotFoundException);
+
+      CPPUNIT_ASSERT_EQUAL(dtCore::Project::ContextSlot(0), p.GetContextSlotForPath(TEST_PROJECT_DIR));
+
+      CPPUNIT_ASSERT_EQUAL(dtCore::Project::ContextSlot(0), p.GetContextSlotForPath(p.GetContext(0)+"/hi/joe.png"));
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("A garbage path should not be found as being in any project context.", dtCore::Project::ContextSlot(dtCore::Project::DEFAULT_SLOT_VALUE), p.GetContextSlotForPath("/hello/mom"));
 
       CPPUNIT_ASSERT_MESSAGE("Project should not be read only.", !p.IsReadOnly());
       CPPUNIT_ASSERT_MESSAGE("Delta3D search path should contain the context.",
@@ -1077,7 +1166,6 @@ void ProjectTests::TestMapBackupFilename()
    const std::string mapName("Neato Map");
    const std::string mapFileName("neatomap");
 
-
    dtCore::Map* map = &project.CreateMap(mapName, mapFileName);
 
    const std::string newAuthor("Dr. Eddie");
@@ -1086,7 +1174,7 @@ void ProjectTests::TestMapBackupFilename()
    const std::string filenameBeforeBackup = map->GetFileName();;
    project.SaveMapBackup(*map);
 
-   CPPUNIT_ASSERT_EQUAL_MESSAGE("Map filename should not have changed after preforming a backup",
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("Map filename should not have changed after performing a backup",
                                 filenameBeforeBackup, map->GetFileName());
 
    map = &project.OpenMapBackup(mapName);

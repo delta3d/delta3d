@@ -35,6 +35,12 @@ namespace dtCore
    }
 
    ///////////////////////////////////////////////////////////////////////////////
+   NamedEnumParameter::NamedEnumParameter(const dtUtil::RefString& name, const dtUtil::Enumeration& enumValue)
+   : NamedStringParameter(dtCore::DataType::ENUMERATION, name, enumValue.GetName(), false)
+   {
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
    NamedEnumParameter::~NamedEnumParameter()
    {
    }

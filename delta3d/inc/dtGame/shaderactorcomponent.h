@@ -37,12 +37,12 @@ namespace dtGame
    class DT_GAME_EXPORT ShaderActorComponent : public dtGame::ActorComponent
    {
    public:
-      static const ActorComponent::ACType SHADER_ACTOR_COMPONENT_TYPE;
+      static const ActorComponent::ACType TYPE;
 
    	ShaderActorComponent();
 
-      virtual void OnAddedToActor(dtGame::GameActor& actor);
-      virtual void OnRemovedFromActor(dtGame::GameActor& actor);
+      virtual void OnAddedToActor(dtCore::BaseActorObject& actor);
+      virtual void OnRemovedFromActor(dtCore::BaseActorObject& actor);
       virtual void BuildPropertyMap();
 
       /** 

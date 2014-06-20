@@ -25,9 +25,9 @@
 
 namespace dtActors
 {
-    void InfiniteLightActorProxy::CreateActor()
+    void InfiniteLightActorProxy::CreateDrawable()
     {
-        SetActor(*new dtCore::InfiniteLight(0));
+        SetDrawable(*new dtCore::InfiniteLight(0));
     }
 
     ///////////////////////////////////////////////////////////////////////////////

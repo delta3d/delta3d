@@ -31,7 +31,7 @@ class FIRE_FIGHTER_EXPORT GameItemActor : public dtActors::GameMeshActor
    public:
       
       /// Constructor
-      GameItemActor(dtGame::GameActorProxy &proxy);
+      GameItemActor(dtGame::GameActorProxy& parent);
 
       /**
        * Base class method for activating a game item
@@ -141,7 +141,7 @@ class FIRE_FIGHTER_EXPORT GameItemActorProxy : public dtActors::GameMeshActorPro
       virtual void BuildInvokables();
 
       /// Instantiates the actor
-      virtual void CreateActor() { SetActor(*new GameItemActor(*this)); }
+      virtual void CreateDrawable() { SetDrawable(*new GameItemActor(*this)); }
 
       // Used in STAGE
       dtCore::ActorProxyIcon* GetBillBoardIcon();
@@ -157,8 +157,6 @@ class FIRE_FIGHTER_EXPORT GameItemActorProxy : public dtActors::GameMeshActorPro
       virtual ~GameItemActorProxy();
 
    private:
-
-      dtCore::RefPtr<dtCore::ActorProxyIcon> mBillBoardIcon; 
 };
 
 #endif

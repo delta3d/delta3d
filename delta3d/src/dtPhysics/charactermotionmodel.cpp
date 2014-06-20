@@ -55,7 +55,6 @@ namespace dtPhysics
    , mTurnSpeed(0.0f)
    , mAccumDeltaTime(0.0f)
    , mCharacterController(NULL)
-
    {
       // This sets some other states based on the set controller.
       SetController(controller);

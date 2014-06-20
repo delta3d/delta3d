@@ -102,7 +102,7 @@ public:
 
    /**
     * Event handler when this tool should be opened for the given graph.
-    * @Note:  This method should be overloaded to perform any initial
+    * @note:  This method should be overloaded to perform any initial
     * operations when this tool is activated.
     *
     * @param[in]  editor  The editor that is using this tool.
@@ -112,7 +112,7 @@ public:
 
    /**
     * Event handler to close the tool.
-    * @Note:  This method should be overloaded to perform any shut down
+    * @note:  This method should be overloaded to perform any shut down
     * operations when this tool is deactivated.
     */
    virtual void Close();
@@ -200,6 +200,7 @@ public slots:
     * Event handler when the remove transform button is pressed.
     */
    void OnRemoveTransform();
+
 
    /**
     * Event handler when one of the edit boxes for the transform info is changed.
@@ -399,6 +400,10 @@ private:
 
       KeyFrameEvent*       mEvent;
    };
+   /**
+    * Updates the transform and scale and refreshes the viewports
+    */
+   void UpdateTransform(TransformData* data);
 
    // Animation Data
    struct AnimationData

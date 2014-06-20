@@ -75,27 +75,12 @@ namespace dtCore
          friend class BatchIsector;
 
       public:
-         SingleISector(const int idForISector, const std::string& nameForISector, bool checkClosestDrawables = false)
-         {
-            mCheckClosestDrawables = checkClosestDrawables;
-            mNameForReference = nameForISector;
-            mIDForReference = -1;
-            mClosestDrawable = NULL;
-            mLineSegment = new osg::LineSegment();
-            mIsOn = false;
-         }
+         SingleISector(const int idForISector, const std::string& nameForISector, bool checkClosestDrawables = false);
 
-         SingleISector(const int idForISector, bool checkClosestDrawables = false)
-         {
-            mCheckClosestDrawables = checkClosestDrawables;
-            mIDForReference = idForISector;
-            mClosestDrawable = NULL;
-            mLineSegment = new osg::LineSegment();
-            mIsOn = false;
-         }
+         SingleISector(const int idForISector, bool checkClosestDrawables = false);
 
       protected:
-         ~SingleISector(){}
+         ~SingleISector();
 
       public:
          ///////////////////////////////////////////////////////////////////////////////

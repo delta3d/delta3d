@@ -53,7 +53,7 @@ namespace dtActors
        */
       void LoadFile(const std::string &fileName)
       {
-         dtCore::ParticleSystem* ps = dynamic_cast<dtCore::ParticleSystem*>(GetActor());
+         dtCore::ParticleSystem* ps = dynamic_cast<dtCore::ParticleSystem*>(GetDrawable());
          if (!ps)
          {
             throw dtCore::InvalidActorException(
@@ -86,7 +86,7 @@ namespace dtActors
       /**
        * Creates a particle system actor.
        */
-      virtual void CreateActor();
+      virtual void CreateDrawable();
 
       /**
        * Destructor

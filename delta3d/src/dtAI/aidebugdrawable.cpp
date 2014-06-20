@@ -39,13 +39,7 @@
 
 #include <osgText/Text>
 
-#ifdef __GNUG__
-#  include <ext/hash_map>
-#elif defined(_MSC_VER)
-#  include <hash_map>
-#else
-#  include <map>
-#endif
+#include <dtUtil/hashmap.h>
 
 namespace dtAI
 {
@@ -55,13 +49,7 @@ namespace dtAI
       dtCore::RefPtr<osgText::Text> mTextNode;
    };
 
-#ifdef __GNUG__
-   typedef __gnu_cxx::hash_map<unsigned, dtCore::RefPtr<RenderData> > RenderDataMap;
-#elif defined(_MSC_VER)
-   typedef stdext::hash_map<unsigned, dtCore::RefPtr<RenderData> > RenderDataMap;
-#else
-   typedef std::map<unsigned, dtCore::RefPtr<RenderData> > RenderDataMap;
-#endif
+   typedef dtUtil::HashMap<unsigned, dtCore::RefPtr<RenderData> > RenderDataMap;
 
    class AIDebugDrawableImpl
    {

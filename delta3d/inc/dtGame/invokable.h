@@ -92,8 +92,8 @@ namespace dtGame
 
          dtCore::RefPtr<InvokableFunctorCallerBase> mCaller;
 
-         Invokable(const Invokable& toCopy) {}
-         Invokable& operator=(const Invokable& toAssign) { return *this; }
+         Invokable(const Invokable&) {}
+         Invokable& operator=(const Invokable&) { return *this; }
    };
 
 }

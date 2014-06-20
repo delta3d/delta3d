@@ -251,11 +251,22 @@ namespace dtQt
    }
 
    /////////////////////////////////////////////////////////////////////////////
+#if OSG_VERSION_LESS_THAN(3,2,0)
    void OSGGraphicsWindowQt::checkEvents()
    {
+      osgViewer::GraphicsWindow::checkEvents();
       if (mCloseRequested)
           getEventQueue()->closeWindow();
    }
+#else
+   bool OSGGraphicsWindowQt::checkEvents()
+   {
+      bool res = osgViewer::GraphicsWindow::checkEvents();
+      if (mCloseRequested)
+          getEventQueue()->closeWindow();
+      return res;
+   }
+#endif
 
    /////////////////////////////////////////////////////////////////////////////
    void OSGGraphicsWindowQt::getWindowRectangle(int& x, int& y, int& width, int& height)

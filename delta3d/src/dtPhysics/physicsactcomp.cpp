@@ -17,6 +17,7 @@
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
  * Allen Danklefsen
+ * David Guthrie
  */
 
 #include <dtPhysics/physicsactcomp.h>
@@ -26,7 +27,7 @@
 #include <dtPhysics/raycast.h>
 #include <dtPhysics/palutil.h>
 #include <dtGame/gameactor.h>
-#include <dtDAL/enginepropertytypes.h>
+#include <dtCore/enginepropertytypes.h>
 
 #include <dtPhysics/physicscomponent.h>
 
@@ -34,7 +35,9 @@
 
 namespace dtPhysics
 {
-   const dtUtil::RefString PhysicsActComp::TYPE("PhysicsActComp");
+   const dtGame::ActorComponent::ACType PhysicsActComp::TYPE(new dtCore::ActorType("PhysicsActComp", "ActorComponents",
+          "Physics subsystem actor component.  Requires a GM level PhysicsComponent",
+          dtGame::ActorComponent::BaseActorComponentType));
 
    const dtUtil::RefString PhysicsActComp::PROPERTY_PHYSICS_NAME("Physics Name");
    const dtUtil::RefString PhysicsActComp::PROPERTY_PHYSICS_MASS("Physics Mass");
@@ -105,11 +108,10 @@ namespace dtPhysics
    {
       PhysicsComponent* comp = NULL;
 
-      dtGame::GameActor* ga = NULL;
-      GetOwner(ga);
-      dtGame::GameActorProxy& act = ga->GetGameActorProxy();
+      dtGame::GameActorProxy* act = NULL;
+      GetOwner(act);
 
-      act.GetGameManager()->
+      act->GetGameManager()->
          GetComponentByName(PhysicsComponent::DEFAULT_NAME, comp);
 
       if (comp != NULL)
@@ -120,7 +122,7 @@ namespace dtPhysics
       {
          dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
             "Actor \"%s\"\"%s\" unable to find PhysicsComponent.",
-            act.GetName().c_str(), act.GetId().ToString().c_str());
+            act->GetName().c_str(), act->GetId().ToString().c_str());
       }
    }
 
@@ -129,11 +131,10 @@ namespace dtPhysics
    {
       PhysicsComponent* comp = NULL;
 
-      dtGame::GameActor* ga = NULL;
-      GetOwner(ga);
-      dtGame::GameActorProxy& act = ga->GetGameActorProxy();
+      dtGame::GameActorProxy* act = NULL;
+      GetOwner(act);
 
-      act.GetGameManager()->
+      act->GetGameManager()->
          GetComponentByName(PhysicsComponent::DEFAULT_NAME, comp);
 
       if (comp != NULL)
@@ -144,7 +145,7 @@ namespace dtPhysics
       {
          dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
             "Actor \"%s\"\"%s\" unable to find PhysicsComponent.",
-            act.GetName().c_str(), act.GetId().ToString().c_str());
+            act->GetName().c_str(), act->GetId().ToString().c_str());
       }
    }
 
@@ -153,40 +154,40 @@ namespace dtPhysics
    {
       static const dtUtil::RefString GROUP("PhysicsActComp");
 
-      AddProperty(new dtDAL::ActorIDActorProperty(PROPERTY_MATERIAL_ACTOR, PROPERTY_MATERIAL_ACTOR,
-               dtDAL::ActorIDActorProperty::SetFuncType(this, &PhysicsActComp::SetMaterialActor),
-               dtDAL::ActorIDActorProperty::GetFuncType(this, &PhysicsActComp::GetMaterialActor),
+      AddProperty(new dtCore::ActorIDActorProperty(PROPERTY_MATERIAL_ACTOR, PROPERTY_MATERIAL_ACTOR,
+               dtCore::ActorIDActorProperty::SetFuncType(this, &PhysicsActComp::SetMaterialActor),
+               dtCore::ActorIDActorProperty::GetFuncType(this, &PhysicsActComp::GetMaterialActor),
                dtUtil::RefString("dtPhysics::MaterialActor"),
                dtUtil::RefString("The actor that defines the material properties of this physics helper."), GROUP));
 
       static const dtUtil::RefString PROPERTY_PHYSICS_NAME_DESC("The physics reference name.");
-      AddProperty(new dtDAL::StringActorProperty(PROPERTY_PHYSICS_NAME, PROPERTY_PHYSICS_NAME, //ActorName
-               dtDAL::StringActorProperty::SetFuncType(this, &PhysicsActComp::SetNameByString),
-               dtDAL::StringActorProperty::GetFuncType(this, &PhysicsActComp::GetNameAsString),
+      AddProperty(new dtCore::StringActorProperty(PROPERTY_PHYSICS_NAME, PROPERTY_PHYSICS_NAME, //ActorName
+               dtCore::StringActorProperty::SetFuncType(this, &PhysicsActComp::SetNameByString),
+               dtCore::StringActorProperty::GetFuncType(this, &PhysicsActComp::GetNameAsString),
                PROPERTY_PHYSICS_NAME_DESC, GROUP));
 
       static const dtUtil::RefString PROPERTY_PHYSICS_MASS_DESC("The physics mass.  This is a configuration value, "
                "and can be use however the developer intends.");
-      AddProperty(new dtDAL::FloatActorProperty(PROPERTY_PHYSICS_MASS, PROPERTY_PHYSICS_MASS, //ActorName
-               dtDAL::FloatActorProperty::SetFuncType(this, &PhysicsActComp::SetMass),
-               dtDAL::FloatActorProperty::GetFuncType(this, &PhysicsActComp::GetMass),
+      AddProperty(new dtCore::FloatActorProperty(PROPERTY_PHYSICS_MASS, PROPERTY_PHYSICS_MASS, //ActorName
+               dtCore::FloatActorProperty::SetFuncType(this, &PhysicsActComp::SetMass),
+               dtCore::FloatActorProperty::GetFuncType(this, &PhysicsActComp::GetMass),
                PROPERTY_PHYSICS_MASS_DESC, GROUP));
 
       static const dtUtil::RefString PROPERTY_PHYSICS_DIMESNIONS_DESC("The collision dimensions.  This is a configuration value, "
                "and can be use however the developer intends.");
-      AddProperty(new dtDAL::Vec3ActorProperty(PROPERTY_PHYSICS_DIMENSIONS, PROPERTY_PHYSICS_DIMENSIONS, //ActorName
-               dtDAL::Vec3ActorProperty::SetFuncType(this, &PhysicsActComp::SetDimensions),
-               dtDAL::Vec3ActorProperty::GetFuncType(this, &PhysicsActComp::GetDimensions),
+      AddProperty(new dtCore::Vec3ActorProperty(PROPERTY_PHYSICS_DIMENSIONS, PROPERTY_PHYSICS_DIMENSIONS, //ActorName
+               dtCore::Vec3ActorProperty::SetFuncType(this, &PhysicsActComp::SetDimensions),
+               dtCore::Vec3ActorProperty::GetFuncType(this, &PhysicsActComp::GetDimensions),
                PROPERTY_PHYSICS_DIMESNIONS_DESC, GROUP));
 
       static const dtUtil::RefString PROPERTY_PHYSICS_COLLISION_GROUP_DESC("The default group to use for the physics "
                "objects.  This is a configuration value, and can be use however the developer intends.");
-      AddProperty(new dtDAL::IntActorProperty(PROPERTY_COLLISION_GROUP, PROPERTY_COLLISION_GROUP,
-               dtDAL::IntActorProperty::SetFuncType(this, &PhysicsActComp::SetDefaultCollisionGroup),
-               dtDAL::IntActorProperty::GetFuncType(this, &PhysicsActComp::GetDefaultCollisionGroup),
+      AddProperty(new dtCore::IntActorProperty(PROPERTY_COLLISION_GROUP, PROPERTY_COLLISION_GROUP,
+               dtCore::IntActorProperty::SetFuncType(this, &PhysicsActComp::SetDefaultCollisionGroup),
+               dtCore::IntActorProperty::GetFuncType(this, &PhysicsActComp::GetDefaultCollisionGroup),
                PROPERTY_PHYSICS_COLLISION_GROUP_DESC, GROUP));
 
-      std::vector<dtCore::RefPtr<dtDAL::ActorProperty> > physicsObjectProps;
+      std::vector<dtCore::RefPtr<dtCore::ActorProperty> > physicsObjectProps;
       {
          //Get properties for the physics objects.
          PhysicsObjectArray::iterator i, iend;
@@ -200,7 +201,7 @@ namespace dtPhysics
       }
 
       {
-         std::vector<dtCore::RefPtr<dtDAL::ActorProperty> >::iterator i, iend;
+         std::vector<dtCore::RefPtr<dtCore::ActorProperty> >::iterator i, iend;
          i = physicsObjectProps.begin();
          iend = physicsObjectProps.end();
          for (; i != iend; ++i)
@@ -211,9 +212,9 @@ namespace dtPhysics
    }
 
    //////////////////////////////////////////////////////////////////
-   dtCore::RefPtr<dtDAL::ActorProperty> PhysicsActComp::GetDeprecatedProperty(const std::string& name)
+   dtCore::RefPtr<dtCore::ActorProperty> PhysicsActComp::GetDeprecatedProperty(const std::string& name)
    {
-      dtCore::RefPtr<dtDAL::ActorProperty> result;
+      dtCore::RefPtr<dtCore::ActorProperty> result;
       dtPhysics::PhysicsObject* po = GetMainPhysicsObject();
       if (name == "Collision Group")
       {
@@ -262,9 +263,9 @@ namespace dtPhysics
       }
       else if (name == "IsActorKinematic")
       {
-         result = new dtDAL::BooleanActorProperty("IsActorKinematic", "IsActorKinematic",
-                  dtDAL::BooleanActorProperty::SetFuncType(this, &PhysicsActComp::SetKinematic),
-                  dtDAL::BooleanActorProperty::GetFuncType(this, &PhysicsActComp::IsKinematic),
+         result = new dtCore::BooleanActorProperty("IsActorKinematic", "IsActorKinematic",
+                  dtCore::BooleanActorProperty::SetFuncType(this, &PhysicsActComp::SetKinematic),
+                  dtCore::BooleanActorProperty::GetFuncType(this, &PhysicsActComp::IsKinematic),
                   "If actor is kinematic it is almost static, but has physics properties when it updates.", "");
       }
       return result;
@@ -367,11 +368,11 @@ namespace dtPhysics
       const MaterialActor* result = NULL;
       if (!GetMaterialActor().ToString().empty() )
       {
-          dtGame::GameActor* ga = NULL;
-          GetOwner(ga);
-          if (ga != NULL)
+          dtGame::GameActorProxy* gap = NULL;
+          GetOwner(gap);
+          if (gap != NULL)
           {
-              ga->GetGameActorProxy().GetGameManager()->FindActorById(GetMaterialActor(), result);
+              gap->GetGameManager()->FindActorById(GetMaterialActor(), result);
           }
       }
       return result;

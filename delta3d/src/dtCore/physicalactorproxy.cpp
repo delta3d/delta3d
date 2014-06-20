@@ -27,6 +27,7 @@
 
 #include <dtCore/floatactorproperty.h>
 #include <dtCore/vectoractorproperties.h>
+#include <dtCore/physical.h>
 
 namespace dtCore
 {
@@ -42,26 +43,29 @@ namespace dtCore
 
       if (!GetHideDTCorePhysicsProps())
       {
-         dtCore::Physical* phys = static_cast<dtCore::Physical*>(GetActor());
+         dtCore::Physical* phys = GetDrawable<Physical>();
+         if (phys != NULL)
+         {
 
-         static const dtUtil::RefString ODE_PREFIX("ODE ");
-         //PHYSICS PROPS...
-         AddProperty(new BooleanActorProperty(PROPERTY_ENABLE_DYNAMICS, ODE_PREFIX + PROPERTY_ENABLE_DYNAMICS,
-                  BooleanActorProperty::SetFuncType(phys, &dtCore::Physical::EnableDynamics),
-                  BooleanActorProperty::GetFuncType(phys, &dtCore::Physical::DynamicsEnabled),
-                  "Enables physics calculations on this actor (using ODE).", GROUPNAME));
+            static const dtUtil::RefString ODE_PREFIX("ODE ");
+            //PHYSICS PROPS...
+            AddProperty(new BooleanActorProperty(PROPERTY_ENABLE_DYNAMICS, ODE_PREFIX + PROPERTY_ENABLE_DYNAMICS,
+                     BooleanActorProperty::SetFuncType(phys, &dtCore::Physical::EnableDynamics),
+                     BooleanActorProperty::GetFuncType(phys, &dtCore::Physical::DynamicsEnabled),
+                     "Enables physics calculations on this actor (using ODE).", GROUPNAME));
 
-         AddProperty(new FloatActorProperty(PROPERTY_MASS, ODE_PREFIX + PROPERTY_MASS,
-                  FloatActorProperty::SetFuncType(this, &PhysicalActorProxy::SetMass),
-                  FloatActorProperty::GetFuncType(this, &PhysicalActorProxy::GetMass),
-                  "Sets the mass of this actor (using ODE).",GROUPNAME));
+            AddProperty(new FloatActorProperty(PROPERTY_MASS, ODE_PREFIX + PROPERTY_MASS,
+                     FloatActorProperty::SetFuncType(this, &PhysicalActorProxy::SetMass),
+                     FloatActorProperty::GetFuncType(this, &PhysicalActorProxy::GetMass),
+                     "Sets the mass of this actor (using ODE).",GROUPNAME));
+         }
       }
    }
 
    /////////////////////////////////////////////////////////////////////////////
    void PhysicalActorProxy::SetMass(float mass)
    {
-      dtCore::Physical* phys = static_cast<dtCore::Physical*>(GetActor());
+      dtCore::Physical* phys = GetDrawable<Physical>();
 
       phys->SetMass(mass);
    }
@@ -69,7 +73,7 @@ namespace dtCore
    /////////////////////////////////////////////////////////////////////////////
    float PhysicalActorProxy::GetMass() const
    {
-      const dtCore::Physical* phys = static_cast<const dtCore::Physical*>(GetActor());
+      const dtCore::Physical* phys = GetDrawable<Physical>();
 
       return phys->GetMass();
    }
@@ -77,7 +81,7 @@ namespace dtCore
    /////////////////////////////////////////////////////////////////////////////
    void PhysicalActorProxy::SetCenterOfGravity(const osg::Vec3& g)
    {
-      dtCore::Physical* phys = static_cast<dtCore::Physical*>(GetActor());
+      dtCore::Physical* phys = GetDrawable<Physical>();
 
       phys->SetCenterOfGravity(g);
    }
@@ -85,7 +89,7 @@ namespace dtCore
    /////////////////////////////////////////////////////////////////////////////
    osg::Vec3 PhysicalActorProxy::GetCenterOfGravity() const
    {
-      const dtCore::Physical* phys = static_cast<const dtCore::Physical*>(GetActor());
+      const dtCore::Physical* phys = GetDrawable<Physical>();
 
       osg::Vec3 r;
       phys->GetCenterOfGravity(r);

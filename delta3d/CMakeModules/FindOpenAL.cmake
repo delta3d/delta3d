@@ -15,16 +15,21 @@
 # Tiger will include OpenAL as part of the System.
 # But for now, we have to look around.
 # Other (Unix) systems should be able to utilize the non-framework paths.
-FIND_PATH(OPENAL_INCLUDE_DIR al.h
+
+if (WIN32)
+   SET(REQUIRED_AL_HEADER_PREFIX "")
+elseif (APPLE)
+   SET(REQUIRED_AL_HEADER_PREFIX "OpenAL")
+else ()
+   SET(REQUIRED_AL_HEADER_PREFIX "AL")
+endif ()
+
+FIND_PATH(OPENAL_INCLUDE_DIR ${REQUIRED_AL_HEADER_PREFIX}/al.h
   PATH_SUFFIXES
      include
-     inc
      include/AL
-     inc/AL
-     inc/OpenAL
-     include/OpenAL
+     AL
   HINTS
-  $ENV{OPENALDIR}
   $ENV{OPENALDIR}
   ${DELTA3D_EXT_DIR}
   $ENV{DELTA_ROOT}/ext
@@ -36,16 +41,14 @@ FIND_PATH(OPENAL_INCLUDE_DIR al.h
   /usr
   )
 
-FIND_PATH(ALUT_INCLUDE_DIR alut.h
+MARK_AS_ADVANCED(OPENAL_INCLUDE_DIR)
+
+FIND_PATH(ALUT_INCLUDE_DIR ${REQUIRED_AL_HEADER_PREFIX}/alut.h
   PATH_SUFFIXES
      include
-     inc
      include/AL
-     inc/AL
-     inc/OpenAL
-     include/OpenAL
+     AL
   HINTS
-  $ENV{OPENALDIR}
   $ENV{OPENALDIR}
   ${DELTA3D_EXT_DIR}
   $ENV{DELTA_ROOT}/ext
@@ -56,7 +59,7 @@ FIND_PATH(ALUT_INCLUDE_DIR alut.h
   /usr/local
   /usr
   )
-
+MARK_AS_ADVANCED(ALUT_INCLUDE_DIR)
   
 # I'm not sure if I should do a special casing for Apple. It is 
 # unlikely that other Unix systems will find the framework path.
@@ -80,6 +83,8 @@ IF(${OPENAL_INCLUDE_DIR} MATCHES ".framework")
   # Clear the temp variable so nobody can see it
   SET(OPENAL_FRAMEWORK_PATH_TMP "" CACHE INTERNAL "")
 
+  MARK_AS_ADVANCED(OPENAL_LIBRARY)
+
   # if we don't have the integrated alut.h in the framework, we need a library
   IF (NOT ${ALUT_INCLUDE_DIR} MATCHES "OpenAL.framework")
     FIND_LIBRARY(ALUT_LIBRARY 
@@ -99,6 +104,7 @@ IF(${OPENAL_INCLUDE_DIR} MATCHES ".framework")
     /opt/csw/lib
     /opt/lib
     )
+    MARK_AS_ADVANCED(ALUT_LIBRARY)
   ENDIF (NOT ${ALUT_INCLUDE_DIR} MATCHES "OpenAL.framework")
 
    
@@ -110,13 +116,8 @@ ELSE(${OPENAL_INCLUDE_DIR} MATCHES ".framework")
 	$ENV{DELTA_ROOT}/ext/lib
     $ENV{OPENALDIR}/lib
     $ENV{OPENALDIR}/libs
-    /usr/local/lib
-    /usr/lib
-    /sw/lib
-    /opt/local/lib
-    /opt/csw/lib
-    /opt/lib
     )
+    MARK_AS_ADVANCED(OPENAL_LIBRARY)
 	
    FIND_LIBRARY(ALUT_LIBRARY 
     NAMES alut
@@ -124,30 +125,18 @@ ELSE(${OPENAL_INCLUDE_DIR} MATCHES ".framework")
           ${DELTA3D_EXT_DIR}/lib
           $ENV{OPENALDIR}/lib
           $ENV{OPENALDIR}/libs
-       PATHS
-          /usr/local/lib
-          /usr/lib
-          /sw/lib
-          /opt/local/lib
-          /opt/csw/lib
-          /opt/lib
     )
+    MARK_AS_ADVANCED(ALUT_LIBRARY)
     
     IF (MSVC)
-       FIND_LIBRARY(ALUT_DEBUG_LIBRARY 
+       FIND_LIBRARY(ALUT_LIBRARY_DEBUG 
        NAMES alutd
        HINTS
           ${DELTA3D_EXT_DIR}/lib
           $ENV{OPENALDIR}/lib
           $ENV{OPENALDIR}/libs
-       PATHS
-          /usr/local/lib
-          /usr/lib
-          /sw/lib
-          /opt/local/lib
-          /opt/csw/lib
-          /opt/lib
        )
+       MARK_AS_ADVANCED(ALUT_LIBRARY_DEBUG)
    ENDIF(MSVC)
 ENDIF(${OPENAL_INCLUDE_DIR} MATCHES ".framework")
 

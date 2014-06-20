@@ -63,7 +63,7 @@ class FIRE_FIGHTER_EXPORT FlySequenceActor : public dtGame::GameActor
    public:
 
       /// Constructor
-      FlySequenceActor(dtGame::GameActorProxy& proxy);
+      FlySequenceActor(dtGame::GameActorProxy& parent);
 
       /// Invokable to update the camera
       void OnTickLocal(const dtGame::TickMessage& msg);
@@ -125,7 +125,7 @@ class FIRE_FIGHTER_EXPORT FlySequenceActorProxy : public dtGame::GameActorProxy
       virtual void BuildInvokables();
 
       /// Creates the actor
-      virtual void CreateActor() { SetActor(*new FlySequenceActor(*this)); }
+      virtual void CreateDrawable() { SetDrawable(*new FlySequenceActor(*this)); }
 
       /// Called when the actor is added to the game manager
       virtual void OnEnteredWorld();
@@ -144,8 +144,6 @@ class FIRE_FIGHTER_EXPORT FlySequenceActorProxy : public dtGame::GameActorProxy
       virtual ~FlySequenceActorProxy();
 
    private:
-
-       dtCore::RefPtr<dtCore::ActorProxyIcon> mBillBoardIcon;
 };
 
 

@@ -18,8 +18,8 @@
  *
  * David Guthrie
  */
-#ifndef DELTA_GAME_APPLICATION
-#define DELTA_GAME_APPLICATION
+#ifndef DELTA_GAME_APPLICATION_LOADER
+#define DELTA_GAME_APPLICATION_LOADER
 
 #include <dtABC/application.h>
 #include <dtUtil/librarysharingmanager.h>
@@ -35,10 +35,8 @@ namespace dtGame
     * @class GameApplication
     * Base application for a GameManager app.  It loads a game entry point library to use at startup.
     */
-   class DT_GAME_EXPORT GameApplication: public dtABC::Application
+   class DT_GAME_EXPORT GameApplicationLoader
    {
-      DECLARE_MANAGEMENT_LAYER(GameApplication)
-
       public:
          /**
           * Function pointer to the create function for .
@@ -58,7 +56,10 @@ namespace dtGame
           * @param configFileName the name of the xml config file.  Defaults to config.xml
           * @param window a window instance ot use instead of creating one.
           */
-         GameApplication(int argc, char** argv, const std::string& configFileName = "config.xml", dtCore::DeltaWin* window = NULL);
+         GameApplicationLoader(int argc, char** argv);
+
+         ///Destructor
+         ~GameApplicationLoader();
 
          /**
           * Configures the application, loads the game library,
@@ -67,7 +68,10 @@ namespace dtGame
           * - "CreateGameEntryPoint", with the signature of CreateEntryPointFn
           * - "DestroyGameEntryPoint", with the signature of DestroyEntryPointFn
           */
-         virtual void Config();
+         void Config(const std::string& configFileName = "config.xml");
+
+         /// Runs the internal application
+         void Run();
 
          ///@return the platform independent library name.
          const std::string& GetGameLibraryName() const { return mLibName; }
@@ -84,12 +88,10 @@ namespace dtGame
           * this class should use instead of the default.
           * @param gameManager : the GameManager this instance should use
           */
-         void SetGameManager(dtGame::GameManager &gameManager);
+         void SetGameManager(dtGame::GameManager* gameManager);
 
       protected:
 
-         ///Destructor
-         virtual ~GameApplication();
 
       private:
 
@@ -99,6 +101,7 @@ namespace dtGame
          char** mArgv;
 
          dtCore::RefPtr<dtGame::GameManager> mGameManager;
+         dtCore::RefPtr<dtABC::BaseABC> mApplication;
          dtCore::RefPtr<dtUtil::LibrarySharingManager::LibraryHandle> mEntryPointLib;
          dtGame::GameEntryPoint* mEntryPoint;
          CreateEntryPointFn mCreateFunction;

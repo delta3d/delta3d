@@ -29,97 +29,108 @@
 #include <dtCore/actortype.h>
 #include <dtUtil/log.h>
 
-const dtGame::ActorComponent::ACType dtGame::ShaderActorComponent::SHADER_ACTOR_COMPONENT_TYPE("ShaderActorComponent");
-
-////////////////////////////////////////////////////////////////////////////////
-dtGame::ShaderActorComponent::ShaderActorComponent()
-: ActorComponent(SHADER_ACTOR_COMPONENT_TYPE),
-mCurrentShaderResource(dtCore::ResourceDescriptor::NULL_RESOURCE)
+namespace dtGame
 {
+   const ActorComponent::ACType ShaderActorComponent::TYPE(new dtCore::ActorType("ShaderActorComponent", "ActorComponents",
+         "Moves, rotates, and ground-clamps actors based on dead-reckoning data.  It also receives the updates from the network.",
+         ActorComponent::BaseActorComponentType));
 
-}
-
-////////////////////////////////////////////////////////////////////////////////
-dtGame::ShaderActorComponent::~ShaderActorComponent()
-{
-   SetCurrentShader(dtCore::ResourceDescriptor::NULL_RESOURCE);
-}
-
-////////////////////////////////////////////////////////////////////////////////
-void dtGame::ShaderActorComponent::OnAddedToActor(dtGame::GameActor& actor)
-{
-   //called when parent GameActor gets added to the GameManager
-}
-
-////////////////////////////////////////////////////////////////////////////////
-void dtGame::ShaderActorComponent::OnRemovedFromActor(dtGame::GameActor& actor)
-{
-   //called when parent GameActor gets removed from the GameManager
-}
-
-////////////////////////////////////////////////////////////////////////////////
-void dtGame::ShaderActorComponent::BuildPropertyMap()
-{
-   static const dtUtil::RefString GROUPNAME("ShaderParams");
-
-   AddProperty(new dtCore::ResourceActorProperty(dtCore::DataType::SHADER,
-      "CurrentShader", "Current Shader", 
-      dtCore::ResourceActorProperty::SetDescFuncType(this, &dtGame::ShaderActorComponent::SetCurrentShader),
-      dtCore::ResourceActorProperty::GetDescFuncType(this, &dtGame::ShaderActorComponent::GetCurrentShader),
-      "The currently applied pixel shader", GROUPNAME));
-}
-
-////////////////////////////////////////////////////////////////////////////////
-void dtGame::ShaderActorComponent::SetCurrentShader(const dtCore::ResourceDescriptor& shaderResource)
-{
-   mCurrentShaderResource = shaderResource;
-
-   dtGame::GameActor* actor;
-   GetOwner(actor);
-   if (actor == NULL)
+   ////////////////////////////////////////////////////////////////////////////////
+   ShaderActorComponent::ShaderActorComponent()
+   : ActorComponent(TYPE),
+     mCurrentShaderResource(dtCore::ResourceDescriptor::NULL_RESOURCE)
    {
-      return;  //no parent GameActor yet!
+
    }
 
-   if (!mCurrentShaderResource.IsEmpty())
+   ////////////////////////////////////////////////////////////////////////////////
+   ShaderActorComponent::~ShaderActorComponent()
    {
-      if (!actor->GetShaderGroup().empty())
+      SetCurrentShader(dtCore::ResourceDescriptor::NULL_RESOURCE);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void ShaderActorComponent::OnAddedToActor(dtCore::BaseActorObject& actor)
+   {
+      //called when parent GameActor gets added to the GameManager
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void ShaderActorComponent::OnRemovedFromActor(dtCore::BaseActorObject& actor)
+   {
+      //called when parent GameActor gets removed from the GameManager
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void ShaderActorComponent::BuildPropertyMap()
+   {
+      static const dtUtil::RefString GROUPNAME("ShaderParams");
+
+      AddProperty(new dtCore::ResourceActorProperty(dtCore::DataType::SHADER,
+            "CurrentShader", "Current Shader",
+            dtCore::ResourceActorProperty::SetDescFuncType(this, &ShaderActorComponent::SetCurrentShader),
+            dtCore::ResourceActorProperty::GetDescFuncType(this, &ShaderActorComponent::GetCurrentShader),
+            "The currently applied pixel shader", GROUPNAME));
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void ShaderActorComponent::SetCurrentShader(const dtCore::ResourceDescriptor& shaderResource)
+   {
+      mCurrentShaderResource = shaderResource;
+
+      if (GetOwner() == NULL)
       {
-         LOG_WARNING(std::string("Setting a current shader resource on an actor that already has a shader group assigned.  "
-                  "The shader group is being cleared. Actor: ") + actor->GetName() + " " + actor->GetGameActorProxy().GetActorType().GetFullName());
+         return;  //no parent GameActor yet!
       }
 
-      actor->SetShaderGroup(std::string());
-   }
+      GameActorProxy* actor = NULL;
+      GetOwner(actor);
 
-   // This will only be not empty if the current shader resource passed in is empty
-   if (actor->GetShaderGroup().empty())
-   {
-      // Unassign any old setting on this, if any - works regardless if there's a node or not
-      dtCore::ShaderManager::GetInstance().UnassignShaderFromNode(*actor->GetOSGNode());
-   }
+      GameActor* drawable = NULL;
+      actor->GetDrawable(drawable);
+      if (drawable != NULL)
+      {
+         if (!mCurrentShaderResource.IsEmpty())
+         {
+            if (!drawable->GetShaderGroup().empty())
+            {
+               LOG_WARNING(std::string("Setting a current shader resource on an actor that already has a shader group assigned.  "
+                     "The shader group is being cleared. Actor: ") + actor->GetName() + " " + actor->GetActorType().GetFullName());
+            }
 
-   if (mCurrentShaderResource.IsEmpty())
-   {
-      return; // Do nothing, since we have nothing to load
-   }
+            drawable->SetShaderGroup(std::string());
+         }
 
-   try
-   {
-      const std::string shaderFile = dtCore::Project::GetInstance().GetResourcePath(mCurrentShaderResource);
-      dtCore::ShaderManager::GetInstance().LoadAndAssignShader(*actor, shaderFile);
-   }
-   catch (const dtUtil::Exception& e)
-   {
-      LOG_ERROR("Could not assign the shader '" + 
+         // This will only be not empty if the current shader resource passed in is empty
+         if (drawable->GetShaderGroup().empty())
+         {
+            // Unassign any old setting on this, if any - works regardless if there's a node or not
+            dtCore::ShaderManager::GetInstance().UnassignShaderFromNode(*drawable->GetOSGNode());
+         }
+
+         if (mCurrentShaderResource.IsEmpty())
+         {
+            return; // Do nothing, since we have nothing to load
+         }
+
+         try
+         {
+            const std::string shaderFile = dtCore::Project::GetInstance().GetResourcePath(mCurrentShaderResource);
+            dtCore::ShaderManager::GetInstance().LoadAndAssignShader(*drawable, shaderFile);
+         }
+         catch (const dtUtil::Exception& e)
+         {
+            LOG_ERROR("Could not assign the shader '" +
                   shaderResource.GetResourceName() +
                   "' to GameActor. " +
                   e.ToString());
-   }    
-}
+         }
+      }
+   }
 
-////////////////////////////////////////////////////////////////////////////////
-const dtCore::ResourceDescriptor dtGame::ShaderActorComponent::GetCurrentShader() const
-{
-   return mCurrentShaderResource;
+   ////////////////////////////////////////////////////////////////////////////////
+   const dtCore::ResourceDescriptor ShaderActorComponent::GetCurrentShader() const
+   {
+      return mCurrentShaderResource;
+   }
 }

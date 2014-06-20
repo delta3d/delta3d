@@ -312,7 +312,7 @@ namespace dtGame
       {
          if (logger != NULL)
          {
-            logger->LogMessage(__FUNCTION__, __LINE__, ss.str(), dtUtil::Log::LOG_ALWAYS);
+            logger->LogMessage(dtUtil::Log::LOG_ALWAYS, __FUNCTION__, __LINE__, ss.str());
          }
       }
       else // print to file

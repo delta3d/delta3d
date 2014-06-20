@@ -292,7 +292,7 @@ namespace dtEditQt
 
          // create our new object
          dtCore::RefPtr<dtCore::BaseActorObject> proxy =
-            dtCore::LibraryManager::GetInstance().CreateActorProxy(*selectedWidget->getActorType()).get();
+            dtCore::LibraryManager::GetInstance().CreateActor(*selectedWidget->getActorType()).get();
 
          if (proxy.valid())
          {

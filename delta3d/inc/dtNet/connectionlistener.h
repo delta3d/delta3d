@@ -21,11 +21,11 @@
 #ifndef CONNECTIONLISTENER_INCLUDE
 #define CONNECTIONLISTENER_INCLUDE
 
-#ifdef _MSC_VER
-   #pragma warning( disable:4276 )  
-#endif
-
+#include <dtUtil/warningdisable.h>
+DT_DISABLE_WARNING_START_MSVC(4276)
+DT_DISABLE_WARNING_ALL_START
 #include <gnelib/ConnectionListener.h>
+DT_DISABLE_WARNING_END
 #include <dtCore/refptr.h>
 
 namespace dtNet
@@ -75,5 +75,7 @@ namespace dtNet
       dtCore::RefPtr<NetMgr> mNetMgr; ///Reference to a NetMgr
    };
 }
+
+DT_DISABLE_WARNING_END
 
 #endif //CONNECTIONLISTENER_INCLUDE

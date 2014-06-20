@@ -36,7 +36,7 @@ class DT_EXAMPLE_EXPORT TestGameActor2 : public dtGame::GameActor
    public:
    
       /// Constructor
-      TestGameActor2(dtGame::GameActorProxy& proxy);
+      TestGameActor2(dtGame::GameActorProxy& parent);
    
       /// Destructor
       virtual ~TestGameActor2();
@@ -82,7 +82,7 @@ class DT_EXAMPLE_EXPORT TestGameActorProxy2 : public dtGame::GameActorProxy
       */
       virtual void BuildInvokables();
    protected:
-      virtual void CreateActor();
+      virtual void CreateDrawable();
 
 };
 #endif

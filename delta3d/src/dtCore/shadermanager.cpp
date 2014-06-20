@@ -111,7 +111,7 @@ namespace dtCore
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void ShaderManager::OnPreFrame(double deltaRealTime, double deltaSimTime)
+   void ShaderManager::OnPreFrame(double /*deltaRealTime*/, double /*deltaSimTime*/)
    {
       for (int i = mActiveNodeList.size() - 1; i >= 0; i--)
       {
@@ -350,6 +350,7 @@ namespace dtCore
       std::vector<dtCore::RefPtr<ShaderParameter> > params;
       std::vector<dtCore::RefPtr<ShaderParameter> >::iterator currParam;
       dtCore::RefPtr<osg::StateSet> stateSet = node.getOrCreateStateSet();
+      stateSet->setDataVariance(osg::Object::DYNAMIC);
 
       if (newShader->GetShaderProgram() == NULL)
       {

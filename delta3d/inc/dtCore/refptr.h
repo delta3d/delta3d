@@ -27,10 +27,8 @@
 
 #include <osg/ref_ptr>
 #include <ostream>
-
-#ifndef dtDAL
-#define dtDAL dtCore
-#endif
+// Had to add this to disable a few warnings on clang.
+#include <dtUtil/warningdisable.h>
 
 namespace dtCore
 {

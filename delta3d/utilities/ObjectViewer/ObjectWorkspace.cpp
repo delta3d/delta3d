@@ -1,7 +1,9 @@
 #include "ObjectWorkspace.h"
+#include "AnimationControlDock.h"
 #include "ResourceDock.h"
 #include "ObjectViewer.h"
 
+#include <dtQt/nodetreepanel.h>
 #include <dtQt/osggraphicswindowqt.h>
 #include <dtQt/projectcontextdialog.h>
 #include <dtUtil/fileutils.h>
@@ -39,6 +41,16 @@ ObjectWorkspace::ObjectWorkspace()
 
    mResourceDock = new ResourceDock;
    addDockWidget(Qt::LeftDockWidgetArea, mResourceDock);
+
+   mAnimationControlDock = new AnimationControlDock;
+   addDockWidget(Qt::RightDockWidgetArea, mAnimationControlDock);
+
+   mNodeToolsDock = new QDockWidget;
+   addDockWidget(Qt::LeftDockWidgetArea, mNodeToolsDock);
+
+   // Additional dock object setup
+   mNodeTree = new dtQt::NodeTreePanel();
+   mNodeToolsDock->setWidget(mNodeTree);
 
    // Create all program actions
    CreateFileMenuActions();
@@ -162,6 +174,19 @@ void ObjectWorkspace::CreateMenus()
 
    menuBar()->addSeparator();
    windowMenu->addAction(mExitAct);
+
+   viewMenu->addAction(mToggleDockAnimationControl);
+   viewMenu->addAction(mToggleDockResources);
+   viewMenu->addAction(mToggleDockNodeTools);
+   
+   connect(mToggleDockAnimationControl, SIGNAL(toggled(bool)), mAnimationControlDock, SLOT(setVisible(bool)));
+   connect(mAnimationControlDock, SIGNAL(visibilityChanged(bool)), mToggleDockAnimationControl, SLOT(setChecked(bool)));
+
+   connect(mToggleDockResources, SIGNAL(toggled(bool)), mResourceDock, SLOT(setVisible(bool)));
+   connect(mResourceDock, SIGNAL(visibilityChanged(bool)), mToggleDockResources, SLOT(setChecked(bool)));
+
+   connect(mToggleDockNodeTools, SIGNAL(toggled(bool)), mNodeToolsDock, SLOT(setVisible(bool)));
+   connect(mNodeToolsDock, SIGNAL(visibilityChanged(bool)), mToggleDockNodeTools, SLOT(setChecked(bool)));
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -183,6 +208,18 @@ void ObjectWorkspace::CreateFileMenuActions()
    mChangeContextAction = new QAction(tr("Change Project..."), this);
    mChangeContextAction->setStatusTip(tr("Change the project context directory."));
    connect(mChangeContextAction, SIGNAL(triggered()), this, SLOT(OnChangeContext()));
+   
+   mToggleDockAnimationControl = new QAction(tr("Anim Controls"), this);
+   mToggleDockAnimationControl->setCheckable(true);
+   mToggleDockAnimationControl->setChecked(true);
+
+   mToggleDockResources = new QAction(tr("Resources"), this);
+   mToggleDockResources->setCheckable(true);
+   mToggleDockResources->setChecked(true);
+
+   mToggleDockNodeTools = new QAction(tr("Node Tools"), this);
+   mToggleDockNodeTools->setCheckable(true);
+   mToggleDockNodeTools->setChecked(true);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -320,6 +357,45 @@ void ObjectWorkspace::OnInitialization()
    SaveCurrentContextPath();
    SaveCurrentShaderFiles();
    UpdateResourceLists();
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ObjectWorkspace::OnToggleResourceDock()
+{
+   if (mResourceDock->isHidden())
+   {
+      mResourceDock->show();
+   }
+   else
+   {
+      mResourceDock->hide();
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ObjectWorkspace::OnToggleAnimationControlDock()
+{
+   if (mAnimationControlDock->isHidden())
+   {
+      mAnimationControlDock->show();
+   }
+   else
+   {
+      mAnimationControlDock->hide();
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ObjectWorkspace::OnToggleNodeToolsDock()
+{
+   if (mNodeToolsDock->isHidden())
+   {
+      mNodeToolsDock->show();
+   }
+   else
+   {
+      mNodeToolsDock->hide();
+   }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -538,7 +614,7 @@ void ObjectWorkspace::OnLoadGeometry()
    QString filename = QFileDialog::getOpenFileName(this,
                                                    tr("Load Geometry File"),
                                                    mContextPath.c_str(),
-                                                   tr("Geometry(*.osg *.ive *.flt *.3ds *.txp *.xml *.earth *)") );
+                                                   tr("Geometry(*.osg *.ive *.flt *.3ds *.txp *.xml *.earth *.dae *)") );
 
    QString statusMessage;
 
@@ -576,6 +652,10 @@ void ObjectWorkspace::OnLoadGeometry(const std::string &fullName)
       {
          QMessageBox::information(this, "Warning", "Geometry already loaded!", QMessageBox::Ok);
       }
+
+      mAnimationControlDock->OnGeometryLoaded(mViewer->GetDeltaObject());
+
+      mNodeTree->SetNode(mViewer->GetDeltaObject()->GetOSGNode());
    }
 }
 
@@ -594,6 +674,8 @@ void ObjectWorkspace::OnChangeContext()
 
       // Re-populate the list using the new context
       UpdateResourceLists();
+
+      mNodeTree->SetNode(NULL);
    }
 }
 

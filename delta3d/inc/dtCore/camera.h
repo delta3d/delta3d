@@ -95,6 +95,11 @@ namespace dtCore
       ///Is this Camera enabled?
       bool GetEnabled() const;
 
+      /**
+       * The old camera default state settings are no longer set by default.  This will create or update the stateset
+       * that will replicate those settings.
+       */
+      void SetupBackwardCompatibleStateset();
 
       ///Get the supplied DeltaWin (could be NULL)
       DeltaWin* GetWindow()             { return (mWindow.get()); }

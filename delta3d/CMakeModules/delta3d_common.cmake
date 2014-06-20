@@ -11,22 +11,26 @@ if (NOT DT_COMMON_RUN)
 
 set(DT_COMMON_RUN "true")
 
+include(UtilityMacros)
+
 #where to find the root Delta3D folder
-FIND_PATH(DELTA3D_ROOT src
+FIND_PATH(DELTA3D_ROOT inc/dtCore include/dtCore
           HINTS
           $ENV{DELTA_ROOT}
           ${CMAKE_SOURCE_DIR}
+          ${DELTA_DIR}
           DOC "The root folder of Delta3D"
           )
 
 #where to find the Delta3D include dir
-FIND_PATH(DELTA3D_INCLUDE_DIR dtCore/dt.h
+FIND_PATH(DELTA3D_INCLUDE_DIR dtCore/transform.h
          HINTS
-         ${DELTA3D_ROOT}/inc
-         $ENV{DELTA_ROOT}/inc
+         ${DELTA3D_ROOT}
+         $ENV{DELTA_ROOT}
          PATHS
-         /usr/local/include
-         /usr/freeware/include     
+         /usr/local
+         /usr/freeware
+         PATH_SUFFIXES include inc
          DOC "The Delta3D include folder. Should contain 'dtCore', 'dtUtil', 'dtABC',..."
 )
 
@@ -41,22 +45,29 @@ ENDIF(DELTA3D_EXT_DIR)
 
 #where to find the Delta3D lib dir
 SET(DELTA3D_LIB_SEARCH_PATH 
-             ${DELTA3D_ROOT}/lib
-             ${DELTA3D_ROOT}/build/lib
+             ${DELTA3D_ROOT}
+             ${DELTA3D_ROOT}/build
              $ENV{DELTA_LIB}
-             $ENV{DELTA_ROOT}/lib
-             $ENV{DELTA_ROOT}/build/lib
+             $ENV{DELTA_ROOT}
+             $ENV{DELTA_ROOT}/build
              ${DELTA3D_LIB_DIR}
-             /usr/local/lib
-             /usr/lib
+             /usr/local
+             /usr
+             /Library
 )
 
 MACRO(FIND_DELTA3D_LIBRARY LIB_VAR LIB_NAME)
   FIND_LIBRARY(${LIB_VAR} NAMES ${LIB_NAME}
-               HINTS
-               ${DELTA3D_LIB_SEARCH_PATH}
+       HINTS ${DELTA3D_LIB_SEARCH_PATH}
+       PATH_SUFFIXES lib64 lib Frameworks
               )
-ENDMACRO(FIND_DELTA3D_LIBRARY LIB_VAR LIB_NAME)            
+  FIND_LIBRARY(${LIB_VAR}_DEBUG NAMES ${LIB_NAME}D
+       HINTS ${DELTA3D_LIB_SEARCH_PATH}
+       PATH_SUFFIXES lib64 lib Frameworks
+              )
+   MARK_AS_ADVANCED(${LIB_VAR})
+   MARK_AS_ADVANCED(${LIB_VAR}_DEBUG)
+ENDMACRO(FIND_DELTA3D_LIBRARY LIB_VAR LIB_NAME)
 
 
 
@@ -71,21 +82,12 @@ function(DELTA3D_FIND_PATH module header)
        HINTS
             $ENV{${module_uc}_DIR}
             $ENV{DELTA_ROOT}
-       PATH_SUFFIXES include inc
-       PATHS
-            /sw # Fink
-            /opt/local # DarwinPorts
-            /opt/csw # Blastwave
-            /opt
-            /usr/freeware
-            /usr
-            /usr/include
-            /usr/local/include
             ${DELTA3D_EXT_DIR} #defined in delta3d_common.cmake
             $ENV{OSG_DIR}
             $ENV{OSG_ROOT}
-
+       PATH_SUFFIXES include inc
    )
+   MARK_AS_ADVANCED(${module_uc}_INCLUDE_DIR)
 endfunction(DELTA3D_FIND_PATH module header)
 
 
@@ -99,51 +101,43 @@ function(DELTA3D_FIND_LIBRARY module library)
        HINTS
             $ENV{${module_uc}_DIR}
             $ENV{DELTA_ROOT}
-       PATH_SUFFIXES lib64 lib
-       PATHS
-            /sw # Fink
-            /opt/local # DarwinPorts
-            /opt/csw # Blastwave
-            /opt
-            /usr/freeware
-            /usr/lib
-            ${DELTA3D_EXT_DIR}/lib
-            ${DELTA3D_EXT_DIR}/lib64
-            $ENV{DELTA_ROOT}/ext/lib
-            $ENV{DELTA_ROOT}/ext/lib64
+            ${DELTA3D_EXT_DIR}
+            ${DELTA3D_EXT_DIR}
+            $ENV{DELTA_ROOT}/ext
+            $ENV{DELTA_ROOT}/ext
             $ENV{OSG_DIR}/build
             $ENV{OSG_ROOT}/build
             $ENV{OSG_DIR}
             $ENV{OSG_ROOT}
+       PATH_SUFFIXES lib64 lib Framework
+       PATHS
    )
 
+   MARK_AS_ADVANCED(${module_uc}_LIBRARY)
+
    #Modify each entry to tack on "d" and "_d" for the debug file name
-   FOREACH(debug_lib ${library})
-     LIST(APPEND debug_list ${debug_lib}d ${debug_lib}_d ${debug_lib}_debug)
-   ENDFOREACH(debug_lib ${library})
+   if (WIN32)
+      FOREACH(debug_lib ${library})
+        LIST(APPEND debug_list ${debug_lib}d ${debug_lib}_d ${debug_lib}_debug)
+      ENDFOREACH(debug_lib ${library})
     
-   find_library(${module_uc}_LIBRARY_DEBUG
-       NAMES ${debug_list}
-       HINTS
+      find_library(${module_uc}_LIBRARY_DEBUG
+         NAMES ${debug_list}
+         HINTS
             $ENV{${module_uc}_DIR}
             $ENV{DELTA_ROOT}
-       PATH_SUFFIXES lib64 lib
-       PATHS
-            /sw # Fink
-            /opt/local # DarwinPorts
-            /opt/csw # Blastwave
-            /opt
-            /usr/freeware
-            /usr/lib
-            ${DELTA3D_EXT_DIR}/lib
-            ${DELTA3D_EXT_DIR}/lib64
-            $ENV{DELTA_ROOT}/ext/lib
-            $ENV{DELTA_ROOT}/ext/lib64
+            ${DELTA3D_EXT_DIR}
+            ${DELTA3D_EXT_DIR}
+            $ENV{DELTA_ROOT}/ext
+            $ENV{DELTA_ROOT}/ext
             $ENV{OSG_DIR}/build
             $ENV{OSG_ROOT}/build  
             $ENV{OSG_DIR}
             $ENV{OSG_ROOT}
-    )
+         PATH_SUFFIXES lib64 lib Framework
+       )
+       MARK_AS_ADVANCED(${module_uc}_LIBRARY_DEBUG)
+   endif()
 
    if(NOT ${module_uc}_LIBRARY_DEBUG)
       # They don't have a debug library
@@ -160,10 +154,48 @@ function(DELTA3D_FIND_LIBRARY module library)
    endif()
 endfunction(DELTA3D_FIND_LIBRARY module library)
 
+function (BUILD_GAME_START libraryTargetName linkBool)
+   set(SOURCE_PATH ${CMAKE_SOURCE_DIR}/utilities/GameStart)
+   set(PROG_SOURCES "${SOURCE_PATH}/Main.cpp")
+   
+   set(APP_NAME ${libraryTargetName}_START)
+   
+   ADD_EXECUTABLE(${libraryTargetName}_START
+       ${PROG_SOURCES}
+   )
+
+   SET_TARGET_PROPERTIES(${libraryTargetName}_START PROPERTIES OUTPUT_NAME ${libraryTargetName})
+
+   TARGET_LINK_LIBRARIES(${libraryTargetName}_START
+                         ${DTUTIL_LIBRARIES}
+                         ${DTCORE_LIBRARIES}
+                         ${DTABC_LIBRARIES}
+                         ${DTGAME_LIBRARIES}
+                        )
+
+   if (linkBool)
+      TARGET_LINK_LIBRARIES(${libraryTargetName}_START
+                            ${libraryTargetName}
+                        )
+   endif()
+
+   INCLUDE(ProgramInstall OPTIONAL)
+   
+   IF (MSVC)
+     SET_TARGET_PROPERTIES(${libraryTargetName}_START PROPERTIES LINK_FLAGS "/LARGEADDRESSAWARE")
+     SET_TARGET_PROPERTIES(${libraryTargetName}_START PROPERTIES DEBUG_POSTFIX "${CMAKE_DEBUG_POSTFIX}")
+   ENDIF (MSVC)
+endfunction (BUILD_GAME_START libraryTargetName)
+
 MACRO (SETUP_PLUGIN_OUTPUT_DIRS SUBFOLDER)
     #put the binary into a "STAGE plugins" folder
-    SET(OUTPUT_BINDIR ${PROJECT_BINARY_DIR}/bin/${SUBFOLDER})
-    SET(OUTPUT_LIBDIR ${PROJECT_BINARY_DIR}/lib)
+    if (WIN32)
+       # This design only makes sense on windows because there is no bin dir for libraries.
+       SET(OUTPUT_BINDIR ${PROJECT_BINARY_DIR}/bin/${SUBFOLDER})
+       SET(OUTPUT_LIBDIR ${PROJECT_BINARY_DIR}/lib)
+    else()
+       SET(OUTPUT_LIBDIR ${PROJECT_BINARY_DIR}/lib/${SUBFOLDER})
+    endif()
     
     SET (CMAKE_ARCHIVE_OUTPUT_DIRECTORY  ${OUTPUT_LIBDIR})
     SET (CMAKE_RUNTIME_OUTPUT_DIRECTORY  ${OUTPUT_BINDIR})

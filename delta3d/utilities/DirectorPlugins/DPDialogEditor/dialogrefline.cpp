@@ -122,7 +122,7 @@ DialogLineItem* DialogRefLineType::recurseFindRef(QTreeWidgetItem* item, QString
 {
    if (!item)
    {
-      return false;
+      return NULL;
    }
 
    int count = item->childCount();

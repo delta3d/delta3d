@@ -83,7 +83,7 @@ namespace dtGame
          }
 
          /// Gets the ground clamping hit that is closest to the deadreckoned z value.
-         bool DoGetClosestHit(dtGame::GameActorProxy& proxy, GroundClampingData& data, dtCore::BatchIsector::SingleISector& single, float pointz,
+         bool DoGetClosestHit(dtGame::GameActorProxy& actor, GroundClampingData& data, dtCore::BatchIsector::SingleISector& single, float pointz,
                   osg::Vec3& hit, osg::Vec3& normal)
          {
             bool success = false;
@@ -92,14 +92,14 @@ namespace dtGame
                = dynamic_cast<DefaultGroundClamper*>(&GetGroundClamper());
             if( defaultClamper != NULL )
             {
-               success = defaultClamper->GetClosestHit(proxy, data, single, pointz, hit, normal);
+               success = defaultClamper->GetClosestHit(actor, data, single, pointz, hit, normal);
             }
 
             return success;
          }
 
          void DoArticulationPublic(dtGame::DeadReckoningHelper& helper,
-            const dtGame::GameActor& gameActor, const dtGame::TickMessage& tickMessage);
+            const dtCore::Transformable& txable, const dtGame::TickMessage& tickMessage);
 
          void DoArticulationSmoothPublic(osgSim::DOFTransform& dofxform, const osg::Vec3& currLocation,
             const osg::Vec3& nextLocation, float currentTimeStep) const;
@@ -109,13 +109,13 @@ namespace dtGame
    };
 
    void TestDeadReckoningComponent::DoArticulationPublic(
-      dtGame::DeadReckoningHelper& helper, const dtGame::GameActor& gameActor,
+      dtGame::DeadReckoningHelper& helper, const dtCore::Transformable& txable,
       const dtGame::TickMessage& tickMessage)
    {
       // The following inherited function was not virtual, so this
       // function allows the programmer to call the inherited
       // function publicly for testing purposes.
-      BaseClass::DoArticulation(helper, gameActor, tickMessage);
+      BaseClass::DoArticulation(helper, txable, tickMessage);
    }
 
    void TestDeadReckoningComponent::DoArticulationSmoothPublic(osgSim::DOFTransform& dofxform,
@@ -154,6 +154,7 @@ namespace dtGame
          CPPUNIT_TEST(TestDoDRVelocityAccel);
          CPPUNIT_TEST(TestDoDRVelocityAccelNoMotion);
          CPPUNIT_TEST(TestDoDRStatic);
+         CPPUNIT_TEST(TestDoDRStaticInitialConditions);
          CPPUNIT_TEST(TestDoDRNoDR);
 
       CPPUNIT_TEST_SUITE_END();
@@ -211,6 +212,7 @@ namespace dtGame
             CPPUNIT_ASSERT(helper->GetLastKnownVelocity() == vec);
             CPPUNIT_ASSERT(helper->GetLastKnownAcceleration() == vec);
             CPPUNIT_ASSERT(helper->GetLastKnownAngularVelocity() == vec);
+            CPPUNIT_ASSERT(helper->GetCurrentInstantVelocity() == vec);
             CPPUNIT_ASSERT(helper->GetGroundOffset() == 0.0f);
             CPPUNIT_ASSERT(helper->GetMaxRotationSmoothingTime() ==
                dtGame::DeadReckoningHelper::DEFAULT_MAX_SMOOTHING_TIME_ROT);
@@ -319,10 +321,10 @@ namespace dtGame
             helper->SetUseFixedSmoothingTime(true);
             CPPUNIT_ASSERT(helper->GetUseFixedSmoothingTime());
 
-            helper->SetUseCubicSplineTransBlend(false);
-            CPPUNIT_ASSERT(!helper->GetUseCubicSplineTransBlend());
-            helper->SetUseCubicSplineTransBlend(true);
-            CPPUNIT_ASSERT(helper->GetUseCubicSplineTransBlend());
+//            helper->SetUseCubicSplineTransBlend(false);
+//            CPPUNIT_ASSERT(!helper->GetUseCubicSplineTransBlend());
+//            helper->SetUseCubicSplineTransBlend(true);
+//            CPPUNIT_ASSERT(helper->GetUseCubicSplineTransBlend());
             
          }
 
@@ -331,7 +333,7 @@ namespace dtGame
             CPPUNIT_ASSERT(mDeadReckoningComponent->GetTerrainActor() == NULL);
 
             mGM->AddActor(*mTestGameActor, false, false);
-            dtCore::Transformable* terrain = &mTestGameActor->GetGameActor();
+            dtCore::Transformable* terrain = mTestGameActor->GetDrawable<dtCore::Transformable>();
 
             mDeadReckoningComponent->SetTerrainActor(terrain);
 
@@ -360,7 +362,7 @@ namespace dtGame
 
             mGM->AddActor(*mTestGameActor, false, false);
 
-            dtCore::Transformable* eyePointActor = &mTestGameActor->GetGameActor();
+            dtCore::Transformable* eyePointActor = mTestGameActor->GetDrawable<dtCore::Transformable>();
 
             osg::Vec3 expectedEyePoint(3.3f, 3.2f, 97.2233f);
             dtCore::Transform xform;
@@ -407,7 +409,7 @@ namespace dtGame
                      !mDeadReckoningComponent->IsRegisteredActor(*mTestGameActor));
          }
 
-         void TickArticulations(DeadReckoningHelper& helper, const dtGame::GameActor& actor, float timeDelta)
+         void TickArticulations(DeadReckoningHelper& helper, const dtCore::Transformable& actor, float timeDelta)
          {
             // Setup a reusable tick message
             // The following message object will be used to test articulation updates
@@ -425,7 +427,7 @@ namespace dtGame
             const osg::Vec3& expectedRotation, float errorTolerance)
          {
             osg::Vec3 dofRotation(dof.getCurrentHPR());
-            osg::Vec3 differences(dofRotation - expectedRotation);
+            //osg::Vec3 differences(dofRotation - expectedRotation);
 
             CPPUNIT_ASSERT_DOUBLES_EQUAL(expectedRotation.x(), dofRotation.x(), errorTolerance);
             CPPUNIT_ASSERT_DOUBLES_EQUAL(expectedRotation.y(), dofRotation.y(), errorTolerance);
@@ -439,7 +441,7 @@ namespace dtGame
             // to its dofs.
             dtCore::RefPtr<dtGame::GameActorProxy> mRemoteProxy;
             mGM->CreateActor(*dtActors::EngineActorRegistry::GAME_MESH_ACTOR_TYPE, mRemoteProxy);
-            dtGame::GameActor& remoteActor = mRemoteProxy->GetGameActor();
+            dtCore::Transformable* remoteActor = mRemoteProxy->GetDrawable<dtCore::Transformable>();
             mGM->AddActor(*mRemoteProxy, true, false);
 
             // Setup the DOFs
@@ -496,7 +498,7 @@ namespace dtGame
             unsigned limit = predictedRotations1.size();
             for (unsigned i = 0; i < limit; ++i)
             {
-               TickArticulations(*helper, remoteActor, timeStep);
+               TickArticulations(*helper, *remoteActor, timeStep);
                SubTestArticulationOrientation(*dof1, predictedRotations1[i], errorTolerance);
                SubTestArticulationOrientation(*dof2, predictedRotations2[i], errorTolerance);
             }
@@ -507,10 +509,10 @@ namespace dtGame
             // Setup game actor
             // The actor must be remote in order to apply dead reckoning
             // to its dofs.
-            dtCore::RefPtr<dtGame::GameActorProxy> mRemoteProxy;
-            mGM->CreateActor(*dtActors::EngineActorRegistry::GAME_MESH_ACTOR_TYPE, mRemoteProxy);
-            dtGame::GameActor& remoteActor = mRemoteProxy->GetGameActor();
-            mGM->AddActor(*mRemoteProxy, true, false);
+            dtCore::RefPtr<dtGame::GameActorProxy> remoteActor;
+            mGM->CreateActor(*dtActors::EngineActorRegistry::GAME_MESH_ACTOR_TYPE, remoteActor);
+            dtCore::Transformable& remoteTransformable = *remoteActor->GetDrawable<dtCore::Transformable>();
+            mGM->AddActor(*remoteActor, true, false);
 
             // Setup the DOFs
             const std::string dofName("TestDOF");
@@ -553,21 +555,21 @@ namespace dtGame
 
             // --- Ensure it still exists after several ticks that would certainly
             //     cause the first stop to be removed under normal circumstances.
-            TickArticulations(*helper, remoteActor, timeStep); // 0.0   to 0.125
-            TickArticulations(*helper, remoteActor, timeStep); // 0.125 to 0.25
-            TickArticulations(*helper, remoteActor, timeStep); // 0.25  to 0.375
+            TickArticulations(*helper, remoteTransformable, timeStep); // 0.0   to 0.125
+            TickArticulations(*helper, remoteTransformable, timeStep); // 0.125 to 0.25
+            TickArticulations(*helper, remoteTransformable, timeStep); // 0.25  to 0.375
             CPPUNIT_ASSERT(dofStops.size() == 2);
-            TickArticulations(*helper, remoteActor, timeStep); // remove first DR DOF on 0.5 -> 0.0 to 0.125
+            TickArticulations(*helper, remoteTransformable, timeStep); // remove first DR DOF on 0.5 -> 0.0 to 0.125
             CPPUNIT_ASSERT(dofStops.size() == 1);
 
             DOFStopList::const_iterator iter = dofStops.begin();
             CPPUNIT_ASSERT((*iter)->mCurrentTime > 0.0f);
 
             // --- Tick articulation a few more time and make sure the DR DOF has updated properly.
-            TickArticulations(*helper, remoteActor, timeStep); // 0.0   to 0.125
-            TickArticulations(*helper, remoteActor, timeStep); // 0.125 to 0.25
-            TickArticulations(*helper, remoteActor, timeStep); // 0.25  to 0.375
-            TickArticulations(*helper, remoteActor, timeStep); // remove first DR DOF on 0.5 -> 0.0 to 0.125
+            TickArticulations(*helper, remoteTransformable, timeStep); // 0.0   to 0.125
+            TickArticulations(*helper, remoteTransformable, timeStep); // 0.125 to 0.25
+            TickArticulations(*helper, remoteTransformable, timeStep); // 0.25  to 0.375
+            TickArticulations(*helper, remoteTransformable, timeStep); // remove first DR DOF on 0.5 -> 0.0 to 0.125
             CPPUNIT_ASSERT((*iter)->mCurrentTime > 0.5f);
 
             // --- Add another stop to prove that stops can truly be added.
@@ -581,7 +583,7 @@ namespace dtGame
 
             // --- The first stop was from the prior test and should now be over a half second old.
             //     The first stop should be removed here and the new one should remain.
-            TickArticulations(*helper, remoteActor, timeStep);
+            TickArticulations(*helper, remoteTransformable, timeStep);
             CPPUNIT_ASSERT(dofStops.size() == 2); // 2 stops are one step older (0.125)
 
             helper->AddToDeadReckonDOF(dofName, rotation, rotationRate);
@@ -592,20 +594,20 @@ namespace dtGame
 
             // --- The component should only transition between 2 stops,
             //     thus all stops before the last two should be removed
-            TickArticulations(*helper, remoteActor, timeStep);
+            TickArticulations(*helper, remoteTransformable, timeStep);
             CPPUNIT_ASSERT(dofStops.size() == 2); // stops are one step older (0.125)
             iter = dofStops.begin();
             // --- The new first stop will have been set to 0 and then immediately
             //     ticked by one type step.
             CPPUNIT_ASSERT((*iter)->mCurrentTime == timeStep);
 
-            TickArticulations(*helper, remoteActor, timeStep);
+            TickArticulations(*helper, remoteTransformable, timeStep);
             CPPUNIT_ASSERT(dofStops.size() == 2); // stops are one step older (0.25)
             iter = dofStops.begin();
             CPPUNIT_ASSERT((*iter)->mCurrentTime == timeStep * 2.0f);
 
-            TickArticulations(*helper, remoteActor, timeStep);
-            TickArticulations(*helper, remoteActor, timeStep);
+            TickArticulations(*helper, remoteTransformable, timeStep);
+            TickArticulations(*helper, remoteTransformable, timeStep);
             // --- The first stop should have been removed since it was 1 second old on the tick.
             //     The last stop now becomes the first stop.
             CPPUNIT_ASSERT(dofStops.size() == 1); // stops are one step older (1.0)
@@ -615,14 +617,14 @@ namespace dtGame
          {
             dtCore::RefPtr<DeadReckoningHelper> helper = new DeadReckoningHelper;
 
-            InitDoDRTestHelper(*helper);
+            InitDoDRTestHelper(*helper, dtCore::System::GetInstance().GetSimulationTime());
 
             helper->SetDeadReckoningAlgorithm(DeadReckoningAlgorithm::NONE);
 
             dtCore::Transform xform;
 
             BaseGroundClamper::GroundClampRangeType* groundClampingType = &BaseGroundClamper::GroundClampRangeType::NONE;
-            bool wasTransformed = helper->DoDR(mTestGameActor->GetGameActor(), xform,
+            bool wasTransformed = helper->DoDR(*mTestGameActor->GetDrawable<dtCore::Transformable>(), xform,
                   &dtUtil::Log::GetInstance(), groundClampingType);
 
             CPPUNIT_ASSERT(!wasTransformed);
@@ -640,7 +642,7 @@ namespace dtGame
          {
             dtCore::RefPtr<DeadReckoningHelper> helper = new DeadReckoningHelper;
 
-            InitDoDRTestHelper(*helper);
+            InitDoDRTestHelper(*helper,dtCore::System::GetInstance().GetSimulationTime());
 
             helper->SetDeadReckoningAlgorithm(DeadReckoningAlgorithm::VELOCITY_AND_ACCELERATION);
 
@@ -652,7 +654,7 @@ namespace dtGame
             helper->ClearUpdated();
 
             BaseGroundClamper::GroundClampRangeType* groundClampingType = &BaseGroundClamper::GroundClampRangeType::NONE;
-            bool wasTransformed = helper->DoDR(mTestGameActor->GetGameActor(), xform,
+            bool wasTransformed = helper->DoDR(*mTestGameActor->GetDrawable<dtCore::Transformable>(), xform,
                   &dtUtil::Log::GetInstance(), groundClampingType);
 
             CPPUNIT_ASSERT(!wasTransformed);
@@ -770,15 +772,15 @@ namespace dtGame
             dtCore::System::GetInstance().Step();
          }
 
-         void InitDoDRTestHelper(dtGame::DeadReckoningHelper& helper)
+         void InitDoDRTestHelper(dtGame::DeadReckoningHelper& helper, double simTime)
          {
             osg::Vec3 trans(1.1, 2.2, 3.3);
             osg::Vec3 rot(1.2, 2.3, 3.4);
 
             helper.SetLastKnownTranslation(trans);
             helper.SetLastKnownRotation(rot);
-            helper.SetLastTranslationUpdatedTime(dtCore::System::GetInstance().GetSimulationTime());
-            helper.SetLastRotationUpdatedTime(dtCore::System::GetInstance().GetSimulationTime());
+            helper.SetLastTranslationUpdatedTime(simTime);
+            helper.SetLastRotationUpdatedTime(simTime);
          }
 
          osg::Vec3 CalcPredictedRotations(const osg::Vec3& rotationStart, const osg::Vec3& rotationEndOrRate, float deltaTime, bool smoothing)
@@ -878,7 +880,7 @@ namespace dtGame
             std::ostringstream ss;
 
             dtCore::Transform xform;
-            mTestGameActor->GetGameActor().GetTransform(xform);
+            mTestGameActor->GetDrawable<dtCore::Transformable>()->GetTransform(xform);
             osg::Vec3 vec;
             xform.GetTranslation(vec);
             ss.str("");
@@ -924,7 +926,7 @@ namespace dtGame
             ss << "The position should be " << setVec << " but it is " << currentHPR;
             CPPUNIT_ASSERT_MESSAGE(ss.str(), dtUtil::Equivalent(setVec, currentHPR, 1e-2f));
 
-            mTestGameActor->GetGameActor().GetTransform(xform);
+            mTestGameActor->GetDrawable<dtCore::Transformable>()->GetTransform(xform);
 
             if (updateActor)
             {
@@ -956,7 +958,7 @@ namespace dtGame
          {
             dtCore::RefPtr<DeadReckoningHelper> helper = new DeadReckoningHelper;
 
-            InitDoDRTestHelper(*helper);
+            InitDoDRTestHelper(*helper, dtCore::System::GetInstance().GetSimulationTime());
 
             helper->SetDeadReckoningAlgorithm(DeadReckoningAlgorithm::VELOCITY_AND_ACCELERATION);
             helper->SetGroundClampType(dtGame::GroundClampTypeEnum::NONE);
@@ -973,22 +975,58 @@ namespace dtGame
 
             dtCore::Transform xform;
             BaseGroundClamper::GroundClampRangeType* groundClampingType = &BaseGroundClamper::GroundClampRangeType::NONE;
-            bool wasTransformed = helper->DoDR(mTestGameActor->GetGameActor(), xform,
+            bool wasTransformed = helper->DoDR(*mTestGameActor->GetDrawable<dtCore::Transformable>(), xform,
                   &dtUtil::Log::GetInstance(), groundClampingType);
 
             CPPUNIT_ASSERT((*groundClampingType == BaseGroundClamper::GroundClampRangeType::NONE) == flying);
             CPPUNIT_ASSERT(wasTransformed);
          }
 
-         void TestDoDRStatic(bool flying)
+         void TestDoDRStaticInitialConditions()
          {
             dtCore::RefPtr<DeadReckoningHelper> helper = new DeadReckoningHelper;
+            osg::Vec3 zeroVec(0.0f,0.0f,0.0f);
 
-            InitDoDRTestHelper(*helper);
+            InitDoDRTestHelper(*helper, 0.016667);
+            double simTime = 0.033333;
+
+            helper->IncrementTimeSinceUpdate(0.016667f, simTime);
 
             helper->SetDeadReckoningAlgorithm(DeadReckoningAlgorithm::STATIC);
 
-            //helper->SetFlying(flying);
+            helper->SetGroundClampType(dtGame::GroundClampTypeEnum::NONE);
+
+            dtCore::Transform xform;
+            BaseGroundClamper::GroundClampRangeType* groundClampingType = &BaseGroundClamper::GroundClampRangeType::NONE;
+
+            CPPUNIT_ASSERT(helper->GetCurrentInstantVelocity().length2() <= FLT_EPSILON);
+
+            bool wasTransformed = helper->DoDR(*mTestGameActor->GetDrawable<dtCore::Transformable>(), xform,
+                  &dtUtil::Log::GetInstance(), groundClampingType);
+
+            CPPUNIT_ASSERT(wasTransformed);
+
+            CPPUNIT_ASSERT_MESSAGE("The code should assume that the position is the initial position, and not calculate a velocity.", helper->GetCurrentInstantVelocity().length2() <= FLT_EPSILON);
+         }
+
+         void TestDoDRStatic(bool flying)
+         {
+            dtCore::RefPtr<DeadReckoningHelper> helper = new DeadReckoningHelper;
+            osg::Vec3 zeroVec(0.0f,0.0f,0.0f);
+            // Seed zero values to make sure it doesn't just have an initialized position.
+            helper->SetLastKnownTranslation(zeroVec);
+            helper->SetLastKnownRotation(zeroVec);
+            float stepTime = 0.016667;
+            // Set a weird init step number so that we know it uses the right time.
+            InitDoDRTestHelper(*helper, stepTime * 1.03f);
+            CPPUNIT_ASSERT(helper->IsUpdated());
+
+            double simTime = stepTime * 1.03 + stepTime;
+
+            helper->IncrementTimeSinceUpdate(stepTime, simTime);
+
+            helper->SetDeadReckoningAlgorithm(DeadReckoningAlgorithm::STATIC);
+
             if (flying) // we just use none or full for this test
             {
                helper->SetGroundClampType(dtGame::GroundClampTypeEnum::NONE);
@@ -1000,8 +1038,12 @@ namespace dtGame
 
             dtCore::Transform xform;
             BaseGroundClamper::GroundClampRangeType* groundClampingType = &BaseGroundClamper::GroundClampRangeType::NONE;
-            bool wasTransformed = helper->DoDR(mTestGameActor->GetGameActor(), xform,
+
+            CPPUNIT_ASSERT(helper->GetCurrentInstantVelocity().length2() <= FLT_EPSILON);
+
+            bool wasTransformed = helper->DoDR(*mTestGameActor->GetDrawable<dtCore::Transformable>(), xform,
                   &dtUtil::Log::GetInstance(), groundClampingType);
+            helper->ClearUpdated();
 
             CPPUNIT_ASSERT((*groundClampingType == BaseGroundClamper::GroundClampRangeType::NONE) == flying);
             CPPUNIT_ASSERT(wasTransformed);
@@ -1009,11 +1051,17 @@ namespace dtGame
             osg::Vec3 trans;
             xform.GetTranslation(trans);
             std::ostringstream ss;
-            ss << "The position should be " << helper->GetLastKnownTranslation() << " but it is "
-            << trans;
+            ss << "The position should be " << helper->GetLastKnownTranslation() << " but it is " << trans;
 
             CPPUNIT_ASSERT_MESSAGE(ss.str(),
-                  dtUtil::Equivalent(helper->GetLastKnownTranslation(), trans, 3, 1e-2f));
+                  dtUtil::Equivalent(helper->GetLastKnownTranslation(), trans, 1e-2f));
+
+            osg::Vec3 expectedVelocity = helper->GetLastKnownTranslation() / stepTime;
+            ss.str("");
+            ss << "The instant velocity should be " << expectedVelocity << " but it is " << helper->GetCurrentInstantVelocity();
+
+            CPPUNIT_ASSERT_MESSAGE(ss.str(),
+                  dtUtil::Equivalent(helper->GetCurrentInstantVelocity(), expectedVelocity, 1e-2f));
 
             ss.str("");
             osg::Vec3 hpr;
@@ -1021,7 +1069,13 @@ namespace dtGame
             ss << "The rotation should be " << helper->GetLastKnownRotation() << " but it is " << hpr;
 
             CPPUNIT_ASSERT_MESSAGE(ss.str(),
-                  dtUtil::Equivalent(helper->GetLastKnownRotation(), hpr, 3, 1e-2f));
+                  dtUtil::Equivalent(helper->GetLastKnownRotation(), hpr, 1e-2f));
+
+            wasTransformed = helper->DoDR(*mTestGameActor->GetDrawable<dtCore::Transformable>(), xform,
+                  &dtUtil::Log::GetInstance(), groundClampingType);
+
+            CPPUNIT_ASSERT(!wasTransformed);
+            CPPUNIT_ASSERT(helper->GetCurrentInstantVelocity().length2() <= FLT_EPSILON);
          }
 
          dtCore::RefPtr<GameManager> mGM;

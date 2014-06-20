@@ -17,6 +17,9 @@
 
 #include <osg/Matrix>
 #include <osg/MatrixTransform>
+#include <osg/BlendFunc>
+#include <osg/Material>
+#include <osg/TexEnv>
 
 #include <osg/GraphicsContext>
 #include <osgViewer/GraphicsWindow>
@@ -79,6 +82,33 @@ namespace dtCore
       SetClearColor(0.2f, 0.2f, 0.6f, 1.f);
 
       SetCollisionCategoryBits(COLLISION_CATEGORY_MASK_CAMERA);
+
+
+   }
+
+   //////////////////////////////////////////////////////////////////////////////
+   void Camera::SetupBackwardCompatibleStateset()
+   {
+      // set the expected defaults for the underlying Delta3D applications, the same as osg283,
+      // mainly a fallback for fixed pipeline materials
+      {
+         osg::StateSet* pSS = GetOSGCamera()->getOrCreateStateSet();
+
+         osg::ref_ptr<osg::TexEnv> texenv = new osg::TexEnv;
+         texenv->setMode(osg::TexEnv::MODULATE);
+         osg::ref_ptr<osg::Material> material = new osg::Material;
+         material->setColorMode(osg::Material::AMBIENT_AND_DIFFUSE);
+
+         pSS->setTextureAttribute(0, texenv);
+         pSS->setAttribute(new osg::BlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
+         pSS->setMode(GL_BLEND, osg::StateAttribute::OFF);
+         pSS->setAttributeAndModes(material, osg::StateAttribute::ON);
+         pSS->setRenderingHint(osg::StateSet::DEFAULT_BIN);
+         pSS->setRenderBinToInherit();
+
+         // required by osg 320, cheers.
+         pSS->setMode(GL_DEPTH_TEST, osg::StateAttribute::ON);
+      }
    }
 
    /////////////////////////////////////////////////////////////////////////////

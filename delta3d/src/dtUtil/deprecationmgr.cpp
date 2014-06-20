@@ -1,12 +1,13 @@
 #include <prefix/dtutilprefix.h>
 #include <dtUtil/deprecationmgr.h>
 
-#if defined(DELTA_WIN32)
-   // Identifier was truncated to '255' characters in the debug information
-   #pragma warning( disable:4786 )
-   // disable warning for stl classes "needs to have dll-interface to be used by clients of class"
-   #pragma warning(disable : 4251)
+#include <dtUtil/warningdisable.h>
+// Identifier was truncated to '255' characters in the debug information
+DT_DISABLE_WARNING_START_MSVC(4786)
+// disable warning for stl classes "needs to have dll-interface to be used by clients of class"
+DT_DISABLE_WARNING_START_MSVC(4251)
 
+#if defined(DELTA_WIN32)
    #include <dtUtil/mswin.h>
 #else
    #include <csignal>
@@ -154,3 +155,6 @@ bool DeprecationMgr::AddDeprecatedFunction(const char* OldFunctionName, const ch
 
    return bAddedForFirstTime;
 }
+DT_DISABLE_WARNING_END
+DT_DISABLE_WARNING_END
+

@@ -37,10 +37,14 @@ dtUtil::LogObserverConsole::~LogObserverConsole()
 void dtUtil::LogObserverConsole::LogMessage(const LogData& logData)
 {
    // Print out the time, the message, the log level, then where it came from
-   std::cout << "[" << std::setw(2) << std::setfill('0') << logData.time.tm_hour << ":"
-      << std::setw(2) << std::setfill('0') << logData.time.tm_min << ":"
-      << std::setw(2) << std::setfill('0') << logData.time.tm_sec 
-      << " " << Log::GetLogLevelString(logData.type) << "] ";
+   std::cout << "[" << logData.time.ToString(dtUtil::DateTime::TimeFormat::CLOCK_TIME_24_HOUR_FORMAT);
+
+   if (logData.frameNumber > 0)
+   {
+	   std::cout << " Frm# " << logData.frameNumber;
+   }
+
+   std::cout << " " << Log::GetLogLevelString(logData.type) << "] ";
 
    std::cout << logData.msg << " [";
 

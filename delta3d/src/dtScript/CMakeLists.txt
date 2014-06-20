@@ -7,11 +7,6 @@ file(GLOB LIB_PUBLIC_HEADERS "${HEADER_PATH}/*.h")
 file(GLOB LIB_SOURCES "*.cpp")
 list(REMOVE_ITEM LIB_SOURCES ${SOURCE_PATH}/precomp.cpp)
 
-ADD_LIBRARY(${LIB_NAME} SHARED                        
-    ${LIB_PUBLIC_HEADERS}                         
-    ${LIB_SOURCES}
-)
- 
 INCLUDE_DIRECTORIES( ${PYTHON_INCLUDE_PATH} )
 
 #Use the debug python library, should it exist, otherwise, use the release version
@@ -22,17 +17,13 @@ IF (NOT PYTHON_DEBUG)
 ENDIF (NOT PYTHON_DEBUG)
 
                        
-TARGET_LINK_LIBRARIES( ${LIB_NAME}
-                       ${DTUTIL_LIBRARY}
-                       ${DTCORE_LIBRARY}
-                       optimized ${PYTHON_LIBRARY} debug ${PYTHON_DEBUG}
-                      )
-                      
-SET_TARGET_PROPERTIES(${LIB_NAME}
-                     PROPERTIES DEFINE_SYMBOL DT_SCRIPT_LIBRARY)
+set(LIB_DEPS
+  ${DTUTIL_LIBRARY}
+  ${DTCORE_LIBRARY}
+  optimized ${PYTHON_LIBRARY} debug ${PYTHON_DEBUG}
+ )
 
-
-INCLUDE(ModuleInstall OPTIONAL)
+DELTA3D_ADD_LIBRARY(${LIB_NAME} DT_SCRIPT_LIBRARY)
 
 IF (MSVC_IDE)
   SET(CMAKE_SHARED_LINKER_FLAGS "/NODEFAULTLIB:python25_d /NODEFAULTLIB:python26_d /NODEFAULTLIB:python27_d") #ignore the auto-link library Python adds in

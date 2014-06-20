@@ -43,7 +43,7 @@ namespace dtActors
       DECLARE_MANAGEMENT_LAYER(WaypointVolumeActor)
    public:
 
-      WaypointVolumeActor(const std::string &name = "WaypointVolumeActor");
+      WaypointVolumeActor(const std::string& name = "WaypointVolumeActor");
 
       /**
        * Set the distance between waypoints that the Waypoint
@@ -131,7 +131,7 @@ namespace dtActors
        * Called by the game manager during creation of the proxy.  This method
        * creates a TaskActor and returns it.
        */
-      virtual void CreateActor();
+      virtual void CreateDrawable();
 
       /**
        * Called when the proxy has been added to the game manager.

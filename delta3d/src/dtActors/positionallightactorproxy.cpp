@@ -27,9 +27,9 @@
 
 namespace dtActors
 {
-   void PositionalLightActorProxy::CreateActor()
+   void PositionalLightActorProxy::CreateDrawable()
    {
-      SetActor(*new dtCore::PositionalLight(0));
+      SetDrawable(*new dtCore::PositionalLight(0));
    }
 
    ///////////////////////////////////////////////////////////////////////////////

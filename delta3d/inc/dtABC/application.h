@@ -27,6 +27,7 @@
 #include <dtCore/generickeyboardlistener.h>
 #include <dtCore/genericmouselistener.h>
 #include <dtUtil/configproperties.h>
+#include <dtUtil/logtimeprovider.h>
 
 #include <string>
 #include <map>
@@ -71,7 +72,7 @@ namespace dtABC
     * app->Run();
     * \endcode
     */
-   class DT_ABC_EXPORT Application : public dtABC::BaseABC, public dtUtil::ConfigProperties
+   class DT_ABC_EXPORT Application : public dtABC::BaseABC, public dtUtil::ConfigProperties, public dtUtil::LogTimeProvider
    {
       DECLARE_MANAGEMENT_LAYER(Application)
       typedef dtABC::BaseABC BaseClass;
@@ -221,16 +222,18 @@ namespace dtABC
         * @param defaultValue The default value to use if name isn't found
         * @return a string value that is paired with the given name.  The default is returned if the property is not set.
        */
-      const std::string& GetConfigPropertyValue(const std::string& name, const std::string& defaultValue = "") const;
+      /*override*/ const std::string& GetConfigPropertyValue(const std::string& name, const std::string& defaultValue = "") const;
+
+      /*override*/ void GetConfigPropertiesWithPrefix(const std::string& prefix, std::vector<std::pair<std::string,std::string> >& resultOut, bool removePrefix = true) const;
 
       /// Sets the value of a given config property.
-      void SetConfigPropertyValue(const std::string& name, const std::string& value);
+      /*override*/ void SetConfigPropertyValue(const std::string& name, const std::string& value);
 
       /// Removes a property with the given name
-      void RemoveConfigPropertyValue(const std::string& name);
+      /*override*/ void RemoveConfigPropertyValue(const std::string& name);
 
       /// Returns whether a config property exists or not
-      bool IsConfigPropertyDefined(const std::string& name) const;
+      /*override*/ bool IsConfigPropertyDefined(const std::string& name) const;
 
       /// Add a view to the Viewer
       void AddView(dtCore::View& view);
@@ -258,6 +261,13 @@ namespace dtABC
 
       /// @return the instance of the osgViewer::CompositeViewer
       osgViewer::CompositeViewer* GetCompositeViewer() { return mCompositeViewer.get(); }
+
+      /******** Log Time Provider functions ********/
+	  /*override*/ const dtUtil::DateTime& GetDateTime();
+	  /*override*/ unsigned GetFrameNumber();
+	  /*override*/ osg::Referenced* AsReferenced();
+      /******** Log Time Provider functions end ********/
+
 
    protected:
       virtual ~Application();
@@ -319,6 +329,9 @@ namespace dtABC
 
       dtCore::StatsHandler *mStats; ///<for stats rendering/controlling
       ViewList mViewsToDelete; ///<list of Views to be removed at the end of the frame
+
+      // Used to provide to the logger
+      dtUtil::DateTime mCurrentFrameTime;
    };
 
 } // namespace dtABC

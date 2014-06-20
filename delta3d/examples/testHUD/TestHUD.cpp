@@ -28,7 +28,7 @@ void TestHUD::Config()
    _ConfigScene();
 
    //configure window
-   GetWindow()->ShowCursor(false);
+   GetWindow()->SetShowCursor(false);
    GetWindow()->SetWindowTitle("delta-window");
 
    //setup a hud:
@@ -89,7 +89,7 @@ void TestHUD::_ConfigScene()
       if (!proxies.empty())
       {
          dtCore::Transformable *startPoint;
-         proxies[0]->GetActor(startPoint);
+         proxies[0]->GetDrawable(startPoint);
 
          if (startPoint != NULL)
          {

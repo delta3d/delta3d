@@ -4,6 +4,7 @@
 SET(LIB_NAME     dtDIS)
 
 INCLUDE_DIRECTORIES( ${DIS_INCLUDE_DIR} ${DIS_CPPUTILS_INCLUDE_DIR} ${HAWKNL_INCLUDE_DIR} )
+ADD_DEFINITIONS(-DDT_DIS_DEFAULT_PLUGIN)
 
 SET(HEADER_PATH ${DELTA3D_SOURCE_DIR}/inc/${LIB_NAME})
 SET(SOURCE_PATH ${DELTA3D_SOURCE_DIR}/src/${LIB_NAME})
@@ -67,33 +68,23 @@ SET(LIB_SOURCES
 		${SOURCE_PATH}/plugins/default/removeentityprocessor.cpp
 )
 
-ADD_LIBRARY(${LIB_NAME} SHARED                        
-    ${LIB_PUBLIC_HEADERS}                         
-    ${LIB_SOURCES}
-)
+SET(LIB_EXTERNAL_DEPS
+  HAWKNL_LIBRARY
+  DIS_LIBRARY
+ )
 
-LINK_WITH_VARIABLES(${LIB_NAME}
-                    HAWKNL_LIBRARY
-                    DIS_LIBRARY
-                   )
+
+SET(LIB_DEPS
+    ${DTACTORS_LIBRARY}
+    ${DTUTIL_LIBRARY}
+    ${DTCORE_LIBRARY}
+    ${DTGAME_LIBRARY}
+    )
+
+DELTA3D_ADD_LIBRARY(${LIB_NAME} DT_DIS_LIBRARY)
 
 IF (WIN32)   
 TARGET_LINK_LIBRARIES(${LIB_NAME}
         wsock32)
 ENDIF (WIN32)
-
-TARGET_LINK_LIBRARIES(${LIB_NAME}
-                      ${DTACTORS_LIBRARY}
-                      ${DTUTIL_LIBRARY}
-                      ${DTCORE_LIBRARY}
-                      ${DTGAME_LIBRARY}
-                      ${CARBON_LIBRARY}
-                      )                                         
-                                                
-SET_TARGET_PROPERTIES(${LIB_NAME}
-                     PROPERTIES DEFINE_SYMBOL DT_DIS_LIBRARY COMPILE_FLAGS -DDT_DIS_DEFAULT_PLUGIN)         
-
-
-
-INCLUDE(ModuleInstall OPTIONAL)
 

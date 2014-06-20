@@ -104,11 +104,11 @@ class DDMCameraCalculatorGeographicTests : public CPPUNIT_NS::TestFixture
          cam->SetTransform(xform, dtCore::Transformable::REL_CS);
          mCamCalcGeo->SetCamera(cam.get());
          
-         unsigned long latMin;
-         unsigned long latMax;
+         unsigned int latMin;
+         unsigned int latMax;
 
-         unsigned long lonMin;
-         unsigned long lonMax;
+         unsigned int lonMin;
+         unsigned int lonMax;
 
          std::set<dtHLAGM::DDMCalculatorGeographic::DDMForce* > foundForces;
          

@@ -46,6 +46,7 @@ namespace dtEditQt
    ////////////////////////////////////////////////////////////////////////////////
 
    ResourceDragTree::ResourceDragTree(QWidget* parent)
+   : ResourceTree(parent)
    {
       setDragEnabled(true);
       //setAcceptDrops(true);

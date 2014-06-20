@@ -30,10 +30,10 @@ namespace dtCore
    /**
      * @class LongIntMessageParameter
      */
-   class DT_CORE_EXPORT NamedLongIntParameter: public NamedPODParameter<long>
+   class DT_CORE_EXPORT NamedLongIntParameter: public NamedPODParameter<long long>
    {
       public:
-         NamedLongIntParameter(const dtUtil::RefString& name, long defaultValue = 0, bool isList = false);
+         NamedLongIntParameter(const dtUtil::RefString& name, long long defaultValue = 0, bool isList = false);
 
          virtual void SetFromProperty(const dtCore::ActorProperty& property);
          virtual void ApplyValueToProperty(dtCore::ActorProperty& property) const;

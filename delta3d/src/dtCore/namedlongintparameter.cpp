@@ -28,9 +28,9 @@
 namespace dtCore
 {
    ///////////////////////////////////////////////////////////////////////////////
-   NamedLongIntParameter::NamedLongIntParameter(const dtUtil::RefString& name, long defaultValue,
+   NamedLongIntParameter::NamedLongIntParameter(const dtUtil::RefString& name, long long defaultValue,
       bool isList)
-      : NamedPODParameter<long>(dtCore::DataType::LONGINT, name, defaultValue, isList)
+      : NamedPODParameter<long long>(dtCore::DataType::LONGINT, name, defaultValue, isList)
    {
    }
 
@@ -44,7 +44,7 @@ namespace dtCore
    {
       ValidatePropertyType(property);
 
-      const dtCore::LongActorProperty *ap = static_cast<const dtCore::LongActorProperty*> (&property);
+      const dtCore::LongActorProperty* ap = static_cast<const dtCore::LongActorProperty*> (&property);
       SetValue(ap->GetValue());
    }
 
@@ -53,7 +53,7 @@ namespace dtCore
    {
       ValidatePropertyType(property);
 
-      dtCore::LongActorProperty *ap = static_cast<dtCore::LongActorProperty*> (&property);
+      dtCore::LongActorProperty* ap = static_cast<dtCore::LongActorProperty*> (&property);
       ap->SetValue(GetValue());
    }
 

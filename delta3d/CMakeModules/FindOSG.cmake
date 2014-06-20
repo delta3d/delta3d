@@ -11,6 +11,7 @@
 #   with revisions by the Delta3D team.
 
 FIND_PATH(OSG_INCLUDE_DIR osg/Node
+    HINTS
     $ENV{OSG_DIR}/include
     $ENV{OSG_DIR}
     $ENV{OSGDIR}/include
@@ -18,17 +19,8 @@ FIND_PATH(OSG_INCLUDE_DIR osg/Node
     $ENV{OSG_ROOT}/include
     ${DELTA3D_EXT_DIR}/inc
     $ENV{DELTA_ROOT}/ext/inc
-    ~/Library/Frameworks
-    /Library/Frameworks
-    /usr/local/include
-    /usr/include
-    /sw/include # Fink
-    /opt/local/include # DarwinPorts
-    /opt/csw/include # Blastwave
-    /opt/include
-    [HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\Session\ Manager\\Environment;OSG_ROOT]/include
-    /usr/freeware/include
 )
+MARK_AS_ADVANCED(OSG_INCLUDE_DIR)
 
 MACRO(FIND_OSG_LIBRARY MYLIBRARY MYLIBRARYNAME)
 
@@ -46,22 +38,14 @@ MACRO(FIND_OSG_LIBRARY MYLIBRARY MYLIBRARYNAME)
         ${DELTA3D_EXT_DIR}/lib64
         $ENV{DELTA_ROOT}/ext/lib
         $ENV{DELTA_ROOT}/ext/lib64
-        ~/Library/Frameworks
-        /Library/Frameworks
-        /usr/local/lib
-        /usr/lib
-        /sw/lib
-        /opt/local/lib
-        /opt/csw/lib
-        /opt/lib
-        [HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\Session\ Manager\\Environment;OSG_ROOT]/lib
-        /usr/freeware/lib64
     )
+    MARK_AS_ADVANCED(${MYLIBRARY})
 
 ENDMACRO(FIND_OSG_LIBRARY LIBRARY LIBRARYNAME)
 
 # Find release (optimized) libs
 FIND_OSG_LIBRARY(OSG_LIBRARY osg)
+FIND_OSG_LIBRARY(OSGANIMATION_LIBRARY osgAnimation)
 FIND_OSG_LIBRARY(OSGUTIL_LIBRARY osgUtil)
 FIND_OSG_LIBRARY(OSGDB_LIBRARY osgDB)
 FIND_OSG_LIBRARY(OSGTEXT_LIBRARY osgText)
@@ -72,9 +56,11 @@ FIND_OSG_LIBRARY(OSGGA_LIBRARY osgGA)
 FIND_OSG_LIBRARY(OSGPARTICLE_LIBRARY osgParticle)
 FIND_OSG_LIBRARY(OSGSIM_LIBRARY osgSim)
 FIND_OSG_LIBRARY(OSGSHADOW_LIBRARY osgShadow)
+FIND_OSG_LIBRARY(OSGANIMATION_LIBRARY osgAnimation)
 
 # Find debug libs
 FIND_OSG_LIBRARY(OSG_LIBRARY_DEBUG osgd)
+FIND_OSG_LIBRARY(OSGANIMATION_LIBRARY_DEBUG osgAnimationd)
 FIND_OSG_LIBRARY(OSGUTIL_LIBRARY_DEBUG osgUtild)
 FIND_OSG_LIBRARY(OSGDB_LIBRARY_DEBUG osgDBd)
 FIND_OSG_LIBRARY(OSGTEXT_LIBRARY_DEBUG osgTextd)
@@ -85,6 +71,7 @@ FIND_OSG_LIBRARY(OSGGA_LIBRARY_DEBUG osgGAd)
 FIND_OSG_LIBRARY(OSGPARTICLE_LIBRARY_DEBUG osgParticled)
 FIND_OSG_LIBRARY(OSGSIM_LIBRARY_DEBUG osgSimd)
 FIND_OSG_LIBRARY(OSGSHADOW_LIBRARY_DEBUG osgShadowd)
+FIND_OSG_LIBRARY(OSGANIMATION_LIBRARY_DEBUG osgAnimationd)
 
 SET(OSG_FOUND "NO")
 IF(OSG_LIBRARY AND OSG_INCLUDE_DIR)

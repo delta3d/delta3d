@@ -26,6 +26,7 @@
 
 #include <dtDirector/actionnode.h>
 #include <dtDirectorNodes/nodelibraryexport.h>
+#include <dtUtil/getsetmacros.h>
 
 namespace dtDirector
 {
@@ -93,8 +94,9 @@ namespace dtDirector
       void SetSpawnLocation(const osg::Vec3& value);
       osg::Vec3 GetSpawnLocation() const;
 
-      void SetNewActor(const dtCore::UniqueId& value);
-      dtCore::UniqueId GetNewActor();
+      DT_DECLARE_ACCESSOR(dtCore::UniqueId, NewActor)
+
+      DT_DECLARE_ACCESSOR(bool, CreateAsPrefab)
 
    protected:
 

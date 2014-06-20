@@ -23,6 +23,8 @@
 #define DELTA_COLLECTOR_UTIL
 
 #include <string>
+#include <dtUtil/warningdisable.h>
+DT_DISABLE_WARNING_START_CLANG("-Woverloaded-virtual")
 
 namespace dtUtil
 {
@@ -43,6 +45,41 @@ namespace dtUtil
          typedef typename T::allocator_type::value_type::second_type::element_type value_type;
       };
 
+      /**
+       * Template function that is used to find a node or object that is inside a map
+       * @param nodeName The name of the Node or Object that you wish to find
+       * @param nodeMap The map that you wish to search for the Node / Object
+       * @return Will return a const pointer to a node or object that you were looking for if it is in the map.  Otherwise it will return null.
+       */
+      template <class mapType>
+      const typename GetElementType<mapType>::value_type* FindNodePointer(const std::string& nodeName, const mapType& nodeMap)
+      {
+         typename mapType::const_iterator iter = nodeMap.find(nodeName);
+
+         if (iter != nodeMap.end())
+         {
+            return (*iter).second.get();
+         }
+         return NULL;
+      }
+
+      /**
+       * Template function that is used to find a node or object that is inside a map
+       * @param nodeName The name of the Node or Object that you wish to find
+       * @param nodeMap The map that you wish to search for the Node / Object
+       * @return Will return a const pointer to the node or object that you were looking for if it is in the map.  Otherwise it will return null.
+       */
+      template <class mapType>
+      typename GetElementType<mapType>::value_type* FindNodePointer(const std::string& nodeName, mapType& nodeMap)
+      {
+         typename mapType::iterator iter = nodeMap.find(nodeName);
+
+         if (iter != nodeMap.end())
+         {
+            return (*iter).second.get();
+         }
+         return NULL;
+      }
 
       /**
        * Template function that is used to Add a unique node or object to its respective map.
@@ -81,46 +118,10 @@ namespace dtUtil
       }
 
 
-      /**
-       * Template function that is used to find a node or object that is inside a map
-       * @param nodeName The name of the Node or Object that you wish to find
-       * @param nodeMap The map that you wish to search for the Node / Object
-       * @return Will return a const pointer to a node or object that you were looking for if it is in the map.  Otherwise it will return null.
-       */
-      template <class mapType>
-      const typename GetElementType<mapType>::value_type* FindNodePointer(const std::string& nodeName, const mapType& nodeMap)
-      {
-         typename mapType::const_iterator iter = nodeMap.find(nodeName);
-
-         if (iter != nodeMap.end())
-         {
-            return (*iter).second.get();
-         }
-         return NULL;
-      }
-
-      /**
-       * Template function that is used to find a node or object that is inside a map
-       * @param nodeName The name of the Node or Object that you wish to find
-       * @param nodeMap The map that you wish to search for the Node / Object
-       * @return Will return a const pointer to the node or object that you were looking for if it is in the map.  Otherwise it will return null.
-       */
-      template <class mapType>
-      typename GetElementType<mapType>::value_type* FindNodePointer(const std::string& nodeName, mapType& nodeMap)
-      {
-         typename mapType::iterator iter = nodeMap.find(nodeName);
-
-         if (iter != nodeMap.end())
-         {
-            return (*iter).second.get();
-         }
-         return NULL;
-      }
-
-
    } // namespace CollectorUtil
 
 
 } // namespace dtUtil
+DT_DISABLE_WARNING_END
 
 #endif // DELTA_COLLECTOR_UTIL

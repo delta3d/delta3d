@@ -70,7 +70,7 @@ namespace dtActors
       /**
       * Creates a new trigger actor.
       */
-      virtual void CreateActor();
+      virtual void CreateDrawable();
 
       /**
       * Destructor

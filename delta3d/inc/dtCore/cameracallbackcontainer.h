@@ -5,7 +5,6 @@
 #include <dtCore/refptr.h>
 #include <osg/Camera>
 #include <dtCore/observerptr.h>
-
 #include <vector>
 
 /// @cond DOXYGEN_SHOULD_SKIP_THIS
@@ -31,7 +30,8 @@ namespace dtCore
       virtual void operator() (osg::RenderInfo& renderInfo) const;
 
       /** Add a CameraDrawCallback to the container.  Callbacks will be 
-        * triggered in the order they are added.
+        * triggered in the order they are added.  NOTE: you must hold a reference to your callback
+        * because it will held in a observer in this list and removed when it is deleted.
         * @param cb The callback to add to this container.
         * @param singleFire When true, the callback will only fire once.
         */
@@ -53,7 +53,8 @@ namespace dtCore
       dtCore::ObserverPtr<dtCore::Camera> mCamera; ///<observer pointer to avoid circular dependency
    
    private:
-      std::vector<RefPtr<CameraDrawCallback> > mCallbacks;
+      // hold in observer so they will get auto-deleted
+      mutable std::vector<ObserverPtr<CameraDrawCallback> > mCallbacks;
       mutable std::vector<RefPtr<CameraDrawCallback> > mSingleFireCallbacks;
    };
 }

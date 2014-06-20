@@ -491,7 +491,7 @@ namespace dtAI
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void DeltaAIInterface::GetWaypointsByType(const dtDAL::ObjectType& type, WaypointArray& toFill)
+   void DeltaAIInterface::GetWaypointsByType(const dtCore::ObjectType& type, WaypointArray& toFill)
    {
       WaypointRefArray::const_iterator iter = mWaypoints.begin();
       WaypointRefArray::const_iterator iterEnd = mWaypoints.end();

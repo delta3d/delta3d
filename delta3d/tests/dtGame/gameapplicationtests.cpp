@@ -38,9 +38,9 @@
 
 #include <cppunit/extensions/HelperMacros.h>
 
-class GameApplicationTests : public CPPUNIT_NS::TestFixture
+class GameApplicationLoaderTests : public CPPUNIT_NS::TestFixture
 {
-   CPPUNIT_TEST_SUITE(GameApplicationTests);
+   CPPUNIT_TEST_SUITE(GameApplicationLoaderTests);
 
       CPPUNIT_TEST(TestProperties);
       CPPUNIT_TEST(TestCleanup);
@@ -53,21 +53,23 @@ public:
 
    void setUp()
    {
-      mGameApplication = new dtGame::GameApplication(0, NULL);
+      mGameApplicationLoader = new dtGame::GameApplicationLoader(0, NULL);
    }
    
    void tearDown()
    {
-      mGameApplication = NULL;
+      delete mGameApplicationLoader;
+      mGameApplicationLoader = NULL;
+      mLogger = NULL;
    }
 
    void TestProperties()
    {
       std::string name = "client";
       
-      CPPUNIT_ASSERT(mGameApplication->GetGameLibraryName().empty());
-      mGameApplication->SetGameLibraryName(name);
-      CPPUNIT_ASSERT(mGameApplication->GetGameLibraryName() == name);
+      CPPUNIT_ASSERT(mGameApplicationLoader->GetGameLibraryName().empty());
+      mGameApplicationLoader->SetGameLibraryName(name);
+      CPPUNIT_ASSERT(mGameApplicationLoader->GetGameLibraryName() == name);
    }
 
    void TestCleanup()
@@ -78,9 +80,10 @@ public:
       CPPUNIT_ASSERT(dtCore::ShaderManager::GetInstance().GetNumShaderGroupPrototypes() > 0);
       dtCore::RefPtr<dtGame::GameManager> gm = new dtGame::GameManager(*new dtCore::Scene);
       gm->AddComponent(*new dtGame::DefaultMessageProcessor(), dtGame::GameManager::ComponentPriority::HIGHEST);
-      mGameApplication->SetGameManager(*gm);
+      mGameApplicationLoader->SetGameManager(gm);
 
-      mGameApplication = NULL;
+      delete mGameApplicationLoader;
+      mGameApplicationLoader = NULL;
 
       CPPUNIT_ASSERT_MESSAGE("The shader manager should cleared on app shutdown", 
                dtCore::ShaderManager::GetInstance().GetNumShaderGroupPrototypes() == 0);
@@ -92,13 +95,13 @@ public:
 private:
    dtUtil::Log* mLogger;
 
-   dtCore::RefPtr<dtGame::GameApplication> mGameApplication;
+   dtGame::GameApplicationLoader* mGameApplicationLoader;
 
 };
 
 // Registers the fixture into the 'registry'
-CPPUNIT_TEST_SUITE_REGISTRATION(GameApplicationTests);
+CPPUNIT_TEST_SUITE_REGISTRATION(GameApplicationLoaderTests);
 
 
-const std::string GameApplicationTests::TESTS_DIR(dtUtil::GetDeltaRootPath()+dtUtil::FileUtils::PATH_SEPARATOR+"tests");
-const std::string GameApplicationTests::projectContext(GameApplicationTests::TESTS_DIR + dtUtil::FileUtils::PATH_SEPARATOR + "data" + dtUtil::FileUtils::PATH_SEPARATOR + "ProjectContext");
+const std::string GameApplicationLoaderTests::TESTS_DIR(dtUtil::GetDeltaRootPath()+dtUtil::FileUtils::PATH_SEPARATOR+"tests");
+const std::string GameApplicationLoaderTests::projectContext(GameApplicationLoaderTests::TESTS_DIR + dtUtil::FileUtils::PATH_SEPARATOR + "data" + dtUtil::FileUtils::PATH_SEPARATOR + "ProjectContext");

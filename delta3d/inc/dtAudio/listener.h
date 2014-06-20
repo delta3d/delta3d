@@ -22,6 +22,7 @@
 #define  DELTA_LISTENER
 
 #include <dtCore/transformable.h>
+#include <dtCore/motioninterface.h>
 #include <dtAudio/export.h>
 
 #include <osg/Vec3>
@@ -51,10 +52,9 @@ namespace dtAudio
     * manually in scene-space without having to make it a child of another
     * object, but any position updates must then be made manually.
     */
-   class DT_AUDIO_EXPORT Listener : public  dtCore::Transformable
+   class DT_AUDIO_EXPORT Listener : public  dtCore::Transformable, public dtCore::VelocityInterface
    {
       DECLARE_MANAGEMENT_LAYER(Listener)
-
       public:
          /**
           * Constructor, user does not create directly
@@ -70,6 +70,19 @@ namespace dtAudio
          virtual ~Listener();
 
       public:
+         DT_DECLARE_VIRTUAL_REF_INTERFACE_INLINE
+
+         /**
+          * Sets the velocity interface that provides the source of the velocity for the update.
+          */
+         void SetVelocitySource(VelocityInterface* vi);
+
+         /**
+          * @return the velocity source that was set on this object
+          */
+         VelocityInterface* GetVelocitySource();
+         const VelocityInterface* GetVelocitySource() const;
+
          /**
           * Set the velocity of the listener.
           *
@@ -82,7 +95,7 @@ namespace dtAudio
           *
           * @param velocity to get
           */
-         void GetVelocity(osg::Vec3f& velocity) const;
+         virtual osg::Vec3 GetVelocity() const;
 
          /**
           * Sets the master volume of the listener.
@@ -99,13 +112,20 @@ namespace dtAudio
          float GetGain() const;
 
          /**
-          * Message handler's main job is to reposition listener if it's a child
-          * of a Transformable in scene-space.
+          * Updates the listener's position and orientation in scene space
+          * It also updates the velocity if a velocity source has been assigned.
+          */
+         void Update();
+
+         /**
+          * Calls update from the old OnMessage update queue
           */
          virtual void OnMessage(MessageData* data);
 
          /// clean up listener
          void Clear(void);
+      private:
+         dtCore::RefPtr<dtCore::VelocityInterface> mVelocitySource;
    };
 } // namespace dtAudio
 

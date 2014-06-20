@@ -1350,7 +1350,7 @@ namespace dtDirector
          QPointF pos = event->scenePos() - mTranslationItem->scenePos() - hotspot;
          Clipboard& clipboard = Clipboard::GetInstance();
 
-         std::vector<dtDAL::PropertyContainer*> newSelection;
+         std::vector<dtCore::PropertyContainer*> newSelection;
          newSelection = clipboard.PasteObjects(mGraph.get(), mEditor->GetUndoManager(), osg::Vec2(pos.x(), pos.y()));
 
          mEditor->RefreshGraph(mGraph.get());

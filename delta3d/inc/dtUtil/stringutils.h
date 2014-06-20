@@ -183,6 +183,12 @@ namespace dtUtil
     */
    DT_UTIL_EXPORT int StrCompare(const std::string& one, const std::string& two, bool caseSensitive = true);
 
+   /// Simple lower case function.  This will clearly have unicode problems.
+   DT_UTIL_EXPORT void ToLowerCase(std::string& str);
+
+   /// Simple upper case function.  This will clearly have unicode problems.
+   DT_UTIL_EXPORT void ToUpperCase(std::string& str);
+
    /// A functor for using std::find or whatever that will compare two strings case sensitive or insensitive.
    struct StrCompareFunc
    {

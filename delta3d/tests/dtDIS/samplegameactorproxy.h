@@ -21,7 +21,7 @@ namespace dtTest
       unsigned short mEntityIDApplication;
       unsigned short mEntityIDSite;
 
-      void CreateActor();
+      void CreateDrawable();
       void BuildPropertyMap();
       void BuildInvokables();
 

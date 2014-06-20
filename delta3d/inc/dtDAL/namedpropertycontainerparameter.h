@@ -1,1 +1,0 @@
-#include <dtCore/namedpropertycontainerparameter.h>

@@ -27,6 +27,11 @@
 
 #include "waypointmotionmodel.h"
 
+namespace dtCore
+{
+   class FlyMotionModel;
+}
+
 class AIUtilityInputComponent : public QObject, public dtGame::BaseInputComponent
 {
    Q_OBJECT
@@ -59,6 +64,14 @@ public:
 
    void OnSelectBrushSizeChanged(double size);
 
+   /**
+   *  Set this to enable controlling the camera speed with -/=
+   */
+   void SetCameraMotionModel(dtCore::FlyMotionModel& fm);
+
+
+   virtual bool HandleKeyPressed(const dtCore::Keyboard* keyboard, int key);
+
 private slots:
    void OnWaypointTranslationBeginning();
 
@@ -71,6 +84,9 @@ private:
    bool IsCtrlHeld();
    double GetSelectionBrushSize() const;
    bool IsOkToSelect() const;
+
+   float mCameraSpeed;
+   dtCore::ObserverPtr<dtCore::FlyMotionModel> mCameraMotionModel;
 
    float mPickDistanceBuffer; //used to "pad" the mouse picked position to make it easier to select
 

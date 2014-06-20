@@ -12,8 +12,8 @@ BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(FP_overloads, FindProxies, 2, 6)
 typedef std::vector< std::string > StringVector;
 typedef std::map< std::string, std::string > StringStringMap;
 
-typedef dtCore::RefPtr< ActorProxy > ActorProxyRefPtr;
-typedef std::vector< ActorProxyRefPtr > ActorProxyVector;
+typedef dtCore::RefPtr< ActorProxy > dtCore::BaseActorObjectPtr;
+typedef std::vector< dtCore::BaseActorObjectPtr > ActorProxyVector;
 
 void initMapBindings()
 {

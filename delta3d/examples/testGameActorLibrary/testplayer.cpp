@@ -44,7 +44,7 @@
 #include <osgDB/ReadFile>
 
 //////////////////////////////////////////////////////////////////////////////
-TestPlayer::TestPlayer(dtGame::GameActorProxy& proxy): dtGame::GameActor(proxy),
+TestPlayer::TestPlayer(dtGame::GameActorProxy& parent): dtGame::GameActor(parent),
                                                        mIsector(new dtCore::Isector())
 {
    mVelocity = 0.0f;
@@ -233,7 +233,7 @@ void TestPlayerProxy::BuildPropertyMap()
    dtGame::GameActorProxy::BuildPropertyMap();
 
    TestPlayer* player = NULL;
-   GetActor(player);
+   GetDrawable(player);
 
    AddProperty(new dtCore::StringActorProperty("mesh","mesh",
       dtCore::StringActorProperty::SetFuncType(player,&TestPlayer::SetModel),
@@ -261,10 +261,10 @@ void TestPlayerProxy::OnEnteredWorld()
    {
       mEnteredBefore = true;
 
-      TestPlayer &actor = static_cast<TestPlayer&>(GetGameActor());
+      TestPlayer* actor = GetDrawable<TestPlayer>();
 
       //std::cout << "Here in on entered world.  Attempting to ground clamp." << std::endl;
-      actor.HandleTick(1.0,true);
+      actor->HandleTick(1.0,true);
 
       //enable receiving tick messages.
       if (IsRemote())
@@ -281,7 +281,7 @@ void TestPlayerProxy::OnEnteredWorld()
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void TestPlayerProxy::CreateActor()
+void TestPlayerProxy::CreateDrawable()
 {
-   SetActor(*new TestPlayer(*this));
+   SetDrawable(*new TestPlayer(*this));
 }

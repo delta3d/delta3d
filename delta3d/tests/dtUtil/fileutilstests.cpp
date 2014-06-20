@@ -36,6 +36,7 @@
 #include <dtUtil/exception.h>
 #include <dtUtil/fileutils.h>
 #include <dtUtil/log.h>
+#include <dtUtil/stringutils.h>
 
 #include <cppunit/extensions/HelperMacros.h>
 
@@ -51,9 +52,11 @@ class FileUtilsTests : public CPPUNIT_NS::TestFixture
 
       CPPUNIT_TEST(testFileIO1);
       CPPUNIT_TEST(testFileIO2);
+      CPPUNIT_TEST(testFileIOCaseInsensitive);
       CPPUNIT_TEST(testRelativePath);
+      CPPUNIT_TEST(testRelativePathComplex);
       CPPUNIT_TEST(testConcatPaths);
-      //CPPUNIT_TEST(testAbsoluteToRelativePath);
+      CPPUNIT_TEST(TestAbsolutePath);
       CPPUNIT_TEST(testDirectoryContentsWithOneFilter);
       CPPUNIT_TEST(testDirectoryContentsWithTwoFilters);
       CPPUNIT_TEST(testDirectoryContentsWithDuplicateFilter);
@@ -76,7 +79,10 @@ class FileUtilsTests : public CPPUNIT_NS::TestFixture
 
       void testFileIO1();
       void testFileIO2();
+      void testFileIOCaseInsensitive();
       void testRelativePath();
+      void testRelativePathComplex();
+      void TestAbsolutePath();
       void testConcatPaths();
       void testCopyFileOntoItself();
       //void testAbsoluteToRelativePath();
@@ -539,6 +545,81 @@ void FileUtilsTests::testFileIO2()
    }
 }
 
+void FileUtilsTests::testFileIOCaseInsensitive()
+{
+   try
+   {
+      dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
+
+      const std::string Dir1("Testing");
+      const std::string Dir2Name("Testing1");
+      const std::string Dir2(Dir1 + dtUtil::FileUtils::PATH_SEPARATOR + Dir2Name);
+
+      std::string file1("terrain_simple.ive");
+      std::string file2("flatdirt.ive");
+
+      dtUtil::FileInfo file1Info = fileUtils.GetFileInfo(file1);
+      dtUtil::FileInfo file2Info = fileUtils.GetFileInfo(file2);
+
+      CPPUNIT_ASSERT(file1Info.fileType == dtUtil::REGULAR_FILE);
+      CPPUNIT_ASSERT(file2Info.fileType == dtUtil::REGULAR_FILE);
+
+      CPPUNIT_ASSERT_EQUAL(std::string("terrain_simple"), file1Info.extensionlessFileName);
+      CPPUNIT_ASSERT_EQUAL(std::string("flatdirt"), file2Info.extensionlessFileName);
+
+      CPPUNIT_ASSERT_EQUAL(std::string("ive"), file1Info.extension);
+      CPPUNIT_ASSERT_EQUAL(std::string("ive"), file2Info.extension);
+
+#ifndef DELTA_WIN32
+      std::string file1ABS = fileUtils.GetAbsolutePath(file1);
+      std::string file2ABS = fileUtils.GetAbsolutePath(file2);
+
+      dtUtil::ToUpperCase(file1);
+      dtUtil::ToUpperCase(file2);
+
+      // mess up the whole path to make sure it all works.
+      dtUtil::ToUpperCase(file1ABS);
+      dtUtil::ToUpperCase(file2ABS);
+
+      dtUtil::FileInfo file1InfoCI = fileUtils.GetFileInfo(file1);
+      dtUtil::FileInfo file2InfoCI = fileUtils.GetFileInfo(file2);
+
+      CPPUNIT_ASSERT(file1InfoCI.fileType == dtUtil::FILE_NOT_FOUND);
+      CPPUNIT_ASSERT(file2InfoCI.fileType == dtUtil::FILE_NOT_FOUND);
+
+      file1InfoCI = fileUtils.GetFileInfo(file1, true);
+      file2InfoCI = fileUtils.GetFileInfo(file2, true);
+
+      CPPUNIT_ASSERT(file1InfoCI.fileType == dtUtil::REGULAR_FILE);
+      CPPUNIT_ASSERT(file2InfoCI.fileType == dtUtil::REGULAR_FILE);
+
+      CPPUNIT_ASSERT_EQUAL(std::string("terrain_simple"), file1InfoCI.extensionlessFileName);
+      CPPUNIT_ASSERT_EQUAL(std::string("flatdirt"), file2InfoCI.extensionlessFileName);
+
+      CPPUNIT_ASSERT_EQUAL(std::string("ive"), file1InfoCI.extension);
+      CPPUNIT_ASSERT_EQUAL(std::string("ive"), file2InfoCI.extension);
+
+      file1InfoCI = fileUtils.GetFileInfo(file1ABS, true);
+      file2InfoCI = fileUtils.GetFileInfo(file2ABS, true);
+
+      CPPUNIT_ASSERT(file1InfoCI.fileType == dtUtil::REGULAR_FILE);
+      CPPUNIT_ASSERT(file2InfoCI.fileType == dtUtil::REGULAR_FILE);
+
+      CPPUNIT_ASSERT_EQUAL(std::string("terrain_simple"), file1InfoCI.extensionlessFileName);
+      CPPUNIT_ASSERT_EQUAL(std::string("flatdirt"), file2InfoCI.extensionlessFileName);
+
+      CPPUNIT_ASSERT_EQUAL(std::string("ive"), file1InfoCI.extension);
+      CPPUNIT_ASSERT_EQUAL(std::string("ive"), file2InfoCI.extension);
+#endif
+
+   }
+   catch (const dtUtil::Exception& ex)
+   {
+      CPPUNIT_FAIL(ex.ToString());
+   }
+}
+
+
 void FileUtilsTests::testRelativePath()
 {
    std::string file = dtUtil::FindFileInPathList("map.xsd");
@@ -548,6 +629,8 @@ void FileUtilsTests::testRelativePath()
    CPPUNIT_ASSERT(!deltaRoot.empty());
 
    deltaRoot = dtUtil::FileUtils::GetInstance().GetAbsolutePath(deltaRoot);
+
+   std::string fileabs = dtUtil::FileUtils::GetInstance().GetAbsolutePath(file);
 
    // Normalize directory separators
    NormalizeDirectorySlashes(file);
@@ -559,6 +642,53 @@ void FileUtilsTests::testRelativePath()
 
    CPPUNIT_ASSERT_EQUAL_MESSAGE("The relative path should be: data/map.xsd",
          std::string("data/map.xsd"), relativePath);
+}
+
+void FileUtilsTests::TestAbsolutePath()
+{
+   std::string deltaRoot = dtUtil::GetDeltaRootPath();
+   CPPUNIT_ASSERT(!deltaRoot.empty());
+
+   deltaRoot = dtUtil::FileUtils::GetInstance().GetAbsolutePath(deltaRoot);
+
+   dtUtil::DirectoryPush dp(deltaRoot);
+
+   CPPUNIT_ASSERT(dp.GetSucceeded());
+
+   CPPUNIT_ASSERT_EQUAL(deltaRoot, dtUtil::FileUtils::GetInstance().CurrentDirectory());
+
+   std::string abspath = dtUtil::FileUtils::GetInstance().GetAbsolutePath("data/map.xsd");
+
+   CPPUNIT_ASSERT_EQUAL(deltaRoot + dtUtil::FileUtils::PATH_SEPARATOR + "data" + dtUtil::FileUtils::PATH_SEPARATOR + "map.xsd",
+            abspath);
+}
+
+
+void FileUtilsTests::testRelativePathComplex()
+{
+   {
+      std::string path1("/fun/is/a/good/thing");
+      // beginning with a \\ doesn't work, but all others do.
+      std::string path2("/fun\\is\\a\\bad\\time.png");
+
+      std::string result = dtUtil::FileUtils::GetInstance().RelativePath(path1, path2);
+      CPPUNIT_ASSERT_EQUAL(std::string("../../bad/time.png"), result);
+   }
+   {
+      std::string path1("C:/We/Love/chicken/burritos");
+      // beginning with a \\ doesn't work, but all others do.
+      std::string path2("D:\\fun\\is\\a\\bad\\time.png");
+      std::string result = dtUtil::FileUtils::GetInstance().RelativePath(path1, path2);
+      // should return the original because the drive letter is different.
+      CPPUNIT_ASSERT_EQUAL(path2, result);
+   }
+   {
+      std::string path1("C:/We/Love/chicken/burritos");
+      // beginning with a \\ doesn't work, but all others do.
+      std::string path2("C:\\fun\\is\\a\\bad\\time.png");
+      std::string result = dtUtil::FileUtils::GetInstance().RelativePath(path1, path2);
+      CPPUNIT_ASSERT_EQUAL(std::string("../../../../fun/is/a/bad/time.png"), result);
+   }
 }
 
 void FileUtilsTests::testConcatPaths()

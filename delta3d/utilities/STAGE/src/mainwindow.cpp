@@ -29,6 +29,8 @@
 #include <prefix/stageprefix.h>
 #include <dtEditQt/mainwindow.h>
 
+#include <dtUtil/warningdisable.h>
+DT_DISABLE_WARNING_ALL_START
 #include <QtCore/QFile>
 #include <QtGui/QApplication>
 #include <QtGui/QIcon>
@@ -42,12 +44,14 @@
 #include <QtGui/QCloseEvent>
 #include <QtGui/QActionGroup>
 #include <QtCore/QTimer>
+DT_DISABLE_WARNING_END
 
 #include <dtActors/volumeeditactor.h>
 #include <dtCore/deltawin.h>
 #include <dtCore/transform.h>
 #include <dtCore/project.h>
 #include <dtCore/librarymanager.h>
+#include <dtCore/exceptionenum.h>
 #include <dtCore/map.h>
 #include <dtUtil/datapathutils.h>
 #include <dtUtil/fileutils.h>
@@ -81,19 +85,25 @@ namespace dtEditQt
    MainWindow::MainWindow(const std::string& stageConfigFile)
       : mPluginManager(new PluginManager(this))
       , mSTAGEConfigFullPath(stageConfigFile)
-      , mVolEditActorProxy(NULL)
-      , mFileMenu(NULL)
-      , mEditMenu(NULL)
-      , mProjectMenu(NULL)
-      , mWindowMenu(NULL)
-      , mHelpMenu(NULL)
-      , mRecentProjs(NULL)
-      , mRecentMaps(NULL)
-      , mToolsMenu(NULL)
-      , mPropertyWindow(NULL)
-      , mActorDockWidg(NULL)
-      , mActorSearchDockWidg(NULL)
-      , mResourceBrowser(NULL)
+      , mVolEditActorProxy()
+      , mFileMenu()
+      , mEditMenu()
+      , mProjectMenu()
+      , mWindowMenu()
+      , mHelpMenu()
+      , mRecentProjs()
+      , mRecentMaps()
+      , mToolsMenu()
+      , mToolModeActionGroup()
+      , mNormalToolMode()
+      , mPerspView()
+      , mTopView()
+      , mSideView()
+      , mFrontView()
+      , mPropertyWindow()
+      , mActorDockWidg()
+      , mActorSearchDockWidg()
+      , mResourceBrowser()
    {
       //Read STAGE configuration file
       if (stageConfigFile != "")
@@ -509,12 +519,12 @@ namespace dtEditQt
    {
       //The persistent pseudo-actor that is used for special-purpose editing
       mVolEditActorProxy =
-         dynamic_cast<dtActors::VolumeEditActorProxy*>(dtCore::LibraryManager::GetInstance().CreateActorProxy("dtutil", "Volume Edit").get());
-      ViewportManager::GetInstance().getMasterScene()->AddChild(mVolEditActorProxy->GetActor());
+         dynamic_cast<dtActors::VolumeEditActorProxy*>(dtCore::LibraryManager::GetInstance().CreateActor("dtutil", "Volume Edit").get());
+      ViewportManager::GetInstance().getMasterScene()->AddChild(mVolEditActorProxy->GetDrawable());
 
       //move the VolumeEditActor away from the Perspective camera so we can see it.
       dtActors::VolumeEditActor* volEditAct =
-            dynamic_cast<dtActors::VolumeEditActor*>(mVolEditActorProxy->GetActor());
+            dynamic_cast<dtActors::VolumeEditActor*>(mVolEditActorProxy->GetDrawable());
       if(volEditAct != NULL)
       {
          dtCore::Transform xForm;
@@ -640,6 +650,12 @@ namespace dtEditQt
       delete mExternalToolsToolBar;
 
       setupToolbar();
+
+      if (mPerspView && mPerspView->getCamera())
+         mPerspView->getCamera()->resetRotation();
+      //ViewportManager::GetInstance().LoadPresetCamera(1);
+
+      EditorEvents::GetInstance().emitResetWindows();
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -671,7 +687,7 @@ namespace dtEditQt
       //EditorActions::GetInstance().refreshRecentProjects();
       //endWaitCursor();
 
-      if (EditorData::GetInstance().getLoadLastMap())
+      if (dtCore::Project::GetInstance().IsContextValid() && EditorData::GetInstance().getLoadLastMap())
       {
          QTimer::singleShot(1000, this, SLOT(onAutoLoadMap()));
       }
@@ -685,6 +701,13 @@ namespace dtEditQt
       repaint();
    }
 
+   ///////////////////////////////////////////////////////////////////////////////
+   bool MainWindow::MapDoesNotExist( const std::string& mapToLoad )
+   {
+      const std::set<std::string>& mapNames = dtCore::Project::GetInstance().GetMapNames();
+      return mapNames.find(mapToLoad) != mapNames.end();
+   }
+
    ////////////////////////////////////////////////////////////////////////////////
    void MainWindow::onAutoLoadMap()
    {
@@ -693,6 +716,13 @@ namespace dtEditQt
       if (!maps.empty())
       {
          mapToLoad = maps.front();
+      }
+
+      // this allows to start STAGE in batch mode with a new empty map ready to be
+      // edited. The new empty map must be pushed as "recent" map.
+      if (MapDoesNotExist(mapToLoad))
+      {
+         EditorActions::GetInstance().createNewEmptyMap(mapToLoad);
       }
 
       checkAndLoadBackup(mapToLoad);
@@ -1144,7 +1174,7 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    dtActors::VolumeEditActor* MainWindow::GetVolumeEditActor()
    {
-      return dynamic_cast<dtActors::VolumeEditActor*>(mVolEditActorProxy.get()->GetActor());
+      return dynamic_cast<dtActors::VolumeEditActor*>(mVolEditActorProxy.get()->GetDrawable());
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -1188,7 +1218,7 @@ namespace dtEditQt
                {
                   dtUtil::FileUtils::GetInstance().MakeDirectory(path);
                }
-               catch (dtUtil::Exception e)
+               catch (dtUtil::Exception&)
                {
                   doFileCopy = false;
                   LOG_ERROR("Unable to create directory for default.ini");
@@ -1200,7 +1230,7 @@ namespace dtEditQt
                {
                   dtUtil::FileUtils::GetInstance().FileCopy(src, dest, false);
                }
-               catch (dtUtil::Exception e)
+               catch (dtUtil::Exception&)
                {
                   LOG_ERROR("Unable to copy default.ini to user preferences folder.");
                }
@@ -1496,7 +1526,7 @@ namespace dtEditQt
       {
          hasBackup = dtCore::Project::GetInstance().HasBackup(str);
       }
-      catch (dtUtil::Exception e)
+      catch (dtUtil::Exception&)
       {
          //must not have a valid backup
          hasBackup = false;
@@ -1551,12 +1581,16 @@ namespace dtEditQt
          startWaitCursor();
          try
          {
-            dtCore::Map& m = dtCore::Project::GetInstance().GetMap(str);
-            EditorActions::GetInstance().changeMaps(
-               EditorData::GetInstance().getCurrentMap(), &m);
-            EditorData::GetInstance().addRecentMap(m.GetName());
+            dtCore::ObserverPtr<dtCore::Map> newMap = &dtCore::Project::GetInstance().GetMap(str);
+            dtCore::ObserverPtr<dtCore::Map> currentMap = EditorData::GetInstance().getCurrentMap();
+            EditorActions::GetInstance().changeMaps(currentMap.get(), newMap.get());
+            
+            // add current map instead of "newMap" to avoid bad pointer issues when the newMap was 
+            // the same as "earlier" currentMap
+            currentMap = EditorData::GetInstance().getCurrentMap();
+            EditorData::GetInstance().addRecentMap(currentMap->GetName());
          }
-         catch (dtUtil::Exception e)
+         catch (dtUtil::Exception&)
          {
             QMessageBox::critical(this, tr("Failed to load map"),
                tr("Failed to load previous map at: \n") +
@@ -1652,7 +1686,12 @@ namespace dtEditQt
 
       if (pluginPath.empty())
       {
+#ifdef DELTA_WIN32
          pluginPath = QCoreApplication::applicationDirPath().toStdString() + "/stplugins";
+#else
+         // 64bit linux should probably look in ../lib64, hmm.  Maybe it should be compiled in from cmake.
+         pluginPath = QCoreApplication::applicationDirPath().toStdString() + "/../lib/stplugins";
+#endif
       }
 
       #ifdef DELTA_WIN32
@@ -1666,7 +1705,7 @@ namespace dtEditQt
       if (!dtUtil::FileUtils::GetInstance().DirExists(pluginPath))
       {
          //no plugin path found...lets not try to load any plugins
-         LOG_INFO("No plugin path was found. No plugins will be loaded.");
+         LOG_WARNING("Plugin path \"" + pluginPath + "\" was found. No plugins will be loaded.");
          return;
       }
 

@@ -23,19 +23,19 @@
 #ifndef CHARACTERCONTROLLER_H_
 #define CHARACTERCONTROLLER_H_
 
-#include <dtDAL/propertycontainer.h>
+#include <dtCore/propertycontainer.h>
 
 #include <dtPhysics/physicsexport.h>
 #include <dtPhysics/physicstypes.h>
 #include <dtPhysics/geometry.h>
 
-#include <dtDAL/propertymacros.h>
+#include <dtCore/propertymacros.h>
 namespace dtPhysics
 {
    class CharacterControllerImpl;
    class PhysicsObject;
 
-   class DT_PHYSICS_EXPORT CharacterController : public dtDAL::PropertyContainer {
+   class DT_PHYSICS_EXPORT CharacterController : public dtCore::PropertyContainer {
    public:
       CharacterController(Geometry& shape);
 
@@ -68,7 +68,7 @@ namespace dtPhysics
       DT_DECLARE_ACCESSOR(Real, JumpSpeed);
       DT_DECLARE_ACCESSOR(Real, FallSpeed);
       DT_DECLARE_ACCESSOR(Real, StepHeight);
-      // Max incline the character can walk up in degrees.
+      /// Max incline the character can walk up in degrees.  Defaults to 45
       DT_DECLARE_ACCESSOR(Real, MaxInclineAngle);
       DT_DECLARE_ACCESSOR(Real, SkinWidth);
       DT_DECLARE_ACCESSOR(CollisionGroup, CollisionGroup);

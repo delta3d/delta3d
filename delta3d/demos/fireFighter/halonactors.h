@@ -29,7 +29,7 @@ class FIRE_FIGHTER_EXPORT PrimaryHalonActor : public GameItemActor
    public:
 
       /// Constructor
-      PrimaryHalonActor(dtGame::GameActorProxy &proxy);
+      PrimaryHalonActor(dtGame::GameActorProxy& parent);
 
       /**
        * Activates this game item
@@ -56,7 +56,7 @@ class FIRE_FIGHTER_EXPORT PrimaryHalonActorProxy : public GameItemActorProxy
       virtual void BuildInvokables();
 
       /// Instantiates the actor
-      virtual void CreateActor() { SetActor(*new PrimaryHalonActor(*this)); }
+      virtual void CreateDrawable() { SetDrawable(*new PrimaryHalonActor(*this)); }
 
    protected:
 
@@ -69,7 +69,7 @@ class FIRE_FIGHTER_EXPORT SecondaryHalonActor : public GameItemActor
    public:
 
       /// Constructor
-      SecondaryHalonActor(dtGame::GameActorProxy &proxy);
+      SecondaryHalonActor(dtGame::GameActorProxy& parent);
 
       /**
        * Activates this game item
@@ -96,7 +96,7 @@ class FIRE_FIGHTER_EXPORT SecondaryHalonActorProxy : public GameItemActorProxy
       virtual void BuildInvokables();
 
       /// Instantiates the actor
-      virtual void CreateActor() { SetActor(*new SecondaryHalonActor(*this)); }
+      virtual void CreateDrawable() { SetDrawable(*new SecondaryHalonActor(*this)); }
 
    protected:
 

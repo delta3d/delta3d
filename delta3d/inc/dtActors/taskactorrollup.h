@@ -40,7 +40,7 @@ namespace dtActors
           * Constructs the rollup task actor.
           * @param proxy Proxy owning this actor.
           */
-         TaskActorRollup(dtGame::GameActorProxy &proxy);
+         TaskActorRollup(dtGame::GameActorProxy& parent);
 
       protected:
 
@@ -80,7 +80,7 @@ namespace dtActors
          /**
           * Create the underlying rollup task actor to be managed by this proxy.
           */
-         virtual void CreateActor();
+         virtual void CreateDrawable();
    };
 }
 

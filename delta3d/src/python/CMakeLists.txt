@@ -200,7 +200,7 @@ IF(BUILD_PLIB)
 
   
   BUILD_PYTHON_BINDING(${PLIB_BINDINGS} 
-                       ${DTINPUT_PLIB_LIBRARY}
+                       ${DTINPUTPLIB_LIBRARY}
                       )
 ENDIF(BUILD_PLIB)
 

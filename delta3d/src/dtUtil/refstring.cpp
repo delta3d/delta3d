@@ -1,7 +1,11 @@
 #include "prefix/dtutilprefix.h"
 #include <dtUtil/refstring.h>
 #include <ostream>
-#ifdef __GNUG__
+
+#if defined( _LIBCPP_VERSION ) || (defined(_MSC_VER) && _MSC_VER >= 1700)
+#  include <unordered_set>
+#  define _UNORDERED_MAP
+#elif defined(__GNUG__)
 #  include <ext/hash_set>
 namespace __gnu_cxx
 {
@@ -9,7 +13,7 @@ namespace __gnu_cxx
      struct hash<std::string>
      {
       size_t operator()(const std::string& string) const
-        { return __gnu_cxx::__stl_hash_string(string.c_str()); }
+        { return dtUtil::__hash_string(string.c_str()); }
      };
 }
 #elif defined(_MSC_VER)
@@ -35,7 +39,9 @@ namespace dtUtil
    static OpenThreads::Mutex gStringSetMutex;
 #endif
 
-#ifdef __GNUG__
+#ifdef _UNORDERED_MAP
+   static std::unordered_set<std::string> StringSet(3000);
+#elif defined(__GNUG__)
    static __gnu_cxx::hash_set<std::string> StringSet(3000);
 #elif defined(_MSC_VER)
    static stdext::hash_set<std::string> StringSet;

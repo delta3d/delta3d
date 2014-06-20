@@ -22,10 +22,8 @@
 #ifndef DELTA_XERCES_UTILS_INC
 #define DELTA_XERCES_UTILS_INC
 
-#if _MSC_VER
-#  pragma warning(push)
-#  pragma warning(disable:4251)
-#endif
+#include <dtUtil/warningdisable.h>
+DT_DISABLE_WARNING_START_MSVC(4276)
 
 #include <dtUtil/export.h>
 
@@ -177,8 +175,6 @@ namespace dtUtil
 
 }
 
-#if _MSC_VER
-#  pragma warning(pop)
-#endif
+DT_DISABLE_WARNING_END
 
 #endif // DELTA_XERCES_UTILS_INC

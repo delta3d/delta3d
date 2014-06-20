@@ -22,6 +22,7 @@
 #define DELTA_CONFIGPROPERTIES
 
 #include <string>
+#include <vector>
 #include <dtUtil/export.h>
 
 namespace dtUtil
@@ -44,6 +45,14 @@ namespace dtUtil
          virtual const std::string& GetConfigPropertyValue(const std::string& name, const std::string& defaultValue = "") const = 0;
 
          /**
+          * Fills the output vector with key/value pairs where the key begins with the supplied prefix.
+          * @param prefix the prefix to use to filter.
+          * @param resultOut the result output parameter
+          * @param removePrefix optional paramater defaulting to true.  Iff true, the supplied prefix will be stripped from the string.
+          */
+         virtual void GetConfigPropertiesWithPrefix(const std::string& prefix, std::vector<std::pair<std::string,std::string> >& resultOut, bool removePrefix = true) const = 0;
+
+         /**
            * Sets the value of a given config property.
            * @param name The name of the configuration to set the value on
            * @param value The value to assign to the configuration
@@ -57,8 +66,14 @@ namespace dtUtil
            */
          virtual void RemoveConfigPropertyValue(const std::string& name) = 0;
 
+         /**
+          * @return true iff the named property exists.
+          * @param name the name of the property to query for.
+          */
+         virtual bool IsConfigPropertyDefined(const std::string& name) const = 0;
+
          /// Virtual destructor to prevent undefined behavior in derived classes
-         virtual ~ConfigProperties() = 0;
+         virtual ~ConfigProperties();
    };
 }
 

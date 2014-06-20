@@ -96,7 +96,7 @@ TestAnim::~TestAnim()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void TestAnim::Initialize(dtGame::GameApplication& app, int argc, char **argv)
+void TestAnim::Initialize(dtABC::BaseABC& app, int argc, char **argv)
 {
    if (argc > 1)
    {
@@ -120,8 +120,17 @@ void TestAnim::Initialize(dtGame::GameApplication& app, int argc, char **argv)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void TestAnim::OnStartup(dtGame::GameApplication& app)
+void TestAnim::OnStartup(dtABC::BaseABC& app, dtGame::GameManager& gameManager)
 {
+   mMessageProcComponent = new dtGame::DefaultMessageProcessor();
+   mAnimationComponent = new dtAnim::AnimationComponent();
+
+   gameManager.AddComponent(*mMessageProcComponent,dtGame::GameManager::ComponentPriority::HIGHEST);
+   gameManager.AddComponent(*mAnimationComponent, dtGame::GameManager::ComponentPriority::NORMAL);
+
+   mInputComponent = new TestAnimInput("TestAnimInput");
+   gameManager.AddComponent(*mInputComponent, dtGame::GameManager::ComponentPriority::NORMAL);
+
    app.GetWindow()->SetWindowTitle("TestAnim");
 
    std::string dataPath = dtUtil::GetDeltaDataPathList();
@@ -133,8 +142,6 @@ void TestAnim::OnStartup(dtGame::GameApplication& app)
    typedef std::vector<dtCore::BaseActorObject* > ProxyContainer;
    ProxyContainer proxies;
    ProxyContainer groundActor;
-
-   dtGame::GameManager& gameManager = *app.GetGameManager();
 
    try
    {
@@ -151,15 +158,6 @@ void TestAnim::OnStartup(dtGame::GameApplication& app)
       LOG_ERROR("Can't find the project context or load the map. Exception follows.");
       e.LogException(dtUtil::Log::LOG_ERROR);
    }
-
-   mMessageProcComponent = new dtGame::DefaultMessageProcessor();
-   mAnimationComponent = new dtAnim::AnimationComponent();
-
-   gameManager.AddComponent(*mMessageProcComponent,dtGame::GameManager::ComponentPriority::HIGHEST);
-   gameManager.AddComponent(*mAnimationComponent, dtGame::GameManager::ComponentPriority::NORMAL);
-
-   mInputComponent = new TestAnimInput("TestAnimInput");
-   gameManager.AddComponent(*mInputComponent, dtGame::GameManager::ComponentPriority::NORMAL);
 
    ProxyContainer::iterator iter = proxies.begin();
    ProxyContainer::iterator endIter = proxies.end();
@@ -198,8 +196,8 @@ void TestAnim::OnStartup(dtGame::GameApplication& app)
             {
                gameManager.AddActor(*proxy);
 
-               dtAnim::AnimationGameActor* actor = dynamic_cast<dtAnim::AnimationGameActor*>(&proxy->GetGameActor());
-               actor->SetModel("SkeletalMeshes/marine.xml");
+               dtAnim::AnimationGameActor* actor = proxy->GetDrawable<dtAnim::AnimationGameActor>();
+               actor->GetComponent<dtAnim::AnimationHelper>()->SetSkeletalMesh(dtCore::ResourceDescriptor("SkeletalMeshes:marine.xml"));
                InitializeAnimationActor(proxy.get(), mAnimationComponent, false, app.GetCamera());
 
                proxy->SetTranslation(startPos);
@@ -215,7 +213,7 @@ void TestAnim::OnStartup(dtGame::GameApplication& app)
       dtCore::BaseActorObject* proxy = dynamic_cast<dtCore::BaseActorObject*>(groundActor.front());
       if (proxy)
       {
-         dtCore::Transformable* transform = dynamic_cast<dtCore::Transformable*>(proxy->GetActor());
+         dtCore::Transformable* transform = dynamic_cast<dtCore::Transformable*>(proxy->GetDrawable());
          if (transform)
          {
             mAnimationComponent->SetTerrainActor(transform);
@@ -229,18 +227,16 @@ void TestAnim::OnStartup(dtGame::GameApplication& app)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void TestAnim::OnShutdown(dtGame::GameApplication& app)
+void TestAnim::OnShutdown(dtABC::BaseABC& app, dtGame::GameManager& gm)
 {
-   dtGame::GameManager* gm = app.GetGameManager();
-
-   gm->RemoveComponent(*mAnimationComponent);
+   gm.RemoveComponent(*mAnimationComponent);
    if (mInputComponent.valid())
    {
-      gm->RemoveComponent(*mInputComponent);
+      gm.RemoveComponent(*mInputComponent);
    }
-   gm->RemoveComponent(*mMessageProcComponent);
+   gm.RemoveComponent(*mMessageProcComponent);
 
-   dtGame::GameEntryPoint::OnShutdown(app);
+   dtGame::GameEntryPoint::OnShutdown(app, gm);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -248,24 +244,23 @@ void TestAnim::InitializeAnimationActor(dtAnim::AnimationGameActorProxy* gamePro
                                         dtAnim::AnimationComponent* animComp,
                                         bool isPlayer, dtCore::Camera *camera)
 {
-   dtAnim::AnimationGameActor* actor = dynamic_cast<dtAnim::AnimationGameActor*>(&gameProxy->GetGameActor());
+   dtAnim::AnimationGameActorProxy* actor = dynamic_cast<dtAnim::AnimationGameActorProxy*>(gameProxy);
 
    if (actor != NULL)
    {
-      dtAnim::AnimationHelper* helper = actor->GetHelper();
+      dtAnim::AnimationHelper* helper = actor->GetComponent<dtAnim::AnimationHelper>();
 
       if (helper != NULL)
       {
-         //we must register the helper with the animation component
-         animComp->RegisterActor(*gameProxy, *helper);
-
          if (isPlayer)
          {
             mAnimationHelper = helper;
             mAnimationHelper->SetGroundClamp(true);
 
+            dtCore::Transformable* tx;
+            actor->GetDrawable(tx);
             //attach the Camera to the Actor using a Tripod
-            mTripod = new dtCore::Tripod(camera, actor);
+            mTripod = new dtCore::Tripod(camera, tx);
             mTripod->SetTetherMode(dtCore::Tripod::TETHER_WORLD_REL);
             mTripod->SetOffset(0.f, -5.f, 1.25f, 0.f, 0.f, 0.f);
 
@@ -284,15 +279,26 @@ void TestAnim::InitializeAnimationActor(dtAnim::AnimationGameActorProxy* gamePro
             hotspotDef.mLocalRotation = attRot.getRotate();
 
             mAnimationHelper->GetAttachmentController().AddAttachment(*attachment, hotspotDef);
-            actor->AddChild(attachment.get());
+            tx->AddChild(attachment.get());
+
+            mAnimationHelper->ModelLoadedSignal.connect_slot(this, &TestAnim::PlayerLoadCallback);
          }
          else
          {
-            helper->PlayAnimation("Walk");
-            helper->GetSequenceMixer().GetActiveAnimation("Walk")->SetStartDelay(dtUtil::RandFloat(20.0f, 40.0f));
-            helper->GetSequenceMixer().ForceRecalculate();
+            helper->ModelLoadedSignal.connect_slot(this, &TestAnim::NonPlayerLoadCallback);
          }
       }
    }
 }
 
+void TestAnim::PlayerLoadCallback(dtAnim::AnimationHelper* helper)
+{
+}
+
+void TestAnim::NonPlayerLoadCallback(dtAnim::AnimationHelper* helper)
+{
+   helper->PlayAnimation("Walk");
+   helper->GetSequenceMixer().GetActiveAnimation("Walk")->SetStartDelay(dtUtil::RandFloat(20.0f, 40.0f));
+   helper->GetSequenceMixer().ForceRecalculate();
+
+}

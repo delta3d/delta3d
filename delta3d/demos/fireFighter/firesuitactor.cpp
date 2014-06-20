@@ -50,8 +50,8 @@ void FireSuitActorProxy::BuildInvokables()
 }
 
 ////////////////////////////////////////////////////
-FireSuitActor::FireSuitActor(dtGame::GameActorProxy& proxy)
-   : GameItemActor(proxy)
+FireSuitActor::FireSuitActor(dtGame::GameActorProxy& parent)
+   : GameItemActor(parent)
 {
    mItemIndex = 0;
 }

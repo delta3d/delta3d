@@ -43,7 +43,7 @@ class FIRE_FIGHTER_EXPORT FireActor : public GameItemActor
    public:
 
       /// Constructor
-      FireActor(dtGame::GameActorProxy& proxy);
+      FireActor(dtGame::GameActorProxy& parent);
 
       /**
        * Sets the filename of the flame particle system.
@@ -199,7 +199,7 @@ class FIRE_FIGHTER_EXPORT FireActorProxy : public GameItemActorProxy
       virtual void BuildInvokables();
 
       /// Instantiates the actor itself
-      virtual void CreateActor() { SetActor(*new FireActor(*this)); }
+      virtual void CreateDrawable() { SetDrawable(*new FireActor(*this)); }
 
       // Used in STAGE
       dtCore::ActorProxyIcon* GetBillBoardIcon();
@@ -218,8 +218,6 @@ class FIRE_FIGHTER_EXPORT FireActorProxy : public GameItemActorProxy
       virtual ~FireActorProxy();
 
    private:
-
-      dtCore::RefPtr<dtCore::ActorProxyIcon> mBillBoardIcon;
 };
 
 #endif

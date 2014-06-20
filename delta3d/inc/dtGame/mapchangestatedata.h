@@ -123,8 +123,8 @@ namespace dtGame
          bool mAddBillboards;
 
          //disable copy constructor and operator = 
-         MapChangeStateData(const MapChangeStateData& toCopy) {}
-         MapChangeStateData& operator = (const MapChangeStateData& toAssign) { return *this; }
+         MapChangeStateData(const MapChangeStateData&) {}
+         MapChangeStateData& operator = (const MapChangeStateData&) { return *this; }
          void SendMapMessage(const MessageType& type, const NameVector& names);
    };
 }
