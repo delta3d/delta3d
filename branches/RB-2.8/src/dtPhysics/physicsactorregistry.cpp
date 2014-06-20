@@ -23,23 +23,23 @@
 
 namespace dtPhysics
 {
-   dtCore::RefPtr<dtDAL::ActorType> PhysicsActorRegistry::PHYSICS_MATERIAL_ACTOR_TYPE(new dtDAL::ActorType
+   dtCore::RefPtr<dtCore::ActorType> PhysicsActorRegistry::PHYSICS_MATERIAL_ACTOR_TYPE(new dtCore::ActorType
       ("Physics Material", "Physics Actors", "Friction, restitution, and other physics material properties - assign this to other actors to get material properties.")); 
 
    ////////////////////////////////////////////////////////////////////////////
-   extern "C" DT_PHYSICS_EXPORT dtDAL::ActorPluginRegistry* CreatePluginRegistry()
+   extern "C" DT_PHYSICS_EXPORT dtCore::ActorPluginRegistry* CreatePluginRegistry()
    {
       return new dtPhysics::PhysicsActorRegistry;
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   extern "C" DT_PHYSICS_EXPORT void DestroyPluginRegistry(dtDAL::ActorPluginRegistry *registry)
+   extern "C" DT_PHYSICS_EXPORT void DestroyPluginRegistry(dtCore::ActorPluginRegistry *registry)
    {
       delete registry;
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   PhysicsActorRegistry::PhysicsActorRegistry() : dtDAL::ActorPluginRegistry("dtPhysics", "This library will store Physics Material actors")
+   PhysicsActorRegistry::PhysicsActorRegistry() : dtCore::ActorPluginRegistry("dtPhysics", "This library will store Physics Material actors")
    {
       
    }

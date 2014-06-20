@@ -141,7 +141,7 @@ namespace dtCore
       BaseXMLWriter();
 
       /**
-       * @Note  Create your own Save functions in your inherited classes.
+       * @note  Create your own Save functions in your inherited classes.
        */
 
       dtUtil::Log* mLogger;

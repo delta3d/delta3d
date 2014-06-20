@@ -48,6 +48,7 @@
 #include <dtCore/transform.h>
 #include <dtCore/project.h>
 #include <dtCore/librarymanager.h>
+#include <dtCore/exceptionenum.h>
 #include <dtCore/map.h>
 #include <dtUtil/datapathutils.h>
 #include <dtUtil/fileutils.h>
@@ -82,6 +83,7 @@ namespace dtEditQt
       : mPluginManager(new PluginManager(this))
       , mSTAGEConfigFullPath(stageConfigFile)
       , mVolEditActorProxy(NULL)
+      , mPerspView(NULL)
       , mFileMenu(NULL)
       , mEditMenu(NULL)
       , mProjectMenu(NULL)
@@ -640,6 +642,12 @@ namespace dtEditQt
       delete mExternalToolsToolBar;
 
       setupToolbar();
+
+      if (mPerspView && mPerspView->getCamera())
+         mPerspView->getCamera()->resetRotation();
+      //ViewportManager::GetInstance().LoadPresetCamera(1);
+
+      EditorEvents::GetInstance().emitResetWindows();
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -671,7 +679,7 @@ namespace dtEditQt
       //EditorActions::GetInstance().refreshRecentProjects();
       //endWaitCursor();
 
-      if (EditorData::GetInstance().getLoadLastMap())
+      if (dtCore::Project::GetInstance().IsContextValid() && EditorData::GetInstance().getLoadLastMap())
       {
          QTimer::singleShot(1000, this, SLOT(onAutoLoadMap()));
       }
@@ -685,6 +693,21 @@ namespace dtEditQt
       repaint();
    }
 
+   ///////////////////////////////////////////////////////////////////////////////
+   bool MainWindow::MapDoesNotExist( const std::string& mapToLoad )
+   {
+      bool exists = true;
+      try
+      {
+         dtCore::Map& m = dtCore::Project::GetInstance().GetMap(mapToLoad);
+      }
+      catch (const dtCore::ProjectFileNotFoundException& pfe)
+      {
+         exists = false;
+      }
+      return !exists;
+   }
+
    ////////////////////////////////////////////////////////////////////////////////
    void MainWindow::onAutoLoadMap()
    {
@@ -693,6 +716,13 @@ namespace dtEditQt
       if (!maps.empty())
       {
          mapToLoad = maps.front();
+      }
+
+      // this allows to start STAGE in batch mode with a new empty map ready to be
+      // edited. The new empty map must be pushed as "recent" map.
+      if (MapDoesNotExist(mapToLoad))
+      {
+         EditorActions::GetInstance().createNewEmptyMap(mapToLoad);
       }
 
       checkAndLoadBackup(mapToLoad);
@@ -1551,10 +1581,14 @@ namespace dtEditQt
          startWaitCursor();
          try
          {
-            dtCore::Map& m = dtCore::Project::GetInstance().GetMap(str);
-            EditorActions::GetInstance().changeMaps(
-               EditorData::GetInstance().getCurrentMap(), &m);
-            EditorData::GetInstance().addRecentMap(m.GetName());
+            dtCore::ObserverPtr<dtCore::Map> newMap = &dtCore::Project::GetInstance().GetMap(str);
+            dtCore::ObserverPtr<dtCore::Map> currentMap = EditorData::GetInstance().getCurrentMap();
+            EditorActions::GetInstance().changeMaps(currentMap.get(), newMap.get());
+            
+            // add current map instead of "newMap" to avoid bad pointer issues when the newMap was 
+            // the same as "earlier" currentMap
+            currentMap = EditorData::GetInstance().getCurrentMap();
+            EditorData::GetInstance().addRecentMap(currentMap->GetName());
          }
          catch (dtUtil::Exception& e)
          {

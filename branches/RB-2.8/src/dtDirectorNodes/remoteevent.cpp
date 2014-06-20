@@ -21,9 +21,9 @@
 #include <prefix/dtdirectornodesprefix.h>
 #include <dtDirectorNodes/remoteevent.h>
 
-#include <dtDAL/actorproxy.h>
-#include <dtDAL/containeractorproperty.h>
-#include <dtDAL/arrayactorproperty.h>
+#include <dtCore/actorproxy.h>
+#include <dtCore/containeractorproperty.h>
+#include <dtCore/arrayactorproperty.h>
 
 namespace dtDirector
 {
@@ -55,36 +55,36 @@ namespace dtDirector
       EventNode::BuildPropertyMap();
       RemoveProperty("Name");
 
-      dtDAL::StringActorProperty* nameProp = new dtDAL::StringActorProperty(
+      dtCore::StringActorProperty* nameProp = new dtCore::StringActorProperty(
          "EventName", "Event Name",
-         dtDAL::StringActorProperty::SetFuncType(this, &RemoteEvent::SetEventName),
-         dtDAL::StringActorProperty::GetFuncType(this, &RemoteEvent::GetEventName),
+         dtCore::StringActorProperty::SetFuncType(this, &RemoteEvent::SetEventName),
+         dtCore::StringActorProperty::GetFuncType(this, &RemoteEvent::GetEventName),
          "The name of the event.");
       AddProperty(nameProp);
 
-      dtDAL::StringActorProperty* paramNameProp = new dtDAL::StringActorProperty(
+      dtCore::StringActorProperty* paramNameProp = new dtCore::StringActorProperty(
          "Param Name", "Param Name",
-         dtDAL::StringActorProperty::SetFuncType(this, &RemoteEvent::SetParamName),
-         dtDAL::StringActorProperty::GetFuncType(this, &RemoteEvent::GetParamName),
+         dtCore::StringActorProperty::SetFuncType(this, &RemoteEvent::SetParamName),
+         dtCore::StringActorProperty::GetFuncType(this, &RemoteEvent::GetParamName),
          "The name of this parameter.");
 
-      dtDAL::StringActorProperty* paramValueProp = new dtDAL::StringActorProperty(
+      dtCore::StringActorProperty* paramValueProp = new dtCore::StringActorProperty(
          "Param Value", "Param Value",
-         dtDAL::StringActorProperty::SetFuncType(this, &RemoteEvent::SetParamValue),
-         dtDAL::StringActorProperty::GetFuncType(this, &RemoteEvent::GetParamValue),
+         dtCore::StringActorProperty::SetFuncType(this, &RemoteEvent::SetParamValue),
+         dtCore::StringActorProperty::GetFuncType(this, &RemoteEvent::GetParamValue),
          "The value of this parameter.");
 
-      dtDAL::ContainerActorProperty* paramProp = new dtDAL::ContainerActorProperty(
+      dtCore::ContainerActorProperty* paramProp = new dtCore::ContainerActorProperty(
          "Parameter", "Parameter", "Custom parameter", "");
       paramProp->AddProperty(paramNameProp);
       paramProp->AddProperty(paramValueProp);
 
-      dtDAL::ArrayActorPropertyBase* paramListProp = new dtDAL::ArrayActorProperty<ParamData>(
+      dtCore::ArrayActorPropertyBase* paramListProp = new dtCore::ArrayActorProperty<ParamData>(
          "Parameters", "Parameters", "Custom parameters to be sent and received from any corresponding Remote Events.",
-         dtDAL::ArrayActorProperty<ParamData>::SetIndexFuncType(this, &RemoteEvent::SetParameterIndex),
-         dtDAL::ArrayActorProperty<ParamData>::GetDefaultFuncType(this, &RemoteEvent::GetDefaultParameter),
-         dtDAL::ArrayActorProperty<ParamData>::GetArrayFuncType(this, &RemoteEvent::GetParameterList),
-         dtDAL::ArrayActorProperty<ParamData>::SetArrayFuncType(this, &RemoteEvent::SetParameterList),
+         dtCore::ArrayActorProperty<ParamData>::SetIndexFuncType(this, &RemoteEvent::SetParameterIndex),
+         dtCore::ArrayActorProperty<ParamData>::GetDefaultFuncType(this, &RemoteEvent::GetDefaultParameter),
+         dtCore::ArrayActorProperty<ParamData>::GetArrayFuncType(this, &RemoteEvent::GetParameterList),
+         dtCore::ArrayActorProperty<ParamData>::SetArrayFuncType(this, &RemoteEvent::SetParameterList),
          paramProp, "");
       AddProperty(paramListProp);
 
@@ -232,10 +232,10 @@ namespace dtDirector
 
          if (isNameValid)
          {
-            mParameterList[index].displayProp = new dtDAL::StringActorProperty(
+            mParameterList[index].displayProp = new dtCore::StringActorProperty(
                name, name,
-               dtDAL::StringActorProperty::SetFuncType(&mParameterList[index], &ParamData::SetValue),
-               dtDAL::StringActorProperty::GetFuncType(&mParameterList[index], &ParamData::GetValue),
+               dtCore::StringActorProperty::SetFuncType(&mParameterList[index], &ParamData::SetValue),
+               dtCore::StringActorProperty::GetFuncType(&mParameterList[index], &ParamData::GetValue),
                "The value of this parameter.");
 
             bool found = false;

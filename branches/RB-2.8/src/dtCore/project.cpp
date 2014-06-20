@@ -637,7 +637,7 @@ namespace dtCore
       if (!IsContextValid())
       {
          throw dtCore::ProjectInvalidContextException(
-            std::string("The context is not valid."), __FILE__, __LINE__);
+            std::string("There is no current project context.  Unable to get map headers."), __FILE__, __LINE__);
       }
 
       if (mImpl->mMapList.empty())
@@ -656,10 +656,13 @@ namespace dtCore
          Project::ContextSlot slotID = mImpl->mMapList[mapName].mSlotId;
 
          std::string& fileName = mImpl->mMapList[mapName].mFileName;
-         std::string fullPath = mImpl->mContexts[slotID] + dtUtil::FileUtils::PATH_SEPARATOR +
-            Project::MAP_DIRECTORY + dtUtil::FileUtils::PATH_SEPARATOR + fileName;
+         std::string fullPath = mImpl->GetMapsDirectory(mImpl->mContexts[slotID], false).fileName + dtUtil::FileUtils::PATH_SEPARATOR + fileName;
 
          headerData = parser->ParseMapHeaderData(fullPath);
+      }
+      else
+      {
+         throw dtUtil::FileNotFoundException("No such map exists: " + mapName, __FILE__, __LINE__);
       }
 
       return headerData;
@@ -1352,7 +1355,7 @@ namespace dtCore
       ReloadMapNames();
 
       dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
-      dtUtil::DirectoryPush dp(mContexts[mapFileData.mSlotId] + dtUtil::FileUtils::PATH_SEPARATOR + Project::MAP_DIRECTORY);
+      dtUtil::DirectoryPush dp(GetMapsDirectory(mContexts[mapFileData.mSlotId], false).fileName);
       if (fileUtils.FileExists(mapFileData.mFileName))
       {
          fileUtils.FileDelete(mapFileData.mFileName);

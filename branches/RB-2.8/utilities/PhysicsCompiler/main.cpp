@@ -22,7 +22,7 @@
 #include <dtCore/scene.h>
 #include <dtCore/system.h>
 #include <dtABC/application.h>
-#include <dtDAL/project.h>
+#include <dtCore/project.h>
 #include <dtGame/gamemanager.h>
 #include <dtUtil/log.h>
 #include <dtUtil/stringutils.h>
@@ -35,7 +35,7 @@
 #include <dtUtil/fileutils.h>
 #include <dtUtil/datapathutils.h>
 
-#include <dtDAL/project.h>
+#include <dtCore/project.h>
 
 #include <cmath>
 
@@ -145,7 +145,7 @@ public:
       mGM = new dtGame::GameManager(*mScene);
       mGM->SetApplication(*mApp);
 
-      dtDAL::Project::GetInstance().SetContext(context, true);
+      dtCore::Project::GetInstance().SetContext(context, true);
    }
 
    dtPhysics::MaterialIndex GetMaterialID(const std::string& commentFlag)
@@ -154,7 +154,7 @@ public:
 
       if(!commentFlag.empty())
       {
-         typedef std::vector<dtDAL::ActorProxy* > ProxyContainer;
+         typedef std::vector<dtCore::ActorProxy* > ProxyContainer;
          ProxyContainer proxies;
 
          mGM->FindActorsByType(*dtPhysics::PhysicsActorRegistry::PHYSICS_MATERIAL_ACTOR_TYPE, proxies);
@@ -221,7 +221,7 @@ public:
 
       if (!dir.empty())
       {
-         mSaveDirectory = dtDAL::Project::GetInstance().GetContext() + "/Terrains/" + dir;
+         mSaveDirectory = dtCore::Project::GetInstance().GetContext() + "/Terrains/" + dir;
 
          if(!dtUtil::FileUtils::GetInstance().DirExists(mSaveDirectory))
          {

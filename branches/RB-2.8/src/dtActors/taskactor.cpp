@@ -169,7 +169,7 @@ namespace dtActors
       mFailed = false;
       mNotifyLMSOnUpdate = false;
 
-      TaskActorProxy &proxy = static_cast<TaskActorProxy&>(GetGameActorProxy());
+      TaskActorProxy& proxy = static_cast<TaskActorProxy&>(GetGameActorProxy());
       proxy.NotifyFullActorUpdate();
    }
 

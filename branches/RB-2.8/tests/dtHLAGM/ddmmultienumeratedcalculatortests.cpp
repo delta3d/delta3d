@@ -109,7 +109,7 @@ class DDMMultiEnumeratedCalculatorTests : public CPPUNIT_NS::TestFixture
          const dtHLAGM::DDMRegionData::DimensionValues* dv = regData.GetDimensionValue(0);
          CPPUNIT_ASSERT(dv != NULL);
          CPPUNIT_ASSERT_EQUAL_MESSAGE("Min and max values should be the same", dv->mMin, dv->mMax);
-         unsigned long expectedMappedValue = dtHLAGM::DDMUtil::MapEnumerated(unsigned(mCalc->GetDefaultAppSpace()), 
+         unsigned int expectedMappedValue = dtHLAGM::DDMUtil::MapEnumerated(unsigned(mCalc->GetDefaultAppSpace()), 
                unsigned(mCalc->GetAppSpaceMinimum()), unsigned(mCalc->GetAppSpaceMaximum()));  
          CPPUNIT_ASSERT_EQUAL_MESSAGE("Mapped value is not correct.", expectedMappedValue, dv->mMin);
                   

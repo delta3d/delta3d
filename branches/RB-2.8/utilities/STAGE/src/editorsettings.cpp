@@ -99,6 +99,10 @@ namespace dtEditQt
    const QString EditorSettings::ACTIVE_PLUGINS("Active_Plugins");
 
    ///////////////////////////////////////////////////////////////////////////////
+   // note: this initialization means storing INI file on 
+   //   "/Users/username/AppData/Roaming/delta3d.org/leveleditor.ini" for a win7 setup, 
+   //   without any chance to customize the directory path...
+   ///////////////////////////////////////////////////////////////////////////////
    EditorSettings::EditorSettings()
       : QSettings(QSettings::IniFormat
       , QSettings::UserScope

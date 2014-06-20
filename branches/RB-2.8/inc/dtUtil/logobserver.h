@@ -57,12 +57,6 @@ namespace dtUtil
    protected:
       virtual ~LogObserver() {}
 
-   private:
-
-      ///Deprecated 4/5/2011. Use LogMessage(const LogData& logData) instead.
-      BREAK_OVERRIDE (LogMessage(Log::LogMessageType type, int hour, int min, int sec,
-                                 const std::string& source, int line, const std::string& msg))
-
    };
 
 }

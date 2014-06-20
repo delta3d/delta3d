@@ -679,7 +679,9 @@ void TaskActorTests::TestRollupTaskActor()
          CPPUNIT_ASSERT_MESSAGE("Could not create game event task actor proxy.",eventTaskProxy.valid());
 
          eventTaskProxy->GetProperty("GameEvent")->FromString(gameEvent->GetUniqueId().ToString());
-         eventTaskProxy->GetProperty("Weight")->FromString("0.2f");
+         eventTaskProxy->GetProperty("Weight")->FromString("0.2");
+
+         CPPUNIT_ASSERT_EQUAL(std::string("0.2"), eventTaskProxy->GetProperty("Weight")->ToString());
 
          rollupTaskProxy->AddSubTask(*eventTaskProxy);
          mGameManager->AddActor(*eventTaskProxy,false,false);
@@ -704,7 +706,7 @@ void TaskActorTests::TestRollupTaskActor()
          dtCore::System::GetInstance().Step();
 
          CPPUNIT_ASSERT_MESSAGE("Rollup task score was not calculated correctly.  The score was: " +
-               dtUtil::ToString(prop->GetValue()),osg::equivalent(prop->GetValue(),((float)i+1.0f) * 0.2f,0.001f));
+               dtUtil::ToString(prop->GetValue()),osg::equivalent(prop->GetValue(),(float(i)+1.0f) * 0.2f,0.001f));
       }
 
       CPPUNIT_ASSERT_MESSAGE("Rollup task should have been marked complete.",
@@ -804,7 +806,9 @@ void TaskActorTests::TestOrderedTaskActor()
          CPPUNIT_ASSERT_MESSAGE("Could not create game event task actor proxy.",eventTaskProxy.valid());
 
          eventTaskProxy->GetProperty("GameEvent")->FromString(gameEvent->GetUniqueId().ToString());
-         eventTaskProxy->GetProperty("Weight")->FromString("0.2f");
+         eventTaskProxy->GetProperty("Weight")->FromString("0.2");
+
+         CPPUNIT_ASSERT_EQUAL(std::string("0.2"), eventTaskProxy->GetProperty("Weight")->ToString());
 
          rollupTaskProxy->AddSubTask(*eventTaskProxy);
          mGameManager->AddActor(*eventTaskProxy,false,false);

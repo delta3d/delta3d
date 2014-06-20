@@ -554,6 +554,45 @@ namespace dtUtil
    }
 
    /////////////////////////////////////////////////////////////////////////////
+   void DataStream::Read(unsigned long long& d)
+   {
+      if (mReadPos + sizeof(long long) > mBufferSize)
+      {
+         throw DataStreamBufferReadError("Buffer underflow detected.", __FILE__, __LINE__);
+      }
+
+      d = *((unsigned long long *)(&mBuffer[mReadPos]));
+
+      if (mForceLittleEndian ^ mIsLittleEndian)
+      {
+         osg::swapBytes((char*)&d, sizeof(d));
+      }
+
+      mReadPos += sizeof(long long);
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void DataStream::Write(unsigned long long d)
+   {
+      if (mWritePos + sizeof(long long) > mBufferCapacity)
+      {
+         ResizeBuffer();
+      }
+
+      if (mForceLittleEndian ^ mIsLittleEndian)
+      {
+         osg::swapBytes((char*)&d, sizeof(d));
+      }
+
+      *((unsigned long long *)(&mBuffer[mWritePos])) = d;
+      mWritePos += sizeof(long long);
+      if (mWritePos > mBufferSize)
+      {
+         mBufferSize = mWritePos;
+      }
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
    void DataStream::Read(std::string& str)
    {
       if (mReadPos + sizeof(unsigned char) > mBufferSize)

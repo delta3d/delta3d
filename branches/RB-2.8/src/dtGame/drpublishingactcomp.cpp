@@ -274,7 +274,13 @@ namespace dtGame
          "This actor computes it's current velocity by averaging the change in position over the given number of frames.", PropRegType, propRegHelper);
 
       DT_REGISTER_PROPERTY_WITH_NAME_AND_LABEL(MaxUpdateSendRate, "DesiredNumUpdatesPerSec", "Desired Number of Updates Per Second",
-         "The desired number of updates per second - the actual frequently may be less if vehicle doesn't change much.", PropRegType, propRegHelper);
+         "The desired number of updates per second - the actual frequently will be less if the motion of the vehicle doesn't deviate from the dead-reckoned values.", PropRegType, propRegHelper);
+
+      DT_REGISTER_PROPERTY_WITH_NAME_AND_LABEL(MaxTranslationError, "MaxTranslationError", "Maximum distance of allowed translation error",
+         "Maximum distance of translation error between the actual and dead-reckoned prediction before an update will be sent.", PropRegType, propRegHelper);
+
+      DT_REGISTER_PROPERTY_WITH_NAME_AND_LABEL(MaxRotationError, "MaxRotationError", "Maximum allowed rotation error in degrees",
+         "Maximum amount of rotation error in degrees between the actual and dead-reckoned prediction before an update will be sent.", PropRegType, propRegHelper);
    }
 
    //////////////////////////////////////////////////////////////////////

@@ -162,7 +162,7 @@ namespace dtPhysics
    }
 
    template <typename ArrayType, typename PalElemType>
-   void UpdateArray(dtCore::RefPtr<ArrayType>& array, const PAL_VECTOR<PalElemType>& palArray)
+      void UpdateArray(dtCore::RefPtr<ArrayType>& array, const PAL_VECTOR<PalElemType>& palArray)
    {
       typedef typename ArrayType::ElementDataType ElementDataType;
       if (!array.valid())
@@ -196,8 +196,22 @@ namespace dtPhysics
 
       dtCore::RefPtr<osg::Vec3Array> vertices = dynamic_cast<osg::Vec3Array*>(geomDrawable.getVertexArray());
       UpdateArray(vertices, debugGeom.m_vVertices);
+
+      // expand vertices if needed
+      if (vertices.valid() && !debugGeom.m_vIndices.empty())
+      {
+         osg::Vec3Array* vertices_lookup = vertices.get();
+         osg::Vec3Array* vertices_expanded = new osg::Vec3Array;
+         for (int i = 0; i < debugGeom.m_vIndices.size(); i++)
+         {
+            int index = debugGeom.m_vIndices[i];
+            vertices_expanded->push_back((*vertices_lookup)[index]);
+         }
+         vertices = vertices_expanded;
+      }
       geomDrawable.setVertexArray(vertices.get());
 
+      /*
       if (debugGeom.m_vIndices.empty())
       {
          geomDrawable.setVertexIndices(NULL);
@@ -208,6 +222,7 @@ namespace dtPhysics
          UpdateArray(indices, debugGeom.m_vIndices);
          geomDrawable.setVertexIndices(indices.get());
       }
+      */
 
       osg::DrawArrays* drawArrays = static_cast<osg::DrawArrays*>(geomDrawable.getPrimitiveSet(0));
       drawArrays->setCount(debugGeom.m_vVertices.size());

@@ -775,7 +775,7 @@ namespace dtHLAGM
 
    /////////////////////////////////////////////////////////////////////////////////
    void HLAComponent::ProvideAttributeValueUpdate(RTIObjectInstanceHandle& theObject,
-            const RTIAttributeHandleSet& theAttributes)
+            const RTIAttributeHandleSet& /*theAttributes*/)
    {
       const dtCore::UniqueId* actorId = mRuntimeMappings.GetId(theObject);
       if (actorId != NULL)
@@ -799,7 +799,7 @@ namespace dtHLAGM
 
    /////////////////////////////////////////////////////////////////////////////////
    void HLAComponent::RemoveObjectInstance(RTIObjectInstanceHandle& theObject,
-            const std::string& theTag)
+            const std::string& /*theTag*/)
    {
       const dtCore::UniqueId* actorId = mRuntimeMappings.GetId(theObject);
 
@@ -1335,7 +1335,7 @@ namespace dtHLAGM
    /////////////////////////////////////////////////////////////////////////////////
    void HLAComponent::ReflectAttributeValues(RTIObjectInstanceHandle& theObject,
             const RTIAttributeHandleValueMap& theAttributes,
-            const std::string& theTag)
+            const std::string& /*theTag*/)
    {
       try
       {
@@ -1743,7 +1743,7 @@ namespace dtHLAGM
 
    /////////////////////////////////////////////////////////////////////////////////
    void HLAComponent::DiscoverObjectInstance(RTIObjectInstanceHandle& theObject,
-            RTIObjectClassHandle& theObjectClassHandle,
+            RTIObjectClassHandle& /*theObjectClassHandle*/,
             const std::string& theObjectName)
    {
       dtCore::UniqueId newId;
@@ -1803,7 +1803,7 @@ namespace dtHLAGM
    /////////////////////////////////////////////////////////////////////////////////
    void HLAComponent::ReceiveInteraction(RTIInteractionClassHandle& interactionClassHandle,
             const RTIParameterHandleValueMap& theParameters,
-            const std::string& theTag)
+            const std::string& /*theTag*/)
    {
       try
       {

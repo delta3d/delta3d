@@ -38,7 +38,7 @@ namespace dtGame
       AddParameter(new StringMessageParameter("LogFile"));
       AddParameter(new DoubleMessageParameter("AutoRecordKeyframeInterval"));
       AddParameter(new DoubleMessageParameter("CurrentRecordDuration"));
-      AddParameter(new UnsignedLongIntMessageParameter("NumRecordedMessages"));
+      AddParameter(new UnsignedIntMessageParameter("NumRecordedMessages"));
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -71,8 +71,8 @@ namespace dtGame
          static_cast<const DoubleMessageParameter*>(GetParameter("CurrentRecordDuration"));
       result.SetCurrentRecordDuration(recordDur->GetValue());
 
-      const UnsignedLongIntMessageParameter *numRecorded =
-         static_cast<const UnsignedLongIntMessageParameter*>(GetParameter("NumRecordedMessages"));
+      const UnsignedIntMessageParameter *numRecorded =
+         static_cast<const UnsignedIntMessageParameter*>(GetParameter("NumRecordedMessages"));
       result.SetNumMessages(numRecorded->GetValue());
 
       return result;
@@ -104,8 +104,8 @@ namespace dtGame
          static_cast< DoubleMessageParameter*>(GetParameter("CurrentRecordDuration"));
       recordDuration->SetValue(status.GetCurrentRecordDuration());
 
-      UnsignedLongIntMessageParameter *numRecorded =
-         static_cast< UnsignedLongIntMessageParameter*>(GetParameter("NumRecordedMessages"));
+      UnsignedIntMessageParameter *numRecorded =
+         static_cast< UnsignedIntMessageParameter*>(GetParameter("NumRecordedMessages"));
       numRecorded->SetValue(status.GetNumMessages());
 
    }
@@ -310,28 +310,28 @@ namespace dtGame
    {
       //The keyframe list is actually broken up into parallel arrays with are
       //stored as message parameters.
-      StringMessageParameter *nameParam =
+      StringMessageParameter* nameParam =
          static_cast<StringMessageParameter*>(GetParameter("Name"));
-      StringMessageParameter *descParam =
+      StringMessageParameter* descParam =
          static_cast<StringMessageParameter*>(GetParameter("Description"));
-      ActorMessageParameter *idParam =
+      ActorMessageParameter* idParam =
          static_cast<ActorMessageParameter*>(GetParameter("UniqueId"));
-      ActorMessageParameter *tagIdParam =
+      ActorMessageParameter* tagIdParam =
          static_cast<ActorMessageParameter*>(GetParameter("TagUniqueId"));
-      StringMessageParameter *mapParam =
+      StringMessageParameter* mapParam =
          static_cast<StringMessageParameter*>(GetParameter("ActiveMap"));
-      DoubleMessageParameter *simTimeParam =
+      DoubleMessageParameter* simTimeParam =
          static_cast<DoubleMessageParameter*>(GetParameter("SimTime"));
-      LongIntMessageParameter *logFileOffsetParam =
+      LongIntMessageParameter* logFileOffsetParam =
          static_cast<LongIntMessageParameter*>(GetParameter("LogFileOffset"));
 
-      std::vector<std::string> &nameList = nameParam->GetValueList();
-      std::vector<std::string> &descList = descParam->GetValueList();
-      std::vector<std::string> &mapList = mapParam->GetValueList();
-      std::vector<double> &simTimeList = simTimeParam->GetValueList();
-      std::vector<dtCore::UniqueId> &idList = idParam->GetValueList();
-      std::vector<dtCore::UniqueId> &tagIdList = tagIdParam->GetValueList();
-      std::vector<long> &logFileOffsetList = logFileOffsetParam->GetValueList();
+      std::vector<StringMessageParameter::value_type>& nameList = nameParam->GetValueList();
+      std::vector<StringMessageParameter::value_type>& descList = descParam->GetValueList();
+      std::vector<StringMessageParameter::value_type>& mapList = mapParam->GetValueList();
+      std::vector<DoubleMessageParameter::value_type>& simTimeList = simTimeParam->GetValueList();
+      std::vector<ActorMessageParameter::value_type>& idList = idParam->GetValueList();
+      std::vector<ActorMessageParameter::value_type>& tagIdList = tagIdParam->GetValueList();
+      std::vector<LongIntMessageParameter::value_type>& logFileOffsetList = logFileOffsetParam->GetValueList();
 
       nameList.clear();
       descList.clear();
@@ -401,13 +401,15 @@ namespace dtGame
       LongIntMessageParameter* logFileOffsetParam =
          static_cast<LongIntMessageParameter*>(GetParameter("LogFileOffset"));
 
-      std::vector<std::string>& nameList = nameParam->GetValueList();
-      std::vector<std::string>& descList = descParam->GetValueList();
-      std::vector<std::string>& mapList = mapParam->GetValueList();
-      std::vector<double>& simTimeList = simTimeParam->GetValueList();
-      std::vector<dtCore::UniqueId>& idList = idParam->GetValueList();
-      std::vector<dtCore::UniqueId>& tagIdList = tagIdParam->GetValueList();
-      std::vector<long>& logFileOffsetList = logFileOffsetParam->GetValueList();
+      std::vector<StringMessageParameter::value_type>& nameList = nameParam->GetValueList();
+      std::vector<StringMessageParameter::value_type>& descList = descParam->GetValueList();
+      std::vector<StringMessageParameter::value_type>& mapList = mapParam->GetValueList();
+      std::vector<DoubleMessageParameter::value_type>& simTimeList = simTimeParam->GetValueList();
+      std::vector<ActorMessageParameter::value_type>& idList = idParam->GetValueList();
+      std::vector<ActorMessageParameter::value_type>& tagIdList = tagIdParam->GetValueList();
+      std::vector<LongIntMessageParameter::value_type>& logFileOffsetList = logFileOffsetParam->GetValueList();
+
+
 
       if (nameList.size() != descList.size() ||
           nameList.size() != mapList.size() ||

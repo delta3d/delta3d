@@ -143,7 +143,7 @@ namespace dtPhysics
           * If Step in background is true, this will block if the physics running the background.  Otherwise
           * it will just return.
           */
-         void WaitUntilUpdateCompletes(const dtGame::TickMessage& tm);
+         void WaitUntilUpdateCompletes();
 
       protected:
          virtual ~PhysicsComponent();

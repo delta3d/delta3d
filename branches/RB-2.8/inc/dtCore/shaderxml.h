@@ -266,8 +266,8 @@ namespace dtCore
          static const std::string OSCILLATOR_ATTRIB_TRIGGER;
 
          //Disable the copy constructor and assignment operator.
-         ShaderXML(const ShaderXML& rhs) { }
-         ShaderXML& operator=(const ShaderXML& rhs) { return *this; }
+         ShaderXML(const ShaderXML&) { }
+         ShaderXML& operator=(const ShaderXML&) { return *this; }
 
          ShaderContainer mShaderGroupContainer; ///<container of loaded ShaderGroups
    };

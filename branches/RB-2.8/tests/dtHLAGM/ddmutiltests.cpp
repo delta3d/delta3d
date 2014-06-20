@@ -51,21 +51,21 @@ class DDMUtilTests : public CPPUNIT_NS::TestFixture
       
       void tearDown()
       {
-         dtHLAGM::DDMUtil::SetMaxExtent(ULONG_MAX);
-         dtHLAGM::DDMUtil::SetMinExtent(0ul);
+         dtHLAGM::DDMUtil::SetMaxExtent(UINT_MAX);
+         dtHLAGM::DDMUtil::SetMinExtent(0U);
       }
       
       void TestGetSetMaxExtent()
       {
          dtHLAGM::DDMUtil::SetMaxExtent(5);
-         CPPUNIT_ASSERT_EQUAL(5ul, dtHLAGM::DDMUtil::GetMaxExtent());
+         CPPUNIT_ASSERT_EQUAL(5U, dtHLAGM::DDMUtil::GetMaxExtent());
          dtHLAGM::DDMUtil::SetMinExtent(3);
-         CPPUNIT_ASSERT_EQUAL(3ul, dtHLAGM::DDMUtil::GetMinExtent());
+         CPPUNIT_ASSERT_EQUAL(3U, dtHLAGM::DDMUtil::GetMinExtent());
       }
 
       void TestLinear()
       {
-         unsigned long result = dtHLAGM::DDMUtil::MapLinear(15.0, 0.0, 15.0);
+         unsigned int result = dtHLAGM::DDMUtil::MapLinear(15.0, 0.0, 15.0);
          CPPUNIT_ASSERT_EQUAL(dtHLAGM::DDMUtil::GetMaxExtent(), result);
          
          result = dtHLAGM::DDMUtil::MapLinear(0.0, 0.0, 15.0);
@@ -83,11 +83,11 @@ class DDMUtilTests : public CPPUNIT_NS::TestFixture
       
       void TestEnumerated()
       {
-         unsigned long result = dtHLAGM::DDMUtil::MapEnumerated(15, 0, 15);
-         CPPUNIT_ASSERT_EQUAL(4160749567UL, result);
+         unsigned int result = dtHLAGM::DDMUtil::MapEnumerated(15, 0, 15);
+         CPPUNIT_ASSERT_EQUAL(4160749567U, result);
          
          result = dtHLAGM::DDMUtil::MapEnumerated(0, 0, 15);
-         CPPUNIT_ASSERT_EQUAL(134217727UL, result);
+         CPPUNIT_ASSERT_EQUAL(134217727U, result);
          
          result = dtHLAGM::DDMUtil::MapEnumerated(8, 0, 16);
          CPPUNIT_ASSERT_EQUAL(dtHLAGM::DDMUtil::GetMaxExtent()/2, result);
@@ -101,11 +101,11 @@ class DDMUtilTests : public CPPUNIT_NS::TestFixture
             partitionValues.push_back(double(i));
          }
          
-         unsigned long result = dtHLAGM::DDMUtil::MapPartitioned(15.9, partitionValues);
-         CPPUNIT_ASSERT_EQUAL(4160749567UL, result);
+         unsigned int result = dtHLAGM::DDMUtil::MapPartitioned(15.9, partitionValues);
+         CPPUNIT_ASSERT_EQUAL(4160749567U, result);
          
          result = dtHLAGM::DDMUtil::MapPartitioned(0.0, partitionValues);
-         CPPUNIT_ASSERT_EQUAL(134217727UL, result);
+         CPPUNIT_ASSERT_EQUAL(134217727U, result);
          
          partitionValues.push_back(17.0);
 

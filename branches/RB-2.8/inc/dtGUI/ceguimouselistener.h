@@ -27,20 +27,13 @@
 namespace dtGUI
 {
 
-#if CEGUI_VERSION_MAJOR >= 0 && CEGUI_VERSION_MINOR < 7
-   class HUD;
-#endif
 
    /// A mouse device listener to inject input to CEGUI.
    ///\todo Why maintain mWidth AND mHalfWidth?
    class DT_GUI_EXPORT CEGUIMouseListener : public dtCore::MouseListener
    {
    public:
-#if CEGUI_VERSION_MAJOR >= 0 && CEGUI_VERSION_MINOR >= 7
       CEGUIMouseListener();
-#else
-      CEGUIMouseListener(HUD *pGui=NULL); //old
-#endif
       void SetWindowSize(unsigned int width, unsigned int height);
 
       ///\todo test System for null, throw exception if null.
@@ -65,13 +58,10 @@ namespace dtGUI
       void UpdateWindowSize();
       void MakeCurrent();
 
-#if CEGUI_VERSION_MAJOR >= 0 && CEGUI_VERSION_MINOR < 7
-      HUD*  m_pGUI; //old
-#endif
-      int   mWidth; ///<the width of the Window
-      int   mHeight; ///<The height of the Window
-      int   mHalfWidth; ///<the width of the Window
-      int   mHalfHeight; ///<The height of the Window
+      unsigned int   mWidth; ///<the width of the Window
+      unsigned int   mHeight; ///<The height of the Window
+      unsigned int   mHalfWidth; ///<the width of the Window
+      unsigned int   mHalfHeight; ///<The height of the Window
       float mMouseX; ///<The current Mouse X position
       float mMouseY; ///<the current Mouse Y position
    };

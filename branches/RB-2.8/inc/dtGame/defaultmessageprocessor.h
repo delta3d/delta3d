@@ -58,25 +58,25 @@ namespace dtGame
           * Processes a tick message
           * @param msg The message
           */
-         virtual void ProcessTick(const TickMessage& msg) {}
+         virtual void ProcessTick(const TickMessage& /*msg*/) {}
 
          /**
           * Processes a local create message
           * @param msg The message
           */
-         virtual void ProcessLocalCreateActor(const ActorUpdateMessage& msg) {}
+         virtual void ProcessLocalCreateActor(const ActorUpdateMessage& /*msg*/) {}
 
          /**
           * Processes an local actor update message
           * @param msg The message
           */
-         virtual void ProcessLocalUpdateActor(const ActorUpdateMessage& msg, GameActorProxy* proxy);
+         virtual void ProcessLocalUpdateActor(const ActorUpdateMessage& /*msg*/, GameActorProxy* proxy);
 
          /**
           * Processes a local actor delete message
           * @param msg The message
           */
-         virtual void ProcessLocalDeleteActor(const Message& msg) {}
+         virtual void ProcessLocalDeleteActor(const Message& /*msg*/) {}
 
          /**
           * Processes a remote create actor message
@@ -136,7 +136,7 @@ namespace dtGame
           * whatever that means to the current game or simulation.
           * @param msg the restart message.
           */
-         virtual void ProcessRestartCommand(const RestartMessage& msg) {}
+         virtual void ProcessRestartCommand(const RestartMessage& /*msg*/) {}
 
          /**
           * Called when a time change command message is received.
@@ -160,7 +160,7 @@ namespace dtGame
           * Processes the player entered world message
           * @param msg The message
           */
-         virtual void ProcessPlayerEnteredWorldMessage(const Message& msg) { }
+         virtual void ProcessPlayerEnteredWorldMessage(const Message& /*msg*/) { }
 
       private:
    };

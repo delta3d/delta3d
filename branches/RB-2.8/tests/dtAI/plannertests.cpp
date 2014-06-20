@@ -104,7 +104,7 @@ namespace dtTest
    {
       NPCParser parser;
       dtCore::RefPtr<BaseNPC> pTestNPC = new BaseNPC("TestNPC");
-      pTestNPC->LoadNPCScript(dtUtil::GetDeltaRootPath() + "/tests/dtAI/npcscript_test.txt");
+      pTestNPC->LoadNPCScript(dtUtil::GetDeltaRootPath() + "/tests/data/npcscript_test.txt");
       pTestNPC->InitNPC();
       pTestNPC->SpawnNPC();
 

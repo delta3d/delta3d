@@ -442,7 +442,7 @@ namespace dtGame
           * Gets the auto keyframe interval
           * @return The interval
           */
-         const double GetAutoKeyframeInterval() const 
+         double GetAutoKeyframeInterval() const
          {
             const DoubleMessageParameter *p = 
                static_cast<const dtCore::NamedDoubleParameter*>(GetParameter("AutoKeyframeInterval"));

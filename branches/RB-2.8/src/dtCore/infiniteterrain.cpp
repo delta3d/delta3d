@@ -578,49 +578,31 @@ void InfiniteTerrain::BuildSegment(int x, int y)
       }
    }
 
+   
+   for (i=0;i<mSegmentDivisions;i++)
+   {
+      RefPtr<osg::DrawElementsUInt> indices = new osg::DrawElementsUInt(osg::PrimitiveSet::TRIANGLE_STRIP);
+      indices->reserveElements(width * 2);
+
+      for (j=0;j<width;j++)
+      {
+         indices->addElement((i+1)*width + j);
+         indices->addElement(i*width + j);
+      }
+      
+      geom->addPrimitiveSet(indices);
+   }
+
    geom->setVertexArray(vertices.get());
 
    geom->setNormalArray(normals.get());
+   geom->setNormalBinding(osg::Geometry::BIND_PER_VERTEX);
 
    geom->setColorArray(colors.get());
+   geom->setColorBinding(osg::Geometry::BIND_PER_VERTEX);
 
    geom->setTexCoordArray(0, textureCoordinates.get());
 
-   RefPtr<osg::IntArray> indices =
-      new osg::IntArray(mSegmentDivisions*width*2);
-
-   for (i=0;i<mSegmentDivisions;i++)
-   {
-      for (j=0;j<width;j++)
-      {
-         (*indices)[i*width*2 + j*2] = (i+1)*width + j;
-
-         (*indices)[i*width*2 + j*2 + 1] = i*width + j;
-      }
-   }
-
-   geom->setVertexIndices(indices.get());
-
-   geom->setNormalIndices(indices.get());
-
-   geom->setColorIndices(indices.get());
-
-   geom->setTexCoordIndices(0, indices.get());
-
-   geom->setNormalBinding(osg::Geometry::BIND_PER_VERTEX);
-
-   geom->setColorBinding(osg::Geometry::BIND_PER_VERTEX);
-
-   for (i=0;i<mSegmentDivisions;i++)
-   {
-      geom->addPrimitiveSet(
-         new osg::DrawArrays(
-            osg::PrimitiveSet::TRIANGLE_STRIP,
-            i*width*2,
-            width*2
-         )
-      );
-   }
 
    geom->setUseDisplayList(true);
 

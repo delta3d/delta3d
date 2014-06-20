@@ -72,7 +72,8 @@ namespace dtActors
 
       //lets make the geometry
       dtCore::RefPtr<osg::Vec3Array> pVerts = new osg::Vec3Array(numVerts);
-      dtCore::RefPtr<osg::IntArray> pIndices = new osg::IntArray(numIndices);
+      dtCore::RefPtr<osg::DrawElementsUInt> pIndices = new osg::DrawElementsUInt(osg::PrimitiveSet::TRIANGLES);
+      pIndices->reserve(numIndices);
 
       float a0 = 0.01f;
       float a1 = 2.0f; // 5.0f;
@@ -131,30 +132,26 @@ namespace dtActors
 
       //std::cout << "WaterGridActor - Max Radial Distance = " << mComputedRadialDistance << std::endl;
 
-      int counter = 0;
-
       for(int i = 0; i < N - 1; ++i)
       {
          for(int j = 0; j < K - 1; ++j)
          {
             int JPlusOne = (j + 1);// % K;
 
-            (*pIndices)[counter] = (i * K) + j;
-            (*pIndices)[counter + 1] = ((i + 1) * K) + j;
-            (*pIndices)[counter + 2] = ((i + 1) * K) + (JPlusOne);
+            pIndices->addElement( (i * K) + j );
+            pIndices->addElement( ((i + 1) * K) + j );
+            pIndices->addElement( ((i + 1) * K) + (JPlusOne) );
 
-            (*pIndices)[counter + 3] = ((i + 1) * K) + (JPlusOne);
-            (*pIndices)[counter + 4] = (i * K) + (JPlusOne);
-            (*pIndices)[counter + 5] = (i * K) + j;
-
-            counter += 6;
+            pIndices->addElement( ((i + 1) * K) + (JPlusOne) );
+            pIndices->addElement( (i * K) + (JPlusOne) );
+            pIndices->addElement( (i * K) + j );
+            
          }
       }
 
-      geometry->setVertexArray(pVerts.get());
-      geometry->setVertexIndices(pIndices.get());
-      geometry->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::TRIANGLES, 0, numIndices));
-
+      geometry->setVertexArray(pVerts.get());      
+      geometry->addPrimitiveSet(pIndices.get());
+      
       return geometry;
    }
 

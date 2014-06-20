@@ -31,7 +31,7 @@ namespace dtHLAGM
 {
 }
 
-#if defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
+#ifdef _MSC_VER
 
 //
 // Automatic library inclusion macros that use the #pragma/lib feature

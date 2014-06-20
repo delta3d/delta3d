@@ -481,6 +481,32 @@ namespace dtEditQt
    {
    }
 
+   ///////////////////////////////////////////////////////////////////////////////
+   void EditorActions::createNewEmptyMap( const std::string& mapToLoad )
+   {
+      int saveResult = SaveCurrentMapChanges(true);
+      if (saveResult == QMessageBox::Cancel || saveResult == QMessageBox::Abort)
+         return;
+
+      slotPauseAutosave();
+      dtCore::Map* newMap = NULL;
+      try
+      {
+         newMap = &dtCore::Project::GetInstance().CreateMap(mapToLoad, mapToLoad);
+      }
+      catch(dtUtil::Exception& e)
+      {
+         newMap = NULL;
+      }
+      if (newMap)
+      {
+         newMap->SetDescription("New STAGE Map");
+         changeMaps(EditorData::GetInstance().getCurrentMap(), newMap);
+         EditorData::GetInstance().addRecentMap(newMap->GetName());
+      }
+      slotRestartAutosave();
+   }
+
    //////////////////////////////////////////////////////////////////////////////
    void EditorActions::slotFileNewMap()
    {
@@ -1961,12 +1987,14 @@ namespace dtEditQt
             dtCore::Project::GetInstance().SaveMap(*currMap);
             ((QMainWindow*)EditorData::GetInstance().getMainWindow())->setWindowTitle(
                getWindowName().c_str());
+
+            EditorEvents::GetInstance().emitCurrentMapSaved();
             EditorData::GetInstance().getMainWindow()->endWaitCursor();
          }
          catch (dtUtil::Exception& e)
          {
             EditorData::GetInstance().getMainWindow()->endWaitCursor();
-            QString error = "An error occured while saving the map. ";
+            QString error = "An error occurred while saving the map. ";
             error += e.What().c_str();
             LOG_ERROR(error.toStdString());
             QMessageBox::critical((QWidget *)EditorData::GetInstance().getMainWindow(),

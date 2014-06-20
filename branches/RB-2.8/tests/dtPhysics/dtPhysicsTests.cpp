@@ -23,12 +23,12 @@
 
 #include <cppunit/extensions/HelperMacros.h>
 
-#include <dtDAL/project.h>
-#include <dtDAL/datatype.h>
-#include <dtDAL/map.h>
-#include <dtDAL/gameeventmanager.h>
-#include <dtDAL/gameevent.h>
-#include <dtDAL/actortype.h>
+#include <dtCore/project.h>
+#include <dtCore/datatype.h>
+#include <dtCore/map.h>
+#include <dtCore/gameeventmanager.h>
+#include <dtCore/gameevent.h>
+#include <dtCore/actortype.h>
 
 #include <dtGame/gamemanager.h>
 #include <dtGame/message.h>
@@ -382,7 +382,7 @@ namespace dtPhysics
    {
       try
       {
-         //std::string path = dtDAL::Project::GetInstance().GetResourcePath(dtDAL::ResourceDescriptor("StaticMeshes:physics_crate.ive"));
+         //std::string path = dtCore::Project::GetInstance().GetResourcePath(dtCore::ResourceDescriptor("StaticMeshes:physics_crate.ive"));
          std::string path = "../examples/data/models/physics_crate.ive";
          path = dtUtil::FindFileInPathList(path);
          dtCore::RefPtr<osgDB::ReaderWriter::Options> options = new osgDB::ReaderWriter::Options;
@@ -1017,7 +1017,7 @@ namespace dtPhysics
       ChangeEngine(engine);
       try
       {
-         //std::string path = dtDAL::Project::GetInstance().GetResourcePath(dtDAL::ResourceDescriptor("StaticMeshes:physics_crate.ive"));
+         //std::string path = dtCore::Project::GetInstance().GetResourcePath(dtCore::ResourceDescriptor("StaticMeshes:physics_crate.ive"));
          std::string path = "../examples/data/models/physics_crate.ive";
          path = dtUtil::FindFileInPathList(path);
          dtCore::RefPtr<osgDB::ReaderWriter::Options> options = new osgDB::ReaderWriter::Options;
@@ -1415,7 +1415,7 @@ namespace dtPhysics
       // just call this to create the properties.
       testAC->BuildPropertyMap();
 
-      dtCore::RefPtr<dtDAL::ActorProperty> tempProp;
+      dtCore::RefPtr<dtCore::ActorProperty> tempProp;
 
       tempProp = testAC->GetDeprecatedProperty("MassForAgeia");
       CPPUNIT_ASSERT_MESSAGE("A deprecated property should exist for MassForAgeia", tempProp.valid());
@@ -1469,7 +1469,7 @@ namespace dtPhysics
       CPPUNIT_ASSERT(dtPhysics::VertexData::FindCachedData(cachingString) == NULL);
       try
       {
-         //std::string path = dtDAL::Project::GetInstance().GetResourcePath(dtDAL::ResourceDescriptor("StaticMeshes:physics_crate.ive"));
+         //std::string path = dtCore::Project::GetInstance().GetResourcePath(dtCore::ResourceDescriptor("StaticMeshes:physics_crate.ive"));
          std::string path = "../examples/data/models/physics_crate.ive";
          path = dtUtil::FindFileInPathList(path);
          dtCore::RefPtr<osgDB::ReaderWriter::Options> options = new osgDB::ReaderWriter::Options;
@@ -1776,17 +1776,17 @@ namespace dtPhysics
 
       for(i = 0; i < 100; ++i)
       {         
-         CPPUNIT_ASSERT_EQUAL(data.mFaces->at(i), i);
+         CPPUNIT_ASSERT_EQUAL(i, data.mFaces->at(i));
       }
 
       for(;i < 200; ++i)
       {
-         CPPUNIT_ASSERT_EQUAL(data.mMaterialFlags->at(i - 100), i);
+         CPPUNIT_ASSERT_EQUAL(i, data.mMaterialFlags->at(i - 100));
       }
 
       for(;i < 300; ++i)
       {
-         CPPUNIT_ASSERT_EQUAL(data.mVertices->at(i - 200), osg::Vec3(0.0f, 0.0f, i));         
+         CPPUNIT_ASSERT_EQUAL(osg::Vec3(0.0f, 0.0f, i), data.mVertices->at(i - 200));
       }
 
    }

@@ -524,8 +524,8 @@ void GameActorTests::TestGlobalInvokableMessageRegistration()
       std::vector< std::pair<dtGame::GameActorProxy*, std::string> > toFill;
 
       mManager->GetRegistrantsForMessages(dtGame::MessageType::INFO_MAP_LOADED, toFill);
-      CPPUNIT_ASSERT_MESSAGE("There should be one registered global listener for the Map Loaded message",
-            toFill.size() == 1);
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("There should be one registered global listener for the Map Loaded message",
+            size_t(1), toFill.size());
 
       mManager->GetRegistrantsForMessagesAboutActor(dtGame::MessageType::INFO_ACTOR_PUBLISHED,
             gap1->GetId(), toFill);
@@ -552,8 +552,8 @@ void GameActorTests::TestGlobalInvokableMessageRegistration()
       //std::cout << gap1->GetId() << std::endl;
 
       mManager->GetRegistrantsForMessages(dtGame::MessageType::INFO_MAP_LOADED, toFill);
-      CPPUNIT_ASSERT_MESSAGE("There should be one registered global listener for the Map Loaded message",
-            toFill.size() == 1);
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("There should be one registered global listener for the Map Loaded message",
+            size_t(1), toFill.size());
 
       mManager->GetRegistrantsForMessagesAboutActor(dtGame::MessageType::INFO_ACTOR_PUBLISHED,
             gap1->GetId(), toFill);

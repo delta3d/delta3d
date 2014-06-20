@@ -27,7 +27,7 @@
 #include <osg/Referenced>
 #include <dtCore/refptr.h>
 #include <dtCore/observerptr.h>
-#include <dtDAL/actorproxy.h>
+#include <dtCore/actorproxy.h>
 #include <dtGame/gmcomponent.h>
 #include <dtUtil/functor.h>
 

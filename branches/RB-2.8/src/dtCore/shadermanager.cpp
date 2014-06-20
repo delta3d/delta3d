@@ -111,7 +111,7 @@ namespace dtCore
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void ShaderManager::OnPreFrame(double deltaRealTime, double deltaSimTime)
+   void ShaderManager::OnPreFrame(double /*deltaRealTime*/, double /*deltaSimTime*/)
    {
       for (int i = mActiveNodeList.size() - 1; i >= 0; i--)
       {

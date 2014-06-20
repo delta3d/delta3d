@@ -259,9 +259,8 @@ namespace dtGame
    {
       if (mGMImpl->mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
       {
-         mGMImpl->mLogger->LogMessage(__FUNCTION__, __LINE__,
-                  "GM Starting delta message \"" + data->message + "\"",
-                  dtUtil::Log::LOG_DEBUG);
+         mGMImpl->mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
+                  "GM Starting delta message \"" + data->message + "\"");
       }
 
       if (data->message == dtCore::System::MESSAGE_POST_EVENT_TRAVERSAL)
@@ -300,9 +299,8 @@ namespace dtGame
 
       if (mGMImpl->mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
       {
-         mGMImpl->mLogger->LogMessage(__FUNCTION__, __LINE__,
-                  "GM Finishing delta message \"" + data->message + "\"",
-                  dtUtil::Log::LOG_DEBUG);
+         mGMImpl->mLogger->LogMessage(dtUtil::Log::LOG_DEBUG,__FUNCTION__, __LINE__,
+                  "GM Finishing delta message \"" + data->message + "\"");
       }
    }
 
@@ -596,10 +594,9 @@ namespace dtGame
 
          if (mGMImpl->mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
          {
-            mGMImpl->mLogger->LogMessage(__FUNCTION__, __LINE__,
+            mGMImpl->mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
                "Sending Message Type \"" + message.GetMessageType().GetName() + "\" to GMComponent \"" +
-               component->GetName() + "\"",
-               dtUtil::Log::LOG_DEBUG);
+               component->GetName() + "\"");
          }
 
          try
@@ -748,11 +745,10 @@ namespace dtGame
             {
                if (mGMImpl->mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
                {
-                  mGMImpl->mLogger->LogMessage(__FUNCTION__, __LINE__,
+                  mGMImpl->mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
                            "Sending Message Type \"" + message.GetMessageType().GetName() + "\" to Actor \"" +
                            listenerActorProxy->GetName() + "\" of Type \"" + listenerActorProxy->GetActorType().GetFullName()
-                           + "\"",
-                           dtUtil::Log::LOG_DEBUG);
+                           + "\"");
                }
                invokable->Invoke(message);
             }
@@ -830,11 +826,10 @@ namespace dtGame
          {
             if (mGMImpl->mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
             {
-                mGMImpl->mLogger->LogMessage(__FUNCTION__, __LINE__,
+                mGMImpl->mLogger->LogMessage(dtUtil::Log::LOG_DEBUG,__FUNCTION__, __LINE__,
                          "Sending Message Type \"" + message.GetMessageType().GetName() + "\" to Actor \"" +
                          aboutActor.GetName() + "\" of Type \"" + aboutActor.GetActorType().GetFullName()
-                         + "\"",
-                         dtUtil::Log::LOG_DEBUG);
+                         + "\"");
             }
             (*i)->Invoke(message);
          }
@@ -896,11 +891,10 @@ namespace dtGame
             {
                if (mGMImpl->mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
                {
-                   mGMImpl->mLogger->LogMessage(__FUNCTION__, __LINE__,
+                   mGMImpl->mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
                             "Sending Message Type \"" + message.GetMessageType().GetName() + "\" to Actor \"" +
                             currentProxy.GetName() + "\" of Type \"" + currentProxy.GetActorType().GetFullName()
-                            + "\"",
-                            dtUtil::Log::LOG_DEBUG);
+                            + "\"");
                }
                invokable->Invoke(message);
             }

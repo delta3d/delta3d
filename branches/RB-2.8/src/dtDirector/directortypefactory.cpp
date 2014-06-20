@@ -22,8 +22,8 @@
 #include <dtDirector/directortypefactory.h>
 #include <dtDirector/directorbinary.h>
 
-#include <dtDAL/project.h>
-#include <dtDAL/map.h>
+#include <dtCore/project.h>
+#include <dtCore/map.h>
 
 #include <dtUtil/exception.h>
 #include <dtUtil/datapathutils.h>
@@ -88,7 +88,7 @@ namespace dtDirector
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   dtCore::RefPtr<Director> DirectorTypeFactory::LoadScript(const std::string& scriptFile, dtGame::GameManager* gm, dtDAL::Map* map, bool cacheScript, Director* parent)
+   dtCore::RefPtr<Director> DirectorTypeFactory::LoadScript(const std::string& scriptFile, dtGame::GameManager* gm, dtCore::Map* map, bool cacheScript, Director* parent)
    {
       dtCore::RefPtr<Director> newDirector = NULL;
 

@@ -241,6 +241,7 @@ namespace dtHLAGM
             << unsigned(GetSubcategory()) << delimiter
             << unsigned(GetSpecific()) << delimiter
             << unsigned(GetExtra());
+      toFill = ss.str();
    }
 
    /////////////////////////////////////////////////////////////

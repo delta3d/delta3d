@@ -197,7 +197,7 @@ namespace dtGame
       AddParameter(new dtGame::StringMessageParameter("UniqueId"));
       AddParameter(new dtGame::StringMessageParameter("HostName"));
       AddParameter(new dtGame::StringMessageParameter("IPAddress"));
-      AddParameter(new dtGame::UnsignedLongIntMessageParameter("TimeStamp"));
+      AddParameter(new dtGame::UnsignedIntMessageParameter("TimeStamp"));
       AddParameter(new dtGame::UnsignedIntMessageParameter("Ping"));
    }
 
@@ -260,14 +260,14 @@ namespace dtGame
    ////////////////////////////////////////////////////////////////////
    unsigned long MachineInfoMessage::GetTimeStamp() const
    {
-      const dtGame::UnsignedLongIntMessageParameter* mp = static_cast<const dtGame::UnsignedLongIntMessageParameter*>(GetParameter("TimeStamp"));
+      const dtGame::UnsignedIntMessageParameter* mp = static_cast<const dtGame::UnsignedIntMessageParameter*>(GetParameter("TimeStamp"));
       return mp->GetValue();
    }
 
    ////////////////////////////////////////////////////////////////////
    void MachineInfoMessage::SetTimeStamp(unsigned long timeStamp)
    {
-      dtGame::UnsignedLongIntMessageParameter* mp = static_cast<dtGame::UnsignedLongIntMessageParameter*>(GetParameter("TimeStamp"));
+      dtGame::UnsignedIntMessageParameter* mp = static_cast<dtGame::UnsignedIntMessageParameter*>(GetParameter("TimeStamp"));
       mp->SetValue(timeStamp);
    }
 

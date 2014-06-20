@@ -44,9 +44,9 @@ namespace dtUtil
    static std::string sLogFileName = "delta3d_log.html";
 
 #ifdef _DEBUG
-   static std::string sTitle("Delta 3D Engine Log File (Debug Libs)");
+   static std::string sTitle("delta3d Engine Log File (Debug Libs)");
 #else
-   static std::string sTitle("Delta 3D Engine Log File");
+   static std::string sTitle("delta3d Engine Log File");
 #endif
 
    //forward declaration
@@ -197,15 +197,6 @@ namespace dtUtil
       mImpl = NULL;
    }
 
-
-   //////////////////////////////////////////////////////////////////////////
-   void Log::LogMessage(const std::string& source, int line, const std::string& msg,
-                LogMessageType msgType) const
-   {
-      LogMessage("", source, line, msg, msgType);
-   }
-
-
    //////////////////////////////////////////////////////////////////////////
    void Log::LogMessage(const std::string& file, const std::string& method,
                         int line, const std::string& msg, LogMessageType msgType) const
@@ -272,7 +263,7 @@ namespace dtUtil
 
       vsnprintf(buffer, 2049, msg, list);
 
-      LogMessage(source, line, buffer, msgType);
+      LogMessage("",source, line, buffer, msgType);
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -303,7 +294,7 @@ namespace dtUtil
                         int line,
                         const std::string& msg) const
    {
-      LogMessage(source, line, msg, msgType);
+      LogMessage("", source, line, msg, msgType);
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -488,5 +479,20 @@ namespace dtUtil
          mImpl->mObservers.erase(found);
       }
    }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   LoggingOff::LoggingOff(const std::string& name)
+   : mLog(dtUtil::Log::GetInstance(name))
+   {
+      mOldLevel = mLog.GetLogLevel();
+      // Only ALWAYS log levels are on.
+      mLog.SetLogLevel(dtUtil::Log::LOG_ALWAYS);
+   }
+   ////////////////////////////////////////////////////////////////////////////////
+   LoggingOff::~LoggingOff()
+   {
+      mLog.SetLogLevel(mOldLevel);
+   }
+
 
 } // namespace dtUtil

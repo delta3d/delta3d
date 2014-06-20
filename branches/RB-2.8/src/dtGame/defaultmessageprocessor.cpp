@@ -137,24 +137,38 @@ namespace dtGame
          return NULL;
       }
 
-      const dtCore::UniqueId& prototypeID = msg.GetPrototypeID();
+      dtGame::GameManager* gm = GetGameManager();
+
+      const dtCore::UniqueId* prototypeID = &msg.GetPrototypeID();
+      bool prototypeEmpty = prototypeID->ToString().empty();
 
       dtCore::RefPtr<dtGame::GameActorProxy> gap;
       dtCore::RefPtr<const dtCore::ActorType> type = msg.GetActorType();
 
+      if (prototypeEmpty && !msg.GetPrototypeName().empty())
+      {
+         dtCore::BaseActorObject* actor = NULL;
+         gm->FindPrototypeByName(msg.GetPrototypeName(), actor);
+         if (actor != NULL)
+         {
+            prototypeID = &actor->GetId();
+            prototypeEmpty = prototypeID->ToString().empty();
+         }
+      }
+
       // If the message has a prototype, then use it to create the actor
-      if (!prototypeID.ToString().empty())
+      if (!prototypeEmpty)
       {
          dtCore::RefPtr<dtGame::GameActorProxy> prototypeProxy = NULL;
-         GetGameManager()->FindPrototypeByID(prototypeID, prototypeProxy);
+         gm->FindPrototypeByID(*prototypeID, prototypeProxy);
          if (prototypeProxy == NULL)
          {
             throw dtGame::InvalidParameterException( "The prototype with value name \""
-               + msg.GetPrototypeName() + "\" and UniqueId " + prototypeID.ToString() + " is invalid. No such prototype exists. Remote actor will not be created.", __FILE__, __LINE__);
+               + msg.GetPrototypeName() + "\" and UniqueId " + prototypeID->ToString() + " is invalid. No such prototype exists. Remote actor will not be created.", __FILE__, __LINE__);
          }
 
          gap = dynamic_cast<dtGame::GameActorProxy*>
-            (GetGameManager()->CreateActorFromPrototype(prototypeProxy->GetId(), true).get());
+            (gm->CreateActorFromPrototype(prototypeProxy->GetId(), true).get());
       }
 
       // Regular create (ie no prototype)
@@ -165,10 +179,16 @@ namespace dtGame
             const std::string& typeName = msg.GetActorTypeName();
             const std::string& catName = msg.GetActorTypeCategory();
 
+            std::string fullType = typeName + "." + catName;
+            if (fullType.length() == 1)
+            {
+               fullType = "EMPTY";
+            }
+
             throw dtGame::InvalidParameterException( "The actor type parameters with value \""
-              + catName + "." + typeName + "\" are invalid because no such actor type is registered.", __FILE__, __LINE__);
+              + fullType + "\" are invalid because no such actor type is registered.", __FILE__, __LINE__);
          }
-         gap = GetGameManager()->CreateRemoteGameActor(*type);
+         gap = gm->CreateRemoteGameActor(*type);
       }
 
       // Change the id to match the one this is ghosting.
@@ -217,8 +237,8 @@ namespace dtGame
             catch (const dtUtil::Exception& ex)
             {
                LOG_ERROR("Exception encountered trying to create a remote actor named \"" + msg.GetName()
-                        + "\".  The actor will be ignored. Message: " + ex.What()
-                        + " | Actor ID: " + dtUtil::ToString(msg.GetAboutActorId()));
+                        + "\".  The actor will be ignored. Message: \"" + ex.What()
+                        + "\" | Actor ID: " + dtUtil::ToString(msg.GetAboutActorId()));
             }
          }
       }

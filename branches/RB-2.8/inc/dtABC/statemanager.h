@@ -135,25 +135,25 @@ namespace dtABC
          virtual void characters(const XMLCh* const chars, const unsigned int length) {}
          virtual void ignorableWhitespace(const XMLCh* const chars, const unsigned int length) {}
 #else
-         virtual void characters(const XMLCh* const chars, const XMLSize_t length) {}
-         virtual void ignorableWhitespace(const XMLCh* const chars, const XMLSize_t length) {}
+         virtual void characters(const XMLCh* const /*chars*/, const XMLSize_t /*length*/) {}
+         virtual void ignorableWhitespace(const XMLCh* const /*chars*/, const XMLSize_t /*length*/) {}
 #endif
          virtual void endDocument() {}
-         virtual void processingInstruction(const XMLCh* const target, const XMLCh* const data) {}
-         virtual void setDocumentLocator(const XERCES_CPP_NAMESPACE_QUALIFIER Locator* const locator) {}
+         virtual void processingInstruction(const XMLCh* const /*target*/, const XMLCh* const /*data*/) {}
+         virtual void setDocumentLocator(const XERCES_CPP_NAMESPACE_QUALIFIER Locator* const /*locator*/) {}
          virtual void startDocument() {}
-         virtual void startPrefixMapping(const XMLCh* const prefix,const XMLCh* const uri) {}
-         virtual void endPrefixMapping(const XMLCh* const prefix) {}
-         virtual void skippedEntity(const XMLCh* const name) {}
+         virtual void startPrefixMapping(const XMLCh* const /*prefix*/,const XMLCh* const /*uri*/) {}
+         virtual void endPrefixMapping(const XMLCh* const /*prefix*/) {}
+         virtual void skippedEntity(const XMLCh* const /*name*/) {}
 
          virtual void startElement(const XMLCh* const uri,
                                    const XMLCh* const localname,
                                    const XMLCh* const qname,
                                    const XERCES_CPP_NAMESPACE_QUALIFIER Attributes& attrs);
 
-         virtual void endElement(const XMLCh* const uri,
+         virtual void endElement(const XMLCh* const /*uri*/,
                                  const XMLCh* const localname,
-                                 const XMLCh* const qname)
+                                 const XMLCh* const /*qname*/)
          {
             char* ename = XERCES_CPP_NAMESPACE_QUALIFIER XMLString::transcode(localname);
             std::string elementName(ename);
@@ -352,9 +352,9 @@ namespace dtABC
    }
 
    template<typename T1, typename T2>
-   void StateManager::TransitionHandler<T1,T2>::startElement(const XMLCh* const uri,
+   void StateManager::TransitionHandler<T1,T2>::startElement(const XMLCh* const /*uri*/,
                                                              const XMLCh* const localname,
-                                                             const XMLCh* const qname,
+                                                             const XMLCh* const /*qname*/,
                                                              const XERCES_CPP_NAMESPACE_QUALIFIER Attributes& attrs)
    {
       char* elementName = XERCES_CPP_NAMESPACE_QUALIFIER XMLString::transcode(localname);

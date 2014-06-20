@@ -1328,8 +1328,10 @@ namespace dtUtil
    {
       // If path names are different, we still could be pointing at the same file
       // on disk.
-      struct stat stat1 = {0};
-      struct stat stat2 = {0};
+      struct stat stat1;
+      struct stat stat2;
+      memset(&stat1, 0, sizeof(struct stat));
+      memset(&stat2, 0, sizeof(struct stat));
 
       if (stat(file1.c_str(), &stat1) != 0)
       {

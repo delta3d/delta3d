@@ -39,10 +39,10 @@ namespace dtHLAGM
          
          //Since the hla libraries are loaded and not direct dependencies now, this has to be set
          // on connection to the federation, so these allow that
-         static unsigned long GetMinExtent();
-         static void SetMinExtent(unsigned long);
-         static unsigned long GetMaxExtent();
-         static void SetMaxExtent(unsigned long);
+         static unsigned int GetMinExtent();
+         static void SetMinExtent(unsigned int);
+         static unsigned int GetMaxExtent();
+         static void SetMaxExtent(unsigned int);
 
          /**
           * Maps an enumerated value into the MIN_EXTENT MAX_EXTENT range given the known min and max.
@@ -50,7 +50,7 @@ namespace dtHLAGM
           * @param min the minimum enumerated value.
           * @param max the maximum enumerated value.
           */
-         static unsigned long MapEnumerated(unsigned value, unsigned min, unsigned max);
+         static unsigned int MapEnumerated(unsigned value, unsigned min, unsigned max);
          
          /**
           * Maps to a value in the MIN_EXTENT/MAX_EXTENT range where value would match a set of precomputed
@@ -58,7 +58,7 @@ namespace dtHLAGM
           * @param value the value to map
           * @param partitionValues a vector of evenly incrementing values that define the list of partitions.
           */
-         static unsigned long MapPartitioned(double value, const std::vector<double> partitionValues);
+         static unsigned int MapPartitioned(double value, const std::vector<double> partitionValues);
          
          /**
           * Maps a double value linearly in the MIN_EXTENT/MAX_EXTENT range using the passed in min and max
@@ -67,11 +67,11 @@ namespace dtHLAGM
           * @param min the minimum value, it should be less than max.
           * @param max the maximum value, it should be greater than min.
           */
-         static unsigned long MapLinear(double value, double min, double max);
+         static unsigned int MapLinear(double value, double min, double max);
 
       private:
-         static unsigned long mMinExtent;
-         static unsigned long mMaxExtent;
+         static unsigned int mMinExtent;
+         static unsigned int mMaxExtent;
 
    };
 

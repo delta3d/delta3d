@@ -23,9 +23,9 @@
 #include <dtDirector/directortypefactory.h>
 #include <dtDirectorNodes/referencescriptaction.h>
 
-#include <dtDAL/project.h>
-#include <dtDAL/resourceactorproperty.h>
-#include <dtDAL/booleanactorproperty.h>
+#include <dtCore/project.h>
+#include <dtCore/resourceactorproperty.h>
+#include <dtCore/booleanactorproperty.h>
 
 #include <osgDB/FileNameUtils>
 
@@ -39,7 +39,7 @@ namespace dtDirector
       AddAuthor("Jeff P. Houde");
       SetColorRGB(Colors::GREEN);
 
-      mScriptResource = dtDAL::ResourceDescriptor::NULL_RESOURCE;
+      mScriptResource = dtCore::ResourceDescriptor::NULL_RESOURCE;
       mCoreValueIndex = 0;
    }
 
@@ -74,17 +74,17 @@ namespace dtDirector
 
       mCoreValueIndex = (int)mValues.size();
 
-      dtDAL::BooleanActorProperty* cacheProp = new dtDAL::BooleanActorProperty(
+      dtCore::BooleanActorProperty* cacheProp = new dtCore::BooleanActorProperty(
          "Use Cache", "Use Cache",
-         dtDAL::BooleanActorProperty::SetFuncType(this, &ReferenceScriptAction::SetUseCache),
-         dtDAL::BooleanActorProperty::GetFuncType(this, &ReferenceScriptAction::GetUseCache),
+         dtCore::BooleanActorProperty::SetFuncType(this, &ReferenceScriptAction::SetUseCache),
+         dtCore::BooleanActorProperty::GetFuncType(this, &ReferenceScriptAction::GetUseCache),
          "Whether this script should be saved and loaded from cached memory.");
       AddProperty(cacheProp);
 
-      dtDAL::ResourceActorProperty* scriptProp = new dtDAL::ResourceActorProperty(
-         dtDAL::DataType::DIRECTOR, "DirectorGraph", "Director Graph",
-         dtDAL::ResourceActorProperty::SetDescFuncType(this, &ReferenceScriptAction::SetDirectorResource),
-         dtDAL::ResourceActorProperty::GetDescFuncType(this, &ReferenceScriptAction::GetDirectorResource),
+      dtCore::ResourceActorProperty* scriptProp = new dtCore::ResourceActorProperty(
+         dtCore::DataType::DIRECTOR, "DirectorGraph", "Director Graph",
+         dtCore::ResourceActorProperty::SetDescFuncType(this, &ReferenceScriptAction::SetDirectorResource),
+         dtCore::ResourceActorProperty::GetDescFuncType(this, &ReferenceScriptAction::GetDirectorResource),
          "A Director Graph Resource.", "", "DirectorEditor");
       AddProperty(scriptProp);
    }
@@ -139,14 +139,14 @@ namespace dtDirector
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void ReferenceScriptAction::SetDirectorResource(const dtDAL::ResourceDescriptor& value)
+   void ReferenceScriptAction::SetDirectorResource(const dtCore::ResourceDescriptor& value)
    {
       mScriptResource = value;
       LoadScript();
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   dtDAL::ResourceDescriptor ReferenceScriptAction::GetDirectorResource() const
+   dtCore::ResourceDescriptor ReferenceScriptAction::GetDirectorResource() const
    {
       return mScriptResource;
    }
@@ -290,14 +290,14 @@ namespace dtDirector
       mScript = NULL;
 
       // Now load the Director Script if able.
-      if (mScriptResource != dtDAL::ResourceDescriptor::NULL_RESOURCE)
+      if (mScriptResource != dtCore::ResourceDescriptor::NULL_RESOURCE)
       {
          DirectorTypeFactory* factory = DirectorTypeFactory::GetInstance();
          if (factory)
          {
             try
             {
-               mScript = factory->LoadScript(dtDAL::Project::GetInstance().GetResourcePath(mScriptResource), GetDirector()->GetGameManager(), GetDirector()->GetMap(), GetBoolean("Use Cache"));
+               mScript = factory->LoadScript(dtCore::Project::GetInstance().GetResourcePath(mScriptResource), GetDirector()->GetGameManager(), GetDirector()->GetMap(), GetBoolean("Use Cache"));
 
                if (mScript)
                {
@@ -322,7 +322,7 @@ namespace dtDirector
                // If the script loaded, null out the resource
                if (mScript)
                {
-                  mScript->SetResource(dtDAL::ResourceDescriptor::NULL_RESOURCE);
+                  mScript->SetResource(dtCore::ResourceDescriptor::NULL_RESOURCE);
                }
 
                mName = "<i>Invalid Script!</i>";

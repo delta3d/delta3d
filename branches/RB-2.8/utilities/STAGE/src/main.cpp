@@ -48,6 +48,16 @@ int main(int argc, char* argv[])
 {
    dtAudio::AudioManager::Instantiate();
 
+   // set proper log file name 
+#if (_DEBUG)
+   dtUtil::Log::GetInstance().SetLogLevel(dtUtil::Log::LOG_INFO);
+#else
+   dtUtil::Log::GetInstance().SetLogLevel(dtUtil::Log::LOG_WARNING);
+#endif
+
+   dtUtil::LogFile::SetTitle("STAGE Log File");
+   dtUtil::LogFile::SetFileName("STAGE_log.html");
+
    dtUtil::SetDataFilePathList(".;" +
       dtUtil::GetDeltaDataPathList() + ";" +
       dtUtil::GetDeltaRootPath() + "/utilities/STAGE");
@@ -134,9 +144,7 @@ int main(int argc, char* argv[])
       QMessageBox::critical(NULL,"Exception", e.ToString().c_str(),
          QMessageBox::Ok,QMessageBox::NoButton);
 
-      dtAudio::AudioManager::Destroy();
-
-      return 1;
+      result = 1;
    }
 
    dtAudio::AudioManager::Destroy();

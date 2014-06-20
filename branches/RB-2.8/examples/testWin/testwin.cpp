@@ -52,7 +52,7 @@ void TestWinApp::Config()
 {
    dtABC::Application::Config();
 
-   GetWindow()->ShowCursor(false);
+   GetWindow()->SetShowCursor(false);
 
    mGUI = new dtGUI::GUI(GetCamera(),
                          GetKeyboard(),

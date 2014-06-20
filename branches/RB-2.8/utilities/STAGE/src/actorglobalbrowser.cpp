@@ -132,7 +132,7 @@ namespace dtEditQt
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void ActorGlobalBrowser::onActorProxyCreated(dtCore::RefPtr<dtCore::BaseActorObject> proxy, bool forceNoAdjustments)
+   void ActorGlobalBrowser::onActorProxyCreated(dtCore::RefPtr<dtCore::BaseActorObject> proxy, bool /*forceNoAdjustments*/)
    {
       if (!proxy->IsPlaceable())
       {
@@ -152,13 +152,13 @@ namespace dtEditQt
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void ActorGlobalBrowser::onActorPropertyChanged(ActorProxyRefPtr proxy, ActorPropertyRefPtr property)
+   void ActorGlobalBrowser::onActorPropertyChanged(ActorProxyRefPtr proxy, ActorPropertyRefPtr /*property*/)
    {
       mResultsTable->HandleProxyUpdated(proxy);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void ActorGlobalBrowser::onActorProxyNameChanged(dtCore::BaseActorObject& proxy, std::string oldName)
+   void ActorGlobalBrowser::onActorProxyNameChanged(dtCore::BaseActorObject& proxy, std::string /*oldName*/)
    {
       mResultsTable->HandleProxyUpdated(&proxy);
    }

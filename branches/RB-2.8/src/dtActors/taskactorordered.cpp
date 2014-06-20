@@ -58,6 +58,7 @@ namespace dtActors
    ///////////////////////////BEGIN PROXY///////////////////////////////////
    //////////////////////////////////////////////////////////////////////////////
    TaskActorOrderedProxy::TaskActorOrderedProxy()
+   : mFailingTask(NULL)
    {
       SetClassName("dtActors::OrderedTaskActor");
    }
@@ -71,7 +72,7 @@ namespace dtActors
    void TaskActorOrderedProxy::BuildPropertyMap()
    {
       TaskActorProxy::BuildPropertyMap();
-      TaskActorOrdered &task = static_cast<TaskActorOrdered&>(GetGameActor());
+      TaskActorOrdered& task = static_cast<TaskActorOrdered&>(GetGameActor());
 
       const std::string GROUPNAME = "Order Properties";
 
@@ -87,7 +88,7 @@ namespace dtActors
    //////////////////////////////////////////////////////////////////////////////
    bool TaskActorOrderedProxy::RequestScoreChange(const TaskActorProxy &childTask, const TaskActorProxy &origTask)
    {
-      TaskActor *myActor;
+      TaskActor* myActor;
       std::vector<TaskActorProxy*> subTasks;
       GetAllSubTasks(subTasks);
       std::vector<TaskActorProxy*>::const_iterator itor;
@@ -141,7 +142,7 @@ namespace dtActors
    }
 
    //////////////////////////////////////////////////////////////////////////////
-   void TaskActorOrderedProxy::NotifyScoreChanged(const TaskActorProxy &childTask)
+   void TaskActorOrderedProxy::NotifyScoreChanged(const TaskActorProxy& childTask)
    {
       //This method is called when a child task has changed its score.  Need to
       //loop through the children of this task.  For any that are complete, we
@@ -160,7 +161,7 @@ namespace dtActors
          totalWeight += subTask->GetWeight();
       }
 
-      taskActor = dynamic_cast<TaskActor *>(GetDrawable());
+      GetDrawable(taskActor);
 
       //We actually do not need to request a score change in the case of the
       //rollup task.  A rollup task's score can only change if one of its
@@ -177,7 +178,7 @@ namespace dtActors
    }
 
    //////////////////////////////////////////////////////////////////////////////
-   bool TaskActorOrderedProxy::IsChildTaskAllowedToChange(const TaskActorProxy &childTask) const
+   bool TaskActorOrderedProxy::IsChildTaskAllowedToChange(const TaskActorProxy& childTask) const
    {
       std::vector<const TaskActorProxy*> subTasks;
       GetAllSubTasks(subTasks);
@@ -185,8 +186,8 @@ namespace dtActors
       bool parentGivesOK = true; // no parent means we have approval.
       bool bOKToChangeChildTask = false;
 
-      const TaskActorOrdered *myActor;
-      GetActor(myActor);
+      const TaskActorOrdered* myActor;
+      GetDrawable(myActor);
 
       // First check to see if our parent allows us to be changed.
       if (GetParentTask() != NULL)

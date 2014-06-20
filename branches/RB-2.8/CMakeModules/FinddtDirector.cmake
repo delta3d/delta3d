@@ -13,7 +13,6 @@ IF (NOT DTDIRECTOR_DEBUG_LIBRARY)
   MESSAGE(STATUS "No debug library was found for DTDIRECTOR_DEBUG_LIBRARY")
 ENDIF()
 
-#convienent list of libraries to link with when using dtDAL
 SET(DTDIRECTOR_LIBRARIES
     optimized ${DTDIRECTOR_LIBRARY}      debug ${DTDIRECTOR_DEBUG_LIBRARY}
     )

@@ -25,7 +25,7 @@
 #include <dtDirector/eventnode.h>
 #include <dtDirectorNodes/nodelibraryexport.h>
 
-#include <dtDAL/stringactorproperty.h>
+#include <dtCore/stringactorproperty.h>
 
 namespace dtDirector
 {
@@ -119,7 +119,7 @@ namespace dtDirector
             return value;
          }
 
-         dtCore::RefPtr<dtDAL::ActorProperty> displayProp;
+         dtCore::RefPtr<dtCore::ActorProperty> displayProp;
          std::string name;
          std::string value;
       };

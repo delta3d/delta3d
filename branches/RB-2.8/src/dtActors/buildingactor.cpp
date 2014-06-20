@@ -80,9 +80,11 @@ namespace dtActors
       mWallGeom[1]->setColorBinding(osg::Geometry::BIND_OVERALL);
 
       mWallGeom[0]->setNormalArray(mWallNormalList.get());
-      mWallGeom[0]->setNormalBinding(osg::Geometry::BIND_PER_PRIMITIVE);
+      //mWallGeom[0]->setNormalBinding(osg::Geometry::BIND_PER_PRIMITIVE);
+      mWallGeom[0]->setNormalBinding(osg::Geometry::BIND_PER_PRIMITIVE_SET);
       mWallGeom[1]->setNormalArray(mWallNormalList.get());
-      mWallGeom[1]->setNormalBinding(osg::Geometry::BIND_PER_PRIMITIVE);
+      //mWallGeom[1]->setNormalBinding(osg::Geometry::BIND_PER_PRIMITIVE);
+      mWallGeom[1]->setNormalBinding(osg::Geometry::BIND_PER_PRIMITIVE_SET);
 
       // Now Set the primitive sets for the three sides of the segment.
       mWallGeom[0]->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::QUADS, 0, 4));

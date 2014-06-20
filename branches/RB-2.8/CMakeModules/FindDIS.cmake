@@ -26,6 +26,7 @@ FIND_PATH(DIS_INCLUDE_DIR DIS/Pdu.h
     /usr/freeware/include
     DOC "The folder that contains the DIS/*.h header files"
 )
+MARK_AS_ADVANCED(DIS_INCLUDE_DIR)
 
 FIND_PATH(DIS_CPPUTILS_INCLUDE_DIR DIS/DataStream.h
     ${DIS_INCLUDE_DIR}/../CppUtils
@@ -46,6 +47,7 @@ FIND_PATH(DIS_CPPUTILS_INCLUDE_DIR DIS/DataStream.h
     /usr/freeware/include
 		DOC "The folder that contains the DIS/*.h CppUtils utility header files"
 )
+MARK_AS_ADVANCED(DIS_CPPUTILS_INCLUDE_DIR)
 
 MACRO(FIND_DIS_LIBRARY MYLIBRARY MYLIBRARYNAME)
 FIND_LIBRARY(${MYLIBRARY}
@@ -68,6 +70,7 @@ FIND_LIBRARY(${MYLIBRARY}
     [HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\Session\ Manager\\Environment;OSG_ROOT]/lib
     /usr/freeware/lib64
 )
+MARK_AS_ADVANCED(${MYLIBRARY})
 ENDMACRO(FIND_DIS_LIBRARY MYLIBRARY MYLIBRARYNAME)
 
 FIND_DIS_LIBRARY(DIS_LIBRARY DIS)

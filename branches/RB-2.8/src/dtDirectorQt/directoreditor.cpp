@@ -59,10 +59,10 @@
 #include <QtGui/QFileDialog>
 #include <QtGui/QMessageBox>
 
-#include <dtDAL/project.h>
-#include <dtDAL/datatype.h>
-#include <dtDAL/actorproperty.h>
-#include <dtDAL/resourceactorproperty.h>
+#include <dtCore/project.h>
+#include <dtCore/datatype.h>
+#include <dtCore/actorproperty.h>
+#include <dtCore/resourceactorproperty.h>
 
 #include <osgDB/FileNameUtils>
 #include <phonon/mediaobject.h>//for sounds
@@ -312,7 +312,7 @@ namespace dtDirector
             if (factory)
             {
                // Determine if we need to change our Director object.
-               if (GetDirector()->GetResource() == dtDAL::ResourceDescriptor::NULL_RESOURCE)
+               if (GetDirector()->GetResource() == dtCore::ResourceDescriptor::NULL_RESOURCE)
                {
                   SetDirector(factory->LoadScript(mFullFileName, GetDirector()->GetGameManager(), GetDirector()->GetMap()));
                }
@@ -959,7 +959,7 @@ namespace dtDirector
       }
       else
       {
-         if (GetDirector()->GetResource() != dtDAL::ResourceDescriptor::NULL_RESOURCE)
+         if (GetDirector()->GetResource() != dtCore::ResourceDescriptor::NULL_RESOURCE)
          {
             mUI.action_New->setEnabled(false);
             mUI.action_Load->setEnabled(false);
@@ -1516,7 +1516,7 @@ namespace dtDirector
          EditorScene* scene = view->GetScene();
          if (!scene) return;
 
-         std::vector<dtCore::RefPtr<dtDAL::PropertyContainer> >& selection = scene->GetSelection();
+         std::vector<dtCore::RefPtr<dtCore::PropertyContainer> >& selection = scene->GetSelection();
          int count = (int)selection.size();
          for (int index = 0; index < count; index++)
          {
@@ -2067,7 +2067,7 @@ namespace dtDirector
             }
          }
 
-         //std::string contextDir = osgDB::convertFileNameToNativeStyle(dtDAL::Project::GetInstance().GetContext()+"/directors/");
+         //std::string contextDir = osgDB::convertFileNameToNativeStyle(dtCore::Project::GetInstance().GetContext()+"/directors/");
          //contextDir = osgDB::getRealPath(contextDir);
 
          std::string fileName = action->text().toStdString();
@@ -2268,7 +2268,7 @@ namespace dtDirector
       if (!scriptType.empty() && scriptType != GetDirector()->GetScriptType())
       {
          dtGame::GameManager* gm = GetDirector()->GetGameManager();
-         dtDAL::Map* map = GetDirector()->GetMap();
+         dtCore::Map* map = GetDirector()->GetMap();
 
          dtCore::RefPtr<Director> newDirector = NULL;
 
@@ -2359,7 +2359,7 @@ namespace dtDirector
          UpdateRecentFiles();
          RefreshRecentFiles();
 
-         dtDAL::ResourceDescriptor resource = GetDirector()->GetResource();
+         dtCore::ResourceDescriptor resource = GetDirector()->GetResource();
 
          // If we are saving this script as a new file while debugging
          // in game, then find out the resource type of the script
@@ -2374,13 +2374,13 @@ namespace dtDirector
                pos++;
             }
 
-            resource = dtDAL::ResourceDescriptor(std::string("Directors:") + tempFileName);
+            resource = dtCore::ResourceDescriptor(std::string("Directors:") + tempFileName);
          }
 
          // If we are dealing with a resourced script, make sure we go through
          // every other script that is referencing this resource and reload
          // them.
-         if (GetDirector()->GetResource() != dtDAL::ResourceDescriptor::NULL_RESOURCE)
+         if (GetDirector()->GetResource() != dtCore::ResourceDescriptor::NULL_RESOURCE)
          {
             // First find all editors that are editing this particular
             // script resource and clear their tabs.
@@ -2420,21 +2420,21 @@ namespace dtDirector
                            continue;
                         }
 
-                        std::vector<dtDAL::ActorProperty*> propList;
+                        std::vector<dtCore::ActorProperty*> propList;
                         node->GetPropertyList(propList);
                         int propCount = (int)propList.size();
                         for (int propIndex = 0; propIndex < propCount; ++propIndex)
                         {
-                           dtDAL::ActorProperty* prop = propList[propIndex];
+                           dtCore::ActorProperty* prop = propList[propIndex];
                            if (!prop)
                            {
                               continue;
                            }
 
-                           if (prop->GetDataType() == dtDAL::DataType::DIRECTOR)
+                           if (prop->GetDataType() == dtCore::DataType::DIRECTOR)
                            {
-                              dtDAL::ResourceActorProperty* resourceProp =
-                                 dynamic_cast<dtDAL::ResourceActorProperty*>(prop);
+                              dtCore::ResourceActorProperty* resourceProp =
+                                 dynamic_cast<dtCore::ResourceActorProperty*>(prop);
                               if (!resourceProp)
                               {
                                  continue;
@@ -2540,7 +2540,7 @@ namespace dtDirector
          QPointF pos = view->mapToScene(view->width()/2, view->height()/2);
          pos -= scene->GetTranslationItem()->scenePos();
 
-         std::vector<dtDAL::PropertyContainer*> newSelection;
+         std::vector<dtCore::PropertyContainer*> newSelection;
          newSelection = clipboard.PasteObjects(scene->GetGraph(), GetUndoManager(), osg::Vec2(pos.x(), pos.y()), createLinks, externalLinks);
 
          scene->clearSelection();

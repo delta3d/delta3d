@@ -23,7 +23,7 @@
 namespace dtActors
 {
    //////////////////////////////////////////////////////////////////////////////
-   TaskActorRollup::TaskActorRollup(dtGame::GameActorProxy &proxy) : TaskActor(proxy)
+   TaskActorRollup::TaskActorRollup(dtGame::GameActorProxy& proxy) : TaskActor(proxy)
    {
       Reset();
    }
@@ -49,7 +49,7 @@ namespace dtActors
    }
 
    //////////////////////////////////////////////////////////////////////////////
-   void TaskActorRollupProxy::NotifyScoreChanged(const TaskActorProxy &childTask)
+   void TaskActorRollupProxy::NotifyScoreChanged(const TaskActorProxy& childTask)
    {
       //This method is called when a child task has changed its score.  Need to
       //loop through the children of this task.  For any that are complete, we
@@ -57,26 +57,36 @@ namespace dtActors
       std::vector<TaskActorProxy*> subTasks;
       GetAllSubTasks(subTasks);
       std::vector<TaskActorProxy*>::const_iterator itor;
-      TaskActor *taskActor = NULL;
+      TaskActor* taskActor = NULL;
       float totalWeightedScore = 0.0f;
       float totalWeight = 0.0f;
 
       for (itor=subTasks.begin(); itor!=subTasks.end(); ++itor)
       {
-         const TaskActor *subTask = dynamic_cast<const TaskActor *>((*itor)->GetDrawable());
+         const TaskActor* subTask = NULL; (*itor)->GetDrawable(subTask);
          totalWeightedScore += (subTask->GetScore() * subTask->GetWeight());
          totalWeight += subTask->GetWeight();
       }
 
-      taskActor = dynamic_cast<TaskActor *>(GetDrawable());
+      GetDrawable(taskActor);
 
       //We actually do not need to request a score change in the case of the
       //rollup task.  A rollup task's score can only change if one of its
-      //children, grandchildren, ect. has its score updated which must have
+      //children, grandchildren, etc. has its score updated which must have
       //already been approaved before reaching this method.
-      taskActor->SetScore(totalWeightedScore / totalWeight);
+      if (totalWeight > 0.0f)
+      {
+         taskActor->SetScore(totalWeightedScore / totalWeight);
+      }
+      else
+      {
+         taskActor->SetScore(0.0f);
+      }
+
       if (taskActor->GetScore() >= taskActor->GetPassingScore())
+      {
          taskActor->SetComplete(true);
+      }
 
       NotifyFullActorUpdate();
 

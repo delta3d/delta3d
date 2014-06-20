@@ -8,9 +8,12 @@
 #ifndef HASHSET_H_
 #define HASHSET_H_
 
-#ifdef __GNUG__
+#if defined( _LIBCPP_VERSION ) || (defined(_MSC_VER) && _MSC_VER >= 1700)
+#  include <unordered_map>
+#  define _UNORDERED_MAP
+#elif defined(__GNUG__)
 #  include <ext/hash_map>
-#elif defined(_MSC_VER)
+#elif defined(_MSC_VER) 
 #  include <hash_map>
 #else
 #  include <map>
@@ -21,7 +24,7 @@
 namespace dtUtil
 {
 
-#if defined(_MSC_VER)
+#if defined(_MSC_VER) && ! defined(_UNORDERED_MAP)
    template<class _Key, class _HashFcn, class _LessKey>
    struct HashCompare
    {
@@ -43,7 +46,7 @@ namespace dtUtil
       };	// min_buckets = 2 ^^ N, 0 < N
 
    };
-#elif defined(__GNUG__)
+#else
    template<class _Key, class _LessKey>
    struct HashEqual
    {
@@ -57,7 +60,9 @@ namespace dtUtil
 
    template<class _Key, class _Tp, class _HashFcn = dtUtil::hash<_Key>, class _LessKey = std::less<_Key>, class _Alloc = std::allocator<_Tp> >
    class HashMap : public
-#ifdef __GNUG__
+#if defined(_UNORDERED_MAP)
+   std::unordered_map<_Key, _Tp, _HashFcn, dtUtil::HashEqual<_Key, _LessKey>, _Alloc >
+#elif defined(__GNUG__)
    __gnu_cxx::hash_map<_Key, _Tp, _HashFcn, dtUtil::HashEqual<_Key, _LessKey>, _Alloc >
 #elif defined(_MSC_VER)
    stdext::hash_map<_Key, _Tp, dtUtil::HashCompare<_Key, _HashFcn, _LessKey>, _Alloc >
@@ -71,7 +76,9 @@ namespace dtUtil
 
    template<class _Key, class _Tp, class _HashFcn = dtUtil::hash<_Key>, class _LessKey = std::less<_Key>, class _Alloc = std::allocator<_Tp> >
    class HashMultiMap : public
-#ifdef __GNUG__
+#if defined(_UNORDERED_MAP)
+   std::unordered_multimap<_Key, _Tp, _HashFcn, dtUtil::HashEqual<_Key, _LessKey>, _Alloc >
+#elif defined(__GNUG__)
    __gnu_cxx::hash_multimap<_Key, _Tp, _HashFcn, dtUtil::HashEqual<_Key, _LessKey>, _Alloc >
 #elif defined(_MSC_VER)
    stdext::hash_multimap<_Key, _Tp, dtUtil::HashCompare<_Key, _HashFcn, _LessKey>, _Alloc >

@@ -826,6 +826,9 @@ void MapTests::TestIsMapFileValid()
 
    dtCore::Project& project = dtCore::Project::GetInstance();
    CPPUNIT_ASSERT(project.IsValidMapFile(validFile));
+
+   // Turn off the default level logging to hide the error message.
+   dtUtil::LoggingOff lo;
    CPPUNIT_ASSERT(!project.IsValidMapFile(invalidFile));
 }
 

@@ -37,13 +37,16 @@ namespace dtPhysics
        * @param controller a pre-created and initialized character controller.
        * see the base class for most of the parameter documentation.  The step up height is controlled
        * by the character controller, so that field is not included in this api.
+       * @param height The height to adjust between the origin of the collision shape and the target.  This should be negative
+       * for a visual model that has the origin of the ground (half the height of the collision shape in the character controller) and
+       * positive if you attaching the camera to the shape so you get a decent eye point.
        * @see dtCore::FPSMotionModel
        */
       CharacterMotionModel(dtCore::Keyboard* kb, dtCore::Mouse* mouse, CharacterController* controller,
                float maxWalkSpeed = 5.0f,
                float maxTurnSpeed = 1.5f,
                float maxSidestepSpeed = 5.0f,
-               float height = 0.75f, // Set low because this becomes the height ABOVE the character model geometry origin.
+               float height = 0.75f, // This adjustment is for putting a camera above the center of mass of the shape in the character controller.
                float maxStepUpDist = 1.0f,
                bool useWASD = true,
                bool useArrowKeys = true

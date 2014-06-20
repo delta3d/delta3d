@@ -30,11 +30,11 @@ namespace dtCore
    /**
     * @class UnsignedLongIntMessageParameter
     */
-   class DT_CORE_EXPORT NamedUnsignedLongIntParameter: public NamedPODParameter<unsigned long>
+   class DT_CORE_EXPORT NamedUnsignedLongIntParameter: public NamedPODParameter<unsigned long long>
    {
       public:
          NamedUnsignedLongIntParameter(const dtUtil::RefString& name,
-            unsigned long defaultValue = 0, bool isList = false);
+            unsigned long long defaultValue = 0, bool isList = false);
 
       protected:
          virtual ~NamedUnsignedLongIntParameter();

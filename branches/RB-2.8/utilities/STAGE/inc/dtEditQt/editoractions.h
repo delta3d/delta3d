@@ -112,6 +112,11 @@ namespace dtEditQt
       bool SaveNewPrefab(std::string category, std::string prefabName,
                          std::string iconFile, std::string prefabDescrip);
 
+      /**
+       * Ask for saving current changes (if any) and create(/load) a new EMPTY map.
+       */
+      void createNewEmptyMap(const std::string& mapToLoad);
+
        /**
        * If the current map is valid and has been modified, this method will
        * prompt the user for asking to save the changes.

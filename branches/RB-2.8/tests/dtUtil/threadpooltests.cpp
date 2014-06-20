@@ -145,7 +145,6 @@ class ThreadPoolTests : public CPPUNIT_NS::TestFixture {
    }
 
    private:
-      dtUtil::Log* mLogger;
       unsigned mOldNumImmediateWorkerThreads;
 };
 

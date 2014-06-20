@@ -28,18 +28,10 @@
 
 namespace dtGUI
 {
-#if CEGUI_VERSION_MAJOR >= 0 && CEGUI_VERSION_MINOR < 7
-   class HUD;
-#endif
-
    class DT_GUI_EXPORT CEGUIKeyboardListener : public dtCore::KeyboardListener
    {
    public:
-#if CEGUI_VERSION_MAJOR >= 0 && CEGUI_VERSION_MINOR >= 7
       CEGUIKeyboardListener();
-#else
-      CEGUIKeyboardListener(HUD* pGUI = NULL);
-#endif
 
       bool HandleKeyPressed(const dtCore::Keyboard* keyboard, int key);
       bool HandleKeyReleased(const dtCore::Keyboard* keyboard, int key);
@@ -60,9 +52,6 @@ namespace dtGUI
       virtual ~CEGUIKeyboardListener();
 
    private:
-#if CEGUI_VERSION_MAJOR >= 0 && CEGUI_VERSION_MINOR < 7
-      HUD* m_pGUI;
-#endif
       void MakeCurrent();
    };
 }

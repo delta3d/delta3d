@@ -33,7 +33,7 @@
 #include <dtCore/scene.h>
 #include <dtCore/camera.h>
 #include <dtABC/application.h>
-#include <dtDAL/enginepropertytypes.h>
+#include <dtCore/enginepropertytypes.h>
 #include <dtGame/messagetype.h>
 #include <dtGame/environmentactor.h>
 #include <algorithm>
@@ -128,13 +128,13 @@ namespace dtPhysics
       }
       else if (message.GetMessageType() == dtGame::MessageType::SYSTEM_POST_FRAME)
       {
-         const dtGame::TickMessage& tm = static_cast<const dtGame::TickMessage&>(message);
-         WaitUntilUpdateCompletes(tm);
+         //const dtGame::TickMessage& tm = static_cast<const dtGame::TickMessage&>(message);
+         WaitUntilUpdateCompletes();
       }
       else if (message.GetMessageType() == dtGame::MessageType::INFO_ACTOR_CREATED)
       {
          const dtGame::ActorUpdateMessage& aum = dynamic_cast<const dtGame::ActorUpdateMessage&>(message);
-         const dtDAL::ActorType* atype = aum.GetActorType();
+         const dtCore::ActorType* atype = aum.GetActorType();
          if (atype != NULL && *atype == *PhysicsActorRegistry::PHYSICS_MATERIAL_ACTOR_TYPE)
          {
             MaterialActorProxy* materialActor = NULL;
@@ -195,7 +195,7 @@ namespace dtPhysics
          mDebDraw->SetActive(false);
       }
 
-      dtDAL::ActorProxy* EnvActor = GetGameManager()->GetEnvironmentActor();
+      dtCore::ActorProxy* EnvActor = GetGameManager()->GetEnvironmentActor();
       if (EnvActor == NULL)
       {
          bool enable = !mDebDraw->GetActive();
@@ -308,10 +308,10 @@ namespace dtPhysics
    /////////////////////////////////////////////////////////////////////////////
    void PhysicsComponent::UpdateMaterials()
    {
-      std::vector<dtDAL::ActorProxy*> toFill;
+      std::vector<dtCore::ActorProxy*> toFill;
       GetGameManager()->FindActorsByType(*PhysicsActorRegistry::PHYSICS_MATERIAL_ACTOR_TYPE, toFill);
 
-      std::vector<dtDAL::ActorProxy*>::iterator i, iend;
+      std::vector<dtCore::ActorProxy*>::iterator i, iend;
       i = toFill.begin();
       iend = toFill.end();
       for (; i != iend; ++i)
@@ -448,7 +448,7 @@ namespace dtPhysics
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void PhysicsComponent::WaitUntilUpdateCompletes(const dtGame::TickMessage& tm)
+   void PhysicsComponent::WaitUntilUpdateCompletes()
    {
       if (mSteppingEnabled && mStepInBackground)
       {

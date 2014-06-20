@@ -126,10 +126,20 @@ namespace dtEditQt
       void emitCurrentMapChanged();
 
       /**
+       * The user saved the current map.
+       */
+      void emitCurrentMapSaved();
+
+      /**
        * This is emitted when the viewport contents have been changed and need to be
        * updated.
        */
       void emitViewportsChanged();
+
+      /**
+       * The user checks the reset windows action.
+       */
+      void emitResetWindows();
 
       /**
        * This is emitted when the user edits the name in the property editor.
@@ -225,6 +235,7 @@ namespace dtEditQt
       void editorInitiationEvent();
       void projectChanged();
       void currentMapChanged();
+      void currentMapSaved();      
       void viewportsChanged();
       void actorPropertyChanged(ActorProxyRefPtr proxy, ActorPropertyRefPtr property);
       void actorPropertyAboutToChange(ActorProxyRefPtr proxy,
@@ -244,13 +255,14 @@ namespace dtEditQt
       void editorCloseEvent();
       void mapPropertyChanged();
       void editorPreferencesChanged();
+      void resetWindows();            
 
       void showStatusBarMessage(const QString message, int timeout);
 
    private:
       EditorEvents();
-      EditorEvents& operator=(const EditorEvents& rhs) { return *this; }
-      EditorEvents(const EditorEvents& rhs) {}
+      EditorEvents& operator=(const EditorEvents& /*rhs*/) { return *this; }
+      EditorEvents(const EditorEvents& /*rhs*/) {}
       virtual ~EditorEvents();
 
       static dtCore::RefPtr<EditorEvents> sInstance;

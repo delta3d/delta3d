@@ -47,6 +47,7 @@
         _Pragma("clang diagnostic pop")
 // warning is triggered on things that are not a problem.
 #pragma GCC diagnostic ignored "-Woverloaded-virtual"
+#pragma GCC diagnostic ignored "-Wunused-parameter"
 #else
 #   define DT_DISABLE_WARNING_START_MSVC(...)
 #   define DT_DISABLE_WARNING_START_CLANG(...)
