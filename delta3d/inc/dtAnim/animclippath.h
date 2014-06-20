@@ -23,9 +23,9 @@
 #define __DELTA_ANIMCLIPPATH_H__
 
 #include <dtAnim/export.h>
+#include <dtCore/refptr.h>
 #include <osg/AnimationPath>
 #include <osg/NodeVisitor>
-#include <dtCore/refptr.h>
 
 namespace dtAnim
 {

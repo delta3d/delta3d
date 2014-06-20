@@ -23,13 +23,12 @@
 #include <prefix/unittestprefix.h>
 #include <cppunit/extensions/HelperMacros.h>
 
-#include <dtAnim/animationwrapper.h>
 #include <dtAnim/animatable.h>
 #include <dtAnim/animationchannel.h>
 #include <dtAnim/animationsequence.h>
 #include <dtAnim/sequencemixer.h>
 #include <dtAnim/animationhelper.h>
-#include <dtAnim/cal3dmodelwrapper.h>
+#include <dtAnim/basemodelwrapper.h>
 
 #include <dtCore/project.h>
 #include <dtCore/refptr.h>
@@ -55,7 +54,7 @@ namespace dtAnim
          void ForceFadeOut(float time){}; 
          void Recalculate(){}
          float CalculateDuration() const {return mDuration;}
-         dtCore::RefPtr<Animatable> Clone(Cal3DModelWrapper* pWrapper)const{return new TestAnimatable(*this);}
+         dtCore::RefPtr<Animatable> Clone(BaseModelWrapper* pWrapper)const{return new TestAnimatable(*this);}
          void Prune(){SetPrune(true);}
 
          void SetStartTime2(float animStart1){ SetStartTime(animStart1);}
@@ -96,7 +95,6 @@ namespace dtAnim
    {
       
       CPPUNIT_TEST_SUITE( AnimationTests );
-      CPPUNIT_TEST( TestAnimWrapper );
       CPPUNIT_TEST( UnitTestAnimatable );
       CPPUNIT_TEST( TestAnimatableEventNames );
       CPPUNIT_TEST( TestAnimChannel );
@@ -119,7 +117,6 @@ namespace dtAnim
          void setUp();
          void tearDown();
 
-         void TestAnimWrapper(); 
          void UnitTestAnimatable(); 
          void TestAnimatableEventNames();
          void TestAnimChannel();
@@ -237,26 +234,6 @@ namespace dtAnim
       mAnimatable2 = NULL;
       mHelper = NULL;
       mLastAnimatableCompleted = NULL;
-   }
-
-
-   /////////////////////////////////////////////////////////////////////////////
-   void AnimationTests::TestAnimWrapper()
-   {
-      std::string wrapperName("MyWrapper");
-      int wrapperID = 101;
-      float duration = 1000.0f;
-      float speed = 2.0f;
-
-      dtCore::RefPtr<AnimationWrapper> wrapper = new AnimationWrapper(wrapperName, wrapperID);
-
-      wrapper->SetDuration(duration);
-      wrapper->SetSpeed(speed);
-
-      CPPUNIT_ASSERT_EQUAL(wrapperName, wrapper->GetName());
-      CPPUNIT_ASSERT_EQUAL(wrapperID, wrapper->GetID());
-      CPPUNIT_ASSERT_EQUAL(duration, wrapper->GetDuration());
-      CPPUNIT_ASSERT_EQUAL(speed, wrapper->GetSpeed());
    }
 
 
@@ -459,27 +436,32 @@ namespace dtAnim
    void AnimationTests::TestAnimChannel()
    {
       dtCore::RefPtr<AnimationChannel> channel = new AnimationChannel();
+      
+      std::string name("ChickenWalk");
+      CPPUNIT_ASSERT_MESSAGE("Channel should have an empty name by default.", channel->GetName().empty());
+      channel->SetName(name);
+      CPPUNIT_ASSERT_MESSAGE("Channel name should have been set.", channel->GetName() == name);
 
-      dtCore::RefPtr<AnimationWrapper> wrapper1 = new AnimationWrapper("ChickenWalk", 1);
-      wrapper1->SetDuration(39.6f);
+      std::string animName(name);
+      CPPUNIT_ASSERT_MESSAGE("Channel animation name should be empty by default.", channel->GetAnimationName().empty());
+      channel->SetAnimationName(name);
+      CPPUNIT_ASSERT_MESSAGE("Channel animation name should have been set.", channel->GetAnimationName() == name);
+
+      float speed = 2.0f;
+      CPPUNIT_ASSERT_MESSAGE("Channel speed should be 1 by default.", channel->GetSpeed() == 1.0f);
+      channel->SetSpeed(speed);
+      CPPUNIT_ASSERT_MESSAGE("Channel speed should should have been set.", channel->GetSpeed() == speed);
+      
+      float duration = 39.6f;
+      CPPUNIT_ASSERT_MESSAGE("Channel duration should be 0 by default.", channel->GetDuration());
+      channel->SetDuration(duration);
+      CPPUNIT_ASSERT_MESSAGE("Channel duration should have been set.", channel->GetDuration() == duration);
 
       CPPUNIT_ASSERT_MESSAGE("Channel should be looping by default.", channel->IsLooping());
       CPPUNIT_ASSERT_MESSAGE("Channel should not have a definite end when looping.",
          ! channel->HasDefiniteEnd());
       CPPUNIT_ASSERT_MESSAGE("Channel should have infinite time limit when looping",
          channel->CalculateDuration() == Animatable::INFINITE_TIME);
-
-      CPPUNIT_ASSERT_MESSAGE("The animation wrapper should default to NULL", channel->GetAnimation() == NULL);
-      channel->SetAnimation(wrapper1.get());
-      CPPUNIT_ASSERT_MESSAGE("The Getter should work after it's set.", channel->GetAnimation() == wrapper1.get());
-
-      const AnimationChannel* channelConst = channel.get();
-      CPPUNIT_ASSERT_MESSAGE("The const Getter should work after it's set.", 
-         channelConst->GetAnimation() == wrapper1.get());
-
-      channel = new AnimationChannel(NULL, wrapper1.get());
-      CPPUNIT_ASSERT_MESSAGE("It should work to set the animation via the constructor.", 
-         channel->GetAnimation() == wrapper1.get());
 
       channel->SetLooping(false);
       CPPUNIT_ASSERT_MESSAGE("Channel should not be looping.", ! channel->IsLooping());
@@ -499,6 +481,25 @@ namespace dtAnim
       channel->SetMaxDuration(0.0f);
       CPPUNIT_ASSERT_MESSAGE("Channel should have the original duration if max duration is set to zero.",
          channel->CalculateDuration() == 39.6f);
+
+      // Test access to the associated animation object.
+      const AnimationChannel* channelConst = channel.get();
+      dtAnim::BaseModelWrapper* model = mHelper->GetModelWrapper();
+      CPPUNIT_ASSERT_MESSAGE("The model should not have an animation object with the test name.", model->GetAnimation(name) == NULL);
+      CPPUNIT_ASSERT_MESSAGE("The channel should not have an animation object with the test name.", channelConst->GetAnimation() == NULL);
+
+      // Use a name of an animation object contained in the model.
+      animName = "";
+      const dtAnim::AnimationInterface* animFromModel = model->GetAnimation(animName);
+      channel->SetAnimationName(animName);
+      CPPUNIT_ASSERT_MESSAGE("Channel name can differ from the referenced animation object's name.",
+         channel->GetName() != channel->GetAnimationName());
+
+      const dtAnim::AnimationInterface* anim = channelConst->GetAnimation();
+      CPPUNIT_ASSERT_MESSAGE("An animation with the specified name should be returned from the model.", animFromModel != NULL);
+      CPPUNIT_ASSERT_MESSAGE("Channel should return a valid animation object if it has a valid name.", anim != NULL);
+      CPPUNIT_ASSERT_MESSAGE("Both the model and the channel should return the same animation object.", animFromModel == anim);
+      CPPUNIT_ASSERT_MESSAGE("The animation object name should match.", animName == anim->GetName());
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -508,8 +509,7 @@ namespace dtAnim
       float duration = 3.0f;
       dtCore::RefPtr<AnimationChannel> channel = new AnimationChannel();
       channel->SetStartTime(1.0f);
-      dtCore::RefPtr<AnimationWrapper> wrapper = new AnimationWrapper("AnimWrapper", 1);
-      wrapper->SetDuration(duration);
+      channel->SetDuration(duration);
 
       // Test relative time without access to the associated animation wrapper.
       channel->SetAction(true);
@@ -519,8 +519,6 @@ namespace dtAnim
       channel->SetLooping(true);
       CPPUNIT_ASSERT_DOUBLES_EQUAL(0.0f, channel->ConvertToRelativeTimeInAnimationScope(2.0f), epsilon);
 
-      // Test relative time with access to the associated animation wrapper.
-      channel->SetAnimation(wrapper.get());
       // --- Test action mode.
       channel->SetAction(true);
       channel->SetLooping(false);
@@ -601,6 +599,11 @@ namespace dtAnim
       clonedAnim1 = dynamic_cast<AnimationChannel*>(clonedChildSeq->GetAnimation(animName));
       CPPUNIT_ASSERT(clonedAnim1 != NULL);
       CPPUNIT_ASSERT_EQUAL_MESSAGE("The Model wrapper should cascade throughout the cloned animation sequence.", clonedAnim1->GetModel(), mHelper->GetModelWrapper());
+
+      float speed = 2.0f;
+      CPPUNIT_ASSERT_MESSAGE("Sequence speed should default to 1.", pSeq->GetSpeed() == 1.0f);
+      pSeq->SetSpeed(speed);
+      CPPUNIT_ASSERT_MESSAGE("Sequence speed should have been set.", pSeq->GetSpeed() == speed);
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -677,22 +680,19 @@ namespace dtAnim
    {
       float epsilon = 0.001f;
 
-      dtCore::RefPtr<AnimationWrapper> wrapper1 = new AnimationWrapper("Wrapper1", 1);
-      wrapper1->SetDuration(10.0f);
-      dtCore::RefPtr<AnimationWrapper> wrapper2 = new AnimationWrapper("Wrapper2", 2);
-      wrapper2->SetDuration(25.0f);
+      dtCore::RefPtr<AnimationChannel> anim1 = new AnimationChannel;
+      dtCore::RefPtr<AnimationChannel> anim2 = new AnimationChannel;
 
-      dtCore::RefPtr<AnimationChannel> anim1 = new AnimationChannel(NULL, wrapper1.get());
-      dtCore::RefPtr<AnimationChannel> anim2 = new AnimationChannel(NULL, wrapper2.get());
-
-      anim1->SetName(wrapper1->GetName());
+      anim1->SetName("Anim 1");
       anim1->SetLooping(false);
+      anim1->SetDuration(10.0f);
       anim1->SetMaxDuration(0.0f);
 
-      anim2->SetName(wrapper2->GetName());
+      anim2->SetName("Anim 2");
       anim2->SetLooping(false);
+      anim2->SetDuration(25.0f);
       anim2->SetMaxDuration(0.0f);
-      anim2->SetStartDelay(wrapper1->GetDuration());
+      anim2->SetStartDelay(anim1->GetDuration());
 
       dtCore::RefPtr<AnimationSequence> seq = new AnimationSequence();
       seq->AddAnimation(anim1.get());
@@ -701,7 +701,7 @@ namespace dtAnim
       CPPUNIT_ASSERT(anim1->HasDefiniteEnd());
       CPPUNIT_ASSERT(anim2->HasDefiniteEnd());
 
-      float duration = wrapper1->GetDuration() + wrapper2->GetDuration();
+      float duration = anim1->GetDuration() + anim2->GetDuration();
       CPPUNIT_ASSERT(seq->HasDefiniteEnd());
       CPPUNIT_ASSERT_DOUBLES_EQUAL(duration, seq->CalculateDuration(), epsilon);
       duration = anim1->CalculateDuration() + anim2->CalculateDuration();
@@ -713,7 +713,7 @@ namespace dtAnim
 
       anim1->SetMaxDuration(5.0f);
       // 2's start delay encompasses the duration of 1.
-      duration = anim2->GetStartDelay() + wrapper2->GetDuration();
+      duration = anim2->GetStartDelay() + anim2->GetDuration();
       CPPUNIT_ASSERT(seq->HasDefiniteEnd());
       CPPUNIT_ASSERT_DOUBLES_EQUAL(duration, seq->CalculateDuration(), epsilon);
 
@@ -723,7 +723,7 @@ namespace dtAnim
       CPPUNIT_ASSERT_DOUBLES_EQUAL(Animatable::INFINITE_TIME, seq->CalculateDuration(), epsilon);
 
       anim2->SetMaxDuration(5.0f);
-      duration = wrapper1->GetDuration() + anim2->GetMaxDuration();
+      duration = anim1->GetDuration() + anim2->GetMaxDuration();
       CPPUNIT_ASSERT(seq->HasDefiniteEnd());
       CPPUNIT_ASSERT_DOUBLES_EQUAL(duration, seq->CalculateDuration(), epsilon);
    }
@@ -748,7 +748,7 @@ namespace dtAnim
       CPPUNIT_ASSERT(regSeq != NULL);
 
       // Satisfy subsequent calls to Clone.
-      Cal3DModelWrapper* modelWrapper = mHelper->GetModelWrapper();
+      BaseModelWrapper* modelWrapper = mHelper->GetModelWrapper();
       
       dtCore::RefPtr<AnimationChannel> chan
          = dynamic_cast<AnimationChannel*>(regChan->Clone(modelWrapper).get());

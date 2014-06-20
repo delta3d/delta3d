@@ -1,5 +1,5 @@
-#ifndef DELTA_MainWindow
-#define DELTA_MainWindow
+#ifndef __ANIMATION_VIEWER_MAIN_WINDOW_H__
+#define __ANIMATION_VIEWER_MAIN_WINDOW_H__
 
 #include <QtGui/QMainWindow>
 
@@ -30,9 +30,14 @@ class QPushButton;
 namespace dtAnim
 {
    class PoseMesh;
-   class Cal3DModelData;
-   class Cal3DModelWrapper;
+   class BaseModelData;
+   class BaseModelWrapper;
    class CharDrawable;
+}
+
+namespace dtQt
+{
+   class NodeTreePanel;
 }
 
 // Application Level Classes
@@ -79,7 +84,7 @@ signals:
    /// Hide the mesh on CalModel from view
    void HideMesh(int meshID);
 
-   void SubMorphTargetChanged(int meshID, int subMeshID,
+   void SubMorphTargetChanged(const QString& meshName, int subMeshID,
                               int morphID, float weight);
 
    void PlayMorphAnimation(int morphAnimID, float weight, float delayIn, float delayOut, bool looping);
@@ -96,9 +101,10 @@ public slots:
    void OnNewMorphAnimation(unsigned int id, const QString& animationName, unsigned int trackCount,
       unsigned int keyframes, float duration);
 
-   void OnNewMesh(int meshID, const QString& meshName, const std::vector<std::string>& boneNames);
+   void OnNewMesh(int meshID, const QString& meshName, const std::vector<std::string>& boneNames,
+      bool visible, int vertCount, int faceCount, int submeshCount);
 
-   void OnNewSubMorphTarget(int meshID, int subMeshID, 
+   void OnNewSubMorphTarget(const QString& meshName, int subMeshID, 
                             int morphID, const QString& morphName);
 
    void OnPoseMeshesLoaded(const std::vector<dtAnim::PoseMesh*>& poseMeshList,
@@ -108,13 +114,13 @@ public slots:
                       const QColor& diff, const QColor& amb, const QColor& spec,
                       float shininess);
 
-   void OnCharacterDataLoaded(dtAnim::Cal3DModelData* modelData, dtAnim::Cal3DModelWrapper* wrapper);
+   void OnCharacterDataLoaded(dtAnim::BaseModelData* modelData, dtAnim::BaseModelWrapper* wrapper);
 
    void OnBlendUpdate(const std::vector<std::pair<float, float> >& animWeightTimeList, const std::vector<float>& morphWeightList);
 
    void OnAnimationClicked(QTableWidgetItem* item);
    void OnMorphAnimationClicked(QTableWidgetItem* item);
-   void OnMeshActivated(QListWidgetItem* item);
+   void OnMeshActivated(QTableWidgetItem* item);
    void OnLODScale_Changed(double newValue);
    void OnSpeedChanged(double newValue);
    void OnChangeScaleFactor();
@@ -144,6 +150,7 @@ private:
    void CreateDockWidgets();
    void CreateDockWidget_Properties();
    void CreateDockWidget_Tools();
+   void CreateDockWidget_NodeTools();
    void CreateDockWidget_Resources();
    void DestroyPoseResources();
    void UpdateRecentFileActions();
@@ -176,6 +183,7 @@ private:
    QAction* mToggleDockProperties;
    QAction* mToggleDockResources;
    QAction* mToggleDockTools;
+   QAction* mToggleDockNodeTools;
 
    QToolBar* mShadingToolbar;
    QToolBar* mLightingToolbar;
@@ -193,8 +201,10 @@ private:
    
    QTabWidget* mTabs;
 
+   dtQt::NodeTreePanel* mNodeTreePanel;
+
    AnimationTableWidget* mAnimListWidget;
-   QListWidget*          mMeshListWidget;
+   QTableWidget*         mMeshListWidget;
    QTableWidget*         mSubMorphTargetListWidget;
    AnimationTableWidget* mSubMorphAnimationListWidget;
 

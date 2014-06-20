@@ -28,16 +28,17 @@
 #include <prefix/unittestprefix.h>
 #include <cppunit/extensions/HelperMacros.h>
 
-#include <dtAnim/animationwrapper.h>
 #include <dtAnim/animatable.h>
 #include <dtAnim/animationchannel.h>
-#include <dtAnim/animationsequence.h>
-#include <dtAnim/sequencemixer.h>
 #include <dtAnim/animationhelper.h>
+#include <dtAnim/animationsequence.h>
 #include <dtAnim/animnodebuilder.h>
-#include <dtAnim/cal3ddatabase.h>
+#include <dtAnim/basemodeldata.h>
+#include <dtAnim/basemodelwrapper.h>
 #include <dtAnim/cal3dmodeldata.h>
 #include <dtAnim/cal3dmodelwrapper.h>
+#include <dtAnim/modeldatabase.h>
+#include <dtAnim/sequencemixer.h>
 
 #include <dtCore/refptr.h>
 #include <dtCore/project.h>
@@ -55,9 +56,9 @@
 
 namespace dtAnim
 {
-   class Cal3DLoaderTests : public CPPUNIT_NS::TestFixture
+   class CharacterFileLoaderTests : public CPPUNIT_NS::TestFixture
    {
-      CPPUNIT_TEST_SUITE(Cal3DLoaderTests);
+      CPPUNIT_TEST_SUITE(CharacterFileLoaderTests);
          CPPUNIT_TEST(TestIsFileValid);
          CPPUNIT_TEST(TestLoadFile);
          CPPUNIT_TEST(TestLODOptions);
@@ -66,17 +67,19 @@ namespace dtAnim
       CPPUNIT_TEST_SUITE_END();
 
       public:
-         Cal3DLoaderTests()
+         CharacterFileLoaderTests()
          {
          }
 
          void setUp()
          {
             dtCore::Project::GetInstance().SetContext(dtUtil::GetDeltaRootPath() + "/examples/data/demoMap");
-            AnimNodeBuilder& nodeBuilder = Cal3DDatabase::GetInstance().GetNodeBuilder();
-            if (nodeBuilder.SupportsSoftware())
+            AnimNodeBuilder* nodeBuilder = dtAnim::ModelDatabase::GetInstance().GetNodeBuilder();
+            CPPUNIT_ASSERT_MESSAGE("AnimNodeBuilder should be valid.", nodeBuilder != NULL);
+            
+            if (nodeBuilder->SupportsSoftware())
             {
-               nodeBuilder.SetCreate(AnimNodeBuilder::CreateFunc(&nodeBuilder, &AnimNodeBuilder::CreateSoftware));
+               nodeBuilder->SetCreate(AnimNodeBuilder::CreateFunc(nodeBuilder, &AnimNodeBuilder::CreateSoftware));
             }
 
             mHelper = new dtAnim::AnimationHelper;
@@ -84,7 +87,7 @@ namespace dtAnim
 
          void tearDown()
          {
-            Cal3DDatabase::GetInstance().TruncateDatabase();
+            dtAnim::ModelDatabase::GetInstance().TruncateDatabase();
             mHelper = NULL;
          }
 
@@ -93,7 +96,7 @@ namespace dtAnim
             std::string validFile = dtUtil::FindFileInPathList("SkeletalMeshes/marine_test.xml");
             std::string invalidFile = dtUtil::FindFileInPathList("maps/TestAnim.xml");
 
-            dtAnim::Cal3DDatabase& database = dtAnim::Cal3DDatabase::GetInstance();
+            dtAnim::ModelDatabase& database = dtAnim::ModelDatabase::GetInstance();
             CPPUNIT_ASSERT(database.IsFileValid(validFile));
             CPPUNIT_ASSERT(!database.IsFileValid(invalidFile));
          }
@@ -161,7 +164,7 @@ namespace dtAnim
             childNames.push_back("IdleAction");
             TestLoadedAnimationSequence(actionSequence, childNames);
 
-            const dtAnim::AttachmentController& attachCon = mHelper->GetAttachmentController();
+            const dtAnim::AttachmentController& attachCon = *mHelper->GetAttachmentController();
             CPPUNIT_ASSERT_EQUAL(1U, unsigned(attachCon.GetAttachments().size()));
 
 
@@ -211,12 +214,12 @@ namespace dtAnim
             std::string modelPath = dtUtil::FindFileInPathList("SkeletalMeshes/marine_test.xml");
             CPPUNIT_ASSERT(!modelPath.empty());
 
-            dtAnim::Cal3DDatabase& database = dtAnim::Cal3DDatabase::GetInstance();
+            dtAnim::ModelDatabase& database = dtAnim::ModelDatabase::GetInstance();
             mHelper->LoadModel(modelPath);
 
-            dtAnim::Cal3DModelWrapper* wrapper = mHelper->GetModelWrapper();
+            dtAnim::BaseModelWrapper* wrapper = mHelper->GetModelWrapper();
             CPPUNIT_ASSERT(wrapper != NULL);
-            Cal3DModelData* modelData = database.GetModelData(*wrapper);
+            BaseModelData* modelData = wrapper->GetModelData();
             CPPUNIT_ASSERT(modelData != NULL);
 
             dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
@@ -226,7 +229,12 @@ namespace dtAnim
             CPPUNIT_ASSERT(modelData->GetVertexBufferObject() == NULL);
             CPPUNIT_ASSERT(modelData->GetElementBufferObject() == NULL);
 
-            CPPUNIT_ASSERT(modelData->GetCoreModel() == wrapper->GetCalModel()->getCoreModel());
+            Cal3DModelWrapper* calModel = dynamic_cast<Cal3DModelWrapper*>(wrapper);
+            Cal3DModelData* calModelData = dynamic_cast<Cal3DModelData*>(modelData);
+            if (calModel != NULL && calModelData != NULL)
+            {
+               CPPUNIT_ASSERT(calModelData->GetCoreModel() == calModel->GetCalModel()->getCoreModel());
+            }
 
             const dtAnim::LODOptions& lodOptions = modelData->GetLODOptions();
 
@@ -262,11 +270,11 @@ namespace dtAnim
          }
 
          // Helper Method
-         bool VectorHasValue(const dtAnim::Cal3DModelData::StrArray& v, const std::string& value) const
+         bool VectorHasValue(const dtAnim::StrArray& v, const std::string& value) const
          {
             bool success = false;
-            dtAnim::Cal3DModelData::StrArray::const_iterator curIter = v.begin();
-            dtAnim::Cal3DModelData::StrArray::const_iterator endIter = v.end();
+            dtAnim::StrArray::const_iterator curIter = v.begin();
+            dtAnim::StrArray::const_iterator endIter = v.end();
             for (; curIter != endIter; ++curIter)
             {
                if(*curIter == value)
@@ -284,44 +292,44 @@ namespace dtAnim
             std::string modelPath = dtUtil::FindFileInPathList("SkeletalMeshes/marine_test.xml");
             CPPUNIT_ASSERT(!modelPath.empty());
 
-            dtAnim::Cal3DDatabase& database = dtAnim::Cal3DDatabase::GetInstance();
+            dtAnim::ModelDatabase& database = dtAnim::ModelDatabase::GetInstance();
             mHelper->LoadModel(modelPath);
 
-            dtAnim::Cal3DModelWrapper* wrapper = mHelper->GetModelWrapper();
+            dtAnim::BaseModelWrapper* wrapper = mHelper->GetModelWrapper();
             CPPUNIT_ASSERT(wrapper != NULL);
-            Cal3DModelData* modelData = database.GetModelData(*wrapper);
+            BaseModelData* modelData = wrapper->GetModelData();
             CPPUNIT_ASSERT(modelData != NULL);
 
             // Test file extension classification.
-            CPPUNIT_ASSERT(modelData->GetFileType("test.caf") == Cal3DModelData::ANIM_FILE);
-            CPPUNIT_ASSERT(modelData->GetFileType("test.xaf") == Cal3DModelData::ANIM_FILE);
-            CPPUNIT_ASSERT(modelData->GetFileType("test.crf") == Cal3DModelData::MAT_FILE);
-            CPPUNIT_ASSERT(modelData->GetFileType("test.xrf") == Cal3DModelData::MAT_FILE);
-            CPPUNIT_ASSERT(modelData->GetFileType("test.cmf") == Cal3DModelData::MESH_FILE);
-            CPPUNIT_ASSERT(modelData->GetFileType("test.xmf") == Cal3DModelData::MESH_FILE);
-            CPPUNIT_ASSERT(modelData->GetFileType("test.csf") == Cal3DModelData::SKEL_FILE);
-            CPPUNIT_ASSERT(modelData->GetFileType("test.xsf") == Cal3DModelData::SKEL_FILE);
-            CPPUNIT_ASSERT(modelData->GetFileType("test.zzz") == Cal3DModelData::NO_FILE);
+            CPPUNIT_ASSERT(modelData->GetFileType("test.caf") == ModelResourceType::ANIM_FILE);
+            CPPUNIT_ASSERT(modelData->GetFileType("test.xaf") == ModelResourceType::ANIM_FILE);
+            CPPUNIT_ASSERT(modelData->GetFileType("test.crf") == ModelResourceType::MAT_FILE);
+            CPPUNIT_ASSERT(modelData->GetFileType("test.xrf") == ModelResourceType::MAT_FILE);
+            CPPUNIT_ASSERT(modelData->GetFileType("test.cmf") == ModelResourceType::MESH_FILE);
+            CPPUNIT_ASSERT(modelData->GetFileType("test.xmf") == ModelResourceType::MESH_FILE);
+            CPPUNIT_ASSERT(modelData->GetFileType("test.csf") == ModelResourceType::SKEL_FILE);
+            CPPUNIT_ASSERT(modelData->GetFileType("test.xsf") == ModelResourceType::SKEL_FILE);
+            CPPUNIT_ASSERT(modelData->GetFileType("test.zzz") == ModelResourceType::NO_FILE);
 
             // Ensure that the actual files that were loaded are in the file mapping.
-            dtAnim::Cal3DModelData::StrArray fileList;
-            CPPUNIT_ASSERT(modelData->GetFileListForFileType(Cal3DModelData::SKEL_FILE, fileList) == 1);
+            dtAnim::StrArray fileList;
+            CPPUNIT_ASSERT(modelData->GetFileListForFileType(ModelResourceType::SKEL_FILE, fileList) == 1);
             CPPUNIT_ASSERT(VectorHasValue(fileList, "Skeleton.csf"));
             fileList.clear();
-            CPPUNIT_ASSERT(modelData->GetFileListForFileType(Cal3DModelData::ANIM_FILE, fileList) == 5);
+            CPPUNIT_ASSERT(modelData->GetFileListForFileType(ModelResourceType::ANIM_FILE, fileList) == 5);
             CPPUNIT_ASSERT(VectorHasValue(fileList, "LowWalk.caf"));
             CPPUNIT_ASSERT(VectorHasValue(fileList, "LowWalk_Wpn.caf"));
             CPPUNIT_ASSERT(VectorHasValue(fileList, "Breath.caf"));
             CPPUNIT_ASSERT(VectorHasValue(fileList, "Run.caf"));
             CPPUNIT_ASSERT(VectorHasValue(fileList, "Walk.caf"));
             fileList.clear();
-            CPPUNIT_ASSERT(modelData->GetFileListForFileType(Cal3DModelData::MESH_FILE, fileList) == 4);
+            CPPUNIT_ASSERT(modelData->GetFileListForFileType(ModelResourceType::MESH_FILE, fileList) == 4);
             CPPUNIT_ASSERT(VectorHasValue(fileList, "HEAD.cmf"));
             CPPUNIT_ASSERT(VectorHasValue(fileList, "BODY.cmf"));
             CPPUNIT_ASSERT(VectorHasValue(fileList, "Helmet.cmf"));
             CPPUNIT_ASSERT(VectorHasValue(fileList, "M16m80.cmf"));
             fileList.clear();
-            CPPUNIT_ASSERT(modelData->GetFileListForFileType(Cal3DModelData::MAT_FILE, fileList) == 4);
+            CPPUNIT_ASSERT(modelData->GetFileListForFileType(ModelResourceType::MAT_FILE, fileList) == 4);
             CPPUNIT_ASSERT(VectorHasValue(fileList, "HEAD.crf"));
             CPPUNIT_ASSERT(VectorHasValue(fileList, "BODY.crf"));
             CPPUNIT_ASSERT(VectorHasValue(fileList, "Helmet.crf"));
@@ -329,28 +337,28 @@ namespace dtAnim
             fileList.clear();
 
             // Test name list by file type
-            dtAnim::Cal3DModelData::StrArray nameList;
-            CPPUNIT_ASSERT(modelData->GetObjectNameListForFileType(Cal3DModelData::SKEL_FILE, nameList) == 1);
-            CPPUNIT_ASSERT(modelData->GetFileCount(Cal3DModelData::SKEL_FILE) == 1);
+            dtAnim::StrArray nameList;
+            CPPUNIT_ASSERT(modelData->GetObjectNameListForFileType(ModelResourceType::SKEL_FILE, nameList) == 1);
+            CPPUNIT_ASSERT(modelData->GetFileCount(ModelResourceType::SKEL_FILE) == 1);
             CPPUNIT_ASSERT(VectorHasValue(nameList, "skeleton"));
             nameList.clear();
-            CPPUNIT_ASSERT(modelData->GetObjectNameListForFileType(Cal3DModelData::ANIM_FILE, nameList) == 5);
-            CPPUNIT_ASSERT(modelData->GetFileCount(Cal3DModelData::ANIM_FILE) == 5);
+            CPPUNIT_ASSERT(modelData->GetObjectNameListForFileType(ModelResourceType::ANIM_FILE, nameList) == 5);
+            CPPUNIT_ASSERT(modelData->GetFileCount(ModelResourceType::ANIM_FILE) == 5);
             CPPUNIT_ASSERT(VectorHasValue(nameList, "LowWalk"));
             CPPUNIT_ASSERT(VectorHasValue(nameList, "LowWalk with weapon"));
             CPPUNIT_ASSERT(VectorHasValue(nameList, "Idle"));
             CPPUNIT_ASSERT(VectorHasValue(nameList, "Run"));
             CPPUNIT_ASSERT(VectorHasValue(nameList, "Walk"));
             nameList.clear();
-            CPPUNIT_ASSERT(modelData->GetObjectNameListForFileType(Cal3DModelData::MESH_FILE, nameList) == 4);
-            CPPUNIT_ASSERT(modelData->GetFileCount(Cal3DModelData::MESH_FILE) == 4);
+            CPPUNIT_ASSERT(modelData->GetObjectNameListForFileType(ModelResourceType::MESH_FILE, nameList) == 4);
+            CPPUNIT_ASSERT(modelData->GetFileCount(ModelResourceType::MESH_FILE) == 4);
             CPPUNIT_ASSERT(VectorHasValue(nameList, "Head"));
             CPPUNIT_ASSERT(VectorHasValue(nameList, "Body"));
             CPPUNIT_ASSERT(VectorHasValue(nameList, "Helmet"));
             CPPUNIT_ASSERT(VectorHasValue(nameList, "M16"));
             nameList.clear();
-            CPPUNIT_ASSERT(modelData->GetObjectNameListForFileType(Cal3DModelData::MAT_FILE, nameList) == 4);
-            CPPUNIT_ASSERT(modelData->GetFileCount(Cal3DModelData::MAT_FILE) == 4);
+            CPPUNIT_ASSERT(modelData->GetObjectNameListForFileType(ModelResourceType::MAT_FILE, nameList) == 4);
+            CPPUNIT_ASSERT(modelData->GetFileCount(ModelResourceType::MAT_FILE) == 4);
             CPPUNIT_ASSERT(VectorHasValue(nameList, "Head Material"));
             CPPUNIT_ASSERT(VectorHasValue(nameList, "Body Material"));
             CPPUNIT_ASSERT(VectorHasValue(nameList, "Helmet Material"));
@@ -358,10 +366,10 @@ namespace dtAnim
             nameList.clear();
 
             // Test access to a file name via an object name and file type.
-            CPPUNIT_ASSERT(modelData->GetFileForObjectName(Cal3DModelData::SKEL_FILE, "skeleton") == "Skeleton.csf");
-            CPPUNIT_ASSERT(modelData->GetFileForObjectName(Cal3DModelData::MAT_FILE, "Helmet Material") == "Helmet.crf");
-            CPPUNIT_ASSERT(modelData->GetFileForObjectName(Cal3DModelData::MESH_FILE, "Head") == "HEAD.cmf");
-            CPPUNIT_ASSERT(modelData->GetFileForObjectName(Cal3DModelData::ANIM_FILE, "LowWalk with weapon") == "LowWalk_Wpn.caf");
+            CPPUNIT_ASSERT(modelData->GetFileForObjectName(ModelResourceType::SKEL_FILE, "skeleton") == "Skeleton.csf");
+            CPPUNIT_ASSERT(modelData->GetFileForObjectName(ModelResourceType::MAT_FILE, "Helmet Material") == "Helmet.crf");
+            CPPUNIT_ASSERT(modelData->GetFileForObjectName(ModelResourceType::MESH_FILE, "Head") == "HEAD.cmf");
+            CPPUNIT_ASSERT(modelData->GetFileForObjectName(ModelResourceType::ANIM_FILE, "LowWalk with weapon") == "LowWalk_Wpn.caf");
 
 
             // Test mapping multiple object names to a single file.
@@ -413,7 +421,7 @@ namespace dtAnim
             CPPUNIT_ASSERT(modelData->RegisterFile(testFile, "D"));
 
             // Test changing an object name.
-            dtAnim::Cal3DModelData::CalFileType fileType = dtAnim::Cal3DModelData::ANIM_FILE;
+            dtAnim::ModelResourceType fileType = dtAnim::ModelResourceType::ANIM_FILE;
             CPPUNIT_ASSERT( ! modelData->ReplaceObjectName(fileType, "A", "B"));
             CPPUNIT_ASSERT(modelData->ReplaceObjectName(fileType, "A", "C"));
             CPPUNIT_ASSERT(modelData->GetFileForObjectName(fileType, "C") == testFile);
@@ -496,7 +504,7 @@ namespace dtAnim
    };
 
    // Registers the fixture into the 'registry'
-   CPPUNIT_TEST_SUITE_REGISTRATION( Cal3DLoaderTests );
+   CPPUNIT_TEST_SUITE_REGISTRATION( CharacterFileLoaderTests );
 
 
 
@@ -525,14 +533,10 @@ namespace dtAnim
       {
       }
 
-      void SetDefaults(AnimOverride& info, Animatable& anim,
-         AnimationWrapper& wrapper, const std::string& name)
+      void SetDefaults(AnimOverride& info, Animatable& anim, const std::string& name)
       {
          info.mName = name;
          info.mSpeed = 1.0f;
-
-         wrapper.SetSpeed(1.0f);
-         wrapper.SetDuration(1.0f);
 
          anim.SetName(name);
          anim.SetSpeed(1.0f);
@@ -540,7 +544,8 @@ namespace dtAnim
          AnimationChannel* channel = dynamic_cast<AnimationChannel*>(&anim);
          if (channel != NULL)
          {
-            channel->SetAnimation(&wrapper);
+            channel->SetSpeed(1.0f);
+            channel->SetDuration(1.0f);
             channel->SetMaxDuration(channel->GetMaxDuration());
             channel->SetLooping(false);
          }
@@ -575,18 +580,12 @@ namespace dtAnim
          mAnimArray.push_back(mAnim4.get());
          mAnimArray.push_back(mAnim5.get());
 
-         mAnimWrapper1 = new AnimationWrapper(NAME_1, 0);
-         mAnimWrapper2 = new AnimationWrapper(NAME_2, 1);
-         mAnimWrapper3 = new AnimationWrapper(NAME_3, 2);
-         mAnimWrapper4 = new AnimationWrapper(NAME_4, 3);
-         mAnimWrapper5 = new AnimationWrapper(NAME_5, 4);
-
          // Setup default values.
-         SetDefaults(*mInfo1, *mAnim1, *mAnimWrapper1, NAME_1);
-         SetDefaults(*mInfo2, *mAnim2, *mAnimWrapper2, NAME_2);
-         SetDefaults(*mInfo3, *mAnim3, *mAnimWrapper3, NAME_3);
-         SetDefaults(*mInfo4, *mAnim4, *mAnimWrapper4, NAME_4);
-         SetDefaults(*mInfo5, *mAnim5, *mAnimWrapper5, NAME_5);
+         SetDefaults(*mInfo1, *mAnim1, NAME_1);
+         SetDefaults(*mInfo2, *mAnim2, NAME_2);
+         SetDefaults(*mInfo3, *mAnim3, NAME_3);
+         SetDefaults(*mInfo4, *mAnim4, NAME_4);
+         SetDefaults(*mInfo5, *mAnim5, NAME_5);
       }
 
       void tearDown()
@@ -604,12 +603,6 @@ namespace dtAnim
          mAnim3 = NULL;
          mAnim4 = NULL;
          mAnim5 = NULL;
-
-         mAnimWrapper1 = NULL;
-         mAnimWrapper2 = NULL;
-         mAnimWrapper3 = NULL;
-         mAnimWrapper4 = NULL;
-         mAnimWrapper5 = NULL;
       }
 
       void TestFollowsFlag()
@@ -620,7 +613,7 @@ namespace dtAnim
          mInfo4->mFollowsPrevious = true;
          mInfo5->mFollowsPrevious = true;
 
-         Cal3DLoader::FinalizeSequenceInfo(mSeqInfo, mAnimArray);
+         CharacterFileLoader::FinalizeSequenceInfo(mSeqInfo, mAnimArray);
 
          CPPUNIT_ASSERT( ! mInfo1->mOverrideStartDelay);
          CPPUNIT_ASSERT(mInfo2->mOverrideStartDelay);
@@ -642,7 +635,7 @@ namespace dtAnim
          mInfo3->mFollowsPrevious = true;
          mInfo5->mFollowsPrevious = true;
 
-         Cal3DLoader::FinalizeSequenceInfo(mSeqInfo, mAnimArray);
+         CharacterFileLoader::FinalizeSequenceInfo(mSeqInfo, mAnimArray);
 
          CPPUNIT_ASSERT( ! mInfo1->mOverrideStartDelay);
          CPPUNIT_ASSERT(mInfo2->mOverrideStartDelay);
@@ -666,7 +659,7 @@ namespace dtAnim
          mInfo2->mFollowAnimatableName = NAME_3;
          mInfo4->mFollowAnimatableName = NAME_2;
 
-         Cal3DLoader::FinalizeSequenceInfo(mSeqInfo, mAnimArray);
+         CharacterFileLoader::FinalizeSequenceInfo(mSeqInfo, mAnimArray);
 
          CPPUNIT_ASSERT( ! mInfo5->mOverrideStartDelay);
          CPPUNIT_ASSERT(mInfo1->mOverrideStartDelay);
@@ -701,7 +694,7 @@ namespace dtAnim
          mInfo5->mFollowsPrevious = true;
          mInfo5->mCrossFade = 0.0f;
 
-         Cal3DLoader::FinalizeSequenceInfo(mSeqInfo, mAnimArray);
+         CharacterFileLoader::FinalizeSequenceInfo(mSeqInfo, mAnimArray);
 
          CPPUNIT_ASSERT( ! mInfo1->mOverrideStartDelay);
          CPPUNIT_ASSERT(mInfo2->mOverrideStartDelay);
@@ -729,18 +722,12 @@ namespace dtAnim
       }
 
    private:
-      Cal3DModelData::AnimatableArray mAnimArray;
+      dtAnim::AnimatableArray mAnimArray;
       dtCore::RefPtr<Animatable> mAnim1;
       dtCore::RefPtr<Animatable> mAnim2;
       dtCore::RefPtr<Animatable> mAnim3;
       dtCore::RefPtr<Animatable> mAnim4;
       dtCore::RefPtr<Animatable> mAnim5;
-
-      dtCore::RefPtr<AnimationWrapper> mAnimWrapper1;
-      dtCore::RefPtr<AnimationWrapper> mAnimWrapper2;
-      dtCore::RefPtr<AnimationWrapper> mAnimWrapper3;
-      dtCore::RefPtr<AnimationWrapper> mAnimWrapper4;
-      dtCore::RefPtr<AnimationWrapper> mAnimWrapper5;
 
       SequenceInfo mSeqInfo;
       AnimOverride* mInfo1;

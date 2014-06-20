@@ -22,19 +22,21 @@
 #include <dtAnim/hardwaresubmesh.h>
 #include <dtAnim/lodcullcallback.h> //for the cull callback.
 #include <dtAnim/cal3dmodelwrapper.h>
-#include <osg/Material>
-#include <osg/Texture2D>
-#include <osg/PolygonMode>
-#include <osg/Uniform>
-#include <osg/PrimitiveSet>
-#include <osg/Vec3>
-#include <osg/BoundingBox>
-#include <dtUtil/matrixutil.h>
 #include <dtUtil/log.h>
-#include <cal3d/hardwaremodel.h>
-#include <osg/CullFace>
+#include <dtUtil/matrixutil.h>
 #include <osg/BlendFunc>
+#include <osg/BoundingBox>
+#include <osg/CullFace>
+#include <osg/Material>
+#include <osg/PolygonMode>
+#include <osg/PrimitiveSet>
+#include <osg/Texture2D>
+#include <osg/Uniform>
+#include <osg/Vec3>
 #include <osg/Version>
+DT_DISABLE_WARNING_ALL_START
+#include <cal3d/hardwaremodel.h>
+DT_DISABLE_WARNING_END
 
 namespace dtAnim
 {
@@ -60,9 +62,10 @@ namespace dtAnim
    {
    public:
       HardwareSubmeshCallback(Cal3DModelWrapper& wrapper, CalHardwareModel& model,
-            osg::Uniform& boneTrans, unsigned mesh, OpenThreads::Mutex& updateMutex)
+            osg::Uniform& scale, osg::Uniform& boneTrans, unsigned mesh, OpenThreads::Mutex& updateMutex)
          : mWrapper(&wrapper)
          , mHardwareModel(&model)
+         , mScale(&scale)
          , mBoneTransforms(&boneTrans)
          , mHardwareMeshID(mesh)
          , mUpdateMutex(updateMutex)
@@ -102,6 +105,8 @@ namespace dtAnim
                mBoneTransforms->setElement(bone * 3 + 0, rotX);
                mBoneTransforms->setElement(bone * 3 + 1, rotY);
                mBoneTransforms->setElement(bone * 3 + 2, rotZ);
+
+               mScale->set(mWrapper->GetScale());
             }
          }
 
@@ -112,6 +117,7 @@ namespace dtAnim
       dtCore::RefPtr<Cal3DModelWrapper> mWrapper;
       CalHardwareModel* mHardwareModel;
       dtCore::RefPtr<osg::Uniform> mBoneTransforms;
+      dtCore::RefPtr<osg::Uniform> mScale;
       unsigned mHardwareMeshID;
       OpenThreads::Mutex& mUpdateMutex;
    };
@@ -123,6 +129,7 @@ HardwareSubmeshDrawable::HardwareSubmeshDrawable(Cal3DModelWrapper* wrapper, Cal
    : osg::Drawable()
    , mWrapper(wrapper)
    , mHardwareModel(model)
+   , mScale(new osg::Uniform(osg::Uniform::FLOAT, "scale", 1))
    , mBoneTransforms(new osg::Uniform(osg::Uniform::FLOAT_VEC4, boneUniformName, numBones*3))
    , mBoneUniformName(boneUniformName)
    , mNumBones(numBones)
@@ -136,10 +143,12 @@ HardwareSubmeshDrawable::HardwareSubmeshDrawable(Cal3DModelWrapper* wrapper, Cal
 
    osg::StateSet* ss = getOrCreateStateSet();
    ss->addUniform(mBoneTransforms.get());
+   ss->addUniform(mScale.get());
    ss->setAttributeAndModes(new osg::CullFace);
    ss->setDataVariance(osg::Object::DYNAMIC);
 
    mBoneTransforms->setDataVariance(osg::Object::DYNAMIC);
+   mScale->setDataVariance(osg::Object::DYNAMIC);
 
    if (mHardwareModel == NULL)
    {
@@ -158,7 +167,7 @@ HardwareSubmeshDrawable::HardwareSubmeshDrawable(Cal3DModelWrapper* wrapper, Cal
    }
 
    // set our update callback which will update the bone transforms
-   setUpdateCallback(new HardwareSubmeshCallback(*mWrapper, *mHardwareModel, *mBoneTransforms, mMeshID, mUpdateMutex));
+   setUpdateCallback(new HardwareSubmeshCallback(*mWrapper, *mHardwareModel, *mScale, *mBoneTransforms, mMeshID, mUpdateMutex));
    setCullCallback(new LODCullCallback(*mWrapper, guessedMeshID)); //for LOD handling
    setComputeBoundingBoxCallback(new HardwareSubmeshComputeBound(mBoundingBox));
 }

@@ -20,8 +20,8 @@
 #include <dtAnim/submesh.h>
 #include <dtAnim/cal3dmodelwrapper.h>
 #include <dtAnim/cal3dmodeldata.h>
-#include <dtAnim/cal3ddatabase.h>
 #include <dtAnim/lodcullcallback.h>
+#include <dtAnim/modeldatabase.h>
 
 #include <dtUtil/log.h>
 #include <dtUtil/mathdefines.h>
@@ -111,7 +111,7 @@ namespace dtAnim
       osg::StateSet* ss = getOrCreateStateSet();
       ss->setAttributeAndModes(new osg::CullFace);
 
-      mModelData = Cal3DDatabase::GetInstance().GetModelData(*mWrapper);
+      mModelData = mWrapper->GetCalModelData();
 
       if (!mModelData.valid())
       {
@@ -142,19 +142,15 @@ namespace dtAnim
          // select mesh and Submesh for further data access
          if (mWrapper->SelectMeshSubmesh(mMeshID, mSubmeshID))
          {
+            Cal3dMaterial* calMaterial = mWrapper->GetSelectedSubmeshMaterial();
+
             osg::Material* material = new osg::Material();
             set->setAttributeAndModes(material, osg::StateAttribute::ON);
 
-            unsigned char meshColor[4];
             osg::Vec4 materialColor;
 
             // set the material diffuse color
-            mWrapper->GetDiffuseColor(&meshColor[0]);
-            materialColor[0] = meshColor[0] / 255.0f;
-            materialColor[1] = meshColor[1] / 255.0f;
-            materialColor[2] = meshColor[2] / 255.0f;
-            materialColor[3] = meshColor[3] / 255.0f;
-            //if (materialColor[3] == 0) materialColor[3]=1.0f;
+            materialColor = calMaterial->GetDiffuseColor();
 
             bool materialTranslucent = materialColor[3] < 1.0f;
             osg::Material::Face materialFace = materialTranslucent ? osg::Material::FRONT_AND_BACK : osg::Material::FRONT;
@@ -162,32 +158,19 @@ namespace dtAnim
             material->setDiffuse(materialFace, materialColor);
 
             // set the material ambient color
-            mWrapper->GetAmbientColor(&meshColor[0]);
-            materialColor[0] = meshColor[0] / 255.0f;
-            materialColor[1] = meshColor[1] / 255.0f;
-            materialColor[2] = meshColor[2] / 255.0f;
-            materialColor[3] = meshColor[3] / 255.0f;
-            //if (materialColor[3] == 0) materialColor[3]=1.0f;
-            material->setAmbient(materialFace, materialColor);
+            material->setAmbient(materialFace, calMaterial->GetAmbientColor());
 
             // set the material specular color
-            mWrapper->GetSpecularColor(&meshColor[0]);
-            materialColor[0] = meshColor[0] / 255.0f;
-            materialColor[1] = meshColor[1] / 255.0f;
-            materialColor[2] = meshColor[2] / 255.0f;
-            materialColor[3] = meshColor[3] / 255.0f;
-            //if (materialColor[3] == 0) materialColor[3]=1.0f;
-            material->setSpecular(materialFace, materialColor);
+            material->setSpecular(materialFace, calMaterial->GetSpecularColor());
 
             // set the material shininess factor
-            float shininess;
-            shininess = mWrapper->GetShininess();
+            float shininess = calMaterial->GetShininess();
             material->setShininess(materialFace, shininess);
 
-            if (mWrapper->GetMapCount() > 0)
+            if (calMaterial->GetTextureCount() > 0)
             {
                unsigned i = 0;
-               osg::Texture2D* texture = reinterpret_cast<osg::Texture2D*>(mWrapper->GetMapUserData(i));
+               osg::Texture2D* texture = dynamic_cast<osg::Texture2D*>(calMaterial->GetTexture(i));
 
                while (texture != NULL)
                {
@@ -199,7 +182,7 @@ namespace dtAnim
                   }
 
                   set->setTextureAttributeAndModes(i, texture, osg::StateAttribute::ON);
-                  texture = reinterpret_cast<osg::Texture2D*>(mWrapper->GetMapUserData(++i));
+                  texture = dynamic_cast<osg::Texture2D*>(calMaterial->GetTexture(++i));
                }
             }
 
@@ -231,13 +214,17 @@ namespace dtAnim
             // select mesh and Submesh for further data access
             if (mWrapper->SelectMeshSubmesh(mMeshID, mSubmeshID))
             {
+               dtCore::RefPtr<dtAnim::SubmeshInterface> submesh = mWrapper->GetSelectedSubmesh();
                // begin the rendering loop t get the faces.
 
-               mVertexCount[i] = mWrapper->GetVertexCount();
-               mFaceCount[i] = mWrapper->GetFaceCount();
+               if (submesh.valid())
+               {
+                  mVertexCount[i] = submesh->GetVertexCount();
+                  mFaceCount[i] = submesh->GetFaceCount();
 
-               vertexCountTotal += mVertexCount[i];
-               faceCountTotal += mFaceCount[i];
+                  vertexCountTotal += mVertexCount[i];
+                  faceCountTotal += mFaceCount[i];
+               }
             }
             mWrapper->EndRenderingQuery();
          }
@@ -272,13 +259,15 @@ namespace dtAnim
             // select mesh and Submesh for further data access
             if (mWrapper->SelectMeshSubmesh(mMeshID, mSubmeshID))
             {
-               int vertexCount = mWrapper->GetVertices(vertexArray, STRIDE_BYTES);
+               dtCore::RefPtr<dtAnim::Cal3dSubmesh> submesh = mWrapper->GetSelectedSubmesh();
+
+               int vertexCount = submesh->GetVertices(vertexArray, STRIDE_BYTES);
 
                // Position and normal will be copied per frame, no need to do it here
                // Only copy over the texture coordinates.
 
-               mWrapper->GetTextureCoords(0, vertexArray + 6, STRIDE_BYTES);
-               mWrapper->GetTextureCoords(1, vertexArray + 8, STRIDE_BYTES);
+               submesh->GetTextureCoords(0, vertexArray + 6, STRIDE_BYTES);
+               submesh->GetTextureCoords(1, vertexArray + 8, STRIDE_BYTES);
 
                //invert texture coordinates.
                for (unsigned i = 0; i < vertexCount * STRIDE; i += STRIDE)
@@ -287,7 +276,7 @@ namespace dtAnim
                   vertexArray[i + 9] = 1.0f - vertexArray[i + 9]; //the odd texture coordinates in cal3d are flipped, not sure why
                }
 
-               int indexCount = mWrapper->GetFaces(indexArray);
+               int indexCount = submesh->GetFaces(indexArray);
 
                ///offset into the vbo to fill the correct lod.
                vertexArray += vertexCount * STRIDE;
@@ -462,6 +451,8 @@ namespace dtAnim
          // select mesh and Submesh for further data access
          if(mWrapper->SelectMeshSubmesh(mMeshID, mSubmeshID))
          {
+            dtCore::RefPtr<dtAnim::Cal3dSubmesh> submesh = mWrapper->GetSelectedSubmesh();
+
             SubmeshUserData* userData = 
                dynamic_cast<SubmeshUserData*>(renderInfo.getUserData());
 
@@ -507,10 +498,10 @@ namespace dtAnim
                ///offset into the vbo to fill the correct lod.
                vertexArray += mVertexOffsets[lodIndex] * STRIDE;
 
-               mWrapper->GetVertices(vertexArray, STRIDE_BYTES);
+               submesh->GetVertices(vertexArray, STRIDE_BYTES);
 
                // get the transformed normals of the Submesh
-               mWrapper->GetNormals(vertexArray + 3, STRIDE_BYTES);
+               submesh->GetNormals(vertexArray + 3, STRIDE_BYTES);
                glExt->glUnmapBuffer(GL_ARRAY_BUFFER_ARB);
             }
 
@@ -551,61 +542,67 @@ namespace dtAnim
          // select mesh and submesh for further data access
          if(mWrapper->SelectMeshSubmesh(mMeshID, mSubmeshID))
          {
-            int vertexCount = mWrapper->GetVertexCount();
-            int faceCount = mWrapper->GetFaceCount();
-            if (!mMeshVertices) 
+            dtCore::RefPtr<Cal3dSubmesh> submesh = mWrapper->GetSelectedSubmesh();
+            dtAnim::MaterialInterface* material = mWrapper->GetSelectedSubmeshMaterial();
+
+            if (submesh.valid())
             {
-               mMeshVertices           = new float[vertexCount*3];
-               mMeshNormals            = new float[vertexCount*3];
-               mMeshTextureCoordinates = new float[vertexCount*2];
-               mMeshFaces              = new int[faceCount*3];
-               mWrapper->GetFaces(mMeshFaces);
+               int vertexCount = submesh->GetVertexCount();
+               int faceCount = submesh->GetFaceCount();
+               if (!mMeshVertices) 
+               {
+                  mMeshVertices           = new float[vertexCount*3];
+                  mMeshNormals            = new float[vertexCount*3];
+                  mMeshTextureCoordinates = new float[vertexCount*2];
+                  mMeshFaces              = new int[faceCount*3];
+                  submesh->GetFaces(mMeshFaces);
+               }
+
+               // get the transformed vertices of the submesh
+               vertexCount = submesh->GetVertices(mMeshVertices);
+
+               // get the transformed normals of the submesh
+               submesh->GetNormals(mMeshNormals);
+
+               // get the texture coordinates of the submesh
+               // this is still buggy, it renders only the first texture.
+               // it should be a loop rendering each texture on its own texture unit
+               unsigned tcount = submesh->GetTextureCoords(0, mMeshTextureCoordinates);
+
+               // flip vertical coordinates
+               for (int i = 1; i < vertexCount * 2; i += 2)
+               {
+                  mMeshTextureCoordinates[i] = 1.0f - mMeshTextureCoordinates[i];
+               }
+
+               // set the vertex and normal buffers
+               state.setVertexPointer(3, GL_FLOAT, 0, mMeshVertices);
+               state.setNormalPointer(GL_FLOAT, 0, mMeshNormals);
+
+               // set the texture coordinate buffer and state if necessary
+               if(material != NULL && (material->GetTextureCount() > 0) && (tcount > 0))
+               {
+                  // set the texture coordinate buffer
+                  state.setTexCoordPointer(0, 2, GL_FLOAT, 0, mMeshTextureCoordinates);
+               }
+
+               // White 
+               glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+
+
+               // draw the submesh
+               if(sizeof(CalIndex) == sizeof(short))
+               {
+                  glDrawElements(GL_TRIANGLES, faceCount * 3, GL_UNSIGNED_SHORT, mMeshFaces);
+               }
+               else
+               {
+                  glDrawElements(GL_TRIANGLES, faceCount * 3, GL_UNSIGNED_INT, mMeshFaces);
+               }
+
+               // get the faces of the submesh for the next frame
+               faceCount = submesh->GetFaces(mMeshFaces);
             }
-
-            // get the transformed vertices of the submesh
-            vertexCount = mWrapper->GetVertices(mMeshVertices);
-
-            // get the transformed normals of the submesh
-            mWrapper->GetNormals(mMeshNormals);
-
-            // get the texture coordinates of the submesh
-            // this is still buggy, it renders only the first texture.
-            // it should be a loop rendering each texture on its own texture unit
-            unsigned tcount = mWrapper->GetTextureCoords(0, mMeshTextureCoordinates);
-
-            // flip vertical coordinates
-            for (int i = 1; i < vertexCount * 2; i += 2)
-            {
-               mMeshTextureCoordinates[i] = 1.0f - mMeshTextureCoordinates[i];
-            }
-
-            // set the vertex and normal buffers
-            state.setVertexPointer(3, GL_FLOAT, 0, mMeshVertices);
-            state.setNormalPointer(GL_FLOAT, 0, mMeshNormals);
-
-            // set the texture coordinate buffer and state if necessary
-            if((mWrapper->GetMapCount() > 0) && (tcount > 0))
-            {
-               // set the texture coordinate buffer
-               state.setTexCoordPointer(0, 2, GL_FLOAT, 0, mMeshTextureCoordinates);
-            }
-
-            // White 
-            glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-
-
-            // draw the submesh
-            if(sizeof(CalIndex) == sizeof(short))
-            {
-               glDrawElements(GL_TRIANGLES, faceCount * 3, GL_UNSIGNED_SHORT, mMeshFaces);
-            }
-            else
-            {
-               glDrawElements(GL_TRIANGLES, faceCount * 3, GL_UNSIGNED_INT, mMeshFaces);
-            }
-
-            // get the faces of the submesh for the next frame
-            faceCount = mWrapper->GetFaces(mMeshFaces);
          }
 
          // end the rendering

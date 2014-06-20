@@ -22,22 +22,39 @@
 #ifndef __DELTA_CAL3DANIMATOR_H__
 #define __DELTA_CAL3DANIMATOR_H__
 
+////////////////////////////////////////////////////////////////////////////////
+// INCLUDE DIRECTIVES
+////////////////////////////////////////////////////////////////////////////////
 #include <dtAnim/export.h>
-#include <dtAnim/ical3ddriver.h>
+#include <dtAnim/animationupdaterinterface.h>
 #include <dtAnim/cal3dmodelwrapper.h>
-
-#include <osg/Referenced>
+#include <dtAnim/ical3ddriver.h>
 #include <dtCore/refptr.h>
+#include <osg/Referenced>
+
+
+
+////////////////////////////////////////////////////////////////////////////////
+// FORWARD DECLARATIONS
+////////////////////////////////////////////////////////////////////////////////
+class CalMixer;
+class CalModel;
+
+
 
 namespace dtAnim
 {
-
-   class DT_ANIM_EXPORT Cal3DAnimator: public osg::Referenced
+   /////////////////////////////////////////////////////////////////////////////
+   // CLASS CODE
+   /////////////////////////////////////////////////////////////////////////////
+   class DT_ANIM_EXPORT Cal3DAnimator: public osg::Referenced, virtual public dtAnim::AnimationUpdaterInterface
    {
    public:
-      Cal3DAnimator(Cal3DModelWrapper* pWrapper);
+      DT_DECLARE_VIRTUAL_REF_INTERFACE_INLINE
 
-      void Update(double dt);
+      static const float DEFAULT_MINIMUM_BLEND_TIME;
+
+      Cal3DAnimator(Cal3DModelWrapper* wrapper);
 
       Cal3DModelWrapper* GetWrapper();
       const Cal3DModelWrapper* GetWrapper() const;
@@ -67,11 +84,61 @@ namespace dtAnim
       void SetPostDriver(ICal3DDriver* pDriver);
       ICal3DDriver* GetPostDriver() const {return mPostDriver.get(); }
 
+      virtual void Update(double timeDelta);
+      
+      /// Update just the Cal3D's animation using the mixer
+      void UpdateAnimation(float deltaTime);
+
+      /// Update just Cal3D's skeleton using the mixer
+      void UpdateSkeleton(float deltaTime);
+
+      /// Update the CalModel's morph target mixer
+      void UpdateMorphTargetMixer(float deltaTime);
+
+      /// Update the CalModel's physique
+      void UpdatePhysique(float deltaTime);
+
+      /// Update the CalModel's spring system
+      void UpdateSpringSystem(float deltaTime);
+
+      /// Remove all existing animations from the mixer
+      virtual void ClearAll(float delay = 0.0);
+
+      /// sets the offset time used in synchronized looping animations.
+      virtual void SetAnimationTime(float time);
+      /// @return the offset time used when playing looping animations.
+      virtual float GetAnimationTime() const;
+
+      virtual void SetPaused(bool paused);
+
+      virtual bool IsPaused() const;
+
+      /**
+       * Determines if animation updates can be performed depending if any queued
+       * animations are present. If bind poses are allowed then this will always
+       * return TRUE; this is because an update with no animation will return to
+       * the neutral bind pose.
+       */
+      virtual bool IsUpdatable() const;
+
+      void SetMinimumBlendTime(float seconds);
+      float GetMinimumBlendTime() const;
+      
+      /**
+       * Globally set whether characters should be allowed to go back to bind pose
+       * when animations have completed.
+       */
+      static void SetBindPoseAllowed(bool allow);
+      static bool IsBindPoseAllowed();
+
    protected:
       virtual ~Cal3DAnimator();
 
    private:
-      dtCore::RefPtr<Cal3DModelWrapper> mWrapper;
+      dtCore::RefPtr<dtAnim::Cal3DModelWrapper> mWrapper;
+      CalModel* mCalModel;
+      CalMixer* mMixer;
+      float mMinBlendTime;
 
       dtCore::RefPtr<ICal3DDriver> mPreDriver;
       dtCore::RefPtr<ICal3DDriver> mPostDriver;
@@ -80,6 +147,9 @@ namespace dtAnim
       dtCore::RefPtr<ICal3DDriver> mMorphDriver;
       dtCore::RefPtr<ICal3DDriver> mSpringDriver;
       dtCore::RefPtr<ICal3DDriver> mPhysiqueDriver;
+
+      // Class variables
+      static bool sAllowBindPose;
    };
 
 } // namespace dtAnim

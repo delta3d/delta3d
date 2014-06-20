@@ -10,11 +10,12 @@
 #include <dtQt/osggraphicswindowqt.h>
 
 #include <osg/Geode> ///needed for the node builder
-#include <dtAnim/cal3ddatabase.h>
+#include <dtAnim/animatable.h>
 #include <dtAnim/animnodebuilder.h>
-#include <dtAnim/animationwrapper.h>
+#include <dtAnim/modeldatabase.h>
 #include <dtAnim/chardrawable.h>
 #include <dtCore/deltawin.h>
+#include <dtQt/nodetreepanel.h>
 #include <dtUtil/fileutils.h>
 #include <dtUtil/log.h>
 
@@ -53,6 +54,13 @@
 #include <cassert>
 
 ////////////////////////////////////////////////////////////////////////////////
+// CONSTANTS
+////////////////////////////////////////////////////////////////////////////////
+static const QString APP_TITLE("Animation Viewer");
+static const QString SETTINGS_NAME("delta3d");
+static const QString SETTINGS_RECENT_FILES("recentFileList");
+
+////////////////////////////////////////////////////////////////////////////////
 // Helper Function
 void ClearTableWidget(QTableWidget& widget)
 {
@@ -87,16 +95,16 @@ void ClearTreeWidgetItem(QTreeWidgetItem& item)
 ////////////////////////////////////////////////////////////////////////////////
 // Helper Function
 void AddItemsToTreeWidgetItem(QTreeWidgetItem& item,
-   const dtAnim::Cal3DModelData& modelData, dtAnim::Cal3DModelData::CalFileType fileType)
+   const dtAnim::BaseModelData& modelData, dtAnim::ModelResourceType fileType)
 {
-   dtAnim::Cal3DModelData::StrArray nameList;
+   dtAnim::StrArray nameList;
    modelData.GetObjectNameListForFileTypeSorted(fileType, nameList);
 
    std::string curName;
    std::string curFile;
    QTreeWidgetItem* curItem = NULL;
-   dtAnim::Cal3DModelData::StrArray::const_iterator curIter = nameList.begin();
-   dtAnim::Cal3DModelData::StrArray::const_iterator endIter = nameList.end();
+   dtAnim::StrArray::const_iterator curIter = nameList.begin();
+   dtAnim::StrArray::const_iterator endIter = nameList.end();
    for (; curIter != endIter; ++curIter)
    {
       curName = *curIter;
@@ -126,6 +134,7 @@ MainWindow::MainWindow()
   , mToggleDockProperties(NULL)
   , mToggleDockResources(NULL)
   , mToggleDockTools(NULL)
+  , mToggleDockNodeTools(NULL)
   , mScaleFactorSpinner(NULL)
   , mAttachmentOffsetXSpinner(NULL)
   , mAttachmentOffsetYSpinner(NULL)
@@ -134,6 +143,7 @@ MainWindow::MainWindow()
   , mAttachmentRotYSpinner(NULL)
   , mAttachmentRotZSpinner(NULL)
   , mCurrentAttachment("")
+  , mNodeTreePanel(NULL)
   , mAnimListWidget(NULL)
   , mMeshListWidget(NULL)
   , mSubMorphTargetListWidget(NULL)
@@ -169,8 +179,12 @@ MainWindow::MainWindow()
    headers << "Name" << "Weight (L)" << "Delay (L)" << "Delay In (A)" << "Delay Out (A)" << "Mixer Blend" << "Frame Time";
    mAnimListWidget->setHorizontalHeaderLabels(headers);
 
-   mMeshListWidget = new QListWidget(this);
-   connect(mMeshListWidget, SIGNAL(itemChanged(QListWidgetItem*)), this, SLOT(OnMeshActivated(QListWidgetItem*)));
+   QStringList meshHeaders;
+   meshHeaders << "Name" << "Verts" << "Faces" << "Submeshes";
+   mMeshListWidget = new QTableWidget(this);
+   mMeshListWidget->setColumnCount(4);
+   mMeshListWidget->setHorizontalHeaderLabels(meshHeaders);
+   connect(mMeshListWidget, SIGNAL(itemChanged(QTableWidgetItem*)), this, SLOT(OnMeshActivated(QTableWidgetItem*)));
 
 
    mMaterialModel = new QStandardItemModel(this);
@@ -189,7 +203,7 @@ MainWindow::MainWindow()
    mSubMorphTargetListWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
    {
       QStringList headers;
-      headers << "MeshID" << "SubMeshID" << "MorphName" << "Weight";
+      headers << "MeshName" << "SubMeshID" << "MorphName" << "Weight";
       mSubMorphTargetListWidget->setHorizontalHeaderLabels(headers);
    }
 
@@ -249,6 +263,7 @@ void MainWindow::CreateMenus()
    viewMenu->addAction(mToggleDockProperties);
    viewMenu->addAction(mToggleDockResources);
    viewMenu->addAction(mToggleDockTools);
+   viewMenu->addAction(mToggleDockNodeTools);
 
    windowMenu->addAction(mNewCharAct);
    windowMenu->addAction(mLoadCharAct);
@@ -352,6 +367,10 @@ void MainWindow::CreateActions()
    mToggleDockTools = new QAction(tr("Tools"), this);
    mToggleDockTools->setCheckable(true);
    mToggleDockTools->setChecked(true);
+
+   mToggleDockNodeTools = new QAction(tr("Node Tools"), this);
+   mToggleDockNodeTools->setCheckable(true);
+   mToggleDockNodeTools->setChecked(true);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -495,7 +514,15 @@ void MainWindow::OnNewAnimation(unsigned int id, const QString& animationName,
                                 unsigned int trackCount, unsigned int keyframes,
                                 float duration)
 {
-   mAnimListWidget->insertRow(mAnimListWidget->rowCount());
+   int rowCount = mAnimListWidget->rowCount();
+   if ((int)(id) > rowCount)
+   {
+      mAnimListWidget->setRowCount(id+1);
+   }
+   else if (id == rowCount)
+   {
+      mAnimListWidget->insertRow(rowCount);
+   }
 
    { //name
       QTableWidgetItem* item = new QTableWidgetItem(animationName);
@@ -599,19 +626,46 @@ void MainWindow::OnNewMorphAnimation(unsigned int id, const QString& animationNa
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void MainWindow::OnNewMesh(int meshID, const QString& meshName, const std::vector<std::string>& boneNames)
+void MainWindow::OnNewMesh(int meshID, const QString& meshName, const std::vector<std::string>& boneNames,
+                           bool visible, int vertCount, int faceCount, int submeshCount)
 {
-   QListWidgetItem *meshItem = new QListWidgetItem();
-   meshItem->setText(meshName);
-   meshItem->setData(Qt::UserRole, meshID);
+   int rowCount = mMeshListWidget->rowCount();
+   if (meshID > rowCount)
+   {
+      mMeshListWidget->setRowCount(meshID+1);
+   }
+   else if (meshID == rowCount)
+   {
+      mMeshListWidget->insertRow(rowCount);
+   }
+   
+   { // Name
+      QTableWidgetItem* item = new QTableWidgetItem(meshName);
+      item->setCheckState(visible ? Qt::Checked : Qt::Unchecked);
+      item->setData(Qt::UserRole, meshID);
+      item->setFlags(Qt::ItemIsUserCheckable | Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+      mMeshListWidget->setItem(meshID, 0, item);
+   }
 
-   meshItem->setFlags(Qt::ItemIsSelectable |
-                      Qt::ItemIsUserCheckable |
-                      Qt::ItemIsEnabled);
+   { // Vert Count
+      QTableWidgetItem* item = new QTableWidgetItem(QString::number(vertCount));
+      item->setFlags(Qt::ItemIsUserCheckable | Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+      mMeshListWidget->setItem(meshID, 1, item);
+   }
 
-   meshItem->setCheckState(Qt::Checked);
+   { // Face Count
+      QTableWidgetItem* item = new QTableWidgetItem(QString::number(faceCount));
+      item->setFlags(Qt::ItemIsUserCheckable | Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+      mMeshListWidget->setItem(meshID, 2, item);
+   }
 
-   mMeshListWidget->addItem(meshItem);
+   { // Submesh Count
+      QTableWidgetItem* item = new QTableWidgetItem(QString::number(submeshCount));
+      item->setFlags(Qt::ItemIsUserCheckable | Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+      mMeshListWidget->setItem(meshID, 3, item);
+   }
+
+   mMeshListWidget->resizeColumnToContents(0);
 
    mAttachmentParent->clear();
    std::vector<std::string>::const_iterator i;
@@ -622,12 +676,12 @@ void MainWindow::OnNewMesh(int meshID, const QString& meshName, const std::vecto
 }
 
 //////////////////////////////////////////////////////////////////////////
-void MainWindow::OnNewSubMorphTarget(int meshID, int subMeshID,
+void MainWindow::OnNewSubMorphTarget(const QString& meshName, int subMeshID,
                                      int morphID, const QString& morphName)
 {
    mSubMorphTargetListWidget->insertRow(mSubMorphTargetListWidget->rowCount());
    { //meshID
-      QTableWidgetItem* item = new QTableWidgetItem(QString::number(meshID));
+      QTableWidgetItem* item = new QTableWidgetItem(meshName);
       item->setData(Qt::UserRole, morphID);
 
       item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
@@ -757,7 +811,7 @@ void MainWindow::OnPoseMeshesLoaded(const std::vector<dtAnim::PoseMesh*>& poseMe
 
       // Add new pose mesh visualization and properties
       mPoseMeshScene->AddMesh(*newMesh, model);
-      mPoseMeshProperties->AddMesh(*newMesh, *model->GetCal3DWrapper());
+      mPoseMeshProperties->AddMesh(*newMesh, *model->GetModelWrapper());
    }
 
    // Set the default mode
@@ -807,8 +861,8 @@ void MainWindow::OnNewMaterial(int matID, const QString& name,
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void MainWindow::OnCharacterDataLoaded(dtAnim::Cal3DModelData* modelData,
-                                       dtAnim::Cal3DModelWrapper* modelWrapper)
+void MainWindow::OnCharacterDataLoaded(dtAnim::BaseModelData* modelData,
+                                       dtAnim::BaseModelWrapper* modelWrapper)
 {
    using namespace dtAnim;
 
@@ -818,11 +872,19 @@ void MainWindow::OnCharacterDataLoaded(dtAnim::Cal3DModelData* modelData,
    mObjectNameDelegate->SetCharModelData(modelData);
    mObjectNameDelegate->SetCharModelWrapper(modelWrapper);
    mFileLabel->setText(modelData->GetModelName().c_str());
-   AddItemsToTreeWidgetItem(*mFileGroupSkel, *modelData, Cal3DModelData::SKEL_FILE);
-   AddItemsToTreeWidgetItem(*mFileGroupAnim, *modelData, Cal3DModelData::ANIM_FILE);
-   AddItemsToTreeWidgetItem(*mFileGroupMesh, *modelData, Cal3DModelData::MESH_FILE);
-   AddItemsToTreeWidgetItem(*mFileGroupMat, *modelData, Cal3DModelData::MAT_FILE);
-   AddItemsToTreeWidgetItem(*mFileGroupMorph, *modelData, Cal3DModelData::MORPH_FILE);
+   AddItemsToTreeWidgetItem(*mFileGroupSkel, *modelData, dtAnim::SKEL_FILE);
+   AddItemsToTreeWidgetItem(*mFileGroupAnim, *modelData, dtAnim::ANIM_FILE);
+   AddItemsToTreeWidgetItem(*mFileGroupMesh, *modelData, dtAnim::MESH_FILE);
+   AddItemsToTreeWidgetItem(*mFileGroupMat, *modelData, dtAnim::MAT_FILE);
+   AddItemsToTreeWidgetItem(*mFileGroupMorph, *modelData, dtAnim::MORPH_FILE);
+
+   mScaleFactorSpinner->setValue(modelData->GetScale());
+
+   osg::Node* characterRootNode = mViewer->GetRootNode();
+   if (characterRootNode != NULL)
+   {
+      mNodeTreePanel->SetNode(characterRootNode);
+   }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -897,18 +959,19 @@ void MainWindow::OnAnimationClicked(QTableWidgetItem* item)
 {
    if (item->column() != 0) return;
 
+   int animId = item->data(Qt::UserRole).toUInt();
 
    if (item->checkState() == Qt::Checked)
    {
       //item->setCheckState(Qt::Unchecked);
       //emit StopAnimation( item->data(Qt::UserRole).toUInt() );
-      OnStartAnimation(item->row());
+      OnStartAnimation(animId);
    }
    else
    {
       //item->setCheckState(Qt::Checked);
       //emit StartAnimation( item->data(Qt::UserRole).toUInt() );
-      OnStopAnimation(item->row());
+      OnStopAnimation(animId);
    }
 }
 
@@ -934,19 +997,22 @@ void MainWindow::OnMorphAnimationClicked(QTableWidgetItem* item)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void MainWindow::OnMeshActivated(QListWidgetItem* item)
+void MainWindow::OnMeshActivated(QTableWidgetItem* item)
 {
    int meshID = item->data(Qt::UserRole).toInt();
 
-   if (item->checkState() == Qt::Checked)
+   if (item->column() == 0)
    {
-      //Show the mesh on the CalModel
-      emit ShowMesh(meshID);
-   }
-   else
-   {
-      //Hide the mesh on CalModel from view
-      emit HideMesh(meshID);
+      bool visible = item->checkState() == Qt::Checked;
+
+      if (visible)
+      {
+         emit ShowMesh(meshID);
+      }
+      else
+      {
+         emit HideMesh(meshID);
+      }
    }
 }
 
@@ -966,30 +1032,20 @@ void MainWindow::OnSpeedChanged(double newValue)
 void MainWindow::OnChangeScaleFactor()
 {
    emit ScaleFactorChanged(float(mScaleFactorSpinner->value()));
-
-   //reset the scaling factor to 1.0
-   mScaleFactorSpinner->blockSignals(true);
-   mScaleFactorSpinner->setValue(1.0);
-   mScaleFactorSpinner->blockSignals(false);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 void MainWindow::OnToggleHardwareSkinning()
 {
-   dtAnim::AnimNodeBuilder& nodeBuilder = dtAnim::Cal3DDatabase::GetInstance().GetNodeBuilder();
-   QAction* action = qobject_cast<QAction*>(sender());
-   bool usingHardwareSkinning = action->isChecked();
+   if (dtAnim::ModelDatabase::IsAvailable())
+   {
+      QAction* action = qobject_cast<QAction*>(sender());
+      bool usingHardwareSkinning = action->isChecked();
 
-   if (usingHardwareSkinning)
-   {
-      nodeBuilder.SetCreate(dtAnim::AnimNodeBuilder::CreateFunc(&nodeBuilder, &dtAnim::AnimNodeBuilder::CreateHardware));
+      dtAnim::ModelDatabase::GetInstance().SetHardwareMode(usingHardwareSkinning);
    }
-   else
-   {
-      nodeBuilder.SetCreate(dtAnim::AnimNodeBuilder::CreateFunc(&nodeBuilder, &dtAnim::AnimNodeBuilder::CreateSoftware));
-   }
-   QSettings settings("MOVES", "Animation Viewer");
-   QStringList files = settings.value("recentFileList").toStringList();
+   QSettings settings(SETTINGS_NAME, APP_TITLE);
+   QStringList files = settings.value(SETTINGS_RECENT_FILES).toStringList();
    LoadCharFile(files.first());
 }
 
@@ -1016,8 +1072,8 @@ void MainWindow::OnToggleLightingToolbar()
 ////////////////////////////////////////////////////////////////////////////////
 void MainWindow::UpdateRecentFileActions()
 {
-   QSettings settings("MOVES", "Animation Viewer");
-   QStringList files = settings.value("recentFileList").toStringList();
+   QSettings settings(SETTINGS_NAME, APP_TITLE);
+   QStringList files = settings.value(SETTINGS_RECENT_FILES).toStringList();
 
    int numRecentFiles = qMin(files.size(), 5);
 
@@ -1041,18 +1097,18 @@ void MainWindow::SetCurrentFile(const QString& filename)
 {
    if (filename.isEmpty())
    {
-      setWindowTitle(tr("Animation Viewer"));
+      setWindowTitle(APP_TITLE);
       mCloseCharAction->setEnabled(false);
       return;
    }
 
    mCurrentFile = filename.toStdString();
 
-   setWindowTitle(tr("%1 - %2").arg(QFileInfo(filename).fileName()).arg(tr("Animation Viewer")));
+   setWindowTitle(tr("%1 - %2").arg(QFileInfo(filename).fileName()).arg(APP_TITLE));
    mCloseCharAction->setEnabled(true);
 
-   QSettings settings("MOVES", "Animation Viewer");
-   QStringList files = settings.value("recentFileList").toStringList();
+   QSettings settings(SETTINGS_NAME, APP_TITLE);
+   QStringList files = settings.value(SETTINGS_RECENT_FILES).toStringList();
    files.removeAll(filename);
    files.prepend(filename);
 
@@ -1061,7 +1117,7 @@ void MainWindow::SetCurrentFile(const QString& filename)
       files.removeLast();
    }
 
-   settings.setValue("recentFileList", files);
+   settings.setValue(SETTINGS_RECENT_FILES, files);
    UpdateRecentFileActions();
 }
 
@@ -1325,12 +1381,7 @@ void MainWindow::dropEvent(QDropEvent* event)
 //////////////////////////////////////////////////////////////////////////
 bool MainWindow::IsAnimNodeBuildingUsingHW() const
 {
-   //Not really a great way to see what method we're using.  A better way would
-   //be to query a hardware skinning object to see if its being used or something.
-   //This'll have to do for now.
-   dtAnim::AnimNodeBuilder& nodeBuilder = dtAnim::Cal3DDatabase::GetInstance().GetNodeBuilder();
-
-   return (nodeBuilder.SupportsHardware());
+   return dtAnim::ModelDatabase::GetInstance().IsHardwareSupported();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -1349,10 +1400,10 @@ void MainWindow::OnSubMorphChanged(QTableWidgetItem* item)
       const float weight = item->text().toFloat();
       const int morphID = item->row();
 
-      const int meshID = mSubMorphTargetListWidget->item(item->row(), 0)->text().toInt();
+      const QString meshName = mSubMorphTargetListWidget->item(item->row(), 0)->text();
       const int subMeshID = mSubMorphTargetListWidget->item(item->row(), 1)->text().toInt();
 
-      emit SubMorphTargetChanged(meshID, subMeshID, morphID, weight);
+      emit SubMorphTargetChanged(meshName, subMeshID, morphID, weight);
    }
 }
 
@@ -1369,13 +1420,11 @@ void MainWindow::OnClearCharacterData()
 {
    //wipe out previous mesh, animation, material ui's
 
-   //mAnimListWidget->clear(); //note, this also removes the header items
-   mMeshListWidget->clear();
-
    // Make sure we start fresh
    DestroyPoseResources();
 
    ClearTableWidget(*mAnimListWidget);
+   ClearTableWidget(*mMeshListWidget);
    ClearTableWidget(*mSubMorphTargetListWidget);
    ClearTableWidget(*mSubMorphAnimationListWidget);
    ClearStandardItemModel(*mMaterialModel);
@@ -1429,26 +1478,26 @@ void MainWindow::OnResourceEditStart(int fileType, const std::string& objectName
 
    // Time to update character and UI states prior to an object resource change.
 
-   Cal3DModelData::CalFileType calFileType = Cal3DModelData::CalFileType(fileType);
-   switch (calFileType)
+   dtAnim::ModelResourceType modelFileType = dtAnim::ModelResourceType(fileType);
+   switch (modelFileType)
    {
-   case Cal3DModelData::SKEL_FILE:
+   case dtAnim::SKEL_FILE:
       // TODO:
       break;
 
-   case Cal3DModelData::ANIM_FILE:
+   case dtAnim::ANIM_FILE:
       // TODO:
       break;
 
-   case Cal3DModelData::MESH_FILE:
+   case dtAnim::MESH_FILE:
       // TODO:
       break;
 
-   case Cal3DModelData::MAT_FILE:
+   case dtAnim::MAT_FILE:
       // TODO:
       break;
 
-   case Cal3DModelData::MORPH_FILE:
+   case dtAnim::MORPH_FILE:
       // TODO:
       break;
 
@@ -1464,26 +1513,26 @@ void MainWindow::OnResourceEditEnd(int fileType, const std::string& objectName)
 
    bool reload = false;
 
-   Cal3DModelData::CalFileType calFileType = Cal3DModelData::CalFileType(fileType);
-   switch (calFileType)
+   dtAnim::ModelResourceType modelFileType = dtAnim::ModelResourceType(fileType);
+   switch (modelFileType)
    {
-   case Cal3DModelData::SKEL_FILE:
+   case dtAnim::SKEL_FILE:
       reload = true;
       break;
 
-   case Cal3DModelData::ANIM_FILE:
+   case dtAnim::ANIM_FILE:
       // Reload not necessary since animations are hot-swappable.
       break;
 
-   case Cal3DModelData::MESH_FILE:
+   case dtAnim::MESH_FILE:
       reload = true;
       break;
 
-   case Cal3DModelData::MAT_FILE:
+   case dtAnim::MAT_FILE:
       reload = true;
       break;
 
-   case Cal3DModelData::MORPH_FILE:
+   case dtAnim::MORPH_FILE:
       reload = true;
       break;
 
@@ -1503,19 +1552,19 @@ void MainWindow::OnResourceNameChanged(int fileType,
 {
    using namespace dtAnim;
 
-   Cal3DModelData::CalFileType calFileType = Cal3DModelData::CalFileType(fileType);
-   switch (calFileType)
+   dtAnim::ModelResourceType modelFileType = dtAnim::ModelResourceType(fileType);
+   switch (modelFileType)
    {
-   case Cal3DModelData::SKEL_FILE:
+   case dtAnim::SKEL_FILE:
       break;
 
-   case Cal3DModelData::ANIM_FILE:
+   case dtAnim::ANIM_FILE:
       {
-         dtAnim::Cal3DModelData* modelData = mObjectNameDelegate->GetCharModelData();
-         const AnimationWrapper* wrapper = modelData->GetAnimationWrapperByName(newName);
-         if (wrapper != NULL)
+         dtAnim::BaseModelData* modelData = mObjectNameDelegate->GetCharModelData();
+         const dtAnim::Animatable* anim = modelData->GetAnimatableByName(newName);
+         if (anim != NULL)
          {
-            int animId = wrapper->GetID();
+            int animId = anim->GetID();
             if (animId >= 0)
             {
                QTableWidgetItem* item = mAnimListWidget->item(animId, 0);
@@ -1526,15 +1575,15 @@ void MainWindow::OnResourceNameChanged(int fileType,
       }
       break;
 
-   case Cal3DModelData::MESH_FILE:
+   case dtAnim::MESH_FILE:
       // TODO:
       break;
 
-   case Cal3DModelData::MAT_FILE:
+   case dtAnim::MAT_FILE:
       // TODO:
       break;
 
-   case Cal3DModelData::MORPH_FILE:
+   case dtAnim::MORPH_FILE:
       // TODO:
       break;
 
@@ -1574,26 +1623,26 @@ void MainWindow::OnResourceRemoved(int fileType, const std::string& objectName)
    QTreeWidgetItem* item = NULL;
 
    // Get the resource file group widget that is affected by the change.
-   Cal3DModelData::CalFileType calFileType = Cal3DModelData::CalFileType(fileType);
-   switch (calFileType)
+   dtAnim::ModelResourceType modelFileType = dtAnim::ModelResourceType(fileType);
+   switch (modelFileType)
    {
-   case Cal3DModelData::SKEL_FILE:
+   case dtAnim::SKEL_FILE:
       item = mFileGroupSkel;
       break;
 
-   case Cal3DModelData::ANIM_FILE:
+   case dtAnim::ANIM_FILE:
       item = mFileGroupAnim;
       break;
 
-   case Cal3DModelData::MESH_FILE:
+   case dtAnim::MESH_FILE:
       item = mFileGroupMesh;
       break;
 
-   case Cal3DModelData::MAT_FILE:
+   case dtAnim::MAT_FILE:
       item = mFileGroupMat;
       break;
 
-   case Cal3DModelData::MORPH_FILE:
+   case dtAnim::MORPH_FILE:
       item = mFileGroupMorph;
       break;
 
@@ -1601,11 +1650,11 @@ void MainWindow::OnResourceRemoved(int fileType, const std::string& objectName)
       break;
    }
 
-   Cal3DModelData* modelData = mFileDelegate->GetCharModelData();
+   BaseModelData* modelData = mFileDelegate->GetCharModelData();
    if (modelData != NULL && item != NULL)
    {
       ClearTreeWidgetItem(*item);
-      AddItemsToTreeWidgetItem(*item, *modelData, calFileType);
+      AddItemsToTreeWidgetItem(*item, *modelData, modelFileType);
    }
 
    // TODO: Update other affected UIs.
@@ -1670,8 +1719,8 @@ void MainWindow::SetupConnectionsWithViewer()
    connect(mViewer, SIGNAL(MorphAnimationLoaded(unsigned int,const QString &,unsigned int,unsigned int,float)),
       this, SLOT(OnNewMorphAnimation(unsigned int,const QString&,unsigned int,unsigned int,float)));
 
-   connect(mViewer, SIGNAL(MeshLoaded(int,const QString&, const std::vector<std::string>&)),
-           this, SLOT(OnNewMesh(int,const QString&, const std::vector<std::string>&)));
+   connect(mViewer, SIGNAL(MeshLoaded(int,const QString&, const std::vector<std::string>&, bool, int, int, int)),
+           this, SLOT(OnNewMesh(int,const QString&, const std::vector<std::string>&, bool, int, int, int)));
 
    connect(mViewer, SIGNAL(PoseMeshesLoaded(const std::vector<dtAnim::PoseMesh*>&, dtAnim::CharDrawable*)),
       this, SLOT(OnPoseMeshesLoaded(const std::vector<dtAnim::PoseMesh*>&, dtAnim::CharDrawable*)));
@@ -1679,8 +1728,8 @@ void MainWindow::SetupConnectionsWithViewer()
    connect(mViewer, SIGNAL(MaterialLoaded(int,const QString&,const QColor&,const QColor&,const QColor&,float)),
       this, SLOT(OnNewMaterial(int,const QString&,const QColor&,const QColor&,const QColor&,float)));
 
-   connect(mViewer, SIGNAL(CharacterDataLoaded(dtAnim::Cal3DModelData*, dtAnim::Cal3DModelWrapper*)),
-      this, SLOT(OnCharacterDataLoaded(dtAnim::Cal3DModelData*, dtAnim::Cal3DModelWrapper*)));
+   connect(mViewer, SIGNAL(CharacterDataLoaded(dtAnim::BaseModelData*, dtAnim::BaseModelWrapper*)),
+      this, SLOT(OnCharacterDataLoaded(dtAnim::BaseModelData*, dtAnim::BaseModelWrapper*)));
 
    connect(this, SIGNAL(ShowMesh(int)), mViewer, SLOT(OnShowMesh(int)));
    connect(this, SIGNAL(HideMesh(int)), mViewer, SLOT(OnHideMesh(int)));
@@ -1704,8 +1753,8 @@ void MainWindow::SetupConnectionsWithViewer()
    connect(this->mBoneBasisAction, SIGNAL(toggled(bool)), mViewer, SLOT(OnSetBoneBasisDisplay(bool)));
    connect(this->mBoneLabelAction, SIGNAL(toggled(bool)), mViewer, SLOT(OnSetBoneLabelDisplay(bool)));
 
-   connect(mViewer, SIGNAL(SubMorphTargetLoaded(int,int,int,const QString&)), this, SLOT(OnNewSubMorphTarget(int,int,int,const QString&)));
-   connect(this, SIGNAL(SubMorphTargetChanged(int,int,int,float)), mViewer, SLOT(OnMorphChanged(int,int,int,float)));
+   connect(mViewer, SIGNAL(SubMorphTargetLoaded(const QString&,int,int,const QString&)), this, SLOT(OnNewSubMorphTarget(const QString&,int,int,const QString&)));
+   connect(this, SIGNAL(SubMorphTargetChanged(const QString&,int,int,float)), mViewer, SLOT(OnMorphChanged(const QString&,int,int,float)));
    connect(this, SIGNAL(PlayMorphAnimation(int, float, float, float, bool)), mViewer, SLOT(OnPlayMorphAnimation(int, float, float, float, bool)));
    connect(this, SIGNAL(StopMorphAnimation(int, float)), mViewer, SLOT(OnStopMorphAnimation(int, float)));
    
@@ -1882,6 +1931,25 @@ void MainWindow::CreateDockWidget_Tools()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+void MainWindow::CreateDockWidget_NodeTools()
+{
+   QDockWidget* nodeToolsDockWidget = new QDockWidget(tr("Node Tools"), this);
+   addDockWidget(Qt::RightDockWidgetArea, nodeToolsDockWidget);
+   QWidget* toolWidget = new QWidget();
+   nodeToolsDockWidget->setWidget(toolWidget);
+
+   connect(mToggleDockNodeTools, SIGNAL(toggled(bool)), nodeToolsDockWidget, SLOT(setVisible(bool)));
+   connect(nodeToolsDockWidget, SIGNAL(visibilityChanged(bool)), mToggleDockNodeTools, SLOT(setChecked(bool)));
+
+   QVBoxLayout* toolVLayout = new QVBoxLayout(toolWidget);
+
+   { // Node Tree Panel
+      mNodeTreePanel = new dtQt::NodeTreePanel;
+      toolVLayout->addWidget(mNodeTreePanel);
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
 void MainWindow::CreateDockWidget_Resources()
 {
    QDockWidget* resDockWidget = new QDockWidget(tr("Resources"), this);
@@ -1974,5 +2042,6 @@ void MainWindow::CreateDockWidgets()
 {
    CreateDockWidget_Properties();
    CreateDockWidget_Tools();
+   CreateDockWidget_NodeTools();
    CreateDockWidget_Resources();
 }

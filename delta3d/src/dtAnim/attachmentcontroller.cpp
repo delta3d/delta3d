@@ -20,7 +20,6 @@
  */
 
 #include <dtAnim/attachmentcontroller.h>
-#include <dtAnim/cal3dmodelwrapper.h>
 #include <dtCore/transformable.h>
 #include <dtCore/transform.h>
 #include <dtCore/hotspotattachment.h>
@@ -98,7 +97,7 @@ namespace dtAnim
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   void AttachmentController::Update(Cal3DModelWrapper& model)
+   void AttachmentController::Update(BaseModelWrapper& model)
    {
       AttachmentMover mover(model);
       std::for_each(mAttachments.begin(), mAttachments.end(), mover);
@@ -106,8 +105,8 @@ namespace dtAnim
 
 
    /////////////////////////////////////////////////////////////////////////////////
-   AttachmentMover::AttachmentMover(const dtAnim::Cal3DModelWrapper& model)
-      : mModel(&model)
+   AttachmentMover::AttachmentMover(const dtAnim::BaseModelWrapper& model)
+      : mModel(const_cast<dtAnim::BaseModelWrapper*>(&model))
    {
    }
 
@@ -138,10 +137,10 @@ namespace dtAnim
       dtUtil::HotSpotDefinition& spotDef = attachment.second;
 
       // find out if the bone exists
-      int boneId = mModel->GetCoreBoneID(spotDef.mParentName);
-
+      dtAnim::BoneInterface* bone = mModel->GetBone(spotDef.mParentName);
+      
       // there was no bone with this name
-      if (boneId == dtAnim::Cal3DModelWrapper::NULL_BONE)
+      if (bone == NULL)
       {
          dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
                "Ignoring update on character attached actor \"%s\" because bone named \"%s\" does not exist.",
@@ -150,10 +149,10 @@ namespace dtAnim
       }
 
       // find the total transformation for the bone
-      osg::Quat parentRot = mModel->GetBoneAbsoluteRotation(boneId);
+      osg::Quat parentRot = bone->GetAbsoluteRotation();
       osg::Quat bodyRotation = spotDef.mLocalRotation * parentRot;
 
-      osg::Vec3 boneTrans = mModel->GetBoneAbsoluteTranslation(boneId);
+      osg::Vec3 boneTrans = bone->GetAbsoluteTranslation();
 
       // transform the local point by the total transformation
       // and store result in the absolute point

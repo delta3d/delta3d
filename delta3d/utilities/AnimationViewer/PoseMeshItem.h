@@ -5,7 +5,7 @@
 #include <dtCore/observerptr.h>
 #include <dtAnim/posemesh.h>
 #include <dtAnim/posemeshutility.h>
-#include <dtAnim/cal3dmodelwrapper.h>
+#include <dtAnim/basemodelwrapper.h>
 #include <QtGui/QGraphicsRectItem>
 
 #include <set>

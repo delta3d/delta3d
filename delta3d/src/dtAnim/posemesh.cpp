@@ -17,23 +17,25 @@
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
+// DELTA3D
 #include <dtAnim/posemesh.h>
 #include <dtAnim/posemath.h>
 #include <dtAnim/posemeshxml.h>
 #include <dtAnim/posemeshutility.h>
-
+#include <dtAnim/animationinterface.h>
+#include <dtAnim/basemodelwrapper.h>
 #include <dtUtil/log.h>
 #include <dtUtil/mathdefines.h>
 #include <dtUtil/exception.h>
-#include <dtAnim/cal3dmodelwrapper.h>
-
-using namespace dtAnim;
 
 #include <iostream>
 #include <sstream>
+#include <cassert>
+
+using namespace dtAnim;
 
 ////////////////////////////////////////////////////////////////////////////////
-PoseMesh::PoseMesh(dtAnim::Cal3DModelWrapper* model,
+PoseMesh::PoseMesh(dtAnim::BaseModelWrapper* model,
                    const PoseMeshData& meshData)
   : mName(meshData.mName)
   , mBoneName(meshData.mEffectorName)
@@ -41,8 +43,17 @@ PoseMesh::PoseMesh(dtAnim::Cal3DModelWrapper* model,
    std::vector<unsigned int> animids;
    GetAnimationIDsByName(model, meshData.mAnimations, animids);
 
-   mRootID     = model->GetCoreBoneID(meshData.mRootName);
-   mEffectorID = model->GetCoreBoneID(meshData.mEffectorName);
+   // Create a temporary reverse lookup map to
+   // map an ID back to a bone object.
+   // The array should be sorted.
+   dtAnim::BoneArray bones;
+   model->GetBones(bones);
+
+   dtAnim::BoneInterface* rootBone = model->GetBone(meshData.mRootName);
+   dtAnim::BoneInterface* effectorBone = model->GetBone(meshData.mEffectorName);
+
+   mRootID     = rootBone == NULL ? -1 : rootBone->GetID();
+   mEffectorID = effectorBone == NULL ? -1 : effectorBone->GetID();
 
    // We need to have valid bones here in order to continue
    if (mRootID == -1 || mEffectorID == -1)
@@ -56,11 +67,12 @@ PoseMesh::PoseMesh(dtAnim::Cal3DModelWrapper* model,
    mRootForward = meshData.mRootForward;
 
    // Update the skeleton to initialize bone data
-   model->ClearAll(0.0f);
-   model->Update(0.0f);
+   dtAnim::AnimationUpdaterInterface* animator = model->GetAnimator();
+   animator->ClearAll(0.0f);
+   animator->Update(0.0f);
 
    // Calculate the forward direction
-   osg::Quat rootRotation = model->GetBoneAbsoluteRotation(mRootID);
+   osg::Quat rootRotation = rootBone->GetAbsoluteRotation();
    osg::Vec3 currentRootForward = rootRotation * meshData.mRootForward;
 
    // Allocate space for osg to triangulate our verts
@@ -70,33 +82,32 @@ PoseMesh::PoseMesh(dtAnim::Cal3DModelWrapper* model,
    AnimVertMap vertMap;
 
    typedef std::vector<unsigned int> UIVector;
-   UIVector::const_iterator endanim = animids.end();
-
-   unsigned int vert_idx(0);
-
-   for (UIVector::const_iterator anim = animids.begin(); anim != endanim; ++anim)
+   UIVector::const_iterator animID = animids.begin();
+   UIVector::const_iterator endanimID = animids.end();
+   for (unsigned int vertIndex = 0; animID != endanimID; ++animID, ++vertIndex)
    {
       // If we've already handled this animation,
       // map it to the previously computed data
-      AnimVertMap::iterator mapIter = vertMap.find(*anim);
+      AnimVertMap::iterator mapIter = vertMap.find(*animID);
 
       if (mapIter != vertMap.end())
       {
-         vertMap[*anim] = mapIter->second;
+         vertMap[*animID] = mapIter->second;
          continue;
       }
 
       // This anim maps to this vert
-      vertMap[*anim] = vert_idx;
+      vertMap[*animID] = vertIndex;
 
-      int animID = *anim;
-      model->BlendCycle(animID, 1.0f, 0.0f);
-      model->Update(0.0f);
+      int curAnimID = *animID;
+      dtAnim::AnimationInterface* anim = model->GetAnimationByIndex(curAnimID);
+      anim->PlayCycle(1.0f, 0.0f);
+      animator->Update(0.0f);
 
-      osg::Quat finalRotation = model->GetBoneAbsoluteRotation(mEffectorID);
+      osg::Quat finalRotation = effectorBone->GetAbsoluteRotation();
 
-      model->ClearCycle(animID, 0.0f);
-      model->Update(0.0f);
+      anim->ClearCycle(0.0f);
+      animator->Update(0.0f);
 
       // calculate a vector transformed by the rotation data.
       osg::Vec3 transformed = finalRotation * mEffectorForward;
@@ -108,7 +119,7 @@ PoseMesh::PoseMesh(dtAnim::Cal3DModelWrapper* model,
 
       dtAnim::GetCelestialCoordinates(transformed, currentRootForward, az, el);
 
-      std::string debugName = model->GetCoreAnimationName(animID);
+      std::string debugName = anim->GetName();
 
       osg::Vec3 debugDirection;
       dtAnim::GetCelestialDirection(az, el, currentRootForward, osg::Z_AXIS, debugDirection);
@@ -126,15 +137,13 @@ PoseMesh::PoseMesh(dtAnim::Cal3DModelWrapper* model,
       posePoints.push_back(newVertPoint);
 
       // add a (az,el) vertex
-      PoseMesh::Vertex* newVert = new PoseMesh::Vertex(newVertPoint, *anim);
+      PoseMesh::Vertex* newVert = new PoseMesh::Vertex(newVertPoint, *animID);
       mVertices.push_back(newVert);
 
       // Store debug info
       newVert->mDebugPrecision = precision;
       newVert->mDebugData      = transformed;
       newVert->mDebugRotation  = finalRotation;
-
-      ++vert_idx;
    }
 
    mTriangles.clear();
@@ -162,9 +171,9 @@ PoseMesh::PoseMesh(dtAnim::Cal3DModelWrapper* model,
 
       // Debug
       unsigned int triIndex = vertIndex / 3;
-      std::string animName0(model->GetCoreAnimationName(mVertices[vertIndex0]->mAnimID));
+      /*std::string animName0(model->GetCoreAnimationName(mVertices[vertIndex0]->mAnimID));
       std::string animName1(model->GetCoreAnimationName(mVertices[vertIndex1]->mAnimID));
-      std::string animName2(model->GetCoreAnimationName(mVertices[vertIndex2]->mAnimID));
+      std::string animName2(model->GetCoreAnimationName(mVertices[vertIndex2]->mAnimID));*/
 
       // Tally the number of edges so that we can determine
       // which ones are the silhouettes
@@ -285,14 +294,15 @@ void PoseMesh::GetIndexPairsForTriangle(int triangleID,
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void PoseMesh::GetAnimationIDsByName(const dtAnim::Cal3DModelWrapper* model,
+void PoseMesh::GetAnimationIDsByName(const dtAnim::BaseModelWrapper* model,
                                      const std::vector<std::string>& animNames,
                                      std::vector<unsigned int>& animIDs) const
 {
    // Convert the animation string into a list of ID's
    for (unsigned int animIndex = 0; animIndex < animNames.size(); ++animIndex)
    {
-      int id = model->GetCoreAnimationIDByName(animNames[animIndex]);
+      dtAnim::AnimationInterface* anim = model->GetAnimation(animNames[animIndex]);
+      int id = anim->GetID();
 
       // The mesh is invalid if we cannot find it's animations
       if (id == -1)

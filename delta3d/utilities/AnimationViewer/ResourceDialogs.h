@@ -1,6 +1,6 @@
 
-#ifndef DELTA_RESOURCE_DIALOGS
-#define DELTA_RESOURCE_DIALOGS
+#ifndef __RESOURCE_DIALOGS_H__
+#define __RESOURCE_DIALOGS_H__
 
 ////////////////////////////////////////////////////////////////////////////////
 // INCLUDE DIRECTIVES
@@ -8,7 +8,7 @@
 #include "ui_ResourceAddDialog.h"
 #include <QtGui/QDialog>
 #include <dtCore/observerptr.h>
-#include <dtAnim/cal3dmodeldata.h>
+#include <dtAnim/basemodeldata.h>
 
 
 
@@ -25,9 +25,9 @@ namespace Ui
 
 
 /////////////////////////////////////////////////////////////////////////////////
-// CAL3D RESOURCE FILTERS CLASS CODE
+// MODEL RESOURCE FILTERS CLASS CODE
 /////////////////////////////////////////////////////////////////////////////////
-class Cal3DResourceFilters
+class ModelResourceFilters
 {
 public:
    static const QString FILTER_ANY;
@@ -41,16 +41,16 @@ public:
    static const QString& GetFilterForFileType(int fileType);
 
 private:
-   Cal3DResourceFilters();
-   Cal3DResourceFilters(const Cal3DResourceFilters&);
+   ModelResourceFilters();
+   ModelResourceFilters(const ModelResourceFilters&);
 };
 
 
 
 /////////////////////////////////////////////////////////////////////////////////
-// CAL3D RESOURCE ICONS CLASS CODE
+// MODEL RESOURCE ICONS CLASS CODE
 /////////////////////////////////////////////////////////////////////////////////
-class Cal3DResourceIcons
+class ModelResourceIcons
 {
 public:
    static const QString ICON_NONE;
@@ -63,8 +63,8 @@ public:
    static const QIcon GetIconForFileType(int fileType);
 
 private:
-   Cal3DResourceIcons();
-   Cal3DResourceIcons(const Cal3DResourceIcons&);
+   ModelResourceIcons();
+   ModelResourceIcons(const ModelResourceIcons&);
 };
 
 
@@ -80,7 +80,7 @@ public:
 
    ResAddDialog(QWidget* parent = 0);
 
-   void SetModelData(dtAnim::Cal3DModelData* modelData);
+   void SetModelData(dtAnim::BaseModelData* modelData);
 
    bool IsDataChanged() const;
 
@@ -98,7 +98,7 @@ protected:
 private:
    bool mDataChanged;
    Ui::ResourceAddDialog mUI;
-   dtCore::ObserverPtr<dtAnim::Cal3DModelData> mModelData;
+   dtCore::ObserverPtr<dtAnim::BaseModelData> mModelData;
 };
 
 #endif

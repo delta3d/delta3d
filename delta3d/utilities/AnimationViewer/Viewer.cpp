@@ -15,15 +15,12 @@
 #include <dtCore/light.h>
 #include <dtCore/deltawin.h>
 
+#include <dtAnim/basemodeldata.h>
+#include <dtAnim/basemodelwrapper.h>
 #include <dtAnim/characterfilehandler.h>
-#include <dtAnim/chardrawable.h>
-#include <dtAnim/characterfilehandler.h>
-#include <dtAnim/cal3dmodelwrapper.h>
-#include <dtAnim/chardrawable.h>
-#include <dtAnim/cal3ddatabase.h>
-#include <dtAnim/cal3dmodeldata.h>
-#include <dtAnim/posemesh.h>
 #include <dtAnim/characterwrapper.h>
+#include <dtAnim/chardrawable.h>
+#include <dtAnim/posemesh.h>
 
 #include <dtCore/basexmlreaderwriter.h>
 
@@ -50,25 +47,38 @@
 #include <osgViewer/GraphicsWindow>
 #include <osgViewer/CompositeViewer>
 
-#include <cal3d/animation.h>
-#include <cal3d/coresubmorphtarget.h>
-#include <cal3d/mesh.h>
-#include <cal3d/submesh.h>
-#include <cal3d/coremodel.h>
-#include <cal3d/coresubmesh.h>
-#include <cal3d/coretrack.h>
-#include <cal3d/morphtargetmixer.h>
-
 #include <dtAnim/hotspotdriver.h>
+#include <dtAnim/modeldatabase.h>
 #include <dtCore/hotspotattachment.h>
 #include <dtCore/refptr.h>
 #include <dtCore/pointaxis.h>
 
-#include <dtAnim/cal3danimator.h>
-#include <cal3d/model.h>
-#include <cal3d/mixer.h>
-#include <cal3d/skeleton.h>
-#include <cal3d/bone.h>
+#if defined(CAL3D_VERSION) && CAL3D_VERSION >= 1300
+#include <cal3d/morphtargetmixer.h>
+#include <dtAnim/cal3dmodelwrapper.h>
+#endif
+
+
+
+////////////////////////////////////////////////////////////////////////////////
+// HELPER FUNCTIONS
+////////////////////////////////////////////////////////////////////////////////
+#if defined(CAL3D_VERSION) && CAL3D_VERSION >= 1300
+CalMorphTargetMixer* GetMorphTargetMixer(dtAnim::BaseModelWrapper& wrapper)
+{
+   CalMorphTargetMixer* mixer = NULL;
+
+   dtAnim::Cal3DModelWrapper* calWrapper = dynamic_cast<dtAnim::Cal3DModelWrapper*>(&wrapper);
+   if (calWrapper != NULL)
+   {
+      mixer = calWrapper->GetCalModel()->getMorphTargetMixer();
+   }
+   
+   return mixer;
+}
+#endif
+
+
 
 typedef std::vector<dtCore::RefPtr<dtCore::HotSpotAttachment> > VectorHotSpot;
 
@@ -79,16 +89,23 @@ using namespace dtAnim;
 ////////////////////////////////////////////////////////////////////////////////
 Viewer::Viewer()
  : dtABC::Application()
- , mCalDatabase(&Cal3DDatabase::GetInstance())
  , mPoseMeshes(NULL)
  , mAttachmentObject(NULL)
 {
    dtUtil::Log::GetInstance().SetLogLevel(dtUtil::Log::LOG_DEBUG);
+
+   mModelLoader = new dtAnim::ModelLoader;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 Viewer::~Viewer()
 {
+}
+
+////////////////////////////////////////////////////////////////////////////////
+osg::Node* Viewer::GetRootNode()
+{
+   return ! mCharacter.valid() ? NULL : mCharacter->GetModelWrapper()->GetDrawableNode();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -128,7 +145,7 @@ void Viewer::Config()
    dtUtil::SetDataFilePathList(dtUtil::GetDataFilePathList() + ";" + exampleDataPath);
 
    // Ensure bind poses are allowed by default.
-   Cal3DModelWrapper::SetAllowBindPose(true);
+   dtAnim::Cal3DAnimator::SetBindPoseAllowed(true);
 
    //adjust the Camera position
    dtCore::Transform camPos;
@@ -187,24 +204,29 @@ void Viewer::OnLoadCharFile(const QString& filename)
 
    OnUnloadCharFile();
 
-   dtAnim::Cal3DModelData* modelData = NULL;
+   dtAnim::BaseModelData* modelData = NULL;
 
    //create an instance from the character definition file
    try
    {
-      // Create a new Cal3DWrapper
-      dtCore::RefPtr<Cal3DModelWrapper> wrapper = mCalDatabase->Load(filename.toStdString());
+      dtCore::RefPtr<dtAnim::BaseModelWrapper> wrapper = mModelLoader->LoadModel(filename.toStdString());
+
       if (wrapper.valid() == false)
       {
          emit ErrorOccured("Problem encountered loading file.  See log file.");
          return;
       }
 
+      wrapper->HandleModelResourceUpdate(ModelResourceType::SKEL_FILE);
+      wrapper->HandleModelResourceUpdate(ModelResourceType::MESH_FILE);
+      wrapper->HandleModelResourceUpdate(ModelResourceType::MAT_FILE);
+      wrapper->HandleModelResourceUpdate(ModelResourceType::ANIM_FILE);
+
       mCharacter = new CharDrawable(wrapper.get());
       mAttachmentController = new dtAnim::AttachmentController;
 
       // Retrieve the data to check for the inclusion of an IK pose mesh file
-      modelData = mCalDatabase->GetModelData(*wrapper.get());
+      modelData = wrapper->GetModelData();
 
       if (!modelData->GetPoseMeshFilename().empty())
       {
@@ -237,82 +259,132 @@ void Viewer::OnLoadCharFile(const QString& filename)
    mShadeDecorator->addChild(mCharacter->GetOSGNode());
    mWireDecorator->addChild(mCharacter->GetOSGNode());
 
-   dtCore::RefPtr<Cal3DModelWrapper> wrapper = mCharacter->GetCal3DWrapper();
+   dtCore::RefPtr<BaseModelWrapper> wrapper = mCharacter->GetModelWrapper();
 
    //get all the data for animations and tell the world
-   for (int animID=0; animID<wrapper->GetCoreAnimationCount(); animID++)
+   dtAnim::AnimationInterface* curAnim = NULL;
+   int numAnims = wrapper->GetAnimationCount();
+   for (int animID = 0; animID < numAnims; ++animID)
    {
-      QString nameToSend = QString::fromStdString(wrapper->GetCoreAnimationName(animID));
-      unsigned int trackCount = wrapper->GetCoreAnimationTrackCount(animID);
-      unsigned int keyframes = wrapper->GetCoreAnimationKeyframeCount(animID);
-      float dur = wrapper->GetCoreAnimationDuration(animID);
+      curAnim = wrapper->GetAnimationByIndex(animID);
+
+      QString nameToSend = QString::fromStdString(curAnim->GetName());
+      unsigned int trackCount = curAnim->GetTrackCount();
+      unsigned int keyframes = curAnim->GetKeyframeCount();
+      float dur = curAnim->GetDuration();
       emit AnimationLoaded(animID, nameToSend, trackCount, keyframes, dur);
    }
 
 #if defined(CAL3D_VERSION) && CAL3D_VERSION >= 1300
-   CalMorphTargetMixer *mixer = wrapper->GetCalModel()->getMorphTargetMixer();
-   if (mixer)
+   Cal3DModelWrapper* calWrapper = dynamic_cast<Cal3DModelWrapper*>(wrapper.get());
+   if (calWrapper != NULL)
    {
-      for (int animID = 0; animID < mixer->getMorphTargetCount(); animID++)
+      CalMorphTargetMixer *mixer = calWrapper->GetCalModel()->getMorphTargetMixer();
+      if (mixer)
       {
-         std::string name = mixer->getMorphName(animID).c_str();
-         QString nameToSend = name.c_str();
-         unsigned int trackCount = mixer->getTrackCount(animID);
-         unsigned int keyframes = mixer->getKeyframeCount(animID);
-         float dur = mixer->getDuration(animID);
-         emit MorphAnimationLoaded(animID, nameToSend, trackCount, keyframes, dur);
+         for (int animID = 0; animID < mixer->getMorphTargetCount(); animID++)
+         {
+            std::string name = mixer->getMorphName(animID).c_str();
+            QString nameToSend = name.c_str();
+            unsigned int trackCount = mixer->getTrackCount(animID);
+            unsigned int keyframes = mixer->getKeyframeCount(animID);
+            float dur = mixer->getDuration(animID);
+            emit MorphAnimationLoaded(animID, nameToSend, trackCount, keyframes, dur);
+         }
       }
    }
 #endif
 
-   std::vector<std::string> bones;
-   wrapper->GetCoreBoneNames(bones);
+   std::vector<std::string> boneNames;
+   dtAnim::BoneArray bones;
+   wrapper->GetBones(bones);
 
-   //get all data for the meshes and emit
-   for (int meshID = 0; meshID < wrapper->GetCoreMeshCount(); ++meshID)
+   dtAnim::BoneArray::iterator curIter = bones.begin();
+   dtAnim::BoneArray::iterator endIter = bones.end();
+   for ( ; curIter != endIter; ++curIter)
    {
-      CalCoreMesh* currentMesh = wrapper->GetCalModel()->getCoreModel()->getCoreMesh(meshID);
+      boneNames.push_back((*curIter)->GetName());
+   }
+
+   dtAnim::MeshArray meshes;
+   wrapper->GetMeshes(meshes);
+
+   dtAnim::MeshInterface* mesh = NULL;
+   dtAnim::MeshArray::iterator curMeshIter = meshes.begin();
+   dtAnim::MeshArray::iterator endMeshIter = meshes.end();
+   //get all data for the meshes and emit
+   for ( ; curMeshIter != endMeshIter; ++curMeshIter)
+   {
+      mesh = curMeshIter->get();
 
       // If the mesh is currently loaded
-      if (currentMesh)
+      std::string name = mesh->GetName();
+      QString meshName = QString::fromStdString(name);
+
+      int meshID = mesh->GetID();
+      emit MeshLoaded(meshID, meshName, boneNames,
+         mesh->IsVisible(), mesh->GetVertexCount(), mesh->GetFaceCount(), mesh->GetSubmeshCount());
+
+      dtAnim::SubmeshArray submeshes;
+      mesh->GetSubmeshes(submeshes);
+
+      dtAnim::SubmeshInterface* submesh = NULL;
+      dtAnim::SubmeshArray::iterator curSubmeshIter = submeshes.begin();
+      dtAnim::SubmeshArray::iterator endSubmeshIter = submeshes.end();
+      for (int submeshID = 0; curSubmeshIter != endSubmeshIter; ++curSubmeshIter, ++submeshID)
       {
-         QString nameToSend = QString::fromStdString(currentMesh->getName());
+         submesh = curSubmeshIter->get();
 
-         emit MeshLoaded(meshID, nameToSend, bones);
-
-         const std::vector<CalCoreSubmesh *> subMeshVec = currentMesh->getVectorCoreSubmesh();
-         for (size_t subMeshID = 0; subMeshID < subMeshVec.size(); ++subMeshID)
+         dtAnim::MorphTargetArray submorphs;
+         submesh->GetMorphTargets(submorphs);
+         
+         dtAnim::MorphTargetArray::iterator curMorphIter = submorphs.begin();
+         dtAnim::MorphTargetArray::iterator endMorphIter = submorphs.end();
+         for (size_t morphID = 0; curMorphIter != endMorphIter; ++curMorphIter, ++morphID)
          {
-            const std::vector<CalCoreSubMorphTarget *> morphVec = subMeshVec[subMeshID]->getVectorCoreSubMorphTarget();
-            for (size_t morphID = 0; morphID < morphVec.size(); ++morphID)
-            {
 #if defined(CAL3D_VERSION) && CAL3D_VERSION >= 1300
-               QString nameToSend = QString::fromStdString(morphVec[morphID]->name());
+            QString nameToSend = QString::fromStdString(curMorphIter->get()->GetName());
 #else
-               QString nameToSend = QString::number(morphID);
+            QString nameToSend = QString::number(morphID);
 #endif
-               emit SubMorphTargetLoaded(meshID, subMeshID, morphID, nameToSend);
-            }
+            emit SubMorphTargetLoaded(meshName, submeshID, morphID, nameToSend);
          }
       }
-
    }
 
    //get all material data and emit
-   for (int matID = 0; matID < wrapper->GetCoreMaterialCount(); matID++)
+   dtAnim::MaterialArray materials;
+   wrapper->GetMaterials(materials);
+   
+   int rgb = 255;
+   QColor diffColor(rgb, rgb, rgb);
+   QColor ambColor(rgb, rgb, rgb);
+   QColor specColor(rgb, rgb, rgb);
+   dtAnim::Cal3dMaterial* calMaterial = NULL;
+   dtAnim::MaterialInterface* material = NULL;
+   int numMaterials = int(materials.size());
+   for (int matID = 0; matID < numMaterials; matID++)
    {
-      QString nameToSend = QString::fromStdString(wrapper->GetCoreMaterialName(matID));
+      material = materials[matID].get();
 
-      osg::Vec4 diffuse = wrapper->GetCoreMaterialDiffuse(matID);
-      QColor diffColor( (int)(diffuse[0]), (int)(diffuse[1]), (int)(diffuse[2]), (int)(diffuse[3]) );
+      QString nameToSend = QString::fromStdString(material->GetName());
 
-      osg::Vec4 ambient = wrapper->GetCoreMaterialAmbient(matID);
-      QColor ambColor( (int)(ambient[0]), (int)(ambient[1]), (int)(ambient[2]), (int)(ambient[3]) );
+      float shininess = 0.0f;
 
-      osg::Vec4 specular = wrapper->GetCoreMaterialSpecular(matID);
-      QColor specColor( (int)(specular[0]), (int)(specular[1]), (int)(specular[2]), (int)(specular[3]) );
+      calMaterial = dynamic_cast<dtAnim::Cal3dMaterial*>(material);
+      if (calMaterial != NULL)
+      {
+         osg::Vec4 diffuse = calMaterial->GetDiffuseColor();
+         diffColor = QColor( (int)(diffuse[0]), (int)(diffuse[1]), (int)(diffuse[2]), (int)(diffuse[3]) );
 
-      float shininess = wrapper->GetCoreMaterialShininess(matID);
+         osg::Vec4 ambient = calMaterial->GetAmbientColor();
+         ambColor = QColor( (int)(ambient[0]), (int)(ambient[1]), (int)(ambient[2]), (int)(ambient[3]) );
+
+         osg::Vec4 specular = calMaterial->GetSpecularColor();
+         specColor = QColor( (int)(specular[0]), (int)(specular[1]), (int)(specular[2]), (int)(specular[3]) );
+
+         shininess = calMaterial->GetShininess();
+      }
 
       emit MaterialLoaded(matID, nameToSend, diffColor, ambColor, specColor, shininess);
    }
@@ -330,8 +402,8 @@ void Viewer::OnSaveCharFile(const QString& filename)
    if(mCharacter.valid())
    {
       // Acquire the model data associated with this character.
-      const Cal3DModelWrapper* wrapper = mCharacter->GetCal3DWrapper();
-      Cal3DModelData* data = mCalDatabase->GetModelData(*wrapper);
+      dtAnim::BaseModelWrapper* wrapper = mCharacter->GetModelWrapper();
+      dtAnim::BaseModelData* data = wrapper->GetModelData();
 
       if(data != NULL)
       {
@@ -341,8 +413,8 @@ void Viewer::OnSaveCharFile(const QString& filename)
          try
          {
             // Wrap and write the data.
-            dtCore::RefPtr<dtCore::WriteWrapperOSGObject<Cal3DModelData> > obj
-               = new dtCore::WriteWrapperOSGObject<Cal3DModelData>(*data);
+            dtCore::RefPtr<dtCore::WriteWrapperOSGObject<dtAnim::BaseModelData> > obj
+               = new dtCore::WriteWrapperOSGObject<dtAnim::BaseModelData>(*data);
             osgDB::writeObjectFile(*obj, filename.toStdString());
          }
          catch(std::exception& e)
@@ -371,16 +443,16 @@ void Viewer::OnReloadCharFile()
 {
    if(mCharacter.valid())
    {
-      dtAnim::Cal3DModelWrapper* wrapper = mCharacter->GetCal3DWrapper();
-      dtAnim::Cal3DModelData* modelData = mCalDatabase->GetModelData(*wrapper);
+      dtAnim::BaseModelWrapper* wrapper = mCharacter->GetModelWrapper();
+      dtAnim::BaseModelData* modelData = wrapper->GetModelData();
       std::string currentFilePath(modelData->GetFilename());
 
       QString qTempFile(mTempFile.c_str());
       OnSaveCharFile(qTempFile);
       OnLoadCharFile(qTempFile);
 
-      wrapper = mCharacter->GetCal3DWrapper();
-      modelData = mCalDatabase->GetModelData(*wrapper);
+      wrapper = mCharacter->GetModelWrapper();
+      modelData = wrapper->GetModelData();
       modelData->SetFilename(currentFilePath);
    }
 }
@@ -438,8 +510,11 @@ void Viewer::OnUnloadCharFile()
 
    //wipe out any previously loaded characters. This will ensure we can
    //reload the same file (which might have been modified).
-   mCalDatabase->TruncateDatabase();
-   mCalDatabase->PurgeLoaderCaches();
+   if (dtAnim::ModelDatabase::IsAvailable())
+   {
+      ModelDatabase& database = dtAnim::ModelDatabase::GetInstance();
+      database.TruncateDatabase();
+   }
 
    emit ClearCharacterData();
 }
@@ -451,24 +526,24 @@ void Viewer::CreateBoneBasisDisplay()
    mBoneBasisGroup->removeChildren(0, mBoneBasisGroup->getNumChildren());
 
    VectorHotSpot hotSpotList;
-   dtAnim::Cal3DModelWrapper* modelWrapper = mCharacter->GetCal3DWrapper();
+   dtAnim::BaseModelWrapper* modelWrapper = mCharacter->GetModelWrapper();
 
-   std::vector<int> boneList;
-   modelWrapper->GetCoreBoneChildrenIDs(0, boneList);
+   dtAnim::BoneArray bones;
+   modelWrapper->GetBones(bones);
 
-   std::vector<std::string> boneVec;
-   modelWrapper->GetCoreBoneNames(boneVec);
+   dtAnim::BoneInterface* bone = NULL;
 
    //for every bone
-   std::vector<std::string>::const_iterator boneNameIter = boneVec.begin();
-   std::vector<std::string>::const_iterator boneNameEnd  = boneVec.end();
-
-   while (boneNameIter!=boneNameEnd)
+   dtAnim::BoneArray::iterator curIter = bones.begin();
+   dtAnim::BoneArray::iterator endIter = bones.end();
+   while (curIter != endIter)
    {
+      bone = curIter->get();
+
       //create a HotSpot
       dtUtil::HotSpotDefinition hotSpotDefinition;
-      hotSpotDefinition.mName = *boneNameIter;
-      hotSpotDefinition.mParentName = *boneNameIter;
+      hotSpotDefinition.mName = bone->GetName();
+      hotSpotDefinition.mParentName = bone->GetName();
 
       //Create the axis geometry
       dtCore::PointAxis* axis = new dtCore::PointAxis();
@@ -477,31 +552,43 @@ void Viewer::CreateBoneBasisDisplay()
       axis->SetLength(dtCore::PointAxis::Z, 0.025f);
       axis->SetCharacterScale(5.0f);
       axis->Enable(dtCore::PointAxis::LABEL_X);
-      axis->SetLabel(dtCore::PointAxis::X, boneNameIter->c_str());
+      axis->SetLabel(dtCore::PointAxis::X, bone->GetName().c_str());
       axis->SetLabelColor(dtCore::PointAxis::X, dtCore::PointAxis::YELLOW);
 
       mAttachmentController->AddAttachment(*axis, hotSpotDefinition);
 
       mBoneBasisGroup->addChild(axis->GetOSGNode());
 
-      ++boneNameIter;
+      ++curIter;
    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 int Viewer::GetMaxBoneAffectedBoneIDForAnimation(int animationID)
 {
-   Cal3DModelWrapper* wrapper = mCharacter->GetCal3DWrapper();
-   std::list<CalCoreTrack*>& trackList =
-      wrapper->GetCalModel()->getCoreModel()->getCoreAnimation(animationID)->getListCoreTrack();
-
-   std::list<CalCoreTrack*>::iterator trackIter = trackList.begin();
-
    int maxID = -1;
-   while(trackIter != trackList.end())
+
+   BaseModelWrapper* wrapper = mCharacter->GetModelWrapper();
+   dtAnim::AnimationInterface* anim = wrapper->GetAnimationByIndex(animationID);
+   
+   if (anim != NULL)
    {
-      maxID = dtUtil::Max(maxID, (*trackIter)->getCoreBoneId());
-      ++trackIter;
+      dtAnim::TrackArray tracks;
+      anim->GetTracks(tracks);
+
+      dtAnim::TrackArray::iterator curIter = tracks.begin();
+      dtAnim::TrackArray::iterator endIter = tracks.end();
+
+      dtAnim::BoneInterface* bone = NULL;
+      while(curIter != endIter)
+      {
+         bone = (*curIter)->GetBone();
+         if (bone != NULL)
+         {
+            maxID = dtUtil::Max(maxID, bone->GetID());
+         }
+         ++curIter;
+      }
    }
 
    return maxID;
@@ -510,7 +597,7 @@ int Viewer::GetMaxBoneAffectedBoneIDForAnimation(int animationID)
 ////////////////////////////////////////////////////////////////////////////////
 void Viewer::OnLoadPoseMeshFile(const std::string& filename)
 {
-   dtAnim::Cal3DModelWrapper* rapper = mCharacter->GetCal3DWrapper();
+   dtAnim::BaseModelWrapper* rapper = mCharacter->GetModelWrapper();
    assert(rapper);
 
    // Delete any previous data
@@ -541,16 +628,24 @@ void Viewer::OnStartAnimation(unsigned int id, float weight, float delay)
 {
    if (mCharacter.valid())
    {
-      Cal3DModelWrapper* wrapper = mCharacter->GetCal3DWrapper();
-      CalCoreSkeleton* skeleton = wrapper->GetCalModel()->getCoreModel()->getCoreSkeleton();
+      BaseModelWrapper* wrapper = mCharacter->GetModelWrapper();
+      dtAnim::SkeletonInterface* skeleton = wrapper->GetSkeleton();
 
       int maxTrackBone = GetMaxBoneAffectedBoneIDForAnimation(id);
-      int maxSkeletonBone = skeleton->getVectorCoreBone().size();
+      int maxSkeletonBone = skeleton->GetBoneCount();
 
       if (maxTrackBone < maxSkeletonBone)
       {
-         wrapper->BlendCycle(id, weight, delay);
-         LOG_DEBUG("Started:" + dtUtil::ToString(id) + ", weight:" + dtUtil::ToString(weight) + ", delay:" + dtUtil::ToString(delay));
+         dtAnim::AnimationInterface* anim = wrapper->GetAnimationByIndex(id);
+
+         if (anim->PlayCycle(weight, delay))
+         {
+            LOG_DEBUG("Started:" + dtUtil::ToString(id) + ", weight:" + dtUtil::ToString(weight) + ", delay:" + dtUtil::ToString(delay));
+         }
+         else
+         {
+            LOG_ERROR("Could not start animation: " + anim->GetName());
+         }
       }
       else
       {
@@ -564,8 +659,8 @@ void Viewer::OnStopAnimation(unsigned int id, float delay)
 {
    if (mCharacter.valid())
    {
-      Cal3DModelWrapper* wrapper = mCharacter->GetCal3DWrapper();
-      wrapper->ClearCycle(id, delay);
+      dtAnim::AnimationInterface* anim = mCharacter->GetModelWrapper()->GetAnimationByIndex(id);
+      anim->ClearCycle(delay);
 
       LOG_DEBUG("Stopped:" + dtUtil::ToString(id) + ", delay:" + dtUtil::ToString(delay));
    }
@@ -576,16 +671,16 @@ void Viewer::OnStartAction(unsigned int id, float delayIn, float delayOut)
 {
    if (mCharacter.valid())
    {
-      Cal3DModelWrapper* wrapper = mCharacter->GetCal3DWrapper();
-      CalCoreSkeleton* skeleton = wrapper->GetCalModel()->getCoreModel()->getCoreSkeleton();
+      dtAnim::BaseModelWrapper* wrapper = mCharacter->GetModelWrapper();
+      dtAnim::SkeletonInterface* skeleton = wrapper->GetSkeleton();
 
       int maxTrackBone = GetMaxBoneAffectedBoneIDForAnimation(id);
-      int maxSkeletonBone = skeleton->getVectorCoreBone().size();
+      int maxSkeletonBone = skeleton->GetBoneCount();
 
       if (maxTrackBone < maxSkeletonBone)
       {
-         Cal3DModelWrapper* wrapper = mCharacter->GetCal3DWrapper();
-         wrapper->ExecuteAction(id, delayIn, delayOut);
+         dtAnim::AnimationInterface* anim = mCharacter->GetModelWrapper()->GetAnimationByIndex(id);
+         anim->PlayAction(delayIn, delayOut);
       }
       else
       {
@@ -597,7 +692,7 @@ void Viewer::OnStartAction(unsigned int id, float delayIn, float delayOut)
 ////////////////////////////////////////////////////////////////////////////////
 void Viewer::OnLODScale_Changed(float scaleValue)
 {
-   if (mCharacter.get())
+   if (mCharacter.valid())
    {
       GetCamera()->SetLODScale(scaleValue);
    }
@@ -606,10 +701,11 @@ void Viewer::OnLODScale_Changed(float scaleValue)
 ////////////////////////////////////////////////////////////////////////////////
 void Viewer::OnScaleFactorChanged(float scaleFactorValue)
 {
-   if (mCharacter.get())
+   if (mCharacter.valid())
    {
-      mCharacter->GetCal3DWrapper()->ApplyCoreModelScaleFactor(scaleFactorValue);
-      mCharacter->RebuildSubmeshes();//need to rebuild our geometry to match the new mesh size
+      dtAnim::BaseModelWrapper* model = mCharacter->GetModelWrapper();
+      model->SetScale(scaleFactorValue);
+      //mCharacter->RebuildSubmeshes();//need to rebuild our geometry to match the new mesh size
    }
 }
 
@@ -686,44 +782,39 @@ void Viewer::OnTimeout()
 {
    if (mCharacter.valid())
    {
-      dtAnim::Cal3DModelWrapper* rapper = mCharacter->GetCal3DWrapper();
-      assert(rapper);
+      dtAnim::BaseModelWrapper* wrapper = mCharacter->GetModelWrapper();
+      assert(wrapper);
 
-      mAttachmentController->Update(*rapper);
-
-      std::vector<CalAnimation*> animVec = rapper->GetCalModel()->getMixer()->getAnimationVector();
-      std::vector<CalAnimation*>::iterator animItr = animVec.begin();
+      mAttachmentController->Update(*wrapper);
 
       std::vector<std::pair<float, float> > animWeightTimeList;
-      animWeightTimeList.reserve(animVec.size());
 
-      while (animItr != animVec.end())
+      dtAnim::AnimationInterface* curAnim = NULL;
+      int numAnims = wrapper->GetAnimationCount();
+      for (int i = 0; i < numAnims; ++i)
       {
-         CalAnimation* anim = *(animItr);
-         float weight = 0.f;
-         float time = 0.f;
+         curAnim = wrapper->GetAnimationByIndex(i);
 
-         if (anim!=NULL)
-         {
-            weight = anim->getWeight();
-            time = anim->getTime();
-         }
+         float weight = curAnim->GetWeight();
+         float time = curAnim->GetTime();
 
          animWeightTimeList.push_back(std::make_pair(weight, time));
-
-         ++animItr;
       }
 
       std::vector<float> morphWeightList;
 
 #if defined(CAL3D_VERSION) && CAL3D_VERSION >= 1300
-      int count = rapper->GetCalModel()->getMorphTargetMixer()->getMorphTargetCount();
-      morphWeightList.reserve(count);
-
-      for (int index = 0; index < count; ++index)
+      CalMorphTargetMixer* mixer = GetMorphTargetMixer(*wrapper);
+      if (mixer != NULL)
       {
-         float weight = rapper->GetCalModel()->getMorphTargetMixer()->getCurrentWeight(index);
-         morphWeightList.push_back(weight);
+         int count = mixer->getMorphTargetCount();
+         morphWeightList.reserve(count);
+
+         for (int index = 0; index < count; ++index)
+         {
+            float weight = mixer->getCurrentWeight(index);
+            morphWeightList.push_back(weight);
+         }
       }
 #endif
 
@@ -784,42 +875,89 @@ void Viewer::OnHideMesh(int meshID)
 ////////////////////////////////////////////////////////////////////////////////
 void Viewer::PostFrame(const double)
 {
+   if ( ! mMeshesToShow.empty() || ! mMeshesToHide.empty())
    {
-      std::vector<int>::iterator showItr = mMeshesToShow.begin();
-      while (showItr != mMeshesToShow.end())
-      {
-         mCharacter->GetCal3DWrapper()->ShowMesh((*showItr));
+      dtAnim::MeshArray meshes;
+      mCharacter->GetModelWrapper()->GetMeshes(meshes);
 
-         ++showItr;
+      {
+         std::vector<int>::iterator showItr = mMeshesToShow.begin();
+         while (showItr != mMeshesToShow.end())
+         {
+            int id = *showItr;
+
+            dtAnim::MeshInterface* mesh = NULL;
+            dtAnim::MeshArray::iterator curIter = meshes.begin();
+            dtAnim::MeshArray::iterator endIter = meshes.end();
+            for (; curIter != endIter; ++curIter)
+            {
+               mesh = curIter->get();
+               if (mesh->GetID() == id)
+               {
+                  mesh->SetVisible(true);
+               }
+            }
+
+            ++showItr;
+         }
+
+         mMeshesToShow.clear();
       }
 
-      mMeshesToShow.clear();
-   }
-
-   {
-      std::vector<int>::iterator hideItr = mMeshesToHide.begin();
-      while (hideItr != mMeshesToHide.end())
       {
-         mCharacter->GetCal3DWrapper()->HideMesh((*hideItr));
-         ++hideItr;
-      }
+         std::vector<int>::iterator hideItr = mMeshesToHide.begin();
+         while (hideItr != mMeshesToHide.end())
+         {
+            int id = *hideItr;
 
-      mMeshesToHide.clear();
+            dtAnim::MeshInterface* mesh = NULL;
+            dtAnim::MeshArray::iterator curIter = meshes.begin();
+            dtAnim::MeshArray::iterator endIter = meshes.end();
+            for (; curIter != endIter; ++curIter)
+            {
+               mesh = curIter->get();
+               if (mesh->GetID() == id)
+               {
+                  mesh->SetVisible(false);
+               }
+            }
+
+            ++hideItr;
+         }
+
+         mMeshesToHide.clear();
+      }
    }
 
    OnTimeout();
 }
 
 //////////////////////////////////////////////////////////////////////////
-void Viewer::OnMorphChanged(int meshID, int subMeshID, int morphID, float weight)
+void Viewer::OnMorphChanged(const QString& meshName, int submeshID, int morphID, float weight)
 {
-   CalMesh* mesh = mCharacter->GetCal3DWrapper()->GetCalModel()->getMesh(meshID);
-   if (mesh)
+   if (mCharacter.valid())
    {
-      CalSubmesh *subMesh = mesh->getSubmesh(subMeshID);
-      if (subMesh)
+      dtAnim::MeshInterface* mesh = mCharacter->GetModelWrapper()->GetMesh(meshName.toStdString());
+      dtAnim::SubmeshArray submeshes;
+      if (mesh != NULL)
       {
-         subMesh->setMorphTargetWeight(morphID, weight);
+         mesh->GetSubmeshes(submeshes);
+      }
+      else
+      {
+         LOG_ERROR("Could not access mesh \"" + meshName.toStdString() + "\"");
+      }
+
+      dtAnim::SubmeshInterface* submesh = int(submeshes.size()) > submeshID ? submeshes[submeshID] : NULL;
+      if (mesh && submesh)
+      {
+         dtAnim::MorphTargetArray morphs;
+         submesh->GetMorphTargets(morphs);
+
+         if (morphID < int(morphs.size()))
+         {
+            morphs[morphID]->SetWeight(weight);
+         }
       }
    }
 }
@@ -828,10 +966,13 @@ void Viewer::OnMorphChanged(int meshID, int subMeshID, int morphID, float weight
 void Viewer::OnPlayMorphAnimation(int morphAnimID, float weight, float delayIn, float delayOut, bool looping)
 {
 #if defined(CAL3D_VERSION) && CAL3D_VERSION >= 1300
-   CalMorphTargetMixer *mixer = mCharacter->GetCal3DWrapper()->GetCalModel()->getMorphTargetMixer();
-   if (mixer)
+   if (mCharacter.valid())
    {
-      mixer->blend(morphAnimID, weight, delayIn, delayOut, looping);
+      CalMorphTargetMixer *mixer = GetMorphTargetMixer(*mCharacter->GetModelWrapper());
+      if (mixer)
+      {
+         mixer->blend(morphAnimID, weight, delayIn, delayOut, looping);
+      }
    }
 #endif
 }
@@ -840,10 +981,13 @@ void Viewer::OnPlayMorphAnimation(int morphAnimID, float weight, float delayIn, 
 void Viewer::OnStopMorphAnimation(int morphAnimID, float delay)
 {
 #if defined(CAL3D_VERSION) && CAL3D_VERSION >= 1300
-   CalMorphTargetMixer *mixer = mCharacter->GetCal3DWrapper()->GetCalModel()->getMorphTargetMixer();
-   if (mixer)
+   if (mCharacter.valid())
    {
-      mixer->clear(morphAnimID, delay);
+      CalMorphTargetMixer *mixer = GetMorphTargetMixer(*mCharacter->GetModelWrapper());
+      if (mixer)
+      {
+         mixer->clear(morphAnimID, delay);
+      }
    }
 #endif
 }

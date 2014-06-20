@@ -30,6 +30,7 @@
 #include <prefix/unittestprefix.h>
 #include <cppunit/extensions/HelperMacros.h>
 
+#include <dtAnim/cal3danimator.h>
 #include <dtAnim/cal3dmodelwrapper.h>
 #include <dtAnim/animationhelper.h>
 
@@ -54,7 +55,7 @@ namespace dtAnim
       CPPUNIT_TEST_SUITE(Cal3DModelWrapperTests);
       CPPUNIT_TEST(TestAttachDetachMesh);
       CPPUNIT_TEST(TestShowHideMesh);
-      CPPUNIT_TEST(TestCanUpdate);
+      CPPUNIT_TEST(TestIsUpdatable);
       CPPUNIT_TEST_SUITE_END();
 
    public:
@@ -82,78 +83,88 @@ namespace dtAnim
       //////////////////////////////////////////////////////////////////////////
       void TestAttachDetachMesh()
       {
-         int meshCount = mModel->GetMeshCount();
+         Cal3DModelWrapper* calModelWrapper
+            = dynamic_cast<Cal3DModelWrapper*>(mModel.get());
+         int meshCount = calModelWrapper->GetMeshCount();
          int remainingMeshes = meshCount;
          CPPUNIT_ASSERT(meshCount > 0);
 
          for (int i = 0; i < meshCount; ++i)
          {
-            CPPUNIT_ASSERT(mModel->DetachMesh(i));
-            CPPUNIT_ASSERT_EQUAL(remainingMeshes - 1, mModel->GetMeshCount());
-            CPPUNIT_ASSERT(mModel->AttachMesh(i));
-            CPPUNIT_ASSERT_EQUAL(remainingMeshes, mModel->GetMeshCount());
-            CPPUNIT_ASSERT(mModel->DetachMesh(i));
+            CPPUNIT_ASSERT_EQUAL(remainingMeshes, calModelWrapper->GetAttachedMeshCount());
+            CPPUNIT_ASSERT(calModelWrapper->DetachMesh(i));
+            CPPUNIT_ASSERT_EQUAL(remainingMeshes - 1, calModelWrapper->GetAttachedMeshCount());
+            CPPUNIT_ASSERT(calModelWrapper->AttachMesh(i));
+            CPPUNIT_ASSERT_EQUAL(remainingMeshes, calModelWrapper->GetAttachedMeshCount());
+            CPPUNIT_ASSERT(calModelWrapper->DetachMesh(i));
             --remainingMeshes;
-            CPPUNIT_ASSERT_EQUAL(remainingMeshes, mModel->GetMeshCount());
+            CPPUNIT_ASSERT_EQUAL(remainingMeshes, calModelWrapper->GetAttachedMeshCount());
          }
       }
 
       //////////////////////////////////////////////////////////////////////////
       void TestShowHideMesh()
       {
-         int meshCount = mModel->GetMeshCount();
+         dtAnim::MeshArray meshes;
+         int meshCount = mModel->GetMeshes(meshes);
          CPPUNIT_ASSERT(meshCount > 0);
+         CPPUNIT_ASSERT(meshCount == (int)(meshes.size()));
+         CPPUNIT_ASSERT(meshCount == mModel->GetMeshCount());
 
-         for (int i = 0; i < meshCount; ++i)
+         dtAnim::MeshInterface* mesh = NULL;
+         dtAnim::MeshArray::iterator curIter = meshes.begin();
+         dtAnim::MeshArray::iterator endIter = meshes.end();
+         for (; curIter != endIter; ++curIter)
          {
-            CPPUNIT_ASSERT_MESSAGE("All meshes should be visible initially.", mModel->IsMeshVisible(i));
-            mModel->HideMesh(i);
-            CPPUNIT_ASSERT_MESSAGE("Mesh should now not be visible.", !mModel->IsMeshVisible(i));
-         }
+            mesh = curIter->get();
 
-         mModel->ShowMesh(1003000);
-         CPPUNIT_ASSERT_MESSAGE("Showing an invalid mesh should not make IsMeshVisible return true.",
-                  !mModel->IsMeshVisible(1003000));
+            CPPUNIT_ASSERT(mesh != NULL);
+            CPPUNIT_ASSERT_MESSAGE("All meshes should be visible initially.", mesh->IsVisible());
+            mesh->SetVisible(false);
+            CPPUNIT_ASSERT_MESSAGE("Mesh should now not be visible.", !mesh->IsVisible());
+            mesh->SetVisible(true);
+            CPPUNIT_ASSERT_MESSAGE("Mesh should now be visible again.", mesh->IsVisible());
+         }
       }
 
       //////////////////////////////////////////////////////////////////////////
-      void TestCanUpdate()
+      void TestIsUpdatable()
       {
          // Declare variables needed for following tests.
          std::string animName("Run");
          const float TIME_STEP = 0.5f;
-         std::vector<std::string> boneNameArray;
-         mModel->GetCoreBoneNames(boneNameArray);
-         CPPUNIT_ASSERT(boneNameArray.size() > 0);
 
-         // --- Find a test bone id.
-         int boneId = mModel->GetCoreBoneID(boneNameArray[0]);
-         CPPUNIT_ASSERT(boneId != Cal3DModelWrapper::NULL_BONE);
+         // --- Find a test bone.
+         dtAnim::BoneArray bones;
+         mModel->GetBones(bones);
+         CPPUNIT_ASSERT(bones.size() > 0);
 
+         dtAnim::BoneInterface* bone = bones.front().get();
+         CPPUNIT_ASSERT(bone != NULL);
 
          // Begin tests...
 
          // Test the global default
-         CPPUNIT_ASSERT( ! Cal3DModelWrapper::GetAllowBindPose());
-         Cal3DModelWrapper::SetAllowBindPose(true);
-         CPPUNIT_ASSERT(Cal3DModelWrapper::GetAllowBindPose());
+         CPPUNIT_ASSERT( ! Cal3DAnimator::IsBindPoseAllowed());
+         Cal3DAnimator::SetBindPoseAllowed(true);
+         CPPUNIT_ASSERT(Cal3DAnimator::IsBindPoseAllowed());
 
          // --- Get the bind pose transform.
          mAnimHelper->Update(TIME_STEP);
-         osg::Vec3 bindPoseTrans = mModel->GetBoneAbsoluteTranslation(boneId);
-         osg::Quat bindPoseRot = mModel->GetBoneAbsoluteRotation(boneId);
+         osg::Vec3 bindPoseTrans = bone->GetAbsoluteTranslation();
+         osg::Quat bindPoseRot = bone->GetAbsoluteRotation();
 
          // --- Ensure the model takes the global flag into account.
          CPPUNIT_ASSERT( ! mAnimHelper->GetSequenceMixer().IsAnimationPlaying(animName));
-         CPPUNIT_ASSERT(mModel->CanUpdate());
+         CPPUNIT_ASSERT(mModel->GetAnimator()->IsUpdatable());
 
          // --- Set back the default for further test purposes.
-         Cal3DModelWrapper::SetAllowBindPose(false);
-         CPPUNIT_ASSERT( ! Cal3DModelWrapper::GetAllowBindPose());
+         Cal3DAnimator::SetBindPoseAllowed(false);
+         CPPUNIT_ASSERT( ! Cal3DAnimator::IsBindPoseAllowed());
 
          // --- Ensure the model still takes the global flag into account.
          CPPUNIT_ASSERT( ! mAnimHelper->GetSequenceMixer().IsAnimationPlaying(animName));
-         CPPUNIT_ASSERT( ! mModel->CanUpdate());
+         CPPUNIT_ASSERT( ! mModel->GetAnimator()->IsUpdatable());
 
 
          // Test movement of a bone in an animation.
@@ -161,14 +172,14 @@ namespace dtAnim
          mAnimHelper->Update(TIME_STEP);
 
          // --- Get the transform of the moved bone and ensure it is not
-         osg::Vec3 animTrans = mModel->GetBoneAbsoluteTranslation(boneId);
-         osg::Quat animRot = mModel->GetBoneAbsoluteRotation(boneId);
+         osg::Vec3 animTrans = bone->GetAbsoluteTranslation();
+         osg::Quat animRot = bone->GetAbsoluteRotation();
          CPPUNIT_ASSERT(animTrans != bindPoseTrans);
          CPPUNIT_ASSERT(animRot != bindPoseRot);
 
          // --- Ensure the state of the animation.
          CPPUNIT_ASSERT(mAnimHelper->GetSequenceMixer().IsAnimationPlaying(animName));
-         CPPUNIT_ASSERT(mModel->CanUpdate());
+         CPPUNIT_ASSERT(mModel->GetAnimator()->IsUpdatable());
 
 
          // Test that clearing the animation causes the model to be left on the
@@ -180,11 +191,11 @@ namespace dtAnim
          // --- Ensure that the animation has stopped and that model knows that
          //     it cannot update its skeleton.
          CPPUNIT_ASSERT( ! mAnimHelper->GetSequenceMixer().IsAnimationPlaying(animName));
-         CPPUNIT_ASSERT( ! mModel->CanUpdate());
+         CPPUNIT_ASSERT( ! mModel->GetAnimator()->IsUpdatable());
 
          // --- Verify that the bone's transform matches that of the recent animation frame.
-         osg::Vec3 endTrans = mModel->GetBoneAbsoluteTranslation(boneId);
-         osg::Quat endRot = mModel->GetBoneAbsoluteRotation(boneId);
+         osg::Vec3 endTrans = bone->GetAbsoluteTranslation();
+         osg::Quat endRot = bone->GetAbsoluteRotation();
          CPPUNIT_ASSERT(endTrans != bindPoseTrans);
          CPPUNIT_ASSERT(endRot != bindPoseRot);
          CPPUNIT_ASSERT(endTrans == animTrans);
@@ -192,19 +203,19 @@ namespace dtAnim
 
 
          // Test re-enabling bind pose with a subsequent call to Update.
-         Cal3DModelWrapper::SetAllowBindPose(true);
+         Cal3DAnimator::SetBindPoseAllowed(true);
          mAnimHelper->ClearAll(0.0f);
          mAnimHelper->Update(TIME_STEP);
 
          // --- Ensure that the model knows that it is allowed to update from
          //     global permission while ensuring there is no animation present.
          CPPUNIT_ASSERT( ! mAnimHelper->GetSequenceMixer().IsAnimationPlaying(animName));
-         CPPUNIT_ASSERT(mModel->CanUpdate());
+         CPPUNIT_ASSERT(mModel->GetAnimator()->IsUpdatable());
 
          // --- The resulting transform of the test bone should be the same as
          //     that of the bones original bind pose.
-         endTrans = mModel->GetBoneAbsoluteTranslation(boneId);
-         endRot = mModel->GetBoneAbsoluteRotation(boneId);
+         endTrans = bone->GetAbsoluteTranslation();
+         endRot = bone->GetAbsoluteRotation();
          CPPUNIT_ASSERT(endTrans == bindPoseTrans);
          CPPUNIT_ASSERT(endRot == bindPoseRot);
          CPPUNIT_ASSERT(endTrans != animTrans);
@@ -212,7 +223,7 @@ namespace dtAnim
       }
 
       dtCore::RefPtr<AnimationHelper> mAnimHelper;
-      dtCore::RefPtr<Cal3DModelWrapper> mModel;
+      dtCore::RefPtr<BaseModelWrapper> mModel;
 
    };
 

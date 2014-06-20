@@ -21,17 +21,13 @@
 
 #include <dtAnim/morphdriver.h>
 
-#include <cal3d/model.h>
-#include <cal3d/morphtargetmixer.h>
-
 namespace dtAnim
 {
 
-MorphDriver::MorphDriver(Cal3DModelWrapper* pWrapper)
-: mWrapper(pWrapper)
+MorphDriver::MorphDriver(Cal3DAnimator* animator)
+: mAnimator(animator)
 {
 }
-
 
 MorphDriver::~MorphDriver()
 {
@@ -39,12 +35,12 @@ MorphDriver::~MorphDriver()
 
 void MorphDriver::Update(double dt)
 {
-   mWrapper->UpdateMorphTargetMixer(float(dt));
+   mAnimator->UpdateMorphTargetMixer(float(dt));
 }
 
-void MorphDriver::SetWrapper(Cal3DModelWrapper* pWrapper)
+void MorphDriver::SetAnimator(Cal3DAnimator* animator)
 {
-   mWrapper = pWrapper;
+   mAnimator = animator;
 }
 
 

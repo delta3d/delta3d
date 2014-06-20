@@ -295,12 +295,13 @@ void ProceduralAnimationActor::AddedToScene(dtCore::Scene* scene)
 ////////////////////////////////////////////////////////////////////////////////
 osg::Vec3 ProceduralAnimationActor::GetPoseMeshEndEffectorDirection(const dtAnim::PoseMesh* poseMesh) const
 {
-   const dtAnim::Cal3DModelWrapper* modelWrapper = GetComponent<dtAnim::AnimationHelper>()->GetModelWrapper();
+   const dtAnim::BaseModelWrapper* modelWrapper = GetComponent<dtAnim::AnimationHelper>()->GetModelWrapper();
 
    // If we have the ik system attached
    if (poseMesh != NULL)
    {
-      osg::Quat boneRotation = modelWrapper->GetBoneAbsoluteRotation(poseMesh->GetEffectorID());
+      dtAnim::BoneInterface* bone = modelWrapper->GetBoneByIndex(poseMesh->GetEffectorID());
+      osg::Quat boneRotation = bone->GetAbsoluteRotation();
       osg::Vec3 nativeBoneForward = poseMesh->GetEffectorForwardAxis();
 
       dtCore::Transform transform;
@@ -321,7 +322,7 @@ osg::Vec3 ProceduralAnimationActor::GetPoseMeshEndEffectorDirection(const dtAnim
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-dtAnim::Cal3DModelWrapper* ProceduralAnimationActor::GetModelWrapper()
+dtAnim::BaseModelWrapper* ProceduralAnimationActor::GetModelWrapper()
 {
    return GetComponent<dtAnim::AnimationHelper>()->GetModelWrapper();
 }
@@ -364,7 +365,7 @@ osg::Vec3 ProceduralAnimationActor::GetGunDirection() const
 ////////////////////////////////////////////////////////////////////////////////
 osg::Vec3 ProceduralAnimationActor::GetGunPosition() const
 {
-   const dtAnim::Cal3DModelWrapper* modelWrapper = GetComponent<dtAnim::AnimationHelper>()->GetModelWrapper();
+   const dtAnim::BaseModelWrapper* modelWrapper = GetComponent<dtAnim::AnimationHelper>()->GetModelWrapper();
    dtAnim::PoseMesh* gunMesh = mMarinePoseData.mPoseMeshes[ProceduralAnimationData::GUN];
 
    dtCore::Transform transform;
@@ -376,13 +377,13 @@ osg::Vec3 ProceduralAnimationActor::GetGunPosition() const
    transform.GetTranslation(translation);
 
    // Get the bone position relative to its root
-   osg::Vec3 bonePosition = modelWrapper->GetBoneAbsoluteTranslation(gunMesh->GetEffectorID());
+   dtAnim::BoneInterface* bone = modelWrapper->GetBoneByIndex(gunMesh->GetEffectorID());
+   osg::Vec3 bonePosition = bone->GetAbsoluteTranslation();
 
    // Get the gun position in the world
    osg::Quat rotationCorrection(osg::DegreesToRadians(180.0f), osg::Z_AXIS);
    bonePosition  = rotationCorrection * (bonePosition * rotation);
    bonePosition += translation;
-
 
    return bonePosition;
 }
@@ -403,7 +404,7 @@ osg::Vec3 ProceduralAnimationActor::GetWorldPosition() const
 ////////////////////////////////////////////////////////////////////////////////
 osg::Vec3 ProceduralAnimationActor::GetHeadPosition() const
 {
-   const dtAnim::Cal3DModelWrapper* modelWrapper = GetComponent<dtAnim::AnimationHelper>()->GetModelWrapper();
+   const dtAnim::BaseModelWrapper* modelWrapper = GetComponent<dtAnim::AnimationHelper>()->GetModelWrapper();
    dtAnim::PoseMesh* headMesh = mMarinePoseData.mPoseMeshes[ProceduralAnimationData::HEAD];
 
    dtCore::Transform transform;
@@ -415,7 +416,8 @@ osg::Vec3 ProceduralAnimationActor::GetHeadPosition() const
    transform.GetTranslation(translation);
 
    // Get the bone position relative to its root
-   osg::Vec3 bonePosition = modelWrapper->GetBoneAbsoluteTranslation(headMesh->GetEffectorID());
+   dtAnim::BoneInterface* bone = modelWrapper->GetBoneByIndex(headMesh->GetEffectorID());
+   osg::Vec3 bonePosition = bone->GetAbsoluteTranslation();
 
    // Get the gun position in the world
    bonePosition  = bonePosition * rotation;

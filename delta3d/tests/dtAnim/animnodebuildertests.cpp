@@ -24,12 +24,13 @@
 #include <prefix/unittestprefix.h>
 #include <cppunit/extensions/HelperMacros.h>
 
-#include <dtAnim/animnodebuilder.h>
-#include <dtAnim/cal3ddatabase.h>
-#include <dtAnim/cal3dmodelwrapper.h>
-#include <dtAnim/cal3dmodeldata.h>
 #include <dtAnim/animationhelper.h>
+#include <dtAnim/animnodebuilder.h>
+#include <dtAnim/basemodeldata.h>
+#include <dtAnim/basemodelwrapper.h>
+#include <dtAnim/cal3dnodebuilder.h>
 #include <dtAnim/hardwaresubmesh.h>
+#include <dtAnim/modeldatabase.h>
 #include <dtAnim/submesh.h>
 
 #include <dtCore/project.h>
@@ -114,15 +115,16 @@ namespace dtAnim
       //////////////////////////////////////////////////////////////////////////
       void TestBuildHardware()
       {
-         AnimNodeBuilder& nodeBuilder = Cal3DDatabase::GetInstance().GetNodeBuilder();
+         AnimNodeBuilder* nodeBuilder = ModelDatabase::GetInstance().GetNodeBuilder();
+         CPPUNIT_ASSERT_MESSAGE("AnimNodeBuilder should be valid.", nodeBuilder != NULL);
 
          //see if we can even do hardware building...
-         if (nodeBuilder.SupportsHardware() == false)
+         if (nodeBuilder->SupportsHardware() == false)
          {
             return;
          }
 
-         nodeBuilder.SetCreate(AnimNodeBuilder::CreateFunc(&nodeBuilder, &AnimNodeBuilder::CreateHardware));
+         nodeBuilder->SetCreate(AnimNodeBuilder::CreateFunc(nodeBuilder, &AnimNodeBuilder::CreateHardware));
          mHelper->LoadModel(mModelPath);
 
          osg::Node* node = mHelper->GetNode();
@@ -144,13 +146,13 @@ namespace dtAnim
                                  geode != NULL);
 
          CheckGeode(geode, true);
-         Cal3DModelData* modelData = Cal3DDatabase::GetInstance().GetModelData(*mHelper->GetModelWrapper());
+         BaseModelData* modelData = mHelper->GetModelWrapper()->GetModelData();
          CPPUNIT_ASSERT(modelData->GetVertexBufferObject() != 0);
          CPPUNIT_ASSERT(modelData->GetElementBufferObject() != 0);
 
          dtCore::RefPtr<dtAnim::AnimationHelper> secondHelper = new AnimationHelper();
          secondHelper->LoadModel(mModelPath);
-         Cal3DModelData* secondModelData = Cal3DDatabase::GetInstance().GetModelData(*secondHelper->GetModelWrapper());
+         BaseModelData* secondModelData = secondHelper->GetModelWrapper()->GetModelData();
 
          CPPUNIT_ASSERT_EQUAL_MESSAGE("The first and second hardware meshes should share VBO's",
                secondModelData->GetVertexBufferObject(), modelData->GetVertexBufferObject());
@@ -163,14 +165,15 @@ namespace dtAnim
       ///////////////////////////////////////////////////////////////////////
       void TestBuildSoftware()
       {
-         AnimNodeBuilder& nodeBuilder = Cal3DDatabase::GetInstance().GetNodeBuilder();
+         AnimNodeBuilder* nodeBuilder = ModelDatabase::GetInstance().GetNodeBuilder();
+         CPPUNIT_ASSERT_MESSAGE("AnimNodeBuilder should be valid.", nodeBuilder != NULL);
 
-         if (nodeBuilder.SupportsSoftware() == false)
+         if (nodeBuilder->SupportsSoftware() == false)
          {
             return;
          }
 
-         nodeBuilder.SetCreate(AnimNodeBuilder::CreateFunc(&nodeBuilder, &AnimNodeBuilder::CreateSoftware));
+         nodeBuilder->SetCreate(AnimNodeBuilder::CreateFunc(nodeBuilder, &AnimNodeBuilder::CreateSoftware));
          mHelper->LoadModel(mModelPath);
          dtCore::RefPtr<osg::Node> node = mHelper->GetNode();
 
@@ -224,8 +227,8 @@ namespace dtAnim
                                       true, hasSubmesh);
 
 
-         const AnimNodeBuilder::Cal3DBoundingSphereCalculator* sphereCallback =
-            dynamic_cast<const AnimNodeBuilder::Cal3DBoundingSphereCalculator*>(toCheck->getComputeBoundingSphereCallback());
+         const dtAnim::Cal3dBoundingSphereCalculator* sphereCallback =
+            dynamic_cast<const dtAnim::Cal3dBoundingSphereCalculator*>(toCheck->getComputeBoundingSphereCallback());
          CPPUNIT_ASSERT(sphereCallback != NULL);
       }
 

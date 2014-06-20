@@ -157,7 +157,7 @@ void PoseMeshItem::SetDisplayError(bool shouldDisplay)
 void PoseMeshItem::Clear()
 {
    // Remove any of this item's pose blends from the model
-   mMeshUtil->ClearPoses(mPoseMesh, mModel->GetCal3DWrapper(), 0.0f);
+   mMeshUtil->ClearPoses(mPoseMesh, mModel->GetModelWrapper(), 0.0f);
 
    mLastBlendPos.setX(FLT_MAX);
    mLastBlendPos.setY(FLT_MAX);
@@ -262,8 +262,8 @@ void PoseMeshItem::AddBoneLinesToScene(const dtAnim::PoseMesh::TargetTriangle& t
    //QColor errorColor = GetErrorColor(trueDirection, blendDirection);
    //osg::Vec4 osgColor(errorColor.redF(), errorColor.greenF(), errorColor.blueF(), 1.0f);
 
-   //mModel->GetCal3DWrapper()->Update(0.0f);
-   //osg::Vec3 startPos = mModel->GetCal3DWrapper()->GetBoneAbsoluteTranslation(mPoseMesh->GetBoneID());
+   //mModel->GetModelWrapper()->Update(0.0f);
+   //osg::Vec3 startPos = mModel->GetModelWrapper()->GetBoneAbsoluteTranslation(mPoseMesh->GetBoneID());
 
    //mTrueLine  = MakeLine(startPos, startPos + trueDirection * 100.0f, osg::Vec4(0.0f, 0.0f, 0.0f, 1.0f), 1.0f);
    //mBlendLine = MakeLine(startPos, startPos + blendDirection * 100.0f, osgColor, 1.0f);
@@ -352,14 +352,14 @@ void PoseMeshItem::BlendPosesFromItemCoordinates(float xCoord, float yCoord)
    // Only update the blend and position if we're in the mesh
    if (targetTri.mIsInside)
    {
-      dtAnim::Cal3DModelWrapper* modelWrapper = mModel->GetCal3DWrapper();
+      dtAnim::BaseModelWrapper* modelWrapper = mModel->GetModelWrapper();
       mMeshUtil->BlendPoses(mPoseMesh, modelWrapper, targetTri, 0.0f);
 
       if (mAreErrorSamplesDisplayed)
       {
          // Make sure the skeleton is updated to the current
          // blend before we try to access it
-         modelWrapper->Update(0.0f);
+         modelWrapper->UpdateAnimations(0.0f);
 
          AddBoneLinesToScene(targetTri);
       }
@@ -629,12 +629,12 @@ void PoseMeshItem::ExtractEdgesFromMesh(const dtAnim::PoseMesh& mesh)
 ////////////////////////////////////////////////////////////////////////////////
 void PoseMeshItem::ExtractErrorFromMesh(const dtAnim::PoseMesh& mesh)
 {
-   dtAnim::Cal3DModelWrapper* modelWrapper = mModel->GetCal3DWrapper();
+   dtAnim::BaseModelWrapper* modelWrapper = mModel->GetModelWrapper();
    assert(modelWrapper);
 
    // Make sure no animations are applied
-   modelWrapper->ClearAll();
-   modelWrapper->Update(0.0f);
+   modelWrapper->ClearAllAnimations();
+   modelWrapper->UpdateAnimations(0.0f);
 
    // Nothing is blended now so remove character lines
    RemoveBoneLinesFromScene();
@@ -720,7 +720,7 @@ bool PoseMeshItem::IsItemMovable()
 ////////////////////////////////////////////////////////////////////////////////
 float PoseMeshItem::GetErrorSample(const QPointF& samplePoint)
 {
-   dtAnim::Cal3DModelWrapper* modelWrapper = mModel->GetCal3DWrapper();
+   dtAnim::BaseModelWrapper* modelWrapper = mModel->GetModelWrapper();
    assert(modelWrapper);
 
    QPointF meshSpaceTrueValue;
@@ -735,10 +735,13 @@ float PoseMeshItem::GetErrorSample(const QPointF& samplePoint)
    mMeshUtil->BlendPoses(mPoseMesh, modelWrapper, blendTarget, 0.0f);
 
    // Apply the blended pose for this sample
-   modelWrapper->Update(0.0f);
+   modelWrapper->UpdateAnimations(0.0f);
 
-   osg::Quat effectorRotation = modelWrapper->GetBoneAbsoluteRotation(mPoseMesh->GetEffectorID());
-   osg::Quat rootRotation = modelWrapper->GetBoneAbsoluteRotation(mPoseMesh->GetRootID());
+   dtAnim::BoneInterface* rootBone = modelWrapper->GetBoneByIndex(mPoseMesh->GetRootID());
+   dtAnim::BoneInterface* effectorBone = modelWrapper->GetBoneByIndex(mPoseMesh->GetEffectorID());
+
+   osg::Quat effectorRotation = effectorBone->GetAbsoluteRotation();
+   osg::Quat rootRotation = rootBone->GetAbsoluteRotation();
 
    // calculate a vector transformed by the rotation data.
    osg::Vec3 blendDirection = effectorRotation * mPoseMesh->GetEffectorForwardAxis();
@@ -768,8 +771,9 @@ void PoseMeshItem::GetBoneDirections(const dtAnim::PoseMesh::TargetTriangle& tar
                                      osg::Vec3& outTrueDirection,
                                      osg::Vec3& outBlendDirection)
 {
-   dtAnim::Cal3DModelWrapper *modelWrapper = mModel->GetCal3DWrapper();
-   osg::Quat boneRotation = modelWrapper->GetBoneAbsoluteRotation(mPoseMesh->GetEffectorID());
+   dtAnim::BaseModelWrapper *modelWrapper = mModel->GetModelWrapper();
+   dtAnim::BoneInterface* effectorBone = modelWrapper->GetBoneByIndex(mPoseMesh->GetEffectorID());
+   osg::Quat boneRotation = effectorBone->GetAbsoluteRotation();
 
    // Get the direction that points forward for this pose mesh's bone
    const osg::Vec3& nativeBoneForward = mPoseMesh->GetEffectorForwardAxis();
@@ -798,13 +802,13 @@ void PoseMeshItem::GetBoneDirections(const dtAnim::PoseMesh::TargetTriangle& tar
 void PoseMeshItem::GetAnchorBoneDirection(const dtAnim::PoseMesh::TargetTriangle& currentTargetTri,
                                            osg::Vec3& outDirection)
 {
-   dtAnim::Cal3DModelWrapper* modelWrapper = mModel->GetCal3DWrapper();
+   dtAnim::BaseModelWrapper* modelWrapper = mModel->GetModelWrapper();
 
    // Temp hack
    if (mPoseMesh->GetName() == "Poses_Gun")
    {
-      osg::Quat boneRotation = modelWrapper->GetBoneAbsoluteRotation(3);
-      osg::Quat test = modelWrapper->GetBoneRelativeRotation(3);
+      osg::Quat boneRotation = modelWrapper->GetBoneByIndex(3)->GetAbsoluteRotation();
+      osg::Quat test = modelWrapper->GetBoneByIndex(3)->GetRelativeRotation();
       outDirection = boneRotation * osg::Y_AXIS;
 
       osg::Vec3 asdf = test * -osg::Y_AXIS;
@@ -832,13 +836,13 @@ void PoseMeshItem::GetAnchorBoneDirection(const dtAnim::PoseMesh::TargetTriangle
    else
    {
       // Remove this mesh's contribution to the animation so we can get the baseline
-      mMeshUtil->ClearPoses(mPoseMesh, mModel->GetCal3DWrapper(), 0.0f);
+      mMeshUtil->ClearPoses(mPoseMesh, mModel->GetModelWrapper(), 0.0f);
 
       // Apply the changes to the skeleton
-      modelWrapper->Update(0.0f);
+      modelWrapper->UpdateAnimations(0.0f);
 
       // Get the bone's rotation without this pose mesh's animations applied
-      osg::Quat boneRotation = modelWrapper->GetBoneAbsoluteRotation(mPoseMesh->GetEffectorID());
+      osg::Quat boneRotation = modelWrapper->GetBoneByIndex(mPoseMesh->GetEffectorID())->GetAbsoluteRotation();
 
       const osg::Vec3 &nativeBoneForward = mPoseMesh->GetEffectorForwardAxis();
 
@@ -846,8 +850,8 @@ void PoseMeshItem::GetAnchorBoneDirection(const dtAnim::PoseMesh::TargetTriangle
       outDirection = boneRotation * nativeBoneForward;
 
       // Re-apply the previous animation
-      mMeshUtil->BlendPoses(mPoseMesh, mModel->GetCal3DWrapper(), currentTargetTri, 0.0f);
-      modelWrapper->Update(0.0f);
+      mMeshUtil->BlendPoses(mPoseMesh, mModel->GetModelWrapper(), currentTargetTri, 0.0f);
+      modelWrapper->UpdateAnimations(0.0f);
    }
 }
 
@@ -993,9 +997,9 @@ bool PoseMeshItem::GetIntersectionBoundingPoints(const QLineF& intersector,
 ////////////////////////////////////////////////////////////////////////////////
 void PoseMeshItem::AssertZeroErrorAtVertices()
 {
-   dtAnim::Cal3DModelWrapper* modelWrapper = mModel->GetCal3DWrapper();
-   modelWrapper->ClearAll();
-   modelWrapper->Update(0.0f);
+   dtAnim::BaseModelWrapper* modelWrapper = mModel->GetModelWrapper();
+   modelWrapper->ClearAllAnimations();
+   modelWrapper->UpdateAnimations(0.0f);
 
    const dtAnim::PoseMesh::VertexVector& vertList = mPoseMesh->GetVertices();
 
@@ -1013,23 +1017,23 @@ void PoseMeshItem::AssertZeroErrorAtVertices()
 
       // Remove this mesh's contribution to the animation so we can get the baseline
       //mMeshUtil->ClearPoses(mPoseMesh, modelWrapper, 0.0f);
-      modelWrapper->ClearAll();
+      modelWrapper->ClearAllAnimations();
 
       // Apply the changes to the skeleton
-      modelWrapper->Update(0.0f);
+      modelWrapper->UpdateAnimations(0.0f);
 
       // Apply the animation to test
       mMeshUtil->BlendPoses(mPoseMesh, modelWrapper, trianglePick, 0.0f);
 
       // Apply new blend to skeleton
-      modelWrapper->Update(0.0f);
+      modelWrapper->UpdateAnimations(0.0f);
 
       osg::Vec3 blendDirection;
       osg::Vec3 trueDirection;
 
       //GetBoneDirections(trianglePick, trueDirection, blendDirection);
 
-         osg::Quat boneRotation = modelWrapper->GetBoneAbsoluteRotation(mPoseMesh->GetEffectorID());
+      osg::Quat boneRotation = modelWrapper->GetBoneByIndex(mPoseMesh->GetEffectorID())->GetAbsoluteRotation();
          //osg::Quat boneRotation = modelWrapper->GetBoneAbsoluteRotationForKeyFrame(animID, mPoseMesh->GetBoneID(), 30);
 
          // Get the direction that points forward for this pose mesh's bone
@@ -1063,16 +1067,16 @@ void PoseMeshItem::AssertZeroErrorAtVertices()
       //assert(angle == 0.0f);
    }
 
-   modelWrapper->ClearAll();
-   modelWrapper->Update(0.0f);
+   modelWrapper->ClearAllAnimations();
+   modelWrapper->UpdateAnimations(0.0f);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 void PoseMeshItem::AssertAzElConversion()
 {
-   dtAnim::Cal3DModelWrapper* modelWrapper = mModel->GetCal3DWrapper();
-   modelWrapper->ClearAll();
-   modelWrapper->Update(0.0f);
+   dtAnim::BaseModelWrapper* modelWrapper = mModel->GetModelWrapper();
+   modelWrapper->ClearAllAnimations();
+   modelWrapper->UpdateAnimations(0.0f);
 
    const dtAnim::PoseMesh::VertexVector &vertList = mPoseMesh->GetVertices();
 

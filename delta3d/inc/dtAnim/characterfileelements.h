@@ -38,6 +38,7 @@ namespace dtAnim
       static const dtUtil::RefString CHARACTER_ELEMENT;
 
       // File Reference Tags
+      static const dtUtil::RefString MIXED_RESOURCE_ELEMENT;
       static const dtUtil::RefString SKELETON_ELEMENT;
       static const dtUtil::RefString MESH_ELEMENT;
       static const dtUtil::RefString MATERIAL_ELEMENT;

@@ -42,7 +42,7 @@
 #include <dtCore/map.h>
 
 #include <dtAnim/chardrawable.h>
-#include <dtAnim/cal3ddatabase.h>
+#include <dtAnim/modeldatabase.h>
 
 #include <osg/PolygonMode>
 #include <osg/PolygonOffset>
@@ -550,8 +550,8 @@ void ObjectViewer::OnLoadGeometryFile(const std::string& filename)
    {
       QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
 
-      dtCore::RefPtr<dtAnim::Cal3DModelWrapper> wrapper =
-         dtAnim::Cal3DDatabase::GetInstance().Load(filename);
+      dtCore::RefPtr<dtAnim::BaseModelWrapper> wrapper =
+         dtAnim::ModelDatabase::GetInstance().Load(filename);
 
       if (wrapper.valid())
       {

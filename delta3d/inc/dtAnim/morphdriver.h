@@ -24,26 +24,25 @@
 
 #include <dtAnim/export.h>
 #include <dtCore/refptr.h>
+#include <dtAnim/cal3danimator.h>
 #include <dtAnim/ical3ddriver.h>
-#include <dtAnim/cal3dmodelwrapper.h>
 
 namespace dtAnim
 {
-
 class DT_ANIM_EXPORT MorphDriver: public ICal3DDriver
 {
 
 public:
-   MorphDriver(Cal3DModelWrapper* pWrapper);
+   MorphDriver(Cal3DAnimator* animator);
 
    void Update(double dt);
-   void SetWrapper(Cal3DModelWrapper*);
+   void SetAnimator(Cal3DAnimator* animator);
 
 protected:
    virtual ~MorphDriver();
 
 private:
-   dtCore::RefPtr<Cal3DModelWrapper> mWrapper;
+   dtCore::RefPtr<Cal3DAnimator> mAnimator;
 };
 
 } // namespace dtAnim

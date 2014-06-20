@@ -68,7 +68,8 @@ protected:
 private:
    typedef dtCore::RefPtr<dtAnim::PoseMeshDatabase> IKDatabase;
 
-   std::map<CalCoreModel*, IKDatabase> mPoseMeshMap;
+   typedef std::map<dtAnim::BaseModelWrapper*, IKDatabase> PoseMeshMap;
+   PoseMeshMap mPoseMeshMap;
    std::vector<ProceduralAnimationActor*> mActorList;
 
    dtCore::RefPtr<dtGame::BaseGroundClamper> mGroundClamper;

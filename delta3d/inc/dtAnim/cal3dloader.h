@@ -23,6 +23,7 @@
 #define DELTA_CAL3DLOADER
 
 #include <dtAnim/export.h>
+#include <dtAnim/basemodelloader.h>
 #include <dtAnim/cal3dmodeldata.h>
 #include <dtAnim/cal3dmodelwrapper.h>
 #include <dtAnim/characterfilehandler.h>
@@ -44,6 +45,39 @@ namespace dtAnim
 {
    class AnimationWrapper;
    class Animatable;
+   
+   ////////////////////////////////////////////////////////////////////////////////
+   // CONSTANTS
+   ////////////////////////////////////////////////////////////////////////////////
+   class DT_ANIM_EXPORT Cal3dExtensionEnum : public dtUtil::Enumeration
+   {
+         DECLARE_ENUM(Cal3dExtensionEnum);
+      public:
+         typedef dtUtil::Enumeration BaseClass;
+         
+         static Cal3dExtensionEnum ANIMATION_XML;
+         static Cal3dExtensionEnum ANIMATION_BINARY;
+         static Cal3dExtensionEnum MATERIAL_XML;
+         static Cal3dExtensionEnum MATERIAL_BINARY;
+         static Cal3dExtensionEnum MESH_XML;
+         static Cal3dExtensionEnum MESH_BINARY;
+         static Cal3dExtensionEnum MORPH_XML;
+         static Cal3dExtensionEnum MORPH_BINARY;
+         static Cal3dExtensionEnum SKELETON_XML;
+         static Cal3dExtensionEnum SKELETON_BINARY;
+
+         const std::string& GetDescription() const;
+
+         dtAnim::ModelResourceType GetResourceType() const;
+
+      private:
+         Cal3dExtensionEnum(const std::string& name,
+            dtAnim::ModelResourceType resourceType,
+            const std::string& description);
+
+         dtAnim::ModelResourceType mResourceType;
+         std::string mDescription;
+   };
 
    /**
     * Loads a animation definition file and returns a valid CalModel.  Caches
@@ -51,44 +85,44 @@ namespace dtAnim
     * instances of CalModels.  If you call Load() with the same filename twice,
     * it actually only loads once.
     */
-   class DT_ANIM_EXPORT Cal3DLoader: public osg::Referenced
+   class DT_ANIM_EXPORT Cal3dLoader: public dtAnim::BaseModelLoader
    {
    public:
-      Cal3DLoader();
+      typedef dtAnim::BaseModelLoader BaseClass;
 
-      ///Load an animated entity definition file and return the Cal3DModelWrapper
-      bool Load(const std::string& filename, dtCore::RefPtr<Cal3DModelData>& data_in);
+      Cal3dLoader();
+
+      // Override
+      virtual dtCore::RefPtr<dtAnim::BaseModelData> CreateModelData(CharacterFileHandler& handler);
+
+      virtual dtCore::RefPtr<dtAnim::BaseModelWrapper> CreateModel(dtAnim::BaseModelData& data);
+      
+      virtual bool Save(const std::string& filename, const dtAnim::BaseModelWrapper& wrapper);
 
       ///empty all containers of CalCoreModels and the stored textures
-      void PurgeAllCaches();
+      virtual void Clear();
 
-      static void FinalizeSequenceInfo(CharacterFileHandler::AnimationSequenceStruct& sequenceStruct,
-         Cal3DModelData::AnimatableArray& animArray);
-
-   protected:
-      virtual ~Cal3DLoader();
-
-   private:
-      dtCore::RefPtr<Cal3DModelData> GetCoreModelData(dtCore::RefPtr<CharacterFileHandler>& outHandler, const std::string &filename, const std::string& path);
-
-      // this is an unpleasant place to load texture files.  Needs to be handled some other way
-      void LoadAllTextures(CalCoreModel& model, const std::string& path);
-
-      void LoadModelData(CharacterFileHandler& handler, Cal3DModelData& modelData);
+      virtual void CreateAttachments(dtAnim::CharacterFileHandler& handler, dtAnim::BaseModelData& modelData);
 
       void LoadHardwareData(Cal3DModelData* modelData);
+
+   protected:
+      virtual ~Cal3dLoader();
+
+   private:
+      // this is an unpleasant place to load texture files.  Needs to be handled some other way
+      void LoadAllTextures(CalCoreModel& model, const std::string& path);
 
       void InvertTextureCoordinates(CalHardwareModel* hardwareModel, const size_t stride,
          float* vboVertexAttr, Cal3DModelData* modelData, CalIndex*& indexArray);
 
       unsigned int GetMaxBoneID(CalCoreMesh& mesh);
-
+      
       typedef std::map<std::string, osg::ref_ptr<osg::Texture2D> > TextureMap;
       typedef std::map<std::string, cal3d::RefPtr<CalCoreAnimation> > AnimationMap;
 
       TextureMap mTextureCache;
       AnimationMap mAnimationCache;
-
    };
 
 } // namespace dtAnim

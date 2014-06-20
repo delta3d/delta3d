@@ -24,6 +24,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 #include <algorithm>
 #include <dtAnim/animatable.h>
+#include <dtAnim/animationinterface.h>
 
 namespace dtAnim
 {
@@ -35,7 +36,8 @@ const float Animatable::INFINITE_TIME = -1.0f;
 
 ////////////////////////////////////////////////////////////////////////////////
 Animatable::Animatable()
-   : mSpeed(1.0f)
+   : mID(-1)
+   , mSpeed(1.0f)
    , mInsertTime(0.0)
    , mStartTime(0.0f)
    , mStartDelay(0.0f)
@@ -59,7 +61,8 @@ Animatable::~Animatable()
 
 ////////////////////////////////////////////////////////////////////////////////
 Animatable::Animatable(const Animatable& pAnim)
-   : mSpeed(pAnim.GetSpeed())
+   : mID(-1)
+   , mSpeed(pAnim.GetSpeed())
    , mInsertTime(0.0)
    , mStartTime(pAnim.GetStartTime())
    , mStartDelay(pAnim.GetStartDelay())
@@ -95,6 +98,18 @@ Animatable& Animatable::operator=(const Animatable& pAnim)
    // NOTE: Do not clone the time-event name map.
    
    return *this;
+}
+
+/////////////////////////////////////////////////////////////////////////////////
+int Animatable::GetID() const
+{
+   return mID;
+}
+
+/////////////////////////////////////////////////////////////////////////////////
+void Animatable::SetID(int id)
+{
+   mID = id;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -272,9 +287,9 @@ const std::string& Animatable::GetName() const
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void Animatable::SetName(const std::string& pName)
+void Animatable::SetName(const std::string& name)
 {
-   mName = pName;
+   mName = name;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

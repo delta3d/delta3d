@@ -6,6 +6,7 @@
 
 const int MAX_BONES = 82;
 uniform vec4 boneTransforms[MAX_BONES * 3];
+uniform float scale = 1.0;
 
 void main(void)
 {
@@ -15,9 +16,19 @@ void main(void)
    float boneWeights[4];//float[](gl_MultiTexCoord2.x, gl_MultiTexCoord2.y, gl_MultiTexCoord2.z, gl_MultiTexCoord2.w);
    float boneIndices[4];//int[](gl_MultiTexCoord3.x, gl_MultiTexCoord3.y, gl_MultiTexCoord3.z, gl_MultiTexCoord3.w);
    
-   boneWeights[0] = gl_MultiTexCoord2.x; boneWeights[1] = gl_MultiTexCoord2.y; boneWeights[2] = gl_MultiTexCoord2.z; boneWeights[3] = gl_MultiTexCoord2.w;
-   boneIndices[0] = gl_MultiTexCoord3.x; boneIndices[1] = gl_MultiTexCoord3.y; boneIndices[2] = gl_MultiTexCoord3.z; boneIndices[3] = gl_MultiTexCoord3.w;
+   boneWeights[0] = gl_MultiTexCoord2.x;
+   boneWeights[1] = gl_MultiTexCoord2.y;
+   boneWeights[2] = gl_MultiTexCoord2.z;
+   boneWeights[3] = gl_MultiTexCoord2.w;
 
+   boneIndices[0] = gl_MultiTexCoord3.x;
+   boneIndices[1] = gl_MultiTexCoord3.y;
+   boneIndices[2] = gl_MultiTexCoord3.z;
+   boneIndices[3] = gl_MultiTexCoord3.w;
+   
+   vec4 vert;
+   vert.xyz = gl_Vertex.xyz * scale;
+   vert.w = 1.0;
 
    //multiply each bone and weight to get the offset matrix
    for(int i = 0; i < 4; ++i)
@@ -25,9 +36,9 @@ void main(void)
       int boneIndex = int(boneIndices[i] * 3.0);
       float boneWeight = boneWeights[i];
 
-      transformedPosition.x += boneWeight * dot(gl_Vertex, boneTransforms[boneIndex]);
-      transformedPosition.y += boneWeight * dot(gl_Vertex, boneTransforms[boneIndex + 1]);
-      transformedPosition.z += boneWeight * dot(gl_Vertex, boneTransforms[boneIndex + 2]);
+      transformedPosition.x += boneWeight * dot(vert, boneTransforms[boneIndex]);
+      transformedPosition.y += boneWeight * dot(vert, boneTransforms[boneIndex + 1]);
+      transformedPosition.z += boneWeight * dot(vert, boneTransforms[boneIndex + 2]);
 
       transformedNormal.x += boneWeight * dot(gl_Normal.xyz, boneTransforms[boneIndex].xyz);
       transformedNormal.y += boneWeight * dot(gl_Normal.xyz, boneTransforms[boneIndex + 1].xyz);
@@ -42,7 +53,7 @@ void main(void)
    
    gl_Position = gl_ModelViewProjectionMatrix * transformedPosition;
    
-   vec4 ecPosition = gl_ModelViewMatrix * gl_Vertex;
+   vec4 ecPosition = gl_ModelViewMatrix * vert;
    vec3 ecPosition3 = vec3(ecPosition) / ecPosition.w;
    gl_FogFragCoord = length(ecPosition3);
 }

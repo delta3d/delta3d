@@ -161,7 +161,7 @@ namespace dtAnim
                 {
                    time += firstTime + _timeOffset;
                    double modulated_time = (time - firstTime)/(period*2.0);
-                   _loopCount = floor(modulated_time);
+                   _loopCount = int(floor(modulated_time));
                    double fraction_part = modulated_time - _loopCount;
                    if (fraction_part>0.5) fraction_part = 1.0-fraction_part;
 
@@ -180,7 +180,7 @@ namespace dtAnim
                 {
                    time += firstTime + _timeOffset;
                    double modulated_time = (time - firstTime)/period;
-                   _loopCount = floor(modulated_time);
+                   _loopCount = int(floor(modulated_time));
                    double fraction_part = modulated_time - _loopCount;
 
                    time = firstTime+fraction_part * period;

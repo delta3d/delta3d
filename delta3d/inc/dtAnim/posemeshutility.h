@@ -27,7 +27,7 @@
 
 namespace dtAnim 
 { 
-   class Cal3DModelWrapper; 
+   class BaseModelWrapper; 
 
    /**
    * Convenience functionality for manipulating pose meshes
@@ -58,7 +58,7 @@ namespace dtAnim
       *  @param model the model where animations will be 'cleared' from
       *  @param delay the amount of time before the start of the 'clear'      
       */
-      void ClearPoses(const PoseMesh *poseMesh, dtAnim::Cal3DModelWrapper *model, float delay);
+      void ClearPoses(const PoseMesh *poseMesh, dtAnim::BaseModelWrapper *model, float delay);
 
       /**
       * BlendPoses Applies a 3 animation blend to a model based on TargetTriangle IK data
@@ -66,12 +66,12 @@ namespace dtAnim
       * @param targetTriangle the 3 triangle points and a point located within
       */
       void BlendPoses(const PoseMesh *poseMesh,
-                      dtAnim::Cal3DModelWrapper* model,
+                      dtAnim::BaseModelWrapper* model,
                       const PoseMesh::TargetTriangle &targetTriangle,
                       float blendDelay);
 
       void SetBaseReferencePoses(std::vector<BaseReferencePose> *poseList,
-                                 const dtAnim::Cal3DModelWrapper* model );
+                                 const dtAnim::BaseModelWrapper* model );
 
       bool GetBaseReferenceBlend(float overallAlpha, BaseReferenceBlend &outFinalBlend );
 

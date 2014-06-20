@@ -35,7 +35,6 @@ class DT_ANIM_EXPORT ICal3DDriver: public osg::Referenced
 public:
 
   virtual void Update(double dt) = 0;
-  virtual void SetWrapper(Cal3DModelWrapper*) = 0;
 
 };
 

@@ -19,13 +19,13 @@
 * Erik Johnson
 */
 
-#ifndef chardrawable_h__
-#define chardrawable_h__
+#ifndef __DELTA_CHARDRAWABLE_H__
+#define __DELTA_CHARDRAWABLE_H__
 
 #include <dtCore/transformable.h>
 #include <dtAnim/export.h>
 
-class CalModel;
+
 
 /// @cond DOXYGEN_SHOULD_SKIP_THIS
 namespace osg
@@ -37,9 +37,7 @@ namespace osg
 
 namespace dtAnim
 {
-   class CoreModel;
-   class Cal3DAnimator;
-   class Cal3DModelWrapper;
+   class BaseModelWrapper;
 
    /// A "view" of the cal3d animation state.
    /** Simple class that wraps up a dtAnim::Model so it can be added to the
@@ -58,12 +56,10 @@ namespace dtAnim
    class DT_ANIM_EXPORT CharDrawable : public dtCore::Transformable
    {
    public:
-      CharDrawable(Cal3DModelWrapper* wrapper);
+      CharDrawable(dtAnim::BaseModelWrapper* wrapper);
       ~CharDrawable();
 
       void OnMessage(dtCore::Base::MessageData* data);
-
-      Cal3DModelWrapper* GetCal3DWrapper();
 
       /** 
         * Get the Node representing the geometry.
@@ -73,10 +69,13 @@ namespace dtAnim
         * method for getting a handle to the geometry.
         * @see GetOSGNode()
         */
-      osg::Node* GetNode() const { return mNode.get(); }
+      osg::Node* GetNode() const;
+      void SetNode(osg::Node* node);
 
       /// change the data this class is viewing.
-      void SetCal3DWrapper(Cal3DModelWrapper* wrapper);
+      void SetModelWrapper(dtAnim::BaseModelWrapper* wrapper);
+
+      dtAnim::BaseModelWrapper* GetModelWrapper();
 
       /** 
        * Delete and rebuild all the SubMeshDrawables required, based on the CalRenderer.
@@ -87,8 +86,8 @@ namespace dtAnim
       osg::Node* RebuildSubmeshes();
 
    protected:
-      dtCore::RefPtr<Cal3DAnimator> mAnimator;
-      dtCore::RefPtr<osg::Node>     mNode;
+      dtCore::RefPtr<dtAnim::BaseModelWrapper> mModel;
+      dtCore::RefPtr<osg::Node> mNode;
       int mLastMeshCount;
 
 
@@ -96,4 +95,4 @@ namespace dtAnim
       CharDrawable();
    };
 }
-#endif // chardrawable_h__
+#endif // __DELTA_CHARDRAWABLE_H__

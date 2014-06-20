@@ -81,13 +81,13 @@ namespace dtAnim
    class DT_ANIM_EXPORT CharacterFileHandler : public dtCore::BaseXMLHandler
    {
    public:
-
       //Logger
       static const std::string CHARACTER_XML_LOGGER;
 
-   public:
       CharacterFileHandler();
       ~CharacterFileHandler();
+
+      const std::string& GetCharacterSystemType() const;
 
       virtual void CombinedCharacters(const XMLCh* const chars, size_t length);
 
@@ -114,27 +114,33 @@ namespace dtAnim
       ///structure to contain all info related to an animation
       struct AnimationStruct
       {
-         std::string mFileName; ///<The filename of the cal3D animation
+         std::string mFileName; ///<The filename of the animation
          std::string mName;     ///<The user friendly name of this animation
       };
 
       ///structure to contain all info related to an animation
       struct MorphAnimationStruct
       {
-         std::string mFileName; ///<The filename of the cal3D morph animation
+         std::string mFileName; ///<The filename of the morph animation
          std::string mName;     ///<The user friendly name of this morph animation
       };
 
       ///structure to contain all info related to a mesh
       struct MeshStruct
       {
-         std::string mFileName; ///<The filename of the Cal3D mesh
+         std::string mFileName; ///<The filename of the mesh
          std::string mName;     ///<The user friendly name of this mesh
       };
 
       struct MaterialStruct
       {
-         std::string mFileName; ///<The filename of the Cal3D material
+         std::string mFileName; ///<The filename of the material
+         std::string mName;     ///<The user friendly name of this material
+      };
+
+      struct MixedResourceStruct
+      {
+         std::string mFileName; ///<The filename of the file containing mixed resources
          std::string mName;     ///<The user friendly name of this material
       };
 
@@ -191,12 +197,15 @@ namespace dtAnim
       };
 
       ///Character Data
+      std::string mFilename;
+      std::string mPath;
       std::string mName;                            ///<The name of this animated entity
       std::vector<AnimationStruct> mAnimations;     ///<Container of animation structs
       std::vector<MorphAnimationStruct> mMorphAnimations;     ///<Container of MorphAnimation structs
       std::vector<std::pair<dtUtil::HotSpotDefinition, std::string> > mAttachmentPoints;     ///<Container of AttachmentPoint structs
       std::vector<MaterialStruct> mMaterials;       ///<Container of material structs
       std::vector<MeshStruct> mMeshes;              ///<Container of mesh structs
+      std::vector<MixedResourceStruct> mMixedResources;              ///<Container of mixed resource structs
       ///Shader information for hardware skinning. these value work with the shader manager.
       std::string mShaderGroup, mShaderName;
       unsigned mShaderMaxBones;
@@ -228,9 +237,8 @@ namespace dtAnim
 
       void HandleEventAttributes(const std::string& elementName,
          dtUtil::AttributeSearch::ResultMap& attrs);
-
-      //typedef std::stack<std::string> ElementStack;
-      //ElementStack mElements;
+      
+      void UpdateCharacterSystemType();
 
       bool mInSkinningShader;
       bool mInLOD;
@@ -239,6 +247,8 @@ namespace dtAnim
       bool mInSequence;
       bool mInSequenceChild;
       dtUtil::Log* mLogger;
+      
+      std::string mCharacterSystemType;
    };
 }
 #endif // DELTA_CHARACTER_FILE_HANDLER

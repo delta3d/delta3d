@@ -2,19 +2,20 @@
 #define __DT_ANIM_SKELETAL_DRAWABLE_H__
 
 #include <dtAnim/export.h>              // for export symbol
-#include <dtAnim/cal3dmodelwrapper.h>
+#include <dtAnim/basemodelwrapper.h>
 #include <osg/Drawable>                 // for base class
 #include <dtCore/refptr.h>              // for member variable
 
 
 namespace dtAnim
 {
+   class BoneInterface;
 
    /// Renders only the skeleton.
    class DT_ANIM_EXPORT SkeletalDrawable : public osg::Drawable
    {
    public:
-      SkeletalDrawable(const Cal3DModelWrapper* model);
+      SkeletalDrawable(const dtAnim::BaseModelWrapper* model);
 
       void drawImplementation(osg::RenderInfo& RenderInfo) const;
 
@@ -39,7 +40,7 @@ namespace dtAnim
 
          virtual void AddChild(const IPrimitiveRenderObject* prims)=0;
          virtual void AddID(int id)=0;
-         virtual void Render(const Cal3DModelWrapper& model) const=0;
+         virtual void Render(const dtAnim::BaseModelWrapper& model) const=0;
          virtual void SetRenderMode(unsigned char bits)=0;
 
          virtual ~IPrimitiveRenderObject();
@@ -47,9 +48,9 @@ namespace dtAnim
          /// a functor to be used in a loop algorithm
          struct RenderPrimitive
          {
-            dtCore::RefPtr<const Cal3DModelWrapper> mModelWrapper;
+            dtCore::RefPtr<const dtAnim::BaseModelWrapper> mModelWrapper;
 
-            RenderPrimitive(const Cal3DModelWrapper* model) : mModelWrapper(model) {}
+            RenderPrimitive(const dtAnim::BaseModelWrapper* model) : mModelWrapper(model) {}
             RenderPrimitive(const RenderPrimitive& same): mModelWrapper(same.mModelWrapper) {}
             void operator ()(const dtAnim::SkeletalDrawable::IPrimitiveRenderObject* ptr) const
             {
@@ -69,14 +70,14 @@ namespace dtAnim
       {
          void AddChild(const IPrimitiveRenderObject* prims);
          void AddID(int id);
-         void Render(const Cal3DModelWrapper& model) const;
+         void Render(const dtAnim::BaseModelWrapper& model) const;
          void SetRenderMode(unsigned char bits);
 
          CPrimitiveRenderObject();
          ~CPrimitiveRenderObject();
 
       private:
-         void RenderBoneIDs(GLenum primitive, const dtAnim::Cal3DModelWrapper& model) const;
+         void RenderBoneIDs(GLenum primitive, const dtAnim::BaseModelWrapper& model) const;
 
          VectorPrimitives mChildren;
          VectorInt mIDs;
@@ -91,11 +92,11 @@ namespace dtAnim
       /// makes a primitive for rendering.
       /// primitives are defined as lists of point data, where each point has only one child.
       /// a new primitive is created when a point is discovered to have multiple children.
-      static void PopulatePrimitive(const Cal3DModelWrapper& model,
-                                    int boneID,
+      static void PopulatePrimitive(const dtAnim::BaseModelWrapper& model,
+                                    dtAnim::BoneInterface& bone,
                                     IPrimitiveRenderObject* primitive);
 
-      dtCore::RefPtr<const Cal3DModelWrapper> mModelWrapper;
+      dtCore::RefPtr<const dtAnim::BaseModelWrapper> mModelWrapper;
 
       VectorPrimitives mRootPrimitives;
    };

@@ -23,7 +23,6 @@
 #include <prefix/unittestprefix.h>
 #include <cppunit/extensions/HelperMacros.h>
 
-#include <dtAnim/animationwrapper.h>
 #include <dtAnim/animatable.h>
 #include <dtAnim/animationchannel.h>
 #include <dtAnim/animationsequence.h>
@@ -134,6 +133,9 @@ namespace dtAnim
 
       CPPUNIT_ASSERT_EQUAL(size_t(0), pChildSeq->GetChildAnimations().size());
 
+      // This doesn't work, but it shouldn't crash.
+      pChildSeq->Setup(1.3f, 2.5f);
+
       pChildSeq->SetAnimations(mAnimStand->Clone(mAnimationAC->GetModelWrapper()),
             mAnimWalk->Clone(mAnimationAC->GetModelWrapper()),
             mAnimRun->Clone(mAnimationAC->GetModelWrapper()) );
@@ -141,10 +143,35 @@ namespace dtAnim
 
       CPPUNIT_ASSERT_EQUAL(size_t(3), pChildSeq->GetChildAnimations().size());
 
-      pChildSeq->Setup(1.0f, 2.0f);
+      pChildSeq->Setup(1.3f, 2.5f);
 
       dtCore::RefPtr<AnimationSequence> clonedSeq = static_cast<AnimationSequence*>(pChildSeq->Clone(mAnimationAC->GetModelWrapper()).get());
       CPPUNIT_ASSERT_EQUAL(size_t(3), clonedSeq->GetChildAnimations().size());
+      dtCore::RefPtr<WalkRunBlend> clonedWRB = dynamic_cast<WalkRunBlend*>(clonedSeq.get());
+      CPPUNIT_ASSERT(clonedWRB.valid());
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("The cloned WR controller should have 4 entries.", 4U, clonedWRB->GetWalkRunController().GetAnimationCount());
+      CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("The stand animation speed should be cloned properly.", 0.0f, clonedWRB->GetWalkRunController().GetAnimationInherentSpeed(0), 0.001f);
+      CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("The slow walk animation speed should be cloned properly.", 1.3f * 0.618f, clonedWRB->GetWalkRunController().GetAnimationInherentSpeed(1), 0.001f);
+      CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("The normal walk animation speed should be cloned properly.", 1.3f, clonedWRB->GetWalkRunController().GetAnimationInherentSpeed(2), 0.001f);
+      CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("The run animation speed should be cloned properly.", 2.5f, clonedWRB->GetWalkRunController().GetAnimationInherentSpeed(3), 0.001f);
+
+      for (unsigned i = 0; i < clonedWRB->GetWalkRunController().GetAnimationCount(); ++i)
+      {
+         Animatable* a = clonedWRB->GetWalkRunController().GetAnimation(i);
+         Animatable* oldA = pChildSeq->GetWalkRunController().GetAnimation(i);
+         if (a != NULL)
+         {
+            CPPUNIT_ASSERT(oldA != a);
+            CPPUNIT_ASSERT(oldA != NULL);
+            CPPUNIT_ASSERT_EQUAL(oldA->GetName(), a->GetName());
+            CPPUNIT_ASSERT(clonedWRB->GetAnimation(a->GetName()) == a);
+         }
+         else
+         {
+            CPPUNIT_ASSERT(oldA == NULL);
+         }
+      }
+      CPPUNIT_ASSERT_MESSAGE("The cloned WR controller animations should not have the same pointers.", pChildSeq->GetWalkRunController().GetAnimation(0) != clonedWRB->GetWalkRunController().GetAnimation(0));
 
       dtAnim::WalkRunBlend::WRController* controller = dynamic_cast<dtAnim::WalkRunBlend::WRController*>(pChildSeq->GetController());
 
@@ -177,7 +204,7 @@ namespace dtAnim
       CPPUNIT_ASSERT_DOUBLES_EQUAL(0.618f, pChildSeq->GetAnimation(mAnimNameWalk)->GetCurrentWeight(), 0.001f);
       CPPUNIT_ASSERT_DOUBLES_EQUAL(0.0f, pChildSeq->GetAnimation(mAnimNameRun)->GetCurrentWeight(), 0.001f);
 
-      velocityInterface->SetVelocity(osg::Vec3(0.0f, 1.0f, 0.0f));
+      velocityInterface->SetVelocity(osg::Vec3(0.0f, 1.2f, 0.0f));
 
       pChildSeq->Update(updateDT);
       // The blending should not change yet.
@@ -191,7 +218,7 @@ namespace dtAnim
       CPPUNIT_ASSERT_DOUBLES_EQUAL(1.0f, pChildSeq->GetAnimation(mAnimNameWalk)->GetCurrentWeight(), 0.001f);
       CPPUNIT_ASSERT_DOUBLES_EQUAL(0.0f, pChildSeq->GetAnimation(mAnimNameRun)->GetCurrentWeight(), 0.001f);
 
-      velocityInterface->SetVelocity(osg::Vec3(0.0f, 2.0f, 0.0f));
+      velocityInterface->SetVelocity(osg::Vec3(0.0f, 2.5f, 0.0f));
 
       pChildSeq->Update(updateDT);
       // The blending should not change yet.

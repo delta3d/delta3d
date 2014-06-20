@@ -1,10 +1,11 @@
 #include "PoseMeshProperties.h"
 #include "PoseMeshItem.h"
 #include <dtAnim/posemesh.h>
-#include <dtAnim/cal3dmodelwrapper.h>
+#include <dtAnim/basemodelwrapper.h>
 #include <dtUtil/macros.h>
 #include <QtGui/QTreeWidgetItem>
 #include <QtCore/QString>
+#include <assert.h>
 
 const QString STRING_ENABLED("Enabled");
 const QString STRING_DISABLED("Disabled");
@@ -30,7 +31,7 @@ PoseMeshProperties::PoseMeshProperties()
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-void PoseMeshProperties::AddMesh(const dtAnim::PoseMesh& newMesh, const dtAnim::Cal3DModelWrapper& model)
+void PoseMeshProperties::AddMesh(const dtAnim::PoseMesh& newMesh, const dtAnim::BaseModelWrapper& model)
 {  
    // Tree depth 0
    // Create the tree item and set its defaults
@@ -62,7 +63,12 @@ void PoseMeshProperties::AddMesh(const dtAnim::PoseMesh& newMesh, const dtAnim::
       int animID = rawVerts[vertIndex]->mAnimID;
       osg::Vec3 rawData = rawVerts[vertIndex]->mData;
 
-      const std::string& animName = model.GetCoreAnimationName(animID);
+      dtAnim::AnimationInterface* anim = model.GetAnimationByIndex(animID);
+      std::string animName;
+      if (anim != NULL)
+      {
+         animName = anim->GetName();
+      }
 
       // TODO add animation names
       QString dataString = QString("{ anim id = %1 }").arg(animID, 3);

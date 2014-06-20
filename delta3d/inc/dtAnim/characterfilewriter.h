@@ -39,7 +39,7 @@ namespace dtAnim
    class Animatable;
    class AnimationChannel;
    class AnimationSequence;
-   class Cal3DModelData;
+   class BaseModelData;
 }
 
 
@@ -56,23 +56,23 @@ namespace dtAnim
 
       CharacterFileWriter();
 
-      bool Write(const Cal3DModelData& modelData, std::ostream& stream);
+      bool Write(const dtAnim::BaseModelData& modelData, std::ostream& stream);
 
    protected:
       virtual ~CharacterFileWriter();
 
    private:
-      void WriteFileTag(const Cal3DModelData& modelData, int fileType);
-      void WriteSkeleton(const Cal3DModelData& modelData);
-      void WriteMeshes(const Cal3DModelData& modelData);
-      void WriteMaterials(const Cal3DModelData& modelData);
-      void WriteAnimations(const Cal3DModelData& modelData);
-      void WriteMorphs(const Cal3DModelData& modelData);
-      void WriteShader(const Cal3DModelData& modelData);
-      void WriteScale(const Cal3DModelData& modelData);
-      void WriteLOD(const Cal3DModelData& modelData);
-      void WritePoseMesh(const Cal3DModelData& modelData);
-      void WriteChannelsAndSequences(const Cal3DModelData& modelData);
+      void WriteFileTag(const dtAnim::BaseModelData& modelData, int fileType);
+      void WriteSkeleton(const dtAnim::BaseModelData& modelData);
+      void WriteMeshes(const dtAnim::BaseModelData& modelData);
+      void WriteMaterials(const dtAnim::BaseModelData& modelData);
+      void WriteAnimations(const dtAnim::BaseModelData& modelData);
+      void WriteMorphs(const dtAnim::BaseModelData& modelData);
+      void WriteShader(const dtAnim::BaseModelData& modelData);
+      void WriteScale(const dtAnim::BaseModelData& modelData);
+      void WriteLOD(const dtAnim::BaseModelData& modelData);
+      void WritePoseMesh(const dtAnim::BaseModelData& modelData);
+      void WriteChannelsAndSequences(const dtAnim::BaseModelData& modelData);
       void WriteChannel(const AnimationChannel& channel);
       void WriteSequence(const AnimationSequence& sequence);
       void WriteChildAnimatable(const Animatable& anim);

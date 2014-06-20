@@ -35,8 +35,9 @@
 
 namespace dtAnim
 {
-   class Cal3DModelWrapper;
+   class BaseModelWrapper;
    class Animatable;
+   class AnimationInterface;
 
    typedef dtUtil::Functor<void, TYPELIST_1(const dtAnim::Animatable&) > AnimationCallback;
 
@@ -62,6 +63,20 @@ namespace dtAnim
          virtual ~Animatable();
 
       public:
+
+         /**
+          * The ID of the internal animation object
+          * @return the animation ID
+          */
+         int GetID() const;
+
+         /**
+          * Set the ID of the animation that this wrapper refers to.
+          * NOTE: This does not change the id of the referenced animation.
+          *    and should only be set if the animation ID has changed
+          *    outside the control of this object.
+          */
+         void SetID(int id);
 
          /**
           * Set the time that the animatable is inserted into a parent sequence,
@@ -161,7 +176,7 @@ namespace dtAnim
          /**
           * This function is used to copy Animatables
           */
-         virtual dtCore::RefPtr<Animatable> Clone(Cal3DModelWrapper* modelWrapper) const = 0;
+         virtual dtCore::RefPtr<Animatable> Clone(BaseModelWrapper* modelWrapper) const = 0;
 
 
          /**
@@ -374,7 +389,7 @@ namespace dtAnim
          void SetActive(bool b);
 
       private:
-
+         int mID;
 
          // user editable fields are: fade in, fade out, base weight, and speed
 

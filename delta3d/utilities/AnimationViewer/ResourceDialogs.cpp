@@ -16,38 +16,38 @@
 /////////////////////////////////////////////////////////////////////////////////
 // CAL3D RESOURCE FILTERS CLASS CODE
 /////////////////////////////////////////////////////////////////////////////////
-const QString Cal3DResourceFilters::FILTER_ANY("Cal3D (*.csf *.xsf *.caf *.xaf *.cmf *.xmf *.crf *.xrf *.cpf *.xpf)");
-const QString Cal3DResourceFilters::FILTER_ALL_NOT_SKEL("Cal3D (*.caf *.xaf *.cmf *.xmf *.crf *.xrf *.cpf *.xpf)");
-const QString Cal3DResourceFilters::FILTER_SKEL("Skeletons (*.csf *.xsf)");
-const QString Cal3DResourceFilters::FILTER_ANIM("Animations (*.caf *.xaf)");
-const QString Cal3DResourceFilters::FILTER_MESH("Meshes (*.cmf *.xmf)");
-const QString Cal3DResourceFilters::FILTER_MAT("Materials (*.crf *.xrf)");
-const QString Cal3DResourceFilters::FILTER_MORPH("Morphs (*.cpf *.xpf)");
+const QString ModelResourceFilters::FILTER_ANY("Cal3D (*.csf *.xsf *.caf *.xaf *.cmf *.xmf *.crf *.xrf *.cpf *.xpf)");
+const QString ModelResourceFilters::FILTER_ALL_NOT_SKEL("Cal3D (*.caf *.xaf *.cmf *.xmf *.crf *.xrf *.cpf *.xpf)");
+const QString ModelResourceFilters::FILTER_SKEL("Skeletons (*.csf *.xsf)");
+const QString ModelResourceFilters::FILTER_ANIM("Animations (*.caf *.xaf)");
+const QString ModelResourceFilters::FILTER_MESH("Meshes (*.cmf *.xmf)");
+const QString ModelResourceFilters::FILTER_MAT("Materials (*.crf *.xrf)");
+const QString ModelResourceFilters::FILTER_MORPH("Morphs (*.cpf *.xpf)");
 
 /////////////////////////////////////////////////////////////////////////////////
-const QString& Cal3DResourceFilters::GetFilterForFileType(int fileType)
+const QString& ModelResourceFilters::GetFilterForFileType(int fileType)
 {
    using namespace dtAnim;
 
-   const QString* filter = &Cal3DResourceFilters::FILTER_ANY;
+   const QString* filter = &ModelResourceFilters::FILTER_ANY;
 
-   dtAnim::Cal3DModelData::CalFileType calFileType = dtAnim::Cal3DModelData::CalFileType(fileType);
-   switch(calFileType)
+   dtAnim::ModelResourceType modelFileType = dtAnim::ModelResourceType(fileType);
+   switch(modelFileType)
    {
-   case Cal3DModelData::SKEL_FILE:
-      filter = &Cal3DResourceFilters::FILTER_SKEL;
+   case dtAnim::SKEL_FILE:
+      filter = &ModelResourceFilters::FILTER_SKEL;
       break;
-   case Cal3DModelData::ANIM_FILE:
-      filter = &Cal3DResourceFilters::FILTER_ANIM;
+   case dtAnim::ANIM_FILE:
+      filter = &ModelResourceFilters::FILTER_ANIM;
       break;
-   case Cal3DModelData::MESH_FILE:
-      filter = &Cal3DResourceFilters::FILTER_MESH;
+   case dtAnim::MESH_FILE:
+      filter = &ModelResourceFilters::FILTER_MESH;
       break;
-   case Cal3DModelData::MAT_FILE:
-      filter = &Cal3DResourceFilters::FILTER_MAT;
+   case dtAnim::MAT_FILE:
+      filter = &ModelResourceFilters::FILTER_MAT;
       break;
-   case Cal3DModelData::MORPH_FILE:
-      filter = &Cal3DResourceFilters::FILTER_MORPH;
+   case dtAnim::MORPH_FILE:
+      filter = &ModelResourceFilters::FILTER_MORPH;
       break;
    default:
       break;
@@ -61,37 +61,37 @@ const QString& Cal3DResourceFilters::GetFilterForFileType(int fileType)
 /////////////////////////////////////////////////////////////////////////////////
 // CAL3D RESOURCE ICONS CLASS CODE
 /////////////////////////////////////////////////////////////////////////////////
-const QString Cal3DResourceIcons::ICON_NONE("");
-const QString Cal3DResourceIcons::ICON_SKEL(":/images/fileIconSkel.png");
-const QString Cal3DResourceIcons::ICON_ANIM(":/images/fileIconAnim.png");
-const QString Cal3DResourceIcons::ICON_MESH(":/images/fileIconMesh.png");
-const QString Cal3DResourceIcons::ICON_MAT(":/images/fileIconMat.png");
-const QString Cal3DResourceIcons::ICON_MORPH(":/images/fileIconMorph.png");
+const QString ModelResourceIcons::ICON_NONE("");
+const QString ModelResourceIcons::ICON_SKEL(":/images/fileIconSkel.png");
+const QString ModelResourceIcons::ICON_ANIM(":/images/fileIconAnim.png");
+const QString ModelResourceIcons::ICON_MESH(":/images/fileIconMesh.png");
+const QString ModelResourceIcons::ICON_MAT(":/images/fileIconMat.png");
+const QString ModelResourceIcons::ICON_MORPH(":/images/fileIconMorph.png");
 
 /////////////////////////////////////////////////////////////////////////////////
-const QIcon Cal3DResourceIcons::GetIconForFileType(int fileType)
+const QIcon ModelResourceIcons::GetIconForFileType(int fileType)
 {
    using namespace dtAnim;
 
-   const QString* icon = &Cal3DResourceIcons::ICON_NONE;
+   const QString* icon = &ModelResourceIcons::ICON_NONE;
 
-   dtAnim::Cal3DModelData::CalFileType calFileType = dtAnim::Cal3DModelData::CalFileType(fileType);
-   switch(calFileType)
+   dtAnim::ModelResourceType modelFileType = dtAnim::ModelResourceType(fileType);
+   switch(modelFileType)
    {
-   case Cal3DModelData::SKEL_FILE:
-      icon = &Cal3DResourceIcons::ICON_SKEL;
+   case dtAnim::SKEL_FILE:
+      icon = &ModelResourceIcons::ICON_SKEL;
       break;
-   case Cal3DModelData::ANIM_FILE:
-      icon = &Cal3DResourceIcons::ICON_ANIM;
+   case dtAnim::ANIM_FILE:
+      icon = &ModelResourceIcons::ICON_ANIM;
       break;
-   case Cal3DModelData::MESH_FILE:
-      icon = &Cal3DResourceIcons::ICON_MESH;
+   case dtAnim::MESH_FILE:
+      icon = &ModelResourceIcons::ICON_MESH;
       break;
-   case Cal3DModelData::MAT_FILE:
-      icon = &Cal3DResourceIcons::ICON_MAT;
+   case dtAnim::MAT_FILE:
+      icon = &ModelResourceIcons::ICON_MAT;
       break;
-   case Cal3DModelData::MORPH_FILE:
-      icon = &Cal3DResourceIcons::ICON_MORPH;
+   case dtAnim::MORPH_FILE:
+      icon = &ModelResourceIcons::ICON_MORPH;
       break;
    default:
       break;
@@ -120,7 +120,7 @@ ResAddDialog::ResAddDialog(QWidget* parent)
 }
 
 /////////////////////////////////////////////////////////////////////////////////
-void ResAddDialog::SetModelData(dtAnim::Cal3DModelData* modelData)
+void ResAddDialog::SetModelData(dtAnim::BaseModelData* modelData)
 {
    mModelData = modelData;
 }
@@ -158,22 +158,22 @@ void ResAddDialog::OnClickedFile()
       modelContext = osgDB::getFilePath(mModelData->GetFilename());
 
       // Prevent adding more skeleton files, only one is allowed.
-      if (mModelData->GetFileCount(dtAnim::Cal3DModelData::SKEL_FILE) > 0)
+      if (mModelData->GetFileCount(dtAnim::SKEL_FILE) > 0)
       {
-         filters << Cal3DResourceFilters::FILTER_ALL_NOT_SKEL;
+         filters << ModelResourceFilters::FILTER_ALL_NOT_SKEL;
       }
       else
       {
-         filters << Cal3DResourceFilters::FILTER_ANY;
-         filters << Cal3DResourceFilters::FILTER_SKEL;
+         filters << ModelResourceFilters::FILTER_ANY;
+         filters << ModelResourceFilters::FILTER_SKEL;
       }
    }
 
    // Add common filters.
-   filters << Cal3DResourceFilters::FILTER_ANIM;
-   filters << Cal3DResourceFilters::FILTER_MESH;
-   filters << Cal3DResourceFilters::FILTER_MAT;
-   filters << Cal3DResourceFilters::FILTER_MORPH;
+   filters << ModelResourceFilters::FILTER_ANIM;
+   filters << ModelResourceFilters::FILTER_MESH;
+   filters << ModelResourceFilters::FILTER_MAT;
+   filters << ModelResourceFilters::FILTER_MORPH;
 
    QString dir(modelContext.empty() ? "." : modelContext.c_str());
    QString filterStr(filters.join(";;"));
@@ -203,7 +203,7 @@ void ResAddDialog::UpdateUI()
    std::string objName(mUI.mObjectName->text().toStdString());
    std::string file(mUI.mFile->text().toStdString());
    std::string currentFile;
-   dtAnim::Cal3DModelData::CalFileType fileType = dtAnim::Cal3DModelData::NO_FILE;
+   dtAnim::ModelResourceType fileType = dtAnim::NO_FILE;
 
    if (mModelData.valid())
    {
@@ -217,9 +217,9 @@ void ResAddDialog::UpdateUI()
       // TODO: Set some indicator that the there is a name conflict.
    }
 
-   if (fileType != dtAnim::Cal3DModelData::NO_FILE)
+   if (fileType != dtAnim::NO_FILE)
    {
-      mUI.mButtonFile->setIcon(Cal3DResourceIcons::GetIconForFileType(fileType));
+      mUI.mButtonFile->setIcon(ModelResourceIcons::GetIconForFileType(fileType));
    }
 
    QPushButton* buttonOk = mUI.mButtonBox->button(QDialogButtonBox::Ok);

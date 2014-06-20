@@ -39,7 +39,7 @@
 
 namespace dtAnim
 {
-   class Cal3DModelWrapper;
+   class BaseModelWrapper;
    struct PoseMeshData;
 
    class DT_ANIM_EXPORT PoseMesh
@@ -98,7 +98,7 @@ namespace dtAnim
 
       typedef std::map<MeshIndexPair, osg::ref_ptr<osg::Geometry> > EdgeLineMap;
 
-      PoseMesh(dtAnim::Cal3DModelWrapper* model,
+      PoseMesh(dtAnim::BaseModelWrapper* model,
                const PoseMeshData& meshData);
 
       ~PoseMesh();
@@ -165,7 +165,7 @@ namespace dtAnim
       Barycentric2DVector mBarySpaces;
 
       // the model should be made const later
-      void GetAnimationIDsByName(const dtAnim::Cal3DModelWrapper* model,
+      void GetAnimationIDsByName(const dtAnim::BaseModelWrapper* model,
                                  const std::vector<std::string>& animNames,
                                  std::vector<unsigned int>& animIDs) const;
    };

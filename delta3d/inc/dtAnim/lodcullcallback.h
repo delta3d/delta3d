@@ -22,13 +22,12 @@
 #ifndef lodcullcallback_h__
 #define lodcullcallback_h__
 
-#include <osg/Drawable>
 #include <dtCore/refptr.h>
+#include <osg/Drawable>
 
 namespace dtAnim
 {
    class Cal3DModelWrapper;
-   class Cal3DModelData;
 
    /**
     * A CullCallback used to adjust the animated character's
@@ -46,7 +45,6 @@ namespace dtAnim
       dtCore::RefPtr<Cal3DModelWrapper> mWrapper;
       //CalHardwareModel* mHardwareModel;
       int mMeshID;
-      dtCore::RefPtr<Cal3DModelData> mModelData;
    };
 
 } // namespace dtAnim

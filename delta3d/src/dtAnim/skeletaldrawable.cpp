@@ -64,7 +64,7 @@ void SkeletalDrawable::CPrimitiveRenderObject::AddID(int boneId)
    mIDs.push_back(boneId);
 }
 
-void SkeletalDrawable::CPrimitiveRenderObject::Render(const Cal3DModelWrapper& model) const
+void SkeletalDrawable::CPrimitiveRenderObject::Render(const BaseModelWrapper& model) const
 {
    // render my primitive
    if (dtUtil::Bits::Has(mRenderMode,RENDER_MODE_POINTS))
@@ -82,13 +82,18 @@ void SkeletalDrawable::CPrimitiveRenderObject::Render(const Cal3DModelWrapper& m
                  SkeletalDrawable::IPrimitiveRenderObject::RenderPrimitive(&model));
 }
 
-void SkeletalDrawable::CPrimitiveRenderObject::RenderBoneIDs(GLenum primitive, const dtAnim::Cal3DModelWrapper& model) const
+void SkeletalDrawable::CPrimitiveRenderObject::RenderBoneIDs(GLenum primitive, const dtAnim::BaseModelWrapper& model) const
 {
    glBegin(primitive);
-      size_t idsSize = mIDs.size();
-      for (size_t idIndex=0; idIndex<idsSize; ++idIndex)
+      dtAnim::BoneArray bones;
+      model.GetBones(bones);
+
+      dtAnim::BoneArray::iterator curIter = bones.begin();
+      dtAnim::BoneArray::iterator endIter = bones.end();
+
+      for ( ; curIter < endIter; ++curIter)
       {
-         osg::Vec3 pos = model.GetBoneAbsoluteTranslation(mIDs[idIndex]);
+         osg::Vec3 pos = curIter->get()->GetAbsoluteTranslation();
          glVertex3f(pos[0], pos[1], pos[2]);
       }
    glEnd();
@@ -114,7 +119,7 @@ SkeletalDrawable::CPrimitiveRenderObject::~CPrimitiveRenderObject()
 
 
 // cache the sketeton hierarchy for quick access during draw
-SkeletalDrawable::SkeletalDrawable(const Cal3DModelWrapper* model)
+SkeletalDrawable::SkeletalDrawable(const dtAnim::BaseModelWrapper* model)
    : mModelWrapper(model)
    , mRootPrimitives()
 {
@@ -152,60 +157,67 @@ osg::Object* SkeletalDrawable::clone(const osg::CopyOp& copyop) const
 void SkeletalDrawable::Init(SkeletalDrawable* instance)
 {
    // start at the root bone,
-   std::vector<int> rootBones;
-   instance->mModelWrapper->GetRootBoneIDs(rootBones);
+   dtAnim::BoneArray rootBones;
+   dtAnim::SkeletonInterface* skel = const_cast<dtAnim::SkeletonInterface*>(instance->mModelWrapper->GetSkeleton());
+   skel->GetRootBones(rootBones);
 
    // build render objects
    instance->mRootPrimitives.resize(rootBones.size());
 
    // traverse each parent
+   dtAnim::Cal3dBone* curBone = NULL;
    size_t rootSize = rootBones.size();
    for (size_t rootIndex=0; rootIndex<rootSize; ++rootIndex)
    {
+      curBone = dynamic_cast<dtAnim::Cal3dBone*>(rootBones[rootIndex].get());
       IPrimitiveRenderObject* rootPrimitive = new CPrimitiveRenderObject();
-      rootPrimitive->AddID(rootBones[rootIndex]);
+      rootPrimitive->AddID(curBone->GetID());
 
-      PopulatePrimitive(*(instance->mModelWrapper), rootBones[rootIndex], rootPrimitive);
+      PopulatePrimitive(*(instance->mModelWrapper), *curBone, rootPrimitive);
       instance->mRootPrimitives[rootIndex] = rootPrimitive;
    }
 }
 
-void SkeletalDrawable::PopulatePrimitive(const Cal3DModelWrapper& model,
-                                         int boneID,
+void SkeletalDrawable::PopulatePrimitive(const dtAnim::BaseModelWrapper& model,
+                                         dtAnim::BoneInterface& bone,
                                          IPrimitiveRenderObject* primitive)
 {
-   VectorInt childrenBones;
-   model.GetCoreBoneChildrenIDs(boneID, childrenBones);
+   dtAnim::BoneArray childBones;
+   bone.GetChildBones(childBones);
 
-   size_t childrenSize = childrenBones.size();
+   size_t numChildren = childBones.size();
 
    std::ostringstream boss;
-   boss << "bone[" << boneID << "] has children: ";
-   for (size_t bonechildindex = 0; bonechildindex<childrenSize; ++bonechildindex)
+   boss << "bone[" << bone.GetID() << "] has children: ";
+   for (size_t childIndex = 0; childIndex < numChildren; ++childIndex)
    {
-      boss << ", " << childrenBones[bonechildindex];
+      boss << ", " << childBones[childIndex];
    }
    boss << std::endl;
    LOG_DEBUG(boss.str())
 
-   if (childrenSize == 0)
+   if (numChildren == 0)
    {
       return;
    }
-   else if (childrenSize == 1)
+   else if (numChildren == 1)
    {
-      primitive->AddID(childrenBones[0]);
-      PopulatePrimitive(model,childrenBones[0], primitive);
+      Cal3dBone* curBone = static_cast<dtAnim::Cal3dBone*>(childBones[0].get());
+      primitive->AddID(curBone->GetID());
+      PopulatePrimitive(model, *curBone, primitive);
    }
    else  // many children
    {
-      for (size_t childIndex=0; childIndex<childrenSize; ++childIndex)
+      dtAnim::Cal3dBone* curBone = NULL;
+      for (size_t childIndex=0; childIndex < numChildren; ++childIndex)
       {
+         curBone = static_cast<dtAnim::Cal3dBone*>(childBones[childIndex].get());
+         
          IPrimitiveRenderObject* newPrimitive = new CPrimitiveRenderObject();
          primitive->AddChild(newPrimitive);
 
-         newPrimitive->AddID(childrenBones[childIndex]);
-         PopulatePrimitive(model,childrenBones[childIndex], newPrimitive);
+         newPrimitive->AddID(curBone->GetID());
+         PopulatePrimitive(model, *curBone, newPrimitive);
       }
    }
 }

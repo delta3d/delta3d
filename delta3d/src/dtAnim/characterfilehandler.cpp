@@ -23,8 +23,12 @@
 #include <dtAnim/characterfilehandler.h>
 #include <dtAnim/characterfileelements.h>
 #include <dtAnim/animatable.h>
-#include <dtUtil/stringutils.h>
+#include <dtAnim/cal3dloader.h> // for Cal3dExtensionEnum
+#include <dtAnim/constants.h>
 #include <dtUtil/log.h>
+#include <dtUtil/stringutils.h>
+#include <osgDB/FileNameUtils> // for getLowerCaseFileExtension
+
 
 
 XERCES_CPP_NAMESPACE_USE;
@@ -40,6 +44,7 @@ namespace dtAnim
    const std::string CharacterFileHandler::CHARACTER_XML_LOGGER("characterfilehandler.cpp");
 
 
+
    ////////////////////////////////////////////////////////////////////////////////
    // CLASS CODE
    ////////////////////////////////////////////////////////////////////////////////
@@ -48,8 +53,8 @@ namespace dtAnim
    : mStartDelay(0.0f)
    , mFadeIn(0.0f)
    , mFadeOut(0.0f)
-   , mSpeed(0.0f)
-   , mBaseWeight(0.0f)
+   , mSpeed(1.0f)
+   , mBaseWeight(1.0f)
    {
    }
 
@@ -149,6 +154,12 @@ namespace dtAnim
    }
 
    ////////////////////////////////////////////////////////////////////////////////
+   const std::string& CharacterFileHandler::GetCharacterSystemType() const
+   {
+      return mCharacterSystemType;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
    void CharacterFileHandler::endDocument()
    {
       if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
@@ -156,6 +167,9 @@ namespace dtAnim
          mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__,
                   "End Parsing File");
       }
+
+      // Determine the character system to be used for the loaded files.
+      UpdateCharacterSystemType();
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -244,6 +258,32 @@ namespace dtAnim
          else
          {
             errorString = std::string("Invalid XML format: <character> missing <name> child");
+         }
+      }
+      else if (elementStr == CFE::MIXED_RESOURCE_ELEMENT)
+      {
+         resultIter = results.find(CFE::FILENAME_ELEMENT);
+
+         if (resultIter != results.end())
+         {
+            std::string filename = resultIter->second;
+
+            //default the name of the animation to be the filename
+            std::string name = resultIter->second;
+
+            resultIter = results.find(CFE::NAME_ELEMENT);
+            if (resultIter != results.end() )
+            {
+               name = resultIter->second;
+            }
+            MixedResourceStruct mixedRes;
+            mixedRes.mFileName = filename;
+            mixedRes.mName = name;
+            mMixedResources.push_back(mixedRes);
+         }
+         else
+         {
+            errorString = std::string("Invalid XML format: <mixedresource> missing <filename> child");
          }
       }
       else if (elementStr == CFE::SKELETON_ELEMENT)
@@ -829,6 +869,22 @@ namespace dtAnim
          {
             curStruct->mCrossFade = dtUtil::ToType<float>(value);
          }
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void CharacterFileHandler::UpdateCharacterSystemType()
+   {
+      std::string ext = osgDB::getLowerCaseFileExtension(mSkeletonFilename);
+      std::transform(ext.begin(), ext.end(), ext.begin(), ::tolower);
+
+      if (Cal3dExtensionEnum::GetValueForName(ext) != NULL)
+      {
+         mCharacterSystemType = Constants::CHARACTER_SYSTEM_CAL3D;
+      }
+      else // Assume OSG has plugins to load files.
+      {
+         mCharacterSystemType = Constants::CHARACTER_SYSTEM_OSG;
       }
    }
 

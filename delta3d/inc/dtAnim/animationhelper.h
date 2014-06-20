@@ -23,9 +23,10 @@
 #define __DELTA_ANIMATIONHELPER_H__
 
 #include <dtAnim/export.h>
-#include <dtAnim/cal3danimator.h>
-#include <dtAnim/sequencemixer.h>
 #include <dtAnim/attachmentcontroller.h>
+#include <dtAnim/basemodelwrapper.h>
+#include <dtAnim/modelloader.h>
+#include <dtAnim/sequencemixer.h>
 #include <dtAnim/animationcomponent.h>
 
 #include <dtGame/datacentricactorcomponent.h>
@@ -60,12 +61,10 @@ namespace dtCore
 
 namespace dtAnim
 {
-   class Cal3DModelWrapper;
-   class Cal3DModelData;
-   class Cal3DDatabase;
    class AnimNodeBuilder;
    class AnimationGameActor;
    class AnimationComponent;
+   class AnimationUpdaterInterface;
 
 
 
@@ -208,22 +207,22 @@ namespace dtAnim
       /**
        * @return The Cal3DAnimator created on LoadModel
        */
-      Cal3DAnimator* GetAnimator();
+      dtAnim::AnimationUpdaterInterface* GetAnimator();
 
       /**
        * @return The Cal3DAnimator created on LoadModel
        */
-      const Cal3DAnimator* GetAnimator() const;
+      const dtAnim::AnimationUpdaterInterface* GetAnimator() const;
 
       /**
        * @return The Cal3DModelWrapper held by the animator
        */
-      Cal3DModelWrapper* GetModelWrapper();
+      dtAnim::BaseModelWrapper* GetModelWrapper();
 
       /**
        * @return The Cal3DModelWrapper held by the animator
        */
-      const Cal3DModelWrapper* GetModelWrapper() const;
+      const dtAnim::BaseModelWrapper* GetModelWrapper() const;
 
       /**
        * @return The SequenceMixer used to play, clear, and register new
@@ -253,14 +252,14 @@ namespace dtAnim
        * Transformable attachments to match up to the bones.
        * @return the currently assigned attachment controller.
        */
-      AttachmentController& GetAttachmentController();
+      AttachmentController* GetAttachmentController();
 
       /**
        * Assigns a new AttachmentController.  One is created by default, so
        * this is provided to allow a developer to subclass the controller and
        * assign the new one to the helper.
        */
-      void SetAttachmentController(AttachmentController& newController);
+      void SetAttachmentController(AttachmentController* newController);
 
       /**
        * Set whether command callbacks should be handled for this helper.
@@ -476,9 +475,9 @@ namespace dtAnim
       AsyncLoadCompletionCallback mAsyncCompletionCallback;
       dtCore::RefPtr<osg::Group> mParent;
       dtCore::RefPtr<osg::Node> mNode;
-      dtCore::RefPtr<Cal3DAnimator> mAnimator;
       dtCore::RefPtr<SequenceMixer> mSequenceMixer;
       dtCore::RefPtr<AttachmentController> mAttachmentController;
+      dtCore::RefPtr<dtAnim::BaseModelWrapper> mModelWrapper;
 
       typedef std::multimap<std::string, dtCore::RefPtr<TimeOffsetCommand> > CommandMap;
       CommandMap mCommandMap;
@@ -486,10 +485,12 @@ namespace dtAnim
       AnimEventCallback mSendEventCallback;
       AnimCommandArray mCommands;
 
-      void RegisterAnimations(const Cal3DModelData& sourceData);
-      void CreateAttachments(const Cal3DModelData& modelData);
+      void RegisterAnimations(const dtAnim::BaseModelData& sourceData);
+
       // this gets the resource path for the skeletal mesh and calls the configured load functionality.
       void LoadSkeletalMesh();
+
+      dtCore::RefPtr<dtAnim::ModelLoader> mModelLoader;
    };
 
 } // namespace dtAnim

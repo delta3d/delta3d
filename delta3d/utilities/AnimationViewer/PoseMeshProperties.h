@@ -1,5 +1,5 @@
-#ifndef _POSEMESH_PROPERTIES_H_
-#define _POSEMESH_PROPERTIES_H_
+#ifndef __POSEMESH_PROPERTIES_H__
+#define __POSEMESH_PROPERTIES_H__
 
 #include <QtGui/QTreeWidget>
 
@@ -7,8 +7,8 @@
 
 namespace dtAnim 
 {
+   class BaseModelWrapper;
    class PoseMesh; 
-   class Cal3DModelWrapper;
 }
 
 class PoseMeshItem;
@@ -23,7 +23,7 @@ public:
    PoseMeshProperties();
    virtual ~PoseMeshProperties(){}
 
-   void AddMesh(const dtAnim::PoseMesh &newMesh, const dtAnim::Cal3DModelWrapper &model);
+   void AddMesh(const dtAnim::PoseMesh &newMesh, const dtAnim::BaseModelWrapper &model);
 
 public slots:
    void OnItemDoubleClicked(QTreeWidgetItem* item, int column);

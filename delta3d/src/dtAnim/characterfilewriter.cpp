@@ -22,14 +22,14 @@
 ////////////////////////////////////////////////////////////////////////////////
 // INCLUDE DIRECTIVES
 ////////////////////////////////////////////////////////////////////////////////
+#include <dtAnim/characterfilewriter.h>
 #include <dtAnim/animationchannel.h>
 #include <dtAnim/animationsequence.h>
-#include <dtAnim/animationwrapper.h>
-#include <dtAnim/characterfilewriter.h>
+#include <dtAnim/basemodeldata.h>
 #include <dtAnim/characterfileelements.h>
-#include <dtAnim/cal3dmodeldata.h>
 #include <dtUtil/exception.h>
 #include <dtUtil/xercesutils.h>
+#include <sstream>
 
 
 
@@ -50,7 +50,7 @@ namespace dtAnim
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   bool CharacterFileWriter::Write(const Cal3DModelData& modelData, std::ostream& stream)
+   bool CharacterFileWriter::Write(const dtAnim::BaseModelData& modelData, std::ostream& stream)
    {
       bool success = false;
 
@@ -101,14 +101,14 @@ namespace dtAnim
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void CharacterFileWriter::WriteFileTag(const Cal3DModelData& modelData, int fileType)
+   void CharacterFileWriter::WriteFileTag(const dtAnim::BaseModelData& modelData, int fileType)
    {
-      typedef Cal3DModelData::StrArray::const_iterator FileNameIter;
+      typedef dtAnim::StrArray::const_iterator FileNameIter;
 
-      Cal3DModelData::CalFileType calFileType = Cal3DModelData::CalFileType(fileType);
+      dtAnim::ModelResourceType calFileType = dtAnim::ModelResourceType(fileType);
 
       // Get all the object names mapped to the file.
-      Cal3DModelData::StrArray nameList;
+      dtAnim::StrArray nameList;
       modelData.GetObjectNameListForFileTypeSorted(calFileType, nameList);
       FileNameIter curNameIter = nameList.begin();
       FileNameIter endNameIter = nameList.end();
@@ -126,19 +126,19 @@ namespace dtAnim
          const dtUtil::RefString* tag = NULL;
          switch (fileType)
          {
-         case Cal3DModelData::SKEL_FILE:
+         case dtAnim::SKEL_FILE:
             tag = &CFE::SKELETON_ELEMENT;
             break;
-         case Cal3DModelData::MAT_FILE:
+         case dtAnim::MAT_FILE:
             tag = &CFE::MATERIAL_ELEMENT;
             break;
-         case Cal3DModelData::MESH_FILE:
+         case dtAnim::MESH_FILE:
             tag = &CFE::MESH_ELEMENT;
             break;
-         case Cal3DModelData::ANIM_FILE:
+         case dtAnim::ANIM_FILE:
             tag = &CFE::ANIMATION_ELEMENT;
             break;
-         case Cal3DModelData::MORPH_FILE:
+         case dtAnim::MORPH_FILE:
             tag = &CFE::MORPH_ANIMATION_ELEMENT;
             break;
          default:
@@ -161,37 +161,37 @@ namespace dtAnim
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void CharacterFileWriter::WriteSkeleton(const Cal3DModelData& modelData)
+   void CharacterFileWriter::WriteSkeleton(const dtAnim::BaseModelData& modelData)
    {
-      WriteFileTag(modelData, Cal3DModelData::SKEL_FILE);
+      WriteFileTag(modelData, dtAnim::SKEL_FILE);
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void CharacterFileWriter::WriteMeshes(const Cal3DModelData& modelData)
+   void CharacterFileWriter::WriteMeshes(const dtAnim::BaseModelData& modelData)
    {
-      WriteFileTag(modelData, Cal3DModelData::MESH_FILE);
+      WriteFileTag(modelData, dtAnim::MESH_FILE);
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void CharacterFileWriter::WriteMaterials(const Cal3DModelData& modelData)
+   void CharacterFileWriter::WriteMaterials(const dtAnim::BaseModelData& modelData)
    {
-      WriteFileTag(modelData, Cal3DModelData::MAT_FILE);
+      WriteFileTag(modelData, dtAnim::MAT_FILE);
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void CharacterFileWriter::WriteAnimations(const Cal3DModelData& modelData)
+   void CharacterFileWriter::WriteAnimations(const dtAnim::BaseModelData& modelData)
    {
-      WriteFileTag(modelData, Cal3DModelData::ANIM_FILE);
+      WriteFileTag(modelData, dtAnim::ANIM_FILE);
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void CharacterFileWriter::WriteMorphs(const Cal3DModelData& modelData)
+   void CharacterFileWriter::WriteMorphs(const dtAnim::BaseModelData& modelData)
    {
-      WriteFileTag(modelData, Cal3DModelData::MORPH_FILE);
+      WriteFileTag(modelData, dtAnim::MORPH_FILE);
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void CharacterFileWriter::WriteShader(const Cal3DModelData& modelData)
+   void CharacterFileWriter::WriteShader(const dtAnim::BaseModelData& modelData)
    {
       BeginElement(CFE::SKINNING_SHADER_ELEMENT);
       {
@@ -207,7 +207,7 @@ namespace dtAnim
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void CharacterFileWriter::WriteScale(const Cal3DModelData& modelData)
+   void CharacterFileWriter::WriteScale(const dtAnim::BaseModelData& modelData)
    {
       BeginElement(CFE::SCALE_ELEMENT);
       {
@@ -219,7 +219,7 @@ namespace dtAnim
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void CharacterFileWriter::WriteLOD(const Cal3DModelData& modelData)
+   void CharacterFileWriter::WriteLOD(const dtAnim::BaseModelData& modelData)
    {
       const LODOptions& lodOptions = modelData.GetLODOptions();
 
@@ -241,17 +241,17 @@ namespace dtAnim
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void CharacterFileWriter::WritePoseMesh(const Cal3DModelData& modelData)
+   void CharacterFileWriter::WritePoseMesh(const dtAnim::BaseModelData& modelData)
    {
       // TODO:
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void CharacterFileWriter::WriteChannelsAndSequences(const Cal3DModelData& modelData)
+   void CharacterFileWriter::WriteChannelsAndSequences(const dtAnim::BaseModelData& modelData)
    {
-      const Cal3DModelData::AnimatableArray& anims = modelData.GetAnimatables();
+      const dtAnim::AnimatableArray& anims = modelData.GetAnimatables();
 
-      typedef Cal3DModelData::AnimatableArray::const_iterator AnimIter;
+      typedef dtAnim::AnimatableArray::const_iterator AnimIter;
       const Animatable* curAnim = NULL;
       const AnimationChannel* curChannel = NULL;
       AnimIter curIter = anims.begin();
@@ -368,15 +368,7 @@ namespace dtAnim
          const AnimationChannel* channel = static_cast<const AnimationChannel*>(&anim);
 
          BeginElement(CFE::ANIMATION_NAME_ELEMENT);
-         const AnimationWrapper* animWrapper = channel->GetAnimation();
-         if(animWrapper != NULL)
-         {
-            Write(animWrapper->GetName());
-         }
-         else
-         {
-            LOG_ERROR("Channel \"" + anim.GetName() + "\" has no AnimationWrapper.\n");
-         }
+         Write(channel->GetName());
          EndElement();
       }
 

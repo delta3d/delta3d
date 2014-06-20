@@ -1070,8 +1070,12 @@ void DirectorCinematicEditorPlugin::OnAnimationComboChanged(int index)
 #ifdef MANUAL_ANIMATIONS
          if (data->mAnimation > -1)
          {
-            CalMixer* calMixer = animActor->GetComponent<dtAnim::AnimationHelper>()->GetModelWrapper()->GetCalModel()->getMixer();
-            calMixer->removeManualAnimation(data->mAnimation);
+            dtAnim::Cal3DModelWrapper* calWrapper = dynamic_cast<dtAnim::Cal3DModelWrapper*>(animActor->GetComponent<dtAnim::AnimationHelper>()->GetModelWrapper());
+            if (calWrapper != NULL)
+            {
+               CalMixer* calMixer = calWrapper->GetCalModel()->getMixer();
+               calMixer->removeManualAnimation(data->mAnimation);
+            }
             animActor->GetComponent<dtAnim::AnimationHelper>()->Update(0.0f);
             data->mAnimation = -1;
 
@@ -2503,7 +2507,15 @@ void DirectorCinematicEditorPlugin::LerpActors(int time)
          animActor = dynamic_cast<dtAnim::AnimationGameActor*>(txable);
          if (animActor)
          {
-            CalMixer* calMixer = animActor->GetComponent<dtAnim::AnimationHelper>()->GetModelWrapper()->GetCalModel()->getMixer();
+            dtAnim::Cal3DModelWrapper* calWrapper = dynamic_cast<dtAnim::Cal3DModelWrapper*>
+               (animActor->GetComponent<dtAnim::AnimationHelper>()->GetModelWrapper());
+
+            if (calWrapper == NULL)
+            {
+               return;
+            }
+
+            CalMixer* calMixer = calWrapper->GetCalModel()->getMixer();
             dtAnim::SequenceMixer& mixer = animActor->GetComponent<dtAnim::AnimationHelper>()->GetSequenceMixer();
 
             int count = (int)actorData.mAnimationData.size();

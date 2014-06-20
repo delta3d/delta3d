@@ -21,7 +21,7 @@
 
 #include <dtAnim/lodcullcallback.h>
 #include <dtAnim/cal3dmodelwrapper.h>
-#include <dtAnim/cal3ddatabase.h>
+#include <dtAnim/modeldatabase.h>
 #include <dtAnim/submesh.h>
 #include <dtUtil/mathdefines.h>
 
@@ -30,24 +30,25 @@ dtAnim::LODCullCallback::LODCullCallback(Cal3DModelWrapper& wrapper, int meshID)
   mWrapper(&wrapper)
 , mMeshID(meshID)
 {
-   mModelData = Cal3DDatabase::GetInstance().GetModelData(*mWrapper);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////
 bool dtAnim::LODCullCallback::cull(osg::NodeVisitor* nv, osg::Drawable* drawable, osg::RenderInfo* renderInfo) const
 {
-   if (!mWrapper->IsMeshVisible(mMeshID) || mWrapper->GetMeshCount() <= mMeshID)
+   dtAnim::MeshInterface* mesh = mWrapper->GetMeshByIndex(mMeshID);
+   if (mesh == NULL || !mesh->IsVisible())
    {
       return true;
    }
 
+   dtAnim::BaseModelData* modelData = mWrapper->GetModelData();
    const osg::Node* parent = nv->getNodePath().back();
-   if (parent != NULL && mModelData.valid())
+   if (parent != NULL && modelData != NULL)
    {
       const float distance = nv->getDistanceFromEyePoint(parent->getBound().center(), true);
 
       // disappear once the max distance is reached
-      if (distance > mModelData->GetLODOptions().GetMaxVisibleDistance())
+      if (distance > modelData->GetLODOptions().GetMaxVisibleDistance())
       {
          return true;
       }
@@ -56,8 +57,8 @@ bool dtAnim::LODCullCallback::cull(osg::NodeVisitor* nv, osg::Drawable* drawable
       SubmeshDrawable* submeshDraw = dynamic_cast<SubmeshDrawable*>(drawable);
       if (submeshDraw != NULL)
       {
-         const float start = mModelData->GetLODOptions().GetStartDistance();
-         const float end   = mModelData->GetLODOptions().GetEndDistance();
+         const float start = modelData->GetLODOptions().GetStartDistance();
+         const float end   = modelData->GetLODOptions().GetEndDistance();
          const float slope = 1.0f / (end - start);
 
          float lod = 1.0f - (slope*(distance - start));

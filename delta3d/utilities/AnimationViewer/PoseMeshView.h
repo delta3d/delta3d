@@ -1,5 +1,5 @@
-#ifndef _POSE_MESH_VIEW_H_
-#define _POSE_MESH_VIEW_H_
+#ifndef __POSE_MESH_VIEW_H__
+#define __POSE_MESH_VIEW_H__
 
 #include <QtGui/QGraphicsView>
 #include <QtGui/QDialog>
