@@ -1,0 +1,1043 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>DirectorEditor</class>
+ <widget class="QMainWindow" name="DirectorEditor">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>800</width>
+    <height>729</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>No Director Graph Loaded</string>
+  </property>
+  <property name="animated">
+   <bool>true</bool>
+  </property>
+  <property name="documentMode">
+   <bool>false</bool>
+  </property>
+  <property name="dockNestingEnabled">
+   <bool>false</bool>
+  </property>
+  <property name="dockOptions">
+   <set>QMainWindow::AllowTabbedDocks|QMainWindow::AnimatedDocks|QMainWindow::VerticalTabs</set>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QGridLayout" name="gridLayout_9">
+    <property name="margin">
+     <number>0</number>
+    </property>
+    <property name="spacing">
+     <number>0</number>
+    </property>
+    <item row="0" column="0">
+     <widget class="dtDirector::GraphTabs" name="graphTab">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+        <horstretch>1</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="tabsClosable">
+       <bool>true</bool>
+      </property>
+      <property name="movable">
+       <bool>true</bool>
+      </property>
+      <widget class="QWidget" name="tab">
+       <attribute name="title">
+        <string>Tab 1</string>
+       </attribute>
+      </widget>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>800</width>
+     <height>22</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>&amp;File</string>
+    </property>
+    <widget class="QMenu" name="menuRecent_Files">
+     <property name="title">
+      <string>Recent Files</string>
+     </property>
+     <addaction name="actionNone"/>
+    </widget>
+    <addaction name="action_New"/>
+    <addaction name="action_Load"/>
+    <addaction name="action_Save"/>
+    <addaction name="action_Save_as"/>
+    <addaction name="separator"/>
+    <addaction name="menuRecent_Files"/>
+    <addaction name="separator"/>
+    <addaction name="action_Exit"/>
+   </widget>
+   <widget class="QMenu" name="menu_Edit">
+    <property name="title">
+     <string>&amp;Edit</string>
+    </property>
+    <addaction name="action_Step_Out_Of_Graph"/>
+    <addaction name="separator"/>
+    <addaction name="action_Smart_Grid_snap"/>
+    <addaction name="separator"/>
+    <addaction name="action_Undo"/>
+    <addaction name="action_Redo"/>
+    <addaction name="separator"/>
+    <addaction name="action_Cut"/>
+    <addaction name="action_Copy"/>
+    <addaction name="action_Paste"/>
+    <addaction name="actionPaste_with_Links"/>
+    <addaction name="separator"/>
+    <addaction name="action_Delete"/>
+    <addaction name="separator"/>
+    <addaction name="action_Manage_Plugins"/>
+    <addaction name="action_Manage_Libraries"/>
+    <addaction name="action_Manage_Imported_Scripts"/>
+   </widget>
+   <widget class="QMenu" name="menu_View">
+    <property name="title">
+     <string>&amp;View</string>
+    </property>
+    <addaction name="action_Node_Palette"/>
+    <addaction name="action_Search_Browser"/>
+    <addaction name="action_Property_Editor"/>
+    <addaction name="action_Graph_Browser"/>
+    <addaction name="action_Thread_Browser"/>
+    <addaction name="separator"/>
+    <addaction name="action_Show_Links"/>
+    <addaction name="action_Hide_Links"/>
+    <addaction name="separator"/>
+    <addaction name="action_Refresh"/>
+   </widget>
+   <widget class="QMenu" name="menuHelp">
+    <property name="title">
+     <string>Help</string>
+    </property>
+    <addaction name="actionDirector_Help"/>
+   </widget>
+   <widget class="QMenu" name="menuDebug">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
+    <property name="title">
+     <string>Debug</string>
+    </property>
+    <addaction name="actionPause"/>
+    <addaction name="actionContinue"/>
+    <addaction name="actionStep_Next"/>
+    <addaction name="separator"/>
+    <addaction name="actionToggle_Break_Point"/>
+   </widget>
+   <addaction name="menuFile"/>
+   <addaction name="menu_Edit"/>
+   <addaction name="menu_View"/>
+   <addaction name="menuDebug"/>
+   <addaction name="menuHelp"/>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <widget class="QToolBar" name="FileToolbar">
+   <property name="windowTitle">
+    <string>File Toolbar</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="action_New"/>
+   <addaction name="action_Load"/>
+   <addaction name="action_Save"/>
+  </widget>
+  <widget class="QToolBar" name="EditToolbar">
+   <property name="windowTitle">
+    <string>Edit Toolbar</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="action_Step_Out_Of_Graph"/>
+   <addaction name="separator"/>
+   <addaction name="action_Smart_Grid_snap"/>
+   <addaction name="separator"/>
+   <addaction name="action_Undo"/>
+   <addaction name="action_Redo"/>
+   <addaction name="separator"/>
+   <addaction name="action_Cut"/>
+   <addaction name="action_Copy"/>
+   <addaction name="action_Paste"/>
+   <addaction name="separator"/>
+   <addaction name="action_Delete"/>
+   <addaction name="separator"/>
+   <addaction name="action_Show_Links"/>
+   <addaction name="action_Hide_Links"/>
+   <addaction name="separator"/>
+   <addaction name="action_Refresh"/>
+   <addaction name="separator"/>
+   <addaction name="actionPause"/>
+   <addaction name="actionContinue"/>
+   <addaction name="actionStep_Next"/>
+   <addaction name="actionToggle_Break_Point"/>
+  </widget>
+  <widget class="dtDirector::PropertyEditor" name="propertyEditor">
+   <property name="minimumSize">
+    <size>
+     <width>80</width>
+     <height>150</height>
+    </size>
+   </property>
+   <property name="features">
+    <set>QDockWidget::AllDockWidgetFeatures</set>
+   </property>
+   <property name="allowedAreas">
+    <set>Qt::AllDockWidgetAreas</set>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>8</number>
+   </attribute>
+  </widget>
+  <widget class="dtDirector::GraphBrowser" name="graphBrowser">
+   <property name="minimumSize">
+    <size>
+     <width>80</width>
+     <height>150</height>
+    </size>
+   </property>
+   <property name="features">
+    <set>QDockWidget::AllDockWidgetFeatures</set>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>8</number>
+   </attribute>
+  </widget>
+  <widget class="dtDirector::SearchBrowser" name="searchBrowser">
+   <attribute name="dockWidgetArea">
+    <number>2</number>
+   </attribute>
+  </widget>
+  <widget class="dtDirector::ThreadBrowser" name="threadBrowser">
+   <attribute name="dockWidgetArea">
+    <number>2</number>
+   </attribute>
+  </widget>
+  <widget class="QDockWidget" name="nodePalette">
+   <property name="features">
+    <set>QDockWidget::AllDockWidgetFeatures</set>
+   </property>
+   <property name="windowTitle">
+    <string>Node Palette</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>1</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents">
+    <layout class="QGridLayout" name="gridLayout">
+     <item row="0" column="0" colspan="2">
+      <widget class="QLineEdit" name="nodeSearchEdit">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0" colspan="2">
+      <widget class="QTabWidget" name="nodeTabs">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="autoFillBackground">
+        <bool>false</bool>
+       </property>
+       <property name="tabPosition">
+        <enum>QTabWidget::West</enum>
+       </property>
+       <property name="currentIndex">
+        <number>0</number>
+       </property>
+       <property name="usesScrollButtons">
+        <bool>true</bool>
+       </property>
+       <property name="movable">
+        <bool>false</bool>
+       </property>
+       <widget class="QWidget" name="eventNodeTab">
+        <attribute name="title">
+         <string>Events</string>
+        </attribute>
+        <layout class="QGridLayout" name="gridLayout_2">
+         <property name="margin">
+          <number>0</number>
+         </property>
+         <item row="0" column="0">
+          <widget class="dtDirector::NodeTabs" name="eventNodeTabWidget">
+           <property name="autoFillBackground">
+            <bool>false</bool>
+           </property>
+           <property name="tabSpacing">
+            <number>0</number>
+           </property>
+           <widget class="QWidget" name="eventNodeTabWidgetPage1">
+            <property name="geometry">
+             <rect>
+              <x>0</x>
+              <y>0</y>
+              <width>115</width>
+              <height>379</height>
+             </rect>
+            </property>
+            <attribute name="label">
+             <string/>
+            </attribute>
+           </widget>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="actionNodeTab">
+        <attribute name="title">
+         <string>Actions</string>
+        </attribute>
+        <layout class="QGridLayout" name="gridLayout_3">
+         <property name="margin">
+          <number>0</number>
+         </property>
+         <item row="0" column="0">
+          <widget class="dtDirector::NodeTabs" name="actionNodeTabWidget">
+           <property name="tabSpacing">
+            <number>0</number>
+           </property>
+           <widget class="QWidget" name="actionNodeTabWidgetPage1">
+            <property name="geometry">
+             <rect>
+              <x>0</x>
+              <y>0</y>
+              <width>115</width>
+              <height>379</height>
+             </rect>
+            </property>
+            <attribute name="label">
+             <string/>
+            </attribute>
+           </widget>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="mutatorNodeTab">
+        <attribute name="title">
+         <string>Mutators</string>
+        </attribute>
+        <layout class="QGridLayout" name="gridLayout_8">
+         <property name="margin">
+          <number>0</number>
+         </property>
+         <item row="0" column="0">
+          <widget class="dtDirector::NodeTabs" name="mutatorNodeTabWidget">
+           <property name="currentIndex">
+            <number>0</number>
+           </property>
+           <property name="tabSpacing">
+            <number>0</number>
+           </property>
+           <widget class="QWidget" name="mutatorNodeTabWidgetPage1">
+            <property name="geometry">
+             <rect>
+              <x>0</x>
+              <y>0</y>
+              <width>115</width>
+              <height>379</height>
+             </rect>
+            </property>
+            <attribute name="label">
+             <string/>
+            </attribute>
+           </widget>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="variableNodeTab">
+        <attribute name="title">
+         <string>Variables</string>
+        </attribute>
+        <layout class="QGridLayout" name="gridLayout_4">
+         <property name="margin">
+          <number>0</number>
+         </property>
+         <item row="0" column="0">
+          <widget class="dtDirector::NodeTabs" name="variableNodeTabWidget">
+           <property name="tabSpacing">
+            <number>0</number>
+           </property>
+           <widget class="QWidget" name="variableNodeTabWidgetPage1">
+            <property name="geometry">
+             <rect>
+              <x>0</x>
+              <y>0</y>
+              <width>115</width>
+              <height>379</height>
+             </rect>
+            </property>
+            <attribute name="label">
+             <string/>
+            </attribute>
+           </widget>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="macroNodeTab">
+        <attribute name="title">
+         <string>Macros</string>
+        </attribute>
+        <layout class="QGridLayout" name="gridLayout_5">
+         <property name="margin">
+          <number>0</number>
+         </property>
+         <item row="0" column="0">
+          <widget class="dtDirector::NodeTabs" name="macroNodeTabWidget">
+           <property name="tabSpacing">
+            <number>0</number>
+           </property>
+           <widget class="QWidget" name="macroNodeTabWidgetPage1">
+            <property name="geometry">
+             <rect>
+              <x>0</x>
+              <y>0</y>
+              <width>115</width>
+              <height>379</height>
+             </rect>
+            </property>
+            <attribute name="label">
+             <string/>
+            </attribute>
+           </widget>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="linkNodeTab">
+        <attribute name="title">
+         <string>Links</string>
+        </attribute>
+        <layout class="QGridLayout" name="gridLayout_6">
+         <property name="margin">
+          <number>0</number>
+         </property>
+         <item row="0" column="0">
+          <widget class="dtDirector::NodeTabs" name="linkNodeTabWidget">
+           <property name="tabSpacing">
+            <number>0</number>
+           </property>
+           <widget class="QWidget" name="linkNodeTabWidgetPage1">
+            <property name="geometry">
+             <rect>
+              <x>0</x>
+              <y>0</y>
+              <width>115</width>
+              <height>379</height>
+             </rect>
+            </property>
+            <attribute name="label">
+             <string/>
+            </attribute>
+           </widget>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="miscNodeTab">
+        <attribute name="title">
+         <string>Misc</string>
+        </attribute>
+        <layout class="QGridLayout" name="gridLayout_7">
+         <property name="margin">
+          <number>0</number>
+         </property>
+         <item row="0" column="0">
+          <widget class="dtDirector::NodeTabs" name="miscNodeTabWidget">
+           <property name="tabSpacing">
+            <number>0</number>
+           </property>
+           <widget class="QWidget" name="miscNodeTabWidgetPage1">
+            <property name="geometry">
+             <rect>
+              <x>0</x>
+              <y>0</y>
+              <width>115</width>
+              <height>379</height>
+             </rect>
+            </property>
+            <attribute name="label">
+             <string/>
+            </attribute>
+           </widget>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="referenceNodeTabs">
+        <attribute name="title">
+         <string>References</string>
+        </attribute>
+        <layout class="QGridLayout" name="gridLayout_11">
+         <property name="margin">
+          <number>0</number>
+         </property>
+         <property name="spacing">
+          <number>0</number>
+         </property>
+         <item row="0" column="0">
+          <widget class="dtDirector::NodeTabs" name="referenceNodeTabWidget">
+           <property name="currentIndex">
+            <number>0</number>
+           </property>
+           <property name="tabSpacing">
+            <number>0</number>
+           </property>
+           <widget class="QWidget" name="referenceNodeTabWidgetPage1">
+            <property name="geometry">
+             <rect>
+              <x>0</x>
+              <y>0</y>
+              <width>115</width>
+              <height>379</height>
+             </rect>
+            </property>
+            <attribute name="label">
+             <string/>
+            </attribute>
+           </widget>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="searchNodeTab">
+        <attribute name="title">
+         <string>Search</string>
+        </attribute>
+        <layout class="QGridLayout" name="gridLayout_10">
+         <property name="margin">
+          <number>0</number>
+         </property>
+         <item row="0" column="0">
+          <widget class="dtDirector::NodeTabs" name="searchNodeTabWidget">
+           <property name="enabled">
+            <bool>true</bool>
+           </property>
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="tabSpacing">
+            <number>0</number>
+           </property>
+           <widget class="QWidget" name="searchNodeTabWidgetPage1">
+            <property name="geometry">
+             <rect>
+              <x>0</x>
+              <y>0</y>
+              <width>115</width>
+              <height>379</height>
+             </rect>
+            </property>
+            <attribute name="label">
+             <string/>
+            </attribute>
+           </widget>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <action name="action_New">
+   <property name="icon">
+    <iconset resource="../../src/dtDirectorQt/directorqt.qrc">
+     <normaloff>:/icons/new.png</normaloff>:/icons/new.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;New</string>
+   </property>
+   <property name="toolTip">
+    <string>Begins a new Director script (Ctrl+N).</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+N</string>
+   </property>
+  </action>
+  <action name="action_Load">
+   <property name="icon">
+    <iconset resource="../../src/dtDirectorQt/directorqt.qrc">
+     <normaloff>:/icons/open.png</normaloff>:/icons/open.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Load</string>
+   </property>
+   <property name="toolTip">
+    <string>Loads a Director script from a file (Ctrl+L).</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+L</string>
+   </property>
+  </action>
+  <action name="action_Save">
+   <property name="icon">
+    <iconset resource="../../src/dtDirectorQt/directorqt.qrc">
+     <normaloff>:/icons/save.png</normaloff>:/icons/save.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Save</string>
+   </property>
+   <property name="toolTip">
+    <string>Saves the current Director script (Ctrl+S).</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
+   </property>
+  </action>
+  <action name="action_Save_as">
+   <property name="icon">
+    <iconset resource="../../src/dtDirectorQt/directorqt.qrc">
+     <normaloff>:/icons/save.png</normaloff>:/icons/save.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Save as...</string>
+   </property>
+   <property name="toolTip">
+    <string>Saves the current Director script.</string>
+   </property>
+  </action>
+  <action name="action_Step_Out_Of_Graph">
+   <property name="icon">
+    <iconset resource="../../src/dtDirectorQt/directorqt.qrc">
+     <normaloff>:/icons/parent.png</normaloff>:/icons/parent.png</iconset>
+   </property>
+   <property name="text">
+    <string>Step &amp;out of Graph</string>
+   </property>
+   <property name="toolTip">
+    <string>Returns to the parent graph (Ctrl+Shift+U).</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+U</string>
+   </property>
+  </action>
+  <action name="action_Smart_Grid_snap">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../src/dtDirectorQt/directorqt.qrc">
+     <normaloff>:/icons/snapgrid.png</normaloff>:/icons/snapgrid.png</iconset>
+   </property>
+   <property name="text">
+    <string>Smart &amp;Grid Snap</string>
+   </property>
+   <property name="toolTip">
+    <string>Snaps nodes to a smart grid determined by the placement of other nodes (Ctrl+G).</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+G</string>
+   </property>
+  </action>
+  <action name="action_Undo">
+   <property name="icon">
+    <iconset resource="../../src/dtDirectorQt/directorqt.qrc">
+     <normaloff>:/icons/undo.png</normaloff>:/icons/undo.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Undo</string>
+   </property>
+   <property name="toolTip">
+    <string>Reverts to your last action (Ctrl+Z).</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Z</string>
+   </property>
+  </action>
+  <action name="action_Redo">
+   <property name="icon">
+    <iconset resource="../../src/dtDirectorQt/directorqt.qrc">
+     <normaloff>:/icons/redo.png</normaloff>:/icons/redo.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Redo</string>
+   </property>
+   <property name="toolTip">
+    <string>Reverts your last undo action (Ctrl+Y).</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Y</string>
+   </property>
+  </action>
+  <action name="action_Delete">
+   <property name="icon">
+    <iconset resource="../../src/dtDirectorQt/directorqt.qrc">
+     <normaloff>:/icons/delete.png</normaloff>:/icons/delete.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Delete</string>
+   </property>
+   <property name="toolTip">
+    <string>Reverts your last undo action (Delete).</string>
+   </property>
+   <property name="shortcut">
+    <string>Del</string>
+   </property>
+  </action>
+  <action name="action_Cut">
+   <property name="icon">
+    <iconset resource="../../src/dtDirectorQt/directorqt.qrc">
+     <normaloff>:/icons/cut.png</normaloff>:/icons/cut.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Cut</string>
+   </property>
+   <property name="toolTip">
+    <string>Cuts the currently selected nodes to the clipboard (Ctrl+X).</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+X</string>
+   </property>
+  </action>
+  <action name="action_Copy">
+   <property name="icon">
+    <iconset resource="../../src/dtDirectorQt/directorqt.qrc">
+     <normaloff>:/icons/duplicate.png</normaloff>:/icons/duplicate.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Copy</string>
+   </property>
+   <property name="toolTip">
+    <string>Copies the currently selected nodes to the clipboard (Ctrl+C).</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+C</string>
+   </property>
+  </action>
+  <action name="action_Paste">
+   <property name="icon">
+    <iconset resource="../../src/dtDirectorQt/directorqt.qrc">
+     <normaloff>:/icons/paste.png</normaloff>:/icons/paste.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Paste</string>
+   </property>
+   <property name="toolTip">
+    <string>Pastes the nodes saved in the clipboard to the current graph (Ctrl+V).</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+V</string>
+   </property>
+  </action>
+  <action name="action_Manage_Libraries">
+   <property name="text">
+    <string>&amp;Manage Libraries...</string>
+   </property>
+   <property name="toolTip">
+    <string>Manages the Node Libraries for the script.</string>
+   </property>
+  </action>
+  <action name="action_Property_Editor">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Property Editor</string>
+   </property>
+   <property name="toolTip">
+    <string>Shows the Property Editor (Ctrl+P).</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+P</string>
+   </property>
+  </action>
+  <action name="action_Graph_Browser">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Macro Browser</string>
+   </property>
+   <property name="toolTip">
+    <string>Shows the Graph Browser (Ctrl+B).</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+B</string>
+   </property>
+  </action>
+  <action name="action_Show_Links">
+   <property name="icon">
+    <iconset resource="../../src/dtDirectorQt/directorqt.qrc">
+     <normaloff>:/icons/showlinks.png</normaloff>:/icons/showlinks.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Show All Links</string>
+   </property>
+   <property name="toolTip">
+    <string>Shows all hidden links on selected nodes (Ctrl+U).</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+U</string>
+   </property>
+  </action>
+  <action name="action_Hide_Links">
+   <property name="icon">
+    <iconset resource="../../src/dtDirectorQt/directorqt.qrc">
+     <normaloff>:/icons/hidelinks.png</normaloff>:/icons/hidelinks.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Hide All Links</string>
+   </property>
+   <property name="toolTip">
+    <string>Hides all unused links on selected nodes (Ctrl+H).</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+H</string>
+   </property>
+  </action>
+  <action name="action_Refresh">
+   <property name="icon">
+    <iconset resource="../../src/dtDirectorQt/directorqt.qrc">
+     <normaloff>:/icons/refresh.png</normaloff>:/icons/refresh.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Refresh</string>
+   </property>
+   <property name="toolTip">
+    <string>Refresh the current view (F5).</string>
+   </property>
+   <property name="shortcut">
+    <string>F5</string>
+   </property>
+  </action>
+  <action name="action_Exit">
+   <property name="text">
+    <string>Exit</string>
+   </property>
+   <property name="toolTip">
+    <string>Exit the editor</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Q</string>
+   </property>
+  </action>
+  <action name="actionDirector_Help">
+   <property name="text">
+    <string>Director Help...</string>
+   </property>
+  </action>
+  <action name="action_Search_Browser">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Search Browser</string>
+   </property>
+   <property name="toolTip">
+    <string>Shows the Search Browser (Ctrl+F).</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+F</string>
+   </property>
+   <property name="shortcutContext">
+    <enum>Qt::WidgetShortcut</enum>
+   </property>
+  </action>
+  <action name="actionPause">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../src/dtDirectorQt/directorqt.qrc">
+     <normaloff>:/icons/debug_pause.png</normaloff>:/icons/debug_pause.png</iconset>
+   </property>
+   <property name="text">
+    <string>Pause</string>
+   </property>
+  </action>
+  <action name="actionContinue">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../src/dtDirectorQt/directorqt.qrc">
+     <normaloff>:/icons/debug_continue.png</normaloff>:/icons/debug_continue.png</iconset>
+   </property>
+   <property name="text">
+    <string>Continue</string>
+   </property>
+   <property name="shortcut">
+    <string>F5</string>
+   </property>
+  </action>
+  <action name="actionStep_Next">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../src/dtDirectorQt/directorqt.qrc">
+     <normaloff>:/icons/debug_step.png</normaloff>:/icons/debug_step.png</iconset>
+   </property>
+   <property name="text">
+    <string>Step Next</string>
+   </property>
+   <property name="shortcut">
+    <string>F10</string>
+   </property>
+  </action>
+  <action name="actionPaste_with_Links">
+   <property name="icon">
+    <iconset resource="../../src/dtDirectorQt/directorqt.qrc">
+     <normaloff>:/icons/paste.png</normaloff>:/icons/paste.png</iconset>
+   </property>
+   <property name="text">
+    <string>Paste with Links</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+V</string>
+   </property>
+  </action>
+  <action name="action_Thread_Browser">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Thread Browser</string>
+   </property>
+   <property name="toolTip">
+    <string>Shows the Thread Browser (Ctrl+T).</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+T</string>
+   </property>
+  </action>
+  <action name="action_Node_Palette">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Node Palette</string>
+   </property>
+  </action>
+  <action name="actionToggle_Break_Point">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../src/dtDirectorQt/directorqt.qrc">
+     <normaloff>:/icons/debug_break.png</normaloff>:/icons/debug_break.png</iconset>
+   </property>
+   <property name="text">
+    <string>Toggle Break Point</string>
+   </property>
+   <property name="shortcut">
+    <string>F9</string>
+   </property>
+  </action>
+  <action name="action_Manage_Plugins">
+   <property name="text">
+    <string>Manage Plugins...</string>
+   </property>
+   <property name="toolTip">
+    <string>Manage the Plugins for the script.</string>
+   </property>
+  </action>
+  <action name="actionNone">
+   <property name="text">
+    <string>&lt;None&gt;</string>
+   </property>
+  </action>
+  <action name="action_Manage_Imported_Scripts">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Manage Imported Scripts...</string>
+   </property>
+  </action>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>dtDirector::PropertyEditor</class>
+   <extends>QDockWidget</extends>
+   <header location="global">dtDirectorQt/propertyeditor.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>dtDirector::GraphBrowser</class>
+   <extends>QDockWidget</extends>
+   <header location="global">dtDirectorQt/graphbrowser.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>dtDirector::GraphTabs</class>
+   <extends>QTabWidget</extends>
+   <header location="global">dtDirectorQt/graphtabs.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>dtDirector::NodeTabs</class>
+   <extends>QToolBox</extends>
+   <header location="global">dtDirectorQt/nodetabs.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>dtDirector::SearchBrowser</class>
+   <extends>QDockWidget</extends>
+   <header location="global">dtDirectorQt/searchbrowser.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>dtDirector::ThreadBrowser</class>
+   <extends>QDockWidget</extends>
+   <header location="global">dtDirectorQt/threadbrowser.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources>
+  <include location="../../src/dtDirectorQt/directorqt.qrc"/>
+ </resources>
+ <connections/>
+</ui>
