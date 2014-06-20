@@ -177,7 +177,7 @@ namespace dtCore
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////
-   void PropertyContainer::GetPropertyList(std::vector<const ActorProperty*>& propList) const
+   void PropertyContainer::GetPropertyList(PropertyConstVector& propList) const
    {
       propList.clear();
       propList.reserve(mProperties.size());
@@ -190,7 +190,7 @@ namespace dtCore
 
 
    ///////////////////////////////////////////////////////////////////////////////////////
-   void PropertyContainer::GetPropertyList(std::vector<ActorProperty*>& propList)
+   void PropertyContainer::GetPropertyList(PropertyVector& propList)
    {
       propList.clear();
       propList.reserve(mProperties.size());

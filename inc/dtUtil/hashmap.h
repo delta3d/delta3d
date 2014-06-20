@@ -58,36 +58,60 @@ namespace dtUtil
    };
 #endif
 
-   template<class _Key, class _Tp, class _HashFcn = dtUtil::hash<_Key>, class _LessKey = std::less<_Key>, class _Alloc = std::allocator<_Tp> >
+   template<class _Key, class _Tp, class _HashFcn = dtUtil::hash<_Key>, class _LessKey = std::less<_Key>, class _Alloc = std::allocator<std::pair<const _Key, _Tp> > >
    class HashMap : public
 #if defined(_UNORDERED_MAP)
    std::unordered_map<_Key, _Tp, _HashFcn, dtUtil::HashEqual<_Key, _LessKey>, _Alloc >
+   {
+   public:
+      typedef std::unordered_map<_Key, _Tp, _HashFcn, dtUtil::HashEqual<_Key, _LessKey>, _Alloc > BaseClass;
 #elif defined(__GNUG__)
    __gnu_cxx::hash_map<_Key, _Tp, _HashFcn, dtUtil::HashEqual<_Key, _LessKey>, _Alloc >
+   {
+   public:
+      typedef __gnu_cxx::hash_map<_Key, _Tp, _HashFcn, dtUtil::HashEqual<_Key, _LessKey>, _Alloc > BaseClass;
 #elif defined(_MSC_VER)
    stdext::hash_map<_Key, _Tp, dtUtil::HashCompare<_Key, _HashFcn, _LessKey>, _Alloc >
+   {
+   public:
+      typedef stdext::hash_map<_Key, _Tp, dtUtil::HashCompare<_Key, _HashFcn, _LessKey>, _Alloc > BaseClass;
 #else
    std::map<_Key, _Tp, _LessKey, _Alloc >
-#endif
    {
-    public:
-         HashMap() {}
+   public:
+      typedef std::map<_Key, _Tp, _LessKey, _Alloc > BaseClass;
+#endif
+      using typename BaseClass::iterator;
+      using typename BaseClass::const_iterator;
+      HashMap() {}
    };
 
-   template<class _Key, class _Tp, class _HashFcn = dtUtil::hash<_Key>, class _LessKey = std::less<_Key>, class _Alloc = std::allocator<_Tp> >
+   template<class _Key, class _Tp, class _HashFcn = dtUtil::hash<_Key>, class _LessKey = std::less<_Key>, class _Alloc = std::allocator<std::pair<const _Key, _Tp> > >
    class HashMultiMap : public
 #if defined(_UNORDERED_MAP)
    std::unordered_multimap<_Key, _Tp, _HashFcn, dtUtil::HashEqual<_Key, _LessKey>, _Alloc >
+   {
+   public:
+      typedef std::unordered_multimap<_Key, _Tp, _HashFcn, dtUtil::HashEqual<_Key, _LessKey>, _Alloc > BaseClass;
 #elif defined(__GNUG__)
    __gnu_cxx::hash_multimap<_Key, _Tp, _HashFcn, dtUtil::HashEqual<_Key, _LessKey>, _Alloc >
+   {
+   public:
+      typedef __gnu_cxx::hash_multimap<_Key, _Tp, _HashFcn, dtUtil::HashEqual<_Key, _LessKey>, _Alloc > BaseClass;
 #elif defined(_MSC_VER)
    stdext::hash_multimap<_Key, _Tp, dtUtil::HashCompare<_Key, _HashFcn, _LessKey>, _Alloc >
+   {
+   public:
+      typedef stdext::hash_multimap<_Key, _Tp, dtUtil::HashCompare<_Key, _HashFcn, _LessKey>, _Alloc > BaseClass;
 #else
    std::multimap<_Key, _Tp, _LessKey, _Alloc >
-#endif
    {
-    public:
-         HashMultiMap() {}
+   public:
+      typedef std::multimap<_Key, _Tp, _LessKey, _Alloc > BaseClass;
+#endif
+      using typename BaseClass::iterator;
+      using typename BaseClass::const_iterator;
+      HashMultiMap() {}
    };
 }
 

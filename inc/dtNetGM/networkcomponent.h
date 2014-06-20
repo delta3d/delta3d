@@ -307,7 +307,7 @@ namespace dtNetGM
        * Is this NetworkComponent a server?
        * @return server true/false
        */
-      virtual const bool IsServer() const { return false; };
+      virtual bool IsServer() const { return false; };
 
       /**
        * Retrieves a vector containing all NetworkBridge which have an accepted

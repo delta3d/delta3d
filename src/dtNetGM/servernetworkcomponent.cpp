@@ -228,6 +228,12 @@ namespace dtNetGM
    void ServerNetworkComponent::ProcessNetClientRequestConnection(const dtGame::MachineInfoMessage& msg)
    {
       std::string rejectReason = "";
+
+      if (GetConnection(msg.GetSource()) == NULL)
+      {
+         return;
+      }
+
       bool acceptClient = AcceptClient(msg.GetSource(), rejectReason);
 
       if (acceptClient)

@@ -56,6 +56,8 @@
 
 #include <assert.h>
 
+#include <osg/AnimationPath>
+
 /**
  * \brief Visitor to count triangles as simply as possible.
  */

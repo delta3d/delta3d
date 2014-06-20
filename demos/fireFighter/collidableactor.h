@@ -30,7 +30,7 @@ class FIRE_FIGHTER_EXPORT CollidableActor : public dtGame::GameActor
    public:
 
       /// Constructor
-      CollidableActor(dtGame::GameActorProxy &proxy);
+      CollidableActor(dtGame::GameActorProxy& parent);
 
    protected:
 

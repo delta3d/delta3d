@@ -52,8 +52,8 @@ dtCore::ActorProxyIcon* CollidableActorProxy::GetBillBoardIcon()
 }
 
 /////////////////////////////////////////////////////////////
-CollidableActor::CollidableActor(dtGame::GameActorProxy& proxy)
-   : dtGame::GameActor(proxy)
+CollidableActor::CollidableActor(dtGame::GameActorProxy& parent)
+   : dtGame::GameActor(parent)
 {
 
 }

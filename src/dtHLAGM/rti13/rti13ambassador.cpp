@@ -252,7 +252,11 @@ namespace dtHLAGM
             // just need this variable to make the getValuePointer call happy.
             RTI::ULong lengthHolder = 0;
             data.mData.append(rtiPairSet.getValuePointer(i, lengthHolder), rtiPairSet.getValueLength(i));
+#ifdef CERTI_WORKAROUND
+            RTI::Region* reg = NULL;
+#else
             RTI::Region* reg = rtiPairSet.getRegion(i);
+#endif
             if (reg != NULL)
             {
                data.mRegion = new RTI13Region(*reg);
@@ -265,7 +269,11 @@ namespace dtHLAGM
 
       void ConvertRTI13PHVSToPHVM(RTI::InteractionClassHandle intClass, const RTI::ParameterHandleValuePairSet& rtiPairSet, RTIParameterHandleValueMap& dtHandleValueMapToFill)
       {
+#ifdef CERTI_WORKAROUND
+         RTI::Region* reg13 = NULL;
+#else
          RTI::Region* reg13 = rtiPairSet.getRegion();
+#endif
          dtCore::RefPtr<RTIRegion> region = new RTI13Region(*reg13);
 
          for (unsigned i = 0; i < rtiPairSet.size(); ++i)

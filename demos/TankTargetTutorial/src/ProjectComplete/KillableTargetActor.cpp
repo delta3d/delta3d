@@ -76,8 +76,8 @@ const std::string& KillableTargetActor::SwitchVisitor::GetSwitchState() const
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-KillableTargetActor::KillableTargetActor(dtGame::GameActorProxy& proxy)
-   : dtActors::GameMeshActor(proxy)
+KillableTargetActor::KillableTargetActor(dtGame::GameActorProxy& parent)
+   : dtActors::GameMeshActor(parent)
    , mShaderEffect()
    , mMaxHealth(100)
    , mCurrentHealth(0)

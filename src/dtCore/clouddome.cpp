@@ -279,6 +279,7 @@ void CloudDome::Create()
    domeStateSet->addUniform(offset.get());
    domeStateSet->addUniform(cloudColor.get());
    domeStateSet->addUniform(noise.get());
+   domeStateSet->setDataVariance(osg::Object::DYNAMIC);
 
    // TODO: Add the fog uniform parameter
    domeStateSet->setAttributeAndModes(mCloudProg.get(), osg::StateAttribute::ON);

@@ -109,13 +109,13 @@ namespace dtCore
       * Gets the actor proxy that this property is representing
       * @return The actor proxy.
       */
-      dtCore::BaseActorObject* GetActorProxy();
+      dtCore::BaseActorObject* GetActor();
 
       /**
       * Gets the actor proxy that this property is representing
       * @return The actor proxy.
       */
-      const dtCore::BaseActorObject* GetActorProxy() const;
+      const dtCore::BaseActorObject* GetActor() const;
 
       /**
       * Sets the value of the property based on a string.

@@ -66,7 +66,7 @@ void TestGameActorCrashProxy::OnEnteredWorld()
 ////////////////////////////////////////////////////////////////////
 // Actor Code
 ////////////////////////////////////////////////////////////////////
-TestGameActorCrash::TestGameActorCrash(dtGame::GameActorProxy& proxy): dtGame::GameActor(proxy)
+TestGameActorCrash::TestGameActorCrash(dtGame::GameActorProxy& parent): dtGame::GameActor(parent)
 {
 }
 

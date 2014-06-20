@@ -29,7 +29,7 @@ class FIRE_FIGHTER_EXPORT FireSuitActor : public GameItemActor
    public:
 
       /// Constructor
-      FireSuitActor(dtGame::GameActorProxy &proxy);
+      FireSuitActor(dtGame::GameActorProxy& parent);
 
       /**
        * Activates this game item

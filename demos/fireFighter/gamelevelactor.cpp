@@ -82,8 +82,8 @@ void GameLevelActorProxy::OnEnteredWorld()
 }
 
 /////////////////////////////////////////////////////////////////
-GameLevelActor::GameLevelActor(dtGame::GameActorProxy& proxy)
-   : dtGame::GameActor(proxy)
+GameLevelActor::GameLevelActor(dtGame::GameActorProxy& parent)
+   : dtGame::GameActor(parent)
    , mAmbientSound(NULL)
 {
 

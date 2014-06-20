@@ -97,10 +97,10 @@ namespace dtCore
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   dtCore::BaseActorObject* ActorIDActorProperty::GetActorProxy()
+   dtCore::BaseActorObject* ActorIDActorProperty::GetActor()
    {
       dtCore::UniqueId idValue = GetValue();
-      if (idValue.ToString() == "") return NULL;
+      if (idValue.ToString().empty()) return NULL;
 
       try
       {
@@ -143,10 +143,10 @@ namespace dtCore
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   const dtCore::BaseActorObject* ActorIDActorProperty::GetActorProxy() const
+   const dtCore::BaseActorObject* ActorIDActorProperty::GetActor() const
    {
       dtCore::UniqueId idValue = GetValue();
-      if (idValue.ToString() == "") return NULL;
+      if (idValue.ToString().empty()) return NULL;
 
       try
       {
@@ -211,17 +211,16 @@ namespace dtCore
    ////////////////////////////////////////////////////////////////////////////
    const std::string ActorIDActorProperty::ToString() const
    {
-      dtCore::UniqueId id = GetValue();
-      return id.ToString();
+      return GetValue().ToString();
    }
 
    //////////////////////////////////////////////////////////////////////////
    std::string ActorIDActorProperty::GetValueString() const
    {
-      const BaseActorObject* proxy = GetActorProxy();
-      if (proxy)
+      const BaseActorObject* actor = GetActor();
+      if (actor)
       {
-         return proxy->GetName();
+         return actor->GetName();
       }
 
       if (!GetValue().ToString().empty())

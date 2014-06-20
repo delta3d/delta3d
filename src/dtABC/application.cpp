@@ -477,6 +477,7 @@ void Application::CreateInstances(const ApplicationConfigData& data)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+DT_DISABLE_WARNING_START_CLANG("-Wreturn-stack-address")
 const std::string& Application::GetConfigPropertyValue(
          const std::string& name, const std::string& defaultValue) const
 {
@@ -488,6 +489,31 @@ const std::string& Application::GetConfigPropertyValue(
    else
    {
       return i->second;
+   }
+}
+DT_DISABLE_WARNING_END
+
+///////////////////////////////////////////////////////////////////////////////
+void Application::GetConfigPropertiesWithPrefix(const std::string& prefix, std::vector<std::pair<std::string,std::string> >& resultOut, bool removePrefix) const
+{
+   size_t prefLen = prefix.length();
+   AppConfigPropertyMap::const_iterator i,iend;
+   i = mConfigProperties.begin();
+   iend = mConfigProperties.end();
+   for (;i != iend; ++i)
+   {
+      const std::string& key = i->first;
+      if (key.length() >= prefLen && key.substr(0, prefLen) == prefix)
+      {
+         if (removePrefix)
+         {
+            resultOut.push_back(std::make_pair(key.substr(prefLen), i->second));
+         }
+         else
+         {
+            resultOut.push_back(std::make_pair(key, i->second));
+         }
+      }
    }
 }
 

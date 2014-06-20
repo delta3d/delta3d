@@ -68,8 +68,8 @@ IMPLEMENT_ENUM(VehicleActor::CoordSys);
 VehicleActor::CoordSys VehicleActor::CoordSys::SYS_ABS("ABS");
 VehicleActor::CoordSys VehicleActor::CoordSys::SYS_REL("REL");
 
-VehicleActor::VehicleActor(dtGame::GameActorProxy &proxy)
-   : dtGame::GameActor(proxy)
+VehicleActor::VehicleActor(dtGame::GameActorProxy& parent)
+   : dtGame::GameActor(parent)
    , mEngineRunning(true)
    , mCoordSys(&VehicleActor::CoordSys::SYS_REL)
 {

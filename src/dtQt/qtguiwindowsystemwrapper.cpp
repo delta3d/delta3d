@@ -46,6 +46,21 @@ namespace dtQt
    }
 
    /////////////////////////////////////////////////////////////
+   void QtGuiWindowSystemWrapper::DisableQtGUIWrapper()
+   {
+      dtQt::QtGuiWindowSystemWrapper* winSys = dynamic_cast<dtQt::QtGuiWindowSystemWrapper*>(osg::GraphicsContext::getWindowingSystemInterface());
+
+      if (winSys != NULL)
+      {
+         osg::GraphicsContext::setWindowingSystemInterface(winSys->mInterface);
+      }
+      else
+      {
+         LOG_ERROR("The current windowing system interface does not use this wrapper.  Disabling failed.");
+      }
+   }
+
+   /////////////////////////////////////////////////////////////
    QtGuiWindowSystemWrapper::QtGuiWindowSystemWrapper(osg::GraphicsContext::WindowingSystemInterface& oldInterface)
    : mInterface(&oldInterface)
    , mWidgetFactory(NULL)

@@ -72,8 +72,8 @@ void FlySequenceActorProxy::OnEnteredWorld()
 }
 
 ///////////////////////////////////////////////////////////
-FlySequenceActor::FlySequenceActor(dtGame::GameActorProxy& proxy)
-   : dtGame::GameActor(proxy)
+FlySequenceActor::FlySequenceActor(dtGame::GameActorProxy& parent)
+   : dtGame::GameActor(parent)
    , lookAt(0.0f, 0.0f, 100.0f)
    , up(0.0f, 0.0f, 1.0f)
    , wayptArray(NULL)

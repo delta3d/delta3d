@@ -52,8 +52,8 @@ void SCBAActorProxy::BuildInvokables()
 }
 
 ////////////////////////////////////////////////////
-SCBAActor::SCBAActor(dtGame::GameActorProxy& proxy)
-   : GameItemActor(proxy)
+SCBAActor::SCBAActor(dtGame::GameActorProxy& parent)
+   : GameItemActor(parent)
 {
    mItemIndex = 2;
 }

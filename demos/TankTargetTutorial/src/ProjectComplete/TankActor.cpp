@@ -57,8 +57,8 @@ const std::string TankActor::EVENT_HANDLER_NAME("HandleGameEvent");
 const float MAXTANKVELOCITY = 15.0f;
 
 ///////////////////////////////////////////////////////////////////////////////
-TankActor::TankActor(dtGame::GameActorProxy& proxy)
-   : dtActors::GameMeshActor(proxy)
+TankActor::TankActor(dtGame::GameActorProxy& parent)
+   : dtActors::GameMeshActor(parent)
    , mDust(NULL)
    , mCannonShot(NULL)
    , mVelocity(0.0f)

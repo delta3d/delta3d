@@ -49,14 +49,14 @@ void GMImpl::ClearTimerSingleSet(std::set<TimerInfo> &timerSet,
 }
 
 //////////////////////////////////////////////////////////////////////////
-void GMImpl::ClearTimersForActor(std::set<TimerInfo>& timerSet, const GameActorProxy& proxy)
+void GMImpl::ClearTimersForActor(std::set<TimerInfo>& timerSet, const GameActorProxy& actor)
 {
    std::set<TimerInfo>::iterator i = timerSet.begin();
    while (i != timerSet.end())
    {
       std::set<TimerInfo>::iterator toDelete;
       const TimerInfo& timer = *i;
-      if (timer.aboutActor == proxy.GetId())
+      if (timer.aboutActor == actor.GetId())
       {
          toDelete = i;
          ++i;

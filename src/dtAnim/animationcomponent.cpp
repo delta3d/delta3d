@@ -84,9 +84,9 @@ void AnimationComponent::TickLocal(float dt)
 }
 
 /////////////////////////////////////////////////////////////////////////////////
-bool AnimationComponent::RegisterActor(dtGame::GameActorProxy& proxy, dtAnim::AnimationHelper& helper)
+bool AnimationComponent::RegisterActor(dtGame::GameActorProxy& actor, dtAnim::AnimationHelper& helper)
 {
-   bool result = BaseClass::RegisterActor(proxy, helper);
+   bool result = BaseClass::RegisterActor(actor, helper);
    if (result)
    {
       // Register the event firing callbacks that the helper will call

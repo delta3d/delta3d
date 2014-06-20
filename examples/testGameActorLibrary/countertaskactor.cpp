@@ -35,7 +35,7 @@
 #include <dtGame/messagetype.h>
 
 //////////////////////////////////////////////////////////////////////////////
-CounterTaskActor::CounterTaskActor(dtGame::GameActorProxy &proxy) : dtActors::TaskActor(proxy)
+CounterTaskActor::CounterTaskActor(dtGame::GameActorProxy& parent) : dtActors::TaskActor(parent)
 {
 }
  

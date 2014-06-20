@@ -202,6 +202,24 @@ MACRO(MACRO_MESSAGE MYTEXT)
     ENDIF(MACRO_MESSAGE_DEBUG)
 ENDMACRO(MACRO_MESSAGE MYTEXT)
 
+MACRO(CREATE_LINK_LINES_FOR_TARGETS OUTVAR)
+    FOREACH(varname ${ARGN})
+        IF(${varname}_RELEASE)
+           IF(${varname}_DEBUG)
+               Set(${OUTVAR} ${${OUTVAR}} optimized "${${varname}_RELEASE}" debug "${${varname}_DEBUG}")
+           ELSE(${varname}_DEBUG)
+               Set(${OUTVAR} ${${OUTVAR}} optimized "${${varname}_RELEASE}" debug "${${varname}_RELEASE}" )
+           ENDIF(${varname}_DEBUG)
+        ELSE(${varname}_RELEASE)
+           IF(${varname}_DEBUG)
+               Set(${OUTVAR} ${${OUTVAR}} optimized "${${varname}}" debug "${${varname}_DEBUG}")
+           ELSE(${varname}_DEBUG)
+               Set(${OUTVAR} ${${OUTVAR}} optimized "${${varname}}" debug "${${varname}}" )
+           ENDIF(${varname}_DEBUG)
+        ENDIF(${varname}_RELEASE)
+    ENDFOREACH(varname)
+ENDMACRO(CREATE_LINK_LINES_FOR_TARGETS)
+
 MACRO(LINK_WITH_VARIABLES TRGTNAME)
     FOREACH(varname ${ARGN})
       IF (WIN32)
@@ -271,25 +289,46 @@ MACRO(FIND_OSG_VERSION)
         SET(OSG_VERSION_PATCH ${_osg_VERSION_PATCH})
 
         SET(OPENSCENEGRAPH_VERSION "${_osg_VERSION_MAJOR}.${_osg_VERSION_MINOR}.${_osg_VERSION_PATCH}"
-                                    CACHE INTERNAL "The version of OSG which was detected")                
+                                    CACHE INTERNAL "The version of OSG which was detected")
     ENDIF()
 ENDMACRO(FIND_OSG_VERSION)
+
 
 MACRO(DELTA3D_ADD_LIBRARY_PROPERTIES LIB_NAME EXPORT_SYMBOL)
    if (MSVC_IDE)
       SET_TARGET_PROPERTIES(${LIB_NAME}
                      PROPERTIES DEFINE_SYMBOL ${EXPORT_SYMBOL})
    endif (MSVC_IDE)
+ENDMACRO()
 
-   if (APPLE AND COMPILE_INSTALL_NAME_DIR)
-      set(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
-      set(CMAKE_INSTALL_RPATH "${COMPILE_INSTALL_NAME_DIR}")
-#      Message(${LIB_NAME} ${COMPILE_INSTALL_NAME_DIR})
-#      SET_TARGET_PROPERTIES(${LIB_NAME} PROPERTIES
-#         FRAMEWORK TRUE
-#         FRAMEWORK_VERSION ${OPENSCENEGRAPH_SOVERSION}
-#         PUBLIC_HEADER  "${ARGN}"
-#         INSTALL_NAME_DIR "${COMPILE_INSTALL_NAME_DIR}"
-#      )
+
+MACRO(DELTA3D_ADD_LIBRARY LIB_NAME EXPORT_MACRO)
+
+   SET(LIBRARY_TYPE ${ARGV2})
+
+   #MESSAGE(${LIB_NAME}"${ARGV2}")
+   
+   if (NOT LIBRARY_TYPE OR "${LIBRARY_TYPE}" STREQUAL "FRAMEWORK")
+      SET(LIBRARY_TYPE SHARED)
+      SET(DELTA3D_ALLOW_FRAMEWORK ON)
+   else()
+      SET(DELTA3D_ALLOW_FRAMEWORK OFF)
    endif()
+
+   ADD_LIBRARY(${LIB_NAME} ${LIBRARY_TYPE}
+       ${LIB_PUBLIC_HEADERS}
+       ${LIB_SOURCES}
+   )
+
+   LINK_WITH_VARIABLES(${LIB_NAME}
+                       ${LIB_EXTERNAL_DEPS})
+
+   TARGET_LINK_LIBRARIES(${LIB_NAME}
+                         ${LIB_DEPS}
+                         )
+
+   DELTA3D_ADD_LIBRARY_PROPERTIES(${LIB_NAME} ${EXPORT_MACRO} ${LIB_PUBLIC_HEADERS})
+
+   INCLUDE(ModuleInstall OPTIONAL)
+
 ENDMACRO()

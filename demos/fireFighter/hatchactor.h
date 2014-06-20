@@ -39,7 +39,7 @@ class FIRE_FIGHTER_EXPORT HatchActor : public GameItemActor
    public:
 
       /// Constructer
-      HatchActor(dtGame::GameActorProxy &proxy);
+      HatchActor(dtGame::GameActorProxy& parent);
 
       /**
        * Activates this game item

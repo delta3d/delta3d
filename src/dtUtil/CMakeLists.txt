@@ -94,6 +94,7 @@ SET( LIB_PUBLIC_HEADERS
     ${HEADER_PATH}/objectfactory.h
     ${HEADER_PATH}/packager.h
     ${HEADER_PATH}/polardecomp.h
+    ${HEADER_PATH}/referencedinterface.h
     ${HEADER_PATH}/refstring.h
     ${HEADER_PATH}/resourceloader.h
     ${HEADER_PATH}/resourcemanager.h
@@ -117,27 +118,18 @@ SET( LIB_PUBLIC_HEADERS
     ${HEADER_PATH}/xerceswriter.h
    )
 
+SET(LIB_EXTERNAL_DEPS
+   OSG_LIBRARY 
+   OSGDB_LIBRARY
+   OSGUTIL_LIBRARY
+   OSGSIM_LIBRARY
+   XERCES_LIBRARY
+   OPENTHREADS_LIBRARY)
 
 if (MSVC)
    # PCH doesn't help with dtUtil on g++.
    ADD_PRECOMPILED_HEADER(${LIB_NAME} prefix/dtutilprefix.h prefix/dtutilprefix.cpp LIB_SOURCES)
 endif (MSVC)
-  
 
-ADD_LIBRARY(${LIB_NAME} SHARED
-    ${LIB_PUBLIC_HEADERS} 
-    ${LIB_SOURCES}
-)
-
-DELTA3D_ADD_LIBRARY_PROPERTIES(${LIB_NAME} DT_UTIL_LIBRARY ${LIB_PUBLIC_HEADERS})
-
-LINK_WITH_VARIABLES(${LIB_NAME}
-                        OSG_LIBRARY 
-                        OSGDB_LIBRARY
-                        OSGUTIL_LIBRARY
-                        OSGSIM_LIBRARY
-                        XERCES_LIBRARY
-                        OPENTHREADS_LIBRARY)
-
-INCLUDE(ModuleInstall OPTIONAL)
+DELTA3D_ADD_LIBRARY(${LIB_NAME} DT_UTIL_LIBRARY)
 

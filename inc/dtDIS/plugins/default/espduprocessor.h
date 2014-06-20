@@ -68,7 +68,7 @@ namespace dtDIS
 
    protected:
       void SendPartialUpdate(const DIS::EntityStatePdu& pdu, const dtCore::BaseActorObject& actor);
-      void ApplyFullUpdateToProxy(const DIS::EntityStatePdu& pdu, dtGame::GameActorProxy& proxy);
+      void ApplyFullUpdateToProxy(const DIS::EntityStatePdu& pdu, dtGame::GameActorProxy& parent);
       void AddActor(const DIS::EntityStatePdu& pdu, dtCore::BaseActorObject* proxy);
 
    private:

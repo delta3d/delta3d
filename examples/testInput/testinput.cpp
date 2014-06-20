@@ -1,7 +1,10 @@
 #ifdef None
 #undef None
 #endif
+#include <dtUtil/warningdisable.h>
+DT_DISABLE_WARNING_ALL_START
 #include <CEGUI/CEGUI.h>
+DT_DISABLE_WARNING_END
 
 #include <dtABC/application.h>
 #include <dtCore/inputmapper.h>

@@ -53,7 +53,7 @@ class TUTORIAL_TANK_EXPORT KillableTargetActor : public dtActors::GameMeshActor
 
 public:
    // Constructs the tank actor.
-   KillableTargetActor(dtGame::GameActorProxy& proxy);
+   KillableTargetActor(dtGame::GameActorProxy& parent);
 
    /**
     * This method is an invokable called when an object is local and

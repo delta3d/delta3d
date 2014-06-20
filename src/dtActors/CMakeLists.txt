@@ -113,19 +113,11 @@ SET(LIB_SOURCES
     ${SOURCE_PATH}/weatherenvironmentactor.cpp
 )
 
-ADD_LIBRARY(${LIB_NAME} SHARED                        
-    ${LIB_PUBLIC_HEADERS}                         
-    ${LIB_SOURCES}
+SET(LIB_DEPS 
+     ${DTGAME_LIBRARY}
+     ${DTAI_LIBRARY}
+     ${DTDIRECTOR_LIBRARY}
 )
 
-TARGET_LINK_LIBRARIES( ${LIB_NAME}
-                       ${DTGAME_LIBRARY}
-                       ${DTAI_LIBRARY}
-					   ${DTDIRECTOR_LIBRARY}
-                     )      
-
-DELTA3D_ADD_LIBRARY_PROPERTIES(${LIB_NAME} DT_PLUGIN ${LIB_PUBLIC_HEADERS})
-
-
-INCLUDE(ModuleInstall OPTIONAL)
+DELTA3D_ADD_LIBRARY(${LIB_NAME} DT_PLUGIN SHARED)
 

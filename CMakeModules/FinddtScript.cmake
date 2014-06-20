@@ -5,17 +5,10 @@ INCLUDE(delta3d_common)
   
 #variable names of the individual Delta3D libraries.  Can be used in application cmakelist.txt files.
 FIND_DELTA3D_LIBRARY(DTSCRIPT_LIBRARY         dtScript)
-FIND_DELTA3D_LIBRARY(DTSCRIPT_DEBUG_LIBRARY   dtScriptD)
-
-
-IF (NOT DTSCRIPT_DEBUG_LIBRARY)
-  SET(DTSCRIPT_DEBUG_LIBRARY ${DTSCRIPT_LIBRARY})
-  MESSAGE(STATUS "No debug library was found for DTSCRIPT_DEBUG_LIBRARY")
-ENDIF()
 
 #convienent list of libraries to link with when using dtScript
-SET(DTSCRIPT_LIBRARIES
-    optimized ${DTSCRIPT_LIBRARY}  debug ${DTSCRIPT_DEBUG_LIBRARY}
+CREATE_LINK_LINES_FOR_TARGETS(DTSCRIPT_LIBRARIES
+    DTSCRIPT_LIBRARY
     )
     
 SET(DTSCRIPT_INCLUDE_DIRECTORIES ${DELTA3D_INCLUDE_DIR}

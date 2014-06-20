@@ -94,7 +94,7 @@ namespace dtGame
       if (!mPublishAngularVelocity && IsDeadReckoningHelperValid())
       {
          osg::Vec3 zeroAngularVelocity;
-         SetCurrentAngularVelocity(zeroAngularVelocity);
+         SetAngularVelocity(zeroAngularVelocity);
          GetDeadReckoningHelper().SetLastKnownAngularVelocity(zeroAngularVelocity);
       }
    }
@@ -353,39 +353,39 @@ namespace dtGame
    }
 
    //////////////////////////////////////////////////////////////////////
-   void DRPublishingActComp::SetCurrentVelocity(const osg::Vec3& vec) 
+   void DRPublishingActComp::SetVelocity(const osg::Vec3& vec)
    { 
-      mCurrentVelocity = vec; 
+      mVelocity = vec;
    }
 
    //////////////////////////////////////////////////////////////////////
-   osg::Vec3 DRPublishingActComp::GetCurrentVelocity() const 
+   osg::Vec3 DRPublishingActComp::GetVelocity() const
    { 
-      return mCurrentVelocity; 
+      return mVelocity;
    }
 
    //////////////////////////////////////////////////////////////////////
-   void DRPublishingActComp::SetCurrentAcceleration(const osg::Vec3& vec) 
+   void DRPublishingActComp::SetAcceleration(const osg::Vec3& vec)
    { 
-      mCurrentAcceleration = vec; 
+      mAcceleration = vec; 
    }
 
    //////////////////////////////////////////////////////////////////////
-   osg::Vec3 DRPublishingActComp::GetCurrentAcceleration() const 
+   osg::Vec3 DRPublishingActComp::GetAcceleration() const
    { 
-      return mCurrentAcceleration; 
+      return mAcceleration; 
    }
 
    //////////////////////////////////////////////////////////////////////
-   void DRPublishingActComp::SetCurrentAngularVelocity(const osg::Vec3& vec) 
+   void DRPublishingActComp::SetAngularVelocity(const osg::Vec3& vec)
    { 
-      mCurrentAngularVelocity = vec; 
+      mAngularVelocity = vec; 
    }
 
    //////////////////////////////////////////////////////////////////////
-   osg::Vec3 DRPublishingActComp::GetCurrentAngularVelocity() const 
+   osg::Vec3 DRPublishingActComp::GetAngularVelocity() const
    { 
-      return mCurrentAngularVelocity; 
+      return mAngularVelocity; 
    }
 
    //////////////////////////////////////////////////////////////////////
@@ -488,7 +488,7 @@ namespace dtGame
       if (mPublishLinearVelocity)
       {
          // VELOCITY 
-         osg::Vec3 velocity = GetCurrentVelocity();
+         osg::Vec3 velocity = GetVelocity();
          if (velocity.length() < 0.0001) // If close to 0, set to 0 to prevent wiggling/shaking
          {
             velocity = osg::Vec3(0.f, 0.f, 0.f);
@@ -504,20 +504,20 @@ namespace dtGame
          // pos to oscillate wildly. Whereas it will improve DR on smooth curves such as a circle.
          // The math is: take the current accel and the non-scaled accel from the last publish;
          // normalize them; dot them and use the product to scale our current Acceleration. 
-         osg::Vec3 curAccel = GetCurrentAcceleration();
+         osg::Vec3 curAccel = GetAcceleration();
          curAccel.normalize();
          float accelDotProduct = curAccel * mAccelerationCalculatedForLastPublish; // dot product
-         SetCurrentAcceleration(GetCurrentAcceleration() * dtUtil::Max(0.0f, accelDotProduct));
+         SetAcceleration(GetAcceleration() * dtUtil::Max(0.0f, accelDotProduct));
          mAccelerationCalculatedForLastPublish = curAccel; // Hold for next time (pre-normalized)
 
          // Acceleration is paired with velocity
-         GetDeadReckoningHelper().SetLastKnownAcceleration(GetCurrentAcceleration());
+         GetDeadReckoningHelper().SetLastKnownAcceleration(GetAcceleration());
       }
 
       // Angular Velocity - push the current value to the Last Known
       if (mPublishAngularVelocity)
       {
-         osg::Vec3 angularVelocity = GetCurrentAngularVelocity();
+         osg::Vec3 angularVelocity = GetAngularVelocity();
          if (angularVelocity.length() < 0.001)  // If close to 0, set to 0 to prevent wiggling/shaking
          {
             angularVelocity = osg::Vec3(0.f, 0.f, 0.f);
@@ -571,7 +571,7 @@ namespace dtGame
             // Compute our acceleration as the instantaneous differential of the velocity
             // Acceleration is dampened before publication - see SetLastKnownValuesBeforePublish().
             // Note - if you know your REAL acceleration due to vehicle dynamics, override the method
-            // and make your own call to SetCurrentAcceleration().
+            // and make your own call to SetAcceleration().
             osg::Vec3 changeInVelocity = mAccumulatedLinearVelocity - previousAccumulatedLinearVelocity; /*instantVelocity - mAccumulatedLinearVelocity*/;
             mAccumulatedAcceleration = changeInVelocity / mPrevFrameDeltaTime;
 
@@ -582,8 +582,8 @@ namespace dtGame
             // is less visually apparent.
             mAccumulatedAcceleration.z() = 0.0f; 
 
-            SetCurrentAcceleration(mAccumulatedAcceleration);
-            SetCurrentVelocity(mAccumulatedLinearVelocity);
+            SetAcceleration(mAccumulatedAcceleration);
+            SetVelocity(mAccumulatedLinearVelocity);
          }
 
          mLastPos = pos; 
@@ -629,7 +629,7 @@ namespace dtGame
             else if (GetUseVelocityInDRUpdateDecision())
             {
                osg::Vec3 oldVel = GetDeadReckoningHelper().GetLastKnownVelocity();
-               osg::Vec3 curVel = GetCurrentVelocity();
+               osg::Vec3 curVel = GetVelocity();
                float oldMag = oldVel.normalize();
                float curMag = curVel.normalize();
                float velMagChange = dtUtil::Abs(curMag - oldMag);

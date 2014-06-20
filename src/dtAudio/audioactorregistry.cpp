@@ -1,5 +1,5 @@
 #include <dtAudio/audioactorregistry.h>
-#include <dtAudio/soundactorproxy.h>
+#include <dtAudio/soundactor.h>
 
 using namespace dtAudio;
 
@@ -28,5 +28,5 @@ dtAudio::AudioActorRegistry::AudioActorRegistry():
 void dtAudio::AudioActorRegistry::RegisterActorTypes()
 {
    // sound actor
-   mActorFactory->RegisterType<dtAudio::SoundActorProxy>(SOUND_ACTOR_TYPE.get());
+   mActorFactory->RegisterType<dtAudio::SoundActor>(SOUND_ACTOR_TYPE.get());
 }

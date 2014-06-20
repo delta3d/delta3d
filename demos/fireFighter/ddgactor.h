@@ -42,7 +42,7 @@ class FIRE_FIGHTER_EXPORT DDGActor : public ShipActor, public dtCore::Loadable
    public:
 
       /// Constructor
-      DDGActor(dtGame::GameActorProxy& proxy);
+      DDGActor(dtGame::GameActorProxy& parent);
 
       /**
        * The following functions were taken entirely from the

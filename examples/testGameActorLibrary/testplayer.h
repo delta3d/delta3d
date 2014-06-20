@@ -44,7 +44,7 @@ class DT_EXAMPLE_EXPORT TestPlayer : public dtGame::GameActor
 {
    public:
 
-      TestPlayer(dtGame::GameActorProxy& proxy);
+      TestPlayer(dtGame::GameActorProxy& parent);
 
       void SetModel(const std::string &fileName);
       std::string GetModel() const { return mModelFile; }

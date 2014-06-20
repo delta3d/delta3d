@@ -126,6 +126,8 @@ void AngularMapProfile::Config(osg::Group* pGroup)
    ss->setAttributeAndModes(mProgram.get(), osg::StateAttribute::ON | 
       osg::StateAttribute::OVERRIDE | osg::StateAttribute::PROTECTED);
 
+   ss->setDataVariance(osg::Object::DYNAMIC);
+
    mGeode->setCullCallback(new AngularMapProfile::UpdateViewCallback(this));
 }
 
@@ -238,6 +240,7 @@ void CubeMapProfile::Config(osg::Group* pGroup)
 
    mInverseModelViewProjMatrix = new osg::Uniform(osg::Uniform::FLOAT_MAT4, "inverseModelViewProjMatrix");
    ss->addUniform(mInverseModelViewProjMatrix.get());
+   mInverseModelViewProjMatrix->setDataVariance(osg::Object::DYNAMIC);
 
    ss->setAttributeAndModes(mProgram.get(), osg::StateAttribute::ON);
 

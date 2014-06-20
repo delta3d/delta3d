@@ -47,7 +47,7 @@
 namespace dtActors
 {
    //////////////////////////////////////////////////////////////////////////////
-   TaskActor::TaskActor(dtGame::GameActorProxy& proxy) : dtGame::GameActor(proxy)
+   TaskActor::TaskActor(dtGame::GameActorProxy& parent) : dtGame::GameActor(parent)
    {
       SetName("Task");
       //SetDisplayName("Display Name");
@@ -188,7 +188,7 @@ namespace dtActors
    {
       SetClassName(TaskActorProxy::CLASS_NAME);
       SetHideDTCorePhysicsProps(true);
-      mParentTaskProxy = NULL;
+      mParentTask = NULL;
    }
 
    //////////////////////////////////////////////////////////////////////////////
@@ -354,7 +354,7 @@ namespace dtActors
    {
       for (int taskIndex = 0; taskIndex < (int)mSubTasks.size(); taskIndex++)
       {
-         TaskActorProxy* subTask = GetProxyById(mSubTasks[taskIndex]);
+         TaskActorProxy* subTask = GetTaskById(mSubTasks[taskIndex]);
 
          if (subTask)
          {
@@ -363,7 +363,7 @@ namespace dtActors
                subTask->GetParentTask()->RemoveSubTask(*subTask);
             }
 
-            subTask->SetParentTaskProxy(this);
+            subTask->SetParentTask(this);
          }
       }
    }
@@ -453,7 +453,7 @@ namespace dtActors
          subTask.GetParentTask()->RemoveSubTask(subTask);
       }
 
-      subTask.SetParentTaskProxy(this);
+      subTask.SetParentTask(this);
       mSubTasks.push_back(subTask.GetId());
    }
 
@@ -468,15 +468,15 @@ namespace dtActors
 
       mSubTasks.push_back(id);
 
-      TaskActorProxy* proxy = GetProxyById(id);
-      if (proxy)
+      TaskActorProxy* actor = GetTaskById(id);
+      if (actor != NULL)
       {
-         if (proxy->GetParentTask() != NULL)
+         if (actor->GetParentTask() != NULL)
          {
-            proxy->GetParentTask()->RemoveSubTask(*proxy);
+            actor->GetParentTask()->RemoveSubTask(*actor);
          }
 
-         proxy->SetParentTaskProxy(this);
+         actor->SetParentTask(this);
       }
    }
 
@@ -500,10 +500,10 @@ namespace dtActors
       }
       else
       {
-         TaskActorProxy* proxy = GetProxyById((*itor));
-         if (proxy)
+         TaskActorProxy* actor = GetTaskById((*itor));
+         if (actor)
          {
-            proxy->SetParentTaskProxy(NULL);
+            actor->SetParentTask(NULL);
          }
          mSubTasks.erase(itor);
       }
@@ -512,12 +512,12 @@ namespace dtActors
    //////////////////////////////////////////////////////////////////////////////
    void TaskActorProxy::RemoveSubTask(const std::string& name)
    {
-      TaskActorProxy* proxy = NULL;
+      TaskActorProxy* actor = NULL;
       std::vector<dtCore::UniqueId>::iterator itor;
       for (itor = mSubTasks.begin(); itor != mSubTasks.end(); ++itor)
       {
-         proxy = GetProxyById((*itor));
-         if (proxy->GetName() == name)
+         actor = GetTaskById((*itor));
+         if (actor->GetName() == name)
          {
             break;
          }
@@ -528,9 +528,9 @@ namespace dtActors
          LOG_WARNING("Task: " + name + " is not a sub task of task: " +
             GetGameActor().GetName() + "  Cannot remove.");
       }
-      else if (proxy)
+      else if (actor)
       {
-         proxy->SetParentTaskProxy(NULL);
+         actor->SetParentTask(NULL);
          mSubTasks.erase(itor);
       }
    }
@@ -542,7 +542,7 @@ namespace dtActors
 
       for (itor = mSubTasks.begin(); itor != mSubTasks.end(); ++itor)
       {
-         TaskActorProxy* proxy = GetProxyById((*itor));
+         TaskActorProxy* proxy = GetTaskById((*itor));
          if (proxy->GetName() == name)
          {
             return proxy;
@@ -559,14 +559,14 @@ namespace dtActors
       {
          if ((*itor) == id)
          {
-            return GetProxyById((*itor));
+            return GetTaskById((*itor));
          }
       }
       return NULL;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   TaskActorProxy* TaskActorProxy::GetProxyById(dtCore::UniqueId id) const
+   TaskActorProxy* TaskActorProxy::GetTaskById(dtCore::UniqueId id) const
    {
       TaskActorProxy* proxy = NULL;
       if (IsInGM())
@@ -583,7 +583,7 @@ namespace dtActors
       toFill.clear();
       for (unsigned i = 0; i < mSubTasks.size(); ++i)
       {
-         toFill.push_back(GetProxyById(mSubTasks[i]));
+         toFill.push_back(GetTaskById(mSubTasks[i]));
       }
    }
 
@@ -594,7 +594,7 @@ namespace dtActors
       toFill.clear();
       for (unsigned i = 0; i < mSubTasks.size(); ++i)
       {
-         toFill.push_back(GetProxyById(mSubTasks[i]));
+         toFill.push_back(GetTaskById(mSubTasks[i]));
       }
    }
 
@@ -605,10 +605,10 @@ namespace dtActors
       //of the same tasks in it.
       for (unsigned i = 0; i < mSubTasks.size(); ++i)
       {
-         TaskActorProxy* proxy = GetProxyById(mSubTasks[i]);
-         if (proxy)
+         TaskActorProxy* actor = GetTaskById(mSubTasks[i]);
+         if (actor)
          {
-            proxy->SetParentTaskProxy(NULL);
+            actor->SetParentTask(NULL);
          }
       }
 
@@ -712,7 +712,7 @@ namespace dtActors
 //      std::string name = "Task";
 //      name += dtUtil::ToString(mSubTaskIndex);
 //      dtCore::BaseActorObject* proxy = GetLinkedActor(name);
-//      if (proxy)
+//      if (parent)
 //      {
 //         SetLinkedActor("Task", proxy);
 //      }
@@ -737,10 +737,10 @@ namespace dtActors
       //of the same tasks in it.
       for (unsigned i = 0; i < mSubTasks.size(); ++i)
       {
-         TaskActorProxy* proxy = GetProxyById(mSubTasks[i]);
-         if (proxy)
+         TaskActorProxy* task = GetTaskById(mSubTasks[i]);
+         if (task)
          {
-            proxy->SetParentTaskProxy(NULL);
+            task->SetParentTask(NULL);
          }
       }
       mSubTasks.clear();

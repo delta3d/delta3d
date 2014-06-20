@@ -94,6 +94,7 @@ namespace dtCore
    void ShaderParameter::SetUniformParam(osg::Uniform& uniform)
    {
       mUniform = &uniform;
+      mUniform->setDataVariance(osg::Object::DYNAMIC);
    }
 
    ///////////////////////////////////////////////////////////////////////////////

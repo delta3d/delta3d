@@ -6,18 +6,11 @@ INCLUDE(delta3d_common)
   
 #variable names of the individual Delta3D libraries.  Can be used in application cmakelist.txt files.
 FIND_DELTA3D_LIBRARY(DTHLAGM_LIBRARY         dtHLAGM)
-FIND_DELTA3D_LIBRARY(DTHLAGM_DEBUG_LIBRARY   dtHLAGMD)
-
-
-IF (NOT DTHLAGM_DEBUG_LIBRARY)
-  SET(DTHLAGM_DEBUG_LIBRARY ${DTHLAGM_LIBRARY})
-  MESSAGE(STATUS "No debug library was found for DTHLAGM_DEBUG_LIBRARY")
-ENDIF()
 
 #convienent list of libraries to link with when using dtHLAGM
-SET(DTHLAGM_LIBRARIES
-    optimized ${DTHLAGM_LIBRARY}      debug ${DTHLAGM_DEBUG_LIBRARY}
-    )
+CREATE_LINK_LINES_FOR_TARGETS(DTHLAGM_LIBRARIES
+   DTHLAGM_LIBRARY
+   )
     
 SET(DTHLAGM_INCLUDE_DIRECTORIES ${DELTA3D_INCLUDE_DIR}
     )

@@ -31,8 +31,12 @@
 #define DELTA_MAIN_WINDOW
 
 #include <dtEditQt/export.h>
+
+DT_DISABLE_WARNING_ALL_START
 #include <QtGui/QMainWindow>
 #include <QtCore/QMap>
+DT_DISABLE_WARNING_END
+
 #include <dtCore/actorproxy.h>
 #include <dtQt/typedefs.h>
 

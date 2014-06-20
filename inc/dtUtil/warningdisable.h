@@ -32,6 +32,7 @@
             __pragma(warning(push,0))
 #   define DT_DISABLE_WARNING_END \
             __pragma(warning(pop))
+__pragma(warning(disable:4251))
 #elif defined __clang__
 #   define _STR_(X) #X
 // Because MSVC warning codes
@@ -42,12 +43,14 @@
         _Pragma(_STR_(GCC diagnostic ignored __VA_ARGS__ ))
 #   define DT_DISABLE_WARNING_ALL_START \
         _Pragma("clang diagnostic push") \
-        _Pragma("GCC diagnostic ignored \"-Wall\"")
+        _Pragma("GCC diagnostic ignored \"-Wall\"") \
+        _Pragma("GCC diagnostic ignored \"-Wignored-qualifiers\"")
 #   define DT_DISABLE_WARNING_END \
         _Pragma("clang diagnostic pop")
 // warning is triggered on things that are not a problem.
 #pragma GCC diagnostic ignored "-Woverloaded-virtual"
 #pragma GCC diagnostic ignored "-Wunused-parameter"
+#pragma GCC diagnostic ignored "-Wdeprecated-register"
 #else
 #   define DT_DISABLE_WARNING_START_MSVC(...)
 #   define DT_DISABLE_WARNING_START_CLANG(...)

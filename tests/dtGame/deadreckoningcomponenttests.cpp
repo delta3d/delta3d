@@ -83,7 +83,7 @@ namespace dtGame
          }
 
          /// Gets the ground clamping hit that is closest to the deadreckoned z value.
-         bool DoGetClosestHit(dtGame::GameActorProxy& proxy, GroundClampingData& data, dtCore::BatchIsector::SingleISector& single, float pointz,
+         bool DoGetClosestHit(dtGame::GameActorProxy& actor, GroundClampingData& data, dtCore::BatchIsector::SingleISector& single, float pointz,
                   osg::Vec3& hit, osg::Vec3& normal)
          {
             bool success = false;
@@ -92,7 +92,7 @@ namespace dtGame
                = dynamic_cast<DefaultGroundClamper*>(&GetGroundClamper());
             if( defaultClamper != NULL )
             {
-               success = defaultClamper->GetClosestHit(proxy, data, single, pointz, hit, normal);
+               success = defaultClamper->GetClosestHit(actor, data, single, pointz, hit, normal);
             }
 
             return success;

@@ -42,7 +42,7 @@ namespace dtAnim
        * Constructs an AnimationGameActor actor.
        * @param proxy The actor proxy owning this task actor.
        */
-      AnimationGameActor(dtGame::GameActorProxy& proxy);
+      AnimationGameActor(dtGame::GameActorProxy& parent);
 
       virtual osg::BoundingBox GetBoundingBox();
 

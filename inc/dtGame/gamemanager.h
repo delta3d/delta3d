@@ -229,6 +229,11 @@ namespace dtGame
       }
 
       /**
+       * Create actors from a prefab.  It will use the map loaded in the GM or try to fake something.
+       */
+      void CreateActorsFromPrefab(const dtCore::ResourceDescriptor&, std::vector<dtCore::RefPtr<dtCore::BaseActorObject> >& actorsOut, bool isRemote = false);
+
+      /**
        * Wraps up several methods used to lookup and create actors from prototypes.
        * It attempts to create a new actor from a prototype by using the name.  Assumes only 1 match.
        * @param prototypeName The unique name to look for.
@@ -993,14 +998,14 @@ namespace dtGame
        * @param proxy
        * @param invokableName
        */
-      void RegisterForMessages(const MessageType& type, GameActorProxy& proxy, const std::string& invokableName);
+      void RegisterForMessages(const MessageType& type, GameActorProxy& actor, const std::string& invokableName);
 
       /**
        * @param type
        * @param proxy
        * @param invokableName
        */
-      void UnregisterForMessages(const MessageType& type, GameActorProxy& proxy, const std::string& invokableName);
+      void UnregisterForMessages(const MessageType& type, GameActorProxy& actor, const std::string& invokableName);
 
       /**
        * @param type
@@ -1011,7 +1016,7 @@ namespace dtGame
       void RegisterForMessagesAboutActor(
                const MessageType& type,
                const dtCore::UniqueId& targetActorId,
-               GameActorProxy& proxy,
+               GameActorProxy& actor,
                const std::string& invokableName);
 
       /**
@@ -1023,13 +1028,13 @@ namespace dtGame
       void UnregisterForMessagesAboutActor(
                const MessageType& type,
                const dtCore::UniqueId& targetActorId,
-               GameActorProxy& proxy,
+               GameActorProxy& actor,
                const std::string& invokableName);
 
       /**
        * @param proxy
        */
-      void UnregisterAllMessageListenersForActor(GameActorProxy& proxy);
+      void UnregisterAllMessageListenersForActor(GameActorProxy& actor);
 
       /**
        * @return true if the GameManager is paused

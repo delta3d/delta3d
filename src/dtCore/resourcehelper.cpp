@@ -185,7 +185,9 @@ namespace dtCore
                extContainer.insert(std::make_pair("3ds","3D Studio Max."));
                extContainer.insert(std::make_pair("ai","Waypoint file."));
                extContainer.insert(std::make_pair("zip","Wrapping another file in a zip."));
+               extContainer.insert(std::make_pair("dae","Collada"));
                extContainer.insert(std::make_pair("earth", "Earth file."));
+               extContainer.insert(std::make_pair("ply", "Stanford point cloud."));
 
                handler = new DefaultResourceTypeHandler(d, "Static Mesh Files", extContainer);
 
@@ -233,6 +235,10 @@ namespace dtCore
                extFilter.insert(std::make_pair("osg","Open Scene Graph ascii scene data (old)."));
                handler = new DefaultResourceTypeHandler(d, "Open Scene Graph ascii scene data (old).", extFilter);
                extMap.insert(std::make_pair("osg", dtCore::RefPtr<ResourceTypeHandler>(handler)));
+
+               extFilter.insert(std::make_pair("dae","Collada"));
+               handler = new DefaultResourceTypeHandler(d, "Collada", extFilter);
+               extMap.insert(std::make_pair("dae", dtCore::RefPtr<ResourceTypeHandler>(handler)));
 
                extFilter.clear();
                extFilter.insert(std::make_pair("zip","Wrapping another file in a zip."));
@@ -971,7 +977,7 @@ namespace dtCore
             {
                IndexResources(dtUtil::FileUtils::GetInstance(), dataTypeTree, dt, std::string(""), std::string(""), referenceSlot);
             }
-            catch (const dtUtil::Exception& ex)
+            catch (const dtUtil::Exception&)
             {
                fileUtils.PopDirectory();
                throw;
@@ -1100,7 +1106,7 @@ namespace dtCore
             }
          }
       }
-      catch (const dtUtil::Exception& ex)
+      catch (const dtUtil::Exception&)
       {
          fileUtils.PopDirectory();
          throw;

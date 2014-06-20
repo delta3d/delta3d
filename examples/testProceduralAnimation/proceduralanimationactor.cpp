@@ -82,8 +82,8 @@ void ProceduralAnimationActorProxy::CreateDrawable()
 
 
 ////////////////////////////////////////////////////////////////////////////////
-ProceduralAnimationActor::ProceduralAnimationActor(ProceduralAnimationActorProxy& proxy)
-   : AnimationGameActor(proxy)
+ProceduralAnimationActor::ProceduralAnimationActor(ProceduralAnimationActorProxy& owner)
+   : AnimationGameActor(owner)
    , mMode(MODE_AIM)
    , mPoseMeshDatabase(NULL)
    , mPoseMeshUtil(NULL)

@@ -54,12 +54,6 @@ namespace dtGame
    public:
       typedef dtCore::PhysicalActorProxy BaseClass;
 
-      /**
-       * Name is intended to become a property, so this constant exists for that and for the LocalActorUpdatePolicy
-       * filter property list.
-       */
-      static const dtUtil::RefString PROPERTY_NAME;
-
       /// Use this when you register a message type and want to receive it in ProcessMessage()
       static const std::string PROCESS_MSG_INVOKABLE;
       /// invokables for tick local and remote - will call TickLocal() and TickRemote();

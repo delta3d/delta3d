@@ -130,33 +130,25 @@ INCLUDE_DIRECTORIES(
 
 ADD_PRECOMPILED_HEADER(${LIB_NAME} prefix/dtdirectorqtprefix.h prefix/dtdirectorqtprefix.cpp LIB_SOURCES)
 
-
-
-ADD_LIBRARY(${LIB_NAME} SHARED
-    ${LIB_PUBLIC_HEADERS}
+set(LIB_SOURCES
     ${LIB_SOURCES}
     ${MOC_SOURCES}
     ${RCC_SOURCES}
     ${UI_SOURCES}
 )
 
+SET(LIB_EXTERNAL_DEPS
+  QT_QTCORE_LIBRARY
+  QT_QTGUI_LIBRARY
+  QT_QTOPENGL_LIBRARY
+  QT_PHONON_LIBRARY
+ )
 
+SET(LIB_DEPS
+     ${DTDIRECTOR_LIBRARY}
+     dtDirectorNodes # need a macro for this.
+     ${DTQT_LIBRARY}
+   )
 
-LINK_WITH_VARIABLES(${LIB_NAME}
-                    QT_QTCORE_LIBRARY
-                    QT_QTGUI_LIBRARY
-                    QT_QTOPENGL_LIBRARY
-                    QT_PHONON_LIBRARY
-                   )
-
-TARGET_LINK_LIBRARIES( ${LIB_NAME}
-                       ${DTDIRECTOR_LIBRARY}
-                       dtDirectorNodes # need a macro for this.
-                       ${DTQT_LIBRARY}
-                     )
-
-DELTA3D_ADD_LIBRARY_PROPERTIES(${LIB_NAME} DIRECTOR_QT_LIBRARY ${LIB_PUBLIC_HEADERS})
-
-
-INCLUDE(ModuleInstall OPTIONAL)
+DELTA3D_ADD_LIBRARY(${LIB_NAME} DIRECTOR_QT_LIBRARY)
 

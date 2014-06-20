@@ -39,6 +39,13 @@ namespace dtCore
    //Singleton global variable for the library manager.
    dtCore::RefPtr<LibraryManager> LibraryManager::mInstance(NULL);
 
+   LibraryManager::RegistryEntry::RegistryEntry()
+   : registry(NULL)
+   , createFn(NULL)
+   , destroyFn(NULL)
+   {
+   }
+
    /////////////////////////////////////////////////////////////////////////////
    LibraryManager::LibraryManager()
    {
@@ -102,7 +109,7 @@ namespace dtCore
          msg.str("");
          msg << "Registry for library with name " << libName <<
             " already exists.  Library must already be loaded.";
-         LOG_ERROR(msg.str());
+         LOGN_ERROR("librarymanager.cpp", msg.str());
          return;
       }
 
@@ -122,44 +129,56 @@ namespace dtCore
          throw dtCore::ProjectResourceErrorException(msg.str(), __FILE__, __LINE__);
       }
 
-      dtUtil::LibrarySharingManager::LibraryHandle::SYMBOL_ADDRESS createFn;
-      dtUtil::LibrarySharingManager::LibraryHandle::SYMBOL_ADDRESS destroyFn;
-      createFn = newEntry.lib->FindSymbol("CreatePluginRegistry");
-      destroyFn = newEntry.lib->FindSymbol("DestroyPluginRegistry");
-
-      //Make sure the plugin actually implemented these functions and they
-      //have been exported.
-      if (!createFn)
+      if (IsInRegistry(libName))
       {
          msg.clear();
          msg.str("");
-         msg << "Actor plugin libraries must implement the function " <<
-            " CreatePluginRegistry.";
-         throw dtCore::ProjectResourceErrorException(msg.str(), __FILE__, __LINE__);
+         msg << "Library auto-registered, no further action is needed. " << libName;
+
+         mRegistries[libName].lib = newEntry.lib;
       }
-
-      if (!destroyFn)
+      else
       {
-         msg.clear();
-         msg.str("");
-         msg << "Actor plugin libraries must implement the function " <<
-            " DestroyPluginRegistry.";
-         throw dtCore::ProjectResourceErrorException(msg.str(), __FILE__, __LINE__);
-      }
 
-      //Well we made it here so that means the plugin was loaded
-      //successfully and the create and destroy functions were found.
-      newEntry.createFn = (CreatePluginRegistryFn)createFn;
-      newEntry.destroyFn = (DestroyPluginRegistryFun)destroyFn;
-      newEntry.registry = newEntry.createFn();
+         dtUtil::LibrarySharingManager::LibraryHandle::SYMBOL_ADDRESS createFn;
+         dtUtil::LibrarySharingManager::LibraryHandle::SYMBOL_ADDRESS destroyFn;
+         createFn = newEntry.lib->FindSymbol("CreatePluginRegistry");
+         destroyFn = newEntry.lib->FindSymbol("DestroyPluginRegistry");
 
-      if (!AddRegistryEntry(libName,newEntry))
-      {
-         msg.clear();
-         msg.str("");
-         msg << "Can't add Registry Entry: " << libName << " to Registry. " <<
-            "Possibly it might have been added already.";
-         throw dtCore::ProjectResourceErrorException( msg.str(), __FILE__, __LINE__);
+         //Make sure the plugin actually implemented these functions and they
+         //have been exported.
+         if (!createFn)
+         {
+            msg.clear();
+            msg.str("");
+            msg << "Actor plugin libraries must implement the function " <<
+               " CreatePluginRegistry.";
+            throw dtCore::ProjectResourceErrorException(msg.str(), __FILE__, __LINE__);
+         }
+
+         if (!destroyFn)
+         {
+            msg.clear();
+            msg.str("");
+            msg << "Actor plugin libraries must implement the function " <<
+               " DestroyPluginRegistry.";
+            throw dtCore::ProjectResourceErrorException(msg.str(), __FILE__, __LINE__);
+         }
+
+         //Well we made it here so that means the plugin was loaded
+         //successfully and the create and destroy functions were found.
+         newEntry.createFn = (CreatePluginRegistryFn)createFn;
+         newEntry.destroyFn = (DestroyPluginRegistryFun)destroyFn;
+         newEntry.registry = newEntry.createFn();
+
+         if (!AddRegistryEntry(libName,newEntry))
+         {
+            msg.clear();
+            msg.str("");
+            msg << "Can't add Registry Entry: " << libName << " to Registry. " <<
+               "Possibly it might have been added already.";
+            throw dtCore::ProjectResourceErrorException( msg.str(), __FILE__, __LINE__);
+         }
       }
    }
 
@@ -430,16 +449,20 @@ namespace dtCore
 
       mRegistries.erase(regItor);
 
-      //Now that all references are gone, take the pointer to the registry so that we can
-      //manually free it in the plugin.
-      ActorPluginRegistry* reg = regEntry.registry;
-
-      if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+      // If it has no destroyFn, then it was added with an autoregister class, so just ignore it, it should go away on its own.
+      if (regEntry.destroyFn != NULL)
       {
-         mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, "Unloading actor plugin registry: \"%s\"", reg->GetName().c_str());
-      }
+         //Now that all references are gone, take the pointer to the registry so that we can
+         //manually free it in the plugin.
+         ActorPluginRegistry* reg = regEntry.registry;
 
-      regEntry.destroyFn(reg);
+         if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+         {
+            mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, "Unloading actor plugin registry: \"%s\"", reg->GetName().c_str());
+         }
+
+         regEntry.destroyFn(reg);
+      }
    }
 
    /////////////////////////////////////////////////////////////////////////////

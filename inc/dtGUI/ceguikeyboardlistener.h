@@ -22,9 +22,12 @@
 #define DELTA_CEGUI_KEYBOARD_LISTENER
 
 #include <dtCore/keyboard.h>   // for base class
+#include <dtUtil/warningdisable.h>
+DT_DISABLE_WARNING_ALL_START
 #include <CEGUI/CEGUIInputEvent.h>  // for internal type, CEGUI::Key::Scan
-#include <dtGUI/export.h>                   // for export symbols
 #include <CEGUI/CEGUIVersion.h>
+DT_DISABLE_WARNING_END
+#include <dtGUI/export.h>                   // for export symbols
 
 namespace dtGUI
 {

@@ -42,7 +42,7 @@ namespace dtActors
           * Constructs the task game event actor.
           * @param proxy Proxy owning this actor.
           */
-         TaskActorGameEvent(dtGame::GameActorProxy &proxy);
+         TaskActorGameEvent(dtGame::GameActorProxy& parent);
 
          /**
           * Sets this task back to its default state.

@@ -27,6 +27,7 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 
+class AnimationControlDock;
 class ResourceDock;
 class QAction;
 class QToolBar;
@@ -64,6 +65,8 @@ signals:
 public slots:
 
    void OnInitialization();
+   void OnToggleResourceDock();
+   void OnToggleAnimationControlDock();
    void OnToggleShadingToolbar();
    void OnToggleGenerateTangents();
    void OnRecompileClicked();
@@ -103,12 +106,17 @@ private:
    QAction* mOpenVertexShaderAction;
    QAction* mOpenGeometryShaderAction;
    QAction* mOpenFragmentShaderAction;
+   
+   // View Menu
+   QAction* mToggleDockResources;
+   QAction* mToggleDockAnimationControl;
 
    QToolBar* mCoordinateToolbar;
    QToolBar* mDisplayToolbar;
    QToolBar* mShaderToolbar;
    QToolBar* mModeToolbar;
 
+   AnimationControlDock* mAnimationControlDock;
    ResourceDock* mResourceDock;
 
    std::string mContextPath;

@@ -85,8 +85,8 @@ dtCore::ActorProxyIcon* GameItemActorProxy::GetBillBoardIcon()
 }
 
 ////////////////////////////////////////////////////////////
-GameItemActor::GameItemActor(dtGame::GameActorProxy& proxy)
-   : dtActors::GameMeshActor(proxy)
+GameItemActor::GameItemActor(dtGame::GameActorProxy& parent)
+   : dtActors::GameMeshActor(parent)
    , mInventoryAddSnd(dtAudio::AudioManager::GetInstance().NewSound())
    , mItemUseSnd(dtAudio::AudioManager::GetInstance().NewSound())
    , mItemIndex(-1)

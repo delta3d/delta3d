@@ -74,7 +74,7 @@ class DT_EXAMPLE_EXPORT TestGameActor1 : public dtGame::GameActor
 {
    public:
       /// Constructor
-      TestGameActor1(dtGame::GameActorProxy& proxy);
+      TestGameActor1(dtGame::GameActorProxy& parent);
 
       /// Destructor
       virtual ~TestGameActor1();

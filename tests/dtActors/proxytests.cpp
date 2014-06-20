@@ -1345,7 +1345,7 @@ void ProxyTest::TestProxies()
    {
       RefPtr<dtCore::BaseActorObject> proxy;
 
-      proxy = libMgr.CreateActorProxy(*ExampleActorLib::TEST_ACTOR_PROPERTY_TYPE).get();
+      proxy = libMgr.CreateActor(*ExampleActorLib::TEST_ACTOR_PROPERTY_TYPE).get();
       CPPUNIT_ASSERT(proxy != NULL);
       proxies.push_back(proxy.get());
 
@@ -1382,15 +1382,15 @@ void ProxyTest::TestBezierProxies()
       RefPtr<const dtCore::ActorType>  at    = libMgr.FindActorType("dtcore.Curve", "Bezier Node");
       CPPUNIT_ASSERT(at != NULL);
 
-      RefPtr<dtCore::BaseActorObject> one   = libMgr.CreateActorProxy(*at);
-      RefPtr<dtCore::BaseActorObject> two   = libMgr.CreateActorProxy(*at);
-      RefPtr<dtCore::BaseActorObject> three = libMgr.CreateActorProxy(*at);
+      RefPtr<dtCore::BaseActorObject> one   = libMgr.CreateActor(*at);
+      RefPtr<dtCore::BaseActorObject> two   = libMgr.CreateActor(*at);
+      RefPtr<dtCore::BaseActorObject> three = libMgr.CreateActor(*at);
 
       at = libMgr.FindActorType("dtcore.Curve", "Bezier Control Point");
       CPPUNIT_ASSERT(at != NULL);
 
-      RefPtr<dtCore::BaseActorObject> entryBCP = libMgr.CreateActorProxy(*at);
-      RefPtr<dtCore::BaseActorObject> exitBCP = libMgr.CreateActorProxy(*at);
+      RefPtr<dtCore::BaseActorObject> entryBCP = libMgr.CreateActor(*at);
+      RefPtr<dtCore::BaseActorObject> exitBCP = libMgr.CreateActor(*at);
 
       dtCore::ActorActorProperty* prevProp1    = static_cast<dtCore::ActorActorProperty*>(one->GetProperty("Previous Bezier Node"));
       CPPUNIT_ASSERT_MESSAGE("Actor type should not be NULL", prevProp1 != NULL);

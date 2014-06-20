@@ -307,6 +307,32 @@ namespace dtTest
 
       app->RemoveConfigPropertyValue(testName);
       CPPUNIT_ASSERT_EQUAL(testDefault, app->GetConfigPropertyValue(testName, testDefault));
+
+      app->SetConfigPropertyValue("blah." + testName, testValue1);
+      app->SetConfigPropertyValue("blah." + testName + "2", testValue2);
+
+      std::vector<std::pair<std::string, std::string> > nameVal;
+      app->GetConfigPropertiesWithPrefix("blah.", nameVal, true);
+
+      CPPUNIT_ASSERT_EQUAL(2U, unsigned(nameVal.size()));
+
+      CPPUNIT_ASSERT_EQUAL(testName, nameVal[0].first);
+      CPPUNIT_ASSERT_EQUAL(testValue1, nameVal[0].second);
+      CPPUNIT_ASSERT_EQUAL(testName+"2", nameVal[1].first);
+      CPPUNIT_ASSERT_EQUAL(testValue2, nameVal[1].second);
+
+      app->GetConfigPropertiesWithPrefix("blah.", nameVal, false);
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("It should not clear the vector.", 4U, unsigned(nameVal.size()));
+
+      nameVal.clear();
+      app->GetConfigPropertiesWithPrefix("blah.", nameVal, false);
+      CPPUNIT_ASSERT_EQUAL(2U, unsigned(nameVal.size()));
+
+      CPPUNIT_ASSERT_EQUAL("blah." + testName, nameVal[0].first);
+      CPPUNIT_ASSERT_EQUAL(testValue1, nameVal[0].second);
+      CPPUNIT_ASSERT_EQUAL("blah." + testName+"2", nameVal[1].first);
+      CPPUNIT_ASSERT_EQUAL(testValue2, nameVal[1].second);
+
    }
 
    void ApplicationTests::TestConfigSupport()

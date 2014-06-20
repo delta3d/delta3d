@@ -114,6 +114,7 @@ SET(LIB_PUBLIC_HEADERS
                 ${HEADER_PATH}/mapxml.h
                 ${HEADER_PATH}/mapxmlconstants.h
                 ${HEADER_PATH}/model.h
+                ${HEADER_PATH}/motioninterface.h
                 ${HEADER_PATH}/motionmodel.h
                 ${HEADER_PATH}/mouse.h
                 ${HEADER_PATH}/moveearthtransform.h
@@ -400,44 +401,34 @@ SET(LIB_SOURCES
                 ${SOURCE_PATH}/view.cpp
                 ${SOURCE_PATH}/walkmotionmodel.cpp
                 ${SOURCE_PATH}/windowresizecontainer.cpp
+                ${PlatformSources}
                 )
-
-#LIST(REMOVE_ITEM LIB_SOURCES 
-#   ${SOURCE_PATH}/deltawin_win32.cpp 
-#   ${SOURCE_PATH}/uniqueid_win32.cpp 
-#   ${SOURCE_PATH}/deltawin_carbon.cpp 
-#   ${SOURCE_PATH}/uniqueid_macosx.cpp 
-#   ${SOURCE_PATH}/deltawin_x11.cpp 
-#   ${SOURCE_PATH}/uniqueid_linux.cpp)
 
 ADD_PRECOMPILED_HEADER(${LIB_NAME} prefix/dtcoreprefix.h prefix/dtcoreprefix.cpp LIB_SOURCES)
 
-ADD_LIBRARY(${LIB_NAME} SHARED
-    ${LIB_PUBLIC_HEADERS} 
-    ${LIB_SOURCES}
-    ${PlatformSources}
-)
+SET(LIB_EXTERNAL_DEPS 
+     OSG_LIBRARY
+     OSGTEXT_LIBRARY
+     OSGDB_LIBRARY
+     OSGGA_LIBRARY
+     OSGVIEWER_LIBRARY
+     OSGPARTICLE_LIBRARY
+     OSGUTIL_LIBRARY
+     OPENTHREADS_LIBRARY
+     ODE_LIBRARY
+     XERCES_LIBRARY
+     UUID_LIBRARY)
 
-LINK_WITH_VARIABLES(${LIB_NAME}
-                    OSG_LIBRARY
-                    OSGTEXT_LIBRARY
-                    OSGDB_LIBRARY
-                    OSGGA_LIBRARY
-                    OSGVIEWER_LIBRARY
-                    OSGPARTICLE_LIBRARY
-                    OSGUTIL_LIBRARY
-                    OPENTHREADS_LIBRARY
-                    ODE_LIBRARY
-                    XERCES_LIBRARY
-                    UUID_LIBRARY)
+SET(LIB_DEPS 
+   ${DTUTIL_LIBRARY}
+   ${OPENGL_LIBRARY} 
+   ${MATH_LIBRARY}
+   ${APPSERVICES_LIBRARY}
+   )
 
-TARGET_LINK_LIBRARIES( ${LIB_NAME}
-            ${DTUTIL_LIBRARY}
-            ${OPENGL_LIBRARY} 
-            ${MATH_LIBRARY}
-            ${CARBON_LIBRARY}
-            ${APPSERVICES_LIBRARY}
-            )
+
+
+DELTA3D_ADD_LIBRARY(${LIB_NAME} DT_CORE_LIBRARY)
 
 if (X11_FOUND)
    TARGET_LINK_LIBRARIES( ${LIB_NAME}
@@ -447,10 +438,4 @@ endif (X11_FOUND)
 IF (WIN32)
    TARGET_LINK_LIBRARIES(${LIB_NAME} Rpcrt4)
 ENDIF(WIN32)
-
-
-
-INCLUDE(ModuleInstall OPTIONAL)
-
-DELTA3D_ADD_LIBRARY_PROPERTIES(${LIB_NAME} DT_CORE_LIBRARY ${LIB_PUBLIC_HEADERS})
 

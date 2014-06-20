@@ -35,7 +35,7 @@
 class TestGameActorCrash : public dtGame::GameActor
 {
 public:
-   TestGameActorCrash(dtGame::GameActorProxy& proxy);
+   TestGameActorCrash(dtGame::GameActorProxy& parent);
 protected:
    virtual ~TestGameActorCrash();
 };

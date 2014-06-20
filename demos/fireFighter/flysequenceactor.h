@@ -63,7 +63,7 @@ class FIRE_FIGHTER_EXPORT FlySequenceActor : public dtGame::GameActor
    public:
 
       /// Constructor
-      FlySequenceActor(dtGame::GameActorProxy& proxy);
+      FlySequenceActor(dtGame::GameActorProxy& parent);
 
       /// Invokable to update the camera
       void OnTickLocal(const dtGame::TickMessage& msg);

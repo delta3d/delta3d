@@ -1,4 +1,4 @@
-/* -*-c++-*-
+ /* -*-c++-*-
  * Delta3D Open Source Game and Simulation Engine
  * Copyright (C) 2007, Alion Science and Technology
  *

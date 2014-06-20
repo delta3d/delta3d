@@ -34,7 +34,7 @@ namespace dtPhysics
 
    //////////////////////////////////////////////////////////////////////////////
    RayCast::RayCast()
-   //It everything by default.
+   //It hits everything by default.
    : mCollisionGroupFilter(~0)
    {
    }

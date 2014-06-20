@@ -67,8 +67,8 @@ namespace dtAnim
    //////////////////////////////////////////////////////////////////////////////
 
    //////////////////////////////////////////////////////////////////////////////
-   Cal3DGameActor::Cal3DGameActor(dtGame::GameActorProxy& proxy)
-      : dtGame::GameActor(proxy)
+   Cal3DGameActor::Cal3DGameActor(dtGame::GameActorProxy& parent)
+      : dtGame::GameActor(parent)
       , mModelGeode(new osg::Geode)
       , mSkeletalGeode(new osg::Geode)
       , mAnimator(NULL)

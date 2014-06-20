@@ -29,7 +29,7 @@ class FIRE_FIGHTER_EXPORT PrimaryHalonActor : public GameItemActor
    public:
 
       /// Constructor
-      PrimaryHalonActor(dtGame::GameActorProxy &proxy);
+      PrimaryHalonActor(dtGame::GameActorProxy& parent);
 
       /**
        * Activates this game item
@@ -69,7 +69,7 @@ class FIRE_FIGHTER_EXPORT SecondaryHalonActor : public GameItemActor
    public:
 
       /// Constructor
-      SecondaryHalonActor(dtGame::GameActorProxy &proxy);
+      SecondaryHalonActor(dtGame::GameActorProxy& parent);
 
       /**
        * Activates this game item

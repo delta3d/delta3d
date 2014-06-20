@@ -36,7 +36,7 @@ class FIRE_FIGHTER_EXPORT GameLevelActor : public dtGame::GameActor, public dtCo
    public:
 
       /// Constructor
-      GameLevelActor(dtGame::GameActorProxy &proxy);
+      GameLevelActor(dtGame::GameActorProxy& parent);
 
       /**
        * Loads the game level file

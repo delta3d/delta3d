@@ -10,18 +10,18 @@
 #
 # Created by David Guthrie. 
 
-FIND_PATH(DELTA_DIR NAMES inc/dtCore/dt.h include/dtCore/dt.h
+FIND_PATH(DELTA_DIR NAMES inc/dtCore/transform.h include/dtCore/transform.h
   HINTS
-    ${CMAKE_SOURCE_DIR}
+    ${CMAKE_SOURCE_DIR}/../delta3d
     $ENV{DELTA_ROOT}
     $ENV{DELTA_INC}
   PATHS
-    ~/Library/Frameworks
-    /Library/Frameworks
     /usr/local
+  PATH_SUFFIXES
+    trunk
 )
 
-FIND_PATH(DELTA3D_INCLUDE_DIR NAMES dtCore/dt.h
+FIND_PATH(DELTA3D_INCLUDE_DIR NAMES dtCore/transform.h
     HINTS
        ${DELTA_DIR}
     PATH_SUFFIXES
@@ -29,17 +29,8 @@ FIND_PATH(DELTA3D_INCLUDE_DIR NAMES dtCore/dt.h
        include
 )
 
-FIND_PATH( DELTA3D_LIB_DIR NAMES libdtCore.so libdtCore.dylib dtCore.lib .
-    HINTS
-       ${DELTA_DIR}
-    PATH_SUFFIXES
-       build/lib
-       Build/lib
-       Debug/lib
-       Release/lib
-       lib
-    NO_DEFAULT_PATH
-)
+if (DELTA_DIR)
+   SET(CMAKE_MODULE_PATH "${DELTA_DIR}/CMakeModules;${CMAKE_MODULE_PATH}")
 
 #where to find the Delta3D "ext" folder.  Look for one of the headers that might be in there.
 SET(DELTA3D_EXT_DIR ${DELTA_DIR}/ext CACHE PATH "The root of the Delta3D external dependency folder")
@@ -51,67 +42,39 @@ IF(DELTA3D_EXT_DIR)
   list(APPEND CMAKE_INCLUDE_PATH ${DELTA3D_EXT_DIR}/inc)
 ENDIF(DELTA3D_EXT_DIR)
 
-SET(DTUTIL_LIBRARY dtUtil)
-SET(DTCORE_LIBRARY dtCore)
-SET(DTABC_LIBRARY dtABC)
-SET(DTDIRECTOR_LIBRARY dtDirector)
-SET(DTDIRECTOR_NODE_LIBRARY dtDirectorNodes)
-SET(DTDIRECTORQT_LIBRARY dtDirectorQt)
-SET(DTAI_LIBRARY dtAI)
-SET(DTGAME_LIBRARY dtGame)
-SET(DTPHYSICS_LIBRARY dtPhysics)
-SET(DTAUDIO_LIBRARY dtAudio)
-SET(DTANIM_LIBRARY dtAnim)
-SET(DTGUI_LIBRARY dtGUI)
-SET(DTINSPECTORQT_LIBRARY dtInspectorQt)
-SET(DTSCRIPT_LIBRARY dtScript)
-SET(DTTERRAIN_LIBRARY dtTerrain)
-SET(DTNET_LIBRARY dtNet)
-SET(DTNETGM_LIBRARY dtNetGM)
-SET(DTHLAGM_LIBRARY dtHLAGM)
-SET(DTDIS_LIBRARY dtDIS)
-SET(DTINPUT_PLIB_LIBRARY dtInputPLIB)
-SET(DTACTORS_LIBRARY dtActors)
-SET(DTANIM_LIBRARY dtAnim)
-SET(DTLMS_LIBRARY dtLMS)
-SET(DTQT_LIBRARY dtQt)
-SET(STAGE_LIBRARY STAGE)
-SET(TEST_ACTOR_LIBRARY testActorLibrary)
-SET(TEST_GAME_ACTOR_LIBRARY testGameActorLibrary)
-SET(FIREFIGHTER_DEMO_LIBRARY fireFighter)
+set(MISSING_PACKAGES )
+set(PACKAGES )
+foreach(COMPONENT ${Delta3D_FIND_COMPONENTS})
+   if (Delta3D_FIND_REQUIRED)
+      Find_package(${COMPONENT} REQUIRED)
+   elseif(Delta3D_FIND_QUIETLY)
+      Find_package(${COMPONENT} QUIETLY)
+   else()
+      Find_package(${COMPONENT})
+   endif()
 
-IF (WIN32)
-    SET(DTUTIL_LIBRARY_DEBUG dtUtild)
-    SET(DTCORE_LIBRARY_DEBUG dtCored)
-    SET(DTABC_LIBRARY_DEBUG dtABCd)
-    SET(DTDIRECTOR_LIBRARY_DEBUG dtDirectord)
-    SET(DTDIRECTOR_NODE_LIBRARY_DEBUG dtDirectorNodesd)
-    SET(DTDIRECTORQT_LIBRARY_DEBUG dtDirectorQtd)
-    SET(DTAI_LIBRARY_DEBUG dtAId)
-    SET(DTGAME_LIBRARY_DEBUG dtGamed)
-    SET(DTPHYSICS_LIBRARY_DEBUG dtPhysicsd)
-    SET(DTAUDIO_LIBRARY_DEBUG dtAudiod)
-    SET(DTANIM_LIBRARY_DEBUG dtAnimd)
-    SET(DTGUI_LIBRARY_DEBUG dtGUId)
-    SET(DTINSPECTORQT_LIBRARY_DEBUG dtInspectorQtd)
-    SET(DTSCRIPT_LIBRARY_DEBUG dtScriptd)
-    SET(DTTERRAIN_LIBRARY_DEBUG dtTerraind)
-    SET(DTNET_LIBRARY_DEBUG dtNetd)
-    SET(DTNETGM_LIBRARY_DEBUG dtNetGMd)
-    SET(DTHLAGM_LIBRARY_DEBUG dtHLAGMd)
-    SET(DTDIS_LIBRARY_DEBUG dtDISd)
-    SET(DTINPUT_PLIB_LIBRARY_DEBUG dtInputPLIBd)
-    SET(DTACTORS_LIBRARY_DEBUG dtActorsd)
-    SET(DTANIM_LIBRARY_DEBUG dtAnimd)
-    SET(DTLMS_LIBRARY_DEBUG dtLMSd)
-    SET(DTQT_LIBRARY_DEBUG dtQtd)
-    SET(STAGE_LIBRARY_DEBUG STAGEd)
-    SET(TEST_ACTOR_LIBRARY_DEBUG testActorLibraryd)
-    SET(TEST_GAME_ACTOR_LIBRARY_DEBUG testGameActorLibraryd)
-    SET(FIREFIGHTER_DEMO_LIBRARY_DEBUG fireFighterd)
-ENDIF (WIN32)
+   string(TOUPPER ${COMPONENT} COMPONENT_uc)
 
-SET(DELTA3D_FOUND "NO")
-IF(DTCORE_LIBRARY AND DELTA3D_INCLUDE_DIR AND DELTA3D_LIB_DIR)
-    SET(DELTA3D_FOUND "YES")
-ENDIF(DTCORE_LIBRARY AND DELTA3D_INCLUDE_DIR AND DELTA3D_LIB_DIR)
+   if (NOT ${COMPONENT_uc}_FOUND)
+      set(MISSING_PACKAGES "${MISSING_PACKAGES}\n${COMPONENT}")
+   endif()
+   set(PACKAGES ${PACKAGES} ${COMPONENT_uc}_INCLUDE_DIRECTORIES ${COMPONENT_uc}_LIBRARY)
+endforeach()
+
+if(MISSING_PACKAGES)
+   if(Delta3D_FIND_REQUIRED)
+      message(SEND_ERROR "Unable to find the requested Delta3D libraries.\n${MISSING_PACKAGES}")
+   else()
+      if(NOT Delta3D_FIND_QUIETLY)
+         # we opt not to automatically output Boost_ERROR_REASON here as
+         # it could be quite lengthy and somewhat imposing in its requests
+         # Since Boost is not always a required dependency we'll leave this
+         # up to the end-user.
+        message(STATUS "Could NOT find all Delta3D libraries\n${MISSING_PACKAGES}")
+      endif()
+   endif()
+endif()
+
+endif()
+INCLUDE(FindPackageHandleStandardArgs)
+FIND_PACKAGE_HANDLE_STANDARD_ARGS(Delta3D DEFAULT_MSG DELTA3D_INCLUDE_DIR ${PACKAGES})

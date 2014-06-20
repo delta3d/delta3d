@@ -39,7 +39,7 @@ class FIRE_FIGHTER_EXPORT FireHoseActor : public GameItemActor
    public:
 
       /// Constructor
-      FireHoseActor(dtGame::GameActorProxy &proxy);
+      FireHoseActor(dtGame::GameActorProxy& parent);
 
       virtual void Activate(bool enable = true);
 

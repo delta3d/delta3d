@@ -130,7 +130,7 @@ namespace dtCore
          /**
           * Sets the precision of floating point number as they are
           * converted to and from string values.
-          * @param precision The amount of numeric percision.
+          * @param precision The amount of numeric precision.
           * @note This value defaults to 16.
           */
          void SetNumberPrecision(unsigned int precision);
@@ -206,6 +206,8 @@ namespace dtCore
    DT_CORE_EXPORT std::ostream& operator << (std::ostream& o, const ActorProperty& prop);
 
    DT_CORE_EXPORT std::istream& operator >> (std::istream& i, ActorProperty& prop);
+
+   typedef dtCore::RefPtr<dtCore::ActorProperty> PropertyPtr;
 }
 
 #endif

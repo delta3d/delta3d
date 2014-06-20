@@ -209,8 +209,6 @@ namespace dtAnim
    /////////////////////////////////////////////////////////////////////////////
    void CharacterFileWriter::WriteScale(const Cal3DModelData& modelData)
    {
-      const CalCoreModel* model = modelData.GetCoreModel();
-
       BeginElement(CFE::SCALE_ELEMENT);
       {
          BeginElement(CFE::SCALE_FACTOR_ELEMENT);

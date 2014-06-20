@@ -129,7 +129,7 @@ namespace dtLMS
    }
 
    ///////////////////////////////////////////////////////////////////////
-   void LmsComponent::SendLmsUpdate(dtGame::GameActorProxy& proxy)
+   void LmsComponent::SendLmsUpdate(dtGame::GameActorProxy& actor)
    {
       // if the client socket is not connected, then return (exceptions should have been
       // thrown elsewhere)
@@ -150,7 +150,7 @@ namespace dtLMS
       }
 
       // if this lms task is not yet being tracked for changes, then start tracking it;
-      std::string taskID = proxy.GetName();
+      std::string taskID = actor.GetName();
 
       std::map<std::string, LmsTaskStatus>::iterator currentTask = mPreviousTaskStatus.find(taskID);
       if (currentTask == mPreviousTaskStatus.end())
@@ -162,7 +162,7 @@ namespace dtLMS
       // if the completion status changed, then send message to LMS;
       // also we will remember the last value we sent so that we can
       // just send when changed
-      dtCore::BooleanActorProperty* prop = static_cast<dtCore::BooleanActorProperty*>(proxy.GetProperty("Complete"));
+      dtCore::BooleanActorProperty* prop = static_cast<dtCore::BooleanActorProperty*>(actor.GetProperty("Complete"));
       bool taskIsComplete = prop->GetValue();
 
       if (taskIsComplete != currentTask->second.GetCompleted())
@@ -182,7 +182,7 @@ namespace dtLMS
       // if the score changed, then send message to LMS;
       // also we will remember the last value we sent so that we can
       // just send when changed
-      float taskScore = static_cast<dtCore::FloatActorProperty*>(proxy.GetProperty("Score"))->GetValue();
+      float taskScore = static_cast<dtCore::FloatActorProperty*>(actor.GetProperty("Score"))->GetValue();
       if (taskScore != currentTask->second.GetScore())
       {
          if (mNeedValidSocket)

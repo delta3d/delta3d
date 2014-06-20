@@ -59,20 +59,10 @@ SET (LIB_SOURCES ${SOURCE_PATH}/actionnode.cpp
      ${SOURCE_PATH}/valuenode.cpp
     )
 
-
-ADD_LIBRARY(${LIB_NAME} SHARED
-    ${LIB_PUBLIC_HEADERS}
-    ${LIB_SOURCES}
+SET(LIB_DEPS
+  ${DTUTIL_LIBRARY}
+  ${DTCORE_LIBRARY}
+  ${DTGAME_LIBRARY}
 )
 
-                          
-TARGET_LINK_LIBRARIES( ${LIB_NAME}
-                       ${DTUTIL_LIBRARY}
-                       ${DTCORE_LIBRARY}
-                       ${DTGAME_LIBRARY}
-                     )                          
-
-DELTA3D_ADD_LIBRARY_PROPERTIES(${LIB_NAME} DT_DIRECTOR_LIBRARY ${LIB_PUBLIC_HEADERS})
-
-
-INCLUDE(ModuleInstall OPTIONAL)
+DELTA3D_ADD_LIBRARY(${LIB_NAME} DT_DIRECTOR_LIBRARY)

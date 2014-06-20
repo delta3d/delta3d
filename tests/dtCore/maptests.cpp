@@ -103,6 +103,7 @@ extern dtABC::Application& GetGlobalApplication();
 class MapTests : public CPPUNIT_NS::TestFixture
 {
    CPPUNIT_TEST_SUITE(MapTests);
+      CPPUNIT_TEST(TestAddRegistryWithoutLibrary);
       CPPUNIT_TEST(TestMapAddRemoveProxies);
       CPPUNIT_TEST(TestMapProxySearch);
       CPPUNIT_TEST(TestMapLibraryHandling);
@@ -129,6 +130,7 @@ class MapTests : public CPPUNIT_NS::TestFixture
       void setUp();
       void tearDown();
 
+      void TestAddRegistryWithoutLibrary();
       void TestMapAddRemoveProxies();
       void TestMapProxySearch();
       void TestMapLibraryHandling();
@@ -177,6 +179,15 @@ const std::string MapTests::TEST_PROJECT_DIR_2="WorkingMapProject2";
 const std::string DATA_DIR = dtUtil::GetDeltaRootPath() + dtUtil::FileUtils::PATH_SEPARATOR + "examples/data";
 const std::string TESTS_DIR = dtUtil::GetDeltaRootPath() + dtUtil::FileUtils::PATH_SEPARATOR + "tests";
 const std::string MAPPROJECTCONTEXT = TESTS_DIR + dtUtil::FileUtils::PATH_SEPARATOR + "dtCore" + dtUtil::FileUtils::PATH_SEPARATOR + MapTests::TEST_PROJECT_DIR;
+
+class TestObjectRegistry : public dtCore::ActorPluginRegistry
+{
+public:
+   TestObjectRegistry(const std::string& name, const std::string& desc)
+   : dtCore::ActorPluginRegistry(name, desc)
+   {}
+   virtual void RegisterActorTypes() {}
+};
 
 ///////////////////////////////////////////////////////////////////////////////////////
 void MapTests::setUp()
@@ -288,7 +299,6 @@ void MapTests::tearDown()
    }
 }
 
-
 ///////////////////////////////////////////////////////////////////////////////////////
 void MapTests::createActors(dtCore::Map& map)
 {
@@ -327,7 +337,7 @@ void MapTests::createActors(dtCore::Map& map)
       logger->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__, __LINE__,
                          "Creating actor proxy with type \"" + actorTypes[i]->GetFullName() + "\"." );
 
-      proxy = libMgr.CreateActorProxy(*actorTypes[i]);
+      proxy = libMgr.CreateActor(*actorTypes[i]);
       snprintf(nameAsString, 21, "%d", nameCounter);
       proxy->SetName(std::string(nameAsString));
       ++nameCounter;
@@ -361,6 +371,27 @@ void MapTests::createActors(dtCore::Map& map)
    }
    CPPUNIT_ASSERT_MESSAGE("The actors that should have been skipped when creating the actors for the test were not found.  This code is out of date.",
       skippedActors >= 2);
+}
+
+///////////////////////////////////////////////////////////////////////////////////////
+void MapTests::TestAddRegistryWithoutLibrary()
+{
+   try
+   {
+      const std::string& TESTREG("MrTestReg");
+      dtCore::LibraryManager& regManager = dtCore::LibraryManager::GetInstance();
+      CPPUNIT_ASSERT(regManager.GetRegistry(TESTREG) == NULL);
+      dtCore::LibraryManager::RegistryEntry entry;
+      entry.registry = new TestObjectRegistry(TESTREG, TESTREG);
+      regManager.AddRegistryEntry(TESTREG, entry);
+      CPPUNIT_ASSERT(regManager.GetRegistry(TESTREG) != NULL);
+      CPPUNIT_ASSERT(regManager.GetRegistry(TESTREG) == entry.registry);
+      regManager.UnloadActorRegistry(TESTREG);
+   }
+   catch (const dtUtil::Exception& ex)
+   {
+       CPPUNIT_FAIL(ex.ToString());
+   }
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -406,16 +437,16 @@ void MapTests::TestMapAddRemoveProxies()
         dtCore::RefPtr<const dtCore::ActorType> exampleType = dtCore::LibraryManager::GetInstance().FindActorType("dtcore.examples", "Test All Properties");
         CPPUNIT_ASSERT_MESSAGE("The example type is NULL", exampleType.valid());
 
-        dtCore::RefPtr<dtCore::BaseActorObject> proxy1 = dtCore::LibraryManager::GetInstance().CreateActorProxy(*exampleType);
+        dtCore::RefPtr<dtCore::BaseActorObject> proxy1 = dtCore::LibraryManager::GetInstance().CreateActor(*exampleType);
         CPPUNIT_ASSERT_MESSAGE("proxy1 is NULL", proxy1.valid());
 
-        dtCore::RefPtr<dtCore::BaseActorObject> proxy2 = dtCore::LibraryManager::GetInstance().CreateActorProxy(*exampleType);
+        dtCore::RefPtr<dtCore::BaseActorObject> proxy2 = dtCore::LibraryManager::GetInstance().CreateActor(*exampleType);
         CPPUNIT_ASSERT_MESSAGE("proxy2 is NULL", proxy2.valid());
 
-        dtCore::RefPtr<dtCore::BaseActorObject> proxy3 = dtCore::LibraryManager::GetInstance().CreateActorProxy(*exampleType);
+        dtCore::RefPtr<dtCore::BaseActorObject> proxy3 = dtCore::LibraryManager::GetInstance().CreateActor(*exampleType);
         CPPUNIT_ASSERT_MESSAGE("proxy3 is NULL", proxy3.valid());
 
-        dtCore::RefPtr<dtCore::BaseActorObject> proxy4 = dtCore::LibraryManager::GetInstance().CreateActorProxy(*exampleType);
+        dtCore::RefPtr<dtCore::BaseActorObject> proxy4 = dtCore::LibraryManager::GetInstance().CreateActor(*exampleType);
         CPPUNIT_ASSERT_MESSAGE("proxy4 is NULL", proxy4.valid());
 
         map.AddProxy(*proxy1.get());
@@ -433,9 +464,9 @@ void MapTests::TestMapAddRemoveProxies()
         CPPUNIT_ASSERT_MESSAGE("Proxy 2 is linked still", dynamic_cast<dtCore::ActorIDActorProperty*>(proxy2->GetProperty("Test_Actor"))->GetValue().ToString().empty());
         CPPUNIT_ASSERT_MESSAGE("Proxy 3 is linked still", dynamic_cast<dtCore::ActorIDActorProperty*>(proxy3->GetProperty("Test_Actor"))->GetValue().ToString().empty());
     }
-    catch (const dtUtil::Exception& e)
+    catch (const dtUtil::Exception& ex)
     {
-        CPPUNIT_FAIL((std::string("Error: ") + e.What()).c_str());
+        CPPUNIT_FAIL(ex.ToString());
     }
 }
 
@@ -883,7 +914,7 @@ void MapTests::TestMapSaveAndLoad()
    dtCore::RefPtr<dtCore::BaseActorObject> proxy;
    try
    {
-      proxy = dtCore::LibraryManager::GetInstance().CreateActorProxy(*ExampleActorLib::TEST_ACTOR_PROPERTY_TYPE.get());
+      proxy = dtCore::LibraryManager::GetInstance().CreateActor(*ExampleActorLib::TEST_ACTOR_PROPERTY_TYPE.get());
    }
    catch (const dtUtil::Exception& e)
    {
@@ -1172,7 +1203,7 @@ void MapTests::TestMapSaveAndLoadGroup()
          dtCore::Map* map = &project.CreateMap(mapName, mapFileName);
          map->AddLibrary(mExampleLibraryName, "1.0");
 
-         dtCore::RefPtr<dtCore::BaseActorObject> proxy = dtCore::LibraryManager::GetInstance().CreateActorProxy(*at);
+         dtCore::RefPtr<dtCore::BaseActorObject> proxy = dtCore::LibraryManager::GetInstance().CreateActor(*at);
        
          dtCore::GroupActorProperty* groupProp;
          proxy->GetProperty("TestGroup", groupProp);
@@ -1493,7 +1524,7 @@ void MapTests::TestMapSaveAndLoadActorGroups()
       const dtCore::ActorType* at = libraryManager.FindActorType("dtcore.Tasks", "Task Actor");
       CPPUNIT_ASSERT(at != NULL);
 
-      dtCore::RefPtr<dtCore::BaseActorObject> proxy = libraryManager.CreateActorProxy(*at);
+      dtCore::RefPtr<dtCore::BaseActorObject> proxy = libraryManager.CreateActor(*at);
 
       map->AddProxy(*proxy);
 
@@ -1504,7 +1535,7 @@ void MapTests::TestMapSaveAndLoadActorGroups()
       std::ostringstream ss;
       for (unsigned i = 0; i < 10; ++i)
       {
-         dtCore::RefPtr<dtCore::BaseActorObject> proxy = libraryManager.CreateActorProxy(*at);
+         dtCore::RefPtr<dtCore::BaseActorObject> proxy = libraryManager.CreateActor(*at);
          subTasks.push_back(proxy->GetId());
          map->AddProxy(*proxy);
          ss.str("");
@@ -1631,7 +1662,7 @@ void MapTests::TestEnvironmentMapLoading()
       for (unsigned int i = 0; i < numProxies; ++i)
       {
          dtCore::RefPtr<dtCore::BaseActorObject> p =
-            dtCore::LibraryManager::GetInstance().CreateActorProxy("dtcore.examples", "Test All Properties");
+            dtCore::LibraryManager::GetInstance().CreateActor("dtcore.examples", "Test All Properties");
          CPPUNIT_ASSERT(p.valid());
          container.push_back(p);
       }
@@ -1647,7 +1678,7 @@ void MapTests::TestEnvironmentMapLoading()
       map.GetAllProxies(mapProxies);
       CPPUNIT_ASSERT_MESSAGE("The map should have the correct number of proxies", mapProxies.size() == numProxies);
 
-      dtCore::RefPtr<dtCore::BaseActorObject> envProxy = dtCore::LibraryManager::GetInstance().CreateActorProxy("Test Environment Actor", "Test Environment Actor");
+      dtCore::RefPtr<dtCore::BaseActorObject> envProxy = dtCore::LibraryManager::GetInstance().CreateActor("Test Environment Actor", "Test Environment Actor");
       CPPUNIT_ASSERT(envProxy.valid());
 
       map.SetEnvironmentActor(envProxy.get());
@@ -1694,7 +1725,7 @@ void MapTests::TestLoadEnvironmentMapIntoScene()
    for (unsigned int i = 0; i < numProxies; ++i)
    {
       dtCore::RefPtr<dtCore::BaseActorObject> p =
-         dtCore::LibraryManager::GetInstance().CreateActorProxy("dtcore.examples", "Test All Properties");
+         dtCore::LibraryManager::GetInstance().CreateActor("dtcore.examples", "Test All Properties");
       CPPUNIT_ASSERT(p.valid());
       container.push_back(p);
    }
@@ -1710,7 +1741,7 @@ void MapTests::TestLoadEnvironmentMapIntoScene()
    map.GetAllProxies(mapProxies);
    CPPUNIT_ASSERT_MESSAGE("The map should have the correct number of proxies", mapProxies.size() == numProxies);
 
-   dtCore::RefPtr<dtCore::BaseActorObject> envProxy = dtCore::LibraryManager::GetInstance().CreateActorProxy("Test Environment Actor", "Test Environment Actor");
+   dtCore::RefPtr<dtCore::BaseActorObject> envProxy = dtCore::LibraryManager::GetInstance().CreateActor("Test Environment Actor", "Test Environment Actor");
    CPPUNIT_ASSERT(envProxy.valid());
 
    project.LoadMapIntoScene(map, *scene);
@@ -1742,7 +1773,7 @@ public:
    bool RemoveTheProperty(std::string& stringToRemove)
    {
       // not in the list
-      if (GetProperty(stringToRemove) == false) return false;
+      if (GetProperty(stringToRemove) == NULL) return false;
       // is in the list
       RemoveProperty(stringToRemove);
       return (GetProperty(stringToRemove) == NULL);

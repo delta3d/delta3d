@@ -39,6 +39,10 @@ namespace dtCore
    class DT_CORE_EXPORT PropertyContainer: public osg::Referenced
    {
    public:
+      typedef std::vector<ActorProperty *> PropertyVector;
+      typedef std::vector<const ActorProperty *> PropertyConstVector;
+      typedef std::vector<RefPtr<ActorProperty> > PropertyPtrVector;
+
       PropertyContainer();
 
       /**
@@ -57,13 +61,13 @@ namespace dtCore
        * Gets a list of the properties currently registered for this
        * actor proxy.
        */
-      void GetPropertyList(std::vector<ActorProperty *>& propList);
+      void GetPropertyList(PropertyVector& propList);
 
       /**
        * Gets a const list of the properties currently registered for this
        * actor proxy.
        */
-      void GetPropertyList(std::vector<const ActorProperty *>& propList) const;
+      void GetPropertyList(PropertyConstVector& propList) const;
 
       /**
        * Adds a new property to the this proxy's list of properties.
@@ -179,6 +183,8 @@ namespace dtCore
       ///vector of properties (for order).
       PropertyVectorType mProperties;
    };
+
+   typedef RefPtr<PropertyContainer> PropertyContainerPtr;
 
 }
 

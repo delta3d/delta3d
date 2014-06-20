@@ -44,9 +44,6 @@
 namespace dtGame
 {
 
-
-const dtUtil::RefString GameActorProxy::PROPERTY_NAME("Name");
-
 // invokable names
 const std::string GameActorProxy::PROCESS_MSG_INVOKABLE("Process Message");
 const std::string GameActorProxy::TICK_LOCAL_INVOKABLE("Tick Local");
@@ -394,14 +391,14 @@ void GameActorProxy::PopulateActorUpdateImpl(ActorUpdateMessage& update,
       }
 
       // don't send the actor's name property as it is already sent earlier.
-      if (prop->GetName() == "Actor Name")
+      if (prop->GetName() == dtCore::BaseActorObject::PROPERTY_NAME)
       {
          continue;
       }
 
       try
       {
-         MessageParameter* mp = update.AddUpdateParameter(prop->GetName(), prop->GetDataType());
+         dtCore::NamedParameter* mp = update.AddUpdateParameter(prop->GetName(), prop->GetDataType());
          if (mp != NULL)
          {
             mp->SetFromProperty(*prop);

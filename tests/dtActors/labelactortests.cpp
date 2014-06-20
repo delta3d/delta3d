@@ -83,7 +83,7 @@ void LabelActorTests::setUp()
       dtCore::System::GetInstance().Step();
       // Create the actor for testing.
       dtCore::RefPtr<dtCore::BaseActorObject> proxy = dtCore::LibraryManager::GetInstance()
-         .CreateActorProxy(*dtActors::EngineActorRegistry::LABEL_ACTOR_TYPE);
+         .CreateActor(*dtActors::EngineActorRegistry::LABEL_ACTOR_TYPE);
       mLabelProxy = dynamic_cast<dtActors::LabelActorProxy*>(proxy.get());
 
       // Validate the proxy.

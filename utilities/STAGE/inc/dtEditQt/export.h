@@ -19,5 +19,6 @@
 #   endif 
 #endif
 
+#include <dtUtil/warningdisable.h>
 
 #endif // DELTA_STAGE_EXPORT

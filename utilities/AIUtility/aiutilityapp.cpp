@@ -34,7 +34,7 @@
 #include <dtCore/deltawin.h>
 #include <dtCore/system.h>
 
-#include <dtCore/rtsmotionmodel.h>
+#include <dtCore/flymotionmodel.h>
 #include <dtCore/objectmotionmodel.h>
 #include <dtCore/scene.h> //for GetHeightOfTerrain()
 #include <dtAI/aidebugdrawable.h>
@@ -78,7 +78,7 @@ void AIUtilityApp::Config()
    AIComponent* aicomp = new AIComponent();
    mGM->AddComponent(*aicomp, dtGame::GameManager::ComponentPriority::NORMAL);
 
-   mMotionModel = new dtCore::RTSMotionModel(GetKeyboard(), GetMouse(), false, false);
+   mMotionModel = new dtCore::FlyMotionModel(GetKeyboard(), GetMouse());
    mMotionModel->SetTarget(GetCamera());
 
    mWaypointMotionModel = new WaypointMotionModel(GetView());
@@ -99,6 +99,12 @@ void AIUtilityApp::SetAIPluginInterface(dtAI::AIPluginInterface* interface, bool
    {
       mInputComponent = new AIUtilityInputComponent();
       mGM->AddComponent(*mInputComponent, dtGame::GameManager::ComponentPriority::NORMAL);
+
+      dtCore::FlyMotionModel* fmm = dynamic_cast<dtCore::FlyMotionModel*>(mMotionModel.get());
+      if(fmm != NULL)
+      {
+         mInputComponent->SetCameraMotionModel(*fmm);
+      }
    }
 
    // We can now setup the input component

@@ -41,9 +41,9 @@ namespace dtGame
    const std::string GameActor::NULL_PROXY_ERROR("The actor proxy for a game actor is NULL.  This usually happens if the actor is held in RefPtr, but not the proxy.");
 
    ///////////////////////////////////////////////////////////////////////////////////////////////////////
-   GameActor::GameActor(GameActorProxy& proxy, const std::string& name)
+   GameActor::GameActor(GameActorProxy& owner, const std::string& name)
       : dtCore::Physical(name)
-      , mProxy(&proxy)
+      , mOwner(&owner)
       , mPublished(false)
       , mRemote(false)
       , mLogger(dtUtil::Log::GetInstance("gameactor.cpp"))
@@ -53,9 +53,9 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////////////////////
-   GameActor::GameActor(GameActorProxy& proxy, TransformableNode& node, const std::string& name)
+   GameActor::GameActor(GameActorProxy& owner, TransformableNode& node, const std::string& name)
       : dtCore::Physical(node, name)
-      , mProxy(&proxy)
+      , mOwner(&owner)
       , mPublished(false)
       , mRemote(false)
       , mLogger(dtUtil::Log::GetInstance("gameactor.cpp"))
@@ -71,31 +71,31 @@ namespace dtGame
    ///////////////////////////////////////////////////////////////////////////////////////////////////////
    GameActorProxy& GameActor::GetGameActorProxy()
    {
-      if (!mProxy.valid())
+      if (!mOwner.valid())
       {
          throw dtGame::InvalidActorStateException(
                   NULL_PROXY_ERROR,
                   __FILE__, __LINE__);
       }
-      return *mProxy;
+      return *mOwner;
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////////////////////
    const GameActorProxy& GameActor::GetGameActorProxy() const
    {
-      if (!mProxy.valid())
+      if (!mOwner.valid())
       {
          throw dtGame::InvalidActorStateException(
                   NULL_PROXY_ERROR,
                   __FILE__, __LINE__);
       }
-      return *mProxy;
+      return *mOwner;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    bool GameActor::IsGameActorProxyValid() const
    {
-      return mProxy.valid();
+      return mOwner.valid();
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////////////////////

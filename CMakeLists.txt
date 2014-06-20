@@ -40,13 +40,16 @@ MACRO(ADD_DELTA3D_SUBFOLDERS)
       FIND_PACKAGE(CEGUI)   #for dtGUI
       SET(DTGUI_AVAILABLE "YES")
       ADD_SUBDIRECTORY(src/dtGUI)
-    ADD_SUBDIRECTORY(src/dtDirectorGUINodes)
+      ADD_SUBDIRECTORY(src/dtDirectorGUINodes)
    ENDIF (BUILD_GUI)
 
    IF (BUILD_HLA)
       IF (USE_HLA_1516e)
          FIND_PACKAGE(HLA1516e REQUIRED)
-      ENDIF(USE_HLA_1516e)
+      else()
+         unset(RTI1516e_INCLUDE_DIR CACHE)
+         unset(RTI1516e_LIBRARIES CACHE)
+      endif()
 
       IF (USE_RTIS)
          FIND_PACKAGE(RTI-s REQUIRED) #for dtHLAGM
@@ -60,6 +63,8 @@ MACRO(ADD_DELTA3D_SUBFOLDERS)
               IF (USE_PORTICO)
                 FIND_PACKAGE(RTIPortico REQUIRED)
               ELSE (USE_PORTICO)
+                 unset(RTI_INCLUDE_DIR CACHE)
+                 unset(RTI_LIBRARIES CACHE)
                  if (NOT USE_HLA_1516e)
                     MESSAGE("No HLA RTI selected, choose USE_CERTI, USE_RTIS, USE_PORTICO, USE_MAK, or USE_HLA_1516e.  HLA 1516 can be compiled as the same time as one of the others.")
                  ENDIF(NOT USE_HLA_1516e)
@@ -70,7 +75,7 @@ MACRO(ADD_DELTA3D_SUBFOLDERS)
 
 
       ADD_SUBDIRECTORY(src/dtHLAGM)
-      if (USE_RTIS OR USE_CERTI OR USE_MAK OR USE_PORTICO)
+      if (RTI_INCLUDE_DIR AND (USE_RTIS OR USE_CERTI OR USE_MAK OR USE_PORTICO))
          ADD_SUBDIRECTORY(src/dtHLAGM/rti13)
       endif()
       if (USE_HLA_1516e)
@@ -127,7 +132,7 @@ MACRO(ADD_DELTA3D_SUBFOLDERS)
    ENDIF (DTAUDIO_AVAILABLE)
 
    ADD_SUBDIRECTORY(src/dtGame)
-   ADD_SUBDIRECTORY(src/dtInputISense)
+   #ADD_SUBDIRECTORY(src/dtInputISense)
    ADD_SUBDIRECTORY(src/dtLMS)
 
    IF (QT4_FOUND)
@@ -178,15 +183,16 @@ OPTION(BUILD_WITH_MULTITHREAD_FIX_HACK_BREAKS_CEGUI "Fixes a multithreading prob
 MARK_AS_ADVANCED(BUILD_WITH_MULTITHREAD_FIX_HACK_BREAKS_CEGUI)
 
 IF (BUILD_HLA)
-   OPTION(USE_RTIS "Use RTI-s for the RTI implementation" ON)
+   OPTION(USE_RTIS "Use RTI-s for the RTI implementation" OFF)
    OPTION(USE_CERTI "Use CERTI for the RTI implementation" OFF)
    OPTION(USE_MAK "Use MAK for the RTI implementation" OFF)
    OPTION(USE_PORTICO "Use Portico for the RTI implementation" OFF)
-   OPTION(USE_HLA_1516e "Use an implementation of RTI 1516e (headers and library names are standardized.)" ON)
+   OPTION(USE_HLA_1516e "Use an implementation of RTI 1516e (headers and library names are standardized.)" OFF)
 ENDIF (BUILD_HLA)
 
 
 # We want to build SONAMES shared libraries
+# TODO This does nothing yet.
 SET(DELTA32_SONAMES TRUE)
 
 # We have some custom .cmake scripts not in the official distribution.
@@ -202,6 +208,7 @@ INCLUDE(UtilityMacros)
 INCLUDE(BuildExample)
 INCLUDE(BuildBinding)
 INCLUDE(PCHMacros)
+INCLUDE(DataInstall)
 include(delta3d_common)
 
 if (BUILD_WITH_PCH)
@@ -220,7 +227,7 @@ include(PlatformConfiguration)
 ################################################################################
 
 # required external dependencies for core functionality
-FIND_PACKAGE(Delta3D REQUIRED)
+FIND_PACKAGE(Delta3DInternal REQUIRED)
 FIND_PACKAGE(OpenThreads REQUIRED)
 FIND_PACKAGE(OSG REQUIRED)
 FIND_PACKAGE(ODE REQUIRED)
@@ -285,6 +292,13 @@ MAKE_DIRECTORY(${OUTPUT_BINDIR})
 
 SET(OUTPUT_LIBDIR ${PROJECT_BINARY_DIR}/lib)
 MAKE_DIRECTORY(${OUTPUT_LIBDIR})
+
+if (APPLE)
+   SET(OUTPUT_FRAMEWORK_DIR ${PROJECT_BINARY_DIR}/Frameworks)
+   MAKE_DIRECTORY(${OUTPUT_FRAMEWORK_DIR})
+   SET(CMAKE_FRAMEWORK_OUTPUT_DIRECTORY ${OUTPUT_FRAMEWORK_DIR} CACHE PATH "Framework Build Directory")
+   message("FRAMEWORK OUTPUT " ${CMAKE_FRAMEWORK_OUTPUT_DIRECTORY})
+endif()
 
 
 SET (CMAKE_ARCHIVE_OUTPUT_DIRECTORY  ${OUTPUT_LIBDIR} CACHE PATH "build directory")

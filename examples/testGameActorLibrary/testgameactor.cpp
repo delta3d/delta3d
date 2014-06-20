@@ -223,7 +223,7 @@ void TestGameActorProxy1::ToggleTicks(const dtGame::Message& message)
 ////////////////////////////////////////////////////////////////////
 // Actor Code
 ////////////////////////////////////////////////////////////////////
-TestGameActor1::TestGameActor1(dtGame::GameActorProxy& proxy): dtGame::GameActor(proxy), fired(false), tickLocals(0), tickRemotes(0)
+TestGameActor1::TestGameActor1(dtGame::GameActorProxy& parent): dtGame::GameActor(parent), fired(false), tickLocals(0), tickRemotes(0)
 {
 }
 

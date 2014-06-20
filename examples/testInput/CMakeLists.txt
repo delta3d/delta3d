@@ -7,5 +7,5 @@ BUILD_EXE_EXAMPLE( testInput
                    ${DTCORE_LIBRARY}
                    ${DTABC_LIBRARY}
                    ${DTGUI_LIBRARY}
-                   ${DTINPUT_PLIB_LIBRARY}
+                   ${DTINPUTPLIB_LIBRARY}
                  )

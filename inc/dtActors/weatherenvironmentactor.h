@@ -215,7 +215,7 @@ namespace dtActors
          };
 
          /// Constructor
-         WeatherEnvironmentActor(dtGame::GameActorProxy& proxy);
+         WeatherEnvironmentActor(dtGame::GameActorProxy& parent);
 
          /**
            * Adds an actor proxy to the internal hierarchy of the environment
@@ -469,7 +469,6 @@ namespace dtActors
          bool mIsCloudPlaneEnabled;
          dtCore::RefPtr<dtABC::Weather> mWeather;
          dtCore::RefPtr<dtCore::CloudPlane> mCloudPlane;
-         dtABC::Weather::WeatherTheme mWeatherTheme;
    };
 
    class DT_PLUGIN_EXPORT WeatherEnvironmentActorProxy : public dtGame::IEnvGameActorProxy

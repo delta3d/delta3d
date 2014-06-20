@@ -25,8 +25,13 @@
 #include <dtCore/refptr.h>
 #include <dtGUI/ceguimouselistener.h>
 #include <dtGUI/ceguikeyboardlistener.h>
+
+#include <dtUtil/warningdisable.h>
+DT_DISABLE_WARNING_ALL_START
 #include <CEGUI/CEGUISubscriberSlot.h>
 #include <CEGUI/CEGUIEvent.h>
+DT_DISABLE_WARNING_END
+
 
 
 /// @cond DOXYGEN_SHOULD_SKIP_THIS
@@ -74,6 +79,12 @@ namespace dtGUI
        * @param camera If NULL, no GUI rendering will take place
        */
       void SetCamera(dtCore::Camera* camera);
+
+      /**
+       * Get the camera that is used for rendering the GUI.
+       */
+      dtCore::Camera* GetCamera();
+      const dtCore::Camera* GetCamera() const;
 
       /**
        *  Set the Mouse from which the gui receives events

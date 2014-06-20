@@ -9,22 +9,14 @@ INCLUDE(delta3d_common)
   
 #variable names of the individual Delta3D libraries.  Can be used in application cmakelist.txt files.
 FIND_DELTA3D_LIBRARY(DTABC_LIBRARY         dtABC)
-FIND_DELTA3D_LIBRARY(DTABC_DEBUG_LIBRARY   dtABCD)
 
 
-IF (NOT DTABC_DEBUG_LIBRARY)
-  SET(DTABC_DEBUG_LIBRARY ${DTABC_LIBRARY})
-  MESSAGE(STATUS "No debug library was found for DTABC_DEBUG_LIBRARY")
-ENDIF()
-
-#convienent list of libraries to link with when using dtABC
-SET(DTABC_LIBRARIES
-    optimized ${DTABC_LIBRARY}      debug ${DTABC_DEBUG_LIBRARY}
-    )
-    
 SET(DTABC_INCLUDE_DIRECTORIES ${DELTA3D_INCLUDE_DIR}
     )
 
+CREATE_LINK_LINES_FOR_TARGETS(DTABC_LIBRARIES
+        DTABC_LIBRARY
+        )
 
 # handle the QUIETLY and REQUIRED arguments and set DELTA3D_FOUND to TRUE if 
 # all listed variables are TRUE
