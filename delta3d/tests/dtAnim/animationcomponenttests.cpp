@@ -534,7 +534,8 @@ namespace dtAnim
       }
       catch(std::exception& ex)
       {
-         LOG_ERROR("Exception hit: ", ex.what());
+         std::string what(ex.what());
+         LOG_ERROR("Exception hit: " + what);
       }
       catch(...)
       {
