@@ -26,6 +26,7 @@ namespace dtAnim
       OsgModelData(const std::string& modelName, const std::string& filename);
 
       void SetCoreModel(osg::Node* model);
+      osg::Node* GetCoreModel();
       const osg::Node* GetCoreModel() const;
    
       dtCore::RefPtr<osg::Node> CreateModelClone(osg::CopyOp::Options copyOptions = DEFAULT_COPY_OPTIONS) const;

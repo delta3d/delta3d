@@ -30,9 +30,17 @@
 #include <osgDB/ReadFile>
 
 
+
+////////////////////////////////////////////////////////////////////////////////
+// FORWARD DECLARATIONS
+////////////////////////////////////////////////////////////////////////////////
 namespace dtAnim
 {
    class BaseModelData;
+   class OsgModelData;
+   class OsgModelResourceFinder;
+
+
 
    /////////////////////////////////////////////////////////////////////////////
    // CLASS CODE
@@ -54,7 +62,23 @@ namespace dtAnim
       virtual void CreateAttachments(dtAnim::CharacterFileHandler& handler, dtAnim::BaseModelData& modelData);
 
       static dtCore::RefPtr<osgDB::ReaderWriter::Options> GetOrCreateOSGOptions();
+
+      int ApplyAnimationsToModel(OsgModelResourceFinder& finder, dtAnim::OsgModelData& modelData);
+      int ApplyMaterialsToModel(OsgModelResourceFinder& finder, dtAnim::OsgModelData& modelData);
+      int ApplyMeshesToModel(OsgModelResourceFinder& finder, dtAnim::OsgModelData& modelData);
+      int ApplyMorphTargetsToModel(OsgModelResourceFinder& finder, dtAnim::OsgModelData& modelData);
+      int ApplySkeletonToModel(OsgModelResourceFinder& finder, dtAnim::OsgModelData& modelData);
       
+      int ApplyAllResourcesToModel(OsgModelResourceFinder& finder, dtAnim::OsgModelData& modelData);
+      
+      osg::Node* GetOrCreateModelNode(dtAnim::OsgModelData& modelData);
+
+      void SetFinderMode(dtAnim::ModelResourceType resType, OsgModelResourceFinder& finder);
+
+      dtCore::RefPtr<osg::Node> LoadResourceFile(
+         const std::string& path, const std::string& file,
+         dtAnim::ModelResourceType resType);
+
    protected:
       virtual ~OsgLoader();
 
