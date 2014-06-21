@@ -46,6 +46,7 @@ namespace dtAnim
          SEARCH_BONES,
          SEARCH_MATERIALS,
          SEARCH_MESHES,
+         SEARCH_MORPHS,
          SEARCH_SKELETON,
       };
 

@@ -41,6 +41,11 @@ namespace dtAnim
       UpdateCoreAnimations();
    }
 
+   osg::Node* OsgModelData::GetCoreModel()
+   {
+      return mCoreModel.get();
+   }
+
    const osg::Node* OsgModelData::GetCoreModel() const
    {
       return mCoreModel.get();
