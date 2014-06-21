@@ -28,7 +28,7 @@
 namespace dtCore
 {
 
-   class SystemComponentType: public dtCore::ActorType
+   class DT_CORE_EXPORT SystemComponentType: public dtCore::ActorType
    {
    public:
       static const SystemComponentType BaseSystemComponentType;
