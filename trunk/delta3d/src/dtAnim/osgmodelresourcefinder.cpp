@@ -11,7 +11,7 @@
 #include <osgAnimation/Bone>
 #include <osgAnimation/Skeleton>
 #include <sstream>
-
+#include <algorithm>
 
 namespace dtAnim
 {
