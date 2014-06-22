@@ -151,7 +151,6 @@ namespace dtAnim
 
       void SetupAction(osgAnimation::Action& action);
 
-      class ActionTimer;
       void AddActionClearTimer(ActionTimer& actionTimer);
       
       void SetActionClearTimer(osgAnimation::Action& action, float timeToClear);
