@@ -48,9 +48,6 @@ namespace dtAnim
 
             void SetAnimations(dtAnim::Animatable* stand, dtAnim::Animatable* walk, dtAnim::Animatable* run = NULL);
 
-            //this sets the basic necessary blend values, the others get expected values
-            void SetInherentSpeeds(float inherentWalkSpeed, float inherentRunSpeed = std::numeric_limits<float>::max());
-
             float GetCurrentSpeed() const;
 
             void SetCurrentSpeed(float pSpeed);
@@ -60,9 +57,10 @@ namespace dtAnim
             dtAnim::Animatable* GetAnimation(unsigned i);
             unsigned GetAnimationCount() const;
 
-            dtCore::RefPtr<WRController> CloneDerived() const;
+            float GetAnimationInherentSpeed(unsigned i) const;
+            void SetAnimationInherentSpeed(unsigned i, float speed);
 
-            void CloneAnimations(dtAnim::Cal3DModelWrapper* modelWrapper);
+            dtCore::VelocityInterface* GetMotionSpeedSource();
 
          protected:
             ~WRController();
@@ -90,15 +88,13 @@ namespace dtAnim
 
          WalkRunBlend(dtCore::VelocityInterface& mi);
 
-         WalkRunBlend(WRController& controller);
-
          void SetAnimations(dtAnim::Animatable* stand, dtAnim::Animatable* walk, dtAnim::Animatable* run);
 
          /**
           * Configures the walk and run blend based on their inherent speeds, i.e. the motion speed
           * implied by the animation at a speed factor of 1.0.
           */
-         void Setup(float inherentSpeed, float inherentRunSpeed = std::numeric_limits<float>::max());
+         void Setup(float inherentWalkSpeed, float inherentRunSpeed = std::numeric_limits<float>::max());
 
          WRController& GetWalkRunController();
 
