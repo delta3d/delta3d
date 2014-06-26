@@ -275,6 +275,15 @@ namespace dtAnim
        * @return Number of results.
        */
       unsigned GetObjectNameListForFile(const std::string& file, StrArray& outObjectNames) const;
+   
+      /**
+       * Register a file a file with an object name. A file may be registered with multiple names.
+       * @param file The file to be registered to an object name.
+       * @param objectName Name of an object that may represent the file, such as an animation, mesh, etc.
+       * @param fileType Type of resource the file contains.
+       * @return TRUE if the file and object name were successfully registered.
+       */
+      bool RegisterFile(const std::string& file, const std::string& objectName, ModelResourceType fileType);
 
       /**
        * Register a file a file with an object name. A file may be registered with multiple names.

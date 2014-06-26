@@ -7,6 +7,7 @@
 #include <dtAnim/export.h>
 #include <dtCore/refptr.h>
 #include <osg/NodeVisitor>
+#include <osgAnimation/Bone>
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -16,8 +17,9 @@ namespace osgAnimation
 {
    class Animation;
    class BasicAnimationManager;
-   class Bone;
+   class MorphGeometry;
    class Skeleton;
+   class UpdateMorph;
 }
 
 
@@ -27,7 +29,7 @@ namespace dtAnim
    /////////////////////////////////////////////////////////////////////////////
    // CLASS CODE
    /////////////////////////////////////////////////////////////////////////////
-   class OsgModelResourceFinder : public osg::NodeVisitor
+   class DT_ANIM_EXPORT OsgModelResourceFinder : public osg::NodeVisitor
    {
    public:
       typedef osg::NodeVisitor BaseClass;
@@ -38,8 +40,12 @@ namespace dtAnim
       typedef std::vector<dtCore::RefPtr<osgAnimation::Bone> > OsgBoneArray;
       typedef std::vector<dtCore::RefPtr<osg::StateSet> > OsgMaterialArray;
       typedef std::vector<dtCore::RefPtr<osg::Geode> > OsgGeodeArray;
+      typedef std::vector<dtCore::RefPtr<osgAnimation::MorphGeometry> > OsgMorphGeometryArray;
+      typedef std::map<osgAnimation::UpdateMorph*, dtCore::RefPtr<osg::Object> > OsgMorphManagerMap;
 
-      enum SearchMode
+      typedef std::map<osg::StateSet*, dtCore::RefPtr<osg::Object> > MaterialObjectMap;
+
+      typedef enum SearchModeE
       {
          SEARCH_ALL,
          SEARCH_ANIMATIONS,
@@ -48,17 +54,25 @@ namespace dtAnim
          SEARCH_MESHES,
          SEARCH_MORPHS,
          SEARCH_SKELETON,
-      };
+      } SearchMode;
 
-      OsgModelResourceFinder(SearchMode mode = SEARCH_ALL);
+      explicit OsgModelResourceFinder(SearchMode mode = SEARCH_ALL);
 
-      virtual ~OsgModelResourceFinder();
+      // Find objects that could be assigned to any node type.
+      void AcquireCommonObjects(osg::Node& node);
       
       // Finds animation managers
       void AcquireAnimationManager(osg::Node& node);
+      void AcquireAnimationManagerFromCallback(osg::NodeCallback& callback, osg::Node& node);
 
-      // Finds materials
-      void AcquireMaterial(osg::Geode& geode);
+      // Finds materials on nodes
+      void AcquireMaterial(osg::Node& geode);
+
+      // Finds materials on geometry
+      void AcquireMaterialFromGeometry(osg::Geode& geode);
+
+      // Finds only morph target geometry
+      void AcquireMorphs(osg::Geode& geode);
 
       // Finds resources contained in generic nodes
       virtual void apply(osg::Node& node);
@@ -77,6 +91,8 @@ namespace dtAnim
 
       // Returns all animations for all animation managers.
       int GetAnimations(OsgAnimationArray& outAnims) const;
+
+      osg::Geode* GetGeodeByName(const std::string& name) const;
       
       SearchMode mMode;
 
@@ -85,7 +101,14 @@ namespace dtAnim
       OsgBoneArray mBones;
       OsgMaterialArray mMaterials;
       OsgGeodeArray mMeshes;
-      dtCore::RefPtr<osgAnimation::Skeleton> mSkel;
+      OsgMorphGeometryArray mMorphs;
+      OsgMorphManagerMap mMorphManagers;
+      dtCore::RefPtr<osgAnimation::Skeleton> mSkeleton;
+
+      MaterialObjectMap mMaterialToObjectMap;
+
+   protected:
+      virtual ~OsgModelResourceFinder();
    };
 
 }

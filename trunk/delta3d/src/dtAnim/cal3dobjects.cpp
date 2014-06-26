@@ -368,11 +368,6 @@ namespace dtAnim
    Cal3dSubmesh::~Cal3dSubmesh()
    {}
 
-   bool Cal3dSubmesh::IsHardwareRendered() const
-   {
-      return false;
-   }
-
    int Cal3dSubmesh::GetVertexCount() const
    {
       return mModel.valid() ? mSubmesh->getVertexCount() : 0;
@@ -673,11 +668,6 @@ namespace dtAnim
 
    Cal3dMesh::~Cal3dMesh()
    {}
-
-   bool Cal3dMesh::IsHardwareRendered() const
-   {
-      return false;
-   }
 
    int Cal3dMesh::GetID() const
    {

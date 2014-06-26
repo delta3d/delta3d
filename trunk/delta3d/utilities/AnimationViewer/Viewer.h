@@ -53,6 +53,10 @@ public:
 
    osg::Node* GetRootNode();
 
+   dtAnim::CharDrawable* GetCharacter();
+
+   void UpdateCharacter();
+
 public slots:
 
    void OnNewCharFile();
@@ -126,6 +130,11 @@ protected:
    virtual ~Viewer();
 
    virtual void PostFrame(const double deltaFrameTime);
+
+   void UpdateAnimationList(dtAnim::BaseModelWrapper& wrapper);
+   void UpdateMaterialList(dtAnim::BaseModelWrapper& wrapper);
+   void UpdateMeshList(dtAnim::BaseModelWrapper& wrapper);
+   void UpdateMorphList(dtAnim::BaseModelWrapper& wrapper);
 
 private:
    dtCore::RefPtr<dtAnim::ModelLoader>          mModelLoader;

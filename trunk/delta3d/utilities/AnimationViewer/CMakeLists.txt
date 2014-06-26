@@ -8,7 +8,9 @@ INCLUDE_DIRECTORIES(${QT_INCLUDE_DIR}
 
 SET(SOURCE_PATH ${DELTA3D_SOURCE_DIR}/utilities/${APP_NAME})
 SET(PROG_HEADERS ${SOURCE_PATH}/AnimationTableWidget.h
+                 ${SOURCE_PATH}/AnimationSliderPanel.h
                  ${SOURCE_PATH}/MainWindow.h
+                 ${SOURCE_PATH}/NewCharacterDialog.h
                  ${SOURCE_PATH}/PoseMeshItem.h
                  ${SOURCE_PATH}/PoseMeshProperties.h
                  ${SOURCE_PATH}/PoseMeshScene.h
@@ -18,8 +20,10 @@ SET(PROG_HEADERS ${SOURCE_PATH}/AnimationTableWidget.h
                  ${SOURCE_PATH}/Viewer.h  )
 
 SET(PROG_SOURCES ${SOURCE_PATH}/AnimationTableWidget.cpp
+                 ${SOURCE_PATH}/AnimationSliderPanel.cpp
                  ${SOURCE_PATH}/main.cpp
                  ${SOURCE_PATH}/MainWindow.cpp
+                 ${SOURCE_PATH}/NewCharacterDialog.cpp
                  ${SOURCE_PATH}/PoseMeshItem.cpp
                  ${SOURCE_PATH}/PoseMeshProperties.cpp
                  ${SOURCE_PATH}/PoseMeshScene.cpp
@@ -32,7 +36,9 @@ SET(PROG_SOURCES ${SOURCE_PATH}/AnimationTableWidget.cpp
 
 QT4_ADD_RESOURCES(RCC_SOURCES AnimationViewerResources.qrc)
 qt4_wrap_cpp(MOC_SOURCES ${PROG_HEADERS})
-qt4_wrap_ui(UI_SOURCES PoseMeshProperties.ui
+qt4_wrap_ui(UI_SOURCES AnimationSliderPanel.ui
+                       NewCharacterDialog.ui
+                       PoseMeshProperties.ui
                        ResourceAddDialog.ui)
 
 SOURCE_GROUP("Generated Files" REGULAR_EXPRESSION qrc_.*cxx|moc_.*cxx)

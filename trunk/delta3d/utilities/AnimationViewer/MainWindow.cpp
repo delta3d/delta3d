@@ -1,4 +1,5 @@
 #include "MainWindow.h"
+#include "AnimationSliderPanel.h"
 #include "AnimationTableWidget.h"
 #include "PoseMeshView.h"
 #include "PoseMeshScene.h"
@@ -12,8 +13,10 @@
 #include <osg/Geode> ///needed for the node builder
 #include <dtAnim/animatable.h>
 #include <dtAnim/animnodebuilder.h>
-#include <dtAnim/modeldatabase.h>
 #include <dtAnim/chardrawable.h>
+#include <dtAnim/constants.h>
+#include <dtAnim/modeldatabase.h>
+#include <dtAnim/osgmodelwrapper.h>
 #include <dtCore/deltawin.h>
 #include <dtQt/nodetreepanel.h>
 #include <dtUtil/fileutils.h>
@@ -94,9 +97,15 @@ void ClearTreeWidgetItem(QTreeWidgetItem& item)
 
 ////////////////////////////////////////////////////////////////////////////////
 // Helper Function
-void AddItemsToTreeWidgetItem(QTreeWidgetItem& item,
+void UpdateItemsOnTreeWidgetItem(QTreeWidgetItem& item,
    const dtAnim::BaseModelData& modelData, dtAnim::ModelResourceType fileType)
 {
+   // Clear the current child items.
+   while (item.childCount() > 0)
+   {
+      item.removeChild(item.child(0));
+   }
+
    dtAnim::StrArray nameList;
    modelData.GetObjectNameListForFileTypeSorted(fileType, nameList);
 
@@ -131,6 +140,7 @@ MainWindow::MainWindow()
   , mLoadCharAct(NULL)
   , mSaveCharAct(NULL)
   , mCloseCharAction(NULL)
+  , mToggleAnimSlider(NULL)
   , mToggleDockProperties(NULL)
   , mToggleDockResources(NULL)
   , mToggleDockTools(NULL)
@@ -144,6 +154,7 @@ MainWindow::MainWindow()
   , mAttachmentRotZSpinner(NULL)
   , mCurrentAttachment("")
   , mNodeTreePanel(NULL)
+  , mAnimSliderPanel(NULL)
   , mAnimListWidget(NULL)
   , mMeshListWidget(NULL)
   , mSubMorphTargetListWidget(NULL)
@@ -166,6 +177,8 @@ MainWindow::MainWindow()
   , mObjectNameDelegate(NULL)
 {
    resize(1024, 800);
+
+   mAnimSliderPanel = new AnimationSliderPanel();
 
    mAnimListWidget = new AnimationTableWidget(this);
    mAnimListWidget->setColumnCount(7);
@@ -218,12 +231,14 @@ MainWindow::MainWindow()
    connect(mSubMorphAnimationListWidget, SIGNAL(itemChanged(QTableWidgetItem*)), this, SLOT(OnMorphItemChanged(QTableWidgetItem*)));
    connect(mSubMorphAnimationListWidget, SIGNAL(itemDoubleClicked(QTableWidgetItem*)), this, SLOT(OnMorphItemDoubleClicked(QTableWidgetItem*)));
 
+   connect(this, SIGNAL(SignalCharacterModelUpdated()),
+      this, SLOT(OnUpdateCharacter()), Qt::QueuedConnection);
+
    {
       QStringList headers;
       headers << "Name" << "Weight" << "Delay In" << "Delay Out" << "Mixer Blend";
       mSubMorphAnimationListWidget->setHorizontalHeaderLabels(headers);
    }
-
 
    CreateActions();
    CreateMenus();
@@ -232,12 +247,15 @@ MainWindow::MainWindow()
    CreateDockWidgets();
 
    QWidget* glParent = new QWidget();
+   glParent->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
 
    mCentralLayout = new QHBoxLayout(glParent);
    mCentralLayout->setMargin(0);
    glParent->setLayout(mCentralLayout);
    setCentralWidget(glParent);
 
+   //connect(mToggleAnimSlider, SIGNAL(toggled(bool)), mAnimSliderPanel, SLOT(setVisible(bool)));
+   //mCentralLayout->addWidget(mAnimSliderPanel);
 
    //accept drag & drop operations
    setAcceptDrops(true);
@@ -260,6 +278,7 @@ void MainWindow::CreateMenus()
    viewMenu->addAction(mHardwareSkinningAction);
    viewMenu->addAction(mBoneLabelAction);
    viewMenu->addSeparator();
+   viewMenu->addAction(mToggleAnimSlider);
    viewMenu->addAction(mToggleDockProperties);
    viewMenu->addAction(mToggleDockResources);
    viewMenu->addAction(mToggleDockTools);
@@ -355,6 +374,10 @@ void MainWindow::CreateActions()
    mBoneLabelAction = new QAction(tr("Use Bone Labeling"), this);
    mBoneLabelAction->setCheckable(true);
    mBoneLabelAction->setChecked(true);
+
+   mToggleAnimSlider = new QAction(tr("Animation Slider"), this);
+   mToggleAnimSlider->setCheckable(true);
+   mToggleAnimSlider->setChecked(true);
 
    mToggleDockProperties = new QAction(tr("Properties"), this);
    mToggleDockProperties->setCheckable(true);
@@ -871,12 +894,8 @@ void MainWindow::OnCharacterDataLoaded(dtAnim::BaseModelData* modelData,
    mFileDelegate->SetCharModelWrapper(modelWrapper);
    mObjectNameDelegate->SetCharModelData(modelData);
    mObjectNameDelegate->SetCharModelWrapper(modelWrapper);
-   mFileLabel->setText(modelData->GetModelName().c_str());
-   AddItemsToTreeWidgetItem(*mFileGroupSkel, *modelData, dtAnim::SKEL_FILE);
-   AddItemsToTreeWidgetItem(*mFileGroupAnim, *modelData, dtAnim::ANIM_FILE);
-   AddItemsToTreeWidgetItem(*mFileGroupMesh, *modelData, dtAnim::MESH_FILE);
-   AddItemsToTreeWidgetItem(*mFileGroupMat, *modelData, dtAnim::MAT_FILE);
-   AddItemsToTreeWidgetItem(*mFileGroupMorph, *modelData, dtAnim::MORPH_FILE);
+
+   UpdateResourceFileLists(modelData);
 
    mScaleFactorSpinner->setValue(modelData->GetScale());
 
@@ -1037,16 +1056,36 @@ void MainWindow::OnChangeScaleFactor()
 /////////////////////////////////////////////////////////////////////////////////////////
 void MainWindow::OnToggleHardwareSkinning()
 {
+   bool usingHardwareSkinning = false;
    if (dtAnim::ModelDatabase::IsAvailable())
    {
       QAction* action = qobject_cast<QAction*>(sender());
-      bool usingHardwareSkinning = action->isChecked();
+      usingHardwareSkinning = action->isChecked();
 
       dtAnim::ModelDatabase::GetInstance().SetHardwareMode(usingHardwareSkinning);
    }
-   QSettings settings(SETTINGS_NAME, APP_TITLE);
-   QStringList files = settings.value(SETTINGS_RECENT_FILES).toStringList();
-   LoadCharFile(files.first());
+
+   bool isCal3dSystem = true;
+   dtAnim::CharDrawable* character = mViewer->GetCharacter();
+   if (character != NULL)
+   {
+      isCal3dSystem = dtAnim::Constants::CHARACTER_SYSTEM_CAL3D
+         == character->GetModelWrapper()->GetModelData()->GetCharacterSystemType();
+
+      if (!isCal3dSystem)
+      {
+         dtAnim::OsgModelWrapper* osgModel = dynamic_cast<dtAnim::OsgModelWrapper*>(character->GetModelWrapper());
+         osgModel->SetHardwareMode(usingHardwareSkinning, true);
+      }
+   }
+
+   // HACK: Currently CAL3D needs to reload files for hardware mode toggling.
+   if (isCal3dSystem)
+   {
+      QSettings settings(SETTINGS_NAME, APP_TITLE);
+      QStringList files = settings.value(SETTINGS_RECENT_FILES).toStringList();
+      LoadCharFile(files.first());
+   }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -1542,7 +1581,19 @@ void MainWindow::OnResourceEditEnd(int fileType, const std::string& objectName)
 
    if (reload)
    {
-      ReloadCharFile();
+      dtAnim::BaseModelWrapper* wrapper = mViewer->GetCharacter()->GetModelWrapper();
+      dtAnim::BaseModelData* modelData = wrapper == NULL ? NULL :wrapper->GetModelData();
+      if (modelData != NULL)
+      {
+         if (modelData->GetCharacterSystemType() == dtAnim::Constants::CHARACTER_SYSTEM_CAL3D)
+         {
+            ReloadCharFile();
+         }
+         else
+         {
+            mViewer->GetCharacter()->RebuildSubmeshes();
+         }
+      }
    }
 }
 
@@ -1595,8 +1646,19 @@ void MainWindow::OnResourceNameChanged(int fileType,
 ////////////////////////////////////////////////////////////////////////////////
 void MainWindow::OnResourceAdd()
 {
+   if (mViewer->GetCharacter() == NULL)
+   {
+      OnNewCharFile();
+      if (mViewer->GetCharacter() == NULL)
+      {
+         return;
+      }
+   }
+
    ResAddDialog* dialog = new ResAddDialog(this);
-   dialog->SetModelData(mFileDelegate->GetCharModelData());
+   dtAnim::BaseModelWrapper* wrapper = mViewer->GetCharacter()->GetModelWrapper();
+   dtAnim::BaseModelData* modelData = wrapper->GetModelData();
+   dialog->SetModelWrapper(wrapper);
 
    int retCode = dialog->exec();
 
@@ -1604,7 +1666,11 @@ void MainWindow::OnResourceAdd()
    bool reload = false;
    if (retCode == QDialog::Accepted && dialog->IsDataChanged())
    {
-      reload = true;
+      // CAL3D models need to be reloaded currently.
+      if (modelData->GetCharacterSystemType() == dtAnim::Constants::CHARACTER_SYSTEM_CAL3D)
+      {
+         reload = true;
+      }
    }
 
    delete dialog;
@@ -1612,6 +1678,11 @@ void MainWindow::OnResourceAdd()
    if (reload)
    {
       emit ReloadFile();
+   }
+
+   if (dialog->IsDataChanged())
+   {
+      SignalCharacterModelUpdated();
    }
 }
 
@@ -1654,7 +1725,7 @@ void MainWindow::OnResourceRemoved(int fileType, const std::string& objectName)
    if (modelData != NULL && item != NULL)
    {
       ClearTreeWidgetItem(*item);
-      AddItemsToTreeWidgetItem(*item, *modelData, modelFileType);
+      UpdateItemsOnTreeWidgetItem(*item, *modelData, modelFileType);
    }
 
    // TODO: Update other affected UIs.
@@ -1760,6 +1831,20 @@ void MainWindow::SetupConnectionsWithViewer()
    
    connect(mViewer, SIGNAL(SignalError(const std::string&, const std::string&)),
       this, SLOT(OnError(const std::string&, const std::string&)));
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void MainWindow::UpdateResourceFileLists(dtAnim::BaseModelData* modelData)
+{
+   if (modelData != NULL)
+   {
+      mFileLabel->setText(modelData->GetModelName().c_str());
+      UpdateItemsOnTreeWidgetItem(*mFileGroupSkel, *modelData, dtAnim::SKEL_FILE);
+      UpdateItemsOnTreeWidgetItem(*mFileGroupAnim, *modelData, dtAnim::ANIM_FILE);
+      UpdateItemsOnTreeWidgetItem(*mFileGroupMesh, *modelData, dtAnim::MESH_FILE);
+      UpdateItemsOnTreeWidgetItem(*mFileGroupMat, *modelData, dtAnim::MAT_FILE);
+      UpdateItemsOnTreeWidgetItem(*mFileGroupMorph, *modelData, dtAnim::MORPH_FILE);
+   }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -2044,4 +2129,20 @@ void MainWindow::CreateDockWidgets()
    CreateDockWidget_Tools();
    CreateDockWidget_NodeTools();
    CreateDockWidget_Resources();
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void MainWindow::OnUpdateCharacter()
+{  
+   dtAnim::CharDrawable* character = mViewer->GetCharacter();
+
+   if (character != NULL)
+   {
+      dtAnim::BaseModelWrapper* wrapper = character->GetModelWrapper();
+      dtAnim::BaseModelData* modelData = wrapper->GetModelData();
+
+      mViewer->UpdateCharacter();
+
+      OnCharacterDataLoaded(modelData, wrapper);
+   }
 }

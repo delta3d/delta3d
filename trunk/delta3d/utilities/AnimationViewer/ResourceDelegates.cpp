@@ -182,7 +182,8 @@ void FileItemDelegate::OnOpenFile() const
    mFileType = mCharData->GetFileType(file);
 
    // Determine the filter by file type.
-   QString filter = ModelResourceFilters::GetFilterForFileType(mFileType);
+   QString filter = ModelResourceFilters::FILTER_OSG + " "
+      + ModelResourceFilters::GetFilterForFileType(mFileType);
 
    if (mFileType != dtAnim::NO_FILE) // This case should not be possible.
    {
@@ -193,7 +194,7 @@ void FileItemDelegate::OnOpenFile() const
       std::string modelContext(osgDB::getFilePath(mCharData->GetFilename()));
       QString dir(modelContext.empty() ? "." : modelContext.c_str());
 
-      mNewValue = QFileDialog::getOpenFileName(NULL, "Open Cal3D File", dir, filter);
+      mNewValue = QFileDialog::getOpenFileName(NULL, "Open File", dir, filter);
 
       // Update data now if it is valid.
       if (IsDataValid(mNewValue) && ApplyData(mNewValue))

@@ -65,6 +65,9 @@ namespace dtAnim
       
       void TruncateDatabase();
 
+      bool RegisterModelData(dtAnim::BaseModelData& modelData);
+      bool UnregisterModelData(dtAnim::BaseModelData& modelData);
+
       dtAnim::BaseModelData* GetModelData(const std::string& filename);
 
       dtAnim::BaseModelData* Find(const std::string& filename);

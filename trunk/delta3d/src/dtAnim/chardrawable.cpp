@@ -82,11 +82,17 @@ void CharDrawable::SetNode(osg::Node* node)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-osg::Node* CharDrawable::RebuildSubmeshes()
+osg::Node* CharDrawable::RebuildSubmeshes(bool immediate)
 {
    if (mModel.valid())
    {
-      SetNode(mModel->CreateDrawableNode(false));
+      SetNode(mModel->CreateDrawableNode(immediate));
+
+      if (immediate)
+      {
+         mModel->HandleModelUpdated();
+         mLastMeshCount = mModel->GetMeshCount();
+      }
    }
 
    return mNode.get();

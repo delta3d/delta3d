@@ -235,8 +235,6 @@ namespace dtAnim
       typedef dtAnim::Cal3dBaseSubmesh BaseClass;
 
       Cal3dSubmesh(Cal3DModelWrapper& model, CalSubmesh& submesh);
-      
-      virtual bool IsHardwareRendered() const;
 
       virtual int GetVertexCount() const;
       virtual int GetFaceCount() const;
@@ -283,8 +281,6 @@ namespace dtAnim
       typedef dtAnim::Cal3dBaseSubmesh BaseClass;
 
       Cal3dHardwareSubmesh(CalHardwareModel& model, int index);
-      
-      virtual bool IsHardwareRendered() const { return true; }
 
       int GetID() const;
 
@@ -346,8 +342,6 @@ namespace dtAnim
       typedef dtAnim::Cal3dBaseMesh BaseClass;
 
       Cal3dMesh(Cal3DModelWrapper& model, CalMesh& mesh);
-      
-      virtual bool IsHardwareRendered() const;
 
       virtual int GetID() const;
       
@@ -393,8 +387,6 @@ namespace dtAnim
       typedef dtAnim::Cal3dBaseMesh BaseClass;
 
       Cal3dHardwareMesh(Cal3DModelWrapper& model, CalHardwareModel& hardwareModel, int id);
-      
-      virtual bool IsHardwareRendered() const { return false; }
 
       virtual int GetID() const;
       

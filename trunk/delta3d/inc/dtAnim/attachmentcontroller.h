@@ -124,9 +124,6 @@ namespace dtAnim
        */
       void operator()(AttachmentPair& attachment);
 
-      // HACK:
-      //dtCore::ObserverPtr<osg::Node> mOsgNode;
-
    private:
       dtCore::ObserverPtr<dtAnim::BaseModelWrapper> mModel;
    };

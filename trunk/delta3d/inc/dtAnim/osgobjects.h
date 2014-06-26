@@ -180,8 +180,6 @@ namespace dtAnim
 
       std::string GetName() const;
 
-      virtual bool IsHardwareRendered() const;
-
       virtual int GetVertexCount() const;
       virtual int GetFaceCount() const;
       virtual int GetMorphTargetWeightCount() const;
@@ -223,8 +221,6 @@ namespace dtAnim
       virtual void SetName(const std::string& name);
       virtual const std::string& GetName() const;
 
-      virtual bool IsHardwareRendered() const;
-
       virtual void SetVisible(bool visible);
       virtual bool IsVisible() const;
 
@@ -238,7 +234,6 @@ namespace dtAnim
 
       osg::BoundingBox GetBoundingBox() const;
 
-      void SetHardwareMode(bool hardwareMode);
       bool IsHardwareMode() const;
 
       osg::Geode* GetOsgGeode();

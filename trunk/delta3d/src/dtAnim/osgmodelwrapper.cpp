@@ -6,6 +6,7 @@
 #include <dtAnim/modeldatabase.h>
 #include <dtAnim/osganimator.h>
 #include <dtAnim/osgmodelresourcefinder.h>
+#include <dtAnim/osgnodebuilder.h>
 #include <dtUtil/log.h>
 #include <osg/CopyOp>
 #include <osg/Geode>
@@ -40,14 +41,14 @@ namespace dtAnim
       }
 
       osg::Node* node = mModel->GetDrawableNode();
-      ResFinder finder(ResFinder::SEARCH_ALL);
-      node->accept(finder);
+      dtCore::RefPtr<ResFinder> finder = new ResFinder(ResFinder::SEARCH_ALL);
+      node->accept(*finder);
 
-      Internal_UpdateSkeleton(finder);
-      Internal_UpdateBones(finder);
-      Internal_UpdateMaterials(finder);
-      Internal_UpdateMeshes(finder);
-      Internal_UpdateAnimations(finder);
+      Internal_UpdateSkeleton(*finder);
+      Internal_UpdateBones(*finder);
+      Internal_UpdateMaterials(*finder);
+      Internal_UpdateMeshes(*finder);
+      Internal_UpdateAnimations(*finder);
    }
 
    void OsgInterfaceObjectCache::UpdateAnimations()
@@ -59,10 +60,10 @@ namespace dtAnim
 
       if (node != NULL)
       {
-         ResFinder finder(ResFinder::SEARCH_ANIMATIONS);
-         node->accept(finder);
+         dtCore::RefPtr<ResFinder> finder = new ResFinder(ResFinder::SEARCH_ANIMATIONS);
+         node->accept(*finder);
 
-         Internal_UpdateAnimations(finder);
+         Internal_UpdateAnimations(*finder);
       }
    }
    
@@ -75,10 +76,10 @@ namespace dtAnim
 
       if (node != NULL)
       {
-         ResFinder finder(ResFinder::SEARCH_BONES);
-         node->accept(finder);
+         dtCore::RefPtr<ResFinder> finder = new ResFinder(ResFinder::SEARCH_BONES);
+         node->accept(*finder);
 
-         Internal_UpdateBones(finder);
+         Internal_UpdateBones(*finder);
       }
    }
    
@@ -90,10 +91,10 @@ namespace dtAnim
       
       if (node != NULL)
       {
-         ResFinder finder(ResFinder::SEARCH_MATERIALS);
-         node->accept(finder);
+         dtCore::RefPtr<ResFinder> finder = new ResFinder(ResFinder::SEARCH_MATERIALS);
+         node->accept(*finder);
 
-         Internal_UpdateMaterials(finder);
+         Internal_UpdateMaterials(*finder);
       }
    }
    
@@ -105,10 +106,10 @@ namespace dtAnim
       
       if (node != NULL)
       {
-         ResFinder finder(ResFinder::SEARCH_MESHES);
-         node->accept(finder);
+         dtCore::RefPtr<ResFinder> finder = new ResFinder(ResFinder::SEARCH_MESHES);
+         node->accept(*finder);
 
-         Internal_UpdateMeshes(finder);
+         Internal_UpdateMeshes(*finder);
       }
    }
 
@@ -120,10 +121,10 @@ namespace dtAnim
       
       if (node != NULL)
       {
-         ResFinder finder(ResFinder::SEARCH_SKELETON);
-         node->accept(finder);
+         dtCore::RefPtr<ResFinder> finder = new ResFinder(ResFinder::SEARCH_SKELETON);
+         node->accept(*finder);
 
-         Internal_UpdateSkeleton(finder);
+         Internal_UpdateSkeleton(*finder);
       }
    }
 
@@ -320,9 +321,9 @@ namespace dtAnim
 
    void OsgInterfaceObjectCache::Internal_UpdateSkeleton(ResFinder& finder)
    {
-      if (finder.mSkel.valid())
+      if (finder.mSkeleton.valid())
       {
-         mSkel = new dtAnim::OsgSkeleton(*GetOsgModelWrapper(), *finder.mSkel);
+         mSkel = new dtAnim::OsgSkeleton(*GetOsgModelWrapper(), *finder.mSkeleton);
       }
    }
 
@@ -333,6 +334,7 @@ namespace dtAnim
    /////////////////////////////////////////////////////////////////////////////
    OsgModelWrapper::OsgModelWrapper(OsgModelData& modelData)
       : BaseClass(modelData)
+      , mHardwareMode(false)
       , mScale(1.0f)
    {
       mCache = new dtAnim::OsgInterfaceObjectCache(*this);
@@ -618,21 +620,21 @@ namespace dtAnim
       return mScale;
    }
 
-   void OsgModelWrapper::SetHardwareMode(bool hardwareMode)
+   void OsgModelWrapper::SetHardwareMode(bool hardwareMode, bool forced)
    {
-      typedef OsgInterfaceObjectCache::MeshMap MeshMap;
-      MeshMap::iterator curIter = mCache->mMeshes.begin();
-      MeshMap::iterator endIter = mCache->mMeshes.end();
-      for (; curIter != endIter; ++curIter)
+      if (forced || mHardwareMode != hardwareMode)
       {
-         curIter->second->SetHardwareMode(hardwareMode);
+         dtCore::RefPtr<dtAnim::OsgNodeBuilder> nodeBuilder = new dtAnim::OsgNodeBuilder;
+         if (nodeBuilder->EnsureMode(*this, *mNode, hardwareMode))
+         {
+            mHardwareMode = hardwareMode;
+         }
       }
    }
 
    bool OsgModelWrapper::IsHardwareMode() const
    {
-      return ! mCache->mMeshes.empty()
-         && mCache->mMeshes.begin()->second->IsHardwareMode();
+      return mHardwareMode;
    }
 
    void OsgModelWrapper::HandleModelResourceUpdate(dtAnim::ModelResourceType resourceType)
