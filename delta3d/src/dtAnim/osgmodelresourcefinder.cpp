@@ -4,12 +4,12 @@
 ////////////////////////////////////////////////////////////////////////////////
 #include <dtAnim/osgmodelresourcefinder.h>
 #include <dtUtil/log.h>
+#include <osgAnimation/BasicAnimationManager>
+#include <osgAnimation/MorphGeometry>
+#include <osgAnimation/Skeleton>
 #include <osg/CopyOp>
 #include <osg/Geode>
 #include <osg/MatrixTransform>
-#include <osgAnimation/BasicAnimationManager>
-#include <osgAnimation/Bone>
-#include <osgAnimation/Skeleton>
 #include <sstream>
 #include <algorithm>
 
@@ -26,23 +26,57 @@ namespace dtAnim
    OsgModelResourceFinder::~OsgModelResourceFinder()
    {}
 
+   void OsgModelResourceFinder::AcquireCommonObjects(osg::Node& node)
+   {
+      AcquireAnimationManager(node);
+      AcquireMaterial(node);
+   }
+
    void OsgModelResourceFinder::AcquireAnimationManager(osg::Node& node)
    {
-      if (mMode == SEARCH_ALL || mMode == SEARCH_ANIMATIONS)
-      {
-         osg::NodeCallback* ucb = node.getUpdateCallback();
+      osg::NodeCallback* ucb = node.getUpdateCallback();
 
-         if (ucb != NULL && (0 == strcmp(ucb->className(), "BasicAnimationManager")))
+      if (ucb != NULL)
+      {
+         AcquireAnimationManagerFromCallback(*ucb, node);
+      }
+   }
+
+   void OsgModelResourceFinder::AcquireAnimationManagerFromCallback(osg::NodeCallback& callback, osg::Node& node)
+   {
+      if (mMode == SEARCH_ALL || mMode == SEARCH_ANIMATIONS || mMode == SEARCH_MORPHS)
+      {
+         if (0 == strcmp(callback.className(), "BasicAnimationManager"))
          {
             osgAnimation::BasicAnimationManager* animManager
-               = static_cast<osgAnimation::BasicAnimationManager*>(ucb);
+               = static_cast<osgAnimation::BasicAnimationManager*>(&callback);
             mAnimManagers.push_back(animManager);
             mAnimNodes.push_back(&node);
+         }
+         else if (0 == strcmp(callback.className(), "UpdateMorph"))
+         {
+            osgAnimation::UpdateMorph* morphManager
+               = static_cast<osgAnimation::UpdateMorph*>(&callback);
+            mMorphManagers.insert(std::make_pair(morphManager, &node));
          }
       }
    }
 
-   void OsgModelResourceFinder::AcquireMaterial(osg::Geode& geode)
+   void OsgModelResourceFinder::AcquireMaterial(osg::Node& node)
+   {
+      if (mMode == SEARCH_ALL || mMode == SEARCH_MATERIALS)
+      {
+         // Determine if the node has material assignment.
+         osg::StateSet* stateSet = node.getStateSet();
+         if (stateSet != NULL)
+         {
+            mMaterials.push_back(stateSet);
+            mMaterialToObjectMap.insert(std::make_pair(stateSet, &node));
+         }
+      }
+   }
+
+   void OsgModelResourceFinder::AcquireMaterialFromGeometry(osg::Geode& geode)
    {
       if (mMode == SEARCH_ALL || mMode == SEARCH_MATERIALS)
       {
@@ -59,14 +93,33 @@ namespace dtAnim
             if (stateSet != NULL && std::find(mMaterials.begin(), mMaterials.end(), stateSet) == mMaterials.end())
             {
                mMaterials.push_back(stateSet);
+               mMaterialToObjectMap.insert(std::make_pair(stateSet, curIter->get()));
             }
+         }
+      }
+   }
+
+   void OsgModelResourceFinder::AcquireMorphs(osg::Geode& geode)
+   {
+      osg::Drawable* curDrawable = NULL;
+      const osg::Geode::DrawableList& geoms = geode.getDrawableList();
+      osg::Geode::DrawableList::const_iterator curIter = geoms.begin();
+      osg::Geode::DrawableList::const_iterator endIter = geoms.end();
+      for (; curIter != endIter; ++curIter)
+      {
+         curDrawable = curIter->get();
+         if (0 == strcmp(curDrawable->className(), "MorphGeometry"))
+         {
+            osgAnimation::MorphGeometry* morph
+               = static_cast<osgAnimation::MorphGeometry*>(curDrawable);
+            mMorphs.push_back(morph);
          }
       }
    }
 
    void OsgModelResourceFinder::apply(osg::Node& node)
    {
-      AcquireAnimationManager(node);
+      AcquireCommonObjects(node);
 
       traverse(node);
    }
@@ -83,30 +136,38 @@ namespace dtAnim
          }
          else if (0 == strcmp(node.className(), "Skeleton"))
          {
-            mSkel = static_cast<osgAnimation::Skeleton*>(&node);
+            mSkeleton = static_cast<osgAnimation::Skeleton*>(&node);
          }
       }
 
-      AcquireAnimationManager(node);
+      AcquireCommonObjects(node);
 
       traverse(node);
    }
 
    void OsgModelResourceFinder::apply(osg::Geode& node)
    {
-      if (mMode == SEARCH_ALL || mMode == SEARCH_MESHES)
+      if (mMode == SEARCH_ALL || mMode == SEARCH_MESHES || mMode == SEARCH_MORPHS)
       {
-         // Add the geode directly if it is not already
-         // referenced in the meshes array.
-         if (std::find(mMeshes.begin(), mMeshes.end(), &node)
-            == mMeshes.end())
+         if (mMode == SEARCH_ALL || mMode == SEARCH_MORPHS)
          {
-            mMeshes.push_back(&node);
+            AcquireMorphs(node);
+         }
+
+         if (mMode == SEARCH_ALL || mMode == SEARCH_MESHES)
+         {
+            // Add the geode directly if it is not already
+            // referenced in the meshes array.
+            if (std::find(mMeshes.begin(), mMeshes.end(), &node)
+               == mMeshes.end())
+            {
+               mMeshes.push_back(&node);
+            }
          }
       }
 
-      AcquireAnimationManager(node);
-      AcquireMaterial(node);
+      AcquireCommonObjects(node);
+      AcquireMaterialFromGeometry(node);
 
       traverse(node);
    }
@@ -117,7 +178,11 @@ namespace dtAnim
       mAnimManagers.clear();
       mBones.clear();
       mMeshes.clear();
-      mSkel = NULL;
+      mMorphs.clear();
+      mMorphManagers.clear();
+      mSkeleton = NULL;
+
+      mMaterialToObjectMap.clear();
    }
 
    void OsgModelResourceFinder::Reset()
@@ -143,6 +208,29 @@ namespace dtAnim
       }
 
       return results;
+   }
+
+   osg::Geode* OsgModelResourceFinder::GetGeodeByName(const std::string& name) const
+   {
+      osg::Geode* geode = NULL;
+
+      OsgGeodeArray::const_iterator curIter = mMeshes.begin();
+      OsgGeodeArray::const_iterator endIter = mMeshes.end();
+      for (; curIter != endIter; ++curIter)
+      {
+         geode = curIter->get();
+
+         if (geode->getName() == name)
+         {
+            break;
+         }
+         else
+         {
+            geode = NULL;
+         }
+      }
+
+      return geode;
    }
 
 }

@@ -8,7 +8,7 @@
 #include "ui_ResourceAddDialog.h"
 #include <QtGui/QDialog>
 #include <dtCore/observerptr.h>
-#include <dtAnim/basemodeldata.h>
+#include <dtAnim/basemodelwrapper.h>
 
 
 
@@ -30,6 +30,7 @@ namespace Ui
 class ModelResourceFilters
 {
 public:
+   static const QString FILTER_OSG;
    static const QString FILTER_ANY;
    static const QString FILTER_ALL_NOT_SKEL;
    static const QString FILTER_SKEL;
@@ -54,6 +55,7 @@ class ModelResourceIcons
 {
 public:
    static const QString ICON_NONE;
+   static const QString ICON_MIXED;
    static const QString ICON_SKEL;
    static const QString ICON_ANIM;
    static const QString ICON_MESH;
@@ -80,7 +82,7 @@ public:
 
    ResAddDialog(QWidget* parent = 0);
 
-   void SetModelData(dtAnim::BaseModelData* modelData);
+   void SetModelWrapper(dtAnim::BaseModelWrapper* wrapper);
 
    bool IsDataChanged() const;
 
@@ -95,10 +97,12 @@ protected:
    virtual void accept();
    void UpdateUI();
 
+   void SetupResourceTypeList();
+
 private:
    bool mDataChanged;
    Ui::ResourceAddDialog mUI;
-   dtCore::ObserverPtr<dtAnim::BaseModelData> mModelData;
+   dtCore::ObserverPtr<dtAnim::BaseModelWrapper> mWrapper;
 };
 
 #endif

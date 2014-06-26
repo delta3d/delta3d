@@ -5,11 +5,111 @@
 #include <dtAnim/osgmodeldata.h>
 #include <dtAnim/constants.h>
 #include <dtAnim/osgmodelresourcefinder.h>
+#include <dtAnim/osgloader.h>
+#include <dtUtil/log.h>
+#include <osg/Geode>
+#include <osgAnimation/BasicAnimationManager>
+#include <osgAnimation/MorphGeometry>
+#include <osgAnimation/RigGeometry>
+#include <osgAnimation/Skeleton>
 
 
 
 namespace dtAnim
 {
+   /////////////////////////////////////////////////////////////////////////////
+   // CLASS CODE
+   /////////////////////////////////////////////////////////////////////////////
+   class OsgModelResourceCloner : public osg::CopyOp
+   {
+   public:
+      typedef osg::CopyOp BaseClass;
+
+      OsgModelResourceCloner(osg::CopyOp::CopyFlags flags, dtAnim::ModelResourceType mode)
+         : BaseClass(flags)
+         , mMode(mode)
+      {}
+
+      virtual ~OsgModelResourceCloner()
+      {}
+      
+      virtual osg::Node* operator() (const osg::Node* node) const
+      {
+         bool copyNode = false;
+
+         if (mMode == dtAnim::MIXED_FILE)
+         {
+            copyNode = true;
+         }
+         else if (mMode == dtAnim::MESH_FILE)
+         {
+            if (strcmp(node->className(), "Geode") == 0)
+            {
+               copyNode = true;
+            }
+         }
+         else if (mMode == dtAnim::SKEL_FILE)
+         {
+            if (strcmp(node->className(), "MatrixTransform") == 0
+               || strcmp(node->className(), "Bone") == 0
+               || strcmp(node->className(), "Skeleton") == 0)
+            {
+               copyNode = true;
+            }
+         }
+
+         if (copyNode)
+         {
+             return BaseClass::operator()(node);
+         }
+
+         return NULL;
+      }
+
+      virtual osg::StateSet* operator() (const osg::StateSet* stateset) const
+      {
+         if (mMode == dtAnim::MIXED_FILE || mMode == dtAnim::MAT_FILE)
+         {
+            return BaseClass::operator()(stateset);
+         }
+
+         return NULL;
+      }
+
+      virtual osg::NodeCallback* operator() (const osg::NodeCallback* nodecallback) const
+      {
+         if (nodecallback == NULL)
+         {
+            return NULL;
+         }
+
+         if (mMode == dtAnim::MIXED_FILE || mMode == dtAnim::ANIM_FILE || mMode == dtAnim::SKEL_FILE)
+         {
+            bool allowCopy = true;
+
+            // Prevent copying the animation manager if one exists on a skeleton
+            if (mMode == dtAnim::SKEL_FILE)
+            {
+               allowCopy = ! (strcmp(nodecallback->className(), "BasicAnimationManager") == 0
+                  || strcmp(nodecallback->className(), "TimelineManager") == 0);
+            }
+
+            if (allowCopy)
+            {
+               return BaseClass::operator()(nodecallback);
+            }
+         }
+
+         return NULL;
+      }
+
+   protected:
+      osg::CopyOp mOptions;
+      dtAnim::ModelResourceType mMode;
+   };
+
+
+
    /////////////////////////////////////////////////////////////////////////////
    // CLASS CODE
    /////////////////////////////////////////////////////////////////////////////
@@ -98,8 +198,18 @@ namespace dtAnim
    int OsgModelData::LoadResource(dtAnim::ModelResourceType resourceType,
       const std::string& file, const std::string& objectName)
    {
-      // TODO:
-      return 0;
+      dtCore::RefPtr<dtAnim::OsgLoader> loader = new dtAnim::OsgLoader;
+      
+      dtCore::RefPtr<osg::Node> node = loader->LoadResourceFile(file, resourceType);
+      if (node.valid())
+      {
+         if (ApplyNodeToModel(resourceType, *node) > 0)
+         {
+            RegisterFile(file, objectName, resourceType);
+         }
+      }
+
+      return node.valid() ? 1 : 0;
    }
 
    int OsgModelData::UnloadResource(dtAnim::ModelResourceType resourceType, const std::string& objectName)
@@ -110,7 +220,8 @@ namespace dtAnim
 
    dtAnim::ModelResourceType OsgModelData::GetFileType(const std::string& file) const
    {
-      // TODO:
+      // Do nothing. OSG can load many file types so a specific
+      // resource type cannot be inferred by the file extension.
       return dtAnim::NO_FILE;
    }
 
@@ -124,12 +235,12 @@ namespace dtAnim
    {
       if (mCoreModel.valid())
       {
-         OsgModelResourceFinder resFinder;
-         mCoreModel->accept(resFinder);
+         dtCore::RefPtr<OsgModelResourceFinder> resFinder = new OsgModelResourceFinder;
+         mCoreModel->accept(*resFinder);
 
          typedef OsgModelResourceFinder::OsgAnimationArray OsgAnimArray;
          OsgAnimArray anims;
-         resFinder.GetAnimations(anims);
+         resFinder->GetAnimations(anims);
 
          osgAnimation::Animation* anim = NULL;
          OsgAnimArray::iterator curIter = anims.begin();
@@ -161,6 +272,362 @@ namespace dtAnim
          {
             anim->setWeight(1.0f);
          }
+      }
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   int OsgModelData::ApplyAnimationsToModel(OsgModelResourceFinder& finder)
+   {
+      int results = 0;
+
+      typedef dtAnim::OsgModelResourceFinder::OsgAnimationArray OsgAnimationArray;
+      typedef dtAnim::OsgModelResourceFinder::OsgAnimManagerArray OsgAnimManagerArray;
+
+      osg::Node* node = GetOrCreateModelNode();
+
+      // Acquire or create an animation manager in the original model.
+      dtCore::RefPtr<OsgModelResourceFinder> finderOfOriginal = new OsgModelResourceFinder;
+      node->accept(*finderOfOriginal);
+
+      // Get or create a new animation manager for the current model.
+      dtCore::RefPtr<osgAnimation::BasicAnimationManager> originalAnimManager;
+
+      if ( ! finderOfOriginal->mAnimManagers.empty())
+      {
+         dtCore::RefPtr<osgAnimation::BasicAnimationManager> originalAnimManager = finderOfOriginal->mAnimManagers.front();
+      }
+
+      // Create the animation manager if it does not yet exist.
+      if ( ! originalAnimManager.valid())
+      {
+         originalAnimManager = new osgAnimation::BasicAnimationManager;
+         node->addUpdateCallback(originalAnimManager);
+      }
+
+      // Find all the new animations and add them to the original
+      // animation manager on the current model.
+      osgAnimation::BasicAnimationManager* animManager = NULL;
+      OsgAnimManagerArray::iterator curIter = finder.mAnimManagers.begin();
+      OsgAnimManagerArray::iterator endIter = finder.mAnimManagers.end();
+      for (; curIter != endIter; ++curIter)
+      {
+         animManager = curIter->get();
+
+         osgAnimation::Animation* anim = NULL;
+         const osgAnimation::AnimationList& animList = animManager->getAnimationList();
+         osgAnimation::AnimationList::const_iterator curAnimIter = animList.begin();
+         osgAnimation::AnimationList::const_iterator endAnimIter = animList.end();
+         for (; curAnimIter != endAnimIter; ++curAnimIter)
+         {
+            anim = curAnimIter->get();
+
+            originalAnimManager->registerAnimation(anim);
+            ++results;
+         }
+      }
+
+      return results;
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   int OsgModelData::ApplyMaterialsToModel(OsgModelResourceFinder& finder)
+   {
+      int results = (int)(finder.mMaterials.size());
+
+      if (results > 0)
+      {
+         mMaterials.insert(mMaterials.end(), finder.mMaterials.begin(), finder.mMaterials.end());
+      }
+
+      // TODO: Replace materials on existing meshses???
+      
+      return results;
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   int OsgModelData::ApplyMeshesToModel(OsgModelResourceFinder& finder)
+   {
+      int results = 0;
+      osgAnimation::Skeleton* skel = GetOrCreateSkeleton();
+
+      dtCore::RefPtr<osg::Geode> geode = NULL;
+      typedef OsgModelResourceFinder::OsgGeodeArray OsgGeodeArray;
+      OsgGeodeArray::iterator curIter = finder.mMeshes.begin();
+      OsgGeodeArray::iterator endIter = finder.mMeshes.end();
+      for (; curIter != endIter; ++curIter)
+      {
+         geode = curIter->get();
+
+         // Remove the mesh from its current parents
+         while (geode->getNumParents())
+         {
+            osg::Group* parent = geode->getParent(0);
+            parent->removeChild(geode);
+         }
+
+         skel->addChild(geode);
+
+         // If there are rig geometries, make sure they have references
+         // to the currently loaded skeleton.
+         osgAnimation::RigGeometry* rigGeom = NULL;
+         const osg::Geode::DrawableList& geoms = geode->getDrawableList();
+         osg::Geode::DrawableList::const_iterator curIter = geoms.begin();
+         osg::Geode::DrawableList::const_iterator endIter = geoms.end();
+         for (; curIter != endIter; ++curIter)
+         {
+            rigGeom = dynamic_cast<osgAnimation::RigGeometry*>(curIter->get());
+            if (rigGeom != NULL)
+            {
+               rigGeom->setSkeleton(skel);
+            }
+         }
+
+         ++results;
+      }
+
+      return results;
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   int OsgModelData::ApplyMorphTargetsToModel(OsgModelResourceFinder& finder)
+   {
+      // TODO:
+      return 0;
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   int OsgModelData::ApplySkeletonToModel(OsgModelResourceFinder& finder)
+   {
+      int results = 0;
+
+      if (finder.mSkeleton.valid())
+      {
+         dtCore::RefPtr<osgAnimation::Skeleton> oldSkel = mSkeleton;
+         
+         // Keep track of the new root skeleton node.
+         OsgModelResourceCloner clonerOp(DEFAULT_COPY_OPTIONS, dtAnim::SKEL_FILE);
+         mSkeleton = dynamic_cast<osgAnimation::Skeleton*>(finder.mSkeleton->clone(clonerOp));
+
+         // Determine if there is already an existing model root node.
+         osg::Node* node = GetCoreModel();
+         if (node == NULL)
+         {
+            // Set the current skeleton node as the root for the model.
+            SetCoreModel(mSkeleton.get());
+         }
+         else // Determine if there is an existing skeleton in the current model.
+         {
+            dtCore::RefPtr<OsgModelResourceFinder> originalFinder
+               = new OsgModelResourceFinder(OsgModelResourceFinder::SEARCH_SKELETON);
+            node->accept(*originalFinder);
+
+            if (originalFinder->mSkeleton.valid())
+            {
+               if (oldSkel.valid() && oldSkel.get() != originalFinder->mSkeleton.get())
+               {
+                  LOG_WARNING("Old skeleton for model \"" + GetModelName() + "\" not the same as previously created skeleton.");
+               }
+
+               oldSkel = originalFinder->mSkeleton;
+            }
+
+            // If the old skeleton is the current root node...
+            if (oldSkel == node)
+            {
+               // ...replace it with the new skeleton.
+               SetCoreModel(mSkeleton);
+            }
+         }
+
+         // Replace old skeleton with the new skeleton.
+         if (oldSkel.valid())
+         {
+            // Transfer the children nodes from the old node to the new one.
+            osg::Node* child = NULL;
+            while (oldSkel->getNumChildren() > 0)
+            {
+               child = oldSkel->getChild(0);
+               mSkeleton->addChild(child);
+               oldSkel->removeChild(child);
+            }
+               
+            // Attach the new node to the old node's parent(s).
+            // Remove the old node from its parents.
+            while (oldSkel->getNumParents() > 0)
+            {
+               osg::Group* parent = oldSkel->getParent(0);
+               parent->removeChild(oldSkel.get());
+               parent->addChild(mSkeleton.get());
+            }
+         }
+
+         ++results;
+      }
+
+      return results;
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   int OsgModelData::ApplyAllResourcesToModel(OsgModelResourceFinder& finder)
+   {
+      int results = 0;
+
+      results += ApplySkeletonToModel(finder);
+      results += ApplyMeshesToModel(finder);
+      results += ApplyMaterialsToModel(finder);
+      results += ApplyAnimationsToModel(finder);
+      results += ApplyMorphTargetsToModel(finder);
+
+      return results;
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   int OsgModelData::ApplyResourcesToModel(dtAnim::ModelResourceType resType,
+      OsgModelResourceFinder& finder)
+   {
+      int results = 0;
+
+      switch (resType)
+      {
+      case dtAnim::ANIM_FILE:
+         results += ApplyAnimationsToModel(finder);
+         break;
+
+      case dtAnim::MAT_FILE:
+         results += ApplyMaterialsToModel(finder);
+         break;
+
+      case dtAnim::MESH_FILE:
+         results += ApplyMeshesToModel(finder);
+         break;
+
+      case dtAnim::MORPH_FILE:
+         results += ApplyMorphTargetsToModel(finder);
+         break;
+
+      case dtAnim::SKEL_FILE:
+         results += ApplySkeletonToModel(finder);
+         break;
+
+      case dtAnim::MIXED_FILE:
+      default:
+         results += ApplyAllResourcesToModel(finder);
+         break;
+      }
+
+      return results;
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   int OsgModelData::ApplyNodeToModel(dtAnim::ModelResourceType resType, osg::Node& node)
+   {
+      int results = 0;
+      
+      // Apply resources from the node but only search for
+      // resources if a model node already exists; otherwise,
+      // the node will be the new model.
+
+      if (GetCoreModel() == NULL)
+      {
+         SetCoreModel(&node);
+         ++results;
+      }
+      else // Add new resource nodes to existing model.
+      {
+         dtCore::RefPtr<OsgModelResourceFinder> newFinder = new OsgModelResourceFinder;
+         SetFinderMode(resType, *newFinder);
+         node.accept(*newFinder);
+
+         results += ApplyResourcesToModel(resType, *newFinder);
+      }
+
+      return results;
+   }
+   
+   /////////////////////////////////////////////////////////////////////////////
+   osg::Node* OsgModelData::GetOrCreateModelNode()
+   {
+      if ( ! mCoreModel.valid())
+      {
+         dtCore::RefPtr<osg::MatrixTransform> xform = new osg::MatrixTransform;
+         mCoreModel = xform.get();
+         mCoreModel->setName(GetModelName());
+
+         mSkeleton = new osgAnimation::Skeleton;
+         mSkeleton->setName("Skeleton");
+         xform->addChild(mSkeleton.get());
+
+         SetCoreModel(mCoreModel.get());
+      }
+
+      return mCoreModel.get();
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   osgAnimation::Skeleton* OsgModelData::GetOrCreateSkeleton()
+   {
+      osgAnimation::Skeleton* skel = NULL;
+
+      if (mSkeleton.valid())
+      {
+         skel = mSkeleton.get();
+      }
+      else
+      {
+         // Determine if a skeleton node is somewhere under the
+         // current root model node.
+         osg::Node* node = GetCoreModel();
+         if (node != NULL)
+         {
+            dtCore::RefPtr<OsgModelResourceFinder> originalFinder
+               = new OsgModelResourceFinder(OsgModelResourceFinder::SEARCH_SKELETON);
+            node->accept(*originalFinder);
+            mSkeleton = originalFinder->mSkeleton;
+
+            skel = mSkeleton.get();
+         }
+      }
+
+      // If nothing was found, create a new skeleton node.
+      if (skel == NULL)
+      {
+         GetOrCreateModelNode();
+
+         // The skeleton reference should have been created in GetOrCreateModelNode.
+         skel = mSkeleton.get();
+      }
+
+      return skel;
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void OsgModelData::SetFinderMode(dtAnim::ModelResourceType resType, OsgModelResourceFinder& finder)
+   {
+      switch (resType)
+      {
+      case dtAnim::ANIM_FILE:
+         finder.mMode = OsgModelResourceFinder::SEARCH_ANIMATIONS;
+         break;
+
+      case dtAnim::MAT_FILE:
+         finder.mMode = OsgModelResourceFinder::SEARCH_MATERIALS;
+         break;
+
+      case dtAnim::MESH_FILE:
+         finder.mMode = OsgModelResourceFinder::SEARCH_MESHES;
+         break;
+
+      case dtAnim::MORPH_FILE:
+         finder.mMode = OsgModelResourceFinder::SEARCH_MORPHS;
+         break;
+
+      case dtAnim::SKEL_FILE:
+         finder.mMode = OsgModelResourceFinder::SEARCH_SKELETON;
+         break;
+
+      default:
+         finder.mMode = OsgModelResourceFinder::SEARCH_ALL;
+         break;
       }
    }
 

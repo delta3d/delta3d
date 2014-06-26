@@ -156,7 +156,7 @@ namespace dtAnim
       virtual void SetScale(float scale);
       virtual float GetScale() const;
 
-      void SetHardwareMode(bool hardwareMode);
+      void SetHardwareMode(bool hardwareMode, bool forced = false);
       bool IsHardwareMode() const;
 
       /**
@@ -177,6 +177,7 @@ namespace dtAnim
       void Internal_UpdateAnimatorObject();
 
    private:
+      bool mHardwareMode;
       float mScale;
       dtCore::RefPtr<dtAnim::OsgInterfaceObjectCache> mCache;
       dtCore::RefPtr<dtAnim::OsgAnimator> mAnimator;

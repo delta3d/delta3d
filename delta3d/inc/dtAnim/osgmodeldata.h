@@ -11,8 +11,17 @@
 
 
 
+namespace osgAnimation
+{
+   class Skeleton;
+}
+
 namespace dtAnim
 {
+   class OsgModelResourceFinder;
+
+
+
    /////////////////////////////////////////////////////////////////////////////
    // CLASS CODE
    /////////////////////////////////////////////////////////////////////////////
@@ -48,6 +57,25 @@ namespace dtAnim
       virtual dtAnim::ModelResourceType GetFileType(const std::string& file) const;
 
       virtual int GetIndexForObjectName(ModelResourceType fileType, const std::string& objectName) const;
+      
+      int ApplyAnimationsToModel(OsgModelResourceFinder& finder);
+      int ApplyMaterialsToModel(OsgModelResourceFinder& finder);
+      int ApplyMeshesToModel(OsgModelResourceFinder& finder);
+      int ApplyMorphTargetsToModel(OsgModelResourceFinder& finder);
+      int ApplySkeletonToModel(OsgModelResourceFinder& finder);
+      
+      int ApplyAllResourcesToModel(OsgModelResourceFinder& finder);
+   
+      int OsgModelData::ApplyResourcesToModel(dtAnim::ModelResourceType resType,
+         OsgModelResourceFinder& finder);
+
+      int ApplyNodeToModel(dtAnim::ModelResourceType resType, osg::Node& node);
+      
+      osg::Node* GetOrCreateModelNode();
+
+      osgAnimation::Skeleton* GetOrCreateSkeleton();
+
+      void SetFinderMode(dtAnim::ModelResourceType resType, OsgModelResourceFinder& finder);
 
    protected:
       virtual ~OsgModelData();
@@ -62,6 +90,10 @@ namespace dtAnim
 
       typedef std::map<std::string, dtCore::RefPtr<osgAnimation::Animation> > AnimMap;
       AnimMap mCoreAnims;
+      dtCore::RefPtr<osgAnimation::Skeleton> mSkeleton;
+
+      typedef std::vector<dtCore::RefPtr<osg::StateSet> > MaterialArray;
+      MaterialArray mMaterials;
    };
 
 }

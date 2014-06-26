@@ -3,6 +3,9 @@
 // INCLUDE DIRECTIVES
 ////////////////////////////////////////////////////////////////////////////////
 #include "ResourceDialogs.h"
+// DELTA3D
+#include <dtAnim/basemodeldata.h>
+#include <dtAnim/constants.h>
 // OSG
 #include <osgDB/FileNameUtils>
 #include <osgDB/ReadFile>
@@ -16,6 +19,7 @@
 /////////////////////////////////////////////////////////////////////////////////
 // CAL3D RESOURCE FILTERS CLASS CODE
 /////////////////////////////////////////////////////////////////////////////////
+const QString ModelResourceFilters::FILTER_OSG("OSG (*.osg *.ive *.dae *.fbx)");
 const QString ModelResourceFilters::FILTER_ANY("Cal3D (*.csf *.xsf *.caf *.xaf *.cmf *.xmf *.crf *.xrf *.cpf *.xpf)");
 const QString ModelResourceFilters::FILTER_ALL_NOT_SKEL("Cal3D (*.caf *.xaf *.cmf *.xmf *.crf *.xrf *.cpf *.xpf)");
 const QString ModelResourceFilters::FILTER_SKEL("Skeletons (*.csf *.xsf)");
@@ -62,6 +66,7 @@ const QString& ModelResourceFilters::GetFilterForFileType(int fileType)
 // CAL3D RESOURCE ICONS CLASS CODE
 /////////////////////////////////////////////////////////////////////////////////
 const QString ModelResourceIcons::ICON_NONE("");
+const QString ModelResourceIcons::ICON_MIXED(":/images/fileIconSkel.png");
 const QString ModelResourceIcons::ICON_SKEL(":/images/fileIconSkel.png");
 const QString ModelResourceIcons::ICON_ANIM(":/images/fileIconAnim.png");
 const QString ModelResourceIcons::ICON_MESH(":/images/fileIconMesh.png");
@@ -78,6 +83,9 @@ const QIcon ModelResourceIcons::GetIconForFileType(int fileType)
    dtAnim::ModelResourceType modelFileType = dtAnim::ModelResourceType(fileType);
    switch(modelFileType)
    {
+   case dtAnim::MIXED_FILE:
+      icon = &ModelResourceIcons::ICON_MIXED;
+      break;
    case dtAnim::SKEL_FILE:
       icon = &ModelResourceIcons::ICON_SKEL;
       break;
@@ -120,9 +128,29 @@ ResAddDialog::ResAddDialog(QWidget* parent)
 }
 
 /////////////////////////////////////////////////////////////////////////////////
-void ResAddDialog::SetModelData(dtAnim::BaseModelData* modelData)
+void ResAddDialog::SetModelWrapper(dtAnim::BaseModelWrapper* wrapper)
 {
-   mModelData = modelData;
+   mWrapper = wrapper;
+   dtAnim::BaseModelData* modelData = mWrapper.valid() ? mWrapper->GetModelData() : NULL;
+
+   if (modelData != NULL)
+   {
+      // Setup and enable the resource type selection combo box
+      // if the character system of the model is not for CAL3D.
+      if (modelData->GetCharacterSystemType() != dtAnim::Constants::CHARACTER_SYSTEM_CAL3D)
+      {
+         SetupResourceTypeList();
+
+         mUI.mComboResourceType->setEnabled(true);
+      }
+      else // CAL3D character system.
+      {
+         // The CAL3D resource type will be determined by file
+         // extension, so the resource type combo box is irrelevant
+         // and should be disabled.
+         mUI.mComboResourceType->setEnabled(false);
+      }
+   }
 }
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -153,12 +181,18 @@ void ResAddDialog::OnClickedFile()
    // Get the location of the model file.
    std::string modelContext;
    QStringList filters;
-   if (mModelData.valid())
+
+   // OSG formats should always be available.
+   filters << ModelResourceFilters::FILTER_OSG;
+
+   dtAnim::BaseModelData* modelData = mWrapper->GetModelData();
+
+   if (modelData != NULL)
    {
-      modelContext = osgDB::getFilePath(mModelData->GetFilename());
+      modelContext = osgDB::getFilePath(modelData->GetFilename());
 
       // Prevent adding more skeleton files, only one is allowed.
-      if (mModelData->GetFileCount(dtAnim::SKEL_FILE) > 0)
+      if (modelData->GetFileCount(dtAnim::SKEL_FILE) > 0)
       {
          filters << ModelResourceFilters::FILTER_ALL_NOT_SKEL;
       }
@@ -167,6 +201,11 @@ void ResAddDialog::OnClickedFile()
          filters << ModelResourceFilters::FILTER_ANY;
          filters << ModelResourceFilters::FILTER_SKEL;
       }
+   }
+   else // Nothing is loaded so allow loading of skeleton file.
+   {
+      filters << ModelResourceFilters::FILTER_ANY;
+      filters << ModelResourceFilters::FILTER_SKEL;
    }
 
    // Add common filters.
@@ -177,7 +216,7 @@ void ResAddDialog::OnClickedFile()
 
    QString dir(modelContext.empty() ? "." : modelContext.c_str());
    QString filterStr(filters.join(";;"));
-   QString file = QFileDialog::getOpenFileName(NULL, "Add Cal3D File", dir, filterStr);
+   QString file = QFileDialog::getOpenFileName(NULL, "Add File", dir, filterStr);
    mUI.mFile->setText(file);
 
    UpdateUI();
@@ -188,27 +227,40 @@ void ResAddDialog::accept()
 {
    BaseClass::accept();
 
+   dtAnim::BaseModelData* modelData = mWrapper->GetModelData();
+
    std::string objName(mUI.mObjectName->text().toStdString());
    std::string file(mUI.mFile->text().toStdString());
-   if (mModelData.valid() && mModelData->RegisterFile(file, objName))
+   dtAnim::ModelResourceType resType = (dtAnim::ModelResourceType)
+      (mUI.mComboResourceType->itemData(mUI.mComboResourceType->currentIndex()).toInt());
+   if (modelData != NULL)
    {
-      mDataChanged = true;
-      emit SignalChangedData();
+      if (0 < modelData->LoadResource(resType, file, objName))
+      {
+         mDataChanged = true;
+         emit SignalChangedData();
+      }
    }
 }
 
 /////////////////////////////////////////////////////////////////////////////////
 void ResAddDialog::UpdateUI()
 {
+
    std::string objName(mUI.mObjectName->text().toStdString());
    std::string file(mUI.mFile->text().toStdString());
    std::string currentFile;
    dtAnim::ModelResourceType fileType = dtAnim::NO_FILE;
 
-   if (mModelData.valid())
+   if (mWrapper.valid())
    {
-      fileType = mModelData->GetFileType(file);
-      currentFile = mModelData->GetFileForObjectName(fileType, objName);
+      dtAnim::BaseModelData* modelData = mWrapper->GetModelData();
+      
+      if (modelData != NULL)
+      {
+         fileType = modelData->GetFileType(file);
+         currentFile = modelData->GetFileForObjectName(fileType, objName);
+      }
    }
 
    bool isObjectNameUsed = ! currentFile.empty();
@@ -224,4 +276,25 @@ void ResAddDialog::UpdateUI()
 
    QPushButton* buttonOk = mUI.mButtonBox->button(QDialogButtonBox::Ok);
    buttonOk->setEnabled( ! isObjectNameUsed && ! objName.empty() && ! file.empty());
+}
+
+/////////////////////////////////////////////////////////////////////////////////
+void ResAddDialog::SetupResourceTypeList()
+{
+   if (mUI.mComboResourceType->count() == 0)
+   {
+      QIcon iconMixed(ModelResourceIcons::ICON_MIXED);
+      QIcon iconMesh(ModelResourceIcons::ICON_MESH);
+      QIcon iconMorph(ModelResourceIcons::ICON_MORPH);
+      QIcon iconAnim(ModelResourceIcons::ICON_ANIM);
+      QIcon iconMat(ModelResourceIcons::ICON_MAT);
+      QIcon iconSkel(ModelResourceIcons::ICON_SKEL);
+
+      mUI.mComboResourceType->addItem(iconMixed, "Mixed", dtAnim::MIXED_FILE);
+      mUI.mComboResourceType->addItem(iconMesh, "Mesh", dtAnim::MESH_FILE);
+      mUI.mComboResourceType->addItem(iconMorph, "Morph", dtAnim::MORPH_FILE);
+      mUI.mComboResourceType->addItem(iconAnim, "Animation", dtAnim::ANIM_FILE);
+      mUI.mComboResourceType->addItem(iconMat, "Material", dtAnim::MAT_FILE);
+      mUI.mComboResourceType->addItem(iconSkel, "Skeleton", dtAnim::SKEL_FILE);
+   }
 }

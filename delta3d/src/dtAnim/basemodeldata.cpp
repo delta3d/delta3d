@@ -525,11 +525,9 @@
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   bool BaseModelData::RegisterFile(const std::string& file, const std::string& objectName)
+   bool BaseModelData::RegisterFile(const std::string& file, const std::string& objectName, ModelResourceType fileType)
    {
       bool success = false;
-
-      ModelResourceType fileType = GetFileType(file);
 
       if (fileType != NO_FILE)
       {
@@ -552,11 +550,15 @@
             relativeFile = relativePath;
          }
 
-         // Map the relative file path.
-         size_t prevSize = mFileObjectMap.size();
-         mFileObjectMap.insert(std::make_pair(relativeFile, new ObjectNameAndFileType(objectName, fileType)));
+         FileToObjectMap::iterator foundIter = mFileObjectMap.find(relativeFile);
+         if (foundIter == mFileObjectMap.end())
+         {
+            // Map the relative file path.
+            size_t prevSize = mFileObjectMap.size();
+            mFileObjectMap.insert(std::make_pair(relativeFile, new ObjectNameAndFileType(objectName, fileType)));
 
-         success = mFileObjectMap.size() > prevSize;
+            success = mFileObjectMap.size() > prevSize;
+         }
       }
       else
       {
@@ -564,6 +566,12 @@
       }
 
       return success;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   bool BaseModelData::RegisterFile(const std::string& file, const std::string& objectName)
+   {
+      return RegisterFile(file, objectName, GetFileType(file));
    }
 
    ////////////////////////////////////////////////////////////////////////////////

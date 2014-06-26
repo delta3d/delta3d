@@ -36,68 +36,6 @@ namespace dtAnim
    /////////////////////////////////////////////////////////////////////////////
    // HELPER FUNCTIONS
    /////////////////////////////////////////////////////////////////////////////
-   int ApplyResourcesToModel(OsgLoader& loader, dtAnim::ModelResourceType resType,
-      OsgModelResourceFinder& finder, dtAnim::OsgModelData& modelData)
-   {
-      int results = 0;
-
-      switch (resType)
-      {
-      case dtAnim::ANIM_FILE:
-         results += loader.ApplyAnimationsToModel(finder, modelData);
-         break;
-
-      case dtAnim::MAT_FILE:
-         results += loader.ApplyMaterialsToModel(finder, modelData);
-         break;
-
-      case dtAnim::MESH_FILE:
-         results += loader.ApplyMeshesToModel(finder, modelData);
-         break;
-
-      case dtAnim::MORPH_FILE:
-         results += loader.ApplyMorphTargetsToModel(finder, modelData);
-         break;
-
-      case dtAnim::SKEL_FILE:
-         results += loader.ApplySkeletonToModel(finder, modelData);
-         break;
-
-      case dtAnim::MIXED_FILE:
-      default:
-         results += loader.ApplyAllResourcesToModel(finder, modelData);
-         break;
-      }
-
-      return results;
-   }
-
-   int ApplyNodeToModel(OsgLoader& loader, osg::Node& node, dtAnim::ModelResourceType resType, dtAnim::OsgModelData& modelData)
-   {
-      int results = 0;
-      
-      // Apply resources from the node but only search for
-      // resources if a model node already exists; otherwise,
-      // the node will be the new model.
-
-      if (modelData.GetCoreModel() == NULL)
-      {
-         modelData.SetCoreModel(&node);
-         ++results;
-      }
-      else
-      {
-         OsgModelResourceFinder newFinder;
-         loader.SetFinderMode(resType, newFinder);
-         node.accept(newFinder);
-
-         results += ApplyResourcesToModel(loader, resType, newFinder, modelData);
-      }
-
-      return results;
-   }
-
-   /////////////////////////////////////////////////////////////////////////////
    template <class T_FileStruct>
    int LoadFiles(OsgLoader& loader, const std::string& path,
       const std::vector<T_FileStruct>& fileArray, dtAnim::ModelResourceType resType,
@@ -110,12 +48,15 @@ namespace dtAnim
       FileArray::const_iterator endIter = fileArray.end();
       for (; curIter != endIter; ++curIter)
       {
+         std::string filepath(path + curIter->mFileName);
          dtCore::RefPtr<osg::Node> node
-            = loader.LoadResourceFile(path, curIter->mFileName, resType);
+            = loader.LoadResourceFile(filepath, resType);
 
-         if (node.valid())
+         if (node.valid() && modelData.GetFileForObjectName(resType, node->getName()).empty())
          {
-            results += ApplyNodeToModel(loader, *node, resType, modelData);
+            modelData.RegisterFile(curIter->mFileName, node->getName(), resType);
+
+            results += modelData.ApplyNodeToModel(resType, *node);
          }
       }
 
@@ -142,9 +83,6 @@ namespace dtAnim
 
       const std::string& path = handler.mPath;
 
-      dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
-
-      
       // Load mixed resources, such as single character resource files.
       dtAnim::ModelResourceType resType = dtAnim::MIXED_FILE;
       LoadFiles(*this, path, handler.mMixedResources, resType, *modelData);
@@ -152,10 +90,11 @@ namespace dtAnim
 
       // Load skeleton
       resType = dtAnim::SKEL_FILE;
-      dtCore::RefPtr<osg::Node> node = LoadResourceFile(path, handler.mSkeletonFilename, resType);
+      std::string filepath(path + handler.mSkeletonFilename);
+      dtCore::RefPtr<osg::Node> node = LoadResourceFile(filepath, resType);
       if (node.valid())
       {
-         ApplyNodeToModel(*this, *node, resType, *modelData);
+         modelData->ApplyNodeToModel(resType, *node);
       }
 
 
@@ -206,148 +145,15 @@ namespace dtAnim
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   int OsgLoader::ApplyAnimationsToModel(OsgModelResourceFinder& finder, dtAnim::OsgModelData& modelData)
-   {
-      int results = 0;
-
-      typedef dtAnim::OsgModelResourceFinder::OsgAnimationArray OsgAnimationArray;
-      typedef dtAnim::OsgModelResourceFinder::OsgAnimManagerArray OsgAnimManagerArray;
-
-      osg::Node* node = GetOrCreateModelNode(modelData);
-
-      // Acquire or create an animation manager in the original model.
-      OsgModelResourceFinder finderOfOriginal;
-      node->accept(finderOfOriginal);
-      dtCore::RefPtr<osgAnimation::BasicAnimationManager> originalAnimManager = finderOfOriginal.mAnimManagers.front();
-      if ( ! originalAnimManager.valid())
-      {
-         originalAnimManager = new osgAnimation::BasicAnimationManager;
-         node->addUpdateCallback(originalAnimManager);
-      }
-
-      // Find all the new animations and add them to the original
-      // animation manager on the current model.
-      osgAnimation::BasicAnimationManager* animManager = NULL;
-      OsgAnimManagerArray::iterator curIter = finder.mAnimManagers.begin();
-      OsgAnimManagerArray::iterator endIter = finder.mAnimManagers.end();
-      for (; curIter != endIter; ++curIter)
-      {
-         animManager = curIter->get();
-
-         osgAnimation::Animation* anim = NULL;
-         const osgAnimation::AnimationList& animList = animManager->getAnimationList();
-         osgAnimation::AnimationList::const_iterator curAnimIter = animList.begin();
-         osgAnimation::AnimationList::const_iterator endAnimIter = animList.end();
-         for (; curAnimIter != endAnimIter; ++curAnimIter)
-         {
-            anim = curAnimIter->get();
-
-            originalAnimManager->registerAnimation(anim);
-            ++results;
-         }
-      }
-
-      return results;
-   }
-
-   /////////////////////////////////////////////////////////////////////////////
-   int OsgLoader::ApplyMaterialsToModel(OsgModelResourceFinder& finder, dtAnim::OsgModelData& modelData)
-   {
-      // TODO:
-      return 0;
-   }
-
-   /////////////////////////////////////////////////////////////////////////////
-   int OsgLoader::ApplyMeshesToModel(OsgModelResourceFinder& finder, dtAnim::OsgModelData& modelData)
-   {
-      // TODO:
-      return 0;
-   }
-
-   /////////////////////////////////////////////////////////////////////////////
-   int OsgLoader::ApplyMorphTargetsToModel(OsgModelResourceFinder& finder, dtAnim::OsgModelData& modelData)
-   {
-      // TODO:
-      return 0;
-   }
-
-   /////////////////////////////////////////////////////////////////////////////
-   int OsgLoader::ApplySkeletonToModel(OsgModelResourceFinder& finder, dtAnim::OsgModelData& modelData)
-   {
-      // TODO:
-      return 0;
-   }
-
-   /////////////////////////////////////////////////////////////////////////////
-   int OsgLoader::ApplyAllResourcesToModel(OsgModelResourceFinder& finder, dtAnim::OsgModelData& modelData)
-   {
-      int results = 0;
-
-      results += ApplySkeletonToModel(finder, modelData);
-      results += ApplyMeshesToModel(finder, modelData);
-      results += ApplyMaterialsToModel(finder, modelData);
-      results += ApplyAnimationsToModel(finder, modelData);
-      results += ApplyMorphTargetsToModel(finder, modelData);
-
-      return results;
-   }
-   
-   /////////////////////////////////////////////////////////////////////////////
-   osg::Node* OsgLoader::GetOrCreateModelNode(dtAnim::OsgModelData& modelData)
-   {
-      dtCore::RefPtr<osg::Node> node = modelData.GetCoreModel();
-
-      if (node == NULL)
-      {
-         node = new osg::Group;
-         node->setName(modelData.GetModelName());
-         modelData.SetCoreModel(node);
-      }
-
-      return node;
-   }
-
-   /////////////////////////////////////////////////////////////////////////////
-   void OsgLoader::SetFinderMode(dtAnim::ModelResourceType resType, OsgModelResourceFinder& finder)
-   {
-      switch (resType)
-      {
-      case dtAnim::ANIM_FILE:
-         finder.mMode = OsgModelResourceFinder::SEARCH_ANIMATIONS;
-         break;
-
-      case dtAnim::MAT_FILE:
-         finder.mMode = OsgModelResourceFinder::SEARCH_MATERIALS;
-         break;
-
-      case dtAnim::MESH_FILE:
-         finder.mMode = OsgModelResourceFinder::SEARCH_MESHES;
-         break;
-
-      case dtAnim::MORPH_FILE:
-         finder.mMode = OsgModelResourceFinder::SEARCH_MORPHS;
-         break;
-
-      case dtAnim::SKEL_FILE:
-         finder.mMode = OsgModelResourceFinder::SEARCH_SKELETON;
-         break;
-
-      default:
-         finder.mMode = OsgModelResourceFinder::SEARCH_ALL;
-         break;
-      }
-   }
-
-   /////////////////////////////////////////////////////////////////////////////
    dtCore::RefPtr<osg::Node> OsgLoader::LoadResourceFile(
-      const std::string& path, const std::string& file,
+      const std::string& filepath,
       dtAnim::ModelResourceType resType)
    {
       dtCore::RefPtr<osg::Node> node;
 
       dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
 
-      std::string filename(GetAbsolutePath(path + file));
+      std::string filename(GetAbsolutePath(filepath));
       if (!filename.empty())
       {
          // Load the mesh and get its id for further error checking
@@ -362,7 +168,7 @@ namespace dtAnim
       else
       {
          LOG_ERROR("Can't find " + BaseModelData::GetResourceTypeName(resType)
-            + " file named:'" + path + file + "'.");
+            + " file named:'" + filepath + "'.");
       }
 
       return node;

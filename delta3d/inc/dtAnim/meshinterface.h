@@ -46,8 +46,6 @@ namespace dtAnim
    class DT_ANIM_EXPORT SubmeshInterface : virtual public dtUtil::ReferencedInterface
    {
    public:
-      virtual bool IsHardwareRendered() const = 0;
-
       virtual int GetVertexCount() const = 0;
       virtual int GetFaceCount() const = 0;
       virtual int GetMorphTargetWeightCount() const = 0;
@@ -78,8 +76,6 @@ namespace dtAnim
 
       virtual void SetName(const std::string& name) = 0;
       virtual const std::string& GetName() const = 0;
-
-      virtual bool IsHardwareRendered() const = 0;
 
       virtual void SetVisible(bool visible) = 0;
       virtual bool IsVisible() const = 0;

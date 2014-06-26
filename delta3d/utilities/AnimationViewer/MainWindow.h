@@ -3,29 +3,30 @@
 
 #include <QtGui/QMainWindow>
 
-class QAction;
-class QTableWidgetItem;
-class QToolBar;
+class AnimationSliderPanel;
 class AnimationTableWidget;
+class PoseMeshProperties;
+class PoseMeshScene;
+class PoseMeshView;
+class QAction;
+class QComboBox;
+class QDoubleSpinBox;
+class QGraphicsScene;
+class QGraphicsView;
+class QGridLayout;
+class QHBoxLayout;
 class QLabel;
 class QListWidget;
 class QListWidgetItem;
-class QTableWidget;
-class QGraphicsView;
-class QGraphicsScene;
-class QTabWidget;
-class QGridLayout;
+class QPushButton;
 class QStandardItemModel;
 class QTableView;
-class PoseMeshView;
-class PoseMeshScene;
-class PoseMeshProperties;
-class QDoubleSpinBox;
-class QComboBox;
-class QHBoxLayout;
+class QTableWidget;
+class QTableWidgetItem;
+class QTabWidget;
+class QToolBar;
 class QTreeWidget;
 class QTreeWidgetItem;
-class QPushButton;
 
 namespace dtAnim
 {
@@ -93,6 +94,8 @@ signals:
    void AttachmentToLoad(const QString&);
 
    void AttachmentSettingsChanged(const std::string& boneName, float offsetX, float offsetY, float offsetZ, float rotx, float roty, float rotz);
+
+   void SignalCharacterModelUpdated();
 
 public slots:
    void OnNewAnimation(unsigned int id, const QString& animationName, unsigned int trackCount,
@@ -163,6 +166,8 @@ private:
    bool IsAnimNodeBuildingUsingHW() const;
    void SetupConnectionsWithViewer();
 
+   void UpdateResourceFileLists(dtAnim::BaseModelData* modelData);
+
    ///turns color into "R:rrr "G:ggg B:bbb A:aaa" format
    QString MakeColorString(const QColor& color) const;
 
@@ -180,6 +185,7 @@ private:
    QAction* mPointLightAction;
    QAction* mHardwareSkinningAction;
    QAction* mBoneLabelAction;
+   QAction* mToggleAnimSlider;
    QAction* mToggleDockProperties;
    QAction* mToggleDockResources;
    QAction* mToggleDockTools;
@@ -203,6 +209,7 @@ private:
 
    dtQt::NodeTreePanel* mNodeTreePanel;
 
+   AnimationSliderPanel* mAnimSliderPanel;
    AnimationTableWidget* mAnimListWidget;
    QTableWidget*         mMeshListWidget;
    QTableWidget*         mSubMorphTargetListWidget;
@@ -258,5 +265,7 @@ private slots:
    void OnToggleFlipHorizontal();
 
    void OnSubMorphChanged(QTableWidgetItem* item);
+
+   void OnUpdateCharacter();
 };
 #endif // DELTA_MainWindow

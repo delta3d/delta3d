@@ -197,6 +197,38 @@ namespace dtAnim
          curIter->second->Clear();
       }
    }
+   
+   bool ModelDatabase::RegisterModelData(dtAnim::BaseModelData& modelData)
+   {
+      bool success = false;
+
+      ModelDataArray::iterator foundIter 
+         = std::find(mModelData.begin(), mModelData.end(), &modelData);
+
+      if (foundIter == mModelData.end())
+      {
+         mModelData.push_back(&modelData);
+         success = true;
+      }
+
+      return success;
+   }
+
+   bool ModelDatabase::UnregisterModelData(dtAnim::BaseModelData& modelData)
+   {
+      bool success = false;
+      
+      ModelDataArray::iterator foundIter 
+         = std::find(mModelData.begin(), mModelData.end(), &modelData);
+
+      if (foundIter != mModelData.end())
+      {
+         mModelData.erase(foundIter);
+         success = true;
+      }
+
+      return success;
+   }
 
    dtAnim::BaseModelData* ModelDatabase::GetModelData(const std::string& filename)
    {

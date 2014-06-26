@@ -83,7 +83,7 @@ namespace dtAnim
        * @note: This will generate brand new geometry.  The node previously 
        * returned by GetNode() will be invalid after calling this.
        */
-      osg::Node* RebuildSubmeshes();
+      osg::Node* RebuildSubmeshes(bool immediate = false);
 
    protected:
       dtCore::RefPtr<dtAnim::BaseModelWrapper> mModel;

@@ -203,7 +203,7 @@ DT_DISABLE_WARNING_END
 
       if (result > -1 && !file.empty())
       {
-         RegisterFile(file, objectName);
+         RegisterFile(file, objectName, resourceType);
       }
 
       return result;

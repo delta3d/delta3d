@@ -394,12 +394,6 @@ namespace dtAnim
       return mSubmesh->getName();
    }
 
-   bool OsgSubmesh::IsHardwareRendered() const
-   {
-      // TODO:
-      return true;
-   }
-
    int OsgSubmesh::GetVertexCount() const
    {
       return mSubmesh->getVertexArray()->getNumElements();
@@ -505,12 +499,6 @@ namespace dtAnim
    const std::string& OsgMesh::GetName() const
    {
       return mGeode->getName();
-   }
-
-   bool OsgMesh::IsHardwareRendered() const
-   {
-      // TODO:
-      return false;
    }
 
    void OsgMesh::SetVisible(bool visible)
@@ -638,34 +626,6 @@ namespace dtAnim
    osg::BoundingBox OsgMesh::GetBoundingBox() const
    {
       return mGeode->getBoundingBox();
-   }
-
-   void OsgMesh::SetHardwareMode(bool hardwareMode)
-   {
-      typedef osg::Geode::DrawableList GeometryList;
-      const GeometryList& geoms = mGeode->getDrawableList();
-
-      osgAnimation::RigGeometry* rigGeom = NULL;
-      GeometryList::const_iterator curIter = geoms.begin();
-      GeometryList::const_iterator endIter = geoms.end();
-      for (; curIter != endIter; ++curIter)
-      {
-         rigGeom = dynamic_cast<osgAnimation::RigGeometry*>(curIter->get());
-         if (rigGeom != NULL)
-         {
-            dtCore::RefPtr<osgAnimation::RigTransform> rigTransImp;
-            if (hardwareMode)
-            {
-               rigTransImp = new osgAnimation::RigTransformHardware;
-            }
-            else
-            {
-               rigTransImp = new osgAnimation::RigTransformSoftware;
-            }
-
-            rigGeom->setRigTransformImplementation(rigTransImp);
-         }
-      }
    }
 
    bool OsgMesh::IsHardwareMode() const

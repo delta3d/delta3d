@@ -302,7 +302,7 @@ namespace dtAnim
 
        bool IsHardwareMode(osgAnimation::RigGeometry& rigGeom)
        {
-         return rigGeom.getRigTransformImplementation() != NULL;
+         return NULL != dynamic_cast<OsgRigTransformHardware*>(rigGeom.getRigTransformImplementation());
        }
     
        void apply(osg::Geode& geode)
@@ -433,7 +433,7 @@ namespace dtAnim
    
    bool OsgNodeBuilder::EnsureMode(dtAnim::OsgModelWrapper& wrapper, osg::Node& modelNode, bool hardware)
    {
-      dtCore::RefPtr<dtAnim::CharacterShaderBuilder> shaderBuilder;
+      dtCore::RefPtr<dtAnim::CharacterShaderBuilder> shaderBuilder = new dtAnim::CharacterShaderBuilder;
       RigGeometryModeSwitcher modeSwitcher(wrapper, *shaderBuilder, hardware);
       modeSwitcher.mBoneQuatMode = true;
       modelNode.accept(modeSwitcher);

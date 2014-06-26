@@ -9,7 +9,8 @@
             </xs:choice>
             <xs:element ref="attachmentPoint" minOccurs="0" maxOccurs="unbounded" />
             <xs:group ref="parametersGroup" />
-            <xs:group ref="animationGroup" />
+            <xs:group ref="animationGroup" maxOccurs="unbounded"/>
+            <xs:element ref="poseMesh" minOccurs="0" maxOccurs="1" />
           </xs:sequence>
          <xs:attribute name="name" use="optional">
             <xs:simpleType>
@@ -64,9 +65,8 @@
 
   <xs:group name="animationGroup">
     <xs:sequence>
-      <xs:element ref="animationChannel" minOccurs="0" maxOccurs="unbounded" />
-      <xs:element ref="animationSequence" minOccurs="0" maxOccurs="unbounded" />
-      <xs:element ref="poseMesh" minOccurs="0" maxOccurs="1" />
+      <xs:element ref="animationChannel" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element ref="animationSequence" minOccurs="0" maxOccurs="unbounded"/>
     </xs:sequence>
   </xs:group>
 
