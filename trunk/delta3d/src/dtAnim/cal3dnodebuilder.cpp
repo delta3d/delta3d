@@ -10,8 +10,6 @@
 // OSG
 #include <osg/Geode>
 
-#include <osg/MatrixTransform> // HACK:
-
 DT_DISABLE_WARNING_ALL_START
 #include <cal3d/global.h>
 #include <cal3d/hardwaremodel.h>

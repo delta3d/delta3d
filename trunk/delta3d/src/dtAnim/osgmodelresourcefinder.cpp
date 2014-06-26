@@ -46,18 +46,31 @@ namespace dtAnim
    {
       if (mMode == SEARCH_ALL || mMode == SEARCH_ANIMATIONS || mMode == SEARCH_MORPHS)
       {
-         if (0 == strcmp(callback.className(), "BasicAnimationManager"))
+         osg::NodeCallback* curCallback = &callback;
+
+         while (curCallback != NULL)
          {
-            osgAnimation::BasicAnimationManager* animManager
-               = static_cast<osgAnimation::BasicAnimationManager*>(&callback);
-            mAnimManagers.push_back(animManager);
-            mAnimNodes.push_back(&node);
-         }
-         else if (0 == strcmp(callback.className(), "UpdateMorph"))
-         {
-            osgAnimation::UpdateMorph* morphManager
-               = static_cast<osgAnimation::UpdateMorph*>(&callback);
-            mMorphManagers.insert(std::make_pair(morphManager, &node));
+            if (0 == strcmp(curCallback->className(), "BasicAnimationManager"))
+            {
+               if (mMode == SEARCH_ALL || mMode == SEARCH_ANIMATIONS)
+               {
+                  osgAnimation::BasicAnimationManager* animManager
+                     = static_cast<osgAnimation::BasicAnimationManager*>(curCallback);
+                  mAnimManagers.push_back(animManager);
+                  mAnimNodes.push_back(&node);
+               }
+            }
+            else if (0 == strcmp(curCallback->className(), "UpdateMorph"))
+            {
+               if (mMode == SEARCH_ALL || mMode == SEARCH_MORPHS)
+               {
+                  osgAnimation::UpdateMorph* morphManager
+                     = static_cast<osgAnimation::UpdateMorph*>(curCallback);
+                  mMorphManagers.insert(std::make_pair(morphManager, &node));
+               }
+            }
+
+            curCallback = curCallback->getNestedCallback();
          }
       }
    }
@@ -177,6 +190,8 @@ namespace dtAnim
       mAnimNodes.clear();
       mAnimManagers.clear();
       mBones.clear();
+      mMaterials.clear();
+      mMaterialToObjectMap.clear();
       mMeshes.clear();
       mMorphs.clear();
       mMorphManagers.clear();
