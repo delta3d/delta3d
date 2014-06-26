@@ -84,7 +84,7 @@ PoseMesh::PoseMesh(dtAnim::BaseModelWrapper* model,
    typedef std::vector<unsigned int> UIVector;
    UIVector::const_iterator animID = animids.begin();
    UIVector::const_iterator endanimID = animids.end();
-   for (unsigned int vertIndex = 0; animID != endanimID; ++animID, ++vertIndex)
+   for (unsigned int vertIndex = 0; animID != endanimID; ++animID)
    {
       // If we've already handled this animation,
       // map it to the previously computed data
@@ -92,7 +92,6 @@ PoseMesh::PoseMesh(dtAnim::BaseModelWrapper* model,
 
       if (mapIter != vertMap.end())
       {
-         vertMap[*animID] = mapIter->second;
          continue;
       }
 
@@ -144,6 +143,8 @@ PoseMesh::PoseMesh(dtAnim::BaseModelWrapper* model,
       newVert->mDebugPrecision = precision;
       newVert->mDebugData      = transformed;
       newVert->mDebugRotation  = finalRotation;
+
+      ++vertIndex;
    }
 
    mTriangles.clear();

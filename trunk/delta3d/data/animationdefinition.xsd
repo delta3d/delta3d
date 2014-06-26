@@ -3,6 +3,7 @@
    <xs:element name="character">
       <xs:complexType>
           <xs:sequence>
+            <xs:element ref="poseMesh" minOccurs="0" maxOccurs="1" />
             <xs:choice>
               <xs:group ref="resourceFileGroupExplicit" />
               <xs:group ref="resourceFileGroupGeneric" />
@@ -10,7 +11,6 @@
             <xs:element ref="attachmentPoint" minOccurs="0" maxOccurs="unbounded" />
             <xs:group ref="parametersGroup" />
             <xs:group ref="animationGroup" maxOccurs="unbounded"/>
-            <xs:element ref="poseMesh" minOccurs="0" maxOccurs="1" />
           </xs:sequence>
          <xs:attribute name="name" use="optional">
             <xs:simpleType>
