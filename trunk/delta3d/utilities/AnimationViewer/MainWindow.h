@@ -5,6 +5,7 @@
 
 class AnimationSliderPanel;
 class AnimationTableWidget;
+class AttachmentPanel;
 class PoseMeshProperties;
 class PoseMeshScene;
 class PoseMeshView;
@@ -59,8 +60,6 @@ public:
    void ReloadCharFile();
    void SetViewer(Viewer* viewer);
 
-   void LoadAttachment(const QString& filename);
-
 protected:
    virtual void dragEnterEvent(QDragEnterEvent* event);
    virtual void dropEvent(QDropEvent* event);
@@ -98,6 +97,8 @@ signals:
    void SignalCharacterModelUpdated();
 
 public slots:
+   void OnLoadAttachment(const QString filename);
+
    void OnNewAnimation(unsigned int id, const QString& animationName, unsigned int trackCount,
                        unsigned int keyframes, float duration);
 
@@ -134,9 +135,6 @@ public slots:
    void OnConfiged(); ///<call when everything is up and running
 
    void OnClearCharacterData();
-
-   void OnLoadAttachment();
-   void OnChangeAttachmentSettings();
 
    void OnResourceEditStart(int fileType, const std::string& objectName);
    void OnResourceEditEnd(int fileType, const std::string& objectName);
@@ -196,15 +194,8 @@ private:
 
    QDoubleSpinBox* mScaleFactorSpinner;
 
-   QDoubleSpinBox* mAttachmentOffsetXSpinner;
-   QDoubleSpinBox* mAttachmentOffsetYSpinner;
-   QDoubleSpinBox* mAttachmentOffsetZSpinner;
-   QDoubleSpinBox* mAttachmentRotXSpinner;
-   QDoubleSpinBox* mAttachmentRotYSpinner;
-   QDoubleSpinBox* mAttachmentRotZSpinner;
-   QComboBox* mAttachmentParent;
-   QString mCurrentAttachment;   // the currently loaded attachment mesh
-   
+   AttachmentPanel* mAttachmentPanel;
+ 
    QTabWidget* mTabs;
 
    dtQt::NodeTreePanel* mNodeTreePanel;

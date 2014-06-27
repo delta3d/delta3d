@@ -127,10 +127,7 @@ void Viewer::UpdateCharacter()
       
       mCharacter->RebuildSubmeshes(true);
 
-      wrapper->HandleModelResourceUpdate(ModelResourceType::SKEL_FILE);
-      wrapper->HandleModelResourceUpdate(ModelResourceType::MESH_FILE);
-      wrapper->HandleModelResourceUpdate(ModelResourceType::MAT_FILE);
-      wrapper->HandleModelResourceUpdate(ModelResourceType::ANIM_FILE);
+      wrapper->HandleModelUpdated();
 
       UpdateAnimationList(*wrapper);
       UpdateMorphList(*wrapper);
@@ -242,18 +239,18 @@ void Viewer::OnNewCharFile()
       {
          dtCore::RefPtr<dtAnim::Cal3DModelData> calModelData = new Cal3DModelData(name, "");
          modelData = calModelData;
+         ModelDatabase::GetInstance().RegisterModelData(*modelData);
          wrapper = new Cal3DModelWrapper(*calModelData);
       }
       else
       {
          dtCore::RefPtr<dtAnim::OsgModelData> osgModelData = new OsgModelData(name, "");
          modelData = osgModelData;
+         ModelDatabase::GetInstance().RegisterModelData(*modelData);
          osgModelData->GetOrCreateSkeleton();
          wrapper = new OsgModelWrapper(*osgModelData);
       }
 
-      ModelDatabase::GetInstance().RegisterModelData(*modelData);
-      
       mCharacter = new dtAnim::CharDrawable(wrapper.get());
       UpdateCharacter();
    }
@@ -415,30 +412,34 @@ void Viewer::OnUnloadAttachmentFile()
 }
 
 //////////////////////////////////////////////////////////////////////////
-void Viewer::OnLoadAttachmentFile(const QString& filename)
+void Viewer::OnLoadAttachmentFile(const QString filename)
 {
    OnUnloadAttachmentFile();
 
    mAttachmentObject = new dtCore::Object;
    mAttachmentObject->LoadFile(filename.toStdString());
    GetScene()->AddChild(mAttachmentObject.get());
+
+   emit SignalAttachmentLoaded();
 }
 
 //////////////////////////////////////////////////////////////////////////
-void Viewer::OnAttachmentSettingsChanged(const std::string& bone, float x, float y, float z, float rotx, float roty, float rotz)
+void Viewer::OnAttachmentSettingsChanged(AttachmentInfo info)
 {
    if(mAttachmentObject == NULL)
    {
       return;
    }
 
+   osg::Vec3& rot = info.mRotation;
+
    dtUtil::HotSpotDefinition hsd;
    hsd.mName = "HotSpot";
-   hsd.mParentName = bone;
-   hsd.mLocalTranslation = osg::Vec3(x, y, z);
-   hsd.mLocalRotation = osg::Quat(osg::DegreesToRadians(rotx), osg::Vec3(1, 0, 0),
-            osg::DegreesToRadians(roty), osg::Vec3(0, 1, 0),
-            osg::DegreesToRadians(rotz), osg::Vec3(0, 0, 1));
+   hsd.mParentName = info.mBone.valid() ? info.mBone->GetName() : "";
+   hsd.mLocalTranslation = info.mOffset;
+   hsd.mLocalRotation = osg::Quat(osg::DegreesToRadians(rot.x()), osg::Vec3(1, 0, 0),
+            osg::DegreesToRadians(rot.y()), osg::Vec3(0, 1, 0),
+            osg::DegreesToRadians(rot.z()), osg::Vec3(0, 0, 1));
    mAttachmentController->RemoveAttachment(*mAttachmentObject.get());
    mAttachmentController->AddAttachment(*mAttachmentObject.get(), hsd);
 }
@@ -995,8 +996,9 @@ void Viewer::UpdateMaterialList(dtAnim::BaseModelWrapper& wrapper)
    for (int matID = 0; matID < numMaterials; matID++)
    {
       material = materials[matID].get();
+      const std::string& name = material->GetName();
 
-      QString nameToSend = QString::fromStdString(material->GetName());
+      QString nameToSend = QString::fromStdString(name);
 
       float shininess = 0.0f;
 

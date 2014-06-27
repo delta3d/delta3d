@@ -19,7 +19,7 @@
 /////////////////////////////////////////////////////////////////////////////////
 // CAL3D RESOURCE FILTERS CLASS CODE
 /////////////////////////////////////////////////////////////////////////////////
-const QString ModelResourceFilters::FILTER_OSG("OSG (*.osg *.ive *.dae *.fbx)");
+const QString ModelResourceFilters::FILTER_OSG("OSG (*.osg *.ive *.dae *.fbx *.bvh)");
 const QString ModelResourceFilters::FILTER_ANY("Cal3D (*.csf *.xsf *.caf *.xaf *.cmf *.xmf *.crf *.xrf *.cpf *.xpf)");
 const QString ModelResourceFilters::FILTER_ALL_NOT_SKEL("Cal3D (*.caf *.xaf *.cmf *.xmf *.crf *.xrf *.cpf *.xpf)");
 const QString ModelResourceFilters::FILTER_SKEL("Skeletons (*.csf *.xsf)");
