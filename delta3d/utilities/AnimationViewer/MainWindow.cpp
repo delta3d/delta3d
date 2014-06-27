@@ -1,6 +1,7 @@
 #include "MainWindow.h"
 #include "AnimationSliderPanel.h"
 #include "AnimationTableWidget.h"
+#include "AttachmentPanel.h"
 #include "PoseMeshView.h"
 #include "PoseMeshScene.h"
 #include "PoseMeshProperties.h"
@@ -146,13 +147,7 @@ MainWindow::MainWindow()
   , mToggleDockTools(NULL)
   , mToggleDockNodeTools(NULL)
   , mScaleFactorSpinner(NULL)
-  , mAttachmentOffsetXSpinner(NULL)
-  , mAttachmentOffsetYSpinner(NULL)
-  , mAttachmentOffsetZSpinner(NULL)
-  , mAttachmentRotXSpinner(NULL)
-  , mAttachmentRotYSpinner(NULL)
-  , mAttachmentRotZSpinner(NULL)
-  , mCurrentAttachment("")
+  , mAttachmentPanel(NULL)
   , mNodeTreePanel(NULL)
   , mAnimSliderPanel(NULL)
   , mAnimListWidget(NULL)
@@ -512,17 +507,10 @@ void MainWindow::ReloadCharFile()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void MainWindow::LoadAttachment(const QString& filename)
+void MainWindow::OnLoadAttachment(const QString filename)
 {
-   if(mCurrentAttachment == filename)
-   {
-      return;
-   }
-
    if (dtUtil::FileUtils::GetInstance().FileExists(filename.toStdString()))
    {
-      emit AttachmentToLoad(filename);
-      mCurrentAttachment = filename;
       statusBar()->showMessage(tr("Attachment loaded"), 2000);
    }
    else
@@ -689,13 +677,6 @@ void MainWindow::OnNewMesh(int meshID, const QString& meshName, const std::vecto
    }
 
    mMeshListWidget->resizeColumnToContents(0);
-
-   mAttachmentParent->clear();
-   std::vector<std::string>::const_iterator i;
-   for(i = boneNames.begin(); i != boneNames.end(); ++i)
-   {
-      mAttachmentParent->addItem(i->c_str());
-   }
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -904,6 +885,8 @@ void MainWindow::OnCharacterDataLoaded(dtAnim::BaseModelData* modelData,
    {
       mNodeTreePanel->SetNode(characterRootNode);
    }
+
+   mAttachmentPanel->OnCharacterUpdated(mViewer->GetCharacter());
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -945,9 +928,9 @@ void MainWindow::OnBlendUpdate(const std::vector<std::pair<float, float> >& anim
             // mark them as turned on in the animation table
             mAnimListWidget->item(rowIndex, 0)->setCheckState(Qt::Checked);
          }
-
+         
+         mAnimListWidget->item(rowIndex, 6)->setText(QString::number(time));
       }
-      mAnimListWidget->item(rowIndex, 6)->setText(QString::number(time));
    }
 
    // Morph Animation Progress bars.
@@ -1484,32 +1467,6 @@ void MainWindow::OnClearCharacterData()
    mCurrentFile = "";
 }
 
-//////////////////////////////////////////////////////////////////////////
-void MainWindow::OnLoadAttachment()
-{
-   QString filename = QFileDialog::getOpenFileName(this,
-      tr("Load Attachment Mesh"), ".", tr("Meshes (*.osg *.ive *.dae *.3ds *.obj)") );
-
-   if (!filename.isEmpty())
-   {
-      LoadAttachment(filename);
-   }
-}
-
-//////////////////////////////////////////////////////////////////////////
-void MainWindow::OnChangeAttachmentSettings()
-{
-   float x = mAttachmentOffsetXSpinner->value();
-   float y = mAttachmentOffsetYSpinner->value();
-   float z = mAttachmentOffsetZSpinner->value();
-   std::string boneName = mAttachmentParent->currentText().toStdString();
-
-   float rx = mAttachmentRotXSpinner->value();
-   float ry = mAttachmentRotYSpinner->value();
-   float rz = mAttachmentRotZSpinner->value();
-   emit AttachmentSettingsChanged(boneName, x, y, z, rx, ry, rz);
-}
-
 ////////////////////////////////////////////////////////////////////////////////
 void MainWindow::OnResourceEditStart(int fileType, const std::string& objectName)
 {
@@ -1664,7 +1621,8 @@ void MainWindow::OnResourceAdd()
 
    // If OK...
    bool reload = false;
-   if (retCode == QDialog::Accepted && dialog->IsDataChanged())
+   bool dataChanged = dialog->IsDataChanged();
+   if (retCode == QDialog::Accepted && dataChanged)
    {
       // CAL3D models need to be reloaded currently.
       if (modelData->GetCharacterSystemType() == dtAnim::Constants::CHARACTER_SYSTEM_CAL3D)
@@ -1680,9 +1638,9 @@ void MainWindow::OnResourceAdd()
       emit ReloadFile();
    }
 
-   if (dialog->IsDataChanged())
+   if (dataChanged)
    {
-      SignalCharacterModelUpdated();
+      emit SignalCharacterModelUpdated();
    }
 }
 
@@ -1777,10 +1735,24 @@ void MainWindow::SetupConnectionsWithViewer()
    connect(this, SIGNAL(FileToLoad(const QString&)), mViewer, SLOT(OnLoadCharFile(const QString&)));
    connect(this, SIGNAL(FileToSave(const QString&)), mViewer, SLOT(OnSaveCharFile(const QString&)));
    connect(this, SIGNAL(ClearTempFile()), mViewer, SLOT(OnClearTempFile()));
-   connect(this, SIGNAL(AttachmentToLoad(const QString&)), mViewer, SLOT(OnLoadAttachmentFile(const QString&)));
-   connect(this, SIGNAL(AttachmentSettingsChanged(const std::string&, float, float, float, float, float, float)),
-           mViewer, SLOT(OnAttachmentSettingsChanged(const std::string&, float, float, float, float, float, float)));
+   
+   // Attachment Panel
+   connect(mAttachmentPanel, SIGNAL(SignalLoadAttachment(const QString)),
+      this, SLOT(OnLoadAttachment(const QString)));
+   connect(mAttachmentPanel, SIGNAL(SignalLoadAttachment(const QString)),
+      mViewer, SLOT(OnLoadAttachmentFile(const QString)));
+   
+   connect(mViewer, SIGNAL(SignalAttachmentLoaded()),
+           mAttachmentPanel, SLOT(OnAttachmentLoaded()));
+   
+   connect(mAttachmentPanel, SIGNAL(SignalAttachmentChanged(AttachmentInfo)),
+           mViewer, SLOT(OnAttachmentSettingsChanged(AttachmentInfo)));
 
+   typedef dtCore::RefPtr<osg::Node> OsgNodePtr;
+   connect(mNodeTreePanel, SIGNAL(SignalNodeSelected(OsgNodePtr)),
+      mAttachmentPanel, SLOT(OnNodeSelected(OsgNodePtr)));
+
+   
    connect(this, SIGNAL(UnloadFile()), mViewer, SLOT(OnUnloadCharFile()) );
    connect(mViewer, SIGNAL(ClearCharacterData()), this, SLOT(OnClearCharacterData()));
 
@@ -1937,81 +1909,8 @@ void MainWindow::CreateDockWidget_Tools()
       QGridLayout* layout = new QGridLayout();
       box->setLayout(layout);
 
-      QLabel* buttonLabel = new QLabel(tr("Load Model"));
-      layout->addWidget(buttonLabel, 0, 0);
-
-      QPushButton* loadAttachmentButton = new QPushButton("...");
-      layout->addWidget(loadAttachmentButton, 0, 1);
-      connect(loadAttachmentButton, SIGNAL(clicked()), this, SLOT(OnLoadAttachment()));
-
-      QLabel* parentLabel = new QLabel("Bone Parent");
-      layout->addWidget(parentLabel, 1, 0);
-
-      mAttachmentParent = new QComboBox();
-      mAttachmentParent->setToolTip(tr("Parent Name"));
-      mAttachmentParent->setMinimumSize(QSize(150, 0));
-      layout->addWidget(mAttachmentParent, 1, 1);
-      connect(mAttachmentParent, SIGNAL(currentIndexChanged(int)), this, SLOT(OnChangeAttachmentSettings()));
-
-      QLabel* xLabel = new QLabel("X");
-      layout->addWidget(xLabel, 2, 0);
-
-      mAttachmentOffsetXSpinner = new QDoubleSpinBox();
-      mAttachmentOffsetXSpinner->setSingleStep(0.01);
-      mAttachmentOffsetXSpinner->setToolTip(tr("Attachment Offset X"));
-      mAttachmentOffsetXSpinner->setRange(-500.0, 500.0);
-      layout->addWidget(mAttachmentOffsetXSpinner, 2, 1);
-      connect(mAttachmentOffsetXSpinner, SIGNAL(valueChanged(double)), this, SLOT(OnChangeAttachmentSettings()));
-
-      QLabel* yLabel = new QLabel("Y");
-      layout->addWidget(yLabel, 3, 0);
-
-      mAttachmentOffsetYSpinner = new QDoubleSpinBox();
-      mAttachmentOffsetYSpinner->setSingleStep(0.01);
-      mAttachmentOffsetYSpinner->setToolTip(tr("Attachment Offset Y"));
-      mAttachmentOffsetYSpinner->setRange(-500.0, 500.0);
-      layout->addWidget(mAttachmentOffsetYSpinner, 3, 1);
-      connect(mAttachmentOffsetYSpinner, SIGNAL(valueChanged(double)), this, SLOT(OnChangeAttachmentSettings()));
-
-      QLabel* zLabel = new QLabel("Z");
-      layout->addWidget(zLabel, 4, 0);
-
-      mAttachmentOffsetZSpinner = new QDoubleSpinBox();
-      mAttachmentOffsetZSpinner->setSingleStep(0.01);
-      mAttachmentOffsetZSpinner->setToolTip(tr("Attachment Offset Z"));
-      mAttachmentOffsetZSpinner->setRange(-500.0, 500.0);
-      layout->addWidget(mAttachmentOffsetZSpinner, 4, 1);
-      connect(mAttachmentOffsetZSpinner, SIGNAL(valueChanged(double)), this, SLOT(OnChangeAttachmentSettings()));
-
-      QLabel* xRotLabel = new QLabel("X Rot");
-      layout->addWidget(xRotLabel, 5, 0);
-
-      mAttachmentRotXSpinner = new QDoubleSpinBox();
-      mAttachmentRotXSpinner->setSingleStep(0.01);
-      mAttachmentRotXSpinner->setToolTip(tr("Rotation Axis X"));
-      mAttachmentRotXSpinner->setRange(-180.0, 180.0);
-      layout->addWidget(mAttachmentRotXSpinner, 5, 1);
-      connect(mAttachmentRotXSpinner, SIGNAL(valueChanged(double)), this, SLOT(OnChangeAttachmentSettings()));
-
-      QLabel* yRotLabel = new QLabel("Y Rot");
-      layout->addWidget(yRotLabel, 6, 0);
-
-      mAttachmentRotYSpinner = new QDoubleSpinBox(this);
-      mAttachmentRotYSpinner->setSingleStep(0.01);
-      mAttachmentRotYSpinner->setToolTip(tr("Rotation Axis Y"));
-      mAttachmentRotYSpinner->setRange(-180.0, 180.0);
-      layout->addWidget(mAttachmentRotYSpinner, 6, 1);
-      connect(mAttachmentRotYSpinner, SIGNAL(valueChanged(double)), this, SLOT(OnChangeAttachmentSettings()));
-
-      QLabel* zRotLabel = new QLabel("Z Rot");
-      layout->addWidget(zRotLabel, 7, 0);
-
-      mAttachmentRotZSpinner = new QDoubleSpinBox(this);
-      mAttachmentRotZSpinner->setSingleStep(0.01);
-      mAttachmentRotZSpinner->setToolTip(tr("Rotation Axis Z"));
-      mAttachmentRotZSpinner->setRange(-180.0, 180.0);
-      layout->addWidget(mAttachmentRotZSpinner, 7, 1);
-      connect(mAttachmentRotZSpinner, SIGNAL(valueChanged(double)), this, SLOT(OnChangeAttachmentSettings()));
+      mAttachmentPanel = new AttachmentPanel;
+      layout->addWidget(mAttachmentPanel, 0, 0);
    }
 }
 
@@ -2144,5 +2043,7 @@ void MainWindow::OnUpdateCharacter()
       mViewer->UpdateCharacter();
 
       OnCharacterDataLoaded(modelData, wrapper);
+
+      mAttachmentPanel->OnCharacterUpdated(mViewer->GetCharacter());
    }
 }

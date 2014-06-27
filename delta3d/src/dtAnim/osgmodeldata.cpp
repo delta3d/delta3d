@@ -113,6 +113,75 @@ namespace dtAnim
    /////////////////////////////////////////////////////////////////////////////
    // CLASS CODE
    /////////////////////////////////////////////////////////////////////////////
+   class GeodeAttacher : public osg::NodeVisitor
+   {
+   public:
+      typedef osg::NodeVisitor BaseClass;
+
+      GeodeAttacher()
+         : BaseClass(osg::NodeVisitor::TRAVERSE_ALL_CHILDREN)
+      {}
+
+      bool AddGeode(const std::string& targetName, osg::Geode& geode)
+      {
+         mTargetToGeodeMap[targetName].push_back(&geode);
+         return true;
+      }
+
+      bool Process(osg::Group& node)
+      {
+         TargetNameGeodeMap::iterator foundIter = mTargetToGeodeMap.find(node.getName());
+         if (foundIter != mTargetToGeodeMap.end())
+         {
+            GeodeArray* geodeArray = &foundIter->second;
+            GeodeArray::iterator curGeode = geodeArray->begin();
+
+            while (curGeode != geodeArray->end())
+            {
+               // Attach the geode to the current node.
+               node.addChild(curGeode->get());
+
+               ++curGeode;
+            }
+
+            // Remove the geode array from the map since they have been attached.
+            mTargetToGeodeMap.erase(foundIter);
+         }
+
+         // Continue traversal only if there are more geodes to be attached.
+         return ! mTargetToGeodeMap.empty();
+      }
+
+      virtual void apply(osg::Group& node)
+      {
+         if (Process(node))
+         {
+            traverse(node);
+         }
+      }
+
+      virtual void apply(osg::MatrixTransform& node)
+      {
+         if (Process(node))
+         {
+            traverse(node);
+         }
+      }
+
+   protected:
+      virtual ~GeodeAttacher()
+      {}
+
+      typedef std::vector<dtCore::RefPtr<osg::Geode> > GeodeArray;
+      typedef std::map<std::string, GeodeArray> TargetNameGeodeMap;
+      TargetNameGeodeMap mTargetToGeodeMap;
+   };
+
+
+
+   /////////////////////////////////////////////////////////////////////////////
+   // CLASS CODE
+   /////////////////////////////////////////////////////////////////////////////
    const osg::CopyOp::Options OsgModelData::DEFAULT_COPY_OPTIONS
       = (osg::CopyOp::Options)(osg::CopyOp::DEEP_COPY_NODES
       | osg::CopyOp::DEEP_COPY_DRAWABLES
@@ -122,35 +191,45 @@ namespace dtAnim
       | osg::CopyOp::DEEP_COPY_CALLBACKS
       | osg::CopyOp::DEEP_COPY_USERDATA);
 
+   /////////////////////////////////////////////////////////////////////////////
    OsgModelData::OsgModelData(const std::string& modelName, const std::string& filename)
       : BaseClass(modelName, filename, Constants::CHARACTER_SYSTEM_OSG)
    {
       // TODO:
    }
       
+   /////////////////////////////////////////////////////////////////////////////
    OsgModelData::~OsgModelData()
    {
       mCoreAnims.clear();
       mCoreModel = NULL;
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    void OsgModelData::SetCoreModel(osg::Node* model)
    {
-      mCoreModel = model;
+      if (mCoreModel != model)
+      {
+         mCoreModel = model;
 
-      UpdateCoreAnimations();
+         // Model has changes so ensure resource references match.
+         UpdateResources();
+      }
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    osg::Node* OsgModelData::GetCoreModel()
    {
       return mCoreModel.get();
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    const osg::Node* OsgModelData::GetCoreModel() const
    {
       return mCoreModel.get();
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    dtCore::RefPtr<osg::Node> OsgModelData::CreateModelClone(osg::CopyOp::Options copyOptions) const
    {
       dtCore::RefPtr<osg::Node> node;
@@ -163,12 +242,14 @@ namespace dtAnim
       return node;
    }
    
+   /////////////////////////////////////////////////////////////////////////////
    const osgAnimation::Animation* OsgModelData::GetCoreAnimation(const std::string& name) const
    {
-      AnimMap::const_iterator foundIter = mCoreAnims.find(name);
+      OsgAnimationMap::const_iterator foundIter = mCoreAnims.find(name);
       return foundIter == mCoreAnims.end() ? NULL : foundIter->second.get();
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    float OsgModelData::GetAnimationDuration(const std::string& name) const
    {
       float duration = 0.0f;
@@ -182,6 +263,7 @@ namespace dtAnim
       return duration;
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    float OsgModelData::GetAnimationWeight(const std::string& name) const
    {
       float weight = 1.0f;
@@ -195,6 +277,7 @@ namespace dtAnim
       return weight;
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    int OsgModelData::LoadResource(dtAnim::ModelResourceType resourceType,
       const std::string& file, const std::string& objectName)
    {
@@ -212,12 +295,14 @@ namespace dtAnim
       return node.valid() ? 1 : 0;
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    int OsgModelData::UnloadResource(dtAnim::ModelResourceType resourceType, const std::string& objectName)
    {
       // TODO:
       return 0;
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    dtAnim::ModelResourceType OsgModelData::GetFileType(const std::string& file) const
    {
       // Do nothing. OSG can load many file types so a specific
@@ -225,41 +310,72 @@ namespace dtAnim
       return dtAnim::NO_FILE;
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    int OsgModelData::GetIndexForObjectName(ModelResourceType fileType, const std::string& objectName) const
    {
       // TODO:
       return 0;
    }
 
-   void OsgModelData::UpdateCoreAnimations()
+   /////////////////////////////////////////////////////////////////////////////
+   const OsgModelData::OsgAnimationMap& OsgModelData::GetCoreAnimations() const
+   {
+      return mCoreAnims;
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   const OsgModelData::OsgMaterialMap& OsgModelData::GetCoreMaterials() const
+   {
+      return mCoreMaterials;
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void OsgModelData::ClearResources()
+   {
+      mCoreAnims.clear();
+      mCoreMaterials.clear();
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void OsgModelData::UpdateResources()
    {
       if (mCoreModel.valid())
       {
          dtCore::RefPtr<OsgModelResourceFinder> resFinder = new OsgModelResourceFinder;
          mCoreModel->accept(*resFinder);
 
-         typedef OsgModelResourceFinder::OsgAnimationArray OsgAnimArray;
-         OsgAnimArray anims;
-         resFinder->GetAnimations(anims);
+         UpdateCoreAnimations(*resFinder);
+         UpdateCoreMaterials(*resFinder);
+      }
+      else
+      {
+         ClearResources();
+      }
+   }
 
-         osgAnimation::Animation* anim = NULL;
-         OsgAnimArray::iterator curIter = anims.begin();
-         OsgAnimArray::iterator endIter = anims.end();
-         for (; curIter != endIter; ++curIter)
-         {
-            anim = curIter->get();
-            mCoreAnims.insert(std::make_pair(anim->getName(), anim));
-         }
+   /////////////////////////////////////////////////////////////////////////////
+   void OsgModelData::UpdateCoreAnimations(OsgModelResourceFinder& finder)
+   {
+      typedef OsgModelResourceFinder::OsgAnimationArray OsgAnimArray;
+      OsgAnimArray anims;
+      finder.GetAnimations(anims);
+
+      osgAnimation::Animation* anim = NULL;
+      OsgAnimArray::iterator curIter = anims.begin();
+      OsgAnimArray::iterator endIter = anims.end();
+      for (; curIter != endIter; ++curIter)
+      {
+         anim = curIter->get();
+         mCoreAnims.insert(std::make_pair(anim->getName(), anim));
       }
 
       // Go through all the core animations and ensure their
       // durations are all precalculated.
-      osgAnimation::Animation* anim = NULL;
-      AnimMap::iterator curIter = mCoreAnims.begin();
-      AnimMap::iterator endIter = mCoreAnims.end();
+      OsgAnimationMap::iterator curCoreIter = mCoreAnims.begin();
+      OsgAnimationMap::iterator endCoreIter = mCoreAnims.end();
       for (; curIter != endIter; ++curIter)
       {
-         anim = curIter->second.get();
+         anim = curCoreIter->second.get();
 
          // Ensure that the animation's duration is valid.
          if (anim->getDuration() == 0.0f)
@@ -272,6 +388,33 @@ namespace dtAnim
          {
             anim->setWeight(1.0f);
          }
+      }
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void OsgModelData::UpdateCoreMaterials(OsgModelResourceFinder& finder)
+   {
+      typedef dtAnim::OsgModelResourceFinder::OsgMaterialArray OsgMatArray;
+      OsgMatArray::iterator curIter = finder.mMaterials.begin();
+      OsgMatArray::iterator endIter = finder.mMaterials.end();
+      for (; curIter != endIter; ++curIter)
+      {
+         AddOrReplaceCoreMaterial(*curIter->get());
+      }
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void OsgModelData::AddOrReplaceCoreMaterial(osg::StateSet& material)
+   {
+      const std::string& name = material.getName();
+      OsgMaterialMap::iterator foundIter = mCoreMaterials.find(name);
+      if (foundIter != mCoreMaterials.end())
+      {
+         foundIter->second = &material;
+      }
+      else
+      {
+         mCoreMaterials.insert(std::make_pair(name, &material));
       }
    }
 
@@ -336,7 +479,7 @@ namespace dtAnim
 
       if (results > 0)
       {
-         mMaterials.insert(mMaterials.end(), finder.mMaterials.begin(), finder.mMaterials.end());
+         UpdateCoreMaterials(finder);
       }
 
       // TODO: Replace materials on existing meshses???
@@ -348,7 +491,13 @@ namespace dtAnim
    int OsgModelData::ApplyMeshesToModel(OsgModelResourceFinder& finder)
    {
       int results = 0;
-      osgAnimation::Skeleton* skel = GetOrCreateSkeleton();
+
+      osg::Node* coreModel = GetOrCreateModelNode();
+
+      // This should have been set in the previous call at least.
+      osgAnimation::Skeleton* skel = mSkeleton.get();
+
+      dtCore::RefPtr<GeodeAttacher> attacher = new GeodeAttacher;
 
       dtCore::RefPtr<osg::Geode> geode = NULL;
       typedef OsgModelResourceFinder::OsgGeodeArray OsgGeodeArray;
@@ -363,9 +512,9 @@ namespace dtAnim
          {
             osg::Group* parent = geode->getParent(0);
             parent->removeChild(geode);
-         }
 
-         skel->addChild(geode);
+            attacher->AddGeode(parent->getName(), *geode);
+         }
 
          // If there are rig geometries, make sure they have references
          // to the currently loaded skeleton.
@@ -384,6 +533,9 @@ namespace dtAnim
 
          ++results;
       }
+
+      // Attach the geodes to the current model.
+      coreModel->accept(*attacher);
 
       return results;
    }

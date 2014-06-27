@@ -29,6 +29,8 @@ namespace dtAnim
    {
    public:
       typedef dtAnim::BaseModelData BaseClass;
+      typedef std::map<std::string, dtCore::RefPtr<osgAnimation::Animation> > OsgAnimationMap;
+      typedef std::map<std::string, dtCore::RefPtr<osg::StateSet> > OsgMaterialMap;
 
       static const osg::CopyOp::Options DEFAULT_COPY_OPTIONS;
 
@@ -77,23 +79,33 @@ namespace dtAnim
 
       void SetFinderMode(dtAnim::ModelResourceType resType, OsgModelResourceFinder& finder);
 
+      const OsgAnimationMap& GetCoreAnimations() const;
+
+      const OsgMaterialMap& GetCoreMaterials() const;
+      
+      void ClearResources();
+
+      void UpdateResources();
+
    protected:
       virtual ~OsgModelData();
 
       OsgModelData(const OsgModelData&); //not implemented
       OsgModelData& operator=(const OsgModelData&); //not implemented
 
-      void UpdateCoreAnimations();
+      void UpdateCoreAnimations(OsgModelResourceFinder& finder);
+
+      void UpdateCoreMaterials(OsgModelResourceFinder& finder);
+
+      void AddOrReplaceCoreMaterial(osg::StateSet& material);
 
    private:
       dtCore::RefPtr<osg::Node> mCoreModel;
 
-      typedef std::map<std::string, dtCore::RefPtr<osgAnimation::Animation> > AnimMap;
-      AnimMap mCoreAnims;
       dtCore::RefPtr<osgAnimation::Skeleton> mSkeleton;
 
-      typedef std::vector<dtCore::RefPtr<osg::StateSet> > MaterialArray;
-      MaterialArray mMaterials;
+      OsgAnimationMap mCoreAnims;
+      OsgMaterialMap mCoreMaterials;
    };
 
 }

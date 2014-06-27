@@ -40,6 +40,8 @@ namespace dtAnim
          return;
       }
 
+      Clear();
+
       osg::Node* node = mModel->GetDrawableNode();
       dtCore::RefPtr<ResFinder> finder = new ResFinder(ResFinder::SEARCH_ALL);
       node->accept(*finder);
@@ -255,6 +257,8 @@ namespace dtAnim
    {
       typedef ResFinder::OsgMaterialArray OsgMaterialArray;
 
+      dtAnim::OsgModelWrapper* wrapper = GetOsgModelWrapper();
+
       osg::StateSet* stateSet = NULL;
       OsgMaterialArray::iterator curIter = finder.mMaterials.begin();
       OsgMaterialArray::iterator endIter = finder.mMaterials.end();
@@ -262,7 +266,43 @@ namespace dtAnim
       {
          stateSet = curIter->get();
          mMaterials.insert(std::make_pair(stateSet->getName(),
-            new dtAnim::OsgMaterial(*GetOsgModelWrapper(), *stateSet)));
+            new dtAnim::OsgMaterial(*wrapper, *stateSet)));
+      }
+
+      const osg::CopyOp::CopyFlags MATERIAL_COPY_FLAGS
+         = osg::CopyOp::DEEP_COPY_STATESETS
+         || osg::CopyOp::DEEP_COPY_UNIFORMS
+         || osg::CopyOp::DEEP_COPY_CALLBACKS;
+
+      // Other parts of the character might not be loaded.
+      // Collect all materials that may have been registered
+      // in the model data that would not otherwise be available
+      // without the presence of drawables.
+      OsgModelData* modelData = wrapper->GetOsgModelData();
+      osg::StateSet* coreMaterial = NULL;
+      const OsgModelData::OsgMaterialMap& coreMaterials = modelData->GetCoreMaterials();
+      OsgModelData::OsgMaterialMap::const_iterator curCoreIter = coreMaterials.begin();
+      OsgModelData::OsgMaterialMap::const_iterator endCoreIter = coreMaterials.end();
+      for (; curCoreIter != endCoreIter; ++curCoreIter)
+      {
+         coreMaterial = curCoreIter->second.get();
+         const std::string& name = curCoreIter->first;
+         BaseClass::MaterialMap::iterator foundIter = mMaterials.find(name);
+         if (foundIter == mMaterials.end())
+         {
+            dtCore::RefPtr<osg::StateSet> materialCopy
+               = static_cast<osg::StateSet*>(coreMaterial->clone(MATERIAL_COPY_FLAGS));
+            
+            if (materialCopy.valid())
+            {
+               mMaterials.insert(std::make_pair(name,
+                  new dtAnim::OsgMaterial(*wrapper, *materialCopy)));
+            }
+            else
+            {
+               LOG_ERROR("Could not clone material \"" + name + "\"");
+            }
+         }
       }
    }
 
@@ -515,6 +555,8 @@ namespace dtAnim
    void OsgModelWrapper::UpdateInterfaceObjects()
    {
       mCache->Update();
+
+      Internal_UpdateAnimatorObject();
    }
 
    void OsgModelWrapper::UpdateAnimationInterfaceObjects()

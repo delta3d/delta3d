@@ -17,6 +17,8 @@
 
 #include <vector>
 
+#include "AttachmentPanel.h"
+
 class QColor;
 
 namespace dtCore
@@ -78,8 +80,8 @@ public slots:
    void OnSetBoneLabelDisplay (bool shouldDisplay);
 
    void OnUnloadAttachmentFile();
-   void OnLoadAttachmentFile  (const QString& filename);
-   void OnAttachmentSettingsChanged(const std::string& bone, float offsx, float offsy, float offsz, float rotx, float roty, float rotz);
+   void OnLoadAttachmentFile  (const QString filename);
+   void OnAttachmentSettingsChanged(AttachmentInfo info);
 
    void OnTimeout();
 
@@ -96,6 +98,8 @@ public slots:
    void OnClearTempFile();
 
 signals:
+   void SignalAttachmentLoaded();
+
    void AnimationLoaded(unsigned int, const QString&, unsigned int trackCount,
                         unsigned int keyframes, float duration);
 

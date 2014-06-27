@@ -9,6 +9,7 @@ INCLUDE_DIRECTORIES(${QT_INCLUDE_DIR}
 SET(SOURCE_PATH ${DELTA3D_SOURCE_DIR}/utilities/${APP_NAME})
 SET(PROG_HEADERS ${SOURCE_PATH}/AnimationTableWidget.h
                  ${SOURCE_PATH}/AnimationSliderPanel.h
+                 ${SOURCE_PATH}/AttachmentPanel.h
                  ${SOURCE_PATH}/MainWindow.h
                  ${SOURCE_PATH}/NewCharacterDialog.h
                  ${SOURCE_PATH}/PoseMeshItem.h
@@ -21,6 +22,7 @@ SET(PROG_HEADERS ${SOURCE_PATH}/AnimationTableWidget.h
 
 SET(PROG_SOURCES ${SOURCE_PATH}/AnimationTableWidget.cpp
                  ${SOURCE_PATH}/AnimationSliderPanel.cpp
+                 ${SOURCE_PATH}/AttachmentPanel.cpp
                  ${SOURCE_PATH}/main.cpp
                  ${SOURCE_PATH}/MainWindow.cpp
                  ${SOURCE_PATH}/NewCharacterDialog.cpp
@@ -37,6 +39,7 @@ SET(PROG_SOURCES ${SOURCE_PATH}/AnimationTableWidget.cpp
 QT4_ADD_RESOURCES(RCC_SOURCES AnimationViewerResources.qrc)
 qt4_wrap_cpp(MOC_SOURCES ${PROG_HEADERS})
 qt4_wrap_ui(UI_SOURCES AnimationSliderPanel.ui
+                       AttachmentPanel.ui
                        NewCharacterDialog.ui
                        PoseMeshProperties.ui
                        ResourceAddDialog.ui)
