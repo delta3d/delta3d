@@ -8,6 +8,7 @@
 #include <dtCore/observerptr.h>
 #include <QtGui/qwidget.h>
 #include <QtGui/qtreewidget.h>
+#include <dtCore/refptr.h>
 #include <osg/Node>
 
 
@@ -52,6 +53,8 @@ namespace dtQt
       Q_OBJECT
    public:
       typedef QWidget BaseClass;
+      typedef dtCore::RefPtr<osg::Node> OsgNodePtr;
+      typedef std::vector<OsgNodePtr > OsgNodeArray;
 
       NodeTreePanel(QWidget* parent = NULL);
 
@@ -62,8 +65,13 @@ namespace dtQt
       void SetNode(osg::Node* node, bool updateUI = true);
       osg::Node* GetNode() const;
 
+   signals:
+      void SignalNodeSelected(OsgNodePtr node);
+      void SignalNodesSelected(OsgNodeArray nodeArray);
+
    public slots:
       void UpdateColumns();
+      void OnItemSelectionChanged();
 
    protected:
       virtual void CreateConnections();

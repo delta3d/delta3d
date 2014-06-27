@@ -198,6 +198,7 @@ namespace dtQt
 
    void NodeTreePanel::CreateConnections()
    {
+      // BUTTONS
       connect(mUI->mButtonExpandAll, SIGNAL(clicked()),
          mUI->mTree, SLOT(expandAll()));
       connect(mUI->mButtonCollapseAll, SIGNAL(clicked()),
@@ -207,6 +208,10 @@ namespace dtQt
          this, SLOT(UpdateColumns()));
       connect(mUI->mButtonCollapseAll, SIGNAL(clicked()),
          this, SLOT(UpdateColumns()));
+
+      // ITEMS
+      connect(mUI->mTree, SIGNAL(itemSelectionChanged()),
+         this, SLOT(OnItemSelectionChanged()));
    }
 
    void NodeTreePanel::UpdateUI()
@@ -229,6 +234,39 @@ namespace dtQt
    {
       mUI->mTree->resizeColumnToContents(0);
       mUI->mTree->resizeColumnToContents(1);
+   }
+
+   void NodeTreePanel::OnItemSelectionChanged()
+   {
+      OsgNodeArray nodeArray;
+
+      typedef QList<QTreeWidgetItem*> NodeItemsArray;
+      const NodeItemsArray items = mUI->mTree->selectedItems();
+
+      NodeTreeItem* curItem = NULL;
+      NodeItemsArray::const_iterator curIter = items.begin();
+      NodeItemsArray::const_iterator endIter = items.end();
+      for (; curIter != endIter; ++curIter)
+      {
+         curItem = dynamic_cast<NodeTreeItem*>(*curIter);
+         if (curItem != NULL)
+         {
+            osg::Node* node = curItem->GetNode();
+            if (node != NULL)
+            {
+               nodeArray.push_back(node);
+            }
+         }
+      }
+
+      if ( ! nodeArray.empty())
+      {
+         // Signal for a single node.
+         emit SignalNodeSelected(nodeArray.front());
+
+         // Signal for multiple nodes.
+         emit SignalNodesSelected(nodeArray);
+      }
    }
 
    void NodeTreePanel::SetNode(osg::Node* node, bool updateUI)
