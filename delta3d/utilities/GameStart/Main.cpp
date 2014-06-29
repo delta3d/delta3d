@@ -66,7 +66,7 @@ void ParseCLI(int& argc, char** argv, std::string& configFileName, std::string& 
    arguments.read("--logFileName", logFileName);
 
    // After removing all options, the library must be the first remaining parameter.
-   if (!arguments.isOption(1))
+   if (arguments.argc() > 1 && !arguments.isOption(1))
    {
       appToLoad = arguments[1];
       arguments.remove(1,1);
