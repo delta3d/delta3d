@@ -298,6 +298,16 @@ namespace dtAnim
       return img == NULL ? "" : img->getFileName();
    }
 
+   osg::StateSet* OsgMaterial::GetOsgStateSet()
+   {
+      return mStateSet.get();
+   }
+
+   const osg::StateSet* OsgMaterial::GetOsgStateSet() const
+   {
+      return mStateSet.get();
+   }
+
 
    
    /////////////////////////////////////////////////////////////////////////////
@@ -653,6 +663,11 @@ namespace dtAnim
    {
       return mGeode.get();
    }
+   
+   void OsgMesh::ApplyMaterial(OsgMaterial& material)
+   {
+      mGeode->setStateSet(material.GetOsgStateSet());
+   }
 
 
 
@@ -943,7 +958,51 @@ namespace dtAnim
 
    float OsgAnimation::GetTime() const
    {
-      return GetAnimator()->GetAnimationTime(*this);
+      float timelineTime = GetAnimator()->GetAnimationTime();
+
+      float animTime = 0.0f;
+
+      float duration = mAnim->getDuration();
+      if (duration != 0.0f)
+      {
+         float startTime = mAnim->getStartTime();
+
+         // Animation time should be relative to the animation and not
+         // the overall timeline. Animation range should fall within
+         // 0 to loop duration.
+         animTime = (timelineTime - startTime) / duration;
+
+         // Clamp the lower time limit. 
+         if (animTime < 0.0f)
+         {
+            animTime = 0.0f;
+         }
+
+         // Clamp to the duration or adjust the time
+         // relative to another loop.
+         if (animTime > duration)
+         {
+            const dtAnim::PlayModeEnum& playMode = GetPlayMode();
+            if (playMode == dtAnim::PlayModeEnum::LOOP)
+            {
+               float ratio = animTime / duration;
+               ratio -= std::floorf(ratio); // Loop count
+               animTime = duration * ratio;
+            }
+            else if (playMode == dtAnim::PlayModeEnum::SWING)
+            {
+               float ratio = (animTime / duration) * 0.5; // Twice the anim time is one full swing loop.
+               ratio -= std::floorf(ratio); // Loop count
+               animTime = duration * ratio;
+            }
+            else
+            {
+               animTime = duration;
+            }
+         }
+      }
+
+      return animTime;
    }
    
    int OsgAnimation::GetKeyframeCount() const

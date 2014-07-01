@@ -41,6 +41,34 @@ namespace dtAnim
    class OsgModelResourceFinder;
 
 
+   
+   /////////////////////////////////////////////////////////////////////////////
+   // CONSTANTS
+   /////////////////////////////////////////////////////////////////////////////
+   class DT_ANIM_EXPORT OsgExtensionEnum : public dtUtil::Enumeration
+   {
+         DECLARE_ENUM(OsgExtensionEnum);
+      public:
+         typedef dtUtil::Enumeration BaseClass;
+
+         static OsgExtensionEnum TARGET;
+
+         const std::string& GetDescription() const;
+
+         dtAnim::ModelResourceType GetResourceType() const;
+
+      private:
+         OsgExtensionEnum(const std::string& name,
+            dtAnim::ModelResourceType resourceType,
+            const std::string& description);
+
+         dtAnim::ModelResourceType mResourceType;
+         std::string mDescription;
+   };
+
+   typedef OsgExtensionEnum OsgExtEnum;
+
+
 
    /////////////////////////////////////////////////////////////////////////////
    // CLASS CODE

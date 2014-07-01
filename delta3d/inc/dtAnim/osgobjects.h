@@ -120,6 +120,9 @@ namespace dtAnim
 
       virtual const std::string GetTextureFile(int index) const;
 
+      osg::StateSet* GetOsgStateSet();
+      const osg::StateSet* GetOsgStateSet() const;
+
    protected:
       virtual ~OsgMaterial();
 
@@ -238,6 +241,8 @@ namespace dtAnim
 
       osg::Geode* GetOsgGeode();
       const osg::Geode* GetOsgGeode() const;
+
+      void ApplyMaterial(OsgMaterial& material);
 
    protected:
       virtual ~OsgMesh();

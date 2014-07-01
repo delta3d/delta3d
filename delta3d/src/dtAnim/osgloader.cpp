@@ -34,6 +34,33 @@
 namespace dtAnim
 {
    /////////////////////////////////////////////////////////////////////////////
+   // CONSTANTS
+   /////////////////////////////////////////////////////////////////////////////
+   IMPLEMENT_ENUM(OsgExtensionEnum);
+   OsgExtensionEnum OsgExtensionEnum::TARGET("target", MORPH_FILE, "MakeHuman Morph Target File (text)");
+
+   OsgExtensionEnum::OsgExtensionEnum(const std::string& name,
+      dtAnim::ModelResourceType resourceType, const std::string& description)
+      : BaseClass(name)
+      , mResourceType(resourceType)
+      , mDescription(description)
+   {
+      OsgExtensionEnum::AddInstance(this);
+   }
+
+   const std::string& OsgExtensionEnum::GetDescription() const
+   {
+      return mDescription;
+   }
+
+   dtAnim::ModelResourceType OsgExtensionEnum::GetResourceType() const
+   {
+      return mResourceType;
+   }
+
+
+
+   /////////////////////////////////////////////////////////////////////////////
    // HELPER FUNCTIONS
    /////////////////////////////////////////////////////////////////////////////
    template <class T_FileStruct>

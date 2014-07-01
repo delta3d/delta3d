@@ -113,43 +113,145 @@ namespace dtAnim
    /////////////////////////////////////////////////////////////////////////////
    // CLASS CODE
    /////////////////////////////////////////////////////////////////////////////
-   class GeodeAttacher : public osg::NodeVisitor
+   class NodeAttacher : public osg::NodeVisitor
    {
    public:
       typedef osg::NodeVisitor BaseClass;
 
-      GeodeAttacher()
+      NodeAttacher()
          : BaseClass(osg::NodeVisitor::TRAVERSE_ALL_CHILDREN)
       {}
 
-      bool AddGeode(const std::string& targetName, osg::Geode& geode)
+      static int GetDepthFromSkeleton(osg::Node& node)
       {
-         mTargetToGeodeMap[targetName].push_back(&geode);
+         int depth = 0;
+
+         bool skeletonFound = false;
+         osg::Group* parent = node.getNumParents() > 0 ? node.getParent(0) : NULL;
+         while (parent != NULL)
+         {
+            if (strcmp(parent->className(), "Skeleton") == 0)
+            {
+               skeletonFound = true;
+               break;
+            }
+            else
+            {
+               ++depth;
+            }
+
+            if (parent->getNumParents() > 0)
+            {
+               parent = parent->getParent(0);
+            }
+            else
+            {
+               parent = NULL;
+            }
+         }
+
+         if ( ! skeletonFound)
+         {
+            depth = -1;
+         }
+
+         return depth;
+      }
+
+      class ParentChildPair : public osg::Referenced
+      {
+      public:
+         ParentChildPair(osg::Group& parent, osg::Node& child)
+            : mParent(&parent)
+            , mChild(&child)
+            , mNodeDepth(0)
+         {
+            mNodeDepth = GetDepthFromSkeleton(child);
+         }
+
+         dtCore::RefPtr<osg::Group> mParent;
+         dtCore::RefPtr<osg::Node> mChild;
+         int mNodeDepth;
+
+      protected:
+         virtual ~ParentChildPair()
+         {}
+      };
+
+      // Predicat method
+      struct IsNullPred
+      {
+         bool operator()(ParentChildPair* pair)
+         {
+            return ! pair->mParent.valid();
+         }
+      };
+
+      /**
+       * This method takes a parent argument in case the node has
+       * multiple parents and may need to be attached to multiple parents.
+       */
+      bool AddNode(osg::Group& parent, osg::Node& child)
+      {
+         child.getStateSet()->setTextureAttributeAndModes(0,NULL,osg::StateAttribute::OFF);
+
+         mNameParentChildMap[parent.getName()].push_back(new ParentChildPair(parent, child));
          return true;
       }
 
       bool Process(osg::Group& node)
       {
-         TargetNameGeodeMap::iterator foundIter = mTargetToGeodeMap.find(node.getName());
-         if (foundIter != mTargetToGeodeMap.end())
+         NameParentChildMap::iterator foundIter = mNameParentChildMap.find(node.getName());
+         if (foundIter != mNameParentChildMap.end())
          {
-            GeodeArray* geodeArray = &foundIter->second;
-            GeodeArray::iterator curGeode = geodeArray->begin();
+            ParentChildPair* curPair = NULL;
+            ParentChildArray* pairsArray = &foundIter->second;
+            ParentChildArray::iterator curIter = pairsArray->begin();
 
-            while (curGeode != geodeArray->end())
+            while (curIter != pairsArray->end())
             {
-               // Attach the geode to the current node.
-               node.addChild(curGeode->get());
+               curPair = curIter->get();
 
-               ++curGeode;
+               if (curPair != NULL && curPair->mParent.valid())
+               {
+                  // Determine if the current node is a true match
+                  // with the parent in the current pair, even though
+                  // the current node matches by name.
+                  int nodeDepth = GetDepthFromSkeleton(node);
+                  bool isMatch = strcmp(curPair->mParent->className(), node.className()) == 0
+                     && nodeDepth == curPair->mNodeDepth - 1;
+
+                  if (isMatch)
+                  {
+                     // Attach the geode to the current node.
+                     node.addChild(curPair->mChild.get());
+
+                     // Remove the current pair since the associated
+                     // node has been attached.
+                     curPair->mParent = NULL;
+                     curPair->mChild = NULL;
+                  }
+               }
+
+               ++curIter;
             }
 
-            // Remove the geode array from the map since they have been attached.
-            mTargetToGeodeMap.erase(foundIter);
+            // Remove NULL entries from the current array.
+            if ( ! pairsArray->empty())
+            {
+               IsNullPred pred;
+               std::remove_if(pairsArray->begin(), pairsArray->end(), pred);
+            }
+
+            // Remove the node array from the map since they have been attached.
+            if (pairsArray->empty())
+            {
+               mNameParentChildMap.erase(foundIter);
+            }
          }
 
-         // Continue traversal only if there are more geodes to be attached.
-         return ! mTargetToGeodeMap.empty();
+         // Continue traversal only if there are more nodes to be attached.
+         return ! mNameParentChildMap.empty();
       }
 
       virtual void apply(osg::Group& node)
@@ -169,12 +271,12 @@ namespace dtAnim
       }
 
    protected:
-      virtual ~GeodeAttacher()
+      virtual ~NodeAttacher()
       {}
 
-      typedef std::vector<dtCore::RefPtr<osg::Geode> > GeodeArray;
-      typedef std::map<std::string, GeodeArray> TargetNameGeodeMap;
-      TargetNameGeodeMap mTargetToGeodeMap;
+      typedef std::vector<dtCore::RefPtr<ParentChildPair> > ParentChildArray;
+      typedef std::map<std::string, ParentChildArray> NameParentChildMap;
+      NameParentChildMap mNameParentChildMap;
    };
 
 
@@ -437,7 +539,7 @@ namespace dtAnim
 
       if ( ! finderOfOriginal->mAnimManagers.empty())
       {
-         dtCore::RefPtr<osgAnimation::BasicAnimationManager> originalAnimManager = finderOfOriginal->mAnimManagers.front();
+         originalAnimManager = finderOfOriginal->mAnimManagers.front();
       }
 
       // Create the animation manager if it does not yet exist.
@@ -464,6 +566,10 @@ namespace dtAnim
          {
             anim = curAnimIter->get();
 
+            if (anim->getDuration() == 0.0f)
+            {
+               anim->computeDuration();
+            }
             originalAnimManager->registerAnimation(anim);
             ++results;
          }
@@ -481,8 +587,6 @@ namespace dtAnim
       {
          UpdateCoreMaterials(finder);
       }
-
-      // TODO: Replace materials on existing meshses???
       
       return results;
    }
@@ -497,7 +601,7 @@ namespace dtAnim
       // This should have been set in the previous call at least.
       osgAnimation::Skeleton* skel = mSkeleton.get();
 
-      dtCore::RefPtr<GeodeAttacher> attacher = new GeodeAttacher;
+      dtCore::RefPtr<NodeAttacher> attacher = new NodeAttacher;
 
       dtCore::RefPtr<osg::Geode> geode = NULL;
       typedef OsgModelResourceFinder::OsgGeodeArray OsgGeodeArray;
@@ -508,12 +612,12 @@ namespace dtAnim
          geode = curIter->get();
 
          // Remove the mesh from its current parents
-         while (geode->getNumParents())
+         while (geode->getNumParents() > 0)
          {
             osg::Group* parent = geode->getParent(0);
-            parent->removeChild(geode);
+            attacher->AddNode(*parent, *geode);
 
-            attacher->AddGeode(parent->getName(), *geode);
+            parent->removeChild(geode);
          }
 
          // If there are rig geometries, make sure they have references
