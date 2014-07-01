@@ -62,6 +62,7 @@ AnimationChannel::AnimationChannel(const AnimationChannel& channel)
    : Animatable(channel)
    , mIsAction(channel.mIsAction)
    , mIsLooping(channel.mIsLooping)
+   , mDuration(channel.mDuration)
    , mMaxDuration(channel.mMaxDuration)
    , mLastWeight(0.0f)
    , mAnimName(channel.mAnimName)
@@ -320,7 +321,7 @@ void AnimationChannel::SetMaxDuration(float seconds)
 ////////////////////////////////////////////////////////////////////////////////
 float AnimationChannel::ConvertToRelativeTimeInAnimationScope(double timeToConvert) const
 {
-   float duration = mDuration > 0.0f ? mDuration : 0.0f;
+   float duration = mDuration > 0.0f ? mDuration / GetSpeed() : 0.0f;
 
    // Get what the the Base Class would set as the relative time.
    float elapsedTime = BaseClass::ConvertToRelativeTimeInAnimationScope(timeToConvert);

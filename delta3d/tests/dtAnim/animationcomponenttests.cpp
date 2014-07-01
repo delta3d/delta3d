@@ -82,8 +82,10 @@ namespace dtAnim
          CPPUNIT_TEST(TestAnimationPerformance);
          CPPUNIT_TEST(TestRegisterUnregister);
          CPPUNIT_TEST(TestRegisterMapUnload);
-         CPPUNIT_TEST(TestAnimationEventFiring);
          CPPUNIT_TEST(TestAnimationActorComponentInit);
+         CPPUNIT_TEST(TestAnimationEventFiring_FullSpeed);
+         CPPUNIT_TEST(TestAnimationEventFiring_TwiceSpeed);
+         CPPUNIT_TEST(TestAnimationEventFiring_HalfSpeed);
       CPPUNIT_TEST_SUITE_END();
 
    public:
@@ -98,8 +100,12 @@ namespace dtAnim
       void TestAnimationPerformance();
       void TestRegisterUnregister();
       void TestRegisterMapUnload();
-      void TestAnimationEventFiring();
       void TestAnimationActorComponentInit();
+      void TestAnimationEventFiring_FullSpeed();
+      void TestAnimationEventFiring_TwiceSpeed();
+      void TestAnimationEventFiring_HalfSpeed();
+
+      void SubtestAnimationEventFiring(float speed);
 
       // Helper methods.
       dtCore::RefPtr<AnimationHelper> CreateRealAnimationHelper();
@@ -173,6 +179,9 @@ namespace dtAnim
    /////////////////////////////////////////////////////////////////////////////
    void AnimationComponentTests::tearDown()
    {
+      dtCore::GameEventManager& gem = dtCore::GameEventManager::GetInstance();
+      gem.ClearAllEvents();
+
       dtCore::System::GetInstance().Stop();
       if (mGM.valid())
       {
@@ -465,82 +474,100 @@ namespace dtAnim
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void AnimationComponentTests::TestAnimationEventFiring()
+   void AnimationComponentTests::TestAnimationEventFiring_FullSpeed()
    {
-      try
+      SubtestAnimationEventFiring(1.0f);
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void AnimationComponentTests::TestAnimationEventFiring_TwiceSpeed()
+   {
+      SubtestAnimationEventFiring(2.0f);
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void AnimationComponentTests::TestAnimationEventFiring_HalfSpeed()
+   {
+      SubtestAnimationEventFiring(0.5f);
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void AnimationComponentTests::SubtestAnimationEventFiring(float speed)
+   {
+      // Create a tick message used to tick the component.
+      float timeStep = 0.2f / speed;
+      dtCore::RefPtr<dtGame::TickMessage> tickMessage;
+      mGM->GetMessageFactory().CreateMessage(dtGame::MessageType::TICK_LOCAL, tickMessage);
+      tickMessage->SetDeltaSimTime(timeStep);
+
+      // Declare the test event names.
+      dtCore::GameEventManager& gem = dtCore::GameEventManager::GetInstance();
+      const std::string eventStart1("startEvent1"); // time 0
+      const std::string eventStart2("startEvent2"); // time 0
+      const std::string eventStart3("startEvent3"); // time 0
+      const std::string eventMid1("midEvent1"); // time 0.25
+      const std::string eventMid2("midEvent2"); // time 0.25
+      const std::string eventMid3("midEvent3"); // time 0.5
+
+      // Ensure that the events do not currently exist.
+      CPPUNIT_ASSERT(gem.FindEvent(eventStart1) == NULL);
+      CPPUNIT_ASSERT(gem.FindEvent(eventStart2) == NULL);
+      CPPUNIT_ASSERT(gem.FindEvent(eventStart3) == NULL);
+      CPPUNIT_ASSERT(gem.FindEvent(eventMid1) == NULL);
+      CPPUNIT_ASSERT(gem.FindEvent(eventMid2) == NULL);
+      CPPUNIT_ASSERT(gem.FindEvent(eventMid3) == NULL);
+
+      // Create the test animation helper
+      dtCore::RefPtr<AnimationHelper> helper = CreateRealAnimationHelper();
+      CPPUNIT_ASSERT( ! helper->GetSendEventCallback().valid());
+      mAnimComp->RegisterActor(*mTestGameActor, *helper);
+      // --- Ensure that the component has registered its
+      //     send event method with the helper.
+      CPPUNIT_ASSERT(helper->GetSendEventCallback().valid());
+      helper->SetCommandCallbacksEnabled(true);
+
+      // Set the speed on the animatables.
+      dtAnim::BaseModelWrapper* wrapper = helper->GetModelWrapper();
+      const dtAnim::BaseModelData* modelData = wrapper->GetModelData();
+
+      typedef dtAnim::AnimatableArray AnimArray;
+      const AnimArray& anims = modelData->GetAnimatables();
+      AnimArray::const_iterator curIter = anims.begin();
+      for (; curIter != anims.end(); ++curIter)
       {
-         // Create a tick message used to tick the component.
-         float timeStep = 0.2f;
-         dtCore::RefPtr<dtGame::TickMessage> tickMessage;
-         mGM->GetMessageFactory().CreateMessage(dtGame::MessageType::TICK_LOCAL, tickMessage);
-         tickMessage->SetDeltaSimTime(timeStep);
-
-         // Declare the test event names.
-         dtCore::GameEventManager& gem = dtCore::GameEventManager::GetInstance();
-         const std::string eventStart1("startEvent1"); // time 0
-         const std::string eventStart2("startEvent2"); // time 0
-         const std::string eventStart3("startEvent3"); // time 0
-         const std::string eventMid1("midEvent1"); // time 0.25
-         const std::string eventMid2("midEvent2"); // time 0.25
-         const std::string eventMid3("midEvent3"); // time 0.5
-
-         // Ensure that the events do not currently exist.
-         CPPUNIT_ASSERT(gem.FindEvent(eventStart1) == NULL);
-         CPPUNIT_ASSERT(gem.FindEvent(eventStart2) == NULL);
-         CPPUNIT_ASSERT(gem.FindEvent(eventStart3) == NULL);
-         CPPUNIT_ASSERT(gem.FindEvent(eventMid1) == NULL);
-         CPPUNIT_ASSERT(gem.FindEvent(eventMid2) == NULL);
-         CPPUNIT_ASSERT(gem.FindEvent(eventMid3) == NULL);
-
-         // Create the test animation helper
-         dtCore::RefPtr<AnimationHelper> helper = CreateRealAnimationHelper();
-         CPPUNIT_ASSERT( ! helper->GetSendEventCallback().valid());
-         mAnimComp->RegisterActor(*mTestGameActor, *helper);
-         // --- Ensure that the component has registered its
-         //     send event method with the helper.
-         CPPUNIT_ASSERT(helper->GetSendEventCallback().valid());
-         helper->SetCommandCallbacksEnabled(true);
-
-         // Start playing the animation that contains those events.
-         helper->PlayAnimation("TestEventsAction");
-         mAnimComp->ProcessMessage(*tickMessage); // Now at time 0.2
-         // --- Ensure the start events were fired.
-         CPPUNIT_ASSERT(gem.FindEvent(eventStart1) != NULL);
-         CPPUNIT_ASSERT(gem.FindEvent(eventStart2) != NULL);
-         CPPUNIT_ASSERT(gem.FindEvent(eventStart3) != NULL);
-         CPPUNIT_ASSERT(gem.FindEvent(eventMid1) == NULL); // will not execute until time 0.25
-         CPPUNIT_ASSERT(gem.FindEvent(eventMid2) == NULL);
-         CPPUNIT_ASSERT(gem.FindEvent(eventMid3) == NULL);
-
-         // --- Ensure some middle events were fired.
-         gem.ClearAllEvents();
-         mAnimComp->ProcessMessage(*tickMessage); // Now at time 0.4
-         CPPUNIT_ASSERT(gem.FindEvent(eventStart1) == NULL);
-         CPPUNIT_ASSERT(gem.FindEvent(eventStart2) == NULL);
-         CPPUNIT_ASSERT(gem.FindEvent(eventStart3) == NULL);
-         CPPUNIT_ASSERT(gem.FindEvent(eventMid1) != NULL);
-         CPPUNIT_ASSERT(gem.FindEvent(eventMid2) != NULL);
-         CPPUNIT_ASSERT(gem.FindEvent(eventMid3) == NULL); // will not execute until time 0.5
-
-         // --- Ensure the last middle event was fired.
-         gem.ClearAllEvents();
-         mAnimComp->ProcessMessage(*tickMessage); // Now at time 0.6
-         CPPUNIT_ASSERT(gem.FindEvent(eventStart1) == NULL);
-         CPPUNIT_ASSERT(gem.FindEvent(eventStart2) == NULL);
-         CPPUNIT_ASSERT(gem.FindEvent(eventStart3) == NULL);
-         CPPUNIT_ASSERT(gem.FindEvent(eventMid1) == NULL);
-         CPPUNIT_ASSERT(gem.FindEvent(eventMid2) == NULL);
-         CPPUNIT_ASSERT(gem.FindEvent(eventMid3) != NULL);
+         (*curIter)->SetSpeed(speed);
       }
-      catch(std::exception& ex)
-      {
-         std::string what(ex.what());
-         LOG_ERROR("Exception hit: " + what);
-      }
-      catch(...)
-      {
-         LOG_ERROR("Unknown exception hit.");
-      }
+
+      // Start playing the animation that contains those events.
+      helper->PlayAnimation("TestEventsAction");
+      mAnimComp->ProcessMessage(*tickMessage); // Now at time 0.2
+      // --- Ensure the start events were fired.
+      CPPUNIT_ASSERT(gem.FindEvent(eventStart1) != NULL);
+      CPPUNIT_ASSERT(gem.FindEvent(eventStart2) != NULL);
+      CPPUNIT_ASSERT(gem.FindEvent(eventStart3) != NULL);
+      CPPUNIT_ASSERT(gem.FindEvent(eventMid1) == NULL); // will not execute until time 0.25
+      CPPUNIT_ASSERT(gem.FindEvent(eventMid2) == NULL);
+      CPPUNIT_ASSERT(gem.FindEvent(eventMid3) == NULL);
+
+      // --- Ensure some middle events were fired.
+      gem.ClearAllEvents();
+      mAnimComp->ProcessMessage(*tickMessage); // Now at time 0.4
+      CPPUNIT_ASSERT(gem.FindEvent(eventStart1) == NULL);
+      CPPUNIT_ASSERT(gem.FindEvent(eventStart2) == NULL);
+      CPPUNIT_ASSERT(gem.FindEvent(eventStart3) == NULL);
+      CPPUNIT_ASSERT(gem.FindEvent(eventMid1) != NULL);
+      CPPUNIT_ASSERT(gem.FindEvent(eventMid2) != NULL);
+      CPPUNIT_ASSERT(gem.FindEvent(eventMid3) == NULL); // will not execute until time 0.5
+
+      // --- Ensure the last middle event was fired.
+      gem.ClearAllEvents();
+      mAnimComp->ProcessMessage(*tickMessage); // Now at time 0.6
+      CPPUNIT_ASSERT(gem.FindEvent(eventStart1) == NULL);
+      CPPUNIT_ASSERT(gem.FindEvent(eventStart2) == NULL);
+      CPPUNIT_ASSERT(gem.FindEvent(eventStart3) == NULL);
+      CPPUNIT_ASSERT(gem.FindEvent(eventMid1) == NULL);
+      CPPUNIT_ASSERT(gem.FindEvent(eventMid2) == NULL);
+      CPPUNIT_ASSERT(gem.FindEvent(eventMid3) != NULL);
    }
 
 } // namespace dtAnim
