@@ -179,15 +179,6 @@ namespace dtAnim
    {
       return mTime;
    }
-
-   float OsgAnimator::GetAnimationTime(const dtAnim::OsgAnimation& anim) const
-   {
-      float animTime = 0.0f;
-
-      // TODO:
-
-      return animTime;
-   }
    
    float OsgAnimator::GetAverageCycleDuration() const
    {

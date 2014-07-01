@@ -64,8 +64,6 @@ namespace dtAnim
       /// @return the offset time used when playing looping animations.
       virtual float GetAnimationTime() const;
 
-      float GetAnimationTime(const dtAnim::OsgAnimation& anim) const;
-
       // @return Average duration of synchronized cycle animations.
       float GetAverageCycleDuration() const;
       

@@ -219,6 +219,15 @@ void ResAddDialog::OnClickedFile()
    QString file = QFileDialog::getOpenFileName(NULL, "Add File", dir, filterStr);
    mUI.mFile->setText(file);
 
+   // Help the user save time with a default object name.
+   if (mUI.mObjectName->text().isEmpty())
+   {
+      std::string strFile(file.toStdString());
+      strFile = osgDB::getSimpleFileName(strFile);
+      file = strFile.c_str();
+      mUI.mObjectName->setText(file);
+   }
+
    UpdateUI();
 }
 

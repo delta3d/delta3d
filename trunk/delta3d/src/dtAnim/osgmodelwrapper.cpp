@@ -207,7 +207,7 @@ namespace dtAnim
          if (finder.mAnimManagers.size() > 1)
          {
             std::ostringstream oss;
-            oss << "Characetr model \"" << mModel->GetModelData()->GetModelName()
+            oss << "Character model \"" << mModel->GetModelData()->GetModelName()
                << "\" has more than one AnimationManager, " << finder.mAnimManagers.size()
                << " in total." << std::endl;
             LOG_WARNING(oss.str());
@@ -216,7 +216,7 @@ namespace dtAnim
       else // Warn that there are no animation managers detected.
       {
          std::ostringstream oss;
-         oss << "Characetr model \"" << mModel->GetModelData()->GetModelName()
+         oss << "Character model \"" << mModel->GetModelData()->GetModelName()
             << "\" does not have an AnimationManager." << std::endl;
          LOG_ERROR(oss.str());
       }
