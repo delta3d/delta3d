@@ -201,7 +201,7 @@ void AnimationChannel::Recalculate()
 /////////////////////////////////////////////////////////////////////////////////
 float AnimationChannel::CalculateDuration() const
 {
-   float duration = mAnimationWrapper.valid() ? mAnimationWrapper->GetDuration() /*/ mAnimationWrapper->GetSpeed()*/ : mMaxDuration;
+   float duration = mAnimationWrapper.valid() ? mAnimationWrapper->GetDuration() / GetSpeed() : mMaxDuration;
    
    if (IsLooping() && mMaxDuration <= 0.0f)
    {

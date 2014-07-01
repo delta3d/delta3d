@@ -82,8 +82,10 @@ namespace dtAnim
          CPPUNIT_TEST(TestAnimationPerformance);
          CPPUNIT_TEST(TestRegisterUnregister);
          CPPUNIT_TEST(TestRegisterMapUnload);
-         CPPUNIT_TEST(TestAnimationEventFiring);
          CPPUNIT_TEST(TestAnimationActorComponentInit);
+         CPPUNIT_TEST(TestAnimationEventFiring_FullSpeed);
+         CPPUNIT_TEST(TestAnimationEventFiring_TwiceSpeed);
+         CPPUNIT_TEST(TestAnimationEventFiring_HalfSpeed);
       CPPUNIT_TEST_SUITE_END();
 
    public:
@@ -98,8 +100,12 @@ namespace dtAnim
       void TestAnimationPerformance();
       void TestRegisterUnregister();
       void TestRegisterMapUnload();
-      void TestAnimationEventFiring();
       void TestAnimationActorComponentInit();
+      void TestAnimationEventFiring_FullSpeed();
+      void TestAnimationEventFiring_TwiceSpeed();
+      void TestAnimationEventFiring_HalfSpeed();
+
+      void SubtestAnimationEventFiring(float speed);
 
       // Helper methods.
       dtCore::RefPtr<AnimationHelper> CreateRealAnimationHelper();
@@ -171,6 +177,9 @@ namespace dtAnim
    /////////////////////////////////////////////////////////////////////////////
    void AnimationComponentTests::tearDown()
    {
+      dtCore::GameEventManager& gem = dtCore::GameEventManager::GetInstance();
+      gem.ClearAllEvents();
+
       dtCore::System::GetInstance().Stop();
       if (mGM.valid())
       {
@@ -463,10 +472,28 @@ namespace dtAnim
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void AnimationComponentTests::TestAnimationEventFiring()
+   void AnimationComponentTests::TestAnimationEventFiring_FullSpeed()
+   {
+      SubtestAnimationEventFiring(1.0f);
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void AnimationComponentTests::TestAnimationEventFiring_TwiceSpeed()
+   {
+      SubtestAnimationEventFiring(2.0f);
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void AnimationComponentTests::TestAnimationEventFiring_HalfSpeed()
+   {
+      SubtestAnimationEventFiring(0.5f);
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void AnimationComponentTests::SubtestAnimationEventFiring(float speed)
    {
       // Create a tick message used to tick the component.
-      float timeStep = 0.2f;
+      float timeStep = 0.2f / speed;
       dtCore::RefPtr<dtGame::TickMessage> tickMessage;
       mGM->GetMessageFactory().CreateMessage(dtGame::MessageType::TICK_LOCAL, tickMessage);
       tickMessage->SetDeltaSimTime(timeStep);
@@ -496,6 +523,18 @@ namespace dtAnim
       //     send event method with the helper.
       CPPUNIT_ASSERT(helper->GetSendEventCallback().valid());
       helper->SetCommandCallbacksEnabled(true);
+
+      // Set the speed on the animation wrappers.
+      dtAnim::Cal3DModelWrapper* wrapper = helper->GetModelWrapper();
+      const dtAnim::Cal3DModelData* modelData = dtAnim::Cal3DDatabase::GetInstance().GetModelData(*wrapper);
+
+      typedef dtAnim::Cal3DModelData::AnimatableArray AnimArray;
+      const AnimArray& anims = modelData->GetAnimatables();
+      AnimArray::const_iterator curIter = anims.begin();
+      for (; curIter != anims.end(); ++curIter)
+      {
+         (*curIter)->SetSpeed(speed);
+      }
 
       // Start playing the animation that contains those events.
       helper->PlayAnimation("TestEventsAction");
