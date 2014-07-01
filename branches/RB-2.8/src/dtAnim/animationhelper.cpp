@@ -669,6 +669,12 @@ unsigned AnimationHelper::CollectCommandCallbacks(Animatable& anim,
    double animStartTime = anim.GetInsertTime() + double(anim.GetStartTime());
    if (anim.IsActive() || (animStartTime < endTime && animStartTime >= startTime))
    {
+      double animSpeed = anim.GetSpeed();
+      if (animSpeed == 0.0)
+      {
+         animSpeed = 1.0;
+      }
+
       // Adjust the start and end times if this is a looping animation channel.
       double diff = endTime - startTime;
       startTime = double(anim.ConvertToRelativeTimeInAnimationScope(startTime));
@@ -699,7 +705,7 @@ unsigned AnimationHelper::CollectCommandCallbacks(Animatable& anim,
       for (; curIter != endIter; ++curIter)
       {
          curStruct = curIter->second.get();
-         offset = double(curStruct->mOffset);
+         offset = double(curStruct->mOffset) / animSpeed;
 
          // Start time should only be inclusive if the range is at or before
          // the offset 0.0, which means this if the first call to collect commands.

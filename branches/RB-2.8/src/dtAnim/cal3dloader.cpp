@@ -1146,7 +1146,6 @@ namespace dtAnim
          {
             AnimationWrapper* pWrapper = new AnimationWrapper(anim->getName(), i);
             pWrapper->SetDuration(anim->getDuration());
-            pWrapper->SetSpeed(float(anim->getTotalNumberOfKeyframes()) / anim->getDuration());
             modelData.Add(pWrapper);
          }
          else
