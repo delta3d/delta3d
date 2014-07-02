@@ -1621,7 +1621,7 @@ namespace dtAnim
       //     If the event time offset is at the precise end of the animation
       //     for the current update, then it should be triggered before the
       //     animation is removed from the root sequence.
-      mHelper->Update(duration - 0.7f); // now at duration time.
+      mHelper->Update(duration - 0.699f); // now at duration time.
       CPPUNIT_ASSERT(mHelper->ExecuteCommands() == 3); // 3 end event at time 1.0
       CPPUNIT_ASSERT(cbtEvents.size() == 3);
       CPPUNIT_ASSERT(cbtEvents[0] == eventEnd1);
