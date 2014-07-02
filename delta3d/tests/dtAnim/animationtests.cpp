@@ -435,7 +435,8 @@ namespace dtAnim
    /////////////////////////////////////////////////////////////////////////////
    void AnimationTests::TestAnimChannel()
    {
-      dtCore::RefPtr<AnimationChannel> channel = new AnimationChannel();
+      dtAnim::BaseModelWrapper* model = mHelper->GetModelWrapper();
+      dtCore::RefPtr<AnimationChannel> channel = new AnimationChannel(model);
       
       std::string name("ChickenWalk");
       CPPUNIT_ASSERT_MESSAGE("Channel should have an empty name by default.", channel->GetName().empty());
@@ -453,7 +454,7 @@ namespace dtAnim
       CPPUNIT_ASSERT_MESSAGE("Channel speed should should have been set.", channel->GetSpeed() == speed);
       
       float duration = 39.6f;
-      CPPUNIT_ASSERT_MESSAGE("Channel duration should be 0 by default.", channel->GetDuration());
+      CPPUNIT_ASSERT_MESSAGE("Channel duration should be 0 by default.", channel->GetDuration() == 0.0f);
       channel->SetDuration(duration);
       CPPUNIT_ASSERT_MESSAGE("Channel duration should have been set.", channel->GetDuration() == duration);
 
@@ -484,7 +485,6 @@ namespace dtAnim
 
       // Test access to the associated animation object.
       const AnimationChannel* channelConst = channel.get();
-      dtAnim::BaseModelWrapper* model = mHelper->GetModelWrapper();
       CPPUNIT_ASSERT_MESSAGE("The model should not have an animation object with the test name.", model->GetAnimation(name) == NULL);
       CPPUNIT_ASSERT_MESSAGE("The channel should not have an animation object with the test name.", channelConst->GetAnimation() == NULL);
 
@@ -496,10 +496,19 @@ namespace dtAnim
          channel->GetName() != channel->GetAnimationName());
 
       const dtAnim::AnimationInterface* anim = channelConst->GetAnimation();
+      CPPUNIT_ASSERT_MESSAGE("If a channel has no animation name it cannot access its associated animation.", animFromModel == NULL);
+
+      name = "Walk";
+      channel->SetAnimationName(name);
+      anim = channelConst->GetAnimation();
+      animFromModel = model->GetAnimation(name);
       CPPUNIT_ASSERT_MESSAGE("An animation with the specified name should be returned from the model.", animFromModel != NULL);
       CPPUNIT_ASSERT_MESSAGE("Channel should return a valid animation object if it has a valid name.", anim != NULL);
       CPPUNIT_ASSERT_MESSAGE("Both the model and the channel should return the same animation object.", animFromModel == anim);
-      CPPUNIT_ASSERT_MESSAGE("The animation object name should match.", animName == anim->GetName());
+      CPPUNIT_ASSERT_MESSAGE("The animation object name should match.", name == anim->GetName());
+
+      channel->SetModel(NULL);
+      CPPUNIT_ASSERT_MESSAGE("The model should no longer be accessible from the animation channel.", channel->GetModel() == NULL);
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -510,14 +519,6 @@ namespace dtAnim
       dtCore::RefPtr<AnimationChannel> channel = new AnimationChannel();
       channel->SetStartTime(1.0f);
       channel->SetDuration(duration);
-
-      // Test relative time without access to the associated animation wrapper.
-      channel->SetAction(true);
-      channel->SetLooping(false);
-      CPPUNIT_ASSERT_DOUBLES_EQUAL(0.0f, channel->ConvertToRelativeTimeInAnimationScope(2.0f), epsilon);
-      channel->SetAction(false);
-      channel->SetLooping(true);
-      CPPUNIT_ASSERT_DOUBLES_EQUAL(0.0f, channel->ConvertToRelativeTimeInAnimationScope(2.0f), epsilon);
 
       // --- Test action mode.
       channel->SetAction(true);
@@ -648,8 +649,7 @@ namespace dtAnim
          = dynamic_cast<const AnimationChannel*>
          (mHelper->GetSequenceMixer().GetRegisteredAnimation("Walk"));
       CPPUNIT_ASSERT(regAnim != NULL);
-      CPPUNIT_ASSERT(regAnim->GetAnimation() != NULL);
-      duration = regAnim->GetAnimation()->GetDuration();
+      duration = regAnim->GetDuration();
       timeStep = duration * 0.2f;
 
       CPPUNIT_ASSERT_DOUBLES_EQUAL(0.0f,            rootSeq.GetElapsedTime(), epsilon);
@@ -842,22 +842,18 @@ namespace dtAnim
 
 
       // Test a channel (Action)
-      const Animatable* regAnim = mHelper->GetSequenceMixer().GetRegisteredAnimation("IdleAction");
+      const Animatable* regAnim = mHelper->GetSequenceMixer().GetRegisteredAnimation("RunAction");
       CPPUNIT_ASSERT(regAnim != NULL);
 
-      mHelper->PlayAnimation("IdleAction");
+      mHelper->PlayAnimation("RunAction");
 
       dtCore::ObserverPtr<AnimationChannel> action
          = dynamic_cast<AnimationChannel*>(rootSeq.GetChildAnimations().front().get());
       CPPUNIT_ASSERT(action != NULL);
       CPPUNIT_ASSERT( ! action->IsLooping());
-      float startTime = action->GetStartTime();
-      CPPUNIT_ASSERT(startTime > 0.0f);
       float duration = action->GetAnimation()->GetDuration();
       CPPUNIT_ASSERT(duration > 0.0f);
 
-      CPPUNIT_ASSERT_DOUBLES_EQUAL(0.0f, action->GetRelativeElapsedTimeInAnimationScope(), epsilon);
-      mHelper->Update(startTime);
       CPPUNIT_ASSERT_DOUBLES_EQUAL(0.0f, action->GetRelativeElapsedTimeInAnimationScope(), epsilon);
       mHelper->Update(0.1f); // now at 0.1 + start Time
       CPPUNIT_ASSERT_DOUBLES_EQUAL(0.1f, action->GetRelativeElapsedTimeInAnimationScope(), epsilon);
@@ -880,7 +876,7 @@ namespace dtAnim
       CPPUNIT_ASSERT(loopAnim != NULL);
       CPPUNIT_ASSERT(loopAnim->IsLooping());
       loopAnim->SetStartTime(0.1f);
-      startTime = loopAnim->GetStartTime();
+      float startTime = loopAnim->GetStartTime();
       CPPUNIT_ASSERT(startTime > 0.0f);
       duration = loopAnim->GetAnimation()->GetDuration();
       CPPUNIT_ASSERT(duration > 0.0f);
