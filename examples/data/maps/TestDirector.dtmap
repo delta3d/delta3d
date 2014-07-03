@@ -330,8 +330,8 @@
             <property>
                 <name>Skeletal Mesh</name>
                 <resourceType>SkeletalMeshes</resourceType>
-                <resourceDisplayName>SkeletalMeshes:marine.xml</resourceDisplayName>
-                <resource>SkeletalMeshes:marine.xml</resource>
+                <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
+                <resource>SkeletalMeshes:Marine:marine.xml</resource>
             </property>
         </actor>
         <actor>
