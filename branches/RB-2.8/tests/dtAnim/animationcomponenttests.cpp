@@ -228,7 +228,7 @@ namespace dtAnim
       CPPUNIT_ASSERT_EQUAL(false, animAC->GetLoadModelAsynchronously());
       CPPUNIT_ASSERT_EQUAL(false, animAC->GetEnableAttachingNodeToDrawable());
 
-      animAC->SetSkeletalMesh(dtCore::ResourceDescriptor("SkeletalMeshes:marine.xml"));
+      animAC->SetSkeletalMesh(dtCore::ResourceDescriptor("SkeletalMeshes:Marine:marine.xml"));
       CPPUNIT_ASSERT(animAC->GetNode() == NULL);
       mGM->AddActor(*mTestGameActor, false, false);
       CPPUNIT_ASSERT(animAC->GetNode() != NULL);
@@ -248,7 +248,7 @@ namespace dtAnim
       CPPUNIT_ASSERT(animAC->GetNode() == NULL);
       CPPUNIT_ASSERT_EQUAL_MESSAGE("Setting the resource to null with AttachingNoteToDrawable enabled should unparent the node.",
                0U, nodeBackup->getNumParents());
-      animAC->SetSkeletalMesh(dtCore::ResourceDescriptor("SkeletalMeshes:marine.xml"));
+      animAC->SetSkeletalMesh(dtCore::ResourceDescriptor("SkeletalMeshes:Marine:marine.xml"));
       CPPUNIT_ASSERT_EQUAL(1U, animAC->GetNode()->getNumParents());
       CPPUNIT_ASSERT(animAC->GetNode()->getParent(0) == mTestGameActor->GetDrawable()->GetOSGNode());
 

@@ -119,7 +119,7 @@ void TestAI::Config()
    WaypointManager::WaypointMap::const_iterator iter = pContainer.begin();
    const Waypoint* pWaypoint = (*iter).second;
 
-   std::string characterFile = dtUtil::FindFileInPathList("SkeletalMeshes/marine.xml");
+   std::string characterFile = dtUtil::FindFileInPathList("SkeletalMeshes/Marine/marine.xml");
 
    // spawn our character
    mCharacter = new dtAI::AICharacter(GetScene(), pWaypoint, characterFile, 3);
