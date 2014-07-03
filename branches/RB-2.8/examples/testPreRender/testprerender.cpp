@@ -149,7 +149,7 @@ void TestPreRender::CreateTextureScene()
    mTextureScene = new dtCore::Scene;
 
    // Set the root directory where our art assets are to be found
-   std::string contextName = dtUtil::GetDeltaRootPath() + "/examples/data/demoMap";
+   std::string contextName = dtUtil::GetDeltaRootPath() + "/examples/data";
    dtCore::Project::GetInstance().SetContext(contextName, true);
 
    // Load the map into our custom scene
@@ -203,7 +203,7 @@ TestPreRender::~TestPreRender()
 
 int main(int argc, char* argv[])
 {
-   std::string mainObjectName = "models/physics_crate.ive";
+   std::string mainObjectName = "StaticMeshes/physics_crate.ive";
 
    // Allow specifying of custom geometry from the command line
    if (argc > 1)

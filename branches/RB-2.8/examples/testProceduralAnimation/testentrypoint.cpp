@@ -131,7 +131,7 @@ void TestProceduralAnimation::OnStartup(dtABC::BaseABC& app, dtGame::GameManager
       app.GetWindow()->SetPosition(x, y, 1024, 768);
       app.GetWindow()->SetWindowTitle("TestProceduralAnimation");
 
-      std::string context = dtUtil::GetDeltaRootPath() + "/examples/data/demoMap";
+      std::string context = dtUtil::GetDeltaRootPath() + "/examples/data";
       dtCore::Project::GetInstance().SetContext(context, true);
 
       if (!mPerformanceTest)

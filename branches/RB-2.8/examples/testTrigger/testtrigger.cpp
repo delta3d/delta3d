@@ -43,12 +43,12 @@ void TestTrigger::Config()
 {
    // Load up a dark 'n scary warehouse...
    mWarehouse = new Object("Warehouse");
-   mWarehouse->LoadFile("models/warehouse.ive");
+   mWarehouse->LoadFile("StaticMeshes/warehouse.ive");
    AddDrawable(mWarehouse.get());
 
    // Throw in a happy sphere to boot...
    mHappySphere = new Object("HappySphere ");
-   mHappySphere->LoadFile("models/physics_happy_sphere.ive");
+   mHappySphere->LoadFile("StaticMeshes/physics_happy_sphere.ive");
 
    // Make a yellow light that is local to only the sphere.
    mPositionalLight = new PositionalLight(0, "PositionalLight");

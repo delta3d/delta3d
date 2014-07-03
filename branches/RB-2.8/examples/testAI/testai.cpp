@@ -64,7 +64,7 @@ void TestAI::Config()
 
    try
    {
-      std::string contextName =  dtUtil::GetDeltaRootPath()+"/examples/data/demoMap";
+      std::string contextName =  dtUtil::GetDeltaRootPath()+"/examples/data";
       Project::GetInstance().SetContext(contextName);
    }
    catch (const dtUtil::Exception& e)

@@ -31,7 +31,7 @@ MainWindow::MainWindow(QMainWindow* parent)
 {
   ui.setupUi(this);
 
-  mLastMeshInfo = new QFileInfo(QString::fromStdString(dtUtil::GetEnvironment("DELTA_ROOT") + "/examples/data/models/"));
+  mLastMeshInfo = new QFileInfo(QString::fromStdString(dtUtil::GetEnvironment("DELTA_ROOT") + "/examples/data/StaticMeshes/"));
 }
 
 ////////////////////////////////////////////////////////////////////////////////

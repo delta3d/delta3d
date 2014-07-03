@@ -56,7 +56,7 @@ TestDirector::~TestDirector()
 ////////////////////////////////////////////////////////////////////////////////
 void TestDirector::Initialize(dtABC::BaseABC& app, int argc, char** argv)
 {
-   std::string context = dtUtil::GetDeltaRootPath() + "/examples/data/demoMap";
+   std::string context = dtUtil::GetDeltaRootPath() + "/examples/data";
    dtCore::Project::GetInstance().SetContext(context, true);
 
 

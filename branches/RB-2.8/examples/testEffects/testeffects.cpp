@@ -147,7 +147,7 @@ public:
       GetCamera()->SetTransform(position);
 
       entity = new Object("UH-1N");
-      entity->LoadFile("models/uh-1n.ive");
+      entity->LoadFile("StaticMeshes/uh-1n.ive");
       AddDrawable(entity.get());
 
       smoke = new ParticleSystem;
