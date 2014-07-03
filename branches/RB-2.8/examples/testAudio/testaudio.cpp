@@ -41,8 +41,8 @@ const char*    TestAudioApp::kGfxFile[kNumGfx] =
                };
 const char*    TestAudioApp::kFxFile[kNumFx] =
                {
-                  "effects/explosion.osg",
-                  "effects/smoke.osg"
+                  "Particles/explosion.osg",
+                  "Particles/smoke.osg"
                };
 
 const char*    TestAudioApp::kFxDetonationType[kNumFx] =
