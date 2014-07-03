@@ -35,9 +35,9 @@ const char*    TestAudioApp::kSoundFile[] =
                };
 const char*    TestAudioApp::kGfxFile[kNumGfx] =
                {
-                  "models/flatdirt.ive",
-                  "models/brdm.ive",
-                  "models/uh-1n.ive"
+                  "StaticMeshes/flatdirt.ive",
+                  "StaticMeshes/brdm.ive",
+                  "StaticMeshes/uh-1n.ive"
                };
 const char*    TestAudioApp::kFxFile[kNumFx] =
                {

@@ -26,7 +26,7 @@ void TestLightsApp::Config()
 
    // load up a warehouse
    mWarehouse = new Object("Warehouse");
-   mWarehouse->LoadFile("models/warehouse.ive");
+   mWarehouse->LoadFile("StaticMeshes/warehouse.ive");
    AddDrawable(mWarehouse.get());
 
    Transform trans;
@@ -41,7 +41,7 @@ void TestLightsApp::Config()
 
    // add a child to the local light
    mSphere = new Object("HappySphere");
-   mSphere->LoadFile("models/physics_happy_sphere.ive");
+   mSphere->LoadFile("StaticMeshes/physics_happy_sphere.ive");
 
    // we want the sphere 1 unit below light so we can see effect of local light and
    trans.Set(0.0f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f);

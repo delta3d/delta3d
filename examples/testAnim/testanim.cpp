@@ -137,7 +137,7 @@ void TestAnim::OnStartup(dtABC::BaseABC& app, dtGame::GameManager& gameManager)
    dtUtil::SetDataFilePathList(dataPath + ";" +
       dtUtil::GetDeltaRootPath() + "/examples/data" + ";");
 
-   std::string context = dtUtil::GetDeltaRootPath() + "/examples/data/demoMap";
+   std::string context = dtUtil::GetDeltaRootPath() + "/examples/data";
 
    typedef std::vector<dtCore::BaseActorObject* > ProxyContainer;
    ProxyContainer proxies;
@@ -267,7 +267,7 @@ void TestAnim::InitializeAnimationActor(dtAnim::AnimationGameActorProxy* gamePro
 
             //attach a pack to the guy's back
             dtCore::RefPtr<dtCore::Object> attachment = new dtCore::Object("CamelPack");
-            attachment->LoadFile("/models/camelpack.ive");
+            attachment->LoadFile("/StaticMeshes/camelpack.ive");
 
             dtUtil::HotSpotDefinition hotspotDef;
             hotspotDef.mName = "backpack";

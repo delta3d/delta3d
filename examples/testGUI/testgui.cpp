@@ -83,7 +83,7 @@ public:
    {
       dtABC::Application::Config();
 
-      std::string contextName = dtUtil::GetDeltaRootPath() + "/examples/data/demoMap";
+      std::string contextName = dtUtil::GetDeltaRootPath() + "/examples/data";
       dtCore::Project::GetInstance().SetContext(contextName, true);
       dtCore::Map& myMap = dtCore::Project::GetInstance().GetMap("MyCoolMap");
 

@@ -65,7 +65,7 @@ public:
       // 1. Set the project context, just like in the editor
       // 2. Get a reference to the map
       // 3. Load the map into the scene through the project class
-      std::string contextName = dtUtil::GetDeltaRootPath() + "/examples/data/demoMap";
+      std::string contextName = dtUtil::GetDeltaRootPath() + "/examples/data";
       Project::GetInstance().SetContext(contextName, true);
       mMap = &Project::GetInstance().GetMap("MyCoolMap");
 

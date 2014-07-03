@@ -100,7 +100,7 @@ void MyNetwork::MakePlayer(const std::string& ownerID)
    LOG_INFO("Making a new remote player named: " + ownerID)
 
    dtCore::RefPtr<dtCore::Object> object = new dtCore::Object(ownerID);
-   object->LoadFile("models/uh-1n.ive");
+   object->LoadFile("StaticMeshes/uh-1n.ive");
 
    Transform transform(0.0f, 0.0f, 5.0f);
    object->SetTransform(transform);
