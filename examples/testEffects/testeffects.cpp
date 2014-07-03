@@ -151,15 +151,15 @@ public:
       AddDrawable(entity.get());
 
       smoke = new ParticleSystem;
-      smoke->LoadFile("effects/smoke.osg");
+      smoke->LoadFile("Particles/smoke.osg");
 
       entity->AddChild(smoke.get());
 
       effectManager = new EffectManager;
       effectManager->AddDetonationTypeMapping(kHighExplosiveDetonation,
-                                              "effects/explosion.osg");
+                                              "Particles/explosion.osg");
       effectManager->AddDetonationTypeMapping(kSmokeDetonation,
-                                              "effects/smoke.osg");
+                                              "Particles/smoke.osg");
 
       AddDrawable(effectManager.get());
 
