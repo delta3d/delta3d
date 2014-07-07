@@ -14,7 +14,6 @@ uniform float WaterFadeDepth;
 uniform int mode;
 
 varying vec3 vNormal;
-varying vec3 vViewDir;
 varying vec3 vLightDir;
 varying vec3 vPos;
 varying vec3 vWorldNormal;
@@ -63,7 +62,6 @@ void main(void)
 
    // normalize all of our incoming vectors
    vec3 lightDir = normalize(vLightDir);
-   vec3 viewDir = normalize(vViewDir);
 
    float NdotL = saturate(dot(vNormal, lightDir));
 
