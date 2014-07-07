@@ -279,7 +279,7 @@ namespace dtAnim
       try
       {
          //uses example data for now
-         std::string context = dtUtil::GetDeltaRootPath() + "/examples/data/demoMap";
+         std::string context = dtUtil::GetDeltaRootPath() + "/examples/data";
          dtCore::Project::GetInstance().SetContext(context, true);
          mGM->ChangeMap("AnimationPerformance");
 
@@ -462,9 +462,9 @@ namespace dtAnim
    dtCore::RefPtr<AnimationHelper> AnimationComponentTests::CreateRealAnimationHelper()
    {
       dtCore::RefPtr<AnimationHelper> helper = new AnimationHelper();
-      dtCore::Project::GetInstance().SetContext(dtUtil::GetDeltaRootPath() + "/examples/data/demoMap");
+      dtCore::Project::GetInstance().SetContext(dtUtil::GetDeltaRootPath() + "/examples/data");
 
-      std::string modelPath = dtUtil::FindFileInPathList("SkeletalMeshes/marine_test.xml");
+      std::string modelPath = dtUtil::FindFileInPathList("SkeletalMeshes/Marine/marine_test.xml");
       CPPUNIT_ASSERT(!modelPath.empty());
       helper->LoadModel(modelPath);
 

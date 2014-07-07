@@ -72,7 +72,7 @@ namespace dtAnim
 
          void setUp()
          {
-            dtCore::Project::GetInstance().SetContext(dtUtil::GetDeltaRootPath() + "/examples/data/demoMap");
+            dtCore::Project::GetInstance().SetContext(dtUtil::GetDeltaRootPath() + "/examples/data");
             AnimNodeBuilder& nodeBuilder = Cal3DDatabase::GetInstance().GetNodeBuilder();
             if (nodeBuilder.SupportsSoftware())
             {
@@ -90,7 +90,7 @@ namespace dtAnim
 
          void TestIsFileValid()
          {
-            std::string validFile = dtUtil::FindFileInPathList("SkeletalMeshes/marine_test.xml");
+            std::string validFile = dtUtil::FindFileInPathList("SkeletalMeshes/Marine/marine_test.xml");
             std::string invalidFile = dtUtil::FindFileInPathList("maps/TestAnim.xml");
 
             dtAnim::Cal3DDatabase& database = dtAnim::Cal3DDatabase::GetInstance();
@@ -100,7 +100,7 @@ namespace dtAnim
 
          void TestLoadFile()
          {
-            std::string modelPath = dtUtil::FindFileInPathList("SkeletalMeshes/marine_test.xml");
+            std::string modelPath = dtUtil::FindFileInPathList("SkeletalMeshes/Marine/marine_test.xml");
             CPPUNIT_ASSERT(!modelPath.empty());
 
             std::string animName = "Walk";
@@ -208,7 +208,7 @@ namespace dtAnim
 
          void TestModelData()
          {
-            std::string modelPath = dtUtil::FindFileInPathList("SkeletalMeshes/marine_test.xml");
+            std::string modelPath = dtUtil::FindFileInPathList("SkeletalMeshes/Marine/marine_test.xml");
             CPPUNIT_ASSERT(!modelPath.empty());
 
             dtAnim::Cal3DDatabase& database = dtAnim::Cal3DDatabase::GetInstance();
@@ -281,7 +281,7 @@ namespace dtAnim
 
          void TestModelDataFileRegistration()
          {
-            std::string modelPath = dtUtil::FindFileInPathList("SkeletalMeshes/marine_test.xml");
+            std::string modelPath = dtUtil::FindFileInPathList("SkeletalMeshes/Marine/marine_test.xml");
             CPPUNIT_ASSERT(!modelPath.empty());
 
             dtAnim::Cal3DDatabase& database = dtAnim::Cal3DDatabase::GetInstance();
