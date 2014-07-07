@@ -850,10 +850,10 @@ void MapTests::TestMapEventsModified()
 ////////////////////////////////////////////////////////////////////////////////
 void MapTests::TestIsMapFileValid()
 {
-   dtCore::Project::GetInstance().SetContext(dtUtil::GetDeltaRootPath() + "/examples/data/demoMap");
+   dtCore::Project::GetInstance().SetContext(dtUtil::GetDeltaRootPath() + "/examples/data");
 
    std::string validFile("maps/MyCoolMap.xml");
-   std::string invalidFile("SkeletalMeshes/marine_test.xml");
+   std::string invalidFile("SkeletalMeshes/Marine/marine_test.xml");
 
    dtCore::Project& project = dtCore::Project::GetInstance();
    CPPUNIT_ASSERT(project.IsValidMapFile(validFile));

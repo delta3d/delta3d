@@ -62,10 +62,10 @@ namespace dtAnim
       //////////////////////////////////////////////////////////////////////////
       void setUp()
       {
-         dtCore::Project::GetInstance().SetContext(dtUtil::GetDeltaRootPath() + "/examples/data/demoMap");
+         dtCore::Project::GetInstance().SetContext(dtUtil::GetDeltaRootPath() + "/examples/data");
 
-         std::string modelPath = dtUtil::FindFileInPathList("SkeletalMeshes/marine_test.xml");
-         CPPUNIT_ASSERT_MESSAGE("Could not find \"SkeletalMeshes/marine_test.xml\"", !modelPath.empty());
+         std::string modelPath = dtUtil::FindFileInPathList("SkeletalMeshes/Marine/marine_test.xml");
+         CPPUNIT_ASSERT_MESSAGE("Could not find \"SkeletalMeshes/Marine/marine_test.xml\"", !modelPath.empty());
 
          mAnimHelper = new dtAnim::AnimationHelper();
          mAnimHelper->LoadModel(modelPath);

@@ -161,8 +161,8 @@ void FileUtilsTests::setUp()
       fileUtils.DirDelete("Testing", true);
       fileUtils.DirDelete("recursiveDir", true);
 
-      fileUtils.FileCopy(DATA_DIR + "/models/terrain_simple.ive", ".", false);
-      fileUtils.FileCopy(DATA_DIR + "/models/flatdirt.ive", ".", false);
+      fileUtils.FileCopy(DATA_DIR + "/StaticMeshes/terrain_simple.ive", ".", false);
+      fileUtils.FileCopy(DATA_DIR + "/StaticMeshes/flatdirt.ive", ".", false);
 
    }
    catch (const dtUtil::Exception& ex)
