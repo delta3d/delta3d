@@ -7,6 +7,7 @@ uniform sampler2D specTexture;
 uniform vec4 Altitudes;
 uniform vec4 TextureScales;
 uniform vec4 WaterColor;
+uniform float AltitudeScale;
 uniform float WaterSurfaceOffset;
 uniform float WaterFadeDepth;
 
@@ -29,7 +30,7 @@ void main(void)
    vec3 rockColor = texture2D(RockTexture, gl_TexCoord[0].st * TextureScales.z).rgb;
    vec3 snowColor = texture2D(SnowTexture, gl_TexCoord[0].st * TextureScales.w).rgb;
 
-   float alt = vPos.z *5;
+   float alt = vPos.z * AltitudeScale;
 
    float grassRange = Altitudes.x;
    float rockRange = Altitudes.y - grassRange;

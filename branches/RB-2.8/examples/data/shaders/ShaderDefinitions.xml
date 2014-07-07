@@ -74,7 +74,7 @@
       </parameter>
 
       <parameter name="Altitudes">
-        <vec4 defaultValue="10 20 30 40" />
+        <vec4 defaultValue="50 300 400 500" />
       </parameter>
       <parameter name="TextureScales">
         <vec4 defaultValue="100 100 100 100" />
@@ -83,13 +83,13 @@
         <vec4 defaultValue="0 0.35 0.5 0.75" />
       </parameter>
       <parameter name="AltitudeScale">
-        <float defaultValue="5" />
+        <float defaultValue="1" />
       </parameter>
       <parameter name="WaterSufaceOffset">
-        <float defaultValue="5" />
+        <float defaultValue="25" />
       </parameter>
       <parameter name="WaterFadeDepth">
-        <float defaultValue="5" />
+        <float defaultValue="25" />
       </parameter>
       <parameter name="SandTexture">
         <texture2D textureUnit="1">
