@@ -17,6 +17,7 @@ varying vec3 vNormal;
 varying vec3 vViewDir;
 varying vec3 vLightDir;
 varying vec3 vPos;
+varying vec3 vWorldNormal;
 
 float saturate(float inValue)
 {
@@ -39,6 +40,8 @@ void main(void)
    float grassFullAlt = Altitudes.x;
    float rockFullAlt = Altitudes.y;
    float snowFullAlt = Altitudes.z;
+   
+   float slope = clamp(1.0 - (dot(vec3(0,0,1), vWorldNormal) * 2.0), 0.0, 1.0);
 
    float waterRatio = clamp(-alt + WaterSurfaceOffset, 0.0, WaterFadeDepth)/WaterFadeDepth;
    vec3 waterColor = mix(sandColor, WaterColor.rgb, WaterColor.a);
@@ -47,7 +50,7 @@ void main(void)
    grassRatio = clamp(grassRatio, 0.0, 1.0);
 
    float rockRatio = clamp(alt - grassFullAlt, 0.0, rockFullAlt) / rockRange;
-   rockRatio = clamp(rockRatio, 0.0, 1.0);
+   rockRatio = clamp(rockRatio * (1.0 - slope), 0.0, 1.0);
    
    float snowRatio = clamp(alt - rockFullAlt, 0.0, snowFullAlt) / snowRange;
    snowRatio = clamp(snowRatio, 0.0, 1.0);
@@ -61,10 +64,8 @@ void main(void)
    // normalize all of our incoming vectors
    vec3 lightDir = normalize(vLightDir);
    vec3 viewDir = normalize(vViewDir);
-   vec3 reflectionDir = normalize(2.0 * dot(vNormal, lightDir) * vNormal - lightDir);
 
    float NdotL = saturate(dot(vNormal, lightDir));
-   float reflectionAngle =  dot(reflectionDir, viewDir);
 
    // Calculate the contributions from each shading component
    vec3 ambientColor = vec3(0.2, 0.2, 0.2) * baseColor.rgb;
