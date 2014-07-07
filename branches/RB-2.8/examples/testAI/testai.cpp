@@ -33,8 +33,8 @@ using namespace dtAI;
 ////////////////////////////////////////////////////////////////////////////////
 TestAI::TestAI(const std::string& pMapFilename, const std::string& configFilename)
    : Application(configFilename)
+   , mDrawNavMesh()
    , mMapFilename(pMapFilename)
-   , mCharacter(0)
 {
    // Generating a default config file if there isn't one already
    if (!dtUtil::FileUtils::GetInstance().FileExists(configFilename))

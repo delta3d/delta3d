@@ -54,7 +54,6 @@ class TestAI : public dtABC::Application
       void CreateHelpLabel();
       std::string CreateHelpLabelText();
 
-      float mSpeed;
       bool mDrawNavMesh;
       std::string mMapFilename;
       dtCore::RefPtr<dtCore::Camera> mOverheadCamera;
