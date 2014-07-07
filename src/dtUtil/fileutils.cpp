@@ -795,7 +795,7 @@ namespace dtUtil
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   const std::string FileUtils::GetAbsolutePath(const std::string& relativePath) const
+   std::string FileUtils::GetAbsolutePath(const std::string& relativePath, bool removeFinalFile) const
    {
       //todo- add archive support here
 
@@ -825,7 +825,7 @@ namespace dtUtil
       if (dp.GetSucceeded())
       {
          result = mCurrentDirectory;
-         if (fi.fileType == REGULAR_FILE)
+         if (removeFinalFile && fi.fileType == REGULAR_FILE)
          {
             result += PATH_SEPARATOR + fi.baseName;
          }

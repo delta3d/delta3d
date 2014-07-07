@@ -23,6 +23,7 @@
 
 #include <dtUtil/export.h>
 #include <string>
+#include <vector>
 
 namespace dtUtil
 {
@@ -58,6 +59,17 @@ namespace dtUtil
     * @return The full path to the file requested or empty string if it's not found. 
     */
    DT_UTIL_EXPORT std::string FindFileInPathList(const std::string& fileName);
+
+   /**
+    * Searches a given path list for a file name.
+    * @param fileName Can be a single filename or a path and file name relative
+    *  to the current Delta3D data path list.
+    * @param paths the list of file paths to search.
+    * @param caseInsensitive  If the search should be case insensitive.  This only works around case-sensitive file systems,
+    *                         it cannot not make a search fail if the case is wrong on a case insensitive one and one sets it to false.
+    *
+    */
+   DT_UTIL_EXPORT std::string FindFileInPathList(const std::string& fileName, std::vector<std::string> paths, bool caseInsensitive = true);
 }
 
 #endif // DELTA_DATA_FILE_PATH_LIST
