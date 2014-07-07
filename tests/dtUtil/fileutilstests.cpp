@@ -631,6 +631,7 @@ void FileUtilsTests::testRelativePath()
    deltaRoot = dtUtil::FileUtils::GetInstance().GetAbsolutePath(deltaRoot);
 
    std::string fileabs = dtUtil::FileUtils::GetInstance().GetAbsolutePath(file);
+   std::string dirOnlyABS = dtUtil::FileUtils::GetInstance().GetAbsolutePath(file, false);
 
    // Normalize directory separators
    NormalizeDirectorySlashes(file);
@@ -642,6 +643,12 @@ void FileUtilsTests::testRelativePath()
 
    CPPUNIT_ASSERT_EQUAL_MESSAGE("The relative path should be: data/map.xsd",
          std::string("data/map.xsd"), relativePath);
+
+   CPPUNIT_ASSERT_EQUAL(
+         std::string(deltaRoot + "/data/map.xsd"), fileabs);
+
+   CPPUNIT_ASSERT_EQUAL(
+         std::string(deltaRoot + "/data"), dirOnlyABS);
 }
 
 void FileUtilsTests::TestAbsolutePath()
