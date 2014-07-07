@@ -111,7 +111,7 @@ void TestApp::Initialize(dtABC::BaseABC& app, int argc, char** argv)
    srand((unsigned int)(time(0)));
 
    dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
-   std::string executablePath = fileUtils.GetAbsolutePath(argv[0], false);
+   std::string executablePath = fileUtils.GetAbsolutePath(argv[0], true);
    std::string deltaDataEnvVar = dtUtil::GetDeltaDataPathList();
    if (deltaDataEnvVar.empty() || !dtUtil::FileUtils::GetInstance().DirExists(deltaDataEnvVar))
    {
