@@ -715,7 +715,7 @@ void LinkedPointsActorToolPlugin::initialize(dtActors::LinkedPointsActorProxy* a
    }
 
    mActiveProxy = activeProxy;
-   activeProxy->GetActor(mActiveActor);
+   activeProxy->GetDrawable(mActiveActor);
    mPointsProp = mActiveProxy->GetProperty("PointList");
 
    mActiveActor->SetVisualize(true);
