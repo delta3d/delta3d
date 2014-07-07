@@ -23,14 +23,15 @@
 #include <cppunit/extensions/HelperMacros.h>
 
 #include <dtUtil/datapathutils.h>
+#include <dtUtil/fileutils.h>
 
 namespace dtTest
 {
-   /// unit tests for dtCore::Axis
-   class GlobalsTests : public CPPUNIT_NS::TestFixture
+   class DataPathUtilsTests : public CPPUNIT_NS::TestFixture
    {
-      CPPUNIT_TEST_SUITE(GlobalsTests);
+      CPPUNIT_TEST_SUITE(DataPathUtilsTests);
       CPPUNIT_TEST(TestEnvironment);
+      CPPUNIT_TEST(TestFindFileInPathList);
       CPPUNIT_TEST_SUITE_END();
 
       public:
@@ -49,9 +50,27 @@ namespace dtTest
             result = dtUtil::GetEnvironment("silly");
             CPPUNIT_ASSERT_EQUAL_MESSAGE("The environment variable \"silly\" should have the value \"goose\".", std::string("goose"), result);
          }
+
+         void TestFindFileInPathList()
+         {
+            std::vector<std::string> projectPaths;
+            projectPaths.push_back("../ExaMples");
+            projectPaths.push_back("../share/delta3d/examples");
+            projectPaths.push_back("../../Examples");
+            std::string result = dtUtil::FindFileInPathList("data", projectPaths);
+
+            CPPUNIT_ASSERT(dtUtil::FileUtils::GetInstance().DirExists(result));
+
+            result = dtUtil::FindFileInPathList("data/StaticMeshes/physics_happy_sphere.ive", projectPaths);
+            CPPUNIT_ASSERT(dtUtil::FileUtils::GetInstance().FileExists(result));
+#ifndef DELTA_WIN32
+            result = dtUtil::FindFileInPathList("data/StaticMeshes/physics_happy_sphere.ive", projectPaths, false);
+            CPPUNIT_ASSERT(result.empty());
+#endif
+         }
          
       private:
    };
 }
 
-CPPUNIT_TEST_SUITE_REGISTRATION(dtTest::GlobalsTests);
+CPPUNIT_TEST_SUITE_REGISTRATION(dtTest::DataPathUtilsTests);

@@ -139,7 +139,7 @@ namespace dtUtil
    }   
 
    /////////////////////////////////////////////////////////////////////////////
-   DT_UTIL_EXPORT std::string FindFileInPathList(const std::string& fileName, std::vector<std::string> pathList, bool caseInsensitive)
+   std::string FindFileInPathList(const std::string& fileName, std::vector<std::string> pathList, bool caseInsensitive)
    {
       std::vector<std::string>::const_iterator itor;
 
