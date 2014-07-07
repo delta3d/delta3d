@@ -52,9 +52,9 @@
 ////////////////////////////////////////////////////////////////////
 TestAARInput::TestAARInput(const std::string& name, dtGame::LogController& logCtrl, TestAARHUD& hudComp)
    : dtGame::BaseInputComponent(name)
-   , mKeyIsPressed(false)
    , mSimSpeedFactor(1.0)
    , mHudGUI(&hudComp)
+   , mPlayer(NULL)
    , mLogController(&logCtrl)
 {
 
