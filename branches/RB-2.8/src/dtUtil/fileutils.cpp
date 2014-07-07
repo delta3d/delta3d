@@ -825,7 +825,7 @@ namespace dtUtil
       if (dp.GetSucceeded())
       {
          result = mCurrentDirectory;
-         if (removeFinalFile && fi.fileType == REGULAR_FILE)
+         if (!removeFinalFile && fi.fileType == REGULAR_FILE)
          {
             result += PATH_SEPARATOR + fi.baseName;
          }

@@ -115,8 +115,8 @@ class FileUtilsTests : public CPPUNIT_NS::TestFixture
 // Registers the fixture into the 'registry'
 CPPUNIT_TEST_SUITE_REGISTRATION(FileUtilsTests);
 
-const std::string DATA_DIR = dtUtil::GetDeltaRootPath()+dtUtil::FileUtils::PATH_SEPARATOR+"examples/data";
-const std::string TESTS_DIR = dtUtil::GetDeltaRootPath()+dtUtil::FileUtils::PATH_SEPARATOR+"tests";
+std::string DATA_DIR = "../examples/data";
+std::string TESTS_DIR = ".";
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -137,12 +137,16 @@ void FileUtilsTests::setUp()
 {
    try
    {
-      dtUtil::SetDataFilePathList(dtUtil::GetDataFilePathList() + ";" + dtUtil::GetDeltaRootPath()+"/examples/data/;");
+      dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
+
+      DATA_DIR = fileUtils.GetAbsolutePath(DATA_DIR);
+      TESTS_DIR = fileUtils.GetAbsolutePath(TESTS_DIR);
+
+      dtUtil::SetDataFilePathList(dtUtil::GetDataFilePathList() + ";" +"../examples/data/;");
       std::string logName("projectTest");
 
       logger = &dtUtil::Log::GetInstance(logName);
 
-      dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
       fileUtils.ChangeDirectory(TESTS_DIR);
       fileUtils.PushDirectory("dtCore");
 
@@ -631,7 +635,7 @@ void FileUtilsTests::testRelativePath()
    deltaRoot = dtUtil::FileUtils::GetInstance().GetAbsolutePath(deltaRoot);
 
    std::string fileabs = dtUtil::FileUtils::GetInstance().GetAbsolutePath(file);
-   std::string dirOnlyABS = dtUtil::FileUtils::GetInstance().GetAbsolutePath(file, false);
+   std::string dirOnlyABS = dtUtil::FileUtils::GetInstance().GetAbsolutePath(file, true);
 
    // Normalize directory separators
    NormalizeDirectorySlashes(file);

@@ -102,10 +102,11 @@ namespace dtAnim
             mAttach = new AttachmentControllerExtended();
             mAnimHelper->SetAttachmentController(*mAttach);
 
-            std::string context = dtUtil::GetDeltaRootPath() + "/examples/data/SkeletalMeshes/Marine/";
+            std::string context = "../examples/data/SkeletalMeshes/Marine/";
             std::string filename = "marine_test.xml";
 
             mAnimHelper->LoadModel(context + filename);
+            CPPUNIT_ASSERT_MESSAGE("Unable to load: " + context + filename, mAnimHelper->GetModelWrapper() != NULL);
          }
 
          void tearDown()
