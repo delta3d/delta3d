@@ -1,0 +1,50 @@
+<character name="Eve">
+   <skeleton fileName="Skeleton.xsf" />
+   <animation fileName="animations/Idle.xaf" name="Idle" />
+   <animation fileName="animations/Walk.xaf" name="Walk" />
+   <mesh fileName="meshes/Body.xmf" name="Body" />
+   <mesh fileName="meshes/Eyes.xmf" name="Eyes" />
+   <mesh fileName="meshes/Eyebrows.xmf" name="Eyebrows" />
+   <mesh fileName="meshes/Hair.xmf" name="Hair" />
+   <mesh fileName="meshes/Pants.xmf" name="Pants" />
+   <mesh fileName="meshes/Shirt.xmf" name="Shirt" />
+   <mesh fileName="meshes/Shoes.xmf" name="Shoes" />
+   <mesh fileName="meshes/Eyelashes.xmf" name="Eyelashes" />
+   <material fileName="materials/Skin03.xrf" name="Body" />
+   <material fileName="materials/Eyes.xrf" name="Eyes" />
+   <material fileName="materials/Hair02.xrf" name="Hair" />
+   <material fileName="materials/Pants03.xrf" name="Pants" />
+   <material fileName="materials/Shirt03.xrf" name="Shirt" />
+   <material fileName="materials/Shoes.xrf" name="Shoes" />
+  <material fileName="materials/Eyebrows.xrf" name="Eyebrows" />
+  <material fileName="materials/Eyelashes.xrf" name="Eyelashes" />
+  <skinningShader>
+      <shaderGroup>Human</shaderGroup>
+      <shaderName>Normal</shaderName>
+      <maxBones>200</maxBones>
+   </skinningShader>
+   <animationChannel>
+      <name>Idle</name>
+      <animationName>Idle</animationName>
+      <startDelay>0.0</startDelay>
+      <fadeIn>0.0</fadeIn>
+      <fadeOut>0.0</fadeOut>
+      <speed>1.0</speed>
+      <baseWeight>1.0</baseWeight>
+      <maxDuration>0.0</maxDuration>
+      <isAction>0</isAction>
+      <isLooping>1</isLooping>
+   </animationChannel>
+  <animationChannel>
+    <name>Walk</name>
+    <animationName>Walk</animationName>
+    <startDelay>0.0</startDelay>
+    <fadeIn>0.0</fadeIn>
+    <fadeOut>0.0</fadeOut>
+    <speed>1.0</speed>
+    <baseWeight>1.0</baseWeight>
+    <maxDuration>0.0</maxDuration>
+    <isAction>0</isAction>
+    <isLooping>1</isLooping>
+  </animationChannel>
+</character>
