@@ -22,6 +22,11 @@
    <animation fileName="poses/HeadRight.xaf"/>
    <animation fileName="poses/HeadUpLeft.xaf"/>
    <animation fileName="poses/HeadUpRight.xaf"/>
+   <animation fileName="poses/TorsoDownLeft.xaf"/>
+   <animation fileName="poses/TorsoDownRight.xaf"/>
+   <animation fileName="poses/TorsoForward.xaf"/>
+   <animation fileName="poses/TorsoUpLeft.xaf"/>
+   <animation fileName="poses/TorsoUpRight.xaf"/>
    
    <mesh fileName="meshes/Body.xmf" name="Body" />
    <mesh fileName="meshes/Eyes.xmf" name="Eyes" />
