@@ -3,6 +3,7 @@
    <skeleton fileName="Skeleton.xsf" />
    <animation fileName="animations/Idle.xaf" name="Idle" />
    <animation fileName="animations/Walk.xaf" name="Walk" />
+   <animation fileName="animations/Run.xaf" name="Run" />
 
    <animation fileName="poses/EyeLeftDown.xaf"/>
    <animation fileName="poses/EyeLeftIn.xaf"/>
@@ -64,6 +65,18 @@
   <animationChannel>
     <name>Walk</name>
     <animationName>Walk</animationName>
+    <startDelay>0.0</startDelay>
+    <fadeIn>0.0</fadeIn>
+    <fadeOut>0.0</fadeOut>
+    <speed>1.0</speed>
+    <baseWeight>1.0</baseWeight>
+    <maxDuration>0.0</maxDuration>
+    <isAction>0</isAction>
+    <isLooping>1</isLooping>
+  </animationChannel>
+  <animationChannel>
+    <name>Run</name>
+    <animationName>Run</animationName>
     <startDelay>0.0</startDelay>
     <fadeIn>0.0</fadeIn>
     <fadeOut>0.0</fadeOut>
