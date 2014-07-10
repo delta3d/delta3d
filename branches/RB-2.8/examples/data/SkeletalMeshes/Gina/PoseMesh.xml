@@ -72,28 +72,28 @@
 		</Triangle>						
 	</PoseMesh>
 
-  <!--PoseMesh name="Poses_Torso" root="mPelvis"  rootForwardAxis="0.0 0.0 1.0"
-	          effector="Bip01 Spine3" effectorForwardAxis="0.0 1.0 0.0">	
+  <PoseMesh name="Poses_Torso" root="mPelvis"  rootForwardAxis="0.0 0.0 1.0"
+	          effector="mChest" effectorForwardAxis="0.0 0.0 1.0">	
 		<Triangle>
 			<Animation>poses/TorsoDownRight.xaf</Animation>
-			<Animation>poses/TorsoCenter.xaf</Animation>
+			<Animation>poses/TorsoForward.xaf</Animation>
 			<Animation>poses/TorsoUpRight.xaf</Animation>
 		</Triangle>	
 		<Triangle>
 			<Animation>poses/TorsoUpRight.xaf</Animation>
-			<Animation>poses/TorsoCenter.xaf</Animation>
+			<Animation>poses/TorsoForward.xaf</Animation>
 			<Animation>poses/TorsoUpLeft.xaf</Animation>
 		</Triangle>	
 		<Triangle>
 			<Animation>poses/TorsoUpLeft.xaf</Animation>
-			<Animation>poses/TorsoCenter.xaf</Animation>
+			<Animation>poses/TorsoForward.xaf</Animation>
 			<Animation>poses/TorsoDownLeft.xaf</Animation>
 		</Triangle>	
 		<Triangle>
 			<Animation>poses/TorsoDownLeft.xaf</Animation>
-			<Animation>poses/TorsoCenter.xaf</Animation>
+			<Animation>poses/TorsoForward.xaf</Animation>
 			<Animation>poses/TorsoDownRight.xaf</Animation>
 		</Triangle>						
-	</PoseMesh-->
+	</PoseMesh>
   
 </PoseMeshFile>
