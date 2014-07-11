@@ -1,8 +1,34 @@
 <character name="Eve">
+   <poseMesh fileName="PoseMesh.xml" />
    <skeleton fileName="Skeleton.xsf" />
    <animation fileName="animations/Idle.xaf" name="Idle" />
    <animation fileName="animations/Walk.xaf" name="Walk" />
    <animation fileName="animations/Run.xaf" name="Run" />
+
+   <animation fileName="poses/EyeLeftDown.xaf"/>
+   <animation fileName="poses/EyeLeftIn.xaf"/>
+   <animation fileName="poses/EyeLeftMidDown.xaf"/>
+   <animation fileName="poses/EyeLeftMidUp.xaf"/>
+   <animation fileName="poses/EyeLeftOut.xaf"/>
+   <animation fileName="poses/EyeLeftUp.xaf"/>
+   <animation fileName="poses/EyeRightDown.xaf"/>
+   <animation fileName="poses/EyeRightIn.xaf"/>
+   <animation fileName="poses/EyeRightMidDown.xaf"/>
+   <animation fileName="poses/EyeRightMidUp.xaf"/>
+   <animation fileName="poses/EyeRightOut.xaf"/>
+   <animation fileName="poses/EyeRightUp.xaf"/>
+   <animation fileName="poses/HeadDownLeft.xaf"/>
+   <animation fileName="poses/HeadDownRight.xaf"/>
+   <animation fileName="poses/HeadLeft.xaf"/>
+   <animation fileName="poses/HeadRight.xaf"/>
+   <animation fileName="poses/HeadUpLeft.xaf"/>
+   <animation fileName="poses/HeadUpRight.xaf"/>
+   <animation fileName="poses/TorsoDownLeft.xaf"/>
+   <animation fileName="poses/TorsoDownRight.xaf"/>
+   <animation fileName="poses/TorsoForward.xaf"/>
+   <animation fileName="poses/TorsoUpLeft.xaf"/>
+   <animation fileName="poses/TorsoUpRight.xaf"/>
+  
    <mesh fileName="meshes/Body.xmf" name="Body" />
    <mesh fileName="meshes/Eyes.xmf" name="Eyes" />
    <mesh fileName="meshes/Eyebrows.xmf" name="Eyebrows" />
