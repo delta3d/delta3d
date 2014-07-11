@@ -45,6 +45,9 @@
    <material fileName="materials/Shoes.xrf" name="Shoes" />
   <material fileName="materials/Eyebrows.xrf" name="Eyebrows" />
   <material fileName="materials/Eyelashes.xrf" name="Eyelashes" />
+   <scale>
+      <scalingFactor>0.1</scalingFactor>
+   </scale>
   <skinningShader>
       <shaderGroup>Human</shaderGroup>
       <shaderName>Normal</shaderName>
@@ -86,4 +89,16 @@
     <isAction>0</isAction>
     <isLooping>1</isLooping>
   </animationChannel>
+   <animationSequence>
+      <name>RunWalk</name>
+      <startDelay>0.1</startDelay>
+      <fadeIn>0.2</fadeIn>
+      <fadeOut>0.2</fadeOut>
+      <speed>1.0</speed>
+      <baseWeight>1.0</baseWeight>
+      <children>
+         <child>Run</child>
+         <child>Walk</child>
+      </children>
+   </animationSequence>
 </character>
