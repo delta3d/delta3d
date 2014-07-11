@@ -124,6 +124,10 @@ namespace dtUtil
 
 #ifdef __APPLE__
          handle = dlopen(("@executable_path/../lib/" + fullLibraryName).c_str(), RTLD_LAZY | RTLD_GLOBAL);
+         if (handle == NULL)
+         {
+            handle = dlopen(("@executable_path/../PlugIns/" + fullLibraryName).c_str(), RTLD_LAZY | RTLD_GLOBAL);
+         }
 #endif
          if (handle == NULL)
          {
