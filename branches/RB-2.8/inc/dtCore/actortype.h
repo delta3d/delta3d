@@ -74,8 +74,6 @@ namespace dtCore
    {
    public:
 
-      typedef BaseActorObject CreateType;
-
       /**
        * Constructs a new actor type object.
        */

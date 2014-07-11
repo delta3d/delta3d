@@ -118,7 +118,11 @@ ENDMACRO(ADD_DELTA3D_SUBFOLDERS)
 
 
 
-PROJECT(DELTA3D)
+PROJECT(delta3d)
+
+set (delta3d_VERSION_MAJOR 2)
+set (delta3d_VERSION_MINOR 8)
+set (delta3d_VERSION_PATCH 0)
 
 ################################################################################
 # User Options
@@ -313,3 +317,5 @@ CONFIGURE_FILE(
    IMMEDIATE @ONLY)
 ADD_CUSTOM_TARGET(uninstall
    "${CMAKE_COMMAND}" -P "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake")
+
+include(delta3dCPack)

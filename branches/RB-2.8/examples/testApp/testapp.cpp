@@ -132,15 +132,15 @@ void TestApp::Initialize(dtABC::BaseABC& app, int argc, char** argv)
 
    if (mProjectPath.empty())
    {
-      // TODO look in the mac bundle.
-      std::vector<std::string> projectPaths;
-      projectPaths.push_back(executablePath + "/../examples");
-      projectPaths.push_back(executablePath + "/../share/delta3d/examples");
-      projectPaths.push_back(executablePath + "/../../examples");
-      // TODO compile in the install prefix for linux?
-      projectPaths.push_back("/usr/share/delta3d/examples");
-      projectPaths.push_back("/usr/local/share/delta3d/examples");
-      mProjectPath = dtUtil::FindFileInPathList("data", projectPaths);
+         // TODO look in the mac bundle.
+         std::vector<std::string> projectPaths;
+         projectPaths.push_back(executablePath + "/../examples");
+         projectPaths.push_back(executablePath + "/../share/delta3d/examples");
+         projectPaths.push_back(executablePath + "/../../examples");
+         // TODO compile in the install prefix for linux?
+         projectPaths.push_back("/usr/share/delta3d/examples");
+         projectPaths.push_back("/usr/local/share/delta3d/examples");
+         mProjectPath = dtUtil::FindFileInPathList("data", projectPaths);
    }
 
 }
