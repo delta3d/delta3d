@@ -175,7 +175,7 @@ namespace dtAnim
    /////////////////////////////////////////////////////////////////////////////
    bool Cal3DModelWrapper::BlendPose(int id, float weight, float delay)
    {
-#ifdef CAL3D_VERSION_DEVELOMENT
+#ifdef CAL3D_VERSION_DEVELOPMENT
       return mMixer->blendPose(id, weight, delay);
 #else
       return mMixer->blendCycle(id, weight, delay);
@@ -212,7 +212,7 @@ namespace dtAnim
    /////////////////////////////////////////////////////////////////////////////
    bool Cal3DModelWrapper::ClearPose(int id, float delay)
    {
-#ifdef CAL3D_VERSION_DEVELOMENT
+#ifdef CAL3D_VERSION_DEVELOPMENT
       return mMixer->clearPose(id, delay);
 #else
       return mMixer->clearCycle(id, delay);
