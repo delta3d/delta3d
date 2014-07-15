@@ -212,7 +212,11 @@ namespace dtAnim
    /////////////////////////////////////////////////////////////////////////////
    bool Cal3DModelWrapper::ClearPose(int id, float delay)
    {
+#ifdef CAL3D_VERSION_DEVELOMENT
       return mMixer->clearPose(id, delay);
+#else
+      return mMixer->clearCycle(id, delay);
+#endif
    }
 
    /////////////////////////////////////////////////////////////////////////////
