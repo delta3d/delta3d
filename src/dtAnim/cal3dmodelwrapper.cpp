@@ -185,7 +185,7 @@ namespace dtAnim
    /////////////////////////////////////////////////////////////////////////////
    void Cal3DModelWrapper::SetSpeedFactor(int id, float speedFactor)
    {
-      if (mMixer->getAnimationVector().size() > id && mMixer->getAnimationVector()[id] != NULL)
+      if ((int)(mMixer->getAnimationVector().size()) > id && mMixer->getAnimationVector()[id] != NULL)
       {
          CalAnimationCycle* cac = dynamic_cast<CalAnimationCycle*>(mMixer->getAnimationVector()[id]);
          if (cac != NULL)
@@ -231,6 +231,10 @@ namespace dtAnim
             if (currentAnim->getType() == CalAnimation::TYPE_CYCLE)
             {
                ClearCycle(animIndex, delay);
+            }
+            else if (currentAnim->getType() == CalAnimation::TYPE_POSE)
+            {
+               ClearPose(animIndex, delay);
             }
             else if (currentAnim->getType() == CalAnimation::TYPE_ACTION)
             {
