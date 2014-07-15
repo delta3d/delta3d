@@ -78,6 +78,7 @@ SET(LIB_PUBLIC_HEADERS
   ${HEADER_PATH}/hotspotdriver.h
   ${HEADER_PATH}/ical3ddriver.h
   ${HEADER_PATH}/lodcullcallback.h
+  ${HEADER_PATH}/macros.h
   ${HEADER_PATH}/morphdriver.h
   ${HEADER_PATH}/physiquedriver.h
   ${HEADER_PATH}/posemath.h

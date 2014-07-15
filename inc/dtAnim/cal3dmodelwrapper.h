@@ -298,6 +298,7 @@ namespace dtAnim
        * @return true if successful, false if an error happened.
        */
       bool BlendCycle(int id, float weight, float delay);
+      bool BlendPose(int id, float weight, float delay);
 
       void SetSpeedFactor(int id, float speedFactor);
 
@@ -307,6 +308,7 @@ namespace dtAnim
        * @return true if successful, false if an error happened.
        */
       bool ClearCycle(int id, float delay);
+      bool ClearPose(int id, float delay);
 
       /// Remove all existing animations from the mixer
       void ClearAll(float delay = 0.0);

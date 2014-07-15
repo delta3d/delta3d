@@ -90,12 +90,12 @@ PoseMesh::PoseMesh(dtAnim::Cal3DModelWrapper* model,
       vertMap[*anim] = vert_idx;
 
       int animID = *anim;
-      model->BlendCycle(animID, 1.0f, 0.0f);
+      model->BlendPose(animID, 1.0f, 0.0f);
       model->Update(0.0f);
 
       osg::Quat finalRotation = model->GetBoneAbsoluteRotation(mEffectorID);
 
-      model->ClearCycle(animID, 0.0f);
+      model->ClearPose(animID, 0.0f);
       model->Update(0.0f);
 
       // calculate a vector transformed by the rotation data.

@@ -64,6 +64,7 @@
 #include <dtCore/refptr.h>
 #include <dtCore/pointaxis.h>
 
+#include <dtAnim/macros.h>
 #include <dtAnim/cal3danimator.h>
 #include <cal3d/model.h>
 #include <cal3d/mixer.h>
@@ -249,7 +250,7 @@ void Viewer::OnLoadCharFile(const QString& filename)
       emit AnimationLoaded(animID, nameToSend, trackCount, keyframes, dur);
    }
 
-#if defined(CAL3D_VERSION) && CAL3D_VERSION >= 1300
+#ifdef CAL3D_VERSION_DEVELOPMENT
    CalMorphTargetMixer *mixer = wrapper->GetCalModel()->getMorphTargetMixer();
    if (mixer)
    {
@@ -286,7 +287,7 @@ void Viewer::OnLoadCharFile(const QString& filename)
             const std::vector<CalCoreSubMorphTarget *> morphVec = subMeshVec[subMeshID]->getVectorCoreSubMorphTarget();
             for (size_t morphID = 0; morphID < morphVec.size(); ++morphID)
             {
-#if defined(CAL3D_VERSION) && CAL3D_VERSION >= 1300
+#ifdef CAL3D_VERSION_DEVELOPMENT
                QString nameToSend = QString::fromStdString(morphVec[morphID]->name());
 #else
                QString nameToSend = QString::number(morphID);
@@ -716,7 +717,7 @@ void Viewer::OnTimeout()
 
       std::vector<float> morphWeightList;
 
-#if defined(CAL3D_VERSION) && CAL3D_VERSION >= 1300
+#ifdef CAL3D_VERSION_DEVELOPMENT
       int count = rapper->GetCalModel()->getMorphTargetMixer()->getMorphTargetCount();
       morphWeightList.reserve(count);
 
@@ -827,7 +828,7 @@ void Viewer::OnMorphChanged(int meshID, int subMeshID, int morphID, float weight
 //////////////////////////////////////////////////////////////////////////
 void Viewer::OnPlayMorphAnimation(int morphAnimID, float weight, float delayIn, float delayOut, bool looping)
 {
-#if defined(CAL3D_VERSION) && CAL3D_VERSION >= 1300
+#ifdef CAL3D_VERSION_DEVELOPMENT
    CalMorphTargetMixer *mixer = mCharacter->GetCal3DWrapper()->GetCalModel()->getMorphTargetMixer();
    if (mixer)
    {
@@ -839,7 +840,7 @@ void Viewer::OnPlayMorphAnimation(int morphAnimID, float weight, float delayIn, 
 ////////////////////////////////////////////////////////////////////////////////
 void Viewer::OnStopMorphAnimation(int morphAnimID, float delay)
 {
-#if defined(CAL3D_VERSION) && CAL3D_VERSION >= 1300
+#ifdef CAL3D_VERSION_DEVELOPMENT
    CalMorphTargetMixer *mixer = mCharacter->GetCal3DWrapper()->GetCalModel()->getMorphTargetMixer();
    if (mixer)
    {
