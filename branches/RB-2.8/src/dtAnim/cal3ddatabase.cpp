@@ -19,6 +19,7 @@
  * David Guthrie and Bradley Anderegg
  */
 
+#include <dtAnim/macros.h>
 #include <dtAnim/cal3ddatabase.h>
 #include <dtAnim/cal3dmodelwrapper.h>
 #include <dtAnim/animnodebuilder.h>
@@ -197,7 +198,7 @@ namespace dtAnim
    ////////////////////////////////////////////////////////////////////////////////
    bool Cal3DDatabase::Save(const std::string& file, const Cal3DModelWrapper& wrapper)
    {
-#if defined(CAL3D_VERSION) && CAL3D_VERSION >= 1300
+#ifdef CAL3D_VERSION_DEVELOPMENT
       std::string filename = osgDB::convertFileNameToNativeStyle(file);
 
       dtCore::RefPtr<dtUtil::XercesWriter> writer = new dtUtil::XercesWriter();

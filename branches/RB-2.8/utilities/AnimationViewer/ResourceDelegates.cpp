@@ -15,11 +15,12 @@
 #include <osgDB/FileNameUtils>
 #include <osgDB/ReadFile>
 // Cal3D
+#include <dtAnim/macros.h>
 #include <cal3d/corematerial.h>
 #include <cal3d/coremesh.h>
 #include <cal3d/coremodel.h>
 #include <cal3d/coreskeleton.h>
-#if defined(CAL3D_VERSION) && CAL3D_VERSION >= 1300
+#ifdef CAL3D_VERSION_DEVELOPMENT
 #include <cal3d/coreanimatedmorph.h>
 #endif
 // Delta3D
@@ -355,7 +356,7 @@ bool FileItemDelegate::ReplaceFile(dtAnim::Cal3DModelData& modelData, dtAnim::Ca
    switch(calFileType)
    {
    case Cal3DModelData::SKEL_FILE:
-#if defined(CAL3D_VERSION) && CAL3D_VERSION >= 1300
+#ifdef CAL3D_VERSION_DEVELOPMENT
       success = !newFile.empty() && modelData.LoadCoreSkeleton(newFile, objectName);
 #else
       success = !newFile.empty() && modelData.LoadCoreSkeleton(newFile);
@@ -430,7 +431,7 @@ bool FileItemDelegate::ReplaceFile(dtAnim::Cal3DModelData& modelData, dtAnim::Ca
       break;
 
    case Cal3DModelData::MORPH_FILE:
-#if defined(CAL3D_VERSION) && CAL3D_VERSION >= 1300
+#ifdef CAL3D_VERSION_DEVELOPMENT
       /*if (-1 < model->unloadCoreAnimatedMorph(model->getCoreAnimatedMorphId(objectName)))
       {
          success = !newFile.empty() && -1 < modelData.LoadCoreMorph(newFile, objectName);
@@ -679,7 +680,7 @@ bool ObjectNameItemDelegate::ApplyData(const QString& data) const
 ////////////////////////////////////////////////////////////////////////////////
 void ObjectNameItemDelegate::RenameSkeleton(const std::string& oldName, const std::string& newName) const
 {
-#if defined(CAL3D_VERSION) && CAL3D_VERSION >= 1300
+#ifdef CAL3D_VERSION_DEVELOPMENT
    CalCoreModel* model = mCharData->GetCoreModel();
    CalCoreSkeleton* skel = model->getCoreSkeleton();
    if (skel != NULL)
@@ -745,7 +746,7 @@ void ObjectNameItemDelegate::RenameMaterials(const std::string& oldName, const s
 ////////////////////////////////////////////////////////////////////////////////
 void ObjectNameItemDelegate::RenameMorphs(const std::string& oldName, const std::string& newName) const
 {
-#if defined(CAL3D_VERSION) && CAL3D_VERSION >= 1300
+#ifdef CAL3D_VERSION_DEVELOPMENT
    CalCoreModel* model = mCharData->GetCoreModel();
    CalCoreAnimatedMorph* morph = NULL;
    int numMorphs = model->getNumCoreAnimatedMorphs();

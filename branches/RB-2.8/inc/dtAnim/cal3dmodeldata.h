@@ -29,7 +29,7 @@ DT_DISABLE_WARNING_ALL_START
 #include <osg/Referenced>
 #include <osg/observer_ptr>
 
-#include <cal3d/global.h>
+#include <dtAnim/macros.h>
 DT_DISABLE_WARNING_END
 
 #include <dtUtil/hotspotdefinition.h>
@@ -224,7 +224,7 @@ namespace dtAnim
       LODOptions& GetLODOptions() { return mLODOptions; }
       const LODOptions& GetLODOptions() const { return mLODOptions; }
 
-#if defined(CAL3D_VERSION) && CAL3D_VERSION >= 1300
+#ifdef CAL3D_VERSION_DEVELOPMENT
       bool LoadCoreSkeletonBuffer(void* buffer, const std::string& file, const std::string& objectName);
       int LoadCoreMorphBuffer(void* buffer, const std::string& file, const std::string& objectName);
       int LoadCoreMaterialBuffer(void* buffer, const std::string& file, const std::string& objectName);

@@ -38,9 +38,10 @@
 #include <cal3d/coresubmorphtarget.h>
 #include <cal3d/morphtargetmixer.h>
 
+#include <dtAnim/macros.h>
 #include <dtUtil/datapathutils.h>
 
-#if defined(CAL3D_VERSION) && CAL3D_VERSION >= 1300
+#ifdef CAL3D_VERSION_DEVELOPMENT
    #define TEST_MORPH_TARGET
 #endif
 

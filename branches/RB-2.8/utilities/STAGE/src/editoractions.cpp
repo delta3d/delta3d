@@ -494,7 +494,7 @@ namespace dtEditQt
       {
          newMap = &dtCore::Project::GetInstance().CreateMap(mapToLoad, mapToLoad);
       }
-      catch(dtUtil::Exception& e)
+      catch(dtUtil::Exception& )
       {
          newMap = NULL;
       }

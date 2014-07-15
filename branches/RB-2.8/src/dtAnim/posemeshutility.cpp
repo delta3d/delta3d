@@ -53,7 +53,7 @@ void PoseMeshUtility::ClearPoses(const PoseMesh* poseMesh, dtAnim::Cal3DModelWra
 
    for (size_t vertIndex = 0; vertIndex < verts.size(); ++vertIndex)
    {
-      model->BlendCycle(verts[vertIndex]->mAnimID, 0.0f, delay);
+      model->BlendPose(verts[vertIndex]->mAnimID, 0.0f, delay);
    }
 }
 
@@ -80,9 +80,9 @@ void PoseMeshUtility::BlendPoses(const PoseMesh* poseMesh,
    weights = barySpace->Transform(osg::Vec3(targetTriangle.mAzimuth, targetTriangle.mElevation, 0.0f));
 
    //now play the 3 animationIDs with the associated weights
-   model->BlendCycle(animIDs[0], weights[0], blendDelay);
-   model->BlendCycle(animIDs[1], weights[1], blendDelay);
-   model->BlendCycle(animIDs[2], weights[2], blendDelay);
+   model->BlendPose(animIDs[0], weights[0], blendDelay);
+   model->BlendPose(animIDs[1], weights[1], blendDelay);
+   model->BlendPose(animIDs[2], weights[2], blendDelay);
 
    // turn off the animations for the rest of the celestial points
    const PoseMesh::VertexVector& vertices = poseMesh->GetVertices();
@@ -97,7 +97,7 @@ void PoseMeshUtility::BlendPoses(const PoseMesh* poseMesh,
           anim_id != animIDs[2])
       {
          float weight= 0.f;  // only want to turn off these animations.
-         model->BlendCycle(anim_id, weight, blendDelay);
+         model->BlendPose(anim_id, weight, blendDelay);
       }
    }
 }

@@ -182,7 +182,7 @@ namespace dtGame
 
             mGameManager->SetApplication(*appObj);
          }
-         mEntryPoint->OnStartup(*mApplication, *this->GetGameManager());
+         mEntryPoint->OnStartup(*mApplication, *mGameManager);
       }
       catch (const dtGame::GameApplicationConfigException& ex)
       {

@@ -20,6 +20,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 // INCLUDE DIRECTIVES
 ////////////////////////////////////////////////////////////////////////////////
+#include <dtAnim/macros.h>
 #include <dtAnim/cal3dmodelwrapper.h>
 #include <cal3d/cal3d.h>
 #include <cal3d/coretrack.h>
@@ -172,6 +173,16 @@ namespace dtAnim
    }
 
    /////////////////////////////////////////////////////////////////////////////
+   bool Cal3DModelWrapper::BlendPose(int id, float weight, float delay)
+   {
+#ifdef CAL3D_VERSION_DEVELOMENT
+      return mMixer->blendPose(id, weight, delay);
+#else
+      return mMixer->blendCycle(id, weight, delay);
+#endif
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
    void Cal3DModelWrapper::SetSpeedFactor(int id, float speedFactor)
    {
       if (mMixer->getAnimationVector().size() > id && mMixer->getAnimationVector()[id] != NULL)
@@ -196,6 +207,12 @@ namespace dtAnim
    bool Cal3DModelWrapper::ClearCycle(int id, float delay)
    {
       return mMixer->clearCycle(id, delay);
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   bool Cal3DModelWrapper::ClearPose(int id, float delay)
+   {
+      return mMixer->clearPose(id, delay);
    }
 
    /////////////////////////////////////////////////////////////////////////////

@@ -26,6 +26,7 @@
 #include <cal3d/model.h>
 #include <cal3d/coremodel.h>
 #include <cal3d/coreanimation.h>
+#include <dtAnim/macros.h>
 #include <dtAnim/animationwrapper.h>
 #include <dtAnim/animationchannel.h>
 #include <dtAnim/animationsequence.h>
@@ -42,6 +43,7 @@
 #include <dtUtil/log.h>
 #include <dtUtil/stringutils.h>
 #include <dtUtil/threadpool.h>
+
 
 namespace dtAnim
 {
@@ -226,7 +228,7 @@ namespace dtAnim
             return osgDB::ReaderWriter::ReadResult(osgDB::ReaderWriter::ReadResult::FILE_NOT_FOUND);
          }
 
-#if defined(CAL3D_VERSION) && CAL3D_VERSION >= 1300
+#ifdef CAL3D_VERSION_DEVELOPMENT
          std::ifstream confStream(fileName.c_str(), std::ios_base::binary);
 
          if (!confStream.is_open())
@@ -264,7 +266,7 @@ namespace dtAnim
 #endif
       }
 
-#if defined(CAL3D_VERSION) && CAL3D_VERSION >= 1300
+#ifdef CAL3D_VERSION_DEVELOPMENT
       //////////////////////////////////////////////////////////////////////////
       virtual osgDB::ReaderWriter::ReadResult readObject(std::istream& fin, const osgDB::ReaderWriter::Options* options = NULL) const
       {
@@ -319,7 +321,7 @@ namespace dtAnim
          return "Cal3D Skeleton Reader/Writer";
       }
 
-#if defined(CAL3D_VERSION) && CAL3D_VERSION >= 1300
+#ifdef CAL3D_VERSION_DEVELOPMENT
       //////////////////////////////////////////////////////////////////////////
       virtual bool LoadFile(const MemBuffer& buffer, CalOptions& options) const
       {
@@ -362,7 +364,7 @@ namespace dtAnim
          return "Cal3D Material Reader/Writer";
       }
 
-#if defined(CAL3D_VERSION) && CAL3D_VERSION >= 1300
+#ifdef CAL3D_VERSION_DEVELOPMENT
       //////////////////////////////////////////////////////////////////////////
       virtual bool LoadFile(const MemBuffer& buffer, CalOptions& options) const
       {
@@ -404,7 +406,7 @@ namespace dtAnim
          return "Cal3D Mesh Reader/Writer";
       }
 
-#if defined(CAL3D_VERSION) && CAL3D_VERSION >= 1300
+#ifdef CAL3D_VERSION_DEVELOPMENT
       //////////////////////////////////////////////////////////////////////////
       virtual bool LoadFile(const MemBuffer& buffer, CalOptions& options) const
       {
@@ -446,7 +448,7 @@ namespace dtAnim
          return "Cal3D Animation Reader/Writer";
       }
 
-#if defined(CAL3D_VERSION) && CAL3D_VERSION >= 1300
+#ifdef CAL3D_VERSION_DEVELOPMENT
       //////////////////////////////////////////////////////////////////////////
       virtual bool LoadFile(const MemBuffer& buffer, CalOptions& options) const
       {
@@ -752,7 +754,7 @@ namespace dtAnim
                ++animItr;
             }
 
-#if defined(CAL3D_VERSION) && CAL3D_VERSION >= 1300
+#ifdef CAL3D_VERSION_DEVELOPMENT
             // load morph animations
             std::vector<CharacterFileHandler::MorphAnimationStruct>::iterator morphAnimItr = handler->mMorphAnimations.begin();
             while (morphAnimItr != handler->mMorphAnimations.end())

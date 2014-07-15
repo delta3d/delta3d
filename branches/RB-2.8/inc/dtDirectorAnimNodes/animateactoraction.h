@@ -27,10 +27,10 @@
 #include <dtDirector/latentactionnode.h>
 #include <dtDirectorAnimNodes/nodelibraryexport.h>
 
-#include <cal3d/global.h>
+#include <dtAnim/macros.h>
 
 
-#if CAL3D_VERSION >= 1300
+#ifdef CAL3D_VERSION_DEVELOPMENT
    #define MANUAL_ANIMATIONS
 #endif
 

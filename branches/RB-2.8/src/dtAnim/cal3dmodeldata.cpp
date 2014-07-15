@@ -22,6 +22,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 // INCLUDE DIRECTIVES
 ////////////////////////////////////////////////////////////////////////////////
+#include <dtAnim/macros.h>
 #include <dtAnim/cal3dmodeldata.h>
 #include <dtAnim/animatable.h>
 #include <dtAnim/animationwrapper.h>
@@ -425,7 +426,7 @@
       mShaderMaxBones = maxBones;
    }
 
-#if defined(CAL3D_VERSION) && CAL3D_VERSION >= 1300
+#ifdef CAL3D_VERSION_DEVELOPMENT
    ////////////////////////////////////////////////////////////////////////////////
    bool Cal3DModelData::LoadCoreSkeletonBuffer(void* buffer, const std::string& file, const std::string& objectName)
    {
