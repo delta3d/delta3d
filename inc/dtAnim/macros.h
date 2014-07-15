@@ -23,7 +23,11 @@
 
 #include <cal3d/global.h>
 
-#if defined(CAL3D_VERSION) && CAL3D_VERSION >= 1300
+#ifndef CAL3D_VERSION
+#define CAL3D_VERSION cal3d::LIBRARY_VERSION
+#endif
+
+#if CAL3D_VERSION >= 1300
    #ifndef CAL3D_VERSION_DEVELOPMENT
    #define CAL3D_VERSION_DEVELOPMENT CAL3D_VERSION
    #endif
