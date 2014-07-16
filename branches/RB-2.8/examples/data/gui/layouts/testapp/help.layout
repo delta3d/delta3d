@@ -1,0 +1,145 @@
+<?xml version="1.0" ?>
+<GUILayout>
+   <!-- MAIN CONTAINER WINDOW (ROOT & BACKGROUND IMAGE) -->
+
+   <!-- FRAME -->
+   <Window Name="Root_Help" Type="DefaultWindow">
+      <Property Name="UnifiedSize" Value="{{0.22,0},{0.40,0}}"/>
+      <Property Name="UnifiedPosition" Value="{{0.0,0},{-0.45,0}}"/>
+      <Property Name="ZOrderChangeEnabled" Value="False"/>
+      <Property Name="AlwaysOnTop" Value="True"/>
+      <Property Name="HorizontalAlignment" Value="Left"/>
+      <Property Name="VerticalAlignment" Value="Bottom"/>
+
+      <!-- TEXT - 1 -->
+      <Window Name="Help_1" Type="WindowsLook/StaticText">
+         <Property Name="UnifiedSize" Value="{{0.8,0},{0.095,0}}"/>
+         <Property Name="UnifiedPosition" Value="{{0.0,0},{0.05,0}}"/>
+         <Property Name="BackgroundEnabled" Value="False"/>
+         <Property Name="FrameEnabled" Value="False"/>
+         <Property Name="HorizontalAlignment" Value="Centre"/>
+         <Property Name="Font" Value="DejaVuSans-10"/>
+         <Property Name="AlwaysOnTop" Value="True"/>
+         <Property Name="TextColours" Value="FFFFFFFF"/>
+         <Property Name="Text" Value="W/A/S/D: Move"/>
+      </Window>
+
+      <!-- TEXT - 2 -->
+      <Window Name="Help_2" Type="WindowsLook/StaticText">
+         <Property Name="UnifiedSize" Value="{{0.8,0},{0.095,0}}"/>
+         <Property Name="UnifiedPosition" Value="{{0.0,0},{0.14,0}}"/>
+         <Property Name="BackgroundEnabled" Value="False"/>
+         <Property Name="FrameEnabled" Value="False"/>
+         <Property Name="HorizontalAlignment" Value="Centre"/>
+         <Property Name="Font" Value="DejaVuSans-10"/>
+         <Property Name="AlwaysOnTop" Value="True"/>
+         <Property Name="TextColours" Value="FFFFFFFF"/>
+         <Property Name="Text" Value="Arrows: Move"/>
+      </Window>
+
+      <!-- TEXT - 3 -->
+      <Window Name="Help_3" Type="WindowsLook/StaticText">
+         <Property Name="UnifiedSize" Value="{{0.8,0},{0.095,0}}"/>
+         <Property Name="UnifiedPosition" Value="{{0.0,0},{0.23,0}}"/>
+         <Property Name="BackgroundEnabled" Value="False"/>
+         <Property Name="FrameEnabled" Value="False"/>
+         <Property Name="HorizontalAlignment" Value="Centre"/>
+         <Property Name="Font" Value="DejaVuSans-10"/>
+         <Property Name="AlwaysOnTop" Value="True"/>
+         <Property Name="TextColours" Value="FFFFFFFF"/>
+         <Property Name="Text" Value="H: Change Weapon"/>
+      </Window>
+
+      <!-- TEXT - 4 -->
+      <Window Name="Help_4" Type="WindowsLook/StaticText">
+         <Property Name="UnifiedSize" Value="{{0.8,0},{0.095,0}}"/>
+         <Property Name="UnifiedPosition" Value="{{0.0,0},{0.32,0}}"/>
+         <Property Name="BackgroundEnabled" Value="False"/>
+         <Property Name="FrameEnabled" Value="False"/>
+         <Property Name="HorizontalAlignment" Value="Centre"/>
+         <Property Name="Font" Value="DejaVuSans-10"/>
+         <Property Name="AlwaysOnTop" Value="True"/>
+         <Property Name="TextColours" Value="FFFFFFFF"/>
+         <Property Name="Text" Value="V: Change View"/>
+      </Window>
+
+      <!-- TEXT - 5 -->
+      <Window Name="Help_5" Type="WindowsLook/StaticText">
+         <Property Name="UnifiedSize" Value="{{0.8,0},{0.095,0}}"/>
+         <Property Name="UnifiedPosition" Value="{{0.0,0},{0.41,0}}"/>
+         <Property Name="BackgroundEnabled" Value="False"/>
+         <Property Name="FrameEnabled" Value="False"/>
+         <Property Name="HorizontalAlignment" Value="Centre"/>
+         <Property Name="Font" Value="DejaVuSans-10"/>
+         <Property Name="AlwaysOnTop" Value="True"/>
+         <Property Name="TextColours" Value="FFFFFFFF"/>
+         <Property Name="Text" Value="Space: Brakes"/>
+      </Window>
+
+      <!-- TEXT - 6 -->
+      <Window Name="Help_6" Type="WindowsLook/StaticText">
+         <Property Name="UnifiedSize" Value="{{0.8,0},{0.095,0}}"/>
+         <Property Name="UnifiedPosition" Value="{{0.0,0},{0.50,0}}"/>
+         <Property Name="BackgroundEnabled" Value="False"/>
+         <Property Name="FrameEnabled" Value="False"/>
+         <Property Name="HorizontalAlignment" Value="Centre"/>
+         <Property Name="Font" Value="DejaVuSans-10"/>
+         <Property Name="AlwaysOnTop" Value="True"/>
+         <Property Name="TextColours" Value="FFFFFFFF"/>
+         <Property Name="Text" Value="Esc: Menu"/>
+      </Window>
+
+      <!-- TEXT - 7 -->
+      <Window Name="Help_7" Type="WindowsLook/StaticText">
+         <Property Name="UnifiedSize" Value="{{0.8,0},{0.095,0}}"/>
+         <Property Name="UnifiedPosition" Value="{{0.01,0},{0.59,0}}"/>
+         <Property Name="BackgroundEnabled" Value="False"/>
+         <Property Name="FrameEnabled" Value="False"/>
+         <Property Name="HorizontalAlignment" Value="Centre"/>
+         <Property Name="Font" Value="DejaVuSans-10"/>
+         <Property Name="AlwaysOnTop" Value="True"/>
+         <Property Name="TextColours" Value="FFFFFFFF"/>
+         <Property Name="Text" Value="L-Click: Fire"/>
+      </Window>
+
+      <!-- TEXT - 8 -->
+      <Window Name="Help_8" Type="WindowsLook/StaticText">
+         <Property Name="UnifiedSize" Value="{{0.8,0},{0.095,0}}"/>
+         <Property Name="UnifiedPosition" Value="{{0.01,0},{0.68,0}}"/>
+         <Property Name="BackgroundEnabled" Value="False"/>
+         <Property Name="FrameEnabled" Value="False"/>
+         <Property Name="HorizontalAlignment" Value="Centre"/>
+         <Property Name="Font" Value="DejaVuSans-10"/>
+         <Property Name="AlwaysOnTop" Value="True"/>
+         <Property Name="TextColours" Value="FFFFFFFF"/>
+         <Property Name="Text" Value="Mouse: Look"/>
+      </Window>
+
+      <!-- TEXT - 9 -->
+      <Window Name="Help_9" Type="WindowsLook/StaticText">
+         <Property Name="UnifiedSize" Value="{{0.8,0},{0.095,0}}"/>
+         <Property Name="UnifiedPosition" Value="{{0.01,0},{0.77,0}}"/>
+         <Property Name="BackgroundEnabled" Value="False"/>
+         <Property Name="FrameEnabled" Value="False"/>
+         <Property Name="HorizontalAlignment" Value="Centre"/>
+         <Property Name="Font" Value="DejaVuSans-10"/>
+         <Property Name="AlwaysOnTop" Value="True"/>
+         <Property Name="TextColours" Value="FFFFFFFF"/>
+         <Property Name="Text" Value="F2: Debug Info"/>
+      </Window>
+        
+      <!-- TEXT - 10 -->
+      <Window Name="Help_10" Type="WindowsLook/StaticText">
+         <Property Name="UnifiedSize" Value="{{0.8,0},{0.095,0}}"/>
+         <Property Name="UnifiedPosition" Value="{{0.01,0},{0.86,0}}"/>
+         <Property Name="BackgroundEnabled" Value="False"/>
+         <Property Name="FrameEnabled" Value="False"/>
+         <Property Name="HorizontalAlignment" Value="Centre"/>
+         <Property Name="Font" Value="DejaVuSans-10"/>
+         <Property Name="AlwaysOnTop" Value="True"/>
+         <Property Name="TextColours" Value="FFFFFFFF"/>
+         <Property Name="Text" Value="G: DR Ghost"/>
+      </Window>
+        
+	</Window>
+</GUILayout>
