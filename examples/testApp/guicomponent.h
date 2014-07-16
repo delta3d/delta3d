@@ -1,6 +1,6 @@
 /* -*-c++-*-
- * testAAR - testaarhud (.h & .cpp) - Using 'The MIT License'
- * Copyright (C) 2005-2008, Alion Science and Technology Corporation
+ * testAPP - Using 'The MIT License'
+ * Copyright (C) 2014, Caper Holdings LLC
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -19,17 +19,20 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
- * 
+ *
  * This software was developed by Alion Science and Technology Corporation under
  * circumstances in which the U. S. Government may have rights in the software.
  *
- * Curtiss Murphy
  */
 
-#ifndef DELTA_TEST_AAR_HUD
-#define DELTA_TEST_AAR_HUD
+#ifndef DELTA_TEST_APP_GUI_COMPONENT
+#define DELTA_TEST_APP_GUI_COMPONENT
 
+////////////////////////////////////////////////////////////////////////////////
+// INCLUDE DIRECTIVES
+////////////////////////////////////////////////////////////////////////////////
 #include <dtGame/message.h>
+#include <dtGame/gamestate.h>
 #include <dtGame/gmcomponent.h>
 #include <osg/Referenced>
 
@@ -38,12 +41,17 @@
 #undef None
 #endif
 
-#include <CEGUI/CEGUIWindow.h>
 #include <dtGUI/gui.h>
 #include "export.h"
+#include "guiscreen.h"
 
 #define HUDCONTROLMAXTEXTSIZE 100
 
+
+
+////////////////////////////////////////////////////////////////////////////////
+// FORWARD DECLARATIONS
+////////////////////////////////////////////////////////////////////////////////
 namespace dtCore
 {
    class Keyboard;
@@ -51,168 +59,79 @@ namespace dtCore
    class DeltaWin;
 }
 
-/**
- * HUD State enumeration - what info is the HUD showing.
- */
-class TEST_APP_EXPORT HUDState : public dtUtil::Enumeration
+
+namespace dtExample
 {
-   DECLARE_ENUM(HUDState);
-   public:
-      static HUDState MINIMAL;
-      static HUDState MEDIUM;
-      static HUDState MAXIMUM;
-      static HUDState NONE;
-      static HUDState HELP;
-   private:
-      HUDState(const std::string &name) : dtUtil::Enumeration(name)
-      {
-         AddInstance(this);
-      }
-};
+   /////////////////////////////////////////////////////////////////////////////
+   // CLASS CODE
+   /////////////////////////////////////////////////////////////////////////////
+   class TEST_APP_EXPORT GuiComponent : public dtGame::GMComponent
+   {
+      public:
 
-/**
- * This class draws the HUD for the testAAR with using CEGUI.  It draws
- * status information like AAR state (record, playback, idle), sim time,
- * speed factor, num messages, and other help info etc...
- */
-class TEST_APP_EXPORT GuiComponent : public dtGame::GMComponent
-{
-   public:
+         /**
+          * Constructs the test application.
+          */
+         GuiComponent();
 
-      /**
-       * Constructs the test application.
-       */
-      GuiComponent();
+      protected:
 
-   protected:
+         /**
+          * Destroys the test application.
+          */
+         virtual ~GuiComponent();
 
-      /**
-       * Destroys the test application.
-       */
-      virtual ~GuiComponent();
+      public:
 
-   public:
+         /*override*/ void OnAddedToGM();
 
-      /*override*/ void OnAddedToGM();
+         /**
+          * Get messages from the GM component
+          */
+         /*override*/ void ProcessMessage(const dtGame::Message& message);
 
-      /**
-       * Get messages from the GM component
-       */
-      /*override*/ void ProcessMessage(const dtGame::Message& message);
+         void HandleGameStateChanged(const dtGame::GameStateType& gameState);
 
-      /**
-       * Sets up the basic GUI.
-       */
-      void SetupGUI(dtCore::Camera& cam, dtCore::Keyboard& keyboard, dtCore::Mouse& mouse);
+         /**
+          * Sets up the basic GUI.
+          */
+         void SetupGUI(dtCore::Camera& cam, dtCore::Keyboard& keyboard, dtCore::Mouse& mouse);
 
-      /**
-       * Cycles HUD state to the next most data.  From minimal, to moderate, to max,
-       * and then back to minimal.
-       */
-      HUDState& CycleToNextHUDState();
+         dtGUI::GUI* GetGUIDrawable() { return mGUI.get(); }
 
-      void SetHUDState(HUDState& newState) { mHUDState = &newState;  UpdateState(); }
-      HUDState& GetHUDState() { return *mHUDState; }
+         void Update(float simTimeDelta, float realTimeDelta);
 
-      dtGUI::GUI* GetGUIDrawable() { return mGUI.get(); }
+      protected:
 
-      void TickHUD();
+         /**
+          * Utility method to set the text, position, and color of a text control
+          * Check to see if the data changed.  The default values for color and position
+          * won't do anything since they use a color and position < 0.
+          */
+         void UpdateStaticText(CEGUI::Window* textControl, const std::string& newText,
+            osg::Vec3 color = osg::Vec3(1.0f, 1.0f, 1.0f), float x = -1.0f, float y = -1.0f);
+         
+         void UpdateStaticText(CEGUI::Window* textControl, const std::string& newText,
+            float x, float y);
 
-   protected:
+      private:
 
-      /**
-       * Helper method that creates an actor with random movement behavior.
-       */
-      //void PlaceActor();
+         /**
+          * Utility method to create text
+          */
+         CEGUI::Window* CreateText(const std::string& name, CEGUI::Window* parent, const std::string& text,
+                                        float x, float y, float width, float height);
 
-      /**
-       * Makes sure to enable/disable controls as appropriate for each state.
-       */
-      void UpdateState();
+         dtCore::RefPtr<dtCore::DeltaWin> mWindow;
+         CEGUI::Window* mMainWindow;
+         dtCore::RefPtr<dtGUI::GUI> mGUI;
 
-      /**
-       * Utility method to set the text, position, and color of a text control
-       * Check to see if the data changed.  The default values for color and position
-       * won't do anything since they use a color and position < 0.
-       */
-      void UpdateStaticText(CEGUI::Window* textControl, const std::string& newText,
-         float red = -1.0f, float green = -1.0f, float blue = -1.0f, float x = -1.0f, float y = -1.0f);
+         typedef std::map<std::string, dtCore::RefPtr<GuiScreen> > GameStateScreenMap;
 
-   private:
+         GameStateScreenMap mScreens;
+         dtCore::RefPtr<GuiScreen> mCurrentScreen;
+   };
 
-      /**
-       * During the tickHUD() - update our medium data
-       */
-      void UpdateMediumDetailData();
-
-      /**
-       * During the tickHUD() - update our high data
-       */
-      void UpdateHighDetailData(int baseWidth, float& curYPos);
-
-      /**
-       * Utility method to create text
-       */
-      CEGUI::Window* CreateText(const std::string& name, CEGUI::Window* parent, const std::string& text,
-                                     float x, float y, float width, float height);
-
-      HUDState* mHUDState;
-      HUDState* mLastHUDStateBeforeHelp;
-
-      dtCore::RefPtr<dtCore::DeltaWin> mWindow;
-      CEGUI::Window* mMainWindow;
-      dtCore::RefPtr<dtGUI::GUI> mGUI;
-      CEGUI::Window* mHUDOverlay;
-      CEGUI::Window* mHelpOverlay;
-
-
-      // main info
-      CEGUI::Window* mStateText;
-      CEGUI::Window* mSimTimeText;
-      CEGUI::Window* mSpeedFactorText;
-      CEGUI::Window* mNumMessagesText;
-      CEGUI::Window* mRecordDurationText;
-      CEGUI::Window* mNumTagsText;
-      CEGUI::Window* mLastTagText;
-      CEGUI::Window* mNumFramesText;
-      CEGUI::Window* mLastFrameText;
-      CEGUI::Window* mCurLogText;
-      CEGUI::Window* mCurMapText;
-
-      // tips messages
-      CEGUI::Window* mFirstTipText;
-      CEGUI::Window* mSecondTipText;
-
-      // help fields
-      CEGUI::Window* mHelpTipText;
-      CEGUI::Window* mHelp1Text;
-      CEGUI::Window* mHelp2Text;
-      CEGUI::Window* mHelp3Text;
-      CEGUI::Window* mHelp4Text;
-      CEGUI::Window* mHelp5Text;
-      CEGUI::Window* mHelp6Text;
-      CEGUI::Window* mHelp7Text;
-      CEGUI::Window* mHelp8Text;
-      CEGUI::Window* mHelp9Text;
-      CEGUI::Window* mHelp10Text;
-      CEGUI::Window* mHelp11Text;
-      CEGUI::Window* mHelp12Text;
-      CEGUI::Window* mHelp13Text;
-      CEGUI::Window* mHelp14Text;
-      CEGUI::Window* mHelp15Text;
-      CEGUI::Window* mHelp16Text;
-      CEGUI::Window* mHelp17Text;
-      CEGUI::Window* mHelp18Text;
-      CEGUI::Window* mHelp19Text;
-
-      // task texts
-      CEGUI::Window* mTasksHeaderText;
-      std::vector<CEGUI::Window*> mTaskTextList;
-
-      float mRightTextXOffset;
-      float mTextYTopOffset;
-      float mTextYSeparation;
-      float mTextHeight;
-};
+} // END - namespace dtExample
 
 #endif

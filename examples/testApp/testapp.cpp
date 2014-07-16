@@ -24,29 +24,37 @@
  * circumstances in which the U. S. Government may have rights in the software.
  *
  */
+
+////////////////////////////////////////////////////////////////////////////////
+// INCLUDE DIRECTIVES
+////////////////////////////////////////////////////////////////////////////////
 #include <dtGame/gameentrypoint.h>
 #include "export.h"
-#include <dtCore/refptr.h>
+#include <dtABC/baseabc.h>
+#include <dtCore/map.h>
 #include <dtCore/project.h>
 #include <dtCore/projectconfig.h>
-#include <dtGame/defaultmessageprocessor.h>
-
-#include "inputcomponent.h"
-#include "guicomponent.h"
-#include <dtGame/serverloggercomponent.h>
-#include <dtGame/logcontroller.h>
+#include <dtCore/refptr.h>
 #include <dtGame/binarylogstream.h>
+#include <dtGame/defaultmessageprocessor.h>
 #include <dtGame/exceptionenum.h>
-
-#include <dtUtil/fileutils.h>
-#include <dtUtil/datapathutils.h>
+#include <dtGame/gamestatecomponent.h>
 #include <dtUtil/configproperties.h>
+#include <dtUtil/datapathutils.h>
+#include <dtUtil/fileutils.h>
+#include "guicomponent.h"
+#include "inputcomponent.h"
+#include "testappgamestates.h"
 
-namespace dtGame
-{
-   class GameManager;
-}
 
+
+using namespace dtExample;
+
+
+
+////////////////////////////////////////////////////////////////////////////////
+// CLASS CODE
+////////////////////////////////////////////////////////////////////////////////
 class TestApp : public dtGame::GameEntryPoint
 {
 
@@ -80,57 +88,55 @@ class TestApp : public dtGame::GameEntryPoint
        */
       void ParseCommandLineOptions(int argc, char **argv);
       std::string mProjectPath;
+
+      dtCore::RefPtr<dtCore::Map> mMap;
 };
 
 
+////////////////////////////////////////////////////////////////////////////////
 extern "C" TEST_APP_EXPORT dtGame::GameEntryPoint* CreateGameEntryPoint()
 {
    return new TestApp;
 }
 
-//////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 extern "C" TEST_APP_EXPORT void DestroyGameEntryPoint(dtGame::GameEntryPoint* entryPoint)
 {
    delete entryPoint;
 }
 
-//////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 TestApp::TestApp()
 {
 
 }
 
-//////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 TestApp::~TestApp()
 {
 }
 
-//////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 void TestApp::Initialize(dtABC::BaseABC& app, int argc, char** argv)
 {
    srand((unsigned int)(time(0)));
 
    dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
    std::string executablePath = fileUtils.GetAbsolutePath(argv[0], true);
-   std::string deltaDataEnvVar = dtUtil::GetDeltaDataPathList();
-   if (deltaDataEnvVar.empty() || !dtUtil::FileUtils::GetInstance().DirExists(deltaDataEnvVar))
-   {
-      // TODO look in mac bundle.
-      dtUtil::SetDataFilePathList(executablePath + "/../data;" + executablePath + "/../share/delta3d/data;" +  executablePath + "/../../data");
-   }
-   else
-   {
-      dtUtil::SetDataFilePathList(deltaDataEnvVar);
-   }
 
    if (dtUtil::FindFileInPathList("map.xsd").empty())
    {
       LOG_INFO("No map.xsd was found in the search path: \"" + dtUtil::GetDataFilePathList() + "\"<BR>\n Hopefully it will be found in the project context.");
    }
 
+   // The commandline might indicate the project context as a parameter.
    ParseCommandLineOptions(argc, argv);
 
-   if (mProjectPath.empty())
+   // If the paths of this code block are necessary, add them to
+   // the .dtproj file. Be sure that all paths are valid since
+   // exceptions are thrown if invalid and the project file will
+   // fail to process any subsequent paths.
+   /*if (mProjectPath.empty())
    {
          // TODO look in the mac bundle.
          std::vector<std::string> projectPaths;
@@ -141,22 +147,25 @@ void TestApp::Initialize(dtABC::BaseABC& app, int argc, char** argv)
          projectPaths.push_back("/usr/share/delta3d/examples");
          projectPaths.push_back("/usr/local/share/delta3d/examples");
          mProjectPath = dtUtil::FindFileInPathList("data", projectPaths);
-   }
+   }*/
 
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 void TestApp::OnStartup(dtABC::BaseABC& app, dtGame::GameManager& gameManager)
 {
+   // If the command line has not indicated the project context...
    if (mProjectPath.empty())
    {
+      // ...search for it within the porperties of the config.xml.
       mProjectPath = gameManager.GetConfiguration().GetConfigPropertyValue("ProjectPath");
    }
 
    dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
-
    dtUtil::FileInfo fi = fileUtils.GetFileInfo(mProjectPath);
+
+   // Determine if the project context was specified as a directory or archive.
    if (fi.fileType == dtUtil::DIRECTORY || fi.fileType == dtUtil::ARCHIVE)
    {
       try
@@ -164,12 +173,14 @@ void TestApp::OnStartup(dtABC::BaseABC& app, dtGame::GameManager& gameManager)
          dtCore::Project::GetInstance().SetContext(mProjectPath, true);
          LOG_ALWAYS("Using project context path: " + mProjectPath);
       }
-      catch (dtUtil::Exception& e)
+      catch (dtUtil::Exception& )
       {
          throw dtGame::GameApplicationConfigException(
             "Invalid project context path: " + mProjectPath, __FILE__, __LINE__);
       }
    }
+   // Otherwise, determine if the project context has been
+   // specified as a .dtproj file.
    else if (fi.fileType == dtUtil::REGULAR_FILE)
    {
       try
@@ -177,39 +188,51 @@ void TestApp::OnStartup(dtABC::BaseABC& app, dtGame::GameManager& gameManager)
          dtCore::Project::GetInstance().SetupFromProjectConfigFile(mProjectPath);
          LOG_ALWAYS("Using project config: " + mProjectPath);
       }
-      catch (dtUtil::Exception& e)
+      catch (dtUtil::Exception& )
       {
          throw dtGame::GameApplicationConfigException(
             "Invalid project config file: " + mProjectPath, __FILE__, __LINE__);
       }
    }
-   else
+   else // The project context could not be found as a file or directory.
    {
       throw dtGame::GameApplicationConfigException(
          "Invalid or unknown project path: " + mProjectPath, __FILE__, __LINE__);
    }
 
-   // Add Component - Input Component
-   dtCore::RefPtr<dtGame::LogController> logCtrl = new dtGame::LogController();
-   dtCore::RefPtr<dtGame::BinaryLogStream> logStream = new dtGame::BinaryLogStream(gameManager.GetMessageFactory());
-   dtCore::RefPtr<dtGame::ServerLoggerComponent> srvrLog = new dtGame::ServerLoggerComponent(*logStream);
-
-   dtCore::RefPtr<GuiComponent> guiComp = new GuiComponent();
-
-   dtCore::RefPtr<InputComponent> inputComp = new InputComponent();
+   // Setup Message Processor
    dtCore::RefPtr<dtGame::DefaultMessageProcessor> mp = new dtGame::DefaultMessageProcessor();
-
    gameManager.AddComponent(*mp, dtGame::GameManager::ComponentPriority::HIGHEST);
+
+   // Setup Input Component
+   dtCore::RefPtr<InputComponent> inputComp = new InputComponent();
    gameManager.AddComponent(*inputComp, dtGame::GameManager::ComponentPriority::NORMAL);
-   gameManager.AddComponent(*logCtrl, dtGame::GameManager::ComponentPriority::NORMAL);
-   gameManager.AddComponent(*srvrLog, dtGame::GameManager::ComponentPriority::NORMAL);
+
+   // Setup GUI Component
+   dtCore::RefPtr<GuiComponent> guiComp = new GuiComponent();
    gameManager.AddComponent(*guiComp, dtGame::GameManager::ComponentPriority::NORMAL);
 
+   // Setup Game State Component
+   dtCore::RefPtr<dtGame::GameStateComponent> gameStateComp = new dtGame::GameStateComponent();
+   gameManager.AddComponent(*gameStateComp, dtGame::GameManager::ComponentPriority::NORMAL);
+   
+   // Load game state transitions.
+   std::string filePath = dtCore::Project::GetInstance().GetResourcePath(dtCore::ResourceDescriptor("Transitions:TestAppTransitions.xml"));
+   if ( ! gameStateComp->LoadTransitions(filePath))
+   {
+      LOG_ERROR("Could not load the game state transitions file.");
+   }
+
+   // Load the map for this application.
+   mMap = &app.LoadMap("TestApp", false);;
+   if ( ! mMap.valid())
+   {
+      LOG_ERROR("Map file for TestApp could not be found.");
+   }
 }
 
 void TestApp::OnShutdown(dtABC::BaseABC& /*app*/, dtGame::GameManager& /*gamemanager*/)
 {
-
 }
 
 void TestApp::ParseCommandLineOptions(int argc, char** argv)

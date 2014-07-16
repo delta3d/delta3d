@@ -1,6 +1,6 @@
 /* -*-c++-*-
- * testAAR - testaarinput (.h & .cpp) - Using 'The MIT License'
- * Copyright (C) 2005-2008, Alion Science and Technology Corporation
+ * testAPP - Using 'The MIT License'
+ * Copyright (C) 2014, Caper Holdings LLC
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -19,73 +19,72 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
- * 
+ *
  * This software was developed by Alion Science and Technology Corporation under
  * circumstances in which the U. S. Government may have rights in the software.
  *
- * Christopher DuBuc
- * William E. Johnson II
  */
 
-#ifndef DELTA_TEST_AAR_INPUT
-#define DELTA_TEST_AAR_INPUT
+#ifndef DELTA_TEST_APP_INPUT
+#define DELTA_TEST_APP_INPUT
 
+////////////////////////////////////////////////////////////////////////////////
+// INCLUDE DIRECTIVES
+////////////////////////////////////////////////////////////////////////////////
 #include "export.h"
+#include "testappgamestates.h"
 #include <dtGame/baseinputcomponent.h>
-#include <dtGame/logstatus.h>
-#include <dtGame/logcontroller.h>
+#include <dtCore/motionmodel.h>
+#include <dtCore/refptr.h>
 
 
-class TEST_APP_EXPORT InputComponent : public dtGame::BaseInputComponent
+
+namespace dtExample
 {
-   public:
+   /////////////////////////////////////////////////////////////////////////////
+   // CLASS CODE
+   /////////////////////////////////////////////////////////////////////////////
+   class TEST_APP_EXPORT InputComponent : public dtGame::BaseInputComponent
+   {
+      public:
+         typedef dtGame::BaseInputComponent BaseClass;
 
-      // Constructor
-      InputComponent();
+         // Constructor
+         InputComponent();
 
-      /*override*/ bool HandleKeyPressed(const dtCore::Keyboard* keyboard, int key);
+         /*override*/ bool HandleKeyPressed(const dtCore::Keyboard* keyboard, int key);
 
-      /*override*/ bool HandleKeyReleased(const dtCore::Keyboard* keyboard, int key);
+         /*override*/ bool HandleKeyReleased(const dtCore::Keyboard* keyboard, int key);
 
-      // General message handler
-      virtual void ProcessMessage(const dtGame::Message& message);
+         // General message handler
+         virtual void ProcessMessage(const dtGame::Message& message);
 
-   protected:
+         virtual void OnAddedToGM();
 
-      /// Destructor
-      virtual ~InputComponent();
+      protected:
 
-      /**
-       * Tell the log controller to insert a tag
-       */
-      void InsertTag();
+         /// Destructor
+         virtual ~InputComponent();
 
-      /**
-       * Tell the log controller to insert a keyframe
-       */
-      void InsertKeyFrame();
+         void SendTransition(const dtExample::Transition& transition);
 
-      /**
-       * Method that will go to the previous key frame
-       */
-      void GotoPreviousKeyframe();
+         void SetMotionModel(int motionModelType);
 
-      /**
-       * Method that will go to the next keyframe
-       */
-      void GotoNextKeyframe();
+      private:
 
-   private:
-
-      /**
-       * Helper method that creates and sends an ActorUpdateMessage about the player
-       * @param paramName The name of the update parameter
-       * @param value The value of the update parameter
-       */
-      void SendPlayerUpdateMsg(const std::string& paramName, const float value);
+         /**
+          * Helper method that creates and sends an ActorUpdateMessage about the player
+          * @param paramName The name of the update parameter
+          * @param value The value of the update parameter
+          */
+         void SendPlayerUpdateMsg(const std::string& paramName, const float value);
+         
+         double mSimSpeedFactor;
       
-      double mSimSpeedFactor;
-      dtGame::LogController* mLogController;
-};
+         int mMotionModelMode;
+         dtCore::RefPtr<dtCore::MotionModel> mMotionModel;
+   };
+
+} // END - namespace dtExample
 
 #endif
