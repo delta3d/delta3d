@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<TransitionList>
+   <Transition>
+      <Event Type="TRANSITION_OCCURRED"/>
+      <FromState Type="STATE_INTRO"/>
+      <ToState Type="STATE_MENU"/>
+   </Transition>
+
+   <Transition>
+      <Event Type="TRANSITION_OCCURRED"/>
+      <FromState Type="STATE_MENU"/>
+      <ToState Type="STATE_LOADING"/>
+   </Transition>
+
+   <Transition>
+      <Event Type="TRANSITION_OCCURRED"/>
+      <FromState Type="STATE_LOADING"/>
+      <ToState Type="STATE_RUNNING"/>
+   </Transition>
+
+   <Transition>
+      <Event Type="TRANSITION_OCCURRED"/>
+      <FromState Type="STATE_RUNNING"/>
+      <ToState Type="STATE_DEBRIEF"/>
+   </Transition>
+
+   <Transition>
+      <Event Type="TRANSITION_OCCURRED"/>
+      <FromState Type="STATE_DEBRIEF"/>
+      <ToState Type="STATE_RUNNING_EXIT_PROMPT"/>
+   </Transition>
+
+   <StartState Type="STATE_INTRO" />
+</TransitionList>
