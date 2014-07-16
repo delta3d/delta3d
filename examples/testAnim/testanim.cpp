@@ -30,13 +30,14 @@
 #include <dtUtil/mathdefines.h>
 #include <dtUtil/exception.h>
 
-#include <dtCore/flymotionmodel.h>
 #include <dtCore/camera.h>
 #include <dtCore/deltawin.h>
-#include <dtCore/scene.h>
-#include <dtCore/system.h>
+#include <dtCore/flymotionmodel.h>
 #include <dtCore/object.h>
+#include <dtCore/orbitmotionmodel.h>
+#include <dtCore/scene.h>
 #include <dtCore/shadermanager.h>
+#include <dtCore/system.h>
 #include <dtCore/transform.h>
 
 #include <dtCore/map.h>
@@ -83,7 +84,7 @@ extern "C" TEST_ANIM_EXPORT void DestroyGameEntryPoint(dtGame::GameEntryPoint* e
 TestAnim::TestAnim()
    : dtGame::GameEntryPoint()
    , mAnimationHelper(NULL)
-   , mFMM(NULL)
+   , mMotionModel(NULL)
    , mPerformanceTest(false)
 {
 
@@ -114,9 +115,14 @@ void TestAnim::Initialize(dtABC::BaseABC& app, int argc, char **argv)
 
    if (mPerformanceTest)
    {
-      mFMM = new dtCore::FlyMotionModel(app.GetKeyboard(), app.GetMouse());
-      mFMM->SetTarget(app.GetCamera());
+      mMotionModel = new dtCore::FlyMotionModel(app.GetKeyboard(), app.GetMouse());
    }
+   else
+   {
+      mMotionModel = new dtCore::OrbitMotionModel(app.GetKeyboard(), app.GetMouse());
+   }
+   
+   mMotionModel->SetTarget(app.GetCamera());
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -259,11 +265,36 @@ void TestAnim::InitializeAnimationActor(dtAnim::AnimationGameActorProxy* gamePro
 
             dtCore::Transformable* tx;
             actor->GetDrawable(tx);
-            //attach the Camera to the Actor using a Tripod
-            mTripod = new dtCore::Tripod(camera, tx);
-            mTripod->SetTetherMode(dtCore::Tripod::TETHER_WORLD_REL);
-            mTripod->SetOffset(0.f, -5.f, 1.25f, 0.f, 0.f, 0.f);
+            dtCore::Transform originalXform;
+            tx->GetTransform(originalXform);
 
+            // Temporarily set the character to the origin
+            // just to be sure things are attached to their
+            // proper locations.
+            dtCore::Transform xform;
+            osg::Vec3 offset;
+            osg::Vec3 originalPos = originalXform.GetTranslation();
+            xform.SetTranslation(offset);
+
+            dtCore::RefPtr<dtCore::Transformable> cameraPivot = new dtCore::Transformable;
+            cameraPivot->SetTransform(xform);
+            tx->AddChild(cameraPivot);
+            offset.set(0.0f, 0.0f, 1.25f);
+            xform.SetTranslation(offset);
+            cameraPivot->SetTransform(xform, dtCore::Transformable::REL_CS);
+            
+            cameraPivot->AddChild(camera);
+            offset.set(0.0f, -5.0f, 0.0f);
+            xform.SetTranslation(offset);
+            camera->SetTransform(xform, dtCore::Transformable::REL_CS);
+
+            dtCore::OrbitMotionModel* omm
+               = dynamic_cast<dtCore::OrbitMotionModel*>(mMotionModel.get());
+            if (omm != NULL)
+            {
+               omm->SetDistance(0.0f);
+            }
+            mMotionModel->SetTarget(cameraPivot.get());
 
             //attach a pack to the guy's back
             dtCore::RefPtr<dtCore::Object> attachment = new dtCore::Object("CamelPack");
@@ -300,5 +331,4 @@ void TestAnim::NonPlayerLoadCallback(dtAnim::AnimationHelper* helper)
    helper->PlayAnimation("Walk");
    helper->GetSequenceMixer().GetActiveAnimation("Walk")->SetStartDelay(dtUtil::RandFloat(20.0f, 40.0f));
    helper->GetSequenceMixer().ForceRecalculate();
-
 }
