@@ -70,7 +70,7 @@ namespace dtGame
       {
          Update(float(static_cast<const dtGame::TickMessage&>(message).GetDeltaSimTime()));
       }
-      else if( messageType == dtGame::MessageType::GAME_STATE_CHANGED)
+      else if( messageType == dtGame::MessageType::INFO_GAME_STATE_CHANGED)
       {
          ProcessStateChanged( static_cast<const GameStateChangedMessage&>(message) );
       }
@@ -89,7 +89,7 @@ namespace dtGame
    void GameStateComponent::SendGameStateChangedMessage(const GameState::Type& oldState, const GameState::Type& newState)
    {
       dtCore::RefPtr<GameStateChangedMessage> gscm;
-      GetGameManager()->GetMessageFactory().CreateMessage(MessageType::GAME_STATE_CHANGED, gscm);
+      GetGameManager()->GetMessageFactory().CreateMessage(MessageType::INFO_GAME_STATE_CHANGED, gscm);
       gscm->SetOldState(oldState);
       gscm->SetNewState(newState);
       LOG_INFO("Changing game state to: " + newState.GetName());

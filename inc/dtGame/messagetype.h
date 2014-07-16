@@ -172,7 +172,7 @@ namespace dtGame
 
 
          // GENERIC GAME SYSTEM MESSAGES
-         static const MessageType GAME_STATE_CHANGED;
+         static const MessageType INFO_GAME_STATE_CHANGED;
 
 
          /**
