@@ -255,7 +255,7 @@ namespace dtAnim
 
       // Allocate data arrays to populate
       CalIndex* indexArrayStart = new CalIndex[faceCountTotal * 3];
-      float* vertexArrayStart = new float[STRIDE * vertexCountTotal];
+      float* vertexArrayStart = new float[VBO_STRIDE * vertexCountTotal];
 
       CalIndex* indexArray = indexArrayStart;
       float* vertexArray = vertexArrayStart;
@@ -272,25 +272,25 @@ namespace dtAnim
             // select mesh and Submesh for further data access
             if (mWrapper->SelectMeshSubmesh(mMeshID, mSubmeshID))
             {
-               int vertexCount = mWrapper->GetVertices(vertexArray, STRIDE_BYTES);
+               int vertexCount = mWrapper->GetVertices(vertexArray, VBO_STRIDE_BYTES);
 
                // Position and normal will be copied per frame, no need to do it here
                // Only copy over the texture coordinates.
 
-               mWrapper->GetTextureCoords(0, vertexArray + 6, STRIDE_BYTES);
-               mWrapper->GetTextureCoords(1, vertexArray + 8, STRIDE_BYTES);
+               mWrapper->GetTextureCoords(0, vertexArray + VBO_OFFSET_TEXCOORD0, VBO_STRIDE_BYTES);
+               mWrapper->GetTextureCoords(1, vertexArray + VBO_OFFSET_TEXCOORD1, VBO_STRIDE_BYTES);
 
                //invert texture coordinates.
-               for (unsigned i = 0; i < vertexCount * STRIDE; i += STRIDE)
+               for (unsigned i = 0; i < vertexCount * VBO_STRIDE; i += VBO_STRIDE)
                {
-                  vertexArray[i + 7] = 1.0f - vertexArray[i + 7]; //the odd texture coordinates in cal3d are flipped, not sure why
-                  vertexArray[i + 9] = 1.0f - vertexArray[i + 9]; //the odd texture coordinates in cal3d are flipped, not sure why
+                  vertexArray[i + (VBO_OFFSET_TEXCOORD0 + 1)] = 1.0f - vertexArray[i + (VBO_OFFSET_TEXCOORD0 + 1)]; //the odd texture coordinates in cal3d are flipped, not sure why
+                  vertexArray[i + (VBO_OFFSET_TEXCOORD1 + 1)] = 1.0f - vertexArray[i + (VBO_OFFSET_TEXCOORD1 + 1)]; //the odd texture coordinates in cal3d are flipped, not sure why
                }
 
                int indexCount = mWrapper->GetFaces(indexArray);
 
                ///offset into the vbo to fill the correct lod.
-               vertexArray += vertexCount * STRIDE;
+               vertexArray += vertexCount * VBO_STRIDE;
                indexArray += indexCount * 3;
             }
          }
@@ -302,7 +302,7 @@ namespace dtAnim
       mMeshEBO = new osg::ElementBufferObject;
 
       // Create osg arrays that can be passed to create buffer objects
-      osg::FloatArray* osgVertexArray = new osg::FloatArray(STRIDE * vertexCountTotal, vertexArrayStart);
+      osg::FloatArray* osgVertexArray = new osg::FloatArray(VBO_STRIDE * vertexCountTotal, vertexArrayStart);
 
       osg::DrawElements* drawElements = NULL;
       
@@ -505,22 +505,22 @@ namespace dtAnim
                }
 
                ///offset into the vbo to fill the correct lod.
-               vertexArray += mVertexOffsets[lodIndex] * STRIDE;
+               vertexArray += mVertexOffsets[lodIndex] * VBO_STRIDE;
 
-               mWrapper->GetVertices(vertexArray, STRIDE_BYTES);
+               mWrapper->GetVertices(vertexArray + VBO_OFFSET_POSITION, VBO_STRIDE_BYTES);
 
                // get the transformed normals of the Submesh
-               mWrapper->GetNormals(vertexArray + 3, STRIDE_BYTES);
+               mWrapper->GetNormals(vertexArray + VBO_OFFSET_NORMAL, VBO_STRIDE_BYTES);
                glExt->glUnmapBuffer(GL_ARRAY_BUFFER_ARB);
             }
 
-            unsigned offset = mVertexOffsets[lodIndex] * STRIDE;
+			unsigned offset = mVertexOffsets[lodIndex] * VBO_STRIDE;
 
-            state.setVertexPointer(3, GL_FLOAT, STRIDE_BYTES, BUFFER_OFFSET(0 + offset));
-
-            state.setNormalPointer(GL_FLOAT, STRIDE_BYTES, BUFFER_OFFSET(3 + offset));
-            state.setTexCoordPointer(0, 2, GL_FLOAT, STRIDE_BYTES, BUFFER_OFFSET(6 + offset));
-            state.setTexCoordPointer(1, 2, GL_FLOAT, STRIDE_BYTES, BUFFER_OFFSET(8 + offset));
+			state.setVertexPointer(3, GL_FLOAT, VBO_STRIDE_BYTES, BUFFER_OFFSET(offset + VBO_OFFSET_POSITION));
+			state.setNormalPointer(GL_FLOAT, VBO_STRIDE_BYTES, BUFFER_OFFSET(offset + VBO_OFFSET_NORMAL));
+			state.setTexCoordPointer(0, 2, GL_FLOAT, VBO_STRIDE_BYTES, BUFFER_OFFSET(offset + VBO_OFFSET_TEXCOORD0));
+			state.setTexCoordPointer(1, 2, GL_FLOAT, VBO_STRIDE_BYTES, BUFFER_OFFSET(offset + VBO_OFFSET_TEXCOORD1));
+			state.disableColorPointer();
 
             //make the call to render
 #if defined(OPENSCENEGRAPH_MAJOR_VERSION) && OPENSCENEGRAPH_MAJOR_VERSION >= 3

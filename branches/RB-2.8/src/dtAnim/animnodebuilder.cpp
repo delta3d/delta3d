@@ -63,12 +63,12 @@ namespace dtAnim
       {
       };
 
-      virtual void drawImplementation(osg::RenderInfo&, const osg::Drawable*) const
+      virtual void drawImplementation(osg::RenderInfo& renderInfo, const osg::Drawable*) const
       {
          if (!mCreatedNode.valid())
          {
             CreateGeometryDrawCallback* const_this = const_cast<CreateGeometryDrawCallback*>(this);
-            const_this->mCreatedNode = mCreateFunc(mWrapper);
+            const_this->mCreatedNode = mCreateFunc(&renderInfo, mWrapper);
          }
       }
 
@@ -193,7 +193,7 @@ dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateNode(Cal3DModelWrapper* pWrappe
    }
    else
    {
-      return mCreateFunc(pWrapper);
+      return mCreateFunc(0, pWrapper);
    }
 }
 
@@ -239,19 +239,19 @@ dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateSoftwareInternal(Cal3DModelWrap
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateSoftware(Cal3DModelWrapper* pWrapper)
+dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateSoftware(osg::RenderInfo* renderInfo, Cal3DModelWrapper* pWrapper)
 {
    return AnimNodeBuilder::CreateSoftwareInternal(pWrapper, true);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateSoftwareNoVBO(Cal3DModelWrapper* pWrapper)
+dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateSoftwareNoVBO(osg::RenderInfo* renderInfo, Cal3DModelWrapper* pWrapper)
 {
    return AnimNodeBuilder::CreateSoftwareInternal(pWrapper, false);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateHardware(Cal3DModelWrapper* pWrapper)
+dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateHardware(osg::RenderInfo* renderInfo, Cal3DModelWrapper* pWrapper)
 {
    if (pWrapper == NULL)
    {
@@ -270,6 +270,9 @@ dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateHardware(Cal3DModelWrapper* pWr
    dtCore::RefPtr<osg::Geode> geode = new osg::Geode();
 
    static const std::string BONE_TRANSFORM_UNIFORM("boneTransforms");
+   static const std::string BONE_WEIGHTS_ATTRIB("boneWeights");
+   static const std::string BONE_INDICES_ATTRIB("boneIndices");
+   static const std::string TANGENT_SPACE_ATTRIB("tangentSpace");
 
    pWrapper->SetLODLevel(1);
    pWrapper->Update(0);
@@ -326,14 +329,17 @@ dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateHardware(Cal3DModelWrapper* pWr
 
       dtCore::ShaderProgram* shadProg = LoadShaders(*modelData, *geode);
 
+
       /* Begin figure out if this open gl implementation uses [0] on array uniforms
       * This seems to be an ATI/NVIDIA thing.
       * This requires me to force the shader to compile.
+      * The latest developer version of Open Scene Graph has a workaround
+      * in the shader program class for this issue, but the current stable 
+      * osg release as of this writing (3.0.1) lacks the fix so 
+      * include this hack here.
       */
       osg::Program* prog = shadProg->GetShaderProgram();
-      dtCore::RefPtr<osg::State> tmpState = new osg::State;
-      tmpState->setContextID(0);
-      prog->compileGLObjects(*tmpState);
+      prog->compileGLObjects(*renderInfo->getState());
 
       std::string boneTransformUniform = BONE_TRANSFORM_UNIFORM;
 
@@ -354,13 +360,34 @@ dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateHardware(Cal3DModelWrapper* pWr
       // Compute this only once
       osg::BoundingBox boundingBox = pWrapper->GetBoundingBox();
 
-      for (int meshCount = 0; meshCount < hardwareModel->getHardwareMeshCount(); ++meshCount)
-      {
-         HardwareSubmeshDrawable* drawable = new HardwareSubmeshDrawable(pWrapper, hardwareModel,
-                                                 boneTransformUniform, modelData->GetShaderMaxBones(),
-                                                 meshCount, vertexVBO, indexEBO);
-         drawable->SetBoundingBox(boundingBox);
-         geode->addDrawable(drawable);
+      int boneTransformLocation = prog->getPCP(renderInfo->getContextID())->getUniformLocation(boneTransformUniform);
+      int boneWeightsLocation = prog->getPCP(renderInfo->getContextID())->getAttribLocation(BONE_WEIGHTS_ATTRIB);
+      int boneIndicesLocation = prog->getPCP(renderInfo->getContextID())->getAttribLocation(BONE_INDICES_ATTRIB);
+      int tangentsLocation = prog->getPCP(renderInfo->getContextID())->getAttribLocation(TANGENT_SPACE_ATTRIB);
+
+      if (boneTransformLocation == -1) {
+          LOG_ERROR("Can't find uniform named \"" + BONE_TRANSFORM_UNIFORM
+              + "\" which is required for skinning.");
+      }
+      else if (boneWeightsLocation== -1) {
+          LOG_ERROR("Can't find attribute named \"" + BONE_WEIGHTS_ATTRIB
+              + "\" which is required for skinning.");
+      }
+      else if (boneIndicesLocation == -1) {
+          LOG_ERROR("Can't find attribute named \"" + BONE_INDICES_ATTRIB
+              + "\" which is required for skinning.");
+      }
+      else {
+          for (int meshCount = 0; meshCount < hardwareModel->getHardwareMeshCount(); ++meshCount) {
+              HardwareSubmeshDrawable* drawable = new HardwareSubmeshDrawable(pWrapper, hardwareModel,
+                  BONE_TRANSFORM_UNIFORM, modelData->GetShaderMaxBones(),
+                  meshCount, vertexVBO, indexEBO,
+                  boneWeightsLocation,
+                  boneIndicesLocation,
+                  tangentsLocation);
+              drawable->SetBoundingBox(boundingBox);
+              geode->addDrawable(drawable);
+          }
       }
 
       geode->setComputeBoundingSphereCallback(new Cal3DBoundingSphereCalculator(*pWrapper));
@@ -372,7 +399,7 @@ dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateHardware(Cal3DModelWrapper* pWr
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateNULL(Cal3DModelWrapper* pWrapper)
+dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateNULL(osg::RenderInfo* renderInfo, Cal3DModelWrapper* pWrapper)
 {
    DTUNREFERENCED_PARAMETER(pWrapper);
 

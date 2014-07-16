@@ -51,7 +51,10 @@ namespace dtAnim
    public:
       HardwareSubmeshDrawable(Cal3DModelWrapper* wrapper, CalHardwareModel* model,
             const std::string& boneUniformName, unsigned numBones,
-            unsigned mesh, osg::VertexBufferObject* vertexVBO, osg::ElementBufferObject* indexEBO);
+            unsigned mesh, osg::VertexBufferObject* vertexVBO, osg::ElementBufferObject* indexEBO,
+			int boneWeightsLocation,
+		    int boneIndicesLocation,
+	        int tangentSpaceLocation);
 
       void SetBoundingBox(const osg::BoundingBox& boundingBox);
 
@@ -59,6 +62,16 @@ namespace dtAnim
 
       virtual osg::Object* cloneType() const;
       virtual osg::Object* clone(const osg::CopyOp&) const;
+
+	  static const unsigned int VBO_OFFSET_POSITION = 0;
+	  static const unsigned int VBO_OFFSET_NORMAL = 3;
+	  static const unsigned int VBO_OFFSET_TEXCOORD0 = 6;
+	  static const unsigned int VBO_OFFSET_TEXCOORD1 = 8;
+	  static const unsigned int VBO_OFFSET_WEIGHT = 10;
+	  static const unsigned int VBO_OFFSET_BONE_INDEX = 14;
+	  static const unsigned int VBO_OFFSET_TANGENT_SPACE = 18;
+	  static const unsigned int VBO_STRIDE = 22;
+	  static const unsigned int VBO_STRIDE_BYTES = VBO_STRIDE * sizeof(float);
 
    protected:
       ~HardwareSubmeshDrawable();
@@ -76,6 +89,9 @@ namespace dtAnim
       osg::VertexBufferObject* mVertexVBO;
       osg::ElementBufferObject* mIndexEBO;
       OpenThreads::Mutex mUpdateMutex; ///Used to support rendering with multiple threads
+	  int mBoneWeightsLocation;
+	  int mBoneIndicesLocation;
+	  int mTangentSpaceLocation;
    };
 
 }; //namespace dtAnim

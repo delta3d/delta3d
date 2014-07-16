@@ -119,7 +119,10 @@ namespace dtAnim
 ////////////////////////////////////////////////////////////////////////////////
 HardwareSubmeshDrawable::HardwareSubmeshDrawable(Cal3DModelWrapper* wrapper, CalHardwareModel* model,
       const std::string& boneUniformName, unsigned numBones, unsigned mesh,
-      osg::VertexBufferObject* vertexVBO, osg::ElementBufferObject* indexEBO)
+      osg::VertexBufferObject* vertexVBO, osg::ElementBufferObject* indexEBO,
+	  int boneWeightsLocation,
+	  int boneIndicesLocation,
+	  int tangentSpaceLocation)
    : osg::Drawable()
    , mWrapper(wrapper)
    , mHardwareModel(model)
@@ -129,6 +132,9 @@ HardwareSubmeshDrawable::HardwareSubmeshDrawable(Cal3DModelWrapper* wrapper, Cal
    , mMeshID(mesh)
    , mVertexVBO(vertexVBO)
    , mIndexEBO(indexEBO)
+   , mBoneWeightsLocation(boneWeightsLocation)
+   , mBoneIndicesLocation(boneIndicesLocation)
+   , mTangentSpaceLocation(tangentSpaceLocation)
 {
    setUseDisplayList(false);
    setUseVertexBufferObjects(true);
@@ -199,18 +205,19 @@ void HardwareSubmeshDrawable::drawImplementation(osg::RenderInfo& renderInfo) co
    state.bindVertexBufferObject(mVertexVBO);
 #endif
 
-   unsigned stride = 18 * sizeof(float);
-
    #define BUFFER_OFFSET(x)((GLvoid*) (0 + ((x) * sizeof(float))))
 
-   state.setVertexPointer(3, GL_FLOAT, stride, BUFFER_OFFSET(0));
+   state.setVertexPointer(3, GL_FLOAT, VBO_STRIDE_BYTES, BUFFER_OFFSET(VBO_OFFSET_POSITION));
 
-   state.setNormalPointer(GL_FLOAT, stride, BUFFER_OFFSET(3));
-   state.setTexCoordPointer(0, 2, GL_FLOAT, stride, BUFFER_OFFSET(6));
-   state.setTexCoordPointer(1, 2, GL_FLOAT, stride, BUFFER_OFFSET(8));
+   state.setNormalPointer(GL_FLOAT, VBO_STRIDE_BYTES, BUFFER_OFFSET(VBO_OFFSET_NORMAL));
+   state.setTexCoordPointer(0, 2, GL_FLOAT, VBO_STRIDE_BYTES, BUFFER_OFFSET(VBO_OFFSET_TEXCOORD0));
+   state.setTexCoordPointer(1, 2, GL_FLOAT, VBO_STRIDE_BYTES, BUFFER_OFFSET(VBO_OFFSET_TEXCOORD1));
 
-   state.setTexCoordPointer(2, 4, GL_FLOAT, stride, BUFFER_OFFSET(10));
-   state.setTexCoordPointer(3, 4, GL_FLOAT, stride, BUFFER_OFFSET(14));
+  state.setVertexAttribPointer(mBoneWeightsLocation, 4, GL_FLOAT, GL_TRUE, VBO_STRIDE_BYTES, BUFFER_OFFSET(VBO_OFFSET_WEIGHT));
+  state.setVertexAttribPointer(mBoneIndicesLocation, 4, GL_FLOAT, GL_TRUE, VBO_STRIDE_BYTES, BUFFER_OFFSET(VBO_OFFSET_BONE_INDEX));
+  if (mTangentSpaceLocation != -1) {
+	  state.setVertexAttribPointer(mTangentSpaceLocation, 4, GL_FLOAT, GL_TRUE, VBO_STRIDE_BYTES, BUFFER_OFFSET(VBO_OFFSET_TANGENT_SPACE));
+  }
 
 #if defined(OPENSCENEGRAPH_MAJOR_VERSION) && OPENSCENEGRAPH_MAJOR_VERSION >= 3
    state.bindElementBufferObject(mIndexEBO->getOrCreateGLBufferObject(renderInfo.getContextID()));
@@ -241,14 +248,15 @@ void HardwareSubmeshDrawable::drawImplementation(osg::RenderInfo& renderInfo) co
 osg::Object* HardwareSubmeshDrawable::clone(const osg::CopyOp&) const
 {
    return new HardwareSubmeshDrawable(mWrapper.get(), mHardwareModel, mBoneUniformName,
-         mNumBones, mMeshID, mVertexVBO, mIndexEBO);
+         mNumBones, mMeshID, mVertexVBO, mIndexEBO, mBoneWeightsLocation, mBoneIndicesLocation, mTangentSpaceLocation);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 osg::Object* HardwareSubmeshDrawable::cloneType() const
 {
    return new HardwareSubmeshDrawable(mWrapper.get(), mHardwareModel,
-         mBoneUniformName, mNumBones, mMeshID, mVertexVBO, mIndexEBO);
+         mBoneUniformName, mNumBones, mMeshID, mVertexVBO, mIndexEBO,
+		 mBoneWeightsLocation, mBoneIndicesLocation, mTangentSpaceLocation);
 }
 
 //////////////////////////////////////////////////////////////////////////
