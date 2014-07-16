@@ -175,6 +175,7 @@ namespace dtAnim
 
       CalModel* model = new CalModel(data->GetCoreModel());
       dtCore::RefPtr<Cal3DModelWrapper> wrapper = new Cal3DModelWrapper(model);
+
       return wrapper;
    }
 
@@ -415,4 +416,12 @@ namespace dtAnim
       return FindWithFunctor(mModelData, findWithCoreModel(coreModel));
    }
 
+   void Cal3DDatabase::ReleaseGLObjects() 
+    { 
+      mFileLoader->ReleaseGLObjects();
+	  for (ModelDataArray::iterator i = mModelData.begin(); i != mModelData.end(); i++) {
+		  (*i)->SetVertexBufferObject(0);
+		  (*i)->SetElementBufferObject(0);
+	  }
+    }
 } // namespace dtAnim

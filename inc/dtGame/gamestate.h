@@ -95,6 +95,7 @@ namespace dtGame
          static EventType TRANSITION_OCCURRED; //used for testing
          static EventType TRANSITION_FORWARD;
          static EventType TRANSITION_BACK;
+         static EventType TRANSITION_MENU;
          static EventType TRANSITION_QUIT;
          static EventType TRANSITION_GAME_OVER;
 

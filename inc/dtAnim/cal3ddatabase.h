@@ -51,7 +51,7 @@ namespace dtAnim
 
          /// Try to parse a file as a character file
          bool IsFileValid(const std::string& filename);
-
+         
          ///Load an animated entity definition file and return the Cal3DModelWrapper
          dtCore::RefPtr<Cal3DModelWrapper> Load(const std::string& filename);
 
@@ -68,13 +68,15 @@ namespace dtAnim
 
          ///Get the model data associated with this filename (used for asynch loading)
          Cal3DModelData* GetModelData(const std::string& filename);
-
+         
          void PurgeLoaderCaches();
          void TruncateDatabase();
 
          /// @return the node builder for this database.
          AnimNodeBuilder& GetNodeBuilder();
 
+		 void ReleaseGLObjects();
+         
       protected:
          Cal3DDatabase();
          virtual ~Cal3DDatabase();

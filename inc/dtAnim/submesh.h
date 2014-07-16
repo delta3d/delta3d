@@ -137,8 +137,12 @@ namespace dtAnim
 
       dtCore::RefPtr<Cal3DModelWrapper> mWrapper;
 
-      static const unsigned STRIDE = 10;
-      static const unsigned STRIDE_BYTES = STRIDE * sizeof(float);
+	  static const unsigned int VBO_OFFSET_POSITION = 0;
+	  static const unsigned int VBO_OFFSET_NORMAL = 3;
+	  static const unsigned int VBO_OFFSET_TEXCOORD0 = 6;
+	  static const unsigned int VBO_OFFSET_TEXCOORD1 = 8;
+	  static const unsigned int VBO_STRIDE = 10;
+	  static const unsigned int VBO_STRIDE_BYTES = VBO_STRIDE * sizeof(float);
 
       osg::BoundingBox mBoundingBox;
 

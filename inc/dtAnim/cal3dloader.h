@@ -65,6 +65,8 @@ namespace dtAnim
       static void FinalizeSequenceInfo(CharacterFileHandler::AnimationSequenceStruct& sequenceStruct,
          Cal3DModelData::AnimatableArray& animArray);
 
+	  void ReleaseGLObjects();
+
    protected:
       virtual ~Cal3DLoader();
 

@@ -31,6 +31,7 @@
 #include <dtAnim/animationchannel.h>
 #include <dtAnim/animationsequence.h>
 #include <dtAnim/characterfilewriter.h>
+#include <dtAnim/hardwaresubmesh.h>
 
 #include <dtCore/basexmlhandler.h>
 #include <dtCore/basexmlreaderwriter.h>
@@ -43,7 +44,6 @@
 #include <dtUtil/log.h>
 #include <dtUtil/stringutils.h>
 #include <dtUtil/threadpool.h>
-
 
 namespace dtAnim
 {
@@ -1148,6 +1148,7 @@ namespace dtAnim
          {
             AnimationWrapper* pWrapper = new AnimationWrapper(anim->getName(), i);
             pWrapper->SetDuration(anim->getDuration());
+            pWrapper->SetSpeed(float(anim->getTotalNumberOfKeyframes()) / anim->getDuration());
             modelData.Add(pWrapper);
          }
          else
@@ -1402,6 +1403,7 @@ namespace dtAnim
                for (int submeshId = 0; submeshId < submeshCount; submeshId++)
                {
                   CalCoreSubmesh* subMesh = calMesh->getCoreSubmesh(submeshId);
+                  subMesh->enableTangents(0, true);
                   numVerts += subMesh->getVertexCount();
                   numIndices += 3 * subMesh->getFaceCount();
                }
@@ -1412,13 +1414,12 @@ namespace dtAnim
       // If verts and indices were already successfully loaded, we can allocate resources
       if (numVerts && numIndices)
       {
-         const size_t stride = 18;
-         const size_t strideBytes = stride * sizeof(float);
-
          // Allocate data arrays for the hardware model to populate
-         modelData->CreateSourceArrays(numVerts, numIndices, stride);
+         modelData->CreateSourceArrays(numVerts, numIndices, HardwareSubmeshDrawable::VBO_STRIDE);
 
-         float* tempVertexArray = new float[stride * numVerts];
+          // need to leave some extra space for duplicate vertices if the mesh needs to be subdivided into
+          // submeshes 
+         float* tempVertexArray = new float[HardwareSubmeshDrawable::VBO_STRIDE * numVerts * 2];
 
          // Get the pointer and fill in the data
          osg::FloatArray* vertexArray = modelData->GetSourceVertexArray();
@@ -1426,15 +1427,16 @@ namespace dtAnim
 
          hardwareModel->setIndexBuffer(indexArray);
 
-         hardwareModel->setVertexBuffer(reinterpret_cast<char*>(tempVertexArray), strideBytes);
-         hardwareModel->setNormalBuffer(reinterpret_cast<char*>(tempVertexArray + 3), strideBytes);
+         hardwareModel->setVertexBuffer(reinterpret_cast<char*>(tempVertexArray+ HardwareSubmeshDrawable::VBO_OFFSET_POSITION), HardwareSubmeshDrawable::VBO_STRIDE_BYTES);
+         hardwareModel->setNormalBuffer(reinterpret_cast<char*>(tempVertexArray + HardwareSubmeshDrawable::VBO_OFFSET_NORMAL), HardwareSubmeshDrawable::VBO_STRIDE_BYTES);
 
          hardwareModel->setTextureCoordNum(2);
-         hardwareModel->setTextureCoordBuffer(0, reinterpret_cast<char*>(tempVertexArray + 6), strideBytes);
-         hardwareModel->setTextureCoordBuffer(1, reinterpret_cast<char*>(tempVertexArray + 8), strideBytes);
+         hardwareModel->setTextureCoordBuffer(0, reinterpret_cast<char*>(tempVertexArray + HardwareSubmeshDrawable::VBO_OFFSET_TEXCOORD0), HardwareSubmeshDrawable::VBO_STRIDE_BYTES);
+         hardwareModel->setTextureCoordBuffer(1, reinterpret_cast<char*>(tempVertexArray + HardwareSubmeshDrawable::VBO_OFFSET_TEXCOORD1), HardwareSubmeshDrawable::VBO_STRIDE_BYTES);
 
-         hardwareModel->setWeightBuffer(reinterpret_cast<char*>(tempVertexArray + 10), strideBytes);
-         hardwareModel->setMatrixIndexBuffer(reinterpret_cast<char*>(tempVertexArray + 14), strideBytes);
+         hardwareModel->setWeightBuffer(reinterpret_cast<char*>(tempVertexArray + HardwareSubmeshDrawable::VBO_OFFSET_WEIGHT), HardwareSubmeshDrawable::VBO_STRIDE_BYTES);
+         hardwareModel->setMatrixIndexBuffer(reinterpret_cast<char*>(tempVertexArray + HardwareSubmeshDrawable::VBO_OFFSET_BONE_INDEX), HardwareSubmeshDrawable::VBO_STRIDE_BYTES);
+         hardwareModel->setTangentSpaceBuffer(0, reinterpret_cast<char*>(tempVertexArray + HardwareSubmeshDrawable::VBO_OFFSET_TANGENT_SPACE), HardwareSubmeshDrawable::VBO_STRIDE_BYTES);
 
          // Load the data into our arrays
          if (!hardwareModel->load(0, 0, modelData->GetShaderMaxBones()))
@@ -1442,10 +1444,10 @@ namespace dtAnim
             LOG_ERROR("Unable to create a hardware mesh:" + CalError::getLastErrorDescription());
          }
 
-         InvertTextureCoordinates(hardwareModel, stride, tempVertexArray, modelData, indexArray);
+         InvertTextureCoordinates(hardwareModel, HardwareSubmeshDrawable::VBO_STRIDE, tempVertexArray, modelData, indexArray);
 
          // Move the data into the osg structure
-         vertexArray->assign(tempVertexArray, tempVertexArray + numVerts * stride);
+         vertexArray->assign(tempVertexArray, tempVertexArray + hardwareModel->getTotalVertexCount() * HardwareSubmeshDrawable::VBO_STRIDE);
 
          delete[] tempVertexArray;
       }
@@ -1459,7 +1461,7 @@ namespace dtAnim
       //invert texture coordinates.
       for (unsigned i = 0; i < numVerts * stride; i += stride)
       {
-         for (unsigned j = 15; j < 18; ++j)
+         for (unsigned j = (HardwareSubmeshDrawable::VBO_OFFSET_BONE_INDEX+1); j < HardwareSubmeshDrawable::VBO_OFFSET_TANGENT_SPACE; ++j)
          {
             if (vboVertexAttr[i + j] > modelData->GetShaderMaxBones())
             {
@@ -1467,8 +1469,8 @@ namespace dtAnim
             }
          }
 
-         vboVertexAttr[i + 7] = 1.0f - vboVertexAttr[i + 7]; //the odd texture coordinates in cal3d are flipped, not sure why
-         vboVertexAttr[i + 9] = 1.0f - vboVertexAttr[i + 9]; //the odd texture coordinates in cal3d are flipped, not sure why
+         vboVertexAttr[i + (HardwareSubmeshDrawable::VBO_OFFSET_TEXCOORD0 + 1)] = 1.0f - vboVertexAttr[i + (HardwareSubmeshDrawable::VBO_OFFSET_TEXCOORD0 + 1)]; //the odd texture coordinates in cal3d are flipped, not sure why
+         vboVertexAttr[i + (HardwareSubmeshDrawable::VBO_OFFSET_TEXCOORD1 + 1)] = 1.0f - vboVertexAttr[i + (HardwareSubmeshDrawable::VBO_OFFSET_TEXCOORD1 + 1)]; //the odd texture coordinates in cal3d are flipped, not sure why
       }
 
       for (int meshCount = 0; meshCount < hardwareModel->getHardwareMeshCount(); ++meshCount)
@@ -1510,6 +1512,13 @@ namespace dtAnim
       }
 
       return maxBoneID;
+   }
+
+   void Cal3DLoader::ReleaseGLObjects()
+   {
+       for (TextureMap::iterator i = mTextureCache.begin(); i != mTextureCache.end(); i++) {
+           i->second->releaseGLObjects();
+       }
    }
 
 } // namespace dtAnim
