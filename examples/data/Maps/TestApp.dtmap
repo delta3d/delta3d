@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="delta3dMap" xsi:schemaLocation="delta3dMap map.xsd">
+    <header>
+        <name>TestApp</name>
+        <description>Map containing actors for use in an example game application.</description>
+        <author></author>
+        <comment></comment>
+        <copyright></copyright>
+        <createTimestamp>2014-07-15T22:49:46-05:00</createTimestamp>
+        <lastUpdateTimestamp>2014-07-15T23:09:08-05:00</lastUpdateTimestamp>
+        <editorVersion>2.8.0</editorVersion>
+        <schemaVersion>1.0</schemaVersion>
+    </header>
+    <libraries>
+        <library>
+            <name>testApp</name>
+            <version></version>
+        </library>
+    </libraries>
+    <actors>
+        <actor>
+            <type>dtcore.Player Start</type>
+            <id>362cb3a0-7aba-464c-a49b-b226f2c65802</id>
+            <name>PlayerStart</name>
+            <property>
+                <name>Name</name>
+                <string>PlayerStart</string>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>969.927002</value1>
+                    <value2>167.055481</value2>
+                    <value3>487.184174</value3>
+                </vec3>
+            </property>
+        </actor>
+        <actor>
+            <type>dtExample.Terrain</type>
+            <id>73193a31-2ba5-49dd-8a36-9e9ce2ea9c3a</id>
+            <name>Terrain</name>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>10.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>ShaderGroup</name>
+                <string>TerrainGroup</string>
+            </property>
+            <property>
+                <name>TerrainMesh</name>
+                <resourceType>Terrains</resourceType>
+                <resourceDisplayName>Terrains:delta3d_island.ive</resourceDisplayName>
+                <resource>Terrains:delta3d_island.ive</resource>
+            </property>
+        </actor>
+    </actors>
+    <groups></groups>
+    <drawablehierarchy></drawablehierarchy>
+    <presetCameras></presetCameras>
+</map>
