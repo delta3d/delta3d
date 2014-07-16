@@ -34,6 +34,9 @@ SET(LIB_PUBLIC_HEADERS
     ${HEADER_PATH}/gameentrypoint.h
     ${HEADER_PATH}/gamemanager.h
     ${HEADER_PATH}/gamemanager.inl
+    ${HEADER_PATH}/gamestate.h
+    ${HEADER_PATH}/gamestatechangedmessage.h
+    ${HEADER_PATH}/gamestatecomponent.h
     ${HEADER_PATH}/gmcomponent.h
     ${HEADER_PATH}/gmsettings.h
     ${HEADER_PATH}/gmimpl.h
@@ -57,6 +60,7 @@ SET(LIB_PUBLIC_HEADERS
     ${HEADER_PATH}/serverloggercomponent.h
     ${HEADER_PATH}/shaderactorcomponent.h
     ${HEADER_PATH}/taskcomponent.h
+    ${HEADER_PATH}/transitionxmlhandler.h
 )
 
 SET(LIB_SOURCES
@@ -81,6 +85,9 @@ SET(LIB_SOURCES
     ${SOURCE_PATH}/gameapplication.cpp
     ${SOURCE_PATH}/gameentrypoint.cpp
     ${SOURCE_PATH}/gamemanager.cpp
+    ${SOURCE_PATH}/gamestate.cpp
+    ${SOURCE_PATH}/gamestatechangedmessage.cpp
+    ${SOURCE_PATH}/gamestatecomponent.cpp
     ${SOURCE_PATH}/gmcomponent.cpp
     ${SOURCE_PATH}/gmsettings.cpp
     ${SOURCE_PATH}/gmimpl.cpp
@@ -100,6 +107,7 @@ SET(LIB_SOURCES
     ${SOURCE_PATH}/serverloggercomponent.cpp
     ${SOURCE_PATH}/shaderactorcomponent.cpp
     ${SOURCE_PATH}/taskcomponent.cpp
+    ${SOURCE_PATH}/transitionxmlhandler.cpp
 )
 
 ADD_PRECOMPILED_HEADER(${LIB_NAME} prefix/dtgameprefix.h prefix/dtgameprefix.cpp LIB_SOURCES)

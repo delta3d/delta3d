@@ -171,6 +171,10 @@ namespace dtGame
          static const MessageType SYSTEM_POST_FRAME;
 
 
+         // GENERIC GAME SYSTEM MESSAGES
+         static const MessageType GAME_STATE_CHANGED;
+
+
          /**
           * Gets the category of this message type
           * @return The category
