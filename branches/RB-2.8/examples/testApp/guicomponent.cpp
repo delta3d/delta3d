@@ -113,10 +113,6 @@ namespace dtExample
       }
       else if (msgType == dtGame::MessageType::INFO_MAP_LOADED)
       {
-         mGUIScene->GetRootSheet()->setVisible(true);
-
-         // DEBUG:
-         LOG_ALWAYS("Map loaded!");
       }
    }
 

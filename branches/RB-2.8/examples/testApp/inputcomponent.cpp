@@ -41,6 +41,7 @@
 #include <dtCore/orbitmotionmodel.h>
 #include <dtCore/rtsmotionmodel.h>
 #include <dtCore/system.h>
+#include <dtCore/transform.h>
 #include <dtCore/ufomotionmodel.h>
 #include <dtCore/walkmotionmodel.h>
 #include <dtGame/gamemanager.h>
@@ -205,12 +206,6 @@ namespace dtExample
          }
          break;
 
-         case osgGA::GUIEventAdapter::KEY_F2:
-         {
-   //         mHudGUI->CycleToNextHUDState();
-         }
-         break;
-
          default:
          {
             handled = false;
@@ -263,8 +258,9 @@ namespace dtExample
    {
       const dtGame::MessageType& type = message.GetMessageType();
 
-      if (type == dtGame::MessageType::INFO_ACTOR_DELETED)
+      if (type == dtGame::MessageType::INFO_MAP_LOADED)
       {
+         SetCameraToPlayerStart();
       }
    }
 
@@ -273,7 +269,8 @@ namespace dtExample
    {
       BaseClass::OnAddedToGM();
 
-      SetMotionModel(MotionModelType::WALK);
+      // Set a motion model default.
+      SetMotionModel(MotionModelType::FLY);
    }
 
    ////////////////////////////////////////////////////////////////////////
@@ -285,6 +282,40 @@ namespace dtExample
    //   dtGame::MessageParameter* mp = aum.AddUpdateParameter(paramName, dtCore::DataType::FLOAT);
    //   static_cast<dtGame::FloatMessageParameter*>(mp)->SetValue(value);
    //   GetGameManager()->SendMessage(aum);
+   }
+
+   ////////////////////////////////////////////////////////////////////////
+   void InputComponent::SetCameraToPlayerStart()
+   {
+      const std::string ACTOR_NAME("PlayerStart");
+
+      dtCore::TransformableActorProxy* proxy = NULL;
+
+      dtGame::GameManager* gm = GetGameManager();
+      gm->FindActorByName(ACTOR_NAME, proxy);
+
+      if (proxy != NULL)
+      {
+         dtCore::Transformable* actor = NULL;
+         proxy->GetActor(actor);
+
+         if (actor != NULL)
+         {
+            dtCore::Transform xform;
+            actor->GetTransform(xform);
+
+            dtCore::Camera* camera = gm->GetApplication().GetCamera();
+            camera->SetTransform(xform);
+         }
+         else
+         {
+            LOG_ERROR("Could not access actor for \"" + ACTOR_NAME + "\" proxy");
+         }
+      }
+      else
+      {
+         LOG_ERROR("Could not find \"" + ACTOR_NAME + "\" to set initial camera position.");
+      }
    }
 
    ////////////////////////////////////////////////////////////////////////
@@ -351,7 +382,9 @@ namespace dtExample
    ////////////////////////////////////////////////////////////////////////
    void InputComponent::SetMotionModel(int motionModelType)
    {
-      if (mMotionModelMode == motionModelType)
+      // Prevent changing the motion model if it exists
+      // and is the same type that is specified.
+      if (mMotionModel.valid() && mMotionModelMode == motionModelType)
       {
          return;
       }

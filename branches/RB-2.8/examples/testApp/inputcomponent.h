@@ -66,6 +66,8 @@ namespace dtExample
          /// Destructor
          virtual ~InputComponent();
 
+         void SetCameraToPlayerStart();
+
          void SendTransitionMessage(const dtExample::Transition& transition);
          
          void SendUIMessage(const std::string& uiName, const dtGame::MessageType& messageType);
