@@ -19,8 +19,8 @@
  * Bradley Anderegg
  */
 
-#ifndef DELTA_GAME_STATE_CHANGED_MESSAGE_H
-#define DELTA_GAME_STATE_CHANGED_MESSAGE_H
+#ifndef DELTA_GAME_STATE_MESSAGES_H
+#define DELTA_GAME_STATE_MESSAGES_H
 
 ////////////////////////////////////////////////////////////////////////////////
 // INCLUDE DIRECTIVES
@@ -62,6 +62,29 @@ namespace dtGame
       private:
          dtGame::EnumMessageParameter& mOldParam;
          dtGame::EnumMessageParameter& mNewParam;
+   };
+
+
+
+   /////////////////////////////////////////////////////////////////////////////
+   // GAME STATE CHANGED MESSAGE
+   /////////////////////////////////////////////////////////////////////////////
+   class DT_GAME_EXPORT GameStateTransitionRequestMessage : public dtGame::Message
+   {
+      public:
+         static const std::string PARAMETER_TRANSITION;
+
+         GameStateTransitionRequestMessage();
+
+         dtGame::EventType& GetTransition() const;
+
+         void SetTransition(const dtGame::EventType &transition);
+
+      protected:
+         virtual ~GameStateTransitionRequestMessage();
+
+      private:
+         dtGame::EnumMessageParameter& mTransition;
    };
 
 }

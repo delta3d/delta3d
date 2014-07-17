@@ -22,7 +22,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 // INCLUDE DIRECTIVES
 ////////////////////////////////////////////////////////////////////////////////
-#include <dtGame/gamestatechangedmessage.h>
+#include <dtGame/gamestatemessages.h>
 
 
 
@@ -70,6 +70,36 @@ namespace dtGame
    void GameStateChangedMessage::SetNewState(const GameState::Type &newState)
    {
       mNewParam.SetValue(newState.GetName());
+   }
+
+
+
+   //////////////////////////////////////////////////////////////////////////
+   // GAME STATE TRANSITION REQUEST MESSAGE
+   //////////////////////////////////////////////////////////////////////////
+   const std::string GameStateTransitionRequestMessage::PARAMETER_TRANSITION("Transition");
+   
+   //////////////////////////////////////////////////////////////////////////
+   GameStateTransitionRequestMessage::GameStateTransitionRequestMessage()
+      : mTransition(*new dtGame::EnumMessageParameter(PARAMETER_TRANSITION, dtGame::EventType::TRANSITION_OCCURRED.GetName()))
+   {
+      AddParameter(&mTransition);
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   GameStateTransitionRequestMessage::~GameStateTransitionRequestMessage()
+   {}
+
+   //////////////////////////////////////////////////////////////////////////
+   dtGame::EventType& GameStateTransitionRequestMessage::GetTransition() const 
+   {
+      return *dtGame::EventType::GetValueForName(mTransition.GetValue());
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void GameStateTransitionRequestMessage::SetTransition(const dtGame::EventType &transition)
+   {
+      mTransition.SetValue(transition.GetName());
    }
 
 }

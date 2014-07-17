@@ -70,6 +70,10 @@ namespace dtGame
       {
          Update(float(static_cast<const dtGame::TickMessage&>(message).GetDeltaSimTime()));
       }
+      else if( messageType == dtGame::MessageType::REQUEST_GAME_STATE_TRANSITION)
+      {
+         DoStateTransition( &(static_cast<const GameStateTransitionRequestMessage&>(message).GetTransition()) );
+      }
       else if( messageType == dtGame::MessageType::INFO_GAME_STATE_CHANGED)
       {
          ProcessStateChanged( static_cast<const GameStateChangedMessage&>(message) );
