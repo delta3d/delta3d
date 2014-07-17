@@ -224,11 +224,23 @@ void TestApp::OnStartup(dtABC::BaseABC& app, dtGame::GameManager& gameManager)
    gameManager.AddComponent(*guiComp, dtGame::GameManager::ComponentPriority::NORMAL);
 
    // Load the map for this application.
-   mMap = &app.LoadMap("TestApp", false);
+   const std::string MAP_NAME("TestApp");
+   mMap = &dtCore::Project::GetInstance().GetMap(MAP_NAME);
+
    if ( ! mMap.valid())
    {
       LOG_ERROR("Map file for TestApp could not be found.");
    }
+   else
+   {
+      app.LoadMap(*mMap, false);
+
+      // DEBUG:
+      LOG_ALWAYS("Map \"" + MAP_NAME + "\" loaded");
+   }
+
+   // Update the Game Manager to use the loaded map.
+   gameManager.ChangeMap(MAP_NAME);
 }
 
 void TestApp::OnShutdown(dtABC::BaseABC& /*app*/, dtGame::GameManager& /*gamemanager*/)

@@ -65,7 +65,7 @@ namespace dtExample
    TestAppActorRegistry::TestAppActorRegistry()
       : BaseClass("This library will store some example actors")
    {
-      dtCore::ShaderManager::GetInstance().LoadShaderDefinitions("Shaders/ShaderDefs.xml", false);
+      dtCore::ShaderManager::GetInstance().LoadShaderDefinitions("Shaders/ShaderDefinitions.xml", false);
    }
 
    ///////////////////////////////////////////////////////////////////////////

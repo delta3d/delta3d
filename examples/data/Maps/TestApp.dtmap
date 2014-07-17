@@ -7,7 +7,7 @@
         <comment></comment>
         <copyright></copyright>
         <createTimestamp>2014-07-15T22:49:46-05:00</createTimestamp>
-        <lastUpdateTimestamp>2014-07-15T23:09:08-05:00</lastUpdateTimestamp>
+        <lastUpdateTimestamp>2014-07-17T18:25:17-05:00</lastUpdateTimestamp>
         <editorVersion>2.8.0</editorVersion>
         <schemaVersion>1.0</schemaVersion>
     </header>
@@ -27,11 +27,19 @@
                 <string>PlayerStart</string>
             </property>
             <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>132.387787</value3>
+                </vec3>
+            </property>
+            <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>969.927002</value1>
-                    <value2>167.055481</value2>
-                    <value3>487.184174</value3>
+                    <value1>-161.000000</value1>
+                    <value2>-115.000008</value2>
+                    <value3>98.000008</value3>
                 </vec3>
             </property>
         </actor>
@@ -49,7 +57,7 @@
             </property>
             <property>
                 <name>ShaderGroup</name>
-                <string>TerrainGroup</string>
+                <string>Terrains</string>
             </property>
             <property>
                 <name>TerrainMesh</name>
