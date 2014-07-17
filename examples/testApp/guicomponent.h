@@ -44,6 +44,7 @@
 #include <dtGUI/gui.h>
 #include "export.h"
 #include "guiscreen.h"
+#include "testappmessages.h"
 
 #define HUDCONTROLMAXTEXTSIZE 100
 
@@ -69,21 +70,11 @@ namespace dtExample
    {
       public:
 
-         /**
-          * Constructs the test application.
-          */
          GuiComponent();
 
-      protected:
-
-         /**
-          * Destroys the test application.
-          */
-         virtual ~GuiComponent();
-
-      public:
-
          /*override*/ void OnAddedToGM();
+
+         GuiNode* GetUI(const std::string& uiName);
 
          /**
           * Get messages from the GM component
@@ -92,44 +83,32 @@ namespace dtExample
 
          void HandleGameStateChanged(const dtGame::GameStateType& gameState);
 
+         void HandleUIMessage(const dtExample::UIMessage& uiMessage);
+
          /**
           * Sets up the basic GUI.
           */
          void SetupGUI(dtCore::Camera& cam, dtCore::Keyboard& keyboard, dtCore::Mouse& mouse);
 
-         dtGUI::GUI* GetGUIDrawable() { return mGUI.get(); }
-
          void Update(float simTimeDelta, float realTimeDelta);
 
       protected:
 
-         /**
-          * Utility method to set the text, position, and color of a text control
-          * Check to see if the data changed.  The default values for color and position
-          * won't do anything since they use a color and position < 0.
-          */
-         void UpdateStaticText(CEGUI::Window* textControl, const std::string& newText,
-            osg::Vec3 color = osg::Vec3(1.0f, 1.0f, 1.0f), float x = -1.0f, float y = -1.0f);
-         
-         void UpdateStaticText(CEGUI::Window* textControl, const std::string& newText,
-            float x, float y);
+         virtual ~GuiComponent();
+
+         bool RegisterScreenWithState(GuiScreen& screen, const dtGame::GameStateType& gameStateType);
 
       private:
 
-         /**
-          * Utility method to create text
-          */
-         CEGUI::Window* CreateText(const std::string& name, CEGUI::Window* parent, const std::string& text,
-                                        float x, float y, float width, float height);
 
          dtCore::RefPtr<dtCore::DeltaWin> mWindow;
-         CEGUI::Window* mMainWindow;
-         dtCore::RefPtr<dtGUI::GUI> mGUI;
+         dtCore::RefPtr<dtGUI::GUI> mGUIScene;
 
-         typedef std::map<std::string, dtCore::RefPtr<GuiScreen> > GameStateScreenMap;
+         typedef std::map<const dtGame::GameStateType*, dtCore::RefPtr<GuiScreen> > GameStateScreenMap;
 
          GameStateScreenMap mScreens;
          dtCore::RefPtr<GuiScreen> mCurrentScreen;
+         dtCore::RefPtr<GuiScreen> mHelpOverlay;
    };
 
 } // END - namespace dtExample

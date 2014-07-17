@@ -53,7 +53,6 @@ namespace dtExample
          static StateType STATE_LOADING;
          static StateType STATE_RUNNING;
          static StateType STATE_SHUTDOWN;*/
-         static TestAppGameState STATE_HELP;
          static TestAppGameState STATE_GAME;
          static TestAppGameState STATE_GAME_OPTIONS;
          static TestAppGameState STATE_GAME_QUIT;

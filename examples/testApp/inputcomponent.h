@@ -66,7 +66,13 @@ namespace dtExample
          /// Destructor
          virtual ~InputComponent();
 
-         void SendTransition(const dtExample::Transition& transition);
+         void SendTransitionMessage(const dtExample::Transition& transition);
+         
+         void SendUIMessage(const std::string& uiName, const dtGame::MessageType& messageType);
+         void SendUIToggleMessage(const std::string& uiName);
+         void SendUIVisibilityMessage(const std::string& uiName, bool visible);
+
+         void SendMotionModelChangedMessage(int motionModelType);
 
          void SetMotionModel(int motionModelType);
 

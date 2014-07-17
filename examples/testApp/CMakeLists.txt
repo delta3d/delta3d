@@ -3,7 +3,11 @@ SET(TARGET_SRC testapp.cpp
                guiscreen.cpp
                inputcomponent.cpp
                terrainactorproxy.cpp
+               testappactorregistry.cpp
+               testappconstants.cpp
                testappgamestates.cpp
+               testappmessages.cpp
+               testappmessagetypes.cpp
                readme.txt
                config.xml)
 
@@ -11,7 +15,11 @@ SET(TARGET_H guicomponent.h
              guiscreen.h
              inputcomponent.h
              terrainactorproxy.h
-             testappgamestates.h)
+             testappactorregistry.h
+             testappconstants.h
+             testappgamestates.h
+             testappmessages.h
+             testappmessagetypes.h)
 
 
 BUILD_LIB_EXAMPLE( testApp TEST_APP_LIBRARY
