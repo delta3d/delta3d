@@ -27,7 +27,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 #include <dtGame/export.h>
 #include <dtGame/gamestate.h>
-#include <dtGame/gamestatechangedmessage.h>
+#include <dtGame/gamestatemessages.h>
 #include <dtGame/gmcomponent.h>
 
 

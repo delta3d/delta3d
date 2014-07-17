@@ -35,8 +35,8 @@ SET(LIB_PUBLIC_HEADERS
     ${HEADER_PATH}/gamemanager.h
     ${HEADER_PATH}/gamemanager.inl
     ${HEADER_PATH}/gamestate.h
-    ${HEADER_PATH}/gamestatechangedmessage.h
     ${HEADER_PATH}/gamestatecomponent.h
+    ${HEADER_PATH}/gamestatemessages.h
     ${HEADER_PATH}/gmcomponent.h
     ${HEADER_PATH}/gmsettings.h
     ${HEADER_PATH}/gmimpl.h
@@ -86,8 +86,8 @@ SET(LIB_SOURCES
     ${SOURCE_PATH}/gameentrypoint.cpp
     ${SOURCE_PATH}/gamemanager.cpp
     ${SOURCE_PATH}/gamestate.cpp
-    ${SOURCE_PATH}/gamestatechangedmessage.cpp
     ${SOURCE_PATH}/gamestatecomponent.cpp
+    ${SOURCE_PATH}/gamestatemessages.cpp
     ${SOURCE_PATH}/gmcomponent.cpp
     ${SOURCE_PATH}/gmsettings.cpp
     ${SOURCE_PATH}/gmimpl.cpp

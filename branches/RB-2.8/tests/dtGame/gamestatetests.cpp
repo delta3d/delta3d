@@ -27,8 +27,8 @@
 #include <dtGame/defaultmessageprocessor.h>
 #include <dtGame/gamemanager.h>
 #include <dtGame/gamestate.h>
-#include <dtGame/gamestatechangedmessage.h>
 #include <dtGame/gamestatecomponent.h>
+#include <dtGame/gamestatemessages.h>
 #include <dtGame/gmcomponent.h>
 #include <dtUtil/command.h>
 #include <dtUtil/datapathutils.h>
