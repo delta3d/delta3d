@@ -29,18 +29,20 @@
 // INCLUDE DIRECTIVES
 ////////////////////////////////////////////////////////////////////////////////
 #include "guicomponent.h"
+#include "testappconstants.h"
 #include "testappgamestates.h"
-#include <dtABC/application.h>
+#include "testappmessages.h"
+#include "testappmessagetypes.h"
 
+#include <dtABC/application.h>
 #include <dtUtil/datapathutils.h>
 #include <dtUtil/fileutils.h>
 #include <dtCore/deltawin.h>
 #include <dtGame/basemessages.h>
 #include <dtGame/exceptionenum.h>
-#include <dtGame/gamestatechangedmessage.h>
+#include <dtGame/gamestatecomponent.h>
+#include <dtGame/gamestatemessages.h>
 #include <dtGame/messagetype.h>
-#include <dtGame/taskcomponent.h>
-#include <dtActors/taskactor.h>
 #include <CEGUI/CEGUIExceptions.h>
 #include <CEGUI/CEGUIPropertyHelper.h>
 #include <CEGUI/CEGUIFont.h>
@@ -54,8 +56,7 @@ namespace dtExample
    ///////////////////////////////////////////////////////////////////////
    GuiComponent::GuiComponent()
       : dtGame::GMComponent("GuiComponent")
-      , mMainWindow(NULL)
-      , mGUI(NULL)
+      , mGUIScene(NULL)
    {
    }
 
@@ -73,40 +74,63 @@ namespace dtExample
    }
 
    //////////////////////////////////////////////////////////////////////////
+   GuiNode* GuiComponent::GetUI(const std::string& uiName)
+   {
+      GuiNode* guiNode = NULL;
+
+      if (uiName == UINames::UI_HELP)
+      {
+         guiNode = mHelpOverlay->GetRoot();
+      }
+
+      return guiNode;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
    void GuiComponent::ProcessMessage(const dtGame::Message& message)
    {
-      if (message.GetMessageType() == dtGame::MessageType::TICK_LOCAL)
+      const dtGame::MessageType& msgType = message.GetMessageType();
+
+      if (msgType == dtGame::MessageType::TICK_LOCAL)
       {
          const dtGame::TickMessage* tickMessage
             = dynamic_cast<const dtGame::TickMessage*>(&message);
 
          Update(tickMessage->GetDeltaSimTime(), tickMessage->GetDeltaRealTime());
       }
-      else if (message.GetMessageType() == dtGame::MessageType::INFO_GAME_STATE_CHANGED)
+      else if (msgType == TestAppMessageType::UI_HIDE
+         || msgType == TestAppMessageType::UI_SHOW
+         || msgType == TestAppMessageType::UI_TOGGLE)
+      {
+         HandleUIMessage(static_cast<const UIMessage&>(message));
+      }
+      else if (msgType == dtGame::MessageType::INFO_GAME_STATE_CHANGED)
       {
          const dtGame::GameStateChangedMessage* stateMessage
             = dynamic_cast<const dtGame::GameStateChangedMessage*>(&message);
 
          HandleGameStateChanged(stateMessage->GetNewState());
       }
-      else if (message.GetMessageType() == dtGame::MessageType::INFO_MAP_LOADED)
+      else if (msgType == dtGame::MessageType::INFO_MAP_LOADED)
       {
-         mMainWindow->setVisible(true);
+         mGUIScene->GetRootSheet()->setVisible(true);
+
+         // DEBUG:
+         LOG_ALWAYS("Map loaded!");
       }
    }
 
    //////////////////////////////////////////////////////////////////////////
    void GuiComponent::HandleGameStateChanged(const dtGame::GameStateType& gameState)
    {
+      // DEBUG:
       LOG_ALWAYS("GuiComponent switching screen for game state: " + gameState.GetName());
 
-      GameStateScreenMap::iterator foundIter = mScreens.find(gameState.GetName());
+      GameStateScreenMap::iterator foundIter = mScreens.find(&gameState);
       
       if (mCurrentScreen.valid())
       {
-         LOG_ALWAYS("\tScreen hiding: " + mCurrentScreen->GetName());
-
-         mCurrentScreen->SetVisible(false);
+         mCurrentScreen->OnExit();
       }
 
       GuiScreen* nextScreen = NULL;
@@ -119,9 +143,31 @@ namespace dtExample
 
       if (mCurrentScreen.valid())
       {
-         LOG_ALWAYS("\tScreen showing: " + mCurrentScreen->GetName());
+         mCurrentScreen->OnEnter();
+      }
+   }
 
-         mCurrentScreen->SetVisible(true);
+   //////////////////////////////////////////////////////////////////////////
+   void GuiComponent::HandleUIMessage(const dtExample::UIMessage& uiMessage)
+   {
+      const dtGame::MessageType& msgType = uiMessage.GetMessageType();
+
+      GuiNode* ui = GetUI(uiMessage.GetUIName());
+
+      if (ui != NULL)
+      {
+         if (msgType == TestAppMessageType::UI_HIDE)
+         {
+            ui->setVisible(false);
+         }
+         else if (msgType == TestAppMessageType::UI_SHOW)
+         {
+            ui->setVisible(true);
+         }
+         else if (msgType == TestAppMessageType::UI_TOGGLE)
+         {
+            ui->setVisible( ! ui->isVisible());
+         }
       }
    }
 
@@ -131,21 +177,38 @@ namespace dtExample
       try
       {
          // Initialize CEGUI
-         mGUI = new dtGUI::GUI(&cam, &keyboard, &mouse);
+         mGUIScene = new dtGUI::GUI(&cam, &keyboard, &mouse);
 
-         mGUI->LoadScheme("testapp.scheme");
+         mGUIScene->LoadScheme("testapp.scheme");
 
          CEGUI::System::getSingleton().getDefaultFont()->setProperty("PointSize", "14");
 
-         mMainWindow = mGUI->GetRootSheet();
+         // Create screen objects associated with specific game states.
+         dtCore::RefPtr<GuiScreen> screen = new GuiScreen(*mGUIScene, "Title Screen", "titlescreen.layout");
+         screen->Setup();
+         RegisterScreenWithState(*screen, TestAppGameState::STATE_TITLE);
 
-         // Create the screen objects.
-         mScreens[TestAppGameState::STATE_GAME.GetName()]
-            = new GuiScreen("Game", "game.layout");
-         mScreens[TestAppGameState::STATE_HELP.GetName()]
-            = new GuiScreen("Help", "help.layout");
+         screen = new GuiScreen(*mGUIScene, "Menu", "menuscreen.layout");
+         screen->Setup();
+         RegisterScreenWithState(*screen, TestAppGameState::STATE_MENU);
 
-         // Setup and hide all screens by default.
+         screen = new GuiScreen(*mGUIScene, "Game", "gamescreen.layout");
+         screen->Setup();
+         RegisterScreenWithState(*screen, TestAppGameState::STATE_GAME);
+
+         screen = new GuiScreen(*mGUIScene, "Game Options", "gameoptionsscreen.layout");
+         screen->Setup();
+         RegisterScreenWithState(*screen, TestAppGameState::STATE_GAME_OPTIONS);
+
+         screen = new GuiScreen(*mGUIScene, "Game Quit", "gamequitscreen.layout");
+         screen->Setup();
+         RegisterScreenWithState(*screen, TestAppGameState::STATE_GAME_QUIT);
+
+         // Create screens/overlays that are not tied to specific states.
+         mHelpOverlay = new GuiScreen(*mGUIScene, dtExample::UINames::UI_HELP, "help.layout");
+         mHelpOverlay->Setup();
+
+         // Hide all screens by default.
          GuiScreen * curScreen = NULL;
          GameStateScreenMap::iterator curIter = mScreens.begin();
          GameStateScreenMap::iterator endIter = mScreens.end();
@@ -153,11 +216,31 @@ namespace dtExample
          {
             curScreen = curIter->second.get();
 
-            curScreen->Setup(mMainWindow);
             curScreen->SetVisible(false);
          }
 
-         mMainWindow->setVisible(false);
+         // Ensure the that the first screen enabled is one
+         // relevant to the initial game state.
+         dtGame::GameStateComponent* gameStateComp
+            = dynamic_cast<dtGame::GameStateComponent*>
+            (GetGameManager()->GetComponentByName(dtGame::GameStateComponent::DEFAULT_NAME));
+         
+         if (gameStateComp != NULL)
+         {
+            const dtGame::StateType* gameState = gameStateComp->GetCurrentState();
+            if (gameState != NULL)
+            {
+               HandleGameStateChanged(*gameState);
+            }
+            else
+            {
+               LOG_ERROR("GameStateComponent returned a NULL current state.");
+            }
+         }
+         else
+         {
+            LOG_ERROR("Could not access the GameStateComponent to determine initial game state.");
+         }
       }
       catch (CEGUI::Exception& e)
       {
@@ -171,70 +254,46 @@ namespace dtExample
    //////////////////////////////////////////////////////////////////////////
    void GuiComponent::Update(float simTimeDelta, float realTimeDelta)
    {
-      // TODO:
-   }
-
-   //////////////////////////////////////////////////////////////////////////
-   void GuiComponent::UpdateStaticText(CEGUI::Window* textControl, const std::string& newText,
-      osg::Vec3 color, float x, float y)
-   {
-      float red = color.x();
-      float green = color.y();
-      float blue = color.z();
-
-      if (textControl != NULL)
+      if (mCurrentScreen.valid())
       {
-         // text and color
-         if (textControl->getText() != newText)
-         {
-            textControl->setText(newText);
-            if (red >= 0.00 && blue >= 0.0 && green >= 0.0)
-            {
-               textControl->setProperty("TextColours", 
-                  CEGUI::PropertyHelper::colourToString(CEGUI::colour(red, green, blue)));
-               // how to do it with a string.  Use "FF00FF00" or "FFFFFFFF" for examples
-               //String col = PropertyHelper::colourRectToString(ColourRect(PropertyHelper::stringToColour(String(color))));
-               //textControl->setProperty("TextColours", col);         }
-            }
-         }
-         // position
-         if (x > 0.0 && y > 0.0)
-         {
-            CEGUI::UVector2 position = textControl->getPosition();
-            CEGUI::UVector2 newPos(cegui_absdim(x), cegui_absdim(y));
-            if (position != newPos)
-               textControl->setPosition(newPos);
-         }
+         mCurrentScreen->Update(realTimeDelta);
       }
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void GuiComponent::UpdateStaticText(CEGUI::Window* textControl, const std::string& newText,
-      float x, float y)
+   bool GuiComponent::RegisterScreenWithState(GuiScreen& screen, const dtGame::GameStateType& gameStateType)
    {
-      osg::Vec3 color(1.0f, 1.0f, 1.0f);
-      UpdateStaticText(textControl, newText, color, x, y);
-   }
+      bool success = mScreens.insert(std::make_pair(&gameStateType, &screen)).second;
 
-   //////////////////////////////////////////////////////////////////////////
-   CEGUI::Window* GuiComponent::CreateText(const std::string& name, CEGUI::Window* parent, const std::string& text,
-                                    float x, float y, float width, float height)
-   {
-      // create base window and set our default attribs
-      CEGUI::Window* result = mGUI->CreateWidget(parent, "WindowsLook/StaticText", name);
-      result->setText(text);
-      result->setPosition(CEGUI::UVector2(cegui_absdim(x), cegui_absdim(y)));
-      result->setSize(CEGUI::UVector2(cegui_absdim(width), cegui_absdim(height)));
-      result->setProperty("FrameEnabled", "false");
-      result->setProperty("BackgroundEnabled", "false");
-      result->setHorizontalAlignment(CEGUI::HA_LEFT);
-      result->setVerticalAlignment(CEGUI::VA_TOP);
-      // set default color to white
-      result->setProperty("TextColours", 
-         CEGUI::PropertyHelper::colourToString(CEGUI::colour(1.0f, 1.0f, 1.0f)));
-      result->show();
+      /*dtGame::GameStateComponent* gameStateComp = GetGameManager()->GetComponentByName(dtGame::GameStateComponent::DEFAULT_NAME);
 
-      return result;
+      if (gameStateComp != NULL)
+      {
+         dtGame::GameState* gameState = gameStateComp->GetState(gameStateType);
+
+         if (gameState != NULL)
+         {
+            success = mScreens.insert(std::make_pair(&gameStateType, &screen)).second;
+            
+            typedef dtUtil::Functor<void,TYPELIST_0()> VoidFunc;
+
+            // Bind Entry method.
+            VoidFunc enterFunc(&screen, &GuiScreen::OnEnter);
+            dtCore::RefPtr<dtUtil::Command0<void> > comEnter = new dtUtil::Command0<void>(enterFunc);
+            gameState->AddEntryCommand(comEnter.get());
+
+            // Bind Exit method.
+            VoidFunc exitFunc(&screen, &GuiScreen::OnExit);
+            dtCore::RefPtr<dtUtil::Command0<void> > comExit = new dtUtil::Command0<void>(exitFunc);
+            gameState->AddExitCommand(comExit);
+
+            // Bind Update Method
+            dtGame::GameState::UpdateFunctor updateFunc(&screen, &GuiScreen::Update);
+            gameState->SetUpdate(updateFunc);
+         }
+      }*/
+
+      return success;
    }
 
 } // END - namsepace dtExample

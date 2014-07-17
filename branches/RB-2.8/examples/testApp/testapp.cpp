@@ -208,10 +208,6 @@ void TestApp::OnStartup(dtABC::BaseABC& app, dtGame::GameManager& gameManager)
    dtCore::RefPtr<InputComponent> inputComp = new InputComponent();
    gameManager.AddComponent(*inputComp, dtGame::GameManager::ComponentPriority::NORMAL);
 
-   // Setup GUI Component
-   dtCore::RefPtr<GuiComponent> guiComp = new GuiComponent();
-   gameManager.AddComponent(*guiComp, dtGame::GameManager::ComponentPriority::NORMAL);
-
    // Setup Game State Component
    dtCore::RefPtr<dtGame::GameStateComponent> gameStateComp = new dtGame::GameStateComponent();
    gameManager.AddComponent(*gameStateComp, dtGame::GameManager::ComponentPriority::NORMAL);
@@ -223,8 +219,12 @@ void TestApp::OnStartup(dtABC::BaseABC& app, dtGame::GameManager& gameManager)
       LOG_ERROR("Could not load the game state transitions file.");
    }
 
+   // Setup GUI Component. This should follow the game state component setup.
+   dtCore::RefPtr<GuiComponent> guiComp = new GuiComponent();
+   gameManager.AddComponent(*guiComp, dtGame::GameManager::ComponentPriority::NORMAL);
+
    // Load the map for this application.
-   mMap = &app.LoadMap("TestApp", false);;
+   mMap = &app.LoadMap("TestApp", false);
    if ( ! mMap.valid())
    {
       LOG_ERROR("Map file for TestApp could not be found.");

@@ -29,7 +29,9 @@
 // INCLUDE DIRECTIVES
 ////////////////////////////////////////////////////////////////////////////////
 #include "inputcomponent.h"
-#include "guicomponent.h"
+#include "testappconstants.h"
+#include "testappmessages.h"
+#include "testappmessagetypes.h"
 
 #include <dtABC/application.h>
 #include <dtCore/camera.h>
@@ -45,6 +47,7 @@
 #include <dtGame/gameactorproxy.h>
 #include <dtGame/actorupdatemessage.h>
 #include <dtGame/basemessages.h>
+#include <dtGame/gamestatemessages.h>
 #include <dtGame/messagefactory.h>
 #include <dtCore/gameevent.h>
 
@@ -55,28 +58,11 @@
 namespace dtExample
 {
    ////////////////////////////////////////////////////////////////////
-   // CONSTANTS
-   ////////////////////////////////////////////////////////////////////
-   enum MotionModelType
-   {
-      NONE, // 0
-      WALK,
-      FLY,
-      UFO,
-      ORBIT,
-      FPS,
-      COLLISION,
-      RTS
-   };
-
-
-
-   ////////////////////////////////////////////////////////////////////
    // CLASS CODE
    ////////////////////////////////////////////////////////////////////
    InputComponent::InputComponent()
       : BaseClass("InputComponent")
-      , mMotionModelMode(dtExample::NONE)
+      , mMotionModelMode(dtExample::MotionModelType::NONE)
       , mSimSpeedFactor(1.0)
    {}
 
@@ -94,34 +80,39 @@ namespace dtExample
       {
          // --- Motion Model Section --- //
          case '1':
-            SetMotionModel(dtExample::WALK);
+            SetMotionModel(MotionModelType::WALK);
             break;
          case '2':
-            SetMotionModel(dtExample::FLY);
+            SetMotionModel(MotionModelType::FLY);
             break;
          case '3':
-            SetMotionModel(dtExample::UFO);
+            SetMotionModel(MotionModelType::UFO);
             break;
          case '4':
-            SetMotionModel(dtExample::ORBIT);
+            SetMotionModel(MotionModelType::ORBIT);
             break;
          case '5':
-            SetMotionModel(dtExample::FPS);
+            SetMotionModel(MotionModelType::FPS);
             break;
          case '6':
-            SetMotionModel(dtExample::COLLISION);
+            SetMotionModel(MotionModelType::COLLISION);
             break;
          case '7':
-            SetMotionModel(dtExample::RTS);
+            SetMotionModel(MotionModelType::RTS);
             break;
 
          // --- Menu Navigation Keys Section --- //
          case osgGA::GUIEventAdapter::KEY_Escape:
-            SendTransition(dtExample::Transition::TRANSITION_BACK);
+            SendTransitionMessage(dtExample::Transition::TRANSITION_BACK);
             break;
             
          case osgGA::GUIEventAdapter::KEY_Return:
-            SendTransition(dtExample::Transition::TRANSITION_FORWARD);
+            SendTransitionMessage(dtExample::Transition::TRANSITION_FORWARD);
+            break;
+            
+         case osgGA::GUIEventAdapter::KEY_F1:
+         case 'h':
+            SendUIToggleMessage(dtExample::UINames::UI_HELP);
             break;
 
          // --- Character Control Section --- //
@@ -214,19 +205,6 @@ namespace dtExample
          }
          break;
 
-         case osgGA::GUIEventAdapter::KEY_F1:
-         {
-   //         if (mHudGUI->GetHUDState() == HUDState::HELP)
-   //         {
-   //            mHudGUI->CycleToNextHUDState(); // already in help, so toggle it off
-   //         }
-   //         else
-   //         {
-   //            mHudGUI->SetHUDState(HUDState::HELP);
-   //         }
-         }
-         break;
-
          case osgGA::GUIEventAdapter::KEY_F2:
          {
    //         mHudGUI->CycleToNextHUDState();
@@ -295,7 +273,7 @@ namespace dtExample
    {
       BaseClass::OnAddedToGM();
 
-      SetMotionModel(dtExample::WALK);
+      SetMotionModel(MotionModelType::WALK);
    }
 
    ////////////////////////////////////////////////////////////////////////
@@ -310,14 +288,74 @@ namespace dtExample
    }
 
    ////////////////////////////////////////////////////////////////////////
-   void InputComponent::SendTransition(const dtExample::Transition& transition)
+   void InputComponent::SendTransitionMessage(const dtExample::Transition& transition)
    {
-      // TODO:
+      dtGame::GameManager* gm = GetGameManager();
+      dtGame::MessageFactory& factory = gm->GetMessageFactory();
+      
+      dtCore::RefPtr<dtGame::GameStateTransitionRequestMessage> transitionMessage;
+      factory.CreateMessage(dtGame::MessageType::REQUEST_GAME_STATE_TRANSITION, transitionMessage);
+      
+      transitionMessage->SetTransition(transition);
+
+      gm->SendMessage(*transitionMessage);
+   }
+
+   ////////////////////////////////////////////////////////////////////////
+   void InputComponent::SendUIMessage(const std::string& uiName, const dtGame::MessageType& messageType)
+   {
+      dtGame::GameManager* gm = GetGameManager();
+      dtGame::MessageFactory& factory = gm->GetMessageFactory();
+      
+      dtCore::RefPtr<dtExample::UIMessage> message;
+      factory.CreateMessage(messageType, message);
+      
+      message->SetUIName(uiName);
+
+      gm->SendMessage(*message);
+   }
+
+   ////////////////////////////////////////////////////////////////////////
+   void InputComponent::SendUIToggleMessage(const std::string& uiName)
+   {
+      SendUIMessage(uiName, TestAppMessageType::UI_TOGGLE);
+   }
+
+   ////////////////////////////////////////////////////////////////////////
+   void InputComponent::SendUIVisibilityMessage(const std::string& uiName, bool visible)
+   {
+      if (visible)
+      {
+         SendUIMessage(uiName, TestAppMessageType::UI_SHOW);
+      }
+      else // Hide
+      {
+         SendUIMessage(uiName, TestAppMessageType::UI_HIDE);
+      }
+   }
+   
+   ////////////////////////////////////////////////////////////////////////
+   void InputComponent::SendMotionModelChangedMessage(int motionModelType)
+   {
+      dtGame::GameManager* gm = GetGameManager();
+      dtGame::MessageFactory& factory = gm->GetMessageFactory();
+      
+      dtCore::RefPtr<dtExample::MotionModelChangedMessage> message;
+      factory.CreateMessage(dtExample::TestAppMessageType::MOTION_MODEL_CHANGED, message);
+      
+      message->SetNewMotionModelType(motionModelType);
+
+      gm->SendMessage(*message);
    }
 
    ////////////////////////////////////////////////////////////////////////
    void InputComponent::SetMotionModel(int motionModelType)
    {
+      if (mMotionModelMode == motionModelType)
+      {
+         return;
+      }
+
       dtCore::RefPtr<dtCore::MotionModel> motionModel;
 
       dtGame::GameManager* gm = GetGameManager();
@@ -329,7 +367,7 @@ namespace dtExample
 
       switch (motionModelType)
       {
-      case dtExample::WALK:
+      case MotionModelType::WALK:
          {
             dtCore::RefPtr<dtCore::WalkMotionModel> wmm
                = new dtCore::WalkMotionModel(keyboard, mouse);
@@ -337,16 +375,20 @@ namespace dtExample
             motionModel = wmm;
          }
          break;
-      case dtExample::FLY:
+
+      case MotionModelType::FLY:
          motionModel = new dtCore::FlyMotionModel(keyboard, mouse);
          break;
-      case dtExample::UFO:
+
+      case MotionModelType::UFO:
          motionModel = new dtCore::UFOMotionModel(keyboard, mouse);
          break;
-      case dtExample::ORBIT:
+
+      case MotionModelType::ORBIT:
          motionModel = new dtCore::OrbitMotionModel(keyboard, mouse);
          break;
-      case dtExample::FPS:
+
+      case MotionModelType::FPS:
          {
             dtCore::RefPtr<dtCore::FPSMotionModel> fmm
                = new dtCore::FPSMotionModel(keyboard, mouse);
@@ -354,12 +396,15 @@ namespace dtExample
             motionModel = fmm;
          }
          break;
-      case dtExample::COLLISION:
+
+      case MotionModelType::COLLISION:
          motionModel = new dtCore::CollisionMotionModel(1.5f, 0.4f, 0.1f, scene, keyboard, mouse);
          break;
-      case dtExample::RTS:
+
+      case MotionModelType::RTS:
          motionModel = new dtCore::RTSMotionModel(keyboard, mouse);
          break;
+
       default:
          break;
       }
@@ -369,6 +414,8 @@ namespace dtExample
       // Swap to the new motion model.
       mMotionModel = motionModel;
       mMotionModelMode = motionModelType;
+
+      SendMotionModelChangedMessage(motionModelType);
    }
 
 } // END - namespace dtExample

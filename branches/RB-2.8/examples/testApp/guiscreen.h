@@ -32,7 +32,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 #include "export.h"
 #include <dtCore/refptr.h>
+#include <dtGUI/gui.h>
 #include <osg/Referenced>
+#include <osg/Vec3>
 
 
 
@@ -60,7 +62,7 @@ namespace dtExample
 
          static const std::string DEFAULT_NAME;
 
-         GuiScreen(const std::string& name, const std::string& layoutFile);
+         GuiScreen(dtGUI::GUI& guiScene, const std::string& name, const std::string& layoutFile);
 
          GuiNode* GetRoot();
          const GuiNode* GetRoot() const;
@@ -83,7 +85,41 @@ namespace dtExample
           *        for the screen drawables. It is up to the implementation
           *        to cast the root and handle attaching elements to it.
           */
-         virtual void Setup(GuiNode* root = NULL);
+         virtual void Setup(GuiNode* parent = NULL);
+
+         void SetParent(GuiNode* parent);
+
+         /**
+          * Method to be called by the GUI system when the screen is
+          * going to be shown. Overriders of this method ought to call
+          * this base method.
+          */
+         virtual void OnEnter();
+
+         /**
+          * Method to be called by the GUI system when the screen is
+          * going to be hidden. Overriders of this method ought to call
+          * this base method.
+          */
+         virtual void OnExit();
+
+         virtual void Update(float timeDelta);
+
+         /**
+          * Utility method to create text
+          */
+         GuiNode* CreateText(const std::string& name, GuiNode* parent, const std::string& text,
+                                        float x, float y, float width, float height);
+         /**
+          * Utility method to set the text, position, and color of a text control
+          * Check to see if the data changed.  The default values for color and position
+          * won't do anything since they use a color and position < 0.
+          */
+         void UpdateText(GuiNode* textControl, const std::string& newText,
+            osg::Vec3 color = osg::Vec3(1.0f, 1.0f, 1.0f), float x = -1.0f, float y = -1.0f);
+         
+         void UpdateText(GuiNode* textControl, const std::string& newText,
+            float x, float y);
 
       protected:
          virtual ~GuiScreen();
@@ -94,6 +130,11 @@ namespace dtExample
 
          // GUI Elements
          GuiNode* mRoot;
+
+         // Keep a reference to the GUI drawable which
+         // wraps calls to CEGUI. Use an observer/weak
+         // pointer to prevent potential memory leaks.
+         dtCore::ObserverPtr<dtGUI::GUI> mGUIScene;
    };
 }
 
