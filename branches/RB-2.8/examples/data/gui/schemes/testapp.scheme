@@ -8,7 +8,7 @@
    <Font Name="DejaVuSans-10" Filename="gui/fonts/DejaVuSans-10.font" />
    
    <!-- LOOKNFEELS -->
-   <LookNFeel Filename="gui/looknfeel/WindowsLook.looknfeel" />
+   <LookNFeel Filename="gui/looknfeel/testapp.looknfeel" />
 
    <!-- MAPPINGS - WINDOW FACTORIES - WINDOWS LOOK -->
    <WindowRendererSet Filename="CEGUIFalagardWRBase" />
