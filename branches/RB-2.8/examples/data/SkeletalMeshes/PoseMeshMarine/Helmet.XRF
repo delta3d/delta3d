@@ -3,5 +3,5 @@
     <DIFFUSE>150 150 150 255</DIFFUSE>
     <SPECULAR>229 229 229 0</SPECULAR>
     <SHININESS>0</SHININESS>
-    <MAP>../helmet.tga</MAP>
+    <MAP>helmet.tga</MAP>
 </MATERIAL>
