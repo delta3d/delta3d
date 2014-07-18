@@ -214,6 +214,9 @@ namespace dtExample
          mHelpOverlay = new GuiScreen(*mGUIScene, dtExample::UINames::UI_HELP, "help.layout");
          mHelpOverlay->Setup();
 
+         mGlobalOverlay = new GuiScreen(*mGUIScene, "Global Overlay", "globaloverlay.layout");
+         mGlobalOverlay->Setup();
+
          // Hide all screens by default.
          GuiScreen * curScreen = NULL;
          GameStateScreenMap::iterator curIter = mScreens.begin();

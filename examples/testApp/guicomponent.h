@@ -126,6 +126,7 @@ namespace dtExample
          GameStateScreenMap mScreens;
          dtCore::RefPtr<GuiScreen> mCurrentScreen;
          dtCore::RefPtr<GuiScreen> mHelpOverlay;
+         dtCore::RefPtr<GuiScreen> mGlobalOverlay;
    };
 
 } // END - namespace dtExample
