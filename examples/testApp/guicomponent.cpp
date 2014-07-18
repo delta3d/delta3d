@@ -44,13 +44,23 @@
 #include <dtGame/gamestatemessages.h>
 #include <dtGame/messagetype.h>
 #include <CEGUI/CEGUIExceptions.h>
-#include <CEGUI/CEGUIPropertyHelper.h>
 #include <CEGUI/CEGUIFont.h>
+#include <CEGUI/CEGUIPropertyHelper.h>
+#include <CEGUI/elements/CEGUIPushButton.h>
 
 
 
 namespace dtExample
 {
+   ///////////////////////////////////////////////////////////////////////
+   // CONSTANTS
+   ///////////////////////////////////////////////////////////////////////
+   const dtUtil::RefString GuiComponent::BUTTON_TYPE("WindowsLook/Button");
+   const dtUtil::RefString GuiComponent::BUTTON_PROPERTY_ACTION("Action");
+   const dtUtil::RefString GuiComponent::BUTTON_PROPERTY_TYPE("ButtonType");
+
+
+
    ///////////////////////////////////////////////////////////////////////
    // CLASS CODE
    ///////////////////////////////////////////////////////////////////////
@@ -212,6 +222,8 @@ namespace dtExample
          {
             curScreen = curIter->second.get();
 
+            BindButtons(*curScreen->GetRoot());
+
             curScreen->SetVisible(false);
          }
 
@@ -290,6 +302,113 @@ namespace dtExample
       }*/
 
       return success;
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void GuiComponent::BindButtons(GuiNode& rootWindow)
+   {
+      GuiNode* curChild = NULL;
+      GuiButton* button = NULL;
+      typedef std::vector<GuiNode*> GuiNodeList;
+      GuiNodeList childList;
+
+      // Go through all child windows and bind all buttons.
+      childList.push_back( &rootWindow );
+      while( ! childList.empty() )
+      {
+         curChild = childList.back();
+         childList.pop_back();
+
+         // If this is a button...
+         std::string guiType(curChild->getType().c_str());
+         if(BUTTON_TYPE == guiType)
+         {
+            button = dynamic_cast<GuiButton*>(curChild);
+
+            // ...bind it to this component's callback for handling buttons.
+            BindButton( *button );
+         }
+         // ...else if this is a normal widget window...
+         else if( curChild->getChildCount() > 0 )
+         {
+            size_t numChildren = curChild->getChildCount();
+            for( size_t i = 0; i < numChildren; ++i )
+            {
+               childList.push_back( curChild->getChildAtIdx( i ) );
+            }
+         }
+      }
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void GuiComponent::BindButton(GuiButton& button)
+   {
+      button.subscribeEvent(GuiButton::EventClicked,
+         CEGUI::Event::Subscriber(&GuiComponent::OnButtonClicked, this));
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   const GuiNode* GuiComponent::GetWidgetFromEventArgs( const GuiEventArgs& args ) const
+   {
+      // Cast to WindowEventArgs in order to access the associated CEGUI window.
+      const CEGUI::WindowEventArgs& winArgs
+         = static_cast<const CEGUI::WindowEventArgs&>(args);
+
+      return winArgs.window;
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   bool GuiComponent::OnButtonClicked( const GuiEventArgs& args )
+   {
+      const GuiNode* button = GetWidgetFromEventArgs(args);
+
+      if(button != NULL)
+      {
+         HandleButton(*button);
+      }
+
+      // Let CEGUI know the button has been handled.
+      return true;
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void GuiComponent::HandleButton(const GuiNode& button)
+   {
+      // Prepare to capture the button action name.
+      std::string action;
+      std::string buttonType;
+
+      // Attempt to access the button's action property.
+      try
+      {
+         CEGUI::String actionValue = button.getProperty(GuiComponent::BUTTON_PROPERTY_ACTION.Get());
+         CEGUI::String buttonTypeValue = button.getProperty(GuiComponent::BUTTON_PROPERTY_TYPE.Get());
+         action = std::string(actionValue.c_str());
+         buttonType = std::string(buttonTypeValue.c_str());
+      }
+      catch(CEGUI::Exception& ceguiEx)
+      {
+         std::ostringstream oss;
+         oss << "Button \"" << button.getName().c_str()
+            << "\" does not have the \"Action\" property.\n"
+            << ceguiEx.getMessage().c_str() << std::endl;
+         LOG_ERROR(oss.str());
+      }
+
+      // Lookup and send the transition type in a message.
+      dtGame::EventType* transition = dtGame::EventType::GetValueForName(action);
+      if (transition != NULL)
+      {
+         dtGame::GameManager* gm = GetGameManager();
+
+         dtCore::RefPtr<dtGame::GameStateTransitionRequestMessage> message;
+         dtGame::MessageFactory& factory = gm->GetMessageFactory();
+         factory.CreateMessage(dtGame::MessageType::REQUEST_GAME_STATE_TRANSITION, message);
+
+         message->SetTransition(*transition);
+
+         gm->SendMessage(*message);
+      }
    }
 
 } // END - namsepace dtExample

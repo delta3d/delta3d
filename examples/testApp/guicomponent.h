@@ -60,6 +60,10 @@ namespace dtCore
    class DeltaWin;
 }
 
+typedef CEGUI::PushButton GuiButton;
+typedef CEGUI::EventArgs GuiEventArgs;
+
+
 
 namespace dtExample
 {
@@ -69,6 +73,9 @@ namespace dtExample
    class TEST_APP_EXPORT GuiComponent : public dtGame::GMComponent
    {
       public:
+         static const dtUtil::RefString BUTTON_TYPE;
+         static const dtUtil::RefString BUTTON_PROPERTY_ACTION;
+         static const dtUtil::RefString BUTTON_PROPERTY_TYPE;
 
          GuiComponent();
 
@@ -97,6 +104,16 @@ namespace dtExample
          virtual ~GuiComponent();
 
          bool RegisterScreenWithState(GuiScreen& screen, const dtGame::GameStateType& gameStateType);
+   
+         void BindButtons(GuiNode& rootWindow);
+   
+         void BindButton(GuiButton& button);
+   
+         const GuiNode* GetWidgetFromEventArgs( const GuiEventArgs& args ) const;
+   
+         bool OnButtonClicked( const GuiEventArgs& args );
+   
+         void HandleButton(const GuiNode& button);
 
       private:
 

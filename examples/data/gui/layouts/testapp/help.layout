@@ -10,11 +10,13 @@
       <Property Name="AlwaysOnTop" Value="True"/>
       <Property Name="HorizontalAlignment" Value="Left"/>
       <Property Name="VerticalAlignment" Value="Top"/>
+      <Property Name="MousePassThroughEnabled" Value="True"/>
 
       <!-- TEXT - 1 -->
       <Window Name="Help_1" Type="WindowsLook/StaticText">
          <Property Name="UnifiedSize" Value="{{0.8,0},{0.095,0}}"/>
          <Property Name="UnifiedPosition" Value="{{0.0,0},{0.05,0}}"/>
+         <Property Name="MousePassThroughEnabled" Value="True"/>
          <Property Name="BackgroundEnabled" Value="False"/>
          <Property Name="FrameEnabled" Value="False"/>
          <Property Name="HorizontalAlignment" Value="Centre"/>
@@ -28,6 +30,7 @@
       <Window Name="Help_2" Type="WindowsLook/StaticText">
          <Property Name="UnifiedSize" Value="{{0.8,0},{0.095,0}}"/>
          <Property Name="UnifiedPosition" Value="{{0.0,0},{0.10,0}}"/>
+         <Property Name="MousePassThroughEnabled" Value="True"/>
          <Property Name="BackgroundEnabled" Value="False"/>
          <Property Name="FrameEnabled" Value="False"/>
          <Property Name="HorizontalAlignment" Value="Centre"/>
@@ -41,6 +44,7 @@
       <Window Name="Help_3" Type="WindowsLook/StaticText">
          <Property Name="UnifiedSize" Value="{{0.8,0},{0.095,0}}"/>
          <Property Name="UnifiedPosition" Value="{{0.0,0},{0.15,0}}"/>
+         <Property Name="MousePassThroughEnabled" Value="True"/>
          <Property Name="BackgroundEnabled" Value="False"/>
          <Property Name="FrameEnabled" Value="False"/>
          <Property Name="HorizontalAlignment" Value="Centre"/>
@@ -54,6 +58,7 @@
       <Window Name="Help_4" Type="WindowsLook/StaticText">
          <Property Name="UnifiedSize" Value="{{0.8,0},{0.095,0}}"/>
          <Property Name="UnifiedPosition" Value="{{0.0,0},{0.20,0}}"/>
+         <Property Name="MousePassThroughEnabled" Value="True"/>
          <Property Name="BackgroundEnabled" Value="False"/>
          <Property Name="FrameEnabled" Value="False"/>
          <Property Name="HorizontalAlignment" Value="Centre"/>
@@ -67,6 +72,7 @@
       <Window Name="Help_5" Type="WindowsLook/StaticText">
          <Property Name="UnifiedSize" Value="{{0.8,0},{0.095,0}}"/>
          <Property Name="UnifiedPosition" Value="{{0.0,0},{0.25,0}}"/>
+         <Property Name="MousePassThroughEnabled" Value="True"/>
          <Property Name="BackgroundEnabled" Value="False"/>
          <Property Name="FrameEnabled" Value="False"/>
          <Property Name="HorizontalAlignment" Value="Centre"/>
@@ -80,6 +86,7 @@
       <Window Name="Help_6" Type="WindowsLook/StaticText">
          <Property Name="UnifiedSize" Value="{{0.8,0},{0.095,0}}"/>
          <Property Name="UnifiedPosition" Value="{{0.0,0},{0.30,0}}"/>
+         <Property Name="MousePassThroughEnabled" Value="True"/>
          <Property Name="BackgroundEnabled" Value="False"/>
          <Property Name="FrameEnabled" Value="False"/>
          <Property Name="HorizontalAlignment" Value="Centre"/>
@@ -93,6 +100,7 @@
       <Window Name="Help_7" Type="WindowsLook/StaticText">
          <Property Name="UnifiedSize" Value="{{0.8,0},{0.095,0}}"/>
          <Property Name="UnifiedPosition" Value="{{0.01,0},{0.35,0}}"/>
+         <Property Name="MousePassThroughEnabled" Value="True"/>
          <Property Name="BackgroundEnabled" Value="False"/>
          <Property Name="FrameEnabled" Value="False"/>
          <Property Name="HorizontalAlignment" Value="Centre"/>
@@ -106,6 +114,7 @@
       <Window Name="Help_8" Type="WindowsLook/StaticText">
          <Property Name="UnifiedSize" Value="{{0.8,0},{0.095,0}}"/>
          <Property Name="UnifiedPosition" Value="{{0.01,0},{0.4,0}}"/>
+         <Property Name="MousePassThroughEnabled" Value="True"/>
          <Property Name="BackgroundEnabled" Value="False"/>
          <Property Name="FrameEnabled" Value="False"/>
          <Property Name="HorizontalAlignment" Value="Centre"/>
@@ -119,6 +128,7 @@
       <Window Name="Help_9" Type="WindowsLook/StaticText">
          <Property Name="UnifiedSize" Value="{{0.8,0},{0.095,0}}"/>
          <Property Name="UnifiedPosition" Value="{{0.01,0},{0.45,0}}"/>
+         <Property Name="MousePassThroughEnabled" Value="True"/>
          <Property Name="BackgroundEnabled" Value="False"/>
          <Property Name="FrameEnabled" Value="False"/>
          <Property Name="HorizontalAlignment" Value="Centre"/>
@@ -132,6 +142,7 @@
       <Window Name="Help_10" Type="WindowsLook/StaticText">
          <Property Name="UnifiedSize" Value="{{0.8,0},{0.095,0}}"/>
          <Property Name="UnifiedPosition" Value="{{0.01,0},{0.5,0}}"/>
+         <Property Name="MousePassThroughEnabled" Value="True"/>
          <Property Name="BackgroundEnabled" Value="False"/>
          <Property Name="FrameEnabled" Value="False"/>
          <Property Name="HorizontalAlignment" Value="Centre"/>
@@ -145,6 +156,7 @@
       <Window Name="Help_11" Type="WindowsLook/StaticText">
          <Property Name="UnifiedSize" Value="{{0.8,0},{0.095,0}}"/>
          <Property Name="UnifiedPosition" Value="{{0.01,0},{0.55,0}}"/>
+         <Property Name="MousePassThroughEnabled" Value="True"/>
          <Property Name="BackgroundEnabled" Value="False"/>
          <Property Name="FrameEnabled" Value="False"/>
          <Property Name="HorizontalAlignment" Value="Centre"/>
@@ -152,6 +164,20 @@
          <Property Name="AlwaysOnTop" Value="True"/>
          <Property Name="TextColours" Value="FFFFFFFF"/>
          <Property Name="Text" Value="Esc: Back Transition"/>
+      </Window>
+
+      <!-- TEXT - 12 -->
+      <Window Name="Help_12" Type="WindowsLook/StaticText">
+         <Property Name="UnifiedSize" Value="{{0.8,0},{0.095,0}}"/>
+         <Property Name="UnifiedPosition" Value="{{0.01,0},{0.6,0}}"/>
+         <Property Name="MousePassThroughEnabled" Value="True"/>
+         <Property Name="BackgroundEnabled" Value="False"/>
+         <Property Name="FrameEnabled" Value="False"/>
+         <Property Name="HorizontalAlignment" Value="Centre"/>
+         <Property Name="Font" Value="DejaVuSans-10"/>
+         <Property Name="AlwaysOnTop" Value="True"/>
+         <Property Name="TextColours" Value="FFFFFFFF"/>
+         <Property Name="Text" Value="H: Toggle Help"/>
       </Window>
         
 	</Window>
