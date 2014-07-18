@@ -2,7 +2,7 @@ SET(TARGET_SRC testapp.cpp
                guicomponent.cpp
                guiscreen.cpp
                inputcomponent.cpp
-               terrainactorproxy.cpp
+               terrainactor.cpp
                testappactorregistry.cpp
                testappconstants.cpp
                testappgamestates.cpp
@@ -14,7 +14,7 @@ SET(TARGET_SRC testapp.cpp
 SET(TARGET_H guicomponent.h
              guiscreen.h
              inputcomponent.h
-             terrainactorproxy.h
+             terrainactor.h
              testappactorregistry.h
              testappconstants.h
              testappgamestates.h

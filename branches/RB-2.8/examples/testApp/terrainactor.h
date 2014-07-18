@@ -105,14 +105,14 @@ namespace dtExample
 
 
 
-   class TEST_APP_EXPORT TerrainActor : public dtGame::GameActor
+   class TEST_APP_EXPORT TerrainDrawable : public dtGame::GameActor
    {
    public:
       typedef dtGame::GameActor BaseClass;
 
       static const std::string DEFAULT_NAME;
       /// Constructor
-      TerrainActor(dtGame::GameActorProxy& parent);
+      TerrainDrawable(dtGame::GameActorProxy& parent);
 
       /**
        * Loads a mesh file which contains terrain.
@@ -165,7 +165,7 @@ namespace dtExample
    protected:
 
       /// Destructor
-      virtual ~TerrainActor();
+      virtual ~TerrainDrawable();
 
    private:
 
@@ -187,7 +187,7 @@ namespace dtExample
 
 
 
-   class TEST_APP_EXPORT TerrainActorProxy : public dtGame::GameActorProxy
+   class TEST_APP_EXPORT TerrainActor : public dtGame::GameActorProxy
    {
    public:
       typedef dtGame::GameActorProxy BaseClass;
@@ -197,7 +197,7 @@ namespace dtExample
       /**
        * Constructor
        */
-      TerrainActorProxy();
+      TerrainActor();
 
       virtual void OnRemovedFromWorld();
 
@@ -213,7 +213,7 @@ namespace dtExample
       virtual void BuildInvokables();
 
       /// Creates the actor we are encapsulating
-      virtual void CreateDrawable() { SetDrawable(*new TerrainActor(*this)); }
+      virtual void CreateDrawable() { SetDrawable(*new TerrainDrawable(*this)); }
 
       /**
        * Gets the billboard used to represent static meshes if this proxy's
@@ -238,7 +238,7 @@ namespace dtExample
       /**
        * Destructor
        */
-      virtual ~TerrainActorProxy() { }
+      virtual ~TerrainActor() { }
 
    private:
    };

@@ -20,12 +20,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  *
- * This software was developed by Alion Science and Technology Corporation under
- * circumstances in which the U. S. Government may have rights in the software.
- *
  */
 
-#include "terrainactorproxy.h"
+#include "terrainactor.h"
 #include <dtCore/enginepropertytypes.h>
 #include <dtCore/actorproxyicon.h>
 #include <dtCore/project.h>
@@ -171,28 +168,28 @@ namespace dtExample
    ///////////////////////////////////////////////////////////////////////////////
    // CLASS CODE
    ///////////////////////////////////////////////////////////////////////////////
-   const std::string TerrainActor::DEFAULT_NAME = "Terrain";
+   const std::string TerrainDrawable::DEFAULT_NAME = "Terrain";
 
    ///////////////////////////////////////////////////////////////////////////////
-   TerrainActorProxy::TerrainActorProxy()
+   TerrainActor::TerrainActor()
    {
-      SetClassName("dtExample::TerrainActorProxy");
+      SetClassName("dtExample::TerrainActor");
       SetHideDTCorePhysicsProps(true);
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void TerrainActorProxy::OnRemovedFromWorld()
+   void TerrainActor::OnRemovedFromWorld()
    {
       dtGame::GameActorProxy::OnRemovedFromWorld();
    }
 
 
    ///////////////////////////////////////////////////////////////////////////////
-   void TerrainActorProxy::BuildPropertyMap()
+   void TerrainActor::BuildPropertyMap()
    {
       dtGame::GameActorProxy::BuildPropertyMap();
-      TerrainActor* ta = NULL;
-      GetActor(ta);
+      TerrainDrawable* ta = NULL;
+      GetDrawable(ta);
 
       static const dtUtil::RefString GROUP_("Terrain");
 
@@ -209,38 +206,38 @@ namespace dtExample
       AddProperty(new dtCore::EnumActorProperty<TerrainPhysicsMode>(
          PROPERTY_TERRAIN_PHYSICS_MODE,
          PROPERTY_TERRAIN_PHYSICS_MODE,
-         dtCore::EnumActorProperty<TerrainPhysicsMode>::SetFuncType(ta, &TerrainActor::SetTerrainPhysicsMode),
-         dtCore::EnumActorProperty<TerrainPhysicsMode>::GetFuncType(ta, &TerrainActor::GetTerrainPhysicsMode),
+         dtCore::EnumActorProperty<TerrainPhysicsMode>::SetFuncType(ta, &TerrainDrawable::SetTerrainPhysicsMode),
+         dtCore::EnumActorProperty<TerrainPhysicsMode>::GetFuncType(ta, &TerrainDrawable::GetTerrainPhysicsMode),
          PROPERTY_TERRAIN_PHYSICS_MODE_DESC, GROUP_));
 
       AddProperty(new dtCore::ResourceActorProperty(*this, dtCore::DataType::TERRAIN,
          PROPERTY_TERRAIN_MESH,
          PROPERTY_TERRAIN_MESH,
-         dtCore::ResourceActorProperty::SetFuncType(ta, &TerrainActor::LoadFile),
+         dtCore::ResourceActorProperty::SetFuncType(ta, &TerrainDrawable::LoadFile),
          "Loads in a terrain mesh for this object", GROUP_));
 
       AddProperty(new dtCore::BooleanActorProperty(
          PROPERTY_LOAD_TERRAIN_MESH_WITH_CACHING,
          PROPERTY_LOAD_TERRAIN_MESH_WITH_CACHING,
-         dtCore::BooleanActorProperty::SetFuncType(ta, &TerrainActor::SetLoadTerrainMeshWithCaching),
-         dtCore::BooleanActorProperty::GetFuncType(ta, &TerrainActor::GetLoadTerrainMeshWithCaching),
+         dtCore::BooleanActorProperty::SetFuncType(ta, &TerrainDrawable::SetLoadTerrainMeshWithCaching),
+         dtCore::BooleanActorProperty::GetFuncType(ta, &TerrainDrawable::GetLoadTerrainMeshWithCaching),
          "Enables OSG caching when loading the terrain mesh.", GROUP_));
 
       AddProperty(new dtCore::ResourceActorProperty(*this, dtCore::DataType::STATIC_MESH,
          PROPERTY_PHYSICS_MODEL,
          PROPERTY_PHYSICS_MODEL,
-         dtCore::ResourceActorProperty::SetFuncType(ta, &TerrainActor::SetPhysicsModelFile),
+         dtCore::ResourceActorProperty::SetFuncType(ta, &TerrainDrawable::SetPhysicsModelFile),
          "Loads a SINGLE physics model file to use for collision.", GROUP_));
 
       AddProperty(new dtCore::StringActorProperty(PROPERTY_PHYSICSDIRECTORY, PROPERTY_PHYSICSDIRECTORY,
-         dtCore::StringActorProperty::SetFuncType(ta, &TerrainActor::SetPhysicsDirectory),
-         dtCore::StringActorProperty::GetFuncType(ta, &TerrainActor::GetPhysicsDirectory),
+         dtCore::StringActorProperty::SetFuncType(ta, &TerrainDrawable::SetPhysicsDirectory),
+         dtCore::StringActorProperty::GetFuncType(ta, &TerrainDrawable::GetPhysicsDirectory),
          "The directory name of MULTIPLE physics model files to use for collision within the Terrains folder in your map project.", GROUP_));
 
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   dtCore::ActorProxyIcon* TerrainActorProxy::GetBillBoardIcon()
+   dtCore::ActorProxyIcon* TerrainActor::GetBillBoardIcon()
    {
       if (!mBillBoardIcon.valid())
       {
@@ -251,7 +248,7 @@ namespace dtExample
    }
 
    ///////////////////////////////////////////////////////////////////
-   void TerrainActorProxy::BuildActorComponents()
+   void TerrainActor::BuildActorComponents()
    {
       BaseClass::BuildActorComponents();
 
@@ -270,22 +267,22 @@ namespace dtExample
    }
 
    ///////////////////////////////////////////////////////////////////
-   void TerrainActorProxy::BuildInvokables()
+   void TerrainActor::BuildInvokables()
    {
       dtGame::GameActorProxy::BuildInvokables();
 
       static const dtUtil::RefString LOAD_CHECK_TIMER_INVOKABLE("LOAD_CHECK_TIMER_INVOKABLE");
       AddInvokable(*new dtGame::Invokable(LOAD_CHECK_TIMER_INVOKABLE,
-         dtUtil::MakeFunctor(&TerrainActorProxy::HandleNodeLoaded, this)));
+         dtUtil::MakeFunctor(&TerrainActor::HandleNodeLoaded, this)));
 
       RegisterForMessagesAboutSelf(dtGame::MessageType::INFO_TIMER_ELAPSED, LOAD_CHECK_TIMER_INVOKABLE);
    }
 
    ///////////////////////////////////////////////////////////////////
-   void TerrainActorProxy::HandleNodeLoaded(const dtGame::TimerElapsedMessage& timerElapsed)
+   void TerrainActor::HandleNodeLoaded(const dtGame::TimerElapsedMessage& timerElapsed)
    {
-      TerrainActor* ta = NULL;
-      GetActor(ta);
+      TerrainDrawable* ta = NULL;
+      GetDrawable(ta);
       if (ta != NULL)
       {
          if (ta->CheckForTerrainLoaded())
@@ -298,14 +295,14 @@ namespace dtExample
 
 
    ///////////////////////////////////////////////////////////////
-   void TerrainActor::RemovedFromScene(dtCore::Scene* scene)
+   void TerrainDrawable::RemovedFromScene(dtCore::Scene* scene)
    {
       scene->ResetDatabasePager();
    }
 
 
    ///////////////////////////////////////////////////////////////
-   TerrainActor::TerrainActor(dtGame::GameActorProxy& owner)
+   TerrainDrawable::TerrainDrawable(dtGame::GameActorProxy& owner)
       : BaseClass(owner)
       , mTerrainPhysicsMode(&TerrainPhysicsMode::DEFERRED)
       , mNeedToLoad(false)
@@ -315,19 +312,19 @@ namespace dtExample
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   TerrainActor::~TerrainActor()
+   TerrainDrawable::~TerrainDrawable()
    {
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void TerrainActor::OnEnteredWorld()
+   void TerrainDrawable::OnEnteredWorld()
    {
       dtGame::GameActor::OnEnteredWorld();
       LoadFile(mLoadedFile);
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void TerrainActor::AddedToScene(dtCore::Scene* scene)
+   void TerrainDrawable::AddedToScene(dtCore::Scene* scene)
    {
       BaseClass::AddedToScene(scene);
       //Actually load the file, even if it's empty string so that if someone were to
@@ -340,43 +337,43 @@ namespace dtExample
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void TerrainActor::SetPhysicsModelFile(const std::string& filename)
+   void TerrainDrawable::SetPhysicsModelFile(const std::string& filename)
    {
       mCollisionResourceString = filename;
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   const std::string& TerrainActor::GetPhysicsModelFile() const
+   const std::string& TerrainDrawable::GetPhysicsModelFile() const
    {
       return mCollisionResourceString;
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void TerrainActor::SetPhysicsDirectory( const std::string& filename )
+   void TerrainDrawable::SetPhysicsDirectory( const std::string& filename )
    {
       mPhysicsDirectory = filename;
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   std::string TerrainActor::GetPhysicsDirectory() const
+   std::string TerrainDrawable::GetPhysicsDirectory() const
    {
       return mPhysicsDirectory;
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   TerrainPhysicsMode& TerrainActor::GetTerrainPhysicsMode() const
+   TerrainPhysicsMode& TerrainDrawable::GetTerrainPhysicsMode() const
    {
       return *mTerrainPhysicsMode;
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void TerrainActor::SetTerrainPhysicsMode(TerrainPhysicsMode& physicsMode)
+   void TerrainDrawable::SetTerrainPhysicsMode(TerrainPhysicsMode& physicsMode)
    {
       mTerrainPhysicsMode = &physicsMode;
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void TerrainActor::SetupTerrainPhysics()
+   void TerrainDrawable::SetupTerrainPhysics()
    {
       GetComponent(mHelper);
 
@@ -491,7 +488,7 @@ namespace dtExample
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void TerrainActor::LoadMeshFromFile(const std::string& fileToLoad, const std::string& materialType)
+   void TerrainDrawable::LoadMeshFromFile(const std::string& fileToLoad, const std::string& materialType)
    {
       if (dtUtil::FileUtils::GetInstance().FileExists(fileToLoad))
       {
@@ -522,7 +519,7 @@ namespace dtExample
                dtCore::RefPtr<dtPhysics::Geometry> geom = dtPhysics::Geometry::CreateConcaveGeometry(geometryWorld, vertData, 0);
                newTile->CreateFromGeometry(*geom);
 
-               newTile->SetCollisionGroup(TerrainActorProxy::COLLISION_GROUP_TERRAIN);
+               newTile->SetCollisionGroup(TerrainActor::COLLISION_GROUP_TERRAIN);
                mHelper->AddPhysicsObject(*newTile);
             }
             else
@@ -538,7 +535,7 @@ namespace dtExample
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void TerrainActor::LoadFile(const std::string& fileName)
+   void TerrainDrawable::LoadFile(const std::string& fileName)
    {
       // Don't do anything if the filenames are the same unless we still need to load
       if (!mNeedToLoad && mLoadedFile == fileName)
@@ -620,7 +617,7 @@ namespace dtExample
    }
 
    ///////////////////////////////////////////////////////////////////
-   bool TerrainActor::CheckForTerrainLoaded()
+   bool TerrainDrawable::CheckForTerrainLoaded()
    {
       if (!mLoadNodeTask.valid())
       {
@@ -668,13 +665,13 @@ namespace dtExample
    }
 
    ///////////////////////////////////////////////////////////////////
-   void TerrainActor::SetLoadTerrainMeshWithCaching(bool enable)
+   void TerrainDrawable::SetLoadTerrainMeshWithCaching(bool enable)
    {
       mLoadTerrainMeshWithCaching = enable;
    }
 
    ///////////////////////////////////////////////////////////////////
-   bool TerrainActor::GetLoadTerrainMeshWithCaching()
+   bool TerrainDrawable::GetLoadTerrainMeshWithCaching()
    {
       return mLoadTerrainMeshWithCaching;
    }

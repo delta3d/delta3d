@@ -29,7 +29,7 @@
 // INCLUDE DIRECTIVES
 ////////////////////////////////////////////////////////////////////////////////
 #include "testappactorregistry.h"
-#include "terrainactorproxy.h"
+#include "terrainactor.h"
 #include <dtActors/engineactorregistry.h>
 #include <dtCore/shadermanager.h>
 
@@ -76,6 +76,6 @@ namespace dtExample
    ///////////////////////////////////////////////////////////////////////////
    void TestAppActorRegistry::RegisterActorTypes()
    {
-      mActorFactory->RegisterType<TerrainActorProxy>(TERRAIN_ACTOR_TYPE.get());
+      mActorFactory->RegisterType<TerrainActor>(TERRAIN_ACTOR_TYPE.get());
    }
 }
