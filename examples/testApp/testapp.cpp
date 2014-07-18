@@ -123,20 +123,25 @@ void TestApp::Initialize(dtABC::BaseABC& app, int argc, char** argv)
 
    dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
    std::string executablePath = fileUtils.GetAbsolutePath(argv[0], true);
+   std::string deltaDataEnvVar = dtUtil::GetDeltaDataPathList();
+   if (deltaDataEnvVar.empty() || !dtUtil::FileUtils::GetInstance().DirExists(deltaDataEnvVar))
+   {
+      // TODO look in mac bundle.
+      dtUtil::SetDataFilePathList(executablePath + "/../data;" + executablePath + "/../share/delta3d/data;" +  executablePath + "/../../data");
+   }
+   else
+   {
+      dtUtil::SetDataFilePathList(deltaDataEnvVar);
+   }
 
    if (dtUtil::FindFileInPathList("map.xsd").empty())
    {
       LOG_INFO("No map.xsd was found in the search path: \"" + dtUtil::GetDataFilePathList() + "\"<BR>\n Hopefully it will be found in the project context.");
    }
 
-   // The commandline might indicate the project context as a parameter.
    ParseCommandLineOptions(argc, argv);
 
-   // If the paths of this code block are necessary, add them to
-   // the .dtproj file. Be sure that all paths are valid since
-   // exceptions are thrown if invalid and the project file will
-   // fail to process any subsequent paths.
-   /*if (mProjectPath.empty())
+   if (mProjectPath.empty())
    {
          // TODO look in the mac bundle.
          std::vector<std::string> projectPaths;
@@ -147,7 +152,7 @@ void TestApp::Initialize(dtABC::BaseABC& app, int argc, char** argv)
          projectPaths.push_back("/usr/share/delta3d/examples");
          projectPaths.push_back("/usr/local/share/delta3d/examples");
          mProjectPath = dtUtil::FindFileInPathList("data", projectPaths);
-   }*/
+   }
 
 }
 
@@ -155,17 +160,14 @@ void TestApp::Initialize(dtABC::BaseABC& app, int argc, char** argv)
 ////////////////////////////////////////////////////////////////////////////////
 void TestApp::OnStartup(dtABC::BaseABC& app, dtGame::GameManager& gameManager)
 {
-   // If the command line has not indicated the project context...
    if (mProjectPath.empty())
    {
-      // ...search for it within the porperties of the config.xml.
       mProjectPath = gameManager.GetConfiguration().GetConfigPropertyValue("ProjectPath");
    }
 
    dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
-   dtUtil::FileInfo fi = fileUtils.GetFileInfo(mProjectPath);
 
-   // Determine if the project context was specified as a directory or archive.
+   dtUtil::FileInfo fi = fileUtils.GetFileInfo(mProjectPath);
    if (fi.fileType == dtUtil::DIRECTORY || fi.fileType == dtUtil::ARCHIVE)
    {
       try
@@ -179,8 +181,6 @@ void TestApp::OnStartup(dtABC::BaseABC& app, dtGame::GameManager& gameManager)
             "Invalid project context path: " + mProjectPath, __FILE__, __LINE__);
       }
    }
-   // Otherwise, determine if the project context has been
-   // specified as a .dtproj file.
    else if (fi.fileType == dtUtil::REGULAR_FILE)
    {
       try
@@ -194,7 +194,7 @@ void TestApp::OnStartup(dtABC::BaseABC& app, dtGame::GameManager& gameManager)
             "Invalid project config file: " + mProjectPath, __FILE__, __LINE__);
       }
    }
-   else // The project context could not be found as a file or directory.
+   else
    {
       throw dtGame::GameApplicationConfigException(
          "Invalid or unknown project path: " + mProjectPath, __FILE__, __LINE__);
@@ -245,6 +245,7 @@ void TestApp::OnStartup(dtABC::BaseABC& app, dtGame::GameManager& gameManager)
 
 void TestApp::OnShutdown(dtABC::BaseABC& /*app*/, dtGame::GameManager& /*gamemanager*/)
 {
+
 }
 
 void TestApp::ParseCommandLineOptions(int argc, char** argv)
