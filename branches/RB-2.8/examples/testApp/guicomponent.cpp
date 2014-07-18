@@ -182,6 +182,7 @@ namespace dtExample
    {
       try
       {
+         const std::string guiDir = "gui/layouts/testapp/";
          // Initialize CEGUI
          mGUIScene = new dtGUI::GUI(&cam, &keyboard, &mouse);
 
@@ -190,31 +191,31 @@ namespace dtExample
          CEGUI::System::getSingleton().getDefaultFont()->setProperty("PointSize", "14");
 
          // Create screen objects associated with specific game states.
-         dtCore::RefPtr<GuiScreen> screen = new GuiScreen(*mGUIScene, "Title Screen", "titlescreen.layout");
+         dtCore::RefPtr<GuiScreen> screen = new GuiScreen(*mGUIScene, "Title Screen", guiDir + "titlescreen.layout");
          screen->Setup();
          RegisterScreenWithState(*screen, TestAppGameState::STATE_TITLE);
 
-         screen = new GuiScreen(*mGUIScene, "Menu", "menuscreen.layout");
+         screen = new GuiScreen(*mGUIScene, "Menu", guiDir + "menuscreen.layout");
          screen->Setup();
          RegisterScreenWithState(*screen, TestAppGameState::STATE_MENU);
 
-         screen = new GuiScreen(*mGUIScene, "Game", "gamescreen.layout");
+         screen = new GuiScreen(*mGUIScene, "Game", guiDir + "gamescreen.layout");
          screen->Setup();
          RegisterScreenWithState(*screen, TestAppGameState::STATE_GAME);
 
-         screen = new GuiScreen(*mGUIScene, "Game Options", "gameoptionsscreen.layout");
+         screen = new GuiScreen(*mGUIScene, "Game Options", guiDir + "gameoptionsscreen.layout");
          screen->Setup();
          RegisterScreenWithState(*screen, TestAppGameState::STATE_GAME_OPTIONS);
 
-         screen = new GuiScreen(*mGUIScene, "Game Quit", "gamequitscreen.layout");
+         screen = new GuiScreen(*mGUIScene, "Game Quit", guiDir + "gamequitscreen.layout");
          screen->Setup();
          RegisterScreenWithState(*screen, TestAppGameState::STATE_GAME_QUIT);
 
          // Create screens/overlays that are not tied to specific states.
-         mHelpOverlay = new GuiScreen(*mGUIScene, dtExample::UINames::UI_HELP, "help.layout");
+         mHelpOverlay = new GuiScreen(*mGUIScene, dtExample::UINames::UI_HELP, guiDir + "help.layout");
          mHelpOverlay->Setup();
 
-         mGlobalOverlay = new GuiScreen(*mGUIScene, "Global Overlay", "globaloverlay.layout");
+         mGlobalOverlay = new GuiScreen(*mGUIScene, "Global Overlay", guiDir + "globaloverlay.layout");
          mGlobalOverlay->Setup();
 
          // Hide all screens by default.

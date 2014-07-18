@@ -7,12 +7,4 @@
 	<Scene Name="defaultScene"/>
 	<Camera Name="defaultCam" WindowInstance="testApp"/>
 	<View Name="defaultView" CameraInstance="defaultCam" SceneInstance="defaultScene"/>
-
-   <!-- Application Settings -->
-   <Properties>
-      <!-- Point the application to the file containing paths to project assets.
-           Paths are relative to this config file. -->
-      <Property Name="ProjectPath">./TestAppProjectConfig.dtproj</Property>
-   </Properties>
-      
 </Application>
