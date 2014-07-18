@@ -3,5 +3,5 @@
     <DIFFUSE>150 150 150 255</DIFFUSE>
     <SPECULAR>255 255 255 0</SPECULAR>
     <SHININESS>0</SHININESS>
-    <MAP>../marine_camodes.tga</MAP>
+    <MAP>marine_camodes.tga</MAP>
 </MATERIAL>
