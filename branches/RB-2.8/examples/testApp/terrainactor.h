@@ -25,8 +25,8 @@
  *
  */
 
-#ifndef DELTA_TEST_APP_TERRAIN_ACTOR_PROXY
-#define DELTA_TEST_APP_TERRAIN_ACTOR_PROXY
+#ifndef DELTA_TEST_APP_TERRAIN_ACTOR
+#define DELTA_TEST_APP_TERRAIN_ACTOR
 
 #include "export.h"
 #include <dtGame/gameactor.h>

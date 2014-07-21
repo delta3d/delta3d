@@ -58,6 +58,8 @@ namespace dtExample
    const dtUtil::RefString GuiComponent::BUTTON_TYPE("WindowsLook/Button");
    const dtUtil::RefString GuiComponent::BUTTON_PROPERTY_ACTION("Action");
    const dtUtil::RefString GuiComponent::BUTTON_PROPERTY_TYPE("ButtonType");
+   const dtUtil::RefString GuiComponent::UI_TEXT_MOTION_MODEL("GlobalOverlay_MotionModelType");
+   const dtUtil::RefString GuiComponent::UI_TEXT_STATUS("GlobalOverlay_Status");
 
 
 
@@ -112,7 +114,15 @@ namespace dtExample
          || msgType == TestAppMessageType::UI_SHOW
          || msgType == TestAppMessageType::UI_TOGGLE)
       {
-         HandleUIMessage(static_cast<const UIMessage&>(message));
+         const UIMessage* uiMessage = dynamic_cast<const UIMessage*>(&message);
+         HandleUIMessage(*uiMessage);
+      }
+      else if (msgType == TestAppMessageType::MOTION_MODEL_CHANGED)
+      {
+         const MotionModelChangedMessage* mmcMessage
+            = dynamic_cast<const MotionModelChangedMessage*>(&message);
+
+         HandleMotionModelChanged(mmcMessage->GetNewMotionModelType());
       }
       else if (msgType == dtGame::MessageType::INFO_GAME_STATE_CHANGED)
       {
@@ -151,6 +161,9 @@ namespace dtExample
       {
          mCurrentScreen->OnEnter();
       }
+
+      std::string statusText(GetGameManager()->IsPaused()?"Paused":"");
+      mGlobalOverlay->SetText(UI_TEXT_STATUS.Get(), statusText);
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -175,6 +188,13 @@ namespace dtExample
             ui->setVisible( ! ui->isVisible());
          }
       }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void GuiComponent::HandleMotionModelChanged(const dtExample::MotionModelType& motionModelType)
+   {
+      std::string text(motionModelType.GetName() + " Motion Model");
+      mGlobalOverlay->SetText(UI_TEXT_MOTION_MODEL.Get(), text);
    }
 
    //////////////////////////////////////////////////////////////////////////

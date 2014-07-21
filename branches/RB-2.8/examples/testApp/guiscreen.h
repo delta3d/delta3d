@@ -108,18 +108,22 @@ namespace dtExample
          /**
           * Utility method to create text
           */
-         GuiNode* CreateText(const std::string& name, GuiNode* parent, const std::string& text,
+         virtual GuiNode* CreateText(const std::string& name, GuiNode* parent, const std::string& text,
                                         float x, float y, float width, float height);
          /**
           * Utility method to set the text, position, and color of a text control
           * Check to see if the data changed.  The default values for color and position
           * won't do anything since they use a color and position < 0.
           */
-         void UpdateText(GuiNode* textControl, const std::string& newText,
+         virtual void SetTextFormatted(GuiNode* textControl, const std::string& newText,
             osg::Vec3 color = osg::Vec3(1.0f, 1.0f, 1.0f), float x = -1.0f, float y = -1.0f);
          
-         void UpdateText(GuiNode* textControl, const std::string& newText,
+         virtual void SetTextAndPosition(GuiNode* textControl, const std::string& newText,
             float x, float y);
+
+         virtual GuiNode* GetNode(const std::string& name, bool deepSearch = true) const;
+
+         virtual bool SetText(const std::string& controlName, const std::string& text);
 
       protected:
          virtual ~GuiScreen();

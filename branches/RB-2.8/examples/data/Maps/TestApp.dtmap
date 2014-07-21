@@ -7,7 +7,7 @@
         <comment></comment>
         <copyright></copyright>
         <createTimestamp>2014-07-15T22:49:46-05:00</createTimestamp>
-        <lastUpdateTimestamp>2014-07-17T18:25:17-05:00</lastUpdateTimestamp>
+        <lastUpdateTimestamp>2014-07-17T21:41:22-05:00</lastUpdateTimestamp>
         <editorVersion>2.8.0</editorVersion>
         <schemaVersion>1.0</schemaVersion>
     </header>
@@ -31,7 +31,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>132.387787</value3>
+                    <value3>132.387802</value3>
                 </vec3>
             </property>
             <property>
@@ -64,6 +64,42 @@
                 <resourceType>Terrains</resourceType>
                 <resourceDisplayName>Terrains:delta3d_island.ive</resourceDisplayName>
                 <resource>Terrains:delta3d_island.ive</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtanim.AnimationGameActor</type>
+            <id>e39619c2-a9a1-4ad0-a973-a82a1a87d6a9</id>
+            <name>CharacterEntity</name>
+            <property>
+                <name>Name</name>
+                <string>Gina</string>
+            </property>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>-180.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-38.967518</value1>
+                    <value2>33.840584</value2>
+                    <value3>0.831302</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>ShaderGroup</name>
+                <string>
+             </string>
+            </property>
+            <property>
+                <name>Skeletal Mesh</name>
+                <resourceType>SkeletalMeshes</resourceType>
+                <resourceDisplayName>SkeletalMeshes:Gina:Gina.dtchar</resourceDisplayName>
+                <resource>SkeletalMeshes:Gina:Gina.dtchar</resource>
             </property>
         </actor>
     </actors>

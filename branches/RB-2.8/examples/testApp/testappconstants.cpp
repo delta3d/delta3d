@@ -37,4 +37,29 @@ namespace dtExample
    // CONSTANTS
    ////////////////////////////////////////////////////////////////////
    const dtUtil::RefString UINames::UI_HELP("Help");
+
+
+
+   ////////////////////////////////////////////////////////////////////
+   // CONSTANTS
+   ////////////////////////////////////////////////////////////////////
+   IMPLEMENT_ENUM(MotionModelType);
+   MotionModelType MotionModelType::NONE("NONE");
+   MotionModelType MotionModelType::COLLISION("Collision");
+   MotionModelType MotionModelType::FLY("Fly");
+   MotionModelType MotionModelType::FPS("FPS");
+   MotionModelType MotionModelType::ORBIT("Orbit");
+   MotionModelType MotionModelType::RTS("RTS");
+   MotionModelType MotionModelType::UFO("UFO");
+   MotionModelType MotionModelType::WALK("Walk");
+
+   MotionModelType::MotionModelType(const std::string& name)
+      : BaseClass(name)
+   {
+      AddInstance(this);
+   }
+
+   MotionModelType::~MotionModelType()
+   {}
+
 }
