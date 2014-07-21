@@ -67,6 +67,10 @@ typedef CEGUI::EventArgs GuiEventArgs;
 
 namespace dtExample
 {
+   class MotionModelType;
+
+
+
    /////////////////////////////////////////////////////////////////////////////
    // CLASS CODE
    /////////////////////////////////////////////////////////////////////////////
@@ -76,6 +80,8 @@ namespace dtExample
          static const dtUtil::RefString BUTTON_TYPE;
          static const dtUtil::RefString BUTTON_PROPERTY_ACTION;
          static const dtUtil::RefString BUTTON_PROPERTY_TYPE;
+         static const dtUtil::RefString UI_TEXT_MOTION_MODEL;
+         static const dtUtil::RefString UI_TEXT_STATUS;
 
          GuiComponent();
 
@@ -91,6 +97,8 @@ namespace dtExample
          void HandleGameStateChanged(const dtGame::GameStateType& gameState);
 
          void HandleUIMessage(const dtExample::UIMessage& uiMessage);
+
+         void HandleMotionModelChanged(const dtExample::MotionModelType& motionModelType);
 
          /**
           * Sets up the basic GUI.

@@ -191,7 +191,7 @@ namespace dtExample
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void GuiScreen::UpdateText(GuiNode* textControl, const std::string& newText,
+   void GuiScreen::SetTextFormatted(GuiNode* textControl, const std::string& newText,
       osg::Vec3 color, float x, float y)
    {
       float red = color.x();
@@ -225,11 +225,43 @@ namespace dtExample
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void GuiScreen::UpdateText(GuiNode* textControl, const std::string& newText,
+   void GuiScreen::SetTextAndPosition(GuiNode* textControl, const std::string& newText,
       float x, float y)
    {
       osg::Vec3 color(1.0f, 1.0f, 1.0f);
-      UpdateText(textControl, newText, color, x, y);
+      SetTextFormatted(textControl, newText, color, x, y);
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   GuiNode* GuiScreen::GetNode(const std::string& name, bool deepSearch) const
+   {
+      GuiNode* guiNode = NULL;
+
+      CEGUI::String nodeName(name.c_str());
+      if (deepSearch)
+      {
+         guiNode = mRoot->getChildRecursive(nodeName);
+      }
+      else
+      {
+         guiNode = mRoot->getChild(nodeName);
+      }
+
+      return guiNode;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   bool GuiScreen::SetText(const std::string& controlName, const std::string& text)
+   {
+      GuiNode* textControl = GetNode(controlName);
+
+      if (textControl != NULL)
+      {
+         CEGUI::String uiText(text.c_str());
+         textControl->setText(uiText);
+      }
+
+      return textControl != NULL;
    }
 
 }

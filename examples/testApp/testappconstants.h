@@ -41,23 +41,7 @@ namespace dtExample
    ////////////////////////////////////////////////////////////////////
    // CONSTANTS
    ////////////////////////////////////////////////////////////////////
-   namespace MotionModelType
-   {
-      enum MMType
-      {
-         NONE, // 0
-         WALK,
-         FLY,
-         UFO,
-         ORBIT,
-         FPS,
-         COLLISION,
-         RTS
-      };
-   };
-
-   ////////////////////////////////////////////////////////////////////
-   class UINames
+   class TEST_APP_EXPORT UINames
    {
    public:
       static const dtUtil::RefString UI_HELP;
@@ -65,6 +49,28 @@ namespace dtExample
    private:
       UINames() {}
       virtual ~UINames() {}
+   };
+
+   ////////////////////////////////////////////////////////////////////
+   class TEST_APP_EXPORT MotionModelType : public dtUtil::Enumeration
+   {
+      DECLARE_ENUM(MotionModelType);
+
+   public:
+      typedef dtUtil::Enumeration BaseClass;
+
+      static MotionModelType NONE;
+      static MotionModelType COLLISION;
+      static MotionModelType FLY;
+      static MotionModelType FPS;
+      static MotionModelType ORBIT;
+      static MotionModelType RTS;
+      static MotionModelType UFO;
+      static MotionModelType WALK;
+
+   protected:
+      MotionModelType(const std::string& name);
+      virtual ~MotionModelType();
    };
 
 }

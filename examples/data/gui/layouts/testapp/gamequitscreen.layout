@@ -6,6 +6,7 @@
    <Window Name="Root_GameQuitScreen" Type="DefaultWindow">
       <Property Name="UnifiedSize" Value="{{1.0,0},{1.0,0}}"/>
       <Property Name="UnifiedPosition" Value="{{0.0,0},{0.0,0}}"/>
+      <Property Name="MousePassThroughEnabled" Value="True"/>
       <Property Name="ZOrderChangeEnabled" Value="False"/>
       <Property Name="AlwaysOnTop" Value="True"/>
       <Property Name="HorizontalAlignment" Value="Left"/>

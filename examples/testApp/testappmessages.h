@@ -33,6 +33,7 @@
 #include <dtGame/message.h>
 #include <dtGame/messagemacros.h>
 #include "export.h"
+#include "testappconstants.h"
 
 
 
@@ -42,8 +43,14 @@ namespace dtExample
    // CLASS CODE
    /////////////////////////////////////////////////////////////////////////////
    DT_DECLARE_MESSAGE_BEGIN(MotionModelChangedMessage, dtGame::Message, TEST_APP_EXPORT)
+      
+      static const dtUtil::RefString PARAM_NAME_NEW_MOTION_MODEL_TYPE;
 
-      DECLARE_PARAMETER_INLINE(int, NewMotionModelType)
+      const dtExample::MotionModelType& GetNewMotionModelType() const;
+      void SetNewMotionModelType(const dtExample::MotionModelType& motionModelType);
+      
+   private:
+      dtCore::RefPtr<dtGame::EnumMessageParameter> mNewMotionModelParam;
 
    DT_DECLARE_MESSAGE_END()
 

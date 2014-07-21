@@ -29,7 +29,6 @@
 // INCLUDE DIRECTIVES
 ////////////////////////////////////////////////////////////////////////////////
 #include "inputcomponent.h"
-#include "testappconstants.h"
 #include "testappmessages.h"
 #include "testappmessagetypes.h"
 
@@ -58,13 +57,27 @@
 
 namespace dtExample
 {
-   ////////////////////////////////////////////////////////////////////
+   ////////////////////////////////////////////////////////////////////////
+   // CONSTANTS
+   ////////////////////////////////////////////////////////////////////////
+   const dtUtil::RefString InputComponent::DEFAULT_NAME("InputComponent");
+   const dtUtil::RefString InputComponent::DEFAULT_ATTACH_ACTOR_NAME("Gina");
+   const dtUtil::RefString InputComponent::DEFAULT_PLAYER_START_NAME("PlayerStart");
+
+
+
+   ////////////////////////////////////////////////////////////////////////
    // CLASS CODE
-   ////////////////////////////////////////////////////////////////////
+   ////////////////////////////////////////////////////////////////////////
    InputComponent::InputComponent()
-      : BaseClass("InputComponent")
-      , mMotionModelMode(dtExample::MotionModelType::NONE)
+      : BaseClass(DEFAULT_NAME)
       , mSimSpeedFactor(1.0)
+      , mMotionModelMode(&dtExample::MotionModelType::NONE)
+      , mMotionModel(NULL)
+      , mCamera(NULL)
+      , mCameraPivot(NULL)
+      , mGroundClamper(NULL)
+      , mAttachActorName(DEFAULT_ATTACH_ACTOR_NAME)
    {}
 
    ////////////////////////////////////////////////////////////////////////
@@ -258,7 +271,14 @@ namespace dtExample
    {
       const dtGame::MessageType& type = message.GetMessageType();
 
-      if (type == dtGame::MessageType::INFO_MAP_LOADED)
+      if (type == dtGame::MessageType::TICK_LOCAL)
+      {
+         const dtGame::TickMessage* tickMessage
+            = static_cast<const dtGame::TickMessage*>(&message);
+
+         Update(tickMessage->GetDeltaSimTime(), tickMessage->GetDeltaRealTime());
+      }
+      else if (type == dtGame::MessageType::INFO_MAP_LOADED)
       {
          SetCameraToPlayerStart();
       }
@@ -269,8 +289,17 @@ namespace dtExample
    {
       BaseClass::OnAddedToGM();
 
+      mCamera = GetGameManager()->GetApplication().GetCamera();
+      mCameraPivot = new dtCore::Transformable;
+
       // Set a motion model default.
       SetMotionModel(MotionModelType::FLY);
+   }
+
+   ////////////////////////////////////////////////////////////////////////
+   void InputComponent::Update(float simTimeDelta, float realTimeDelta)
+   {
+      DoGroundClamping();
    }
 
    ////////////////////////////////////////////////////////////////////////
@@ -285,36 +314,96 @@ namespace dtExample
    }
 
    ////////////////////////////////////////////////////////////////////////
-   void InputComponent::SetCameraToPlayerStart()
+   dtCore::Transformable* InputComponent::GetActorByName(const std::string& name)
    {
-      const std::string ACTOR_NAME("PlayerStart");
-
+      dtCore::Transformable* actor = NULL;
       dtCore::TransformableActorProxy* proxy = NULL;
 
       dtGame::GameManager* gm = GetGameManager();
-      gm->FindActorByName(ACTOR_NAME, proxy);
+      gm->FindActorByName(name, proxy);
 
       if (proxy != NULL)
       {
-         dtCore::Transformable* actor = NULL;
          proxy->GetActor(actor);
 
-         if (actor != NULL)
+         if (actor == NULL)
          {
-            dtCore::Transform xform;
-            actor->GetTransform(xform);
-
-            dtCore::Camera* camera = gm->GetApplication().GetCamera();
-            camera->SetTransform(xform);
-         }
-         else
-         {
-            LOG_ERROR("Could not access actor for \"" + ACTOR_NAME + "\" proxy");
+            LOG_ERROR("Could not access actor \"" + name + "\".");
          }
       }
       else
       {
-         LOG_ERROR("Could not find \"" + ACTOR_NAME + "\" to set initial camera position.");
+         LOG_ERROR("Could not find proxy for actor \"" + name + "\".");
+      }
+
+      return actor;
+   }
+
+   ////////////////////////////////////////////////////////////////////////
+   bool InputComponent::SetCameraPivotToActor(const std::string& actorName)
+   {
+      // Detach from the current actor.
+      if (mCurrentActor.valid())
+      {
+         // If this is the same actor, exit early.
+         if (mCurrentActor->GetName() == actorName)
+         {
+            // Return true because the camera pivot should be attached.
+            return true;
+         }
+
+         mCurrentActor->RemoveChild(mCameraPivot.get());
+      }
+
+      mCurrentActor = GetActorByName(actorName);
+
+      if ( ! mCurrentActor.valid())
+      {
+         return false;
+      }
+
+      dtCore::Transform originalXform;
+      mCurrentActor->GetTransform(originalXform);
+
+      // Temporarily set the character to the origin
+      // just to be sure things are attached to their
+      // proper locations.
+      osg::Vec3 offset;
+      osg::Vec3 originalPos = originalXform.GetTranslation();
+
+      dtCore::Transform xform;
+      mCurrentActor->AddChild(mCameraPivot);
+      mCameraPivot->SetTransform(originalXform);
+      offset.set(0.0f, 0.0f, 1.25f);
+      xform.SetTranslation(offset);
+      mCameraPivot->SetTransform(xform, dtCore::Transformable::REL_CS);
+      
+      dtCore::Transform camXform;
+      mCameraPivot->AddChild(mCamera);
+      mCamera->SetTransform(originalXform);
+      offset.set(0.0f, -5.0f, 0.0f);
+      camXform.SetTranslation(offset);
+      mCamera->SetTransform(camXform, dtCore::Transformable::REL_CS);
+
+      return true;
+   }
+
+   ////////////////////////////////////////////////////////////////////////
+   void InputComponent::SetCameraToPlayerStart()
+   {
+      const std::string ACTOR_NAME(DEFAULT_PLAYER_START_NAME);
+      dtCore::Transformable* actor = GetActorByName(ACTOR_NAME);
+
+      if (actor != NULL)
+      {
+         dtCore::Transform xform;
+         actor->GetTransform(xform);
+
+         mCamera->SetTransform(xform);
+      }
+      else
+      {
+         LOG_ERROR("Could not move camera to actor \"" + ACTOR_NAME + "\".");
       }
    }
 
@@ -366,7 +455,7 @@ namespace dtExample
    }
    
    ////////////////////////////////////////////////////////////////////////
-   void InputComponent::SendMotionModelChangedMessage(int motionModelType)
+   void InputComponent::SendMotionModelChangedMessage(const dtExample::MotionModelType& motionModelType)
    {
       dtGame::GameManager* gm = GetGameManager();
       dtGame::MessageFactory& factory = gm->GetMessageFactory();
@@ -380,11 +469,11 @@ namespace dtExample
    }
 
    ////////////////////////////////////////////////////////////////////////
-   void InputComponent::SetMotionModel(int motionModelType)
+   void InputComponent::SetMotionModel(const dtExample::MotionModelType& motionModelType)
    {
       // Prevent changing the motion model if it exists
       // and is the same type that is specified.
-      if (mMotionModel.valid() && mMotionModelMode == motionModelType)
+      if ( ! mCamera.valid() || (mMotionModel.valid() && mMotionModelMode == &motionModelType))
       {
          return;
       }
@@ -398,57 +487,106 @@ namespace dtExample
       dtCore::Keyboard* keyboard = app->GetKeyboard();
       dtCore::Mouse* mouse = app->GetMouse();
 
-      switch (motionModelType)
+      bool attachToCharacter = false;
+
+      if (&motionModelType == &MotionModelType::WALK)
       {
-      case MotionModelType::WALK:
-         {
-            dtCore::RefPtr<dtCore::WalkMotionModel> wmm
-               = new dtCore::WalkMotionModel(keyboard, mouse);
-            wmm->SetScene(scene);
-            motionModel = wmm;
-         }
-         break;
-
-      case MotionModelType::FLY:
+         dtCore::RefPtr<dtCore::WalkMotionModel> wmm
+            = new dtCore::WalkMotionModel(keyboard, mouse);
+         wmm->SetScene(scene);
+         motionModel = wmm;
+      }
+      else if (&motionModelType == &MotionModelType::FLY)
+      {
          motionModel = new dtCore::FlyMotionModel(keyboard, mouse);
-         break;
-
-      case MotionModelType::UFO:
+      }
+      else if (&motionModelType == &MotionModelType::UFO)
+      {
          motionModel = new dtCore::UFOMotionModel(keyboard, mouse);
-         break;
-
-      case MotionModelType::ORBIT:
-         motionModel = new dtCore::OrbitMotionModel(keyboard, mouse);
-         break;
-
-      case MotionModelType::FPS:
-         {
-            dtCore::RefPtr<dtCore::FPSMotionModel> fmm
-               = new dtCore::FPSMotionModel(keyboard, mouse);
-            fmm->SetScene(scene);
-            motionModel = fmm;
-         }
-         break;
-
-      case MotionModelType::COLLISION:
+      }
+      else if (&motionModelType == &MotionModelType::ORBIT)
+      {
+         dtCore::RefPtr<dtCore::OrbitMotionModel> omm = new dtCore::OrbitMotionModel(keyboard, mouse);
+         omm->SetDistance(0.0f);
+         motionModel = omm;
+         attachToCharacter = true;
+      }
+      else if (&motionModelType == &MotionModelType::FPS)
+      {
+         dtCore::RefPtr<dtCore::FPSMotionModel> fmm
+            = new dtCore::FPSMotionModel(keyboard, mouse);
+         fmm->SetScene(scene);
+         motionModel = fmm;
+      }
+      else if (&motionModelType == &MotionModelType::COLLISION)
+      {
          motionModel = new dtCore::CollisionMotionModel(1.5f, 0.4f, 0.1f, scene, keyboard, mouse);
-         break;
-
-      case MotionModelType::RTS:
+      }
+      else if (&motionModelType == &MotionModelType::RTS)
+      {
          motionModel = new dtCore::RTSMotionModel(keyboard, mouse);
-         break;
-
-      default:
-         break;
       }
 
-      motionModel->SetTarget(app->GetCamera());
 
       // Swap to the new motion model.
       mMotionModel = motionModel;
-      mMotionModelMode = motionModelType;
+      mMotionModelMode = &motionModelType;
+
+      // Acquire the camera's current transform in case
+      // it is to be dettached from an actor.
+      dtCore::Transform xform;
+      mCamera->GetTransform(xform);
+
+      if (attachToCharacter)
+      {
+         SetCameraPivotToActor(mAttachActorName);
+         
+         mMotionModel->SetTarget(mCameraPivot.get());
+      }
+      else
+      {
+         mCurrentActor = NULL;
+
+         mCameraPivot->RemoveChild(mCamera.get());
+
+         // The camera may have been detached so set
+         // the previous transform so that it does not
+         // warp to a place that does not make sense.
+         mCamera->SetTransform(xform);
+
+         mMotionModel->SetTarget(mCamera.get());
+      }
 
       SendMotionModelChangedMessage(motionModelType);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void InputComponent::DoGroundClamping()
+   {
+      /*if ( ! mGroundClamper.valid())
+      {
+         mGroundClamper = new dtGame::DefaultGroundClamper;
+      }
+
+      // Ground clamp dynamically created actors
+      mGroundClamper->SetTerrainActor(GetTerrain());
+
+      dtGame::GroundClampingData gcData;
+      gcData.SetAdjustRotationToGround(false);
+      gcData.SetUseModelDimensions(false);
+      gcData.SetGroundClampType(dtGame::GroundClampTypeEnum::KEEP_ABOVE_GROUND);
+
+      dtCore::Transform transform;
+      mCamera->GetTransform(transform, dtCore::Transformable::REL_CS);
+
+      dtGame::GameActorProxy& actor = mActorList[actorIndex]->GetGameActorProxy();
+
+      // Add this actor to the ground clamp batch
+      mGroundClamper->ClampToGround(dtGame::BaseGroundClamper::GroundClampRangeType::RANGED,
+         0.0, transform, actor, gcData, true);
+
+      // Run the batch ground clamp
+      mGroundClamper->FinishUp();*/
    }
 
 } // END - namespace dtExample

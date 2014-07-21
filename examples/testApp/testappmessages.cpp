@@ -37,9 +37,23 @@ namespace dtExample
    ////////////////////////////////////////////////////////////////////////////////
    // CLASS CODE
    ////////////////////////////////////////////////////////////////////////////////
-   DT_IMPLEMENT_MESSAGE_BEGIN(MotionModelChangedMessage)
-      DT_ADD_PARAMETER_WITH_DEFAULT(int, NewMotionModelType, dtExample::MotionModelType::NONE)
-   DT_IMPLEMENT_MESSAGE_END()
+   const dtUtil::RefString MotionModelChangedMessage::PARAM_NAME_NEW_MOTION_MODEL_TYPE("NewMotionModelType");
+
+   MotionModelChangedMessage::MotionModelChangedMessage()
+   {      
+      mNewMotionModelParam = new dtGame::EnumMessageParameter(PARAM_NAME_NEW_MOTION_MODEL_TYPE, dtExample::MotionModelType::NONE.GetName());
+      AddParameter(mNewMotionModelParam);
+   }
+
+   const dtExample::MotionModelType& MotionModelChangedMessage::GetNewMotionModelType() const 
+   {
+      return *dtExample::MotionModelType::GetValueForName(mNewMotionModelParam->GetValue());
+   }
+
+   void MotionModelChangedMessage::SetNewMotionModelType(const dtExample::MotionModelType& motionModelType)
+   {
+      mNewMotionModelParam->SetValue(motionModelType.GetName());
+   }
 
 
 

@@ -32,10 +32,13 @@
 // INCLUDE DIRECTIVES
 ////////////////////////////////////////////////////////////////////////////////
 #include "export.h"
+#include "testappconstants.h"
 #include "testappgamestates.h"
 #include <dtGame/baseinputcomponent.h>
 #include <dtCore/motionmodel.h>
 #include <dtCore/refptr.h>
+#include <dtCore/transformable.h>
+#include <dtGame/defaultgroundclamper.h>
 
 
 
@@ -49,6 +52,10 @@ namespace dtExample
       public:
          typedef dtGame::BaseInputComponent BaseClass;
 
+         static const dtUtil::RefString DEFAULT_NAME;
+         static const dtUtil::RefString DEFAULT_ATTACH_ACTOR_NAME;
+         static const dtUtil::RefString DEFAULT_PLAYER_START_NAME;
+
          // Constructor
          InputComponent();
 
@@ -61,12 +68,18 @@ namespace dtExample
 
          virtual void OnAddedToGM();
 
+         void Update(float simTimeDelta, float realTimeDelta);
+
       protected:
 
          /// Destructor
          virtual ~InputComponent();
 
+         dtCore::Transformable* GetActorByName(const std::string& name);
+
          void SetCameraToPlayerStart();
+
+         bool SetCameraPivotToActor(const std::string& actorName);
 
          void SendTransitionMessage(const dtExample::Transition& transition);
          
@@ -74,9 +87,11 @@ namespace dtExample
          void SendUIToggleMessage(const std::string& uiName);
          void SendUIVisibilityMessage(const std::string& uiName, bool visible);
 
-         void SendMotionModelChangedMessage(int motionModelType);
+         void SendMotionModelChangedMessage(const dtExample::MotionModelType& motionModelType);
 
-         void SetMotionModel(int motionModelType);
+         void SetMotionModel(const dtExample::MotionModelType& motionModelType);
+
+         void DoGroundClamping();
 
       private:
 
@@ -89,8 +104,17 @@ namespace dtExample
          
          double mSimSpeedFactor;
       
-         int mMotionModelMode;
+         const dtExample::MotionModelType* mMotionModelMode;
          dtCore::RefPtr<dtCore::MotionModel> mMotionModel;
+
+         dtCore::RefPtr<dtCore::Transformable> mCamera;
+         dtCore::RefPtr<dtCore::Transformable> mCameraPivot;
+         dtCore::RefPtr<dtCore::Transformable> mCurrentActor;
+
+         dtCore::RefPtr<dtGame::DefaultGroundClamper> mGroundClamper;
+         
+         std::string mAttachActorName;
+
    };
 
 } // END - namespace dtExample
