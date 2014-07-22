@@ -46,6 +46,7 @@
 #include <dtGame/gamemanager.h>
 #include <dtGame/gameactorproxy.h>
 #include <dtGame/actorupdatemessage.h>
+#include <dtGame/basegroundclamper.h>
 #include <dtGame/basemessages.h>
 #include <dtGame/gamestatemessages.h>
 #include <dtGame/messagefactory.h>
@@ -63,6 +64,9 @@ namespace dtExample
    const dtUtil::RefString InputComponent::DEFAULT_NAME("InputComponent");
    const dtUtil::RefString InputComponent::DEFAULT_ATTACH_ACTOR_NAME("Gina");
    const dtUtil::RefString InputComponent::DEFAULT_PLAYER_START_NAME("PlayerStart");
+   const dtUtil::RefString InputComponent::DEFAULT_TERRAIN_NAME("Terrain");
+
+   static const float CAMERA_HEIGHT = 2.0f;
 
 
 
@@ -71,11 +75,14 @@ namespace dtExample
    ////////////////////////////////////////////////////////////////////////
    InputComponent::InputComponent()
       : BaseClass(DEFAULT_NAME)
+      , mClampCameraEnabled(false)
       , mSimSpeedFactor(1.0)
       , mMotionModelMode(&dtExample::MotionModelType::NONE)
       , mMotionModel(NULL)
       , mCamera(NULL)
       , mCameraPivot(NULL)
+      , mCurrentActor(NULL)
+      , mCameraXformProxy(NULL)
       , mGroundClamper(NULL)
       , mAttachActorName(DEFAULT_ATTACH_ACTOR_NAME)
    {}
@@ -195,30 +202,6 @@ namespace dtExample
          }
          break;
 
-         case 'i':
-         {
-            SendPlayerUpdateMsg("Velocity", 10.0f);
-         }
-         break;
-
-         case 'k':
-         {
-            SendPlayerUpdateMsg("Velocity", -10.0f);
-         }
-         break;
-
-         case 'j':
-         {
-            SendPlayerUpdateMsg("Turn Rate", 0.25f);
-         }
-         break;
-
-         case 'l':
-         {
-            SendPlayerUpdateMsg("Turn Rate", -0.25f);
-         }
-         break;
-
          default:
          {
             handled = false;
@@ -239,29 +222,17 @@ namespace dtExample
    {
       bool handled = true;
 
-
-         switch (key)
-         {
-         case 'i':
-         case 'k':
-         {
-            SendPlayerUpdateMsg("Velocity", 0.0f);
-         }
-         break;
-
-         case 'j':
-         case 'l':
-         {
-            SendPlayerUpdateMsg("Turn Rate", 0.0f);
-         }
-         break;
-
-         default:
-         {
-            handled = false;
-         }
-         break;
+      /*switch (key)
+      {
+      default:
+      {
+         handled = false;
       }
+      break;
+      }*/
+
+      // TODO: Replace this line if handing key released.
+      handled = false;
 
       return handled ? handled : dtGame::BaseInputComponent::HandleKeyReleased(keyboard, key);
    }
@@ -277,10 +248,15 @@ namespace dtExample
             = static_cast<const dtGame::TickMessage*>(&message);
 
          Update(tickMessage->GetDeltaSimTime(), tickMessage->GetDeltaRealTime());
+         
+         DoGroundClamping(tickMessage->GetSimulationTime());
       }
       else if (type == dtGame::MessageType::INFO_MAP_LOADED)
       {
          SetCameraToPlayerStart();
+
+         // Set a motion model default.
+         SetMotionModel(MotionModelType::FLY);
       }
    }
 
@@ -288,52 +264,44 @@ namespace dtExample
    void InputComponent::OnAddedToGM()
    {
       BaseClass::OnAddedToGM();
-
-      mCamera = GetGameManager()->GetApplication().GetCamera();
-      mCameraPivot = new dtCore::Transformable;
-
-      // Set a motion model default.
-      SetMotionModel(MotionModelType::FLY);
    }
 
    ////////////////////////////////////////////////////////////////////////
    void InputComponent::Update(float simTimeDelta, float realTimeDelta)
    {
-      DoGroundClamping();
+      // TODO:
    }
 
    ////////////////////////////////////////////////////////////////////////
-   void InputComponent::SendPlayerUpdateMsg(const std::string& paramName, const float value)
+   dtCore::TransformableActorProxy* InputComponent::GetProxyByName(const std::string& name)
    {
-   //   dtCore::RefPtr<dtGame::Message> msg = GetGameManager()->GetMessageFactory().CreateMessage(dtGame::MessageType::INFO_ACTOR_UPDATED);
-   //   dtGame::ActorUpdateMessage& aum = static_cast<dtGame::ActorUpdateMessage&>(*msg);
-   //   aum.SetAboutActorId(mPlayer->GetId());
-   //   dtGame::MessageParameter* mp = aum.AddUpdateParameter(paramName, dtCore::DataType::FLOAT);
-   //   static_cast<dtGame::FloatMessageParameter*>(mp)->SetValue(value);
-   //   GetGameManager()->SendMessage(aum);
+      dtCore::TransformableActorProxy* proxy = NULL;
+
+      dtGame::GameManager* gm = GetGameManager();
+      gm->FindActorByName(name, proxy);
+
+      if (proxy == NULL)
+      {
+         LOG_ERROR("Could not find proxy for actor \"" + name + "\".");
+      }
+
+      return proxy;
    }
 
    ////////////////////////////////////////////////////////////////////////
    dtCore::Transformable* InputComponent::GetActorByName(const std::string& name)
    {
       dtCore::Transformable* actor = NULL;
-      dtCore::TransformableActorProxy* proxy = NULL;
-
-      dtGame::GameManager* gm = GetGameManager();
-      gm->FindActorByName(name, proxy);
+      dtCore::TransformableActorProxy* proxy = GetProxyByName(name);
 
       if (proxy != NULL)
       {
          proxy->GetActor(actor);
-
-         if (actor == NULL)
-         {
-            LOG_ERROR("Could not access actor \"" + name + "\".");
-         }
       }
-      else
+
+      if (actor == NULL)
       {
-         LOG_ERROR("Could not find proxy for actor \"" + name + "\".");
+         LOG_ERROR("Could not access actor \"" + name + "\".");
       }
 
       return actor;
@@ -352,7 +320,7 @@ namespace dtExample
             return true;
          }
 
-         mCurrentActor->RemoveChild(mCameraPivot.get());
+         mCurrentActor->RemoveChild(mCameraPivot);
       }
 
       mCurrentActor = GetActorByName(actorName);
@@ -379,7 +347,6 @@ namespace dtExample
       mCameraPivot->SetTransform(xform, dtCore::Transformable::REL_CS);
       
       dtCore::Transform camXform;
-      mCameraPivot->AddChild(mCamera);
       mCamera->SetTransform(originalXform);
       offset.set(0.0f, -5.0f, 0.0f);
       camXform.SetTranslation(offset);
@@ -392,14 +359,19 @@ namespace dtExample
    void InputComponent::SetCameraToPlayerStart()
    {
       const std::string ACTOR_NAME(DEFAULT_PLAYER_START_NAME);
-      dtCore::Transformable* actor = GetActorByName(ACTOR_NAME);
+      mCameraXformProxy = GetProxyByName(ACTOR_NAME);
 
-      if (actor != NULL)
+      mCamera = GetGameManager()->GetApplication().GetCamera();
+      mCameraPivot = new dtCore::Transformable;
+
+      if (mCameraXformProxy.valid())
       {
-         dtCore::Transform xform;
-         actor->GetTransform(xform);
+         dtCore::Transformable* actor = NULL;
+         mCameraXformProxy->GetActor(actor);
+         mCameraPivot = actor;
+         mCameraPivot->Emancipate();
 
-         mCamera->SetTransform(xform);
+         mCameraPivot->AddChild(mCamera);
       }
       else
       {
@@ -540,53 +512,75 @@ namespace dtExample
       if (attachToCharacter)
       {
          SetCameraPivotToActor(mAttachActorName);
-         
-         mMotionModel->SetTarget(mCameraPivot.get());
       }
       else
       {
-         mCurrentActor = NULL;
+         if (mCurrentActor.valid())
+         {
+            mCurrentActor->RemoveChild(mCameraPivot);
+            mCurrentActor = NULL;
+         }
 
-         mCameraPivot->RemoveChild(mCamera.get());
+         osg::Vec3 hpr = xform.GetRotation();
+         hpr.y() = 0.0f;
+         hpr.z() = 0.0f;
+         xform.SetRotation(hpr);
 
          // The camera may have been detached so set
          // the previous transform so that it does not
          // warp to a place that does not make sense.
-         mCamera->SetTransform(xform);
-
-         mMotionModel->SetTarget(mCamera.get());
+         osg::Vec3 offset(0.0f, 0.0f, CAMERA_HEIGHT);
+         osg::Vec3 camPos(xform.GetTranslation());
+         // --- Move the attach point under the current camera position.
+         xform.SetTranslation(camPos - offset);
+         mCameraPivot->SetTransform(xform);
+         // --- Restore the position and ensure the camera is at
+         //     the absolute position at which it left the previous
+         //     motion model.
+         dtCore::Transform camXform;
+         camXform.SetTranslation(offset);
+         mCamera->SetTransform(camXform, dtCore::Transformable::REL_CS);
       }
+      
+      mMotionModel->SetTarget(mCameraPivot.get());
+
+      mClampCameraEnabled = ! attachToCharacter;
 
       SendMotionModelChangedMessage(motionModelType);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void InputComponent::DoGroundClamping()
+   void InputComponent::DoGroundClamping(float simTime)
    {
-      /*if ( ! mGroundClamper.valid())
+      // Ground clamp dynamically created actors
+      dtCore::Transformable* terrain = GetActorByName(DEFAULT_TERRAIN_NAME.Get());
+      if ( ! mClampCameraEnabled
+         || ! mCameraXformProxy.valid() || terrain == NULL)
       {
-         mGroundClamper = new dtGame::DefaultGroundClamper;
+         // Cannot clamp to nothing.
+         return;
       }
 
-      // Ground clamp dynamically created actors
-      mGroundClamper->SetTerrainActor(GetTerrain());
+      if ( ! mGroundClamper.valid())
+      {
+         mGroundClamper = new dtGame::DefaultGroundClamper;
+         mGroundClamper->SetTerrainActor(terrain);
+      }
 
       dtGame::GroundClampingData gcData;
       gcData.SetAdjustRotationToGround(false);
       gcData.SetUseModelDimensions(false);
-      gcData.SetGroundClampType(dtGame::GroundClampTypeEnum::KEEP_ABOVE_GROUND);
+      gcData.SetGroundClampType(dtGame::GroundClampTypeEnum::KEEP_ABOVE);
 
       dtCore::Transform transform;
-      mCamera->GetTransform(transform, dtCore::Transformable::REL_CS);
-
-      dtGame::GameActorProxy& actor = mActorList[actorIndex]->GetGameActorProxy();
+      mCameraPivot->GetTransform(transform, dtCore::Transformable::ABS_CS);
 
       // Add this actor to the ground clamp batch
       mGroundClamper->ClampToGround(dtGame::BaseGroundClamper::GroundClampRangeType::RANGED,
-         0.0, transform, actor, gcData, true);
+         simTime, transform, *mCameraXformProxy, gcData, true);
 
       // Run the batch ground clamp
-      mGroundClamper->FinishUp();*/
+      mGroundClamper->FinishUp();
    }
 
 } // END - namespace dtExample

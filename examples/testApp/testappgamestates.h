@@ -58,8 +58,8 @@ namespace dtExample
          static TestAppGameState STATE_GAME_QUIT;
          static TestAppGameState STATE_TITLE;
 
-         TestAppGameState(const std::string& name)
-            : BaseClass(name,false)
+         TestAppGameState(const std::string& name, bool paused = false)
+            : BaseClass(name,paused)
          {}
 
       protected:

@@ -8,6 +8,7 @@ uniform vec4 Altitudes;
 uniform vec4 TextureScales;
 uniform vec4 WaterColor;
 uniform float AltitudeScale;
+uniform float DetailScale;
 uniform float WaterSurfaceOffset;
 uniform float WaterFadeDepth;
 
@@ -25,6 +26,7 @@ float saturate(float inValue)
 
 void main(void)
 {  
+   vec3 detailColor = texture2D(SandTexture, gl_TexCoord[0].st * DetailScale).rgb;
    vec3 sandColor = texture2D(SandTexture, gl_TexCoord[0].st * TextureScales.x).rgb;
    vec3 grassColor = texture2D(GrassTexture, gl_TexCoord[0].st * TextureScales.y).rgb;
    vec3 rockColor = texture2D(RockTexture, gl_TexCoord[0].st * TextureScales.z).rgb;
@@ -59,6 +61,11 @@ void main(void)
    baseColor = mix(baseColor, grassColor, grassRatio);
    baseColor = mix(baseColor, rockColor, rockRatio);
    baseColor = mix(baseColor, snowColor, snowRatio);
+   
+   // Modulate the texture with finer light/dark details.
+   float avgerage = (detailColor.r + detailColor.g + detailColor.b)/3.0;
+   baseColor.rgb += (avgerage - vec3(0.5, 0.5, 0.5));
+   baseColor.rgb = clamp(baseColor, vec3(0,0,0), vec3(1,1,1));
 
    // normalize all of our incoming vectors
    vec3 lightDir = normalize(vLightDir);

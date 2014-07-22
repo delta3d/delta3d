@@ -58,6 +58,7 @@ namespace dtExample
    const dtUtil::RefString GuiComponent::BUTTON_TYPE("WindowsLook/Button");
    const dtUtil::RefString GuiComponent::BUTTON_PROPERTY_ACTION("Action");
    const dtUtil::RefString GuiComponent::BUTTON_PROPERTY_TYPE("ButtonType");
+   const dtUtil::RefString GuiComponent::UI_BACKGROUND("GlobalOverlay_Background");
    const dtUtil::RefString GuiComponent::UI_TEXT_MOTION_MODEL("GlobalOverlay_MotionModelType");
    const dtUtil::RefString GuiComponent::UI_TEXT_STATUS("GlobalOverlay_Status");
 
@@ -162,8 +163,10 @@ namespace dtExample
          mCurrentScreen->OnEnter();
       }
 
-      std::string statusText(GetGameManager()->IsPaused()?"Paused":"");
+      bool paused = gameState.IsPausedState();//GetGameManager()->IsPaused();
+      std::string statusText(paused?"Paused":"");
       mGlobalOverlay->SetText(UI_TEXT_STATUS.Get(), statusText);
+      mGlobalOverlay->SetVisible(UI_BACKGROUND.Get(), paused);
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -210,6 +213,13 @@ namespace dtExample
 
          CEGUI::System::getSingleton().getDefaultFont()->setProperty("PointSize", "14");
 
+         // Create screens/overlays that are not tied to specific states.
+         mGlobalOverlay = new GuiScreen(*mGUIScene, "Global Overlay", guiDir + "globaloverlay.layout");
+         mGlobalOverlay->Setup();
+
+         mHelpOverlay = new GuiScreen(*mGUIScene, dtExample::UINames::UI_HELP, guiDir + "help.layout");
+         mHelpOverlay->Setup();
+
          // Create screen objects associated with specific game states.
          dtCore::RefPtr<GuiScreen> screen = new GuiScreen(*mGUIScene, "Title Screen", guiDir + "titlescreen.layout");
          screen->Setup();
@@ -230,13 +240,6 @@ namespace dtExample
          screen = new GuiScreen(*mGUIScene, "Game Quit", guiDir + "gamequitscreen.layout");
          screen->Setup();
          RegisterScreenWithState(*screen, TestAppGameState::STATE_GAME_QUIT);
-
-         // Create screens/overlays that are not tied to specific states.
-         mHelpOverlay = new GuiScreen(*mGUIScene, dtExample::UINames::UI_HELP, guiDir + "help.layout");
-         mHelpOverlay->Setup();
-
-         mGlobalOverlay = new GuiScreen(*mGUIScene, "Global Overlay", guiDir + "globaloverlay.layout");
-         mGlobalOverlay->Setup();
 
          // Hide all screens by default.
          GuiScreen * curScreen = NULL;
@@ -405,8 +408,11 @@ namespace dtExample
       // Attempt to access the button's action property.
       try
       {
+         // NOTE: "Action" and "ButtonType" properties are not inherent to CEGUI
+         // and were added as custom properties to the testapp.looknfeel file
          CEGUI::String actionValue = button.getProperty(GuiComponent::BUTTON_PROPERTY_ACTION.Get());
          CEGUI::String buttonTypeValue = button.getProperty(GuiComponent::BUTTON_PROPERTY_TYPE.Get());
+
          action = std::string(actionValue.c_str());
          buttonType = std::string(buttonTypeValue.c_str());
       }
