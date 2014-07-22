@@ -38,6 +38,7 @@
 #include <dtCore/motionmodel.h>
 #include <dtCore/refptr.h>
 #include <dtCore/transformable.h>
+#include <dtCore/transformableactorproxy.h>
 #include <dtGame/defaultgroundclamper.h>
 
 
@@ -55,6 +56,7 @@ namespace dtExample
          static const dtUtil::RefString DEFAULT_NAME;
          static const dtUtil::RefString DEFAULT_ATTACH_ACTOR_NAME;
          static const dtUtil::RefString DEFAULT_PLAYER_START_NAME;
+         static const dtUtil::RefString DEFAULT_TERRAIN_NAME;
 
          // Constructor
          InputComponent();
@@ -75,6 +77,7 @@ namespace dtExample
          /// Destructor
          virtual ~InputComponent();
 
+         dtCore::TransformableActorProxy* GetProxyByName(const std::string& name);
          dtCore::Transformable* GetActorByName(const std::string& name);
 
          void SetCameraToPlayerStart();
@@ -91,17 +94,11 @@ namespace dtExample
 
          void SetMotionModel(const dtExample::MotionModelType& motionModelType);
 
-         void DoGroundClamping();
+         void DoGroundClamping(float simTime);
 
       private:
 
-         /**
-          * Helper method that creates and sends an ActorUpdateMessage about the player
-          * @param paramName The name of the update parameter
-          * @param value The value of the update parameter
-          */
-         void SendPlayerUpdateMsg(const std::string& paramName, const float value);
-         
+         bool mClampCameraEnabled;
          double mSimSpeedFactor;
       
          const dtExample::MotionModelType* mMotionModelMode;
@@ -110,6 +107,11 @@ namespace dtExample
          dtCore::RefPtr<dtCore::Transformable> mCamera;
          dtCore::RefPtr<dtCore::Transformable> mCameraPivot;
          dtCore::RefPtr<dtCore::Transformable> mCurrentActor;
+
+         // A reference to an actor proxy is need for ground clamping.
+         // Use a transformable actor to hold the camera since clamping
+         // on the camera object will not work on it directly.
+         dtCore::RefPtr<dtCore::TransformableActorProxy> mCameraXformProxy;
 
          dtCore::RefPtr<dtGame::DefaultGroundClamper> mGroundClamper;
          

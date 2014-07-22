@@ -85,6 +85,9 @@
       <parameter name="AltitudeScale">
         <float defaultValue="1" />
       </parameter>
+      <parameter name="DetailScale">
+        <float defaultValue="1000" />
+      </parameter>
       <parameter name="WaterSufaceOffset">
         <float defaultValue="25" />
       </parameter>

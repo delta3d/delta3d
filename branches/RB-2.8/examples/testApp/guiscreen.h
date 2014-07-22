@@ -125,6 +125,9 @@ namespace dtExample
 
          virtual bool SetText(const std::string& controlName, const std::string& text);
 
+         virtual bool SetVisible(const std::string& controlName, bool visible);
+         virtual bool IsVisible(const std::string& controlName) const;
+
       protected:
          virtual ~GuiScreen();
 

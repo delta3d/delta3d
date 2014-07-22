@@ -263,5 +263,32 @@ namespace dtExample
 
       return textControl != NULL;
    }
+   
+   //////////////////////////////////////////////////////////////////////////
+   bool GuiScreen::SetVisible(const std::string& controlName, bool visible)
+   {
+      GuiNode* control = GetNode(controlName);
+
+      if (control != NULL)
+      {
+         control->setVisible(visible);
+      }
+
+      return control != NULL;
+   }
+   
+   //////////////////////////////////////////////////////////////////////////
+   bool GuiScreen::IsVisible(const std::string& controlName) const
+   {
+      bool visible = false;
+      GuiNode* control = GetNode(controlName);
+
+      if (control != NULL)
+      {
+         visible = control->isVisible();
+      }
+
+      return visible;
+   }
 
 }

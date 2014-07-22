@@ -31,9 +31,9 @@ namespace dtExample
    // GAME STATE TYPE CODE
    //////////////////////////////////////////////////////////////////////////
    TestAppGameState TestAppGameState::STATE_GAME("STATE_GAME");
-   TestAppGameState TestAppGameState::STATE_GAME_OPTIONS("STATE_GAME_OPTIONS");
-   TestAppGameState TestAppGameState::STATE_GAME_QUIT("STATE_GAME_QUIT");
-   TestAppGameState TestAppGameState::STATE_TITLE("STATE_TITLE");
+   TestAppGameState TestAppGameState::STATE_GAME_OPTIONS("STATE_GAME_OPTIONS", true);
+   TestAppGameState TestAppGameState::STATE_GAME_QUIT("STATE_GAME_QUIT", true);
+   TestAppGameState TestAppGameState::STATE_TITLE("STATE_TITLE", true);
 
 
 
