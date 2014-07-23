@@ -77,12 +77,12 @@ namespace dtExample
          /// Destructor
          virtual ~InputComponent();
 
-         dtCore::TransformableActorProxy* GetProxyByName(const std::string& name);
-         dtCore::Transformable* GetActorByName(const std::string& name);
+         dtCore::TransformableActorProxy* GetActorByName(const std::string& name);
+         dtCore::Transformable* GetDrawableByName(const std::string& name);
 
          void SetCameraToPlayerStart();
 
-         bool SetCameraPivotToActor(const std::string& actorName);
+         bool SetCameraPivot(const std::string& actorName);
 
          void SendTransitionMessage(const dtExample::Transition& transition);
          
@@ -106,12 +106,12 @@ namespace dtExample
 
          dtCore::RefPtr<dtCore::Transformable> mCamera;
          dtCore::RefPtr<dtCore::Transformable> mCameraPivot;
-         dtCore::RefPtr<dtCore::Transformable> mCurrentActor;
+         dtCore::RefPtr<dtCore::Transformable> mGroundClampedXformable;
 
-         // A reference to an actor proxy is need for ground clamping.
+         // A reference to an actor is need for ground clamping.
          // Use a transformable actor to hold the camera since clamping
          // on the camera object will not work on it directly.
-         dtCore::RefPtr<dtCore::TransformableActorProxy> mCameraXformProxy;
+         dtCore::RefPtr<dtCore::TransformableActorProxy> mGroundClampedObject;
 
          dtCore::RefPtr<dtGame::DefaultGroundClamper> mGroundClamper;
          
