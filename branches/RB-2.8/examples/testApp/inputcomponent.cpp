@@ -1,5 +1,5 @@
 /* -*-c++-*-
- * testAPP - Using 'The MIT License'
+ * testApp - Using 'The MIT License'
  * Copyright (C) 2014, Caper Holdings LLC
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -81,8 +81,8 @@ namespace dtExample
       , mMotionModel(NULL)
       , mCamera(NULL)
       , mCameraPivot(NULL)
-      , mCurrentActor(NULL)
-      , mCameraXformProxy(NULL)
+      , mGroundClampedXformable(NULL)
+      , mGroundClampedObject(NULL)
       , mGroundClamper(NULL)
       , mAttachActorName(DEFAULT_ATTACH_ACTOR_NAME)
    {}
@@ -273,74 +273,74 @@ namespace dtExample
    }
 
    ////////////////////////////////////////////////////////////////////////
-   dtCore::TransformableActorProxy* InputComponent::GetProxyByName(const std::string& name)
+   dtCore::TransformableActorProxy* InputComponent::GetActorByName(const std::string& name)
    {
-      dtCore::TransformableActorProxy* proxy = NULL;
+      dtCore::TransformableActorProxy* actor = NULL;
 
       dtGame::GameManager* gm = GetGameManager();
-      gm->FindActorByName(name, proxy);
-
-      if (proxy == NULL)
-      {
-         LOG_ERROR("Could not find proxy for actor \"" + name + "\".");
-      }
-
-      return proxy;
-   }
-
-   ////////////////////////////////////////////////////////////////////////
-   dtCore::Transformable* InputComponent::GetActorByName(const std::string& name)
-   {
-      dtCore::Transformable* actor = NULL;
-      dtCore::TransformableActorProxy* proxy = GetProxyByName(name);
-
-      if (proxy != NULL)
-      {
-         proxy->GetActor(actor);
-      }
+      gm->FindActorByName(name, actor);
 
       if (actor == NULL)
       {
-         LOG_ERROR("Could not access actor \"" + name + "\".");
+         LOG_ERROR("Could not find actor \"" + name + "\".");
       }
 
       return actor;
    }
 
    ////////////////////////////////////////////////////////////////////////
-   bool InputComponent::SetCameraPivotToActor(const std::string& actorName)
+   dtCore::Transformable* InputComponent::GetDrawableByName(const std::string& name)
+   {
+      dtCore::Transformable* xformable = NULL;
+      dtCore::TransformableActorProxy* actor = GetActorByName(name);
+
+      if (actor != NULL)
+      {
+         actor->GetDrawable(xformable);
+      }
+
+      if (xformable == NULL)
+      {
+         LOG_ERROR("Could not find  \"" + name + "\".");
+      }
+
+      return xformable;
+   }
+
+   ////////////////////////////////////////////////////////////////////////
+   bool InputComponent::SetCameraPivot(const std::string& actorName)
    {
       // Detach from the current actor.
-      if (mCurrentActor.valid())
+      if (mGroundClampedXformable.valid())
       {
          // If this is the same actor, exit early.
-         if (mCurrentActor->GetName() == actorName)
+         if (mGroundClampedXformable->GetName() == actorName)
          {
             // Return true because the camera pivot should be attached.
             return true;
          }
 
-         mCurrentActor->RemoveChild(mCameraPivot);
+         mGroundClampedXformable->RemoveChild(mCameraPivot);
       }
 
-      mCurrentActor = GetActorByName(actorName);
+      mGroundClampedXformable = GetDrawableByName(actorName);
 
-      if ( ! mCurrentActor.valid())
+      if ( ! mGroundClampedXformable.valid())
       {
          return false;
       }
 
       dtCore::Transform originalXform;
-      mCurrentActor->GetTransform(originalXform);
+      mGroundClampedXformable->GetTransform(originalXform);
 
       // Temporarily set the character to the origin
       // just to be sure things are attached to their
       // proper locations.
       osg::Vec3 offset;
-      osg::Vec3 originalPos = originalXform.GetTranslation();
+      //osg::Vec3 originalPos = originalXform.GetTranslation();
 
       dtCore::Transform xform;
-      mCurrentActor->AddChild(mCameraPivot);
+      mGroundClampedXformable->AddChild(mCameraPivot);
       mCameraPivot->SetTransform(originalXform);
       offset.set(0.0f, 0.0f, 1.25f);
       xform.SetTranslation(offset);
@@ -359,16 +359,16 @@ namespace dtExample
    void InputComponent::SetCameraToPlayerStart()
    {
       const std::string ACTOR_NAME(DEFAULT_PLAYER_START_NAME);
-      mCameraXformProxy = GetProxyByName(ACTOR_NAME);
+      mGroundClampedObject = GetActorByName(ACTOR_NAME);
 
       mCamera = GetGameManager()->GetApplication().GetCamera();
       mCameraPivot = new dtCore::Transformable;
 
-      if (mCameraXformProxy.valid())
+      if (mGroundClampedObject.valid())
       {
-         dtCore::Transformable* actor = NULL;
-         mCameraXformProxy->GetActor(actor);
-         mCameraPivot = actor;
+         dtCore::Transformable* xformable = NULL;
+         mGroundClampedObject->GetDrawable(xformable);
+         mCameraPivot = xformable ;
          mCameraPivot->Emancipate();
 
          mCameraPivot->AddChild(mCamera);
@@ -511,14 +511,14 @@ namespace dtExample
 
       if (attachToCharacter)
       {
-         SetCameraPivotToActor(mAttachActorName);
+         SetCameraPivot(mAttachActorName);
       }
       else
       {
-         if (mCurrentActor.valid())
+         if (mGroundClampedXformable.valid())
          {
-            mCurrentActor->RemoveChild(mCameraPivot);
-            mCurrentActor = NULL;
+            mGroundClampedXformable->RemoveChild(mCameraPivot);
+            mGroundClampedXformable = NULL;
          }
 
          osg::Vec3 hpr = xform.GetRotation();
@@ -553,9 +553,9 @@ namespace dtExample
    void InputComponent::DoGroundClamping(float simTime)
    {
       // Ground clamp dynamically created actors
-      dtCore::Transformable* terrain = GetActorByName(DEFAULT_TERRAIN_NAME.Get());
+      dtCore::Transformable* terrain = GetDrawableByName(DEFAULT_TERRAIN_NAME.Get());
       if ( ! mClampCameraEnabled
-         || ! mCameraXformProxy.valid() || terrain == NULL)
+         || ! mGroundClampedObject.valid() || terrain == NULL)
       {
          // Cannot clamp to nothing.
          return;
@@ -577,7 +577,7 @@ namespace dtExample
 
       // Add this actor to the ground clamp batch
       mGroundClamper->ClampToGround(dtGame::BaseGroundClamper::GroundClampRangeType::RANGED,
-         simTime, transform, *mCameraXformProxy, gcData, true);
+         simTime, transform, *mGroundClampedObject, gcData, true);
 
       // Run the batch ground clamp
       mGroundClamper->FinishUp();
