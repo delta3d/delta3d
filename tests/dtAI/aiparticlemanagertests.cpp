@@ -80,7 +80,7 @@ namespace dtTest
       static float prob = 0.5f;
 
       BaseNPC* pNewNPC = new BaseNPC("ClonedNPC");
-      pNewNPC->LoadNPCScript(dtUtil::GetDeltaRootPath() + "/tests/dtAI/npcscript_test.txt");
+      CPPUNIT_ASSERT(pNewNPC->LoadNPCScript("./data/npcscript_test.txt"));
       pNewNPC->SetWSTemplate(pNPC.second->GetWSTemplate());
       pNewNPC->InitNPC();
       pNewNPC->SpawnNPC();
@@ -99,7 +99,8 @@ namespace dtTest
    void AIParticleManagerTests::TestAIParticleManager()
    {      
       BaseNPC* pTestNPC = new BaseNPC("TestNPC");
-      pTestNPC->LoadNPCScript(dtUtil::GetDeltaRootPath() + "/tests/dtAI/npcscript_test.txt");
+      CPPUNIT_ASSERT(!pTestNPC->LoadNPCScript("gook.txt"));
+      CPPUNIT_ASSERT(pTestNPC->LoadNPCScript("./data/npcscript_test.txt"));
       pTestNPC->InitNPC();
       pTestNPC->SpawnNPC();
 
