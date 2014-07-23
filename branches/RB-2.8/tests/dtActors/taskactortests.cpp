@@ -210,7 +210,7 @@ int TaskActorTests::GetEventCount(const dtCore::GameEvent& gameEvent)
 bool TaskActorTests::SetNotifyEventsOnTask(dtActors::TaskActorProxy& taskProxy)
 {
    dtActors::TaskActor* task = NULL;
-   taskProxy.GetActor(task);
+   taskProxy.GetDrawable(task);
 
    task->SetNotifyCompletedEvent(mNotifyCompletedEvent.get());
    task->SetNotifyFailedEvent(mNotifyFailedEvent.get());
@@ -232,7 +232,7 @@ void TaskActorTests::TestTaskActorDefaultValues()
       mGameManager->CreateActor(*taskActorType, proxy);
       CPPUNIT_ASSERT_MESSAGE("Could not create task actor proxy.",proxy.valid());
       dtActors::TaskActor* task = NULL;
-      proxy->GetActor(task);
+      proxy->GetDrawable(task);
 
       // Make sure the correct properties exist on the proxy.
       CPPUNIT_ASSERT_MESSAGE("Task actor should have a description property.",
@@ -623,7 +623,7 @@ void TaskActorTests::TestGameEventTaskActor()
 
       // Test failing by a fail event.
       dtActors::TaskActorGameEvent* task = NULL;
-      eventTaskProxy->GetActor(task);
+      eventTaskProxy->GetDrawable(task);
       task->SetCompletedTimeStamp(-1);
       task->SetComplete(false);
       CPPUNIT_ASSERT(!task->IsComplete());
@@ -986,7 +986,7 @@ void TaskActorTests::TestFailedAndComplete()
       mGameManager->CreateActor(*rollupActorType, rollupTaskProxy);
       CPPUNIT_ASSERT_MESSAGE("Could not create rollup task actor proxy.", rollupTaskProxy.valid());
       dtActors::TaskActor* parentActor;
-      rollupTaskProxy->GetActor(parentActor);
+      rollupTaskProxy->GetDrawable(parentActor);
       // add the child
       rollupTaskProxy->AddSubTask(*proxy);
 
@@ -1079,7 +1079,7 @@ void TaskActorTests::TestMutable()
 
       // Fail the parent and child 2 should not be mutable anymore
       dtActors::TaskActorOrdered* orderedTaskActor = NULL;
-      orderedTaskProxy->GetActor(orderedTaskActor);
+      orderedTaskProxy->GetDrawable(orderedTaskActor);
       orderedTaskActor->SetFailed(true);
       CPPUNIT_ASSERT_MESSAGE("2nd child task should NOT be mutable when ordered parent is failed.", !childProxy2->IsCurrentlyMutable());
 
@@ -1190,15 +1190,15 @@ void TaskActorTests::TestNestedMutable()
    CPPUNIT_ASSERT(!eventFour->IsCurrentlyMutable());
 
    dtActors::TaskActor* taskActorOne;
-   subTaskOne->GetActor(taskActorOne);
+   subTaskOne->GetDrawable(taskActorOne);
    CPPUNIT_ASSERT(taskActorOne != NULL);
 
    dtActors::TaskActorGameEvent* eventSubActorOne;
-   eventSubOne->GetActor(eventSubActorOne);
+   eventSubOne->GetDrawable(eventSubActorOne);
    CPPUNIT_ASSERT(eventSubActorOne);
 
    dtActors::TaskActorGameEvent* eventSubActorTwo;
-   eventSubTwo->GetActor(eventSubActorTwo);
+   eventSubTwo->GetDrawable(eventSubActorTwo);
    CPPUNIT_ASSERT(eventSubActorTwo);
 
    eventSubActorOne->SetComplete(true);
@@ -1213,19 +1213,19 @@ void TaskActorTests::TestNestedMutable()
       eventOne->IsCurrentlyMutable());
 
    dtActors::TaskActorGameEvent* eventActorOne;
-   eventOne->GetActor(eventActorOne);
+   eventOne->GetDrawable(eventActorOne);
    CPPUNIT_ASSERT(eventActorOne);
 
    dtActors::TaskActorGameEvent* eventActorTwo;
-   eventTwo->GetActor(eventActorTwo);
+   eventTwo->GetDrawable(eventActorTwo);
    CPPUNIT_ASSERT(eventActorTwo);
 
    dtActors::TaskActorGameEvent* eventActorThree;
-   eventThree->GetActor(eventActorThree);
+   eventThree->GetDrawable(eventActorThree);
    CPPUNIT_ASSERT(eventActorThree);
 
    dtActors::TaskActorGameEvent* eventActorFour;
-   eventFour->GetActor(eventActorFour);
+   eventFour->GetDrawable(eventActorFour);
    CPPUNIT_ASSERT(eventActorFour);
 
    eventActorOne->SetComplete(true);

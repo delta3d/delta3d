@@ -90,7 +90,7 @@ void STAGEObjectMotionModel::AddTarget(dtCore::TransformableActorProxy* target)
       if (targetProxy)
       {
          dtCore::Transformable* target = NULL;
-         targetProxy->GetActor(target);
+         targetProxy->GetDrawable(target);
          ObjectMotionModel::SetTarget(target);
       }
    }
@@ -123,7 +123,7 @@ void STAGEObjectMotionModel::RemoveTarget(dtCore::TransformableActorProxy* targe
       if (targetProxy)
       {
          dtCore::Transformable* target = NULL;
-         targetProxy->GetActor(target);
+         targetProxy->GetDrawable(target);
          ObjectMotionModel::SetTarget(target);
       }
    }
@@ -175,7 +175,7 @@ void STAGEObjectMotionModel::OnRotate(float delta, const osg::Vec3& axis)
       if (targetProxy)
       {
          dtCore::Transformable* target = NULL;
-         targetProxy->GetActor(target);
+         targetProxy->GetDrawable(target);
 
          if (target)
          {

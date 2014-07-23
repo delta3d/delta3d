@@ -69,7 +69,7 @@ void RTSCameraPlugin::onActorsSelected(ActorProxyRefPtrVector& actors)
          if (proxy)
          {
             dtCore::Transformable* actor = NULL;
-            proxy->GetActor(actor);
+            proxy->GetDrawable(actor);
             if (actor)
             {
                dtCore::Transform transform;
