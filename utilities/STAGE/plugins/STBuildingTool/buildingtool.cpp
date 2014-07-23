@@ -85,7 +85,7 @@ void BuildingToolPlugin::onActorProxyCreated(ActorProxyRefPtr proxy, bool forceN
    if (buildingActor)
    {
       dtCore::Transformable* actor;
-      proxy->GetActor(actor);
+      proxy->GetDrawable(actor);
 
       if (actor)
       {
@@ -196,7 +196,7 @@ void BuildingToolPlugin::initialize(dtActors::BuildingActorProxy* activeProxy)
 
    if (mActiveProxy.valid())
    {
-      mActiveProxy->GetActor(mActiveActor);
+      mActiveProxy->GetDrawable(mActiveActor);
 
       //dtCore::Map* map = EditorData::GetInstance().getCurrentMap();
 
@@ -214,7 +214,7 @@ void BuildingToolPlugin::initialize(dtActors::BuildingActorProxy* activeProxy)
       //      if (proxy)
       //      {
       //         dtCore::Transformable* transformable = NULL;
-      //         proxy->GetActor(transformable);
+      //         proxy->GetDrawable(transformable);
 
       //         if (transformable)
       //         {

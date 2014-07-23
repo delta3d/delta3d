@@ -46,6 +46,7 @@
 #include "inputcomponent.h"
 #include "testappgamestates.h"
 
+#include <dtPhysics/physicscomponent.h>
 
 
 using namespace dtExample;
@@ -222,6 +223,22 @@ void TestApp::OnStartup(dtABC::BaseABC& app, dtGame::GameManager& gameManager)
    // Setup GUI Component. This should follow the game state component setup.
    dtCore::RefPtr<GuiComponent> guiComp = new GuiComponent();
    gameManager.AddComponent(*guiComp, dtGame::GameManager::ComponentPriority::NORMAL);
+
+   // Setup Physics
+   dtCore::RefPtr<dtPhysics::PhysicsWorld> world;
+   try
+   {
+      // See if the world exists already.
+      world = &dtPhysics::PhysicsWorld::GetInstance();
+   }
+   catch (const dtUtil::Exception&)
+   {
+      world = new dtPhysics::PhysicsWorld(gameManager.GetConfiguration());
+      world->Init();
+   }
+   dtCore::RefPtr<dtPhysics::PhysicsComponent> physicsComponent = new dtPhysics::PhysicsComponent(dtPhysics::PhysicsWorld::GetInstance(), false);
+   gameManager.AddComponent(*physicsComponent, dtGame::GameManager::ComponentPriority::NORMAL);
+
 
    // Load the map for this application.
    const std::string MAP_NAME("TestApp");
