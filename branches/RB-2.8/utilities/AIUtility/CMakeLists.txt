@@ -39,6 +39,7 @@ SET(PROG_SOURCES
                 waypointbrowsertreeitem.cpp
                 waypointmotionmodel.cpp
                 waypointselection.cpp
+                AIUtility.rc
                 AIUtilityResources.qrc
 )
 
