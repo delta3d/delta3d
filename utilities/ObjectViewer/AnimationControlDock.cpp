@@ -141,7 +141,7 @@ void AnimationControlDock::CreateConnections()
 
    // SPINNERS
    connect(mUI.mAnimSpeed, SIGNAL(editingFinished()), this, SLOT(OnSpeedChanged()));
-   connect(mUI.mAnimFrameBeginOffset, SIGNAL(editingFinished()), this, SLOT(OnBeginOffsetChanged()));
+   connect(mUI.mAnimFrameBeginOffset, SIGNAL(editingFinished()), this, SLOT(OnBeginFrameOffsetChanged()));
    connect(mUI.mAnimLoopLimit, SIGNAL(editingFinished()), this, SLOT(OnLoopLimitChanged()));
 
    // TABLE ITEMS
