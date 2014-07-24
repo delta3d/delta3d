@@ -461,6 +461,11 @@ namespace dtExample
 
       bool attachToCharacter = false;
 
+      // Some motion models do not have ground clamping.
+      // Use a control variable to determine if the new
+      // motion model needs it.
+      bool enableGroundClamper = false;
+
       if (&motionModelType == &MotionModelType::WALK)
       {
          dtCore::RefPtr<dtCore::WalkMotionModel> wmm
@@ -471,10 +476,12 @@ namespace dtExample
       else if (&motionModelType == &MotionModelType::FLY)
       {
          motionModel = new dtCore::FlyMotionModel(keyboard, mouse);
+         enableGroundClamper = true;
       }
       else if (&motionModelType == &MotionModelType::UFO)
       {
          motionModel = new dtCore::UFOMotionModel(keyboard, mouse);
+         enableGroundClamper = true;
       }
       else if (&motionModelType == &MotionModelType::ORBIT)
       {
@@ -497,6 +504,7 @@ namespace dtExample
       else if (&motionModelType == &MotionModelType::RTS)
       {
          motionModel = new dtCore::RTSMotionModel(keyboard, mouse);
+         enableGroundClamper = true;
       }
 
 
@@ -544,7 +552,7 @@ namespace dtExample
       
       mMotionModel->SetTarget(mCameraPivot.get());
 
-      mClampCameraEnabled = ! attachToCharacter;
+      mClampCameraEnabled = enableGroundClamper;
 
       SendMotionModelChangedMessage(motionModelType);
    }
