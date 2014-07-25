@@ -107,24 +107,39 @@ namespace dtPhysics
        */
       Material* NewMaterial(const std::string& name, const MaterialDef& def);
 
+      ///@return a material by name or NULL if it doesn't exist.
+      Material* GetMaterial(const std::string& name);
+      ///@return a material by name or NULL if it doesn't exist.
+      const Material* GetMaterial(const std::string& name) const;
+
       /// Changes the definition of a material.
-      void SetMaterialDef(const std::string& name, MaterialDef& def);
+      void SetMaterialDef(const std::string& name, const MaterialDef& def);
+
+      /// Changes the definition of a material directly.
+      void SetMaterialDef(Material* mat, const MaterialDef& def);
 
       /// retrieves the definition of a material.
-      void GetMaterialDef(const std::string& name, MaterialDef& def);
+      void GetMaterialDef(const std::string& name, MaterialDef& def) const;
 
       /**
-       * Defines the interaction between two materials.
+       * Defines the interaction between two materials by name.
+       * If the names match, this is a no-op.
+       * @param name1 the name of the first material
+       * @param name2 the name of the second material
+       * @param def the definintion of the material.
+       * @param
+       */
+      void SetMaterialInteraction(const std::string& name1, const std::string& name2, const MaterialDef& def);
+      /**
+       * Defines the interaction between two materials by name.
        * @param name The name for the new material.
        * @param def the definintion of the material.
        */
-      void SetMaterialInteraction(const std::string& name1, const std::string& name2, const MaterialDef& def);
-
-      ///@return a material by name or NULL if it doesn't exist.
-      Material* GetMaterial(const std::string& name);
+      void SetMaterialInteraction(Material* mat1, Material* mat2, MaterialDef& def, MaterialInteractionCollisionCallback* callback = NULL);
 
       /**
        * Retrieves the interaction between two materials.  The order of the material names does not matter.
+       * If you have the materials handy, it is much faster to call the version that takes the two pointers.
        * @param name1 The name of the first material
        * @param name2 The name of the second material
        * @param defToFill the material def that will be assigned the values of the interaction.
@@ -132,6 +147,16 @@ namespace dtPhysics
        * @return true if the material interaction exists.
        */
       bool GetMaterialInteraction(const std::string& name1, const std::string& name2, MaterialDef& defToFill);
+
+      /**
+       * Retrieves a material interaction.  This is the preferred function to call.
+       * @param mat1 The first material
+       * @param mat2 The second material
+       * @param defToFill the material def that will be assigned the values of the interaction.
+       *    If the method returns false, the values in the def object are not changed.
+       * @return true if the material interaction exists.
+       */
+      bool GetMaterialInteraction(Material* mat1, Material* mat2, MaterialDef& defToFill);
 
       palMaterials& GetPalMaterials();
    protected:

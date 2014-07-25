@@ -54,9 +54,9 @@ const dtCore::RefPtr<dtCore::SystemComponentType> TestAARInput::TYPE(new dtCore:
 ////////////////////////////////////////////////////////////////////
 TestAARInput::TestAARInput(dtGame::LogController& logCtrl, TestAARHUD& hudComp)
    : dtGame::BaseInputComponent(*TYPE)
-   , mKeyIsPressed(false)
    , mSimSpeedFactor(1.0)
    , mHudGUI(&hudComp)
+   , mPlayer(NULL)
    , mLogController(&logCtrl)
 {
 

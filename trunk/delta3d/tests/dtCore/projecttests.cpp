@@ -159,8 +159,8 @@ void ProjectTests::setUp()
       fileUtils.DirDelete("Testing", true);
       fileUtils.DirDelete("recursiveDir", true);
 
-      fileUtils.FileCopy(DATA_DIR + "/models/terrain_simple.ive", ".", false);
-      fileUtils.FileCopy(DATA_DIR + "/models/flatdirt.ive", ".", false);
+      fileUtils.FileCopy(DATA_DIR + "/StaticMeshes/terrain_simple.ive", ".", false);
+      fileUtils.FileCopy(DATA_DIR + "/StaticMeshes/flatdirt.ive", ".", false);
 
       dtCore::Project::GetInstance().ClearAllContexts();
       dtCore::Project::GetInstance().SetReadOnly(false);
@@ -725,14 +725,14 @@ void ProjectTests::TestResources()
       std::string dirtCategory = "fun:bigmamajama";
 
 
-      dtCore::ResourceDescriptor terrain1RD = p.AddResource("terrain1", DATA_DIR + "/models/exampleTerrain", "terrain",
+      dtCore::ResourceDescriptor terrain1RD = p.AddResource("terrain1", DATA_DIR + "/StaticMeshes/exampleTerrain", "terrain",
             dtCore::DataType::TERRAIN, 0);
 
       //force resources to be indexed.
       p.GetAllResources();
 
 
-      dtCore::ResourceDescriptor terrain2RD = p.AddResource("terrain2", DATA_DIR + "/models/exampleTerrain/terrain.3ds", "",
+      dtCore::ResourceDescriptor terrain2RD = p.AddResource("terrain2", DATA_DIR + "/StaticMeshes/exampleTerrain/terrain.3ds", "",
             dtCore::DataType::TERRAIN, 1);
 
       //printTree(p.GetAllResources());
@@ -773,7 +773,7 @@ void ProjectTests::TestResources()
 
       //Done with the terrains
 
-      dtCore::ResourceDescriptor rd = p.AddResource("flatdirt", std::string(DATA_DIR + "/models/flatdirt.ive"),
+      dtCore::ResourceDescriptor rd = p.AddResource("flatdirt", std::string(DATA_DIR + "/StaticMeshes/flatdirt.ive"),
             dirtCategory, dtCore::DataType::STATIC_MESH, 0);
 
       CPPUNIT_ASSERT_MESSAGE("Descriptor id should not be empty.", !rd.GetResourceIdentifier().empty());

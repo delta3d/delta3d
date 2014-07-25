@@ -486,10 +486,11 @@ namespace dtPhysics
       ChangeEngine();
       dtCore::RefPtr<TestAction> action = new TestAction();
       CPPUNIT_ASSERT(!action->WasCalled());
+      dtPhysics::PhysicsWorld& world = dtPhysics::PhysicsWorld::GetInstance();
 
-      dtPhysics::PhysicsWorld::GetInstance().AddAction(*action);
+      world.AddAction(*action);
 
-      dtPhysics::PhysicsWorld::GetInstance().UpdateStep(1.0f/60.0f);
+      world.UpdateStep(1.0f/60.0f);
 
       CPPUNIT_ASSERT_MESSAGE("The action should have been added to the world, so it should have been called.",
                action->WasCalled());
@@ -499,9 +500,9 @@ namespace dtPhysics
       dtCore::RefPtr<TestAction> action2 = new TestAction();
       CPPUNIT_ASSERT(!action2->WasCalled());
 
-      dtPhysics::PhysicsWorld::GetInstance().AddAction(*action2);
+      world.AddAction(*action2);
 
-      dtPhysics::PhysicsWorld::GetInstance().UpdateStep(1.0f/60.0f);
+      world.UpdateStep(1.0f/60.0f);
       CPPUNIT_ASSERT_MESSAGE("The action is still in the world, so it should have been called.",
                action->WasCalled());
       CPPUNIT_ASSERT_MESSAGE("The action2 should have been added to the world, so it should have been called.",
@@ -511,9 +512,9 @@ namespace dtPhysics
       CPPUNIT_ASSERT(!action->WasCalled());
       CPPUNIT_ASSERT(!action2->WasCalled());
 
-      dtPhysics::PhysicsWorld::GetInstance().RemoveAction(*action);
+      world.RemoveAction(*action);
 
-      dtPhysics::PhysicsWorld::GetInstance().UpdateStep(1.0f/60.0f);
+      world.UpdateStep(1.0f/60.0f);
       CPPUNIT_ASSERT_MESSAGE("The first action has been removed, so it should not have been called.",
                !action->WasCalled());
       CPPUNIT_ASSERT_MESSAGE("The action2 is still in the world, so it should have been called.",
@@ -521,8 +522,8 @@ namespace dtPhysics
 
       action2->ResetCalled();
 
-      dtPhysics::PhysicsWorld::GetInstance().RemoveAction(*action2);
-      dtPhysics::PhysicsWorld::GetInstance().UpdateStep(1.0f/60.0f);
+      world.RemoveAction(*action2);
+      world.UpdateStep(1.0f/60.0f);
 
       CPPUNIT_ASSERT_MESSAGE("The second action has been removed, so it should not have been called.",
                !action->WasCalled());
@@ -590,6 +591,32 @@ namespace dtPhysics
       CPPUNIT_ASSERT_DOUBLES_EQUAL(def.GetKineticFriction(), uniqueMaterial->m_fKinetic, 0.01f);
       CPPUNIT_ASSERT_DOUBLES_EQUAL(def.GetStaticFriction(), uniqueMaterial->m_fStatic, 0.01f);
       CPPUNIT_ASSERT_DOUBLES_EQUAL(def.GetRestitution(), uniqueMaterial->m_fRestitution, 0.01f);
+
+      def.SetKineticFriction(0.001f);
+      Material* test1 = materials.NewMaterial(testMaterialName +"1", def);
+      CPPUNIT_ASSERT_MESSAGE("Recreating the same named material doesn't work.", materials.NewMaterial(testMaterialName +"1", def) == NULL);
+      CPPUNIT_ASSERT(test1 == materials.GetMaterial(testMaterialName +"1"));
+      def.SetStaticFriction(3.77f);
+      Material* test2 = materials.NewMaterial(testMaterialName +"2", def);
+      CPPUNIT_ASSERT(test2 == materials.GetMaterial(testMaterialName +"2"));
+      def.SetRestitution(0.61f);
+      Material* test3 = materials.NewMaterial(testMaterialName +"3", def);
+      CPPUNIT_ASSERT(test3 == materials.GetMaterial(testMaterialName +"3"));
+
+      CPPUNIT_ASSERT_DOUBLES_EQUAL(float(test1->m_fKinetic), float(def.GetKineticFriction()), 0.01f);
+      CPPUNIT_ASSERT_DOUBLES_EQUAL(float(test1->m_fStatic), 4.2f, 0.01f);
+      CPPUNIT_ASSERT_DOUBLES_EQUAL(float(test1->m_fRestitution), 0.43f, 0.01f);
+      CPPUNIT_ASSERT_EQUAL(2U, test1->GetId());
+
+      CPPUNIT_ASSERT_DOUBLES_EQUAL(float(test2->m_fKinetic), float(def.GetKineticFriction()), 0.01f);
+      CPPUNIT_ASSERT_DOUBLES_EQUAL(float(test2->m_fStatic), float(def.GetStaticFriction()), 0.01f);
+      CPPUNIT_ASSERT_DOUBLES_EQUAL(float(test2->m_fRestitution), 0.43f, 0.01f);
+      CPPUNIT_ASSERT_EQUAL(3U, test2->GetId());
+
+      CPPUNIT_ASSERT_DOUBLES_EQUAL(float(test3->m_fKinetic), float(def.GetKineticFriction()), 0.01f);
+      CPPUNIT_ASSERT_DOUBLES_EQUAL(float(test3->m_fStatic), float(def.GetStaticFriction()), 0.01f);
+      CPPUNIT_ASSERT_DOUBLES_EQUAL(float(test3->m_fRestitution), float(def.GetRestitution()), 0.01f);
+      CPPUNIT_ASSERT_EQUAL(4U, test3->GetId());
    }
 
    /////////////////////////////////////////////////////////
@@ -604,12 +631,12 @@ namespace dtPhysics
       def.SetKineticFriction(Real(0.55));
       def.SetStaticFriction(Real(0.34));
       def.SetRestitution(Real(0.97));
-      materials.NewMaterial(cheeseMaterialName, def);
+      dtPhysics::Material* mat1 = materials.NewMaterial(cheeseMaterialName, def);
 
       def.SetKineticFriction(Real(0.8));
       def.SetStaticFriction(Real(0.9));
       def.SetRestitution(Real(0.78));
-      materials.NewMaterial(steelMaterialName, def);
+      dtPhysics::Material* mat2 = materials.NewMaterial(steelMaterialName, def);
 
       def.SetKineticFriction(Real(0.3));
       def.SetStaticFriction(Real(0.2));
@@ -627,5 +654,30 @@ namespace dtPhysics
       CPPUNIT_ASSERT_DOUBLES_EQUAL(def.GetKineticFriction(), actualDef.GetKineticFriction(), 0.01);
       CPPUNIT_ASSERT_DOUBLES_EQUAL(def.GetStaticFriction(), actualDef.GetStaticFriction(), 0.01);
       CPPUNIT_ASSERT_DOUBLES_EQUAL(def.GetRestitution(), actualDef.GetRestitution(), 0.01);
+
+
+      def.SetKineticFriction(Real(0.7));
+      def.SetStaticFriction(Real(0.4));
+      def.SetRestitution(Real(0.92));
+
+      materials.SetMaterialInteraction(mat1, mat1, def);
+      materials.GetMaterialInteraction(cheeseMaterialName, cheeseMaterialName, actualDef);
+      CPPUNIT_ASSERT_DOUBLES_EQUAL(def.GetKineticFriction(), actualDef.GetKineticFriction(), 0.01);
+      CPPUNIT_ASSERT_DOUBLES_EQUAL(def.GetStaticFriction(), actualDef.GetStaticFriction(), 0.01);
+      CPPUNIT_ASSERT_DOUBLES_EQUAL(def.GetRestitution(), actualDef.GetRestitution(), 0.01);
+
+      def.SetKineticFriction(Real(0.2));
+      def.SetStaticFriction(Real(0.56));
+      def.SetRestitution(Real(0.97));
+
+      materials.SetMaterialInteraction(mat2, mat2, def);
+      materials.GetMaterialInteraction(mat2, mat2, actualDef);
+      CPPUNIT_ASSERT_DOUBLES_EQUAL(def.GetKineticFriction(), actualDef.GetKineticFriction(), 0.01);
+      CPPUNIT_ASSERT_DOUBLES_EQUAL(def.GetStaticFriction(), actualDef.GetStaticFriction(), 0.01);
+      CPPUNIT_ASSERT_DOUBLES_EQUAL(def.GetRestitution(), actualDef.GetRestitution(), 0.01);
+
+      CPPUNIT_ASSERT_EQUAL(mat1->GetName(), cheeseMaterialName);
+      CPPUNIT_ASSERT_EQUAL(mat2->GetName(), steelMaterialName);
+
    }
 }

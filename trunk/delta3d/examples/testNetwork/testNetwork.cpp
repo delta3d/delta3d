@@ -62,7 +62,7 @@ void TestNetwork::Config()
 
    //setup scene here
    mTerrain = new Object("Terrain");
-   mTerrain->LoadFile("models/terrain_simple.ive");
+   mTerrain->LoadFile("StaticMeshes/terrain_simple.ive");
    AddDrawable(mTerrain.get());
 
    Application::Config();

@@ -106,7 +106,6 @@ TestAARHUD::TestAARHUD(dtABC::BaseABC& app,
    , mTaskTextList()
    , mRightTextXOffset(180.0f)
    , mTextYTopOffset(10.0f)
-   , mTextYSeparation(2.0f)
    , mTextHeight(14.0f)
 {
    SetupGUI(*app.GetCamera(), *app.GetKeyboard(), *app.GetMouse());

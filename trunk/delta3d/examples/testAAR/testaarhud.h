@@ -240,7 +240,6 @@ class TEST_AAR_EXPORT TestAARHUD : public dtGame::GMComponent
 
       float mRightTextXOffset;
       float mTextYTopOffset;
-      float mTextYSeparation;
       float mTextHeight;
 };
 

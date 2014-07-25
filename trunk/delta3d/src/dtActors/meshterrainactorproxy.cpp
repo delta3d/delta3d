@@ -42,7 +42,7 @@ namespace dtActors
    ///////////////////////////////////////////////////////////////////////////////
    void MeshTerrainActorProxy::BuildPropertyMap()
    {
-      const std::string &GROUPNAME = "Terrain";
+      const std::string& GROUPNAME = "Terrain";
       DeltaObjectActorProxy::BuildPropertyMap();
 
 
@@ -61,7 +61,7 @@ namespace dtActors
    ///////////////////////////////////////////////////////////////////////////////
    void MeshTerrainActorProxy::LoadFile(const std::string& fileName)
    {
-      dtCore::Object *obj = static_cast<dtCore::Object*>(GetDrawable());
+      dtCore::Object *obj = GetDrawable<dtCore::Object>();
 
       if (obj->LoadFile(fileName, false) == NULL)
       {

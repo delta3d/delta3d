@@ -146,6 +146,9 @@ void ProceduralAnimationComponent::CreateIKActorsForAesthetics()
    gcData.SetAdjustRotationToGround(false);
    gcData.SetUseModelDimensions(false);
 
+   // For lack of gravity, snap actors to the nearest point below or above.
+   gcData.SetGroundClampType(dtGame::GroundClampTypeEnum::FULL);
+
    const int HORIZONTAL_ELEMENTS = 5;
    const int VERTICAL_ELEMENTS = 5;
    const float ELEMENT_SPACE = 4.0f;

@@ -23,7 +23,6 @@ SET( LIB_SOURCES
     ${SOURCE_PATH}/nodecollector.cpp
     ${SOURCE_PATH}/nodeprintout.cpp
     ${SOURCE_PATH}/noisetexture.cpp
-    ${SOURCE_PATH}/packager.cpp
     ${SOURCE_PATH}/polardecomp.cpp
 #    ${SOURCE_PATH}/precomp.cpp
     ${SOURCE_PATH}/refstring.cpp
@@ -92,7 +91,6 @@ SET( LIB_PUBLIC_HEADERS
     ${HEADER_PATH}/noisetexture.h
     ${HEADER_PATH}/noiseutility.h
     ${HEADER_PATH}/objectfactory.h
-    ${HEADER_PATH}/packager.h
     ${HEADER_PATH}/polardecomp.h
     ${HEADER_PATH}/referencedinterface.h
     ${HEADER_PATH}/refstring.h

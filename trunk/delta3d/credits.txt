@@ -4,5 +4,5 @@
 #                         #
 ###########################
 
-See (http://delta3d.wiki.sourceforge.net/Contributors) for a list
+See (http://delta3d.org/deltawiki/index.php?title=Contributors) for a list
 of the contributors who have helped make Delta3D what it is.

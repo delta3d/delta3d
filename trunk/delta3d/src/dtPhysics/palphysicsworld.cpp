@@ -437,15 +437,6 @@ namespace dtPhysics
          mImpl->mSolver->SetSolverAccuracy(iterCount);
          SetStepTime(mImpl->mStepTime);
       }
-
-      palMaterials* materials = palFactory->CreateMaterials();
-
-      if (materials == NULL)
-      {
-         throw dtUtil::Exception("Pal Physics was unable to create a materials interface.", __FUNCTION__, __LINE__);
-      }
-
-      mImpl->mMaterials = new PhysicsMaterials(*materials);
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -479,6 +470,15 @@ namespace dtPhysics
 
 
       mImpl->mPalPhysicsScene->Init(desc);
+
+      palMaterials* materials = mImpl->mPalPhysicsScene->GetMaterials(); //palFactory->CreateMaterials();
+
+      if (materials == NULL)
+      {
+         throw dtUtil::Exception("Pal Physics was unable to create a materials interface.", __FUNCTION__, __LINE__);
+      }
+
+      mImpl->mMaterials = new PhysicsMaterials(*materials);
 
       /// Create the default material.
       if (mImpl->mMaterials->GetMaterial(dtPhysics::PhysicsMaterials::DEFAULT_MATERIAL_NAME) == NULL)

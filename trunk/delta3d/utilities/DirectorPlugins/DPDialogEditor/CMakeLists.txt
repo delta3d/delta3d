@@ -4,7 +4,7 @@ SET(LIB_NAME     DPDialogEditor)
 SET(SOURCE_PATH ${CMAKE_SOURCE_DIR}/utilities/DirectorPlugins/${LIB_NAME})
 SET(HEADER_PATH ${CMAKE_SOURCE_DIR}/utilities/DirectorPlugins/${LIB_NAME})
 
-SET(LIB_SOURCES
+SET(LIB_C_SOURCES
     ${SOURCE_PATH}/dialogconditionline.cpp
     ${SOURCE_PATH}/dialogdelayline.cpp
     ${SOURCE_PATH}/dialogeditor.cpp
@@ -16,7 +16,7 @@ SET(LIB_SOURCES
     ${SOURCE_PATH}/dialogtreeitems.cpp
 )
 
-SET(LIB_HEADERS
+SET(LIB_PUBLIC_HEADERS
     ${HEADER_PATH}/dialogconditionline.h
     ${HEADER_PATH}/dialogdelayline.h
     ${HEADER_PATH}/dialogeditor.h
@@ -35,23 +35,19 @@ INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_SOURCE_DIR}/utilities/Di
                     ${DELTA3D_SOURCE_DIR}/ui/dtDirectorQt # for director editor ui*.h files
 )
 
-qt4_wrap_cpp(MOC_SOURCES ${LIB_HEADERS})
+qt4_wrap_cpp(MOC_SOURCES ${LIB_PUBLIC_HEADERS})
 QT4_WRAP_UI(UI_SOURCES dialogeditor.ui)
 
 SOURCE_GROUP("Generated Files" REGULAR_EXPRESSION qrc_.*cxx|moc_.*cxx)
 
-#put the binary into a "Director plugins" folder
-SETUP_PLUGIN_OUTPUT_DIRS(directorplugins)
-
-ADD_LIBRARY(${LIB_NAME} MODULE
-   ${LIB_HEADERS}
-   ${LIB_SOURCES}
+SET(LIB_SOURCES
+   ${LIB_C_SOURCES}
    ${UI_SOURCES}
    ${RCC_SOURCES}
    ${MOC_SOURCES}
 )
 
-TARGET_LINK_LIBRARIES( ${LIB_NAME}
+SET(LIB_DEPS
                        ${DTUTIL_LIBRARY}
                        ${DTCORE_LIBRARY}
                        ${DTDIRECTOR_LIBRARY}
@@ -62,10 +58,5 @@ TARGET_LINK_LIBRARIES( ${LIB_NAME}
                       )
 
 
-SET_TARGET_PROPERTIES(${LIB_NAME}
-                     PROPERTIES DEFINE_SYMBOL DT_DIRECTOR_DIALOG_EDITOR_PLUGIN)
-
-#make sure that the debug build is the only one that gets built in the debug folder.
-IF (MSVC)
-  SET_TARGET_PROPERTIES(${LIB_NAME} PROPERTIES DEBUG_OUTPUT_NAME ${LIB_NAME})
-ENDIF (MSVC)
+#put the binary into a "Director plugins" folder
+SETUP_PLUGIN_WITH_OUTPUT_DIRS(${LIB_NAME} DT_DIRECTOR_DIALOG_EDITOR_PLUGIN directorplugins)

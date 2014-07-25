@@ -26,10 +26,11 @@
 #define DELTA_TEST_ANIM_ENTRY_POINT
 
 #include <dtGame/gameentrypoint.h>
-#include <dtCore/refptr.h>
+#include <dtCore/motionmodel.h>
 #include <dtCore/observerptr.h>
-#include <dtCore/tripod.h>
+#include <dtCore/refptr.h>
 #include <dtCore/sigslot.h>
+#include <dtCore/tripod.h>
 #include "export.h"
 #include "testaniminput.h"
 
@@ -88,7 +89,7 @@ class TEST_ANIM_EXPORT TestAnim : public dtGame::GameEntryPoint, public sigslot:
 
 
       dtCore::ObserverPtr<dtAnim::AnimationHelper> mAnimationHelper;
-      dtCore::RefPtr<dtCore::FlyMotionModel> mFMM;
+      dtCore::RefPtr<dtCore::MotionModel> mMotionModel;
       bool mPerformanceTest;
 
       dtCore::RefPtr<dtGame::DefaultMessageProcessor> mMessageProcComponent;

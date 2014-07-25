@@ -157,7 +157,7 @@ namespace dtEditQt
                if (actorIndex == 0)
                {
                   dtCore::Transformable* target = NULL;
-                  targetProxy->GetActor(target);
+                  targetProxy->GetDrawable(target);
                   if (target)
                   {
                      mObjectMotionModel->SetTarget(target);
@@ -255,7 +255,7 @@ namespace dtEditQt
       if (mGhostProxy.valid())
       {
          dtCore::DeltaDrawable* drawable = NULL;
-         mGhostProxy->GetActor(drawable);
+         mGhostProxy->GetDrawable(drawable);
 
          const dtCore::BaseActorObject::RenderMode& renderMode = mGhostProxy->GetRenderMode();
          if (renderMode == dtCore::BaseActorObject::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON ||
@@ -293,7 +293,7 @@ namespace dtEditQt
          {
             ghostData = event->mimeData()->data("Prefab");
             resourceProp = dynamic_cast<dtCore::ResourceActorProperty*>(mGhostProxy->GetProperty("PrefabResource"));
-            mGhostProxy->GetActor(drawable);
+            mGhostProxy->GetDrawable(drawable);
          }
       }
       else if (event->mimeData()->hasFormat("StaticMesh"))
@@ -306,7 +306,7 @@ namespace dtEditQt
          {
             ghostData = event->mimeData()->data("StaticMesh");
             resourceProp = dynamic_cast<dtCore::ResourceActorProperty*>(mGhostProxy->GetProperty("static mesh"));
-            mGhostProxy->GetActor(drawable);
+            mGhostProxy->GetDrawable(drawable);
          }
       }
       else if (event->mimeData()->hasFormat("SkeletalMesh"))
@@ -319,7 +319,7 @@ namespace dtEditQt
          {
             ghostData = event->mimeData()->data("SkeletalMesh");
             resourceProp = dynamic_cast<dtCore::ResourceActorProperty*>(mGhostProxy->GetProperty("Skeletal Mesh"));
-            mGhostProxy->GetActor(drawable);
+            mGhostProxy->GetDrawable(drawable);
          }
       }
       else if (event->mimeData()->hasFormat("Particle"))
@@ -332,7 +332,7 @@ namespace dtEditQt
          {
             ghostData = event->mimeData()->data("Particle");
             resourceProp = dynamic_cast<dtCore::ResourceActorProperty*>(mGhostProxy->GetProperty("Particle(s) File"));
-            mGhostProxy->GetActor(drawable);
+            mGhostProxy->GetDrawable(drawable);
          }
       }
       else if (event->mimeData()->hasFormat("Sound"))
@@ -345,7 +345,7 @@ namespace dtEditQt
          {
             ghostData = event->mimeData()->data("Sound");
             resourceProp = dynamic_cast<dtCore::ResourceActorProperty*>(mGhostProxy->GetProperty("The Sound Effect"));
-            mGhostProxy->GetActor(drawable);
+            mGhostProxy->GetDrawable(drawable);
          }
       }
       else if (event->mimeData()->hasFormat("Actor"))
@@ -361,7 +361,7 @@ namespace dtEditQt
          mGhostProxy = dtCore::LibraryManager::GetInstance().CreateActor(category.toStdString(), name.toStdString());
          if (mGhostProxy.valid())
          {
-            mGhostProxy->GetActor(drawable);
+            mGhostProxy->GetDrawable(drawable);
          }
       }
       // Create a ghost of the object being dragged into the view.
@@ -385,7 +385,7 @@ namespace dtEditQt
                arrayProp->SetIndex(0);
                resourceProp = dynamic_cast<dtCore::ResourceActorProperty*>(arrayProp->GetArrayProperty());
             }
-            mGhostProxy->GetActor(drawable);
+            mGhostProxy->GetDrawable(drawable);
          }
       }
 
@@ -449,7 +449,7 @@ namespace dtEditQt
          if (mGhostProxy.valid())
          {
             dtCore::DeltaDrawable* ghostDrawable = NULL;
-            mGhostProxy->GetActor(ghostDrawable);
+            mGhostProxy->GetDrawable(ghostDrawable);
             std::vector<dtCore::DeltaDrawable*> ignoredDrawables;
             ignoredDrawables.push_back(ghostDrawable);
             dtCore::ActorProxyIcon* icon = mGhostProxy->GetBillBoardIcon();
@@ -881,7 +881,7 @@ namespace dtEditQt
             if (proxy)
             {
                dtCore::DeltaDrawable* drawable;
-               proxy->GetActor(drawable);
+               proxy->GetDrawable(drawable);
 
                if (drawable)
                {
@@ -1038,7 +1038,7 @@ namespace dtEditQt
 
          if (transProxy)
          {
-            const dtCore::Transformable *t = static_cast<const dtCore::Transformable*>(transProxy->GetActor());
+            const dtCore::Transformable *t = static_cast<const dtCore::Transformable*>(transProxy->GetDrawable());
             dtCore::Transform xform;
             t->GetTransform(xform);
             getCamera()->setPosition(xform.GetTranslation());

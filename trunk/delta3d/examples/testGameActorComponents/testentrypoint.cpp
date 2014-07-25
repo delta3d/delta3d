@@ -99,7 +99,7 @@ public:
          // Get the screen size
          app.GetWindow()->SetWindowTitle("TestGameActorComponents");
 
-         std::string context = dtUtil::GetDeltaRootPath() + "/examples/data/demoMap";
+         std::string context = dtUtil::GetDeltaRootPath() + "/examples/data";
          dtCore::Project::GetInstance().SetContext(context, true);
 
          gameManager.ChangeMap("MyCoolMap");
@@ -139,7 +139,7 @@ public:
       // set mesh property and translation of component game actor
       ComponentGameActor* actor;
       proxy->GetDrawable(actor);
-      actor->SetMesh("models/physics_happy_sphere.ive");
+      actor->SetMesh("StaticMeshes/physics_happy_sphere.ive");
       dtCore::Transform xform;
       xform.SetTranslation(TARGET_XYZ);
       actor->SetTransform(xform);

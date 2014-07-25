@@ -44,8 +44,6 @@ namespace dtDirector
    {
    public:
 
-      typedef Node CreateType;
-
       enum NodeTypeEnum
       {
          EVENT_NODE,

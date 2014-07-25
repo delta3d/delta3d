@@ -172,7 +172,7 @@ void FenceToolPlugin::initialize(dtActors::FenceActorProxy* activeProxy)
 
    if (mActiveProxy.valid())
    {
-      mActiveProxy->GetActor(mActiveActor);
+      mActiveProxy->GetDrawable(mActiveActor);
    }
 }
 

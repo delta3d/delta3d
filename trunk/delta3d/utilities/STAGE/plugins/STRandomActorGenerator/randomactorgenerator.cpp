@@ -134,7 +134,7 @@ void RandomActorGeneratorPlugin::OnRefreshActorList()
    std::vector< dtCore::RefPtr<dtCore::BaseActorObject> >::iterator it;
    for(it = foundProxies.begin(); it != foundProxies.end(); ++it)
    {
-      mUI.mActorToGenerate->addItem((*it).get()->GetActor()->GetName().c_str(),
+      mUI.mActorToGenerate->addItem((*it).get()->GetName().c_str(),
                                     (*it).get()->GetId().ToString().c_str());
    }
 

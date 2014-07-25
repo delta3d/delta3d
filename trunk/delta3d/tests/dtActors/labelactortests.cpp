@@ -118,7 +118,7 @@ void LabelActorTests::TestLabelActorProperties()
       // Get the actor from the proxy.
       dtABC::LabelActor* actor = NULL;
       const dtABC::LabelActor* actorConst = NULL;
-      mLabelProxy->GetActor(actor);
+      mLabelProxy->GetDrawable(actor);
       actorConst = actor;
 
       // Test variables.
@@ -181,7 +181,7 @@ void LabelActorTests::TestLabelActorCreateActorProperties()
    {
       // Get the actor from the proxy.
       dtABC::LabelActor* actor = NULL;
-      mLabelProxy->GetActor(actor);
+      mLabelProxy->GetDrawable(actor);
 
       dtABC::LabelActor::ActorPropertyArray propArray;
       actor->CreateActorProperties(propArray);

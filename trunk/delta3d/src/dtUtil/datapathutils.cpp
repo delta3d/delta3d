@@ -24,6 +24,7 @@
 #include <dtUtil/mswinmacros.h>
 #include <dtUtil/mswin.h>
 
+#include <dtUtil/fileutils.h>
 #include <osgDB/FileUtils>
 #include <osgDB/FileNameUtils>
 
@@ -41,7 +42,7 @@ namespace dtUtil
       std::string modpath = pathList;
       for(std::string::size_type i = 0; i < pathList.size(); i++)
       {
-         #ifdef DELTA_WIN32
+#ifdef DELTA_WIN32
          try
          {
             if(modpath.at(i) == ':' && modpath.at(i+1) != '\\')
@@ -53,50 +54,50 @@ namespace dtUtil
          {
             LOG_WARNING(myexcept.what());
          }
-         #else
+#else
          if( modpath[i] == ';' )
          {
             modpath[i] = ':'; 
          }
-         #endif
+#endif
       }
       osgDB::setDataFilePathList(modpath);
    }
-   
+
    /////////////////////////////////////////////////////////////////////////////
    std::string GetDataFilePathList()
    {
       OpenThreads::ScopedLock<OpenThreads::Mutex> lock(gDatapathMutex);
 
       osgDB::FilePathList pathList = osgDB::getDataFilePathList();
-   
+
       std::string pathString = "";
-   
+
       typedef std::deque<std::string> StringDeque;
       for(StringDeque::iterator itr = pathList.begin(); itr != pathList.end(); itr++)
       {
          pathString += *itr;
-   
+
          StringDeque::iterator next = itr + 1;         if(next != pathList.end())
          {
-            #ifdef DELTA_WIN32
-               pathString += ';';
-            #else
-               pathString += ':';
-            #endif
+#ifdef DELTA_WIN32
+            pathString += ';';
+#else
+            pathString += ':';
+#endif
          }
       }
-   
+
       return pathString;
    }
-   
+
    /////////////////////////////////////////////////////////////////////////////
    std::string FindFileInPathList(const std::string& fileName)
    {
       OpenThreads::ScopedLock<OpenThreads::Mutex> lock(gDatapathMutex);
 
       std::string filePath = osgDB::findDataFile(fileName, osgDB::CASE_INSENSITIVE);
-      
+
       // In some cases, filePath will contain a url that is
       // relative to the current working directory so for
       // consistency, be sure to return the full path every time
@@ -106,21 +107,21 @@ namespace dtUtil
       }
 
       return filePath;
-   /**   
+      /**
       std::vector<std::string> pathList;
       std::vector<std::string>::const_iterator itor;
-      
+
    #if defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
       dtUtil::IsDelimeter delimCheck(';');
    #else
       dtUtil::IsDelimeter delimCheck(':');
    #endif
-      
+
       dtUtil::StringTokenizer<dtUtil::IsDelimeter>::tokenize(pathList,
                                                              GetDataFilePathList(),delimCheck);
-      
+
       dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
-      
+
       std::string path;
       for (itor=pathList.begin(); itor!=pathList.end(); ++itor)
       {
@@ -128,15 +129,39 @@ namespace dtUtil
          //Make sure we remove any trailing slashes from the cache path.
          if (path[path.length()-1] == '/' || path[path.length()-1] == '\\')
             path = path.substr(0,path.length()-1);
-   
+
          if (fileUtils.FileExists(path + dtUtil::FileUtils::PATH_SEPARATOR + fileName))
             return path + dtUtil::FileUtils::PATH_SEPARATOR + fileName;
       }     
-      
+
       return std::string();
-      */
+       */
    }   
-   
+
+   /////////////////////////////////////////////////////////////////////////////
+   std::string FindFileInPathList(const std::string& fileName, std::vector<std::string> pathList, bool caseInsensitive)
+   {
+      std::vector<std::string>::const_iterator itor;
+
+      dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
+      std::string path;
+      for (itor=pathList.begin(); itor!=pathList.end(); ++itor)
+      {
+         path = *itor;
+         //Make sure we remove any trailing slashes from the cache path.
+         if (path[path.length()-1] == '/' || path[path.length()-1] == '\\')
+            path = path.substr(0,path.length()-1);
+
+         FileInfo fi = fileUtils.GetFileInfo(path + FileUtils::PATH_SEPARATOR + fileName, caseInsensitive);
+         if (fi.fileType != FILE_NOT_FOUND)
+         {
+            return fi.fileName;
+         }
+      }
+
+      return std::string();
+   }
+
    /////////////////////////////////////////////////////////////////////////////
    std::string GetEnvironment(const std::string& env)
    {
@@ -160,7 +185,7 @@ namespace dtUtil
          return std::string("./");
       }
    }
-  
+
    /////////////////////////////////////////////////////////////////////////////
    void SetEnvironment(const std::string& name, const std::string& value)
    {
@@ -172,7 +197,7 @@ namespace dtUtil
       setenv(name.c_str(), value.c_str(), true);
 #endif
    }
-   
+
    /**
     * Get the Delta Data file path.  This comes directly from the environment 
     * variable "DELTA_DATA".  If the environment variable is not set, the local
@@ -183,7 +208,7 @@ namespace dtUtil
    {
       return GetEnvironment("DELTA_DATA");
    }
-   
+
    /** 
     * If the DELTA_ROOT environment is not set, the local directory will be
     * returned.

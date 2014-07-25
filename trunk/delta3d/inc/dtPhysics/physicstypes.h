@@ -33,6 +33,7 @@
 //#include <dtUtil/mswin.h>
 //#include <pal/pal.h>
 
+class palMaterialInteractionCollisionCallback;
 class palMaterial;
 class palAction;
 class palDebugDraw;
@@ -51,6 +52,7 @@ namespace dtPhysics
    typedef DT_PHYSICS_EXPORT unsigned long CollisionGroupFilter;
 
    typedef DT_PHYSICS_EXPORT palMaterial Material;
+   typedef DT_PHYSICS_EXPORT palMaterialInteractionCollisionCallback MaterialInteractionCollisionCallback;
 
    typedef DT_PHYSICS_EXPORT palDebugDraw DebugDraw;
 
