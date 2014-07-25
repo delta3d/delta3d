@@ -347,11 +347,9 @@ namespace dtPhysics
       materialActor.GetDrawable(drawable);
 
       Material* uniqueMaterial = materials.GetMaterial(drawable->GetName());
-      if (uniqueMaterial != NULL)
+      if (uniqueMaterial == NULL)
       {
-         // If the material already exists, the definition of said material may be changed by setting the materials
-         // interaction with itself. This is weird, and should really be rethought out. -DG
-         materials.SetMaterialInteraction(materialActor.GetName(), materialActor.GetName(), drawable->GetMateralDef());
+         materials.SetMaterialDef(uniqueMaterial, drawable->GetMateralDef());
       }
       else
       {

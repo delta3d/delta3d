@@ -4,5 +4,5 @@
 #                            #
 ##############################
 
-See (http://delta3d.wiki.sourceforge.net/Changes) for a
+See (http://delta3d.org/deltawiki/index.php?title=Changes) for a
 list of the major changes.

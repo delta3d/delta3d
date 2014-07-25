@@ -108,7 +108,7 @@ public:
       // load ground
       {
          mGround = new Object("Ground");
-         mGround->LoadFile("models/terrain_simple.ive");
+         mGround->LoadFile("StaticMeshes/terrain_simple.ive");
 
          // create collision mesh
          mGround->SetCollisionMesh();
@@ -123,7 +123,7 @@ public:
       // load falling crate
       {
          RefPtr<Object> obj2 = new Object("FallingCrate");
-         obj2->LoadFile("models/physics_crate.ive");
+         obj2->LoadFile("StaticMeshes/physics_crate.ive");
 
          // position first falling crate
          position.Set(0.55f, 0.0f, 7.0f, 0.0f, 40.0f, 0.0f);
@@ -151,7 +151,7 @@ public:
       // load ground crate
       {
          RefPtr<Object> obj3 = new Object("GroundCrate");
-         obj3->LoadFile("models/physics_crate.ive");
+         obj3->LoadFile("StaticMeshes/physics_crate.ive");
 
          // position the crate on the ground
          position.Set(0.0f, 0.0f, 4.f, 0.0f, 0.0f, 0.0f);
@@ -254,7 +254,7 @@ protected:
          if (mObjects.size() < mLimit)
          {
             RefPtr<Object> box = new Object("box");
-            box->LoadFile("models/physics_crate.ive");
+            box->LoadFile("StaticMeshes/physics_crate.ive");
 
             float randomScale = RandFloat(0.5f, 2.0f);
             box->SetScale(osg::Vec3(randomScale, randomScale, randomScale));
@@ -286,7 +286,7 @@ protected:
          if (mObjects.size() < mLimit)
          {
             RefPtr<Object> sphere = new Object("sphere");
-            sphere->LoadFile("models/physics_happy_sphere.ive");
+            sphere->LoadFile("StaticMeshes/physics_happy_sphere.ive");
 
             float randomScale = RandFloat(0.5f, 2.0f);
             sphere->SetScale(osg::Vec3(randomScale, randomScale, randomScale));
@@ -315,7 +315,7 @@ protected:
          if (mObjects.size() < mLimit)
          {
             RefPtr<Object> cyl = new Object("cylinder");
-            cyl->LoadFile("models/physics_barrel.ive");
+            cyl->LoadFile("StaticMeshes/physics_barrel.ive");
 
             float randomScale = RandFloat(0.5f, 2.0f);
             cyl->SetScale(osg::Vec3(randomScale, randomScale, randomScale));

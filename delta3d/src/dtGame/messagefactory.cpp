@@ -20,12 +20,13 @@
  * David Guthrie
  */
 #include <prefix/dtgameprefix.h>
+#include <dtGame/actorupdatemessage.h>
+#include <dtGame/basemessages.h>
+#include <dtGame/gamestatemessages.h>
+#include <dtGame/loggermessages.h>
+#include <dtGame/message.h>
 #include <dtGame/messagefactory.h>
 #include <dtGame/messagetype.h>
-#include <dtGame/message.h>
-#include <dtGame/basemessages.h>
-#include <dtGame/actorupdatemessage.h>
-#include <dtGame/loggermessages.h>
 #include <dtCore/refptr.h>
 #include <sstream>
 
@@ -334,6 +335,13 @@ namespace dtGame
 
    const MessageType MessageType::SYSTEM_POST_FRAME("Post Frame", "System",
       "Sent on the system message postframe.  Use this to do thing after the rendering, but before the next frame.", 302, (SystemMessage*)(NULL));
+   
+   
+   const MessageType MessageType::INFO_GAME_STATE_CHANGED("Info Game State Changed", "Info",
+      "Sent when the game state changes.", 303, (GameStateChangedMessage*)(NULL));
+
+   const MessageType MessageType::REQUEST_GAME_STATE_TRANSITION("Request Game State Transition", "Request",
+      "Sent when the game state is requested to change.", 304, (GameStateTransitionRequestMessage*)(NULL));
 
 }
 

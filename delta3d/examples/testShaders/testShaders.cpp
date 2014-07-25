@@ -48,7 +48,7 @@ public:
    {
       mTotalTime = 0.0f;
 
-      std::string contextName = dtUtil::GetDeltaRootPath() + "/examples/data/demoMap";
+      std::string contextName = dtUtil::GetDeltaRootPath() + "/examples/data";
       dtCore::Project::GetInstance().SetContext(contextName, true);
 
       LoadGeometry();

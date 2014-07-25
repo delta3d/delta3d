@@ -33,8 +33,8 @@ using namespace dtAI;
 ////////////////////////////////////////////////////////////////////////////////
 TestAI::TestAI(const std::string& pMapFilename, const std::string& configFilename)
    : Application(configFilename)
+   , mDrawNavMesh()
    , mMapFilename(pMapFilename)
-   , mCharacter(0)
 {
    // Generating a default config file if there isn't one already
    if (!dtUtil::FileUtils::GetInstance().FileExists(configFilename))
@@ -64,7 +64,7 @@ void TestAI::Config()
 
    try
    {
-      std::string contextName =  dtUtil::GetDeltaRootPath()+"/examples/data/demoMap";
+      std::string contextName =  dtUtil::GetDeltaRootPath()+"/examples/data";
       Project::GetInstance().SetContext(contextName);
    }
    catch (const dtUtil::Exception& e)
@@ -119,7 +119,7 @@ void TestAI::Config()
    WaypointManager::WaypointMap::const_iterator iter = pContainer.begin();
    const Waypoint* pWaypoint = (*iter).second;
 
-   std::string characterFile = dtUtil::FindFileInPathList("SkeletalMeshes/marine.xml");
+   std::string characterFile = dtUtil::FindFileInPathList("SkeletalMeshes/Marine/marine.xml");
 
    // spawn our character
    mCharacter = new dtAI::AICharacter(GetScene(), pWaypoint, characterFile, 3);

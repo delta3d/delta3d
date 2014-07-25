@@ -359,7 +359,7 @@ public:
       }
       else
       {
-         mTown->LoadFile("/demoMap/StaticMeshes/TestTownLt.ive");
+         mTown->LoadFile("/StaticMeshes/TestTownLt.ive");
       }
 
 

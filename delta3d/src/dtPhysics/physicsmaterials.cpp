@@ -73,6 +73,22 @@ namespace dtPhysics
    }
 
    //////////////////////////////////////
+   void PhysicsMaterials::SetMaterialInteraction(Material* mat1, Material* mat2, MaterialDef& def, MaterialInteractionCollisionCallback* callback)
+   {
+      palMaterials& pm = mImpl->mPalMaterials;
+      palMaterialDesc desc;
+      MatDefToPalMatDesc(desc, def);
+
+      // Set this to make sure it exists.
+      pm.SetMaterialInteraction(mat1, mat2, desc);
+      palMaterialInteraction* pmi = pm.GetMaterialInteraction(mat1, mat2);
+      if (pmi != NULL)
+      {
+         pmi->SetCollisionCallback(callback);
+      }
+   }
+
+   //////////////////////////////////////
    Material* PhysicsMaterials::GetMaterial(const std::string& name)
    {
       palMaterials& pm = mImpl->mPalMaterials;
@@ -80,15 +96,32 @@ namespace dtPhysics
    }
 
    //////////////////////////////////////
-   void PhysicsMaterials::SetMaterialDef(const std::string& name, MaterialDef& def)
+   const Material* PhysicsMaterials::GetMaterial(const std::string& name) const
    {
-      SetMaterialInteraction(name, name, def);
+      palMaterials& pm = mImpl->mPalMaterials;
+      return pm.GetMaterial(name);
    }
 
    //////////////////////////////////////
-   void PhysicsMaterials::GetMaterialDef(const std::string& name, MaterialDef& def)
+   void PhysicsMaterials::SetMaterialDef(const std::string& name, const MaterialDef& def)
    {
-      Material* mat = GetMaterial(name);
+      Material* m = GetMaterial(name);
+      SetMaterialDef(m, def);
+   }
+
+   //////////////////////////////////////
+   void PhysicsMaterials::SetMaterialDef(Material* mat, const MaterialDef& def)
+   {
+      if (mat != NULL)
+      {
+         MatDefToPalMatDesc(*mat, def);
+      }
+   }
+
+   //////////////////////////////////////
+   void PhysicsMaterials::GetMaterialDef(const std::string& name, MaterialDef& def) const
+   {
+      const Material* mat = GetMaterial(name);
       if (mat != NULL)
       {
          PalMatDescToMatDef(def, *mat);
@@ -106,6 +139,20 @@ namespace dtPhysics
          return true;
       }
       return false;
+   }
+
+   //////////////////////////////////////
+   bool PhysicsMaterials::GetMaterialInteraction(Material* mat1, Material* mat2, MaterialDef& defToFill)
+   {
+      palMaterials& pm = mImpl->mPalMaterials;
+      palMaterialInteraction* pMI = pm.GetMaterialInteraction(mat1, mat2);
+      if (pMI != NULL)
+      {
+         PalMatDescToMatDef(defToFill, *pMI);
+         return true;
+      }
+      return false;
+
    }
 
    //////////////////////////////////////

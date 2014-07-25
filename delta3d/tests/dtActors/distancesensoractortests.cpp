@@ -174,7 +174,7 @@ namespace dtActors
          mGameManager->AddActor(*mDSProxy1, false, false);
 
          DistanceSensorActor* dsActor;
-         mDSProxy1->GetActor(dsActor);
+         mDSProxy1->GetDrawable(dsActor);
          const std::string TEST_NAME("jojo");
          dtCore::RefPtr<dtCore::Transformable> xformable = new dtCore::Transformable(TEST_NAME);
 

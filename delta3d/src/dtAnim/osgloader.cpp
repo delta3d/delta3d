@@ -71,8 +71,8 @@ namespace dtAnim
       int results = 0;
       
       typedef std::vector<T_FileStruct> FileArray;
-      FileArray::const_iterator curIter = fileArray.begin();
-      FileArray::const_iterator endIter = fileArray.end();
+      typename FileArray::const_iterator curIter = fileArray.begin();
+      typename FileArray::const_iterator endIter = fileArray.end();
       for (; curIter != endIter; ++curIter)
       {
          std::string filepath(path + curIter->mFileName);

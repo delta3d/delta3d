@@ -68,7 +68,7 @@ namespace dtAnim
       
       int ApplyAllResourcesToModel(OsgModelResourceFinder& finder);
    
-      int OsgModelData::ApplyResourcesToModel(dtAnim::ModelResourceType resType,
+      int ApplyResourcesToModel(dtAnim::ModelResourceType resType,
          OsgModelResourceFinder& finder);
 
       int ApplyNodeToModel(dtAnim::ModelResourceType resType, osg::Node& node);

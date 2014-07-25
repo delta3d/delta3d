@@ -38,7 +38,7 @@ void TestMultiWin::Config()
 
    //setup scene here
    RefPtr<Object> terr = new Object();
-   terr->LoadFile("models/terrain_simple.ive");
+   terr->LoadFile("StaticMeshes/terrain_simple.ive");
    GetScene()->AddChild(terr.get());
 
    //change the title of the pre-built Window

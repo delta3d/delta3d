@@ -62,7 +62,7 @@ void ParticleTest::setUp()
 {
    dtUtil::SetDataFilePathList(dtUtil::GetDeltaDataPathList() + ";" + dtUtil::GetDeltaRootPath() + "/examples/data/;");
    pSystem = new dtCore::ParticleSystem();
-   std::string smokeFile = dtUtil::FindFileInPathList("effects/smoke.osg");
+   std::string smokeFile = dtUtil::FindFileInPathList("Particles/smoke.osg");
    CPPUNIT_ASSERT(!smokeFile.empty());
    pSystem->LoadFile(smokeFile, true);
 }

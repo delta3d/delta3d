@@ -111,9 +111,7 @@ class TEST_AAR_EXPORT TestAARInput : public dtGame::BaseInputComponent
        */
       void SendPlayerUpdateMsg(const std::string& paramName, const float value);
       
-      bool mKeyIsPressed;
       double mSimSpeedFactor;
-      const dtGame::LogStateEnumeration* mAppMode;
       TestAARHUD* mHudGUI;
       dtGame::GameActorProxy* mPlayer;
       dtGame::LogController* mLogController;

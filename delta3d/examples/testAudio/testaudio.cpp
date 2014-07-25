@@ -35,14 +35,14 @@ const char*    TestAudioApp::kSoundFile[] =
                };
 const char*    TestAudioApp::kGfxFile[kNumGfx] =
                {
-                  "models/flatdirt.ive",
-                  "models/brdm.ive",
-                  "models/uh-1n.ive"
+                  "StaticMeshes/flatdirt.ive",
+                  "StaticMeshes/brdm.ive",
+                  "StaticMeshes/uh-1n.ive"
                };
 const char*    TestAudioApp::kFxFile[kNumFx] =
                {
-                  "effects/explosion.osg",
-                  "effects/smoke.osg"
+                  "Particles/explosion.osg",
+                  "Particles/smoke.osg"
                };
 
 const char*    TestAudioApp::kFxDetonationType[kNumFx] =

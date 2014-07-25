@@ -98,7 +98,7 @@ void TestBumpMapApp::LoadGeometry(const std::string& customObjectName)
    // NOTE! This model mirrors the uv coords so the lighting
    // will be incorrect on the backside.
    mSphere = new dtCore::Object("Sphere");
-   mSphere->LoadFile("models/physics_happy_sphere.ive");
+   mSphere->LoadFile("StaticMeshes/physics_happy_sphere.ive");
    mSphere->SetActive(false);
    AddDrawable(mSphere.get());
 
@@ -108,7 +108,7 @@ void TestBumpMapApp::LoadGeometry(const std::string& customObjectName)
 
    // Load some geometry to represent the direction of the light
    mLightObject = new dtCore::Object("Light Arrow");
-   mLightObject->LoadFile("models/LightArrow.ive");
+   mLightObject->LoadFile("StaticMeshes/LightArrow.ive");
    mLightObject->SetScale(osg::Vec3(0.5f, 0.5f, 0.5f));
 
    AddDrawable(mLightObject.get());
@@ -367,7 +367,7 @@ std::string TestBumpMapApp::CreateHelpLabelText()
 
 int main(int argc, char* argv[])
 {
-   std::string customObjectName = "models/physics_crate.ive";
+   std::string customObjectName = "StaticMeshes/physics_crate.ive";
 
    // Allow specifying of custom geometry from the command line
    if (argc > 1)

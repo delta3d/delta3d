@@ -244,7 +244,7 @@ void GameActorTests::TestGameActorNoDefaultStateSet()
       CPPUNIT_ASSERT_MESSAGE("GameActorProxy should not be NULL", gap != NULL);
 
       dtGame::GameActor* gameActor = NULL;
-      gap->GetActor(gameActor);
+      gap->GetDrawable(gameActor);
 
       CPPUNIT_ASSERT_MESSAGE("a newly created game actor should not have stateset.",
                gameActor->GetOSGNode()->getStateSet() == NULL);
@@ -280,9 +280,10 @@ void GameActorTests::TestGameActorProxyDeleteError()
       mManager->CreateActor(*actorType, gap);
 
       CPPUNIT_ASSERT_MESSAGE("GameActorProxy should not be NULL", gap != NULL);
+      // TODO this test is about to be invalid.
       CPPUNIT_ASSERT_MESSAGE("GameActor should have a reference to the proxy", &gap->GetGameActor().GetGameActorProxy() == gap.get());
 
-      dtCore::RefPtr<dtGame::GameActor> actor = &gap->GetGameActor();
+      dtCore::RefPtr<dtGame::GameActor> actor = gap->GetDrawable<dtGame::GameActor>();
       dtCore::ObserverPtr<dtGame::GameActorProxy> gapObserver(gap.get());
       dtCore::ObserverPtr<dtGame::GameActorProxy> gapOb2(gapObserver);
       gap = NULL;

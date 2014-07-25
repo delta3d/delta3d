@@ -390,7 +390,7 @@ namespace dtPhysics
       try
       {
          //std::string path = dtCore::Project::GetInstance().GetResourcePath(dtCore::ResourceDescriptor("StaticMeshes:physics_crate.ive"));
-         std::string path = "../examples/data/models/physics_crate.ive";
+         std::string path = "../examples/data/StaticMeshes/physics_crate.ive";
          path = dtUtil::FindFileInPathList(path);
          dtCore::RefPtr<osgDB::ReaderWriter::Options> options = new osgDB::ReaderWriter::Options;
 
@@ -1032,7 +1032,7 @@ namespace dtPhysics
       try
       {
          //std::string path = dtCore::Project::GetInstance().GetResourcePath(dtCore::ResourceDescriptor("StaticMeshes:physics_crate.ive"));
-         std::string path = "../examples/data/models/physics_crate.ive";
+         std::string path = "../examples/data/StaticMeshes/physics_crate.ive";
          path = dtUtil::FindFileInPathList(path);
          dtCore::RefPtr<osgDB::ReaderWriter::Options> options = new osgDB::ReaderWriter::Options;
 
@@ -1484,7 +1484,7 @@ namespace dtPhysics
       try
       {
          //std::string path = dtCore::Project::GetInstance().GetResourcePath(dtCore::ResourceDescriptor("StaticMeshes:physics_crate.ive"));
-         std::string path = "../examples/data/models/physics_crate.ive";
+         std::string path = "../examples/data/StaticMeshes/physics_crate.ive";
          path = dtUtil::FindFileInPathList(path);
          dtCore::RefPtr<osgDB::ReaderWriter::Options> options = new osgDB::ReaderWriter::Options;
 

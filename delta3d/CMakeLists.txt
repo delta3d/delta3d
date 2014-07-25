@@ -120,6 +120,10 @@ ENDMACRO(ADD_DELTA3D_SUBFOLDERS)
 
 PROJECT(DELTA3D)
 
+set (delta3d_VERSION_MAJOR 2)
+set (delta3d_VERSION_MINOR 8)
+set (delta3d_VERSION_PATCH 0)
+
 ################################################################################
 # User Options
 OPTION(BUILD_ANIM          "Enables the building of dtAnim (requires CAL3D)" ON)
@@ -150,7 +154,7 @@ SET(DELTA32_SONAMES TRUE)
 
 # We have some custom .cmake scripts not in the official distribution.
 # Maybe this can be used override existing behavior if needed?
-SET(CMAKE_MODULE_PATH "${DELTA3D_SOURCE_DIR}/CMakeModules;${CMAKE_MODULE_PATH}")
+SET(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/CMakeModules;${CMAKE_MODULE_PATH}")
 
 SET(DELTA_DIR ${CMAKE_SOURCE_DIR})
 
@@ -311,5 +315,8 @@ CONFIGURE_FILE(
    "${CMAKE_CURRENT_SOURCE_DIR}/CMakeModules/cmake_uninstall.cmake.in"
    "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake"
    IMMEDIATE @ONLY)
+
 ADD_CUSTOM_TARGET(uninstall
    "${CMAKE_COMMAND}" -P "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake")
+
+include(delta3dCPack)

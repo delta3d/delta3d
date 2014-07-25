@@ -1007,7 +1007,7 @@ void ObjectViewer::InitLights()
 
       bool enabled = light->GetEnabled();
       dtCore::RefPtr<dtCore::Object> lightArrow = new dtCore::Object;
-      lightArrow->LoadFile("examples/data/models/LightArrow.ive");
+      lightArrow->LoadFile("examples/data/StaticMeshes/LightArrow.ive");
       lightArrow->SetActive(enabled);
 
       dtCore::RefPtr<dtCore::Transformable> lightArrowTransformable = new dtCore::Transformable;

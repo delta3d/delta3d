@@ -25,7 +25,7 @@ The Delta3D Team
 
 Delta3D uses CMake (http://www.cmake.org) to generate projects for the 
 libraries, examples, and utilities.  See 
-http://delta3d.wiki.sourceforge.net/Tutorials for instructions on
+http://delta3d.org/deltawiki/index.php?title=Tutorials for instructions on
 how to build Delta3D from source and which CMake build options are available.
 
 NOTE: You will *not* be able to compile the libraries or utilities
@@ -49,7 +49,7 @@ Note: if the external dependency is not found by CMake, the Delta3D
 projects that rely on that dependency will not be generated.
 
 Please see the latest information on the External Dependencies at:
-http://delta3d.wiki.sourceforge.net/Dependencies.
+http://delta3d.org/deltawiki/index.php?title=Dependencies.
 
 
 #########################
@@ -108,7 +108,7 @@ LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$DELTA_LIB
    Building the Delta3D Python bindings requires the following additional 
    packages: Python and Boost.Python. 
 
-   See http://delta3d.wiki.sourceforge.net/Tutorials for information on 
+   See http://delta3d.org/deltawiki/index.php?title=Tutorials for information on 
    how to compile the non-distributed external dependencies required for 
    the Python bindings.
    
@@ -116,9 +116,9 @@ LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$DELTA_LIB
    STAGE
    -----
    Building STAGE requires an additional download of:
-   -Qt 4.x, the Windows or Linux open-source release (http://www.trolltech.com)
+   -Qt 4.x, the Windows or Linux open-source release (http://qt-project.org/downloads)
    
-   See http://delta3d.wiki.sourceforge.net/Tutorials for information on 
+   See http://delta3d.org/deltawiki/index.php?title=Tutorials for information on 
    how to compile the non-distributed external dependencies required for 
    building STAGE.
 

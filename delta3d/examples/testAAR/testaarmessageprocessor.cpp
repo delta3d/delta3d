@@ -236,7 +236,7 @@ void TestAARMessageProcessor::PlaceActor(bool ignored)
 
    if (ignored)
    {
-      path = dtUtil::FindFileInPathList("models/ignore_me.ive");
+      path = dtUtil::FindFileInPathList("StaticMeshes/ignore_me.ive");
       if (!path.empty())
       {
          obj = CreateNewMovingActor(path,velocity,turn,true,ignored);
@@ -248,7 +248,7 @@ void TestAARMessageProcessor::PlaceActor(bool ignored)
    }
    else if (chance <= 0.5f)
    {
-      path = dtUtil::FindFileInPathList("models/physics_crate.ive");
+      path = dtUtil::FindFileInPathList("StaticMeshes/physics_crate.ive");
       if (!path.empty())
       {
          obj = CreateNewMovingActor(path,velocity,turn,true,ignored);
@@ -260,7 +260,7 @@ void TestAARMessageProcessor::PlaceActor(bool ignored)
    }
    else
    {
-      path = dtUtil::FindFileInPathList("models/physics_barrel.ive");
+      path = dtUtil::FindFileInPathList("StaticMeshes/physics_barrel.ive");
       if (!path.empty())
       {
          obj = CreateNewMovingActor(path,velocity,turn,true,ignored);
@@ -336,7 +336,7 @@ void TestAARMessageProcessor::Reset()
 
    // setup terrain
    dtCore::RefPtr<dtCore::Object> terrain = new dtCore::Object();
-   std::string path = dtUtil::FindFileInPathList("models/terrain_simple.ive");
+   std::string path = dtUtil::FindFileInPathList("StaticMeshes/terrain_simple.ive");
    if (path.empty())
    {
       LOG_ERROR("Failed to find the terrain model.");
@@ -353,7 +353,7 @@ void TestAARMessageProcessor::Reset()
    GetGameManager()->AddActor(*mPlayer, false, false);
 
    dtCore::StringActorProperty* prop = static_cast<dtCore::StringActorProperty*>(mPlayer->GetProperty("mesh"));
-   path = dtUtil::FindFileInPathList("models/physics_happy_sphere.ive");
+   path = dtUtil::FindFileInPathList("StaticMeshes/physics_happy_sphere.ive");
    if (!path.empty())
    {
       prop->SetValue(path);

@@ -228,10 +228,11 @@ namespace dtUtil
       /**
        * Converts a relative path to an absolute path.
        * @param relativePath the relative path to convert to absolute.
+       * @param removeFinalFile If this refers to a file, then remove the final file in the result.
        * @return the absolute path.
        * @throws dtUtil::FileNotFoundException if the path does not exist.
        */
-      const std::string GetAbsolutePath(const std::string& relativePath) const;
+      std::string GetAbsolutePath(const std::string& relativePath, bool removeFinalFile = false) const;
 
       /**
        * Note: throws exceptions of type dtUtil::Exception
