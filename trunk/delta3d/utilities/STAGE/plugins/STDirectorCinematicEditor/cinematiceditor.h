@@ -42,9 +42,9 @@
 
 #include <QtCore/QTimer>
 
-#include <dtAnim/macros.h>
+#include <cal3d/global.h>
 
-#ifdef CAL3D_VERSION_DEVELOPMENT
+#if CAL3D_VERSION >= 1300
    #define MANUAL_ANIMATIONS
 #endif
 
