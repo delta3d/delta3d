@@ -67,7 +67,12 @@
     <shader name="TerrainAltitude" default="yes">
       <source type="Vertex">shaders/TerrainAltitude.vert</source>
       <source type="Fragment">shaders/TerrainAltitude.frag</source>
-      <parameter name="diffuseTexture">
+       <source type="Fragment">shaders/water/water_functions.frag</source>
+       <source type="Fragment">shaders/base/fragment_functions.frag</source>
+       <!--The Fragment shader is using a function from the vertex functions-->
+       <source type="Fragment">shaders/base/vertex_functions.vert</source>
+       
+       <parameter name="diffuseTexture">
         <texture2D textureUnit="0">
           <source type="Auto"/>
         </texture2D>
@@ -79,9 +84,9 @@
       <parameter name="TextureScales">
         <vec4 defaultValue="100 100 100 100" />
       </parameter>
-      <parameter name="WaterColor">
+       <!-->parameter name="WaterColor">  This is an actual uniform set by the water
         <vec4 defaultValue="0 0.35 0.5 0.75" />
-      </parameter>
+      </parameter-->
       <parameter name="AltitudeScale">
         <float defaultValue="1" />
       </parameter>
@@ -92,7 +97,7 @@
         <float defaultValue="25" />
       </parameter>
       <parameter name="WaterFadeDepth">
-        <float defaultValue="25" />
+        <float defaultValue="100" />
       </parameter>
       <parameter name="SandTexture">
         <texture2D textureUnit="1">
@@ -124,5 +129,32 @@
       </parameter>
     </shader>
   </shadergroup>
-    
+
+   <shadergroup name="WaterGroup">
+      <shader name="WaterShader" default="yes">
+         <source type="Vertex">shaders/water/water_functions.vert</source>
+         <source type="Vertex">shaders/water/water.vert</source>
+         <source type="Vertex">shaders/base/vertex_functions.vert</source>
+         <source type="Fragment">shaders/water/water_functions.frag</source>
+         <source type="Fragment">shaders/water/water.frag</source>
+         <source type="Fragment">shaders/base/fragment_functions.frag</source>
+      </shader>
+      <shader name="TextureWave" default="no">
+         <source type="Vertex">shaders/water/water_functions.vert</source>
+         <source type="Vertex">shaders/water/texture_wave.vert</source>
+         <source type="Fragment">shaders/water/texture_wave.frag</source>
+      </shader>
+      <shader name="WaveTest" default="no">
+         <source type="Vertex">shaders/water/water_functions.vert</source>
+         <source type="Vertex">shaders/water/wave_test.vert</source>
+         <source type="Fragment">shaders/water/wave_test.frag</source>
+      </shader>
+      <shader name="UnderWater" default="no">
+         <source type="Vertex">shaders/water/water_functions.vert</source>
+         <source type="Vertex">shaders/water/underwater.vert</source>
+         <source type="Fragment">shaders/water/water_functions.frag</source>
+         <source type="Fragment">shaders/water/underwater.frag</source>
+         <source type="Fragment">shaders/base/fragment_functions.frag</source>
+      </shader>
+   </shadergroup>
 </shaderlist>

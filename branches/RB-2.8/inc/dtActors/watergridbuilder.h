@@ -40,9 +40,11 @@ namespace dtActors
 
       static osg::Geometry* BuildRadialGrid(float &outComputedRadialDistance);
 
-      static void BuildWaves(std::vector<WaterGridActor::Wave>& waveList);
-
+      static void BuildWavesFromSeaState(WaterGridActor::SeaState*, std::vector<WaterGridActor::Wave>& waveList);
+      
       static void BuildTextureWaves(std::vector<WaterGridActor::TextureWave>& waveList);
+
+      static void AddRandomWaves(std::vector<WaterGridActor::Wave>& waveList, float meanWaveLength, float meanAmplitude, float minPeriod, float maxPeriod, unsigned numWaves);
 
    private:
 
