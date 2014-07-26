@@ -91,7 +91,7 @@ void main (void)
    ////This samples the wave texture in a way that will remove tiling artifacts
    float fadeTransition = 0.05;
    float distToFragment = length(pos.xy);
-   float textureScale = 20.0 + clamp((50.0 * floor(distToFragment / 50.0)), 0.0, 2000.0);
+   float textureScale = 20.0 + clamp((50.0 * floor(distToFragment / 50.0)), 0.0, 1000.0);
    vec3 waveNormal = vec3(0.0, 0.0, 0.0); 
    vec2 waveCoords = 0.025 * vertexNormal.xy + vec2(combinedPos.xy / textureScale);   
    waveCoords /= (0.5 + (modForFOV * 0.5) );
@@ -109,15 +109,12 @@ void main (void)
    waveNormal += fadeAmt3 * SampleNormalMap(waveTexture, waveCoords3);
    //////////////////////////////////////////////////////////////////////////////
 
-
-   float waveNormalFadeOut = clamp(distToFragment / 1000.0, 0.0, 1.0);
-   waveNormal = mix(waveNormal, vec3(0.0, 0.0, 1.0), waveNormalFadeOut);
    waveNormal = normalize(waveNormal);
    
-   float waveNormalContribution = 1.0;//max(vec3(0.0), dot(vertexNormal, vec3(1.0, 1.0, 0.0)));
-   waveNormal = waveNormalContribution * waveNormal;
+   float vertexNormalFadeOut = clamp(distToFragment / 1000.0, 0.0, 1.0);
+   vec3 dampenedVertexNormal = mix(vertexNormal, vec3(0.0, 0.0, 1.0), vertexNormalFadeOut);
    
-   vec3 normal = vertexNormal + waveNormal;
+   vec3 normal = dampenedVertexNormal + waveNormal;
    normal = normalize(normal);   
 
    //this inverts the normal if we are underwater
