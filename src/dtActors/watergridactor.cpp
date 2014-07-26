@@ -66,6 +66,7 @@
 #include <osg/TexGenNode>
 #include <osg/TexMat>
 #include <osg/Texture>
+#include <osg/Version>
 
 #include <osgDB/FileUtils>
 #include <osgDB/ReadFile>
@@ -111,7 +112,13 @@ namespace dtActors
    const int WaterGridActor::MAX_TEXTURE_WAVES(32);
    const dtUtil::RefString WaterGridActor::UNIFORM_ELAPSED_TIME("elapsedTime");
    const dtUtil::RefString WaterGridActor::UNIFORM_MAX_COMPUTED_DISTANCE("maxComputedDistance");
+
+#if defined (__APPLE__) && OSG_VERSION_LESS_THAN(3,2,0)
+   const dtUtil::RefString WaterGridActor::UNIFORM_WAVE_ARRAY("waveArray[0]");
+#else
    const dtUtil::RefString WaterGridActor::UNIFORM_WAVE_ARRAY("waveArray");
+#endif
+
    const dtUtil::RefString WaterGridActor::UNIFORM_TEXTURE_WAVE_ARRAY("TextureWaveArray");
    const dtUtil::RefString WaterGridActor::UNIFORM_REFLECTION_MAP("reflectionMap");
    const dtUtil::RefString WaterGridActor::UNIFORM_NOISE_TEXTURE("noiseTexture");
@@ -125,18 +132,51 @@ namespace dtActors
    const dtUtil::RefString WaterGridActor::UNIFORM_WATER_COLOR("WaterColor");
 
 
-   ////////////////////////////////////////////////////////////////////////////////
+   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    IMPLEMENT_ENUM(WaterGridActor::ChoppinessSettings);
    WaterGridActor::ChoppinessSettings WaterGridActor::ChoppinessSettings::
-   CHOP_FLAT("CHOP_FLAT", 1.0f, 0.0f, 1.0f, 1.0f, 27.0f);
+      CHOP_FLAT("CHOP_FLAT", 0.0f, 20.0f);
    WaterGridActor::ChoppinessSettings WaterGridActor::ChoppinessSettings::
-   CHOP_MILD("CHOP_MILD", 1.33f, 1.51f, 1.0f, 1.0f, 37.0f);
+      CHOP_MILD("CHOP_MILD", 0.51f, 35.0f);
    WaterGridActor::ChoppinessSettings WaterGridActor::ChoppinessSettings::
-   CHOP_MED("CHOP_MED", 1.6f, 3.0f, 0.80f, 1.0f, 65.0f);
+      CHOP_MED("CHOP_MED", 1.0f, 65.0f);
    WaterGridActor::ChoppinessSettings WaterGridActor::ChoppinessSettings::
-   CHOP_ROUGH("CHOP_ROUGH", 2.0f, 7.5f, 0.6f, 1.0f, 100.0f);
+      CHOP_ROUGH("CHOP_ROUGH", 2.5f, 130.0f);
 
 
+   WaterGridActor::ChoppinessSettings::ChoppinessSettings(const std::string &name, float rotationSpread, float texMod)
+      : dtUtil::Enumeration(name), mRotationSpread(rotationSpread), mTextureWaveModifier(texMod)
+   {  
+      AddInstance(this);
+   }
+
+
+   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+   IMPLEMENT_ENUM(WaterGridActor::SeaState);///////////////////////////////// AMP  WaveLen  Speed
+   WaterGridActor::SeaState WaterGridActor::SeaState::SeaState_0("SeaState_0", 0.1, 0.1, 0.2);
+   WaterGridActor::SeaState WaterGridActor::SeaState::SeaState_1("SeaState_1", 0.15, 0.15, 0.4);
+   WaterGridActor::SeaState WaterGridActor::SeaState::SeaState_2("SeaState_2", 0.25, 0.25, 0.6);
+   WaterGridActor::SeaState WaterGridActor::SeaState::SeaState_3("SeaState_3", 0.45, 0.45, 0.8);
+   WaterGridActor::SeaState WaterGridActor::SeaState::SeaState_4("SeaState_4", 0.65, 0.65, 1.0);
+   WaterGridActor::SeaState WaterGridActor::SeaState::SeaState_5("SeaState_5", 0.85, 0.85, 1.25);
+   WaterGridActor::SeaState WaterGridActor::SeaState::SeaState_6("SeaState_6", 1.0, 1.0, 1.5);
+   WaterGridActor::SeaState WaterGridActor::SeaState::SeaState_7("SeaState_7", 1.15, 1.15, 1.75);
+   WaterGridActor::SeaState WaterGridActor::SeaState::SeaState_8("SeaState_8", 1.25, 1.25, 2.25);
+   WaterGridActor::SeaState WaterGridActor::SeaState::SeaState_9("SeaState_9", 1.45, 1.45, 2.5);
+   WaterGridActor::SeaState WaterGridActor::SeaState::SeaState_10("SeaState_10", 1.55, 1.55, 3.0);
+   WaterGridActor::SeaState WaterGridActor::SeaState::SeaState_11("SeaState_11", 1.65, 1.65, 4.0);
+   WaterGridActor::SeaState WaterGridActor::SeaState::SeaState_12("SeaState_12", 2.0, 2.0, 8.0);
+
+
+
+   WaterGridActor::SeaState::SeaState(const std::string& name, float ampMod, float waveLenMod, float speedMod)
+      : dtUtil::Enumeration(name), mAmplitudeModifier(ampMod) , mWaveLengthModifier(waveLenMod), mSpeedModifier(speedMod)
+   {  
+      AddInstance(this);
+   }
+
+
+   
    ////////////////////////////////////////////////////////////////////////////////
    //This should temporarily keep us from being culled out
    //TODO: calculate bounding box
@@ -175,6 +215,11 @@ namespace dtActors
    ////////////////////////////////////////////////////////////////////////////////
    WaterGridActor::WaterGridActor(WaterGridActorProxy& owner)
       : BaseClass(owner)
+      , mModForWaveLength(1.0f)
+      , mModForSpeed(1.0f)
+      , mModForSteepness(1.0f)
+      , mModForAmplitude(1.0f)
+      , mModForDirectionInDegrees(0.0f)
       , mElapsedTime(0.0f)
       , mDeltaTime(0.0f)
       , mRenderWaveTexture(false)
@@ -182,18 +227,13 @@ namespace dtActors
       , mDeveloperMode(false)
       , mComputedRadialDistance(0.0)
       , mTextureWaveAmpOverLength(1.0 / 64.0)
-      , mModForWaveLength(1.0f)
-      , mModForSpeed(1.0f)
-      , mModForSteepness(1.0f)
-      , mModForAmplitude(1.0f)
-      , mModForDirectionInDegrees(0.0f)
       , mModForFOV(1.0f)
       , mCameraFoVScalar(1.0f)
-      , mWaterColor(10.0 / 256.0, 69.0 / 256.0, 39.0 / 256.0, 1.0)
-      , mChoppinessEnum(&WaterGridActor::ChoppinessSettings::CHOP_FLAT)
-      , mGeometry()
-      , mGeode()
-      , mWaves()
+      , mWaterColor(0.117187, 0.3125, 0.58593, 1.0)
+      , mLastCameraOffsetPos()
+      , mCurrentCameraPos()
+      , mChoppinessEnum(&ChoppinessSettings::CHOP_FLAT)
+      , mSeaStateEnum(&SeaState::SeaState_4)
    {
       SetName("WaterGridActor"); // Set a default name
 
@@ -281,7 +321,7 @@ namespace dtActors
       SetTransform(transform);
       SetWaterHeight(pos.z());
 
-      WaterGridBuilder::BuildWaves(mWaves);
+      WaterGridBuilder::BuildWavesFromSeaState(mSeaStateEnum , mWaves);
       WaterGridBuilder::BuildTextureWaves(mTextureWaves);
    }
 
@@ -457,10 +497,36 @@ namespace dtActors
 
             keyTimeOut = 0.5;
          }
-         if(kb->GetKeyState('p'))
+
+
+         //set to 4 because that is the default
+         static int testSeaState = 4;
+         if(kb->GetKeyState(osgGA::GUIEventAdapter::KEY_Page_Up))
          {
-            dtCore::ShaderManager::GetInstance().ReloadAndReassignShaderDefinitions("shaders/ShaderDefinitions.xml");
+            if(testSeaState == 12) testSeaState = -1;
+
+            testSeaState++;
+
+            SetSeaStateByNumber(testSeaState);
+
+            std::cout << "Setting Sea State to: " << testSeaState << std::endl;
+
+            keyTimeOut = 0.5;
          }
+
+         if(kb->GetKeyState(osgGA::GUIEventAdapter::KEY_Page_Down))
+         {
+            if(testSeaState == 0) testSeaState = 13;
+
+            testSeaState--;
+
+            SetSeaStateByNumber(testSeaState);
+
+            std::cout << "Setting Sea State to: " << testSeaState << std::endl;
+
+            keyTimeOut = 0.5;
+         }
+
       }
    }
 
@@ -471,6 +537,8 @@ namespace dtActors
       mGeode = new osg::Geode();
       mGeometry = WaterGridBuilder::BuildRadialGrid(mComputedRadialDistance);
       mGeometry->setCullCallback(new WaterCullCallback());
+
+      BindShader(mGeode, "WaterShader");
 
       mGeode->addDrawable(mGeometry.get());
 
@@ -671,7 +739,7 @@ namespace dtActors
       // Camera Cut Point is an estimated value for the cut point - scaled by all the FoV modifiers.
       bool quitLooking = false;
       int numIgnored = 0;
-      float cameraCutPoint = 0.5 + cameraHeight / (12.0 * mModForWaveLength * mCameraFoVScalar * mModForFOV); // Used to pick waves
+      float cameraCutPoint = 0.5 + cameraHeight / (24.0 * mModForWaveLength * mCameraFoVScalar * mModForFOV); // Used to pick waves
       while(iter != endIter && !quitLooking)
       {
          Wave &nextWave = (*iter);
@@ -698,7 +766,7 @@ namespace dtActors
             Wave& wave = (*iter);
             // weaken the amp as it reaches the pop point to hide some of the popping
             float fadeRatio = sqrt((wave.mWaveLength - cameraCutPoint) / cameraCutPoint);
-            float amp = wave.mAmplitude * mModForAmplitude * dtUtil::Min(1.0f, dtUtil::Max(0.0f, fadeRatio));
+            float amp = wave.mAmplitude * mModForAmplitude;
             float waveLength = wave.mWaveLength * mModForWaveLength;
             float speed = wave.mSpeed * mModForSpeed;
 
@@ -716,9 +784,9 @@ namespace dtActors
                float dirX = sin(osg::DegreesToRadians(curWaveDir + mModForDirectionInDegrees));
                float dirY = cos(osg::DegreesToRadians(curWaveDir + mModForDirectionInDegrees));
 
-               mProcessedWaveData[count/2][0] = waveLength * mChoppinessEnum->mWaveLengthModifier;
-               mProcessedWaveData[count/2][1] = speed * mChoppinessEnum->mSpeedMod;
-               mProcessedWaveData[count/2][2] = amp * mChoppinessEnum->mAmpModifier;
+               mProcessedWaveData[count/2][0] = waveLength * mSeaStateEnum->mWaveLengthModifier;
+               mProcessedWaveData[count/2][1] = speed * mSeaStateEnum->mSpeedModifier;
+               mProcessedWaveData[count/2][2] = amp * mSeaStateEnum->mAmplitudeModifier;
                mProcessedWaveData[count/2][3] = freq;
                mProcessedWaveData[count/2][4] = steepness;
                mProcessedWaveData[count/2][5] = 1.0f;
@@ -852,12 +920,21 @@ namespace dtActors
    ////////////////////////////////////////////////////////////////////////////////
    void WaterGridActor::BindShader(osg::Node* node, const std::string& shaderName)
    {
-      const dtCore::ShaderGroup* shaderGroup = dtCore::ShaderManager::GetInstance().FindShaderGroupPrototype("WaterGroup");
+      dtCore::ShaderManager& sm = dtCore::ShaderManager::GetInstance();
+      const dtCore::ShaderGroup* shaderGroup = sm.FindShaderGroupPrototype("WaterGroup");
 
       if (shaderGroup == NULL)
       {
-         LOG_INFO("Could not find shader group: WaterGroup");
-         return;
+         //try to load the default shaders
+         //sm.LoadShaderDefinitions("shaders/WaterGroup.dtshader");
+         sm.LoadShaderDefinitions("shaders/ShaderDefinitions.xml");
+         shaderGroup = sm.FindShaderGroupPrototype("WaterGroup");
+
+         if (shaderGroup == NULL)
+         {
+            LOG_INFO("Could not find shader group: WaterGroup");
+            return;
+         }
       }
 
       const dtCore::ShaderProgram* defaultShader = shaderGroup->FindShader(shaderName);
@@ -907,7 +984,7 @@ namespace dtActors
 
       mReflectionCamera->setRenderOrder(osg::Camera::PRE_RENDER);
       mReflectionCamera->setClearMask(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-      mReflectionCamera->setClearColor(osg::Vec4(0.0f, 0.0f, 0.0f, 1.0f));
+      mReflectionCamera->setClearColor(osg::Vec4(1.0f, 1.0f, 1.0f, 1.0f));
 
       ResetReflectionUpdate();
 
@@ -922,30 +999,30 @@ namespace dtActors
       ss->setTextureAttributeAndModes(1, mReflectionTexture.get(), osg::StateAttribute::ON);
 
       // Debug display
-      //{
-      //   osg::Matrix orthoMatrix;
-      //   orthoMatrix.makeOrtho2D(-40.0f, 40.0f, -40.0f, 40.0f);
+      {
+         /*osg::Matrix orthoMatrix;
+         orthoMatrix.makeOrtho2D(-40.0f, 40.0f, -40.0f, 40.0f);
 
-      //   osg::Projection* proj = new osg::Projection(orthoMatrix);
+         osg::Projection* proj = new osg::Projection(orthoMatrix);
 
-      //   osg::MatrixTransform* ident = new osg::MatrixTransform(osg::Matrix::translate(20.0f, 20.0f, 0.0f));
-      //   ident->setReferenceFrame(osg::Transform::ABSOLUTE_RF);
+         osg::MatrixTransform* ident = new osg::MatrixTransform(osg::Matrix::translate(20.0f, 20.0f, 0.0f));
+         ident->setReferenceFrame(osg::Transform::ABSOLUTE_RF);
 
-      //   proj->addChild(ident);
+         proj->addChild(ident);
 
-      //   osg::Node* quad = CreateQuad(mReflectionTexture.get(), 50);
-      //   ident->addChild(quad);
+         osg::Node* quad = WaterGridBuilder::CreateQuad(mReflectionTexture.get(), 50);
+         ident->addChild(quad);
 
-      //   osg::Depth* depth = new osg::Depth;
-      //   depth->setFunction(osg::Depth::ALWAYS);
-      //   depth->setRange(0.0f, 0.0f);
+         osg::Depth* depth = new osg::Depth;
+         depth->setFunction(osg::Depth::ALWAYS);
+         depth->setRange(0.0f, 0.0f);
 
-      //   osg::StateSet* quadState = quad->getOrCreateStateSet();
-      //   quadState->setAttributeAndModes(depth, osg::StateAttribute::OFF | osg::StateAttribute::OVERRIDE);
-      //   quadState->setRenderBinDetails(50, "RenderBin");
+         osg::StateSet* quadState = quad->getOrCreateStateSet();
+         quadState->setAttributeAndModes(depth, osg::StateAttribute::OFF | osg::StateAttribute::OVERRIDE);
+         quadState->setRenderBinDetails(50, "RenderBin");
 
-      //   dtABC::Application::GetInstance()->GetScene().GetSceneNode()->addChild(proj);
-      //}
+         dtABC::Application::GetInstance("Application")->GetScene()->GetSceneNode()->addChild(proj);*/
+      }
 
    }
 
@@ -1170,6 +1247,80 @@ namespace dtActors
       waterHeightScreenSpace->set(posOnFarPlane);
    }
 
+
+   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+   void WaterGridActor::SetSeaState(WaterGridActor::SeaState& seaState)
+   {
+      mSeaStateEnum = &seaState;
+
+      mWaves.clear();
+      WaterGridBuilder::BuildWavesFromSeaState(&seaState, mWaves);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+   WaterGridActor::SeaState& WaterGridActor::GetSeaState() const
+   {
+      return *mSeaStateEnum;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+   void WaterGridActor::SetSeaStateByNumber(unsigned force)
+   {
+      if(force == 0)
+      {
+         SetSeaState(SeaState::SeaState_0);
+      }
+      else if(force == 1)
+      {
+         SetSeaState(SeaState::SeaState_1);
+      }
+      else if(force == 2)
+      {
+         SetSeaState(SeaState::SeaState_2);
+      }
+      else if(force == 3)
+      {
+         SetSeaState(SeaState::SeaState_3);
+      }
+      else if(force == 4)
+      {
+         SetSeaState(SeaState::SeaState_4);
+      }
+      else if(force == 5)
+      {
+         SetSeaState(SeaState::SeaState_5);
+      }
+      else if(force == 6)
+      {
+         SetSeaState(SeaState::SeaState_6);
+      }
+      else if(force == 7)
+      {
+         SetSeaState(SeaState::SeaState_7);
+      }
+      else if(force == 8)
+      {
+         SetSeaState(SeaState::SeaState_8);
+      }
+      else if(force == 9)
+      {
+         SetSeaState(SeaState::SeaState_9);
+      }
+      else if(force == 10)
+      {
+         SetSeaState(SeaState::SeaState_10);
+      }
+      else if(force == 11)
+      {
+         SetSeaState(SeaState::SeaState_11);
+      }
+      else if(force == 12)
+      {
+         SetSeaState(SeaState::SeaState_12);            
+      }
+   }
+
+
    ////////////////////////////////////////////////////////////////////////////////
    //WATER GRID PROXY
    ////////////////////////////////////////////////////////////////////////////////
@@ -1183,6 +1334,10 @@ namespace dtActors
 
    WaterGridActorProxy::WaterGridActorProxy()
    : mSceneCameraName(dtABC::Application::GetDefaultConfigData().CAMERA_NAME)
+   , mWaveDirection(0.0f)
+   , mAmplitudeModifier(1.0f)
+   , mWavelengthModifier(1.0f)
+   , mSpeedModifier(1.0f)
    {
       SetClassName(WaterGridActorProxy::CLASSNAME);
    }
@@ -1196,6 +1351,7 @@ namespace dtActors
    void WaterGridActorProxy::CreateDrawable()
    {
       WaterGridActor* actor = new WaterGridActor(*this);
+     
       SetDrawable(*actor);
 
       //if (IsInSTAGE())
@@ -1242,6 +1398,15 @@ namespace dtActors
       BaseClass::BuildPropertyMap();
 
       WaterGridActor* actor = GetDrawable<WaterGridActor>();
+      
+      typedef dtCore::PropertyRegHelper<dtCore::PropertyContainer&, WaterGridActorProxy> RegHelperType;
+      RegHelperType propReg(*this, this, GROUPNAME);
+
+      DT_REGISTER_PROPERTY(WaveDirection, "The direction the waves are moving.", RegHelperType, propReg);
+      DT_REGISTER_PROPERTY(AmplitudeModifier, "A percentage multiplied times the amplitude.", RegHelperType, propReg);
+      DT_REGISTER_PROPERTY(WavelengthModifier, "A percentage multiplied with the wave length.", RegHelperType, propReg);
+      DT_REGISTER_PROPERTY(SpeedModifier, "A percentage multiplied with the speed.", RegHelperType, propReg);
+
 
       AddProperty(new dtCore::ColorRgbaActorProperty(PROPERTY_WATER_COLOR, PROPERTY_WATER_COLOR,
          dtCore::ColorRgbaActorProperty::SetFuncType(actor, &WaterGridActor::SetWaterColor),
@@ -1257,6 +1422,11 @@ namespace dtActors
          dtCore::StringActorProperty::SetFuncType(this, &WaterGridActorProxy::SetSceneCamera),
          dtCore::StringActorProperty::GetFuncType(this, &WaterGridActorProxy::GetSceneCamera),
          "Sets the name of the camera used to render the scene.", GROUPNAME));
+
+      AddProperty(new dtCore::EnumActorProperty<WaterGridActor::SeaState>("Sea State", "Sea State",
+         dtCore::EnumActorProperty<WaterGridActor::SeaState>::SetFuncType(actor, &WaterGridActor::SetSeaState),
+         dtCore::EnumActorProperty<WaterGridActor::SeaState>::GetFuncType(actor, &WaterGridActor::GetSeaState),
+         "The Sea State number based on the Beaufort wind force scale.", GROUPNAME));
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -1314,6 +1484,52 @@ namespace dtActors
       {
          waterActor->SetSceneCamera(dtABC::Application::GetInstance("Application")->GetCamera());
       }
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   DT_IMPLEMENT_ACCESSOR_GETTER(WaterGridActorProxy, float, WaveDirection);
+   DT_IMPLEMENT_ACCESSOR_GETTER(WaterGridActorProxy, float, AmplitudeModifier);
+   DT_IMPLEMENT_ACCESSOR_GETTER(WaterGridActorProxy, float, WavelengthModifier);
+   DT_IMPLEMENT_ACCESSOR_GETTER(WaterGridActorProxy, float, SpeedModifier);
+
+   /////////////////////////////////////////////////////////////////////////////
+   void WaterGridActorProxy::SetWaveDirection(float f)
+   {
+      WaterGridActor* wga = NULL;
+      GetActor(wga);
+
+      mWaveDirection = f;
+      wga->SetModForDirectionInDegrees(mWaveDirection);
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void WaterGridActorProxy::SetWavelengthModifier(float f)
+   {
+      WaterGridActor* wga = NULL;
+      GetActor(wga);
+
+      mWavelengthModifier = f;
+      wga->SetModForWaveLength(mWavelengthModifier);
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void WaterGridActorProxy::SetAmplitudeModifier(float f)
+   {
+      WaterGridActor* wga = NULL;
+      GetActor(wga);
+
+      mAmplitudeModifier = f;
+      wga->SetModForAmplitude(mAmplitudeModifier);
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void WaterGridActorProxy::SetSpeedModifier(float f)
+   {
+      WaterGridActor* wga = NULL;
+      GetActor(wga);
+
+      mSpeedModifier = f;
+      wga->SetModForSpeed(f);
    }
 }
 ////////////////////////////////////////////////////////////////////////////////
