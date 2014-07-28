@@ -81,7 +81,7 @@ void TestDISApp::Config()
    mGameManager = new dtGame::GameManager(*this->GetScene());
 
    //need to set a ProjectContext so the ResouceActorProperty can find the StaticMesh resources
-   const std::string context = dtUtil::FindFileInPathList("demoMap");
+   const std::string context = dtUtil::FindFileInPathList("examples/data");
    dtCore::Project::GetInstance().SetContext(context);
    mGameManager->ChangeMap("MyCoolMap");  //just for something to see
 

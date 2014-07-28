@@ -181,9 +181,9 @@ namespace dtAnim
    void AnimationTests::setUp()
    {      
       mHelper = new AnimationHelper();
-      dtCore::Project::GetInstance().SetContext(dtUtil::GetDeltaRootPath() + "/examples/data/demoMap");
+      dtCore::Project::GetInstance().SetContext(dtUtil::GetDeltaRootPath() + "/examples/data");
       
-      std::string modelPath = dtUtil::FindFileInPathList("SkeletalMeshes/marine_test.xml");
+      std::string modelPath = dtUtil::FindFileInPathList("SkeletalMeshes/Marine/marine_test.xml");
       CPPUNIT_ASSERT(!modelPath.empty());
 
       mLastAnimatableCompleted = NULL;

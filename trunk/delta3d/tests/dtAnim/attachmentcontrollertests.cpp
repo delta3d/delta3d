@@ -102,7 +102,7 @@ namespace dtAnim
             mAttach = new AttachmentControllerExtended();
             mAnimHelper->SetAttachmentController(mAttach);
 
-            std::string context = dtUtil::GetDeltaRootPath() + "/examples/data/demoMap/SkeletalMeshes/";
+            std::string context = "../examples/data/SkeletalMeshes/Marine";
             std::string filename = "marine_test.xml";
 
             mAnimHelper->LoadModel(context + filename);

@@ -75,7 +75,7 @@ bool TestHUD::OnButtonClicked(const CEGUI::EventArgs&) //non-static
 
 void TestHUD::_ConfigScene()
 {
-   std::string contextName = dtUtil::GetDeltaRootPath() + "/examples/data/demoMap";
+   std::string contextName = dtUtil::GetDeltaRootPath() + "/examples/data";
    dtCore::Project::GetInstance().SetContext(contextName, true);
    dtCore::Map &myMap = dtCore::Project::GetInstance().GetMap("MyCoolMap");
 
