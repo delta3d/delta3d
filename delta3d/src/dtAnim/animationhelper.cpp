@@ -101,18 +101,22 @@ void AnimationHelper::OnRemovedFromWorld()
 /////////////////////////////////////////////////////////////////////////////////
 void AnimationHelper::Update(float dt)
 {
-   dtAnim::AnimationUpdaterInterface* animator = mModelWrapper->GetAnimator();
-   if (animator != NULL)
+   if (mModelWrapper != NULL)
    {
-      mLastUpdateTime = mSequenceMixer->GetRootSequence().GetElapsedTime();
-      CollectCommands(mLastUpdateTime, mLastUpdateTime + dt);
-
-      mSequenceMixer->Update(dt);
-      animator->Update(dt);
-      if (mAttachmentController.valid())
+      dtAnim::AnimationUpdaterInterface* animator = mModelWrapper->GetAnimator();
+      if (animator != NULL)
       {
-         mAttachmentController->Update(*GetModelWrapper());
+         mLastUpdateTime = mSequenceMixer->GetRootSequence().GetElapsedTime();
+         CollectCommands(mLastUpdateTime, mLastUpdateTime + dt);
+
+         mSequenceMixer->Update(dt);
+         animator->Update(dt);
+         if (mAttachmentController.valid())
+         {
+            mAttachmentController->Update(*GetModelWrapper());
+         }
       }
+
    }
 
    if (IsLoadingAsynchronously())
@@ -288,6 +292,8 @@ bool AnimationHelper::LoadModelAsynchronously(const std::string& pFilename)
       {
          UnloadModel();
       }
+
+      mModelLoader = new dtAnim::ModelLoader;
 
       mModelLoader->LoadModelAsynchronously(pFilename);
 

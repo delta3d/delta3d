@@ -73,7 +73,7 @@ namespace dtAnim
 
          void setUp()
          {
-            dtCore::Project::GetInstance().SetContext(dtUtil::GetDeltaRootPath() + "/examples/data/demoMap");
+            dtCore::Project::GetInstance().SetContext("../examples/data");
             AnimNodeBuilder* nodeBuilder = dtAnim::ModelDatabase::GetInstance().GetNodeBuilder();
             CPPUNIT_ASSERT_MESSAGE("AnimNodeBuilder should be valid.", nodeBuilder != NULL);
             
@@ -93,7 +93,7 @@ namespace dtAnim
 
          void TestIsFileValid()
          {
-            std::string validFile = dtUtil::FindFileInPathList("SkeletalMeshes/marine_test.xml");
+            std::string validFile = dtUtil::FindFileInPathList("SkeletalMeshes/Marine/marine_test.xml");
             std::string invalidFile = dtUtil::FindFileInPathList("maps/TestAnim.xml");
 
             dtAnim::ModelDatabase& database = dtAnim::ModelDatabase::GetInstance();

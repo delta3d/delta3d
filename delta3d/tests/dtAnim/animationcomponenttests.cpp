@@ -230,7 +230,7 @@ namespace dtAnim
       CPPUNIT_ASSERT_EQUAL(false, animAC->GetLoadModelAsynchronously());
       CPPUNIT_ASSERT_EQUAL(false, animAC->GetEnableAttachingNodeToDrawable());
 
-      animAC->SetSkeletalMesh(dtCore::ResourceDescriptor("SkeletalMeshes:marine.xml"));
+      animAC->SetSkeletalMesh(dtCore::ResourceDescriptor("SkeletalMeshes:Marine:marine.xml"));
       CPPUNIT_ASSERT(animAC->GetNode() == NULL);
       mGM->AddActor(*mTestGameActor, false, false);
       CPPUNIT_ASSERT(animAC->GetNode() != NULL);
@@ -250,7 +250,7 @@ namespace dtAnim
       CPPUNIT_ASSERT(animAC->GetNode() == NULL);
       CPPUNIT_ASSERT_EQUAL_MESSAGE("Setting the resource to null with AttachingNoteToDrawable enabled should unparent the node.",
                0U, nodeBackup->getNumParents());
-      animAC->SetSkeletalMesh(dtCore::ResourceDescriptor("SkeletalMeshes:marine.xml"));
+      animAC->SetSkeletalMesh(dtCore::ResourceDescriptor("SkeletalMeshes:Marine:marine.xml"));
       CPPUNIT_ASSERT_EQUAL(1U, animAC->GetNode()->getNumParents());
       CPPUNIT_ASSERT(animAC->GetNode()->getParent(0) == mTestGameActor->GetDrawable()->GetOSGNode());
 
@@ -281,7 +281,7 @@ namespace dtAnim
       try
       {
          //uses example data for now
-         std::string context = dtUtil::GetDeltaRootPath() + "/examples/data/demoMap";
+         std::string context = dtUtil::GetDeltaRootPath() + "/examples/data";
          dtCore::Project::GetInstance().SetContext(context, true);
          mGM->ChangeMap("AnimationPerformance");
 
@@ -464,9 +464,9 @@ namespace dtAnim
    dtCore::RefPtr<AnimationHelper> AnimationComponentTests::CreateRealAnimationHelper()
    {
       dtCore::RefPtr<AnimationHelper> helper = new AnimationHelper();
-      dtCore::Project::GetInstance().SetContext(dtUtil::GetDeltaRootPath() + "/examples/data/demoMap");
+      dtCore::Project::GetInstance().SetContext(dtUtil::GetDeltaRootPath() + "/examples/data");
 
-      std::string modelPath = dtUtil::FindFileInPathList("SkeletalMeshes/marine_test.xml");
+      std::string modelPath = dtUtil::FindFileInPathList("SkeletalMeshes/Marine/marine_test.xml");
       CPPUNIT_ASSERT(!modelPath.empty());
       helper->LoadModel(modelPath);
 

@@ -6,7 +6,7 @@
 
 const int MAX_BONES = 82;
 uniform vec4 boneTransforms[MAX_BONES * 3];
-uniform float scale = 1.0;
+uniform float scale;
 
 void main(void)
 {
