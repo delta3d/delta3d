@@ -376,7 +376,7 @@ namespace dtActors
       static float keyTimeOut = 0.0f;
       keyTimeOut -= dt;
 
-      if(kb != NULL && mDeveloperMode && keyTimeOut <= 0.0f)
+      if(kb != NULL && /*mDeveloperMode &&*/ keyTimeOut <= 0.0f)
       {
          if(kb->GetKeyState('9'))
          {
@@ -546,7 +546,7 @@ namespace dtActors
       ss->setMode(GL_BLEND, osg::StateAttribute::ON);
       osg::BlendFunc* bf = new osg::BlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
       ss->setAttribute(bf);
-      ss->setRenderBinDetails(0, "RenderBin");
+      //ss->setRenderBinDetails(0, "RenderBin");
       GetMatrixNode()->addChild(BuildSubmergedGeometry());
       GetMatrixNode()->addChild(mGeode.get());
 
@@ -570,9 +570,9 @@ namespace dtActors
       depth->setRange(1.0, 1.0);
       ss->setAttributeAndModes(depth, osg::StateAttribute::ON);
 
-      osg::BlendFunc* bf = new osg::BlendFunc();
+      /*osg::BlendFunc* bf = new osg::BlendFunc();
       bf->setFunction(osg::BlendFunc::SRC_ALPHA ,osg::BlendFunc::ONE_MINUS_SRC_ALPHA);
-      ss->setAttributeAndModes(bf);
+      ss->setAttributeAndModes(bf);*/
 
       ss->setMode(GL_CULL_FACE, osg::StateAttribute::OFF);
       ss->setMode(GL_DEPTH_TEST, osg::StateAttribute::OFF);

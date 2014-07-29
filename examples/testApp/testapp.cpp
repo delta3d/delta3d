@@ -31,6 +31,8 @@
 #include <dtGame/gameentrypoint.h>
 #include "export.h"
 #include <dtABC/baseabc.h>
+#include <dtABC/application.h>
+#include <dtCore/deltawin.h>
 #include <dtCore/map.h>
 #include <dtCore/project.h>
 #include <dtCore/projectconfig.h>
@@ -239,22 +241,28 @@ void TestApp::OnStartup(dtABC::BaseABC& app, dtGame::GameManager& gameManager)
    dtCore::RefPtr<dtPhysics::PhysicsComponent> physicsComponent = new dtPhysics::PhysicsComponent(dtPhysics::PhysicsWorld::GetInstance(), false);
    gameManager.AddComponent(*physicsComponent, dtGame::GameManager::ComponentPriority::NORMAL);
 
+   //setup camera
+   //double vfov, aspect, nearClip, farClip;
+   dtCore::DeltaWin::Resolution vec = gameManager.GetApplication().GetWindow()->GetCurrentResolution();
+   
+   //gameManager.GetApplication().GetCamera()->GetPerspectiveParams(vfov, aspect, nearClip, farClip);
+   gameManager.GetApplication().GetCamera()->SetPerspectiveParams(75.0, vec.width / vec.height, 0.5f, 25000.0f);
 
    // Load the map for this application.
    const std::string MAP_NAME("TestApp");
-   mMap = &dtCore::Project::GetInstance().GetMap(MAP_NAME);
+   //mMap = &dtCore::Project::GetInstance().GetMap(MAP_NAME);
 
-   if ( ! mMap.valid())
-   {
-      LOG_ERROR("Map file for TestApp could not be found.");
-   }
-   else
-   {
-      app.LoadMap(*mMap, false);
+   //if ( ! mMap.valid())
+   //{
+   //   LOG_ERROR("Map file for TestApp could not be found.");
+   //}
+   //else
+   //{
+   //   app.LoadMap(*mMap, false);
 
-      // DEBUG:
-      LOG_ALWAYS("Map \"" + MAP_NAME + "\" loaded");
-   }
+   //   // DEBUG:
+   //   LOG_ALWAYS("Map \"" + MAP_NAME + "\" loaded");
+   //}
 
    // Update the Game Manager to use the loaded map.
    gameManager.ChangeMap(MAP_NAME);

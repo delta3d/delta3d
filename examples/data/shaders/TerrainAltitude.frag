@@ -11,6 +11,7 @@ uniform float AltitudeScale;
 uniform float DetailScale;
 uniform float WaterSurfaceOffset;
 uniform float WaterFadeDepth;
+uniform float WaterHeight;
 
 uniform int mode;
 
@@ -18,11 +19,20 @@ varying vec3 vNormal;
 varying vec3 vLightDir;
 varying vec3 vPos;
 varying vec3 vWorldNormal;
+varying vec3 vCamera;
 
 float saturate(float inValue)
 {
    return clamp(inValue, 0.0, 1.0);
 }
+
+//TODO- this needs to be set from a property on the water
+const float UnderWaterViewDistance = 15.0;
+
+void lightContribution(vec3, vec3, vec3, vec3, out vec3);
+float computeLinearFog(float, float, float);
+float computeExpFog(float);
+vec3 GetWaterColorAtDepth(float);
 
 void main(void)
 {  
@@ -44,7 +54,7 @@ void main(void)
    
    float slope = clamp(1.0 - (dot(vec3(0,0,1), vWorldNormal) * 2.0), 0.0, 1.0);
 
-   float waterRatio = clamp(-alt + WaterSurfaceOffset, 0.0, WaterFadeDepth)/WaterFadeDepth;
+   float waterRatio = 0.0;//clamp(-alt + WaterSurfaceOffset, 0.0, WaterFadeDepth)/WaterFadeDepth;
    vec3 waterColor = mix(sandColor, WaterColor.rgb, WaterColor.a);
 
    float grassRatio = clamp(alt, 0.0, grassFullAlt) / grassRange;
@@ -69,14 +79,42 @@ void main(void)
 
    // normalize all of our incoming vectors
    vec3 lightDir = normalize(vLightDir);
-
-   float NdotL = saturate(dot(vNormal, lightDir));
-
-   // Calculate the contributions from each shading component
-   vec3 ambientColor = vec3(0.2, 0.2, 0.2) * baseColor.rgb;
-   vec3 diffuseColor = NdotL * vec3(gl_LightSource[0].diffuse.rgb) * baseColor.rgb;
    
-   vec3 result = ambientColor + diffuseColor;
+   //Compute the Light Contribution
+   vec3 lightContrib;
+   lightContribution(vNormal, lightDir, gl_LightSource[0].diffuse.xyz, gl_LightSource[0].ambient.xyz, lightContrib);
+  
+   vec3 result = lightContrib * baseColor.rgb;
+  
+   float dist = length(vPos - vCamera);
+   
+   vec4 fogColor = gl_Fog.color;
+
+   //This adds the under water effects 
+   float fogAmt = 0.0;
+   float height = vPos.z;
+
+   if(height < WaterHeight)
+   {
+      //camera height over the water
+      float heightOverWater = max(vCamera.z - WaterHeight, 0.0);
+
+      fogAmt = computeExpFog(1000.0 + 10.0 * (dist - heightOverWater));
+
+      //fade under water fog in over depth
+      float depth = clamp(WaterHeight - height, 0.0, 3.0 * UnderWaterViewDistance);
+      
+      fogColor = vec4(GetWaterColorAtDepth(-1.0), 1.0);
+      
+      //considering the underwater color essentially removing light
+      result = mix(result, 1.2 * result * GetWaterColorAtDepth(-1.0), depth / (3.0 * UnderWaterViewDistance));
+   }
+   else
+   {
+      fogAmt = computeExpFog(dist);
+   }
+
+   result = mix(fogColor, result, fogAmt);
 
    gl_FragColor = vec4(result, 1.0);
 }

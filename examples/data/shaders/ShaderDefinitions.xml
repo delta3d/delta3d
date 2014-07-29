@@ -66,7 +66,8 @@
   <shadergroup name="Terrains">
     <shader name="TerrainAltitude" default="yes">
       <source type="Vertex">shaders/TerrainAltitude.vert</source>
-      <source type="Fragment">shaders/TerrainAltitude.frag</source>
+       <source type="Vertex">shaders/base/vertex_functions.vert</source>
+       <source type="Fragment">shaders/TerrainAltitude.frag</source>
        <source type="Fragment">shaders/water/water_functions.frag</source>
        <source type="Fragment">shaders/base/fragment_functions.frag</source>
        <!--The Fragment shader is using a function from the vertex functions-->
