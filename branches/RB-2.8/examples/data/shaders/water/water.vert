@@ -12,8 +12,8 @@ const int NUMWAVES = 16;
 const int MAX_WAVES = 32;
 uniform vec4 waveArray[2 * MAX_WAVES];
 uniform float waterPlaneFOV;
-uniform float WaterHeight;// = 443.0;
-const float UnderWaterViewDistance = 50.0;
+uniform float WaterHeight;
+const float UnderWaterViewDistance = 15.0;
 
  
 varying vec4 pos;
@@ -32,7 +32,9 @@ uniform float waveDirection;
 uniform vec3 cameraHPR;
 uniform vec3 cameraRecenter;
 
-float computeFog(float, float, float);
+float computeExpFog(float);
+float computeLinearFog(float, float, float);
+
 
 void main(void)
 {   
@@ -65,7 +67,7 @@ void main(void)
    distanceScale = (1.0 - clamp(distance / (maxDistance * modForFOV), 0.0, 1.0));   
    float distFromCamera = distance;
    float distBetweenVerts = gl_Vertex.z;
-   distBetweenVertsScalar = gl_Vertex.z * scalar * 3.5;// / modForFOV;
+   distBetweenVertsScalar = gl_Vertex.z * scalar * 4.0;// / modForFOV;
  
    pos = camPos + localVert;   
    pos.z = WaterHeight;
@@ -78,7 +80,7 @@ void main(void)
    vertexWaveDir = vec2(0.0);
 
    shaderVertexNormal = vec3(0.0, 0.0, 1.0);
-   int offset = WAVE_OFFSET;//gl_Vertex.w;//23 * clamp(distance / maxDistance, 0.0, 1.0);  
+   int offset = WAVE_OFFSET;
 
    // There are 2 vec4's of data per wave, so the loop is MAX_WAVES * 2 but increments by 2's
    for(int i = 2 * offset; i < (offset + NUMWAVES) * 2; i+=2)
@@ -130,7 +132,9 @@ void main(void)
    //very far off in worldspace
    lightVector = (inverseView3x3 * gl_LightSource[0].position.xyz);
    //compute fog color for above water and under water
-   vFog.x = computeFog(gl_Fog.end * 0.15, gl_Fog.end, fog_distance);  
-   vFog.y = computeFog(1.0, UnderWaterViewDistance, fog_distance);
+   vFog.x = computeExpFog(fog_distance);  
+   
+   float underWaterDist = clamp(abs(distance), 3.5, 1000.0);
+   vFog.y = computeLinearFog(underWaterDist, 1.0, UnderWaterViewDistance);
 
 }

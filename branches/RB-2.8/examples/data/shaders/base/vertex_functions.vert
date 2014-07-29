@@ -1,9 +1,10 @@
 
-void calculateDistance(mat4 modelViewMatrix, vec4 vertex, out float dist)
+float calculateDistance(mat4 modelViewMatrix, vec4 vertex)
 {
    vec4 ecPosition = modelViewMatrix * vertex;
    vec3 ecPosition3 = vec3(ecPosition) / ecPosition.w;
-   dist = length(ecPosition3);
+   float dist = length(ecPosition3);
+   return dist;
 }
 
 void normalizeLight(mat4 InverseMVM, vec4 position, out vec3 lightNormal)
@@ -11,10 +12,25 @@ void normalizeLight(mat4 InverseMVM, vec4 position, out vec3 lightNormal)
    lightNormal = normalize(vec3(InverseMVM * position));
 }
 
-float computeFog(float startFog, float endFog, float fogDistance)
+float computeExpFog(float fogDistance)
 {
+   //defaults to EXP2 Fog
+    const float LOG2 = 1.442695;
+    float fogFactor = exp2( -gl_Fog.density * 
+                       gl_Fog.density * 
+                       fogDistance * 
+                       fogDistance * 
+                       LOG2 );
+
+    fogFactor = clamp(fogFactor, 0.0, 1.0);
+    return fogFactor;
+}
+
+float computeLinearFog(float startFog, float endFog, float fogDistance)
+{
+   gl_FogFragCoord = fogDistance;
    float fogTemp = pow(2.0, (fogDistance - startFog) / (endFog - startFog)) - 1.0;
-   return clamp(fogTemp, 0.0, 1.0);
+   return 1.0 - clamp(fogTemp, 0.0, 1.0);
 }
 
 void sphereMap(in vec3 eye, in vec3 normal, out vec2 ReflectTexCoord)

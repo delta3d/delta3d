@@ -7,7 +7,7 @@
         <comment></comment>
         <copyright></copyright>
         <createTimestamp>2014-07-15T22:49:46-05:00</createTimestamp>
-        <lastUpdateTimestamp>2014-07-24T18:44:02-05:00</lastUpdateTimestamp>
+        <lastUpdateTimestamp>2014-07-25T12:37:42-05:00</lastUpdateTimestamp>
         <editorVersion>2.8.0</editorVersion>
         <schemaVersion>1.0</schemaVersion>
     </header>
@@ -16,8 +16,13 @@
             <name>testApp</name>
             <version></version>
         </library>
+        <library>
+            <name>dtRender</name>
+            <version></version>
+        </library>
     </libraries>
     <actors>
+        <environmentActor>576b168c-1f8d-497e-b138-6650a1be8a3d</environmentActor>
         <actor>
             <type>dtcore.Game.Actors.Game Mesh Actor</type>
             <id>051eb0be-e068-42e8-939c-f645400a3e2a</id>
@@ -31,7 +36,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-36.873642</value3>
+                    <value3>-36.873669</value3>
                 </vec3>
             </property>
             <property>
@@ -112,6 +117,15 @@
             </property>
         </actor>
         <actor>
+            <type>dtRender.Ocean Scene</type>
+            <id>20125039-fd6e-4f15-863d-19882cf35e27</id>
+            <name>OceanScene_01</name>
+            <property>
+                <name>Name</name>
+                <string>OceanScene_01</string>
+            </property>
+        </actor>
+        <actor>
             <type>dtcore.Player Start</type>
             <id>362cb3a0-7aba-464c-a49b-b226f2c65802</id>
             <name>PlayerStart</name>
@@ -137,6 +151,23 @@
             </property>
         </actor>
         <actor>
+            <type>dtRender.Scene Manager</type>
+            <id>576b168c-1f8d-497e-b138-6650a1be8a3d</id>
+            <name>SceneManager_01</name>
+            <property>
+                <name>Name</name>
+                <string>SceneManager_01</string>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-5432.104980</value1>
+                    <value2>-1299.812622</value2>
+                    <value3>77.142715</value3>
+                </vec3>
+            </property>
+        </actor>
+        <actor>
             <type>dtcore.Game.Actors.Game Mesh Actor</type>
             <id>5fc5c122-1882-4b51-b88f-4c46fac78652</id>
             <name>PalmTree_09</name>
@@ -149,7 +180,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-106.071404</value3>
+                    <value3>-106.071411</value3>
                 </vec3>
             </property>
             <property>
@@ -265,7 +296,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>34.783367</value3>
+                    <value3>34.783371</value3>
                 </vec3>
             </property>
             <property>
@@ -327,7 +358,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-36.873642</value3>
+                    <value3>-36.873669</value3>
                 </vec3>
             </property>
             <property>
@@ -346,6 +377,15 @@
             </property>
         </actor>
         <actor>
+            <type>dtRender.Ephemeris Scene</type>
+            <id>c0320aa2-d9b3-4c2b-85ea-bd185cb0a4e0</id>
+            <name>EphemerisScene_01</name>
+            <property>
+                <name>Name</name>
+                <string>EphemerisScene_01</string>
+            </property>
+        </actor>
+        <actor>
             <type>dtcore.Game.Actors.Game Mesh Actor</type>
             <id>c0fbbeb9-9f71-4fa2-a6fd-cd22f7b0e568</id>
             <name>PalmTree_07</name>
@@ -358,7 +398,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-36.873642</value3>
+                    <value3>-36.873669</value3>
                 </vec3>
             </property>
             <property>
@@ -456,7 +496,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-36.873642</value3>
+                    <value3>-36.873669</value3>
                 </vec3>
             </property>
             <property>

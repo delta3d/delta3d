@@ -34,6 +34,8 @@ void main (void)
    }
    else
    {
+      //gl_FragColor = vec4(1.0, 1.0, 1.0, 0.0);     
+
       discard;
    }
 }
