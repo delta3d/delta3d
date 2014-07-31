@@ -5,8 +5,8 @@
   <shadergroup name="TestShaders">
 
       <shader name="TestBumpMap" default="yes">
-         <source type="Vertex">shaders/TestBumpMap.vert</source>
-         <source type="Fragment">shaders/TestBumpMap.frag</source>
+         <source type="Vertex">shaders/lighting/TestBumpMap.vert</source>
+         <source type="Fragment">shaders/lighting/TestBumpMap.frag</source>
 		 
          <parameter name="diffuseTexture">
             <texture2D textureUnit="0">
@@ -33,8 +33,8 @@
       </shader>
 
 	  <shader name="AttributelessBump" default="no">
-         <source type="Vertex">shaders/AttributelessBump.vert</source>	
-         <source type="Fragment">shaders/AttributelessBump.frag</source>
+         <source type="Vertex">shaders/lighting/AttributelessBump.vert</source>	
+         <source type="Fragment">shaders/lighting/AttributelessBump.frag</source>
 
          <parameter name="diffuseTexture">
             <texture2D textureUnit="0">
@@ -65,9 +65,9 @@
 
   <shadergroup name="Terrains">
     <shader name="TerrainAltitude" default="yes">
-      <source type="Vertex">shaders/TerrainAltitude.vert</source>
+      <source type="Vertex">shaders/terrain/TerrainAltitude.vert</source>
        <source type="Vertex">shaders/base/vertex_functions.vert</source>
-       <source type="Fragment">shaders/TerrainAltitude.frag</source>
+       <source type="Fragment">shaders/terrain/TerrainAltitude.frag</source>
        <source type="Fragment">shaders/water/water_functions.frag</source>
        <source type="Fragment">shaders/base/fragment_functions.frag</source>
        <!--The Fragment shader is using a function from the vertex functions-->
