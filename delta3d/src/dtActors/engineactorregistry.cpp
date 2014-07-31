@@ -80,6 +80,8 @@
 #include <dtGame/deadreckoninghelper.h>
 #include <dtGame/drpublishingactcomp.h>
 
+#include <dtCore/librarymanager.h> // for auto register
+
 namespace dtActors
 { // "display name", "category", "description/tooltip"
    dtCore::RefPtr<dtCore::ActorType> EngineActorRegistry::TASK_ACTOR_TYPE(new dtCore::ActorType("Task Actor", "dtcore.Tasks","Generic task actor."));
@@ -144,6 +146,8 @@ namespace dtActors
          delete registry;
       }
    }
+
+   //static dtCore::AutoLibraryRegister<EngineActorRegistry> mAuto("dtActors");
 
    ///////////////////////////////////////////////////////////////////////////////
    ///////////////////////////////////////////////////////////////////////////////

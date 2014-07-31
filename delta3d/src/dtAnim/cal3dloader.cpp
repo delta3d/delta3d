@@ -558,6 +558,8 @@ namespace dtAnim
          dtCore::RefPtr<osgDB::ReaderWriter::Options> options = CalOptions::CreateOSGOptions(*calOptions);
          fileUtils.ReadObject(skelFile, options.get());
 
+         modelData->RegisterFile(skelFile, "skeleton");
+
          size_t boneCount = coreModel->getCoreSkeleton()->getVectorCoreBone().size();
 
          if (handler.mShaderMaxBones < boneCount)
@@ -588,6 +590,7 @@ namespace dtAnim
             }
             else
             {
+               modelData->RegisterFile(filename, (*meshItr).mName);
                CalCoreMesh* mesh = coreModel->getCoreMesh(coreModel->getCoreMeshId((*meshItr).mName));
 
                // Make sure this mesh doesn't reference bones we don't have
@@ -634,9 +637,10 @@ namespace dtAnim
 
                      CalCoreAnimation* animToCache = coreModel->getCoreAnimation(id);
 
-                     if (animToCache)
+                     if (animToCache != NULL)
                      {
                         mAnimationCache[filename] = cal3d::RefPtr<CalCoreAnimation>(animToCache);
+                        modelData->RegisterFile(filename, animName);
                      }
                   }
                   else
@@ -672,6 +676,10 @@ namespace dtAnim
                {
                   LOG_ERROR("Can't load animated morph '" + filename +"':" + CalError::getLastErrorDescription());
                }
+               else
+               {
+                  modelData->RegisterFile(filename, filename);
+               }
             }
             else
             {
@@ -699,6 +707,10 @@ namespace dtAnim
                if (fileUtils.ReadObject(filename, options.get()) == NULL)
                {
                   LOG_ERROR("Material file failed to load:'" + filename + "'." + CalError::getLastErrorDescription());
+               }
+               else
+               {
+                  modelData->RegisterFile(filename, (*matItr).mName);
                }
             }
          }

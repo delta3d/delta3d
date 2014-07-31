@@ -246,7 +246,7 @@ namespace dtAnim
       mCache->Clear();
       mCache = NULL;
 
-      Cal3DAnimator* calAnimator = dynamic_cast<Cal3DAnimator*>(mAnimator.get());
+      Cal3DAnimator* calAnimator = static_cast<Cal3DAnimator*>(mAnimator.get());
       calAnimator->SetWrapper(NULL);
       calAnimator = NULL;
       mAnimator = NULL;

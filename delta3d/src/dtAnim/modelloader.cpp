@@ -22,9 +22,11 @@ namespace dtAnim
    {
    }
       
+   /////////////////////////////////////////////////////////////////////////////////
    ModelLoader::~ModelLoader()
    {}
 
+   /////////////////////////////////////////////////////////////////////////////////
    dtCore::RefPtr<dtAnim::BaseModelWrapper> ModelLoader::LoadModel(const std::string& filename)
    {
       mFile = filename;
@@ -41,19 +43,24 @@ namespace dtAnim
             return NULL;
          }
 
-         mAttachmentController = new dtAnim::AttachmentController;
+         if (!mAttachmentController.valid())
+         {
+            mAttachmentController = new dtAnim::AttachmentController;
+         }
          CreateAttachments(*modelData, *mAttachmentController);
       }
 
       return mLoadedModel;
    }
 
+   /////////////////////////////////////////////////////////////////////////////////
    void ModelLoader::LoadModelAsynchronously(const std::string& filename)
    {
       dtAnim::ModelDatabase& database = dtAnim::ModelDatabase::GetInstance();
       database.LoadAsynchronously(filename);
    }
    
+   /////////////////////////////////////////////////////////////////////////////////
    dtCore::RefPtr<dtAnim::BaseModelWrapper> ModelLoader::CreateModel(dtAnim::BaseModelData& modelData)
    {
       dtAnim::Cal3DModelData* calModelData = dynamic_cast<dtAnim::Cal3DModelData*>(&modelData);
@@ -72,11 +79,13 @@ namespace dtAnim
       return newWrapper;
    }
 
+   /////////////////////////////////////////////////////////////////////////////////
    dtAnim::BaseModelWrapper* ModelLoader::GetLoadedModel()
    {
       return mLoadedModel.get();
    }
 
+   /////////////////////////////////////////////////////////////////////////////////
    dtAnim::BaseModelData* ModelLoader::GetLoadedModelData()
    {
       dtAnim::ModelDatabase& database = dtAnim::ModelDatabase::GetInstance();
@@ -85,11 +94,13 @@ namespace dtAnim
       return database.GetModelData(mFile);
    }
 
+   /////////////////////////////////////////////////////////////////////////////////
    void ModelLoader::SetAttachmentController(dtAnim::AttachmentController* controller)
    {
       mAttachmentController = controller;
    }
 
+   /////////////////////////////////////////////////////////////////////////////////
    dtAnim::AttachmentController* ModelLoader::GetAttachmentController()
    {
       return mAttachmentController.get();

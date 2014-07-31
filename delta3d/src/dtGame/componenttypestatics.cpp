@@ -1,8 +1,22 @@
-/*
- * componenttypestatics.cpp
+/* -*-c++-*-
+ * Delta3D
+ * Copyright 2014, David Guthrie
  *
- *  Created on: Jun 9, 2014
- *      Author: david
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ *
+ * David Guthrie
  */
 
 #include <dtGame/gmcomponent.h>
@@ -28,11 +42,11 @@ namespace dtGame
 
    const dtCore::RefPtr<dtCore::SystemComponentType> BaseInputComponent::DEFAULT_TYPE(new dtCore::SystemComponentType("BaseInputComponent", "GMComponents",
          "Tank Target input", dtGame::GMComponent::BaseGMComponentType));
-   const std::string BaseInputComponent::DEFAULT_NAME = DEFAULT_TYPE->GetName();
+   const std::string BaseInputComponent::DEFAULT_NAME(BaseInputComponent::DEFAULT_TYPE->GetName());
 
    const dtCore::RefPtr<dtCore::SystemComponentType> DefaultMessageProcessor::TYPE(new dtCore::SystemComponentType("DefaultMessageProcessor", "GMComponents",
          "This handles base system messages that come in remotely such as actor created, deleted, and updated plus a few other system level things.  You almost always need this component.", dtGame::GMComponent::BaseGMComponentType));
-   const std::string DefaultMessageProcessor::DEFAULT_NAME(TYPE->GetName());
+   const std::string DefaultMessageProcessor::DEFAULT_NAME(DefaultMessageProcessor::TYPE->GetName());
 
    const dtCore::RefPtr<dtCore::SystemComponentType> DefaultNetworkPublishingComponent::TYPE(new dtCore::SystemComponentType("DefaultNetworkPublishingComponent","GMComponents",
          "Takes messages from published actors and other configurable messages and pushes them to the network queue.", dtGame::GMComponent::BaseGMComponentType));

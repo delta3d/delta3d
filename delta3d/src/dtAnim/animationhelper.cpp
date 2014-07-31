@@ -233,7 +233,9 @@ void AnimationHelper::UnloadModel()
       mAttachmentController->Clear();
    }
    ModelUnloadedSignal(this);
-   // Set node to null after so that it can be accessed in the callback.
+   // Set these to null after so that they can be accessed in the callback.
+   mModelWrapper = NULL;
+   mModelLoader = NULL;
    mNode = NULL;
 }
 
@@ -247,19 +249,15 @@ bool AnimationHelper::LoadModel(const std::string& pFilename, bool immediate)
          UnloadModel();
       }
 
-      mModelLoader = new dtAnim::ModelLoader;
+      mModelLoader = new dtAnim::ModelLoader();
+      mModelLoader->SetAttachmentController(mAttachmentController);
       dtCore::RefPtr<dtAnim::BaseModelWrapper> newModel = mModelLoader->LoadModel(pFilename);
 
       if (newModel.valid())
       {
          mModelWrapper = newModel;
          mNode = mModelWrapper->CreateDrawableNode(immediate);
-         
-         // Acquire a new attachment controller if one exists.
-         if (mAttachmentController.valid())
-         {
-            mAttachmentController->Clear();
-         }
+
          mAttachmentController = mModelLoader->GetAttachmentController();
 
          dtAnim::BaseModelData* modelData = mModelWrapper->GetModelData();
@@ -293,7 +291,8 @@ bool AnimationHelper::LoadModelAsynchronously(const std::string& pFilename)
          UnloadModel();
       }
 
-      mModelLoader = new dtAnim::ModelLoader;
+      mModelLoader = new dtAnim::ModelLoader();
+      mModelLoader->SetAttachmentController(mAttachmentController);
 
       mModelLoader->LoadModelAsynchronously(pFilename);
 
@@ -402,13 +401,21 @@ const osg::Node* AnimationHelper::GetNode() const
 /////////////////////////////////////////////////////////////////////////////////
 dtAnim::AnimationUpdaterInterface* AnimationHelper::GetAnimator()
 {
-   return mModelWrapper->GetAnimator();
+   dtAnim::AnimationUpdaterInterface* result = NULL;
+   if (mModelWrapper != NULL)
+      result = mModelWrapper->GetAnimator();
+
+   return result;
 }
 
 /////////////////////////////////////////////////////////////////////////////////
 const dtAnim::AnimationUpdaterInterface* AnimationHelper::GetAnimator() const
 {
-   return mModelWrapper->GetAnimator();
+   const dtAnim::AnimationUpdaterInterface* result = NULL;
+   if (mModelWrapper != NULL)
+      result = mModelWrapper->GetAnimator();
+
+   return result;
 }
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -457,6 +464,10 @@ AttachmentController* AnimationHelper::GetAttachmentController()
 void AnimationHelper::SetAttachmentController(AttachmentController* newController)
 {
    mAttachmentController = newController;
+   if (mModelLoader.valid())
+   {
+      mModelLoader->SetAttachmentController(newController);
+   }
 }
 
 ////////////////////////////////////////////////////////////////////////////////

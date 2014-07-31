@@ -96,8 +96,8 @@ namespace dtAnim
          if (mCreateCB->mCreatedNode.valid())
          {
             //then add it, remove the temp geometry, and remove this callback
+            mGroupToAddTo->removeChild(0, mGroupToAddTo->getNumChildren());
             mGroupToAddTo->addChild(mCreateCB->mCreatedNode.get());
-            mGroupToAddTo->removeChild(0, 1);
             mGroupToAddTo->setUpdateCallback(NULL);
          }
          else

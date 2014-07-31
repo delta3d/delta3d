@@ -550,15 +550,10 @@
             relativeFile = relativePath;
          }
 
-         FileToObjectMap::iterator foundIter = mFileObjectMap.find(relativeFile);
-         if (foundIter == mFileObjectMap.end())
-         {
-            // Map the relative file path.
-            size_t prevSize = mFileObjectMap.size();
-            mFileObjectMap.insert(std::make_pair(relativeFile, new ObjectNameAndFileType(objectName, fileType)));
+         size_t prevSize = mFileObjectMap.size();
+         mFileObjectMap.insert(std::make_pair(relativeFile, new ObjectNameAndFileType(objectName, fileType)));
 
-            success = mFileObjectMap.size() > prevSize;
-         }
+         success = mFileObjectMap.size() > prevSize;
       }
       else
       {

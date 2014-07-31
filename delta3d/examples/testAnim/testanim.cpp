@@ -216,11 +216,11 @@ void TestAnim::OnStartup(dtABC::BaseABC& app, dtGame::GameManager& gameManager)
 
    if (!groundActor.empty())
    {
-      dtCore::BaseActorObject* proxy = dynamic_cast<dtCore::BaseActorObject*>(groundActor.front());
-      if (proxy)
+      dtCore::BaseActorObject* actor = dynamic_cast<dtCore::BaseActorObject*>(groundActor.front());
+      if (actor != NULL)
       {
-         dtCore::Transformable* transform = dynamic_cast<dtCore::Transformable*>(proxy->GetDrawable());
-         if (transform)
+         dtCore::Transformable* transform = actor->GetDrawable<dtCore::Transformable>();
+         if (transform != NULL)
          {
             mAnimationComponent->SetTerrainActor(transform);
          }
@@ -235,13 +235,6 @@ void TestAnim::OnStartup(dtABC::BaseABC& app, dtGame::GameManager& gameManager)
 ////////////////////////////////////////////////////////////////////////////////
 void TestAnim::OnShutdown(dtABC::BaseABC& app, dtGame::GameManager& gm)
 {
-   gm.RemoveComponent(*mAnimationComponent);
-   if (mInputComponent.valid())
-   {
-      gm.RemoveComponent(*mInputComponent);
-   }
-   gm.RemoveComponent(*mMessageProcComponent);
-
    dtGame::GameEntryPoint::OnShutdown(app, gm);
 }
 
@@ -273,7 +266,7 @@ void TestAnim::InitializeAnimationActor(dtAnim::AnimationGameActorProxy* gamePro
             // proper locations.
             dtCore::Transform xform;
             osg::Vec3 offset;
-            osg::Vec3 originalPos = originalXform.GetTranslation();
+            //osg::Vec3 originalPos = originalXform.GetTranslation();
             xform.SetTranslation(offset);
 
             dtCore::RefPtr<dtCore::Transformable> cameraPivot = new dtCore::Transformable;

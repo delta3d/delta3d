@@ -44,18 +44,15 @@ namespace dtAnim
    class HardwareSubmeshComputeBound : public osg::Drawable::ComputeBoundingBoxCallback
    {
       public:
-         HardwareSubmeshComputeBound(const osg::BoundingBox& defaultBox)
-            : mDefaultBox(defaultBox)
+         HardwareSubmeshComputeBound()
          {
          }
 
-         /*virtual*/ osg::BoundingBox computeBound(const osg::Drawable&) const
+         /*virtual*/ osg::BoundingBox computeBound(const osg::Drawable& osgD) const
          {
             // temp until a better solution is implemented
-            return mDefaultBox;
+            return osgD.getInitialBound();
          }
-
-         const osg::BoundingBox& mDefaultBox;
    };
 
    class HardwareSubmeshCallback : public osg::Drawable::UpdateCallback
@@ -169,18 +166,12 @@ HardwareSubmeshDrawable::HardwareSubmeshDrawable(Cal3DModelWrapper* wrapper, Cal
    // set our update callback which will update the bone transforms
    setUpdateCallback(new HardwareSubmeshCallback(*mWrapper, *mHardwareModel, *mScale, *mBoneTransforms, mMeshID, mUpdateMutex));
    setCullCallback(new LODCullCallback(*mWrapper, guessedMeshID)); //for LOD handling
-   setComputeBoundingBoxCallback(new HardwareSubmeshComputeBound(mBoundingBox));
+   setComputeBoundingBoxCallback(new HardwareSubmeshComputeBound);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 HardwareSubmeshDrawable::~HardwareSubmeshDrawable(void)
 {
-}
-
-////////////////////////////////////////////////////////////////////////////////
-void HardwareSubmeshDrawable::SetBoundingBox(const osg::BoundingBox& boundingBox)
-{
-   mBoundingBox = boundingBox;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
