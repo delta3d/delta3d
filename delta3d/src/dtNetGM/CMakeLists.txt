@@ -9,6 +9,7 @@ file(GLOB LIB_PUBLIC_HEADERS "${HEADER_PATH}/*.h")
 SET(LIB_SOURCES
    clientconnectionlistener.cpp
    clientnetworkcomponent.cpp
+   componenttypestatics.cpp
    datastreampacket.cpp
    messagepacket.cpp
    networkbridge.cpp

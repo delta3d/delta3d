@@ -34,10 +34,6 @@
 namespace dtNetGM
 {
 
-   const dtCore::RefPtr<dtCore::SystemComponentType> ClientNetworkComponent::TYPE(new dtCore::SystemComponentType("ClientNetworkComponent","GMComponents",
-         "Handles a the client side of a Client-server network component.", dtNetGM::NetworkComponent::TYPE));
-   const std::string ClientNetworkComponent::DEFAULT_NAME(TYPE->GetName());
-
    ////////////////////////////////////////////////////////////////////
    ClientNetworkComponent::ClientNetworkComponent(dtCore::SystemComponentType& type)
    : NetworkComponent(type)
