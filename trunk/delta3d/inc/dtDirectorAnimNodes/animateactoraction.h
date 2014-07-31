@@ -30,7 +30,7 @@
 #include <cal3d/global.h>
 
 
-#if CAL3D_VERSION >= 1300
+#if defined(CAL3D_VERSION) && CAL3D_VERSION >= 1300
    #define MANUAL_ANIMATIONS
 #endif
 

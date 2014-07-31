@@ -133,7 +133,7 @@ namespace dtAnim
    /////////////////////////////////////////////////////////////////////////////////
    void AttachmentMover::operator()(AttachmentPair& attachment)
    {
-      dtCore::Transformable& actor = *attachment.first;
+      dtCore::Transformable& xformable = *attachment.first;
       dtUtil::HotSpotDefinition& spotDef = attachment.second;
 
       // find out if the bone exists
@@ -144,7 +144,7 @@ namespace dtAnim
       {
          dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
                "Ignoring update on character attached actor \"%s\" because bone named \"%s\" does not exist.",
-               actor.GetName().c_str(), spotDef.mParentName.c_str());
+               xformable.GetName().c_str(), spotDef.mParentName.c_str());
          return;
       }
 
@@ -160,7 +160,7 @@ namespace dtAnim
 
       dtCore::Transform x;
       x.Set(bodyTranslation, osg::Matrix(bodyRotation));
-      actor.SetTransform(x, dtCore::Transformable::REL_CS);
+      xformable.SetTransform(x, dtCore::Transformable::REL_CS);
    }
 
 } // namespace dtAnim

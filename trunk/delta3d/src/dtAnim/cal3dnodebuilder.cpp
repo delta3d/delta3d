@@ -32,6 +32,10 @@ namespace dtAnim
    osg::BoundingSphere Cal3dBoundingSphereCalculator::computeBound(const osg::Node&) const
    {
       osg::BoundingSphere bSphere(mWrapper->GetBoundingBox());
+      if (bSphere.radius2() <= FLT_EPSILON)
+      {
+         bSphere.expandBy(osg::Vec3(3.0f, 3.0f, 3.0f));
+      }
       return bSphere;
    }
 
@@ -188,23 +192,27 @@ namespace dtAnim
          }
 
          dtCore::RefPtr<dtAnim::CharacterShaderBuilder> shaderBuilder;
-         dtCore::ShaderProgram* shadProg = shaderBuilder->LoadShaders(*modelData, *geode);
+         //dtCore::ShaderProgram* shadProg =
+         shaderBuilder->LoadShaders(*modelData, *geode);
          //End check.
 
          // Compute this only once
          osg::BoundingBox boundingBox = wrapper->GetBoundingBox();
+         if (boundingBox.radius2() <= FLT_EPSILON)
+         {
+            boundingBox.expandBy(osg::Vec3f(1.0f, 1.0f, 1.0f));
+         }
 
          for (int meshCount = 0; meshCount < hardwareModel->getHardwareMeshCount(); ++meshCount)
          {
             HardwareSubmeshDrawable* drawable = new HardwareSubmeshDrawable(wrapper, hardwareModel,
                                                     CharacterShaderBuilder::BONE_TRANSFORM_UNIFORM, modelData->GetShaderMaxBones(),
                                                     meshCount, vertexVBO, indexEBO);
-            drawable->SetBoundingBox(boundingBox);
+            drawable->setInitialBound(boundingBox);
             geode->addDrawable(drawable);
 
             // Register the drawable instance with the associated interface object.
-            dtAnim::Cal3dHardwareMesh* mesh = dynamic_cast<dtAnim::Cal3dHardwareMesh*>
-               (wrapper->GetMeshByIndex(meshCount));
+            dtAnim::Cal3dHardwareMesh* mesh = dynamic_cast<dtAnim::Cal3dHardwareMesh*>(wrapper->GetMeshByIndex(meshCount));
             if (mesh != NULL)
             {
                mesh->SetDrawable(drawable);

@@ -38,5 +38,5 @@ void dtAnim::AnimActorRegistry::RegisterActorTypes()
 {
    mActorFactory->RegisterType<Cal3DGameActorProxy>(CAL3D_ACTOR_TYPE.get());
    mActorFactory->RegisterType<AnimationGameActorProxy>(ANIMATION_ACTOR_TYPE.get());
-   mActorFactory->RegisterType<AnimationComponent>();
+   //mActorFactory->RegisterType<AnimationComponent>();
 }

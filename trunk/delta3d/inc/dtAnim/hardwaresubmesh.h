@@ -53,8 +53,6 @@ namespace dtAnim
             const std::string& boneUniformName, unsigned numBones,
             unsigned mesh, osg::VertexBufferObject* vertexVBO, osg::ElementBufferObject* indexEBO);
 
-      void SetBoundingBox(const osg::BoundingBox& boundingBox);
-
       virtual void drawImplementation(osg::RenderInfo& renderInfo) const;
 
       virtual osg::Object* cloneType() const;
@@ -64,7 +62,6 @@ namespace dtAnim
       ~HardwareSubmeshDrawable();
 
    private:
-      HardwareSubmeshDrawable();   ///< not implemented by design
       void SetUpMaterial();
 
       dtCore::RefPtr<Cal3DModelWrapper> mWrapper;
@@ -72,7 +69,6 @@ namespace dtAnim
       dtCore::RefPtr<osg::Uniform> mScale;
       dtCore::RefPtr<osg::Uniform> mBoneTransforms;
       std::string mBoneUniformName;
-      osg::BoundingBox mBoundingBox;
       unsigned int mNumBones, mMeshID;
       osg::VertexBufferObject* mVertexVBO;
       osg::ElementBufferObject* mIndexEBO;

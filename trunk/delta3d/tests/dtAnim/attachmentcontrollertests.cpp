@@ -73,7 +73,7 @@ namespace dtAnim
          {
          }
          
-         virtual void Update(Cal3DModelWrapper& model)
+         virtual void Update(dtAnim::BaseModelWrapper& model)
          {
             BaseClass::Update(model);
             mUpdated = true;
@@ -102,7 +102,7 @@ namespace dtAnim
             mAttach = new AttachmentControllerExtended();
             mAnimHelper->SetAttachmentController(mAttach);
 
-            std::string context = "../examples/data/SkeletalMeshes/Marine";
+            std::string context = "../examples/data/SkeletalMeshes/Marine/";
             std::string filename = "marine_test.xml";
 
             mAnimHelper->LoadModel(context + filename);
@@ -193,10 +193,12 @@ namespace dtAnim
             
             std::vector<std::string> names;
             BaseModelWrapper* wrapper = mAnimHelper->GetModelWrapper();
+            CPPUNIT_ASSERT(wrapper != NULL);
 
             dtAnim::BoneArray bones;
             wrapper->GetBones(bones);
             dtAnim::BoneInterface* bone = bones.front().get();
+            spotDef.mParentName = bone->GetName();
 
             mAttach->AddAttachment(*attachment, spotDef);
 
@@ -214,8 +216,12 @@ namespace dtAnim
 
             osg::Vec3 trans;
             xform.GetTranslation(trans);
-            CPPUNIT_ASSERT(dtUtil::Equivalent(expectedRot, actualRot, 4, osg::Quat::value_type(0.0003)));
-            CPPUNIT_ASSERT(dtUtil::Equivalent(expectedPos, trans, osg::Vec3::value_type(0.0003)));
+            std::ostringstream oss;
+            oss << "expectedRot: " << expectedRot << " actualRot: " << actualRot;
+            CPPUNIT_ASSERT_MESSAGE(oss.str(), dtUtil::Equivalent(expectedRot, actualRot, 4, osg::Quat::value_type(0.0003)));
+            oss.str("");
+            oss << "expectedPos: " << expectedPos << " trans: " << trans;
+            CPPUNIT_ASSERT_MESSAGE(oss.str(), dtUtil::Equivalent(expectedPos, trans, osg::Vec3::value_type(0.0003)));
          }
 
       private:

@@ -116,13 +116,13 @@ namespace dtCore
       };
 
       /**
-       * Constructs the actor proxy.
+       * Constructs the actor.
        */
       BaseActorObject();
 
       /**
        * Initializes the actor by calling
-       * CreateActor
+       * CreateDrawable
        * SetActorType
        * BuildPropertyMap
        *
