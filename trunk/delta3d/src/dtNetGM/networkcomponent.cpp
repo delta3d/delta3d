@@ -91,10 +91,6 @@ namespace dtNetGM
 
    NetworkComponent::DestinationType::~DestinationType() {}
 
-   const dtCore::RefPtr<dtCore::SystemComponentType> NetworkComponent::TYPE(new dtCore::SystemComponentType("NetworkComponent","GMComponents",
-         "Base Client-Server networking component",
-         dtGame::GMComponent::BaseGMComponentType));
-
    const NetworkComponent::DestinationType NetworkComponent::DestinationType::DESTINATION("Destination");
    const NetworkComponent::DestinationType NetworkComponent::DestinationType::ALL_CLIENTS("All Clients");
    const NetworkComponent::DestinationType NetworkComponent::DestinationType::ALL_NOT_CLIENTS("All Not Clients");

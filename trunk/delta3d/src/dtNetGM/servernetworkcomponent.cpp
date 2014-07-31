@@ -34,11 +34,6 @@
 
 namespace dtNetGM
 {
-   const dtCore::RefPtr<dtCore::SystemComponentType> ServerNetworkComponent::TYPE(new dtCore::SystemComponentType("ServerNetworkComponent","GMComponents",
-         "Server component for client-server networking.",
-         dtNetGM::NetworkComponent::TYPE));
-   const dtUtil::RefString ServerNetworkComponent::DEFAULT_NAME(TYPE->GetName());
-
    // Config settings for the Frame Sync behavior. Initially read during the OnAddedToGM() method. 
    // To override the config settings or the defaults, call the Set methods AFTER adding it to the GM.
    const dtUtil::RefString ServerNetworkComponent::CONFIG_PROP_FRAMESYNC_ISENABLED("dtNetGM.FrameSyncIsEnabled");
