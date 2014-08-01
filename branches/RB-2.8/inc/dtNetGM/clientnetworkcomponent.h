@@ -117,6 +117,11 @@ namespace dtNetGM
       bool IsConnectedClient() { return mAcceptedClient; }
 
       /**
+       * Returns TRUE if a client connection is valid.
+       */
+      bool IsConnected() const;
+
+      /**
        * Returns the MachineInfo of the Server, or NULL if we don't have a accepted connection
        * @return MachineInfo
        */
@@ -138,6 +143,8 @@ namespace dtNetGM
 
       // bool indicating if the server has accepted our connection
       bool mAcceptedClient;
+
+      GNE::ClientConnection::sptr mClient;
 
       /**
        * @brief connect a new GNE network connection to a server.

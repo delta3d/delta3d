@@ -446,6 +446,12 @@ namespace dtNetGM
       NetworkBridge* GetConnection(const dtGame::MachineInfo& machineInfo);
 
       /**
+       * Method for simply determining the number of connections
+       * held by this component.
+       */
+      int GetConnectionCount() const;
+
+      /**
        * Retrieves a dtGame::MachineInfo* from the stored connections
        * If no matching connection is found, NULL is returned
        * @param dtCore::UniqueId of the MachineInfo
@@ -473,7 +479,7 @@ namespace dtNetGM
       int mRateIn; // Value describing the GNE connection parameter
 
       // Mutex
-      OpenThreads::Mutex mMutex;
+      mutable OpenThreads::Mutex mMutex;
       // mutex for accessing the GameManager message queue
       OpenThreads::Mutex mBufferMutex;
 
