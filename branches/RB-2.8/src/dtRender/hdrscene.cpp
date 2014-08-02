@@ -21,6 +21,8 @@
 
 #include <dtRender/hdrscene.h>
 
+#include <dtUtil/nodemask.h>
+
 #include <dtCore/observerptr.h>
 
 #include <osg/Camera>
@@ -411,6 +413,7 @@ class HDRRendering
             HDRRendering hdrBuilder;
 
             osgPPU::Processor* proc = BaseClass::GetPPUProcessor();
+            proc->setNodeMask(dtUtil::NodeMask::IGNORE_RAYCAST);
 
             hdrBuilder.setupCamera(cam->GetOSGCamera(), cam->GetOSGCamera()->getViewport());
 

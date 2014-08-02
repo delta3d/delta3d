@@ -22,6 +22,7 @@
 #include <dtRender/guiscene.h>
 
 #include <dtUtil/log.h>
+#include <dtUtil/nodemask.h>
 
 #include <osg/Group>
 
@@ -49,7 +50,7 @@ namespace dtRender
 
    void GUIScene::CreateScene( SceneManager& sm, const GraphicsQuality& g)
    {
-      
+      mNode->setNodeMask(dtUtil::NodeMask::FOREGROUND);
    }
 
    osg::Group* GUIScene::GetSceneNode()
