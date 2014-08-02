@@ -42,6 +42,7 @@
 #include <dtGame/messagetype.h>
 
 #include <dtUtil/bits.h>
+#include <dtUtil/nodemask.h>
 
 #include <osg/Geode>
 #include <osg/Material>
@@ -75,7 +76,7 @@ namespace dtAnim
       , mRenderModeBits(RENDER_MODE_SKIN)
    {
       mSkeletalGeode->setName("Cal3DGameActor_mSkeletalGeode");
-      mSkeletalGeode->setNodeMask(0x0);  // will not be drawn
+      mSkeletalGeode->setNodeMask(dtUtil::NodeMask::NOTHING);  // will not be drawn
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -125,21 +126,21 @@ namespace dtAnim
       // parse the bits
       if (RENDER_MODE_NONE == mRenderModeBits)
       {
-         mModelGeode->setNodeMask(0x0);  // will not be drawn
-         mSkeletalGeode->setNodeMask(0x0);  // will not be drawn
+         mModelGeode->setNodeMask(dtUtil::NodeMask::NOTHING);  // will not be drawn
+         mSkeletalGeode->setNodeMask(dtUtil::NodeMask::NOTHING);  // will not be drawn
       }
       else
       {
-         mModelGeode->setNodeMask(0x0);  // will not be drawn
-         mSkeletalGeode->setNodeMask(0x0);  // will not be drawn
+         mModelGeode->setNodeMask(dtUtil::NodeMask::NOTHING);  // will not be drawn
+         mSkeletalGeode->setNodeMask(dtUtil::NodeMask::NOTHING);  // will not be drawn
 
          if (dtUtil::Bits::Has(mRenderModeBits,RENDER_MODE_SKIN))
          {
-            mModelGeode->setNodeMask(0xffffffff);  // will be drawn
+            mModelGeode->setNodeMask(dtUtil::NodeMask::EVERYTHING);  // will be drawn
          }
          if (dtUtil::Bits::Has(mRenderModeBits,RENDER_MODE_BONES))
          {
-            mSkeletalGeode->setNodeMask(0xffffffff);  // will be drawn
+            mSkeletalGeode->setNodeMask(dtUtil::NodeMask::EVERYTHING);  // will be drawn
          }
       }
    }

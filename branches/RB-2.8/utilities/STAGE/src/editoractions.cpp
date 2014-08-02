@@ -79,6 +79,7 @@
 #include <dtUtil/fileutils.h>
 #include <dtUtil/librarysharingmanager.h>
 #include <dtUtil/log.h>
+#include <dtUtil/nodemask.h>
 
 #include <osgDB/FileNameUtils>
 
@@ -1398,7 +1399,7 @@ namespace dtEditQt
 
          theBrushActor->EnableOutline(true);
 
-         theBrushActor->GetOSGNode()->setNodeMask(0xffffffff);
+         theBrushActor->GetOSGNode()->setNodeMask(dtUtil::NodeMask::EVERYTHING);
       }
       else
       {
@@ -1421,7 +1422,7 @@ namespace dtEditQt
          }
          EditorEvents::GetInstance().emitActorsSelected(aplrp);
 
-         theBrushActor->GetOSGNode()->setNodeMask(0);
+         theBrushActor->GetOSGNode()->setNodeMask(dtUtil::NodeMask::NOTHING);
       }
 
       ViewportManager::GetInstance().refreshAllViewports();

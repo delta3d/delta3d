@@ -7,6 +7,7 @@
 #include <dtCore/collisioncategorydefaults.h>
 #include <dtUtil/log.h>
 #include <dtUtil/matrixutil.h>
+#include <dtUtil/nodemask.h>
 
 #include <osg/Geode>
 #include <osg/MatrixTransform>
@@ -44,7 +45,7 @@ namespace dtCore
          , _haltTraversalAtNode(haltTraversalAtNode)
       {
          //this will force the traversal over nodes that have a mask of 0x0
-         this->setNodeMaskOverride(0xffffffff);
+         this->setNodeMaskOverride(dtUtil::NodeMask::EVERYTHING);
       }
 
       virtual void apply(osg::Node& node)

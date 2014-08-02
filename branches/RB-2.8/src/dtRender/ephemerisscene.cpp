@@ -22,6 +22,7 @@
 #include <dtRender/ephemerisscene.h>
 
 #include <dtUtil/log.h>
+#include <dtUtil/nodemask.h>
 
 #include <osg/StateSet>
 #include <osg/Group>
@@ -90,13 +91,19 @@ namespace dtRender
 
          void Init()
          {
+            mRootNode = new osg::Camera();
+            
+            mRootNode->setRenderOrder(osg::Camera::NESTED_RENDER);
+            mRootNode->setClearMask(GL_NONE);
+            mRootNode->setReferenceFrame(osg::Transform::RELATIVE_RF);
+
             mEphemerisModel = new osgEphemeris::EphemerisModel();
+            //mEphemerisModel->setMembers(osgEphemeris::EphemerisModel::SKY_DOME);//osgEphemeris::EphemerisModel::GROUND_PLANE | osgEphemeris::EphemerisModel::PLANETS | osgEphemeris::EphemerisModel::STAR_FIELD | osgEphemeris::EphemerisModel::SUN_LIGHT_SOURCE | osgEphemeris::EphemerisModel::MOON_LIGHT_SOURCE | osgEphemeris::EphemerisModel::MOON);
             mEphemerisModel->setSkyDomeRadius( 499.0f );
             mEphemerisModel->setSunLightNum(0);
             mEphemerisModel->setMoveWithEyePoint(true);
             
-            //this is taken from dtCore Environment
-            mEphemerisModel->setNodeMask(0xF0000000);
+            mEphemerisModel->setNodeMask(dtUtil::NodeMask::BACKGROUND);
 
             osgEphemeris::DateTime dt;
             dt.now();
@@ -114,6 +121,7 @@ namespace dtRender
             BBVisitor bbv;
             mEphemerisModel->traverse(bbv);
 
+            mRootNode->addChild(mEphemerisModel.get());
          }
 
 
@@ -125,6 +133,7 @@ namespace dtRender
       dtCore::RefPtr<osg::Fog> mFog; 
       dtCore::ObserverPtr<osg::StateSet> mFogStateSet;
       dtCore::RefPtr<osgEphemeris::EphemerisModel> mEphemerisModel;
+      dtCore::RefPtr<osg::Camera> mRootNode;
 
    };
 
@@ -175,12 +184,12 @@ namespace dtRender
 
    osg::Group* EphemerisScene::GetSceneNode()
    {
-      return mImpl->mEphemerisModel.get();
+      return mImpl->mRootNode.get();
    }
 
    const osg::Group* EphemerisScene::GetSceneNode() const
    {
-      return mImpl->mEphemerisModel.get();
+      return mImpl->mRootNode.get();
    }
 
    void EphemerisScene::SetLatitudeLongitude(float latitude, float longitude)

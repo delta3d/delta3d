@@ -14,6 +14,7 @@
 #include <dtCore/particlesystem.h>
 #include <dtCore/transform.h>
 #include <dtUtil/datapathutils.h>
+#include <dtUtil/nodemask.h>
 #include <osgGA/GUIEventAdapter>
 
 // name spaces
@@ -621,7 +622,7 @@ TestAudioApp::LoadGfxFile(const char* fname)
    dtCore::RefPtr<osg::Node> filenode = fileobj->GetOSGNode();
    assert(filenode.valid());
 
-   filenode->setNodeMask(0xFFFFFFFF);
+   filenode->setNodeMask(dtUtil::NodeMask::EVERYTHING);
    return fileobj;
 }
 

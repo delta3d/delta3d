@@ -8,6 +8,7 @@
 #include <dtCore/particlesystem.h>
 #include <dtCore/system.h>
 #include <dtUtil/log.h>
+#include <dtUtil/nodemask.h>
 
 #include <osg/Group>
 #include <osg/NodeVisitor>
@@ -313,6 +314,9 @@ osg::Node* ParticleSystem::LoadFile( const std::string& filename, bool useCache)
    mLoadedFile = NULL;
    mOriginalLoadedParticleSystem = NULL;
    mParticleSystemUpdater = NULL;
+
+   //set the default node mask for particles
+   GetMatrixNode()->setNodeMask(dtUtil::NodeMask::TRANSPARENT_EFFECTS);
 
    dtCore::RefPtr<osg::Node> node = Loadable::LoadFile(filename, useCache); //force it to use cache
    //node = Loadable::LoadFile(filename, false); //force it not to use cache

@@ -45,12 +45,7 @@ namespace dtRender
    public:
       typedef SceneBase BaseClass;
       static const dtCore::RefPtr<SceneType> SHADOW_SCENE;
-
-      // Unfortunately osg doesn't currently respect the shadow receive mask
-      static const int SHADOW_RECEIVE_NODE_MASK = 0x1;
-      static const int SHADOW_CAST_NODE_MASK = 0x2;
-      static const int SHADOW_ABSTAIN_MASK = ~(SHADOW_RECEIVE_NODE_MASK | SHADOW_CAST_NODE_MASK);
-
+      
       class DT_RENDER_EXPORT ShadowMapType : public dtUtil::Enumeration 
       {
          DECLARE_ENUM(ShadowScene::ShadowMapType);
@@ -92,6 +87,9 @@ namespace dtRender
 
       void SetShadowsEnabled(bool enabled);
       bool GetShadowsEnabled() const;
+
+      virtual bool AddChild(DeltaDrawable* child);
+      virtual void RemoveChild(DeltaDrawable* child);
 
       DT_DECLARE_ACCESSOR_INLINE(dtUtil::EnumerationPointer<ShadowMapType>, ShadowMapType);
       DT_DECLARE_ACCESSOR_INLINE(dtUtil::EnumerationPointer<ShadowResolution>, ShadowResolution);

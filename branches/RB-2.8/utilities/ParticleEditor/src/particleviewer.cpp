@@ -39,6 +39,7 @@
 #include <dtCore/compass.h>
 
 #include <dtUtil/datapathutils.h>
+#include <dtUtil/nodemask.h>
 
 ////////////////////////////////////////////////////////////////////////////////
 ParticleViewer::ParticleViewer()
@@ -392,11 +393,11 @@ void ParticleViewer::ToggleReferenceObject(bool enabled)
 
    if (enabled)
    {
-      mpReferenceModel->setNodeMask(0xffffffff);
+      mpReferenceModel->setNodeMask(dtUtil::NodeMask::EVERYTHING);
    }
    else
    {
-      mpReferenceModel->setNodeMask(0x0);
+      mpReferenceModel->setNodeMask(dtUtil::NodeMask::NOTHING);
    }
 }
 
@@ -436,11 +437,11 @@ void ParticleViewer::ToggleCompass(bool enabled)
 {
    if(enabled)
    {
-      mpCompassTransform->setNodeMask(0xFFFFFFFF);
+      mpCompassTransform->setNodeMask(dtUtil::NodeMask::EVERYTHING);
    }
    else
    {
-      mpCompassTransform->setNodeMask(0x0);
+      mpCompassTransform->setNodeMask(dtUtil::NodeMask::NOTHING);
    }
 }
 
@@ -449,11 +450,11 @@ void ParticleViewer::ToggleXYGrid(bool enabled)
 {
    if(enabled)
    {
-      mpXYGridTransform->setNodeMask(0xFFFFFFFF);
+      mpXYGridTransform->setNodeMask(dtUtil::NodeMask::EVERYTHING);
    }
    else
    {
-      mpXYGridTransform->setNodeMask(0x0);
+      mpXYGridTransform->setNodeMask(dtUtil::NodeMask::NOTHING);
    }
 }
 
@@ -462,11 +463,11 @@ void ParticleViewer::ToggleXZGrid(bool enabled)
 {
    if(enabled)
    {
-      mpXZGridTransform->setNodeMask(0xFFFFFFFF);
+      mpXZGridTransform->setNodeMask(dtUtil::NodeMask::EVERYTHING);
    }
    else
    {
-      mpXZGridTransform->setNodeMask(0x0);
+      mpXZGridTransform->setNodeMask(dtUtil::NodeMask::NOTHING);
    }
 }
 
@@ -475,11 +476,11 @@ void ParticleViewer::ToggleYZGrid(bool enabled)
 {
    if(enabled)
    {
-      mpYZGridTransform->setNodeMask(0xFFFFFFFF);
+      mpYZGridTransform->setNodeMask(dtUtil::NodeMask::EVERYTHING);
    }
    else
    {
-      mpYZGridTransform->setNodeMask(0x0);
+      mpYZGridTransform->setNodeMask(dtUtil::NodeMask::NOTHING);
    }
 }
 
@@ -1409,13 +1410,13 @@ void ParticleViewer::MakeGrids()
    mpXZGridTransform->setMatrix(osg::Matrix::rotate(osg::PI_2, 1, 0, 0));
 
    mpXZGridTransform->addChild(geode);
-   mpXZGridTransform->setNodeMask(0x0);
+   mpXZGridTransform->setNodeMask(dtUtil::NodeMask::NOTHING);
 
    mpYZGridTransform = new osg::MatrixTransform;
    mpYZGridTransform->setMatrix(osg::Matrix::rotate(osg::PI_2, 0, 1, 0));
 
    mpYZGridTransform->addChild(geode);
-   mpYZGridTransform->setNodeMask(0x0);
+   mpYZGridTransform->setNodeMask(dtUtil::NodeMask::NOTHING);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

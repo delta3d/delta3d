@@ -56,6 +56,7 @@
 
 #include <dtUtil/exception.h>
 #include <dtUtil/mathdefines.h>
+#include <dtUtil/nodemask.h>
 
 #include <QtGui/QDrag>
 #include <QtGui/QDragMoveEvent>

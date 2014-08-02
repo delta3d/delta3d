@@ -21,6 +21,7 @@ SET( LIB_SOURCES
     ${SOURCE_PATH}/logobserverfile.cpp
     ${SOURCE_PATH}/matrixutil.cpp
     ${SOURCE_PATH}/nodecollector.cpp
+    ${SOURCE_PATH}/nodemask.cpp
     ${SOURCE_PATH}/nodeprintout.cpp
     ${SOURCE_PATH}/noisetexture.cpp
     ${SOURCE_PATH}/polardecomp.cpp
@@ -84,6 +85,7 @@ SET( LIB_PUBLIC_HEADERS
     ${HEADER_PATH}/mswin.h
     ${HEADER_PATH}/mswinmacros.h
     ${HEADER_PATH}/nodecollector.h
+    ${HEADER_PATH}/nodemask.h
     ${HEADER_PATH}/nodeprintout.h
     ${HEADER_PATH}/noise1.h
     ${HEADER_PATH}/noise2.h
