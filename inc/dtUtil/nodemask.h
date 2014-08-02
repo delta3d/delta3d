@@ -37,30 +37,35 @@ namespace dtUtil
       public:
 
 
-         static NodeMask NOTHING; //0
+         static NodeMask NOTHING;                  //0
 
-         static NodeMask EVERYTHING;//~0
+         static NodeMask EVERYTHING;               //~0
 
-         static NodeMask BACKGROUND; //0x10000000
+         static NodeMask BACKGROUND;               //0x10000000
          
-         static NodeMask FOREGROUND; //0x20000000
+         static NodeMask FOREGROUND;               //0x20000000
 
-         static NodeMask TRANSPARENT_EFFECTS;  //0x40000000
+         static NodeMask TRANSPARENT_EFFECTS;      //0x40000000
 
-         static NodeMask WATER; //0x80000000
+         static NodeMask WATER;                    //0x80000000
          
-         static NodeMask IGNORE_RAYCAST; //0xF0000000
+         static NodeMask IGNORE_RAYCAST;           //0xF0000000
 
-         static NodeMask SCENE_INTERSECT_MASK; //0x0FFFFFFF
+         static NodeMask SCENE_INTERSECT_MASK;     //0x0FFFFFFF
 
-         static NodeMask TERRAIN_FEATURES; //0x0F000000
+         static NodeMask TERRAIN_FEATURES;         //0x0F000000
          
-         static NodeMask DEFAULT; //0x00FFFFFF
+         static NodeMask DEFAULT_GEOMETRY;         //0x00FF0000 contains transparent and non transparent, ie not sorted
 
-         static NodeMask SHADOW_RECEIVE;// 0x00000010         
+         static NodeMask NON_TRANSPARENT_GEOMETRY; //0x00F00000
+
+         static NodeMask TRANSPARENT_GEOMETRY;     //0x000F0000
          
-         static NodeMask SHADOW_CAST;//0x00000020
+         static NodeMask SHADOW_RECEIVE;           //0x00001000
+         
+         static NodeMask SHADOW_CAST;              //0x00002000
 
+         
 
          //cull masks , do we need a separate class?
          static NodeMask MAIN_CAMERA_CULL_MASK;//0xFFFFFFFF         
@@ -68,6 +73,10 @@ namespace dtUtil
          //additional camera cull mask removes the UI or foreground bit
          //this supports multiple views or screens where the UI is only on the center
          static NodeMask ADDITIONAL_CAMERA_CULL_MASK;//0xDFFFFFFF
+
+         static NodeMask NON_TRANSPARENT_SCENE_CULL_MASK;//0x1FF00000
+         
+         static NodeMask TRANSPARENT_ONLY_CULL_MASK;//0xC00F0000
 
 
 
