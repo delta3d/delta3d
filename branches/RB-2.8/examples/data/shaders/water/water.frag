@@ -127,7 +127,7 @@ void main (void)
    {     
       vec3 refTexCoords = vec3(gl_FragCoord.x / ScreenWidth, gl_FragCoord.y / ScreenHeight, gl_FragCoord.z);
       refTexCoords.xy = clamp(refTexCoords.xy + 0.4 * normal.xy, 0.0, 1.0);
-      vec3 reflectColor = vec3(0.65, 0.7, 0.95);// texture2D(reflectionMap, refTexCoords.xy).rgb;
+      vec3 reflectColor = texture2D(reflectionMap, refTexCoords.xy).rgb;//vec3(0.65, 0.7, 0.95);      
       reflectColor = (deepWaterColor.xyz + fresnel * (reflectColor - deepWaterColor.xyz));
       
       vec3 lightVect = normalize(lightVector);
@@ -164,12 +164,10 @@ void main (void)
          gl_LightSource[0].ambient.xyz, lightContribFinal);
 
 
-      float ff_alpha = FastFresnel(waveNDotL, 0.15, 1.0);
-
       vec3 combinedColor = lightContribFinal * resultColor;      
       combinedColor = mix(waterColorAtDepth, combinedColor, vFog.y);
 
-      gl_FragColor = vec4(combinedColor, ff_alpha);
+      gl_FragColor = vec4(combinedColor, fresnel);
 
    }
 }

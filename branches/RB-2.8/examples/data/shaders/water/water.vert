@@ -8,7 +8,7 @@
 // [Length, Speed, Amplitude, Frequency], [Q, reserved for later use, Direction.x, Direction.y]
 //////////////////////////////////////////////////////////////////////////////////////////////////
 const int WAVE_OFFSET = 0;
-const int NUMWAVES = 16;
+const int NUMWAVES = 32;
 const int MAX_WAVES = 32;
 uniform vec4 waveArray[2 * MAX_WAVES];
 uniform float waterPlaneFOV;

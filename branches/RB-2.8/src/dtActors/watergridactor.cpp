@@ -50,6 +50,7 @@
 #include <dtUtil/mathdefines.h>
 #include <dtUtil/noisetexture.h>
 #include <dtUtil/matrixutil.h>
+#include <dtUtil/nodemask.h>
 
 #include <osg/BlendFunc>
 #include <osg/Camera>
@@ -535,6 +536,9 @@ namespace dtActors
    void WaterGridActor::CreateGeometry()
    {
       mGeode = new osg::Geode();
+      mGeode->setDataVariance(osg::Object::DYNAMIC);
+      mGeode->setNodeMask(dtUtil::NodeMask::WATER);
+
       mGeometry = WaterGridBuilder::BuildRadialGrid(mComputedRadialDistance);
       mGeometry->setCullCallback(new WaterCullCallback());
 
@@ -543,6 +547,7 @@ namespace dtActors
       mGeode->addDrawable(mGeometry.get());
 
       osg::StateSet* ss = mGeode->getOrCreateStateSet();
+      ss->setDataVariance(osg::Object::DYNAMIC);
       ss->setMode(GL_BLEND, osg::StateAttribute::ON);
       osg::BlendFunc* bf = new osg::BlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
       ss->setAttribute(bf);
@@ -624,6 +629,7 @@ namespace dtActors
 
       //set the elapsed time
       osg::Uniform* elapsedTime = ss->getOrCreateUniform(UNIFORM_ELAPSED_TIME, osg::Uniform::FLOAT);
+      elapsedTime->setDataVariance(osg::Object::DYNAMIC);
       elapsedTime->set(mElapsedTime);
       elapsedTime->setDataVariance(osg::Object::DYNAMIC);
 
@@ -735,25 +741,29 @@ namespace dtActors
       WaveArray::iterator iter = mWaves.begin();
       WaveArray::iterator endIter = mWaves.end();
 
-      // Search for the next wave that is big enough to be worth showing.
-      // Camera Cut Point is an estimated value for the cut point - scaled by all the FoV modifiers.
-      bool quitLooking = false;
-      int numIgnored = 0;
       float cameraCutPoint = 0.5 + cameraHeight / (24.0 * mModForWaveLength * mCameraFoVScalar * mModForFOV); // Used to pick waves
-      while(iter != endIter && !quitLooking)
+
+      //just use them all if we can
+      if(numWaves <= MAX_WAVES)
       {
-         Wave &nextWave = (*iter);
-         if (nextWave.mWaveLength > (cameraCutPoint) || (numWaves - numIgnored) <= MAX_WAVES)
+         // Search for the next wave that is big enough to be worth showing.
+         // Camera Cut Point is an estimated value for the cut point - scaled by all the FoV modifiers.
+         bool quitLooking = false;
+         int numIgnored = 0;
+         while(iter != endIter && !quitLooking)
          {
-            quitLooking = true;
-         }
-         else
-         {
-            ++iter;
-            numIgnored ++;
+            Wave &nextWave = (*iter);
+            if (nextWave.mWaveLength > (cameraCutPoint) || (numWaves - numIgnored) <= MAX_WAVES)
+            {
+               quitLooking = true;
+            }
+            else
+            {
+               ++iter;
+               numIgnored ++;
+            }
          }
       }
-
 
       // The choppiness rotation spreads out the 8 waves so that they come at wider angles
       // which causes then to be choppier.
@@ -851,7 +861,6 @@ namespace dtActors
    {
       if(!mWaveTexture.valid())
       {
-         //TODO: GET DIMENSIONS OF SCREEN
          int width = 512;
          int height = 512;
 
@@ -871,7 +880,7 @@ namespace dtActors
          mWaveCameraScreen->setViewport(0, 0, width, height);
          mWaveCameraScreen->setGraphicsContext(new osgViewer::GraphicsWindowEmbedded());
          AddOrthoQuad(mWaveCameraScreen.get(), mWaveTexture.get(), "WaveTest", "waveTexture");
-         mWaveCameraScreen->setNodeMask(0x0);
+         mWaveCameraScreen->setNodeMask(dtUtil::NodeMask::NOTHING);
 
          dtABC::Application::GetInstance("Application")->GetScene()->GetSceneNode()->addChild(mWaveCamera.get());
          dtABC::Application::GetInstance("Application")->GetScene()->GetSceneNode()->addChild(mWaveCameraScreen.get());
@@ -963,11 +972,11 @@ namespace dtActors
    {
       if(b)
       {
-         mWaveCameraScreen->setNodeMask(0xFFFFFFFF);
+         mWaveCameraScreen->setNodeMask(dtUtil::NodeMask::FOREGROUND);
       }
       else
       {
-         mWaveCameraScreen->setNodeMask(0x0);
+         mWaveCameraScreen->setNodeMask(dtUtil::NodeMask::NOTHING);
       }
    }
 
@@ -1029,7 +1038,7 @@ namespace dtActors
    ////////////////////////////////////////////////////////////////////////////////
    void WaterGridActor::SetEnableWater(bool enable)
    {
-      mGeode->setNodeMask((enable) ? 0xffffffff: 0x0);
+      mGeode->setNodeMask((enable) ? dtUtil::NodeMask::WATER : 0x0);
    }
 
    ////////////////////////////////////////////////////////////////////////////////

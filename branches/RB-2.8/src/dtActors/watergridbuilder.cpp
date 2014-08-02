@@ -65,8 +65,8 @@ namespace dtActors
    {
       osg::Geometry* geometry = new osg::Geometry();
 
-      int N = 180; // rows from center outward
-      int K = 180;// columns around the circle
+      int N = 360; // rows from center outward
+      int K = 360;// columns around the circle
 
       //calculate num verts and num indices
       int numVerts = N * K;
@@ -168,6 +168,8 @@ namespace dtActors
       float waveLenMod = 2.0f;
       float ampMod = 0.25f;
 
+      AddDefaultWaves(waveList);
+
       if(seaState == &WaterGridActor::SeaState::SeaState_0)
       {
          AddRandomWaves(waveList, waveLenMod * 3.167f, ampMod * 00.16f, 1.0f, 2.5f, numWaves);
@@ -256,6 +258,7 @@ namespace dtActors
          AddRandomWaves(waveList, waveLenMod * 123.33, ampMod * 12.67f, 8.5f, 14.0f, 2);
          AddRandomWaves(waveList, waveLenMod * 545.667, ampMod * 125.33f, 33.5f, 33.0f, 3);
       }
+
    }
 
 
@@ -333,6 +336,251 @@ namespace dtActors
          cos(osg::DegreesToRadians(wave.mDirectionInDegrees)));
 
       wave.mDirection.normalize();
+   }
+
+   void WaterGridBuilder::AddDefaultWaves(std::vector<WaterGridActor::Wave>& waveList)
+   {
+      WaterGridActor::Wave w;
+
+      //w.mWaveLength = 4.8f;
+      //w.mAmplitude = 0.08f;
+      //w.mSpeed = 0.5f;
+      //w.mSteepness = 0.5;
+      //w.mDirectionInDegrees = -5.7f;
+      //SetWaveDirection(w);
+      //waveList.push_back(w); // -3
+
+      w.mWaveLength = 5.33f;
+      w.mAmplitude = 0.09f;
+      w.mSpeed = 0.3f;
+      w.mSteepness = 0.1f;
+      w.mDirectionInDegrees = 181.0f;
+      SetWaveDirection(w);
+      waveList.push_back(w); // 1
+
+      //w.mWaveLength = 6.37f;
+      //w.mAmplitude = 0.11f;
+      //w.mSpeed = 0.7f;
+      //w.mSteepness = 0.7f;
+      //w.mDirectionInDegrees = 15.3f;
+      //SetWaveDirection(w);
+      //waveList.push_back(w);  // -1
+
+      w.mWaveLength = 6.89f;
+      w.mAmplitude = 0.08f;
+      w.mSpeed = 0.65f;
+      w.mSteepness = 0.8f;
+      w.mDirectionInDegrees = 4.2f;
+      SetWaveDirection(w);
+      waveList.push_back(w); // 2
+
+      w.mWaveLength = 16.51f;
+      w.mAmplitude = 0.11f;
+      w.mSpeed = 0.8f;
+      w.mSteepness = 0.1f;
+      w.mDirectionInDegrees = -15.0f;
+      SetWaveDirection(w);
+      waveList.push_back(w); // 3
+
+      w.mWaveLength = 19.89f;
+      w.mAmplitude = 0.12f;
+      w.mSpeed = 1.2f;
+      w.mSteepness = 0.1f;
+      w.mDirectionInDegrees = 184.0f;
+      SetWaveDirection(w);
+      waveList.push_back(w); // 4
+
+      w.mWaveLength = 35.51f;
+      w.mAmplitude = 0.22f;
+      w.mSpeed = 1.3f;
+      w.mSteepness = 0.3f;
+      w.mDirectionInDegrees = 10.7f;
+      SetWaveDirection(w);
+      waveList.push_back(w);  // 5
+
+      w.mWaveLength = 42.18f;
+      w.mAmplitude = 0.35f;
+      w.mSpeed = 1.1f;
+      w.mSteepness = 0.3f;
+      w.mDirectionInDegrees = 0.0f;
+      SetWaveDirection(w);
+      waveList.push_back(w); // 6
+
+      //w.mWaveLength = 54.055f;
+      //w.mAmplitude = 0.28f;
+      //w.mSpeed = 1.2f;
+      //w.mSteepness = 0.2f;
+      //w.mDirectionInDegrees = -10.4f;
+      //SetWaveDirection(w);
+      //waveList.push_back(w); // 5
+
+      //w.mWaveLength = 92.15f;
+      //w.mAmplitude = 0.25f;
+      //w.mSpeed = 1.5f;
+      //w.mSteepness = 0.1f;
+      //w.mDirectionInDegrees = 178.1f;
+      //SetWaveDirection(w);
+      //waveList.push_back(w);  // 6
+
+      w.mWaveLength = 106.98f;
+      w.mAmplitude = 0.34f;
+      w.mSpeed = 1.8f;
+      w.mSteepness = 0.3f;
+      w.mDirectionInDegrees = 5.0f;
+      SetWaveDirection(w);
+      waveList.push_back(w); // 7
+
+      w.mWaveLength = 148.7f;
+      w.mAmplitude = 0.25f;
+      w.mSpeed = 2.3f;
+      w.mSteepness = 0.1f;
+      w.mDirectionInDegrees = 5.0f;
+      SetWaveDirection(w);
+      waveList.push_back(w); // 8
+
+      w.mWaveLength = 181.35f;
+      w.mAmplitude = 0.88f;
+      w.mSpeed = 2.8f;
+      w.mSteepness = 0.6f;
+      w.mDirectionInDegrees = -1.8f;
+      SetWaveDirection(w);
+      waveList.push_back(w); // 9
+
+      //w.mWaveLength = 188.9f;
+      //w.mAmplitude = 0.92f;
+      //w.mSpeed = 3.5f;
+      //w.mSteepness = 0.1f;
+      //w.mDirectionInDegrees = 1.3f;
+      //SetWaveDirection(w);
+      //waveList.push_back(w);  // 10
+
+      //w.mWaveLength = 200.25f;
+      //w.mAmplitude = 0.62f;
+      //w.mSpeed = 3.5f;
+      //w.mSteepness = 0.1f;
+      //w.mDirectionInDegrees = 8.1f;
+      //SetWaveDirection(w);
+      //waveList.push_back(w);  // 11
+
+      //w.mWaveLength = 213.275f;
+      //w.mAmplitude = 0.3f;
+      //w.mSpeed = 3.8f;
+      //w.mSteepness = 0.5f;
+      //w.mDirectionInDegrees = 5.3f;
+      //SetWaveDirection(w);
+      //waveList.push_back(w); // 12
+
+      w.mWaveLength = 507.4f;
+      w.mAmplitude = 0.12f;
+      w.mSpeed = 2.5f;
+      w.mSteepness = 0.0f;
+      w.mDirectionInDegrees = 174.0f;
+      SetWaveDirection(w);
+      waveList.push_back(w); // 10
+
+      w.mWaveLength = 526.5f;
+      w.mAmplitude = 1.8f;
+      w.mSpeed = 6.9f;
+      w.mSteepness = 0.5f;
+      w.mDirectionInDegrees = -3.0f;
+      SetWaveDirection(w);
+      waveList.push_back(w); // 11
+
+      //w.mWaveLength = 540.4f;
+      //w.mAmplitude = 1.91f;
+      //w.mSpeed = 6.8f;
+      //w.mSteepness = 0.1f;
+      //w.mDirectionInDegrees = 2.5f;
+      //SetWaveDirection(w);
+      //waveList.push_back(w); // 15
+
+      //w.mWaveLength = 557.2f;
+      //w.mAmplitude = 0.63f;
+      //w.mSpeed = 1.8f;
+      //w.mSteepness = 0.0f;
+      //w.mDirectionInDegrees = -179.3f;
+      //SetWaveDirection(w);
+      //waveList.push_back(w);  // 16
+
+      w.mWaveLength = 582.4f;
+      w.mAmplitude = 1.51f;
+      w.mSpeed = 7.2f;
+      w.mSteepness = 0.3f;
+      w.mDirectionInDegrees = 12.0f;
+      SetWaveDirection(w);
+      waveList.push_back(w);  // 12
+
+      w.mWaveLength = 1250.3f;
+      w.mAmplitude = 2.5f;
+      w.mSpeed = 9.2f;
+      w.mSteepness = 0.1f;
+      w.mDirectionInDegrees = 3.0f;
+      SetWaveDirection(w);
+      waveList.push_back(w); // 13
+
+      w.mWaveLength = 1268.0f;
+      w.mAmplitude = 0.9f;
+      w.mSpeed = 3.5f;
+      w.mSteepness = 0.0f;
+      w.mDirectionInDegrees = 183.0f;
+      SetWaveDirection(w);
+      waveList.push_back(w); // 14
+
+      //w.mWaveLength = 1280.7f;
+      //w.mAmplitude = 2.61f;
+      //w.mSpeed = 9.3f;
+      //w.mSteepness = 0.5f;
+      //w.mDirectionInDegrees = -3.5f;
+      //SetWaveDirection(w);
+      //waveList.push_back(w); // 20
+
+      //w.mWaveLength = 1310.6f;
+      //w.mAmplitude = 1.5f;
+      //w.mSpeed = 2.8f;
+      //w.mSteepness = 0.3f;
+      //w.mDirectionInDegrees = -179.3f;
+      //SetWaveDirection(w);
+      //waveList.push_back(w);  // 21
+
+      //w.mWaveLength = 1325.1f;
+      //w.mAmplitude = 2.9f;
+      //w.mSpeed = 10.1f;
+      //w.mSteepness = 0.2f;
+      //w.mDirectionInDegrees = -6.0f;
+      //SetWaveDirection(w);
+      //waveList.push_back(w);  // 15
+
+      w.mWaveLength = 3600.3f;
+      w.mAmplitude = 5.2f;
+      w.mSpeed = 15.2f;
+      w.mSteepness = 0.1f;
+      w.mDirectionInDegrees = 2.5f;
+      SetWaveDirection(w);
+      waveList.push_back(w); // 15
+
+      //w.mWaveLength = 3727.7f;
+      //w.mAmplitude = 4.1f;
+      //w.mSpeed = 14.3f;
+      //w.mSteepness = 0.5f;
+      //w.mDirectionInDegrees = -3.9f;
+      //SetWaveDirection(w);
+      //waveList.push_back(w); // 24
+
+      //w.mWaveLength = 3929.6f;
+      //w.mAmplitude = 1.8f;
+      //w.mSpeed = 7.4f;
+      //w.mSteepness = 0.1f;
+      //w.mDirectionInDegrees = -179.3f;
+      //SetWaveDirection(w);
+      //waveList.push_back(w);  // 25
+
+      w.mWaveLength = 4017.1f;
+      w.mAmplitude = 6.1f;
+      w.mSpeed = 16.1f;
+      w.mSteepness = 0.2f;
+      w.mDirectionInDegrees = -5.7f;
+      SetWaveDirection(w);
+      waveList.push_back(w);  // 16
    }
 }
 ////////////////////////////////////////////////////////////////////////////////
