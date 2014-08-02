@@ -8,6 +8,7 @@
 #include <dtCore/deltawin.h>
 #include <dtUtil/log.h>
 #include <dtUtil/datapathutils.h>
+#include <dtUtil/nodemask.h>
 
 #include <osg/Drawable>
 #include <osg/StateSet>
@@ -332,6 +333,10 @@ void GUI::_SetupInternalGraph()
    states->setTextureMode(0, GL_TEXTURE_2D, osg::StateAttribute::ON);
 
    osg::Geode* geode = new osg::Geode;
+   
+   //set the default node mask for foreground drawables
+   geode->setNodeMask(dtUtil::NodeMask::FOREGROUND);
+
    geode->addDrawable(new HUDDrawable());
    mInternalGraph->addChild(geode);
 }

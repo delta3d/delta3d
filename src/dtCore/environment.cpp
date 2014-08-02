@@ -13,6 +13,8 @@
 #include <dtCore/transform.h>
 #include <dtUtil/log.h>
 #include <dtUtil/mathdefines.h>
+#include <dtUtil/nodemask.h>
+
 #include <osg/Fog>
 #include <osg/FragmentProgram>
 #include <osg/Group>
@@ -65,7 +67,7 @@ Environment::Environment(const std::string& name)
    mEnvEffectNode->setName("EnvEffectNode");
 
    GetOSGNode()->asGroup()->addChild(mEnvEffectNode.get());
-   mEnvEffectNode->setNodeMask(0xF0000000);
+   mEnvEffectNode->setNodeMask(dtUtil::NodeMask::BACKGROUND);
    GetOSGNode()->asGroup()->addChild(mDrawableNode.get());
 
    mSkyColor.set(0.39f, 0.50f, 0.74f);

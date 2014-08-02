@@ -22,6 +22,7 @@
 #include <dtRender/shadowscene.h>
 
 #include <dtUtil/log.h>
+#include <dtUtil/nodemask.h>
 
 #include <dtCore/light.h>
 #include <osg/LightSource>
@@ -115,14 +116,18 @@ namespace dtRender
       {
          mImpl->mNode = new osgShadow::ShadowedScene();
 
+         mImpl->mNode->getOrCreateStateSet()->setGlobalDefaults();
+
          //use light zero for sunlight
          mImpl->mLightSource = gm->GetScene().GetLight(0);
 
-         mImpl->mNode->setReceivesShadowTraversalMask(SHADOW_RECEIVE_NODE_MASK);
-         mImpl->mNode->setCastsShadowTraversalMask(SHADOW_CAST_NODE_MASK);
+         mImpl->mNode->setReceivesShadowTraversalMask(dtUtil::NodeMask::SHADOW_RECEIVE);
+         mImpl->mNode->setCastsShadowTraversalMask(dtUtil::NodeMask::SHADOW_CAST);
 
          SetShadowsEnabled(true);
 
+         //shadow scene becomes the new default scene
+         sm.PushScene(*this);
       }
    }
 
@@ -257,6 +262,15 @@ namespace dtRender
       return mImpl->mLightSource->GetLightSource();
    }
 
+   bool ShadowScene::AddChild(DeltaDrawable* child)
+   {
+      return BaseClass::AddChild(child);
+   }
+
+   void ShadowScene::RemoveChild(DeltaDrawable* child)
+   {
+      BaseClass::RemoveChild(child);
+   }
    ShadowSceneProxy::ShadowSceneProxy()
    {
    }

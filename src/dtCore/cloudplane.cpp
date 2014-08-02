@@ -4,6 +4,7 @@
 #include <dtCore/system.h>
 #include <dtUtil/noisetexture.h>
 #include <dtUtil/log.h>
+#include <dtUtil/nodemask.h>
 
 #include <osg/BlendFunc>
 #include <osg/Fog>
@@ -59,7 +60,7 @@ CloudPlane::CloudPlane(int   octaves,
       mHeight = MAX_HEIGHT;
 
    SetOSGNode(new osg::Group);
-   GetOSGNode()->setNodeMask(0xf0000000);
+   GetOSGNode()->setNodeMask(dtUtil::NodeMask::BACKGROUND);
 
    Create(textureFilePath);
    AddSender(&System::GetInstance());
@@ -92,7 +93,7 @@ CloudPlane::CloudPlane(float height, const std::string& name, const std::string&
    }
 
    SetOSGNode(new osg::Group);
-   GetOSGNode()->setNodeMask(0xf0000000);
+   GetOSGNode()->setNodeMask(dtUtil::NodeMask::BACKGROUND);
 
    Create(textureFilePath);
    AddSender(&System::GetInstance());

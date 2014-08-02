@@ -14,6 +14,7 @@
 #include <dtUtil/datetime.h>
 #include <dtUtil/log.h>
 #include <dtUtil/functor.h>
+#include <dtUtil/nodemask.h>
 
 #include <osg/Matrix>
 #include <osg/MatrixTransform>
@@ -190,7 +191,7 @@ namespace dtCore
       {
          //save off the existing, theoretically enabled, node mask
          mEnabledNodeMask = GetOSGCamera()->getNodeMask();
-         GetOSGCamera()->setNodeMask(0x0);
+         GetOSGCamera()->setNodeMask(dtUtil::NodeMask::NOTHING);
       }
    }
 

@@ -4,6 +4,7 @@
 #include <dtCore/moveearthtransform.h>
 #include <dtCore/makeskydome.h>
 #include <dtUtil/mathdefines.h>
+#include <dtUtil/nodemask.h>
 #include <osg/Depth>
 #include <osg/Drawable>
 #include <osg/Geometry>
@@ -57,7 +58,7 @@ void dtCore::SkyDome::Config(float radius)
    mGeode = MakeSkyDome(*this, radius).Compute();
    mXform->addChild(mGeode.get());
    group->addChild(mXform.get());
-   group->setNodeMask(0xf0000000);
+   group->setNodeMask(dtUtil::NodeMask::BACKGROUND);
 
    GetOSGNode()->asGroup()->addChild(group);
 }
