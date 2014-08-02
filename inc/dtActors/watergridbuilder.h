@@ -46,6 +46,7 @@ namespace dtActors
 
       static void AddRandomWaves(std::vector<WaterGridActor::Wave>& waveList, float meanWaveLength, float meanAmplitude, float minPeriod, float maxPeriod, unsigned numWaves);
 
+      static void AddDefaultWaves(std::vector<WaterGridActor::Wave>& waveList);
    private:
 
       WaterGridBuilder(){}
