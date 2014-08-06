@@ -108,7 +108,7 @@ namespace dtAnim
       void SubtestAnimationEventFiring(float speed);
 
       // Helper methods.
-      dtCore::RefPtr<AnimationHelper> CreateRealAnimationHelper();
+      void LoadAnimationACModel();
 
    private:
       void OnModelLoaded(dtAnim::AnimationHelper*);
@@ -128,7 +128,7 @@ namespace dtAnim
       dtCore::RefPtr<dtGame::GameManager> mGM;
       dtCore::RefPtr<AnimationComponent> mAnimComp;
       dtCore::RefPtr<dtGame::GameActorProxy> mTestGameActor;
-      dtCore::RefPtr<AnimationHelper> mHelper;
+      dtCore::RefPtr<AnimationHelper> mAnimAC;
 
       dtCore::RefPtr<dtCore::Scene>          mScene;
       dtCore::RefPtr<dtCore::Camera>         mCamera;
@@ -177,8 +177,9 @@ namespace dtAnim
       mGM->CreateActor(*dtAnim::AnimActorRegistry::ANIMATION_ACTOR_TYPE, mTestGameActor);
       CPPUNIT_ASSERT(mTestGameActor.valid());
 
-      mTestGameActor->GetComponent(mHelper);
-      CPPUNIT_ASSERT(mHelper.valid());
+      mTestGameActor->GetComponent(mAnimAC);
+      CPPUNIT_ASSERT(mAnimAC.valid());
+      Connect(mAnimAC);
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -190,7 +191,7 @@ namespace dtAnim
       dtCore::System::GetInstance().Stop();
       if (mGM.valid())
       {
-         mHelper = NULL;
+         mAnimAC = NULL;
          mTestGameActor = NULL;
          mGM->DeleteAllActors(true);
          mGM = NULL;
@@ -204,7 +205,7 @@ namespace dtAnim
    {
       CPPUNIT_ASSERT(!mAnimComp->IsRegisteredActor(*mTestGameActor));
       mGM->AddActor(*mTestGameActor, false, false);
-      CPPUNIT_ASSERT_MESSAGE("Addding the actor to the gm should auto register with the gm component",
+      CPPUNIT_ASSERT_MESSAGE("Adding the actor to the gm should auto register with the gm component",
                mAnimComp->IsRegisteredActor(*mTestGameActor));
 
       mGM->DeleteActor(*mTestGameActor);
@@ -254,7 +255,7 @@ namespace dtAnim
       dtCore::RefPtr<osg::Node> nodeBackup = animAC->GetNode();
       animAC->SetSkeletalMesh(dtCore::ResourceDescriptor());
       CPPUNIT_ASSERT(animAC->GetNode() == NULL);
-      CPPUNIT_ASSERT_EQUAL_MESSAGE("Setting the resource to null with AttachingNoteToDrawable enabled should unparent the node.",
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("Setting the resource to null with AttachingNodeToDrawable enabled should unparent the node.",
                0U, nodeBackup->getNumParents());
       animAC->SetSkeletalMesh(dtCore::ResourceDescriptor("SkeletalMeshes:Marine:marine.xml"));
       CPPUNIT_ASSERT_MESSAGE("Right after setting the mesh, the node will be NULL.", animAC->GetNode() == NULL);
@@ -469,15 +470,12 @@ namespace dtAnim
 
    /////////////////////////////////////////////////////////////////////////////
    // Helper method
-   dtCore::RefPtr<AnimationHelper> AnimationComponentTests::CreateRealAnimationHelper()
+   void AnimationComponentTests::LoadAnimationACModel()
    {
-      dtCore::RefPtr<AnimationHelper> helper = new AnimationHelper();
       dtCore::Project::GetInstance().SetContext(dtUtil::GetDeltaRootPath() + "/examples/data");
 
       dtCore::ResourceDescriptor modelPath("SkeletalMeshes:Marine:marine_test.xml");
-      helper->LoadModel(modelPath);
-
-      return helper;
+      LoadModel(mAnimAC, modelPath);
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -536,16 +534,17 @@ namespace dtAnim
       CPPUNIT_ASSERT(gem.FindEvent(eventMid3) == NULL);
 
       // Create the test animation helper
-      dtCore::RefPtr<AnimationHelper> helper = CreateRealAnimationHelper();
-      CPPUNIT_ASSERT( ! helper->GetSendEventCallback().valid());
-      mAnimComp->RegisterActor(*mTestGameActor, *helper);
+      LoadAnimationACModel();
+      dtCore::RefPtr<AnimationHelper> animAC = mAnimAC;
+      CPPUNIT_ASSERT( ! animAC->GetSendEventCallback().valid());
+      mGM->AddActor(*mTestGameActor, false, false);
       // --- Ensure that the component has registered its
       //     send event method with the helper.
-      CPPUNIT_ASSERT(helper->GetSendEventCallback().valid());
-      helper->SetCommandCallbacksEnabled(true);
+      CPPUNIT_ASSERT(animAC->GetSendEventCallback().valid());
+      animAC->SetCommandCallbacksEnabled(true);
 
       // Set the speed on the animatables.
-      dtAnim::BaseModelWrapper* wrapper = helper->GetModelWrapper();
+      dtAnim::BaseModelWrapper* wrapper = animAC->GetModelWrapper();
       CPPUNIT_ASSERT(wrapper != NULL);
       const dtAnim::BaseModelData* modelData = wrapper->GetModelData();
       CPPUNIT_ASSERT(modelData != NULL);
@@ -559,7 +558,7 @@ namespace dtAnim
       }
 
       // Start playing the animation that contains those events.
-      helper->PlayAnimation("TestEventsAction");
+      animAC->PlayAnimation("TestEventsAction");
       mAnimComp->ProcessMessage(*tickMessage); // Now at time 0.2
       // --- Ensure the start events were fired.
       CPPUNIT_ASSERT(gem.FindEvent(eventStart1) != NULL);
