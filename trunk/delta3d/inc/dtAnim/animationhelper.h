@@ -144,13 +144,23 @@ namespace dtAnim
        */
       bool LoadModel(const dtCore::ResourceDescriptor& resource, bool immediate = false);
 
+      /**
+       * @note Just because this function returns false doesn't mean you have a loaded
+       *       model.  The load could have failed, but due to threading issues, the model doesn't
+       *       get assigned and setup until the Update(..) call after the load finishes, so it very well may
+       *       be that the model has finished loading, but it's waiting to be assigned on tick.
+       *       The ModelLoadedSignal will emit when the model is assigned, so you should listen for that.
+       *  @return true if a background load is running but is not yet completed.
+       */
+      bool IsLoadingAsynchronously();
+
       /// Unloads the character model and calls related callbacks.  Should be the same as LoadModel("");
       void UnloadModel();
 
       /**
-       * Emits a signal when the model files have been loaded but before OSG
-       * has had a chance to create the geometry.  It's also worth noting that this
-       * is called upon completion of an async load.
+       * Emits a signal when the model files have been loaded and assigned to
+       * this actor component.  You should listen for this whether you have async on or not because
+       * the code essentially works the same way.
        */
       sigslot::signal1<AnimationHelper*> ModelLoadedSignal;
       sigslot::signal1<AnimationHelper*> ModelUnloadedSignal;
