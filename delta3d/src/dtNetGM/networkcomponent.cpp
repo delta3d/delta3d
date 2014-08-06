@@ -191,6 +191,8 @@ namespace dtNetGM
       // This is really not a proper shutdown.  It needs to send a message across to notify the other clients
       // but this just makes it drop immediately.
       Disconnect();
+      
+      mDispatchTask = NULL;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -444,6 +446,14 @@ namespace dtNetGM
          }
       }
       return NULL;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   int NetworkComponent::GetConnectionCount() const
+   {
+      OpenThreads::ScopedLock<OpenThreads::Mutex> lock(mMutex);
+
+      return (int)mConnections.size();
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -925,12 +935,9 @@ namespace dtNetGM
          {
             LOG_ERROR("Attempted to wait for the background message send to complete during disconnect, but it never completed after 2 seconds.");
          }
-         mDispatchTask = NULL;
       }
 
       OpenThreads::ScopedLock<OpenThreads::Mutex> lock(mMutex);
-
-      mShuttingDown = true;
 
       // empty connections
       for (std::vector<NetworkBridge*>::iterator iter = mConnections.begin(); iter < mConnections.end(); iter++)
@@ -946,6 +953,8 @@ namespace dtNetGM
       LOG_INFO("Shutting down network...");
 
       Disconnect();
+
+      mShuttingDown = true;
 
       // Only shutdown if this network component is the only existing one, otherwise some other
       // instance will still want GNE running, Eventually it will get shutdown by the destructor of the last

@@ -101,7 +101,7 @@ namespace dtAudio
          {
             try
             {
-               fileName = dtCore::Project::GetInstance().GetResourcePath(soundFile);
+               fileName = dtCore::Project::GetInstance().GetResourcePath(dtCore::ResourceDescriptor(soundFile));
             }
             catch (...)
             {

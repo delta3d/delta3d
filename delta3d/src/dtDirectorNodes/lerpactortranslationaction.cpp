@@ -216,7 +216,7 @@ namespace dtDirector
                if (actor)
                {
                   dtCore::Transformable* drawable = NULL;
-                  actor->GetActor(drawable);
+                  actor->GetDrawable(drawable);
                   if (drawable)
                   {
                      dtCore::Transform transform;
