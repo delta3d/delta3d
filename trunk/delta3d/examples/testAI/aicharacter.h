@@ -44,7 +44,7 @@ namespace dtAI
    class AICharacter: public osg::Referenced
    {
    public:
-      AICharacter(dtCore::Scene* pScene, const WaypointInterface* pWaypoint, const std::string& pFilename, unsigned pSpeed);
+      AICharacter(dtCore::Scene* pScene, const WaypointInterface* pWaypoint, const dtCore::ResourceDescriptor& pResource, unsigned pSpeed);
 
    protected:
       /*virtual*/ ~AICharacter();

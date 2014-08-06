@@ -26,6 +26,7 @@ namespace dtAnim
       typedef CharacterFileHandler::AnimatableOverrideStructArray OverrideStructArray;
       typedef CharacterFileHandler::AnimationSequenceStruct AnimationSequenceStruct;
       
+      virtual dtCore::RefPtr<CharacterFileHandler> LoadCharacterFile(const dtCore::ResourceDescriptor& resourde);
       virtual dtCore::RefPtr<CharacterFileHandler> LoadCharacterFile(const std::string& file);
    
       virtual void CreateChannelsAndSequences(dtAnim::CharacterFileHandler& handler, dtAnim::BaseModelData& modelData);

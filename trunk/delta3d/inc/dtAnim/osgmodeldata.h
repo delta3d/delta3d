@@ -34,7 +34,7 @@ namespace dtAnim
 
       static const osg::CopyOp::Options DEFAULT_COPY_OPTIONS;
 
-      OsgModelData(const std::string& modelName, const std::string& filename);
+      OsgModelData(const std::string& modelName, const dtCore::ResourceDescriptor& resource);
 
       void SetCoreModel(osg::Node* model);
       osg::Node* GetCoreModel();

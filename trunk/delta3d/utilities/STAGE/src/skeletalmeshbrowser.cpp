@@ -249,54 +249,45 @@ namespace dtEditQt
          // Find the currently selected tree item
          dtCore::ResourceDescriptor resource = EditorData::GetInstance().getCurrentResource(dtCore::DataType::SKELETAL_MESH);
 
-         try
+
+         if (previewObject.valid() && meshScene->GetChildIndex(previewObject.get()) == (unsigned)meshScene->GetNumberOfAddedDrawable())
          {
-            file = QString(project.GetResourcePath(resource).c_str());
-            validFile = true;
-         }
-         catch (dtUtil::Exception&)
-         {
-            validFile = false;
+            meshScene->AddChild(previewObject.get());
          }
 
-         if (file != NULL && validFile == true)
+         dtCore::RefPtr<dtAnim::BaseModelWrapper> animWrap;
+         if (dtAnim::ModelDatabase::GetInstance().Load(resource))
          {
-            file.replace("\\", "/");
+            dtAnim::BaseModelData* modelData = dtAnim::ModelDatabase::GetInstance().GetModelData(resource);
+            animWrap = dtAnim::ModelDatabase::GetInstance().CreateModelWrapper(*modelData);
+         }
 
-            if (previewObject.valid() && meshScene->GetChildIndex(previewObject.get()) == (unsigned)meshScene->GetNumberOfAddedDrawable())
+         if (animWrap.valid())
+         {
+            if (!previewObject.valid())
             {
+               previewObject = new dtAnim::CharDrawable(animWrap);
                meshScene->AddChild(previewObject.get());
-            }
-
-            dtCore::RefPtr<dtAnim::BaseModelWrapper> animWrap = dtAnim::ModelDatabase::GetInstance().Load(file.toStdString());
-
-            if (animWrap.valid())
-            {
-               if (!previewObject.valid())
-               {
-                  previewObject = new dtAnim::CharDrawable(animWrap);
-                  meshScene->AddChild(previewObject.get());
-               }
-               else
-               {
-                  previewObject->SetModelWrapper(animWrap);
-               }
             }
             else
             {
-               if (previewObject.valid())
-               {
-                  previewObject->SetModelWrapper(NULL);
-               }
+               previewObject->SetModelWrapper(animWrap);
             }
-            // Load the new file.
-            perspView->refresh();
-
-            SetCameraLookAt(*camera, *previewObject);
-
-            perspView->refresh();
-            perspView->GetQGLWidget()->setFocus();
          }
+         else
+         {
+            if (previewObject.valid())
+            {
+               previewObject->SetModelWrapper(NULL);
+            }
+         }
+         // Load the new file.
+         perspView->refresh();
+
+         SetCameraLookAt(*camera, *previewObject);
+
+         perspView->refresh();
+         perspView->GetQGLWidget()->setFocus();
       }
    }
 

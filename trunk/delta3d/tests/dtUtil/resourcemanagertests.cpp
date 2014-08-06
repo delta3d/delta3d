@@ -27,6 +27,7 @@
 #include <cppunit/extensions/HelperMacros.h>
 #include <dtUtil/resourcemanager.h>
 #include <dtUtil/resourceloader.h>
+#include <dtCore/resourcedescriptor.h>
 
 #include <dtCore/refptr.h>
 
@@ -38,24 +39,27 @@ namespace dtUtil
    class MyString: public osg::Referenced
    {
    public:
-      MyString(const std::string& pStr):mStr(pStr){} 
+      MyString(const dtCore::ResourceDescriptor& res):mRes(res){}
 
-      std::string mStr;
+      dtCore::ResourceDescriptor mRes;
    };
 
-   class TestLoader: public ResourceLoader<std::string, MyString>
+   class TestLoader: public ResourceLoader<dtCore::ResourceDescriptor, MyString>, public osg::Referenced
    {
    public:
+      DT_DECLARE_VIRTUAL_REF_INTERFACE_INLINE
 
+      typedef ResourceLoader<dtCore::ResourceDescriptor, MyString> BaseClass;
+      typedef typename BaseClass::CallbackFunctor CallbackFunctor;
    
-      MyString* LoadResource(const std::string& pVar)
+      void LoadResource(const dtCore::ResourceDescriptor& pVar, CallbackFunctor callback)
       {
-         return new MyString(pVar);
+         callback(pVar, new MyString(pVar), BaseClass::COMPLETE);
       }
+
       void FreeResource(MyString* pResource)
       {
       }
-
    };
 
    class ResourceManagerTests : public CPPUNIT_NS::TestFixture
@@ -78,8 +82,8 @@ namespace dtUtil
 
       private:
 
-         std::string resource1, resource2, resource3, resource4, resource5;
-         dtCore::RefPtr<ResourceManager<std::string, MyString> > mResourceManager;
+         dtCore::ResourceDescriptor resource1, resource2, resource3, resource4, resource5;
+         dtCore::RefPtr<ResourceManager<dtCore::ResourceDescriptor, MyString> > mResourceManager;
    };
 
    // Registers the fixture into the 'registry'
@@ -87,13 +91,13 @@ namespace dtUtil
 
    void ResourceManagerTests::setUp()
    {
-      resource1 = ("1");
-      resource2 = ("2");
-      resource3 = ("3");
-      resource4 = ("4");
-      resource5 = ("5");
+      resource1 = dtCore::ResourceDescriptor("1");
+      resource2 = dtCore::ResourceDescriptor("2");
+      resource3 = dtCore::ResourceDescriptor("3");
+      resource4 = dtCore::ResourceDescriptor("4");
+      resource5 = dtCore::ResourceDescriptor("5");
 
-      mResourceManager = new ResourceManager<std::string, MyString>();
+      mResourceManager = new ResourceManager<dtCore::ResourceDescriptor, MyString>();
       mResourceManager->SetResourceLoader(new TestLoader());
    }
 
@@ -104,54 +108,54 @@ namespace dtUtil
 
    void ResourceManagerTests::TestAddResource()
    {
-      mResourceManager->AddResource("resource1", new MyString(resource1));
+      mResourceManager->AddResource(resource1, new MyString(resource1));
 
-      mResourceManager->AddResource("resource2", new MyString(resource2));
+      mResourceManager->AddResource(resource2, new MyString(resource2));
 
-      mResourceManager->AddResource("resource3", new MyString(resource3));
+      mResourceManager->AddResource(resource3, new MyString(resource3));
 
-      mResourceManager->AddResource("resource4", new MyString(resource4));
+      mResourceManager->AddResource(resource4, new MyString(resource4));
 
-      MyString* str = mResourceManager->GetResource("resource2");     
-      CPPUNIT_ASSERT(str->mStr == resource2);
+      MyString* str = mResourceManager->GetResource(resource2);
+      CPPUNIT_ASSERT(str->mRes == resource2);
 
-      str = mResourceManager->GetResource("resource4");      
-      CPPUNIT_ASSERT(str->mStr == resource4);
+      str = mResourceManager->GetResource(resource4);
+      CPPUNIT_ASSERT(str->mRes == resource4);
    }
 
    
    void ResourceManagerTests::TestLoadResource()
    {
       
-      mResourceManager->LoadResource("resource1", resource1);
+      mResourceManager->LoadResource(resource1);
 
-      mResourceManager->LoadResource("resource2", resource2);
+      mResourceManager->LoadResource(resource2);
 
-      mResourceManager->LoadResource("resource3", resource3);
+      mResourceManager->LoadResource(resource3);
 
-      mResourceManager->LoadResource("resource4", resource4);
+      mResourceManager->LoadResource(resource4);
 
-      MyString* str = mResourceManager->GetResource("resource2");     
-      CPPUNIT_ASSERT(str->mStr == resource2);
+      MyString* str = mResourceManager->GetResource(resource2);
+      CPPUNIT_ASSERT(str->mRes == resource2);
 
-      str = mResourceManager->GetResource("resource4");      
-      CPPUNIT_ASSERT(str->mStr == resource4);
+      str = mResourceManager->GetResource(resource4);
+      CPPUNIT_ASSERT(str->mRes == resource4);
    }
 
    
    void ResourceManagerTests::TestFreeResource()
    {
       
-      mResourceManager->AddResource("resource1", new MyString(resource1));
+      mResourceManager->AddResource(resource1, new MyString(resource1));
 
-      mResourceManager->AddResource("resource2", new MyString(resource2));
+      mResourceManager->AddResource(resource2, new MyString(resource2));
 
-      mResourceManager->AddResource("resource3", new MyString(resource3));
+      mResourceManager->AddResource(resource3, new MyString(resource3));
 
-      mResourceManager->AddResource("resource4", new MyString(resource4));
+      mResourceManager->AddResource(resource4, new MyString(resource4));
 
-      mResourceManager->FreeResource("resource3");
-      MyString* str = mResourceManager->GetResource("resource3");      
+      mResourceManager->FreeResource(resource3);
+      MyString* str = mResourceManager->GetResource(resource3);
       CPPUNIT_ASSERT(str == 0);      
 
    }
@@ -159,26 +163,26 @@ namespace dtUtil
    
    void ResourceManagerTests::TestFreeAll()
    {
-      mResourceManager->AddResource("resource1", new MyString(resource1));
+      mResourceManager->AddResource(resource1, new MyString(resource1));
 
-      mResourceManager->AddResource("resource2", new MyString(resource2));
+      mResourceManager->AddResource(resource2, new MyString(resource2));
 
-      mResourceManager->AddResource("resource3", new MyString(resource3));
+      mResourceManager->AddResource(resource3, new MyString(resource3));
 
-      mResourceManager->AddResource("resource4", new MyString(resource4));
+      mResourceManager->AddResource(resource4, new MyString(resource4));
 
       mResourceManager->FreeAll();
 
-      MyString* str = mResourceManager->GetResource("resource1");     
+      MyString* str = mResourceManager->GetResource(resource1);
       CPPUNIT_ASSERT(str == 0);
 
-      str = mResourceManager->GetResource("resource2");      
+      str = mResourceManager->GetResource(resource2);
       CPPUNIT_ASSERT(str == 0);
 
-      str = mResourceManager->GetResource("resource3");     
+      str = mResourceManager->GetResource(resource3);
       CPPUNIT_ASSERT(str == 0);
 
-      str = mResourceManager->GetResource("resource4");      
+      str = mResourceManager->GetResource(resource4);
       CPPUNIT_ASSERT(str == 0);
    }
 

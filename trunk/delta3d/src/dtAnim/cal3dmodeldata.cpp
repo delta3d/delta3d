@@ -41,8 +41,8 @@ DT_DISABLE_WARNING_END
  namespace dtAnim
  {
    ////////////////////////////////////////////////////////////////////////////////
-   Cal3DModelData::Cal3DModelData(const std::string& modelName, const std::string& filename)
-      : BaseClass(modelName, filename, Constants::CHARACTER_SYSTEM_CAL3D)
+   Cal3DModelData::Cal3DModelData(const std::string& modelName, const dtCore::ResourceDescriptor& resource)
+      : BaseClass(modelName, resource, Constants::CHARACTER_SYSTEM_CAL3D)
       , mCoreModel(NULL)
       , mHardwareModel(NULL)
    {

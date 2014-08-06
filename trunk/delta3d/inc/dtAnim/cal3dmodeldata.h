@@ -47,7 +47,7 @@ namespace dtAnim
    public:
       typedef dtAnim::BaseModelData BaseClass;
 
-      Cal3DModelData(const std::string& modelName, const std::string& filename);
+      Cal3DModelData(const std::string& modelName, const dtCore::ResourceDescriptor& resource);
 
       /**
        * Adds a non-skinned attachment to a bone for this character data.  Often this is just an invisible transformable to attach something.

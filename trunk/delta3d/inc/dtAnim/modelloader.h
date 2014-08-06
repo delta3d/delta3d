@@ -9,6 +9,7 @@
 #include <dtAnim/basemodelwrapper.h>
 #include <dtAnim/attachmentcontroller.h>
 #include <dtCore/sigslot.h>
+#include <dtCore/resourcedescriptor.h>
 #include <osg/Referenced>
 
 
@@ -31,17 +32,36 @@ namespace dtAnim
    /////////////////////////////////////////////////////////////////////////////
    // CLASS CODE
    /////////////////////////////////////////////////////////////////////////////
-   class DT_ANIM_EXPORT ModelLoader : public osg::Referenced
+   class DT_ANIM_EXPORT ModelLoader : public osg::Referenced, sigslot::has_slots<>
    {
    public:
+      enum LoadingState
+      {
+         IDLE,
+         LOADING,
+         FAILED,
+         COMPLETE
+      };
       ModelLoader();
 
-      dtCore::RefPtr<dtAnim::BaseModelWrapper> LoadModel(const std::string& filename);
-      void LoadModelAsynchronously(const std::string& filename);
+      sigslot::signal2<dtAnim::BaseModelWrapper*, LoadingState> ModelLoaded;
 
-      dtCore::RefPtr<dtAnim::BaseModelWrapper> CreateModel(dtAnim::BaseModelData& modelData);
+      /**
+       * Loads the model into the database.
+       * it will emit the signal ModelLoaded when it completes.
+       * @param async pass true if this should load in the background.
+       */
+      void LoadModel(const dtCore::ResourceDescriptor& resource, bool async = false);
 
-      dtAnim::BaseModelWrapper* GetLoadedModel();
+      const dtCore::ResourceDescriptor& GetResourceDescriptor() const { return mResource; }
+
+      /**
+       * This will return the loading state for an async load.
+       * @param reset  If the state is FAILED or COMPLETE, it will set it back to IDLE if this is true.
+       */
+      LoadingState GetLoadingState(bool reset = true);
+
+      dtCore::RefPtr<dtAnim::BaseModelWrapper> CreateModel();
 
       dtAnim::BaseModelData* GetLoadedModelData();
 
@@ -55,10 +75,13 @@ namespace dtAnim
       virtual ~ModelLoader();
 
    private:
-      dtCore::RefPtr<dtAnim::BaseModelWrapper> mLoadedModel;
       dtCore::RefPtr<dtAnim::AttachmentController> mAttachmentController;
-      std::string mFile;
+      LoadingState mLoadState;
+      dtCore::ResourceDescriptor mResource;
    };
+
 }
+
+
 
 #endif

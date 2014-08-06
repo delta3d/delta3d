@@ -1145,7 +1145,7 @@ namespace dtAnim
          float minBlendTime = mModel->GetCalAnimator()->GetMinimumBlendTime();
          float fadeTime = delay < minBlendTime ? minBlendTime : delay;
 
-         success = mixer->blendCycle(mID, weight, delay);
+         success = mixer->blendCycle(mID, weight, fadeTime);
       }
 
       return success;

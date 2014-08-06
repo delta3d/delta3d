@@ -38,7 +38,7 @@
 namespace dtAnim
 {
    ////////////////////////////////////////////////////////////////////////////////
-   CharacterWrapper::CharacterWrapper(const std::string& filename)
+   CharacterWrapper::CharacterWrapper(const dtCore::ResourceDescriptor& resource)
       : BaseClass()
       , mSpeed(0.0f)
       , mRotationSpeed(0.0f)
@@ -46,7 +46,7 @@ namespace dtAnim
       , mLocalOffset(0)
       , mAnimHelper(0)
    {
-      Init(filename);
+      Init(resource);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -139,14 +139,28 @@ namespace dtAnim
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void CharacterWrapper::Init(const std::string& filename)
+   void CharacterWrapper::Init(const dtCore::ResourceDescriptor& resource)
    {
       mAnimHelper = new dtAnim::AnimationHelper();
-      mAnimHelper->LoadModel(filename);
+      mAnimHelper->LoadModel(resource);
+   }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   void CharacterWrapper::OnModelLoaded(dtAnim::AnimationHelper*)
+   {
       mLocalOffset = new osg::MatrixTransform();
       mLocalOffset->addChild(mAnimHelper->GetNode());
       BaseClass::GetMatrixNode()->addChild(mLocalOffset.get());
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void CharacterWrapper::OnModelUnloaded(dtAnim::AnimationHelper*)
+   {
+      if (mLocalOffset.valid())
+      {
+         BaseClass::GetMatrixNode()->removeChild(mLocalOffset.get());
+         mLocalOffset = NULL;
+      }
    }
 
    ////////////////////////////////////////////////////////////////////////////////

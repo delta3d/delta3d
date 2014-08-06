@@ -26,6 +26,7 @@
 #include <dtCore/refptr.h>
 #include <dtCore/observerptr.h>
 #include <dtCore/transformable.h>
+#include <dtCore/resourcedescriptor.h>
 #include <string>
 
 namespace dtCore
@@ -48,10 +49,9 @@ namespace dtAnim
          typedef dtCore::Transformable BaseClass;
 
       public:
-         CharacterWrapper(const std::string& filename);
+         CharacterWrapper(const dtCore::ResourceDescriptor& resource);
       protected:
          /*virtual*/ ~CharacterWrapper();
-
       public:
 
          /**
@@ -222,8 +222,10 @@ namespace dtAnim
          const AnimationHelper& GetAnimationHelper() const;
 
       private:
+         void OnModelLoaded(dtAnim::AnimationHelper*);
+         void OnModelUnloaded(dtAnim::AnimationHelper*);
 
-         void Init(const std::string& filename);
+         void Init(const dtCore::ResourceDescriptor& resource);
 
          float mSpeed;
          float mRotationSpeed;

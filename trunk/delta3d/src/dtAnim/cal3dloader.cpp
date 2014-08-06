@@ -38,6 +38,7 @@ DT_DISABLE_WARNING_END
 #include <dtCore/basexmlhandler.h>
 #include <dtCore/basexmlreaderwriter.h>
 #include <dtCore/hotspotattachment.h>
+#include <dtCore/project.h>
 
 #include <dtUtil/datapathutils.h>
 #include <dtUtil/fileutils.h>
@@ -47,6 +48,7 @@ DT_DISABLE_WARNING_END
 #include <dtUtil/threadpool.h>
 #include <dtUtil/xercesparser.h>
 #include <dtUtil/xerceswriter.h>
+
 
 namespace dtAnim
 {
@@ -542,13 +544,22 @@ namespace dtAnim
    {
       using namespace dtCore;
 
-      const std::string& filename = handler.mFilename;
-      const std::string& path = handler.mPath;
-
       dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
 
-      dtCore::RefPtr<Cal3DModelData> modelData = new Cal3DModelData(handler.mName, filename);
+      dtCore::RefPtr<Cal3DModelData> modelData = new Cal3DModelData(handler.mName, handler.mResource);
       CalCoreModel* coreModel = modelData->GetCoreModel();
+
+      std::string path;
+      try
+      {
+         path = dtCore::Project::GetInstance().GetResourcePath(handler.mResource);
+         path = osgDB::getFilePath(path) + "/";
+      }
+      catch(const dtUtil::Exception& ex)
+      {
+         ex.LogException(dtUtil::Log::LOG_ERROR, "cal3dloader.cpp");
+         path = "./";
+      }
 
       //load skeleton
       std::string skelFile(GetAbsolutePath(path + handler.mSkeletonFilename));
@@ -564,7 +575,7 @@ namespace dtAnim
 
          if (handler.mShaderMaxBones < boneCount)
          {
-            LOG_ERROR("Not enough shader bones (" + filename + ") for the skeleton:'" + skelFile + "'."
+            LOG_ERROR("Not enough shader bones (" + handler.mResource.GetResourceIdentifier() + ") for the skeleton:'" + skelFile + "'."
                "  Automatically setting shader max bones to " + dtUtil::ToString(boneCount));
             handler.mShaderMaxBones = boneCount;
          }
@@ -730,7 +741,7 @@ namespace dtAnim
       }
       else
       {
-         LOG_ERROR("Unable to load character file: '" + filename + "'");
+         LOG_ERROR("Unable to load character file: '" + handler.mResource.GetResourceIdentifier() + "'");
          return NULL;
       }
 

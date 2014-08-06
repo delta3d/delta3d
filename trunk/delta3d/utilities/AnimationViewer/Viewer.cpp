@@ -16,6 +16,7 @@
 #include <dtCore/orbitmotionmodel.h>
 #include <dtCore/light.h>
 #include <dtCore/deltawin.h>
+#include <dtCore/project.h>
 
 #include <dtAnim/basemodeldata.h>
 #include <dtAnim/basemodelwrapper.h>
@@ -237,14 +238,14 @@ void Viewer::OnNewCharFile()
 
       if (dialog->mUI.mChoiceTypeCal3d->isChecked())
       {
-         dtCore::RefPtr<dtAnim::Cal3DModelData> calModelData = new Cal3DModelData(name, "");
+         dtCore::RefPtr<dtAnim::Cal3DModelData> calModelData = new Cal3DModelData(name, dtCore::ResourceDescriptor::NULL_RESOURCE);
          modelData = calModelData;
          ModelDatabase::GetInstance().RegisterModelData(*modelData);
          wrapper = new Cal3DModelWrapper(*calModelData);
       }
       else
       {
-         dtCore::RefPtr<dtAnim::OsgModelData> osgModelData = new OsgModelData(name, "");
+         dtCore::RefPtr<dtAnim::OsgModelData> osgModelData = new OsgModelData(name, dtCore::ResourceDescriptor::NULL_RESOURCE);
          modelData = osgModelData;
          ModelDatabase::GetInstance().RegisterModelData(*modelData);
          osgModelData->GetOrCreateSkeleton();
@@ -271,10 +272,11 @@ void Viewer::OnLoadCharFile(const QString& filename)
    LOG_DEBUG("Loading file: " + filename.toStdString());
 
    QDir dir(filename);
+   std::string baseName = dir.dirName().toStdString();
    dir.cdUp();
 
-   dtUtil::SetDataFilePathList(dtUtil::GetDataFilePathList() + ";" +
-                       dir.path().toStdString() + ";");
+
+   dtCore::ResourceDescriptor resource(baseName);
 
    OnUnloadCharFile();
 
@@ -284,9 +286,12 @@ void Viewer::OnLoadCharFile(const QString& filename)
    dtCore::RefPtr<dtAnim::BaseModelWrapper> wrapper;
    try
    {
-      wrapper = mModelLoader->LoadModel(filename.toStdString());
+      dtCore::Project::GetInstance().SetContext(dir.absolutePath().toStdString());
+      mModelLoader->LoadModel(resource, false);
+      if (mModelLoader->GetLoadingState() == dtAnim::ModelLoader::COMPLETE)
+         wrapper = mModelLoader->CreateModel();
 
-      if (wrapper.valid() == false)
+      if (!wrapper.valid())
       {
          emit ErrorOccured("Problem encountered loading file.  See log file.");
          return;
@@ -307,12 +312,19 @@ void Viewer::OnLoadCharFile(const QString& filename)
          OnLoadPoseMeshFile(modelData->GetPoseMeshFilename());
       }
 
+      // This is bad.  It should be in a temp dir or something.
       // Determine where a temp file should be for the current character.
-      mTempFile = osgDB::getFilePath(modelData->GetFilename());
+      mTempFile = dtCore::Project::GetInstance().GetContext(0);
       if (!mTempFile.empty())
       {
          mTempFile += "/_Temp.dtchar";
       }
+   }
+   catch (const dtUtil::Exception& ex)
+   {
+      QString errorMsg;
+      errorMsg = QString("Exception thrown: %1").arg(ex.ToString().c_str());
+      emit ErrorOccured(errorMsg);
    }
    catch (const XERCES_CPP_NAMESPACE_QUALIFIER SAXParseException& e)
    {
@@ -385,9 +397,9 @@ void Viewer::OnReloadCharFile()
    {
       dtAnim::BaseModelWrapper* wrapper = mCharacter->GetModelWrapper();
       dtAnim::BaseModelData* modelData = wrapper->GetModelData();
-      std::string currentFilePath(modelData->GetFilename());
+      dtCore::ResourceDescriptor rd = modelData->GetResource();
 
-      if ( ! currentFilePath.empty())
+      if ( ! rd.IsEmpty())
       {
          QString qTempFile(mTempFile.c_str());
          OnSaveCharFile(qTempFile);
@@ -395,7 +407,7 @@ void Viewer::OnReloadCharFile()
 
          wrapper = mCharacter->GetModelWrapper();
          modelData = wrapper->GetModelData();
-         modelData->SetFilename(currentFilePath);
+         modelData->SetResource(rd);
       }
    }
 }

@@ -26,7 +26,7 @@
 * David Guthrie
 */
 #include <prefix/unittestprefix.h>
-#include <cppunit/extensions/HelperMacros.h>
+#include "AnimModelLoadingTestFixture.h"
 
 #include <dtAnim/animatable.h>
 #include <dtAnim/animationchannel.h>
@@ -56,7 +56,7 @@
 
 namespace dtAnim
 {
-   class CharacterFileLoaderTests : public CPPUNIT_NS::TestFixture
+   class CharacterFileLoaderTests : public AnimModelLoadingTestFixture
    {
       CPPUNIT_TEST_SUITE(CharacterFileLoaderTests);
          CPPUNIT_TEST(TestIsFileValid);
@@ -83,6 +83,7 @@ namespace dtAnim
             }
 
             mHelper = new dtAnim::AnimationHelper;
+            Connect(mHelper);
          }
 
          void tearDown()
@@ -93,8 +94,8 @@ namespace dtAnim
 
          void TestIsFileValid()
          {
-            std::string validFile = dtUtil::FindFileInPathList("SkeletalMeshes/Marine/marine_test.xml");
-            std::string invalidFile = dtUtil::FindFileInPathList("maps/TestAnim.xml");
+            dtCore::ResourceDescriptor validFile("SkeletalMeshes:Marine:marine_test.xml");
+            dtCore::ResourceDescriptor invalidFile("maps:TestAnim.xml");
 
             dtAnim::ModelDatabase& database = dtAnim::ModelDatabase::GetInstance();
             CPPUNIT_ASSERT(database.IsFileValid(validFile));
@@ -103,14 +104,13 @@ namespace dtAnim
 
          void TestLoadFile()
          {
-            std::string modelPath = dtUtil::FindFileInPathList("SkeletalMeshes/Marine/marine_test.xml");
-            CPPUNIT_ASSERT(!modelPath.empty());
+            dtCore::ResourceDescriptor modelPath("SkeletalMeshes:Marine:marine_test.xml");
 
             std::string animName = "Walk";
 
             TestEmptyHelper();
 
-            mHelper->LoadModel(modelPath);
+            LoadModel(mHelper, modelPath);
 
             SequenceMixer& mixer = mHelper->GetSequenceMixer();
 
@@ -187,7 +187,7 @@ namespace dtAnim
             CPPUNIT_ASSERT_MESSAGE(oss.str(), dtUtil::Equivalent(q, hotSpotDef.mLocalRotation, 4U, 0.1));
 
             //Test unloading.
-            CPPUNIT_ASSERT_NO_THROW(mHelper->LoadModel(""));
+            CPPUNIT_ASSERT_NO_THROW(mHelper->LoadModel(dtCore::ResourceDescriptor::NULL_RESOURCE));
             TestEmptyHelper();
 
 
@@ -211,19 +211,16 @@ namespace dtAnim
 
          void TestModelData()
          {
-            std::string modelPath = dtUtil::FindFileInPathList("SkeletalMeshes/Marine/marine_test.xml");
-            CPPUNIT_ASSERT(!modelPath.empty());
+            dtCore::ResourceDescriptor modelPath("SkeletalMeshes:Marine:marine_test.xml");
 
-            mHelper->LoadModel(modelPath);
+            LoadModel(mHelper, modelPath);
 
             dtAnim::BaseModelWrapper* wrapper = mHelper->GetModelWrapper();
             CPPUNIT_ASSERT(wrapper != NULL);
             BaseModelData* modelData = wrapper->GetModelData();
             CPPUNIT_ASSERT(modelData != NULL);
 
-            dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
-            fileUtils.CleanupFileString(modelPath);
-            CPPUNIT_ASSERT_EQUAL(modelData->GetFilename(), modelPath);
+            CPPUNIT_ASSERT_EQUAL(modelData->GetResource(), modelPath);
 
             CPPUNIT_ASSERT(modelData->GetVertexBufferObject() == NULL);
             CPPUNIT_ASSERT(modelData->GetElementBufferObject() == NULL);
@@ -288,10 +285,8 @@ namespace dtAnim
 
          void TestModelDataFileRegistration()
          {
-            std::string modelPath = dtUtil::FindFileInPathList("SkeletalMeshes/Marine/marine_test.xml");
-            CPPUNIT_ASSERT(!modelPath.empty());
-
-            mHelper->LoadModel(modelPath);
+            dtCore::ResourceDescriptor modelPath("SkeletalMeshes:Marine:marine_test.xml");
+            LoadModel(mHelper, modelPath);
 
             dtAnim::BaseModelWrapper* wrapper = mHelper->GetModelWrapper();
             CPPUNIT_ASSERT(wrapper != NULL);

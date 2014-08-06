@@ -26,7 +26,6 @@
 * David Guthrie
 */
 #include <prefix/unittestprefix.h>
-#include <cppunit/extensions/HelperMacros.h>
 
 #include <dtUtil/log.h>
 #include <dtUtil/stringutils.h>
@@ -43,6 +42,7 @@
 #include <dtCore/scene.h>
 #include <dtCore/transform.h>
 #include <dtCore/transformable.h>
+#include "AnimModelLoadingTestFixture.h"
 
 #include <dtGame/gamemanager.h>
 #include <dtGame/basemessages.h>
@@ -82,7 +82,7 @@ namespace dtAnim
          bool mUpdated;
    };
    
-   class AttachmentControllerTests : public CPPUNIT_NS::TestFixture
+   class AttachmentControllerTests : public AnimModelLoadingTestFixture
    {
       CPPUNIT_TEST_SUITE(AttachmentControllerTests);
       CPPUNIT_TEST(TestUpdate);
@@ -99,13 +99,14 @@ namespace dtAnim
             dtCore::System::GetInstance().Start();
             
             mAnimHelper = new AnimationHelper();
+            Connect(mAnimHelper);
             mAttach = new AttachmentControllerExtended();
             mAnimHelper->SetAttachmentController(mAttach);
 
-            std::string context = "../examples/data/SkeletalMeshes/Marine/";
-            std::string filename = "marine_test.xml";
+            dtCore::Project::GetInstance().SetContext("../examples/data");
+            dtCore::ResourceDescriptor charModel("SkeletalMeshes:Marine:marine_test.xml");
 
-            mAnimHelper->LoadModel(context + filename);
+            LoadModel(mAnimHelper, charModel);
          }
 
          void tearDown()

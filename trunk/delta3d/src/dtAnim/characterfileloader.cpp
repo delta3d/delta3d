@@ -28,6 +28,7 @@
 #include <dtAnim/animationsequence.h>
 #include <dtCore/basexmlhandler.h>
 #include <dtCore/basexmlreaderwriter.h>
+#include <dtCore/project.h>
 #include <dtUtil/datapathutils.h>
 #include <dtUtil/fileutils.h>
 #include <dtUtil/xercesparser.h>
@@ -119,9 +120,25 @@ namespace dtAnim
       }
    };
 
-   REGISTER_OSGPLUGIN(dtchar, CharacterXMLReaderWriter)
+   REGISTER_OSGPLUGIN(dtchar, CharacterXMLReaderWriter);
 
 
+   /////////////////////////////////////////////////////////////////////////////
+   dtCore::RefPtr<CharacterFileHandler> CharacterFileLoader::LoadCharacterFile(const dtCore::ResourceDescriptor& resource)
+   {
+      dtCore::RefPtr<CharacterFileHandler> result;
+      try
+      {
+          std::string file = dtCore::Project::GetInstance().GetResourcePath(resource);
+          result = LoadCharacterFile(file);
+          result->mResource = resource;
+      }
+      catch(const dtUtil::Exception& ex)
+      {
+         ex.LogException();
+      }
+      return result;
+   }
 
    /////////////////////////////////////////////////////////////////////////////
    // CLASS CODE
@@ -137,8 +154,6 @@ namespace dtAnim
       else { path = "./"; }
 
       dtCore::RefPtr<CharacterFileHandler> handler;
-
-      dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
 
       //gotta parse the file and create/store a new CalCoreModel
       dtUtil::XercesParser parser;
@@ -184,8 +199,6 @@ namespace dtAnim
       {
          // Acquire the handler that was involved with the parsing.
          handler = resultObj->mHandler.get();
-         handler->mFilename = filename;
-         handler->mPath = path;
       }
 
       return handler;
@@ -243,7 +256,7 @@ namespace dtAnim
             else
             {
                LOG_ERROR("Unable to find animation '" + pStruct.mAnimationName +
-                  "' within the CalCoreModel. (" + modelData.GetFilename() + ")");
+                  "' within the CalCoreModel. (" + modelData.GetResource().GetResourceIdentifier() + ")");
             }
 
          }

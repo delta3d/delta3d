@@ -28,7 +28,7 @@
 // INCLUDE DIRECTIVES
 ////////////////////////////////////////////////////////////////////////////////
 #include <prefix/unittestprefix.h>
-#include <cppunit/extensions/HelperMacros.h>
+#include "AnimModelLoadingTestFixture.h"
 
 #include <dtAnim/cal3danimator.h>
 #include <dtAnim/cal3dmodelwrapper.h>
@@ -50,7 +50,7 @@
 namespace dtAnim
 {
 
-   class Cal3DModelWrapperTests : public CPPUNIT_NS::TestFixture
+   class Cal3DModelWrapperTests : public AnimModelLoadingTestFixture
    {
       CPPUNIT_TEST_SUITE(Cal3DModelWrapperTests);
       CPPUNIT_TEST(TestAttachDetachMesh);
@@ -65,12 +65,13 @@ namespace dtAnim
       {
          dtCore::Project::GetInstance().SetContext("../examples/data");
 
-         std::string modelPath = dtUtil::FindFileInPathList("SkeletalMeshes/Marine/marine_test.xml");
-         CPPUNIT_ASSERT_MESSAGE("Could not find \"SkeletalMeshes/Marine/marine_test.xml\"", !modelPath.empty());
+         dtCore::ResourceDescriptor modelPath("SkeletalMeshes/Marine/marine_test.xml");
 
          mAnimHelper = new dtAnim::AnimationHelper();
-         mAnimHelper->LoadModel(modelPath);
+         Connect(mAnimHelper);
+         LoadModel(mAnimHelper, modelPath);
          mModel = mAnimHelper->GetModelWrapper();
+         CPPUNIT_ASSERT(mModel.valid());
       }
 
       //////////////////////////////////////////////////////////////////////////
@@ -85,6 +86,7 @@ namespace dtAnim
       {
          Cal3DModelWrapper* calModelWrapper
             = dynamic_cast<Cal3DModelWrapper*>(mModel.get());
+         CPPUNIT_ASSERT(calModelWrapper != NULL);
          int meshCount = calModelWrapper->GetMeshCount();
          int remainingMeshes = meshCount;
          CPPUNIT_ASSERT(meshCount > 0);

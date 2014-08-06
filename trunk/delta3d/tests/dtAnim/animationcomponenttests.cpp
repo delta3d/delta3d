@@ -21,7 +21,7 @@
  * THE SOFTWARE.
  */
 #include <prefix/unittestprefix.h>
-#include <cppunit/extensions/HelperMacros.h>
+#include "AnimModelLoadingTestFixture.h"
 
 #include <dtUtil/log.h>
 #include <dtUtil/datapathutils.h>
@@ -75,7 +75,7 @@ namespace dtAnim
       }
    };
 
-   class AnimationComponentTests : public CPPUNIT_NS::TestFixture
+   class AnimationComponentTests : public AnimModelLoadingTestFixture
    {
       CPPUNIT_TEST_SUITE(AnimationComponentTests);
          CPPUNIT_TEST(TestAnimationComponent);
@@ -111,6 +111,9 @@ namespace dtAnim
       dtCore::RefPtr<AnimationHelper> CreateRealAnimationHelper();
 
    private:
+      void OnModelLoaded(dtAnim::AnimationHelper*);
+      void OnModelUnloaded(dtAnim::AnimationHelper*);
+
       void SimulateMapUnloaded()
       {
          dtGame::MessageFactory& msgFac = mGM->GetMessageFactory();
@@ -131,6 +134,8 @@ namespace dtAnim
       dtCore::RefPtr<dtCore::Camera>         mCamera;
       dtCore::RefPtr<dtCore::DeltaWin>       mWin;
       dtCore::RefPtr<dtCore::View>           mView;
+
+      bool mModelLoaded, mModelUnloaded;
    };
 
    // Registers the fixture into the 'registry'
@@ -222,7 +227,7 @@ namespace dtAnim
    {
       dtCore::ObserverPtr<dtAnim::AnimationHelper> animAC = mTestGameActor->GetComponent<dtAnim::AnimationHelper>();
 
-      CPPUNIT_ASSERT_EQUAL(false, animAC->GetLoadModelAsynchronously());
+      CPPUNIT_ASSERT_EQUAL(true, animAC->GetLoadModelAsynchronously());
       CPPUNIT_ASSERT_EQUAL(true, animAC->GetEnableAttachingNodeToDrawable());
 
       animAC->SetLoadModelAsynchronously(false);
@@ -231,8 +236,9 @@ namespace dtAnim
       CPPUNIT_ASSERT_EQUAL(false, animAC->GetEnableAttachingNodeToDrawable());
 
       animAC->SetSkeletalMesh(dtCore::ResourceDescriptor("SkeletalMeshes:Marine:marine.xml"));
-      CPPUNIT_ASSERT(animAC->GetNode() == NULL);
+      CPPUNIT_ASSERT_MESSAGE("It should not load the character until it's added to the GM.", animAC->GetNode() == NULL);
       mGM->AddActor(*mTestGameActor, false, false);
+      animAC->Update(0.016f);
       CPPUNIT_ASSERT(animAC->GetNode() != NULL);
       CPPUNIT_ASSERT(animAC->GetNode()->getNumParents() == 0);
       animAC->AttachNodeToDrawable();
@@ -251,6 +257,8 @@ namespace dtAnim
       CPPUNIT_ASSERT_EQUAL_MESSAGE("Setting the resource to null with AttachingNoteToDrawable enabled should unparent the node.",
                0U, nodeBackup->getNumParents());
       animAC->SetSkeletalMesh(dtCore::ResourceDescriptor("SkeletalMeshes:Marine:marine.xml"));
+      CPPUNIT_ASSERT_MESSAGE("Right after setting the mesh, the node will be NULL.", animAC->GetNode() == NULL);
+      animAC->Update(0.016f);
       CPPUNIT_ASSERT_EQUAL(1U, animAC->GetNode()->getNumParents());
       CPPUNIT_ASSERT(animAC->GetNode()->getParent(0) == mTestGameActor->GetDrawable()->GetOSGNode());
 
@@ -466,11 +474,21 @@ namespace dtAnim
       dtCore::RefPtr<AnimationHelper> helper = new AnimationHelper();
       dtCore::Project::GetInstance().SetContext(dtUtil::GetDeltaRootPath() + "/examples/data");
 
-      std::string modelPath = dtUtil::FindFileInPathList("SkeletalMeshes/Marine/marine_test.xml");
-      CPPUNIT_ASSERT(!modelPath.empty());
+      dtCore::ResourceDescriptor modelPath("SkeletalMeshes:Marine:marine_test.xml");
       helper->LoadModel(modelPath);
 
       return helper;
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void AnimationComponentTests::OnModelLoaded(dtAnim::AnimationHelper*)
+   {
+      mModelLoaded = true;
+   }
+   /////////////////////////////////////////////////////////////////////////////
+   void AnimationComponentTests::OnModelUnloaded(dtAnim::AnimationHelper*)
+   {
+      mModelUnloaded = true;
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -528,7 +546,9 @@ namespace dtAnim
 
       // Set the speed on the animatables.
       dtAnim::BaseModelWrapper* wrapper = helper->GetModelWrapper();
+      CPPUNIT_ASSERT(wrapper != NULL);
       const dtAnim::BaseModelData* modelData = wrapper->GetModelData();
+      CPPUNIT_ASSERT(modelData != NULL);
 
       typedef dtAnim::AnimatableArray AnimArray;
       const AnimArray& anims = modelData->GetAnimatables();

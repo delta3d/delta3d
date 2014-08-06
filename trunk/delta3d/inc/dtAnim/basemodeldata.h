@@ -27,6 +27,8 @@
 #include <osg/Array>
 #include <osg/Referenced>
 #include <osg/observer_ptr>
+#include <dtUtil/getsetmacros.h>
+#include <dtCore/resourcedescriptor.h>
 
 #include <vector>
 
@@ -89,7 +91,7 @@ namespace dtAnim
    class DT_ANIM_EXPORT BaseModelData : public osg::Referenced
    {
    public:
-      BaseModelData(const std::string& modelName, const std::string& filename,
+      BaseModelData(const std::string& modelName, const dtCore::ResourceDescriptor& rd,
          const std::string& characterSystemType);
 
       static std::string GetResourceTypeName(dtAnim::ModelResourceType resourceType);
@@ -101,17 +103,20 @@ namespace dtAnim
 
       void Remove(Animatable& animatable);
 
-      void SetFilename(const std::string& file);
-      const std::string& GetFilename() const;
+      DT_DECLARE_ACCESSOR(dtCore::ResourceDescriptor, Resource);
 
-      void SetModelName(const std::string& name);
-      const std::string& GetModelName() const;
+      DT_DECLARE_ACCESSOR(std::string, ModelName);
 
-      virtual void SetScale(float scale);
-      float GetScale() const;
+      DT_DECLARE_ACCESSOR(float, Scale);
 
-      void SetScaleInFile(float scale);
-      float GetScaleInFile() const;
+      DT_DECLARE_ACCESSOR(float, ScaleInFile);
+
+      DT_DECLARE_ACCESSOR(std::string, ShaderGroupName);
+      DT_DECLARE_ACCESSOR(std::string, ShaderName);
+      DT_DECLARE_ACCESSOR(std::string, PoseMeshFilename);
+      /// Sets the maximum number of bones the shader supports
+      DT_DECLARE_ACCESSOR(unsigned, ShaderMaxBones);
+
 
       Animatable* GetAnimatableByName(const std::string& name);
       const Animatable* GetAnimatableByName(const std::string& name) const;
@@ -166,36 +171,6 @@ namespace dtAnim
       /// Sets the DrawElements to use with the ElementBufferObject
       void SetDrawElements(osg::DrawElements* drawElements);
 
-      /**
-       * @see dtCore::ShaderManager
-       * @return the shader group used to lookup the shader for this character model.
-       */
-      const std::string& GetShaderGroupName() const;
-
-      /// Sets the shader group name
-      void SetShaderGroupName(const std::string& groupName);
-
-      /**
-       * @see dtCore::ShaderManager
-       * @see #GetShaderGroupName
-       * @return the name of the shader within the shader group to use.
-       */
-      const std::string& GetShaderName() const;
-
-      /// Sets the shader group name
-      void SetShaderName(const std::string& name);
-
-      const std::string& GetPoseMeshFilename() const;
-
-      void SetPoseMeshFilename(const std::string& name);
-
-      /**
-       * @return the maximum number of bones the skinning shader supports.
-       */
-      unsigned GetShaderMaxBones() const;
-
-      /// Sets the maximum number of bones the shader supports
-      void SetShaderMaxBones(unsigned maxBones);
 
       LODOptions& GetLODOptions() { return mLODOptions; }
       const LODOptions& GetLODOptions() const { return mLODOptions; }
@@ -332,13 +307,6 @@ namespace dtAnim
       BaseModelData& operator=(const BaseModelData&); //not implemented
 
    private:
-      float mScale;
-      float mScaleInFile;
-      std::string mFilename;
-      std::string mShaderName;
-      std::string mShaderGroupName;
-      std::string mPoseMeshFilename;
-      std::string mModelName;
       std::string mCharacterSystemType;
 
       // Buffer data
@@ -350,8 +318,6 @@ namespace dtAnim
       osg::ref_ptr<osg::DrawElements> mElementBufferDrawElements;
 
       AnimatableArray mAnimatables;
-
-      unsigned mShaderMaxBones;
 
       LODOptions mLODOptions;
 

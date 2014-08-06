@@ -63,11 +63,9 @@ namespace dtAnim
    {
       dtCore::Project::GetInstance().SetContext("../examples/data");
 
-      std::string modelPath = dtUtil::FindFileInPathList("SkeletalMeshes/Marine/marine_test.xml");
-      CPPUNIT_ASSERT(!modelPath.empty());
+      dtCore::ResourceDescriptor modelPath("SkeletalMeshes:Marine:marine_test.xml");
 
       mCharacter = new CharacterWrapper(modelPath);
-
    }
 
    void CharacterWrapperTests::tearDown()

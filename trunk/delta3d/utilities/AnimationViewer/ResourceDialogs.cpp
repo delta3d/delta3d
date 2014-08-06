@@ -13,7 +13,7 @@
 #include <QtCore/QString>
 #include <QtGui/QFileDialog>
 #include <QtGui/QIcon>
-
+#include <dtCore/project.h>
 
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -189,7 +189,15 @@ void ResAddDialog::OnClickedFile()
 
    if (modelData != NULL)
    {
-      modelContext = osgDB::getFilePath(modelData->GetFilename());
+      try
+      {
+         std::string resFile = dtCore::Project::GetInstance().GetResourcePath(modelData->GetResource());
+         modelContext = osgDB::getFilePath(resFile);
+      }
+      catch (const dtUtil::Exception& ex)
+      {
+         modelContext = ".";
+      }
 
       // Prevent adding more skeleton files, only one is allowed.
       if (modelData->GetFileCount(dtAnim::SKEL_FILE) > 0)

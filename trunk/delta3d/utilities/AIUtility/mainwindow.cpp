@@ -569,8 +569,8 @@ void MainWindow::OnConvertWaypointTypes()
 
    // temp Alert the user
    // TODO, need to create an undo command for this
-   if (!QMessageBox::question(this, tr("Warning"), tr("There is currently no way to undo this action, would you like"
-      "to perform it anyway?"), QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes) == 1)
+   if (QMessageBox::question(this, tr("Warning"), tr("There is currently no way to undo this action, would you like"
+      "to perform it anyway?"), QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes) != 1)
    {
       return;
    }

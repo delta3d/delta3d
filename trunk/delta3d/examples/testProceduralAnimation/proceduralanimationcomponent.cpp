@@ -272,7 +272,7 @@ void ProceduralAnimationComponent::InitializePerformanceTest()
 /// is important in a real application that has more than one core model
 dtAnim::PoseMeshDatabase* ProceduralAnimationComponent::GetPoseMeshDatabaseForActor(ProceduralAnimationActor* actor)
 {
-   dtAnim::ModelDatabase& database = dtAnim::ModelDatabase::GetInstance();
+   //dtAnim::ModelDatabase& database = dtAnim::ModelDatabase::GetInstance();
 
    dtAnim::BaseModelWrapper* wrapper = actor->GetComponent<dtAnim::AnimationHelper>()->GetModelWrapper();
 

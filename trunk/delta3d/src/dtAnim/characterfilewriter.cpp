@@ -86,14 +86,14 @@ namespace dtAnim
       {
          mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
             "Caught Exception \"%s\" while attempting to save character file \"%s\".",
-            ex.What().c_str(), modelData.GetFilename().c_str());
+            ex.What().c_str(), modelData.GetResource().GetResourceIdentifier().c_str());
          mFormatTarget.SetOutputStream(NULL);
       }
       catch (...)
       {
          mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
             "Unknown exception while attempting to save character file \"%s\".",
-            modelData.GetFilename().c_str());
+            modelData.GetResource().GetResourceIdentifier().c_str());
          mFormatTarget.SetOutputStream(NULL);
       }
 
