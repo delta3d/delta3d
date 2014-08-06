@@ -206,6 +206,13 @@ void AnimationHelper::LoadSkeletalMesh()
 }
 
 /////////////////////////////////////////////////////////////////////////////////
+bool AnimationHelper::IsLoadingAsynchronously()
+{
+   // This can't be const because GetLoadingState isn't const.
+   return mModelLoader.valid() && mModelLoader->GetLoadingState(false) == ModelLoader::LOADING;
+}
+
+/////////////////////////////////////////////////////////////////////////////////
 void AnimationHelper::UnloadModel()
 {
    mSequenceMixer->ClearRegisteredAnimations();
