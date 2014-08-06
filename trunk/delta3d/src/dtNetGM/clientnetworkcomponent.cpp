@@ -49,6 +49,7 @@ namespace dtNetGM
    ClientNetworkComponent::ClientNetworkComponent(const std::string& gameName, const int gameVersion, const std::string& logFile)
       : NetworkComponent(gameName, gameVersion, logFile)
       , mAcceptedClient(false)
+      , mClient()
       , mNumSyncsExpectingPerFrame(0.0f)
       , mNumSyncsCurrentlyNeeded(0.0f)
       , mNumSyncsLeftInBackLog(0)
@@ -99,7 +100,7 @@ namespace dtNetGM
       params.setInRate(mRateOut);
       params.setOutRate(mRateIn);
 
-      GNE::ClientConnection::sptr mClient = GNE::ClientConnection::create();
+      mClient = GNE::ClientConnection::create();
 
       if (mClient->open(address, params))
       {
@@ -190,6 +191,12 @@ namespace dtNetGM
    }
 
    ////////////////////////////////////////////////////////////////////
+   bool ClientNetworkComponent::IsConnected() const
+   {
+      return mClient.get() != NULL &&  mClient->isConnected();
+   }
+
+   ////////////////////////////////////////////////////////////////////
    const dtGame::MachineInfo* ClientNetworkComponent::GetServer()
    {
       if (mMachineInfoServer.valid())
@@ -234,7 +241,7 @@ namespace dtNetGM
       GetGameManager()->GetMessageFactory().CreateMessage(dtGame::MessageType::NETCLIENT_REQUEST_CONNECTION, message);
       message->SetDestination(GetServer());
       message->SetMachineInfo(GetGameManager()->GetMachineInfo());
-      GetGameManager()->SendNetworkMessage(*message);
+      SendNetworkMessage(*message, dtNetGM::NetworkComponent::DestinationType::ALL_NOT_CLIENTS);
    }
 
 

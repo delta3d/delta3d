@@ -89,15 +89,15 @@ namespace dtDirector
    bool GetActorOrientationAction::Update(float simDelta, float delta, int input, bool firstUpdate)
    {
       dtCore::UniqueId actorID = GetActorID("Actor");
-      dtCore::BaseActorObject* proxy = GetDirector()->GetGameManager()->FindActorById(actorID);
-      if (proxy != NULL)
+      dtCore::BaseActorObject* actor = GetDirector()->GetGameManager()->FindActorById(actorID);
+      if (actor != NULL)
       {
-         dtCore::Transformable* actor = NULL;
-         proxy->GetActor(actor);
-         if (actor != NULL)
+         dtCore::Transformable* xformable = NULL;
+         actor->GetDrawable(xformable);
+         if (xformable != NULL)
          {
             dtCore::Transform transform;
-            actor->GetTransform(transform);
+            xformable->GetTransform(transform);
 
             SetVec3(transform.GetForwardVector(), "Forward");
             SetVec3(transform.GetUpVector(), "Up");

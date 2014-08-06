@@ -873,11 +873,11 @@ void ProjectTests::TestResources()
             + dtUtil::FileUtils::PATH_SEPARATOR + "cash" + dtUtil::FileUtils::PATH_SEPARATOR + "bang.wav");
 
       CPPUNIT_ASSERT_THROW_MESSAGE("Getting the path to a resource directory should throw an exception",
-               p.GetResourcePath(dtCore::DataType::SOUND.GetName()), dtCore::ProjectResourceErrorException);
+               p.GetResourcePath(dtCore::ResourceDescriptor(dtCore::DataType::SOUND.GetName())), dtCore::ProjectResourceErrorException);
 
       CPPUNIT_ASSERT_EQUAL_MESSAGE("Getting the path to a resource directory should work in this case.",
                p.GetContext(0) + dtUtil::FileUtils::PATH_SEPARATOR + dtCore::DataType::SOUND.GetName(),
-               p.GetResourcePath(dtCore::DataType::SOUND.GetName(), true));
+               p.GetResourcePath(dtCore::ResourceDescriptor(dtCore::DataType::SOUND.GetName()), true));
 
       dtCore::ResourceDescriptor rdNoCat = p.AddResource("pow", std::string(DATA_DIR + "/sounds/pow.wav"), std::string(""), dtCore::DataType::SOUND, 1);
       CPPUNIT_ASSERT_EQUAL(dtCore::DataType::SOUND.GetName() + ":pow.wav", rdNoCat.GetDisplayName());
