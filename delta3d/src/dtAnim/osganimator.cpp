@@ -685,7 +685,7 @@ namespace dtAnim
          if (hasActions && mActionClearTimers.empty())
          {
             // Determine if there are no actions being processed.
-            int numActions = GetActiveAnimationCount();
+            //int numActions = GetActiveAnimationCount();
 
             // DEBUG:
             //printf("Animator flush actions: %d\n", numActions);
@@ -759,7 +759,7 @@ namespace dtAnim
                // objects associated with this cycle
                // since its duration is changing.
 
-               float oldWeight = curAnim->getWeight();
+               //float oldWeight = curAnim->getWeight();
 
                // DEBUG:
                //printf("Setting animation weight: \"%s\" - %f to %f\n\n",

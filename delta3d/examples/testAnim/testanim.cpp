@@ -289,22 +289,6 @@ void TestAnim::InitializeAnimationActor(dtAnim::AnimationGameActorProxy* gamePro
             }
             mMotionModel->SetTarget(cameraPivot.get());
 
-            //attach a pack to the guy's back
-            dtCore::RefPtr<dtCore::Object> attachment = new dtCore::Object("CamelPack");
-            attachment->LoadFile("/StaticMeshes/camelpack.ive");
-
-            dtUtil::HotSpotDefinition hotspotDef;
-            hotspotDef.mName = "backpack";
-            hotspotDef.mParentName = "Bip02 Spine2";
-            hotspotDef.mLocalTranslation.set(0.25f, -0.125f, 0.0f);
-
-            osg::Matrix attRot = osg::Matrix::rotate(osg::DegreesToRadians(90.f), osg::Vec3(0.f,1.f,0.f));
-            attRot *= osg::Matrix::rotate(osg::DegreesToRadians(180.f), osg::Vec3(0.f,0.f,1.f));
-            hotspotDef.mLocalRotation = attRot.getRotate();
-
-            mAnimationHelper->GetAttachmentController()->AddAttachment(*attachment, hotspotDef);
-            tx->AddChild(attachment.get());
-
             mAnimationHelper->ModelLoadedSignal.connect_slot(this, &TestAnim::PlayerLoadCallback);
          }
          else
@@ -317,6 +301,28 @@ void TestAnim::InitializeAnimationActor(dtAnim::AnimationGameActorProxy* gamePro
 
 void TestAnim::PlayerLoadCallback(dtAnim::AnimationHelper* helper)
 {
+   //attach a pack to the guy's back
+   dtCore::RefPtr<dtCore::Object> attachment = new dtCore::Object("CamelPack");
+   attachment->LoadFile("/StaticMeshes/camelpack.ive");
+
+   dtUtil::HotSpotDefinition hotspotDef;
+   hotspotDef.mName = "backpack";
+   hotspotDef.mParentName = "Bip02 Spine2";
+   hotspotDef.mLocalTranslation.set(0.25f, -0.125f, 0.0f);
+
+   osg::Matrix attRot = osg::Matrix::rotate(osg::DegreesToRadians(90.f), osg::Vec3(0.f,1.f,0.f));
+   attRot *= osg::Matrix::rotate(osg::DegreesToRadians(180.f), osg::Vec3(0.f,0.f,1.f));
+   hotspotDef.mLocalRotation = attRot.getRotate();
+
+   helper->GetAttachmentController()->AddAttachment(*attachment, hotspotDef);
+
+   dtGame::GameActorProxy* actor;
+   helper->GetOwner(actor);
+
+   dtCore::Transformable* tx;
+   actor->GetDrawable(tx);
+
+   tx->AddChild(attachment.get());
 }
 
 void TestAnim::NonPlayerLoadCallback(dtAnim::AnimationHelper* helper)

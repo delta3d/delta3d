@@ -56,9 +56,9 @@ struct funcRenderGreen
 namespace dtAI
 {
    /////////////////////////////////////////////////////////////////////////////
-   AICharacter::AICharacter(dtCore::Scene* pScene, const WaypointInterface* pWaypoint, const std::string& pFilename, unsigned pSpeed)
+   AICharacter::AICharacter(dtCore::Scene* pScene, const WaypointInterface* pWaypoint, const dtCore::ResourceDescriptor& pResource, unsigned pSpeed)
       : mSpeed(pSpeed)
-      , mCharacter(new dtAnim::CharacterWrapper(pFilename))
+      , mCharacter(new dtAnim::CharacterWrapper(pResource))
       , mCurrentWaypoint(pWaypoint)
       , mWaypointPath()
       , mAStar()

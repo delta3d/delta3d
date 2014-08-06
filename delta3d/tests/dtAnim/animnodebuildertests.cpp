@@ -22,8 +22,7 @@
  */
 
 #include <prefix/unittestprefix.h>
-#include <cppunit/extensions/HelperMacros.h>
-
+#include "AnimModelLoadingTestFixture.h"
 #include <dtAnim/animationhelper.h>
 #include <dtAnim/animnodebuilder.h>
 #include <dtAnim/basemodeldata.h>
@@ -55,7 +54,7 @@ extern dtABC::Application& GetGlobalApplication();
 
 namespace dtAnim
 {
-   class AnimNodeBuilderTests : public CPPUNIT_NS::TestFixture
+   class AnimNodeBuilderTests : public AnimModelLoadingTestFixture
    {
       CPPUNIT_TEST_SUITE(AnimNodeBuilderTests);
          CPPUNIT_TEST(TestBuildSoftware);
@@ -75,16 +74,17 @@ namespace dtAnim
          dtCore::System::GetInstance().Start();
 
          mHelper = new AnimationHelper();
+         Connect(mHelper);
+
          dtCore::Project::GetInstance().SetContext("../examples/data");
 
-         mModelPath = dtUtil::FindFileInPathList("SkeletalMeshes/Marine/marine_test.xml");
-         CPPUNIT_ASSERT(!mModelPath.empty());
+         mModelPath = dtCore::ResourceDescriptor("SkeletalMeshes/Marine/marine_test.xml");
+
       }
 
       void tearDown()
       {
          mHelper = NULL;
-         mModelPath.clear();
 
          dtCore::System::GetInstance().Stop();
       }
@@ -125,9 +125,11 @@ namespace dtAnim
          }
 
          nodeBuilder->SetCreate(AnimNodeBuilder::CreateFunc(nodeBuilder, &AnimNodeBuilder::CreateHardware));
-         mHelper->LoadModel(mModelPath);
+
+         LoadModel(mHelper, mModelPath);
 
          osg::Node* node = mHelper->GetNode();
+         CPPUNIT_ASSERT(node != NULL);
          dtCore::RefPtr<TestDrawable> drawable = new TestDrawable(*node);
          GetGlobalApplication().GetScene()->AddChild(drawable.get());
 
@@ -174,8 +176,9 @@ namespace dtAnim
          }
 
          nodeBuilder->SetCreate(AnimNodeBuilder::CreateFunc(nodeBuilder, &AnimNodeBuilder::CreateSoftware));
-         mHelper->LoadModel(mModelPath);
+         LoadModel(mHelper, mModelPath);
          dtCore::RefPtr<osg::Node> node = mHelper->GetNode();
+         CPPUNIT_ASSERT(node.valid());
 
          dtCore::RefPtr<TestDrawable> drawable = new TestDrawable(*node);
          GetGlobalApplication().GetScene()->AddChild(drawable.get());
@@ -233,7 +236,7 @@ namespace dtAnim
       }
 
 
-      std::string mModelPath;
+      dtCore::ResourceDescriptor mModelPath;
       dtCore::RefPtr<dtAnim::AnimationHelper> mHelper;
    };
 

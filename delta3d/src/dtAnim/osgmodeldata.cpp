@@ -294,8 +294,8 @@ namespace dtAnim
       | osg::CopyOp::DEEP_COPY_USERDATA);
 
    /////////////////////////////////////////////////////////////////////////////
-   OsgModelData::OsgModelData(const std::string& modelName, const std::string& filename)
-      : BaseClass(modelName, filename, Constants::CHARACTER_SYSTEM_OSG)
+   OsgModelData::OsgModelData(const std::string& modelName, const dtCore::ResourceDescriptor& resource)
+      : BaseClass(modelName, resource, Constants::CHARACTER_SYSTEM_OSG)
    {
       // TODO:
    }
@@ -475,7 +475,7 @@ namespace dtAnim
       // durations are all precalculated.
       OsgAnimationMap::iterator curCoreIter = mCoreAnims.begin();
       OsgAnimationMap::iterator endCoreIter = mCoreAnims.end();
-      for (; curIter != endIter; ++curIter)
+      for (; curCoreIter != endCoreIter; ++curCoreIter)
       {
          anim = curCoreIter->second.get();
 

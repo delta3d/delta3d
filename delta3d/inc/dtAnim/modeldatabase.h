@@ -33,6 +33,7 @@
 #include <dtAnim/basemodelwrapper.h>
 #include <dtAnim/characterfileloader.h>
 #include <dtUtil/threadpool.h>
+#include <dtCore/resourcedescriptor.h>
 
 
 
@@ -52,27 +53,29 @@ namespace dtAnim
 
       static ModelDatabase& GetInstance();
 
-      bool IsFileValid(const std::string& filename);
+      bool IsFileValid(const dtCore::ResourceDescriptor& filename);
 
       void SetHardwareMode(bool hardwareMode);
       bool IsHardwareMode() const;
 
       bool IsHardwareSupported() const;
 
-      dtCore::RefPtr<dtAnim::BaseModelWrapper> Load(const std::string& file);
+      /**
+       * Loads a model internally
+       * @return true if the model loaded successfully.
+       */
+      bool Load(const dtCore::ResourceDescriptor& resource);
 
-      void LoadAsynchronously(const std::string& file);
-      
       void TruncateDatabase();
 
       bool RegisterModelData(dtAnim::BaseModelData& modelData);
       bool UnregisterModelData(dtAnim::BaseModelData& modelData);
 
-      dtAnim::BaseModelData* GetModelData(const std::string& filename);
+      dtAnim::BaseModelData* GetModelData(const dtCore::ResourceDescriptor& resource);
 
-      dtAnim::BaseModelData* Find(const std::string& filename);
+      dtAnim::BaseModelData* Find(const dtCore::ResourceDescriptor& resource);
 
-      const dtAnim::BaseModelData* Find(const std::string& filename) const;
+      const dtAnim::BaseModelData* Find(const dtCore::ResourceDescriptor& resource) const;
 
       dtAnim::BaseModelData* Find(const dtAnim::BaseModelWrapper* model);
 
@@ -96,7 +99,7 @@ namespace dtAnim
 
       virtual ~ModelDatabase();
 
-      bool InternalLoad(const std::string& filename, dtCore::RefPtr<dtAnim::BaseModelData>& outModelData);
+      bool InternalLoad(const dtCore::ResourceDescriptor& resource, dtCore::RefPtr<dtAnim::BaseModelData>& outModelData);
 
       static dtCore::RefPtr<ModelDatabase> mInstance;
       
@@ -114,22 +117,6 @@ namespace dtAnim
       ModelDataArray mModelData;
       
       friend class LoadTask;
-   };
-
-
-
-   /////////////////////////////////////////////////////////////////////////////
-   // CLASS CODE
-   /////////////////////////////////////////////////////////////////////////////
-   class DT_ANIM_EXPORT LoadTask : public dtUtil::ThreadPoolTask
-   {
-   public:
-      LoadTask(dtAnim::ModelDatabase& db, const std::string& fileName);
-
-      virtual void operator()();
-
-   private:
-      dtCore::RefPtr<dtAnim::ModelDatabase> mDatabase;
    };
 
 } // namespace dtAnim

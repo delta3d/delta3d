@@ -710,7 +710,7 @@ void ObjectWorkspace::SaveCurrentContextPath()
       settings.setValue("projectContextPath", mContextPath.c_str());
       settings.sync();
    }
-   catch (const dtUtil::Exception &e)
+   catch (const dtUtil::Exception& e)
    {
       // The context path is not valid, clear the registry entry
       mContextPath = "";

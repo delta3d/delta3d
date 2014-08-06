@@ -64,7 +64,7 @@ const dtGame::ActorComponent::ACType AnimationHelper::TYPE(new dtCore::ActorType
 AnimationHelper::AnimationHelper()
    : BaseClass(TYPE)
    , mAutoRegisterWithGMComponent(true)
-   , mLoadModelAsynchronously(false)
+   , mLoadModelAsynchronously(true)
    , mEnableAttachingNodeToDrawable(true)
    , mGroundClamp(false)
    , mEnableCommands(false)
@@ -101,7 +101,23 @@ void AnimationHelper::OnRemovedFromWorld()
 /////////////////////////////////////////////////////////////////////////////////
 void AnimationHelper::Update(float dt)
 {
-   if (mModelWrapper != NULL)
+   ModelLoader::LoadingState loadingState = mModelLoader.valid() ? mModelLoader->GetLoadingState(): ModelLoader::IDLE;
+   if (loadingState == ModelLoader::COMPLETE)
+   {
+      mNode = mModelWrapper->CreateDrawableNode(false);
+
+      mAttachmentController = mModelLoader->GetAttachmentController();
+
+      dtAnim::BaseModelData* modelData = mModelWrapper->GetModelData();
+
+      RegisterAnimations(*modelData);
+
+      // Notify observers that the model has been loaded
+      ModelLoadedSignal(this);
+   }
+
+   // We don't want to check the wrapper if we are curretly loading for threading reasons.
+   if (loadingState != ModelLoader::LOADING && mModelWrapper != NULL)
    {
       dtAnim::AnimationUpdaterInterface* animator = mModelWrapper->GetAnimator();
       if (animator != NULL)
@@ -119,32 +135,6 @@ void AnimationHelper::Update(float dt)
 
    }
 
-   if (IsLoadingAsynchronously())
-   {
-      // See if the data is ready yet
-      dtAnim::BaseModelData* modelData = mModelLoader->GetLoadedModelData();
-
-      if (modelData != NULL)
-      {
-         // Now that we have the data, create the model wrapper
-         mModelWrapper = mModelLoader->CreateModel(*modelData);
-         mNode = mModelWrapper->GetDrawableNode();
-
-         if (mAttachmentController.valid())
-         {
-            mAttachmentController->Clear();
-         }
-         mAttachmentController = mModelLoader->GetAttachmentController();
-
-         RegisterAnimations(*modelData);
-
-         // Done loading, clear the file to load string
-         mAsyncFile.clear();
-
-         // Notify observers that the model has been loaded
-         ModelLoadedSignal(this);
-      }
-   }
 }
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -196,7 +186,7 @@ void AnimationHelper::SetSkeletalMesh(const dtCore::ResourceDescriptor& rd)
       }
       else
       {
-         LoadModel("");
+         LoadModel(dtCore::ResourceDescriptor::NULL_RESOURCE);
       }
    }
 }
@@ -206,16 +196,7 @@ void AnimationHelper::LoadSkeletalMesh()
 {
    try
    {
-      dtCore::Project& proj = dtCore::Project::GetInstance();
-      std::string path = proj.GetResourcePath(mSkeletalMesh);
-      if (mLoadModelAsynchronously && !proj.GetEditMode())
-      {
-         LoadModelAsynchronously(path);
-      }
-      else
-      {
-         LoadModel(path, false);
-      }
+      LoadModel(mSkeletalMesh, false);
    }
    catch (const dtUtil::Exception& ex)
    {
@@ -240,9 +221,9 @@ void AnimationHelper::UnloadModel()
 }
 
 /////////////////////////////////////////////////////////////////////////////////
-bool AnimationHelper::LoadModel(const std::string& pFilename, bool immediate)
+bool AnimationHelper::LoadModel(const dtCore::ResourceDescriptor& resource, bool immediate)
 {
-   if (!pFilename.empty())
+   if (!resource.IsEmpty())
    {
       if (mNode.valid())
       {
@@ -250,60 +231,15 @@ bool AnimationHelper::LoadModel(const std::string& pFilename, bool immediate)
       }
 
       mModelLoader = new dtAnim::ModelLoader();
+      mModelLoader->ModelLoaded.connect_slot(this, &AnimationHelper::OnModelLoadCompleted);
       mModelLoader->SetAttachmentController(mAttachmentController);
-      dtCore::RefPtr<dtAnim::BaseModelWrapper> newModel = mModelLoader->LoadModel(pFilename);
+      mModelLoader->LoadModel(resource);
 
-      if (newModel.valid())
-      {
-         mModelWrapper = newModel;
-         mNode = mModelWrapper->CreateDrawableNode(immediate);
-
-         mAttachmentController = mModelLoader->GetAttachmentController();
-
-         dtAnim::BaseModelData* modelData = mModelWrapper->GetModelData();
-
-         RegisterAnimations(*modelData);
-
-         // Notify observers that the model has been loaded
-         ModelLoadedSignal(this);
-      }
-      else
-      {
-         LOG_ERROR("Unable to load skeletal resource: " + pFilename);
-         return false;
-      }
    }
    else
    {
       UnloadModel();
   }
-
-   return true;
-}
-
-/////////////////////////////////////////////////////////////////////////////////
-bool AnimationHelper::LoadModelAsynchronously(const std::string& pFilename)
-{
-   if (!pFilename.empty())
-   {
-      if (mNode.valid())
-      {
-         UnloadModel();
-      }
-
-      mModelLoader = new dtAnim::ModelLoader();
-      mModelLoader->SetAttachmentController(mAttachmentController);
-
-      mModelLoader->LoadModelAsynchronously(pFilename);
-
-      // Store the filename so that we can poll for load completion
-      mAsyncFile = pFilename;
-
-   }
-   else
-   {
-      UnloadModel();
-   }
 
    return true;
 }
@@ -362,13 +298,6 @@ void AnimationHelper::OnUnloadCompleted(AnimationHelper*)
    {
       DetachNodeFromDrawable();
    }
-}
-
-
-/////////////////////////////////////////////////////////////////////////////////
-bool AnimationHelper::IsLoadingAsynchronously() const
-{
-   return !mAsyncFile.empty();
 }
 
 
@@ -949,6 +878,19 @@ float AnimationHelper::GetAnimationDuration(const std::string& animName) const
    }
 
    return duration;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void AnimationHelper::OnModelLoadCompleted(dtAnim::BaseModelWrapper* newModel, dtAnim::ModelLoader::LoadingState loadState)
+{
+   if (loadState == dtAnim::ModelLoader::COMPLETE)
+   {
+      mModelWrapper = newModel;
+   }
+   else
+   {
+      LOGN_ERROR("AnimationHelper.cpp", std::string("Loading character model \"") + mModelLoader->GetResourceDescriptor().GetResourceIdentifier() + "\" failed.");
+   }
 }
 
 } // namespace dtAnim

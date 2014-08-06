@@ -27,6 +27,7 @@
 #include <dtAnim/osgmodelresourcefinder.h>
 #include <dtUtil/fileutils.h>
 #include <dtUtil/log.h>
+#include <dtCore/project.h>
 #include <osgDB/FileNameUtils>
 
 
@@ -106,9 +107,19 @@ namespace dtAnim
 
    dtCore::RefPtr<dtAnim::BaseModelData> OsgLoader::CreateModelData(CharacterFileHandler& handler)
    {
-      dtCore::RefPtr<OsgModelData> modelData = new OsgModelData(handler.mName, handler.mFilename);
+      dtCore::RefPtr<OsgModelData> modelData = new OsgModelData(handler.mName, handler.mResource);
 
-      const std::string& path = handler.mPath;
+      std::string path;
+      try
+      {
+         path = dtCore::Project::GetInstance().GetResourcePath(handler.mResource);
+         path = osgDB::getFilePath(path) + "/";
+      }
+      catch(const dtUtil::Exception& ex)
+      {
+         ex.LogException(dtUtil::Log::LOG_ERROR, "cal3dloader.cpp");
+         path = "./";
+      }
 
       // Load mixed resources, such as single character resource files.
       dtAnim::ModelResourceType resType = dtAnim::MIXED_FILE;

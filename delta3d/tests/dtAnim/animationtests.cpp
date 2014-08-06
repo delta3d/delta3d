@@ -32,7 +32,9 @@
 
 #include <dtCore/project.h>
 #include <dtCore/refptr.h>
+#include <dtCore/timer.h>
 #include <dtUtil/datapathutils.h>
+#include "AnimModelLoadingTestFixture.h"
 
 #include <osg/Math>
 #include <sstream>
@@ -91,7 +93,7 @@ namespace dtAnim
 
 
 
-   class AnimationTests : public CPPUNIT_NS::TestFixture
+   class AnimationTests : public AnimModelLoadingTestFixture
    {
       
       CPPUNIT_TEST_SUITE( AnimationTests );
@@ -121,11 +123,11 @@ namespace dtAnim
          void TestAnimatableEventNames();
          void TestAnimChannel();
          void TestAnimChannelRelativeTime();
-         void TestAnimSequence();         
+         void TestAnimSequence();
          void TestAnimSequenceUpdate();
-         void TestAnimSequenceCalculateDuration(); 
+         void TestAnimSequenceCalculateDuration();
          void TestAnimInsert();
-         void TestAnimRelativeTime();      
+         void TestAnimRelativeTime();
          void TestSequenceMixer();
          void TestAnimController();
          void TestAnimHelper();
@@ -179,16 +181,16 @@ namespace dtAnim
 
    /////////////////////////////////////////////////////////////////////////////
    void AnimationTests::setUp()
-   {      
+   {
       mHelper = new AnimationHelper();
+      Connect(mHelper);
       dtCore::Project::GetInstance().SetContext(dtUtil::GetDeltaRootPath() + "/examples/data");
       
-      std::string modelPath = dtUtil::FindFileInPathList("SkeletalMeshes/Marine/marine_test.xml");
-      CPPUNIT_ASSERT(!modelPath.empty());
+      dtCore::ResourceDescriptor modelPath = dtCore::ResourceDescriptor("SkeletalMeshes:Marine:marine_test.xml");
 
       mLastAnimatableCompleted = NULL;
-      
-      mHelper->LoadModel(modelPath);
+
+      LoadModel(mHelper, modelPath);
 
       animStart1 = 1.0f;
       animEnd1 = 2.0f;
@@ -436,6 +438,7 @@ namespace dtAnim
    void AnimationTests::TestAnimChannel()
    {
       dtAnim::BaseModelWrapper* model = mHelper->GetModelWrapper();
+      CPPUNIT_ASSERT(model != NULL);
       dtCore::RefPtr<AnimationChannel> channel = new AnimationChannel(model);
       
       std::string name("ChickenWalk");

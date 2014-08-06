@@ -30,6 +30,7 @@
 #include <dtUtil/hotspotdefinition.h>
 #include <dtCore/refptr.h>
 #include <dtCore/basexmlhandler.h>
+#include <dtCore/resourcedescriptor.h>
 #include <vector>
 #include <string>
 #include <stack>
@@ -197,8 +198,7 @@ namespace dtAnim
       };
 
       ///Character Data
-      std::string mFilename;
-      std::string mPath;
+      dtCore::ResourceDescriptor mResource;
       std::string mName;                            ///<The name of this animated entity
       std::vector<AnimationStruct> mAnimations;     ///<Container of animation structs
       std::vector<MorphAnimationStruct> mMorphAnimations;     ///<Container of MorphAnimation structs

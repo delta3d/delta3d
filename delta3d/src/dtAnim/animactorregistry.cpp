@@ -1,6 +1,5 @@
 #include <dtAnim/animactorregistry.h>
 #include <dtAnim/animationgameactor.h>
-#include <dtAnim/cal3dgameactor.h>
 
 #include <dtAnim/animationcomponent.h>
 
@@ -20,7 +19,6 @@ extern "C" DT_ANIM_EXPORT void DestroyPluginRegistry(dtCore::ActorPluginRegistry
    }
 }
 
-dtCore::RefPtr<dtCore::ActorType> AnimActorRegistry::CAL3D_ACTOR_TYPE(new dtCore::ActorType("Cal3DGameActor", "dtanim", "Cal3DGameActor"));
 dtCore::RefPtr<dtCore::ActorType> AnimActorRegistry::ANIMATION_ACTOR_TYPE(new dtCore::ActorType("AnimationGameActor", "dtanim", "AnimationGameActor"));
 
 const dtCore::RefPtr<dtCore::SystemComponentType> AnimationComponent::TYPE(new dtCore::SystemComponentType("AnimationComponent","GMComponents",
@@ -36,7 +34,6 @@ AnimActorRegistry::AnimActorRegistry()
 
 void dtAnim::AnimActorRegistry::RegisterActorTypes()
 {
-   mActorFactory->RegisterType<Cal3DGameActorProxy>(CAL3D_ACTOR_TYPE.get());
    mActorFactory->RegisterType<AnimationGameActorProxy>(ANIMATION_ACTOR_TYPE.get());
-   //mActorFactory->RegisterType<AnimationComponent>();
+   mActorFactory->RegisterType<AnimationComponent>();
 }

@@ -21,7 +21,6 @@ SET(LIB_SOURCES
   ${SOURCE_PATH}/basemodeldata.cpp
   ${SOURCE_PATH}/basemodelloader.cpp
   ${SOURCE_PATH}/cal3danimator.cpp
-  ${SOURCE_PATH}/cal3dgameactor.cpp
   ${SOURCE_PATH}/cal3dloader.cpp
   ${SOURCE_PATH}/cal3dmodeldata.cpp
   ${SOURCE_PATH}/cal3dmodelwrapper.cpp
@@ -83,7 +82,6 @@ SET(LIB_PUBLIC_HEADERS
   ${HEADER_PATH}/basemodelwrapper.h
   ${HEADER_PATH}/boneinterface.h
   ${HEADER_PATH}/cal3danimator.h
-  ${HEADER_PATH}/cal3dgameactor.h
   ${HEADER_PATH}/cal3dloader.h
   ${HEADER_PATH}/cal3dmodeldata.h
   ${HEADER_PATH}/cal3dmodelwrapper.h

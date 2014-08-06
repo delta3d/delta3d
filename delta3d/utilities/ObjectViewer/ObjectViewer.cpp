@@ -550,8 +550,12 @@ void ObjectViewer::OnLoadGeometryFile(const std::string& filename)
    {
       QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
 
-      dtCore::RefPtr<dtAnim::BaseModelWrapper> wrapper =
-         dtAnim::ModelDatabase::GetInstance().Load(filename);
+      dtCore::RefPtr<dtAnim::BaseModelWrapper> wrapper;
+      //if (dtAnim::ModelDatabase::GetInstance().Load(filename))
+      //{
+      //   dtCore::RefPtr<dtAnim::BaseModelWrapper> wrapper =
+      //}
+
 
       if (wrapper.valid())
       {

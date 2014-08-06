@@ -62,8 +62,8 @@ namespace dtAnim
             osg::Uniform& scale, osg::Uniform& boneTrans, unsigned mesh, OpenThreads::Mutex& updateMutex)
          : mWrapper(&wrapper)
          , mHardwareModel(&model)
-         , mScale(&scale)
          , mBoneTransforms(&boneTrans)
+         , mScale(&scale)
          , mHardwareMeshID(mesh)
          , mUpdateMutex(updateMutex)
       {

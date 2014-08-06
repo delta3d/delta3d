@@ -27,6 +27,7 @@
 #include <dtAnim/osgloader.h>
 #include <dtUtil/xerceswriter.h>
 #include <dtUtil/xercesparser.h>
+#include <dtCore/project.h>
 #include <osgDB/FileNameUtils>
 
 
@@ -52,9 +53,9 @@ namespace dtAnim
       return 0;
    };
 
-   struct findWithFilename
+   struct findWithResourceDescriptor
    {
-      findWithFilename(const std::string& filename) : mFilename(filename) {}
+      findWithResourceDescriptor(const dtCore::ResourceDescriptor& rd) : mResource(rd) {}
 
       bool operator()(dtAnim::BaseModelData* data)
       {
@@ -64,11 +65,11 @@ namespace dtAnim
          }
          else
          {
-            return data->GetFilename() == mFilename;
+            return data->GetResource() == mResource;
          }
       }
 
-      const std::string& mFilename;
+      const dtCore::ResourceDescriptor& mResource;
    };
 
 
@@ -112,10 +113,22 @@ namespace dtAnim
       return *mInstance;
    }
 
-   bool ModelDatabase::IsFileValid(const std::string& filename)
+   bool ModelDatabase::IsFileValid(const dtCore::ResourceDescriptor& resource)
    {
       dtUtil::XercesParser parser;
       CharacterFileHandler handler;
+      handler.mResource = resource;
+
+      std::string filename;
+      try
+      {
+         filename = dtCore::Project::GetInstance().GetResourcePath(handler.mResource);
+      }
+      catch(const dtUtil::Exception& ex)
+      {
+         ex.LogException(dtUtil::Log::LOG_ERROR, "cal3dloader.cpp");
+         return false;
+      }
 
       return parser.Parse(filename, handler, "animationdefinition.xsd");
    }
@@ -150,38 +163,11 @@ namespace dtAnim
       return mNodeBuilder->SupportsHardware();
    }
 
-   dtCore::RefPtr<dtAnim::BaseModelWrapper> ModelDatabase::Load(const std::string& file)
-   {
-      std::string filename = osgDB::convertFileNameToNativeStyle(file);
-
-      dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
-      fileUtils.CleanupFileString(filename);
-
-      dtCore::RefPtr<dtAnim::BaseModelData> data;
-
-      if (!InternalLoad(filename, data))
-      {
-         LOG_ERROR("Unable to load Character XML file '" + filename + "'.");
-         return NULL;
-      }
-
-      dtCore::RefPtr<dtAnim::BaseModelWrapper> wrapper = CreateModelWrapper(*data);
-      return wrapper;
-   }
-
-   void ModelDatabase::LoadAsynchronously(const std::string& file)
+   bool ModelDatabase::Load(const dtCore::ResourceDescriptor& resource)
    {
       dtCore::RefPtr<dtAnim::BaseModelData> data;
-      {
-         OpenThreads::ScopedLock<OpenThreads::Mutex> lock(mAsynchronousLoadLock);
-         data = Find(file);
-      }
 
-      if (!data.valid())
-      {
-         dtCore::RefPtr<LoadTask> loadTask = new LoadTask(*this, file);
-         dtUtil::ThreadPool::AddTask(*loadTask, dtUtil::ThreadPool::IO);
-      }
+      return InternalLoad(resource, data);
    }
       
    void ModelDatabase::TruncateDatabase()
@@ -200,6 +186,8 @@ namespace dtAnim
    
    bool ModelDatabase::RegisterModelData(dtAnim::BaseModelData& modelData)
    {
+      OpenThreads::ScopedLock<OpenThreads::Mutex> lock(mAsynchronousLoadLock);
+
       bool success = false;
 
       ModelDataArray::iterator foundIter 
@@ -216,6 +204,8 @@ namespace dtAnim
 
    bool ModelDatabase::UnregisterModelData(dtAnim::BaseModelData& modelData)
    {
+      OpenThreads::ScopedLock<OpenThreads::Mutex> lock(mAsynchronousLoadLock);
+
       bool success = false;
       
       ModelDataArray::iterator foundIter 
@@ -230,44 +220,42 @@ namespace dtAnim
       return success;
    }
 
-   dtAnim::BaseModelData* ModelDatabase::GetModelData(const std::string& filename)
+   dtAnim::BaseModelData* ModelDatabase::GetModelData(const dtCore::ResourceDescriptor& resource)
    {
       OpenThreads::ScopedLock<OpenThreads::Mutex> lock(mAsynchronousLoadLock);
-      return Find(filename);
+      return Find(resource);
    }
 
-   dtAnim::BaseModelData* ModelDatabase::Find(const std::string& filename)
+   dtAnim::BaseModelData* ModelDatabase::Find(const dtCore::ResourceDescriptor& resource)
    {
-      return const_cast<dtAnim::BaseModelData*>(FindWithFunctor(mModelData, findWithFilename(filename)));
+      OpenThreads::ScopedLock<OpenThreads::Mutex> lock(mAsynchronousLoadLock);
+      return const_cast<dtAnim::BaseModelData*>(FindWithFunctor(mModelData, findWithResourceDescriptor(resource)));
    }
 
-   const dtAnim::BaseModelData* ModelDatabase::Find(const std::string& filename) const
+   const dtAnim::BaseModelData* ModelDatabase::Find(const dtCore::ResourceDescriptor& resource) const
    {
-      return FindWithFunctor(mModelData, findWithFilename(filename));
+      OpenThreads::ScopedLock<OpenThreads::Mutex> lock(mAsynchronousLoadLock);
+      return FindWithFunctor(mModelData, findWithResourceDescriptor(resource));
    }
 
-   bool ModelDatabase::InternalLoad(const std::string& filename, dtCore::RefPtr<dtAnim::BaseModelData>& outModelData)
+   bool ModelDatabase::InternalLoad(const dtCore::ResourceDescriptor& resource, dtCore::RefPtr<dtAnim::BaseModelData>& outModelData)
    {
       // have to lock for this entire call because the load function is not thread safe
       // plus it also prevents anyone from adding data to the cache unless they just loaded it.
       OpenThreads::ScopedLock<OpenThreads::Mutex> lockLoad(mLoadingLock);
 
-      {
-         OpenThreads::ScopedLock<OpenThreads::Mutex> lock(mAsynchronousLoadLock);
-         outModelData = Find(filename);
-      }
+      outModelData = Find(resource);
 
       if (!outModelData.valid())
       {
          BaseModelLoader* loader = NULL;
-         dtCore::RefPtr<CharacterFileHandler> handler = mFileLoader->LoadCharacterFile(filename);
-         
+         dtCore::RefPtr<CharacterFileHandler> handler = mFileLoader->LoadCharacterFile(resource);
          if (handler.valid())
          {
             // TODO: Determine if thread safe...
             loader = GetModelLoader(handler->GetCharacterSystemType());
          }
-         
+
          if (loader != NULL)
          {
             // TODO: Determine if thread safe...
@@ -282,8 +270,7 @@ namespace dtAnim
 
          if (outModelData.valid())
          {
-            OpenThreads::ScopedLock<OpenThreads::Mutex> lock(mAsynchronousLoadLock);
-            mModelData.push_back(outModelData);
+            RegisterModelData(*outModelData);
          }
       }
 
@@ -357,23 +344,6 @@ namespace dtAnim
       dtAnim::BaseModelWrapper& model, bool immediate)
    {
       return mNodeBuilder->CreateNode(&model, immediate);
-   }
-
-
-
-   /////////////////////////////////////////////////////////////////////////////
-   // CLASS CODE
-   /////////////////////////////////////////////////////////////////////////////
-   LoadTask::LoadTask(dtAnim::ModelDatabase& db, const std::string& fileName)
-      : mDatabase(&db)
-   {
-      SetName(fileName);
-   }
-
-   void LoadTask::operator()()
-   {
-      dtCore::RefPtr<dtAnim::BaseModelData> loadedData;
-      mDatabase->InternalLoad(GetName(), loadedData);
    }
 
 } // namespace dtAnim

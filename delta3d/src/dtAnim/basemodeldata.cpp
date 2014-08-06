@@ -26,6 +26,8 @@
 #include <dtAnim/animatable.h>
 #include <dtUtil/fileutils.h>
 #include <dtUtil/log.h>
+#include <dtCore/project.h>
+#include <dtCore/exceptionenum.h>
 
 #include <osg/BufferObject>
 #include <osgDB/FileNameUtils>
@@ -70,19 +72,19 @@
    ////////////////////////////////////////////////////////////////////////////////
    // CLASS CODE
    ////////////////////////////////////////////////////////////////////////////////
-   BaseModelData::BaseModelData(const std::string& modelName, const std::string& filename,
+   BaseModelData::BaseModelData(const std::string& modelName, const dtCore::ResourceDescriptor& resource,
       const std::string& characterSystemType)
-      : mScale(1.0f)
+      : mResource(resource)
+      , mScale(1.0f)
       , mScaleInFile(1.0f)
-      , mFilename(filename)
       , mCharacterSystemType(characterSystemType)
       , mStride(-1)
       , mIndexArray(NULL)
       , mVertexArray(NULL)
+      , mShaderMaxBones(72)
       , mVertexBufferObject(NULL)
       , mElementBufferObject(NULL)
       , mAnimatables()
-      , mShaderMaxBones(72)
    {
    }
 
@@ -112,30 +114,11 @@
       mAnimatables.erase(std::remove(mAnimatables.begin(), mAnimatables.end(), &animatable));
    }
 
-   ////////////////////////////////////////////////////////////////////////////////
-   void BaseModelData::SetFilename(const std::string& file)
-   {
-      mFilename = file;
-   }
+   DT_IMPLEMENT_ACCESSOR(BaseModelData, dtCore::ResourceDescriptor, Resource);
 
-   ////////////////////////////////////////////////////////////////////////////////
-   const std::string& BaseModelData::GetFilename() const
-   {
-      return mFilename;
-   }
+   DT_IMPLEMENT_ACCESSOR(BaseModelData, std::string, ModelName);
 
-   ////////////////////////////////////////////////////////////////////////////////
-   void BaseModelData::SetModelName(const std::string& name)
-   {
-      mModelName = name;
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   const std::string& BaseModelData::GetModelName() const
-   {
-      return mModelName;
-   }
-
+   DT_IMPLEMENT_ACCESSOR_GETTER(BaseModelData, float, Scale);
    ////////////////////////////////////////////////////////////////////////////////
    void BaseModelData::SetScale(float scale)
    {
@@ -148,23 +131,14 @@
       mScale = scale;
    }
 
-   ////////////////////////////////////////////////////////////////////////////////
-   float BaseModelData::GetScale() const
-   {
-      return mScale;
-   }
+   DT_IMPLEMENT_ACCESSOR(BaseModelData, float, ScaleInFile);
 
-   ////////////////////////////////////////////////////////////////////////////////
-   void BaseModelData::SetScaleInFile(float scale)
-   {
-      mScaleInFile = scale;
-   }
-   
-   ////////////////////////////////////////////////////////////////////////////////
-   float BaseModelData::GetScaleInFile() const
-   {
-      return mScaleInFile;
-   }
+   DT_IMPLEMENT_ACCESSOR(BaseModelData, std::string, ShaderGroupName);
+   DT_IMPLEMENT_ACCESSOR(BaseModelData, std::string, ShaderName);
+   DT_IMPLEMENT_ACCESSOR(BaseModelData, std::string, PoseMeshFilename);
+   /// Sets the maximum number of bones the shader supports
+   DT_IMPLEMENT_ACCESSOR(BaseModelData, unsigned, ShaderMaxBones);
+
 
    ////////////////////////////////////////////////////////////////////////////////
    Animatable* BaseModelData::GetAnimatableByName(const std::string& name)
@@ -285,53 +259,6 @@
       mElementBufferDrawElements = drawElements;
    }
 
-   ////////////////////////////////////////////////////////////////////////////////
-   const std::string& BaseModelData::GetShaderGroupName() const
-   {
-      return mShaderGroupName;
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   void BaseModelData::SetShaderGroupName(const std::string& groupName)
-   {
-      mShaderGroupName = groupName;
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   const std::string& BaseModelData::GetShaderName() const
-   {
-      return mShaderName;
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   void BaseModelData::SetShaderName(const std::string& name)
-   {
-      mShaderName = name;
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   const std::string& BaseModelData::GetPoseMeshFilename() const
-   {
-      return mPoseMeshFilename;
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   void BaseModelData::SetPoseMeshFilename(const std::string& name)
-   {
-      mPoseMeshFilename = name;
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   unsigned BaseModelData::GetShaderMaxBones() const
-   {
-      return mShaderMaxBones;
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   void BaseModelData::SetShaderMaxBones(unsigned maxBones)
-   {
-      mShaderMaxBones = maxBones;
-   }
 
    ////////////////////////////////////////////////////////////////////////////////
    unsigned BaseModelData::GetFileCount(ModelResourceType fileType) const
@@ -536,8 +463,22 @@
          dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
          fileUtils.CleanupFileString(relativeFile);
 
+         std::string resourceFile;
+         // Let it throw exceptions for now.
+         if (!mResource.IsEmpty())
+         {
+            try
+            {
+               resourceFile = dtCore::Project::GetInstance().GetResourcePath(mResource);
+            }
+            catch (const dtCore::ProjectInvalidContextException& ex)
+            {
+               ex.LogException(dtUtil::Log::LOG_ERROR, "basemodeldata.cpp");
+            }
+         }
+
          // Get the location of the model file.
-         std::string modelContext(osgDB::getFilePath(mFilename));
+         std::string modelContext(osgDB::getFilePath(resourceFile));
          if (!modelContext.empty())
          {
             modelContext += '/';

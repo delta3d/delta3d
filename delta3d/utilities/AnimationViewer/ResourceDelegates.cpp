@@ -26,6 +26,7 @@
 // Delta3D
 #include <dtAnim/animatable.h>
 #include <dtUtil/log.h>
+#include <dtCore/project.h>
 
 
 
@@ -190,9 +191,18 @@ void FileItemDelegate::OnOpenFile() const
       // Notify the application that a resource is about to change.
       emit SignalResourceEditStart(mFileType, mObjectName);
 
+      QString dir;
       // Get the location of the model file.
-      std::string modelContext(osgDB::getFilePath(mCharData->GetFilename()));
-      QString dir(modelContext.empty() ? "." : modelContext.c_str());
+      try
+      {
+         std::string resourcePath = dtCore::Project::GetInstance().GetResourcePath(mCharData->GetResource());
+         std::string modelContext(osgDB::getFilePath(resourcePath));
+         dir = modelContext.empty() ? "." : modelContext.c_str();
+      }
+      catch (dtUtil::Exception& ex)
+      {
+         dir = ".";
+      }
 
       mNewValue = QFileDialog::getOpenFileName(NULL, "Open File", dir, filter);
 
@@ -390,7 +400,8 @@ bool FileItemDelegate::ReplaceFile(dtAnim::BaseModelData& modelData, dtAnim::Bas
       }
    }
 
-   int result = modelData.UnloadResource(fileType, objectName);
+   //int result =
+   modelData.UnloadResource(fileType, objectName);
 
    if (!newFile.empty())
    {
@@ -438,8 +449,18 @@ void FileItemDelegate::LoadMaterial(dtAnim::BaseModelWrapper& model, const std::
 
       if (textureIterator == mTextures.end())
       {
+         std::string path;
+         try
+         {
+            std::string resourcePath = dtCore::Project::GetInstance().GetResourcePath(modelData->GetResource());
+            path = osgDB::getFilePath(resourcePath);
+         }
+         catch (dtUtil::Exception& ex)
+         {
+            path = ".";
+         }
+         // TODO replace this with a resource loader.
          // load the texture from the file
-         std::string path(osgDB::getFilePath(modelData->GetFilename()));
          dtCore::RefPtr<osg::Image> img = osgDB::readImageFile(path + "/" + strFilename);
 
          if (!img.valid())

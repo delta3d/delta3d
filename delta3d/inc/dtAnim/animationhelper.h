@@ -96,8 +96,6 @@ namespace dtAnim
 
       static const std::string PROPERTY_SKELETAL_MESH;
 
-      typedef dtUtil::Functor<void, TYPELIST_1(AnimationHelper*)> AsyncLoadCompletionCallback;
-
       /**
        * The constructor constructs a default AnimNodeBuilder, the Cal3DModelWrapper,
        * and AnimationController
@@ -144,23 +142,10 @@ namespace dtAnim
        * until a valid OpenGL context is present. (default = false)
        * @return whether or not we successfully loaded the file
        */
-      bool LoadModel(const std::string& pFilename, bool immediate = false);
+      bool LoadModel(const dtCore::ResourceDescriptor& resource, bool immediate = false);
 
       /// Unloads the character model and calls related callbacks.  Should be the same as LoadModel("");
       void UnloadModel();
-
-      /**
-       * This function enqueues a character XML file from string where it
-       * will be loaded in the background to create a Cal3DAnimator with
-       * the Cal3DModelWrapper and then calls CreateGeode() on the AnimNodeBuilder
-       *
-       * @param the name of the file to load
-       * @return whether or not we successfully loaded the file
-       */
-      bool LoadModelAsynchronously(const std::string& pFilename);
-
-      ///@return true is this is still loading a model on a background thread
-      bool IsLoadingAsynchronously() const;
 
       /**
        * Emits a signal when the model files have been loaded but before OSG
@@ -472,7 +457,6 @@ namespace dtAnim
       bool mEnableCommands;
       double mLastUpdateTime;
       std::string mAsyncFile;
-      AsyncLoadCompletionCallback mAsyncCompletionCallback;
       dtCore::RefPtr<osg::Group> mParent;
       dtCore::RefPtr<osg::Node> mNode;
       dtCore::RefPtr<SequenceMixer> mSequenceMixer;
@@ -489,6 +473,8 @@ namespace dtAnim
 
       // this gets the resource path for the skeletal mesh and calls the configured load functionality.
       void LoadSkeletalMesh();
+
+      void OnModelLoadCompleted(dtAnim::BaseModelWrapper* newModel, dtAnim::ModelLoader::LoadingState loadState);
 
       dtCore::RefPtr<dtAnim::ModelLoader> mModelLoader;
    };

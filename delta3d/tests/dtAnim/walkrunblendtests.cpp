@@ -21,7 +21,7 @@
 * THE SOFTWARE.
  */
 #include <prefix/unittestprefix.h>
-#include <cppunit/extensions/HelperMacros.h>
+#include "AnimModelLoadingTestFixture.h"
 
 #include <dtAnim/animatable.h>
 #include <dtAnim/animationchannel.h>
@@ -42,7 +42,7 @@
 
 namespace dtAnim
 {
-   class WalkRunBlendTests : public CPPUNIT_NS::TestFixture
+   class WalkRunBlendTests : public AnimModelLoadingTestFixture
    {
 
       CPPUNIT_TEST_SUITE( WalkRunBlendTests );
@@ -76,12 +76,12 @@ namespace dtAnim
    void WalkRunBlendTests::setUp()
    {
       mAnimationAC = new AnimationHelper();
+      Connect(mAnimationAC);
       dtCore::Project::GetInstance().SetContext("../examples/data");
 
-      std::string modelPath = dtUtil::FindFileInPathList("SkeletalMeshes/Marine/marine_test.xml");
-      CPPUNIT_ASSERT(!modelPath.empty());
+      dtCore::ResourceDescriptor modelPath("SkeletalMeshes:Marine:marine_test.xml");
 
-      mAnimationAC->LoadModel(modelPath);
+      LoadModel(mAnimationAC, modelPath);
 
       mAnimNameStand = "Idle";
       mAnimNameWalk = "Walk";

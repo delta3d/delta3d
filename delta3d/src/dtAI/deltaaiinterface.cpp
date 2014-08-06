@@ -34,12 +34,13 @@ namespace dtAI
    /////////////////////////////////////////////////////////////////////////////
    namespace WaypointFileHeader
    {
-      const unsigned FILE_IDENT = 5705313;
+/*      const unsigned FILE_IDENT = 5705313;
 
       const unsigned VERSION_MAJOR = 1;
       const unsigned VERSION_MINOR = 0;
 
       const char FILE_START_END_CHAR = '!';
+*/
    };
 
    /////////////////////////////////////////////////////////////////////////////

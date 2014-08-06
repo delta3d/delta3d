@@ -22,25 +22,35 @@
 #ifndef __RESOURCELOADER_H__
 #define __RESOURCELOADER_H__
 
-#include <osg/Referenced>
+#include <dtUtil/referencedinterface.h>
+#include <dtUtil/functor.h>
 
 namespace dtUtil
 {
 
-template <class ResourceDescriptor, class Resource>
-class ResourceLoader: public osg::Referenced
-{
-protected:
-     virtual ~ResourceLoader(){}
+   template <class ResourceDescriptor, class Resource>
+   class ResourceLoader: public dtUtil::ReferencedInterface
+   {
+   protected:
+      virtual ~ResourceLoader(){}
 
-public:
+   public:
+      enum LoadingState
+      {
+         IDLE,
+         LOADING,
+         FAILED,
+         COMPLETE
+      };
 
-  virtual Resource* LoadResource(const ResourceDescriptor&) = 0;
+      typedef dtUtil::Functor<void, TYPELIST_3(const ResourceDescriptor&, Resource*, LoadingState)> CallbackFunctor;
 
-  virtual void FreeResource(Resource*) = 0;
+      virtual void LoadResource(const ResourceDescriptor&, CallbackFunctor) = 0;
+
+      virtual void FreeResource(Resource*) = 0;
 
 
-};
+   };
 
 }//namespace dtUtil
 
