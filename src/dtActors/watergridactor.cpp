@@ -377,7 +377,7 @@ namespace dtActors
       static float keyTimeOut = 0.0f;
       keyTimeOut -= dt;
 
-      if(kb != NULL && /*mDeveloperMode &&*/ keyTimeOut <= 0.0f)
+      if(kb != NULL && mDeveloperMode && keyTimeOut <= 0.0f)
       {
          if(kb->GetKeyState('9'))
          {
