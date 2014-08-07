@@ -1,6 +1,46 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <shaderlist>
+   
+   <shadergroup name="MultiMap">
+      <shader name="MultiMap" default="yes">
+         <source type="Vertex">shaders/base/multimap.vert</source>
+         <source type="Vertex">shaders/base/vertex_functions.vert</source>
+         <source type="Fragment">shaders/base/multimap.frag</source>
+         <source type="Fragment">shaders/base/fragment_functions.frag</source>
+         <!--The Fragment shader is using a function from the vertex functions-->
+         <source type="Fragment">shaders/base/vertex_functions.vert</source>
+
+         <parameter name="diffuseTexture">
+            <texture2D textureUnit="0">
+               <source type="Auto"/>
+            </texture2D>
+         </parameter>
+         <parameter name="specularTexture">
+            <texture2D textureUnit="1">
+               <source type="Auto"/>
+            </texture2D>
+         </parameter>
+         <parameter name="illumTexture">
+            <texture2D textureUnit="3">
+               <source type="Auto"/>
+            </texture2D>
+         </parameter>
+         <parameter name="normalTexture">
+            <texture2D textureUnit="4">
+               <source type="Auto"/>
+            </texture2D>
+         </parameter>
+         <parameter name="envTexture">
+            <texture2D textureUnit="5">
+               <source type="Auto"/>
+               <wrap axis="S" mode="Repeat"/>
+               <wrap axis="T" mode="Repeat"/>
+            </texture2D>
+         </parameter>
+
+      </shader>
+   </shadergroup>
 
   <shadergroup name="TestShaders">
 

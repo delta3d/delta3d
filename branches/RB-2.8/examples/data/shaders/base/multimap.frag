@@ -1,0 +1,62 @@
+uniform sampler2D diffuseTexture;
+uniform sampler2D specularTexture;
+uniform sampler2D illumTexture;
+uniform sampler2D normalTexture;
+uniform sampler2D envTexture;
+
+varying vec3 vNormal;
+varying vec3 vLightDir;
+varying vec3 vPos;
+varying vec3 vCamera;
+varying vec2 vReflectTexCoord;
+varying vec3 vViewDir;
+
+float saturate(float inValue)
+{
+   return clamp(inValue, 0.0, 1.0);
+}
+
+void lightContribution(vec3, vec3, vec3, vec3, out vec3);
+float computeLinearFog(float, float, float);
+float computeExpFog(float);
+
+void main(void)
+{
+   vec3 diffuseColor = texture2D(diffuseTexture, gl_TexCoord[0].st).rgb;
+   vec3 specColor = texture2D(specularTexture, gl_TexCoord[0].st).rgb;
+   vec3 illumColor = texture2D(illumTexture, gl_TexCoord[0].st).rgb;
+   vec3 normalColor = texture2D(normalTexture, gl_TexCoord[0].st).rgb;
+   vec3 envColor = texture2D(envTexture, vReflectTexCoord).rgb;
+   
+   vec3 normal = normalize((normalColor.xyz * 2.0) - 1.0);
+
+   // Normalize all incoming vectors
+   vec3 lightDir = normalize(vLightDir);
+   
+   // Compute the Light Contribution
+   vec3 lightContrib;
+   lightContribution(normal, lightDir, gl_LightSource[0].diffuse.xyz, gl_LightSource[0].ambient.xyz, lightContrib);
+  
+   
+   // Compute the specular & reflection contribution
+   vec3 reflectVec = reflect(vLightDir, normal);
+   float reflectionAngle =  dot(reflectVec, vViewDir);
+   float reflectContrib = max(0.0,reflectionAngle);
+   vec3 specularContrib = specColor * (pow(reflectContrib, 16.0));
+   
+   vec3 minLightSpec = min(lightContrib, specColor);
+   vec3 color = mix(lightContrib * diffuseColor, envColor, minLightSpec);
+   
+   // Don't apply specular greater than the light contrib or objects will glow in the dark...
+   color += min(specularContrib, lightContrib) + illumColor;		
+   color = clamp(color, 0.0, 1.0);
+   
+   
+   // Apply Fog 
+   float dist = length(vPos - vCamera);
+   float fogAmt = computeExpFog(dist);
+   vec4 fogColor = gl_Fog.color;
+   vec3 result = mix(fogColor.rgb, color, fogAmt);
+   
+   gl_FragColor = vec4(result.rgb, 1.0);//diffuseColor.a);  
+}
