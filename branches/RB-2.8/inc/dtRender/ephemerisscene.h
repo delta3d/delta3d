@@ -57,13 +57,14 @@ namespace dtRender
 
       osg::Vec3d GetSunPosition() const;
 
-      virtual void OnTimeChanged();
       virtual void SetLatitudeLongitude(float latitude, float longitude);
 
       bool SetDateTimeAsString(const std::string& timeAndDate);
       
       void SetDateTime(dtUtil::DateTime&);
       dtUtil::DateTime GetDateTime() const;
+
+      void SetTimeFromSystem();
 
       void SetFogDensity(float density);
       float GetFogDensity();
@@ -80,6 +81,9 @@ namespace dtRender
 
       void SetVisibility( float distance );
       float GetVisibility ();
+
+   protected:
+      virtual void OnTimeChanged();
 
    private:
       bool SetTimeAndDate(std::istringstream& iss);

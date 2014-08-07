@@ -33,6 +33,8 @@
 #include <osgEphemeris/EphemerisModel.h>
 #include <osgEphemeris/EphemerisData.h>
 
+#include <dtCore/system.h>  //for setting time from system clock
+
 #include <dtRender/scenemanager.h> //needed to get the game manager
 #include <dtGame/gamemanager.h> //used to get the camera
 #include <dtABC/application.h> //used to get the camera
@@ -195,31 +197,6 @@ namespace dtRender
    void EphemerisScene::SetLatitudeLongitude(float latitude, float longitude)
    {
       mImpl->mEphemerisModel->setLatitudeLongitude(latitude, longitude);
-   }
-
-   void EphemerisScene::OnTimeChanged()
-   {
-      //update the ephemeris with the proper time
-      mImpl->mEphemerisModel->setAutoDateTime( false );
-
-      osgEphemeris::EphemerisData* ephem = mImpl->mEphemerisModel->getEphemerisData();
-
-      dtUtil::DateTime dt(GetDateTime().GetGMTTime());
-
-      LOGN_DEBUG("EphemerisScene.cpp", dt.ToString());
-      if (ephem != NULL)
-      {
-         ephem->dateTime.setYear(dt.GetYear()); // DateTime uses _actual_ year (not since 1900)
-         ephem->dateTime.setMonth(dt.GetMonth());    // DateTime numbers months from 1 to 12, not 0 to 11
-         ephem->dateTime.setDayOfMonth(dt.GetDay()); // DateTime numbers days from 1 to 31, not 0 to 30
-         ephem->dateTime.setHour(dt.GetHour());
-         ephem->dateTime.setMinute(dt.GetMinute());
-         ephem->dateTime.setSecond(unsigned(dt.GetSecond()));
-      }
-      else
-      {
-         LOG_ERROR("Ephemeris Data is NULL");
-      }
    }
 
    osg::Vec3d EphemerisScene::GetSunPosition() const
@@ -414,7 +391,42 @@ namespace dtRender
    void EphemerisScene::SetDateTime( dtUtil::DateTime& dt)
    {
       mImpl->mDateTime = dt;
+      
+      OnTimeChanged();
    }
+
+   void EphemerisScene::OnTimeChanged()
+   {
+      mImpl->mEphemerisModel->setAutoDateTime( false );
+
+      osgEphemeris::EphemerisData* ephem = mImpl->mEphemerisModel->getEphemerisData();
+
+      dtUtil::DateTime dt(GetDateTime().GetGMTTime());
+
+      if (ephem != NULL)
+      {
+         ephem->dateTime.setYear(dt.GetYear()); // DateTime uses _actual_ year (not since 1900)
+         ephem->dateTime.setMonth(dt.GetMonth());    // DateTime numbers months from 1 to 12, not 0 to 11
+         ephem->dateTime.setDayOfMonth(dt.GetDay()); // DateTime numbers days from 1 to 31, not 0 to 30
+         ephem->dateTime.setHour(dt.GetHour());
+         ephem->dateTime.setMinute(dt.GetMinute());
+         ephem->dateTime.setSecond(unsigned(dt.GetSecond()));
+      }
+      else
+      {
+         LOG_ERROR("Ephemeris Data is NULL");
+      }
+   }
+
+
+   void EphemerisScene::SetTimeFromSystem()
+   {
+      dtCore::Timer_t t = dtCore::System::GetInstance().GetSimulationClockTime();
+      dtUtil::DateTime dt = GetDateTime();
+      dt.SetTime(time_t(t / dtCore::Timer_t(1000000)));
+      SetDateTime(dt);
+   }
+
 
    dtUtil::DateTime EphemerisScene::GetDateTime() const
    {
