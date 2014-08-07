@@ -65,8 +65,8 @@ namespace dtActors
    {
       osg::Geometry* geometry = new osg::Geometry();
 
-      int N = 360; // rows from center outward
-      int K = 360;// columns around the circle
+      int N = 180; // rows from center outward
+      int K = 180;// columns around the circle
 
       //calculate num verts and num indices
       int numVerts = N * K;
