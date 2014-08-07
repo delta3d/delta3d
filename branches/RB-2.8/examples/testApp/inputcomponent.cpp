@@ -52,6 +52,7 @@
 #include <dtGame/messagefactory.h>
 #include <dtCore/gameevent.h>
 
+#include <dtActors/engineactorregistry.h>
 #include <iostream>
 
 
@@ -359,13 +360,27 @@ namespace dtExample
    void InputComponent::SetCameraToPlayerStart()
    {
       const std::string ACTOR_NAME(DEFAULT_PLAYER_START_NAME);
-      mGroundClampedObject = GetActorByName(ACTOR_NAME);
+
+      dtGame::GameManager* gm = GetGameManager();
 
       mCamera = GetGameManager()->GetApplication().GetCamera();
       mCameraPivot = new dtCore::Transformable;
 
-      if (mGroundClampedObject.valid())
+      //try to find the default player start actor type
+      dtCore::TransformableActorProxy* playerStart = NULL;      
+      gm->FindActorByType(*dtActors::EngineActorRegistry::PLAYER_START_ACTOR_TYPE, playerStart);
+
+      //otherwise try to find by the default player start actor name
+      if(playerStart == NULL)
       {
+         playerStart = GetActorByName(ACTOR_NAME);
+      }
+
+
+      if(playerStart != NULL)
+      {
+         mGroundClampedObject = playerStart;
+      
          dtCore::Transformable* xformable = NULL;
          mGroundClampedObject->GetDrawable(xformable);
          mCameraPivot = xformable ;
