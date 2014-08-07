@@ -7,7 +7,7 @@
         <comment></comment>
         <copyright></copyright>
         <createTimestamp>2014-07-15T22:49:46-05:00</createTimestamp>
-        <lastUpdateTimestamp>2014-07-25T12:37:42-05:00</lastUpdateTimestamp>
+        <lastUpdateTimestamp>2014-08-07T09:04:11-05:00</lastUpdateTimestamp>
         <editorVersion>2.8.0</editorVersion>
         <schemaVersion>1.0</schemaVersion>
     </header>
@@ -23,99 +23,6 @@
     </libraries>
     <actors>
         <environmentActor>576b168c-1f8d-497e-b138-6650a1be8a3d</environmentActor>
-        <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
-            <id>051eb0be-e068-42e8-939c-f645400a3e2a</id>
-            <name>PalmTree_10</name>
-            <property>
-                <name>Name</name>
-                <string>PalmTree_10</string>
-            </property>
-            <property>
-                <name>Rotation</name>
-                <vec3>
-                    <value1>0.000000</value1>
-                    <value2>0.000000</value2>
-                    <value3>-36.873669</value3>
-                </vec3>
-            </property>
-            <property>
-                <name>Translation</name>
-                <vec3>
-                    <value1>-5636.540039</value1>
-                    <value2>-1830.188232</value2>
-                    <value3>12.521936</value3>
-                </vec3>
-            </property>
-            <property>
-                <name>static mesh</name>
-                <resourceType>StaticMeshes</resourceType>
-                <resourceDisplayName>StaticMeshes:trees:palmtree.ive</resourceDisplayName>
-                <resource>StaticMeshes:trees:palmtree.ive</resource>
-            </property>
-        </actor>
-        <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
-            <id>0a82a76d-1bf8-47e6-ade1-2cb392e1e756</id>
-            <name>PalmTree_12</name>
-            <property>
-                <name>Name</name>
-                <string>PalmTree_12</string>
-            </property>
-            <property>
-                <name>Rotation</name>
-                <vec3>
-                    <value1>0.000000</value1>
-                    <value2>0.000000</value2>
-                    <value3>-170.748901</value3>
-                </vec3>
-            </property>
-            <property>
-                <name>Translation</name>
-                <vec3>
-                    <value1>-5605.787109</value1>
-                    <value2>-1788.065186</value2>
-                    <value3>12.521936</value3>
-                </vec3>
-            </property>
-            <property>
-                <name>static mesh</name>
-                <resourceType>StaticMeshes</resourceType>
-                <resourceDisplayName>StaticMeshes:trees:palmtree.ive</resourceDisplayName>
-                <resource>StaticMeshes:trees:palmtree.ive</resource>
-            </property>
-        </actor>
-        <actor>
-            <type>dtcore.Static Mesh</type>
-            <id>1c6c7520-8c0a-4a5d-8aa6-285649382cd8</id>
-            <name>Boardwalk</name>
-            <property>
-                <name>Name</name>
-                <string>Boardwalk</string>
-            </property>
-            <property>
-                <name>Rotation</name>
-                <vec3>
-                    <value1>0.000000</value1>
-                    <value2>0.000000</value2>
-                    <value3>-125.629166</value3>
-                </vec3>
-            </property>
-            <property>
-                <name>Translation</name>
-                <vec3>
-                    <value1>-5583.700195</value1>
-                    <value2>-1772.258057</value2>
-                    <value3>12.205597</value3>
-                </vec3>
-            </property>
-            <property>
-                <name>static mesh</name>
-                <resourceType>StaticMeshes</resourceType>
-                <resourceDisplayName>StaticMeshes:walkways:boardwalk:boardwalk.ive</resourceDisplayName>
-                <resource>StaticMeshes:walkways:boardwalk:boardwalk.ive</resource>
-            </property>
-        </actor>
         <actor>
             <type>dtRender.Ocean Scene</type>
             <id>20125039-fd6e-4f15-863d-19882cf35e27</id>
@@ -168,212 +75,43 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
-            <id>5fc5c122-1882-4b51-b88f-4c46fac78652</id>
-            <name>PalmTree_09</name>
-            <property>
-                <name>Name</name>
-                <string>PalmTree_09</string>
-            </property>
-            <property>
-                <name>Rotation</name>
-                <vec3>
-                    <value1>0.000000</value1>
-                    <value2>0.000000</value2>
-                    <value3>-106.071411</value3>
-                </vec3>
-            </property>
-            <property>
-                <name>Translation</name>
-                <vec3>
-                    <value1>-5644.087402</value1>
-                    <value2>-1840.580200</value2>
-                    <value3>12.521936</value3>
-                </vec3>
-            </property>
-            <property>
-                <name>static mesh</name>
-                <resourceType>StaticMeshes</resourceType>
-                <resourceDisplayName>StaticMeshes:trees:palmtree.ive</resourceDisplayName>
-                <resource>StaticMeshes:trees:palmtree.ive</resource>
-            </property>
-        </actor>
-        <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
-            <id>67ce2dcd-4b43-4256-b436-580b998d270e</id>
-            <name>PalmTree_03</name>
-            <property>
-                <name>Name</name>
-                <string>PalmTree_03</string>
-            </property>
-            <property>
-                <name>Rotation</name>
-                <vec3>
-                    <value1>0.000000</value1>
-                    <value2>0.000000</value2>
-                    <value3>-18.003113</value3>
-                </vec3>
-            </property>
-            <property>
-                <name>Translation</name>
-                <vec3>
-                    <value1>-5560.659668</value1>
-                    <value2>-1724.258911</value2>
-                    <value3>12.364321</value3>
-                </vec3>
-            </property>
-            <property>
-                <name>static mesh</name>
-                <resourceType>StaticMeshes</resourceType>
-                <resourceDisplayName>StaticMeshes:trees:palmtree.ive</resourceDisplayName>
-                <resource>StaticMeshes:trees:palmtree.ive</resource>
-            </property>
-        </actor>
-        <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
-            <id>700f6ec0-c606-4966-b3f1-765de8753f57</id>
-            <name>PalmTree_00</name>
-            <property>
-                <name>Name</name>
-                <string>PalmTree_00</string>
-            </property>
-            <property>
-                <name>Rotation</name>
-                <vec3>
-                    <value1>0.000000</value1>
-                    <value2>0.000000</value2>
-                    <value3>68.059380</value3>
-                </vec3>
-            </property>
-            <property>
-                <name>Translation</name>
-                <vec3>
-                    <value1>-5542.628906</value1>
-                    <value2>-1698.870728</value2>
-                    <value3>12.521936</value3>
-                </vec3>
-            </property>
-            <property>
-                <name>static mesh</name>
-                <resourceType>StaticMeshes</resourceType>
-                <resourceDisplayName>StaticMeshes:trees:palmtree.ive</resourceDisplayName>
-                <resource>StaticMeshes:trees:palmtree.ive</resource>
-            </property>
-        </actor>
-        <actor>
             <type>dtExample.Terrain</type>
             <id>73193a31-2ba5-49dd-8a36-9e9ce2ea9c3a</id>
             <name>Terrain</name>
             <property>
+                <name>TerrainMesh</name>
+                <resourceType>Terrains</resourceType>
+                <resourceDisplayName>Terrains:delta3d_island.osg</resourceDisplayName>
+                <resource>Terrains:delta3d_island.osg</resource>
+            </property>
+            <property>
+                <name>CurrentShader</name>
+                <resourceType>Shaders</resourceType>
+                <resourceDisplayName>Shaders:TerrainAltitude.dtShader</resourceDisplayName>
+                <resource>Shaders:TerrainAltitude.dtShader</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <id>9494a54c-7de7-41ee-8d90-31ba43e84dd6</id>
+            <name>BoardwalkAndBar</name>
+            <property>
+                <name>Name</name>
+                <string>BoardwalkAndBar</string>
+            </property>
+            <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>0.000000</value1>
-                    <value2>10.000000</value2>
+                    <value1>-3.863645</value1>
+                    <value2>-3.173681</value2>
                     <value3>0.000000</value3>
                 </vec3>
             </property>
             <property>
-                <name>ShaderGroup</name>
-                <string>Terrains</string>
-            </property>
-            <property>
-                <name>TerrainMesh</name>
-                <resourceType>Terrains</resourceType>
-                <resourceDisplayName>Terrains:delta3d_island.ive</resourceDisplayName>
-                <resource>Terrains:delta3d_island.ive</resource>
-            </property>
-        </actor>
-        <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
-            <id>805e1fcd-c816-46f3-bf8b-447463759efd</id>
-            <name>PalmTree_04</name>
-            <property>
-                <name>Name</name>
-                <string>PalmTree_04</string>
-            </property>
-            <property>
-                <name>Rotation</name>
-                <vec3>
-                    <value1>0.000000</value1>
-                    <value2>0.000000</value2>
-                    <value3>34.783371</value3>
-                </vec3>
-            </property>
-            <property>
-                <name>Translation</name>
-                <vec3>
-                    <value1>-5573.265625</value1>
-                    <value2>-1741.880737</value2>
-                    <value3>12.521936</value3>
-                </vec3>
-            </property>
-            <property>
                 <name>static mesh</name>
                 <resourceType>StaticMeshes</resourceType>
-                <resourceDisplayName>StaticMeshes:trees:palmtree.ive</resourceDisplayName>
-                <resource>StaticMeshes:trees:palmtree.ive</resource>
-            </property>
-        </actor>
-        <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
-            <id>a0ee9476-b9e6-4676-9f02-145659ebb0f8</id>
-            <name>PalmTree_08</name>
-            <property>
-                <name>Name</name>
-                <string>PalmTree_08</string>
-            </property>
-            <property>
-                <name>Rotation</name>
-                <vec3>
-                    <value1>0.000000</value1>
-                    <value2>0.000000</value2>
-                    <value3>-119.037621</value3>
-                </vec3>
-            </property>
-            <property>
-                <name>Translation</name>
-                <vec3>
-                    <value1>-5625.502441</value1>
-                    <value2>-1815.087036</value2>
-                    <value3>12.521936</value3>
-                </vec3>
-            </property>
-            <property>
-                <name>static mesh</name>
-                <resourceType>StaticMeshes</resourceType>
-                <resourceDisplayName>StaticMeshes:trees:palmtree.ive</resourceDisplayName>
-                <resource>StaticMeshes:trees:palmtree.ive</resource>
-            </property>
-        </actor>
-        <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
-            <id>b56a21ff-3ebe-46ea-9cd2-3b65dd45cb90</id>
-            <name>PalmTree_06</name>
-            <property>
-                <name>Name</name>
-                <string>PalmTree_06</string>
-            </property>
-            <property>
-                <name>Rotation</name>
-                <vec3>
-                    <value1>0.000000</value1>
-                    <value2>0.000000</value2>
-                    <value3>-36.873669</value3>
-                </vec3>
-            </property>
-            <property>
-                <name>Translation</name>
-                <vec3>
-                    <value1>-5597.791992</value1>
-                    <value2>-1776.474609</value2>
-                    <value3>12.521936</value3>
-                </vec3>
-            </property>
-            <property>
-                <name>static mesh</name>
-                <resourceType>StaticMeshes</resourceType>
-                <resourceDisplayName>StaticMeshes:trees:palmtree.ive</resourceDisplayName>
-                <resource>StaticMeshes:trees:palmtree.ive</resource>
+                <resourceDisplayName>StaticMeshes:walkways:boardwalk_and_bar:boardwalk_and_bar.osg</resourceDisplayName>
+                <resource>StaticMeshes:walkways:boardwalk_and_bar:boardwalk_and_bar.osg</resource>
             </property>
         </actor>
         <actor>
@@ -387,64 +125,17 @@
         </actor>
         <actor>
             <type>dtcore.Game.Actors.Game Mesh Actor</type>
-            <id>c0fbbeb9-9f71-4fa2-a6fd-cd22f7b0e568</id>
-            <name>PalmTree_07</name>
+            <id>c4c3427c-4fd6-4fae-abaa-85a6ec80bf28</id>
+            <name>Group_PalmTrees</name>
             <property>
                 <name>Name</name>
-                <string>PalmTree_07</string>
-            </property>
-            <property>
-                <name>Rotation</name>
-                <vec3>
-                    <value1>0.000000</value1>
-                    <value2>0.000000</value2>
-                    <value3>-36.873669</value3>
-                </vec3>
-            </property>
-            <property>
-                <name>Translation</name>
-                <vec3>
-                    <value1>-5613.782227</value1>
-                    <value2>-1799.184326</value2>
-                    <value3>12.521936</value3>
-                </vec3>
+                <string>Group_PalmTrees</string>
             </property>
             <property>
                 <name>static mesh</name>
                 <resourceType>StaticMeshes</resourceType>
-                <resourceDisplayName>StaticMeshes:trees:palmtree.ive</resourceDisplayName>
-                <resource>StaticMeshes:trees:palmtree.ive</resource>
-            </property>
-        </actor>
-        <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
-            <id>e3665c79-b022-427c-810a-6e9187a710a8</id>
-            <name>PalmTree_05</name>
-            <property>
-                <name>Name</name>
-                <string>PalmTree_05</string>
-            </property>
-            <property>
-                <name>Rotation</name>
-                <vec3>
-                    <value1>0.000000</value1>
-                    <value2>0.000000</value2>
-                    <value3>17.671350</value3>
-                </vec3>
-            </property>
-            <property>
-                <name>Translation</name>
-                <vec3>
-                    <value1>-5590.077148</value1>
-                    <value2>-1765.732056</value2>
-                    <value3>12.521936</value3>
-                </vec3>
-            </property>
-            <property>
-                <name>static mesh</name>
-                <resourceType>StaticMeshes</resourceType>
-                <resourceDisplayName>StaticMeshes:trees:palmtree.ive</resourceDisplayName>
-                <resource>StaticMeshes:trees:palmtree.ive</resource>
+                <resourceDisplayName>StaticMeshes:delta3d_island:IslandTrees_ResortArea.osg</resourceDisplayName>
+                <resource>StaticMeshes:delta3d_island:IslandTrees_ResortArea.osg</resource>
             </property>
         </actor>
         <actor>
@@ -466,9 +157,9 @@
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-5584.438477</value1>
-                    <value2>-1777.274902</value2>
-                    <value3>12.911819</value3>
+                    <value1>-537.877869</value1>
+                    <value2>-115.951355</value2>
+                    <value3>0.561044</value3>
                 </vec3>
             </property>
             <property>
@@ -481,37 +172,6 @@
                 <resourceType>SkeletalMeshes</resourceType>
                 <resourceDisplayName>SkeletalMeshes:Gina:Gina.dtchar</resourceDisplayName>
                 <resource>SkeletalMeshes:Gina:Gina.dtchar</resource>
-            </property>
-        </actor>
-        <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
-            <id>e8cd6a0b-2462-479e-b33d-4683cf26dd50</id>
-            <name>PalmTree_11</name>
-            <property>
-                <name>Name</name>
-                <string>PalmTree_11</string>
-            </property>
-            <property>
-                <name>Rotation</name>
-                <vec3>
-                    <value1>0.000000</value1>
-                    <value2>0.000000</value2>
-                    <value3>-36.873669</value3>
-                </vec3>
-            </property>
-            <property>
-                <name>Translation</name>
-                <vec3>
-                    <value1>-5582.091309</value1>
-                    <value2>-1754.439941</value2>
-                    <value3>12.521936</value3>
-                </vec3>
-            </property>
-            <property>
-                <name>static mesh</name>
-                <resourceType>StaticMeshes</resourceType>
-                <resourceDisplayName>StaticMeshes:trees:palmtree.ive</resourceDisplayName>
-                <resource>StaticMeshes:trees:palmtree.ive</resource>
             </property>
         </actor>
     </actors>
