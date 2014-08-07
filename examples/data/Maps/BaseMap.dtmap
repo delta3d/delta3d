@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="delta3dMap" xsi:schemaLocation="delta3dMap map.xsd">
+    <header>
+        <name>BaseMap</name>
+        <description>This map contains the scene structure that determines how the rest of the map will be loaded.</description>
+        <author></author>
+        <comment></comment>
+        <copyright></copyright>
+        <createTimestamp>2014-07-29T11:17:35-05:00</createTimestamp>
+        <lastUpdateTimestamp>2014-08-06T22:17:05-05:00</lastUpdateTimestamp>
+        <editorVersion>2.8.0</editorVersion>
+        <schemaVersion>1.0</schemaVersion>
+    </header>
+    <libraries>
+        <library>
+            <name>dtRender</name>
+            <version></version>
+        </library>
+    </libraries>
+    <actors>
+        <environmentActor>913761f9-6ffe-42f5-84ca-fe9bdcffa2d5</environmentActor>
+        <actor>
+            <type>dtRender.Ephemeris Scene</type>
+            <id>0bcf0227-0726-414a-aa0d-3b3e9c643b5e</id>
+            <name>EphemerisScene_01</name>
+            <property>
+                <name>Name</name>
+                <string>EphemerisScene_01</string>
+            </property>
+        </actor>
+        <actor>
+            <type>dtRender.Shadow Scene</type>
+            <id>10947b01-3604-477e-9e8c-f24b3823ff47</id>
+            <name>ShadowScene_01</name>
+            <property>
+                <name>Name</name>
+                <string>ShadowScene_01</string>
+            </property>
+            <property>
+                <name>ShadowMapType</name>
+                <enumerated>PSSM</enumerated>
+            </property>
+        </actor>
+        <actor>
+            <type>dtRender.Scene Manager</type>
+            <id>913761f9-6ffe-42f5-84ca-fe9bdcffa2d5</id>
+            <name>SceneManager_01</name>
+            <property>
+                <name>Name</name>
+                <string>SceneManager_01</string>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>10.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+        </actor>
+        <actor>
+            <type>dtRender.Ocean Scene</type>
+            <id>f7ef2865-379e-4b35-9d89-9aa2bc052838</id>
+            <name>OceanScene_01</name>
+            <property>
+                <name>Name</name>
+                <string>OceanScene_01</string>
+            </property>
+        </actor>
+    </actors>
+    <groups></groups>
+    <drawablehierarchy></drawablehierarchy>
+    <presetCameras></presetCameras>
+</map>

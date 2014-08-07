@@ -87,8 +87,8 @@
             <property>
                 <name>CurrentShader</name>
                 <resourceType>Shaders</resourceType>
-                <resourceDisplayName>Shaders:TerrainAltitude.dtShader</resourceDisplayName>
-                <resource>Shaders:TerrainAltitude.dtShader</resource>
+                <resourceDisplayName>shaders:terrain:TerrainAltitude.dtShader</resourceDisplayName>
+                <resource>shaders:terrain:TerrainAltitude.dtShader</resource>
             </property>
         </actor>
         <actor>
