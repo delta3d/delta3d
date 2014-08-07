@@ -43,6 +43,9 @@
 #include <dtCore/transform.h>
 #include <dtCore/ufomotionmodel.h>
 #include <dtCore/walkmotionmodel.h>
+
+#include <dtCore/shadermanager.h> //for reloading shader defs
+
 #include <dtGame/gamemanager.h>
 #include <dtGame/gameactorproxy.h>
 #include <dtGame/actorupdatemessage.h>
@@ -51,6 +54,9 @@
 #include <dtGame/gamestatemessages.h>
 #include <dtGame/messagefactory.h>
 #include <dtCore/gameevent.h>
+
+#include <dtRender/scenemanager.h>
+#include <dtRender/ephemerisscene.h>
 
 #include <dtActors/engineactorregistry.h>
 #include <iostream>
@@ -77,7 +83,6 @@ namespace dtExample
    InputComponent::InputComponent()
       : BaseClass(DEFAULT_NAME)
       , mClampCameraEnabled(false)
-      , mSimSpeedFactor(1.0)
       , mMotionModelMode(&dtExample::MotionModelType::NONE)
       , mMotionModel(NULL)
       , mCamera(NULL)
@@ -150,30 +155,14 @@ namespace dtExample
          // --- Control Adjustment Section --- //
          case '0':
          {
-            mSimSpeedFactor = 1.0f;
-            ss << "Resetting Game Manager Speed to [" << mSimSpeedFactor << "] == Realtime.";
-            std::cout << ss.str() << std::endl;
-            GetGameManager()->ChangeTimeSettings(GetGameManager()->GetSimulationTime(),
-               mSimSpeedFactor, GetGameManager()->GetSimulationClockTime());
+          
          }
          break;
 
          case '-':
          case osgGA::GUIEventAdapter::KEY_KP_Subtract:
          {
-            mSimSpeedFactor = mSimSpeedFactor * 0.9f;
-            if (mSimSpeedFactor < 0.10f)
-            {
-               mSimSpeedFactor = 0.10f;
-            }
-            else
-            {
-               ss << "Decreasing Game Manager Speed to [" << mSimSpeedFactor << "]X Realtime.";
-               std::cout << ss.str() << std::endl;
-            }
-
-            GetGameManager()->ChangeTimeSettings(GetGameManager()->GetSimulationTime(),
-               mSimSpeedFactor, GetGameManager()->GetSimulationClockTime());
+            IncrementTime(-400.0f);
          }
          break;
 
@@ -181,25 +170,13 @@ namespace dtExample
          case '=':
          case '+':
          {
-            mSimSpeedFactor = mSimSpeedFactor * 1.20f;
-            if (mSimSpeedFactor > 10.0f)
-            {
-               mSimSpeedFactor = 10.0f;
-            }
-            else
-            {
-               ss << "Increasing Game Manager Speed to [" << mSimSpeedFactor << "]X Realtime.";
-               std::cout << ss.str() << std::endl;
-            }
-
-            GetGameManager()->ChangeTimeSettings(GetGameManager()->GetSimulationTime(),
-               mSimSpeedFactor, GetGameManager()->GetSimulationClockTime());
+            IncrementTime(400.0f);
          }
          break;
 
          case 'p':
          {
-            GetGameManager()->SetPaused(!GetGameManager()->IsPaused());
+            dtCore::ShaderManager::GetInstance().ReloadAndReassignShaderDefinitions("shaders/ShaderDefinitions.xml");
          }
          break;
 
@@ -605,5 +582,25 @@ namespace dtExample
       // Run the batch ground clamp
       mGroundClamper->FinishUp();
    }
+
+   //////////////////////////////////////////////////////////////////////////
+   void InputComponent::IncrementTime(float numSeconds)
+   {
+      dtRender::SceneManager* sm = dynamic_cast<dtRender::SceneManager*>(GetGameManager()->GetEnvironmentActor()->GetDrawable());
+      
+      if(sm != NULL)
+      {
+
+         dtRender::EphemerisScene* eph = dynamic_cast<dtRender::EphemerisScene*>(sm->FindSceneByType(*dtRender::EphemerisScene::EPHEMERIS_SCENE));
+         if(eph != NULL)
+         {
+            dtUtil::DateTime dt = eph->GetDateTime();
+            dt.IncrementClock(numSeconds);
+            eph->SetDateTime(dt);
+         }
+      }
+         
+   }
+
 
 } // END - namespace dtExample

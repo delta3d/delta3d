@@ -94,12 +94,13 @@ namespace dtExample
 
          void SetMotionModel(const dtExample::MotionModelType& motionModelType);
 
+         void IncrementTime(float numSeconds);
+         
          void DoGroundClamping(float simTime);
 
       private:
 
          bool mClampCameraEnabled;
-         double mSimSpeedFactor;
       
          const dtExample::MotionModelType* mMotionModelMode;
          dtCore::RefPtr<dtCore::MotionModel> mMotionModel;
