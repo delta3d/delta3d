@@ -159,6 +159,12 @@ namespace dtExample
          }
          break;
 
+         case '\\':
+         case '|':
+         {
+            GetGameManager()->GetApplication().SetNextStatisticsType();
+         }
+         break;
          case '-':
          case osgGA::GUIEventAdapter::KEY_KP_Subtract:
          {
