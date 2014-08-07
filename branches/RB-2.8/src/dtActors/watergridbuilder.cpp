@@ -168,11 +168,10 @@ namespace dtActors
       float waveLenMod = 2.0f;
       float ampMod = 0.25f;
 
-      AddDefaultWaves(waveList);
-
       if(seaState == &WaterGridActor::SeaState::SeaState_0)
       {
-         AddRandomWaves(waveList, waveLenMod * 3.167f, ampMod * 00.16f, 1.0f, 2.5f, numWaves);
+         //AddRandomWaves(waveList, waveLenMod * 3.167f, ampMod * 00.16f, 1.0f, 2.5f, numWaves);
+         AddDefaultWaves(waveList);
       }
       else if(seaState == &WaterGridActor::SeaState::SeaState_1)
       {

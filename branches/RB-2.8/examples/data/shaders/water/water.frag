@@ -7,10 +7,6 @@
 //The wave parameters are packed into two vec4's like so
 // [Length, Speed, Amplitude, Frequency], [Q, reserved for later use, Direction.x, Direction.y]
 //////////////////////////////////////////////////////////////////////////////////////////////////
-const int MAX_WAVES = 32;
-
-uniform vec4 waveArray[2 * MAX_WAVES];
-uniform float WaterHeight;
 
 uniform float ScreenHeight;
 uniform float ScreenWidth;
@@ -18,7 +14,7 @@ uniform float waveDirection;
 uniform float elapsedTime;
 uniform float maxComputedDistance;
 uniform mat4 inverseViewMatrix;
-uniform vec4 WaterColor;// = vec4(30.0 / 256.0, 80.0 / 256.0, 150.0 / 256.0, 1.0);
+uniform vec4 WaterColor;
 uniform vec3 cameraRecenter;
 
 uniform float modForFOV;	
