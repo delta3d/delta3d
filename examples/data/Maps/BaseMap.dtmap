@@ -7,7 +7,7 @@
         <comment></comment>
         <copyright></copyright>
         <createTimestamp>2014-07-29T11:17:35-05:00</createTimestamp>
-        <lastUpdateTimestamp>2014-08-06T22:17:05-05:00</lastUpdateTimestamp>
+        <lastUpdateTimestamp>2014-08-07T12:01:22-05:00</lastUpdateTimestamp>
         <editorVersion>2.8.0</editorVersion>
         <schemaVersion>1.0</schemaVersion>
     </header>
@@ -26,19 +26,6 @@
             <property>
                 <name>Name</name>
                 <string>EphemerisScene_01</string>
-            </property>
-        </actor>
-        <actor>
-            <type>dtRender.Shadow Scene</type>
-            <id>10947b01-3604-477e-9e8c-f24b3823ff47</id>
-            <name>ShadowScene_01</name>
-            <property>
-                <name>Name</name>
-                <string>ShadowScene_01</string>
-            </property>
-            <property>
-                <name>ShadowMapType</name>
-                <enumerated>PSSM</enumerated>
             </property>
         </actor>
         <actor>
