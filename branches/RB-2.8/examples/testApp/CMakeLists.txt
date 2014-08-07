@@ -29,4 +29,5 @@ BUILD_LIB_EXAMPLE( testApp TEST_APP_LIBRARY
                   ${DTGUI_LIBRARY}
                   ${DTPHYSICS_LIBRARY}
                   ${DTACTORS_LIBRARY}
+                  ${DTRENDER_LIBRARY}
                  )
