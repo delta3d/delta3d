@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <map xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="delta3dMap" xsi:schemaLocation="delta3dMap map.xsd">
     <header>
         <name>TestApp</name>
@@ -7,7 +8,7 @@
         <comment></comment>
         <copyright></copyright>
         <createTimestamp>2014-07-15T22:49:46-05:00</createTimestamp>
-        <lastUpdateTimestamp>2014-08-07T09:04:11-05:00</lastUpdateTimestamp>
+        <lastUpdateTimestamp>2014-08-07T12:01:02-05:00</lastUpdateTimestamp>
         <editorVersion>2.8.0</editorVersion>
         <schemaVersion>1.0</schemaVersion>
     </header>
@@ -22,16 +23,6 @@
         </library>
     </libraries>
     <actors>
-        <environmentActor>576b168c-1f8d-497e-b138-6650a1be8a3d</environmentActor>
-        <actor>
-            <type>dtRender.Ocean Scene</type>
-            <id>20125039-fd6e-4f15-863d-19882cf35e27</id>
-            <name>OceanScene_01</name>
-            <property>
-                <name>Name</name>
-                <string>OceanScene_01</string>
-            </property>
-        </actor>
         <actor>
             <type>dtcore.Player Start</type>
             <id>362cb3a0-7aba-464c-a49b-b226f2c65802</id>
@@ -45,32 +36,15 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>132.387802</value3>
+                    <value3>166.588058</value3>
                 </vec3>
             </property>
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-161.000000</value1>
-                    <value2>-115.000008</value2>
-                    <value3>98.000008</value3>
-                </vec3>
-            </property>
-        </actor>
-        <actor>
-            <type>dtRender.Scene Manager</type>
-            <id>576b168c-1f8d-497e-b138-6650a1be8a3d</id>
-            <name>SceneManager_01</name>
-            <property>
-                <name>Name</name>
-                <string>SceneManager_01</string>
-            </property>
-            <property>
-                <name>Translation</name>
-                <vec3>
-                    <value1>-5432.104980</value1>
-                    <value2>-1299.812622</value2>
-                    <value3>77.142715</value3>
+                    <value1>-482.636841</value1>
+                    <value2>-123.839050</value2>
+                    <value3>21.802572</value3>
                 </vec3>
             </property>
         </actor>
@@ -79,16 +53,14 @@
             <id>73193a31-2ba5-49dd-8a36-9e9ce2ea9c3a</id>
             <name>Terrain</name>
             <property>
-                <name>TerrainMesh</name>
-                <resourceType>Terrains</resourceType>
-                <resourceDisplayName>Terrains:delta3d_island.osg</resourceDisplayName>
-                <resource>Terrains:delta3d_island.osg</resource>
+                <name>ShaderGroup</name>
+                <string>Terrains</string>
             </property>
             <property>
-                <name>CurrentShader</name>
-                <resourceType>Shaders</resourceType>
-                <resourceDisplayName>shaders:terrain:TerrainAltitude.dtShader</resourceDisplayName>
-                <resource>shaders:terrain:TerrainAltitude.dtShader</resource>
+                <name>TerrainMesh</name>
+                <resourceType>Terrains</resourceType>
+                <resourceDisplayName>Terrains:delta3d_island.ive</resourceDisplayName>
+                <resource>Terrains:delta3d_island.ive</resource>
             </property>
         </actor>
         <actor>
@@ -112,15 +84,6 @@
                 <resourceType>StaticMeshes</resourceType>
                 <resourceDisplayName>StaticMeshes:walkways:boardwalk_and_bar:boardwalk_and_bar.osg</resourceDisplayName>
                 <resource>StaticMeshes:walkways:boardwalk_and_bar:boardwalk_and_bar.osg</resource>
-            </property>
-        </actor>
-        <actor>
-            <type>dtRender.Ephemeris Scene</type>
-            <id>c0320aa2-d9b3-4c2b-85ea-bd185cb0a4e0</id>
-            <name>EphemerisScene_01</name>
-            <property>
-                <name>Name</name>
-                <string>EphemerisScene_01</string>
             </property>
         </actor>
         <actor>
