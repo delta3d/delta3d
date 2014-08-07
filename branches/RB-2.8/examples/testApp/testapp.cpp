@@ -81,6 +81,8 @@ class TestApp : public dtGame::GameEntryPoint
 
       virtual void OnShutdown(dtABC::BaseABC& /*app*/, dtGame::GameManager& /*gamemanager*/);
 
+      void ValidateMap(const std::string& mapToValidate);
+
    private:
 
       /**
@@ -91,8 +93,7 @@ class TestApp : public dtGame::GameEntryPoint
        */
       void ParseCommandLineOptions(int argc, char **argv);
       std::string mProjectPath;
-
-      dtCore::RefPtr<dtCore::Map> mMap;
+      std::string mMapName;
 };
 
 
@@ -249,23 +250,35 @@ void TestApp::OnStartup(dtABC::BaseABC& app, dtGame::GameManager& gameManager)
    gameManager.GetApplication().GetCamera()->SetPerspectiveParams(75.0, vec.width / vec.height, 0.5f, 25000.0f);
 
    // Load the map for this application.
-   const std::string MAP_NAME("TestApp");
-   //mMap = &dtCore::Project::GetInstance().GetMap(MAP_NAME);
+   const std::string BASE_MAP("BaseMap");
+   
+   ValidateMap(BASE_MAP);
+   ValidateMap(mMapName);
 
-   //if ( ! mMap.valid())
-   //{
-   //   LOG_ERROR("Map file for TestApp could not be found.");
-   //}
-   //else
-   //{
-   //   app.LoadMap(*mMap, false);
+   dtGame::GameManager::NameVector mapNames;
+   mapNames.push_back(BASE_MAP);
+   mapNames.push_back(mMapName);
 
-   //   // DEBUG:
-   //   LOG_ALWAYS("Map \"" + MAP_NAME + "\" loaded");
-   //}
+   gameManager.ChangeMapSet(mapNames);
+   //gameManager.OpenAdditionalMapSet(mapNames);
+}
 
-   // Update the Game Manager to use the loaded map.
-   gameManager.ChangeMap(MAP_NAME);
+void TestApp::ValidateMap(const std::string& mapToValidate)
+{
+   std::set<std::string> mapNames = dtCore::Project::GetInstance().GetMapNames();
+   bool containsMap = false;
+   for(std::set<std::string>::iterator i = mapNames.begin(); i != mapNames.end(); ++i)
+      if(*i == mapToValidate)
+         containsMap = true;
+
+   if(!containsMap)
+   {
+      std::ostringstream oss;
+      oss << "A map named: " << mapToValidate << " could not be located in the project context: "
+         << mProjectPath;
+      throw dtGame::GameApplicationConfigException(
+         oss.str(), __FILE__, __LINE__);
+   }   
 }
 
 void TestApp::OnShutdown(dtABC::BaseABC& /*app*/, dtGame::GameManager& /*gamemanager*/)
@@ -280,6 +293,7 @@ void TestApp::ParseCommandLineOptions(int argc, char** argv)
    argParser.getApplicationUsage()->setCommandLineUsage("TestApp [options] value ...");
    argParser.getApplicationUsage()->addCommandLineOption("-h or --help","Display command line options");
    argParser.getApplicationUsage()->addCommandLineOption("--projectPath", "The path to the project config or project contexct directory.");
+   argParser.getApplicationUsage()->addCommandLineOption("--mapName", "The name of the map to load in. This must be a map that is located within the project path specified");
 
    if (argParser.read("-h") || argParser.read("--help") || argParser.argc() == 0)
    {
@@ -289,6 +303,11 @@ void TestApp::ParseCommandLineOptions(int argc, char** argv)
    }
 
    argParser.read("--projectPath", mProjectPath);
+
+   if (!argParser.read("--mapName", mMapName))
+   {
+      mMapName = "TestApp";
+   }
 
 
    argParser.reportRemainingOptionsAsUnrecognized();
