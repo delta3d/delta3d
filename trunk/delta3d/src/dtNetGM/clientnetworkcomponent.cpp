@@ -104,12 +104,12 @@ namespace dtNetGM
 
       if (mClient->open(address, params))
       {
-         LOG_ERROR("Can not open socket");
+         LOGN_ERROR("dtNetGM", "Can not open socket");
          return false;
       }
       mClient->connect();
 
-      LOG_ALWAYS("Connecting to server at: " + address.toString());
+      LOGN_ALWAYS("dtNetGM", "Connecting to server at: " + address.toString());
 
       mClient->waitForConnect();
 
@@ -117,11 +117,11 @@ namespace dtNetGM
       {
          GetGameManager()->GetMachineInfo().SetHostName(mClient->getLocalAddress(IsReliable()).getNameByAddress());
          GetGameManager()->GetMachineInfo().SetIPAddress(mClient->getLocalAddress(IsReliable()).toString());
-         LOG_ALWAYS("Network is connected");
+         LOGN_ALWAYS("dtNetGM", "Network is connected");
       }
       else
       {
-         LOG_ERROR( "Could not connect to server \"" + host + "\" at " + address.toString() );
+         LOGN_ERROR("dtNetGM", "Could not connect to server \"" + host + "\" at " + address.toString() );
          return false;
       }
       return true;
@@ -133,7 +133,7 @@ namespace dtNetGM
       mAcceptedClient = false;
       networkBridge.SetClientConnected(false);
 
-      LOG_ALWAYS("Disconnected from Server: " + networkBridge.GetHostDescription());
+      LOGN_ALWAYS("dtNetGM", "Disconnected from Server: " + networkBridge.GetHostDescription());
 
       RemoveConnection(networkBridge.GetMachineInfo());
    }
@@ -146,20 +146,20 @@ namespace dtNetGM
       mMachineInfoServer = new dtGame::MachineInfo("Server");
       *mMachineInfoServer = msg.GetSource();
 
-      LOG_INFO("Connection accepted by " + msg.GetSource().GetName() + " {" + msg.GetSource().GetHostName() + "}");
+      LOGN_INFO("dtNetGM", "Connection accepted by " + msg.GetSource().GetName() + " {" + msg.GetSource().GetHostName() + "}");
    }
 
    ////////////////////////////////////////////////////////////////////
    void ClientNetworkComponent::ProcessNetServerRejectConnection(const dtGame::NetServerRejectMessage& msg)
    {
       mAcceptedClient = false; // should stay false....
-      LOG_INFO("Connection rejected by " + msg.GetSource().GetName() + " {" + msg.GetSource().GetHostName() + "}.\nReason: " + msg.GetRejectionMessage());
+      LOGN_INFO("dtNetGM", "Connection rejected by " + msg.GetSource().GetName() + " {" + msg.GetSource().GetHostName() + "}.\nReason: " + msg.GetRejectionMessage());
    }
 
    ////////////////////////////////////////////////////////////////////
    void ClientNetworkComponent::ProcessNetServerRejectMessage(const dtGame::ServerMessageRejected& msg)
    {
-      LOG_DEBUG("Message[" + dtUtil::ToString(msg.GetMessageType().GetId()) + "] rejected by " + msg.GetSource().GetName() + " Reason: " + msg.GetCause());
+      LOGN_DEBUG("dtNetGM", "Message[" + dtUtil::ToString(msg.GetMessageType().GetId()) + "] rejected by " + msg.GetSource().GetName() + " Reason: " + msg.GetCause());
    }
 
    ////////////////////////////////////////////////////////////////////
@@ -167,7 +167,7 @@ namespace dtNetGM
    {
       mConnectedClients.push_back(msg.GetMachineInfo());
 
-      LOG_DEBUG("InfoClientConnected: " + msg.GetMachineInfo()->GetName() + " {" + msg.GetMachineInfo()->GetHostName() + "} ID [" + msg.GetMachineInfo()->GetUniqueId().ToString() + "].");
+      LOGN_DEBUG("dtNetGM", "InfoClientConnected: " + msg.GetMachineInfo()->GetName() + " {" + msg.GetMachineInfo()->GetHostName() + "} ID [" + msg.GetMachineInfo()->GetUniqueId().ToString() + "].");
    }
 
    ////////////////////////////////////////////////////////////////////
@@ -178,7 +178,7 @@ namespace dtNetGM
       std::vector< dtCore::RefPtr<dtGame::MachineInfo> >::iterator iter;
       dtCore::RefPtr<dtGame::MachineInfo> machineInfo = msg.GetMachineInfo();
 
-      LOG_DEBUG("ClientNotifyDisconnect: " + msg.GetMachineInfo()->GetName() + " {" + msg.GetMachineInfo()->GetHostName() + "} ID [" + msg.GetMachineInfo()->GetUniqueId().ToString() + "].");
+      LOGN_DEBUG("dtNetGM", "ClientNotifyDisconnect: " + msg.GetMachineInfo()->GetName() + " {" + msg.GetMachineInfo()->GetHostName() + "} ID [" + msg.GetMachineInfo()->GetUniqueId().ToString() + "].");
 
       for (iter = mConnectedClients.begin(); iter != mConnectedClients.end(); iter++)
       {
@@ -321,7 +321,7 @@ namespace dtNetGM
       // Error checking - must be in fixed time step - ok to check outside of scope lock, because only the above lines set those values anyway.
       if (GetFrameSyncIsEnabled() && !(dtCore::System::GetInstance().GetUsesFixedTimeStep()))
       {
-         LOGN_ERROR("ClientNetworkComponent.cpp", "CRITICAL ERROR - Server has sent a frame sync enabled message, but the client is not in fixed Time Step. Make sure your config.xml settings are correct. Forcing Fixed Time Step in order to continue.");
+         LOGN_ERROR("dtNetGM", "CRITICAL ERROR - Server has sent a frame sync enabled message, but the client is not in fixed Time Step. Make sure your config.xml settings are correct. Forcing Fixed Time Step in order to continue.");
          dtCore::System::GetInstance().SetFrameRate((double) GetFrameSyncNumPerSecond());
          dtCore::System::GetInstance().SetUseFixedTimeStep(true);
       }
