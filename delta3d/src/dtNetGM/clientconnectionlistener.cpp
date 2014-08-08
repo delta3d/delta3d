@@ -34,12 +34,12 @@ namespace dtNetGM
    ClientConnectionListener::ClientConnectionListener(NetworkBridge* netwBridge)
       : mNetworkBridge(netwBridge)
    {
-      LOG_DEBUG("ClientConnectionListener created.");
+      LOGN_DEBUG("dtNetGM", "ClientConnectionListener created.");
    }
 
    ClientConnectionListener::~ClientConnectionListener(void)
    {
-      LOG_DEBUG("ClientConnectionListener destroyed.");
+      LOGN_DEBUG("dtNetGM", "ClientConnectionListener destroyed.");
    }
 
    void ClientConnectionListener::onDisconnect(GNE::Connection& conn)
