@@ -91,7 +91,7 @@ void FireFighterMessageTests::TestGameStateMessages()
 {
    try
    {
-      RefPtr<InputComponent> inputComp = new InputComponent(InputComponent::NAME);
+      RefPtr<InputComponent> inputComp = new InputComponent(*InputComponent::NAME);
       RefPtr<dtGame::DefaultMessageProcessor> dmp = new dtGame::DefaultMessageProcessor;
       CPPUNIT_ASSERT(inputComp.valid());
       CPPUNIT_ASSERT(dmp.valid());
