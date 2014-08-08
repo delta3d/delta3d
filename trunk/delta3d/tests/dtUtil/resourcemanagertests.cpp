@@ -50,7 +50,7 @@ namespace dtUtil
       DT_DECLARE_VIRTUAL_REF_INTERFACE_INLINE
 
       typedef ResourceLoader<dtCore::ResourceDescriptor, MyString> BaseClass;
-      typedef typename BaseClass::CallbackFunctor CallbackFunctor;
+      typedef BaseClass::CallbackFunctor CallbackFunctor;
    
       void LoadResource(const dtCore::ResourceDescriptor& pVar, CallbackFunctor callback)
       {
