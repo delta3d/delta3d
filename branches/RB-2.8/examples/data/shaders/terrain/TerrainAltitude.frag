@@ -111,12 +111,12 @@ void main(void)
       //camera height over the water
       float heightOverWater = max(vCamera.z - WaterHeight, 0.0);
 
-      fogAmt = computeLinearFog(3.0, 10.0 * UnderWaterViewDistance, 3.0 * (dist - heightOverWater));
+      fogAmt = computeLinearFog(0.0, 2.0 * UnderWaterViewDistance, (dist - heightOverWater));
 
       //fade under water fog in over depth
       float depth = clamp(WaterHeight - height, 0.0, 3.0 * UnderWaterViewDistance);
-      
-      fogColor = vec4(GetWaterColorAtDepth(-1.0), 1.0);
+  
+      fogColor = vec4(gl_LightSource[0].ambient.xyz * GetWaterColorAtDepth(-1.0), 1.0);
       
       //considering the underwater color essentially removing light
       result = mix(result, 1.2 * result * GetWaterColorAtDepth(-1.0), depth / (3.0 * UnderWaterViewDistance));
