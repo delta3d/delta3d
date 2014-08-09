@@ -1,6 +1,7 @@
 /* -*-c++-*-
  * testClient - testClient (.h & .cpp) - Using 'The MIT License'
  * Copyright (C) 2007-2008, MOVES Institute
+ * Copyright (C) 2014 Caper Holdings LLC
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -82,6 +83,15 @@ public:
     * Configures the application and prepares it to start the game/simulation.
     */
    void Config();
+
+   /**
+    * Key press callback.
+    *
+    * @param keyboard the keyboard object generating the event
+    * @param key the key pressed
+    * @param character the corresponding character
+    */
+   virtual bool KeyPressed(const dtCore::Keyboard* kb, int key);
 
    virtual void Quit();
 
