@@ -170,13 +170,13 @@ namespace dtNetGM
 
       if (GetGameManager() == NULL)
       {
-         LOG_ERROR("This component is not assigned to a GameManager, but received a message.  It will be ignored.");
+         LOGN_ERROR("dtNetGM","This component is not assigned to a GameManager, but received a message.  It will be ignored.");
          return;
       }
 
       if (message.GetDestination() != NULL && GetGameManager()->GetMachineInfo() != *message.GetDestination())
       {
-         LOG_DEBUG("Received message has a destination set to a different GameManager than this one. It will be ignored.");
+         LOGN_DEBUG("dtNetGM","Received message has a destination set to a different GameManager than this one. It will be ignored.");
          return;
       }
 
@@ -328,7 +328,7 @@ namespace dtNetGM
 
          GNE::GNEProtocolVersionNumber num = GNE::getGNEProtocolVersion();
 
-         dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,
+         dtUtil::Log::GetInstance("dtNetGM").LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,
              "Using GNE protocol: %d.%d.%d", num.version, num.subVersion, num.build );
 
 #ifdef _DEBUG
@@ -358,7 +358,7 @@ namespace dtNetGM
       OpenThreads::ScopedLock<OpenThreads::Mutex> lock(mMutex);
       mConnections.push_back(networkBridge);
 
-      LOG_DEBUG("Added connection " + networkBridge->GetHostDescription());
+      LOGN_DEBUG("dtNetGM","Added connection " + networkBridge->GetHostDescription());
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -374,7 +374,7 @@ namespace dtNetGM
             return;
          }
       }
-      LOG_WARNING("Connection not found! " + machineInfo.GetName() + " [" + machineInfo.GetHostName()+ "]");
+      LOGN_WARNING("dtNetGM","Connection not found! " + machineInfo.GetName() + " [" + machineInfo.GetHostName()+ "]");
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -435,7 +435,7 @@ namespace dtNetGM
          }
          else
          {
-            LOG_ERROR("Waited 100 milliseconds for the background message task to complete before sending any "
+            LOGN_ERROR("dtNetGM","Waited 100 milliseconds for the background message task to complete before sending any "
                      "remaining messages, but it timed out.  ");
          }
 
@@ -492,13 +492,13 @@ namespace dtNetGM
    ////////////////////////////////////////////////////////////////////////////////
    void NetworkComponent::OnExit(NetworkBridge& networkBridge)
    {
-      LOG_DEBUG(networkBridge.GetHostDescription() + " is exiting.");
+      LOGN_DEBUG("dtNetGM", networkBridge.GetHostDescription() + " is exiting.");
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    void NetworkComponent::OnDisconnect(NetworkBridge& networkBridge)
    {
-      LOG_INFO(networkBridge.GetHostDescription() + " disconnected.");
+      LOGN_INFO("dtNetGM", networkBridge.GetHostDescription() + " disconnected.");
       RemoveConnection(networkBridge.GetMachineInfo());
    }
 
@@ -534,7 +534,7 @@ namespace dtNetGM
             }
             else
             {
-               LOGN_ERROR("networkcomponent.cpp", "Received either a NETCLIENT_REQUEST_CONNECTION or NETCLIENT_ACCEPT_CONNECTION message, "
+               LOGN_ERROR("dtNetGM", "Received either a NETCLIENT_REQUEST_CONNECTION or NETCLIENT_ACCEPT_CONNECTION message, "
                         "but was unable to create the message from the stream data.  This is serious.");
             }
 
@@ -542,7 +542,7 @@ namespace dtNetGM
          }
          else
          {
-            LOGN_WARNING("networkcomponent.cpp", "Received DataStream with MessageType " + dtUtil::ToString(msgId) + " while not being a client.");
+            LOGN_WARNING("dtNetGM", "Received DataStream with MessageType " + dtUtil::ToString(msgId) + " while not being a client.");
          }
       }
       // create message, again maybe but with proper Source!
@@ -561,10 +561,10 @@ namespace dtNetGM
       if (message.GetDestination() == NULL ||
             (*message.GetDestination() != GetGameManager()->GetMachineInfo()))
       {
-//         if (message.GetDestination() != NULL)
-//         {
-//            LOG_ALWAYS(std::string("Dest: ") + message.GetDestination()->GetUniqueId().ToString() + std::string("  LocalMachine: ") + GetGameManager()->GetMachineInfo().GetUniqueId().ToString());
-//         }
+         //         if (message.GetDestination() != NULL)
+         //         {
+         //            LOGN_ALWAYS("dtNetGM", std::string("Dest: ") + message.GetDestination()->GetUniqueId().ToString() + std::string("  LocalMachine: ") + GetGameManager()->GetMachineInfo().GetUniqueId().ToString());
+         //         }
 
          // forward the message to any other connections
          dtUtil::DataStream dataStreamFwd = CreateDataStream(message);
@@ -600,7 +600,7 @@ namespace dtNetGM
          }
          else
          {
-            LOG_ERROR("Received " + message.GetMessageType().GetName() + " while connection is not accepted.");
+            LOGN_ERROR("dtNetGM", "Received " + message.GetMessageType().GetName() + " while connection is not accepted.");
          }
       }
 
@@ -801,7 +801,7 @@ namespace dtNetGM
       {
          if (mUnknownMessages.insert(msgId).second)
          {
-            LOGN_WARNING("networkcomponent.cpp", "Received an unsupported message "
+            LOGN_WARNING("dtNetGM", "Received an unsupported message "
                      "(You will only get the log message once per message type). MessageId = " + dtUtil::ToString(msgId));
          }
          return NULL;
@@ -812,7 +812,7 @@ namespace dtNetGM
          // This assumes looking up the message type will work because
          // the code above just tried to do that, and if it had failed, it wouldn't have made it here.
          // plus this is a really unusual case with no known cause.
-         LOGN_ERROR("networkcomponent.cpp",
+         LOGN_ERROR("dtNetGM",
                   "Unknown error creating message with message type \""
                   + gm->GetMessageFactory().GetMessageTypeById(msgId).GetName() + "\"");
          return NULL;
@@ -868,25 +868,25 @@ namespace dtNetGM
    ////////////////////////////////////////////////////////////////////////////////
    void NetworkComponent::OnFailure(NetworkBridge& networkBridge, const GNE::Error& error)
    {
-      LOG_ERROR("OnFailure: " + error.toString() + " Host: " + networkBridge.GetHostDescription());
+      LOGN_ERROR("dtNetGM", "OnFailure: " + error.toString() + " Host: " + networkBridge.GetHostDescription());
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    void NetworkComponent::OnError(NetworkBridge& networkBridge, const GNE::Error& error)
    {
-      LOG_ERROR("onError: " + error.toString() + " Host: " + networkBridge.GetHostDescription());
+      LOGN_ERROR("dtNetGM", "onError: " + error.toString() + " Host: " + networkBridge.GetHostDescription());
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    void NetworkComponent::OnConnectFailure(NetworkBridge& networkBridge, const GNE::Error& error)
    {
-      LOG_ERROR("onConnectFailure, Host: " + networkBridge.GetHostDescription());
+      LOGN_ERROR("dtNetGM", "onConnectFailure, Host: " + networkBridge.GetHostDescription());
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    void NetworkComponent::OnTimeOut(NetworkBridge& networkBridge)
    {
-      LOG_ERROR("OnTimeOut, Host: " + networkBridge.GetHostDescription());
+      LOGN_ERROR("dtNetGM", "OnTimeOut, Host: " + networkBridge.GetHostDescription());
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -898,7 +898,7 @@ namespace dtNetGM
          // block until complete to make sure the buffer is empty before disconnecting.
          if (!mDispatchTask->WaitUntilComplete(2000))
          {
-            LOG_ERROR("Attempted to wait for the background message send to complete during disconnect, but it never completed after 2 seconds.");
+            LOGN_ERROR("dtNetGM", "Attempted to wait for the background message send to complete during disconnect, but it never completed after 2 seconds.");
          }
       }
 
@@ -909,13 +909,13 @@ namespace dtNetGM
       {
          (*iter)->Disconnect(-1);
       }
-      mConnections.clear();
+      //mConnections.clear();
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    void NetworkComponent::ShutdownNetwork()
    {
-      LOG_INFO("Shutting down network...");
+      LOGN_INFO("dtNetGM", "Shutting down network...");
 
       Disconnect();
 
@@ -975,7 +975,7 @@ namespace dtNetGM
       {
          if (newValue <= 0)
          {
-            LOGN_ERROR("networkcomponent.cpp", "FrameSyncs Per Second cannot be less than 1. Canceling attempt to set to " + dtUtil::ToString(newValue));
+            LOGN_ERROR("dtNetGM", "FrameSyncs Per Second cannot be less than 1. Canceling attempt to set to " + dtUtil::ToString(newValue));
          }
          else 
          {
@@ -998,7 +998,7 @@ namespace dtNetGM
       {
          if (newValue <= 1.0f)
          {
-            LOGN_ERROR("networkcomponent.cpp", "MaxWaitTime for FrameSyncs cannot be less than 1.0. Forcing value to be 1.0 instead of the request " + dtUtil::ToString(newValue));
+            LOGN_ERROR("dtNetGM", "MaxWaitTime for FrameSyncs cannot be less than 1.0. Forcing value to be 1.0 instead of the request " + dtUtil::ToString(newValue));
             newValue = 1.0f;
          }
 
