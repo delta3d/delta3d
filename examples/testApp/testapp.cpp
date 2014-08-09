@@ -246,8 +246,12 @@ void TestApp::OnStartup(dtABC::BaseABC& app, dtGame::GameManager& gameManager)
    //double vfov, aspect, nearClip, farClip;
    dtCore::DeltaWin::Resolution vec = gameManager.GetApplication().GetWindow()->GetCurrentResolution();
    
+   dtCore::Camera* cam = gameManager.GetApplication().GetCamera();
    //gameManager.GetApplication().GetCamera()->GetPerspectiveParams(vfov, aspect, nearClip, farClip);
-   gameManager.GetApplication().GetCamera()->SetPerspectiveParams(75.0, vec.width / vec.height, 0.5f, 25000.0f);
+   cam->SetPerspectiveParams(75.0, vec.width / vec.height, 0.5f, 25000.0f);
+
+   cam->GetOSGCamera()->setComputeNearFarMode(osg::CullSettings::DO_NOT_COMPUTE_NEAR_FAR);   
+   cam->GetOSGCamera()->setCullingMode(osg::CullSettings::ENABLE_ALL_CULLING);
 
    // Load the map for this application.
    const std::string BASE_MAP("BaseMap");
