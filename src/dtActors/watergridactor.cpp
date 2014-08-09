@@ -67,6 +67,8 @@
 #include <osg/TexGenNode>
 #include <osg/TexMat>
 #include <osg/Texture>
+#include <osg/ClipNode>
+#include <osg/ClipPlane>
 #include <osg/Version>
 
 #include <osgDB/FileUtils>
@@ -98,7 +100,36 @@ namespace dtActors
 
          mCamera->setReferenceFrame(osg::Camera::ABSOLUTE_RF);
          mCamera->setProjectionMatrix(mTarget->getProjectionMatrix());;
-         mCamera->setViewMatrix(mTarget->getViewMatrix());
+         
+         osg::Matrix viewMat = mTarget->getViewMatrix();
+         osg::Matrix inverseView = mTarget->getInverseViewMatrix();
+         osg::Vec3 pos = dtUtil::MatrixUtil::GetRow3(inverseView, 3);
+
+         //adds 1 to avoid light coming through
+         if(pos.z() > 1.0f)//WaterHeight) need to get water height here
+         {
+            viewMat.preMult( osg::Matrix::scale(1.0f, 1.0f, -1.0f) );
+
+            osg::CullFace* cullState = new osg::CullFace(osg::CullFace::FRONT);
+            mCamera->getOrCreateStateSet()->setAttributeAndModes(cullState,
+               osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE);
+
+            osg::Uniform* reflectMode = mCamera->getOrCreateStateSet()->getOrCreateUniform("ReflectMode", osg::Uniform::FLOAT);
+            reflectMode->set(-1.0f);
+
+         }
+         else
+         {
+
+            osg::Uniform* reflectMode = mCamera->getOrCreateStateSet()->getOrCreateUniform("ReflectMode", osg::Uniform::FLOAT);
+            reflectMode->set(1.0f);
+
+            osg::CullFace* cullState = new osg::CullFace(osg::CullFace::BACK);
+            mCamera->getOrCreateStateSet()->setAttributeAndModes(cullState,
+               osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE);
+         }
+
+         mCamera->setViewMatrix(viewMat);
       }
 
    protected:
@@ -993,7 +1024,10 @@ namespace dtActors
 
       mReflectionCamera->setRenderOrder(osg::Camera::PRE_RENDER);
       mReflectionCamera->setClearMask(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-      mReflectionCamera->setClearColor(osg::Vec4(1.0f, 1.0f, 1.0f, 1.0f));
+      mReflectionCamera->setClearColor(osg::Vec4(0.0f, 0.0f, 0.0f, 0.0f));
+
+      //turn off water bit, reflection shouldnt have water
+      mReflectionCamera->setCullMask(dtUtil::NodeMask::BACKGROUND | dtUtil::NodeMask::NON_TRANSPARENT_GEOMETRY | dtUtil::NodeMask::DEFAULT_GEOMETRY );
 
       ResetReflectionUpdate();
 
@@ -1008,8 +1042,8 @@ namespace dtActors
       ss->setTextureAttributeAndModes(1, mReflectionTexture.get(), osg::StateAttribute::ON);
 
       // Debug display
-      {
-         /*osg::Matrix orthoMatrix;
+      /*{
+         osg::Matrix orthoMatrix;
          orthoMatrix.makeOrtho2D(-40.0f, 40.0f, -40.0f, 40.0f);
 
          osg::Projection* proj = new osg::Projection(orthoMatrix);
@@ -1030,8 +1064,8 @@ namespace dtActors
          quadState->setAttributeAndModes(depth, osg::StateAttribute::OFF | osg::StateAttribute::OVERRIDE);
          quadState->setRenderBinDetails(50, "RenderBin");
 
-         dtABC::Application::GetInstance("Application")->GetScene()->GetSceneNode()->addChild(proj);*/
-      }
+         dtABC::Application::GetInstance("Application")->GetScene()->GetSceneNode()->addChild(proj);
+      }*/
 
    }
 
@@ -1047,13 +1081,6 @@ namespace dtActors
       if (!mReflectionGroup.valid())
       {
          mReflectionGroup = new osg::MatrixTransform();
-         mReflectionGroup->setMatrix(osg::Matrix::scale(osg::Vec3(1.0, 1.0, -1.0)));
-
-         //we have to reverse the cullface on the ephemeris or we wont see it
-         //this is necessary due to the reflection about the z axis
-         osg::CullFace* cullState = new osg::CullFace(osg::CullFace::FRONT);
-         mReflectionGroup->getOrCreateStateSet()->setAttributeAndModes(cullState,
-            osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE);
 
          cam->addChild(mReflectionGroup.get());
 
@@ -1078,7 +1105,7 @@ namespace dtActors
       mReflectionScene = sceneNode;
 
       if (mReflectionGroup.valid())
-      {
+      { 
          // Cut the previous scene if it exists
          mReflectionGroup->removeChildren(0, mReflectionGroup->getNumChildren());
 
@@ -1100,6 +1127,11 @@ namespace dtActors
    void WaterGridActor::SetSceneCamera(dtCore::Camera* sceneCamera)
    {
       mSceneCamera = sceneCamera->GetOSGCamera();
+      
+      //set this global state to allow things to know when they are being rendered in a reflection
+      osg::Uniform* reflectModeBase = mSceneCamera->getOrCreateStateSet()->getOrCreateUniform("ReflectMode", osg::Uniform::FLOAT);
+      reflectModeBase->set(1.0f);
+
    }
 
    ///////////////////////////////////////////////////////////////////////////////////
@@ -1486,9 +1518,9 @@ namespace dtActors
       {
          waterActor->SetSceneCamera(sceneCamera);
       }
-      //else if (IsInSTAGE())
-      //{
-      //}
+      else if (IsInSTAGE())
+      {
+      }
       else if (IsInGM())
       {
          waterActor->SetSceneCamera(dtABC::Application::GetInstance("Application")->GetCamera());

@@ -12,6 +12,7 @@ uniform float DetailScale;
 uniform float WaterSurfaceOffset;
 uniform float WaterFadeDepth;
 uniform float WaterHeight;
+uniform float ReflectMode;
 
 uniform int mode;
 
@@ -35,14 +36,25 @@ float computeExpFog(float);
 vec3 GetWaterColorAtDepth(float);
 
 void main(void)
-{  
+{
+   float h = ReflectMode * vPos.z;
+
+   if(h < WaterHeight)
+   {
+      if(ReflectMode < 0.0)
+      {
+         discard;
+      }
+   }
+     
+
    vec3 detailColor = texture2D(SandTexture, gl_TexCoord[0].st * DetailScale).rgb;
    vec3 sandColor = texture2D(SandTexture, gl_TexCoord[0].st * TextureScales.x).rgb;
    vec3 grassColor = texture2D(GrassTexture, gl_TexCoord[0].st * TextureScales.y).rgb;
    vec3 rockColor = texture2D(RockTexture, gl_TexCoord[0].st * TextureScales.z).rgb;
    vec3 snowColor = texture2D(SnowTexture, gl_TexCoord[0].st * TextureScales.w).rgb;
 
-   float alt = vPos.z * AltitudeScale;
+   float alt = ReflectMode * vPos.z * AltitudeScale;
 
    float grassRange = Altitudes.x;
    float rockRange = Altitudes.y - grassRange;
@@ -92,14 +104,14 @@ void main(void)
 
    //This adds the under water effects 
    float fogAmt = 0.0;
-   float height = vPos.z;
+   float height = ReflectMode * vPos.z;
 
    if(height < WaterHeight)
    {
       //camera height over the water
       float heightOverWater = max(vCamera.z - WaterHeight, 0.0);
 
-      fogAmt = computeExpFog(1000.0 + 10.0 * (dist - heightOverWater));
+      fogAmt = computeLinearFog(3.0, 10.0 * UnderWaterViewDistance, 3.0 * (dist - heightOverWater));
 
       //fade under water fog in over depth
       float depth = clamp(WaterHeight - height, 0.0, 3.0 * UnderWaterViewDistance);

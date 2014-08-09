@@ -33,6 +33,12 @@ float computeLinearFog(float startFog, float endFog, float fogDistance)
    return 1.0 - clamp(fogTemp, 0.0, 1.0);
 }
 
+//returns -1.0 if x < 0, and 1.0 if x >= 0
+float signGreaterEqualZero(float x)
+{
+    return step(0.0, x) * 2.0 - 1.0;
+}
+
 void sphereMap(in vec3 eye, in vec3 normal, out vec2 ReflectTexCoord)
 {
    float m;

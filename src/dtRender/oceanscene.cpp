@@ -27,9 +27,9 @@
 #include <dtActors/engineactorregistry.h>
 
 #include <dtGame/gamemanager.h> //to create water grid actor
-
+#include <dtABC/application.h> //to get camera
 #include <dtUtil/log.h>
-
+#include <dtUtil/nodemask.h>
 #include <osg/Group>
 
 #include <osg/StateSet>
@@ -46,7 +46,7 @@ namespace dtRender
    , mNode(new osg::Group())
    {
       SetName("OceanScene");
-
+      mNode->setNodeMask(dtUtil::NodeMask::WATER);
    }
 
 
@@ -73,7 +73,8 @@ namespace dtRender
 
             if(defaultScene != NULL)
             {
-               water->SetReflectionScene(defaultScene->GetOSGNode());
+               water->SetSceneCamera(gm->GetApplication().GetCamera());
+               water->SetReflectionScene(sm.GetOSGNode());//defaultScene->GetOSGNode());
             }
             else
             {
