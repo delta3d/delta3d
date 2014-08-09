@@ -13,7 +13,7 @@ const int MAX_WAVES = 32;
 uniform vec4 waveArray[2 * MAX_WAVES];
 uniform float waterPlaneFOV;
 uniform float WaterHeight;
-const float UnderWaterViewDistance = 15.0;
+const float UnderWaterViewDistance = 5.0;
 
  
 varying vec4 pos;
@@ -134,7 +134,7 @@ void main(void)
    //compute fog color for above water and under water
    vFog.x = computeExpFog(fog_distance);  
    
-   float underWaterDist = clamp(abs(distance), 3.5, 1000.0);
+   float underWaterDist = clamp(abs(distance), 1.0, 1000.0);
    vFog.y = computeLinearFog(underWaterDist, 1.0, UnderWaterViewDistance);
 
 }

@@ -1,16 +1,3 @@
-// The following shaders make use of it least one of this functions:
-//   ephemeris_fog_frag.glsl
-//   perpixel_lighting_one_directional_frag.glsl
-//   perpixel_lighting_detailmap_frag.glsl
-//   shader_gloss_reflect_pixel.glsl
-//   shader_gloss_reflect_pixel_hmmwv_interior.glsl
-//   shader_nogolss_pixel.glsl
-//   terrain_fragment.glsl
-
-
-/////////////////////////////////////////////////////////////////////
-///////////General Functions Used By Fragment Fog Shaders////////////
-/////////////////////////////////////////////////////////////////////
 uniform bool writeLinearDepth;
 uniform float nearPlane;
 uniform float farPlane;
@@ -31,23 +18,12 @@ void alphaMix(vec3 color1, vec3 color2, float fogContrib, float alpha, out vec4 
    mixColor = vec4( mix(color1, color2, fogContrib), alpha);
 }
 
-/////////////////////////////////////////////////////////////////////
-// Computes the light color based on the normal of the light and the surface.
-// It also considers that just using the normal is too harsh, so we blend in the 
-// light value with an imaginary up vector. Pass in the norms, light dir, color of the 
-// light (diffuse and ambient). Out is the final light color. 
-// Returns the diffuse contrib value (0.0 to 1.0). The modified dot of the norm and light dir
 void lightContribution(vec3 normal, vec3 lightDir, vec3 diffuseLightSource, vec3 ambientLightSource, out vec3 lightContrib)
 {
-   // Light contribution considers the light impacting the surface. Since that 
-   // is too dramatic, we weight the effect of light against a straight up vector.
    float diffuseSurfaceContrib = max(dot(normal, lightDir),0.0);
-   float fUpContribution = max(dot(vec3(0.0, 0.0, 1.0), lightDir), -0.1);
-   fUpContribution = (fUpContribution + 0.1) / 1.1;  // we use a bit past horizontal, else it darkens too soon.
-   float diffuseContrib = fUpContribution * 0.52 + diffuseSurfaceContrib * 0.52;
-
+   
    // Lit Color (Diffuse plus Ambient)
-   vec3 diffuseLight = diffuseLightSource * diffuseContrib;
+   vec3 diffuseLight = diffuseLightSource * diffuseSurfaceContrib;
    lightContrib = vec3(diffuseLight + ambientLightSource);
 }
 
@@ -81,3 +57,24 @@ float softParticleOpacity(vec3 viewPosCenter, vec3 viewPosCurrent,
    return opacity;
 }
 
+//From Shader X5
+mat3 compute_tangent_frame_O3(vec3 N, vec3 p, vec2 uv)
+{
+    // Optimisation 3:
+    // assume M is orthogonal
+
+    // get edge vectors of the pixel triangle
+    vec3 dp1 = normalize(dFdx(p));
+    vec3 dp2 = normalize(dFdy(p));
+    vec2 duv1 = normalize(dFdx(uv));
+    vec2 duv2 = normalize(dFdy(uv));
+
+    // solve the linear system
+    // (not much solving is left going here)
+    mat3 M = mat3(dp1, dp2,cross(dp1, dp2));
+    vec3 T = mul(vec3(duv1.x, duv2.x,0), M);
+    vec3 B = mul(vec3(duv1.y, duv2.y,0), M);
+
+    // construct tangent frame 
+    return mat3(normalize(T), normalize(B), normalize(N));
+}

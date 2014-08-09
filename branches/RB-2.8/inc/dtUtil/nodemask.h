@@ -51,8 +51,6 @@ namespace dtUtil
          
          static NodeMask IGNORE_RAYCAST;           //0xF0000000
 
-         static NodeMask SCENE_INTERSECT_MASK;     //0x0FFFFFFF
-
          static NodeMask TERRAIN_FEATURES;         //0x0F000000
          
          static NodeMask DEFAULT_GEOMETRY;         //0x00FF0000 contains transparent and non transparent, ie not sorted
@@ -70,6 +68,8 @@ namespace dtUtil
          //cull masks , do we need a separate class?
          static NodeMask MAIN_CAMERA_CULL_MASK;//0xFFFFFFFF         
          
+         static NodeMask SCENE_INTERSECT_MASK;     //0x0FFFFFFF
+
          //additional camera cull mask removes the UI or foreground bit
          //this supports multiple views or screens where the UI is only on the center
          static NodeMask ADDITIONAL_CAMERA_CULL_MASK;//0xDFFFFFFF

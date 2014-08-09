@@ -7,7 +7,7 @@ varying vec3 vPos;
 varying vec3 vWorldNormal;
 varying vec3 vCamera;
 
-uniform mat4 inverseViewMatrix;
+uniform mat4 osg_ViewMatrixInverse;
 
 float calculateDistance(mat4, vec4);
 
@@ -18,18 +18,18 @@ void main()
    gl_FogFragCoord = gl_FogCoord;
 
    //moves the position, normal, and light direction into world space   
-   vPos = (inverseViewMatrix * gl_ModelViewMatrix * gl_Vertex).xyz;
-   mat3 inverseView3x3 = mat3(inverseViewMatrix[0].xyz, inverseViewMatrix[1].xyz, inverseViewMatrix[2].xyz);
+   vPos = (osg_ViewMatrixInverse * gl_ModelViewMatrix * gl_Vertex).xyz;
+   mat3 inverseView3x3 = mat3(osg_ViewMatrixInverse[0].xyz, osg_ViewMatrixInverse[1].xyz, osg_ViewMatrixInverse[2].xyz);
 
-   vCamera = inverseViewMatrix[3].xyz;
+   gl_ClipVertex = vec4(vPos.xyz, 1.0);
+
+   vCamera = osg_ViewMatrixInverse[3].xyz;
    vNormal = inverseView3x3 * gl_NormalMatrix * gl_Normal;
 
    vLightDir = normalize(inverseView3x3 * gl_LightSource[0].position.xyz);
 
    vWorldNormal = gl_Normal;
    
-   vec3 vVertex = vec3(gl_ModelViewMatrix * gl_Vertex);
-
    //Compute the final vertex position in clip space.
    gl_Position = ftransform();
 
