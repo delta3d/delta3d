@@ -81,7 +81,7 @@ namespace dtNetGM
          }
          else
          {
-            LOG_WARNING("Frame Sync is enabled, but no config value was found for " + CONFIG_PROP_FRAMESYNC_NUMPERSECOND + ".");
+            LOGN_WARNING("dtNetGM", "Frame Sync is enabled, but no config value was found for " + CONFIG_PROP_FRAMESYNC_NUMPERSECOND + ".");
          }
 
          // MAX WAIT TIME
@@ -94,7 +94,7 @@ namespace dtNetGM
          }
          else
          {
-            LOG_WARNING("Frame Sync is enabled, but no config value was found for " + CONFIG_PROP_FRAMESYNC_MAXWAITTIME + ".");
+            LOGN_WARNING("dtNetGM", "Frame Sync is enabled, but no config value was found for " + CONFIG_PROP_FRAMESYNC_MAXWAITTIME + ".");
          }
 
       }
@@ -145,7 +145,7 @@ namespace dtNetGM
    {
       if (!IsGneInitialized())
       {
-         LOG_ALWAYS("Network must be initialized first");
+         LOGN_ALWAYS("dtNetGM", "Network must be initialized first");
          //  EXCEPT(NetworkComponent::NetworkComponentException::NETWORK_UNAVAILABLE, std::string("Unable to start server."));
 
          return false;
@@ -159,18 +159,18 @@ namespace dtNetGM
 
       if (serverConnListener->open(portNum))
       {
-         LOG_ERROR("Can not open server on port: " + dtUtil::ToString<int>(portNum) );
+         LOGN_ERROR("dtNetGM", "Can not open server on port: " + dtUtil::ToString<int>(portNum) );
          ret = false;
       }
 
       if (serverConnListener->listen())
       {
-         LOG_ERROR("Can not listen on server socket");
+         LOGN_ERROR("dtNetGM", "Can not listen on server socket");
          ret = false;
       }
       else
       {
-         LOG_ALWAYS("Listening for connections on port: " + dtUtil::ToString<int>(portNum));
+         LOGN_ALWAYS("dtNetGM", "Listening for connections on port: " + dtUtil::ToString<int>(portNum));
       }
 
       // Adjust MachineInfo of the GameManager
@@ -186,13 +186,13 @@ namespace dtNetGM
    ////////////////////////////////////////////////////////////////////////////////
    void ServerNetworkComponent::OnListenSuccess()
    {
-      LOG_INFO("On Listen success");
+      LOGN_INFO("dtNetGM","On Listen success");
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    void ServerNetworkComponent::OnListenFailure(const GNE::Error& error, const GNE::Address& from, const GNE::ConnectionListener::sptr& listener)
    {
-      LOG_ERROR("onListenFailure");
+      LOGN_ERROR("dtNetGM", "onListenFailure");
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -243,9 +243,10 @@ namespace dtNetGM
 
          // Generate a NETSERVER_ACCEPT_CONNECTION message
          // send the MachineInfo of our server to  the new client
-         dtCore::RefPtr<dtGame::Message> message = GetGameManager()->GetMessageFactory().CreateMessage(dtGame::MessageType::NETSERVER_ACCEPT_CONNECTION);
-         dtGame::MachineInfoMessage* acceptMsg = static_cast<dtGame::MachineInfoMessage*>(message.get());
+         dtCore::RefPtr<dtGame::MachineInfoMessage> acceptMsg;
+         GetGameManager()->GetMessageFactory().CreateMessage(dtGame::MessageType::NETSERVER_ACCEPT_CONNECTION, acceptMsg);
          acceptMsg->SetDestination(&msg.GetSource());
+         acceptMsg->SetMachineInfo(GetGameManager()->GetMachineInfo());
          SendNetworkMessage(*acceptMsg);
 
          // inform new client of connected clients
@@ -273,7 +274,7 @@ namespace dtNetGM
    {
       if (*msg.GetDestination() != GetGameManager()->GetMachineInfo())
       {
-         LOG_ERROR("Received client notify disconnect message from " + msg.GetSource().GetHostName() + ".");
+         LOGN_ERROR("dtNetGM", "Received client notify disconnect message from " + msg.GetSource().GetHostName() + ".");
       }
       else
       {
