@@ -106,18 +106,13 @@ void main (void)
    //////////////////////////////////////////////////////////////////////////////
 
    waveNormal = normalize(waveNormal);
-   
-   float vertexNormalFadeOut = clamp(distToFragment / 1000.0, 0.0, 1.0);
-   vec3 dampenedVertexNormal = vertexNormal;//mix(vertexNormal, vec3(0.0, 0.0, 1.0), vertexNormalFadeOut);
-   
-   vec3 normal = dampenedVertexNormal + waveNormal;
+   vec3 normal = vertexNormal + waveNormal;
    normal = normalize(normal);   
 
    //this inverts the normal if we are underwater
    normal.z *= -1.0 * (float(gl_FrontFacing) * -1.0);
 
    vec3 fresnelViewAngle = -1.0 * vec3(viewDir.x, viewDir.y, 0.0);
-
    fresnelViewAngle = normalize(fresnelViewAngle);
 
    float waveNDotL = max(0.0, dot(fresnelViewAngle, normal));   
@@ -126,21 +121,20 @@ void main (void)
    float fresnel2 = FastFresnel(waveNDotL2, 0.05, 6.15);
 
    fresnel = 0.5 * (fresnel + fresnel2);
+   
+   vec3 refTexCoords = vec3(gl_FragCoord.x / ScreenWidth, (gl_FragCoord.y / ScreenHeight), gl_FragCoord.z);      
+   refTexCoords.xy = clamp(refTexCoords.xy + 0.4 * normal.xy, 0.0, 1.0);
+   vec3 reflectColor = texture2D(reflectionMap, refTexCoords.xy).rgb;
+
+   vec3 lightContribFinal;
+   vec3 lightVect = normalize(lightVector);
+      
+   lightContribution(normal, lightVector, gl_LightSource[0].diffuse.xyz, gl_LightSource[0].ambient.xyz, lightContribFinal);
 
    if (gl_FrontFacing)
    {     
-      vec3 refTexCoords = vec3(gl_FragCoord.x / ScreenWidth, (gl_FragCoord.y / ScreenHeight), gl_FragCoord.z);      
-      refTexCoords.xy = clamp(refTexCoords.xy + 0.4 * normal.xy, 0.0, 1.0);
-      vec3 reflectColor = texture2D(reflectionMap, refTexCoords.xy).rgb;//vec3(0.65, 0.7, 0.95);      
       reflectColor = (deepWaterColor.xyz + fresnel * (reflectColor - deepWaterColor.xyz));
-      //reflectColor = mix(reflectColor, deepWaterColor.xyz, fresnel);
       
-      vec3 lightVect = normalize(lightVector);
-      
-      vec3 lightContribFinal;
-      lightContribution(normal, lightVector, gl_LightSource[0].diffuse.xyz, 
-         gl_LightSource[0].ambient.xyz, lightContribFinal);
-
       lightContribFinal = sqrt(lightContribFinal);
       
       vec3 waterColorContrib = lightContribFinal * (mix(reflectColor.xyz, 0.2 * deepWaterColor.xyz, waveNDotL));
@@ -152,35 +146,21 @@ void main (void)
       vec3 resultSpecular = vec3(gl_LightSource[0].specular.xyz * specularContrib);     
       
       //adds in the fog contribution, computes alpha
-
-      vec4 resultColor = vec4(waterColorContrib + resultSpecular, fresnel);
+      vec4 resultColor = vec4(waterColorContrib + resultSpecular, 0.35 + fresnel);
       gl_FragColor = mix(gl_Fog.color, resultColor, vFog.x);
-      //gl_FragColor = vec4(fresnel, fresnel, fresnel, 1.0);
    }
    else
    {
-
       float wL = max(0.0, dot(viewDir, normal));   
       float fsnel = FastFresnel(wL, 0.05, 0.5);
-
-
-      vec3 refTexCoords = vec3(gl_FragCoord.x / ScreenWidth, (gl_FragCoord.y / ScreenHeight), gl_FragCoord.z);      
-      refTexCoords.xy = clamp(refTexCoords.xy + 0.4 * normal.xy, 0.0, 1.0);
-      vec3 reflectColor = texture2D(reflectionMap, refTexCoords.xy).rgb;
 
       vec3 waterColorAtDepth = GetWaterColorAtDepth(-1.0);
 
       vec3 resultColor = WaterColor.xyz;//(0.5 * fresnel) + mix(WaterColor.xyz, waterColorAtDepth, fsnel);
 
-      vec3 lightContribFinal;
-      lightContribution(normal, lightVector, gl_LightSource[0].diffuse.xyz, 
-         gl_LightSource[0].ambient.xyz, lightContribFinal);
-
-
       vec3 combinedColor = lightContribFinal * resultColor;      
 
-      //float ff = FastFresnel(waveNDotL, 1.05, 0.6);
-
+      
       combinedColor  = mix(combinedColor,reflectColor, fsnel);
       combinedColor = mix(waterColorAtDepth, combinedColor, vFog.y);
 
