@@ -100,18 +100,16 @@ namespace dtRender
             mRootNode->setReferenceFrame(osg::Transform::RELATIVE_RF);
 
             mEphemerisModel = new osgEphemeris::EphemerisModel();
-            //mEphemerisModel->setMembers(osgEphemeris::EphemerisModel::SKY_DOME);//osgEphemeris::EphemerisModel::GROUND_PLANE | osgEphemeris::EphemerisModel::PLANETS | osgEphemeris::EphemerisModel::STAR_FIELD | osgEphemeris::EphemerisModel::SUN_LIGHT_SOURCE | osgEphemeris::EphemerisModel::MOON_LIGHT_SOURCE | osgEphemeris::EphemerisModel::MOON);
+            //add in moonlight which gives a nice ambient effect at night
+            mEphemerisModel->setMembers(osgEphemeris::EphemerisModel::DEFAULT_MEMBERS | osgEphemeris::EphemerisModel::MOON_LIGHT_SOURCE);//osgEphemeris::EphemerisModel::GROUND_PLANE | osgEphemeris::EphemerisModel::PLANETS | osgEphemeris::EphemerisModel::STAR_FIELD | osgEphemeris::EphemerisModel::SUN_LIGHT_SOURCE | osgEphemeris::EphemerisModel::MOON_LIGHT_SOURCE | osgEphemeris::EphemerisModel::MOON);
             mEphemerisModel->setSkyDomeRadius( 499.0f );
             mEphemerisModel->setSunLightNum(0);
+            mEphemerisModel->setMoonLightNum(1);
             mEphemerisModel->setMoveWithEyePoint(true);
-            
+            mEphemerisModel->setTurbidity(2.2f);
+
             mEphemerisModel->setNodeMask(dtUtil::NodeMask::BACKGROUND);
 
-            osgEphemeris::DateTime dt;
-            dt.now();
-            dt.setHour(10);
-            mEphemerisModel->setAutoDateTime(false);
-            mEphemerisModel->setDateTime(dt);
 
             // Change render order and depth writing.
             osg::StateSet* ss = mEphemerisModel->getOrCreateStateSet();
@@ -157,8 +155,20 @@ namespace dtRender
       //sets up the osg ephemeris
       mImpl->Init();
 
+      //set time, todo make property
+      dtUtil::DateTime dt = GetDateTime();
+      
+      //set to July 4th
+      dt.SetMonth(7);
+      dt.SetDay(4);
+
+      //make day time
+      dt.SetHour(10);
+      
+      SetDateTime(dt);
+
       //set default lat long
-      SetLatitudeLongitude(36.8506f, 75.9779f);
+      //SetLatitudeLongitude(36.8506f, 75.9779f);
 
       //setup default fog state
       mImpl->mFogStateSet = sm.GetOSGNode()->getOrCreateStateSet();
@@ -166,7 +176,7 @@ namespace dtRender
       osg::Vec4 fogColor(0.84f, 0.87f, 1.0f, 1.0f);
       SetFogColor(fogColor);
       SetFogMode(EXP2);
-      SetVisibility(16000.0f);
+      SetVisibility(10000.0f);
 
       mImpl->mFogStateSet->setAttributeAndModes(mImpl->mFog.get());
 
