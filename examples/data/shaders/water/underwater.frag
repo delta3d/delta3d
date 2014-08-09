@@ -26,7 +26,7 @@ void main (void)
    float depthScalar = (depth / viewDistance);
 
    vec3 color = GetWaterColorAtDepth(1.0);
-   color = mix(color, deepWaterColor.xyz, 0.5 * depthScalar);
+   color = gl_LightSource[0].ambient.xyz * mix(color, deepWaterColor.xyz, 0.5 * depthScalar);
 
    if(worldSpacePos.z < waterHeightScreenSpace)
    {

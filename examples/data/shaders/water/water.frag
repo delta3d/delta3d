@@ -156,13 +156,10 @@ void main (void)
 
       vec3 waterColorAtDepth = GetWaterColorAtDepth(-1.0);
 
-      vec3 resultColor = WaterColor.xyz;//(0.5 * fresnel) + mix(WaterColor.xyz, waterColorAtDepth, fsnel);
-
-      vec3 combinedColor = lightContribFinal * resultColor;      
-
+      vec3 combinedColor = WaterColor.xyz;      
       
       combinedColor  = mix(combinedColor,reflectColor, fsnel);
-      combinedColor = mix(waterColorAtDepth, combinedColor, vFog.y);
+      combinedColor = mix(gl_LightSource[0].ambient.xyz * waterColorAtDepth, combinedColor, vFog.y);
 
       gl_FragColor = vec4(combinedColor, 1.0);
 
