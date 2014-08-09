@@ -62,7 +62,6 @@ ENDIF (DTGUI_AVAILABLE)
 
 FOREACH(varname ${DIRS}) 
   file(GLOB TEMP_SOURCES "${varname}/*.cpp" "${varname}/*.h")
-  message(${varname}  ${TEMP_SOURCES})
   SOURCE_GROUP( ${varname} FILES ${TEMP_SOURCES} )
   SET(ALL_SOURCES ${ALL_SOURCES} ${TEMP_SOURCES})
 ENDFOREACH(varname)
