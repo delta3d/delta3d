@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <map xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="delta3dMap" xsi:schemaLocation="delta3dMap map.xsd">
     <header>
         <name>TestApp</name>
@@ -8,7 +7,7 @@
         <comment></comment>
         <copyright></copyright>
         <createTimestamp>2014-07-15T22:49:46-05:00</createTimestamp>
-        <lastUpdateTimestamp>2014-08-07T12:01:02-05:00</lastUpdateTimestamp>
+        <lastUpdateTimestamp>2014-08-11T17:01:25-05:00</lastUpdateTimestamp>
         <editorVersion>2.8.0</editorVersion>
         <schemaVersion>1.0</schemaVersion>
     </header>
@@ -53,6 +52,14 @@
             <id>73193a31-2ba5-49dd-8a36-9e9ce2ea9c3a</id>
             <name>Terrain</name>
             <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>1.000000</value3>
+                </vec3>
+            </property>
+            <property>
                 <name>ShaderGroup</name>
                 <string>Terrains</string>
             </property>
@@ -76,7 +83,7 @@
                 <vec3>
                     <value1>-3.863645</value1>
                     <value2>-3.173681</value2>
-                    <value3>0.000000</value3>
+                    <value3>1.000000</value3>
                 </vec3>
             </property>
             <property>
@@ -102,39 +109,38 @@
             </property>
         </actor>
         <actor>
-            <type>dtanim.AnimationGameActor</type>
-            <id>e39619c2-a9a1-4ad0-a973-a82a1a87d6a9</id>
-            <name>Gina</name>
+            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <id>ee7385db-bf6a-4bdc-8c33-6f6153072077</id>
+            <name>AncientCube</name>
             <property>
                 <name>Name</name>
-                <string>Gina</string>
-            </property>
-            <property>
-                <name>Rotation</name>
-                <vec3>
-                    <value1>0.000000</value1>
-                    <value2>0.000000</value2>
-                    <value3>-129.833145</value3>
-                </vec3>
+                <string>AncientCube</string>
             </property>
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-537.877869</value1>
-                    <value2>-115.951355</value2>
-                    <value3>0.561044</value3>
+                    <value1>-514.044556</value1>
+                    <value2>-307.448059</value2>
+                    <value3>5.081728</value3>
                 </vec3>
             </property>
             <property>
                 <name>ShaderGroup</name>
-                <string>
-             </string>
+                <string>MultiMap</string>
             </property>
             <property>
-                <name>Skeletal Mesh</name>
-                <resourceType>SkeletalMeshes</resourceType>
-                <resourceDisplayName>SkeletalMeshes:Gina:Gina.dtchar</resourceDisplayName>
-                <resource>SkeletalMeshes:Gina:Gina.dtchar</resource>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:multimap:Cube.osg</resourceDisplayName>
+                <resource>StaticMeshes:multimap:Cube.osg</resource>
+            </property>
+            <property>
+                <name>Scale</name>
+                <vec3>
+                    <value1>20.000000</value1>
+                    <value2>20.000000</value2>
+                    <value3>20.000000</value3>
+                </vec3>
             </property>
         </actor>
     </actors>
