@@ -66,7 +66,7 @@ void main(void)
    float dist = length(vPos - vCamera);
    float fogAmt = computeExpFog(dist);
    vec4 fogColor = gl_Fog.color;
-   vec3 result = mix(fogColor.rgb, color, fogAmt);
+   vec3 result = mix(color, fogColor.rgb, fogAmt);
    
    gl_FragColor = vec4(result.rgb, 1.0);//diffuseColor.a);  
 }
