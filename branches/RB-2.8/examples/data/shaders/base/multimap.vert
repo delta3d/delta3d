@@ -1,6 +1,4 @@
 
-attribute vec4 tangentAttrib;
-
 varying vec3 vLightDir;
 varying vec3 vNormal;
 varying vec3 vPos;
@@ -8,7 +6,7 @@ varying vec3 vCamera;
 varying vec2 vReflectTexCoord;
 varying vec3 vViewDir;
 
-uniform mat4 inverseViewMatrix;
+uniform mat4 osg_ViewMatrixInverse;
 
 void sphereMap(vec3, vec3, out vec2);
 float calculateDistance(mat4, vec4);
@@ -20,52 +18,20 @@ void main()
    gl_FogFragCoord = gl_FogCoord;
 
    // Moves the position, normal, and light direction into world space   
-   vPos = (inverseViewMatrix * gl_ModelViewMatrix * gl_Vertex).xyz;
-   mat3 inverseView3x3 = mat3(inverseViewMatrix[0].xyz, inverseViewMatrix[1].xyz, inverseViewMatrix[2].xyz);
+   vPos = (osg_ViewMatrixInverse * gl_ModelViewMatrix * gl_Vertex).xyz;
+   mat3 inverseView3x3 = mat3(osg_ViewMatrixInverse[0].xyz, osg_ViewMatrixInverse[1].xyz, osg_ViewMatrixInverse[2].xyz);
 
-   vCamera = inverseViewMatrix[3].xyz;
+   vCamera = osg_ViewMatrixInverse[3].xyz;
    
-   vNormal = normalize(gl_NormalMatrix * gl_Normal);
-//   vNormal = inverseView3x3 * gl_NormalMatrix * gl_Normal;
+   vNormal = inverseView3x3 * gl_NormalMatrix * gl_Normal;
 
    vec3 lightDir = normalize(gl_LightSource[0].position.xyz);
-//   vLightDir = normalize(inverseView3x3 * gl_LightSource[0].position.xyz);
+   vLightDir = normalize(inverseView3x3 * gl_LightSource[0].position.xyz);
    
+   vec4 ecPosition = gl_ModelViewMatrix * gl_Vertex;
+   vec3 ecPosition3 = vec3(ecPosition) / ecPosition.w;
+   vViewDir = normalize(ecPosition3);
    
-   
-   
-   vec3 tangent   = normalize(gl_NormalMatrix * tangentAttrib.xyz);
-   vec3 bitangent = cross(vNormal, tangent);
-
-   // gram-schmidt tangent orthonormalization
-   float tangentDOTnormal = dot(tangent, vNormal);
-   vec3 tempNormal = vNormal * tangentDOTnormal;
-   tangent -= tempNormal;   
- 
-   float bitangentDOTnormal = dot(bitangent, vNormal);
-   tempNormal = vNormal * bitangentDOTnormal;
-   
-   float bitangentDOTtangent = dot(bitangent, tangent);
-   vec3 tempTan = tangent * bitangentDOTtangent;
-   vec3 tempBi = tempNormal - tempTan;
-   bitangent -= tempBi;
-   
-   vec3 vVertex = vec3(gl_ModelViewMatrix * gl_Vertex);
-   
-   vec3 temp;
-   temp.x = dot(lightDir, tangent);
-   temp.y = dot(lightDir, bitangent);
-   temp.z = dot(lightDir, vNormal);
-   vLightDir = normalize(temp);
-   
-   vec3 eyeDir = -vec3(gl_ModelViewMatrix * gl_Vertex);
-
-   temp.x = dot(eyeDir, tangent);
-   temp.y = dot(eyeDir, bitangent);
-   temp.z = dot(eyeDir, vNormal);
-   vViewDir = normalize(temp);
-   
-
    // Compute the reflection map UV coordinate
    sphereMap(vViewDir, vNormal, vReflectTexCoord);
 
