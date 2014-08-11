@@ -37,7 +37,7 @@ void main(void)
    
    // Transform the tangent space normal into view space
    vec3 WorldMapNormal;
-   WorldMapNormal.xyz = normalize(mul(TBN, tangentSpaceNormal));  
+   WorldMapNormal.xyz = normalize(tangentSpaceNormal * TBN);  
 
    // Normalize all incoming vectors
    vec3 lightDir = normalize(vLightDir);   
@@ -66,7 +66,7 @@ void main(void)
    float dist = length(vPos - vCamera);
    float fogAmt = computeExpFog(dist);
    vec4 fogColor = gl_Fog.color;
-   vec3 result = mix(color, fogColor.rgb, fogAmt);
+   vec3 result = mix(fogColor.rgb, color, fogAmt);
    
    gl_FragColor = vec4(result.rgb, 1.0);//diffuseColor.a);  
 }

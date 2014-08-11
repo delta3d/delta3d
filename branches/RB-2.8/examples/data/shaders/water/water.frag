@@ -116,14 +116,14 @@ void main (void)
    fresnelViewAngle = normalize(fresnelViewAngle);
 
    float waveNDotL = max(0.0, dot(fresnelViewAngle, normal));   
-   float waveNDotL2 = max(0.0, dot(-viewDir, normal));   
+   float waveNDotL2 = max(0.0, dot(-1.0 * viewDir, normal));   
    float fresnel = FastFresnel(waveNDotL, 0.5, 20.15);
    float fresnel2 = FastFresnel(waveNDotL2, 0.05, 6.15);
 
    fresnel = 0.5 * (fresnel + fresnel2);
    
    vec3 refTexCoords = vec3(gl_FragCoord.x / ScreenWidth, (gl_FragCoord.y / ScreenHeight), gl_FragCoord.z);      
-   refTexCoords.xy = clamp(refTexCoords.xy + 0.4 * normal.xy, 0.0, 1.0);
+   refTexCoords.xy = clamp(refTexCoords.xy + 0.15 * normal.xy, 0.0, 1.0);
    vec3 reflectColor = texture2D(reflectionMap, refTexCoords.xy).rgb;
 
    vec3 lightContribFinal;
@@ -154,7 +154,7 @@ void main (void)
       float wL = max(0.0, dot(viewDir, normal));   
       float fsnel = FastFresnel(wL, 0.05, 0.5);
 
-      vec3 waterColorAtDepth = GetWaterColorAtDepth(-1.0);
+      vec3 waterColorAtDepth = WaterColor.rgb;
 
       vec3 combinedColor = WaterColor.xyz;      
       

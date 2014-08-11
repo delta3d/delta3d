@@ -72,8 +72,8 @@ mat3 compute_tangent_frame_O3(vec3 N, vec3 p, vec2 uv)
     // solve the linear system
     // (not much solving is left going here)
     mat3 M = mat3(dp1, dp2,cross(dp1, dp2));
-    vec3 T = mul(vec3(duv1.x, duv2.x,0), M);
-    vec3 B = mul(vec3(duv1.y, duv2.y,0), M);
+    vec3 T = M * vec3(duv1.x, duv2.x,0);
+    vec3 B = M * vec3(duv1.y, duv2.y,0);
 
     // construct tangent frame 
     return mat3(normalize(T), normalize(B), normalize(N));

@@ -100,7 +100,7 @@ void main(void)
   
    float dist = length(vPos - vCamera);
    
-   vec4 fogColor = gl_Fog.color;
+   vec3 fogColor = gl_Fog.color.rgb;
 
    //This adds the under water effects 
    float fogAmt = 0.0;
@@ -116,10 +116,10 @@ void main(void)
       //fade under water fog in over depth
       float depth = clamp(WaterHeight - height, 0.0, 3.0 * UnderWaterViewDistance);
   
-      fogColor = vec4(gl_LightSource[0].ambient.xyz * GetWaterColorAtDepth(-1.0), 1.0);
+      fogColor = gl_LightSource[0].ambient.rgb * WaterColor.rgb;
       
       //considering the underwater color essentially removing light
-      result = mix(result, 1.2 * result * GetWaterColorAtDepth(-1.0), depth / (3.0 * UnderWaterViewDistance));
+      result = mix(result, 1.2 * vec3(result.rgb * WaterColor.rgb), depth / (3.0 * UnderWaterViewDistance));
    }
    else
    {
@@ -128,5 +128,5 @@ void main(void)
 
    result = mix(fogColor, result, fogAmt);
 
-   gl_FragColor = vec4(result, 1.0);
+   gl_FragColor = vec4(result.rgb, 1.0);
 }
