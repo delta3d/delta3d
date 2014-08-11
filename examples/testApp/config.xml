@@ -26,7 +26,6 @@
    <Property Name="System.UseFixedTimeStep">true</Property>
       
    <Property Name="dtPhysics.PhysicsEngine">Bullet</Property>
-   <!--Property Name="dtPhysics.PalPluginPath">D:\Dev\Delta3D\TestDoron\delta3d\ext\PalPlugins</Property-->
    <!--Property Name="dtPhysics.PalPluginPath">./bin/PalPlugins</Property-->
    <Property Name="dtPhysics.EnableStepPhysicsInBackground">true</Property>
    <!-- This is the number of steps the physics engine will use for solving
