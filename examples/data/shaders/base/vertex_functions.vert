@@ -28,7 +28,6 @@ float computeExpFog(float fogDistance)
 
 float computeLinearFog(float startFog, float endFog, float fogDistance)
 {
-   gl_FogFragCoord = fogDistance;
    float fogTemp = pow(2.0, (fogDistance - startFog) / (endFog - startFog)) - 1.0;
    return 1.0 - clamp(fogTemp, 0.0, 1.0);
 }

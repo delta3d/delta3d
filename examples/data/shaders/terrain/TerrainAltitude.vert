@@ -15,13 +15,10 @@ void main()
 {   
    //Pass the texture coordinate on through.
    gl_TexCoord[0] = gl_MultiTexCoord0;
-   gl_FogFragCoord = gl_FogCoord;
 
    //moves the position, normal, and light direction into world space   
    vPos = (osg_ViewMatrixInverse * gl_ModelViewMatrix * gl_Vertex).xyz;
    mat3 inverseView3x3 = mat3(osg_ViewMatrixInverse[0].xyz, osg_ViewMatrixInverse[1].xyz, osg_ViewMatrixInverse[2].xyz);
-
-   gl_ClipVertex = vec4(vPos.xyz, 1.0);
 
    vCamera = osg_ViewMatrixInverse[3].xyz;
    vNormal = inverseView3x3 * gl_NormalMatrix * gl_Normal;
