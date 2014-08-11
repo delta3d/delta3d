@@ -12,8 +12,8 @@ uniform sampler2D waveTexture;
 void main (void)
 {   
    //test texture waves   
-   vec2 waveCoords = gl_FragCoord.xy / 1024;
-   vec3 waveNormal = texture2D(waveTexture, waveCoords);
-   gl_FragColor = vec4(vec3(waveNormal), 1.0);
+   vec2 waveCoords = vec2(gl_FragCoord.x / 1024.0, gl_FragCoord.y / 1024.0);
+   vec3 waveNormal = texture2D(waveTexture, waveCoords.xy);
+   gl_FragColor = vec4(waveNormal.rgb, 1.0);
    
 }
