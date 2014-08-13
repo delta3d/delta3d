@@ -27,6 +27,7 @@ uniform sampler3D noiseTexture;
 varying vec4 pos;
 varying vec3 lightVector;
 varying float distanceScale;
+varying float distanceGroup;
 varying float distBetweenVertsScalar;
 varying vec2 vFog;
 varying vec2 vertexWaveDir;
@@ -74,25 +75,13 @@ float edgeFade(float blendStart, vec2 texCoord)
 void lightContribution(vec3, vec3, vec3, vec3, out vec3);
 vec3 GetWaterColorAtDepth(float);
 
-
-void main (void)
-{   
-   vec3 camPos = inverseViewMatrix[3].xyz;
-   vec3 combinedPos = pos.xyz + vec3(camPos.x, camPos.y, 0.0);
-   vec3 viewDir = normalize(combinedPos - camPos);
-
-   vec3 vertexNormal = normalize(shaderVertexNormal);
-
-   /////////////////////////////////////////////////////////////////////////////
-   ////This samples the wave texture in a way that will remove tiling artifacts
+/////////////////////////////////////////////////////////////////////////////
+////This triple samples the wave texture in a way that will remove tiling artifacts   
+vec3 ComputeNormals(vec2 waveCoords)
+{
    float fadeTransition = 0.05;
-   float distToFragment = length(pos.xy);
-   float textureScale = 20.0 + clamp((50.0 * floor(distToFragment / 50.0)), 0.0, 1000.0);
    vec3 waveNormal = vec3(0.0, 0.0, 0.0); 
-   vec2 waveCoords = 0.025 * vertexNormal.xy + vec2(combinedPos.xy / textureScale);   
-   waveCoords /= (0.5 + (modForFOV * 0.5) );
-   //waveCoords = rotateTexCoords(waveCoords, waveDirection);
-
+   
    float fadeAmt = edgeFade(fadeTransition, waveCoords);
    waveNormal += fadeAmt * SampleNormalMap(waveTexture, waveCoords);
 
@@ -103,12 +92,37 @@ void main (void)
    vec2 waveCoords3 = vec2(0.25, 0.25) + waveCoords;
    float fadeAmt3 = 1.0 - clamp(fadeAmt + fadeAmt2, 0.0, 1.0);
    waveNormal += fadeAmt3 * SampleNormalMap(waveTexture, waveCoords3);
-   //////////////////////////////////////////////////////////////////////////////
+   return normalize(waveNormal);
+}
 
-   waveNormal = normalize(waveNormal);
-   vec3 normal = vertexNormal + waveNormal;
-   normal = normalize(normal);   
+void main (void)
+{   
+   vec3 camPos = inverseViewMatrix[3].xyz;
+   vec3 combinedPos = pos.xyz + vec3(camPos.x, camPos.y, 0.0);
+   vec3 viewDir = normalize(combinedPos - camPos);
+   float distToFragment = length(pos.xy);
 
+   vec3 vertexNormal = normalize(shaderVertexNormal);
+
+   vec3 normal = vec3(0.0, 0.0, 0.0);
+   float distDivisor =  50.0 * (10.0 + ( distToFragment / 50.0));
+   float distanceStep =  3.5 * 1.0 + floor( (10.0 * distToFragment) / distDivisor);
+   distanceStep = 3.5 * pow(distanceStep, 3.0185);  
+   float textureScale = clamp(distanceStep, 0.0, 25000.0);
+   
+   vec2 waveCoords = vec2(combinedPos.xy / textureScale);   
+   //waveCoords = rotateTexCoords(waveCoords, -33.0);
+   
+   vec3 waveNormal = ComputeNormals(waveCoords);
+
+   vec2 waveCoords2 = 3.75 * vec2(combinedPos.xy / textureScale);   
+   //waveCoords2 = rotateTexCoords(waveCoords2, 29.0);
+   waveNormal = (0.5 * waveNormal) + (0.5 * ComputeNormals(waveCoords2));
+   //normal = vertexNormal * waveNormal;
+   
+   normal = (0.5 * vertexNormal) + (0.5 * vertexNormal.z * waveNormal);
+   normal = normalize(normal);
+   
    //this inverts the normal if we are underwater
    normal.z *= -1.0 * (float(gl_FrontFacing) * -1.0);
 
@@ -123,7 +137,7 @@ void main (void)
    fresnel = 0.5 * (fresnel + fresnel2);
    
    vec3 refTexCoords = vec3(gl_FragCoord.x / ScreenWidth, (gl_FragCoord.y / ScreenHeight), gl_FragCoord.z);      
-   refTexCoords.xy = clamp(refTexCoords.xy + 0.15 * normal.xy, 0.0, 1.0);
+   refTexCoords.xy = clamp(refTexCoords.xy + 0.05 * normal.xy, 0.0, 1.0);
    vec3 reflectColor = texture2D(reflectionMap, refTexCoords.xy).rgb;
 
    vec3 lightContribFinal;
@@ -146,7 +160,7 @@ void main (void)
       vec3 resultSpecular = vec3(gl_LightSource[0].specular.xyz * specularContrib);     
       
       //adds in the fog contribution, computes alpha
-      vec4 resultColor = vec4(waterColorContrib + resultSpecular, 0.35 + fresnel);
+      vec4 resultColor = vec4(waterColorContrib + resultSpecular, 1.0);//0.5 + fresnel);
       gl_FragColor = mix(gl_Fog.color, resultColor, vFog.x);
    }
    else

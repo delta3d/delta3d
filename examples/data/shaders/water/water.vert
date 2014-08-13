@@ -19,6 +19,7 @@ const float UnderWaterViewDistance = 5.0;
 varying vec4 pos;
 varying vec3 lightVector;
 varying float distanceScale;
+varying float distanceGroup;
 varying vec2 vFog;
 varying vec2 vertexWaveDir;
 varying vec3 shaderVertexNormal;
@@ -40,14 +41,14 @@ void main(void)
 {   
    float distBetweenVertsScalar;
    vec4 camPos = inverseViewMatrix[3];
- 
+   distanceGroup = gl_Vertex.w;
 
    // This scalar stretches the verts out, so we don't waste 50,000 verts directly under us.
    // As we move up, it pushes the verts out.
    float cameraHeight = max(0.1, abs(camPos.z - WaterHeight));
-   float scalar = min(15.0, log(cameraHeight/20.0 + 1.0)) + min(10.0, max(0.0, (cameraHeight-10.0))/50.0);
-   scalar = max(0.1, scalar);
-
+   float scalar = min(10.0, log(cameraHeight/20.0 + 1.0)) + min(10.0, max(0.0, (cameraHeight-10.0))/50.0);
+   scalar = 1.15 * max(1.1, scalar);
+   
    camPos.z = 0.0;
    camPos.w = 0.0;
    
