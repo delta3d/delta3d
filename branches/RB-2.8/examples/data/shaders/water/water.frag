@@ -105,22 +105,20 @@ void main (void)
    vec3 vertexNormal = normalize(shaderVertexNormal);
 
    vec3 normal = vec3(0.0, 0.0, 0.0);
-   float distDivisor =  50.0 * (10.0 + ( distToFragment / 50.0));
+   float distDivisor =  75.0 * (10.0 + ( distToFragment / 50.0));
    float distanceStep =  3.5 * 1.0 + floor( (10.0 * distToFragment) / distDivisor);
-   distanceStep = 3.5 * pow(distanceStep, 3.0185);  
+   distanceStep = 1.5 * pow(distanceStep, 3.0185);  
    float textureScale = clamp(distanceStep, 0.0, 25000.0);
    
    vec2 waveCoords = vec2(combinedPos.xy / textureScale);   
-   //waveCoords = rotateTexCoords(waveCoords, -33.0);
    
    vec3 waveNormal = ComputeNormals(waveCoords);
 
-   vec2 waveCoords2 = 3.75 * vec2(combinedPos.xy / textureScale);   
-   //waveCoords2 = rotateTexCoords(waveCoords2, 29.0);
+   vec2 waveCoords2 = 0.75 * vec2(combinedPos.xy / textureScale);   
    waveNormal = (0.5 * waveNormal) + (0.5 * ComputeNormals(waveCoords2));
    //normal = vertexNormal * waveNormal;
    
-   normal = (0.5 * vertexNormal) + (0.5 * vertexNormal.z * waveNormal);
+   normal = (0.5 * vertexNormal) + (0.5 * dot(vertexNormal, waveNormal) * waveNormal);
    normal = normalize(normal);
    
    //this inverts the normal if we are underwater
@@ -129,12 +127,8 @@ void main (void)
    vec3 fresnelViewAngle = -1.0 * vec3(viewDir.x, viewDir.y, 0.0);
    fresnelViewAngle = normalize(fresnelViewAngle);
 
-   float waveNDotL = max(0.0, dot(fresnelViewAngle, normal));   
-   float waveNDotL2 = max(0.0, dot(-1.0 * viewDir, normal));   
-   float fresnel = FastFresnel(waveNDotL, 0.5, 20.15);
-   float fresnel2 = FastFresnel(waveNDotL2, 0.05, 6.15);
-
-   fresnel = 0.5 * (fresnel + fresnel2);
+   float waveNDotL = max(0.0, dot(-1.0 * viewDir, normal));   
+   float fresnel = FastFresnel(waveNDotL, 0.05, 6.15);
    
    vec3 refTexCoords = vec3(gl_FragCoord.x / ScreenWidth, (gl_FragCoord.y / ScreenHeight), gl_FragCoord.z);      
    refTexCoords.xy = clamp(refTexCoords.xy + 0.05 * normal.xy, 0.0, 1.0);
@@ -147,21 +141,23 @@ void main (void)
 
    if (gl_FrontFacing)
    {     
-      reflectColor = (deepWaterColor.xyz + fresnel * (reflectColor - deepWaterColor.xyz));
+      reflectColor = (mix(0.2 * WaterColor.xyz, reflectColor.xyz, fresnel));
       
       lightContribFinal = sqrt(lightContribFinal);
       
-      vec3 waterColorContrib = lightContribFinal * (mix(reflectColor.xyz, 0.2 * deepWaterColor.xyz, waveNDotL));
+      vec3 waterColorContrib = lightContribFinal * reflectColor.xyz;
       
       //calculates a specular contribution
       vec3 normRefLightVec = reflect(lightVect, normal);
       float specularContrib = max(0.0, dot(normRefLightVec, viewDir));
       specularContrib = (0.1 * pow(specularContrib, 8.0)) + (0.8 * pow(specularContrib, 200.0));
-      vec3 resultSpecular = vec3(gl_LightSource[0].specular.xyz * specularContrib);     
+      vec3 resultSpecular = specularContrib * gl_LightSource[0].specular.rgb;     
       
       //adds in the fog contribution, computes alpha
-      vec4 resultColor = vec4(waterColorContrib + resultSpecular, 1.0);//0.5 + fresnel);
+      float opacity_fresnel = FastFresnel(waveNDotL, 0.65, 2.15);  
+      vec4 resultColor = vec4(waterColorContrib + resultSpecular, 0.2 + opacity_fresnel);
       gl_FragColor = mix(gl_Fog.color, resultColor, vFog.x);
+      //gl_FragColor = vec4(fresnel, fresnel, fresnel, 1.0);
    }
    else
    {
