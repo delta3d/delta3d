@@ -892,8 +892,8 @@ namespace dtActors
    {
       if(!mWaveTexture.valid())
       {
-         int width = 512;
-         int height = 512;
+         int width = 1024;
+         int height = 1024;
 
          mWaveCamera = new osg::Camera();
          mWaveCamera->setRenderOrder(osg::Camera::PRE_RENDER, 1);

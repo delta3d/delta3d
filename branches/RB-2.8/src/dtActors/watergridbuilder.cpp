@@ -77,15 +77,15 @@ namespace dtActors
       dtCore::RefPtr<osg::DrawElementsUInt> pIndices = new osg::DrawElementsUInt(osg::PrimitiveSet::TRIANGLES);
       pIndices->reserve(numIndices);
 
-      float a0 = 0.01f;
-      float a1 = 2.0f; // 5.0f;
-      float outerMostRingDistance = 150.0; // the furthest rings get an extra reach.
-      float middleRingDistance = 4.0; // Middle rings get a minor boost too.
-      int numOuterRings = 16;
-      int numMiddleRings = 16;
-      float innerExpBase = 1.03f;
-      float middleExpBase = 1.2f;
-      float outerExpBase = 1.19f;
+      float a0 = 0.5f;
+      float a1 = 1.205f; // 5.0f;
+      float outerMostRingDistance = 1250.0; // the furthest rings get an extra reach.
+      float middleRingDistance = 12.5; // Middle rings get a minor boost too.
+      int numOuterRings = 10;
+      int numMiddleRings = 50;
+      float innerExpBase = 1.0015f;
+      float middleExpBase = 1.05f;
+      float outerExpBase = 1.5f;
       //float exponent = 3;
 
       float r = a0;
@@ -94,20 +94,14 @@ namespace dtActors
          float radiusIncrement = a0;
          // Radius extends with each row/ring.
          if (i != 0)
-         {
             radiusIncrement += a1 * powf(innerExpBase, i); //= a0 + a1 * powf(base, i);
-         }
 
          // Final rows/rings get an extra boost - solves some shrinkage & horizon problems.
          if ((i + numOuterRings) > N)
-         {
             radiusIncrement += outerMostRingDistance * powf(outerExpBase, (i + numOuterRings - N));
-         }
          // Middle rows/rings get a little boost - solves some shrinkage & horizon problems
          else if ((i + numOuterRings + numMiddleRings) > N)
-         {
             radiusIncrement += middleRingDistance * powf(middleExpBase, (i + numOuterRings + numMiddleRings - N));
-         }
 
          r += radiusIncrement;
 
@@ -127,14 +121,12 @@ namespace dtActors
             }
             float y = r;
             float z = radiusIncrement; // We put the radius increment into the Z so we can use it in the shader
-            
-            float groupNum = 56.0f * (float(i) / float(N));
+            float groupNum = float(i);
             (*pVerts)[(i * K) + j ].set(x, y, z, groupNum);
          }
       }
-      outComputedRadialDistance = r;
 
-      //std::cout << "WaterGridActor - Max Radial Distance = " << mComputedRadialDistance << std::endl;
+      LOG_ALWAYS("WATER GRID REACH IN METERS = " + dtUtil::ToString(r));
 
       for(int i = 0; i < N - 1; ++i)
       {
@@ -149,13 +141,13 @@ namespace dtActors
             pIndices->addElement( ((i + 1) * K) + (JPlusOne) );
             pIndices->addElement( (i * K) + (JPlusOne) );
             pIndices->addElement( (i * K) + j );
-            
          }
       }
 
-      geometry->setVertexArray(pVerts.get());      
+
+      geometry->setVertexArray(pVerts.get());
       geometry->addPrimitiveSet(pIndices.get());
-      
+
       return geometry;
    }
 
@@ -170,51 +162,63 @@ namespace dtActors
 
       if(seaState == &WaterGridActor::SeaState::SeaState_0)
       {
-         //AddRandomWaves(waveList, waveLenMod * 3.167f, ampMod * 00.16f, 1.0f, 2.5f, numWaves);
-         AddDefaultWaves(waveList);
+         AddRandomWaves(waveList, waveLenMod * 3.167f, ampMod * 00.16f, 1.0f, 2.5f, numWaves);
       }
       else if(seaState == &WaterGridActor::SeaState::SeaState_1)
       {
-         AddRandomWaves(waveList, waveLenMod * 8.667f, ampMod * 00.667f, 1.5f, 5.0f, numWaves);
+         //AddRandomWaves(waveList, waveLenMod * 8.667f, ampMod * 00.9667f, 1.5f, 5.0f, numWaves);
+         AddRandomWaves(waveList, waveLenMod * 4.1667f, ampMod * 1.1967f, 1.0f, 2.5f, 4);
+         AddRandomWaves(waveList, waveLenMod * 5.3667f, ampMod * 1.3667f, 1.15f, 3.0f, 4);
+         AddRandomWaves(waveList, waveLenMod * 6.5667f, ampMod * 1.531667f, 2.1f, 4.5f, 4);
+         AddRandomWaves(waveList, waveLenMod * 8.766f, ampMod * 1.75167f, 1.0f, 5.5f, 4);
       }
       else if(seaState == &WaterGridActor::SeaState::SeaState_2)
       {         
-         AddRandomWaves(waveList, waveLenMod * 12.667f, ampMod * 0.9667f, 1.75f, 6.0f, numWaves);
+         //AddRandomWaves(waveList, waveLenMod * 12.667f, ampMod * 1.29667f, 1.75f, 6.0f, numWaves);
+         AddRandomWaves(waveList, waveLenMod * 7.1667f, ampMod * 1.2167f, 1.0f, 2.5f, 4);
+         AddRandomWaves(waveList, waveLenMod * 9.3667f, ampMod * 1.4667f, 1.15f, 3.0f, 4);
+         AddRandomWaves(waveList, waveLenMod * 12.5667f, ampMod * 1.7531667f, 2.1f, 4.5f, 4);
+         AddRandomWaves(waveList, waveLenMod * 15.766f, ampMod * 1.95167f, 1.0f, 5.5f, 4);
       }
       else if(seaState == &WaterGridActor::SeaState::SeaState_3)
       {
-         AddRandomWaves(waveList, waveLenMod * 16.667f, ampMod * 1.1667f, 2.0f, 6.5f, numWaves);
+         //AddRandomWaves(waveList, waveLenMod * 16.667f, ampMod * 1.5667f, 2.0f, 6.5f, numWaves);
+
+         AddRandomWaves(waveList, waveLenMod * 9.1667f, ampMod * 1.3167f, 1.0f, 2.5f, 4);
+         AddRandomWaves(waveList, waveLenMod * 11.3667f, ampMod * 1.6167f, 1.15f, 3.0f, 4);
+         AddRandomWaves(waveList, waveLenMod * 14.5667f, ampMod * 1.9531667f, 2.1f, 4.5f, 4);
+         AddRandomWaves(waveList, waveLenMod * 18.766f, ampMod * 2.195167f, 1.0f, 5.5f, 4);
       }
       else if(seaState == &WaterGridActor::SeaState::SeaState_4)
       {
-         AddRandomWaves(waveList, waveLenMod * 3.167f, ampMod * 00.16f, 1.0f, 2.5f, 4);
-         AddRandomWaves(waveList, waveLenMod * 12.667f, ampMod * 0.9667f, 1.75f, 6.0f, 4);
-         AddRandomWaves(waveList, waveLenMod * 16.667f, ampMod * 1.1667f, 2.0f, 6.5f, 4);
-         AddRandomWaves(waveList, waveLenMod * 20.66f, ampMod * 1.5f, 4.5f, 8.5f, 4);
+         AddRandomWaves(waveList, waveLenMod * 3.167f, ampMod * 1.467f, 1.0f, 2.5f, 4);
+         AddRandomWaves(waveList, waveLenMod * 12.667f, ampMod * 1.81667f, 1.15f, 3.0f, 4);
+         AddRandomWaves(waveList, waveLenMod * 16.667f, ampMod * 2.131667f, 2.1f, 4.5f, 4);
+         AddRandomWaves(waveList, waveLenMod * 20.66f, ampMod * 2.25167f, 1.0f, 5.5f, 4);
 
       }
       else if(seaState == &WaterGridActor::SeaState::SeaState_5)
       {
-         AddRandomWaves(waveList, waveLenMod * 12.667f, ampMod * 0.9667f, 1.75f, 6.0f, 4);
-         AddRandomWaves(waveList, waveLenMod * 16.667f, ampMod * 1.1667f, 2.0f, 6.5f, 4);
-         AddRandomWaves(waveList, waveLenMod * 20.66f, ampMod * 1.5f, 4.5f, 8.5f, 4);
-         AddRandomWaves(waveList, waveLenMod * 26.66f, ampMod * 2.0f, 4.5f, 8.5f, 4);
+         AddRandomWaves(waveList, waveLenMod * 12.667f, ampMod * 0.9667f, 1.75f, 4.0f, 4);
+         AddRandomWaves(waveList, waveLenMod * 16.667f, ampMod * 1.1667f, 1.0f, 4.5f, 4);
+         AddRandomWaves(waveList, waveLenMod * 20.66f, ampMod * 1.5f, 1.5f, 5.5f, 4);
+         AddRandomWaves(waveList, waveLenMod * 26.66f, ampMod * 2.0f, 1.5f, 5.5f, 4);
       }
       else if(seaState == &WaterGridActor::SeaState::SeaState_6)
       {
          AddRandomWaves(waveList, waveLenMod * 11.667f, ampMod * 1.1471f, 2.0f, 6.5f, 4);
-         AddRandomWaves(waveList, waveLenMod * 26.66f, ampMod * 2.14f, 4.5f, 8.5f, 4);
-         AddRandomWaves(waveList, waveLenMod * 43.33, ampMod * 3.341f, 5.0f, 9.0f, 2);
-         AddRandomWaves(waveList, waveLenMod * 65.33, ampMod * 5.4667, 6.0f, 8.0f, 2);
-         AddRandomWaves(waveList, waveLenMod * 95.667, ampMod * 6.133f, 7.5f, 12.0f, 4);
+         AddRandomWaves(waveList, waveLenMod * 26.66f, ampMod * 1.514f, 2.5f, 5.5f, 4);
+         AddRandomWaves(waveList, waveLenMod * 43.33, ampMod * 2.0341f, 2.0f, 6.0f, 2);
+         AddRandomWaves(waveList, waveLenMod * 65.33, ampMod * 3.4667, 3.0f, 8.0f, 2);
+         AddRandomWaves(waveList, waveLenMod * 95.667, ampMod * 4.133f, 3.5f, 9.0f, 4);
       }
       else if(seaState == &WaterGridActor::SeaState::SeaState_7)
       {
-         AddRandomWaves(waveList, waveLenMod * 9.667f, ampMod * 1.167f, 3.0f, 4.5f, 4);
-         AddRandomWaves(waveList, waveLenMod * 26.66f, ampMod * 3.14f, 4.5f, 8.5f, 4);
-         AddRandomWaves(waveList, waveLenMod * 63.33, ampMod * 4.341f, 7.0f, 13.0f, 2);
-         AddRandomWaves(waveList, waveLenMod * 85.33, ampMod * 6.667, 6.0f, 10.0f, 2);
-         AddRandomWaves(waveList, waveLenMod * 109.667, ampMod * 8.33f, 10.5f, 20.0f, 4);
+         AddRandomWaves(waveList, waveLenMod * 9.667f, ampMod * 1.167f, 2.0f, 4.5f, 4);
+         AddRandomWaves(waveList, waveLenMod * 26.66f, ampMod * 2.14f, 2.5f, 5.5f, 4);
+         AddRandomWaves(waveList, waveLenMod * 63.33, ampMod * 3.341f, 2.0f, 6.0f, 2);
+         AddRandomWaves(waveList, waveLenMod * 85.33, ampMod * 4.667, 2.0f, 10.0f, 2);
+         AddRandomWaves(waveList, waveLenMod * 109.667, ampMod * 5.33f, 2.5f, 12.0f, 4);
       }
       else if(seaState == &WaterGridActor::SeaState::SeaState_8)
       {
@@ -337,249 +341,5 @@ namespace dtActors
       wave.mDirection.normalize();
    }
 
-   void WaterGridBuilder::AddDefaultWaves(std::vector<WaterGridActor::Wave>& waveList)
-   {
-      WaterGridActor::Wave w;
-
-      //w.mWaveLength = 4.8f;
-      //w.mAmplitude = 0.08f;
-      //w.mSpeed = 0.5f;
-      //w.mSteepness = 0.5;
-      //w.mDirectionInDegrees = -5.7f;
-      //SetWaveDirection(w);
-      //waveList.push_back(w); // -3
-
-      w.mWaveLength = 5.33f;
-      w.mAmplitude = 0.09f;
-      w.mSpeed = 0.3f;
-      w.mSteepness = 0.1f;
-      w.mDirectionInDegrees = 181.0f;
-      SetWaveDirection(w);
-      waveList.push_back(w); // 1
-
-      //w.mWaveLength = 6.37f;
-      //w.mAmplitude = 0.11f;
-      //w.mSpeed = 0.7f;
-      //w.mSteepness = 0.7f;
-      //w.mDirectionInDegrees = 15.3f;
-      //SetWaveDirection(w);
-      //waveList.push_back(w);  // -1
-
-      w.mWaveLength = 6.89f;
-      w.mAmplitude = 0.08f;
-      w.mSpeed = 0.65f;
-      w.mSteepness = 0.8f;
-      w.mDirectionInDegrees = 4.2f;
-      SetWaveDirection(w);
-      waveList.push_back(w); // 2
-
-      w.mWaveLength = 16.51f;
-      w.mAmplitude = 0.11f;
-      w.mSpeed = 0.8f;
-      w.mSteepness = 0.1f;
-      w.mDirectionInDegrees = -15.0f;
-      SetWaveDirection(w);
-      waveList.push_back(w); // 3
-
-      w.mWaveLength = 19.89f;
-      w.mAmplitude = 0.12f;
-      w.mSpeed = 1.2f;
-      w.mSteepness = 0.1f;
-      w.mDirectionInDegrees = 184.0f;
-      SetWaveDirection(w);
-      waveList.push_back(w); // 4
-
-      w.mWaveLength = 35.51f;
-      w.mAmplitude = 0.22f;
-      w.mSpeed = 1.3f;
-      w.mSteepness = 0.3f;
-      w.mDirectionInDegrees = 10.7f;
-      SetWaveDirection(w);
-      waveList.push_back(w);  // 5
-
-      w.mWaveLength = 42.18f;
-      w.mAmplitude = 0.35f;
-      w.mSpeed = 1.1f;
-      w.mSteepness = 0.3f;
-      w.mDirectionInDegrees = 0.0f;
-      SetWaveDirection(w);
-      waveList.push_back(w); // 6
-
-      //w.mWaveLength = 54.055f;
-      //w.mAmplitude = 0.28f;
-      //w.mSpeed = 1.2f;
-      //w.mSteepness = 0.2f;
-      //w.mDirectionInDegrees = -10.4f;
-      //SetWaveDirection(w);
-      //waveList.push_back(w); // 5
-
-      //w.mWaveLength = 92.15f;
-      //w.mAmplitude = 0.25f;
-      //w.mSpeed = 1.5f;
-      //w.mSteepness = 0.1f;
-      //w.mDirectionInDegrees = 178.1f;
-      //SetWaveDirection(w);
-      //waveList.push_back(w);  // 6
-
-      w.mWaveLength = 106.98f;
-      w.mAmplitude = 0.34f;
-      w.mSpeed = 1.8f;
-      w.mSteepness = 0.3f;
-      w.mDirectionInDegrees = 5.0f;
-      SetWaveDirection(w);
-      waveList.push_back(w); // 7
-
-      w.mWaveLength = 148.7f;
-      w.mAmplitude = 0.25f;
-      w.mSpeed = 2.3f;
-      w.mSteepness = 0.1f;
-      w.mDirectionInDegrees = 5.0f;
-      SetWaveDirection(w);
-      waveList.push_back(w); // 8
-
-      w.mWaveLength = 181.35f;
-      w.mAmplitude = 0.88f;
-      w.mSpeed = 2.8f;
-      w.mSteepness = 0.6f;
-      w.mDirectionInDegrees = -1.8f;
-      SetWaveDirection(w);
-      waveList.push_back(w); // 9
-
-      //w.mWaveLength = 188.9f;
-      //w.mAmplitude = 0.92f;
-      //w.mSpeed = 3.5f;
-      //w.mSteepness = 0.1f;
-      //w.mDirectionInDegrees = 1.3f;
-      //SetWaveDirection(w);
-      //waveList.push_back(w);  // 10
-
-      //w.mWaveLength = 200.25f;
-      //w.mAmplitude = 0.62f;
-      //w.mSpeed = 3.5f;
-      //w.mSteepness = 0.1f;
-      //w.mDirectionInDegrees = 8.1f;
-      //SetWaveDirection(w);
-      //waveList.push_back(w);  // 11
-
-      //w.mWaveLength = 213.275f;
-      //w.mAmplitude = 0.3f;
-      //w.mSpeed = 3.8f;
-      //w.mSteepness = 0.5f;
-      //w.mDirectionInDegrees = 5.3f;
-      //SetWaveDirection(w);
-      //waveList.push_back(w); // 12
-
-      w.mWaveLength = 507.4f;
-      w.mAmplitude = 0.12f;
-      w.mSpeed = 2.5f;
-      w.mSteepness = 0.0f;
-      w.mDirectionInDegrees = 174.0f;
-      SetWaveDirection(w);
-      waveList.push_back(w); // 10
-
-      w.mWaveLength = 526.5f;
-      w.mAmplitude = 1.8f;
-      w.mSpeed = 6.9f;
-      w.mSteepness = 0.5f;
-      w.mDirectionInDegrees = -3.0f;
-      SetWaveDirection(w);
-      waveList.push_back(w); // 11
-
-      //w.mWaveLength = 540.4f;
-      //w.mAmplitude = 1.91f;
-      //w.mSpeed = 6.8f;
-      //w.mSteepness = 0.1f;
-      //w.mDirectionInDegrees = 2.5f;
-      //SetWaveDirection(w);
-      //waveList.push_back(w); // 15
-
-      //w.mWaveLength = 557.2f;
-      //w.mAmplitude = 0.63f;
-      //w.mSpeed = 1.8f;
-      //w.mSteepness = 0.0f;
-      //w.mDirectionInDegrees = -179.3f;
-      //SetWaveDirection(w);
-      //waveList.push_back(w);  // 16
-
-      w.mWaveLength = 582.4f;
-      w.mAmplitude = 1.51f;
-      w.mSpeed = 7.2f;
-      w.mSteepness = 0.3f;
-      w.mDirectionInDegrees = 12.0f;
-      SetWaveDirection(w);
-      waveList.push_back(w);  // 12
-
-      w.mWaveLength = 1250.3f;
-      w.mAmplitude = 2.5f;
-      w.mSpeed = 9.2f;
-      w.mSteepness = 0.1f;
-      w.mDirectionInDegrees = 3.0f;
-      SetWaveDirection(w);
-      waveList.push_back(w); // 13
-
-      w.mWaveLength = 1268.0f;
-      w.mAmplitude = 0.9f;
-      w.mSpeed = 3.5f;
-      w.mSteepness = 0.0f;
-      w.mDirectionInDegrees = 183.0f;
-      SetWaveDirection(w);
-      waveList.push_back(w); // 14
-
-      //w.mWaveLength = 1280.7f;
-      //w.mAmplitude = 2.61f;
-      //w.mSpeed = 9.3f;
-      //w.mSteepness = 0.5f;
-      //w.mDirectionInDegrees = -3.5f;
-      //SetWaveDirection(w);
-      //waveList.push_back(w); // 20
-
-      //w.mWaveLength = 1310.6f;
-      //w.mAmplitude = 1.5f;
-      //w.mSpeed = 2.8f;
-      //w.mSteepness = 0.3f;
-      //w.mDirectionInDegrees = -179.3f;
-      //SetWaveDirection(w);
-      //waveList.push_back(w);  // 21
-
-      //w.mWaveLength = 1325.1f;
-      //w.mAmplitude = 2.9f;
-      //w.mSpeed = 10.1f;
-      //w.mSteepness = 0.2f;
-      //w.mDirectionInDegrees = -6.0f;
-      //SetWaveDirection(w);
-      //waveList.push_back(w);  // 15
-
-      w.mWaveLength = 3600.3f;
-      w.mAmplitude = 5.2f;
-      w.mSpeed = 15.2f;
-      w.mSteepness = 0.1f;
-      w.mDirectionInDegrees = 2.5f;
-      SetWaveDirection(w);
-      waveList.push_back(w); // 15
-
-      //w.mWaveLength = 3727.7f;
-      //w.mAmplitude = 4.1f;
-      //w.mSpeed = 14.3f;
-      //w.mSteepness = 0.5f;
-      //w.mDirectionInDegrees = -3.9f;
-      //SetWaveDirection(w);
-      //waveList.push_back(w); // 24
-
-      //w.mWaveLength = 3929.6f;
-      //w.mAmplitude = 1.8f;
-      //w.mSpeed = 7.4f;
-      //w.mSteepness = 0.1f;
-      //w.mDirectionInDegrees = -179.3f;
-      //SetWaveDirection(w);
-      //waveList.push_back(w);  // 25
-
-      w.mWaveLength = 4017.1f;
-      w.mAmplitude = 6.1f;
-      w.mSpeed = 16.1f;
-      w.mSteepness = 0.2f;
-      w.mDirectionInDegrees = -5.7f;
-      SetWaveDirection(w);
-      waveList.push_back(w);  // 16
-   }
 }
 ////////////////////////////////////////////////////////////////////////////////
