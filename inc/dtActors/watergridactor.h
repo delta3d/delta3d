@@ -220,7 +220,7 @@ namespace dtActors
       void CreateReflectionCamera();
 
       void BindTextureUniformToNode(osg::Node*, osg::Texture2D*, const std::string& name, unsigned texUnit);
-      void InitAndBindToTarget(osg::Camera*, osg::Texture2D*, int width, int height);
+      void InitAndBindToTarget(osg::Camera*, osg::Texture2D*, int width, int height, bool mipmap);
       void AddOrthoQuad(osg::Camera*, osg::Texture2D*, const std::string& shader, const std::string& texUniform);
       void BindShader(osg::Node* node, const std::string& shaderName);
 

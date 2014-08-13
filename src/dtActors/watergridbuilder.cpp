@@ -48,15 +48,24 @@ namespace dtActors
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   osg::Texture2D* WaterGridBuilder::CreateTexture(int width, int height)
+   osg::Texture2D* WaterGridBuilder::CreateTexture(int width, int height, bool mipMap)
    {
       osg::Texture2D* tex = new osg::Texture2D();
       tex->setTextureSize(width, height);
       tex->setWrap(osg::Texture::WRAP_S, osg::Texture::REPEAT);
       tex->setWrap(osg::Texture::WRAP_T, osg::Texture::REPEAT);
       tex->setInternalFormat(GL_RGBA);
-      tex->setFilter(osg::Texture2D::MIN_FILTER,osg::Texture2D::LINEAR/*_MIPMAP_LINEAR*/);
-      tex->setFilter(osg::Texture2D::MAG_FILTER,osg::Texture2D::LINEAR/*_MIPMAP_LINEAR*/);
+      if(mipMap)
+      {
+         tex->setFilter(osg::Texture2D::MIN_FILTER,osg::Texture2D::LINEAR_MIPMAP_NEAREST);
+         tex->setFilter(osg::Texture2D::MAG_FILTER,osg::Texture2D::LINEAR_MIPMAP_NEAREST);
+         tex->setUseHardwareMipMapGeneration(true);
+      }
+      else
+      {
+         tex->setFilter(osg::Texture2D::MIN_FILTER,osg::Texture2D::LINEAR);
+         tex->setFilter(osg::Texture2D::MAG_FILTER,osg::Texture2D::LINEAR);
+      }
       return tex;
    }
 

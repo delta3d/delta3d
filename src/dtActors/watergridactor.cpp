@@ -899,8 +899,8 @@ namespace dtActors
          mWaveCamera->setRenderOrder(osg::Camera::PRE_RENDER, 1);
          mWaveCamera->setClearMask(GL_NONE);
 
-         mWaveTexture = WaterGridBuilder::CreateTexture(width, height);
-         InitAndBindToTarget(mWaveCamera.get(), mWaveTexture.get(), width, height);
+         mWaveTexture = WaterGridBuilder::CreateTexture(width, height, true);
+         InitAndBindToTarget(mWaveCamera.get(), mWaveTexture.get(), width, height, true);
          AddOrthoQuad(mWaveCamera.get(), NULL, "TextureWave", "");
 
          mWaveCameraScreen = new osg::Camera();
@@ -938,14 +938,23 @@ namespace dtActors
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void WaterGridActor::InitAndBindToTarget(osg::Camera* cn, osg::Texture2D* tx, int width, int height)
+   void WaterGridActor::InitAndBindToTarget(osg::Camera* cn, osg::Texture2D* tx, int width, int height, bool mipMap)
    {
+      
       cn->setReferenceFrame(osg::Transform::ABSOLUTE_RF);
       cn->setProjectionMatrixAsOrtho2D(-10.0, 10.0, -10.0, 10.0);
       cn->setViewport(0, 0, width, height);
       cn->setRenderTargetImplementation(osg::Camera::FRAME_BUFFER_OBJECT);
       cn->detach(osg::Camera::COLOR_BUFFER);
-      cn->attach(osg::Camera::COLOR_BUFFER, tx);
+      if(mipMap)
+      {
+         cn->attach(osg::Camera::COLOR_BUFFER, tx, 0, 0, true);
+      }
+      else
+      {
+         cn->attach(osg::Camera::COLOR_BUFFER, tx);
+      }
+      
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -1019,8 +1028,8 @@ namespace dtActors
       int width = 512;
       int height = 512;
 
-      mReflectionTexture = WaterGridBuilder::CreateTexture(width, height);
-      InitAndBindToTarget(mReflectionCamera.get(), mReflectionTexture.get(), width, height);
+      mReflectionTexture = WaterGridBuilder::CreateTexture(width, height, true);
+      InitAndBindToTarget(mReflectionCamera.get(), mReflectionTexture.get(), width, height, true);
 
       mReflectionCamera->setRenderOrder(osg::Camera::PRE_RENDER);
       mReflectionCamera->setClearMask(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

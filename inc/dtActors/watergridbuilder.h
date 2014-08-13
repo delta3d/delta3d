@@ -36,7 +36,7 @@ namespace dtActors
 
       static osg::Node* CreateQuad(osg::Texture2D* texture, int renderBin);
 
-      static osg::Texture2D* CreateTexture(int width, int height);
+      static osg::Texture2D* CreateTexture(int width, int height, bool mipMap);
 
       static osg::Geometry* BuildRadialGrid(float &outComputedRadialDistance);
 
