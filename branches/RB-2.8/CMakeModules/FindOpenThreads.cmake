@@ -11,38 +11,30 @@
 #   with revisions by the Delta3D team.
 
 FIND_PATH(OPENTHREADS_INCLUDE_DIR OpenThreads/Thread
+    PATH_SUFFIXES include inc Frameworks
     HINTS
-    ${OPENTHREADS_DIR}/include
-    $ENV{OPENTHREADS_DIR}/include
+    ${OPENTHREADS_DIR}
     $ENV{OPENTHREADS_DIR}
-    ${DELTA3D_EXT_DIR}/inc
-    $ENV{DELTA_ROOT}/ext/inc
-    $ENV{DELTA_ROOT}
-    $ENV{OSG_DIR}/include
-    $ENV{OSG_ROOT}/include
+    ${DELTA3D_EXT_DIR}
+    $ENV{DELTA_ROOT}/ext
+    $ENV{OSG_DIR}
+    $ENV{OSG_ROOT}
 )
 MARK_AS_ADVANCED(OPENTHREADS_INCLUDE_DIR)
 
 MACRO(FIND_OPENTHREADS_LIBRARY MYLIBRARY MYLIBRARYNAME)
  
 FIND_LIBRARY(${MYLIBRARY} 
-    NAMES ${MYLIBRARYNAME}
-    HINTS
-    ${OPENTHREADS_DIR}/lib
-    $ENV{OPENTHREADS_DIR}/lib
-    $ENV{OPENTHREADS_DIR}/lib64
-    $ENV{OPENTHREADS_DIR}
-    ${DELTA3D_EXT_DIR}/lib
-    ${DELTA3D_EXT_DIR}/lib64
-    $ENV{DELTA_ROOT}/ext/lib
-    $ENV{DELTA_ROOT}/ext/lib64
-    $ENV{DELTA_ROOT}
-    $ENV{OSG_DIR}/lib
-    $ENV{OSG_DIR}/build/lib
-    $ENV{OSG_ROOT}/lib
-    $ENV{OSG_ROOT}/build/lib
+        NAMES ${MYLIBRARYNAME}
+        PATH_SUFFIXES lib build/lib lib64 build/lib64 Frameworks
+        HINTS
+        ${OPENTHREADS_DIR}
+        $ENV{OSG_DIR}
+        $ENV{OSGDIR}
+        $ENV{OSG_ROOT}
+        ${DELTA3D_EXT_DIR}
+        $ENV{DELTA_ROOT}/ext
 )
-
 MARK_AS_ADVANCED(${MYLIBRARY})
 
 ENDMACRO(FIND_OPENTHREADS_LIBRARY MYLIBRARY MYLIBRARYNAME)
