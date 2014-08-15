@@ -18,8 +18,8 @@ const float UnderWaterViewDistance = 5.0;
  
 varying vec4 pos;
 varying vec3 lightVector;
+varying vec3 lightVector2;
 varying float distanceScale;
-varying float distanceGroup;
 varying vec2 vFog;
 varying vec2 vertexWaveDir;
 varying vec3 shaderVertexNormal;
@@ -41,8 +41,7 @@ void main(void)
 {   
    float distBetweenVertsScalar;
    vec4 camPos = inverseViewMatrix[3];
-   distanceGroup = gl_Vertex.w;
-
+   
    // This scalar stretches the verts out, so we don't waste 50,000 verts directly under us.
    // As we move up, it pushes the verts out.
    float cameraHeight = max(0.1, abs(camPos.z - WaterHeight));
@@ -132,6 +131,7 @@ void main(void)
    
    //very far off in worldspace
    lightVector = (inverseView3x3 * gl_LightSource[0].position.xyz);
+   lightVector2 = (inverseView3x3 * gl_LightSource[1].position.xyz);
    //compute fog color for above water and under water
    vFog.x = computeExpFog(fog_distance);  
    

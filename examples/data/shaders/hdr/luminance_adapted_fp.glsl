@@ -17,7 +17,7 @@ uniform float maxLuminance;
 uniform float minLuminance;
 
 // time interval between two frames
-uniform float invFrameTime;
+uniform float osg_FrameTime;
 
 // scaling factor which decides how fast to adapt for new luminance
 uniform float adaptScaleFactor;
@@ -47,7 +47,7 @@ void main(void)
     float Tau = mix(TauCone,TauRod,sigma) / adaptScaleFactor;
 
     // compute new adapted value
-    //float lum = old + (current - old) * (1.0 - pow(0.98, adaptScaleFactor * invFrameTime));
+    //float lum = old + (current - old) * (1.0 - pow(0.98, adaptScaleFactor * 0.03));
 
     // clamp and return back
     //gl_FragData[0].xyzw = lum;//clamp(lum, minLuminance, maxLuminance);
@@ -59,9 +59,9 @@ void main(void)
 
     //calculate adaption
     //Perceptual Effects in Real-time Tone Mapping: Equ(5)
-    float lum  = old + (current - old) * (1.0 - exp(-(invFrameTime)/Tau));
+    float lum  = old + (current - old) * (1.0 - exp(-(0.03)/Tau));
     //gl_FragData[0].x = current;
     //gl_FragData[0].y = old;
-    //gl_FragData[0].z = (1.0 - exp(-(invFrameTime)/Tau));
+    //gl_FragData[0].z = (1.0 - exp(-(osg_FrameTime)/Tau));
     gl_FragData[0].xyzw = vec4( clamp(lum, minLuminance, maxLuminance) );
 }

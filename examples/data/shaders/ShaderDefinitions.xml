@@ -1,7 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <shaderlist>
-   
+
+   <shadergroup name="EphemerisGroup">
+      <shader name="Ephemeris" default="yes">
+         <source type="Vertex">shaders/base/ephemeris.vert</source>
+         <source type="Vertex">shaders/base/vertex_functions.vert</source>
+         <source type="Fragment">shaders/base/ephemeris.frag</source>
+         <source type="Vertex">shaders/base/fragment_functions.frag</source>
+      </shader>
+   </shadergroup>
+
+
    <shadergroup name="MultiMap">
       <shader name="MultiMap" default="yes">
          <source type="Vertex">shaders/base/multimap.vert</source>
@@ -106,13 +116,15 @@
   <shadergroup name="Terrains">
     <shader name="TerrainAltitude" default="yes">
       <source type="Vertex">shaders/terrain/TerrainAltitude.vert</source>
+       <source type="Vertex">shaders/shadow/shadow_functions.vert</source>
        <source type="Vertex">shaders/base/vertex_functions.vert</source>
        <source type="Fragment">shaders/terrain/TerrainAltitude.frag</source>
        <source type="Fragment">shaders/water/water_functions.frag</source>
        <source type="Fragment">shaders/base/fragment_functions.frag</source>
        <!--The Fragment shader is using a function from the vertex functions-->
        <source type="Fragment">shaders/base/vertex_functions.vert</source>
-       
+       <source type="Fragment">shaders/shadow/shadow_functions.frag</source>
+
        <parameter name="diffuseTexture">
         <texture2D textureUnit="0">
           <source type="Auto"/>

@@ -18,6 +18,7 @@ uniform int mode;
 
 varying vec3 vNormal;
 varying vec3 vLightDir;
+varying vec3 vLightDir2;
 varying vec3 vPos;
 varying vec3 vWorldNormal;
 varying vec3 vCamera;
@@ -34,6 +35,7 @@ void lightContribution(vec3, vec3, vec3, vec3, out vec3);
 float computeLinearFog(float, float, float);
 float computeExpFog(float);
 vec3 GetWaterColorAtDepth(float);
+float SampleShadowTexture();
 
 void main(void)
 {
@@ -91,12 +93,19 @@ void main(void)
 
    // normalize all of our incoming vectors
    vec3 lightDir = normalize(vLightDir);
+   vec3 lightDir2 = normalize(vLightDir2);
    
    //Compute the Light Contribution
-   vec3 lightContrib;
-   lightContribution(vNormal, lightDir, gl_LightSource[0].diffuse.xyz, gl_LightSource[0].ambient.xyz, lightContrib);
+   vec3 lightContribSun;
+   vec3 lightContribMoon;
+
+   lightContribution(vNormal, lightDir, gl_LightSource[0].diffuse.xyz, gl_LightSource[0].ambient.xyz, lightContribSun);
+   lightContribution(vNormal, lightDir2, gl_LightSource[1].diffuse.xyz, gl_LightSource[1].ambient.xyz, lightContribMoon);
   
-   vec3 result = lightContrib * baseColor.rgb;
+   vec3 lightContrib = lightContribSun + lightContribMoon;
+
+   float shadowAmt = 1.0;//SampleShadowTexture();
+   vec3 result = shadowAmt * lightContrib * baseColor.rgb;
   
    float dist = length(vPos - vCamera);
    

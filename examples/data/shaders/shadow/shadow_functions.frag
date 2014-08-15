@@ -1,8 +1,11 @@
 
 uniform sampler2D baseTexture;
-uniform int SHADOW_TEX_COORD_UNIT;
+uniform sampler2DShadow shadowTexture;
+uniform vec2 ambientBias;
+
+const int SHADOW_TEX_COORD_UNIT = 6;
 
 float SampleShadowTexture()
 {
-   return osgShadow_ambientBias.x + shadow2DProj( osgShadow_shadowTexture, gl_TexCoord[SHADOW_TEX_COORD_UNIT] ).r * osgShadow_ambientBias.y;
+   return ambientBias.x + shadow2DProj( shadowTexture, gl_TexCoord[SHADOW_TEX_COORD_UNIT] ).r * ambientBias.y;
 }

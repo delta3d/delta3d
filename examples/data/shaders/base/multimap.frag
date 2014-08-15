@@ -6,6 +6,7 @@ uniform sampler2D envTexture;
 
 varying vec3 vNormal;
 varying vec3 vLightDir;
+varying vec3 vLightDir2;
 varying vec3 vPos;
 varying vec3 vCamera;
 varying vec2 vReflectTexCoord;
@@ -37,15 +38,21 @@ void main(void)
    
    // Transform the tangent space normal into view space
    vec3 WorldMapNormal;
-   WorldMapNormal.xyz = normalize(tangentSpaceNormal * TBN);  
+   WorldMapNormal.xyz = normalize(TBN * tangentSpaceNormal);  
 
    // Normalize all incoming vectors
    vec3 lightDir = normalize(vLightDir);   
+   vec3 lightDir2 = normalize(vLightDir2);   
    vec3 viewDir = normalize(vViewDir);
 
    // Compute the Light Contribution
-   vec3 lightContrib;
-   lightContribution(WorldMapNormal, lightDir, gl_LightSource[0].diffuse.xyz, gl_LightSource[0].ambient.xyz, lightContrib);
+   vec3 lightContribSun;
+   vec3 lightContribMoon;
+
+   lightContribution(WorldMapNormal, lightDir, gl_LightSource[0].diffuse.xyz, gl_LightSource[0].ambient.xyz, lightContribSun);
+   lightContribution(WorldMapNormal, lightDir2, gl_LightSource[1].diffuse.xyz, gl_LightSource[1].ambient.xyz, lightContribMoon);
+  
+   vec3 lightContrib = lightContribSun + lightContribMoon;
   
    
    // Compute the specular & reflection contribution
@@ -68,5 +75,8 @@ void main(void)
    vec4 fogColor = gl_Fog.color;
    vec3 result = mix(fogColor.rgb, color, fogAmt);
    
-   gl_FragColor = vec4(result.rgb, 1.0);//diffuseColor.a);  
+   gl_FragColor = vec4(result.rgb, 1.0);//diffuseColor.a);     
+   //vec3 normalColor2 = 0.5 * (tangentSpaceNormal.rgb + vec3(1.0, 1.0, 1.0));
+   //gl_FragColor = vec4(WorldMapNormal.xyz, 1.0);
+
 }
