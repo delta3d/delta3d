@@ -693,7 +693,7 @@ void HUDComponent::UpdateMediumDetailData(CEGUI::Window* parent)
       unsigned int numAdded = 0;
       unsigned int numComplete = 0;
 
-      dtGame::GMComponent* comp = GetGameManager()->GetComponentByName("LMSComponent");
+      dtGame::GMComponent* comp = GetGameManager()->GetComponentByName(dtLMS::LmsComponent::DEFAULT_NAME);
       dtGame::TaskComponent* mTaskComponent = static_cast<dtGame::TaskComponent*>(comp);
 
       if (mTaskComponent)
