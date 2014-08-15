@@ -1,5 +1,5 @@
 
-uniform int SHADOW_TEX_COORD_UNIT;
+const int SHADOW_TEX_COORD_UNIT = 6;
 
 
 void GenerateShadowTexCoords( in vec4 ecPosition ) 

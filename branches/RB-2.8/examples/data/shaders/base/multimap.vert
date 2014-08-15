@@ -1,5 +1,6 @@
 
 varying vec3 vLightDir;
+varying vec3 vLightDir2;
 varying vec3 vNormal;
 varying vec3 vPos;
 varying vec3 vCamera;
@@ -25,8 +26,8 @@ void main()
    
    vNormal = inverseView3x3 * gl_NormalMatrix * gl_Normal;
 
-   vec3 lightDir = normalize(gl_LightSource[0].position.xyz);
    vLightDir = normalize(inverseView3x3 * gl_LightSource[0].position.xyz);
+   vLightDir2 = normalize(inverseView3x3 * gl_LightSource[1].position.xyz);
    
    vec4 ecPosition = gl_ModelViewMatrix * gl_Vertex;
    vec3 ecPosition3 = vec3(ecPosition) / ecPosition.w;

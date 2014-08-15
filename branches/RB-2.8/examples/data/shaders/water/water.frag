@@ -26,8 +26,8 @@ uniform sampler3D noiseTexture;
 
 varying vec4 pos;
 varying vec3 lightVector;
+varying vec3 lightVector2;
 varying float distanceScale;
-varying float distanceGroup;
 varying float distBetweenVertsScalar;
 varying vec2 vFog;
 varying vec2 vertexWaveDir;
@@ -134,10 +134,16 @@ void main (void)
    refTexCoords.xy = clamp(refTexCoords.xy + 0.05 * normal.xy, 0.0, 1.0);
    vec3 reflectColor = texture2D(reflectionMap, refTexCoords.xy).rgb;
 
-   vec3 lightContribFinal;
+   vec3 lightContribSun;
+   vec3 lightContribMoon;
+   
    vec3 lightVect = normalize(lightVector);
+   vec3 lightVect2 = normalize(lightVector2);
       
-   lightContribution(normal, lightVector, gl_LightSource[0].diffuse.xyz, gl_LightSource[0].ambient.xyz, lightContribFinal);
+   lightContribution(normal, lightVect, gl_LightSource[0].diffuse.xyz, gl_LightSource[0].ambient.xyz, lightContribSun);
+   lightContribution(normal, lightVect2, gl_LightSource[1].diffuse.xyz, gl_LightSource[1].ambient.xyz, lightContribMoon);
+
+   vec3 lightContribFinal = lightContribSun + lightContribMoon;
 
    if (gl_FrontFacing)
    {     
@@ -157,6 +163,7 @@ void main (void)
       float opacity_fresnel = FastFresnel(waveNDotL, 0.65, 2.15);  
       vec4 resultColor = vec4(waterColorContrib + resultSpecular, 0.2 + opacity_fresnel);
       gl_FragColor = mix(gl_Fog.color, resultColor, vFog.x);
+      //gl_FragColor = resultColor;
       //gl_FragColor = vec4(fresnel, fresnel, fresnel, 1.0);
    }
    else
