@@ -29,7 +29,6 @@
 #include <QtGui/QPushButton>
 #include <QtGui/QScrollBar>
 #include <QtGui/QLabel>
-#include <QtGui/QPixmap>
 #include <QtGui/QTextEdit>
 #include <QtGui/QTabWidget>
 #include <QtCore/QTextStream>
