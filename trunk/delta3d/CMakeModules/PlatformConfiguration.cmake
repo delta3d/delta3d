@@ -1,10 +1,14 @@
 IF(APPLE)
    OPTION(BUILD_FOR_IOS OFF)
 
-   SET(CMAKE_SHARED_LINKER_FLAGS "-Wl,-single_module -compatibility_version 4 -current_version 4 -F/Library/Frameworks" )
-   SET(CMAKE_MODULE_LINKER_FLAGS "-F/Library/Frameworks" )
+   #SET(CMAKE_SHARED_LINKER_FLAGS "-Wl,-single_module -compatibility_version 4 -current_version 4 -F/Library/Frameworks" )
+   #SET(CMAKE_MODULE_LINKER_FLAGS "-F/Library/Frameworks" )
    SET(CMAKE_INSTALL_NAME_DIR "@executable_path/../lib" CACHE STRING "install name dir for compiled frameworks")
    SET(CMAKE_C_FLAGS "-pipe -Wnewline-eof")
+
+   SET(OUTPUT_FRAMEWORK_DIR ${PROJECT_BINARY_DIR}/Frameworks)
+   MAKE_DIRECTORY(${OUTPUT_FRAMEWORK_DIR})
+   SET(CMAKE_FRAMEWORK_OUTPUT_DIRECTORY ${OUTPUT_FRAMEWORK_DIR} CACHE PATH "Framework Build Directory")
 
    if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
       set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pipe -Wall -Wextra -Wnewline-eof")
