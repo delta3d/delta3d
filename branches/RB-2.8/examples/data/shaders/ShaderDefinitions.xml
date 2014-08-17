@@ -51,6 +51,99 @@
 
       </shader>
    </shadergroup>
+   
+   <shadergroup name="BRDF">
+      <shader name="BRDF" default="yes">
+         <source type="Vertex">shaders/base/brdf.vert</source>
+         <source type="Fragment">shaders/base/brdf.frag</source>
+         <source type="Vertex">shaders/base/vertex_functions.vert</source>
+         <source type="Fragment">shaders/base/fragment_functions.frag</source>
+         <source type="Fragment">shaders/base/brdf_functions.frag</source>
+         <source type="Fragment">shaders/base/brdf_fresnel_functions.frag</source>
+         <source type="Fragment">shaders/base/brdf_normal_functions.frag</source>
+         <source type="Fragment">shaders/base/brdf_geometric_functions.frag</source>
+         <source type="Fragment">shaders/base/brdf_specular_functions.frag</source>
+
+         <parameter name="diffuseTexture">
+            <texture2D textureUnit="0">
+               <source type="Auto"/>
+            </texture2D>
+         </parameter>
+         <parameter name="specularTexture">
+            <texture2D textureUnit="1">
+               <source type="Auto"/>
+            </texture2D>
+         </parameter>
+         <parameter name="illumTexture">
+            <texture2D textureUnit="3">
+               <source type="Auto"/>
+            </texture2D>
+         </parameter>
+         <parameter name="normalTexture">
+            <texture2D textureUnit="4">
+               <source type="Auto"/>
+            </texture2D>
+         </parameter>
+         <parameter name="envTexture">
+            <texture2D textureUnit="5">
+               <source type="Auto"/>
+               <wrap axis="S" mode="Repeat"/>
+               <wrap axis="T" mode="Repeat"/>
+            </texture2D>
+         </parameter>
+         <parameter name="roughnessTexture">
+            <texture2D textureUnit="6">
+               <source type="Auto"/>
+            </texture2D>
+         </parameter>
+         <parameter name="irradianceTexture">
+            <texture2D textureUnit="7">
+               <source type="Auto"/>
+            </texture2D>
+         </parameter>
+
+         <parameter name="g_PBRValues">
+            <!-- 
+               X: Roughness
+               Y: Metallic -->
+            <vec4 defaultValue="0 0 0 0" />
+         </parameter>
+         <parameter name="g_LightingParameters">
+            <!-- 
+               X: Light Intensity
+               Y: Ambient Light Intensity
+               Z: Reflection Intensity -->
+            <vec4 defaultValue="50000 0.5 0.5 0" />
+         </parameter>
+         <parameter name="g_BRDFParam1">
+            <!-- 
+               X: Subsurface
+               Y: Specular
+               Z: Specular Tint
+               W: Anisotropic -->
+            <vec4 defaultValue="0 0 0 0" />
+         </parameter>
+         <parameter name="g_BRDFParam2">
+            <!-- 
+               X: Sheen
+               Y: Sheen Tint
+               Z: Clear Coat
+               W: Clear Coat Gloss -->
+            <vec4 defaultValue="0 0 0 0" />
+         </parameter>
+
+         <parameter name="g_specDistributionMode">
+            <integer defaultValue="0" />
+         </parameter>
+         <parameter name="g_specFresnelMode">
+            <integer defaultValue="0" />
+         </parameter>
+         <parameter name="g_specGeometricMode">
+            <integer defaultValue="0" />
+         </parameter>
+
+      </shader>
+   </shadergroup>
 
   <shadergroup name="TestShaders">
 

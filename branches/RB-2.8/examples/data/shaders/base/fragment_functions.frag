@@ -78,3 +78,15 @@ mat3 compute_tangent_frame_O3(vec3 N, vec3 p, vec2 uv)
     // construct tangent frame 
     return mat3(normalize(T), normalize(B), normalize(N));
 }
+
+vec3 computeWorldSpaceNormal(vec3 vertPos, vec3 vertNormal, vec3 mapNormal, vec2 vertUV, out mat3 tbn)
+{
+   // Change the range from  [-1, 1] to [0, 1]
+   vec3 tangentSpaceNormal = (2.0 * normalize(mapNormal.xyz)) - vec3(1.0, 1.0, 1.0);
+
+   vec3 vn = normalize(vertNormal);
+   tbn = compute_tangent_frame_O3(vn, vertPos, vertUV);
+   
+   // Transform the tangent space normal into view space
+   return normalize(tbn * tangentSpaceNormal); 
+}
