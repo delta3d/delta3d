@@ -17,28 +17,28 @@ float saturate(float inValue)
    return clamp(inValue, 0.0, 1.0);
 }
 
+
+
+// External Functions
 void lightContribution(vec3, vec3, vec3, vec3, out vec3);
 float computeLinearFog(float, float, float);
 float computeExpFog(float);
-mat3 compute_tangent_frame_O3(vec3 N, vec3 p, vec2 uv);
+vec3 computeWorldSpaceNormal(vec3 vertPos, vec3 vertNormal, vec3 mapNormal, vec2 vertUV, out mat3 tbn);
+
+
 
 void main(void)
 {
-   vec3 diffuseColor = texture2D(diffuseTexture, gl_TexCoord[0].st).rgb;
-   vec3 specColor = texture2D(specularTexture, gl_TexCoord[0].st).rgb;
-   vec3 illumColor = texture2D(illumTexture, gl_TexCoord[0].st).rgb;
-   vec3 normalColor = texture2D(normalTexture, gl_TexCoord[0].st).rgb;
+   vec2 uv = gl_TexCoord[0].xy;
+   
+   vec3 diffuseColor = texture2D(diffuseTexture, uv).rgb;
+   vec3 specColor = texture2D(specularTexture, uv).rgb;
+   vec3 illumColor = texture2D(illumTexture, uv).rgb;
+   vec3 normalColor = normalize(texture2D(normalTexture, uv).rgb);
    vec3 envColor = texture2D(envTexture, vReflectTexCoord).rgb;
    
-   // Change the range from  [-1, 1] to [0, 1]
-   vec3 tangentSpaceNormal = (2.0 * normalColor.rgb) - vec3(1.0, 1.0, 1.0);
-
-   vec3 n = normalize(vNormal);
-   mat3 TBN = compute_tangent_frame_O3(n, vPos,gl_TexCoord[0].xy);
-   
-   // Transform the tangent space normal into view space
-   vec3 WorldMapNormal;
-   WorldMapNormal.xyz = normalize(TBN * tangentSpaceNormal);  
+   mat3 tbn;
+   vec3 WorldMapNormal = computeWorldNormal(vPos, normalize(vNormal), normalize(normalColor.rgb), uv, tbn);
 
    // Normalize all incoming vectors
    vec3 lightDir = normalize(vLightDir);   
@@ -75,8 +75,6 @@ void main(void)
    vec4 fogColor = gl_Fog.color;
    vec3 result = mix(fogColor.rgb, color, fogAmt);
    
-   gl_FragColor = vec4(result.rgb, 1.0);//diffuseColor.a);     
-   //vec3 normalColor2 = 0.5 * (tangentSpaceNormal.rgb + vec3(1.0, 1.0, 1.0));
-   //gl_FragColor = vec4(WorldMapNormal.xyz, 1.0);
-
+   gl_FragColor = vec4(color.rgb, 1.0);//diffuseColor.a);
+   
 }
