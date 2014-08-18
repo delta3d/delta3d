@@ -1,7 +1,7 @@
 uniform sampler2D SandTexture;
 uniform sampler2D GrassTexture;
 uniform sampler2D RockTexture;
-uniform sampler2D SnowTexture;
+uniform sampler2D BlendMaskTexture;
 uniform sampler2D normalTexture;
 uniform sampler2D specTexture;
 uniform vec4 Altitudes;
@@ -9,12 +9,8 @@ uniform vec4 TextureScales;
 uniform vec4 WaterColor;
 uniform float AltitudeScale;
 uniform float DetailScale;
-uniform float WaterSurfaceOffset;
-uniform float WaterFadeDepth;
 uniform float WaterHeight;
 uniform float ReflectMode;
-
-uniform int mode;
 
 varying vec3 vNormal;
 varying vec3 vLightDir;
@@ -39,9 +35,9 @@ float SampleShadowTexture();
 
 void main(void)
 {
-   float h = ReflectMode * vPos.z;
+   float altitude = vPos.z * AltitudeScale;
 
-   if(h < WaterHeight)
+   if(altitude < WaterHeight)
    {
       if(ReflectMode < 0.0)
       {
@@ -49,42 +45,56 @@ void main(void)
       }
    }
      
+   float NdUp = dot(vNormal, vec3(0,0,1));
 
    vec3 detailColor = texture2D(SandTexture, gl_TexCoord[0].st * DetailScale).rgb;
    vec3 sandColor = texture2D(SandTexture, gl_TexCoord[0].st * TextureScales.x).rgb;
    vec3 grassColor = texture2D(GrassTexture, gl_TexCoord[0].st * TextureScales.y).rgb;
    vec3 rockColor = texture2D(RockTexture, gl_TexCoord[0].st * TextureScales.z).rgb;
-   vec3 snowColor = texture2D(SnowTexture, gl_TexCoord[0].st * TextureScales.w).rgb;
-
-   float alt = ReflectMode * vPos.z * AltitudeScale;
+   vec4 blendMask = texture2D(BlendMaskTexture, gl_TexCoord[0].st * TextureScales.w);
+   
+   float alphaGrass = blendMask.a;
+   float alphaRock = 1.0 - alphaGrass;
 
    float grassRange = Altitudes.x;
    float rockRange = Altitudes.y - grassRange;
-   float snowRange = Altitudes.z - rockRange;
 
    float grassFullAlt = Altitudes.x;
    float rockFullAlt = Altitudes.y;
-   float snowFullAlt = Altitudes.z;
    
    float slope = clamp(1.0 - (dot(vec3(0,0,1), vWorldNormal) * 2.0), 0.0, 1.0);
 
-   float waterRatio = 0.0;//clamp(-alt + WaterSurfaceOffset, 0.0, WaterFadeDepth)/WaterFadeDepth;
-   vec3 waterColor = mix(sandColor, WaterColor.rgb, WaterColor.a);
-
-   float grassRatio = clamp(alt, 0.0, grassFullAlt) / grassRange;
+   float grassRatio = clamp(altitude, 0.0, grassFullAlt) / grassRange;
    grassRatio = clamp(grassRatio, 0.0, 1.0);
 
-   float rockRatio = clamp(alt - grassFullAlt, 0.0, rockFullAlt) / rockRange;
+   float rockRatio = clamp(altitude - grassFullAlt, 0.0, rockFullAlt) / rockRange;
    rockRatio = clamp(rockRatio * (1.0 - slope), 0.0, 1.0);
-   
-   float snowRatio = clamp(alt - rockFullAlt, 0.0, snowFullAlt) / snowRange;
-   snowRatio = clamp(snowRatio, 0.0, 1.0);
 
-   vec3 baseColor = mix(sandColor, waterColor, waterRatio);
-
+   vec3 baseColor = sandColor;
    baseColor = mix(baseColor, grassColor, grassRatio);
    baseColor = mix(baseColor, rockColor, rockRatio);
-   baseColor = mix(baseColor, snowColor, snowRatio);
+   
+   float useRock = ceil(rockRatio) * (1.0 - clamp(1.0 - rockRatio, 0, 1));
+   float useGrass = ceil(grassRatio) * (1.0 - clamp(1.0 - grassRatio, 0, 1)) - useRock;
+   
+   float overrideAngle = 0.9;
+   float overrideAngleDiff = 1.0 - overrideAngle;
+   float effectOverride = 0.0;
+   if (grassRatio == 1.0)
+   {
+      effectOverride = clamp((NdUp - overrideAngle)/overrideAngleDiff, 0, 1);
+      float effectRatio = max(effectOverride, clamp(2.0 - altitude / rockFullAlt, 0.0, 1.0));
+      useRock *= effectRatio;
+   }
+   
+   float useMask = clamp(useGrass + useRock, 0.0, 1.0);
+   float maskRatio = useMask * (useGrass * alphaGrass + useRock * alphaRock);
+   vec3 baseWithGrass = baseColor;
+   vec3 baseWithRock = baseColor * max(blendMask.rgb, vec3(0.75,0.75,0.75));
+   vec3 blendColor = mix(baseWithGrass, baseWithRock, useRock);
+   baseColor = mix(baseColor, blendColor, maskRatio);
+   
+   baseColor = mix(baseColor, grassColor, effectOverride);
    
    // Modulate the texture with finer light/dark details.
    float avgerage = (detailColor.r + detailColor.g + detailColor.b)/3.0;
@@ -113,9 +123,8 @@ void main(void)
 
    //This adds the under water effects 
    float fogAmt = 0.0;
-   float height = ReflectMode * vPos.z;
 
-   if(height < WaterHeight)
+   if(altitude < WaterHeight)
    {
       //camera height over the water
       float heightOverWater = max(vCamera.z - WaterHeight, 0.0);
@@ -123,7 +132,7 @@ void main(void)
       fogAmt = computeLinearFog(0.0, 2.0 * UnderWaterViewDistance, (dist - heightOverWater));
 
       //fade under water fog in over depth
-      float depth = clamp(WaterHeight - height, 0.0, 3.0 * UnderWaterViewDistance);
+      float depth = clamp(WaterHeight - altitude, 0.0, 3.0 * UnderWaterViewDistance);
   
       fogColor = gl_LightSource[0].ambient.rgb * WaterColor.rgb;
       
@@ -137,5 +146,6 @@ void main(void)
 
    result = mix(fogColor, result, fogAmt);
 
-   gl_FragColor = vec4(result.rgb, 1.0);
+   //gl_FragColor = vec4(useGrass, useRock, useMask, 1.0);
+   gl_FragColor = vec4(result, 1.0);
 }
