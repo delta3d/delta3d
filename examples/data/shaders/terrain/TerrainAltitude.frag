@@ -19,6 +19,8 @@ varying vec3 vPos;
 varying vec3 vWorldNormal;
 varying vec3 vCamera;
 
+varying vec4 gl_Color;
+
 float saturate(float inValue)
 {
    return clamp(inValue, 0.0, 1.0);
@@ -46,53 +48,99 @@ void main(void)
    }
      
    float NdUp = dot(vNormal, vec3(0,0,1));
-
-   vec3 detailColor = texture2D(SandTexture, gl_TexCoord[0].st * DetailScale).rgb;
-   vec3 sandColor = texture2D(SandTexture, gl_TexCoord[0].st * TextureScales.x).rgb;
-   vec3 grassColor = texture2D(GrassTexture, gl_TexCoord[0].st * TextureScales.y).rgb;
-   vec3 rockColor = texture2D(RockTexture, gl_TexCoord[0].st * TextureScales.z).rgb;
-   vec4 blendMask = texture2D(BlendMaskTexture, gl_TexCoord[0].st * TextureScales.w);
    
-   float alphaGrass = blendMask.a;
-   float alphaRock = 1.0 - alphaGrass;
+   // Red verts mark a path/road.
+   float roadRatio = 1.0 - gl_Color.g * gl_Color.b * 0.5;
 
    float grassRange = Altitudes.x;
    float rockRange = Altitudes.y - grassRange;
 
    float grassFullAlt = Altitudes.x;
    float rockFullAlt = Altitudes.y;
-   
+
+   float altRatio = 0.0;
+   float rockRatio = 0.0;
    float slope = clamp(1.0 - (dot(vec3(0,0,1), vWorldNormal) * 2.0), 0.0, 1.0);
-
-   float grassRatio = clamp(altitude, 0.0, grassFullAlt) / grassRange;
-   grassRatio = clamp(grassRatio, 0.0, 1.0);
-
-   float rockRatio = clamp(altitude - grassFullAlt, 0.0, rockFullAlt) / rockRange;
-   rockRatio = clamp(rockRatio * (1.0 - slope), 0.0, 1.0);
-
-   vec3 baseColor = sandColor;
-   baseColor = mix(baseColor, grassColor, grassRatio);
-   baseColor = mix(baseColor, rockColor, rockRatio);
    
-   float useRock = ceil(rockRatio) * (1.0 - clamp(1.0 - rockRatio, 0, 1));
-   float useGrass = ceil(grassRatio) * (1.0 - clamp(1.0 - grassRatio, 0, 1)) - useRock;
+   vec3 baseColor;
+   vec3 detailColor;
+   vec3 lowAltColor;
+   vec3 highAltColor;
+   vec4 blendMask = texture2D(BlendMaskTexture, gl_TexCoord[0].st * TextureScales.w);
+   vec4 blendColor;
+   vec3 grassColor;
+   
+   vec4 grassBlendColor = blendMask;
+   vec4 rockBlendColor = vec4(max(blendMask.rgb, vec3(0.75,0.75,0.75)), 1.0 - blendMask.a);
+   
+   if (altitude < grassFullAlt)
+   {
+      lowAltColor = texture2D(SandTexture, gl_TexCoord[0].st * TextureScales.x).rgb;
+      highAltColor = texture2D(GrassTexture, gl_TexCoord[0].st * TextureScales.y).rgb;
+      
+      altRatio = clamp(altitude / grassRange, 0.0, 1.0);
+      float effect = clamp(pow(altRatio,4.0), 0.0, 1.0);
+      baseColor = mix(lowAltColor, highAltColor, effect);
+      
+      detailColor = mix(
+         texture2D(SandTexture, gl_TexCoord[0].st * DetailScale).rgb,
+         texture2D(GrassTexture, gl_TexCoord[0].st * DetailScale).rgb,
+         effect);
+         
+      blendColor.rgb = grassBlendColor.rgb;
+      blendColor.a = grassBlendColor.a * effect;
+   }
+   else if (altitude < rockFullAlt)
+   {
+      lowAltColor = texture2D(GrassTexture, gl_TexCoord[0].st * TextureScales.y).rgb;
+      highAltColor = texture2D(RockTexture, gl_TexCoord[0].st * TextureScales.z).rgb;
+      
+      grassColor = lowAltColor;
+      
+      altRatio = clamp(altitude / rockRange, 0.0, 1.0);
+      float effect = clamp(pow(altRatio,2.0), 0.0, 1.0);
+      baseColor = mix(lowAltColor, highAltColor, effect);
+      
+      detailColor = mix(
+         texture2D(GrassTexture, gl_TexCoord[0].st * DetailScale).rgb,
+         texture2D(RockTexture, gl_TexCoord[0].st * DetailScale).rgb,
+         effect);
+         
+      rockBlendColor.rgb *= baseColor;
+      blendColor = mix(grassBlendColor, rockBlendColor, effect);
+      
+      rockRatio = effect;
+   }
+   else
+   {
+      detailColor = texture2D(RockTexture, gl_TexCoord[0].st * DetailScale).rgb;
+      lowAltColor = texture2D(RockTexture, gl_TexCoord[0].st * TextureScales.z).rgb;
+      highAltColor = lowAltColor;
+      
+      grassColor = texture2D(GrassTexture, gl_TexCoord[0].st * TextureScales.y).rgb;
+      
+      altRatio = 1.0;
+      baseColor = highAltColor;
+      
+      detailColor = texture2D(RockTexture, gl_TexCoord[0].st * DetailScale).rgb;
+      
+      rockBlendColor.rgb *= baseColor;
+      blendColor.rgb = rockBlendColor.rgb;
+      blendColor.a = rockBlendColor.a * clamp(0.0, 1.0, 1.0 - (altitude - rockFullAlt)/rockRange);
+      
+      rockRatio = 1.0;
+   }
+   
+   baseColor = mix(baseColor, blendColor.rgb, blendColor.a);
    
    float overrideAngle = 0.9;
    float overrideAngleDiff = 1.0 - overrideAngle;
    float effectOverride = 0.0;
-   if (grassRatio == 1.0)
+   if (altitude >= grassFullAlt)
    {
-      effectOverride = clamp((NdUp - overrideAngle)/overrideAngleDiff, 0, 1);
-      float effectRatio = max(effectOverride, clamp(2.0 - altitude / rockFullAlt, 0.0, 1.0));
-      useRock *= effectRatio;
+      float effectRatio = (NdUp - overrideAngle)/overrideAngleDiff;
+      effectOverride = clamp(effectRatio * rockRatio, 0, 1);
    }
-   
-   float useMask = clamp(useGrass + useRock, 0.0, 1.0);
-   float maskRatio = useMask * (useGrass * alphaGrass + useRock * alphaRock);
-   vec3 baseWithGrass = baseColor;
-   vec3 baseWithRock = baseColor * max(blendMask.rgb, vec3(0.75,0.75,0.75));
-   vec3 blendColor = mix(baseWithGrass, baseWithRock, useRock);
-   baseColor = mix(baseColor, blendColor, maskRatio);
    
    baseColor = mix(baseColor, grassColor, effectOverride);
    
@@ -100,6 +148,9 @@ void main(void)
    float avgerage = (detailColor.r + detailColor.g + detailColor.b)/3.0;
    baseColor.rgb += (avgerage - vec3(0.5, 0.5, 0.5));
    baseColor.rgb = clamp(baseColor, vec3(0,0,0), vec3(1,1,1));
+   
+   // Determine if road texture needs to be overlayed.
+//   baseColor = mix(baseColor, sandColor, roadRatio);
 
    // normalize all of our incoming vectors
    vec3 lightDir = normalize(vLightDir);
@@ -146,6 +197,7 @@ void main(void)
 
    result = mix(fogColor, result, fogAmt);
 
-   //gl_FragColor = vec4(useGrass, useRock, useMask, 1.0);
    gl_FragColor = vec4(result, 1.0);
+   //gl_FragColor = vec4(gl_Color.rgb, 1.0);
+   //gl_FragColor = vec4(baseColor.rgb, 1.0);
 }
