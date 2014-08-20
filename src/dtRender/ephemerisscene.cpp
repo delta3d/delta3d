@@ -29,15 +29,15 @@
 #include <osg/Depth>
 #include <osg/Fog>
 #include <osg/Vec4>
+#include <osg/CullFace>
 
 #include <osgEphemeris/EphemerisModel.h>
 #include <osgEphemeris/EphemerisData.h>
 
 #include <dtCore/system.h>  //for setting time from system clock
+#include <dtCore/shadermanager.h>
 
-#include <dtRender/scenemanager.h> //needed to get the game manager
-#include <dtGame/gamemanager.h> //used to get the camera
-#include <dtABC/application.h> //used to get the camera
+#include <dtRender/scenemanager.h> //needed to get the camera
 #include <dtCore/camera.h> //needed to set the clear color to get rid of rendering artifact
 
 namespace dtRender
@@ -76,6 +76,84 @@ namespace dtRender
    };
 
 
+   class UpdateEphemerisCameraCallback : public osg::NodeCallback
+   {
+   public:
+
+      UpdateEphemerisCameraCallback(osg::Camera* trans, osg::Camera* camera)
+         : mTarget(trans)
+         , mCamera(camera)
+      {
+      }
+
+      virtual void operator()(osg::Node* node, osg::NodeVisitor* nv)
+      {
+         // first update subgraph to make sure objects are all moved into postion
+         traverse(node,nv);
+
+         mCamera->setReferenceFrame(osg::Camera::ABSOLUTE_RF);
+         mCamera->setProjectionMatrix(mTarget->getProjectionMatrix());;
+         mCamera->setViewMatrix(mTarget->getViewMatrix());
+
+      }
+
+   protected:
+
+      virtual ~UpdateEphemerisCameraCallback() {}
+
+      dtCore::ObserverPtr<osg::Camera>                mTarget;
+      dtCore::ObserverPtr<osg::Camera>                mCamera;
+
+   };
+
+
+   osg::Node* CreateQuad(osg::Texture2D* tex, int renderBin, const osg::Vec4& color, const osg::Vec4& extents )
+   {
+      osg::Geometry* geo = new osg::Geometry;
+      geo->setUseDisplayList( false );
+      osg::Vec4Array* colors = new osg::Vec4Array;
+      colors->push_back(color);
+      geo->setColorArray(colors);
+      geo->setColorBinding(osg::Geometry::BIND_OVERALL);
+      osg::Vec3Array *vx = new osg::Vec3Array;
+      vx->push_back(osg::Vec3(extents[0], extents[2], 0));
+      vx->push_back(osg::Vec3(extents[1], extents[2], 0));
+      vx->push_back(osg::Vec3(extents[1], extents[3], 0 ));
+      vx->push_back(osg::Vec3(extents[0], extents[3], 0));
+      geo->setVertexArray(vx);
+      osg::Vec3Array *nx = new osg::Vec3Array;
+      nx->push_back(osg::Vec3(0, 0, 1));
+      geo->setNormalArray(nx);
+
+      if(tex != NULL)
+      {
+         osg::Vec2Array *tx = new osg::Vec2Array;
+         tx->push_back(osg::Vec2(0, 0));
+         tx->push_back(osg::Vec2(1, 0));
+         tx->push_back(osg::Vec2(1, 1));
+         tx->push_back(osg::Vec2(0, 1));
+         geo->setTexCoordArray(0, tx);
+
+         geo->getOrCreateStateSet()->setTextureAttributeAndModes(0, tex, osg::StateAttribute::ON);
+      }
+
+      geo->addPrimitiveSet(new osg::DrawArrays(GL_QUADS, 0, 4));
+      osg::Geode *geode = new osg::Geode;
+      geode->addDrawable(geo);
+      geode->setCullingActive(false);
+      osg::StateSet* ss = geode->getOrCreateStateSet();
+      
+      //we cannot let reflections change the cullface side of full screen quads
+      osg::CullFace* cullState = new osg::CullFace(osg::CullFace::BACK);
+      ss->setAttributeAndModes(cullState, osg::StateAttribute::ON | osg::StateAttribute::PROTECTED | osg::StateAttribute::OVERRIDE);
+      
+      ss->setMode( GL_LIGHTING, osg::StateAttribute::OVERRIDE | osg::StateAttribute::OFF );
+      ss->setMode( GL_DEPTH_TEST, osg::StateAttribute::OVERRIDE | osg::StateAttribute::OFF );
+      ss->setRenderBinDetails( renderBin, "RenderBin" );
+      return geode;
+   }
+
+
    class EphemerisImpl
    {
    public:
@@ -91,14 +169,69 @@ namespace dtRender
          }
 
 
-         void Init()
+         //! Create camera resulting texture
+         osg::Texture2D* createRenderTexture(int tex_width, int tex_height)
          {
-            mRootNode = new osg::Camera();
-            
-            mRootNode->setRenderOrder(osg::Camera::NESTED_RENDER);
-            mRootNode->setClearMask(GL_NONE);
-            mRootNode->setReferenceFrame(osg::Transform::RELATIVE_RF);
+            // create simple 2D texture
+            osg::Texture2D* texture2D = new osg::Texture2D;
+            texture2D->setTextureSize(tex_width, tex_height);
+            //texture2D->setInternalFormat(GL_RGBA);
+            texture2D->setFilter(osg::Texture2D::MIN_FILTER,osg::Texture2D::LINEAR);
+            texture2D->setFilter(osg::Texture2D::MAG_FILTER,osg::Texture2D::LINEAR);
 
+            // since we want to use HDR, setup float format
+            texture2D->setInternalFormat(GL_RGBA16F_ARB);//(GL_RGBA16F_ARB);
+            //texture2D->setSourceFormat(GL_RGBA);
+            texture2D->setSourceType(GL_FLOAT);
+
+            return texture2D;
+         }
+
+         //! Setup the camera to do the render to texture
+         osg::Texture2D* setupCamera(osg::Camera* camera, osg::Viewport* vp)
+         {
+            
+            // create texture to render to
+            osg::Texture2D* texture = createRenderTexture((int)vp->width(), (int)vp->height());
+
+            camera->setReferenceFrame(osg::Transform::ABSOLUTE_RF);
+
+            // set up the background color and clear mask.
+            camera->setClearColor(osg::Vec4(0.0f,1.0f,0.0f,0.0f));
+            camera->setClearMask(GL_NONE);
+            
+            // set viewport
+            camera->setViewport(0, 0, (int)vp->width(), (int)vp->height());
+            camera->setComputeNearFarMode(osg::CullSettings::DO_NOT_COMPUTE_NEAR_FAR);
+
+            // tell the camera to use OpenGL frame buffer object where supported.
+            camera->setRenderTargetImplementation(osg::Camera::FRAME_BUFFER_OBJECT);
+
+            camera->detach(osg::Camera::COLOR_BUFFER);
+
+            // attach the texture and use it as the color buffer.
+            camera->attach(osg::Camera::COLOR_BUFFER, texture);//, 0, 0, false, 4, 4);
+            
+            return texture;
+         }
+   
+         
+         void Init(dtCore::Camera& sceneCamera)
+         {
+            mRootNode = new osg::Group();
+            mRootNode->setNodeMask(dtUtil::NodeMask::BACKGROUND);
+
+            //create a camera to render the ephemeris
+            mEphCamera = new osg::Camera();
+            mEphCamera->setRenderOrder(osg::Camera::NESTED_RENDER);
+
+            //mRootNode->setNodeMask(dtUtil::NodeMask::PRE_PROCESS);
+
+            mRootNode->addChild(mEphCamera);
+            osg::Viewport* vp = sceneCamera.GetOSGCamera()->getViewport();
+            //dtCore::RefPtr<osg::Texture2D> renderTarget = setupCamera(mEphCamera.get(), vp);
+
+            //create the actual ephemeris
             mEphemerisModel = new osgEphemeris::EphemerisModel();
             //add in moonlight which gives a nice ambient effect at night
             mEphemerisModel->setMembers(osgEphemeris::EphemerisModel::DEFAULT_MEMBERS | osgEphemeris::EphemerisModel::MOON_LIGHT_SOURCE);//osgEphemeris::EphemerisModel::GROUND_PLANE | osgEphemeris::EphemerisModel::PLANETS | osgEphemeris::EphemerisModel::STAR_FIELD | osgEphemeris::EphemerisModel::SUN_LIGHT_SOURCE | osgEphemeris::EphemerisModel::MOON_LIGHT_SOURCE | osgEphemeris::EphemerisModel::MOON);
@@ -108,21 +241,28 @@ namespace dtRender
             mEphemerisModel->setMoveWithEyePoint(true);
             mEphemerisModel->setTurbidity(2.2f);
 
-            mEphemerisModel->setNodeMask(dtUtil::NodeMask::BACKGROUND);
-
-
-            // Change render order and depth writing.
             osg::StateSet* ss = mEphemerisModel->getOrCreateStateSet();
             dtCore::RefPtr<osg::Depth> depthState = new osg::Depth(osg::Depth::ALWAYS, 1.0f , 1.0f );
             ss->setAttributeAndModes(depthState);
-            ss->setMode(GL_DEPTH_TEST,osg::StateAttribute::OFF);
-
+            
             //this will create a large bounding volume for the ephemeris to ensure it doesn't get culled out
             BBVisitor bbv;
             mEphemerisModel->traverse(bbv);
 
-            mRootNode->addChild(mEphemerisModel.get());
+            mEphCamera->addChild(mEphemerisModel.get());
+
+            //give the ephemeris the same view as the scene
+            //mEphCamera->setUpdateCallback(new UpdateEphemerisCameraCallback(sceneCamera.GetOSGCamera(), mEphCamera.get()));
+
+            //create geometry to view the result of the ephemeris
+            /*osg::Vec4 color(1.0, 1.0, 1.0, 1.0);
+            osg::Vec4 extents(0.0, vp->width(), 0.0, vp->height());
+            osg::Node* rt = CreateQuad(renderTarget.get(), -10, color, extents);
+            rt->getOrCreateStateSet()->setAttributeAndModes(depthState);
+
+            mRootNode->addChild(rt);*/
          }
+
 
 
       bool mFogEnabled;
@@ -133,7 +273,8 @@ namespace dtRender
       dtCore::RefPtr<osg::Fog> mFog; 
       dtCore::ObserverPtr<osg::StateSet> mFogStateSet;
       dtCore::RefPtr<osgEphemeris::EphemerisModel> mEphemerisModel;
-      dtCore::RefPtr<osg::Camera> mRootNode;
+      dtCore::RefPtr<osg::Group> mRootNode;
+      dtCore::RefPtr<osg::Camera> mEphCamera;
 
    };
 
@@ -153,22 +294,32 @@ namespace dtRender
    void EphemerisScene::CreateScene(SceneManager& sm, const GraphicsQuality& g)
    {
       //sets up the osg ephemeris
-      mImpl->Init();
+      dtCore::Camera* cam = sm.GetSceneCamera();
+      if(cam == NULL)
+      {
+         LOG_ERROR("Unable to create ephemeris scene without main scene camera");
+         return;
+      }
+
+      mImpl->Init(*cam);
 
       //set time, todo make property
       dtUtil::DateTime dt = GetDateTime();
       
       //set to July 4th
-      dt.SetMonth(7);
-      dt.SetDay(4);
-
+      dt.SetMonth(8);
+      dt.SetDay(15);
+      dt.SetYear(2014);
       //make day time
       dt.SetHour(10);
+      dt.SetMinute(0);
+      dt.SetSecond(0);
       
       SetDateTime(dt);
 
-      //set default lat long
-      //SetLatitudeLongitude(36.8506f, 75.9779f);
+      //set default lat long, grand cayman
+      SetLatitudeLongitude(19.3333f, 81.2167f);
+      //SetTimeFromSystem();
 
       //setup default fog state
       mImpl->mFogStateSet = sm.GetOSGNode()->getOrCreateStateSet();
@@ -184,13 +335,14 @@ namespace dtRender
 
       //////////////////////////////////////////////////////////
       //these are camera settings required by ephemeris   
-      dtGame::GameManager* gm = sm.GetGameManager();
-      if (gm != NULL)
+      dtCore::Camera* camera = sm.GetSceneCamera();
+      if (camera != NULL)
       {
-         dtCore::Camera* camera = gm->GetApplication().GetCamera();
          camera->SetClearColor(osg::Vec4(0, 0, 0, 0));
          camera->SetNearFarCullingMode(dtCore::Camera::NO_AUTO_NEAR_FAR);
       }
+
+      BindShader();
       
    }
 
@@ -426,6 +578,7 @@ namespace dtRender
       {
          LOG_ERROR("Ephemeris Data is NULL");
       }
+      LOG_ALWAYS("Changing Time");
    }
 
 
@@ -443,6 +596,45 @@ namespace dtRender
       return mImpl->mDateTime;
    }
 
+   void EphemerisScene::BindShader()
+   {
+      dtCore::ShaderManager& sm = dtCore::ShaderManager::GetInstance();
+      const dtCore::ShaderGroup* shaderGroup = sm.FindShaderGroupPrototype("EphemerisGroup");
+
+      if (shaderGroup == NULL)
+      {
+         //try to load the default shaders
+         //sm.LoadShaderDefinitions("shaders/WaterGroup.dtshader");
+         sm.LoadShaderDefinitions("shaders/ShaderDefinitions.xml");
+         shaderGroup = sm.FindShaderGroupPrototype("EphemerisGroup");
+
+         if (shaderGroup == NULL)
+         {
+            LOG_INFO("Could not find shader group: WaterGroup");
+            return;
+         }
+      }
+
+      const dtCore::ShaderProgram* defaultShader = shaderGroup->FindShader("Ephemeris");
+
+      try
+      {
+         if (defaultShader != NULL)
+         {
+            dtCore::ShaderManager::GetInstance().AssignShaderFromPrototype(*defaultShader, *mImpl->mEphemerisModel);
+         }
+         else
+         {
+            LOG_WARNING("Could not find ephemeris shader.'");
+            return;
+         }
+      }
+      catch (const dtUtil::Exception& e)
+      {
+         LOG_WARNING("Caught Exception while assigning shader: " + e.ToString());
+         return;
+      }
+   }
 
    EphemerisSceneProxy::EphemerisSceneProxy()
    {

@@ -1,6 +1,6 @@
 #include <dtABC/baseabc.h>
 #include <dtCore/map.h>
-#include <dtUtil/nodemask.h>
+#include <dtUtil/cullmask.h>
 
 #include <dtCore/keyboard.h>
 #include <dtCore/mouse.h>
@@ -132,7 +132,7 @@ void BaseABC::CreateInstances()
    assert(mViewList[0].get());
 
    dtCore::RefPtr<dtCore::Camera> defaultCam = new dtCore::Camera("defaultCam");   
-   defaultCam->GetOSGCamera()->setCullMask(dtUtil::NodeMask::MAIN_CAMERA_CULL_MASK);
+   defaultCam->GetOSGCamera()->setCullMask(dtUtil::CullMask::MAIN_CAMERA_MASK);
 
    mViewList[0]->SetCamera(defaultCam.get());
    mViewList[0]->SetScene(new dtCore::Scene("defaultScene"));

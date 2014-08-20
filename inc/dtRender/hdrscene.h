@@ -49,9 +49,13 @@ namespace dtRender
       HDRScene();
       virtual ~HDRScene();
       
+      virtual osg::Group* GetSceneNode();
+      virtual const osg::Group* GetSceneNode() const;
+
       virtual void CreateScene(SceneManager&, const GraphicsQuality&);
 
    private:
+      dtCore::RefPtr<osg::Group> mRootNode;
    };
 
    class DT_RENDER_EXPORT HDRSceneProxy : public dtCore::BaseActorObject

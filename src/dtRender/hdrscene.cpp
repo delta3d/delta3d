@@ -20,6 +20,7 @@
 */
 
 #include <dtRender/hdrscene.h>
+#include <dtRender/multipassscene.h>
 
 #include <dtUtil/nodemask.h>
 
@@ -27,18 +28,21 @@
 
 #include <osg/Camera>
 #include <osg/Texture2D>
+#include <osg/ClampColor>
 
 #include <osgdb/ReaderWriter>
 #include <osgdb/ReadFile>
 
 #include <osgPPU/Processor.h>
 #include <osgPPU/Unit.h>
+#include <osgPPU/UnitCameraAttachmentBypass.h>
 #include <osgPPU/UnitInOut.h>
 #include <osgPPU/UnitOut.h>
 #include <osgPPU/UnitInMipmapOut.h>
 #include <osgPPU/UnitInResampleOut.h>
 #include <osgPPU/ShaderAttribute.h>
 #include <osgPPU/UnitBypass.h>
+#include <osgPPU/UnitText.h>
 
 //needed to set the scene camera
 #include <dtRender/scenemanager.h>
@@ -81,49 +85,8 @@ class HDRRendering
             mAdaptFactor = 0.01;
         }
 
-        //! Create camera resulting texture
-        osg::Texture* createRenderTexture(int tex_width, int tex_height)
-        {
-           // create simple 2D texture
-           osg::Texture2D* texture2D = new osg::Texture2D;
-           texture2D->setTextureSize(tex_width, tex_height);
-           texture2D->setInternalFormat(GL_RGBA);
-           texture2D->setFilter(osg::Texture2D::MIN_FILTER,osg::Texture2D::LINEAR);
-           texture2D->setFilter(osg::Texture2D::MAG_FILTER,osg::Texture2D::LINEAR);
-
-           // since we want to use HDR, setup float format
-           texture2D->setInternalFormat(GL_RGBA16F_ARB);
-           texture2D->setSourceFormat(GL_RGBA);
-           texture2D->setSourceType(GL_FLOAT);
-
-           return texture2D;
-        }
-
-        //! Setup the camera to do the render to texture
-        void setupCamera(osg::Camera* camera, osg::Viewport* vp)
-        {
-           // setup viewer's default camera
-           
-           // create texture to render to
-           osg::Texture* texture = createRenderTexture((int)vp->width(), (int)vp->height());
-
-           // set up the background color and clear mask.
-           camera->setClearColor(osg::Vec4(0.0f,0.0f,0.0f,0.0f));
-           camera->setClearMask(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-           // set viewport
-           camera->setViewport(vp);
-           camera->setComputeNearFarMode(osg::CullSettings::DO_NOT_COMPUTE_NEAR_FAR);
-
-           // tell the camera to use OpenGL frame buffer object where supported.
-           camera->setRenderTargetImplementation(osg::Camera::FRAME_BUFFER_OBJECT);
-
-           // attach the texture and use it as the color buffer.
-           camera->attach(osg::Camera::COLOR_BUFFER, texture);//, 0, 0, false, 4, 4);
-        }
-
         //------------------------------------------------------------------------
-        void createHDRPipeline(osgPPU::Processor* parent, osgPPU::Unit*& firstUnit, osgPPU::Unit*& lastUnit)
+        void createHDRPipeline(osgPPU::UnitBypass* bypass, osgPPU::Unit* resample, osgPPU::Unit*& firstUnit, osgPPU::Unit*& lastUnit)
         {
             osg::ref_ptr<osgDB::ReaderWriter::Options> fragmentOptions = new osgDB::ReaderWriter::Options("fragment");
             osg::ref_ptr<osgDB::ReaderWriter::Options> vertexOptions = new osgDB::ReaderWriter::Options("vertex");
@@ -131,23 +94,28 @@ class HDRRendering
             // first a simple bypass to get the data from somewhere
             // there must be a camera bypass already specified
             // You need this ppu to relay on it with following ppus
-            osgPPU::UnitBypass* bypass = new osgPPU::UnitBypass();
-            bypass->setName("HDRBypass");
-            firstUnit = bypass;
-            lastUnit = bypass;
+            //osgPPU::UnitBypass* bypass = new osgPPU::UnitBypass();
+            //bypass->setName("HDRBypass");
+            /*osgPPU::UnitCameraAttachmentBypass* bypass = new osgPPU::UnitCameraAttachmentBypass();
+            bypass->setBufferComponent(osg::Camera::COLOR_BUFFER0);
+            bypass->setName("HDRBypass");*/
+
+            //firstUnit = bypass;
+            //lastUnit = bypass;
 
 
             // Now we have got a texture with only to bright pixels.
             // To simulate hdr glare we have to blur this texture.
             // We do this by first downsampling the texture and
             // applying separated gauss filter afterwards.
-            osgPPU::UnitInResampleOut* resample = new osgPPU::UnitInResampleOut();
+            /*osgPPU::UnitInResampleOut* resample = new osgPPU::UnitInResampleOut();
             {
                 resample->setName("Resample");
                 resample->setFactorX(0.25);
                 resample->setFactorY(0.25);
             }
-            bypass->addChild(resample);
+            bypass->addChild(resample);*/
+
 
             // Now we need a ppu which do compute the luminance of the scene.
             // We need to compute luminance per pixel and current luminance
@@ -170,7 +138,10 @@ class HDRRendering
                 //pixelLuminance->setShader(lumShader);
                 pixelLuminance->getOrCreateStateSet()->setAttributeAndModes(lumShader);
             }
-            resample->addChild(pixelLuminance);
+            
+            //set the first ppu unit
+            firstUnit = pixelLuminance;
+
 
             // now we do the second case computing the average scene luminance based on mipmaps
             osgPPU::UnitInMipmapOut* sceneLuminance = new osgPPU::UnitInMipmapOut();
@@ -386,7 +357,8 @@ class HDRRendering
    const dtCore::RefPtr<SceneType> HDRScene::HDR_SCENE(new SceneType("HDR Scene", "Scene", "Creates an osgPPU HDR Scene."));
 
    HDRScene::HDRScene()
-   : BaseClass(*HDR_SCENE, SceneEnum::PRE_RENDER)
+   : BaseClass(*HDR_SCENE, SceneEnum::MULTIPASS)
+   , mRootNode(new osg::Group())
    {
       SetName("HDRScene");  
    }
@@ -400,42 +372,54 @@ class HDRRendering
    void HDRScene::CreateScene( SceneManager& sm, const GraphicsQuality& g)
    {
       
-      dtGame::GameManager* gm = sm.GetGameManager();
-      if(gm != NULL)
+      MultipassScene* mps = dynamic_cast<MultipassScene*>(sm.FindSceneByType(*MultipassScene::MULTIPASS_SCENE));
+     
+      //try to create default multipass scene
+      if(mps == NULL)
       {
-         dtCore::Camera* cam = gm->GetApplication().GetCamera();
+         sm.CreateDefaultMultipassScene();
+         mps = dynamic_cast<MultipassScene*>(sm.FindSceneByType(*MultipassScene::MULTIPASS_SCENE));
 
-         if(cam != NULL)
-         {
-            osgPPU::Unit* firstUnit;
-            osgPPU::Unit* lastUnit;
-
-            HDRRendering hdrBuilder;
-
-            osgPPU::Processor* proc = BaseClass::GetPPUProcessor();
-            proc->setNodeMask(dtUtil::NodeMask::IGNORE_RAYCAST);
-
-            hdrBuilder.setupCamera(cam->GetOSGCamera(), cam->GetOSGCamera()->getViewport());
-
-            BaseClass::SetCamera(*cam->GetOSGCamera());
-
-            hdrBuilder.createHDRPipeline(proc, firstUnit, lastUnit);
-
-            proc->addChild(firstUnit);
-
-            BaseClass::SetFirstUnit(*firstUnit);
-            BaseClass::SetLastUnit(*lastUnit);
-
-
-            // As a last step we setup a ppu which do render the content of the result
-            // on the screenbuffer. This ppu MUST be as one of the last, otherwise you
-            // will not be able to get results from the ppu pipeline
-            osgPPU::UnitOut* ppuout = new osgPPU::UnitOut();
-            ppuout->setName("PipelineResult");
-            ppuout->setInputTextureIndexForViewportReference(-1); // need this here to get viewport from camera
-            lastUnit->addChild(ppuout);
-         }
       }
+
+      if(mps != NULL)
+      {
+         osgPPU::Unit* firstUnit = NULL;
+         osgPPU::Unit* lastUnit = NULL;
+
+         HDRRendering hdrBuilder;
+
+         hdrBuilder.createHDRPipeline(mps->GetColorBypass(), mps->GetResampleColor(), firstUnit, lastUnit);
+
+         BaseClass::SetFirstUnit(*firstUnit);
+         BaseClass::SetLastUnit(*lastUnit);
+
+
+         lastUnit->addChild(mps->GetUnitOut());
+
+         // disable color clamping, because we want to work on real hdr values
+         osg::ClampColor* clamp = new osg::ClampColor();
+         clamp->setClampVertexColor(GL_FALSE);
+         clamp->setClampFragmentColor(GL_FALSE);
+         clamp->setClampReadColor(GL_FALSE);
+
+         // make it protected and override, so that it is done for the whole rendering pipeline
+         sm.GetOSGNode()->getOrCreateStateSet()->setAttribute(clamp, osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE | osg::StateAttribute::PROTECTED);     
+      }
+      else
+      {
+         LOG_ERROR("Must have a valid Multipass Scene to use HDR.");
+      }
+   }
+
+   osg::Group* HDRScene::GetSceneNode()
+   {
+      return mRootNode;
+   }
+
+   const osg::Group* HDRScene::GetSceneNode() const
+   {
+      return mRootNode;
    }
 
    HDRSceneProxy::HDRSceneProxy()

@@ -37,7 +37,11 @@ namespace dtRender
 
       static dtCore::RefPtr<dtCore::ActorType> HDR_SCENE_ACTOR_TYPE;
 
+      static dtCore::RefPtr<dtCore::ActorType> MULTIPASS_SCENE_ACTOR_TYPE;
+
       static dtCore::RefPtr<dtCore::ActorType> OCEAN_SCENE_ACTOR_TYPE;
+
+      static dtCore::RefPtr<dtCore::ActorType> PPU_SCENE_ACTOR_TYPE;
 
       static dtCore::RefPtr<dtCore::ActorType> SCENE_MANAGER_ACTOR_TYPE;
 

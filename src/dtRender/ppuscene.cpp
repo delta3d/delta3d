@@ -40,24 +40,22 @@ namespace dtRender
    public:
       PPUSceneImpl()
       {
-         mPPUProcessor = new osgPPU::Processor();
 
       }
       
       ~PPUSceneImpl()
       {
-
+         mFirstUnit = NULL;
+         mLastUnit = NULL;
       }
 
-      dtCore::RefPtr<osgPPU::Processor> mPPUProcessor;
-
-      dtCore::ObserverPtr<osgPPU::Unit> mFirstUnit;
-      dtCore::ObserverPtr<osgPPU::Unit> mLastUnit;
+      dtCore::RefPtr<osgPPU::Unit> mFirstUnit;
+      dtCore::RefPtr<osgPPU::Unit> mLastUnit;
 
    };
 
    PPUScene::PPUScene()
-   : BaseClass(*PPU_SCENE, SceneEnum::PRE_RENDER)
+   : BaseClass(*PPU_SCENE, SceneEnum::MULTIPASS)
    , mImpl(new PPUSceneImpl())
    {
       SetName("PPUScene");
@@ -84,26 +82,6 @@ namespace dtRender
       
    }
 
-   osg::Group* PPUScene::GetSceneNode()
-   {
-      return mImpl->mPPUProcessor.get();
-   }
-
-   const osg::Group* PPUScene::GetSceneNode() const
-   {
-      return mImpl->mPPUProcessor.get();
-   }
-
-   osgPPU::Processor* PPUScene::GetPPUProcessor()
-   {
-      return mImpl->mPPUProcessor.get();
-   }
-
-   const osgPPU::Processor* PPUScene::GetPPUProcessor() const
-   {
-      return mImpl->mPPUProcessor.get();
-   }
-
    osgPPU::Unit* PPUScene::GetFirstUnit()
    {
       return mImpl->mFirstUnit.get();
@@ -125,23 +103,6 @@ namespace dtRender
 
    }
 
-   osg::Camera* PPUScene::GetCamera()
-   {
-      return mImpl->mPPUProcessor->getCamera();
-   }
-
-   const osg::Camera* PPUScene::GetCamera() const
-   {
-      return mImpl->mPPUProcessor->getCamera();
-   }
-
-   void PPUScene::SetCamera( osg::Camera& cam)
-   {
-      mImpl->mPPUProcessor->setCamera(&cam);
-      mImpl->mPPUProcessor->dirtyUnitSubgraph();
-
-   }
-
    void PPUScene::SetFirstUnit( osgPPU::Unit& u)
    {
       mImpl->mFirstUnit = &u;
@@ -150,6 +111,16 @@ namespace dtRender
    void PPUScene::SetLastUnit( osgPPU::Unit& u)
    {
       mImpl->mLastUnit = &u;
+   }
+
+   osg::Group* PPUScene::GetSceneNode()
+   {
+      return mImpl->mFirstUnit;
+   }
+
+   const osg::Group* PPUScene::GetSceneNode() const
+   {
+      return mImpl->mFirstUnit;
    }
 
    

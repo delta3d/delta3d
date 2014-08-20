@@ -29,6 +29,8 @@
 #include <prefix/unittestprefix.h>
 #include <cppunit/extensions/HelperMacros.h>
 #include <dtUtil//nodemask.h>
+#include <dtUtil//cullmask.h>
+#include <dtUtil//bits.h>
 
 namespace dtUtil
 {
@@ -50,7 +52,7 @@ class NodeMaskTests : public CPPUNIT_NS::TestFixture
 
       
    private:
-      
+   bool ContainsBits(unsigned int mask, unsigned int bits);      
 
 };
 
@@ -68,6 +70,12 @@ void NodeMaskTests::tearDown()
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+bool NodeMaskTests::ContainsBits(unsigned int mask, unsigned int bits)
+{
+   return dtUtil::Bits::Has(mask, bits);
+}
+
+///////////////////////////////////////////////////////////////////////////////
 void NodeMaskTests::TestNodeMask()
 {
 
@@ -77,194 +85,344 @@ void NodeMaskTests::TestNodeMask()
       dtUtil::NodeMask::EVERYTHING.GetNodeMask()));
 
    //everything
-   CPPUNIT_ASSERT_MESSAGE("Everything and Background should return true",
-      (dtUtil::NodeMask::EVERYTHING.GetNodeMask() & 
+   CPPUNIT_ASSERT_MESSAGE("Everything should contain Background.",
+      ContainsBits(dtUtil::NodeMask::EVERYTHING.GetNodeMask(),
       dtUtil::NodeMask::BACKGROUND.GetNodeMask()));
 
-   CPPUNIT_ASSERT_MESSAGE("Everything and Foreground should return true",
-      (dtUtil::NodeMask::EVERYTHING.GetNodeMask() & 
+   CPPUNIT_ASSERT_MESSAGE("Everything should contain Foreground.",
+      ContainsBits(dtUtil::NodeMask::EVERYTHING.GetNodeMask(),
       dtUtil::NodeMask::FOREGROUND.GetNodeMask()));
 
-   CPPUNIT_ASSERT_MESSAGE("Everything and Transparent Effects should return true",
-      (dtUtil::NodeMask::EVERYTHING.GetNodeMask() & 
+   CPPUNIT_ASSERT_MESSAGE("Everything should contain Transparent Effects",
+      ContainsBits(dtUtil::NodeMask::EVERYTHING.GetNodeMask(),
       dtUtil::NodeMask::TRANSPARENT_EFFECTS.GetNodeMask()));
 
-   CPPUNIT_ASSERT_MESSAGE("Everything and Water should return true",
-      (dtUtil::NodeMask::EVERYTHING.GetNodeMask() & 
+   CPPUNIT_ASSERT_MESSAGE("Everything should contain Water.",
+      ContainsBits(dtUtil::NodeMask::EVERYTHING.GetNodeMask(),
       dtUtil::NodeMask::WATER.GetNodeMask()));
 
-   CPPUNIT_ASSERT_MESSAGE("Everything and Terrain Features should return true",
-      (dtUtil::NodeMask::EVERYTHING.GetNodeMask() & 
-      dtUtil::NodeMask::TERRAIN_FEATURES.GetNodeMask()));
+   CPPUNIT_ASSERT_MESSAGE("Everything should contain Terrain.",
+      ContainsBits(dtUtil::NodeMask::EVERYTHING.GetNodeMask(),
+      dtUtil::NodeMask::TRANSPARENT_GEOMETRY.GetNodeMask()));
 
-   CPPUNIT_ASSERT_MESSAGE("Everything and DEFAULT_GEOMETRY should return true",
-      (dtUtil::NodeMask::EVERYTHING.GetNodeMask() & 
+   CPPUNIT_ASSERT_MESSAGE("Everything should contain DEFAULT_GEOMETRY",
+      ContainsBits(dtUtil::NodeMask::EVERYTHING.GetNodeMask(),
       dtUtil::NodeMask::DEFAULT_GEOMETRY.GetNodeMask()));
 
 
-   CPPUNIT_ASSERT_MESSAGE("Background and Foreground should return false",
-      !(dtUtil::NodeMask::BACKGROUND.GetNodeMask() & 
+   CPPUNIT_ASSERT_MESSAGE("Background should not contain Foreground",
+      !ContainsBits(dtUtil::NodeMask::BACKGROUND.GetNodeMask(),
       dtUtil::NodeMask::FOREGROUND.GetNodeMask()));
    
-   CPPUNIT_ASSERT_MESSAGE("Foreground and Transparent Effects should return false", 
-      !(dtUtil::NodeMask::FOREGROUND.GetNodeMask() & 
+   CPPUNIT_ASSERT_MESSAGE("Foreground should not contain Transparent Effects", 
+      !ContainsBits(dtUtil::NodeMask::FOREGROUND, 
       dtUtil::NodeMask::TRANSPARENT_EFFECTS.GetNodeMask()));
    
-   CPPUNIT_ASSERT_MESSAGE("Transparent Effects and Water should return false", 
-      !(dtUtil::NodeMask::TRANSPARENT_EFFECTS.GetNodeMask() & 
+   CPPUNIT_ASSERT_MESSAGE("Transparent Effects should not should contatin Water", 
+      !ContainsBits(dtUtil::NodeMask::TRANSPARENT_EFFECTS,
       dtUtil::NodeMask::WATER.GetNodeMask()));
 
    //IGNORE_RAYCAST
 
    CPPUNIT_ASSERT_MESSAGE("Background should ignore raycast", 
-      (dtUtil::NodeMask::BACKGROUND.GetNodeMask() | 
-      dtUtil::NodeMask::IGNORE_RAYCAST.GetNodeMask()));
+      !ContainsBits(dtUtil::CullMask::SCENE_INTERSECT_MASK,
+      dtUtil::NodeMask::BACKGROUND.GetNodeMask()));
 
    CPPUNIT_ASSERT_MESSAGE("Foreground should ignore raycast", 
-      (dtUtil::NodeMask::FOREGROUND.GetNodeMask() |  
-      dtUtil::NodeMask::IGNORE_RAYCAST.GetNodeMask()));
+      !ContainsBits(dtUtil::CullMask::SCENE_INTERSECT_MASK,
+      dtUtil::NodeMask::FOREGROUND.GetNodeMask()));
 
    CPPUNIT_ASSERT_MESSAGE("Transparent effects should ignore raycast", 
-      (dtUtil::NodeMask::TRANSPARENT_EFFECTS.GetNodeMask() |
-      dtUtil::NodeMask::IGNORE_RAYCAST.GetNodeMask()));
+      !ContainsBits(dtUtil::CullMask::SCENE_INTERSECT_MASK,
+      dtUtil::NodeMask::TRANSPARENT_EFFECTS));
 
    CPPUNIT_ASSERT_MESSAGE("Water should ignore raycast", 
-      (dtUtil::NodeMask::WATER.GetNodeMask() |
-      dtUtil::NodeMask::IGNORE_RAYCAST.GetNodeMask()));
+      !ContainsBits(dtUtil::CullMask::SCENE_INTERSECT_MASK,
+      dtUtil::NodeMask::WATER));
 
    CPPUNIT_ASSERT_MESSAGE("Terrain features should not ignore raycast", 
-      !(dtUtil::NodeMask::TERRAIN_FEATURES.GetNodeMask() &
-      dtUtil::NodeMask::IGNORE_RAYCAST.GetNodeMask()));
+      ContainsBits(dtUtil::CullMask::SCENE_INTERSECT_MASK,
+      dtUtil::NodeMask::TRANSPARENT_GEOMETRY));
 
    CPPUNIT_ASSERT_MESSAGE("Default geometry should not ignore raycast", 
-      !(dtUtil::NodeMask::DEFAULT_GEOMETRY.GetNodeMask() &
-      dtUtil::NodeMask::IGNORE_RAYCAST.GetNodeMask()));
+      ContainsBits(dtUtil::CullMask::SCENE_INTERSECT_MASK,
+      dtUtil::NodeMask::DEFAULT_GEOMETRY));
 
    CPPUNIT_ASSERT_MESSAGE("Non Transparent geometry should not ignore raycast", 
-      !(dtUtil::NodeMask::NON_TRANSPARENT_GEOMETRY.GetNodeMask() &
-      dtUtil::NodeMask::IGNORE_RAYCAST.GetNodeMask()));
+      ContainsBits(dtUtil::CullMask::SCENE_INTERSECT_MASK,
+      dtUtil::NodeMask::NON_TRANSPARENT_GEOMETRY));
 
    CPPUNIT_ASSERT_MESSAGE("Transparent geometry should not ignore raycast", 
-      !(dtUtil::NodeMask::TRANSPARENT_GEOMETRY.GetNodeMask() &
-      dtUtil::NodeMask::IGNORE_RAYCAST.GetNodeMask()));
-
-   //SCENE_INTERSECT_MASK
-
-   CPPUNIT_ASSERT_MESSAGE("Background should not intersect with scene", 
-      !(dtUtil::NodeMask::BACKGROUND.GetNodeMask() &
-      dtUtil::NodeMask::SCENE_INTERSECT_MASK.GetNodeMask()));
-
-   CPPUNIT_ASSERT_MESSAGE("Foreground should not intersect with scene", 
-      !(dtUtil::NodeMask::FOREGROUND.GetNodeMask() &  
-      dtUtil::NodeMask::SCENE_INTERSECT_MASK.GetNodeMask()));
-
-   CPPUNIT_ASSERT_MESSAGE("Transparent effects should not intersect with scene", 
-      !(dtUtil::NodeMask::TRANSPARENT_EFFECTS.GetNodeMask() &
-      dtUtil::NodeMask::SCENE_INTERSECT_MASK.GetNodeMask()));
-
-   CPPUNIT_ASSERT_MESSAGE("Water should not intersect with scene", 
-      !(dtUtil::NodeMask::WATER.GetNodeMask() &
-      dtUtil::NodeMask::SCENE_INTERSECT_MASK.GetNodeMask()));
-
-   CPPUNIT_ASSERT_MESSAGE("Terrain features should intersect with scene", 
-      (dtUtil::NodeMask::TERRAIN_FEATURES.GetNodeMask() |
-      dtUtil::NodeMask::SCENE_INTERSECT_MASK.GetNodeMask()));
-
-   CPPUNIT_ASSERT_MESSAGE("Default geometry should intersect with scene", 
-      (dtUtil::NodeMask::DEFAULT_GEOMETRY.GetNodeMask() |
-      dtUtil::NodeMask::SCENE_INTERSECT_MASK.GetNodeMask()));
-
-   CPPUNIT_ASSERT_MESSAGE("Non Transparent geometry should intersect with scene", 
-      (dtUtil::NodeMask::NON_TRANSPARENT_GEOMETRY.GetNodeMask() |
-      dtUtil::NodeMask::SCENE_INTERSECT_MASK.GetNodeMask()));
-
-   CPPUNIT_ASSERT_MESSAGE("Transparent geometry should intersect with scene", 
-      (dtUtil::NodeMask::TRANSPARENT_GEOMETRY.GetNodeMask() |
-      dtUtil::NodeMask::SCENE_INTERSECT_MASK.GetNodeMask()));
-
+      ContainsBits(dtUtil::CullMask::SCENE_INTERSECT_MASK,
+      dtUtil::NodeMask::TRANSPARENT_GEOMETRY));
+  
    //default geometry
    CPPUNIT_ASSERT_MESSAGE("Default geometry should contain non transparent geometry", 
-      (dtUtil::NodeMask::DEFAULT_GEOMETRY.GetNodeMask() |
-      dtUtil::NodeMask::NON_TRANSPARENT_GEOMETRY.GetNodeMask()));
+      ContainsBits(dtUtil::NodeMask::DEFAULT_GEOMETRY,
+      dtUtil::NodeMask::NON_TRANSPARENT_GEOMETRY));
 
    CPPUNIT_ASSERT_MESSAGE("Default geometry should contain transparent geometry", 
-      (dtUtil::NodeMask::DEFAULT_GEOMETRY.GetNodeMask() |
-      dtUtil::NodeMask::TRANSPARENT_GEOMETRY.GetNodeMask()));
+      ContainsBits(dtUtil::NodeMask::DEFAULT_GEOMETRY,
+      dtUtil::NodeMask::TRANSPARENT_GEOMETRY));
 
    //transparent - non- transparent
-   CPPUNIT_ASSERT_MESSAGE("Transparent and non transparent should be 0", 
-      !(dtUtil::NodeMask::NON_TRANSPARENT_GEOMETRY.GetNodeMask() &
-      dtUtil::NodeMask::TRANSPARENT_GEOMETRY.GetNodeMask()));
+   CPPUNIT_ASSERT_MESSAGE("Transparent and non transparent should not overlap", 
+      !ContainsBits(dtUtil::NodeMask::NON_TRANSPARENT_GEOMETRY,
+      dtUtil::NodeMask::TRANSPARENT_GEOMETRY));
 
 
-   //cull mask
+   //cull mask, single pass
 
 
-   CPPUNIT_ASSERT_MESSAGE("Main cull camera mask should contain everything", 
-      (dtUtil::NodeMask::MAIN_CAMERA_CULL_MASK.GetNodeMask() &
-       dtUtil::NodeMask::EVERYTHING.GetNodeMask()));
+   CPPUNIT_ASSERT_MESSAGE("Main camera mask should contain PreProcess", 
+      ContainsBits(dtUtil::CullMask::MAIN_CAMERA_SINGLEPASS,
+      dtUtil::NodeMask::PRE_PROCESS));
+
+   CPPUNIT_ASSERT_MESSAGE("Main camera mask should contain Background", 
+      ContainsBits(dtUtil::CullMask::MAIN_CAMERA_SINGLEPASS,
+      dtUtil::NodeMask::BACKGROUND));
+
+   CPPUNIT_ASSERT_MESSAGE("Main camera mask should contain Terrain", 
+      ContainsBits(dtUtil::CullMask::MAIN_CAMERA_SINGLEPASS,
+      dtUtil::NodeMask::TERRAIN_GEOMETRY));
+
+   CPPUNIT_ASSERT_MESSAGE("Main camera mask should contain Water", 
+      ContainsBits(dtUtil::CullMask::MAIN_CAMERA_SINGLEPASS,
+      dtUtil::NodeMask::WATER));
+
+   CPPUNIT_ASSERT_MESSAGE("Main camera mask should contain Transparent Effects", 
+      ContainsBits(dtUtil::CullMask::MAIN_CAMERA_SINGLEPASS,
+      dtUtil::NodeMask::TRANSPARENT_EFFECTS));
+
+   CPPUNIT_ASSERT_MESSAGE("Main camera mask should contain Volumetric Effects", 
+      ContainsBits(dtUtil::CullMask::MAIN_CAMERA_SINGLEPASS,
+      dtUtil::NodeMask::VOLUMETRIC_EFFECTS));
+
+   CPPUNIT_ASSERT_MESSAGE("Main camera mask should contain Non Transparent Geometry", 
+      ContainsBits(dtUtil::CullMask::MAIN_CAMERA_SINGLEPASS,
+      dtUtil::NodeMask::NON_TRANSPARENT_GEOMETRY));
+
+   CPPUNIT_ASSERT_MESSAGE("Main camera mask should contain Default Geometry", 
+      ContainsBits(dtUtil::CullMask::MAIN_CAMERA_SINGLEPASS,
+      dtUtil::NodeMask::DEFAULT_GEOMETRY));
+
+   CPPUNIT_ASSERT_MESSAGE("Main camera mask should contain Transparent Geometry", 
+      ContainsBits(dtUtil::CullMask::MAIN_CAMERA_SINGLEPASS,
+      dtUtil::NodeMask::TRANSPARENT_GEOMETRY));
+
+   CPPUNIT_ASSERT_MESSAGE("Main camera mask should contain Foreground", 
+      ContainsBits(dtUtil::CullMask::MAIN_CAMERA_SINGLEPASS,
+      dtUtil::NodeMask::FOREGROUND));
+
+
+   CPPUNIT_ASSERT_MESSAGE("Main camera mask should contain Post Process", 
+      ContainsBits(dtUtil::CullMask::MAIN_CAMERA_SINGLEPASS,
+      dtUtil::NodeMask::POST_PROCESS));
 
 
    CPPUNIT_ASSERT_MESSAGE("Additional camera mask should not contain Foreground", 
-      !(dtUtil::NodeMask::ADDITIONAL_CAMERA_CULL_MASK.GetNodeMask() &
-       dtUtil::NodeMask::FOREGROUND.GetNodeMask()));
+      !ContainsBits(dtUtil::CullMask::ADDITIONAL_CAMERA_SINGLEPASS,
+       dtUtil::NodeMask::FOREGROUND));
+
+   
+   //cull mask, multi pass, main camera
+
+   CPPUNIT_ASSERT_MESSAGE("Main camera multipass mask should contain PreProcess", 
+      ContainsBits(dtUtil::CullMask::MAIN_CAMERA_MULTIPASS,
+      dtUtil::NodeMask::PRE_PROCESS));
+
+   CPPUNIT_ASSERT_MESSAGE("Main camera multipass mask should contain Multipass", 
+      ContainsBits(dtUtil::CullMask::MAIN_CAMERA_MULTIPASS,
+      dtUtil::NodeMask::MULTIPASS));
+
+   CPPUNIT_ASSERT_MESSAGE("Main camera multipass mask should not contain Background", 
+      !ContainsBits(dtUtil::CullMask::MAIN_CAMERA_MULTIPASS,
+      dtUtil::NodeMask::BACKGROUND));
+
+   CPPUNIT_ASSERT_MESSAGE("Main camera multipass mask should not contain Terrain", 
+      !ContainsBits(dtUtil::CullMask::MAIN_CAMERA_MULTIPASS,
+      dtUtil::NodeMask::TERRAIN_GEOMETRY));
+
+   CPPUNIT_ASSERT_MESSAGE("Main camera multipass mask should not contain Water", 
+      !ContainsBits(dtUtil::CullMask::MAIN_CAMERA_MULTIPASS,
+      dtUtil::NodeMask::WATER));
+
+   CPPUNIT_ASSERT_MESSAGE("Main camera multipass mask should not contain Transparent Effects", 
+      !ContainsBits(dtUtil::CullMask::MAIN_CAMERA_MULTIPASS,
+      dtUtil::NodeMask::TRANSPARENT_EFFECTS));
+
+   CPPUNIT_ASSERT_MESSAGE("Main camera multipass mask should not contain Volumetric Effects", 
+      !ContainsBits(dtUtil::CullMask::MAIN_CAMERA_MULTIPASS,
+      dtUtil::NodeMask::VOLUMETRIC_EFFECTS));
+
+   CPPUNIT_ASSERT_MESSAGE("Main camera multipass mask should not contain Non Transparent Geometry", 
+      !ContainsBits(dtUtil::CullMask::MAIN_CAMERA_MULTIPASS,
+      dtUtil::NodeMask::NON_TRANSPARENT_GEOMETRY));
+
+   CPPUNIT_ASSERT_MESSAGE("Main camera multipass mask should not contain Default Geometry", 
+      !ContainsBits(dtUtil::CullMask::MAIN_CAMERA_MULTIPASS,
+      dtUtil::NodeMask::DEFAULT_GEOMETRY));
+
+   CPPUNIT_ASSERT_MESSAGE("Main camera multipass mask should contain not Transparent Geometry", 
+      !ContainsBits(dtUtil::CullMask::MAIN_CAMERA_MULTIPASS,
+      dtUtil::NodeMask::TRANSPARENT_GEOMETRY));
+
+   CPPUNIT_ASSERT_MESSAGE("Main camera multipass mask should contain Foreground", 
+      ContainsBits(dtUtil::CullMask::MAIN_CAMERA_MULTIPASS,
+      dtUtil::NodeMask::FOREGROUND));
+
+   CPPUNIT_ASSERT_MESSAGE("Main camera multipass mask should contain Post Process", 
+      ContainsBits(dtUtil::CullMask::MAIN_CAMERA_MULTIPASS,
+      dtUtil::NodeMask::POST_PROCESS));
+
+
+   //cull masks additional camera multipass
+
+   //cull mask, multi pass, main camera
+
+   CPPUNIT_ASSERT_MESSAGE("Additional camera multipass mask should not contain PreProcess", 
+      !ContainsBits(dtUtil::CullMask::ADDITIONAL_CAMERA_MULTIPASS,
+      dtUtil::NodeMask::PRE_PROCESS));
+
+   CPPUNIT_ASSERT_MESSAGE("Additional camera multipass mask should not contain Multipass", 
+      !ContainsBits(dtUtil::CullMask::ADDITIONAL_CAMERA_MULTIPASS,
+      dtUtil::NodeMask::MULTIPASS));
+
+   CPPUNIT_ASSERT_MESSAGE("Additional camera multipass mask should contain Background", 
+      ContainsBits(dtUtil::CullMask::ADDITIONAL_CAMERA_MULTIPASS,
+      dtUtil::NodeMask::BACKGROUND));
+
+   CPPUNIT_ASSERT_MESSAGE("Additional camera multipass mask should contain Terrain", 
+      ContainsBits(dtUtil::CullMask::ADDITIONAL_CAMERA_MULTIPASS,
+      dtUtil::NodeMask::TERRAIN_GEOMETRY));
+
+   CPPUNIT_ASSERT_MESSAGE("Additional camera multipass mask should contain Water", 
+      ContainsBits(dtUtil::CullMask::ADDITIONAL_CAMERA_MULTIPASS,
+      dtUtil::NodeMask::WATER));
+
+   CPPUNIT_ASSERT_MESSAGE("Additional camera multipass mask should contain Transparent Effects", 
+      ContainsBits(dtUtil::CullMask::ADDITIONAL_CAMERA_MULTIPASS,
+      dtUtil::NodeMask::TRANSPARENT_EFFECTS));
+
+   CPPUNIT_ASSERT_MESSAGE("Additional camera multipass mask should contain Volumetric Effects", 
+      ContainsBits(dtUtil::CullMask::ADDITIONAL_CAMERA_MULTIPASS,
+      dtUtil::NodeMask::VOLUMETRIC_EFFECTS));
+
+   CPPUNIT_ASSERT_MESSAGE("Additional camera multipass mask should contain Non Transparent Geometry", 
+      ContainsBits(dtUtil::CullMask::ADDITIONAL_CAMERA_MULTIPASS,
+      dtUtil::NodeMask::NON_TRANSPARENT_GEOMETRY));
+
+   CPPUNIT_ASSERT_MESSAGE("Additional camera multipass mask should contain Default Geometry", 
+      ContainsBits(dtUtil::CullMask::ADDITIONAL_CAMERA_MULTIPASS,
+      dtUtil::NodeMask::DEFAULT_GEOMETRY));
+
+   CPPUNIT_ASSERT_MESSAGE("Additional camera multipass mask should contain not Transparent Geometry", 
+      ContainsBits(dtUtil::CullMask::ADDITIONAL_CAMERA_MULTIPASS,
+      dtUtil::NodeMask::TRANSPARENT_GEOMETRY));
+
+   CPPUNIT_ASSERT_MESSAGE("Additional camera multipass mask should not contain Foreground", 
+      !ContainsBits(dtUtil::CullMask::ADDITIONAL_CAMERA_MULTIPASS,
+      dtUtil::NodeMask::FOREGROUND));
+
+   CPPUNIT_ASSERT_MESSAGE("Additional camera multipass mask should nost contain Post Process", 
+      !ContainsBits(dtUtil::CullMask::ADDITIONAL_CAMERA_MULTIPASS,
+      dtUtil::NodeMask::POST_PROCESS));
+
+
+   //cull masks and non transparent masks
+   
+   CPPUNIT_ASSERT_MESSAGE("Non Transparent Scene should not contain the pre process scene", 
+      !ContainsBits(dtUtil::CullMask::MULTIPASS_NON_TRANSPARENT_MASK,
+      dtUtil::NodeMask::PRE_PROCESS));
+
+   CPPUNIT_ASSERT_MESSAGE("Non Transparent Scene should not contain the post processs scene", 
+      !ContainsBits(dtUtil::CullMask::MULTIPASS_NON_TRANSPARENT_MASK,
+      dtUtil::NodeMask::POST_PROCESS));
 
    CPPUNIT_ASSERT_MESSAGE("Non Transparent Scene should not contain Foreground", 
-      !(dtUtil::NodeMask::NON_TRANSPARENT_SCENE_CULL_MASK.GetNodeMask() &
-       dtUtil::NodeMask::FOREGROUND.GetNodeMask()));
+      !ContainsBits(dtUtil::CullMask::MULTIPASS_NON_TRANSPARENT_MASK,
+       dtUtil::NodeMask::FOREGROUND));
+
+   CPPUNIT_ASSERT_MESSAGE("Non Transparent Scene should not contain the Multipass scene", 
+      !ContainsBits(dtUtil::CullMask::MULTIPASS_NON_TRANSPARENT_MASK,
+      dtUtil::NodeMask::MULTIPASS));
+
 
    CPPUNIT_ASSERT_MESSAGE("Non Transparent Scene should contain Background", 
-      (dtUtil::NodeMask::NON_TRANSPARENT_SCENE_CULL_MASK.GetNodeMask() &
-       dtUtil::NodeMask::BACKGROUND.GetNodeMask()));
-
-   CPPUNIT_ASSERT_MESSAGE("Non Transparent Scene should not contain the Foreground", 
-      !(dtUtil::NodeMask::NON_TRANSPARENT_SCENE_CULL_MASK.GetNodeMask() &
-      dtUtil::NodeMask::FOREGROUND.GetNodeMask()));
-
+      ContainsBits(dtUtil::CullMask::MULTIPASS_NON_TRANSPARENT_MASK,
+       dtUtil::NodeMask::BACKGROUND));
+  
    CPPUNIT_ASSERT_MESSAGE("Non Transparent Scene should not contain the Water", 
-      !(dtUtil::NodeMask::NON_TRANSPARENT_SCENE_CULL_MASK.GetNodeMask() &
-      dtUtil::NodeMask::WATER.GetNodeMask()));
+      !ContainsBits(dtUtil::CullMask::MULTIPASS_NON_TRANSPARENT_MASK,
+      dtUtil::NodeMask::WATER));
+
+   CPPUNIT_ASSERT_MESSAGE("Non Transparent Scene should not contain the Volumetric Effects", 
+      !ContainsBits(dtUtil::CullMask::MULTIPASS_NON_TRANSPARENT_MASK,
+      dtUtil::NodeMask::VOLUMETRIC_EFFECTS));
 
    CPPUNIT_ASSERT_MESSAGE("Non Transparent Scene should not contain the Transparent Effects", 
-      !(dtUtil::NodeMask::NON_TRANSPARENT_SCENE_CULL_MASK.GetNodeMask() &
-      dtUtil::NodeMask::TRANSPARENT_EFFECTS.GetNodeMask()));
+      !ContainsBits(dtUtil::CullMask::MULTIPASS_NON_TRANSPARENT_MASK,
+      dtUtil::NodeMask::TRANSPARENT_EFFECTS));
 
    CPPUNIT_ASSERT_MESSAGE("Non Transparent Scene should not contain the Transparent Geometry", 
-      !(dtUtil::NodeMask::NON_TRANSPARENT_SCENE_CULL_MASK.GetNodeMask() &
-      dtUtil::NodeMask::TRANSPARENT_GEOMETRY.GetNodeMask()));
+      !ContainsBits(dtUtil::CullMask::MULTIPASS_NON_TRANSPARENT_MASK,
+      dtUtil::NodeMask::TRANSPARENT_GEOMETRY));
 
-   CPPUNIT_ASSERT_MESSAGE("Transparent Scene should contain the Transparent Geometry", 
-      (dtUtil::NodeMask::TRANSPARENT_ONLY_CULL_MASK.GetNodeMask() &
-      dtUtil::NodeMask::TRANSPARENT_GEOMETRY.GetNodeMask()));
+   CPPUNIT_ASSERT_MESSAGE("Non Transparent Scene should contain the Non Transparent Geometry", 
+      ContainsBits(dtUtil::CullMask::MULTIPASS_NON_TRANSPARENT_MASK,
+      dtUtil::NodeMask::NON_TRANSPARENT_GEOMETRY));
 
-   CPPUNIT_ASSERT_MESSAGE("Transparent Scene should contain the Transparent Effects", 
-      (dtUtil::NodeMask::TRANSPARENT_ONLY_CULL_MASK.GetNodeMask() &
-      dtUtil::NodeMask::TRANSPARENT_EFFECTS.GetNodeMask()));
+   CPPUNIT_ASSERT_MESSAGE("Non Transparent Scene should contain the Terrain Geometry", 
+      ContainsBits(dtUtil::CullMask::MULTIPASS_NON_TRANSPARENT_MASK,
+      dtUtil::NodeMask::TERRAIN_GEOMETRY));
+   
 
-   CPPUNIT_ASSERT_MESSAGE("Transparent Scene should contain Water", 
-      (dtUtil::NodeMask::TRANSPARENT_ONLY_CULL_MASK.GetNodeMask() &
-      dtUtil::NodeMask::WATER.GetNodeMask()));
+   //transparent mask
 
    CPPUNIT_ASSERT_MESSAGE("Transparent Scene should not contain Background", 
-      !(dtUtil::NodeMask::TRANSPARENT_ONLY_CULL_MASK.GetNodeMask() &
-      dtUtil::NodeMask::BACKGROUND.GetNodeMask()));
+      !ContainsBits(dtUtil::CullMask::MULTIPASS_TRANSPARENT_MASK,
+      dtUtil::NodeMask::BACKGROUND));
 
    CPPUNIT_ASSERT_MESSAGE("Transparent Scene should not contain Foreground", 
-      !(dtUtil::NodeMask::TRANSPARENT_ONLY_CULL_MASK.GetNodeMask() &
-      dtUtil::NodeMask::FOREGROUND.GetNodeMask()));
+      !ContainsBits(dtUtil::CullMask::MULTIPASS_TRANSPARENT_MASK,
+      dtUtil::NodeMask::FOREGROUND));
+
+   CPPUNIT_ASSERT_MESSAGE("Transparent Scene should not contain Pre Process", 
+      !ContainsBits(dtUtil::CullMask::MULTIPASS_TRANSPARENT_MASK,
+      dtUtil::NodeMask::PRE_PROCESS));
+   
+   CPPUNIT_ASSERT_MESSAGE("Transparent Scene should not contain Post Process", 
+      !ContainsBits(dtUtil::CullMask::MULTIPASS_TRANSPARENT_MASK,
+      dtUtil::NodeMask::POST_PROCESS));
+
+   CPPUNIT_ASSERT_MESSAGE("Transparent Scene should not contain Multipass", 
+      !ContainsBits(dtUtil::CullMask::MULTIPASS_TRANSPARENT_MASK,
+      dtUtil::NodeMask::MULTIPASS));
+
+
+   CPPUNIT_ASSERT_MESSAGE("Transparent Scene should contain the Transparent Geometry", 
+      ContainsBits(dtUtil::CullMask::MULTIPASS_TRANSPARENT_MASK,
+      dtUtil::NodeMask::TRANSPARENT_GEOMETRY));
+
+   CPPUNIT_ASSERT_MESSAGE("Transparent Scene should contain the Transparent Effects", 
+      ContainsBits(dtUtil::CullMask::MULTIPASS_TRANSPARENT_MASK,
+      dtUtil::NodeMask::TRANSPARENT_EFFECTS));
+
+   CPPUNIT_ASSERT_MESSAGE("Transparent Scene should contain Water", 
+      ContainsBits(dtUtil::CullMask::MULTIPASS_TRANSPARENT_MASK,
+      dtUtil::NodeMask::WATER));
+
+   CPPUNIT_ASSERT_MESSAGE("Transparent Scene should contain Volumetric Effects", 
+      ContainsBits(dtUtil::CullMask::MULTIPASS_TRANSPARENT_MASK,
+      dtUtil::NodeMask::VOLUMETRIC_EFFECTS));
+
+   CPPUNIT_ASSERT_MESSAGE("Transparent Scene should not contain Terrain", 
+      !ContainsBits(dtUtil::CullMask::MULTIPASS_TRANSPARENT_MASK,
+      dtUtil::NodeMask::TERRAIN_GEOMETRY));
 
    CPPUNIT_ASSERT_MESSAGE("Transparent Scene should not contain Non Transparent Geometry", 
-      !(dtUtil::NodeMask::TRANSPARENT_ONLY_CULL_MASK.GetNodeMask() &
-      dtUtil::NodeMask::NON_TRANSPARENT_GEOMETRY.GetNodeMask()));
-
-   CPPUNIT_ASSERT_MESSAGE("Transparent Scene should not contain Background", 
-      !(dtUtil::NodeMask::TRANSPARENT_ONLY_CULL_MASK.GetNodeMask() &
-      dtUtil::NodeMask::BACKGROUND.GetNodeMask()));
-
-
-   CPPUNIT_ASSERT_MESSAGE("Everything should include the background scene", 
-      dtUtil::NodeMask::BACKGROUND.GetNodeMask() & 
-      dtUtil::NodeMask::EVERYTHING);
+      !ContainsBits(dtUtil::CullMask::MULTIPASS_TRANSPARENT_MASK,
+      dtUtil::NodeMask::NON_TRANSPARENT_GEOMETRY));
 
 }
 
