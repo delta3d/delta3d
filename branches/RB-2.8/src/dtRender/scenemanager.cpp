@@ -21,6 +21,7 @@
 
 #include <dtRender/scenemanager.h>
 #include <dtRender/scenegroup.h>
+#include <dtRender/multipassscene.h>
 
 #include <dtRender/simplescene.h>
 #include <dtRender/shadowscene.h>
@@ -29,7 +30,7 @@
 #include <osg/MatrixTransform>
 
 #include <stack>
-
+#include <dtUtil/nodemask.h>
 #include <dtABC/application.h>
 #include <dtGame/gamemanager.h>
 #include <dtGame/gameactorproxy.h>
@@ -41,7 +42,9 @@ namespace dtRender
    public:
 
       SceneManagerImpl()
-         : mGraphicsQuality(&GraphicsQuality::DEFAULT)
+         : mCreateDefaultScene(true)
+         , mCreateMultipassScene(true)
+         , mGraphicsQuality(&GraphicsQuality::DEFAULT)
       {
       }
       ~SceneManagerImpl()
@@ -50,10 +53,17 @@ namespace dtRender
          mSceneStack = std::stack<dtCore::ObserverPtr<SceneBase> >();
          
          mChildren.clear();
+
+         mMultipassScene = NULL;
+         mSceneCamera = NULL;
       }
 
+      bool mCreateDefaultScene;
+      bool mCreateMultipassScene;
       const GraphicsQuality* mGraphicsQuality;
       typedef std::vector<dtCore::RefPtr<SceneGroup> > SceneManagerImpl::SceneGroupArray;
+      dtCore::RefPtr<MultipassScene> mMultipassScene;
+      dtCore::RefPtr<dtCore::Camera> mSceneCamera;
       SceneManagerImpl::SceneGroupArray mChildren;
       std::stack<dtCore::ObserverPtr<SceneBase> > mSceneStack;
    };
@@ -70,6 +80,7 @@ namespace dtRender
 
    SceneManager::~SceneManager()
    {
+      RemoveAllActors();
       delete mImpl;
    }
 
@@ -87,6 +98,9 @@ namespace dtRender
          dtCore::RefPtr<SceneGroup> newNode = new SceneGroup();
          SceneEnum& se = SceneEnum::FindSceneByNumber(i);
          newNode->SetSceneEnum(se);
+
+         SetNodeMask(se, *newNode->GetOSGNode());
+
          newNode->CreateScene(*this, *mImpl->mGraphicsQuality);
          newNode->GetOSGNode()->getOrCreateStateSet()->setBinNumber(i);
 
@@ -97,18 +111,48 @@ namespace dtRender
       }
 
       //create a default scene to accept DeltaDrawables
+      if(mImpl->mCreateDefaultScene)
+      {
+         CreateDefaultScene();
+      }
+
+      //create a default scene which enables render to texture 
+      //and multipass effects
+      if(mImpl->mCreateMultipassScene)
+      {
+         CreateDefaultMultipassScene();
+      }
+      
+   }
+
+   void SceneManager::CreateDefaultScene()
+   {
+      //create a default scene to accept DeltaDrawables
       dtCore::RefPtr<SimpleScene> ss = new SimpleScene();
       ss->CreateScene(*this, *mImpl->mGraphicsQuality);
       ss->SetSceneEnum(SceneEnum::DEFAULT_SCENE);
 
-      mImpl->mChildren[SceneEnum::DEFAULT_SCENE.GetSceneNumber()]->AddChild(ss.get());
-      
+      AddScene(*ss);
+   }
+
+   void SceneManager::CreateDefaultMultipassScene()
+   {    
+      dtCore::Camera* sceneCam = GetSceneCamera();
+      if(sceneCam != NULL)
+      {
+         dtCore::RefPtr<MultipassScene> mps = new MultipassScene();
+
+         AddScene(*mps);
+      }
+      else
+      {
+         LOG_ERROR("Cannot create multipass scene without main scene camera.");
+      }
    }
 
    void SceneManager::AddScene(SceneBase& sb)
    {
       const int sceneRenderOrder = sb.GetSceneEnum().GetSceneNumber();
-
       
       SceneGroup* childAsGroup = mImpl->mChildren[sceneRenderOrder]->GetAsSceneGroup();
 
@@ -118,8 +162,12 @@ namespace dtRender
          //Make the create scene call, this initializes any multi pass rendering 
          //effects and cameras
          sb.CreateScene(*this, *mImpl->mGraphicsQuality);
-          
-         childAsGroup->AddScene(sb);
+         
+         bool addedToScene = childAsGroup->AddChild(&sb);
+         if(!addedToScene)
+         {
+            LOG_ERROR("Error trying to add Scene to SceneManager");
+         }
       }
       else
       {
@@ -421,6 +469,81 @@ namespace dtRender
       }
    }
 
+   dtCore::Camera* SceneManager::GetSceneCamera()
+   {
+      if(!mImpl->mSceneCamera.valid())
+      {
+         //setup default main scene camera      
+         //TODO - WHY Doesnt this work??
+         if (GetGameActorProxy().IsInGM())
+         {
+            mImpl->mSceneCamera = GetGameActorProxy().GetGameManager()->GetApplication().GetCamera();
+         }
+         else if (GetGameActorProxy().IsInSTAGE())
+         {
+            mImpl->mSceneCamera =  dtABC::Application::GetInstance("Application")->GetCamera();
+         }
+      }
+
+      return mImpl->mSceneCamera.get();
+   }
+
+   const dtCore::Camera* SceneManager::GetSceneCamera() const
+   {
+      return mImpl->mSceneCamera.get();
+   }
+
+   void SceneManager::SetEnableMultipass( bool b )
+   {
+      mImpl->mCreateMultipassScene = b;
+   }
+
+   bool SceneManager::GetEnableMultipass() const
+   {
+      return mImpl->mCreateMultipassScene;
+   }
+
+   void SceneManager::SetSceneCamera( dtCore::Camera* cam)
+   {
+      mImpl->mSceneCamera = cam;
+   }
+
+
+   void SceneManager::SetNodeMask(const SceneEnum& se, osg::Node& n)
+   {
+      if(se == SceneEnum::PRE_RENDER)
+      {
+         n.setNodeMask(dtUtil::NodeMask::PRE_PROCESS);
+      }
+      else if(se == SceneEnum::POST_RENDER)
+      {
+         n.setNodeMask(dtUtil::NodeMask::POST_PROCESS);
+      }
+      else if(se == SceneEnum::BACKGROUND)
+      {
+         n.setNodeMask(dtUtil::NodeMask::BACKGROUND);
+      }
+      else if(se == SceneEnum::FOREGROUND)
+      {
+         n.setNodeMask(dtUtil::NodeMask::FOREGROUND);
+      }
+      else if(se == SceneEnum::NON_TRANSPARENT_OBJECTS)
+      {
+         n.setNodeMask(dtUtil::NodeMask::NON_TRANSPARENT_GEOMETRY);
+      }
+      else if(se == SceneEnum::DEFAULT_SCENE)
+      {
+         n.setNodeMask(dtUtil::NodeMask::DEFAULT_GEOMETRY);
+      }
+      else if(se == SceneEnum::TRANSPARENT_OBJECTS)
+      {
+         n.setNodeMask(dtUtil::NodeMask::TRANSPARENT_GEOMETRY);
+      }
+   }
+   
+
+   /////////////////////////////////////////////////////////////
+   //proxy
    SceneManagerProxy::SceneManagerProxy()
    {
    }

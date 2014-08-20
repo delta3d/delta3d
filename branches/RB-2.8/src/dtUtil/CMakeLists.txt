@@ -7,6 +7,7 @@ SET(SOURCE_PATH ${CMAKE_SOURCE_DIR}/src/${LIB_NAME})
 SET( LIB_SOURCES 
     ${SOURCE_PATH}/configproperties.cpp
     ${SOURCE_PATH}/coordinates.cpp
+    ${SOURCE_PATH}/cullmask.cpp
     ${SOURCE_PATH}/datapathutils.cpp
     ${SOURCE_PATH}/datastream.cpp
     ${SOURCE_PATH}/datetime.cpp
@@ -51,6 +52,7 @@ SET( LIB_PUBLIC_HEADERS
     ${HEADER_PATH}/command.h
     ${HEADER_PATH}/configproperties.h
     ${HEADER_PATH}/coordinates.h
+    ${HEADER_PATH}/cullmask.h
     ${HEADER_PATH}/datapathutils.h
     ${HEADER_PATH}/datastream.h
     ${HEADER_PATH}/datetime.h

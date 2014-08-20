@@ -87,6 +87,7 @@ namespace dtRender
 
    private:
       bool SetTimeAndDate(std::istringstream& iss);
+      void BindShader();
 
       EphemerisImpl* mImpl;
    };

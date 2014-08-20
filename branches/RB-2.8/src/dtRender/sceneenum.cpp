@@ -29,13 +29,14 @@ namespace dtRender
    IMPLEMENT_ENUM(SceneEnum);
 
    SceneEnum SceneEnum::PRE_RENDER("PRE_RENDER", 0);
-   SceneEnum SceneEnum::BACKGROUND("BACKGROUND", 1);
-   SceneEnum SceneEnum::NON_TRANSPARENT_OBJECTS("NON_TRANSPARENT_OBJECTS", 2);
-   SceneEnum SceneEnum::DEFAULT_SCENE("DEFAULT_SCENE", 3);
-   SceneEnum SceneEnum::TRANSPARENT_OBJECTS("TRANSPARENT_OBJECTS", 4);
-   SceneEnum SceneEnum::FOREGROUND("FOREGROUND", 5);
-   SceneEnum SceneEnum::POST_RENDER("POST_RENDER", 6);
-   SceneEnum SceneEnum::NUM_SCENES("NUM_SCENES", 7);
+   SceneEnum SceneEnum::MULTIPASS("MULTIPASS", 1);
+   SceneEnum SceneEnum::BACKGROUND("BACKGROUND", 2);
+   SceneEnum SceneEnum::NON_TRANSPARENT_OBJECTS("NON_TRANSPARENT_OBJECTS", 3);
+   SceneEnum SceneEnum::DEFAULT_SCENE("DEFAULT_SCENE", 4);
+   SceneEnum SceneEnum::TRANSPARENT_OBJECTS("TRANSPARENT_OBJECTS", 5);
+   SceneEnum SceneEnum::FOREGROUND("FOREGROUND", 6);
+   SceneEnum SceneEnum::POST_RENDER("POST_RENDER", 7);
+   SceneEnum SceneEnum::NUM_SCENES("NUM_SCENES", 8);
 
 
    SceneEnum::SceneEnum(const std::string &name, int order) 

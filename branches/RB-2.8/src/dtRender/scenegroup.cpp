@@ -53,6 +53,13 @@ namespace dtRender
       SetName("SceneGroup");
    }
 
+   SceneGroup::SceneGroup(const SceneType& sceneId, const SceneEnum& defaultScene)
+      : BaseClass(sceneId, defaultScene)   
+      , mImpl(new SceneGroupImpl())
+   {
+      SetName("SceneGroup");
+   }
+
 
    SceneGroup::~SceneGroup()
    {
@@ -66,51 +73,51 @@ namespace dtRender
    }
 
 
-   void SceneGroup::AddScene(SceneBase& sb)
-   {
-      //we do not use BaseClass or SceneBase here
-      //because it does not have ordered OSG children
-      if(DeltaDrawable::AddChild(&sb))
+   bool SceneGroup::AddScene(SceneBase& sb)
+   {      
+      //this inserts sorted in order of the scene children's render order
+      SceneGroup::SceneArray::iterator iter = mImpl->mChildren.begin();
+      SceneGroup::SceneArray::iterator iterEnd = mImpl->mChildren.end();
+      for (;iter != iterEnd; ++iter)
       {
-         //this inserts sorted in order of the scene children's render order
-         SceneGroup::SceneArray::iterator iter = mImpl->mChildren.begin();
-         SceneGroup::SceneArray::iterator iterEnd = mImpl->mChildren.end();
-         for (;iter != iterEnd; ++iter)
+         SceneBase* childScene = (*iter).get();
+         if(sb.GetRenderOrder() < childScene->GetRenderOrder())
          {
-            SceneBase* childScene = (*iter).get();
-            if(sb.GetRenderOrder() < childScene->GetRenderOrder())
-            {
-               unsigned int childNum = mImpl->mNode->getChildIndex(childScene->GetOSGNode());
+            unsigned int childNum = mImpl->mNode->getChildIndex(childScene->GetOSGNode());
 
-               mImpl->mChildren.insert(iter, &sb);
-               GetSceneNode()->insertChild(childNum, sb.GetOSGNode());
+            mImpl->mChildren.insert(iter, &sb);
+            GetSceneNode()->insertChild(childNum, sb.GetOSGNode());
                
-               //return early if we successfully insert
-               return;
-            }
+            //return early if we successfully insert
+            return DeltaDrawable::AddChild(&sb);
          }
-
-         //if we get here, either we have no children, or this child
-         //belongs at the end of the list
-         mImpl->mChildren.push_back(&sb);
-         GetSceneNode()->addChild(sb.GetOSGNode());
       }
+
+      //if we get here, either we have no children, or this child
+      //belongs at the end of the list
+      mImpl->mChildren.push_back(&sb);
+      GetSceneNode()->addChild(sb.GetOSGNode());
+      return DeltaDrawable::AddChild(&sb);      
    }
    
 
    bool SceneGroup::AddChild( DeltaDrawable* child )
    {
+      bool isScene = false;
       SceneBase* scene = dynamic_cast<SceneBase*>(child);
 
       if(scene != NULL)
       {
-         AddScene(*scene);
+         isScene = true;
       }
-      else
+
+      //first try to add it to our children
+      SceneArray::iterator iter = mImpl->mChildren.begin();
+      SceneArray::iterator iterEnd = mImpl->mChildren.end();
+      for (; iter != iterEnd; ++iter)
       {
-         SceneArray::iterator iter = mImpl->mChildren.begin();
-         SceneArray::iterator iterEnd = mImpl->mChildren.end();
-         for (; iter != iterEnd; ++iter)
+         //if the child is a scene we can only add it to scene groups
+         if(!isScene || (*iter)->GetAsSceneGroup() != NULL)
          {
             //returns on the first scene that accepts the child
             if((*iter)->AddChild(child))
@@ -119,6 +126,14 @@ namespace dtRender
             }
          }
       }
+   
+      //else see if it is a scene      
+      if(isScene)
+      {
+         return AddScene(*scene);
+      }
+
+      //else we have no children that can accept a regular drawable
       return false;
    }
 
@@ -283,6 +298,16 @@ namespace dtRender
             s->GetAsSceneGroup()->GetAllScenesByType(st, toFill);
          }
       }
+   }
+
+   SceneGroup::SceneArray& SceneGroup::GetChildArray()
+   {
+      return mImpl->mChildren;
+   }
+
+   const SceneGroup::SceneArray& SceneGroup::GetChildArray() const
+   {
+      return mImpl->mChildren;
    }
 
 }//namespace dtRender

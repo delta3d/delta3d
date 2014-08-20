@@ -41,6 +41,11 @@ namespace dtGame
    class GameManager;
 }
 
+namespace dtCore 
+{
+   class Camera;
+}
+
 namespace dtRender
 {
    class SceneManagerImpl;
@@ -94,6 +99,21 @@ namespace dtRender
       const GraphicsQuality& GetGraphicsQuality() const;
       void SetGraphicsQuality(GraphicsQuality&);
 
+      /***
+      * Use this setting to disable multipass effects
+      */
+      void SetEnableMultipass(bool);
+      bool GetEnableMultipass() const;
+
+      /***
+      *  Exposes the main scene camera.
+      *
+      */
+      void SetSceneCamera(dtCore::Camera*);
+      dtCore::Camera* GetSceneCamera();
+      const dtCore::Camera* GetSceneCamera() const;
+
+
       //dtCore IEnvironment Interface start
       virtual void AddActor(dtCore::DeltaDrawable& dd);
 
@@ -113,9 +133,13 @@ namespace dtRender
       dtGame::GameManager* GetGameManager();
       const dtGame::GameManager* GetGameManager() const;
 
+      void CreateDefaultScene();
+      void CreateDefaultMultipassScene();
+
    private:
       virtual void AddScene(SceneBase&);
-
+      
+      void SetNodeMask(const SceneEnum& se, osg::Node& n);
 
       SceneManagerImpl* mImpl;
 

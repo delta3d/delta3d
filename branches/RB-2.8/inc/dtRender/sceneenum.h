@@ -37,20 +37,22 @@ namespace dtRender
       public:
 
          static SceneEnum PRE_RENDER; //0
-
-         static SceneEnum BACKGROUND;//1
-
-         static SceneEnum NON_TRANSPARENT_OBJECTS; //2
-
-         static SceneEnum DEFAULT_SCENE; //3
-
-         static SceneEnum TRANSPARENT_OBJECTS;  //4
-
-         static SceneEnum FOREGROUND; //5
-
-         static SceneEnum POST_RENDER; //6
          
-         static SceneEnum NUM_SCENES; //7
+         static SceneEnum MULTIPASS; //1
+
+         static SceneEnum BACKGROUND;//2
+
+         static SceneEnum NON_TRANSPARENT_OBJECTS; //3
+
+         static SceneEnum DEFAULT_SCENE; //4
+
+         static SceneEnum TRANSPARENT_OBJECTS;  //5
+
+         static SceneEnum FOREGROUND; //6
+
+         static SceneEnum POST_RENDER; //7
+        
+         static SceneEnum NUM_SCENES; //8
 
          /**
          *  @return the child number of the specified scene.

@@ -38,7 +38,7 @@ void main(void)
    vec3 envColor = texture2D(envTexture, vReflectTexCoord).rgb;
    
    mat3 tbn;
-   vec3 WorldMapNormal = computeWorldNormal(vPos, normalize(vNormal), normalize(normalColor.rgb), uv, tbn);
+   vec3 WorldMapNormal = computeWorldSpaceNormal(vPos, normalize(vNormal), normalize(normalColor.rgb), uv, tbn);
 
    // Normalize all incoming vectors
    vec3 lightDir = normalize(vLightDir);   

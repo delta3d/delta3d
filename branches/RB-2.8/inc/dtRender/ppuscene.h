@@ -55,20 +55,12 @@ namespace dtRender
       virtual osg::Group* GetSceneNode();
       virtual const osg::Group* GetSceneNode() const;
 
-      osgPPU::Processor* GetPPUProcessor();
-      const osgPPU::Processor* GetPPUProcessor() const;
-
       osgPPU::Unit* GetFirstUnit();
       const osgPPU::Unit* GetFirstUnit() const;
 
       osgPPU::Unit* GetLastUnit();
       const osgPPU::Unit* GetLastUnit() const;
-
-      osg::Camera* GetCamera();
-      const osg::Camera* GetCamera() const;
-
-      void SetCamera(osg::Camera&);
-
+      
    protected:
       void SetFirstUnit(osgPPU::Unit&);
       void SetLastUnit(osgPPU::Unit&);

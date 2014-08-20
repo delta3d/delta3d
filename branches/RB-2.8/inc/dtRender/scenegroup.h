@@ -51,13 +51,6 @@ namespace dtRender
 
       virtual void CreateScene(SceneManager&, const GraphicsQuality&);
 
-      /**
-      *  A SceneGroup holds an array of scenes 
-      *     sorted by their render order.
-      *
-      *  There is no RemoveScene(), use RemoveChild().
-      */
-      virtual void AddScene(SceneBase&);
       
       /**
       * Searches the scene for the first found scene of said type
@@ -105,7 +98,16 @@ namespace dtRender
       virtual const SceneGroup* GetAsSceneGroup() const{return this;}
 
    protected:
-      
+      /**
+      *  A SceneGroup holds an array of scenes 
+      *     sorted by their render order.
+      *
+      *  There is no RemoveScene(), use RemoveChild().
+      */
+      virtual bool AddScene(SceneBase&);
+      SceneArray& GetChildArray();
+      const SceneArray& GetChildArray() const;
+
    private:
       
 

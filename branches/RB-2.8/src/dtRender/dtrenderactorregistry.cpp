@@ -24,8 +24,10 @@
 #include <dtRender/guiscene.h>
 #include <dtRender/ephemerisscene.h>
 #include <dtRender/simplescene.h>
+#include <dtRender/ppuscene.h>
 #include <dtRender/hdrscene.h>
 #include <dtRender/shadowscene.h>
+#include <dtRender/multipassscene.h>
 
 // For the autoreg
 #include <dtCore/librarymanager.h> 
@@ -41,8 +43,14 @@ namespace dtRender
    dtCore::RefPtr<dtCore::ActorType> RenderActorRegistry::HDR_SCENE_ACTOR_TYPE(new dtCore::ActorType
       ("HDR Scene", "dtRender", "This actor uses osgPPU to accumulate hdr light values and apply tone mapping.")); 
 
+   dtCore::RefPtr<dtCore::ActorType> RenderActorRegistry::MULTIPASS_SCENE_ACTOR_TYPE(new dtCore::ActorType
+      ("Multipass Scene", "dtRender", "This actor enables multipass effects.")); 
+
    dtCore::RefPtr<dtCore::ActorType> RenderActorRegistry::OCEAN_SCENE_ACTOR_TYPE(new dtCore::ActorType
       ("Ocean Scene", "dtRender", "This actor creates a large water mesh.")); 
+
+   dtCore::RefPtr<dtCore::ActorType> RenderActorRegistry::PPU_SCENE_ACTOR_TYPE(new dtCore::ActorType
+      ("PPU Scene", "dtRender", "This actor is required to do osgPPU effects.")); 
 
    dtCore::RefPtr<dtCore::ActorType> RenderActorRegistry::SCENE_MANAGER_ACTOR_TYPE(new dtCore::ActorType
       ("Scene Manager", "dtRender", "This actor is used for managing scene structure.")); 
@@ -82,6 +90,7 @@ namespace dtRender
       mActorFactory->RegisterType<EphemerisSceneProxy>(EPHEMERIS_SCENE_ACTOR_TYPE.get());
       mActorFactory->RegisterType<GUISceneProxy>(GUI_SCENE_ACTOR_TYPE.get());
       mActorFactory->RegisterType<HDRSceneProxy>(HDR_SCENE_ACTOR_TYPE.get());
+      mActorFactory->RegisterType<MultipassSceneProxy>(MULTIPASS_SCENE_ACTOR_TYPE.get());
       mActorFactory->RegisterType<OceanSceneProxy>(OCEAN_SCENE_ACTOR_TYPE.get());
       mActorFactory->RegisterType<SceneManagerProxy>(SCENE_MANAGER_ACTOR_TYPE.get());
       mActorFactory->RegisterType<ShadowSceneProxy>(SHADOW_SCENE_ACTOR_TYPE.get());
