@@ -129,7 +129,7 @@ void main (void)
                                     
    
    float resolutionScalar = 3.0;// + clamp(floor(sqrt(camPos.z - WaterHeight) / 15.0), 0.0, 3.0); 
-   float ampOverLength = 1.0 / (32.0 * resolutionScalar);
+   float ampOverLength = 1.0 / (16.0 * resolutionScalar);
 
    vec3 textureNormal = vec3(0.0, 0.0, 0.0);  
    for(int i = 0; i < numWaves; ++i)
@@ -146,7 +146,7 @@ void main (void)
       float freq = twoPI / waveLength;
       float amp = waveLength * ampOverLength;
       float steepness = 4.0;
-      float speed = 0.75 * waveSpeedArray[i];      
+      float speed = 0.5 * waveSpeedArray[i];      
    
       //speed * freq * time   
       float phi = 0.5 * speed * freq * elapsedTime;
