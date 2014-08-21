@@ -1091,14 +1091,12 @@ namespace dtActors
       {
          mReflectionGroup = new osg::MatrixTransform();
 
-         cam->addChild(mReflectionGroup.get());
-
          if (mReflectionScene.valid())
          {
             mReflectionGroup->addChild(mReflectionScene.get());
          }
 
-         mReflectionCamera->addChild(mReflectionGroup.get());
+         cam->addChild(mReflectionGroup.get());
       }
    }
 
