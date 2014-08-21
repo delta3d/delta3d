@@ -4,6 +4,8 @@ uniform sampler2D illumTexture;
 uniform sampler2D normalTexture;
 uniform sampler2D envTexture;
 
+uniform float d3d_SceneLuminance = 1.0;
+
 varying vec3 vNormal;
 varying vec3 vLightDir;
 varying vec3 vLightDir2;
@@ -33,7 +35,7 @@ void main(void)
    
    vec3 diffuseColor = texture2D(diffuseTexture, uv).rgb;
    vec3 specColor = texture2D(specularTexture, uv).rgb;
-   vec3 illumColor = texture2D(illumTexture, uv).rgb;
+   vec3 illumColor = d3d_SceneLuminance * texture2D(illumTexture, uv).rgb;
    vec3 normalColor = normalize(texture2D(normalTexture, uv).rgb);
    vec3 envColor = texture2D(envTexture, vReflectTexCoord).rgb;
    
@@ -62,11 +64,13 @@ void main(void)
    vec3 specularContrib = specColor * (pow(reflectContrib, 16.0));
    
    vec3 minLightSpec = min(lightContrib, specColor);
-   vec3 color = mix(lightContrib * diffuseColor, envColor, minLightSpec);
+   vec3 color = mix(lightContrib * diffuseColor, d3d_SceneLuminance * envColor, minLightSpec);
    
    // Don't apply specular greater than the light contrib or objects will glow in the dark...
    color += min(specularContrib, lightContrib) + illumColor;		
-   color = clamp(color, 0.0, 1.0);
+   
+   //don't clamp color for hdr
+   //color = clamp(color, 0.0, 1.0);
    
    
    // Apply Fog 
