@@ -30,8 +30,8 @@
 #include <osg/Texture2D>
 #include <osg/ClampColor>
 
-#include <osgdb/ReaderWriter>
-#include <osgdb/ReadFile>
+#include <osgDB/ReaderWriter>
+#include <osgDB/ReadFile>
 
 #include <osgPPU/Processor.h>
 #include <osgPPU/Unit.h>
@@ -443,3 +443,4 @@ class HDRRendering
 
    
 }//namespace dtRender
+
