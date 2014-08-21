@@ -4,8 +4,8 @@ uniform float farPlane;
 uniform sampler2D depthTexture;
 
 //used for HDR
-uniform float d3d_SceneLuminance;
-uniform float d3d_SceneAmbience;
+uniform float d3d_SceneLuminance = 1.0;
+uniform float d3d_SceneAmbience = 1.0;
 
 float computeFragDepth(float distance, float fragZ)
 {

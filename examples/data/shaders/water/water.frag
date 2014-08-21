@@ -17,7 +17,7 @@ uniform mat4 inverseViewMatrix;
 uniform vec4 WaterColor;
 uniform vec3 cameraRecenter;
 
-uniform float d3d_SceneLuminance;
+uniform float d3d_SceneLuminance = 1.0;
 
 uniform float modForFOV;	
 uniform float foamMaxHeight;	

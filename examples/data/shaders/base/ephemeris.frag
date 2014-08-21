@@ -1,5 +1,5 @@
 uniform sampler2D diffuseTexture;
-uniform float d3d_SceneLuminance;
+uniform float d3d_SceneLuminance = 1.0;
 
 const float exposure = 6.0;
 
