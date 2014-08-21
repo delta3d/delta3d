@@ -787,7 +787,7 @@ void ProjectTests::TestResources()
             testResult, expectedPath);
 
       CPPUNIT_ASSERT(dtCore::ResourceActorProperty::GetResourcePath(dtCore::ResourceDescriptor::NULL_RESOURCE).empty());
-      CPPUNIT_ASSERT_EQUAL(dtCore::ResourceActorProperty::GetResourcePath(rd), expectedPath);
+      CPPUNIT_ASSERT_EQUAL(expectedPath, dtCore::ResourceActorProperty::GetResourcePath(rd));
 
 #ifndef DELTA_WIN32
       std::string rdVal = rd.GetResourceIdentifier();
