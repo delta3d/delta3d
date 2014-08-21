@@ -56,6 +56,9 @@ namespace dtRender
    public:
       typedef dtGame::IEnvGameActor BaseClass;
 
+      static const std::string UNIFORM_SCENE_LUMINANCE;
+      static const std::string UNIFORM_SCENE_AMBIENCE;
+
    public:
       SceneManager(dtGame::GameActorProxy& parent);
       virtual ~SceneManager();
@@ -104,6 +107,13 @@ namespace dtRender
       */
       void SetEnableMultipass(bool);
       bool GetEnableMultipass() const;
+
+      /***
+      *  Setting this disables color clamping on the entire scene
+      *     as well as scales the lighting values.
+      */
+      void SetEnableHDR(bool);
+      bool GetEnableHDR() const;
 
       /***
       *  Exposes the main scene camera.

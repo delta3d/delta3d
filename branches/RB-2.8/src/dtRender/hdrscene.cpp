@@ -80,9 +80,9 @@ class HDRRendering
             mHDRBlurSigma = 4.0;
             mHDRBlurRadius = 7.0;
             mGlareFactor = 2.5;
-            mMinLuminance = 0.2;
+            mMinLuminance = 0.25;
             mMaxLuminance = 5.0;
-            mAdaptFactor = 0.01;
+            mAdaptFactor = 0.005;
         }
 
         //------------------------------------------------------------------------
@@ -384,6 +384,8 @@ class HDRRendering
 
       if(mps != NULL)
       {
+         sm.SetEnableHDR(true);
+
          osgPPU::Unit* firstUnit = NULL;
          osgPPU::Unit* lastUnit = NULL;
 
@@ -396,15 +398,6 @@ class HDRRendering
 
 
          lastUnit->addChild(mps->GetUnitOut());
-
-         // disable color clamping, because we want to work on real hdr values
-         osg::ClampColor* clamp = new osg::ClampColor();
-         clamp->setClampVertexColor(GL_FALSE);
-         clamp->setClampFragmentColor(GL_FALSE);
-         clamp->setClampReadColor(GL_FALSE);
-
-         // make it protected and override, so that it is done for the whole rendering pipeline
-         sm.GetOSGNode()->getOrCreateStateSet()->setAttribute(clamp, osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE | osg::StateAttribute::PROTECTED);     
       }
       else
       {

@@ -69,18 +69,9 @@ namespace dtRender
             waterProxy->GetDrawable(water);
          
             //get reflection scene root node
-            SceneGroup* defaultScene = sm.GetSceneGroup(SceneEnum::BACKGROUND);
 
-            if(defaultScene != NULL)
-            {
-               water->SetSceneCamera(gm->GetApplication().GetCamera());
-               water->SetReflectionScene(sm.GetOSGNode());//defaultScene->GetOSGNode());
-            }
-            else
-            {
-               LOG_ERROR("No default scene! Was unable to set a reflection scene for the WaterGridActor.");
-            }
-
+            water->SetSceneCamera(gm->GetApplication().GetCamera());
+            water->SetReflectionScene(sm.GetOSGNode());
 
             //this adds the actor to our scene
             sm.PushScene(*this);

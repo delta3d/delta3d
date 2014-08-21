@@ -28,6 +28,7 @@
 
 #include <dtCore/transformable.h>
 #include <osg/MatrixTransform>
+#include <osg/ClampColor>
 
 #include <stack>
 #include <dtUtil/nodemask.h>
@@ -44,6 +45,7 @@ namespace dtRender
       SceneManagerImpl()
          : mCreateDefaultScene(true)
          , mCreateMultipassScene(true)
+         , mEnableHDR(false)
          , mGraphicsQuality(&GraphicsQuality::DEFAULT)
       {
       }
@@ -60,6 +62,7 @@ namespace dtRender
 
       bool mCreateDefaultScene;
       bool mCreateMultipassScene;
+      bool mEnableHDR;
       const GraphicsQuality* mGraphicsQuality;
       typedef std::vector<dtCore::RefPtr<SceneGroup> > SceneManagerImpl::SceneGroupArray;
       dtCore::RefPtr<MultipassScene> mMultipassScene;
@@ -68,6 +71,9 @@ namespace dtRender
       std::stack<dtCore::ObserverPtr<SceneBase> > mSceneStack;
    };
 
+
+   const std::string SceneManager::UNIFORM_SCENE_LUMINANCE("d3d_SceneLuminance");
+   const std::string SceneManager::UNIFORM_SCENE_AMBIENCE("d3d_SceneAmbience");
 
    SceneManager::SceneManager( dtGame::GameActorProxy& parent )
    : BaseClass(parent)
@@ -89,7 +95,7 @@ namespace dtRender
    {
       //clear old scene first
       RemoveAllActors();
-
+      
       //create a scene for each enumeration
       mImpl->mChildren.resize(SceneEnum::NUM_SCENES.GetSceneNumber());
       int numScenes = SceneEnum::NUM_SCENES.GetSceneNumber();
@@ -123,6 +129,8 @@ namespace dtRender
          CreateDefaultMultipassScene();
       }
       
+      //set the hdr preference
+      SetEnableHDR(mImpl->mEnableHDR);
    }
 
    void SceneManager::CreateDefaultScene()
@@ -540,7 +548,55 @@ namespace dtRender
          n.setNodeMask(dtUtil::NodeMask::TRANSPARENT_GEOMETRY);
       }
    }
-   
+
+   void SceneManager::SetEnableHDR( bool b)
+   {
+      mImpl->mEnableHDR = b;
+      
+      osg::StateSet* ss = GetOSGNode()->getOrCreateStateSet();
+
+      if(mImpl->mEnableHDR)
+      {
+         osg::Uniform* l = ss->getOrCreateUniform(UNIFORM_SCENE_LUMINANCE, osg::Uniform::FLOAT);
+         l->set(2.5f);
+
+         osg::Uniform* a = ss->getOrCreateUniform(UNIFORM_SCENE_AMBIENCE, osg::Uniform::FLOAT);
+         a->set(1.5f);
+
+         // disable color clamping, because we want to work on real hdr values
+         osg::ClampColor* clamp = new osg::ClampColor();
+         clamp->setClampVertexColor(GL_FALSE);
+         clamp->setClampFragmentColor(GL_FALSE);
+         clamp->setClampReadColor(GL_FALSE);
+
+         // make it protected and override, so that it is done for the whole rendering pipeline
+         ss->setAttribute(clamp, osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE | osg::StateAttribute::PROTECTED);     
+      }
+      else
+      {
+
+         osg::Uniform* l = ss->getOrCreateUniform(UNIFORM_SCENE_LUMINANCE, osg::Uniform::FLOAT);
+         l->set(1.0f);
+
+         osg::Uniform* a = ss->getOrCreateUniform(UNIFORM_SCENE_AMBIENCE, osg::Uniform::FLOAT);
+         a->set(1.0f);
+
+         osg::ClampColor* clamp = new osg::ClampColor();
+         clamp->setClampVertexColor(GL_TRUE);
+         clamp->setClampFragmentColor(GL_TRUE);
+         clamp->setClampReadColor(GL_TRUE);
+
+         ss->setAttribute(clamp, osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE | osg::StateAttribute::PROTECTED);     
+      }
+      
+   }
+
+   bool SceneManager::GetEnableHDR() const
+   {
+      return mImpl->mEnableHDR;
+   }
+
+
 
    /////////////////////////////////////////////////////////////
    //proxy

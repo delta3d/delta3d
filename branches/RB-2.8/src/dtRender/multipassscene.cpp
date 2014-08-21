@@ -92,7 +92,7 @@ namespace dtRender
          , mEnableResampleColor(true)
          , mDepthImageFormat(GL_DEPTH_COMPONENT)
          , mEnableDepthBypass(false)
-         , mResampleColorFactor(0.25)
+         , mResampleColorFactor(0.5)
       {
          
 
