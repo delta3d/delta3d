@@ -128,15 +128,15 @@ void main (void)
    vec3 camPos = inverseViewMatrix[3].xyz;
                                     
    
-   float resolutionScalar = 3.0;// + clamp(floor(sqrt(camPos.z - WaterHeight) / 15.0), 0.0, 3.0); 
-   float ampOverLength = 1.0 / (16.0 * resolutionScalar);
+   float resolutionScalar = 2.0;// + clamp(floor(sqrt(camPos.z - WaterHeight) / 15.0), 0.0, 3.0); 
+   float ampOverLength = 1.0 / (8.0 * resolutionScalar);
 
    vec3 textureNormal = vec3(0.0, 0.0, 0.0);  
    for(int i = 0; i < numWaves; ++i)
    {   
       float waveLength = waveLengthArray[i];
    
-      float dir = 90.0 + pow(-1.0, float(i)) * float(i) * (textureWaveChopModifier / float(numWaves));
+      float dir = 90.0 + pow(-1.0, float(i)) * 1.57 * float(i) * (textureWaveChopModifier / float(numWaves));
       float dirAsRad = radians(dir);//radians(waveDirArray[i]);
       //float dirAsRad = radians(waveDirArray[i]);
       float dirCos = cos(radians(waveDirection) + dirAsRad);
