@@ -37,7 +37,7 @@ float SampleShadowTexture();
 
 void main(void)
 {
-   float altitude = vPos.z * AltitudeScale;
+   float altitude = ReflectMode * vPos.z * AltitudeScale;
 
    if(altitude < WaterHeight)
    {
