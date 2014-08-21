@@ -64,7 +64,7 @@ namespace dtRender
       bool mCreateMultipassScene;
       bool mEnableHDR;
       const GraphicsQuality* mGraphicsQuality;
-      typedef std::vector<dtCore::RefPtr<SceneGroup> > SceneManagerImpl::SceneGroupArray;
+      typedef std::vector<dtCore::RefPtr<SceneGroup> > SceneGroupArray;
       dtCore::RefPtr<MultipassScene> mMultipassScene;
       dtCore::RefPtr<dtCore::Camera> mSceneCamera;
       SceneManagerImpl::SceneGroupArray mChildren;

@@ -226,7 +226,7 @@ namespace dtRender
             mEphCamera->setRenderOrder(osg::Camera::NESTED_RENDER);
             
             mRootNode->addChild(mEphCamera);
-            osg::Viewport* vp = sceneCamera.GetOSGCamera()->getViewport();
+            //osg::Viewport* vp = sceneCamera.GetOSGCamera()->getViewport();
             //dtCore::RefPtr<osg::Texture2D> renderTarget = setupCamera(mEphCamera.get(), vp);
 
             //create the actual ephemeris
@@ -494,7 +494,7 @@ namespace dtRender
 
       mImpl->mFogMode = mode;
       osg::Fog::Mode fm;
-      short attr = osg::StateAttribute::OFF;
+      //short attr = osg::StateAttribute::OFF;
 
       switch (mode)
       {
