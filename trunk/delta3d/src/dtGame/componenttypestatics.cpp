@@ -26,6 +26,7 @@
 #include <dtGame/logcontroller.h>
 #include <dtGame/serverloggercomponent.h>
 #include <dtGame/taskcomponent.h>
+#include <dtGame/gamestatecomponent.h>
 
 
 #include <dtGame/actorcomponent.h>
@@ -64,6 +65,12 @@ namespace dtGame
    const dtCore::RefPtr<dtCore::SystemComponentType> TaskComponent::TYPE(new dtCore::SystemComponentType("TaskComponent","GMComponents",
          "Manages Task Actors.", dtGame::GMComponent::BaseGMComponentType));
    const std::string TaskComponent::DEFAULT_NAME(TaskComponent::TYPE->GetName());
+
+   const dtCore::RefPtr<dtCore::SystemComponentType> GameStateComponent::TYPE(new dtCore::SystemComponentType("TaskComponent","GMComponents",
+         "Saves and transitions the game state.", dtGame::GMComponent::BaseGMComponentType));
+
+   const std::string GameStateComponent::DEFAULT_NAME(TYPE->GetName());
+
 
 
    const ActorComponent::ACType ActorComponent::BaseActorComponentType(new dtCore::ActorType("Base", "ActorComponents", "A base type so that all actor component types should set as a parent"));

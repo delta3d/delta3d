@@ -42,14 +42,15 @@ namespace dtGame
       public:
          typedef dtGame::GMComponent BaseClass;
 
-         static const dtUtil::RefString DEFAULT_NAME;
+         static const dtCore::RefPtr<dtCore::SystemComponentType> TYPE;
+         static const std::string DEFAULT_NAME;
 
          typedef dtCore::RefPtr<GameState> GameStatePtr;
-         typedef std::map<const StateType*, GameStatePtr> GameStateSet;         
+         typedef std::map<const StateType*, GameStatePtr> GameStateSet;
          typedef std::pair<const EventType*, GameStatePtr> EventStatePtrPair;
          typedef std::map<EventStatePtrPair, GameStatePtr> TransitionMap;
 
-         GameStateComponent(const std::string& name = DEFAULT_NAME.Get() );
+         GameStateComponent(dtCore::SystemComponentType& type = *TYPE );
 
          /**
           * Handles incoming messages
