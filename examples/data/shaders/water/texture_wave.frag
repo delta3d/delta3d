@@ -145,7 +145,7 @@ void main (void)
       
       float freq = twoPI / waveLength;
       float amp = waveLength * ampOverLength;
-      float steepness = 4.0;
+      float steepness = 2.0;
       float speed = 0.5 * waveSpeedArray[i];      
    
       //speed * freq * time   
