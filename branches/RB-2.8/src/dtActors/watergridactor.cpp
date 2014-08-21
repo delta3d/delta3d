@@ -137,7 +137,7 @@ namespace dtActors
       virtual ~UpdateReflectionCameraCallback() {}
 
       dtCore::ObserverPtr<osg::Camera> mTarget;
-      dtCore::RefPtr<osg::Camera>      mCamera;
+      dtCore::ObserverPtr<osg::Camera>      mCamera;
    };
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -264,7 +264,7 @@ namespace dtActors
       , mWaterColor(0.117187, 0.3125, 0.58593, 1.0)
       , mLastCameraOffsetPos()
       , mCurrentCameraPos()
-      , mChoppinessEnum(&ChoppinessSettings::CHOP_FLAT)
+      , mChoppinessEnum(&ChoppinessSettings::CHOP_ROUGH)
       , mSeaStateEnum(&SeaState::SeaState_4)
    {
       SetName("WaterGridActor"); // Set a default name
