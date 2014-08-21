@@ -224,9 +224,7 @@ namespace dtRender
             //create a camera to render the ephemeris
             mEphCamera = new osg::Camera();
             mEphCamera->setRenderOrder(osg::Camera::NESTED_RENDER);
-
-            //mRootNode->setNodeMask(dtUtil::NodeMask::PRE_PROCESS);
-
+            
             mRootNode->addChild(mEphCamera);
             osg::Viewport* vp = sceneCamera.GetOSGCamera()->getViewport();
             //dtCore::RefPtr<osg::Texture2D> renderTarget = setupCamera(mEphCamera.get(), vp);

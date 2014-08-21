@@ -17,6 +17,8 @@ uniform mat4 inverseViewMatrix;
 uniform vec4 WaterColor;
 uniform vec3 cameraRecenter;
 
+uniform float d3d_SceneLuminance;
+
 uniform float modForFOV;	
 uniform float foamMaxHeight;	
 uniform sampler2D waveTexture;
@@ -33,8 +35,6 @@ varying vec2 vFog;
 varying vec2 vertexWaveDir;
 varying vec3 shaderVertexNormal;
 varying vec3 vOffsetPos;
-
-vec4 deepWaterColor = 0.74 * WaterColor;  
 
 vec2 rotateTexCoords(vec2 coords, float angle)
 {
@@ -147,7 +147,8 @@ void main (void)
 
    if (gl_FrontFacing)
    {     
-      reflectColor = (mix(0.2 * WaterColor.xyz, reflectColor.xyz, fresnel));
+      vec3 reflectWaterColor = d3d_SceneLuminance * 0.2 * WaterColor.xyz;
+      reflectColor = (mix(reflectWaterColor,reflectColor, fresnel));
       
       lightContribFinal = sqrt(lightContribFinal);
       
@@ -157,7 +158,7 @@ void main (void)
       vec3 normRefLightVec = reflect(lightVect, normal);
       float specularContrib = max(0.0, dot(normRefLightVec, viewDir));
       specularContrib = (0.1 * pow(specularContrib, 8.0)) + (0.8 * pow(specularContrib, 200.0));
-      vec3 resultSpecular = specularContrib * gl_LightSource[0].specular.rgb;     
+      vec3 resultSpecular = d3d_SceneLuminance * specularContrib * gl_LightSource[0].specular.rgb;     
       
       //adds in the fog contribution, computes alpha
       float opacity_fresnel = FastFresnel(waveNDotL, 0.65, 2.15);  

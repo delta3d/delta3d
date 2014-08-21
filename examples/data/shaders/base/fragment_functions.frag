@@ -3,6 +3,10 @@ uniform float nearPlane;
 uniform float farPlane;
 uniform sampler2D depthTexture;
 
+//used for HDR
+uniform float d3d_SceneLuminance;
+uniform float d3d_SceneAmbience;
+
 float computeFragDepth(float distance, float fragZ)
 {
    float fragDepth = fragZ;
@@ -23,8 +27,8 @@ void lightContribution(vec3 normal, vec3 lightDir, vec3 diffuseLightSource, vec3
    float diffuseSurfaceContrib = max(dot(normal, lightDir),0.0);
    
    // Lit Color (Diffuse plus Ambient)
-   vec3 diffuseLight = diffuseLightSource * diffuseSurfaceContrib;
-   lightContrib = vec3(diffuseLight + ambientLightSource);
+   vec3 diffuseLight = d3d_SceneLuminance * diffuseSurfaceContrib * diffuseLightSource;
+   lightContrib = vec3(diffuseLight + (ambientLightSource * d3d_SceneAmbience));
 }
 
 void computeSpecularContribution(vec3 lightDir, vec3 normal, vec3 viewDir, vec3 glossMap, out vec3 specularContribution)
