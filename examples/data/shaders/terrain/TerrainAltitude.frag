@@ -75,7 +75,7 @@ void main(void)
    
    if (altitude < grassFullAlt)
    {
-      lowAltColor = texture2D(SandTexture, gl_TexCoord[0].st * TextureScales.x).rgb;
+      lowAltColor = texture2D(SandTexture, gl_TexCoord[0].st * 0.15 * TextureScales.x).rgb;
       highAltColor = texture2D(GrassTexture, gl_TexCoord[0].st * TextureScales.y).rgb;
       
       altRatio = clamp(altitude / grassRange, 0.0, 1.0);
