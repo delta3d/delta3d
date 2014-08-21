@@ -128,7 +128,7 @@ void main (void)
    vec3 camPos = inverseViewMatrix[3].xyz;
                                     
    
-   float resolutionScalar = 1.5;// + clamp(floor(sqrt(camPos.z - WaterHeight) / 15.0), 0.0, 3.0); 
+   float resolutionScalar = 3.0;// + clamp(floor(sqrt(camPos.z - WaterHeight) / 15.0), 0.0, 3.0); 
    float ampOverLength = 1.0 / (32.0 * resolutionScalar);
 
    vec3 textureNormal = vec3(0.0, 0.0, 0.0);  
@@ -136,7 +136,7 @@ void main (void)
    {   
       float waveLength = waveLengthArray[i];
    
-      float dir = pow(-1.0, float(i)) * float(i) * (textureWaveChopModifier / float(numWaves));
+      float dir = 90.0 + pow(-1.0, float(i)) * float(i) * (textureWaveChopModifier / float(numWaves));
       float dirAsRad = radians(dir);//radians(waveDirArray[i]);
       //float dirAsRad = radians(waveDirArray[i]);
       float dirCos = cos(radians(waveDirection) + dirAsRad);
@@ -146,7 +146,7 @@ void main (void)
       float freq = twoPI / waveLength;
       float amp = waveLength * ampOverLength;
       float steepness = 4.0;
-      float speed = waveSpeedArray[i];      
+      float speed = 0.75 * waveSpeedArray[i];      
    
       //speed * freq * time   
       float phi = 0.5 * speed * freq * elapsedTime;
@@ -162,7 +162,7 @@ void main (void)
       //float m = dot( freq * waveDir, resolution * tilingSize);      
       float m = dot( freq * waveDir, resolution);                
 
-      float k = 1.0;//1.1 * steepness;
+      float k = 1.0 * steepness;
       float vertexDerivativeScalar = freq * amp * pow((sin(m + phi) + 1.0) * 0.5, k - 1.0) * cos(m + phi);
 
       textureNormal.x += k * waveDir.x * vertexDerivativeScalar;
