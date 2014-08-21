@@ -570,24 +570,24 @@ namespace dtUtil
          return;
       }
 
-      // convert all separators to unix-style for conformity
+      // remove duplicate path separators
       for (unsigned int i = 0; i < strFileOrDir.length(); ++i)
       {
-         if (strFileOrDir[i] == '\\')
+         if (strFileOrDir[i] == '/' || strFileOrDir[i] == '\\')
          {
-            strFileOrDir[i] = '/';
-         }
-         if(strFileOrDir[i] == '/' && i > 0 && strFileOrDir[i-1] == '/')
-         {
-            strFileOrDir.erase(strFileOrDir.begin() + i);
-            --i;
+            if(i > 0 && (strFileOrDir[i-1] == '/' || strFileOrDir[i-1] == '\\'))
+            {
+               strFileOrDir.erase(strFileOrDir.begin() + i);
+               --i;
+            }
+            strFileOrDir[i] = PATH_SEPARATOR;
          }
       }
 
       // get rid of trailing separators
-      if (strFileOrDir[strFileOrDir.length()-1] == '/')
+      if (strFileOrDir[strFileOrDir.length()-1] == PATH_SEPARATOR)
       {
-         strFileOrDir = strFileOrDir.substr(0, strFileOrDir.length()-1);
+         strFileOrDir.erase(strFileOrDir.end() - 1);
       }
    }
 
