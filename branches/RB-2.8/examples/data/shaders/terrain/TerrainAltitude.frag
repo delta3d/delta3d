@@ -2,6 +2,7 @@ uniform sampler2D SandTexture;
 uniform sampler2D GrassTexture;
 uniform sampler2D RockTexture;
 uniform sampler2D BlendMaskTexture;
+uniform sampler2D MountainsideTexture;
 uniform sampler2D normalTexture;
 uniform sampler2D specTexture;
 uniform vec4 Altitudes;
@@ -83,8 +84,8 @@ void main(void)
       baseColor = mix(lowAltColor, highAltColor, effect);
       
       detailColor = mix(
-         texture2D(SandTexture, gl_TexCoord[0].st * DetailScale).rgb,
-         texture2D(GrassTexture, gl_TexCoord[0].st * DetailScale).rgb,
+         texture2D(SandTexture, gl_TexCoord[0].st * DetailScale * TextureScales.x).rgb,
+         texture2D(GrassTexture, gl_TexCoord[0].st * DetailScale * TextureScales.y).rgb,
          effect);
          
       blendColor.rgb = grassBlendColor.rgb;
@@ -93,7 +94,7 @@ void main(void)
    else if (altitude < rockFullAlt)
    {
       lowAltColor = texture2D(GrassTexture, gl_TexCoord[0].st * TextureScales.y).rgb;
-      highAltColor = texture2D(RockTexture, gl_TexCoord[0].st * TextureScales.z).rgb;
+      highAltColor = texture2D(MountainsideTexture, gl_TexCoord[0].st * TextureScales.z).rgb;
       
       grassColor = lowAltColor;
       
@@ -102,8 +103,8 @@ void main(void)
       baseColor = mix(lowAltColor, highAltColor, effect);
       
       detailColor = mix(
-         texture2D(GrassTexture, gl_TexCoord[0].st * DetailScale).rgb,
-         texture2D(RockTexture, gl_TexCoord[0].st * DetailScale).rgb,
+         texture2D(GrassTexture, gl_TexCoord[0].st * DetailScale * TextureScales.y).rgb,
+         texture2D(MountainsideTexture, gl_TexCoord[0].st * DetailScale * TextureScales.z).rgb,
          effect);
          
       rockBlendColor.rgb *= baseColor;
@@ -113,8 +114,8 @@ void main(void)
    }
    else
    {
-      detailColor = texture2D(RockTexture, gl_TexCoord[0].st * DetailScale).rgb;
-      lowAltColor = texture2D(RockTexture, gl_TexCoord[0].st * TextureScales.z).rgb;
+      detailColor = texture2D(MountainsideTexture, gl_TexCoord[0].st * DetailScale * TextureScales.z).rgb;
+      lowAltColor = texture2D(MountainsideTexture, gl_TexCoord[0].st * TextureScales.z).rgb;
       highAltColor = lowAltColor;
       
       grassColor = texture2D(GrassTexture, gl_TexCoord[0].st * TextureScales.y).rgb;
@@ -122,7 +123,7 @@ void main(void)
       altRatio = 1.0;
       baseColor = highAltColor;
       
-      detailColor = texture2D(RockTexture, gl_TexCoord[0].st * DetailScale).rgb;
+      detailColor = texture2D(MountainsideTexture, gl_TexCoord[0].st * DetailScale * TextureScales.z).rgb;
       
       rockBlendColor.rgb *= baseColor;
       blendColor.rgb = rockBlendColor.rgb;
@@ -142,7 +143,9 @@ void main(void)
       effectOverride = clamp(effectRatio * rockRatio, 0, 1);
    }
    
-   baseColor = mix(baseColor, grassColor, effectOverride);
+   vec3 mountainColor = texture2D(RockTexture, gl_TexCoord[0].st * DetailScale * TextureScales.z).rgb;
+
+   baseColor = mix(baseColor, mountainColor, effectOverride);
    
    // Modulate the texture with finer light/dark details.
    float avgerage = (detailColor.r + detailColor.g + detailColor.b)/3.0;

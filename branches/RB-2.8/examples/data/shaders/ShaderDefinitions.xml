@@ -225,10 +225,10 @@
       </parameter>
 
       <parameter name="Altitudes">
-        <vec4 defaultValue="5 25 50 70" />
+        <vec4 defaultValue="10 70 5 70" />
       </parameter>
       <parameter name="TextureScales">
-        <vec4 defaultValue="75 50 50 150" />
+        <vec4 defaultValue="75 30 3 20" />
       </parameter>
        <!-->parameter name="WaterColor">  This is an actual uniform set by the water
         <vec4 defaultValue="0 0.35 0.5 0.75" />
@@ -237,7 +237,7 @@
         <float defaultValue="1" />
       </parameter>
       <parameter name="DetailScale">
-        <float defaultValue="500" />
+        <float defaultValue="5.0" />
       </parameter>
       <parameter name="SandTexture">
         <texture2D textureUnit="1">
@@ -267,6 +267,13 @@
           <wrap axis="T" mode="Repeat"/>
         </texture2D>
       </parameter>
+       <parameter name="MountainsideTexture">
+          <texture2D textureUnit="5">
+             <source type="Image">textures/ShaderBase/TerrainAltitude_Mountainside.png</source>
+             <wrap axis="S" mode="Repeat"/>
+             <wrap axis="T" mode="Repeat"/>
+          </texture2D>
+       </parameter>
     </shader>
   </shadergroup>
 
