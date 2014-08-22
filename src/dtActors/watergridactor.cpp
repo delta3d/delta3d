@@ -1544,7 +1544,7 @@ namespace dtActors
    void WaterGridActorProxy::SetWaveDirection(float f)
    {
       WaterGridActor* wga = NULL;
-      GetActor(wga);
+      GetDrawable(wga);
 
       mWaveDirection = f;
       wga->SetModForDirectionInDegrees(mWaveDirection);
@@ -1554,7 +1554,7 @@ namespace dtActors
    void WaterGridActorProxy::SetWavelengthModifier(float f)
    {
       WaterGridActor* wga = NULL;
-      GetActor(wga);
+      GetDrawable(wga);
 
       mWavelengthModifier = f;
       wga->SetModForWaveLength(mWavelengthModifier);
@@ -1564,7 +1564,7 @@ namespace dtActors
    void WaterGridActorProxy::SetAmplitudeModifier(float f)
    {
       WaterGridActor* wga = NULL;
-      GetActor(wga);
+      GetDrawable(wga);
 
       mAmplitudeModifier = f;
       wga->SetModForAmplitude(mAmplitudeModifier);
@@ -1574,7 +1574,7 @@ namespace dtActors
    void WaterGridActorProxy::SetSpeedModifier(float f)
    {
       WaterGridActor* wga = NULL;
-      GetActor(wga);
+      GetDrawable(wga);
 
       mSpeedModifier = f;
       wga->SetModForSpeed(f);
