@@ -7,7 +7,7 @@ varying vec3 vCamera;
 varying vec2 vReflectTexCoord;
 varying vec3 vViewDir;
 
-uniform mat4 osg_ViewMatrixInverse;
+uniform mat4 osg_ViewMatrixInverse = mat4(1.0);
 
 void sphereMap(vec3, vec3, out vec2);
 float calculateDistance(mat4, vec4);
@@ -17,6 +17,8 @@ void main()
    // Pass the texture coordinate on through.
    gl_TexCoord[0] = gl_MultiTexCoord0;
    gl_FogFragCoord = gl_FogCoord;
+   
+   gl_FrontColor = gl_Color;
 
    // Moves the position, normal, and light direction into world space   
    vPos = (osg_ViewMatrixInverse * gl_ModelViewMatrix * gl_Vertex).xyz;
