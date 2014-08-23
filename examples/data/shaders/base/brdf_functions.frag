@@ -158,9 +158,6 @@ vec3 ComputeBRDFResult(vec3 baseColor,out vec3 specularColor, vec3 normal, float
     //diffuse = ((1.0f/PI) * mix(Fd, ss, subsurface) * baseColor + Fsheen) * (1.0f - metallic);
     diffuse = ((1.0f/PI) * mix(Fd, ss, subsurface) * baseColor + Fsheen) * (1.0f - metallic);
     return (diffuse + Gs*Fs*Ds + 0.25f*clearcoat*Gr*Fr*Dr)*NdL;
-    
-    // HACK:
-    //return vec4(diffuse,1);
 }
 
 struct BRDFFragParams

@@ -2,8 +2,6 @@ uniform sampler2D diffuseTexture;
 uniform sampler2D specularTexture;
 uniform sampler2D illumTexture;
 uniform sampler2D normalTexture;
-uniform sampler2D envTexture;
-
 uniform float d3d_SceneLuminance = 1.0;
 
 varying vec3 vNormal;
@@ -11,74 +9,117 @@ varying vec3 vLightDir;
 varying vec3 vLightDir2;
 varying vec3 vPos;
 varying vec3 vCamera;
-varying vec2 vReflectTexCoord;
 varying vec3 vViewDir;
 
-float saturate(float inValue)
+
+
+struct FragParams
 {
-   return clamp(inValue, 0.0, 1.0);
-}
+   vec3 pos;
+   vec2 uv;
+   vec4 color; // varied from vertex shader
+   vec3 normal; // varied from vertex shader
+   vec3 worldNormal;
+   vec3 viewDir;
+   vec3 cameraPos;
+   mat3 tbn;
+   float sceneLuminance;
+};
+
+struct EffectParams
+{
+   vec4 colorContrib;
+   vec3 lightContrib;
+   vec4 specContrib;
+   vec4 envContrib;
+   vec4 illumContrib; // self-glow
+   vec4 fogContrib;
+};
+
+struct MapParams
+{
+   vec4 diffuse;
+   vec4 normal;
+   vec4 specular;
+   vec4 roughness;
+   vec4 illum;
+   vec4 irradiance;
+};
 
 
 
 // External Functions
-void lightContribution(vec3, vec3, vec3, vec3, out vec3);
-float computeLinearFog(float, float, float);
-float computeExpFog(float);
-vec3 computeWorldSpaceNormal(vec3 vertPos, vec3 vertNormal, vec3 mapNormal, vec2 vertUV, out mat3 tbn);
+vec4 computeMultiMapColor(MapParams m, out FragParams f, out EffectParams e);
 
 
+
+vec4 combineEffects(EffectParams e)
+{
+   vec4 result = e.colorContrib;
+   result.rgb *= e.lightContrib.rgb;
+   result.rgb += e.envContrib.rgb;
+   result.rgb += e.specContrib.rgb;
+   result.rgb += e.illumContrib.rgb;
+   return result;
+}
 
 void main(void)
 {
+   vec4 zeroVec = vec4(0,0,0,0);
    vec2 uv = gl_TexCoord[0].xy;
    
-   vec3 diffuseColor = texture2D(diffuseTexture, uv).rgb;
-   vec3 specColor = texture2D(specularTexture, uv).rgb;
-   vec3 illumColor = d3d_SceneLuminance * texture2D(illumTexture, uv).rgb;
-   vec3 normalColor = normalize(texture2D(normalTexture, uv).rgb);
-   vec3 envColor = texture2D(envTexture, vReflectTexCoord).rgb;
+   FragParams f;
+   f.uv = uv;
+   f.pos = vPos;
+   f.normal = vNormal;
+   f.viewDir = vViewDir;
+   f.cameraPos = vCamera;
+   f.color = gl_Color;
+   f.sceneLuminance = d3d_SceneLuminance;
    
-   mat3 tbn;
-   vec3 WorldMapNormal = computeWorldSpaceNormal(vPos, normalize(vNormal), normalize(normalColor.rgb), uv, tbn);
+   EffectParams e;
+   e.lightContrib = zeroVec.rgb;
+   e.specContrib = zeroVec;
+   e.envContrib = zeroVec;
+   e.fogContrib = zeroVec;
+   e.illumContrib = zeroVec;
 
-   // Normalize all incoming vectors
-   vec3 lightDir = normalize(vLightDir);   
-   vec3 lightDir2 = normalize(vLightDir2);   
-   vec3 viewDir = normalize(vViewDir);
-
-   // Compute the Light Contribution
-   vec3 lightContribSun;
-   vec3 lightContribMoon;
-
-   lightContribution(WorldMapNormal, lightDir, gl_LightSource[0].diffuse.xyz, gl_LightSource[0].ambient.xyz, lightContribSun);
-   lightContribution(WorldMapNormal, lightDir2, gl_LightSource[1].diffuse.xyz, gl_LightSource[1].ambient.xyz, lightContribMoon);
-  
-   vec3 lightContrib = lightContribSun + lightContribMoon;
-  
+ 
+   MapParams m;
+   m.diffuse = texture2D(diffuseTexture, uv);
+   m.specular.rgb = texture2D(specularTexture, uv).rgb;
+   m.specular.a = 1.0;
+   m.illum.rgb = texture2D(illumTexture, uv).rgb;
+   m.normal.rgb = normalize(texture2D(normalTexture, uv).rgb);
+   m.irradiance = vec4(0,0,0,0);
    
-   // Compute the specular & reflection contribution
-   vec3 reflectVec = reflect(vLightDir, WorldMapNormal);
-   float reflectionAngle =  dot(reflectVec, viewDir);
-   float reflectContrib = max(0.0,reflectionAngle);
-   vec3 specularContrib = specColor * (pow(reflectContrib, 16.0));
+   vec4 result = computeMultiMapColor(m, f, e);
    
-   vec3 minLightSpec = min(lightContrib, specColor);
-   vec3 color = mix(lightContrib * diffuseColor, d3d_SceneLuminance * envColor, minLightSpec);
+   //gl_FragColor = result;
    
-   // Don't apply specular greater than the light contrib or objects will glow in the dark...
-   color += min(specularContrib, lightContrib) + illumColor;		
+   // DEBUG:
+   /*vec3 oneVec = vec3(1,1,1);
+   vec3 tan = (f.tbn[0] + oneVec)*0.5;
+   vec3 bitan = (f.tbn[1] + oneVec)*0.5;
+   vec3 norm = (f.tbn[2] + oneVec)*0.5;
+   vec3 worldNorm = (f.worldNormal + oneVec)*0.5;
+   vec3 normVaried = (vNormal + oneVec)*0.5;*/
+   //gl_FragColor = vec4(e.specContrib.rgb,1.0);
+   //gl_FragColor = vec4(e.specContrib.rgb * m.diffuse.rgb,1.0);
+   //gl_FragColor = vec4(e.lightContrib.rgb,1.0);
+   //gl_FragColor = vec4((e.lightContrib.rgb + f.envContrib.rgb) * m.diffuse.rgb,1.0);
+   //gl_FragColor = vec4(e.lightContrib.rgb * m.diffuse.rgb,1.0);
+   //gl_FragColor = vec4(e.envContrib.rgb + m.diffuse.rgb,1.0);
+   //gl_FragColor = vec4(e.envContrib.rgb,1.0);
+   //gl_FragColor = vec4(e.illumContrib.rgb,1.0);
+   //gl_FragColor = vec4(tan,1.0);
+   //gl_FragColor = vec4(bitan,1.0);
+   //gl_FragColor = vec4(norm,1.0);
+   //gl_FragColor = vec4(worldNorm,1.0);
+   //gl_FragColor = vec4(worldNorm.rrr,1.0);
+   //gl_FragColor = vec4(normVaried,1.0);
+   //gl_FragColor = vec4(gl_Color.rgb,1.0);
    
-   //don't clamp color for hdr
-   //color = clamp(color, 0.0, 1.0);
-   
-   
-   // Apply Fog 
-   float dist = length(vPos - vCamera);
-   float fogAmt = computeExpFog(dist);
-   vec4 fogColor = gl_Fog.color;
-   vec3 result = mix(fogColor.rgb, color, fogAmt);
-   
-   gl_FragColor = vec4(color.rgb, 1.0);//diffuseColor.a);
-   
+   result = combineEffects(e);
+   gl_FragColor = result;
 }
