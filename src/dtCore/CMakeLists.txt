@@ -184,6 +184,7 @@ SET(LIB_PUBLIC_HEADERS
                 ${HEADER_PATH}/shadergroup.h
                 ${HEADER_PATH}/shadermanager.h
                 ${HEADER_PATH}/shaderparameter.h
+                ${HEADER_PATH}/shaderparameteractorproperty.h
                 ${HEADER_PATH}/shaderparamfloat.h
                 ${HEADER_PATH}/shaderparamint.h
                 ${HEADER_PATH}/shaderparamoscillator.h
@@ -364,6 +365,7 @@ SET(LIB_SOURCES
                 ${SOURCE_PATH}/screenshotcallback.cpp
                 ${SOURCE_PATH}/shadergroup.cpp
                 ${SOURCE_PATH}/shadermanager.cpp
+                ${SOURCE_PATH}/shaderparameteractorproperty.cpp
                 ${SOURCE_PATH}/shaderparameter.cpp
                 ${SOURCE_PATH}/shaderparamfloat.cpp
                 ${SOURCE_PATH}/shaderparamint.cpp
