@@ -2,6 +2,17 @@
 
 <shaderlist>
 
+   <shadergroup name="SimpleShader">  
+      <shader name="TestShader" default="yes">
+         <source type="Vertex">shaders/base/simpleshader.vert</source>
+         <source type="Vertex">shaders/base/vertex_functions.vert</source>
+       <source type="Vertex">shaders/shadow/shadow_functions.vert</source>
+         <source type="Fragment">shaders/base/simpleshader.frag</source>
+         <source type="Fragment">shaders/base/fragment_functions.frag</source>      
+       <source type="Fragment">shaders/shadow/shadow_functions.frag</source>
+      </shader>
+   </shadergroup>
+   
    <shadergroup name="EphemerisGroup">
       <shader name="Ephemeris" default="yes">
          <source type="Vertex">shaders/base/ephemeris.vert</source>
@@ -19,8 +30,6 @@
          <source type="Fragment">shaders/base/multimap_functions.frag</source>
          <source type="Fragment">shaders/base/multimap.frag</source>
          <source type="Fragment">shaders/base/fragment_functions.frag</source>
-         <!--The Fragment shader is using a function from the vertex functions-->
-         <source type="Fragment">shaders/base/vertex_functions.vert</source>
 
          <parameter name="diffuseTexture">
             <texture2D textureUnit="0">
@@ -215,8 +224,6 @@
        <source type="Fragment">shaders/terrain/TerrainAltitude.frag</source>
        <source type="Fragment">shaders/water/water_functions.frag</source>
        <source type="Fragment">shaders/base/fragment_functions.frag</source>
-       <!--The Fragment shader is using a function from the vertex functions-->
-       <source type="Fragment">shaders/base/vertex_functions.vert</source>
        <source type="Fragment">shaders/shadow/shadow_functions.frag</source>
 
        <parameter name="diffuseTexture">
@@ -229,7 +236,7 @@
         <vec4 defaultValue="3.8 12.5 50 70" />
       </parameter>
       <parameter name="TextureScales">
-        <vec4 defaultValue="150 100 20 70" />
+        <vec4 defaultValue="150 200 20 70" />
       </parameter>
        <!-->parameter name="WaterColor">  This is an actual uniform set by the water
         <vec4 defaultValue="0 0.35 0.5 0.75" />
@@ -290,6 +297,7 @@
          <source type="Vertex">shaders/water/water_functions.vert</source>
          <source type="Vertex">shaders/water/water.vert</source>
          <source type="Vertex">shaders/base/vertex_functions.vert</source>
+         <source type="Vertex">shaders/base/fragment_functions.frag</source>         
          <source type="Fragment">shaders/water/water_functions.frag</source>
          <source type="Fragment">shaders/water/water.frag</source>
          <source type="Fragment">shaders/base/fragment_functions.frag</source>
