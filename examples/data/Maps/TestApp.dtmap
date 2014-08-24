@@ -7,7 +7,7 @@
         <comment></comment>
         <copyright></copyright>
         <createTimestamp>2014-07-15T22:49:46-05:00</createTimestamp>
-        <lastUpdateTimestamp>2014-08-11T17:01:25-05:00</lastUpdateTimestamp>
+        <lastUpdateTimestamp>2014-08-23T15:46:57-05:00</lastUpdateTimestamp>
         <editorVersion>2.8.0</editorVersion>
         <schemaVersion>1.0</schemaVersion>
     </header>
@@ -23,6 +23,92 @@
     </libraries>
     <actors>
         <actor>
+            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <id>1ce7122f-f79b-460b-8d55-07816aa807bd</id>
+            <name>Chair_03</name>
+            <property>
+                <name>Name</name>
+                <string>Chair_03</string>
+            </property>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>1.036006</value2>
+                    <value3>-108.762062</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-593.179993</value1>
+                    <value2>-109.319412</value2>
+                    <value3>1.722378</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>ShaderGroup</name>
+                <string>MultiMap</string>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:chairs:sunchair:SunChair.osg</resourceDisplayName>
+                <resource>StaticMeshes:chairs:sunchair:SunChair.osg</resource>
+            </property>
+            <property>
+                <name>Scale</name>
+                <vec3>
+                    <value1>2.000000</value1>
+                    <value2>2.000000</value2>
+                    <value3>2.000000</value3>
+                </vec3>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <id>263527b9-239e-4159-b922-8ba05f5dbe43</id>
+            <name>Chair_01</name>
+            <property>
+                <name>Name</name>
+                <string>Chair_01</string>
+            </property>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>1.036006</value2>
+                    <value3>-108.762062</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-586.438477</value1>
+                    <value2>-96.719559</value2>
+                    <value3>1.579815</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>ShaderGroup</name>
+                <string>MultiMap</string>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:chairs:sunchair:SunChair.osg</resourceDisplayName>
+                <resource>StaticMeshes:chairs:sunchair:SunChair.osg</resource>
+            </property>
+            <property>
+                <name>Scale</name>
+                <vec3>
+                    <value1>2.000000</value1>
+                    <value2>2.000000</value2>
+                    <value3>2.000000</value3>
+                </vec3>
+            </property>
+        </actor>
+        <actor>
             <type>dtcore.Player Start</type>
             <id>362cb3a0-7aba-464c-a49b-b226f2c65802</id>
             <name>PlayerStart</name>
@@ -31,19 +117,54 @@
                 <string>PlayerStart</string>
             </property>
             <property>
-                <name>Rotation</name>
-                <vec3>
-                    <value1>0.000000</value1>
-                    <value2>0.000000</value2>
-                    <value3>166.588058</value3>
-                </vec3>
-            </property>
-            <property>
                 <name>Translation</name>
                 <vec3>
                     <value1>-482.636841</value1>
                     <value2>-123.839050</value2>
                     <value3>21.802572</value3>
+                </vec3>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <id>51f364c9-cece-4abd-bbe4-8151a005e42c</id>
+            <name>Chair_02</name>
+            <property>
+                <name>Name</name>
+                <string>Chair_02</string>
+            </property>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>1.036006</value2>
+                    <value3>-108.762062</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-591.084717</value1>
+                    <value2>-104.992920</value2>
+                    <value3>1.661882</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>ShaderGroup</name>
+                <string>MultiMap</string>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:chairs:sunchair:SunChair.osg</resourceDisplayName>
+                <resource>StaticMeshes:chairs:sunchair:SunChair.osg</resource>
+            </property>
+            <property>
+                <name>Scale</name>
+                <vec3>
+                    <value1>2.000000</value1>
+                    <value2>2.000000</value2>
+                    <value3>2.000000</value3>
                 </vec3>
             </property>
         </actor>
@@ -87,6 +208,10 @@
                 </vec3>
             </property>
             <property>
+                <name>ShaderGroup</name>
+                <string>MultiMap</string>
+            </property>
+            <property>
                 <name>static mesh</name>
                 <resourceType>StaticMeshes</resourceType>
                 <resourceDisplayName>StaticMeshes:walkways:boardwalk_and_bar:boardwalk_and_bar.osg</resourceDisplayName>
@@ -106,6 +231,76 @@
                 <resourceType>StaticMeshes</resourceType>
                 <resourceDisplayName>StaticMeshes:delta3d_island:IslandTrees_ResortArea.osg</resourceDisplayName>
                 <resource>StaticMeshes:delta3d_island:IslandTrees_ResortArea.osg</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <id>cd782592-b8e4-4d82-8ed0-4a0cf472eba9</id>
+            <name>Chair</name>
+            <property>
+                <name>Name</name>
+                <string>Chair</string>
+            </property>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>1.036006</value2>
+                    <value3>-108.762062</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-582.903687</value1>
+                    <value2>-91.000725</value2>
+                    <value3>1.691863</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>ShaderGroup</name>
+                <string>MultiMap</string>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:chairs:sunchair:SunChair.osg</resourceDisplayName>
+                <resource>StaticMeshes:chairs:sunchair:SunChair.osg</resource>
+            </property>
+            <property>
+                <name>Scale</name>
+                <vec3>
+                    <value1>2.000000</value1>
+                    <value2>2.000000</value2>
+                    <value3>2.000000</value3>
+                </vec3>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <id>df7d89fe-a709-4fb8-9375-3a693d2ff015</id>
+            <name>Beachball</name>
+            <property>
+                <name>Name</name>
+                <string>Beachball</string>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-581.565979</value1>
+                    <value2>-112.361481</value2>
+                    <value3>1.648008</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>ShaderGroup</name>
+                <string>SimpleShader</string>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:beachball:beachball.obj</resourceDisplayName>
+                <resource>StaticMeshes:beachball:beachball.obj</resource>
             </property>
         </actor>
         <actor>

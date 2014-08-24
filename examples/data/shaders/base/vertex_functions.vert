@@ -12,26 +12,6 @@ void normalizeLight(mat4 InverseMVM, vec4 position, out vec3 lightNormal)
    lightNormal = normalize(vec3(InverseMVM * position));
 }
 
-float computeExpFog(float fogDistance)
-{
-   //defaults to EXP2 Fog
-    const float LOG2 = 1.442695;
-    float fogFactor = exp2( -gl_Fog.density * 
-                       gl_Fog.density * 
-                       fogDistance * 
-                       fogDistance * 
-                       LOG2 );
-
-    fogFactor = clamp(fogFactor, 0.0, 1.0);
-    return fogFactor;
-}
-
-float computeLinearFog(float startFog, float endFog, float fogDistance)
-{
-   float fogTemp = pow(2.0, (fogDistance - startFog) / (endFog - startFog)) - 1.0;
-   return 1.0 - clamp(fogTemp, 0.0, 1.0);
-}
-
 //returns -1.0 if x < 0, and 1.0 if x >= 0
 float signGreaterEqualZero(float x)
 {
