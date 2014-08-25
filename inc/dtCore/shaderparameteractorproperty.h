@@ -46,11 +46,11 @@ namespace dtCore
    class ShaderParameterActorProperty : public T_BaseActorProperty
    {
    public:
-      typedef typename T_BaseActorProperty BaseClass;
+      typedef T_BaseActorProperty BaseClass;
       typedef typename BaseClass::SetFuncType SetFuncType;
       typedef typename BaseClass::GetFuncType GetFuncType;
-      typedef typename T_ShaderParam ParamType;
-      typedef typename ShaderParameterActorProperty<T_ShaderParam, T_BaseActorProperty> ClassType;
+      typedef T_ShaderParam ParamType;
+      typedef ShaderParameterActorProperty<T_ShaderParam, T_BaseActorProperty> ClassType;
    
       static dtCore::RefPtr<ClassType> CreateProperty(const dtUtil::RefString& name,
                         typename ClassType::ParamType* param = NULL,
@@ -121,8 +121,8 @@ namespace dtCore
       const dtUtil::RefString& desc,
       const dtUtil::RefString& groupName)
       : BaseClass(name, label,
-         T_BaseActorProperty::SetFuncType(param, &T_ShaderParam::SetValue),
-         T_BaseActorProperty::GetFuncType(param, &T_ShaderParam::GetValue),
+         typename T_BaseActorProperty::SetFuncType(param, &T_ShaderParam::SetValue),
+         typename T_BaseActorProperty::GetFuncType(param, &T_ShaderParam::GetValue),
          desc, groupName)
       , mParam(param)
    {}

@@ -49,7 +49,7 @@ namespace dtGame
          static const std::string DEFAULT_NAME;
 
          /// Constructor
-         BaseInputComponent(const std::string &name = DEFAULT_NAME);
+         BaseInputComponent(const std::string& name = DEFAULT_NAME);
 
          /**
           * When this component is added to the GM, it 

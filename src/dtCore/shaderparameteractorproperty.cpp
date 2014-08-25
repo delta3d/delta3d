@@ -100,11 +100,11 @@ namespace dtCore
       const dtUtil::RefString& groupName = "")
    {
       // Ensure the parameter is a valid instance.
-      dtCore::RefPtr<T_ShaderPropType::ParamType> actualParam
-         = dynamic_cast<T_ShaderPropType::ParamType*>(param);
+      dtCore::RefPtr<typename T_ShaderPropType::ParamType> actualParam
+         = dynamic_cast<typename T_ShaderPropType::ParamType*>(param);
       if ( ! actualParam.valid())
       {
-         actualParam = new T_ShaderPropType::ParamType(name);
+         actualParam = new typename T_ShaderPropType::ParamType(name);
          param = actualParam.get();
 
          if (param != NULL)
