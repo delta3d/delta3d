@@ -841,13 +841,9 @@ MatrixTransform {
               }
               textureUnit 1 {
                 GL_TEXTURE_2D ON
-                Use Texture2D_3
-              }
-              textureUnit 4 {
-                GL_TEXTURE_2D ON
                 Texture2D {
                   UniqueID Texture2D_9
-                  file "images\\NONE_NORM.png"
+                  file "images\\NONE_SPEC.png"
                   wrap_s REPEAT
                   wrap_t REPEAT
                   wrap_r CLAMP_TO_EDGE
@@ -864,24 +860,27 @@ MatrixTransform {
                   shadowCompareFunc GL_LEQUAL
                   shadowTextureMode GL_LUMINANCE
                 }
-                TexEnvCombine {
-                  combine_RGB INTERPOLATE
-                  combine_Alpha MODULATE
-                  source0_RGB TEXTURE
-                  source1_RGB PREVIOUS
-                  source2_RGB CONSTANT
-                  source0_Alpha TEXTURE
-                  source1_Alpha PREVIOUS
-                  source2_Alpha CONSTANT
-                  operand0_RGB SRC_COLOR
-                  operand1_RGB SRC_COLOR
-                  operand2_RGB SRC_ALPHA
-                  operand0_Alpha SRC_ALPHA
-                  operand1_Alpha SRC_ALPHA
-                  operand2_Alpha SRC_ALPHA
-                  scale_RGB 1
-                  scale_Alpha 1
-                  constantColor 0.3 0.3 0.3 0.3
+              }
+              textureUnit 4 {
+                GL_TEXTURE_2D ON
+                Texture2D {
+                  UniqueID Texture2D_10
+                  file "images\\NONE_NORM.png"
+                  wrap_s REPEAT
+                  wrap_t REPEAT
+                  wrap_r CLAMP_TO_EDGE
+                  min_filter LINEAR_MIPMAP_LINEAR
+                  mag_filter LINEAR
+                  maxAnisotropy 1
+                  borderColor 0 0 0 0
+                  borderWidth 0
+                  useHardwareMipMapGeneration TRUE
+                  unRefImageDataAfterApply TRUE
+                  internalFormatMode USE_S3TC_DXT1_COMPRESSION
+                  resizeNonPowerOfTwo TRUE
+                  shadowComparison FALSE
+                  shadowCompareFunc GL_LEQUAL
+                  shadowTextureMode GL_LUMINANCE
                 }
               }
             }
@@ -2161,29 +2160,46 @@ MatrixTransform {
               }
               textureUnit 1 {
                 GL_TEXTURE_2D ON
-                Use Texture2D_3
+                Texture2D {
+                  UniqueID Texture2D_14
+                  file "images\\NONE_SPEC.png"
+                  wrap_s REPEAT
+                  wrap_t REPEAT
+                  wrap_r CLAMP_TO_EDGE
+                  min_filter LINEAR_MIPMAP_LINEAR
+                  mag_filter LINEAR
+                  maxAnisotropy 1
+                  borderColor 0 0 0 0
+                  borderWidth 0
+                  useHardwareMipMapGeneration TRUE
+                  unRefImageDataAfterApply TRUE
+                  internalFormatMode USE_S3TC_DXT1_COMPRESSION
+                  resizeNonPowerOfTwo TRUE
+                  shadowComparison FALSE
+                  shadowCompareFunc GL_LEQUAL
+                  shadowTextureMode GL_LUMINANCE
+                }
               }
-              textureUnit 2 {
+              textureUnit 4 {
                 GL_TEXTURE_2D ON
-                Use Texture2D_9
-                TexEnvCombine {
-                  combine_RGB INTERPOLATE
-                  combine_Alpha MODULATE
-                  source0_RGB TEXTURE
-                  source1_RGB PREVIOUS
-                  source2_RGB CONSTANT
-                  source0_Alpha TEXTURE
-                  source1_Alpha PREVIOUS
-                  source2_Alpha CONSTANT
-                  operand0_RGB SRC_COLOR
-                  operand1_RGB SRC_COLOR
-                  operand2_RGB SRC_ALPHA
-                  operand0_Alpha SRC_ALPHA
-                  operand1_Alpha SRC_ALPHA
-                  operand2_Alpha SRC_ALPHA
-                  scale_RGB 1
-                  scale_Alpha 1
-                  constantColor 0.3 0.3 0.3 0.3
+                Texture2D {
+                  UniqueID Texture2D_15
+                  file "images\\NONE_NORM.png"
+                  wrap_s REPEAT
+                  wrap_t REPEAT
+                  wrap_r CLAMP_TO_EDGE
+                  min_filter LINEAR_MIPMAP_LINEAR
+                  mag_filter LINEAR
+                  maxAnisotropy 1
+                  borderColor 0 0 0 0
+                  borderWidth 0
+                  useHardwareMipMapGeneration TRUE
+                  unRefImageDataAfterApply TRUE
+                  internalFormatMode USE_S3TC_DXT1_COMPRESSION
+                  resizeNonPowerOfTwo TRUE
+                  shadowComparison FALSE
+                  shadowCompareFunc GL_LEQUAL
+                  shadowTextureMode GL_LUMINANCE
                 }
               }
             }
