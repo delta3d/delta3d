@@ -1,3 +1,4 @@
+#version 120
 uniform sampler2D diffuseTexture;
 uniform sampler2D normalTexture;
 uniform sampler2D specTexture;

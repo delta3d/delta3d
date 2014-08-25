@@ -1,4 +1,4 @@
-
+#version 120
 const float PI = 3.141592653589793238462643383279;
 
 float NormalDistribution_GGX(float a, float NdH)

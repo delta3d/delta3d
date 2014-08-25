@@ -1,3 +1,4 @@
+#version 120
 
 float Geometric_Implicit(float a, float NdV, float NdL)
 {

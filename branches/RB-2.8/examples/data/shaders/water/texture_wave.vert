@@ -1,3 +1,4 @@
+#version 120
 //////////////////////////////////////////////
 //The texture waves are all done by computing normals in the fragment shader
 //no work needs to be done here

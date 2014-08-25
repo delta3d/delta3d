@@ -1,4 +1,4 @@
-
+#version 120
 /*
  * Reimplement fixed function pipeline of OpenGL
  * So bypass all the data.

@@ -1,3 +1,4 @@
+#version 120
 /*
  * Compute luminance values of the input texture.
  * So result will contain only luminance values per pixel.

@@ -1,3 +1,5 @@
+#version 120
+
 uniform sampler2D diffuseTexture;
 
 varying vec3 vLightDir;

@@ -1,3 +1,4 @@
+#version 120
 
 const int SHADOW_TEX_COORD_UNIT = 6;
 

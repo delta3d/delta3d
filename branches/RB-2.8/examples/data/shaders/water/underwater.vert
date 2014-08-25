@@ -1,3 +1,4 @@
+#version 120
 //////////////////////////////////////////////
 //An under water shader
 //by Bradley Anderegg

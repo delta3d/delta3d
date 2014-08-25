@@ -1,3 +1,4 @@
+#version 120
 
 uniform int g_specDistributionMode;
 uniform int g_specFresnelMode;

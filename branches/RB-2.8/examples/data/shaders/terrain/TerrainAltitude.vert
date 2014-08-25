@@ -1,6 +1,6 @@
-
+#version 120
 attribute vec4 tangentAttrib;
-attribute vec4 gl_Color;
+//attribute vec4 gl_Color;
 
 varying vec3 vLightDir;
 varying vec3 vLightDir2;

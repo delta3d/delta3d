@@ -1,4 +1,4 @@
-
+#version 120
 uniform float WaterHeight;
 uniform vec4 WaterColor;
 
