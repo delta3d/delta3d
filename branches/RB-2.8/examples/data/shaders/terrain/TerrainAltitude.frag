@@ -13,6 +13,7 @@ uniform float AltitudeScale;
 uniform float DetailScale;
 uniform float WaterHeight;
 uniform float ReflectMode;
+uniform bool d3d_DepthOnlyPass = false;
 
 varying vec3 vNormal;
 varying vec3 vLightDir;
@@ -20,6 +21,7 @@ varying vec3 vLightDir2;
 varying vec3 vPos;
 varying vec3 vWorldNormal;
 varying vec3 vCamera;
+varying vec4 vViewPos;
 
 varying vec4 gl_Color;
 
@@ -36,6 +38,8 @@ float computeLinearFog(float, float, float);
 float computeExpFog(float);
 vec3 GetWaterColorAtDepth(float);
 float SampleShadowTexture();
+float computeFragDepth(float);
+
 
 void main(void)
 {
@@ -48,7 +52,22 @@ void main(void)
          discard;
       }
    }
+
+   //if your shader ever sets the frag depth it must always
+   if(d3d_DepthOnlyPass)
+   {
+      vec3 ecPosition3 = vViewPos.xyz / vViewPos.w;
+      float dist = length(ecPosition3);
+      
+      gl_FragDepth = computeFragDepth(dist);
+      return;
+   }
+   else
+   {
+      gl_FragDepth = gl_FragCoord.z;
+   }
      
+
    float NdUp = dot(vNormal, vec3(0,0,1));
    
    // Red verts mark a path/road.
@@ -192,17 +211,17 @@ void main(void)
    //This adds the under water effects 
    float fogAmt = 0.0;
 
-   if(altitude < WaterHeight)
+   if(altitude < WaterHeight + 1.0)
    {
       //camera height over the water
-      float heightOverWater = max(vCamera.z - WaterHeight, 0.0);
+      float heightOverWater = 20.5 * max(vCamera.z - WaterHeight, 0.0);
 
-      fogAmt = computeLinearFog(0.0, 2.0 * UnderWaterViewDistance, (dist - heightOverWater));
+      fogAmt = computeLinearFog(0.0, 3.0 * UnderWaterViewDistance, (dist - heightOverWater));
 
       //fade under water fog in over depth
-      float depth = clamp(WaterHeight - altitude, 0.0, 3.0 * UnderWaterViewDistance);
-  
-      fogColor = gl_LightSource[0].ambient.rgb * WaterColor.rgb;
+      float depth = clamp(WaterHeight - altitude, 0.0, 30.0 * UnderWaterViewDistance);
+      vec3 waterColorAtDepth = 0.64 * WaterColor.rgb;
+      fogColor = (gl_LightSource[0].ambient.rgb * waterColorAtDepth)  + (gl_LightSource[0].diffuse.rgb * waterColorAtDepth);
       
       //considering the underwater color essentially removing light
       result = mix(result, 1.2 * vec3(result.rgb * WaterColor.rgb), depth / (3.0 * UnderWaterViewDistance));

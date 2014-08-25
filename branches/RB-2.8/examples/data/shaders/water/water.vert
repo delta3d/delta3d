@@ -17,6 +17,7 @@ const float UnderWaterViewDistance = 5.0;
 
  
 varying vec4 pos;
+varying vec4 viewPos;
 varying vec3 lightVector;
 varying vec3 lightVector2;
 varying float distanceScale;
@@ -122,9 +123,11 @@ void main(void)
    //transform our vector into screen space
    mat4 mvp = gl_ModelViewProjectionMatrix;
    gl_Position = mvp * pos;
+   viewPos = gl_ModelViewMatrix * pos;   
    
    float fog_distance = length(pos - inverseViewMatrix[3]);
    pos.xy = localVert.xy; // used to allow more precision in the frag shader.
+
 
    mat3 inverseView3x3 = mat3(inverseViewMatrix[0].xyz, 
        inverseViewMatrix[1].xyz, inverseViewMatrix[2].xyz);

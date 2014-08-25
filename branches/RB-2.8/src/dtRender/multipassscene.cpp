@@ -50,6 +50,53 @@
 
 namespace dtRender
 {
+   const std::string MultipassScene::UNIFORM_DEPTH_ONLY_PASS("d3d_DepthOnlyPass");
+   const std::string MultipassScene::UNIFORM_NEAR_PLANE("d3d_NearPlane");
+   const std::string MultipassScene::UNIFORM_FAR_PLANE("d3d_FarPlane");
+   const std::string MultipassScene::UNIFORM_PREDEPTH_TEXTURE("d3d_PreDepthTexture");
+   const int MultipassScene::TEXTURE_UNIT_PREDEPTH = 5;
+
+   class UpdateUniformsCallback : public osg::NodeCallback
+   {
+   public:
+
+      UpdateUniformsCallback(osg::Camera* targetCamera, osg::Node* sceneNode)
+         : mCamera(targetCamera)
+         , mSceneNode(sceneNode)
+      {
+      }
+
+      virtual void operator()(osg::Node* node, osg::NodeVisitor* nv)
+      {
+         // first update subgraph to make sure objects are all moved into postion
+         traverse(node,nv);
+
+         //debug
+         osg::StateSet* ss = mSceneNode->getOrCreateStateSet();
+
+         double fovy, aspect, near, far;
+         mCamera->getProjectionMatrixAsPerspective(fovy, aspect, near, far);
+
+         osg::Uniform* nearPlaneUniform = ss->getOrCreateUniform(MultipassScene::UNIFORM_NEAR_PLANE, osg::Uniform::FLOAT);
+         nearPlaneUniform->setDataVariance(osg::Object::DYNAMIC);
+
+         osg::Uniform* farPlaneUniform = ss->getOrCreateUniform(MultipassScene::UNIFORM_FAR_PLANE, osg::Uniform::FLOAT);
+         farPlaneUniform->setDataVariance(osg::Object::DYNAMIC);
+
+         nearPlaneUniform->set(float(near));
+         farPlaneUniform->set(float(far));
+         
+      }
+
+   protected:
+
+      virtual ~UpdateUniformsCallback() {}
+
+      dtCore::ObserverPtr<osg::Camera>                mCamera;
+      dtCore::ObserverPtr<osg::Node>                 mSceneNode;
+
+   };
+
 
    class UpdateCameraCallback : public osg::NodeCallback
    {
@@ -81,6 +128,53 @@ namespace dtRender
 
    };
 
+   class PreDepthDrawCallback : public osg::Camera::DrawCallback
+   {
+   public:
+
+      enum Phase{ PRE_DRAW, POST_DRAW};
+
+      PreDepthDrawCallback(osg::Camera* depthCam, osg::Node& n, Phase p)
+         : mDepthCamera(depthCam)
+         , mNode(&n)
+         , mPhase(p)
+      {
+
+      }
+
+      ~PreDepthDrawCallback(){}
+
+
+      virtual void operator () (const osg::Camera& /*camera*/) const
+      {
+         if(mNode.valid())
+         {
+
+            osg::StateSet* ss = mNode->getOrCreateStateSet();
+     
+            osg::Uniform* sceneDepthUniform = ss->getOrCreateUniform(MultipassScene::UNIFORM_DEPTH_ONLY_PASS, osg::Uniform::BOOL);
+            sceneDepthUniform->setDataVariance(osg::Object::DYNAMIC);
+
+            if(mPhase == PRE_DRAW)
+            {
+               sceneDepthUniform->set(true);
+            }
+            else
+            {
+               sceneDepthUniform->set(false);
+            }
+         }
+      }
+
+   private:
+
+      dtCore::ObserverPtr<osg::Camera> mDepthCamera;
+      dtCore::ObserverPtr<osg::Node> mNode;
+      Phase mPhase;
+
+   };
+
+
    const dtCore::RefPtr<SceneType> MultipassScene::MULTIPASS_SCENE(new SceneType("Multipass Scene", "Scene", "Makes the main scene render to a render target."));
 
    class MultipassSceneImpl
@@ -89,10 +183,12 @@ namespace dtRender
       MultipassSceneImpl()
          : mColorImageFormat(GL_RGBA16F_ARB)
          , mEnableColorBypass(true)
-         , mEnableResampleColor(true)
+         , mEnableResampleColor(false)
          , mDepthImageFormat(GL_DEPTH_COMPONENT)
          , mEnableDepthBypass(false)
-         , mResampleColorFactor(0.5)
+         , mPreDepthImageFormat(GL_DEPTH_COMPONENT32)
+         , mEnablePreDepthPass(true)
+         , mResampleColorFactor(0.25)
       {
          
 
@@ -100,8 +196,8 @@ namespace dtRender
       
       ~MultipassSceneImpl()
       {
-         mMultipassSceneCamera= NULL;
          mMultipassCamera= NULL;
+         mPreDepthSceneCamera = NULL;
 
          mPPUProcessor= NULL;
 
@@ -120,17 +216,23 @@ namespace dtRender
 
       int mDepthImageFormat;
       bool mEnableDepthBypass;
+      
+      int mPreDepthImageFormat;
+      bool mEnablePreDepthPass;
+      
       float mResampleColorFactor;
 
-      
-      dtCore::RefPtr<dtCore::Camera> mMultipassSceneCamera;
+      dtCore::RefPtr<osg::Texture> mPreDepthTexture;
       dtCore::RefPtr<osg::Camera> mMultipassCamera;
+      dtCore::RefPtr<osg::Camera> mPreDepthSceneCamera;
 
       dtCore::RefPtr<osgPPU::Processor> mPPUProcessor;
 
       dtCore::RefPtr<osgPPU::UnitBypass> mColorBypass;
       dtCore::RefPtr<osgPPU::UnitInResampleOut> mResampleColor;
+      dtCore::RefPtr<osgPPU::UnitDepthbufferBypass> mPreDepthBufferBypass;
       dtCore::RefPtr<osgPPU::UnitDepthbufferBypass> mDepthBufferBypass;
+
       dtCore::RefPtr<osgPPU::UnitOut> mUnitOut;
 
       dtCore::ObserverPtr<osgPPU::Unit> mFirstUnit;
@@ -169,16 +271,18 @@ namespace dtRender
 
       if(mainSceneCamera != NULL)
       {
-
          osg::Camera* mainSceneOSGCamera = mainSceneCamera->GetOSGCamera();
-         
+       
+         UpdateUniformsCallback* updateUniforms = new UpdateUniformsCallback(mainSceneOSGCamera, sm.GetOSGNode());
+         sm.GetOSGNode()->setUpdateCallback(updateUniforms);
+
          //dtCore::Camera* multiPassCamera = new dtCore::Camera();
          osg::Camera* multiPassOSGCam = new osg::Camera();
          mImpl->mMultipassCamera = multiPassOSGCam;
 
          //setup a render to texture camera for the multi pass scene
-         SetupMultipassCamera(*mainSceneOSGCamera, *mainSceneOSGCamera->getViewport());
-         SetupMultipassCamera(*multiPassOSGCam, *mainSceneOSGCamera->getViewport());
+         SetupMultipassCamera(*mainSceneOSGCamera, *mainSceneOSGCamera->getViewport(), true, false);
+         SetupMultipassCamera(*multiPassOSGCam, *mainSceneOSGCamera->getViewport(), mImpl->mEnableColorBypass, mImpl->mEnableDepthBypass);
          
          //create ppu processor
          mImpl->mPPUProcessor = new osgPPU::Processor();
@@ -194,7 +298,7 @@ namespace dtRender
          
          GetSceneNode()->setNodeMask(dtUtil::NodeMask::MULTIPASS);
          
-         mainSceneOSGCamera->setCullMask(dtUtil::CullMask::MAIN_CAMERA_MULTIPASS);
+         mainSceneOSGCamera->setCullMask(dtUtil::CullMask::MAIN_CAMERA_MULTIPASS ^ dtUtil::NodeMask::FOREGROUND);
          multiPassOSGCam->setCullMask(dtUtil::CullMask::ADDITIONAL_CAMERA_MULTIPASS);
          
          //keep the multipass camera in synch with the main camera
@@ -210,6 +314,39 @@ namespace dtRender
          mImpl->mUnitOut->setName("PipelineResult");
          mImpl->mUnitOut->setInputTextureIndexForViewportReference(-1); 
          
+         if(mImpl->mEnablePreDepthPass)
+         {
+            mImpl->mPreDepthSceneCamera = new osg::Camera();
+
+            PreDepthDrawCallback* vrcPre = new PreDepthDrawCallback(mImpl->mPreDepthSceneCamera, *sm.GetOSGNode(), PreDepthDrawCallback::PRE_DRAW);
+            PreDepthDrawCallback* vrcPost = new PreDepthDrawCallback(mImpl->mPreDepthSceneCamera, *sm.GetOSGNode(), PreDepthDrawCallback::POST_DRAW);
+
+            mImpl->mPreDepthSceneCamera->setPreDrawCallback(vrcPre);
+            mImpl->mPreDepthSceneCamera->setPostDrawCallback(vrcPost);
+
+            mImpl->mPreDepthSceneCamera->setRenderOrder(osg::Camera::PRE_RENDER);
+            mImpl->mPreDepthSceneCamera->setCullMask(dtUtil::CullMask::MULTIPASS_DEPTH_ONLY_MASK);
+
+            mImpl->mPreDepthTexture = SetupMultipassCamera(*mImpl->mPreDepthSceneCamera, *mainSceneOSGCamera->getViewport(), false, true);
+           
+            //keep the predepth camera in synch with the main camera
+            mImpl->mPreDepthSceneCamera->setUpdateCallback(new UpdateCameraCallback(mainSceneOSGCamera, mImpl->mPreDepthSceneCamera.get()));
+
+            /*osgPPU::UnitCamera* unitPreDepthCamera = new osgPPU::UnitCamera;
+            unitPreDepthCamera->setCamera(mImpl->mPreDepthSceneCamera.get());
+            mImpl->mPPUProcessor->addChild(unitPreDepthCamera);
+
+            mImpl->mPreDepthBufferBypass = new osgPPU::UnitDepthbufferBypass();
+            mImpl->mPreDepthBufferBypass->setName("DepthBypass");
+            unitPreDepthCamera->addChild(mImpl->mPreDepthBufferBypass.get());
+
+            SetFirstUnit(*mImpl->mPreDepthBufferBypass);
+            SetLastUnit(*mImpl->mPreDepthBufferBypass);*/
+            
+            mImpl->mPreDepthSceneCamera->addChild(sm.GetOSGNode());
+            mainSceneOSGCamera->addChild(mImpl->mPreDepthSceneCamera);
+
+         }
 
          if(mImpl->mEnableColorBypass)
          {
@@ -219,7 +356,11 @@ namespace dtRender
             mImpl->mColorBypass = cameraBypass;
             mImpl->mColorBypass->setName("ColorBypass");
             
-            SetFirstUnit(*mImpl->mColorBypass);
+            if(GetFirstUnit() == NULL)
+            {
+               SetFirstUnit(*mImpl->mColorBypass);
+            }
+
             SetLastUnit(*mImpl->mColorBypass);
             
             unitMultipassCamera->addChild(mImpl->mColorBypass.get());
@@ -230,12 +371,12 @@ namespace dtRender
             mImpl->mDepthBufferBypass = new osgPPU::UnitDepthbufferBypass();
             mImpl->mDepthBufferBypass->setName("DepthBypass");
 
-            //if we did not set them above
-            if(!mImpl->mColorBypass.valid())
+            if(GetFirstUnit() == NULL)
             {
                SetFirstUnit(*mImpl->mDepthBufferBypass);
-               SetLastUnit(*mImpl->mDepthBufferBypass);
             }
+
+            SetLastUnit(*mImpl->mDepthBufferBypass);
 
             unitMultipassCamera->addChild(mImpl->mDepthBufferBypass.get());
          }
@@ -253,7 +394,8 @@ namespace dtRender
             SetLastUnit(*mImpl->mResampleColor);
          }
 
-         //GetLastUnit()->addChild(GetUnitOut());
+         GetLastUnit()->addChild(GetUnitOut());
+         //GetPreDepthBufferBypass()->addChild(GetUnitOut());
 
          //finally add the camera as a child to the main camera
          mainSceneOSGCamera->addChild(multiPassOSGCam);
@@ -289,19 +431,19 @@ namespace dtRender
    }
 
 
-   dtCore::Camera* MultipassScene::GetCamera()
+   osg::Camera* MultipassScene::GetCamera()
    {
-      return mImpl->mMultipassSceneCamera.get();
+      return mImpl->mMultipassCamera.get();
    }
 
-   const dtCore::Camera* MultipassScene::GetCamera() const
+   const osg::Camera* MultipassScene::GetCamera() const
    {
-      return mImpl->mMultipassSceneCamera.get();
+      return mImpl->mMultipassCamera.get();
    }
 
-   void MultipassScene::SetCamera( dtCore::Camera& cam)
+   void MultipassScene::SetCamera( osg::Camera& cam)
    {
-      mImpl->mMultipassSceneCamera = &cam;
+      mImpl->mMultipassCamera = &cam;
    }
 
 
@@ -317,13 +459,23 @@ namespace dtRender
 
 
    //! Setup the camera to do the render to texture
-   void MultipassScene::SetupMultipassCamera(osg::Camera& camera, osg::Viewport& vp)
+   osg::Texture* MultipassScene::SetupMultipassCamera(osg::Camera& camera, osg::Viewport& vp, bool use_color, bool use_depth)
    {
-      //camera.setReferenceFrame(osg::Camera::ABSOLUTE_RF);
-      
+      osg::Texture* result = NULL;
+
       // set up the background color and clear mask.
       camera.setClearColor(osg::Vec4(0.0f,0.0f,0.0f,0.0f));
-      camera.setClearMask(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+      int clearMask = GL_DEPTH_BUFFER_BIT;
+      if (use_color)
+      {
+         clearMask |= GL_COLOR_BUFFER_BIT;
+      }
+      else
+      {
+         camera.setClearColor(osg::Vec4(0.0f,0.0f,1.0f,1.0f));
+      }
+
+      camera.setClearMask(clearMask);
 
       // set viewport
       camera.setViewport(&vp);
@@ -331,16 +483,33 @@ namespace dtRender
 
       camera.setRenderTargetImplementation(osg::Camera::FRAME_BUFFER_OBJECT);
 
-      // tell the camera to use OpenGL frame buffer object where supported.
-      // create texture to render to
-      osg::Texture* color_texture = CreateRenderTexture((int)vp.width(), (int)vp.height(), false, false, GetColorBufferImageFormat());
-      //osg::Texture* depth_texture = CreateRenderTexture((int)vp.width(), (int)vp.height(), true, true, GetDepthBufferImageFormat());
+      if(use_depth)
+      {
+         osg::Texture* depth_texture = CreateRenderTexture((int)vp.width(), (int)vp.height(), true, true, GetDepthBufferImageFormat());
+
+         if(!use_color)
+         {
+            camera.detach(osg::Camera::COLOR_BUFFER);
+         }
+
+         camera.attach(osg::Camera::DEPTH_BUFFER, depth_texture);//, 0, 0, false, 4, 4);
+         result = depth_texture;
+      }
 
       // attach the texture and use it as the color buffer.
-      camera.detach(osg::Camera::COLOR_BUFFER);
-      camera.attach(osg::Camera::COLOR_BUFFER0, color_texture);//, 0, 0, false, 4, 4);
-      //camera.attach(osg::Camera::DEPTH_BUFFER, depth_texture);//, 0, 0, false, 4, 4);
+      if(use_color)
+      {
+         osg::Texture* color_texture = CreateRenderTexture((int)vp.width(), (int)vp.height(), false, false, GetColorBufferImageFormat());
+         camera.attach(osg::Camera::COLOR_BUFFER0, color_texture);//, 0, 0, false, 4, 4);
+         result = color_texture;
+      }
 
+      if(!use_color && !use_depth)
+      {
+         LOG_ERROR("Must attach a texture either color or depth for a multipass camera.");
+      }
+
+      return result;
    }
 
    osg::Texture2D* MultipassScene::CreateRenderTexture(int tex_width, int tex_height, bool depth, bool nearest, int imageFormat)
@@ -350,15 +519,18 @@ namespace dtRender
       texture2D->setTextureSize(tex_width, tex_height);
       texture2D->setFilter(osg::Texture2D::MIN_FILTER, nearest ? osg::Texture2D::NEAREST : osg::Texture2D::LINEAR);
       texture2D->setFilter(osg::Texture2D::MAG_FILTER, nearest ? osg::Texture2D::NEAREST : osg::Texture2D::LINEAR);
-
-      texture2D->setInternalFormat(imageFormat);
-
-      // if we want to use HDR, setup float format
+      
       if (!depth)
       {
          texture2D->setSourceFormat(GL_RGBA);
-         texture2D->setSourceType(GL_FLOAT);
       }
+      else
+      {
+        texture2D->setSourceFormat(GL_DEPTH_COMPONENT);
+      }
+
+      texture2D->setSourceType(GL_FLOAT);
+      texture2D->setInternalFormat(imageFormat);
 
       return texture2D;
    }
@@ -494,7 +666,58 @@ namespace dtRender
    {
       mImpl->mLastUnit = &u;
    }
-   
+
+   int MultipassScene::GetPreDepthBufferImageFormat() const
+   {
+      return mImpl->mPreDepthImageFormat;
+   }
+
+   void MultipassScene::SetPreDepthBufferImageFormat( int i)
+   {
+      mImpl->mPreDepthImageFormat = i;
+   }
+
+   void MultipassScene::SetEnablePreDepthPass( bool b)
+   {
+      mImpl->mEnablePreDepthPass = b;
+   }
+
+   bool MultipassScene::GetEnablePreDepthPass() const
+   {
+      return mImpl->mEnablePreDepthPass;
+   }
+
+   osgPPU::UnitDepthbufferBypass* MultipassScene::GetPreDepthBufferBypass()
+   {
+      return mImpl->mPreDepthBufferBypass;
+   }
+
+   const osgPPU::UnitDepthbufferBypass* MultipassScene::GetPreDepthBufferBypass() const
+   {
+      return mImpl->mPreDepthBufferBypass;
+   }
+
+   osg::Camera* MultipassScene::GetPreDepthCamera()
+   {
+      return mImpl->mPreDepthSceneCamera;
+   }
+
+   const osg::Camera* MultipassScene::GetPreDepthCamera() const
+   {
+      return mImpl->mPreDepthSceneCamera;
+   }
+
+   osg::Texture* MultipassScene::GetPreDepthTexture()
+   {
+      return mImpl->mPreDepthTexture;
+   }
+
+   const osg::Texture* MultipassScene::GetPreDepthTexture() const
+   {
+      return mImpl->mPreDepthTexture;
+   }
+
+
 
    ///////////////////////////////////////////////////////////
    //PROXY
@@ -532,7 +755,11 @@ namespace dtRender
          PropRegHelperType, propRegHelper);
 
       DT_REGISTER_PROPERTY_WITH_NAME_AND_LABEL(EnableDepthBypass, "EnableDepthBypass", "Enable Depth Bypass",
-         "Setting this true computes a predepth pass using the DepthSceneCullMask.",
+         "Setting this true saves a depth buffer with the main draw.",
+         PropRegHelperType, propRegHelper);
+
+      DT_REGISTER_PROPERTY_WITH_NAME_AND_LABEL(EnablePreDepthPass, "EnablePreDepthPass", "Enables a depth pass before rendering a view in the scene.",
+         "Setting this true computes a predepth pass.",
          PropRegHelperType, propRegHelper);
 
       //DT_REGISTER_PROPERTY_WITH_NAME_AND_LABEL(DepthSceneCullMask, "DepthSceneCullMask", "Main Scene Cull Mask", 

@@ -22,6 +22,9 @@
 #include <dtRender/oceanscene.h>
 #include <dtRender/scenemanager.h>
 #include <dtRender/scenegroup.h>
+#include <dtRender/multipassscene.h>
+
+#include <dtRender/ppuscene.h>
 
 #include <dtActors/watergridactor.h>
 #include <dtActors/engineactorregistry.h>
@@ -31,7 +34,7 @@
 #include <dtUtil/log.h>
 #include <dtUtil/nodemask.h>
 #include <osg/Group>
-
+#include <osgPPU/UnitDepthbufferBypass.h>
 #include <osg/StateSet>
 
 
@@ -40,23 +43,65 @@ namespace dtRender
 
    const dtCore::RefPtr<SceneType> OceanScene::OCEAN_SCENE(new SceneType("Ocean Scene", "Scene", "Creates water meshes, and allows for underwater effects."));
 
+   //class DepthPassScene : public PPUScene
+   //{
+   //public:
+   //   typedef PPUScene BaseClass;
+   //   static const dtCore::RefPtr<SceneType> DEPTH_PASS_SCENE;
+
+   //public:
+   //   DepthPassScene();
+   //   virtual ~DepthPassScene();
+
+   //   virtual osg::Group* GetSceneNode();
+   //   virtual const osg::Group* GetSceneNode() const;
+
+   //   virtual void CreateScene(SceneManager&, const GraphicsQuality&);
+
+   //private:
+   //   dtCore::RefPtr<osg::Group> mRootNode;
+   //};
+
+
+   class OceanSceneImpl
+   {
+   public:
+      OceanSceneImpl()
+         : mUseMultipassWater(true)
+      {
+
+
+      }
+
+      ~OceanSceneImpl()
+      {
+         mRootNode = NULL;
+      }
+
+      bool mUseMultipassWater;
+      dtCore::RefPtr<osg::Group> mRootNode;
+   };
+
 
    OceanScene::OceanScene()
    : BaseClass(*OCEAN_SCENE, SceneEnum::TRANSPARENT_OBJECTS)
-   , mNode(new osg::Group())
+   , mImpl(new OceanSceneImpl())
    {
       SetName("OceanScene");
-      mNode->setNodeMask(dtUtil::NodeMask::WATER);
    }
 
 
    OceanScene::~OceanScene()
    {
-      mNode = NULL;
+      delete mImpl;
+      mImpl = NULL;
    }
 
    void OceanScene::CreateScene( SceneManager& sm, const GraphicsQuality& g)
    {
+      mImpl->mRootNode = new osg::Group();
+      mImpl->mRootNode->setNodeMask(dtUtil::NodeMask::WATER);
+
       dtGame::GameManager* gm = sm.GetGameManager();
       if(gm != NULL)
       {
@@ -69,9 +114,37 @@ namespace dtRender
             waterProxy->GetDrawable(water);
          
             //get reflection scene root node
-
             water->SetSceneCamera(gm->GetApplication().GetCamera());
-            water->SetReflectionScene(sm.GetOSGNode());
+
+            if(mImpl->mUseMultipassWater)
+            {
+               MultipassScene* mps = dynamic_cast<MultipassScene*>(sm.FindSceneByType(*MultipassScene::MULTIPASS_SCENE));
+
+               //try to create default multipass scene
+               if(mps == NULL)
+               {
+                  sm.CreateDefaultMultipassScene();
+                  mps = dynamic_cast<MultipassScene*>(sm.FindSceneByType(*MultipassScene::MULTIPASS_SCENE));
+               }
+
+               if(mps != NULL && mps->GetEnablePreDepthPass())
+               {
+                  //bind the result of the pre depth texture to the scene
+                  dtCore::RefPtr<osg::Uniform> depthTextureUniform = new osg::Uniform(osg::Uniform::SAMPLER_2D, MultipassScene::UNIFORM_PREDEPTH_TEXTURE);
+                  depthTextureUniform->setDataVariance(osg::Object::DYNAMIC);
+                  depthTextureUniform->set(MultipassScene::TEXTURE_UNIT_PREDEPTH);
+
+                  osg::StateSet* ss = water->GetOSGNode()->getOrCreateStateSet();
+                  ss->addUniform(depthTextureUniform);
+                  ss->setTextureAttributeAndModes(MultipassScene::TEXTURE_UNIT_PREDEPTH, mps->GetPreDepthTexture(), osg::StateAttribute::ON);
+
+               }
+            }
+            //currently not creating multipass reflection scene
+            //else
+            {
+               water->SetReflectionScene(sm.GetOSGNode());
+            }
 
             //this adds the actor to our scene
             sm.PushScene(*this);
@@ -90,12 +163,12 @@ namespace dtRender
 
    osg::Group* OceanScene::GetSceneNode()
    {
-      return mNode.get();
+      return mImpl->mRootNode.get();
    }
 
    const osg::Group* OceanScene::GetSceneNode() const
    {
-      return mNode.get();
+      return mImpl->mRootNode.get();
    }
 
 
