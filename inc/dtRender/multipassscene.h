@@ -57,6 +57,13 @@ namespace dtRender
       typedef SceneGroup BaseClass;
       static const dtCore::RefPtr<SceneType> MULTIPASS_SCENE;
 
+      static const int TEXTURE_UNIT_PREDEPTH;
+
+      static const std::string UNIFORM_NEAR_PLANE;
+      static const std::string UNIFORM_FAR_PLANE;
+      static const std::string UNIFORM_DEPTH_ONLY_PASS;
+      static const std::string UNIFORM_PREDEPTH_TEXTURE;
+
    public:
       MultipassScene();
       MultipassScene(const SceneType& sceneId, const SceneEnum& defaultScene);
@@ -92,16 +99,32 @@ namespace dtRender
       void SetEnableDepthBypass(bool);
       bool GetEnableDepthBypass() const;
 
+      void SetEnablePreDepthPass(bool);
+      bool GetEnablePreDepthPass() const;
+
+      int GetPreDepthBufferImageFormat() const;
+      void SetPreDepthBufferImageFormat(int);
+
       int GetDepthBufferImageFormat() const;
       void SetDepthBufferImageFormat(int);
+
+      osgPPU::UnitDepthbufferBypass* GetPreDepthBufferBypass();
+      const osgPPU::UnitDepthbufferBypass* GetPreDepthBufferBypass() const;
 
       osgPPU::UnitDepthbufferBypass* GetDepthBufferBypass();
       const osgPPU::UnitDepthbufferBypass* GetDepthBufferBypass() const;
 
-      dtCore::Camera* GetCamera();
-      const dtCore::Camera* GetCamera() const;
+      osg::Camera* GetCamera();
+      const osg::Camera* GetCamera() const;
 
-      void SetCamera(dtCore::Camera&);
+      osg::Camera* GetPreDepthCamera();
+      const osg::Camera* GetPreDepthCamera() const;
+
+      osg::Texture* GetPreDepthTexture();
+      const osg::Texture* GetPreDepthTexture() const;
+
+
+      void SetCamera(osg::Camera&);
 
       /***
       *  Override AddScene to allow multipass effects combine
@@ -119,7 +142,7 @@ namespace dtRender
       void SetFirstUnit(osgPPU::Unit&);
       void SetLastUnit(osgPPU::Unit&);
 
-      void SetupMultipassCamera(osg::Camera& camera, osg::Viewport& vp);
+      osg::Texture* SetupMultipassCamera(osg::Camera& camera, osg::Viewport& vp , bool use_color, bool use_depth);
       osg::Texture2D* CreateRenderTexture(int tex_width, int tex_height, bool depth, bool nearest, int imageFormat);
 
    private:

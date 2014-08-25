@@ -17,6 +17,10 @@ uniform mat4 inverseViewMatrix;
 uniform vec4 WaterColor;
 uniform vec3 cameraRecenter;
 
+uniform float d3d_NearPlane;
+uniform float d3d_FarPlane;
+
+uniform bool d3d_DepthOnlyPass = false;
 uniform float d3d_SceneLuminance = 1.0;
 
 uniform float modForFOV;	
@@ -27,6 +31,7 @@ uniform sampler2D foamTexture;
 uniform sampler3D noiseTexture;
 
 varying vec4 pos;
+varying vec4 viewPos;
 varying vec3 lightVector;
 varying vec3 lightVector2;
 varying float distanceScale;
@@ -35,6 +40,8 @@ varying vec2 vFog;
 varying vec2 vertexWaveDir;
 varying vec3 shaderVertexNormal;
 varying vec3 vOffsetPos;
+
+const float UnderWaterViewDistance = 15.0;
 
 vec2 rotateTexCoords(vec2 coords, float angle)
 {
@@ -74,6 +81,9 @@ float edgeFade(float blendStart, vec2 texCoord)
 
 void lightContribution(vec3, vec3, vec3, vec3, out vec3);
 vec3 GetWaterColorAtDepth(float);
+float samplePreDepthTexture(vec2 screenCoord);
+float computeLinearFog(float startFog, float endFog, float fogDistance);
+float computeFragDepth(float distance);
 
 /////////////////////////////////////////////////////////////////////////////
 ////This triple samples the wave texture in a way that will remove tiling artifacts   
@@ -97,6 +107,7 @@ vec3 ComputeNormals(vec2 waveCoords)
 
 void main (void)
 {   
+
    vec3 camPos = inverseViewMatrix[3].xyz;
    vec3 combinedPos = pos.xyz + vec3(camPos.x, camPos.y, 0.0);
    vec3 viewDir = normalize(combinedPos - camPos);
@@ -146,8 +157,24 @@ void main (void)
    vec3 lightContribFinal = lightContribSun + lightContribMoon;
 
    if (gl_FrontFacing)
-   {     
-      vec3 reflectWaterColor = d3d_SceneLuminance * 0.2 * WaterColor.xyz;
+   {  
+   
+      //adds in the fog contribution, computes alpha
+      vec2 depthCoords = vec2(gl_FragCoord.x / ScreenWidth, gl_FragCoord.y / ScreenHeight);
+      float depthAtPixel = samplePreDepthTexture(depthCoords);
+      
+      vec3 ecPosition = viewPos.xyz / viewPos.w;
+      float waterDepth = max(depthAtPixel - length(ecPosition), 0.0);
+      waterDepth = computeLinearFog(1.0, UnderWaterViewDistance, waterDepth / 1.5);
+
+      float minOpacity = 0.21;
+      float opaqueDist = UnderWaterViewDistance / 1.5;
+      float opacity = sqrt( min( waterDepth / opaqueDist, 1.0));
+
+      vec4 waterColorDepth = mix(WaterColor, 0.2 * WaterColor, fresnel); 
+      vec4 waterColorTint = (minOpacity + (1.0 - minOpacity ) * opacity ) * WaterColor;
+         
+      vec3 reflectWaterColor = waterColorDepth.rgb;
       reflectColor = (mix(reflectWaterColor,reflectColor, fresnel));
       
       lightContribFinal = sqrt(lightContribFinal);
@@ -160,24 +187,25 @@ void main (void)
       specularContrib = (0.1 * pow(specularContrib, 8.0)) + (0.8 * pow(specularContrib, 200.0));
       vec3 resultSpecular = d3d_SceneLuminance * specularContrib * gl_LightSource[0].specular.rgb;     
       
-      //adds in the fog contribution, computes alpha
-      float opacity_fresnel = FastFresnel(waveNDotL, 0.65, 2.15);  
-      vec4 resultColor = vec4(waterColorContrib + resultSpecular, 0.2 + opacity_fresnel);
-      gl_FragColor = mix(gl_Fog.color, resultColor, vFog.x);
-      //gl_FragColor = resultColor;
-      //gl_FragColor = vec4(fresnel, fresnel, fresnel, 1.0);
+      vec4 resultColor = vec4(waterColorContrib + resultSpecular, 1.0 - waterColorTint.a);
+      
+      //gl_FragColor = mix(gl_Fog.color, resultColor, vFog.x);
+      gl_FragColor = resultColor;
+      //gl_FragColor = vec4(depthCoords.x, depthCoords.y, 0.0, 1.0);
+      //gl_FragColor = vec4(depthAtPixel / 100.0, depthAtPixel/ 100.0, depthAtPixel/ 100.0, 1.0);
+      
    }
    else
    {
       float wL = max(0.0, dot(viewDir, normal));   
       float fsnel = FastFresnel(wL, 0.05, 0.5);
 
-      vec3 waterColorAtDepth = WaterColor.rgb;
+      vec3 waterColorAtDepth = 0.64 * WaterColor.rgb;
 
       vec3 combinedColor = WaterColor.xyz;      
       
       combinedColor  = mix(combinedColor,reflectColor, fsnel);
-      combinedColor = mix(gl_LightSource[0].ambient.xyz * waterColorAtDepth, combinedColor, vFog.y);
+      combinedColor = (gl_LightSource[0].ambient.xyz * waterColorAtDepth) + mix(gl_LightSource[0].diffuse.xyz * waterColorAtDepth, combinedColor, vFog.y);
 
       gl_FragColor = vec4(combinedColor, 1.0);
 

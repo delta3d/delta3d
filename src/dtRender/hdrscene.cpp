@@ -80,9 +80,9 @@ class HDRRendering
             mHDRBlurSigma = 4.0;
             mHDRBlurRadius = 7.0;
             mGlareFactor = 2.5;
-            mMinLuminance = 0.25;
+            mMinLuminance = 0.65;
             mMaxLuminance = 5.0;
-            mAdaptFactor = 0.005;
+            mAdaptFactor = 0.01;
         }
 
         //------------------------------------------------------------------------

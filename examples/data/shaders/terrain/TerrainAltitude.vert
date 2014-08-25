@@ -8,6 +8,7 @@ varying vec3 vNormal;
 varying vec3 vPos;
 varying vec3 vWorldNormal;
 varying vec3 vCamera;
+varying vec4 vViewPos;
 
 uniform mat4 osg_ViewMatrixInverse;
 
@@ -35,7 +36,8 @@ void main()
    vLightDir2 = normalize(inverseView3x3 * gl_LightSource[1].position.xyz);
 
    vWorldNormal = gl_Normal;
-   
+   vViewPos = gl_ModelViewMatrix * gl_Vertex;   
+
    //Compute the final vertex position in clip space.
    gl_Position = ftransform();
 

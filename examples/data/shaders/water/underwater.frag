@@ -24,9 +24,9 @@ void main (void)
    float depth = waterHeightScreenSpace - (viewDistance * worldSpacePos.z);
    depth = clamp(depth, 0.0, viewDistance);
    float depthScalar = (depth / viewDistance);
-
-   vec3 color = GetWaterColorAtDepth(1.0);
-   color = gl_LightSource[0].ambient.xyz * mix(color, deepWaterColor.xyz, 0.5 * depthScalar);
+   
+   vec3 color = gl_LightSource[0].ambient.xyz * deepWaterColor;
+   color += (gl_LightSource[0].diffuse.xyz * mix(deepWaterColor.xyz, color, 1.25 * depthScalar));
 
    if(worldSpacePos.z < waterHeightScreenSpace)
    {

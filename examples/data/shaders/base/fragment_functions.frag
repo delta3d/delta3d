@@ -1,20 +1,15 @@
-uniform bool writeLinearDepth;
-uniform float nearPlane;
-uniform float farPlane;
-uniform sampler2D depthTexture;
+
+uniform float d3d_NearPlane;
+uniform float d3d_FarPlane;
+uniform sampler2D d3d_PreDepthTexture;
 
 //used for HDR
 uniform float d3d_SceneLuminance = 1.0;
 uniform float d3d_SceneAmbience = 1.0;
 
-float computeFragDepth(float distance, float fragZ)
+float computeFragDepth(float distance)
 {
-   float fragDepth = fragZ;
-   if(writeLinearDepth)
-   {
-      fragDepth = (distance - nearPlane) / (farPlane - nearPlane);
-   }
-   return fragDepth;
+   return (distance - d3d_NearPlane) / (d3d_FarPlane - d3d_NearPlane);
 }
 
 void alphaMix(vec3 color1, vec3 color2, float fogContrib, float alpha, out vec4 mixColor)
@@ -49,16 +44,21 @@ float softParticleOpacity(vec3 viewPosCenter, vec3 viewPosCurrent,
 {
    float dist = length(viewPosCenter.xy - viewPosCurrent.xy);
    float vpLength = radius + length(viewPosCurrent);
-   float fMin = nearPlane * vpLength / viewPosCurrent.z;
+   float fMin = d3d_NearPlane * vpLength / viewPosCurrent.z;
    float w = sqrt(radius * radius - dist * dist);
    float f = vpLength - w;
    float b = vpLength + w;
-   float sceneDepth = texture2D(depthTexture, screenCoord).r * (farPlane - nearPlane);
+   float sceneDepth = texture2D(d3d_PreDepthTexture, screenCoord).r * (d3d_FarPlane - d3d_NearPlane);
    float ds = min(sceneDepth, b) - max(fMin, f);
    float sphereDepth = (1.0 - dist / radius) * ds;
    float opacity = 1.0 - exp(-density * sphereDepth);
 
    return opacity;
+}
+
+float samplePreDepthTexture(vec2 screenCoord)
+{
+   return texture2D(d3d_PreDepthTexture, screenCoord).b * (d3d_FarPlane - d3d_NearPlane);
 }
 
 //From Shader X5

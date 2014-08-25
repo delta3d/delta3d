@@ -41,13 +41,14 @@ namespace dtUtil
 
          static CullMask MAIN_CAMERA_SINGLEPASS;         //0xFFFFFFFF         
          static CullMask MAIN_CAMERA_MULTIPASS;          //0xB100FFFF ( PRE_PROCESS, MULTIPASS, FOREGROUND, POST_PROCESS )      
-         static CullMask MAIN_CAMERA_MASK;               //0xFFFFFFFF (Set for actor property will choose appropriate mode.)
+         static CullMask MAIN_CAMERA_MASK;               //0xFFFFFFHFF (Set for actor property will choose appropriate mode.)
                   
          static CullMask ADDITIONAL_CAMERA_SINGLEPASS;   //0x7FFFFFFF (removes FOREGROUND for multiple screen rendering)        
          static CullMask ADDITIONAL_CAMERA_MULTIPASS;    //0x4EFFFFFF ( removes PRE_PROCESS, MULTIPASS, FOREGROUND, POST_PROCESS )      
          static CullMask ADDITIONAL_CAMERA_MASK;         //0x7FFFFFFF (Set for actor property will choose appropriate mode.)         
          
 
+         static CullMask MULTIPASS_DEPTH_ONLY_MASK;      //0x008F0000 (TERRAIN_GEOMETRY, NON_TRANSPARENT_GEOMETRY)
          static CullMask MULTIPASS_NON_TRANSPARENT_MASK; //0x40F0FFFF (BACKGROUND, and NON_TRANSPARENT_GEOMETRY)
          static CullMask MULTIPASS_TRANSPARENT_MASK;     //0x0E0FFFFF (WATER, TRANSPARENT_EFFECTS, VOLUMETRIC_EFFECTS, TRANSPARENT_GEOMETRY)
          

@@ -26,6 +26,7 @@
 
 namespace dtRender
 {
+   class OceanSceneImpl;
    class DT_RENDER_EXPORT OceanScene : public SceneBase
    {
    public:
@@ -43,7 +44,7 @@ namespace dtRender
 
 
    private:
-      dtCore::RefPtr<osg::Group> mNode;
+      OceanSceneImpl* mImpl;
    };
 
 
