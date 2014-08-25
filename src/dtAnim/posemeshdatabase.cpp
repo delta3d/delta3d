@@ -70,15 +70,6 @@ private:
    PredicatePoseMeshName();
 };
 
-template<typename PtrT>
-struct DeletePointer
-{
-   void operator ()(PtrT ptr)
-   {
-      delete ptr;
-   }
-};
-
 ////////////////////////////////////////////////////////////////////////////////
 PoseMeshDatabase::PoseMeshDatabase(dtAnim::Cal3DModelWrapper* model)
    : mMeshes()
@@ -89,10 +80,6 @@ PoseMeshDatabase::PoseMeshDatabase(dtAnim::Cal3DModelWrapper* model)
 ////////////////////////////////////////////////////////////////////////////////
 PoseMeshDatabase::~PoseMeshDatabase()
 {
-   std::for_each(mMeshes.begin(),
-                 mMeshes.end(),
-                 DeletePointer<PoseMeshList::value_type>());
-
    mMeshes.clear();
 }
 
@@ -130,11 +117,6 @@ bool PoseMeshDatabase::LoadFromFile(const std::string& file)
    catch (dtUtil::Exception& exception)
    {
       LOG_ERROR(exception.ToString());
-
-      // Mesh is invalid, clear its data
-      std::for_each(mMeshes.begin(),
-                    mMeshes.end(),
-                    DeletePointer<PoseMeshList::value_type>());
 
       mMeshes.clear();
 

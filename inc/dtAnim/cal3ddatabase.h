@@ -38,6 +38,7 @@ class CalCoreModel;
 namespace dtAnim
 {
    class Cal3DModelData;
+   class PoseMeshDatabase;
 
    class DT_ANIM_EXPORT Cal3DDatabase: public osg::Referenced
    {
@@ -69,6 +70,8 @@ namespace dtAnim
          ///Get the model data associated with this filename (used for asynch loading)
          Cal3DModelData* GetModelData(const std::string& filename);
          
+         dtAnim::PoseMeshDatabase* GetPoseMeshDatabase(Cal3DModelWrapper& wrapper);
+         
          void PurgeLoaderCaches();
          void TruncateDatabase();
 
@@ -93,6 +96,10 @@ namespace dtAnim
 
          dtCore::RefPtr<Cal3DLoader> mFileLoader;
          dtCore::RefPtr<AnimNodeBuilder> mNodeBuilder;
+
+         typedef dtCore::RefPtr<dtAnim::PoseMeshDatabase> PoseDatabase;
+         typedef std::map<CalCoreModel*, PoseDatabase> PoseDatabaseMap;
+         PoseDatabaseMap mPoseMeshMap;
 
          mutable OpenThreads::Mutex mAsynchronousLoadLock;
          mutable OpenThreads::Mutex mLoadingLock;

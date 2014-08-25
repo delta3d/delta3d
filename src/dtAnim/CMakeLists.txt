@@ -40,6 +40,7 @@ SET(LIB_SOURCES
   ${SOURCE_PATH}/posemeshloader.cpp
   ${SOURCE_PATH}/posemeshutility.cpp
   ${SOURCE_PATH}/posemeshxml.cpp
+  ${SOURCE_PATH}/posesequence.cpp
   ${SOURCE_PATH}/sequencemixer.cpp
   ${SOURCE_PATH}/skeletaldrawable.cpp
   ${SOURCE_PATH}/skeletondriver.cpp
@@ -87,6 +88,7 @@ SET(LIB_PUBLIC_HEADERS
   ${HEADER_PATH}/posemeshloader.h
   ${HEADER_PATH}/posemeshutility.h
   ${HEADER_PATH}/posemeshxml.h
+  ${HEADER_PATH}/posesequence.h
   ${HEADER_PATH}/sequencemixer.h
   ${HEADER_PATH}/skeletaldrawable.h
   ${HEADER_PATH}/skeletondriver.h
