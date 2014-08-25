@@ -1,3 +1,4 @@
+#version 120
 //About the most innovative shader ever
 //but it shows what is the bare bone minimum for a vertex shader
 

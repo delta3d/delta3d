@@ -1,3 +1,4 @@
+#version 120
 //////////////////////////////////////////////
 //A generic ocean water shader
 //by Bradley Anderegg

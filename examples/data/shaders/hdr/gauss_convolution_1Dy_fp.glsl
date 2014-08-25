@@ -1,3 +1,4 @@
+#version 120
 /*
  * Apply convolution of variable size onto the pixels.
  * The convolution is done in 1D

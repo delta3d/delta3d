@@ -1,3 +1,4 @@
+#version 120
 
 float calculateDistance(mat4 modelViewMatrix, vec4 vertex)
 {

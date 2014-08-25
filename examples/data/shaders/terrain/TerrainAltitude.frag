@@ -1,3 +1,5 @@
+#version 120
+
 uniform sampler2D UnderWaterSandTexture;
 uniform sampler2D SandTexture;
 uniform sampler2D GrassTexture;
@@ -175,7 +177,7 @@ void main(void)
    if (altitude >= grassFullAlt)
    {
       float effectRatio = (NdUp - overrideAngle)/overrideAngleDiff;
-      effectOverride = clamp(effectRatio * rockRatio, 0, 1);
+      effectOverride = clamp(effectRatio * rockRatio, 0.0, 1.0);
       vec3 mountainColor = texture2D(MountainsideTexture, gl_TexCoord[0].st * DetailScale * TextureScales.z).rgb;
       baseColor = mix(baseColor, mountainColor, effectOverride);
    }
@@ -183,7 +185,7 @@ void main(void)
    // Modulate the texture with finer light/dark details.
    float avgerage = (detailColor.r + detailColor.g + detailColor.b)/3.0;
    baseColor.rgb += (avgerage - vec3(0.5, 0.5, 0.5));
-   baseColor.rgb = clamp(baseColor, vec3(0,0,0), vec3(1,1,1));
+   baseColor.rgb = clamp(baseColor, vec3(0.0,0.0,0.0), vec3(1.0,1.0,1.0));
    
    // Determine if road texture needs to be overlayed.
 //   baseColor = mix(baseColor, sandColor, roadRatio);

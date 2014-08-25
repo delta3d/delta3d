@@ -1,3 +1,4 @@
+#version 120
 /*
  * Pass only values which are over a bright treshold.
  * see http://msdn2.microsoft.com/en-us/library/bb173484(VS.85).aspx

@@ -1,3 +1,4 @@
+#version 120
 
 uniform sampler2D baseTexture;
 uniform sampler2DShadow shadowTexture;

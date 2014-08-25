@@ -1,3 +1,4 @@
+#version 120
 /*
  * Compute adapted luminance based on the data from the previous frames.
  * see http://msdn2.microsoft.com/en-us/library/bb173484(VS.85).aspx

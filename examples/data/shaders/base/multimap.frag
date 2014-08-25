@@ -1,8 +1,10 @@
+#version 120
+
 uniform sampler2D diffuseTexture;
 uniform sampler2D specularTexture;
 uniform sampler2D illumTexture;
 uniform sampler2D normalTexture;
-uniform float d3d_SceneLuminance = 1.0;
+uniform float d3d_SceneLuminance; // = 1.0;
 
 varying vec3 vNormal;
 varying vec3 vLightDir;

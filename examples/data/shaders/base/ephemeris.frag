@@ -1,5 +1,7 @@
+#version 120
+
 uniform sampler2D diffuseTexture;
-uniform float d3d_SceneLuminance = 1.0;
+uniform float d3d_SceneLuminance; // = 1.0;
 
 const float exposure = 6.0;
 
@@ -7,10 +9,10 @@ void main(void)
 {
    vec3 diffuseColor = texture2D(diffuseTexture, gl_TexCoord[0].st).rgb;
    
-   float luminance = ( diffuseColor.r * 0.299f + diffuseColor.g * 0.587f + diffuseColor.b * 0.114f );
+   float luminance = ( diffuseColor.r * 0.299 + diffuseColor.g * 0.587 + diffuseColor.b * 0.114 );
 
-   float brightness = ( 1.0f - exp(-luminance * exposure) );
-   float scale = d3d_SceneLuminance * ( brightness / (luminance + 0.001f) );
+   float brightness = ( 1.0 - exp(-luminance * exposure) );
+   float scale = d3d_SceneLuminance * ( brightness / (luminance + 0.001) );
   
   
    vec3 finalColor = scale * diffuseColor;

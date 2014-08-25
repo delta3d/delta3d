@@ -1,3 +1,4 @@
+#version 120
 /*
  * Combine input texture with a given hdr texture by applying
  * tonemapping algorithm found in

@@ -1,3 +1,4 @@
+#version 120
 //////////////////////////////////////////////
 //An under water shader
 //by Bradley Anderegg
@@ -25,7 +26,7 @@ void main (void)
    depth = clamp(depth, 0.0, viewDistance);
    float depthScalar = (depth / viewDistance);
    
-   vec3 color = gl_LightSource[0].ambient.xyz * deepWaterColor;
+   vec3 color = gl_LightSource[0].ambient.xyz * deepWaterColor.xyz;
    color += (gl_LightSource[0].diffuse.xyz * mix(deepWaterColor.xyz, color, 1.25 * depthScalar));
 
    if(worldSpacePos.z < waterHeightScreenSpace)
