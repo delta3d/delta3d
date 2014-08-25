@@ -42,7 +42,7 @@ namespace dtAnim
    class Cal3DModelWrapper;
    struct PoseMeshData;
 
-   class DT_ANIM_EXPORT PoseMesh
+   class DT_ANIM_EXPORT PoseMesh : public osg::Referenced
    {
    public:
 
@@ -101,8 +101,6 @@ namespace dtAnim
       PoseMesh(dtAnim::Cal3DModelWrapper* model,
                const PoseMeshData& meshData);
 
-      ~PoseMesh();
-
       const std::string& GetName() const                 { return mName;            }
       const std::string& GetEffectorName() const         { return mBoneName;        }
       int GetEffectorID() const                          { return mEffectorID;      }
@@ -144,6 +142,9 @@ namespace dtAnim
                                     MeshIndexPair& pair0,
                                     MeshIndexPair& pair1,
                                     MeshIndexPair& pair2) const;
+
+   protected:
+      virtual ~PoseMesh();
 
    private:
 

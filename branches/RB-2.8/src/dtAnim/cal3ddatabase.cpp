@@ -23,6 +23,7 @@
 #include <dtAnim/cal3ddatabase.h>
 #include <dtAnim/cal3dmodelwrapper.h>
 #include <dtAnim/animnodebuilder.h>
+#include <dtAnim/posemeshdatabase.h>
 #include <dtUtil/fileutils.h>
 #include <dtUtil/log.h>
 #include <dtUtil/xerceswriter.h>
@@ -175,6 +176,8 @@ namespace dtAnim
 
       CalModel* model = new CalModel(data->GetCoreModel());
       dtCore::RefPtr<Cal3DModelWrapper> wrapper = new Cal3DModelWrapper(model);
+
+      GetPoseMeshDatabase(*wrapper);
 
       return wrapper;
    }
@@ -365,6 +368,7 @@ namespace dtAnim
    {
       OpenThreads::ScopedLock<OpenThreads::Mutex> lock(mAsynchronousLoadLock);
       mModelData.clear();
+      mPoseMeshMap.clear();
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -390,6 +394,50 @@ namespace dtAnim
    {
       OpenThreads::ScopedLock<OpenThreads::Mutex> lock(mAsynchronousLoadLock);
       return Find(filename);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   /// Each core model needs to work with its own pose mesh database.
+   /// This is not necessary for this example since they all share the same mesh but
+   /// is important in a real application that has more than one core model
+   dtAnim::PoseMeshDatabase* Cal3DDatabase::GetPoseMeshDatabase(Cal3DModelWrapper& wrapper)
+   {
+      dtAnim::PoseMeshDatabase* poseDatabase = NULL;
+      CalCoreModel* coreModel = wrapper.GetCalModel()->getCoreModel();
+
+      // See if this core model already has a pose mesh database that can be shared
+      PoseDatabaseMap::iterator mapIter = mPoseMeshMap.find(coreModel);
+
+      if (mapIter != mPoseMeshMap.end())
+      {
+         poseDatabase = mapIter->second.get();
+      }
+      else
+      {
+         // Get access to the pose mesh file name
+         dtAnim::Cal3DDatabase& calDatabase = dtAnim::Cal3DDatabase::GetInstance();
+         dtAnim::Cal3DModelData* modelData = calDatabase.GetModelData(wrapper);
+
+         if ( ! modelData->GetPoseMeshFilename().empty())
+         {
+            // Load up the pose mesh data
+            dtCore::RefPtr<dtAnim::PoseMeshDatabase> newPoseDatabase
+               = new dtAnim::PoseMeshDatabase(&wrapper);
+            if (newPoseDatabase->LoadFromFile(modelData->GetPoseMeshFilename()))
+            {
+               mPoseMeshMap.insert(std::make_pair(coreModel, newPoseDatabase));
+
+               poseDatabase = newPoseDatabase;
+            }
+
+            if (poseDatabase == NULL)
+            {
+               LOG_ERROR("Cannot access pose mesh data for character model \"" + coreModel->getName() + "\"");
+            }
+         }
+      }
+
+      return poseDatabase;
    }
 
    /////////////////////////////////////////////////////////////////////////////
