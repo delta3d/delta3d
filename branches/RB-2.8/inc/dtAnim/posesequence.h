@@ -165,7 +165,7 @@ namespace dtAnim
 
       PoseSequence();
 
-      dtCore::RefPtr<dtAnim::Animatable> PoseSequence::Clone(dtAnim::Cal3DModelWrapper* modelWrapper) const;
+      dtCore::RefPtr<dtAnim::Animatable> Clone(dtAnim::Cal3DModelWrapper* modelWrapper) const;
 
       PoseController* GetPoseController();
       const PoseController* GetPoseController() const;
