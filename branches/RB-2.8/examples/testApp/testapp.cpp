@@ -61,39 +61,39 @@ using namespace dtExample;
 class TestApp : public dtGame::GameEntryPoint
 {
 
-   public:
+public:
 
-      TestApp();
+   TestApp();
 
-      virtual ~TestApp();
+   virtual ~TestApp();
 
-      /**
-       * Called to initialize the game application.  You can pull any command line params here.
-       */
-      virtual void Initialize(dtABC::BaseABC& app, int argc, char **argv);
+   /**
+    * Called to initialize the game application.  You can pull any command line params here.
+    */
+   virtual void Initialize(dtABC::BaseABC& app, int argc, char **argv);
 
 
-      /**
-       * Called just before your application's game loop starts.  This is your main
-       * opportunity to create components, load maps, create unique actors, etc...
-       */
-      virtual void OnStartup(dtABC::BaseABC& app, dtGame::GameManager& gamemanager);
+   /**
+    * Called just before your application's game loop starts.  This is your main
+    * opportunity to create components, load maps, create unique actors, etc...
+    */
+   virtual void OnStartup(dtABC::BaseABC& app, dtGame::GameManager& gamemanager);
 
-      virtual void OnShutdown(dtABC::BaseABC& /*app*/, dtGame::GameManager& /*gamemanager*/);
+   virtual void OnShutdown(dtABC::BaseABC& /*app*/, dtGame::GameManager& /*gamemanager*/);
 
-      void ValidateMap(const std::string& mapToValidate);
+   void ValidateMap(const std::string& mapToValidate);
 
-   private:
+private:
 
-      /**
-       * Helper method to parse command line options
-       * @note This method will parse command line options
-       * and set values as necessary. For instance, it will
-       * set the data path of the application
-       */
-      void ParseCommandLineOptions(int argc, char **argv);
-      std::string mProjectPath;
-      std::string mMapName;
+   /**
+    * Helper method to parse command line options
+    * @note This method will parse command line options
+    * and set values as necessary. For instance, it will
+    * set the data path of the application
+    */
+   void ParseCommandLineOptions(int argc, char **argv);
+   std::string mProjectPath;
+   std::string mMapName;
 };
 
 
@@ -130,8 +130,7 @@ void TestApp::Initialize(dtABC::BaseABC& app, int argc, char** argv)
    std::string deltaDataEnvVar = dtUtil::GetDeltaDataPathList();
    if (deltaDataEnvVar.empty() || !dtUtil::FileUtils::GetInstance().DirExists(deltaDataEnvVar))
    {
-      // TODO look in mac bundle.
-      dtUtil::SetDataFilePathList(executablePath + "/../data;" + executablePath + "/../share/delta3d/data;" +  executablePath + "/../../data");
+      dtUtil::SetDataFilePathList(executablePath + "/../data;" + executablePath + "/../share/delta3d/data;" +  executablePath + "/../../data;" + executablePath + "/../Resources/delta3dData");
    }
    else
    {
@@ -147,15 +146,16 @@ void TestApp::Initialize(dtABC::BaseABC& app, int argc, char** argv)
 
    if (mProjectPath.empty())
    {
-         // TODO look in the mac bundle.
-         std::vector<std::string> projectPaths;
-         projectPaths.push_back(executablePath + "/../examples");
-         projectPaths.push_back(executablePath + "/../share/delta3d/examples");
-         projectPaths.push_back(executablePath + "/../../examples");
-         // TODO compile in the install prefix for linux?
-         projectPaths.push_back("/usr/share/delta3d/examples");
-         projectPaths.push_back("/usr/local/share/delta3d/examples");
-         mProjectPath = dtUtil::FindFileInPathList("data", projectPaths);
+      // TODO look in the mac bundle.
+      std::vector<std::string> projectPaths;
+      projectPaths.push_back(executablePath + "/../examples");
+      projectPaths.push_back(executablePath + "/../share/delta3d/examples");
+      projectPaths.push_back(executablePath + "/../../examples");
+      projectPaths.push_back(executablePath + "/../Resources");
+      // TODO compile in the install prefix for linux?
+      projectPaths.push_back("/usr/share/delta3d/examples");
+      projectPaths.push_back("/usr/local/share/delta3d/examples");
+      mProjectPath = dtUtil::FindFileInPathList("data", projectPaths);
    }
 
 }
@@ -182,7 +182,7 @@ void TestApp::OnStartup(dtABC::BaseABC& app, dtGame::GameManager& gameManager)
       catch (dtUtil::Exception& )
       {
          throw dtGame::GameApplicationConfigException(
-            "Invalid project context path: " + mProjectPath, __FILE__, __LINE__);
+               "Invalid project context path: " + mProjectPath, __FILE__, __LINE__);
       }
    }
    else if (fi.fileType == dtUtil::REGULAR_FILE)
@@ -195,13 +195,13 @@ void TestApp::OnStartup(dtABC::BaseABC& app, dtGame::GameManager& gameManager)
       catch (dtUtil::Exception& )
       {
          throw dtGame::GameApplicationConfigException(
-            "Invalid project config file: " + mProjectPath, __FILE__, __LINE__);
+               "Invalid project config file: " + mProjectPath, __FILE__, __LINE__);
       }
    }
    else
    {
       throw dtGame::GameApplicationConfigException(
-         "Invalid or unknown project path: " + mProjectPath, __FILE__, __LINE__);
+            "Invalid or unknown project path: " + mProjectPath, __FILE__, __LINE__);
    }
 
    // Setup Message Processor
@@ -215,7 +215,7 @@ void TestApp::OnStartup(dtABC::BaseABC& app, dtGame::GameManager& gameManager)
    // Setup Game State Component
    dtCore::RefPtr<dtGame::GameStateComponent> gameStateComp = new dtGame::GameStateComponent();
    gameManager.AddComponent(*gameStateComp, dtGame::GameManager::ComponentPriority::NORMAL);
-   
+
    // Load game state transitions.
    std::string filePath = dtCore::Project::GetInstance().GetResourcePath(dtCore::ResourceDescriptor("Transitions:TestAppTransitions.xml"));
    if ( ! gameStateComp->LoadTransitions(filePath))
@@ -245,7 +245,7 @@ void TestApp::OnStartup(dtABC::BaseABC& app, dtGame::GameManager& gameManager)
    //setup camera
    //double vfov, aspect, nearClip, farClip;
    dtCore::DeltaWin::Resolution vec = gameManager.GetApplication().GetWindow()->GetCurrentResolution();
-   
+
    dtCore::Camera* cam = gameManager.GetApplication().GetCamera();
    //gameManager.GetApplication().GetCamera()->GetPerspectiveParams(vfov, aspect, nearClip, farClip);
    cam->SetPerspectiveParams(75.0, vec.width / vec.height, 0.5f, 25000.0f);
@@ -255,7 +255,7 @@ void TestApp::OnStartup(dtABC::BaseABC& app, dtGame::GameManager& gameManager)
 
    // Load the map for this application.
    const std::string BASE_MAP("BaseMap");
-   
+
    ValidateMap(BASE_MAP);
    ValidateMap(mMapName);
 
@@ -279,9 +279,9 @@ void TestApp::ValidateMap(const std::string& mapToValidate)
    {
       std::ostringstream oss;
       oss << "A map named: " << mapToValidate << " could not be located in the project context: "
-         << mProjectPath;
+            << mProjectPath;
       throw dtGame::GameApplicationConfigException(
-         oss.str(), __FILE__, __LINE__);
+            oss.str(), __FILE__, __LINE__);
    }   
 }
 
@@ -303,7 +303,7 @@ void TestApp::ParseCommandLineOptions(int argc, char** argv)
    {
       argParser.getApplicationUsage()->write(std::cerr);
       throw dtGame::GameApplicationConfigException(
-         "Command Line Error.", __FILE__, __LINE__);
+            "Command Line Error.", __FILE__, __LINE__);
    }
 
    argParser.read("--projectPath", mProjectPath);
