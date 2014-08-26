@@ -410,7 +410,7 @@ namespace dtActors
 
       if(kb != NULL && mDeveloperMode && keyTimeOut <= 0.0f)
       {
-         if(kb->GetKeyState('9'))
+         /*if(kb->GetKeyState('9'))
          {
             mModForWaveLength *= 0.96f; // 10% less
             std::cout << "WaveLength mod changed to [" << mModForWaveLength << "]." << std::endl;
@@ -502,7 +502,7 @@ namespace dtActors
 
             mGeode->getOrCreateStateSet()->setAttributeAndModes(polymode.get(),osg::StateAttribute::OVERRIDE | osg::StateAttribute::ON);
             keyTimeOut = 0.5;
-         }
+         }*/
 
          if(kb->GetKeyState(osgGA::GUIEventAdapter::KEY_Home))
          {
