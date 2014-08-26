@@ -155,7 +155,17 @@ namespace dtExample
          // --- Control Adjustment Section --- //
          case '0':
          {
-          
+            dtRender::SceneManager* sm = dynamic_cast<dtRender::SceneManager*>(GetGameManager()->GetEnvironmentActor()->GetDrawable());
+
+            if(sm != NULL)
+            {
+
+               dtRender::EphemerisScene* eph = dynamic_cast<dtRender::EphemerisScene*>(sm->FindSceneByType(*dtRender::EphemerisScene::EPHEMERIS_SCENE));
+               if(eph != NULL)
+               {
+                  eph->SetTimeFromSystem();
+               }
+            }
          }
          break;
 
@@ -168,7 +178,7 @@ namespace dtExample
          case '-':
          case osgGA::GUIEventAdapter::KEY_KP_Subtract:
          {
-            IncrementTime(-400.0f);
+            IncrementTime(-200.0f);
          }
          break;
 
@@ -176,7 +186,7 @@ namespace dtExample
          case '=':
          case '+':
          {
-            IncrementTime(400.0f);
+            IncrementTime(200.0f);
          }
          break;
 
@@ -266,7 +276,7 @@ namespace dtExample
 
       if (actor == NULL)
       {
-         LOG_ERROR("Could not find actor \"" + name + "\".");
+         LOG_DEBUG("Could not find actor \"" + name + "\".");
       }
 
       return actor;
@@ -285,7 +295,7 @@ namespace dtExample
 
       if (xformable == NULL)
       {
-         LOG_ERROR("Could not find  \"" + name + "\".");
+         LOG_DEBUG("Could not find  \"" + name + "\".");
       }
 
       return xformable;
@@ -373,7 +383,7 @@ namespace dtExample
       }
       else
       {
-         LOG_ERROR("Could not move camera to actor \"" + ACTOR_NAME + "\".");
+         LOG_DEBUG("Could not move camera to actor \"" + ACTOR_NAME + "\".");
       }
    }
 
