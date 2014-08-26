@@ -572,7 +572,7 @@ void ObjectViewer::OnLoadGeometryFile(const std::string& filename)
    {
        // If this is a static mesh
       mObject = new dtCore::Object;
-      mObject->LoadFile(filename);
+      mObject->LoadFile(filename, false);
 
       //print out stats
       CountPrimitives ( *(mObject->GetOSGNode()), filename );
@@ -1187,11 +1187,19 @@ void ObjectViewer::GenerateTangentsForObject(dtCore::Object* object)
 
       osg::ref_ptr<osgUtil::TangentSpaceGenerator> tsg = new osgUtil::TangentSpaceGenerator;
       tsg->generate(geom, 0);
+      osg::Array* tangentArray = tsg->getTangentArray();
 
       if (!geom->getVertexAttribArray(6))
       {
-         //geom->setVertexAttribData(6, osg::Geometry::ArrayData(tsg->getTangentArray(), osg::Geometry::BIND_PER_VERTEX, GL_FALSE));
-         geom->setVertexAttribArray(6, tsg->getTangentArray());
+         if (tangentArray != NULL)
+         {
+            //geom->setVertexAttribData(6, osg::Geometry::ArrayData(tsg->getTangentArray(), osg::Geometry::BIND_PER_VERTEX, GL_FALSE));
+            geom->setVertexAttribArray(6, tangentArray);
+         }
+         else
+         {
+            LOG_WARNING("Could not generate tangent space for object: " + object->GetName());
+         }
       }
    }
 }

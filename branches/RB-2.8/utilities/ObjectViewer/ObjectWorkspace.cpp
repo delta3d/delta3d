@@ -636,10 +636,21 @@ void ObjectWorkspace::OnLoadGeometry(const std::string &fullName)
    if (dtUtil::FileUtils::GetInstance().FileExists(fullName))
    {
       QFileInfo fileInfo(fullName.c_str());
-      QTreeWidgetItem *geometryItem = mResourceDock->FindGeometryItem(fullName);
+      QTreeWidgetItem* geometryItem = mResourceDock->FindGeometryItem(fullName);
+      
+      // NOTE: The resource dock sends a signal to the viewer
+      // load the actual file when the resource dock adds an
+      // item to its treeview.
 
-      // Only reload the item if it has not already been loaded
-      if (!geometryItem)
+      // Remove the current model if it currently exists.
+      if (geometryItem != NULL)
+      {
+         mResourceDock->RemoveGeometryItem(geometryItem);
+         geometryItem = mResourceDock->FindGeometryItem(fullName);
+      }
+
+      // Only reload the item if it does not exist.
+      if (geometryItem == NULL)
       {
          // Give the required information to the resource manager(dock)
          mResourceDock->OnNewGeometry(fileInfo.absolutePath().toStdString(),

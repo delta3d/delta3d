@@ -187,6 +187,29 @@ QTreeWidgetItem* ResourceDock::FindGeometryItem(const std::string& fullName) con
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+bool ResourceDock::RemoveGeometryItem(QTreeWidgetItem* item)
+{
+   bool success = false;
+
+   if (item != NULL)
+   {
+      while (item->childCount() > 0)
+      {
+         QTreeWidgetItem* child = item->child(0);
+         item->removeChild(item->child(0));
+         delete child;
+      }
+
+      mGeometryTreeWidget->removeItemWidget(item,0);
+      delete item;
+
+      success = true;
+   }
+
+   return success;
+}
+
+////////////////////////////////////////////////////////////////////////////////
 QTreeWidgetItem* ResourceDock::FindShaderFileItem(const std::string& filename) const
 {
    for (int itemIndex = 0; itemIndex < mShaderTreeWidget->topLevelItemCount(); ++itemIndex)
