@@ -65,7 +65,7 @@ void main(void)
 
       //fade under water fog in over depth
       float depth = clamp(WaterHeight - altitude, 0.0, 30.0 * UnderWaterViewDistance);
-      vec3 waterColorAtDepth = 0.64 * WaterColor.rgb;
+      vec3 waterColorAtDepth = 0.85 * WaterColor.rgb;
       fogColor = (gl_LightSource[0].ambient.rgb * waterColorAtDepth)  + (gl_LightSource[0].diffuse.rgb * waterColorAtDepth);
       
       //considering the underwater color essentially removing light

@@ -11,7 +11,7 @@ varying vec4 worldSpacePos;
 varying vec3 lightVector;
 varying vec4 camPos;
 
-float deepWaterScalar = 0.64;
+float deepWaterScalar = 0.85;
 float viewDistance = 10.0;
 
 uniform vec4 WaterColor;

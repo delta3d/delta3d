@@ -140,7 +140,7 @@ void main (void)
    fresnelViewAngle = normalize(fresnelViewAngle);
 
    float waveNDotL = max(0.0, dot(-1.0 * viewDir, normal));   
-   float fresnel = FastFresnel(waveNDotL, 0.05, 6.15);
+   float fresnel = FastFresnel(waveNDotL, 0.15, 1.15);
    
    vec3 refTexCoords = vec3(gl_FragCoord.x / ScreenWidth, (gl_FragCoord.y / ScreenHeight), gl_FragCoord.z);      
    refTexCoords.xy = clamp(refTexCoords.xy + 0.05 * normal.xy, 0.0, 1.0);
@@ -168,20 +168,20 @@ void main (void)
       float waterDepth = max(depthAtPixel - length(ecPosition), 0.0);
       waterDepth = computeLinearFog(1.0, UnderWaterViewDistance, waterDepth / 1.5);
 
-      float minOpacity = 0.21;
+      float minOpacity = 0.1;
       float opaqueDist = UnderWaterViewDistance / 1.5;
       float opacity = sqrt( min( waterDepth / opaqueDist, 1.0));
 
       vec4 waterColorDepth = mix(WaterColor, 0.2 * WaterColor, fresnel); 
       vec4 waterColorTint = (minOpacity + (1.0 - minOpacity ) * opacity ) * WaterColor;
          
-      vec3 reflectWaterColor = waterColorDepth.rgb;
-      reflectColor = (mix(reflectWaterColor,reflectColor, fresnel));
-      
       lightContribFinal = sqrt(lightContribFinal);
       
-      vec3 waterColorContrib = lightContribFinal * reflectColor.xyz;
+      vec3 waterColorContrib = lightContribFinal * WaterColor.rgb;
       
+      waterColorContrib.rgb = mix(waterColorContrib.rgb, reflectColor, fresnel);
+      
+
       //calculates a specular contribution
       vec3 normRefLightVec = reflect(lightVect, normal);
       float specularContrib = max(0.0, dot(normRefLightVec, viewDir));
@@ -193,7 +193,7 @@ void main (void)
       //gl_FragColor = mix(gl_Fog.color, resultColor, vFog.x);
       gl_FragColor = resultColor;
       //gl_FragColor = vec4(depthCoords.x, depthCoords.y, 0.0, 1.0);
-      //gl_FragColor = vec4(depthAtPixel / 100.0, depthAtPixel/ 100.0, depthAtPixel/ 100.0, 1.0);
+      //gl_FragColor = vec4(vec3(fresnel), 1.0);
       
    }
    else
@@ -201,7 +201,7 @@ void main (void)
       float wL = max(0.0, dot(viewDir, normal));   
       float fsnel = FastFresnel(wL, 0.05, 0.5);
 
-      vec3 waterColorAtDepth = 0.64 * WaterColor.rgb;
+      vec3 waterColorAtDepth = 0.85 * WaterColor.rgb;
 
       vec3 combinedColor = WaterColor.xyz;      
       
