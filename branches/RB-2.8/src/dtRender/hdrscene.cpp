@@ -108,14 +108,20 @@ class HDRRendering
             // To simulate hdr glare we have to blur this texture.
             // We do this by first downsampling the texture and
             // applying separated gauss filter afterwards.
-            /*osgPPU::UnitInResampleOut* resample = new osgPPU::UnitInResampleOut();
+            if(resample == NULL)
             {
-                resample->setName("Resample");
-                resample->setFactorX(0.25);
-                resample->setFactorY(0.25);
+               osgPPU::UnitInResampleOut* resampleInOut = new osgPPU::UnitInResampleOut();
+               {
+                   resampleInOut->setName("Resample");
+                   resampleInOut->setFactorX(0.25);
+                   resampleInOut->setFactorY(0.25);
+               }
+               
+               resample = resampleInOut;
+               
+               //set the first ppu unit
+               firstUnit = resample;
             }
-            bypass->addChild(resample);*/
-
 
             // Now we need a ppu which do compute the luminance of the scene.
             // We need to compute luminance per pixel and current luminance
@@ -139,8 +145,15 @@ class HDRRendering
                 pixelLuminance->getOrCreateStateSet()->setAttributeAndModes(lumShader);
             }
             
-            //set the first ppu unit
-            firstUnit = pixelLuminance;
+            if(firstUnit != NULL)
+            {
+               firstUnit->addChild(pixelLuminance);
+            }
+            else
+            {
+               //set the first ppu unit if it is not resample above
+               firstUnit = pixelLuminance;
+            }
 
 
             // now we do the second case computing the average scene luminance based on mipmaps
@@ -396,8 +409,15 @@ class HDRRendering
          BaseClass::SetFirstUnit(*firstUnit);
          BaseClass::SetLastUnit(*lastUnit);
 
+         //the multipass unit connects its out to the last unit, 
+         //we need to undo this to to insert ourselves in the pipeline
+         dtCore::RefPtr<osgPPU::UnitOut> unitOut = mps->GetUnitOut();
+         if(unitOut->getParent(0) == mps->GetLastUnit() )
+         {
+            mps->GetLastUnit()->removeChild(unitOut);
+         }
 
-         lastUnit->addChild(mps->GetUnitOut());
+         lastUnit->addChild(unitOut);
       }
       else
       {
