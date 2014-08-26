@@ -23,6 +23,8 @@
 
 #include <dtUtil/log.h>
 
+#include <algorithm> //for std::find on msvc9.0
+
 namespace dtRender
 {
 
