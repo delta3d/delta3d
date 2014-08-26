@@ -27,7 +27,7 @@ MatrixTransform {
       1 0 0 0
       0 1 0 0
       0 0 1 0
-      0 0 0.6096 1
+      0 0 0 1
     }
     num_children 1
     MatrixTransform {
@@ -40,7 +40,7 @@ MatrixTransform {
         -1 -1.50996e-007 0 0
         1.50996e-007 -1 0 0
         0 0 1 0
-        0 0 0 1
+        0 0 0.6096 1
       }
       num_children 1
       Geode {

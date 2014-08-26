@@ -19,7 +19,7 @@ MatrixTransform {
   num_children 1
   MatrixTransform {
     DataVariance STATIC
-    name "WoodWalkway_Segment"
+    name "WoodWalkway_TSection"
     nodeMask 0xffffffff
     cullingActive TRUE
     referenceFrame RELATIVE
@@ -27,12 +27,12 @@ MatrixTransform {
       1 0 0 0
       0 1 0 0
       0 0 1 0
-      0 0 0.6096 1
+      0 0 0 1
     }
     num_children 1
     MatrixTransform {
       DataVariance STATIC
-      name "WoodWalkway_Segment-OFFSET"
+      name "WoodWalkway_TSection-OFFSET"
       nodeMask 0xffffffff
       cullingActive TRUE
       referenceFrame RELATIVE
@@ -40,13 +40,13 @@ MatrixTransform {
         0 1 0 0
         -1 0 0 0
         0 0 1 0
-        0 0 0 1
+        0 0 0.6096 1
       }
       num_children 1
       Geode {
         UniqueID Geode_0
         DataVariance STATIC
-        name "WoodWalkway_Segment-GEODE"
+        name "WoodWalkway_TSection-GEODE"
         nodeMask 0xffffffff
         cullingActive TRUE
         num_drawables 1
