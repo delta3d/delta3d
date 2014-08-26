@@ -3,7 +3,7 @@
 <shaderlist>
 
    <shadergroup name="SimpleShader">  
-      <shader name="TestShader" default="yes">
+      <shader name="TestAppDefaultShader" default="yes">
          <source type="Vertex">shaders/base/simpleshader.vert</source>
          <source type="Vertex">shaders/base/vertex_functions.vert</source>
        <source type="Vertex">shaders/shadow/shadow_functions.vert</source>
