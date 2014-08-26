@@ -812,20 +812,13 @@ void GameActorProxy::SetPublished(bool published)
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 void GameActorProxy::InvokeEnteredWorld()
 {
-   /**
-   * We will perform a check to make sure this actor actually is a GameActor
-   */
-
    GameActor* ga = NULL;
    GetDrawable(ga);
-   if (ga == NULL)
+   if (ga != NULL)
    {
-      // throw exception
-      throw dtGame::GeneralGameManagerException(
-         "ERROR: Actor has the type of a GameActor, but casting it to one failed.", __FILE__, __LINE__);
+      ga->OnEnteredWorld();
    }
 
-   ga->OnEnteredWorld();
    CallOnEnteredWorldForActorComponents();
 
    OnEnteredWorld();
@@ -834,18 +827,6 @@ void GameActorProxy::InvokeEnteredWorld()
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 void GameActorProxy::InvokeRemovedFromWorld()
 {
-   /**
-   * We will perform a check to make sure this actor actually is a GameActor
-   */
-
-   GameActor* ga = dynamic_cast<GameActor*>(GetDrawable());
-   if (ga == NULL)
-   {
-      // throw exception
-      throw dtGame::GeneralGameManagerException(
-         "ERROR: Actor has the type of a GameActor, but casting it to a GameActorProxy failed.", __FILE__, __LINE__);
-   }
-
    CallOnRemovedFromWorldForActorComponents();
    OnRemovedFromWorld();
 }
