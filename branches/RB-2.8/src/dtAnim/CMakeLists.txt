@@ -45,6 +45,7 @@ SET(LIB_SOURCES
   ${SOURCE_PATH}/skeletaldrawable.cpp
   ${SOURCE_PATH}/skeletondriver.cpp
   ${SOURCE_PATH}/springdriver.cpp
+  ${SOURCE_PATH}/animationtransitionplanner.cpp
   ${SOURCE_PATH}/submesh.cpp
   ${SOURCE_PATH}/walkrunblend.cpp
 )
@@ -93,6 +94,7 @@ SET(LIB_PUBLIC_HEADERS
   ${HEADER_PATH}/skeletaldrawable.h
   ${HEADER_PATH}/skeletondriver.h
   ${HEADER_PATH}/springdriver.h
+  ${HEADER_PATH}/animationtransitionplanner.h
   ${HEADER_PATH}/submesh.h
   ${HEADER_PATH}/walkrunblend.h
 )
@@ -109,6 +111,7 @@ SET(LIB_DEPS
     ${DTUTIL_LIBRARY}
     ${DTCORE_LIBRARY}
     ${DTGAME_LIBRARY}
+    ${DTAI_LIBRARY}
  )
 
 DELTA3D_ADD_LIBRARY(${LIB_NAME} DT_ANIM_LIBRARY SHARED)
