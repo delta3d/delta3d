@@ -63,6 +63,8 @@ public:
    QTreeWidgetItem* FindShaderFileItem(const std::string& filename) const;
    QTreeWidgetItem* FindShaderGroupItem(const std::string& groupName, const QTreeWidgetItem* fileItem) const;
 
+   bool RemoveGeometryItem(QTreeWidgetItem* item);
+
    void ReselectCurrentShaderItem();
 
    bool FindShaderFileEntryName(const std::string& entryName) const;
