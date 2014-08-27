@@ -3,6 +3,7 @@
    <animation fileName="animations/Idle.xaf" name="Idle" />
    <animation fileName="animations/Run.xaf" name="Run" />
    <animation fileName="animations/Walk.xaf" name="Walk" />
+   <animation fileName="animations/Sitting_BarStool.xaf" name="Sitting_BarStool" />
    <mesh fileName="meshes/Body_Male_Caucasian_Average_HeadAndHands.xmf" name="Body" />
    <mesh fileName="meshes/Eyes_Average.xmf" name="Eyes" />
    <mesh fileName="meshes/Eyebrows_Male_Average.xmf" name="Eyebrows" />
