@@ -51,7 +51,7 @@ class ProceduralAnimationActorProxy;
 
 ////////////////////////////////////////////////////////////////////////////////
 
-class TEST_ANIM_EXPORT ProceduralAnimationActor : public dtAnim::AnimationGameActor
+class TEST_ANIM_EXPORT ProceduralAnimationActor : public dtGame::GameActor
 {
 public:
    // This class is designed to work with pose meshes
@@ -152,7 +152,7 @@ private:
    osg::Vec3 GetHeadPosition() const;
 };
 
-class TEST_ANIM_EXPORT ProceduralAnimationActorProxy: public dtAnim::AnimationGameActorProxy
+class TEST_ANIM_EXPORT ProceduralAnimationActorProxy: public dtAnim::AnimationGameActor
 {
 public:
    /// Constructor

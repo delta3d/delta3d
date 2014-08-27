@@ -20,6 +20,7 @@
 namespace dtAnim
 {
    class BasicStanceEnum;
+   class AnimationTransitionPlanner;
 }
 
 namespace dtExample
@@ -38,12 +39,6 @@ namespace dtExample
       virtual void Initialize(dtAI::AIPluginInterface& aiInterface);
 
       /*override*/ void OnTickLocal(const dtGame::TickMessage& tickMessage);
-
-      // Get the actor's transform.  This is for convenience.
-      void GetTransform(dtCore::Transform& xform);
-
-      // Get the actor's transform.  This is for convenience.
-      void SetTransform(dtCore::Transform& xform);
 
       /**
        * Build the properties common to all platform objects
@@ -76,7 +71,6 @@ namespace dtExample
 
       void MoveToPoint(float dt, const dtAI::WaypointInterface* pWaypoint);
 
-      void OnStanceChanged(dtAnim::BasicStanceEnum& stance);
 
       void SetHasDestination(bool hasDestination);
       bool GetHasDestination() const;
@@ -107,6 +101,8 @@ namespace dtExample
 
       void ApplyStringPulling();
       void PerformMove(float dt);
+
+      void OnAnimationsTransitioning(dtAnim::AnimationTransitionPlanner& planner);
 
       bool mHasDestination;
       bool mHasArrived;

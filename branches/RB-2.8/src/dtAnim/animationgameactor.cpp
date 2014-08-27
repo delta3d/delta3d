@@ -36,16 +36,6 @@
 
 namespace dtAnim
 {
-   /////////////////////////////////////////////////////////////////////////////
-   AnimationGameActor::AnimationGameActor(dtGame::GameActorProxy& parent)
-      : dtGame::GameActor(parent)
-   {
-   }
-
-   /////////////////////////////////////////////////////////////////////////////
-   AnimationGameActor::~AnimationGameActor()
-   {
-   }
 
    /////////////////////////////////////////////////////////////////////////////
    osg::BoundingBox AnimationGameActor::GetBoundingBox()
@@ -59,24 +49,24 @@ namespace dtAnim
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   AnimationGameActorProxy::AnimationGameActorProxy()
+   AnimationGameActor::AnimationGameActor()
    {
       SetClassName("dtActors::AnimationGameActor");
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   AnimationGameActorProxy::~AnimationGameActorProxy()
+   AnimationGameActor::~AnimationGameActor()
    {
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void AnimationGameActorProxy::BuildPropertyMap()
+   void AnimationGameActor::BuildPropertyMap()
    {
       dtGame::GameActorProxy::BuildPropertyMap();
    }
 
    //////////////////////////////////////////////////////////////////////////////
-   void AnimationGameActorProxy::BuildActorComponents()
+   void AnimationGameActor::BuildActorComponents()
    {
       dtGame::GameActorProxy::BuildActorComponents();
 
@@ -86,7 +76,7 @@ namespace dtAnim
 
 
    /////////////////////////////////////////////////////////////////////////////
-   const dtCore::BaseActorObject::RenderMode& AnimationGameActorProxy::GetRenderMode()
+   const dtCore::BaseActorObject::RenderMode& AnimationGameActor::GetRenderMode()
    {
       AnimationHelper* animHelper = GetComponent<AnimationHelper>();
       dtCore::ResourceDescriptor resource;
@@ -105,7 +95,7 @@ namespace dtAnim
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   dtCore::ActorProxyIcon* AnimationGameActorProxy::GetBillBoardIcon()
+   dtCore::ActorProxyIcon* AnimationGameActor::GetBillBoardIcon()
    {
       if (!mBillBoardIcon.valid())
       {
@@ -116,9 +106,9 @@ namespace dtAnim
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void AnimationGameActorProxy::CreateDrawable()
+   void AnimationGameActor::CreateDrawable()
    {
-      SetDrawable(*new AnimationGameActor(*this));
+      SetDrawable(*new dtCore::Transformable());
    }
 
 } // namespace dtAnim

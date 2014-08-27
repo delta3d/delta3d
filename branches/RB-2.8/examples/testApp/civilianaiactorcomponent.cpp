@@ -58,6 +58,8 @@ namespace dtExample
    {
       BaseClass::OnEnteredWorld();
       RegisterForTick();
+      dtAnim::AnimationTransitionPlanner* planner = GetOwner()->GetComponent<dtAnim::AnimationTransitionPlanner>();
+      planner->SignalAnimationsTransitioning.connect_slot(this, &CivilianAIActorComponent::OnAnimationsTransitioning);
    }
 
    ///////////////////////////////////////////////////////////////////////////////////
@@ -65,6 +67,10 @@ namespace dtExample
    {
       mTransformable = actor.GetDrawable<dtCore::Transformable>();
       SetName(actor.GetName());
+      if (!GetOwner()->HasComponent(dtAnim::AnimationTransitionPlanner::TYPE))
+      {
+         GetOwner()->AddComponent(* new dtAnim::AnimationTransitionPlanner);
+      }
    }
 
    ///////////////////////////////////////////////////////////////////////////////////
@@ -527,8 +533,9 @@ namespace dtExample
    }
 
 
-   void CivilianAIActorComponent::OnStanceChanged(dtAnim::BasicStanceEnum& stance)
+   void CivilianAIActorComponent::OnAnimationsTransitioning(dtAnim::AnimationTransitionPlanner& planner)
    {
+      dtAnim::BasicStanceEnum& stance = planner.GetStance();
 
       if(stance == dtAnim::BasicStanceEnum::PRONE)
       {

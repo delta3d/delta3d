@@ -21,6 +21,8 @@
 #include <dtUtil/getsetmacros.h>
 #include <dtGame/actorcomponent.h>
 
+#include <dtCore/sigslot.h>
+
 namespace dtAI
 {
    class WorldState;
@@ -112,6 +114,7 @@ namespace dtAnim
 
       typedef dtGame::ActorComponent BaseClass;
 
+      sigslot::signal1<AnimationTransitionPlanner&> SignalAnimationsTransitioning;
 
       /// All derived actor component types must pass this or a descendant as a parent type.
       static const dtGame::ActorComponent::ACType TYPE;
