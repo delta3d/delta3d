@@ -4,6 +4,7 @@
    <animation fileName="animations/Run.xaf" name="Run" />
    <animation fileName="animations/Walk.xaf" name="Walk" />
    <animation fileName="animations/Sitting_BarStool.xaf" name="Sitting_BarStool" />
+   <animation fileName="animations/Laying_Sunchair.xaf" name="Laying_Sunchair" />
    <mesh fileName="meshes/Body_Male_Caucasian_Average_HeadArmsLegs.xmf" name="Body" />
    <mesh fileName="meshes/Eyes_Average.xmf" name="Eyes" />
    <mesh fileName="meshes/Eyebrows_Male_Average.xmf" name="Eyebrows" />
