@@ -36,7 +36,7 @@ namespace dtExample
 
       CivilianAIActorComponent(const ACType& type = TYPE);
 
-      virtual void Initialize(dtAI::AIPluginInterface& aiInterface);
+      virtual void Initialize();
 
       /*override*/ void OnTickLocal(const dtGame::TickMessage& tickMessage);
 

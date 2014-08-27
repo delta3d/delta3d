@@ -6,6 +6,7 @@
 #include <dtGame/gamemanager.h>
 #include <dtCore/propertymacros.h>
 #include <dtAI/waypointinterface.h>
+#include <dtAI/aiactorregistry.h>
 #include <dtPhysics/raycast.h>
 #include <dtPhysics/palphysicsworld.h>
 
@@ -60,6 +61,24 @@ namespace dtExample
       RegisterForTick();
       dtAnim::AnimationTransitionPlanner* planner = GetOwner()->GetComponent<dtAnim::AnimationTransitionPlanner>();
       planner->SignalAnimationsTransitioning.connect_slot(this, &CivilianAIActorComponent::OnAnimationsTransitioning);
+
+      dtAI::AIInterfaceActorProxy* aiInterfaceActor = NULL;
+      dtGame::GameActorProxy* actor = NULL;
+      GetOwner(actor);
+      if (actor != NULL)
+      {
+         actor->GetGameManager()->FindActorByType(*dtAI::AIActorRegistry::AI_INTERFACE_ACTOR_TYPE, aiInterfaceActor);
+      }
+      if(aiInterfaceActor != NULL)
+      {
+         mAIInterface = aiInterfaceActor->GetAIInterface();
+      }
+      else
+      {
+         LOG_ERROR("Unable to find AIInterfaceActor in map.");
+      }
+
+      Initialize();
    }
 
    ///////////////////////////////////////////////////////////////////////////////////
@@ -149,10 +168,8 @@ namespace dtExample
 
 
    ///////////////////////////////////////////////////////////////////////////////////
-   void CivilianAIActorComponent::Initialize(dtAI::AIPluginInterface& aiInterface)
+   void CivilianAIActorComponent::Initialize()
    {
-      mAIInterface = &aiInterface;
-
       if (!mTransformable.valid())
       {
          LOG_ERROR("Invalid transformable on actor.");
