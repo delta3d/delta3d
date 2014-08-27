@@ -83,26 +83,45 @@ void ActorComponent::Init(const dtCore::ActorType& actorType)
 }
 
 //////////////////////////////////////////////////////////////////////////
-void ActorComponent::RegisterForTicks()
+void ActorComponent::RegisterForTick()
 {
    GameActorProxy* owner = NULL;
    GetOwner(owner);
-   std::string tickInvokable = "Tick Local " + GetType()->GetFullName();
-   if(!owner->GetInvokable(tickInvokable))
+   if (!owner->IsRemote())
    {
-      owner->AddInvokable(*new Invokable(tickInvokable, dtUtil::MakeFunctor(&ActorComponent::OnTickLocal, this)));
+      std::string tickInvokable = "Tick Local " + GetType()->GetFullName();
+      if(!owner->GetInvokable(tickInvokable))
+      {
+         owner->AddInvokable(*new Invokable(tickInvokable, dtUtil::MakeFunctor(&ActorComponent::OnTickLocal, this)));
+      }
+      owner->RegisterForMessages(MessageType::TICK_LOCAL, tickInvokable);
    }
-   owner->RegisterForMessages(MessageType::TICK_LOCAL, tickInvokable);
-}
+   else
+   {
+      std::string tickInvokable = "Tick Remote " + GetType()->GetFullName();
+      if(!owner->GetInvokable(tickInvokable))
+      {
+         owner->AddInvokable(*new Invokable(tickInvokable, dtUtil::MakeFunctor(&ActorComponent::OnTickLocal, this)));
+      }
+      owner->RegisterForMessages(MessageType::TICK_REMOTE, tickInvokable);
+   }
+ }
 
 //////////////////////////////////////////////////////////////////////////
-void ActorComponent::UnregisterForTicks()
+void ActorComponent::UnregisterForTick()
 {
    GameActorProxy* owner = NULL;
    GetOwner(owner);
-   std::string tickInvokable = "Tick Local " + GetType()->GetFullName();
-   owner->UnregisterForMessages(MessageType::TICK_LOCAL, tickInvokable);
-   owner->RemoveInvokable(tickInvokable);
+   if (!owner->IsRemote())
+   {
+      std::string tickInvokable = "Tick Local " + GetType()->GetFullName();
+      owner->UnregisterForMessages(MessageType::TICK_LOCAL, tickInvokable);
+   }
+   else
+   {
+      std::string tickInvokable = "Tick Remote " + GetType()->GetFullName();
+      owner->UnregisterForMessages(MessageType::TICK_REMOTE, tickInvokable);
+   }
 }
 
 ////////////////////////////////////////////////////////////////////////////
