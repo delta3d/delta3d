@@ -1,4 +1,5 @@
 SET(TARGET_SRC testapp.cpp
+               civilianaiactorcomponent.cpp
                guicomponent.cpp
                guiscreen.cpp
                inputcomponent.cpp
@@ -11,7 +12,8 @@ SET(TARGET_SRC testapp.cpp
                readme.txt
                config.xml)
 
-SET(TARGET_H guicomponent.h
+SET(TARGET_H civilianaiactorcomponent.h
+             guicomponent.h
              guiscreen.h
              inputcomponent.h
              terrainactor.h
@@ -28,6 +30,8 @@ BUILD_LIB_EXAMPLE( testApp TEST_APP_LIBRARY
                   ${DTGAME_LIBRARY}
                   ${DTGUI_LIBRARY}
                   ${DTPHYSICS_LIBRARY}
+                  ${DTANIM_LIBRARY}
+                  ${DTAI_LIBRARY}
                   ${DTACTORS_LIBRARY}
                   ${DTRENDER_LIBRARY}
                  )
