@@ -711,6 +711,11 @@ namespace dtEditQt
    ////////////////////////////////////////////////////////////////////////////////
    void MainWindow::onAutoLoadMap()
    {
+      // Turn off map reload here so that if it crashes in a user's actor library, next time you load stage, it won't try again.
+      bool oldReloadMaps = EditorData::GetInstance().getLoadLastMap();
+      EditorData::GetInstance().setLoadLastMap(false);
+      WritePreferences();
+
       std::string mapToLoad = "";
       std::list<std::string>& maps = EditorData::GetInstance().getRecentMaps();
       if (!maps.empty())
@@ -726,132 +731,12 @@ namespace dtEditQt
       }
 
       checkAndLoadBackup(mapToLoad);
+      EditorData::GetInstance().setLoadLastMap(oldReloadMaps);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    void MainWindow::onEditorShutDown()
    {
-      EditorData& editorData = EditorData::GetInstance();
-      EditorSettings settings;
-
-      //Save the main window state...
-      settings.beginGroup(EditorSettings::MAINWIN_GROUP);
-      settings.setValue(EditorSettings::MAINWIN_POSITION, pos());
-      settings.setValue(EditorSettings::MAINWIN_SIZE, size());
-      settings.setValue(EditorSettings::MAINWIN_DOCK_STATE, saveState(EditorSettings::MAINWIN_DOCK_STATE_ID));
-      settings.setValue(EditorSettings::MAINWIN_GEOMETRY, saveGeometry());
-      settings.endGroup();
-
-      //splitter data
-      settings.remove(EditorSettings::SPLITTER_GROUP);
-      settings.beginWriteArray(EditorSettings::SPLITTER_GROUP);
-      for (int s = 0; s < mSplitters.size(); ++s)
-      {
-         settings.setArrayIndex(s);
-         settings.setValue(EditorSettings::SPLITTER_SIZE, mSplitters.at(s)->saveState());
-      }
-      settings.endArray();
-
-      // Save the general preferences...
-      settings.beginGroup(EditorSettings::PREFERENCES_GROUP);
-      settings.setValue(EditorSettings::LOAD_RECENT_PROJECTS, editorData.getLoadLastProject());
-      settings.setValue(EditorSettings::LOAD_RECENT_MAPS, editorData.getLoadLastMap());
-      settings.setValue(EditorSettings::RIGID_CAMERA, editorData.getRigidCamera());
-      settings.setValue(EditorSettings::ACTOR_CREATION_OFFSET, editorData.GetActorCreationOffset());
-      settings.setValue(EditorSettings::NUM_RECENT_PROJECTS, editorData.GetNumRecentProjects());
-      settings.setValue(EditorSettings::SAVE_MILLISECONDS, EditorActions::GetInstance().mSaveMilliSeconds);
-      settings.setValue(EditorSettings::SELECTION_COLOR, editorData.getSelectionColor());
-
-      //Volume edit brush shape, visibility
-      settings.setValue(EditorSettings::VOLUME_EDIT_VISIBLE, GetVolumeEditActor()->GetOSGNode()->getNodeMask() ? "true" : "false");
-      settings.setValue(EditorSettings::VOLUME_EDIT_SHAPE, QString::fromStdString(GetVolumeEditActor()->GetShape().GetName()));
-
-      settings.endGroup();
-
-      //camera speed settings
-      settings.beginGroup(EditorSettings::CAMERA_SPEED_GROUP);
-      QString perspName(mPerspView->getName().c_str());
-      QString topName(mTopView->getName().c_str());
-      QString frontName(mFrontView->getName().c_str());
-      QString sideName(mSideView->getName().c_str());
-      settings.setValue(perspName, mViewportContainers.value(perspName)->GetCameraSpeed());
-      settings.setValue(topName, mViewportContainers.value(topName)->GetCameraSpeed());
-      settings.setValue(frontName, mViewportContainers.value(frontName)->GetCameraSpeed());
-      settings.setValue(sideName, mViewportContainers.value(sideName)->GetCameraSpeed());
-      settings.endGroup();
-
-      // Clip distance settings.
-      settings.beginGroup(EditorSettings::CLIP_DISTANCE_GROUP);
-      settings.setValue(perspName, mViewportContainers.value(perspName)->GetClipDistance());
-      settings.setValue(topName, mViewportContainers.value(topName)->GetClipDistance());
-      settings.setValue(frontName, mViewportContainers.value(frontName)->GetClipDistance());
-      settings.setValue(sideName, mViewportContainers.value(sideName)->GetClipDistance());
-      settings.endGroup();
-
-      // Save our current snap settings.
-      settings.beginGroup(EditorSettings::SNAP_GROUP);
-      settings.setValue(EditorSettings::SNAP_TRANSLATION_ENABLED, ViewportManager::GetInstance().GetSnapTranslationEnabled());
-      settings.setValue(EditorSettings::SNAP_ROTATION_ENABLED, ViewportManager::GetInstance().GetSnapRotationEnabled());
-      settings.setValue(EditorSettings::SNAP_SCALE_ENABLED, ViewportManager::GetInstance().GetSnapScaleEnabled());
-      settings.setValue(EditorSettings::SNAP_TRANSLATION_VALUE, ViewportManager::GetInstance().GetSnapTranslation());
-      settings.setValue(EditorSettings::SNAP_ROTATION_VALUE, ViewportManager::GetInstance().GetSnapRotation());
-      settings.setValue(EditorSettings::SNAP_SCALE_VALUE, ViewportManager::GetInstance().GetSnapScale());
-      settings.endGroup();
-
-      // Save any custom library paths
-      // Save the current project state...
-      settings.remove(EditorSettings::LIBRARY_PATHS);
-      settings.beginGroup(EditorSettings::LIBRARY_PATHS);
-
-      std::vector<std::string> pathList;
-      dtUtil::LibrarySharingManager::GetInstance().GetSearchPath(pathList);
-      if (!pathList.empty())
-      {
-         int pos = 0;
-         for (std::vector<std::string>::iterator iter = pathList.begin();
-            iter != pathList.end();
-            ++iter)
-         {
-            QString item = EditorSettings::LIBRARY_PATH_N;
-
-            item += QString::number(pos++);
-
-            settings.setValue(item, tr((*iter).c_str()));
-         }
-      }
-      settings.endGroup();
-
-      //save the external tools
-      const QList<ExternalTool*> extTools = EditorActions::GetInstance().GetExternalTools();
-
-      settings.remove(EditorSettings::EXTERNAL_TOOLS); //remove old ones
-      settings.beginWriteArray(EditorSettings::EXTERNAL_TOOLS);
-      int savedIdx = 0;///<used to keep the external tools sorted correctly
-      for (int toolIdx = 0; toolIdx < extTools.size(); ++toolIdx)
-      {
-         if (extTools.at(toolIdx)->GetAction()->isVisible())
-         {
-            settings.setArrayIndex(savedIdx);
-            savedIdx++;
-            settings.setValue(EditorSettings::EXTERNAL_TOOL_TITLE, extTools.at(toolIdx)->GetTitle());
-            settings.setValue(EditorSettings::EXTERNAL_TOOL_COMMAND, extTools.at(toolIdx)->GetCmd());
-            settings.setValue(EditorSettings::EXTERNAL_TOOL_ARGS, extTools.at(toolIdx)->GetArgs());
-            settings.setValue(EditorSettings::EXTERNAL_TOOL_WORKING_DIR, extTools.at(toolIdx)->GetWorkingDir());
-            settings.setValue(EditorSettings::EXTERNAL_TOOL_ICON, extTools.at(toolIdx)->GetIcon());
-         }
-      }
-      settings.endArray();
-
-      // Save the current project state...
-      QStringList projectStringList;
-      std::list<std::string>::iterator itr = EditorData::GetInstance().getRecentProjects().begin();
-      while (itr != EditorData::GetInstance().getRecentProjects().end())
-      {
-         projectStringList << QString::fromStdString(*itr);
-         ++itr;
-      }
-      settings.setValue(EditorSettings::RECENT_PROJECTS, projectStringList);
-
       if(mPropertyWindow != NULL)
       {
          // listen for selection changed event
@@ -872,29 +757,7 @@ namespace dtEditQt
          mPropertyWindow->hide();
       }
 
-      //Check to see if the user wants the app to remember the recently loaded map.
-      if (EditorData::GetInstance().getLoadLastMap() == false ||
-          EditorData::GetInstance().getCurrentMap() == NULL)
-      {
-         // Error check, if they have a previous settings file with a recent map in it, it
-         // needs to be deleted as to not load it next time
-         settings.remove(EditorSettings::RECENT_MAPS);
-      }
-      else
-      {
-         //Save the current map state...
-         settings.beginGroup(EditorSettings::RECENT_MAPS);
-         if (!EditorData::GetInstance().getRecentMaps().empty())
-         {
-            settings.setValue(EditorSettings::RECENT_MAP0,
-                              QVariant(QString(EditorData::GetInstance().getRecentMaps().front().c_str())));
-            EditorData::GetInstance().getRecentMaps().pop_front();
-         }
-         settings.endGroup();
-      }
-
-      //Save the Plugin state
-      mPluginManager->StoreActivePluginsToConfigFile();
+      WritePreferences();
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -1440,6 +1303,154 @@ namespace dtEditQt
          tool->GetAction()->setVisible(true);
       }
       settings.endArray();
+   }
+
+   void MainWindow::WritePreferences()
+   {
+      EditorData& editorData = EditorData::GetInstance();
+      EditorSettings settings;
+
+      //Save the main window state...
+      settings.beginGroup(EditorSettings::MAINWIN_GROUP);
+      settings.setValue(EditorSettings::MAINWIN_POSITION, pos());
+      settings.setValue(EditorSettings::MAINWIN_SIZE, size());
+      settings.setValue(EditorSettings::MAINWIN_DOCK_STATE, saveState(EditorSettings::MAINWIN_DOCK_STATE_ID));
+      settings.setValue(EditorSettings::MAINWIN_GEOMETRY, saveGeometry());
+      settings.endGroup();
+
+      //splitter data
+      settings.remove(EditorSettings::SPLITTER_GROUP);
+      settings.beginWriteArray(EditorSettings::SPLITTER_GROUP);
+      for (int s = 0; s < mSplitters.size(); ++s)
+      {
+         settings.setArrayIndex(s);
+         settings.setValue(EditorSettings::SPLITTER_SIZE, mSplitters.at(s)->saveState());
+      }
+      settings.endArray();
+
+      // Save the general preferences...
+      settings.beginGroup(EditorSettings::PREFERENCES_GROUP);
+      settings.setValue(EditorSettings::LOAD_RECENT_PROJECTS, editorData.getLoadLastProject());
+      settings.setValue(EditorSettings::LOAD_RECENT_MAPS, editorData.getLoadLastMap());
+      settings.setValue(EditorSettings::RIGID_CAMERA, editorData.getRigidCamera());
+      settings.setValue(EditorSettings::ACTOR_CREATION_OFFSET, editorData.GetActorCreationOffset());
+      settings.setValue(EditorSettings::NUM_RECENT_PROJECTS, editorData.GetNumRecentProjects());
+      settings.setValue(EditorSettings::SAVE_MILLISECONDS, EditorActions::GetInstance().mSaveMilliSeconds);
+      settings.setValue(EditorSettings::SELECTION_COLOR, editorData.getSelectionColor());
+
+      //Volume edit brush shape, visibility
+      settings.setValue(EditorSettings::VOLUME_EDIT_VISIBLE, GetVolumeEditActor()->GetOSGNode()->getNodeMask() ? "true" : "false");
+      settings.setValue(EditorSettings::VOLUME_EDIT_SHAPE, QString::fromStdString(GetVolumeEditActor()->GetShape().GetName()));
+
+      settings.endGroup();
+
+      //camera speed settings
+      settings.beginGroup(EditorSettings::CAMERA_SPEED_GROUP);
+      QString perspName(mPerspView->getName().c_str());
+      QString topName(mTopView->getName().c_str());
+      QString frontName(mFrontView->getName().c_str());
+      QString sideName(mSideView->getName().c_str());
+      settings.setValue(perspName, mViewportContainers.value(perspName)->GetCameraSpeed());
+      settings.setValue(topName, mViewportContainers.value(topName)->GetCameraSpeed());
+      settings.setValue(frontName, mViewportContainers.value(frontName)->GetCameraSpeed());
+      settings.setValue(sideName, mViewportContainers.value(sideName)->GetCameraSpeed());
+      settings.endGroup();
+
+      // Clip distance settings.
+      settings.beginGroup(EditorSettings::CLIP_DISTANCE_GROUP);
+      settings.setValue(perspName, mViewportContainers.value(perspName)->GetClipDistance());
+      settings.setValue(topName, mViewportContainers.value(topName)->GetClipDistance());
+      settings.setValue(frontName, mViewportContainers.value(frontName)->GetClipDistance());
+      settings.setValue(sideName, mViewportContainers.value(sideName)->GetClipDistance());
+      settings.endGroup();
+
+      // Save our current snap settings.
+      settings.beginGroup(EditorSettings::SNAP_GROUP);
+      settings.setValue(EditorSettings::SNAP_TRANSLATION_ENABLED, ViewportManager::GetInstance().GetSnapTranslationEnabled());
+      settings.setValue(EditorSettings::SNAP_ROTATION_ENABLED, ViewportManager::GetInstance().GetSnapRotationEnabled());
+      settings.setValue(EditorSettings::SNAP_SCALE_ENABLED, ViewportManager::GetInstance().GetSnapScaleEnabled());
+      settings.setValue(EditorSettings::SNAP_TRANSLATION_VALUE, ViewportManager::GetInstance().GetSnapTranslation());
+      settings.setValue(EditorSettings::SNAP_ROTATION_VALUE, ViewportManager::GetInstance().GetSnapRotation());
+      settings.setValue(EditorSettings::SNAP_SCALE_VALUE, ViewportManager::GetInstance().GetSnapScale());
+      settings.endGroup();
+
+      // Save any custom library paths
+      // Save the current project state...
+      settings.remove(EditorSettings::LIBRARY_PATHS);
+      settings.beginGroup(EditorSettings::LIBRARY_PATHS);
+
+      std::vector<std::string> pathList;
+      dtUtil::LibrarySharingManager::GetInstance().GetSearchPath(pathList);
+      if (!pathList.empty())
+      {
+         int pos = 0;
+         for (std::vector<std::string>::iterator iter = pathList.begin();
+            iter != pathList.end();
+            ++iter)
+         {
+            QString item = EditorSettings::LIBRARY_PATH_N;
+
+            item += QString::number(pos++);
+
+            settings.setValue(item, tr((*iter).c_str()));
+         }
+      }
+      settings.endGroup();
+
+      //save the external tools
+      const QList<ExternalTool*> extTools = EditorActions::GetInstance().GetExternalTools();
+
+      settings.remove(EditorSettings::EXTERNAL_TOOLS); //remove old ones
+      settings.beginWriteArray(EditorSettings::EXTERNAL_TOOLS);
+      int savedIdx = 0;///<used to keep the external tools sorted correctly
+      for (int toolIdx = 0; toolIdx < extTools.size(); ++toolIdx)
+      {
+         if (extTools.at(toolIdx)->GetAction()->isVisible())
+         {
+            settings.setArrayIndex(savedIdx);
+            savedIdx++;
+            settings.setValue(EditorSettings::EXTERNAL_TOOL_TITLE, extTools.at(toolIdx)->GetTitle());
+            settings.setValue(EditorSettings::EXTERNAL_TOOL_COMMAND, extTools.at(toolIdx)->GetCmd());
+            settings.setValue(EditorSettings::EXTERNAL_TOOL_ARGS, extTools.at(toolIdx)->GetArgs());
+            settings.setValue(EditorSettings::EXTERNAL_TOOL_WORKING_DIR, extTools.at(toolIdx)->GetWorkingDir());
+            settings.setValue(EditorSettings::EXTERNAL_TOOL_ICON, extTools.at(toolIdx)->GetIcon());
+         }
+      }
+      settings.endArray();
+
+      // Save the current project state...
+      QStringList projectStringList;
+      std::list<std::string>::iterator itr = EditorData::GetInstance().getRecentProjects().begin();
+      while (itr != EditorData::GetInstance().getRecentProjects().end())
+      {
+         projectStringList << QString::fromStdString(*itr);
+         ++itr;
+      }
+      settings.setValue(EditorSettings::RECENT_PROJECTS, projectStringList);
+
+      //Check to see if the user wants the app to remember the recently loaded map.
+      if (EditorData::GetInstance().getLoadLastMap() == false ||
+          EditorData::GetInstance().getCurrentMap() == NULL)
+      {
+         // Error check, if they have a previous settings file with a recent map in it, it
+         // needs to be deleted as to not load it next time
+         settings.remove(EditorSettings::RECENT_MAPS);
+      }
+      else
+      {
+         //Save the current map state...
+         settings.beginGroup(EditorSettings::RECENT_MAPS);
+         if (!EditorData::GetInstance().getRecentMaps().empty())
+         {
+            settings.setValue(EditorSettings::RECENT_MAP0,
+                              QVariant(QString(EditorData::GetInstance().getRecentMaps().front().c_str())));
+            EditorData::GetInstance().getRecentMaps().pop_front();
+         }
+         settings.endGroup();
+      }
+
+      //Save the Plugin state
+      mPluginManager->StoreActivePluginsToConfigFile();
    }
 
    ///////////////////////////////////////////////////////////////////////////////
