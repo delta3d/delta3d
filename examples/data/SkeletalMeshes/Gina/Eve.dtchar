@@ -4,6 +4,7 @@
    <animation fileName="animations/Idle.xaf" name="Idle" />
    <animation fileName="animations/Walk.xaf" name="Walk" />
    <animation fileName="animations/Run.xaf" name="Run" />
+   <animation fileName="animations/Sitting_BarStool.xaf" name="Sitting_BarStool" />
 
    <animation fileName="poses/EyeLeftDown.xaf"/>
    <animation fileName="poses/EyeLeftIn.xaf"/>
