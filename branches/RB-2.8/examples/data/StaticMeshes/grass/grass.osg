@@ -1,0 +1,509 @@
+MatrixTransform {
+  DataVariance STATIC
+  name "Scene Root"
+  nodeMask 0xffffffff
+  cullingActive TRUE
+  StateSet {
+    rendering_hint DEFAULT_BIN
+    renderBinMode INHERIT
+    GL_LIGHTING ON
+    GL_NORMALIZE ON
+  }
+  referenceFrame RELATIVE
+  Matrix {
+    1 0 0 0
+    0 1 0 0
+    0 0 1 0
+    0 0 0 1
+  }
+  num_children 6
+  MatrixTransform {
+    DataVariance STATIC
+    name "Grass_01"
+    nodeMask 0xffffffff
+    cullingActive TRUE
+    referenceFrame RELATIVE
+    Matrix {
+      1 0 0 0
+      0 1 0 0
+      0 0 1 0
+      0.25 -7.45058e-009 0 1
+    }
+    num_children 1
+    MatrixTransform {
+      DataVariance STATIC
+      name "Grass_01-OFFSET"
+      nodeMask 0xffffffff
+      cullingActive TRUE
+      referenceFrame RELATIVE
+      Matrix {
+        1 0 0 0
+        0 0 1 0
+        0 -1 0 0
+        -0.25 -0.125 7.45058e-009 1
+      }
+      num_children 1
+      Geode {
+        UniqueID Geode_0
+        DataVariance STATIC
+        name "Grass_01-GEODE"
+        nodeMask 0xffffffff
+        cullingActive TRUE
+        num_drawables 1
+        Geometry {
+          name "Material #25"
+          StateSet {
+            UniqueID StateSet_1
+            name "Material #25"
+            rendering_hint TRANSPARENT_BIN
+            renderBinMode USE
+            binNumber 10
+            binName DepthSortedBin
+            GL_CULL_FACE OVERRIDE|OFF
+            GL_LIGHTING ON
+            GL_NORMALIZE ON
+            GL_BLEND ON
+            Material {
+              ColorMode OFF
+              ambientColor 0.588 0.588 0.588 1
+              diffuseColor 1 1 1 1
+              specularColor 0 0 0 1
+              emissionColor 0 0 0 1
+              shininess 0
+            }
+            BlendFunc {
+              source SRC_ALPHA
+              destination ONE_MINUS_SRC_ALPHA
+            }
+            textureUnit 0 {
+              GL_TEXTURE_2D ON
+              Texture2D {
+                UniqueID Texture2D_2
+                file "images\\Grass_DIFF.png"
+                wrap_s REPEAT
+                wrap_t REPEAT
+                wrap_r CLAMP_TO_EDGE
+                min_filter LINEAR_MIPMAP_LINEAR
+                mag_filter LINEAR
+                maxAnisotropy 1
+                borderColor 0 0 0 0
+                borderWidth 0
+                useHardwareMipMapGeneration TRUE
+                unRefImageDataAfterApply TRUE
+                internalFormatMode USE_S3TC_DXT5_COMPRESSION
+                resizeNonPowerOfTwo TRUE
+                shadowComparison FALSE
+                shadowCompareFunc GL_LEQUAL
+                shadowTextureMode GL_LUMINANCE
+              }
+            }
+          }
+          useDisplayList TRUE
+          useVertexBufferObjects FALSE
+          PrimitiveSets 1
+          {
+            DrawArrays TRIANGLES 0 6
+          }
+          VertexArray Vec3Array 6
+          {
+            0.5 1.49012e-008 -0.125
+            0.5 0.25 -0.125
+            0 0.25 -0.125
+            0 0.25 -0.125
+            0 1.49012e-008 -0.125
+            0.5 1.49012e-008 -0.125
+          }
+          NormalBinding PER_VERTEX
+          NormalArray Vec3Array 6
+          {
+            0 1 0
+            0 1 0
+            0 1 0
+            0 1 0
+            0 1 0
+            0 1 0
+          }
+          TexCoordArray 0 Vec2Array 6
+          {
+            1 5.96046e-008
+            1 0.953877
+            0.5 0.953878
+            0.5 0.953878
+            0.5 5.36442e-007
+            1 5.96046e-008
+          }
+        }
+      }
+    }
+  }
+  MatrixTransform {
+    DataVariance STATIC
+    name "Grass_04"
+    nodeMask 0xffffffff
+    cullingActive TRUE
+    referenceFrame RELATIVE
+    Matrix {
+      1 0 0 0
+      0 1 0 0
+      0 0 1 0
+      -0.25 -7.45058e-009 0 1
+    }
+    num_children 1
+    MatrixTransform {
+      DataVariance STATIC
+      name "Grass_04-OFFSET"
+      nodeMask 0xffffffff
+      cullingActive TRUE
+      referenceFrame RELATIVE
+      Matrix {
+        1 0 0 0
+        0 0 1 0
+        0 -1 0 0
+        0.25 -0.125 7.45058e-009 1
+      }
+      num_children 1
+      Geode {
+        UniqueID Geode_3
+        DataVariance STATIC
+        name "Grass_04-GEODE"
+        nodeMask 0xffffffff
+        cullingActive TRUE
+        num_drawables 1
+        Geometry {
+          name "Material #25"
+          Use StateSet_1
+          useDisplayList TRUE
+          useVertexBufferObjects FALSE
+          PrimitiveSets 1
+          {
+            DrawArrays TRIANGLES 0 6
+          }
+          VertexArray Vec3Array 6
+          {
+            0 1.49012e-008 -0.125
+            0 0.25 -0.125
+            -0.5 0.25 -0.125
+            -0.5 0.25 -0.125
+            -0.5 1.49012e-008 -0.125
+            0 1.49012e-008 -0.125
+          }
+          NormalBinding PER_VERTEX
+          NormalArray Vec3Array 6
+          {
+            0 1 0
+            0 1 0
+            0 1 0
+            0 1 0
+            0 1 0
+            0 1 0
+          }
+          TexCoordArray 0 Vec2Array 6
+          {
+            0.5 5.36442e-007
+            0.5 0.953878
+            2.98023e-008 0.953878
+            2.98023e-008 0.953878
+            0 1.01328e-006
+            0.5 5.36442e-007
+          }
+        }
+      }
+    }
+  }
+  MatrixTransform {
+    DataVariance STATIC
+    name "Grass_06"
+    nodeMask 0xffffffff
+    cullingActive TRUE
+    referenceFrame RELATIVE
+    Matrix {
+      1 0 0 0
+      0 1 0 0
+      0 0 1 0
+      0.125 -0.216506 0 1
+    }
+    num_children 1
+    MatrixTransform {
+      DataVariance STATIC
+      name "Grass_06-OFFSET"
+      nodeMask 0xffffffff
+      cullingActive TRUE
+      referenceFrame RELATIVE
+      Matrix {
+        1 0 0 0
+        0 0 1 0
+        0 -1 0 0
+        -0.125 0.0915063 7.45058e-009 1
+      }
+      num_children 1
+      Geode {
+        UniqueID Geode_4
+        DataVariance STATIC
+        name "Grass_06-GEODE"
+        nodeMask 0xffffffff
+        cullingActive TRUE
+        num_drawables 1
+        Geometry {
+          name "Material #25"
+          Use StateSet_1
+          useDisplayList TRUE
+          useVertexBufferObjects FALSE
+          PrimitiveSets 1
+          {
+            DrawArrays TRIANGLES 0 6
+          }
+          VertexArray Vec3Array 6
+          {
+            -1.49012e-008 1.49012e-008 -0.125
+            -1.49012e-008 0.25 -0.125
+            0.25 0.25 0.308013
+            0.25 0.25 0.308013
+            0.25 2.98023e-008 0.308013
+            -1.49012e-008 1.49012e-008 -0.125
+          }
+          NormalBinding PER_VERTEX
+          NormalArray Vec3Array 6
+          {
+            0 1 0
+            0 1 0
+            0 1 0
+            0 1 0
+            0 1 0
+            0 1 0
+          }
+          TexCoordArray 0 Vec2Array 6
+          {
+            0.5 5.36442e-007
+            0.5 0.953878
+            2.98023e-008 0.953878
+            2.98023e-008 0.953878
+            0 1.01328e-006
+            0.5 5.36442e-007
+          }
+        }
+      }
+    }
+  }
+  MatrixTransform {
+    DataVariance STATIC
+    name "Grass_02"
+    nodeMask 0xffffffff
+    cullingActive TRUE
+    referenceFrame RELATIVE
+    Matrix {
+      1 0 0 0
+      0 1 0 0
+      0 0 1 0
+      0.125 0.216506 0 1
+    }
+    num_children 1
+    MatrixTransform {
+      DataVariance STATIC
+      name "Grass_02-OFFSET"
+      nodeMask 0xffffffff
+      cullingActive TRUE
+      referenceFrame RELATIVE
+      Matrix {
+        1 0 0 0
+        0 0 1 0
+        0 -1 0 0
+        -0.125 -0.341506 7.45058e-009 1
+      }
+      num_children 1
+      Geode {
+        UniqueID Geode_5
+        DataVariance STATIC
+        name "Grass_02-GEODE"
+        nodeMask 0xffffffff
+        cullingActive TRUE
+        num_drawables 1
+        Geometry {
+          name "Material #25"
+          Use StateSet_1
+          useDisplayList TRUE
+          useVertexBufferObjects FALSE
+          PrimitiveSets 1
+          {
+            DrawArrays TRIANGLES 0 6
+          }
+          VertexArray Vec3Array 6
+          {
+            -1.49012e-008 2.23517e-008 -0.125
+            1.49012e-008 0.25 -0.125
+            0.25 0.25 -0.558013
+            0.25 0.25 -0.558013
+            0.25 0 -0.558013
+            -1.49012e-008 2.23517e-008 -0.125
+          }
+          NormalBinding PER_VERTEX
+          NormalArray Vec3Array 6
+          {
+            0 1 0
+            0 1 0
+            0 1 0
+            0 1 0
+            0 1 0
+            0 1 0
+          }
+          TexCoordArray 0 Vec2Array 6
+          {
+            0.5 5.36442e-007
+            0.5 0.953878
+            2.98023e-008 0.953878
+            2.98023e-008 0.953878
+            0 1.01328e-006
+            0.5 5.36442e-007
+          }
+        }
+      }
+    }
+  }
+  MatrixTransform {
+    DataVariance STATIC
+    name "Grass_05"
+    nodeMask 0xffffffff
+    cullingActive TRUE
+    referenceFrame RELATIVE
+    Matrix {
+      1 0 0 0
+      0 1 0 0
+      0 0 1 0
+      -0.125 -0.216506 2.98023e-008 1
+    }
+    num_children 1
+    MatrixTransform {
+      DataVariance STATIC
+      name "Grass_05-OFFSET"
+      nodeMask 0xffffffff
+      cullingActive TRUE
+      referenceFrame RELATIVE
+      Matrix {
+        1 0 0 0
+        0 0 1 0
+        0 -1 0 0
+        0.125 0.0915063 -2.98023e-008 1
+      }
+      num_children 1
+      Geode {
+        UniqueID Geode_6
+        DataVariance STATIC
+        name "Grass_05-GEODE"
+        nodeMask 0xffffffff
+        cullingActive TRUE
+        num_drawables 1
+        Geometry {
+          name "Material #25"
+          Use StateSet_1
+          useDisplayList TRUE
+          useVertexBufferObjects FALSE
+          PrimitiveSets 1
+          {
+            DrawArrays TRIANGLES 0 6
+          }
+          VertexArray Vec3Array 6
+          {
+            -0.25 4.47035e-008 0.308013
+            -0.25 0.25 0.308013
+            1.49012e-008 0.25 -0.125
+            1.49012e-008 0.25 -0.125
+            -1.49012e-008 2.23517e-008 -0.125
+            -0.25 4.47035e-008 0.308013
+          }
+          NormalBinding PER_VERTEX
+          NormalArray Vec3Array 6
+          {
+            0 1 0
+            0 1 0
+            0 1 0
+            0 1 0
+            0 1 0
+            0 1 0
+          }
+          TexCoordArray 0 Vec2Array 6
+          {
+            1 5.96046e-008
+            1 0.953877
+            0.5 0.953878
+            0.5 0.953878
+            0.5 5.36442e-007
+            1 5.96046e-008
+          }
+        }
+      }
+    }
+  }
+  MatrixTransform {
+    DataVariance STATIC
+    name "Grass_03"
+    nodeMask 0xffffffff
+    cullingActive TRUE
+    referenceFrame RELATIVE
+    Matrix {
+      1 0 0 0
+      0 1 0 0
+      0 0 1 0
+      -0.125 0.216506 0 1
+    }
+    num_children 1
+    MatrixTransform {
+      DataVariance STATIC
+      name "Grass_03-OFFSET"
+      nodeMask 0xffffffff
+      cullingActive TRUE
+      referenceFrame RELATIVE
+      Matrix {
+        1 0 0 0
+        0 0 1 0
+        0 -1 0 0
+        0.125 -0.341506 7.45058e-009 1
+      }
+      num_children 1
+      Geode {
+        UniqueID Geode_7
+        DataVariance STATIC
+        name "Grass_03-GEODE"
+        nodeMask 0xffffffff
+        cullingActive TRUE
+        num_drawables 1
+        Geometry {
+          name "Material #25"
+          Use StateSet_1
+          useDisplayList TRUE
+          useVertexBufferObjects FALSE
+          PrimitiveSets 1
+          {
+            DrawArrays TRIANGLES 0 6
+          }
+          VertexArray Vec3Array 6
+          {
+            -0.25 0 -0.558013
+            -0.25 0.25 -0.558013
+            -1.49012e-008 0.25 -0.125
+            -1.49012e-008 0.25 -0.125
+            -1.49012e-008 1.49012e-008 -0.125
+            -0.25 0 -0.558013
+          }
+          NormalBinding PER_VERTEX
+          NormalArray Vec3Array 6
+          {
+            0 1 0
+            0 1 0
+            0 1 0
+            0 1 0
+            0 1 0
+            0 1 0
+          }
+          TexCoordArray 0 Vec2Array 6
+          {
+            1 5.96046e-008
+            1 0.953877
+            0.5 0.953878
+            0.5 0.953878
+            0.5 5.36442e-007
+            1 5.96046e-008
+          }
+        }
+      }
+    }
+  }
+}
