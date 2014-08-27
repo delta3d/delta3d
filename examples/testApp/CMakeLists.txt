@@ -1,4 +1,5 @@
 SET(TARGET_SRC testapp.cpp
+               civilianactor.cpp
                civilianaiactorcomponent.cpp
                guicomponent.cpp
                guiscreen.cpp
@@ -12,7 +13,8 @@ SET(TARGET_SRC testapp.cpp
                readme.txt
                config.xml)
 
-SET(TARGET_H civilianaiactorcomponent.h
+SET(TARGET_H civilianactor.h
+             civilianaiactorcomponent.h
              guicomponent.h
              guiscreen.h
              inputcomponent.h

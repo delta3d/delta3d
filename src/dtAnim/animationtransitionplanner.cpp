@@ -516,6 +516,8 @@ namespace dtAnim
 
             seqMixer.ClearActiveAnimations(blendTime);
             seqMixer.PlayAnimation(generatedSequence.get());
+
+            SignalAnimationsTransitioning.emit_signal(*this);
          }
       }
       else
@@ -524,6 +526,7 @@ namespace dtAnim
          //This is the error-out state.
          animAC->ClearAll(blendTime);
          animAC->PlayAnimation(AnimationOperators::ANIM_WALK_DEPLOYED);
+         SignalAnimationsTransitioning.emit_signal(*this);
       }
    }
 

@@ -30,10 +30,10 @@
 ////////////////////////////////////////////////////////////////////////////////
 #include "testappactorregistry.h"
 #include "terrainactor.h"
+#include "civilianaiactorcomponent.h"
+#include "civilianactor.h"
 #include <dtActors/engineactorregistry.h>
 #include <dtCore/shadermanager.h>
-
-
 
 using dtCore::RefPtr;
 
@@ -44,6 +44,8 @@ namespace dtExample
    ///////////////////////////////////////////////////////////////////////////
    RefPtr<dtCore::ActorType> TestAppActorRegistry::TERRAIN_ACTOR_TYPE(
       new dtCore::ActorType("Terrain", "dtExample", "This is an example terrain actor with physics."));
+   RefPtr<dtCore::ActorType> TestAppActorRegistry::CIVILIAN_ACTOR_TYPE(
+      new dtCore::ActorType("Civilian", "dtExample", "This is an example animated civilian with AI."));
   
 
 
@@ -77,5 +79,8 @@ namespace dtExample
    void TestAppActorRegistry::RegisterActorTypes()
    {
       mActorFactory->RegisterType<TerrainActor>(TERRAIN_ACTOR_TYPE.get());
+      mActorFactory->RegisterType<CivilianActor>(CIVILIAN_ACTOR_TYPE.get());
+
+      mActorFactory->RegisterType<CivilianAIActorComponent>(CivilianAIActorComponent::TYPE.get());
    }
 }

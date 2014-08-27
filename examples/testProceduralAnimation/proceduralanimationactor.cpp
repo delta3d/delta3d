@@ -53,19 +53,19 @@ ProceduralAnimationActorProxy::~ProceduralAnimationActorProxy()
 ////////////////////////////////////////////////////////////////////////////////
 void ProceduralAnimationActorProxy::BuildInvokables()
 {
-   dtAnim::AnimationGameActorProxy::BuildInvokables();
+   dtAnim::AnimationGameActor::BuildInvokables();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 void ProceduralAnimationActorProxy::BuildPropertyMap()
 {
-   dtAnim::AnimationGameActorProxy::BuildPropertyMap();
+   dtAnim::AnimationGameActor::BuildPropertyMap();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 void ProceduralAnimationActorProxy::BuildActorComponents()
 {
-   dtAnim::AnimationGameActorProxy::BuildActorComponents();
+   dtAnim::AnimationGameActor::BuildActorComponents();
    GetComponent<dtAnim::AnimationHelper>()->SetLoadModelAsynchronously(false);
 }
 
@@ -83,7 +83,7 @@ void ProceduralAnimationActorProxy::CreateDrawable()
 
 ////////////////////////////////////////////////////////////////////////////////
 ProceduralAnimationActor::ProceduralAnimationActor(ProceduralAnimationActorProxy& owner)
-   : AnimationGameActor(owner)
+   : GameActor(owner)
    , mMode(MODE_AIM)
    , mPoseMeshDatabase(NULL)
    , mPoseMeshUtil(NULL)
@@ -110,7 +110,7 @@ ProceduralAnimationActor::~ProceduralAnimationActor()
 ////////////////////////////////////////////////////////////////////////////////
 void ProceduralAnimationActor::OnEnteredWorld()
 {
-   AnimationGameActor::OnEnteredWorld();
+   dtGame::GameActor::OnEnteredWorld();
 
    // Make sure we receive the tick messages
    GetGameActorProxy().RegisterForMessages(dtGame::MessageType::TICK_LOCAL,
@@ -289,7 +289,7 @@ void ProceduralAnimationActor::TickIK(float dt)
 ////////////////////////////////////////////////////////////////////////////////
 void ProceduralAnimationActor::AddedToScene(dtCore::Scene* scene)
 {
-   dtAnim::AnimationGameActor::AddedToScene(scene);
+   dtGame::GameActor::AddedToScene(scene);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
