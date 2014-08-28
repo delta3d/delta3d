@@ -1,5 +1,5 @@
-<character name="YoungMan_Asian">
-   <!--poseMesh fileName="PoseMesh.xml" /-->
+<character name="YoungMan_Asian_Jogger">
+   <poseMesh fileName="PoseMesh.xml" />
    <skeleton fileName="Skeleton_Male_Average.xsf" />
    <animation fileName="animations/Idle.xaf" name="Idle" />
    <animation fileName="animations/Run.xaf" name="Run" />
@@ -8,7 +8,7 @@
    <animation fileName="animations/Sitting_BarStool.xaf" name="Sitting_BarStool" />
    <animation fileName="animations/Laying_Sunchair.xaf" name="Laying_Sunchair" />
 
-   <!--animation fileName="poses/EyeLeftDown.xaf"/>
+   <animation fileName="poses/EyeLeftDown.xaf"/>
    <animation fileName="poses/EyeLeftIn.xaf"/>
    <animation fileName="poses/EyeLeftMidDown.xaf"/>
    <animation fileName="poses/EyeLeftMidUp.xaf"/>
@@ -30,7 +30,7 @@
    <animation fileName="poses/TorsoDownRight.xaf"/>
    <animation fileName="poses/TorsoForward.xaf"/>
    <animation fileName="poses/TorsoUpLeft.xaf"/>
-   <animation fileName="poses/TorsoUpRight.xaf"/-->
+   <animation fileName="poses/TorsoUpRight.xaf"/>
   
    <mesh fileName="meshes/Body_Male_Asian_Average_HeadArmsLegs.xmf" name="Body" />
    <mesh fileName="meshes/Eyes_Average.xmf" name="Eyes" />
@@ -39,7 +39,7 @@
    <mesh fileName="meshes/Shorts_Male_Average.xmf" name="Pants" />
    <mesh fileName="meshes/TShirt_Male_Average.xmf" name="Shirt" />
    <mesh fileName="meshes/Shoes_Runner_Male_Average.xmf" name="Shoes" />
-   <material fileName="materials/Skin_Male_Asian_Average.xrf" name="Body" />
+   <material fileName="materials/Skin_Male_Asian_Average_ShortsShirtShoes.xrf" name="Body" />
    <material fileName="materials/Eyes_Brown.xrf" name="Eyes" />
    <material fileName="materials/Hair_Black.xrf" name="Hair" />
    <material fileName="materials/Shorts_Jogger_Green.xrf" name="Pants" />
