@@ -3,5 +3,5 @@
     <DIFFUSE>166 126 102 255</DIFFUSE>
     <SPECULAR>76 76 76 0</SPECULAR>
     <SHININESS>1</SHININESS>
-    <MAP>materials/Skin_Caucasian.png</MAP>
+    <MAP>materials/Skin_Caucasian02.png</MAP>
 </MATERIAL>
