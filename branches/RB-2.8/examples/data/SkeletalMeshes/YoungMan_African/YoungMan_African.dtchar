@@ -1,17 +1,43 @@
 <character name="YoungMan_African">
+   <poseMesh fileName="PoseMesh.xml" />
    <skeleton fileName="Skeleton_Male_Average.xsf" />
    <animation fileName="animations/Idle.xaf" name="Idle" />
    <animation fileName="animations/Run.xaf" name="Run" />
    <animation fileName="animations/Walk.xaf" name="Walk" />
    <animation fileName="animations/Sitting_BarStool.xaf" name="Sitting_BarStool" />
    <animation fileName="animations/Laying_Sunchair.xaf" name="Laying_Sunchair" />
+
+   <animation fileName="poses/EyeLeftDown.xaf"/>
+   <animation fileName="poses/EyeLeftIn.xaf"/>
+   <animation fileName="poses/EyeLeftMidDown.xaf"/>
+   <animation fileName="poses/EyeLeftMidUp.xaf"/>
+   <animation fileName="poses/EyeLeftOut.xaf"/>
+   <animation fileName="poses/EyeLeftUp.xaf"/>
+   <animation fileName="poses/EyeRightDown.xaf"/>
+   <animation fileName="poses/EyeRightIn.xaf"/>
+   <animation fileName="poses/EyeRightMidDown.xaf"/>
+   <animation fileName="poses/EyeRightMidUp.xaf"/>
+   <animation fileName="poses/EyeRightOut.xaf"/>
+   <animation fileName="poses/EyeRightUp.xaf"/>
+   <animation fileName="poses/HeadDownLeft.xaf"/>
+   <animation fileName="poses/HeadDownRight.xaf"/>
+   <animation fileName="poses/HeadLeft.xaf"/>
+   <animation fileName="poses/HeadRight.xaf"/>
+   <animation fileName="poses/HeadUpLeft.xaf"/>
+   <animation fileName="poses/HeadUpRight.xaf"/>
+   <animation fileName="poses/TorsoDownLeft.xaf"/>
+   <animation fileName="poses/TorsoDownRight.xaf"/>
+   <animation fileName="poses/TorsoForward.xaf"/>
+   <animation fileName="poses/TorsoUpLeft.xaf"/>
+   <animation fileName="poses/TorsoUpRight.xaf"/>
+
    <mesh fileName="meshes/Body_Male_African_Average_HeadAndHands.xmf" name="Body" />
    <mesh fileName="meshes/Eyes_Average.xmf" name="Eyes" />
    <mesh fileName="meshes/Eyebrows_Male_Average.xmf" name="Eyebrows" />
    <mesh fileName="meshes/Jeans_Male_Average.xmf" name="Pants" />
    <mesh fileName="meshes/Shirt_Long_Male_Average.xmf" name="Shirt" />
    <mesh fileName="meshes/Shoes_Classic_Male_Average.xmf" name="Shoes" />
-   <material fileName="materials/Skin_Male_African_Average.xrf" name="Body" />
+   <material fileName="materials/Skin_African.xrf" name="Body" />
    <material fileName="materials/Eyes_Brown.xrf" name="Eyes" />
    <material fileName="materials/Hair_Black.xrf" name="Hair" />
    <material fileName="materials/Jeans_Blue.xrf" name="Pants" />
