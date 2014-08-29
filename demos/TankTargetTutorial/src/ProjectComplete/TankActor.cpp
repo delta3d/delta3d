@@ -58,7 +58,7 @@ const float MAXTANKVELOCITY = 15.0f;
 
 ///////////////////////////////////////////////////////////////////////////////
 TankActor::TankActor(dtGame::GameActorProxy& parent)
-   : dtActors::GameMeshActor(parent)
+   : dtActors::GameMeshDrawable(parent)
    , mDust(NULL)
    , mCannonShot(NULL)
    , mVelocity(0.0f)
@@ -433,7 +433,7 @@ void TankActor::SetTurnRate(float rate)
 ///////////////////////////////////////////////////////////////////////////////
 void TankActor::OnEnteredWorld()
 {
-   dtActors::GameMeshActor::OnEnteredWorld();
+   dtActors::GameMeshDrawable::OnEnteredWorld();
 
    // add our dust particle
    mDust = new dtCore::ParticleSystem();
@@ -483,7 +483,7 @@ void TankActorProxy::BuildPropertyMap()
 {
    const std::string GROUP = "HoverTank";
 
-   dtActors::GameMeshActorProxy::BuildPropertyMap();
+   dtActors::GameMeshActor::BuildPropertyMap();
    TankActor* actor = GetDrawable<TankActor>();
 
    // "Velocity" property
@@ -526,5 +526,5 @@ void TankActorProxy::OnEnteredWorld()
          dtGame::GameActorProxy::TICK_LOCAL_INVOKABLE);
    }
 
-   dtActors::GameMeshActorProxy::OnEnteredWorld();
+   dtActors::GameMeshActor::OnEnteredWorld();
 }

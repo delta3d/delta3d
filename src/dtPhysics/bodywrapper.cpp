@@ -260,7 +260,7 @@ namespace dtPhysics
    {
       TriangleRecorder recorder;
       recorder.Record(*mesh);
-      if (recorder.mVertices.size() == 0 || recorder.mIndices.size() == 0)
+      if (recorder.mData.mVertices->empty() || recorder.mData.mFaces->empty())
       {
          throw dtUtil::Exception("Unable to create convex mesh, no vertex data was found when traversing the osg Node.", __FILE__, __LINE__);
       }
@@ -279,7 +279,7 @@ namespace dtPhysics
       TransformToPalMatrix(palOrigin, worldPos);
 
       ourBody->Init(0.0, 0.0, 0.0,
-               (Real*)(&recorder.mVertices.front()), recorder.mVertices.size(), mass);
+               (Real*)(&recorder.mData.mVertices->front()), recorder.mData.mVertices->size(), mass);
 
       ourBody->SetPosition(palOrigin);
 
@@ -327,7 +327,7 @@ namespace dtPhysics
    {
       TriangleRecorder recorder;
       recorder.Record(*mesh);
-      if (recorder.mVertices.size() == 0 || recorder.mIndices.size() == 0)
+      if (recorder.mData.mVertices->empty() || recorder.mData.mFaces->empty())
       {
          throw dtUtil::Exception("Unable to create terrain mesh, no vertex data was found when traversing the osg Node.", __FILE__, __LINE__);
       }
@@ -346,8 +346,8 @@ namespace dtPhysics
       worldPos.GetTranslation(trans);
 
       ourTerrainMesh->Init(trans.x(), trans.y(), trans.z(),
-               (Real*)(&recorder.mVertices.front()), recorder.mVertices.size(),
-               reinterpret_cast<int*>(&recorder.mIndices.front()), recorder.mIndices.size());
+               (Real*)(&recorder.mData.mVertices->front()), recorder.mData.mVertices->size(),
+               reinterpret_cast<int*>(&recorder.mData.mFaces->front()), recorder.mData.mFaces->size());
 
       return bodyWrapper;
    }

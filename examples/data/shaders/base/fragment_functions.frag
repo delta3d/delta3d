@@ -82,10 +82,10 @@ mat3 compute_tangent_frame_O3(vec3 N, vec3 p, vec2 uv)
     // assume M is orthogonal
 
     // get edge vectors of the pixel triangle
-    vec3 dp1 = dFdx(p);
-    vec3 dp2 = dFdy(p);
-    vec2 duv1 = dFdx(uv);
-    vec2 duv2 = dFdy(uv);
+    vec3 dp1 = vec3(1.0); //dFdx(p);
+    vec3 dp2 = vec3(1.0); // dFdy(p);
+    vec2 duv1 = vec2(1.0); // dFdx(uv);
+    vec2 duv2 = vec2(1.0); // dFdy(uv);
 
     dp1 = normalize(dp1);
     dp2 = normalize(dp2);

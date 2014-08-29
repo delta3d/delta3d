@@ -45,7 +45,7 @@ GameItemActorProxy::~GameItemActorProxy()
 
 void GameItemActorProxy::BuildPropertyMap()
 {
-   dtActors::GameMeshActorProxy::BuildPropertyMap();
+   dtActors::GameMeshActor::BuildPropertyMap();
 
    GameItemActor& gia = *GetDrawable<GameItemActor>();
 
@@ -72,7 +72,7 @@ void GameItemActorProxy::BuildPropertyMap()
 
 void GameItemActorProxy::BuildInvokables()
 {
-   dtActors::GameMeshActorProxy::BuildInvokables();
+   dtActors::GameMeshActor::BuildInvokables();
 }
 
 dtCore::ActorProxyIcon* GameItemActorProxy::GetBillBoardIcon()
@@ -86,7 +86,7 @@ dtCore::ActorProxyIcon* GameItemActorProxy::GetBillBoardIcon()
 
 ////////////////////////////////////////////////////////////
 GameItemActor::GameItemActor(dtGame::GameActorProxy& parent)
-   : dtActors::GameMeshActor(parent)
+   : dtActors::GameMeshDrawable(parent)
    , mInventoryAddSnd(dtAudio::AudioManager::GetInstance().NewSound())
    , mItemUseSnd(dtAudio::AudioManager::GetInstance().NewSound())
    , mItemIndex(-1)

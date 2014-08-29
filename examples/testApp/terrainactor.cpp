@@ -640,7 +640,7 @@ namespace dtExample
       {
          mTerrainNode = mLoadNodeTask->GetLoadedNode();
 
-         osg::StateSet* ss = mTerrainNode->getOrCreateStateSet();
+         //osg::StateSet* ss = mTerrainNode->getOrCreateStateSet();
 //         ss->setRenderBinDetails(RenderingSupportComponent::RENDER_BIN_TERRAIN, "TerrainBin");
 
          // Run a visitor to switch to VBO's instead of DrawArrays (the OSG default)

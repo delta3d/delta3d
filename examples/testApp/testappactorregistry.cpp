@@ -32,7 +32,9 @@
 #include "terrainactor.h"
 #include "civilianaiactorcomponent.h"
 #include "civilianactor.h"
+#include "meshobjectactor.h"
 #include <dtActors/engineactorregistry.h>
+#include <dtAnim/animactorregistry.h>
 #include <dtCore/shadermanager.h>
 
 using dtCore::RefPtr;
@@ -45,7 +47,9 @@ namespace dtExample
    RefPtr<dtCore::ActorType> TestAppActorRegistry::TERRAIN_ACTOR_TYPE(
       new dtCore::ActorType("Terrain", "dtExample", "This is an example terrain actor with physics."));
    RefPtr<dtCore::ActorType> TestAppActorRegistry::CIVILIAN_ACTOR_TYPE(
-      new dtCore::ActorType("Civilian", "dtExample", "This is an example animated civilian with AI."));
+      new dtCore::ActorType("Civilian", "dtExample", "This is an example animated civilian with AI.", dtAnim::AnimActorRegistry::ANIMATION_ACTOR_TYPE));
+   RefPtr<dtCore::ActorType> TestAppActorRegistry::MESH_OBJECT_ACTOR_TYPE(
+      new dtCore::ActorType("Mesh Object", "dtExample", "Mesh object with automated physics.", dtActors::EngineActorRegistry::GAME_MESH_ACTOR_TYPE));
   
 
 
@@ -80,6 +84,7 @@ namespace dtExample
    {
       mActorFactory->RegisterType<TerrainActor>(TERRAIN_ACTOR_TYPE.get());
       mActorFactory->RegisterType<CivilianActor>(CIVILIAN_ACTOR_TYPE.get());
+      mActorFactory->RegisterType<MeshObjectActor>(MESH_OBJECT_ACTOR_TYPE.get());
 
       mActorFactory->RegisterType<CivilianAIActorComponent>(CivilianAIActorComponent::TYPE.get());
    }
