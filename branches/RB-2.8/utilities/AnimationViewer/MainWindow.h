@@ -122,7 +122,6 @@ public slots:
    void OnToggleShadingToolbar();
    void OnToggleLightingToolbar();
    void OnDisplayError(const QString& msg);
-   void OnConfiged(); ///<call when everything is up and running
 
    void OnClearCharacterData();
 
@@ -136,6 +135,8 @@ public slots:
    void OnResourceRemoved(int fileType, const std::string& objectName);
 
    void OnError(const std::string& title, const std::string& message);
+   
+   void OnInitialization();
 
 private:
    void CreateMenus();
@@ -158,6 +159,12 @@ private:
 
    ///turns color into "R:rrr "G:ggg B:bbb A:aaa" format
    QString MakeColorString(const QColor& color) const;
+
+   void SaveSettings();
+
+
+   std::string mContextPath;
+   std::string mShaderDefFile;
 
    QAction* mExitAct;
    QAction* mNewCharAct;
@@ -248,5 +255,8 @@ private slots:
    void OnToggleFlipHorizontal();
 
    void OnSubMorphChanged(QTableWidgetItem* item);
+
+   void OnLoadShaderDefinition();
+   void OnLoadShaderFile(const QString& filename);
 };
 #endif // DELTA_MainWindow
