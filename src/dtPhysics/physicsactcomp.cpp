@@ -96,9 +96,9 @@ namespace dtPhysics
 
    struct CreateFromPropsPhysObj
    {
-      void operator()(PhysicsObject& po)
+      void operator()(dtCore::RefPtr<PhysicsObject>& po)
       {
-         po.CreateFromProperties();
+         po->CreateFromProperties();
       }
    };
 
@@ -106,9 +106,17 @@ namespace dtPhysics
    void PhysicsActComp::OnEnteredWorld()
    {
       RegisterWithGMComponent();
+
+      // Initialize the position
+      if (!mPrePhysicsUpdate.valid())
+      {
+         DefaultPrePhysicsUpdate();
+      }
+
       if (GetAutoCreateOnEnteringWorld())
       {
-
+         CreateFromPropsPhysObj creatFunc;
+         ForEachPhysicsObject(creatFunc);
       }
    }
 
