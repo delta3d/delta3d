@@ -33,6 +33,7 @@ SelfIlluminationColorMode	0	0
       name "PHYSICS_Lamppost_Trident"
       nodeMask 0xffffffff
       cullingActive TRUE
+      description "BOX"
       num_children 1
       Geode {
         UniqueID Geode_0
@@ -160,6 +161,7 @@ SelfIlluminationColorMode	0	0
       name "PHYSICS_Lamppost_Trident"
       nodeMask 0xffffffff
       cullingActive TRUE
+      description "BOX"
       num_children 1
       Geode {
         UniqueID Geode_2
@@ -264,6 +266,7 @@ SelfIlluminationColorMode	0	0
       name "PHYSICS_Lamppost_Trident"
       nodeMask 0xffffffff
       cullingActive TRUE
+      description "BOX"
       num_children 1
       Geode {
         UniqueID Geode_3
@@ -368,6 +371,7 @@ SelfIlluminationColorMode	0	0
       name "PHYSICS_Lamppost_Trident"
       nodeMask 0xffffffff
       cullingActive TRUE
+      description "BOX"
       num_children 1
       Group {
         DataVariance STATIC
@@ -479,6 +483,7 @@ SelfIlluminationColorMode	0	0
       name "PHYSICS_Lamppost_Trident001"
       nodeMask 0xffffffff
       cullingActive TRUE
+      description "BOX"
       num_children 1
       Group {
         DataVariance STATIC
@@ -590,6 +595,7 @@ SelfIlluminationColorMode	0	0
       name "PHYSICS_Lamppost_Trident002"
       nodeMask 0xffffffff
       cullingActive TRUE
+      description "BOX"
       num_children 1
       Group {
         DataVariance STATIC
@@ -701,6 +707,7 @@ SelfIlluminationColorMode	0	0
       name "PHYSICS_Lamppost_Trident003"
       nodeMask 0xffffffff
       cullingActive TRUE
+      description "BOX"
       num_children 1
       Group {
         DataVariance STATIC
@@ -812,6 +819,7 @@ SelfIlluminationColorMode	0	0
       name "PHYSICS_Lamppost_Trident004"
       nodeMask 0xffffffff
       cullingActive TRUE
+      description "BOX"
       num_children 1
       Group {
         DataVariance STATIC
