@@ -35,6 +35,18 @@ void computeSpecularContribution(vec3 lightDir, vec3 normal, vec3 viewDir, vec3 
    specularContribution = vec3(glossMap.r) * (pow(reflectContrib, 16.0));
 }
 
+vec2 computeSphereMapCoord(in vec3 viewDir, in vec3 normal)
+{
+   float m;
+   vec3 r,u;
+
+   u = normalize(viewDir);
+   r = reflect(u,normal);
+   m = 2.0 * sqrt(dot(r.xy,r.xy) + ((r.z + 1.0) * (r.z + 1.0)));
+
+   return vec2(r.x/m + 0.5,r.y/m + 0.5);
+}
+
 /////////////////////////////////////////////////////////////////////
 // Determines the opacity of a spherical soft particle (drawn as a billboard). 
 // The center is fully opaque (1.0), the edges are fully transparent (0.0)
