@@ -161,6 +161,9 @@ private:
    QString MakeColorString(const QColor& color) const;
 
    void SaveSettings();
+   bool IsShaderDefFileValid() const;
+   bool EnsureShaderDefFileValid();
+   bool AskUserToLoadShaderDef();
 
 
    std::string mContextPath;
@@ -258,5 +261,6 @@ private slots:
 
    void OnLoadShaderDefinition();
    void OnLoadShaderFile(const QString& filename);
+   void OnReloadShaderFiles();
 };
 #endif // DELTA_MainWindow

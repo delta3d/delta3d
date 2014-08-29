@@ -2003,7 +2003,7 @@ void MainWindow::OnInitialization()
    mShaderDefFile = settings.value(
       SETTING_SHADERDEFS_FILE.c_str()).toString().toStdString();
 
-   if ( ! mShaderDefFile.empty())
+   if (EnsureShaderDefFileValid())
    {
       QString qstr(mShaderDefFile.c_str());
       OnLoadShaderFile(qstr);
@@ -2071,4 +2071,64 @@ void MainWindow::OnLoadShaderFile(const QString& filename)
    {
       QMessageBox::critical(NULL, "Error", e.ToString().c_str());
    }
+}
+
+///////////////////////////////////////////////////////////////////////////////
+bool MainWindow::IsShaderDefFileValid() const
+{
+   return dtUtil::FileUtils::GetInstance().FileExists(mShaderDefFile);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+bool MainWindow::EnsureShaderDefFileValid()
+{
+   bool valid = IsShaderDefFileValid();
+
+   if ( ! valid)
+   {
+      if (AskUserToLoadShaderDef())
+      {
+         OnLoadShaderDefinition();
+
+         valid = IsShaderDefFileValid();
+      }
+   }
+
+   if ( ! valid)
+   {
+      std::string title("Invalid ShaderDef");
+      std::string message("Could not load shader definition file:\n\t" + mShaderDefFile
+         + "\nCharacter models may not display correctly.");
+      QMessageBox::warning(NULL, title.c_str(), message.c_str());
+   }
+
+   return valid;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+void MainWindow::OnReloadShaderFiles()
+{
+   if (EnsureShaderDefFileValid())
+   {
+      dtCore::ShaderManager& shaderManager = dtCore::ShaderManager::GetInstance();
+      shaderManager.Clear();
+
+      try
+      {
+         shaderManager.LoadShaderDefinitions(mShaderDefFile);
+      }
+      catch (dtUtil::Exception& e)
+      {
+         QMessageBox::critical(NULL, "Error", e.ToString().c_str());
+      }
+   }
+}
+
+///////////////////////////////////////////////////////////////////////////////
+bool MainWindow::AskUserToLoadShaderDef()
+{
+   std::string title("Load ShaderDef File?");
+   std::string message("Character models may need custom shaders to render. Would you like to load your project's ShaderDef file?");
+
+   return QMessageBox::Ok == QMessageBox::information(NULL, title.c_str(), message.c_str(), QMessageBox::Ok, QMessageBox::Cancel);
 }
