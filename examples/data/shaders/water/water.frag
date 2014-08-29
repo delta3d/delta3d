@@ -28,8 +28,9 @@ uniform float modForFOV;
 uniform float foamMaxHeight;	
 uniform sampler2D waveTexture;
 uniform sampler2D reflectionMap;
-uniform sampler2D foamTexture;
-uniform sampler3D noiseTexture;
+//uniform sampler2D foamTexture;
+//uniform sampler3D noiseTexture;
+uniform samplerCube d3d_ReflectionCubeMap;
 
 varying vec4 pos;
 varying vec4 viewPos;
@@ -145,6 +146,13 @@ void main (void)
    vec3 refTexCoords = vec3(gl_FragCoord.x / ScreenWidth, (gl_FragCoord.y / ScreenHeight), gl_FragCoord.z);      
    refTexCoords.xy = clamp(refTexCoords.xy + 0.05 * normal.xy, 0.0, 1.0);
    vec3 reflectColor = texture2D(reflectionMap, refTexCoords.xy).rgb;
+   
+   //vec3 reflectCubeCoords = reflect(viewDir.xyz, vec3(0.0, 0.0, 1.0));//normal);   
+   //vec3 rayCol = combinedPos.xyz  + ((25000.0 - length(viewDir)) * reflectCubeCoords);
+   //rayCol = normalize(rayCol - camPos);
+   
+   //vec3 reflectCubeMap = textureCube(d3d_ReflectionCubeMap, rayCol).rgb;
+   //reflectColor = reflectCubeMap;
 
    vec3 lightContribSun;
    vec3 lightContribMoon;
@@ -187,13 +195,18 @@ void main (void)
       float specularContrib = max(0.0, dot(normRefLightVec, viewDir));
       specularContrib = (0.1 * pow(specularContrib, 8.0)) + (0.8 * pow(specularContrib, 200.0));
       vec3 resultSpecular = d3d_SceneLuminance * specularContrib * gl_LightSource[0].specular.rgb;     
+   
+      vec3 refractionCoords = refract(normalize(combinedPos - camPos), normal, 1.02);   
+      vec3 refractionColor = textureCube(d3d_ReflectionCubeMap, refractionCoords.xyz).rgb;
       
       vec4 resultColor = vec4(waterColorContrib + resultSpecular, 1.0 - waterColorTint.a);
-      
-      //gl_FragColor = mix(gl_Fog.color, resultColor, vFog.x);
-      gl_FragColor = resultColor;
-      //gl_FragColor = vec4(depthCoords.x, depthCoords.y, 0.0, 1.0);
-      //gl_FragColor = vec4(vec3(fresnel), 1.0);
+      resultColor = vec4(mix(resultColor.rgb, refractionColor, waterColorTint.a), 1.0);
+
+      gl_FragColor = mix(gl_Fog.color, resultColor, vFog.x);
+      //gl_FragColor = resultColor;
+      //gl_FragColor = vec4(vec3(refractionColor.rgb), 1.0);
+      //gl_FragColor = vec4(vec3(WaterColor.rgb) * fresnel, 1.0);
+      //gl_FragColor = vec4(0.5 * (reflectCubeCoords.xyz + vec3(1.0)), 1.0);
       
    }
    else

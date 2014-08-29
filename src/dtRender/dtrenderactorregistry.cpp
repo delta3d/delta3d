@@ -28,17 +28,29 @@
 #include <dtRender/hdrscene.h>
 #include <dtRender/shadowscene.h>
 #include <dtRender/multipassscene.h>
+#include <dtRender/dofscene.h>
+#include <dtRender/glowscene.h>
+#include <dtRender/cubemapscene.h>
+#include <dtRender/ssaoscene.h>
+#include <dtRender/videoscene.h>
 
 // For the autoreg
 #include <dtCore/librarymanager.h> 
 
 namespace dtRender
 {
+
+   dtCore::RefPtr<dtCore::ActorType> RenderActorRegistry::DOF_SCENE_ACTOR_TYPE(new dtCore::ActorType
+      ("DOF Scene", "dtRender", "This actor creates a depth of field post process effect.")); 
+
    dtCore::RefPtr<dtCore::ActorType> RenderActorRegistry::EPHEMERIS_SCENE_ACTOR_TYPE(new dtCore::ActorType
       ("Ephemeris Scene", "dtRender", "This actor creates an osgEphemeris sky dome.")); 
 
    dtCore::RefPtr<dtCore::ActorType> RenderActorRegistry::GUI_SCENE_ACTOR_TYPE(new dtCore::ActorType
       ("GUI Scene", "dtRender", "This actor renders stuff on top of the main render pass.")); 
+
+   dtCore::RefPtr<dtCore::ActorType> RenderActorRegistry::GLOW_SCENE_ACTOR_TYPE(new dtCore::ActorType
+      ("Glow Scene", "dtRender", "This actor renders materials that glow in a prepass to provide a post p glow pass.")); 
 
    dtCore::RefPtr<dtCore::ActorType> RenderActorRegistry::HDR_SCENE_ACTOR_TYPE(new dtCore::ActorType
       ("HDR Scene", "dtRender", "This actor uses osgPPU to accumulate hdr light values and apply tone mapping.")); 
@@ -50,7 +62,10 @@ namespace dtRender
       ("Ocean Scene", "dtRender", "This actor creates a large water mesh.")); 
 
    dtCore::RefPtr<dtCore::ActorType> RenderActorRegistry::PPU_SCENE_ACTOR_TYPE(new dtCore::ActorType
-      ("PPU Scene", "dtRender", "This actor is required to do osgPPU effects.")); 
+      ("PPU Scene", "dtRender", "This the base actor for osgPPU effects.")); 
+
+   dtCore::RefPtr<dtCore::ActorType> RenderActorRegistry::CUBEMAP_SCENE_ACTOR_TYPE(new dtCore::ActorType
+      ("Cube Map Scene", "dtRender", "This actor creates a cubemap render target.")); 
 
    dtCore::RefPtr<dtCore::ActorType> RenderActorRegistry::SCENE_MANAGER_ACTOR_TYPE(new dtCore::ActorType
       ("Scene Manager", "dtRender", "This actor is used for managing scene structure.")); 
@@ -61,6 +76,11 @@ namespace dtRender
    dtCore::RefPtr<dtCore::ActorType> RenderActorRegistry::SIMPLE_SCENE_ACTOR_TYPE(new dtCore::ActorType
       ("Simple Scene", "dtRender", "This actor represents a bare minimum scene, useful if you only need to add a camera.")); 
 
+   dtCore::RefPtr<dtCore::ActorType> RenderActorRegistry::SSAO_SCENE_ACTOR_TYPE(new dtCore::ActorType
+      ("SSAO Scene", "dtRender", "This actor creates a Screen Space Ambient Occlusion post process effect.")); 
+
+   dtCore::RefPtr<dtCore::ActorType> RenderActorRegistry::VIDEO_SCENE_ACTOR_TYPE(new dtCore::ActorType
+      ("Video Scene", "dtRender", "This actor renders a video to a texture.")); 
 
    
    // Must be after the types or it will crash.
@@ -87,13 +107,18 @@ namespace dtRender
    ////////////////////////////////////////////////////////////////////////////
    void RenderActorRegistry::RegisterActorTypes()
    {
+      mActorFactory->RegisterType<CubeMapSceneProxy>(CUBEMAP_SCENE_ACTOR_TYPE.get());
+      mActorFactory->RegisterType<DOFSceneProxy>(DOF_SCENE_ACTOR_TYPE.get());
       mActorFactory->RegisterType<EphemerisSceneProxy>(EPHEMERIS_SCENE_ACTOR_TYPE.get());
       mActorFactory->RegisterType<GUISceneProxy>(GUI_SCENE_ACTOR_TYPE.get());
+      mActorFactory->RegisterType<GlowSceneProxy>(GLOW_SCENE_ACTOR_TYPE.get());
       mActorFactory->RegisterType<HDRSceneProxy>(HDR_SCENE_ACTOR_TYPE.get());
       mActorFactory->RegisterType<MultipassSceneProxy>(MULTIPASS_SCENE_ACTOR_TYPE.get());
       mActorFactory->RegisterType<OceanSceneProxy>(OCEAN_SCENE_ACTOR_TYPE.get());
       mActorFactory->RegisterType<SceneManagerProxy>(SCENE_MANAGER_ACTOR_TYPE.get());
       mActorFactory->RegisterType<ShadowSceneProxy>(SHADOW_SCENE_ACTOR_TYPE.get());
       mActorFactory->RegisterType<SimpleSceneProxy>(SIMPLE_SCENE_ACTOR_TYPE.get());
+      mActorFactory->RegisterType<SSAOSceneProxy>(SSAO_SCENE_ACTOR_TYPE.get());
+      mActorFactory->RegisterType<VideoSceneProxy>(VIDEO_SCENE_ACTOR_TYPE.get());
    }
 }

@@ -42,6 +42,7 @@
 
 namespace dtRender
 {
+   const unsigned int gShadowTexUnit = 6;
 
    const dtCore::RefPtr<SceneType> ShadowScene::SHADOW_SCENE(new SceneType("Shadow Scene", "Scene", "A scene which computes shadows for it's children."));
 
@@ -111,15 +112,10 @@ namespace dtRender
 
    void ShadowScene::CreateScene( SceneManager& sm, const GraphicsQuality& g)
    {
-      dtGame::GameManager* gm = sm.GetGameManager();
-      if(gm != NULL)
-      {
+      
          mImpl->mNode = new osgShadow::ShadowedScene();
 
          mImpl->mNode->getOrCreateStateSet()->setGlobalDefaults();
-
-         //use light zero for sunlight
-         mImpl->mLightSource = gm->GetScene().GetLight(0);
 
          mImpl->mNode->setReceivesShadowTraversalMask(dtUtil::NodeMask::SHADOW_RECEIVE);
          mImpl->mNode->setCastsShadowTraversalMask(dtUtil::NodeMask::SHADOW_CAST);
@@ -128,7 +124,13 @@ namespace dtRender
 
          //shadow scene becomes the new default scene
          sm.PushScene(*this);
-      }
+      
+         dtGame::GameManager* gm = sm.GetGameManager();
+         if(gm != NULL)
+         {
+            //use light zero for sunlight
+            mImpl->mLightSource = gm->GetScene().GetLight(0);
+         }
    }
 
    osg::Group* ShadowScene::GetSceneNode()
@@ -202,9 +204,15 @@ namespace dtRender
       //osg::Shader* fragShader = new osg::Shader(osg::Shader::FRAGMENT, fragShaderSource);
 
       // Setup the scene with shadows via shadow mapping
-      osgShadow::ShadowMap* shadowMap = new osgShadow::ShadowMap;
+      osgShadow::StandardShadowMap* shadowMap = new osgShadow::StandardShadowMap;
+
+      //osgShadow::ShadowMap* shadowMap = new osgShadow::ShadowMap;
       shadowMap->setTextureSize(osg::Vec2s(shadowRes, shadowRes));
-      shadowMap->setLight(mImpl->mLightSource->GetLightSource());
+      if(mImpl->mLightSource->valid() && mImpl->mLightSource->GetLightSource() != NULL)
+      {
+         shadowMap->setLight(mImpl->mLightSource->GetLightSource()->getLight());
+      }
+      shadowMap->setShadowTextureUnit(gShadowTexUnit);
       //shadowMap->addShader(fragShader);
       //shadowMap->setAmbientBias(osg::Vec2(1.0f, 10.1f));
 
@@ -221,13 +229,13 @@ namespace dtRender
          new osgShadow::LightSpacePerspectiveShadowMapDB;
 
       unsigned int baseTexUnit = 0;
-      unsigned int shadowTexUnit = 1;
+      
 
       shadowMap->setMinLightMargin(mImpl->mMinLightMargin);
       shadowMap->setMaxFarPlane(mImpl->mMaxFarPlane);
       shadowMap->setTextureSize(osg::Vec2s(shadowRes, shadowRes));
-      shadowMap->setShadowTextureCoordIndex(shadowTexUnit);
-      shadowMap->setShadowTextureUnit(shadowTexUnit);
+      shadowMap->setShadowTextureCoordIndex(gShadowTexUnit);
+      shadowMap->setShadowTextureUnit(gShadowTexUnit);
       shadowMap->setBaseTextureCoordIndex(baseTexUnit);
       shadowMap->setBaseTextureUnit(baseTexUnit);
       //shadowMap->setShadowVertexShader(shadowVertShader);
@@ -240,7 +248,8 @@ namespace dtRender
    osgShadow::ShadowTechnique* ShadowScene::GetSoftShadowMap(int shadowRes)
    {
       osgShadow::SoftShadowMap* shadowMap = new osgShadow::SoftShadowMap;
-      shadowMap->setTextureSize(osg::Vec2s(2048, 2048));
+      shadowMap->setTextureSize(osg::Vec2s(shadowRes, shadowRes));
+      shadowMap->setTextureUnit(gShadowTexUnit);
       shadowMap->setSoftnessWidth(1.0f);
 
       return shadowMap;
@@ -249,10 +258,11 @@ namespace dtRender
    osgShadow::ShadowTechnique* ShadowScene::GetParallelSplitShadowMap(int shadowRes)
    {
       osgShadow::ParallelSplitShadowMap* shadowMap = new osgShadow::ParallelSplitShadowMap(NULL, 3);
-      shadowMap->setTextureResolution(1024);
+      shadowMap->setTextureResolution(shadowRes);
       shadowMap->setMinNearDistanceForSplits(0.25);
       shadowMap->setMaxFarDistance(1024.0);
       shadowMap->setPolygonOffset(osg::Vec2(10.0f, 20.0f));
+
 
       return shadowMap;
    }

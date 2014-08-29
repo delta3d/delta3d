@@ -58,6 +58,9 @@ namespace dtRender
       static const dtCore::RefPtr<SceneType> MULTIPASS_SCENE;
 
       static const int TEXTURE_UNIT_PREDEPTH;
+      static const int TEXTURE_UNIT_REFLECTION;
+
+      static const std::string REFLECTION_TEXTURE_UNIFORM;
 
       static const std::string UNIFORM_NEAR_PLANE;
       static const std::string UNIFORM_FAR_PLANE;
@@ -111,8 +114,8 @@ namespace dtRender
       osgPPU::UnitDepthbufferBypass* GetPreDepthBufferBypass();
       const osgPPU::UnitDepthbufferBypass* GetPreDepthBufferBypass() const;
 
-      osgPPU::UnitDepthbufferBypass* GetDepthBufferBypass();
-      const osgPPU::UnitDepthbufferBypass* GetDepthBufferBypass() const;
+      osgPPU::UnitDepthbufferBypass* GetDepthBypass();
+      const osgPPU::UnitDepthbufferBypass* GetDepthBypass() const;
 
       osg::Camera* GetCamera();
       const osg::Camera* GetCamera() const;

@@ -18,63 +18,67 @@
 *
 * Bradley Anderegg
 */
-#ifndef DELTA_PPUSCENE_H
-#define DELTA_PPUSCENE_H
+#ifndef DELTA_VIDEOSCENE_H
+#define DELTA_VIDEOSCENE_H
 
-#include <dtRender/scenebase.h>
-
-#include <dtUtil/getsetmacros.h>
+#include <dtRender/ppuscene.h>
+#include <dtCore/baseactorobject.h>
 
 namespace osg
 {
    class Camera;
+   class Texture2D;
 }
 
 namespace osgPPU
 {
-   class Processor;
    class Unit;
 }
 
 namespace dtRender
 {
-   class PPUSceneImpl;
-
-   class DT_RENDER_EXPORT PPUScene : public SceneBase
+   class VideoSceneImpl;
+   class DT_RENDER_EXPORT VideoScene : public PPUScene
    {
    public:
-      typedef SceneBase BaseClass;
-      static const dtCore::RefPtr<SceneType> PPU_SCENE;
+      typedef PPUScene BaseClass;
+      static const dtCore::RefPtr<SceneType> VIDEO_SCENE;
 
    public:
-      PPUScene();
-      PPUScene(const SceneType& sceneId, const SceneEnum& defaultScene);
-
-      virtual ~PPUScene();
+      VideoScene();
+      virtual ~VideoScene();
       
-      virtual void CreateScene(SceneManager&, const GraphicsQuality&);
-
       virtual osg::Group* GetSceneNode();
       virtual const osg::Group* GetSceneNode() const;
 
-      osgPPU::Unit* GetFirstUnit();
-      const osgPPU::Unit* GetFirstUnit() const;
+      virtual void CreateScene(SceneManager&, const GraphicsQuality&);
 
-      osgPPU::Unit* GetLastUnit();
-      const osgPPU::Unit* GetLastUnit() const;
+      osg::Texture2D* GetOutputTexture();
+      const osg::Texture2D* GetOutputTexture() const;
 
-      DT_DECLARE_ACCESSOR_INLINE(bool, AddToRootPPUScene)
-      DT_DECLARE_ACCESSOR_INLINE(bool, AddToMultipassOutput)
-
-      
-   protected:
-      void SetFirstUnit(osgPPU::Unit&);
-      void SetLastUnit(osgPPU::Unit&);
+      DT_DECLARE_ACCESSOR_INLINE(std::string, VideoFile)
+      DT_DECLARE_ACCESSOR_INLINE(bool, Looping)
 
    private:
-      PPUSceneImpl* mImpl;
+      VideoSceneImpl* mImpl;
+   };
+
+   class DT_RENDER_EXPORT VideoSceneProxy : public dtCore::BaseActorObject
+   {
+   public:
+      typedef dtCore::BaseActorObject BaseClass;
+      VideoSceneProxy();
+
+      virtual void BuildPropertyMap();
+      virtual void CreateDrawable();
+
+      virtual bool IsPlaceable() const;
+
+   protected:
+      virtual ~VideoSceneProxy();
    };
 
 }
 
-#endif // DELTA_PPUSCENE_H
+#endif // DELTA_VIDEOSCENE_H
+

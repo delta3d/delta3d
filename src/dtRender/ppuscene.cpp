@@ -64,6 +64,8 @@ namespace dtRender
 
    PPUScene::PPUScene(const SceneType& sceneId, const SceneEnum& defaultScene)
       : BaseClass(sceneId, defaultScene)
+      , mAddToRootPPUScene(true)
+      , mAddToMultipassOutput(false)
       , mImpl(new PPUSceneImpl())
    {
       SetName("PPUScene");

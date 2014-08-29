@@ -17,9 +17,11 @@ uniform float WaterHeight;
 uniform float ReflectMode;
 uniform bool d3d_DepthOnlyPass = false;
 
-varying vec3 vNormal;
+
 varying vec3 vLightDir;
 varying vec3 vLightDir2;
+varying vec3 vNormal;
+varying vec3 vLocalPos;
 varying vec3 vPos;
 varying vec3 vWorldNormal;
 varying vec3 vCamera;
@@ -40,10 +42,13 @@ vec3 GetWaterColorAtDepth(float);
 float SampleShadowTexture();
 float computeFragDepth(float);
 
+uniform mat4 osg_ViewMatrixInverse;
 
 void main(void)
 {
-   float altitude = ReflectMode * vPos.z * AltitudeScale;
+   vec3 model = mat3(osg_ViewMatrixInverse) * vec3(vViewPos.xyz);
+   vec3 upDir = normalize(model.xyz);
+   float altitude = vLocalPos.z;   
 
    if(altitude < WaterHeight)
    {
@@ -68,7 +73,7 @@ void main(void)
    }
      
 
-   float NdUp = dot(vNormal, vec3(0,0,1));
+   float NdUp = dot(vNormal, upDir);
    
    // Red verts mark a path/road.
    float roadRatio = 1.0 - gl_Color.g * gl_Color.b * 0.5;
@@ -233,7 +238,5 @@ void main(void)
 
    result = mix(fogColor, result, fogAmt);
 
-   gl_FragColor = vec4(result, 1.0);
-   //gl_FragColor = vec4(gl_Color.rgb, 1.0);
-   //gl_FragColor = vec4(baseColor.rgb, 1.0);
+   gl_FragColor = vec4(result.rgb, 1.0);
 }
