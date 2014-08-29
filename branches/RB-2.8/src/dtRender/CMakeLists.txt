@@ -18,7 +18,6 @@ set(LIB_SOURCES
       graphicsquality.cpp
       guiscene.cpp
       hdrscene.cpp
-      lightscene.cpp
       multipassscene.cpp
       oceanscene.cpp
       ppuscene.cpp
