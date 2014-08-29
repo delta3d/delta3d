@@ -20,7 +20,7 @@ int main(int argc, char *argv[])
    mViewer->Config();
 
    win.SetViewer(mViewer.get());
-   win.OnConfiged();
+   win.OnInitialization();
    win.show();
 
    //create a little class to ensure Delta3D performs Window "steps"
