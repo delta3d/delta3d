@@ -498,9 +498,7 @@ namespace dtExample
          std::string filename = dtUtil::FindFileInPathList(fileToLoad);
          if (!filename.empty())
          {
-            dtPhysics::PhysicsReaderWriter::PhysicsTriangleData data;
-            data.mFaces = new osg::UIntArray();
-            data.mMaterialFlags = new osg::UIntArray();
+            dtPhysics::PhysicsReaderWriter::PhysicsTriangleData data;            
             data.mVertices = new osg::Vec3Array();
 
             if (dtPhysics::PhysicsReaderWriter::LoadTriangleDataFile(data, fileToLoad))
@@ -514,8 +512,8 @@ namespace dtExample
                newTile->SetPrimitiveType(dtPhysics::PrimitiveType::TERRAIN_MESH);
                
                dtPhysics::VertexData vertData;
-               vertData.mIndices = &(data.mFaces->at(0));
-               vertData.mNumIndices = data.mFaces->size();
+               vertData.mIndices = &(data.mFaces.at(0));
+               vertData.mNumIndices = data.mFaces.size();
                vertData.mVertices = &(data.mVertices->at(0)[0]);
                vertData.mNumVertices = data.mVertices->size();
 
