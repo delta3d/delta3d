@@ -135,7 +135,7 @@ vec4 computeMultiMapColor(MapParams mp, out FragParams fp, out EffectParams ep)
    // Don't apply specular greater than the light contrib or objects will glow in the dark...
    float specLevel = ep.specContrib.a;
    ep.specContrib.rgb = ep.lightContrib * specColor.rgb * specLevel;
-   ep.illumContrib += fp.sceneLuminance * illumColor.rgb;
+   ep.illumContrib.rgb += fp.sceneLuminance * illumColor.rgb;
    color += min(ep.specContrib.rgb, ep.lightContrib.rgb) + illumColor.rgb;
    
    // Apply Fog 
