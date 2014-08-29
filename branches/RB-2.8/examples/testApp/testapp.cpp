@@ -37,6 +37,7 @@
 #include <dtCore/project.h>
 #include <dtCore/projectconfig.h>
 #include <dtCore/refptr.h>
+#include <dtAnim/animationcomponent.h>
 #include <dtGame/binarylogstream.h>
 #include <dtGame/defaultmessageprocessor.h>
 #include <dtGame/exceptionenum.h>
@@ -241,6 +242,9 @@ void TestApp::OnStartup(dtABC::BaseABC& app, dtGame::GameManager& gameManager)
    }
    dtCore::RefPtr<dtPhysics::PhysicsComponent> physicsComponent = new dtPhysics::PhysicsComponent(dtPhysics::PhysicsWorld::GetInstance(), false);
    gameManager.AddComponent(*physicsComponent, dtGame::GameManager::ComponentPriority::NORMAL);
+
+   dtCore::RefPtr<dtAnim::AnimationComponent> animComponent = new dtAnim::AnimationComponent;
+   gameManager.AddComponent(*animComponent, dtGame::GameManager::ComponentPriority::NORMAL);
 
    //setup camera
    //double vfov, aspect, nearClip, farClip;
