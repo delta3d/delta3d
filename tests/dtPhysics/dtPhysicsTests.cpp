@@ -1759,19 +1759,17 @@ namespace dtPhysics
    {
 
       dtPhysics::PhysicsReaderWriter::PhysicsTriangleData data;
-      data.mFaces = new osg::UIntArray();
-      data.mMaterialFlags = new osg::UIntArray();
       data.mVertices = new osg::Vec3Array();
       
       unsigned i = 0;
       for(; i < 100; ++i)
       {
-         data.mFaces->push_back(i);
+         data.mFaces.push_back(i);
       }
 
       for(;i < 200; ++i)
       {
-         data.mMaterialFlags->push_back(i);
+         data.mMaterialFlags.push_back(i);
       }
 
       for(;i < 300; ++i)
@@ -1782,20 +1780,20 @@ namespace dtPhysics
       std::string filename("temp_dtPhysicsTests.phys");
       dtPhysics::PhysicsReaderWriter::SaveTriangleDataFile(data, filename);
 
-      data.mFaces->clear();
-      data.mMaterialFlags->clear();
+      data.mFaces.clear();
+      data.mMaterialFlags.clear();
       data.mVertices->clear();
 
       dtPhysics::PhysicsReaderWriter::LoadTriangleDataFile(data, filename);
 
       for(i = 0; i < 100; ++i)
       {         
-         CPPUNIT_ASSERT_EQUAL(i, data.mFaces->at(i));
+         CPPUNIT_ASSERT_EQUAL(i, data.mFaces.at(i));
       }
 
       for(;i < 200; ++i)
       {
-         CPPUNIT_ASSERT_EQUAL(i, data.mMaterialFlags->at(i - 100));
+         CPPUNIT_ASSERT_EQUAL(i, data.mMaterialFlags.at(i - 100));
       }
 
       for(;i < 300; ++i)

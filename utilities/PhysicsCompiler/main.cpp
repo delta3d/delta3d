@@ -367,11 +367,11 @@ void CookPhysicsFromNode(osg::Node* node, float maxPerMesh)
       if ( materialName.empty() ) materialName = "_default_";
 
       //if we have too much geometry break it into multiple pieces
-      if(mv.mFunctor.mData.mFaces->size() > maxPerMesh)
+      if(mv.mFunctor.mData.mFaces.size() > maxPerMesh)
       {
-         int exportCount = 1 + (mv.mFunctor.mData.mFaces->size() / maxPerMesh);
+         int exportCount = 1 + (mv.mFunctor.mData.mFaces.size() / maxPerMesh);
          std::cout << "Splitting material \"" << materialName << "\" into " << exportCount
-                   << " pieces because it contains " << mv.mFunctor.mData.mFaces->size()
+                   << " pieces because it contains " << mv.mFunctor.mData.mFaces.size()
                    << " triangles, which exceeds the maximum size." << std::endl;
 
          GeodeCounter gc;
@@ -390,7 +390,7 @@ void CookPhysicsFromNode(osg::Node* node, float maxPerMesh)
 
             node->accept(mv2);
 
-            if ( mv2.mFunctor.mData.mFaces->empty() )
+            if ( mv2.mFunctor.mData.mFaces.empty() )
             {
                 std::cout << std::endl << "Finished material: " << materialName << " with " << i << " files." << std::endl;
                 break;
@@ -410,7 +410,7 @@ void CookPhysicsFromNode(osg::Node* node, float maxPerMesh)
       {
          std::string fileWithPath = GlobalApp->GetDirectory() + "/" + GlobalApp->GetFilePrefix() + materialName + ".dtphys";
          std::cout << std::endl << "Cooking mesh for material name \"" << materialName << "\", with full path \"" << fileWithPath << "\"." << std::endl;
-         if (mv.mFunctor.mData.mFaces->empty() || !CookMesh(mv.mFunctor, fileWithPath))
+         if (mv.mFunctor.mData.mFaces.empty() || !CookMesh(mv.mFunctor, fileWithPath))
          {
             std::cout << std::endl << "Error cooking mesh for material: " << materialName << std::endl;
          }
