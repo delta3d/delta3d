@@ -257,7 +257,7 @@ namespace dtPhysics
                   {
                      unsigned face = 0;
                      ds.Read(face);
-                     triangleData.mFaces->push_back(face);
+                     triangleData.mFaces.push_back(face);
                   }
                }
 
@@ -268,7 +268,7 @@ namespace dtPhysics
                   {
                      unsigned materialID = 0;
                      ds.Read(materialID);
-                     triangleData.mMaterialFlags->push_back(materialID);
+                     triangleData.mMaterialFlags.push_back(materialID);
                   }
                }
 
@@ -347,10 +347,10 @@ namespace dtPhysics
       }
 
       //triangle data
-      ds.Write(unsigned(triangleData.mFaces->size()));
+      ds.Write(unsigned(triangleData.mFaces.size()));
       {
-         osg::UIntArray::const_iterator iter = triangleData.mFaces->begin();
-         osg::UIntArray::const_iterator iterEnd = triangleData.mFaces->end();
+         osg::UIntArray::const_iterator iter = triangleData.mFaces.begin();
+         osg::UIntArray::const_iterator iterEnd = triangleData.mFaces.end();
          for(;iter != iterEnd; ++iter)
          {
             ds.Write(*iter);
@@ -358,10 +358,10 @@ namespace dtPhysics
       }
 
       //material data
-      ds.Write(unsigned(triangleData.mMaterialFlags->size()));
+      ds.Write(unsigned(triangleData.mMaterialFlags.size()));
       {
-         osg::UIntArray::const_iterator iter = triangleData.mMaterialFlags->begin();
-         osg::UIntArray::const_iterator iterEnd = triangleData.mMaterialFlags->end();
+         osg::UIntArray::const_iterator iter = triangleData.mMaterialFlags.begin();
+         osg::UIntArray::const_iterator iterEnd = triangleData.mMaterialFlags.end();
          for(;iter != iterEnd; ++iter)
          {
             ds.Write(*iter);

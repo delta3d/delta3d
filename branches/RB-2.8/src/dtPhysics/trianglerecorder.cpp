@@ -18,8 +18,8 @@ namespace dtPhysics
    , mMatrixIsIdentity()
    {
       mData.mVertices = new osg::Vec3Array();
-      mData.mFaces = new osg::UIntArray();
-      mData.mMaterialFlags = new osg::UIntArray();
+      //mData.mFaces = new osg::UIntArray();
+      //mData.mMaterialFlags = new osg::UIntArray();
    }
 
    //////////////////////////////////////////////////////
@@ -177,11 +177,11 @@ namespace dtPhysics
                   mData.mVertices->push_back(mTriangles[i].mV[j]);
                   mVertIndexSet.insert(std::make_pair(mTriangles[i].mV[j], indices[j]));
                }
-               mData.mFaces->push_back(indices[j]);
+               mData.mFaces.push_back(indices[j]);
             }
          }
 
-         mData.mMaterialFlags->push_back(mCurrentMaterial);
+         mData.mMaterialFlags.push_back(mCurrentMaterial);
       }
       else
       {

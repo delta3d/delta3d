@@ -41,8 +41,8 @@ namespace dtPhysics
          struct DT_PHYSICS_EXPORT PhysicsTriangleData
          {
             dtCore::RefPtr<osg::Vec3Array> mVertices;
-            dtCore::RefPtr<osg::UIntArray> mFaces;
-            dtCore::RefPtr<osg::UIntArray> mMaterialFlags;
+            std::vector <unsigned int> mFaces;
+            std::vector <unsigned int> mMaterialFlags;
          };
 
       public:

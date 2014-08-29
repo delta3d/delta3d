@@ -263,15 +263,15 @@ namespace dtPhysics
          TriangleRecorder tr;
          tr.Record(nodeToParse);
 
-         if (tr.mData.mVertices->empty() || tr.mData.mFaces->empty())
+         if (tr.mData.mVertices->empty() || tr.mData.mFaces.empty())
          {
             throw dtUtil::Exception("Unable to create convex mesh, no vertex data was found when traversing the osg Node.", __FILE__, __LINE__);
          }
 
          VertexData triangleData;
-         triangleData.mNumIndices = tr.mData.mFaces->size();
+         triangleData.mNumIndices = tr.mData.mFaces.size();
          triangleData.mNumVertices = tr.mData.mVertices->size();
-         triangleData.mIndices = &tr.mData.mFaces->front();
+         triangleData.mIndices = &tr.mData.mFaces.front();
          triangleData.mVertices = reinterpret_cast<Real*>(&tr.mData.mVertices->front());
 
          ConvexHull hull(triangleData, 100);
@@ -325,15 +325,15 @@ namespace dtPhysics
    {
       TriangleRecorder tr;
       tr.Record(nodeToParse);
-      if (tr.mData.mVertices->empty() || tr.mData.mFaces->empty())
+      if (tr.mData.mVertices->empty() || tr.mData.mFaces.empty())
       {
          throw dtUtil::Exception("Unable to create concave mesh, no vertex data was found when traversing the osg Node.", __FILE__, __LINE__);
       }
       VertexData data;
-      data.mNumIndices = tr.mData.mFaces->size();
+      data.mNumIndices = tr.mData.mFaces.size();
       data.mNumVertices = tr.mData.mVertices->size();
       // TODO must copy the data in order to cache it.
-      data.mIndices = &tr.mData.mFaces->front();
+      data.mIndices = &tr.mData.mFaces.front();
       data.mVertices = reinterpret_cast<Real*>(&tr.mData.mVertices->front());
       return CreateConcaveGeometry(worldxform, data, mass);
    }
