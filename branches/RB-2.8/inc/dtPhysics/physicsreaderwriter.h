@@ -38,13 +38,12 @@ namespace dtPhysics
    class DT_PHYSICS_EXPORT PhysicsReaderWriter
    {
       public:
-         struct PhysicsTriangleData
+         struct DT_PHYSICS_EXPORT PhysicsTriangleData
          {
             dtCore::RefPtr<osg::Vec3Array> mVertices;
             dtCore::RefPtr<osg::UIntArray> mFaces;
             dtCore::RefPtr<osg::UIntArray> mMaterialFlags;
          };
-
 
       public:
 
