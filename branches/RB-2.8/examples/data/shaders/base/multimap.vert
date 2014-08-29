@@ -1,10 +1,12 @@
 #version 120
 
-//attribute vec4 tangentAttrib;
+attribute vec4 tangentAttrib;
 
 varying vec3 vLightDir;
 varying vec3 vLightDir2;
 varying vec3 vNormal;
+varying vec3 vTangent;
+varying vec3 vBitangent;
 varying vec3 vPos;
 varying vec3 vCamera;
 varying vec2 vReflectTexCoord;
@@ -30,6 +32,8 @@ void main()
    vCamera = osg_ViewMatrixInverse[3].xyz;
    
    vNormal = inverseView3x3 * gl_NormalMatrix * gl_Normal;
+   vTangent = normalize(inverseView3x3 * gl_NormalMatrix * tangentAttrib.xyz);
+   vBitangent = normalize(cross(vNormal, vTangent));
 
    vLightDir = normalize(inverseView3x3 * gl_LightSource[0].position.xyz);
    vLightDir2 = normalize(inverseView3x3 * gl_LightSource[1].position.xyz);

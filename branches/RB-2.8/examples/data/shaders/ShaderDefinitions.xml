@@ -96,7 +96,7 @@
             </texture2D>
          </parameter>
          <parameter name="specularTexture">
-            <texture2D textureUnit="4">
+            <texture2D textureUnit="1">
                <source type="Image">textures/ShaderBase/NONE.png</source>
             </texture2D>
          </parameter>
@@ -106,7 +106,7 @@
             </texture2D>
          </parameter>
          <parameter name="normalTexture">
-            <texture2D textureUnit="1">
+            <texture2D textureUnit="4">
                <source type="Image">textures/ShaderBase/NONE_NORM.png</source>
             </texture2D>
          </parameter>

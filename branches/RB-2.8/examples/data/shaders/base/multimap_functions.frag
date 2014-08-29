@@ -104,10 +104,11 @@ vec4 computeMultiMapColor(MapParams mp, out FragParams fp, out EffectParams ep)
    vec4 specColor = mp.specular;
    vec4 illumColor = mp.illum;
    
-   mat3 tbn;
-   fp.worldNormal = computeWorldSpaceNormal(fp.pos, normalize(fp.normal), normalize(normalColor.rgb), uv, fp.tbn);
-   //fp.worldNormal = normalize((2.0 * normalize(normalColor.rgb)) - vec3(1.0, 1.0, 1.0));
-   //fp.worldNormal = normalize(fp.tbn * fp.worldNormal);
+   //mat3 tbn;
+   //fp.worldNormal = computeWorldSpaceNormal(fp.pos, normalize(fp.normal), normalize(normalColor.rgb), uv, fp.tbn);
+   
+   fp.worldNormal = normalize((2.0 * normalize(normalColor.rgb)) - vec3(1.0, 1.0, 1.0));
+   fp.worldNormal = normalize(fp.tbn * fp.worldNormal);
 
    // Normalize all incoming vectors 
    vec3 viewDir = normalize(fp.viewDir);
