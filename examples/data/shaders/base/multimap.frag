@@ -9,6 +9,8 @@ uniform sampler2D alphaTexture;
 uniform float d3d_SceneLuminance; // = 1.0;
 
 varying vec3 vNormal;
+varying vec3 vTangent;
+varying vec3 vBitangent;
 varying vec3 vLightDir;
 varying vec3 vLightDir2;
 varying vec3 vPos;
@@ -83,6 +85,9 @@ void main(void)
    f.cameraPos = vCamera;
    f.color = gl_Color;
    f.sceneLuminance = d3d_SceneLuminance;
+   f.tbn[0] = normalize(vTangent);
+   f.tbn[1] = normalize(vBitangent);
+   f.tbn[2] = f.normal;
    
    EffectParams e;
    e.lightContrib = zeroVec.rgb;
@@ -100,7 +105,7 @@ void main(void)
    m.normal.rgb = normalize(texture2D(normalTexture, uv).rgb);
    m.irradiance = vec4(0,0,0,0);
    
-   vec4 result = computeMultiMapColor(m, f, e);
+   computeMultiMapColor(m, f, e);
    
    // DEBUG:
    vec3 oneVec = vec3(1,1,1);
@@ -130,6 +135,6 @@ void main(void)
    //gl_FragColor = vec4(f.viewDir,1.0);
    //gl_FragColor = vec4(gl_Color.rgb,1.0);
    
-   //result = combineEffects(e);
+   vec4 result = combineEffects(e);
    gl_FragColor = result;
 }
