@@ -43,7 +43,9 @@ namespace dtPhysics
    const dtUtil::RefString PhysicsActComp::PROPERTY_PHYSICS_MASS("Physics Mass");
    const dtUtil::RefString PhysicsActComp::PROPERTY_PHYSICS_DIMENSIONS("Physics Dimensions");
    const dtUtil::RefString PhysicsActComp::PROPERTY_COLLISION_GROUP("Default Collision Group");
+   const dtUtil::RefString PhysicsActComp::PROPERTY_AUTO_CREATE("Auto-Create Physics Objects");
    const dtUtil::RefString PhysicsActComp::PROPERTY_MATERIAL_ACTOR("Material Actor");
+
 
    /////////////////////////////////////////////////////////////////////////////
    class PhysicsActCompAction : public Action
@@ -219,9 +221,9 @@ namespace dtPhysics
 
       static const dtUtil::RefString PROPERTY_PHYSICS_AUTO_CREATE("Creates and initializes all the physics objects as configured when "
             "the actor enters the world.");
-      AddProperty(new dtCore::BooleanActorProperty(PROPERTY_COLLISION_GROUP, PROPERTY_COLLISION_GROUP,
-               dtCore::BooleanActorProperty::SetFuncType(this, &PhysicsActComp::SetDefaultCollisionGroup),
-               dtCore::BooleanActorProperty::GetFuncType(this, &PhysicsActComp::GetDefaultCollisionGroup),
+      AddProperty(new dtCore::BooleanActorProperty(PROPERTY_AUTO_CREATE, PROPERTY_AUTO_CREATE,
+               dtCore::BooleanActorProperty::SetFuncType(this, &PhysicsActComp::SetAutoCreateOnEnteringWorld),
+               dtCore::BooleanActorProperty::GetFuncType(this, &PhysicsActComp::GetAutoCreateOnEnteringWorld),
                PROPERTY_PHYSICS_COLLISION_GROUP_DESC, GROUP));
 
       std::vector<dtCore::RefPtr<dtCore::ActorProperty> > physicsObjectProps;
