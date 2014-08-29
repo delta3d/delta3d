@@ -18,58 +18,67 @@
 *
 * Bradley Anderegg
 */
-#ifndef DELTA_HDRSCENE_H
-#define DELTA_HDRSCENE_H
+#ifndef DELTA_CUBEMAPSCENE_H
+#define DELTA_CUBEMAPSCENE_H
 
 #include <dtRender/ppuscene.h>
 
 #include <dtCore/baseactorobject.h>
 
+#include <osg/Vec4>
+
 namespace osg
 {
    class Camera;
+   class TextureCubeMap;
 }
 
 namespace osgPPU
 {
    class Unit;
-   class UnitBypass;
 }
 
 namespace dtRender
 {
-   
-   class DT_RENDER_EXPORT HDRScene : public PPUScene
+   class CubemapSceneImpl;
+   class DT_RENDER_EXPORT CubeMapScene : public PPUScene
    {
    public:
       typedef PPUScene BaseClass;
-      static const dtCore::RefPtr<SceneType> HDR_SCENE;
+      static const dtCore::RefPtr<SceneType> CUBEMAP_SCENE;
 
    public:
-      HDRScene();
-      virtual ~HDRScene();
+      CubeMapScene();
+      virtual ~CubeMapScene();
       
+      virtual osg::Group* GetSceneNode();
+      virtual const osg::Group* GetSceneNode() const;
+
       virtual void CreateScene(SceneManager&, const GraphicsQuality&);
 
-      DT_DECLARE_ACCESSOR_INLINE(float, MidGrey)
-      DT_DECLARE_ACCESSOR_INLINE(float, HDRBlurSigma)
-      DT_DECLARE_ACCESSOR_INLINE(float, HDRBlurRadius)
-      DT_DECLARE_ACCESSOR_INLINE(float, GlareFactor)
-      DT_DECLARE_ACCESSOR_INLINE(float, AdaptFactor)
-      DT_DECLARE_ACCESSOR_INLINE(float, MinLuminance)
-      DT_DECLARE_ACCESSOR_INLINE(float, MaxLuminance)
+      osg::TextureCubeMap* GetCubeMap();
+      const osg::TextureCubeMap* GetCubeMap() const;
 
-   protected:
-      void CreateHDRPipeline(osgPPU::UnitBypass* bypass, osgPPU::Unit* resample);
+      DT_DECLARE_ACCESSOR_INLINE(int, TexWidth)
+      DT_DECLARE_ACCESSOR_INLINE(int, TexHeight)
+      
+      DT_DECLARE_ACCESSOR_INLINE(int, NearPlane)
+      DT_DECLARE_ACCESSOR_INLINE(int, FarPlane)
+      DT_DECLARE_ACCESSOR_INLINE(bool, ShowCubeMap)
+
+      DT_DECLARE_ACCESSOR_INLINE(osg::Vec4, ClearColor)
+
 
    private:
+
+      CubemapSceneImpl* mImpl;
    };
 
-   class DT_RENDER_EXPORT HDRSceneProxy : public dtCore::BaseActorObject
+   class DT_RENDER_EXPORT CubeMapSceneProxy : public dtCore::BaseActorObject
    {
    public:
       typedef dtCore::BaseActorObject BaseClass;
-      HDRSceneProxy();
+      CubeMapSceneProxy();
 
       virtual void BuildPropertyMap();
       virtual void CreateDrawable();
@@ -77,9 +86,9 @@ namespace dtRender
       virtual bool IsPlaceable() const;
 
    protected:
-      virtual ~HDRSceneProxy();
+      virtual ~CubeMapSceneProxy();
    };
 
 }
 
-#endif // DELTA_HDRSCENE_H
+#endif // DELTA_CUBEMAPSCENE_H

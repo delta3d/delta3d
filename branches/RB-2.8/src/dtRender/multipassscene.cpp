@@ -50,11 +50,17 @@
 
 namespace dtRender
 {
+   const int MultipassScene::TEXTURE_UNIT_PREDEPTH = 6;
+
+   const int MultipassScene::TEXTURE_UNIT_REFLECTION = 7;
+
+   const std::string MultipassScene::REFLECTION_TEXTURE_UNIFORM("d3d_ReflectionCubeMap");
+
    const std::string MultipassScene::UNIFORM_DEPTH_ONLY_PASS("d3d_DepthOnlyPass");
    const std::string MultipassScene::UNIFORM_NEAR_PLANE("d3d_NearPlane");
    const std::string MultipassScene::UNIFORM_FAR_PLANE("d3d_FarPlane");
    const std::string MultipassScene::UNIFORM_PREDEPTH_TEXTURE("d3d_PreDepthTexture");
-   const int MultipassScene::TEXTURE_UNIT_PREDEPTH = 5;
+
 
    class UpdateUniformsCallback : public osg::NodeCallback
    {
@@ -71,7 +77,6 @@ namespace dtRender
          // first update subgraph to make sure objects are all moved into postion
          traverse(node,nv);
 
-         //debug
          osg::StateSet* ss = mSceneNode->getOrCreateStateSet();
 
          double fovy, aspect, near, far;
@@ -185,10 +190,10 @@ namespace dtRender
          , mEnableColorBypass(true)
          , mEnableResampleColor(false)
          , mDepthImageFormat(GL_DEPTH_COMPONENT)
-         , mEnableDepthBypass(false)
+         , mEnableDepthBypass(true)
          , mPreDepthImageFormat(GL_DEPTH_COMPONENT32)
          , mEnablePreDepthPass(true)
-         , mResampleColorFactor(0.25)
+         , mResampleColorFactor(0.5)
       {
          
 
@@ -298,7 +303,7 @@ namespace dtRender
          
          GetSceneNode()->setNodeMask(dtUtil::NodeMask::MULTIPASS);
          
-         mainSceneOSGCamera->setCullMask(dtUtil::CullMask::MAIN_CAMERA_MULTIPASS ^ dtUtil::NodeMask::FOREGROUND);
+         mainSceneOSGCamera->setCullMask(dtUtil::CullMask::MAIN_CAMERA_MULTIPASS);
          multiPassOSGCam->setCullMask(dtUtil::CullMask::ADDITIONAL_CAMERA_MULTIPASS);
          
          //keep the multipass camera in synch with the main camera
@@ -394,7 +399,7 @@ namespace dtRender
             SetLastUnit(*mImpl->mResampleColor);
          }
 
-         GetLastUnit()->addChild(GetUnitOut());
+         mImpl->mColorBypass->addChild(GetUnitOut());
          //GetPreDepthBufferBypass()->addChild(GetUnitOut());
 
          //finally add the camera as a child to the main camera
@@ -416,8 +421,19 @@ namespace dtRender
          osgPPU::Processor* proc = GetPPUProcessor();
          if(proc != NULL)
          {
-            //proc->addChild(ppu->GetFirstUnit());
-            GetLastUnit()->addChild(ppu->GetFirstUnit());
+            if(ppu->GetAddToRootPPUScene())
+            {
+               proc->addChild(ppu->GetSceneNode());
+            }
+            else if(ppu->GetAddToMultipassOutput())
+            {
+               GetLastUnit()->addChild(ppu->GetSceneNode());
+            }
+            else
+            {
+               LOG_ERROR("PPU not added to scene no add method specified");
+            }
+
             SceneGroup::GetChildArray().push_back(&sb);
             return DeltaDrawable::AddChild(&sb);
          }
@@ -555,12 +571,12 @@ namespace dtRender
       mImpl->mDepthImageFormat = e;
    }
 
-   osgPPU::UnitDepthbufferBypass* MultipassScene::GetDepthBufferBypass()
+   osgPPU::UnitDepthbufferBypass* MultipassScene::GetDepthBypass()
    {
       return mImpl->mDepthBufferBypass;
    }
 
-   const osgPPU::UnitDepthbufferBypass* MultipassScene::GetDepthBufferBypass() const
+   const osgPPU::UnitDepthbufferBypass* MultipassScene::GetDepthBypass() const
    {
       return mImpl->mDepthBufferBypass;
    }

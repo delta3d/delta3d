@@ -58,7 +58,7 @@ namespace dtActors
       if(mipMap)
       {
          tex->setFilter(osg::Texture2D::MIN_FILTER,osg::Texture2D::LINEAR_MIPMAP_LINEAR);
-         tex->setFilter(osg::Texture2D::MAG_FILTER,osg::Texture2D::LINEAR_MIPMAP_LINEAR);
+         tex->setFilter(osg::Texture2D::MAG_FILTER,osg::Texture2D::LINEAR);
          tex->setUseHardwareMipMapGeneration(true);
       }
       else

@@ -10,13 +10,19 @@ file(GLOB LIB_PUBLIC_HEADERS
    )
 
 set(LIB_SOURCES 
+      cubemapscene.cpp
       dtrenderactorregistry.cpp
+      dofscene.cpp
       ephemerisscene.cpp
+      glowscene.cpp
       graphicsquality.cpp
       guiscene.cpp
       hdrscene.cpp
+      lightscene.cpp
       multipassscene.cpp
+      oceanscene.cpp
       ppuscene.cpp
+      ssaoscene.cpp
       scenebase.cpp
       sceneenum.cpp
       scenegroup.cpp
@@ -24,7 +30,7 @@ set(LIB_SOURCES
       scenetype.cpp
       shadowscene.cpp
       simplescene.cpp
-      oceanscene.cpp
+      videoscene.cpp
 )
 
 SET(LIB_DEPS 

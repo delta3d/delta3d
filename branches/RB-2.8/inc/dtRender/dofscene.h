@@ -18,11 +18,11 @@
 *
 * Bradley Anderegg
 */
-#ifndef DELTA_HDRSCENE_H
-#define DELTA_HDRSCENE_H
+#ifndef DELTA_DOFSCENE_H
+#define DELTA_DOFSCENE_H
 
 #include <dtRender/ppuscene.h>
-
+#include <dtUtil/getsetmacros.h>
 #include <dtCore/baseactorobject.h>
 
 namespace osg
@@ -35,41 +35,41 @@ namespace osgPPU
    class Unit;
    class UnitBypass;
 }
-
+ 
 namespace dtRender
 {
    
-   class DT_RENDER_EXPORT HDRScene : public PPUScene
+   class DT_RENDER_EXPORT DOFScene : public PPUScene
    {
    public:
       typedef PPUScene BaseClass;
-      static const dtCore::RefPtr<SceneType> HDR_SCENE;
+      static const dtCore::RefPtr<SceneType> DOF_SCENE;
 
    public:
-      HDRScene();
-      virtual ~HDRScene();
-      
+      DOFScene();
+      virtual ~DOFScene();
+
       virtual void CreateScene(SceneManager&, const GraphicsQuality&);
 
-      DT_DECLARE_ACCESSOR_INLINE(float, MidGrey)
-      DT_DECLARE_ACCESSOR_INLINE(float, HDRBlurSigma)
-      DT_DECLARE_ACCESSOR_INLINE(float, HDRBlurRadius)
-      DT_DECLARE_ACCESSOR_INLINE(float, GlareFactor)
-      DT_DECLARE_ACCESSOR_INLINE(float, AdaptFactor)
-      DT_DECLARE_ACCESSOR_INLINE(float, MinLuminance)
-      DT_DECLARE_ACCESSOR_INLINE(float, MaxLuminance)
+      
+      DT_DECLARE_ACCESSOR_INLINE(float, FocalLength)
+      DT_DECLARE_ACCESSOR_INLINE(float, FocalRange)
+      DT_DECLARE_ACCESSOR_INLINE(float, ZNear)
+      DT_DECLARE_ACCESSOR_INLINE(float, ZFar)
+      DT_DECLARE_ACCESSOR_INLINE(float, GaussSigma)
+      DT_DECLARE_ACCESSOR_INLINE(float, GaussRadius)
 
    protected:
-      void CreateHDRPipeline(osgPPU::UnitBypass* bypass, osgPPU::Unit* resample);
+      void CreateDOFPipeline(osgPPU::UnitBypass* bypass, osgPPU::UnitBypass* depthbypass, osgPPU::Unit* resampleLight);
 
    private:
    };
 
-   class DT_RENDER_EXPORT HDRSceneProxy : public dtCore::BaseActorObject
+   class DT_RENDER_EXPORT DOFSceneProxy : public dtCore::BaseActorObject
    {
    public:
       typedef dtCore::BaseActorObject BaseClass;
-      HDRSceneProxy();
+      DOFSceneProxy();
 
       virtual void BuildPropertyMap();
       virtual void CreateDrawable();
@@ -77,9 +77,9 @@ namespace dtRender
       virtual bool IsPlaceable() const;
 
    protected:
-      virtual ~HDRSceneProxy();
+      virtual ~DOFSceneProxy();
    };
 
 }
 
-#endif // DELTA_HDRSCENE_H
+#endif // DELTA_DOFSCENE_H

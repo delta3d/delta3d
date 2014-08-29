@@ -18,12 +18,12 @@
 *
 * Bradley Anderegg
 */
-#ifndef DELTA_PPUSCENE_H
-#define DELTA_PPUSCENE_H
+#ifndef DELTA_GLOWSCENE_H
+#define DELTA_GLOWSCENE_H
 
-#include <dtRender/scenebase.h>
+#include <dtRender/ppuscene.h>
 
-#include <dtUtil/getsetmacros.h>
+#include <dtCore/baseactorobject.h>
 
 namespace osg
 {
@@ -38,43 +38,41 @@ namespace osgPPU
 
 namespace dtRender
 {
-   class PPUSceneImpl;
-
-   class DT_RENDER_EXPORT PPUScene : public SceneBase
+   
+   class DT_RENDER_EXPORT GlowScene : public PPUScene
    {
    public:
-      typedef SceneBase BaseClass;
-      static const dtCore::RefPtr<SceneType> PPU_SCENE;
+      typedef PPUScene BaseClass;
+      static const dtCore::RefPtr<SceneType> GLOW_SCENE;
 
    public:
-      PPUScene();
-      PPUScene(const SceneType& sceneId, const SceneEnum& defaultScene);
-
-      virtual ~PPUScene();
+      GlowScene();
+      virtual ~GlowScene();
       
-      virtual void CreateScene(SceneManager&, const GraphicsQuality&);
-
       virtual osg::Group* GetSceneNode();
       virtual const osg::Group* GetSceneNode() const;
 
-      osgPPU::Unit* GetFirstUnit();
-      const osgPPU::Unit* GetFirstUnit() const;
-
-      osgPPU::Unit* GetLastUnit();
-      const osgPPU::Unit* GetLastUnit() const;
-
-      DT_DECLARE_ACCESSOR_INLINE(bool, AddToRootPPUScene)
-      DT_DECLARE_ACCESSOR_INLINE(bool, AddToMultipassOutput)
-
-      
-   protected:
-      void SetFirstUnit(osgPPU::Unit&);
-      void SetLastUnit(osgPPU::Unit&);
+      virtual void CreateScene(SceneManager&, const GraphicsQuality&);
 
    private:
-      PPUSceneImpl* mImpl;
+      dtCore::RefPtr<osg::Group> mRootNode;
+   };
+
+   class DT_RENDER_EXPORT GlowSceneProxy : public dtCore::BaseActorObject
+   {
+   public:
+      typedef dtCore::BaseActorObject BaseClass;
+      GlowSceneProxy();
+
+      virtual void BuildPropertyMap();
+      virtual void CreateDrawable();
+
+      virtual bool IsPlaceable() const;
+
+   protected:
+      virtual ~GlowSceneProxy();
    };
 
 }
 
-#endif // DELTA_PPUSCENE_H
+#endif // DELTA_GLOWSCENE_H

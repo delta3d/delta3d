@@ -18,12 +18,12 @@
 *
 * Bradley Anderegg
 */
-#ifndef DELTA_PPUSCENE_H
-#define DELTA_PPUSCENE_H
+#ifndef DELTA_SSAOSCENE_H
+#define DELTA_SSAOSCENE_H
 
-#include <dtRender/scenebase.h>
+#include <dtRender/ppuscene.h>
 
-#include <dtUtil/getsetmacros.h>
+#include <dtCore/baseactorobject.h>
 
 namespace osg
 {
@@ -32,49 +32,51 @@ namespace osg
 
 namespace osgPPU
 {
-   class Processor;
    class Unit;
+   class UnitBypass;
 }
 
 namespace dtRender
 {
-   class PPUSceneImpl;
-
-   class DT_RENDER_EXPORT PPUScene : public SceneBase
+   
+   class DT_RENDER_EXPORT SSAOScene : public PPUScene
    {
    public:
-      typedef SceneBase BaseClass;
-      static const dtCore::RefPtr<SceneType> PPU_SCENE;
+      typedef PPUScene BaseClass;
+      static const dtCore::RefPtr<SceneType> SSAO_SCENE;
 
    public:
-      PPUScene();
-      PPUScene(const SceneType& sceneId, const SceneEnum& defaultScene);
-
-      virtual ~PPUScene();
+      SSAOScene();
+      virtual ~SSAOScene();
       
       virtual void CreateScene(SceneManager&, const GraphicsQuality&);
 
-      virtual osg::Group* GetSceneNode();
-      virtual const osg::Group* GetSceneNode() const;
+      DT_DECLARE_ACCESSOR_INLINE(float, BlurSigma)
+      DT_DECLARE_ACCESSOR_INLINE(float, BlurRadius)
+      DT_DECLARE_ACCESSOR_INLINE(float, Intensity)
+      DT_DECLARE_ACCESSOR_INLINE(bool, ShowOnlyAOMap)
 
-      osgPPU::Unit* GetFirstUnit();
-      const osgPPU::Unit* GetFirstUnit() const;
-
-      osgPPU::Unit* GetLastUnit();
-      const osgPPU::Unit* GetLastUnit() const;
-
-      DT_DECLARE_ACCESSOR_INLINE(bool, AddToRootPPUScene)
-      DT_DECLARE_ACCESSOR_INLINE(bool, AddToMultipassOutput)
-
-      
    protected:
-      void SetFirstUnit(osgPPU::Unit&);
-      void SetLastUnit(osgPPU::Unit&);
+      void CreateSSAOPipeline(osgPPU::UnitBypass* colorbypass, osgPPU::UnitBypass* depthbypass);
 
    private:
-      PPUSceneImpl* mImpl;
+   };
+
+   class DT_RENDER_EXPORT SSAOSceneProxy : public dtCore::BaseActorObject
+   {
+   public:
+      typedef dtCore::BaseActorObject BaseClass;
+      SSAOSceneProxy();
+
+      virtual void BuildPropertyMap();
+      virtual void CreateDrawable();
+
+      virtual bool IsPlaceable() const;
+
+   protected:
+      virtual ~SSAOSceneProxy();
    };
 
 }
 
-#endif // DELTA_PPUSCENE_H
+#endif // DELTA_SSAOSCENE_H
