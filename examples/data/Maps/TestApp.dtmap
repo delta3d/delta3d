@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <map xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="delta3dMap" xsi:schemaLocation="delta3dMap map.xsd">
     <header>
         <name>TestApp</name>
@@ -7,7 +8,7 @@
         <comment></comment>
         <copyright></copyright>
         <createTimestamp>2014-07-15T22:49:46-05:00</createTimestamp>
-        <lastUpdateTimestamp>2014-08-28T23:25:44-05:00</lastUpdateTimestamp>
+        <lastUpdateTimestamp>2014-08-29T12:10:28-05:00</lastUpdateTimestamp>
         <editorVersion>2.8.0</editorVersion>
         <schemaVersion>1.0</schemaVersion>
     </header>
@@ -23,7 +24,7 @@
     </libraries>
     <actors>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>035dae91-5e6f-4e52-98f8-775366d0d325</id>
             <name>angledpalm_01</name>
             <property>
@@ -66,7 +67,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>056fbfc4-cb8b-4f0e-95df-f6f304db710a</id>
             <name>palmtree_13</name>
             <property>
@@ -109,7 +110,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>05d8b0cf-58b8-4326-8606-ecd68033a630</id>
             <name>palmtree_59</name>
             <property>
@@ -152,7 +153,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>06a93eb5-1501-4e51-ad4b-31e9f459fb2d</id>
             <name>walkway_33</name>
             <property>
@@ -195,7 +196,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>09ee66bd-235a-4fbf-91c2-ed09f5414ba3</id>
             <name>palmtree_15</name>
             <property>
@@ -238,7 +239,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>0b93f0aa-6e41-4c4a-9f17-1f481f6497a9</id>
             <name>StaticMesh_13</name>
             <property>
@@ -247,7 +248,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>0bbfab75-ab73-44a9-a388-3d22de38f08a</id>
             <name>palmtree_75</name>
             <property>
@@ -290,7 +291,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>0eeb115d-228d-4336-bdd0-6a3be176d691</id>
             <name>walkway_26</name>
             <property>
@@ -333,7 +334,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>1033de23-b4ec-4da6-9015-6a8bb772ab86</id>
             <name>palmtree_31</name>
             <property>
@@ -376,7 +377,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>14111fe8-e00c-42cf-bfa7-2af56d0da279</id>
             <name>palmtree_73</name>
             <property>
@@ -419,7 +420,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>16c26fe7-fadd-4bc1-87b1-7b9c55fe9345</id>
             <name>lamp_02</name>
             <property>
@@ -454,7 +455,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>16f4392f-b2c9-43d3-8d8a-4c17e5ed65d4</id>
             <name>walkway_49</name>
             <property>
@@ -497,7 +498,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>1b018934-0e03-4af7-b58f-c78100dcc456</id>
             <name>walkway_22</name>
             <property>
@@ -540,7 +541,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>1b5fcf27-d01b-4730-88c5-e46278247084</id>
             <name>coral</name>
             <property>
@@ -567,7 +568,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>1c5bfcfc-016c-4bdd-9c71-d5dfa02a07cc</id>
             <name>lamp_07</name>
             <property>
@@ -602,7 +603,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>1ce7122f-f79b-460b-8d55-07816aa807bd</id>
             <name>Chair_03</name>
             <property>
@@ -637,7 +638,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>1d4bdf53-3862-47f2-9f80-19a29b663b65</id>
             <name>Chair_11</name>
             <property>
@@ -672,7 +673,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>1ef1c6bf-b624-4906-a3ac-d97d8da2fea7</id>
             <name>walkway_02</name>
             <property>
@@ -715,7 +716,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>1f107866-6010-47fd-b817-aa0d730a9b81</id>
             <name>palmtree_22</name>
             <property>
@@ -758,7 +759,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>1f10ad98-6b56-42e5-ba20-6770c948751d</id>
             <name>walkway_31</name>
             <property>
@@ -801,7 +802,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>1fb5402a-bc27-4736-9b1b-bd25fd7dc13f</id>
             <name>walkway_60</name>
             <property>
@@ -844,7 +845,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>21ccd061-0fdb-44b9-a7b8-9485725ab06f</id>
             <name>palmtree_28</name>
             <property>
@@ -887,7 +888,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>2313f132-7d7b-45c7-8fd4-b7c480ea4b1b</id>
             <name>walkway_12</name>
             <property>
@@ -930,7 +931,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>249c050b-8a9a-4b7a-8411-6aa4eda9b288</id>
             <name>palmtree_56</name>
             <property>
@@ -973,7 +974,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>263527b9-239e-4159-b922-8ba05f5dbe43</id>
             <name>Chair_01</name>
             <property>
@@ -1008,7 +1009,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>2776fa71-1aff-41d6-aa07-fcacbfebb308</id>
             <name>walkway_54</name>
             <property>
@@ -1051,7 +1052,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>27ed86c1-a8f2-490e-b32d-812d1e167816</id>
             <name>palmtree_02</name>
             <property>
@@ -1094,7 +1095,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>285d5c87-9a1b-42d9-9a3d-1d974c0be2c4</id>
             <name>palmtree_53</name>
             <property>
@@ -1137,7 +1138,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>2985b87e-5d84-49b2-8c26-6602860f1e5a</id>
             <name>walkway_74</name>
             <property>
@@ -1180,7 +1181,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>29b9a820-5791-4f4f-a092-a563f51d62b3</id>
             <name>palmtree_57</name>
             <property>
@@ -1223,7 +1224,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>2a7b3325-1628-4043-993a-fc95b2382ecc</id>
             <name>palmtree_43</name>
             <property>
@@ -1266,7 +1267,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>2beb6954-6e92-41f8-8115-a3522cfae276</id>
             <name>walkway_30</name>
             <property>
@@ -1309,7 +1310,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>2d7b37fd-f5df-4ac0-8464-d3ead2f588f3</id>
             <name>lamp_06</name>
             <property>
@@ -1321,7 +1322,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>6.818160</value3>
+                    <value3>6.818161</value3>
                 </vec3>
             </property>
             <property>
@@ -1344,7 +1345,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>2dec40b9-6911-4c44-b6c6-d5424ffe2960</id>
             <name>Chair_17</name>
             <property>
@@ -1379,7 +1380,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>313e0078-cdad-4e2c-9c56-c79453893f15</id>
             <name>Chair_15</name>
             <property>
@@ -1389,7 +1390,7 @@
             <property>
                 <name>Rotation</name>
                 <vec3>
-                    <value1>-0.823301</value1>
+                    <value1>-0.823274</value1>
                     <value2>-0.623641</value2>
                     <value3>124.004814</value3>
                 </vec3>
@@ -1414,7 +1415,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>32c3584c-a9c9-401b-82a1-662849f2f9d2</id>
             <name>Chair_09</name>
             <property>
@@ -1449,7 +1450,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>33d42bc4-3c8b-4277-97af-2e11d0c3bd00</id>
             <name>walkway_75</name>
             <property>
@@ -1492,7 +1493,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>3402a632-41ec-49bf-9df6-1afe2570b0c3</id>
             <name>palmtree_74</name>
             <property>
@@ -1552,7 +1553,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>380b4098-163b-487a-ac00-6c52a5362918</id>
             <name>palmtree_08</name>
             <property>
@@ -1595,7 +1596,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>384b0d7d-3eed-4c5d-a984-949e67bf6572</id>
             <name>walkway_77</name>
             <property>
@@ -1638,7 +1639,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>3947f895-cc25-4fc5-8a9f-484f7417f902</id>
             <name>palmtree_38</name>
             <property>
@@ -1681,7 +1682,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>39b9f69d-694e-4a9e-84da-a3ff0c8d80cd</id>
             <name>walkway_48</name>
             <property>
@@ -1724,7 +1725,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>39e23eb8-bdbb-4de3-9886-9bd7403a5541</id>
             <name>walkway_40</name>
             <property>
@@ -1767,7 +1768,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>3a6d4a21-ec61-45dc-8c66-3fd6954165df</id>
             <name>walkway_04</name>
             <property>
@@ -1810,7 +1811,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>3dbeacef-e988-4a8f-9310-c8671d15989c</id>
             <name>palmtree_67</name>
             <property>
@@ -1853,7 +1854,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>3e5391c2-5477-4e75-84b5-a24ef586ca75</id>
             <name>lamp_03</name>
             <property>
@@ -1888,7 +1889,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>3ea25607-fe49-4788-836b-58840f6b09a0</id>
             <name>palmtree_48</name>
             <property>
@@ -1931,7 +1932,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>3f612589-faa8-49a0-9156-735872e79ea1</id>
             <name>walkway_37</name>
             <property>
@@ -1974,7 +1975,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>3fb94d7c-4ddc-456b-827c-d6d36c169941</id>
             <name>palmtree_03</name>
             <property>
@@ -2009,7 +2010,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>425dd397-1d6f-410a-bf17-bbd8a13ef6fb</id>
             <name>palmtree_50</name>
             <property>
@@ -2052,7 +2053,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>44282e2f-b866-42ac-9b53-30ff8a733aeb</id>
             <name>palmtree_76</name>
             <property>
@@ -2095,7 +2096,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>44bacdc9-b472-4709-bb24-547083aae7d2</id>
             <name>walkway_53</name>
             <property>
@@ -2138,7 +2139,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>44eb769d-ebc7-4c1f-b215-5d057b6969b1</id>
             <name>walkway_36</name>
             <property>
@@ -2181,7 +2182,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>48606f8e-dbb2-4d01-8936-a45fd0bdfe8b</id>
             <name>walkway_79</name>
             <property>
@@ -2224,7 +2225,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>4a0f0412-8895-4824-9d59-f2e93acadde3</id>
             <name>statue</name>
             <property>
@@ -2267,7 +2268,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>4e2a3a76-aca0-4f46-8cce-7cb66e868d57</id>
             <name>walkway_67</name>
             <property>
@@ -2310,7 +2311,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>51c9d347-e026-4d45-a5d8-acb57dc93a0a</id>
             <name>Chair_10</name>
             <property>
@@ -2345,7 +2346,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>51f364c9-cece-4abd-bbe4-8151a005e42c</id>
             <name>Chair_02</name>
             <property>
@@ -2380,7 +2381,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>529de8b5-8aba-4ebf-88e0-e8689ea232c6</id>
             <name>palmtree_27</name>
             <property>
@@ -2423,7 +2424,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>52cdb52e-2490-4d3f-a54e-913bc4a88279</id>
             <name>walkway_64</name>
             <property>
@@ -2466,7 +2467,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>53b64d3d-344c-419c-8a4f-5e088360b083</id>
             <name>walkway_69</name>
             <property>
@@ -2509,7 +2510,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>549c45c6-05ee-409e-b6a8-e827ba8ea70c</id>
             <name>Chair_16</name>
             <property>
@@ -2544,7 +2545,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>559402af-a056-47ce-adb4-afce3588915e</id>
             <name>palmtree_55</name>
             <property>
@@ -2587,7 +2588,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>572e895a-99a1-4a5c-9961-8073f4bfeb76</id>
             <name>walkway_72</name>
             <property>
@@ -2630,7 +2631,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>5828e14f-1dc6-4686-ba27-8750be7f6556</id>
             <name>palmtree_36</name>
             <property>
@@ -2673,7 +2674,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>594666fc-3a02-4f60-9a6e-078d4fb3acf7</id>
             <name>walkway_32</name>
             <property>
@@ -2716,7 +2717,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>5ab62ad9-9cb1-4ded-af8a-05547e49228b</id>
             <name>walkway_87</name>
             <property>
@@ -2759,7 +2760,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>5b090b0c-0018-4fbe-a4db-72b00ee759c1</id>
             <name>Chair_23</name>
             <property>
@@ -2794,7 +2795,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>5f7c5fd6-d157-4b38-b31e-b82f06422b75</id>
             <name>palmtree_60</name>
             <property>
@@ -2837,7 +2838,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>61a26556-318a-40d0-8b14-f0d27bf6f36d</id>
             <name>walkway_45</name>
             <property>
@@ -2880,7 +2881,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>61a3ea96-82a9-4cc2-a6e8-fa591321d6f0</id>
             <name>palmtree_77</name>
             <property>
@@ -2923,7 +2924,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>62df61c9-2083-44eb-b861-04cd2d55bafa</id>
             <name>Chair_13</name>
             <property>
@@ -2933,7 +2934,7 @@
             <property>
                 <name>Rotation</name>
                 <vec3>
-                    <value1>-0.679266</value1>
+                    <value1>-0.679239</value1>
                     <value2>0.779811</value2>
                     <value3>-149.876450</value3>
                 </vec3>
@@ -2958,7 +2959,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>63df4aa1-0378-40f3-af77-a0dc1e9ae23d</id>
             <name>walkway_20</name>
             <property>
@@ -3001,7 +3002,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>64a28303-4796-4cab-a57d-14be23dd5d91</id>
             <name>walkway_38</name>
             <property>
@@ -3044,7 +3045,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>652f8b81-ee3a-490a-8023-a5b87f4080e8</id>
             <name>walkway_09</name>
             <property>
@@ -3087,7 +3088,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>65e4beaf-ed84-4d98-a3c2-24277fef2235</id>
             <name>walkway_25</name>
             <property>
@@ -3130,7 +3131,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>673e4b9a-d2d3-4aff-99ab-92980cde6e3e</id>
             <name>palmtree_10</name>
             <property>
@@ -3173,7 +3174,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>6af504f6-e825-4a75-ae45-0f77dcef35cb</id>
             <name>Chair_04</name>
             <property>
@@ -3208,7 +3209,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>6e5f9ccb-7622-44e9-bd66-9f262d8e5413</id>
             <name>palmtree_12</name>
             <property>
@@ -3251,7 +3252,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>719466b2-ee66-43a2-aacc-8015acaa6de7</id>
             <name>walkway_35</name>
             <property>
@@ -3310,6 +3311,10 @@
                 <string>Terrains</string>
             </property>
             <property>
+                <name>TerrainPhysicsMode</name>
+                <enumerated>IMMEDIATE</enumerated>
+            </property>
+            <property>
                 <name>TerrainMesh</name>
                 <resourceType>Terrains</resourceType>
                 <resourceDisplayName>Terrains:delta3d_island.ive</resourceDisplayName>
@@ -3317,7 +3322,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>74150ecf-10da-4c41-8ae5-5f468e8b8e56</id>
             <name>palmtree_70</name>
             <property>
@@ -3360,7 +3365,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>7731b4e8-2afe-4f7f-95f3-7f4d109e6157</id>
             <name>palmtree_33</name>
             <property>
@@ -3403,7 +3408,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>77567059-7b7f-42dc-a458-57db0473e21e</id>
             <name>walkway_86</name>
             <property>
@@ -3446,7 +3451,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>7785f210-cfdf-40eb-a091-2ba4dbd37fef</id>
             <name>walkway_55</name>
             <property>
@@ -3489,7 +3494,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>77ebc656-4c84-45d7-b458-7c34166f7693</id>
             <name>palmtree_06</name>
             <property>
@@ -3532,7 +3537,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>7a7dfbf6-d1e2-457f-9238-3def13a14a71</id>
             <name>palmtree_44</name>
             <property>
@@ -3575,7 +3580,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>7ccb7cd6-a4fe-4c2a-9d27-9caa4227a202</id>
             <name>walkway_50</name>
             <property>
@@ -3618,7 +3623,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>7d06df1b-a9b0-47f4-9817-c225049e6e5a</id>
             <name>walkway_46</name>
             <property>
@@ -3661,7 +3666,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>7f0ea980-1442-48a8-9385-590cbfc4f0e6</id>
             <name>palmtree_01</name>
             <property>
@@ -3696,7 +3701,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>8409b1d9-312c-4e1d-8523-a189ba425682</id>
             <name>palmtree_54</name>
             <property>
@@ -3739,7 +3744,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>85afb7d7-eb2c-4e9d-a1ff-fb5baf1618f6</id>
             <name>palmtree_49</name>
             <property>
@@ -3782,7 +3787,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>85d04b7c-3251-41fe-b945-12e5214d9154</id>
             <name>Chair_21</name>
             <property>
@@ -3817,7 +3822,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>88923843-7754-4085-ba5c-53f75f4ee80f</id>
             <name>palmtree_58</name>
             <property>
@@ -3860,7 +3865,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>89725cc9-e5c0-43c2-b315-0efaf9d24aea</id>
             <name>palmtree_19</name>
             <property>
@@ -3903,7 +3908,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>8a8b5f0b-2ab4-4cfd-b147-f002c34b813c</id>
             <name>Chair_12</name>
             <property>
@@ -3913,7 +3918,7 @@
             <property>
                 <name>Rotation</name>
                 <vec3>
-                    <value1>-0.679266</value1>
+                    <value1>-0.679239</value1>
                     <value2>0.779811</value2>
                     <value3>-149.876450</value3>
                 </vec3>
@@ -3938,7 +3943,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>8b2c63f1-c0a2-4eb0-9414-aacc88dd1ea6</id>
             <name>angledpalm_02</name>
             <property>
@@ -3981,7 +3986,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>8c323b4e-7464-40a3-9108-5a3ed699ac2f</id>
             <name>walkway_18</name>
             <property>
@@ -4024,7 +4029,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>8e25596e-0c62-4b59-b335-81fc86037c16</id>
             <name>walkway_78</name>
             <property>
@@ -4067,7 +4072,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>8f591f18-6013-4962-9098-d54b44ffff42</id>
             <name>walkway_24</name>
             <property>
@@ -4110,7 +4115,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>9002264a-a656-4b06-a8d3-da36862dce94</id>
             <name>walkway_68</name>
             <property>
@@ -4153,7 +4158,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>908b97a8-d4aa-4d4d-b8af-9dd0f083f6cb</id>
             <name>palmtree_62</name>
             <property>
@@ -4196,7 +4201,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>91474feb-d9dd-414e-81bc-f82a279b35ff</id>
             <name>walkway_06</name>
             <property>
@@ -4239,7 +4244,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>9277f98d-44c8-4b8f-afd4-4ee217100a65</id>
             <name>palmtree_47</name>
             <property>
@@ -4282,7 +4287,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>9494a54c-7de7-41ee-8d90-31ba43e84dd6</id>
             <name>BoardwalkAndBar</name>
             <property>
@@ -4309,7 +4314,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>950e1a9e-d6f8-4345-894b-b34ba8a305e4</id>
             <name>walkway_76</name>
             <property>
@@ -4352,7 +4357,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>95235ecc-dcb3-49dd-8723-7e1aa83b5b14</id>
             <name>walkway_47</name>
             <property>
@@ -4395,7 +4400,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>96b46b8f-db80-4319-9494-553829d639f9</id>
             <name>walkway_11</name>
             <property>
@@ -4438,7 +4443,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>98d7fbb5-ddb4-4be6-8557-8fd553ffc097</id>
             <name>walkway_17</name>
             <property>
@@ -4481,7 +4486,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>9eaee6d0-5091-4d14-963e-93a13c70781e</id>
             <name>palmtree_17</name>
             <property>
@@ -4524,7 +4529,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>9f1660e3-9187-4210-b28e-1a4d3319b089</id>
             <name>walkway_85</name>
             <property>
@@ -4567,7 +4572,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>9f85f05f-1cda-47f9-a1e0-37c16002cafd</id>
             <name>walkway_29</name>
             <property>
@@ -4610,7 +4615,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>9fc0d4ff-b0be-4bf0-9d9b-ad51d23e0ddf</id>
             <name>Chair_20</name>
             <property>
@@ -4645,7 +4650,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>9fee0e34-3351-4485-aa1d-de5b4c776b60</id>
             <name>palmtree_42</name>
             <property>
@@ -4688,7 +4693,30 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Civilian</type>
+            <id>B49D2450-C1E9-4AEC-8E17-03E2D2544346</id>
+            <name>Transformable_01</name>
+            <property>
+                <name>Name</name>
+                <string>Transformable_01</string>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-1.294460</value1>
+                    <value2>-4.579725</value2>
+                    <value3>1.713852</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Skeletal Mesh</name>
+                <resourceType>SkeletalMeshes</resourceType>
+                <resourceDisplayName>SkeletalMeshes:Gina:Eve.dtchar</resourceDisplayName>
+                <resource>SkeletalMeshes:Gina:Eve.dtchar</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtExample.Mesh Object</type>
             <id>a0368696-1d5c-46b0-bd70-4176b96faf94</id>
             <name>palmtree_29</name>
             <property>
@@ -4731,7 +4759,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>a0852400-b67a-4e38-9668-fba44a5d1035</id>
             <name>Chair_06</name>
             <property>
@@ -4766,7 +4794,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>a3384900-b533-4212-9080-2a8b6fa15dc9</id>
             <name>walkway_08</name>
             <property>
@@ -4809,7 +4837,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>a782cae8-2269-4881-9a9b-9f30b6204662</id>
             <name>lamp_04</name>
             <property>
@@ -4844,7 +4872,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>a7cb23d9-f795-4749-bfb2-b570c7bc0dae</id>
             <name>walkway_66</name>
             <property>
@@ -4887,7 +4915,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>a85d4344-f39c-46ac-99f3-cfaf19bf2cfe</id>
             <name>palmtree_30</name>
             <property>
@@ -4930,7 +4958,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>a9feeef7-cb09-4500-9f3b-275f8e032e50</id>
             <name>walkway_43</name>
             <property>
@@ -4973,7 +5001,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>aad311e4-0913-498c-9628-07859d34398e</id>
             <name>walkway_07</name>
             <property>
@@ -5016,7 +5044,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>aecc3cd8-d043-410a-b300-79890e5129c1</id>
             <name>walkway_59</name>
             <property>
@@ -5059,7 +5087,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>afa220ca-bccd-4041-99d4-96dba51e76fb</id>
             <name>walkway_80</name>
             <property>
@@ -5102,7 +5130,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>b067dabe-bd14-4559-b9ea-e4d2eb6d4d28</id>
             <name>walkway_01</name>
             <property>
@@ -5145,7 +5173,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>b0f87150-4763-4432-905d-04f512618bc3</id>
             <name>palmtree_69</name>
             <property>
@@ -5188,7 +5216,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>b1f2279d-7f4e-4f79-83d0-182924a16886</id>
             <name>walkway_01</name>
             <property>
@@ -5231,7 +5259,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>b397ada6-c18a-4b7e-8623-630e062403f9</id>
             <name>palmtree_20</name>
             <property>
@@ -5274,7 +5302,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>b6634ed3-b37f-4b69-814d-18acabf5c8fc</id>
             <name>walkway_56</name>
             <property>
@@ -5317,7 +5345,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>b6c141d7-8621-4812-9b80-977ae036fa38</id>
             <name>palmtree_51</name>
             <property>
@@ -5360,7 +5388,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>b6fae384-cf92-4618-bd45-bc7dca97d53c</id>
             <name>walkway_05</name>
             <property>
@@ -5403,7 +5431,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>b7b6b4ca-97ea-4a1c-af6d-465fd59700bc</id>
             <name>lamp_05</name>
             <property>
@@ -5438,7 +5466,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>bcf8070a-77d1-4d17-84a6-267435ecad90</id>
             <name>palmtree_32</name>
             <property>
@@ -5481,7 +5509,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>bd27f0c4-cab3-42e4-b995-7c2419e863ad</id>
             <name>palmtree_05</name>
             <property>
@@ -5524,7 +5552,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>beb7dddb-8995-4ed3-937c-039b481fd03a</id>
             <name>Chair_14</name>
             <property>
@@ -5534,7 +5562,7 @@
             <property>
                 <name>Rotation</name>
                 <vec3>
-                    <value1>-0.823301</value1>
+                    <value1>-0.823274</value1>
                     <value2>-0.623641</value2>
                     <value3>124.004814</value3>
                 </vec3>
@@ -5559,7 +5587,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>bee5a97c-6bf3-4e1f-938a-d805f6ed296a</id>
             <name>Chair_08</name>
             <property>
@@ -5594,7 +5622,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>bf896615-c040-4388-b823-34f6878e7e63</id>
             <name>walkway_84</name>
             <property>
@@ -5637,7 +5665,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>c02a135f-9d21-4304-96d3-36441f45f382</id>
             <name>palmtree_34</name>
             <property>
@@ -5680,7 +5708,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>c04cf6fa-99a4-483a-8c7d-ed581f2fea76</id>
             <name>walkway_21</name>
             <property>
@@ -5723,7 +5751,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>c0b3735a-11ed-47c1-a9a6-ef9e8cd76d23</id>
             <name>palmtree_61</name>
             <property>
@@ -5766,7 +5794,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>c11c983a-c474-40ab-9053-d29e0c72563c</id>
             <name>palmtree_04</name>
             <property>
@@ -5809,7 +5837,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>c184f7f6-9f8c-4657-a364-e1ecadabc765</id>
             <name>palmtree_37</name>
             <property>
@@ -5852,7 +5880,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>c2328824-1bbf-462c-bf47-b3eb84a00e69</id>
             <name>walkway_16</name>
             <property>
@@ -5895,7 +5923,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>c24172e9-2cc7-4f3b-86e1-b514d8e78b8a</id>
             <name>walkway_73</name>
             <property>
@@ -5938,7 +5966,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>c243445f-8d34-4eec-b8ae-565fd449bb5d</id>
             <name>walkway_41</name>
             <property>
@@ -5981,7 +6009,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>c3c75f92-9289-4162-a894-db87ad621014</id>
             <name>walkway_28</name>
             <property>
@@ -6024,7 +6052,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>c4e101ec-0777-4f83-8712-cf59ce1e4bc4</id>
             <name>palmtree_66</name>
             <property>
@@ -6067,7 +6095,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>c5a46713-0e0b-4f15-a7a6-fc29cf61486a</id>
             <name>palmtree_16</name>
             <property>
@@ -6110,7 +6138,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>c600bc7a-32e2-4e4a-8a37-43628c76ad7d</id>
             <name>palmtree_24</name>
             <property>
@@ -6153,7 +6181,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>c6e1c35c-c333-49d6-83ad-27395c8a0a5c</id>
             <name>walkway_83</name>
             <property>
@@ -6196,7 +6224,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>c6fb7aa0-a420-456b-a6d3-bd5845e0b403</id>
             <name>palmtree_46</name>
             <property>
@@ -6239,7 +6267,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>c9529a4d-149d-4810-a9f8-985c72ddbb50</id>
             <name>walkway_65</name>
             <property>
@@ -6282,7 +6310,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>cb90a33a-9d46-45a6-95f2-6c26c411f605</id>
             <name>walkway_52</name>
             <property>
@@ -6325,7 +6353,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>cc7c8be0-23fa-4847-83b0-d63dd0d34a0e</id>
             <name>walkway_51</name>
             <property>
@@ -6368,7 +6396,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>cd782592-b8e4-4d82-8ed0-4a0cf472eba9</id>
             <name>Chair</name>
             <property>
@@ -6403,7 +6431,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>cdd83239-adf7-4eb7-94ba-28788733bef3</id>
             <name>walkway_57</name>
             <property>
@@ -6446,7 +6474,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>ced527e9-8c79-4c40-8671-a6af281c1ace</id>
             <name>water</name>
             <property>
@@ -6469,7 +6497,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>d464242b-26bd-41f3-877c-ce6569d6c856</id>
             <name>palmtree_72</name>
             <property>
@@ -6512,7 +6540,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>d47e8f6c-365b-4bfb-9d19-a21632eb8a74</id>
             <name>palmtree_65</name>
             <property>
@@ -6555,7 +6583,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>d90e1480-886b-4bff-ae9a-e2c2209f0627</id>
             <name>palmtree_41</name>
             <property>
@@ -6598,7 +6626,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>d9a38556-4eb0-4bdc-8942-b88be13287ea</id>
             <name>lamp_01</name>
             <property>
@@ -6633,7 +6661,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>d9c1af68-94f4-4382-9563-64b75bf6bfe0</id>
             <name>palmtree_35</name>
             <property>
@@ -6676,7 +6704,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>dc6c9b08-49a9-42f8-8f41-0fc44e538bb1</id>
             <name>palmtree_14</name>
             <property>
@@ -6719,7 +6747,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>dd4e6934-8ae8-4ca8-bd71-4da5152d0b0d</id>
             <name>walkway_03</name>
             <property>
@@ -6762,7 +6790,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>df2b31ec-a4ac-4ec5-917d-653b13a7a67b</id>
             <name>Chair_18</name>
             <property>
@@ -6797,7 +6825,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>df3a8ed2-24cb-4bb1-96c7-ec9eb1440a83</id>
             <name>palmtree_45</name>
             <property>
@@ -6840,7 +6868,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>df7d89fe-a709-4fb8-9375-3a693d2ff015</id>
             <name>Beachball</name>
             <property>
@@ -6867,7 +6895,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>e053a9b2-a3b6-4dd0-806f-4d2e34acc2bd</id>
             <name>Chair_07</name>
             <property>
@@ -6902,7 +6930,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>e0c0e811-4f39-4ad6-9036-d58d69e208b7</id>
             <name>walkway_34</name>
             <property>
@@ -6945,7 +6973,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>e2ee7a1c-f9c6-4f67-93c4-15101678735b</id>
             <name>walkway_82</name>
             <property>
@@ -6988,7 +7016,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>e462c2e2-429f-4c4f-b1a7-79b194ec0040</id>
             <name>palmtree_11</name>
             <property>
@@ -7031,7 +7059,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>e46be1fc-8d9b-48e7-8d3f-382366dd9da6</id>
             <name>walkway_70</name>
             <property>
@@ -7074,7 +7102,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>e58cb6fa-7cbb-4055-bd73-0fb25d201d7c</id>
             <name>palmtree_39</name>
             <property>
@@ -7117,7 +7145,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>e60de862-6e6a-4f79-bcf8-7e861d92e07d</id>
             <name>Chair_19</name>
             <property>
@@ -7152,7 +7180,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>e638ed38-a259-4842-a3b3-4e1bc6827f50</id>
             <name>walkway_88</name>
             <property>
@@ -7195,7 +7223,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>e6cdd54a-553c-4453-8bab-7c6d4de96b7f</id>
             <name>palmtree_64</name>
             <property>
@@ -7238,7 +7266,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>e71232d5-9750-474a-ad79-967ce0ff5a76</id>
             <name>palmtree_63</name>
             <property>
@@ -7281,7 +7309,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>e74b66ea-689e-44ac-bf1d-3e54047db466</id>
             <name>walkway_58</name>
             <property>
@@ -7324,7 +7352,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>e7c66c1c-85a3-4a2d-9589-24157f9f2bea</id>
             <name>walkway_61</name>
             <property>
@@ -7367,7 +7395,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>e7fa49ac-f516-4ef7-b4d1-0621c9fc77aa</id>
             <name>walkway_42</name>
             <property>
@@ -7410,7 +7438,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>ea22411e-a6ed-49de-b3e3-70cbd8db2e60</id>
             <name>angledpalm_01</name>
             <property>
@@ -7453,7 +7481,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>ebfd8181-1ca3-46ec-ad21-325c3b855349</id>
             <name>walkway_39</name>
             <property>
@@ -7496,7 +7524,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>ed0ef960-c6b5-449f-8212-385c40cfb971</id>
             <name>palmtree_23</name>
             <property>
@@ -7539,7 +7567,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>ed8791b3-7c21-4132-8338-28134a0cd5b2</id>
             <name>palmtree_68</name>
             <property>
@@ -7582,7 +7610,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>ee7385db-bf6a-4bdc-8c33-6f6153072077</id>
             <name>AncientCube</name>
             <property>
@@ -7617,7 +7645,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>efbd5592-6d0a-4c12-8d36-36e29fa06037</id>
             <name>palmtree_40</name>
             <property>
@@ -7660,7 +7688,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>eff83971-e1a2-4e94-b123-b662c786712f</id>
             <name>Chair_22</name>
             <property>
@@ -7695,7 +7723,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>f1a14a5b-997c-437d-87b0-e3ac25b884ec</id>
             <name>walkway_63</name>
             <property>
@@ -7738,7 +7766,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>f450f680-d155-4740-a806-29236db5b2f2</id>
             <name>walkway_81</name>
             <property>
@@ -7781,7 +7809,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>f5bc67b0-3ce8-4fe9-9771-85b6b3c5f5f5</id>
             <name>walkway_27</name>
             <property>
@@ -7824,7 +7852,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>f7c282da-9a15-46f8-a724-63e1817dd959</id>
             <name>walkway_23</name>
             <property>
@@ -7867,7 +7895,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>f7cc34f5-2b94-4c60-93bd-9fa3b372a404</id>
             <name>palmtree_18</name>
             <property>
@@ -7910,7 +7938,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>f943e25b-ba04-49e6-a438-8770e42aba40</id>
             <name>lamp</name>
             <property>
@@ -7945,7 +7973,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>f9673e58-e4d1-4b58-bf9e-fbd96a838ac5</id>
             <name>walkway_10</name>
             <property>
@@ -7988,7 +8016,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>f978248e-6262-4a94-902f-7c170b0474f5</id>
             <name>palmtree_07</name>
             <property>
@@ -8031,7 +8059,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>fba27431-5657-4182-a20d-570ddbd0a520</id>
             <name>walkway_44</name>
             <property>
@@ -8074,7 +8102,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>fc9e7c09-d656-4bd9-9a54-3db7d0be6baa</id>
             <name>Chair_05</name>
             <property>
@@ -8109,7 +8137,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>fca3892f-321d-40f2-b429-1bd7c37071cf</id>
             <name>palmtree_21</name>
             <property>
@@ -8152,7 +8180,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>ff2dd486-fd0f-464d-b020-ed24edd42b24</id>
             <name>walkway_71</name>
             <property>
@@ -8195,7 +8223,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>ff425b72-c472-466c-ad7e-c327596c3b75</id>
             <name>walkway_62</name>
             <property>
@@ -8238,7 +8266,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Mesh Object</type>
             <id>ffba7e0a-8d59-48d9-921b-3efde642f893</id>
             <name>walkway_19</name>
             <property>
