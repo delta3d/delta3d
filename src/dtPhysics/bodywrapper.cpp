@@ -260,7 +260,7 @@ namespace dtPhysics
    {
       TriangleRecorder recorder;
       recorder.Record(*mesh);
-      if (recorder.mData.mVertices->empty() || recorder.mData.mFaces->empty())
+      if (recorder.mData.mVertices->empty() || recorder.mData.mFaces.empty())
       {
          throw dtUtil::Exception("Unable to create convex mesh, no vertex data was found when traversing the osg Node.", __FILE__, __LINE__);
       }
@@ -327,7 +327,7 @@ namespace dtPhysics
    {
       TriangleRecorder recorder;
       recorder.Record(*mesh);
-      if (recorder.mData.mVertices->empty() || recorder.mData.mFaces->empty())
+      if (recorder.mData.mVertices->empty() || recorder.mData.mFaces.empty())
       {
          throw dtUtil::Exception("Unable to create terrain mesh, no vertex data was found when traversing the osg Node.", __FILE__, __LINE__);
       }
@@ -347,7 +347,7 @@ namespace dtPhysics
 
       ourTerrainMesh->Init(trans.x(), trans.y(), trans.z(),
                (Real*)(&recorder.mData.mVertices->front()), recorder.mData.mVertices->size(),
-               reinterpret_cast<int*>(&recorder.mData.mFaces->front()), recorder.mData.mFaces->size());
+               reinterpret_cast<int*>(&recorder.mData.mFaces.front()), recorder.mData.mFaces.size());
 
       return bodyWrapper;
    }
