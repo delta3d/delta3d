@@ -23,12 +23,72 @@
    </shadergroup>
 
 
+   <shadergroup name="MultiMapCharacter">
+      <shader name="MultiMapCharacter" default="yes">
+         <source type="Vertex">shaders/base/character.vert</source>
+         <source type="Vertex">shaders/base/vertex_functions.vert</source>
+         <source type="Fragment">shaders/base/fragment_functions.frag</source>
+         <source type="Fragment">shaders/base/multimap.frag</source>
+         <source type="Fragment">shaders/base/multimap_functions.frag</source>
+
+         <parameter name="effectScales">
+            <!-- 
+               X: Alpha
+               Y: Illuminance -->
+            <vec4 defaultValue="1 1 1 1" />
+         </parameter>
+
+         <parameter name="diffuseTexture">
+            <texture2D textureUnit="0">
+               <source type="Auto"/>
+            </texture2D>
+         </parameter>
+         <parameter name="normalTexture">
+            <texture2D textureUnit="1">
+               <source type="Image">textures/ShaderBase/NONE_NORM.png</source>
+            </texture2D>
+         </parameter>
+         <parameter name="specularTexture">
+            <texture2D textureUnit="2">
+               <source type="Image">textures/ShaderBase/NONE.png</source>
+            </texture2D>
+         </parameter>
+         <parameter name="alphaTexture">
+            <texture2D textureUnit="3">
+               <source type="Image">textures/ShaderBase/NONE_ALPHA.png</source>
+            </texture2D>
+         </parameter>
+         <parameter name="illumTexture">
+            <texture2D textureUnit="4">
+               <source type="Image">textures/ShaderBase/NONE.png</source>
+            </texture2D>
+         </parameter>
+         <parameter name="envTexture">
+            <texture2D textureUnit="5">
+               <source type="Image">textures/ShaderBase/DefaultEnvironmentMap.png</source>
+               <wrap axis="S" mode="Repeat"/>
+               <wrap axis="T" mode="Repeat"/>
+            </texture2D>
+         </parameter>
+
+      </shader>
+   </shadergroup>
+
+
    <shadergroup name="MultiMap">
       <shader name="MultiMap" default="yes">
          <source type="Vertex">shaders/base/multimap.vert</source>
-         <source type="Vertex">shaders/base/vertex_functions.vert</source>         
+         <source type="Vertex">shaders/base/vertex_functions.vert</source>
+         <source type="Fragment">shaders/base/multimap_functions.frag</source>
          <source type="Fragment">shaders/base/multimap.frag</source>
          <source type="Fragment">shaders/base/fragment_functions.frag</source>
+
+         <parameter name="effectScales">
+            <!-- 
+               X: Alpha
+               Y: Illuminance -->
+            <vec4 defaultValue="1 1 1 1" />
+         </parameter>
 
          <parameter name="diffuseTexture">
             <texture2D textureUnit="0">
@@ -36,23 +96,30 @@
             </texture2D>
          </parameter>
          <parameter name="specularTexture">
-            <texture2D textureUnit="1">
-               <source type="Auto"/>
+            <texture2D textureUnit="4">
+               <source type="Image">textures/ShaderBase/NONE.png</source>
             </texture2D>
          </parameter>
          <parameter name="illumTexture">
             <texture2D textureUnit="3">
-               <source type="Auto"/>
+               <source type="Image">textures/ShaderBase/NONE.png</source>
             </texture2D>
          </parameter>
          <parameter name="normalTexture">
-            <texture2D textureUnit="4">
-               <source type="Auto"/>
+            <texture2D textureUnit="1">
+               <source type="Image">textures/ShaderBase/NONE_NORM.png</source>
             </texture2D>
          </parameter>
          <parameter name="envTexture">
             <texture2D textureUnit="5">
-               <source type="Auto"/>
+               <source type="Image">textures/ShaderBase/DefaultEnvironmentMap.png</source>
+               <wrap axis="S" mode="Repeat"/>
+               <wrap axis="T" mode="Repeat"/>
+            </texture2D>
+         </parameter>
+         <parameter name="alphaTexture">
+            <texture2D textureUnit="6">
+               <source type="Image">textures/ShaderBase/NONE_ALPHA.png</source>
                <wrap axis="S" mode="Repeat"/>
                <wrap axis="T" mode="Repeat"/>
             </texture2D>

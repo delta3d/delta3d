@@ -25,8 +25,6 @@ varying vec3 vWorldNormal;
 varying vec3 vCamera;
 varying vec4 vViewPos;
 
-varying vec4 gl_Color;
-
 float saturate(float inValue)
 {
    return clamp(inValue, 0.0, 1.0);

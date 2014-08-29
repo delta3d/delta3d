@@ -1,5 +1,7 @@
 #version 120
 
+//attribute vec4 tangentAttrib;
+
 varying vec3 vLightDir;
 varying vec3 vLightDir2;
 varying vec3 vNormal;

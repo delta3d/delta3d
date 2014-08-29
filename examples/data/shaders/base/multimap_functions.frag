@@ -12,6 +12,7 @@ void lightContribution(vec3, vec3, vec3, vec3, out vec3);
 float computeLinearFog(float, float, float);
 float computeExpFog(float);
 vec3 computeWorldSpaceNormal(vec3 vertPos, vec3 vertNormal, vec3 mapNormal, vec2 vertUV, out mat3 tbn);
+vec2 computeSphereMapCoord(in vec3 viewDir, in vec3 normal);
 
 
 
@@ -105,6 +106,8 @@ vec4 computeMultiMapColor(MapParams mp, out FragParams fp, out EffectParams ep)
    
    mat3 tbn;
    fp.worldNormal = computeWorldSpaceNormal(fp.pos, normalize(fp.normal), normalize(normalColor.rgb), uv, fp.tbn);
+   //fp.worldNormal = normalize((2.0 * normalize(normalColor.rgb)) - vec3(1.0, 1.0, 1.0));
+   //fp.worldNormal = normalize(fp.tbn * fp.worldNormal);
 
    // Normalize all incoming vectors 
    vec3 viewDir = normalize(fp.viewDir);
@@ -116,13 +119,15 @@ vec4 computeMultiMapColor(MapParams mp, out FragParams fp, out EffectParams ep)
    computeLightContrib_SunMoon(fp, ep);
    
    // Compute the reflection contribution
-   vec3 reflectVec = reflect(fp.viewDir, fp.worldNormal);
+   //vec3 reflectVec = reflect(fp.viewDir, fp.worldNormal);
+   vec3 reflectVec = reflect(fp.viewDir, fp.worldNormal.xyz);
    float reflectionAngle =  dot(reflectVec, fp.viewDir);
    float reflectContrib = max(0.0,reflectionAngle);
    
    vec3 minLightSpec = min(ep.lightContrib.rgb, specColor.rgb);
    
-   vec3 envColor = fp.sceneLuminance * texture2D(envTexture, reflectVec.xy).rgb;
+   vec3 envColor = fp.sceneLuminance * texture2D(envTexture, computeSphereMapCoord(fp.viewDir, fp.worldNormal)).rgb;
+   //vec3 envColor = fp.sceneLuminance * texture2D(envTexture, reflectVec.xy).rgb;
    ep.envContrib = vec4(envColor, reflectContrib);
    ep.envContrib *= mp.specular;
    color = mix(ep.lightContrib * color, envColor, minLightSpec);
