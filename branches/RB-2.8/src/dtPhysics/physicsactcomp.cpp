@@ -69,6 +69,8 @@ namespace dtPhysics
    , mMass(0.0f)
    , mDefaultCollisionGroup(0)
    , mDefaultPrimitiveType(&PrimitiveType::BOX)
+   , mAutoCreateOnEnteringWorld(false)
+   , mIsRemote(false)
    {
    }
 
@@ -90,10 +92,22 @@ namespace dtPhysics
       return mName;
    }
 
+   struct CreateFromPropsPhysObj
+   {
+      void operator()(PhysicsObject& po)
+      {
+         po.CreateFromProperties();
+      }
+   };
+
    /////////////////////////////////////////////////////////////////////////////
    void PhysicsActComp::OnEnteredWorld()
    {
       RegisterWithGMComponent();
+      if (GetAutoCreateOnEnteringWorld())
+      {
+
+      }
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -103,6 +117,20 @@ namespace dtPhysics
       CleanUp();
    }
 
+   /////////////////////////////////////////////////////////////////////////////
+   void PhysicsActComp::OnAddedToActor(dtCore::BaseActorObject& actor)
+   {
+      dtCore::Transformable* xformable = NULL;
+      actor.GetDrawable(xformable);
+      mCachedTransformable = xformable;
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void PhysicsActComp::OnRemovedFromActor(dtCore::BaseActorObject& actor)
+   {
+      mCachedTransformable = NULL;
+   }
+
    ////////////////////////////////////////////////////////////////////////////////
    void PhysicsActComp::RegisterWithGMComponent()
    {
@@ -110,6 +138,8 @@ namespace dtPhysics
 
       dtGame::GameActorProxy* act = NULL;
       GetOwner(act);
+
+      mIsRemote = act->IsRemote();
 
       act->GetGameManager()->
          GetComponentByName(PhysicsComponent::DEFAULT_NAME, comp);
@@ -185,6 +215,13 @@ namespace dtPhysics
       AddProperty(new dtCore::IntActorProperty(PROPERTY_COLLISION_GROUP, PROPERTY_COLLISION_GROUP,
                dtCore::IntActorProperty::SetFuncType(this, &PhysicsActComp::SetDefaultCollisionGroup),
                dtCore::IntActorProperty::GetFuncType(this, &PhysicsActComp::GetDefaultCollisionGroup),
+               PROPERTY_PHYSICS_COLLISION_GROUP_DESC, GROUP));
+
+      static const dtUtil::RefString PROPERTY_PHYSICS_AUTO_CREATE("Creates and initializes all the physics objects as configured when "
+            "the actor enters the world.");
+      AddProperty(new dtCore::BooleanActorProperty(PROPERTY_COLLISION_GROUP, PROPERTY_COLLISION_GROUP,
+               dtCore::BooleanActorProperty::SetFuncType(this, &PhysicsActComp::SetDefaultCollisionGroup),
+               dtCore::BooleanActorProperty::GetFuncType(this, &PhysicsActComp::GetDefaultCollisionGroup),
                PROPERTY_PHYSICS_COLLISION_GROUP_DESC, GROUP));
 
       std::vector<dtCore::RefPtr<dtCore::ActorProperty> > physicsObjectProps;
@@ -311,7 +348,14 @@ namespace dtPhysics
    void PhysicsActComp::PrePhysicsUpdate()
    {
       if (mPrePhysicsUpdate.valid())
+      {
          mPrePhysicsUpdate();
+      }
+      else if (mIsRemote)
+      {
+         DefaultPrePhysicsUpdate();
+      }
+
 
       // Update the action in pre physics for several reasons.
       // Creating the helper and/or setting the callback for the action update may happen
@@ -340,7 +384,13 @@ namespace dtPhysics
    void PhysicsActComp::PostPhysicsUpdate()
    {
       if (mPostPhysicsUpdate.valid())
+      {
          mPostPhysicsUpdate();
+      }
+      else if (!mIsRemote)
+      {
+         DefaultPostPhysicsUpdate();
+      }
    }
 
    //////////////////////////////////////////////////////////////////
@@ -424,6 +474,18 @@ namespace dtPhysics
    PrimitiveType& PhysicsActComp::GetDefaultPrimitiveType() const
    {
       return *mDefaultPrimitiveType;
+   }
+
+   //////////////////////////////////////////////////////////////////
+   bool PhysicsActComp::GetAutoCreateOnEnteringWorld() const
+   {
+      return mAutoCreateOnEnteringWorld;
+   }
+
+   //////////////////////////////////////////////////////////////////
+   void PhysicsActComp::SetAutoCreateOnEnteringWorld(bool autoCreate)
+   {
+      mAutoCreateOnEnteringWorld = autoCreate;
    }
 
    //////////////////////////////////////////////////////////////////
@@ -646,6 +708,7 @@ namespace dtPhysics
    , mMass(0.0f)
    , mDefaultCollisionGroup(0)
    , mDefaultPrimitiveType(&PrimitiveType::BOX)
+   , mAutoCreateOnEnteringWorld(false)
    {
    }
 
@@ -734,5 +797,32 @@ namespace dtPhysics
       return false;
    }
 
+   //////////////////////////////////////////////////////////////////
+   void PhysicsActComp::DefaultPrePhysicsUpdate()
+   {
+      if (!mCachedTransformable.valid())
+         return;
+      dtCore::Transform xform;
+      mCachedTransformable->GetTransform(xform);
+      dtPhysics::PhysicsObject* physObj = GetMainPhysicsObject();
+      if (physObj != NULL)
+      {
+         physObj->SetTransformAsVisual(xform);
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////
+   void PhysicsActComp::DefaultPostPhysicsUpdate()
+   {
+      if (!mCachedTransformable.valid())
+         return;
+      dtCore::Transform xform;
+      dtPhysics::PhysicsObject* physObj = GetMainPhysicsObject();
+      if (physObj != NULL)
+      {
+         physObj->GetTransformAsVisual(xform);
+      }
+      mCachedTransformable->SetTransform(xform);
+   }
 
 } // namespace dtPhysics

@@ -26,7 +26,7 @@
 #include <dtAudio/sound.h>
 #include <dtCore/actorproxyicon.h>
 
-class FIRE_FIGHTER_EXPORT GameItemActor : public dtActors::GameMeshActor
+class FIRE_FIGHTER_EXPORT GameItemActor : public dtActors::GameMeshDrawable
 {
    public:
       
@@ -127,7 +127,7 @@ class FIRE_FIGHTER_EXPORT GameItemActor : public dtActors::GameMeshActor
       bool mIsActivated;
  };
 
-class FIRE_FIGHTER_EXPORT GameItemActorProxy : public dtActors::GameMeshActorProxy
+class FIRE_FIGHTER_EXPORT GameItemActorProxy : public dtActors::GameMeshActor
 {
    public:
 

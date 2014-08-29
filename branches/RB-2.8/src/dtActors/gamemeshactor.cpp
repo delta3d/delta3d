@@ -40,23 +40,22 @@ namespace dtActors
    //////////////////////////////////////////////////////////////////////////////
 
    //////////////////////////////////////////////////////////////////////////////
-   GameMeshActor::GameMeshActor(dtGame::GameActorProxy& parent)
+   GameMeshDrawable::GameMeshDrawable(dtGame::GameActorProxy& parent)
       : dtGame::GameActor(parent)
       , mUseCache(true)
       , mModel(new dtCore::Model)
       , mMeshNode(NULL)
    {
       GetMatrixNode()->addChild(&mModel->GetMatrixTransform());
-      SetName("StaticMesh");
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   GameMeshActor::~GameMeshActor()
+   GameMeshDrawable::~GameMeshDrawable()
    {
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void GameMeshActor::SetMesh(const std::string& meshFile)
+   void GameMeshDrawable::SetMesh(const std::string& meshFile)
    {
       // Make sure the mesh changed.
       if (mLoader.GetFilename() != meshFile)
@@ -72,7 +71,7 @@ namespace dtActors
    }
 
    //////////////////////////////////////////////////////////////////////////////
-   void GameMeshActor::LoadMesh()
+   void GameMeshDrawable::LoadMesh()
    {
       osg::Node* model = mLoader.LoadFile(mLoader.GetFilename(), mUseCache);
 
@@ -104,7 +103,7 @@ namespace dtActors
    }
 
    //////////////////////////////////////////////////////////////////////////////
-   void GameMeshActor::AddedToScene(dtCore::Scene* scene)
+   void GameMeshDrawable::AddedToScene(dtCore::Scene* scene)
    {
       dtGame::GameActor::AddedToScene(scene);
 
@@ -120,13 +119,13 @@ namespace dtActors
    }
 
    //////////////////////////////////////////////////////////////////////////////
-   void GameMeshActor::SetScale(const osg::Vec3& xyz)
+   void GameMeshDrawable::SetScale(const osg::Vec3& xyz)
    {
       mModel->SetScale(xyz);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void GameMeshActor::SetModelRotation(const osg::Vec3& v3)
+   void GameMeshDrawable::SetModelRotation(const osg::Vec3& v3)
    {
       dtCore::Transform ourTransform;
       mModel->GetTransform(ourTransform);
@@ -135,7 +134,7 @@ namespace dtActors
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   osg::Vec3 GameMeshActor::GetModelRotation()
+   osg::Vec3 GameMeshDrawable::GetModelRotation()
    {
       osg::Vec3 v3;
       dtCore::Transform ourTransform;
@@ -145,7 +144,7 @@ namespace dtActors
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void GameMeshActor::SetModelTranslation(const osg::Vec3& v3)
+   void GameMeshDrawable::SetModelTranslation(const osg::Vec3& v3)
    {
       dtCore::Transform ourTransform;
       mModel->GetTransform(ourTransform);
@@ -154,7 +153,7 @@ namespace dtActors
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   osg::Vec3 GameMeshActor::GetModelTranslation()
+   osg::Vec3 GameMeshDrawable::GetModelTranslation()
    {
       osg::Vec3 v3;
       dtCore::Transform ourTransform;
@@ -164,7 +163,7 @@ namespace dtActors
    }
 
    //////////////////////////////////////////////////////////////////////////////
-   osg::Vec3 GameMeshActor::GetScale() const
+   osg::Vec3 GameMeshDrawable::GetScale() const
    {
       osg::Vec3 scale;
       mModel->GetScale(scale);
@@ -172,25 +171,25 @@ namespace dtActors
    }
 
    //////////////////////////////////////////////////////////////////////////////
-   osg::MatrixTransform& GameMeshActor::GetMatrixTransform()
+   osg::MatrixTransform& GameMeshDrawable::GetMatrixTransform()
    {
       return mModel->GetMatrixTransform();
    }
 
    //////////////////////////////////////////////////////////////////////////////
-   const osg::MatrixTransform& GameMeshActor::GetMatrixTransform() const
+   const osg::MatrixTransform& GameMeshDrawable::GetMatrixTransform() const
    {
       return mModel->GetMatrixTransform();
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   osg::Node* GameMeshActor::GetMeshNode()
+   osg::Node* GameMeshDrawable::GetMeshNode()
    {
       return mMeshNode.get();
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   const osg::Node* GameMeshActor::GetMeshNode() const
+   const osg::Node* GameMeshDrawable::GetMeshNode() const
    {
       return mMeshNode.get();
    }
@@ -205,65 +204,66 @@ namespace dtActors
    //////////////////////////////////////////////////////////////////////////////
 
    //////////////////////////////////////////////////////////////////////////////
-   GameMeshActorProxy::GameMeshActorProxy()
+   GameMeshActor::GameMeshActor()
    {
       SetClassName("dtActors::GameMeshActor");
+      SetName("StaticMesh");
    }
 
    //////////////////////////////////////////////////////////////////////////////
-   GameMeshActorProxy::~GameMeshActorProxy()
+   GameMeshActor::~GameMeshActor()
    {
    }
 
    //////////////////////////////////////////////////////////////////////////////
-   void GameMeshActorProxy::BuildPropertyMap()
+   void GameMeshActor::BuildPropertyMap()
    {
       const std::string GROUPNAME = "GameMesh";
 
       dtGame::GameActorProxy::BuildPropertyMap();
 
-      GameMeshActor* myActor = NULL;
+      GameMeshDrawable* myActor = NULL;
       GetDrawable(myActor);
 
       AddProperty(new dtCore::ResourceActorProperty(dtCore::DataType::STATIC_MESH,
          "static mesh", "Static Mesh",
-         dtCore::ResourceActorProperty::SetDescFuncType(this, &GameMeshActorProxy::SetMeshResource),
-         dtCore::ResourceActorProperty::GetDescFuncType(this, &GameMeshActorProxy::GetMeshResource),
+         dtCore::ResourceActorProperty::SetDescFuncType(this, &GameMeshActor::SetMeshResource),
+         dtCore::ResourceActorProperty::GetDescFuncType(this, &GameMeshActor::GetMeshResource),
          "The static mesh resource that defines the geometry", GROUPNAME));
 
       AddProperty(new dtCore::BooleanActorProperty("use cache object", "Use Model Cache",
-         dtCore::BooleanActorProperty::SetFuncType(myActor, &GameMeshActor::SetUseCache),
-         dtCore::BooleanActorProperty::GetFuncType(myActor, &GameMeshActor::GetUseCache),
+         dtCore::BooleanActorProperty::SetFuncType(myActor, &GameMeshDrawable::SetUseCache),
+         dtCore::BooleanActorProperty::GetFuncType(myActor, &GameMeshDrawable::GetUseCache),
          "Indicates whether we will try to use the cache when we load our model.", GROUPNAME));
 
       AddProperty(new dtCore::Vec3ActorProperty("Scale", "Scale",
-         dtCore::Vec3ActorProperty::SetFuncType(myActor, &GameMeshActor::SetScale),
-         dtCore::Vec3ActorProperty::GetFuncType(myActor, &GameMeshActor::GetScale),
+         dtCore::Vec3ActorProperty::SetFuncType(myActor, &GameMeshDrawable::SetScale),
+         dtCore::Vec3ActorProperty::GetFuncType(myActor, &GameMeshDrawable::GetScale),
          "Scales this visual model", "Transformable"));
 
       AddProperty(new dtCore::Vec3ActorProperty("Model Rotation", "Model Rotation",
-         dtCore::Vec3ActorProperty::SetFuncType(myActor, &GameMeshActor::SetModelRotation),
-         dtCore::Vec3ActorProperty::GetFuncType(myActor, &GameMeshActor::GetModelRotation),
+         dtCore::Vec3ActorProperty::SetFuncType(myActor, &GameMeshDrawable::SetModelRotation),
+         dtCore::Vec3ActorProperty::GetFuncType(myActor, &GameMeshDrawable::GetModelRotation),
          "Specifies the Rotation of the object",
          "Transformable"));
 
       AddProperty(new dtCore::Vec3ActorProperty("Model Translation", "Model Translation",
-         dtCore::Vec3ActorProperty::SetFuncType(myActor, &GameMeshActor::SetModelTranslation),
-         dtCore::Vec3ActorProperty::GetFuncType(myActor, &GameMeshActor::GetModelTranslation),
+         dtCore::Vec3ActorProperty::SetFuncType(myActor, &GameMeshDrawable::SetModelTranslation),
+         dtCore::Vec3ActorProperty::GetFuncType(myActor, &GameMeshDrawable::GetModelTranslation),
          "Specifies the Translation of the object",
          "Transformable"));
    }
 
    //////////////////////////////////////////////////////////////////////////////
-   void GameMeshActorProxy::BuildInvokables()
+   void GameMeshActor::BuildInvokables()
    {
       dtGame::GameActorProxy::BuildInvokables();
    }
 
    //////////////////////////////////////////////////////////////////////////////
-   void GameMeshActorProxy::CreateDrawable()
+   void GameMeshActor::CreateDrawable()
    {
-      SetDrawable(*new GameMeshActor(*this));
+      SetDrawable(*new GameMeshDrawable(*this));
 
       //// set the default name of this object so they show up somewhat nicely in STAGE
       //// obviously, it's not guaranteed to be unique
@@ -274,7 +274,7 @@ namespace dtActors
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   const dtCore::BaseActorObject::RenderMode& GameMeshActorProxy::GetRenderMode()
+   const dtCore::BaseActorObject::RenderMode& GameMeshActor::GetRenderMode()
    {
       dtCore::ResourceDescriptor resource = GetMeshResource();
       if (resource.IsEmpty() == false)
@@ -293,7 +293,7 @@ namespace dtActors
    }
 
    //////////////////////////////////////////////////////////////////////////
-   dtCore::ActorProxyIcon* GameMeshActorProxy::GetBillBoardIcon()
+   dtCore::ActorProxyIcon* GameMeshActor::GetBillBoardIcon()
    {
       if (!mBillBoardIcon.valid())
       {
@@ -305,10 +305,10 @@ namespace dtActors
    }
 
    //////////////////////////////////////////////////////////////////////////
-   DT_IMPLEMENT_ACCESSOR_GETTER(GameMeshActorProxy, dtCore::ResourceDescriptor, MeshResource)
-   void GameMeshActorProxy::SetMeshResource(const dtCore::ResourceDescriptor& rd)
+   DT_IMPLEMENT_ACCESSOR_GETTER(GameMeshActor, dtCore::ResourceDescriptor, MeshResource)
+   void GameMeshActor::SetMeshResource(const dtCore::ResourceDescriptor& rd)
    {
-      GameMeshActor* gmd = NULL;
+      GameMeshDrawable* gmd = NULL;
       GetDrawable(gmd);
       gmd->SetMesh(dtCore::ResourceActorProperty::GetResourcePath(rd));
       mMeshResource = rd;

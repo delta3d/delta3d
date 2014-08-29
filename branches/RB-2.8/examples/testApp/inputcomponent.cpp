@@ -42,7 +42,12 @@
 #include <dtCore/system.h>
 #include <dtCore/transform.h>
 #include <dtCore/ufomotionmodel.h>
-#include <dtCore/walkmotionmodel.h>
+//#include <dtCore/walkmotionmodel.h>
+
+#include <dtPhysics/geometry.h>
+#include <dtPhysics/charactercontroller.h>
+#include <dtPhysics/charactermotionmodel.h>
+#include <dtPhysics/physicscomponent.h>
 
 #include <dtCore/shadermanager.h> //for reloading shader defs
 
@@ -193,6 +198,16 @@ namespace dtExample
          case 'p':
          {
             dtCore::ShaderManager::GetInstance().ReloadAndReassignShaderDefinitions("shaders/ShaderDefinitions.xml");
+         }
+         break;
+         case 'P':
+         {
+            dtPhysics::PhysicsComponent* physComp = NULL;
+            GetGameManager()->GetComponentByName(dtPhysics::PhysicsComponent::DEFAULT_NAME, physComp);
+            if (physComp != NULL)
+            {
+               physComp->SetNextDebugDrawMode();
+            }
          }
          break;
 
@@ -476,10 +491,21 @@ namespace dtExample
 
       if (&motionModelType == &MotionModelType::WALK)
       {
-         dtCore::RefPtr<dtCore::WalkMotionModel> wmm
-            = new dtCore::WalkMotionModel(keyboard, mouse);
+         dtCore::Transform xform;
+         mCamera->GetTransform(xform);
+         dtCore::RefPtr<dtPhysics::Geometry> charShape = dtPhysics::Geometry::CreateCapsuleGeometry(xform, 2.0f, 0.5f, 100.0f);
+         dtCore::RefPtr<dtPhysics::CharacterController> charController = new dtPhysics::CharacterController(*charShape);
+         charController->SetStepHeight(0.7f);
+         charController->SetSkinWidth(0.01f);
+         charController->SetMaxInclineAngle(70.0f);
+         charController->Init();
+
+         charController->Warp(xform.GetTranslation());
+         dtCore::RefPtr<dtPhysics::CharacterMotionModel> wmm
+            = new dtPhysics::CharacterMotionModel(keyboard, mouse, charController);
          wmm->SetScene(scene);
          motionModel = wmm;
+         enableGroundClamper = true;
       }
       else if (&motionModelType == &MotionModelType::FLY)
       {

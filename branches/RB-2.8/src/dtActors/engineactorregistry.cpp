@@ -207,7 +207,7 @@ namespace dtActors
       mActorFactory->RegisterType<PositionDataActorProxy>(POSITION_DATA_ACTOR_TYPE.get());
 
       // Base Game Mesh actor - typically subclassed (maybe shouldn't even be registered)
-      mActorFactory->RegisterType<GameMeshActorProxy>(GAME_MESH_ACTOR_TYPE.get());
+      mActorFactory->RegisterType<GameMeshActor>(GAME_MESH_ACTOR_TYPE.get());
 
       mActorFactory->RegisterType<DistanceSensorActorProxy>(DISTANCE_SENSOR_ACTOR_TYPE.get());
    }
