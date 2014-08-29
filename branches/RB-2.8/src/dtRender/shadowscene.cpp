@@ -208,7 +208,7 @@ namespace dtRender
 
       //osgShadow::ShadowMap* shadowMap = new osgShadow::ShadowMap;
       shadowMap->setTextureSize(osg::Vec2s(shadowRes, shadowRes));
-      if(mImpl->mLightSource->valid() && mImpl->mLightSource->GetLightSource() != NULL)
+      if(mImpl->mLightSource.valid() && mImpl->mLightSource->GetLightSource() != NULL)
       {
          shadowMap->setLight(mImpl->mLightSource->GetLightSource()->getLight());
       }
