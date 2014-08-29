@@ -78,7 +78,7 @@ namespace dtExample
    const dtUtil::RefString InputComponent::DEFAULT_PLAYER_START_NAME("PlayerStart");
    const dtUtil::RefString InputComponent::DEFAULT_TERRAIN_NAME("Terrain");
 
-   static const float CAMERA_HEIGHT = 2.0f;
+   static const float CAMERA_HEIGHT = 0.0f;
 
 
 
@@ -493,10 +493,10 @@ namespace dtExample
       {
          dtCore::Transform xform;
          mCamera->GetTransform(xform);
-         dtCore::RefPtr<dtPhysics::Geometry> charShape = dtPhysics::Geometry::CreateCapsuleGeometry(xform, 2.0f, 0.5f, 100.0f);
+         dtCore::RefPtr<dtPhysics::Geometry> charShape = dtPhysics::Geometry::CreateCapsuleGeometry(xform, 1.5f, 3.0f, 100.0f);
          dtCore::RefPtr<dtPhysics::CharacterController> charController = new dtPhysics::CharacterController(*charShape);
          charController->SetStepHeight(0.7f);
-         charController->SetSkinWidth(0.01f);
+         charController->SetSkinWidth(0.06f);
          charController->SetMaxInclineAngle(70.0f);
          charController->Init();
 
