@@ -4,4 +4,5 @@
     <SPECULAR>6 6 6 0</SPECULAR>
     <SHININESS>1</SHININESS>
     <MAP>materials/TShirt_CaperGreen.png</MAP>
+    <MAP>materials/NONE_NORM.png</MAP>
 </MATERIAL>

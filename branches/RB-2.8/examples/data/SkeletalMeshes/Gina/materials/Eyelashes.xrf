@@ -4,4 +4,7 @@
     <SPECULAR>255 255 255 0</SPECULAR>
     <SHININESS>1</SHININESS>
     <MAP>materials/Eyelashes.png</MAP>
+    <MAP>materials/NONE_NORM.png</MAP>
+    <MAP>materials/NONE_SPEC.png</MAP>
+    <MAP>materials/Eyelashes.png</MAP><!--ALPHA-->
 </MATERIAL>

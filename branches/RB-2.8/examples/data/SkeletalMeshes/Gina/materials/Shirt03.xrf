@@ -4,4 +4,6 @@
     <SPECULAR>6 6 6 0</SPECULAR>
     <SHININESS>1</SHININESS>
     <MAP>materials/Shirt03.png</MAP>
+    <MAP>materials/Shirt_Normals.png</MAP>
+    <MAP>materials/NONE_SPEC.png</MAP>
 </MATERIAL>
