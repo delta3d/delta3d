@@ -72,6 +72,7 @@ namespace dtPhysics
          static const dtUtil::RefString PROPERTY_PHYSICS_DIMENSIONS;
          static const dtUtil::RefString PROPERTY_COLLISION_GROUP;
          static const dtUtil::RefString PROPERTY_MATERIAL_ACTOR;
+         static const dtUtil::RefString PROPERTY_AUTO_CREATE;
 
          typedef dtUtil::Functor<void, TYPELIST_0()> UpdateCallback;
          typedef dtUtil::Functor<void, TYPELIST_1(float)> ActionUpdateCallback;
