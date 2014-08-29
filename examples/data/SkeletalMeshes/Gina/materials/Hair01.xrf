@@ -4,4 +4,6 @@
     <SPECULAR>51 51 51 0</SPECULAR>
     <SHININESS>1</SHININESS>
     <MAP>materials/Hair01.png</MAP>
+    <MAP>materials/Hair_Normals.png</MAP>
+    <MAP>materials/NONE_SPEC.png</MAP>
 </MATERIAL>

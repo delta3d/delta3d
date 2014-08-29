@@ -51,8 +51,8 @@
     <scalingFactor>0.1</scalingFactor>
   </scale>
   <skinningShader>
-      <shaderGroup>Human</shaderGroup>
-      <shaderName>Normal</shaderName>
+      <shaderGroup>MultiMapCharacter</shaderGroup>
+      <shaderName>MultiMapCharacter</shaderName>
       <maxBones>200</maxBones>
    </skinningShader>
    <animationChannel>
