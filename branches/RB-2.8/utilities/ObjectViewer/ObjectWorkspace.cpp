@@ -10,6 +10,7 @@
 #include <dtUtil/xercesparser.h>
 #include <dtCore/project.h>
 #include <dtCore/map.h>
+#include <dtCore/datatype.h>
 #include <dtAnim/cal3ddatabase.h>
 #include <dtCore/deltawin.h>
 
@@ -478,7 +479,7 @@ void ObjectWorkspace::UpdateGeometryList()
    QDir directory(mContextPath.c_str());
 
    // Populate the static mesh list.
-   QString staticMeshDir = QString(mContextPath.c_str()) + "/staticmeshes";
+   QString staticMeshDir = QString(mContextPath.c_str()) + "/" + dtCore::DataType::STATIC_MESH.GetName().c_str();
 
    QStringList staticMeshNameFilters;
    staticMeshNameFilters << "*.ive" << "*.osg" << "*.earth";
@@ -496,7 +497,7 @@ void ObjectWorkspace::UpdateGeometryList()
    }
 
    // Populate the skeletal mesh list.
-   QString skeletalMeshDir = QString(mContextPath.c_str()) + "/skeletalmeshes";
+   QString skeletalMeshDir = QString(mContextPath.c_str()) + "/" + dtCore::DataType::SKELETAL_MESH.GetName().c_str();
 
    QStringList skeltalMeshNameFilter;
    skeltalMeshNameFilter << "*.dtChar";
@@ -510,7 +511,7 @@ void ObjectWorkspace::UpdateGeometryList()
 
       std::string pathName = fileInfo.absolutePath().toStdString();
       std::string fileName = fileInfo.fileName().toStdString();
-      mResourceDock->OnNewGeometry(pathName, fileName);
+      mResourceDock->OnNewSkinnedMesh(pathName, fileName);
    }
 }
 
@@ -519,7 +520,7 @@ void ObjectWorkspace::UpdateShaderList()
 {
    QDir directory(mContextPath.c_str());
 
-   if (directory.cd(QString(mContextPath.c_str()) + "/shaders"))
+   if (directory.cd(QString(mContextPath.c_str()) + "/" + dtCore::DataType::SHADER.GetName().c_str()))
    {
       QStringList nameFilters;
       nameFilters << "*.dtShader" << "*.xml";
@@ -530,7 +531,7 @@ void ObjectWorkspace::UpdateShaderList()
       while (!fileList.empty())
       {
          QFileInfo fileInfo = fileList.takeFirst();
-         mShaderDefinitionName = QString("%1/shaders/%2").arg(QString(mContextPath.c_str()), fileInfo.fileName());
+         mShaderDefinitionName = QString("%1/%2/%3").arg(QString(mContextPath.c_str()), QString(dtCore::DataType::SHADER.GetName().c_str()), fileInfo.fileName());
          emit LoadShaderDefinition(mShaderDefinitionName);
       }
 

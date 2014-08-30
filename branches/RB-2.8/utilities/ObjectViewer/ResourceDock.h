@@ -107,6 +107,7 @@ public slots:
 
    void OnNewMap(const std::string& mapName);
    void OnNewGeometry(const std::string& path, const std::string& filename);
+   void OnNewSkinnedMesh(const std::string& path, const std::string& filename);
    void OnGeometryItemChanged(QTreeWidgetItem* item, int column);
    void OnSaveAs();
 
