@@ -55,7 +55,7 @@ struct MapParams
 
 
 // External Functions
-vec4 computeMultiMapColor(MapParams m, out FragParams f, out EffectParams e);
+vec4 computeMultiMapColor(MapParams m, inout FragParams f, inout EffectParams e);
 
 
 
@@ -107,15 +107,11 @@ void main(void)
    
    computeMultiMapColor(m, f, e);
    
+   vec4 result = combineEffects(e);
+   gl_FragColor = result;
+
    // DEBUG:
-   vec3 oneVec = vec3(1,1,1);
-   vec3 tan = (f.tbn[0] + oneVec)*0.5;
-   vec3 bitan = (f.tbn[1] + oneVec)*0.5;
-   vec3 norm = (f.tbn[2] + oneVec)*0.5;
-   vec3 mNorm = (m.normal.rgb + oneVec)*0.5;
-   vec3 worldNorm = (f.worldNormal + oneVec)*0.5;
-   vec3 normVaried = (normalize(vNormal) + oneVec)*0.5;
-   //gl_FragColor = vec4(m.diffuse.rgb,1.0);
+   //gl_FragColor = vec4( (vec3(1.0) + f.worldNormal.rgb) * 0.5,1.0);
    //gl_FragColor = vec4(m.specular.rgb,1.0);
    //gl_FragColor = vec4(mNorm,1.0);
    //gl_FragColor = vec4(e.specContrib.rgb,1.0);
@@ -135,6 +131,5 @@ void main(void)
    //gl_FragColor = vec4(f.viewDir,1.0);
    //gl_FragColor = vec4(gl_Color.rgb,1.0);
    
-   vec4 result = combineEffects(e);
-   gl_FragColor = result;
+   
 }

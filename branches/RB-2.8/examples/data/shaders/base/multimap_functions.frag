@@ -59,7 +59,7 @@ struct LightParams
 
 
 
-void computeLightContrib(LightParams lp, out FragParams fp, out EffectParams ep)
+void computeLightContrib(LightParams lp, inout FragParams fp, inout EffectParams ep)
 {
    vec3 lightContrib;
 
@@ -76,7 +76,7 @@ void computeLightContrib(LightParams lp, out FragParams fp, out EffectParams ep)
    ep.lightContrib += lightContrib;
 }
 
-void computeLightContrib_SunMoon(out FragParams fp, out EffectParams ep)
+void computeLightContrib_SunMoon(inout FragParams fp, inout EffectParams ep)
 {
    LightParams lp;
    
@@ -95,7 +95,7 @@ void computeLightContrib_SunMoon(out FragParams fp, out EffectParams ep)
    computeLightContrib(lp, fp, ep);*/
 }
 
-vec4 computeMultiMapColor(MapParams mp, out FragParams fp, out EffectParams ep)
+vec4 computeMultiMapColor(MapParams mp, inout FragParams fp, inout EffectParams ep)
 {
    vec2 uv = gl_TexCoord[0].xy;
    
@@ -118,7 +118,7 @@ vec4 computeMultiMapColor(MapParams mp, out FragParams fp, out EffectParams ep)
 
    // Compute the Light & Spec Contribution
    computeLightContrib_SunMoon(fp, ep);
-   
+
    // Compute the reflection contribution
    //vec3 reflectVec = reflect(fp.viewDir, fp.worldNormal);
    vec3 reflectVec = reflect(fp.viewDir, fp.worldNormal.xyz);
@@ -133,6 +133,7 @@ vec4 computeMultiMapColor(MapParams mp, out FragParams fp, out EffectParams ep)
    ep.envContrib *= mp.specular;
    color = mix(ep.lightContrib * color, envColor, minLightSpec);
    
+
    // Don't apply specular greater than the light contrib or objects will glow in the dark...
    float specLevel = ep.specContrib.a;
    ep.specContrib.rgb = ep.lightContrib * specColor.rgb * specLevel;
