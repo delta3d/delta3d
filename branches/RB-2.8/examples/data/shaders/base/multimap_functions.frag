@@ -1,6 +1,5 @@
 #version 120
 
-uniform sampler2D envTexture;
 uniform samplerCube d3d_ReflectionCubeMap;
 
 varying vec3 vLightDir;
@@ -146,6 +145,7 @@ vec4 computeMultiMapColor(MapParams mp, inout FragParams fp, inout EffectParams 
   
 
    // Don't apply specular greater than the light contrib or objects will glow in the dark...
+   ep.specContrib.a *= specColor.a;
    float specLevel = ep.specContrib.a;
    ep.specContrib.rgb = ep.lightContrib * specColor.rgb * specLevel;
    ep.illumContrib.rgb += fp.sceneLuminance * illumColor.rgb;

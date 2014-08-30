@@ -63,12 +63,17 @@
                <source type="Image">textures/ShaderBase/NONE.png</source>
             </texture2D>
          </parameter>
-         <parameter name="envTexture">
-            <texture2D textureUnit="5">
-               <source type="Image">textures/ShaderBase/DefaultEnvironmentMap.png</source>
+         <parameter name="d3d_ReflectionCubeMap">
+            <textureCubeMap textureUnit="5">
+               <source type="ImagePositiveX">textures/right.jpg</source>
+               <source type="ImageNegativeX">textures/left.jpg</source>
+               <source type="ImagePositiveY">textures/front.jpg</source>
+               <source type="ImageNegativeY">textures/back.jpg</source>
+               <source type="ImagePositiveZ">textures/top.jpg</source>
+               <source type="ImageNegativeZ">textures/bottom.jpg</source>
                <wrap axis="S" mode="Repeat"/>
                <wrap axis="T" mode="Repeat"/>
-            </texture2D>
+            </textureCubeMap>
          </parameter>
 
       </shader>
@@ -110,12 +115,17 @@
                <source type="Image">textures/ShaderBase/NONE_NORM.png</source>
             </texture2D>
          </parameter>
-         <parameter name="envTexture">
-            <texture2D textureUnit="5">
-               <source type="Image">textures/ShaderBase/DefaultEnvironmentMap.png</source>
+         <parameter name="d3d_ReflectionCubeMap">
+            <textureCubeMap textureUnit="5">
+               <source type="ImagePositiveX">textures/right.jpg</source>
+               <source type="ImageNegativeX">textures/left.jpg</source>
+               <source type="ImagePositiveY">textures/front.jpg</source>
+               <source type="ImageNegativeY">textures/back.jpg</source>
+               <source type="ImagePositiveZ">textures/top.jpg</source>
+               <source type="ImageNegativeZ">textures/bottom.jpg</source>
                <wrap axis="S" mode="Repeat"/>
                <wrap axis="T" mode="Repeat"/>
-            </texture2D>
+            </textureCubeMap>
          </parameter>
          <parameter name="alphaTexture">
             <texture2D textureUnit="6">

@@ -63,8 +63,8 @@ vec4 combineEffects(EffectParams e)
 {
    vec4 result = e.colorContrib;
    result.rgb *= e.lightContrib.rgb;
-   result.rgb += e.envContrib.rgb;
-   result.rgb += e.specContrib.rgb;
+   result.rgb += e.envContrib.rgb * e.envContrib.a;
+   result.rgb += e.specContrib.rgb * e.specContrib.a;
    result.rgb += e.illumContrib.rgb;
    return result;
 }
@@ -97,10 +97,11 @@ void main(void)
    e.illumContrib = zeroVec;
  
    MapParams m;
+   vec2 alpha = texture2D(alphaTexture, uv).rg * alphaScale;
    m.diffuse.rgb = texture2D(diffuseTexture, uv).rgb;
-   m.diffuse.a = texture2D(alphaTexture, uv).r * alphaScale;
+   m.diffuse.a = alpha.r;
    m.specular.rgb = texture2D(specularTexture, uv).rgb;
-   m.specular.a = 1.0;
+   m.specular.a = alpha.g;
    m.illum.rgb = texture2D(illumTexture, uv).rgb * illumScale;
    m.normal.rgb = normalize(texture2D(normalTexture, uv).rgb);
    m.irradiance = vec4(0,0,0,0);
@@ -130,6 +131,7 @@ void main(void)
    //gl_FragColor = vec4(normVaried,1.0);
    //gl_FragColor = vec4(f.viewDir,1.0);
    //gl_FragColor = vec4(gl_Color.rgb,1.0);
+   //gl_FragColor = vec4(e.colorContrib.aaa, 1.0);
    
    
 }
