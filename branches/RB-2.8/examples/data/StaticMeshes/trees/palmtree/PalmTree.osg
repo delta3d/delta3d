@@ -883,6 +883,28 @@ MatrixTransform {
                   shadowTextureMode GL_LUMINANCE
                 }
               }
+              textureUnit 6 {
+                GL_TEXTURE_2D ON
+                Texture2D {
+                  UniqueID Texture2D_11
+                  file "images\\PalmTreeFrond_ALPHA.png"
+                  wrap_s REPEAT
+                  wrap_t REPEAT
+                  wrap_r CLAMP_TO_EDGE
+                  min_filter LINEAR_MIPMAP_LINEAR
+                  mag_filter LINEAR
+                  maxAnisotropy 1
+                  borderColor 0 0 0 0
+                  borderWidth 0
+                  useHardwareMipMapGeneration TRUE
+                  unRefImageDataAfterApply TRUE
+                  internalFormatMode USE_S3TC_DXT1_COMPRESSION
+                  resizeNonPowerOfTwo TRUE
+                  shadowComparison FALSE
+                  shadowCompareFunc GL_LEQUAL
+                  shadowTextureMode GL_LUMINANCE
+                }
+              }
             }
             useDisplayList TRUE
             useVertexBufferObjects FALSE
