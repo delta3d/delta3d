@@ -52,10 +52,7 @@
 
 //needed to set the scene camera
 #include <dtRender/scenemanager.h>
-#include <dtGame/gamemanager.h>
-#include <dtABC/application.h>
 #include <dtCore/camera.h>
-#include <dtCore/scene.h>
 
 
 namespace dtRender
@@ -103,9 +100,7 @@ namespace dtRender
          dtCore::Transform xform;
          mReflector->GetTransform(xform);
          osg::Matrixd worldToLocal;
-         //xform.Get(worldToLocal);
-         //worldToLocal.invert(worldToLocal);
-
+         
          osg::BoundingSphere bs = mReflector->GetOSGNode()->getBound();
          osg::Vec3 position = xform.GetTranslation();// bs.center();
 
@@ -119,15 +114,6 @@ namespace dtRender
          }
 
          typedef std::pair<osg::Vec3, osg::Vec3> ImageData;
-         //const ImageData id[] =
-         //{
-         //   ImageData( osg::Vec3(-1,  0,  0), osg::Vec3( 0, 0,  1) ), // +X
-         //   ImageData( osg::Vec3(1,  0,  0), osg::Vec3( 0, 0,  1) ), // -X
-         //   ImageData( osg::Vec3( 0, 0, -1), osg::Vec3( 0,  1, 0) ), // -Y
-         //   ImageData( osg::Vec3( 0,  0,  1), osg::Vec3( 0,  -1,  0) ), // +Y
-         //   ImageData( osg::Vec3( 0,  -1,  0), osg::Vec3( 0, 0, 1) ), // +Z
-         //   ImageData( osg::Vec3( 0, 1, 0), osg::Vec3( 0, 0, -1) )  // -Z
-         //};
          const ImageData id[] =
          {
             ImageData( osg::Vec3( 1,  0,  0), osg::Vec3( 0, -1,  0) ), // +X
@@ -181,6 +167,7 @@ namespace dtRender
 
       dtCore::RefPtr<osg::Group> mRootNode;
       dtCore::RefPtr<osg::TextureCubeMap> mCubeMapTexture;
+      dtCore::ObserverPtr<dtCore::Transformable> mTarget;
       dtCore::RefPtr<UpdateCubeMapCameraCallback> mCameraCallback;
    };
 
@@ -276,14 +263,18 @@ namespace dtRender
             //mImpl->mRootNode->addChild(camera);
             sm.GetSceneCamera()->GetOSGCamera()->addChild(camera);
             
-            //dtABC::Application::GetInstance("Application")->GetScene()->GetSceneNode()->addChild(camera.get());
-
-
+            
             Cameras.push_back(camera);
          }
 
 
-         mImpl->mRootNode->setUpdateCallback(new UpdateCubeMapCameraCallback(*sm.GetSceneCamera(), Cameras));
+         //if we dont have a target assigned use the main scene camera
+         if(!mImpl->mTarget.valid())
+         {
+            mImpl->mTarget = sm.GetSceneCamera();
+         }
+
+         mImpl->mRootNode->setUpdateCallback(new UpdateCubeMapCameraCallback(*mImpl->mTarget, Cameras));
 
          //set default reflection uniform
          osg::StateSet* mainSceneSS = sm.GetOSGNode()->getOrCreateStateSet();
@@ -307,6 +298,16 @@ namespace dtRender
    const osg::Group* CubeMapScene::GetSceneNode() const
    {
       return mImpl->mRootNode;
+   }
+
+   void CubeMapScene::SetTarget( dtCore::Transformable& xform)
+   {
+      mImpl->mTarget = &xform;
+   }
+
+   const dtCore::Transformable& CubeMapScene::SetTarget() const
+   {
+      return *mImpl->mTarget;
    }
 
    CubeMapSceneProxy::CubeMapSceneProxy()

@@ -59,6 +59,9 @@ namespace dtRender
       osg::TextureCubeMap* GetCubeMap();
       const osg::TextureCubeMap* GetCubeMap() const;
 
+      void SetTarget(dtCore::Transformable&);
+      const dtCore::Transformable& SetTarget() const;
+
       DT_DECLARE_ACCESSOR_INLINE(int, TexWidth)
       DT_DECLARE_ACCESSOR_INLINE(int, TexHeight)
       

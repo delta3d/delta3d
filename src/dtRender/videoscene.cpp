@@ -26,6 +26,7 @@
 
 #include <dtCore/observerptr.h>
 #include <dtCore/propertymacros.h>
+#include <dtCore/project.h>
 
 #include <osg/Camera>
 #include <osg/Texture2D>
@@ -33,6 +34,7 @@
 #include <osg/Image>
 #include <osg/ImageStream>
 #include <osg/Geode>
+#include <osg/MatrixTransform>
 
 #include <osgDB/ReaderWriter>
 #include <osgDB/ReadFile>
@@ -145,10 +147,17 @@ namespace dtRender
       if(mps != NULL)
       {
          
-         dtCore::RefPtr<osg::Image> image = osgDB::readImageFile(GetVideoFile());
+         std::string videoFile = dtCore::Project::GetInstance().GetResourcePath(GetVideoFile());
+         if(videoFile.empty())
+         {
+            LOG_ERROR("Cannot create video scene, unable to find video file.");
+            return;
+         }
+
+         dtCore::RefPtr<osg::Image> image = osgDB::readImageFile(videoFile);
          if (image == NULL)
          {
-            LOG_ERROR("Cannot create video scene, unable to load video file.");
+            LOG_ERROR("Cannot create video scene, unable to read video file, check for missing plugins.");
             return;
          }
 
@@ -165,32 +174,44 @@ namespace dtRender
             }
 
             videoStream->play();
-         }
-
-         // setup scene
-         mImpl->mVideoScene = new osg::Group();         
-         dtCore::RefPtr<osg::Geode> gQuad = new osg::Geode();
-         gQuad->addDrawable(createSquare());
-         mImpl->mVideoScene->addChild(gQuad);
-
-         // setup texture which will hold the video file
-         mImpl->mVideoTexture = new osg::Texture2D();
-         mImpl->mVideoTexture->setResizeNonPowerOfTwoHint(false);
-         mImpl->mVideoTexture->setFilter(osg::Texture2D::MIN_FILTER,osg::Texture2D::LINEAR);
-         mImpl->mVideoTexture->setFilter(osg::Texture2D::MAG_FILTER,osg::Texture2D::LINEAR);
-         mImpl->mVideoTexture->setWrap(osg::Texture2D::WRAP_S,osg::Texture2D::CLAMP_TO_EDGE);
-         mImpl->mVideoTexture->setWrap(osg::Texture2D::WRAP_T,osg::Texture2D::CLAMP_TO_EDGE);
-         mImpl->mVideoTexture->setImage(image.get());
-         gQuad->getOrCreateStateSet()->setTextureAttributeAndModes(0, mImpl->mVideoTexture);
-
-         // create osgPPU's units and processor         
-         osgPPU::UnitTexture* unitTexture = new osgPPU::UnitTexture(mImpl->mVideoTexture);
          
-         mImpl->mVideoScene->addChild(unitTexture);
 
-         BaseClass::SetFirstUnit(*unitTexture);
-         BaseClass::SetLastUnit(*unitTexture);
+            // setup scene
+            mImpl->mVideoScene = new osg::Group();         
+            dtCore::RefPtr<osg::Geode> gQuad = new osg::Geode();
+            gQuad->addDrawable(createSquare());
+            mImpl->mVideoScene->addChild(gQuad);
+            sm.GetMatrixNode()->addChild(mImpl->mVideoScene);
 
+            // setup texture which will hold the video file
+            mImpl->mVideoTexture = new osg::Texture2D();
+            mImpl->mVideoTexture->setResizeNonPowerOfTwoHint(false);
+            mImpl->mVideoTexture->setFilter(osg::Texture2D::MIN_FILTER,osg::Texture2D::LINEAR);
+            mImpl->mVideoTexture->setFilter(osg::Texture2D::MAG_FILTER,osg::Texture2D::LINEAR);
+            mImpl->mVideoTexture->setWrap(osg::Texture2D::WRAP_S,osg::Texture2D::CLAMP_TO_EDGE);
+            mImpl->mVideoTexture->setWrap(osg::Texture2D::WRAP_T,osg::Texture2D::CLAMP_TO_EDGE);
+            mImpl->mVideoTexture->setImage(image.get());
+            gQuad->getOrCreateStateSet()->setTextureAttributeAndModes(0, mImpl->mVideoTexture);
+
+            // create osgPPU's units and processor         
+            osgPPU::UnitTexture* unitTexture = new osgPPU::UnitTexture(mImpl->mVideoTexture);
+         
+
+            //set default reflection uniform
+            osg::StateSet* mainSceneSS = sm.GetOSGNode()->getOrCreateStateSet();
+            osg::Uniform* uniform = mainSceneSS->getOrCreateUniform("d3d_VideoTexture", osg::Uniform::SAMPLER_2D);
+            uniform->set(2);
+
+            mainSceneSS->setTextureAttributeAndModes(2, mImpl->mVideoTexture, osg::StateAttribute::ON);
+
+
+            BaseClass::SetFirstUnit(*unitTexture);
+            BaseClass::SetLastUnit(*unitTexture);
+         }
+         else
+         {
+            LOG_ERROR("Invalid video stream, file was found and loaded but the video stream was NULL");
+         }
       }
       else
       {
