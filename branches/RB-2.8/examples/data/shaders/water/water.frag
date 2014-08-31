@@ -144,14 +144,13 @@ void main (void)
 
       float foamAmt = max(-1.0 * dot(normal, vec3(vertexWaveDir.xy, 0.0)), 0.0);
       float foamNoise = clamp(2.0 * pow(noisevalue, 2.0), 0.0, 1.0);         
-      foamAmt = clamp(15.0 * pow(foamAmt, 4.0), 0.0, 1.0);
+      foamAmt = clamp(15.0 * pow(foamAmt, 3.5), 0.0, 1.0);
       //foamAmt *= foamNoise;
       //foamColor *= foamAmt;
       foamColor *= foamNoise;
       
       foamColor += foamNoise * foamAmt;
       
-      foamColor.a = 1.0;
       ////////////////////////////////////////////////////////
       
       reflectColor = (opacity * foamColor.rgb * reflectColor) + ((1.0 - opacity) * reflectColor);
