@@ -84,6 +84,7 @@ void main(void)
    shaderVertexNormal = vec3(0.0, 0.0, 1.0);
    int offset = WAVE_OFFSET;
 
+   //From GPUGems 1 edited by Randima Fernando, ch1 article by Mark Finch
    // There are 2 vec4's of data per wave, so the loop is MAX_WAVES * 2 but increments by 2's
    for(int i = 2 * offset; i < (offset + NUMWAVES) * 2; i+=2)
    {           
