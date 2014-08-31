@@ -39,6 +39,7 @@
 #include <dtCore/enumactorproperty.h>
 #include <dtCore/functor.h>
 #include <dtCore/stringactorproperty.h>
+#include <dtCore/project.h>
 
 #include <dtGame/gamemanager.h>
 #include <dtGame/messagetype.h>
@@ -588,10 +589,77 @@ namespace dtActors
 
       CreateWaveTexture();
       CreateReflectionCamera();
+      
+      CreateNoiseTexture();
+      CreateFoamTexture();
 
       //add a custom compute bounding box callback
       mGeometry->setComputeBoundingBoxCallback(new WaterGridComputeBound());
    }
+
+   void WaterGridActor::CreateFoamTexture()
+   {
+
+      
+      std::string foamTextureFile = dtCore::Project::GetInstance().GetResourcePath(dtCore::ResourceDescriptor("textures/ShaderBase/OceanFoam.png"));
+      
+      if(!foamTextureFile.empty())
+      {
+
+         osg::Image* newImage = osgDB::readImageFile(foamTextureFile);
+         if (newImage == NULL)
+         {
+            LOG_ERROR("WaterGridActor failed to load Foam Texture file [" + foamTextureFile + "].");
+         }
+      
+
+         osg::Texture2D* foamTexture2D = new osg::Texture2D();
+         foamTexture2D->setImage(newImage);
+         foamTexture2D->dirtyTextureObject();
+         foamTexture2D->setFilter( osg::Texture3D::MIN_FILTER, osg::Texture3D::LINEAR_MIPMAP_LINEAR);
+         foamTexture2D->setFilter( osg::Texture3D::MAG_FILTER, osg::Texture3D::LINEAR );
+         foamTexture2D->setWrap(osg::Texture::WRAP_S, osg::Texture::REPEAT);
+         foamTexture2D->setWrap(osg::Texture::WRAP_T, osg::Texture::REPEAT);
+         foamTexture2D->setUnRefImageDataAfterApply(true);
+      
+         osg::StateSet* ss = mGeode->getOrCreateStateSet();
+
+         osg::Uniform* foamTexUniform = new osg::Uniform(osg::Uniform::SAMPLER_2D, "foamTexture");
+         foamTexUniform->set(3);
+         ss->addUniform(foamTexUniform);
+         ss->setTextureAttributeAndModes(3, foamTexture2D, osg::StateAttribute::ON);
+      }
+      else
+      {
+         LOG_ERROR("Unable to create foam effect, unable to find texture file [" + foamTextureFile + "].");
+      }
+   }
+
+
+   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+   void WaterGridActor::CreateNoiseTexture()
+   {
+      LOG_INFO("Creating noise texture.");
+      dtUtil::NoiseTexture noise3d(6, 2, 0.7, 0.5, 128, 128, 32);
+      dtCore::RefPtr<osg::Image> img = noise3d.MakeNoiseTexture(GL_ALPHA);
+      LOG_INFO("Finished creating noise texture.");
+
+      mNoiseTexture = new osg::Texture3D();
+      mNoiseTexture->setImage(img.get());
+
+      mNoiseTexture->setFilter( osg::Texture3D::MIN_FILTER, osg::Texture3D::LINEAR );
+      mNoiseTexture->setFilter( osg::Texture3D::MAG_FILTER, osg::Texture3D::LINEAR );
+      mNoiseTexture->setWrap( osg::Texture3D::WRAP_S, osg::Texture3D::REPEAT );
+      mNoiseTexture->setWrap( osg::Texture3D::WRAP_T, osg::Texture3D::REPEAT );
+      mNoiseTexture->setWrap( osg::Texture3D::WRAP_R, osg::Texture3D::REPEAT );
+
+      osg::Uniform* tex = new osg::Uniform(osg::Uniform::SAMPLER_3D, UNIFORM_NOISE_TEXTURE);
+      tex->set(4);
+      mGeometry->getOrCreateStateSet()->addUniform(tex);
+      mGeometry->getOrCreateStateSet()->setTextureAttributeAndModes(4, mNoiseTexture.get(), osg::StateAttribute::ON);
+
+   }
+
 
    ////////////////////////////////////////////////////////////////////////////////
    osg::Node* WaterGridActor::BuildSubmergedGeometry()
@@ -600,16 +668,7 @@ namespace dtActors
       BindShader(quad, "UnderWater");
 
       osg::StateSet* ss = quad->getOrCreateStateSet();
-
-      osg::Depth* depth = new osg::Depth;
-      depth->setFunction(osg::Depth::ALWAYS);
-      depth->setRange(1.0, 1.0);
-      ss->setAttributeAndModes(depth, osg::StateAttribute::ON);
-
-      /*osg::BlendFunc* bf = new osg::BlendFunc();
-      bf->setFunction(osg::BlendFunc::SRC_ALPHA ,osg::BlendFunc::ONE_MINUS_SRC_ALPHA);
-      ss->setAttributeAndModes(bf);*/
-
+     
       ss->setMode(GL_CULL_FACE, osg::StateAttribute::OFF);
       ss->setMode(GL_DEPTH_TEST, osg::StateAttribute::OFF);
 

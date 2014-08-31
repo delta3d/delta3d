@@ -216,7 +216,7 @@ void main(void)
    //This adds the under water effects 
    float fogAmt = 0.0;
 
-   if(altitude < WaterHeight + 1.0)
+   if(altitude < WaterHeight - 0.1)
    {
       //camera height over the water
       float heightOverWater = 20.5 * max(vCamera.z - WaterHeight, 0.0);

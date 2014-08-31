@@ -129,9 +129,10 @@ void main (void)
    vec3 camPos = inverseViewMatrix[3].xyz;
                                     
    
-   float resolutionScalar = 2.0;// + clamp(floor(sqrt(camPos.z - WaterHeight) / 15.0), 0.0, 3.0); 
+   float resolutionScalar = 2.0;// + 2.0 * clamp(floor(sqrt(camPos.z - WaterHeight) / 5.0), 0.0, 3.0); 
    float ampOverLength = 1.0 / (8.0 * resolutionScalar);
 
+   //From GPUGems 1 edited by Randima Fernando, ch1 article by Mark Finch
    vec3 textureNormal = vec3(0.0, 0.0, 0.0);  
    for(int i = 0; i < numWaves; ++i)
    {   

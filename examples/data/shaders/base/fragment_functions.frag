@@ -1,9 +1,20 @@
 #version 120
 //#extension GL_OES_standard_derivatives : enable
 
+//used for pre depth calculations and soft particle opacity
 uniform float d3d_NearPlane;
 uniform float d3d_FarPlane;
 uniform sampler2D d3d_PreDepthTexture;
+
+//used for planar reflections
+//it just needs some reasonable default so its never zero
+uniform float ScreenHeight = 1024;
+uniform float ScreenWidth = 768;
+
+//reflections, planar and cube
+uniform sampler2D reflectionMap;
+uniform samplerCube d3d_ReflectionCubeMap;
+
 
 //used for HDR
 uniform float d3d_SceneLuminance = 1.0;
@@ -24,8 +35,8 @@ void lightContribution(vec3 normal, vec3 lightDir, vec3 diffuseLightSource, vec3
    float diffuseSurfaceContrib = max(dot(normal, lightDir),0.0);
    
    // Lit Color (Diffuse plus Ambient)
-   vec3 diffuseLight = d3d_SceneLuminance * diffuseSurfaceContrib * diffuseLightSource;
-   lightContrib = vec3(diffuseLight + (ambientLightSource * d3d_SceneAmbience));
+   vec3 diffuseLight = diffuseSurfaceContrib * diffuseLightSource;
+   lightContrib = vec3(diffuseLight + (ambientLightSource ));
 }
 
 void computeSpecularContribution(vec3 lightDir, vec3 normal, vec3 viewDir, vec3 glossMap, out vec3 specularContribution)
@@ -45,6 +56,18 @@ vec2 computeSphereMapCoord(in vec3 viewDir, in vec3 normal)
    m = 2.0 * sqrt(dot(r.xy,r.xy) + ((r.z + 1.0) * (r.z + 1.0)));
 
    return vec2(r.x/m + 0.5,r.y/m + 0.5);
+}
+
+
+//A simple function to rotate a texture with a heading in degrees
+vec2 rotateTexCoords(vec2 coords, float angle)
+{
+   float degInRad = radians(angle);   
+   
+   vec2 coordsRot;
+   coordsRot.x = dot(vec2(cos(degInRad), -sin(degInRad)), coords);
+   coordsRot.y = dot(vec2(sin(degInRad), cos(degInRad)), coords);
+   return coordsRot;
 }
 
 /////////////////////////////////////////////////////////////////////
@@ -70,9 +93,10 @@ float softParticleOpacity(vec3 viewPosCenter, vec3 viewPosCurrent,
    return opacity;
 }
 
-float samplePreDepthTexture(vec2 screenCoord)
+float samplePreDepthTexture()
 {
-   return texture2D(d3d_PreDepthTexture, screenCoord).b * (d3d_FarPlane - d3d_NearPlane);
+   vec2 depthCoords = vec2(gl_FragCoord.x / ScreenWidth, gl_FragCoord.y / ScreenHeight);
+   return texture2D(d3d_PreDepthTexture, depthCoords).b * (d3d_FarPlane - d3d_NearPlane);
 }
 
 //From Shader X5
@@ -114,18 +138,71 @@ vec3 computeWorldSpaceNormal(vec3 vertPos, vec3 vertNormal, vec3 mapNormal, vec2
    return normalize(tbn * tangentSpaceNormal); 
 }
 
-float computeExpFog(float fogDistance)
+vec3 samplePlanarReflectionTexture()
+{
+   vec3 refTexCoords = vec3(gl_FragCoord.x / ScreenWidth, (gl_FragCoord.y / ScreenHeight), gl_FragCoord.z);      
+   return texture2D(reflectionMap, refTexCoords.xy).rgb;   
+}
+
+vec3 sampleCubeMapReflection(vec3 worldPos, vec3 camPos, vec3 normal)
+{
+   float dist = length(worldPos - camPos);
+   
+   //could this end up as a divide by zero ???
+   vec3 wsViewDir = (worldPos - camPos) / dist;
+   
+   vec3 reflectCubeCoords = reflect(wsViewDir, normal);
+   vec3 rayCol = worldPos + ((d3d_FarPlane - dist) * reflectCubeCoords);
+   rayCol = normalize(rayCol - camPos);
+
+   return textureCube(d3d_ReflectionCubeMap, rayCol).rgb;   
+ }
+
+//From GPUGems 1 edited by Randima Fernando, ch1 article by Mark Finch
+//a great fast approximation, use computeRefractCoef for a more physically based computation
+float FastFresnel(float nDotL, float fbias, float fpow)
+{
+   float facing = 1.0 - nDotL;
+   return max(fbias + ((1.0 - fbias) * pow(facing, fpow)), 0.0);
+}
+
+
+//From More OpenGL Programming with David Astle, chapter 8 article by Angus Dorbie
+//a good refractIndex for water is 1.333
+float computeReflectionCoef(vec3 viewDir, vec3 viewSpaceNormal, float refractIndex)
+{
+   float incidentAngle = acos(dot(viewDir, viewSpaceNormal));
+   float refractAngle = asin(sin(incidentAngle) / refractIndex);
+   
+   float Rs = pow(sin(incidentAngle - refractAngle) /
+                        sin(incidentAngle + refractAngle), 2.0 );
+
+   float Rp = pow( (refractIndex * cos(incidentAngle) - cos(refractAngle) ) /
+                        (refractIndex * cos(incidentAngle) + cos(refractAngle) ), 2.0);
+
+   //this basically acts as a polarization filter
+   return (Rs + Rp) * 0.5;
+}
+
+
+float computeExpFogWithDensity(float fogDistance, float fogDensity)
 {
    //defaults to EXP2 Fog
     const float LOG2 = 1.442695;
-    float fogFactor = exp2( -gl_Fog.density * 
-                       gl_Fog.density * 
+    float fogFactor = exp2( -fogDensity * 
+                       fogDensity * 
                        fogDistance * 
                        fogDistance * 
                        LOG2 );
 
     fogFactor = clamp(fogFactor, 0.0, 1.0);
     return fogFactor;
+}
+
+
+float computeExpFog(float fogDistance)
+{
+   return computeExpFogWithDensity(fogDistance, gl_Fog.density);
 }
 
 float computeLinearFog(float startFog, float endFog, float fogDistance)

@@ -1,7 +1,5 @@
 #version 120
 
-uniform samplerCube d3d_ReflectionCubeMap;
-
 varying vec3 vLightDir;
 varying vec3 vLightDir2;
 
@@ -13,7 +11,7 @@ float computeLinearFog(float, float, float);
 float computeExpFog(float);
 vec3 computeWorldSpaceNormal(vec3 vertPos, vec3 vertNormal, vec3 mapNormal, vec2 vertUV, out mat3 tbn);
 vec2 computeSphereMapCoord(in vec3 viewDir, in vec3 normal);
-
+vec3 sampleCubeMapReflection(vec3 worldPos, vec3 camPos, vec3 normal);
 
 
 struct FragParams
@@ -127,22 +125,10 @@ vec4 computeMultiMapColor(MapParams mp, inout FragParams fp, inout EffectParams 
    
    vec3 minLightSpec = min(ep.lightContrib.rgb, specColor.rgb);
    
-   //vec3 envColor = fp.sceneLuminance * texture2D(envTexture, computeSphereMapCoord(fp.viewDir, fp.worldNormal)).rgb;
-   //vec3 envColor = fp.sceneLuminance * texture2D(envTexture, reflectVec.xy).rgb;
-   //ep.envContrib = vec4(envColor, reflectContrib);
-   //ep.envContrib *= mp.specular;
-   //color = mix(ep.lightContrib * color, envColor, minLightSpec);
-
-   vec3 wsViewDir = normalize(fp.pos - fp.cameraPos);
-   vec3 reflectCubeCoords = reflect(wsViewDir, fp.worldNormal);
-   vec3 rayCol = fp.pos + ((200.0 - length(fp.viewDir)) * reflectCubeCoords);
-   rayCol = normalize(rayCol - fp.cameraPos);
-
-   vec3 reflectCubeMap = fp.sceneLuminance * textureCube(d3d_ReflectionCubeMap, rayCol).rgb;   
+   vec3 reflectCubeMap = sampleCubeMapReflection(fp.pos, fp.cameraPos, fp.worldNormal);
    ep.envContrib = vec4(reflectCubeMap, reflectContrib); 
    ep.envContrib *= mp.specular;
    color = mix(ep.lightContrib * color, reflectCubeMap, minLightSpec);
-  
 
    // Don't apply specular greater than the light contrib or objects will glow in the dark...
    ep.specContrib.a *= specColor.a;

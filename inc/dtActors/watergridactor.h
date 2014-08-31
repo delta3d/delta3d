@@ -218,6 +218,8 @@ namespace dtActors
       osg::Node* BuildSubmergedGeometry();
       void CreateWaveTexture();
       void CreateReflectionCamera();
+      void CreateFoamTexture();
+      void CreateNoiseTexture();
 
       void BindTextureUniformToNode(osg::Node*, osg::Texture2D*, const std::string& name, unsigned texUnit);
       void InitAndBindToTarget(osg::Camera*, osg::Texture2D*, int width, int height, bool mipmap);
