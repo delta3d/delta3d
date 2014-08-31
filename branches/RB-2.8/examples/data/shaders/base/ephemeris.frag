@@ -15,8 +15,11 @@ void main(void)
    float scale = d3d_SceneLuminance * ( brightness / (luminance + 0.001) );
   
   
-   vec3 finalColor = scale * diffuseColor;
-   //finalColor = 10.5 * pow(finalColor, 8.5);
+   vec3 finalColor = scale * diffuseColor * vec3(0.85, 0.9, 0.85);
+   //finalColor += diffuseColor;
+   
+   finalColor += 0.5 * pow(finalColor, vec3(1.5));
+   finalColor += 0.5 * pow(finalColor, vec3(2.5));
 
    
    gl_FragColor = vec4(finalColor,  1.0);
