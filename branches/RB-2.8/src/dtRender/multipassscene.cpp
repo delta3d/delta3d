@@ -188,7 +188,7 @@ namespace dtRender
       MultipassSceneImpl()
          : mColorImageFormat(GL_RGBA16F_ARB)
          , mEnableColorBypass(true)
-         , mEnableResampleColor(false)
+         , mEnableResampleColor(true)
          , mDepthImageFormat(GL_DEPTH_COMPONENT)
          , mEnableDepthBypass(true)
          , mPreDepthImageFormat(GL_DEPTH_COMPONENT32)
@@ -303,7 +303,7 @@ namespace dtRender
          
          GetSceneNode()->setNodeMask(dtUtil::NodeMask::MULTIPASS);
          
-         mainSceneOSGCamera->setCullMask(dtUtil::CullMask::MAIN_CAMERA_MULTIPASS);
+         mainSceneOSGCamera->setCullMask(dtUtil::CullMask::MAIN_CAMERA_MULTIPASS ^ dtUtil::NodeMask::FOREGROUND);
          multiPassOSGCam->setCullMask(dtUtil::CullMask::ADDITIONAL_CAMERA_MULTIPASS);
          
          //keep the multipass camera in synch with the main camera
