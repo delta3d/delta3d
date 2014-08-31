@@ -150,9 +150,11 @@ void main (void)
       foamColor *= foamNoise;
       
       foamColor += foamNoise * foamAmt;
+      foamColor += opacity * foamNoise * foamAmt;
       
       ////////////////////////////////////////////////////////
       
+      //foam overrides reflection
       reflectColor = (opacity * foamColor.rgb * reflectColor) + ((1.0 - opacity) * reflectColor);
 
 
