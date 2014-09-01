@@ -25,7 +25,9 @@
 
 #include <dtRender/simplescene.h>
 #include <dtRender/shadowscene.h>
+#include <dtRender/uniformactcomp.h>
 
+#include <dtCore/transform.h>
 #include <dtCore/transformable.h>
 #include <osg/MatrixTransform>
 #include <osg/ClampColor>
@@ -36,8 +38,52 @@
 #include <dtGame/gamemanager.h>
 #include <dtGame/gameactorproxy.h>
 
+#include <dtCore/shaderparamfloat.h>
+#include <dtCore/shaderparamint.h>
+#include <dtCore/shaderparamvec4.h>
+
+//for frame and elapsed time
+#include <dtCore/system.h>
+
 namespace dtRender
 {
+
+   class SMDefaultUniforms
+   {
+   public:
+      SMDefaultUniforms()
+      {
+
+      }
+      ~SMDefaultUniforms()
+      {
+
+      }
+
+      dtCore::RefPtr<dtCore::ShaderParamInt> mScreenWidth;
+      dtCore::RefPtr<dtCore::ShaderParamInt> mScreenHeight;
+
+      dtCore::RefPtr<dtCore::ShaderParamFloat> mNearPlane;
+      dtCore::RefPtr<dtCore::ShaderParamFloat> mFarPlane;
+
+      dtCore::RefPtr<dtCore::ShaderParamFloat> mFrameTime;
+      dtCore::RefPtr<dtCore::ShaderParamFloat> mElapsedTime;
+
+      dtCore::RefPtr<dtCore::ShaderParamFloat> mGamma;
+      dtCore::RefPtr<dtCore::ShaderParamFloat> mBrightness;
+
+      dtCore::RefPtr<dtCore::ShaderParamFloat> mSceneLuminance;
+      dtCore::RefPtr<dtCore::ShaderParamFloat> mSceneAmbience;
+
+      dtCore::RefPtr<dtCore::ShaderParamVec4> mMainCameraPos;
+      dtCore::RefPtr<dtCore::ShaderParamVec4> mMainCameraHPR;
+
+      //need a mat4 param
+      dtCore::RefPtr<osg::Uniform> mMainCameraInverseViewMatrix;
+      dtCore::RefPtr<osg::Uniform> mMainCameraInverseModelViewProjectionMatrix;
+   };
+
+
    class SceneManagerImpl
    {
    public:
@@ -46,11 +92,20 @@ namespace dtRender
          : mCreateDefaultScene(true)
          , mCreateMultipassScene(true)
          , mEnableHDR(false)
+         , mResize(false)
          , mGraphicsQuality(&GraphicsQuality::DEFAULT)
+         , mMultipassScene(NULL)
+         , mSceneCamera(NULL)
+         , mUniforms(NULL)
+         , mChildren()
+         , mSceneStack()
       {
+         mUniforms = new SMDefaultUniforms();
       }
       ~SceneManagerImpl()
       {
+         delete mUniforms;
+
          //effectively clears without popping all the elements
          mSceneStack = std::stack<dtCore::ObserverPtr<SceneBase> >();
          
@@ -63,17 +118,38 @@ namespace dtRender
       bool mCreateDefaultScene;
       bool mCreateMultipassScene;
       bool mEnableHDR;
+      bool mResize;
       const GraphicsQuality* mGraphicsQuality;
       typedef std::vector<dtCore::RefPtr<SceneGroup> > SceneGroupArray;
       dtCore::RefPtr<MultipassScene> mMultipassScene;
       dtCore::RefPtr<dtCore::Camera> mSceneCamera;
+
+      SMDefaultUniforms* mUniforms;
+
       SceneManagerImpl::SceneGroupArray mChildren;
       std::stack<dtCore::ObserverPtr<SceneBase> > mSceneStack;
    };
 
 
-   const std::string SceneManager::UNIFORM_SCENE_LUMINANCE("d3d_SceneLuminance");
-   const std::string SceneManager::UNIFORM_SCENE_AMBIENCE("d3d_SceneAmbience");
+   const dtUtil::RefString SceneManager::UNIFORM_MAIN_CAMERA_POS("d3d_CameraPos");
+   const dtUtil::RefString SceneManager::UNIFORM_MAIN_CAMERA_HPR("d3d_CameraHPR");
+   const dtUtil::RefString SceneManager::UNIFORM_MAIN_CAMERA_INVERSE_VIEW("d3d_InverseViewMatrix");
+   const dtUtil::RefString SceneManager::UNIFORM_MAIN_CAMERA_INVERSE_MODELVIEWPROJECTION("d3d_InverseModelViewProjectionMatrix");
+
+   const dtUtil::RefString SceneManager::UNIFORM_SCREEN_WIDTH("d3d_ScreenWidth");
+   const dtUtil::RefString SceneManager::UNIFORM_SCREEN_HEIGHT("d3d_ScreenHeight");
+
+   const dtUtil::RefString SceneManager::UNIFORM_NEAR_PLANE("d3d_NearPlane");
+   const dtUtil::RefString SceneManager::UNIFORM_FAR_PLANE("d3d_FarPlane");
+
+   const dtUtil::RefString SceneManager::UNIFORM_FRAME_TIME("d3d_FrameTime");
+   const dtUtil::RefString SceneManager::UNIFORM_ELAPSED_TIME("d3d_ElapsedTime");
+
+   const dtUtil::RefString SceneManager::UNIFORM_GAMMA("d3d_Gamma");
+   const dtUtil::RefString SceneManager::UNIFORM_BRIGHTNESS("d3d_Brightness");
+
+   const dtUtil::RefString SceneManager::UNIFORM_SCENE_LUMINANCE("d3d_SceneLuminance");
+   const dtUtil::RefString SceneManager::UNIFORM_SCENE_AMBIENCE("d3d_SceneAmbience");
 
    SceneManager::SceneManager( dtGame::GameActorProxy& parent )
    : BaseClass(parent)
@@ -95,7 +171,7 @@ namespace dtRender
    {
       //clear old scene first
       RemoveAllActors();
-      
+
       //create a scene for each enumeration
       mImpl->mChildren.resize(SceneEnum::NUM_SCENES.GetSceneNumber());
       int numScenes = SceneEnum::NUM_SCENES.GetSceneNumber();
@@ -129,8 +205,6 @@ namespace dtRender
          CreateDefaultMultipassScene();
       }
       
-      //set the hdr preference
-      SetEnableHDR(mImpl->mEnableHDR);
    }
 
    void SceneManager::CreateDefaultScene()
@@ -555,40 +629,33 @@ namespace dtRender
       
       osg::StateSet* ss = GetOSGNode()->getOrCreateStateSet();
 
+      osg::ClampColor* clamp = new osg::ClampColor();
+
       if(mImpl->mEnableHDR)
       {
-         osg::Uniform* l = ss->getOrCreateUniform(UNIFORM_SCENE_LUMINANCE, osg::Uniform::FLOAT);
-         l->set(2.5f);
 
-         osg::Uniform* a = ss->getOrCreateUniform(UNIFORM_SCENE_AMBIENCE, osg::Uniform::FLOAT);
-         a->set(1.5f);
-
+         mImpl->mUniforms->mSceneLuminance->SetValue(2.0);
+         mImpl->mUniforms->mSceneAmbience->SetValue(1.25);
+         
          // disable color clamping, because we want to work on real hdr values
-         osg::ClampColor* clamp = new osg::ClampColor();
          clamp->setClampVertexColor(GL_FALSE);
          clamp->setClampFragmentColor(GL_FALSE);
          clamp->setClampReadColor(GL_FALSE);
-
-         // make it protected and override, so that it is done for the whole rendering pipeline
-         ss->setAttribute(clamp, osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE | osg::StateAttribute::PROTECTED);     
       }
       else
       {
-
-         osg::Uniform* l = ss->getOrCreateUniform(UNIFORM_SCENE_LUMINANCE, osg::Uniform::FLOAT);
-         l->set(1.0f);
-
-         osg::Uniform* a = ss->getOrCreateUniform(UNIFORM_SCENE_AMBIENCE, osg::Uniform::FLOAT);
-         a->set(1.0f);
+         mImpl->mUniforms->mSceneLuminance->SetValue(1.0);
+         mImpl->mUniforms->mSceneAmbience->SetValue(1.0);
 
          osg::ClampColor* clamp = new osg::ClampColor();
          clamp->setClampVertexColor(GL_TRUE);
          clamp->setClampFragmentColor(GL_TRUE);
          clamp->setClampReadColor(GL_TRUE);
-
-         ss->setAttribute(clamp, osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE | osg::StateAttribute::PROTECTED);     
       }
-      
+
+      // make it protected and override, so that it is done for the whole rendering pipeline
+      ss->setAttribute(clamp, osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE | osg::StateAttribute::PROTECTED);     
+
    }
 
    bool SceneManager::GetEnableHDR() const
@@ -596,6 +663,201 @@ namespace dtRender
       return mImpl->mEnableHDR;
    }
 
+   void SceneManager::BuildActorComponents()
+   {
+      BaseClass::BuildActorComponents();
+      AddComponent(*new UniformActComp());
+
+      //create all default scene uniforms
+      InitUniforms();
+
+      //set the hdr preference
+      SetEnableHDR(mImpl->mEnableHDR);
+   }
+
+   float SceneManager::GetGamma() const
+   {
+      return mImpl->mUniforms->mGamma->GetValue();
+   }
+
+   void SceneManager::SetGamma( float g)
+   {
+      mImpl->mUniforms->mGamma->SetValue(g);
+   }
+
+   float SceneManager::GetBrightness() const
+   {
+      return mImpl->mUniforms->mBrightness->GetValue();
+   }
+
+   void SceneManager::SetBrightness( float b)
+   {
+      mImpl->mUniforms->mBrightness->SetValue(b);
+   }
+
+   float SceneManager::GetLuminance() const
+   {
+      return mImpl->mUniforms->mSceneLuminance->GetValue();
+   }
+
+   void SceneManager::SetLuminance( float l)
+   {
+      mImpl->mUniforms->mSceneLuminance->SetValue(l);
+   }
+
+   float SceneManager::GetAmbience() const
+   {
+      return mImpl->mUniforms->mSceneAmbience->GetValue();
+   }
+
+   void SceneManager::SetAmbience( float a)
+   {
+      mImpl->mUniforms->mSceneAmbience->SetValue(a);
+   }
+
+   void SceneManager::InitUniforms()
+   {
+   
+      //without mat 4 params we have to bind a few ourselves
+      osg::StateSet* ss = GetOSGNode()->getOrCreateStateSet();
+
+      //add a camera update callback to set camera based uniforms
+      dtCore::Camera::AddCameraSyncCallback(*this,
+         dtCore::Camera::CameraSyncCallback(this, &SceneManager::UpdateUniforms));
+
+
+      //create default shader parameters
+      mImpl->mUniforms->mScreenWidth = new dtCore::ShaderParamInt(UNIFORM_SCREEN_WIDTH);
+      mImpl->mUniforms->mScreenHeight = new dtCore::ShaderParamInt(UNIFORM_SCREEN_HEIGHT);
+
+      mImpl->mUniforms->mNearPlane = new dtCore::ShaderParamFloat(UNIFORM_NEAR_PLANE);
+      mImpl->mUniforms->mFarPlane = new dtCore::ShaderParamFloat(UNIFORM_FAR_PLANE);
+
+      mImpl->mUniforms->mFrameTime = new dtCore::ShaderParamFloat(UNIFORM_FRAME_TIME);
+      mImpl->mUniforms->mElapsedTime = new dtCore::ShaderParamFloat(UNIFORM_ELAPSED_TIME);
+
+      mImpl->mUniforms->mGamma = new dtCore::ShaderParamFloat(UNIFORM_GAMMA);
+      mImpl->mUniforms->mBrightness = new dtCore::ShaderParamFloat(UNIFORM_BRIGHTNESS);
+
+      mImpl->mUniforms->mGamma->SetValue(1.0f);
+      mImpl->mUniforms->mBrightness->SetValue(1.0f);
+
+      mImpl->mUniforms->mSceneLuminance = new dtCore::ShaderParamFloat(UNIFORM_SCENE_LUMINANCE);
+      mImpl->mUniforms->mSceneAmbience = new dtCore::ShaderParamFloat(UNIFORM_SCENE_AMBIENCE);
+
+      mImpl->mUniforms->mSceneLuminance->SetValue(1.0f);
+      mImpl->mUniforms->mSceneAmbience->SetValue(1.0f);
+
+      mImpl->mUniforms->mMainCameraPos = new dtCore::ShaderParamVec4(UNIFORM_MAIN_CAMERA_POS);
+      mImpl->mUniforms->mMainCameraHPR = new dtCore::ShaderParamVec4(UNIFORM_MAIN_CAMERA_HPR);
+      
+      //no mat4 parameter we have to add these ourselves
+      mImpl->mUniforms->mMainCameraInverseViewMatrix = ss->getOrCreateUniform(UNIFORM_MAIN_CAMERA_INVERSE_VIEW, osg::Uniform::FLOAT_MAT4);
+      mImpl->mUniforms->mMainCameraInverseModelViewProjectionMatrix = ss->getOrCreateUniform(UNIFORM_MAIN_CAMERA_INVERSE_MODELVIEWPROJECTION, osg::Uniform::FLOAT_MAT4);
+
+
+      UniformActComp* actComp = GetComponent<UniformActComp>();
+      if(actComp != NULL)
+      {
+         actComp->AddParameter(*(mImpl->mUniforms->mScreenWidth));
+         actComp->AddParameter(*(mImpl->mUniforms->mScreenHeight));
+         actComp->AddParameter(*(mImpl->mUniforms->mNearPlane));
+         actComp->AddParameter(*(mImpl->mUniforms->mFarPlane));
+         actComp->AddParameter(*(mImpl->mUniforms->mFrameTime));
+         actComp->AddParameter(*(mImpl->mUniforms->mElapsedTime));
+         actComp->AddParameter(*(mImpl->mUniforms->mGamma));
+         actComp->AddParameter(*(mImpl->mUniforms->mBrightness));
+         actComp->AddParameter(*(mImpl->mUniforms->mSceneLuminance));
+         actComp->AddParameter(*(mImpl->mUniforms->mSceneAmbience));
+         actComp->AddParameter(*(mImpl->mUniforms->mMainCameraPos));
+         actComp->AddParameter(*(mImpl->mUniforms->mMainCameraHPR));
+      }
+      else
+      {
+         LOG_ERROR("Error initializing uniforms, scene manager cannot find uniform actor component.");
+      }
+   }
+
+   void SceneManager::UpdateUniforms(dtCore::Camera& pCamera)
+   {
+      osg::StateSet* ss = GetOSGNode()->getOrCreateStateSet();
+      
+      float frameTime = dtCore::System::GetInstance().GetSimulationTime();
+      float elapsedTime = dtCore::System::GetInstance().GetSimTimeSinceStartup();
+
+      float screenWidth = 1024;
+      float screenHeight = 768;
+
+      if(pCamera.GetOSGCamera()->getViewport() != NULL)
+      {
+         screenWidth = pCamera.GetOSGCamera()->getViewport()->width();
+         screenHeight = pCamera.GetOSGCamera()->getViewport()->height();
+      }
+
+      double vfov, aspect, pnear, pfar;
+
+      pCamera.GetPerspectiveParams(vfov, aspect, pnear, pfar);
+
+      if(screenWidth != mImpl->mUniforms->mScreenWidth->GetValue())
+      {
+         mImpl->mUniforms->mScreenWidth->SetValue(screenWidth);
+         mImpl->mUniforms->mScreenWidth->Update();
+         mImpl->mResize = true;
+      }
+
+      if(screenHeight != mImpl->mUniforms->mScreenHeight->GetValue())
+      {
+         mImpl->mUniforms->mScreenHeight->SetValue(screenHeight);
+         mImpl->mUniforms->mScreenHeight->Update();
+         mImpl->mResize = true;
+      }
+
+      if(pnear != mImpl->mUniforms->mNearPlane->GetValue())
+      {
+         mImpl->mUniforms->mNearPlane->SetValue(pnear);
+         mImpl->mUniforms->mNearPlane->Update();
+      }
+
+      if(pfar != mImpl->mUniforms->mFarPlane->GetValue())
+      {
+         mImpl->mUniforms->mFarPlane->SetValue(pfar);
+         mImpl->mUniforms->mFarPlane->Update();
+      }
+
+      mImpl->mUniforms->mFrameTime->SetValue(frameTime);
+      mImpl->mUniforms->mFrameTime->Update();
+
+      mImpl->mUniforms->mElapsedTime->SetValue(elapsedTime);
+      mImpl->mUniforms->mElapsedTime->Update();
+
+
+      //camera based uniforms
+      {
+         osg::Matrix matWorld, matView, matViewInverse, matProj, matProjInverse, matViewProj, matViewProjInverse;
+      
+         matView.set(pCamera.GetOSGCamera()->getViewMatrix());
+
+         matViewInverse.invert(matView);
+
+         matProj.set(pCamera.GetOSGCamera()->getProjectionMatrix());
+         matProjInverse.invert(matProj);
+
+         matViewProj = matView * matProj;
+         matViewProjInverse.invert(matViewProj);
+
+         mImpl->mUniforms->mMainCameraInverseModelViewProjectionMatrix->set(matViewProjInverse);
+         mImpl->mUniforms->mMainCameraInverseViewMatrix->set(matViewInverse);
+
+         dtCore::Transform trans;
+         pCamera.GetTransform(trans);
+
+         osg::Vec3 hpr;
+         trans.GetRotation(hpr);
+
+         mImpl->mUniforms->mMainCameraHPR->SetValue(osg::Vec4(hpr[0], hpr[1], hpr[2], 0.0));
+         mImpl->mUniforms->mMainCameraHPR->Update();
+      }
+   }
 
 
    /////////////////////////////////////////////////////////////

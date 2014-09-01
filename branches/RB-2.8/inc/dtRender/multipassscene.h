@@ -62,8 +62,6 @@ namespace dtRender
 
       static const std::string REFLECTION_TEXTURE_UNIFORM;
 
-      static const std::string UNIFORM_NEAR_PLANE;
-      static const std::string UNIFORM_FAR_PLANE;
       static const std::string UNIFORM_DEPTH_ONLY_PASS;
       static const std::string UNIFORM_PREDEPTH_TEXTURE;
 

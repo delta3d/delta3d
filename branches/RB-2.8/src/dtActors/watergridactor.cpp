@@ -922,10 +922,7 @@ namespace dtActors
       osg::Uniform* hprUniform = ss->getOrCreateUniform("cameraHPR", osg::Uniform::FLOAT_VEC3);
 
       osg::Matrix matWorld, matView, matViewInverse, matProj, matProjInverse, matViewProj, matViewProjInverse;
-
-      typedef std::vector<osg::Matrix> MatrixList;
-      MatrixList list = pCamera.GetOSGCamera()->getWorldMatrices();
-
+      
       matView.set(pCamera.GetOSGCamera()->getViewMatrix());
       matViewInverse.invert(matView);
 
