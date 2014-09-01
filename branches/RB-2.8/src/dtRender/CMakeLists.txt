@@ -29,6 +29,7 @@ set(LIB_SOURCES
       scenetype.cpp
       shadowscene.cpp
       simplescene.cpp
+      uniformactcomp.cpp
       videoscene.cpp
 )
 
