@@ -57,50 +57,10 @@ namespace dtRender
    const std::string MultipassScene::REFLECTION_TEXTURE_UNIFORM("d3d_ReflectionCubeMap");
 
    const std::string MultipassScene::UNIFORM_DEPTH_ONLY_PASS("d3d_DepthOnlyPass");
-   const std::string MultipassScene::UNIFORM_NEAR_PLANE("d3d_NearPlane");
-   const std::string MultipassScene::UNIFORM_FAR_PLANE("d3d_FarPlane");
    const std::string MultipassScene::UNIFORM_PREDEPTH_TEXTURE("d3d_PreDepthTexture");
 
 
-   class UpdateUniformsCallback : public osg::NodeCallback
-   {
-   public:
-
-      UpdateUniformsCallback(osg::Camera* targetCamera, osg::Node* sceneNode)
-         : mCamera(targetCamera)
-         , mSceneNode(sceneNode)
-      {
-      }
-
-      virtual void operator()(osg::Node* node, osg::NodeVisitor* nv)
-      {
-         // first update subgraph to make sure objects are all moved into postion
-         traverse(node,nv);
-
-         osg::StateSet* ss = mSceneNode->getOrCreateStateSet();
-
-         double fovy, aspect, near, far;
-         mCamera->getProjectionMatrixAsPerspective(fovy, aspect, near, far);
-
-         osg::Uniform* nearPlaneUniform = ss->getOrCreateUniform(MultipassScene::UNIFORM_NEAR_PLANE, osg::Uniform::FLOAT);
-         nearPlaneUniform->setDataVariance(osg::Object::DYNAMIC);
-
-         osg::Uniform* farPlaneUniform = ss->getOrCreateUniform(MultipassScene::UNIFORM_FAR_PLANE, osg::Uniform::FLOAT);
-         farPlaneUniform->setDataVariance(osg::Object::DYNAMIC);
-
-         nearPlaneUniform->set(float(near));
-         farPlaneUniform->set(float(far));
-         
-      }
-
-   protected:
-
-      virtual ~UpdateUniformsCallback() {}
-
-      dtCore::ObserverPtr<osg::Camera>                mCamera;
-      dtCore::ObserverPtr<osg::Node>                 mSceneNode;
-
-   };
+   //class UpdateUniformsCallback : public osg::NodeCallback
 
 
    class UpdateCameraCallback : public osg::NodeCallback
@@ -278,9 +238,6 @@ namespace dtRender
       {
          osg::Camera* mainSceneOSGCamera = mainSceneCamera->GetOSGCamera();
        
-         UpdateUniformsCallback* updateUniforms = new UpdateUniformsCallback(mainSceneOSGCamera, sm.GetOSGNode());
-         sm.GetOSGNode()->setUpdateCallback(updateUniforms);
-
          //dtCore::Camera* multiPassCamera = new dtCore::Camera();
          osg::Camera* multiPassOSGCam = new osg::Camera();
          mImpl->mMultipassCamera = multiPassOSGCam;

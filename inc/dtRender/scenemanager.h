@@ -56,8 +56,26 @@ namespace dtRender
    public:
       typedef dtGame::IEnvGameActor BaseClass;
 
-      static const std::string UNIFORM_SCENE_LUMINANCE;
-      static const std::string UNIFORM_SCENE_AMBIENCE;
+      static const dtUtil::RefString UNIFORM_MAIN_CAMERA_POS;
+      static const dtUtil::RefString UNIFORM_MAIN_CAMERA_HPR;
+      static const dtUtil::RefString UNIFORM_MAIN_CAMERA_INVERSE_VIEW;
+      static const dtUtil::RefString UNIFORM_MAIN_CAMERA_INVERSE_MODELVIEWPROJECTION;
+
+      static const dtUtil::RefString UNIFORM_SCREEN_WIDTH;
+      static const dtUtil::RefString UNIFORM_SCREEN_HEIGHT;
+
+      static const dtUtil::RefString UNIFORM_NEAR_PLANE;
+      static const dtUtil::RefString UNIFORM_FAR_PLANE;
+      
+      static const dtUtil::RefString UNIFORM_FRAME_TIME;
+      static const dtUtil::RefString UNIFORM_ELAPSED_TIME;
+
+      static const dtUtil::RefString UNIFORM_GAMMA;
+      static const dtUtil::RefString UNIFORM_BRIGHTNESS;
+      
+      static const dtUtil::RefString UNIFORM_SCENE_LUMINANCE;
+      static const dtUtil::RefString UNIFORM_SCENE_AMBIENCE;
+      
 
    public:
       SceneManager(dtGame::GameActorProxy& parent);
@@ -123,6 +141,20 @@ namespace dtRender
       dtCore::Camera* GetSceneCamera();
       const dtCore::Camera* GetSceneCamera() const;
 
+      /***
+      *  These are uniforms which effect the shading
+      */
+      float GetGamma() const;
+      void SetGamma(float );
+
+      float GetBrightness() const;
+      void SetBrightness(float);
+
+      float GetLuminance() const;
+      void SetLuminance(float);
+
+      float GetAmbience() const;
+      void SetAmbience(float);
 
       //dtCore IEnvironment Interface start
       virtual void AddActor(dtCore::DeltaDrawable& dd);
@@ -146,9 +178,13 @@ namespace dtRender
       void CreateDefaultScene();
       void CreateDefaultMultipassScene();
 
+   protected:
+      /*virtual*/ void BuildActorComponents();
    private:
       virtual void AddScene(SceneBase&);
-      
+      void InitUniforms();
+      void UpdateUniforms(dtCore::Camera& pCamera);
+
       void SetNodeMask(const SceneEnum& se, osg::Node& n);
 
       SceneManagerImpl* mImpl;
