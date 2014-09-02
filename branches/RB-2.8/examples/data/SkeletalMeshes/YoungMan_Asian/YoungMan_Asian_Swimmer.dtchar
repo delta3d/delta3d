@@ -40,14 +40,14 @@
    <material fileName="materials/Skin_Male_Asian_Average_ShortsOnly.xrf" name="Body" />
    <material fileName="materials/Eyes_Brown.xrf" name="Eyes" />
    <material fileName="materials/Hair_Black.xrf" name="Hair" />
-   <material fileName="materials/Shorts_Jogger_Green.xrf" name="Pants" />
+   <material fileName="materials/SwimTrunks_Blue.xrf" name="Pants" />
   <material fileName="materials/Eyebrows_Black.xrf" name="Eyebrows Black" />
   <scale>
     <scalingFactor>0.1</scalingFactor>
   </scale>
   <skinningShader>
-      <shaderGroup>MultiMapCharacter</shaderGroup>
-      <shaderName>MultiMapCharacter</shaderName>
+      <shaderGroup>Human</shaderGroup>
+      <shaderName>Normal</shaderName>
       <maxBones>200</maxBones>
    </skinningShader>
    <animationChannel>

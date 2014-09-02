@@ -4,4 +4,6 @@
     <SPECULAR>76 76 76 0</SPECULAR>
     <SHININESS>1</SHININESS>
     <MAP>materials/Skin_African_ShortsOnly.png</MAP>
+    <MAP>materials/NONE_NORM.png</MAP>
+    <MAP>materials/Skin_SPEC.png</MAP>
 </MATERIAL>
