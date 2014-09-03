@@ -33,6 +33,8 @@ namespace dtRender
 
       static dtCore::RefPtr<dtCore::ActorType> DOF_SCENE_ACTOR_TYPE;
 
+      static dtCore::RefPtr<dtCore::ActorType> DYNAMIC_LIGHT_ACTOR_TYPE;
+
       static dtCore::RefPtr<dtCore::ActorType> EPHEMERIS_SCENE_ACTOR_TYPE;
 
       static dtCore::RefPtr<dtCore::ActorType> GUI_SCENE_ACTOR_TYPE;
@@ -45,6 +47,8 @@ namespace dtRender
 
       static dtCore::RefPtr<dtCore::ActorType> OCEAN_SCENE_ACTOR_TYPE;
 
+      static dtCore::RefPtr<dtCore::ActorType> LIGHT_SCENE_ACTOR_TYPE;
+
       static dtCore::RefPtr<dtCore::ActorType> PPU_SCENE_ACTOR_TYPE;
 
       static dtCore::RefPtr<dtCore::ActorType> CUBEMAP_SCENE_ACTOR_TYPE;
@@ -54,6 +58,8 @@ namespace dtRender
       static dtCore::RefPtr<dtCore::ActorType> SHADOW_SCENE_ACTOR_TYPE;
 
       static dtCore::RefPtr<dtCore::ActorType> SIMPLE_SCENE_ACTOR_TYPE;
+
+      static dtCore::RefPtr<dtCore::ActorType> SPOT_LIGHT_ACTOR_TYPE;
 
       static dtCore::RefPtr<dtCore::ActorType> SSAO_SCENE_ACTOR_TYPE;
 

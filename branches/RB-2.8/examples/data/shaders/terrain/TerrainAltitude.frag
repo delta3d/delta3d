@@ -36,6 +36,7 @@ float saturate(float inValue)
 const float UnderWaterViewDistance = 15.0;
 
 void lightContribution(vec3, vec3, vec3, vec3, out vec3);
+vec3 computeDynamicLightContrib(vec3 wsNormal, vec3 wsPos);
 float computeLinearFog(float, float, float);
 float computeExpFog(float);
 vec3 GetWaterColorAtDepth(float);
@@ -204,7 +205,9 @@ void main(void)
    lightContribution(vNormal, lightDir, gl_LightSource[0].diffuse.xyz, gl_LightSource[0].ambient.xyz, lightContribSun);
    lightContribution(vNormal, lightDir2, gl_LightSource[1].diffuse.xyz, gl_LightSource[1].ambient.xyz, lightContribMoon);
   
-   vec3 lightContrib = lightContribSun + lightContribMoon;
+   vec3 dynamicLightContrib = computeDynamicLightContrib(vNormal, vPos);
+
+   vec3 lightContrib = clamp(lightContribSun + lightContribMoon + dynamicLightContrib, vec3(0.0), vec3(1.0)) ;
 
    float shadowAmt = 1.0;//SampleShadowTexture();
    vec3 result = shadowAmt * lightContrib * baseColor.rgb;

@@ -43,8 +43,8 @@ float computeScaledLuminance(float avg, float lum)
  **/
 void main(void)
 {
-	const float BRIGHT_PASS_THRESHOLD = 0.9;
-	const float BRIGHT_PASS_OFFSET = 1.0;
+	const float BRIGHT_PASS_THRESHOLD = 1.0;
+	const float BRIGHT_PASS_OFFSET = 1.1;
 		
 	// get luminance and average (adapted) luminance value 
 	float fLuminance = texture2D(lumInput, gl_TexCoord[0].st).r;

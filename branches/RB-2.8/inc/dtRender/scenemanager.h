@@ -72,6 +72,7 @@ namespace dtRender
 
       static const dtUtil::RefString UNIFORM_GAMMA;
       static const dtUtil::RefString UNIFORM_BRIGHTNESS;
+      static const dtUtil::RefString UNIFORM_EXPOSURE;
       
       static const dtUtil::RefString UNIFORM_SCENE_LUMINANCE;
       static const dtUtil::RefString UNIFORM_SCENE_AMBIENCE;

@@ -87,6 +87,7 @@
          <source type="Fragment">shaders/base/multimap_functions.frag</source>
          <source type="Fragment">shaders/base/multimap.frag</source>
          <source type="Fragment">shaders/base/fragment_functions.frag</source>
+         <source type="Fragment">shaders/lighting/dynamic_light_functions.frag</source>
 
          <parameter name="effectScales">
             <!-- 
@@ -301,6 +302,7 @@
        <source type="Fragment">shaders/water/water_functions.frag</source>
        <source type="Fragment">shaders/base/fragment_functions.frag</source>
        <source type="Fragment">shaders/shadow/shadow_functions.frag</source>
+       <source type="Fragment">shaders/lighting/dynamic_light_functions.frag</source>
 
        <parameter name="diffuseTexture">
         <texture2D textureUnit="0">
@@ -377,6 +379,8 @@
          <source type="Fragment">shaders/water/water_functions.frag</source>
          <source type="Fragment">shaders/water/water.frag</source>
          <source type="Fragment">shaders/base/fragment_functions.frag</source>
+         <source type="Fragment">shaders/lighting/dynamic_light_functions.frag</source>
+
       </shader>
       <shader name="TextureWave" default="no">
          <source type="Vertex">shaders/water/water_functions.vert</source>

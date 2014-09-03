@@ -12,7 +12,7 @@ float computeExpFog(float);
 vec3 computeWorldSpaceNormal(vec3 vertPos, vec3 vertNormal, vec3 mapNormal, vec2 vertUV, out mat3 tbn);
 vec2 computeSphereMapCoord(in vec3 viewDir, in vec3 normal);
 vec3 sampleCubeMapReflection(vec3 worldPos, vec3 camPos, vec3 normal);
-
+vec3 computeDynamicLightContrib(vec3 wsNormal, vec3 wsPos);
 
 struct FragParams
 {
@@ -78,6 +78,14 @@ void computeLightContrib_SunMoon(inout FragParams fp, inout EffectParams ep)
 {
    LightParams lp;
    
+   // Moon
+   lp.color = gl_LightSource[1].diffuse.rgb;
+   lp.colorAmbient = gl_LightSource[1].ambient.rgb;
+   lp.dir = normalize(vLightDir2);
+   
+   computeLightContrib(lp, fp, ep);
+
+
    // Sun
    lp.color = gl_LightSource[0].diffuse.rgb;
    lp.colorAmbient = gl_LightSource[0].ambient.rgb;
@@ -85,12 +93,6 @@ void computeLightContrib_SunMoon(inout FragParams fp, inout EffectParams ep)
    
    computeLightContrib(lp, fp, ep);
    
-   // Moon
-   /*lp.color = gl_LightSource[1].diffuse.rgb;
-   lp.colorAmbient = gl_LightSource[1].ambient.rgb;
-   lp.dir = normalize(vLightDir2);
-
-   computeLightContrib(lp, fp, ep);*/
 }
 
 vec4 computeMultiMapColor(MapParams mp, inout FragParams fp, inout EffectParams ep)
@@ -116,6 +118,11 @@ vec4 computeMultiMapColor(MapParams mp, inout FragParams fp, inout EffectParams 
 
    // Compute the Light & Spec Contribution
    computeLightContrib_SunMoon(fp, ep);
+
+   //add dynamic lights
+   vec3 dynamicLightContrib = computeDynamicLightContrib(fp.worldNormal, fp.pos);
+   ep.lightContrib = clamp(ep.lightContrib + dynamicLightContrib, 0.0, 1.0);
+
 
    // Compute the reflection contribution
    //vec3 reflectVec = reflect(fp.viewDir, fp.worldNormal);

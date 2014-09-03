@@ -260,7 +260,7 @@ namespace dtRender
          
          GetSceneNode()->setNodeMask(dtUtil::NodeMask::MULTIPASS);
          
-         mainSceneOSGCamera->setCullMask(dtUtil::CullMask::MAIN_CAMERA_MULTIPASS ^ dtUtil::NodeMask::FOREGROUND);
+         mainSceneOSGCamera->setCullMask(dtUtil::CullMask::MAIN_CAMERA_MULTIPASS);
          multiPassOSGCam->setCullMask(dtUtil::CullMask::ADDITIONAL_CAMERA_MULTIPASS);
          
          //keep the multipass camera in synch with the main camera

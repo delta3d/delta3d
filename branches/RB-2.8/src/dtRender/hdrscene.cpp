@@ -118,6 +118,7 @@ namespace dtRender
    // The pipeline is build based on the following:
    //     http://msdn2.microsoft.com/en-us/library/bb173484(VS.85).aspx
    //
+   // From- osgPPU/examples/hdr
    //---------------------------------------------------------------
 
    //------------------------------------------------------------------------
