@@ -27,7 +27,7 @@
 #include <dtGame/gameactor.h>
 #include <dtCore/enginepropertytypes.h>
 
-#include <dtCore/ShaderParameter.h>
+#include <dtCore/shaderparameter.h>
 
 
 namespace dtRender
