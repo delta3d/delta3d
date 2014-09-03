@@ -93,9 +93,9 @@ float softParticleOpacity(vec3 viewPosCenter, vec3 viewPosCurrent,
    return opacity;
 }
 
-float samplePreDepthTexture()
+float samplePreDepthTexture(vec2 fragCoord)
 {
-   vec2 depthCoords = vec2(gl_FragCoord.x / ScreenWidth, gl_FragCoord.y / ScreenHeight);
+   vec2 depthCoords = vec2(fragCoord.x / ScreenWidth, fragCoord.y / ScreenHeight);
    return texture2D(d3d_PreDepthTexture, depthCoords).b * (d3d_FarPlane - d3d_NearPlane);
 }
 
@@ -138,10 +138,10 @@ vec3 computeWorldSpaceNormal(vec3 vertPos, vec3 vertNormal, vec3 mapNormal, vec2
    return normalize(tbn * tangentSpaceNormal); 
 }
 
-vec3 samplePlanarReflectionTexture()
+vec3 samplePlanarReflectionTexture(vec2 fragCoord)
 {
-   vec3 refTexCoords = vec3(gl_FragCoord.x / ScreenWidth, (gl_FragCoord.y / ScreenHeight), gl_FragCoord.z);      
-   return texture2D(reflectionMap, refTexCoords.xy).rgb;   
+   vec2 refTexCoords = vec2(fragCoord.x / ScreenWidth, (fragCoord.y / ScreenHeight));      
+   return texture2D(reflectionMap, refTexCoords).rgb;   
 }
 
 vec3 sampleCubeMapReflection(vec3 worldPos, vec3 camPos, vec3 normal)

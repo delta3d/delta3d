@@ -40,15 +40,14 @@ varying vec3 vOffsetPos;
 void lightContribution(vec3, vec3, vec3, vec3, out vec3);
 vec3 computeDynamicLightContrib(vec3 wsNormal, vec3 wsPos);
 vec3 GetWaterColorAtDepth(float);
-float samplePreDepthTexture();
 float computeLinearFog(float startFog, float endFog, float fogDistance);
 float computeFragDepth(float distance);
 float computeReflectionCoef(vec3 viewDir, vec3 viewSpaceNormal, float refractIndex);
 vec3 ComputeNormals(vec2);
 vec2 ComputeWaveTextureCoords(float distToFragment, vec3 worldPos);
 float FastFresnel(float nDotL, float fbias, float fpow);
-vec3 waterSamplePlanarReflectTexture(vec3 normal);
-float computeWaterColumn(vec4 viewPos);
+vec3 waterSamplePlanarReflectTexture(vec3 normal, vec2 fragCoord);
+float computeWaterColumn(vec4 viewPos, vec2 fragCoord);
 vec2 rotateTexCoords(vec2 coords, float angle);
 
 const float UnderWaterViewDistance = 15.0;
@@ -79,7 +78,7 @@ void main (void)
    //float fresnel = FastFresnel(waveNDotL, 0.15, 6.15);
    float fresnel = computeReflectionCoef(-normalize(viewPos.xyz / viewPos.w), normalize(gl_NormalMatrix * normal), 1.333);
    fresnel = clamp(fresnel, 0.0, 1.0);
-   vec3 reflectColor = waterSamplePlanarReflectTexture(normal);
+   vec3 reflectColor = waterSamplePlanarReflectTexture(normal, gl_FragCoord.xy);
    
    vec3 lightContribSun;
    vec3 lightContribMoon;
@@ -111,7 +110,7 @@ void main (void)
    
    if (gl_FrontFacing)
    {  
-      float waterDepth = computeWaterColumn(viewPos);
+      float waterDepth = computeWaterColumn(viewPos, gl_FragCoord.xy);
 
       vec3 waterColorContrib = (lightContrib * WaterColor.rgb) + resultSpecular;
       
