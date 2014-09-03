@@ -6,5 +6,5 @@
     <MAP>materials/Eyebrow_Black.png</MAP>
     <MAP>materials/NONE_NORM.png</MAP>
     <MAP>materials/NONE_SPEC.png</MAP>
-    <MAP>materials/Eyebrow_Black.png</MAP><!--ALPHA-->
+    <MAP>materials/Eyebrow_ALPHA.png</MAP><!--ALPHA-->
 </MATERIAL>
