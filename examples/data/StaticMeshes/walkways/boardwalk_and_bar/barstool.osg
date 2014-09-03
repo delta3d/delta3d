@@ -27,7 +27,7 @@ MatrixTransform {
       1 0 0 0
       0 1 0 0
       0 0 1 0
-      -534.698 -112.737 0.550398 1
+      0 0 0 1
     }
     num_children 1
     MatrixTransform {
@@ -83,7 +83,7 @@ MatrixTransform {
                 borderWidth 0
                 useHardwareMipMapGeneration TRUE
                 unRefImageDataAfterApply TRUE
-                internalFormatMode USE_S3TC_DXT5_COMPRESSION
+                internalFormatMode USE_S3TC_DXT1_COMPRESSION
                 resizeNonPowerOfTwo TRUE
                 shadowComparison FALSE
                 shadowCompareFunc GL_LEQUAL
@@ -105,7 +105,7 @@ MatrixTransform {
                 borderWidth 0
                 useHardwareMipMapGeneration TRUE
                 unRefImageDataAfterApply TRUE
-                internalFormatMode USE_S3TC_DXT5_COMPRESSION
+                internalFormatMode USE_S3TC_DXT1_COMPRESSION
                 resizeNonPowerOfTwo TRUE
                 shadowComparison FALSE
                 shadowCompareFunc GL_LEQUAL
@@ -127,7 +127,7 @@ MatrixTransform {
                 borderWidth 0
                 useHardwareMipMapGeneration TRUE
                 unRefImageDataAfterApply TRUE
-                internalFormatMode USE_S3TC_DXT5_COMPRESSION
+                internalFormatMode USE_S3TC_DXT1_COMPRESSION
                 resizeNonPowerOfTwo TRUE
                 shadowComparison FALSE
                 shadowCompareFunc GL_LEQUAL
