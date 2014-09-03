@@ -22,22 +22,22 @@ const float cViewDistance = 100.0;
 const float UnderWaterViewDistance = 15.0;
 
 //must include shaders/base/fragment_functions.frag to get these
-float samplePreDepthTexture();
+float samplePreDepthTexture(vec2 fragCoord);
 float computeFragDepth(float distance);
 vec2 rotateTexCoords(vec2 coords, float angle);
 float computeExpFogWithDensity(float fogDistance, float fogDensity);
 //end include
 
-vec3 waterSamplePlanarReflectTexture(vec3 normal)
+vec3 waterSamplePlanarReflectTexture(vec3 normal, vec2 fragCoord)
 {
-   vec3 refTexCoords = vec3(gl_FragCoord.x / ScreenWidth, (gl_FragCoord.y / ScreenHeight), gl_FragCoord.z);      
-   refTexCoords.xy = clamp(refTexCoords.xy + 0.05 * normal.xy, 0.0, 1.0);
-   return d3d_SceneLuminance * texture2D(reflectionMap, refTexCoords.xy).rgb;   
+   vec2 refTexCoords = vec2(fragCoord.x / ScreenWidth, (fragCoord.y / ScreenHeight));      
+   refTexCoords = clamp(refTexCoords.xy + 0.05 * normal.xy, 0.0, 1.0);
+   return d3d_SceneLuminance * texture2D(reflectionMap, refTexCoords).rgb;   
 }
 
-float computeWaterColumn(vec4 viewPos)
+float computeWaterColumn(vec4 viewPos, vec2 fragCoord)
 {
-   float depthAtPixel = samplePreDepthTexture();
+   float depthAtPixel = samplePreDepthTexture(fragCoord);
       
    vec3 ecPosition = viewPos.xyz / viewPos.w;
    float waterFragDepth = computeFragDepth(length(ecPosition)) * (d3d_FarPlane - d3d_NearPlane);
