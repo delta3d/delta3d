@@ -4,4 +4,7 @@
     <SPECULAR>255 255 255 0</SPECULAR>
     <SHININESS>1</SHININESS>
     <MAP>materials/Eyebrow_Black.png</MAP>
+    <MAP>materials/NONE_NORM.png</MAP>
+    <MAP>materials/NONE_SPEC.png</MAP>
+    <MAP>materials/Eyebrow_ALPHA.png</MAP>
 </MATERIAL>
