@@ -38,6 +38,7 @@ varying vec3 vOffsetPos;
 
 
 void lightContribution(vec3, vec3, vec3, vec3, out vec3);
+vec3 computeDynamicLightContrib(vec3 wsNormal, vec3 wsPos);
 vec3 GetWaterColorAtDepth(float);
 float samplePreDepthTexture();
 float computeLinearFog(float startFog, float endFog, float fogDistance);
@@ -89,7 +90,10 @@ void main (void)
    lightContribution(normalize(vertexNormal + (0.3 * normal)), lightVect, gl_LightSource[0].diffuse.xyz, gl_LightSource[0].ambient.xyz, lightContribSun);
    lightContribution(vertexNormal, lightVect2, gl_LightSource[1].diffuse.xyz, gl_LightSource[1].ambient.xyz, lightContribMoon);
 
-   vec3 lightContrib = lightContribSun + lightContribMoon;
+   vec3 dynamicLightContrib = computeDynamicLightContrib(normal.xyz, combinedPos.xyz);
+
+   vec3 lightContrib = clamp(lightContribSun + lightContribMoon + dynamicLightContrib, vec3(0.0), vec3(1.0)) ;
+
 
    //calculates a specular contribution
    //Sun
@@ -165,8 +169,6 @@ void main (void)
       vec4 alphaOverlay = vec4(waterAlpha * resultColor, waterAlpha - opacity);
       alphaOverlay += (1.0 - waterAlpha) * vec4(refractionColor, 1.0);
       gl_FragColor = vec4(alphaOverlay.rgb + foamColor.rgb, alphaOverlay.a);
-      //gl_FragColor = vec4(vec3(foamNoise), 1.0);//foamColor;//vec4(vec3(opacity), 1.0);     //gl_FragColor = vec4(vec3(noisevalue), 1.0);
-
    }
    else
    {
@@ -181,7 +183,6 @@ void main (void)
       combinedColor = (gl_LightSource[0].ambient.xyz * waterColorAtDepth) + mix(gl_LightSource[0].diffuse.xyz * waterColorAtDepth, combinedColor, vFog.y);
 
       gl_FragColor = vec4(combinedColor, 1.0);
-
    }
 
    //debug 

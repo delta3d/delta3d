@@ -785,6 +785,7 @@ namespace dtRender
       float frameTime = dtCore::System::GetInstance().GetSimulationTime();
       float elapsedTime = dtCore::System::GetInstance().GetSimTimeSinceStartup();
 
+      //just something  better then 0
       float screenWidth = 1024;
       float screenHeight = 768;
 

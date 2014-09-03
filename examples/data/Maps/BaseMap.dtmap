@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <map xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="delta3dMap" xsi:schemaLocation="delta3dMap map.xsd">
     <header>
         <name>BaseMap</name>
@@ -7,7 +8,7 @@
         <comment></comment>
         <copyright></copyright>
         <createTimestamp>2014-07-29T11:17:35-05:00</createTimestamp>
-        <lastUpdateTimestamp>2014-08-07T12:01:22-05:00</lastUpdateTimestamp>
+        <lastUpdateTimestamp>2014-09-02T21:09:06-05:00</lastUpdateTimestamp>
         <editorVersion>2.8.0</editorVersion>
         <schemaVersion>1.0</schemaVersion>
     </header>
@@ -18,19 +19,19 @@
         </library>
     </libraries>
     <actors>
-        <environmentActor>913761f9-6ffe-42f5-84ca-fe9bdcffa2d5</environmentActor>
+        <environmentActor>a48fb972-ecf3-4bf3-9d00-0158e95e409e</environmentActor>
         <actor>
-            <type>dtRender.Ephemeris Scene</type>
-            <id>0bcf0227-0726-414a-aa0d-3b3e9c643b5e</id>
-            <name>EphemerisScene_01</name>
+            <type>dtRender.Light Scene</type>
+            <id>73dcf378-d197-4afe-8f69-f7a3ad7c2e36</id>
+            <name>LightScene_01</name>
             <property>
                 <name>Name</name>
-                <string>EphemerisScene_01</string>
+                <string>LightScene_01</string>
             </property>
         </actor>
         <actor>
             <type>dtRender.Scene Manager</type>
-            <id>913761f9-6ffe-42f5-84ca-fe9bdcffa2d5</id>
+            <id>a48fb972-ecf3-4bf3-9d00-0158e95e409e</id>
             <name>SceneManager_01</name>
             <property>
                 <name>Name</name>
@@ -46,8 +47,26 @@
             </property>
         </actor>
         <actor>
+            <type>dtRender.Ephemeris Scene</type>
+            <id>b113dbb9-e8b5-466b-8011-5022b22dcfb1</id>
+            <name>EphemerisScene_01</name>
+            <property>
+                <name>Name</name>
+                <string>EphemerisScene_01</string>
+            </property>
+        </actor>
+        <actor>
+            <type>dtRender.Cube Map Scene</type>
+            <id>c399fd71-e0e4-4e55-845f-8714cd260a14</id>
+            <name>CubeMapScene_01</name>
+            <property>
+                <name>Name</name>
+                <string>CubeMapScene_01</string>
+            </property>
+        </actor>
+        <actor>
             <type>dtRender.Ocean Scene</type>
-            <id>f7ef2865-379e-4b35-9d89-9aa2bc052838</id>
+            <id>e3b01045-055d-43e4-8747-7c23f78ed5e2</id>
             <name>OceanScene_01</name>
             <property>
                 <name>Name</name>

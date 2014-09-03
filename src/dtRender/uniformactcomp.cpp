@@ -288,12 +288,12 @@ namespace dtRender
       BindAllUniforms();
    }
 
-   osg::StateSet* UniformActComp::SetStateSet()
+   osg::StateSet* UniformActComp::GetStateSet()
    {
       return mStateSet.get();
    }
 
-   const osg::StateSet* UniformActComp::SetStateSet() const
+   const osg::StateSet* UniformActComp::GetStateSet() const
    {
       return mStateSet.get();
    }

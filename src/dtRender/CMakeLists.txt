@@ -13,11 +13,13 @@ set(LIB_SOURCES
       cubemapscene.cpp
       dtrenderactorregistry.cpp
       dofscene.cpp
+      dynamiclight.cpp
       ephemerisscene.cpp
       glowscene.cpp
       graphicsquality.cpp
       guiscene.cpp
       hdrscene.cpp
+      lightscene.cpp
       multipassscene.cpp
       oceanscene.cpp
       ppuscene.cpp

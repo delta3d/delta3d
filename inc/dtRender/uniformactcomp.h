@@ -136,8 +136,8 @@ namespace dtRender
          *
          */
          void SetStateSet(osg::StateSet&);
-         osg::StateSet* SetStateSet();
-         const osg::StateSet* SetStateSet() const;
+         osg::StateSet* GetStateSet();
+         const osg::StateSet* GetStateSet() const;
 
       protected:
          ~UniformActComp();

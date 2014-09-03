@@ -19,6 +19,8 @@
 * Bradley Anderegg
 */
 #include <dtRender/dtrenderactorregistry.h>
+#include <dtRender/dynamiclight.h>
+#include <dtRender/lightscene.h>
 #include <dtRender/scenemanager.h>
 #include <dtRender/oceanscene.h>
 #include <dtRender/guiscene.h>
@@ -34,6 +36,7 @@
 #include <dtRender/ssaoscene.h>
 #include <dtRender/videoscene.h>
 
+
 // For the autoreg
 #include <dtCore/librarymanager.h> 
 
@@ -42,6 +45,9 @@ namespace dtRender
 
    dtCore::RefPtr<dtCore::ActorType> RenderActorRegistry::DOF_SCENE_ACTOR_TYPE(new dtCore::ActorType
       ("DOF Scene", "dtRender", "This actor creates a depth of field post process effect.")); 
+
+   dtCore::RefPtr<dtCore::ActorType> RenderActorRegistry::DYNAMIC_LIGHT_ACTOR_TYPE(new dtCore::ActorType
+      ("Dynamic Light", "dtRender", "This actor creates a light which is simulated in the LightScene.")); 
 
    dtCore::RefPtr<dtCore::ActorType> RenderActorRegistry::EPHEMERIS_SCENE_ACTOR_TYPE(new dtCore::ActorType
       ("Ephemeris Scene", "dtRender", "This actor creates an osgEphemeris sky dome.")); 
@@ -61,6 +67,11 @@ namespace dtRender
    dtCore::RefPtr<dtCore::ActorType> RenderActorRegistry::OCEAN_SCENE_ACTOR_TYPE(new dtCore::ActorType
       ("Ocean Scene", "dtRender", "This actor creates a large water mesh.")); 
 
+
+   dtCore::RefPtr<dtCore::ActorType> RenderActorRegistry::LIGHT_SCENE_ACTOR_TYPE(new dtCore::ActorType
+      ("Light Scene", "dtRender", "This actor manages dynamic light actors.")); 
+
+
    dtCore::RefPtr<dtCore::ActorType> RenderActorRegistry::PPU_SCENE_ACTOR_TYPE(new dtCore::ActorType
       ("PPU Scene", "dtRender", "This the base actor for osgPPU effects.")); 
 
@@ -75,6 +86,9 @@ namespace dtRender
 
    dtCore::RefPtr<dtCore::ActorType> RenderActorRegistry::SIMPLE_SCENE_ACTOR_TYPE(new dtCore::ActorType
       ("Simple Scene", "dtRender", "This actor represents a bare minimum scene, useful if you only need to add a camera.")); 
+
+   dtCore::RefPtr<dtCore::ActorType> RenderActorRegistry::SPOT_LIGHT_ACTOR_TYPE(new dtCore::ActorType
+      ("Spotlight", "dtRender", "This actor creates a runtime spotlight.")); 
 
    dtCore::RefPtr<dtCore::ActorType> RenderActorRegistry::SSAO_SCENE_ACTOR_TYPE(new dtCore::ActorType
       ("SSAO Scene", "dtRender", "This actor creates a Screen Space Ambient Occlusion post process effect.")); 
@@ -108,16 +122,20 @@ namespace dtRender
    void RenderActorRegistry::RegisterActorTypes()
    {
       mActorFactory->RegisterType<CubeMapSceneProxy>(CUBEMAP_SCENE_ACTOR_TYPE.get());
+      mActorFactory->RegisterType<DynamicLight>(DYNAMIC_LIGHT_ACTOR_TYPE.get());
       mActorFactory->RegisterType<DOFSceneProxy>(DOF_SCENE_ACTOR_TYPE.get());
       mActorFactory->RegisterType<EphemerisSceneProxy>(EPHEMERIS_SCENE_ACTOR_TYPE.get());
       mActorFactory->RegisterType<GUISceneProxy>(GUI_SCENE_ACTOR_TYPE.get());
       mActorFactory->RegisterType<GlowSceneProxy>(GLOW_SCENE_ACTOR_TYPE.get());
       mActorFactory->RegisterType<HDRSceneProxy>(HDR_SCENE_ACTOR_TYPE.get());
+      mActorFactory->RegisterType<LightSceneProxy>(LIGHT_SCENE_ACTOR_TYPE.get());
+      
       mActorFactory->RegisterType<MultipassSceneProxy>(MULTIPASS_SCENE_ACTOR_TYPE.get());
       mActorFactory->RegisterType<OceanSceneProxy>(OCEAN_SCENE_ACTOR_TYPE.get());
       mActorFactory->RegisterType<SceneManagerProxy>(SCENE_MANAGER_ACTOR_TYPE.get());
       mActorFactory->RegisterType<ShadowSceneProxy>(SHADOW_SCENE_ACTOR_TYPE.get());
       mActorFactory->RegisterType<SimpleSceneProxy>(SIMPLE_SCENE_ACTOR_TYPE.get());
+      mActorFactory->RegisterType<SpotLight>(SPOT_LIGHT_ACTOR_TYPE.get());
       mActorFactory->RegisterType<SSAOSceneProxy>(SSAO_SCENE_ACTOR_TYPE.get());
       mActorFactory->RegisterType<VideoSceneProxy>(VIDEO_SCENE_ACTOR_TYPE.get());
    }
