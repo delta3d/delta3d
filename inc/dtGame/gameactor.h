@@ -40,7 +40,8 @@ namespace dtGame
 
    /**
     * @class GameActor
-    * This class will be the main base class for actors being used by the
+    * This drawable subclass is deprecated.  All functionality exists on the GameActorProxy, which can have
+    * any drawable type now and it also holds the components.
     * Game Manager
     * @see dtGame::GameManager
     */
@@ -78,10 +79,8 @@ namespace dtGame
       bool IsGameActorProxyValid() const;
 
       /**
-        * Override this to add your own Actor Components.
-        * Note - actor components do the BuildPropertyMap during the AddComponent method, so set
-        * your default values after you that.
-        */
+       * Override the one on GameActorProxy
+       */
       DEPRECATE_FUNC virtual void BuildActorComponents();
 
       /**
