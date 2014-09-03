@@ -29,7 +29,9 @@
 #include <dtPhysics/palphysicsworld.h>
 #include <dtPhysics/bodywrapper.h>
 #include <dtPhysics/geometry.h>
+#include <dtPhysics/physicsreaderwriter.h>
 #include <dtGame/gameactor.h>
+#include <dtCore/project.h>
 #include <dtUtil/mathdefines.h>
 
 #include <osg/ComputeBoundsVisitor>
@@ -121,10 +123,9 @@ namespace dtPhysics
 
       std::vector<dtCore::RefPtr<Geometry> > mGeometries;
 
-      void CreateAndAddGeometry(const PrimitiveType& primType, const VectorType& dimensions,
+      void CreateSimpleGeometry(const PrimitiveType& primType, const VectorType& dimensions,
                               const TransformType& geomWorldTransform,
-                              Real mass,
-                              const osg::Node* mesh, const std::string& cachingKey)
+                              Real mass)
       {
 
          dtCore::RefPtr<Geometry> geom;
@@ -140,17 +141,11 @@ namespace dtPhysics
          {
             geom = Geometry::CreateCapsuleGeometry(geomWorldTransform, dimensions[0], dimensions[1], mass);
          }
-         else if(PrimitiveType::CONVEX_HULL == primType)
+
+         if (geom == NULL)
          {
-            geom = Geometry::CreateConvexGeometry(geomWorldTransform, *mesh, mass, cachingKey);
-         }
-         else if(PrimitiveType::TRIANGLE_MESH == primType)
-         {
-            geom = Geometry::CreateConcaveGeometry(geomWorldTransform, *mesh, mass);
-         }
-         else if (PrimitiveType::TERRAIN_MESH == primType)
-         {
-            geom = Geometry::CreateConcaveGeometry(geomWorldTransform, *mesh, mass);
+            LOG_ERROR("Unsupported primitive type passed to CreateSimpleGeometry: " + primType.GetName());
+            return;
          }
 
          geom->SetMargin(mSkinThickness);
@@ -159,46 +154,30 @@ namespace dtPhysics
          mGenericBody->ConnectGeometry(*geom);
       }
 
-      void CreateOldStylePrimitive(const PrimitiveType& primType,
-               const VectorType& dimensions,
-               const TransformType& transform, const osg::Node* mesh, Real mass)
+
+      void CreateComplexGeometry(const PrimitiveType& primType,
+            const TransformType& geomWorldTransform,
+            VertexData& vertexData,
+            Real mass)
       {
-         if (PrimitiveType::BOX == primType)
+         dtCore::RefPtr<Geometry> geom;
+         if(PrimitiveType::CONVEX_HULL == primType)
          {
-            if (*mMechanicsType == MechanicsType::STATIC)
-            {
-               mBaseBody = BaseBodyWrapper::CreateStaticBox(transform, dimensions);
-            }
-            else
-            {
-               mBaseBody = BaseBodyWrapper::CreateBox(transform, dimensions, mass);
-            }
-         }
-         else if (PrimitiveType::SPHERE == primType)
-         {
-            mBaseBody = BaseBodyWrapper::CreateSphere(transform, dimensions, mass);
-         }
-         else if (PrimitiveType::CYLINDER == primType)
-         {
-            mBaseBody = BaseBodyWrapper::CreateCylinder(transform, dimensions, mass);
-         }
-         else if (PrimitiveType::HEIGHTFIELD == primType)
-         {
-            mBaseBody = BaseBodyWrapper::CreateHeightfield(transform, mesh);
-         }
-         else if (PrimitiveType::CONVEX_HULL == primType)
-         {
-            mBaseBody = BaseBodyWrapper::CreateConvexHull(transform, mesh, mass);
+            geom = Geometry::CreateConvexGeometry(geomWorldTransform, vertexData, mass, true);
          }
          else if(PrimitiveType::TRIANGLE_MESH == primType)
          {
-            mBaseBody = BaseBodyWrapper::CreateTriangleMesh(transform, mesh, mass);
+            geom = Geometry::CreateConcaveGeometry(geomWorldTransform, vertexData, mass);
          }
          else if (PrimitiveType::TERRAIN_MESH == primType)
          {
-            mBaseBody = BaseBodyWrapper::CreateTerrainMesh(transform, mesh);
+            geom = Geometry::CreateConcaveGeometry(geomWorldTransform, vertexData, mass);
          }
 
+         geom->SetMargin(mSkinThickness);
+
+         mGeometries.push_back(geom);
+         mGenericBody->ConnectGeometry(*geom);
       }
 
       void ApplyActivationSettings()
@@ -410,6 +389,14 @@ namespace dtPhysics
                "Artifical angular body damping. 0 means off, 1 means pretty much don't move."
                , PropRegType, propRegHelper);
 
+      generatedName = (GetName());
+      generatedName.append(": ");
+      generatedName.append("PhysicsMesh");
+
+      DT_REGISTER_RESOURCE_PROPERTY_WITH_NAME(dtCore::DataType::STATIC_MESH, MeshResource, generatedName, generatedName,
+               "Geometry file to load for the physics to use.  It can be either a renderable mesh or a compiled physics mesh.",
+                PropRegType, propRegHelper);
+
       std::vector<dtCore::ActorProperty *> propList;
       GetPropertyList(propList);
 
@@ -424,40 +411,126 @@ namespace dtPhysics
       }
    }
 
+   void PhysicsObject::CalculateBoundsAndOrigin(const osg::Node* nodeToLoad, bool calcDimensions, bool adjustOriginOffsetForGeometry)
+   {
+      VectorType center, newDimensions;
+
+      osg::ComputeBoundsVisitor bb;
+      // sorry about the const cast.  The node SHOULD be const since we aren't changing it
+      // but accept doesn't work as const.
+      const_cast<osg::Node&>(*nodeToLoad).accept(bb);
+
+      if (calcDimensions)
+      {
+         CalculateOriginAndExtentsForNode(GetPrimitiveType(), bb.getBoundingBox(), center, newDimensions);
+         SetExtents(newDimensions);
+      }
+
+      if (adjustOriginOffsetForGeometry)
+      {
+         SetOriginOffset(GetOriginOffset() + center);
+      }
+
+   }
+
+   static const std::string POLYTOPE_SUFFIX = "_Polytope";
+
    /////////////////////////////////////////////////////////////////////////////
-   bool PhysicsObject::CreateFromProperties(const osg::Node* nodeToLoad, bool adjustOriginOffsetForGeometry,
+   bool PhysicsObject::Create(const osg::Node* nodeToLoad, bool adjustOriginOffsetForGeometry,
             const std::string& cachingKey)
    {
-      TransformType xform;
-      GetTransform(xform);
-      VectorType dimensions = GetExtents();
-      bool calcDimensions = dimensions[0] <= 0.0f && dimensions[1] <= 0.0f && dimensions[2] <= 0.0f;
-      if (nodeToLoad != NULL)
+      try
       {
-         if (calcDimensions || adjustOriginOffsetForGeometry)
-         {
-            VectorType center, newDimensions;
-            CalculateOriginAndExtentsForNode(GetPrimitiveType(), *nodeToLoad, center, newDimensions);
-            if (calcDimensions)
-            {
-               dimensions = newDimensions;
-               SetExtents(dimensions);
-            }
+         VectorType dimensions = GetExtents();
+         bool calcDimensions = GetPrimitiveType().IsSimpleShape() && dimensions[0] <= 0.0f && dimensions[1] <= 0.0f && dimensions[2] <= 0.0f;
 
-            if (adjustOriginOffsetForGeometry)
+         if (nodeToLoad != NULL)
+         {
+            CalculateBoundsAndOrigin(nodeToLoad, calcDimensions, adjustOriginOffsetForGeometry);
+         }
+
+         dimensions = GetExtents();
+         bool changedDimensions = false;
+         for (int i = 0; i < VectorType::num_components; ++i)
+         {
+            if (dimensions[i] <= 0.0)
             {
-               SetOriginOffset(GetOriginOffset() + center);
+               dimensions[i] = 1.0f;
+               changedDimensions = true;
+            }
+         }
+
+         if (changedDimensions)
+         {
+            SetExtents(dimensions);
+         }
+
+         dtCore::RefPtr<VertexData> data;
+         if (nodeToLoad != NULL)
+         {
+            bool polytope = GetPrimitiveType() == PrimitiveType::CONVEX_HULL;
+            VertexData::GetOrCreateCachedDataForNode(data, nodeToLoad, polytope ? cachingKey + POLYTOPE_SUFFIX : cachingKey, polytope);
+
+         }
+         else
+         {
+            GetVertexDataForResource(data, cachingKey);
+         }
+
+         return CreateInternal(data);
+      }
+      catch (const dtUtil::Exception& ex)
+      {
+         ex.LogException(dtUtil::Log::LOG_ERROR);
+      }
+      return false;
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void PhysicsObject::GetVertexDataForResource(dtCore::RefPtr<VertexData>& vertDataOut, const std::string& cachingKey)
+   {
+      if (mMeshResource == dtCore::ResourceDescriptor::NULL_RESOURCE)
+         return;
+
+      bool polytope = GetPrimitiveType() == PrimitiveType::CONVEX_HULL;
+
+      std::string fileToLoad;
+
+      bool dataNew = true;
+      if (cachingKey != VertexData::NO_CACHE_KEY)
+      {
+         dataNew = VertexData::GetOrCreateCachedData(vertDataOut, polytope ? cachingKey + POLYTOPE_SUFFIX : cachingKey );
+      }
+      else
+      {
+         dataNew = VertexData::GetOrCreateCachedData(vertDataOut, polytope ? GetMeshResource().GetResourceIdentifier() + POLYTOPE_SUFFIX : GetMeshResource().GetResourceIdentifier() );
+      }
+
+      if (dataNew)
+      {
+         // throw the exception
+         fileToLoad = dtCore::Project::GetInstance().GetResourcePath(GetMeshResource());
+
+         if (!fileToLoad.empty())
+         {
+            dtCore::RefPtr<VertexData> readerData = new VertexData;
+
+            if (dtPhysics::PhysicsReaderWriter::LoadTriangleDataFile(*readerData, fileToLoad))
+            {
+               dtCore::Transform geometryWorld;
+               GetTransform(geometryWorld);
+
+               vertDataOut->Assign(*readerData, polytope);
+
+            }
+            else
+            {
+               vertDataOut = NULL;
+               throw dtUtil::Exception("Unable to load triangle data from existing file resource: "
+                     + GetMeshResource().GetResourceIdentifier(), __FILE__, __LINE__);
             }
          }
       }
-      else if (calcDimensions)
-      {
-         dimensions.set(1.0f, 1.0f, 1.0f);
-         LOG_WARNING("Extents are not set on PhysicsObject \"" + GetName()
-                  + "\" and no node has been supplied from which to calculated them. Setting unit extents.");
-         SetExtents(dimensions);
-      }
-      return CreateFromPrimitive(GetPrimitiveType(), dimensions, xform, nodeToLoad, cachingKey);
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -475,7 +548,7 @@ namespace dtPhysics
          mDataMembers->mGenericBody = dynamic_cast<GenericBodyWrapper*>(mDataMembers->mBaseBody.get());
 
          if (mDataMembers->mGenericBody.valid())
-         {            
+         {
             mDataMembers->mGenericBody->Init();
 
             AddGeometry(geometry);
@@ -515,24 +588,13 @@ namespace dtPhysics
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   bool PhysicsObject::CreateFromPrimitive(const PrimitiveType& primType,
-            const VectorType& dimensions, const VectorType& initialTranslation,
-            const osg::Node* mesh, const std::string& cachingKey)
+   bool PhysicsObject::CreateInternal(VertexData* data)
    {
       TransformType xform;
-      xform.SetTranslation(initialTranslation);
-      return CreateFromPrimitive(primType, dimensions, xform, mesh, cachingKey);
-   }
-
-   /////////////////////////////////////////////////////////////////////////////
-   bool PhysicsObject::CreateFromPrimitive(const PrimitiveType& primType,
-            const VectorType& dimensions,
-            const TransformType& transform, const osg::Node* mesh, const std::string& cachingKey)
-   {
+      GetTransform(xform);
       mDataMembers->mGeometries.clear();
 
-      mDataMembers->mTransform = transform;
-      mDataMembers->mBaseBody = BaseBodyWrapper::CreateGenericBody(transform, *mDataMembers->mMechanicsType, mDataMembers->mCollisionGroup, mDataMembers->mMassOfObject);
+      mDataMembers->mBaseBody = BaseBodyWrapper::CreateGenericBody(xform, *mDataMembers->mMechanicsType, mDataMembers->mCollisionGroup, mDataMembers->mMassOfObject);
 
       if (mDataMembers->mBaseBody.valid())
       {
@@ -542,7 +604,19 @@ namespace dtPhysics
             mDataMembers->mGenericBody->Init();
             dtCore::Transform geometryWorld;
             GetOriginOffsetInWorldSpace(geometryWorld);
-            mDataMembers->CreateAndAddGeometry(primType, dimensions, geometryWorld, GetMass(), mesh, cachingKey);
+            if (GetPrimitiveType().IsSimpleShape())
+            {
+               mDataMembers->CreateSimpleGeometry(GetPrimitiveType(), GetExtents(), geometryWorld, GetMass());
+            }
+            else if (data != NULL)
+            {
+               mDataMembers->CreateComplexGeometry(GetPrimitiveType(), geometryWorld, *data, GetMass());
+            }
+            else
+            {
+               throw dtUtil::Exception("Unable to create a geometry for this physics object because it is not configured to a simple shape, and it has not vertex data for a mesh.",
+                     __FILE__, __LINE__);
+            }
             //Reset this because it has to be done after geometry is added.
             SetMomentOfInertia(mDataMembers->mMomentOfInertia);
          }
@@ -554,13 +628,6 @@ namespace dtPhysics
             mDataMembers->mGenericBody = NULL;
             return false;
          }
-      }
-      else
-      {
-         mDataMembers->CreateOldStylePrimitive(primType, dimensions, transform, mesh, GetMass());
-         // Collision group gets stet in the CreateGenericBody call above.  For old style pal primitives, it doesn't
-         // so we have to set it here.
-         mDataMembers->mBaseBody->SetGroup(mDataMembers->mCollisionGroup);
       }
 
 
@@ -1298,20 +1365,17 @@ namespace dtPhysics
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void PhysicsObject::CalculateOriginAndExtentsForNode(PrimitiveType& type, const osg::Node& node,
+   DT_IMPLEMENT_ACCESSOR(PhysicsObject, dtCore::ResourceDescriptor, MeshResource);
+
+   /////////////////////////////////////////////////////////////////////////////
+   void PhysicsObject::CalculateOriginAndExtentsForNode(PrimitiveType& type, const osg::BoundingBox& bb,
             VectorType& center, VectorType& extents)
    {
       if (type == PrimitiveType::SPHERE)
       {
-         osg::ComputeBoundsVisitor bb;
-
-         // sorry about the const cast.  The node SHOULD be const since we aren't changing it
-         // but accept doesn't work as const.
-         const_cast<osg::Node&>(node).accept(bb);
-
-         float radiusX = (bb.getBoundingBox().xMax() - bb.getBoundingBox().xMin()) / 2.0f;
-         float radiusY = (bb.getBoundingBox().yMax() - bb.getBoundingBox().yMin()) / 2.0f;
-         float radiusZ = (bb.getBoundingBox().zMax() - bb.getBoundingBox().zMin()) / 2.0f;
+         float radiusX = (bb.xMax() - bb.xMin()) / 2.0f;
+         float radiusY = (bb.yMax() - bb.yMin()) / 2.0f;
+         float radiusZ = (bb.zMax() - bb.zMin()) / 2.0f;
 
          // Taking the radius of the box always gives a sphere that is very large.
          // This may not completely encase the object, but the thought it that if
@@ -1321,29 +1385,19 @@ namespace dtPhysics
          extents[0] = largestAxis;
          extents[1] = 0.0f;
          extents[2] = 0.0f;
-         center = bb.getBoundingBox().center();
+         center = bb.center();
       }
       else if (type == PrimitiveType::BOX)
       {
-         osg::ComputeBoundsVisitor bb;
-
-         // sorry about the const cast.  The node SHOULD be const since we aren't changing it
-         // but accept doesn't work as const.
-         const_cast<osg::Node&>(node).accept(bb);
-         extents[0] = bb.getBoundingBox().xMax() - bb.getBoundingBox().xMin();
-         extents[1] = bb.getBoundingBox().yMax() - bb.getBoundingBox().yMin();
-         extents[2] = bb.getBoundingBox().zMax() - bb.getBoundingBox().zMin();
-         center = bb.getBoundingBox().center();
+         extents[0] = bb.xMax() - bb.xMin();
+         extents[1] = bb.yMax() - bb.yMin();
+         extents[2] = bb.zMax() - bb.zMin();
+         center = bb.center();
       }
       else if (type == PrimitiveType::CYLINDER)
       {
-         osg::ComputeBoundsVisitor bb;
-
-         // sorry about the const cast.  The node SHOULD be const since we aren't changing it
-         // but accept doesn't work as const.
-         const_cast<osg::Node&>(node).accept(bb);
-         float radiusX = (bb.getBoundingBox().xMax() - bb.getBoundingBox().xMin()) / 2.0f;
-         float radiusY = (bb.getBoundingBox().yMax() - bb.getBoundingBox().yMin()) / 2.0f;
+         float radiusX = (bb.xMax() - bb.xMin()) / 2.0f;
+         float radiusY = (bb.yMax() - bb.yMin()) / 2.0f;
 
          // Taking the radius of the box always gives a radius that is very large.
          // This may not completely encompass the object, but the thought it that if
@@ -1351,12 +1405,12 @@ namespace dtPhysics
          // code makes that assumption.
          float largestAxis = dtUtil::Max(radiusX, radiusY);
 
-         float height = bb.getBoundingBox().zMax() - bb.getBoundingBox().zMin();
+         float height = bb.zMax() - bb.zMin();
 
          extents[0] = height;
          extents[1] = largestAxis;
          extents[2] = 0.0f;
-         center = bb.getBoundingBox().center();
+         center = bb.center();
       }
       else
       {

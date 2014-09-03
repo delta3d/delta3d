@@ -24,16 +24,6 @@ namespace dtExample
 
    void MeshObjectActor::OnEnteredWorld()
    {
-      if (GetMeshResource() != dtCore::ResourceDescriptor::NULL_RESOURCE)
-      {
-         dtActors::GameMeshDrawable* drawable = NULL;
-         GetDrawable(drawable);
-         if (drawable->GetMeshNode() != NULL)
-         {
-            GetComponent<dtPhysics::PhysicsActComp>()->GetMainPhysicsObject()->
-                  CreateFromProperties(drawable->GetMeshNode(), false, GetMeshResource().GetResourceIdentifier());
-         }
-      }
    }
 
    void MeshObjectActor::BuildActorComponents()
@@ -44,7 +34,7 @@ namespace dtExample
       phyObj->SetMechanicsType(dtPhysics::MechanicsType::STATIC);
       phyObj->SetPrimitiveType(dtPhysics::PrimitiveType::CONVEX_HULL);
       pac->AddPhysicsObject(*phyObj);
-      pac->SetAutoCreateOnEnteringWorld(false);
+      pac->SetAutoCreateOnEnteringWorld(true);
       AddComponent(*pac);
    }
 

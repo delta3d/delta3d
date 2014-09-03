@@ -16,10 +16,8 @@ namespace dtPhysics
    : mCurrentMaterial(0)
    , mMaxEdgeSize(20.0)
    , mMatrixIsIdentity()
+   , mData(new VertexData)
    {
-      mData.mVertices = new osg::Vec3Array();
-      //mData.mFaces = new osg::UIntArray();
-      //mData.mMaterialFlags = new osg::UIntArray();
    }
 
    //////////////////////////////////////////////////////
@@ -173,15 +171,15 @@ namespace dtPhysics
                }
                else
                {
-                  indices[j] = mData.mVertices->size();
-                  mData.mVertices->push_back(mTriangles[i].mV[j]);
+                  indices[j] = mData->mVertices.size();
+                  mData->mVertices.push_back(mTriangles[i].mV[j]);
                   mVertIndexSet.insert(std::make_pair(mTriangles[i].mV[j], indices[j]));
                }
-               mData.mFaces.push_back(indices[j]);
+               mData->mIndices.push_back(indices[j]);
             }
          }
 
-         mData.mMaterialFlags.push_back(mCurrentMaterial);
+         mData->mMaterialFlags.push_back(mCurrentMaterial);
       }
       else
       {

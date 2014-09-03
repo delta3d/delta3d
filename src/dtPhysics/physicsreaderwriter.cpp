@@ -27,7 +27,12 @@
 #include <osgDB/FileNameUtils>
 #include <osgDB/ReadFile>
 
+#include <osg/ComputeBoundsVisitor>
+
 #include <dtPhysics/physicsreaderwriter.h>
+#include <dtPhysics/trianglerecorder.h>
+#include <dtPhysics/geometry.h>
+
 
 #include <dtUtil/datastream.h>
 #include <dtUtil/exception.h>
@@ -68,7 +73,7 @@ namespace dtPhysics
    {
    public:
       typedef osg::Object BaseClass;
-      typedef dtPhysics::PhysicsReaderWriter::PhysicsTriangleData PhysTriData;
+      typedef dtPhysics::VertexData PhysTriData;
 
       PhysOptions(PhysTriData& triangleData, const std::string& fileName)
          : mDataContainer(&triangleData)
@@ -99,6 +104,8 @@ namespace dtPhysics
          {
             newOptions = new osgDB::ReaderWriter::Options;
          }
+
+         newOptions->setObjectCacheHint(osgDB::ReaderWriter::Options::CACHE_ALL);
 
          newOptions->setPluginData(PHYSICS_PLUGIN_DATA, &optionData);
 
@@ -237,27 +244,28 @@ namespace dtPhysics
 
                //vertex data
                unsigned numVerts = 0;
-               unsigned numFaces = 0;
+               unsigned numIndices = 0;
                unsigned numMaterials = 0;
 
-               ds.Read(numVerts);    
+               ds.Read(numVerts);
                {
+                  triangleData.mVertices.reserve(triangleData.mVertices.size() + numVerts);
                   for(unsigned i = 0; i < numVerts; ++i)
                   {
                      osg::Vec3 vert;
                      ds.Read(vert);
-                     triangleData.mVertices->push_back(vert);
+                     triangleData.mVertices.push_back(vert);
                   }
                }
 
                //triangle data
-               ds.Read(numFaces);
+               ds.Read(numIndices);
                {
-                  for(unsigned i = 0; i < numFaces; ++i)
+                  for(unsigned i = 0; i < numIndices; ++i)
                   {
                      unsigned face = 0;
                      ds.Read(face);
-                     triangleData.mFaces.push_back(face);
+                     triangleData.mIndices.push_back(face);
                   }
                }
 
@@ -308,16 +316,77 @@ namespace dtPhysics
    //////////////////////////////////////////////////////////////////////////
    //PhysicsReaderWriter
    //////////////////////////////////////////////////////////////////////////
+   bool PhysicsReaderWriter::LoadFileGetExtents(osg::BoundingBox& bound, const std::string& filename)
+   {
+      dtCore::RefPtr<VertexData> triangleData = new VertexData;
+      dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
+      dtCore::RefPtr<PhysOptions> physOptions = new PhysOptions(*triangleData, filename);
+      dtCore::RefPtr<osgDB::ReaderWriter::Options> options = PhysOptions::CreateOSGOptions(*physOptions);
 
-   bool PhysicsReaderWriter::LoadTriangleDataFile(PhysicsTriangleData& triangleData, const std::string& filename)
+      bool result = false;
+      if (fileUtils.ReadObject(filename, options.get()) != NULL)
+      {
+         std::vector<VectorType>::iterator i,iend;
+         i = triangleData->mVertices.begin();
+         iend = triangleData->mVertices.end();
+         for (;i != iend; ++i)
+         {
+            bound.expandBy(*i);
+         }
+      }
+      else
+      {
+         osgDB::Registry* reg = osgDB::Registry::instance();
+
+         options = reg->getOptions() ?
+            static_cast<osgDB::ReaderWriter::Options*>(reg->getOptions()->clone(osg::CopyOp::SHALLOW_COPY)) :
+         new osgDB::ReaderWriter::Options;
+
+         options->setObjectCacheHint(osgDB::ReaderWriter::Options::CACHE_ALL);
+
+         dtCore::RefPtr<osg::Node> node = fileUtils.ReadNode(filename, options);
+         if (node.valid())
+         {
+            osg::ComputeBoundsVisitor bbv;
+
+            // sorry about the const cast.  The node SHOULD be const since we aren't changing it
+            // but accept doesn't work as const.
+            const_cast<osg::Node&>(*node).accept(bbv);
+            bound.expandBy(bbv.getBoundingBox());
+            result = true;
+         }
+      }
+      return result;
+
+   }
+
+   bool PhysicsReaderWriter::LoadTriangleDataFile(VertexData& triangleData, const std::string& filename)
    {
       dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
       dtCore::RefPtr<PhysOptions> physOptions = new PhysOptions(triangleData, filename);
       dtCore::RefPtr<osgDB::ReaderWriter::Options> options = PhysOptions::CreateOSGOptions(*physOptions);
-      return fileUtils.ReadObject(filename, options.get()) != NULL;
+
+      dtCore::RefPtr<osg::Object> objResult = fileUtils.ReadObject(filename, options.get());
+
+      if (triangleData.mVertices.empty())
+      {
+         dtCore::RefPtr<osg::Node> node = dynamic_cast<osg::Node*>(objResult.get());
+         if (node.valid())
+         {
+            TriangleRecorder tr;
+            tr.Record(*node);
+            if (!tr.mData->mVertices.empty() && !tr.mData->mIndices.empty())
+            {
+               triangleData.mVertices = tr.mData->mVertices;
+               triangleData.mIndices.swap(tr.mData->mIndices);
+               triangleData.mMaterialFlags.swap(tr.mData->mMaterialFlags);
+            }
+         }
+      }
+      return !triangleData.mVertices.empty();
    }
   
-   bool PhysicsReaderWriter::SaveTriangleDataFile(const PhysicsTriangleData& triangleData, const std::string& filename)
+   bool PhysicsReaderWriter::SaveTriangleDataFile(const VertexData& triangleData, const std::string& filename)
    {
       std::ofstream outfile;
 
@@ -336,10 +405,10 @@ namespace dtPhysics
       
       
       //vertex data
-      ds.Write(unsigned(triangleData.mVertices->size()));
+      ds.Write(unsigned(triangleData.mVertices.size()));
       {
-         osg::Vec3Array::const_iterator iter = triangleData.mVertices->begin();
-         osg::Vec3Array::const_iterator iterEnd = triangleData.mVertices->end();
+         std::vector<VectorType>::const_iterator iter = triangleData.mVertices.begin();
+         std::vector<VectorType>::const_iterator iterEnd = triangleData.mVertices.end();
          for(;iter != iterEnd; ++iter)
          {
             ds.Write(*iter);
@@ -347,10 +416,10 @@ namespace dtPhysics
       }
 
       //triangle data
-      ds.Write(unsigned(triangleData.mFaces.size()));
+      ds.Write(unsigned(triangleData.mIndices.size()));
       {
-         osg::UIntArray::const_iterator iter = triangleData.mFaces.begin();
-         osg::UIntArray::const_iterator iterEnd = triangleData.mFaces.end();
+         osg::UIntArray::const_iterator iter = triangleData.mIndices.begin();
+         osg::UIntArray::const_iterator iterEnd = triangleData.mIndices.end();
          for(;iter != iterEnd; ++iter)
          {
             ds.Write(*iter);

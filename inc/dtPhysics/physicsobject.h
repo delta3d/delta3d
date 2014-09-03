@@ -34,7 +34,10 @@
 #include <dtCore/actorproperty.h>
 #include <dtCore/propertycontainer.h>
 #include <dtCore/motioninterface.h>
+#include <dtCore/resourcedescriptor.h>
 #include <dtUtil/getsetmacros.h>
+#include <dtUtil/deprecationmgr.h>
+#include <osg/BoundingBox>
 
 namespace dtPhysics
 {
@@ -79,21 +82,13 @@ namespace dtPhysics
        * @note pass in null for non-mesh initialization.
        * @note You may call this repeatedly to re-initialize the object. It will first cleanup, then re-create everything
        */
-      virtual bool CreateFromProperties(const osg::Node* nodeToLoad = NULL,
-               bool adjustOriginOffsetForGeometry = false, const std::string& cachingKey = Geometry::NO_CACHE_KEY);
+      virtual bool Create(const osg::Node* nodeToLoad = NULL,
+               bool adjustOriginOffsetForGeometry = false, const std::string& cachingKey = VertexData::NO_CACHE_KEY);
 
-      /**
-       * The same as from properties, but the primitive type, the dimensions and the initial position
-       * are all passed in.  Note that the position is given here with no rotation.
-       */
-      bool CreateFromPrimitive(const PrimitiveType& primType, const VectorType& dimensions,
-               const VectorType& initialPosition, const osg::Node* mesh = NULL, const std::string& cachingKey = Geometry::NO_CACHE_KEY);
-      /**
-       * The same as from properties, but the primitive type, the dimensions and the initial position
-       * are all passed in.
-       */
-      virtual bool CreateFromPrimitive(const PrimitiveType& primType, const VectorType& dimensions,
-               const TransformType& initialPosition, const osg::Node* mesh = NULL, const std::string& cachingKey = Geometry::NO_CACHE_KEY);
+      /// Just call Create(...)
+      DEPRECATE_FUNC virtual bool CreateFromProperties(const osg::Node* nodeToLoad = NULL,
+               bool adjustOriginOffsetForGeometry = false, const std::string& cachingKey = VertexData::NO_CACHE_KEY)
+      { return Create(nodeToLoad, false, cachingKey); }
 
       /**
        * Initializes this PhysicsObject with an already created Geometry object.
@@ -276,6 +271,11 @@ namespace dtPhysics
        */
       void SetMaterial(Material*);
 
+      /**
+       * This mesh resource will be loaded to set the physics data for a triangle mesh or convex.
+       */
+      DT_DECLARE_ACCESSOR(dtCore::ResourceDescriptor, MeshResource);
+
       //////////////////////////////////////////////////////
       // Build our property functions
       virtual void BuildPropertyMap(std::vector<dtCore::RefPtr<dtCore::ActorProperty> >& toFillIn);
@@ -307,16 +307,27 @@ namespace dtPhysics
 
       /// @return angular damping factor.
       Real GetAngularDamping() const;
-      /// Sets artifical angular body damping. 0 means off, 1 means pretty much don't rotate.
+      /// Sets artificial angular body damping. 0 means off, 1 means pretty much don't rotate.
       void SetAngularDamping(Real);
 
       VectorType TransformToWorldSpace(const VectorType& localSpaceVector);
 
-      static void CalculateOriginAndExtentsForNode(PrimitiveType& type, const osg::Node& node,
+      static void CalculateOriginAndExtentsForNode(PrimitiveType& type, const osg::BoundingBox& bb,
                VectorType& center, VectorType& extents);
 
    protected:
       ~PhysicsObject();
+
+      void CalculateBoundsAndOrigin(const osg::Node* nodeToLoad, bool calcDimensions, bool adjustOriginOffsetForGeometry);
+
+      // If you don't pass a key here, the resource name itself will be used.
+      void GetVertexDataForResource(dtCore::RefPtr<VertexData>& vertDataOut, const std::string& cachingKey);
+
+      /**
+       * Assumes all configuration values are set such as computing bounds, and that the loading does not use a resource.
+       * then creates a body.
+       */
+      virtual bool CreateInternal(VertexData* data);
 
    private:
       // our implementation to the physics engine

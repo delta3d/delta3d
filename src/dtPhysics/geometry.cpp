@@ -32,12 +32,12 @@
 
 namespace dtPhysics
 {
-   const std::string Geometry::NO_CACHE_KEY("");
+   const std::string VertexData::NO_CACHE_KEY("");
 
    class MeshCache
    {
    public:
-      typedef std::map<std::string, VertexData> MeshCacheContainerType;
+      typedef std::map<std::string, dtCore::RefPtr<VertexData> > MeshCacheContainerType;
       ~MeshCache()
       {
          DeleteAll();
@@ -45,13 +45,6 @@ namespace dtPhysics
 
       void DeleteAll()
       {
-         MeshCacheContainerType::iterator i, iend;
-         i = mMeshCacheMap.begin();
-         iend = mMeshCacheMap.end();
-         for (; i != iend; ++i)
-         {
-            i->second.DeleteData();
-         }
          mMeshCacheMap.clear();
       }
 
@@ -61,42 +54,66 @@ namespace dtPhysics
    static MeshCache gMeshCache;
 
    /////////////////////////////////////////////////
-   VertexData::VertexData()
+   VertexData::VertexData() {}
+
+   /////////////////////////////////////////////////
+    VertexData::~VertexData() {}
+
+   /////////////////////////////////////////////////
+   VertexData& VertexData::Assign(VertexData& readerData, bool convertToPolytope)
    {
-      NullData();
+      mIndices.swap(readerData.mIndices);
+      mVertices.swap(readerData.mVertices);
+      mMaterialFlags.swap(readerData.mMaterialFlags);
+
+      if (convertToPolytope)
+      {
+         ConvexHull hull(*this, 100);
+
+         hull.GetVertexData(*this);
+      }
+
+      return *this;
    }
 
    /////////////////////////////////////////////////
-   void VertexData::DeleteData()
+   void VertexData::GetOrCreateCachedDataForNode(dtCore::RefPtr<VertexData>& dataOut, const osg::Node* nodeToParse, const std::string& cacheKey, bool polytope)
    {
-      delete[] mVertices;
-      delete[] mIndices;
-      NullData();
-   }
+      bool newData = false;
+      if (cacheKey != NO_CACHE_KEY)
+      {
+         newData = VertexData::GetOrCreateCachedData(dataOut, cacheKey);
+      }
+      else
+      {
+         dataOut = new VertexData;
+         newData = true;
+      }
 
-   /////////////////////////////////////////////////
-   void VertexData::NullData()
-   {
-      mNumIndices = 0U;
-      mNumVertices = 0U;
-      mIndices = NULL;
-      mVertices = NULL;
+      if (newData)
+      {
+         TriangleRecorder tr;
+         tr.Record(*nodeToParse);
+
+         if (tr.mData->mVertices.empty() || tr.mData->mIndices.empty())
+         {
+            throw dtUtil::Exception("Unable to build Vertex data object, no vertex data was found when traversing the osg Node.", __FILE__, __LINE__);
+         }
+         dataOut->Assign(*tr.mData, polytope);
+      }
    }
 
    ////////////////////////////////////////////////////////////
-   bool VertexData::GetOrCreateCachedData(const std::string& key, VertexData*& dataOut)
+   bool VertexData::GetOrCreateCachedData(dtCore::RefPtr<VertexData>& dataOut, const std::string& key)
    {
       bool result = false;
       dataOut = FindCachedData(key);
-      if (dataOut == NULL)
+      if (!dataOut.valid())
       {
-         VertexData meshData;
-         std::pair<MeshCache::MeshCacheContainerType::iterator, bool> insertResult = gMeshCache.mMeshCacheMap.insert(std::make_pair(key, meshData));
+         std::pair<MeshCache::MeshCacheContainerType::iterator, bool> insertResult = gMeshCache.mMeshCacheMap.insert(std::make_pair(key, new VertexData));
          if (insertResult.second)
          {
-            VertexData& vertData = insertResult.first->second;
-            // Return the created mesh data object so the external code can populated it.
-            dataOut = &vertData;
+            dataOut = insertResult.first->second;
             result = true;
          }
          else
@@ -113,12 +130,12 @@ namespace dtPhysics
    }
 
    ////////////////////////////////////////////////////////////
-   VertexData* VertexData::FindCachedData(const std::string& key)
+   dtCore::RefPtr<VertexData> VertexData::FindCachedData(const std::string& key)
    {
       MeshCache::MeshCacheContainerType::iterator found = gMeshCache.mMeshCacheMap.find(key);
       if (found != gMeshCache.mMeshCacheMap.end())
       {
-         return &found->second;
+         return found->second;
       }
       return NULL;
    }
@@ -129,7 +146,6 @@ namespace dtPhysics
       MeshCache::MeshCacheContainerType::iterator found = gMeshCache.mMeshCacheMap.find(key);
       if (found != gMeshCache.mMeshCacheMap.end())
       {
-         found->second.DeleteData();
          gMeshCache.mMeshCacheMap.erase(found);
          return true;
       }
@@ -242,52 +258,6 @@ namespace dtPhysics
    }
 
    /////////////////////////////////////
-   dtCore::RefPtr<Geometry> Geometry::CreateConvexGeometry(const TransformType& worldxform,
-            const osg::Node& nodeToParse, Real mass, const std::string& cacheKey)
-   {
-      VertexData* data = NULL;
-      VertexData tmpData;
-      bool newData = false;
-      if (cacheKey != NO_CACHE_KEY)
-      {
-         newData = VertexData::GetOrCreateCachedData(cacheKey, data);
-      }
-      else
-      {
-         data = &tmpData;
-         newData = true;
-      }
-
-      if (newData)
-      {
-         TriangleRecorder tr;
-         tr.Record(nodeToParse);
-
-         if (tr.mData.mVertices->empty() || tr.mData.mFaces.empty())
-         {
-            throw dtUtil::Exception("Unable to create convex mesh, no vertex data was found when traversing the osg Node.", __FILE__, __LINE__);
-         }
-
-         VertexData triangleData;
-         triangleData.mNumIndices = tr.mData.mFaces.size();
-         triangleData.mNumVertices = tr.mData.mVertices->size();
-         triangleData.mIndices = &tr.mData.mFaces.front();
-         triangleData.mVertices = reinterpret_cast<Real*>(&tr.mData.mVertices->front());
-
-         ConvexHull hull(triangleData, 100);
-
-         *data = hull.ReleaseNewVertexData();
-      }
-
-      dtCore::RefPtr<Geometry> geom = CreateConvexGeometry(worldxform, *data, mass, true);
-      if (cacheKey == NO_CACHE_KEY)
-      {
-         data->DeleteData();
-      }
-      return geom;
-   }
-
-   /////////////////////////////////////
    dtCore::RefPtr<Geometry> Geometry::CreateConvexGeometry(const TransformType& worldxform, VertexData& data, Real mass, bool assumePolytope)
    {
       dtCore::RefPtr<Geometry> geometry = new Geometry(PrimitiveType::CONVEX_HULL);
@@ -305,37 +275,17 @@ namespace dtPhysics
       {
          ConvexHull hull(data, 100);
 
-         VertexData newData = hull.ReleaseNewVertexData();
+         dtCore::RefPtr<VertexData> newData = new VertexData;
+         hull.GetVertexData(*newData);
 
          //init the geom
-         convGeom->Init(palMat, newData.mVertices, newData.mNumVertices, reinterpret_cast<int*>(newData.mIndices), newData.mNumIndices, mass);
-         // Must do this manually since the vertex data object doesn't know if it owns its data.
-         newData.DeleteData();
+         convGeom->Init(palMat, reinterpret_cast<Real*>(&newData->mVertices.front()), newData->mVertices.size(), reinterpret_cast<int*>(&newData->mIndices.front()), newData->mIndices.size(), mass);
       }
       else
       {
-         convGeom->Init(palMat, data.mVertices, data.mNumVertices, reinterpret_cast<int*>(data.mIndices), data.mNumIndices, mass);
+         convGeom->Init(palMat, reinterpret_cast<Real*>(&data.mVertices.front()), data.mVertices.size(), reinterpret_cast<int*>(&data.mIndices.front()), data.mIndices.size(), mass);
       }
       return geometry;
-   }
-
-   /////////////////////////////////////
-   dtCore::RefPtr<Geometry> Geometry::CreateConcaveGeometry(const TransformType& worldxform,
-            const osg::Node& nodeToParse, Real mass, const std::string& cacheKey)
-   {
-      TriangleRecorder tr;
-      tr.Record(nodeToParse);
-      if (tr.mData.mVertices->empty() || tr.mData.mFaces.empty())
-      {
-         throw dtUtil::Exception("Unable to create concave mesh, no vertex data was found when traversing the osg Node.", __FILE__, __LINE__);
-      }
-      VertexData data;
-      data.mNumIndices = tr.mData.mFaces.size();
-      data.mNumVertices = tr.mData.mVertices->size();
-      // TODO must copy the data in order to cache it.
-      data.mIndices = &tr.mData.mFaces.front();
-      data.mVertices = reinterpret_cast<Real*>(&tr.mData.mVertices->front());
-      return CreateConcaveGeometry(worldxform, data, mass);
    }
 
    /////////////////////////////////////
@@ -357,7 +307,7 @@ namespace dtPhysics
       TransformToPalMatrix(palMat, osgMat);
 
       //init the geom
-      convGeom->Init(palMat, data.mVertices, data.mNumVertices, reinterpret_cast<int*>(data.mIndices), data.mNumIndices, mass);
+      convGeom->Init(palMat, reinterpret_cast<Real*>(&data.mVertices.front()), data.mVertices.size(), reinterpret_cast<int*>(&data.mIndices.front()), data.mIndices.size(), mass);
       return geometry;
    }
 

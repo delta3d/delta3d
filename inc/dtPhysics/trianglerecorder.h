@@ -27,6 +27,7 @@
 #include <dtPhysics/physicstypes.h>
 #include <dtPhysics/physicsreaderwriter.h>
 #include <dtPhysics/physicsmaterials.h>
+#include <dtPhysics/geometry.h>
 #include <dtUtil/functor.h>
 #include <dtUtil/getsetmacros.h>
 #include <vector>
@@ -56,7 +57,7 @@ namespace dtPhysics
          typedef std::map<osg::Vec3, int> VertexMap;
 
          VertexMap mVertIndexSet;
-         dtPhysics::PhysicsReaderWriter::PhysicsTriangleData mData;
+         dtCore::RefPtr<VertexData> mData;
 
          const MatrixType& GetMatrix() const;
          void SetMatrix(const MatrixType& m);

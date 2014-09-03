@@ -66,6 +66,7 @@
 #include <osg/Geode>
 #include <osg/Shape>
 #include <osg/ShapeDrawable>
+#include <osg/ComputeBoundsVisitor>
 
 #include <pal/pal.h>
 #include <pal/palFactory.h>
@@ -401,10 +402,13 @@ namespace dtPhysics
          CPPUNIT_ASSERT(box.valid());
 
          VectorType center, extents;
-         PhysicsObject::CalculateOriginAndExtentsForNode(PrimitiveType::BOX, *box, center, extents);
+         osg::ComputeBoundsVisitor bb;
+
+         const_cast<osg::Node&>(*box).accept(bb);
+         PhysicsObject::CalculateOriginAndExtentsForNode(PrimitiveType::BOX, bb.getBoundingBox(), center, extents);
 
          CPPUNIT_ASSERT(dtUtil::Equivalent(center, VectorType(0.0f, 0.0f, 0.0f), 0.01f));
-         CPPUNIT_ASSERT_EQUAL(extents, VectorType(1.0f, 1.0f, 1.0f));
+         CPPUNIT_ASSERT_EQUAL(VectorType(1.0f, 1.0f, 1.0f), extents);
          center.set(0.0f, 0.0f, 0.0f);
          extents.set(0.0f, 0.0f, 0.0f);
 
@@ -415,28 +419,34 @@ namespace dtPhysics
          xform.SetTranslation(offsetCenter);
          xformable->SetTransform(xform);
 
-         PhysicsObject::CalculateOriginAndExtentsForNode(PrimitiveType::BOX, *xformable->GetOSGNode(), center, extents);
+         bb.reset();
+         const_cast<osg::Node&>(*xformable->GetOSGNode()).accept(bb);
+         PhysicsObject::CalculateOriginAndExtentsForNode(PrimitiveType::BOX, bb.getBoundingBox(), center, extents);
          CPPUNIT_ASSERT_EQUAL(offsetCenter, center);
          CPPUNIT_ASSERT_EQUAL(VectorType(1.0f, 1.0f, 1.0f), extents);
 
-         PhysicsObject::CalculateOriginAndExtentsForNode(PrimitiveType::SPHERE, *xformable->GetOSGNode(), center, extents);
+         bb.reset();
+         const_cast<osg::Node&>(*xformable->GetOSGNode()).accept(bb);
+         PhysicsObject::CalculateOriginAndExtentsForNode(PrimitiveType::SPHERE, bb.getBoundingBox(), center, extents);
          CPPUNIT_ASSERT_EQUAL(offsetCenter, center);
          CPPUNIT_ASSERT_EQUAL(VectorType(0.5f, 0.0f, 0.0f), extents);
 
-         PhysicsObject::CalculateOriginAndExtentsForNode(PrimitiveType::CYLINDER, *xformable->GetOSGNode(), center, extents);
+         bb.reset();
+         const_cast<osg::Node&>(*xformable->GetOSGNode()).accept(bb);
+         PhysicsObject::CalculateOriginAndExtentsForNode(PrimitiveType::CYLINDER, bb.getBoundingBox(), center, extents);
          CPPUNIT_ASSERT_EQUAL(offsetCenter, center);
          CPPUNIT_ASSERT_EQUAL(VectorType(1.0f, 0.5f, 0.0f), extents);
 
          VectorType zeroVec(0.0f, 0.0f, 0.0f);
-         PhysicsObject::CalculateOriginAndExtentsForNode(PrimitiveType::CONVEX_HULL, *xformable->GetOSGNode(), center, extents);
+         PhysicsObject::CalculateOriginAndExtentsForNode(PrimitiveType::CONVEX_HULL, bb.getBoundingBox(), center, extents);
          CPPUNIT_ASSERT_EQUAL(zeroVec, center);
          CPPUNIT_ASSERT_EQUAL(zeroVec, extents);
 
-         PhysicsObject::CalculateOriginAndExtentsForNode(PrimitiveType::TRIANGLE_MESH, *xformable->GetOSGNode(), center, extents);
+         PhysicsObject::CalculateOriginAndExtentsForNode(PrimitiveType::TRIANGLE_MESH, bb.getBoundingBox(), center, extents);
          CPPUNIT_ASSERT_EQUAL(zeroVec, center);
          CPPUNIT_ASSERT_EQUAL(zeroVec, extents);
 
-         PhysicsObject::CalculateOriginAndExtentsForNode(PrimitiveType::TERRAIN_MESH, *xformable->GetOSGNode(), center, extents);
+         PhysicsObject::CalculateOriginAndExtentsForNode(PrimitiveType::TERRAIN_MESH, bb.getBoundingBox(), center, extents);
          CPPUNIT_ASSERT_EQUAL(zeroVec, center);
          CPPUNIT_ASSERT_EQUAL(zeroVec, extents);
 
@@ -560,7 +570,7 @@ namespace dtPhysics
       CPPUNIT_ASSERT_EQUAL_MESSAGE("If the body has not been created, the angular velocity should always be 0.",
                VectorType(), physicsObject->GetAngularVelocity());
 
-      physicsObject->CreateFromProperties();
+      physicsObject->Create();
 
       // These just make sure it doesn't crash.  TODO make a test to really test this works
       physicsObject->AddForce(force);
@@ -597,7 +607,7 @@ namespace dtPhysics
          // Set different collision groups.
          physicsObject[i]->SetCollisionGroup(i);
          physicsObject[i]->SetNotifyCollisions(false);
-         physicsObject[i]->CreateFromProperties();
+         physicsObject[i]->Create();
       }
 
       dtPhysics::PhysicsWorld::GetInstance().UpdateStep(0.01666666f);
@@ -677,7 +687,7 @@ namespace dtPhysics
       physicsObject->SetExtents(VectorType(1.0, 1.0, 1.0));
       physicsObject->SetVisualToBodyTransform(xformOffset);
 
-      physicsObject->CreateFromProperties();
+      physicsObject->Create();
 
       physicsObject->SetTransformAsVisual(xformVisual);
       TransformType xformVisualRetrieved;
@@ -764,7 +774,7 @@ namespace dtPhysics
 
       ///////// CREATE //////////////
       CPPUNIT_ASSERT_MESSAGE("Should be able to call CreateFromPrimitive on a physics object",
-               physicsObject->CreateFromProperties());
+               physicsObject->Create());
 
       CPPUNIT_ASSERT_MESSAGE("The Material should default to, of all things, the default one.",
                physicsObject->GetMaterial() == materials.GetMaterial(PhysicsMaterials::DEFAULT_MATERIAL_NAME));
@@ -842,8 +852,8 @@ namespace dtPhysics
 
       for (unsigned i = 0; i < 20; ++i)
       {
-         CPPUNIT_ASSERT_MESSAGE("Should be able to call CreateFromProperties multiple times to regenerate the object",
-                  physicsObject->CreateFromProperties());
+         CPPUNIT_ASSERT_MESSAGE("Should be able to call Create multiple times to regenerate the object",
+                  physicsObject->Create());
          CPPUNIT_ASSERT_EQUAL(1U, physicsObject->GetNumGeometries());
       }
 
@@ -904,7 +914,7 @@ namespace dtPhysics
       dtCore::RefPtr<osg::Sphere> sphere = new osg::Sphere(osg::Vec3(0.0f, 0.0f, 0.0f), 3.0f);
       dtCore::RefPtr<osg::ShapeDrawable> shapeDraw = new osg::ShapeDrawable(sphere.get());
       geode->addDrawable(shapeDraw.get());
-      po->CreateFromProperties(geode);
+      po->Create(geode);
 
       dtCore::Transform xformActual;
 
@@ -942,11 +952,11 @@ namespace dtPhysics
          dtCore::RefPtr<osg::Sphere> sphere = new osg::Sphere(osg::Vec3(0.0f, 0.0f, 0.0f), 3.0f);
          dtCore::RefPtr<osg::ShapeDrawable> shapeDraw = new osg::ShapeDrawable(sphere.get());
          geode->addDrawable(shapeDraw.get());
-         po->CreateFromProperties(geode);
+         po->Create(geode);
       }
       else
       {
-         po->CreateFromProperties();
+         po->Create();
       }
 
       CPPUNIT_ASSERT_EQUAL(1U, po->GetNumGeometries());
@@ -1054,7 +1064,7 @@ namespace dtPhysics
          po->SetOriginOffset(originOffset);
          po->SetPrimitiveType(PrimitiveType::BOX);
 
-         po->CreateFromProperties(xformable->GetOSGNode(), true);
+         po->Create(xformable->GetOSGNode(), true);
 
          CPPUNIT_ASSERT_EQUAL_MESSAGE("The extents should have been calculated from the unit box",
                   /*dtUtil::Equivalent(*/VectorType(1.0f, 1.0f, 1.0f), po->GetExtents());//, 0.01f));
@@ -1077,7 +1087,7 @@ namespace dtPhysics
       po->SetPrimitiveType(PrimitiveType::SPHERE);
       po->SetExtents(VectorType(1.0f, 0.0f, 0.0f));
       po->SetMass(30.0f);
-      po->CreateFromProperties();
+      po->Create();
 
       po->SetAngularVelocity(VectorType(0.0f, 20.0f, 0.0f));
       po->SetLinearVelocity(VectorType(30.0f, 25.0f, 19.7f));
@@ -1095,7 +1105,7 @@ namespace dtPhysics
       po->SetPrimitiveType(PrimitiveType::SPHERE);
       po->SetExtents(VectorType(1.0f, 0.0f, 0.0f));
       po->SetMass(30.0f);
-      po->CreateFromProperties();
+      po->Create();
 
       VectorType inertia = po->GetMomentOfInertia();
       po->SetMomentOfInertia(VectorType(0.0f, 0.0f, 0.0f));
@@ -1122,7 +1132,7 @@ namespace dtPhysics
       CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("All activation setting should default to -1, engine default",
                po->GetActivationTimeThreshold(), Real(-1.0), Real(0.1));
 
-      po->CreateFromProperties();
+      po->Create();
 
       palActivationSettings* activationImpl = dynamic_cast<palActivationSettings*>(&po->GetBaseBodyWrapper()->GetPalBodyBase());
       // No activation support, so return
@@ -1179,7 +1189,7 @@ namespace dtPhysics
       CPPUNIT_ASSERT_DOUBLES_EQUAL(Real(0.1), po->GetLinearDamping(), Real(0.01));
       CPPUNIT_ASSERT_DOUBLES_EQUAL(Real(0.2), po->GetAngularDamping(), Real(0.01));
 
-      po->CreateFromProperties();
+      po->Create();
 
       CPPUNIT_ASSERT_DOUBLES_EQUAL(Real(0.1), po->GetLinearDamping(), Real(0.01));
       CPPUNIT_ASSERT_DOUBLES_EQUAL(Real(0.2), po->GetAngularDamping(), Real(0.01));
@@ -1203,11 +1213,11 @@ namespace dtPhysics
       ChangeEngine(engine);
       dtCore::RefPtr<PhysicsObject> poA = new PhysicsObject("jojo");
       poA->SetMass(30.0f);
-      poA->CreateFromProperties();
+      poA->Create();
 
       dtCore::RefPtr<PhysicsObject> poB = new PhysicsObject("mojo");
       poB->SetMass(50.0f);
-      poB->CreateFromProperties();
+      poB->Create();
 
       palLink* rigidLinkBefore = dtPhysics::PhysicsWorld::GetInstance().GetPalFactory()->CreateRigidLink(&poA->GetBaseBodyWrapper()->GetPalBodyBase(),
             &poB->GetBaseBodyWrapper()->GetPalBodyBase());
@@ -1507,19 +1517,19 @@ namespace dtPhysics
          po->SetPrimitiveType(PrimitiveType::CONVEX_HULL);
 
          dtCore::Timer_t timerBegin = dtCore::Timer::Instance()->Tick();
-         po->CreateFromProperties(xformable->GetOSGNode(), true, cachingString);
+         po->Create(xformable->GetOSGNode(), true, cachingString);
          dtCore::Timer_t timerEnd = dtCore::Timer::Instance()->Tick();
 
          po->CleanUp();
 
          double elapsedFirst = dtCore::Timer::Instance()->DeltaMil(timerBegin, timerEnd);
 
-         CPPUNIT_ASSERT_MESSAGE("A cached convex hull should exist",
-                  dtPhysics::VertexData::FindCachedData(cachingString) != NULL);
+         CPPUNIT_ASSERT_MESSAGE("A cached convex hull should exist with name " + cachingString + "_Polytope",
+                  dtPhysics::VertexData::FindCachedData(cachingString + "_Polytope") != NULL);
 
          // Creating it a second time should use the cache.
          timerBegin = dtCore::Timer::Instance()->Tick();
-         po->CreateFromProperties(xformable->GetOSGNode(), true, cachingString);
+         po->Create(xformable->GetOSGNode(), true, cachingString);
          timerEnd = dtCore::Timer::Instance()->Tick();
 
          double elapsedSecond = dtCore::Timer::Instance()->DeltaMil(timerBegin, timerEnd);
@@ -1758,47 +1768,46 @@ namespace dtPhysics
    void dtPhysicsTests::testPhysicsReaderWriter()
    {
 
-      dtPhysics::PhysicsReaderWriter::PhysicsTriangleData data;
-      data.mVertices = new osg::Vec3Array();
+      dtCore::RefPtr<dtPhysics::VertexData> data = new dtPhysics::VertexData;
       
       unsigned i = 0;
       for(; i < 100; ++i)
       {
-         data.mFaces.push_back(i);
+         data->mIndices.push_back(i);
       }
 
       for(;i < 200; ++i)
       {
-         data.mMaterialFlags.push_back(i);
+         data->mMaterialFlags.push_back(i);
       }
 
       for(;i < 300; ++i)
       {
-         data.mVertices->push_back(osg::Vec3(0.0f, 0.0f, i));
+         data->mVertices.push_back(osg::Vec3(0.0f, 0.0f, i));
       }
 
       std::string filename("temp_dtPhysicsTests.phys");
-      dtPhysics::PhysicsReaderWriter::SaveTriangleDataFile(data, filename);
+      dtPhysics::PhysicsReaderWriter::SaveTriangleDataFile(*data, filename);
 
-      data.mFaces.clear();
-      data.mMaterialFlags.clear();
-      data.mVertices->clear();
+      data->mIndices.clear();
+      data->mMaterialFlags.clear();
+      data->mVertices.clear();
 
-      dtPhysics::PhysicsReaderWriter::LoadTriangleDataFile(data, filename);
+      dtPhysics::PhysicsReaderWriter::LoadTriangleDataFile(*data, filename);
 
       for(i = 0; i < 100; ++i)
       {         
-         CPPUNIT_ASSERT_EQUAL(i, data.mFaces.at(i));
+         CPPUNIT_ASSERT_EQUAL(i, data->mIndices.at(i));
       }
 
       for(;i < 200; ++i)
       {
-         CPPUNIT_ASSERT_EQUAL(i, data.mMaterialFlags.at(i - 100));
+         CPPUNIT_ASSERT_EQUAL(i, data->mMaterialFlags.at(i - 100));
       }
 
       for(;i < 300; ++i)
       {
-         CPPUNIT_ASSERT_EQUAL(osg::Vec3(0.0f, 0.0f, i), data.mVertices->at(i - 200));
+         CPPUNIT_ASSERT_EQUAL(osg::Vec3(0.0f, 0.0f, i), data->mVertices.at(i - 200));
       }
 
    }

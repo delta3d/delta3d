@@ -28,27 +28,31 @@
 
 #include <dtPhysics/physicsexport.h> 
 #include <osg/Array>
+#include <osg/BoundingBox>
 #include <string>
 #include <vector>
-
 #include <dtCore/refptr.h>
 
 namespace dtPhysics
 {
+   class VertexData;
+
    class DT_PHYSICS_EXPORT PhysicsReaderWriter
    {
       public:
-         struct DT_PHYSICS_EXPORT PhysicsTriangleData
-         {
-            dtCore::RefPtr<osg::Vec3Array> mVertices;
-            std::vector <unsigned int> mFaces;
-            std::vector <unsigned int> mMaterialFlags;
-         };
+         /**
+          * Loads either a compiled physics file or a renderable mesh file and computes the axis-aligned bounds.
+          */
+         static bool LoadFileGetExtents(osg::BoundingBox& bound, const std::string& filename);
+         /**
+          * Loads either a compiled physics file or a renderable mesh file and fills the triangle data.
+          */
+         static bool LoadTriangleDataFile(VertexData& triangleData, const std::string& filename);
 
-      public:
-
-         static bool LoadTriangleDataFile(PhysicsTriangleData& triangleData, const std::string& filename);
-         static bool SaveTriangleDataFile(const PhysicsTriangleData& triangleData, const std::string& filename);
+         /**
+          * Saves a simple triangle buffer to file for quick reloading for the physics.
+          */
+         static bool SaveTriangleDataFile(const VertexData& triangleData, const std::string& filename);
 
       private: 
 

@@ -29,6 +29,7 @@
 #include <dtPhysics/physicsexport.h>
 #include <dtPhysics/physicstypes.h>
 #include <dtPhysics/primitivetype.h>
+#include <dtPhysics/physicsreaderwriter.h>
 
 #include <dtCore/refptr.h>
 
@@ -38,36 +39,42 @@ namespace dtPhysics
 {
    class GeometryImpl;
 
-   struct DT_PHYSICS_EXPORT VertexData
+   class DT_PHYSICS_EXPORT VertexData : public osg::Referenced
    {
+   public:
       VertexData();
-      void DeleteData();
-      void NullData();
+
+      VertexData& Assign(VertexData& readerData, bool convertToPolytope);
+
+      static const std::string NO_CACHE_KEY;
+
+      /**
+       * Converts an node to a triangle mesh and caches it.  It will simply pull the date back from the cache if it is exists.
+       */
+      static void GetOrCreateCachedDataForNode(dtCore::RefPtr<VertexData>& dataOut, const osg::Node* nodeToParse, const std::string& cacheKey, bool polytope);
 
       /**
        * creates a new cached vertex data object or returns an existing one based on the key
        * @return true if the data is new. that way the code will know if it should populate the data.
        */
-      static bool GetOrCreateCachedData(const std::string& key, VertexData*& dataOut);
+      static bool GetOrCreateCachedData(dtCore::RefPtr<VertexData>& dataOut, const std::string& key);
 
-      static VertexData* FindCachedData(const std::string& key);
+      static dtCore::RefPtr<VertexData> FindCachedData(const std::string& key);
 
       static bool ClearCachedData(const std::string& key);
 
       static void ClearAllCachedData();
 
-      Real* mVertices;
-      unsigned* mIndices;
-      size_t mNumVertices;
-      size_t mNumIndices;
-
+      std::vector<VectorType> mVertices;
+      std::vector<unsigned> mIndices;
+      std::vector<unsigned> mMaterialFlags;
+   protected:
+      ~VertexData();
    };
 
    class DT_PHYSICS_EXPORT Geometry : public osg::Referenced
    {
    public:
-
-      static const std::string NO_CACHE_KEY;
 
       static dtCore::RefPtr<Geometry> CreateBoxGeometry(const TransformType& worldxform, const VectorType wdh, Real mass);
 
@@ -75,11 +82,7 @@ namespace dtPhysics
 
       static dtCore::RefPtr<Geometry> CreateCapsuleGeometry(const TransformType& worldxform, Real height, Real radius, Real Mass);
 
-      static dtCore::RefPtr<Geometry> CreateConvexGeometry(const TransformType& worldxform, const osg::Node& nodeToParse, Real mass, const std::string& cacheKey = NO_CACHE_KEY);
-
       static dtCore::RefPtr<Geometry> CreateConvexGeometry(const TransformType& worldxform, VertexData& data, Real mass, bool assumePolytope = false);
-
-      static dtCore::RefPtr<Geometry> CreateConcaveGeometry(const TransformType& worldxform, const osg::Node& nodeToParse, Real mass, const std::string& cacheKey = NO_CACHE_KEY);
 
       static dtCore::RefPtr<Geometry> CreateConcaveGeometry(const TransformType& worldxform, VertexData& data, Real mass);
 

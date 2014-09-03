@@ -94,11 +94,12 @@ namespace dtPhysics
       return mName;
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    struct CreateFromPropsPhysObj
    {
       void operator()(dtCore::RefPtr<PhysicsObject>& po)
       {
-         po->CreateFromProperties();
+         po->Create();
       }
    };
 
