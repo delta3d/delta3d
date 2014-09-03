@@ -52,30 +52,6 @@ namespace dtGame
 
 namespace dtExample
 {
-   class TEST_APP_EXPORT TerrainPhysicsMode: public dtUtil::Enumeration
-   {
-      DECLARE_ENUM(TerrainPhysicsMode);
-   public:
-
-      /// Disable means that all terrain physics will be disabled.
-      static TerrainPhysicsMode DISABLED;
-
-      /// Used for static terrains where all the physics data can be loaded or generated immediately on creation
-      static TerrainPhysicsMode IMMEDIATE;
-
-      /**
-       *  On any terrain where the physics is either very large or the terrain is paged dynamically, the
-       *  physics generation will deferred until later where it can be determined based on the loaded/visible
-       *  working set.
-       */
-      static TerrainPhysicsMode DEFERRED;
-
-   protected:
-      TerrainPhysicsMode(const std::string& name);
-      virtual ~TerrainPhysicsMode();
-   };
-
-
 
    class TEST_APP_EXPORT LoadNodeTask : public dtUtil::ThreadPoolTask
    {
@@ -133,18 +109,6 @@ namespace dtExample
 
       /*virtual*/ void OnEnteredWorld();
 
-      void SetPhysicsModelFile( const std::string& filename );
-      const std::string& GetPhysicsModelFile() const;
-
-      void SetPhysicsDirectory( const std::string& filename );
-      std::string GetPhysicsDirectory() const;
-
-      /// @return the physics mode as in if the physics should be loaded and when.
-      TerrainPhysicsMode& GetTerrainPhysicsMode() const;
-
-      /// @return the physics mode as in if the physics should be loaded and when.
-      void SetTerrainPhysicsMode(TerrainPhysicsMode& physicsMode);
-
       dtPhysics::PhysicsActComp& GetHelper() { return *mHelper; }
       const dtPhysics::PhysicsActComp& GetHelper() const { return *mHelper; }
 
@@ -173,12 +137,11 @@ namespace dtExample
 
       dtCore::RefPtr<dtPhysics::PhysicsActComp> mHelper;
 
-      TerrainPhysicsMode* mTerrainPhysicsMode;
       dtCore::RefPtr<osg::Node> mTerrainNode;
 
       dtCore::RefPtr<LoadNodeTask> mLoadNodeTask;
 
-      std::string mLoadedFile, mCollisionResourceString, mPhysicsDirectory;
+      std::string mLoadedFile;
       //This doesn't load the file unless it's in a scene, so this flag tells it to load
       bool mNeedToLoad;
 

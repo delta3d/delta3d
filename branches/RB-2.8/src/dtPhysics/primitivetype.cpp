@@ -24,17 +24,18 @@
 namespace dtPhysics
 {
    IMPLEMENT_ENUM(PrimitiveType);
-   PrimitiveType PrimitiveType::BOX("Box", false);
-   PrimitiveType PrimitiveType::SPHERE("Sphere", false);
-   PrimitiveType PrimitiveType::CYLINDER("Cylinder", false);
-   PrimitiveType PrimitiveType::CONVEX_HULL("Convex Hull", false);
-   PrimitiveType PrimitiveType::HEIGHTFIELD("Heightfield", true);
-   PrimitiveType PrimitiveType::TRIANGLE_MESH("Triangle Mesh", false);
-   PrimitiveType PrimitiveType::TERRAIN_MESH("Terrain Mesh", true);
+   PrimitiveType PrimitiveType::BOX("Box", false, true);
+   PrimitiveType PrimitiveType::SPHERE("Sphere", false, true);
+   PrimitiveType PrimitiveType::CYLINDER("Cylinder", false, true);
+   PrimitiveType PrimitiveType::CONVEX_HULL("Convex Hull", false, false);
+   PrimitiveType PrimitiveType::HEIGHTFIELD("Heightfield", true, false);
+   PrimitiveType PrimitiveType::TRIANGLE_MESH("Triangle Mesh", false, false);
+   PrimitiveType PrimitiveType::TERRAIN_MESH("Terrain Mesh", true, false);
 
-   PrimitiveType::PrimitiveType(const std::string& name, bool terrainType)
+   PrimitiveType::PrimitiveType(const std::string& name, bool terrainType, bool simpleShape)
    : dtUtil::Enumeration(name)
    , mTerrainType(terrainType)
+   , mSimpleShape(simpleShape)
    {
       AddInstance(this);
    }
@@ -42,6 +43,11 @@ namespace dtPhysics
    bool PrimitiveType::IsTerrainType() const
    {
       return mTerrainType;
+   }
+
+   bool PrimitiveType::IsSimpleShape() const
+   {
+      return mSimpleShape;
    }
 
 }

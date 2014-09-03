@@ -37,13 +37,13 @@ namespace dtPhysics
       ConvexHull(VertexData& meshData, unsigned margin);
       ~ConvexHull();
 
-      /// Releases the vertex data so that the pointers can be copied.
-      VertexData ReleaseNewVertexData();
+      // Fills the vertex data by swapping buffers;
+      void GetVertexData(VertexData& v);
 
    private:
       ConvexHull(const ConvexHull&);
       ConvexHull& operator=(const ConvexHull&);
-      VertexData mNewVertexData;
+      dtCore::RefPtr<VertexData> mNewVertexData;
    };
 
 }

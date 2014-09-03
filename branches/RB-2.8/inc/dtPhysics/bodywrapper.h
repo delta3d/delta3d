@@ -52,22 +52,8 @@ namespace dtPhysics
       static dtCore::RefPtr<BaseBodyWrapper> CreateBox(const TransformType& worldPos,
                const VectorType& dimensions, Real mass);
       ///////////////////////////////////////////////////////////////////////////
-      static dtCore::RefPtr<BaseBodyWrapper> CreateStaticBox(const TransformType& worldPos,
-                              const VectorType& dimensions);
-      static dtCore::RefPtr<BaseBodyWrapper> CreateSphere(const TransformType& worldPos,
-               const VectorType& dimensions, Real mass);
-      static dtCore::RefPtr<BaseBodyWrapper> CreateCylinder(const TransformType& worldPos,
-               const VectorType& dimensions, Real mass);
-      static dtCore::RefPtr<BaseBodyWrapper> CreateConvexHull(const TransformType& worldPos,
-               const osg::Node* mesh, Real mass);
-      static dtCore::RefPtr<BaseBodyWrapper> CreateTriangleMesh(const TransformType& worldPos,
-               const osg::Node* mesh, Real mass);
-      static dtCore::RefPtr<BaseBodyWrapper> CreateHeightfield(const TransformType& worldPos,
-               const osg::Node* mesh);
-      static dtCore::RefPtr<BaseBodyWrapper> CreateTerrainMesh(const TransformType& worldPos,
-               const osg::Node* mesh);
 
-      /// Creates a generic body.  Unlike the other versions, you must call Init manually after adding geometry.
+      /// Creates a generic body.  You must call Init manually after adding geometry.
       static dtCore::RefPtr<BaseBodyWrapper> CreateGenericBody(const TransformType& worldPos,
                MechanicsType& mechType, CollisionGroup collisionGroup, Real mass);
 
