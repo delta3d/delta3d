@@ -63,7 +63,7 @@
                <source type="Image">textures/ShaderBase/NONE.png</source>
             </texture2D>
          </parameter>
-         <parameter name="d3d_ReflectionCubeMap">
+         <!--parameter name="d3d_ReflectionCubeMap">
             <textureCubeMap textureUnit="5">
                <source type="ImagePositiveX">textures/right.jpg</source>
                <source type="ImageNegativeX">textures/left.jpg</source>
@@ -74,7 +74,7 @@
                <wrap axis="S" mode="Repeat"/>
                <wrap axis="T" mode="Repeat"/>
             </textureCubeMap>
-         </parameter>
+         </parameter-->
 
       </shader>
    </shadergroup>
@@ -116,7 +116,7 @@
                <source type="Image">textures/ShaderBase/NONE_NORM.png</source>
             </texture2D>
          </parameter>
-         <parameter name="d3d_ReflectionCubeMap">
+         <!--parameter name="d3d_ReflectionCubeMap">
             <textureCubeMap textureUnit="5">
                <source type="ImagePositiveX">textures/right.jpg</source>
                <source type="ImageNegativeX">textures/left.jpg</source>
@@ -127,7 +127,7 @@
                <wrap axis="S" mode="Repeat"/>
                <wrap axis="T" mode="Repeat"/>
             </textureCubeMap>
-         </parameter>
+         </parameter-->
          <parameter name="alphaTexture">
             <texture2D textureUnit="6">
                <source type="Image">textures/ShaderBase/NONE_ALPHA.png</source>
