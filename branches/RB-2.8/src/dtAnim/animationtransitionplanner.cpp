@@ -1,5 +1,5 @@
 /*
- * stanceplanner.cpp
+ * animationtransitionplanner.cpp
  *
  *  Created on: Aug 24, 2014
  *      Author: david
@@ -16,6 +16,8 @@
 #include <dtAI/basenpcutils.h>
 #include <dtUtil/log.h>
 #include <dtUtil/mathdefines.h>
+
+#include <dtCore/propertymacros.h>
 
 #include <deque>
 
@@ -175,12 +177,13 @@ namespace dtAnim
    const dtUtil::RefString AnimationTransitionPlanner::STATE_BASIC_STANCE("BasicStanceState");
    const dtUtil::RefString AnimationTransitionPlanner::STATE_WEAPON("WeaponState");
    const dtUtil::RefString AnimationTransitionPlanner::STATE_DEAD("DeadState");
-   //const dtUtil::RefString StancePlanner::STATE_MOVING("MovingState");
    const dtUtil::RefString AnimationTransitionPlanner::STATE_TRANSITION("TranstionState");
    const dtUtil::RefString AnimationTransitionPlanner::STATE_STANDING_ACTION_COUNT("StandingActionCountState");
    const dtUtil::RefString AnimationTransitionPlanner::STATE_KNEELING_ACTION_COUNT("KneelingActionCountState");
+   const dtUtil::RefString AnimationTransitionPlanner::STATE_SITTING_ACTION_COUNT("SittingActionCountState");
+   const dtUtil::RefString AnimationTransitionPlanner::STATE_LYING_ACTION_COUNT("LyingActionCountState");
    const dtUtil::RefString AnimationTransitionPlanner::STATE_PRONE_ACTION_COUNT("ProneActionCountState");
-   const dtUtil::RefString AnimationTransitionPlanner::STATE_SHOT("ShotState");
+   const dtUtil::RefString AnimationTransitionPlanner::STATE_DYING("ShotState");
 
    /////////////////////////////////////////////////////////////////////////////
    AnimationTransitionPlanner::AnimationTransitionPlanner()
@@ -194,6 +197,7 @@ namespace dtAnim
          dtAI::PlannerHelper::DesiredStateFunctor(this, &AnimationTransitionPlanner::IsDesiredState)
          )
    , mAnimOperators(mPlannerHelper)
+   , mResetNextTick(false)
    {
       std::vector<dtAnim::BasicStanceEnum*> basicStances = dtAnim::BasicStanceEnum::EnumerateType();
       for (unsigned i = 0; i < basicStances.size(); ++i)
@@ -206,6 +210,21 @@ namespace dtAnim
    AnimationTransitionPlanner::~AnimationTransitionPlanner()
    {
    }
+
+   ////////////////////////////////////////////////////////////////////////////
+   void AnimationTransitionPlanner::BuildPropertyMap()
+   {
+      BaseClass::BuildPropertyMap();
+
+      const dtUtil::RefString ATP_GROUP("Animation Transition Planner");
+      typedef dtCore::PropertyRegHelper<AnimationTransitionPlanner&, AnimationTransitionPlanner> RegHelperType;
+      RegHelperType propReg(*this, this, ATP_GROUP);
+
+      DT_REGISTER_PROPERTY(Stance, "The target stance of the animated character.", RegHelperType, propReg);
+      DT_REGISTER_PROPERTY(WeaponState, "The weapon and how the character is using it.", RegHelperType, propReg);
+      DT_REGISTER_PROPERTY(IsDead, "If this character is dead.", RegHelperType, propReg);
+   }
+
 
    ////////////////////////////////////////////////////////////////////////////
    void AnimationTransitionPlanner::Setup()
@@ -228,8 +247,10 @@ namespace dtAnim
       initialState.AddState(STATE_TRANSITION,            new dtAI::StateVariable(true));
       initialState.AddState(STATE_STANDING_ACTION_COUNT, new dtAI::StateVar<unsigned>(0U));
       initialState.AddState(STATE_KNEELING_ACTION_COUNT, new dtAI::StateVar<unsigned>(0U));
+      initialState.AddState(STATE_SITTING_ACTION_COUNT,    new dtAI::StateVar<unsigned>(0U));
+      initialState.AddState(STATE_LYING_ACTION_COUNT,    new dtAI::StateVar<unsigned>(0U));
       initialState.AddState(STATE_PRONE_ACTION_COUNT,    new dtAI::StateVar<unsigned>(0U));
-      initialState.AddState(STATE_SHOT,                  new dtAI::StateVariable(false));
+      initialState.AddState(STATE_DYING,                  new dtAI::StateVariable(false));
 
 
       mPlannerHelper.SetCurrentState(initialState);
@@ -257,6 +278,7 @@ namespace dtAnim
 
       value += 2.0 * float(CheckActionState(pWS, STATE_STANDING_ACTION_COUNT, mExecutedActionCounts.find(&BasicStanceEnum::STANDING)->second));
       value += 2.0 * float(CheckActionState(pWS, STATE_KNEELING_ACTION_COUNT, mExecutedActionCounts.find(&BasicStanceEnum::KNEELING)->second));
+      value += 2.0 * float(CheckActionState(pWS, STATE_SITTING_ACTION_COUNT, mExecutedActionCounts.find(&BasicStanceEnum::SITTING)->second));
       value += 2.0 * float(CheckActionState(pWS, STATE_PRONE_ACTION_COUNT, mExecutedActionCounts.find(&BasicStanceEnum::PRONE)->second));
 
       //Only add the stance difference if no actions need to be performed
@@ -346,6 +368,8 @@ namespace dtAnim
       bool actionStateResult =
          0U == CheckActionState(pWS, STATE_STANDING_ACTION_COUNT, mExecutedActionCounts.find(&BasicStanceEnum::STANDING)->second) &&
          0U == CheckActionState(pWS, STATE_KNEELING_ACTION_COUNT, mExecutedActionCounts.find(&BasicStanceEnum::KNEELING)->second) &&
+         0U == CheckActionState(pWS, STATE_SITTING_ACTION_COUNT, mExecutedActionCounts.find(&BasicStanceEnum::SITTING)->second) &&
+         0U == CheckActionState(pWS, STATE_LYING_ACTION_COUNT, mExecutedActionCounts.find(&BasicStanceEnum::LYING)->second) &&
          0U == CheckActionState(pWS, STATE_PRONE_ACTION_COUNT,    mExecutedActionCounts.find(&BasicStanceEnum::PRONE)->second);
 
       if (!actionStateResult)
@@ -398,6 +422,14 @@ namespace dtAnim
       {
          actionOpName = AnimationOperators::ANIM_KNEELING_ACTION;
       }
+      else if (basicStance == BasicStanceEnum::SITTING)
+      {
+         actionOpName = AnimationOperators::ANIM_SITTING_ACTION;
+      }
+      else if (basicStance == BasicStanceEnum::LYING)
+      {
+         actionOpName = AnimationOperators::ANIM_LYING_ACTION;
+      }
       else if (basicStance == BasicStanceEnum::PRONE)
       {
          actionOpName = AnimationOperators::ANIM_PRONE_ACTION;
@@ -425,7 +457,7 @@ namespace dtAnim
       // TODO Check the animation helper for this.
       if (!IsDesiredState(mPlannerHelper.GetCurrentState())) //&& mModelNode.valid())
       {
-         LOGN_DEBUG("stanceplanner.cpp", "The planner is not in the desired state on actor named \"" + GetName() + "\".  Generating animations.");
+         LOGN_DEBUG("animationtransitionplanner.cpp", "The planner is not in the desired state on actor named \"" + GetName() + "\".  Generating animations.");
 
          UpdatePlanAndAnimations();
       }
@@ -470,7 +502,7 @@ namespace dtAnim
 
          generatedSequence->SetName(mSequenceId);
 
-         LOGN_DEBUG("stanceplanner.cpp", "Current animation plan has \"" + dtUtil::ToString(mCurrentPlan.size()) + "\" steps.");
+         LOGN_DEBUG("animationtransitionplanner.cpp", "Current animation plan has \"" + dtUtil::ToString(mCurrentPlan.size()) + "\" steps.");
 
          if (!mCurrentPlan.empty())
          {
@@ -500,7 +532,7 @@ namespace dtAnim
 
                if (animatable != NULL)
                {
-                  LOGN_DEBUG("stanceplanner.cpp", std::string("Adding animatable named \"") + animatable->GetName().c_str() + "\".");
+                  LOGN_DEBUG("animationtransitionplanner.cpp", std::string("Adding animatable named \"") + animatable->GetName().c_str() + "\".");
                   newAnim = animatable->Clone(GetOwner()->GetComponent<AnimationHelper>()->GetModelWrapper());
                   newAnim->SetStartDelay(std::max(0.0f, accumulatedStartTime));
                   newAnim->SetFadeIn(blendTime);
@@ -510,6 +542,7 @@ namespace dtAnim
                }
                else
                {
+                  LOGN_DEBUG("animationtransitionplanner.cpp", std::string("Unable to find animatable with name: \"") + (*i)->GetName() + "\".");
                   newAnim = NULL;
                }
             }
@@ -542,7 +575,7 @@ namespace dtAnim
       if (result == dtAI::Planner::PLAN_FOUND)
       {
          mCurrentPlan = mPlanner.GetConfig().mResult;
-         //std::cout << " BOGUS TEST -- stanceplanner.cpp - Plan took[" << mPlanner.GetConfig().mTotalElapsedTime << "]." << std::endl;
+         //std::cout << " BOGUS TEST -- animationtransitionplanner.cpp - Plan took[" << mPlanner.GetConfig().mTotalElapsedTime << "]." << std::endl;
          return true;
       }
       else
@@ -562,7 +595,7 @@ namespace dtAnim
          {
             ss << i->first->GetName() << ": \"" << i->second << "\" \n";
          }
-         LOGN_ERROR("stanceplanner.cpp", ss.str());
+         LOGN_ERROR("animationtransitionplanner.cpp", ss.str());
       }
       return false;
    }
@@ -601,13 +634,36 @@ namespace dtAnim
          animAC->ModelLoadedSignal.connect_slot(this, &AnimationTransitionPlanner::OnModelLoaded);
          animAC->ModelUnloadedSignal.connect_slot(this, &AnimationTransitionPlanner::OnModelUnloaded);
       }
+      RegisterForTick();
+   }
+
+   ////////////////////////////////////////////////////////////////////////
+   void AnimationTransitionPlanner::OnTickLocal(const dtGame::TickMessage& /*tickMessage*/)
+   {
+      if (mResetNextTick)
+      {
+         Setup();
+         UpdatePlanAndAnimations();
+         mResetNextTick = false;
+      }
+      else
+      {
+         CheckAndUpdateAnimationState();
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////
+   void AnimationTransitionPlanner::OnTickRemote(const dtGame::TickMessage& /*tickMessage*/)
+   {
+      CheckAndUpdateAnimationState();
    }
 
    ////////////////////////////////////////////////////////////////////////
    void AnimationTransitionPlanner::OnModelLoaded(AnimationHelper*)
    {
-      Setup();
-      UpdatePlanAndAnimations();
+      // Have to wait until the next tick because other listeners may get this message and do things that
+      // will change the results of this.
+      mResetNextTick = true;
    }
 
    ////////////////////////////////////////////////////////////////////////
@@ -628,11 +684,23 @@ namespace dtAnim
    const dtUtil::RefString AnimationOperators::ANIM_WALK_READY("Walk Run Ready");
    const dtUtil::RefString AnimationOperators::ANIM_WALK_DEPLOYED("Walk Run Deployed");
 
+   const dtUtil::RefString AnimationOperators::ANIM_SITTING_READY("Sitting Ready");
+   const dtUtil::RefString AnimationOperators::ANIM_SITTING_DEPLOYED("Sitting");
+
+   const dtUtil::RefString AnimationOperators::ANIM_LYING_READY("Lying Ready");
+   const dtUtil::RefString AnimationOperators::ANIM_LYING_DEPLOYED("Lying");
+
    const dtUtil::RefString AnimationOperators::ANIM_LOW_WALK_READY("Kneel-Low Walk Ready");
    const dtUtil::RefString AnimationOperators::ANIM_LOW_WALK_DEPLOYED("Kneel-Low Walk Deployed");
 
    const dtUtil::RefString AnimationOperators::ANIM_STAND_TO_KNEEL("Stand To Kneel");
    const dtUtil::RefString AnimationOperators::ANIM_KNEEL_TO_STAND("Kneel To Stand");
+
+   const dtUtil::RefString AnimationOperators::ANIM_STAND_TO_SIT("Stand To Sit");
+   const dtUtil::RefString AnimationOperators::ANIM_SIT_TO_STAND("Sit To Stand");
+
+   const dtUtil::RefString AnimationOperators::ANIM_SIT_TO_LIE("Sit To Lie");
+   const dtUtil::RefString AnimationOperators::ANIM_LIE_TO_SIT("Lie To Sit");
 
    const dtUtil::RefString AnimationOperators::ANIM_CRAWL_READY("Prone-Crawl Ready");
    const dtUtil::RefString AnimationOperators::ANIM_CRAWL_DEPLOYED("Prone-Crawl Deployed");
@@ -640,9 +708,9 @@ namespace dtAnim
    const dtUtil::RefString AnimationOperators::ANIM_PRONE_TO_KNEEL("Prone To Kneel");
    const dtUtil::RefString AnimationOperators::ANIM_KNEEL_TO_PRONE("Kneel To Prone");
 
-   const dtUtil::RefString AnimationOperators::ANIM_SHOT_STANDING("Shot Standing");
-   const dtUtil::RefString AnimationOperators::ANIM_SHOT_KNEELING("Shot Kneeling");
-   const dtUtil::RefString AnimationOperators::ANIM_SHOT_PRONE("Shot Prone");
+   const dtUtil::RefString AnimationOperators::ANIM_DYING_STANDING("Shot Standing");
+   const dtUtil::RefString AnimationOperators::ANIM_DYING_KNEELING("Shot Kneeling");
+   const dtUtil::RefString AnimationOperators::ANIM_DYING_PRONE("Shot Prone");
 
    const dtUtil::RefString AnimationOperators::ANIM_DEAD_STANDING("Dead Standing");
    const dtUtil::RefString AnimationOperators::ANIM_DEAD_KNEELING("Dead Kneeling");
@@ -651,6 +719,8 @@ namespace dtAnim
    const dtUtil::RefString AnimationOperators::ANIM_STANDING_ACTION("Standing Action");
    const dtUtil::RefString AnimationOperators::ANIM_KNEELING_ACTION("Kneeling Action");
    const dtUtil::RefString AnimationOperators::ANIM_PRONE_ACTION("Prone Action");
+   const dtUtil::RefString AnimationOperators::ANIM_LYING_ACTION("Lying Action");
+   const dtUtil::RefString AnimationOperators::ANIM_SITTING_ACTION("Sitting Action");
 
    const dtUtil::RefString AnimationOperators::OPER_DEPLOYED_TO_READY("Deployed To Ready");
    const dtUtil::RefString AnimationOperators::OPER_READY_TO_DEPLOYED("Ready To Deployed");
@@ -680,18 +750,6 @@ namespace dtAnim
    ////////////////////////////////////////////////////////////////////////////
    void AnimationOperators::CreateOperators()
    {
-      dtCore::RefPtr<HumanOperator::BasicStanceEnumConditional> standing
-         = new HumanOperator::BasicStanceEnumConditional(AnimationTransitionPlanner::STATE_BASIC_STANCE, BasicStanceEnum::STANDING);
-
-      dtCore::RefPtr<HumanOperator::BasicStanceEnumConditional> kneeling
-         = new HumanOperator::BasicStanceEnumConditional(AnimationTransitionPlanner::STATE_BASIC_STANCE, BasicStanceEnum::KNEELING);
-
-      dtCore::RefPtr<HumanOperator::BasicStanceEnumConditional> prone
-         = new HumanOperator::BasicStanceEnumConditional(AnimationTransitionPlanner::STATE_BASIC_STANCE, BasicStanceEnum::PRONE);
-
-      dtCore::RefPtr<HumanOperator::BasicStanceEnumConditional> idle
-         = new HumanOperator::BasicStanceEnumConditional(AnimationTransitionPlanner::STATE_BASIC_STANCE, BasicStanceEnum::IDLE);
-
 
       dtCore::RefPtr<HumanOperator::WeaponStateEnumConditional> deployed
          = new HumanOperator::WeaponStateEnumConditional(AnimationTransitionPlanner::STATE_WEAPON, WeaponStateEnum::DEPLOYED);
@@ -700,11 +758,8 @@ namespace dtAnim
          = new HumanOperator::WeaponStateEnumConditional(AnimationTransitionPlanner::STATE_WEAPON, WeaponStateEnum::FIRING_POSITION);
 
 
-//      dtCore::RefPtr<dtAI::Precondition> isDead
-//         = new dtAI::Precondition(StancePlanner::STATE_DEAD, true);
-
-      dtCore::RefPtr<dtAI::Precondition> isShot
-         = new dtAI::Precondition(AnimationTransitionPlanner::STATE_SHOT, true);
+      dtCore::RefPtr<dtAI::Precondition> isDying
+         = new dtAI::Precondition(AnimationTransitionPlanner::STATE_DYING, true);
 
 
       dtCore::RefPtr<dtAI::Precondition> isTransition
@@ -713,15 +768,15 @@ namespace dtAnim
       dtCore::RefPtr<dtAI::Precondition> notTransition
          = new dtAI::Precondition(AnimationTransitionPlanner::STATE_TRANSITION, false);
 
-      dtCore::RefPtr<HumanOperator::BasicStanceEnumEffect> standingEff
-         = new HumanOperator::BasicStanceEnumEffect(AnimationTransitionPlanner::STATE_BASIC_STANCE, BasicStanceEnum::STANDING);
 
-      dtCore::RefPtr<HumanOperator::BasicStanceEnumEffect> kneelingEff
-         = new HumanOperator::BasicStanceEnumEffect(AnimationTransitionPlanner::STATE_BASIC_STANCE, BasicStanceEnum::KNEELING);
-
-      dtCore::RefPtr<HumanOperator::BasicStanceEnumEffect> proneEff
-         = new HumanOperator::BasicStanceEnumEffect(AnimationTransitionPlanner::STATE_BASIC_STANCE, BasicStanceEnum::PRONE);
-
+      std::map<BasicStanceEnum*, dtCore::RefPtr<HumanOperator::BasicStanceEnumEffect> > stanceEffects;
+      std::map<BasicStanceEnum*, dtCore::RefPtr<HumanOperator::BasicStanceEnumConditional> > stanceConditionals;
+      for (unsigned i = 0; i < BasicStanceEnum::EnumerateType().size(); ++i)
+      {
+         BasicStanceEnum* curEnum = BasicStanceEnum::EnumerateType()[i];
+         stanceEffects[curEnum] = new HumanOperator::BasicStanceEnumEffect(AnimationTransitionPlanner::STATE_BASIC_STANCE, *curEnum);
+         stanceConditionals[curEnum] = new HumanOperator::BasicStanceEnumConditional(AnimationTransitionPlanner::STATE_BASIC_STANCE, *curEnum);
+      }
 
       dtCore::RefPtr<HumanOperator::WeaponStateEnumEffect> readyEff
          = new HumanOperator::WeaponStateEnumEffect(AnimationTransitionPlanner::STATE_WEAPON, WeaponStateEnum::FIRING_POSITION);
@@ -734,13 +789,15 @@ namespace dtAnim
       dtCore::RefPtr<HumanOperator::UnsignedIntIncrementEffect >
          incrementKneelingActionCount = new HumanOperator::UnsignedIntIncrementEffect(AnimationTransitionPlanner::STATE_KNEELING_ACTION_COUNT);
       dtCore::RefPtr<HumanOperator::UnsignedIntIncrementEffect >
+         incrementSittingActionCount = new HumanOperator::UnsignedIntIncrementEffect(AnimationTransitionPlanner::STATE_SITTING_ACTION_COUNT);
+      dtCore::RefPtr<HumanOperator::UnsignedIntIncrementEffect >
          incrementProneActionCount = new HumanOperator::UnsignedIntIncrementEffect(AnimationTransitionPlanner::STATE_PRONE_ACTION_COUNT);
 
       dtCore::RefPtr<dtAI::Effect>
          deadEff = new dtAI::Effect(AnimationTransitionPlanner::STATE_DEAD, true);
 
       dtCore::RefPtr<dtAI::Effect>
-         shotEff = new dtAI::Effect(AnimationTransitionPlanner::STATE_SHOT, true);
+         dyingEff = new dtAI::Effect(AnimationTransitionPlanner::STATE_DYING, true);
 
       dtCore::RefPtr<dtAI::Effect>
          transitionEff = new dtAI::Effect(AnimationTransitionPlanner::STATE_TRANSITION, true);
@@ -751,73 +808,143 @@ namespace dtAnim
       HumanOperator* newOp;
 
       newOp = AddOperator(ANIM_WALK_READY);
-      newOp->AddPreCondition(standing.get());
+      newOp->AddPreCondition(stanceConditionals[&BasicStanceEnum::STANDING]);
       newOp->AddPreCondition(ready.get());
 
-      newOp->AddEffect(standingEff.get());
+      newOp->AddEffect(stanceEffects[&BasicStanceEnum::STANDING]);
       newOp->AddEffect(notTransitionEff.get());
 
       newOp = AddOperator(ANIM_WALK_DEPLOYED);
-      newOp->AddPreCondition(standing.get());
+      newOp->AddPreCondition(stanceConditionals[&BasicStanceEnum::STANDING]);
       newOp->AddPreCondition(deployed.get());
 
-      newOp->AddEffect(standingEff.get());
+      newOp->AddEffect(stanceEffects[&BasicStanceEnum::STANDING]);
       newOp->AddEffect(notTransitionEff.get());
 
       newOp = AddOperator(ANIM_LOW_WALK_READY);
-      newOp->AddPreCondition(kneeling.get());
+      newOp->AddPreCondition(stanceConditionals[&BasicStanceEnum::KNEELING]);
       newOp->AddPreCondition(ready.get());
 
-      newOp->AddEffect(kneelingEff.get());
+      newOp->AddEffect(stanceEffects[&BasicStanceEnum::KNEELING]);
       newOp->AddEffect(notTransitionEff.get());
 
       newOp = AddOperator(ANIM_LOW_WALK_DEPLOYED);
-      newOp->AddPreCondition(kneeling.get());
+      newOp->AddPreCondition(stanceConditionals[&BasicStanceEnum::KNEELING]);
       newOp->AddPreCondition(deployed.get());
 
-      newOp->AddEffect(kneelingEff.get());
+      newOp->AddEffect(stanceEffects[&BasicStanceEnum::KNEELING]);
       newOp->AddEffect(notTransitionEff.get());
 
-      newOp = AddOperator(ANIM_STAND_TO_KNEEL);
-      newOp->AddPreCondition(standing.get());
+      newOp = AddOperator(ANIM_SITTING_READY);
+      newOp->AddPreCondition(stanceConditionals[&BasicStanceEnum::SITTING]);
+      newOp->AddPreCondition(ready.get());
+
+      newOp->AddEffect(stanceEffects[&BasicStanceEnum::SITTING]);
+      newOp->AddEffect(notTransitionEff.get());
+
+      newOp = AddOperator(ANIM_SITTING_DEPLOYED);
+      newOp->AddPreCondition(stanceConditionals[&BasicStanceEnum::SITTING]);
       newOp->AddPreCondition(deployed.get());
 
-      newOp->AddEffect(kneelingEff.get());
+      newOp->AddEffect(stanceEffects[&BasicStanceEnum::SITTING]);
+      newOp->AddEffect(notTransitionEff.get());
+
+      newOp = AddOperator(ANIM_LYING_READY);
+      newOp->AddPreCondition(stanceConditionals[&BasicStanceEnum::LYING]);
+      newOp->AddPreCondition(ready.get());
+
+      newOp->AddEffect(stanceEffects[&BasicStanceEnum::LYING]);
+      newOp->AddEffect(notTransitionEff.get());
+
+      newOp = AddOperator(ANIM_LYING_DEPLOYED);
+      newOp->AddPreCondition(stanceConditionals[&BasicStanceEnum::LYING]);
+      newOp->AddPreCondition(deployed.get());
+
+      newOp->AddEffect(stanceEffects[&BasicStanceEnum::LYING]);
+      newOp->AddEffect(notTransitionEff.get());
+
+      newOp = AddOperator(ANIM_STAND_TO_SIT);
+      newOp->AddPreCondition(stanceConditionals[&BasicStanceEnum::STANDING]);
+      newOp->AddPreCondition(deployed.get());
+
+      newOp->AddEffect(stanceEffects[&BasicStanceEnum::SITTING]);
+      newOp->AddEffect(transitionEff.get());
+
+      newOp = AddOperator(ANIM_SIT_TO_STAND);
+      newOp->AddPreCondition(stanceConditionals[&BasicStanceEnum::SITTING]);
+      newOp->AddPreCondition(deployed.get());
+
+      newOp->AddEffect(stanceEffects[&BasicStanceEnum::STANDING]);
+      newOp->AddEffect(transitionEff.get());
+
+      newOp = AddOperator(ANIM_SIT_TO_LIE);
+      newOp->AddPreCondition(stanceConditionals[&BasicStanceEnum::SITTING]);
+      newOp->AddPreCondition(deployed.get());
+
+      newOp->AddEffect(stanceEffects[&BasicStanceEnum::LYING]);
+      newOp->AddEffect(transitionEff.get());
+
+      newOp = AddOperator(ANIM_LIE_TO_SIT);
+      newOp->AddPreCondition(stanceConditionals[&BasicStanceEnum::LYING]);
+      newOp->AddPreCondition(deployed.get());
+
+      newOp->AddEffect(stanceEffects[&BasicStanceEnum::SITTING]);
+      newOp->AddEffect(transitionEff.get());
+
+      newOp = AddOperator(ANIM_STAND_TO_KNEEL);
+      newOp->AddPreCondition(stanceConditionals[&BasicStanceEnum::STANDING]);
+      newOp->AddPreCondition(deployed.get());
+
+      newOp->AddEffect(stanceEffects[&BasicStanceEnum::KNEELING]);
       newOp->AddEffect(transitionEff.get());
 
       newOp = AddOperator(ANIM_KNEEL_TO_STAND);
-      newOp->AddPreCondition(kneeling.get());
+      newOp->AddPreCondition(stanceConditionals[&BasicStanceEnum::KNEELING]);
       newOp->AddPreCondition(deployed.get());
 
-      newOp->AddEffect(standingEff.get());
+      newOp->AddEffect(stanceEffects[&BasicStanceEnum::STANDING]);
+      newOp->AddEffect(transitionEff.get());
+
+      newOp = AddOperator(ANIM_STAND_TO_KNEEL);
+      newOp->AddPreCondition(stanceConditionals[&BasicStanceEnum::STANDING]);
+      newOp->AddPreCondition(deployed.get());
+
+      newOp->AddEffect(stanceEffects[&BasicStanceEnum::KNEELING]);
+      newOp->AddEffect(transitionEff.get());
+
+      newOp = AddOperator(ANIM_KNEEL_TO_STAND);
+      newOp->AddPreCondition(stanceConditionals[&BasicStanceEnum::KNEELING]);
+      newOp->AddPreCondition(deployed.get());
+
+      newOp->AddEffect(stanceEffects[&BasicStanceEnum::STANDING]);
       newOp->AddEffect(transitionEff.get());
 
       newOp = AddOperator(ANIM_PRONE_TO_KNEEL);
-      newOp->AddPreCondition(prone.get());
+      newOp->AddPreCondition(stanceConditionals[&BasicStanceEnum::PRONE]);
       newOp->AddPreCondition(deployed.get());
 
-      newOp->AddEffect(kneelingEff.get());
+      newOp->AddEffect(stanceEffects[&BasicStanceEnum::KNEELING]);
       newOp->AddEffect(transitionEff.get());
 
       newOp = AddOperator(ANIM_CRAWL_READY);
-      newOp->AddPreCondition(prone.get());
+      newOp->AddPreCondition(stanceConditionals[&BasicStanceEnum::PRONE]);
       newOp->AddPreCondition(ready.get());
 
-      newOp->AddEffect(proneEff.get());
+      newOp->AddEffect(stanceEffects[&BasicStanceEnum::PRONE]);
       newOp->AddEffect(notTransitionEff.get());
 
       newOp = AddOperator(ANIM_CRAWL_DEPLOYED);
-      newOp->AddPreCondition(prone.get());
+      newOp->AddPreCondition(stanceConditionals[&BasicStanceEnum::PRONE]);
       newOp->AddPreCondition(deployed.get());
 
-      newOp->AddEffect(proneEff.get());
+      newOp->AddEffect(stanceEffects[&BasicStanceEnum::PRONE]);
       newOp->AddEffect(notTransitionEff.get());
 
       newOp = AddOperator(ANIM_KNEEL_TO_PRONE);
-      newOp->AddPreCondition(kneeling.get());
+      newOp->AddPreCondition(stanceConditionals[&BasicStanceEnum::KNEELING]);
       newOp->AddPreCondition(deployed.get());
 
-      newOp->AddEffect(proneEff.get());
+      newOp->AddEffect(stanceEffects[&BasicStanceEnum::PRONE]);
       newOp->AddEffect(transitionEff.get());
 
       newOp = AddOperator(OPER_READY_TO_DEPLOYED);
@@ -830,53 +957,53 @@ namespace dtAnim
       newOp->AddEffect(readyEff.get());
       newOp->AddEffect(transitionEff.get());
 
-      newOp = AddOperator(ANIM_SHOT_STANDING);
-      newOp->AddPreCondition(standing.get());
-      newOp->AddEffect(shotEff.get());
+      newOp = AddOperator(ANIM_DYING_STANDING);
+      newOp->AddPreCondition(stanceConditionals[&BasicStanceEnum::STANDING]);
+      newOp->AddEffect(dyingEff.get());
       newOp->AddEffect(transitionEff.get());
 
-      newOp = AddOperator(ANIM_SHOT_KNEELING);
-      newOp->AddPreCondition(kneeling.get());
-      newOp->AddEffect(shotEff.get());
+      newOp = AddOperator(ANIM_DYING_KNEELING);
+      newOp->AddPreCondition(stanceConditionals[&BasicStanceEnum::KNEELING]);
+      newOp->AddEffect(dyingEff.get());
       newOp->AddEffect(transitionEff.get());
 
-      newOp = AddOperator(ANIM_SHOT_PRONE);
-      newOp->AddPreCondition(prone.get());
-      newOp->AddEffect(shotEff.get());
+      newOp = AddOperator(ANIM_DYING_PRONE);
+      newOp->AddPreCondition(stanceConditionals[&BasicStanceEnum::PRONE]);
+      newOp->AddEffect(dyingEff.get());
       newOp->AddEffect(transitionEff.get());
 
       newOp = AddOperator(ANIM_DEAD_STANDING);
-      newOp->AddPreCondition(standing.get());
-      newOp->AddPreCondition(isShot.get());
+      newOp->AddPreCondition(stanceConditionals[&BasicStanceEnum::STANDING]);
+      newOp->AddPreCondition(isDying.get());
       newOp->AddEffect(deadEff.get());
       newOp->AddEffect(notTransitionEff.get());
 
       newOp = AddOperator(ANIM_DEAD_KNEELING);
-      newOp->AddPreCondition(kneeling.get());
-      newOp->AddPreCondition(isShot.get());
+      newOp->AddPreCondition(stanceConditionals[&BasicStanceEnum::KNEELING]);
+      newOp->AddPreCondition(isDying.get());
       newOp->AddEffect(deadEff.get());
       newOp->AddEffect(notTransitionEff.get());
 
       newOp = AddOperator(ANIM_DEAD_PRONE);
-      newOp->AddPreCondition(prone.get());
-      newOp->AddPreCondition(isShot.get());
+      newOp->AddPreCondition(stanceConditionals[&BasicStanceEnum::PRONE]);
+      newOp->AddPreCondition(isDying.get());
       newOp->AddEffect(deadEff.get());
       newOp->AddEffect(notTransitionEff.get());
 
       newOp = AddOperator(ANIM_STANDING_ACTION);
-      newOp->AddPreCondition(standing.get());
+      newOp->AddPreCondition(stanceConditionals[&BasicStanceEnum::STANDING]);
       newOp->AddPreCondition(deployed.get());
       newOp->AddEffect(incrementStandingActionCount.get());
       newOp->AddEffect(transitionEff.get());
 
       newOp = AddOperator(ANIM_KNEELING_ACTION);
-      newOp->AddPreCondition(kneeling.get());
+      newOp->AddPreCondition(stanceConditionals[&BasicStanceEnum::KNEELING]);
       newOp->AddPreCondition(deployed.get());
       newOp->AddEffect(incrementKneelingActionCount.get());
       newOp->AddEffect(transitionEff.get());
 
       newOp = AddOperator(ANIM_PRONE_ACTION);
-      newOp->AddPreCondition(prone.get());
+      newOp->AddPreCondition(stanceConditionals[&BasicStanceEnum::PRONE]);
       newOp->AddPreCondition(deployed.get());
       newOp->AddEffect(incrementProneActionCount.get());
       newOp->AddEffect(transitionEff.get());
@@ -887,6 +1014,8 @@ namespace dtAnim
    IMPLEMENT_ENUM(BasicStanceEnum);
    BasicStanceEnum BasicStanceEnum::IDLE("IDLE", 1.75);
    BasicStanceEnum BasicStanceEnum::STANDING("STANDING", 1.75);
+   BasicStanceEnum BasicStanceEnum::SITTING("SITTING", 1.10);
+   BasicStanceEnum BasicStanceEnum::LYING("LYING", 1.05);
    BasicStanceEnum BasicStanceEnum::KNEELING("KNEELING", 1.00);
    BasicStanceEnum BasicStanceEnum::PRONE("PRONE", 0.00);
 
@@ -906,8 +1035,8 @@ namespace dtAnim
 
    ////////////////////////////////////////////////////////////////////////////
    ////////////////////////////////////////////////////////////////////////////
-   BasicStanceState::BasicStanceState():
-      mStance(&BasicStanceEnum::IDLE)
+   BasicStanceState::BasicStanceState()
+   : mStance(&BasicStanceEnum::IDLE)
    {
    }
 
@@ -1041,7 +1170,6 @@ namespace dtAnim
    ////////////////////////////////////////////////////////////////////////////
    bool HumanOperator::Apply(const dtAI::Operator* oper, dtAI::WorldState* pWSIn) const
    {
-      //std::cout << GetName() << std::endl;
       EffectList::const_iterator iter = mEffects.begin();
       EffectList::const_iterator endOfList = mEffects.end();
       for (;iter != endOfList; ++iter)

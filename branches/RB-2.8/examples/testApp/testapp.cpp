@@ -50,6 +50,7 @@
 #include "testappgamestates.h"
 
 #include <dtPhysics/physicscomponent.h>
+#include <dtGame/deadreckoningcomponent.h>
 
 
 using namespace dtExample;
@@ -241,10 +242,15 @@ void TestApp::OnStartup(dtABC::BaseABC& app, dtGame::GameManager& gameManager)
       world->Init();
    }
    dtCore::RefPtr<dtPhysics::PhysicsComponent> physicsComponent = new dtPhysics::PhysicsComponent(dtPhysics::PhysicsWorld::GetInstance(), false);
+   // Keep the human kinematic cylinder from colliding with the terrain and its own shape walking shape.
+   physicsComponent->SetGroupCollision(0, 6, false);
    gameManager.AddComponent(*physicsComponent, dtGame::GameManager::ComponentPriority::NORMAL);
 
    dtCore::RefPtr<dtAnim::AnimationComponent> animComponent = new dtAnim::AnimationComponent;
    gameManager.AddComponent(*animComponent, dtGame::GameManager::ComponentPriority::NORMAL);
+
+   dtCore::RefPtr<dtGame::DeadReckoningComponent> drComponent = new dtGame::DeadReckoningComponent;
+   gameManager.AddComponent(*drComponent, dtGame::GameManager::ComponentPriority::NORMAL);
 
    //setup camera
    //double vfov, aspect, nearClip, farClip;

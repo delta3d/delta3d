@@ -21,6 +21,7 @@ namespace dtAnim
 {
    class BasicStanceEnum;
    class AnimationTransitionPlanner;
+   class AnimationHelper;
 }
 
 namespace dtExample
@@ -51,6 +52,11 @@ namespace dtExample
 
       float GetWalkSpeed() const;
       void SetWalkSpeed(float metersPerSecond);
+
+      DT_DECLARE_ACCESSOR(float, AnimationWalkSpeed);
+      DT_DECLARE_ACCESSOR(float, AnimationRunSpeed);
+      DT_DECLARE_ACCESSOR(float, AnimationCrawlSpeed);
+      DT_DECLARE_ACCESSOR(float, AnimationLowWalkSpeed);
 
       float GetRotationSpeed() const;
       void SetRotationSpeed(float degreesPerSecond);
@@ -97,12 +103,22 @@ namespace dtExample
    protected:
       virtual ~CivilianAIActorComponent();
 
+      void OnModelLoaded(dtAnim::AnimationHelper*);
+
       //private: temporarily commented out to aid refactor for derived marine
 
       void ApplyStringPulling();
       void PerformMove(float dt);
 
       void OnAnimationsTransitioning(dtAnim::AnimationTransitionPlanner& planner);
+
+      void InitializeMotionBlendAnimations();
+
+      void SetupWalkRunBlend(dtAnim::AnimationHelper* helper, const dtUtil::RefString& OpName,
+            const std::vector<dtUtil::RefString>& nameWalkOptions, const std::string& newWalkAnimName,
+            const std::vector<dtUtil::RefString>& nameRunOptions, const std::string& newRunAnimName,
+            const std::vector<dtUtil::RefString>& nameStandOptions, const std::string& newStandAnimName,
+            float walkSpeed, float runSpeed);
 
       bool mHasDestination;
       bool mHasArrived;
