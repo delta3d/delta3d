@@ -5,7 +5,7 @@
    <animation fileName="animations/Walk.xaf" name="Walk" />
    <animation fileName="animations/Run.xaf" name="Run" />
    <animation fileName="animations/Sitting_BarStool.xaf" name="Sitting_BarStool" />
-   <animation fileName="animations/Laying_Sunchair.xaf" name="Laying_Sunchair" />
+   <animation fileName="animations/Lying_Sunchair.xaf" name="Lying_Sunchair" />
 
    <animation fileName="poses/EyeLeftDown.xaf"/>
    <animation fileName="poses/EyeLeftIn.xaf"/>
@@ -85,16 +85,28 @@
     <isAction>0</isAction>
     <isLooping>1</isLooping>
   </animationChannel>
-   <animationSequence>
-      <name>RunWalk</name>
-      <startDelay>0.1</startDelay>
-      <fadeIn>0.2</fadeIn>
-      <fadeOut>0.2</fadeOut>
-      <speed>1.0</speed>
-      <baseWeight>1.0</baseWeight>
-      <children>
-         <child>Run</child>
-         <child>Walk</child>
-      </children>
-   </animationSequence>
+  <animationChannel>
+    <name>Sitting</name>
+    <animationName>Sitting_BarStool</animationName>
+    <startDelay>0.0</startDelay>
+    <fadeIn>0.0</fadeIn>
+    <fadeOut>0.0</fadeOut>
+    <speed>1.0</speed>
+    <baseWeight>1.0</baseWeight>
+    <maxDuration>0.0</maxDuration>
+    <isAction>0</isAction>
+    <isLooping>1</isLooping>
+  </animationChannel>
+  <animationChannel>
+    <name>Lying</name>
+    <animationName>Lying_Sunchair</animationName>
+    <startDelay>0.0</startDelay>
+    <fadeIn>0.0</fadeIn>
+    <fadeOut>0.0</fadeOut>
+    <speed>1.0</speed>
+    <baseWeight>1.0</baseWeight>
+    <maxDuration>0.0</maxDuration>
+    <isAction>0</isAction>
+    <isLooping>1</isLooping>
+  </animationChannel>
 </character>
