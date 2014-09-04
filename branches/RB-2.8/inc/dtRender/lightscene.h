@@ -117,11 +117,11 @@ namespace dtRender
       dtCore::RefPtr<osg::Group> mRootNode;
    };
 
-   class DT_RENDER_EXPORT LightSceneProxy : public dtCore::BaseActorObject
+   class DT_RENDER_EXPORT LightSceneActor : public dtCore::BaseActorObject
    {
    public:
       typedef dtCore::BaseActorObject BaseClass;
-      LightSceneProxy();
+      LightSceneActor();
 
       virtual void BuildPropertyMap();
       virtual void CreateDrawable();
@@ -129,7 +129,7 @@ namespace dtRender
       virtual bool IsPlaceable() const;
 
    protected:
-      virtual ~LightSceneProxy();
+      virtual ~LightSceneActor();
    };
 
 }

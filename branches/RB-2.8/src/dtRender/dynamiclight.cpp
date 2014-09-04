@@ -224,7 +224,7 @@ namespace dtRender
          if(gm != NULL)
          {
             dtGame::IEnvGameActorProxy* env = gm->GetEnvironmentActor();
-            SceneManagerProxy* smp = dynamic_cast<SceneManagerProxy*>(env);
+            SceneManagerActor* smp = dynamic_cast<SceneManagerActor*>(env);
             if(smp != NULL)
             {
                SceneManager* sm = dynamic_cast<SceneManager*>(smp->GetDrawable());

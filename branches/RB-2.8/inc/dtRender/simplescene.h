@@ -48,11 +48,11 @@ namespace dtRender
    };
 
 
-   class DT_RENDER_EXPORT SimpleSceneProxy : public dtCore::BaseActorObject
+   class DT_RENDER_EXPORT SimpleSceneActor : public dtCore::BaseActorObject
    {
    public:
       typedef dtCore::BaseActorObject BaseClass;
-      SimpleSceneProxy();
+      SimpleSceneActor();
 
       virtual void BuildPropertyMap();
       virtual void CreateDrawable();
@@ -60,7 +60,7 @@ namespace dtRender
       virtual bool IsPlaceable() const;
 
    protected:
-      virtual ~SimpleSceneProxy();
+      virtual ~SimpleSceneActor();
    };
 }
 

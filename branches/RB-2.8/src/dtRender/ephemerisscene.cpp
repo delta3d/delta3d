@@ -634,27 +634,27 @@ namespace dtRender
       }
    }
 
-   EphemerisSceneProxy::EphemerisSceneProxy()
+   EphemerisSceneActor::EphemerisSceneActor()
    {
    }
 
-   EphemerisSceneProxy::~EphemerisSceneProxy()
+   EphemerisSceneActor::~EphemerisSceneActor()
    {
    }
 
-   void EphemerisSceneProxy::BuildPropertyMap()
+   void EphemerisSceneActor::BuildPropertyMap()
    {
       BaseClass::BuildPropertyMap();
 
    }
 
-   void EphemerisSceneProxy::CreateDrawable()
+   void EphemerisSceneActor::CreateDrawable()
    {
       dtCore::RefPtr<EphemerisScene> es = new EphemerisScene();
       SetDrawable(*es);
    }
 
-   bool EphemerisSceneProxy::IsPlaceable() const
+   bool EphemerisSceneActor::IsPlaceable() const
    {
       return false;
    }

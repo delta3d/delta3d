@@ -151,11 +151,11 @@ namespace dtRender
    };
 
 
-   class DT_RENDER_EXPORT MultipassSceneProxy : public dtCore::BaseActorObject
+   class DT_RENDER_EXPORT MultipassSceneActor : public dtCore::BaseActorObject
    {
    public:
       typedef dtCore::BaseActorObject BaseClass;
-      MultipassSceneProxy();
+      MultipassSceneActor();
 
       virtual void BuildPropertyMap();
       virtual void CreateDrawable();
@@ -163,7 +163,7 @@ namespace dtRender
       virtual bool IsPlaceable() const;
 
    protected:
-      virtual ~MultipassSceneProxy();
+      virtual ~MultipassSceneActor();
    };
 }
 

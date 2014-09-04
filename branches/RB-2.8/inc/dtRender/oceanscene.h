@@ -49,11 +49,11 @@ namespace dtRender
 
 
 
-   class DT_RENDER_EXPORT OceanSceneProxy : public dtCore::BaseActorObject
+   class DT_RENDER_EXPORT OceanSceneActor : public dtCore::BaseActorObject
    {
    public:
       typedef dtCore::BaseActorObject BaseClass;
-      OceanSceneProxy();
+      OceanSceneActor();
 
       virtual void BuildPropertyMap();
       virtual void CreateDrawable();
@@ -61,7 +61,7 @@ namespace dtRender
       virtual bool IsPlaceable() const;
 
    protected:
-      virtual ~OceanSceneProxy();
+      virtual ~OceanSceneActor();
    };
 }
 

@@ -65,11 +65,11 @@ namespace dtRender
    private:
    };
 
-   class DT_RENDER_EXPORT DOFSceneProxy : public dtCore::BaseActorObject
+   class DT_RENDER_EXPORT DOFSceneActor : public dtCore::BaseActorObject
    {
    public:
       typedef dtCore::BaseActorObject BaseClass;
-      DOFSceneProxy();
+      DOFSceneActor();
 
       virtual void BuildPropertyMap();
       virtual void CreateDrawable();
@@ -77,7 +77,7 @@ namespace dtRender
       virtual bool IsPlaceable() const;
 
    protected:
-      virtual ~DOFSceneProxy();
+      virtual ~DOFSceneActor();
    };
 
 }

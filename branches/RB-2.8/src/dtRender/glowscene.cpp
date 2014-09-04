@@ -124,28 +124,28 @@ namespace dtRender
       return mRootNode;
    }
 
-   GlowSceneProxy::GlowSceneProxy()
+   GlowSceneActor::GlowSceneActor()
    {
    }
 
-   GlowSceneProxy::~GlowSceneProxy()
+   GlowSceneActor::~GlowSceneActor()
    {
    }
 
-   void GlowSceneProxy::BuildPropertyMap()
+   void GlowSceneActor::BuildPropertyMap()
    {
       BaseClass::BuildPropertyMap();
 
    }
 
-   void GlowSceneProxy::CreateDrawable()
+   void GlowSceneActor::CreateDrawable()
    {
       dtCore::RefPtr<GlowScene> es = new GlowScene();
 
       SetDrawable(*es);
    }
 
-   bool GlowSceneProxy::IsPlaceable() const
+   bool GlowSceneActor::IsPlaceable() const
    {
       return false;
    }

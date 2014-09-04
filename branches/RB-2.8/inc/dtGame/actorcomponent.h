@@ -151,6 +151,14 @@ namespace dtGame
          }
       }
 
+      template <typename TOwner>
+      TOwner* GetOwner() const
+      {
+         TOwner* owner = NULL;
+         GetOwner(owner);
+         return owner;
+      }
+
       /**
        * Set the ComponentBase that this component is a part of.
        * Don't call this! Should only be called by ComponentBase.

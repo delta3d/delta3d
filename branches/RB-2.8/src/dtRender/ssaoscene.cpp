@@ -234,20 +234,20 @@ namespace dtRender
 }
    
    //proxy
-   SSAOSceneProxy::SSAOSceneProxy()
+   SSAOSceneActor::SSAOSceneActor()
    {
    }
 
-   SSAOSceneProxy::~SSAOSceneProxy()
+   SSAOSceneActor::~SSAOSceneActor()
    {
    }
 
-   void SSAOSceneProxy::BuildPropertyMap()
+   void SSAOSceneActor::BuildPropertyMap()
    {
       BaseClass::BuildPropertyMap();
 
       std::string group("SSAOScene");
-      typedef dtCore::PropertyRegHelper<SSAOSceneProxy&, SSAOScene> PropRegHelperType;
+      typedef dtCore::PropertyRegHelper<SSAOSceneActor&, SSAOScene> PropRegHelperType;
       PropRegHelperType propRegHelper(*this, GetDrawable<SSAOScene>(), group);
 
       DT_REGISTER_PROPERTY_WITH_NAME(BlurSigma, "BlurSigma", "The sigma blur value to use for the SSAO.", PropRegHelperType, propRegHelper);
@@ -256,14 +256,14 @@ namespace dtRender
       DT_REGISTER_PROPERTY_WITH_NAME(ShowOnlyAOMap, "ShowOnlyAOMap", "A debug value to view the results of the SSAO.", PropRegHelperType, propRegHelper);
    }
 
-   void SSAOSceneProxy::CreateDrawable()
+   void SSAOSceneActor::CreateDrawable()
    {
       dtCore::RefPtr<SSAOScene> es = new SSAOScene();
 
       SetDrawable(*es);
    }
 
-   bool SSAOSceneProxy::IsPlaceable() const
+   bool SSAOSceneActor::IsPlaceable() const
    {
       return false;
    }

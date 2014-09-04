@@ -69,27 +69,27 @@ namespace dtRender
       return mNode.get();
    }
 
-   SimpleSceneProxy::SimpleSceneProxy()
+   SimpleSceneActor::SimpleSceneActor()
    {
    }
 
-   SimpleSceneProxy::~SimpleSceneProxy()
+   SimpleSceneActor::~SimpleSceneActor()
    {
    }
 
-   void SimpleSceneProxy::BuildPropertyMap()
+   void SimpleSceneActor::BuildPropertyMap()
    {
       BaseClass::BuildPropertyMap();
 
    }
 
-   void SimpleSceneProxy::CreateDrawable()
+   void SimpleSceneActor::CreateDrawable()
    {
       dtCore::RefPtr<SimpleScene> es = new SimpleScene();
       SetDrawable(*es);
    }
 
-   bool SimpleSceneProxy::IsPlaceable() const
+   bool SimpleSceneActor::IsPlaceable() const
    {
       return false;
    }

@@ -77,11 +77,11 @@ namespace dtRender
       CubemapSceneImpl* mImpl;
    };
 
-   class DT_RENDER_EXPORT CubeMapSceneProxy : public dtCore::BaseActorObject
+   class DT_RENDER_EXPORT CubeMapSceneActor : public dtCore::BaseActorObject
    {
    public:
       typedef dtCore::BaseActorObject BaseClass;
-      CubeMapSceneProxy();
+      CubeMapSceneActor();
 
       virtual void BuildPropertyMap();
       virtual void CreateDrawable();
@@ -89,7 +89,7 @@ namespace dtRender
       virtual bool IsPlaceable() const;
 
    protected:
-      virtual ~CubeMapSceneProxy();
+      virtual ~CubeMapSceneActor();
    };
 
 }

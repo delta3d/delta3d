@@ -699,9 +699,14 @@ void GameActorTests::TestAddRemoveFromEnvActor()
       // Ensure all actors are removed from the environment
       ea->GetAllActors(actors);
       CPPUNIT_ASSERT(actors.empty());
+      dtCore::RefPtr<osg::ObserverSet> obSet = ap->getOrCreateObserverSet();
 
+      CPPUNIT_ASSERT_EQUAL(1, ap->referenceCount());
+      CPPUNIT_ASSERT_EQUAL(1, ap2->referenceCount());
       ap  = NULL;
       ap2 = NULL;
+
+      CPPUNIT_ASSERT(obSet->getObserverdObject() == NULL);
       CPPUNIT_ASSERT_MESSAGE("Actor 1 should have been deleted.", !apObserver1.valid());
       CPPUNIT_ASSERT_MESSAGE("Actor 2 should have been deleted.", !apObserver2.valid());
 

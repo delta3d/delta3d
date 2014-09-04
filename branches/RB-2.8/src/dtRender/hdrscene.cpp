@@ -388,20 +388,20 @@ namespace dtRender
    }
 
 
-   HDRSceneProxy::HDRSceneProxy()
+   HDRSceneActor::HDRSceneActor()
    {
    }
 
-   HDRSceneProxy::~HDRSceneProxy()
+   HDRSceneActor::~HDRSceneActor()
    {
    }
 
-   void HDRSceneProxy::BuildPropertyMap()
+   void HDRSceneActor::BuildPropertyMap()
    {
       BaseClass::BuildPropertyMap();
 
       std::string group("HDRScene");
-      typedef dtCore::PropertyRegHelper<HDRSceneProxy&, HDRScene> PropRegHelperType;
+      typedef dtCore::PropertyRegHelper<HDRSceneActor&, HDRScene> PropRegHelperType;
       PropRegHelperType propRegHelper(*this, GetDrawable<HDRScene>(), group);
 
       DT_REGISTER_PROPERTY_WITH_NAME(MidGrey, "MidGrey", "The mid range value to use for processing the HDR.", PropRegHelperType, propRegHelper);
@@ -414,14 +414,14 @@ namespace dtRender
 
    }
 
-   void HDRSceneProxy::CreateDrawable()
+   void HDRSceneActor::CreateDrawable()
    {
       dtCore::RefPtr<HDRScene> es = new HDRScene();
 
       SetDrawable(*es);
    }
 
-   bool HDRSceneProxy::IsPlaceable() const
+   bool HDRSceneActor::IsPlaceable() const
    {
       return false;
    }

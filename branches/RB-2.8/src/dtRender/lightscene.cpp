@@ -162,7 +162,7 @@ namespace dtRender
          //now setup the lighting uniforms necessary for rendering the dynamic lights
          osg::StateSet* ss = NULL;
 
-         UniformActComp* uniformActComp = sm.GetComponent<UniformActComp>();
+         UniformActComp* uniformActComp = sm.GetOwner()->GetComponent<UniformActComp>();
          if(uniformActComp != NULL)
          {
             //currently no array uniform property
@@ -564,28 +564,28 @@ namespace dtRender
 
 
    ///proxy
-   LightSceneProxy::LightSceneProxy()
+   LightSceneActor::LightSceneActor()
    {
    }
 
-   LightSceneProxy::~LightSceneProxy()
+   LightSceneActor::~LightSceneActor()
    {
    }
 
-   void LightSceneProxy::BuildPropertyMap()
+   void LightSceneActor::BuildPropertyMap()
    {
       BaseClass::BuildPropertyMap();
 
    }
 
-   void LightSceneProxy::CreateDrawable()
+   void LightSceneActor::CreateDrawable()
    {
       dtCore::RefPtr<LightScene> es = new LightScene();
 
       SetDrawable(*es);
    }
 
-   bool LightSceneProxy::IsPlaceable() const
+   bool LightSceneActor::IsPlaceable() const
    {
       return false;
    }

@@ -34,26 +34,27 @@
 class DT_EXAMPLE_EXPORT TestGameEnvironmentActor : public dtGame::IEnvGameActor
 {
    public:
+      typedef dtGame::IEnvGameActor BaseClass;
 
       TestGameEnvironmentActor(dtGame::GameActorProxy& parent) :
-         dtGame::IEnvGameActor(parent), mYear(0), mMonth(0), mDay(0), mHour(0), mMin(0), mSec(0) { }
+         dtGame::IEnvGameActor(parent),  mYear(0), mMonth(0), mDay(0), mHour(0), mMin(0), mSec(0) { }
 
-      virtual void AddActor(dtCore::DeltaDrawable &dd);
+      virtual void AddActor(dtCore::DeltaDrawable& dd);
 
-      virtual void RemoveActor(dtCore::DeltaDrawable &dd);
+      virtual void RemoveActor(dtCore::DeltaDrawable& dd);
 
       virtual void RemoveAllActors();
 
-      virtual bool ContainsActor(dtCore::DeltaDrawable &dd) const;
+      virtual bool ContainsActor(dtCore::DeltaDrawable& dd) const;
 
-      virtual void GetAllActors(std::vector<dtCore::DeltaDrawable*> &vec);
+      virtual void GetAllActors(std::vector<dtCore::DeltaDrawable*>& vec);
 
       virtual void SetTimeAndDate(const int year, const int month, const int day,
                                   const int hour, const int min,   const int sec);
 
-      virtual void GetTimeAndDate(int &year, int &month, int &day, int &hour, int &min, int &sec) const;
+      virtual void GetTimeAndDate(int& year, int& month, int& day, int& hour, int& min, int& sec) const;
    
-      void SetTimeAndDateString(const std::string &timeAndDate);
+      void SetTimeAndDateString(const std::string& timeAndDate);
 
       std::string GetCurrentTimeAndDateString() const;
 
@@ -81,7 +82,7 @@ class DT_EXAMPLE_EXPORT TestGameEnvironmentActorProxy : public dtGame::IEnvGameA
 
       TestGameEnvironmentActorProxy() { SetClassName("TestGameEnvironmentActorProxy"); }
 
-      virtual void CreateDrawable()      { SetDrawable(*new TestGameEnvironmentActor(*this)); }
+      virtual void CreateDrawable()   { SetDrawable(*new TestGameEnvironmentActor(*this)); }
 
       virtual void BuildPropertyMap() { dtGame::GameActorProxy::BuildPropertyMap(); }
 
