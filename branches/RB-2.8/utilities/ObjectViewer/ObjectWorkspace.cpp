@@ -632,7 +632,7 @@ void ObjectWorkspace::OnLoadGeometry()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ObjectWorkspace::OnLoadGeometry(const std::string &fullName)
+void ObjectWorkspace::OnLoadGeometry(const std::string& fullName)
 {
    if (dtUtil::FileUtils::GetInstance().FileExists(fullName))
    {
