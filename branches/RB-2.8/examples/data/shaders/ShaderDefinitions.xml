@@ -30,6 +30,7 @@
          <source type="Fragment">shaders/base/fragment_functions.frag</source>
          <source type="Fragment">shaders/base/multimap.frag</source>
          <source type="Fragment">shaders/base/multimap_functions.frag</source>
+         <source type="Fragment">shaders/lighting/dynamic_light_functions.frag</source>
 
          <parameter name="effectScales">
             <!-- 
