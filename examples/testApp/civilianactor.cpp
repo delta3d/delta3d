@@ -13,19 +13,21 @@
 namespace dtExample
 {
 
+   ////////////////////////////////////////////////
    CivilianActor::CivilianActor()
    {
       SetHideDTCorePhysicsProps(true);
    }
 
+   ////////////////////////////////////////////////
    CivilianActor::~CivilianActor()
    {
    }
 
+   ////////////////////////////////////////////////
    void CivilianActor::BuildActorComponents()
    {
       BaseClass::BuildActorComponents();
-      AddComponent(*new dtAnim::AnimationTransitionPlanner);
       AddComponent(*new CivilianAIActorComponent);
       if (!HasComponent(dtPhysics::PhysicsActComp::TYPE))
       {

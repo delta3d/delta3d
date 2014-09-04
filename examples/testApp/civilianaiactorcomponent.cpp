@@ -11,6 +11,10 @@
 #include <dtPhysics/palphysicsworld.h>
 
 #include <dtAnim/animationtransitionplanner.h>
+#include <dtAnim/walkrunblend.h>
+#include <dtAnim/animationhelper.h>
+#include <dtGame/deadreckoninghelper.h>
+#include <dtGame/drpublishingactcomp.h>
 
 namespace dtExample
 {
@@ -20,6 +24,10 @@ namespace dtExample
    ////////////////////////////////////////////////////////////////////////
    CivilianAIActorComponent::CivilianAIActorComponent(const ACType& type)
    : dtGame::ActorComponent(type)
+   , mAnimationWalkSpeed(1.5f)
+   , mAnimationRunSpeed(3.0f)
+   , mAnimationCrawlSpeed(0.2f)
+   , mAnimationLowWalkSpeed(0.4f)
    , mEntityIndex(0)
    , mIgnoreRotation(false)
    , mHasDestination(false)
@@ -52,6 +60,10 @@ namespace dtExample
       RegHelperType propReg(*this, this, CIV_GROUP);
 
       DT_REGISTER_PROPERTY(WalkSpeed, "The walking speed.", RegHelperType, propReg);
+      DT_REGISTER_PROPERTY(AnimationWalkSpeed, "The inherent speed of the walk animation.", RegHelperType, propReg);
+      DT_REGISTER_PROPERTY(AnimationRunSpeed, "The inherent speed of the run animation.", RegHelperType, propReg);
+      DT_REGISTER_PROPERTY(AnimationCrawlSpeed, "The inherent speed of the crawl animation.", RegHelperType, propReg);
+      DT_REGISTER_PROPERTY(AnimationLowWalkSpeed, "The inherent speed of the low walk animation.", RegHelperType, propReg);
    }
 
    ////////////////////////////////////////////////////////////////////////
@@ -90,6 +102,18 @@ namespace dtExample
       {
          GetOwner()->AddComponent(* new dtAnim::AnimationTransitionPlanner);
       }
+      if (!GetOwner()->HasComponent(dtGame::DeadReckoningHelper::TYPE))
+      {
+         GetOwner()->AddComponent(* new dtGame::DeadReckoningHelper);
+      }
+      if (!GetOwner()->HasComponent(dtGame::DRPublishingActComp::TYPE))
+      {
+         GetOwner()->AddComponent(* new dtGame::DRPublishingActComp);
+      }
+
+      // transition planner should add this.
+      GetOwner()->GetComponent<dtAnim::AnimationHelper>()->ModelLoadedSignal.connect_slot(this, &CivilianAIActorComponent::OnModelLoaded);
+
    }
 
    ///////////////////////////////////////////////////////////////////////////////////
@@ -139,6 +163,7 @@ namespace dtExample
 
    }
 
+   ///////////////////////////////////////////////////////////////////////////////////
    void CivilianAIActorComponent::PerformMove(float dt)
    {
       if (!mWaypointPath.empty() && mHasDestination)
@@ -193,6 +218,184 @@ namespace dtExample
       mCharacterController->Warp(offset);
 
    }
+
+   /////////////////////////////////////////////////////////////////
+   void CivilianAIActorComponent::OnModelLoaded(dtAnim::AnimationHelper* animComp)
+   {
+      InitializeMotionBlendAnimations();
+   }
+
+   /////////////////////////////////////////////////////////////////
+   void SearchAndRegisterAnimationOptions(dtAnim::SequenceMixer& seqMixer, const dtUtil::RefString& name, const std::vector<dtUtil::RefString>& options, dtAnim::Cal3DModelWrapper& wrapper)
+   {
+      dtCore::RefPtr<const dtAnim::Animatable> anim = seqMixer.GetRegisteredAnimation(name);
+      if (anim != NULL) return;
+
+      for (unsigned i = 0; anim == NULL && i < options.size(); ++i)
+      {
+         anim = seqMixer.GetRegisteredAnimation(options[i]);
+      }
+
+      if (anim != NULL)
+      {
+         LOG_ALWAYS("Registering Animation named \"" + anim->GetName() + "\" in place of missing \"" + name + "\"");
+         dtCore::RefPtr<dtAnim::Animatable> animClone = anim->Clone(&wrapper).get();
+         animClone->SetName(name);
+
+         seqMixer.RegisterAnimation(animClone);
+      }
+   }
+
+   /////////////////////////////////////////////////////////////////
+   void CivilianAIActorComponent::SetupWalkRunBlend(dtAnim::AnimationHelper* helper, const dtUtil::RefString& OpName,
+         const std::vector<dtUtil::RefString>& nameWalkOptions, const std::string& newWalkAnimName,
+         const std::vector<dtUtil::RefString>& nameRunOptions, const std::string& newRunAnimName,
+         const std::vector<dtUtil::RefString>& nameStandOptions, const std::string& newStandAnimName,
+         float walkSpeed, float runSpeed)
+   {
+      dtCore::RefPtr<dtAnim::WalkRunBlend> newWRBlend;
+      if (GetOwner<dtGame::GameActorProxy>()->IsRemote())
+      {
+         newWRBlend = new dtAnim::WalkRunBlend(*GetOwner()->GetComponent<dtGame::DeadReckoningHelper>());
+      }
+      else
+      {
+         newWRBlend = new dtAnim::WalkRunBlend(*GetOwner()->GetComponent<dtGame::DRPublishingActComp>());
+      }
+      newWRBlend->SetName(OpName);
+
+      dtAnim::SequenceMixer& seqMixer = helper->GetSequenceMixer();
+      dtAnim::Cal3DModelWrapper* wrapper = helper->GetModelWrapper();
+
+      SearchAndRegisterAnimationOptions(seqMixer, newWalkAnimName, nameWalkOptions, *wrapper);
+      SearchAndRegisterAnimationOptions(seqMixer, newRunAnimName, nameRunOptions, *wrapper);
+      SearchAndRegisterAnimationOptions(seqMixer, newStandAnimName, nameStandOptions, *wrapper);
+
+      const dtAnim::Animatable* stand = seqMixer.GetRegisteredAnimation(newStandAnimName);
+      const dtAnim::Animatable* walk = seqMixer.GetRegisteredAnimation(newWalkAnimName);
+      const dtAnim::Animatable* run = seqMixer.GetRegisteredAnimation(newRunAnimName);
+
+      if(stand != NULL && walk != NULL && run != NULL)
+      {
+         newWRBlend->SetAnimations(stand->Clone(wrapper).get(), walk->Clone(wrapper).get(), run->Clone(wrapper).get());
+         newWRBlend->Setup(walkSpeed, runSpeed);
+         seqMixer.RegisterAnimation(newWRBlend);
+      }
+      else
+      {
+         if (stand != NULL && walk != NULL)
+         {
+            newWRBlend->SetAnimations(stand->Clone(wrapper).get(), walk->Clone(wrapper).get(), NULL);
+            newWRBlend->Setup(walkSpeed, runSpeed);
+            seqMixer.RegisterAnimation(newWRBlend);
+         }
+         else if (walk != NULL)
+         {
+            // Can't do much right now with just a walk.
+            dtCore::RefPtr<dtAnim::Animatable> walkClone = walk->Clone(wrapper).get();
+            walkClone->SetName(OpName);
+            seqMixer.RegisterAnimation(walkClone);
+            LOGN_WARNING("Human.cpp", "Cannot load/find a motionless animation for: " + OpName);
+         }
+         else if (stand != NULL)
+         {
+            // Can't do much right now with just a stand.
+            dtCore::RefPtr<dtAnim::Animatable> standClone = stand->Clone(wrapper).get();
+            standClone->SetName(OpName);
+            seqMixer.RegisterAnimation(standClone);
+            LOGN_WARNING("Human.cpp", "Cannot load/find a walking animation for: " + OpName);
+         }
+         else
+         {
+            LOGN_WARNING("Human.cpp", "Cannot load any walk or run animations for: " + OpName);
+         }
+      }
+   }
+
+
+   ///////////////////////////////////////////////////////////////////////////////////
+   void CivilianAIActorComponent::InitializeMotionBlendAnimations()
+   {
+      std::vector<dtUtil::RefString> optionsWalk;
+      std::vector<dtUtil::RefString> optionsRun;
+      std::vector<dtUtil::RefString> optionsStand;
+
+      dtUtil::RefString animationNamesW[4] = { "WalkReady", "Walk", "Walk Deployed", "" };
+      dtUtil::RefString animationNamesR[4] = { "RunReady", "Run", "Run Deployed", "" };
+      dtUtil::RefString animationNamesIdle[8] = { "Stand Deployed", "StandDeployed", "Stand", "Idle", "Idle_2", "StandReady", "Stand Ready", "" };
+
+      optionsWalk.insert(optionsWalk.end(), &animationNamesW[0], &animationNamesW[3]);
+      optionsRun.insert(optionsRun.end(), &animationNamesR[0], &animationNamesR[3]);
+      optionsStand.insert(optionsStand.end(), &animationNamesIdle[0], &animationNamesIdle[7]);
+
+      dtAnim::AnimationHelper* animActorComponent = NULL;
+      GetOwner()->GetComponent(animActorComponent);
+
+      SetupWalkRunBlend(animActorComponent, dtAnim::AnimationOperators::ANIM_WALK_READY, optionsWalk, "Walk Ready",
+            optionsRun, "Run Ready",
+            optionsStand, "Stand Ready",
+            GetAnimationWalkSpeed(), GetAnimationRunSpeed());
+
+      std::reverse(optionsWalk.begin(), optionsWalk.end());
+      std::reverse(optionsRun.begin(), optionsRun.end());
+      std::reverse(optionsStand.begin(), optionsStand.end());
+      SetupWalkRunBlend(animActorComponent, dtAnim::AnimationOperators::ANIM_WALK_DEPLOYED, optionsWalk, "Walk Deployed",
+            optionsRun, "Run Deployed",
+            optionsStand, "Stand Deployed",
+            GetAnimationWalkSpeed(), GetAnimationRunSpeed());
+
+
+      dtUtil::RefString animationNamesCrawl[6] = { "Crawl Ready", "CrawlReady", "Crawl", "CrawlDeployed", "Crawl Deployed", "" };
+      dtUtil::RefString animationNamesProne[6] = { "Prone Deployed", "ProneDeployed", "Prone", "ProneReady","Prone Ready", "" };
+
+      optionsStand.clear();
+      optionsWalk.clear();
+      optionsRun.clear();
+      optionsWalk.insert(optionsWalk.end(), &animationNamesCrawl[0], &animationNamesCrawl[5]);
+      optionsStand.insert(optionsStand.end(), &animationNamesProne[0], &animationNamesProne[5]);
+
+      SetupWalkRunBlend(animActorComponent, dtAnim::AnimationOperators::ANIM_CRAWL_READY, optionsWalk, "Crawl Ready",
+            optionsRun, "",
+            optionsStand, "Prone Ready",
+            GetAnimationCrawlSpeed(), GetAnimationCrawlSpeed());
+
+      std::reverse(optionsWalk.begin(), optionsWalk.end());
+      std::reverse(optionsRun.begin(), optionsRun.end());
+      std::reverse(optionsStand.begin(), optionsStand.end());
+      SetupWalkRunBlend(animActorComponent, dtAnim::AnimationOperators::ANIM_CRAWL_DEPLOYED, optionsWalk, "Crawl Deployed",
+            optionsRun, "",
+            optionsStand, "Prone Deployed",
+            GetAnimationCrawlSpeed(), GetAnimationCrawlSpeed());
+
+      dtUtil::RefString animationNamesLowWalk[6] = { "Low Walk Ready", "LowWalkReady", "Low Walk", "LowWalkDeployed", "Low Walk Deployed", "" };
+      dtUtil::RefString animationNamesCrouch[6] = { "Crouch Deployed", "CrouchDeployed", "Crouch", "CrouchReady","Crouch Ready", "" };
+
+      optionsStand.clear();
+      optionsWalk.clear();
+      optionsRun.clear();
+      optionsWalk.insert(optionsWalk.end(), &animationNamesLowWalk[0], &animationNamesLowWalk[5]);
+      optionsStand.insert(optionsStand.end(), &animationNamesCrouch[0], &animationNamesCrouch[5]);
+
+      SetupWalkRunBlend(animActorComponent, dtAnim::AnimationOperators::ANIM_LOW_WALK_READY, optionsWalk, "Low Walk Ready",
+            optionsRun, "",
+            optionsStand, "Kneel Ready",
+            GetAnimationLowWalkSpeed(), GetAnimationLowWalkSpeed());
+
+      std::reverse(optionsWalk.begin(), optionsWalk.end());
+      std::reverse(optionsRun.begin(), optionsRun.end());
+      std::reverse(optionsStand.begin(), optionsStand.end());
+      SetupWalkRunBlend(animActorComponent, dtAnim::AnimationOperators::ANIM_LOW_WALK_DEPLOYED, optionsWalk, "Low Walk Deployed",
+            optionsRun, "",
+            optionsStand, "Kneel Deployed",
+            GetAnimationLowWalkSpeed(), GetAnimationLowWalkSpeed());
+
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////////
+   DT_IMPLEMENT_ACCESSOR(CivilianAIActorComponent, float, AnimationWalkSpeed);
+   DT_IMPLEMENT_ACCESSOR(CivilianAIActorComponent, float, AnimationRunSpeed);
+   DT_IMPLEMENT_ACCESSOR(CivilianAIActorComponent, float, AnimationCrawlSpeed);
+   DT_IMPLEMENT_ACCESSOR(CivilianAIActorComponent, float, AnimationLowWalkSpeed);
 
    ///////////////////////////////////////////////////////////////////////////////////
    dtPhysics::CharacterController* CivilianAIActorComponent::GetCharacterController()

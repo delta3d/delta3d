@@ -40,6 +40,8 @@ namespace dtAnim
    public:
       static BasicStanceEnum IDLE;
       static BasicStanceEnum STANDING;
+      static BasicStanceEnum SITTING;
+      static BasicStanceEnum LYING;
       static BasicStanceEnum KNEELING;
       static BasicStanceEnum PRONE;
 
@@ -68,31 +70,35 @@ namespace dtAnim
    public:
       typedef std::map<dtUtil::RefString, dtAI::Operator*> NameOperMap;
 
-      //            static const dtUtil::RefString ANIM_STAND_READY;
-      //            static const dtUtil::RefString ANIM_STAND_DEPLOYED;
       static const dtUtil::RefString ANIM_WALK_READY;
       static const dtUtil::RefString ANIM_WALK_DEPLOYED;
       static const dtUtil::RefString ANIM_LOW_WALK_READY;
       static const dtUtil::RefString ANIM_LOW_WALK_DEPLOYED;
       static const dtUtil::RefString ANIM_CRAWL_READY;
       static const dtUtil::RefString ANIM_CRAWL_DEPLOYED;
-      //            static const dtUtil::RefString ANIM_KNEEL_READY;
-      //            static const dtUtil::RefString ANIM_KNEEL_DEPLOYED;
+      static const dtUtil::RefString ANIM_SITTING_DEPLOYED;
+      static const dtUtil::RefString ANIM_SITTING_READY;
+      static const dtUtil::RefString ANIM_LYING_DEPLOYED;
+      static const dtUtil::RefString ANIM_LYING_READY;
       static const dtUtil::RefString ANIM_STAND_TO_KNEEL;
       static const dtUtil::RefString ANIM_KNEEL_TO_STAND;
-      //            static const dtUtil::RefString ANIM_PRONE_READY;
-      //            static const dtUtil::RefString ANIM_PRONE_DEPLOYED;
+      static const dtUtil::RefString ANIM_STAND_TO_SIT;
+      static const dtUtil::RefString ANIM_SIT_TO_STAND;
+      static const dtUtil::RefString ANIM_SIT_TO_LIE;
+      static const dtUtil::RefString ANIM_LIE_TO_SIT;
       static const dtUtil::RefString ANIM_PRONE_TO_KNEEL;
       static const dtUtil::RefString ANIM_KNEEL_TO_PRONE;
-      static const dtUtil::RefString ANIM_SHOT_STANDING;
-      static const dtUtil::RefString ANIM_SHOT_KNEELING;
-      static const dtUtil::RefString ANIM_SHOT_PRONE;
+      static const dtUtil::RefString ANIM_DYING_STANDING;
+      static const dtUtil::RefString ANIM_DYING_KNEELING;
+      static const dtUtil::RefString ANIM_DYING_PRONE;
       static const dtUtil::RefString ANIM_DEAD_STANDING;
       static const dtUtil::RefString ANIM_DEAD_KNEELING;
       static const dtUtil::RefString ANIM_DEAD_PRONE;
       static const dtUtil::RefString ANIM_STANDING_ACTION;
       static const dtUtil::RefString ANIM_KNEELING_ACTION;
       static const dtUtil::RefString ANIM_PRONE_ACTION;
+      static const dtUtil::RefString ANIM_LYING_ACTION;
+      static const dtUtil::RefString ANIM_SITTING_ACTION;
       static const dtUtil::RefString OPER_DEPLOYED_TO_READY;
       static const dtUtil::RefString OPER_READY_TO_DEPLOYED;
 
@@ -132,10 +138,14 @@ namespace dtAnim
       static const dtUtil::RefString STATE_STANDING_ACTION_COUNT;
       /// The number of completed actions while kneeling.  This counter increments every time an action should be completed.
       static const dtUtil::RefString STATE_KNEELING_ACTION_COUNT;
+      /// The number of completed actions while sitting.  This counter increments every time an action should be completed.
+      static const dtUtil::RefString STATE_SITTING_ACTION_COUNT;
+      /// The number of completed actions while lying.  This counter increments every time an action should be completed.
+      static const dtUtil::RefString STATE_LYING_ACTION_COUNT;
       /// The number of completed actions while kneeling.  This counter increments every time an action should be completed.
       static const dtUtil::RefString STATE_PRONE_ACTION_COUNT;
-      /// flag marking that the person has been shot.  Really this means the person is dying.
-      static const dtUtil::RefString STATE_SHOT;
+      /// flag marking that the person has been killed.
+      static const dtUtil::RefString STATE_DYING;
 
       AnimationTransitionPlanner();
 
@@ -172,7 +182,10 @@ namespace dtAnim
        */
       DT_DECLARE_ACCESSOR(double, MaxTimePerIteration);
 
+      /*override*/ void BuildPropertyMap();
+
    protected:
+
       /*override*/ ~AnimationTransitionPlanner();
 
       unsigned GetExecutedActionCount(BasicStanceEnum& stance) const;
@@ -181,6 +194,9 @@ namespace dtAnim
       void OnModelUnloaded(AnimationHelper*);
 
       unsigned CheckActionState(const dtAI::WorldState* pWS, const std::string& stateName, unsigned desiredVal) const;
+
+      /*override*/ void OnTickLocal(const dtGame::TickMessage& /*tickMessage*/);
+      /*override*/ void OnTickRemote(const dtGame::TickMessage& /*tickMessage*/);
 
    private:
       dtAI::PlannerHelper mPlannerHelper;
@@ -191,6 +207,7 @@ namespace dtAnim
       typedef std::map<BasicStanceEnum*, unsigned> ExecuteActionCountMap;
       ExecuteActionCountMap mExecutedActionCounts;
       std::string mSequenceId;
+      bool mResetNextTick;
    };
 
 
