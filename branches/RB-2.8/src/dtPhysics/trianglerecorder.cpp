@@ -11,10 +11,10 @@ namespace dtPhysics
 
    //////////////////////////////////////////////////////
    TriangleRecorder::TriangleRecorder()
-   : mCurrentMaterial(0)
+   : mData(new VertexData)
+   , mCurrentMaterial(0)
    , mMaxEdgeSize(20.0)
    , mMatrixIsIdentity()
-   , mData(new VertexData)
    {
    }
 
