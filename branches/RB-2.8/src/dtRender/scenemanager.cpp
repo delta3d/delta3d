@@ -635,7 +635,9 @@ namespace dtRender
       {
 
          mImpl->mUniforms->mSceneLuminance->SetValue(2.0);
+         mImpl->mUniforms->mSceneLuminance->Update();
          mImpl->mUniforms->mSceneAmbience->SetValue(1.25);
+         mImpl->mUniforms->mSceneAmbience->Update();
          
          // disable color clamping, because we want to work on real hdr values
          clamp->setClampVertexColor(GL_FALSE);
@@ -645,7 +647,9 @@ namespace dtRender
       else
       {
          mImpl->mUniforms->mSceneLuminance->SetValue(1.0);
+         mImpl->mUniforms->mSceneLuminance->Update();
          mImpl->mUniforms->mSceneAmbience->SetValue(1.0);
+         mImpl->mUniforms->mSceneAmbience->Update();
 
          osg::ClampColor* clamp = new osg::ClampColor();
          clamp->setClampVertexColor(GL_TRUE);
