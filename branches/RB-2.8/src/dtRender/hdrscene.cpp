@@ -343,7 +343,7 @@ namespace dtRender
             // invFrameTime - parameter is updated during the runtime, hence add the
             // uniform to the unit and not to the shader, so that it can be accessed easily.
             //adaptedShader->add("invFrameTime", osg::Uniform::FLOAT);
-            adaptedlum->getOrCreateStateSet()->getOrCreateUniform("invFrameTime", osg::Uniform::FLOAT);
+            //adaptedlum->getOrCreateStateSet()->getOrCreateUniform("invFrameTime", osg::Uniform::FLOAT);
 
             // Set maximum and minimum representable luminance values
             adaptedShader->set("maxLuminance", mMaxLuminance);
