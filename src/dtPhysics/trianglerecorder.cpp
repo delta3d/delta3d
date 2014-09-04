@@ -6,8 +6,6 @@
 #include <sstream>
 #include <osg/io_utils>
 
-#include <iostream>
-
 namespace dtPhysics
 {
 
@@ -154,7 +152,6 @@ namespace dtPhysics
             while (t.SplitIf(20.0f, newT))
             {
                mTriangles.push_back(newT);
-               std::cout << "Splitting." << std::endl;
             }
 
             mTriangles[i] = t;
