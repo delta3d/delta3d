@@ -281,20 +281,20 @@ namespace dtRender
    {
       BaseClass::RemoveChild(child);
    }
-   ShadowSceneProxy::ShadowSceneProxy()
+   ShadowSceneActor::ShadowSceneActor()
    {
    }
 
-   ShadowSceneProxy::~ShadowSceneProxy()
+   ShadowSceneActor::~ShadowSceneActor()
    {
    }
 
-   void ShadowSceneProxy::BuildPropertyMap()
+   void ShadowSceneActor::BuildPropertyMap()
    {
       BaseClass::BuildPropertyMap();
 
       std::string group("ShadowScene");
-      typedef dtCore::PropertyRegHelper<ShadowSceneProxy&, ShadowScene> PropRegHelperType;
+      typedef dtCore::PropertyRegHelper<ShadowSceneActor&, ShadowScene> PropRegHelperType;
       PropRegHelperType propRegHelper(*this, GetDrawable<ShadowScene>(), group);
 
 
@@ -308,13 +308,13 @@ namespace dtRender
 
    }
 
-   void ShadowSceneProxy::CreateDrawable()
+   void ShadowSceneActor::CreateDrawable()
    {
       dtCore::RefPtr<ShadowScene> es = new ShadowScene();
       SetDrawable(*es);
    }
 
-   bool ShadowSceneProxy::IsPlaceable() const
+   bool ShadowSceneActor::IsPlaceable() const
    {
       return false;
    }

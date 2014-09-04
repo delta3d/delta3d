@@ -265,20 +265,20 @@ namespace dtRender
 
 
    //proxy
-   DOFSceneProxy::DOFSceneProxy()
+   DOFSceneActor::DOFSceneActor()
    {
    }
 
-   DOFSceneProxy::~DOFSceneProxy()
+   DOFSceneActor::~DOFSceneActor()
    {
    }
 
-   void DOFSceneProxy::BuildPropertyMap()
+   void DOFSceneActor::BuildPropertyMap()
    {
       BaseClass::BuildPropertyMap();
 
       std::string group("DOFScene");
-      typedef dtCore::PropertyRegHelper<DOFSceneProxy&, DOFScene> PropRegHelperType;
+      typedef dtCore::PropertyRegHelper<DOFSceneActor&, DOFScene> PropRegHelperType;
       PropRegHelperType propRegHelper(*this, GetDrawable<DOFScene>(), group);
 
 
@@ -299,14 +299,14 @@ namespace dtRender
          PropRegHelperType, propRegHelper);
    }
 
-   void DOFSceneProxy::CreateDrawable()
+   void DOFSceneActor::CreateDrawable()
    {
       dtCore::RefPtr<DOFScene> es = new DOFScene();
 
       SetDrawable(*es);
    }
 
-   bool DOFSceneProxy::IsPlaceable() const
+   bool DOFSceneActor::IsPlaceable() const
    {
       return false;
    }

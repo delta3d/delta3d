@@ -62,11 +62,11 @@ namespace dtRender
    private:
    };
 
-   class DT_RENDER_EXPORT SSAOSceneProxy : public dtCore::BaseActorObject
+   class DT_RENDER_EXPORT SSAOSceneActor : public dtCore::BaseActorObject
    {
    public:
       typedef dtCore::BaseActorObject BaseClass;
-      SSAOSceneProxy();
+      SSAOSceneActor();
 
       virtual void BuildPropertyMap();
       virtual void CreateDrawable();
@@ -74,7 +74,7 @@ namespace dtRender
       virtual bool IsPlaceable() const;
 
    protected:
-      virtual ~SSAOSceneProxy();
+      virtual ~SSAOSceneActor();
    };
 
 }

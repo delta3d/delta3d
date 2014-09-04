@@ -65,11 +65,11 @@ namespace dtRender
    private:
    };
 
-   class DT_RENDER_EXPORT HDRSceneProxy : public dtCore::BaseActorObject
+   class DT_RENDER_EXPORT HDRSceneActor : public dtCore::BaseActorObject
    {
    public:
       typedef dtCore::BaseActorObject BaseClass;
-      HDRSceneProxy();
+      HDRSceneActor();
 
       virtual void BuildPropertyMap();
       virtual void CreateDrawable();
@@ -77,7 +77,7 @@ namespace dtRender
       virtual bool IsPlaceable() const;
 
    protected:
-      virtual ~HDRSceneProxy();
+      virtual ~HDRSceneActor();
    };
 
 }

@@ -106,11 +106,11 @@ namespace dtRender
      ShadowSceneImpl* mImpl; 
    };
 
-   class DT_RENDER_EXPORT ShadowSceneProxy : public dtCore::BaseActorObject
+   class DT_RENDER_EXPORT ShadowSceneActor : public dtCore::BaseActorObject
    {
    public:
       typedef dtCore::BaseActorObject BaseClass;
-      ShadowSceneProxy();
+      ShadowSceneActor();
 
       virtual void BuildPropertyMap();
       virtual void CreateDrawable();
@@ -118,7 +118,7 @@ namespace dtRender
       virtual bool IsPlaceable() const;
 
    protected:
-      virtual ~ShadowSceneProxy();
+      virtual ~ShadowSceneActor();
    };
 
 }

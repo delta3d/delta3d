@@ -26,27 +26,34 @@
 #include <dtGame/gameactor.h>
 #include <dtGame/gameactorproxy.h>
 #include <dtCore/environmentactor.h>
+#include <dtCore/observerptr.h>
 
 namespace dtGame
 {
   /**
    * Interface to the Environment Game Actor.  The dtGame::GameManager uses this
-   * class as the Environment Actor.  It is expected users will derive and
+   * class as the Environment Drawable root.  It is expected users will derive and
    * supply their own implementation of a concrete Environment Actor.
    */
-   class DT_GAME_EXPORT IEnvGameActor : public GameActor, public dtCore::IEnvironmentActor
+   class DT_GAME_EXPORT IEnvGameActor : public dtCore::Transformable, public dtCore::IEnvironmentActor
    {
    public:
-      /// Constructor
-      IEnvGameActor(GameActorProxy& parent);
 
-   protected:
+      DT_DECLARE_VIRTUAL_REF_INTERFACE_INLINE
+
+      /// Constructor
+      IEnvGameActor(GameActorProxy& owner);
+
+      GameActorProxy* GetOwner();
+      const GameActorProxy* GetOwner() const;
+    protected:
       /// Destructor
       virtual ~IEnvGameActor();
+      dtCore::ObserverPtr<GameActorProxy> mOwner;
    };
 
    /**
-    * Interface to the proxy of the Environment Game Actor.  Users should derive
+    * Interface of the Environment Game Actor.  Users should derive
     * a concrete version and supply that to the GameManager.
     * @see dtGame::GameManager::SetEnvironmentActor()
     */
@@ -58,7 +65,7 @@ namespace dtGame
 
    protected:
       /// Destructor
-      virtual ~IEnvGameActorProxy() = 0;
+      virtual ~IEnvGameActorProxy();
 
    private:
    };

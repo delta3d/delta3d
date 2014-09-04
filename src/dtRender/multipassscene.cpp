@@ -694,21 +694,21 @@ namespace dtRender
 
    ///////////////////////////////////////////////////////////
    //PROXY
-   MultipassSceneProxy::MultipassSceneProxy()
+   MultipassSceneActor::MultipassSceneActor()
    {
    }
 
-   MultipassSceneProxy::~MultipassSceneProxy()
+   MultipassSceneActor::~MultipassSceneActor()
    {
    }
 
-   void MultipassSceneProxy::BuildPropertyMap()
+   void MultipassSceneActor::BuildPropertyMap()
    {
       BaseClass::BuildPropertyMap();
 
 
       std::string group("MultipassScene");
-      typedef dtCore::PropertyRegHelper<MultipassSceneProxy&, MultipassScene> PropRegHelperType;
+      typedef dtCore::PropertyRegHelper<MultipassSceneActor&, MultipassScene> PropRegHelperType;
       PropRegHelperType propRegHelper(*this, GetDrawable<MultipassScene>(), group);
 
       //DT_REGISTER_PROPERTY_WITH_NAME_AND_LABEL(MainSceneCullMask, "MainSceneCullMask", "Main Scene Cull Mask", 
@@ -742,14 +742,14 @@ namespace dtRender
 
    }
 
-   void MultipassSceneProxy::CreateDrawable()
+   void MultipassSceneActor::CreateDrawable()
    {
       dtCore::RefPtr<MultipassScene> es = new MultipassScene();
 
       SetDrawable(*es);
    }
 
-   bool MultipassSceneProxy::IsPlaceable() const
+   bool MultipassSceneActor::IsPlaceable() const
    {
       return false;
    }

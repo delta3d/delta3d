@@ -310,20 +310,20 @@ namespace dtRender
       return *mImpl->mTarget;
    }
 
-   CubeMapSceneProxy::CubeMapSceneProxy()
+   CubeMapSceneActor::CubeMapSceneActor()
    {
    }
 
-   CubeMapSceneProxy::~CubeMapSceneProxy()
+   CubeMapSceneActor::~CubeMapSceneActor()
    {
    }
 
-   void CubeMapSceneProxy::BuildPropertyMap()
+   void CubeMapSceneActor::BuildPropertyMap()
    {
       BaseClass::BuildPropertyMap();
 
       std::string group("CubeMapScene");
-      typedef dtCore::PropertyRegHelper<CubeMapSceneProxy&, CubeMapScene> PropRegHelperType;
+      typedef dtCore::PropertyRegHelper<CubeMapSceneActor&, CubeMapScene> PropRegHelperType;
       PropRegHelperType propRegHelper(*this, GetDrawable<CubeMapScene>(), group);
 
       DT_REGISTER_PROPERTY_WITH_NAME(TexWidth, "TexWidth", "The width of the render target.", PropRegHelperType, propRegHelper);
@@ -334,14 +334,14 @@ namespace dtRender
       DT_REGISTER_PROPERTY_WITH_NAME(ClearColor, "ClearColor", "The clear color for the cubemap cameras.", PropRegHelperType, propRegHelper);
    }
 
-   void CubeMapSceneProxy::CreateDrawable()
+   void CubeMapSceneActor::CreateDrawable()
    {
       dtCore::RefPtr<CubeMapScene> es = new CubeMapScene();
 
       SetDrawable(*es);
    }
 
-   bool CubeMapSceneProxy::IsPlaceable() const
+   bool CubeMapSceneActor::IsPlaceable() const
    {
       return false;
    }

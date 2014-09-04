@@ -63,27 +63,27 @@ namespace dtRender
       return mNode.get();
    }
 
-   GUISceneProxy::GUISceneProxy()
+   GUISceneActor::GUISceneActor()
    {
    }
 
-   GUISceneProxy::~GUISceneProxy()
+   GUISceneActor::~GUISceneActor()
    {
    }
 
-   void GUISceneProxy::BuildPropertyMap()
+   void GUISceneActor::BuildPropertyMap()
    {
       BaseClass::BuildPropertyMap();
 
    }
 
-   void GUISceneProxy::CreateDrawable()
+   void GUISceneActor::CreateDrawable()
    {
       dtCore::RefPtr<GUIScene> es = new GUIScene();
       SetDrawable(*es);
    }
 
-   bool GUISceneProxy::IsPlaceable() const
+   bool GUISceneActor::IsPlaceable() const
    {
       return false;
    }

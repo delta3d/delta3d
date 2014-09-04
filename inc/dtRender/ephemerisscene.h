@@ -92,11 +92,11 @@ namespace dtRender
       EphemerisImpl* mImpl;
    };
 
-   class DT_RENDER_EXPORT EphemerisSceneProxy : public dtCore::BaseActorObject
+   class DT_RENDER_EXPORT EphemerisSceneActor : public dtCore::BaseActorObject
    {
    public:
       typedef dtCore::BaseActorObject BaseClass;
-      EphemerisSceneProxy();
+      EphemerisSceneActor();
 
       virtual void BuildPropertyMap();
       virtual void CreateDrawable();
@@ -104,7 +104,7 @@ namespace dtRender
       virtual bool IsPlaceable() const;
 
    protected:
-      virtual ~EphemerisSceneProxy();
+      virtual ~EphemerisSceneActor();
    };
 }
 

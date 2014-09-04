@@ -724,7 +724,7 @@ namespace dtEditQt
       ViewportManager::GetInstance().emitMouseMoveEvent(this, e);
 
       // Get the position of the mouse.
-      osg::Vec2 pos = convertMousePosition(e->pos());
+      //osg::Vec2 pos = convertMousePosition(e->pos());
 
       // If we move the mouse while in select actor mode,
       // immediately jump to camera motion mode.
@@ -1008,12 +1008,9 @@ namespace dtEditQt
          {
             if ((*itr)->IsPlaceable())
             {
-               dtCore::TransformableActorProxy* transProxy =
-                  dynamic_cast<dtCore::TransformableActorProxy*>(*itr);
-
-               if (transProxy)
+               dtCore::Transformable* t = (*itr)->GetDrawable<dtCore::Transformable>();
+               if (t != NULL)
                {
-                  dtCore::Transformable *t = static_cast<dtCore::Transformable*>(transProxy->GetDrawable());
                   t->SetTransform(camXform);
                }
             }
@@ -1034,12 +1031,9 @@ namespace dtEditQt
          EditorEvents::GetInstance().emitBeginChangeTransaction();
          const dtCore::BaseActorObject* firstProxy = (*selected.begin());
 
-         const dtCore::TransformableActorProxy* transProxy =
-            dynamic_cast<const dtCore::TransformableActorProxy*>(firstProxy);
-
-         if (transProxy)
+         const dtCore::Transformable* t = firstProxy->GetDrawable<dtCore::Transformable>();
+         if (t != NULL)
          {
-            const dtCore::Transformable *t = static_cast<const dtCore::Transformable*>(transProxy->GetDrawable());
             dtCore::Transform xform;
             t->GetTransform(xform);
             getCamera()->setPosition(xform.GetTranslation());

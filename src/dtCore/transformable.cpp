@@ -497,13 +497,12 @@ void Transformable::SetNormalRescaling(const bool enable)
 ////////////////////////////////////////////////////////////////////////////////
 bool Transformable::GetNormalRescaling() const
 {
-   if(GetOSGNode() == NULL)
+   if (GetOSGNode() != NULL && GetOSGNode()->getStateSet() != NULL)
    {
-      return false;
+      osg::StateAttribute::GLModeValue state = GetOSGNode()->getStateSet()->getMode(GL_RESCALE_NORMAL);
+      return (state & osg::StateAttribute::ON) ? true : false;
    }
-
-   osg::StateAttribute::GLModeValue state = GetOSGNode()->getStateSet()->getMode(GL_RESCALE_NORMAL);
-   return (state & osg::StateAttribute::ON) ? true : false;
+   return false;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

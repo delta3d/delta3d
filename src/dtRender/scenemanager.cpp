@@ -128,6 +128,7 @@ namespace dtRender
 
       SceneManagerImpl::SceneGroupArray mChildren;
       std::stack<dtCore::ObserverPtr<SceneBase> > mSceneStack;
+
    };
 
 
@@ -166,7 +167,6 @@ namespace dtRender
       delete mImpl;
    }
 
-
    void SceneManager::CreateScene()
    {
       //clear old scene first
@@ -187,8 +187,7 @@ namespace dtRender
          newNode->GetOSGNode()->getOrCreateStateSet()->setBinNumber(i);
 
          //this relies on the fact that children added are always pushed back
-         Transformable::AddChild(newNode.get());
-
+         dtCore::Transformable::AddChild(newNode.get());
          mImpl->mChildren[i] = newNode;
       }
 
@@ -309,7 +308,7 @@ namespace dtRender
                //clear the scene enum slot
                mImpl->mChildren[sb->GetSceneEnum().GetSceneNumber()] = NULL;
 
-               Transformable::RemoveChild(&dd);
+               RemoveChild(&dd);
             }
             else
             {
@@ -436,12 +435,12 @@ namespace dtRender
 
    dtGame::GameManager* SceneManager::GetGameManager()
    {
-      return GetGameActorProxy().GetGameManager();
+      return GetOwner()->GetGameManager();
    }
 
    const dtGame::GameManager* SceneManager::GetGameManager() const
    {
-      return GetGameActorProxy().GetGameManager();
+      return GetOwner()->GetGameManager();
    }
 
    SceneBase* SceneManager::FindSceneByType( SceneType& st)
@@ -496,7 +495,7 @@ namespace dtRender
       return NULL;
    }
 
-   SceneBase* SceneManager::FindSceneForActor( DeltaDrawable& dd)
+   SceneBase* SceneManager::FindSceneForDrawable( DeltaDrawable& dd)
    {
       //get the parent and recurse up till we find a scene
       DeltaDrawable* parentNode = dd.GetParent();
@@ -509,13 +508,13 @@ namespace dtRender
          }
          else
          {
-            return FindSceneForActor(*parentNode);
+            return FindSceneForDrawable(*parentNode);
          }
       }
       return NULL;
    }
 
-   const SceneBase* SceneManager::FindSceneForActor( DeltaDrawable& dd) const
+   const SceneBase* SceneManager::FindSceneForDrawable( DeltaDrawable& dd) const
    {
       //get the parent and recurse up till we find a scene
       DeltaDrawable* parentNode = dd.GetParent();
@@ -528,7 +527,7 @@ namespace dtRender
          }
          else
          {
-            return FindSceneForActor(*parentNode);
+            return FindSceneForDrawable(*parentNode);
          }
       }
       return NULL;
@@ -557,11 +556,11 @@ namespace dtRender
       {
          //setup default main scene camera      
          //TODO - WHY Doesnt this work??
-         if (GetGameActorProxy().IsInGM())
+         if (GetOwner()->IsInGM())
          {
-            mImpl->mSceneCamera = GetGameActorProxy().GetGameManager()->GetApplication().GetCamera();
+            mImpl->mSceneCamera = GetGameManager()->GetApplication().GetCamera();
          }
-         else if (GetGameActorProxy().IsInSTAGE())
+         else if (GetOwner()->IsInSTAGE())
          {
             mImpl->mSceneCamera =  dtABC::Application::GetInstance("Application")->GetCamera();
          }
@@ -667,11 +666,8 @@ namespace dtRender
       return mImpl->mEnableHDR;
    }
 
-   void SceneManager::BuildActorComponents()
+   void SceneManager::PostComponentInit()
    {
-      BaseClass::BuildActorComponents();
-      AddComponent(*new UniformActComp());
-
       //create all default scene uniforms
       InitUniforms();
 
@@ -760,7 +756,7 @@ namespace dtRender
       mImpl->mUniforms->mMainCameraInverseModelViewProjectionMatrix = ss->getOrCreateUniform(UNIFORM_MAIN_CAMERA_INVERSE_MODELVIEWPROJECTION, osg::Uniform::FLOAT_MAT4);
 
 
-      UniformActComp* actComp = GetComponent<UniformActComp>();
+      UniformActComp* actComp = GetOwner()->GetComponent<UniformActComp>();
       if(actComp != NULL)
       {
          actComp->AddParameter(*(mImpl->mUniforms->mScreenWidth));
@@ -866,16 +862,16 @@ namespace dtRender
 
 
    /////////////////////////////////////////////////////////////
-   //proxy
-   SceneManagerProxy::SceneManagerProxy()
+   // actor
+   SceneManagerActor::SceneManagerActor()
    {
    }
 
-   SceneManagerProxy::~SceneManagerProxy()
+   SceneManagerActor::~SceneManagerActor()
    {
    }
 
-   void SceneManagerProxy::BuildPropertyMap()
+   void SceneManagerActor::BuildPropertyMap()
    {
       dtGame::GameActorProxy::BuildPropertyMap();
 
@@ -892,7 +888,14 @@ namespace dtRender
 
    }
 
-   void SceneManagerProxy::CreateDrawable()
+   void SceneManagerActor::BuildActorComponents()
+   {
+      BaseClass::BuildActorComponents();
+      AddComponent(*new UniformActComp());
+      GetDrawable<SceneManager>()->PostComponentInit();
+   }
+
+   void SceneManagerActor::CreateDrawable()
    {
       dtCore::RefPtr<SceneManager> scene = new SceneManager(*this);
       SetDrawable(*scene);

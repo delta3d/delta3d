@@ -63,11 +63,11 @@ namespace dtRender
       VideoSceneImpl* mImpl;
    };
 
-   class DT_RENDER_EXPORT VideoSceneProxy : public dtCore::BaseActorObject
+   class DT_RENDER_EXPORT VideoSceneActor : public dtCore::BaseActorObject
    {
    public:
       typedef dtCore::BaseActorObject BaseClass;
-      VideoSceneProxy();
+      VideoSceneActor();
 
       virtual void BuildPropertyMap();
       virtual void CreateDrawable();
@@ -75,7 +75,7 @@ namespace dtRender
       virtual bool IsPlaceable() const;
 
    protected:
-      virtual ~VideoSceneProxy();
+      virtual ~VideoSceneActor();
    };
 
 }

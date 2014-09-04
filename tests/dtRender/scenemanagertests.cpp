@@ -174,7 +174,7 @@ namespace dtRender
       //now create some scenes
       
       //PRE RENDER SCENE
-      dtCore::RefPtr<SimpleSceneProxy> simpleScenePreRender;
+      dtCore::RefPtr<SimpleSceneActor> simpleScenePreRender;
       mGameManager->CreateActor(*RenderActorRegistry::SIMPLE_SCENE_ACTOR_TYPE, simpleScenePreRender);
 
       CPPUNIT_ASSERT_MESSAGE("The proxies should not be NULL.", simpleScenePreRender.valid());
@@ -196,7 +196,7 @@ namespace dtRender
 
 
       //POST RENDER SCENE
-      dtCore::RefPtr<SimpleSceneProxy> simpleScenePostRender;
+      dtCore::RefPtr<SimpleSceneActor> simpleScenePostRender;
       mGameManager->CreateActor(*RenderActorRegistry::SIMPLE_SCENE_ACTOR_TYPE, simpleScenePostRender);
 
       CPPUNIT_ASSERT_MESSAGE("The proxies should not be NULL.", simpleScenePostRender.valid());
@@ -352,7 +352,7 @@ namespace dtRender
       dtCore::RefPtr<dtCore::Light> light4 = new dtCore::InfiniteLight(4);
 
       {
-         dtCore::RefPtr<SimpleSceneProxy> proxy;
+         dtCore::RefPtr<SimpleSceneActor> proxy;
 
          //trying to push a non child scene on the stack should not work
          SceneGroup* sg = mSceneManager->GetSceneGroup(SceneEnum::PRE_RENDER);
@@ -497,7 +497,7 @@ namespace dtRender
       dtCore::RefPtr<dtCore::Light> light7 = new dtCore::InfiniteLight(7);
 
       {
-         dtCore::RefPtr<SimpleSceneProxy> proxy;
+         dtCore::RefPtr<SimpleSceneActor> proxy;
 
          //trying to push a non child scene on the stack should not work
          SceneGroup* sg = mSceneManager->GetSceneGroup(SceneEnum::PRE_RENDER);
@@ -573,14 +573,14 @@ namespace dtRender
          }
 
          {
-            SceneBase* sceneForLight7 = mSceneManager->FindSceneForActor(*light7);
-            SceneBase* sceneForLight6 = mSceneManager->FindSceneForActor(*light6);
-            SceneBase* sceneForLight5 = mSceneManager->FindSceneForActor(*light5);
-            SceneBase* sceneForLight4 = mSceneManager->FindSceneForActor(*light4);
-            SceneBase* sceneForLight3 = mSceneManager->FindSceneForActor(*light3);
-            SceneBase* sceneForLight2 = mSceneManager->FindSceneForActor(*light2);
-            SceneBase* sceneForLight1 = mSceneManager->FindSceneForActor(*light1);
-            SceneBase* sceneForLight0 = mSceneManager->FindSceneForActor(*light0);
+            SceneBase* sceneForLight7 = mSceneManager->FindSceneForDrawable(*light7);
+            SceneBase* sceneForLight6 = mSceneManager->FindSceneForDrawable(*light6);
+            SceneBase* sceneForLight5 = mSceneManager->FindSceneForDrawable(*light5);
+            SceneBase* sceneForLight4 = mSceneManager->FindSceneForDrawable(*light4);
+            SceneBase* sceneForLight3 = mSceneManager->FindSceneForDrawable(*light3);
+            SceneBase* sceneForLight2 = mSceneManager->FindSceneForDrawable(*light2);
+            SceneBase* sceneForLight1 = mSceneManager->FindSceneForDrawable(*light1);
+            SceneBase* sceneForLight0 = mSceneManager->FindSceneForDrawable(*light0);
 
             CPPUNIT_ASSERT_EQUAL_MESSAGE("drawable should match scene added to", sceneForLight0,(SceneBase*) ss4);
             CPPUNIT_ASSERT_EQUAL_MESSAGE("drawable should match scene added to", sceneForLight1,(SceneBase*) ss7);
@@ -622,7 +622,7 @@ namespace dtRender
    /////////////////////////////////////////////////////////
    SimpleScene* SceneManagerTests::CreateSimpleScene(SceneEnum& se, RenderOrder ro)
    {
-      dtCore::RefPtr<SimpleSceneProxy> proxy;
+      dtCore::RefPtr<SimpleSceneActor> proxy;
 
       //first check the existing number of children
       SceneGroup* sg = mSceneManager->GetSceneGroup(se);

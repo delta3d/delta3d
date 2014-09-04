@@ -181,7 +181,7 @@ namespace dtRender
             dtCore::RefPtr<osg::Geode> gQuad = new osg::Geode();
             gQuad->addDrawable(createSquare());
             mImpl->mVideoScene->addChild(gQuad);
-            sm.GetMatrixNode()->addChild(mImpl->mVideoScene);
+            sm.GetOSGNode()->asGroup()->addChild(mImpl->mVideoScene);
 
             // setup texture which will hold the video file
             mImpl->mVideoTexture = new osg::Texture2D();
@@ -233,20 +233,20 @@ namespace dtRender
 
 
    //proxy
-   VideoSceneProxy::VideoSceneProxy()
+   VideoSceneActor::VideoSceneActor()
    {
    }
 
-   VideoSceneProxy::~VideoSceneProxy()
+   VideoSceneActor::~VideoSceneActor()
    {
    }
 
-   void VideoSceneProxy::BuildPropertyMap()
+   void VideoSceneActor::BuildPropertyMap()
    {
       BaseClass::BuildPropertyMap();
 
       std::string group("VideoScene");
-      typedef dtCore::PropertyRegHelper<VideoSceneProxy&, VideoScene> PropRegHelperType;
+      typedef dtCore::PropertyRegHelper<VideoSceneActor&, VideoScene> PropRegHelperType;
       PropRegHelperType propRegHelper(*this, GetDrawable<VideoScene>(), group);
 
       DT_REGISTER_PROPERTY_WITH_NAME_AND_LABEL(VideoFile, "VideoFile", "Video File",
@@ -259,14 +259,14 @@ namespace dtRender
 
    }
 
-   void VideoSceneProxy::CreateDrawable()
+   void VideoSceneActor::CreateDrawable()
    {
       dtCore::RefPtr<VideoScene> es = new VideoScene();
 
       SetDrawable(*es);
    }
 
-   bool VideoSceneProxy::IsPlaceable() const
+   bool VideoSceneActor::IsPlaceable() const
    {
       return false;
    }

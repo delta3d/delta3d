@@ -121,22 +121,22 @@ namespace dtRender
    ////////////////////////////////////////////////////////////////////////////
    void RenderActorRegistry::RegisterActorTypes()
    {
-      mActorFactory->RegisterType<CubeMapSceneProxy>(CUBEMAP_SCENE_ACTOR_TYPE.get());
+      mActorFactory->RegisterType<CubeMapSceneActor>(CUBEMAP_SCENE_ACTOR_TYPE.get());
       mActorFactory->RegisterType<DynamicLight>(DYNAMIC_LIGHT_ACTOR_TYPE.get());
-      mActorFactory->RegisterType<DOFSceneProxy>(DOF_SCENE_ACTOR_TYPE.get());
-      mActorFactory->RegisterType<EphemerisSceneProxy>(EPHEMERIS_SCENE_ACTOR_TYPE.get());
-      mActorFactory->RegisterType<GUISceneProxy>(GUI_SCENE_ACTOR_TYPE.get());
-      mActorFactory->RegisterType<GlowSceneProxy>(GLOW_SCENE_ACTOR_TYPE.get());
-      mActorFactory->RegisterType<HDRSceneProxy>(HDR_SCENE_ACTOR_TYPE.get());
-      mActorFactory->RegisterType<LightSceneProxy>(LIGHT_SCENE_ACTOR_TYPE.get());
+      mActorFactory->RegisterType<DOFSceneActor>(DOF_SCENE_ACTOR_TYPE.get());
+      mActorFactory->RegisterType<EphemerisSceneActor>(EPHEMERIS_SCENE_ACTOR_TYPE.get());
+      mActorFactory->RegisterType<GUISceneActor>(GUI_SCENE_ACTOR_TYPE.get());
+      mActorFactory->RegisterType<GlowSceneActor>(GLOW_SCENE_ACTOR_TYPE.get());
+      mActorFactory->RegisterType<HDRSceneActor>(HDR_SCENE_ACTOR_TYPE.get());
+      mActorFactory->RegisterType<LightSceneActor>(LIGHT_SCENE_ACTOR_TYPE.get());
       
-      mActorFactory->RegisterType<MultipassSceneProxy>(MULTIPASS_SCENE_ACTOR_TYPE.get());
-      mActorFactory->RegisterType<OceanSceneProxy>(OCEAN_SCENE_ACTOR_TYPE.get());
-      mActorFactory->RegisterType<SceneManagerProxy>(SCENE_MANAGER_ACTOR_TYPE.get());
-      mActorFactory->RegisterType<ShadowSceneProxy>(SHADOW_SCENE_ACTOR_TYPE.get());
-      mActorFactory->RegisterType<SimpleSceneProxy>(SIMPLE_SCENE_ACTOR_TYPE.get());
+      mActorFactory->RegisterType<MultipassSceneActor>(MULTIPASS_SCENE_ACTOR_TYPE.get());
+      mActorFactory->RegisterType<OceanSceneActor>(OCEAN_SCENE_ACTOR_TYPE.get());
+      mActorFactory->RegisterType<SceneManagerActor>(SCENE_MANAGER_ACTOR_TYPE.get());
+      mActorFactory->RegisterType<ShadowSceneActor>(SHADOW_SCENE_ACTOR_TYPE.get());
+      mActorFactory->RegisterType<SimpleSceneActor>(SIMPLE_SCENE_ACTOR_TYPE.get());
       mActorFactory->RegisterType<SpotLight>(SPOT_LIGHT_ACTOR_TYPE.get());
-      mActorFactory->RegisterType<SSAOSceneProxy>(SSAO_SCENE_ACTOR_TYPE.get());
-      mActorFactory->RegisterType<VideoSceneProxy>(VIDEO_SCENE_ACTOR_TYPE.get());
+      mActorFactory->RegisterType<SSAOSceneActor>(SSAO_SCENE_ACTOR_TYPE.get());
+      mActorFactory->RegisterType<VideoSceneActor>(VIDEO_SCENE_ACTOR_TYPE.get());
    }
 }

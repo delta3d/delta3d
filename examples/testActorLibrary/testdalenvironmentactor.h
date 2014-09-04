@@ -36,6 +36,7 @@
 class DT_PLUGIN_EXPORT TestDALEnvironmentActor : public dtCore::IEnvironmentActor, public dtCore::DeltaDrawable
 {
    public:
+      DT_DECLARE_VIRTUAL_REF_INTERFACE_INLINE
 
       /// Constructor
       TestDALEnvironmentActor();

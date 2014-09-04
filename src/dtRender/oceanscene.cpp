@@ -172,27 +172,27 @@ namespace dtRender
    }
 
 
-   OceanSceneProxy::OceanSceneProxy()
+   OceanSceneActor::OceanSceneActor()
    {
    }
 
-   OceanSceneProxy::~OceanSceneProxy()
+   OceanSceneActor::~OceanSceneActor()
    {
    }
 
-   void OceanSceneProxy::BuildPropertyMap()
+   void OceanSceneActor::BuildPropertyMap()
    {
       BaseClass::BuildPropertyMap();
 
    }
 
-   void OceanSceneProxy::CreateDrawable()
+   void OceanSceneActor::CreateDrawable()
    {
       dtCore::RefPtr<OceanScene> es = new OceanScene();
       SetDrawable(*es);
    }
 
-   bool OceanSceneProxy::IsPlaceable() const
+   bool OceanSceneActor::IsPlaceable() const
    {
       return false;
    }

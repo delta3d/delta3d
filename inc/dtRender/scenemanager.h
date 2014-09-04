@@ -1,23 +1,23 @@
 /* -*-c++-*-
-* Delta3D Open Source Game and Simulation Engine
-* Copyright (C) 2014, Caper Holdings, LLC
-*
-* This library is free software; you can redistribute it and/or modify it under
-* the terms of the GNU Lesser General Public License as published by the Free
-* Software Foundation; either version 2.1 of the License, or (at your option)
-* any later version.
-*
-* This library is distributed in the hope that it will be useful, but WITHOUT
-* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-* FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
-* details.
-*
-* You should have received a copy of the GNU Lesser General Public License
-* along with this library; if not, write to the Free Software Foundation, Inc.,
-* 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-*
-* Bradley Anderegg
-*/
+ * Delta3D Open Source Game and Simulation Engine
+ * Copyright (C) 2014, Caper Holdings, LLC
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ *
+ * Bradley Anderegg
+ */
 #ifndef DELTA_SCENEMANAGER_H
 #define DELTA_SCENEMANAGER_H
 
@@ -66,17 +66,17 @@ namespace dtRender
 
       static const dtUtil::RefString UNIFORM_NEAR_PLANE;
       static const dtUtil::RefString UNIFORM_FAR_PLANE;
-      
+
       static const dtUtil::RefString UNIFORM_FRAME_TIME;
       static const dtUtil::RefString UNIFORM_ELAPSED_TIME;
 
       static const dtUtil::RefString UNIFORM_GAMMA;
       static const dtUtil::RefString UNIFORM_BRIGHTNESS;
       static const dtUtil::RefString UNIFORM_EXPOSURE;
-      
+
       static const dtUtil::RefString UNIFORM_SCENE_LUMINANCE;
       static const dtUtil::RefString UNIFORM_SCENE_AMBIENCE;
-      
+
 
    public:
       SceneManager(dtGame::GameActorProxy& parent);
@@ -84,67 +84,67 @@ namespace dtRender
 
       SceneGroup* GetSceneGroup(SceneEnum&);
       const SceneGroup* GetSceneGroup(SceneEnum&) const;
-      
+
       /**
-      * Searches the scene for the first found scene of said type
-      * @return NULL if the scene type cannot be found.
-      */
+       * Searches the scene for the first found scene of said type
+       * @return NULL if the scene type cannot be found.
+       */
       SceneBase* FindSceneByType(SceneType&);
       const SceneBase* FindSceneByType(SceneType&) const;
-      
+
       /***
-      * Fills a vector with all scenes of the specified type.
-      */
+       * Fills a vector with all scenes of the specified type.
+       */
       void GetAllScenesByType(SceneType&, std::vector<SceneBase*>&);
 
 
       /**
-      * Searches for the scene containing the specified actor
-      * @return NULL if the actor cannot be found.
-      */
-      SceneBase* FindSceneForActor(DeltaDrawable&);
-      const SceneBase* FindSceneForActor(DeltaDrawable&) const;      
+       * Searches for the scene containing the specified actor
+       * @return NULL if the actor cannot be found.
+       */
+      SceneBase* FindSceneForDrawable(DeltaDrawable&);
+      const SceneBase* FindSceneForDrawable(DeltaDrawable&) const;
 
       /**
-      *  If the scene stack is not empty, new drawables will be added
-      *     to the top of that being the result of GetCurrentScene().
-      *     The scene should already be added before pushing it on the stack.
-      **/
+       *  If the scene stack is not empty, new drawables will be added
+       *     to the top of that being the result of GetCurrentScene().
+       *     The scene should already be added before pushing it on the stack.
+       **/
       void PushScene(SceneBase&);
       void PopScene();
 
       /***
-      *  @return the top of the scene stack
-      */
+       *  @return the top of the scene stack
+       */
       SceneBase* GetCurrentScene();
 
       const GraphicsQuality& GetGraphicsQuality() const;
       void SetGraphicsQuality(GraphicsQuality&);
 
       /***
-      * Use this setting to disable multipass effects
-      */
+       * Use this setting to disable multipass effects
+       */
       void SetEnableMultipass(bool);
       bool GetEnableMultipass() const;
 
       /***
-      *  Setting this disables color clamping on the entire scene
-      *     as well as scales the lighting values.
-      */
+       *  Setting this disables color clamping on the entire scene
+       *     as well as scales the lighting values.
+       */
       void SetEnableHDR(bool);
       bool GetEnableHDR() const;
 
       /***
-      *  Exposes the main scene camera.
-      *
-      */
+       *  Exposes the main scene camera.
+       *
+       */
       void SetSceneCamera(dtCore::Camera*);
       dtCore::Camera* GetSceneCamera();
       const dtCore::Camera* GetSceneCamera() const;
 
       /***
-      *  These are uniforms which effect the shading
-      */
+       *  These are uniforms which effect the shading
+       */
       float GetGamma() const;
       void SetGamma(float );
 
@@ -167,7 +167,7 @@ namespace dtRender
       virtual bool ContainsActor(dtCore::DeltaDrawable& dd) const;
 
       virtual void GetAllActors(std::vector<dtCore::DeltaDrawable*>& vec);
-      
+
       virtual unsigned int GetNumEnvironmentChildren() const;
       //dtCore IEnvironment Interface end
 
@@ -179,8 +179,7 @@ namespace dtRender
       void CreateDefaultScene();
       void CreateDefaultMultipassScene();
 
-   protected:
-      /*virtual*/ void BuildActorComponents();
+      virtual void PostComponentInit();
    private:
       virtual void AddScene(SceneBase&);
       void InitUniforms();
@@ -193,17 +192,18 @@ namespace dtRender
    };
 
 
-   class DT_RENDER_EXPORT SceneManagerProxy : public dtGame::IEnvGameActorProxy
+   class DT_RENDER_EXPORT SceneManagerActor : public dtGame::IEnvGameActorProxy
    {
    public:
       typedef dtGame::IEnvGameActorProxy BaseClass;
-      SceneManagerProxy();
+      SceneManagerActor();
 
-     virtual void BuildPropertyMap();
-     virtual void CreateDrawable();
+      virtual void BuildPropertyMap();
+      virtual void BuildActorComponents();
+      virtual void CreateDrawable();
 
    protected:
-      virtual ~SceneManagerProxy();
+      virtual ~SceneManagerActor();
    };
 }
 
