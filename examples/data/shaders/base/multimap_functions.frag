@@ -95,7 +95,7 @@ void computeLightContrib_SunMoon(inout FragParams fp, inout EffectParams ep)
    
 }
 
-vec4 computeMultiMapColor(MapParams mp, inout FragParams fp, inout EffectParams ep)
+void computeMultiMapColor(MapParams mp, inout FragParams fp, inout EffectParams ep)
 {
    vec2 uv = gl_TexCoord[0].xy;
    
@@ -114,8 +114,7 @@ vec4 computeMultiMapColor(MapParams mp, inout FragParams fp, inout EffectParams 
    vec3 viewDir = normalize(fp.viewDir);
    
    ep.colorContrib = diffuseColor * fp.color;
-   vec3 color = ep.colorContrib.rgb;
-
+   
    // Compute the Light & Spec Contribution
    computeLightContrib_SunMoon(fp, ep);
 
@@ -135,26 +134,16 @@ vec4 computeMultiMapColor(MapParams mp, inout FragParams fp, inout EffectParams 
    vec3 reflectCubeMap = sampleCubeMapReflection(fp.pos, fp.cameraPos, fp.worldNormal);
    ep.envContrib = vec4(reflectCubeMap, reflectContrib); 
    ep.envContrib *= mp.specular;
-   color = mix(ep.lightContrib * color, reflectCubeMap, minLightSpec);
-
+   
    // Don't apply specular greater than the light contrib or objects will glow in the dark...
    ep.specContrib.a *= specColor.a;
    float specLevel = ep.specContrib.a;
    ep.specContrib.rgb = ep.lightContrib * specColor.rgb * specLevel;
    ep.illumContrib.rgb += fp.sceneLuminance * illumColor.rgb;
-   color += min(ep.specContrib.rgb, ep.lightContrib.rgb) + illumColor.rgb;
    
    // Apply Fog 
    float dist = length(fp.pos - fp.cameraPos);
    float fogAmt = computeExpFog(dist);
    ep.fogContrib = vec4(gl_Fog.color.rgb, fogAmt);
    
-   vec4 result;
-   //result.rgb = mix(ep.fogContrib.rgb, color, fogAmt);
-   
-   // Comput final alpha.
-   result.rgb = color;
-   result.a = max(specLevel, diffuseColor.a);
-   
-   return result;
 }

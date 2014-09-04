@@ -55,7 +55,7 @@ struct MapParams
 
 
 // External Functions
-vec4 computeMultiMapColor(MapParams m, inout FragParams f, inout EffectParams e);
+void computeMultiMapColor(MapParams m, inout FragParams f, inout EffectParams e);
 
 
 
