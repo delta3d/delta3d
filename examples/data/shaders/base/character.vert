@@ -17,6 +17,7 @@ varying vec3 vPos;
 varying vec3 vCamera;
 varying vec3 vViewDir;
 varying vec3 vLightDir;
+varying vec3 vLightDir2;
 
 attribute vec4 boneWeights;
 attribute vec4 boneIndices;
@@ -82,6 +83,7 @@ void main(void)
    vViewDir = vPos / ecPosition.w;
    
    vLightDir = normalize(inverseView3x3 * gl_LightSource[0].position.xyz);
+   vLightDir2 = normalize(inverseView3x3 * gl_LightSource[1].position.xyz);
    
    vCamera = osg_ViewMatrixInverse[3].xyz;
 }
