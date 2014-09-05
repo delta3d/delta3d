@@ -370,6 +370,70 @@
       </parameter>
     </shader>
   </shadergroup>
+   
+   <shadergroup name="Particles">
+      <shader name="Particles" default="yes">
+         <source type="Vertex">shaders/lighting/dynamic_light_functions.frag</source>
+         <source type="Vertex">shaders/base/vertex_functions.vert</source>
+         <source type="Fragment">shaders/base/fragment_functions.frag</source>
+         <source type="Vertex">shaders/base/particle_non_emissive.vert</source>
+         <source type="Fragment">shaders/base/particle_non_emissive.frag</source>
+      </shader>
+   </shadergroup>
+
+   <shadergroup name="ParticlesEmissive">
+      <shader name="ParticlesEmissive" default="yes">
+         <source type="Vertex">shaders/lighting/dynamic_light_functions.frag</source>
+         <source type="Vertex">shaders/base/vertex_functions.vert</source>
+         <source type="Fragment">shaders/base/fragment_functions.frag</source>
+         <source type="Vertex">shaders/base/particle_emissive.vert</source>
+         <source type="Fragment">shaders/base/particle_emissive.frag</source>
+      </shader>
+   </shadergroup>
+
+   <shadergroup name="VolumetricParticles">
+      <shader name="VolumetricParticles" default="yes">
+         <source type="Vertex">shaders/lighting/dynamic_light_functions.frag</source>
+         <source type="Vertex">shaders/base/vertex_functions.vert</source>
+         <source type="Fragment">shaders/base/fragment_functions.frag</source>
+         <!--source type="Vertex">shaders/base/particle_non_emissive.vert</source>
+         <source type="Fragment">shaders/base/particle_non_emissive.frag</source-->
+         <source type="Vertex">shaders/base/particle_volume.vert</source>
+         <source type="Fragment">shaders/base/particle_volume.frag</source>
+
+         <parameter name="ScreenDimensions">
+            <vec4 defaultValue="600 600 0 0" />
+         </parameter>
+         <parameter name="volumeParticlePos">
+            <vec4 defaultValue="0 0 0 0" />
+         </parameter>
+         <parameter name="volumeParticleColor">
+            <vec4 defaultValue="1 1 1 1" />
+         </parameter>
+         <parameter name="volumeParticleRadius">
+            <float defaultValue="10" />
+         </parameter>
+         <parameter name="volumeParticleIntensity">
+            <float defaultValue="1" />
+         </parameter>
+         <parameter name="volumeParticleDensity">
+            <float defaultValue="1" />
+         </parameter>
+         <parameter name="volumeParticleVelocity">
+            <float defaultValue="1" />
+         </parameter>
+         <parameter name="volumeParticleNoiseScale">
+            <float defaultValue="1" />
+         </parameter>
+         <parameter name="noiseTexture">
+            <texture2D textureUnit="6">
+               <source type="Image">textures/ShaderBase/Noise.png</source>
+               <wrap axis="S" mode="Repeat"/>
+               <wrap axis="T" mode="Repeat"/>
+            </texture2D>
+         </parameter>
+      </shader>
+   </shadergroup>
 
    <shadergroup name="WaterGroup">
       <shader name="WaterShader" default="yes">
