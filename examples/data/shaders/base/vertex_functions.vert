@@ -31,7 +31,7 @@ void sphereMap(in vec3 eye, in vec3 normal, out vec2 ReflectTexCoord)
    ReflectTexCoord = vec2(r.x/m + 0.5,r.y/m + 0.5);
 }
 
-void lightContribution(vec3 normal, vec3 lightDir, vec3 diffuseLightSource, vec3 ambientLightSource, out vec3 lightContrib)
+void lightContributionVertex(vec3 normal, vec3 lightDir, vec3 diffuseLightSource, vec3 ambientLightSource, out vec3 lightContrib)
 {
    float diffuseSurfaceContrib = max(dot(normal, lightDir),0.0);
    
