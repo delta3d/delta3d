@@ -444,7 +444,7 @@ namespace dtPhysics
          VectorType dimensions = GetExtents();
          bool calcDimensions = GetPrimitiveType().IsSimpleShape() && dimensions[0] <= 0.0f && dimensions[1] <= 0.0f && dimensions[2] <= 0.0f;
 
-         if (nodeToLoad != NULL)
+         if ((calcDimensions || adjustOriginOffsetForGeometry) && nodeToLoad != NULL)
          {
             CalculateBoundsAndOrigin(nodeToLoad, calcDimensions, adjustOriginOffsetForGeometry);
          }
@@ -469,7 +469,7 @@ namespace dtPhysics
          if (nodeToLoad != NULL)
          {
             bool polytope = GetPrimitiveType() == PrimitiveType::CONVEX_HULL;
-            VertexData::GetOrCreateCachedDataForNode(data, nodeToLoad, polytope ? cachingKey + POLYTOPE_SUFFIX : cachingKey, polytope);
+            VertexData::GetOrCreateCachedDataForNode(data, nodeToLoad, polytope && !cachingKey.empty() ? cachingKey + POLYTOPE_SUFFIX : cachingKey, polytope);
 
          }
          else
