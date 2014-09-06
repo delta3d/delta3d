@@ -32,6 +32,18 @@ using namespace dtCore;
 
 namespace dtActors
 {
+   //////////////////////////////////////////////////////////////////////////
+   ParticleSystemActorProxy::ParticleSystemActorProxy()
+   {
+      SetClassName("dtCore::ParticleSystem");
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   ParticleSystemActorProxy::~ParticleSystemActorProxy()
+   {
+   }
+
+   //////////////////////////////////////////////////////////////////////////
    void ParticleSystemActorProxy::CreateDrawable()
    {
       SetDrawable(*new dtCore::ParticleSystem);
@@ -69,6 +81,32 @@ namespace dtActors
       AddProperty(new ResourceActorProperty(DataType::PARTICLE_SYSTEM, "Particle(s) File",
          "particle file", ResourceActorProperty::SetFuncType(this, &ParticleSystemActorProxy::LoadFile),
          "Sets the resource file of this particle system", GROUPNAME));
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   const dtCore::BaseActorObject::RenderMode& ParticleSystemActorProxy::GetRenderMode()
+   {
+      return GetDrawable() != NULL
+         ? dtCore::BaseActorObject::RenderMode::DRAW_ACTOR
+         : dtCore::BaseActorObject::RenderMode::DRAW_BILLBOARD_ICON;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void ParticleSystemActorProxy::LoadFile(const std::string &fileName)
+   {
+      dtCore::ParticleSystem* ps = NULL;
+      GetDrawable(ps);
+
+      if (ps == NULL)
+      {
+         throw dtCore::InvalidActorException(
+         "Actor should be type dtCore::ParticleSystem", __FILE__, __LINE__);
+      }
+
+      if (ps->LoadFile(fileName) == NULL)
+      {
+         LOG_ERROR("Could not load the file" + fileName);
+      }
    }
 
    //////////////////////////////////////////////////////////////////////////
