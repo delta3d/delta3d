@@ -178,4 +178,54 @@ namespace dtCore
       return prop;
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   int ShaderPropertyBuilder::CreateShaderPropertiesForContainer(
+      dtCore::ShaderProgram& shaderProgram, dtCore::PropertyContainer& outPropertyContainer)
+   {
+      int propCount = 0;
+
+      typedef std::vector<dtCore::RefPtr<dtCore::ShaderParameter> > ParamList;
+      ParamList params;
+
+      shaderProgram.GetParameterList(params);
+      if ( ! params.empty())
+      {
+         dtCore::DataType* curType = NULL;
+         dtCore::ShaderParameter* curParam = NULL;
+         ParamList::iterator curIter = params.begin();
+         ParamList::iterator endIter = params.end();
+         for ( ; curIter != endIter; ++curIter)
+         {
+            curParam = curIter->get();
+            curType = GetDataTypeForParam(*curParam);
+
+            if (curType == NULL)
+            {
+               LOG_WARNING("No matching dtCore::DataType for shader parameter \"" +
+                  curParam->GetName() + "\" of type ["
+                  + curParam->GetType().GetName() + "]. Cannot map to appropriate UI control.");
+            }
+            else
+            {
+               std::string propName = curParam->GetName();
+               if (NULL != outPropertyContainer.GetProperty(propName))
+               {
+                  LOG_ERROR("Cannot add shader actor property \"" + propName
+                     + "\" since it conflicts with an existing property of the same name.");
+               }
+               else
+               {
+                  dtCore::RefPtr<dtCore::ActorProperty> prop = CreateShaderProperty(*curParam);
+
+                  outPropertyContainer.AddProperty(prop.get());
+
+                  ++propCount;
+               }
+            }
+         }
+      }
+
+      return propCount;
+   }
+
 }

@@ -23,6 +23,7 @@
 #include <dtCore/export.h>
 #include <dtCore/floatactorproperty.h>
 #include <dtCore/intactorproperty.h>
+#include <dtCore/propertycontainer.h>
 #include <dtCore/refptr.h>
 #include <dtCore/resourceactorproperty.h>
 #include <dtCore/shaderparamfloat.h>
@@ -33,6 +34,7 @@
 #include <dtCore/shaderparamtexture2d.h>
 #include <dtCore/shaderparamtexture3d.h>
 #include <dtCore/shaderparamtexturecubemap.h>
+#include <dtCore/shaderprogram.h>
 #include <dtCore/vectoractorproperties.h>
 #include <dtUtil/log.h>
 #include <dtUtil/refstring.h>
@@ -214,6 +216,8 @@ namespace dtCore
       dtCore::DataType* GetDataTypeForParam(dtCore::ShaderParameter& param);
 
       dtCore::RefPtr<dtCore::ActorProperty> CreateShaderProperty(dtCore::ShaderParameter& param);
+
+      int CreateShaderPropertiesForContainer(dtCore::ShaderProgram& shaderProgram, dtCore::PropertyContainer& outPropertyContainer);
    
    protected:
       virtual ~ShaderPropertyBuilder();
