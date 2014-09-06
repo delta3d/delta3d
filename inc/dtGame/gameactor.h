@@ -126,21 +126,6 @@ namespace dtGame
       virtual void ProcessMessage(const Message& message);
 
       /**
-       * Sets the shader group on the game actor.  This implementation uses
-       * the default shader in the group to shade the game actor.
-       * @param groupName The name of the shader group.
-       */
-      virtual void SetShaderGroup(const std::string& groupName);
-
-      /**
-       * Gets the current shader group assigned to this game actor.
-       * @return The name of the group.
-       */
-      std::string GetShaderGroup() const { return mShaderGroup; }
-
-      virtual void OnShaderGroupChanged();
-
-      /**
        * This value is set automatically by the GM when an actor is created from prototype.
        * @return The prototype that was used to create this actor. Set by the GM.
        */
@@ -244,7 +229,6 @@ namespace dtGame
 
       friend class GameActorProxy;
       dtCore::ObserverPtr<GameActorProxy> mOwner;
-      std::string mShaderGroup;
       dtUtil::Log& mLogger;
    };
 

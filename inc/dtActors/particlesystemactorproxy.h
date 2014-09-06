@@ -40,7 +40,7 @@ namespace dtActors
       /**
        * Constructor
        */
-      ParticleSystemActorProxy() { SetClassName("dtCore::ParticleSystem"); }
+      ParticleSystemActorProxy();
 
       /**
        * Adds the properties that are common to all Delta3D particle system objects.
@@ -51,29 +51,13 @@ namespace dtActors
        * Loads in a particle system file
        * @param fileName The particle system file to load
        */
-      void LoadFile(const std::string &fileName)
-      {
-         dtCore::ParticleSystem* ps = dynamic_cast<dtCore::ParticleSystem*>(GetDrawable());
-         if (!ps)
-         {
-            throw dtCore::InvalidActorException(
-            "Actor should be type dtCore::ParticleSystem", __FILE__, __LINE__);
-         }
-
-         if (!ps->LoadFile(fileName))
-         {
-            LOG_ERROR("Could not load the file" + fileName);
-         }
-      }
+      void LoadFile(const std::string& fileName);
 
       /**
        * Gets the method by which a particle system is rendered.
        * @return dtCore::BaseActorObject::RenderMode::DRAW_BILLBOARD_ICON.
        */
-      virtual const dtCore::BaseActorObject::RenderMode& GetRenderMode()
-      {
-         return dtCore::BaseActorObject::RenderMode::DRAW_BILLBOARD_ICON;
-      }
+      virtual const dtCore::BaseActorObject::RenderMode& GetRenderMode();
 
       /**
        * Gets the billboard used to represent particle systems.
@@ -91,7 +75,7 @@ namespace dtActors
       /**
        * Destructor
        */
-      virtual ~ParticleSystemActorProxy() { }
+      virtual ~ParticleSystemActorProxy();
    };
 }
 

@@ -136,6 +136,8 @@ namespace dtCore
       public:
          typedef std::vector<ParticleLayer> LayerList;
 
+         typedef Transformable BaseClass;
+
          /**
           * Constructor.
           *

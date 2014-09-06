@@ -220,19 +220,6 @@ void GameActorProxy::BuildPropertyMap()
       dtCore::EnumActorProperty<LocalActorUpdatePolicy>::SetFuncType(this, &GameActorProxy::SetLocalActorUpdatePolicy),
       dtCore::EnumActorProperty<LocalActorUpdatePolicy>::GetFuncType(this, &GameActorProxy::GetLocalActorUpdatePolicy),
       PROPERTY_LOCAL_ACTOR_ACCEPT_UPDATE_POLICY_DESC));
-
-   static const dtUtil::RefString PROPERTY_SHADER_GROUP("ShaderGroup");
-   static const dtUtil::RefString PROPERTY_SHADER_GROUP_DESC("Sets the shader group on the game actor.");
-   static const dtUtil::RefString GROUPNAME("ShaderParams");
-
-   GameActor* ga = GetDrawable<GameActor>();
-   if (ga != NULL)
-   {
-      AddProperty(new dtCore::StringActorProperty(PROPERTY_SHADER_GROUP, PROPERTY_SHADER_GROUP,
-         dtCore::StringActorProperty::SetFuncType(ga, &GameActor::SetShaderGroup),
-         dtCore::StringActorProperty::GetFuncType(ga, &GameActor::GetShaderGroup),
-         PROPERTY_SHADER_GROUP_DESC,GROUPNAME));
-   }
 }
 
 /////////////////////////////////////////////////////////////////////////////
