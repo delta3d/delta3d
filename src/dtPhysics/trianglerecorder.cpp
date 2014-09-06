@@ -13,8 +13,10 @@ namespace dtPhysics
    TriangleRecorder::TriangleRecorder()
    : mData(new VertexData)
    , mCurrentMaterial(0)
-   , mMaxEdgeSize(20.0)
-   , mMatrixIsIdentity()
+   , mMaxEdgeLength(20.0)
+   , mSplitCount()
+   , mReuseCount()
+   , mMatrixIsIdentity(true)
    {
    }
 
@@ -25,13 +27,16 @@ namespace dtPhysics
    }
 
    //////////////////////////////////////////////////////
-   void TriangleRecorder::Record(const osg::Node& node, Real maxEdgeSize, MaterialLookupFunc materialLookup)
+   void TriangleRecorder::Record(const osg::Node& node, Real maxEdgeLength, MaterialLookupFunc materialLookup)
    {
       TriangleRecorderVisitor<TriangleRecorder> visitor(materialLookup);
+      if (maxEdgeLength > 0)
+      {
+         mMaxEdgeLength = maxEdgeLength;
+      }
       // sorry about the const cast.  The node SHOULD be const since we aren't changing it
       // but accept doesn't work as const.
       const_cast<osg::Node&>(node).accept(visitor);
-      mMaxEdgeSize = maxEdgeSize;
       mData = visitor.mFunctor.mData;
       visitor.mFunctor.mVertIndexSet.swap(mVertIndexSet);
    }
@@ -116,6 +121,7 @@ namespace dtPhysics
    };
 
    DT_IMPLEMENT_ACCESSOR(TriangleRecorder, dtPhysics::MaterialIndex, CurrentMaterial);
+   DT_IMPLEMENT_ACCESSOR(TriangleRecorder, float, MaxEdgeLength);
 
    //////////////////////////////////////////////////////
    void TriangleRecorder::operator()(const VectorType& v1,
@@ -123,12 +129,13 @@ namespace dtPhysics
             const VectorType& v3,
             bool treatVertexDataAsTemporary)
    {
+      //std::cerr << "New Vertex: " << v1 << "\n" << v2 << "\n" << v3 << std::endl;
       osg::Vec3 tv[3];
       if (mMatrixIsIdentity)
       {
-         tv[0]= v1*mMatrix;
-         tv[1] = v2*mMatrix;
-         tv[2] = v3*mMatrix;
+         tv[0] = v1;
+         tv[1] = v2;
+         tv[2] = v3;
       }
       else
       {
@@ -136,11 +143,12 @@ namespace dtPhysics
          tv[1] = v2*mMatrix;
          tv[2] = v3*mMatrix;
       }
+      //std::cerr << tv[0] << "\n" << tv[1] << "\n" << tv[2] << std::endl;
 
       if (dtUtil::IsFiniteVec(tv[0]) && dtUtil::IsFiniteVec(tv[1]) && dtUtil::IsFiniteVec(tv[2]))
       {
          std::vector<Triangle> mTriangles;
-         Triangle initial(tv[0], tv[1], tv[0]);
+         Triangle initial(tv[0], tv[1], tv[2]);
 
          mTriangles.push_back(initial);
 
@@ -149,31 +157,34 @@ namespace dtPhysics
          for (size_t i = 0; i < mTriangles.size(); ++i)
          {
             Triangle t = mTriangles[i];
-            while (t.SplitIf(20.0f, newT))
+            while (t.SplitIf(mMaxEdgeLength, newT))
             {
                mTriangles.push_back(newT);
+               ++mSplitCount;
             }
-
             mTriangles[i] = t;
 
-            VertexMap::iterator vertIters[3];
-            int indices[3];
-            for (unsigned j = 0; j < 2; ++j)
+            VertexMap::iterator vertIter;
+            int index = 0;
+            for (unsigned j = 0; j < 3; ++j)
             {
-               vertIters[j] = mVertIndexSet.find(mTriangles[i].mV[j]);
+               vertIter = mVertIndexSet.find(t.mV[j]);
 
-               if(vertIters[j] != mVertIndexSet.end())
+               if(vertIter != mVertIndexSet.end())
                {
-                  indices[j] = (*vertIters[j]).second;
+                  index = (*vertIter).second;
+                  ++mReuseCount;
                }
                else
                {
-                  indices[j] = mData->mVertices.size();
-                  mData->mVertices.push_back(mTriangles[i].mV[j]);
-                  mVertIndexSet.insert(std::make_pair(mTriangles[i].mV[j], indices[j]));
+                  index = mData->mVertices.size();
+                  mData->mVertices.push_back(t.mV[j]);
+                  mVertIndexSet.insert(std::make_pair(t.mV[j], index));
                }
-               mData->mIndices.push_back(indices[j]);
+               mData->mIndices.push_back(index);
+               //std::cerr << mData->mVertices[index] << "\n";
             }
+            //std::cerr << std::endl;
          }
 
          mData->mMaterialFlags.push_back(mCurrentMaterial);
