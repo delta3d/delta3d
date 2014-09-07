@@ -104,9 +104,6 @@ namespace dtGame
        */
       virtual void OnTickLocal(const TickMessage& tickMessage);
 
-      ///Deprecated, override the one that takes a TickMessage;
-      DEPRECATE_FUNC virtual void TickLocal(const Message& tickMessage);
-
       /**
        * Method for handling remote ticks.  This will called by the "Tick Remote" invokable
        * This is designed to be registered to receive TICK_REMOTE messages, but that registration is not done
@@ -115,9 +112,6 @@ namespace dtGame
        * @param tickMessage the actual message
        */
       virtual void OnTickRemote(const TickMessage& tickMessage);
-
-      ///Deprecated, override the one that takes a TickMessage;
-      DEPRECATE_FUNC virtual void TickRemote(const Message& tickMessage);
 
       /**
        * This is going away.  It is still the default for the invokable, but
