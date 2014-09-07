@@ -29,6 +29,11 @@
 
 #include <string>
 
+namespace osg
+{
+   class LightSource;
+}
+
 namespace dtRender
 {
    class EphemerisImpl;
@@ -56,6 +61,7 @@ namespace dtRender
       virtual const osg::Group* GetSceneNode() const;
 
       osg::Vec3d GetSunPosition() const;
+      osg::Vec3d GetMoonPosition() const;
 
       virtual void SetLatitudeLongitude(float latitude, float longitude);
 
@@ -81,6 +87,9 @@ namespace dtRender
 
       void SetVisibility( float distance );
       float GetVisibility ();
+
+      osg::LightSource* GetLightSource();
+      const osg::LightSource* GetLightSource() const;
 
    protected:
       virtual void OnTimeChanged();
