@@ -63,7 +63,7 @@
 #include <dtActors/buildingactor.h>
 #include <dtActors/watergridactor.h>
 #include <dtActors/triggervolumeactorproxy.h>
-#include <dtActors/directoractorproxy.h>
+#include <dtActors/directoractor.h>
 #include <dtActors/positiondataactor.h>
 
 namespace dtActors
@@ -203,7 +203,7 @@ namespace dtActors
       mActorFactory->RegisterType<BuildingActorProxy>(BUILDING_ACTOR_TYPE.get());
       mActorFactory->RegisterType<WaterGridActorProxy>(WATER_GRID_ACTOR_TYPE.get());
       mActorFactory->RegisterType<TriggerVolumeActorProxy>(TRIGGER_VOLUME_ACTOR_TYPE.get());
-      mActorFactory->RegisterType<DirectorActorProxy>(DIRECTOR_ACTOR_TYPE.get());
+      mActorFactory->RegisterType<DirectorActor>(DIRECTOR_ACTOR_TYPE.get());
       mActorFactory->RegisterType<PositionDataActorProxy>(POSITION_DATA_ACTOR_TYPE.get());
 
       // Base Game Mesh actor - typically subclassed (maybe shouldn't even be registered)
