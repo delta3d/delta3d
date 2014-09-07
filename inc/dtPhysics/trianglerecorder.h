@@ -52,7 +52,7 @@ namespace dtPhysics
           * @param materialLookup A functor to use map the descriptions in the nodes to physics material id's.  It will store this
           *                       data on the triangles.
           */
-         void Record(const osg::Node& node, Real maxEdgeSize = 20.0, MaterialLookupFunc materialLookup = MaterialLookupFunc());
+         void Record(const osg::Node& node, Real maxEdgeLength = -1, MaterialLookupFunc materialLookup = MaterialLookupFunc());
 
          typedef std::map<osg::Vec3, int> VertexMap;
 
@@ -63,6 +63,7 @@ namespace dtPhysics
          void SetMatrix(const MatrixType& m);
 
          DT_DECLARE_ACCESSOR(dtPhysics::MaterialIndex, CurrentMaterial);
+         DT_DECLARE_ACCESSOR(float, MaxEdgeLength);
 
          /**
           * Called once for each visited triangle.
@@ -79,7 +80,8 @@ namespace dtPhysics
                   bool treatVertexDataAsTemporary);
       private:
          MatrixType mMatrix;
-         Real mMaxEdgeSize;
+         int mSplitCount;
+         int mReuseCount;
          bool mMatrixIsIdentity;
    };
 
