@@ -1700,8 +1700,11 @@ namespace dtEditQt
 #ifdef DELTA_WIN32
          pluginPath = QCoreApplication::applicationDirPath().toStdString() + "/stplugins";
 #else
-         // 64bit linux should probably look in ../lib64, hmm.  Maybe it should be compiled in from cmake.
          pluginPath = QCoreApplication::applicationDirPath().toStdString() + "/../lib/stplugins";
+         if (!dtUtil::FileUtils::GetInstance().DirExists(pluginPath))
+         {
+            pluginPath = QCoreApplication::applicationDirPath().toStdString() + "/../PlugIns/stplugins";
+         }
 #endif
       }
 
