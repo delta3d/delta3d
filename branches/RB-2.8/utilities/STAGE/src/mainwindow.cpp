@@ -545,37 +545,38 @@ namespace dtEditQt
       const bool hasCurrentMap = (EditorData::GetInstance().getCurrentMap() != NULL);
       const bool hasBoth       = hasProject && hasCurrentMap;
 
-      EditorActions::GetInstance().mActionFileNewMap->setEnabled(hasProject);
-      EditorActions::GetInstance().mActionFileOpenMap->setEnabled(hasProject);
-      EditorActions::GetInstance().mActionFileCloseMap->setEnabled(hasBoth);
-      EditorActions::GetInstance().mActionFileSaveMap->setEnabled(hasBoth);
-      EditorActions::GetInstance().mActionFileSaveMapAs->setEnabled(hasBoth);
-      EditorActions::GetInstance().mActionFileExportPrefab->setEnabled(false);
-      EditorActions::GetInstance().mActionFileExit->setEnabled(true);
+      EditorActions& ea = EditorActions::GetInstance();
+      ea.mActionFileNewMap->setEnabled(hasProject);
+      ea.mActionFileOpenMap->setEnabled(hasProject);
+      ea.mActionFileCloseMap->setEnabled(hasBoth);
+      ea.mActionFileSaveMap->setEnabled(hasBoth);
+      ea.mActionFileSaveMapAs->setEnabled(hasBoth);
+      ea.mActionFileExportPrefab->setEnabled(false);
+      ea.mActionFileExit->setEnabled(true);
 
-      EditorActions::GetInstance().mActionGroupActors->setEnabled(false);
-      EditorActions::GetInstance().mActionUngroupActors->setEnabled(false);
-      EditorActions::GetInstance().mActionEditDuplicateActor->setEnabled(false);
-      EditorActions::GetInstance().mActionEditDeleteActor->setEnabled(false);
-      EditorActions::GetInstance().mActionEditGotoActor->setEnabled(false);
-      EditorActions::GetInstance().mActionEditGroundClampActors->setEnabled(false);
-      EditorActions::GetInstance().mActionEditMapProperties->setEnabled(hasBoth);
-      EditorActions::GetInstance().mActionEditMapLibraries->setEnabled(hasBoth);
-      EditorActions::GetInstance().mActionEditTaskEditor->setEnabled(hasBoth);
-      EditorActions::GetInstance().mActionEditMapEvents->setEnabled(hasBoth);
-      EditorActions::GetInstance().mActionEditResetTranslation->setEnabled(false);
-      EditorActions::GetInstance().mActionEditResetRotation->setEnabled(false);
-      EditorActions::GetInstance().mActionEditResetScale->setEnabled(false);
+      ea.mActionGroupActors->setEnabled(false);
+      ea.mActionUngroupActors->setEnabled(false);
+      ea.mActionEditDuplicateActor->setEnabled(false);
+      ea.mActionEditDeleteActor->setEnabled(false);
+      ea.mActionEditGotoActor->setEnabled(false);
+      ea.mActionEditGroundClampActors->setEnabled(false);
+      ea.mActionEditMapProperties->setEnabled(hasBoth);
+      ea.mActionEditMapLibraries->setEnabled(hasBoth);
+      ea.mActionEditTaskEditor->setEnabled(hasBoth);
+      ea.mActionEditMapEvents->setEnabled(hasBoth);
+      ea.mActionEditResetTranslation->setEnabled(false);
+      ea.mActionEditResetRotation->setEnabled(false);
+      ea.mActionEditResetScale->setEnabled(false);
 
-      EditorActions::GetInstance().mActionWindowsActor->setEnabled(hasBoth);
-      EditorActions::GetInstance().mActionWindowsActorSearch->setEnabled(hasBoth);
-      EditorActions::GetInstance().mActionWindowsPropertyEditor->setEnabled(hasBoth);
-      EditorActions::GetInstance().mActionWindowsResourceBrowser->setEnabled(hasBoth);
-      EditorActions::GetInstance().mActionWindowsResetWindows->setEnabled(true);
+      ea.mActionWindowsActor->setEnabled(hasBoth);
+      ea.mActionWindowsActorSearch->setEnabled(hasBoth);
+      ea.mActionWindowsPropertyEditor->setEnabled(hasBoth);
+      ea.mActionWindowsResourceBrowser->setEnabled(hasBoth);
+      ea.mActionWindowsResetWindows->setEnabled(true);
 
-      EditorActions::GetInstance().mActionHelpEditorHelp->setEnabled(true);
-      EditorActions::GetInstance().mActionHelpAboutEditor->setEnabled(true);
-      EditorActions::GetInstance().mActionHelpAboutQT->setEnabled(true);
+      ea.mActionHelpEditorHelp->setEnabled(true);
+      ea.mActionHelpAboutEditor->setEnabled(true);
+      ea.mActionHelpAboutQT->setEnabled(true);
 
       // enable main window areas
       if(mPropertyWindow != NULL)
@@ -1113,18 +1114,19 @@ namespace dtEditQt
       move(settings.value(EditorSettings::MAINWIN_POSITION, QPoint(100, 100)).toPoint());
 
       // When restoring the window state, first see if the key exists.
+      if (settings.contains(EditorSettings::MAINWIN_GEOMETRY))
+      {
+         QByteArray state = settings.value(EditorSettings::MAINWIN_GEOMETRY).toByteArray();
+         restoreGeometry(state);
+      }
+
+      // When restoring the window state, first see if the key exists.
       if (settings.contains(EditorSettings::MAINWIN_DOCK_STATE))
       {
          QByteArray state = settings.value(EditorSettings::MAINWIN_DOCK_STATE).toByteArray();
          restoreState(state,EditorSettings::MAINWIN_DOCK_STATE_ID);
       }
 
-      // When restoring the window state, first see if the key exists.
-      if (settings.contains(EditorSettings::MAINWIN_GEOMETRY))
-      {
-         QByteArray state = settings.value(EditorSettings::MAINWIN_GEOMETRY).toByteArray();
-         restoreGeometry(state);
-      }
       settings.endGroup();
 
       // restore splitter positions
