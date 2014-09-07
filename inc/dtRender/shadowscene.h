@@ -65,7 +65,8 @@ namespace dtRender
       {
          DECLARE_ENUM(ShadowScene::ShadowResolution);
       public:
-             
+         
+         static ShadowResolution SR_ULTRAHIGH;
          static ShadowResolution SR_HIGH;
          static ShadowResolution SR_MEDIUM;
          static ShadowResolution SR_LOW;
@@ -73,6 +74,11 @@ namespace dtRender
       protected:
          ShadowResolution(const std::string &name);
       };
+      
+      static const dtUtil::RefString UNIFORM_RENDER_SHADOWS;
+      static const dtUtil::RefString UNIFORM_SHADOW_EFFECT_SCALAR;
+      static const dtUtil::RefString UNIFORM_SHADOW_TEXTURE_UNIT;
+
 
    public:
       ShadowScene();
@@ -84,6 +90,7 @@ namespace dtRender
       virtual const osg::Group* GetSceneNode() const;
 
       osg::LightSource* GetLightSource();
+      void SetLightSource(osg::LightSource* ls);
 
       void SetShadowsEnabled(bool enabled);
       bool GetShadowsEnabled() const;
@@ -93,6 +100,21 @@ namespace dtRender
 
       DT_DECLARE_ACCESSOR_INLINE(dtUtil::EnumerationPointer<ShadowMapType>, ShadowMapType);
       DT_DECLARE_ACCESSOR_INLINE(dtUtil::EnumerationPointer<ShadowResolution>, ShadowResolution);
+
+      DT_DECLARE_ACCESSOR_INLINE(osg::Vec2, AmbientBias)
+      DT_DECLARE_ACCESSOR_INLINE(osg::Vec2, PolygonOffset)
+
+
+      DT_DECLARE_ACCESSOR_INLINE(int, TextureUnitOffset)
+      DT_DECLARE_ACCESSOR_INLINE(int, NumPSSMSplits)
+      
+      DT_DECLARE_ACCESSOR_INLINE(float, MinNearDistance)
+      DT_DECLARE_ACCESSOR_INLINE(float, MaxFarDistance)
+      
+      DT_DECLARE_ACCESSOR_INLINE(bool, UseShadowEffectScalar)
+      
+      void SetShadowEffectsScalar(float f);
+      float GetShadowEffectsScalar() const;
 
    private:
       

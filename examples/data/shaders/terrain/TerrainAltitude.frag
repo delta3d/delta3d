@@ -15,6 +15,8 @@ uniform float AltitudeScale;
 uniform float DetailScale;
 uniform float WaterHeight;
 uniform float ReflectMode;
+uniform float d3d_SceneLuminance = 1.0;
+uniform float d3d_SceneAmbience = 1.0;
 uniform bool d3d_DepthOnlyPass = false;
 
 
@@ -207,9 +209,9 @@ void main(void)
   
    vec3 dynamicLightContrib = computeDynamicLightContrib(vNormal, vPos);
 
-   vec3 lightContrib = clamp(lightContribSun + lightContribMoon + dynamicLightContrib, vec3(0.0), vec3(1.0)) ;
+   vec3 lightContrib = d3d_SceneLuminance * clamp(lightContribSun + lightContribMoon + dynamicLightContrib, vec3(0.0), vec3(1.0)) ;
 
-   float shadowAmt = 1.0;//SampleShadowTexture();
+   float shadowAmt = SampleShadowTexture();
    vec3 result = shadowAmt * lightContrib * baseColor.rgb;
   
    float dist = length(vPos - vCamera);
