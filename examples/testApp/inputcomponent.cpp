@@ -63,6 +63,10 @@
 #include <dtRender/scenemanager.h>
 #include <dtRender/ephemerisscene.h>
 
+#if defined(USE_INSPECTOR)
+   #include <dtInspectorQt/inspectorqt.h>
+#endif
+
 #include <dtActors/engineactorregistry.h>
 #include <iostream>
 
@@ -96,7 +100,11 @@ namespace dtExample
       , mGroundClampedObject(NULL)
       , mGroundClamper(NULL)
       , mAttachActorName(DEFAULT_ATTACH_ACTOR_NAME)
-   {}
+   {
+      int argc = 0;
+      mInspector = new dtInspectorQt::InspectorQt(argc, NULL);
+      mInspector->SetVisible(false);
+   }
 
    ////////////////////////////////////////////////////////////////////////
    InputComponent::~InputComponent()
@@ -210,6 +218,13 @@ namespace dtExample
             }
          }
          break;
+#if defined(USE_INSPECTOR)
+         case '`':
+         {
+            mInspector->SetVisible(true);
+            return true;
+         }
+#endif
 
          default:
          {
@@ -493,16 +508,17 @@ namespace dtExample
       {
          dtCore::Transform xform;
          mCamera->GetTransform(xform);
-         dtCore::RefPtr<dtPhysics::Geometry> charShape = dtPhysics::Geometry::CreateCapsuleGeometry(xform, 1.5f, 3.0f, 100.0f);
+         dtCore::RefPtr<dtPhysics::Geometry> charShape = dtPhysics::Geometry::CreateCapsuleGeometry(xform, 1.5f, 0.6f, 1.0f);
+         charShape->SetMargin(0.3);
          dtCore::RefPtr<dtPhysics::CharacterController> charController = new dtPhysics::CharacterController(*charShape);
-         charController->SetStepHeight(0.7f);
-         charController->SetSkinWidth(0.06f);
-         charController->SetMaxInclineAngle(70.0f);
+         charController->SetStepHeight(0.3f);
+         charController->SetSkinWidth(0.04f);
+         charController->SetMaxInclineAngle(60.0f);
          charController->Init();
 
          charController->Warp(xform.GetTranslation());
          dtCore::RefPtr<dtPhysics::CharacterMotionModel> wmm
-            = new dtPhysics::CharacterMotionModel(keyboard, mouse, charController);
+            = new dtPhysics::CharacterMotionModel(keyboard, mouse, charController, 6.5, 1.5, 2.5, 0.25, true, true);
          wmm->SetScene(scene);
          motionModel = wmm;
          enableGroundClamper = true;

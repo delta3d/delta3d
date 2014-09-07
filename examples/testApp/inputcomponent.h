@@ -42,6 +42,7 @@
 #include <dtGame/defaultgroundclamper.h>
 
 
+namespace dtInspectorQt { class InspectorQt; }
 
 namespace dtExample
 {
@@ -115,7 +116,11 @@ namespace dtExample
          dtCore::RefPtr<dtCore::TransformableActorProxy> mGroundClampedObject;
 
          dtCore::RefPtr<dtGame::DefaultGroundClamper> mGroundClamper;
-         
+
+#if defined(USE_INSPECTOR)
+         dtInspectorQt::InspectorQt* mInspector;
+#endif
+
          std::string mAttachActorName;
 
    };
