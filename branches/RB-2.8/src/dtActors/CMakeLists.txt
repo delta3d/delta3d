@@ -21,7 +21,7 @@ SET(LIB_PUBLIC_HEADERS
     ${HEADER_PATH}/cloudplaneactorproxy.h
     ${HEADER_PATH}/coordinateconfigactor.h
     ${HEADER_PATH}/deltaobjectactorproxy.h
-    ${HEADER_PATH}/directoractorproxy.h
+    ${HEADER_PATH}/directoractor.h
     ${HEADER_PATH}/distancesensoractor.h
     ${HEADER_PATH}/engineactorregistry.h
     ${HEADER_PATH}/enveffectactorproxy.h
@@ -75,7 +75,7 @@ SET(LIB_SOURCES
     ${SOURCE_PATH}/cloudplaneactorproxy.cpp
     ${SOURCE_PATH}/coordinateconfigactor.cpp
     ${SOURCE_PATH}/deltaobjectactorproxy.cpp
-    ${SOURCE_PATH}/directoractorproxy.cpp
+    ${SOURCE_PATH}/directoractor.cpp
     ${SOURCE_PATH}/distancesensoractor.cpp
     ${SOURCE_PATH}/engineactorregistry.cpp
     ${SOURCE_PATH}/enveffectactorproxy.cpp
