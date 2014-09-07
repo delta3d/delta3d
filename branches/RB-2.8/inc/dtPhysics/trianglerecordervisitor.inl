@@ -21,7 +21,7 @@
  *
  * David Guthrie
  */
-
+#include <iostream>
 namespace dtPhysics
 {
    template<class T>
@@ -69,7 +69,7 @@ namespace dtPhysics
       if((mExportSpecificMaterial && (mCurrentDescription != mSpecificDescription))
          || (mSkipSpecificMaterial && (mCurrentDescription == mSpecificDescription)))
       {
-         //std::cout << "Skipping material: " << mCurrentDescription << std::endl;
+         std::cout << "Skipping material: " << mCurrentDescription << std::endl;
          return;
       }
 
@@ -82,10 +82,11 @@ namespace dtPhysics
          {
             //skip this one since we are breaking it up into multiple parts
             return;
+            std::cout << "Skipping tile number: " << mGeodeExportCounter << std::endl;
          }
          else
          {
-            //std::cout << "Exporting tile number: " << mGeodeExportCounter << std::endl;
+            std::cout << "Exporting tile number: " << mGeodeExportCounter << std::endl;
          }
       }
 
@@ -94,15 +95,16 @@ namespace dtPhysics
 
       dtPhysics::MaterialIndex matID = GetMaterialID(mSpecificDescription);
 
+      osg::NodePath nodePath = getNodePath();
+      mFunctor.SetMatrix(osg::computeLocalToWorld(nodePath));
+      mFunctor.SetCurrentMaterial(matID);
+
       for(size_t i=0;i<node.getNumDrawables();i++)
       {
          osg::Drawable* d = node.getDrawable(i);
 
-         if(d->supports(mFunctor))
+         if (d->supports(mFunctor))
          {
-            osg::NodePath nodePath = getNodePath();
-            mFunctor.SetMatrix(osg::computeLocalToWorld(nodePath));
-            mFunctor.SetCurrentMaterial(matID);
             d->accept(mFunctor);
          }
       }

@@ -22,6 +22,7 @@
 #include <dtCore/scene.h>
 #include <dtCore/system.h>
 #include <dtABC/application.h>
+#include <dtCore/shadermanager.h>
 #include <dtCore/project.h>
 #include <dtGame/gamemanager.h>
 #include <dtUtil/log.h>
@@ -112,6 +113,10 @@ public:
    {
 
    }
+   ~ApplicationHandler()
+   {
+      Shutdown();
+   }
 
    void Init(const std::string& context)
    {
@@ -128,6 +133,22 @@ public:
       mGM->SetApplication(*mApp);
 
       dtCore::Project::GetInstance().SetContext(context, true);
+   }
+
+   void Shutdown()
+   {
+      if (mApp.valid())
+      {
+         mApp->GetScene()->RemoveAllDrawables();
+      }
+
+      dtCore::ShaderManager::GetInstance().Clear();
+
+      if (mGM.valid())
+      {
+         mGM->Shutdown();
+         mGM = NULL;
+      }
    }
 
    dtPhysics::MaterialIndex GetMaterialID(const std::string& commentFlag)
@@ -203,7 +224,7 @@ public:
 
       if (!dir.empty())
       {
-         mSaveDirectory = dtCore::Project::GetInstance().GetContext() + "/Terrains/" + dir;
+         mSaveDirectory = dtCore::Project::GetInstance().GetContext() + "/" + dtCore::DataType::STATIC_MESH.GetName() +  "/" + dir;
 
          if(!dtUtil::FileUtils::GetInstance().DirExists(mSaveDirectory))
          {
@@ -341,7 +362,7 @@ bool CookMesh(dtPhysics::TriangleRecorder& tr, const std::string& fileName)
 
 
 ////////////////////////////////////////////////////////////////
-void CookPhysicsFromNode(osg::Node* node, float maxPerMesh)
+void CookPhysicsFromNode(osg::Node* node, float maxPerMesh, float maxEdge)
 {
    /**
    * This will export each material as a separate physics object
@@ -360,26 +381,36 @@ void CookPhysicsFromNode(osg::Node* node, float maxPerMesh)
    for(;iter != iterEnd; ++iter)
    {
       dtPhysics::TriangleRecorderVisitor<dtPhysics::TriangleRecorder> mv(materialLookup);
+      mv.mFunctor.SetMaxEdgeLength(maxEdge);
       mv.mExportSpecificMaterial = true;
       mv.mSpecificDescription = (*iter);
       node->accept(mv);
       std::string materialName = (*iter);
       if ( materialName.empty() ) materialName = "_default_";
 
-      //if we have too much geometry break it into multiple pieces
+      GeodeCounter gc;
+      gc.mExportSpecificMaterial = true;
+      gc.mSpecificDescription = (*iter);
+      gc.mGeodeCount = 1;
       if(mv.mFunctor.mData->mIndices.size() > maxPerMesh)
       {
-         int exportCount = 1 + (mv.mFunctor.mData->mIndices.size() / maxPerMesh);
+         node->accept(gc);
+      }
+
+      // if we have too much geometry break it into multiple pieces
+      // but we can't break it up smaller than per geode.
+      if(gc.mGeodeCount > 1)
+      {
+         unsigned exportCount = 1 + (mv.mFunctor.mData->mIndices.size() / maxPerMesh);
+         if (exportCount > gc.mGeodeCount)
+         {
+            exportCount = gc.mGeodeCount;
+         }
          std::cout << "Splitting material \"" << materialName << "\" into " << exportCount
                    << " pieces because it contains " << mv.mFunctor.mData->mIndices.size()
                    << " triangles, which exceeds the maximum size." << std::endl;
 
-         GeodeCounter gc;
-         gc.mExportSpecificMaterial = true;
-         gc.mSpecificDescription = (*iter);
-         node->accept(gc);
-
-         for(int i = 0; i <= exportCount; ++i)
+         for (unsigned i = 0; i <= exportCount; ++i)
          {
             dtPhysics::TriangleRecorderVisitor<dtPhysics::TriangleRecorder> mv2(materialLookup);
             mv2.mExportSpecificMaterial = true;
@@ -452,6 +483,7 @@ int main(int argc, char** argv)
    parser.getApplicationUsage()->addCommandLineOption("--directoryName", "The name of directory within the Terrains folder to save the physics files.");
    parser.getApplicationUsage()->addCommandLineOption("--filePrefix", "The prefix to use for each file saved out, the prefix will be followed directly by the material name.");
    parser.getApplicationUsage()->addCommandLineOption("--maxPerMesh", "The number of triangles we try to put into each output file: default 300000.");
+   parser.getApplicationUsage()->addCommandLineOption("--maxTriangleEdgeLength", "The maximum length of a triangle edge before it subdivides the triangle.  This helps physics stability: default 20.");
 
    int maxPerMesh = 300000;
 
@@ -531,8 +563,13 @@ int main(int argc, char** argv)
        maxPerMesh = tempInt;
    }
 
+   float maxEdge = 20.0f;
+   parser.read("--maxTriangleEdgeLength", maxEdge);
+
    osg::Node* ourNode = loadFile(parser[1]);
-   CookPhysicsFromNode(ourNode,maxPerMesh);
+   CookPhysicsFromNode(ourNode, maxPerMesh, maxEdge);
+
+   GlobalApp->Shutdown();
 
    return 0;
 }
