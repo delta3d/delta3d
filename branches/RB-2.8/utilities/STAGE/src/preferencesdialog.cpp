@@ -140,8 +140,7 @@ namespace dtEditQt
       mNumRecentProjects->setValue(edData.GetNumRecentProjects());
 
       setModal(true);
-      resize(350, 300);
-      //setFixedSize(325, 300);
+      setFixedSize(minimumSize());
    }
 
    //////////////////////////////////////////////////////////////////
