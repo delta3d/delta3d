@@ -9,6 +9,9 @@ const int NUM_SPOT_LIGHT_ATTRIBS = 4;
 uniform int NUM_DYNAMIC_LIGHTS_TO_USE = 0;
 uniform int NUM_SPOT_LIGHTS_TO_USE = 0;
 
+//used for HDR
+uniform float d3d_SceneLuminance = 1.0;
+uniform float d3d_SceneAmbience = 1.0;
 
 //each dynamic light has 3 associated vec4's
 //the first vec4 is a vec3 position and an intensity
@@ -68,7 +71,7 @@ void dynamic_light_fragment(vec3 normal, vec3 pos, out vec3 totalLightContrib)
       totalLightContrib +=  absIntensity * min(1.0, atten) * dotProductLightingAndAmbient; 
    } 
    
-   totalLightContrib = clamp(totalLightContrib, 0.0, 1.0);
+   totalLightContrib = d3d_SceneLuminance * clamp(totalLightContrib, 0.0, 1.0);
 }
 
 
@@ -115,7 +118,7 @@ void spot_light_fragment(vec3 normal, vec3 pos, out vec3 totalLightContrib)
       }
    } 
    
-   totalLightContrib = clamp(totalLightContrib, 0.0, 1.0);
+   totalLightContrib = d3d_SceneLuminance *clamp(totalLightContrib, 0.0, 1.0);
 }
 
 
