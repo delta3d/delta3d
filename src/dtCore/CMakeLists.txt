@@ -183,6 +183,7 @@ SET(LIB_PUBLIC_HEADERS
                 ${HEADER_PATH}/serializeable.h
                 ${HEADER_PATH}/shadergroup.h
                 ${HEADER_PATH}/shadermanager.h
+                ${HEADER_PATH}/shaderparambool.h
                 ${HEADER_PATH}/shaderparameter.h
                 ${HEADER_PATH}/shaderparameteractorproperty.h
                 ${HEADER_PATH}/shaderparamfloat.h
@@ -365,6 +366,7 @@ SET(LIB_SOURCES
                 ${SOURCE_PATH}/screenshotcallback.cpp
                 ${SOURCE_PATH}/shadergroup.cpp
                 ${SOURCE_PATH}/shadermanager.cpp
+                ${SOURCE_PATH}/shaderparambool.cpp                
                 ${SOURCE_PATH}/shaderparameteractorproperty.cpp
                 ${SOURCE_PATH}/shaderparameter.cpp
                 ${SOURCE_PATH}/shaderparamfloat.cpp
