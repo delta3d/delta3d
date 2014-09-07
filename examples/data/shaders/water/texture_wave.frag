@@ -179,7 +179,7 @@ void main (void)
    textureNormal = normalize(textureNormal); 
 
    //scale it into color space
-   textureNormal += 1.0;
+   textureNormal += vec3(1.0);
    textureNormal /= 2.0;
     
    gl_FragColor = vec4(textureNormal, 0.0);
