@@ -77,7 +77,7 @@ MatrixTransform {
               shadowTextureMode GL_LUMINANCE
             }
           }
-          textureUnit 1 {
+          textureUnit 4 {
             GL_TEXTURE_2D ON
             Texture2D {
               UniqueID Texture2D_3
@@ -99,7 +99,7 @@ MatrixTransform {
               shadowTextureMode GL_LUMINANCE
             }
           }
-          textureUnit 4 {
+          textureUnit 6 {
             GL_TEXTURE_2D ON
             Texture2D {
               UniqueID Texture2D_4

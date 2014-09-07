@@ -90,7 +90,7 @@ MatrixTransform {
                 shadowTextureMode GL_LUMINANCE
               }
             }
-            textureUnit 1 {
+            textureUnit 4 {
               GL_TEXTURE_2D ON
               Texture2D {
                 UniqueID Texture2D_3
@@ -112,11 +112,7 @@ MatrixTransform {
                 shadowTextureMode GL_LUMINANCE
               }
             }
-            textureUnit 2 {
-              GL_TEXTURE_2D ON
-              Use Texture2D_3
-            }
-            textureUnit 3 {
+            textureUnit 5 {
               GL_TEXTURE_2D ON
               Texture2D {
                 UniqueID Texture2D_4
@@ -138,7 +134,7 @@ MatrixTransform {
                 shadowTextureMode GL_LUMINANCE
               }
             }
-            textureUnit 4 {
+            textureUnit 6 {
               GL_TEXTURE_2D ON
               Texture2D {
                 UniqueID Texture2D_5
@@ -158,35 +154,6 @@ MatrixTransform {
                 shadowComparison FALSE
                 shadowCompareFunc GL_LEQUAL
                 shadowTextureMode GL_LUMINANCE
-              }
-            }
-            textureUnit 5 {
-              GL_TEXTURE_GEN_S ON
-              GL_TEXTURE_GEN_T ON
-              GL_TEXTURE_GEN_R ON
-              GL_TEXTURE_GEN_Q ON
-              GL_TEXTURE_2D ON
-              Texture2D {
-                UniqueID Texture2D_6
-                file "images\\Cube_ENV.png"
-                wrap_s REPEAT
-                wrap_t REPEAT
-                wrap_r CLAMP_TO_EDGE
-                min_filter LINEAR_MIPMAP_LINEAR
-                mag_filter LINEAR
-                maxAnisotropy 1
-                borderColor 0 0 0 0
-                borderWidth 0
-                useHardwareMipMapGeneration TRUE
-                unRefImageDataAfterApply TRUE
-                internalFormatMode USE_S3TC_DXT1_COMPRESSION
-                resizeNonPowerOfTwo TRUE
-                shadowComparison FALSE
-                shadowCompareFunc GL_LEQUAL
-                shadowTextureMode GL_LUMINANCE
-              }
-              TexGen {
-                mode SPHERE_MAP
               }
             }
           }
