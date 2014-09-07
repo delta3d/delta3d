@@ -15,7 +15,6 @@ set(LIB_SOURCES
       dofscene.cpp
       dynamiclight.cpp
       ephemerisscene.cpp
-      glowscene.cpp
       graphicsquality.cpp
       guiscene.cpp
       hdrscene.cpp
@@ -23,6 +22,7 @@ set(LIB_SOURCES
       multipassscene.cpp
       oceanscene.cpp
       ppuscene.cpp
+      parallelsplitshadowmap.cpp
       ssaoscene.cpp
       scenebase.cpp
       sceneenum.cpp
