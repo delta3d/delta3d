@@ -90,7 +90,7 @@ MatrixTransform {
                 shadowTextureMode GL_LUMINANCE
               }
             }
-            textureUnit 1 {
+            textureUnit 4 {
               GL_TEXTURE_2D ON
               Texture2D {
                 UniqueID Texture2D_3
@@ -112,7 +112,7 @@ MatrixTransform {
                 shadowTextureMode GL_LUMINANCE
               }
             }
-            textureUnit 4 {
+            textureUnit 6 {
               GL_TEXTURE_2D ON
               Texture2D {
                 UniqueID Texture2D_4
@@ -839,7 +839,7 @@ MatrixTransform {
                   shadowTextureMode GL_LUMINANCE
                 }
               }
-              textureUnit 1 {
+              textureUnit 4 {
                 GL_TEXTURE_2D ON
                 Texture2D {
                   UniqueID Texture2D_9
@@ -861,7 +861,7 @@ MatrixTransform {
                   shadowTextureMode GL_LUMINANCE
                 }
               }
-              textureUnit 4 {
+              textureUnit 6 {
                 GL_TEXTURE_2D ON
                 Texture2D {
                   UniqueID Texture2D_10
@@ -883,7 +883,7 @@ MatrixTransform {
                   shadowTextureMode GL_LUMINANCE
                 }
               }
-              textureUnit 6 {
+              textureUnit 7 {
                 GL_TEXTURE_2D ON
                 Texture2D {
                   UniqueID Texture2D_11
@@ -2180,7 +2180,7 @@ MatrixTransform {
                   shadowTextureMode GL_LUMINANCE
                 }
               }
-              textureUnit 1 {
+              textureUnit 4 {
                 GL_TEXTURE_2D ON
                 Texture2D {
                   UniqueID Texture2D_14
@@ -2202,7 +2202,7 @@ MatrixTransform {
                   shadowTextureMode GL_LUMINANCE
                 }
               }
-              textureUnit 4 {
+              textureUnit 6 {
                 GL_TEXTURE_2D ON
                 Texture2D {
                   UniqueID Texture2D_15
