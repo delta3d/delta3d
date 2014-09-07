@@ -268,7 +268,7 @@ namespace dtCore
       template <typename T>
       void GetDrawable(dtCore::RefPtr<T>& drawable)
       {
-         drawable = static_cast<T*>(GetDrawable());
+         drawable = dynamic_cast<T*>(GetDrawable());
       }
 
       /// Templated version of GetDrawable that returns the drawable with a dynamic cast to the type requested.
@@ -282,7 +282,7 @@ namespace dtCore
       template <typename TPtr>
       void GetDrawable(TPtr& drawable) const
       {
-         drawable = static_cast<TPtr>(GetDrawable());
+         drawable = dynamic_cast<TPtr>(GetDrawable());
       }
 
 
