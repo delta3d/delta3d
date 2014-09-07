@@ -30,6 +30,7 @@
 #include <osg/Fog>
 #include <osg/Vec4>
 #include <osg/CullFace>
+#include <osg/LightSource>
 
 #include <osgEphemeris/EphemerisModel.h>
 #include <osgEphemeris/EphemerisData.h>
@@ -364,6 +365,10 @@ namespace dtRender
       return mImpl->mEphemerisModel->getSunPosition();
    }
 
+   osg::Vec3d EphemerisScene::GetMoonPosition() const
+   {
+      return mImpl->mEphemerisModel->getMoonTransform()->getMatrix().getTrans();
+   }
 
    bool EphemerisScene::SetDateTimeAsString(const std::string& timeAndDate)
    {
@@ -632,6 +637,30 @@ namespace dtRender
          LOG_WARNING("Caught Exception while assigning shader: " + e.ToString());
          return;
       }
+   }
+
+   osg::LightSource* EphemerisScene::GetLightSource()
+   {
+      osg::LightSource* result = NULL;
+
+      if(mImpl->mEphemerisModel.valid())
+      {
+         result = mImpl->mEphemerisModel->getSunLightSource();
+      }
+
+      return result;
+   }
+
+   const osg::LightSource* EphemerisScene::GetLightSource() const
+   {
+      const osg::LightSource* result = NULL;
+
+      if(mImpl->mEphemerisModel.valid())
+      {
+         result = mImpl->mEphemerisModel->getSunLightSource();
+      }
+
+      return result;
    }
 
    EphemerisSceneActor::EphemerisSceneActor()
