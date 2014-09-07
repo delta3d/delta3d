@@ -1,13 +1,18 @@
 #version 120
 
-const int SHADOW_TEX_COORD_UNIT = 6;
+
+uniform bool d3d_RenderShadows = false;
+uniform  int d3d_ShadowTextureUnit = 1;
 
 
 void GenerateShadowTexCoords( in vec4 ecPosition ) 
 { 
-   // generate coords for shadow mapping 
-   gl_TexCoord[SHADOW_TEX_COORD_UNIT].s = dot( ecPosition, gl_EyePlaneS[SHADOW_TEX_COORD_UNIT] ); 
-   gl_TexCoord[SHADOW_TEX_COORD_UNIT].t = dot( ecPosition, gl_EyePlaneT[SHADOW_TEX_COORD_UNIT] ); 
-   gl_TexCoord[SHADOW_TEX_COORD_UNIT].p = dot( ecPosition, gl_EyePlaneR[SHADOW_TEX_COORD_UNIT] ); 
-   gl_TexCoord[SHADOW_TEX_COORD_UNIT].q = dot( ecPosition, gl_EyePlaneQ[SHADOW_TEX_COORD_UNIT] ); 
+   if(d3d_RenderShadows)
+   {
+      // generate coords for shadow mapping 
+      gl_TexCoord[d3d_ShadowTextureUnit].s = dot( ecPosition, gl_EyePlaneS[d3d_ShadowTextureUnit] ); 
+      gl_TexCoord[d3d_ShadowTextureUnit].t = dot( ecPosition, gl_EyePlaneT[d3d_ShadowTextureUnit] ); 
+      gl_TexCoord[d3d_ShadowTextureUnit].p = dot( ecPosition, gl_EyePlaneR[d3d_ShadowTextureUnit] ); 
+      gl_TexCoord[d3d_ShadowTextureUnit].q = dot( ecPosition, gl_EyePlaneQ[d3d_ShadowTextureUnit] ); 
+   }
 } 

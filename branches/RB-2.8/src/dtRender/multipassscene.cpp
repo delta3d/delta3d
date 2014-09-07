@@ -50,10 +50,10 @@
 
 namespace dtRender
 {
-   const int MultipassScene::TEXTURE_UNIT_PREDEPTH = 6;
+   const int MultipassScene::TEXTURE_UNIT_REFLECTION = 10;
 
-   const int MultipassScene::TEXTURE_UNIT_REFLECTION = 7;
-
+   const int MultipassScene::TEXTURE_UNIT_PREDEPTH = 11;
+   
    const std::string MultipassScene::REFLECTION_TEXTURE_UNIFORM("d3d_ReflectionCubeMap");
 
    const std::string MultipassScene::UNIFORM_DEPTH_ONLY_PASS("d3d_DepthOnlyPass");
@@ -150,10 +150,10 @@ namespace dtRender
          , mEnableColorBypass(true)
          , mEnableResampleColor(true)
          , mDepthImageFormat(GL_DEPTH_COMPONENT)
-         , mEnableDepthBypass(true)
+         , mEnableDepthBypass(false)
          , mPreDepthImageFormat(GL_DEPTH_COMPONENT32)
          , mEnablePreDepthPass(true)
-         , mResampleColorFactor(0.5)
+         , mResampleColorFactor(0.25)
       {
          
 

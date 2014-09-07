@@ -39,8 +39,6 @@ namespace dtRender
 
       static dtCore::RefPtr<dtCore::ActorType> GUI_SCENE_ACTOR_TYPE;
 
-      static dtCore::RefPtr<dtCore::ActorType> GLOW_SCENE_ACTOR_TYPE;
-
       static dtCore::RefPtr<dtCore::ActorType> HDR_SCENE_ACTOR_TYPE;
 
       static dtCore::RefPtr<dtCore::ActorType> MULTIPASS_SCENE_ACTOR_TYPE;

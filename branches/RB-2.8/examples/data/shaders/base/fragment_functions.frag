@@ -35,8 +35,8 @@ void lightContribution(vec3 normal, vec3 lightDir, vec3 diffuseLightSource, vec3
    float diffuseSurfaceContrib = max(dot(normal, lightDir),0.0);
    
    // Lit Color (Diffuse plus Ambient)
-   vec3 diffuseLight = diffuseSurfaceContrib * diffuseLightSource;
-   lightContrib = vec3(diffuseLight + (ambientLightSource ));
+   vec3 diffuseLight = d3d_SceneLuminance * diffuseSurfaceContrib * diffuseLightSource;
+   lightContrib = vec3(diffuseLight + (d3d_SceneAmbience * ambientLightSource ));
 }
 
 void computeSpecularContribution(vec3 lightDir, vec3 normal, vec3 viewDir, vec3 glossMap, out vec3 specularContribution)
