@@ -333,6 +333,62 @@ MACRO(DELTA3D_ADD_LIBRARY LIB_NAME EXPORT_MACRO)
 
 ENDMACRO()
 
+MACRO(DELTA3D_ADD_PROGRAM APP_NAME)
+   SET(APP_TYPE ${ARGV1})
+   SET(EXPORT_MACRO ${ARGV2})
+
+
+   if (APPLE)
+      SET(apple_bundle_sources "${APP_NAME}.icns")
+      SET_SOURCE_FILES_PROPERTIES(
+          ${apple_bundle_sources}
+          PROPERTIES
+          MACOSX_PACKAGE_LOCATION Resources
+      )
+
+      ADD_EXECUTABLE(${APP_NAME} ${APP_TYPE}
+         ${PROG_HEADERS}
+         ${PROG_SOURCES}
+         ${MOC_SOURCES}
+         ${RCC_SOURCES}
+         ${UI_SOURCES}
+         ${apple_bundle_sources}
+      )
+      SET_TARGET_PROPERTIES(${APP_NAME} PROPERTIES
+          MACOSX_BUNDLE_ICON_FILE ${APP_NAME})
+
+   else ()
+      ADD_EXECUTABLE(${APP_NAME} ${APP_TYPE}
+         ${PROG_HEADERS}
+         ${PROG_SOURCES}
+         ${MOC_SOURCES}
+         ${RCC_SOURCES}
+         ${UI_SOURCES}
+      )
+   endif ()
+
+
+   LINK_WITH_VARIABLES(${APP_NAME}
+                       ${APP_EXTERNAL_DEPS}
+                      )
+
+   TARGET_LINK_LIBRARIES(${APP_NAME}
+                         ${APP_DEPS}
+                        )
+
+   if (EXPORT_MACRO)
+      SET_TARGET_PROPERTIES(${APP_NAME}
+                           PROPERTIES DEFINE_SYMBOL ${EXPORT_MACRO} 
+      )
+      # export symbols so plugins get access
+      SET_TARGET_PROPERTIES(${APP_NAME} PROPERTIES ENABLE_EXPORTS true)
+   endif()
+   
+   INCLUDE(ProgramInstall OPTIONAL)
+   
+ENDMACRO()
+
+
 MACRO (SETUP_PLUGIN_WITH_OUTPUT_DIRS LIB_NAME EXPORT_MACRO SUBFOLDER)
    #put the binary into a "STAGE plugins" folder
    if (WIN32)
