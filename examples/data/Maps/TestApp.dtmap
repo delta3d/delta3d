@@ -7,7 +7,7 @@
         <comment></comment>
         <copyright></copyright>
         <createTimestamp>2014-07-15T22:49:46-05:00</createTimestamp>
-        <lastUpdateTimestamp>2014-09-06T20:01:56-05:00</lastUpdateTimestamp>
+        <lastUpdateTimestamp>2014-09-07T00:02:28-05:00</lastUpdateTimestamp>
         <editorVersion>2.8.0</editorVersion>
         <schemaVersion>1.0</schemaVersion>
     </header>
@@ -564,6 +564,47 @@
             </property>
         </actor>
         <actor>
+            <type>dtRender.Dynamic Light</type>
+            <id>1486dd55-d854-44ca-959c-496cef4777fb</id>
+            <name>Dynamic Light_11</name>
+            <property>
+                <name>Name</name>
+                <string>Dynamic Light_11</string>
+            </property>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>-101.500481</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-577.129456</value1>
+                    <value2>-75.036438</value2>
+                    <value3>7.006354</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Attenuation</name>
+                <vec3>
+                    <value1>1.000000</value1>
+                    <value2>0.090000</value2>
+                    <value3>0.032000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Fade Out Time</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Radius</name>
+                <float>25</float>
+            </property>
+        </actor>
+        <actor>
             <type>dtExample.Mesh Object</type>
             <id>14a2aaa8-9c7c-4d9f-89e2-30f13427a716</id>
             <name>palmtree_85</name>
@@ -675,47 +716,6 @@
                     <value1>-669.484375</value1>
                     <value2>-239.446320</value2>
                     <value3>3.275831</value3>
-                </vec3>
-            </property>
-            <property>
-                <name>static mesh</name>
-                <resourceType>StaticMeshes</resourceType>
-                <resourceDisplayName>StaticMeshes:lamps:Lamppost_Trident.osg</resourceDisplayName>
-                <resource>StaticMeshes:lamps:Lamppost_Trident.osg</resource>
-            </property>
-            <property>
-                <name>Main: PhysicsMesh</name>
-                <resourceType>StaticMeshes</resourceType>
-                <resourceDisplayName>StaticMeshes:lamps:Lamppost_Trident_PHYSICS.osg</resourceDisplayName>
-                <resource>StaticMeshes:lamps:Lamppost_Trident_PHYSICS.osg</resource>
-            </property>
-        </actor>
-        <actor>
-            <type>dtExample.Mesh Object</type>
-            <id>16db029c-d485-463f-8398-0345c87d9615</id>
-            <name>lamp_08</name>
-            <property>
-                <name>Name</name>
-                <string>lamp_08</string>
-            </property>
-            <property>
-                <name>ShaderGroup</name>
-                <string>MultiMap</string>
-            </property>
-            <property>
-                <name>Rotation</name>
-                <vec3>
-                    <value1>0.000000</value1>
-                    <value2>0.000000</value2>
-                    <value3>8.757064</value3>
-                </vec3>
-            </property>
-            <property>
-                <name>Translation</name>
-                <vec3>
-                    <value1>-591.169189</value1>
-                    <value2>-123.016884</value2>
-                    <value3>1.248776</value3>
                 </vec3>
             </property>
             <property>
@@ -1906,6 +1906,29 @@
             </property>
         </actor>
         <actor>
+            <type>dtcore.Particle System</type>
+            <id>2c8d9905-6f32-44cc-a145-16f24f4bb69d</id>
+            <name>torch_01</name>
+            <property>
+                <name>Name</name>
+                <string>torch_01</string>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-558.687012</value1>
+                    <value2>-133.225739</value2>
+                    <value3>3.408030</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Particle(s) File</name>
+                <resourceType>Particles</resourceType>
+                <resourceDisplayName>Particles:fire:torch_flame.osg</resourceDisplayName>
+                <resource>Particles:fire:torch_flame.osg</resource>
+            </property>
+        </actor>
+        <actor>
             <type>dtExample.Mesh Object</type>
             <id>2d7b37fd-f5df-4ac0-8464-d3ead2f588f3</id>
             <name>lamp_06</name>
@@ -2264,6 +2287,47 @@
             </property>
         </actor>
         <actor>
+            <type>dtRender.Dynamic Light</type>
+            <id>35ea31ec-d5b6-425f-a10b-fbef29377924</id>
+            <name>torchlight_03</name>
+            <property>
+                <name>Name</name>
+                <string>torchlight_03</string>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-558.686768</value1>
+                    <value2>-133.233963</value2>
+                    <value3>3.364410</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Attenuation</name>
+                <vec3>
+                    <value1>1.000000</value1>
+                    <value2>0.350000</value2>
+                    <value3>0.440000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Light Color</name>
+                <vec3>
+                    <value1>1.000000</value1>
+                    <value2>0.500000</value2>
+                    <value3>0.250000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Flicker Scale</name>
+                <float>0.30000001</float>
+            </property>
+            <property>
+                <name>Radius</name>
+                <float>10</float>
+            </property>
+        </actor>
+        <actor>
             <type>dtcore.Player Start</type>
             <id>362cb3a0-7aba-464c-a49b-b226f2c65802</id>
             <name>PlayerStart</name>
@@ -2272,11 +2336,19 @@
                 <string>PlayerStart</string>
             </property>
             <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>-139.747620</value3>
+                </vec3>
+            </property>
+            <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-482.636841</value1>
-                    <value2>-123.839050</value2>
-                    <value3>21.802572</value3>
+                    <value1>-598.910645</value1>
+                    <value2>-94.630356</value2>
+                    <value3>4.066618</value3>
                 </vec3>
             </property>
         </actor>
@@ -2374,6 +2446,47 @@
                 <resourceType>StaticMeshes</resourceType>
                 <resourceDisplayName>StaticMeshes:walkways:wood_walkway:WoodWalkway.osg</resourceDisplayName>
                 <resource>StaticMeshes:walkways:wood_walkway:WoodWalkway.osg</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtRender.Dynamic Light</type>
+            <id>384e34b0-68c7-442e-9cfb-edf587c1d42c</id>
+            <name>Dynamic Light_05</name>
+            <property>
+                <name>Name</name>
+                <string>Dynamic Light_05</string>
+            </property>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>-9.299866</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-743.606018</value1>
+                    <value2>-44.638115</value2>
+                    <value3>8.170630</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Attenuation</name>
+                <vec3>
+                    <value1>1.000000</value1>
+                    <value2>0.090000</value2>
+                    <value3>0.032000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Fade Out Time</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Radius</name>
+                <float>25</float>
             </property>
         </actor>
         <actor>
@@ -3151,6 +3264,47 @@
             </property>
         </actor>
         <actor>
+            <type>dtRender.Dynamic Light</type>
+            <id>45e4976d-6e88-4486-98ca-2743d27eecb6</id>
+            <name>torchlight_02</name>
+            <property>
+                <name>Name</name>
+                <string>torchlight_02</string>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-562.494324</value1>
+                    <value2>-124.706932</value2>
+                    <value3>3.364410</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Attenuation</name>
+                <vec3>
+                    <value1>1.000000</value1>
+                    <value2>0.350000</value2>
+                    <value3>0.440000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Light Color</name>
+                <vec3>
+                    <value1>1.000000</value1>
+                    <value2>0.500000</value2>
+                    <value3>0.250000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Flicker Scale</name>
+                <float>0.30000001</float>
+            </property>
+            <property>
+                <name>Radius</name>
+                <float>10</float>
+            </property>
+        </actor>
+        <actor>
             <type>dtExample.Mesh Object</type>
             <id>4715019c-f2b5-4c3d-bee7-cf69785d8603</id>
             <name>palmtree_94</name>
@@ -3271,7 +3425,7 @@
                 <vec3>
                     <value1>-652.440613</value1>
                     <value2>-125.185844</value2>
-                    <value3>5.672500</value3>
+                    <value3>4.940485</value3>
                 </vec3>
             </property>
             <property>
@@ -3293,6 +3447,47 @@
                 <resourceType>StaticMeshes</resourceType>
                 <resourceDisplayName>StaticMeshes:statues:dolphin_statue:DolphineStatue_PHYSICS.osg</resourceDisplayName>
                 <resource>StaticMeshes:statues:dolphin_statue:DolphineStatue_PHYSICS.osg</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtRender.Dynamic Light</type>
+            <id>4ad0b6ba-82ee-4f38-bf59-2ed02d3b7788</id>
+            <name>Dynamic Light_06</name>
+            <property>
+                <name>Name</name>
+                <string>Dynamic Light_06</string>
+            </property>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000024</value1>
+                    <value2>0.000000</value2>
+                    <value3>34.799950</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-737.205200</value1>
+                    <value2>-107.956497</value2>
+                    <value3>10.313393</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Attenuation</name>
+                <vec3>
+                    <value1>1.000000</value1>
+                    <value2>0.090000</value2>
+                    <value3>0.032000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Fade Out Time</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Radius</name>
+                <float>25</float>
             </property>
         </actor>
         <actor>
@@ -3338,6 +3533,47 @@
                 <resourceType>StaticMeshes</resourceType>
                 <resourceDisplayName>StaticMeshes:benches:bench:Bench_PHYSICS.osg</resourceDisplayName>
                 <resource>StaticMeshes:benches:bench:Bench_PHYSICS.osg</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtRender.Dynamic Light</type>
+            <id>4d7997a1-ba7e-42dc-ad2d-eb469c20b0c3</id>
+            <name>Dynamic Light_07</name>
+            <property>
+                <name>Name</name>
+                <string>Dynamic Light_07</string>
+            </property>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000018</value1>
+                    <value2>0.000018</value2>
+                    <value3>31.212582</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-709.624146</value1>
+                    <value2>-237.683716</value2>
+                    <value3>7.387932</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Attenuation</name>
+                <vec3>
+                    <value1>1.000000</value1>
+                    <value2>0.090000</value2>
+                    <value3>0.032000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Fade Out Time</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Radius</name>
+                <float>25</float>
             </property>
         </actor>
         <actor>
@@ -3391,6 +3627,33 @@
                 <resourceType>StaticMeshes</resourceType>
                 <resourceDisplayName>StaticMeshes:walkways:wood_walkway:WoodWalkway.osg</resourceDisplayName>
                 <resource>StaticMeshes:walkways:wood_walkway:WoodWalkway.osg</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <id>4ff36f02-c047-46a9-8a69-c3c6fbc0d7e5</id>
+            <name>TikiTorch03</name>
+            <property>
+                <name>Name</name>
+                <string>TikiTorch03</string>
+            </property>
+            <property>
+                <name>ShaderGroup</name>
+                <string>MultiMap</string>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-565.560669</value1>
+                    <value2>-135.159515</value2>
+                    <value3>1.867371</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:torches:tiki_torch:TikiTorch.osg</resourceDisplayName>
+                <resource>StaticMeshes:torches:tiki_torch:TikiTorch.osg</resource>
             </property>
         </actor>
         <actor>
@@ -5553,6 +5816,47 @@
             </property>
         </actor>
         <actor>
+            <type>dtRender.Dynamic Light</type>
+            <id>810fa6cb-eb47-4abb-90cb-5acb64ad405a</id>
+            <name>Dynamic Light_10</name>
+            <property>
+                <name>Name</name>
+                <string>Dynamic Light_10</string>
+            </property>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000018</value1>
+                    <value2>0.000018</value2>
+                    <value3>139.112045</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-619.823975</value1>
+                    <value2>-167.824066</value2>
+                    <value3>6.502155</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Attenuation</name>
+                <vec3>
+                    <value1>1.000000</value1>
+                    <value2>0.090000</value2>
+                    <value3>0.032000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Fade Out Time</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Radius</name>
+                <float>25</float>
+            </property>
+        </actor>
+        <actor>
             <type>dtExample.Mesh Object</type>
             <id>839a0ae9-4068-48cb-afbe-1278074202c3</id>
             <name>bottle_10</name>
@@ -5751,6 +6055,47 @@
                 <resourceType>StaticMeshes</resourceType>
                 <resourceDisplayName>StaticMeshes:chairs:sunchair:SunChair_PHYSICS.osg</resourceDisplayName>
                 <resource>StaticMeshes:chairs:sunchair:SunChair_PHYSICS.osg</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtRender.Dynamic Light</type>
+            <id>887bfb33-9770-45e0-95e4-bea0a1ddd56d</id>
+            <name>Dynamic Light_03</name>
+            <property>
+                <name>Name</name>
+                <string>Dynamic Light_03</string>
+            </property>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>-36.700184</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-630.145081</value1>
+                    <value2>-100.569847</value2>
+                    <value3>9.398559</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Attenuation</name>
+                <vec3>
+                    <value1>1.000000</value1>
+                    <value2>0.090000</value2>
+                    <value3>0.032000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Fade Out Time</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Radius</name>
+                <float>25</float>
             </property>
         </actor>
         <actor>
@@ -6085,6 +6430,33 @@
             </property>
         </actor>
         <actor>
+            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <id>8e32a30c-8f28-4e91-9136-a4c2ccaca755</id>
+            <name>TikiTorch02</name>
+            <property>
+                <name>Name</name>
+                <string>TikiTorch02</string>
+            </property>
+            <property>
+                <name>ShaderGroup</name>
+                <string>MultiMap</string>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-565.995117</value1>
+                    <value2>-125.591446</value2>
+                    <value3>1.867371</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:torches:tiki_torch:TikiTorch.osg</resourceDisplayName>
+                <resource>StaticMeshes:torches:tiki_torch:TikiTorch.osg</resource>
+            </property>
+        </actor>
+        <actor>
             <type>dtExample.Mesh Object</type>
             <id>8f591f18-6013-4962-9098-d54b44ffff42</id>
             <name>walkway_24</name>
@@ -6284,6 +6656,29 @@
                 <resourceType>StaticMeshes</resourceType>
                 <resourceDisplayName>StaticMeshes:walkways:wood_walkway:WoodWalkway.osg</resourceDisplayName>
                 <resource>StaticMeshes:walkways:wood_walkway:WoodWalkway.osg</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Particle System</type>
+            <id>9247dcab-0872-4c01-874f-d4e987928762</id>
+            <name>torch_02</name>
+            <property>
+                <name>Name</name>
+                <string>torch_02</string>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-562.493347</value1>
+                    <value2>-124.699600</value2>
+                    <value3>3.408030</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Particle(s) File</name>
+                <resourceType>Particles</resourceType>
+                <resourceDisplayName>Particles:fire:torch_flame.osg</resourceDisplayName>
+                <resource>Particles:fire:torch_flame.osg</resource>
             </property>
         </actor>
         <actor>
@@ -6722,6 +7117,33 @@
             </property>
         </actor>
         <actor>
+            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <id>9a311aa2-efdf-412e-9da6-2e8fe9461db6</id>
+            <name>TikiTorch04</name>
+            <property>
+                <name>Name</name>
+                <string>TikiTorch04</string>
+            </property>
+            <property>
+                <name>ShaderGroup</name>
+                <string>MultiMap</string>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-558.688782</value1>
+                    <value2>-133.227081</value2>
+                    <value3>1.867371</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:torches:tiki_torch:TikiTorch.osg</resourceDisplayName>
+                <resource>StaticMeshes:torches:tiki_torch:TikiTorch.osg</resource>
+            </property>
+        </actor>
+        <actor>
             <type>dtExample.Mesh Object</type>
             <id>9b781e68-ef2b-47d5-948a-6cbdeeb39f75</id>
             <name>palmtree_79</name>
@@ -6762,6 +7184,29 @@
                     <value2>1.557695</value2>
                     <value3>1.557695</value3>
                 </vec3>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Particle System</type>
+            <id>9be251ba-7c81-422e-aef1-ba4f2188e530</id>
+            <name>torch_03</name>
+            <property>
+                <name>Name</name>
+                <string>torch_03</string>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-565.993774</value1>
+                    <value2>-125.593353</value2>
+                    <value3>3.408030</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Particle(s) File</name>
+                <resourceType>Particles</resourceType>
+                <resourceDisplayName>Particles:fire:torch_flame.osg</resourceDisplayName>
+                <resource>Particles:fire:torch_flame.osg</resource>
             </property>
         </actor>
         <actor>
@@ -7188,6 +7633,29 @@
             </property>
         </actor>
         <actor>
+            <type>dtcore.Particle System</type>
+            <id>a3ab9a3d-af5f-438d-b1e8-31dfc0d852d2</id>
+            <name>torch03</name>
+            <property>
+                <name>Name</name>
+                <string>torch03</string>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-565.562134</value1>
+                    <value2>-135.158813</value2>
+                    <value3>3.408030</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Particle(s) File</name>
+                <resourceType>Particles</resourceType>
+                <resourceDisplayName>Particles:fire:torch_flame.osg</resourceDisplayName>
+                <resource>Particles:fire:torch_flame.osg</resource>
+            </property>
+        </actor>
+        <actor>
             <type>dtExample.Mesh Object</type>
             <id>a782cae8-2269-4881-9a9b-9f30b6204662</id>
             <name>lamp_04</name>
@@ -7516,6 +7984,47 @@
                 <resourceType>StaticMeshes</resourceType>
                 <resourceDisplayName>StaticMeshes:walkways:wood_walkway:WoodWalkway_Ramp.osg</resourceDisplayName>
                 <resource>StaticMeshes:walkways:wood_walkway:WoodWalkway_Ramp.osg</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtRender.Dynamic Light</type>
+            <id>af4b5297-6b28-4c83-b766-f2bd217ebb57</id>
+            <name>torchlight01</name>
+            <property>
+                <name>Name</name>
+                <string>torchlight01</string>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-565.996033</value1>
+                    <value2>-125.593857</value2>
+                    <value3>3.364410</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Attenuation</name>
+                <vec3>
+                    <value1>1.000000</value1>
+                    <value2>0.350000</value2>
+                    <value3>0.440000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Light Color</name>
+                <vec3>
+                    <value1>1.000000</value1>
+                    <value2>0.500000</value2>
+                    <value3>0.250000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Flicker Scale</name>
+                <float>0.30000001</float>
+            </property>
+            <property>
+                <name>Radius</name>
+                <float>10</float>
             </property>
         </actor>
         <actor>
@@ -7902,6 +8411,47 @@
             </property>
         </actor>
         <actor>
+            <type>dtRender.Dynamic Light</type>
+            <id>b3ea232c-6b43-4462-baa1-1b3a5487c480</id>
+            <name>Dynamic Light_08</name>
+            <property>
+                <name>Name</name>
+                <string>Dynamic Light_08</string>
+            </property>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000018</value1>
+                    <value2>0.000018</value2>
+                    <value3>107.012291</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-669.195801</value1>
+                    <value2>-239.199051</value2>
+                    <value3>7.783769</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Attenuation</name>
+                <vec3>
+                    <value1>1.000000</value1>
+                    <value2>0.090000</value2>
+                    <value3>0.032000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Fade Out Time</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Radius</name>
+                <float>25</float>
+            </property>
+        </actor>
+        <actor>
             <type>dtExample.Mesh Object</type>
             <id>b475f714-dd2d-4947-a27f-125a0b9e227a</id>
             <name>lamp_09</name>
@@ -7924,8 +8474,8 @@
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-590.174744</value1>
-                    <value2>-128.793045</value2>
+                    <value1>-601.306274</value1>
+                    <value2>-142.812866</value2>
                     <value3>0.965105</value3>
                 </vec3>
             </property>
@@ -9104,6 +9654,47 @@
             </property>
         </actor>
         <actor>
+            <type>dtRender.Dynamic Light</type>
+            <id>c67e8b6f-0fe0-4bb8-946a-06d171bba0b6</id>
+            <name>Dynamic Light_01</name>
+            <property>
+                <name>Name</name>
+                <string>Dynamic Light_01</string>
+            </property>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>-65.100410</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-601.578796</value1>
+                    <value2>-142.545654</value2>
+                    <value3>5.621722</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Attenuation</name>
+                <vec3>
+                    <value1>1.000000</value1>
+                    <value2>0.090000</value2>
+                    <value3>0.032000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Fade Out Time</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Radius</name>
+                <float>25</float>
+            </property>
+        </actor>
+        <actor>
             <type>dtExample.Mesh Object</type>
             <id>c6e1c35c-c333-49d6-83ad-27395c8a0a5c</id>
             <name>walkway_83</name>
@@ -9767,6 +10358,33 @@
             </property>
         </actor>
         <actor>
+            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <id>d6c0b2e3-f86f-49cb-a76d-dc1cff5774fb</id>
+            <name>TikiTorch01</name>
+            <property>
+                <name>Name</name>
+                <string>TikiTorch01</string>
+            </property>
+            <property>
+                <name>ShaderGroup</name>
+                <string>MultiMap</string>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-562.494019</value1>
+                    <value2>-124.696129</value2>
+                    <value3>1.867371</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:torches:tiki_torch:TikiTorch.osg</resourceDisplayName>
+                <resource>StaticMeshes:torches:tiki_torch:TikiTorch.osg</resource>
+            </property>
+        </actor>
+        <actor>
             <type>dtExample.Mesh Object</type>
             <id>d89d621c-d945-46e1-a4e5-79344e673d50</id>
             <name>bench_01</name>
@@ -10139,7 +10757,7 @@
                 <vec3>
                     <value1>-581.565979</value1>
                     <value2>-112.361481</value2>
-                    <value3>1.648008</value3>
+                    <value3>0.868672</value3>
                 </vec3>
             </property>
             <property>
@@ -10248,6 +10866,47 @@
             </property>
         </actor>
         <actor>
+            <type>dtRender.Dynamic Light</type>
+            <id>e0a8787f-384e-454e-a6aa-c970d1db433f</id>
+            <name>Dynamic Light_04</name>
+            <property>
+                <name>Name</name>
+                <string>Dynamic Light_04</string>
+            </property>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>-36.700184</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-681.389099</value1>
+                    <value2>-68.023918</value2>
+                    <value3>10.114550</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Attenuation</name>
+                <vec3>
+                    <value1>1.000000</value1>
+                    <value2>0.090000</value2>
+                    <value3>0.032000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Fade Out Time</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Radius</name>
+                <float>25</float>
+            </property>
+        </actor>
+        <actor>
             <type>dtExample.Mesh Object</type>
             <id>e0c0e811-4f39-4ad6-9036-d58d69e208b7</id>
             <name>walkway_34</name>
@@ -10298,6 +10957,47 @@
                 <resourceType>StaticMeshes</resourceType>
                 <resourceDisplayName>StaticMeshes:walkways:wood_walkway:WoodWalkway.osg</resourceDisplayName>
                 <resource>StaticMeshes:walkways:wood_walkway:WoodWalkway.osg</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtRender.Dynamic Light</type>
+            <id>e2ee35ab-98a8-4232-99a6-6aae5bcae1a4</id>
+            <name>Dynamic Light_02</name>
+            <property>
+                <name>Name</name>
+                <string>Dynamic Light_02</string>
+            </property>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>-36.700184</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-606.762756</value1>
+                    <value2>-95.353249</value2>
+                    <value3>7.009480</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Attenuation</name>
+                <vec3>
+                    <value1>1.000000</value1>
+                    <value2>0.090000</value2>
+                    <value3>0.032000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Fade Out Time</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Radius</name>
+                <float>25</float>
             </property>
         </actor>
         <actor>
@@ -10588,6 +11288,47 @@
                 <resourceType>StaticMeshes</resourceType>
                 <resourceDisplayName>StaticMeshes:walkways:wood_walkway:WoodWalkway_Ramp.osg</resourceDisplayName>
                 <resource>StaticMeshes:walkways:wood_walkway:WoodWalkway_Ramp.osg</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtRender.Dynamic Light</type>
+            <id>e6afacc4-cc2d-4944-8725-c0c16518c645</id>
+            <name>Dynamic Light_09</name>
+            <property>
+                <name>Name</name>
+                <string>Dynamic Light_09</string>
+            </property>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000018</value1>
+                    <value2>0.000018</value2>
+                    <value3>135.212158</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-650.973206</value1>
+                    <value2>-197.658615</value2>
+                    <value3>7.783769</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Attenuation</name>
+                <vec3>
+                    <value1>1.000000</value1>
+                    <value2>0.090000</value2>
+                    <value3>0.032000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Fade Out Time</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Radius</name>
+                <float>25</float>
             </property>
         </actor>
         <actor>
@@ -11134,51 +11875,6 @@
         </actor>
         <actor>
             <type>dtExample.Mesh Object</type>
-            <id>ee7385db-bf6a-4bdc-8c33-6f6153072077</id>
-            <name>AncientCube</name>
-            <property>
-                <name>Name</name>
-                <string>AncientCube</string>
-            </property>
-            <property>
-                <name>ShaderGroup</name>
-                <string>MultiMap</string>
-            </property>
-            <property>
-                <name>Translation</name>
-                <vec3>
-                    <value1>-514.044556</value1>
-                    <value2>-307.448059</value2>
-                    <value3>5.081728</value3>
-                </vec3>
-            </property>
-            <property>
-                <name>static mesh</name>
-                <resourceType>StaticMeshes</resourceType>
-                <resourceDisplayName>StaticMeshes:multimap:Cube.osg</resourceDisplayName>
-                <resource>StaticMeshes:multimap:Cube.osg</resource>
-            </property>
-            <property>
-                <name>Scale</name>
-                <vec3>
-                    <value1>20.000000</value1>
-                    <value2>20.000000</value2>
-                    <value3>20.000000</value3>
-                </vec3>
-            </property>
-            <property>
-                <name>Main: Primitive Type</name>
-                <enumerated>Box</enumerated>
-            </property>
-            <property>
-                <name>Main: PhysicsMesh</name>
-                <resourceType>StaticMeshes</resourceType>
-                <resourceDisplayName>StaticMeshes:multimap:Cube.osg</resourceDisplayName>
-                <resource>StaticMeshes:multimap:Cube.osg</resource>
-            </property>
-        </actor>
-        <actor>
-            <type>dtExample.Mesh Object</type>
             <id>efbd5592-6d0a-4c12-8d36-36e29fa06037</id>
             <name>palmtree_40</name>
             <property>
@@ -11559,6 +12255,47 @@
                 <resourceType>StaticMeshes</resourceType>
                 <resourceDisplayName>StaticMeshes:lamps:Lamppost_Trident_PHYSICS.osg</resourceDisplayName>
                 <resource>StaticMeshes:lamps:Lamppost_Trident_PHYSICS.osg</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtRender.Dynamic Light</type>
+            <id>f9601ba0-9d21-44f3-92dc-a7eaa41214b9</id>
+            <name>torchlight_04</name>
+            <property>
+                <name>Name</name>
+                <string>torchlight_04</string>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-565.558594</value1>
+                    <value2>-135.159332</value2>
+                    <value3>3.364410</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Attenuation</name>
+                <vec3>
+                    <value1>1.000000</value1>
+                    <value2>0.350000</value2>
+                    <value3>0.440000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Light Color</name>
+                <vec3>
+                    <value1>1.000000</value1>
+                    <value2>0.500000</value2>
+                    <value3>0.250000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Flicker Scale</name>
+                <float>0.30000001</float>
+            </property>
+            <property>
+                <name>Radius</name>
+                <float>10</float>
             </property>
         </actor>
         <actor>
