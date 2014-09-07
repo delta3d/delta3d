@@ -159,7 +159,6 @@ namespace dtEditQt
       // Create our "toolbar" widget.
       mToolBar = new QFrame(this);
       mToolBar->setFrameStyle(QFrame::Box | QFrame::Raised);
-      mToolBar->setFixedHeight(25);
 
       QBoxLayout* layout = new QHBoxLayout(mToolBar);
       mButtonLayout = new QHBoxLayout();
@@ -245,6 +244,7 @@ namespace dtEditQt
       mButtonLayout->addWidget(button);
 
       mLayout->addWidget(mToolBar);
+      mToolBar->setFixedHeight(layout->sizeHint().height());
    }
 
    /////////////////////////////////////////////////////////////////////////////
