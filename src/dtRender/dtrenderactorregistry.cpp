@@ -31,7 +31,6 @@
 #include <dtRender/shadowscene.h>
 #include <dtRender/multipassscene.h>
 #include <dtRender/dofscene.h>
-#include <dtRender/glowscene.h>
 #include <dtRender/cubemapscene.h>
 #include <dtRender/ssaoscene.h>
 #include <dtRender/videoscene.h>
@@ -54,9 +53,6 @@ namespace dtRender
 
    dtCore::RefPtr<dtCore::ActorType> RenderActorRegistry::GUI_SCENE_ACTOR_TYPE(new dtCore::ActorType
       ("GUI Scene", "dtRender", "This actor renders stuff on top of the main render pass.")); 
-
-   dtCore::RefPtr<dtCore::ActorType> RenderActorRegistry::GLOW_SCENE_ACTOR_TYPE(new dtCore::ActorType
-      ("Glow Scene", "dtRender", "This actor renders materials that glow in a prepass to provide a post p glow pass.")); 
 
    dtCore::RefPtr<dtCore::ActorType> RenderActorRegistry::HDR_SCENE_ACTOR_TYPE(new dtCore::ActorType
       ("HDR Scene", "dtRender", "This actor uses osgPPU to accumulate hdr light values and apply tone mapping.")); 
@@ -126,7 +122,6 @@ namespace dtRender
       mActorFactory->RegisterType<DOFSceneActor>(DOF_SCENE_ACTOR_TYPE.get());
       mActorFactory->RegisterType<EphemerisSceneActor>(EPHEMERIS_SCENE_ACTOR_TYPE.get());
       mActorFactory->RegisterType<GUISceneActor>(GUI_SCENE_ACTOR_TYPE.get());
-      mActorFactory->RegisterType<GlowSceneActor>(GLOW_SCENE_ACTOR_TYPE.get());
       mActorFactory->RegisterType<HDRSceneActor>(HDR_SCENE_ACTOR_TYPE.get());
       mActorFactory->RegisterType<LightSceneActor>(LIGHT_SCENE_ACTOR_TYPE.get());
       
