@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <map xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="delta3dMap" xsi:schemaLocation="delta3dMap map.xsd">
     <header>
         <name>TestApp</name>
@@ -162,6 +163,12 @@
                     <value3>1.421903</value3>
                 </vec3>
             </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resourceDisplayName>
+                <resource>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resource>
+            </property>
         </actor>
         <actor>
             <type>dtExample.Mesh Object</type>
@@ -205,6 +212,12 @@
                     <value3>1.218585</value3>
                 </vec3>
             </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resourceDisplayName>
+                <resource>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resource>
+            </property>
         </actor>
         <actor>
             <type>dtExample.Mesh Object</type>
@@ -247,6 +260,12 @@
                     <value2>2.429839</value2>
                     <value3>2.429839</value3>
                 </vec3>
+            </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resourceDisplayName>
+                <resource>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resource>
             </property>
         </actor>
         <actor>
@@ -344,14 +363,11 @@
                     <value3>1.084280</value3>
                 </vec3>
             </property>
-        </actor>
-        <actor>
-            <type>dtExample.Mesh Object</type>
-            <id>0b93f0aa-6e41-4c4a-9f17-1f481f6497a9</id>
-            <name>StaticMesh_13</name>
             <property>
-                <name>Name</name>
-                <string>StaticMesh_13</string>
+                <name>Main: PhysicsMesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resourceDisplayName>
+                <resource>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resource>
             </property>
         </actor>
         <actor>
@@ -395,6 +411,12 @@
                     <value2>1.594322</value2>
                     <value3>1.594322</value3>
                 </vec3>
+            </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resourceDisplayName>
+                <resource>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resource>
             </property>
         </actor>
         <actor>
@@ -492,6 +514,12 @@
                     <value3>1.084280</value3>
                 </vec3>
             </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resourceDisplayName>
+                <resource>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resource>
+            </property>
         </actor>
         <actor>
             <type>dtExample.Mesh Object</type>
@@ -515,6 +543,12 @@
             </property>
             <property>
                 <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:glassware:wine_bottle:WineBottle_Purple.osg</resourceDisplayName>
+                <resource>StaticMeshes:glassware:wine_bottle:WineBottle_Purple.osg</resource>
+            </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
                 <resourceType>StaticMeshes</resourceType>
                 <resourceDisplayName>StaticMeshes:glassware:wine_bottle:WineBottle_Purple.osg</resourceDisplayName>
                 <resource>StaticMeshes:glassware:wine_bottle:WineBottle_Purple.osg</resource>
@@ -561,6 +595,12 @@
                     <value2>2.351737</value2>
                     <value3>2.351737</value3>
                 </vec3>
+            </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resourceDisplayName>
+                <resource>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resource>
             </property>
         </actor>
         <actor>
@@ -646,6 +686,12 @@
                     <value3>1.218585</value3>
                 </vec3>
             </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resourceDisplayName>
+                <resource>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resource>
+            </property>
         </actor>
         <actor>
             <type>dtExample.Mesh Object</type>
@@ -688,6 +734,12 @@
                     <value2>1.631390</value2>
                     <value3>1.631390</value3>
                 </vec3>
+            </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resourceDisplayName>
+                <resource>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resource>
             </property>
         </actor>
         <actor>
@@ -900,6 +952,12 @@
             </property>
             <property>
                 <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:coral:coral004c.obj</resourceDisplayName>
+                <resource>StaticMeshes:coral:coral004c.obj</resource>
+            </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
                 <resourceType>StaticMeshes</resourceType>
                 <resourceDisplayName>StaticMeshes:coral:coral004c.obj</resourceDisplayName>
                 <resource>StaticMeshes:coral:coral004c.obj</resource>
@@ -1131,6 +1189,12 @@
                     <value3>1.594322</value3>
                 </vec3>
             </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resourceDisplayName>
+                <resource>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resource>
+            </property>
         </actor>
         <actor>
             <type>dtExample.Mesh Object</type>
@@ -1280,6 +1344,12 @@
                     <value3>1.155899</value3>
                 </vec3>
             </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resourceDisplayName>
+                <resource>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resource>
+            </property>
         </actor>
         <actor>
             <type>dtExample.Mesh Object</type>
@@ -1303,6 +1373,12 @@
             </property>
             <property>
                 <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:glassware:wine_bottle:WineBottle_Green.osg</resourceDisplayName>
+                <resource>StaticMeshes:glassware:wine_bottle:WineBottle_Green.osg</resource>
+            </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
                 <resourceType>StaticMeshes</resourceType>
                 <resourceDisplayName>StaticMeshes:glassware:wine_bottle:WineBottle_Green.osg</resourceDisplayName>
                 <resource>StaticMeshes:glassware:wine_bottle:WineBottle_Green.osg</resource>
@@ -1402,6 +1478,12 @@
                     <value2>1.834725</value2>
                     <value3>1.834725</value3>
                 </vec3>
+            </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resourceDisplayName>
+                <resource>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resource>
             </property>
         </actor>
         <actor>
@@ -1669,6 +1751,12 @@
                     <value3>1.444901</value3>
                 </vec3>
             </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resourceDisplayName>
+                <resource>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resource>
+            </property>
         </actor>
         <actor>
             <type>dtExample.Mesh Object</type>
@@ -1711,6 +1799,12 @@
                     <value2>1.834725</value2>
                     <value3>1.834725</value3>
                 </vec3>
+            </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resourceDisplayName>
+                <resource>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resource>
             </property>
         </actor>
         <actor>
@@ -1808,6 +1902,12 @@
                     <value3>2.429839</value3>
                 </vec3>
             </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resourceDisplayName>
+                <resource>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resource>
+            </property>
         </actor>
         <actor>
             <type>dtExample.Mesh Object</type>
@@ -1850,6 +1950,12 @@
                     <value2>1.834725</value2>
                     <value3>1.834725</value3>
                 </vec3>
+            </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resourceDisplayName>
+                <resource>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resource>
             </property>
         </actor>
         <actor>
@@ -2183,6 +2289,12 @@
                     <value3>1.421903</value3>
                 </vec3>
             </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resourceDisplayName>
+                <resource>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resource>
+            </property>
         </actor>
         <actor>
             <type>dtExample.Mesh Object</type>
@@ -2225,6 +2337,12 @@
                     <value2>1.502282</value2>
                     <value3>1.502282</value3>
                 </vec3>
+            </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resourceDisplayName>
+                <resource>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resource>
             </property>
         </actor>
         <actor>
@@ -2321,6 +2439,12 @@
                     <value2>1.594322</value2>
                     <value3>1.594322</value3>
                 </vec3>
+            </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resourceDisplayName>
+                <resource>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resource>
             </property>
         </actor>
         <actor>
@@ -2430,6 +2554,12 @@
                     <value2>1.384651</value2>
                     <value3>1.384651</value3>
                 </vec3>
+            </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resourceDisplayName>
+                <resource>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resource>
             </property>
         </actor>
         <actor>
@@ -2567,6 +2697,12 @@
                     <value2>1.453299</value2>
                     <value3>1.453299</value3>
                 </vec3>
+            </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resourceDisplayName>
+                <resource>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resource>
             </property>
         </actor>
         <actor>
@@ -2770,6 +2906,12 @@
                     <value3>1.084280</value3>
                 </vec3>
             </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resourceDisplayName>
+                <resource>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resource>
+            </property>
         </actor>
         <actor>
             <type>dtExample.Mesh Object</type>
@@ -2853,6 +2995,12 @@
                     <value2>2.167648</value2>
                     <value3>2.167648</value3>
                 </vec3>
+            </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resourceDisplayName>
+                <resource>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resource>
             </property>
         </actor>
         <actor>
@@ -2941,6 +3089,12 @@
                     <value2>1.084280</value2>
                     <value3>1.084280</value3>
                 </vec3>
+            </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resourceDisplayName>
+                <resource>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resource>
             </property>
         </actor>
         <actor>
@@ -3075,6 +3229,12 @@
                     <value3>1.834725</value3>
                 </vec3>
             </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resourceDisplayName>
+                <resource>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resource>
+            </property>
         </actor>
         <actor>
             <type>dtActors.Director Actor</type>
@@ -3149,6 +3309,12 @@
                     <value2>2.351737</value2>
                     <value3>2.351737</value3>
                 </vec3>
+            </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resourceDisplayName>
+                <resource>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resource>
             </property>
         </actor>
         <actor>
@@ -3299,6 +3465,12 @@
                     <value3>1.834736</value3>
                 </vec3>
             </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:trees:palmtree:PalmTree_Angled_PHYSICS.osg</resourceDisplayName>
+                <resource>StaticMeshes:trees:palmtree:PalmTree_Angled_PHYSICS.osg</resource>
+            </property>
         </actor>
         <actor>
             <type>dtRender.Dynamic Light</type>
@@ -3382,6 +3554,12 @@
                     <value2>1.953257</value2>
                     <value3>1.953257</value3>
                 </vec3>
+            </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resourceDisplayName>
+                <resource>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resource>
             </property>
         </actor>
         <actor>
@@ -3899,6 +4077,12 @@
                     <value3>1.155899</value3>
                 </vec3>
             </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resourceDisplayName>
+                <resource>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resource>
+            </property>
         </actor>
         <actor>
             <type>dtExample.Mesh Object</type>
@@ -4183,6 +4367,12 @@
                     <value3>1.834725</value3>
                 </vec3>
             </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resourceDisplayName>
+                <resource>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resource>
+            </property>
         </actor>
         <actor>
             <type>dtExample.Mesh Object</type>
@@ -4278,6 +4468,12 @@
                     <value2>1.265184</value2>
                     <value3>1.265184</value3>
                 </vec3>
+            </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resourceDisplayName>
+                <resource>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resource>
             </property>
         </actor>
         <actor>
@@ -4555,6 +4751,12 @@
                 <resourceDisplayName>StaticMeshes:glassware:wine_bottle:WineBottle_Orange.osg</resourceDisplayName>
                 <resource>StaticMeshes:glassware:wine_bottle:WineBottle_Orange.osg</resource>
             </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:glassware:wine_bottle:WineBottle_Orange.osg</resourceDisplayName>
+                <resource>StaticMeshes:glassware:wine_bottle:WineBottle_Orange.osg</resource>
+            </property>
         </actor>
         <actor>
             <type>dtExample.Mesh Object</type>
@@ -4597,6 +4799,12 @@
                     <value2>2.429839</value2>
                     <value3>2.429839</value3>
                 </vec3>
+            </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resourceDisplayName>
+                <resource>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resource>
             </property>
         </actor>
         <actor>
@@ -4694,6 +4902,12 @@
                     <value3>2.351737</value3>
                 </vec3>
             </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resourceDisplayName>
+                <resource>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resource>
+            </property>
         </actor>
         <actor>
             <type>dtExample.Mesh Object</type>
@@ -4781,6 +4995,12 @@
                     <value2>1.410942</value2>
                     <value3>1.410942</value3>
                 </vec3>
+            </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resourceDisplayName>
+                <resource>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resource>
             </property>
         </actor>
         <actor>
@@ -5037,6 +5257,12 @@
                     <value3>1.084280</value3>
                 </vec3>
             </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resourceDisplayName>
+                <resource>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resource>
+            </property>
         </actor>
         <actor>
             <type>dtExample.Mesh Object</type>
@@ -5125,6 +5351,12 @@
                     <value3>1.124380</value3>
                 </vec3>
             </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resourceDisplayName>
+                <resource>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resource>
+            </property>
         </actor>
         <actor>
             <type>dtExample.Mesh Object</type>
@@ -5167,6 +5399,12 @@
                     <value2>2.006537</value2>
                     <value3>2.006537</value3>
                 </vec3>
+            </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resourceDisplayName>
+                <resource>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resource>
             </property>
         </actor>
         <actor>
@@ -5300,6 +5538,12 @@
                     <value2>1.410942</value2>
                     <value3>1.410942</value3>
                 </vec3>
+            </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resourceDisplayName>
+                <resource>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resource>
             </property>
         </actor>
         <actor>
@@ -5447,6 +5691,12 @@
                     <value3>2.429839</value3>
                 </vec3>
             </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resourceDisplayName>
+                <resource>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resource>
+            </property>
         </actor>
         <actor>
             <type>dtExample.Mesh Object</type>
@@ -5489,6 +5739,12 @@
                     <value2>1.045081</value2>
                     <value3>1.045081</value3>
                 </vec3>
+            </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resourceDisplayName>
+                <resource>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resource>
             </property>
         </actor>
         <actor>
@@ -5631,6 +5887,12 @@
                 <resourceDisplayName>StaticMeshes:glassware:wine_bottle:WineBottle_Green.osg</resourceDisplayName>
                 <resource>StaticMeshes:glassware:wine_bottle:WineBottle_Green.osg</resource>
             </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:glassware:wine_bottle:WineBottle_Green.osg</resourceDisplayName>
+                <resource>StaticMeshes:glassware:wine_bottle:WineBottle_Green.osg</resource>
+            </property>
         </actor>
         <actor>
             <type>dtExample.Mesh Object</type>
@@ -5674,6 +5936,12 @@
                     <value3>1.218075</value3>
                 </vec3>
             </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resourceDisplayName>
+                <resource>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resource>
+            </property>
         </actor>
         <actor>
             <type>dtExample.Mesh Object</type>
@@ -5716,6 +5984,12 @@
                     <value2>1.850563</value2>
                     <value3>1.850563</value3>
                 </vec3>
+            </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resourceDisplayName>
+                <resource>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resource>
             </property>
         </actor>
         <actor>
@@ -5858,6 +6132,12 @@
                     <value3>1.000000</value3>
                 </vec3>
             </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resourceDisplayName>
+                <resource>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resource>
+            </property>
         </actor>
         <actor>
             <type>dtExample.Mesh Object</type>
@@ -5900,6 +6180,12 @@
                     <value2>1.842431</value2>
                     <value3>1.842431</value3>
                 </vec3>
+            </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resourceDisplayName>
+                <resource>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resource>
             </property>
         </actor>
         <actor>
@@ -5977,6 +6263,12 @@
                 <resourceDisplayName>StaticMeshes:glassware:wine_bottle:WineBottle_Purple.osg</resourceDisplayName>
                 <resource>StaticMeshes:glassware:wine_bottle:WineBottle_Purple.osg</resource>
             </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:glassware:wine_bottle:WineBottle_Purple.osg</resourceDisplayName>
+                <resource>StaticMeshes:glassware:wine_bottle:WineBottle_Purple.osg</resource>
+            </property>
         </actor>
         <actor>
             <type>dtExample.Mesh Object</type>
@@ -6019,6 +6311,12 @@
                     <value2>1.834725</value2>
                     <value3>1.834725</value3>
                 </vec3>
+            </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resourceDisplayName>
+                <resource>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resource>
             </property>
         </actor>
         <actor>
@@ -6076,6 +6374,12 @@
                 <resourceDisplayName>StaticMeshes:glassware:wine_bottle:WineBottle_Green.osg</resourceDisplayName>
                 <resource>StaticMeshes:glassware:wine_bottle:WineBottle_Green.osg</resource>
             </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:glassware:wine_bottle:WineBottle_Green.osg</resourceDisplayName>
+                <resource>StaticMeshes:glassware:wine_bottle:WineBottle_Green.osg</resource>
+            </property>
         </actor>
         <actor>
             <type>dtExample.Mesh Object</type>
@@ -6118,6 +6422,12 @@
                     <value2>2.273289</value2>
                     <value3>2.273289</value3>
                 </vec3>
+            </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resourceDisplayName>
+                <resource>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resource>
             </property>
         </actor>
         <actor>
@@ -6248,6 +6558,12 @@
                     <value3>2.351737</value3>
                 </vec3>
             </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resourceDisplayName>
+                <resource>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resource>
+            </property>
         </actor>
         <actor>
             <type>dtExample.Mesh Object</type>
@@ -6290,6 +6606,12 @@
                     <value2>1.045081</value2>
                     <value3>1.045081</value3>
                 </vec3>
+            </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resourceDisplayName>
+                <resource>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resource>
             </property>
         </actor>
         <actor>
@@ -6733,6 +7055,12 @@
                     <value3>1.834725</value3>
                 </vec3>
             </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resourceDisplayName>
+                <resource>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resource>
+            </property>
         </actor>
         <actor>
             <type>dtcore.Curve.Bezier Node</type>
@@ -6902,6 +7230,12 @@
                     <value3>2.856055</value3>
                 </vec3>
             </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resourceDisplayName>
+                <resource>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resource>
+            </property>
         </actor>
         <actor>
             <type>dtExample.Mesh Object</type>
@@ -6936,6 +7270,12 @@
                 <resourceType>StaticMeshes</resourceType>
                 <resourceDisplayName>StaticMeshes:walkways:boardwalk_and_bar:boardwalk_and_bar.osg</resourceDisplayName>
                 <resource>StaticMeshes:walkways:boardwalk_and_bar:boardwalk_and_bar.osg</resource>
+            </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:walkways:boardwalk_and_bar:boardwalk_and_bar_PHYSICS.osg</resourceDisplayName>
+                <resource>StaticMeshes:walkways:boardwalk_and_bar:boardwalk_and_bar_PHYSICS.osg</resource>
             </property>
         </actor>
         <actor>
@@ -7294,6 +7634,12 @@
                     <value3>1.505068</value3>
                 </vec3>
             </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resourceDisplayName>
+                <resource>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resource>
+            </property>
         </actor>
         <actor>
             <type>dtcore.Game.Actors.Game Mesh Actor</type>
@@ -7363,6 +7709,12 @@
                     <value2>1.557695</value2>
                     <value3>1.557695</value3>
                 </vec3>
+            </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resourceDisplayName>
+                <resource>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resource>
             </property>
         </actor>
         <actor>
@@ -7458,6 +7810,12 @@
                     <value2>1.262645</value2>
                     <value3>1.262645</value3>
                 </vec3>
+            </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resourceDisplayName>
+                <resource>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resource>
             </property>
         </actor>
         <actor>
@@ -7698,6 +8056,12 @@
                     <value3>1.925492</value3>
                 </vec3>
             </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resourceDisplayName>
+                <resource>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resource>
+            </property>
         </actor>
         <actor>
             <type>dtExample.Mesh Object</type>
@@ -7740,6 +8104,12 @@
                     <value2>1.410942</value2>
                     <value3>1.410942</value3>
                 </vec3>
+            </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resourceDisplayName>
+                <resource>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resource>
             </property>
         </actor>
         <actor>
@@ -8033,6 +8403,12 @@
                     <value3>1.410942</value3>
                 </vec3>
             </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resourceDisplayName>
+                <resource>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resource>
+            </property>
         </actor>
         <actor>
             <type>dtExample.Mesh Object</type>
@@ -8207,6 +8583,12 @@
             </property>
             <property>
                 <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:glassware:wine_bottle:WineBottle_Orange.osg</resourceDisplayName>
+                <resource>StaticMeshes:glassware:wine_bottle:WineBottle_Orange.osg</resource>
+            </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
                 <resourceType>StaticMeshes</resourceType>
                 <resourceDisplayName>StaticMeshes:glassware:wine_bottle:WineBottle_Orange.osg</resourceDisplayName>
                 <resource>StaticMeshes:glassware:wine_bottle:WineBottle_Orange.osg</resource>
@@ -8454,6 +8836,12 @@
                     <value3>2.429839</value3>
                 </vec3>
             </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resourceDisplayName>
+                <resource>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resource>
+            </property>
         </actor>
         <actor>
             <type>dtExample.Mesh Object</type>
@@ -8587,6 +8975,12 @@
                     <value3>2.222320</value3>
                 </vec3>
             </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resourceDisplayName>
+                <resource>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resource>
+            </property>
         </actor>
         <actor>
             <type>dtExample.Mesh Object</type>
@@ -8687,6 +9081,12 @@
                     <value2>1.367967</value2>
                     <value3>1.367967</value3>
                 </vec3>
+            </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resourceDisplayName>
+                <resource>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resource>
             </property>
         </actor>
         <actor>
@@ -8866,6 +9266,12 @@
                     <value3>1.834725</value3>
                 </vec3>
             </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resourceDisplayName>
+                <resource>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resource>
+            </property>
         </actor>
         <actor>
             <type>dtExample.Mesh Object</type>
@@ -9040,6 +9446,12 @@
                     <value3>1.218585</value3>
                 </vec3>
             </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resourceDisplayName>
+                <resource>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resource>
+            </property>
         </actor>
         <actor>
             <type>dtExample.Mesh Object</type>
@@ -9083,6 +9495,12 @@
                     <value3>1.084280</value3>
                 </vec3>
             </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resourceDisplayName>
+                <resource>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resource>
+            </property>
         </actor>
         <actor>
             <type>dtExample.Mesh Object</type>
@@ -9125,6 +9543,12 @@
                     <value2>1.449655</value2>
                     <value3>1.449655</value3>
                 </vec3>
+            </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resourceDisplayName>
+                <resource>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resource>
             </property>
         </actor>
         <actor>
@@ -9189,6 +9613,12 @@
                     <value2>2.412538</value2>
                     <value3>2.412538</value3>
                 </vec3>
+            </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resourceDisplayName>
+                <resource>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resource>
             </property>
         </actor>
         <actor>
@@ -9397,6 +9827,12 @@
                     <value3>1.045081</value3>
                 </vec3>
             </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resourceDisplayName>
+                <resource>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resource>
+            </property>
         </actor>
         <actor>
             <type>dtExample.Mesh Object</type>
@@ -9493,6 +9929,12 @@
                     <value3>2.429839</value3>
                 </vec3>
             </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resourceDisplayName>
+                <resource>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resource>
+            </property>
         </actor>
         <actor>
             <type>dtExample.Mesh Object</type>
@@ -9536,6 +9978,12 @@
                     <value3>1.218075</value3>
                 </vec3>
             </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resourceDisplayName>
+                <resource>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resource>
+            </property>
         </actor>
         <actor>
             <type>dtExample.Mesh Object</type>
@@ -9578,6 +10026,12 @@
                     <value2>1.265184</value2>
                     <value3>1.265184</value3>
                 </vec3>
+            </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resourceDisplayName>
+                <resource>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resource>
             </property>
         </actor>
         <actor>
@@ -9945,6 +10399,12 @@
                     <value3>2.526402</value3>
                 </vec3>
             </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resourceDisplayName>
+                <resource>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resource>
+            </property>
         </actor>
         <actor>
             <type>dtcore.Curve.Bezier Node</type>
@@ -10025,6 +10485,12 @@
                     <value3>1.347287</value3>
                 </vec3>
             </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resourceDisplayName>
+                <resource>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resource>
+            </property>
         </actor>
         <actor>
             <type>dtExample.Mesh Object</type>
@@ -10067,6 +10533,12 @@
                     <value2>1.347287</value2>
                     <value3>1.347287</value3>
                 </vec3>
+            </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resourceDisplayName>
+                <resource>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resource>
             </property>
         </actor>
         <actor>
@@ -10242,6 +10714,12 @@
                     <value3>1.155899</value3>
                 </vec3>
             </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resourceDisplayName>
+                <resource>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resource>
+            </property>
         </actor>
         <actor>
             <type>dtExample.Mesh Object</type>
@@ -10326,6 +10804,12 @@
             </property>
             <property>
                 <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:glassware:wine_bottle:WineBottle_Orange.osg</resourceDisplayName>
+                <resource>StaticMeshes:glassware:wine_bottle:WineBottle_Orange.osg</resource>
+            </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
                 <resourceType>StaticMeshes</resourceType>
                 <resourceDisplayName>StaticMeshes:glassware:wine_bottle:WineBottle_Orange.osg</resourceDisplayName>
                 <resource>StaticMeshes:glassware:wine_bottle:WineBottle_Orange.osg</resource>
@@ -10752,6 +11236,12 @@
                     <value3>2.351737</value3>
                 </vec3>
             </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resourceDisplayName>
+                <resource>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resource>
+            </property>
         </actor>
         <actor>
             <type>dtExample.Mesh Object</type>
@@ -10795,6 +11285,12 @@
                     <value3>2.272793</value3>
                 </vec3>
             </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resourceDisplayName>
+                <resource>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resource>
+            </property>
         </actor>
         <actor>
             <type>dtExample.Mesh Object</type>
@@ -10826,6 +11322,12 @@
             </property>
             <property>
                 <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:glassware:wine_bottle:WineBottle_Orange.osg</resourceDisplayName>
+                <resource>StaticMeshes:glassware:wine_bottle:WineBottle_Orange.osg</resource>
+            </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
                 <resourceType>StaticMeshes</resourceType>
                 <resourceDisplayName>StaticMeshes:glassware:wine_bottle:WineBottle_Orange.osg</resourceDisplayName>
                 <resource>StaticMeshes:glassware:wine_bottle:WineBottle_Orange.osg</resource>
@@ -10945,6 +11447,12 @@
                     <value3>1.410942</value3>
                 </vec3>
             </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resourceDisplayName>
+                <resource>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resource>
+            </property>
         </actor>
         <actor>
             <type>dtExample.Mesh Object</type>
@@ -11050,6 +11558,12 @@
                     <value3>1.045081</value3>
                 </vec3>
             </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resourceDisplayName>
+                <resource>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resource>
+            </property>
         </actor>
         <actor>
             <type>dtcore.Curve.Bezier Control Point</type>
@@ -11130,6 +11644,12 @@
                     <value2>1.084280</value2>
                     <value3>1.084280</value3>
                 </vec3>
+            </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resourceDisplayName>
+                <resource>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resource>
             </property>
         </actor>
         <actor>
@@ -11293,6 +11813,12 @@
                     <value3>2.429839</value3>
                 </vec3>
             </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resourceDisplayName>
+                <resource>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resource>
+            </property>
         </actor>
         <actor>
             <type>dtExample.Mesh Object</type>
@@ -11410,6 +11936,12 @@
             </property>
             <property>
                 <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:glassware:wine_bottle:WineBottle_Purple.osg</resourceDisplayName>
+                <resource>StaticMeshes:glassware:wine_bottle:WineBottle_Purple.osg</resource>
+            </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
                 <resourceType>StaticMeshes</resourceType>
                 <resourceDisplayName>StaticMeshes:glassware:wine_bottle:WineBottle_Purple.osg</resourceDisplayName>
                 <resource>StaticMeshes:glassware:wine_bottle:WineBottle_Purple.osg</resource>
@@ -11645,6 +12177,12 @@
                     <value3>1.084280</value3>
                 </vec3>
             </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resourceDisplayName>
+                <resource>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resource>
+            </property>
         </actor>
         <actor>
             <type>dtExample.Mesh Object</type>
@@ -11777,6 +12315,12 @@
                     <value2>1.265184</value2>
                     <value3>1.265184</value3>
                 </vec3>
+            </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resourceDisplayName>
+                <resource>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resource>
             </property>
         </actor>
         <actor>
@@ -11960,6 +12504,12 @@
                     <value3>1.834725</value3>
                 </vec3>
             </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resourceDisplayName>
+                <resource>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resource>
+            </property>
         </actor>
         <actor>
             <type>dtExample.Mesh Object</type>
@@ -12002,6 +12552,12 @@
                     <value2>1.834725</value2>
                     <value3>1.834725</value3>
                 </vec3>
+            </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resourceDisplayName>
+                <resource>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resource>
             </property>
         </actor>
         <actor>
@@ -12254,6 +12810,12 @@
                     <value3>1.444901</value3>
                 </vec3>
             </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resourceDisplayName>
+                <resource>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resource>
+            </property>
         </actor>
         <actor>
             <type>dtExample.Mesh Object</type>
@@ -12350,14 +12912,11 @@
                     <value3>1.430507</value3>
                 </vec3>
             </property>
-        </actor>
-        <actor>
-            <type>dtExample.Mesh Object</type>
-            <id>ed4aa0fe-71fb-4127-aa7a-d0d208b92914</id>
-            <name>StaticMesh_15</name>
             <property>
-                <name>Name</name>
-                <string>StaticMesh_15</string>
+                <name>Main: PhysicsMesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resourceDisplayName>
+                <resource>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resource>
             </property>
         </actor>
         <actor>
@@ -12401,6 +12960,12 @@
                     <value2>2.429839</value2>
                     <value3>2.429839</value3>
                 </vec3>
+            </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resourceDisplayName>
+                <resource>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resource>
             </property>
         </actor>
         <actor>
@@ -12534,6 +13099,12 @@
                     <value2>1.410942</value2>
                     <value3>1.410942</value3>
                 </vec3>
+            </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resourceDisplayName>
+                <resource>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resource>
             </property>
         </actor>
         <actor>
@@ -12873,6 +13444,12 @@
                     <value3>1.084280</value3>
                 </vec3>
             </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resourceDisplayName>
+                <resource>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resource>
+            </property>
         </actor>
         <actor>
             <type>dtExample.Mesh Object</type>
@@ -13051,6 +13628,12 @@
                     <value3>1.029670</value3>
                 </vec3>
             </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resourceDisplayName>
+                <resource>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resource>
+            </property>
         </actor>
         <actor>
             <type>dtExample.Mesh Object</type>
@@ -13191,6 +13774,12 @@
                     <value2>1.204240</value2>
                     <value3>1.204240</value3>
                 </vec3>
+            </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resourceDisplayName>
+                <resource>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resource>
             </property>
         </actor>
         <actor>
