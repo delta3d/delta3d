@@ -56,7 +56,7 @@ struct MapParams
 
 // External Functions
 void computeMultiMapColor(MapParams m, inout FragParams f, inout EffectParams e);
-
+float SampleShadowTexture();
 
 
 vec4 combineEffects(EffectParams e)
@@ -66,6 +66,10 @@ vec4 combineEffects(EffectParams e)
    result.rgb += e.envContrib.rgb * e.envContrib.a;
    result.rgb += e.specContrib.rgb * e.specContrib.a;
    result.rgb += e.illumContrib.rgb;
+   
+   float shadowAmt = SampleShadowTexture();
+   result.rgb *= shadowAmt;
+
    return result;
 }
 
