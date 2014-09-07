@@ -41,7 +41,7 @@ namespace dtExample
    , mCurrentWaypoint(NULL)
    , mWaypointPath()
    {
-      SetClassName("Blacklight.CivilianAIActorComponent");
+      SetClassName("dtExample.CivilianAIActorComponent");
    }
 
    ////////////////////////////////////////////////////////////////////////

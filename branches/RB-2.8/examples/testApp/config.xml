@@ -7,6 +7,7 @@
 	<Scene Name="defaultScene"/>
 	<Camera Name="defaultCam" WindowInstance="testApp"/>
 	<View Name="defaultView" CameraInstance="defaultCam" SceneInstance="defaultScene"/>
+        <Log Name="animationtransitionplanner.cpp" Level="Debug"/>
    
    <Properties>
    <!-- Possible threading models:
