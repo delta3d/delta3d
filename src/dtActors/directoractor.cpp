@@ -19,7 +19,7 @@
  * Jeff P. Houde
  */
 
-#include <dtActors/directoractorproxy.h>
+#include <dtActors/directoractor.h>
 
 #include <dtABC/application.h>
 
@@ -45,23 +45,6 @@
 
 namespace dtActors
 {
-   /////////////////////////////////////////////////////////////////////////////
-   // ACTOR CODE
-   /////////////////////////////////////////////////////////////////////////////
-
-   /////////////////////////////////////////////////////////////////////////////
-   DirectorActor::DirectorActor(dtGame::GameActorProxy& parent)
-      : BaseClass(parent)
-      , mNodeLogging(false)
-      , mResourceIndex(0)
-   {
-      SetName("Director_Graph_Actor");
-   }
-
-   /////////////////////////////////////////////////////////////////////////////
-   DirectorActor::~DirectorActor()
-   {
-   }
 
    ////////////////////////////////////////////////////
    void DirectorActor::OnTickLocal(const dtGame::TickMessage& tickMessage)
@@ -93,10 +76,10 @@ namespace dtActors
    {
       mDirectorList.clear();
 
-      dtGame::GameManager* gm = GetGameActorProxy().GetGameManager();
+      dtGame::GameManager* gm = GetGameManager();
 
       // Find the map that this actor belongs to.
-      dtCore::Map* map = dtCore::Project::GetInstance().GetMapForActorProxy(GetUniqueId());
+      dtCore::Map* map = dtCore::Project::GetInstance().GetMapForActorProxy(GetId());
 
       int count = (int)mResourceList.size();
       for (int index = 0; index < count; index++)
@@ -167,37 +150,37 @@ namespace dtActors
       return mDirectorList;
    }
 
+   /////////////////////////////////////////////////////////////////////////////
+   const dtUtil::RefString DirectorActor::CLASS_NAME("dtActors::DirectorActor");
 
    /////////////////////////////////////////////////////////////////////////////
-   // PROXY CODE
-   /////////////////////////////////////////////////////////////////////////////
-   const dtUtil::RefString DirectorActorProxy::CLASS_NAME("dtActors::DirectorActor");
-
-   /////////////////////////////////////////////////////////////////////////////
-   DirectorActorProxy::DirectorActorProxy()
+   DirectorActor::DirectorActor()
       : BaseClass()
+      , mNodeLogging(false)
+      , mResourceIndex(0)
    {
+      SetName("Director Graph Actor");
       SetClassName(CLASS_NAME.Get());
+      SetHideDTCorePhysicsProps(true);
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   DirectorActorProxy::~DirectorActorProxy()
+   DirectorActor::~DirectorActor()
    {
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void DirectorActorProxy::CreateDrawable()
+   void DirectorActor::CreateDrawable()
    {
-      SetDrawable(*new DirectorActor(*this));
+      SetDrawable(*new dtCore::Transformable);
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void DirectorActorProxy::BuildPropertyMap()
+   void DirectorActor::BuildPropertyMap()
    {
       BaseClass::BuildPropertyMap();
 
-      DirectorActor* actor = NULL;
-      GetDrawable(actor);
+      DirectorActor* actor = this;
 
       AddProperty(new dtCore::BooleanActorProperty(
          "NodeLogging", "Node Logging",
@@ -225,7 +208,7 @@ namespace dtActors
    }
 
    //////////////////////////////////////////////////////////////////////////////
-   void DirectorActorProxy::OnEnteredWorld()
+   void DirectorActor::OnEnteredWorld()
    {
       BaseClass::OnEnteredWorld();
 
@@ -238,28 +221,25 @@ namespace dtActors
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void DirectorActorProxy::BuildInvokables()
+   void DirectorActor::BuildInvokables()
    {
       BaseClass::BuildInvokables();
 
       if (!IsInSTAGE())
       {
-         DirectorActor* actor = NULL;
-         GetDrawable(actor);
-
          AddInvokable(*new dtGame::Invokable("Map Loaded",
-            dtUtil::MakeFunctor(&DirectorActor::OnLoadDirectors, *actor)));
+            dtUtil::MakeFunctor(&DirectorActor::OnLoadDirectors, *this)));
       }
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   const dtCore::BaseActorObject::RenderMode& DirectorActorProxy::GetRenderMode()
+   const dtCore::BaseActorObject::RenderMode& DirectorActor::GetRenderMode()
    {
       return dtCore::BaseActorObject::RenderMode::DRAW_BILLBOARD_ICON;
    }
 
    //////////////////////////////////////////////////////////////////////////
-   dtCore::ActorProxyIcon* DirectorActorProxy::GetBillBoardIcon()
+   dtCore::ActorProxyIcon* DirectorActor::GetBillBoardIcon()
    {
       if(!mBillBoardIcon.valid())
       {

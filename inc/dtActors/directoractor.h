@@ -37,19 +37,54 @@ namespace dtActors
    /////////////////////////////////////////////////////////////////////////////
    // ACTOR CODE
    /////////////////////////////////////////////////////////////////////////////
-   class DT_PLUGIN_EXPORT DirectorActor : public dtGame::GameActor
+   class DT_PLUGIN_EXPORT DirectorActor : public dtGame::GameActorProxy
    {
       DECLARE_MANAGEMENT_LAYER(DirectorActor)
 
    public:
-      typedef dtGame::GameActor BaseClass;
+      typedef dtGame::GameActorProxy BaseClass;
+
+      static const dtUtil::RefString CLASS_NAME;
 
       /**
       * Constructor.
       *
       * @param[in]  parent  The Game Actor Proxy.
       */
-      DirectorActor(dtGame::GameActorProxy& parent);
+      DirectorActor();
+      /**
+      * Creates the Actor for this Proxy.
+      */
+      virtual void CreateDrawable();
+
+      /**
+      * Builds all properties for this Proxy.
+      */
+      virtual void BuildPropertyMap();
+
+      /**
+      * Event handler when this actor has entered the world.
+      */
+      void OnEnteredWorld();
+
+      /**
+      * Build all invokables.
+      */
+      void BuildInvokables();
+
+      /**
+       * Retrieves the render mode for this proxy.
+       *
+       * @return  The render mode.
+       */
+      virtual const RenderMode& GetRenderMode();
+
+      /**
+      * Retrieves the billboard icon for this proxy.
+      *
+      * @return  The billboard icon.
+      */
+      virtual dtCore::ActorProxyIcon* GetBillBoardIcon();
 
       /**
       * Local tick function.
@@ -145,63 +180,5 @@ namespace dtActors
       int mResourceIndex;
    };
 
-   /////////////////////////////////////////////////////////////////////////////
-   // PROXY CODE
-   /////////////////////////////////////////////////////////////////////////////
-   class DT_PLUGIN_EXPORT DirectorActorProxy : public dtGame::GameActorProxy
-   {
-   public:
-      typedef dtGame::GameActorProxy BaseClass;
-
-      static const dtUtil::RefString CLASS_NAME;
-
-      /**
-      * Constructor.
-      */
-      DirectorActorProxy();
-
-      /**
-      * Creates the Actor for this Proxy.
-      */
-      virtual void CreateDrawable();
-
-      /**
-      * Builds all properties for this Proxy.
-      */
-      virtual void BuildPropertyMap();
-
-      /**
-      * Event handler when this actor has entered the world.
-      */
-      void OnEnteredWorld();
-
-      /**
-      * Build all invokables.
-      */
-      void BuildInvokables();
-
-      /**
-       * Retrieves the render mode for this proxy.
-       *
-       * @return  The render mode.
-       */
-      virtual const RenderMode& GetRenderMode();
-
-      /**
-      * Retrieves the billboard icon for this proxy.
-      *
-      * @return  The billboard icon.
-      */
-      virtual dtCore::ActorProxyIcon* GetBillBoardIcon();
-
-   protected:
-
-      /**
-      * Destructor.
-      */
-      virtual ~DirectorActorProxy();
-
-   private:
-   };
 }
 #endif // directoractorproxy_h__
