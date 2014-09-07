@@ -16,6 +16,7 @@ uniform mat4 osg_ViewMatrixInverse = mat4(1.0);
 
 void sphereMap(vec3, vec3, out vec2);
 float calculateDistance(mat4, vec4);
+void GenerateShadowTexCoords( in vec4 ecPosition );
 
 void main()
 {   
@@ -24,6 +25,9 @@ void main()
    gl_FogFragCoord = gl_FogCoord;
    
    gl_FrontColor = gl_Color;
+
+   vec4  ecPos  = gl_ModelViewMatrix * gl_Vertex;
+   GenerateShadowTexCoords(ecPos);
 
    // Moves the position, normal, and light direction into world space   
    vPos = (osg_ViewMatrixInverse * gl_ModelViewMatrix * gl_Vertex).xyz;
