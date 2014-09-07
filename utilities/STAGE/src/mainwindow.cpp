@@ -738,6 +738,8 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    void MainWindow::onEditorShutDown()
    {
+      WritePreferences();
+
       if(mPropertyWindow != NULL)
       {
          // listen for selection changed event
@@ -757,8 +759,6 @@ namespace dtEditQt
 
          mPropertyWindow->hide();
       }
-
-      WritePreferences();
    }
 
    ///////////////////////////////////////////////////////////////////////////////
