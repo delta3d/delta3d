@@ -129,13 +129,15 @@ namespace dtEditQt
       mSaveMins->setMaximum(60);
       mSaveMins->setSuffix(tr(" min(s)"));
 
-      hLay->setParent(vLay);
       hLay->addStretch(1);
       hLay->addWidget(ok);
       hLay->addWidget(cancel);
       hLay->addStretch(1);
 
-      vLay->addLayout(hLay);
+      QWidget* buttonWidget = new QWidget;
+      buttonWidget->setLayout(hLay);
+
+      vLay->addWidget(buttonWidget);
 
       connect(mProjectCheck,  SIGNAL(stateChanged(int)), this, SLOT(onLastProjectCheckBox(int)));
       connect(mMapCheck,      SIGNAL(stateChanged(int)), this, SLOT(onLastMapCheckBox(int)));
@@ -144,28 +146,29 @@ namespace dtEditQt
       connect(cancel,         SIGNAL(clicked()),         this, SLOT(reject()));
 
       setWindowTitle(tr("Preference Editor"));
-
+      EditorActions& ea = EditorActions::GetInstance();
       // Set the existing values
-      mSaveMins->setValue((EditorActions::GetInstance().mSaveMilliSeconds / 1000) / 60);
+      mSaveMins->setValue((ea.mSaveMilliSeconds / 1000) / 60);
 
       setNewPalette();
 
-      bool loadProject = EditorData::GetInstance().getLoadLastProject();
-      bool loadMap     = EditorData::GetInstance().getLoadLastMap();
-      bool rigidCamera = EditorData::GetInstance().getRigidCamera();
+      EditorData& edData = EditorData::GetInstance();
+      bool loadProject = edData.getLoadLastProject();
+      bool loadMap     = edData.getLoadLastMap();
+      bool rigidCamera = edData.getRigidCamera();
 
       mProjectCheck->setChecked(loadProject);
       mMapCheck->setChecked((loadProject && loadMap));
       mRigidCamCheck->setChecked(rigidCamera);
 
-      float actorOffsetDistance = EditorData::GetInstance().GetActorCreationOffset();
+      float actorOffsetDistance = edData.GetActorCreationOffset();
       mActorOffsetDistance->setText(QString::number(actorOffsetDistance, 'f', 5));
 
-      mNumRecentProjects->setValue(EditorData::GetInstance().GetNumRecentProjects());
+      mNumRecentProjects->setValue(edData.GetNumRecentProjects());
 
       setModal(true);
-      //resize(200, 300);
-      setFixedSize(325, 300);
+      resize(350, 300);
+      //setFixedSize(325, 300);
    }
 
    //////////////////////////////////////////////////////////////////
