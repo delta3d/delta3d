@@ -27,6 +27,10 @@
 
 #include <dtRender/parallelsplitshadowmap.h>
 
+//to get scene node
+#include <dtABC/application.h>
+#include <dtCore/scene.h>
+
 #include <osgShadow/ShadowedScene>
 #include <osg/Notify>
 #include <osg/ComputeBoundsVisitor>
@@ -61,6 +65,53 @@
 
 namespace dtRender
 {
+   const std::string ParallelSplitShadowMap::UNIFORM_SHADOW_ONLY_PASS("d3d_ShadowOnlyPass");
+
+   class ShadowCameraDrawCallback : public osg::Camera::DrawCallback
+   {
+   public:
+
+      enum Phase{ PRE_DRAW, POST_DRAW};
+
+      ShadowCameraDrawCallback(osg::Camera* depthCam, osg::Node& n, Phase p)
+         : mTextureCamera(depthCam)
+         , mNode(&n)
+         , mPhase(p)
+      {
+
+      }
+
+      ~ShadowCameraDrawCallback(){}
+
+
+      virtual void operator () (const osg::Camera& /*camera*/) const
+      {
+         if(mNode.valid())
+         {
+
+            osg::StateSet* ss = mNode->getOrCreateStateSet();
+
+            osg::Uniform* sceneDepthUniform = ss->getOrCreateUniform(ParallelSplitShadowMap::UNIFORM_SHADOW_ONLY_PASS, osg::Uniform::BOOL);
+            sceneDepthUniform->setDataVariance(osg::Object::DYNAMIC);
+
+            if(mPhase == PRE_DRAW)
+            {
+               sceneDepthUniform->set(true);
+            }
+            else
+            {
+               sceneDepthUniform->set(false);
+            }
+         }
+      }
+
+   private:
+
+      dtCore::ObserverPtr<osg::Camera> mTextureCamera;
+      dtCore::ObserverPtr<osg::Node> mNode;
+      Phase mPhase;
+
+   };
 
 
    //////////////////////////////////////////////////////////////////////////
@@ -320,6 +371,17 @@ namespace dtRender
                // create the camera
                pssmShadowSplitTexture._camera = new osg::Camera;
                pssmShadowSplitTexture._camera->setCullCallback(new CameraCullCallback(this));
+
+               //need to get scene node
+               osg::Node* sceneRoot = dtABC::Application::GetInstance("Application")->GetScene()->GetSceneNode();
+
+
+               ShadowCameraDrawCallback* vrcPre = new ShadowCameraDrawCallback(pssmShadowSplitTexture._camera, *sceneRoot, ShadowCameraDrawCallback::PRE_DRAW);
+               ShadowCameraDrawCallback* vrcPost = new ShadowCameraDrawCallback(pssmShadowSplitTexture._camera, *sceneRoot, ShadowCameraDrawCallback::POST_DRAW);
+
+               pssmShadowSplitTexture._camera->setPreDrawCallback(vrcPre);
+               pssmShadowSplitTexture._camera->setPostDrawCallback(vrcPost);
+
 
 
    #ifndef SHADOW_TEXTURE_DEBUG

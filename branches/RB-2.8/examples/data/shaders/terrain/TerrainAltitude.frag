@@ -18,6 +18,7 @@ uniform float ReflectMode;
 uniform float d3d_SceneLuminance = 1.0;
 uniform float d3d_SceneAmbience = 1.0;
 uniform bool d3d_DepthOnlyPass = false;
+uniform bool d3d_ShadowOnlyPass = false;
 
 
 varying vec3 vLightDir;
@@ -68,11 +69,15 @@ void main(void)
       float dist = length(ecPosition3);
       
       gl_FragDepth = computeFragDepth(dist);
-      return;
    }
    else
    {
       gl_FragDepth = gl_FragCoord.z;
+   }
+
+   if(d3d_DepthOnlyPass || d3d_ShadowOnlyPass)
+   {
+      return;
    }
      
 

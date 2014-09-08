@@ -9,8 +9,7 @@ varying vec3 vTangent;
 varying vec3 vBitangent;
 varying vec3 vPos;
 varying vec3 vCamera;
-varying vec2 vReflectTexCoord;
-varying vec3 vViewDir;
+varying vec4 vViewPos;
 
 uniform mat4 osg_ViewMatrixInverse = mat4(1.0);
 
@@ -22,7 +21,6 @@ void main()
 {   
    // Pass the texture coordinate on through.
    gl_TexCoord[0] = gl_MultiTexCoord0;
-   gl_FogFragCoord = gl_FogCoord;
    
    gl_FrontColor = gl_Color;
 
@@ -42,13 +40,8 @@ void main()
    vLightDir = normalize(inverseView3x3 * gl_LightSource[0].position.xyz);
    vLightDir2 = normalize(inverseView3x3 * gl_LightSource[1].position.xyz);
    
-   vec4 ecPosition = gl_ModelViewMatrix * gl_Vertex;
-   vec3 ecPosition3 = vec3(ecPosition) / ecPosition.w;
-   vViewDir = normalize(ecPosition3);
+   vViewPos = gl_ModelViewMatrix * gl_Vertex;
    
-   // Compute the reflection map UV coordinate
-   sphereMap(vViewDir, vNormal, vReflectTexCoord);
-
    // Compute the final vertex position in clip space.
    gl_Position = ftransform();
 
