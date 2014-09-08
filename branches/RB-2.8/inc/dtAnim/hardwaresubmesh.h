@@ -52,9 +52,9 @@ namespace dtAnim
       HardwareSubmeshDrawable(Cal3DModelWrapper* wrapper, CalHardwareModel* model,
             const std::string& boneUniformName, unsigned numBones,
             unsigned mesh, osg::VertexBufferObject* vertexVBO, osg::ElementBufferObject* indexEBO,
-			int boneWeightsLocation,
-		    int boneIndicesLocation,
-	        int tangentSpaceLocation);
+            int boneWeightsLocation,
+            int boneIndicesLocation,
+            int tangentSpaceLocation);
 
       void SetBoundingBox(const osg::BoundingBox& boundingBox);
 
@@ -86,9 +86,9 @@ namespace dtAnim
       std::string mBoneUniformName;
       osg::BoundingBox mBoundingBox;
       unsigned int mNumBones, mMeshID;
-      osg::VertexBufferObject* mVertexVBO;
-      osg::ElementBufferObject* mIndexEBO;
-      OpenThreads::Mutex mUpdateMutex; ///Used to support rendering with multiple threads
+      dtCore::RefPtr<osg::VertexBufferObject> mVertexVBO;
+      dtCore::RefPtr<osg::ElementBufferObject> mIndexEBO;
+      mutable OpenThreads::Mutex mUpdateMutex; ///Used to support rendering with multiple threads
 	  int mBoneWeightsLocation;
 	  int mBoneIndicesLocation;
 	  int mTangentSpaceLocation;
