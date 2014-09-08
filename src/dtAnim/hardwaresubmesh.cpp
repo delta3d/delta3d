@@ -72,7 +72,7 @@ namespace dtAnim
       /** do customized update code.*/
       virtual void update(osg::NodeVisitor*, osg::Drawable* drawable)
       {
-         mUpdateMutex.lock();
+         OpenThreads::ScopedLock<OpenThreads::Mutex> sl(mUpdateMutex);
 
          // select the proper hardware mesh
          if (mHardwareModel->selectHardwareMesh(mHardwareMeshID))
@@ -105,7 +105,6 @@ namespace dtAnim
             }
          }
 
-         mUpdateMutex.unlock();
       }
 
    private:
@@ -183,16 +182,18 @@ void HardwareSubmeshDrawable::SetBoundingBox(const osg::BoundingBox& boundingBox
 ////////////////////////////////////////////////////////////////////////////////
 void HardwareSubmeshDrawable::drawImplementation(osg::RenderInfo& renderInfo) const
 {
-   ((OpenThreads::Mutex&)mUpdateMutex).lock();
+   int faceCount = 0;
+   int startIndex = 0;
+   {
+      OpenThreads::ScopedLock<OpenThreads::Mutex> sl(mUpdateMutex);
       // select the appropriate mesh
       if (!mHardwareModel->selectHardwareMesh(mMeshID))
       {
-         ((OpenThreads::Mutex&)mUpdateMutex).unlock();
          return;
       }
-      const int faceCount = mHardwareModel->getFaceCount();
-      const int startIndex = mHardwareModel->getStartIndex();
-   ((OpenThreads::Mutex&)mUpdateMutex).unlock();
+      faceCount = mHardwareModel->getFaceCount();
+      startIndex = mHardwareModel->getStartIndex();
+   }
 
    osg::State& state = *renderInfo.getState();
 
@@ -226,8 +227,9 @@ void HardwareSubmeshDrawable::drawImplementation(osg::RenderInfo& renderInfo) co
 #endif
 
    // Make the call to render
-   glDrawElements(GL_TRIANGLES,  faceCount * 3, (sizeof(CalIndex) < 4) ?
-                  GL_UNSIGNED_SHORT: GL_UNSIGNED_INT, (void*)(sizeof(CalIndex) * startIndex));
+   glDrawElements(GL_TRIANGLES,  faceCount * 3,
+         (sizeof(CalIndex) < 4) ? GL_UNSIGNED_SHORT: GL_UNSIGNED_INT,
+         (void*)(sizeof(CalIndex) * startIndex));
 
    state.unbindVertexBufferObject();
    state.unbindElementBufferObject();
