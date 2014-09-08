@@ -1080,6 +1080,9 @@
                          <property name="alignment">
                           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                          </property>
+                         <property name="decimals">
+                          <number>3</number>
+                         </property>
                          <property name="maximum">
                           <double>1000.000000000000000</double>
                          </property>
@@ -1113,6 +1116,9 @@
                          </property>
                          <property name="alignment">
                           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                         </property>
+                         <property name="decimals">
+                          <number>3</number>
                          </property>
                          <property name="maximum">
                           <double>10.000000000000000</double>
@@ -1170,6 +1176,9 @@
                          <property name="alignment">
                           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                          </property>
+                         <property name="decimals">
+                          <number>3</number>
+                         </property>
                          <property name="maximum">
                           <double>10.000000000000000</double>
                          </property>
@@ -1207,6 +1216,9 @@
                          <property name="alignment">
                           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                          </property>
+                         <property name="decimals">
+                          <number>3</number>
+                         </property>
                          <property name="maximum">
                           <double>1000.000000000000000</double>
                          </property>
@@ -1243,6 +1255,9 @@
                          </property>
                          <property name="alignment">
                           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                         </property>
+                         <property name="decimals">
+                          <number>3</number>
                          </property>
                          <property name="maximum">
                           <double>1000.000000000000000</double>
@@ -1757,6 +1772,9 @@
                       <property name="alignment">
                        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                       </property>
+                      <property name="decimals">
+                       <number>3</number>
+                      </property>
                       <property name="maximum">
                        <double>1.000000000000000</double>
                       </property>
@@ -1793,6 +1811,9 @@
                       </property>
                       <property name="alignment">
                        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                      </property>
+                      <property name="decimals">
+                       <number>3</number>
                       </property>
                       <property name="maximum">
                        <double>1.000000000000000</double>
@@ -1831,6 +1852,9 @@
                       <property name="alignment">
                        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                       </property>
+                      <property name="decimals">
+                       <number>3</number>
+                      </property>
                       <property name="maximum">
                        <double>1.000000000000000</double>
                       </property>
@@ -1867,6 +1891,9 @@
                       </property>
                       <property name="alignment">
                        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                      </property>
+                      <property name="decimals">
+                       <number>3</number>
                       </property>
                       <property name="maximum">
                        <double>1.000000000000000</double>
@@ -2113,6 +2140,9 @@
                       <property name="alignment">
                        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                       </property>
+                      <property name="decimals">
+                       <number>3</number>
+                      </property>
                       <property name="maximum">
                        <double>1.000000000000000</double>
                       </property>
@@ -2149,6 +2179,9 @@
                       </property>
                       <property name="alignment">
                        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                      </property>
+                      <property name="decimals">
+                       <number>3</number>
                       </property>
                       <property name="maximum">
                        <double>1.000000000000000</double>
@@ -2187,6 +2220,9 @@
                       <property name="alignment">
                        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                       </property>
+                      <property name="decimals">
+                       <number>3</number>
+                      </property>
                       <property name="maximum">
                        <double>1.000000000000000</double>
                       </property>
@@ -2223,6 +2259,9 @@
                       </property>
                       <property name="alignment">
                        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                      </property>
+                      <property name="decimals">
+                       <number>3</number>
                       </property>
                       <property name="maximum">
                        <double>1.000000000000000</double>
@@ -2490,6 +2529,9 @@
                       <property name="alignment">
                        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                       </property>
+                      <property name="decimals">
+                       <number>3</number>
+                      </property>
                       <property name="maximum">
                        <double>10.000000000000000</double>
                       </property>
@@ -2527,6 +2569,9 @@
                       <property name="alignment">
                        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                       </property>
+                      <property name="decimals">
+                       <number>3</number>
+                      </property>
                       <property name="maximum">
                        <double>10.000000000000000</double>
                       </property>
@@ -2560,6 +2605,9 @@
                       </property>
                       <property name="alignment">
                        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                      </property>
+                      <property name="decimals">
+                       <number>3</number>
                       </property>
                       <property name="maximum">
                        <double>10.000000000000000</double>
@@ -2759,7 +2807,7 @@
                      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                     </property>
                     <property name="decimals">
-                     <number>1</number>
+                     <number>3</number>
                     </property>
                     <property name="maximum">
                      <double>1000.000000000000000</double>
@@ -2840,7 +2888,7 @@
                      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                     </property>
                     <property name="decimals">
-                     <number>1</number>
+                     <number>3</number>
                     </property>
                     <property name="maximum">
                      <double>1000.000000000000000</double>
@@ -3199,7 +3247,7 @@
                      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                     </property>
                     <property name="decimals">
-                     <number>1</number>
+                     <number>3</number>
                     </property>
                     <property name="minimum">
                      <double>-10.000000000000000</double>
@@ -3249,7 +3297,7 @@
                      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                     </property>
                     <property name="decimals">
-                     <number>1</number>
+                     <number>3</number>
                     </property>
                     <property name="minimum">
                      <double>-10.000000000000000</double>
@@ -3299,7 +3347,7 @@
                      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                     </property>
                     <property name="decimals">
-                     <number>1</number>
+                     <number>3</number>
                     </property>
                     <property name="minimum">
                      <double>-10.000000000000000</double>
@@ -3479,7 +3527,7 @@
                         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                        </property>
                        <property name="decimals">
-                        <number>1</number>
+                        <number>3</number>
                        </property>
                        <property name="minimum">
                         <double>-10.000000000000000</double>
@@ -3538,7 +3586,7 @@
                         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                        </property>
                        <property name="decimals">
-                        <number>1</number>
+                        <number>3</number>
                        </property>
                        <property name="minimum">
                         <double>-10.000000000000000</double>
@@ -3597,7 +3645,7 @@
                         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                        </property>
                        <property name="decimals">
-                        <number>1</number>
+                        <number>3</number>
                        </property>
                        <property name="minimum">
                         <double>-10.000000000000000</double>
@@ -3706,7 +3754,7 @@
                      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                     </property>
                     <property name="decimals">
-                     <number>1</number>
+                     <number>3</number>
                     </property>
                     <property name="maximum">
                      <double>10.000000000000000</double>
@@ -3740,7 +3788,7 @@
                      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                     </property>
                     <property name="decimals">
-                     <number>1</number>
+                     <number>3</number>
                     </property>
                     <property name="maximum">
                      <double>10.000000000000000</double>
@@ -3823,7 +3871,7 @@
                      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                     </property>
                     <property name="decimals">
-                     <number>2</number>
+                     <number>3</number>
                     </property>
                     <property name="maximum">
                      <double>6.280000000000000</double>
@@ -3857,7 +3905,7 @@
                      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                     </property>
                     <property name="decimals">
-                     <number>2</number>
+                     <number>3</number>
                     </property>
                     <property name="maximum">
                      <double>6.280000000000000</double>
@@ -3987,7 +4035,7 @@
                         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                        </property>
                        <property name="decimals">
-                        <number>1</number>
+                        <number>3</number>
                        </property>
                        <property name="minimum">
                         <double>-10.000000000000000</double>
@@ -4009,7 +4057,7 @@
                         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                        </property>
                        <property name="decimals">
-                        <number>1</number>
+                        <number>3</number>
                        </property>
                        <property name="minimum">
                         <double>-10.000000000000000</double>
@@ -4028,7 +4076,7 @@
                         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                        </property>
                        <property name="decimals">
-                        <number>1</number>
+                        <number>3</number>
                        </property>
                        <property name="minimum">
                         <double>-10.000000000000000</double>
@@ -4160,7 +4208,7 @@
                         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                        </property>
                        <property name="decimals">
-                        <number>1</number>
+                        <number>3</number>
                        </property>
                        <property name="minimum">
                         <double>-10.000000000000000</double>
@@ -4182,7 +4230,7 @@
                         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                        </property>
                        <property name="decimals">
-                        <number>1</number>
+                        <number>3</number>
                        </property>
                        <property name="minimum">
                         <double>-10.000000000000000</double>
@@ -4201,7 +4249,7 @@
                         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                        </property>
                        <property name="decimals">
-                        <number>1</number>
+                        <number>3</number>
                        </property>
                        <property name="minimum">
                         <double>-10.000000000000000</double>
@@ -4425,7 +4473,7 @@
                             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                            </property>
                            <property name="decimals">
-                            <number>1</number>
+                            <number>3</number>
                            </property>
                            <property name="minimum">
                             <double>-10.000000000000000</double>
@@ -4444,7 +4492,7 @@
                             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                            </property>
                            <property name="decimals">
-                            <number>1</number>
+                            <number>3</number>
                            </property>
                            <property name="minimum">
                             <double>-10.000000000000000</double>
@@ -4463,7 +4511,7 @@
                             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                            </property>
                            <property name="decimals">
-                            <number>1</number>
+                            <number>3</number>
                            </property>
                            <property name="minimum">
                             <double>-10.000000000000000</double>
@@ -4814,6 +4862,9 @@
                           <property name="alignment">
                            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                           </property>
+                          <property name="decimals">
+                           <number>3</number>
+                          </property>
                           <property name="minimum">
                            <double>-3.140000000000000</double>
                           </property>
@@ -4869,6 +4920,9 @@
                           </property>
                           <property name="alignment">
                            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                          </property>
+                          <property name="decimals">
+                           <number>3</number>
                           </property>
                           <property name="minimum">
                            <double>-3.140000000000000</double>
@@ -5066,6 +5120,9 @@
                           <property name="alignment">
                            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                           </property>
+                          <property name="decimals">
+                           <number>3</number>
+                          </property>
                           <property name="minimum">
                            <double>-6.280000000000000</double>
                           </property>
@@ -5121,6 +5178,9 @@
                           </property>
                           <property name="alignment">
                            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                          </property>
+                          <property name="decimals">
+                           <number>3</number>
                           </property>
                           <property name="minimum">
                            <double>-6.280000000000000</double>
@@ -5319,7 +5379,7 @@
                            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                           </property>
                           <property name="decimals">
-                           <number>1</number>
+                           <number>3</number>
                           </property>
                           <property name="maximum">
                            <double>1000.000000000000000</double>
@@ -5375,7 +5435,7 @@
                            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                           </property>
                           <property name="decimals">
-                           <number>1</number>
+                           <number>3</number>
                           </property>
                           <property name="maximum">
                            <double>1000.000000000000000</double>
@@ -5562,7 +5622,7 @@
                            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                           </property>
                           <property name="decimals">
-                           <number>1</number>
+                           <number>3</number>
                           </property>
                           <property name="minimum">
                            <double>-10.000000000000000</double>
@@ -5612,7 +5672,7 @@
                            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                           </property>
                           <property name="decimals">
-                           <number>1</number>
+                           <number>3</number>
                           </property>
                           <property name="minimum">
                            <double>-10.000000000000000</double>
@@ -5662,7 +5722,7 @@
                            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                           </property>
                           <property name="decimals">
-                           <number>1</number>
+                           <number>3</number>
                           </property>
                           <property name="minimum">
                            <double>-10.000000000000000</double>
@@ -5799,7 +5859,7 @@
                            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                           </property>
                           <property name="decimals">
-                           <number>1</number>
+                           <number>3</number>
                           </property>
                           <property name="minimum">
                            <double>-10.000000000000000</double>
@@ -5849,7 +5909,7 @@
                            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                           </property>
                           <property name="decimals">
-                           <number>1</number>
+                           <number>3</number>
                           </property>
                           <property name="minimum">
                            <double>-10.000000000000000</double>
@@ -5912,7 +5972,7 @@
                            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                           </property>
                           <property name="decimals">
-                           <number>1</number>
+                           <number>3</number>
                           </property>
                           <property name="minimum">
                            <double>-10.000000000000000</double>
@@ -6095,7 +6155,7 @@
               <item row="0" column="0">
                <widget class="QStackedWidget" name="OperatorsStackedWidget">
                 <property name="currentIndex">
-                 <number>0</number>
+                 <number>1</number>
                 </property>
                 <widget class="QWidget" name="OperatorsEmptyPage"/>
                 <widget class="QWidget" name="ForcePage">
@@ -6148,7 +6208,7 @@
                      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                     </property>
                     <property name="decimals">
-                     <number>1</number>
+                     <number>3</number>
                     </property>
                     <property name="minimum">
                      <double>-1000.000000000000000</double>
@@ -6170,7 +6230,7 @@
                      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                     </property>
                     <property name="decimals">
-                     <number>1</number>
+                     <number>3</number>
                     </property>
                     <property name="minimum">
                      <double>-1000.000000000000000</double>
@@ -6192,7 +6252,7 @@
                      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                     </property>
                     <property name="decimals">
-                     <number>1</number>
+                     <number>3</number>
                     </property>
                     <property name="minimum">
                      <double>-1000.000000000000000</double>
@@ -6298,6 +6358,9 @@
                     <property name="alignment">
                      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                     </property>
+                    <property name="decimals">
+                     <number>3</number>
+                    </property>
                     <property name="minimum">
                      <double>-10.000000000000000</double>
                     </property>
@@ -6337,6 +6400,9 @@
                     <property name="alignment">
                      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                     </property>
+                    <property name="decimals">
+                     <number>3</number>
+                    </property>
                     <property name="minimum">
                      <double>-10.000000000000000</double>
                     </property>
@@ -6375,6 +6441,9 @@
                    <widget class="QDoubleSpinBox" name="AccelerationParametersZSpinBox">
                     <property name="alignment">
                      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                    </property>
+                    <property name="decimals">
+                     <number>3</number>
                     </property>
                     <property name="minimum">
                      <double>-10.000000000000000</double>
@@ -6655,7 +6724,7 @@
                      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                     </property>
                     <property name="decimals">
-                     <number>1</number>
+                     <number>3</number>
                     </property>
                     <property name="maximum">
                      <double>10.000000000000000</double>
@@ -6886,7 +6955,7 @@
      <x>0</x>
      <y>0</y>
      <width>1408</width>
-     <height>21</height>
+     <height>26</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuView">
