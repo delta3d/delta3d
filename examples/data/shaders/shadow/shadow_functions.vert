@@ -2,7 +2,7 @@
 
 
 uniform bool d3d_RenderShadows = false;
-uniform  int d3d_ShadowTextureUnit = 1;
+const int d3d_ShadowTextureUnit = 1;
 
 
 void GenerateShadowTexCoords( in vec4 ecPosition ) 
