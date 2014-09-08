@@ -416,13 +416,49 @@ void DeltaDrawableTests::TestAddingChildWithExistingParent()
 }
 
 //////////////////////////////////////////////////////////////////////////
+class TestShaderDrawable : public dtCore::DeltaDrawable
+{
+public:
+   typedef dtCore::DeltaDrawable BaseClass;
+
+   bool mShaderGroupChanged;
+
+   TestShaderDrawable(const std::string& name)
+      : BaseClass(name)
+      , mShaderGroupChanged(false)
+   {}
+
+   virtual osg::Node* GetOSGNode() 
+   {
+      return NULL;
+   }
+
+   virtual const osg::Node* GetOSGNode() const
+   {
+      return NULL;
+   }
+
+   virtual void OnShaderGroupChanged()
+   {
+      mShaderGroupChanged = true;
+   }
+
+protected:
+   virtual ~TestShaderDrawable() {}
+};
+
+//////////////////////////////////////////////////////////////////////////
 void DeltaDrawableTests::TestShaderGroup()
 {
    using namespace dtCore;
-   RefPtr<Transformable> obj = new Transformable("TestObject");
+   RefPtr<TestShaderDrawable> obj = new TestShaderDrawable("TestObject");
+
+   CPPUNIT_ASSERT( ! obj->mShaderGroupChanged);
 
    std::string shaderGroup("MultiMap");
    CPPUNIT_ASSERT(obj->GetShaderGroup().empty());
    obj->SetShaderGroup(shaderGroup);
    CPPUNIT_ASSERT(obj->GetShaderGroup() == shaderGroup);
+
+   CPPUNIT_ASSERT(obj->mShaderGroupChanged);
 }
