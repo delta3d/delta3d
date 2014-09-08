@@ -64,8 +64,13 @@
                <source type="Image">textures/ShaderBase/NONE.png</source>
             </texture2D>
          </parameter>
+         <parameter name="shadowTexture">
+            <texture2D textureUnit="5">
+               <source type="Auto"/>
+            </texture2D>
+         </parameter>
          <!--parameter name="d3d_ReflectionCubeMap">
-            <textureCubeMap textureUnit="5">
+            <textureCubeMap textureUnit="6">
                <source type="ImagePositiveX">textures/right.jpg</source>
                <source type="ImageNegativeX">textures/left.jpg</source>
                <source type="ImagePositiveY">textures/front.jpg</source>
@@ -104,28 +109,35 @@
                <source type="Auto"/>
             </texture2D>
          </parameter>
-         <parameter name="shadowTexture">
+         <parameter name="normalTexture">
             <texture2D textureUnit="1">
-               <source type="Auto"/>
+               <source type="Image">textures/ShaderBase/NONE_NORM.png</source>
             </texture2D>
          </parameter>
          <parameter name="specularTexture">
+            <texture2D textureUnit="2">
+               <source type="Image">textures/ShaderBase/NONE.png</source>
+            </texture2D>
+         </parameter>
+         <parameter name="alphaTexture">
+            <texture2D textureUnit="3">
+               <source type="Image">textures/ShaderBase/NONE_ALPHA.png</source>
+               <wrap axis="S" mode="Repeat"/>
+               <wrap axis="T" mode="Repeat"/>
+            </texture2D>
+         </parameter>
+         <parameter name="illumTexture">
             <texture2D textureUnit="4">
                <source type="Image">textures/ShaderBase/NONE.png</source>
             </texture2D>
          </parameter>
-         <parameter name="illumTexture">
+         <parameter name="shadowTexture">
             <texture2D textureUnit="5">
-               <source type="Image">textures/ShaderBase/NONE.png</source>
-            </texture2D>
-         </parameter>
-         <parameter name="normalTexture">
-            <texture2D textureUnit="6">
-               <source type="Image">textures/ShaderBase/NONE_NORM.png</source>
+               <source type="Auto"/>
             </texture2D>
          </parameter>
          <!--parameter name="d3d_ReflectionCubeMap">
-            <textureCubeMap textureUnit="5">
+            <textureCubeMap textureUnit="6">
                <source type="ImagePositiveX">textures/right.jpg</source>
                <source type="ImageNegativeX">textures/left.jpg</source>
                <source type="ImagePositiveY">textures/front.jpg</source>
@@ -136,13 +148,6 @@
                <wrap axis="T" mode="Repeat"/>
             </textureCubeMap>
          </parameter-->
-         <parameter name="alphaTexture">
-            <texture2D textureUnit="7">
-               <source type="Image">textures/ShaderBase/NONE_ALPHA.png</source>
-               <wrap axis="S" mode="Repeat"/>
-               <wrap axis="T" mode="Repeat"/>
-            </texture2D>
-         </parameter>
       </shader>
    </shadergroup>
    
@@ -163,38 +168,50 @@
                <source type="Auto"/>
             </texture2D>
          </parameter>
-         <parameter name="specularTexture">
+         <parameter name="normalTexture">
             <texture2D textureUnit="1">
-               <source type="Auto"/>
+               <source type="Image">textures/ShaderBase/NONE_NORM.png</source>
+            </texture2D>
+         </parameter>
+         <parameter name="specularTexture">
+            <texture2D textureUnit="2">
+               <source type="Image">textures/ShaderBase/NONE.png</source>
+            </texture2D>
+         </parameter>
+         <parameter name="alphaTexture">
+            <texture2D textureUnit="3">
+               <source type="Image">textures/ShaderBase/NONE_ALPHA.png</source>
+               <wrap axis="S" mode="Repeat"/>
+               <wrap axis="T" mode="Repeat"/>
             </texture2D>
          </parameter>
          <parameter name="illumTexture">
-            <texture2D textureUnit="3">
-               <source type="Auto"/>
-            </texture2D>
-         </parameter>
-         <parameter name="normalTexture">
             <texture2D textureUnit="4">
+               <source type="Image">textures/ShaderBase/NONE.png</source>
+            </texture2D>
+         </parameter>
+         <parameter name="roughnessTexture">
+            <texture2D textureUnit="5">
+               <source type="Image">textures/ShaderBase/NONE.png</source>
+            </texture2D>
+         </parameter>
+         <parameter name="irradianceTexture">
+            <texture2D textureUnit="6">
+               <source type="Image">textures/ShaderBase/NONE.png</source>
+            </texture2D>
+         </parameter>
+         <parameter name="shadowTexture">
+            <texture2D textureUnit="7">
                <source type="Auto"/>
             </texture2D>
          </parameter>
-         <parameter name="envTexture">
+         <!--parameter name="envTexture">
             <texture2D textureUnit="5">
                <source type="Auto"/>
                <wrap axis="S" mode="Repeat"/>
                <wrap axis="T" mode="Repeat"/>
             </texture2D>
-         </parameter>
-         <parameter name="roughnessTexture">
-            <texture2D textureUnit="6">
-               <source type="Auto"/>
-            </texture2D>
-         </parameter>
-         <parameter name="irradianceTexture">
-            <texture2D textureUnit="7">
-               <source type="Auto"/>
-            </texture2D>
-         </parameter>
+         </parameter-->
 
          <parameter name="g_PBRValues">
             <!-- 
