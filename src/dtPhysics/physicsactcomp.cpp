@@ -698,6 +698,13 @@ namespace dtPhysics
          PhysicsWorld::GetInstance().RemoveAction(*mHelperAction);
          mHelperAction = NULL;
       }
+
+      std::vector<dtCore::ActorProperty *> propList;
+      GetPropertyList(propList);
+      for (unsigned i = 0; i < propList.size(); ++i)
+      {
+         RemoveProperty(propList[i]->GetName());
+      }
    }
 
    //////////////////////////////////////////////////////////////////

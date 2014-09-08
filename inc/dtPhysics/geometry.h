@@ -44,7 +44,13 @@ namespace dtPhysics
    public:
       VertexData();
 
-      VertexData& Assign(VertexData& readerData, bool convertToPolytope);
+      VertexData& Swap(VertexData& readerData);
+
+      VertexData& ConvertToPolytope();
+
+      VertexData& Scale(const VectorType& scale);
+
+      VertexData& Copy(VertexData& readerData);
 
       static const std::string NO_CACHE_KEY;
 
@@ -68,6 +74,7 @@ namespace dtPhysics
       std::vector<VectorType> mVertices;
       std::vector<unsigned> mIndices;
       std::vector<unsigned> mMaterialFlags;
+      VectorType mCurrentScale;
    protected:
       ~VertexData();
    };

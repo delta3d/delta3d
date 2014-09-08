@@ -29,6 +29,7 @@
 #include <dtPhysics/trianglerecorder.h>
 #include <dtPhysics/convexhull.h>
 #include <dtUtil/exception.h>
+#include <dtUtil/mathdefines.h>
 
 namespace dtPhysics
 {
@@ -54,27 +55,63 @@ namespace dtPhysics
    static MeshCache gMeshCache;
 
    /////////////////////////////////////////////////
-   VertexData::VertexData() {}
+   VertexData::VertexData() : mCurrentScale(Real(1.0), Real(1.0), Real(1.0)) {}
 
    /////////////////////////////////////////////////
     VertexData::~VertexData() {}
 
    /////////////////////////////////////////////////
-   VertexData& VertexData::Assign(VertexData& readerData, bool convertToPolytope)
+   VertexData& VertexData::Swap(VertexData& readerData)
    {
       mIndices.swap(readerData.mIndices);
       mVertices.swap(readerData.mVertices);
       mMaterialFlags.swap(readerData.mMaterialFlags);
 
-      if (convertToPolytope)
-      {
-         ConvexHull hull(*this, 100);
+      return *this;
+   }
 
-         hull.GetVertexData(*this);
+   /////////////////////////////////////////////////
+   VertexData& VertexData::ConvertToPolytope()
+   {
+      ConvexHull hull(*this, 100);
+
+      hull.GetVertexData(*this);
+      return *this;
+   }
+
+   /////////////////////////////////////////////////
+   VertexData& VertexData::Scale(const VectorType& scale)
+   {
+      // If the new scale equals the current, do nothing.
+      if (dtUtil::Equivalent(scale, mCurrentScale))
+      {
+         return *this;
       }
+      VectorType rescale = VectorType(scale.x()*mCurrentScale.x(), scale.y()*mCurrentScale.y(), scale.z()*mCurrentScale.z());
+
+      std::vector<VectorType>::iterator i, iend;
+      i = mVertices.begin();
+      iend = mVertices.end();
+      for (; i != iend; ++i)
+      {
+         VectorType& v = *i;
+         v = VectorType(v.x()*rescale.x(), v.y()*rescale.y(), v.z()*rescale.z());
+      }
+      mCurrentScale = scale;
+      return *this;
+   }
+
+
+   /////////////////////////////////////////////////
+   VertexData& VertexData::Copy(VertexData& readerData)
+   {
+      mIndices = readerData.mIndices;
+      mVertices = readerData.mVertices;
+      mMaterialFlags = readerData.mMaterialFlags;
 
       return *this;
    }
+
 
    /////////////////////////////////////////////////
    void VertexData::GetOrCreateCachedDataForNode(dtCore::RefPtr<VertexData>& dataOut, const osg::Node* nodeToParse, const std::string& cacheKey, bool polytope)
@@ -99,7 +136,11 @@ namespace dtPhysics
          {
             throw dtUtil::Exception("Unable to build Vertex data object, no vertex data was found when traversing the osg Node.", __FILE__, __LINE__);
          }
-         dataOut->Assign(*tr.mData, polytope);
+         dataOut->Swap(*tr.mData);
+         if (polytope)
+         {
+            dataOut->ConvertToPolytope();
+         }
       }
    }
 
