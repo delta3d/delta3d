@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <map xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="delta3dMap" xsi:schemaLocation="delta3dMap map.xsd">
     <header>
         <name>TestApp</name>
@@ -8,7 +7,7 @@
         <comment></comment>
         <copyright></copyright>
         <createTimestamp>2014-07-15T22:49:46-05:00</createTimestamp>
-        <lastUpdateTimestamp>2014-09-07T16:12:29-05:00</lastUpdateTimestamp>
+        <lastUpdateTimestamp>2014-09-08T11:39:27-05:00</lastUpdateTimestamp>
         <editorVersion>2.8.0</editorVersion>
         <schemaVersion>1.0</schemaVersion>
     </header>
@@ -436,7 +435,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254890</value3>
+                    <value3>-87.254868</value3>
                 </vec3>
             </property>
             <property>
@@ -1213,7 +1212,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254890</value3>
+                    <value3>-87.254868</value3>
                 </vec3>
             </property>
             <property>
@@ -1975,7 +1974,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254890</value3>
+                    <value3>-87.254868</value3>
                 </vec3>
             </property>
             <property>
@@ -2113,6 +2112,37 @@
             </property>
         </actor>
         <actor>
+            <type>dtExample.Civilian</type>
+            <id>2daea1bf-96c4-4fe2-b371-d1fd65faca5c</id>
+            <name>youngman_01</name>
+            <property>
+                <name>Name</name>
+                <string>youngman_01</string>
+            </property>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>97.504189</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-604.104858</value1>
+                    <value2>-142.324921</value2>
+                    <value3>1.616157</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Skeletal Mesh</name>
+                <resourceType>SkeletalMeshes</resourceType>
+                <resourceDisplayName>SkeletalMeshes:YoungMan:YoungMan_Jogger.dtchar</resourceDisplayName>
+                <resource>SkeletalMeshes:YoungMan:YoungMan_Jogger.dtchar</resource>
+            </property>
+        </actor>
+        <actor>
             <type>dtExample.Mesh Object</type>
             <id>2dec40b9-6911-4c44-b6c6-d5424ffe2960</id>
             <name>Chair_17</name>
@@ -2173,7 +2203,7 @@
                 <name>Rotation</name>
                 <vec3>
                     <value1>-0.823274</value1>
-                    <value2>-0.623641</value2>
+                    <value2>-0.623614</value2>
                     <value3>124.004814</value3>
                 </vec3>
             </property>
@@ -2775,7 +2805,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254890</value3>
+                    <value3>-87.254868</value3>
                 </vec3>
             </property>
             <property>
@@ -3122,7 +3152,7 @@
                 <vec3>
                     <value1>-756.246887</value1>
                     <value2>-137.004715</value2>
-                    <value3>3.039089</value3>
+                    <value3>2.887818</value3>
                 </vec3>
             </property>
             <property>
@@ -3140,6 +3170,37 @@
                 <resourceType>StaticMeshes</resourceType>
                 <resourceDisplayName>StaticMeshes:benches:bench:Bench_PHYSICS.osg</resourceDisplayName>
                 <resource>StaticMeshes:benches:bench:Bench_PHYSICS.osg</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtExample.Civilian</type>
+            <id>4089f3f6-d422-40e7-abe8-e2cdaf8464a7</id>
+            <name>youngman_02</name>
+            <property>
+                <name>Name</name>
+                <string>youngman_02</string>
+            </property>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>-44.854336</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-656.188354</value1>
+                    <value2>-211.615479</value2>
+                    <value3>3.938143</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Skeletal Mesh</name>
+                <resourceType>SkeletalMeshes</resourceType>
+                <resourceDisplayName>SkeletalMeshes:YoungMan:YoungMan_Swimmer.dtchar</resourceDisplayName>
+                <resource>SkeletalMeshes:YoungMan:YoungMan_Swimmer.dtchar</resource>
             </property>
         </actor>
         <actor>
@@ -3167,7 +3228,7 @@
                 <vec3>
                     <value1>-661.288574</value1>
                     <value2>-137.289474</value2>
-                    <value3>4.244179</value3>
+                    <value3>4.098180</value3>
                 </vec3>
             </property>
             <property>
@@ -3575,15 +3636,15 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>-0.000000</value2>
-                    <value3>134.967072</value3>
+                    <value3>104.443352</value3>
                 </vec3>
             </property>
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-597.921265</value1>
-                    <value2>-127.717583</value2>
-                    <value3>5.077828</value3>
+                    <value1>-588.989868</value1>
+                    <value2>-125.613220</value2>
+                    <value3>5.268859</value3>
                 </vec3>
             </property>
             <property>
@@ -3759,7 +3820,7 @@
                 <vec3>
                     <value1>-663.154968</value1>
                     <value2>-114.109955</value2>
-                    <value3>5.127697</value3>
+                    <value3>4.860925</value3>
                 </vec3>
             </property>
             <property>
@@ -3874,6 +3935,37 @@
             </property>
         </actor>
         <actor>
+            <type>dtExample.Civilian</type>
+            <id>4f4bc6bb-8c7f-4361-b6a9-5227aa17f1ad</id>
+            <name>Gina_01</name>
+            <property>
+                <name>Name</name>
+                <string>Gina_01</string>
+            </property>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>-73.005310</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-573.125427</value1>
+                    <value2>-121.101860</value2>
+                    <value3>1.867371</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Skeletal Mesh</name>
+                <resourceType>SkeletalMeshes</resourceType>
+                <resourceDisplayName>SkeletalMeshes:Gina:Gina_SwimWear.dtchar</resourceDisplayName>
+                <resource>SkeletalMeshes:Gina:Gina_SwimWear.dtchar</resource>
+            </property>
+        </actor>
+        <actor>
             <type>dtcore.Game.Actors.Game Mesh Actor</type>
             <id>4ff36f02-c047-46a9-8a69-c3c6fbc0d7e5</id>
             <name>TikiTorch03</name>
@@ -3925,7 +4017,7 @@
                 <vec3>
                     <value1>-745.537292</value1>
                     <value2>-146.723495</value2>
-                    <value3>3.748471</value3>
+                    <value3>3.622371</value3>
                 </vec3>
             </property>
             <property>
@@ -4215,7 +4307,7 @@
                 <vec3>
                     <value1>-793.812195</value1>
                     <value2>-66.520149</value2>
-                    <value3>4.917071</value3>
+                    <value3>4.890607</value3>
                 </vec3>
             </property>
             <property>
@@ -4297,7 +4389,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>99.088097</value3>
+                    <value3>99.088112</value3>
                 </vec3>
             </property>
             <property>
@@ -4305,7 +4397,7 @@
                 <vec3>
                     <value1>-794.502380</value1>
                     <value2>-40.594433</value2>
-                    <value3>2.761616</value3>
+                    <value3>2.659042</value3>
                 </vec3>
             </property>
             <property>
@@ -4493,7 +4585,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254890</value3>
+                    <value3>-87.254868</value3>
                 </vec3>
             </property>
             <property>
@@ -5073,7 +5165,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254890</value3>
+                    <value3>-87.254868</value3>
                 </vec3>
             </property>
             <property>
@@ -5179,7 +5271,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254890</value3>
+                    <value3>-87.254868</value3>
                 </vec3>
             </property>
             <property>
@@ -5544,6 +5636,29 @@
                 <resourceType>StaticMeshes</resourceType>
                 <resourceDisplayName>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resourceDisplayName>
                 <resource>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtExample.Civilian</type>
+            <id>6f7766cc-9d34-44a5-8c0d-5dc677c39079</id>
+            <name>Transformable_01</name>
+            <property>
+                <name>Name</name>
+                <string>Transformable_01</string>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-764.722961</value1>
+                    <value2>-151.994385</value2>
+                    <value3>3.278625</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Skeletal Mesh</name>
+                <resourceType>SkeletalMeshes</resourceType>
+                <resourceDisplayName>SkeletalMeshes:Gina:Petunia_SwimWear.dtchar</resourceDisplayName>
+                <resource>SkeletalMeshes:Gina:Petunia_SwimWear.dtchar</resource>
             </property>
         </actor>
         <actor>
@@ -6924,7 +7039,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254890</value3>
+                    <value3>-87.254868</value3>
                 </vec3>
             </property>
             <property>
@@ -7572,7 +7687,7 @@
                 <vec3>
                     <value1>-667.264404</value1>
                     <value2>-125.720329</value2>
-                    <value3>4.244179</value3>
+                    <value3>3.939176</value3>
                 </vec3>
             </property>
             <property>
@@ -7741,6 +7856,37 @@
             </property>
         </actor>
         <actor>
+            <type>dtExample.Civilian</type>
+            <id>9d0a0692-85c6-4dd3-aeb4-9a6542c2e0f3</id>
+            <name>Gina_02</name>
+            <property>
+                <name>Name</name>
+                <string>Gina_02</string>
+            </property>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>-73.005310</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-781.506165</value1>
+                    <value2>-50.705482</value2>
+                    <value3>5.680526</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Skeletal Mesh</name>
+                <resourceType>SkeletalMeshes</resourceType>
+                <resourceDisplayName>SkeletalMeshes:Gina:Gina_SwimWear.dtchar</resourceDisplayName>
+                <resource>SkeletalMeshes:Gina:Gina_SwimWear.dtchar</resource>
+            </property>
+        </actor>
+        <actor>
             <type>dtcore.Curve.Bezier Node</type>
             <id>9dc85029-c92e-4932-b1f9-5030508ed60a</id>
             <name>BezierNode_01</name>
@@ -7888,7 +8034,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254890</value3>
+                    <value3>-87.254868</value3>
                 </vec3>
             </property>
             <property>
@@ -8247,6 +8393,37 @@
             </property>
         </actor>
         <actor>
+            <type>dtExample.Civilian</type>
+            <id>a58a4383-0213-427f-b802-43cc10c07084</id>
+            <name>youngman_01</name>
+            <property>
+                <name>Name</name>
+                <string>youngman_01</string>
+            </property>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>30.379480</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-610.243530</value1>
+                    <value2>-127.594719</value2>
+                    <value3>2.167853</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Skeletal Mesh</name>
+                <resourceType>SkeletalMeshes</resourceType>
+                <resourceDisplayName>SkeletalMeshes:YoungMan:YoungMan_Swimmer.dtchar</resourceDisplayName>
+                <resource>SkeletalMeshes:YoungMan:YoungMan_Swimmer.dtchar</resource>
+            </property>
+        </actor>
+        <actor>
             <type>dtcore.Curve.Bezier Control Point</type>
             <id>a6060362-a5f2-4b95-b8e0-a9571a265cb5</id>
             <name>ControlPoint_03</name>
@@ -8427,7 +8604,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254890</value3>
+                    <value3>-87.254868</value3>
                 </vec3>
             </property>
             <property>
@@ -9102,7 +9279,7 @@
                 <vec3>
                     <value1>0.000018</value1>
                     <value2>0.000018</value2>
-                    <value3>107.012291</value3>
+                    <value3>107.012306</value3>
                 </vec3>
             </property>
             <property>
@@ -9155,7 +9332,7 @@
                 <vec3>
                     <value1>-601.306274</value1>
                     <value2>-142.812866</value2>
-                    <value3>0.965105</value3>
+                    <value3>1.443326</value3>
                 </vec3>
             </property>
             <property>
@@ -9658,7 +9835,7 @@
                 <name>Rotation</name>
                 <vec3>
                     <value1>-0.823274</value1>
-                    <value2>-0.623641</value2>
+                    <value2>-0.623614</value2>
                     <value3>124.004814</value3>
                 </vec3>
             </property>
@@ -10072,7 +10249,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>99.088097</value3>
+                    <value3>99.088112</value3>
                 </vec3>
             </property>
             <property>
@@ -10080,7 +10257,7 @@
                 <vec3>
                     <value1>-794.126892</value1>
                     <value2>-45.841080</value2>
-                    <value3>2.903807</value3>
+                    <value3>2.846634</value3>
                 </vec3>
             </property>
             <property>
@@ -10223,7 +10400,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254890</value3>
+                    <value3>-87.254868</value3>
                 </vec3>
             </property>
             <property>
@@ -10276,7 +10453,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254890</value3>
+                    <value3>-87.254868</value3>
                 </vec3>
             </property>
             <property>
@@ -10840,7 +11017,7 @@
                 <vec3>
                     <value1>-792.830994</value1>
                     <value2>-62.039505</value2>
-                    <value3>4.323118</value3>
+                    <value3>4.263694</value3>
                 </vec3>
             </property>
             <property>
@@ -11028,7 +11205,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254890</value3>
+                    <value3>-87.254868</value3>
                 </vec3>
             </property>
             <property>
@@ -11170,7 +11347,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-59.716446</value3>
+                    <value3>-59.716415</value3>
                 </vec3>
             </property>
             <property>
@@ -11385,7 +11562,7 @@
                 <vec3>
                     <value1>-650.394531</value1>
                     <value2>-141.873871</value2>
-                    <value3>4.603446</value3>
+                    <value3>4.355100</value3>
                 </vec3>
             </property>
             <property>
@@ -12577,7 +12754,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254890</value3>
+                    <value3>-87.254868</value3>
                 </vec3>
             </property>
             <property>
@@ -12683,7 +12860,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254890</value3>
+                    <value3>-87.254868</value3>
                 </vec3>
             </property>
             <property>
@@ -12736,7 +12913,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>45.879765</value3>
+                    <value3>45.879772</value3>
                 </vec3>
             </property>
             <property>
@@ -12834,7 +13011,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254890</value3>
+                    <value3>-87.254868</value3>
                 </vec3>
             </property>
             <property>
@@ -13223,6 +13400,37 @@
             </property>
         </actor>
         <actor>
+            <type>dtExample.Civilian</type>
+            <id>f3b44211-60c2-412b-812c-2a6ad2cfb7a8</id>
+            <name>Gina_03</name>
+            <property>
+                <name>Name</name>
+                <string>Gina_03</string>
+            </property>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>-73.005310</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-717.341675</value1>
+                    <value2>-227.715057</value2>
+                    <value3>2.756776</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Skeletal Mesh</name>
+                <resourceType>SkeletalMeshes</resourceType>
+                <resourceDisplayName>SkeletalMeshes:Gina:Gina_SwimWear.dtchar</resourceDisplayName>
+                <resource>SkeletalMeshes:Gina:Gina_SwimWear.dtchar</resource>
+            </property>
+        </actor>
+        <actor>
             <type>dtExample.Mesh Object</type>
             <id>f450f680-d155-4740-a806-29236db5b2f2</id>
             <name>walkway_81</name>
@@ -13313,7 +13521,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254890</value3>
+                    <value3>-87.254868</value3>
                 </vec3>
             </property>
             <property>
