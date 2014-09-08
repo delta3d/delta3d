@@ -780,7 +780,8 @@ namespace dtRender
 
    void SceneManager::UpdateUniforms(dtCore::Camera& pCamera)
    {
-      osg::StateSet* ss = GetOSGNode()->getOrCreateStateSet();
+      //osg::StateSet* ss = 
+      GetOSGNode()->getOrCreateStateSet();
       
       float frameTime = dtCore::System::GetInstance().GetSimulationTime();
       float elapsedTime = dtCore::System::GetInstance().GetSimTimeSinceStartup();
