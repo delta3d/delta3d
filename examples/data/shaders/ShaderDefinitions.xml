@@ -348,38 +348,38 @@
         <texture2D textureUnit="0">
           <source type="Auto"/>
         </texture2D>
-      </parameter>
-      <parameter name="shadowTexture">
-        <texture2D textureUnit="1">
-          <source type="Auto"/>
-        </texture2D>
-      </parameter>
+      </parameter>      
        <parameter name="SandTexture">
-        <texture2D textureUnit="4">
+        <texture2D textureUnit="1">
           <source type="Image">textures/ShaderBase/TerrainAltitude_Sand.png</source>
           <wrap axis="S" mode="Repeat"/>
           <wrap axis="T" mode="Repeat"/>
         </texture2D>
       </parameter>
       <parameter name="GrassTexture">
-        <texture2D textureUnit="5">
+        <texture2D textureUnit="2">
           <source type="Image">textures/ShaderBase/TerrainAltitude_Grass.png</source>
           <wrap axis="S" mode="Repeat"/>
           <wrap axis="T" mode="Repeat"/>
         </texture2D>
       </parameter>
       <parameter name="RockTexture">
-        <texture2D textureUnit="6">
+        <texture2D textureUnit="3">
           <source type="Image">textures/ShaderBase/TerrainAltitude_Rock.png</source>
           <wrap axis="S" mode="Repeat"/>
           <wrap axis="T" mode="Repeat"/>
         </texture2D>
       </parameter>
       <parameter name="BlendMaskTexture">
-        <texture2D textureUnit="7">
+        <texture2D textureUnit="4">
           <source type="Image">textures/ShaderBase/TerrainAltitude_BlendMask.tga</source>
           <wrap axis="S" mode="Repeat"/>
           <wrap axis="T" mode="Repeat"/>
+        </texture2D>
+      </parameter>
+       <parameter name="shadowTexture">
+        <texture2D textureUnit="5">
+          <source type="Auto"/>
         </texture2D>
       </parameter>
        <parameter name="MountainsideTexture">

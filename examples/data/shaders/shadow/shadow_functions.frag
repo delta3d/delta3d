@@ -4,8 +4,12 @@ uniform sampler2DShadow shadowTexture;
 uniform vec2 ambientBias;
 
 uniform bool d3d_RenderShadows = false;
-const int d3d_ShadowTextureUnit = 1;
 uniform float d3d_ShadowEffectScalar = 1.0;
+
+//must match texture unit offset property in shadow scene
+//this cannot be a uniform since it indexes texture units
+const int d3d_ShadowTextureUnit = 5;
+
 
 float SampleShadowTexture()
 {

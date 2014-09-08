@@ -1,8 +1,11 @@
 #version 120
 
-
 uniform bool d3d_RenderShadows = false;
-const int d3d_ShadowTextureUnit = 1;
+
+
+//must match texture unit offset property in shadow scene
+//this cannot be a uniform since it indexes texture units
+const int d3d_ShadowTextureUnit = 5;
 
 
 void GenerateShadowTexCoords( in vec4 ecPosition ) 
