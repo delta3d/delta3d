@@ -388,7 +388,7 @@ osg::Node* ParticleSystem::LoadFile( const std::string& filename, bool useCache)
       // Re-apply a shader if one had been specified.
       if ( ! BaseClass::GetShaderGroup().empty())
       {
-         BaseClass::OnShaderGroupChanged();
+         BaseClass::ApplyShaderGroup();
       }
    }
    else

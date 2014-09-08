@@ -207,8 +207,18 @@ namespace dtCore
        * @return The name of the group.
        */
       std::string GetShaderGroup() const;
-      
+
+      /**
+       * Method to override to pick up on changes to shader assignment.
+       */
       virtual void OnShaderGroupChanged();
+      
+      /**
+       * Method to actually apply the currently specified shader group.
+       * This can be used to reapply a shader if it has been recompiled
+       * or if the drawable has new geometry that needs the current shader applied.
+       */
+      void ApplyShaderGroup();
 
    protected:
       DeltaDrawable(const std::string& name = "DeltaDrawable");
