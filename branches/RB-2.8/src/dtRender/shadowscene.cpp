@@ -219,7 +219,7 @@ namespace dtRender
    , mShadowResolution(&ShadowResolution::SR_MEDIUM)
    , mAmbientBias(0.4f, 0.6f)
    , mPolygonOffset(10.0f, 20.0f)
-   , mTextureUnitOffset(1)
+   , mTextureUnitOffset(5)
    , mNumPSSMSplits(3)
    , mMinNearDistance(1.0f)
    , mMaxFarDistance(1000.0f)
