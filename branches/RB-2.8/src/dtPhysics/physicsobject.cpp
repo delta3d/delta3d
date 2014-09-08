@@ -67,6 +67,7 @@ namespace dtPhysics
       ,  mLinearDamping(Real(0.01))
       ,  mAngularDamping(Real(0.01))
       ,  mActivationSettings(NULL)
+      ,  mMeshScale(Real(1.0), Real(1.0), Real(1.0))
       {
       }
       // the mechanics enum  that can say what type of physics object is in the world
@@ -120,6 +121,9 @@ namespace dtPhysics
       dtCore::RefPtr<BodyWrapper> mBody;
       dtCore::RefPtr<GenericBodyWrapper> mGenericBody;
       palActivationSettings* mActivationSettings;
+
+      dtCore::ResourceDescriptor mMeshResource;
+      VectorType mMeshScale;
 
       std::vector<dtCore::RefPtr<Geometry> > mGeometries;
 
@@ -397,6 +401,14 @@ namespace dtPhysics
                "Geometry file to load for the physics to use.  It can be either a renderable mesh or a compiled physics mesh.",
                 PropRegType, propRegHelper);
 
+      generatedName = (GetName());
+      generatedName.append(": ");
+      generatedName.append("PhysicsMeshScale");
+
+      DT_REGISTER_PROPERTY_WITH_NAME(MeshScale, generatedName,
+               "If a physics mesh is set, it can be scaled with this property.",
+                PropRegType, propRegHelper);
+
       std::vector<dtCore::ActorProperty *> propList;
       GetPropertyList(propList);
 
@@ -489,7 +501,7 @@ namespace dtPhysics
    /////////////////////////////////////////////////////////////////////////////
    void PhysicsObject::GetVertexDataForResource(dtCore::RefPtr<VertexData>& vertDataOut, const std::string& cachingKey)
    {
-      if (mMeshResource == dtCore::ResourceDescriptor::NULL_RESOURCE)
+      if (mDataMembers->mMeshResource == dtCore::ResourceDescriptor::NULL_RESOURCE)
          return;
 
       bool polytope = GetPrimitiveType() == PrimitiveType::CONVEX_HULL;
@@ -520,8 +532,11 @@ namespace dtPhysics
                dtCore::Transform geometryWorld;
                GetTransform(geometryWorld);
 
-               vertDataOut->Assign(*readerData, polytope);
-
+               vertDataOut->Swap(*readerData);
+               if (polytope)
+               {
+                  vertDataOut->ConvertToPolytope();
+               }
             }
             else
             {
@@ -610,6 +625,11 @@ namespace dtPhysics
             }
             else if (data != NULL)
             {
+               // Scale the data in place, which is actually the cached one.
+               // Each user will just rescale the data to what they need, but
+               // chances are good that the same scale will end up being used over and over.
+               data->Scale(mDataMembers->mMeshScale);
+
                mDataMembers->CreateComplexGeometry(GetPrimitiveType(), geometryWorld, *data, GetMass());
             }
             else
@@ -1365,7 +1385,28 @@ namespace dtPhysics
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   DT_IMPLEMENT_ACCESSOR(PhysicsObject, dtCore::ResourceDescriptor, MeshResource);
+   const dtCore::ResourceDescriptor& PhysicsObject::GetMeshResource() const
+   {
+      return mDataMembers->mMeshResource;
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void PhysicsObject::SetMeshResource(const dtCore::ResourceDescriptor& meshRes)
+   {
+      mDataMembers->mMeshResource = meshRes;
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   const VectorType& PhysicsObject::GetMeshScale() const
+   {
+      return mDataMembers->mMeshScale;
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void PhysicsObject::SetMeshScale(const VectorType& meshScale)
+   {
+      mDataMembers->mMeshScale = meshScale;
+   }
 
    /////////////////////////////////////////////////////////////////////////////
    void PhysicsObject::CalculateOriginAndExtentsForNode(PrimitiveType& type, const osg::BoundingBox& bb,

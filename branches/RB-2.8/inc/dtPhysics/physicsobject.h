@@ -274,7 +274,12 @@ namespace dtPhysics
       /**
        * This mesh resource will be loaded to set the physics data for a triangle mesh or convex.
        */
-      DT_DECLARE_ACCESSOR(dtCore::ResourceDescriptor, MeshResource);
+      DT_DECLARE_ACCESSOR_GET_SET(dtCore::ResourceDescriptor, MeshResource);
+
+      /**
+       * This mesh resource or code supplied osg node will be scaled to this size.
+       */
+      DT_DECLARE_ACCESSOR_GET_SET(VectorType, MeshScale);
 
       //////////////////////////////////////////////////////
       // Build our property functions
