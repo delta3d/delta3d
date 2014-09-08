@@ -135,7 +135,8 @@ AnimNodeBuilder::AnimNodeBuilder()
    {
       SetCreate(CreateFunc(this, &AnimNodeBuilder::CreateHardware));
    }
-   else if (SupportsSoftware())
+   else
+   if (SupportsSoftware())
    {
       SetCreate(CreateFunc(this, &AnimNodeBuilder::CreateSoftware));
    }
@@ -295,14 +296,11 @@ dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateHardware(osg::RenderInfo* rende
 
    // Create GPU resources from our source data
    {
-      osg::VertexBufferObject* vertexVBO = modelData->GetVertexBufferObject();
-      osg::ElementBufferObject* indexEBO = modelData->GetElementBufferObject();
+      dtCore::RefPtr<osg::VertexBufferObject> vertexVBO = modelData->GetVertexBufferObject();
+      dtCore::RefPtr<osg::ElementBufferObject> indexEBO = modelData->GetElementBufferObject();
 
-      if (vertexVBO == NULL)
+      if (!vertexVBO.valid() || !indexEBO.valid())
       {
-         // Either both should be NULL, or both non NULL
-         assert(indexEBO == NULL);
-
          vertexVBO = new osg::VertexBufferObject;
          indexEBO = new osg::ElementBufferObject;
 
@@ -331,13 +329,13 @@ dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateHardware(osg::RenderInfo* rende
 
 
       /* Begin figure out if this open gl implementation uses [0] on array uniforms
-      * This seems to be an ATI/NVIDIA thing.
-      * This requires me to force the shader to compile.
-      * The latest developer version of Open Scene Graph has a workaround
-      * in the shader program class for this issue, but the current stable 
-      * osg release as of this writing (3.0.1) lacks the fix so 
-      * include this hack here.
-      */
+       * This seems to be an ATI/NVIDIA thing.
+       * This requires me to force the shader to compile.
+       * The latest developer version of Open Scene Graph has a workaround
+       * in the shader program class for this issue, but the current stable
+       * osg release as of this writing (3.0.1) lacks the fix so
+       * include this hack here.
+       */
       osg::Program* prog = shadProg->GetShaderProgram();
       prog->compileGLObjects(*renderInfo->getState());
 
