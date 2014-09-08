@@ -40,6 +40,10 @@ namespace dtRender {
 class DT_RENDER_EXPORT ParallelSplitShadowMap :  public osgShadow::ShadowTechnique
 {
     public:
+
+       static const std::string UNIFORM_SHADOW_ONLY_PASS;
+
+
         ParallelSplitShadowMap(osg::Geode** debugGroup=NULL, int icountplanes=3, int texUnitOffset = 1);
 
         ParallelSplitShadowMap(const ParallelSplitShadowMap& es, const osg::CopyOp& copyop=osg::CopyOp::SHALLOW_COPY);
