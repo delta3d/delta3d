@@ -75,7 +75,7 @@ namespace dtCore
       void SetShaderGroup(const std::string& groupName);
       std::string GetShaderGroup() const;
 
-      void OnShaderGroupChanged();
+      void ApplyShaderGroup();
 
    private:
       ///Insert a new Switch Node above GetOSGNode() and below it's parents
@@ -373,7 +373,8 @@ namespace dtCore
       if (groupName != mShaderGroup)
       {
          mShaderGroup = groupName;
-         OnShaderGroupChanged();
+
+         ApplyShaderGroup();
 
          mOwner->OnShaderGroupChanged();
       }
@@ -386,7 +387,7 @@ namespace dtCore
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////////////////////
-   void DeltaDrawablePrivate::OnShaderGroupChanged()
+   void DeltaDrawablePrivate::ApplyShaderGroup()
    {
       if (mShaderGroup.empty())
          return; // Do nothing, since there is nothing to load.
@@ -822,6 +823,12 @@ void dtCore::DeltaDrawable::SetShaderGroup(const std::string& groupName)
 std::string dtCore::DeltaDrawable::GetShaderGroup() const
 {
    return mPvt->GetShaderGroup();
+}
+
+/////////////////////////////////////////////////////////////////////////////
+void dtCore::DeltaDrawable::ApplyShaderGroup()
+{
+   return mPvt->ApplyShaderGroup();
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
