@@ -33,6 +33,7 @@
 #include <dtAnim/submesh.h>
 
 #include <dtCore/project.h>
+#include <dtCore/transform.h>
 #include <dtUtil/datapathutils.h>
 
 #include <dtABC/application.h>
@@ -43,6 +44,7 @@
 #include <dtCore/system.h>
 
 #include <osg/Geode>
+#include <osg/MatrixTransform>
 #include <osg/Drawable>
 #include <osgViewer/Viewer>
 
@@ -59,6 +61,7 @@ namespace dtAnim
       CPPUNIT_TEST_SUITE(AnimNodeBuilderTests);
          CPPUNIT_TEST(TestBuildSoftware);
          CPPUNIT_TEST(TestBuildHardware);
+         CPPUNIT_TEST(TestBuildWithScale);
       CPPUNIT_TEST_SUITE_END();
 
    public:
@@ -184,7 +187,7 @@ namespace dtAnim
                                  group != NULL);
 
          const osg::Geode* geode = dynamic_cast<const osg::Geode*>(group->getChild(0));
-         CPPUNIT_ASSERT_MESSAGE("AnimNodeBuilder's first child isn't a Geode",
+         CPPUNIT_ASSERT_MESSAGE("AnimNodeBuilder's first child isn't a Geode, which should be the case if the scale is unity.",
                                  geode != NULL);
 
          CheckGeode(geode, false);
@@ -192,6 +195,59 @@ namespace dtAnim
          GetGlobalApplication().GetScene()->RemoveChild(drawable.get());
       }
 
+      void TestBuildWithScale()
+      {
+         AnimNodeBuilder& nodeBuilder = Cal3DDatabase::GetInstance().GetNodeBuilder();
+
+         if (nodeBuilder.SupportsSoftware() == false)
+         {
+            return;
+         }
+
+         nodeBuilder.SetCreate(AnimNodeBuilder::CreateFunc(&nodeBuilder, &AnimNodeBuilder::CreateSoftware));
+         dtCore::RefPtr<Cal3DModelWrapper> wrapper = Cal3DDatabase::GetInstance().Load(mModelPath);
+         CPPUNIT_ASSERT(wrapper.valid());
+         dtCore::RefPtr<Cal3DModelData> modelData = Cal3DDatabase::GetInstance().GetModelData(*wrapper);
+         float testScale = 3.5f;
+         modelData->SetScale(testScale);
+         CPPUNIT_ASSERT_DOUBLES_EQUAL(testScale, modelData->GetScale(), 0.1f);
+         mHelper->LoadModel(mModelPath);
+         dtCore::RefPtr<osg::Node> node = mHelper->GetNode();
+         // The model wrapper should get the scale from the cached database.
+         CPPUNIT_ASSERT_DOUBLES_EQUAL(testScale, mHelper->GetModelWrapper()->GetScale(), 0.1f);
+
+         dtCore::RefPtr<TestDrawable> drawable = new TestDrawable(*node);
+         GetGlobalApplication().GetScene()->AddChild(drawable.get());
+         dtCore::System::GetInstance().Step();
+         dtCore::System::GetInstance().Step();
+
+         const osg::Group* group = node->asGroup();
+         CPPUNIT_ASSERT_MESSAGE("AnimNodeBuilder didn't generate a valid group node",
+                                 group != NULL);
+         CPPUNIT_ASSERT_MESSAGE("The first node should be a transform because of the scale.", node->asTransform() != NULL);
+         const osg::MatrixTransform* mt = dynamic_cast<osg::MatrixTransform*>(node.get());
+         CPPUNIT_ASSERT_MESSAGE("The first node should be a matrix transform because of the scale.", mt != NULL);
+         dtCore::Transform xform;
+         xform.Set(mt->getMatrix());
+         osg::Vec3 curRow;
+         for (unsigned i = 0; i < 3; ++i)
+         {
+            xform.GetRow(i, curRow);
+            CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("Each row of the matrix should have the magnitude of the scale.", testScale, curRow.length(), 0.1f);
+         }
+
+         const osg::Group* group2 = node->asGroup()->getChild(0)->asGroup();
+         CPPUNIT_ASSERT_MESSAGE("First child should be a group when scaled.",
+                                 group2 != NULL);
+         CPPUNIT_ASSERT_EQUAL(1U, group2->getNumChildren());
+         const osg::Geode* geode =  group2->getChild(0)->asGeode();
+         CPPUNIT_ASSERT_MESSAGE("AnimNodeBuilder's child of a child isn't a Geode",
+                                 geode != NULL);
+
+         CheckGeode(geode, false);
+
+         GetGlobalApplication().GetScene()->RemoveChild(drawable.get());
+      }
    private:
       void CheckGeode(const osg::Geode* toCheck, bool hardware)
       {

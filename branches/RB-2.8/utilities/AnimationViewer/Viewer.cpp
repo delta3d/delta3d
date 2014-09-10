@@ -609,7 +609,7 @@ void Viewer::OnScaleFactorChanged(float scaleFactorValue)
 {
    if (mCharacter.get())
    {
-      mCharacter->GetCal3DWrapper()->ApplyCoreModelScaleFactor(scaleFactorValue);
+      mCharacter->GetCal3DWrapper()->SetScale(mCharacter->GetCal3DWrapper()->GetScale() * scaleFactorValue);
       mCharacter->RebuildSubmeshes();//need to rebuild our geometry to match the new mesh size
    }
 }

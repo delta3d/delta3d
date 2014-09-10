@@ -256,19 +256,6 @@ namespace dtAnim
       void SetScale(float scale);
       float GetScale() const;
 
-      /**
-       * Apply a scaling factor to the core model.  May need to rebuild
-       * any local geometry after calling this.
-       * Subsequent calls to this method has a compounding effect, such that
-       * the scale for the current call is relative to the previous scale effect.
-       * For example, a previous scale of 2.0 followed by an applied scale of 0.5
-       * will result close to 1.0 of the original model scale. Due to float
-       * imprecision, multiple calls to this method will eventually make the final
-       * anticipated absolute scale have a greater margin of error.
-       * @param scaleFactor : amount to scale the character (2.0 = double the current size)
-       */
-      void ApplyCoreModelScaleFactor(float scaleFactor);
-
       /************************************************************************/
       int GetFaces(CalIndex* faces);
       int GetNormals(float* normals, int stride=0);
