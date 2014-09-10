@@ -1,8 +1,9 @@
 <?xml version="1.0" ?>
 <GUIScheme Name="testapp">
 
-   <!-- IMAGE SET - WINDOWS LOOK -->
+   <!-- IMAGE SETS -->
    <Imageset Name="WindowsLook" Filename="gui/imagesets/WindowsLook.imageset" />
+   <Imageset Name="TestApp" Filename="gui/imagesets/TestApp.imageset" />
    
    <!-- FONTS -->
    <Font Name="DejaVuSans-10" Filename="gui/fonts/DejaVuSans-10.font" />
@@ -12,7 +13,7 @@
 
    <!-- MAPPINGS - WINDOW FACTORIES - WINDOWS LOOK -->
    <WindowRendererSet Filename="CEGUIFalagardWRBase" />
-	<FalagardMapping WindowType="WindowsLook/Button"      TargetType="CEGUI/PushButton"  Renderer="Falagard/Button"       LookNFeel="WindowsLook/Button" />
+	<FalagardMapping WindowType="WindowsLook/Button"      TargetType="CEGUI/PushButton"  Renderer="Falagard/Button"       LookNFeel="TestApp/Button" />
 	<FalagardMapping WindowType="WindowsLook/Checkbox"    TargetType="CEGUI/Checkbox"    Renderer="Falagard/ToggleButton" LookNFeel="WindowsLook/Checkbox" />
 	<FalagardMapping WindowType="WindowsLook/IconButton"  TargetType="CEGUI/PushButton"  Renderer="Falagard/Button"       LookNFeel="WindowsLook/IconButton" />
 	<FalagardMapping WindowType="WindowsLook/RadioButton" TargetType="CEGUI/RadioButton" Renderer="Falagard/ToggleButton" LookNFeel="WindowsLook/RadioButton" />
