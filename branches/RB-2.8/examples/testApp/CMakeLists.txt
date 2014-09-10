@@ -1,6 +1,7 @@
 SET(TARGET_SRC testapp.cpp
                civilianactor.cpp
                civilianaiactorcomponent.cpp
+               fireworkactor.cpp
                guicomponent.cpp
                guiscreen.cpp
                inputcomponent.cpp
@@ -26,6 +27,7 @@ SET(TARGET_SRC testapp.cpp
 
 SET(TARGET_H civilianactor.h
              civilianaiactorcomponent.h
+             fireworkactor.h
              guicomponent.h
              guiscreen.h
              inputcomponent.h

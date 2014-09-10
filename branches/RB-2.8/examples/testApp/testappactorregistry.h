@@ -43,6 +43,7 @@ namespace dtExample
 
          static dtCore::RefPtr<dtCore::ActorType> TERRAIN_ACTOR_TYPE;
          static dtCore::RefPtr<dtCore::ActorType> CIVILIAN_ACTOR_TYPE;
+         static dtCore::RefPtr<dtCore::ActorType> FIREWORK_ACTOR_TYPE;
          static dtCore::RefPtr<dtCore::ActorType> MESH_OBJECT_ACTOR_TYPE;
          
          /// Constructor
