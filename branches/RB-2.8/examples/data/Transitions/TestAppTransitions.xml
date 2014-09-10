@@ -1,5 +1,12 @@
 <?xml version="1.0"?>
 <TransitionList>
+
+   <!-- LOADING STATE -->
+   <Transition>
+      <Event Type="TRANSITION_FORWARD"/>
+      <FromState Type="STATE_LOADING"/>
+      <ToState Type="STATE_TITLE"/>
+   </Transition>
    
    <!-- TITLE STATE -->
    <Transition>
@@ -54,5 +61,5 @@
       <ToState Type="STATE_GAME"/>
    </Transition>
 
-   <StartState Type="STATE_TITLE" />
+   <StartState Type="STATE_LOADING" />
 </TransitionList>

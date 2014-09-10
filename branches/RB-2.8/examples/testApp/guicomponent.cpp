@@ -134,6 +134,10 @@ namespace dtExample
       }
       else if (msgType == dtGame::MessageType::INFO_MAP_LOADED)
       {
+         dtGame::GameStateComponent* gameStateComp = NULL;
+         GetGameManager()->GetComponentByName(dtGame::GameStateComponent::DEFAULT_NAME, gameStateComp);
+
+         gameStateComp->DoStateTransition(&dtGame::EventType::TRANSITION_FORWARD);
       }
    }
 
@@ -221,7 +225,11 @@ namespace dtExample
          mHelpOverlay->Setup();
 
          // Create screen objects associated with specific game states.
-         dtCore::RefPtr<GuiScreen> screen = new GuiScreen(*mGUIScene, "Title Screen", guiDir + "titlescreen.layout");
+         dtCore::RefPtr<GuiScreen> screen = new GuiScreen(*mGUIScene, "Loading Screen", guiDir + "loadingscreen.layout");
+         screen->Setup();
+         RegisterScreenWithState(*screen, TestAppGameState::STATE_LOADING);
+
+         screen = new GuiScreen(*mGUIScene, "Title Screen", guiDir + "titlescreen.layout");
          screen->Setup();
          RegisterScreenWithState(*screen, TestAppGameState::STATE_TITLE);
 
