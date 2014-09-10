@@ -176,6 +176,7 @@ namespace dtAnim
 
       CalModel* model = new CalModel(data->GetCoreModel());
       dtCore::RefPtr<Cal3DModelWrapper> wrapper = new Cal3DModelWrapper(model);
+      wrapper->SetScale(data->GetScale());
 
       GetPoseMeshDatabase(*wrapper);
 

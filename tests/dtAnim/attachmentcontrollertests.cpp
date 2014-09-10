@@ -37,6 +37,7 @@
 #include <dtAnim/animationhelper.h>
 #include <dtAnim/attachmentcontroller.h>
 #include <dtAnim/cal3dmodelwrapper.h>
+#include <dtAnim/cal3ddatabase.h>
 
 #include <dtCore/refptr.h>
 #include <dtCore/system.h>
@@ -105,8 +106,14 @@ namespace dtAnim
             std::string context = "../examples/data/SkeletalMeshes/Marine/";
             std::string filename = "marine_test.xml";
 
+            dtCore::RefPtr<dtAnim::Cal3DModelWrapper> wrapper = dtAnim::Cal3DDatabase::GetInstance().Load(context + filename);
+            CPPUNIT_ASSERT(wrapper.valid());
+            float testScale = 0.77f;
+            dtAnim::Cal3DDatabase::GetInstance().GetModelData(*wrapper)->SetScale(testScale);
+
             mAnimHelper->LoadModel(context + filename);
             CPPUNIT_ASSERT_MESSAGE("Unable to load: " + context + filename, mAnimHelper->GetModelWrapper() != NULL);
+            CPPUNIT_ASSERT_DOUBLES_EQUAL(testScale, mAnimHelper->GetModelWrapper()->GetScale(), 0.01f);
          }
 
          void tearDown()
@@ -208,7 +215,7 @@ namespace dtAnim
             osg::Vec3 boneTrans = wrapper->GetBoneAbsoluteTranslation(boneId);
 
             osg::Quat expectedRot = spotDef.mLocalRotation * boneRot;
-            osg::Vec3 expectedPos = boneTrans + (boneRot * spotDef.mLocalTranslation);
+            osg::Vec3 expectedPos = boneTrans + (boneRot * spotDef.mLocalTranslation) * wrapper->GetScale();
 
             dtCore::Transform xform;
             attachment->GetTransform(xform, dtCore::Transformable::REL_CS);

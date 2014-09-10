@@ -606,35 +606,31 @@ namespace dtAnim
    /////////////////////////////////////////////////////////////////////////////
    void Cal3DModelWrapper::SetScale(float scale)
    {
-      // Ensure scale never goes to 0, to prevent the NAN plague.
-      if(scale <= 0.0f)
-      {
-         scale = 0.001f;
-      }
+//      // Ensure scale never goes to 0, to prevent the NAN plague.
+//      if(scale <= 0.0f)
+//      {
+//         scale = 0.001f;
+//      }
+//
+//      float prevScale = mScale;
 
-      float prevScale = mScale;
+      // DG - The core model scale is problematic for reusing core models.
       mScale = scale;
 
-      // If the previous scale was not 1...
-      if(prevScale != 1.0f)
-      {
-         // ...reverse its effect by 1/prevScale and then apply the new scale.
-         scale = 1.0f/prevScale * scale;
-      }
-
-      mCalModel->getCoreModel()->scale(scale);
+//      // If the previous scale was not 1...
+//      if(prevScale != 1.0f)
+//      {
+//         // ...reverse its effect by 1/prevScale and then apply the new scale.
+//         scale = 1.0f/prevScale * scale;
+//      }
+//
+//      mCalModel->getCoreModel()->scale(scale);
    }
 
    /////////////////////////////////////////////////////////////////////////////
    float Cal3DModelWrapper::GetScale() const
    {
       return mScale;
-   }
-
-   /////////////////////////////////////////////////////////////////////////////
-   void Cal3DModelWrapper::ApplyCoreModelScaleFactor(float scaleFactor)
-   {
-      SetScale(mScale * scaleFactor);
    }
 
    /////////////////////////////////////////////////////////////////////////////

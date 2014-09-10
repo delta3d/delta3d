@@ -28,6 +28,7 @@
 #include <dtCore/shaderprogram.h>
 #include <dtCore/shadermanager.h>
 #include <dtCore/shadergroup.h>
+#include <dtUtil/mathdefines.h>
 #include <dtUtil/log.h>
 
 #include <osg/Geode>
@@ -37,6 +38,7 @@
 #include <osg/Texture2D>
 #include <osg/GLExtensions>
 #include <osg/ShapeDrawable>
+#include <osg/MatrixTransform>
 
 #include <cal3d/hardwaremodel.h>
 
@@ -174,6 +176,7 @@ void AnimNodeBuilder::SetCreate(const CreateFunc& pCreate)
 ////////////////////////////////////////////////////////////////////////////////
 dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateNode(Cal3DModelWrapper* pWrapper, bool immediate)
 {
+   dtCore::RefPtr<osg::Node> result;
    if(!immediate)
    {
       ///Add a temporary rendered shape with a draw callback to a Group.  The callback
@@ -190,12 +193,25 @@ dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateNode(Cal3DModelWrapper* pWrappe
 
       defaultGeode->addDrawable(defaultDrawable);
       rootNode->addChild(defaultGeode);
-      return rootNode;
+
+      result = rootNode;
    }
    else
    {
-      return mCreateFunc(0, pWrapper);
+      result = mCreateFunc(0, pWrapper);
    }
+
+   float scale = pWrapper->GetScale();
+   if (result.valid() && dtUtil::Abs(1.0f - scale) > FLT_EPSILON)
+   {
+      osg::Matrix scaleXform;
+      scaleXform.makeScale(scale, scale, scale);
+      dtCore::RefPtr<osg::MatrixTransform> scaleTransform = new osg::MatrixTransform(scaleXform);
+      scaleTransform->setName("Scale Transform");
+      scaleTransform->addChild(result);
+      result = scaleTransform.get();
+   }
+   return result;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
