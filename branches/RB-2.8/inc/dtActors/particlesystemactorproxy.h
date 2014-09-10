@@ -23,7 +23,7 @@
 #define DELTA_PARTICLE_SYSTEM_ACTOR_PROXY
 
 #include <dtCore/plugin_export.h>
-#include <dtCore/transformableactorproxy.h>
+#include <dtGame/gameactorproxy.h>
 #include <dtCore/particlesystem.h>
 #include <dtCore/exceptionenum.h>
 
@@ -33,9 +33,11 @@ namespace dtActors
     * @class ParticleSystemActorProxy
     * @brief This proxy wraps the ParticleSystem Delta3D object.
     */
-   class DT_PLUGIN_EXPORT ParticleSystemActorProxy : public dtCore::TransformableActorProxy
+   class DT_PLUGIN_EXPORT ParticleSystemActorProxy : public dtGame::GameActorProxy
    {
    public:
+
+      typedef dtGame::GameActorProxy BaseClass;
 
       /**
        * Constructor
