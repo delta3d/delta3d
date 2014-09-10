@@ -73,24 +73,6 @@ namespace dtExample
       RegisterForTick();
       dtAnim::AnimationTransitionPlanner* planner = GetOwner()->GetComponent<dtAnim::AnimationTransitionPlanner>();
       planner->SignalAnimationsTransitioning.connect_slot(this, &CivilianAIActorComponent::OnAnimationsTransitioning);
-
-      dtAI::AIInterfaceActorProxy* aiInterfaceActor = NULL;
-      dtGame::GameActorProxy* actor = NULL;
-      GetOwner(actor);
-      if (actor != NULL)
-      {
-         actor->GetGameManager()->FindActorByType(*dtAI::AIActorRegistry::AI_INTERFACE_ACTOR_TYPE, aiInterfaceActor);
-      }
-      if(aiInterfaceActor != NULL)
-      {
-         mAIInterface = aiInterfaceActor->GetAIInterface();
-      }
-      else
-      {
-         LOG_ERROR("Unable to find AIInterfaceActor in map.");
-      }
-
-      Initialize();
    }
 
    ///////////////////////////////////////////////////////////////////////////////////
@@ -143,10 +125,10 @@ namespace dtExample
 
    ///////////////////////////////////////////////////////////////////////////////////
    void CivilianAIActorComponent::OnTickLocal(const dtGame::TickMessage& tickMessage)
-   {      
+   {
       PerformMove(tickMessage.GetDeltaSimTime());
 
-      if( mTransformable.valid())
+      if( mTransformable.valid() && mCharacterController.valid())
       {
          dtCore::Transform xform;
          mTransformable->GetTransform(xform);
@@ -197,8 +179,25 @@ namespace dtExample
    {
       if (!mTransformable.valid())
       {
-         LOG_ERROR("Invalid transformable on actor.");
+         LOG_ERROR("Invalid transformable on actor.  Civilian AI cannot function, aborting init.");
          return;
+      }
+
+      dtAI::AIInterfaceActorProxy* aiInterfaceActor = NULL;
+      dtGame::GameActorProxy* actor = NULL;
+      GetOwner(actor);
+      if (actor != NULL)
+      {
+         actor->GetGameManager()->FindActorByType(*dtAI::AIActorRegistry::AI_INTERFACE_ACTOR_TYPE, aiInterfaceActor);
+      }
+
+      if(aiInterfaceActor != NULL)
+      {
+         mAIInterface = aiInterfaceActor->GetAIInterface();
+      }
+      else
+      {
+         LOG_ERROR("Unable to find AIInterfaceActor in map.");
       }
 
       dtCore::Transform xform;
