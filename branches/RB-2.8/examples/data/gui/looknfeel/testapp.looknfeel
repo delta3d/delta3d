@@ -2,13 +2,17 @@
 <Falagard>
     <!--
     ***************************************************
-        WindowsLook/Button
+        TestApp/Button
     ***************************************************
     -->
-    <WidgetLook name="WindowsLook/Button">
-        <PropertyDefinition name="NormalTextColour" initialValue="FF000000" redrawOnWrite="true" />
+    <WidgetLook name="TestApp/Button">
+        <PropertyDefinition name="ButtonNormalColours" initialValue="FF00CCCC" redrawOnWrite="true" />
+        <PropertyDefinition name="ButtonHoverColours" initialValue="FFCCCC00" redrawOnWrite="true" />
+        <PropertyDefinition name="ButtonPushedColours" initialValue="FFCC00CC" redrawOnWrite="true" />
+        <PropertyDefinition name="ButtonDisabledColours" initialValue="FF888888" redrawOnWrite="true" />
+        <PropertyDefinition name="NormalTextColour" initialValue="FFFFFFFF" redrawOnWrite="true" />
         <PropertyDefinition name="HoverTextColour" initialValue="FF000000" redrawOnWrite="true" />
-        <PropertyDefinition name="PushedTextColour" initialValue="FF000000" redrawOnWrite="true" />
+        <PropertyDefinition name="PushedTextColour" initialValue="FFFFFF00" redrawOnWrite="true" />
         <PropertyDefinition name="DisabledTextColour" initialValue="FF888888" redrawOnWrite="true" />
         <PropertyDefinition name="ButtonType" initialValue="" redrawOnWrite="false" />
         <PropertyDefinition name="Action" initialValue="" redrawOnWrite="false" />
@@ -48,40 +52,42 @@
                         <UnifiedDim scale="1" type="BottomEdge" />
                     </Dim>
                 </Area>
-                <Image type="TopLeftCorner" imageset="WindowsLook" image="ButtonNormalTopLeft" />
-                <Image type="TopRightCorner" imageset="WindowsLook" image="ButtonNormalTopRight" />
-                <Image type="BottomLeftCorner" imageset="WindowsLook" image="ButtonNormalBottomLeft" />
-                <Image type="BottomRightCorner" imageset="WindowsLook" image="ButtonNormalBottomRight" />
-                <Image type="LeftEdge" imageset="WindowsLook" image="ButtonNormalLeft" />
-                <Image type="TopEdge" imageset="WindowsLook" image="ButtonNormalTop" />
-                <Image type="RightEdge" imageset="WindowsLook" image="ButtonNormalRight" />
-                <Image type="BottomEdge" imageset="WindowsLook" image="ButtonNormalBottom" />
+                <Image type="TopLeftCorner" imageset="TestApp" image="ButtonNormalTopLeft" />
+                <Image type="TopRightCorner" imageset="TestApp" image="ButtonNormalTopRight" />
+                <Image type="BottomLeftCorner" imageset="TestApp" image="ButtonNormalBottomLeft" />
+                <Image type="BottomRightCorner" imageset="TestApp" image="ButtonNormalBottomRight" />
+                <Image type="LeftEdge" imageset="TestApp" image="ButtonNormalLeft" />
+                <Image type="TopEdge" imageset="TestApp" image="ButtonNormalTop" />
+                <Image type="RightEdge" imageset="TestApp" image="ButtonNormalRight" />
+                <Image type="BottomEdge" imageset="TestApp" image="ButtonNormalBottom" />
+                <ColourRectProperty name="ButtonNormalColours" />
             </FrameComponent>
             <ImageryComponent>
                 <Area>
                     <Dim type="LeftEdge">
-                        <ImageDim imageset="WindowsLook" image="ButtonNormalLeft" dimension="Width" />
+                        <ImageDim imageset="TestApp" image="ButtonNormalLeft" dimension="Width" />
                     </Dim>
                     <Dim type="TopEdge">
-                        <ImageDim imageset="WindowsLook" image="ButtonNormalTop" dimension="Height" />
+                        <ImageDim imageset="TestApp" image="ButtonNormalTop" dimension="Height" />
                     </Dim>
                     <Dim type="RightEdge">
                         <UnifiedDim scale="1" type="RightEdge">
                             <DimOperator op="Subtract">
-                                <ImageDim imageset="WindowsLook" image="ButtonNormalRight" dimension="Width" />
+                                <ImageDim imageset="TestApp" image="ButtonNormalRight" dimension="Width" />
                             </DimOperator>
                         </UnifiedDim>
                     </Dim>
                     <Dim type="BottomEdge">
                         <UnifiedDim scale="1" type="BottomEdge">
                             <DimOperator op="Subtract">
-                                <ImageDim imageset="WindowsLook" image="ButtonNormalBottom" dimension="Height" />
+                                <ImageDim imageset="TestApp" image="ButtonNormalBottom" dimension="Height" />
                             </DimOperator>
                         </UnifiedDim>
                     </Dim>
                 </Area>
-                <Image imageset="WindowsLook" image="Background" />
-                <Colours topLeft="FFAFAFAF" topRight="FFFFFFFF" bottomLeft="FFFFFFFF" bottomRight="FFAFAFAF" />
+                <Image imageset="TestApp" image="ButtonNormalCenter" />
+                <ColourRectProperty name="ButtonNormalColours" />
+               <!--Colours topLeft="FFAFAFAF" topRight="FFFFFFFF" bottomLeft="FFFFFFFF" bottomRight="FFAFAFAF" /-->
                 <VertFormat type="Stretched" />
                 <HorzFormat type="Stretched" />
             </ImageryComponent>
@@ -102,40 +108,42 @@
                         <UnifiedDim scale="1" type="BottomEdge" />
                     </Dim>
                 </Area>
-                <Image type="TopLeftCorner" imageset="WindowsLook" image="ButtonHoverTopLeft" />
-                <Image type="TopRightCorner" imageset="WindowsLook" image="ButtonHoverTopRight" />
-                <Image type="BottomLeftCorner" imageset="WindowsLook" image="ButtonHoverBottomLeft" />
-                <Image type="BottomRightCorner" imageset="WindowsLook" image="ButtonHoverBottomRight" />
-                <Image type="LeftEdge" imageset="WindowsLook" image="ButtonHoverLeft" />
-                <Image type="TopEdge" imageset="WindowsLook" image="ButtonHoverTop" />
-                <Image type="RightEdge" imageset="WindowsLook" image="ButtonHoverRight" />
-                <Image type="BottomEdge" imageset="WindowsLook" image="ButtonHoverBottom" />
+                <Image type="TopLeftCorner" imageset="TestApp" image="ButtonHoverTopLeft" />
+                <Image type="TopRightCorner" imageset="TestApp" image="ButtonHoverTopRight" />
+                <Image type="BottomLeftCorner" imageset="TestApp" image="ButtonHoverBottomLeft" />
+                <Image type="BottomRightCorner" imageset="TestApp" image="ButtonHoverBottomRight" />
+                <Image type="LeftEdge" imageset="TestApp" image="ButtonHoverLeft" />
+                <Image type="TopEdge" imageset="TestApp" image="ButtonHoverTop" />
+                <Image type="RightEdge" imageset="TestApp" image="ButtonHoverRight" />
+                <Image type="BottomEdge" imageset="TestApp" image="ButtonHoverBottom" />
+                <ColourRectProperty name="ButtonHoverColours" />
             </FrameComponent>
             <ImageryComponent>
                 <Area>
                     <Dim type="LeftEdge">
-                        <ImageDim imageset="WindowsLook" image="ButtonHoverLeft" dimension="Width" />
+                        <ImageDim imageset="TestApp" image="ButtonHoverLeft" dimension="Width" />
                     </Dim>
                     <Dim type="TopEdge">
-                        <ImageDim imageset="WindowsLook" image="ButtonHoverTop" dimension="Height" />
+                        <ImageDim imageset="TestApp" image="ButtonHoverTop" dimension="Height" />
                     </Dim>
                     <Dim type="RightEdge">
                         <UnifiedDim scale="1" type="RightEdge">
                             <DimOperator op="Subtract">
-                                <ImageDim imageset="WindowsLook" image="ButtonHoverRight" dimension="Width" />
+                                <ImageDim imageset="TestApp" image="ButtonHoverRight" dimension="Width" />
                             </DimOperator>
                         </UnifiedDim>
                     </Dim>
                     <Dim type="BottomEdge">
                         <UnifiedDim scale="1" type="BottomEdge">
                             <DimOperator op="Subtract">
-                                <ImageDim imageset="WindowsLook" image="ButtonHoverBottom" dimension="Height" />
+                                <ImageDim imageset="TestApp" image="ButtonHoverBottom" dimension="Height" />
                             </DimOperator>
                         </UnifiedDim>
                     </Dim>
                 </Area>
-                <Image imageset="WindowsLook" image="Background" />
-                <Colours topLeft="FFCFD9CF" topRight="FFF2FFF2" bottomLeft="FFF2FFF2" bottomRight="FFCFD9CF" />
+                <Image imageset="TestApp" image="ButtonHoverCenter" />
+                <ColourRectProperty name="ButtonHoverColours" />
+               <!--Colours topLeft="FFCFD9CF" topRight="FFF2FFF2" bottomLeft="FFF2FFF2" bottomRight="FFCFD9CF" /-->
                 <VertFormat type="Stretched" />
                 <HorzFormat type="Stretched" />
             </ImageryComponent>
@@ -156,40 +164,42 @@
                         <UnifiedDim scale="1" type="BottomEdge" />
                     </Dim>
                 </Area>
-                <Image type="TopLeftCorner" imageset="WindowsLook" image="ButtonPushedTopLeft" />
-                <Image type="TopRightCorner" imageset="WindowsLook" image="ButtonPushedTopRight" />
-                <Image type="BottomLeftCorner" imageset="WindowsLook" image="ButtonPushedBottomLeft" />
-                <Image type="BottomRightCorner" imageset="WindowsLook" image="ButtonPushedBottomRight" />
-                <Image type="LeftEdge" imageset="WindowsLook" image="ButtonPushedLeft" />
-                <Image type="TopEdge" imageset="WindowsLook" image="ButtonPushedTop" />
-                <Image type="RightEdge" imageset="WindowsLook" image="ButtonPushedRight" />
-                <Image type="BottomEdge" imageset="WindowsLook" image="ButtonPushedBottom" />
+                <Image type="TopLeftCorner" imageset="TestApp" image="ButtonPushedTopLeft" />
+                <Image type="TopRightCorner" imageset="TestApp" image="ButtonPushedTopRight" />
+                <Image type="BottomLeftCorner" imageset="TestApp" image="ButtonPushedBottomLeft" />
+                <Image type="BottomRightCorner" imageset="TestApp" image="ButtonPushedBottomRight" />
+                <Image type="LeftEdge" imageset="TestApp" image="ButtonPushedLeft" />
+                <Image type="TopEdge" imageset="TestApp" image="ButtonPushedTop" />
+                <Image type="RightEdge" imageset="TestApp" image="ButtonPushedRight" />
+                <Image type="BottomEdge" imageset="TestApp" image="ButtonPushedBottom" />
+                <ColourRectProperty name="ButtonPushedColours" />
             </FrameComponent>
             <ImageryComponent>
                 <Area>
                     <Dim type="LeftEdge">
-                        <ImageDim imageset="WindowsLook" image="ButtonPushedLeft" dimension="Width" />
+                        <ImageDim imageset="TestApp" image="ButtonPushedLeft" dimension="Width" />
                     </Dim>
                     <Dim type="TopEdge">
-                        <ImageDim imageset="WindowsLook" image="ButtonPushedTop" dimension="Height" />
+                        <ImageDim imageset="TestApp" image="ButtonPushedTop" dimension="Height" />
                     </Dim>
                     <Dim type="RightEdge">
                         <UnifiedDim scale="1" type="RightEdge">
                             <DimOperator op="Subtract">
-                                <ImageDim imageset="WindowsLook" image="ButtonPushedRight" dimension="Width" />
+                                <ImageDim imageset="TestApp" image="ButtonPushedRight" dimension="Width" />
                             </DimOperator>
                         </UnifiedDim>
                     </Dim>
                     <Dim type="BottomEdge">
                         <UnifiedDim scale="1" type="BottomEdge">
                             <DimOperator op="Subtract">
-                                <ImageDim imageset="WindowsLook" image="ButtonPushedBottom" dimension="Height" />
+                                <ImageDim imageset="TestApp" image="ButtonPushedBottom" dimension="Height" />
                             </DimOperator>
                         </UnifiedDim>
                     </Dim>
                 </Area>
-                <Image imageset="WindowsLook" image="Background" />
-                <Colours topLeft="FFAFAFAF" topRight="FFFFFFFF" bottomLeft="FFFFFFFF" bottomRight="FFAFAFAF" />
+                <Image imageset="TestApp" image="ButtonPushedCenter" />
+                <ColourRectProperty name="ButtonPushedColours" />
+               <!--Colours topLeft="FFAFAFAF" topRight="FFFFFFFF" bottomLeft="FFFFFFFF" bottomRight="FFAFAFAF" /-->
                 <VertFormat type="Stretched" />
                 <HorzFormat type="Stretched" />
             </ImageryComponent>
@@ -218,6 +228,7 @@
                 <Image type="TopEdge" imageset="WindowsLook" image="ButtonNormalTop" />
                 <Image type="RightEdge" imageset="WindowsLook" image="ButtonNormalRight" />
                 <Image type="BottomEdge" imageset="WindowsLook" image="ButtonNormalBottom" />
+                <ColourRectProperty name="ButtonDisabledColours" />
             </FrameComponent>
             <ImageryComponent>
                 <Area>
@@ -242,7 +253,8 @@
                         </UnifiedDim>
                     </Dim>
                 </Area>
-                <Image imageset="WindowsLook" image="Background" />
+                <Image imageset="TestApp" image="ButtonNormalCenter" />
+                <ColourRectProperty name="ButtonDisabledColours" />
                 <VertFormat type="Stretched" />
                 <HorzFormat type="Stretched" />
             </ImageryComponent>
