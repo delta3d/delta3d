@@ -147,7 +147,7 @@ namespace dtQt
       {
          proxyClass = mIdProperty->GetDesiredActorClass();
       }
-      GetActorProxies(names, proxyClass);
+      GetActors(names, proxyClass);
 
       QStringList sortedNames;
       for (unsigned int i = 0; i < names.size(); ++i)
@@ -310,7 +310,7 @@ namespace dtQt
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   void DynamicActorControl::GetActorProxies(std::vector< dtCore::RefPtr<dtCore::BaseActorObject> >& toFill, const std::string& className)
+   void DynamicActorControl::GetActors(std::vector< dtCore::RefPtr<dtCore::BaseActorObject> >& toFill, const std::string& className)
    {
       toFill.clear();
 

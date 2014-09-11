@@ -90,22 +90,27 @@ namespace dtCore
       // Can't have any of these properties unless it has a drawable
       if (trans == NULL) return;
 
+      dtCore::RefPtr<dtCore::ActorProperty> newProp;
       if (IsRotationPropertyShown())
       {
-         AddProperty(new Vec3ActorProperty(PROPERTY_ROTATION, PROPERTY_ROTATION,
-                  Vec3ActorProperty::SetFuncType(this, &TransformableActorProxy::SetRotation),
-                  Vec3ActorProperty::GetFuncType(this, &TransformableActorProxy::GetRotation),
-                  "Sets the amount of rotation on a transformable. Represented with pitch, yaw, and roll.",
-                  GROUPNAME));
+          newProp = new Vec3ActorProperty(PROPERTY_ROTATION, PROPERTY_ROTATION,
+                           Vec3ActorProperty::SetFuncType(this, &TransformableActorProxy::SetRotation),
+                           Vec3ActorProperty::GetFuncType(this, &TransformableActorProxy::GetRotation),
+                           "Sets the amount of rotation on a transformable. Represented with pitch, yaw, and roll.",
+                           GROUPNAME);
+         newProp->SetSendInPartialUpdate(true);
+         AddProperty(newProp);
       }
 
       if (IsTranslationPropertyShown())
       {
-         AddProperty(new Vec3ActorProperty(PROPERTY_TRANSLATION, PROPERTY_TRANSLATION,
+         newProp = new Vec3ActorProperty(PROPERTY_TRANSLATION, PROPERTY_TRANSLATION,
                   Vec3ActorProperty::SetFuncType(this, &TransformableActorProxy::SetTranslation),
                   Vec3ActorProperty::GetFuncType(this, &TransformableActorProxy::GetTranslation),
                   "Sets the location of a transformable in 3D space.",
-                  GROUPNAME));
+                  GROUPNAME);
+         newProp->SetSendInPartialUpdate(true);
+         AddProperty(newProp);
       }
 
       AddProperty(new BooleanActorProperty(PROPERTY_NORMAL_RESCALING, PROPERTY_NORMAL_RESCALING,
