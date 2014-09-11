@@ -1076,10 +1076,10 @@ bool AnimationHelper::SetupPoses(const dtAnim::Cal3DModelData& modelData)
          poseController->SetModelWrapper(model);
 
          // Attempt setting some defaults. This may have to be removed later.
-         poseController->AddPoseControl("Poses_LeftEye", 0);
+         /*poseController->AddPoseControl("Poses_LeftEye", 0);
          poseController->AddPoseControl("Poses_RightEye", 0);
          poseController->AddPoseControl("Poses_Head", 1, true);
-         poseController->AddPoseControl("Poses_Torso", 2);
+         poseController->AddPoseControl("Poses_Torso", 2);*/
 
          SetPosesEnabled(true);
 

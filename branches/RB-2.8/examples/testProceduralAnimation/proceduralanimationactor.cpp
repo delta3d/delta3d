@@ -25,6 +25,7 @@
 #include <dtAnim/cal3dmodelwrapper.h>
 #include <dtAnim/posemath.h>
 #include <dtAnim/posemeshdatabase.h>
+#include <dtAnim/posesequence.h> // for PoseController
 
 #include <dtCore/transform.h>
 
@@ -79,33 +80,23 @@ void ProceduralAnimationActorProxy::CreateDrawable()
 //////////////////////////////////////////////////////////
 // Actor code
 //////////////////////////////////////////////////////////
+const dtUtil::RefString ProceduralAnimationActor::POSE_MESH_EYE_LEFT("Poses_LeftEye");
+const dtUtil::RefString ProceduralAnimationActor::POSE_MESH_EYE_RIGHT("Poses_RightEye");
+const dtUtil::RefString ProceduralAnimationActor::POSE_MESH_HEAD("Poses_Head");
+const dtUtil::RefString ProceduralAnimationActor::POSE_MESH_TORSO("Poses_Torso");
+const dtUtil::RefString ProceduralAnimationActor::POSE_MESH_GUN("Poses_Gun");
 
 
 ////////////////////////////////////////////////////////////////////////////////
 ProceduralAnimationActor::ProceduralAnimationActor(ProceduralAnimationActorProxy& owner)
    : GameActor(owner)
    , mMode(MODE_AIM)
-   , mPoseMeshDatabase(NULL)
-   , mPoseMeshUtil(NULL)
-   , mBlendTime(0.3f)
    , mCurrentTarget(NULL)
-{
-   memset(mMarinePoseData.mPoseMeshes, 0, sizeof(dtAnim::PoseMesh*) * ProceduralAnimationData::PMP_TOTAL);
-
-   // Initialize ik target data
-   for (size_t partIndex = ProceduralAnimationData::PMP_FIRST;
-      partIndex < ProceduralAnimationData::PMP_TOTAL;
-      ++partIndex)
-   {
-      mMarinePoseData.mTargetTriangles[partIndex].mIsInside = false;
-      mMarinePoseData.mTargetTriangles[partIndex].mTriangleID = -1;
-   }
-}
+{}
 
 ////////////////////////////////////////////////////////////////////////////////
 ProceduralAnimationActor::~ProceduralAnimationActor()
-{
-}
+{}
 
 ////////////////////////////////////////////////////////////////////////////////
 void ProceduralAnimationActor::OnEnteredWorld()
@@ -118,25 +109,7 @@ void ProceduralAnimationActor::OnEnteredWorld()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ProceduralAnimationActor::SetPoseMeshDatabase(dtAnim::PoseMeshDatabase* poseMeshDatabase)
-{
-   // Is there any reason to set this a second time?
-   assert(!mPoseMeshDatabase);
-
-   mPoseMeshDatabase = poseMeshDatabase;
-
-   // Make sure we have a utility to use on the posemesh data
-   if (!mPoseMeshUtil.valid())
-   {
-      mPoseMeshUtil = new dtAnim::PoseMeshUtility;
-   }
-
-   // Get access to each individual part
-   AssemblePoseData();
-}
-
-////////////////////////////////////////////////////////////////////////////////
-void ProceduralAnimationActor::SetTarget(const dtCore::Transformable* target, osg::Vec3* offset)
+void ProceduralAnimationActor::SetTarget(dtCore::Transformable* target, osg::Vec3* offset)
 {
    mCurrentTarget = target;
 
@@ -144,31 +117,44 @@ void ProceduralAnimationActor::SetTarget(const dtCore::Transformable* target, os
    {
       mTargetOffset = *offset;
    }
+
+   dtAnim::PoseController* controller = GetHelper()->GetPoseController();
+   controller->SetTarget(mCurrentTarget.get());
+   controller->SetTargetOffset(mTargetOffset);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 void ProceduralAnimationActor::SetBlendTime(float blendTime)
 {
-   mBlendTime = blendTime;
+   GetHelper()->GetPoseController()->SetBlendTime(blendTime);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ProceduralAnimationActor::AssemblePoseData()
+void ProceduralAnimationActor::SetMode(eMode mode)
 {
-   mMarinePoseData.mPoseMeshes[ProceduralAnimationData::LEFT_EYE] =
-      mPoseMeshDatabase->GetPoseMeshByName("Poses_LeftEye");
+   if (mMode != mode)
+   {
+      mMode = mode;
 
-   mMarinePoseData.mPoseMeshes[ProceduralAnimationData::RIGHT_EYE] =
-      mPoseMeshDatabase->GetPoseMeshByName("Poses_RightEye");
+      // Reset the controller so that old controls do not conflict.
+      dtAnim::PoseController* controller = GetHelper()->GetPoseController();
+      controller->ClearPoseControls();
 
-   mMarinePoseData.mPoseMeshes[ProceduralAnimationData::HEAD] =
-      mPoseMeshDatabase->GetPoseMeshByName("Poses_Head");
+      if (mMode == MODE_AIM)
+      {
+         // Set the head pose mesh needed in pose calculations.
+         controller->SetHeadPoseMesh(POSE_MESH_HEAD);
 
-   mMarinePoseData.mPoseMeshes[ProceduralAnimationData::TORSO] =
-      mPoseMeshDatabase->GetPoseMeshByName("Poses_Torso");
-
-   mMarinePoseData.mPoseMeshes[ProceduralAnimationData::GUN] =
-      mPoseMeshDatabase->GetPoseMeshByName("Poses_Gun");
+         controller->AddPoseControl(POSE_MESH_GUN, 0);
+      }
+      else if (mMode == MODE_WATCH) // Default - MODE_WATCH
+      {
+         controller->AddPoseControl(POSE_MESH_EYE_LEFT, 0);
+         controller->AddPoseControl(POSE_MESH_EYE_RIGHT, 0);
+         controller->AddPoseControl(POSE_MESH_HEAD, 1, true);
+         controller->AddPoseControl(POSE_MESH_TORSO, 2);
+      }
+   }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -178,16 +164,17 @@ void ProceduralAnimationActor::OnTickLocal(const dtGame::TickMessage& tickMessag
 
    // inverse kinematics
    TickIK(dt);
-
-   // The component handles this...
-   // canned animation update
-   //GetHelper()->GetModelWrapper()->Update(dt);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 void ProceduralAnimationActor::TickIK(float dt)
 {
-   dtCore::Transform targetTransform;
+   if (mMode == MODE_NONE)
+   {
+      SetMode(MODE_WATCH);
+   }
+
+   /*dtCore::Transform targetTransform;
    mCurrentTarget->GetTransform(targetTransform);
 
    // The 2 unit offset here is a crude approximation for this
@@ -283,7 +270,7 @@ void ProceduralAnimationActor::TickIK(float dt)
          currentTransform.SetRotation(hpr);
          SetTransform(currentTransform);
       }
-   }
+   }*/
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -293,98 +280,21 @@ void ProceduralAnimationActor::AddedToScene(dtCore::Scene* scene)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-osg::Vec3 ProceduralAnimationActor::GetPoseMeshEndEffectorDirection(const dtAnim::PoseMesh* poseMesh) const
-{
-   const dtAnim::Cal3DModelWrapper* modelWrapper = GetComponent<dtAnim::AnimationHelper>()->GetModelWrapper();
-
-   // If we have the ik system attached
-   if (poseMesh != NULL)
-   {
-      osg::Quat boneRotation = modelWrapper->GetBoneAbsoluteRotation(poseMesh->GetEffectorID());
-      osg::Vec3 nativeBoneForward = poseMesh->GetEffectorForwardAxis();
-
-      dtCore::Transform transform;
-      GetTransform(transform);
-
-      osg::Matrix modelRotation;
-      transform.GetRotation(modelRotation);
-
-      // Get the direction the head is facing
-      osg::Vec3 boneDirection = boneRotation * nativeBoneForward;
-      boneDirection = boneDirection * modelRotation;
-
-      osg::Quat rotationCorrection(osg::DegreesToRadians(180.0f), osg::Z_AXIS);
-      return rotationCorrection * boneDirection;
-   }
-
-   return GetForwardDirection();
-}
-
-////////////////////////////////////////////////////////////////////////////////
 dtAnim::Cal3DModelWrapper* ProceduralAnimationActor::GetModelWrapper()
 {
-   return GetComponent<dtAnim::AnimationHelper>()->GetModelWrapper();
+   return GetHelper()->GetModelWrapper();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 osg::Vec3 ProceduralAnimationActor::GetForwardDirection() const
 {
-   dtCore::Transform currentTransform;
-   GetTransform(currentTransform);
-
-   osg::Matrix matrix;
-   currentTransform.Get(matrix);
-
-   // Many characters face backwards so we negate the forward direction
-   return -osg::Vec3(matrix(1, 0), matrix(1, 1), matrix(1, 2));
+   return GetHelper()->GetPoseController()->GetForwardDirection();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 osg::Vec3 ProceduralAnimationActor::GetGazeDirection() const
 {
-   dtAnim::PoseMesh* headMesh = mMarinePoseData.mPoseMeshes[ProceduralAnimationData::HEAD];
-
-   if (headMesh)
-   {
-      return GetPoseMeshEndEffectorDirection(headMesh);
-   }
-   else
-   {
-      return GetForwardDirection();
-   }
-}
-
-////////////////////////////////////////////////////////////////////////////////
-osg::Vec3 ProceduralAnimationActor::GetGunDirection() const
-{
-   dtAnim::PoseMesh* gunMesh = mMarinePoseData.mPoseMeshes[ProceduralAnimationData::GUN];
-   return GetPoseMeshEndEffectorDirection(gunMesh);
-}
-
-////////////////////////////////////////////////////////////////////////////////
-osg::Vec3 ProceduralAnimationActor::GetGunPosition() const
-{
-   const dtAnim::Cal3DModelWrapper* modelWrapper = GetComponent<dtAnim::AnimationHelper>()->GetModelWrapper();
-   dtAnim::PoseMesh* gunMesh = mMarinePoseData.mPoseMeshes[ProceduralAnimationData::GUN];
-
-   dtCore::Transform transform;
-   GetTransform(transform);
-
-   osg::Matrix rotation;
-   osg::Vec3 translation;
-   transform.GetRotation(rotation);
-   transform.GetTranslation(translation);
-
-   // Get the bone position relative to its root
-   osg::Vec3 bonePosition = modelWrapper->GetBoneAbsoluteTranslation(gunMesh->GetEffectorID());
-
-   // Get the gun position in the world
-   osg::Quat rotationCorrection(osg::DegreesToRadians(180.0f), osg::Z_AXIS);
-   bonePosition  = rotationCorrection * (bonePosition * rotation);
-   bonePosition += translation;
-
-
-   return bonePosition;
+   return GetHelper()->GetPoseController()->GetHeadDirection();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -401,27 +311,27 @@ osg::Vec3 ProceduralAnimationActor::GetWorldPosition() const
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-osg::Vec3 ProceduralAnimationActor::GetHeadPosition() const
+osg::Vec3 ProceduralAnimationActor::GetDirection(const std::string& poseMeshName) const
 {
-   const dtAnim::Cal3DModelWrapper* modelWrapper = GetComponent<dtAnim::AnimationHelper>()->GetModelWrapper();
-   dtAnim::PoseMesh* headMesh = mMarinePoseData.mPoseMeshes[ProceduralAnimationData::HEAD];
+   return GetHelper()->GetPoseController()->GetDirection(poseMeshName);
+}
 
-   dtCore::Transform transform;
-   GetTransform(transform);
+////////////////////////////////////////////////////////////////////////////////
+osg::Vec3 ProceduralAnimationActor::GetPosition(const std::string& poseMeshName) const
+{
+   return GetHelper()->GetPoseController()->GetPosition(poseMeshName);
+}
 
-   osg::Matrix rotation;
-   osg::Vec3 translation;
-   transform.GetRotation(rotation);
-   transform.GetTranslation(translation);
+////////////////////////////////////////////////////////////////////////////////
+dtAnim::AnimationHelper* ProceduralAnimationActor::GetHelper()
+{
+   return GetComponent<dtAnim::AnimationHelper>();
+}
 
-   // Get the bone position relative to its root
-   osg::Vec3 bonePosition = modelWrapper->GetBoneAbsoluteTranslation(headMesh->GetEffectorID());
-
-   // Get the gun position in the world
-   bonePosition  = bonePosition * rotation;
-   bonePosition += translation;
-
-   return bonePosition;
+////////////////////////////////////////////////////////////////////////////////
+dtAnim::AnimationHelper* ProceduralAnimationActor::GetHelper() const
+{
+   return GetComponent<dtAnim::AnimationHelper>();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
