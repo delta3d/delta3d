@@ -23,7 +23,7 @@
    <Property Name="GameManager.Statistics.ToConsole">true</Property>
 
    <Property Name="System.SimFrameRate">30</Property>
-   <Property Name="System.MaxTimeBetweenDraws">0.2</Property>
+   <Property Name="System.MaxTimeBetweenDraws">0.5</Property>
    <Property Name="System.UseFixedTimeStep">true</Property>
       
    <Property Name="dtPhysics.PhysicsEngine">Bullet</Property>
