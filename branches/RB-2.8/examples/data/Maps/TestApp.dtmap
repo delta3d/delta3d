@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <map xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="delta3dMap" xsi:schemaLocation="delta3dMap map.xsd">
     <header>
         <name>TestApp</name>
@@ -7,7 +8,7 @@
         <comment></comment>
         <copyright></copyright>
         <createTimestamp>2014-07-15T22:49:46-05:00</createTimestamp>
-        <lastUpdateTimestamp>2014-09-11T16:25:57-05:00</lastUpdateTimestamp>
+        <lastUpdateTimestamp>2014-09-11T17:57:14-05:00</lastUpdateTimestamp>
         <editorVersion>2.8.0</editorVersion>
         <schemaVersion>1.0</schemaVersion>
     </header>
@@ -1937,7 +1938,7 @@
             </property>
             <property>
                 <name>Bezier Node</name>
-                <actorId>8c8be7b7-5645-4997-873b-266c7b6af1ec</actorId>
+                <actorId>5e9ad074-dfdc-4432-be58-53326f1f2e43</actorId>
             </property>
         </actor>
         <actor>
@@ -2383,17 +2384,17 @@
         <actor>
             <type>dtExample.Mesh Object</type>
             <id>300c6a18-0265-4363-9aaf-e88906fa017d</id>
-            <name>GameActor_01</name>
+            <name>Barge</name>
             <property>
                 <name>Name</name>
-                <string>GameActor_01</string>
+                <string>Barge</string>
             </property>
             <property>
                 <name>Rotation</name>
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>104.902771</value3>
+                    <value3>104.902779</value3>
                 </vec3>
             </property>
             <property>
@@ -2407,8 +2408,8 @@
             <property>
                 <name>static mesh</name>
                 <resourceType>StaticMeshes</resourceType>
-                <resourceDisplayName>StaticMeshes:vehicles:Barge:GameReady:barge.osg</resourceDisplayName>
-                <resource>StaticMeshes:vehicles:Barge:GameReady:barge.osg</resource>
+                <resourceDisplayName>StaticMeshes:Barge:barge.osg</resourceDisplayName>
+                <resource>StaticMeshes:Barge:barge.osg</resource>
             </property>
         </actor>
         <actor>
@@ -2853,17 +2854,17 @@
             <property>
                 <name>Rotation</name>
                 <vec3>
-                    <value1>0.000000</value1>
-                    <value2>-0.000000</value2>
-                    <value3>-14.638299</value3>
+                    <value1>-0.000072</value1>
+                    <value2>0.000010</value2>
+                    <value3>-134.440201</value3>
                 </vec3>
             </property>
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-720.663879</value1>
-                    <value2>-230.689331</value2>
-                    <value3>3.693086</value3>
+                    <value1>-594.688660</value1>
+                    <value2>-91.878761</value2>
+                    <value3>3.693073</value3>
                 </vec3>
             </property>
         </actor>
@@ -5314,14 +5315,14 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>-0.000000</value2>
-                    <value3>-88.255386</value3>
+                    <value3>-87.652214</value3>
                 </vec3>
             </property>
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-243.287201</value1>
-                    <value2>-427.427429</value2>
+                    <value1>90.278130</value1>
+                    <value2>-415.366516</value2>
                     <value3>75.000000</value3>
                 </vec3>
             </property>

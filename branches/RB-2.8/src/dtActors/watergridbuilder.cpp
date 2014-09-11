@@ -70,12 +70,12 @@ namespace dtActors
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   osg::Geometry* WaterGridBuilder::BuildRadialGrid(float &outComputedRadialDistance)
+   osg::Geometry* WaterGridBuilder::BuildRadialGrid(float &outComputedRadialDistance, float numRows, float numColumns)
    {
       osg::Geometry* geometry = new osg::Geometry();
 
-      int N = 200; // rows from center outward
-      int K = 200;// columns around the circle
+      int N = numRows; // rows from center outward
+      int K = numColumns;// columns around the circle
 
       //calculate num verts and num indices
       int numVerts = N * K;

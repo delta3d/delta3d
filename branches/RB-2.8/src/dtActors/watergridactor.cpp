@@ -253,6 +253,9 @@ namespace dtActors
       , mModForSteepness(1.0f)
       , mModForAmplitude(1.0f)
       , mModForDirectionInDegrees(0.0f)
+      , mNumRows(180)
+      , mNumColumns(180)
+      , mUseDebugKeys(false)
       , mElapsedTime(0.0f)
       , mDeltaTime(0.0f)
       , mRenderWaveTexture(false)
@@ -409,9 +412,9 @@ namespace dtActors
       static float keyTimeOut = 0.0f;
       keyTimeOut -= dt;
 
-      if(kb != NULL && mDeveloperMode && keyTimeOut <= 0.0f)
+      if(kb != NULL && mUseDebugKeys && keyTimeOut <= 0.0f)
       {
-         /*if(kb->GetKeyState('9'))
+         if(kb->GetKeyState('9'))
          {
             mModForWaveLength *= 0.96f; // 10% less
             std::cout << "WaveLength mod changed to [" << mModForWaveLength << "]." << std::endl;
@@ -482,10 +485,7 @@ namespace dtActors
             keyTimeOut = 0.5;
          }
 
-         // JPH: Having space bar switch between wireframe mode
-         // interferes with projects that need to use space bar
-         // for other things.  We really should find another way
-         // to do this.
+         
          if(kb->GetKeyState(osgGA::GUIEventAdapter::KEY_Tab))
          {
             mWireframe = !mWireframe;
@@ -503,7 +503,7 @@ namespace dtActors
 
             mGeode->getOrCreateStateSet()->setAttributeAndModes(polymode.get(),osg::StateAttribute::OVERRIDE | osg::StateAttribute::ON);
             keyTimeOut = 0.5;
-         }*/
+         }
 
          if(kb->GetKeyState(osgGA::GUIEventAdapter::KEY_Home))
          {
@@ -571,7 +571,7 @@ namespace dtActors
       mGeode->setDataVariance(osg::Object::DYNAMIC);
       mGeode->setNodeMask(dtUtil::NodeMask::WATER);
 
-      mGeometry = WaterGridBuilder::BuildRadialGrid(mComputedRadialDistance);
+      mGeometry = WaterGridBuilder::BuildRadialGrid(mComputedRadialDistance, mNumRows, mNumColumns);
       mGeometry->setCullCallback(new WaterCullCallback());
 
       BindShader(mGeode, "WaterShader");

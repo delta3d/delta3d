@@ -26,8 +26,10 @@
 
 #include <dtRender/ppuscene.h>
 
-#include <dtActors/watergridactor.h>
 #include <dtActors/engineactorregistry.h>
+
+#include <dtCore/colorrgbaactorproperty.h>
+#include <dtCore/enumactorproperty.h>
 
 #include <dtGame/gamemanager.h> //to create water grid actor
 #include <dtABC/application.h> //to get camera
@@ -80,11 +82,22 @@ namespace dtRender
 
       bool mUseMultipassWater;
       dtCore::RefPtr<osg::Group> mRootNode;
+      dtCore::ObserverPtr<dtActors::WaterGridActor> mWaterActor;
    };
 
 
    OceanScene::OceanScene()
    : BaseClass(*OCEAN_SCENE, SceneEnum::TRANSPARENT_OBJECTS)
+   , mNumRows(180)
+   , mNumColumns(180)
+   , mWaveDirection(0.0f)
+   , mAmplitudeModifier(1.0f)
+   , mWavelengthModifier(1.0)
+   , mSpeedModifier(1.0)
+   , mWaterColor(0.117187, 0.3125, 0.58593, 1.0)
+   , mSeaState(&dtActors::WaterGridActor::SeaState::SeaState_4)
+   , mChoppiness(&dtActors::WaterGridActor::ChoppinessSettings::CHOP_FLAT)
+   , mUseDebugKeys(false)
    , mImpl(new OceanSceneImpl())
    {
       SetName("OceanScene");
@@ -112,6 +125,7 @@ namespace dtRender
          if (waterProxy.valid())
          {
             waterProxy->GetDrawable(water);
+            mImpl->mWaterActor = water;
          
             //get reflection scene root node
             water->SetSceneCamera(gm->GetApplication().GetCamera());
@@ -146,6 +160,21 @@ namespace dtRender
                water->SetReflectionScene(sm.GetOSGNode());
             }
 
+            //set properties
+            {
+               water->SetNumRows(mNumRows);
+               water->SetNumColumns(mNumColumns);
+               water->SetUseDebugKeys(mUseDebugKeys);
+               water->SetModForDirectionInDegrees(mWaveDirection);
+               water->SetModForAmplitude(mAmplitudeModifier);
+               water->SetModForWaveLength(mWavelengthModifier);
+               water->SetModForSpeed(mSpeedModifier);
+               water->SetWaterColor(mWaterColor);
+               water->SetChoppiness(mChoppiness);
+               water->SetSeaState(mSeaState);
+            }
+
+
             //this adds the actor to our scene
             sm.PushScene(*this);
          
@@ -172,6 +201,129 @@ namespace dtRender
    }
 
 
+   /////////////////////////////////////////////////////////////////////////////
+   DT_IMPLEMENT_ACCESSOR_GETTER(OceanScene, int, NumRows);
+   DT_IMPLEMENT_ACCESSOR_GETTER(OceanScene, int, NumColumns);
+   DT_IMPLEMENT_ACCESSOR_GETTER(OceanScene, bool, UseDebugKeys);
+   DT_IMPLEMENT_ACCESSOR_GETTER(OceanScene, float, WaveDirection);
+   DT_IMPLEMENT_ACCESSOR_GETTER(OceanScene, float, AmplitudeModifier);
+   DT_IMPLEMENT_ACCESSOR_GETTER(OceanScene, float, WavelengthModifier);
+   DT_IMPLEMENT_ACCESSOR_GETTER(OceanScene, float, SpeedModifier);
+   //DT_IMPLEMENT_ACCESSOR_GETTER(OceanScene, float, UnderwaterViewDistance);
+   DT_IMPLEMENT_ACCESSOR_GETTER(OceanScene, osg::Vec4, WaterColor);
+   DT_IMPLEMENT_ACCESSOR_GETTER(OceanScene, dtUtil::EnumerationPointer<dtActors::WaterGridActor::SeaState>, SeaState);
+   DT_IMPLEMENT_ACCESSOR_GETTER(OceanScene, dtUtil::EnumerationPointer<dtActors::WaterGridActor::ChoppinessSettings>, Choppiness);
+
+   /////////////////////////////////////////////////////////////////////////////
+   void OceanScene::SetUseDebugKeys(bool b)
+   {
+      mUseDebugKeys = b;
+      if(mImpl->mWaterActor.valid())
+      {
+         mImpl->mWaterActor->SetUseDebugKeys(b);
+      }
+
+   }
+
+
+   /////////////////////////////////////////////////////////////////////////////
+   void OceanScene::SetNumRows(int i)
+   {
+      mNumRows = i;
+      if(mImpl->mWaterActor.valid())
+      {
+         mImpl->mWaterActor->SetNumRows(mNumRows);
+      }
+
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void OceanScene::SetNumColumns(int i)
+   {
+      mNumColumns = i;
+      if(mImpl->mWaterActor.valid())
+      {
+         mImpl->mWaterActor->SetNumColumns(mNumColumns);
+      }
+
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void OceanScene::SetWaveDirection(float f)
+   {
+      mWaveDirection = f;
+      if(mImpl->mWaterActor.valid())
+      {
+         mImpl->mWaterActor->SetModForDirectionInDegrees(mWaveDirection);
+      }
+
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void OceanScene::SetWavelengthModifier(float f)
+   {
+      mWavelengthModifier = f;
+      if(mImpl->mWaterActor.valid())
+      {
+         mImpl->mWaterActor->SetModForWaveLength(mWavelengthModifier);
+      }      
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void OceanScene::SetAmplitudeModifier(float f)
+   {
+      mAmplitudeModifier = f;
+      if(mImpl->mWaterActor.valid())
+      {
+         mImpl->mWaterActor->SetModForAmplitude(mAmplitudeModifier);
+      }
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void OceanScene::SetSpeedModifier(float f)
+   {
+      mSpeedModifier = f;
+      if(mImpl->mWaterActor.valid())
+      {
+         mImpl->mWaterActor->SetModForSpeed(f);
+      }
+   }
+
+
+   /////////////////////////////////////////////////////////////////////////////
+   void OceanScene::SetWaterColor(const osg::Vec4& color_)
+   {
+      mWaterColor = color_;
+      if(mImpl->mWaterActor.valid())
+      {
+         mImpl->mWaterActor->SetWaterColor(color_);
+      }
+   }
+
+
+   /////////////////////////////////////////////////////////////////////////////
+   void OceanScene::SetSeaState(dtActors::WaterGridActor::SeaState& seaState_)
+   {
+      mSeaState = seaState_;
+      if(mImpl->mWaterActor.valid())
+      {
+         mImpl->mWaterActor->SetSeaState(seaState_);
+      }
+   }
+   
+   /////////////////////////////////////////////////////////////////////////////
+   void OceanScene::SetChoppiness(dtActors::WaterGridActor::ChoppinessSettings&  choppiness_)
+   {
+      mChoppiness = choppiness_;
+      if(mImpl->mWaterActor.valid())
+      {
+         mImpl->mWaterActor->SetChoppiness(choppiness_);
+      }
+   }
+
+
+   /////////////////////////////////////////////////////////////////////////////
+   //actor
    OceanSceneActor::OceanSceneActor()
    {
    }
@@ -183,6 +335,35 @@ namespace dtRender
    void OceanSceneActor::BuildPropertyMap()
    {
       BaseClass::BuildPropertyMap();
+
+
+      const std::string GROUPNAME = "OceanScene";
+
+      BaseClass::BuildPropertyMap();
+
+      OceanScene* actor = GetDrawable<OceanScene>();
+
+      typedef dtCore::PropertyRegHelper<dtCore::PropertyContainer&, OceanScene> RegHelperType;
+      RegHelperType propReg(*this, actor, GROUPNAME);
+
+      DT_REGISTER_PROPERTY(NumRows, "The number of rows of tesselation for the water surface.", RegHelperType, propReg);
+      DT_REGISTER_PROPERTY(NumColumns, "The number of columns of tesselation for the water surface.", RegHelperType, propReg);
+
+      DT_REGISTER_PROPERTY(WaveDirection, "The direction of the waves.", RegHelperType, propReg);
+      DT_REGISTER_PROPERTY(AmplitudeModifier, "A scalar for the amplitude.", RegHelperType, propReg);
+      DT_REGISTER_PROPERTY(WavelengthModifier, "A scalar for the wave length.", RegHelperType, propReg);
+      DT_REGISTER_PROPERTY(SpeedModifier, "A scalar for the speed.", RegHelperType, propReg);
+
+      DT_REGISTER_PROPERTY(SeaState, "A value representing the overall sea state based on the beaufort scale 1-12.", RegHelperType, propReg);
+      DT_REGISTER_PROPERTY(Choppiness, "A value representing the overall choppiness of the waves.", RegHelperType, propReg);
+
+      DT_REGISTER_PROPERTY(UseDebugKeys, "These activate the debug keys for the water, keys- 1-9, TAB, Space, Return, Home, End, PG Up, and PG Down.", RegHelperType, propReg);
+
+
+      AddProperty(new dtCore::ColorRgbaActorProperty("Water Color", "Water Color",
+         dtCore::ColorRgbaActorProperty::SetFuncType(actor, &OceanScene::SetWaterColor),
+         dtCore::ColorRgbaActorProperty::GetFuncType(actor,&OceanScene::GetWaterColor),
+         "Sets the color of the water.", GROUPNAME));
 
    }
 

@@ -24,6 +24,9 @@
 #include <dtRender/scenebase.h>
 #include <dtCore/baseactorobject.h>
 
+#include <dtActors/watergridactor.h>
+#include <dtUtil/getsetmacros.h>
+
 namespace dtRender
 {
    class OceanSceneImpl;
@@ -43,6 +46,20 @@ namespace dtRender
       virtual const osg::Group* GetSceneNode() const;
 
 
+      DT_DECLARE_ACCESSOR(int, NumRows)
+      DT_DECLARE_ACCESSOR(int, NumColumns)
+
+      DT_DECLARE_ACCESSOR(float, WaveDirection);
+      DT_DECLARE_ACCESSOR(float, AmplitudeModifier);
+      DT_DECLARE_ACCESSOR(float, WavelengthModifier);
+      DT_DECLARE_ACCESSOR(float, SpeedModifier);      
+      //DT_DECLARE_ACCESSOR(float, UnderwaterViewDistance);      
+      DT_DECLARE_ACCESSOR(osg::Vec4, WaterColor);
+      DT_DECLARE_ACCESSOR(dtUtil::EnumerationPointer<dtActors::WaterGridActor::SeaState>, SeaState);
+      DT_DECLARE_ACCESSOR(dtUtil::EnumerationPointer<dtActors::WaterGridActor::ChoppinessSettings>, Choppiness);
+
+      DT_DECLARE_ACCESSOR(bool, UseDebugKeys)
+
    private:
       OceanSceneImpl* mImpl;
    };
@@ -59,6 +76,7 @@ namespace dtRender
       virtual void CreateDrawable();
 
       virtual bool IsPlaceable() const;
+
 
    protected:
       virtual ~OceanSceneActor();
