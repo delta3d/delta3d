@@ -94,9 +94,10 @@ void TestProceduralAnimation::Initialize(dtABC::BaseABC& app, int argc, char** a
    }
    else
    {
-      dtCore::FPSMotionModel* motionModel = new dtCore::FPSMotionModel(app.GetKeyboard(), app.GetMouse());
-      motionModel->SetScene(app.GetScene());
+      dtCore::FlyMotionModel* motionModel = new dtCore::FlyMotionModel(app.GetKeyboard(), app.GetMouse());
       mMotionModel = motionModel;
+      motionModel->SetMaximumFlySpeed(1.0f);
+      motionModel->SetMaximumTurnSpeed(5.0f);
    }
 
    mMotionModel->SetTarget(app.GetCamera());

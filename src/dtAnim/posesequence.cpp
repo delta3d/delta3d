@@ -522,6 +522,7 @@ namespace dtAnim
 
    void PoseController::Update(float timeDelta)
    {
+      // Avoid the base functionality because it will prune pose animations.
       //BaseClass::Update(timeDelta);
 
       if ( ! mTarget.valid() || ! mModelWrapper.valid())
@@ -592,7 +593,7 @@ namespace dtAnim
             }
             
             // Incrementing loop here in case an invalid entry
-            // was removed and current iterator were updated.
+            // was removed and current iterator was updated.
             ++curIter;
          }
       }

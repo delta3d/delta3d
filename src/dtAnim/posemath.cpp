@@ -1,8 +1,9 @@
 #include <dtAnim/posemesh.h>
 #include <dtAnim/posemath.h>
-
 #include <dtUtil/mathdefines.h>
 #include <osg/Quat>
+
+
 
 ////////////////////////////////////////////////////////////////////////////////
 void dtAnim::GetCelestialCoordinates(osg::Vec3 target,
@@ -14,7 +15,10 @@ void dtAnim::GetCelestialCoordinates(osg::Vec3 target,
 
    // Derive the reference frame for the "look" pose
    osg::Vec3 frameRight = lookForward ^ osg::Z_AXIS;
+   frameRight.normalize();
+
    osg::Vec3 frameUp    = frameRight ^ lookForward;
+   frameUp.normalize();
 
    osg::Matrix frameMatrix(frameRight.x(),  frameRight.y(),  frameRight.z(),  0.0f,
                            lookForward.x(), lookForward.y(), lookForward.z(), 0.0f,
@@ -84,7 +88,7 @@ void dtAnim::GetClosestPointOnSegment(const osg::Vec3& startPoint,
    float numerator   = (refPoint * lineDirection) - (startPoint * lineDirection);
    float denominator = lineDirection * lineDirection;
 
-   float scale = numerator / denominator;
+   float scale = denominator == 0.0f ? 0.0f : numerator / denominator;
 
    if (scale <= 0.0f)
    {
@@ -110,12 +114,12 @@ bool dtAnim::IsPointBetweenVectors(const osg::Vec3f& point,
    osg::Vec3f vector_B = B - origin;
    osg::Vec3f vector_P = point - origin;
 
-   osg::Vec3f CrossA   = vector_P ^ vector_A;
-   osg::Vec3f CrossB   = vector_B ^ vector_P;
+   osg::Vec3f crossA   = vector_P ^ vector_A;
+   osg::Vec3f crossB   = vector_B ^ vector_P;
    osg::Vec3f refCross = vector_B ^ vector_A;
 
-   return ((CrossA * refCross >= 0) &&
-           (CrossB * refCross >= 0));
+   return ((crossA * refCross >= 0) &&
+           (crossB * refCross >= 0));
 }
 
 ////////////////////////////////////////////////////////////////////////////////
