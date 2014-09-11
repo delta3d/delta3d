@@ -79,7 +79,6 @@ namespace dtPhysics
    /////////////////////////////////////////////////////////////////////////////
    PhysicsActComp::~PhysicsActComp()
    {
-      // Cleanup now happens in OnRemovedFromWorld.  It can't happen here because it's virtual.
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -235,8 +234,6 @@ namespace dtPhysics
                dtCore::BooleanActorProperty::GetFuncType(this, &PhysicsActComp::GetAutoCreateOnEnteringWorld),
                PROPERTY_PHYSICS_COLLISION_GROUP_DESC, GROUP));
 
-      std::vector<dtCore::RefPtr<dtCore::ActorProperty> > physicsObjectProps;
-      {
          //Get properties for the physics objects.
          PhysicsObjectArray::iterator i, iend;
          i = mPhysicsObjects.begin();
@@ -244,79 +241,15 @@ namespace dtPhysics
          for(; i != iend; ++i)
          {
             PhysicsObject& physObj = **i;
-            physObj.BuildPropertyMap(physicsObjectProps);
+            physObj.BuildPropertyMap();
+            physObj.ForEachProperty(dtUtil::MakeFunctor(&PropertyContainer::AddProperty, this));
          }
-      }
-
-      {
-         std::vector<dtCore::RefPtr<dtCore::ActorProperty> >::iterator i, iend;
-         i = physicsObjectProps.begin();
-         iend = physicsObjectProps.end();
-         for (; i != iend; ++i)
-         {
-            AddProperty((*i).get());
-         }
-      }
    }
 
    //////////////////////////////////////////////////////////////////
    dtCore::RefPtr<dtCore::ActorProperty> PhysicsActComp::GetDeprecatedProperty(const std::string& name)
    {
-      dtCore::RefPtr<dtCore::ActorProperty> result;
-      dtPhysics::PhysicsObject* po = GetMainPhysicsObject();
-      if (name == "Collision Group")
-      {
-         if (po != NULL)
-         {
-            std::string generatedName(po->GetName());
-            generatedName.append(": ");
-            generatedName.append("Collision Group");
-
-            result = GetProperty(generatedName);
-         }
-         else
-         {
-            result = GetProperty(PROPERTY_COLLISION_GROUP);
-         }
-      }
-      else if (name == "MassForAgeia")
-      {
-         if (po != NULL)
-         {
-            std::string generatedName(po->GetName());
-            generatedName.append(": ");
-            generatedName.append("Mass");
-
-            result = GetProperty(generatedName);
-         }
-         else
-         {
-            result = GetProperty(PROPERTY_PHYSICS_MASS);
-         }
-      }
-      else if (name == "Dimensions")
-      {
-         if (po != NULL)
-         {
-            std::string generatedName(po->GetName());
-            generatedName.append(": ");
-            generatedName.append("Dimensions");
-
-            result = GetProperty(generatedName);
-         }
-         else
-         {
-            result = GetProperty(PROPERTY_PHYSICS_DIMENSIONS);
-         }
-      }
-      else if (name == "IsActorKinematic")
-      {
-         result = new dtCore::BooleanActorProperty("IsActorKinematic", "IsActorKinematic",
-                  dtCore::BooleanActorProperty::SetFuncType(this, &PhysicsActComp::SetKinematic),
-                  dtCore::BooleanActorProperty::GetFuncType(this, &PhysicsActComp::IsKinematic),
-                  "If actor is kinematic it is almost static, but has physics properties when it updates.", "");
-      }
-      return result;
+      return NULL;
    }
 
    //////////////////////////////////////////////////////////////////
@@ -699,12 +632,12 @@ namespace dtPhysics
          mHelperAction = NULL;
       }
 
-      std::vector<dtCore::ActorProperty *> propList;
-      GetPropertyList(propList);
-      for (unsigned i = 0; i < propList.size(); ++i)
-      {
-         RemoveProperty(propList[i]->GetName());
-      }
+//      std::vector<dtCore::ActorProperty *> propList;
+//      GetPropertyList(propList);
+//      for (unsigned i = 0; i < propList.size(); ++i)
+//      {
+//         RemoveProperty(propList[i]->GetName());
+//      }
    }
 
    //////////////////////////////////////////////////////////////////
@@ -727,6 +660,7 @@ namespace dtPhysics
    , mDefaultCollisionGroup(0)
    , mDefaultPrimitiveType(&PrimitiveType::BOX)
    , mAutoCreateOnEnteringWorld(false)
+   , mIsRemote(false)
    {
    }
 
@@ -787,45 +721,30 @@ namespace dtPhysics
    }
 
    //////////////////////////////////////////////////////////////////
-   void PhysicsActComp::SetKinematic(bool isKinematic)
-   {
-      dtPhysics::PhysicsObject* po = GetMainPhysicsObject();
-
-      if (po != NULL)
-      {
-         if (isKinematic)
-         {
-            po->SetMechanicsType(dtPhysics::MechanicsType::KINEMATIC);
-         }
-         else
-         {
-            po->SetMechanicsType(dtPhysics::MechanicsType::DYNAMIC);
-         }
-      }
-   }
-
-   //////////////////////////////////////////////////////////////////
-   bool PhysicsActComp::IsKinematic() const
-   {
-      const dtPhysics::PhysicsObject* po = GetMainPhysicsObject();
-      if (po != NULL)
-      {
-         return po->GetMechanicsType() == dtPhysics::MechanicsType::KINEMATIC;
-      }
-      return false;
-   }
-
-   //////////////////////////////////////////////////////////////////
    void PhysicsActComp::DefaultPrePhysicsUpdate()
    {
       if (!mCachedTransformable.valid())
          return;
+      dtPhysics::PhysicsObject* physObj = GetMainPhysicsObject();
+      if (physObj == NULL)
+         return;
+
       dtCore::Transform xform;
       mCachedTransformable->GetTransform(xform);
-      dtPhysics::PhysicsObject* physObj = GetMainPhysicsObject();
-      if (physObj != NULL)
+      if (xform.IsValid())
       {
          physObj->SetTransformAsVisual(xform);
+      }
+      else
+      {
+         BaseActorObject* actor = NULL;
+         GetOwner(actor);
+         std::string debugInfo("Invalid transform on physics actor component: ");
+         if (actor)
+         {
+            debugInfo += actor->GetName() + " " + actor->GetActorType().GetFullName();
+         }
+         LOGN_ERROR("physicsactcomp.cpp", "Invalid transform on physics actor component: ");
       }
    }
 
@@ -836,11 +755,26 @@ namespace dtPhysics
          return;
       dtCore::Transform xform;
       dtPhysics::PhysicsObject* physObj = GetMainPhysicsObject();
-      if (physObj != NULL)
+      if (physObj == NULL)
+         return;
+
+      physObj->GetTransformAsVisual(xform);
+
+      if (xform.IsValid())
       {
-         physObj->GetTransformAsVisual(xform);
+         mCachedTransformable->SetTransform(xform);
       }
-      mCachedTransformable->SetTransform(xform);
+      else
+      {
+         BaseActorObject* actor = NULL;
+         GetOwner(actor);
+         std::string debugInfo("Invalid transform on physics actor component: ");
+         if (actor)
+         {
+            debugInfo += actor->GetName() + " " + actor->GetActorType().GetFullName();
+         }
+         LOGN_ERROR("physicsactcomp.cpp", "Invalid transform on physics actor component: ");
+      }
    }
 
 } // namespace dtPhysics

@@ -123,8 +123,8 @@ namespace dtCore
 
          ////////////////////////////////////////////////////////////////////
          // sets
-         void SetToCheckForClosestDrawable(bool value) { mCheckClosestDrawables = value; }
-         void ToggleIsOn(bool value)                   { mIsOn = value; }
+         void SetToCheckForClosestDrawable(bool value);
+         void ToggleIsOn(bool value);
          // other sets are purposely not here, you should not touch them
          ////////////////////////////////////////////////////////////////////
 

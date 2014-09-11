@@ -283,7 +283,7 @@ namespace dtPhysics
 
       //////////////////////////////////////////////////////
       // Build our property functions
-      virtual void BuildPropertyMap(std::vector<dtCore::RefPtr<dtCore::ActorProperty> >& toFillIn);
+      virtual void BuildPropertyMap();
 
       /// forces the automatic activate and deactivate state.  The physics engine normally controls this.
       void SetActive(bool active);
