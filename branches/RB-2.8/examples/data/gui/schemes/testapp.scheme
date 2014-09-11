@@ -8,7 +8,9 @@
    
    <!-- FONTS -->
    <Font Name="DejaVuSans-10" Filename="gui/fonts/DejaVuSans-10.font" />
-   
+   <Font Name="Hobo" Filename="gui/fonts/Hobo.font" />
+   <Imageset Name="Hobo" Filename="gui/fonts/Hobo.imageset" />
+
    <!-- LOOKNFEELS -->
    <LookNFeel Filename="gui/looknfeel/testapp.looknfeel" />
 

@@ -20,7 +20,7 @@
          <Property Name="FrameEnabled" Value="False"/>
          <Property Name="HorzFormatting" Value="HorzCentred"/>
          <Property Name="HorizontalAlignment" Value="Centre"/>
-         <Property Name="Font" Value="DejaVuSans-10"/>
+         <Property Name="Font" Value="Hobo"/>
          <Property Name="AlwaysOnTop" Value="True"/>
          <Property Name="TextColours" Value="FFFFFFFF"/>
          <Property Name="Text" Value="Game Screen"/>
