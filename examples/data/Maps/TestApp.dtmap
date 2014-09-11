@@ -7,7 +7,7 @@
         <comment></comment>
         <copyright></copyright>
         <createTimestamp>2014-07-15T22:49:46-05:00</createTimestamp>
-        <lastUpdateTimestamp>2014-09-11T15:58:22-05:00</lastUpdateTimestamp>
+        <lastUpdateTimestamp>2014-09-11T16:25:57-05:00</lastUpdateTimestamp>
         <editorVersion>2.8.0</editorVersion>
         <schemaVersion>1.0</schemaVersion>
     </header>
@@ -431,6 +431,10 @@
                 <name>Start Node</name>
                 <actorId>068d4729-4bd8-48ba-bf4f-8d9bb8f2a00a</actorId>
             </property>
+            <property>
+                <name>Render Path</name>
+                <boolean>false</boolean>
+            </property>
         </actor>
         <actor>
             <type>dtExample.Mesh Object</type>
@@ -498,7 +502,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254868</value3>
+                    <value3>-87.254890</value3>
                 </vec3>
             </property>
             <property>
@@ -1321,7 +1325,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254868</value3>
+                    <value3>-87.254890</value3>
                 </vec3>
             </property>
             <property>
@@ -2142,7 +2146,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254868</value3>
+                    <value3>-87.254890</value3>
                 </vec3>
             </property>
             <property>
@@ -2389,7 +2393,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>104.902763</value3>
+                    <value3>104.902771</value3>
                 </vec3>
             </property>
             <property>
@@ -2423,7 +2427,7 @@
                 <name>Rotation</name>
                 <vec3>
                     <value1>-0.823274</value1>
-                    <value2>-0.623614</value2>
+                    <value2>-0.623641</value2>
                     <value3>124.004814</value3>
                 </vec3>
             </property>
@@ -2851,15 +2855,15 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>-0.000000</value2>
-                    <value3>-129.585052</value3>
+                    <value3>-14.638299</value3>
                 </vec3>
             </property>
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-664.300903</value1>
-                    <value2>-76.347954</value2>
-                    <value3>8.102232</value3>
+                    <value1>-720.663879</value1>
+                    <value2>-230.689331</value2>
+                    <value3>3.693086</value3>
                 </vec3>
             </property>
         </actor>
@@ -3125,7 +3129,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254868</value3>
+                    <value3>-87.254890</value3>
                 </vec3>
             </property>
             <property>
@@ -3626,6 +3630,10 @@
                 <name>Start Node</name>
                 <actorId>3184dfc6-6e79-47d9-a1ad-67ddb8acc6fe</actorId>
             </property>
+            <property>
+                <name>Render Path</name>
+                <boolean>false</boolean>
+            </property>
         </actor>
         <actor>
             <type>dtExample.Mesh Object</type>
@@ -3952,6 +3960,10 @@
             <property>
                 <name>Start Node</name>
                 <actorId>c776c460-2b29-4dce-8fc9-c8db12f4c9ff</actorId>
+            </property>
+            <property>
+                <name>Render Path</name>
+                <boolean>false</boolean>
             </property>
         </actor>
         <actor>
@@ -4410,7 +4422,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-73.005310</value3>
+                    <value3>-73.005318</value3>
                 </vec3>
             </property>
             <property>
@@ -5048,7 +5060,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254868</value3>
+                    <value3>-87.254890</value3>
                 </vec3>
             </property>
             <property>
@@ -5302,14 +5314,14 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>-0.000000</value2>
-                    <value3>-87.239555</value3>
+                    <value3>-88.255386</value3>
                 </vec3>
             </property>
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>887.743042</value1>
-                    <value2>-378.585968</value2>
+                    <value1>-243.287201</value1>
+                    <value2>-427.427429</value2>
                     <value3>75.000000</value3>
                 </vec3>
             </property>
@@ -5843,7 +5855,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254868</value3>
+                    <value3>-87.254890</value3>
                 </vec3>
             </property>
             <property>
@@ -5949,7 +5961,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254868</value3>
+                    <value3>-87.254890</value3>
                 </vec3>
             </property>
             <property>
@@ -6254,6 +6266,10 @@
             <property>
                 <name>Start Node</name>
                 <actorId>84694483-4229-4dfd-8bea-58bb5d3f3dc3</actorId>
+            </property>
+            <property>
+                <name>Render Path</name>
+                <boolean>false</boolean>
             </property>
         </actor>
         <actor>
@@ -7190,6 +7206,10 @@
                 <name>Start Node</name>
                 <actorId>c668dc3a-13cd-4f5b-b9b7-a587f978aaec</actorId>
             </property>
+            <property>
+                <name>Render Path</name>
+                <boolean>false</boolean>
+            </property>
         </actor>
         <actor>
             <type>dtRender.Dynamic Light</type>
@@ -7264,6 +7284,10 @@
             <property>
                 <name>Start Node</name>
                 <actorId>73d22acc-2979-460d-8092-ac6f103ab72c</actorId>
+            </property>
+            <property>
+                <name>Render Path</name>
+                <boolean>false</boolean>
             </property>
         </actor>
         <actor>
@@ -8036,7 +8060,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254868</value3>
+                    <value3>-87.254890</value3>
                 </vec3>
             </property>
             <property>
@@ -8890,7 +8914,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-73.005310</value3>
+                    <value3>-73.005318</value3>
                 </vec3>
             </property>
             <property>
@@ -9056,7 +9080,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254868</value3>
+                    <value3>-87.254890</value3>
                 </vec3>
             </property>
             <property>
@@ -9626,7 +9650,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254868</value3>
+                    <value3>-87.254890</value3>
                 </vec3>
             </property>
             <property>
@@ -9726,6 +9750,10 @@
             <property>
                 <name>Start Node</name>
                 <actorId>5db88fc9-ed81-4a83-8547-dc5a2a466708</actorId>
+            </property>
+            <property>
+                <name>Render Path</name>
+                <boolean>false</boolean>
             </property>
         </actor>
         <actor>
@@ -10748,6 +10776,10 @@
                 <name>Start Node</name>
                 <actorId>317d308f-f0fd-4867-b65d-cf20906e80ed</actorId>
             </property>
+            <property>
+                <name>Render Path</name>
+                <boolean>false</boolean>
+            </property>
         </actor>
         <actor>
             <type>dtExample.Mesh Object</type>
@@ -10979,7 +11011,7 @@
                 <name>Rotation</name>
                 <vec3>
                     <value1>-0.823274</value1>
-                    <value2>-0.623614</value2>
+                    <value2>-0.623641</value2>
                     <value3>124.004814</value3>
                 </vec3>
             </property>
@@ -11544,7 +11576,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254868</value3>
+                    <value3>-87.254890</value3>
                 </vec3>
             </property>
             <property>
@@ -11597,7 +11629,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254868</value3>
+                    <value3>-87.254890</value3>
                 </vec3>
             </property>
             <property>
@@ -12206,6 +12238,10 @@
                 <name>Start Node</name>
                 <actorId>b56dafbd-9fa9-49dc-90e3-7d14a245d6ba</actorId>
             </property>
+            <property>
+                <name>Render Path</name>
+                <boolean>false</boolean>
+            </property>
         </actor>
         <actor>
             <type>dtExample.Mesh Object</type>
@@ -12445,7 +12481,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254868</value3>
+                    <value3>-87.254890</value3>
                 </vec3>
             </property>
             <property>
@@ -12671,7 +12707,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-59.716415</value3>
+                    <value3>-59.716446</value3>
                 </vec3>
             </property>
             <property>
@@ -12894,6 +12930,10 @@
                 <name>Start Node</name>
                 <actorId>76f83d19-d481-4cfc-87ad-e9c2f685c787</actorId>
             </property>
+            <property>
+                <name>Render Path</name>
+                <boolean>false</boolean>
+            </property>
         </actor>
         <actor>
             <type>dtExample.Mesh Object</type>
@@ -13111,6 +13151,10 @@
             <property>
                 <name>Start Node</name>
                 <actorId>7831b3fa-524f-4520-87a7-59eedaa89567</actorId>
+            </property>
+            <property>
+                <name>Render Path</name>
+                <boolean>false</boolean>
             </property>
         </actor>
         <actor>
@@ -14142,7 +14186,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254868</value3>
+                    <value3>-87.254890</value3>
                 </vec3>
             </property>
             <property>
@@ -14248,7 +14292,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254868</value3>
+                    <value3>-87.254890</value3>
                 </vec3>
             </property>
             <property>
@@ -14420,7 +14464,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254868</value3>
+                    <value3>-87.254890</value3>
                 </vec3>
             </property>
             <property>
@@ -14632,6 +14676,10 @@
                 <actorId>44f7492b-42cb-4a0a-8ae8-8258ad12a904</actorId>
             </property>
             <property>
+                <name>Render Path</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
                 <name>Follow Path</name>
                 <boolean>true</boolean>
             </property>
@@ -14674,12 +14722,12 @@
                 <float>0.016666668</float>
             </property>
             <property>
-                <name>Target Object</name>
-                <actorId>362cb3a0-7aba-464c-a49b-b226f2c65802</actorId>
-            </property>
-            <property>
                 <name>Start Node</name>
                 <actorId>9dc85029-c92e-4932-b1f9-5030508ed60a</actorId>
+            </property>
+            <property>
+                <name>Render Path</name>
+                <boolean>false</boolean>
             </property>
             <property>
                 <name>Follow Path</name>
@@ -14867,7 +14915,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-73.005310</value3>
+                    <value3>-73.005318</value3>
                 </vec3>
             </property>
             <property>
@@ -14976,7 +15024,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254868</value3>
+                    <value3>-87.254890</value3>
                 </vec3>
             </property>
             <property>
