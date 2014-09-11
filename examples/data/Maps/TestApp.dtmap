@@ -7,7 +7,7 @@
         <comment></comment>
         <copyright></copyright>
         <createTimestamp>2014-07-15T22:49:46-05:00</createTimestamp>
-        <lastUpdateTimestamp>2014-09-08T11:39:27-05:00</lastUpdateTimestamp>
+        <lastUpdateTimestamp>2014-09-11T15:58:22-05:00</lastUpdateTimestamp>
         <editorVersion>2.8.0</editorVersion>
         <schemaVersion>1.0</schemaVersion>
     </header>
@@ -73,6 +73,27 @@
                 <resourceType>StaticMeshes</resourceType>
                 <resourceDisplayName>StaticMeshes:trees:palmtree:PalmTree_Angled_PHYSICS.osg</resourceDisplayName>
                 <resource>StaticMeshes:trees:palmtree:PalmTree_Angled_PHYSICS.osg</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Curve.Bezier Control Point</type>
+            <id>03ba8748-8245-47dc-8040-a609d1af5d02</id>
+            <name>Firework_ControlPoint_13</name>
+            <property>
+                <name>Name</name>
+                <string>Firework_ControlPoint_13</string>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-436.077728</value1>
+                    <value2>-154.589661</value2>
+                    <value3>53.545177</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Bezier Node</name>
+                <actorId>7158de1e-8bed-48ad-a295-bf59d7c7eb99</actorId>
             </property>
         </actor>
         <actor>
@@ -268,6 +289,35 @@
             </property>
         </actor>
         <actor>
+            <type>dtcore.Curve.Bezier Node</type>
+            <id>068d4729-4bd8-48ba-bf4f-8d9bb8f2a00a</id>
+            <name>FireworkG_BezierNode_01</name>
+            <property>
+                <name>Name</name>
+                <string>FireworkG_BezierNode_01</string>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-435.455658</value1>
+                    <value2>-149.090332</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Time to Next</name>
+                <float>1</float>
+            </property>
+            <property>
+                <name>Exit Control Point</name>
+                <actorId>75f651b5-81ee-4672-98cb-341aa4ae1799</actorId>
+            </property>
+            <property>
+                <name>Next Bezier Node</name>
+                <actorId>5da5c7f2-482a-4c79-95c8-9555b564f4c5</actorId>
+            </property>
+        </actor>
+        <actor>
             <type>dtExample.Mesh Object</type>
             <id>06a93eb5-1501-4e51-ad4b-31e9f459fb2d</id>
             <name>walkway_33</name>
@@ -367,6 +417,19 @@
                 <resourceType>StaticMeshes</resourceType>
                 <resourceDisplayName>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resourceDisplayName>
                 <resource>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Action.Bezier Controller</type>
+            <id>0a6161d9-ed46-43e2-bf2c-33a5ec09e690</id>
+            <name>FireworkG_Controller</name>
+            <property>
+                <name>Name</name>
+                <string>FireworkG_Controller</string>
+            </property>
+            <property>
+                <name>Start Node</name>
+                <actorId>068d4729-4bd8-48ba-bf4f-8d9bb8f2a00a</actorId>
             </property>
         </actor>
         <actor>
@@ -877,6 +940,27 @@
             </property>
         </actor>
         <actor>
+            <type>dtcore.Curve.Bezier Control Point</type>
+            <id>19d62a0a-3d86-45ef-94ce-22935d81dd0c</id>
+            <name>Firework_ControlPoint_10</name>
+            <property>
+                <name>Name</name>
+                <string>Firework_ControlPoint_10</string>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-446.996918</value1>
+                    <value2>-151.974457</value2>
+                    <value3>53.545177</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Bezier Node</name>
+                <actorId>bdc7d53e-3e88-413a-af78-944b974f8e11</actorId>
+            </property>
+        </actor>
+        <actor>
             <type>dtExample.Mesh Object</type>
             <id>1b018934-0e03-4af7-b58f-c78100dcc456</id>
             <name>walkway_22</name>
@@ -960,6 +1044,31 @@
                 <resourceType>StaticMeshes</resourceType>
                 <resourceDisplayName>StaticMeshes:coral:coral004c.obj</resourceDisplayName>
                 <resource>StaticMeshes:coral:coral004c.obj</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Curve.Bezier Node</type>
+            <id>1baa3f33-480a-43e4-ba8f-98b90b59bf36</id>
+            <name>PlaneBezierNode_02</name>
+            <property>
+                <name>Name</name>
+                <string>PlaneBezierNode_02</string>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>1004.240784</value1>
+                    <value2>-372.968842</value2>
+                    <value3>75.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Entry Control Point</name>
+                <actorId>621c4aff-7434-4c8d-8ea0-f808b45acfd2</actorId>
+            </property>
+            <property>
+                <name>Previous Bezier Node</name>
+                <actorId>44f7492b-42cb-4a0a-8ae8-8258ad12a904</actorId>
             </property>
         </actor>
         <actor>
@@ -1807,6 +1916,48 @@
             </property>
         </actor>
         <actor>
+            <type>dtcore.Curve.Bezier Control Point</type>
+            <id>28c3d886-8917-42f1-bac9-013df9924ac9</id>
+            <name>Firework_ControlPoint_02</name>
+            <property>
+                <name>Name</name>
+                <string>Firework_ControlPoint_02</string>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-437.861420</value1>
+                    <value2>-160.520203</value2>
+                    <value3>53.545177</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Bezier Node</name>
+                <actorId>8c8be7b7-5645-4997-873b-266c7b6af1ec</actorId>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Curve.Bezier Control Point</type>
+            <id>29334fac-3fe2-4067-808f-65f94fd4bd2d</id>
+            <name>Firework_ControlPoint_18</name>
+            <property>
+                <name>Name</name>
+                <string>Firework_ControlPoint_18</string>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-445.869568</value1>
+                    <value2>-161.864166</value2>
+                    <value3>33.665428</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Bezier Node</name>
+                <actorId>c776c460-2b29-4dce-8fc9-c8db12f4c9ff</actorId>
+            </property>
+        </actor>
+        <actor>
             <type>dtExample.Mesh Object</type>
             <id>2985b87e-5d84-49b2-8c26-6602860f1e5a</id>
             <name>walkway_74</name>
@@ -1958,6 +2109,23 @@
             </property>
         </actor>
         <actor>
+            <type>dtcore.Curve.Bezier Node</type>
+            <id>2bbb650b-9037-4e43-b5e4-2ce53f75ee2f</id>
+            <name>Camera_C_BezierNode_03</name>
+            <property>
+                <name>Name</name>
+                <string>Camera_C_BezierNode_03</string>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-397.496826</value1>
+                    <value2>-46.652954</value2>
+                    <value3>35.000000</value3>
+                </vec3>
+            </property>
+        </actor>
+        <actor>
             <type>dtExample.Mesh Object</type>
             <id>2beb6954-6e92-41f8-8115-a3522cfae276</id>
             <name>walkway_30</name>
@@ -2036,10 +2204,10 @@
         <actor>
             <type>dtcore.Curve.Bezier Node</type>
             <id>2cb86245-06a6-4589-9a98-442a035f9738</id>
-            <name>BezierNode_06</name>
+            <name>Camera_A_BezierNode_06</name>
             <property>
                 <name>Name</name>
-                <string>BezierNode_06</string>
+                <string>Camera_A_BezierNode_06</string>
             </property>
             <property>
                 <name>Translation</name>
@@ -2051,7 +2219,7 @@
             </property>
             <property>
                 <name>Time to Next</name>
-                <float>1</float>
+                <float>5</float>
             </property>
             <property>
                 <name>Entry Control Point</name>
@@ -2068,6 +2236,27 @@
             <property>
                 <name>Previous Bezier Node</name>
                 <actorId>b844ff0a-3072-4da1-ae49-c42e18d34566</actorId>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Curve.Bezier Control Point</type>
+            <id>2d563c0a-9330-44b7-936c-7f9786073b4a</id>
+            <name>ControlPoint_17</name>
+            <property>
+                <name>Name</name>
+                <string>ControlPoint_17</string>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-963.973145</value1>
+                    <value2>-298.075897</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Bezier Node</name>
+                <actorId>317d308f-f0fd-4867-b65d-cf20906e80ed</actorId>
             </property>
         </actor>
         <actor>
@@ -2189,6 +2378,37 @@
         </actor>
         <actor>
             <type>dtExample.Mesh Object</type>
+            <id>300c6a18-0265-4363-9aaf-e88906fa017d</id>
+            <name>GameActor_01</name>
+            <property>
+                <name>Name</name>
+                <string>GameActor_01</string>
+            </property>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>104.902763</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-439.752014</value1>
+                    <value2>-157.791672</value2>
+                    <value3>2.600004</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:vehicles:Barge:GameReady:barge.osg</resourceDisplayName>
+                <resource>StaticMeshes:vehicles:Barge:GameReady:barge.osg</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtExample.Mesh Object</type>
             <id>313e0078-cdad-4e2c-9c56-c79453893f15</id>
             <name>Chair_15</name>
             <property>
@@ -2230,6 +2450,85 @@
                 <resourceType>StaticMeshes</resourceType>
                 <resourceDisplayName>StaticMeshes:chairs:sunchair:SunChair_PHYSICS.osg</resourceDisplayName>
                 <resource>StaticMeshes:chairs:sunchair:SunChair_PHYSICS.osg</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Curve.Bezier Node</type>
+            <id>317d308f-f0fd-4867-b65d-cf20906e80ed</id>
+            <name>Boat_BezierNode_01</name>
+            <property>
+                <name>Name</name>
+                <string>Boat_BezierNode_01</string>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-965.149231</value1>
+                    <value2>-1030.402344</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Time to Next</name>
+                <float>1</float>
+            </property>
+            <property>
+                <name>Exit Control Point</name>
+                <actorId>2d563c0a-9330-44b7-936c-7f9786073b4a</actorId>
+            </property>
+            <property>
+                <name>Next Bezier Node</name>
+                <actorId>d013163c-50b4-4247-8606-07afc7d56935</actorId>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Curve.Bezier Node</type>
+            <id>3184dfc6-6e79-47d9-a1ad-67ddb8acc6fe</id>
+            <name>Camera_B_BezierNode_01</name>
+            <property>
+                <name>Name</name>
+                <string>Camera_B_BezierNode_01</string>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-450.015991</value1>
+                    <value2>-194.318008</value2>
+                    <value3>-14.692646</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Time to Next</name>
+                <float>1</float>
+            </property>
+            <property>
+                <name>Exit Control Point</name>
+                <actorId>d0d3fef0-eb10-4d26-85dc-8ee1b34ed205</actorId>
+            </property>
+            <property>
+                <name>Next Bezier Node</name>
+                <actorId>b7b660fb-61c1-4036-a0f5-2f004dafbb87</actorId>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Curve.Bezier Control Point</type>
+            <id>31a37b1c-7bf7-4e56-99ef-6ed0a01d7fcf</id>
+            <name>Firework_ControlPoint_15</name>
+            <property>
+                <name>Name</name>
+                <string>Firework_ControlPoint_15</string>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-437.330811</value1>
+                    <value2>-149.749237</value2>
+                    <value3>53.545177</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Bezier Node</name>
+                <actorId>5da5c7f2-482a-4c79-95c8-9555b564f4c5</actorId>
             </property>
         </actor>
         <actor>
@@ -2478,6 +2777,27 @@
             </property>
         </actor>
         <actor>
+            <type>dtcore.Curve.Bezier Control Point</type>
+            <id>35d16250-8ead-420c-a1fc-93ef61a48756</id>
+            <name>Firework_ControlPoint_03</name>
+            <property>
+                <name>Name</name>
+                <string>Firework_ControlPoint_03</string>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-440.376770</value1>
+                    <value2>-156.198959</value2>
+                    <value3>33.665428</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Bezier Node</name>
+                <actorId>84694483-4229-4dfd-8bea-58bb5d3f3dc3</actorId>
+            </property>
+        </actor>
+        <actor>
             <type>dtRender.Dynamic Light</type>
             <id>35ea31ec-d5b6-425f-a10b-fbef29377924</id>
             <name>torchlight_03</name>
@@ -2530,16 +2850,16 @@
                 <name>Rotation</name>
                 <vec3>
                     <value1>0.000000</value1>
-                    <value2>0.000000</value2>
-                    <value3>-116.361084</value3>
+                    <value2>-0.000000</value2>
+                    <value3>-129.585052</value3>
                 </vec3>
             </property>
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-600.443359</value1>
-                    <value2>-98.521553</value2>
-                    <value3>4.109030</value3>
+                    <value1>-664.300903</value1>
+                    <value2>-76.347954</value2>
+                    <value3>8.102232</value3>
                 </vec3>
             </property>
         </actor>
@@ -3087,6 +3407,27 @@
             </property>
         </actor>
         <actor>
+            <type>dtcore.Curve.Bezier Control Point</type>
+            <id>3f9dbd63-c6a2-4c13-9d8f-fdd1d8481663</id>
+            <name>Firework_ControlPoint_05</name>
+            <property>
+                <name>Name</name>
+                <string>Firework_ControlPoint_05</string>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-442.021698</value1>
+                    <value2>-151.477280</value2>
+                    <value3>33.665428</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Bezier Node</name>
+                <actorId>7831b3fa-524f-4520-87a7-59eedaa89567</actorId>
+            </property>
+        </actor>
+        <actor>
             <type>dtExample.Mesh Object</type>
             <id>3fb94d7c-4ddc-456b-827c-d6d36c169941</id>
             <name>palmtree_03</name>
@@ -3246,6 +3587,44 @@
                 <resourceType>StaticMeshes</resourceType>
                 <resourceDisplayName>StaticMeshes:benches:bench:Bench_PHYSICS.osg</resourceDisplayName>
                 <resource>StaticMeshes:benches:bench:Bench_PHYSICS.osg</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Curve.Bezier Node</type>
+            <id>41816da3-4c7c-4fb1-ab12-085e6a44414a</id>
+            <name>FireworkI_BezierNode_02</name>
+            <property>
+                <name>Name</name>
+                <string>FireworkI_BezierNode_02</string>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-446.127960</value1>
+                    <value2>-160.547211</value2>
+                    <value3>105.836311</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Entry Control Point</name>
+                <actorId>5dd6f5ed-e66c-461d-9093-02f66adb31d0</actorId>
+            </property>
+            <property>
+                <name>Previous Bezier Node</name>
+                <actorId>c776c460-2b29-4dce-8fc9-c8db12f4c9ff</actorId>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Action.Bezier Controller</type>
+            <id>4213e10d-1695-4ce0-9b85-4b65a5ebe286</id>
+            <name>Camera_B_Controller</name>
+            <property>
+                <name>Name</name>
+                <string>Camera_B_Controller</string>
+            </property>
+            <property>
+                <name>Start Node</name>
+                <actorId>3184dfc6-6e79-47d9-a1ad-67ddb8acc6fe</actorId>
             </property>
         </actor>
         <actor>
@@ -3485,6 +3864,35 @@
             </property>
         </actor>
         <actor>
+            <type>dtcore.Curve.Bezier Node</type>
+            <id>44f7492b-42cb-4a0a-8ae8-8258ad12a904</id>
+            <name>PlaneBezierNode_01</name>
+            <property>
+                <name>Name</name>
+                <string>PlaneBezierNode_01</string>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-2585.306396</value1>
+                    <value2>-432.414185</value2>
+                    <value3>75.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Time to Next</name>
+                <float>100</float>
+            </property>
+            <property>
+                <name>Exit Control Point</name>
+                <actorId>6950773a-2776-47df-86cb-6d5871b66eb6</actorId>
+            </property>
+            <property>
+                <name>Next Bezier Node</name>
+                <actorId>1baa3f33-480a-43e4-ba8f-98b90b59bf36</actorId>
+            </property>
+        </actor>
+        <actor>
             <type>dtExample.Mesh Object</type>
             <id>45081c15-c505-44eb-8ac2-438e1dcddcf6</id>
             <name>palmtree_93</name>
@@ -3531,6 +3939,19 @@
                 <resourceType>StaticMeshes</resourceType>
                 <resourceDisplayName>StaticMeshes:trees:palmtree:PalmTree_Angled_PHYSICS.osg</resourceDisplayName>
                 <resource>StaticMeshes:trees:palmtree:PalmTree_Angled_PHYSICS.osg</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Action.Bezier Controller</type>
+            <id>458c11b3-0229-43a0-a0ef-eccc80081ab3</id>
+            <name>FireworkI_Controller</name>
+            <property>
+                <name>Name</name>
+                <string>FireworkI_Controller</string>
+            </property>
+            <property>
+                <name>Start Node</name>
+                <actorId>c776c460-2b29-4dce-8fc9-c8db12f4c9ff</actorId>
             </property>
         </actor>
         <actor>
@@ -3635,16 +4056,16 @@
                 <name>Rotation</name>
                 <vec3>
                     <value1>0.000000</value1>
-                    <value2>-0.000000</value2>
-                    <value3>104.443352</value3>
+                    <value2>0.000000</value2>
+                    <value3>-86.016472</value3>
                 </vec3>
             </property>
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-588.989868</value1>
-                    <value2>-125.613220</value2>
-                    <value3>5.268859</value3>
+                    <value1>-771.043762</value1>
+                    <value2>-52.099190</value2>
+                    <value3>9.354584</value3>
                 </vec3>
             </property>
             <property>
@@ -3932,6 +4353,48 @@
                 <resourceType>StaticMeshes</resourceType>
                 <resourceDisplayName>StaticMeshes:walkways:wood_walkway:WoodWalkway.osg</resourceDisplayName>
                 <resource>StaticMeshes:walkways:wood_walkway:WoodWalkway.osg</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Curve.Bezier Control Point</type>
+            <id>4ecb3d86-a55c-4eb0-aef4-46cbfdb6f3c1</id>
+            <name>Firework_ControlPoint_17</name>
+            <property>
+                <name>Name</name>
+                <string>Firework_ControlPoint_17</string>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-445.990234</value1>
+                    <value2>-156.872070</value2>
+                    <value3>53.545177</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Bezier Node</name>
+                <actorId>cae8b52e-b507-475d-9e1d-917892e1b5d9</actorId>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Curve.Bezier Control Point</type>
+            <id>4ede9997-d31d-43dc-beab-27e74d3a94c8</id>
+            <name>Firework_ControlPoint_08</name>
+            <property>
+                <name>Name</name>
+                <string>Firework_ControlPoint_08</string>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-435.037231</value1>
+                    <value2>-159.480194</value2>
+                    <value3>53.545177</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Bezier Node</name>
+                <actorId>8c8be7b7-5645-4997-873b-266c7b6af1ec</actorId>
             </property>
         </actor>
         <actor>
@@ -4765,6 +5228,19 @@
             </property>
         </actor>
         <actor>
+            <type>dtcore.Triggers.AutoTrigger</type>
+            <id>5b78f8b7-3f32-4934-aab9-cf6ab1ada90c</id>
+            <name>PlaneAutoTrigger</name>
+            <property>
+                <name>Name</name>
+                <string>PlaneAutoTrigger</string>
+            </property>
+            <property>
+                <name>Action</name>
+                <actorId>ee7aeb0e-d960-4904-ac60-9447592bd650</actorId>
+            </property>
+        </actor>
+        <actor>
             <type>dtExample.Mesh Object</type>
             <id>5cc61f72-f421-417f-981f-7f619c052218</id>
             <name>Chair_24</name>
@@ -4807,6 +5283,141 @@
                 <resourceType>StaticMeshes</resourceType>
                 <resourceDisplayName>StaticMeshes:chairs:sunchair:SunChair_PHYSICS.osg</resourceDisplayName>
                 <resource>StaticMeshes:chairs:sunchair:SunChair_PHYSICS.osg</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtExample.Mesh Object</type>
+            <id>5d58f27a-528b-486e-9507-632e12ea9c94</id>
+            <name>plane</name>
+            <property>
+                <name>Name</name>
+                <string>plane</string>
+            </property>
+            <property>
+                <name>ShaderGroup</name>
+                <string>MultiMap</string>
+            </property>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>-0.000000</value2>
+                    <value3>-87.239555</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>887.743042</value1>
+                    <value2>-378.585968</value2>
+                    <value3>75.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:vehicles:aircraft:biplane_pontoons:Biplane_Pontoons.osg</resourceDisplayName>
+                <resource>StaticMeshes:vehicles:aircraft:biplane_pontoons:Biplane_Pontoons.osg</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Curve.Bezier Node</type>
+            <id>5da5c7f2-482a-4c79-95c8-9555b564f4c5</id>
+            <name>FireworkG_BezierNode_02</name>
+            <property>
+                <name>Name</name>
+                <string>FireworkG_BezierNode_02</string>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-435.098236</value1>
+                    <value2>-150.624313</value2>
+                    <value3>105.836311</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Entry Control Point</name>
+                <actorId>31a37b1c-7bf7-4e56-99ef-6ed0a01d7fcf</actorId>
+            </property>
+            <property>
+                <name>Previous Bezier Node</name>
+                <actorId>068d4729-4bd8-48ba-bf4f-8d9bb8f2a00a</actorId>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Curve.Bezier Node</type>
+            <id>5db88fc9-ed81-4a83-8547-dc5a2a466708</id>
+            <name>FireworkA_BezierNode_01</name>
+            <property>
+                <name>Name</name>
+                <string>FireworkA_BezierNode_01</string>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-437.861420</value1>
+                    <value2>-160.520203</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Time to Next</name>
+                <float>1</float>
+            </property>
+            <property>
+                <name>Exit Control Point</name>
+                <actorId>ee908e47-07c3-407f-b650-5bc3aa016dba</actorId>
+            </property>
+            <property>
+                <name>Next Bezier Node</name>
+                <actorId>5e9ad074-dfdc-4432-be58-53326f1f2e43</actorId>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Curve.Bezier Control Point</type>
+            <id>5dd6f5ed-e66c-461d-9093-02f66adb31d0</id>
+            <name>Firework_ControlPoint_19</name>
+            <property>
+                <name>Name</name>
+                <string>Firework_ControlPoint_19</string>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-445.903748</value1>
+                    <value2>-161.871323</value2>
+                    <value3>53.545177</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Bezier Node</name>
+                <actorId>41816da3-4c7c-4fb1-ab12-085e6a44414a</actorId>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Curve.Bezier Node</type>
+            <id>5e9ad074-dfdc-4432-be58-53326f1f2e43</id>
+            <name>FireworkA_BezierNode_02</name>
+            <property>
+                <name>Name</name>
+                <string>FireworkA_BezierNode_02</string>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-437.861420</value1>
+                    <value2>-160.520203</value2>
+                    <value3>105.836311</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Entry Control Point</name>
+                <actorId>28c3d886-8917-42f1-bac9-013df9924ac9</actorId>
+            </property>
+            <property>
+                <name>Previous Bezier Node</name>
+                <actorId>5db88fc9-ed81-4a83-8547-dc5a2a466708</actorId>
             </property>
         </actor>
         <actor>
@@ -4897,6 +5508,31 @@
                 <resourceType>StaticMeshes</resourceType>
                 <resourceDisplayName>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resourceDisplayName>
                 <resource>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Curve.Bezier Node</type>
+            <id>6164e7c4-29ac-4a3d-bee6-eac101741c9b</id>
+            <name>FireworkC_BezierNode_02</name>
+            <property>
+                <name>Name</name>
+                <string>FireworkC_BezierNode_02</string>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-441.799835</value1>
+                    <value2>-151.355560</value2>
+                    <value3>105.836311</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Entry Control Point</name>
+                <actorId>7b675d0e-bcfc-4211-8f2d-8a0848ee3223</actorId>
+            </property>
+            <property>
+                <name>Previous Bezier Node</name>
+                <actorId>7831b3fa-524f-4520-87a7-59eedaa89567</actorId>
             </property>
         </actor>
         <actor>
@@ -4999,6 +5635,48 @@
                 <resourceType>StaticMeshes</resourceType>
                 <resourceDisplayName>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resourceDisplayName>
                 <resource>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Curve.Bezier Control Point</type>
+            <id>621c4aff-7434-4c8d-8ea0-f808b45acfd2</id>
+            <name>planecontrolpoint_02</name>
+            <property>
+                <name>Name</name>
+                <string>planecontrolpoint_02</string>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-463.384949</value1>
+                    <value2>-443.703766</value2>
+                    <value3>75.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Bezier Node</name>
+                <actorId>1baa3f33-480a-43e4-ba8f-98b90b59bf36</actorId>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Curve.Bezier Control Point</type>
+            <id>628b3378-9516-40ad-99c0-45018b64199e</id>
+            <name>Firework_ControlPoint_04</name>
+            <property>
+                <name>Name</name>
+                <string>Firework_ControlPoint_04</string>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-440.376770</value1>
+                    <value2>-156.198959</value2>
+                    <value3>53.545177</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Bezier Node</name>
+                <actorId>9a4b6dae-a108-4fc5-8eeb-79405ebfac36</actorId>
             </property>
         </actor>
         <actor>
@@ -5402,6 +6080,27 @@
             </property>
         </actor>
         <actor>
+            <type>dtcore.Curve.Bezier Control Point</type>
+            <id>6950773a-2776-47df-86cb-6d5871b66eb6</id>
+            <name>planecontrolpoint_01</name>
+            <property>
+                <name>Name</name>
+                <string>planecontrolpoint_01</string>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-511.064392</value1>
+                    <value2>-448.126709</value2>
+                    <value3>75.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Bezier Node</name>
+                <actorId>44f7492b-42cb-4a0a-8ae8-8258ad12a904</actorId>
+            </property>
+        </actor>
+        <actor>
             <type>dtExample.Mesh Object</type>
             <id>697e26e4-56c6-47a7-892a-3455f221928e</id>
             <name>palmtree_84</name>
@@ -5545,6 +6244,28 @@
             </property>
         </actor>
         <actor>
+            <type>dtcore.Action.Bezier Controller</type>
+            <id>6c2fd394-40b6-4d52-a87a-6e93d583e56d</id>
+            <name>FireworkB_Controller</name>
+            <property>
+                <name>Name</name>
+                <string>FireworkB_Controller</string>
+            </property>
+            <property>
+                <name>Start Node</name>
+                <actorId>84694483-4229-4dfd-8bea-58bb5d3f3dc3</actorId>
+            </property>
+        </actor>
+        <actor>
+            <type>dtExample.Mesh Object</type>
+            <id>6cb7aa6f-6639-4833-8c35-090c97573339</id>
+            <name>GameActor_02</name>
+            <property>
+                <name>Name</name>
+                <string>GameActor_02</string>
+            </property>
+        </actor>
+        <actor>
             <type>dtExample.Mesh Object</type>
             <id>6e44c1e7-51b6-434f-af30-4863717b9d40</id>
             <name>barstool_03</name>
@@ -5662,6 +6383,31 @@
             </property>
         </actor>
         <actor>
+            <type>dtcore.Curve.Bezier Node</type>
+            <id>7158de1e-8bed-48ad-a295-bf59d7c7eb99</id>
+            <name>FireworkF_BezierNode_02</name>
+            <property>
+                <name>Name</name>
+                <string>FireworkF_BezierNode_02</string>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-434.023346</value1>
+                    <value2>-155.507416</value2>
+                    <value3>105.836311</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Entry Control Point</name>
+                <actorId>03ba8748-8245-47dc-8040-a609d1af5d02</actorId>
+            </property>
+            <property>
+                <name>Previous Bezier Node</name>
+                <actorId>b56dafbd-9fa9-49dc-90e3-7d14a245d6ba</actorId>
+            </property>
+        </actor>
+        <actor>
             <type>dtExample.Mesh Object</type>
             <id>719466b2-ee66-43a2-aacc-8015acaa6de7</id>
             <name>walkway_35</name>
@@ -5765,6 +6511,35 @@
             </property>
         </actor>
         <actor>
+            <type>dtcore.Curve.Bezier Node</type>
+            <id>73d22acc-2979-460d-8092-ac6f103ab72c</id>
+            <name>FireworkD_BezierNode_01</name>
+            <property>
+                <name>Name</name>
+                <string>FireworkD_BezierNode_01</string>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-433.169220</value1>
+                    <value2>-158.792999</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Time to Next</name>
+                <float>1</float>
+            </property>
+            <property>
+                <name>Exit Control Point</name>
+                <actorId>86bf71bf-e78c-477e-b257-2aa560795f7f</actorId>
+            </property>
+            <property>
+                <name>Next Bezier Node</name>
+                <actorId>8c8be7b7-5645-4997-873b-266c7b6af1ec</actorId>
+            </property>
+        </actor>
+        <actor>
             <type>dtExample.Mesh Object</type>
             <id>74150ecf-10da-4c41-8ae5-5f468e8b8e56</id>
             <name>palmtree_70</name>
@@ -5811,6 +6586,56 @@
                 <resourceType>StaticMeshes</resourceType>
                 <resourceDisplayName>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resourceDisplayName>
                 <resource>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Curve.Bezier Control Point</type>
+            <id>75f651b5-81ee-4672-98cb-341aa4ae1799</id>
+            <name>Firework_ControlPoint_14</name>
+            <property>
+                <name>Name</name>
+                <string>Firework_ControlPoint_14</string>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-436.261871</value1>
+                    <value2>-149.255783</value2>
+                    <value3>33.665428</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Bezier Node</name>
+                <actorId>068d4729-4bd8-48ba-bf4f-8d9bb8f2a00a</actorId>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Curve.Bezier Node</type>
+            <id>76f83d19-d481-4cfc-87ad-e9c2f685c787</id>
+            <name>FireworkH_BezierNode_01</name>
+            <property>
+                <name>Name</name>
+                <string>FireworkH_BezierNode_01</string>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-445.125488</value1>
+                    <value2>-156.511261</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Time to Next</name>
+                <float>1</float>
+            </property>
+            <property>
+                <name>Exit Control Point</name>
+                <actorId>d5103ee2-883b-44e5-9cb5-cee326e27665</actorId>
+            </property>
+            <property>
+                <name>Next Bezier Node</name>
+                <actorId>cae8b52e-b507-475d-9e1d-917892e1b5d9</actorId>
             </property>
         </actor>
         <actor>
@@ -6059,6 +6884,35 @@
             </property>
         </actor>
         <actor>
+            <type>dtcore.Curve.Bezier Node</type>
+            <id>7831b3fa-524f-4520-87a7-59eedaa89567</id>
+            <name>FireworkC_BezierNode_01</name>
+            <property>
+                <name>Name</name>
+                <string>FireworkC_BezierNode_01</string>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-441.411896</value1>
+                    <value2>-151.175873</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Time to Next</name>
+                <float>1</float>
+            </property>
+            <property>
+                <name>Exit Control Point</name>
+                <actorId>3f9dbd63-c6a2-4c13-9d8f-fdd1d8481663</actorId>
+            </property>
+            <property>
+                <name>Next Bezier Node</name>
+                <actorId>6164e7c4-29ac-4a3d-bee6-eac101741c9b</actorId>
+            </property>
+        </actor>
+        <actor>
             <type>dtExample.Mesh Object</type>
             <id>7a7dfbf6-d1e2-457f-9238-3def13a14a71</id>
             <name>palmtree_44</name>
@@ -6105,6 +6959,27 @@
                 <resourceType>StaticMeshes</resourceType>
                 <resourceDisplayName>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resourceDisplayName>
                 <resource>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Curve.Bezier Control Point</type>
+            <id>7b675d0e-bcfc-4211-8f2d-8a0848ee3223</id>
+            <name>Firework_ControlPoint_06</name>
+            <property>
+                <name>Name</name>
+                <string>Firework_ControlPoint_06</string>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-442.021698</value1>
+                    <value2>-151.477280</value2>
+                    <value3>53.545177</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Bezier Node</name>
+                <actorId>6164e7c4-29ac-4a3d-bee6-eac101741c9b</actorId>
             </property>
         </actor>
         <actor>
@@ -6304,6 +7179,19 @@
             </property>
         </actor>
         <actor>
+            <type>dtcore.Action.Bezier Controller</type>
+            <id>80ec53e9-d19c-4d1a-8f0f-ed285a0f6c2c</id>
+            <name>FireworkE_Controller</name>
+            <property>
+                <name>Name</name>
+                <string>FireworkE_Controller</string>
+            </property>
+            <property>
+                <name>Start Node</name>
+                <actorId>c668dc3a-13cd-4f5b-b9b7-a587f978aaec</actorId>
+            </property>
+        </actor>
+        <actor>
             <type>dtRender.Dynamic Light</type>
             <id>810fa6cb-eb47-4abb-90cb-5acb64ad405a</id>
             <name>Dynamic Light_10</name>
@@ -6342,6 +7230,40 @@
             <property>
                 <name>Radius</name>
                 <float>25</float>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Curve.Bezier Control Point</type>
+            <id>8164d63e-d4a9-414e-99b2-c7518ff191b4</id>
+            <name>ControlPoint_18</name>
+            <property>
+                <name>Name</name>
+                <string>ControlPoint_18</string>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-961.489624</value1>
+                    <value2>-298.075897</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Bezier Node</name>
+                <actorId>d013163c-50b4-4247-8606-07afc7d56935</actorId>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Action.Bezier Controller</type>
+            <id>831971ff-d7a4-4974-80bc-029e6b249b88</id>
+            <name>FireworkD_Controller</name>
+            <property>
+                <name>Name</name>
+                <string>FireworkD_Controller</string>
+            </property>
+            <property>
+                <name>Start Node</name>
+                <actorId>73d22acc-2979-460d-8092-ac6f103ab72c</actorId>
             </property>
         </actor>
         <actor>
@@ -6453,6 +7375,35 @@
             <property>
                 <name>Bezier Node</name>
                 <actorId>c559f2bb-b7b7-4dfe-b744-29c331e07bc1</actorId>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Curve.Bezier Node</type>
+            <id>84694483-4229-4dfd-8bea-58bb5d3f3dc3</id>
+            <name>FireworkB_BezierNode_01</name>
+            <property>
+                <name>Name</name>
+                <string>FireworkB_BezierNode_01</string>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-439.766968</value1>
+                    <value2>-155.897552</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Time to Next</name>
+                <float>1</float>
+            </property>
+            <property>
+                <name>Exit Control Point</name>
+                <actorId>35d16250-8ead-420c-a1fc-93ef61a48756</actorId>
+            </property>
+            <property>
+                <name>Next Bezier Node</name>
+                <actorId>9a4b6dae-a108-4fc5-8eeb-79405ebfac36</actorId>
             </property>
         </actor>
         <actor>
@@ -6588,6 +7539,27 @@
                 <resourceType>StaticMeshes</resourceType>
                 <resourceDisplayName>StaticMeshes:chairs:sunchair:SunChair_PHYSICS.osg</resourceDisplayName>
                 <resource>StaticMeshes:chairs:sunchair:SunChair_PHYSICS.osg</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Curve.Bezier Control Point</type>
+            <id>86bf71bf-e78c-477e-b257-2aa560795f7f</id>
+            <name>Firework_ControlPoint_07</name>
+            <property>
+                <name>Name</name>
+                <string>Firework_ControlPoint_07</string>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-433.178314</value1>
+                    <value2>-158.768448</value2>
+                    <value3>33.665428</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Bezier Node</name>
+                <actorId>73d22acc-2979-460d-8092-ac6f103ab72c</actorId>
             </property>
         </actor>
         <actor>
@@ -6874,6 +7846,31 @@
                 <resourceType>StaticMeshes</resourceType>
                 <resourceDisplayName>StaticMeshes:walkways:wood_walkway:WoodWalkway.osg</resourceDisplayName>
                 <resource>StaticMeshes:walkways:wood_walkway:WoodWalkway.osg</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Curve.Bezier Node</type>
+            <id>8c8be7b7-5645-4997-873b-266c7b6af1ec</id>
+            <name>FireworkD_BezierNode_02</name>
+            <property>
+                <name>Name</name>
+                <string>FireworkD_BezierNode_02</string>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-432.863647</value1>
+                    <value2>-160.371063</value2>
+                    <value3>105.836311</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Entry Control Point</name>
+                <actorId>28c3d886-8917-42f1-bac9-013df9924ac9</actorId>
+            </property>
+            <property>
+                <name>Previous Bezier Node</name>
+                <actorId>73d22acc-2979-460d-8092-ac6f103ab72c</actorId>
             </property>
         </actor>
         <actor>
@@ -7180,10 +8177,10 @@
         <actor>
             <type>dtcore.Curve.Bezier Node</type>
             <id>90959223-2267-46db-b715-237445f65600</id>
-            <name>BezierNode_08</name>
+            <name>Camera_A_BezierNode_08</name>
             <property>
                 <name>Name</name>
-                <string>BezierNode_08</string>
+                <string>Camera_A_BezierNode_08</string>
             </property>
             <property>
                 <name>Translation</name>
@@ -7195,7 +8192,7 @@
             </property>
             <property>
                 <name>Time to Next</name>
-                <float>1</float>
+                <float>5</float>
             </property>
             <property>
                 <name>Entry Control Point</name>
@@ -7784,6 +8781,31 @@
             </property>
         </actor>
         <actor>
+            <type>dtcore.Curve.Bezier Node</type>
+            <id>9a4b6dae-a108-4fc5-8eeb-79405ebfac36</id>
+            <name>FireworkB_BezierNode_02</name>
+            <property>
+                <name>Name</name>
+                <string>FireworkB_BezierNode_02</string>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-440.154907</value1>
+                    <value2>-156.077240</value2>
+                    <value3>105.836311</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Entry Control Point</name>
+                <actorId>628b3378-9516-40ad-99c0-45018b64199e</actorId>
+            </property>
+            <property>
+                <name>Previous Bezier Node</name>
+                <actorId>84694483-4229-4dfd-8bea-58bb5d3f3dc3</actorId>
+            </property>
+        </actor>
+        <actor>
             <type>dtExample.Mesh Object</type>
             <id>9b781e68-ef2b-47d5-948a-6cbdeeb39f75</id>
             <name>palmtree_79</name>
@@ -7889,10 +8911,10 @@
         <actor>
             <type>dtcore.Curve.Bezier Node</type>
             <id>9dc85029-c92e-4932-b1f9-5030508ed60a</id>
-            <name>BezierNode_01</name>
+            <name>Camera_A_BezierNode_01</name>
             <property>
                 <name>Name</name>
-                <string>BezierNode_01</string>
+                <string>Camera_A_BezierNode_01</string>
             </property>
             <property>
                 <name>Translation</name>
@@ -7904,7 +8926,7 @@
             </property>
             <property>
                 <name>Time to Next</name>
-                <float>1</float>
+                <float>10</float>
             </property>
             <property>
                 <name>Exit Control Point</name>
@@ -8405,7 +9427,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>30.379480</value3>
+                    <value3>30.379486</value3>
                 </vec3>
             </property>
             <property>
@@ -8694,12 +9716,25 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Curve.Bezier Node</type>
-            <id>add9de85-adbd-45dd-b7db-054ac6405398</id>
-            <name>BezierNode_02</name>
+            <type>dtcore.Action.Bezier Controller</type>
+            <id>ac56d360-88af-45ba-9050-cb017acac9a4</id>
+            <name>FireworkA_Controller</name>
             <property>
                 <name>Name</name>
-                <string>BezierNode_02</string>
+                <string>FireworkA_Controller</string>
+            </property>
+            <property>
+                <name>Start Node</name>
+                <actorId>5db88fc9-ed81-4a83-8547-dc5a2a466708</actorId>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Curve.Bezier Node</type>
+            <id>add9de85-adbd-45dd-b7db-054ac6405398</id>
+            <name>Camera_A_BezierNode_02</name>
+            <property>
+                <name>Name</name>
+                <string>Camera_A_BezierNode_02</string>
             </property>
             <property>
                 <name>Translation</name>
@@ -8711,7 +9746,7 @@
             </property>
             <property>
                 <name>Time to Next</name>
-                <float>1</float>
+                <float>5</float>
             </property>
             <property>
                 <name>Entry Control Point</name>
@@ -9207,6 +10242,23 @@
             </property>
         </actor>
         <actor>
+            <type>dtcore.Curve.Bezier Node</type>
+            <id>b1f40ebf-8420-47fa-8f44-23dc6c4fd491</id>
+            <name>Camera_C_BezierNode_02</name>
+            <property>
+                <name>Name</name>
+                <string>Camera_C_BezierNode_02</string>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-368.030609</value1>
+                    <value2>-213.411224</value2>
+                    <value3>35.000000</value3>
+                </vec3>
+            </property>
+        </actor>
+        <actor>
             <type>dtai.AIInterface.AI Interface Actor</type>
             <id>b2f7bb4e-b560-4eb0-a264-6b2c6d5a0663</id>
             <name>DeltaDrawable</name>
@@ -9279,7 +10331,7 @@
                 <vec3>
                     <value1>0.000018</value1>
                     <value2>0.000018</value2>
-                    <value3>107.012306</value3>
+                    <value3>107.012314</value3>
                 </vec3>
             </property>
             <property>
@@ -9346,6 +10398,35 @@
                 <resourceType>StaticMeshes</resourceType>
                 <resourceDisplayName>StaticMeshes:lamps:Lamppost_Trident_PHYSICS.osg</resourceDisplayName>
                 <resource>StaticMeshes:lamps:Lamppost_Trident_PHYSICS.osg</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Curve.Bezier Node</type>
+            <id>b56dafbd-9fa9-49dc-90e3-7d14a245d6ba</id>
+            <name>FireworkF_BezierNode_01</name>
+            <property>
+                <name>Name</name>
+                <string>FireworkF_BezierNode_01</string>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-433.926025</value1>
+                    <value2>-153.850601</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Time to Next</name>
+                <float>1</float>
+            </property>
+            <property>
+                <name>Exit Control Point</name>
+                <actorId>d137e12a-c7cb-4eef-86a2-af33e6654744</actorId>
+            </property>
+            <property>
+                <name>Next Bezier Node</name>
+                <actorId>7158de1e-8bed-48ad-a295-bf59d7c7eb99</actorId>
             </property>
         </actor>
         <actor>
@@ -9504,6 +10585,31 @@
             </property>
         </actor>
         <actor>
+            <type>dtcore.Curve.Bezier Node</type>
+            <id>b7b660fb-61c1-4036-a0f5-2f004dafbb87</id>
+            <name>Camera_B_BezierNode_02</name>
+            <property>
+                <name>Name</name>
+                <string>Camera_B_BezierNode_02</string>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-741.290100</value1>
+                    <value2>-100.980621</value2>
+                    <value3>14.671365</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Entry Control Point</name>
+                <actorId>ebb15029-07bc-4196-ab11-71a3e338e2cc</actorId>
+            </property>
+            <property>
+                <name>Previous Bezier Node</name>
+                <actorId>3184dfc6-6e79-47d9-a1ad-67ddb8acc6fe</actorId>
+            </property>
+        </actor>
+        <actor>
             <type>dtExample.Mesh Object</type>
             <id>b7b6b4ca-97ea-4a1c-af6d-465fd59700bc</id>
             <name>lamp_05</name>
@@ -9547,10 +10653,10 @@
         <actor>
             <type>dtcore.Curve.Bezier Node</type>
             <id>b844ff0a-3072-4da1-ae49-c42e18d34566</id>
-            <name>BezierNode_05</name>
+            <name>Camera_A_BezierNode_05</name>
             <property>
                 <name>Name</name>
-                <string>BezierNode_05</string>
+                <string>Camera_A_BezierNode_05</string>
             </property>
             <property>
                 <name>Translation</name>
@@ -9562,7 +10668,7 @@
             </property>
             <property>
                 <name>Time to Next</name>
-                <float>1</float>
+                <float>5</float>
             </property>
             <property>
                 <name>Entry Control Point</name>
@@ -9628,6 +10734,19 @@
                 <resourceType>StaticMeshes</resourceType>
                 <resourceDisplayName>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resourceDisplayName>
                 <resource>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Action.Bezier Controller</type>
+            <id>baa2581c-f177-4a12-8571-e9d0563f6319</id>
+            <name>Boat_Controller</name>
+            <property>
+                <name>Name</name>
+                <string>Boat_Controller</string>
+            </property>
+            <property>
+                <name>Start Node</name>
+                <actorId>317d308f-f0fd-4867-b65d-cf20906e80ed</actorId>
             </property>
         </actor>
         <actor>
@@ -9747,6 +10866,31 @@
             <property>
                 <name>Bezier Node</name>
                 <actorId>b844ff0a-3072-4da1-ae49-c42e18d34566</actorId>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Curve.Bezier Node</type>
+            <id>bdc7d53e-3e88-413a-af78-944b974f8e11</id>
+            <name>FireworkE_BezierNode_02</name>
+            <property>
+                <name>Name</name>
+                <string>FireworkE_BezierNode_02</string>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-446.738373</value1>
+                    <value2>-150.574020</value2>
+                    <value3>105.836311</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Entry Control Point</name>
+                <actorId>19d62a0a-3d86-45ef-94ce-22935d81dd0c</actorId>
+            </property>
+            <property>
+                <name>Previous Bezier Node</name>
+                <actorId>c668dc3a-13cd-4f5b-b9b7-a587f978aaec</actorId>
             </property>
         </actor>
         <actor>
@@ -10586,10 +11730,10 @@
         <actor>
             <type>dtcore.Curve.Bezier Node</type>
             <id>c559f2bb-b7b7-4dfe-b744-29c331e07bc1</id>
-            <name>BezierNode_03</name>
+            <name>Camera_A_BezierNode_03</name>
             <property>
                 <name>Name</name>
-                <string>BezierNode_03</string>
+                <string>Camera_A_BezierNode_03</string>
             </property>
             <property>
                 <name>Translation</name>
@@ -10601,7 +11745,7 @@
             </property>
             <property>
                 <name>Time to Next</name>
-                <float>1</float>
+                <float>5</float>
             </property>
             <property>
                 <name>Entry Control Point</name>
@@ -10719,6 +11863,35 @@
             </property>
         </actor>
         <actor>
+            <type>dtcore.Curve.Bezier Node</type>
+            <id>c668dc3a-13cd-4f5b-b9b7-a587f978aaec</id>
+            <name>FireworkE_BezierNode_01</name>
+            <property>
+                <name>Name</name>
+                <string>FireworkE_BezierNode_01</string>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-446.387115</value1>
+                    <value2>-151.673050</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Time to Next</name>
+                <float>1</float>
+            </property>
+            <property>
+                <name>Exit Control Point</name>
+                <actorId>ff56b328-fecd-4414-99d0-c1e6e9824896</actorId>
+            </property>
+            <property>
+                <name>Next Bezier Node</name>
+                <actorId>bdc7d53e-3e88-413a-af78-944b974f8e11</actorId>
+            </property>
+        </actor>
+        <actor>
             <type>dtRender.Dynamic Light</type>
             <id>c67e8b6f-0fe0-4bb8-946a-06d171bba0b6</id>
             <name>Dynamic Light_01</name>
@@ -10762,10 +11935,10 @@
         <actor>
             <type>dtcore.Curve.Bezier Node</type>
             <id>c6a0c385-362c-4a6c-a828-2622d9faf45c</id>
-            <name>BezierNode_07</name>
+            <name>Camera_A_BezierNode_07</name>
             <property>
                 <name>Name</name>
-                <string>BezierNode_07</string>
+                <string>Camera_A_BezierNode_07</string>
             </property>
             <property>
                 <name>Translation</name>
@@ -10777,7 +11950,7 @@
             </property>
             <property>
                 <name>Time to Next</name>
-                <float>1</float>
+                <float>5</float>
             </property>
             <property>
                 <name>Entry Control Point</name>
@@ -10899,6 +12072,35 @@
             </property>
         </actor>
         <actor>
+            <type>dtcore.Curve.Bezier Node</type>
+            <id>c776c460-2b29-4dce-8fc9-c8db12f4c9ff</id>
+            <name>FireworkI_BezierNode_01</name>
+            <property>
+                <name>Name</name>
+                <string>FireworkI_BezierNode_01</string>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-444.664429</value1>
+                    <value2>-161.489960</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Time to Next</name>
+                <float>1</float>
+            </property>
+            <property>
+                <name>Exit Control Point</name>
+                <actorId>29334fac-3fe2-4067-808f-65f94fd4bd2d</actorId>
+            </property>
+            <property>
+                <name>Next Bezier Node</name>
+                <actorId>41816da3-4c7c-4fb1-ab12-085e6a44414a</actorId>
+            </property>
+        </actor>
+        <actor>
             <type>dtExample.Mesh Object</type>
             <id>c9529a4d-149d-4810-a9f8-985c72ddbb50</id>
             <name>walkway_65</name>
@@ -10993,6 +12195,19 @@
             </property>
         </actor>
         <actor>
+            <type>dtcore.Action.Bezier Controller</type>
+            <id>ca40f472-224b-440e-8671-5da4b03371ef</id>
+            <name>FireworkF_Controller</name>
+            <property>
+                <name>Name</name>
+                <string>FireworkF_Controller</string>
+            </property>
+            <property>
+                <name>Start Node</name>
+                <actorId>b56dafbd-9fa9-49dc-90e3-7d14a245d6ba</actorId>
+            </property>
+        </actor>
+        <actor>
             <type>dtExample.Mesh Object</type>
             <id>ca563054-9704-46d1-933f-a2e1ef67da6d</id>
             <name>bench_06</name>
@@ -11035,6 +12250,31 @@
                 <resourceType>StaticMeshes</resourceType>
                 <resourceDisplayName>StaticMeshes:benches:bench:Bench_PHYSICS.osg</resourceDisplayName>
                 <resource>StaticMeshes:benches:bench:Bench_PHYSICS.osg</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Curve.Bezier Node</type>
+            <id>cae8b52e-b507-475d-9e1d-917892e1b5d9</id>
+            <name>FireworkH_BezierNode_02</name>
+            <property>
+                <name>Name</name>
+                <string>FireworkH_BezierNode_02</string>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-446.231873</value1>
+                    <value2>-155.548294</value2>
+                    <value3>105.836311</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Entry Control Point</name>
+                <actorId>4ecb3d86-a55c-4eb0-aef4-46cbfdb6f3c1</actorId>
+            </property>
+            <property>
+                <name>Previous Bezier Node</name>
+                <actorId>76f83d19-d481-4cfc-87ad-e9c2f685c787</actorId>
             </property>
         </actor>
         <actor>
@@ -11310,6 +12550,73 @@
             </property>
         </actor>
         <actor>
+            <type>dtcore.Curve.Bezier Node</type>
+            <id>d013163c-50b4-4247-8606-07afc7d56935</id>
+            <name>Boat_BezierNode_02</name>
+            <property>
+                <name>Name</name>
+                <string>Boat_BezierNode_02</string>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-965.135071</value1>
+                    <value2>425.811340</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Entry Control Point</name>
+                <actorId>8164d63e-d4a9-414e-99b2-c7518ff191b4</actorId>
+            </property>
+            <property>
+                <name>Previous Bezier Node</name>
+                <actorId>317d308f-f0fd-4867-b65d-cf20906e80ed</actorId>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Curve.Bezier Control Point</type>
+            <id>d0d3fef0-eb10-4d26-85dc-8ee1b34ed205</id>
+            <name>ControlPoint_19</name>
+            <property>
+                <name>Name</name>
+                <string>ControlPoint_19</string>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-625.652100</value1>
+                    <value2>-135.081421</value2>
+                    <value3>11.781014</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Bezier Node</name>
+                <actorId>3184dfc6-6e79-47d9-a1ad-67ddb8acc6fe</actorId>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Curve.Bezier Control Point</type>
+            <id>d137e12a-c7cb-4eef-86a2-af33e6654744</id>
+            <name>Firework_ControlPoint_12</name>
+            <property>
+                <name>Name</name>
+                <string>Firework_ControlPoint_12</string>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-434.732239</value1>
+                    <value2>-154.016052</value2>
+                    <value3>33.665428</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Bezier Node</name>
+                <actorId>b56dafbd-9fa9-49dc-90e3-7d14a245d6ba</actorId>
+            </property>
+        </actor>
+        <actor>
             <type>dtcore.Curve.Bezier Control Point</type>
             <id>d1cf3a76-84a7-419f-9244-e75bb3739dec</id>
             <name>ControlPoint_02</name>
@@ -11328,6 +12635,23 @@
             <property>
                 <name>Bezier Node</name>
                 <actorId>add9de85-adbd-45dd-b7db-054ac6405398</actorId>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Curve.Bezier Node</type>
+            <id>d3c5f001-ced0-4a6a-8135-266ac77e215e</id>
+            <name>Camera_C_BezierNode_04</name>
+            <property>
+                <name>Name</name>
+                <string>Camera_C_BezierNode_04</string>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-497.646240</value1>
+                    <value2>-71.266144</value2>
+                    <value3>35.000000</value3>
+                </vec3>
             </property>
         </actor>
         <actor>
@@ -11470,6 +12794,27 @@
             </property>
         </actor>
         <actor>
+            <type>dtcore.Curve.Bezier Control Point</type>
+            <id>d5103ee2-883b-44e5-9cb5-cee326e27665</id>
+            <name>Firework_ControlPoint_16</name>
+            <property>
+                <name>Name</name>
+                <string>Firework_ControlPoint_16</string>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-445.956055</value1>
+                    <value2>-156.864914</value2>
+                    <value3>33.665428</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Bezier Node</name>
+                <actorId>76f83d19-d481-4cfc-87ad-e9c2f685c787</actorId>
+            </property>
+        </actor>
+        <actor>
             <type>dtExample.Mesh Object</type>
             <id>d64aead3-c52c-4607-b935-2c870d47f571</id>
             <name>bottle_02</name>
@@ -11535,6 +12880,19 @@
                 <resourceType>StaticMeshes</resourceType>
                 <resourceDisplayName>StaticMeshes:torches:tiki_torch:TikiTorch.osg</resourceDisplayName>
                 <resource>StaticMeshes:torches:tiki_torch:TikiTorch.osg</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Action.Bezier Controller</type>
+            <id>d8429ebd-b3f7-4847-83d4-199985ee657a</id>
+            <name>FireworkH_Controller</name>
+            <property>
+                <name>Name</name>
+                <string>FireworkH_Controller</string>
+            </property>
+            <property>
+                <name>Start Node</name>
+                <actorId>76f83d19-d481-4cfc-87ad-e9c2f685c787</actorId>
             </property>
         </actor>
         <actor>
@@ -11743,6 +13101,19 @@
             </property>
         </actor>
         <actor>
+            <type>dtcore.Action.Bezier Controller</type>
+            <id>d9f01f81-1453-48f6-b055-1cd506be9462</id>
+            <name>FireworkC_Controller</name>
+            <property>
+                <name>Name</name>
+                <string>FireworkC_Controller</string>
+            </property>
+            <property>
+                <name>Start Node</name>
+                <actorId>7831b3fa-524f-4520-87a7-59eedaa89567</actorId>
+            </property>
+        </actor>
+        <actor>
             <type>dtcore.Curve.Bezier Control Point</type>
             <id>dbb0e8cc-d6cb-4fdd-b80e-de047fe019f3</id>
             <name>ControlPoint_16</name>
@@ -11772,7 +13143,7 @@
                 <vec3>
                     <value1>-806.763123</value1>
                     <value2>-136.437851</value2>
-                    <value3>8.558268</value3>
+                    <value3>13.555916</value3>
                 </vec3>
             </property>
             <property>
@@ -12417,10 +13788,10 @@
         <actor>
             <type>dtcore.Curve.Bezier Node</type>
             <id>e4b648ac-21a8-40f7-915c-521b4b41cc9a</id>
-            <name>BezierNode_04</name>
+            <name>Camera_A_BezierNode_04</name>
             <property>
                 <name>Name</name>
-                <string>BezierNode_04</string>
+                <string>Camera_A_BezierNode_04</string>
             </property>
             <property>
                 <name>Translation</name>
@@ -12432,7 +13803,7 @@
             </property>
             <property>
                 <name>Time to Next</name>
-                <float>1</float>
+                <float>5</float>
             </property>
             <property>
                 <name>Entry Control Point</name>
@@ -12498,6 +13869,23 @@
                 <resourceType>StaticMeshes</resourceType>
                 <resourceDisplayName>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resourceDisplayName>
                 <resource>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Curve.Bezier Node</type>
+            <id>e5f6c816-2bf0-4d72-8363-65aa360a10a4</id>
+            <name>Camera_C_BezierNode_01</name>
+            <property>
+                <name>Name</name>
+                <string>Camera_C_BezierNode_01</string>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-455.478394</value1>
+                    <value2>-235.736298</value2>
+                    <value3>35.000000</value3>
+                </vec3>
             </property>
         </actor>
         <actor>
@@ -12995,6 +14383,27 @@
             </property>
         </actor>
         <actor>
+            <type>dtcore.Curve.Bezier Control Point</type>
+            <id>ebb15029-07bc-4196-ab11-71a3e338e2cc</id>
+            <name>ControlPoint_20</name>
+            <property>
+                <name>Name</name>
+                <string>ControlPoint_20</string>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-628.952209</value1>
+                    <value2>-137.150208</value2>
+                    <value3>11.781014</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Bezier Node</name>
+                <actorId>b7b660fb-61c1-4036-a0f5-2f004dafbb87</actorId>
+            </property>
+        </actor>
+        <actor>
             <type>dtExample.Mesh Object</type>
             <id>ebfd8181-1ca3-46ec-ad21-325c3b855349</id>
             <name>walkway_39</name>
@@ -13204,6 +14613,56 @@
         </actor>
         <actor>
             <type>dtcore.Action.Bezier Controller</type>
+            <id>ee7aeb0e-d960-4904-ac60-9447592bd650</id>
+            <name>planecontroller</name>
+            <property>
+                <name>Name</name>
+                <string>planecontroller</string>
+            </property>
+            <property>
+                <name>Time Step</name>
+                <float>0.016666668</float>
+            </property>
+            <property>
+                <name>Target Object</name>
+                <actorId>5d58f27a-528b-486e-9507-632e12ea9c94</actorId>
+            </property>
+            <property>
+                <name>Start Node</name>
+                <actorId>44f7492b-42cb-4a0a-8ae8-8258ad12a904</actorId>
+            </property>
+            <property>
+                <name>Follow Path</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Set Looping</name>
+                <boolean>true</boolean>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Curve.Bezier Control Point</type>
+            <id>ee908e47-07c3-407f-b650-5bc3aa016dba</id>
+            <name>Firework_ControlPoint_01</name>
+            <property>
+                <name>Name</name>
+                <string>Firework_ControlPoint_01</string>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-437.861420</value1>
+                    <value2>-160.520203</value2>
+                    <value3>33.665428</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Bezier Node</name>
+                <actorId>5db88fc9-ed81-4a83-8547-dc5a2a466708</actorId>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Action.Bezier Controller</type>
             <id>ef133551-79ef-465e-aee0-be13eb0c8eca</id>
             <name>Controller_01</name>
             <property>
@@ -13216,15 +14675,11 @@
             </property>
             <property>
                 <name>Target Object</name>
-                <actorId>482db8f4-4817-4370-9d70-e8e96e270a00</actorId>
+                <actorId>362cb3a0-7aba-464c-a49b-b226f2c65802</actorId>
             </property>
             <property>
                 <name>Start Node</name>
                 <actorId>9dc85029-c92e-4932-b1f9-5030508ed60a</actorId>
-            </property>
-            <property>
-                <name>Render Path</name>
-                <boolean>false</boolean>
             </property>
             <property>
                 <name>Follow Path</name>
@@ -14001,9 +15456,9 @@
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-810.935791</value1>
+                    <value1>-799.789673</value1>
                     <value2>-110.134369</value2>
-                    <value3>6.560851</value3>
+                    <value3>12.480587</value3>
                 </vec3>
             </property>
             <property>
@@ -14160,6 +15615,27 @@
                 <resourceType>StaticMeshes</resourceType>
                 <resourceDisplayName>StaticMeshes:walkways:wood_walkway:WoodWalkway.osg</resourceDisplayName>
                 <resource>StaticMeshes:walkways:wood_walkway:WoodWalkway.osg</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Curve.Bezier Control Point</type>
+            <id>ff56b328-fecd-4414-99d0-c1e6e9824896</id>
+            <name>Firework_ControlPoint_09</name>
+            <property>
+                <name>Name</name>
+                <string>Firework_ControlPoint_09</string>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-446.996918</value1>
+                    <value2>-151.974457</value2>
+                    <value3>33.665428</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Bezier Node</name>
+                <actorId>c668dc3a-13cd-4f5b-b9b7-a587f978aaec</actorId>
             </property>
         </actor>
         <actor>
