@@ -116,6 +116,7 @@ class MapTests : public CPPUNIT_NS::TestFixture
       CPPUNIT_TEST(TestMapSaveAndLoadPropertyContainerProperty);
       CPPUNIT_TEST(TestMapSaveAndLoadNestedPropertyContainerArray);
       CPPUNIT_TEST(TestMapSaveAndLoadActorGroups);
+      CPPUNIT_TEST(TestShouldSaveProperty);
       CPPUNIT_TEST(TestLibraryMethods);
       CPPUNIT_TEST(TestWildCard);
       CPPUNIT_TEST(TestEnvironmentMapLoading);
@@ -141,6 +142,7 @@ class MapTests : public CPPUNIT_NS::TestFixture
       void TestMapSaveAndLoadPropertyContainerProperty();
       void TestMapSaveAndLoadNestedPropertyContainerArray();
       void TestMapSaveAndLoadActorGroups();
+      void TestShouldSaveProperty();
       void TestIsMapFileValid();
       void TestLoadMapIntoScene();
       void TestLibraryMethods();
@@ -1569,6 +1571,28 @@ void MapTests::TestMapSaveAndLoadActorGroups()
    {
       CPPUNIT_FAIL(std::string("Error: ") + e.What());
    }
+}
+
+///////////////////////////////////////////////////////////////////////////////////////
+void MapTests::TestShouldSaveProperty()
+{
+   const dtCore::ActorType* at = dtCore::LibraryManager::GetInstance().FindActorType("ExampleActors", "TestGamePropertyActor");
+   CPPUNIT_ASSERT(at != NULL);
+
+   dtCore::RefPtr<dtCore::BaseActorObject> actor = dtCore::LibraryManager::GetInstance().CreateActor(*at);
+   dtCore::ActorProperty* prop = actor->GetProperty(dtCore::TransformableActorProxy::PROPERTY_ACTIVE);
+   CPPUNIT_ASSERT_MESSAGE("Property should NOT save because it has the default value", !actor->ShouldPropertySave(*prop));
+   prop->SetAlwaysSave(true);
+   CPPUNIT_ASSERT_MESSAGE("Property SHOULD save because it is set to always save, even though it is the default.", actor->ShouldPropertySave(*prop));
+   prop->SetAlwaysSave(false);
+   prop->FromString("false");
+   CPPUNIT_ASSERT_MESSAGE("Property SHOULD save because it is not the default value.", actor->ShouldPropertySave(*prop));
+   prop->SetIgnoreWhenSaving(true);
+   CPPUNIT_ASSERT_MESSAGE("Property should NOT save because it is set to ignore.", !actor->ShouldPropertySave(*prop));
+   prop->SetIgnoreWhenSaving(false);
+   prop->SetReadOnly(true);
+   CPPUNIT_ASSERT_MESSAGE("Property should NOT save because it is set to read only.", !actor->ShouldPropertySave(*prop));
+   prop->SetReadOnly(false);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////

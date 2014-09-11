@@ -111,21 +111,6 @@ namespace dtCore
       BuildPropertyMap();
    }
 
-   ////////////////////////////////////////////////////////////////////////////////
-   bool BaseActorObject::ShouldPropertySave(const dtCore::ActorProperty& prop) const
-   {
-      bool result = PropertyContainer::ShouldPropertySave(prop);
-
-      // Any properties in this group are saved elsewhere, therefore
-      // we ignore these properties.
-      if (prop.GetGroupName() == "Actor Information")
-      {
-         result = false;
-      }
-
-      return result;
-   }
-
    /////////////////////////////////////////////////////////////////////////////
    void BaseActorObject::CreateDrawable()
    {

@@ -115,6 +115,10 @@ namespace dtCore
        */
       const ActorProperty* GetProperty(const std::string& name) const;
 
+      /// Perform the given action for each property.
+      template <typename UnaryFunctor>
+      void ForEachProperty(UnaryFunctor func);
+
       /**
        * This function queries the proxy with any properties not
        * found in the property list. If a property was previously
@@ -156,6 +160,8 @@ namespace dtCore
 
       /**
        * Checks if a given property should be saved out to file data.
+       * The flags on a property can be used to control this, so this shouldn't be needed unless you need to do
+       * something custom.
        *
        * @param[in]  prop  The property.
        *
@@ -185,6 +191,12 @@ namespace dtCore
    };
 
    typedef RefPtr<PropertyContainer> PropertyContainerPtr;
+
+   template <typename UnaryFunctor>
+   inline void PropertyContainer::ForEachProperty(UnaryFunctor func)
+   {
+      std::for_each(mProperties.begin(), mProperties.end(), func);
+   }
 
 }
 

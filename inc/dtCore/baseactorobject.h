@@ -134,15 +134,6 @@ namespace dtCore
       virtual void Init(const dtCore::ActorType& actorType);
 
       /**
-       * Checks if a given property should be saved out to file data.
-       *
-       * @param[in]  prop  The property.
-       *
-       * @return     True if the given property should be saved.
-       */
-      virtual bool ShouldPropertySave(const dtCore::ActorProperty& prop) const;
-
-      /**
        * Gets the UniqueID object assigned to this actor proxy.
        * @return The UniqueID.
        */

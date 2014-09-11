@@ -324,11 +324,28 @@ namespace dtGame
    }
 
    /////////////////////////////////////////////////////////////////////////////
+   struct AddToPartialUpdateList
+   {
+      AddToPartialUpdateList(std::vector<dtUtil::RefString>& propNamesToFill)
+      : mPropNamesToFill(propNamesToFill)
+      {
+      }
+
+      void operator() (dtCore::RefPtr<dtCore::ActorProperty>& prop)
+      {
+         if (prop->GetSendInPartialUpdate())
+         {
+            mPropNamesToFill.push_back(prop->GetName());
+         }
+      }
+      std::vector<dtUtil::RefString>& mPropNamesToFill;
+   };
+
+   /////////////////////////////////////////////////////////////////////////////
    void GameActorProxy::GetPartialUpdateProperties(std::vector<dtUtil::RefString>& propNamesToFill)
    {
-      // The default of this does nothing except log a warning.
-      mLogger.LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
-            "If you use NotifyPartialActorUpdate(), you should override GetPartialUpdateProperties().");
+      AddToPartialUpdateList addFunc(propNamesToFill);
+      ForEachProperty(addFunc);
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -343,6 +360,55 @@ namespace dtGame
    {
       PopulateActorUpdateImpl(update);
    }
+
+   /////////////////////////////////////////////////////////////////////////////
+   struct AddPropsToUpdate
+   {
+      AddPropsToUpdate(ActorUpdateMessage& updateMsg, bool checkFullFlag)
+      : mUpdateMsg(updateMsg)
+      , mCheckFullUpdateFlag(checkFullFlag)
+      {}
+
+      void operator() (dtCore::RefPtr<dtCore::ActorProperty>& prop)
+      {
+         if (prop == NULL)
+         {
+            return;
+         }
+
+         // don't send read-only properties
+         if (prop->IsReadOnly())
+         {
+            return;
+         }
+
+         if (mCheckFullUpdateFlag && !prop->GetSendInFullUpdate())
+         {
+            return;
+         }
+
+         // don't send the actor's name property as it is already sent earlier.
+         if (prop->GetName() == dtCore::BaseActorObject::PROPERTY_NAME)
+         {
+            return;
+         }
+
+         try
+         {
+            dtCore::NamedParameter* mp = mUpdateMsg.AddUpdateParameter(prop->GetName(), prop->GetDataType());
+            if (mp != NULL)
+            {
+               mp->SetFromProperty(*prop);
+            }
+         }
+         catch (const dtUtil::Exception&)
+         {
+            //anything to do here?
+         }
+      }
+      ActorUpdateMessage& mUpdateMsg;
+      bool mCheckFullUpdateFlag;
+   };
 
    /////////////////////////////////////////////////////////////////////////////
    void GameActorProxy::PopulateActorUpdateImpl(ActorUpdateMessage& update,
@@ -361,57 +427,25 @@ namespace dtGame
       update.SetSendingActorId(GetId());
       update.SetAboutActorId(GetId());
 
-      std::vector<const dtCore::ActorProperty*> toFill;
-      toFill.reserve(propNames.size());
+      AddPropsToUpdate addFunc(update, propNames.empty());
 
-      //If user supplied any specific Property names, try to find them.
-      for (size_t i = 0; i < propNames.size(); ++i)
+      if (!propNames.empty())
       {
-         toFill.push_back(GetProperty(propNames[i])); //note: could be NULL
-      }
-
-      //If user didn't supply any Property names, just grab all that we have.
-      if (toFill.empty())
-      {
-         GetPropertyList(toFill);
-      }
-
-      for (size_t i = 0; i < toFill.size(); ++i)
-      {
-         const dtCore::ActorProperty* prop = toFill[i];
-
-         if (prop == NULL)
+         //If user supplied any specific Property names, try to find them.
+         for (size_t i = 0; i < propNames.size(); ++i)
          {
-            continue;
-         }
-
-         // don't send read-only properties
-         if (prop->IsReadOnly())
-         {
-            continue;
-         }
-
-         // don't send the actor's name property as it is already sent earlier.
-         if (prop->GetName() == dtCore::BaseActorObject::PROPERTY_NAME)
-         {
-            continue;
-         }
-
-         try
-         {
-            dtCore::NamedParameter* mp = update.AddUpdateParameter(prop->GetName(), prop->GetDataType());
-            if (mp != NULL)
-            {
-               mp->SetFromProperty(*prop);
-            }
-         }
-         catch (const dtUtil::Exception&)
-         {
-            //anything to do here?
+            dtCore::RefPtr<dtCore::ActorProperty> prop = GetProperty(propNames[i]);
+            addFunc(prop);
          }
       }
+      else
+      {
+         ForEachProperty(addFunc);
+      }
+
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    struct ApplyActorUpdateFunc
    {
       ApplyActorUpdateFunc(dtGame::GameActorProxy& gap, dtUtil::Log& logger, bool filterProps)
