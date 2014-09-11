@@ -355,23 +355,15 @@ namespace dtAnim
 
       /// this processes the lowest LOD at the moment,
       /// because that's what's loaded at the front of the VBO.
-      osg::Drawable::Extensions* glExt = osg::Drawable::getExtensions(0, true);
-#if defined(OPENSCENEGRAPH_MAJOR_VERSION) && OPENSCENEGRAPH_MAJOR_VERSION >= 3
-      mMeshVBO->getOrCreateGLBufferObject(0)->bindBuffer();
-#else
-      mMeshVBO->bindBuffer(0);
-#endif
-      osg::Vec3f* vertexArray = reinterpret_cast<osg::Vec3f*>(glExt->glMapBuffer(GL_ARRAY_BUFFER_ARB, GL_READ_WRITE_ARB));
 
-      functor.setVertexArray(mVertexCount[0], vertexArray);
+      //osg::Vec3f* vertexArray =
+      osg::BufferData* vertexArray = mMeshVBO->getBufferData(0);
+      if (vertexArray->asArray()->getType() != osg::Array::Vec3ArrayType)
+         return;
+
+      functor.setVertexArray(mVertexCount[0], reinterpret_cast<const osg::Vec3*>(vertexArray->getDataPointer()));
      
-#if defined(OPENSCENEGRAPH_MAJOR_VERSION) && OPENSCENEGRAPH_MAJOR_VERSION >= 3
-      mMeshEBO->getOrCreateGLBufferObject(0)->bindBuffer();
-#else
-      mMeshEBO->bindBuffer(0);
-#endif
-
-      void* indexArray = glExt->glMapBuffer(GL_ELEMENT_ARRAY_BUFFER_ARB, GL_READ_WRITE_ARB);
+      const GLvoid* indexArray = mMeshEBO->getBufferData(0)->getDataPointer();
       if (indexArray != NULL)
       {
          if (sizeof(CalIndex) == sizeof(short))
@@ -387,16 +379,6 @@ namespace dtAnim
             pset->accept(functor);
          }
       }
-
-      glExt->glUnmapBuffer(GL_ELEMENT_ARRAY_BUFFER_ARB);
-      glExt->glUnmapBuffer(GL_ARRAY_BUFFER_ARB);
-#if defined(OPENSCENEGRAPH_MAJOR_VERSION) && OPENSCENEGRAPH_MAJOR_VERSION >= 3
-      mMeshVBO->getOrCreateGLBufferObject(0)->unbindBuffer();
-      mMeshEBO->getOrCreateGLBufferObject(0)->unbindBuffer();
-#else
-      mMeshVBO->unbindBuffer(0);
-      mMeshEBO->unbindBuffer(0);
-#endif
    }
 
    ////////////////////////////////////////////////////////////////////////////////////////
