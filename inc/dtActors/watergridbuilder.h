@@ -38,7 +38,7 @@ namespace dtActors
 
       static osg::Texture2D* CreateTexture(int width, int height, bool mipMap);
 
-      static osg::Geometry* BuildRadialGrid(float &outComputedRadialDistance);
+      static osg::Geometry* BuildRadialGrid(float &outComputedRadialDistance, float numRows, float numColumns);
 
       static void BuildWavesFromSeaState(WaterGridActor::SeaState*, std::vector<WaterGridActor::Wave>& waveList);
       

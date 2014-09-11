@@ -207,6 +207,10 @@ namespace dtActors
       DT_DECLARE_ACCESSOR_INLINE(float, ModForAmplitude)
       DT_DECLARE_ACCESSOR_INLINE(float, ModForDirectionInDegrees)
 
+      DT_DECLARE_ACCESSOR_INLINE(int, NumRows)
+      DT_DECLARE_ACCESSOR_INLINE(int, NumColumns)
+      DT_DECLARE_ACCESSOR_INLINE(bool, UseDebugKeys)
+
    protected:
 
       ~WaterGridActor();

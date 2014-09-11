@@ -36,7 +36,7 @@ namespace dtUtil
 
          static CullMask EVERYTHING;               //~0
 
-         static CullMask SCENE_INTERSECT_MASK;           //0x00FF0000
+         static CullMask SCENE_INTERSECT_MASK;           //0x00FFFFFF
 
 
          static CullMask MAIN_CAMERA_SINGLEPASS;         //0xFFFFFFFF         
