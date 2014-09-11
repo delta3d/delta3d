@@ -258,7 +258,7 @@ namespace dtPhysics
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void PhysicsObject::BuildPropertyMap(std::vector<dtCore::RefPtr<dtCore::ActorProperty> >& toFillIn)
+   void PhysicsObject::BuildPropertyMap()
    {
       // Don't make this static since it's generated.
       const dtUtil::RefString GROUP("PhysicsObject-" + GetName());
@@ -409,18 +409,6 @@ namespace dtPhysics
                "If a physics mesh is set, it can be scaled with this property.",
                 PropRegType, propRegHelper);
 
-      std::vector<dtCore::ActorProperty *> propList;
-      GetPropertyList(propList);
-
-      toFillIn.reserve(propList.size());
-
-      std::vector<dtCore::ActorProperty *>::iterator i, iend;
-      i = propList.begin();
-      iend = propList.end();
-      for (; i != iend; ++i)
-      {
-         toFillIn.push_back(*i);
-      }
    }
 
    void PhysicsObject::CalculateBoundsAndOrigin(const osg::Node* nodeToLoad, bool calcDimensions, bool adjustOriginOffsetForGeometry)

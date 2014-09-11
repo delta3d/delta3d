@@ -276,10 +276,6 @@ namespace dtPhysics
 
       private:
 
-         /// Supports the deprecated property system.
-         void SetKinematic(bool isKinematic);
-         bool IsKinematic() const;
-
          /// name of the physics helper
          dtUtil::RefString mName;
 

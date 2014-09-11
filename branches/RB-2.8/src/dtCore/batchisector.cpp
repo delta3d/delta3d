@@ -26,11 +26,14 @@
 #include <dtCore/scene.h>
 #include <dtUtil/log.h>
 #include <dtUtil/exception.h>
+#include <dtUtil/mathdefines.h>
+#include <dtUtil/cullmask.h>
 
 #include <osg/Group>
 #include <osg/Version>
 
 #include <stack>
+#include <algorithm>
 
 namespace dtCore
 {
@@ -38,6 +41,7 @@ namespace dtCore
    BatchIsector::BatchIsector(dtCore::Scene* scene)
       : mScene(scene)
       , mFixedArraySize(32)
+      , mTraversalMask(dtUtil::CullMask::SCENE_INTERSECT_MASK)
    {
       for (int i = 0 ; i < mFixedArraySize; ++i)
       {
@@ -45,10 +49,10 @@ namespace dtCore
       }
 
       // initialize traversal mask with default OSG value
-      {
-         osgUtil::IntersectVisitor intersectVisitor;
-         mTraversalMask = intersectVisitor.getTraversalMask();
-      }
+//      {
+//         osgUtil::IntersectVisitor intersectVisitor;
+//         mTraversalMask = intersectVisitor.getTraversalMask();
+//      }
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -255,27 +259,39 @@ namespace dtCore
 
    ///////////////////////////////////////////////////////////////////////////////
    BatchIsector::SingleISector::SingleISector(const int idForISector, const std::string& nameForISector, bool checkClosestDrawables)
+   : mIsOn()
    {
       mCheckClosestDrawables = checkClosestDrawables;
       mNameForReference = nameForISector;
       mIDForReference = idForISector;
       mClosestDrawable = NULL;
       mLineSegment = new osg::LineSegment();
-      mIsOn = false;
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    BatchIsector::SingleISector::SingleISector(const int idForISector, bool checkClosestDrawables)
+   : mIsOn()
    {
       mCheckClosestDrawables = checkClosestDrawables;
       mIDForReference = idForISector;
       mClosestDrawable = NULL;
       mLineSegment = new osg::LineSegment();
-      mIsOn = false;
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    BatchIsector::SingleISector::~SingleISector() {} 
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void BatchIsector::SingleISector::SetToCheckForClosestDrawable(bool value)
+   {
+      mCheckClosestDrawables = value;
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void BatchIsector::SingleISector::ToggleIsOn(bool value)
+   {
+      mIsOn = value;
+   }
 
    ///////////////////////////////////////////////////////////////////////////////
    void BatchIsector::SingleISector::GetHitPoint(osg::Vec3& xyz, int pointNum) const
@@ -303,14 +319,28 @@ namespace dtCore
    void BatchIsector::SingleISector::SetSectorAsRay(const osg::Vec3& startPos, osg::Vec3& direction, const float lineLength)
    {
       direction.normalize();
-      mLineSegment->set(startPos, startPos + (direction * lineLength));
+      if (dtUtil::IsFiniteVec(startPos) && dtUtil::IsFiniteVec(direction) && dtUtil::IsFinite(lineLength))
+      {
+         mLineSegment->set(startPos, startPos + (direction * lineLength));
+      }
+      else
+      {
+         LOG_ERROR("Non-finite ray assigned to the Isector.  Put a breakpoint here to debug.");
+      }
       ResetSingleISector();
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    void BatchIsector::SingleISector::SetSectorAsLineSegment(const osg::Vec3& startPos, const osg::Vec3& endPos)
    {
-      mLineSegment->set(startPos, endPos);
+      if (dtUtil::IsFiniteVec(startPos) && dtUtil::IsFiniteVec(endPos))
+      {
+         mLineSegment->set(startPos, endPos);
+      }
+      else
+      {
+         LOG_ERROR("Non-finite ray assigned to the Isector.  Put a breakpoint here to debug.");
+      }
       ResetSingleISector();
    }
 
@@ -321,10 +351,28 @@ namespace dtCore
       mClosestDrawable = NULL;
    }
 
+   struct DeleteNonFinite
+   {
+      bool operator()(BatchIsector::Hit& hit)
+      {
+         bool result = !dtUtil::IsFiniteVec(hit._intersectPoint) || !dtUtil::IsFiniteVec(hit._intersectNormal) || !
+               dtUtil::IsFiniteVec(hit._matrix->getTrans());
+         static bool mNotifiedAboutNAN = false;
+         if (!result && !mNotifiedAboutNAN)
+         {
+            LOGN_ERROR("batchisector.cpp", "Invalid collision point found in isector.  You only get this error once each time you run the application to avoid spamming the console.");
+            mNotifiedAboutNAN = true;
+         }
+         return result;
+      }
+   };
+
    ///////////////////////////////////////////////////////////////////////////////
    void BatchIsector::SingleISector::SetHitList(osgUtil::IntersectVisitor::HitList& newList)
    {
       mHitList = newList;
+      DeleteNonFinite deleteFunc;
+      mHitList.erase(std::remove_if(mHitList.begin(), mHitList.end(), deleteFunc), mHitList.end());
    }
 
 } // end namespace
