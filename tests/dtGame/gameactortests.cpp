@@ -958,11 +958,11 @@ void GameActorTests::TestPartialUpdateFlags()
    std::vector<dtUtil::RefString> names;
    actor1->GetPartialUpdateProperties(names);
 
-   // DG - I want this to need to be changed if the base behavior changes.
-   CPPUNIT_ASSERT_EQUAL(2U, unsigned(names.size()));
-   // Check the list for the required ones.
-   CPPUNIT_ASSERT(std::find(names.begin(), names.end(), dtCore::TransformableActorProxy::PROPERTY_TRANSLATION) != names.end());
-   CPPUNIT_ASSERT(std::find(names.begin(), names.end(), dtCore::TransformableActorProxy::PROPERTY_ROTATION) != names.end());
+   // DG - No properties are in the partial list by default, unless you have a dr helper.
+   CPPUNIT_ASSERT_EQUAL(0U, unsigned(names.size()));
+//   // Check the list for the required ones.
+//   CPPUNIT_ASSERT(std::find(names.begin(), names.end(), dtCore::TransformableActorProxy::PROPERTY_TRANSLATION) != names.end());
+//   CPPUNIT_ASSERT(std::find(names.begin(), names.end(), dtCore::TransformableActorProxy::PROPERTY_ROTATION) != names.end());
 
    dtCore::PropertyContainer::PropertyVector pv;
 

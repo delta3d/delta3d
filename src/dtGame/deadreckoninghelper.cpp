@@ -557,53 +557,43 @@ namespace dtGame
 
       DT_REGISTER_PROPERTY_WITH_NAME(LastKnownTranslation, PROPERTY_LAST_KNOWN_TRANSLATION, 
          "Sets the last know position of this Entity", PropRegType, propRegHelper);
+      GetProperty(PROPERTY_LAST_KNOWN_TRANSLATION)->SetSendInPartialUpdate(true);
 
       // Last Known Rotation - See the header for GetInternalLastKnownRotationInXYZ() for why this is wierd.
       DT_REGISTER_PROPERTY_WITH_NAME(InternalLastKnownRotationInXYZ, PROPERTY_LAST_KNOWN_ROTATION, 
          "Sets the last known rotation of this Entity", PropRegType, propRegHelper);
+      GetProperty(PROPERTY_LAST_KNOWN_ROTATION)->SetSendInPartialUpdate(true);
 
       // Note - the member vars were changed to LastKnownXYZ, but the properties were left the same
       // so as to not break MANY maps in production.
       DT_REGISTER_PROPERTY_WITH_NAME(LastKnownVelocity, PROPERTY_VELOCITY_VECTOR, 
          "Sets the last known velocity vector of this Entity", PropRegType, propRegHelper);
+      GetProperty(PROPERTY_VELOCITY_VECTOR)->SetSendInPartialUpdate(true);
 
       // Note - the member vars were changed to LastKnownXYZ, but the properties were left the same
       // so as to not break MANY maps in production.
       DT_REGISTER_PROPERTY_WITH_NAME(LastKnownAcceleration, PROPERTY_ACCELERATION_VECTOR, 
          "Sets the last known acceleration vector of this Entity", PropRegType, propRegHelper);
+      GetProperty(PROPERTY_ACCELERATION_VECTOR)->SetSendInPartialUpdate(true);
 
       // Note - the member vars were changed to LastKnownXYZ, but the properties were left the same
       // so as to not break MANY maps in production.
       DT_REGISTER_PROPERTY_WITH_NAME(LastKnownAngularVelocity, PROPERTY_ANGULAR_VELOCITY_VECTOR, 
          "Sets the last known angular velocity vector of this Entity", PropRegType, propRegHelper);
+      GetProperty(PROPERTY_ANGULAR_VELOCITY_VECTOR)->SetSendInPartialUpdate(true);
+
       DT_REGISTER_PROPERTY_WITH_NAME(DeadReckoningAlgorithm, PROPERTY_DEAD_RECKONING_ALGORITHM, 
          "Sets the enumerated dead reckoning algorithm to use.", PropRegType, propRegHelper);
+      GetProperty(PROPERTY_DEAD_RECKONING_ALGORITHM)->SetSendInPartialUpdate(true);
+
 
       // Doesn't use macro cause the Getter is called IsFlying
       DT_REGISTER_PROPERTY_WITH_NAME_AND_LABEL(GroundClampType, PROPERTY_GROUND_CLAMP_TYPE, "Ground Clamp Type",
          "What type of ground clamping should be performed. This replaced the Flying property.", 
          PropRegType, propRegHelper);
 
-
       DT_REGISTER_PROPERTY_WITH_NAME(GroundOffset, PROPERTY_GROUND_OFFSET, 
          "Sets the offset from the ground this entity should have.  This only matters if it is not flying.", PropRegType, propRegHelper);
-
-
-      // The following 'properties' are usually set dynamically at runtime by computing the bounding dimensions
-      // of the object. Making them real properties would be very misleading for people working on a map file. So, 
-      // these were removed.  In the future, if someone strongly thinks these should be properties, it should be revisited 
-      // by DG and CMM.
-      /*
-      AddProperty(new dtCore::Vec3ActorProperty("Model Dimensions", "Actor Model Dimensions",
-         dtCore::Vec3ActorProperty::SetFuncType(this, &DeadReckoningHelper::SetModelDimensions),
-         dtCore::Vec3ActorProperty::GetFuncType(this, &DeadReckoningHelper::GetModelDimensions),
-         "Sets the x,y,z dimensions of the model the actor loads.  This is used by the ground clamping code.", DEADRECKONING_GROUP));
-
-      AddProperty(new dtCore::BooleanActorProperty("Use Model Dimensions", "Use Model Dimensions",
-         dtCore::BooleanActorProperty::SetFuncType(this, &DeadReckoningHelper::SetUseModelDimensions),
-         dtCore::BooleanActorProperty::GetFuncType(this, &DeadReckoningHelper::UseModelDimensions),
-         "Should the DR Component use the currently set model dimension values when ground clamping?", DEADRECKONING_GROUP));
-         */
 
    }
 
