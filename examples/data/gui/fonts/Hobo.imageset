@@ -1,0 +1,86 @@
+<?xml version="1.0" ?>
+<Imageset Name="Hobo" Imagefile="gui/fonts/Hobo.png" NativeHorzRes="512" NativeVertRes="128" AutoScaled="true">
+
+   <Image Name="A" XPos="0"  YPos="0" Width="20" Height="26" />
+   <Image Name="B" XPos="20" YPos="0" Width="19" Height="26" />
+   <Image Name="C" XPos="39" YPos="0" Width="18" Height="26" />
+   <Image Name="D" XPos="57" YPos="0" Width="19" Height="26" />
+   <Image Name="E" XPos="76" YPos="0" Width="18" Height="26" />
+   <Image Name="F" XPos="94" YPos="0" Width="17" Height="26" />
+   <Image Name="G" XPos="111" YPos="0" Width="19" Height="26" />
+   <Image Name="H" XPos="130" YPos="0" Width="19" Height="26" />
+   <Image Name="I" XPos="149" YPos="0" Width="8"  Height="26" />
+   <Image Name="J" XPos="157" YPos="0" Width="13" Height="26" />
+   <Image Name="K" XPos="170" YPos="0" Width="18" Height="26" />
+   <Image Name="L" XPos="188" YPos="0" Width="16" Height="26" />
+   <Image Name="M" XPos="204" YPos="0" Width="24" Height="26" />
+   <Image Name="N" XPos="228" YPos="0" Width="20" Height="26" />
+   <Image Name="O" XPos="248" YPos="0" Width="20" Height="26" />
+   <Image Name="P" XPos="268" YPos="0" Width="18" Height="26" />
+   <Image Name="Q" XPos="286" YPos="0" Width="20" Height="26" />
+   <Image Name="R" XPos="306" YPos="0" Width="18" Height="26" />
+   <Image Name="S" XPos="324" YPos="0" Width="17" Height="26" />
+   <Image Name="T" XPos="341" YPos="0" Width="20" Height="26" />
+   <Image Name="U" XPos="361" YPos="0" Width="19" Height="26" />
+   <Image Name="V" XPos="380" YPos="0" Width="19" Height="26" />
+   <Image Name="W" XPos="399" YPos="0" Width="25" Height="26" />
+   <Image Name="X" XPos="424" YPos="0" Width="18" Height="26" />
+   <Image Name="Y" XPos="442" YPos="0" Width="20" Height="26" />
+   <Image Name="Z" XPos="462" YPos="0" Width="18" Height="26" />
+
+   <Image Name="a" XPos="0"  YPos="33" Width="15" Height="26" />
+   <Image Name="b" XPos="15" YPos="33" Width="16" Height="26" />
+   <Image Name="c" XPos="31" YPos="33" Width="15" Height="26" />
+   <Image Name="d" XPos="46" YPos="33" Width="17" Height="26" />
+   <Image Name="e" XPos="63" YPos="33" Width="16" Height="26" />
+   <Image Name="f" XPos="80" YPos="33" Width="12" Height="26" />
+   <Image Name="g" XPos="93" YPos="33" Width="17" Height="26" />
+   <Image Name="h" XPos="110" YPos="33" Width="16" Height="26" />
+   <Image Name="i" XPos="126" YPos="33" Width="8"  Height="26" />
+   <Image Name="j" XPos="134" YPos="33" Width="10" Height="26" />
+   <Image Name="k" XPos="144" YPos="33" Width="16" Height="26" />
+   <Image Name="l" XPos="161" YPos="33" Width="7"  Height="26" />
+   <Image Name="m" XPos="169" YPos="33" Width="24"  Height="26" />
+   <Image Name="n" XPos="193" YPos="33" Width="16"  Height="26" />
+   <Image Name="o" XPos="209" YPos="33" Width="16"  Height="26" />
+   <Image Name="p" XPos="225" YPos="33" Width="16"  Height="26" />
+   <Image Name="q" XPos="241" YPos="33" Width="15"  Height="26" />
+   <Image Name="r" XPos="256" YPos="33" Width="13"  Height="26" />
+   <Image Name="s" XPos="269" YPos="33" Width="14"  Height="26" />
+   <Image Name="t" XPos="283" YPos="33" Width="12"  Height="26" />
+   <Image Name="u" XPos="295" YPos="33" Width="16"  Height="26" />
+   <Image Name="v" XPos="311" YPos="33" Width="16"  Height="26" />
+   <Image Name="w" XPos="327" YPos="33" Width="21"  Height="26" />
+   <Image Name="x" XPos="348" YPos="33" Width="15"  Height="26" />
+   <Image Name="y" XPos="363" YPos="33" Width="15"  Height="26" />
+   <Image Name="z" XPos="378" YPos="33" Width="14"  Height="26" />
+
+   <Image Name="0" XPos="144" YPos="71" Width="17" Height="26" />
+   <Image Name="1" XPos="0" YPos="71" Width="9" Height="26" />
+   <Image Name="2" XPos="12" YPos="71" Width="16" Height="26" />
+   <Image Name="3" XPos="28" YPos="71" Width="16" Height="26" />
+   <Image Name="4" XPos="44" YPos="71" Width="18" Height="26" />
+   <Image Name="5" XPos="62" YPos="71" Width="15" Height="26" />
+   <Image Name="6" XPos="77" YPos="71" Width="17" Height="26" />
+   <Image Name="7" XPos="94" YPos="71" Width="16" Height="26" />
+   <Image Name="8" XPos="110" YPos="71" Width="17" Height="26" />
+   <Image Name="9" XPos="127" YPos="71" Width="17" Height="26" />
+   <Image Name="." XPos="161" YPos="71" Width="9" Height="26" />
+   <Image Name=":" XPos="170" YPos="71" Width="9" Height="26" />
+   <Image Name="," XPos="180" YPos="71" Width="8" Height="26" />
+   <Image Name=";" XPos="188" YPos="71" Width="9" Height="26" />
+   <Image Name="'" XPos="204" YPos="71" Width="6" Height="26" />
+   <!--Image Name=""" XPos="117" YPos="71" Width="11" Height="26" /-->
+   <Image Name="(" XPos="236" YPos="71" Width="11" Height="26" />
+   <Image Name="!" XPos="247" YPos="71" Width="9" Height="26" />
+   <Image Name="?" XPos="257" YPos="71" Width="14" Height="26" />
+   <Image Name=")" XPos="272" YPos="71" Width="11" Height="26" />
+   <Image Name="+" XPos="291" YPos="71" Width="16" Height="26" />
+   <Image Name="-" XPos="308" YPos="71" Width="10" Height="26" />
+   <Image Name="*" XPos="318" YPos="71" Width="13" Height="26" />
+   <Image Name="/" XPos="333" YPos="71" Width="14" Height="26" />
+   <Image Name="=" XPos="348" YPos="71" Width="16" Height="26" />
+   <Image Name=" " XPos="364" YPos="71" Width="8" Height="26" />
+
+
+</Imageset>

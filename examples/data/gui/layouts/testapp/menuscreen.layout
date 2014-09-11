@@ -20,7 +20,7 @@
          <Property Name="HorzFormatting" Value="HorzCentred"/>
          <Property Name="HorizontalAlignment" Value="Centre"/>
          <Property Name="VerticalAlignment" Value="Top"/>
-         <Property Name="Font" Value="DejaVuSans-10"/>
+         <Property Name="Font" Value="Hobo"/>
          <Property Name="AlwaysOnTop" Value="True"/>
          <Property Name="TextColours" Value="FFFFFFFF"/>
          <Property Name="Text" Value="Menu Screen"/>
@@ -33,7 +33,7 @@
          <Property Name="MousePassThroughEnabled" Value="True"/>
          <Property Name="HorizontalAlignment" Value="Centre"/>
          <Property Name="VerticalAlignment" Value="Bottom"/>
-         <Property Name="Font" Value="DejaVuSans-10"/>
+         <Property Name="Font" Value="Hobo"/>
          <Property Name="AlwaysOnTop" Value="True"/>
          <Property Name="Text" Value="Back"/>
          <Property Name="Action" Value="TRANSITION_BACK"/>
@@ -45,7 +45,7 @@
          <Property Name="UnifiedPosition" Value="{{0.15,0},{-0.05,0}}"/>
          <Property Name="HorizontalAlignment" Value="Centre"/>
          <Property Name="VerticalAlignment" Value="Bottom"/>
-         <Property Name="Font" Value="DejaVuSans-10"/>
+         <Property Name="Font" Value="Hobo"/>
          <Property Name="AlwaysOnTop" Value="True"/>
          <Property Name="Text" Value="Start"/>
          <Property Name="Action" Value="TRANSITION_FORWARD"/>

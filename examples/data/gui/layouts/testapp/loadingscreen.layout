@@ -23,10 +23,10 @@
          <Property Name="HorzFormatting" Value="HorzCentred"/>
          <Property Name="HorizontalAlignment" Value="Centre"/>
          <Property Name="VerticalAlignment" Value="Centre"/>
-         <Property Name="Font" Value="DejaVuSans-10"/>
+         <Property Name="Font" Value="Hobo"/>
          <Property Name="AlwaysOnTop" Value="True"/>
          <Property Name="TextColours" Value="FFFFFFFF"/>
-         <Property Name="Text" Value="Loading..."/>
+         <Property Name="Text" Value="LOADING"/>
       </Window>
         
 	</Window>
