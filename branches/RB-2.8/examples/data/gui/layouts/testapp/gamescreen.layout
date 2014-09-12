@@ -40,30 +40,46 @@
 
          <!-- SCENE CONTROLS -->
          <Window Name="GameScreen_SceneControls" Type="DefaultWindow">
-            <Property Name="UnifiedSize" Value="{{1.0,0},{0.5,0}}"/>
-            <Property Name="UnifiedPosition" Value="{{0.0,0},{0.0,0}}"/>
+            <Property Name="UnifiedSize" Value="{{1.0,-10},{0.5,-5}}"/>
+            <Property Name="UnifiedPosition" Value="{{0.0,5},{0.0,5}}"/>
             <Property Name="ZOrderChangeEnabled" Value="False"/>
             <Property Name="AlwaysOnTop" Value="True"/>
             <Property Name="HorizontalAlignment" Value="Left"/>
             <Property Name="VerticalAlignment" Value="Top"/>
 
-            <!-- LABEL - TIME SPINNER -->
-            <Window Name="GameScreen_TimeSpinnerLabel" Type="WindowsLook/StaticText">
+            <!-- LABEL - SCENE CONTROLS -->
+            <Window Name="GameScreen_SceneControlsLabel" Type="WindowsLook/StaticText">
                <Property Name="UnifiedSize" Value="{{0.5,0},{0.1,0}}"/>
                <Property Name="UnifiedPosition" Value="{{0.0,0},{0.0,0}}"/>
+               <Property Name="ZOrderChangeEnabled" Value="False"/>
+               <Property Name="MousePassThroughEnabled" Value="True"/>
                <Property Name="BackgroundEnabled" Value="False"/>
                <Property Name="FrameEnabled" Value="False"/>
                <Property Name="HorizontalAlignment" Value="Left"/>
-               <Property Name="Font" Value="Hobo"/>
+               <Property Name="Font" Value="DejaVuSans-10"/>
                <Property Name="AlwaysOnTop" Value="True"/>
                <Property Name="TextColours" Value="FFFFFFFF"/>
-               <Property Name="Text" Value="Time"/>
+               <Property Name="Text" Value="Scene Controls"/>
+            </Window>
+
+            <!-- LABEL - TIME SPINNER -->
+            <Window Name="GameScreen_TimeSpinnerLabel" Type="WindowsLook/StaticText">
+               <Property Name="UnifiedSize" Value="{{0.5,0},{0.1,0}}"/>
+               <Property Name="UnifiedPosition" Value="{{0.0,0},{0.1,0}}"/>
+               <Property Name="ZOrderChangeEnabled" Value="False"/>
+               <Property Name="BackgroundEnabled" Value="False"/>
+               <Property Name="FrameEnabled" Value="False"/>
+               <Property Name="HorizontalAlignment" Value="Left"/>
+               <Property Name="Font" Value="DejaVuSans-10"/>
+               <Property Name="AlwaysOnTop" Value="True"/>
+               <Property Name="TextColours" Value="FFFFFFFF"/>
+               <Property Name="Text" Value="Hour Offset"/>
             </Window>
 
             <!-- TIME SPINNER -->
             <Window Name="GameScreen_TimeSpinner" Type="WindowsLook/Spinner">
                <Property Name="UnifiedSize" Value="{{0.5,0},{0.1,0}}"/>
-               <Property Name="UnifiedPosition" Value="{{0.0,0},{0.0,0}}"/>
+               <Property Name="UnifiedPosition" Value="{{0.0,0},{0.1,0}}"/>
                <Property Name="ZOrderChangeEnabled" Value="False"/>
                <Property Name="AlwaysOnTop" Value="True"/>
                <Property Name="HorizontalAlignment" Value="Right"/>
@@ -73,8 +89,8 @@
 
          <!-- CAMERA CONTROLS -->
          <Window Name="GameScreen_CameraControls" Type="DefaultWindow">
-            <Property Name="UnifiedSize" Value="{{1.0,0},{0.5,0}}"/>
-            <Property Name="UnifiedPosition" Value="{{0.0,0},{0.0,0}}"/>
+            <Property Name="UnifiedSize" Value="{{1.0,-10},{0.5,-5}}"/>
+            <Property Name="UnifiedPosition" Value="{{0.0,5},{0.0,-5}}"/>
             <Property Name="ZOrderChangeEnabled" Value="False"/>
             <Property Name="AlwaysOnTop" Value="True"/>
             <Property Name="HorizontalAlignment" Value="Left"/>
@@ -84,13 +100,14 @@
             <Window Name="GameScreen_ActorListLabel" Type="WindowsLook/StaticText">
                <Property Name="UnifiedSize" Value="{{1.0,0},{0.1,0}}"/>
                <Property Name="UnifiedPosition" Value="{{0.0,0},{0.0,0}}"/>
+               <Property Name="ZOrderChangeEnabled" Value="False"/>
                <Property Name="BackgroundEnabled" Value="False"/>
                <Property Name="FrameEnabled" Value="False"/>
                <Property Name="HorizontalAlignment" Value="Left"/>
-               <Property Name="Font" Value="Hobo"/>
+               <Property Name="Font" Value="DejaVuSans-10"/>
                <Property Name="AlwaysOnTop" Value="True"/>
                <Property Name="TextColours" Value="FFFFFFFF"/>
-               <Property Name="Text" Value="Actors"/>
+               <Property Name="Text" Value="Attachable Actors"/>
             </Window>
 
             <!-- ACTOR LIST -->
