@@ -355,10 +355,14 @@ namespace dtCore
    {
       bool operator()(BatchIsector::Hit& hit)
       {
-         bool result = !dtUtil::IsFiniteVec(hit._intersectPoint) || !dtUtil::IsFiniteVec(hit._intersectNormal) || !
-               dtUtil::IsFiniteVec(hit._matrix->getTrans());
+         bool result = !dtUtil::IsFiniteVec(hit._intersectPoint) || !dtUtil::IsFiniteVec(hit._intersectNormal);
+
+         if (!result && hit._matrix.valid())
+         {
+            result = !dtUtil::IsFiniteVec(hit._matrix->getTrans());
+         }
          static bool mNotifiedAboutNAN = false;
-         if (!result && !mNotifiedAboutNAN)
+         if (result && !mNotifiedAboutNAN)
          {
             LOGN_ERROR("batchisector.cpp", "Invalid collision point found in isector.  You only get this error once each time you run the application to avoid spamming the console.");
             mNotifiedAboutNAN = true;
