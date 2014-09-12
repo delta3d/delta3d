@@ -47,6 +47,7 @@
          <Property Name="UnifiedSize" Value="{{0.8,0},{0.095,0}}"/>
          <Property Name="UnifiedPosition" Value="{{-0.025,0},{0.0,0}}"/>
          <Property Name="MousePassThroughEnabled" Value="True"/>
+         <Property Name="ZOrderChangeEnabled" Value="False"/>
          <Property Name="BackgroundEnabled" Value="False"/>
          <Property Name="FrameEnabled" Value="False"/>
          <Property Name="HorzFormatting" Value="RightAligned"/>
@@ -63,6 +64,7 @@
          <Property Name="UnifiedSize" Value="{{0.8,0},{0.095,0}}"/>
          <Property Name="UnifiedPosition" Value="{{0.025,0},{0.0,0}}"/>
          <Property Name="MousePassThroughEnabled" Value="True"/>
+         <Property Name="ZOrderChangeEnabled" Value="False"/>
          <Property Name="BackgroundEnabled" Value="False"/>
          <Property Name="FrameEnabled" Value="False"/>
          <Property Name="HorzFormatting" Value="LeftAligned"/>
