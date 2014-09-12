@@ -600,6 +600,8 @@ namespace dtExample
          dtCore::RefPtr<dtPhysics::CharacterMotionModel> wmm
             = new dtPhysics::CharacterMotionModel(keyboard, mouse, charController, 6.5, 1.5, 2.5, 0.25, true, true);
          wmm->SetScene(scene);
+         wmm->SetUseMouseButtons(true);
+
          motionModel = wmm;
          enableGroundClamper = true;
       }
