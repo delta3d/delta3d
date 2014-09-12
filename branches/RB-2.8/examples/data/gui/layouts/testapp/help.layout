@@ -25,7 +25,7 @@
          <Property Name="Font" Value="DejaVuSans-10"/>
          <Property Name="AlwaysOnTop" Value="True"/>
          <Property Name="TextColours" Value="FFFFFFFF"/>
-         <Property Name="Text" Value="W/A/S/D: Move"/>
+         <Property Name="Text" Value="W/A/S/D/Arrows: Move"/>
       </Window>
 
       <!-- TEXT - 2 -->
@@ -40,7 +40,7 @@
          <Property Name="Font" Value="DejaVuSans-10"/>
          <Property Name="AlwaysOnTop" Value="True"/>
          <Property Name="TextColours" Value="FFFFFFFF"/>
-         <Property Name="Text" Value="Arrows: Move"/>
+         <Property Name="Text" Value="+/-: Adjust Move Speed"/>
       </Window>
 
       <!-- TEXT - 3 -->
@@ -175,7 +175,7 @@
          <Property Name="Font" Value="DejaVuSans-10"/>
          <Property Name="AlwaysOnTop" Value="True"/>
          <Property Name="TextColours" Value="FFFFFFFF"/>
-         <Property Name="Text" Value=".: Control Panel"/>
+         <Property Name="Text" Value="C: Control Panel"/>
       </Window>
         
 	</Window>

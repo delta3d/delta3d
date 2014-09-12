@@ -137,7 +137,7 @@ namespace dtExample
                SendUIToggleMessage(dtExample::UINames::UI_HELP);
                break;
                
-            case '.':
+            case 'c':
                SendUIToggleMessage(dtExample::UINames::UI_CONTROL_PANEL);
                break;
 
