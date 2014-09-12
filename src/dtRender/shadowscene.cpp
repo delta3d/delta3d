@@ -537,6 +537,8 @@ namespace dtRender
 
       if(!mRenderEveryFrame)
       {
+         mBypassTraversal = true;
+
          if(mRenderOnLightChanged)
          {
             mBypassTraversal = !mLightChanged;
