@@ -72,10 +72,13 @@ namespace dtCore
          return;
       }
 
-      const ActorIDActorProperty& prop =
-         static_cast<const ActorIDActorProperty& >(otherProp);
+      const ActorIDActorProperty* prop =
+         static_cast<const ActorIDActorProperty* >(&otherProp);
 
-      SetValue(prop.GetValue());
+      if (prop != NULL)
+      {
+         SetValue(prop->GetValue());
+      }
    }
 
    ////////////////////////////////////////////////////////////////////////////
