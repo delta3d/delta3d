@@ -136,7 +136,7 @@ namespace dtExample
          osg::Vec3 newPos = mCharacterController->GetTranslation();
 
          //is this required?
-         newPos[2] -= 2.5f;
+         newPos[2] -= 0.9;
 
          xform.SetTranslation(newPos);
 
@@ -183,7 +183,7 @@ namespace dtExample
          return;
       }
 
-      dtAI::AIInterfaceActorProxy* aiInterfaceActor = NULL;
+      dtAI::AIInterfaceActor* aiInterfaceActor = NULL;
       dtGame::GameActorProxy* actor = NULL;
       GetOwner(actor);
       if (actor != NULL)
@@ -207,7 +207,7 @@ namespace dtExample
       offset[2] += 2.5f; //so the character is centered at its origin
       xform.SetTranslation(offset);
 
-      dtCore::RefPtr<dtPhysics::Geometry> charShape = dtPhysics::Geometry::CreateCapsuleGeometry(xform, 5.0f, 0.7f, 100.0f);
+      dtCore::RefPtr<dtPhysics::Geometry> charShape = dtPhysics::Geometry::CreateCapsuleGeometry(xform, 1.8f, 0.2f, 100.0f);
       mCharacterController = new dtPhysics::CharacterController(*charShape);
       mCharacterController->SetStepHeight(0.5f);
       mCharacterController->SetSkinWidth(0.04f);
