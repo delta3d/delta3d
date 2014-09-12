@@ -23,6 +23,10 @@ attribute vec4 boneWeights;
 attribute vec4 boneIndices;
 attribute vec4 tangentSpace;
 
+
+void GenerateShadowTexCoords( in vec4 ecPosition );
+
+
 void main(void)
 {
    mat3 inverseView3x3 = mat3(osg_ViewMatrixInverse[0].xyz, osg_ViewMatrixInverse[1].xyz, osg_ViewMatrixInverse[2].xyz);
@@ -72,6 +76,9 @@ void main(void)
    gl_TexCoord[0] = gl_MultiTexCoord0;
    gl_TexCoord[1] = gl_MultiTexCoord1;
    gl_TexCoord[2] = transformedNormal;
+
+   vec4  ecPos  = gl_ModelViewMatrix * transformedPosition;
+   GenerateShadowTexCoords(ecPos);
    
    vNormal = gl_NormalMatrix * normalize(transformedNormal.xyz);
    vTangent = gl_NormalMatrix * normalize(transformedTangent.xyz);

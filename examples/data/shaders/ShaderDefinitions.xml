@@ -27,10 +27,12 @@
       <shader name="MultiMapCharacter" default="yes">
          <source type="Vertex">shaders/base/character.vert</source>
          <source type="Vertex">shaders/base/vertex_functions.vert</source>
+         <source type="Vertex">shaders/shadow/shadow_functions.vert</source>
          <source type="Fragment">shaders/base/fragment_functions.frag</source>
-         <source type="Fragment">shaders/base/character.frag</source>
+         <source type="Fragment">shaders/base/multimap.frag</source>
          <source type="Fragment">shaders/base/multimap_functions.frag</source>
          <source type="Fragment">shaders/lighting/dynamic_light_functions.frag</source>
+         <source type="Fragment">shaders/shadow/shadow_functions.frag</source>
 
          <parameter name="effectScales">
             <!-- 
