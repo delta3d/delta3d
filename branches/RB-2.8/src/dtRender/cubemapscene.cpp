@@ -21,6 +21,7 @@
 
 #include <dtRender/cubemapscene.h>
 #include <dtRender/multipassscene.h>
+#include <dtRender/ephemerisscene.h>
 
 #include <dtUtil/nodemask.h>
 #include <dtUtil/cullmask.h>
@@ -63,8 +64,12 @@ namespace dtRender
    {
    public:
 
-      UpdateCubeMapCameraCallback(dtCore::Transformable& reflector, CameraArray& Cameras)
-         : mReflector(&reflector)
+      UpdateCubeMapCameraCallback(CubeMapScene& scene, SceneManager& sm, dtCore::Transformable& reflector, CameraArray& Cameras)
+         : mLightDir(0.0, 0.0, 0.0)
+         , mCubeMapScene(&scene)
+         , mEphemerisScene(NULL)
+         , mSceneManager(&sm)
+         , mReflector(&reflector)
          , mNearPlane(1.0f)
          , mFarPlane(1000.0f)
          , mCameras(Cameras)
@@ -95,6 +100,33 @@ namespace dtRender
       {
          // first update subgraph to make sure objects are all moved into position
          traverse(node,nv);
+
+         int traversalNumber = nv->getTraversalNumber();
+
+         if(!mEphemerisScene.valid())
+         {
+            mEphemerisScene = dynamic_cast<EphemerisScene*>(mSceneManager->FindSceneByType(*EphemerisScene::EPHEMERIS_SCENE));
+         }
+
+         if(mEphemerisScene.valid())
+         {
+            osg::Vec3 sunPos = mEphemerisScene->GetSunPosition();
+
+            osg::Vec3 lightVector = sunPos;
+            lightVector.normalize();
+
+            float diff = mLightDir * lightVector;
+
+            if(diff < 0.98)
+            {
+               mCubeMapScene->SetLightChanged(true);
+               mLightDir = lightVector;
+            }
+            else
+            {
+               mCubeMapScene->SetLightChanged(false);
+            }
+         }
 
          // compute the position of the center of the reflector subgraph
          dtCore::Transform xform;
@@ -137,12 +169,27 @@ namespace dtRender
             mCameras[i]->setProjectionMatrixAsFrustum(-1.0,1.0,-1.0,1.0,mNearPlane,mFarPlane);
             mCameras[i]->setViewMatrix(viewMatrix);
          }
+
+         mCubeMapScene->SetTraversal(traversalNumber);
+      }
+
+      void SetEnableCameras(bool b)
+      {
+         for(unsigned int i=0; i < 6 && i<mCameras.size();++i)
+         {
+            mCameras[i]->setNodeMask(b ? ~0 : 0);
+         }
+
       }
 
    protected:
 
       virtual ~UpdateCubeMapCameraCallback() {}
-
+      
+      osg::Vec3 mLightDir;
+      dtCore::ObserverPtr<CubeMapScene> mCubeMapScene;
+      dtCore::ObserverPtr<EphemerisScene> mEphemerisScene;
+      dtCore::ObserverPtr<dtRender::SceneManager> mSceneManager;
       dtCore::ObserverPtr<dtCore::Transformable> mReflector;
       
       float mNearPlane;
@@ -181,6 +228,12 @@ namespace dtRender
    , mFarPlane(25000.0)
    , mShowCubeMap(false)
    , mClearColor(0.0f, 0.0f, 0.0f, 0.0f)
+   , mRenderEveryFrame(true)
+   , mRenderOnLightChanged(true)
+   , mTraversalMod(0)
+   , mTraversalNumber(0)
+   , mBypassTraversal(false)
+   , mLightChanged(false)
    , mImpl(new CubemapSceneImpl())
    {
       SetName("CubeMapScene");  
@@ -231,6 +284,7 @@ namespace dtRender
             camera->setClearMask(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
             camera->setClearColor(mClearColor);
             
+            ////DEBUG- just renders cube maps on top of screen
             if(mShowCubeMap)
             {               
                static int startX = 0;
@@ -274,7 +328,9 @@ namespace dtRender
             mImpl->mTarget = sm.GetSceneCamera();
          }
 
-         mImpl->mRootNode->setUpdateCallback(new UpdateCubeMapCameraCallback(*mImpl->mTarget, Cameras));
+         mImpl->mCameraCallback = new UpdateCubeMapCameraCallback(*this, sm, *mImpl->mTarget, Cameras);
+
+         mImpl->mRootNode->setUpdateCallback(mImpl->mCameraCallback.get());
 
          //set default reflection uniform
          osg::StateSet* mainSceneSS = sm.GetOSGNode()->getOrCreateStateSet();
@@ -310,6 +366,31 @@ namespace dtRender
       return *mImpl->mTarget;
    }
 
+   void CubeMapScene::SetTraversal( int num )
+   {
+      if( mTraversalNumber == num)
+         return;
+
+      mTraversalNumber = num;
+
+      if(!mRenderEveryFrame)
+      {
+         mBypassTraversal = true;
+
+         if(mRenderOnLightChanged) 
+         {
+            mBypassTraversal = !mLightChanged;
+         }
+
+         if(num % mTraversalMod == 0)
+         {
+            mBypassTraversal = false;
+         }
+
+         mImpl->mCameraCallback->SetEnableCameras(!mBypassTraversal);
+      }
+    }
+
    CubeMapSceneActor::CubeMapSceneActor()
    {
    }
@@ -332,6 +413,19 @@ namespace dtRender
       DT_REGISTER_PROPERTY_WITH_NAME(FarPlane, "FarPlane", "The far plane to use for the cubemap cameras.", PropRegHelperType, propRegHelper);
       DT_REGISTER_PROPERTY_WITH_NAME(ShowCubeMap, "ShowCubeMap", "A debug setting for rendering the cubemap cameras on screen.", PropRegHelperType, propRegHelper);
       DT_REGISTER_PROPERTY_WITH_NAME(ClearColor, "ClearColor", "The clear color for the cubemap cameras.", PropRegHelperType, propRegHelper);
+
+      DT_REGISTER_PROPERTY_WITH_NAME_AND_LABEL(RenderEveryFrame, "RenderEveryFrame", "Render Every Frame",
+         "Setting this to false allows the shadow rendering to only happen on traversal mod frames.",
+         PropRegHelperType, propRegHelper);
+
+      DT_REGISTER_PROPERTY_WITH_NAME_AND_LABEL(RenderOnLightChanged, "RenderOnLightChanged", "Render On Light Changed",
+         "If it is not rendering every frame, setting this to true forces the shadow rendering to happen when the time changes.",
+         PropRegHelperType, propRegHelper);
+
+      DT_REGISTER_PROPERTY_WITH_NAME_AND_LABEL(TraversalMod, "TraversalMod", "Traversal Mod",
+         "Allows the shadow rendering to only happen on traversal mod frames, must set RenderEveryFrame to false.",
+         PropRegHelperType, propRegHelper);
+
    }
 
    void CubeMapSceneActor::CreateDrawable()

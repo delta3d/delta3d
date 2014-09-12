@@ -71,8 +71,17 @@ namespace dtRender
 
       DT_DECLARE_ACCESSOR_INLINE(osg::Vec4, ClearColor)
 
+      DT_DECLARE_ACCESSOR_INLINE(bool, RenderEveryFrame)
+      DT_DECLARE_ACCESSOR_INLINE(bool, RenderOnLightChanged)
+      DT_DECLARE_ACCESSOR_INLINE(int, TraversalMod)
+
+      void SetTraversal(int num);
 
    private:
+      DT_DECLARE_ACCESSOR_INLINE(int, TraversalNumber)
+      DT_DECLARE_ACCESSOR_INLINE(bool, BypassTraversal)
+      DT_DECLARE_ACCESSOR_INLINE(bool, LightChanged)
+
 
       CubemapSceneImpl* mImpl;
    };
