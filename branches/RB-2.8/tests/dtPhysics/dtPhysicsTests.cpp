@@ -102,8 +102,6 @@ namespace dtPhysics
       CPPUNIT_TEST(testObjectShapeCalcOriginOffsetPerEngine);
       CPPUNIT_TEST(testObjectDeleteWithConstraintsPerEngine);
       CPPUNIT_TEST(testActCompPerEngine);
-      CPPUNIT_TEST(testActCompDeprecatedPropsNoObjectPerEngine);
-      CPPUNIT_TEST(testActCompDeprecatedPropsWithObjectPerEngine);
       CPPUNIT_TEST(testConvexHullCachingPerEngine);
       CPPUNIT_TEST(testComponentPerEngine);
       CPPUNIT_TEST(testCallbacksPerEngine);
@@ -135,8 +133,6 @@ namespace dtPhysics
       void testObjectShapeCalcOriginOffsetPerEngine();
       void testObjectDeleteWithConstraintsPerEngine();
       void testActCompPerEngine();
-      void testActCompDeprecatedPropsNoObjectPerEngine();
-      void testActCompDeprecatedPropsWithObjectPerEngine();
       void testConvexHullCachingPerEngine();
       void testComponentPerEngine();
       void testCallbacksPerEngine();
@@ -167,9 +163,6 @@ namespace dtPhysics
       void testPhysicsObjectDeleteWithConstraints(const std::string& engine);
 
       void testPhysicsActComp(const std::string& engine);
-      void testPhysicsActCompDeprecatedProps(const std::string& engine, bool createObject);
-      void testPhysicsActCompDeprecatedPropsNoObject(const std::string& engine);
-      void testPhysicsActCompDeprecatedPropsWithObject(const std::string& engine);
       void testConvexHullCaching(const std::string& engine);
       void testPhysicsWorld(const std::string& engine);
       void testCallbacks(const std::string& engine);
@@ -484,20 +477,6 @@ namespace dtPhysics
    {
       std::for_each(GetPhysicsEngineList().begin(), GetPhysicsEngineList().end(),
                dtUtil::MakeFunctor(&dtPhysicsTests::testPhysicsActComp, this));
-   }
-
-   /////////////////////////////////////////////////////////
-   void dtPhysicsTests::testActCompDeprecatedPropsNoObjectPerEngine()
-   {
-      std::for_each(GetPhysicsEngineList().begin(), GetPhysicsEngineList().end(),
-               dtUtil::MakeFunctor(&dtPhysicsTests::testPhysicsActCompDeprecatedPropsNoObject, this));
-   }
-
-   /////////////////////////////////////////////////////////
-   void dtPhysicsTests::testActCompDeprecatedPropsWithObjectPerEngine()
-   {
-      std::for_each(GetPhysicsEngineList().begin(), GetPhysicsEngineList().end(),
-               dtUtil::MakeFunctor(&dtPhysicsTests::testPhysicsActCompDeprecatedPropsWithObject, this));
    }
 
    /////////////////////////////////////////////////////////
@@ -1422,66 +1401,6 @@ namespace dtPhysics
 
       testMass(*tehVoodoo);
       testDimensions(*tehVoodoo);
-   }
-
-   /////////////////////////////////////////////////////////
-   void dtPhysicsTests::testPhysicsActCompDeprecatedProps(const std::string& engine, bool createObject)
-   {
-      ChangeEngine(engine);
-      dtCore::RefPtr<PhysicsActComp> testAC = new PhysicsActComp();
-      dtCore::RefPtr<PhysicsObject> po = new PhysicsObject("jojo");
-
-      if (createObject)
-      {
-         testAC->AddPhysicsObject(*po);
-      }
-
-      // just call this to create the properties.
-      testAC->BuildPropertyMap();
-
-      dtCore::RefPtr<dtCore::ActorProperty> tempProp;
-
-      tempProp = testAC->GetDeprecatedProperty("MassForAgeia");
-      CPPUNIT_ASSERT_MESSAGE("A deprecated property should exist for MassForAgeia", tempProp.valid());
-      tempProp->FromString("35.0");
-
-      tempProp = testAC->GetDeprecatedProperty("Collision Group");
-      CPPUNIT_ASSERT_MESSAGE("A deprecated property should exist for Collision Group", tempProp.valid());
-      tempProp->FromString("12");
-
-      tempProp = testAC->GetDeprecatedProperty("Dimensions");
-      CPPUNIT_ASSERT_MESSAGE("A deprecated property should exist for Dimensions", tempProp.valid());
-      tempProp->FromString("1.0 3.5 2.7");
-
-      tempProp = testAC->GetDeprecatedProperty("IsActorKinematic");
-      CPPUNIT_ASSERT_MESSAGE("A deprecated property should exist for IsActorKinematic", tempProp.valid());
-      tempProp->FromString("true");
-
-      if (createObject)
-      {
-         CPPUNIT_ASSERT_DOUBLES_EQUAL(35.0f, po->GetMass(), 0.1f);
-         CPPUNIT_ASSERT_EQUAL(12, po->GetCollisionGroup());
-         CPPUNIT_ASSERT(dtUtil::Equivalent(osg::Vec3(1.0f, 3.5f, 2.7f), po->GetExtents(), 0.1f));
-         CPPUNIT_ASSERT_EQUAL(MechanicsType::KINEMATIC, po->GetMechanicsType());
-      }
-      else
-      {
-         CPPUNIT_ASSERT_DOUBLES_EQUAL(35.0f, testAC->GetMass(), 0.1f);
-         CPPUNIT_ASSERT_EQUAL(12, testAC->GetDefaultCollisionGroup());
-         CPPUNIT_ASSERT(dtUtil::Equivalent(osg::Vec3(1.0f, 3.5f, 2.7f), testAC->GetDimensions(), 0.1f));
-      }
-   }
-
-   /////////////////////////////////////////////////////////
-   void dtPhysicsTests::testPhysicsActCompDeprecatedPropsNoObject(const std::string& engine)
-   {
-      testPhysicsActCompDeprecatedProps(engine, false);
-   }
-
-   /////////////////////////////////////////////////////////
-   void dtPhysicsTests::testPhysicsActCompDeprecatedPropsWithObject(const std::string& engine)
-   {
-      testPhysicsActCompDeprecatedProps(engine, true);
    }
 
    /////////////////////////////////////////////////////////
