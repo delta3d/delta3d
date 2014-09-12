@@ -54,6 +54,8 @@ namespace dtExample
       static const int TEST_APP_MESSAGE_TYPE_ID = 2048;
 
       static const TestAppMessageType MOTION_MODEL_CHANGED;
+      static const TestAppMessageType REQUEST_ATTACH;
+      static const TestAppMessageType REQUEST_TIME_OFFSET;
       static const TestAppMessageType UI_TOGGLE;
       static const TestAppMessageType UI_SHOW;
       static const TestAppMessageType UI_HIDE;

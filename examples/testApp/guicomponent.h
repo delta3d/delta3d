@@ -61,6 +61,7 @@ namespace dtCore
 }
 
 typedef CEGUI::PushButton GuiButton;
+typedef CEGUI::Spinner GuiSpinner;
 typedef CEGUI::EventArgs GuiEventArgs;
 
 
@@ -77,6 +78,7 @@ namespace dtExample
    class TEST_APP_EXPORT GuiComponent : public dtGame::GMComponent
    {
       public:
+         static const dtUtil::RefString SPINNER_TYPE;
          static const dtUtil::RefString BUTTON_TYPE;
          static const dtUtil::RefString BUTTON_PROPERTY_ACTION;
          static const dtUtil::RefString BUTTON_PROPERTY_TYPE;
@@ -108,21 +110,33 @@ namespace dtExample
 
          void Update(float simTimeDelta, float realTimeDelta);
 
+         void UpdateActorList(GuiScreen& screen);
+
       protected:
 
          virtual ~GuiComponent();
 
          bool RegisterScreenWithState(GuiScreen& screen, const dtGame::GameStateType& gameStateType);
    
-         void BindButtons(GuiNode& rootWindow);
+         void BindControls(GuiNode& rootWindow);
    
          void BindButton(GuiButton& button);
+
+         void BindSpinner(GuiSpinner& spinner);
    
-         const GuiNode* GetWidgetFromEventArgs( const GuiEventArgs& args ) const;
+         const GuiNode* GetWidgetFromEventArgs(const GuiEventArgs& args) const;
    
-         bool OnButtonClicked( const GuiEventArgs& args );
-   
+         bool OnButtonClicked(const GuiEventArgs& args);
+
+         bool OnListItemClicked(const GuiEventArgs& args);
+
+         bool OnSpinnerChanged(const GuiEventArgs& args);
+
          void HandleButton(const GuiNode& button);
+
+         void SendRequestTimeOffsetMessage(float offset);
+
+         void SendRequestAttachMessage(const std::string& actorName);
 
       private:
 

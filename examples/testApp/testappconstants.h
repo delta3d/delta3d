@@ -45,6 +45,7 @@ namespace dtExample
    {
    public:
       static const dtUtil::RefString UI_HELP;
+      static const dtUtil::RefString UI_CONTROL_PANEL;
 
    private:
       UINames() {}
@@ -60,7 +61,6 @@ namespace dtExample
       typedef dtUtil::Enumeration BaseClass;
 
       static MotionModelType NONE;
-      static MotionModelType COLLISION;
       static MotionModelType FLY;
       static MotionModelType FPS;
       static MotionModelType ORBIT;
