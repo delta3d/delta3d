@@ -141,6 +141,11 @@ class DT_RENDER_EXPORT ParallelSplitShadowMap :  public osgShadow::ShadowTechniq
         /** get split calculation mode */
         inline SplitCalcMode getSplitCalculationMode() const { return _SplitCalcMode; }
 
+        void setEnableTraversal(bool b);
+        bool getEnableTraversal() const;
+
+        void setRenderEveryFrame(bool b);
+        bool getRenderEveryFrame() const;
 
     protected :
 
@@ -178,6 +183,7 @@ class DT_RENDER_EXPORT ParallelSplitShadowMap :  public osgShadow::ShadowTechniq
             unsigned int                      _resolution;
 
             osg::Uniform*                    _farDistanceSplit;
+
         };
 
         typedef std::map<unsigned int,PSSMShadowSplitTexture> PSSMShadowSplitTextureMap;
@@ -219,6 +225,8 @@ class DT_RENDER_EXPORT ParallelSplitShadowMap :  public osgShadow::ShadowTechniq
         osg::Uniform*   _ambientBiasUniform;
         osg::Vec2       _ambientBias;
 
+        bool                             _enableTraversal;
+        bool                             _renderEveryFrame;
 };
 }
 #endif

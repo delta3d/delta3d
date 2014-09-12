@@ -116,8 +116,17 @@ namespace dtRender
       void SetShadowEffectsScalar(float f);
       float GetShadowEffectsScalar() const;
 
-   private:
+      DT_DECLARE_ACCESSOR_INLINE(bool, RenderEveryFrame)
+      DT_DECLARE_ACCESSOR_INLINE(bool, RenderOnLightChanged)
+      DT_DECLARE_ACCESSOR_INLINE(int, TraversalMod)
+
+      void SetTraversal(int num);
       
+   private:
+      DT_DECLARE_ACCESSOR_INLINE(int, TraversalNumber)
+      DT_DECLARE_ACCESSOR_INLINE(bool, BypassTraversal)
+      DT_DECLARE_ACCESSOR_INLINE(bool, LightChanged)
+
       void SetShadowMap();
       osgShadow::ShadowTechnique* GetBasicShadowMap(int shadowRes);
       osgShadow::ShadowTechnique* GetLightSpacePerspectiveShadowMap(int shadowRes);

@@ -95,7 +95,8 @@ namespace dtRender
    public:
 
       UpdateShadowLightCallback(SceneManager* sm, ShadowScene* ss)
-         : mSceneManager(sm)
+         : mLightDir(0.0, 0.0, 0.0)
+         , mSceneManager(sm)
          , mEphemerisScene(NULL)
          , mShadowScene(ss)
       {
@@ -116,11 +117,24 @@ namespace dtRender
          {
             osg::Vec3 up (0.0, 0.0, 1.0);
             float shadowScalar = 1.0f;
+            osg::Vec3 sunPos = mEphemerisScene->GetSunPosition();
 
-            osg::Vec3 lightDir =  mEphemerisScene->GetSunPosition();
+            osg::Vec3 lightDir =  sunPos;
 
             osg::Vec3 lightVector = lightDir;
             lightVector.normalize();
+
+            float diff = mLightDir * lightVector;
+
+            if(diff < 0.9999)
+            {
+               mShadowScene->SetLightChanged(true);
+               mLightDir = lightVector;
+            }
+            else
+            {
+               mShadowScene->SetLightChanged(false);
+            }         
 
             float lightDotUp = lightVector * up;
             if (lightDotUp < 0.0)
@@ -172,7 +186,8 @@ namespace dtRender
 
             mShadowScene->GetLightSource()->getLight()->setDirection(lightDir);
          
-            
+
+            mShadowScene->SetTraversal(nv->getTraversalNumber());
          }
 
       }
@@ -181,6 +196,7 @@ namespace dtRender
 
       virtual ~UpdateShadowLightCallback() {}
 
+      osg::Vec3 mLightDir;
       dtCore::ObserverPtr<dtRender::SceneManager> mSceneManager;            
       dtCore::ObserverPtr<dtRender::EphemerisScene> mEphemerisScene;            
       dtCore::ObserverPtr<dtRender::ShadowScene> mShadowScene;            
@@ -224,6 +240,11 @@ namespace dtRender
    , mMinNearDistance(1.0f)
    , mMaxFarDistance(1000.0f)
    , mUseShadowEffectScalar(true)
+   , mRenderEveryFrame(true)
+   , mRenderOnLightChanged(true)
+   , mTraversalMod(0)
+   , mTraversalNumber(0)
+   , mBypassTraversal(false)
    , mImpl(new ShadowSceneImpl())
    {
       SetName("ShadowScene");
@@ -507,6 +528,46 @@ namespace dtRender
       return result;
    }
 
+   void ShadowScene::SetTraversal( int num )
+   {
+      if( mTraversalNumber == num)
+         return;
+
+      mTraversalNumber = num;
+
+      if(!mRenderEveryFrame)
+      {
+         if(mRenderOnLightChanged)
+         {
+            mBypassTraversal = !mLightChanged;
+         }
+
+         if(num % mTraversalMod == 0)
+         {
+            mBypassTraversal = false;
+         }
+
+         if(mShadowMapType.get() == &ShadowMapType::PSSM)
+         {
+            dtRender::ParallelSplitShadowMap* shadowMap = dynamic_cast<dtRender::ParallelSplitShadowMap*>(mImpl->mNode->getShadowTechnique());
+            if(shadowMap != NULL)
+            {
+               shadowMap->setEnableTraversal(!mBypassTraversal);
+            }
+            else
+            {
+               LOG_ERROR("Invalid shadow technique.");
+            }
+         }
+          else
+          {
+             LOG_DEBUG("Bypassing shadow traversal is currently only supported by PSSM shadows.");
+          }
+
+      }
+   }
+
+
    ShadowSceneActor::ShadowSceneActor()
    {
    }
@@ -559,6 +620,19 @@ namespace dtRender
       DT_REGISTER_PROPERTY_WITH_NAME_AND_LABEL(UseShadowEffectScalar, "UseShadowEffectScalar", "UseShadowEffectScalar",
          "This option scales the effect of the shadow map based on the sun, moon, and how shallow the angle to surface is.",
          PropRegHelperType, propRegHelper);
+
+      DT_REGISTER_PROPERTY_WITH_NAME_AND_LABEL(RenderEveryFrame, "RenderEveryFrame", "Render Every Frame",
+         "Setting this to false allows the shadow rendering to only happen on traversal mod frames.",
+         PropRegHelperType, propRegHelper);
+
+      DT_REGISTER_PROPERTY_WITH_NAME_AND_LABEL(RenderOnLightChanged, "RenderOnLightChanged", "Render On Light Changed",
+         "If it is not rendering every frame, setting this to true forces the shadow rendering to happen when the time changes.",
+         PropRegHelperType, propRegHelper);
+
+      DT_REGISTER_PROPERTY_WITH_NAME_AND_LABEL(TraversalMod, "TraversalMod", "Traversal Mod",
+         "Allows the shadow rendering to only happen on traversal mod frames, must set RenderEveryFrame to false.",
+         PropRegHelperType, propRegHelper);
+
    }
 
    void ShadowSceneActor::CreateDrawable()

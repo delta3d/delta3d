@@ -33,6 +33,7 @@
 
 #include <osgShadow/ShadowedScene>
 #include <osg/Notify>
+#include <osg/Matrixd>
 #include <osg/ComputeBoundsVisitor>
 #include <osg/PolygonOffset>
 #include <osg/CullFace>
@@ -294,7 +295,9 @@ namespace dtRender
        _userLight(NULL),
        _GLSL_shadow_filtered(true),
        _ambientBiasUniform(NULL),
-       _ambientBias(0.1f,0.3f)
+       _ambientBias(0.1f,0.3f),
+       _enableTraversal(true),
+       _renderEveryFrame(true)
    {
        _displayTexturesGroupingNode = gr;
        _number_of_splits = icountplanes;
@@ -620,12 +623,21 @@ namespace dtRender
 
    void ParallelSplitShadowMap::update(osg::NodeVisitor& nv){
        getShadowedScene()->osg::Group::traverse(nv);
+
    }
 
    void ParallelSplitShadowMap::cull(osgUtil::CullVisitor& cv){
-       // record the traversal mask on entry so we can reapply it later.
+      
+      // record the traversal mask on entry so we can reapply it later.
        unsigned int traversalMask = cv.getTraversalMask();
        osgUtil::RenderStage* orig_rs = cv.getRenderStage();
+
+       static dtCore::RefPtr<osg::RefMatrix> modelView;
+
+       if(_enableTraversal)
+       {
+          modelView = cv.getModelViewMatrix();
+       }
 
    #ifdef SHADOW_TEXTURE_GLSL
        PSSMShadowSplitTextureMap::iterator it=_PSSMShadowSplitTextureMap.begin();
@@ -650,11 +662,14 @@ namespace dtRender
 
        }
 
-       // need to compute view frustum for RTT camera.
-       // get the bounds of the model.
-       osg::ComputeBoundsVisitor cbbv(osg::NodeVisitor::TRAVERSE_ACTIVE_CHILDREN);
-       cbbv.setTraversalMask(getShadowedScene()->getCastsShadowTraversalMask());
-       _shadowedScene->osg::Group::traverse(cbbv);
+       if(_enableTraversal)
+       {
+          // need to compute view frustum for RTT camera.
+          // get the bounds of the model.
+          osg::ComputeBoundsVisitor cbbv(osg::NodeVisitor::TRAVERSE_ACTIVE_CHILDREN);
+          cbbv.setTraversalMask(getShadowedScene()->getCastsShadowTraversalMask());
+          _shadowedScene->osg::Group::traverse(cbbv);
+       }
 
        //////////////////////////////////////////////////////////////////////////
        const osg::Light* selectLight = 0;
@@ -705,86 +720,95 @@ namespace dtRender
            {
                PSSMShadowSplitTexture pssmShadowSplitTexture = it->second;
 
+               if(_enableTraversal)
+               {
+                  //////////////////////////////////////////////////////////////////////////
+                  // SETUP pssmShadowSplitTexture for rendering
+                  //
+                  lightDirection.normalize();
+                  pssmShadowSplitTexture._lightDirection = lightDirection;
+                  pssmShadowSplitTexture._cameraView    = cv.getRenderInfo().getView()->getCamera()->getViewMatrix();
+                  pssmShadowSplitTexture._cameraProj    = cv.getRenderInfo().getView()->getCamera()->getProjectionMatrix();
 
-               //////////////////////////////////////////////////////////////////////////
-               // SETUP pssmShadowSplitTexture for rendering
-               //
-               lightDirection.normalize();
-               pssmShadowSplitTexture._lightDirection = lightDirection;
-               pssmShadowSplitTexture._cameraView    = cv.getRenderInfo().getView()->getCamera()->getViewMatrix();
-               pssmShadowSplitTexture._cameraProj    = cv.getRenderInfo().getView()->getCamera()->getProjectionMatrix();
+                  //////////////////////////////////////////////////////////////////////////
+                  // CALCULATE
 
-               //////////////////////////////////////////////////////////////////////////
-               // CALCULATE
+                  // Calculate corner points of frustum split
+                  //
+                  // To avoid edge problems, scale the frustum so
+                  // that it's at least a few pixels larger
+                  //
+                  osg::Vec3d pCorners[8];
+                  calculateFrustumCorners(pssmShadowSplitTexture,pCorners);
 
+                  // Init Light (Directional Light)
+                  //
+                  calculateLightInitialPosition(pssmShadowSplitTexture,pCorners);
 
+                  // Calculate near and far for light view
+                  //
+                  calculateLightNearFarFormFrustum(pssmShadowSplitTexture,pCorners);
 
-               // Calculate corner points of frustum split
-               //
-               // To avoid edge problems, scale the frustum so
-               // that it's at least a few pixels larger
-               //
-               osg::Vec3d pCorners[8];
-               calculateFrustumCorners(pssmShadowSplitTexture,pCorners);
+                  // Calculate view and projection matrices
+                  //
+                  calculateLightViewProjectionFormFrustum(pssmShadowSplitTexture,pCorners);
 
-               // Init Light (Directional Light)
-               //
-               calculateLightInitialPosition(pssmShadowSplitTexture,pCorners);
+                  //////////////////////////////////////////////////////////////////////////
+                  // set up shadow rendering camera
+                  pssmShadowSplitTexture._camera->setReferenceFrame(osg::Camera::ABSOLUTE_RF);
 
-               // Calculate near and far for light view
-               //
-               calculateLightNearFarFormFrustum(pssmShadowSplitTexture,pCorners);
+                  //////////////////////////////////////////////////////////////////////////
+                  // DEBUG
+                  if ( _displayTexturesGroupingNode ) {
+                      pssmShadowSplitTexture._debug_camera->setViewMatrix(pssmShadowSplitTexture._camera->getViewMatrix());
+                      pssmShadowSplitTexture._debug_camera->setProjectionMatrix(pssmShadowSplitTexture._camera->getProjectionMatrix());
+                      pssmShadowSplitTexture._debug_camera->setReferenceFrame(osg::Camera::ABSOLUTE_RF);
+                  }
 
-               // Calculate view and projection matrices
-               //
-               calculateLightViewProjectionFormFrustum(pssmShadowSplitTexture,pCorners);
+                  //////////////////////////////////////////////////////////////////////////
+                  // compute the matrix which takes a vertex from local coords into tex coords
+                  // will use this later to specify osg::TexGen..
+               
+                  osg::Matrix MVPT = pssmShadowSplitTexture._camera->getViewMatrix() *
+                        pssmShadowSplitTexture._camera->getProjectionMatrix() *
+                        osg::Matrix::translate(1.0,1.0,1.0) *
+                        osg::Matrix::scale(0.5,0.5,0.5);
 
-               //////////////////////////////////////////////////////////////////////////
-               // set up shadow rendering camera
-               pssmShadowSplitTexture._camera->setReferenceFrame(osg::Camera::ABSOLUTE_RF);
+                  pssmShadowSplitTexture._texgen->setMode(osg::TexGen::EYE_LINEAR);
+                  pssmShadowSplitTexture._texgen->setPlanesFromMatrix(MVPT);
+                  //////////////////////////////////////////////////////////////////////////
+               
 
-               //////////////////////////////////////////////////////////////////////////
-               // DEBUG
-               if ( _displayTexturesGroupingNode ) {
-                   pssmShadowSplitTexture._debug_camera->setViewMatrix(pssmShadowSplitTexture._camera->getViewMatrix());
-                   pssmShadowSplitTexture._debug_camera->setProjectionMatrix(pssmShadowSplitTexture._camera->getProjectionMatrix());
-                   pssmShadowSplitTexture._debug_camera->setReferenceFrame(osg::Camera::ABSOLUTE_RF);
+                  //////////////////////////////////////////////////////////////////////////               
+                  // do RTT camera traversal
+                  cv.setTraversalMask( traversalMask & getShadowedScene()->getCastsShadowTraversalMask() );
+
+                  pssmShadowSplitTexture._camera->accept(cv);
+               
+
+                  //////////////////////////////////////////////////////////////////////////
+                  // DEBUG
+                  if ( _displayTexturesGroupingNode ) {
+                      pssmShadowSplitTexture._debug_camera->accept(cv);
+                  }
+
+                  orig_rs->getPositionalStateContainer()->addPositionedTextureAttribute(pssmShadowSplitTexture._textureUnit, cv.getModelViewMatrix(), pssmShadowSplitTexture._texgen.get());
                }
+               else
+               {
+                  osg::Matrix MVPT = pssmShadowSplitTexture._camera->getViewMatrix() *
+                     pssmShadowSplitTexture._camera->getProjectionMatrix() *
+                     osg::Matrix::translate(1.0,1.0,1.0) *
+                     osg::Matrix::scale(0.5,0.5,0.5);
 
-               //////////////////////////////////////////////////////////////////////////
-               // compute the matrix which takes a vertex from local coords into tex coords
-               // will use this later to specify osg::TexGen..
+                  pssmShadowSplitTexture._texgen->setMode(osg::TexGen::EYE_LINEAR);
+                  pssmShadowSplitTexture._texgen->setPlanesFromMatrix(MVPT);
 
-               osg::Matrix MVPT = pssmShadowSplitTexture._camera->getViewMatrix() *
-                   pssmShadowSplitTexture._camera->getProjectionMatrix() *
-                   osg::Matrix::translate(1.0,1.0,1.0) *
-                   osg::Matrix::scale(0.5,0.5,0.5);
-
-               pssmShadowSplitTexture._texgen->setMode(osg::TexGen::EYE_LINEAR);
-               pssmShadowSplitTexture._texgen->setPlanesFromMatrix(MVPT);
-               //////////////////////////////////////////////////////////////////////////
-
-
-               //////////////////////////////////////////////////////////////////////////
-               cv.setTraversalMask( traversalMask & getShadowedScene()->getCastsShadowTraversalMask() );
-
-               // do RTT camera traversal
-               pssmShadowSplitTexture._camera->accept(cv);
-
-               //////////////////////////////////////////////////////////////////////////
-               // DEBUG
-               if ( _displayTexturesGroupingNode ) {
-                   pssmShadowSplitTexture._debug_camera->accept(cv);
+                  orig_rs->getPositionalStateContainer()->addPositionedTextureAttribute(pssmShadowSplitTexture._textureUnit, cv.getModelViewMatrix(), pssmShadowSplitTexture._texgen.get());
                }
-
-
-               orig_rs->getPositionalStateContainer()->addPositionedTextureAttribute(pssmShadowSplitTexture._textureUnit, cv.getModelViewMatrix(), pssmShadowSplitTexture._texgen.get());
-
 
            }
        } // if light
-
-
 
        // reapply the original traversal mask
        cv.setTraversalMask( traversalMask );
@@ -999,6 +1023,30 @@ namespace dtRender
 
 
    }
+
+   void ParallelSplitShadowMap::setEnableTraversal( bool b )
+   {
+      _enableTraversal = b;
+   }
+
+   bool ParallelSplitShadowMap::getEnableTraversal() const
+   {
+      return _enableTraversal;
+   }
+
+   void ParallelSplitShadowMap::setRenderEveryFrame( bool b )
+   {
+      _renderEveryFrame = b;
+   }
+
+   bool ParallelSplitShadowMap::getRenderEveryFrame() const
+   {
+      return _renderEveryFrame;
+   }
+
+
+
+
 
 }//namespace dtRender
 

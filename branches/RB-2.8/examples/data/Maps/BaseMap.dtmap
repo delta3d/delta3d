@@ -7,7 +7,7 @@
         <comment></comment>
         <copyright></copyright>
         <createTimestamp>2014-07-29T11:17:35-05:00</createTimestamp>
-        <lastUpdateTimestamp>2014-09-11T22:04:43-05:00</lastUpdateTimestamp>
+        <lastUpdateTimestamp>2014-09-12T16:01:54-05:00</lastUpdateTimestamp>
         <editorVersion>2.8.0</editorVersion>
         <schemaVersion>1.0</schemaVersion>
     </header>
@@ -86,12 +86,16 @@
                 <enumerated>SR_HIGH</enumerated>
             </property>
             <property>
-                <name>NumPSSMSplits</name>
-                <integer>2</integer>
+                <name>MaxFarDistance</name>
+                <float>750</float>
             </property>
             <property>
-                <name>MaxFarDistance</name>
-                <float>500</float>
+                <name>RenderEveryFrame</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>TraversalMod</name>
+                <integer>300</integer>
             </property>
         </actor>
         <actor>
