@@ -135,7 +135,7 @@ namespace dtRender
                {
                   lightDir = up * 1000000.0;
                
-                  shadowScalar = dtUtil::MapRangeValue<float>(lightDotUp, 0.0f, 0.2f, 0.3f, 0.5f);
+                  shadowScalar = dtUtil::MapRangeValue<float>(lightDotUp, 0.0f, 0.2f, 0.5f, 1.0f);
                }
                else
                {
@@ -145,7 +145,7 @@ namespace dtRender
             else if(lightDotUp < 0.2)
             {
                //this might be a problem if the light was never set?
-               shadowScalar = 0.7f * dtUtil::Max(0.0f, dtUtil::MapRangeValue<float>(lightDotUp, 0.0f, 0.2f, 0.3f, 1.0f));
+               shadowScalar = 0.7f * dtUtil::Max(0.0f, dtUtil::MapRangeValue<float>(lightDotUp, 0.0f, 0.1f, 0.5f, 1.0f));
                
                if(mShadowScene->GetUseShadowEffectScalar())
                {
@@ -157,7 +157,7 @@ namespace dtRender
                         
             shadowScalar *= 0.7f;
 
-            shadowScalar = dtUtil::Max(0.0f, shadowScalar);
+            shadowScalar = dtUtil::Max(0.3f, shadowScalar);
 
             if(mShadowScene->GetUseShadowEffectScalar())
             {
