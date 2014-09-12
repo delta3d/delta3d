@@ -34,7 +34,6 @@
 
 #include <dtABC/application.h>
 #include <dtCore/camera.h>
-#include <dtCore/collisionmotionmodel.h>
 #include <dtCore/flymotionmodel.h>
 #include <dtCore/fpsmotionmodel.h>
 #include <dtCore/orbitmotionmodel.h>
@@ -42,7 +41,6 @@
 #include <dtCore/system.h>
 #include <dtCore/transform.h>
 #include <dtCore/ufomotionmodel.h>
-//#include <dtCore/walkmotionmodel.h>
 
 #include <dtPhysics/geometry.h>
 #include <dtPhysics/charactercontroller.h>
@@ -91,8 +89,11 @@ namespace dtExample
    ////////////////////////////////////////////////////////////////////////
    InputComponent::InputComponent()
       : BaseClass(DEFAULT_NAME)
+      , mTimeOffset(0.0f)
       , mClampCameraEnabled(false)
+      , mMotionModelsEnabled(false)
       , mMotionModelMode(&dtExample::MotionModelType::NONE)
+      , mMotionModelMode_Previous(&dtExample::MotionModelType::NONE)
       , mMotionModel(NULL)
       , mCamera(NULL)
       , mCameraPivot(NULL)
@@ -114,124 +115,99 @@ namespace dtExample
    bool InputComponent::HandleKeyPressed(const dtCore::Keyboard* keyBoard, int key)
    {
       std::ostringstream ss;
-      bool handled = true;
 
-      switch (key)
+      bool handled = HandleMotionModelKey(key);
+
+      if ( ! handled)
       {
-         // --- Motion Model Section --- //
-         case '1':
-            SetMotionModel(MotionModelType::WALK);
-            break;
-         case '2':
-            SetMotionModel(MotionModelType::FLY);
-            break;
-         case '3':
-            SetMotionModel(MotionModelType::UFO);
-            break;
-         case '4':
-            SetMotionModel(MotionModelType::ORBIT);
-            break;
-         case '5':
-            SetMotionModel(MotionModelType::FPS);
-            break;
-         case '6':
-            SetMotionModel(MotionModelType::COLLISION);
-            break;
-         case '7':
-            SetMotionModel(MotionModelType::RTS);
-            break;
-
-         // --- Menu Navigation Keys Section --- //
-         case osgGA::GUIEventAdapter::KEY_Escape:
-            SendTransitionMessage(dtExample::Transition::TRANSITION_BACK);
-            break;
-            
-         case osgGA::GUIEventAdapter::KEY_Return:
-            SendTransitionMessage(dtExample::Transition::TRANSITION_FORWARD);
-            break;
-            
-         case osgGA::GUIEventAdapter::KEY_F1:
-         case 'h':
-            SendUIToggleMessage(dtExample::UINames::UI_HELP);
-            break;
-
-         // --- Character Control Section --- //
-         case 'w':
-         case 'a':
-         case 's':
-         case 'd':
+         switch (key)
          {
-            // Do nothing.
-         }
-         break;
+            // --- Menu Navigation Keys Section --- //
+            case osgGA::GUIEventAdapter::KEY_Escape:
+               SendTransitionMessage(dtExample::Transition::TRANSITION_BACK);
+               break;
+               
+            case osgGA::GUIEventAdapter::KEY_Return:
+               SendTransitionMessage(dtExample::Transition::TRANSITION_FORWARD);
+               break;
+               
+            case osgGA::GUIEventAdapter::KEY_F1:
+            case 'h':
+               SendUIToggleMessage(dtExample::UINames::UI_HELP);
+               break;
+               
+            case '.':
+               SendUIToggleMessage(dtExample::UINames::UI_CONTROL_PANEL);
+               break;
 
-         // --- Control Adjustment Section --- //
-         case '0':
-         {
-            dtRender::SceneManager* sm = dynamic_cast<dtRender::SceneManager*>(GetGameManager()->GetEnvironmentActor()->GetDrawable());
-
-            if(sm != NULL)
+            // --- Control Adjustment Section --- //
+            case '0':
             {
+               dtRender::SceneManager* sm = dynamic_cast<dtRender::SceneManager*>(GetGameManager()->GetEnvironmentActor()->GetDrawable());
 
-               dtRender::EphemerisScene* eph = dynamic_cast<dtRender::EphemerisScene*>(sm->FindSceneByType(*dtRender::EphemerisScene::EPHEMERIS_SCENE));
-               if(eph != NULL)
+               if(sm != NULL)
                {
-                  eph->SetTimeFromSystem();
+
+                  dtRender::EphemerisScene* eph = dynamic_cast<dtRender::EphemerisScene*>(sm->FindSceneByType(*dtRender::EphemerisScene::EPHEMERIS_SCENE));
+                  if(eph != NULL)
+                  {
+                     eph->SetTimeFromSystem();
+                  }
                }
             }
-         }
-         break;
+            break;
 
-         case '\\':
-         case '|':
-         {
-            GetGameManager()->GetApplication().SetNextStatisticsType();
-         }
-         break;
-         case '-':
-         case osgGA::GUIEventAdapter::KEY_KP_Subtract:
-         {
-            IncrementTime(-200.0f);
-         }
-         break;
-
-         case osgGA::GUIEventAdapter::KEY_KP_Add:
-         case '=':
-         case '+':
-         {
-            IncrementTime(200.0f);
-         }
-         break;
-
-         case 'p':
-         {
-            dtCore::ShaderManager::GetInstance().ReloadAndReassignShaderDefinitions("shaders/ShaderDefinitions.xml");
-         }
-         break;
-         case 'P':
-         {
-            dtPhysics::PhysicsComponent* physComp = NULL;
-            GetGameManager()->GetComponentByName(dtPhysics::PhysicsComponent::DEFAULT_NAME, physComp);
-            if (physComp != NULL)
+            case '\\':
+            case '|':
             {
-               physComp->SetNextDebugDrawMode();
+               GetGameManager()->GetApplication().SetNextStatisticsType();
             }
-         }
-         break;
-#if defined(USE_INSPECTOR)
-         case '`':
-         {
-            mInspector->SetVisible(true);
-            return true;
-         }
-#endif
+            break;
+            case '-':
+            case osgGA::GUIEventAdapter::KEY_KP_Subtract:
+            {
+               IncrementTime(-200.0f);
+            }
+            break;
 
-         default:
-         {
-            handled = false;
-         }
-         break;
-      };
+            case osgGA::GUIEventAdapter::KEY_KP_Add:
+            case '=':
+            case '+':
+            {
+               IncrementTime(200.0f);
+            }
+            break;
+
+            case 'p':
+            {
+               dtCore::ShaderManager::GetInstance().ReloadAndReassignShaderDefinitions("shaders/ShaderDefinitions.xml");
+            }
+            break;
+            case 'P':
+            {
+               dtPhysics::PhysicsComponent* physComp = NULL;
+               GetGameManager()->GetComponentByName(dtPhysics::PhysicsComponent::DEFAULT_NAME, physComp);
+               if (physComp != NULL)
+               {
+                  physComp->SetNextDebugDrawMode();
+               }
+            }
+            break;
+   #if defined(USE_INSPECTOR)
+            case '`':
+            {
+               mInspector->SetVisible(true);
+               return true;
+            }
+   #endif
+
+            default:
+            {
+               handled = false;
+            }
+            break;
+         };
+      }
 
       if (!handled)
       {
@@ -260,6 +236,79 @@ namespace dtExample
 
       return handled ? handled : dtGame::BaseInputComponent::HandleKeyReleased(keyboard, key);
    }
+   
+   ////////////////////////////////////////////////////////////////////////
+   bool InputComponent::HandleMotionModelKey(int key)
+   {
+      bool handled = false;
+
+      if (mMotionModelsEnabled)
+      {
+         switch (key)
+         {
+         // --- Motion Model Section --- //
+         case '1':
+            SetMotionModel(MotionModelType::WALK);
+            handled = true;
+            break;
+         case '2':
+            SetMotionModel(MotionModelType::FLY);
+            handled = true;
+            break;
+         case '3':
+            SetMotionModel(MotionModelType::UFO);
+            handled = true;
+            break;
+         case '4':
+            SetMotionModel(MotionModelType::ORBIT);
+            handled = true;
+            break;
+         case '5':
+            SetMotionModel(MotionModelType::FPS);
+            handled = true;
+            break;
+         case '6':
+            SetMotionModel(MotionModelType::RTS);
+            handled = true;
+            break;
+         default:
+            break;
+         }
+      }
+
+      return handled;
+   }
+
+   ////////////////////////////////////////////////////////////////////////
+   void InputComponent::HandleGameStateChange(
+      dtGame::GameState::Type& newState, dtGame::GameState::Type& oldState)
+   {
+      bool isRunningState = &newState == &TestAppGameState::STATE_GAME;
+
+      if (isRunningState != mMotionModelsEnabled)
+      {
+         // Enable motion models only for a paused/non-action state.
+         mMotionModelsEnabled = isRunningState;
+
+         const MotionModelType* newMode = &dtExample::MotionModelType::NONE;
+
+         if (mMotionModelsEnabled)
+         {
+            newMode = mMotionModelMode_Previous;
+
+            if (newMode == &MotionModelType::NONE)
+            {
+               newMode = &MotionModelType::FLY;
+            }
+         }
+         else
+         {
+            mMotionModelMode_Previous = mMotionModelMode;
+         }
+
+         SetMotionModel(*newMode);
+      }
+   }
 
    ////////////////////////////////////////////////////////////////////////
    void InputComponent::ProcessMessage(const dtGame::Message& message)
@@ -275,12 +324,41 @@ namespace dtExample
          
          DoGroundClamping(tickMessage->GetSimulationTime());
       }
+      else if (type == dtGame::MessageType::INFO_GAME_STATE_CHANGED)
+      {
+         const dtGame::GameStateChangedMessage& gscm
+            = static_cast<const dtGame::GameStateChangedMessage&>(message);
+
+         HandleGameStateChange(gscm.GetNewState(), gscm.GetOldState());
+      }
+      else if (type == dtExample::TestAppMessageType::REQUEST_TIME_OFFSET)
+      {
+         const dtExample::RequestTimeOffsetMessage& rtom
+            = static_cast<const dtExample::RequestTimeOffsetMessage&>(message);
+
+         // Offsets will be treated in terms of hours.
+         float newOffset = rtom.GetOffset();
+         float difference = newOffset - mTimeOffset;
+         mTimeOffset = newOffset;
+
+         float seconds = difference * 3600.0f;
+         IncrementTime(seconds);
+      }
+      else if (type == dtExample::TestAppMessageType::REQUEST_ATTACH)
+      {
+         const dtExample::RequestAttachMessage& ram
+            = static_cast<const dtExample::RequestAttachMessage&>(message);
+
+         mAttachActorName = ram.GetActorName();
+
+         if ( ! mAttachActorName.empty())
+         {
+            SetMotionModel(MotionModelType::ORBIT);
+         }
+      }
       else if (type == dtGame::MessageType::INFO_MAP_LOADED)
       {
          SetCameraToPlayerStart();
-
-         // Set a motion model default.
-         SetMotionModel(MotionModelType::FLY);
       }
    }
 
@@ -288,6 +366,8 @@ namespace dtExample
    void InputComponent::OnAddedToGM()
    {
       BaseClass::OnAddedToGM();
+
+      // TODO: Something for custom initialization?
    }
 
    ////////////////////////////////////////////////////////////////////////
@@ -525,7 +605,8 @@ namespace dtExample
       }
       else if (&motionModelType == &MotionModelType::FLY)
       {
-         motionModel = new dtCore::FlyMotionModel(keyboard, mouse);
+         dtCore::RefPtr<dtCore::FlyMotionModel> flyMotionModel = new dtCore::FlyMotionModel(keyboard, mouse);
+         motionModel = flyMotionModel;
          enableGroundClamper = true;
       }
       else if (&motionModelType == &MotionModelType::UFO)
@@ -547,16 +628,11 @@ namespace dtExample
          fmm->SetScene(scene);
          motionModel = fmm;
       }
-      else if (&motionModelType == &MotionModelType::COLLISION)
-      {
-         motionModel = new dtCore::CollisionMotionModel(1.5f, 0.4f, 0.1f, scene, keyboard, mouse);
-      }
       else if (&motionModelType == &MotionModelType::RTS)
       {
          motionModel = new dtCore::RTSMotionModel(keyboard, mouse);
          enableGroundClamper = true;
       }
-
 
       // Swap to the new motion model.
       mMotionModel = motionModel;
@@ -648,7 +724,6 @@ namespace dtExample
       
       if(sm != NULL)
       {
-
          dtRender::EphemerisScene* eph = dynamic_cast<dtRender::EphemerisScene*>(sm->FindSceneByType(*dtRender::EphemerisScene::EPHEMERIS_SCENE));
          if(eph != NULL)
          {
@@ -656,8 +731,7 @@ namespace dtExample
             dt.IncrementClock(numSeconds);
             eph->SetDateTime(dt);
          }
-      }
-         
+      }  
    }
 
 

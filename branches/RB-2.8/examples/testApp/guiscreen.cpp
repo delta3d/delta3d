@@ -291,4 +291,58 @@ namespace dtExample
       return visible;
    }
 
+   //////////////////////////////////////////////////////////////////////////
+   bool GuiScreen::IsControlOfType(const GuiNode& control, const std::string& typeName) const
+   {
+      return strcmp(control.getLookNFeel().c_str(), typeName.c_str()) == 0;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   GuiListbox* GuiScreen::GetListbox(const std::string& controlName) const
+   {
+      GuiListbox* listbox = NULL;
+      GuiNode* control = GetNode(controlName);
+
+      if (control != NULL && IsControlOfType(*control, GuiListItem::LISTBOX_TYPE))
+      {
+         listbox = static_cast<GuiListbox*>(control);
+      }
+      else
+      {
+         LOG_ERROR("Could not access listbox control: " + controlName);
+      }
+
+      return listbox;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   GuiListItem* GuiScreen::AddListItem(const std::string& listControlName, GuiNode& itemNode) const
+   {
+      GuiListItem* listItem = NULL;
+      GuiListbox* listbox = GetListbox(listControlName);
+
+      if (listbox != NULL)
+      {
+         listItem = AddListItem(*listbox, itemNode);
+      }
+
+      return listItem;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   GuiListItem* GuiScreen::AddListItem(GuiListbox& listControl, GuiNode& itemNode) const
+   {
+      GuiListItem* result = NULL;
+
+      std::ostringstream itemName;
+      itemName << listControl.getName().c_str() << "@" << itemNode.getName().c_str();
+
+      result = GuiListItem::Create(itemName.str());
+      result->addChildWindow(&itemNode);
+
+      listControl.addItem(result);
+
+      return result;
+   }
+
 }

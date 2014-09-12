@@ -66,6 +66,12 @@ namespace dtExample
 
          /*override*/ bool HandleKeyReleased(const dtCore::Keyboard* keyboard, int key);
 
+         bool HandleMotionModelKey(int key);
+
+         void HandleGameStateChange(
+            dtGame::GameState::Type& newState,
+            dtGame::GameState::Type& oldState);
+
          // General message handler
          virtual void ProcessMessage(const dtGame::Message& message);
 
@@ -100,10 +106,13 @@ namespace dtExample
          void DoGroundClamping(float simTime);
 
       private:
+         float mTimeOffset;
 
          bool mClampCameraEnabled;
       
+         bool mMotionModelsEnabled;
          const dtExample::MotionModelType* mMotionModelMode;
+         const dtExample::MotionModelType* mMotionModelMode_Previous;
          dtCore::RefPtr<dtCore::MotionModel> mMotionModel;
 
          dtCore::RefPtr<dtCore::Transformable> mCamera;

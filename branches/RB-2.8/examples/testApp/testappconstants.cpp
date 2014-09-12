@@ -37,6 +37,7 @@ namespace dtExample
    // CONSTANTS
    ////////////////////////////////////////////////////////////////////
    const dtUtil::RefString UINames::UI_HELP("Help");
+   const dtUtil::RefString UINames::UI_CONTROL_PANEL("GameScreen_ControlPanel");
 
 
 
@@ -45,7 +46,6 @@ namespace dtExample
    ////////////////////////////////////////////////////////////////////
    IMPLEMENT_ENUM(MotionModelType);
    MotionModelType MotionModelType::NONE("NONE");
-   MotionModelType MotionModelType::COLLISION("Collision");
    MotionModelType MotionModelType::FLY("Fly");
    MotionModelType MotionModelType::FPS("FPS");
    MotionModelType MotionModelType::ORBIT("Orbit");

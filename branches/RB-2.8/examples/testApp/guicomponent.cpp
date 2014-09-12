@@ -29,6 +29,9 @@
 // INCLUDE DIRECTIVES
 ////////////////////////////////////////////////////////////////////////////////
 #include "guicomponent.h"
+#include "guilistitem.h"
+#include "meshobjectactor.h"
+#include "testappactorregistry.h"
 #include "testappconstants.h"
 #include "testappgamestates.h"
 #include "testappmessages.h"
@@ -55,6 +58,7 @@ namespace dtExample
    ///////////////////////////////////////////////////////////////////////
    // CONSTANTS
    ///////////////////////////////////////////////////////////////////////
+   const dtUtil::RefString GuiComponent::SPINNER_TYPE("WindowsLook/Spinner");
    const dtUtil::RefString GuiComponent::BUTTON_TYPE("WindowsLook/Button");
    const dtUtil::RefString GuiComponent::BUTTON_PROPERTY_ACTION("Action");
    const dtUtil::RefString GuiComponent::BUTTON_PROPERTY_TYPE("ButtonType");
@@ -84,6 +88,9 @@ namespace dtExample
       dtABC::BaseABC* app = &GetGameManager()->GetApplication();
       mWindow = app->GetWindow();
       SetupGUI(*app->GetCamera(), *app->GetKeyboard(), *app->GetMouse());
+
+      // Create the factories for custom controls.
+      GuiListItem::BindFactory();
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -94,6 +101,10 @@ namespace dtExample
       if (uiName == UINames::UI_HELP)
       {
          guiNode = mHelpOverlay->GetRoot();
+      }
+      else
+      {
+         guiNode = mCurrentScreen->GetNode(uiName);
       }
 
       return guiNode;
@@ -171,6 +182,11 @@ namespace dtExample
       std::string statusText(paused?"Paused":"");
       mGlobalOverlay->SetText(UI_TEXT_STATUS.Get(), statusText);
       mGlobalOverlay->SetVisible(UI_BACKGROUND.Get(), paused);
+
+      if (&gameState == &TestAppGameState::STATE_GAME)
+      {
+         UpdateActorList(*mCurrentScreen);
+      }
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -237,7 +253,7 @@ namespace dtExample
          screen->Setup();
          RegisterScreenWithState(*screen, TestAppGameState::STATE_MENU);
 
-         screen = new GuiScreen(*mGUIScene, "Game", guiDir + "gamescreen.layout");
+         screen = new GuiScreen(*mGUIScene, "GameScreen", guiDir + "gamescreen.layout");
          screen->Setup();
          RegisterScreenWithState(*screen, TestAppGameState::STATE_GAME);
 
@@ -257,7 +273,7 @@ namespace dtExample
          {
             curScreen = curIter->second.get();
 
-            BindButtons(*curScreen->GetRoot());
+            BindControls(*curScreen->GetRoot());
 
             curScreen->SetVisible(false);
          }
@@ -304,6 +320,91 @@ namespace dtExample
    }
 
    //////////////////////////////////////////////////////////////////////////
+   bool IsAttachableActor(dtCore::BaseActorObject& actor)
+   {
+      bool valid = &actor.GetActorType() == TestAppActorRegistry::CIVILIAN_ACTOR_TYPE.get();
+
+      // Determine if there are some special Mesh Actors that can be attached to.
+      if ( ! valid && &actor.GetActorType() == TestAppActorRegistry::MESH_OBJECT_ACTOR_TYPE.get())
+      {
+         MeshObjectActor& meshActor = static_cast<MeshObjectActor&>(actor);
+
+         dtCore::ResourceDescriptor res = meshActor.GetMeshResource();
+         const std::string& resName = res.GetDisplayName();
+
+         // Search the resource descriptor string for a hint about the model.
+         if (resName.find("vehicle") != std::string::npos)
+         {
+            valid = true;
+         }
+      }
+
+      return valid;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void GuiComponent::UpdateActorList(GuiScreen& screen)
+   {
+      std::string listboxName(screen.GetName());
+      listboxName += "_ActorList";
+
+      GuiListbox* listbox = screen.GetListbox(listboxName);
+
+      if (listbox != NULL)
+      {
+         CEGUI::WindowManager *wm = CEGUI::WindowManager::getSingletonPtr();
+
+         // Clear the current listing.
+         listbox->resetList();
+
+         typedef std::vector<dtCore::BaseActorObject*> ActorList;
+         ActorList actors;
+         GetGameManager()->GetAllActors(actors);
+
+         dtCore::BaseActorObject* curActor = NULL;
+         ActorList::iterator curIter = actors.begin();
+         ActorList::iterator endIter = actors.end();
+         for ( ; curIter != endIter; ++curIter)
+         {
+            curActor = *curIter;
+
+            if ( ! IsAttachableActor(*curActor))
+            {
+               // Skip this actor and go to the next one.
+               continue;
+            }
+
+            CEGUI::String itemName("Item_");
+            CEGUI::String actorName(curActor->GetName().c_str());
+            itemName += actorName;
+            CEGUI::Window* item = wm->createWindow("WindowsLook/StaticText", itemName);
+
+            item->setText(actorName);
+            item->setProperty("Font", "DejaVuSans-10");
+            item->setProperty("BackgroundEnabled", "False");
+            item->setProperty("FrameEnabled", "False");
+            item->subscribeEvent( CEGUI::Window::EventMouseClick,
+               CEGUI::Event::Subscriber(&GuiComponent::OnListItemClicked, this));
+
+            if (screen.AddListItem(*listbox, *item))
+            {
+               // DEBUG:
+               printf("\n\tItem for actor: %s\n\n", actorName.c_str());
+            }
+            else
+            {
+               LOG_ERROR("Could not add item for actor: " + std::string(actorName.c_str()));
+            }
+         }
+
+         listbox->layoutItemWidgets();
+
+         // DEBUG:
+         printf("\n\tActor list count: %d\n\n", listbox->getItemCount());
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
    bool GuiComponent::RegisterScreenWithState(GuiScreen& screen, const dtGame::GameStateType& gameStateType)
    {
       bool success = mScreens.insert(std::make_pair(&gameStateType, &screen)).second;
@@ -340,7 +441,7 @@ namespace dtExample
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void GuiComponent::BindButtons(GuiNode& rootWindow)
+   void GuiComponent::BindControls(GuiNode& rootWindow)
    {
       GuiNode* curChild = NULL;
       GuiButton* button = NULL;
@@ -363,6 +464,13 @@ namespace dtExample
             // ...bind it to this component's callback for handling buttons.
             BindButton( *button );
          }
+         // ...or if this is a spinner...
+         else if(SPINNER_TYPE == guiType)
+         {
+            GuiSpinner* spinner = dynamic_cast<GuiSpinner*>(curChild);
+            
+            BindSpinner(*spinner);
+         }
          // ...else if this is a normal widget window...
          else if( curChild->getChildCount() > 0 )
          {
@@ -383,7 +491,14 @@ namespace dtExample
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   const GuiNode* GuiComponent::GetWidgetFromEventArgs( const GuiEventArgs& args ) const
+   void GuiComponent::BindSpinner(GuiSpinner& spinner)
+   {
+      spinner.subscribeEvent(GuiSpinner::EventValueChanged,
+         CEGUI::Event::Subscriber(&GuiComponent::OnSpinnerChanged, this));
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   const GuiNode* GuiComponent::GetWidgetFromEventArgs(const GuiEventArgs& args) const
    {
       // Cast to WindowEventArgs in order to access the associated CEGUI window.
       const CEGUI::WindowEventArgs& winArgs
@@ -393,7 +508,7 @@ namespace dtExample
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   bool GuiComponent::OnButtonClicked( const GuiEventArgs& args )
+   bool GuiComponent::OnButtonClicked(const GuiEventArgs& args)
    {
       const GuiNode* button = GetWidgetFromEventArgs(args);
 
@@ -403,6 +518,47 @@ namespace dtExample
       }
 
       // Let CEGUI know the button has been handled.
+      return true;
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   bool GuiComponent::OnListItemClicked(const GuiEventArgs& args)
+   {
+      const GuiNode* item = GetWidgetFromEventArgs(args);
+
+      if (item != NULL)
+      {
+         GuiNode* content = NULL;
+         std::string actorName = item->getText().c_str();
+
+         // DEBUG:
+         printf("\n\tClicked item: %s\n\n", actorName.c_str());
+
+         if ( ! actorName.empty())
+         {
+            SendRequestAttachMessage(actorName);
+         }
+      }
+
+      return true;
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   bool GuiComponent::OnSpinnerChanged(const GuiEventArgs& args)
+   {
+      const GuiSpinner* spinner = dynamic_cast<const GuiSpinner*>(GetWidgetFromEventArgs(args));
+
+      if (spinner != NULL)
+      {
+         std::string controlName(spinner->getName().c_str());
+         double value = spinner->getCurrentValue();
+
+         if (controlName == "GameScreen_TimeSpinner")
+         {
+            SendRequestTimeOffsetMessage(value);
+         }
+      }
+
       return true;
    }
 
@@ -418,11 +574,14 @@ namespace dtExample
       {
          // NOTE: "Action" and "ButtonType" properties are not inherent to CEGUI
          // and were added as custom properties to the testapp.looknfeel file
-         CEGUI::String actionValue = button.getProperty(GuiComponent::BUTTON_PROPERTY_ACTION.Get());
-         CEGUI::String buttonTypeValue = button.getProperty(GuiComponent::BUTTON_PROPERTY_TYPE.Get());
+         if (button.isPropertyPresent(BUTTON_PROPERTY_ACTION.Get()))
+         {
+            CEGUI::String actionValue = button.getProperty(GuiComponent::BUTTON_PROPERTY_ACTION.Get());
+            CEGUI::String buttonTypeValue = button.getProperty(GuiComponent::BUTTON_PROPERTY_TYPE.Get());
 
-         action = std::string(actionValue.c_str());
-         buttonType = std::string(buttonTypeValue.c_str());
+            action = std::string(actionValue.c_str());
+            buttonType = std::string(buttonTypeValue.c_str());
+         }
       }
       catch(CEGUI::Exception& ceguiEx)
       {
@@ -447,6 +606,34 @@ namespace dtExample
 
          gm->SendMessage(*message);
       }
+   }
+
+   ////////////////////////////////////////////////////////////////////////
+   void GuiComponent::SendRequestTimeOffsetMessage(float offset)
+   {
+      dtGame::GameManager* gm = GetGameManager();
+      dtGame::MessageFactory& factory = gm->GetMessageFactory();
+      
+      dtCore::RefPtr<dtExample::RequestTimeOffsetMessage> message;
+      factory.CreateMessage(dtExample::TestAppMessageType::REQUEST_TIME_OFFSET, message);
+      
+      message->SetOffset(offset);
+
+      gm->SendMessage(*message);
+   }
+
+   ////////////////////////////////////////////////////////////////////////
+   void GuiComponent::SendRequestAttachMessage(const std::string& actorName)
+   {
+      dtGame::GameManager* gm = GetGameManager();
+      dtGame::MessageFactory& factory = gm->GetMessageFactory();
+      
+      dtCore::RefPtr<dtExample::RequestAttachMessage> message;
+      factory.CreateMessage(dtExample::TestAppMessageType::REQUEST_ATTACH, message);
+      
+      message->SetActorName(actorName);
+
+      gm->SendMessage(*message);
    }
 
 } // END - namsepace dtExample
