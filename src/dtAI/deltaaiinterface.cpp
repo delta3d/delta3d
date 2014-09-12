@@ -403,12 +403,23 @@ namespace dtAI
    bool DeltaAIInterface::LoadWaypointFile(const std::string& filename)
    {
       dtCore::RefPtr<WaypointReaderWriter> reader = new WaypointReaderWriter(*this);
+      // Hide the drawable for a moment so that it doesn't repeatedly call the geometry changed code.
+      dtCore::RefPtr<AIDebugDrawable> tempDrawable = mDrawable;
+      mDrawable = NULL;
       bool result = reader->LoadWaypointFile(filename);
+      mDrawable = tempDrawable;
 
       if (!result)
       {
          //this is temporary to support the old waypoint file
          result = LoadLegacyWaypointFile(filename);
+      }
+      else
+      {
+         if (mDrawable.valid())
+         {
+            UpdateDebugDrawable();
+         }
       }
 
       mLastFileLoaded = filename;
@@ -445,20 +456,26 @@ namespace dtAI
    {
       if (!mDrawable.valid())
       {
-         std::vector<dtAI::WaypointInterface*> waypointList;
-         GetWaypoints(waypointList);
-
          mDrawable = new AIDebugDrawable();
-         mDrawable->SetWaypoints(waypointList);
-
-         NavMesh* nm = mWaypointGraph->GetNavMeshAtSearchLevel(0);
-         if (nm != NULL)
-         {
-            mDrawable->UpdateWaypointGraph(*nm);
-         }
+         UpdateDebugDrawable();
       }
 
       return mDrawable.get();
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void DeltaAIInterface::UpdateDebugDrawable()
+   {
+      std::vector<dtAI::WaypointInterface*> waypointList;
+      GetWaypoints(waypointList);
+
+      mDrawable->SetWaypoints(waypointList);
+
+      NavMesh* nm = mWaypointGraph->GetNavMeshAtSearchLevel(0);
+      if (nm != NULL)
+      {
+         mDrawable->UpdateWaypointGraph(*nm);
+      }
    }
 
    /////////////////////////////////////////////////////////////////////////////

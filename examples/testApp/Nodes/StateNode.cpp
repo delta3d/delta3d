@@ -74,7 +74,7 @@ namespace dtExample
    /////////////////////////////////////////////////////////////////////////////
    void StateNode::FindAIInterface()
    {
-      dtAI::AIInterfaceActorProxy* aiInterfaceActorProxy = NULL;
+      dtAI::AIInterfaceActor* aiInterfaceActorProxy = NULL;
       dtGame::GameManager* gm = GetDirector()->GetGameManager();
       if (gm != NULL)
       {

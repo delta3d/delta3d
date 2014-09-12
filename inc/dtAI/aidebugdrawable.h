@@ -63,9 +63,9 @@ namespace dtAI
        * @note replaces all geometry, this can be SLOW, if the editor interface must
        * call this every frame we can make a separate function to reset ALL the geometry
        */
-      void SetRenderInfo(WaypointRenderInfo& pRenderInfo);
-      WaypointRenderInfo& GetRenderInfo();
-      const WaypointRenderInfo& GetRenderInfo() const;
+      void SetRenderInfo(WaypointRenderInfo* pRenderInfo);
+      WaypointRenderInfo* GetRenderInfo();
+      const WaypointRenderInfo* GetRenderInfoConst() const;
 
       osg::Node* GetOSGNode();
       const osg::Node* GetOSGNode() const;

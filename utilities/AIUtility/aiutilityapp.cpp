@@ -219,7 +219,7 @@ void AIUtilityApp::OnRenderOnSelectChanged(bool enabled)
       //redraw the whole nav mesh
       if (mAIInterface)
       {
-         if (mAIInterface->GetDebugDrawable()->GetRenderInfo().GetRenderNavMesh())
+         if (mAIInterface->GetDebugDrawable()->GetRenderInfo()->GetRenderNavMesh())
          {
             dtAI::NavMesh* navmesh = mAIInterface->GetWaypointGraph().GetNavMeshAtSearchLevel(0);
             if (navmesh != NULL)
@@ -261,10 +261,10 @@ void AIUtilityApp::OnGroundClampSelectedWaypoints()
       mWaypointMotionModel->SetEnabled(false);
    }
 
-   if (mAIInterface->GetDebugDrawable()->GetRenderInfo().GetRenderWaypointID())
+   if (mAIInterface->GetDebugDrawable()->GetRenderInfo()->GetRenderWaypointID())
    {
       idWasEnabled = true;
-      mAIInterface->GetDebugDrawable()->GetRenderInfo().SetRenderWaypointID(false);
+      mAIInterface->GetDebugDrawable()->GetRenderInfo()->SetRenderWaypointID(false);
       mAIInterface->GetDebugDrawable()->OnRenderInfoChanged();
    }
 
@@ -281,7 +281,7 @@ void AIUtilityApp::OnGroundClampSelectedWaypoints()
 
    if (idWasEnabled)
    {
-      mAIInterface->GetDebugDrawable()->GetRenderInfo().SetRenderWaypointID(true);
+      mAIInterface->GetDebugDrawable()->GetRenderInfo()->SetRenderWaypointID(true);
       mAIInterface->GetDebugDrawable()->OnRenderInfoChanged();
    }
 }
@@ -372,12 +372,12 @@ void AIUtilityApp::OnWaypointSelectionChanged(std::vector<dtAI::WaypointInterfac
 
    if (mSelectionBasedRendering)
    {
-      if (mAIInterface->GetDebugDrawable()->GetRenderInfo().GetRenderNavMesh())
+      if (mAIInterface->GetDebugDrawable()->GetRenderInfo()->GetRenderNavMesh())
       {
          mAIInterface->GetDebugDrawable()->SetEdges(edgesForSelection);
       }
 
-      if (mAIInterface->GetDebugDrawable()->GetRenderInfo().GetRenderWaypointID())
+      if (mAIInterface->GetDebugDrawable()->GetRenderInfo()->GetRenderWaypointID())
       {
          mAIInterface->GetDebugDrawable()->SetText(selectedWaypoints);
       }
