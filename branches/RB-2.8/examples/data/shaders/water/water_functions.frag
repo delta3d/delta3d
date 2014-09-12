@@ -19,7 +19,7 @@ uniform float d3d_SceneAmbience = 1.0;
 const float cDeepWaterScalar = 0.64;
 const float cViewDistance = 100.0; 
 
-const float UnderWaterViewDistance = 15.0;
+uniform float UnderWaterViewDistance;
 
 //must include shaders/base/fragment_functions.frag to get these
 float samplePreDepthTexture(vec2 fragCoord);

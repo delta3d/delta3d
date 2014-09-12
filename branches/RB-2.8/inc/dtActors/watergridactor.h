@@ -147,12 +147,16 @@ namespace dtActors
       static const dtUtil::RefString UNIFORM_WAVE_TEXTURE;
       static const dtUtil::RefString UNIFORM_SCREEN_WIDTH;
       static const dtUtil::RefString UNIFORM_SCREEN_HEIGHT;
-      static const dtUtil::RefString UNIFORM_TEXTURE_WAVE_AMP;
       static const dtUtil::RefString UNIFORM_WATER_HEIGHT;
       static const dtUtil::RefString UNIFORM_CENTER_OFFSET;
       static const dtUtil::RefString UNIFORM_WAVE_DIRECTION;
       static const dtUtil::RefString UNIFORM_WATER_COLOR;
-
+      static const dtUtil::RefString UNIFORM_UNDERWATER_VIEW_DISTANCE;      
+      static const dtUtil::RefString UNIFORM_TEXWAVE_RESOLUTION_SCALAR;
+      static const dtUtil::RefString UNIFORM_TEXWAVE_AMPLITUDE_SCALAR;
+      static const dtUtil::RefString UNIFORM_TEXWAVE_SPREAD_SCALAR;
+      static const dtUtil::RefString UNIFORM_TEXWAVE_STEEPNESS;
+      
    public:
       WaterGridActor(WaterGridActorProxy& proxy);
 
@@ -171,8 +175,6 @@ namespace dtActors
       void SetSeaStateByNumber(unsigned force);
 
       void SetEnableWater(bool enable);
-
-      void SetTextureWaveAmpOverLength(float ampOverLength);
 
       // Reflection related functions
       void SetReflectionScene(osg::Node* sceneNode);
@@ -206,10 +208,18 @@ namespace dtActors
       DT_DECLARE_ACCESSOR_INLINE(float, ModForSteepness)         
       DT_DECLARE_ACCESSOR_INLINE(float, ModForAmplitude)
       DT_DECLARE_ACCESSOR_INLINE(float, ModForDirectionInDegrees)
+      DT_DECLARE_ACCESSOR_INLINE(float, UnderWaterViewDistance)
 
       DT_DECLARE_ACCESSOR_INLINE(int, NumRows)
       DT_DECLARE_ACCESSOR_INLINE(int, NumColumns)
       DT_DECLARE_ACCESSOR_INLINE(bool, UseDebugKeys)
+      
+      DT_DECLARE_ACCESSOR_INLINE(osg::Vec2, ReflectionMapResolution)
+      DT_DECLARE_ACCESSOR_INLINE(osg::Vec2, TexWaveTextureResolution)
+      DT_DECLARE_ACCESSOR_INLINE(float, TexWaveResolutionScalar)
+      DT_DECLARE_ACCESSOR_INLINE(float, TexWaveAmpScalar)
+      DT_DECLARE_ACCESSOR_INLINE(float, TexWaveSpreadScalar)
+      DT_DECLARE_ACCESSOR_INLINE(float, TexWaveSteepness)
 
    protected:
 

@@ -36,7 +36,7 @@ float saturate(float inValue)
 }
 
 //TODO- this needs to be set from a property on the water
-const float UnderWaterViewDistance = 15.0;
+uniform float UnderWaterViewDistance;
 
 void lightContribution(vec3, vec3, vec3, vec3, out vec3);
 vec3 computeDynamicLightContrib(vec3 wsNormal, vec3 wsPos);

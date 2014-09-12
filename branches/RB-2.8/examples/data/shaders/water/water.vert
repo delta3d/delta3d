@@ -14,7 +14,7 @@ const int MAX_WAVES = 32;
 uniform vec4 waveArray[2 * MAX_WAVES];
 uniform float waterPlaneFOV;
 uniform float WaterHeight;
-const float UnderWaterViewDistance = 5.0;
+uniform float UnderWaterViewDistance;
 
  
 varying vec4 pos;

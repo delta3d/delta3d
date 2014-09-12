@@ -8,12 +8,16 @@
 //The wave parameters are packed into two vec4's like so
 // [Length, Speed, Steepness, Frequency]
 //////////////////////////////////////////////////////////////////////////////////////////////////
-uniform sampler2D reflectionMap;
 uniform float elapsedTime;
 uniform mat4 inverseViewMatrix;
 uniform float textureWaveChopModifier;
 uniform float WaterHeight;
 uniform float waveDirection;
+
+uniform float textureWaveResolutionScalar;
+uniform float textureWaveAmpScalar;
+uniform float textureWaveSpreadScalar;
+uniform float textureWaveSteepness;
 
 const int CURWAVE=0;
 const int numWaves = 32;//16;
@@ -129,8 +133,8 @@ void main (void)
    vec3 camPos = inverseViewMatrix[3].xyz;
                                     
    
-   float resolutionScalar = 2.0;// + 2.0 * clamp(floor(sqrt(camPos.z - WaterHeight) / 5.0), 0.0, 3.0); 
-   float ampOverLength = 1.0 / (8.0 * resolutionScalar);
+   float resolutionScalar = textureWaveResolutionScalar;// + 2.0 * clamp(floor(sqrt(camPos.z - WaterHeight) / 5.0), 0.0, 3.0); 
+   float ampOverLength = textureWaveAmpScalar * (1.0 / (8.0 * resolutionScalar));
 
    //From GPUGems 1 edited by Randima Fernando, ch1 article by Mark Finch
    vec3 textureNormal = vec3(0.0, 0.0, 0.0);  
@@ -138,7 +142,7 @@ void main (void)
    {   
       float waveLength = waveLengthArray[i];
    
-      float dir = 90.0 + pow(-1.0, float(i)) * 1.57 * float(i) * (textureWaveChopModifier / float(numWaves));
+      float dir = 90.0 + pow(-1.0, float(i)) * textureWaveSpreadScalar * float(i) * (textureWaveChopModifier / float(numWaves));
       float dirAsRad = radians(dir);//radians(waveDirArray[i]);
       //float dirAsRad = radians(waveDirArray[i]);
       float dirCos = cos(radians(waveDirection) + dirAsRad);
@@ -147,7 +151,7 @@ void main (void)
       
       float freq = twoPI / waveLength;
       float amp = waveLength * ampOverLength;
-      float steepness = 2.0;
+      float steepness = textureWaveSteepness;
       float speed = 0.5 * waveSpeedArray[i];      
    
       //speed * freq * time   
@@ -156,15 +160,9 @@ void main (void)
       vec2 fragCoord = gl_FragCoord.xy;
 
       vec2 resolution = fragCoord / (128.0 * resolutionScalar);
-      //float twoLSqrd = pow(2.0 * waveLength, 2.0);
-      //vec2 tilingSize = sqrt(twoLSqrd / dot(waveDir, waveDir));
-      //tilingSize *= (1.0 + int(1.0 / waveLength));
-           
-      //freq * waveDir DOT vertex
-      //float m = dot( freq * waveDir, resolution * tilingSize);      
       float m = dot( freq * waveDir, resolution);                
 
-      float k = 1.0 * steepness;
+      float k = steepness;
       float vertexDerivativeScalar = freq * amp * pow((sin(m + phi) + 1.0) * 0.5, k - 1.0) * cos(m + phi);
 
       textureNormal.x += k * waveDir.x * vertexDerivativeScalar;
@@ -183,5 +181,4 @@ void main (void)
    textureNormal /= 2.0;
     
    gl_FragColor = vec4(textureNormal, 0.0);
-   //gl_FragColor = vec4(waveDirArray[i].x, waveDirArray[i].y, 0.0, 1.0);
 }

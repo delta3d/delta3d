@@ -16,7 +16,7 @@ uniform float maxComputedDistance;
 uniform mat4 inverseViewMatrix;
 uniform vec4 WaterColor;
 uniform vec3 cameraRecenter;
-
+uniform float UnderWaterViewDistance;
 uniform float d3d_SceneLuminance = 1.0;
 
 uniform float modForFOV;	
@@ -50,7 +50,6 @@ vec3 waterSamplePlanarReflectTexture(vec3 normal, vec2 fragCoord);
 float computeWaterColumn(vec4 viewPos, vec2 fragCoord);
 vec2 rotateTexCoords(vec2 coords, float angle);
 
-const float UnderWaterViewDistance = 15.0;
 
 void main (void)
 {   
