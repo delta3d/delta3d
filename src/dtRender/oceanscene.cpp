@@ -94,7 +94,14 @@ namespace dtRender
    , mAmplitudeModifier(1.0f)
    , mWavelengthModifier(1.0)
    , mSpeedModifier(1.0)
+   , mUnderWaterViewDistance(15.0)
    , mWaterColor(0.117187, 0.3125, 0.58593, 1.0)
+   , mReflectionMapResolution(512, 512)
+   , mTexWaveTextureResolution(512, 512)
+   , mTexWaveResolutionScalar(2.0)
+   , mTexWaveAmpScalar(1.0)
+   , mTexWaveSpreadScalar(1.35)
+   , mTexWaveSteepness(2.0)
    , mSeaState(&dtActors::WaterGridActor::SeaState::SeaState_4)
    , mChoppiness(&dtActors::WaterGridActor::ChoppinessSettings::CHOP_FLAT)
    , mUseDebugKeys(false)
@@ -164,14 +171,21 @@ namespace dtRender
             {
                water->SetNumRows(mNumRows);
                water->SetNumColumns(mNumColumns);
-               water->SetUseDebugKeys(mUseDebugKeys);
                water->SetModForDirectionInDegrees(mWaveDirection);
                water->SetModForAmplitude(mAmplitudeModifier);
                water->SetModForWaveLength(mWavelengthModifier);
                water->SetModForSpeed(mSpeedModifier);
+               water->SetUnderWaterViewDistance(mUnderWaterViewDistance);
                water->SetWaterColor(mWaterColor);
+               water->SetReflectionMapResolution(mReflectionMapResolution);
+               water->SetTexWaveTextureResolution(mTexWaveTextureResolution);
+               water->SetTexWaveResolutionScalar(mTexWaveResolutionScalar);
+               water->SetTexWaveAmpScalar(mTexWaveAmpScalar);
+               water->SetTexWaveSpreadScalar(mTexWaveSpreadScalar);
+               water->SetTexWaveSteepness(mTexWaveSteepness);
                water->SetChoppiness(mChoppiness);
                water->SetSeaState(mSeaState);
+               water->SetUseDebugKeys(mUseDebugKeys);
             }
 
 
@@ -209,7 +223,11 @@ namespace dtRender
    DT_IMPLEMENT_ACCESSOR_GETTER(OceanScene, float, AmplitudeModifier);
    DT_IMPLEMENT_ACCESSOR_GETTER(OceanScene, float, WavelengthModifier);
    DT_IMPLEMENT_ACCESSOR_GETTER(OceanScene, float, SpeedModifier);
-   //DT_IMPLEMENT_ACCESSOR_GETTER(OceanScene, float, UnderwaterViewDistance);
+   DT_IMPLEMENT_ACCESSOR_GETTER(OceanScene, float, UnderWaterViewDistance);
+   DT_IMPLEMENT_ACCESSOR_GETTER(OceanScene, float, TexWaveResolutionScalar);
+   DT_IMPLEMENT_ACCESSOR_GETTER(OceanScene, float, TexWaveAmpScalar);
+   DT_IMPLEMENT_ACCESSOR_GETTER(OceanScene, float, TexWaveSpreadScalar);
+   DT_IMPLEMENT_ACCESSOR_GETTER(OceanScene, float, TexWaveSteepness);
    DT_IMPLEMENT_ACCESSOR_GETTER(OceanScene, osg::Vec4, WaterColor);
    DT_IMPLEMENT_ACCESSOR_GETTER(OceanScene, dtUtil::EnumerationPointer<dtActors::WaterGridActor::SeaState>, SeaState);
    DT_IMPLEMENT_ACCESSOR_GETTER(OceanScene, dtUtil::EnumerationPointer<dtActors::WaterGridActor::ChoppinessSettings>, Choppiness);
@@ -225,6 +243,60 @@ namespace dtRender
 
    }
 
+   /////////////////////////////////////////////////////////////////////////////
+   void OceanScene::SetTexWaveAmpScalar(float f)
+   {
+      mTexWaveAmpScalar = f;
+      if(mImpl->mWaterActor.valid())
+      {
+         mImpl->mWaterActor->SetTexWaveAmpScalar(f);
+      }
+
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void OceanScene::SetTexWaveSpreadScalar(float f)
+   {
+      mTexWaveSpreadScalar = f;
+      if(mImpl->mWaterActor.valid())
+      {
+         mImpl->mWaterActor->SetTexWaveSpreadScalar(f);
+      }
+
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void OceanScene::SetTexWaveSteepness(float f)
+   {
+      mTexWaveSteepness = f;
+      if(mImpl->mWaterActor.valid())
+      {
+         mImpl->mWaterActor->SetTexWaveSteepness(f);
+      }
+
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void OceanScene::SetTexWaveResolutionScalar(float f)
+   {
+      mTexWaveResolutionScalar = f;
+      if(mImpl->mWaterActor.valid())
+      {
+         mImpl->mWaterActor->SetTexWaveResolutionScalar(f);
+      }
+
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void OceanScene::SetUnderWaterViewDistance(float f)
+   {
+      mUnderWaterViewDistance = f;
+      if(mImpl->mWaterActor.valid())
+      {
+         mImpl->mWaterActor->SetUnderWaterViewDistance(f);
+      }
+
+   }
 
    /////////////////////////////////////////////////////////////////////////////
    void OceanScene::SetNumRows(int i)
@@ -354,8 +426,19 @@ namespace dtRender
       DT_REGISTER_PROPERTY(WavelengthModifier, "A scalar for the wave length.", RegHelperType, propReg);
       DT_REGISTER_PROPERTY(SpeedModifier, "A scalar for the speed.", RegHelperType, propReg);
 
+      DT_REGISTER_PROPERTY(UnderWaterViewDistance, "How far you can see under water.", RegHelperType, propReg);
+
       DT_REGISTER_PROPERTY(SeaState, "A value representing the overall sea state based on the beaufort scale 1-12.", RegHelperType, propReg);
       DT_REGISTER_PROPERTY(Choppiness, "A value representing the overall choppiness of the waves.", RegHelperType, propReg);
+
+      DT_REGISTER_PROPERTY(ReflectionMapResolution, "The resolution of the render to texture reflection map.", RegHelperType, propReg);
+      DT_REGISTER_PROPERTY(TexWaveTextureResolution, "The resolution of the render to texture texture wave map.", RegHelperType, propReg);
+
+      DT_REGISTER_PROPERTY(TexWaveResolutionScalar, "A value to scale the rendered resolution of the texture waves.", RegHelperType, propReg);
+      DT_REGISTER_PROPERTY(TexWaveAmpScalar, "A value to scale amplitude of the texture waves.", RegHelperType, propReg);
+      DT_REGISTER_PROPERTY(TexWaveSpreadScalar, "A value to scale the variation in angle of the texture waves.", RegHelperType, propReg);
+      DT_REGISTER_PROPERTY(TexWaveSteepness, "A value to scale the steepness of the texture waves.", RegHelperType, propReg);
+
 
       DT_REGISTER_PROPERTY(UseDebugKeys, "These activate the debug keys for the water, keys- 1-9, TAB, Space, Return, Home, End, PG Up, and PG Down.", RegHelperType, propReg);
 

@@ -53,8 +53,15 @@ namespace dtRender
       DT_DECLARE_ACCESSOR(float, AmplitudeModifier);
       DT_DECLARE_ACCESSOR(float, WavelengthModifier);
       DT_DECLARE_ACCESSOR(float, SpeedModifier);      
-      //DT_DECLARE_ACCESSOR(float, UnderwaterViewDistance);      
+      DT_DECLARE_ACCESSOR(float, UnderWaterViewDistance);      
       DT_DECLARE_ACCESSOR(osg::Vec4, WaterColor);
+      DT_DECLARE_ACCESSOR_INLINE(osg::Vec2, ReflectionMapResolution)
+      DT_DECLARE_ACCESSOR_INLINE(osg::Vec2, TexWaveTextureResolution)
+      DT_DECLARE_ACCESSOR(float, TexWaveResolutionScalar)
+      DT_DECLARE_ACCESSOR(float, TexWaveAmpScalar)
+      DT_DECLARE_ACCESSOR(float, TexWaveSpreadScalar)
+      DT_DECLARE_ACCESSOR(float, TexWaveSteepness)
+
       DT_DECLARE_ACCESSOR(dtUtil::EnumerationPointer<dtActors::WaterGridActor::SeaState>, SeaState);
       DT_DECLARE_ACCESSOR(dtUtil::EnumerationPointer<dtActors::WaterGridActor::ChoppinessSettings>, Choppiness);
 

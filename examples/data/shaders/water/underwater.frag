@@ -12,7 +12,7 @@ varying vec3 lightVector;
 varying vec4 camPos;
 
 float deepWaterScalar = 0.85;
-float viewDistance = 10.0;
+uniform float UnderWaterViewDistance;
 
 uniform vec4 WaterColor;
 vec4 deepWaterColor = deepWaterScalar * WaterColor;
@@ -22,9 +22,9 @@ vec3 GetWaterColorAtDepth(float);
 void main (void)
 {     
 
-   float depth = waterHeightScreenSpace - (viewDistance * worldSpacePos.z);
-   depth = clamp(depth, 0.0, viewDistance);
-   float depthScalar = (depth / viewDistance);
+   float depth = waterHeightScreenSpace - (UnderWaterViewDistance * worldSpacePos.z);
+   depth = clamp(depth, 0.0, UnderWaterViewDistance);
+   float depthScalar = (depth / UnderWaterViewDistance);
    
    vec3 color = gl_LightSource[0].ambient.xyz * deepWaterColor.xyz;
    color += (gl_LightSource[0].diffuse.xyz * mix(deepWaterColor.xyz, color, 1.25 * depthScalar));

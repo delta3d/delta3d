@@ -158,11 +158,15 @@ namespace dtActors
    const dtUtil::RefString WaterGridActor::UNIFORM_WAVE_TEXTURE("waveTexture");
    const dtUtil::RefString WaterGridActor::UNIFORM_SCREEN_WIDTH("ScreenWidth");
    const dtUtil::RefString WaterGridActor::UNIFORM_SCREEN_HEIGHT("ScreenHeight");
-   const dtUtil::RefString WaterGridActor::UNIFORM_TEXTURE_WAVE_AMP("AmpOverLength");
    const dtUtil::RefString WaterGridActor::UNIFORM_WATER_HEIGHT("WaterHeight");
    const dtUtil::RefString WaterGridActor::UNIFORM_CENTER_OFFSET("cameraRecenter");
    const dtUtil::RefString WaterGridActor::UNIFORM_WAVE_DIRECTION("waveDirection");
    const dtUtil::RefString WaterGridActor::UNIFORM_WATER_COLOR("WaterColor");
+   const dtUtil::RefString WaterGridActor::UNIFORM_UNDERWATER_VIEW_DISTANCE("UnderWaterViewDistance");
+   const dtUtil::RefString WaterGridActor::UNIFORM_TEXWAVE_RESOLUTION_SCALAR("textureWaveResolutionScalar");
+   const dtUtil::RefString WaterGridActor::UNIFORM_TEXWAVE_AMPLITUDE_SCALAR("textureWaveAmpScalar");
+   const dtUtil::RefString WaterGridActor::UNIFORM_TEXWAVE_SPREAD_SCALAR("textureWaveSpreadScalar");
+   const dtUtil::RefString WaterGridActor::UNIFORM_TEXWAVE_STEEPNESS("textureWaveSteepness");
 
 
    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -253,9 +257,16 @@ namespace dtActors
       , mModForSteepness(1.0f)
       , mModForAmplitude(1.0f)
       , mModForDirectionInDegrees(0.0f)
+      , mUnderWaterViewDistance(15.0f)
       , mNumRows(180)
       , mNumColumns(180)
       , mUseDebugKeys(false)
+      , mReflectionMapResolution(512, 512)
+      , mTexWaveTextureResolution(512, 512)
+      , mTexWaveResolutionScalar(2.0)
+      , mTexWaveAmpScalar(1.0)
+      , mTexWaveSpreadScalar(1.35)
+      , mTexWaveSteepness(2.0)
       , mElapsedTime(0.0f)
       , mDeltaTime(0.0f)
       , mRenderWaveTexture(false)
@@ -747,6 +758,21 @@ namespace dtActors
       osg::Uniform* waterColor = ss->getOrCreateUniform(UNIFORM_WATER_COLOR, osg::Uniform::FLOAT_VEC4);
       waterColor->set(mWaterColor);
 
+      osg::Uniform* underWaterViewDistance = ss->getOrCreateUniform(UNIFORM_UNDERWATER_VIEW_DISTANCE, osg::Uniform::FLOAT);
+      underWaterViewDistance->set(mUnderWaterViewDistance);
+
+      osg::Uniform* texWaveResScalar = ss->getOrCreateUniform(UNIFORM_TEXWAVE_RESOLUTION_SCALAR, osg::Uniform::FLOAT);
+      texWaveResScalar->set(mTexWaveResolutionScalar);
+
+      osg::Uniform* texWaveAmpScalar = ss->getOrCreateUniform(UNIFORM_TEXWAVE_AMPLITUDE_SCALAR, osg::Uniform::FLOAT);
+      texWaveAmpScalar->set(mTexWaveAmpScalar);
+
+      osg::Uniform* texWaveSpreadScalar = ss->getOrCreateUniform(UNIFORM_TEXWAVE_SPREAD_SCALAR, osg::Uniform::FLOAT);
+      texWaveSpreadScalar->set(mTexWaveSpreadScalar);
+
+      osg::Uniform* texWaveSteepness = ss->getOrCreateUniform(UNIFORM_TEXWAVE_STEEPNESS, osg::Uniform::FLOAT);
+      texWaveSteepness->set(mTexWaveSteepness);
+
 
       // Loop through the current list of waves and put them in the uniform
       DetermineCurrentWaveSet(pCamera);
@@ -768,36 +794,31 @@ namespace dtActors
       osg::Uniform* twcModifier = ss->getOrCreateUniform("textureWaveChopModifier", osg::Uniform::FLOAT);
       twcModifier->set(mChoppinessEnum->mTextureWaveModifier);
       twcModifier->setDataVariance(osg::Object::DYNAMIC);
+      
+   //   osg::Uniform* textureWaveArray = ss->getOrCreateUniform(UNIFORM_TEXTURE_WAVE_ARRAY, osg::Uniform::FLOAT_VEC4, MAX_TEXTURE_WAVES);
+   //   textureWaveArray->setDataVariance(osg::Object::DYNAMIC);
 
-      //update texture wave uniforms
-      osg::Uniform* textureWaveAmp = ss->getOrCreateUniform(UNIFORM_TEXTURE_WAVE_AMP, osg::Uniform::FLOAT);
-      textureWaveAmp->set(mTextureWaveAmpOverLength);
-      textureWaveAmp->setDataVariance(osg::Object::DYNAMIC);
+   //   TextureWaveArray::iterator tw_iter = mTextureWaves.begin();
+   //   TextureWaveArray::iterator tw_endIter = mTextureWaves.end();
 
-      osg::Uniform* textureWaveArray = ss->getOrCreateUniform(UNIFORM_TEXTURE_WAVE_ARRAY, osg::Uniform::FLOAT_VEC4, MAX_TEXTURE_WAVES);
-      textureWaveArray->setDataVariance(osg::Object::DYNAMIC);
+   //   for(int count = 0;count < MAX_TEXTURE_WAVES; ++count)
+   //   {
+   //      if(tw_iter != tw_endIter)
+   //      {
+   //         TextureWave& wave = (*tw_iter);
 
-      TextureWaveArray::iterator tw_iter = mTextureWaves.begin();
-      TextureWaveArray::iterator tw_endIter = mTextureWaves.end();
+   //         float freq = (2.0f * osg::PI) / wave.mWaveLength;
 
-      for(int count = 0;count < MAX_TEXTURE_WAVES; ++count)
-      {
-         if(tw_iter != tw_endIter)
-         {
-            TextureWave& wave = (*tw_iter);
+   //         textureWaveArray->setElement(count, osg::Vec4(wave.mWaveLength, wave.mSpeed, wave.mSteepness, freq));
 
-            float freq = (2.0f * osg::PI) / wave.mWaveLength;
-
-            textureWaveArray->setElement(count, osg::Vec4(wave.mWaveLength, wave.mSpeed, wave.mSteepness, freq));
-
-            ++tw_iter;
-         }
-         else
-         {
-            //else disable the wave by zero-ing it out
-            textureWaveArray->setElement(count, osg::Vec4(0.0f, 0.0f, 0.0f, 0.0f));
-         }
-      }
+   //         ++tw_iter;
+   //      }
+   //      else
+   //      {
+   //         //else disable the wave by zero-ing it out
+   //         textureWaveArray->setElement(count, osg::Vec4(0.0f, 0.0f, 0.0f, 0.0f));
+   //      }
+   //   }
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -948,15 +969,12 @@ namespace dtActors
    {
       if(!mWaveTexture.valid())
       {
-         int width = 1024;
-         int height = 1024;
-
          mWaveCamera = new osg::Camera();
          mWaveCamera->setRenderOrder(osg::Camera::PRE_RENDER, 1);
          mWaveCamera->setClearMask(GL_NONE);
 
-         mWaveTexture = WaterGridBuilder::CreateTexture(width, height, true);
-         InitAndBindToTarget(mWaveCamera.get(), mWaveTexture.get(), width, height, true);
+         mWaveTexture = WaterGridBuilder::CreateTexture(mTexWaveTextureResolution.x(), mTexWaveTextureResolution.y(), true);
+         InitAndBindToTarget(mWaveCamera.get(), mWaveTexture.get(), mTexWaveTextureResolution.x(), mTexWaveTextureResolution.y(), true);
          AddOrthoQuad(mWaveCamera.get(), NULL, "TextureWave", "");
 
          mWaveCameraScreen = new osg::Camera();
@@ -964,7 +982,7 @@ namespace dtActors
          mWaveCameraScreen->setClearMask(GL_NONE);
          mWaveCameraScreen->setReferenceFrame(osg::Transform::ABSOLUTE_RF);
          mWaveCameraScreen->setProjectionMatrixAsOrtho2D(-10.0, 10.0, -10.0, 10.0);
-         mWaveCameraScreen->setViewport(0, 0, width, height);
+         mWaveCameraScreen->setViewport(0, 0, mTexWaveTextureResolution.x(), mTexWaveTextureResolution.y());
          mWaveCameraScreen->setGraphicsContext(new osgViewer::GraphicsWindowEmbedded());
          AddOrthoQuad(mWaveCameraScreen.get(), mWaveTexture.get(), "WaveTest", "waveTexture");
          mWaveCameraScreen->setNodeMask(dtUtil::NodeMask::NOTHING);
@@ -1081,11 +1099,8 @@ namespace dtActors
    {
       mReflectionCamera = new osg::Camera();
 
-      int width = 512;
-      int height = 512;
-
-      mReflectionTexture = WaterGridBuilder::CreateTexture(width, height, true);
-      InitAndBindToTarget(mReflectionCamera.get(), mReflectionTexture.get(), width, height, true);
+      mReflectionTexture = WaterGridBuilder::CreateTexture(mReflectionMapResolution.x(), mReflectionMapResolution.y(), true);
+      InitAndBindToTarget(mReflectionCamera.get(), mReflectionTexture.get(), mReflectionMapResolution.x(), mReflectionMapResolution.y(), true);
 
       mReflectionCamera->setRenderOrder(osg::Camera::PRE_RENDER);
       mReflectionCamera->setClearMask(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -1154,12 +1169,6 @@ namespace dtActors
 
          cam->addChild(mReflectionGroup.get());
       }
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   void WaterGridActor::SetTextureWaveAmpOverLength(float ampOverLength)
-   {
-      mTextureWaveAmpOverLength = ampOverLength;
    }
 
    ////////////////////////////////////////////////////////////////////////////////

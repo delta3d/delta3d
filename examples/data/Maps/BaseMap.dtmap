@@ -7,7 +7,7 @@
         <comment></comment>
         <copyright></copyright>
         <createTimestamp>2014-07-29T11:17:35-05:00</createTimestamp>
-        <lastUpdateTimestamp>2014-09-11T17:59:37-05:00</lastUpdateTimestamp>
+        <lastUpdateTimestamp>2014-09-11T21:37:44-05:00</lastUpdateTimestamp>
         <editorVersion>2.8.0</editorVersion>
         <schemaVersion>1.0</schemaVersion>
     </header>
@@ -49,6 +49,21 @@
                 <float>1.2</float>
             </property>
             <property>
+                <name>Choppiness</name>
+                <enumerated>CHOP_MILD</enumerated>
+            </property>
+            <property>
+                <name>TexWaveTextureResolution</name>
+                <vec2>
+                    <value1>1024.000000</value1>
+                    <value2>1024.000000</value2>
+                </vec2>
+            </property>
+            <property>
+                <name>TexWaveSpreadScalar</name>
+                <float>1.15</float>
+            </property>
+            <property>
                 <name>Water Color</name>
                 <colorRGBA>
                     <valueR>0.117647</valueR>
@@ -69,10 +84,6 @@
             <property>
                 <name>ShadowResolution</name>
                 <enumerated>SR_LOW</enumerated>
-            </property>
-            <property>
-                <name>NumPSSMSplits</name>
-                <integer>1</integer>
             </property>
             <property>
                 <name>MaxFarDistance</name>
