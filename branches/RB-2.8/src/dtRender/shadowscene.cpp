@@ -544,7 +544,12 @@ namespace dtRender
             mBypassTraversal = !mLightChanged;
          }
 
-         if(num % mTraversalMod == 0)
+         //0 and 1 are special case for even and odd
+         if(mTraversalMod == 0 || mTraversalMod == 1)
+         {
+            mBypassTraversal = (num % 2) == mTraversalMod;
+         }
+         else if(num % mTraversalMod == 0)
          {
             mBypassTraversal = false;
          }
