@@ -351,9 +351,18 @@ namespace dtExample
 
          mAttachActorName = ram.GetActorName();
 
+         // Attch to the actor if the name is valid.
          if ( ! mAttachActorName.empty())
          {
-            SetMotionModel(MotionModelType::ORBIT);
+            // Determine if the current motion model is proper.
+            if (mMotionModelMode != &MotionModelType::ORBIT)
+            {
+               SetMotionModel(MotionModelType::ORBIT);
+            }
+            else // Already using a proper motion model for attachment.
+            {
+               SetCameraPivot(mAttachActorName);
+            }
          }
       }
       else if (type == dtGame::MessageType::INFO_MAP_LOADED)

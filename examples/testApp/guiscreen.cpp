@@ -340,6 +340,16 @@ namespace dtExample
       result = GuiListItem::Create(itemName.str());
       result->addChildWindow(&itemNode);
 
+      CEGUI::UVector2 itemSize = result->getSize();
+
+      // CEGUI cannot be trusted to arrange complex items
+      // in a listbox. Set the relative positioning of
+      // the items manually.
+      int index = listControl.getItemCount();
+      CEGUI::UVector2 pos;
+      pos.d_y.d_offset = index * itemSize.d_y.d_offset;
+      result->setPosition(pos);
+
       listControl.addItem(result);
 
       return result;
