@@ -7,7 +7,7 @@
         <comment></comment>
         <copyright></copyright>
         <createTimestamp>2014-07-29T11:17:35-05:00</createTimestamp>
-        <lastUpdateTimestamp>2014-09-11T21:37:44-05:00</lastUpdateTimestamp>
+        <lastUpdateTimestamp>2014-09-11T22:04:43-05:00</lastUpdateTimestamp>
         <editorVersion>2.8.0</editorVersion>
         <schemaVersion>1.0</schemaVersion>
     </header>
@@ -83,11 +83,15 @@
             </property>
             <property>
                 <name>ShadowResolution</name>
-                <enumerated>SR_LOW</enumerated>
+                <enumerated>SR_HIGH</enumerated>
+            </property>
+            <property>
+                <name>NumPSSMSplits</name>
+                <integer>2</integer>
             </property>
             <property>
                 <name>MaxFarDistance</name>
-                <float>100</float>
+                <float>500</float>
             </property>
         </actor>
         <actor>
