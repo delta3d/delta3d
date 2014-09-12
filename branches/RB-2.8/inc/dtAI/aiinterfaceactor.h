@@ -33,34 +33,21 @@ namespace dtAI
 {
    class AIPluginInterface;
 
-   class DT_AI_EXPORT AIInterfaceActor : public dtCore::DeltaDrawable
-   {
-   public:
-      AIInterfaceActor();
-
-      osg::Node* GetOSGNode();
-      const osg::Node* GetOSGNode() const;
-
-   protected:
-      /*virtual*/ ~AIInterfaceActor();
-
-   private:
-   };
-
    /**
-    * @class AIInterfaceActorProxy
+    * @class AIInterfaceActor
     * @brief This proxy wraps the AI Interface class Delta3D object.
     */
-   class DT_AI_EXPORT AIInterfaceActorProxy : public dtCore::BaseActorObject
+   class DT_AI_EXPORT AIInterfaceActor : public dtCore::BaseActorObject
    {
    public:
       static const dtUtil::RefString CLASS_NAME;
       static const dtUtil::RefString PROPERTY_WAYPOINT_FILE_NAME;
+      static const dtUtil::RefString PROPERTY_WAYPOINT_RENDER_INFO;
 
       /**
        * Constructor
        */
-      AIInterfaceActorProxy();
+      AIInterfaceActor();
 
       /**
        * Adds the properties that are common to all Delta3D physical objects.
@@ -91,7 +78,7 @@ namespace dtAI
       */
      virtual AIPluginInterface* CreateAIInterface();
 
-     /*virtual*/ ~AIInterfaceActorProxy();
+     /*virtual*/ ~AIInterfaceActor();
 
    private:
       dtCore::RefPtr<AIPluginInterface> mAIInterface;

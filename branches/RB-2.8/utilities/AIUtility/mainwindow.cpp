@@ -478,7 +478,7 @@ void MainWindow::SelectRenderingOptions()
       WaypointSelection::GetInstance().DeselectAllWaypoints();
 
       dtQt::BasePropertyEditor::PropertyContainerRefPtrVector selected;
-      dtAI::WaypointRenderInfo& ri = mPluginInterface->GetDebugDrawable()->GetRenderInfo();
+      dtAI::WaypointRenderInfo& ri = *mPluginInterface->GetDebugDrawable()->GetRenderInfo();
 
       selected.push_back(&ri);
       mPropertyEditor.HandlePropertyContainersSelected(selected);
@@ -665,7 +665,7 @@ void MainWindow::OnConvertWaypointTypes()
 ////////////////////////////////////////////////////////////////////////////////
 void MainWindow::PropertyChangedFromControl(dtCore::PropertyContainer& pc, dtCore::ActorProperty& ap)
 {
-   dtAI::WaypointRenderInfo& ri = mPluginInterface->GetDebugDrawable()->GetRenderInfo();
+   dtAI::WaypointRenderInfo& ri = *mPluginInterface->GetDebugDrawable()->GetRenderInfo();
    if (&pc == &ri)
    {
       mPluginInterface->GetDebugDrawable()->OnRenderInfoChanged();

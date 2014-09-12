@@ -62,20 +62,20 @@ namespace dtAI
    /////////////////////////////////////////////////////////////
    void BaseAIComponent::CleanUp()
    {
-      mAIInterfaceProxy = NULL;
+      mAIInterfaceActor = NULL;
    }
 
    /////////////////////////////////////////////////////////////
    dtAI::AIPluginInterface* BaseAIComponent::GetAIPluginInterface()
    {
-      dtAI::AIPluginInterface* interface = mAIInterfaceProxy.valid() ? mAIInterfaceProxy->GetAIInterface() : NULL;
+      dtAI::AIPluginInterface* interface = mAIInterfaceActor.valid() ? mAIInterfaceActor->GetAIInterface() : NULL;
       return interface;
    }
 
    /////////////////////////////////////////////////////////////
    const dtAI::AIPluginInterface* BaseAIComponent::GetAIPluginInterface() const
    {
-      const dtAI::AIPluginInterface* interface = mAIInterfaceProxy.valid() ? mAIInterfaceProxy->GetAIInterface() : NULL;
+      const dtAI::AIPluginInterface* interface = mAIInterfaceActor.valid() ? mAIInterfaceActor->GetAIInterface() : NULL;
       return interface;
    }
 
@@ -93,9 +93,9 @@ namespace dtAI
       {
          // when the map is loaded we must look for an instance of an AIInterfaceActor and add it's debug drawable
          // to the scene, this will make the waypoints visible in the map
-         dtAI::AIInterfaceActorProxy* aiInterface = NULL;
+         dtAI::AIInterfaceActor* aiInterface = NULL;
          GetGameManager()->FindActorByType(*dtAI::AIActorRegistry::AI_INTERFACE_ACTOR_TYPE, aiInterface);
-         mAIInterfaceProxy = aiInterface;
+         mAIInterfaceActor = aiInterface;
       }
       else if (message.GetMessageType() == dtGame::MessageType::INFO_MAP_UNLOADED)
       {

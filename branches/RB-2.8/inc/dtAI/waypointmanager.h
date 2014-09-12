@@ -113,6 +113,7 @@ namespace dtAI
       /**
        * Rendering functionality
        */
+      bool GetDrawWaypoints() const { return mDrawWaypoints; }
       void SetDrawWaypoints(bool pDraw);
       void SetWaypointColor(const osg::Vec4& pColor);
       void SetWaypointSize(float pSize);

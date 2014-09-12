@@ -248,23 +248,26 @@ namespace dtAI
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void AIDebugDrawable::SetRenderInfo(WaypointRenderInfo& pRenderInfo)
+   void AIDebugDrawable::SetRenderInfo(WaypointRenderInfo* pRenderInfo)
    {
-      mImpl->mRenderInfo = &pRenderInfo;
+      if (pRenderInfo != NULL)
+      {
+         mImpl->mRenderInfo = pRenderInfo;
 
-      mImpl->OnRenderInfoChanged();
+         mImpl->OnRenderInfoChanged();
+      }
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   WaypointRenderInfo& AIDebugDrawable::GetRenderInfo()
+   WaypointRenderInfo* AIDebugDrawable::GetRenderInfo()
    {
-      return *mImpl->mRenderInfo;
+      return mImpl->mRenderInfo;
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   const WaypointRenderInfo& AIDebugDrawable::GetRenderInfo() const
+   const WaypointRenderInfo* AIDebugDrawable::GetRenderInfoConst() const
    {
-      return *mImpl->mRenderInfo;
+      return mImpl->mRenderInfo;
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -525,6 +528,7 @@ namespace dtAI
          const WaypointPair* wp = (*iter).second;
          AddPathSegment(wp->GetWaypointFrom(), wp->GetWaypointTo());
       }
+      OnRenderInfoChanged();
    }
 
    /////////////////////////////////////////////////////////////////////////////

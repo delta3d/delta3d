@@ -131,7 +131,7 @@ void AIComponent::AddAIInterfaceToMap(const std::string& map)
       currentMap.AddLibrary("dtAI", "1.0");
    }
 
-   dtCore::RefPtr<dtAI::AIInterfaceActorProxy> aiActor;
+   dtCore::RefPtr<dtAI::AIInterfaceActor> aiActor;
    GetGameManager()->CreateActor(*dtAI::AIActorRegistry::AI_INTERFACE_ACTOR_TYPE, aiActor);
    currentMap.AddProxy(*aiActor);
 
@@ -143,7 +143,7 @@ void AIComponent::AddAIInterfaceToMap(const std::string& map)
 
    dtCore::ResourceDescriptor rd(dtCore::DataType::STATIC_MESH.GetName() + ":" + mapFileName + stringNumToTackOn + ".ai");
    dtCore::ResourceActorProperty* rap = NULL;
-   aiActor->GetProperty(dtAI::AIInterfaceActorProxy::PROPERTY_WAYPOINT_FILE_NAME, rap);
+   aiActor->GetProperty(dtAI::AIInterfaceActor::PROPERTY_WAYPOINT_FILE_NAME, rap);
    if (rap == NULL)
    {
       throw dtUtil::Exception("AI interface actor doesn't have a waypoint resource property, so it can't be added to the map.", __FILE__, __LINE__);
@@ -153,7 +153,7 @@ void AIComponent::AddAIInterfaceToMap(const std::string& map)
    // Auto save until this becomes part of the undo stack
    dtCore::Project::GetInstance().SaveMap(currentMap);
 
-   SetAIPluginInterfaceProxy(aiActor);
+   SetAIPluginInterface(aiActor);
    AIUtilityApp& aiApp = dynamic_cast<AIUtilityApp&>(GetGameManager()->GetApplication());
    GetGameManager()->GetScene().AddChild(GetAIPluginInterface()->GetDebugDrawable());
    aiApp.SetAIPluginInterface(GetAIPluginInterface(), false);

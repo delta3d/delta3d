@@ -18,7 +18,7 @@
 namespace dtAI
 {
    class AIPluginInterface;
-   class AIInterfaceActorProxy;
+   class AIInterfaceActor;
 }
 
 namespace dtExample
@@ -73,7 +73,7 @@ namespace dtExample
     private:
 
        dtCore::ObserverPtr<dtGame::GameActorProxy> mTarget;
-       dtCore::ObserverPtr<dtAI::AIInterfaceActorProxy> mAIInterface;
+       dtCore::ObserverPtr<dtAI::AIInterfaceActor> mAIInterface;
 
    };
 
