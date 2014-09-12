@@ -25,6 +25,87 @@
          <Property Name="TextColours" Value="FFFFFFFF"/>
          <Property Name="Text" Value="Game Screen"/>
       </Window>
+
+      <!-- CONTROL PANEL -->
+      <Window Name="GameScreen_ControlPanel" Type="WindowsLook/StaticImage">
+         <Property Name="UnifiedSize" Value="{{0.2,0},{0.9,0}}"/>
+         <Property Name="UnifiedPosition" Value="{{0.0,0},{0.0,0}}"/>
+         <Property Name="ZOrderChangeEnabled" Value="False"/>
+         <Property Name="AlwaysOnTop" Value="True"/>
+         <Property Name="HorizontalAlignment" Value="Right"/>
+         <Property Name="VerticalAlignment" Value="Bottom"/>
+         <Property Name="BackgroundColours" Value="99000000"/>
+         <Property Name="FrameColours" Value="00000000"/>
+         <Property Name="Visible" Value="False"/>
+
+         <!-- SCENE CONTROLS -->
+         <Window Name="GameScreen_SceneControls" Type="DefaultWindow">
+            <Property Name="UnifiedSize" Value="{{1.0,0},{0.5,0}}"/>
+            <Property Name="UnifiedPosition" Value="{{0.0,0},{0.0,0}}"/>
+            <Property Name="ZOrderChangeEnabled" Value="False"/>
+            <Property Name="AlwaysOnTop" Value="True"/>
+            <Property Name="HorizontalAlignment" Value="Left"/>
+            <Property Name="VerticalAlignment" Value="Top"/>
+
+            <!-- LABEL - TIME SPINNER -->
+            <Window Name="GameScreen_TimeSpinnerLabel" Type="WindowsLook/StaticText">
+               <Property Name="UnifiedSize" Value="{{0.5,0},{0.1,0}}"/>
+               <Property Name="UnifiedPosition" Value="{{0.0,0},{0.0,0}}"/>
+               <Property Name="BackgroundEnabled" Value="False"/>
+               <Property Name="FrameEnabled" Value="False"/>
+               <Property Name="HorizontalAlignment" Value="Left"/>
+               <Property Name="Font" Value="Hobo"/>
+               <Property Name="AlwaysOnTop" Value="True"/>
+               <Property Name="TextColours" Value="FFFFFFFF"/>
+               <Property Name="Text" Value="Time"/>
+            </Window>
+
+            <!-- TIME SPINNER -->
+            <Window Name="GameScreen_TimeSpinner" Type="WindowsLook/Spinner">
+               <Property Name="UnifiedSize" Value="{{0.5,0},{0.1,0}}"/>
+               <Property Name="UnifiedPosition" Value="{{0.0,0},{0.0,0}}"/>
+               <Property Name="ZOrderChangeEnabled" Value="False"/>
+               <Property Name="AlwaysOnTop" Value="True"/>
+               <Property Name="HorizontalAlignment" Value="Right"/>
+            </Window>
+            
+         </Window>
+
+         <!-- CAMERA CONTROLS -->
+         <Window Name="GameScreen_CameraControls" Type="DefaultWindow">
+            <Property Name="UnifiedSize" Value="{{1.0,0},{0.5,0}}"/>
+            <Property Name="UnifiedPosition" Value="{{0.0,0},{0.0,0}}"/>
+            <Property Name="ZOrderChangeEnabled" Value="False"/>
+            <Property Name="AlwaysOnTop" Value="True"/>
+            <Property Name="HorizontalAlignment" Value="Left"/>
+            <Property Name="VerticalAlignment" Value="Bottom"/>
+
+            <!-- LABEL - ACTOR LIST -->
+            <Window Name="GameScreen_ActorListLabel" Type="WindowsLook/StaticText">
+               <Property Name="UnifiedSize" Value="{{1.0,0},{0.1,0}}"/>
+               <Property Name="UnifiedPosition" Value="{{0.0,0},{0.0,0}}"/>
+               <Property Name="BackgroundEnabled" Value="False"/>
+               <Property Name="FrameEnabled" Value="False"/>
+               <Property Name="HorizontalAlignment" Value="Left"/>
+               <Property Name="Font" Value="Hobo"/>
+               <Property Name="AlwaysOnTop" Value="True"/>
+               <Property Name="TextColours" Value="FFFFFFFF"/>
+               <Property Name="Text" Value="Actors"/>
+            </Window>
+
+            <!-- ACTOR LIST -->
+            <Window Name="GameScreen_ActorList" Type="WindowsLook/ItemListbox">
+               <Property Name="UnifiedSize" Value="{{1.0,0},{0.9,0}}"/>
+               <Property Name="UnifiedPosition" Value="{{0.0,0},{0.0,0}}"/>
+               <Property Name="HorizontalAlignment" Value="Right"/>
+               <Property Name="VerticalAlignment" Value="Bottom"/>
+               <Property Name="Font" Value="Hobo"/>
+               <Property Name="AlwaysOnTop" Value="True"/>
+               <Property Name="Text" Value="Game Screen"/>
+            </Window>
+
+         </Window>
+      </Window>
         
 	</Window>
 </GUILayout>

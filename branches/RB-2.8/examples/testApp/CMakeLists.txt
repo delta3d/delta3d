@@ -3,6 +3,7 @@ SET(TARGET_SRC testapp.cpp
                civilianaiactorcomponent.cpp
                fireworkactor.cpp
                guicomponent.cpp
+               guilistitem.cpp
                guiscreen.cpp
                inputcomponent.cpp
                meshobjectactor.cpp
@@ -29,6 +30,7 @@ SET(TARGET_H civilianactor.h
              civilianaiactorcomponent.h
              fireworkactor.h
              guicomponent.h
+             guilistitem.h
              guiscreen.h
              inputcomponent.h
              meshobjectactor.h
