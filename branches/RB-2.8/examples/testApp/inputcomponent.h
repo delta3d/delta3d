@@ -102,6 +102,12 @@ namespace dtExample
          void SetMotionModel(const dtExample::MotionModelType& motionModelType);
 
          void IncrementTime(float numSeconds);
+
+         void IncrementMotionModelSpeed(float increment);
+
+         void SetMotionModelSpeed(
+            const dtExample::MotionModelType& motionModelType,
+            dtCore::MotionModel& motionModel, float speed);
          
          void DoGroundClamping(float simTime);
 
@@ -111,6 +117,7 @@ namespace dtExample
          bool mClampCameraEnabled;
       
          bool mMotionModelsEnabled;
+         float mMotionModelSpeed;
          const dtExample::MotionModelType* mMotionModelMode;
          const dtExample::MotionModelType* mMotionModelMode_Previous;
          dtCore::RefPtr<dtCore::MotionModel> mMotionModel;

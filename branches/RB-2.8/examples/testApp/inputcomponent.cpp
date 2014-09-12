@@ -92,6 +92,7 @@ namespace dtExample
       , mTimeOffset(0.0f)
       , mClampCameraEnabled(false)
       , mMotionModelsEnabled(false)
+      , mMotionModelSpeed(5.0f)
       , mMotionModelMode(&dtExample::MotionModelType::NONE)
       , mMotionModelMode_Previous(&dtExample::MotionModelType::NONE)
       , mMotionModel(NULL)
@@ -166,7 +167,7 @@ namespace dtExample
             case '-':
             case osgGA::GUIEventAdapter::KEY_KP_Subtract:
             {
-               IncrementTime(-200.0f);
+               IncrementMotionModelSpeed(-5.0f);
             }
             break;
 
@@ -174,7 +175,7 @@ namespace dtExample
             case '=':
             case '+':
             {
-               IncrementTime(200.0f);
+               IncrementMotionModelSpeed(5.0f);
             }
             break;
 
@@ -689,6 +690,8 @@ namespace dtExample
       
       mMotionModel->SetTarget(mCameraPivot.get());
 
+      SetMotionModelSpeed(*mMotionModelMode, *mMotionModel, mMotionModelSpeed);
+
       mClampCameraEnabled = enableGroundClamper;
 
       SendMotionModelChangedMessage(motionModelType);
@@ -743,6 +746,103 @@ namespace dtExample
             eph->SetDateTime(dt);
          }
       }  
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void InputComponent::IncrementMotionModelSpeed(float increment)
+   {
+      if (mMotionModel.valid())
+      {
+         mMotionModelSpeed += increment;
+
+         if (mMotionModelSpeed < 0.1f)
+         {
+            mMotionModelSpeed = 0.1f;
+         }
+
+         SetMotionModelSpeed(*mMotionModelMode, *mMotionModel, mMotionModelSpeed);
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void InputComponent::SetMotionModelSpeed(const dtExample::MotionModelType& motionModelType,
+      dtCore::MotionModel& motionModel, float speed)
+   {
+      bool success = false;
+
+      if (&motionModelType == &MotionModelType::WALK)
+      {
+         dtPhysics::CharacterMotionModel* walk
+            = dynamic_cast<dtPhysics::CharacterMotionModel*>(&motionModel);
+         
+         if (walk != NULL)
+         {
+            walk->SetMaximumWalkSpeed(speed);
+            walk->SetMaximumSidestepSpeed(speed);
+            success = true;
+         }
+      }
+      else if (&motionModelType == &MotionModelType::FLY)
+      {
+         dtCore::FlyMotionModel* fly
+            = dynamic_cast<dtCore::FlyMotionModel*>(&motionModel);
+         
+         if (fly != NULL)
+         {
+            fly->SetMaximumFlySpeed(speed);
+            success = true;
+         }
+      }
+      else if (&motionModelType == &MotionModelType::UFO)
+      {
+         dtCore::UFOMotionModel* ufo
+            = dynamic_cast<dtCore::UFOMotionModel*>(&motionModel);
+         
+         if (ufo != NULL)
+         {
+            ufo->SetMaximumFlySpeed(speed);
+            success = true;
+         }
+      }
+      else if (&motionModelType == &MotionModelType::ORBIT)
+      {
+         dtCore::OrbitMotionModel* orbit
+            = dynamic_cast<dtCore::OrbitMotionModel*>(&motionModel);
+       
+         if (orbit != NULL)
+         {
+            // TODO:
+            success = true;
+         }
+      }
+      else if (&motionModelType == &MotionModelType::FPS)
+      {
+         dtCore::FPSMotionModel* fps
+            = dynamic_cast<dtCore::FPSMotionModel*>(&motionModel);
+
+         if (fps != NULL)
+         {
+            fps->SetMaximumWalkSpeed(speed);
+            fps->SetMaximumSidestepSpeed(speed);
+            success = true;
+         }
+      }
+      else if (&motionModelType == &MotionModelType::RTS)
+      {
+         dtCore::RTSMotionModel* rts
+            = dynamic_cast<dtCore::RTSMotionModel*>(&motionModel);
+         
+         if (rts != NULL)
+         {
+            rts->SetLinearRate(speed);
+            success = true;
+         }
+      }
+
+      if ( ! success)
+      {
+         LOG_ERROR("Cannot cast motion model to type: " + motionModelType.GetName());
+      }
    }
 
 

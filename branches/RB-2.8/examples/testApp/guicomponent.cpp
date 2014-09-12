@@ -38,6 +38,7 @@
 #include "testappmessagetypes.h"
 
 #include <dtABC/application.h>
+#include <dtActors/engineactorregistry.h>
 #include <dtUtil/datapathutils.h>
 #include <dtUtil/fileutils.h>
 #include <dtCore/deltawin.h>
@@ -322,7 +323,10 @@ namespace dtExample
    //////////////////////////////////////////////////////////////////////////
    bool IsAttachableActor(dtCore::BaseActorObject& actor)
    {
-      bool valid = &actor.GetActorType() == TestAppActorRegistry::CIVILIAN_ACTOR_TYPE.get();
+      const dtCore::ActorType* actorType = &actor.GetActorType();
+
+      bool valid = actorType == TestAppActorRegistry::CIVILIAN_ACTOR_TYPE.get()
+         || actorType == dtActors::EngineActorRegistry::BEZIER_CONTROLLER_ACTOR_TYPE.get();
 
       // Determine if there are some special Mesh Actors that can be attached to.
       if ( ! valid && &actor.GetActorType() == TestAppActorRegistry::MESH_OBJECT_ACTOR_TYPE.get())
