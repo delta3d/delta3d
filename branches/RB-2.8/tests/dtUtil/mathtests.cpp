@@ -316,7 +316,7 @@ namespace dtUtil
    //////////////////////////////////////////////////////////////////////////
    void MathTests::TestEquivalentVecUsingEqualVecs()
    {
-      const osg::Vec3 v1(1.f, 2.f, 3.f);
+      const osg::Vec3 v1(1.0f, 2.0f, 3.0f);
 
       // easy case, this *better* be true
       CPPUNIT_ASSERT_MESSAGE("dtUtil::Equivalent(Vec3,Vec3) did not correctly compare equal Vec3",
@@ -326,7 +326,7 @@ namespace dtUtil
    //////////////////////////////////////////////////////////////////////////
    void MathTests::TestEquivalentVecUsingSlightlyDifferentVecs()
    {
-      const osg::Vec3 v1(1.f, 2.f, 3.f);
+      const osg::Vec3 v1(1.0f, 2.0f, 3.0f);
       const osg::Vec3 v2(1.0000001f, 2.0000001f, 3.0000001f);
 
       // numbers are really close, should be equivalent
@@ -337,8 +337,8 @@ namespace dtUtil
    //////////////////////////////////////////////////////////////////////////
    void MathTests::TestEquivalentVecUsingVeryDifferentVecs()
    {
-      const osg::Vec3 v1(1.f, 2.f, 3.f);
-      const osg::Vec3 v2(10.f, 20.f, 30.f);
+      const osg::Vec3 v1(1.0f, 2.0f, 3.0f);
+      const osg::Vec3 v2(10.0f, 20.0f, 30.0f);
 
       // numbers are really different, should *not* be equivalent
       CPPUNIT_ASSERT_MESSAGE("dtUtil::Equivalent(Vec3,Vec3) did not correctly compare very different Vec3",
@@ -452,23 +452,23 @@ namespace dtUtil
       const float delta = 0.02f; //fudge factor to allow for roundoff errors
 
       //90 degrees apart
-      const osg::Vec3 v1(0.f, 1.f, 0.f); const osg::Vec3 v2(1.f, 0.f, 0.f);     
+      const osg::Vec3 v1(0.0f, 1.0f, 0.0f); const osg::Vec3 v2(1.0f, 0.0f, 0.0f);     
       
       const float a12 = dtUtil::GetAngleBetweenVectors(v1, v2);
-      CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("Angle between vectors should have been 90", 90.f, a12, delta);
+      CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("Angle between vectors should have been 90", 90.0f, a12, delta);
 
       const float a21 = dtUtil::GetAngleBetweenVectors(v2, v1);
-      CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("Angle between vectors should have been 90", 90.f, a21, delta);
+      CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("Angle between vectors should have been 90", 90.0f, a21, delta);
 
       //180 degrees apart
-      const osg::Vec3 v3(1.f, 1.f, 0.f);  const osg::Vec3 v4(-1.f, -1.f, 0.f);
+      const osg::Vec3 v3(1.0f, 1.0f, 0.0f);  const osg::Vec3 v4(-1.0f, -1.0f, 0.0f);
       const float a34 = dtUtil::GetAngleBetweenVectors(v3, v4);
-      CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("Angle between vectors should have been 180", 180.f, a34, delta);
+      CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("Angle between vectors should have been 180", 180.0f, a34, delta);
 
       //45 degrees apart
-      const osg::Vec3 v5(0.f, 1.f, 0.f); const osg::Vec3 v6(-1.f, 1.f, 0.f);
+      const osg::Vec3 v5(0.0f, 1.0f, 0.0f); const osg::Vec3 v6(-1.0f, 1.0f, 0.0f);
       const float a56 = dtUtil::GetAngleBetweenVectors(v5, v6);
-      CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("Angle between vectors should have been 45", 45.f, a56, delta);
+      CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("Angle between vectors should have been 45", 45.0f, a56, delta);
 
    }
 
@@ -485,7 +485,7 @@ namespace dtUtil
    void MathTests::TestMatrixToHPRWithNegativePitch()
    {
       dtCore::Transform xform;
-      const osg::Vec3 set(0.f, -90.f, 0.f);
+      const osg::Vec3 set(0.0f, -90.0f, 0.0f);
       xform.SetRotation(set);
 
       osg::Vec3 get;
@@ -495,7 +495,7 @@ namespace dtUtil
       //if the get didn't return exactly what was set.
       if (!Equivalent(set,get, 0.001f))
       {
-         const osg::Vec3 equivVec(180.f, -90.f, 180.f);
+         const osg::Vec3 equivVec(180.0f, -90.0f, 180.0f);
 
          std::string str = "The set HPR didn't get returned correctly: " + 
             ToString(equivVec) + " != " + ToString(get);     

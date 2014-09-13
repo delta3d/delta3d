@@ -44,7 +44,7 @@ namespace dtCore
       , mBBTorso(0)
       , mTorsoGeom(NULL)
       , mLocalSpaceID(0)
-      , mTorsoOffset(0.f)
+      , mTorsoOffset(0.0f)
       , mTorsoLengths()
       , mNumFeetContactPoints(0)
       , mNumTorsoContactPoints(0)
@@ -78,7 +78,7 @@ namespace dtCore
       , mBBTorso(0)
       , mTorsoGeom(NULL)
       , mLocalSpaceID(0)
-      , mTorsoOffset(0.f)
+      , mTorsoOffset(0.0f)
       , mTorsoLengths()
       , mNumFeetContactPoints(0)
       , mNumTorsoContactPoints(0)
@@ -334,7 +334,7 @@ namespace dtCore
          float length = dtUtil::Abs(oldFeetPos.z() - newFeetPos.z());
 
          dtCore::Transform xform;
-         xform.Set(osg::Matrix::rotate(osg::Vec3(0.f, 0.f, 1.f), osg::Vec3(0.0f, 0.0f, -1.0f)));
+         xform.Set(osg::Matrix::rotate(osg::Vec3(0.0f, 0.0f, 1.0f), osg::Vec3(0.0f, 0.0f, -1.0f)));
          xform.SetTranslation(oldFeetPos);
          mFeetGeom->SetCollisionRay(length);
          mFeetGeom->SetCollisionDetection(true);

@@ -62,7 +62,7 @@ void PhysicalTests::TestGeomInit()
    RefPtr<Scene> scene = new Scene();
    scene->AddChild(trans.get());
 
-   trans->SetCollisionSphere(1.f);
+   trans->SetCollisionSphere(1.0f);
    trans->SetCollisionDetection(true);
 
    const dGeomID geomID = trans->GetGeomID();
@@ -114,12 +114,12 @@ void PhysicalTests::TestGeomPosition()
    RefPtr<Scene> scene = new Scene();
    scene->AddChild(trans.get());
 
-   trans->SetCollisionSphere(1.f);
+   trans->SetCollisionSphere(1.0f);
    trans->SetCollisionDetection(true);
 
    Transform startXform;
-   const osg::Vec3 startXYZ(1.f, 2.f, 3.f);
-   const osg::Vec3 startHPR(10.f, 20.f, 30.f);
+   const osg::Vec3 startXYZ(1.0f, 2.0f, 3.0f);
+   const osg::Vec3 startHPR(10.0f, 20.0f, 30.0f);
    startXform.SetTranslation(startXYZ);
    startXform.SetRotation(startHPR);
 
@@ -147,8 +147,8 @@ void PhysicalTests::TestBodyPosition()
    phys->EnableDynamics(true);
 
    Transform startXform;
-   const osg::Vec3 startXYZ(1.f, 2.f, 3.f);
-   const osg::Vec3 startHPR(10.f, 20.f, 30.f);
+   const osg::Vec3 startXYZ(1.0f, 2.0f, 3.0f);
+   const osg::Vec3 startHPR(10.0f, 20.0f, 30.0f);
    startXform.SetTranslation(startXYZ);
    startXform.SetRotation(startHPR);
 
@@ -173,13 +173,13 @@ void PhysicalTests::TestBodyAndGeomPosition()
    RefPtr<Scene> scene = new Scene();
    scene->AddChild(phys.get());
 
-   phys->SetCollisionSphere(1.f);
+   phys->SetCollisionSphere(1.0f);
    phys->SetCollisionDetection(true);
    phys->EnableDynamics(true);
 
    Transform startXform;
-   const osg::Vec3 startXYZ(1.f, 2.f, 3.f);
-   const osg::Vec3 startHPR(10.f, 20.f, 30.f);
+   const osg::Vec3 startXYZ(1.0f, 2.0f, 3.0f);
+   const osg::Vec3 startHPR(10.0f, 20.0f, 30.0f);
    startXform.SetTranslation(startXYZ);
    startXform.SetRotation(startHPR);
 

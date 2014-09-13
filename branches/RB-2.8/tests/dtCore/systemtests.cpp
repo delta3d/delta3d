@@ -403,7 +403,7 @@ void SystemTests::TestSimMode()
    // adjust the Camera position
    dtCore::Transform camPos;
    osg::Vec3 camXYZ(0.0f, -50.0f, 20.0f);
-   osg::Vec3 lookAtXYZ (0.0f, 10.f, 0.0f);
+   osg::Vec3 lookAtXYZ (0.0f, 10.0f, 0.0f);
    osg::Vec3 upVec (0.0f, 0.0f, 1.0f );
    camPos.Set(camXYZ, lookAtXYZ, upVec);
    app->GetCamera()->SetTransform( camPos );

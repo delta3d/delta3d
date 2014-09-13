@@ -305,8 +305,8 @@ void TestAnim::InitializeAnimationActor(dtAnim::AnimationGameActor* gameProxy,
             hotspotDef.mParentName = "Bip02 Spine2";
             hotspotDef.mLocalTranslation.set(0.25f, -0.125f, 0.0f);
 
-            osg::Matrix attRot = osg::Matrix::rotate(osg::DegreesToRadians(90.f), osg::Vec3(0.f,1.f,0.f));
-            attRot *= osg::Matrix::rotate(osg::DegreesToRadians(180.f), osg::Vec3(0.f,0.f,1.f));
+            osg::Matrix attRot = osg::Matrix::rotate(osg::DegreesToRadians(90.0f), osg::Vec3(0.0f,1.0f,0.0f));
+            attRot *= osg::Matrix::rotate(osg::DegreesToRadians(180.0f), osg::Vec3(0.0f,0.0f,1.0f));
             hotspotDef.mLocalRotation = attRot.getRotate();
 
             mAnimationHelper->GetAttachmentController().AddAttachment(*attachment, hotspotDef);

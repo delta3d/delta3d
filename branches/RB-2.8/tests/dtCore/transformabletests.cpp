@@ -656,8 +656,8 @@ void TransformableTests::TestDistance()
    dtCore::Transform transform1;
    dtCore::Transform transform2;
 
-   transform1.SetTranslation(osg::Vec3(0.f,0.f,10.f));
-   transform2.SetTranslation(osg::Vec3(0.f,0.f,0.f));
+   transform1.SetTranslation(osg::Vec3(0.0f,0.0f,10.0f));
+   transform2.SetTranslation(osg::Vec3(0.0f,0.0f,0.0f));
 
    double expectedValue = 100;
    double expectedValuert = 10;
@@ -682,13 +682,13 @@ void TransformableTests::TestGetTransformWithDisabledCamera()
 
    RefPtr<Transformable> parent = new Transformable("parent");
    Transform cameraEnabledParentTransform;
-   const osg::Vec3 cameraEnabledParentXYZ(1.f, 2.f, 3.f);
+   const osg::Vec3 cameraEnabledParentXYZ(1.0f, 2.0f, 3.0f);
    cameraEnabledParentTransform.SetTranslation(cameraEnabledParentXYZ);
    parent->SetTransform(cameraEnabledParentTransform);
 
    RefPtr<Transformable> child = new Transformable("child");
    Transform cameraEnabledChildTransform;
-   const osg::Vec3 cameraEnabledChildXYZ(10.f, 10.f, 10.f);
+   const osg::Vec3 cameraEnabledChildXYZ(10.0f, 10.0f, 10.0f);
    cameraEnabledChildTransform.SetTranslation(cameraEnabledChildXYZ);
    child->SetTransform(cameraEnabledChildTransform);
 
@@ -717,7 +717,7 @@ void TransformableTests::TestGetTransformInSceneWithNoCamera()
    transformable->SetName("testNode");
 
    Transform startXform;
-   const osg::Vec3 startXYZ(1.f, 2.f, 3.f);
+   const osg::Vec3 startXYZ(1.0f, 2.0f, 3.0f);
    startXform.SetTranslation(startXYZ);
 
    transformable->SetTransform(startXform);
@@ -742,7 +742,7 @@ void TransformableTests::TestGetTransformNotInScene()
    transformable->SetName("testNode");
 
    Transform startXform;
-   const osg::Vec3 startXYZ(1.f, 2.f, 3.f);
+   const osg::Vec3 startXYZ(1.0f, 2.0f, 3.0f);
    startXform.SetTranslation(startXYZ);
 
    transformable->SetTransform(startXform);
@@ -763,7 +763,7 @@ void TransformableTests::TestGetTransformFromInactiveTransformable()
    transformable->SetName("testNode");
 
    Transform startXform;
-   const osg::Vec3 startXYZ(1.f, 2.f, 3.f);
+   const osg::Vec3 startXYZ(1.0f, 2.0f, 3.0f);
    startXform.SetTranslation(startXYZ);
 
    transformable->SetTransform(startXform);
@@ -784,7 +784,7 @@ void TransformableTests::TestGetTransformFromInactiveParent()
    RefPtr<Transformable> parent = new Transformable();
    parent->SetName("parent");
    Transform parentStart;
-   const osg::Vec3 parentStartXYZ(10.f, 10.f, 10.f);
+   const osg::Vec3 parentStartXYZ(10.0f, 10.0f, 10.0f);
    parentStart.SetTranslation(parentStartXYZ);
    parent->SetTransform(parentStart);
    parent->SetActive(false);
@@ -799,7 +799,7 @@ void TransformableTests::TestGetTransformFromInactiveParent()
    child->SetActive(true);
 
    Transform startXform;
-   const osg::Vec3 childStartXYZ(1.f, 2.f, 3.f);
+   const osg::Vec3 childStartXYZ(1.0f, 2.0f, 3.0f);
    startXform.SetTranslation(childStartXYZ);
    child->SetTransform(startXform, Transformable::REL_CS);
 

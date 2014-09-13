@@ -80,7 +80,7 @@ namespace dtCore
       System* sys = &dtCore::System::GetInstance();
       AddSender(sys);
 
-      SetClearColor(0.2f, 0.2f, 0.6f, 1.f);
+      SetClearColor(0.2f, 0.2f, 0.6f, 1.0f);
 
       SetCollisionCategoryBits(COLLISION_CATEGORY_MASK_CAMERA);
 

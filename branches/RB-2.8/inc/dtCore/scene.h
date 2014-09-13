@@ -191,7 +191,7 @@ namespace dtCore
        *
        * @return bool : true if and only if a height was found
        */
-      bool GetHeightOfTerrain(float& heightOfTerrain, float x, float y, float maxZ = 10000.f, float minZ = -10000);
+      bool GetHeightOfTerrain(float& heightOfTerrain, float x, float y, float maxZ = 10000.0f, float minZ = -10000.0f);
 
       ///Get the ODE space ID
       dSpaceID GetSpaceID() const;

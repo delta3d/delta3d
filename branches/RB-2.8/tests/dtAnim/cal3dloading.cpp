@@ -256,7 +256,7 @@ void CAL3DLoadingTests::CorrectAnimationData()
                                  unsigned (1), anim->getTrackCount());
 
    CPPUNIT_ASSERT_EQUAL_MESSAGE("CalCoreAnimation doesn't have the correct duration.",
-                                2.f, anim->getDuration());
+                                2.0f, anim->getDuration());
 
    delete model;
 
@@ -350,7 +350,7 @@ void CAL3DLoadingTests::CorrectMeshData()
       int(8), vert.vectorInfluence[0].boneId);
 
    CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("Influence weight is incorrect.",
-      float(1.f), vert.vectorInfluence[0].weight, 0.0001f);
+      float(1.0f), vert.vectorInfluence[0].weight, 0.0001f);
 
 
    delete model;
@@ -574,7 +574,7 @@ void CAL3DLoadingTests::TestMorphWeights()
    const std::vector<float> weights = subMesh->getVectorMorphTargetWeight();
 
    CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("CalSubMesh doesn't have the correct morph target weight",
-      0.f, subMesh->getMorphTargetWeight(0), 0.0001f);
+      0.0f, subMesh->getMorphTargetWeight(0), 0.0001f);
 
    model->update(0.1f);
 
@@ -667,7 +667,7 @@ void CAL3DLoadingTests::TestPlayAnimatedMorph()
    CalModel* model = new CalModel(coreModel);
    model->attachMesh(coreMeshID);
 
-   model->getMorphTargetMixer()->blend(morphID, 1.f, 0.f, 0.0f, false);
+   model->getMorphTargetMixer()->blend(morphID, 1.0f, 0.0f, 0.0f, false);
 
    model->update(1.18f);
 

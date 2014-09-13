@@ -87,7 +87,7 @@ void MakeSkyDome::SetCoordinatesAndColors()
 
          assert(ci < mColorArray->size());
          assert(i < mCCArray.size());
-         (*mColorArray)[ci].set(mCCArray[i].x(), mCCArray[i].y(), mCCArray[i].z(), 1.f);
+         (*mColorArray)[ci].set(mCCArray[i].x(), mCCArray[i].y(), mCCArray[i].z(), 1.0f);
 
          ci++;
       }

@@ -121,7 +121,7 @@ PoseMesh::PoseMesh(dtAnim::Cal3DModelWrapper* model,
 
       // Store the vert for triangulation
       // - osg::PI_2
-      osg::Vec3 newVertPoint(az, el, 0.f);
+      osg::Vec3 newVertPoint(az, el, 0.0f);
 
       posePoints.push_back(newVertPoint);
 

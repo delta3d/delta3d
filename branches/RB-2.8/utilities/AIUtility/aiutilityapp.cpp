@@ -344,7 +344,7 @@ void AIUtilityApp::OnWaypointSelectionChanged(std::vector<dtAI::WaypointInterfac
       return;
    }
 
-   const osg::Vec4 kSelectedColor(1.f, 0.1f, 0.1f, 1.f);
+   const osg::Vec4 kSelectedColor(1.0f, 0.1f, 0.1f, 1.0f);
    mAIInterface->GetDebugDrawable()->ResetWaypointColorsToDefault();
 
    std::vector<dtAI::WaypointPair> edgesForSelection;

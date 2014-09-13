@@ -250,7 +250,7 @@ namespace dtAI
        */
       TOperator(const std::string& pName):
          Operator(pName, Operator::ApplyOperatorFunctor(this, &TOperator<_Type>::Apply))
-         ,mCost(0.f)
+         ,mCost(0.0f)
          {}
 
       void SetCost(float pcost){mCost = pcost;}

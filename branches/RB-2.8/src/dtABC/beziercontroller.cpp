@@ -29,7 +29,7 @@ BezierController::BezierController()
 
    osg::StateSet* ss = mGeode->getOrCreateStateSet();
    ss->setMode(GL_LIGHTING, osg::StateAttribute::OFF);
-   osg::LineWidth* lineWidth = new osg::LineWidth(3.f);
+   osg::LineWidth* lineWidth = new osg::LineWidth(3.0f);
    ss->setAttributeAndModes(lineWidth, osg::StateAttribute::ON);
 
    mNode = new osg::Group;
@@ -168,7 +168,7 @@ void BezierController::MakeSegment(float time,
 ////////////////////////////////////////////////////////////////////////////////
 float BezierController::BlendFunction(float t, int index)
 {
-   // Calculates each part of Cubic Bézier curve depending on the indexed part of the function
+   // Calculates each part of Cubic Bï¿½zier curve depending on the indexed part of the function
    float result = 0.0f;
 
    switch (index)
@@ -201,22 +201,22 @@ float BezierController::BlendFunction(float t, int index)
 float BezierController::DerivativeFunction(float t, int index) const
 {  
    // This is the derivative of the blendfunction and calculates the 
-   // derivative (tangent) of each part of Cubic Bézier curve 
+   // derivative (tangent) of each part of Cubic Bï¿½zier curve 
    // depending on the indexed part of the function
    float result = 0.0f;
 
    switch (index)
    {
    case 0: // CurrentNode * (-3)*(t - 1)^2
-      result = -3.f * powf(t - 1.0f, 2.0f);
+      result = -3.0f * powf(t - 1.0f, 2.0f);
       break;
 
    case 1: // CurrentNodeExit * 3*t*(2*t - 2) + 3*(t - 1)^2
-      result = 3.f * t * (2.f * t - 2.f) + 3.f * powf(t - 1.f, 2.f);
+      result = 3.0f * t * (2.0f * t - 2.0f) + 3.0f * powf(t - 1.0f, 2.0f);
       break;
 
    case 2: // NextNodeEntry * (-2)*t*(3*t - 3) - 3*t^2
-      result = -2.f * t * (3.f * t - 3.f) - 3.f * powf(t, 2.f);
+      result = -2.0f * t * (3.0f * t - 3.0f) - 3.0f * powf(t, 2.0f);
       break;
 
    case 3: // NextNode * 3*t^2

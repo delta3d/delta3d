@@ -88,7 +88,7 @@ dtCore::ActorProxyIcon* dtActors::TriggerVolumeActorProxy::GetBillBoardIcon()
 {
    if (!mBillBoardIcon.valid())
    {
-      dtCore::ActorProxyIcon::ActorProxyIconConfig cfg(false,false,1.f);
+      dtCore::ActorProxyIcon::ActorProxyIconConfig cfg(false,false,1.0f);
       mBillBoardIcon = new dtCore::ActorProxyIcon(dtCore::ActorProxyIcon::IMAGE_BILLBOARD_TRIGGER, cfg);
    }
 
