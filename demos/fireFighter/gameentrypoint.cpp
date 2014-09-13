@@ -140,7 +140,7 @@ void FireFighterGameEntryPoint::OnStartup(dtABC::BaseABC& app, dtGame::GameManag
    gameManager.SendMessage(gscm);
 
    app.GetScene()->SetPhysicsStepSize(0.01);
-   app.GetScene()->SetGravity(0.f, 0.f, -2.f);
+   app.GetScene()->SetGravity(0.0f, 0.0f, -2.0f);
 
    app.GetWindow()->SetPosition(app.GetWindow()->GetPosition());
 }

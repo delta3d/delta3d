@@ -76,11 +76,11 @@ void CloudPlaneTests::tearDown()
 void CloudPlaneTests::TestSaveAndLoad()
 {
    dtCore::RefPtr<dtCore::CloudPlane> fakeCloud = 
-      new dtCore::CloudPlane(6, 0.75f, 2, 1.f, 0.2f, 0.96f, 1, 1.f, 
+      new dtCore::CloudPlane(6, 0.75f, 2, 1.0f, 0.2f, 0.96f, 1, 1.0f, 
       "Fake Clouds", "ThisFileIsNotReal.Imaginary");
 
    dtCore::RefPtr<dtCore::CloudPlane> clouds = 
-      new dtCore::CloudPlane(6, 0.75f, 2, 1.f, 0.2f, 0.96f, 1, 1.f, 
+      new dtCore::CloudPlane(6, 0.75f, 2, 1.0f, 0.2f, 0.96f, 1, 1.0f, 
       "Test Clouds", "");
 
    bool result = clouds->SaveTexture(mTextureDir);

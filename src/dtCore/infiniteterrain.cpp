@@ -108,7 +108,7 @@ InfiniteTerrain::InfiniteTerrain(const std::string& name, osg::Image* textureIma
       mBuildDistance(3000.0f),
       mSmoothCollisionsEnabled(false),
       mClearFlag(false),
-      mLOSPostSpacing(0.f)
+      mLOSPostSpacing(0.0f)
 {
    SetName(name);
 
@@ -197,7 +197,7 @@ InfiniteTerrain::InfiniteTerrain(const std::string& name, osg::Image* textureIma
 
    SetCollisionCategoryBits(COLLISION_CATEGORY_MASK_INFINITETERRAIN);
 
-   SetLineOfSightSpacing(25.f); // a bit less than DTED L2
+   SetLineOfSightSpacing(25.0f); // a bit less than DTED L2
 }
 
 /**

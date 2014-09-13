@@ -44,7 +44,7 @@ public:
    {
       terr = new dtCore::InfiniteTerrain();
       terr->SetHorizontalScale(0.005);
-      terr->SetVerticalScale(35.f);
+      terr->SetVerticalScale(35.0f);
       terr->SetSegmentDivisions(64);
 
       Transform trans = Transform(0.0f, 0.0f, terr->GetVerticalScale() + 15.0f);

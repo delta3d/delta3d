@@ -57,7 +57,7 @@ void App::Config()
 
    mCameraMotion = new dtCore::OrbitMotionModel(GetKeyboard(), GetMouse());
    mCameraMotion->SetTarget(GetCamera());
-   mCameraMotion->SetFocalPoint(osg::Vec3(0.f, 0.f, 0.f));
+   mCameraMotion->SetFocalPoint(osg::Vec3(0.0f, 0.0f, 0.0f));
 
    mObject1 = new dtCore::Object("Object1");
    AddDrawable(mObject1.get());

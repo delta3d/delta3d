@@ -41,8 +41,8 @@ namespace dtCore
     *\code
     * BatchIsector *isect = new BatchIsector( mScene );
     * osg::Vec3 eyePoint( 500.0f, 500.0f, 1000.0f );
-    * osg::Vec3 startPos(100.f, 100.f, 10.f);
-    * osg::Vec3 endPos(100.f, 1000.f, 10.f);
+    * osg::Vec3 startPos(100.f0, 100.0f, 10.0f);
+    * osg::Vec3 endPos(100.0f, 1000.0f, 10.0f);
     * isect->EnableAndGetISector(0).SetSectorAsLineSegment(startPos, endPos);
     * isect->Update(eyePoint, true);
     * osg::Vec3 hitPt;

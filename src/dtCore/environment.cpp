@@ -71,9 +71,9 @@ Environment::Environment(const std::string& name)
    GetOSGNode()->asGroup()->addChild(mDrawableNode.get());
 
    mSkyColor.set(0.39f, 0.50f, 0.74f);
-   mFogColor.set(0.84f, 0.87f, 1.f);
-   mAdvFogCtrl.set(1.f, 10.f, 2.545f); // T, E, N
-   mSunColor.set(1.f, 1.f, 1.f);
+   mFogColor.set(0.84f, 0.87f, 1.0f);
+   mAdvFogCtrl.set(1.0f, 10.0f, 2.545f); // T, E, N
+   mSunColor.set(1.0f, 1.0f, 1.0f);
    mModFogColor.set(mFogColor);
 
    mRefLatLong.set(36.586944f, -121.842778f);
@@ -138,7 +138,7 @@ Environment::Environment(const std::string& name)
    SetAdvFogCtrl(mAdvFogCtrl);
    SetSkyColor(mSkyColor);
    SetFogMode(EXP2);
-   SetVisibility(16000.f);
+   SetVisibility(16000.0f);
    SetFogEnable(true);
    RecalculateWindSpeed();
 
@@ -395,7 +395,7 @@ void dtCore::Environment::SetFogNear(float val)
 {
    mFogNear = val;
 
-   if (mFogNear < 0.f)
+   if (mFogNear < 0.0f)
    {
       mFogNear = 0.f;
    }
@@ -694,7 +694,7 @@ void dtCore::Environment::UpdateFogColor()
    double rotation = -(sunRotation + osg::PI) - heading;
 
    float inverseVis = 1.f - (MAX_VISIBILITY - vis) / MAX_VISIBILITY;
-   float sif = 0.5f - cosf(osg::DegreesToRadians(mSunAltitude) * 2.f) / 2.f + 0.000001f;
+   float sif = 0.5f - cosf(osg::DegreesToRadians(mSunAltitude) * 2.0f) / 2.f + 0.000001f;
 
    float rf1  = std::abs((rotation-osg::PI) / osg::PI); // difference between eyepoint heading and sun heading (rad)
    float rf2 = inverseVis * pow(rf1 * rf1, 1.0f / sif);
@@ -706,7 +706,7 @@ void dtCore::Environment::UpdateFogColor()
    mModFogColor[2] = rf3 * mModFogColor[2] + rf2 * blue;
 
    // now apply the fog's color
-   mFog->setColor(osg::Vec4(mModFogColor[0], mModFogColor[1], mModFogColor[2], 1.f));
+   mFog->setColor(osg::Vec4(mModFogColor[0], mModFogColor[1], mModFogColor[2], 1.0f));
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -735,8 +735,8 @@ void dtCore::Environment::UpdateSunColor()
 
    if (mSkyLight.valid())
    {
-      mSkyLight->SetDiffuse(diff[0], diff[1], diff[2], 1.f);
-      mSkyLight->SetAmbient(amb[0],  amb[1],  amb[2],  1.f);
+      mSkyLight->SetDiffuse(diff[0], diff[1], diff[2], 1.0f);
+      mSkyLight->SetAmbient(amb[0],  amb[1],  amb[2],  1.0f);
    }
 
 }

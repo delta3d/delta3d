@@ -155,7 +155,7 @@ void SkyDomeShader::Update(   const osg::Vec2& sunDir,
    sunVec[1] = (cos(osg::DegreesToRadians(sunDir[0])) * cos_alt);
    sunVec[2] = sin(osg::DegreesToRadians(sunDir[1]));
 
-   mLightScatterinVP->setProgramLocalParameter(0, osg::Vec4(0.f, 0.f, 0.f, 0.f) );
+   mLightScatterinVP->setProgramLocalParameter(0, osg::Vec4(0.0f, 0.0f, 0.0f, 0.0f) );
    mLightScatterinVP->setProgramLocalParameter(1, osg::Vec4( -sunVec[0], -sunVec[1], -sunVec[2], 0));
 
    float tempMie = 0.434 * ConcentrationFactor(turbidity) * osg::PI * (2 * osg::PI) * (2 * osg::PI) * 0.5;

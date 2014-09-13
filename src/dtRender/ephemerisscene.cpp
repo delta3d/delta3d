@@ -518,7 +518,7 @@ namespace dtRender
 
       mImpl->mFogNear = val;
 
-      if (mImpl->mFogNear < 0.f)
+      if (mImpl->mFogNear < 0.0f)
       {
          mImpl->mFogNear = 0.f;
       }

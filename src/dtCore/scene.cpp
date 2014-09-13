@@ -476,7 +476,7 @@ osg::Vec3 Scene::GetGravity() const
    }
    else
    {
-      return osg::Vec3(0.f, 0.f, 0.f);
+      return osg::Vec3(0.0f, 0.0f, 0.0f);
    }
 }
 

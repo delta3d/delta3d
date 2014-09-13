@@ -96,7 +96,7 @@ Viewer::~Viewer()
 osg::Geode* MakePlane()
 {
    osg::Geode* geode = new osg::Geode();
-   osg::Box* box = new osg::Box(osg::Vec3(0.f,0.f,-0.025f), 2.5f, 2.5f, 0.01f);
+   osg::Box* box = new osg::Box(osg::Vec3(0.0f,0.0f,-0.025f), 2.5f, 2.5f, 0.01f);
    osg::ShapeDrawable* shapeDrawable = new osg::ShapeDrawable(box);
 
    osg::Material* material = new osg::Material;
@@ -133,9 +133,9 @@ void Viewer::Config()
 
    //adjust the Camera position
    dtCore::Transform camPos;
-   osg::Vec3 camXYZ(0.f, 5.f, 1.f);
-   osg::Vec3 lookAtXYZ (0.f, 0.f, 1.f);
-   osg::Vec3 upVec (0.f, 0.f, 1.f);
+   osg::Vec3 camXYZ(0.0f, 5.0f, 1.0f);
+   osg::Vec3 lookAtXYZ (0.0f, 0.0f, 1.0f);
+   osg::Vec3 upVec (0.0f, 0.0f, 1.0f);
    camPos.Set(camXYZ, lookAtXYZ, upVec);
 
    GetCamera()->SetTransform(camPos);
@@ -143,14 +143,14 @@ void Viewer::Config()
 
    double vfov, aspectRatio, nearClip, farClip;
    GetCamera()->GetPerspectiveParams(vfov, aspectRatio, nearClip, farClip);
-   GetCamera()->SetPerspectiveParams(vfov, aspectRatio, 0.25, farClip);
+   GetCamera()->SetPerspectiveParams(vfov, aspectRatio, 0.25f, farClip);
 
    mMotion = new OrbitMotionModel(GetKeyboard(), GetMouse());
    mMotion->SetTarget(GetCamera());
-   mMotion->SetDistance(5.f);
+   mMotion->SetDistance(5.0f);
 
    Light* l = GetScene()->GetLight(0);
-   l->SetAmbient(0.7f, 0.7f, 0.7f, 1.f);
+   l->SetAmbient(0.7f, 0.7f, 0.7f, 1.0f);
    l->SetDiffuse(1.0f, 1.0f, 1.0f, 1.0f);
 
    GetScene()->GetSceneNode()->addChild(MakePlane());

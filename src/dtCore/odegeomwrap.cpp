@@ -880,9 +880,9 @@ dtCore::RefPtr<osg::Geode> dtCore::ODEGeomWrap::CreateRenderedCollisionGeometry(
    }
 
    osg::Material* mat = new osg::Material();
-   mat->setDiffuse(osg::Material::FRONT_AND_BACK, osg::Vec4(1.f,0.f,1.f, 0.5f));
-   mat->setAmbient(osg::Material::FRONT_AND_BACK, osg::Vec4(1.f,0.f,1.f, 1.f));
-   mat->setEmission(osg::Material::FRONT_AND_BACK,osg::Vec4(0.f,0.f,0.f, 1.f));
+   mat->setDiffuse(osg::Material::FRONT_AND_BACK, osg::Vec4(1.0f,0.0f,1.0f, 0.5f));
+   mat->setAmbient(osg::Material::FRONT_AND_BACK, osg::Vec4(1.0f,0.0f,1.0f, 1.0f));
+   mat->setEmission(osg::Material::FRONT_AND_BACK,osg::Vec4(0.0f,0.0f,0.0f, 1.0f));
 
    osg::PolygonOffset* polyoffset = new osg::PolygonOffset;
    polyoffset->setFactor(-1.0f);

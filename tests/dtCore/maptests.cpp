@@ -932,12 +932,12 @@ void MapTests::TestMapSaveAndLoad()
    const float TEST_FLOAT(12345.12345f);
    const double TEST_DOUBLE(12345.54321);
    const int TEST_INT(123345);
-   const osg::Vec3 TEST_VEC3(1.f, 2.f, 3.f);
+   const osg::Vec3 TEST_VEC3(1.0f, 2.0f, 3.0f);
    const osg::Vec3 TEST_VEC3F(123.123f, 456.456f, 789.789f);
    const osg::Vec3d TEST_VEC3D(123.123, 456.456, 789.789);
-   const osg::Vec4f TEST_VEC4F(1.f, 2.f, 3.f, 4.f);
+   const osg::Vec4f TEST_VEC4F(1.0f, 2.0f, 3.0f, 4.0f);
    const osg::Vec4d TEST_VEC4D(2.0, 3.0, 4.0, 5.0);
-   const osg::Vec4 TEST_RGBA(255.f, 245.f, 235.f, 1235.f);
+   const osg::Vec4 TEST_RGBA(255.0f, 245.0f, 235.0f, 1235.0f);
    const dtCore::UniqueId TEST_ACTORID;
    const dtCore::ResourceDescriptor TEST_RESOURCE("test", "somethingelse");
    const unsigned int TEST_BIT(0xFF00FF00);

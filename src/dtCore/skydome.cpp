@@ -78,7 +78,7 @@ void dtCore::SkyDome::SetBaseColor(const osg::Vec3& color)
       for (unsigned int i=0; i<limit; i++)
       {
          assert(i<color->size());
-         (*color)[i].set(mBaseColor[0], mBaseColor[1], mBaseColor[2], 1.f);
+         (*color)[i].set(mBaseColor[0], mBaseColor[1], mBaseColor[2], 1.0f);
       }
       geom->dirtyDisplayList();
    }
@@ -197,7 +197,7 @@ void SkyDome::AssignColors() const
          for (unsigned int i = 0; i < 19; i++)
          {
             assert(i<color->size());
-            (*color)[i].set(bottom_color[i][0], bottom_color[i][1], bottom_color[i][2], 1.f);
+            (*color)[i].set(bottom_color[i][0], bottom_color[i][1], bottom_color[i][2], 1.0f);
          }
       }
 
@@ -206,11 +206,11 @@ void SkyDome::AssignColors() const
       for(unsigned int i = 0; i < 19; i++)
       {
          assert(c+19+19+19+19 < color->size());
-         (*color)[c].set(bottom_color[i][0], bottom_color[i][1], bottom_color[i][2], 1.f);
-         (*color)[c+19].set(lower_color[i][0], lower_color[i][1], lower_color[i][2], 1.f);
-         (*color)[c+19+19].set(middle_color[i][0], middle_color[i][1], middle_color[i][2], 1.f);
-         (*color)[c+19+19+19].set(upper_color[i][0], upper_color[i][1], upper_color[i][2], 1.f);
-         (*color)[c+19+19+19+19].set(center_color[0], center_color[1], center_color[2], 1.f);
+         (*color)[c].set(bottom_color[i][0], bottom_color[i][1], bottom_color[i][2], 1.0f);
+         (*color)[c+19].set(lower_color[i][0], lower_color[i][1], lower_color[i][2], 1.0f);
+         (*color)[c+19+19].set(middle_color[i][0], middle_color[i][1], middle_color[i][2], 1.0f);
+         (*color)[c+19+19+19].set(upper_color[i][0], upper_color[i][1], upper_color[i][2], 1.0f);
+         (*color)[c+19+19+19+19].set(center_color[0], center_color[1], center_color[2], 1.0f);
          c++;
       }
    }
@@ -243,17 +243,17 @@ void SkyDome::SetUpperMiddleLowerColors(const osg::Vec3& skyColor, const osg::Ve
       const osg::Vec3::value_type diff = skyColor[j] - fogColor[j];
 
       upper_color[i][j] = skyColor[j] - diff *
-                          (1.0 - GetVisibilityFactor(visibility) * (0.7 + 0.3 * cvf/20000.f));
+                          (1.0 - GetVisibilityFactor(visibility) * (0.7 + 0.3 * cvf/20000.0f));
 
       middle_color[i][j] = skyColor[j] - diff *
-                          (1.0 - GetVisibilityFactor(visibility) * (0.1 + 0.85 * cvf/20000.f))
+                          (1.0 - GetVisibilityFactor(visibility) * (0.1 + 0.85 * cvf/20000.0f))
                            + middle_amt[j];
 
       lower_color[i][j] = fogColor[j] + outer_amt[j];
 
-      dtUtil::Clamp(upper_color[i][j], 0.f, 1.f);
-      dtUtil::Clamp(middle_color[i][j], 0.f, 1.f);
-      dtUtil::Clamp(lower_color[i][j], 0.f, 1.f);
+      dtUtil::Clamp(upper_color[i][j], 0.0f, 1.0f);
+      dtUtil::Clamp(middle_color[i][j], 0.0f, 1.0f);
+      dtUtil::Clamp(lower_color[i][j], 0.0f, 1.0f);
    }
 }
 

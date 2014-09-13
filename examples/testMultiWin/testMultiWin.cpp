@@ -78,7 +78,7 @@ void TestMultiWin::Config()
    mCam2->SetWindow(mWin2.get());
    mCam2->GetOSGCamera()->setViewport(new osg::Viewport(0.0, 0.0, (float)DEFAULT_WIN_WIDTH, (float)DEFAULT_WIN_HEIGHT));
    mCam2->SetTransform(transform);
-   mCam2->SetClearColor(1.f, 0.f, 0.f, 1.f);
+   mCam2->SetClearColor(1.0f, 0.0f, 0.0f, 1.0f);
    mCam2->SetAspectRatio(DEFAULT_ASPECT_RATIO);
    mView2->SetCamera(mCam2.get());
 
@@ -97,7 +97,7 @@ void TestMultiWin::Config()
    mCam3->SetWindow(mWin2.get());
    mCam3->GetOSGCamera()->setViewport(new osg::Viewport(0.0, 480.0, (float)DEFAULT_WIN_WIDTH, (float)DEFAULT_WIN_HEIGHT));
    mCam3->SetTransform(transform);
-   mCam3->SetClearColor(0.f, 1.f, 0.f, 1.f);
+   mCam3->SetClearColor(0.0f, 1.0f, 0.0f, 1.0f);
    mCam3->SetAspectRatio(DEFAULT_ASPECT_RATIO);
 
    mView3->SetCamera(mCam3.get());

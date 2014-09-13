@@ -412,7 +412,7 @@ osg::Node* FixedFunctionProfile::MakeBox()
    osg::Geometry *polyGeom[6];
 
    osg::Vec4Array *colors = new osg::Vec4Array(1);
-   (*colors)[0] = osg::Vec4(1.f, 1.f, 1.f, 1.f);
+   (*colors)[0] = osg::Vec4(1.0f, 1.0f, 1.0f, 1.0f);
 
    osg::Vec3Array *vArray[6];
    vArray[0] = new osg::Vec3Array(4, coords0);
