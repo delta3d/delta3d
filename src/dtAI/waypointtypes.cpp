@@ -164,6 +164,8 @@ namespace dtAI
    /////////////////////////////////////////////////////////////////////////////
    TacticalWaypoint::TacticalWaypoint()
       : BaseClass(WaypointTypes::TACTICAL_WAYPOINT.get())
+      , mCover()
+      , mSniper()
    {
 
    }
@@ -171,6 +173,8 @@ namespace dtAI
    /////////////////////////////////////////////////////////////////////////////
    TacticalWaypoint::TacticalWaypoint(const osg::Vec3& pos)
       : BaseClass(WaypointTypes::TACTICAL_WAYPOINT.get(), pos)
+      , mCover()
+      , mSniper()
    {
 
    }
@@ -178,6 +182,8 @@ namespace dtAI
    /////////////////////////////////////////////////////////////////////////////
    TacticalWaypoint::TacticalWaypoint(const dtUtil::RefString& name)
       : BaseClass(WaypointTypes::TACTICAL_WAYPOINT.get(), name)
+      , mCover()
+      , mSniper()
    {
 
    }
@@ -185,6 +191,8 @@ namespace dtAI
    /////////////////////////////////////////////////////////////////////////////
    TacticalWaypoint::TacticalWaypoint(const osg::Vec3& pos, const dtUtil::RefString& name)
       : BaseClass(WaypointTypes::TACTICAL_WAYPOINT.get(), pos, name)
+      , mCover()
+      , mSniper()
    {
 
    }
