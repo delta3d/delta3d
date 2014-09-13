@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <map xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="delta3dMap" xsi:schemaLocation="delta3dMap map.xsd">
     <header>
         <name>TestApp</name>
@@ -8,7 +7,7 @@
         <comment></comment>
         <copyright></copyright>
         <createTimestamp>2014-07-15T22:49:46-05:00</createTimestamp>
-        <lastUpdateTimestamp>2014-09-12T15:39:23-05:00</lastUpdateTimestamp>
+        <lastUpdateTimestamp>2014-09-13T11:56:13-05:00</lastUpdateTimestamp>
         <editorVersion>2.8.0</editorVersion>
         <schemaVersion>1.0</schemaVersion>
     </header>
@@ -31,10 +30,6 @@
             <type>dtExample.Mesh Object</type>
             <id>035dae91-5e6f-4e52-98f8-775366d0d325</id>
             <name>angledpalm_01</name>
-            <property>
-                <name>Name</name>
-                <string>angledpalm_01</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -81,10 +76,6 @@
             <id>03ba8748-8245-47dc-8040-a609d1af5d02</id>
             <name>Firework_ControlPoint_13</name>
             <property>
-                <name>Name</name>
-                <string>Firework_ControlPoint_13</string>
-            </property>
-            <property>
                 <name>Translation</name>
                 <vec3>
                     <value1>-436.077728</value1>
@@ -101,10 +92,6 @@
             <type>dtExample.Mesh Object</type>
             <id>04253c4a-c737-45b5-ba4f-600e1f874df3</id>
             <name>barstool_06</name>
-            <property>
-                <name>Name</name>
-                <string>barstool_06</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -146,10 +133,6 @@
             <type>dtExample.Mesh Object</type>
             <id>047652b9-201a-4861-a072-2492c46f4bcb</id>
             <name>palmtree_80</name>
-            <property>
-                <name>Name</name>
-                <string>palmtree_80</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -196,10 +179,6 @@
             <id>056fbfc4-cb8b-4f0e-95df-f6f304db710a</id>
             <name>palmtree_13</name>
             <property>
-                <name>Name</name>
-                <string>palmtree_13</string>
-            </property>
-            <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
             </property>
@@ -244,10 +223,6 @@
             <type>dtExample.Mesh Object</type>
             <id>05d8b0cf-58b8-4326-8606-ecd68033a630</id>
             <name>palmtree_59</name>
-            <property>
-                <name>Name</name>
-                <string>palmtree_59</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -294,10 +269,6 @@
             <id>068d4729-4bd8-48ba-bf4f-8d9bb8f2a00a</id>
             <name>FireworkG_BezierNode_01</name>
             <property>
-                <name>Name</name>
-                <string>FireworkG_BezierNode_01</string>
-            </property>
-            <property>
                 <name>Translation</name>
                 <vec3>
                     <value1>-435.455658</value1>
@@ -322,10 +293,6 @@
             <type>dtExample.Mesh Object</type>
             <id>06a93eb5-1501-4e51-ad4b-31e9f459fb2d</id>
             <name>walkway_33</name>
-            <property>
-                <name>Name</name>
-                <string>walkway_33</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -384,10 +351,6 @@
             <id>09ee66bd-235a-4fbf-91c2-ed09f5414ba3</id>
             <name>palmtree_15</name>
             <property>
-                <name>Name</name>
-                <string>palmtree_15</string>
-            </property>
-            <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
             </property>
@@ -433,10 +396,6 @@
             <id>0a6161d9-ed46-43e2-bf2c-33a5ec09e690</id>
             <name>FireworkG_Controller</name>
             <property>
-                <name>Name</name>
-                <string>FireworkG_Controller</string>
-            </property>
-            <property>
                 <name>Start Node</name>
                 <actorId>068d4729-4bd8-48ba-bf4f-8d9bb8f2a00a</actorId>
             </property>
@@ -449,10 +408,6 @@
             <type>dtExample.Mesh Object</type>
             <id>0bbfab75-ab73-44a9-a388-3d22de38f08a</id>
             <name>palmtree_75</name>
-            <property>
-                <name>Name</name>
-                <string>palmtree_75</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -498,10 +453,6 @@
             <type>dtExample.Mesh Object</type>
             <id>0eeb115d-228d-4336-bdd0-6a3be176d691</id>
             <name>walkway_26</name>
-            <property>
-                <name>Name</name>
-                <string>walkway_26</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -560,10 +511,6 @@
             <id>1033de23-b4ec-4da6-9015-6a8bb772ab86</id>
             <name>palmtree_31</name>
             <property>
-                <name>Name</name>
-                <string>palmtree_31</string>
-            </property>
-            <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
             </property>
@@ -609,10 +556,6 @@
             <id>1209a04a-99dc-4091-a82d-13cfb2c8c1da</id>
             <name>bottle_01</name>
             <property>
-                <name>Name</name>
-                <string>bottle_01</string>
-            </property>
-            <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
             </property>
@@ -641,10 +584,6 @@
             <type>dtExample.Mesh Object</type>
             <id>14111fe8-e00c-42cf-bfa7-2af56d0da279</id>
             <name>palmtree_73</name>
-            <property>
-                <name>Name</name>
-                <string>palmtree_73</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -691,10 +630,6 @@
             <id>1486dd55-d854-44ca-959c-496cef4777fb</id>
             <name>Dynamic Light_11</name>
             <property>
-                <name>Name</name>
-                <string>Dynamic Light_11</string>
-            </property>
-            <property>
                 <name>Rotation</name>
                 <vec3>
                     <value1>0.000000</value1>
@@ -731,10 +666,6 @@
             <type>dtExample.Mesh Object</type>
             <id>14a2aaa8-9c7c-4d9f-89e2-30f13427a716</id>
             <name>palmtree_85</name>
-            <property>
-                <name>Name</name>
-                <string>palmtree_85</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -781,10 +712,6 @@
             <id>15fdc1df-325f-430d-9d30-ea5ec1e55f1f</id>
             <name>palmtree_95</name>
             <property>
-                <name>Name</name>
-                <string>palmtree_95</string>
-            </property>
-            <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
             </property>
@@ -830,10 +757,6 @@
             <id>16c26fe7-fadd-4bc1-87b1-7b9c55fe9345</id>
             <name>lamp_02</name>
             <property>
-                <name>Name</name>
-                <string>lamp_02</string>
-            </property>
-            <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
             </property>
@@ -870,10 +793,6 @@
             <type>dtExample.Mesh Object</type>
             <id>16f4392f-b2c9-43d3-8d8a-4c17e5ed65d4</id>
             <name>walkway_49</name>
-            <property>
-                <name>Name</name>
-                <string>walkway_49</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -932,10 +851,6 @@
             <id>1900379a-e731-4553-8c7a-e07b69959cc9</id>
             <name>lamp_10</name>
             <property>
-                <name>Name</name>
-                <string>lamp_10</string>
-            </property>
-            <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
             </property>
@@ -973,10 +888,6 @@
             <id>19d62a0a-3d86-45ef-94ce-22935d81dd0c</id>
             <name>Firework_ControlPoint_10</name>
             <property>
-                <name>Name</name>
-                <string>Firework_ControlPoint_10</string>
-            </property>
-            <property>
                 <name>Translation</name>
                 <vec3>
                     <value1>-446.996918</value1>
@@ -993,10 +904,6 @@
             <type>dtExample.Mesh Object</type>
             <id>1b018934-0e03-4af7-b58f-c78100dcc456</id>
             <name>walkway_22</name>
-            <property>
-                <name>Name</name>
-                <string>walkway_22</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -1055,10 +962,6 @@
             <id>1b5fcf27-d01b-4730-88c5-e46278247084</id>
             <name>coral</name>
             <property>
-                <name>Name</name>
-                <string>coral</string>
-            </property>
-            <property>
                 <name>ShaderGroup</name>
                 <string>SimpleShader</string>
             </property>
@@ -1088,10 +991,6 @@
             <id>1baa3f33-480a-43e4-ba8f-98b90b59bf36</id>
             <name>PlaneBezierNode_02</name>
             <property>
-                <name>Name</name>
-                <string>PlaneBezierNode_02</string>
-            </property>
-            <property>
                 <name>Translation</name>
                 <vec3>
                     <value1>1004.240784</value1>
@@ -1112,10 +1011,6 @@
             <type>dtExample.Mesh Object</type>
             <id>1c5bfcfc-016c-4bdd-9c71-d5dfa02a07cc</id>
             <name>lamp_07</name>
-            <property>
-                <name>Name</name>
-                <string>lamp_07</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -1153,10 +1048,6 @@
             <type>dtExample.Mesh Object</type>
             <id>1ce7122f-f79b-460b-8d55-07816aa807bd</id>
             <name>Chair_03</name>
-            <property>
-                <name>Name</name>
-                <string>Chair_03</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -1199,10 +1090,6 @@
             <id>1d4bdf53-3862-47f2-9f80-19a29b663b65</id>
             <name>Chair_11</name>
             <property>
-                <name>Name</name>
-                <string>Chair_11</string>
-            </property>
-            <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
             </property>
@@ -1243,10 +1130,6 @@
             <type>dtExample.Mesh Object</type>
             <id>1ef1c6bf-b624-4906-a3ac-d97d8da2fea7</id>
             <name>walkway_02</name>
-            <property>
-                <name>Name</name>
-                <string>walkway_02</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -1305,10 +1188,6 @@
             <id>1f107866-6010-47fd-b817-aa0d730a9b81</id>
             <name>palmtree_22</name>
             <property>
-                <name>Name</name>
-                <string>palmtree_22</string>
-            </property>
-            <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
             </property>
@@ -1353,10 +1232,6 @@
             <type>dtExample.Mesh Object</type>
             <id>1f10ad98-6b56-42e5-ba20-6770c948751d</id>
             <name>walkway_31</name>
-            <property>
-                <name>Name</name>
-                <string>walkway_31</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -1415,10 +1290,6 @@
             <id>1fb5402a-bc27-4736-9b1b-bd25fd7dc13f</id>
             <name>walkway_60</name>
             <property>
-                <name>Name</name>
-                <string>walkway_60</string>
-            </property>
-            <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
             </property>
@@ -1476,10 +1347,6 @@
             <id>21ccd061-0fdb-44b9-a7b8-9485725ab06f</id>
             <name>palmtree_28</name>
             <property>
-                <name>Name</name>
-                <string>palmtree_28</string>
-            </property>
-            <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
             </property>
@@ -1525,10 +1392,6 @@
             <id>21efe6ca-d622-4366-8a1d-c76fde0b3302</id>
             <name>bottle</name>
             <property>
-                <name>Name</name>
-                <string>bottle</string>
-            </property>
-            <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
             </property>
@@ -1557,10 +1420,6 @@
             <type>dtExample.Mesh Object</type>
             <id>2313f132-7d7b-45c7-8fd4-b7c480ea4b1b</id>
             <name>walkway_12</name>
-            <property>
-                <name>Name</name>
-                <string>walkway_12</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -1619,10 +1478,6 @@
             <id>249c050b-8a9a-4b7a-8411-6aa4eda9b288</id>
             <name>palmtree_56</name>
             <property>
-                <name>Name</name>
-                <string>palmtree_56</string>
-            </property>
-            <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
             </property>
@@ -1668,10 +1523,6 @@
             <id>258a80cf-dcf9-43d3-b2a6-4ec387cd9076</id>
             <name>bottle_06</name>
             <property>
-                <name>Name</name>
-                <string>bottle_06</string>
-            </property>
-            <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
             </property>
@@ -1702,10 +1553,6 @@
             <type>dtExample.Mesh Object</type>
             <id>25df6287-9757-4ef3-ad06-cba54105cae5</id>
             <name>barstool_01</name>
-            <property>
-                <name>Name</name>
-                <string>barstool_01</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -1748,10 +1595,6 @@
             <id>262e1105-9dd2-46ae-903c-813f52f80908</id>
             <name>barstool_02</name>
             <property>
-                <name>Name</name>
-                <string>barstool_02</string>
-            </property>
-            <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
             </property>
@@ -1793,10 +1636,6 @@
             <id>263527b9-239e-4159-b922-8ba05f5dbe43</id>
             <name>Chair_01</name>
             <property>
-                <name>Name</name>
-                <string>Chair_01</string>
-            </property>
-            <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
             </property>
@@ -1837,10 +1676,6 @@
             <type>dtExample.Mesh Object</type>
             <id>2776fa71-1aff-41d6-aa07-fcacbfebb308</id>
             <name>walkway_54</name>
-            <property>
-                <name>Name</name>
-                <string>walkway_54</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -1899,10 +1734,6 @@
             <id>27ed86c1-a8f2-490e-b32d-812d1e167816</id>
             <name>palmtree_02</name>
             <property>
-                <name>Name</name>
-                <string>palmtree_02</string>
-            </property>
-            <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
             </property>
@@ -1947,10 +1778,6 @@
             <type>dtExample.Mesh Object</type>
             <id>285d5c87-9a1b-42d9-9a3d-1d974c0be2c4</id>
             <name>palmtree_53</name>
-            <property>
-                <name>Name</name>
-                <string>palmtree_53</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -1997,10 +1824,6 @@
             <id>28c3d886-8917-42f1-bac9-013df9924ac9</id>
             <name>Firework_ControlPoint_02</name>
             <property>
-                <name>Name</name>
-                <string>Firework_ControlPoint_02</string>
-            </property>
-            <property>
                 <name>Translation</name>
                 <vec3>
                     <value1>-437.861420</value1>
@@ -2010,17 +1833,13 @@
             </property>
             <property>
                 <name>Bezier Node</name>
-                <actorId>8c8be7b7-5645-4997-873b-266c7b6af1ec</actorId>
+                <actorId>5e9ad074-dfdc-4432-be58-53326f1f2e43</actorId>
             </property>
         </actor>
         <actor>
             <type>dtcore.Curve.Bezier Control Point</type>
             <id>29334fac-3fe2-4067-808f-65f94fd4bd2d</id>
             <name>Firework_ControlPoint_18</name>
-            <property>
-                <name>Name</name>
-                <string>Firework_ControlPoint_18</string>
-            </property>
             <property>
                 <name>Translation</name>
                 <vec3>
@@ -2038,10 +1857,6 @@
             <type>dtExample.Mesh Object</type>
             <id>2985b87e-5d84-49b2-8c26-6602860f1e5a</id>
             <name>walkway_74</name>
-            <property>
-                <name>Name</name>
-                <string>walkway_74</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -2100,10 +1915,6 @@
             <id>29b9a820-5791-4f4f-a092-a563f51d62b3</id>
             <name>palmtree_57</name>
             <property>
-                <name>Name</name>
-                <string>palmtree_57</string>
-            </property>
-            <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
             </property>
@@ -2148,10 +1959,6 @@
             <type>dtExample.Mesh Object</type>
             <id>2a7b3325-1628-4043-993a-fc95b2382ecc</id>
             <name>palmtree_43</name>
-            <property>
-                <name>Name</name>
-                <string>palmtree_43</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -2198,10 +2005,6 @@
             <id>2bbb650b-9037-4e43-b5e4-2ce53f75ee2f</id>
             <name>Camera_C_BezierNode_03</name>
             <property>
-                <name>Name</name>
-                <string>Camera_C_BezierNode_03</string>
-            </property>
-            <property>
                 <name>Translation</name>
                 <vec3>
                     <value1>-397.496826</value1>
@@ -2214,10 +2017,6 @@
             <type>dtExample.Mesh Object</type>
             <id>2beb6954-6e92-41f8-8115-a3522cfae276</id>
             <name>walkway_30</name>
-            <property>
-                <name>Name</name>
-                <string>walkway_30</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -2276,10 +2075,6 @@
             <id>2c8d9905-6f32-44cc-a145-16f24f4bb69d</id>
             <name>torch_01</name>
             <property>
-                <name>Name</name>
-                <string>torch_01</string>
-            </property>
-            <property>
                 <name>Translation</name>
                 <vec3>
                     <value1>-558.687012</value1>
@@ -2298,10 +2093,6 @@
             <type>dtcore.Curve.Bezier Node</type>
             <id>2cb86245-06a6-4589-9a98-442a035f9738</id>
             <name>Camera_A_BezierNode_06</name>
-            <property>
-                <name>Name</name>
-                <string>Camera_A_BezierNode_06</string>
-            </property>
             <property>
                 <name>Translation</name>
                 <vec3>
@@ -2336,10 +2127,6 @@
             <id>2d563c0a-9330-44b7-936c-7f9786073b4a</id>
             <name>ControlPoint_17</name>
             <property>
-                <name>Name</name>
-                <string>ControlPoint_17</string>
-            </property>
-            <property>
                 <name>Translation</name>
                 <vec3>
                     <value1>-963.973145</value1>
@@ -2356,10 +2143,6 @@
             <type>dtExample.Mesh Object</type>
             <id>2d7b37fd-f5df-4ac0-8464-d3ead2f588f3</id>
             <name>lamp_06</name>
-            <property>
-                <name>Name</name>
-                <string>lamp_06</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -2398,10 +2181,6 @@
             <id>2daea1bf-96c4-4fe2-b371-d1fd65faca5c</id>
             <name>youngman_01</name>
             <property>
-                <name>Name</name>
-                <string>youngman_01</string>
-            </property>
-            <property>
                 <name>Rotation</name>
                 <vec3>
                     <value1>0.000000</value1>
@@ -2425,13 +2204,40 @@
             </property>
         </actor>
         <actor>
+            <type>dtExample.Civilian</type>
+            <id>2dbb847e-9c08-4d86-bfcf-c98626cb4164</id>
+            <name>Gina_04</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>9.090513</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-562.466064</value1>
+                    <value2>-127.748032</value2>
+                    <value3>1.867371</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Skeletal Mesh</name>
+                <resourceType>SkeletalMeshes</resourceType>
+                <resourceDisplayName>SkeletalMeshes:Gina:Gina_SwimWear.dtchar</resourceDisplayName>
+                <resource>SkeletalMeshes:Gina:Gina_SwimWear.dtchar</resource>
+            </property>
+            <property>
+                <name>Stance</name>
+                <enumerated>SITTING</enumerated>
+            </property>
+        </actor>
+        <actor>
             <type>dtExample.Mesh Object</type>
             <id>2dec40b9-6911-4c44-b6c6-d5424ffe2960</id>
             <name>Chair_17</name>
-            <property>
-                <name>Name</name>
-                <string>Chair_17</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -2474,10 +2280,6 @@
             <id>300c6a18-0265-4363-9aaf-e88906fa017d</id>
             <name>Barge</name>
             <property>
-                <name>Name</name>
-                <string>Barge</string>
-            </property>
-            <property>
                 <name>Rotation</name>
                 <vec3>
                     <value1>0.000000</value1>
@@ -2504,10 +2306,6 @@
             <type>dtExample.Mesh Object</type>
             <id>313e0078-cdad-4e2c-9c56-c79453893f15</id>
             <name>Chair_15</name>
-            <property>
-                <name>Name</name>
-                <string>Chair_15</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -2550,10 +2348,6 @@
             <id>317d308f-f0fd-4867-b65d-cf20906e80ed</id>
             <name>Boat_BezierNode_01</name>
             <property>
-                <name>Name</name>
-                <string>Boat_BezierNode_01</string>
-            </property>
-            <property>
                 <name>Translation</name>
                 <vec3>
                     <value1>-965.149231</value1>
@@ -2578,10 +2372,6 @@
             <type>dtcore.Curve.Bezier Node</type>
             <id>3184dfc6-6e79-47d9-a1ad-67ddb8acc6fe</id>
             <name>Camera_B_BezierNode_01</name>
-            <property>
-                <name>Name</name>
-                <string>Camera_B_BezierNode_01</string>
-            </property>
             <property>
                 <name>Translation</name>
                 <vec3>
@@ -2608,10 +2398,6 @@
             <id>31a37b1c-7bf7-4e56-99ef-6ed0a01d7fcf</id>
             <name>Firework_ControlPoint_15</name>
             <property>
-                <name>Name</name>
-                <string>Firework_ControlPoint_15</string>
-            </property>
-            <property>
                 <name>Translation</name>
                 <vec3>
                     <value1>-437.330811</value1>
@@ -2628,10 +2414,6 @@
             <type>dtExample.Mesh Object</type>
             <id>32c3584c-a9c9-401b-82a1-662849f2f9d2</id>
             <name>Chair_09</name>
-            <property>
-                <name>Name</name>
-                <string>Chair_09</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -2673,10 +2455,6 @@
             <type>dtExample.Mesh Object</type>
             <id>3346c7ed-91a8-4f43-a731-df530022160b</id>
             <name>palmtree_78</name>
-            <property>
-                <name>Name</name>
-                <string>palmtree_78</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -2723,10 +2501,6 @@
             <id>337c0150-5a8b-4f52-9b22-324d6f127bee</id>
             <name>palmtree_89</name>
             <property>
-                <name>Name</name>
-                <string>palmtree_89</string>
-            </property>
-            <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
             </property>
@@ -2771,10 +2545,6 @@
             <type>dtExample.Mesh Object</type>
             <id>33d42bc4-3c8b-4277-97af-2e11d0c3bd00</id>
             <name>walkway_75</name>
-            <property>
-                <name>Name</name>
-                <string>walkway_75</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -2833,10 +2603,6 @@
             <id>3402a632-41ec-49bf-9df6-1afe2570b0c3</id>
             <name>palmtree_74</name>
             <property>
-                <name>Name</name>
-                <string>palmtree_74</string>
-            </property>
-            <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
             </property>
@@ -2882,10 +2648,6 @@
             <id>35d16250-8ead-420c-a1fc-93ef61a48756</id>
             <name>Firework_ControlPoint_03</name>
             <property>
-                <name>Name</name>
-                <string>Firework_ControlPoint_03</string>
-            </property>
-            <property>
                 <name>Translation</name>
                 <vec3>
                     <value1>-440.376770</value1>
@@ -2902,10 +2664,6 @@
             <type>dtRender.Dynamic Light</type>
             <id>35ea31ec-d5b6-425f-a10b-fbef29377924</id>
             <name>torchlight_03</name>
-            <property>
-                <name>Name</name>
-                <string>torchlight_03</string>
-            </property>
             <property>
                 <name>Translation</name>
                 <vec3>
@@ -2944,15 +2702,11 @@
             <id>362cb3a0-7aba-464c-a49b-b226f2c65802</id>
             <name>PlayerStart</name>
             <property>
-                <name>Name</name>
-                <string>PlayerStart</string>
-            </property>
-            <property>
                 <name>Rotation</name>
                 <vec3>
-                    <value1>-0.000072</value1>
+                    <value1>-0.000017</value1>
                     <value2>0.000000</value2>
-                    <value3>-134.440201</value3>
+                    <value3>-134.440155</value3>
                 </vec3>
             </property>
             <property>
@@ -2968,10 +2722,6 @@
             <type>dtExample.Mesh Object</type>
             <id>380b4098-163b-487a-ac00-6c52a5362918</id>
             <name>palmtree_08</name>
-            <property>
-                <name>Name</name>
-                <string>palmtree_08</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -3017,10 +2767,6 @@
             <type>dtExample.Mesh Object</type>
             <id>384b0d7d-3eed-4c5d-a984-949e67bf6572</id>
             <name>walkway_77</name>
-            <property>
-                <name>Name</name>
-                <string>walkway_77</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -3079,10 +2825,6 @@
             <id>384e34b0-68c7-442e-9cfb-edf587c1d42c</id>
             <name>Dynamic Light_05</name>
             <property>
-                <name>Name</name>
-                <string>Dynamic Light_05</string>
-            </property>
-            <property>
                 <name>Rotation</name>
                 <vec3>
                     <value1>0.000000</value1>
@@ -3116,13 +2858,40 @@
             </property>
         </actor>
         <actor>
+            <type>dtExample.Civilian</type>
+            <id>3945a089-2902-49da-a0aa-186ca23720e9</id>
+            <name>Eve_02</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>97.367157</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-566.248108</value1>
+                    <value2>-130.018951</value2>
+                    <value3>1.879515</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Skeletal Mesh</name>
+                <resourceType>SkeletalMeshes</resourceType>
+                <resourceDisplayName>SkeletalMeshes:Gina:Eve_SwimWear.dtchar</resourceDisplayName>
+                <resource>SkeletalMeshes:Gina:Eve_SwimWear.dtchar</resource>
+            </property>
+            <property>
+                <name>Stance</name>
+                <enumerated>SITTING</enumerated>
+            </property>
+        </actor>
+        <actor>
             <type>dtExample.Mesh Object</type>
             <id>3947f895-cc25-4fc5-8a9f-484f7417f902</id>
             <name>palmtree_38</name>
-            <property>
-                <name>Name</name>
-                <string>palmtree_38</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -3168,10 +2937,6 @@
             <type>dtExample.Mesh Object</type>
             <id>39b9f69d-694e-4a9e-84da-a3ff0c8d80cd</id>
             <name>walkway_48</name>
-            <property>
-                <name>Name</name>
-                <string>walkway_48</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -3230,10 +2995,6 @@
             <id>39e23eb8-bdbb-4de3-9886-9bd7403a5541</id>
             <name>walkway_40</name>
             <property>
-                <name>Name</name>
-                <string>walkway_40</string>
-            </property>
-            <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
             </property>
@@ -3290,10 +3051,6 @@
             <type>dtExample.Mesh Object</type>
             <id>3a6d4a21-ec61-45dc-8c66-3fd6954165df</id>
             <name>walkway_04</name>
-            <property>
-                <name>Name</name>
-                <string>walkway_04</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -3352,10 +3109,6 @@
             <id>3dbeacef-e988-4a8f-9310-c8671d15989c</id>
             <name>palmtree_67</name>
             <property>
-                <name>Name</name>
-                <string>palmtree_67</string>
-            </property>
-            <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
             </property>
@@ -3401,10 +3154,6 @@
             <id>3e5391c2-5477-4e75-84b5-a24ef586ca75</id>
             <name>lamp_03</name>
             <property>
-                <name>Name</name>
-                <string>lamp_03</string>
-            </property>
-            <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
             </property>
@@ -3441,10 +3190,6 @@
             <type>dtExample.Mesh Object</type>
             <id>3ea25607-fe49-4788-836b-58840f6b09a0</id>
             <name>palmtree_48</name>
-            <property>
-                <name>Name</name>
-                <string>palmtree_48</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -3490,10 +3235,6 @@
             <type>dtExample.Mesh Object</type>
             <id>3f612589-faa8-49a0-9156-735872e79ea1</id>
             <name>walkway_37</name>
-            <property>
-                <name>Name</name>
-                <string>walkway_37</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -3552,10 +3293,6 @@
             <id>3f9dbd63-c6a2-4c13-9d8f-fdd1d8481663</id>
             <name>Firework_ControlPoint_05</name>
             <property>
-                <name>Name</name>
-                <string>Firework_ControlPoint_05</string>
-            </property>
-            <property>
                 <name>Translation</name>
                 <vec3>
                     <value1>-442.021698</value1>
@@ -3572,10 +3309,6 @@
             <type>dtExample.Mesh Object</type>
             <id>3fb94d7c-4ddc-456b-827c-d6d36c169941</id>
             <name>palmtree_03</name>
-            <property>
-                <name>Name</name>
-                <string>palmtree_03</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -3613,10 +3346,6 @@
             <type>dtExample.Mesh Object</type>
             <id>4031c15a-49eb-4008-830b-cdf4d1e454d4</id>
             <name>bench_08</name>
-            <property>
-                <name>Name</name>
-                <string>bench_08</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -3659,10 +3388,6 @@
             <id>4089f3f6-d422-40e7-abe8-e2cdaf8464a7</id>
             <name>youngman_02</name>
             <property>
-                <name>Name</name>
-                <string>youngman_02</string>
-            </property>
-            <property>
                 <name>Rotation</name>
                 <vec3>
                     <value1>0.000000</value1>
@@ -3689,10 +3414,6 @@
             <type>dtExample.Mesh Object</type>
             <id>4166b77a-f8ea-489e-97b4-e1f688c07557</id>
             <name>bench</name>
-            <property>
-                <name>Name</name>
-                <string>bench</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -3735,10 +3456,6 @@
             <id>41816da3-4c7c-4fb1-ab12-085e6a44414a</id>
             <name>FireworkI_BezierNode_02</name>
             <property>
-                <name>Name</name>
-                <string>FireworkI_BezierNode_02</string>
-            </property>
-            <property>
                 <name>Translation</name>
                 <vec3>
                     <value1>-446.127960</value1>
@@ -3760,10 +3477,6 @@
             <id>4213e10d-1695-4ce0-9b85-4b65a5ebe286</id>
             <name>Camera_B_Controller</name>
             <property>
-                <name>Name</name>
-                <string>Camera_B_Controller</string>
-            </property>
-            <property>
                 <name>Start Node</name>
                 <actorId>3184dfc6-6e79-47d9-a1ad-67ddb8acc6fe</actorId>
             </property>
@@ -3776,10 +3489,6 @@
             <type>dtExample.Mesh Object</type>
             <id>425dd397-1d6f-410a-bf17-bbd8a13ef6fb</id>
             <name>palmtree_50</name>
-            <property>
-                <name>Name</name>
-                <string>palmtree_50</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -3826,10 +3535,6 @@
             <id>431A5664-5395-4428-BA58-271EA0F13AFE</id>
             <name>Director Graph Actor</name>
             <property>
-                <name>Name</name>
-                <string>Director Graph Actor</string>
-            </property>
-            <property>
                 <name>Translation</name>
                 <vec3>
                     <value1>-37.241295</value1>
@@ -3857,10 +3562,6 @@
             <type>dtExample.Mesh Object</type>
             <id>44282e2f-b866-42ac-9b53-30ff8a733aeb</id>
             <name>palmtree_76</name>
-            <property>
-                <name>Name</name>
-                <string>palmtree_76</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -3906,10 +3607,6 @@
             <type>dtExample.Mesh Object</type>
             <id>44bacdc9-b472-4709-bb24-547083aae7d2</id>
             <name>walkway_53</name>
-            <property>
-                <name>Name</name>
-                <string>walkway_53</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -3968,10 +3665,6 @@
             <id>44eb769d-ebc7-4c1f-b215-5d057b6969b1</id>
             <name>walkway_36</name>
             <property>
-                <name>Name</name>
-                <string>walkway_36</string>
-            </property>
-            <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
             </property>
@@ -4029,10 +3722,6 @@
             <id>44f7492b-42cb-4a0a-8ae8-8258ad12a904</id>
             <name>PlaneBezierNode_01</name>
             <property>
-                <name>Name</name>
-                <string>PlaneBezierNode_01</string>
-            </property>
-            <property>
                 <name>Translation</name>
                 <vec3>
                     <value1>-2585.306396</value1>
@@ -4057,10 +3746,6 @@
             <type>dtExample.Mesh Object</type>
             <id>45081c15-c505-44eb-8ac2-438e1dcddcf6</id>
             <name>palmtree_93</name>
-            <property>
-                <name>Name</name>
-                <string>palmtree_93</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -4107,10 +3792,6 @@
             <id>458c11b3-0229-43a0-a0ef-eccc80081ab3</id>
             <name>FireworkI_Controller</name>
             <property>
-                <name>Name</name>
-                <string>FireworkI_Controller</string>
-            </property>
-            <property>
                 <name>Start Node</name>
                 <actorId>c776c460-2b29-4dce-8fc9-c8db12f4c9ff</actorId>
             </property>
@@ -4123,10 +3804,6 @@
             <type>dtRender.Dynamic Light</type>
             <id>45e4976d-6e88-4486-98ca-2743d27eecb6</id>
             <name>torchlight_02</name>
-            <property>
-                <name>Name</name>
-                <string>torchlight_02</string>
-            </property>
             <property>
                 <name>Translation</name>
                 <vec3>
@@ -4164,10 +3841,6 @@
             <type>dtExample.Mesh Object</type>
             <id>4715019c-f2b5-4c3d-bee7-cf69785d8603</id>
             <name>palmtree_94</name>
-            <property>
-                <name>Name</name>
-                <string>palmtree_94</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -4214,10 +3887,6 @@
             <id>482db8f4-4817-4370-9d70-e8e96e270a00</id>
             <name>Camera_01</name>
             <property>
-                <name>Name</name>
-                <string>Camera_01</string>
-            </property>
-            <property>
                 <name>Rotation</name>
                 <vec3>
                     <value1>0.000000</value1>
@@ -4242,10 +3911,6 @@
             <type>dtExample.Mesh Object</type>
             <id>48606f8e-dbb2-4d01-8936-a45fd0bdfe8b</id>
             <name>walkway_79</name>
-            <property>
-                <name>Name</name>
-                <string>walkway_79</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -4304,10 +3969,6 @@
             <id>4a0f0412-8895-4824-9d59-f2e93acadde3</id>
             <name>statue</name>
             <property>
-                <name>Name</name>
-                <string>statue</string>
-            </property>
-            <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
             </property>
@@ -4353,10 +4014,6 @@
             <id>4ad0b6ba-82ee-4f38-bf59-2ed02d3b7788</id>
             <name>Dynamic Light_06</name>
             <property>
-                <name>Name</name>
-                <string>Dynamic Light_06</string>
-            </property>
-            <property>
                 <name>Rotation</name>
                 <vec3>
                     <value1>0.000024</value1>
@@ -4393,10 +4050,6 @@
             <type>dtExample.Mesh Object</type>
             <id>4b818787-9db4-4cbb-8385-170d7cd6855a</id>
             <name>bench_03</name>
-            <property>
-                <name>Name</name>
-                <string>bench_03</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -4439,10 +4092,6 @@
             <id>4d7997a1-ba7e-42dc-ad2d-eb469c20b0c3</id>
             <name>Dynamic Light_07</name>
             <property>
-                <name>Name</name>
-                <string>Dynamic Light_07</string>
-            </property>
-            <property>
                 <name>Rotation</name>
                 <vec3>
                     <value1>0.000018</value1>
@@ -4479,10 +4128,6 @@
             <type>dtExample.Mesh Object</type>
             <id>4e2a3a76-aca0-4f46-8cce-7cb66e868d57</id>
             <name>walkway_67</name>
-            <property>
-                <name>Name</name>
-                <string>walkway_67</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -4537,13 +4182,40 @@
             </property>
         </actor>
         <actor>
+            <type>dtExample.Civilian</type>
+            <id>4eb42e77-17a1-4423-95a0-83cf32bdfb39</id>
+            <name>Petunia_01</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>-74.687889</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-559.796326</value1>
+                    <value2>-131.092743</value2>
+                    <value3>1.879515</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Skeletal Mesh</name>
+                <resourceType>SkeletalMeshes</resourceType>
+                <resourceDisplayName>SkeletalMeshes:Gina:Petunia_SwimWear.dtchar</resourceDisplayName>
+                <resource>SkeletalMeshes:Gina:Petunia_SwimWear.dtchar</resource>
+            </property>
+            <property>
+                <name>Stance</name>
+                <enumerated>SITTING</enumerated>
+            </property>
+        </actor>
+        <actor>
             <type>dtcore.Curve.Bezier Control Point</type>
             <id>4ecb3d86-a55c-4eb0-aef4-46cbfdb6f3c1</id>
             <name>Firework_ControlPoint_17</name>
-            <property>
-                <name>Name</name>
-                <string>Firework_ControlPoint_17</string>
-            </property>
             <property>
                 <name>Translation</name>
                 <vec3>
@@ -4562,10 +4234,6 @@
             <id>4ede9997-d31d-43dc-beab-27e74d3a94c8</id>
             <name>Firework_ControlPoint_08</name>
             <property>
-                <name>Name</name>
-                <string>Firework_ControlPoint_08</string>
-            </property>
-            <property>
                 <name>Translation</name>
                 <vec3>
                     <value1>-435.037231</value1>
@@ -4582,10 +4250,6 @@
             <type>dtExample.Civilian</type>
             <id>4f4bc6bb-8c7f-4361-b6a9-5227aa17f1ad</id>
             <name>Gina_01</name>
-            <property>
-                <name>Name</name>
-                <string>Gina_01</string>
-            </property>
             <property>
                 <name>Rotation</name>
                 <vec3>
@@ -4614,10 +4278,6 @@
             <id>4ff36f02-c047-46a9-8a69-c3c6fbc0d7e5</id>
             <name>TikiTorch03</name>
             <property>
-                <name>Name</name>
-                <string>TikiTorch03</string>
-            </property>
-            <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
             </property>
@@ -4640,10 +4300,6 @@
             <type>dtExample.Mesh Object</type>
             <id>51beb5e2-b628-463c-973f-1b4c88f2094d</id>
             <name>bench_10</name>
-            <property>
-                <name>Name</name>
-                <string>bench_10</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -4686,10 +4342,6 @@
             <id>51c9d347-e026-4d45-a5d8-acb57dc93a0a</id>
             <name>Chair_10</name>
             <property>
-                <name>Name</name>
-                <string>Chair_10</string>
-            </property>
-            <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
             </property>
@@ -4731,10 +4383,6 @@
             <id>51f364c9-cece-4abd-bbe4-8151a005e42c</id>
             <name>Chair_02</name>
             <property>
-                <name>Name</name>
-                <string>Chair_02</string>
-            </property>
-            <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
             </property>
@@ -4775,10 +4423,6 @@
             <type>dtExample.Mesh Object</type>
             <id>529de8b5-8aba-4ebf-88e0-e8689ea232c6</id>
             <name>palmtree_27</name>
-            <property>
-                <name>Name</name>
-                <string>palmtree_27</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -4824,10 +4468,6 @@
             <type>dtExample.Mesh Object</type>
             <id>52cdb52e-2490-4d3f-a54e-913bc4a88279</id>
             <name>walkway_64</name>
-            <property>
-                <name>Name</name>
-                <string>walkway_64</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -4886,10 +4526,6 @@
             <id>53b64d3d-344c-419c-8a4f-5e088360b083</id>
             <name>walkway_69</name>
             <property>
-                <name>Name</name>
-                <string>walkway_69</string>
-            </property>
-            <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
             </property>
@@ -4947,10 +4583,6 @@
             <id>5488fdcb-8fb5-42e5-ac01-6ec762426ddd</id>
             <name>bench_07</name>
             <property>
-                <name>Name</name>
-                <string>bench_07</string>
-            </property>
-            <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
             </property>
@@ -4991,10 +4623,6 @@
             <type>dtExample.Mesh Object</type>
             <id>549c45c6-05ee-409e-b6a8-e827ba8ea70c</id>
             <name>Chair_16</name>
-            <property>
-                <name>Name</name>
-                <string>Chair_16</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -5037,10 +4665,6 @@
             <id>55291455-736d-45e5-8367-f517929c9837</id>
             <name>bench_05</name>
             <property>
-                <name>Name</name>
-                <string>bench_05</string>
-            </property>
-            <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
             </property>
@@ -5081,10 +4705,6 @@
             <type>dtExample.Mesh Object</type>
             <id>559402af-a056-47ce-adb4-afce3588915e</id>
             <name>palmtree_55</name>
-            <property>
-                <name>Name</name>
-                <string>palmtree_55</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -5127,13 +4747,40 @@
             </property>
         </actor>
         <actor>
+            <type>dtExample.Civilian</type>
+            <id>56d03f2b-f135-409d-8510-3616fc289f89</id>
+            <name>youngasianman_01</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>-161.177078</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-560.866943</value1>
+                    <value2>-133.027847</value2>
+                    <value3>1.845965</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Skeletal Mesh</name>
+                <resourceType>SkeletalMeshes</resourceType>
+                <resourceDisplayName>SkeletalMeshes:YoungMan_Asian:YoungMan_Asian_Swimmer.dtchar</resourceDisplayName>
+                <resource>SkeletalMeshes:YoungMan_Asian:YoungMan_Asian_Swimmer.dtchar</resource>
+            </property>
+            <property>
+                <name>Stance</name>
+                <enumerated>SITTING</enumerated>
+            </property>
+        </actor>
+        <actor>
             <type>dtExample.Mesh Object</type>
             <id>572e895a-99a1-4a5c-9961-8073f4bfeb76</id>
             <name>walkway_72</name>
-            <property>
-                <name>Name</name>
-                <string>walkway_72</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -5192,10 +4839,6 @@
             <id>5828e14f-1dc6-4686-ba27-8750be7f6556</id>
             <name>palmtree_36</name>
             <property>
-                <name>Name</name>
-                <string>palmtree_36</string>
-            </property>
-            <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
             </property>
@@ -5240,10 +4883,6 @@
             <type>dtExample.Mesh Object</type>
             <id>594666fc-3a02-4f60-9a6e-078d4fb3acf7</id>
             <name>walkway_32</name>
-            <property>
-                <name>Name</name>
-                <string>walkway_32</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -5302,10 +4941,6 @@
             <id>59f023d1-e377-4bbf-9826-6b66a1051aa2</id>
             <name>barstool_11</name>
             <property>
-                <name>Name</name>
-                <string>barstool_11</string>
-            </property>
-            <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
             </property>
@@ -5346,10 +4981,6 @@
             <type>dtExample.Mesh Object</type>
             <id>5ab62ad9-9cb1-4ded-af8a-05547e49228b</id>
             <name>walkway_87</name>
-            <property>
-                <name>Name</name>
-                <string>walkway_87</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -5408,10 +5039,6 @@
             <id>5b090b0c-0018-4fbe-a4db-72b00ee759c1</id>
             <name>Chair_23</name>
             <property>
-                <name>Name</name>
-                <string>Chair_23</string>
-            </property>
-            <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
             </property>
@@ -5453,10 +5080,6 @@
             <id>5b78f8b7-3f32-4934-aab9-cf6ab1ada90c</id>
             <name>PlaneAutoTrigger</name>
             <property>
-                <name>Name</name>
-                <string>PlaneAutoTrigger</string>
-            </property>
-            <property>
                 <name>Action</name>
                 <actorId>ee7aeb0e-d960-4904-ac60-9447592bd650</actorId>
             </property>
@@ -5465,10 +5088,6 @@
             <type>dtExample.Mesh Object</type>
             <id>5cc61f72-f421-417f-981f-7f619c052218</id>
             <name>Chair_24</name>
-            <property>
-                <name>Name</name>
-                <string>Chair_24</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -5511,10 +5130,6 @@
             <id>5d58f27a-528b-486e-9507-632e12ea9c94</id>
             <name>plane</name>
             <property>
-                <name>Name</name>
-                <string>plane</string>
-            </property>
-            <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
             </property>
@@ -5523,15 +5138,15 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>-0.000000</value2>
-                    <value3>-89.900421</value3>
+                    <value3>-89.135704</value3>
                 </vec3>
             </property>
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-1100.802124</value1>
-                    <value2>-439.794556</value2>
-                    <value3>75.000000</value3>
+                    <value1>-627.691345</value1>
+                    <value2>-436.163696</value2>
+                    <value3>74.999985</value3>
                 </vec3>
             </property>
             <property>
@@ -5545,10 +5160,6 @@
             <type>dtcore.Curve.Bezier Node</type>
             <id>5da5c7f2-482a-4c79-95c8-9555b564f4c5</id>
             <name>FireworkG_BezierNode_02</name>
-            <property>
-                <name>Name</name>
-                <string>FireworkG_BezierNode_02</string>
-            </property>
             <property>
                 <name>Translation</name>
                 <vec3>
@@ -5570,10 +5181,6 @@
             <type>dtcore.Curve.Bezier Node</type>
             <id>5db88fc9-ed81-4a83-8547-dc5a2a466708</id>
             <name>FireworkA_BezierNode_01</name>
-            <property>
-                <name>Name</name>
-                <string>FireworkA_BezierNode_01</string>
-            </property>
             <property>
                 <name>Translation</name>
                 <vec3>
@@ -5600,10 +5207,6 @@
             <id>5dd6f5ed-e66c-461d-9093-02f66adb31d0</id>
             <name>Firework_ControlPoint_19</name>
             <property>
-                <name>Name</name>
-                <string>Firework_ControlPoint_19</string>
-            </property>
-            <property>
                 <name>Translation</name>
                 <vec3>
                     <value1>-445.903748</value1>
@@ -5620,10 +5223,6 @@
             <type>dtcore.Curve.Bezier Node</type>
             <id>5e9ad074-dfdc-4432-be58-53326f1f2e43</id>
             <name>FireworkA_BezierNode_02</name>
-            <property>
-                <name>Name</name>
-                <string>FireworkA_BezierNode_02</string>
-            </property>
             <property>
                 <name>Translation</name>
                 <vec3>
@@ -5645,10 +5244,6 @@
             <type>dtExample.Mesh Object</type>
             <id>5ecf2a55-3b1f-4dfb-9ccf-dc26b5f412f4</id>
             <name>bottle_05</name>
-            <property>
-                <name>Name</name>
-                <string>bottle_05</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -5686,10 +5281,6 @@
             <type>dtExample.Mesh Object</type>
             <id>5f7c5fd6-d157-4b38-b31e-b82f06422b75</id>
             <name>palmtree_60</name>
-            <property>
-                <name>Name</name>
-                <string>palmtree_60</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -5736,10 +5327,6 @@
             <id>6164e7c4-29ac-4a3d-bee6-eac101741c9b</id>
             <name>FireworkC_BezierNode_02</name>
             <property>
-                <name>Name</name>
-                <string>FireworkC_BezierNode_02</string>
-            </property>
-            <property>
                 <name>Translation</name>
                 <vec3>
                     <value1>-441.799835</value1>
@@ -5760,10 +5347,6 @@
             <type>dtExample.Mesh Object</type>
             <id>61a26556-318a-40d0-8b14-f0d27bf6f36d</id>
             <name>walkway_45</name>
-            <property>
-                <name>Name</name>
-                <string>walkway_45</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -5822,10 +5405,6 @@
             <id>61a3ea96-82a9-4cc2-a6e8-fa591321d6f0</id>
             <name>palmtree_77</name>
             <property>
-                <name>Name</name>
-                <string>palmtree_77</string>
-            </property>
-            <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
             </property>
@@ -5871,10 +5450,6 @@
             <id>621c4aff-7434-4c8d-8ea0-f808b45acfd2</id>
             <name>planecontrolpoint_02</name>
             <property>
-                <name>Name</name>
-                <string>planecontrolpoint_02</string>
-            </property>
-            <property>
                 <name>Translation</name>
                 <vec3>
                     <value1>-463.384949</value1>
@@ -5892,10 +5467,6 @@
             <id>628b3378-9516-40ad-99c0-45018b64199e</id>
             <name>Firework_ControlPoint_04</name>
             <property>
-                <name>Name</name>
-                <string>Firework_ControlPoint_04</string>
-            </property>
-            <property>
                 <name>Translation</name>
                 <vec3>
                     <value1>-440.376770</value1>
@@ -5912,10 +5483,6 @@
             <type>dtExample.Mesh Object</type>
             <id>62df61c9-2083-44eb-b861-04cd2d55bafa</id>
             <name>Chair_13</name>
-            <property>
-                <name>Name</name>
-                <string>Chair_13</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -5957,10 +5524,6 @@
             <type>dtExample.Mesh Object</type>
             <id>6374c833-e5d8-430b-9bb6-9b5f2320bcd1</id>
             <name>palmtree_88</name>
-            <property>
-                <name>Name</name>
-                <string>palmtree_88</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -6006,10 +5569,6 @@
             <type>dtExample.Mesh Object</type>
             <id>63df4aa1-0378-40f3-af77-a0dc1e9ae23d</id>
             <name>walkway_20</name>
-            <property>
-                <name>Name</name>
-                <string>walkway_20</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -6068,10 +5627,6 @@
             <id>64a28303-4796-4cab-a57d-14be23dd5d91</id>
             <name>walkway_38</name>
             <property>
-                <name>Name</name>
-                <string>walkway_38</string>
-            </property>
-            <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
             </property>
@@ -6128,10 +5683,6 @@
             <type>dtExample.Mesh Object</type>
             <id>652f8b81-ee3a-490a-8023-a5b87f4080e8</id>
             <name>walkway_09</name>
-            <property>
-                <name>Name</name>
-                <string>walkway_09</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -6190,10 +5741,6 @@
             <id>65e4beaf-ed84-4d98-a3c2-24277fef2235</id>
             <name>walkway_25</name>
             <property>
-                <name>Name</name>
-                <string>walkway_25</string>
-            </property>
-            <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
             </property>
@@ -6251,10 +5798,6 @@
             <id>673e4b9a-d2d3-4aff-99ab-92980cde6e3e</id>
             <name>palmtree_10</name>
             <property>
-                <name>Name</name>
-                <string>palmtree_10</string>
-            </property>
-            <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
             </property>
@@ -6300,10 +5843,6 @@
             <id>674c5ebb-cc7c-4a4e-ae46-9da4a78ff878</id>
             <name>barstool_07</name>
             <property>
-                <name>Name</name>
-                <string>barstool_07</string>
-            </property>
-            <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
             </property>
@@ -6345,10 +5884,6 @@
             <id>6950773a-2776-47df-86cb-6d5871b66eb6</id>
             <name>planecontrolpoint_01</name>
             <property>
-                <name>Name</name>
-                <string>planecontrolpoint_01</string>
-            </property>
-            <property>
                 <name>Translation</name>
                 <vec3>
                     <value1>-511.064392</value1>
@@ -6365,10 +5900,6 @@
             <type>dtExample.Mesh Object</type>
             <id>697e26e4-56c6-47a7-892a-3455f221928e</id>
             <name>palmtree_84</name>
-            <property>
-                <name>Name</name>
-                <string>palmtree_84</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -6415,10 +5946,6 @@
             <id>697ec42b-51ea-4499-a492-5494890cff3e</id>
             <name>palmtree_90</name>
             <property>
-                <name>Name</name>
-                <string>palmtree_90</string>
-            </property>
-            <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
             </property>
@@ -6464,10 +5991,6 @@
             <id>6af504f6-e825-4a75-ae45-0f77dcef35cb</id>
             <name>Chair_04</name>
             <property>
-                <name>Name</name>
-                <string>Chair_04</string>
-            </property>
-            <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
             </property>
@@ -6509,10 +6032,6 @@
             <id>6c2fd394-40b6-4d52-a87a-6e93d583e56d</id>
             <name>FireworkB_Controller</name>
             <property>
-                <name>Name</name>
-                <string>FireworkB_Controller</string>
-            </property>
-            <property>
                 <name>Start Node</name>
                 <actorId>84694483-4229-4dfd-8bea-58bb5d3f3dc3</actorId>
             </property>
@@ -6523,21 +6042,8 @@
         </actor>
         <actor>
             <type>dtExample.Mesh Object</type>
-            <id>6cb7aa6f-6639-4833-8c35-090c97573339</id>
-            <name>GameActor_02</name>
-            <property>
-                <name>Name</name>
-                <string>GameActor_02</string>
-            </property>
-        </actor>
-        <actor>
-            <type>dtExample.Mesh Object</type>
             <id>6e44c1e7-51b6-434f-af30-4863717b9d40</id>
             <name>barstool_03</name>
-            <property>
-                <name>Name</name>
-                <string>barstool_03</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -6579,10 +6085,6 @@
             <type>dtExample.Mesh Object</type>
             <id>6e5f9ccb-7622-44e9-bd66-9f262d8e5413</id>
             <name>palmtree_12</name>
-            <property>
-                <name>Name</name>
-                <string>palmtree_12</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -6627,34 +6129,38 @@
         <actor>
             <type>dtExample.Civilian</type>
             <id>6f7766cc-9d34-44a5-8c0d-5dc677c39079</id>
-            <name>Transformable_01</name>
+            <name>Eve_01</name>
             <property>
-                <name>Name</name>
-                <string>Transformable_01</string>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>-48.310654</value3>
+                </vec3>
             </property>
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-764.722961</value1>
-                    <value2>-151.994385</value2>
-                    <value3>3.278625</value3>
+                    <value1>-746.179077</value1>
+                    <value2>-171.017761</value2>
+                    <value3>2.090701</value3>
                 </vec3>
             </property>
             <property>
                 <name>Skeletal Mesh</name>
                 <resourceType>SkeletalMeshes</resourceType>
-                <resourceDisplayName>SkeletalMeshes:Gina:Petunia_SwimWear.dtchar</resourceDisplayName>
-                <resource>SkeletalMeshes:Gina:Petunia_SwimWear.dtchar</resource>
+                <resourceDisplayName>SkeletalMeshes:Gina:Eve_SwimWear.dtchar</resourceDisplayName>
+                <resource>SkeletalMeshes:Gina:Eve_SwimWear.dtchar</resource>
+            </property>
+            <property>
+                <name>Stance</name>
+                <enumerated>LYING</enumerated>
             </property>
         </actor>
         <actor>
             <type>dtcore.Curve.Bezier Node</type>
             <id>7158de1e-8bed-48ad-a295-bf59d7c7eb99</id>
             <name>FireworkF_BezierNode_02</name>
-            <property>
-                <name>Name</name>
-                <string>FireworkF_BezierNode_02</string>
-            </property>
             <property>
                 <name>Translation</name>
                 <vec3>
@@ -6676,10 +6182,6 @@
             <type>dtExample.Mesh Object</type>
             <id>719466b2-ee66-43a2-aacc-8015acaa6de7</id>
             <name>walkway_35</name>
-            <property>
-                <name>Name</name>
-                <string>walkway_35</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -6738,10 +6240,6 @@
             <id>72466029-864c-4629-8eec-e5b249aa833d</id>
             <name>ControlPoint_14</name>
             <property>
-                <name>Name</name>
-                <string>ControlPoint_14</string>
-            </property>
-            <property>
                 <name>Translation</name>
                 <vec3>
                     <value1>-652.993896</value1>
@@ -6788,10 +6286,6 @@
             <id>73d22acc-2979-460d-8092-ac6f103ab72c</id>
             <name>FireworkD_BezierNode_01</name>
             <property>
-                <name>Name</name>
-                <string>FireworkD_BezierNode_01</string>
-            </property>
-            <property>
                 <name>Translation</name>
                 <vec3>
                     <value1>-433.169220</value1>
@@ -6816,10 +6310,6 @@
             <type>dtExample.Mesh Object</type>
             <id>74150ecf-10da-4c41-8ae5-5f468e8b8e56</id>
             <name>palmtree_70</name>
-            <property>
-                <name>Name</name>
-                <string>palmtree_70</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -6866,10 +6356,6 @@
             <id>75f651b5-81ee-4672-98cb-341aa4ae1799</id>
             <name>Firework_ControlPoint_14</name>
             <property>
-                <name>Name</name>
-                <string>Firework_ControlPoint_14</string>
-            </property>
-            <property>
                 <name>Translation</name>
                 <vec3>
                     <value1>-436.261871</value1>
@@ -6886,10 +6372,6 @@
             <type>dtcore.Curve.Bezier Node</type>
             <id>76f83d19-d481-4cfc-87ad-e9c2f685c787</id>
             <name>FireworkH_BezierNode_01</name>
-            <property>
-                <name>Name</name>
-                <string>FireworkH_BezierNode_01</string>
-            </property>
             <property>
                 <name>Translation</name>
                 <vec3>
@@ -6915,10 +6397,6 @@
             <type>dtExample.Mesh Object</type>
             <id>7731b4e8-2afe-4f7f-95f3-7f4d109e6157</id>
             <name>palmtree_33</name>
-            <property>
-                <name>Name</name>
-                <string>palmtree_33</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -6964,10 +6442,6 @@
             <type>dtExample.Mesh Object</type>
             <id>77567059-7b7f-42dc-a458-57db0473e21e</id>
             <name>walkway_86</name>
-            <property>
-                <name>Name</name>
-                <string>walkway_86</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -7026,10 +6500,6 @@
             <id>7785f210-cfdf-40eb-a091-2ba4dbd37fef</id>
             <name>walkway_55</name>
             <property>
-                <name>Name</name>
-                <string>walkway_55</string>
-            </property>
-            <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
             </property>
@@ -7087,10 +6557,6 @@
             <id>77ba9d4f-c6a4-4678-8dec-0025b2c30384</id>
             <name>bottle_03</name>
             <property>
-                <name>Name</name>
-                <string>bottle_03</string>
-            </property>
-            <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
             </property>
@@ -7127,10 +6593,6 @@
             <type>dtExample.Mesh Object</type>
             <id>77ebc656-4c84-45d7-b458-7c34166f7693</id>
             <name>palmtree_06</name>
-            <property>
-                <name>Name</name>
-                <string>palmtree_06</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -7177,10 +6639,6 @@
             <id>7831b3fa-524f-4520-87a7-59eedaa89567</id>
             <name>FireworkC_BezierNode_01</name>
             <property>
-                <name>Name</name>
-                <string>FireworkC_BezierNode_01</string>
-            </property>
-            <property>
                 <name>Translation</name>
                 <vec3>
                     <value1>-441.411896</value1>
@@ -7205,10 +6663,6 @@
             <type>dtExample.Mesh Object</type>
             <id>7a7dfbf6-d1e2-457f-9238-3def13a14a71</id>
             <name>palmtree_44</name>
-            <property>
-                <name>Name</name>
-                <string>palmtree_44</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -7255,10 +6709,6 @@
             <id>7b675d0e-bcfc-4211-8f2d-8a0848ee3223</id>
             <name>Firework_ControlPoint_06</name>
             <property>
-                <name>Name</name>
-                <string>Firework_ControlPoint_06</string>
-            </property>
-            <property>
                 <name>Translation</name>
                 <vec3>
                     <value1>-442.021698</value1>
@@ -7275,10 +6725,6 @@
             <type>dtExample.Mesh Object</type>
             <id>7ccb7cd6-a4fe-4c2a-9d27-9caa4227a202</id>
             <name>walkway_50</name>
-            <property>
-                <name>Name</name>
-                <string>walkway_50</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -7337,10 +6783,6 @@
             <id>7d06df1b-a9b0-47f4-9817-c225049e6e5a</id>
             <name>walkway_46</name>
             <property>
-                <name>Name</name>
-                <string>walkway_46</string>
-            </property>
-            <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
             </property>
@@ -7398,10 +6840,6 @@
             <id>7f0ea980-1442-48a8-9385-590cbfc4f0e6</id>
             <name>palmtree_01</name>
             <property>
-                <name>Name</name>
-                <string>palmtree_01</string>
-            </property>
-            <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
             </property>
@@ -7438,10 +6876,6 @@
             <type>dtExample.Mesh Object</type>
             <id>803fcab3-ea63-405d-84a1-ca23999d3b33</id>
             <name>palmtree_91</name>
-            <property>
-                <name>Name</name>
-                <string>palmtree_91</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -7488,10 +6922,6 @@
             <id>80ec53e9-d19c-4d1a-8f0f-ed285a0f6c2c</id>
             <name>FireworkE_Controller</name>
             <property>
-                <name>Name</name>
-                <string>FireworkE_Controller</string>
-            </property>
-            <property>
                 <name>Start Node</name>
                 <actorId>c668dc3a-13cd-4f5b-b9b7-a587f978aaec</actorId>
             </property>
@@ -7504,10 +6934,6 @@
             <type>dtRender.Dynamic Light</type>
             <id>810fa6cb-eb47-4abb-90cb-5acb64ad405a</id>
             <name>Dynamic Light_10</name>
-            <property>
-                <name>Name</name>
-                <string>Dynamic Light_10</string>
-            </property>
             <property>
                 <name>Rotation</name>
                 <vec3>
@@ -7546,10 +6972,6 @@
             <id>8164d63e-d4a9-414e-99b2-c7518ff191b4</id>
             <name>ControlPoint_18</name>
             <property>
-                <name>Name</name>
-                <string>ControlPoint_18</string>
-            </property>
-            <property>
                 <name>Translation</name>
                 <vec3>
                     <value1>-961.489624</value1>
@@ -7567,10 +6989,6 @@
             <id>831971ff-d7a4-4974-80bc-029e6b249b88</id>
             <name>FireworkD_Controller</name>
             <property>
-                <name>Name</name>
-                <string>FireworkD_Controller</string>
-            </property>
-            <property>
                 <name>Start Node</name>
                 <actorId>73d22acc-2979-460d-8092-ac6f103ab72c</actorId>
             </property>
@@ -7583,10 +7001,6 @@
             <type>dtExample.Mesh Object</type>
             <id>839a0ae9-4068-48cb-afbe-1278074202c3</id>
             <name>bottle_10</name>
-            <property>
-                <name>Name</name>
-                <string>bottle_10</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -7624,10 +7038,6 @@
             <type>dtExample.Mesh Object</type>
             <id>8409b1d9-312c-4e1d-8523-a189ba425682</id>
             <name>palmtree_54</name>
-            <property>
-                <name>Name</name>
-                <string>palmtree_54</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -7674,10 +7084,6 @@
             <id>84417ad3-c075-4e6f-a754-ea781938a59b</id>
             <name>ControlPoint_05</name>
             <property>
-                <name>Name</name>
-                <string>ControlPoint_05</string>
-            </property>
-            <property>
                 <name>Translation</name>
                 <vec3>
                     <value1>-683.958435</value1>
@@ -7694,10 +7100,6 @@
             <type>dtcore.Curve.Bezier Node</type>
             <id>84694483-4229-4dfd-8bea-58bb5d3f3dc3</id>
             <name>FireworkB_BezierNode_01</name>
-            <property>
-                <name>Name</name>
-                <string>FireworkB_BezierNode_01</string>
-            </property>
             <property>
                 <name>Translation</name>
                 <vec3>
@@ -7723,10 +7125,6 @@
             <type>dtExample.Mesh Object</type>
             <id>85219103-4432-4465-b2fd-3ac4b95000f1</id>
             <name>bottle_04</name>
-            <property>
-                <name>Name</name>
-                <string>bottle_04</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -7764,10 +7162,6 @@
             <type>dtExample.Mesh Object</type>
             <id>85afb7d7-eb2c-4e9d-a1ff-fb5baf1618f6</id>
             <name>palmtree_49</name>
-            <property>
-                <name>Name</name>
-                <string>palmtree_49</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -7814,10 +7208,6 @@
             <id>85d04b7c-3251-41fe-b945-12e5214d9154</id>
             <name>Chair_21</name>
             <property>
-                <name>Name</name>
-                <string>Chair_21</string>
-            </property>
-            <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
             </property>
@@ -7859,10 +7249,6 @@
             <id>86bf71bf-e78c-477e-b257-2aa560795f7f</id>
             <name>Firework_ControlPoint_07</name>
             <property>
-                <name>Name</name>
-                <string>Firework_ControlPoint_07</string>
-            </property>
-            <property>
                 <name>Translation</name>
                 <vec3>
                     <value1>-433.178314</value1>
@@ -7879,10 +7265,6 @@
             <type>dtRender.Dynamic Light</type>
             <id>887bfb33-9770-45e0-95e4-bea0a1ddd56d</id>
             <name>Dynamic Light_03</name>
-            <property>
-                <name>Name</name>
-                <string>Dynamic Light_03</string>
-            </property>
             <property>
                 <name>Rotation</name>
                 <vec3>
@@ -7920,10 +7302,6 @@
             <type>dtExample.Mesh Object</type>
             <id>88923843-7754-4085-ba5c-53f75f4ee80f</id>
             <name>palmtree_58</name>
-            <property>
-                <name>Name</name>
-                <string>palmtree_58</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -7970,10 +7348,6 @@
             <id>89725cc9-e5c0-43c2-b315-0efaf9d24aea</id>
             <name>palmtree_19</name>
             <property>
-                <name>Name</name>
-                <string>palmtree_19</string>
-            </property>
-            <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
             </property>
@@ -8019,10 +7393,6 @@
             <id>8a8b5f0b-2ab4-4cfd-b147-f002c34b813c</id>
             <name>Chair_12</name>
             <property>
-                <name>Name</name>
-                <string>Chair_12</string>
-            </property>
-            <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
             </property>
@@ -8063,10 +7433,6 @@
             <type>dtExample.Mesh Object</type>
             <id>8b2c63f1-c0a2-4eb0-9414-aacc88dd1ea6</id>
             <name>angledpalm_02</name>
-            <property>
-                <name>Name</name>
-                <string>angledpalm_02</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -8112,10 +7478,6 @@
             <type>dtExample.Mesh Object</type>
             <id>8c323b4e-7464-40a3-9108-5a3ed699ac2f</id>
             <name>walkway_18</name>
-            <property>
-                <name>Name</name>
-                <string>walkway_18</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -8174,10 +7536,6 @@
             <id>8c8be7b7-5645-4997-873b-266c7b6af1ec</id>
             <name>FireworkD_BezierNode_02</name>
             <property>
-                <name>Name</name>
-                <string>FireworkD_BezierNode_02</string>
-            </property>
-            <property>
                 <name>Translation</name>
                 <vec3>
                     <value1>-432.863647</value1>
@@ -8198,10 +7556,6 @@
             <type>dtExample.Mesh Object</type>
             <id>8ce8626c-4910-40e0-89e4-e0aa8e4aa549</id>
             <name>barstool_04</name>
-            <property>
-                <name>Name</name>
-                <string>barstool_04</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -8243,10 +7597,6 @@
             <type>dtExample.Mesh Object</type>
             <id>8e25596e-0c62-4b59-b335-81fc86037c16</id>
             <name>walkway_78</name>
-            <property>
-                <name>Name</name>
-                <string>walkway_78</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -8305,10 +7655,6 @@
             <id>8e32a30c-8f28-4e91-9136-a4c2ccaca755</id>
             <name>TikiTorch02</name>
             <property>
-                <name>Name</name>
-                <string>TikiTorch02</string>
-            </property>
-            <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
             </property>
@@ -8328,13 +7674,36 @@
             </property>
         </actor>
         <actor>
+            <type>dtExample.Civilian</type>
+            <id>8e60434f-2103-40a8-ae68-c50f872a9107</id>
+            <name>youngafricanman_01</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>-71.444016</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-560.302734</value1>
+                    <value2>-129.204865</value2>
+                    <value3>1.845324</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Skeletal Mesh</name>
+                <resourceType>SkeletalMeshes</resourceType>
+                <resourceDisplayName>SkeletalMeshes:YoungMan_African:YoungMan_African_Swimmer.dtchar</resourceDisplayName>
+                <resource>SkeletalMeshes:YoungMan_African:YoungMan_African_Swimmer.dtchar</resource>
+            </property>
+        </actor>
+        <actor>
             <type>dtcore.Curve.Bezier Control Point</type>
             <id>8f4a736d-a330-4671-bc96-1505a303cbad</id>
             <name>ControlPoint_04</name>
-            <property>
-                <name>Name</name>
-                <string>ControlPoint_04</string>
-            </property>
             <property>
                 <name>Translation</name>
                 <vec3>
@@ -8352,10 +7721,6 @@
             <type>dtExample.Mesh Object</type>
             <id>8f591f18-6013-4962-9098-d54b44ffff42</id>
             <name>walkway_24</name>
-            <property>
-                <name>Name</name>
-                <string>walkway_24</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -8414,10 +7779,6 @@
             <id>9002264a-a656-4b06-a8d3-da36862dce94</id>
             <name>walkway_68</name>
             <property>
-                <name>Name</name>
-                <string>walkway_68</string>
-            </property>
-            <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
             </property>
@@ -8475,10 +7836,6 @@
             <id>908b97a8-d4aa-4d4d-b8af-9dd0f083f6cb</id>
             <name>palmtree_62</name>
             <property>
-                <name>Name</name>
-                <string>palmtree_62</string>
-            </property>
-            <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
             </property>
@@ -8524,10 +7881,6 @@
             <id>90959223-2267-46db-b715-237445f65600</id>
             <name>Camera_A_BezierNode_08</name>
             <property>
-                <name>Name</name>
-                <string>Camera_A_BezierNode_08</string>
-            </property>
-            <property>
                 <name>Translation</name>
                 <vec3>
                     <value1>-620.416870</value1>
@@ -8553,10 +7906,6 @@
             <id>90c7d0f2-3680-40b1-a902-2a3835ead3ba</id>
             <name>ControlPoint_11</name>
             <property>
-                <name>Name</name>
-                <string>ControlPoint_11</string>
-            </property>
-            <property>
                 <name>Translation</name>
                 <vec3>
                     <value1>-776.879028</value1>
@@ -8573,10 +7922,6 @@
             <type>dtExample.Mesh Object</type>
             <id>91474feb-d9dd-414e-81bc-f82a279b35ff</id>
             <name>walkway_06</name>
-            <property>
-                <name>Name</name>
-                <string>walkway_06</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -8635,10 +7980,6 @@
             <id>9247dcab-0872-4c01-874f-d4e987928762</id>
             <name>torch_02</name>
             <property>
-                <name>Name</name>
-                <string>torch_02</string>
-            </property>
-            <property>
                 <name>Translation</name>
                 <vec3>
                     <value1>-562.493347</value1>
@@ -8657,10 +7998,6 @@
             <type>dtExample.Mesh Object</type>
             <id>9277f98d-44c8-4b8f-afd4-4ee217100a65</id>
             <name>palmtree_47</name>
-            <property>
-                <name>Name</name>
-                <string>palmtree_47</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -8707,10 +8044,6 @@
             <id>9494a54c-7de7-41ee-8d90-31ba43e84dd6</id>
             <name>BoardwalkAndBar</name>
             <property>
-                <name>Name</name>
-                <string>BoardwalkAndBar</string>
-            </property>
-            <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
             </property>
@@ -8751,10 +8084,6 @@
             <type>dtExample.Mesh Object</type>
             <id>950e1a9e-d6f8-4345-894b-b34ba8a305e4</id>
             <name>walkway_76</name>
-            <property>
-                <name>Name</name>
-                <string>walkway_76</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -8813,10 +8142,6 @@
             <id>95235ecc-dcb3-49dd-8723-7e1aa83b5b14</id>
             <name>walkway_47</name>
             <property>
-                <name>Name</name>
-                <string>walkway_47</string>
-            </property>
-            <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
             </property>
@@ -8870,13 +8195,40 @@
             </property>
         </actor>
         <actor>
+            <type>dtExample.Civilian</type>
+            <id>96721874-a69b-44cf-9929-ac9757bcb1bc</id>
+            <name>youngman_03</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>-161.177078</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-563.591797</value1>
+                    <value2>-133.808731</value2>
+                    <value3>1.845965</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Skeletal Mesh</name>
+                <resourceType>SkeletalMeshes</resourceType>
+                <resourceDisplayName>SkeletalMeshes:YoungMan:YoungMan_Jogger.dtchar</resourceDisplayName>
+                <resource>SkeletalMeshes:YoungMan:YoungMan_Jogger.dtchar</resource>
+            </property>
+            <property>
+                <name>Stance</name>
+                <enumerated>SITTING</enumerated>
+            </property>
+        </actor>
+        <actor>
             <type>dtExample.Mesh Object</type>
             <id>96b46b8f-db80-4319-9494-553829d639f9</id>
             <name>walkway_11</name>
-            <property>
-                <name>Name</name>
-                <string>walkway_11</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -8935,10 +8287,6 @@
             <id>97232bdb-0d5d-4041-88d7-a41688995cfe</id>
             <name>rock</name>
             <property>
-                <name>Name</name>
-                <string>rock</string>
-            </property>
-            <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
             </property>
@@ -8991,10 +8339,6 @@
             <type>dtExample.Mesh Object</type>
             <id>98d7fbb5-ddb4-4be6-8557-8fd553ffc097</id>
             <name>walkway_17</name>
-            <property>
-                <name>Name</name>
-                <string>walkway_17</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -9053,10 +8397,6 @@
             <id>98d92d05-0328-40dc-865f-627db6c907e9</id>
             <name>bench_02</name>
             <property>
-                <name>Name</name>
-                <string>bench_02</string>
-            </property>
-            <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
             </property>
@@ -9097,10 +8437,6 @@
             <type>dtExample.Mesh Object</type>
             <id>9980e6f4-68c9-4df2-bd05-9a13356220fb</id>
             <name>palmtree_92</name>
-            <property>
-                <name>Name</name>
-                <string>palmtree_92</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -9147,10 +8483,6 @@
             <id>9a311aa2-efdf-412e-9da6-2e8fe9461db6</id>
             <name>TikiTorch04</name>
             <property>
-                <name>Name</name>
-                <string>TikiTorch04</string>
-            </property>
-            <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
             </property>
@@ -9174,10 +8506,6 @@
             <id>9a4b6dae-a108-4fc5-8eeb-79405ebfac36</id>
             <name>FireworkB_BezierNode_02</name>
             <property>
-                <name>Name</name>
-                <string>FireworkB_BezierNode_02</string>
-            </property>
-            <property>
                 <name>Translation</name>
                 <vec3>
                     <value1>-440.154907</value1>
@@ -9198,10 +8526,6 @@
             <type>dtExample.Mesh Object</type>
             <id>9b781e68-ef2b-47d5-948a-6cbdeeb39f75</id>
             <name>palmtree_79</name>
-            <property>
-                <name>Name</name>
-                <string>palmtree_79</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -9248,10 +8572,6 @@
             <id>9be251ba-7c81-422e-aef1-ba4f2188e530</id>
             <name>torch_03</name>
             <property>
-                <name>Name</name>
-                <string>torch_03</string>
-            </property>
-            <property>
                 <name>Translation</name>
                 <vec3>
                     <value1>-565.993774</value1>
@@ -9270,10 +8590,6 @@
             <type>dtExample.Civilian</type>
             <id>9d0a0692-85c6-4dd3-aeb4-9a6542c2e0f3</id>
             <name>Gina_02</name>
-            <property>
-                <name>Name</name>
-                <string>Gina_02</string>
-            </property>
             <property>
                 <name>Rotation</name>
                 <vec3>
@@ -9302,10 +8618,6 @@
             <id>9dc85029-c92e-4932-b1f9-5030508ed60a</id>
             <name>Camera_A_BezierNode_01</name>
             <property>
-                <name>Name</name>
-                <string>Camera_A_BezierNode_01</string>
-            </property>
-            <property>
                 <name>Translation</name>
                 <vec3>
                     <value1>-519.403748</value1>
@@ -9330,10 +8642,6 @@
             <type>dtExample.Mesh Object</type>
             <id>9eaee6d0-5091-4d14-963e-93a13c70781e</id>
             <name>palmtree_17</name>
-            <property>
-                <name>Name</name>
-                <string>palmtree_17</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -9379,10 +8687,6 @@
             <type>dtExample.Mesh Object</type>
             <id>9f1660e3-9187-4210-b28e-1a4d3319b089</id>
             <name>walkway_85</name>
-            <property>
-                <name>Name</name>
-                <string>walkway_85</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -9441,10 +8745,6 @@
             <id>9f85f05f-1cda-47f9-a1e0-37c16002cafd</id>
             <name>walkway_29</name>
             <property>
-                <name>Name</name>
-                <string>walkway_29</string>
-            </property>
-            <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
             </property>
@@ -9502,10 +8802,6 @@
             <id>9fad676f-659a-4265-8a70-c8bed8616c2f</id>
             <name>barstool_05</name>
             <property>
-                <name>Name</name>
-                <string>barstool_05</string>
-            </property>
-            <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
             </property>
@@ -9547,10 +8843,6 @@
             <id>9fc0d4ff-b0be-4bf0-9d9b-ad51d23e0ddf</id>
             <name>Chair_20</name>
             <property>
-                <name>Name</name>
-                <string>Chair_20</string>
-            </property>
-            <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
             </property>
@@ -9591,10 +8883,6 @@
             <type>dtExample.Mesh Object</type>
             <id>9fee0e34-3351-4485-aa1d-de5b4c776b60</id>
             <name>palmtree_42</name>
-            <property>
-                <name>Name</name>
-                <string>palmtree_42</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -9641,10 +8929,6 @@
             <id>a0368696-1d5c-46b0-bd70-4176b96faf94</id>
             <name>palmtree_29</name>
             <property>
-                <name>Name</name>
-                <string>palmtree_29</string>
-            </property>
-            <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
             </property>
@@ -9690,10 +8974,6 @@
             <id>a0852400-b67a-4e38-9668-fba44a5d1035</id>
             <name>Chair_06</name>
             <property>
-                <name>Name</name>
-                <string>Chair_06</string>
-            </property>
-            <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
             </property>
@@ -9734,10 +9014,6 @@
             <type>dtExample.Mesh Object</type>
             <id>a3384900-b533-4212-9080-2a8b6fa15dc9</id>
             <name>walkway_08</name>
-            <property>
-                <name>Name</name>
-                <string>walkway_08</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -9796,10 +9072,6 @@
             <id>a3ab9a3d-af5f-438d-b1e8-31dfc0d852d2</id>
             <name>torch03</name>
             <property>
-                <name>Name</name>
-                <string>torch03</string>
-            </property>
-            <property>
                 <name>Translation</name>
                 <vec3>
                     <value1>-565.562134</value1>
@@ -9819,10 +9091,6 @@
             <id>a5189ce7-30df-4c54-bc96-f5aff908470b</id>
             <name>AutoTrigger_01</name>
             <property>
-                <name>Name</name>
-                <string>AutoTrigger_01</string>
-            </property>
-            <property>
                 <name>Action</name>
                 <actorId>ef133551-79ef-465e-aee0-be13eb0c8eca</actorId>
             </property>
@@ -9831,10 +9099,6 @@
             <type>dtExample.Civilian</type>
             <id>a58a4383-0213-427f-b802-43cc10c07084</id>
             <name>youngman_01</name>
-            <property>
-                <name>Name</name>
-                <string>youngman_01</string>
-            </property>
             <property>
                 <name>Rotation</name>
                 <vec3>
@@ -9863,10 +9127,6 @@
             <id>a6060362-a5f2-4b95-b8e0-a9571a265cb5</id>
             <name>ControlPoint_03</name>
             <property>
-                <name>Name</name>
-                <string>ControlPoint_03</string>
-            </property>
-            <property>
                 <name>Translation</name>
                 <vec3>
                     <value1>-616.602966</value1>
@@ -9883,10 +9143,6 @@
             <type>dtExample.Mesh Object</type>
             <id>a782cae8-2269-4881-9a9b-9f30b6204662</id>
             <name>lamp_04</name>
-            <property>
-                <name>Name</name>
-                <string>lamp_04</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -9924,10 +9180,6 @@
             <type>dtExample.Mesh Object</type>
             <id>a7cb23d9-f795-4749-bfb2-b570c7bc0dae</id>
             <name>walkway_66</name>
-            <property>
-                <name>Name</name>
-                <string>walkway_66</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -9986,10 +9238,6 @@
             <id>a85d4344-f39c-46ac-99f3-cfaf19bf2cfe</id>
             <name>palmtree_30</name>
             <property>
-                <name>Name</name>
-                <string>palmtree_30</string>
-            </property>
-            <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
             </property>
@@ -10034,10 +9282,6 @@
             <type>dtExample.Mesh Object</type>
             <id>a9feeef7-cb09-4500-9f3b-275f8e032e50</id>
             <name>walkway_43</name>
-            <property>
-                <name>Name</name>
-                <string>walkway_43</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -10096,10 +9340,6 @@
             <id>aad311e4-0913-498c-9628-07859d34398e</id>
             <name>walkway_07</name>
             <property>
-                <name>Name</name>
-                <string>walkway_07</string>
-            </property>
-            <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
             </property>
@@ -10157,10 +9397,6 @@
             <id>ac56d360-88af-45ba-9050-cb017acac9a4</id>
             <name>FireworkA_Controller</name>
             <property>
-                <name>Name</name>
-                <string>FireworkA_Controller</string>
-            </property>
-            <property>
                 <name>Start Node</name>
                 <actorId>5db88fc9-ed81-4a83-8547-dc5a2a466708</actorId>
             </property>
@@ -10173,10 +9409,6 @@
             <type>dtcore.Curve.Bezier Node</type>
             <id>add9de85-adbd-45dd-b7db-054ac6405398</id>
             <name>Camera_A_BezierNode_02</name>
-            <property>
-                <name>Name</name>
-                <string>Camera_A_BezierNode_02</string>
-            </property>
             <property>
                 <name>Translation</name>
                 <vec3>
@@ -10210,10 +9442,6 @@
             <type>dtExample.Mesh Object</type>
             <id>ae2df144-a585-442f-9eea-80ebf8284699</id>
             <name>bottle_07</name>
-            <property>
-                <name>Name</name>
-                <string>bottle_07</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -10251,10 +9479,6 @@
             <type>dtExample.Mesh Object</type>
             <id>aecc3cd8-d043-410a-b300-79890e5129c1</id>
             <name>walkway_59</name>
-            <property>
-                <name>Name</name>
-                <string>walkway_59</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -10313,10 +9537,6 @@
             <id>af4b5297-6b28-4c83-b766-f2bd217ebb57</id>
             <name>torchlight01</name>
             <property>
-                <name>Name</name>
-                <string>torchlight01</string>
-            </property>
-            <property>
                 <name>Translation</name>
                 <vec3>
                     <value1>-565.996033</value1>
@@ -10353,10 +9573,6 @@
             <type>dtExample.Mesh Object</type>
             <id>afa220ca-bccd-4041-99d4-96dba51e76fb</id>
             <name>walkway_80</name>
-            <property>
-                <name>Name</name>
-                <string>walkway_80</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -10415,10 +9631,6 @@
             <id>b067dabe-bd14-4559-b9ea-e4d2eb6d4d28</id>
             <name>walkway_01</name>
             <property>
-                <name>Name</name>
-                <string>walkway_01</string>
-            </property>
-            <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
             </property>
@@ -10476,10 +9688,6 @@
             <id>b0f87150-4763-4432-905d-04f512618bc3</id>
             <name>palmtree_69</name>
             <property>
-                <name>Name</name>
-                <string>palmtree_69</string>
-            </property>
-            <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
             </property>
@@ -10525,10 +9733,6 @@
             <id>b11c1c7c-7f70-480f-bc15-3995952707e1</id>
             <name>barstool_10</name>
             <property>
-                <name>Name</name>
-                <string>barstool_10</string>
-            </property>
-            <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
             </property>
@@ -10570,10 +9774,6 @@
             <id>b130414a-bbe2-4d45-8adf-832fe7301eb4</id>
             <name>Chair_25</name>
             <property>
-                <name>Name</name>
-                <string>Chair_25</string>
-            </property>
-            <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
             </property>
@@ -10614,10 +9814,6 @@
             <type>dtExample.Mesh Object</type>
             <id>b17d169f-d9ee-4fc4-ad8f-1cde3e164b62</id>
             <name>palmtree_81</name>
-            <property>
-                <name>Name</name>
-                <string>palmtree_81</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -10663,10 +9859,6 @@
             <type>dtExample.Mesh Object</type>
             <id>b1f2279d-7f4e-4f79-83d0-182924a16886</id>
             <name>walkway_01</name>
-            <property>
-                <name>Name</name>
-                <string>walkway_01</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -10724,10 +9916,6 @@
             <type>dtcore.Curve.Bezier Node</type>
             <id>b1f40ebf-8420-47fa-8f44-23dc6c4fd491</id>
             <name>Camera_C_BezierNode_02</name>
-            <property>
-                <name>Name</name>
-                <string>Camera_C_BezierNode_02</string>
-            </property>
             <property>
                 <name>Translation</name>
                 <vec3>
@@ -10854,10 +10042,6 @@
             <id>b397ada6-c18a-4b7e-8623-630e062403f9</id>
             <name>palmtree_20</name>
             <property>
-                <name>Name</name>
-                <string>palmtree_20</string>
-            </property>
-            <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
             </property>
@@ -10903,10 +10087,6 @@
             <id>b3ea232c-6b43-4462-baa1-1b3a5487c480</id>
             <name>Dynamic Light_08</name>
             <property>
-                <name>Name</name>
-                <string>Dynamic Light_08</string>
-            </property>
-            <property>
                 <name>Rotation</name>
                 <vec3>
                     <value1>0.000018</value1>
@@ -10943,10 +10123,6 @@
             <type>dtExample.Mesh Object</type>
             <id>b475f714-dd2d-4947-a27f-125a0b9e227a</id>
             <name>lamp_09</name>
-            <property>
-                <name>Name</name>
-                <string>lamp_09</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -10985,10 +10161,6 @@
             <id>b56dafbd-9fa9-49dc-90e3-7d14a245d6ba</id>
             <name>FireworkF_BezierNode_01</name>
             <property>
-                <name>Name</name>
-                <string>FireworkF_BezierNode_01</string>
-            </property>
-            <property>
                 <name>Translation</name>
                 <vec3>
                     <value1>-433.926025</value1>
@@ -11013,10 +10185,6 @@
             <type>dtExample.Mesh Object</type>
             <id>b6634ed3-b37f-4b69-814d-18acabf5c8fc</id>
             <name>walkway_56</name>
-            <property>
-                <name>Name</name>
-                <string>walkway_56</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -11075,10 +10243,6 @@
             <id>b6c141d7-8621-4812-9b80-977ae036fa38</id>
             <name>palmtree_51</name>
             <property>
-                <name>Name</name>
-                <string>palmtree_51</string>
-            </property>
-            <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
             </property>
@@ -11123,10 +10287,6 @@
             <type>dtExample.Mesh Object</type>
             <id>b6fae384-cf92-4618-bd45-bc7dca97d53c</id>
             <name>walkway_05</name>
-            <property>
-                <name>Name</name>
-                <string>walkway_05</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -11185,10 +10345,6 @@
             <id>b7b660fb-61c1-4036-a0f5-2f004dafbb87</id>
             <name>Camera_B_BezierNode_02</name>
             <property>
-                <name>Name</name>
-                <string>Camera_B_BezierNode_02</string>
-            </property>
-            <property>
                 <name>Translation</name>
                 <vec3>
                     <value1>-741.290100</value1>
@@ -11209,10 +10365,6 @@
             <type>dtExample.Mesh Object</type>
             <id>b7b6b4ca-97ea-4a1c-af6d-465fd59700bc</id>
             <name>lamp_05</name>
-            <property>
-                <name>Name</name>
-                <string>lamp_05</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -11251,10 +10403,6 @@
             <id>b844ff0a-3072-4da1-ae49-c42e18d34566</id>
             <name>Camera_A_BezierNode_05</name>
             <property>
-                <name>Name</name>
-                <string>Camera_A_BezierNode_05</string>
-            </property>
-            <property>
                 <name>Translation</name>
                 <vec3>
                     <value1>-821.205566</value1>
@@ -11287,10 +10435,6 @@
             <type>dtExample.Mesh Object</type>
             <id>b972ed7a-76e7-4109-bce5-6ae19efc871a</id>
             <name>palmtree_86</name>
-            <property>
-                <name>Name</name>
-                <string>palmtree_86</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -11337,10 +10481,6 @@
             <id>baa2581c-f177-4a12-8571-e9d0563f6319</id>
             <name>Boat_Controller</name>
             <property>
-                <name>Name</name>
-                <string>Boat_Controller</string>
-            </property>
-            <property>
                 <name>Start Node</name>
                 <actorId>317d308f-f0fd-4867-b65d-cf20906e80ed</actorId>
             </property>
@@ -11353,10 +10493,6 @@
             <type>dtExample.Mesh Object</type>
             <id>bcf8070a-77d1-4d17-84a6-267435ecad90</id>
             <name>palmtree_32</name>
-            <property>
-                <name>Name</name>
-                <string>palmtree_32</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -11403,10 +10539,6 @@
             <id>bd27f0c4-cab3-42e4-b995-7c2419e863ad</id>
             <name>palmtree_05</name>
             <property>
-                <name>Name</name>
-                <string>palmtree_05</string>
-            </property>
-            <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
             </property>
@@ -11452,10 +10584,6 @@
             <id>bda4ab60-b906-445b-8712-cdfcdef3f25b</id>
             <name>ControlPoint_08</name>
             <property>
-                <name>Name</name>
-                <string>ControlPoint_08</string>
-            </property>
-            <property>
                 <name>Translation</name>
                 <vec3>
                     <value1>-723.946655</value1>
@@ -11472,10 +10600,6 @@
             <type>dtcore.Curve.Bezier Node</type>
             <id>bdc7d53e-3e88-413a-af78-944b974f8e11</id>
             <name>FireworkE_BezierNode_02</name>
-            <property>
-                <name>Name</name>
-                <string>FireworkE_BezierNode_02</string>
-            </property>
             <property>
                 <name>Translation</name>
                 <vec3>
@@ -11497,10 +10621,6 @@
             <type>dtExample.Mesh Object</type>
             <id>be08b2d8-c3ce-4fa0-aab5-0deb9c038640</id>
             <name>palmtree_87</name>
-            <property>
-                <name>Name</name>
-                <string>palmtree_87</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -11547,10 +10667,6 @@
             <id>be5d6802-b2c6-4d27-8b65-f9e1c50c2d64</id>
             <name>ControlPoint_07</name>
             <property>
-                <name>Name</name>
-                <string>ControlPoint_07</string>
-            </property>
-            <property>
                 <name>Translation</name>
                 <vec3>
                     <value1>-707.227234</value1>
@@ -11567,10 +10683,6 @@
             <type>dtExample.Mesh Object</type>
             <id>beb7dddb-8995-4ed3-937c-039b481fd03a</id>
             <name>Chair_14</name>
-            <property>
-                <name>Name</name>
-                <string>Chair_14</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -11613,10 +10725,6 @@
             <id>bee5a97c-6bf3-4e1f-938a-d805f6ed296a</id>
             <name>Chair_08</name>
             <property>
-                <name>Name</name>
-                <string>Chair_08</string>
-            </property>
-            <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
             </property>
@@ -11657,10 +10765,6 @@
             <type>dtExample.Mesh Object</type>
             <id>bf896615-c040-4388-b823-34f6878e7e63</id>
             <name>walkway_84</name>
-            <property>
-                <name>Name</name>
-                <string>walkway_84</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -11719,10 +10823,6 @@
             <id>c02a135f-9d21-4304-96d3-36441f45f382</id>
             <name>palmtree_34</name>
             <property>
-                <name>Name</name>
-                <string>palmtree_34</string>
-            </property>
-            <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
             </property>
@@ -11767,10 +10867,6 @@
             <type>dtExample.Mesh Object</type>
             <id>c04cf6fa-99a4-483a-8c7d-ed581f2fea76</id>
             <name>walkway_21</name>
-            <property>
-                <name>Name</name>
-                <string>walkway_21</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -11829,10 +10925,6 @@
             <id>c0b3735a-11ed-47c1-a9a6-ef9e8cd76d23</id>
             <name>palmtree_61</name>
             <property>
-                <name>Name</name>
-                <string>palmtree_61</string>
-            </property>
-            <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
             </property>
@@ -11877,10 +10969,6 @@
             <type>dtExample.Mesh Object</type>
             <id>c11c983a-c474-40ab-9053-d29e0c72563c</id>
             <name>palmtree_04</name>
-            <property>
-                <name>Name</name>
-                <string>palmtree_04</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -11927,10 +11015,6 @@
             <id>c184f7f6-9f8c-4657-a364-e1ecadabc765</id>
             <name>palmtree_37</name>
             <property>
-                <name>Name</name>
-                <string>palmtree_37</string>
-            </property>
-            <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
             </property>
@@ -11976,10 +11060,6 @@
             <id>c1df8e1c-b52e-483f-be9b-2b496e8f11eb</id>
             <name>ControlPoint_06</name>
             <property>
-                <name>Name</name>
-                <string>ControlPoint_06</string>
-            </property>
-            <property>
                 <name>Translation</name>
                 <vec3>
                     <value1>-703.526733</value1>
@@ -11996,10 +11076,6 @@
             <type>dtExample.Mesh Object</type>
             <id>c21efe49-bfc9-452b-b92d-b06a33232409</id>
             <name>bench_04</name>
-            <property>
-                <name>Name</name>
-                <string>bench_04</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -12041,10 +11117,6 @@
             <type>dtExample.Mesh Object</type>
             <id>c2328824-1bbf-462c-bf47-b3eb84a00e69</id>
             <name>walkway_16</name>
-            <property>
-                <name>Name</name>
-                <string>walkway_16</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -12103,10 +11175,6 @@
             <id>c24172e9-2cc7-4f3b-86e1-b514d8e78b8a</id>
             <name>walkway_73</name>
             <property>
-                <name>Name</name>
-                <string>walkway_73</string>
-            </property>
-            <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
             </property>
@@ -12163,10 +11231,6 @@
             <type>dtExample.Mesh Object</type>
             <id>c243445f-8d34-4eec-b8ae-565fd449bb5d</id>
             <name>walkway_41</name>
-            <property>
-                <name>Name</name>
-                <string>walkway_41</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -12225,10 +11289,6 @@
             <id>c3c75f92-9289-4162-a894-db87ad621014</id>
             <name>walkway_28</name>
             <property>
-                <name>Name</name>
-                <string>walkway_28</string>
-            </property>
-            <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
             </property>
@@ -12286,10 +11346,6 @@
             <id>c4d356cf-af04-4d9e-a981-cf39d4d09d66</id>
             <name>barstool_08</name>
             <property>
-                <name>Name</name>
-                <string>barstool_08</string>
-            </property>
-            <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
             </property>
@@ -12330,10 +11386,6 @@
             <type>dtExample.Mesh Object</type>
             <id>c4e101ec-0777-4f83-8712-cf59ce1e4bc4</id>
             <name>palmtree_66</name>
-            <property>
-                <name>Name</name>
-                <string>palmtree_66</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -12380,10 +11432,6 @@
             <id>c559f2bb-b7b7-4dfe-b744-29c331e07bc1</id>
             <name>Camera_A_BezierNode_03</name>
             <property>
-                <name>Name</name>
-                <string>Camera_A_BezierNode_03</string>
-            </property>
-            <property>
                 <name>Translation</name>
                 <vec3>
                     <value1>-669.171326</value1>
@@ -12416,10 +11464,6 @@
             <type>dtExample.Mesh Object</type>
             <id>c5a46713-0e0b-4f15-a7a6-fc29cf61486a</id>
             <name>palmtree_16</name>
-            <property>
-                <name>Name</name>
-                <string>palmtree_16</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -12466,10 +11510,6 @@
             <id>c600bc7a-32e2-4e4a-8a37-43628c76ad7d</id>
             <name>palmtree_24</name>
             <property>
-                <name>Name</name>
-                <string>palmtree_24</string>
-            </property>
-            <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
             </property>
@@ -12515,10 +11555,6 @@
             <id>c668dc3a-13cd-4f5b-b9b7-a587f978aaec</id>
             <name>FireworkE_BezierNode_01</name>
             <property>
-                <name>Name</name>
-                <string>FireworkE_BezierNode_01</string>
-            </property>
-            <property>
                 <name>Translation</name>
                 <vec3>
                     <value1>-446.387115</value1>
@@ -12543,10 +11579,6 @@
             <type>dtRender.Dynamic Light</type>
             <id>c67e8b6f-0fe0-4bb8-946a-06d171bba0b6</id>
             <name>Dynamic Light_01</name>
-            <property>
-                <name>Name</name>
-                <string>Dynamic Light_01</string>
-            </property>
             <property>
                 <name>Rotation</name>
                 <vec3>
@@ -12585,10 +11617,6 @@
             <id>c6a0c385-362c-4a6c-a828-2622d9faf45c</id>
             <name>Camera_A_BezierNode_07</name>
             <property>
-                <name>Name</name>
-                <string>Camera_A_BezierNode_07</string>
-            </property>
-            <property>
                 <name>Translation</name>
                 <vec3>
                     <value1>-697.954407</value1>
@@ -12621,10 +11649,6 @@
             <type>dtExample.Mesh Object</type>
             <id>c6e1c35c-c333-49d6-83ad-27395c8a0a5c</id>
             <name>walkway_83</name>
-            <property>
-                <name>Name</name>
-                <string>walkway_83</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -12683,10 +11707,6 @@
             <id>c6fb7aa0-a420-456b-a6d3-bd5845e0b403</id>
             <name>palmtree_46</name>
             <property>
-                <name>Name</name>
-                <string>palmtree_46</string>
-            </property>
-            <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
             </property>
@@ -12732,10 +11752,6 @@
             <id>c776c460-2b29-4dce-8fc9-c8db12f4c9ff</id>
             <name>FireworkI_BezierNode_01</name>
             <property>
-                <name>Name</name>
-                <string>FireworkI_BezierNode_01</string>
-            </property>
-            <property>
                 <name>Translation</name>
                 <vec3>
                     <value1>-444.664429</value1>
@@ -12760,10 +11776,6 @@
             <type>dtExample.Mesh Object</type>
             <id>c9529a4d-149d-4810-a9f8-985c72ddbb50</id>
             <name>walkway_65</name>
-            <property>
-                <name>Name</name>
-                <string>walkway_65</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -12822,10 +11834,6 @@
             <id>c96c4b72-2d08-4c11-8912-f0d33174e81f</id>
             <name>bottle_08</name>
             <property>
-                <name>Name</name>
-                <string>bottle_08</string>
-            </property>
-            <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
             </property>
@@ -12863,10 +11871,6 @@
             <id>ca40f472-224b-440e-8671-5da4b03371ef</id>
             <name>FireworkF_Controller</name>
             <property>
-                <name>Name</name>
-                <string>FireworkF_Controller</string>
-            </property>
-            <property>
                 <name>Start Node</name>
                 <actorId>b56dafbd-9fa9-49dc-90e3-7d14a245d6ba</actorId>
             </property>
@@ -12879,10 +11883,6 @@
             <type>dtExample.Mesh Object</type>
             <id>ca563054-9704-46d1-933f-a2e1ef67da6d</id>
             <name>bench_06</name>
-            <property>
-                <name>Name</name>
-                <string>bench_06</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -12925,10 +11925,6 @@
             <id>cae8b52e-b507-475d-9e1d-917892e1b5d9</id>
             <name>FireworkH_BezierNode_02</name>
             <property>
-                <name>Name</name>
-                <string>FireworkH_BezierNode_02</string>
-            </property>
-            <property>
                 <name>Translation</name>
                 <vec3>
                     <value1>-446.231873</value1>
@@ -12949,10 +11945,6 @@
             <type>dtExample.Mesh Object</type>
             <id>cb90a33a-9d46-45a6-95f2-6c26c411f605</id>
             <name>walkway_52</name>
-            <property>
-                <name>Name</name>
-                <string>walkway_52</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -13011,10 +12003,6 @@
             <id>cc7c8be0-23fa-4847-83b0-d63dd0d34a0e</id>
             <name>walkway_51</name>
             <property>
-                <name>Name</name>
-                <string>walkway_51</string>
-            </property>
-            <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
             </property>
@@ -13072,10 +12060,6 @@
             <id>cd782592-b8e4-4d82-8ed0-4a0cf472eba9</id>
             <name>Chair</name>
             <property>
-                <name>Name</name>
-                <string>Chair</string>
-            </property>
-            <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
             </property>
@@ -13116,10 +12100,6 @@
             <type>dtExample.Mesh Object</type>
             <id>cdd83239-adf7-4eb7-94ba-28788733bef3</id>
             <name>walkway_57</name>
-            <property>
-                <name>Name</name>
-                <string>walkway_57</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -13178,10 +12158,6 @@
             <id>ced527e9-8c79-4c40-8671-a6af281c1ace</id>
             <name>water</name>
             <property>
-                <name>Name</name>
-                <string>water</string>
-            </property>
-            <property>
                 <name>Translation</name>
                 <vec3>
                     <value1>-547.917969</value1>
@@ -13200,10 +12176,6 @@
             <type>dtExample.Mesh Object</type>
             <id>cf3f1493-5f9c-4fc0-98fa-b02911301851</id>
             <name>barstool</name>
-            <property>
-                <name>Name</name>
-                <string>barstool</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -13246,10 +12218,6 @@
             <id>d013163c-50b4-4247-8606-07afc7d56935</id>
             <name>Boat_BezierNode_02</name>
             <property>
-                <name>Name</name>
-                <string>Boat_BezierNode_02</string>
-            </property>
-            <property>
                 <name>Translation</name>
                 <vec3>
                     <value1>-965.135071</value1>
@@ -13271,10 +12239,6 @@
             <id>d0d3fef0-eb10-4d26-85dc-8ee1b34ed205</id>
             <name>ControlPoint_19</name>
             <property>
-                <name>Name</name>
-                <string>ControlPoint_19</string>
-            </property>
-            <property>
                 <name>Translation</name>
                 <vec3>
                     <value1>-625.652100</value1>
@@ -13291,10 +12255,6 @@
             <type>dtcore.Curve.Bezier Control Point</type>
             <id>d137e12a-c7cb-4eef-86a2-af33e6654744</id>
             <name>Firework_ControlPoint_12</name>
-            <property>
-                <name>Name</name>
-                <string>Firework_ControlPoint_12</string>
-            </property>
             <property>
                 <name>Translation</name>
                 <vec3>
@@ -13313,10 +12273,6 @@
             <id>d1cf3a76-84a7-419f-9244-e75bb3739dec</id>
             <name>ControlPoint_02</name>
             <property>
-                <name>Name</name>
-                <string>ControlPoint_02</string>
-            </property>
-            <property>
                 <name>Translation</name>
                 <vec3>
                     <value1>-580.134644</value1>
@@ -13334,10 +12290,6 @@
             <id>d3c5f001-ced0-4a6a-8135-266ac77e215e</id>
             <name>Camera_C_BezierNode_04</name>
             <property>
-                <name>Name</name>
-                <string>Camera_C_BezierNode_04</string>
-            </property>
-            <property>
                 <name>Translation</name>
                 <vec3>
                     <value1>-497.646240</value1>
@@ -13350,10 +12302,6 @@
             <type>dtExample.Mesh Object</type>
             <id>d443bf07-0910-42a6-a943-099363bcc02f</id>
             <name>lamp_11</name>
-            <property>
-                <name>Name</name>
-                <string>lamp_11</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -13391,10 +12339,6 @@
             <type>dtExample.Mesh Object</type>
             <id>d464242b-26bd-41f3-877c-ce6569d6c856</id>
             <name>palmtree_72</name>
-            <property>
-                <name>Name</name>
-                <string>palmtree_72</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -13441,10 +12385,6 @@
             <id>d47e8f6c-365b-4bfb-9d19-a21632eb8a74</id>
             <name>palmtree_65</name>
             <property>
-                <name>Name</name>
-                <string>palmtree_65</string>
-            </property>
-            <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
             </property>
@@ -13490,10 +12430,6 @@
             <id>d5103ee2-883b-44e5-9cb5-cee326e27665</id>
             <name>Firework_ControlPoint_16</name>
             <property>
-                <name>Name</name>
-                <string>Firework_ControlPoint_16</string>
-            </property>
-            <property>
                 <name>Translation</name>
                 <vec3>
                     <value1>-445.956055</value1>
@@ -13510,10 +12446,6 @@
             <type>dtExample.Mesh Object</type>
             <id>d64aead3-c52c-4607-b935-2c870d47f571</id>
             <name>bottle_02</name>
-            <property>
-                <name>Name</name>
-                <string>bottle_02</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -13552,10 +12484,6 @@
             <id>d6c0b2e3-f86f-49cb-a76d-dc1cff5774fb</id>
             <name>TikiTorch01</name>
             <property>
-                <name>Name</name>
-                <string>TikiTorch01</string>
-            </property>
-            <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
             </property>
@@ -13579,10 +12507,6 @@
             <id>d8429ebd-b3f7-4847-83d4-199985ee657a</id>
             <name>FireworkH_Controller</name>
             <property>
-                <name>Name</name>
-                <string>FireworkH_Controller</string>
-            </property>
-            <property>
                 <name>Start Node</name>
                 <actorId>76f83d19-d481-4cfc-87ad-e9c2f685c787</actorId>
             </property>
@@ -13595,10 +12519,6 @@
             <type>dtExample.Mesh Object</type>
             <id>d89d621c-d945-46e1-a4e5-79344e673d50</id>
             <name>bench_01</name>
-            <property>
-                <name>Name</name>
-                <string>bench_01</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -13640,10 +12560,6 @@
             <type>dtExample.Mesh Object</type>
             <id>d90e1480-886b-4bff-ae9a-e2c2209f0627</id>
             <name>palmtree_41</name>
-            <property>
-                <name>Name</name>
-                <string>palmtree_41</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -13690,10 +12606,6 @@
             <id>d9a38556-4eb0-4bdc-8942-b88be13287ea</id>
             <name>lamp_01</name>
             <property>
-                <name>Name</name>
-                <string>lamp_01</string>
-            </property>
-            <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
             </property>
@@ -13731,10 +12643,6 @@
             <id>d9bef1b8-5b8c-42a0-8465-63db23122980</id>
             <name>ControlPoint_13</name>
             <property>
-                <name>Name</name>
-                <string>ControlPoint_13</string>
-            </property>
-            <property>
                 <name>Translation</name>
                 <vec3>
                     <value1>-672.010498</value1>
@@ -13751,10 +12659,6 @@
             <type>dtExample.Mesh Object</type>
             <id>d9c1af68-94f4-4382-9563-64b75bf6bfe0</id>
             <name>palmtree_35</name>
-            <property>
-                <name>Name</name>
-                <string>palmtree_35</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -13801,10 +12705,6 @@
             <id>d9f01f81-1453-48f6-b055-1cd506be9462</id>
             <name>FireworkC_Controller</name>
             <property>
-                <name>Name</name>
-                <string>FireworkC_Controller</string>
-            </property>
-            <property>
                 <name>Start Node</name>
                 <actorId>7831b3fa-524f-4520-87a7-59eedaa89567</actorId>
             </property>
@@ -13818,10 +12718,6 @@
             <id>dbb0e8cc-d6cb-4fdd-b80e-de047fe019f3</id>
             <name>ControlPoint_16</name>
             <property>
-                <name>Name</name>
-                <string>ControlPoint_16</string>
-            </property>
-            <property>
                 <name>Translation</name>
                 <vec3>
                     <value1>-529.454407</value1>
@@ -13834,10 +12730,6 @@
             <type>dtcore.Curve.Bezier Control Point</type>
             <id>dbd89381-e862-49d7-af68-e16198a82f3c</id>
             <name>ControlPoint_09</name>
-            <property>
-                <name>Name</name>
-                <string>ControlPoint_09</string>
-            </property>
             <property>
                 <name>Translation</name>
                 <vec3>
@@ -13855,10 +12747,6 @@
             <type>dtExample.Mesh Object</type>
             <id>dc6c9b08-49a9-42f8-8f41-0fc44e538bb1</id>
             <name>palmtree_14</name>
-            <property>
-                <name>Name</name>
-                <string>palmtree_14</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -13904,10 +12792,6 @@
             <type>dtExample.Mesh Object</type>
             <id>dd4e6934-8ae8-4ca8-bd71-4da5152d0b0d</id>
             <name>walkway_03</name>
-            <property>
-                <name>Name</name>
-                <string>walkway_03</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -13966,10 +12850,6 @@
             <id>ddea0dad-08bd-4112-911b-5f729167b96a</id>
             <name>ControlPoint_01</name>
             <property>
-                <name>Name</name>
-                <string>ControlPoint_01</string>
-            </property>
-            <property>
                 <name>Translation</name>
                 <vec3>
                     <value1>-541.475952</value1>
@@ -13986,10 +12866,6 @@
             <type>dtExample.Mesh Object</type>
             <id>df2b31ec-a4ac-4ec5-917d-653b13a7a67b</id>
             <name>Chair_18</name>
-            <property>
-                <name>Name</name>
-                <string>Chair_18</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -14031,10 +12907,6 @@
             <type>dtExample.Mesh Object</type>
             <id>df3a8ed2-24cb-4bb1-96c7-ec9eb1440a83</id>
             <name>palmtree_45</name>
-            <property>
-                <name>Name</name>
-                <string>palmtree_45</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -14081,10 +12953,6 @@
             <id>df7d89fe-a709-4fb8-9375-3a693d2ff015</id>
             <name>Beachball</name>
             <property>
-                <name>Name</name>
-                <string>Beachball</string>
-            </property>
-            <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
             </property>
@@ -14121,10 +12989,6 @@
             <type>dtExample.Mesh Object</type>
             <id>e053a9b2-a3b6-4dd0-806f-4d2e34acc2bd</id>
             <name>Chair_07</name>
-            <property>
-                <name>Name</name>
-                <string>Chair_07</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -14167,10 +13031,6 @@
             <id>e0877ad9-074b-4cf5-ac75-81827b887a37</id>
             <name>bottle_09</name>
             <property>
-                <name>Name</name>
-                <string>bottle_09</string>
-            </property>
-            <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
             </property>
@@ -14208,10 +13068,6 @@
             <id>e0a8787f-384e-454e-a6aa-c970d1db433f</id>
             <name>Dynamic Light_04</name>
             <property>
-                <name>Name</name>
-                <string>Dynamic Light_04</string>
-            </property>
-            <property>
                 <name>Rotation</name>
                 <vec3>
                     <value1>0.000000</value1>
@@ -14248,10 +13104,6 @@
             <type>dtExample.Mesh Object</type>
             <id>e0c0e811-4f39-4ad6-9036-d58d69e208b7</id>
             <name>walkway_34</name>
-            <property>
-                <name>Name</name>
-                <string>walkway_34</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -14310,10 +13162,6 @@
             <id>e2ee35ab-98a8-4232-99a6-6aae5bcae1a4</id>
             <name>Dynamic Light_02</name>
             <property>
-                <name>Name</name>
-                <string>Dynamic Light_02</string>
-            </property>
-            <property>
                 <name>Rotation</name>
                 <vec3>
                     <value1>0.000000</value1>
@@ -14350,10 +13198,6 @@
             <type>dtExample.Mesh Object</type>
             <id>e2ee7a1c-f9c6-4f67-93c4-15101678735b</id>
             <name>walkway_82</name>
-            <property>
-                <name>Name</name>
-                <string>walkway_82</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -14412,10 +13256,6 @@
             <id>e462c2e2-429f-4c4f-b1a7-79b194ec0040</id>
             <name>palmtree_11</name>
             <property>
-                <name>Name</name>
-                <string>palmtree_11</string>
-            </property>
-            <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
             </property>
@@ -14460,10 +13300,6 @@
             <type>dtExample.Mesh Object</type>
             <id>e46be1fc-8d9b-48e7-8d3f-382366dd9da6</id>
             <name>walkway_70</name>
-            <property>
-                <name>Name</name>
-                <string>walkway_70</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -14522,10 +13358,6 @@
             <id>e4b648ac-21a8-40f7-915c-521b4b41cc9a</id>
             <name>Camera_A_BezierNode_04</name>
             <property>
-                <name>Name</name>
-                <string>Camera_A_BezierNode_04</string>
-            </property>
-            <property>
                 <name>Translation</name>
                 <vec3>
                     <value1>-726.137634</value1>
@@ -14555,13 +13387,40 @@
             </property>
         </actor>
         <actor>
+            <type>dtExample.Civilian</type>
+            <id>e4d99a02-be41-4847-b6d0-1d16153bca50</id>
+            <name>Petunia_02</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>20.597799</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-568.339050</value1>
+                    <value2>-90.407532</value2>
+                    <value3>1.064846</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Skeletal Mesh</name>
+                <resourceType>SkeletalMeshes</resourceType>
+                <resourceDisplayName>SkeletalMeshes:Gina:Petunia_SwimWear.dtchar</resourceDisplayName>
+                <resource>SkeletalMeshes:Gina:Petunia_SwimWear.dtchar</resource>
+            </property>
+            <property>
+                <name>Stance</name>
+                <enumerated>LYING</enumerated>
+            </property>
+        </actor>
+        <actor>
             <type>dtExample.Mesh Object</type>
             <id>e58cb6fa-7cbb-4055-bd73-0fb25d201d7c</id>
             <name>palmtree_39</name>
-            <property>
-                <name>Name</name>
-                <string>palmtree_39</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -14608,10 +13467,6 @@
             <id>e5f6c816-2bf0-4d72-8363-65aa360a10a4</id>
             <name>Camera_C_BezierNode_01</name>
             <property>
-                <name>Name</name>
-                <string>Camera_C_BezierNode_01</string>
-            </property>
-            <property>
                 <name>Translation</name>
                 <vec3>
                     <value1>-455.478394</value1>
@@ -14624,10 +13479,6 @@
             <type>dtExample.Mesh Object</type>
             <id>e60de862-6e6a-4f79-bcf8-7e861d92e07d</id>
             <name>Chair_19</name>
-            <property>
-                <name>Name</name>
-                <string>Chair_19</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -14669,10 +13520,6 @@
             <type>dtExample.Mesh Object</type>
             <id>e638ed38-a259-4842-a3b3-4e1bc6827f50</id>
             <name>walkway_88</name>
-            <property>
-                <name>Name</name>
-                <string>walkway_88</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -14731,10 +13578,6 @@
             <id>e6afacc4-cc2d-4944-8725-c0c16518c645</id>
             <name>Dynamic Light_09</name>
             <property>
-                <name>Name</name>
-                <string>Dynamic Light_09</string>
-            </property>
-            <property>
                 <name>Rotation</name>
                 <vec3>
                     <value1>0.000018</value1>
@@ -14771,10 +13614,6 @@
             <type>dtExample.Mesh Object</type>
             <id>e6cdd54a-553c-4453-8bab-7c6d4de96b7f</id>
             <name>palmtree_64</name>
-            <property>
-                <name>Name</name>
-                <string>palmtree_64</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -14821,10 +13660,6 @@
             <id>e71232d5-9750-474a-ad79-967ce0ff5a76</id>
             <name>palmtree_63</name>
             <property>
-                <name>Name</name>
-                <string>palmtree_63</string>
-            </property>
-            <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
             </property>
@@ -14869,10 +13704,6 @@
             <type>dtExample.Mesh Object</type>
             <id>e74b66ea-689e-44ac-bf1d-3e54047db466</id>
             <name>walkway_58</name>
-            <property>
-                <name>Name</name>
-                <string>walkway_58</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -14931,10 +13762,6 @@
             <id>e7c66c1c-85a3-4a2d-9589-24157f9f2bea</id>
             <name>walkway_61</name>
             <property>
-                <name>Name</name>
-                <string>walkway_61</string>
-            </property>
-            <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
             </property>
@@ -14991,10 +13818,6 @@
             <type>dtExample.Mesh Object</type>
             <id>e7fa49ac-f516-4ef7-b4d1-0621c9fc77aa</id>
             <name>walkway_42</name>
-            <property>
-                <name>Name</name>
-                <string>walkway_42</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -15053,10 +13876,6 @@
             <id>ea22411e-a6ed-49de-b3e3-70cbd8db2e60</id>
             <name>angledpalm_01</name>
             <property>
-                <name>Name</name>
-                <string>angledpalm_01</string>
-            </property>
-            <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
             </property>
@@ -15101,10 +13920,6 @@
             <type>dtExample.Mesh Object</type>
             <id>eb362236-e659-491c-9aeb-a0a04b6334e1</id>
             <name>palmtree_82</name>
-            <property>
-                <name>Name</name>
-                <string>palmtree_82</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -15151,10 +13966,6 @@
             <id>ebb15029-07bc-4196-ab11-71a3e338e2cc</id>
             <name>ControlPoint_20</name>
             <property>
-                <name>Name</name>
-                <string>ControlPoint_20</string>
-            </property>
-            <property>
                 <name>Translation</name>
                 <vec3>
                     <value1>-628.952209</value1>
@@ -15171,10 +13982,6 @@
             <type>dtExample.Mesh Object</type>
             <id>ebfd8181-1ca3-46ec-ad21-325c3b855349</id>
             <name>walkway_39</name>
-            <property>
-                <name>Name</name>
-                <string>walkway_39</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -15233,10 +14040,6 @@
             <id>ed0ef960-c6b5-449f-8212-385c40cfb971</id>
             <name>palmtree_23</name>
             <property>
-                <name>Name</name>
-                <string>palmtree_23</string>
-            </property>
-            <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
             </property>
@@ -15282,10 +14085,6 @@
             <id>ed8791b3-7c21-4132-8338-28134a0cd5b2</id>
             <name>palmtree_68</name>
             <property>
-                <name>Name</name>
-                <string>palmtree_68</string>
-            </property>
-            <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
             </property>
@@ -15330,10 +14129,6 @@
             <type>dtExample.Mesh Object</type>
             <id>ee652567-85eb-4d58-b0cc-ccb005dfa527</id>
             <name>rock_02</name>
-            <property>
-                <name>Name</name>
-                <string>rock_02</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -15388,10 +14183,6 @@
             <id>ee7aeb0e-d960-4904-ac60-9447592bd650</id>
             <name>planecontroller</name>
             <property>
-                <name>Name</name>
-                <string>planecontroller</string>
-            </property>
-            <property>
                 <name>Time Step</name>
                 <float>0.016666668</float>
             </property>
@@ -15421,10 +14212,6 @@
             <id>ee908e47-07c3-407f-b650-5bc3aa016dba</id>
             <name>Firework_ControlPoint_01</name>
             <property>
-                <name>Name</name>
-                <string>Firework_ControlPoint_01</string>
-            </property>
-            <property>
                 <name>Translation</name>
                 <vec3>
                     <value1>-437.861420</value1>
@@ -15441,10 +14228,6 @@
             <type>dtcore.Action.Bezier Controller</type>
             <id>ef133551-79ef-465e-aee0-be13eb0c8eca</id>
             <name>Controller_01</name>
-            <property>
-                <name>Name</name>
-                <string>Controller_01</string>
-            </property>
             <property>
                 <name>Time Step</name>
                 <float>0.016666668</float>
@@ -15470,10 +14253,6 @@
             <type>dtExample.Mesh Object</type>
             <id>efbd5592-6d0a-4c12-8d36-36e29fa06037</id>
             <name>palmtree_40</name>
-            <property>
-                <name>Name</name>
-                <string>palmtree_40</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -15520,10 +14299,6 @@
             <id>eff83971-e1a2-4e94-b123-b662c786712f</id>
             <name>Chair_22</name>
             <property>
-                <name>Name</name>
-                <string>Chair_22</string>
-            </property>
-            <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
             </property>
@@ -15564,10 +14339,6 @@
             <type>dtExample.Mesh Object</type>
             <id>f1a14a5b-997c-437d-87b0-e3ac25b884ec</id>
             <name>walkway_63</name>
-            <property>
-                <name>Name</name>
-                <string>walkway_63</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -15626,10 +14397,6 @@
             <id>f2e41283-c0d4-400d-9d9a-e5d03e7432c2</id>
             <name>ControlPoint_15</name>
             <property>
-                <name>Name</name>
-                <string>ControlPoint_15</string>
-            </property>
-            <property>
                 <name>Translation</name>
                 <vec3>
                     <value1>-593.279541</value1>
@@ -15642,10 +14409,6 @@
             <type>dtExample.Civilian</type>
             <id>f3b44211-60c2-412b-812c-2a6ad2cfb7a8</id>
             <name>Gina_03</name>
-            <property>
-                <name>Name</name>
-                <string>Gina_03</string>
-            </property>
             <property>
                 <name>Rotation</name>
                 <vec3>
@@ -15673,10 +14436,6 @@
             <type>dtExample.Mesh Object</type>
             <id>f450f680-d155-4740-a806-29236db5b2f2</id>
             <name>walkway_81</name>
-            <property>
-                <name>Name</name>
-                <string>walkway_81</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -15735,10 +14494,6 @@
             <id>f5b94a0a-741a-4930-a0ee-d8157b3961b0</id>
             <name>ControlPoint_12</name>
             <property>
-                <name>Name</name>
-                <string>ControlPoint_12</string>
-            </property>
-            <property>
                 <name>Translation</name>
                 <vec3>
                     <value1>-727.700073</value1>
@@ -15755,10 +14510,6 @@
             <type>dtExample.Mesh Object</type>
             <id>f5bc67b0-3ce8-4fe9-9771-85b6b3c5f5f5</id>
             <name>walkway_27</name>
-            <property>
-                <name>Name</name>
-                <string>walkway_27</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -15817,10 +14568,6 @@
             <id>f7c282da-9a15-46f8-a724-63e1817dd959</id>
             <name>walkway_23</name>
             <property>
-                <name>Name</name>
-                <string>walkway_23</string>
-            </property>
-            <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
             </property>
@@ -15878,10 +14625,6 @@
             <id>f7cc34f5-2b94-4c60-93bd-9fa3b372a404</id>
             <name>palmtree_18</name>
             <property>
-                <name>Name</name>
-                <string>palmtree_18</string>
-            </property>
-            <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
             </property>
@@ -15927,10 +14670,6 @@
             <id>f943e25b-ba04-49e6-a438-8770e42aba40</id>
             <name>lamp</name>
             <property>
-                <name>Name</name>
-                <string>lamp</string>
-            </property>
-            <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
             </property>
@@ -15968,10 +14707,6 @@
             <id>f9601ba0-9d21-44f3-92dc-a7eaa41214b9</id>
             <name>torchlight_04</name>
             <property>
-                <name>Name</name>
-                <string>torchlight_04</string>
-            </property>
-            <property>
                 <name>Translation</name>
                 <vec3>
                     <value1>-565.558594</value1>
@@ -16008,10 +14743,6 @@
             <type>dtExample.Mesh Object</type>
             <id>f9673e58-e4d1-4b58-bf9e-fbd96a838ac5</id>
             <name>walkway_10</name>
-            <property>
-                <name>Name</name>
-                <string>walkway_10</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -16070,10 +14801,6 @@
             <id>f978248e-6262-4a94-902f-7c170b0474f5</id>
             <name>palmtree_07</name>
             <property>
-                <name>Name</name>
-                <string>palmtree_07</string>
-            </property>
-            <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
             </property>
@@ -16118,10 +14845,6 @@
             <type>dtExample.Mesh Object</type>
             <id>fba27431-5657-4182-a20d-570ddbd0a520</id>
             <name>walkway_44</name>
-            <property>
-                <name>Name</name>
-                <string>walkway_44</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -16180,10 +14903,6 @@
             <id>fc9e7c09-d656-4bd9-9a54-3db7d0be6baa</id>
             <name>Chair_05</name>
             <property>
-                <name>Name</name>
-                <string>Chair_05</string>
-            </property>
-            <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
             </property>
@@ -16224,10 +14943,6 @@
             <type>dtExample.Mesh Object</type>
             <id>fca3892f-321d-40f2-b429-1bd7c37071cf</id>
             <name>palmtree_21</name>
-            <property>
-                <name>Name</name>
-                <string>palmtree_21</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -16274,10 +14989,6 @@
             <id>fe2b7a08-975a-4f4f-ae37-29cc3d69f06f</id>
             <name>ControlPoint_10</name>
             <property>
-                <name>Name</name>
-                <string>ControlPoint_10</string>
-            </property>
-            <property>
                 <name>Translation</name>
                 <vec3>
                     <value1>-799.789673</value1>
@@ -16294,10 +15005,6 @@
             <type>dtExample.Mesh Object</type>
             <id>feb511f5-391b-4a05-8bf1-30d21308593b</id>
             <name>barstool_09</name>
-            <property>
-                <name>Name</name>
-                <string>barstool_09</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -16339,10 +15046,6 @@
             <type>dtExample.Mesh Object</type>
             <id>ff2dd486-fd0f-464d-b020-ed24edd42b24</id>
             <name>walkway_71</name>
-            <property>
-                <name>Name</name>
-                <string>walkway_71</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -16401,10 +15104,6 @@
             <id>ff425b72-c472-466c-ad7e-c327596c3b75</id>
             <name>walkway_62</name>
             <property>
-                <name>Name</name>
-                <string>walkway_62</string>
-            </property>
-            <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
             </property>
@@ -16462,10 +15161,6 @@
             <id>ff56b328-fecd-4414-99d0-c1e6e9824896</id>
             <name>Firework_ControlPoint_09</name>
             <property>
-                <name>Name</name>
-                <string>Firework_ControlPoint_09</string>
-            </property>
-            <property>
                 <name>Translation</name>
                 <vec3>
                     <value1>-446.996918</value1>
@@ -16482,10 +15177,6 @@
             <type>dtExample.Mesh Object</type>
             <id>ffba7e0a-8d59-48d9-921b-3efde642f893</id>
             <name>walkway_19</name>
-            <property>
-                <name>Name</name>
-                <string>walkway_19</string>
-            </property>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
