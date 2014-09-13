@@ -44,6 +44,22 @@ namespace dtAI
    }
 
    //////////////////////////////////////////////////////////////////////////////
+   bool WaypointRenderInfo::IsAnyRenderingEnabled() const
+   {
+      return mRenderWaypoints || mRenderWaypointID || mRenderWaypointText || mRenderNavMesh || mRenderNavMeshText;
+   }
+
+   //////////////////////////////////////////////////////////////////////////////
+   void WaypointRenderInfo::DisableAllRendering()
+   {
+      SetRenderWaypoints(false);
+      SetRenderWaypointID(false);
+      SetRenderWaypointText(false);
+      SetRenderNavMesh(false);
+      SetRenderNavMeshText(false);
+   }
+
+   //////////////////////////////////////////////////////////////////////////////
    void WaypointRenderInfo::SetDefaults()
    {
       //we actually don't want to reset this, simiarly to the Waypoint ID
