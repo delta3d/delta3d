@@ -181,17 +181,12 @@ namespace dtExample
 
             case 'p':
             {
-               dtCore::ShaderManager::GetInstance().ReloadAndReassignShaderDefinitions("shaders/ShaderDefinitions.xml");
+               ReloadShaders();
             }
             break;
             case 'P':
             {
-               dtPhysics::PhysicsComponent* physComp = NULL;
-               GetGameManager()->GetComponentByName(dtPhysics::PhysicsComponent::DEFAULT_NAME, physComp);
-               if (physComp != NULL)
-               {
-                  physComp->SetNextDebugDrawMode();
-               }
+               TogglePhysicsDrawMode();
             }
             break;
    #if defined(USE_INSPECTOR)
@@ -281,8 +276,7 @@ namespace dtExample
    }
 
    ////////////////////////////////////////////////////////////////////////
-   void InputComponent::HandleGameStateChange(
-      dtGame::GameState::Type& newState, dtGame::GameState::Type& oldState)
+   void InputComponent::HandleGameStateChange(dtGame::GameState::Type& newState)
    {
       bool isRunningState = &newState == &TestAppGameState::STATE_GAME;
 
@@ -330,7 +324,7 @@ namespace dtExample
          const dtGame::GameStateChangedMessage& gscm
             = static_cast<const dtGame::GameStateChangedMessage&>(message);
 
-         HandleGameStateChange(gscm.GetNewState(), gscm.GetOldState());
+         HandleGameStateChange(gscm.GetNewState());
       }
       else if (type == dtExample::TestAppMessageType::REQUEST_TIME_OFFSET)
       {
@@ -575,6 +569,15 @@ namespace dtExample
       // and is the same type that is specified.
       if ( ! mCamera.valid() || (mMotionModel.valid() && mMotionModelMode == &motionModelType))
       {
+         return;
+      }
+
+      // If the type is set to NONE, just disable the current
+      // motion model and ground clamping, then escape.
+      if (&motionModelType == &dtExample::MotionModelType::NONE)
+      {
+         mMotionModel = NULL;
+         mClampCameraEnabled = false;
          return;
       }
 
@@ -842,6 +845,21 @@ namespace dtExample
       if ( ! success)
       {
          LOG_ERROR("Cannot cast motion model to type: " + motionModelType.GetName());
+      }
+   }
+
+   void InputComponent::ReloadShaders()
+   {
+      dtCore::ShaderManager::GetInstance().ReloadAndReassignShaderDefinitions("shaders/ShaderDefinitions.xml");
+   }
+
+   void InputComponent::TogglePhysicsDrawMode()
+   {
+      dtPhysics::PhysicsComponent* physComp = NULL;
+      GetGameManager()->GetComponentByName(dtPhysics::PhysicsComponent::DEFAULT_NAME, physComp);
+      if (physComp != NULL)
+      {
+         physComp->SetNextDebugDrawMode();
       }
    }
 

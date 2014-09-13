@@ -42,23 +42,6 @@
          <Property Name="Text" Value="(H) Help"/>
       </Window>
 
-      <!-- TEXT - MOTION MODEL TYPE -->
-      <Window Name="GlobalOverlay_MotionModelType" Type="WindowsLook/StaticText">
-         <Property Name="UnifiedSize" Value="{{0.8,0},{0.095,0}}"/>
-         <Property Name="UnifiedPosition" Value="{{-0.025,0},{0.0,0}}"/>
-         <Property Name="MousePassThroughEnabled" Value="True"/>
-         <Property Name="ZOrderChangeEnabled" Value="False"/>
-         <Property Name="BackgroundEnabled" Value="False"/>
-         <Property Name="FrameEnabled" Value="False"/>
-         <Property Name="HorzFormatting" Value="RightAligned"/>
-         <Property Name="HorizontalAlignment" Value="Right"/>
-         <Property Name="VerticalAlignment" Value="Top"/>
-         <Property Name="Font" Value="DejaVuSans-10"/>
-         <Property Name="AlwaysOnTop" Value="True"/>
-         <Property Name="TextColours" Value="FFFFFFFF"/>
-         <Property Name="Text" Value="MotionModel"/>
-      </Window>
-
       <!-- TEXT - STATUS -->
       <Window Name="GlobalOverlay_Status" Type="WindowsLook/StaticText">
          <Property Name="UnifiedSize" Value="{{0.8,0},{0.095,0}}"/>

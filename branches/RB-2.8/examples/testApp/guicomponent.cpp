@@ -19,10 +19,6 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
- *
- * This software was developed by Alion Science and Technology Corporation under
- * circumstances in which the U. S. Government may have rights in the software.
- *
  */
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -30,6 +26,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 #include "guicomponent.h"
 #include "guilistitem.h"
+#include "inputcomponent.h"
 #include "meshobjectactor.h"
 #include "testappactorregistry.h"
 #include "testappconstants.h"
@@ -59,12 +56,14 @@ namespace dtExample
    ///////////////////////////////////////////////////////////////////////
    // CONSTANTS
    ///////////////////////////////////////////////////////////////////////
+   const dtUtil::RefString GuiComponent::CHECKBOX_TYPE("WindowsLook/Checkbox");
    const dtUtil::RefString GuiComponent::SPINNER_TYPE("WindowsLook/Spinner");
    const dtUtil::RefString GuiComponent::BUTTON_TYPE("WindowsLook/Button");
-   const dtUtil::RefString GuiComponent::BUTTON_PROPERTY_ACTION("Action");
-   const dtUtil::RefString GuiComponent::BUTTON_PROPERTY_TYPE("ButtonType");
+   const dtUtil::RefString GuiComponent::TESTAPP_BUTTON_TYPE("TestApp/Button");
+   const dtUtil::RefString GuiComponent::TESTAPP_BUTTON_PROPERTY_ACTION("Action");
+   const dtUtil::RefString GuiComponent::TESTAPP_BUTTON_PROPERTY_TYPE("ButtonType");
    const dtUtil::RefString GuiComponent::UI_BACKGROUND("GlobalOverlay_Background");
-   const dtUtil::RefString GuiComponent::UI_TEXT_MOTION_MODEL("GlobalOverlay_MotionModelType");
+   const dtUtil::RefString GuiComponent::UI_TEXT_MOTION_MODEL("GameScreen_MotionModelType");
    const dtUtil::RefString GuiComponent::UI_TEXT_STATUS("GlobalOverlay_Status");
 
 
@@ -218,7 +217,7 @@ namespace dtExample
    void GuiComponent::HandleMotionModelChanged(const dtExample::MotionModelType& motionModelType)
    {
       std::string text(motionModelType.GetName() + " Motion Model");
-      mGlobalOverlay->SetText(UI_TEXT_MOTION_MODEL.Get(), text);
+      mGameScreen->SetText(UI_TEXT_MOTION_MODEL.Get(), text);
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -254,9 +253,9 @@ namespace dtExample
          screen->Setup();
          RegisterScreenWithState(*screen, TestAppGameState::STATE_MENU);
 
-         screen = new GuiScreen(*mGUIScene, "GameScreen", guiDir + "gamescreen.layout");
-         screen->Setup();
-         RegisterScreenWithState(*screen, TestAppGameState::STATE_GAME);
+         mGameScreen = new GuiScreen(*mGUIScene, "GameScreen", guiDir + "gamescreen.layout");
+         mGameScreen->Setup();
+         RegisterScreenWithState(*mGameScreen, TestAppGameState::STATE_GAME);
 
          screen = new GuiScreen(*mGUIScene, "Game Options", guiDir + "gameoptionsscreen.layout");
          screen->Setup();
@@ -461,7 +460,8 @@ namespace dtExample
 
          // If this is a button...
          std::string guiType(curChild->getType().c_str());
-         if(BUTTON_TYPE == guiType)
+         if(BUTTON_TYPE == guiType
+            || TESTAPP_BUTTON_TYPE == guiType)
          {
             button = dynamic_cast<GuiButton*>(curChild);
 
@@ -474,6 +474,12 @@ namespace dtExample
             GuiSpinner* spinner = dynamic_cast<GuiSpinner*>(curChild);
             
             BindSpinner(*spinner);
+         }
+         else if (CHECKBOX_TYPE == guiType)
+         {
+            GuiCheckbox* checkbox = dynamic_cast<GuiCheckbox*>(curChild);
+            
+            BindCheckbox(*checkbox);
          }
          // ...else if this is a normal widget window...
          else if( curChild->getChildCount() > 0 )
@@ -492,6 +498,13 @@ namespace dtExample
    {
       button.subscribeEvent(GuiButton::EventClicked,
          CEGUI::Event::Subscriber(&GuiComponent::OnButtonClicked, this));
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void GuiComponent::BindCheckbox(GuiCheckbox& checkbox)
+   {
+      checkbox.subscribeEvent(GuiCheckbox::EventCheckStateChanged,
+         CEGUI::Event::Subscriber(&GuiComponent::OnCheckboxChanged, this));
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -518,7 +531,22 @@ namespace dtExample
 
       if(button != NULL)
       {
-         HandleButton(*button);
+         std::string name(button->getName().c_str());
+
+         InputComponent* inputComp = NULL;
+         GetGameManager()->GetComponentByName(InputComponent::DEFAULT_NAME, inputComp);
+         if (name == "GameScreen_TogglePhysicsDraw")
+         {
+            inputComp->TogglePhysicsDrawMode();
+         }
+         else if (name == "GameScreen_ReloadShaders")
+         {
+            inputComp->ReloadShaders();
+         }
+         else
+         {
+            HandleButton(*button);
+         }
       }
 
       // Let CEGUI know the button has been handled.
@@ -542,6 +570,22 @@ namespace dtExample
          {
             SendRequestAttachMessage(actorName);
          }
+      }
+
+      return true;
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   bool GuiComponent::OnCheckboxChanged(const GuiEventArgs& args)
+   {
+      const GuiCheckbox* checkbox = dynamic_cast<const GuiCheckbox*>(GetWidgetFromEventArgs(args));
+
+      if (checkbox != NULL)
+      {
+         std::string controlName(checkbox->getName().c_str());
+         bool value = checkbox->isSelected();
+
+         // TODO:
       }
 
       return true;
@@ -578,10 +622,10 @@ namespace dtExample
       {
          // NOTE: "Action" and "ButtonType" properties are not inherent to CEGUI
          // and were added as custom properties to the testapp.looknfeel file
-         if (button.isPropertyPresent(BUTTON_PROPERTY_ACTION.Get()))
+         if (button.isPropertyPresent(TESTAPP_BUTTON_PROPERTY_ACTION.Get()))
          {
-            CEGUI::String actionValue = button.getProperty(GuiComponent::BUTTON_PROPERTY_ACTION.Get());
-            CEGUI::String buttonTypeValue = button.getProperty(GuiComponent::BUTTON_PROPERTY_TYPE.Get());
+            CEGUI::String actionValue = button.getProperty(GuiComponent::TESTAPP_BUTTON_PROPERTY_ACTION.Get());
+            CEGUI::String buttonTypeValue = button.getProperty(GuiComponent::TESTAPP_BUTTON_PROPERTY_TYPE.Get());
 
             action = std::string(actionValue.c_str());
             buttonType = std::string(buttonTypeValue.c_str());
