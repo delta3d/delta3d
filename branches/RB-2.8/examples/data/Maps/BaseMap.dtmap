@@ -7,7 +7,7 @@
         <comment></comment>
         <copyright></copyright>
         <createTimestamp>2014-07-29T11:17:35-05:00</createTimestamp>
-        <lastUpdateTimestamp>2014-09-12T16:01:54-05:00</lastUpdateTimestamp>
+        <lastUpdateTimestamp>2014-09-13T00:34:51-05:00</lastUpdateTimestamp>
         <editorVersion>2.8.0</editorVersion>
         <schemaVersion>1.0</schemaVersion>
     </header>
@@ -74,37 +74,37 @@
             </property>
         </actor>
         <actor>
-            <type>dtRender.Shadow Scene</type>
-            <id>56b39df8-f3c1-437a-a714-1160025e2ebf</id>
-            <name>ShadowScene_01</name>
-            <property>
-                <name>Name</name>
-                <string>ShadowScene_01</string>
-            </property>
-            <property>
-                <name>ShadowResolution</name>
-                <enumerated>SR_HIGH</enumerated>
-            </property>
-            <property>
-                <name>MaxFarDistance</name>
-                <float>750</float>
-            </property>
-            <property>
-                <name>RenderEveryFrame</name>
-                <boolean>false</boolean>
-            </property>
-            <property>
-                <name>TraversalMod</name>
-                <integer>300</integer>
-            </property>
-        </actor>
-        <actor>
             <type>dtRender.Ephemeris Scene</type>
             <id>90c64a56-1ee4-4297-bede-e4b46990fef7</id>
             <name>EphemerisScene_03</name>
             <property>
                 <name>Name</name>
                 <string>EphemerisScene_03</string>
+            </property>
+        </actor>
+        <actor>
+            <type>dtRender.Cube Map Scene</type>
+            <id>9e3eddd1-eac7-4258-aeeb-4c16d911ed64</id>
+            <name>CubeMapScene_01</name>
+            <property>
+                <name>Name</name>
+                <string>CubeMapScene_01</string>
+            </property>
+            <property>
+                <name>FarPlane</name>
+                <integer>15000</integer>
+            </property>
+            <property>
+                <name>RenderEveryFrame</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>RenderOnLightChanged</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>TraversalMod</name>
+                <integer>1</integer>
             </property>
         </actor>
         <actor>
@@ -122,6 +122,27 @@
                     <value2>10.000000</value2>
                     <value3>0.000000</value3>
                 </vec3>
+            </property>
+        </actor>
+        <actor>
+            <type>dtRender.Shadow Scene</type>
+            <id>f1a51002-513a-4438-ab12-23db818d4794</id>
+            <name>ShadowScene_02</name>
+            <property>
+                <name>Name</name>
+                <string>ShadowScene_02</string>
+            </property>
+            <property>
+                <name>ShadowResolution</name>
+                <enumerated>SR_HIGH</enumerated>
+            </property>
+            <property>
+                <name>RenderEveryFrame</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>RenderOnLightChanged</name>
+                <boolean>false</boolean>
             </property>
         </actor>
     </actors>
