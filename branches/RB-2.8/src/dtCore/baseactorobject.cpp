@@ -373,6 +373,7 @@ namespace dtCore
          StringActorProperty::GetFuncType(this, &BaseActorObject::GetName),
          "The Display Name of the Actor.", GROUP_INFORMATION);
       nameProp->SetMultipleEdit(false);
+      nameProp->SetIgnoreWhenSaving(true);
       AddProperty(nameProp);
 
       if (mActorType)
