@@ -28,7 +28,7 @@
       </Window>
 
       <!-- BUTTON -->
-      <Window Name="GameQuitScreen_Button_Quit" Type="WindowsLook/Button">
+      <Window Name="GameQuitScreen_Button_Quit" Type="TestApp/Button">
          <Property Name="UnifiedSize" Value="{{0.2,0},{0.075,0}}"/>
          <Property Name="UnifiedPosition" Value="{{-0.15,0},{0.0,0}}"/>
          <Property Name="HorizontalAlignment" Value="Centre"/>
@@ -40,7 +40,7 @@
       </Window>
 
       <!-- BUTTON -->
-      <Window Name="GameQuitScreen_Button_Continue" Type="WindowsLook/Button">
+      <Window Name="GameQuitScreen_Button_Continue" Type="TestApp/Button">
          <Property Name="UnifiedSize" Value="{{0.2,0},{0.075,0}}"/>
          <Property Name="UnifiedPosition" Value="{{0.15,0},{0.0,0}}"/>
          <Property Name="HorizontalAlignment" Value="Centre"/>

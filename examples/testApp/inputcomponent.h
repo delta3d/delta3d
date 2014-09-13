@@ -68,9 +68,7 @@ namespace dtExample
 
          bool HandleMotionModelKey(int key);
 
-         void HandleGameStateChange(
-            dtGame::GameState::Type& newState,
-            dtGame::GameState::Type& oldState);
+         void HandleGameStateChange(dtGame::GameState::Type& newState);
 
          // General message handler
          virtual void ProcessMessage(const dtGame::Message& message);
@@ -78,6 +76,10 @@ namespace dtExample
          virtual void OnAddedToGM();
 
          void Update(float simTimeDelta, float realTimeDelta);
+
+         void TogglePhysicsDrawMode();
+
+         void ReloadShaders();
 
       protected:
 

@@ -19,10 +19,6 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
- *
- * This software was developed by Alion Science and Technology Corporation under
- * circumstances in which the U. S. Government may have rights in the software.
- *
  */
 
 #ifndef DELTA_TEST_APP_GUI_COMPONENT
@@ -61,6 +57,7 @@ namespace dtCore
 }
 
 typedef CEGUI::PushButton GuiButton;
+typedef CEGUI::Checkbox GuiCheckbox;
 typedef CEGUI::Spinner GuiSpinner;
 typedef CEGUI::EventArgs GuiEventArgs;
 
@@ -78,10 +75,12 @@ namespace dtExample
    class TEST_APP_EXPORT GuiComponent : public dtGame::GMComponent
    {
       public:
+         static const dtUtil::RefString CHECKBOX_TYPE;
          static const dtUtil::RefString SPINNER_TYPE;
          static const dtUtil::RefString BUTTON_TYPE;
-         static const dtUtil::RefString BUTTON_PROPERTY_ACTION;
-         static const dtUtil::RefString BUTTON_PROPERTY_TYPE;
+         static const dtUtil::RefString TESTAPP_BUTTON_TYPE;
+         static const dtUtil::RefString TESTAPP_BUTTON_PROPERTY_ACTION;
+         static const dtUtil::RefString TESTAPP_BUTTON_PROPERTY_TYPE;
          static const dtUtil::RefString UI_BACKGROUND;
          static const dtUtil::RefString UI_TEXT_MOTION_MODEL;
          static const dtUtil::RefString UI_TEXT_STATUS;
@@ -122,6 +121,8 @@ namespace dtExample
    
          void BindButton(GuiButton& button);
 
+         void BindCheckbox(GuiCheckbox& checkbox);
+
          void BindSpinner(GuiSpinner& spinner);
    
          const GuiNode* GetWidgetFromEventArgs(const GuiEventArgs& args) const;
@@ -129,6 +130,8 @@ namespace dtExample
          bool OnButtonClicked(const GuiEventArgs& args);
 
          bool OnListItemClicked(const GuiEventArgs& args);
+
+         bool OnCheckboxChanged(const GuiEventArgs& args);
 
          bool OnSpinnerChanged(const GuiEventArgs& args);
 
@@ -148,6 +151,7 @@ namespace dtExample
 
          GameStateScreenMap mScreens;
          dtCore::RefPtr<GuiScreen> mCurrentScreen;
+         dtCore::RefPtr<GuiScreen> mGameScreen;
          dtCore::RefPtr<GuiScreen> mHelpOverlay;
          dtCore::RefPtr<GuiScreen> mGlobalOverlay;
    };

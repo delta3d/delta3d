@@ -26,6 +26,23 @@
          <Property Name="Text" Value="Game Screen"/>
       </Window>
 
+      <!-- TEXT - MOTION MODEL TYPE -->
+      <Window Name="GameScreen_MotionModelType" Type="WindowsLook/StaticText">
+         <Property Name="UnifiedSize" Value="{{0.8,0},{0.095,0}}"/>
+         <Property Name="UnifiedPosition" Value="{{-0.025,0},{0.0,0}}"/>
+         <Property Name="MousePassThroughEnabled" Value="True"/>
+         <Property Name="ZOrderChangeEnabled" Value="False"/>
+         <Property Name="BackgroundEnabled" Value="False"/>
+         <Property Name="FrameEnabled" Value="False"/>
+         <Property Name="HorzFormatting" Value="RightAligned"/>
+         <Property Name="HorizontalAlignment" Value="Right"/>
+         <Property Name="VerticalAlignment" Value="Top"/>
+         <Property Name="Font" Value="DejaVuSans-10"/>
+         <Property Name="AlwaysOnTop" Value="True"/>
+         <Property Name="TextColours" Value="FFFFFFFF"/>
+         <Property Name="Text" Value="MotionModel"/>
+      </Window>
+
       <!-- CONTROL PANEL -->
       <Window Name="GameScreen_ControlPanel" Type="WindowsLook/StaticImage">
          <Property Name="UnifiedSize" Value="{{0.2,0},{0.9,0}}"/>
@@ -49,10 +66,9 @@
 
             <!-- LABEL - SCENE CONTROLS -->
             <Window Name="GameScreen_SceneControlsLabel" Type="WindowsLook/StaticText">
-               <Property Name="UnifiedSize" Value="{{0.5,0},{0.1,0}}"/>
+               <Property Name="UnifiedSize" Value="{{1.0,0},{0.1,0}}"/>
                <Property Name="UnifiedPosition" Value="{{0.0,0},{0.0,0}}"/>
                <Property Name="ZOrderChangeEnabled" Value="False"/>
-               <Property Name="MousePassThroughEnabled" Value="True"/>
                <Property Name="BackgroundEnabled" Value="False"/>
                <Property Name="FrameEnabled" Value="False"/>
                <Property Name="HorizontalAlignment" Value="Left"/>
@@ -78,11 +94,33 @@
 
             <!-- TIME SPINNER -->
             <Window Name="GameScreen_TimeSpinner" Type="WindowsLook/Spinner">
-               <Property Name="UnifiedSize" Value="{{0.5,0},{0.1,0}}"/>
+               <Property Name="UnifiedSize" Value="{{0.5,0},{0.08,0}}"/>
                <Property Name="UnifiedPosition" Value="{{0.0,0},{0.1,0}}"/>
                <Property Name="ZOrderChangeEnabled" Value="False"/>
                <Property Name="AlwaysOnTop" Value="True"/>
                <Property Name="HorizontalAlignment" Value="Right"/>
+            </Window>
+            
+            <!-- BUTTON - TOGGLE PHYSICS DRAW -->
+            <Window Name="GameScreen_TogglePhysicsDraw" Type="WindowsLook/Button">
+               <Property Name="UnifiedSize" Value="{{1.0,0},{0.08,0}}"/>
+               <Property Name="UnifiedPosition" Value="{{0.0,0},{0.2,0}}"/>
+               <Property Name="ZOrderChangeEnabled" Value="False"/>
+               <Property Name="HorizontalAlignment" Value="Right"/>
+               <Property Name="Font" Value="DejaVuSans-10"/>
+               <Property Name="AlwaysOnTop" Value="True"/>
+               <Property Name="Text" Value="Toggle Physics Draw"/>
+            </Window>
+
+            <!-- BUTTON - RELOAD SHADERS -->
+            <Window Name="GameScreen_DrawPhysics" Type="WindowsLook/Button">
+               <Property Name="UnifiedSize" Value="{{1.0,0},{0.08,0}}"/>
+               <Property Name="UnifiedPosition" Value="{{0.0,0},{0.3,0}}"/>
+               <Property Name="ZOrderChangeEnabled" Value="False"/>
+               <Property Name="HorizontalAlignment" Value="Right"/>
+               <Property Name="Font" Value="DejaVuSans-10"/>
+               <Property Name="AlwaysOnTop" Value="True"/>
+               <Property Name="Text" Value="Reload Shaders"/>
             </Window>
             
          </Window>
