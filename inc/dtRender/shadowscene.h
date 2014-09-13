@@ -98,6 +98,7 @@ namespace dtRender
       virtual bool AddChild(DeltaDrawable* child);
       virtual void RemoveChild(DeltaDrawable* child);
 
+
       DT_DECLARE_ACCESSOR_INLINE(dtUtil::EnumerationPointer<ShadowMapType>, ShadowMapType);
       DT_DECLARE_ACCESSOR_INLINE(dtUtil::EnumerationPointer<ShadowResolution>, ShadowResolution);
 

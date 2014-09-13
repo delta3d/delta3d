@@ -147,6 +147,8 @@ class DT_RENDER_EXPORT ParallelSplitShadowMap :  public osgShadow::ShadowTechniq
         void setRenderEveryFrame(bool b);
         bool getRenderEveryFrame() const;
 
+        void setShadowCamera(osg::Camera*);
+
     protected :
 
         virtual ~ParallelSplitShadowMap() {}
@@ -227,6 +229,8 @@ class DT_RENDER_EXPORT ParallelSplitShadowMap :  public osgShadow::ShadowTechniq
 
         bool                             _enableTraversal;
         bool                             _renderEveryFrame;
+
+        osg::observer_ptr<osg::Camera> _shadowCamera;
 };
 }
 #endif
