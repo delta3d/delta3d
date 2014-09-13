@@ -627,17 +627,18 @@ namespace dtRender
    }
 
    void ParallelSplitShadowMap::cull(osgUtil::CullVisitor& cv){
-      
+   
+      bool isShadowCam = true;
+
+      if(_shadowCamera.valid())
+      {
+         isShadowCam = (cv.getCurrentCamera() == _shadowCamera.get());
+      }
+
       // record the traversal mask on entry so we can reapply it later.
        unsigned int traversalMask = cv.getTraversalMask();
        osgUtil::RenderStage* orig_rs = cv.getRenderStage();
 
-       static dtCore::RefPtr<osg::RefMatrix> modelView;
-
-       if(_enableTraversal)
-       {
-          modelView = cv.getModelViewMatrix();
-       }
 
    #ifdef SHADOW_TEXTURE_GLSL
        PSSMShadowSplitTextureMap::iterator it=_PSSMShadowSplitTextureMap.begin();
@@ -662,7 +663,7 @@ namespace dtRender
 
        }
 
-       if(_enableTraversal)
+       if(_enableTraversal && isShadowCam)
        {
           // need to compute view frustum for RTT camera.
           // get the bounds of the model.
@@ -720,7 +721,7 @@ namespace dtRender
            {
                PSSMShadowSplitTexture pssmShadowSplitTexture = it->second;
 
-               if(_enableTraversal)
+               if(_enableTraversal && isShadowCam)
                {
                   //////////////////////////////////////////////////////////////////////////
                   // SETUP pssmShadowSplitTexture for rendering
@@ -794,7 +795,7 @@ namespace dtRender
 
                   orig_rs->getPositionalStateContainer()->addPositionedTextureAttribute(pssmShadowSplitTexture._textureUnit, cv.getModelViewMatrix(), pssmShadowSplitTexture._texgen.get());
                }
-               else
+               else if(isShadowCam)
                {
                   osg::Matrix MVPT = pssmShadowSplitTexture._camera->getViewMatrix() *
                      pssmShadowSplitTexture._camera->getProjectionMatrix() *
@@ -1043,6 +1044,12 @@ namespace dtRender
    {
       return _renderEveryFrame;
    }
+
+   void ParallelSplitShadowMap::setShadowCamera( osg::Camera* cam)
+   {
+      _shadowCamera = cam;
+   }
+
 
 
 

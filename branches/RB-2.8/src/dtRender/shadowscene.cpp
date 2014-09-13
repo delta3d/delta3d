@@ -21,6 +21,7 @@
 
 #include <dtRender/shadowscene.h>
 #include <dtRender/ephemerisscene.h>
+#include <dtRender/multipassscene.h>
 #include <dtRender/uniformactcomp.h>
 
 #include <dtUtil/log.h>
@@ -44,6 +45,7 @@
 
 //needed to get scene/ scene light
 #include <dtCore/scene.h>
+#include <dtCore/camera.h>
 #include <dtCore/propertymacros.h>
 #include <dtGame/gamemanager.h>
 #include <dtRender/scenemanager.h>
@@ -218,6 +220,7 @@ namespace dtRender
          float mMaxFarPlane;
          float mMinLightMargin;
 
+         dtCore::ObserverPtr<osg::Camera> mShadowCamera;
          dtCore::RefPtr<osgShadow::ShadowedScene> mNode;
          dtCore::RefPtr<osg::LightSource>  mLightSource;
 
@@ -259,48 +262,61 @@ namespace dtRender
 
    void ShadowScene::CreateScene( SceneManager& sm, const GraphicsQuality& g)
    {
+         dtCore::Camera* mainCam = sm.GetSceneCamera();
+         if(mainCam != NULL)
+         {
+            MultipassScene* mps = dynamic_cast<MultipassScene*>(sm.FindSceneByType(*MultipassScene::MULTIPASS_SCENE));
+
+            if(mps == NULL)
+            {
+               osg::Camera* sceneCamera = mainCam->GetOSGCamera();
+               mImpl->mShadowCamera = sceneCamera;
+            }
+            else
+            {
+               osg::Camera* sceneCamera = mps->GetCamera();
+               mImpl->mShadowCamera = sceneCamera;
+            }
+
+            mImpl->mNode = new osgShadow::ShadowedScene();
+
+            mImpl->mNode->getOrCreateStateSet()->setGlobalDefaults();
+
+            mImpl->mNode->setReceivesShadowTraversalMask(dtUtil::NodeMask::SHADOW_RECEIVE);
+            mImpl->mNode->setCastsShadowTraversalMask(dtUtil::NodeMask::SHADOW_CAST);
+
+            //shadow scene becomes the new default scene
+            sm.PushScene(*this);
       
-         mImpl->mNode = new osgShadow::ShadowedScene();
-
-         mImpl->mNode->getOrCreateStateSet()->setGlobalDefaults();
-
-         mImpl->mNode->setReceivesShadowTraversalMask(dtUtil::NodeMask::SHADOW_RECEIVE);
-         mImpl->mNode->setCastsShadowTraversalMask(dtUtil::NodeMask::SHADOW_CAST);
-
-         //shadow scene becomes the new default scene
-         sm.PushScene(*this);
-      
-         //create a uniform for the shadow texture unit
+            //create a uniform for the shadow texture unit
         
-         UniformActComp* uniformActComp = sm.GetOwner()->GetComponent<UniformActComp>();
-         if(uniformActComp != NULL)
-         {
-            mImpl->mRenderShadows = new dtCore::ShaderParamBool(UNIFORM_RENDER_SHADOWS);
-            mImpl->mRenderShadows->SetValue(true);
+            UniformActComp* uniformActComp = sm.GetOwner()->GetComponent<UniformActComp>();
+            if(uniformActComp != NULL)
+            {
+               mImpl->mRenderShadows = new dtCore::ShaderParamBool(UNIFORM_RENDER_SHADOWS);
+               mImpl->mRenderShadows->SetValue(true);
 
-            mImpl->mShadowTextureUnit = new dtCore::ShaderParamInt(UNIFORM_SHADOW_TEXTURE_UNIT);
-            mImpl->mShadowTextureUnit->SetValue(mTextureUnitOffset);
+               mImpl->mShadowTextureUnit = new dtCore::ShaderParamInt(UNIFORM_SHADOW_TEXTURE_UNIT);
+               mImpl->mShadowTextureUnit->SetValue(mTextureUnitOffset);
 
-            mImpl->mShadowEffectScalar = new dtCore::ShaderParamFloat(UNIFORM_SHADOW_EFFECT_SCALAR);
-            mImpl->mShadowEffectScalar->SetValue(1.0f);
+               mImpl->mShadowEffectScalar = new dtCore::ShaderParamFloat(UNIFORM_SHADOW_EFFECT_SCALAR);
+               mImpl->mShadowEffectScalar->SetValue(1.0f);
 
-            uniformActComp->AddParameter(*mImpl->mRenderShadows);
-            uniformActComp->AddParameter(*mImpl->mShadowTextureUnit);
-            uniformActComp->AddParameter(*mImpl->mShadowEffectScalar);
-         }
+               uniformActComp->AddParameter(*mImpl->mRenderShadows);
+               uniformActComp->AddParameter(*mImpl->mShadowTextureUnit);
+               uniformActComp->AddParameter(*mImpl->mShadowEffectScalar);
+            }
 
-         UpdateShadowLightCallback* usc = new UpdateShadowLightCallback(&sm, this);
-         GetSceneNode()->setUpdateCallback(usc);
+            UpdateShadowLightCallback* usc = new UpdateShadowLightCallback(&sm, this);
+            GetSceneNode()->setUpdateCallback(usc);
             
-         /*if(!mImpl->mLightSource.valid())
+            //this creates the shadow technique
+            SetShadowsEnabled(true);
+         }
+         else
          {
-            //use light zero for sunlight
-            mImpl->mLightSource = gm->GetScene().GetLight(0)->GetLightSource();
-         }*/
-         
-
-         //this creates the shadow technique
-         SetShadowsEnabled(true);
+            LOG_ERROR("Cannot initialize shadow scene without a main camera.");
+         }
    }
 
    osg::Group* ShadowScene::GetSceneNode()
@@ -445,7 +461,10 @@ namespace dtRender
       shadowMap->setMoveVCamBehindRCamFactor(15.0);
       shadowMap->setAmbientBias(mAmbientBias);
       
-      //cannot set texture unit offset??
+      if(mImpl->mShadowCamera.valid())
+      {
+         shadowMap->setShadowCamera(mImpl->mShadowCamera.get());
+      }
 
       if(mImpl->mLightSource.valid())
       {
