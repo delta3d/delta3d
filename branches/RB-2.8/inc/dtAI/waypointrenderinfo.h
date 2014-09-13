@@ -63,6 +63,11 @@ namespace dtAI
       DT_DECLARE_ACCESSOR(bool, RenderNavMesh);
       DT_DECLARE_ACCESSOR(bool, RenderNavMeshText);
 
+      /// @return true if any of the rendering options are enabled
+      bool IsAnyRenderingEnabled() const;
+      /// Disable all the rendering options
+      void DisableAllRendering();
+
       // Waypoints
       DT_DECLARE_ACCESSOR(float, WaypointSize);
       DT_DECLARE_ACCESSOR(Color, WaypointColor);

@@ -62,6 +62,8 @@ namespace dtAI
       mAIInterface->RegisterWaypointType<WaypointCollection>(WaypointTypes::WAYPOINT_COLLECTION.get());
 
       SetDrawable(*mAIInterface->GetDebugDrawable());
+      // Turn off all rendering
+      mAIInterface->GetDebugDrawable()->GetRenderInfo()->DisableAllRendering();
 
    }
 

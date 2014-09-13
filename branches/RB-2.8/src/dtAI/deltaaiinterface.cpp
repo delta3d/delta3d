@@ -24,6 +24,7 @@
 #include <dtAI/waypointcollection.h>
 #include <dtAI/aidebugdrawable.h>
 #include <dtAI/waypointreaderwriter.h>
+#include <dtAI/waypointrenderinfo.h>
 #include <dtUtil/templateutility.h>
 #include <iterator>
 
@@ -469,12 +470,15 @@ namespace dtAI
       std::vector<dtAI::WaypointInterface*> waypointList;
       GetWaypoints(waypointList);
 
-      mDrawable->SetWaypoints(waypointList);
-
-      NavMesh* nm = mWaypointGraph->GetNavMeshAtSearchLevel(0);
-      if (nm != NULL)
+      if (mDrawable->GetRenderInfo()->IsAnyRenderingEnabled())
       {
-         mDrawable->UpdateWaypointGraph(*nm);
+         mDrawable->SetWaypoints(waypointList);
+
+         NavMesh* nm = mWaypointGraph->GetNavMeshAtSearchLevel(0);
+         if (nm != NULL)
+         {
+            mDrawable->UpdateWaypointGraph(*nm);
+         }
       }
    }
 
