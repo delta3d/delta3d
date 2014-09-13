@@ -133,7 +133,7 @@ void Viewer::Config()
 
    //adjust the Camera position
    dtCore::Transform camPos;
-   osg::Vec3 camXYZ(0.f, -5.f, 1.f);
+   osg::Vec3 camXYZ(0.f, 5.f, 1.f);
    osg::Vec3 lookAtXYZ (0.f, 0.f, 1.f);
    osg::Vec3 upVec (0.f, 0.f, 1.f);
    camPos.Set(camXYZ, lookAtXYZ, upVec);
