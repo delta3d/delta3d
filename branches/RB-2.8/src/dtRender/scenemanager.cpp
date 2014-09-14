@@ -26,6 +26,7 @@
 #include <dtRender/simplescene.h>
 #include <dtRender/shadowscene.h>
 #include <dtRender/uniformactcomp.h>
+#include <dtRender/optimizeractcomp.h>
 
 #include <dtCore/transform.h>
 #include <dtCore/transformable.h>
@@ -893,6 +894,7 @@ namespace dtRender
    {
       BaseClass::BuildActorComponents();
       AddComponent(*new UniformActComp());
+      AddComponent(*new OptimzerActComp());
       GetDrawable<SceneManager>()->PostComponentInit();
    }
 

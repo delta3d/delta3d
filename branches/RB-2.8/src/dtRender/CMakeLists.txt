@@ -21,6 +21,7 @@ set(LIB_SOURCES
       lightscene.cpp
       multipassscene.cpp
       oceanscene.cpp
+      optimizeractcomp.cpp
       ppuscene.cpp
       parallelsplitshadowmap.cpp
       ssaoscene.cpp

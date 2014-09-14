@@ -7,7 +7,7 @@
         <comment></comment>
         <copyright></copyright>
         <createTimestamp>2014-07-29T11:17:35-05:00</createTimestamp>
-        <lastUpdateTimestamp>2014-09-13T00:34:51-05:00</lastUpdateTimestamp>
+        <lastUpdateTimestamp>2014-09-14T13:30:31-05:00</lastUpdateTimestamp>
         <editorVersion>2.8.0</editorVersion>
         <schemaVersion>1.0</schemaVersion>
     </header>
@@ -23,19 +23,11 @@
             <type>dtRender.Light Scene</type>
             <id>2ab88062-1ccb-4ab2-b460-1dd4378ed6b4</id>
             <name>LightScene_02</name>
-            <property>
-                <name>Name</name>
-                <string>LightScene_02</string>
-            </property>
         </actor>
         <actor>
             <type>dtRender.Ocean Scene</type>
             <id>4b29bff2-ed10-4642-968c-ff4dc00083d3</id>
             <name>OceanScene_02</name>
-            <property>
-                <name>Name</name>
-                <string>OceanScene_02</string>
-            </property>
             <property>
                 <name>NumRows</name>
                 <integer>200</integer>
@@ -77,19 +69,11 @@
             <type>dtRender.Ephemeris Scene</type>
             <id>90c64a56-1ee4-4297-bede-e4b46990fef7</id>
             <name>EphemerisScene_03</name>
-            <property>
-                <name>Name</name>
-                <string>EphemerisScene_03</string>
-            </property>
         </actor>
         <actor>
             <type>dtRender.Cube Map Scene</type>
             <id>9e3eddd1-eac7-4258-aeeb-4c16d911ed64</id>
             <name>CubeMapScene_01</name>
-            <property>
-                <name>Name</name>
-                <string>CubeMapScene_01</string>
-            </property>
             <property>
                 <name>FarPlane</name>
                 <integer>15000</integer>
@@ -104,17 +88,13 @@
             </property>
             <property>
                 <name>TraversalMod</name>
-                <integer>1</integer>
+                <integer>19</integer>
             </property>
         </actor>
         <actor>
             <type>dtRender.Scene Manager</type>
             <id>a48fb972-ecf3-4bf3-9d00-0158e95e409e</id>
             <name>SceneManager_01</name>
-            <property>
-                <name>Name</name>
-                <string>SceneManager_01</string>
-            </property>
             <property>
                 <name>Translation</name>
                 <vec3>
@@ -123,18 +103,26 @@
                     <value3>0.000000</value3>
                 </vec3>
             </property>
+            <property>
+                <name>SpatializeGroups</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>ShareDuplicateState</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>MergeGeometry</name>
+                <boolean>true</boolean>
+            </property>
         </actor>
         <actor>
             <type>dtRender.Shadow Scene</type>
             <id>f1a51002-513a-4438-ab12-23db818d4794</id>
             <name>ShadowScene_02</name>
             <property>
-                <name>Name</name>
-                <string>ShadowScene_02</string>
-            </property>
-            <property>
-                <name>ShadowResolution</name>
-                <enumerated>SR_HIGH</enumerated>
+                <name>MaxFarDistance</name>
+                <float>500</float>
             </property>
             <property>
                 <name>RenderEveryFrame</name>
@@ -143,6 +131,10 @@
             <property>
                 <name>RenderOnLightChanged</name>
                 <boolean>false</boolean>
+            </property>
+            <property>
+                <name>TraversalMod</name>
+                <integer>10</integer>
             </property>
         </actor>
     </actors>
