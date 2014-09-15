@@ -39,7 +39,7 @@
    <mesh fileName="meshes/Shoes_Classic_Male_Average.xmf" name="Shoes" />
    <material fileName="materials/Skin_African.xrf" name="Body" />
    <material fileName="materials/Eyes_Brown.xrf" name="Eyes" />
-   <material fileName="materials/Hair_Black02.xrf" name="Hair" />
+   <material fileName="materials/Hair_Black.xrf" name="Hair" />
    <material fileName="materials/Jeans02.xrf" name="Pants" />
   <material fileName="materials/Shirt_Long01.xrf" name="Shirt" />
    <material fileName="materials/Shoes_Classic_Black.xrf" name="Classic Shoes" />
