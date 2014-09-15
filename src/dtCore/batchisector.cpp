@@ -41,7 +41,7 @@ namespace dtCore
    BatchIsector::BatchIsector(dtCore::Scene* scene)
       : mScene(scene)
       , mFixedArraySize(32)
-      , mTraversalMask(dtUtil::CullMask::SCENE_INTERSECT_MASK)
+      //, mTraversalMask(dtUtil::CullMask::SCENE_INTERSECT_MASK)
    {
       for (int i = 0 ; i < mFixedArraySize; ++i)
       {
@@ -49,10 +49,10 @@ namespace dtCore
       }
 
       // initialize traversal mask with default OSG value
-//      {
-//         osgUtil::IntersectVisitor intersectVisitor;
-//         mTraversalMask = intersectVisitor.getTraversalMask();
-//      }
+      {
+         osgUtil::IntersectVisitor intersectVisitor;
+         mTraversalMask = intersectVisitor.getTraversalMask();
+      }
    }
 
    ///////////////////////////////////////////////////////////////////////////////
