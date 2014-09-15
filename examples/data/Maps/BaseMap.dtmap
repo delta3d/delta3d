@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <map xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="delta3dMap" xsi:schemaLocation="delta3dMap map.xsd">
     <header>
         <name>BaseMap</name>
@@ -7,7 +8,7 @@
         <comment></comment>
         <copyright></copyright>
         <createTimestamp>2014-07-29T11:17:35-05:00</createTimestamp>
-        <lastUpdateTimestamp>2014-09-14T13:30:31-05:00</lastUpdateTimestamp>
+        <lastUpdateTimestamp>2014-09-15T18:34:11-05:00</lastUpdateTimestamp>
         <editorVersion>2.8.0</editorVersion>
         <schemaVersion>1.0</schemaVersion>
     </header>
@@ -95,14 +96,6 @@
             <type>dtRender.Scene Manager</type>
             <id>a48fb972-ecf3-4bf3-9d00-0158e95e409e</id>
             <name>SceneManager_01</name>
-            <property>
-                <name>Translation</name>
-                <vec3>
-                    <value1>0.000000</value1>
-                    <value2>10.000000</value2>
-                    <value3>0.000000</value3>
-                </vec3>
-            </property>
             <property>
                 <name>SpatializeGroups</name>
                 <boolean>true</boolean>
