@@ -959,6 +959,16 @@ namespace dtPhysics
    }
 
    /////////////////////////////////////////////////////////////////////////////
+   Geometry* PhysicsObject::GetGeometry(unsigned idx)
+   {
+      if (mDataMembers->mGenericBody.valid() && mDataMembers->mGeometries.size() > idx)
+      {
+         return mDataMembers->mGeometries[idx];
+      }
+      return NULL;
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
    void PhysicsObject::RemoveGeometry(Geometry& geom)
    {
       if (mDataMembers->mGenericBody.valid())
