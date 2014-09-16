@@ -3,7 +3,7 @@
 <director xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="delta3dDirector" xsi:schemaLocation="delta3dDirector director.xsd">
     <header>
         <createTimestamp>2014-04-15T01:18:17-05:00</createTimestamp>
-        <lastUpdateTimestamp>2014-04-15T01:18:17-05:00</lastUpdateTimestamp>
+        <lastUpdateTimestamp>2014-09-16T11:51:31-05:00</lastUpdateTimestamp>
         <editorVersion>2.8.0</editorVersion>
         <schemaVersion>2.0</schemaVersion>
         <scriptType>Scenario</scriptType>
@@ -40,7 +40,7 @@
     </libraries>
     <graph>
         <idIndex>0</idIndex>
-        <id>B47CC76D-AA61-4520-992B-7474F3FAB093</id>
+        <id>B05ACCE6-8FB0-45D5-9579-6D01C438FD5B</id>
         <property>
             <name>Comment</name>
             <string></string>
@@ -209,7 +209,7 @@
                 </property>
                 <property>
                     <name>PropertyName</name>
-                    <string>Transform</string>
+                    <string>Translation</string>
                 </property>
                 <inputlink>
                     <name>In</name>
@@ -364,11 +364,11 @@
                 </property>
                 <property>
                     <name>Min Value</name>
-                    <float>15</float>
+                    <float>5</float>
                 </property>
                 <property>
                     <name>Max Value</name>
-                    <float>20</float>
+                    <float>7</float>
                 </property>
                 <valuelink>
                     <name>Enabled</name>
