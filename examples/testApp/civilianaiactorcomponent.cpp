@@ -27,8 +27,8 @@ namespace dtExample
    ////////////////////////////////////////////////////////////////////////
    CivilianAIActorComponent::CivilianAIActorComponent(const ACType& type)
    : dtGame::ActorComponent(type)
-   , mAnimationWalkSpeed(1.5f)
-   , mAnimationRunSpeed(3.0f)
+   , mAnimationWalkSpeed(0.79f)
+   , mAnimationRunSpeed(1.4f)
    , mAnimationCrawlSpeed(0.2f)
    , mAnimationLowWalkSpeed(0.4f)
    , mStepHeight(0.3f)
@@ -37,7 +37,7 @@ namespace dtExample
    , mIgnoreRotation(false)
    , mHasDestination(false)
    , mHasArrived(false)
-   , mWalkSpeed(2.75f)
+   , mWalkSpeed(0.79f)
    , mRotationSpeed(90.0f)
    , mHPR()
    , mAIInterface(NULL)
@@ -839,15 +839,15 @@ namespace dtExample
 
       if(stance == dtAnim::BasicStanceEnum::PRONE)
       {
-         SetWalkSpeed(1.0f);
+         SetWalkSpeed(GetAnimationCrawlSpeed());
       }
       else if (stance == dtAnim::BasicStanceEnum::KNEELING)
       {
-         SetWalkSpeed(1.5f);
+         SetWalkSpeed(GetAnimationLowWalkSpeed());
       }
       else if(stance == dtAnim::BasicStanceEnum::STANDING)
       {
-         SetWalkSpeed(2.0f);
+         SetWalkSpeed(GetAnimationWalkSpeed());
       }
    }
 
