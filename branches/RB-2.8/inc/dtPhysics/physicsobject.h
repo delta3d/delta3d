@@ -179,6 +179,7 @@ namespace dtPhysics
       VectorType GetLinearVelocityAtLocalPoint(const VectorType& relPos) const;
 
       void AddGeometry(Geometry& geometry);
+      Geometry* GetGeometry(unsigned idx);
       void RemoveGeometry(Geometry& geometry);
       unsigned GetNumGeometries() const;
 
