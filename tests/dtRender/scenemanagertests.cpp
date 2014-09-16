@@ -465,18 +465,23 @@ namespace dtRender
       }
 
       //create a bunch of scenes 
-      SimpleScene* ss5 = CreateSimpleScene(SceneEnum::PRE_RENDER, 5);
-      SimpleScene* ss6 = CreateSimpleScene(SceneEnum::PRE_RENDER, 6);
+      //SimpleScene* ss5 =
+            CreateSimpleScene(SceneEnum::PRE_RENDER, 5);
+      //SimpleScene* ss6 =
+            CreateSimpleScene(SceneEnum::PRE_RENDER, 6);
       SimpleScene* ss7 = CreateSimpleScene(SceneEnum::PRE_RENDER, 7);
-      SimpleScene* ss3 = CreateSimpleScene(SceneEnum::PRE_RENDER, 3);
+      //SimpleScene* ss3 =
+            CreateSimpleScene(SceneEnum::PRE_RENDER, 3);
       SimpleScene* ss4 = CreateSimpleScene(SceneEnum::PRE_RENDER, 4); 
       SimpleScene* ss2 = CreateSimpleScene(SceneEnum::PRE_RENDER, 2);
 
-      SimpleScene* ss1_2 = CreateSimpleScene(SceneEnum::NON_TRANSPARENT_OBJECTS, 1);
+      //SimpleScene* ss1_2 =
+            CreateSimpleScene(SceneEnum::NON_TRANSPARENT_OBJECTS, 1);
       SimpleScene* ss3_2 = CreateSimpleScene(SceneEnum::NON_TRANSPARENT_OBJECTS, 3); 
       SimpleScene* ss2_2 = CreateSimpleScene(SceneEnum::NON_TRANSPARENT_OBJECTS, 2);
       
-      SimpleScene* ss1_3 = CreateSimpleScene(SceneEnum::FOREGROUND, 1);
+      //SimpleScene* ss1_3 =
+            CreateSimpleScene(SceneEnum::FOREGROUND, 1);
       SimpleScene* ss3_3 = CreateSimpleScene(SceneEnum::FOREGROUND, 3); 
       
       SimpleScene* ss1_4 = CreateSimpleScene(SceneEnum::POST_RENDER, 1);
@@ -500,8 +505,8 @@ namespace dtRender
          dtCore::RefPtr<SimpleSceneActor> proxy;
 
          //trying to push a non child scene on the stack should not work
-         SceneGroup* sg = mSceneManager->GetSceneGroup(SceneEnum::PRE_RENDER);
-         int numchildStart = sg->GetNumChildren();
+         //SceneGroup* sg = mSceneManager->GetSceneGroup(SceneEnum::PRE_RENDER);
+         //int numchildStart = sg->GetNumChildren();
 
          mGameManager->CreateActor(*RenderActorRegistry::SIMPLE_SCENE_ACTOR_TYPE, proxy);
 
