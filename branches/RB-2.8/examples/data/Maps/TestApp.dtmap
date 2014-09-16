@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <map xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="delta3dMap" xsi:schemaLocation="delta3dMap map.xsd">
     <header>
         <name>TestApp</name>
@@ -8,7 +7,7 @@
         <comment></comment>
         <copyright></copyright>
         <createTimestamp>2014-07-15T22:49:46-05:00</createTimestamp>
-        <lastUpdateTimestamp>2014-09-15T19:12:57-05:00</lastUpdateTimestamp>
+        <lastUpdateTimestamp>2014-09-16T13:05:12-05:00</lastUpdateTimestamp>
         <editorVersion>2.8.0</editorVersion>
         <schemaVersion>1.0</schemaVersion>
     </header>
@@ -2213,14 +2212,14 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>9.090513</value3>
+                    <value3>-160.204956</value3>
                 </vec3>
             </property>
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-562.466064</value1>
-                    <value2>-127.748032</value2>
+                    <value1>-562.503174</value1>
+                    <value2>-127.644897</value2>
                     <value3>1.867371</value3>
                 </vec3>
             </property>
@@ -2883,7 +2882,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>97.367157</value3>
+                    <value3>-72.389366</value3>
                 </vec3>
             </property>
             <property>
@@ -4223,7 +4222,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-74.687889</value3>
+                    <value3>106.810402</value3>
                 </vec3>
             </property>
             <property>
@@ -4820,7 +4819,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-161.177078</value3>
+                    <value3>12.838576</value3>
                 </vec3>
             </property>
             <property>
@@ -5203,14 +5202,14 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>-0.000000</value2>
-                    <value3>-87.626762</value3>
+                    <value3>-90.432381</value3>
                 </vec3>
             </property>
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>109.618347</value1>
-                    <value2>-414.569214</value2>
+                    <value1>-2549.174561</value1>
+                    <value2>-432.687408</value2>
                     <value3>75.000000</value3>
                 </vec3>
             </property>
@@ -7763,7 +7762,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-71.444016</value3>
+                    <value3>104.599159</value3>
                 </vec3>
             </property>
             <property>
@@ -8284,7 +8283,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-161.177078</value3>
+                    <value3>11.041974</value3>
                 </vec3>
             </property>
             <property>

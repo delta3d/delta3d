@@ -180,12 +180,16 @@ namespace dtExample
    void CivilianAIActorComponent::PostPhysicsUpdate()
    {
       osg::Vec3 newPos;
+      bool posValid = false;
       if (mCharacterController.valid())
-         newPos= mCharacterController->GetTranslation();
+      {
+         newPos = mCharacterController->GetTranslation();
+         posValid = true;
+      }
 
       dtPhysics::PhysicsActComp* pac = GetOwner()->GetComponent<dtPhysics::PhysicsActComp>();
 
-      if (pac != NULL && pac->GetMainPhysicsObject() != NULL)
+      if (posValid && pac != NULL && pac->GetMainPhysicsObject() != NULL)
       {
          // Adjust the controller shape by the physics origin offset on the physics object
          newPos -= pac->GetMainPhysicsObject()->GetOriginOffset();
