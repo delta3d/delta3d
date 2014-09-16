@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <map xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="delta3dMap" xsi:schemaLocation="delta3dMap map.xsd">
     <header>
         <name>TestApp</name>
@@ -7,7 +8,7 @@
         <comment></comment>
         <copyright></copyright>
         <createTimestamp>2014-07-15T22:49:46-05:00</createTimestamp>
-        <lastUpdateTimestamp>2014-09-13T11:56:13-05:00</lastUpdateTimestamp>
+        <lastUpdateTimestamp>2014-09-15T19:12:57-05:00</lastUpdateTimestamp>
         <editorVersion>2.8.0</editorVersion>
         <schemaVersion>1.0</schemaVersion>
     </header>
@@ -1833,7 +1834,7 @@
             </property>
             <property>
                 <name>Bezier Node</name>
-                <actorId>5e9ad074-dfdc-4432-be58-53326f1f2e43</actorId>
+                <actorId>8c8be7b7-5645-4997-873b-266c7b6af1ec</actorId>
             </property>
         </actor>
         <actor>
@@ -2232,6 +2233,22 @@
             <property>
                 <name>Stance</name>
                 <enumerated>SITTING</enumerated>
+            </property>
+            <property>
+                <name>Body: Origin Offset</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.800000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Body: Dimensions</name>
+                <vec3>
+                    <value1>1.600000</value1>
+                    <value2>0.500000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
             </property>
         </actor>
         <actor>
@@ -2886,6 +2903,22 @@
             <property>
                 <name>Stance</name>
                 <enumerated>SITTING</enumerated>
+            </property>
+            <property>
+                <name>Body: Origin Offset</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.800000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Body: Dimensions</name>
+                <vec3>
+                    <value1>1.600000</value1>
+                    <value2>0.500000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
             </property>
         </actor>
         <actor>
@@ -4211,6 +4244,22 @@
                 <name>Stance</name>
                 <enumerated>SITTING</enumerated>
             </property>
+            <property>
+                <name>Body: Origin Offset</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.800000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Body: Dimensions</name>
+                <vec3>
+                    <value1>1.600000</value1>
+                    <value2>0.500000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
         </actor>
         <actor>
             <type>dtcore.Curve.Bezier Control Point</type>
@@ -4261,8 +4310,8 @@
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-573.125427</value1>
-                    <value2>-121.101860</value2>
+                    <value1>-576.778931</value1>
+                    <value2>-122.235359</value2>
                     <value3>1.867371</value3>
                 </vec3>
             </property>
@@ -4271,6 +4320,22 @@
                 <resourceType>SkeletalMeshes</resourceType>
                 <resourceDisplayName>SkeletalMeshes:Gina:Gina_SwimWear.dtchar</resourceDisplayName>
                 <resource>SkeletalMeshes:Gina:Gina_SwimWear.dtchar</resource>
+            </property>
+            <property>
+                <name>Body: Origin Offset</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.800000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Body: Dimensions</name>
+                <vec3>
+                    <value1>1.600000</value1>
+                    <value2>0.500000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
             </property>
         </actor>
         <actor>
@@ -5138,15 +5203,15 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>-0.000000</value2>
-                    <value3>-89.135704</value3>
+                    <value3>-87.626762</value3>
                 </vec3>
             </property>
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-627.691345</value1>
-                    <value2>-436.163696</value2>
-                    <value3>74.999985</value3>
+                    <value1>109.618347</value1>
+                    <value2>-414.569214</value2>
+                    <value3>75.000000</value3>
                 </vec3>
             </property>
             <property>
@@ -6155,6 +6220,22 @@
             <property>
                 <name>Stance</name>
                 <enumerated>LYING</enumerated>
+            </property>
+            <property>
+                <name>Body: Origin Offset</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.800000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Body: Dimensions</name>
+                <vec3>
+                    <value1>1.600000</value1>
+                    <value2>0.500000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
             </property>
         </actor>
         <actor>
@@ -8612,6 +8693,22 @@
                 <resourceDisplayName>SkeletalMeshes:Gina:Gina_SwimWear.dtchar</resourceDisplayName>
                 <resource>SkeletalMeshes:Gina:Gina_SwimWear.dtchar</resource>
             </property>
+            <property>
+                <name>Body: Origin Offset</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.800000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Body: Dimensions</name>
+                <vec3>
+                    <value1>1.600000</value1>
+                    <value2>0.500000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
         </actor>
         <actor>
             <type>dtcore.Curve.Bezier Node</type>
@@ -9934,27 +10031,27 @@
                 <propertyContainer>
                     <property>
                         <name>EnableDepthTest</name>
-                        <boolean>false</boolean>
+                        <boolean>true</boolean>
                     </property>
                     <property>
                         <name>RenderWaypoints</name>
-                        <boolean>false</boolean>
+                        <boolean>true</boolean>
                     </property>
                     <property>
                         <name>RenderWaypointID</name>
-                        <boolean>false</boolean>
+                        <boolean>true</boolean>
                     </property>
                     <property>
                         <name>RenderWaypointText</name>
-                        <boolean>false</boolean>
+                        <boolean>true</boolean>
                     </property>
                     <property>
                         <name>RenderNavMesh</name>
-                        <boolean>false</boolean>
+                        <boolean>true</boolean>
                     </property>
                     <property>
                         <name>RenderNavMeshText</name>
-                        <boolean>false</boolean>
+                        <boolean>true</boolean>
                     </property>
                     <property>
                         <name>WaypointSize</name>
@@ -13416,6 +13513,22 @@
                 <name>Stance</name>
                 <enumerated>LYING</enumerated>
             </property>
+            <property>
+                <name>Body: Origin Offset</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.800000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Body: Dimensions</name>
+                <vec3>
+                    <value1>1.600000</value1>
+                    <value2>0.500000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
         </actor>
         <actor>
             <type>dtExample.Mesh Object</type>
@@ -14430,6 +14543,22 @@
                 <resourceType>SkeletalMeshes</resourceType>
                 <resourceDisplayName>SkeletalMeshes:Gina:Gina_SwimWear.dtchar</resourceDisplayName>
                 <resource>SkeletalMeshes:Gina:Gina_SwimWear.dtchar</resource>
+            </property>
+            <property>
+                <name>Body: Origin Offset</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.800000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Body: Dimensions</name>
+                <vec3>
+                    <value1>1.600000</value1>
+                    <value2>0.500000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
             </property>
         </actor>
         <actor>
