@@ -862,6 +862,13 @@ namespace dtRender
       }
    }
 
+   /////////////////////////////////////////////////////////////
+   bool SceneManager::IsPlaceable() const
+   {
+      //the scene should not be placeable
+      return false;
+   }
+
 
    /////////////////////////////////////////////////////////////
    // actor

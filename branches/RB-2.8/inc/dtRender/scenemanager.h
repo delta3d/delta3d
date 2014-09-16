@@ -180,6 +180,9 @@ namespace dtRender
       void CreateDefaultMultipassScene();
 
       virtual void PostComponentInit();
+
+      /*virtual*/ bool IsPlaceable() const;
+
    private:
       virtual void AddScene(SceneBase&);
       void InitUniforms();
