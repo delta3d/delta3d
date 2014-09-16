@@ -9,12 +9,15 @@
 #include <dtAI/aiactorregistry.h>
 #include <dtPhysics/raycast.h>
 #include <dtPhysics/palphysicsworld.h>
+#include <dtPhysics/physicsactcomp.h>
 
 #include <dtAnim/animationtransitionplanner.h>
 #include <dtAnim/walkrunblend.h>
 #include <dtAnim/animationhelper.h>
 #include <dtGame/deadreckoninghelper.h>
 #include <dtGame/drpublishingactcomp.h>
+#include <dtUtil/functor.h>
+#include <dtUtil/mathdefines.h>
 
 namespace dtExample
 {
@@ -28,12 +31,14 @@ namespace dtExample
    , mAnimationRunSpeed(3.0f)
    , mAnimationCrawlSpeed(0.2f)
    , mAnimationLowWalkSpeed(0.4f)
+   , mStepHeight(0.3f)
+   , mMaxIncline(70.0f)
    , mEntityIndex(0)
    , mIgnoreRotation(false)
    , mHasDestination(false)
    , mHasArrived(false)
    , mWalkSpeed(2.75f)
-   , mRotationSpeed(1.0f)
+   , mRotationSpeed(90.0f)
    , mHPR()
    , mAIInterface(NULL)
    , mCharacterController(NULL)
@@ -60,6 +65,9 @@ namespace dtExample
       RegHelperType propReg(*this, this, CIV_GROUP);
 
       DT_REGISTER_PROPERTY(WalkSpeed, "The walking speed.", RegHelperType, propReg);
+      DT_REGISTER_PROPERTY(RotationSpeed, "The speed the character turns when changing direction.", RegHelperType, propReg);
+      DT_REGISTER_PROPERTY(StepHeight, "The maximum height this character can step up.", RegHelperType, propReg);
+      DT_REGISTER_PROPERTY(MaxIncline, "The maximum incline in degrees the character can climb..", RegHelperType, propReg);
       DT_REGISTER_PROPERTY(AnimationWalkSpeed, "The inherent speed of the walk animation.", RegHelperType, propReg);
       DT_REGISTER_PROPERTY(AnimationRunSpeed, "The inherent speed of the run animation.", RegHelperType, propReg);
       DT_REGISTER_PROPERTY(AnimationCrawlSpeed, "The inherent speed of the crawl animation.", RegHelperType, propReg);
@@ -93,6 +101,28 @@ namespace dtExample
          GetOwner()->AddComponent(* new dtGame::DRPublishingActComp);
       }
 
+      dtPhysics::PhysicsActComp* pac = GetOwner()->GetComponent<dtPhysics::PhysicsActComp>();
+
+      if (pac == NULL)
+      {
+         dtCore::RefPtr<dtPhysics::PhysicsActComp> physAC = new dtPhysics::PhysicsActComp();
+         dtCore::RefPtr<dtPhysics::PhysicsObject> physicsObject = new dtPhysics::PhysicsObject("Body");
+         physicsObject->SetPrimitiveType(dtPhysics::PrimitiveType::CYLINDER);
+         physicsObject->SetMechanicsType(dtPhysics::MechanicsType::KINEMATIC);
+         physicsObject->SetCollisionGroup(6);
+         physicsObject->SetMass(100.0f);
+         physicsObject->SetExtents(dtPhysics::VectorType(1.8f, 0.5f, 0.0f));
+         physicsObject->SetOriginOffset(dtPhysics::VectorType(0.0f, 0.0f, 0.9f));
+         physAC->AddPhysicsObject(*physicsObject);
+         physAC->SetAutoCreateOnEnteringWorld(true);
+
+         GetOwner()->AddComponent(*physAC);
+         pac = physAC;
+      }
+
+      pac->SetPrePhysicsCallback(dtUtil::MakeFunctor(&CivilianAIActorComponent::PrePhysicsUpdate, this));
+      pac->SetPostPhysicsCallback(dtUtil::MakeFunctor(&CivilianAIActorComponent::PostPhysicsUpdate, this));
+
       // transition planner should add this.
       GetOwner()->GetComponent<dtAnim::AnimationHelper>()->ModelLoadedSignal.connect_slot(this, &CivilianAIActorComponent::OnModelLoaded);
 
@@ -122,27 +152,58 @@ namespace dtExample
       return !mWaypointPath.empty() && HasDestination();
    }
 
+   ///////////////////////////////////////////////////////////////////////////////////
+   void CivilianAIActorComponent::PrePhysicsUpdate()
+   {
+      dtCore::Transform xform;
+      mTransformable->GetTransform(xform);
+
+      dtPhysics::PhysicsActComp* pac = GetOwner()->GetComponent<dtPhysics::PhysicsActComp>();
+
+      if (pac != NULL && pac->GetMainPhysicsObject() != NULL)
+      {
+         // If the transform was set externally
+         if (!xform.EpsilonEquals(mLastTransform, 0.01f))
+         {
+            pac->GetMainPhysicsObject()->SetTransformAsVisual(xform);
+            osg::Vec3 newPos = pac->GetMainPhysicsObject()->GetTranslation();
+            // Adjust the controller shape by the physics origin offset on the physics object
+            newPos += pac->GetMainPhysicsObject()->GetOriginOffset();
+
+            if (mCharacterController.valid())
+               mCharacterController->Warp(newPos);
+         }
+      }
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////////
+   void CivilianAIActorComponent::PostPhysicsUpdate()
+   {
+      osg::Vec3 newPos;
+      if (mCharacterController.valid())
+         newPos= mCharacterController->GetTranslation();
+
+      dtPhysics::PhysicsActComp* pac = GetOwner()->GetComponent<dtPhysics::PhysicsActComp>();
+
+      if (pac != NULL && pac->GetMainPhysicsObject() != NULL)
+      {
+         // Adjust the controller shape by the physics origin offset on the physics object
+         newPos -= pac->GetMainPhysicsObject()->GetOriginOffset();
+         // Get the transform of the physics object
+         pac->GetMainPhysicsObject()->SetTranslation(newPos);
+
+         dtCore::Transform xform;
+         // Move the physics object
+         pac->GetMainPhysicsObject()->GetTransformAsVisual(xform);
+         mTransformable->SetTransform(xform);
+      }
+   }
+
 
    ///////////////////////////////////////////////////////////////////////////////////
    void CivilianAIActorComponent::OnTickLocal(const dtGame::TickMessage& tickMessage)
    {
       PerformMove(tickMessage.GetDeltaSimTime());
-
-      if( mTransformable.valid() && mCharacterController.valid())
-      {
-         dtCore::Transform xform;
-         mTransformable->GetTransform(xform);
-
-         osg::Vec3 newPos = mCharacterController->GetTranslation();
-
-         //is this required?
-         newPos[2] -= 0.9;
-
-         xform.SetTranslation(newPos);
-
-         mTransformable->SetTransform(xform);
-      }
-
    }
 
    ///////////////////////////////////////////////////////////////////////////////////
@@ -155,6 +216,7 @@ namespace dtExample
          {
             mCurrentWaypoint = mWaypointPath.front();
             mWaypointPath.pop_front();
+            LOGN_ALWAYS("civilianaiactorcomponent.cpp", "Waypoint: " + dtUtil::ToString(mCurrentWaypoint->GetID()));
          }
 
          // if we have another waypoint to goto, goto it
@@ -165,13 +227,14 @@ namespace dtExample
          }
          else
          {
-
             mCharacterController->WalkClear();
             SetHasDestination(false);
             mHasArrived = true;
          }
       }
    }
+
+   static const float ShapeDefaultHeight = 1.8f;
 
 
    ///////////////////////////////////////////////////////////////////////////////////
@@ -203,19 +266,24 @@ namespace dtExample
       dtCore::Transform xform;
       mTransformable->GetTransform(xform);
 
-      osg::Vec3 offset = xform.GetTranslation();
-      offset[2] += 2.5f; //so the character is centered at its origin
-      xform.SetTranslation(offset);
+      dtCore::RefPtr<dtPhysics::Geometry> charShape;
+      dtPhysics::PhysicsActComp* pac = GetOwner()->GetComponent<dtPhysics::PhysicsActComp>();
+      if (pac != NULL && pac->GetMainPhysicsObject() != NULL && pac->GetMainPhysicsObject()->GetNumGeometries() > 0)
+      {
+         charShape = pac->GetMainPhysicsObject()->GetGeometry(0);
+      }
 
-      dtCore::RefPtr<dtPhysics::Geometry> charShape = dtPhysics::Geometry::CreateCapsuleGeometry(xform, 1.8f, 0.2f, 100.0f);
+      if (!charShape.valid())
+      {
+         charShape = dtPhysics::Geometry::CreateCapsuleGeometry(xform, ShapeDefaultHeight, 0.2f, 100.0f);
+      }
       mCharacterController = new dtPhysics::CharacterController(*charShape);
-      mCharacterController->SetStepHeight(0.5f);
-      mCharacterController->SetSkinWidth(0.04f);
-      mCharacterController->SetMaxInclineAngle(70.0f);
+      mCharacterController->SetStepHeight(mStepHeight);
+      mCharacterController->SetSkinWidth(pac->GetMainPhysicsObject()->GetSkinThickness());
+      mCharacterController->SetMaxInclineAngle(mMaxIncline);
       mCharacterController->Init();
 
-      mCharacterController->Warp(offset);
-
+      PrePhysicsUpdate();
    }
 
    /////////////////////////////////////////////////////////////////
@@ -237,7 +305,7 @@ namespace dtExample
 
       if (anim != NULL)
       {
-         LOG_ALWAYS("Registering Animation named \"" + anim->GetName() + "\" in place of missing \"" + name + "\"");
+         //LOG_ALWAYS("Registering Animation named \"" + anim->GetName() + "\" in place of missing \"" + name + "\"");
          dtCore::RefPtr<dtAnim::Animatable> animClone = anim->Clone(&wrapper).get();
          animClone->SetName(name);
 
@@ -395,6 +463,9 @@ namespace dtExample
    DT_IMPLEMENT_ACCESSOR(CivilianAIActorComponent, float, AnimationRunSpeed);
    DT_IMPLEMENT_ACCESSOR(CivilianAIActorComponent, float, AnimationCrawlSpeed);
    DT_IMPLEMENT_ACCESSOR(CivilianAIActorComponent, float, AnimationLowWalkSpeed);
+   DT_IMPLEMENT_ACCESSOR(CivilianAIActorComponent, float, StepHeight);
+   DT_IMPLEMENT_ACCESSOR(CivilianAIActorComponent, float, MaxIncline);
+
 
    ///////////////////////////////////////////////////////////////////////////////////
    dtPhysics::CharacterController* CivilianAIActorComponent::GetCharacterController()
@@ -450,11 +521,12 @@ namespace dtExample
          dR += 360.0f;
       }
 
+      float change = delta * mRotationSpeed;
       if (dR > 0.0f)
       {
-         if(dR > delta*90.0f)
+         if(dR > change)
          {
-            rotation +=  delta*90.0f;
+            rotation +=  change;
          }
          else
          {
@@ -464,9 +536,9 @@ namespace dtExample
       }
       else if (dR < 0.0f)
       {
-         if(dR < -delta*90.0f)
+         if(dR < -change)
          {
-            rotation += -delta*90.0f;
+            rotation += -change;
          }
          else
          {
@@ -512,6 +584,7 @@ namespace dtExample
       osg::Vec3 hpr;
       xform.GetRotation(hpr);
       hpr[0] = degrees - 180.0f;
+      //LOG_ALWAYS("Rotation: " + dtUtil::ToString(hpr));
       xform.SetRotation(hpr);
       mTransformable->SetTransform(xform);
    }
@@ -541,19 +614,22 @@ namespace dtExample
    ///////////////////////////////////////////////////////////////////////////////////
    void CivilianAIActorComponent::ApplyStringPulling()
    {
-      //temporarily commented out...
-      return;
-
-      if (mWaypointPath.size() < 2) return;
-
-      do
+      return; // disabled
+      while (mWaypointPath.size() > 2)
       {
-
          const dtAI::WaypointInterface* pNextWaypoint = *(++(mWaypointPath.begin()));
          std::vector<dtPhysics::RayCast::Report> hits;
          dtPhysics::RayCast ray;
          osg::Vec3 pos = GetPosition();
          osg::Vec3 potentialDest = pNextWaypoint->GetPosition();
+         // Avoid a skipping a waypoint that is on an incline or decline greater than twice the step height
+         // because the given path is more likely to be the best way
+         if (dtUtil::Abs(potentialDest.z() - pos.z()) > mCharacterController->GetStepHeight() * 2.0f)
+         {
+            LOG_ALWAYS("Unit: " + mTransformable->GetName() + ", breaking out early from string pulling due to height change.");
+            break;
+         }
+         // Raycast from a the step height
          pos.z() += mCharacterController->GetStepHeight();
          potentialDest.z() += mCharacterController->GetStepHeight();
          ray.SetOrigin(pos);
@@ -562,10 +638,7 @@ namespace dtExample
          dtPhysics::PhysicsWorld::GetInstance().TraceRay(ray, hits);
          if (hits.empty())
          {
-            if(pNextWaypoint->GetID() == 24)
-            {
-               LOG_ALWAYS("Unit: " + GetName() + ", has clear path to waypoint: " + dtUtil::ToString(pNextWaypoint->GetID()) + " removing waypoint:" + dtUtil::ToString(mWaypointPath.front()->GetID()) + " from path.");
-            }
+            LOG_ALWAYS("Unit: " + mTransformable->GetName() + ", has clear path to waypoint: " + dtUtil::ToString(pNextWaypoint->GetID()) + " removing waypoint:" + dtUtil::ToString(mWaypointPath.front()->GetID()) + " from path.");
             mWaypointPath.pop_front();
          }
          else
@@ -573,15 +646,16 @@ namespace dtExample
             break;
          }
       }
-      while (mWaypointPath.size() > 2);
    }
 
    ///////////////////////////////////////////////////////////////////////////////////
    osg::Vec3 CivilianAIActorComponent::GetPosition()
    {
-      dtCore::Transform xform;
-      mTransformable->GetTransform(xform);
-      return xform.GetTranslation();
+      if (mCharacterController.valid())
+      {
+         return mCharacterController->GetTranslation();
+      }
+      return osg::Vec3();
    }
 
    ///////////////////////////////////////////////////////////////////////////////////
@@ -601,11 +675,14 @@ namespace dtExample
          RotateToPoint(pWaypoint->GetPosition(), dt);
       }
 
+      //LOGN_ALWAYS("civilianaiactorcomponent.cpp", "Walking to/from: " + dtUtil::ToString(pWaypoint->GetID()) + " " + dtUtil::ToString(pWaypoint->GetPosition()) + " " + dtUtil::ToString(GetPosition()));
+
       osg::Vec3 dir = pWaypoint->GetPosition() - GetPosition();
       dir[2] = 0.0f;
       dir.normalize();
 
-      osg::Vec3 vel =  dir * /*GetHumanDrawable()->GetWalkAnimationSpeed();*/ mWalkSpeed;
+      osg::Vec3 vel =  dir * mWalkSpeed;
+      //LOGN_ALWAYS("civilianaiactorcomponent.cpp", "Walk Vector: " + dtUtil::ToString(vel));
       mCharacterController->Walk(vel, 1.0f);
    }
 
@@ -629,7 +706,7 @@ namespace dtExample
    bool CivilianAIActorComponent::SetDestByClosestNamedWaypoint(const std::string& waypointName, const osg::Vec3& pos)
    {
       bool success = false;
-      //wLOG_ALWAYS("Get Closest Name Waypoint with name '" + waypointName);
+      //LOG_ALWAYS("Get Closest Name Waypoint with name '" + waypointName);
       dtAI::WaypointInterface* result = mAIInterface->GetClosestNamedWaypoint(waypointName, pos, 2500.0f);
       if(result != NULL)
       {
