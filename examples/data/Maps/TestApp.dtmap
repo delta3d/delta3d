@@ -27,6 +27,37 @@
     </libraries>
     <actors>
         <actor>
+            <type>dtExample.Civilian</type>
+            <id>019e6cce-5c52-4c1d-b82d-5e00c32e3516</id>
+            <name>youngafricanman_04_BeachChair</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>-78.734283</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-600.216492</value1>
+                    <value2>-158.918640</value2>
+                    <value3>1.055542</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Skeletal Mesh</name>
+                <resourceType>SkeletalMeshes</resourceType>
+                <resourceDisplayName>SkeletalMeshes:YoungMan_African:YoungMan_African_Swimmer.dtchar</resourceDisplayName>
+                <resource>SkeletalMeshes:YoungMan_African:YoungMan_African_Swimmer.dtchar</resource>
+            </property>
+            <property>
+                <name>Stance</name>
+                <enumerated>LYING</enumerated>
+            </property>
+        </actor>
+        <actor>
             <type>dtExample.Mesh Object</type>
             <id>035dae91-5e6f-4e52-98f8-775366d0d325</id>
             <name>angledpalm_01</name>
@@ -344,6 +375,33 @@
                     <value2>2.000000</value2>
                     <value3>2.000000</value3>
                 </vec3>
+            </property>
+        </actor>
+        <actor>
+            <type>dtExample.Civilian</type>
+            <id>09294f0a-8edb-4e89-a79d-b11a9ae665ad</id>
+            <name>youngafricanman_02_Walkway</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>41.094250</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-639.492188</value1>
+                    <value2>-96.881996</value2>
+                    <value3>5.638026</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Skeletal Mesh</name>
+                <resourceType>SkeletalMeshes</resourceType>
+                <resourceDisplayName>SkeletalMeshes:YoungMan_African:YoungMan_African_Swimmer.dtchar</resourceDisplayName>
+                <resource>SkeletalMeshes:YoungMan_African:YoungMan_African_Swimmer.dtchar</resource>
             </property>
         </actor>
         <actor>
@@ -2185,7 +2243,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>97.504189</value3>
+                    <value3>-84.612267</value3>
                 </vec3>
             </property>
             <property>
@@ -2206,21 +2264,21 @@
         <actor>
             <type>dtExample.Civilian</type>
             <id>2dbb847e-9c08-4d86-bfcf-c98626cb4164</id>
-            <name>Gina_04</name>
+            <name>Gina_04_Bar</name>
             <property>
                 <name>Rotation</name>
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-160.204956</value3>
+                    <value3>-170.984436</value3>
                 </vec3>
             </property>
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-562.503174</value1>
-                    <value2>-127.644897</value2>
-                    <value3>1.867371</value3>
+                    <value1>-562.429382</value1>
+                    <value2>-127.526100</value2>
+                    <value3>1.932662</value3>
                 </vec3>
             </property>
             <property>
@@ -2330,7 +2388,7 @@
                 <name>Rotation</name>
                 <vec3>
                     <value1>-0.823274</value1>
-                    <value2>-0.623641</value2>
+                    <value2>-0.623614</value2>
                     <value3>124.004814</value3>
                 </vec3>
             </property>
@@ -2876,13 +2934,13 @@
         <actor>
             <type>dtExample.Civilian</type>
             <id>3945a089-2902-49da-a0aa-186ca23720e9</id>
-            <name>Eve_02</name>
+            <name>Eve_02_Bar</name>
             <property>
                 <name>Rotation</name>
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-72.389366</value3>
+                    <value3>-82.091461</value3>
                 </vec3>
             </property>
             <property>
@@ -3035,7 +3093,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254890</value3>
+                    <value3>-87.254868</value3>
                 </vec3>
             </property>
             <property>
@@ -3424,7 +3482,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-44.854336</value3>
+                    <value3>139.864456</value3>
                 </vec3>
             </property>
             <property>
@@ -3915,6 +3973,33 @@
             </property>
         </actor>
         <actor>
+            <type>dtExample.Civilian</type>
+            <id>47549ce9-0861-40b8-8d13-1c52c4100fc1</id>
+            <name>youngman_08_Walkway</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>-134.385193</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-683.768311</value1>
+                    <value2>-60.198410</value2>
+                    <value3>5.727972</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Skeletal Mesh</name>
+                <resourceType>SkeletalMeshes</resourceType>
+                <resourceDisplayName>SkeletalMeshes:YoungMan:YoungMan_Jogger.dtchar</resourceDisplayName>
+                <resource>SkeletalMeshes:YoungMan:YoungMan_Jogger.dtchar</resource>
+            </property>
+        </actor>
+        <actor>
             <type>dtcore.Camera</type>
             <id>482db8f4-4817-4370-9d70-e8e96e270a00</id>
             <name>Camera_01</name>
@@ -4216,20 +4301,20 @@
         <actor>
             <type>dtExample.Civilian</type>
             <id>4eb42e77-17a1-4423-95a0-83cf32bdfb39</id>
-            <name>Petunia_01</name>
+            <name>Petunia_01_Bar</name>
             <property>
                 <name>Rotation</name>
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>106.810402</value3>
+                    <value3>100.938812</value3>
                 </vec3>
             </property>
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-559.796326</value1>
-                    <value2>-131.092743</value2>
+                    <value1>-559.771362</value1>
+                    <value2>-131.085907</value2>
                     <value3>1.879515</value3>
                 </vec3>
             </property>
@@ -4303,14 +4388,14 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-73.005318</value3>
+                    <value3>-73.005310</value3>
                 </vec3>
             </property>
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-576.778931</value1>
-                    <value2>-122.235359</value2>
+                    <value1>-573.125427</value1>
+                    <value2>-121.101860</value2>
                     <value3>1.867371</value3>
                 </vec3>
             </property>
@@ -4813,13 +4898,13 @@
         <actor>
             <type>dtExample.Civilian</type>
             <id>56d03f2b-f135-409d-8510-3616fc289f89</id>
-            <name>youngasianman_01</name>
+            <name>youngasianman_01_Bar</name>
             <property>
                 <name>Rotation</name>
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>12.838576</value3>
+                    <value3>18.444860</value3>
                 </vec3>
             </property>
             <property>
@@ -4956,7 +5041,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254890</value3>
+                    <value3>-87.254868</value3>
                 </vec3>
             </property>
             <property>
@@ -5202,14 +5287,14 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>-0.000000</value2>
-                    <value3>-90.432381</value3>
+                    <value3>-87.240875</value3>
                 </vec3>
             </property>
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-2549.174561</value1>
-                    <value2>-432.687408</value2>
+                    <value1>848.596069</value1>
+                    <value2>-380.473083</value2>
                     <value3>75.000000</value3>
                 </vec3>
             </property>
@@ -5699,7 +5784,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254890</value3>
+                    <value3>-87.254868</value3>
                 </vec3>
             </property>
             <property>
@@ -5813,7 +5898,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254890</value3>
+                    <value3>-87.254868</value3>
                 </vec3>
             </property>
             <property>
@@ -6193,21 +6278,21 @@
         <actor>
             <type>dtExample.Civilian</type>
             <id>6f7766cc-9d34-44a5-8c0d-5dc677c39079</id>
-            <name>Eve_01</name>
+            <name>Eve_01_BeachChair</name>
             <property>
                 <name>Rotation</name>
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-48.310654</value3>
+                    <value3>129.825867</value3>
                 </vec3>
             </property>
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-746.179077</value1>
-                    <value2>-171.017761</value2>
-                    <value3>2.090701</value3>
+                    <value1>-746.129028</value1>
+                    <value2>-170.976013</value2>
+                    <value3>2.052018</value3>
                 </vec3>
             </property>
             <property>
@@ -6715,6 +6800,37 @@
             </property>
         </actor>
         <actor>
+            <type>dtExample.Civilian</type>
+            <id>77f73282-779d-4d83-bae7-d79633bb4523</id>
+            <name>Gina_05_Bench</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>-19.796499</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-661.504211</value1>
+                    <value2>-136.894165</value2>
+                    <value3>4.150257</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Skeletal Mesh</name>
+                <resourceType>SkeletalMeshes</resourceType>
+                <resourceDisplayName>SkeletalMeshes:Gina:Gina_SwimWear.dtchar</resourceDisplayName>
+                <resource>SkeletalMeshes:Gina:Gina_SwimWear.dtchar</resource>
+            </property>
+            <property>
+                <name>Stance</name>
+                <enumerated>SITTING</enumerated>
+            </property>
+        </actor>
+        <actor>
             <type>dtcore.Curve.Bezier Node</type>
             <id>7831b3fa-524f-4520-87a7-59eedaa89567</id>
             <name>FireworkC_BezierNode_01</name>
@@ -7199,6 +7315,37 @@
             <property>
                 <name>Next Bezier Node</name>
                 <actorId>9a4b6dae-a108-4fc5-8eeb-79405ebfac36</actorId>
+            </property>
+        </actor>
+        <actor>
+            <type>dtExample.Civilian</type>
+            <id>8476d220-812c-4510-b750-9ecc68abe40c</id>
+            <name>youngman_04_BeachChair</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>95.170265</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-718.940186</value1>
+                    <value2>-260.721497</value2>
+                    <value3>1.806582</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Skeletal Mesh</name>
+                <resourceType>SkeletalMeshes</resourceType>
+                <resourceDisplayName>SkeletalMeshes:YoungMan:YoungMan_Swimmer.dtchar</resourceDisplayName>
+                <resource>SkeletalMeshes:YoungMan:YoungMan_Swimmer.dtchar</resource>
+            </property>
+            <property>
+                <name>Stance</name>
+                <enumerated>LYING</enumerated>
             </property>
         </actor>
         <actor>
@@ -7756,13 +7903,13 @@
         <actor>
             <type>dtExample.Civilian</type>
             <id>8e60434f-2103-40a8-ae68-c50f872a9107</id>
-            <name>youngafricanman_01</name>
+            <name>youngafricanman_01_Bar</name>
             <property>
                 <name>Rotation</name>
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>104.599159</value3>
+                    <value3>103.594795</value3>
                 </vec3>
             </property>
             <property>
@@ -7810,7 +7957,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254890</value3>
+                    <value3>-87.254868</value3>
                 </vec3>
             </property>
             <property>
@@ -8277,13 +8424,13 @@
         <actor>
             <type>dtExample.Civilian</type>
             <id>96721874-a69b-44cf-9929-ac9757bcb1bc</id>
-            <name>youngman_03</name>
+            <name>youngman_03_Bar</name>
             <property>
                 <name>Rotation</name>
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>11.041974</value3>
+                    <value3>17.797388</value3>
                 </vec3>
             </property>
             <property>
@@ -8291,7 +8438,7 @@
                 <vec3>
                     <value1>-563.591797</value1>
                     <value2>-133.808731</value2>
-                    <value3>1.845965</value3>
+                    <value3>1.877951</value3>
                 </vec3>
             </property>
             <property>
@@ -8669,21 +8816,21 @@
         <actor>
             <type>dtExample.Civilian</type>
             <id>9d0a0692-85c6-4dd3-aeb4-9a6542c2e0f3</id>
-            <name>Gina_02</name>
+            <name>Gina_02_BeachChair</name>
             <property>
                 <name>Rotation</name>
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-73.005318</value3>
+                    <value3>112.615578</value3>
                 </vec3>
             </property>
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-781.506165</value1>
-                    <value2>-50.705482</value2>
-                    <value3>5.680526</value3>
+                    <value1>-816.823608</value1>
+                    <value2>-50.161976</value2>
+                    <value3>3.986008</value3>
                 </vec3>
             </property>
             <property>
@@ -8691,6 +8838,10 @@
                 <resourceType>SkeletalMeshes</resourceType>
                 <resourceDisplayName>SkeletalMeshes:Gina:Gina_SwimWear.dtchar</resourceDisplayName>
                 <resource>SkeletalMeshes:Gina:Gina_SwimWear.dtchar</resource>
+            </property>
+            <property>
+                <name>Stance</name>
+                <enumerated>LYING</enumerated>
             </property>
             <property>
                 <name>Body: Origin Offset</name>
@@ -8849,7 +9000,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254890</value3>
+                    <value3>-87.254868</value3>
                 </vec3>
             </property>
             <property>
@@ -9194,13 +9345,13 @@
         <actor>
             <type>dtExample.Civilian</type>
             <id>a58a4383-0213-427f-b802-43cc10c07084</id>
-            <name>youngman_01</name>
+            <name>youngman_05_Sand</name>
             <property>
                 <name>Rotation</name>
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>30.379486</value3>
+                    <value3>-150.958694</value3>
                 </vec3>
             </property>
             <property>
@@ -9375,6 +9526,68 @@
             </property>
         </actor>
         <actor>
+            <type>dtExample.Civilian</type>
+            <id>a861b3a1-5f56-4722-a80f-5713450b250a</id>
+            <name>youngafricanman_03_BeachChair</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>-143.986420</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-777.773865</value1>
+                    <value2>-162.048752</value2>
+                    <value3>1.453518</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Skeletal Mesh</name>
+                <resourceType>SkeletalMeshes</resourceType>
+                <resourceDisplayName>SkeletalMeshes:YoungMan_African:YoungMan_African_Swimmer.dtchar</resourceDisplayName>
+                <resource>SkeletalMeshes:YoungMan_African:YoungMan_African_Swimmer.dtchar</resource>
+            </property>
+            <property>
+                <name>Stance</name>
+                <enumerated>LYING</enumerated>
+            </property>
+        </actor>
+        <actor>
+            <type>dtExample.Civilian</type>
+            <id>a881e5f6-40c5-4342-831b-ddc6020237ab</id>
+            <name>Eve_03_BeachChair</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>-158.295074</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-563.722839</value1>
+                    <value2>-87.681046</value2>
+                    <value3>1.093687</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Skeletal Mesh</name>
+                <resourceType>SkeletalMeshes</resourceType>
+                <resourceDisplayName>SkeletalMeshes:Gina:Eve_SwimWear.dtchar</resourceDisplayName>
+                <resource>SkeletalMeshes:Gina:Eve_SwimWear.dtchar</resource>
+            </property>
+            <property>
+                <name>Stance</name>
+                <enumerated>LYING</enumerated>
+            </property>
+        </actor>
+        <actor>
             <type>dtExample.Mesh Object</type>
             <id>a9feeef7-cb09-4500-9f3b-275f8e032e50</id>
             <name>walkway_43</name>
@@ -9387,7 +9600,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254890</value3>
+                    <value3>-87.254868</value3>
                 </vec3>
             </property>
             <property>
@@ -9429,6 +9642,37 @@
                     <value2>2.000000</value2>
                     <value3>2.000000</value3>
                 </vec3>
+            </property>
+        </actor>
+        <actor>
+            <type>dtExample.Civilian</type>
+            <id>aa190316-04b4-4ab5-a04f-052b8aec1b97</id>
+            <name>youngman_07_BeachChair</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>-152.155701</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-566.196777</value1>
+                    <value2>-88.930153</value2>
+                    <value3>1.111520</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Skeletal Mesh</name>
+                <resourceType>SkeletalMeshes</resourceType>
+                <resourceDisplayName>SkeletalMeshes:YoungMan_Asian:YoungMan_Asian_Swimmer.dtchar</resourceDisplayName>
+                <resource>SkeletalMeshes:YoungMan_Asian:YoungMan_Asian_Swimmer.dtchar</resource>
+            </property>
+            <property>
+                <name>Stance</name>
+                <enumerated>LYING</enumerated>
             </property>
         </actor>
         <actor>
@@ -10024,7 +10268,7 @@
         <actor>
             <type>dtai.AIInterface.AI Interface Actor</type>
             <id>b2f7bb4e-b560-4eb0-a264-6b2c6d5a0663</id>
-            <name>DeltaDrawable</name>
+            <name>dtAI::WaypointFilename</name>
             <property>
                 <name>dtAI::WaypointRenderInfo</name>
                 <propertyContainer>
@@ -10787,7 +11031,7 @@
                 <name>Rotation</name>
                 <vec3>
                     <value1>-0.823274</value1>
-                    <value2>-0.623641</value2>
+                    <value2>-0.623614</value2>
                     <value3>124.004814</value3>
                 </vec3>
             </property>
@@ -11336,7 +11580,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254890</value3>
+                    <value3>-87.254868</value3>
                 </vec3>
             </property>
             <property>
@@ -11393,7 +11637,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254890</value3>
+                    <value3>-87.254868</value3>
                 </vec3>
             </property>
             <property>
@@ -12407,7 +12651,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-59.716446</value3>
+                    <value3>-59.716415</value3>
                 </vec3>
             </property>
             <property>
@@ -13348,6 +13592,33 @@
             </property>
         </actor>
         <actor>
+            <type>dtExample.Civilian</type>
+            <id>e3843d17-c778-473c-a7fb-d44420ba170a</id>
+            <name>youngasianman_02_Walkway</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>172.911896</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-743.254700</value1>
+                    <value2>-95.330811</value2>
+                    <value3>6.902360</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Skeletal Mesh</name>
+                <resourceType>SkeletalMeshes</resourceType>
+                <resourceDisplayName>SkeletalMeshes:YoungMan_Asian:YoungMan_Asian_Swimmer.dtchar</resourceDisplayName>
+                <resource>SkeletalMeshes:YoungMan_Asian:YoungMan_Asian_Swimmer.dtchar</resource>
+            </property>
+        </actor>
+        <actor>
             <type>dtExample.Mesh Object</type>
             <id>e462c2e2-429f-4c4f-b1a7-79b194ec0040</id>
             <name>palmtree_11</name>
@@ -13485,21 +13756,21 @@
         <actor>
             <type>dtExample.Civilian</type>
             <id>e4d99a02-be41-4847-b6d0-1d16153bca50</id>
-            <name>Petunia_02</name>
+            <name>Petunia_02_BeachChair</name>
             <property>
                 <name>Rotation</name>
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>20.597799</value3>
+                    <value3>-108.719688</value3>
                 </vec3>
             </property>
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-568.339050</value1>
-                    <value2>-90.407532</value2>
-                    <value3>1.064846</value3>
+                    <value1>-585.838806</value1>
+                    <value2>-98.256332</value2>
+                    <value3>1.531458</value3>
                 </vec3>
             </property>
             <property>
@@ -13825,7 +14096,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254890</value3>
+                    <value3>-87.254868</value3>
                 </vec3>
             </property>
             <property>
@@ -13939,7 +14210,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254890</value3>
+                    <value3>-87.254868</value3>
                 </vec3>
             </property>
             <property>
@@ -14103,7 +14374,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254890</value3>
+                    <value3>-87.254868</value3>
                 </vec3>
             </property>
             <property>
@@ -14145,6 +14416,37 @@
                     <value2>2.000000</value2>
                     <value3>2.000000</value3>
                 </vec3>
+            </property>
+        </actor>
+        <actor>
+            <type>dtExample.Civilian</type>
+            <id>eca47081-80b9-47cf-8c4b-c94be3163c99</id>
+            <name>youngman_06_BeachChair</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>-101.528214</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-587.584595</value1>
+                    <value2>-103.235672</value2>
+                    <value3>1.178020</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Skeletal Mesh</name>
+                <resourceType>SkeletalMeshes</resourceType>
+                <resourceDisplayName>SkeletalMeshes:YoungMan:YoungMan_Swimmer.dtchar</resourceDisplayName>
+                <resource>SkeletalMeshes:YoungMan:YoungMan_Swimmer.dtchar</resource>
+            </property>
+            <property>
+                <name>Stance</name>
+                <enumerated>LYING</enumerated>
             </property>
         </actor>
         <actor>
@@ -14520,21 +14822,21 @@
         <actor>
             <type>dtExample.Civilian</type>
             <id>f3b44211-60c2-412b-812c-2a6ad2cfb7a8</id>
-            <name>Gina_03</name>
+            <name>Gina_03_BeachChair</name>
             <property>
                 <name>Rotation</name>
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-73.005318</value3>
+                    <value3>98.317055</value3>
                 </vec3>
             </property>
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-717.341675</value1>
-                    <value2>-227.715057</value2>
-                    <value3>2.756776</value3>
+                    <value1>-721.972656</value1>
+                    <value2>-225.233627</value2>
+                    <value3>1.773678</value3>
                 </vec3>
             </property>
             <property>
@@ -14542,6 +14844,10 @@
                 <resourceType>SkeletalMeshes</resourceType>
                 <resourceDisplayName>SkeletalMeshes:Gina:Gina_SwimWear.dtchar</resourceDisplayName>
                 <resource>SkeletalMeshes:Gina:Gina_SwimWear.dtchar</resource>
+            </property>
+            <property>
+                <name>Stance</name>
+                <enumerated>LYING</enumerated>
             </property>
             <property>
                 <name>Body: Origin Offset</name>
@@ -14647,7 +14953,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254890</value3>
+                    <value3>-87.254868</value3>
                 </vec3>
             </property>
             <property>
