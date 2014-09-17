@@ -8,7 +8,7 @@
         <comment></comment>
         <copyright></copyright>
         <createTimestamp>2014-07-15T22:49:46-05:00</createTimestamp>
-        <lastUpdateTimestamp>2014-09-16T16:54:16-05:00</lastUpdateTimestamp>
+        <lastUpdateTimestamp>2014-09-17T15:07:17-05:00</lastUpdateTimestamp>
         <editorVersion>2.8.0</editorVersion>
         <schemaVersion>1.0</schemaVersion>
     </header>
@@ -1300,7 +1300,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254868</value3>
+                    <value3>-87.254890</value3>
                 </vec3>
             </property>
             <property>
@@ -1892,7 +1892,7 @@
             </property>
             <property>
                 <name>Bezier Node</name>
-                <actorId>8c8be7b7-5645-4997-873b-266c7b6af1ec</actorId>
+                <actorId>5e9ad074-dfdc-4432-be58-53326f1f2e43</actorId>
             </property>
         </actor>
         <actor>
@@ -2085,7 +2085,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254868</value3>
+                    <value3>-87.254890</value3>
                 </vec3>
             </property>
             <property>
@@ -2307,8 +2307,8 @@
             <property>
                 <name>Body: Dimensions</name>
                 <vec3>
-                    <value1>1.600000</value1>
-                    <value2>0.500000</value2>
+                    <value1>1.200000</value1>
+                    <value2>0.200000</value2>
                     <value3>0.000000</value3>
                 </vec3>
             </property>
@@ -2393,7 +2393,7 @@
                 <name>Rotation</name>
                 <vec3>
                     <value1>-0.823274</value1>
-                    <value2>-0.623614</value2>
+                    <value2>-0.623641</value2>
                     <value3>124.004814</value3>
                 </vec3>
             </property>
@@ -2977,8 +2977,8 @@
             <property>
                 <name>Body: Dimensions</name>
                 <vec3>
-                    <value1>1.600000</value1>
-                    <value2>0.500000</value2>
+                    <value1>1.200000</value1>
+                    <value2>0.200000</value2>
                     <value3>0.000000</value3>
                 </vec3>
             </property>
@@ -3098,7 +3098,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254868</value3>
+                    <value3>-87.254890</value3>
                 </vec3>
             </property>
             <property>
@@ -3986,7 +3986,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-134.385193</value3>
+                    <value3>-134.385178</value3>
                 </vec3>
             </property>
             <property>
@@ -4344,8 +4344,8 @@
             <property>
                 <name>Body: Dimensions</name>
                 <vec3>
-                    <value1>1.600000</value1>
-                    <value2>0.500000</value2>
+                    <value1>1.200000</value1>
+                    <value2>0.200000</value2>
                     <value3>0.000000</value3>
                 </vec3>
             </property>
@@ -4393,7 +4393,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-73.005310</value3>
+                    <value3>-73.005318</value3>
                 </vec3>
             </property>
             <property>
@@ -4421,8 +4421,8 @@
             <property>
                 <name>Body: Dimensions</name>
                 <vec3>
-                    <value1>1.600000</value1>
-                    <value2>0.500000</value2>
+                    <value1>1.200000</value1>
+                    <value2>0.200000</value2>
                     <value3>0.000000</value3>
                 </vec3>
             </property>
@@ -5046,7 +5046,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254868</value3>
+                    <value3>-87.254890</value3>
                 </vec3>
             </property>
             <property>
@@ -5292,14 +5292,14 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>-0.000000</value2>
-                    <value3>-90.250702</value3>
+                    <value3>-90.240150</value3>
                 </vec3>
             </property>
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-1585.528564</value1>
-                    <value2>-438.931793</value2>
+                    <value1>-1561.957275</value1>
+                    <value2>-439.032776</value2>
                     <value3>75.000000</value3>
                 </vec3>
             </property>
@@ -5789,7 +5789,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254868</value3>
+                    <value3>-87.254890</value3>
                 </vec3>
             </property>
             <property>
@@ -5903,7 +5903,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254868</value3>
+                    <value3>-87.254890</value3>
                 </vec3>
             </property>
             <property>
@@ -6321,8 +6321,8 @@
             <property>
                 <name>Body: Dimensions</name>
                 <vec3>
-                    <value1>1.600000</value1>
-                    <value2>0.500000</value2>
+                    <value1>1.200000</value1>
+                    <value2>0.200000</value2>
                     <value3>0.000000</value3>
                 </vec3>
             </property>
@@ -6813,7 +6813,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-19.796499</value3>
+                    <value3>-19.796530</value3>
                 </vec3>
             </property>
             <property>
@@ -6833,6 +6833,22 @@
             <property>
                 <name>Stance</name>
                 <enumerated>SITTING</enumerated>
+            </property>
+            <property>
+                <name>Body: Origin Offset</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.800000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Body: Dimensions</name>
+                <vec3>
+                    <value1>1.200000</value1>
+                    <value2>0.200000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
             </property>
         </actor>
         <actor>
@@ -7914,7 +7930,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>103.594795</value3>
+                    <value3>103.594803</value3>
                 </vec3>
             </property>
             <property>
@@ -7962,7 +7978,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254868</value3>
+                    <value3>-87.254890</value3>
                 </vec3>
             </property>
             <property>
@@ -8435,7 +8451,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>17.797388</value3>
+                    <value3>17.797390</value3>
                 </vec3>
             </property>
             <property>
@@ -8859,8 +8875,8 @@
             <property>
                 <name>Body: Dimensions</name>
                 <vec3>
-                    <value1>1.600000</value1>
-                    <value2>0.500000</value2>
+                    <value1>1.200000</value1>
+                    <value2>0.200000</value2>
                     <value3>0.000000</value3>
                 </vec3>
             </property>
@@ -9005,7 +9021,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254868</value3>
+                    <value3>-87.254890</value3>
                 </vec3>
             </property>
             <property>
@@ -9570,7 +9586,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-158.295074</value3>
+                    <value3>-158.295059</value3>
                 </vec3>
             </property>
             <property>
@@ -9591,6 +9607,22 @@
                 <name>Stance</name>
                 <enumerated>LYING</enumerated>
             </property>
+            <property>
+                <name>Body: Origin Offset</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.800000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Body: Dimensions</name>
+                <vec3>
+                    <value1>1.200000</value1>
+                    <value2>0.200000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
         </actor>
         <actor>
             <type>dtExample.Mesh Object</type>
@@ -9605,7 +9637,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254868</value3>
+                    <value3>-87.254890</value3>
                 </vec3>
             </property>
             <property>
@@ -11093,7 +11125,7 @@
                 <name>Rotation</name>
                 <vec3>
                     <value1>-0.823274</value1>
-                    <value2>-0.623614</value2>
+                    <value2>-0.623641</value2>
                     <value3>124.004814</value3>
                 </vec3>
             </property>
@@ -11642,7 +11674,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254868</value3>
+                    <value3>-87.254890</value3>
                 </vec3>
             </property>
             <property>
@@ -11699,7 +11731,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254868</value3>
+                    <value3>-87.254890</value3>
                 </vec3>
             </property>
             <property>
@@ -12511,7 +12543,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254868</value3>
+                    <value3>-87.254890</value3>
                 </vec3>
             </property>
             <property>
@@ -12713,7 +12745,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-59.716415</value3>
+                    <value3>-59.716446</value3>
                 </vec3>
             </property>
             <property>
@@ -13856,8 +13888,8 @@
             <property>
                 <name>Body: Dimensions</name>
                 <vec3>
-                    <value1>1.600000</value1>
-                    <value2>0.500000</value2>
+                    <value1>1.200000</value1>
+                    <value2>0.200000</value2>
                     <value3>0.000000</value3>
                 </vec3>
             </property>
@@ -14158,7 +14190,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254868</value3>
+                    <value3>-87.254890</value3>
                 </vec3>
             </property>
             <property>
@@ -14272,7 +14304,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254868</value3>
+                    <value3>-87.254890</value3>
                 </vec3>
             </property>
             <property>
@@ -14436,7 +14468,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254868</value3>
+                    <value3>-87.254890</value3>
                 </vec3>
             </property>
             <property>
@@ -14979,8 +15011,8 @@
             <property>
                 <name>Body: Dimensions</name>
                 <vec3>
-                    <value1>1.600000</value1>
-                    <value2>0.500000</value2>
+                    <value1>1.200000</value1>
+                    <value2>0.200000</value2>
                     <value3>0.000000</value3>
                 </vec3>
             </property>
@@ -15072,7 +15104,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254868</value3>
+                    <value3>-87.254890</value3>
                 </vec3>
             </property>
             <property>
