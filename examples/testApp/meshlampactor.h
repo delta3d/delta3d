@@ -21,39 +21,38 @@
  * THE SOFTWARE.
  */
 
-#ifndef DELTA_TEST_APP_ACTOR_REGISTRY
-#define DELTA_TEST_APP_ACTOR_REGISTRY
+#ifndef DELTA_TEST_APP_MESH_LAMP_ACTOR_H
+#define DELTA_TEST_APP_MESH_LAMP_ACTOR_H
 
-#include "export.h"
-#include <dtCore/actorpluginregistry.h>
+////////////////////////////////////////////////////////////////////////////////
+// INCLUDE DIRECTIVES
+////////////////////////////////////////////////////////////////////////////////
+#include "meshobjectactor.h"
+
+
 
 namespace dtExample
 {
-   /**
-    * Class that exports the applicable actor proxies to a library
-    */
-   class TEST_APP_EXPORT TestAppActorRegistry : public dtCore::ActorPluginRegistry
+   /////////////////////////////////////////////////////////////////////////////
+   // CLASS CODE
+   /////////////////////////////////////////////////////////////////////////////
+   class MeshLampActor : public MeshObjectActor
    {
-      public:
-         typedef dtCore::ActorPluginRegistry BaseClass;
+   public:
 
-         static dtCore::RefPtr<dtCore::ActorType> TERRAIN_ACTOR_TYPE;
-         static dtCore::RefPtr<dtCore::ActorType> CIVILIAN_ACTOR_TYPE;
-         static dtCore::RefPtr<dtCore::ActorType> FIREWORK_ACTOR_TYPE;
-         static dtCore::RefPtr<dtCore::ActorType> MESH_OBJECT_ACTOR_TYPE;
-         static dtCore::RefPtr<dtCore::ActorType> MESH_LAMP_ACTOR_TYPE;
-         
-         /// Constructor
-         TestAppActorRegistry();
+      typedef MeshObjectActor BaseClass;
 
-         /// Destructor
-         virtual ~TestAppActorRegistry();
+      MeshLampActor();
 
-         /// Registers all of the actor proxies to be exported
-         void RegisterActorTypes();
-      private:
+      void SetLightIntensity(float intensity);
+      float GetLightIntensity() const;
 
+      /*virtual*/ void BuildActorComponents();
+
+   protected:
+      virtual ~MeshLampActor();
    };
+
 }
 
 #endif
