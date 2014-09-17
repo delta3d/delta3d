@@ -30,6 +30,7 @@
 #include <dtCore/sigslot.h>
 #include <dtUtil/refstring.h>
 #include <dtUtil/getsetmacros.h>
+#include <typeinfo>  //for bad_cast
 
 namespace dtGame
 {
