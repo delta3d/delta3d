@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <director xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="delta3dDirector" xsi:schemaLocation="delta3dDirector director.xsd">
     <header>
         <createTimestamp>2014-04-11T21:34:39-05:00</createTimestamp>
-        <lastUpdateTimestamp>2014-09-15T17:24:13-05:00</lastUpdateTimestamp>
+        <lastUpdateTimestamp>2014-09-16T15:57:54-05:00</lastUpdateTimestamp>
         <editorVersion>2.8.0</editorVersion>
         <schemaVersion>2.0</schemaVersion>
         <scriptType>Scenario</scriptType>
@@ -40,7 +39,7 @@
     </libraries>
     <graph>
         <idIndex>0</idIndex>
-        <id>A0C2DC02-75DF-4E8A-8381-98A8FA132B37</id>
+        <id>11AF7BBE-4FC1-4A29-B467-F5FE403D556F</id>
         <property>
             <name>Comment</name>
             <string></string>
@@ -318,10 +317,6 @@
                 <idIndex>9</idIndex>
                 <id>090ae1ff-47e7-446a-9e9c-5caf6fcb490a</id>
                 <property>
-                    <name>Enabled</name>
-                    <boolean>false</boolean>
-                </property>
-                <property>
                     <name>Position</name>
                     <vec2>
                         <value1>-111.000000</value1>
@@ -336,7 +331,7 @@
                 </property>
                 <property>
                     <name>ExistingActor</name>
-                    <actorId>9d0a0692-85c6-4dd3-aeb4-9a6542c2e0f3</actorId>
+                    <actorId>09294f0a-8edb-4e89-a79d-b11a9ae665ad</actorId>
                 </property>
                 <property>
                     <name>DestinationName</name>
@@ -388,10 +383,6 @@
                 <idIndex>11</idIndex>
                 <id>4ebe1f93-8ef8-4b5b-8e7b-15b5deb7c4e6</id>
                 <property>
-                    <name>Enabled</name>
-                    <boolean>false</boolean>
-                </property>
-                <property>
                     <name>Position</name>
                     <vec2>
                         <value1>-15.000000</value1>
@@ -406,7 +397,7 @@
                 </property>
                 <property>
                     <name>ExistingActor</name>
-                    <actorId>f3b44211-60c2-412b-812c-2a6ad2cfb7a8</actorId>
+                    <actorId>a58a4383-0213-427f-b802-43cc10c07084</actorId>
                 </property>
                 <property>
                     <name>DestinationName</name>
