@@ -682,7 +682,7 @@ namespace dtExample
       {
          dtCore::Transform xform;
          mCamera->GetTransform(xform);
-         dtCore::RefPtr<dtPhysics::Geometry> charShape = dtPhysics::Geometry::CreateCapsuleGeometry(xform, 1.8f, 0.6f, 1.0f);
+         dtCore::RefPtr<dtPhysics::Geometry> charShape = dtPhysics::Geometry::CreateCapsuleGeometry(xform, 1.0f, 0.4f, 1.0f);
          charShape->SetMargin(0.3);
          dtCore::RefPtr<dtPhysics::CharacterController> charController = new dtPhysics::CharacterController(*charShape);
          charController->SetStepHeight(0.3f);
