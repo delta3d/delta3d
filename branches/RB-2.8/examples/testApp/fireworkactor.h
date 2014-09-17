@@ -21,8 +21,8 @@
  * THE SOFTWARE.
  */
 
-#ifndef DELTA_TEST_APP_FIREWORKACTOR_H
-#define DELTA_TEST_APP_FIREWORKACTOR_H
+#ifndef DELTA_TEST_APP_FIREWORK_ACTOR_H
+#define DELTA_TEST_APP_FIREWORK_ACTOR_H
 
 ////////////////////////////////////////////////////////////////////////////////
 // INCLUDE DIRECTIVES
@@ -45,9 +45,13 @@ namespace dtExample
       typedef dtActors::ParticleSystemActorProxy BaseClass;
 
       static const float DEFAULT_DETONATE_TIME_LIMIT;
+      static const dtUtil::RefString DEFAULT_LAYER_NAME_FLARE;
+      static const dtUtil::RefString DEFAULT_LAYER_NAME_SPARKS;
 
       static const dtUtil::RefString PROPERTY_COLOR_BEGIN;
       static const dtUtil::RefString PROPERTY_COLOR_END;
+      static const dtUtil::RefString PROPERTY_LAYER_NAME_FLARE;
+      static const dtUtil::RefString PROPERTY_LAYER_NAME_SPARKS;
       static const dtUtil::RefString PROPERTY_DETONATE_TIME_LIMIT;
 
       FireworkActor();
@@ -63,24 +67,51 @@ namespace dtExample
 
       float GetDetonateTimeRemaining() const;
 
-      void StartDetonateTimer();
+      dtCore::ParticleLayer* GetParticleLayer(dtCore::ParticleSystem& ps, const std::string& layerName) const;
+      dtCore::ParticleLayer* GetParticleLayer(const std::string& layerName);
+
+      void SetLayerNameFlare(const std::string& name);
+      const std::string& GetLayerNameFlare() const;
+
+      void SetLayerNameSparks(const std::string& name);
+      const std::string& GetLayerNameSparks() const;
+
+      osg::Vec4 GetCurrentColor(dtCore::ParticleSystem& ps) const;
+
+      virtual void OnLaunch();
 
       /*virtual*/ void OnEnteredWorld();
 
       /*virtual*/ void BuildPropertyMap();
+
+      /*virtual*/ void BuildActorComponents();
    
       /*virtual*/ void OnTickLocal(const dtGame::TickMessage& tickMessage);
 
    protected:
       virtual ~FireworkActor();
 
+      void StartDetonateTimer();
+
+      virtual void OnLaunch(dtCore::ParticleSystem& ps);
+      virtual void OnDetonate(dtCore::ParticleSystem& ps);
+      virtual void OnCleared(dtCore::ParticleSystem& ps);
+
+      void UpdateLight(dtCore::ParticleSystem& ps);
+      void ResetLight();
+      void FadeLight(float fadeTime);
+
       void ApplyColorsToParticleSystem();
       void ApplyColorsToParticleLayer(dtCore::ParticleLayer& layer);
 
+      float mSparkLifeTime;
+      float mSparkLifeTimeRemaining;
       float mDetonateTimeRemaining;
       float mDetonateTimeLimit;
       osg::Vec4 mColorBegin;
       osg::Vec4 mColorEnd;
+      std::string mLayerNameFlare;
+      std::string mLayerNameSparks;
    };
 
 }

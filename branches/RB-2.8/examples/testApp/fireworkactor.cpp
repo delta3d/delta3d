@@ -25,6 +25,7 @@
 // INCLUDE DIRECTIVES
 ////////////////////////////////////////////////////////////////////////////////
 #include "fireworkactor.h"
+#include "lightactorcomponent.h"
 #include <dtCore/colorrgbaactorproperty.h>
 #include <dtCore/floatactorproperty.h>
 #include <osgParticle/Particle>
@@ -38,9 +39,13 @@ namespace dtExample
    // CONSTANTS
    /////////////////////////////////////////////////////////////////////////////
    const float FireworkActor::DEFAULT_DETONATE_TIME_LIMIT = 10.0f;
+   const dtUtil::RefString FireworkActor::DEFAULT_LAYER_NAME_FLARE("Flare");
+   const dtUtil::RefString FireworkActor::DEFAULT_LAYER_NAME_SPARKS("Sparks");
 
    const dtUtil::RefString FireworkActor::PROPERTY_COLOR_BEGIN("ColorBegin");
    const dtUtil::RefString FireworkActor::PROPERTY_COLOR_END("ColorEnd");
+   const dtUtil::RefString FireworkActor::PROPERTY_LAYER_NAME_FLARE("Layer Name Flare");
+   const dtUtil::RefString FireworkActor::PROPERTY_LAYER_NAME_SPARKS("Layer Name Sparks");
    const dtUtil::RefString FireworkActor::PROPERTY_DETONATE_TIME_LIMIT("DetonateTimeLimit");
 
 
@@ -51,7 +56,11 @@ namespace dtExample
    FireworkActor::FireworkActor()
       : BaseClass()
       , mDetonateTimeRemaining(0.0f)
+      , mSparkLifeTime(0.0f)
+      , mSparkLifeTimeRemaining(0.0f)
       , mDetonateTimeLimit(DEFAULT_DETONATE_TIME_LIMIT)
+      , mLayerNameFlare(DEFAULT_LAYER_NAME_FLARE)
+      , mLayerNameSparks(DEFAULT_LAYER_NAME_SPARKS)
    {
       mColorBegin.set(1.0f, 1.0f, 1.0f, 1.0f);
       mColorEnd.set(1.0f, 1.0f, 1.0f, 1.0f);
@@ -115,9 +124,129 @@ namespace dtExample
    }
 
    /////////////////////////////////////////////////////////////////////////////
+   dtCore::ParticleLayer* FireworkActor::GetParticleLayer(
+      dtCore::ParticleSystem& ps, const std::string& layerName) const
+   {
+      dtCore::ParticleLayer* layer = NULL;
+
+      typedef dtCore::ParticleSystem::LayerList ParticleLayerList;
+
+      dtCore::ParticleLayer* curLayer = NULL;
+      ParticleLayerList& layers = ps.GetAllLayers();
+      ParticleLayerList::iterator curIter = layers.begin();
+      ParticleLayerList::iterator endIter = layers.end();
+      for ( ; curIter != endIter; ++curIter)
+      {
+         curLayer = &(*curIter);
+         if (curLayer->GetLayerName() == layerName)
+         {
+            layer = curLayer;
+            break;
+         }
+      }
+
+      return layer;
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   dtCore::ParticleLayer* FireworkActor::GetParticleLayer(const std::string& layerName)
+   {
+      dtCore::ParticleSystem* ps = NULL;
+      GetDrawable(ps);
+
+      return ps == NULL ? NULL : GetParticleLayer(*ps, layerName);
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void FireworkActor::SetLayerNameFlare(const std::string& name)
+   {
+      mLayerNameFlare = name;
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   const std::string& FireworkActor::GetLayerNameFlare() const
+   {
+      return mLayerNameFlare;
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void FireworkActor::SetLayerNameSparks(const std::string& name)
+   {
+      mLayerNameSparks = name;
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   const std::string& FireworkActor::GetLayerNameSparks() const
+   {
+      return mLayerNameSparks;
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   osg::Vec4 FireworkActor::GetCurrentColor(dtCore::ParticleSystem& ps) const
+   {
+      osg::Vec4 color;
+
+      bool flarePhase = mDetonateTimeRemaining > 0.0f;
+      const std::string* layerName = mDetonateTimeRemaining > 0.0f
+         ? &mLayerNameFlare : &mLayerNameSparks;
+
+      dtCore::ParticleLayer* layer = GetParticleLayer(ps, *layerName);
+
+      if (layer != NULL)
+      {
+         osgParticle::ParticleSystem& osgPS = layer->GetParticleSystem();
+         osgParticle::Particle& p = osgPS.getDefaultParticleTemplate();
+         
+         float timeRemaining = 0.0f;
+         float timeSpan = 0.0f;
+
+         if (flarePhase)
+         {
+            timeRemaining = mDetonateTimeRemaining;
+            timeSpan = mDetonateTimeLimit;
+         }
+         else // spark phase
+         {
+            timeRemaining = mSparkLifeTimeRemaining;
+            timeSpan = mSparkLifeTime;
+         }
+
+         float ratio = 0.0;
+         if (timeSpan != 0.0f)
+         {
+            ratio = timeRemaining / timeSpan;
+         }
+
+         osgParticle::rangev4 colorRange = p.getColorRange();
+         color = (colorRange.maximum - colorRange.minimum) * ratio + colorRange.minimum;
+      }
+
+      return color;
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void FireworkActor::OnLaunch()
+   {
+      dtCore::ParticleSystem* ps = NULL;
+      GetDrawable(ps);
+
+      if (ps == NULL)
+      {
+         LOG_ERROR("Could not launch firework \"" + GetName()
+            + "\" because its particle system could not be accessed.");
+      }
+      else
+      {
+         OnLaunch(*ps);
+      }
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
    void FireworkActor::StartDetonateTimer()
    {
       mDetonateTimeRemaining = mDetonateTimeLimit;
+
+      ResetLight();
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -130,13 +259,22 @@ namespace dtExample
       {
          typedef dtCore::ParticleSystem::LayerList ParticleLayerList;
 
+         dtCore::ParticleLayer* curLayer = NULL;
          ParticleLayerList& layers = ps->GetAllLayers();
          ParticleLayerList::iterator curIter = layers.begin();
          ParticleLayerList::iterator endIter = layers.end();
 
          for ( ; curIter != endIter; ++curIter)
          {
-            ApplyColorsToParticleLayer(*curIter);
+            curLayer = &(*curIter);
+
+            // Do not set color on the flare layer.
+            // Colors are intended for the sparks
+            // from the detonation.
+            if (curLayer->GetLayerName() != mLayerNameFlare)
+            {
+               ApplyColorsToParticleLayer(*curLayer);
+            }
          }
       }
    }
@@ -198,28 +336,59 @@ namespace dtExample
    {
       BaseClass::BuildPropertyMap();
 
-      static const dtUtil::RefString GROUP_("Firework");
+      using namespace dtCore;
+      using namespace dtUtil;
+
+      static const dtUtil::RefString GROUP("Firework");
 
       AddProperty(new dtCore::ColorRgbaActorProperty(
          PROPERTY_COLOR_BEGIN,
          PROPERTY_COLOR_BEGIN,
-         dtCore::ColorRgbaActorProperty::SetFuncType(this, &FireworkActor::SetColorBegin),
-         dtCore::ColorRgbaActorProperty::GetFuncType(this, &FireworkActor::GetColorBegin),
-         "Begin color of the firework particle system.", GROUP_));
+         ColorRgbaActorProperty::SetFuncType(this, &FireworkActor::SetColorBegin),
+         ColorRgbaActorProperty::GetFuncType(this, &FireworkActor::GetColorBegin),
+         RefString("Begin color of the firework particle system."),
+         GROUP));
 
       AddProperty(new dtCore::ColorRgbaActorProperty(
          PROPERTY_COLOR_END,
          PROPERTY_COLOR_END,
-         dtCore::ColorRgbaActorProperty::SetFuncType(this, &FireworkActor::SetColorEnd),
-         dtCore::ColorRgbaActorProperty::GetFuncType(this, &FireworkActor::GetColorEnd),
-         "End color of the firework particle system.", GROUP_));
+         ColorRgbaActorProperty::SetFuncType(this, &FireworkActor::SetColorEnd),
+         ColorRgbaActorProperty::GetFuncType(this, &FireworkActor::GetColorEnd),
+         RefString("End color of the firework particle system."),
+         GROUP));
 
       AddProperty(new dtCore::FloatActorProperty(
          PROPERTY_DETONATE_TIME_LIMIT,
          PROPERTY_DETONATE_TIME_LIMIT,
-         dtCore::FloatActorProperty::SetFuncType(this, &FireworkActor::SetDetonateTimeLimit),
-         dtCore::FloatActorProperty::GetFuncType(this, &FireworkActor::GetDetonateTimeLimit),
-         "Time in seconds until the firework will detonate.", GROUP_));
+         FloatActorProperty::SetFuncType(this, &FireworkActor::SetDetonateTimeLimit),
+         FloatActorProperty::GetFuncType(this, &FireworkActor::GetDetonateTimeLimit),
+         RefString("Time in seconds until the firework will detonate."),
+         GROUP));
+
+      AddProperty(new dtCore::StringActorProperty(
+         DEFAULT_LAYER_NAME_FLARE,
+         DEFAULT_LAYER_NAME_FLARE,
+         StringActorProperty::SetFuncType(this, &FireworkActor::SetLayerNameFlare),
+         StringActorProperty::GetFuncType(this, &FireworkActor::GetLayerNameFlare),
+         RefString("Name of the layer in the particle system that contains the flare effect."),
+         GROUP));
+
+      AddProperty(new dtCore::StringActorProperty(
+         DEFAULT_LAYER_NAME_SPARKS,
+         DEFAULT_LAYER_NAME_SPARKS,
+         StringActorProperty::SetFuncType(this, &FireworkActor::SetLayerNameSparks),
+         StringActorProperty::GetFuncType(this, &FireworkActor::GetLayerNameSparks),
+         RefString("Name of the layer in the particle system that contains the sparks effect."),
+         GROUP));
+   }
+
+   ////////////////////////////////////////////////
+   void FireworkActor::BuildActorComponents()
+   {
+      BaseClass::BuildActorComponents();
+
+      dtCore::RefPtr<LightActorComponent> comp = new LightActorComponent;
+      AddComponent(*comp);
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -229,6 +398,10 @@ namespace dtExample
 
       float timeDelta = tickMessage.GetDeltaSimTime();
 
+      dtCore::ParticleSystem* ps = NULL;
+      GetDrawable(ps);
+
+      // Update the detonate timer.
       if (mDetonateTimeRemaining > 0.0f)
       {
          mDetonateTimeRemaining -= timeDelta;
@@ -237,19 +410,146 @@ namespace dtExample
          {
             mDetonateTimeRemaining = 0.0f;
 
-            dtCore::ParticleSystem* ps = NULL;
-            GetDrawable(ps);
-            if (ps != NULL)
-            {
-               ps->SetEnabled(true);
-               ps->ResetTime();
-            }
-            else
+            if (ps == NULL)
             {
                LOG_WARNING("Firework actor \"" + GetName()
                   + "\" has no valid particle system.");
             }
+            else
+            {
+               OnDetonate(*ps);
+            }
          }
+      }
+
+      // Update the spark fade timer.
+      if (mSparkLifeTimeRemaining > 0.0f)
+      {
+         mSparkLifeTimeRemaining -= timeDelta;
+
+         if (mSparkLifeTimeRemaining <= 0.0f)
+         {
+            mSparkLifeTimeRemaining = 0.0f;
+
+            if (ps == NULL)
+            {
+               // Do nothing. Error reported at time of detonation.
+            }
+            else
+            {
+               OnCleared(*ps);
+            }
+         }
+      }
+
+      if (ps != NULL)
+      {
+         UpdateLight(*ps);
+      }
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void FireworkActor::OnLaunch(dtCore::ParticleSystem& ps)
+   {
+      ps.SetEnabled(true);
+      ps.ResetTime();
+
+      dtCore::ParticleLayer* flareLayer = GetParticleLayer(ps, mLayerNameFlare);
+      dtCore::ParticleLayer* sparkLayer = GetParticleLayer(ps, mLayerNameSparks);
+      
+      if (flareLayer != NULL)
+      {
+         flareLayer->GetModularEmitter().setEnabled(true);
+      }
+
+      if (sparkLayer != NULL)
+      {
+         sparkLayer->GetModularEmitter().setEnabled(false);
+      }
+
+      ResetLight();
+      
+      StartDetonateTimer();
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void FireworkActor::OnDetonate(dtCore::ParticleSystem& ps)
+   {
+      dtCore::ParticleLayer* flareLayer = GetParticleLayer(ps, mLayerNameFlare);
+      dtCore::ParticleLayer* sparkLayer = GetParticleLayer(ps, mLayerNameSparks);
+      
+      if (flareLayer != NULL)
+      {
+         flareLayer->GetModularEmitter().setEnabled(false);
+      }
+
+      if (sparkLayer != NULL)
+      {
+         sparkLayer->GetModularEmitter().setEnabled(true);
+         osgParticle::ParticleSystem& osgPS = sparkLayer->GetParticleSystem();
+         osgParticle::Particle& p = osgPS.getDefaultParticleTemplate();
+
+         mSparkLifeTime = p.getLifeTime();
+         mSparkLifeTimeRemaining = mSparkLifeTime;
+      }
+
+      FadeLight(mSparkLifeTime);
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void FireworkActor::OnCleared(dtCore::ParticleSystem& ps)
+   {
+      ps.SetEnabled(false);
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void FireworkActor::UpdateLight(dtCore::ParticleSystem& ps)
+   {
+      LightActorComponent* lac = NULL;
+      GetComponent(lac);
+
+      dtRender::DynamicLight* light = lac->GetLight();
+
+      // Help the light component get the light reference if the
+      // light reference is currently missing.
+      if (light == NULL)
+      {
+         light = lac->GetLightActorById(lac->GetLightActorId());
+         lac->SetLight(light);
+      }
+
+      if (light != NULL)
+      {
+         osg::Vec4 color = GetCurrentColor(ps);
+         osg::Vec3 color3(color.x(), color.y(), color.z());
+         light->SetLightColor(color3);
+      }
+   }
+   
+   /////////////////////////////////////////////////////////////////////////////
+   void FireworkActor::ResetLight()
+   {
+      LightActorComponent* lac = NULL;
+      GetComponent(lac);
+
+      dtRender::DynamicLight* light = lac->GetLight();
+      if (light != NULL)
+      {
+         light->SetFadeOut(false);
+      }
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void FireworkActor::FadeLight(float fadeTime)
+   {
+      LightActorComponent* lac = NULL;
+      GetComponent(lac);
+
+      dtRender::DynamicLight* light = lac->GetLight();
+      if (light != NULL)
+      {
+         light->SetFadeOut(true);
+         light->SetFadeOutTime(fadeTime);
       }
    }
 
