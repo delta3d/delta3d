@@ -19,26 +19,26 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
- *
- * This software was developed by Alion Science and Technology Corporation under
- * circumstances in which the U. S. Government may have rights in the software.
- *
  */
 
 ////////////////////////////////////////////////////////////////////////////////
 // INCLUDE DIRECTIVES
 ////////////////////////////////////////////////////////////////////////////////
 #include "testappactorregistry.h"
-#include "terrainactor.h"
-#include "civilianaiactorcomponent.h"
 #include "civilianactor.h"
+#include "civilianaiactorcomponent.h"
 #include "fireworkactor.h"
+#include "lightactorcomponent.h"
+#include "meshlampactor.h"
 #include "meshobjectactor.h"
+#include "terrainactor.h"
 #include <dtActors/engineactorregistry.h>
 #include <dtAnim/animactorregistry.h>
 #include <dtCore/shadermanager.h>
 
 using dtCore::RefPtr;
+
+
 
 namespace dtExample
 {
@@ -53,6 +53,8 @@ namespace dtExample
       new dtCore::ActorType("Firework", "dtExample", "This is an example timed particle system effect."));
    RefPtr<dtCore::ActorType> TestAppActorRegistry::MESH_OBJECT_ACTOR_TYPE(
       new dtCore::ActorType("Mesh Object", "dtExample", "Mesh object with automated physics.", dtActors::EngineActorRegistry::GAME_MESH_ACTOR_TYPE));
+   RefPtr<dtCore::ActorType> TestAppActorRegistry::MESH_LAMP_ACTOR_TYPE(
+      new dtCore::ActorType("Mesh Lamp", "dtExample", "Mesh object with automated physics AND light properties.", TestAppActorRegistry::MESH_OBJECT_ACTOR_TYPE));
   
 
 
@@ -89,7 +91,9 @@ namespace dtExample
       mActorFactory->RegisterType<CivilianActor>(CIVILIAN_ACTOR_TYPE.get());
       mActorFactory->RegisterType<FireworkActor>(FIREWORK_ACTOR_TYPE.get());
       mActorFactory->RegisterType<MeshObjectActor>(MESH_OBJECT_ACTOR_TYPE.get());
+      mActorFactory->RegisterType<MeshLampActor>(MESH_LAMP_ACTOR_TYPE.get());
 
       mActorFactory->RegisterType<CivilianAIActorComponent>(CivilianAIActorComponent::TYPE.get());
+      mActorFactory->RegisterType<LightActorComponent>(LightActorComponent::TYPE.get());
    }
 }

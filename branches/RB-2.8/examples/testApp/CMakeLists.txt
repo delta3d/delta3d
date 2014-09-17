@@ -6,6 +6,8 @@ SET(TARGET_SRC testapp.cpp
                guilistitem.cpp
                guiscreen.cpp
                inputcomponent.cpp
+               lightactorcomponent.cpp
+               meshlampactor.cpp
                meshobjectactor.cpp
                terrainactor.cpp
                testappactorregistry.cpp
@@ -34,6 +36,8 @@ SET(TARGET_H civilianactor.h
              guilistitem.h
              guiscreen.h
              inputcomponent.h
+             lightactorcomponent.h
+             meshlampactor.h
              meshobjectactor.h
              terrainactor.h
              testappactorregistry.h
