@@ -976,5 +976,31 @@ namespace dtExample
       }
    }
 
+   void InputComponent::SetSeaState(dtActors::WaterGridActor::SeaState& seaState)
+   {
+      dtActors::WaterGridActorProxy* waterActor =NULL;
+      GetGameManager()->FindActorByType(*dtActors::EngineActorRegistry::WATER_GRID_ACTOR_TYPE, waterActor);
+      if(waterActor != NULL)
+      {
+         dtActors::WaterGridActor* water = NULL;
+         waterActor->GetDrawable(water);
+
+         water->SetSeaState(seaState);
+      }
+   }
+
+   void InputComponent::SetWaterChoppiness(dtActors::WaterGridActor::ChoppinessSettings& chop)
+   {
+      dtActors::WaterGridActorProxy* waterActor =NULL;
+      GetGameManager()->FindActorByType(*dtActors::EngineActorRegistry::WATER_GRID_ACTOR_TYPE, waterActor);
+      if(waterActor != NULL)
+      {
+         dtActors::WaterGridActor* water = NULL;
+         waterActor->GetDrawable(water);
+
+         water->SetChoppiness(chop);
+      }
+   }
+
 
 } // END - namespace dtExample
