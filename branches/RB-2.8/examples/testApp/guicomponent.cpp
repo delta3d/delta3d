@@ -377,9 +377,8 @@ namespace dtExample
                continue;
             }
 
-            CEGUI::String itemName("Item_");
+            CEGUI::String itemName(curActor->GetId().ToString().c_str());
             CEGUI::String actorName(curActor->GetName().c_str());
-            itemName += actorName;
             CEGUI::Window* item = wm->createWindow("WindowsLook/StaticText", itemName);
 
             item->setText(actorName);
@@ -561,14 +560,14 @@ namespace dtExample
       if (item != NULL)
       {
          GuiNode* content = NULL;
-         std::string actorName = item->getText().c_str();
+         dtCore::UniqueId actorID(item->getName().c_str());
 
          // DEBUG:
-         printf("\n\tClicked item: %s\n\n", actorName.c_str());
+         printf("\n\tClicked item: %s\n\n", actorID.ToString().c_str());
 
-         if ( ! actorName.empty())
+         if ( ! actorID.ToString().empty())
          {
-            SendRequestAttachMessage(actorName);
+            SendRequestAttachMessage(actorID);
          }
       }
 
@@ -671,7 +670,7 @@ namespace dtExample
    }
 
    ////////////////////////////////////////////////////////////////////////
-   void GuiComponent::SendRequestAttachMessage(const std::string& actorName)
+   void GuiComponent::SendRequestAttachMessage(const dtCore::UniqueId& actorId)
    {
       dtGame::GameManager* gm = GetGameManager();
       dtGame::MessageFactory& factory = gm->GetMessageFactory();
@@ -679,7 +678,7 @@ namespace dtExample
       dtCore::RefPtr<dtExample::RequestAttachMessage> message;
       factory.CreateMessage(dtExample::TestAppMessageType::REQUEST_ATTACH, message);
       
-      message->SetActorName(actorName);
+      message->SetActorId(actorId);
 
       gm->SendMessage(*message);
    }

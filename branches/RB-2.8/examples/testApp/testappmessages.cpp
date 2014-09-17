@@ -62,7 +62,7 @@ namespace dtExample
    /////////////////////////////////////////////////////////////////////////////
    DT_IMPLEMENT_MESSAGE_BEGIN(RequestAttachMessage)
 
-      DT_ADD_PARAMETER(std::string, ActorName)
+      DT_ADD_PARAMETER(dtCore::UniqueId, ActorId)
 
    DT_IMPLEMENT_MESSAGE_END()
 
