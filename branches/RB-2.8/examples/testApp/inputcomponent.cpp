@@ -692,7 +692,7 @@ namespace dtExample
 
          charController->Warp(xform.GetTranslation());
          dtCore::RefPtr<dtPhysics::CharacterMotionModel> wmm
-            = new dtPhysics::CharacterMotionModel(keyboard, mouse, charController, 6.5, 1.5, 0.75, 0.25, true, true);
+            = new dtPhysics::CharacterMotionModel(keyboard, mouse, charController, 6.5, 1.5, 0.75, 0.9f, 0.3f, true, true);
          wmm->SetScene(scene);
          wmm->SetUseMouseButtons(true);
 
