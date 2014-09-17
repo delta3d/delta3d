@@ -40,7 +40,7 @@
 #include <dtCore/transformable.h>
 #include <dtCore/transformableactorproxy.h>
 #include <dtGame/defaultgroundclamper.h>
-
+#include <dtActors/watergridactor.h>
 
 namespace dtInspectorQt { class InspectorQt; }
 
@@ -118,6 +118,9 @@ namespace dtExample
          void SetLampIntensity(float intensity);
          
          void DoGroundClamping(float simTime);
+
+         void SetSeaState(dtActors::WaterGridActor::SeaState&);
+         void SetWaterChoppiness(dtActors::WaterGridActor::ChoppinessSettings&);
 
       private:
          float mTimeOffset;
