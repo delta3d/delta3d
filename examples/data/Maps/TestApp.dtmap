@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <map xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="delta3dMap" xsi:schemaLocation="delta3dMap map.xsd">
     <header>
         <name>TestApp</name>
@@ -7,7 +8,7 @@
         <comment></comment>
         <copyright></copyright>
         <createTimestamp>2014-07-15T22:49:46-05:00</createTimestamp>
-        <lastUpdateTimestamp>2014-09-16T13:05:12-05:00</lastUpdateTimestamp>
+        <lastUpdateTimestamp>2014-09-16T16:54:16-05:00</lastUpdateTimestamp>
         <editorVersion>2.8.0</editorVersion>
         <schemaVersion>1.0</schemaVersion>
     </header>
@@ -1121,9 +1122,9 @@
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-587.999023</value1>
-                    <value2>-105.131920</value2>
-                    <value3>1.142152</value3>
+                    <value1>-587.998840</value1>
+                    <value2>-105.131310</value2>
+                    <value3>1.161647</value3>
                 </vec3>
             </property>
             <property>
@@ -1162,9 +1163,9 @@
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-736.462219</value1>
-                    <value2>-182.475067</value2>
-                    <value3>1.707517</value3>
+                    <value1>-736.461609</value1>
+                    <value2>-182.473221</value2>
+                    <value3>1.599291</value3>
                 </vec3>
             </property>
             <property>
@@ -1299,7 +1300,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254890</value3>
+                    <value3>-87.254868</value3>
                 </vec3>
             </property>
             <property>
@@ -1710,7 +1711,7 @@
                 <vec3>
                     <value1>-586.385132</value1>
                     <value2>-100.712402</value2>
-                    <value3>1.511757</value3>
+                    <value3>1.203373</value3>
                 </vec3>
             </property>
             <property>
@@ -2084,7 +2085,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254890</value3>
+                    <value3>-87.254868</value3>
                 </vec3>
             </property>
             <property>
@@ -2259,6 +2260,10 @@
                 <resourceType>SkeletalMeshes</resourceType>
                 <resourceDisplayName>SkeletalMeshes:YoungMan:YoungMan_Jogger.dtchar</resourceDisplayName>
                 <resource>SkeletalMeshes:YoungMan:YoungMan_Jogger.dtchar</resource>
+            </property>
+            <property>
+                <name>AnimationWalkSpeed</name>
+                <float>0.64999998</float>
             </property>
         </actor>
         <actor>
@@ -2503,9 +2508,9 @@
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-743.035583</value1>
-                    <value2>-174.939117</value2>
-                    <value3>1.892205</value3>
+                    <value1>-743.034912</value1>
+                    <value2>-174.937164</value2>
+                    <value3>1.777729</value3>
                 </vec3>
             </property>
             <property>
@@ -4307,7 +4312,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>100.938812</value3>
+                    <value3>100.938820</value3>
                 </vec3>
             </property>
             <property>
@@ -4505,9 +4510,9 @@
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-739.748901</value1>
-                    <value2>-178.707092</value2>
-                    <value3>1.785201</value3>
+                    <value1>-739.748047</value1>
+                    <value2>-178.704651</value2>
+                    <value3>1.642140</value3>
                 </vec3>
             </property>
             <property>
@@ -4787,9 +4792,9 @@
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-721.192871</value1>
-                    <value2>-256.187378</value2>
-                    <value3>1.560489</value3>
+                    <value1>-721.192017</value1>
+                    <value2>-256.184845</value2>
+                    <value3>1.413118</value3>
                 </vec3>
             </property>
             <property>
@@ -5202,9 +5207,9 @@
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-600.633606</value1>
-                    <value2>-163.233795</value2>
-                    <value3>1.105282</value3>
+                    <value1>-600.633057</value1>
+                    <value2>-163.232239</value2>
+                    <value3>1.014651</value3>
                 </vec3>
             </property>
             <property>
@@ -5252,9 +5257,9 @@
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-597.626648</value1>
-                    <value2>-181.687500</value2>
-                    <value3>1.163868</value3>
+                    <value1>-597.625977</value1>
+                    <value2>-181.685608</value2>
+                    <value3>1.052948</value3>
                 </vec3>
             </property>
             <property>
@@ -5287,14 +5292,14 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>-0.000000</value2>
-                    <value3>-87.240875</value3>
+                    <value3>-90.250702</value3>
                 </vec3>
             </property>
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>848.596069</value1>
-                    <value2>-380.473083</value2>
+                    <value1>-1585.528564</value1>
+                    <value2>-438.931793</value2>
                     <value3>75.000000</value3>
                 </vec3>
             </property>
@@ -5647,9 +5652,9 @@
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-787.251892</value1>
-                    <value2>-166.763733</value2>
-                    <value3>1.596275</value3>
+                    <value1>-787.250793</value1>
+                    <value2>-166.760498</value2>
+                    <value3>1.406834</value3>
                 </vec3>
             </property>
             <property>
@@ -6156,7 +6161,7 @@
                 <vec3>
                     <value1>-570.489807</value1>
                     <value2>-91.345909</value2>
-                    <value3>1.048228</value3>
+                    <value3>1.048252</value3>
                 </vec3>
             </property>
             <property>
@@ -7449,9 +7454,9 @@
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-599.975098</value1>
-                    <value2>-158.869980</value2>
-                    <value3>1.112345</value3>
+                    <value1>-599.974426</value1>
+                    <value2>-158.868088</value2>
+                    <value3>1.001409</value3>
                 </vec3>
             </property>
             <property>
@@ -7634,9 +7639,9 @@
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-777.687439</value1>
-                    <value2>-162.211441</value2>
-                    <value3>1.731200</value3>
+                    <value1>-777.686279</value1>
+                    <value2>-162.208084</value2>
+                    <value3>1.534326</value3>
                 </vec3>
             </property>
             <property>
@@ -9104,9 +9109,9 @@
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-720.394531</value1>
-                    <value2>-220.655777</value2>
-                    <value3>2.097942</value3>
+                    <value1>-720.393616</value1>
+                    <value2>-220.653152</value2>
+                    <value3>1.944632</value3>
                 </vec3>
             </property>
             <property>
@@ -9653,7 +9658,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-152.155701</value3>
+                    <value3>-152.155685</value3>
                 </vec3>
             </property>
             <property>
@@ -10128,9 +10133,9 @@
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-595.569763</value1>
-                    <value2>-185.073242</value2>
-                    <value3>1.058095</value3>
+                    <value1>-595.568909</value1>
+                    <value2>-185.070694</value2>
+                    <value3>0.909474</value3>
                 </vec3>
             </property>
             <property>
@@ -10739,6 +10744,63 @@
             </property>
         </actor>
         <actor>
+            <type>dtExample.Mesh Object</type>
+            <id>b7e2738d-0e03-4774-ad64-5d3c045f8b7f</id>
+            <name>walkway_89</name>
+            <property>
+                <name>ShaderGroup</name>
+                <string>MultiMap</string>
+            </property>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>101.998764</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-719.712769</value1>
+                    <value2>-244.332214</value2>
+                    <value3>1.414079</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:walkways:wood_walkway:WoodWalkway_Ramp.osg</resourceDisplayName>
+                <resource>StaticMeshes:walkways:wood_walkway:WoodWalkway_Ramp.osg</resource>
+            </property>
+            <property>
+                <name>Scale</name>
+                <vec3>
+                    <value1>2.000000</value1>
+                    <value2>2.000000</value2>
+                    <value3>2.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Main: Primitive Type</name>
+                <enumerated>Triangle Mesh</enumerated>
+            </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:walkways:wood_walkway:WoodWalkway_Ramp.osg</resourceDisplayName>
+                <resource>StaticMeshes:walkways:wood_walkway:WoodWalkway_Ramp.osg</resource>
+            </property>
+            <property>
+                <name>Main: PhysicsMeshScale</name>
+                <vec3>
+                    <value1>2.000000</value1>
+                    <value2>2.000000</value2>
+                    <value3>2.000000</value3>
+                </vec3>
+            </property>
+        </actor>
+        <actor>
             <type>dtcore.Curve.Bezier Node</type>
             <id>b844ff0a-3072-4da1-ae49-c42e18d34566</id>
             <name>Camera_A_BezierNode_05</name>
@@ -11038,9 +11100,9 @@
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-814.075500</value1>
-                    <value2>-62.869102</value2>
-                    <value3>3.702214</value3>
+                    <value1>-814.075012</value1>
+                    <value2>-62.867718</value2>
+                    <value3>3.621097</value3>
                 </vec3>
             </property>
             <property>
@@ -12414,9 +12476,9 @@
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-585.641602</value1>
-                    <value2>-98.350327</value2>
-                    <value3>1.550092</value3>
+                    <value1>-585.638794</value1>
+                    <value2>-98.342018</value2>
+                    <value3>1.064959</value3>
                 </vec3>
             </property>
             <property>
@@ -12449,7 +12511,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254890</value3>
+                    <value3>-87.254868</value3>
                 </vec3>
             </property>
             <property>
@@ -13221,9 +13283,9 @@
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-719.954956</value1>
-                    <value2>-266.757751</value2>
-                    <value3>1.688271</value3>
+                    <value1>-719.954163</value1>
+                    <value2>-266.755371</value2>
+                    <value3>1.548536</value3>
                 </vec3>
             </property>
             <property>
@@ -13770,7 +13832,7 @@
                 <vec3>
                     <value1>-585.838806</value1>
                     <value2>-98.256332</value2>
-                    <value3>1.531458</value3>
+                    <value3>0.901801</value3>
                 </vec3>
             </property>
             <property>
@@ -14427,7 +14489,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-101.528214</value3>
+                    <value3>-101.528183</value3>
                 </vec3>
             </property>
             <property>
@@ -14593,6 +14655,63 @@
             </property>
         </actor>
         <actor>
+            <type>dtExample.Mesh Object</type>
+            <id>ee75e33a-09b6-4a3f-8b87-deb567889d95</id>
+            <name>walkway_90</name>
+            <property>
+                <name>ShaderGroup</name>
+                <string>MultiMap</string>
+            </property>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>135.183228</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-752.855896</value1>
+                    <value2>-144.264374</value2>
+                    <value3>3.065857</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:walkways:wood_walkway:WoodWalkway_Ramp.osg</resourceDisplayName>
+                <resource>StaticMeshes:walkways:wood_walkway:WoodWalkway_Ramp.osg</resource>
+            </property>
+            <property>
+                <name>Scale</name>
+                <vec3>
+                    <value1>2.000000</value1>
+                    <value2>2.000000</value2>
+                    <value3>2.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Main: Primitive Type</name>
+                <enumerated>Triangle Mesh</enumerated>
+            </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:walkways:wood_walkway:WoodWalkway_Ramp.osg</resourceDisplayName>
+                <resource>StaticMeshes:walkways:wood_walkway:WoodWalkway_Ramp.osg</resource>
+            </property>
+            <property>
+                <name>Main: PhysicsMeshScale</name>
+                <vec3>
+                    <value1>2.000000</value1>
+                    <value2>2.000000</value2>
+                    <value3>2.000000</value3>
+                </vec3>
+            </property>
+        </actor>
+        <actor>
             <type>dtcore.Action.Bezier Controller</type>
             <id>ee7aeb0e-d960-4904-ac60-9447592bd650</id>
             <name>planecontroller</name>
@@ -14727,9 +14846,9 @@
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-600.671143</value1>
-                    <value2>-153.918671</value2>
-                    <value3>1.220144</value3>
+                    <value1>-600.670593</value1>
+                    <value2>-153.916977</value2>
+                    <value3>1.120809</value3>
                 </vec3>
             </property>
             <property>
@@ -14987,6 +15106,63 @@
                 <resourceType>StaticMeshes</resourceType>
                 <resourceDisplayName>StaticMeshes:walkways:wood_walkway:WoodWalkway.osg</resourceDisplayName>
                 <resource>StaticMeshes:walkways:wood_walkway:WoodWalkway.osg</resource>
+            </property>
+            <property>
+                <name>Main: PhysicsMeshScale</name>
+                <vec3>
+                    <value1>2.000000</value1>
+                    <value2>2.000000</value2>
+                    <value3>2.000000</value3>
+                </vec3>
+            </property>
+        </actor>
+        <actor>
+            <type>dtExample.Mesh Object</type>
+            <id>f6e49fcb-9cd9-47b1-b8b6-943d9a7f43d3</id>
+            <name>walkway_91</name>
+            <property>
+                <name>ShaderGroup</name>
+                <string>MultiMap</string>
+            </property>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>94.027435</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-792.047668</value1>
+                    <value2>-52.949287</value2>
+                    <value3>3.083138</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:walkways:wood_walkway:WoodWalkway_Ramp.osg</resourceDisplayName>
+                <resource>StaticMeshes:walkways:wood_walkway:WoodWalkway_Ramp.osg</resource>
+            </property>
+            <property>
+                <name>Scale</name>
+                <vec3>
+                    <value1>2.000000</value1>
+                    <value2>2.000000</value2>
+                    <value3>2.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Main: Primitive Type</name>
+                <enumerated>Triangle Mesh</enumerated>
+            </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:walkways:wood_walkway:WoodWalkway_Ramp.osg</resourceDisplayName>
+                <resource>StaticMeshes:walkways:wood_walkway:WoodWalkway_Ramp.osg</resource>
             </property>
             <property>
                 <name>Main: PhysicsMeshScale</name>
@@ -15353,7 +15529,7 @@
                 <vec3>
                     <value1>-568.324707</value1>
                     <value2>-90.401840</value2>
-                    <value3>1.069884</value3>
+                    <value3>1.069901</value3>
                 </vec3>
             </property>
             <property>
