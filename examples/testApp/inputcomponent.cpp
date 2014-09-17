@@ -29,6 +29,8 @@
 // INCLUDE DIRECTIVES
 ////////////////////////////////////////////////////////////////////////////////
 #include "inputcomponent.h"
+#include "lightactorcomponent.h"
+#include "meshlampactor.h"
 #include "testappmessages.h"
 #include "testappmessagetypes.h"
 
@@ -90,6 +92,7 @@ namespace dtExample
    InputComponent::InputComponent()
       : BaseClass(DEFAULT_NAME)
       , mTimeOffset(0.0f)
+      , mLampIntensity(1.0f)
       , mClampCameraEnabled(false)
       , mMotionModelsEnabled(false)
       , mMotionModelSpeed(5.0f)
@@ -195,6 +198,17 @@ namespace dtExample
                return true;
             }
    #endif
+
+            case 'n':
+            {
+               SetLampIntensity(mLampIntensity - 0.1f);
+            }
+            break;
+            case 'm':
+            {
+               SetLampIntensity(mLampIntensity + 0.1f);
+            }
+            break;
 
             default:
             {
@@ -912,6 +926,38 @@ namespace dtExample
       if ( ! success)
       {
          LOG_ERROR("Cannot cast motion model to type: " + motionModelType.GetName());
+      }
+   }
+
+   void InputComponent::SetLampIntensity(float intensity)
+   {
+      if (intensity > 1.0f)
+         intensity = 1.0f;
+      if (intensity < 0.0f)
+         intensity = 0.0f;
+
+      mLampIntensity = intensity;
+
+      typedef std::vector<dtCore::BaseActorObject*> ActorList;
+      ActorList actors;
+
+      dtGame::GameManager* gm = GetGameManager();
+      gm->GetAllActors(actors);
+
+      dtExample::MeshLampActor* curLamp = NULL;
+      ActorList::iterator curIter = actors.begin();
+      ActorList::iterator endIter = actors.end();
+      for ( ; curIter != endIter; ++curIter)
+      {
+         curLamp = dynamic_cast<dtExample::MeshLampActor*>(*curIter);
+
+         if (curLamp != NULL)
+         {
+            LightActorComponent* lac = NULL;
+            curLamp->GetComponent(lac);
+
+            lac->SetLightIntensity(intensity);
+         }
       }
    }
 

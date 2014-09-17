@@ -114,11 +114,14 @@ namespace dtExample
          void SetMotionModelSpeed(
             const dtExample::MotionModelType& motionModelType,
             dtCore::MotionModel& motionModel, float speed);
+
+         void SetLampIntensity(float intensity);
          
          void DoGroundClamping(float simTime);
 
       private:
          float mTimeOffset;
+         float mLampIntensity;
 
          bool mClampCameraEnabled;
       
