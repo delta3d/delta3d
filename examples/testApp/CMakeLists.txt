@@ -18,6 +18,7 @@ SET(TARGET_SRC testapp.cpp
                Nodes/CivilianAvatar.cpp
                Nodes/DirectorNodePluginRegistry.cpp
                Nodes/GroupNode.cpp
+               Nodes/LookAt.cpp
                Nodes/MoveToDestination.cpp
                Nodes/SelectDestination.cpp
                Nodes/SelectTarget.cpp
@@ -45,6 +46,7 @@ SET(TARGET_H civilianactor.h
              Nodes/CivilianAvatar.h
              Nodes/DirectorNodePluginRegistry.h
              Nodes/GroupNode.h
+             Nodes/LookAt.h
              Nodes/MoveToDestination.h
              Nodes/SelectDestination.h
              Nodes/SelectTarget.h

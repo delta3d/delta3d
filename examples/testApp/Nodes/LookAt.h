@@ -21,36 +21,23 @@
  * THE SOFTWARE.
  */
 
-#ifndef NODEREGISTRY_H_
-#define NODEREGISTRY_H_
+#ifndef LOOKAT_H_
+#define LOOKAT_H_
 
-#include "../export.h"
-#include <dtDirector/nodepluginregistry.h>
+#include "StateNode.h"
 
 namespace dtExample
 {
-   class TEST_APP_EXPORT DirectorNodePluginRegistry: public dtDirector::NodePluginRegistry
+
+   class LookAt: public StateNode
    {
    public:
+      LookAt();
 
-      static dtCore::RefPtr<dtDirector::NodeType> SELECT_DESTINATION_NODE_TYPE;
-      static dtCore::RefPtr<dtDirector::NodeType> MOVE_TO_DESTINATION_NODE_TYPE;
-      static dtCore::RefPtr<dtDirector::NodeType> SELECT_TARGET_NODE_TYPE;
-      static dtCore::RefPtr<dtDirector::NodeType> TURN_TO_FACE_DIRECTION_NODE_TYPE;
-      static dtCore::RefPtr<dtDirector::NodeType> LOOK_AT_NODE_TYPE;
-      static dtCore::RefPtr<dtDirector::NodeType> CHANGE_STANCE_NODE_TYPE;
-
-      static dtCore::RefPtr<dtDirector::NodeType> CIVILIAN_AVATAR_NODE_TYPE;
-      static dtCore::RefPtr<dtDirector::NodeType> MARINE_AVATAR_NODE_TYPE;
-      static dtCore::RefPtr<dtDirector::NodeType> APPLICATION_NODE_TYPE;
-
-      DirectorNodePluginRegistry();
-      virtual ~DirectorNodePluginRegistry();
-
-      virtual std::string GetNodeLibraryType() const;
-
-      virtual void RegisterNodeTypes();
-
+   protected:
+      virtual ~LookAt();
    };
-}
-#endif /* NODEREGISTRY_H_ */
+
+} /* namespace dtExample */
+
+#endif /* LOOKAT_H_ */
