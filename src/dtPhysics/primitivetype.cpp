@@ -27,6 +27,7 @@ namespace dtPhysics
    PrimitiveType PrimitiveType::BOX("Box", false, true);
    PrimitiveType PrimitiveType::SPHERE("Sphere", false, true);
    PrimitiveType PrimitiveType::CYLINDER("Cylinder", false, true);
+   PrimitiveType PrimitiveType::CAPSULE("Capsule", false, true);
    PrimitiveType PrimitiveType::CONVEX_HULL("Convex Hull", false, false);
    PrimitiveType PrimitiveType::HEIGHTFIELD("Heightfield", true, false);
    PrimitiveType PrimitiveType::TRIANGLE_MESH("Triangle Mesh", false, false);

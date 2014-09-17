@@ -89,6 +89,8 @@ namespace dtPhysics
 
       static dtCore::RefPtr<Geometry> CreateCapsuleGeometry(const TransformType& worldxform, Real height, Real radius, Real Mass);
 
+      static dtCore::RefPtr<Geometry> CreateCylinderGeometry(const TransformType& worldxform, Real height, Real radius, Real Mass);
+
       static dtCore::RefPtr<Geometry> CreateConvexGeometry(const TransformType& worldxform, VertexData& data, Real mass, bool assumePolytope = false);
 
       static dtCore::RefPtr<Geometry> CreateConcaveGeometry(const TransformType& worldxform, VertexData& data, Real mass);
