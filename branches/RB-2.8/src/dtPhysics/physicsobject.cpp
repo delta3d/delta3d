@@ -143,6 +143,10 @@ namespace dtPhysics
          }
          else if(PrimitiveType::CYLINDER == primType)
          {
+            geom = Geometry::CreateCylinderGeometry(geomWorldTransform, dimensions[0], dimensions[1], mass);
+         }
+         else if(PrimitiveType::CAPSULE == primType)
+         {
             geom = Geometry::CreateCapsuleGeometry(geomWorldTransform, dimensions[0], dimensions[1], mass);
          }
 
@@ -1441,6 +1445,24 @@ namespace dtPhysics
          // Taking the radius of the box always gives a radius that is very large.
          // This may not completely encompass the object, but the thought it that if
          // one is using a cylinder, the object probably fits pretty well in it, so this
+         // code makes that assumption.
+         float largestAxis = dtUtil::Max(radiusX, radiusY);
+
+         float height = bb.zMax() - bb.zMin();
+
+         extents[0] = height;
+         extents[1] = largestAxis;
+         extents[2] = 0.0f;
+         center = bb.center();
+      }
+      else if (type == PrimitiveType::CAPSULE)
+      {
+         float radiusX = (bb.xMax() - bb.xMin()) / 2.0f;
+         float radiusY = (bb.yMax() - bb.yMin()) / 2.0f;
+
+         // Taking the radius of the box always gives a radius that is very large.
+         // This may not completely encompass the object, but the thought it that if
+         // one is using a capsule, the object probably fits pretty well in it, so this
          // code makes that assumption.
          float largestAxis = dtUtil::Max(radiusX, radiusY);
 

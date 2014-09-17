@@ -35,6 +35,7 @@ namespace dtPhysics
       static PrimitiveType BOX;
       static PrimitiveType SPHERE;
       static PrimitiveType CYLINDER;
+      static PrimitiveType CAPSULE;
       static PrimitiveType HEIGHTFIELD; // Not yet supported
       static PrimitiveType CONVEX_HULL;
       static PrimitiveType TRIANGLE_MESH;

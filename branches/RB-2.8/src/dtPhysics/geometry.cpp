@@ -282,7 +282,7 @@ namespace dtPhysics
    dtCore::RefPtr<Geometry> Geometry::CreateCapsuleGeometry(const TransformType& worldxform,
             Real height, Real radius, Real mass)
    {
-      dtCore::RefPtr<Geometry> geometry = new Geometry(PrimitiveType::CYLINDER);
+      dtCore::RefPtr<Geometry> geometry = new Geometry(PrimitiveType::CAPSULE);
 
       palCapsuleGeometry* capGeom = palFactory::GetInstance()->CreateCapsuleGeometry();
 
@@ -295,6 +295,26 @@ namespace dtPhysics
 
       //init the geom
       capGeom->Init(palMat, radius, height, mass);
+      return geometry;
+   }
+
+   /////////////////////////////////////
+   dtCore::RefPtr<Geometry> Geometry::CreateCylinderGeometry(const TransformType& worldxform,
+            Real height, Real radius, Real mass)
+   {
+      dtCore::RefPtr<Geometry> geometry = new Geometry(PrimitiveType::CYLINDER);
+
+      palCylinderGeometry* cyGeom = palFactory::GetInstance()->CreateCylinderGeometry();
+
+      geometry->mImpl->mGeom = cyGeom;
+
+      MatrixType osgMat;
+      worldxform.Get(osgMat);
+      palMatrix4x4 palMat;
+      TransformToPalMatrix(palMat, osgMat);
+
+      //init the geom
+      cyGeom->Init(palMat, radius, height, mass);
       return geometry;
    }
 

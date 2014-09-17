@@ -430,6 +430,12 @@ namespace dtPhysics
          CPPUNIT_ASSERT_EQUAL(offsetCenter, center);
          CPPUNIT_ASSERT_EQUAL(VectorType(1.0f, 0.5f, 0.0f), extents);
 
+         bb.reset();
+         const_cast<osg::Node&>(*xformable->GetOSGNode()).accept(bb);
+         PhysicsObject::CalculateOriginAndExtentsForNode(PrimitiveType::CAPSULE, bb.getBoundingBox(), center, extents);
+         CPPUNIT_ASSERT_EQUAL(offsetCenter, center);
+         CPPUNIT_ASSERT_EQUAL(VectorType(1.0f, 0.5f, 0.0f), extents);
+
          VectorType zeroVec(0.0f, 0.0f, 0.0f);
          PhysicsObject::CalculateOriginAndExtentsForNode(PrimitiveType::CONVEX_HULL, bb.getBoundingBox(), center, extents);
          CPPUNIT_ASSERT_EQUAL(zeroVec, center);
@@ -864,6 +870,7 @@ namespace dtPhysics
          testPhysicsObjectWithOffsetAndShape(PrimitiveType::BOX);
          testPhysicsObjectWithOffsetAndShape(PrimitiveType::SPHERE);
          testPhysicsObjectWithOffsetAndShape(PrimitiveType::CYLINDER);
+         testPhysicsObjectWithOffsetAndShape(PrimitiveType::CAPSULE);
          testPhysicsObjectWithOffsetAndShape(PrimitiveType::CONVEX_HULL);
          testPhysicsObjectWithOffsetAndShape(PrimitiveType::TRIANGLE_MESH);
       }
