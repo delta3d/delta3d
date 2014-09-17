@@ -87,11 +87,15 @@ namespace dtExample
          virtual ~InputComponent();
 
          dtCore::TransformableActorProxy* GetActorByName(const std::string& name);
+         dtCore::TransformableActorProxy* GetActorById(const dtCore::UniqueId& id);
          dtCore::Transformable* GetDrawableByName(const std::string& name);
+         dtCore::Transformable* GetDrawableById(const dtCore::UniqueId& id);
 
          void SetCameraToPlayerStart();
 
-         bool SetCameraPivot(const std::string& actorName);
+         bool SetCameraPivotByName(const std::string& actorName);
+         bool SetCameraPivotById(const dtCore::UniqueId& id);
+         bool SetCameraPivot(dtCore::Transformable* drawable);
 
          void SendTransitionMessage(const dtExample::Transition& transition);
          
@@ -139,7 +143,7 @@ namespace dtExample
          dtInspectorQt::InspectorQt* mInspector;
 #endif
 
-         std::string mAttachActorName;
+         dtCore::UniqueId mAttachActorId;
 
    };
 

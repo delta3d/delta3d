@@ -61,7 +61,7 @@ namespace dtExample
    /////////////////////////////////////////////////////////////////////////////
    DT_DECLARE_MESSAGE_BEGIN(RequestAttachMessage, dtGame::Message, TEST_APP_EXPORT)
 
-      DECLARE_PARAMETER_INLINE(std::string, ActorName)
+      DECLARE_PARAMETER_INLINE(dtCore::UniqueId, ActorId)
 
    DT_DECLARE_MESSAGE_END()
 

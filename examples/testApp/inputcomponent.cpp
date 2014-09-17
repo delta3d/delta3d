@@ -101,7 +101,6 @@ namespace dtExample
       , mGroundClampedXformable(NULL)
       , mGroundClampedObject(NULL)
       , mGroundClamper(NULL)
-      , mAttachActorName(DEFAULT_ATTACH_ACTOR_NAME)
    {
       int argc = 0;
       mInspector = new dtInspectorQt::InspectorQt(argc, NULL);
@@ -344,10 +343,10 @@ namespace dtExample
          const dtExample::RequestAttachMessage& ram
             = static_cast<const dtExample::RequestAttachMessage&>(message);
 
-         mAttachActorName = ram.GetActorName();
+         mAttachActorId = ram.GetActorId();
 
          // Attch to the actor if the name is valid.
-         if ( ! mAttachActorName.empty())
+         if ( ! mAttachActorId.ToString().empty())
          {
             // Determine if the current motion model is proper.
             if (mMotionModelMode != &MotionModelType::ORBIT)
@@ -356,7 +355,7 @@ namespace dtExample
             }
             else // Already using a proper motion model for attachment.
             {
-               SetCameraPivot(mAttachActorName);
+               SetCameraPivotById(mAttachActorId);
             }
          }
       }
@@ -390,7 +389,23 @@ namespace dtExample
 
       if (actor == NULL)
       {
-         LOG_DEBUG("Could not find actor \"" + name + "\".");
+         LOG_DEBUG("Could not find actor with name \"" + name + "\".");
+      }
+
+      return actor;
+   }
+
+   ////////////////////////////////////////////////////////////////////////
+   dtCore::TransformableActorProxy* InputComponent::GetActorById(const dtCore::UniqueId& id)
+   {
+      dtCore::TransformableActorProxy* actor = NULL;
+
+      dtGame::GameManager* gm = GetGameManager();
+      gm->FindActorById(id, actor);
+
+      if (actor == NULL)
+      {
+         LOG_DEBUG("Could not find actor with id \"" + id.ToString() + "\".");
       }
 
       return actor;
@@ -409,15 +424,36 @@ namespace dtExample
 
       if (xformable == NULL)
       {
-         LOG_DEBUG("Could not find  \"" + name + "\".");
+         LOG_DEBUG("Could not find drawable with name \"" + name + "\".");
       }
 
       return xformable;
    }
 
    ////////////////////////////////////////////////////////////////////////
-   bool InputComponent::SetCameraPivot(const std::string& actorName)
+   dtCore::Transformable* InputComponent::GetDrawableById(const dtCore::UniqueId& id)
    {
+      dtCore::Transformable* xformable = NULL;
+      dtCore::TransformableActorProxy* actor = GetActorById(id);
+
+      if (actor != NULL)
+      {
+         actor->GetDrawable(xformable);
+      }
+
+      if (xformable == NULL)
+      {
+         LOG_DEBUG("Could not find drawable with id \"" + id.ToString() + "\".");
+      }
+
+      return xformable;
+   }
+
+   ////////////////////////////////////////////////////////////////////////
+   bool InputComponent::SetCameraPivotByName(const std::string& actorName)
+   {
+      bool success = false;
+
       // Detach from the current actor.
       if (mGroundClampedXformable.valid())
       {
@@ -431,7 +467,38 @@ namespace dtExample
          mGroundClampedXformable->RemoveChild(mCameraPivot);
       }
 
-      mGroundClampedXformable = GetDrawableByName(actorName);
+      dtCore::Transformable* drawable = GetDrawableByName(actorName);
+
+      return SetCameraPivot(drawable);
+   }
+
+   ////////////////////////////////////////////////////////////////////////
+   bool InputComponent::SetCameraPivotById(const dtCore::UniqueId& id)
+   {
+      bool success = false;
+
+      // Detach from the current actor.
+      if (mGroundClampedXformable.valid())
+      {
+         // If this is the same actor, exit early.
+         if (mGroundClampedXformable->GetUniqueId() == id)
+         {
+            // Return true because the camera pivot should be attached.
+            return true;
+         }
+
+         mGroundClampedXformable->RemoveChild(mCameraPivot);
+      }
+
+      dtCore::Transformable* drawable = GetDrawableById(id);
+
+      return SetCameraPivot(drawable);
+   }
+
+   ////////////////////////////////////////////////////////////////////////
+   bool InputComponent::SetCameraPivot(dtCore::Transformable* drawable)
+   {
+      mGroundClampedXformable = drawable;
 
       if ( ! mGroundClampedXformable.valid())
       {
@@ -660,7 +727,7 @@ namespace dtExample
 
       if (attachToCharacter)
       {
-         SetCameraPivot(mAttachActorName);
+         SetCameraPivotById(mAttachActorId);
       }
       else
       {

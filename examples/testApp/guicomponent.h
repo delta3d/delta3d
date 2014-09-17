@@ -139,7 +139,7 @@ namespace dtExample
 
          void SendRequestTimeOffsetMessage(float offset);
 
-         void SendRequestAttachMessage(const std::string& actorName);
+         void SendRequestAttachMessage(const dtCore::UniqueId& actorId);
 
       private:
 
