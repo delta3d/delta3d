@@ -406,9 +406,6 @@ namespace dtRender
 
    void OceanSceneActor::BuildPropertyMap()
    {
-      BaseClass::BuildPropertyMap();
-
-
       const std::string GROUPNAME = "OceanScene";
 
       BaseClass::BuildPropertyMap();
