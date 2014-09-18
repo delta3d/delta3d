@@ -3,6 +3,7 @@
 varying vec3 vLightDir;
 varying vec3 vLightDir2;
 
+uniform samplerCube d3d_ReflectionCubeMap;
 
 
 // External Functions
@@ -13,6 +14,8 @@ vec3 computeWorldSpaceNormal(vec3 vertPos, vec3 vertNormal, vec3 mapNormal, vec2
 vec2 computeSphereMapCoord(in vec3 viewDir, in vec3 normal);
 vec3 sampleCubeMapReflection(vec3 worldPos, vec3 camPos, vec3 normal);
 vec3 computeDynamicLightContrib(vec3 wsNormal, vec3 wsPos);
+float computeReflectionCoef(vec3 viewDir, vec3 viewSpaceNormal, float refractIndex);
+
 
 struct FragParams
 {
@@ -95,6 +98,22 @@ void computeLightContrib_SunMoon(inout FragParams fp, inout EffectParams ep)
    
 }
 
+void computeRefraction(inout FragParams fp, inout EffectParams ep)
+{
+   if(ep.colorContrib.a < 0.5)
+   {
+      float fresnel = computeReflectionCoef(fp.viewDir, fp.worldNormal, 1.02);
+
+      
+      vec3 refractionCoords = refract(normalize(fp.pos - fp.cameraPos), fp.worldNormal, 1.02);
+      vec3 refractionColor = textureCube(d3d_ReflectionCubeMap, refractionCoords.xyz).rgb;
+
+      ep.colorContrib.rgb *= refractionColor;//(ep.specContrib.a)* mix(ep.colorContrib.rgb, refractionColor, fresnel);
+      ep.colorContrib.a = 1.0;
+   }
+}
+
+
 void computeMultiMapColor(MapParams mp, inout FragParams fp, inout EffectParams ep)
 {
    vec2 uv = gl_TexCoord[0].xy;
@@ -114,6 +133,9 @@ void computeMultiMapColor(MapParams mp, inout FragParams fp, inout EffectParams 
    vec3 viewDir = normalize(fp.viewDir);
    
    ep.colorContrib = diffuseColor * fp.color;
+
+//   computeRefraction(fp, ep);
+
    
    // Compute the Light & Spec Contribution
    computeLightContrib_SunMoon(fp, ep);

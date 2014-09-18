@@ -7,6 +7,8 @@ uniform sampler2D illumTexture;
 uniform sampler2D normalTexture;
 uniform sampler2D alphaTexture;
 uniform float d3d_SceneLuminance; // = 1.0;
+uniform bool d3d_DepthOnlyPass = false;
+uniform bool d3d_ShadowOnlyPass = false;
 
 varying vec3 vNormal;
 varying vec3 vTangent;
@@ -15,7 +17,7 @@ varying vec3 vLightDir;
 varying vec3 vLightDir2;
 varying vec3 vPos;
 varying vec3 vCamera;
-varying vec3 vViewDir;
+varying vec4 vViewPos;
 
 
 
@@ -56,6 +58,8 @@ struct MapParams
 
 // External Functions
 void computeMultiMapColor(MapParams m, inout FragParams f, inout EffectParams e);
+float SampleShadowTexture();
+float computeFragDepth(float);
 
 
 vec4 combineEffects(EffectParams e)
@@ -64,13 +68,36 @@ vec4 combineEffects(EffectParams e)
    result.rgb *= e.lightContrib.rgb;
    result.rgb += e.envContrib.rgb * e.envContrib.a;
    result.rgb += e.specContrib.rgb * e.specContrib.a;
-   result.rgb += e.illumContrib.rgb;   
+   result.rgb += e.illumContrib.rgb;
+   result.rgb  *= 1.5;
+   //float shadowAmt = SampleShadowTexture();
+   //result.rgb *= shadowAmt;
 
    return result;
 }
 
 void main(void)
 {
+   vec3 ecPosition = vec3(vViewPos.xyz) / vViewPos.w;
+   float dist = length(ecPosition);
+   vec3 viewDir = ecPosition / dist;
+   
+   //if your shader ever sets the frag depth it must always
+   if(d3d_DepthOnlyPass)
+   {
+      gl_FragDepth = computeFragDepth(dist);
+   }
+   else
+   {
+      gl_FragDepth = gl_FragCoord.z;
+   }
+
+   if(d3d_DepthOnlyPass || d3d_ShadowOnlyPass)
+   {
+      return;
+   }
+     
+     
    vec4 zeroVec = vec4(0,0,0,0);
    vec2 uv = gl_TexCoord[0].xy;
 
@@ -81,7 +108,7 @@ void main(void)
    f.uv = uv;
    f.pos = vPos;
    f.normal = normalize(vNormal);
-   f.viewDir = normalize(vViewDir);
+   f.viewDir = normalize(viewDir);
    f.cameraPos = vCamera;
    f.color = gl_Color;
    f.sceneLuminance = d3d_SceneLuminance;
