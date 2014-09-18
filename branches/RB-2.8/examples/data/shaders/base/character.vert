@@ -78,8 +78,8 @@ void main(void)
    gl_TexCoord[1] = gl_MultiTexCoord1;
    gl_TexCoord[2] = transformedNormal;
 
-   vec4  ecPos  = gl_ModelViewMatrix * transformedPosition;
-   GenerateShadowTexCoords(ecPos);
+   //vec4  ecPos  = gl_ModelViewMatrix * transformedPosition;
+   //GenerateShadowTexCoords(ecPos);
    
    vNormal = gl_NormalMatrix * normalize(transformedNormal.xyz);
    vTangent = gl_NormalMatrix * normalize(transformedTangent.xyz);
