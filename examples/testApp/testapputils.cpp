@@ -21,11 +21,15 @@
  * THE SOFTWARE.
  */
 
-///////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 // INCLUDE DIRECTIVES
-///////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 #include "testapputils.h"
+#include "testappactorregistry.h"
+#include "meshobjectactor.h"
+#include <dtActors/engineactorregistry.h>
 #include <dtCore/deltadrawable.h>
+#include <dtCore/resourcedescriptor.h>
 #include <dtUtil/geometrycollector.h>
 #include <dtUtil/log.h>
 #include <osg/Geometry>
@@ -35,10 +39,10 @@
 
 namespace dtExample
 {
-   ////////////////////////////////////////////////////////////////////
-   // CONSTANTS
-   ////////////////////////////////////////////////////////////////////
-   bool TestAppUtils::GenerateTangentsForObject(dtCore::BaseActorObject& actor)
+   /////////////////////////////////////////////////////////////////////////////
+   // CLASS CODE
+   /////////////////////////////////////////////////////////////////////////////
+   bool TestAppUtils::GenerateTangentsForObject(dtCore::BaseActorObject& actor) const
    {
       dtCore::DeltaDrawable* drawable = actor.GetDrawable();
 
@@ -52,7 +56,8 @@ namespace dtExample
       return GenerateTangentsForObject(*drawable);
    }
 
-   bool TestAppUtils::GenerateTangentsForObject(dtCore::DeltaDrawable& drawable)
+   /////////////////////////////////////////////////////////////////////////////
+   bool TestAppUtils::GenerateTangentsForObject(dtCore::DeltaDrawable& drawable) const
    {
       bool success = false;
 
@@ -97,6 +102,32 @@ namespace dtExample
       }
 
       return success;
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   bool TestAppUtils::IsAttachableActor(dtCore::BaseActorObject& actor) const
+   {
+      const dtCore::ActorType* actorType = &actor.GetActorType();
+
+      bool valid = actorType == TestAppActorRegistry::CIVILIAN_ACTOR_TYPE.get()
+         || actorType == dtActors::EngineActorRegistry::BEZIER_CONTROLLER_ACTOR_TYPE.get();
+
+      // Determine if there are some special Mesh Actors that can be attached to.
+      if ( ! valid && &actor.GetActorType() == TestAppActorRegistry::MESH_OBJECT_ACTOR_TYPE.get())
+      {
+         MeshObjectActor& meshActor = static_cast<MeshObjectActor&>(actor);
+
+         dtCore::ResourceDescriptor res = meshActor.GetMeshResource();
+         const std::string& resName = res.GetDisplayName();
+
+         // Search the resource descriptor string for a hint about the model.
+         if (resName.find("vehicle") != std::string::npos)
+         {
+            valid = true;
+         }
+      }
+
+      return valid;
    }
 
 }

@@ -79,6 +79,7 @@ namespace dtExample
    {
       public:
          static const dtUtil::RefString CHECKBOX_TYPE;
+         static const dtUtil::RefString COMBOBOX_TYPE;
          static const dtUtil::RefString SPINNER_TYPE;
          static const dtUtil::RefString BUTTON_TYPE;
          static const dtUtil::RefString TESTAPP_BUTTON_TYPE;
@@ -112,6 +113,8 @@ namespace dtExample
 
          void Update(float simTimeDelta, float realTimeDelta);
 
+         void UpdateUIValues(GuiScreen& screen);
+
          void UpdateActorList(GuiScreen& screen);
 
       protected:
@@ -126,6 +129,8 @@ namespace dtExample
 
          void BindCheckbox(GuiCheckbox& checkbox);
 
+         void BindCombobox(GuiCombobox& combobox);
+
          void BindSpinner(GuiSpinner& spinner);
    
          const GuiNode* GetWidgetFromEventArgs(const GuiEventArgs& args) const;
@@ -135,6 +140,8 @@ namespace dtExample
          bool OnListItemClicked(const GuiEventArgs& args);
 
          bool OnCheckboxChanged(const GuiEventArgs& args);
+
+         bool OnComboboxChanged(const GuiEventArgs& args);
 
          bool OnSpinnerChanged(const GuiEventArgs& args);
 
@@ -147,8 +154,6 @@ namespace dtExample
          InputComponent* GetInputComponent();
 
       private:
-
-
          dtCore::RefPtr<dtCore::DeltaWin> mWindow;
          dtCore::RefPtr<dtGUI::GUI> mGUIScene;
 

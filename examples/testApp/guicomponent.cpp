@@ -33,6 +33,7 @@
 #include "testappgamestates.h"
 #include "testappmessages.h"
 #include "testappmessagetypes.h"
+#include "testapputils.h"
 
 #include <dtABC/application.h>
 #include <dtActors/engineactorregistry.h>
@@ -57,6 +58,7 @@ namespace dtExample
    // CONSTANTS
    ///////////////////////////////////////////////////////////////////////
    const dtUtil::RefString GuiComponent::CHECKBOX_TYPE("WindowsLook/Checkbox");
+   const dtUtil::RefString GuiComponent::COMBOBOX_TYPE("WindowsLook/Combobox");
    const dtUtil::RefString GuiComponent::SPINNER_TYPE("WindowsLook/Spinner");
    const dtUtil::RefString GuiComponent::BUTTON_TYPE("WindowsLook/Button");
    const dtUtil::RefString GuiComponent::TESTAPP_BUTTON_TYPE("TestApp/Button");
@@ -185,7 +187,7 @@ namespace dtExample
 
       if (&gameState == &TestAppGameState::STATE_GAME)
       {
-         UpdateActorList(*mCurrentScreen);
+         UpdateUIValues(*mCurrentScreen);
       }
    }
 
@@ -320,34 +322,68 @@ namespace dtExample
    }
 
    //////////////////////////////////////////////////////////////////////////
-   bool IsAttachableActor(dtCore::BaseActorObject& actor)
+   void GuiComponent::UpdateUIValues(GuiScreen& screen)
    {
-      const dtCore::ActorType* actorType = &actor.GetActorType();
+      // Update the Attachable Actors list
+      UpdateActorList(screen);
 
-      bool valid = actorType == TestAppActorRegistry::CIVILIAN_ACTOR_TYPE.get()
-         || actorType == dtActors::EngineActorRegistry::BEZIER_CONTROLLER_ACTOR_TYPE.get();
 
-      // Determine if there are some special Mesh Actors that can be attached to.
-      if ( ! valid && &actor.GetActorType() == TestAppActorRegistry::MESH_OBJECT_ACTOR_TYPE.get())
+      // Update the Sea State spinner.
+      InputComponent* comp = GetInputComponent();
+
+      typedef dtActors::WaterGridActor::SeaState SeaState;
+      const SeaState& state = comp->GetSeaState();
+
+      typedef std::vector<dtUtil::Enumeration*> EnumList;
+      const EnumList& seaStates = SeaState::Enumerate();
+
+      int index = 0;
       {
-         MeshObjectActor& meshActor = static_cast<MeshObjectActor&>(actor);
-
-         dtCore::ResourceDescriptor res = meshActor.GetMeshResource();
-         const std::string& resName = res.GetDisplayName();
-
-         // Search the resource descriptor string for a hint about the model.
-         if (resName.find("vehicle") != std::string::npos)
+         EnumList::const_iterator curIter = seaStates.begin();
+         EnumList::const_iterator endIter = seaStates.end();
+         for (int i = 0; curIter != endIter; ++curIter, ++i)
          {
-            valid = true;
+            if ((*curIter) == &state)
+            {
+               index = i;
+               break;
+            }
          }
       }
 
-      return valid;
+      GuiSpinner* spinner = dynamic_cast<GuiSpinner*>(screen.GetNode("GameScreen_SeaStateSpinner"));
+      spinner->setCurrentValue(index);
+
+
+      // Update the Sea Choppiness combobox
+      typedef dtActors::WaterGridActor::ChoppinessSettings Choppiness;
+      const EnumList& choppies = Choppiness::Enumerate();
+
+      Choppiness& choppiness = comp->GetWaterChoppiness();
+
+      index = 0;
+      {
+         EnumList::const_iterator curIter = choppies.begin();
+         EnumList::const_iterator endIter = choppies.end();
+         for (int i = 0; curIter != endIter; ++curIter, ++i)
+         {
+            if ((*curIter) == &choppiness)
+            {
+               index = i;
+               break;
+            }
+         }
+      }
+
+      GuiCombobox* combo = dynamic_cast<GuiCombobox*>(screen.GetNode("GameScreen_SeaChoppinessList"));
+      combo->setItemSelectState(index, true);
    }
 
    //////////////////////////////////////////////////////////////////////////
    void GuiComponent::UpdateActorList(GuiScreen& screen)
    {
+      TestAppUtils util;
+
       std::string listboxName(screen.GetName());
       listboxName += "_ActorList";
 
@@ -371,7 +407,7 @@ namespace dtExample
          {
             curActor = *curIter;
 
-            if ( ! IsAttachableActor(*curActor))
+            if ( ! util.IsAttachableActor(*curActor))
             {
                // Skip this actor and go to the next one.
                continue;
@@ -464,10 +500,8 @@ namespace dtExample
          {
             button = dynamic_cast<GuiButton*>(curChild);
 
-            // ...bind it to this component's callback for handling buttons.
             BindButton( *button );
          }
-         // ...or if this is a spinner...
          else if(SPINNER_TYPE == guiType)
          {
             GuiSpinner* spinner = dynamic_cast<GuiSpinner*>(curChild);
@@ -479,6 +513,12 @@ namespace dtExample
             GuiCheckbox* checkbox = dynamic_cast<GuiCheckbox*>(curChild);
             
             BindCheckbox(*checkbox);
+         }
+         else if (COMBOBOX_TYPE == guiType)
+         {
+            GuiCombobox* checkbox = dynamic_cast<GuiCombobox*>(curChild);
+            
+            BindCombobox(*checkbox);
          }
          // ...else if this is a normal widget window...
          else if( curChild->getChildCount() > 0 )
@@ -504,6 +544,13 @@ namespace dtExample
    {
       checkbox.subscribeEvent(GuiCheckbox::EventCheckStateChanged,
          CEGUI::Event::Subscriber(&GuiComponent::OnCheckboxChanged, this));
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void GuiComponent::BindCombobox(GuiCombobox& combobox)
+   {
+      combobox.subscribeEvent(GuiCombobox::EventListSelectionChanged,
+         CEGUI::Event::Subscriber(&GuiComponent::OnComboboxChanged, this));
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -592,6 +639,38 @@ namespace dtExample
          bool value = checkbox->isSelected();
 
          // TODO:
+      }
+
+      return true;
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   bool GuiComponent::OnComboboxChanged(const GuiEventArgs& args)
+   {
+      const GuiCombobox* combobox = dynamic_cast<const GuiCombobox*>(GetWidgetFromEventArgs(args));
+
+      if (combobox != NULL)
+      {
+         std::string controlName(combobox->getName().c_str());
+         std::string value;
+
+         CEGUI::ListboxItem* item = combobox->getSelectedItem();
+         if (item != NULL)
+         {
+            value = item->getText().c_str();
+         }
+
+         if (controlName == "GameScreen_SeaChoppinessList")
+         {
+            typedef dtActors::WaterGridActor::ChoppinessSettings Choppiness;
+            Choppiness* choppiness = Choppiness::GetValueForName(value);
+
+            if (choppiness != NULL)
+            {
+               InputComponent* comp = GetInputComponent();
+               comp->SetWaterChoppiness(*choppiness);
+            }
+         }
       }
 
       return true;
