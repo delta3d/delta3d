@@ -18,7 +18,7 @@ uniform float maxLuminance;
 uniform float minLuminance;
 
 // time interval between two frames
-uniform float d3d_FrameTime;
+uniform float d3d_FrameTime = 0.02;
 
 // scaling factor which decides how fast to adapt for new luminance
 uniform float adaptScaleFactor;
