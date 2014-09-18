@@ -1,4 +1,5 @@
 #include "civilianaiactorcomponent.h"
+#include "testapputils.h"
 #include <dtGame/messagetype.h>
 #include <dtGame/message.h>
 #include <dtGame/invokable.h>
@@ -294,6 +295,15 @@ namespace dtExample
    void CivilianAIActorComponent::OnModelLoaded(dtAnim::AnimationHelper* animComp)
    {
       InitializeMotionBlendAnimations();
+
+      dtGame::GameActorProxy* actor = NULL;
+      GetOwner(actor);
+
+      TestAppUtils util;
+      if (actor == NULL || ! util.GenerateTangentsForObject(*actor))
+      {
+         LOG_WARNING("Could not generate tangents for CivilianActor: " + GetName());
+      }
    }
 
    /////////////////////////////////////////////////////////////////

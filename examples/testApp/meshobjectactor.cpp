@@ -6,6 +6,7 @@
  */
 
 #include "meshobjectactor.h"
+#include "testapputils.h"
 
 #include <dtPhysics/physicsactcomp.h>
 #include <dtPhysics/physicsobject.h>
@@ -25,6 +26,11 @@ namespace dtExample
 
    void MeshObjectActor::OnEnteredWorld()
    {
+      TestAppUtils util;
+      if ( ! util.GenerateTangentsForObject(*this))
+      {
+         LOG_WARNING("Could not generate tangents for MeshObjectActor: " + GetName());
+      }
    }
 
    void MeshObjectActor::BuildActorComponents()
