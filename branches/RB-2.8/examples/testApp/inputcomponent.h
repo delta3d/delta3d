@@ -81,6 +81,11 @@ namespace dtExample
 
          void ReloadShaders();
 
+         void SetLampIntensity(float intensity);
+
+         void SetSeaState(dtActors::WaterGridActor::SeaState&);
+         void SetWaterChoppiness(dtActors::WaterGridActor::ChoppinessSettings&);
+
       protected:
 
          /// Destructor
@@ -114,13 +119,8 @@ namespace dtExample
          void SetMotionModelSpeed(
             const dtExample::MotionModelType& motionModelType,
             dtCore::MotionModel& motionModel, float speed);
-
-         void SetLampIntensity(float intensity);
          
          void DoGroundClamping(float simTime);
-
-         void SetSeaState(dtActors::WaterGridActor::SeaState&);
-         void SetWaterChoppiness(dtActors::WaterGridActor::ChoppinessSettings&);
 
       private:
          float mTimeOffset;
