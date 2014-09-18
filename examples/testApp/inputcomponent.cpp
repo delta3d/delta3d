@@ -966,6 +966,16 @@ namespace dtExample
       dtCore::ShaderManager::GetInstance().ReloadAndReassignShaderDefinitions("shaders/ShaderDefinitions.xml");
    }
 
+   void InputComponent::ToggleFireworks()
+   {
+      // TODO:
+   }
+
+   void InputComponent::ToggleAIWaypointDrawMode()
+   {
+      // TODO:
+   }
+
    void InputComponent::TogglePhysicsDrawMode()
    {
       dtPhysics::PhysicsComponent* physComp = NULL;
