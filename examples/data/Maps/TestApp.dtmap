@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <map xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="delta3dMap" xsi:schemaLocation="delta3dMap map.xsd">
     <header>
         <name>TestApp</name>
@@ -8,7 +7,7 @@
         <comment></comment>
         <copyright></copyright>
         <createTimestamp>2014-07-15T22:49:46-05:00</createTimestamp>
-        <lastUpdateTimestamp>2014-09-17T15:07:17-05:00</lastUpdateTimestamp>
+        <lastUpdateTimestamp>2014-09-18T11:17:20-05:00</lastUpdateTimestamp>
         <editorVersion>2.8.0</editorVersion>
         <schemaVersion>1.0</schemaVersion>
     </header>
@@ -297,6 +296,63 @@
             </property>
         </actor>
         <actor>
+            <type>dtExample.Mesh Object</type>
+            <id>066ded8a-747e-4f37-92ce-eabe2e80275c</id>
+            <name>walkwaylegs</name>
+            <property>
+                <name>ShaderGroup</name>
+                <string>MultiMap</string>
+            </property>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>-131.919144</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-678.613708</value1>
+                    <value2>-63.669983</value2>
+                    <value3>3.009054</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:walkways:wood_walkway:WoodWalkway_LegsOnly.osg</resourceDisplayName>
+                <resource>StaticMeshes:walkways:wood_walkway:WoodWalkway_LegsOnly.osg</resource>
+            </property>
+            <property>
+                <name>Scale</name>
+                <vec3>
+                    <value1>2.000000</value1>
+                    <value2>2.000000</value2>
+                    <value3>2.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Main: Primitive Type</name>
+                <enumerated>Triangle Mesh</enumerated>
+            </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:walkways:wood_walkway:WoodWalkway.osg</resourceDisplayName>
+                <resource>StaticMeshes:walkways:wood_walkway:WoodWalkway.osg</resource>
+            </property>
+            <property>
+                <name>Main: PhysicsMeshScale</name>
+                <vec3>
+                    <value1>2.000000</value1>
+                    <value2>2.000000</value2>
+                    <value3>2.000000</value3>
+                </vec3>
+            </property>
+        </actor>
+        <actor>
             <type>dtcore.Curve.Bezier Node</type>
             <id>068d4729-4bd8-48ba-bf4f-8d9bb8f2a00a</id>
             <name>FireworkG_BezierNode_01</name>
@@ -451,6 +507,63 @@
             </property>
         </actor>
         <actor>
+            <type>dtExample.Mesh Object</type>
+            <id>0a1ac513-241d-49f3-8a11-1609ce7619a1</id>
+            <name>walkwaylegs_20</name>
+            <property>
+                <name>ShaderGroup</name>
+                <string>MultiMap</string>
+            </property>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>-133.724350</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-746.432373</value1>
+                    <value2>-137.910034</value2>
+                    <value3>2.713971</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:walkways:wood_walkway:WoodWalkway_LegsOnly.osg</resourceDisplayName>
+                <resource>StaticMeshes:walkways:wood_walkway:WoodWalkway_LegsOnly.osg</resource>
+            </property>
+            <property>
+                <name>Scale</name>
+                <vec3>
+                    <value1>2.000000</value1>
+                    <value2>2.000000</value2>
+                    <value3>2.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Main: Primitive Type</name>
+                <enumerated>Triangle Mesh</enumerated>
+            </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:walkways:wood_walkway:WoodWalkway.osg</resourceDisplayName>
+                <resource>StaticMeshes:walkways:wood_walkway:WoodWalkway.osg</resource>
+            </property>
+            <property>
+                <name>Main: PhysicsMeshScale</name>
+                <vec3>
+                    <value1>2.000000</value1>
+                    <value2>2.000000</value2>
+                    <value3>2.000000</value3>
+                </vec3>
+            </property>
+        </actor>
+        <actor>
             <type>dtcore.Action.Bezier Controller</type>
             <id>0a6161d9-ed46-43e2-bf2c-33a5ec09e690</id>
             <name>FireworkG_Controller</name>
@@ -521,7 +634,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254890</value3>
+                    <value3>-87.254868</value3>
                 </vec3>
             </property>
             <property>
@@ -1300,7 +1413,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254890</value3>
+                    <value3>-87.254868</value3>
                 </vec3>
             </property>
             <property>
@@ -1316,6 +1429,63 @@
                 <resourceType>StaticMeshes</resourceType>
                 <resourceDisplayName>StaticMeshes:walkways:wood_walkway:WoodWalkway.osg</resourceDisplayName>
                 <resource>StaticMeshes:walkways:wood_walkway:WoodWalkway.osg</resource>
+            </property>
+            <property>
+                <name>Scale</name>
+                <vec3>
+                    <value1>2.000000</value1>
+                    <value2>2.000000</value2>
+                    <value3>2.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Main: Primitive Type</name>
+                <enumerated>Triangle Mesh</enumerated>
+            </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:walkways:wood_walkway:WoodWalkway.osg</resourceDisplayName>
+                <resource>StaticMeshes:walkways:wood_walkway:WoodWalkway.osg</resource>
+            </property>
+            <property>
+                <name>Main: PhysicsMeshScale</name>
+                <vec3>
+                    <value1>2.000000</value1>
+                    <value2>2.000000</value2>
+                    <value3>2.000000</value3>
+                </vec3>
+            </property>
+        </actor>
+        <actor>
+            <type>dtExample.Mesh Object</type>
+            <id>1f2e67bd-969b-4d11-97a9-0e8a1a7385cc</id>
+            <name>walkwaylegs_07</name>
+            <property>
+                <name>ShaderGroup</name>
+                <string>MultiMap</string>
+            </property>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>-87.337753</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-728.697205</value1>
+                    <value2>-49.785992</value2>
+                    <value3>2.773255</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:walkways:wood_walkway:WoodWalkway_LegsOnly.osg</resourceDisplayName>
+                <resource>StaticMeshes:walkways:wood_walkway:WoodWalkway_LegsOnly.osg</resource>
             </property>
             <property>
                 <name>Scale</name>
@@ -1522,6 +1692,63 @@
                 <resourceType>StaticMeshes</resourceType>
                 <resourceDisplayName>StaticMeshes:walkways:wood_walkway:WoodWalkway_Bend_L.osg</resourceDisplayName>
                 <resource>StaticMeshes:walkways:wood_walkway:WoodWalkway_Bend_L.osg</resource>
+            </property>
+            <property>
+                <name>Main: PhysicsMeshScale</name>
+                <vec3>
+                    <value1>2.000000</value1>
+                    <value2>2.000000</value2>
+                    <value3>2.000000</value3>
+                </vec3>
+            </property>
+        </actor>
+        <actor>
+            <type>dtExample.Mesh Object</type>
+            <id>240cd45b-7ea0-43f7-95db-ed92931c8c07</id>
+            <name>walkwaylegs_01</name>
+            <property>
+                <name>ShaderGroup</name>
+                <string>MultiMap</string>
+            </property>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>-131.919144</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-685.869568</value1>
+                    <value2>-57.058437</value2>
+                    <value3>2.800628</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:walkways:wood_walkway:WoodWalkway_LegsOnly.osg</resourceDisplayName>
+                <resource>StaticMeshes:walkways:wood_walkway:WoodWalkway_LegsOnly.osg</resource>
+            </property>
+            <property>
+                <name>Scale</name>
+                <vec3>
+                    <value1>2.000000</value1>
+                    <value2>2.000000</value2>
+                    <value3>2.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Main: Primitive Type</name>
+                <enumerated>Triangle Mesh</enumerated>
+            </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:walkways:wood_walkway:WoodWalkway.osg</resourceDisplayName>
+                <resource>StaticMeshes:walkways:wood_walkway:WoodWalkway.osg</resource>
             </property>
             <property>
                 <name>Main: PhysicsMeshScale</name>
@@ -1892,7 +2119,7 @@
             </property>
             <property>
                 <name>Bezier Node</name>
-                <actorId>5e9ad074-dfdc-4432-be58-53326f1f2e43</actorId>
+                <actorId>8c8be7b7-5645-4997-873b-266c7b6af1ec</actorId>
             </property>
         </actor>
         <actor>
@@ -2085,7 +2312,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254890</value3>
+                    <value3>-87.254868</value3>
                 </vec3>
             </property>
             <property>
@@ -2179,6 +2406,63 @@
             <property>
                 <name>Previous Bezier Node</name>
                 <actorId>b844ff0a-3072-4da1-ae49-c42e18d34566</actorId>
+            </property>
+        </actor>
+        <actor>
+            <type>dtExample.Mesh Object</type>
+            <id>2d1f11d3-095e-4313-982f-1af9972412f2</id>
+            <name>walkwaylegs_11</name>
+            <property>
+                <name>ShaderGroup</name>
+                <string>MultiMap</string>
+            </property>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>-87.337753</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-767.750122</value1>
+                    <value2>-51.612995</value2>
+                    <value3>2.773255</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:walkways:wood_walkway:WoodWalkway_LegsOnly.osg</resourceDisplayName>
+                <resource>StaticMeshes:walkways:wood_walkway:WoodWalkway_LegsOnly.osg</resource>
+            </property>
+            <property>
+                <name>Scale</name>
+                <vec3>
+                    <value1>2.000000</value1>
+                    <value2>2.000000</value2>
+                    <value3>2.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Main: Primitive Type</name>
+                <enumerated>Triangle Mesh</enumerated>
+            </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:walkways:wood_walkway:WoodWalkway.osg</resourceDisplayName>
+                <resource>StaticMeshes:walkways:wood_walkway:WoodWalkway.osg</resource>
+            </property>
+            <property>
+                <name>Main: PhysicsMeshScale</name>
+                <vec3>
+                    <value1>2.000000</value1>
+                    <value2>2.000000</value2>
+                    <value3>2.000000</value3>
+                </vec3>
             </property>
         </actor>
         <actor>
@@ -2393,7 +2677,7 @@
                 <name>Rotation</name>
                 <vec3>
                     <value1>-0.823274</value1>
-                    <value2>-0.623641</value2>
+                    <value2>-0.623614</value2>
                     <value3>124.004814</value3>
                 </vec3>
             </property>
@@ -3098,7 +3382,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254890</value3>
+                    <value3>-87.254868</value3>
                 </vec3>
             </property>
             <property>
@@ -4210,6 +4494,63 @@
             </property>
         </actor>
         <actor>
+            <type>dtExample.Mesh Object</type>
+            <id>4d51f35a-53f1-4f4c-9175-b4479780930b</id>
+            <name>walkwaylegs_19</name>
+            <property>
+                <name>ShaderGroup</name>
+                <string>MultiMap</string>
+            </property>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>-133.724350</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-743.040833</value1>
+                    <value2>-134.376831</value2>
+                    <value3>2.713971</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:walkways:wood_walkway:WoodWalkway_LegsOnly.osg</resourceDisplayName>
+                <resource>StaticMeshes:walkways:wood_walkway:WoodWalkway_LegsOnly.osg</resource>
+            </property>
+            <property>
+                <name>Scale</name>
+                <vec3>
+                    <value1>2.000000</value1>
+                    <value2>2.000000</value2>
+                    <value3>2.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Main: Primitive Type</name>
+                <enumerated>Triangle Mesh</enumerated>
+            </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:walkways:wood_walkway:WoodWalkway.osg</resourceDisplayName>
+                <resource>StaticMeshes:walkways:wood_walkway:WoodWalkway.osg</resource>
+            </property>
+            <property>
+                <name>Main: PhysicsMeshScale</name>
+                <vec3>
+                    <value1>2.000000</value1>
+                    <value2>2.000000</value2>
+                    <value3>2.000000</value3>
+                </vec3>
+            </property>
+        </actor>
+        <actor>
             <type>dtRender.Dynamic Light</type>
             <id>4d7997a1-ba7e-42dc-ad2d-eb469c20b0c3</id>
             <name>Dynamic Light_07</name>
@@ -4385,6 +4726,63 @@
             </property>
         </actor>
         <actor>
+            <type>dtExample.Mesh Object</type>
+            <id>4ee80790-0438-4710-8d00-8db2a2198ac3</id>
+            <name>walkwaylegs_10</name>
+            <property>
+                <name>ShaderGroup</name>
+                <string>MultiMap</string>
+            </property>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>-87.337753</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-757.979553</value1>
+                    <value2>-51.122200</value2>
+                    <value3>2.773255</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:walkways:wood_walkway:WoodWalkway_LegsOnly.osg</resourceDisplayName>
+                <resource>StaticMeshes:walkways:wood_walkway:WoodWalkway_LegsOnly.osg</resource>
+            </property>
+            <property>
+                <name>Scale</name>
+                <vec3>
+                    <value1>2.000000</value1>
+                    <value2>2.000000</value2>
+                    <value3>2.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Main: Primitive Type</name>
+                <enumerated>Triangle Mesh</enumerated>
+            </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:walkways:wood_walkway:WoodWalkway.osg</resourceDisplayName>
+                <resource>StaticMeshes:walkways:wood_walkway:WoodWalkway.osg</resource>
+            </property>
+            <property>
+                <name>Main: PhysicsMeshScale</name>
+                <vec3>
+                    <value1>2.000000</value1>
+                    <value2>2.000000</value2>
+                    <value3>2.000000</value3>
+                </vec3>
+            </property>
+        </actor>
+        <actor>
             <type>dtExample.Civilian</type>
             <id>4f4bc6bb-8c7f-4361-b6a9-5227aa17f1ad</id>
             <name>Gina_01</name>
@@ -4393,7 +4791,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-73.005318</value3>
+                    <value3>-73.005310</value3>
                 </vec3>
             </property>
             <property>
@@ -5046,7 +5444,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254890</value3>
+                    <value3>-87.254868</value3>
                 </vec3>
             </property>
             <property>
@@ -5240,6 +5638,63 @@
         </actor>
         <actor>
             <type>dtExample.Mesh Object</type>
+            <id>5c14dd28-7ec7-4fff-83e1-660fa386e602</id>
+            <name>walkwaylegs_18</name>
+            <property>
+                <name>ShaderGroup</name>
+                <string>MultiMap</string>
+            </property>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>91.270920</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-740.670044</value1>
+                    <value2>-128.167709</value2>
+                    <value3>2.713971</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:walkways:wood_walkway:WoodWalkway_LegsOnly.osg</resourceDisplayName>
+                <resource>StaticMeshes:walkways:wood_walkway:WoodWalkway_LegsOnly.osg</resource>
+            </property>
+            <property>
+                <name>Scale</name>
+                <vec3>
+                    <value1>2.000000</value1>
+                    <value2>2.000000</value2>
+                    <value3>2.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Main: Primitive Type</name>
+                <enumerated>Triangle Mesh</enumerated>
+            </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:walkways:wood_walkway:WoodWalkway.osg</resourceDisplayName>
+                <resource>StaticMeshes:walkways:wood_walkway:WoodWalkway.osg</resource>
+            </property>
+            <property>
+                <name>Main: PhysicsMeshScale</name>
+                <vec3>
+                    <value1>2.000000</value1>
+                    <value2>2.000000</value2>
+                    <value3>2.000000</value3>
+                </vec3>
+            </property>
+        </actor>
+        <actor>
+            <type>dtExample.Mesh Object</type>
             <id>5cc61f72-f421-417f-981f-7f619c052218</id>
             <name>Chair_24</name>
             <property>
@@ -5292,14 +5747,14 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>-0.000000</value2>
-                    <value3>-90.240150</value3>
+                    <value3>-88.812401</value3>
                 </vec3>
             </property>
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-1561.957275</value1>
-                    <value2>-439.032776</value2>
+                    <value1>-483.717834</value1>
+                    <value2>-433.591248</value2>
                     <value3>75.000000</value3>
                 </vec3>
             </property>
@@ -5789,7 +6244,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254890</value3>
+                    <value3>-87.254868</value3>
                 </vec3>
             </property>
             <property>
@@ -5903,7 +6358,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254890</value3>
+                    <value3>-87.254868</value3>
                 </vec3>
             </property>
             <property>
@@ -6034,6 +6489,63 @@
             </property>
         </actor>
         <actor>
+            <type>dtExample.Mesh Object</type>
+            <id>680a9ffe-fa0b-4374-b6bd-e85140a259cd</id>
+            <name>walkwaylegs_15</name>
+            <property>
+                <name>ShaderGroup</name>
+                <string>MultiMap</string>
+            </property>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>91.270912</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-741.820923</value1>
+                    <value2>-99.154488</value2>
+                    <value3>4.096457</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:walkways:wood_walkway:WoodWalkway_LegsOnly.osg</resourceDisplayName>
+                <resource>StaticMeshes:walkways:wood_walkway:WoodWalkway_LegsOnly.osg</resource>
+            </property>
+            <property>
+                <name>Scale</name>
+                <vec3>
+                    <value1>2.000000</value1>
+                    <value2>2.000000</value2>
+                    <value3>2.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Main: Primitive Type</name>
+                <enumerated>Triangle Mesh</enumerated>
+            </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:walkways:wood_walkway:WoodWalkway.osg</resourceDisplayName>
+                <resource>StaticMeshes:walkways:wood_walkway:WoodWalkway.osg</resource>
+            </property>
+            <property>
+                <name>Main: PhysicsMeshScale</name>
+                <vec3>
+                    <value1>2.000000</value1>
+                    <value2>2.000000</value2>
+                    <value3>2.000000</value3>
+                </vec3>
+            </property>
+        </actor>
+        <actor>
             <type>dtcore.Curve.Bezier Control Point</type>
             <id>6950773a-2776-47df-86cb-6d5871b66eb6</id>
             <name>planecontrolpoint_01</name>
@@ -6142,6 +6654,120 @@
         </actor>
         <actor>
             <type>dtExample.Mesh Object</type>
+            <id>69a9019a-314f-4192-9bb6-3db691a75976</id>
+            <name>walkwaylegs_17</name>
+            <property>
+                <name>ShaderGroup</name>
+                <string>MultiMap</string>
+            </property>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>91.270920</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-740.851868</value1>
+                    <value2>-123.346588</value2>
+                    <value3>2.713971</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:walkways:wood_walkway:WoodWalkway_LegsOnly.osg</resourceDisplayName>
+                <resource>StaticMeshes:walkways:wood_walkway:WoodWalkway_LegsOnly.osg</resource>
+            </property>
+            <property>
+                <name>Scale</name>
+                <vec3>
+                    <value1>2.000000</value1>
+                    <value2>2.000000</value2>
+                    <value3>2.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Main: Primitive Type</name>
+                <enumerated>Triangle Mesh</enumerated>
+            </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:walkways:wood_walkway:WoodWalkway.osg</resourceDisplayName>
+                <resource>StaticMeshes:walkways:wood_walkway:WoodWalkway.osg</resource>
+            </property>
+            <property>
+                <name>Main: PhysicsMeshScale</name>
+                <vec3>
+                    <value1>2.000000</value1>
+                    <value2>2.000000</value2>
+                    <value3>2.000000</value3>
+                </vec3>
+            </property>
+        </actor>
+        <actor>
+            <type>dtExample.Mesh Object</type>
+            <id>6a80c53e-a405-44d7-a997-fa4b374e5f52</id>
+            <name>walkwaylegs_02</name>
+            <property>
+                <name>ShaderGroup</name>
+                <string>MultiMap</string>
+            </property>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>-131.919144</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-693.121765</value1>
+                    <value2>-50.568207</value2>
+                    <value3>2.800628</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:walkways:wood_walkway:WoodWalkway_LegsOnly.osg</resourceDisplayName>
+                <resource>StaticMeshes:walkways:wood_walkway:WoodWalkway_LegsOnly.osg</resource>
+            </property>
+            <property>
+                <name>Scale</name>
+                <vec3>
+                    <value1>2.000000</value1>
+                    <value2>2.000000</value2>
+                    <value3>2.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Main: Primitive Type</name>
+                <enumerated>Triangle Mesh</enumerated>
+            </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:walkways:wood_walkway:WoodWalkway.osg</resourceDisplayName>
+                <resource>StaticMeshes:walkways:wood_walkway:WoodWalkway.osg</resource>
+            </property>
+            <property>
+                <name>Main: PhysicsMeshScale</name>
+                <vec3>
+                    <value1>2.000000</value1>
+                    <value2>2.000000</value2>
+                    <value3>2.000000</value3>
+                </vec3>
+            </property>
+        </actor>
+        <actor>
+            <type>dtExample.Mesh Object</type>
             <id>6af504f6-e825-4a75-ae45-0f77dcef35cb</id>
             <name>Chair_04</name>
             <property>
@@ -6192,6 +6818,63 @@
             <property>
                 <name>Render Path</name>
                 <boolean>false</boolean>
+            </property>
+        </actor>
+        <actor>
+            <type>dtExample.Mesh Object</type>
+            <id>6cacda09-f65d-4060-84ed-b66ad5a52594</id>
+            <name>walkwaylegs_23</name>
+            <property>
+                <name>ShaderGroup</name>
+                <string>MultiMap</string>
+            </property>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>-123.363152</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-631.613281</value1>
+                    <value2>-177.596130</value2>
+                    <value3>1.352698</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:walkways:wood_walkway:WoodWalkway_LegsOnly.osg</resourceDisplayName>
+                <resource>StaticMeshes:walkways:wood_walkway:WoodWalkway_LegsOnly.osg</resource>
+            </property>
+            <property>
+                <name>Scale</name>
+                <vec3>
+                    <value1>2.000000</value1>
+                    <value2>2.000000</value2>
+                    <value3>2.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Main: Primitive Type</name>
+                <enumerated>Triangle Mesh</enumerated>
+            </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:walkways:wood_walkway:WoodWalkway.osg</resourceDisplayName>
+                <resource>StaticMeshes:walkways:wood_walkway:WoodWalkway.osg</resource>
+            </property>
+            <property>
+                <name>Main: PhysicsMeshScale</name>
+                <vec3>
+                    <value1>2.000000</value1>
+                    <value2>2.000000</value2>
+                    <value3>2.000000</value3>
+                </vec3>
             </property>
         </actor>
         <actor>
@@ -6449,6 +7132,63 @@
                 <resourceType>StaticMeshes</resourceType>
                 <resourceDisplayName>StaticMeshes:delta3dIslandPhysics:island_default_.dtphys</resourceDisplayName>
                 <resource>StaticMeshes:delta3dIslandPhysics:island_default_.dtphys</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtExample.Mesh Object</type>
+            <id>735e7198-b5d3-44b7-8719-0e7c987e7959</id>
+            <name>walkwaylegs_24</name>
+            <property>
+                <name>ShaderGroup</name>
+                <string>MultiMap</string>
+            </property>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>-123.363152</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-636.841309</value1>
+                    <value2>-185.817215</value2>
+                    <value3>1.352698</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:walkways:wood_walkway:WoodWalkway_LegsOnly.osg</resourceDisplayName>
+                <resource>StaticMeshes:walkways:wood_walkway:WoodWalkway_LegsOnly.osg</resource>
+            </property>
+            <property>
+                <name>Scale</name>
+                <vec3>
+                    <value1>2.000000</value1>
+                    <value2>2.000000</value2>
+                    <value3>2.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Main: Primitive Type</name>
+                <enumerated>Triangle Mesh</enumerated>
+            </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:walkways:wood_walkway:WoodWalkway.osg</resourceDisplayName>
+                <resource>StaticMeshes:walkways:wood_walkway:WoodWalkway.osg</resource>
+            </property>
+            <property>
+                <name>Main: PhysicsMeshScale</name>
+                <vec3>
+                    <value1>2.000000</value1>
+                    <value2>2.000000</value2>
+                    <value3>2.000000</value3>
+                </vec3>
             </property>
         </actor>
         <actor>
@@ -7978,7 +8718,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254890</value3>
+                    <value3>-87.254868</value3>
                 </vec3>
             </property>
             <property>
@@ -8727,6 +9467,63 @@
             </property>
         </actor>
         <actor>
+            <type>dtExample.Mesh Object</type>
+            <id>9a021a2a-dac3-4278-b977-e7bf9630be7b</id>
+            <name>walkwaylegs_12</name>
+            <property>
+                <name>ShaderGroup</name>
+                <string>MultiMap</string>
+            </property>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>-87.337753</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-777.510437</value1>
+                    <value2>-52.038052</value2>
+                    <value3>2.773255</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:walkways:wood_walkway:WoodWalkway_LegsOnly.osg</resourceDisplayName>
+                <resource>StaticMeshes:walkways:wood_walkway:WoodWalkway_LegsOnly.osg</resource>
+            </property>
+            <property>
+                <name>Scale</name>
+                <vec3>
+                    <value1>2.000000</value1>
+                    <value2>2.000000</value2>
+                    <value3>2.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Main: Primitive Type</name>
+                <enumerated>Triangle Mesh</enumerated>
+            </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:walkways:wood_walkway:WoodWalkway.osg</resourceDisplayName>
+                <resource>StaticMeshes:walkways:wood_walkway:WoodWalkway.osg</resource>
+            </property>
+            <property>
+                <name>Main: PhysicsMeshScale</name>
+                <vec3>
+                    <value1>2.000000</value1>
+                    <value2>2.000000</value2>
+                    <value3>2.000000</value3>
+                </vec3>
+            </property>
+        </actor>
+        <actor>
             <type>dtcore.Game.Actors.Game Mesh Actor</type>
             <id>9a311aa2-efdf-412e-9da6-2e8fe9461db6</id>
             <name>TikiTorch04</name>
@@ -9021,7 +9818,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254890</value3>
+                    <value3>-87.254868</value3>
                 </vec3>
             </property>
             <property>
@@ -9037,6 +9834,63 @@
                 <resourceType>StaticMeshes</resourceType>
                 <resourceDisplayName>StaticMeshes:walkways:wood_walkway:WoodWalkway.osg</resourceDisplayName>
                 <resource>StaticMeshes:walkways:wood_walkway:WoodWalkway.osg</resource>
+            </property>
+            <property>
+                <name>Scale</name>
+                <vec3>
+                    <value1>2.000000</value1>
+                    <value2>2.000000</value2>
+                    <value3>2.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Main: Primitive Type</name>
+                <enumerated>Triangle Mesh</enumerated>
+            </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:walkways:wood_walkway:WoodWalkway.osg</resourceDisplayName>
+                <resource>StaticMeshes:walkways:wood_walkway:WoodWalkway.osg</resource>
+            </property>
+            <property>
+                <name>Main: PhysicsMeshScale</name>
+                <vec3>
+                    <value1>2.000000</value1>
+                    <value2>2.000000</value2>
+                    <value3>2.000000</value3>
+                </vec3>
+            </property>
+        </actor>
+        <actor>
+            <type>dtExample.Mesh Object</type>
+            <id>9f8ff37d-2c86-4a5a-97c1-cf8d4139312e</id>
+            <name>walkwaylegs_22</name>
+            <property>
+                <name>ShaderGroup</name>
+                <string>MultiMap</string>
+            </property>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>-123.363152</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-626.261292</value1>
+                    <value2>-169.336807</value2>
+                    <value3>1.352698</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:walkways:wood_walkway:WoodWalkway_LegsOnly.osg</resourceDisplayName>
+                <resource>StaticMeshes:walkways:wood_walkway:WoodWalkway_LegsOnly.osg</resource>
             </property>
             <property>
                 <name>Scale</name>
@@ -9280,6 +10134,177 @@
         </actor>
         <actor>
             <type>dtExample.Mesh Object</type>
+            <id>a127ba44-5dda-4a00-9b85-a947a7baa3aa</id>
+            <name>walkwaylegs_08</name>
+            <property>
+                <name>ShaderGroup</name>
+                <string>MultiMap</string>
+            </property>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>-87.337753</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-738.466309</value1>
+                    <value2>-50.224274</value2>
+                    <value3>2.773255</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:walkways:wood_walkway:WoodWalkway_LegsOnly.osg</resourceDisplayName>
+                <resource>StaticMeshes:walkways:wood_walkway:WoodWalkway_LegsOnly.osg</resource>
+            </property>
+            <property>
+                <name>Scale</name>
+                <vec3>
+                    <value1>2.000000</value1>
+                    <value2>2.000000</value2>
+                    <value3>2.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Main: Primitive Type</name>
+                <enumerated>Triangle Mesh</enumerated>
+            </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:walkways:wood_walkway:WoodWalkway.osg</resourceDisplayName>
+                <resource>StaticMeshes:walkways:wood_walkway:WoodWalkway.osg</resource>
+            </property>
+            <property>
+                <name>Main: PhysicsMeshScale</name>
+                <vec3>
+                    <value1>2.000000</value1>
+                    <value2>2.000000</value2>
+                    <value3>2.000000</value3>
+                </vec3>
+            </property>
+        </actor>
+        <actor>
+            <type>dtExample.Mesh Object</type>
+            <id>a1896daf-149a-41b9-8db5-7b6cf5aa75e5</id>
+            <name>walkwaylegs_05</name>
+            <property>
+                <name>ShaderGroup</name>
+                <string>MultiMap</string>
+            </property>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>-87.337784</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-709.156433</value1>
+                    <value2>-48.800488</value2>
+                    <value3>2.773255</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:walkways:wood_walkway:WoodWalkway_LegsOnly.osg</resourceDisplayName>
+                <resource>StaticMeshes:walkways:wood_walkway:WoodWalkway_LegsOnly.osg</resource>
+            </property>
+            <property>
+                <name>Scale</name>
+                <vec3>
+                    <value1>2.000000</value1>
+                    <value2>2.000000</value2>
+                    <value3>2.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Main: Primitive Type</name>
+                <enumerated>Triangle Mesh</enumerated>
+            </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:walkways:wood_walkway:WoodWalkway.osg</resourceDisplayName>
+                <resource>StaticMeshes:walkways:wood_walkway:WoodWalkway.osg</resource>
+            </property>
+            <property>
+                <name>Main: PhysicsMeshScale</name>
+                <vec3>
+                    <value1>2.000000</value1>
+                    <value2>2.000000</value2>
+                    <value3>2.000000</value3>
+                </vec3>
+            </property>
+        </actor>
+        <actor>
+            <type>dtExample.Mesh Object</type>
+            <id>a2460adc-d8e9-4fe7-b8ec-e13e6a70b2d6</id>
+            <name>walkwaylegs_09</name>
+            <property>
+                <name>ShaderGroup</name>
+                <string>MultiMap</string>
+            </property>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>-87.337753</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-748.230896</value1>
+                    <value2>-50.696033</value2>
+                    <value3>2.773255</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:walkways:wood_walkway:WoodWalkway_LegsOnly.osg</resourceDisplayName>
+                <resource>StaticMeshes:walkways:wood_walkway:WoodWalkway_LegsOnly.osg</resource>
+            </property>
+            <property>
+                <name>Scale</name>
+                <vec3>
+                    <value1>2.000000</value1>
+                    <value2>2.000000</value2>
+                    <value3>2.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Main: Primitive Type</name>
+                <enumerated>Triangle Mesh</enumerated>
+            </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:walkways:wood_walkway:WoodWalkway.osg</resourceDisplayName>
+                <resource>StaticMeshes:walkways:wood_walkway:WoodWalkway.osg</resource>
+            </property>
+            <property>
+                <name>Main: PhysicsMeshScale</name>
+                <vec3>
+                    <value1>2.000000</value1>
+                    <value2>2.000000</value2>
+                    <value3>2.000000</value3>
+                </vec3>
+            </property>
+        </actor>
+        <actor>
+            <type>dtExample.Mesh Object</type>
             <id>a3384900-b533-4212-9080-2a8b6fa15dc9</id>
             <name>walkway_08</name>
             <property>
@@ -9352,6 +10377,63 @@
                 <resourceType>Particles</resourceType>
                 <resourceDisplayName>Particles:fire:torch_flame.osg</resourceDisplayName>
                 <resource>Particles:fire:torch_flame.osg</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtExample.Mesh Object</type>
+            <id>a4a67c9d-f5cc-41ae-9982-834c930aca17</id>
+            <name>walkwaylegs_21</name>
+            <property>
+                <name>ShaderGroup</name>
+                <string>MultiMap</string>
+            </property>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>-123.363152</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-620.936279</value1>
+                    <value2>-161.263901</value2>
+                    <value3>1.352698</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:walkways:wood_walkway:WoodWalkway_LegsOnly.osg</resourceDisplayName>
+                <resource>StaticMeshes:walkways:wood_walkway:WoodWalkway_LegsOnly.osg</resource>
+            </property>
+            <property>
+                <name>Scale</name>
+                <vec3>
+                    <value1>2.000000</value1>
+                    <value2>2.000000</value2>
+                    <value3>2.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Main: Primitive Type</name>
+                <enumerated>Triangle Mesh</enumerated>
+            </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:walkways:wood_walkway:WoodWalkway.osg</resourceDisplayName>
+                <resource>StaticMeshes:walkways:wood_walkway:WoodWalkway.osg</resource>
+            </property>
+            <property>
+                <name>Main: PhysicsMeshScale</name>
+                <vec3>
+                    <value1>2.000000</value1>
+                    <value2>2.000000</value2>
+                    <value3>2.000000</value3>
+                </vec3>
             </property>
         </actor>
         <actor>
@@ -9586,7 +10668,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-158.295059</value3>
+                    <value3>-158.295029</value3>
                 </vec3>
             </property>
             <property>
@@ -9637,7 +10719,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254890</value3>
+                    <value3>-87.254868</value3>
                 </vec3>
             </property>
             <property>
@@ -9944,6 +11026,63 @@
             <property>
                 <name>Radius</name>
                 <float>10</float>
+            </property>
+        </actor>
+        <actor>
+            <type>dtExample.Mesh Object</type>
+            <id>af6eed17-b52b-4554-9540-135574464482</id>
+            <name>walkwaylegs_26</name>
+            <property>
+                <name>ShaderGroup</name>
+                <string>MultiMap</string>
+            </property>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>13.015429</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-710.431396</value1>
+                    <value2>-242.301804</value2>
+                    <value3>1.655875</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:walkways:wood_walkway:WoodWalkway_LegsOnly.osg</resourceDisplayName>
+                <resource>StaticMeshes:walkways:wood_walkway:WoodWalkway_LegsOnly.osg</resource>
+            </property>
+            <property>
+                <name>Scale</name>
+                <vec3>
+                    <value1>2.000000</value1>
+                    <value2>2.000000</value2>
+                    <value3>2.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Main: Primitive Type</name>
+                <enumerated>Triangle Mesh</enumerated>
+            </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:walkways:wood_walkway:WoodWalkway.osg</resourceDisplayName>
+                <resource>StaticMeshes:walkways:wood_walkway:WoodWalkway.osg</resource>
+            </property>
+            <property>
+                <name>Main: PhysicsMeshScale</name>
+                <vec3>
+                    <value1>2.000000</value1>
+                    <value2>2.000000</value2>
+                    <value3>2.000000</value3>
+                </vec3>
             </property>
         </actor>
         <actor>
@@ -10617,6 +11756,63 @@
         </actor>
         <actor>
             <type>dtExample.Mesh Object</type>
+            <id>b671003b-4138-400d-91b6-f91636936e61</id>
+            <name>walkwaylegs_13</name>
+            <property>
+                <name>ShaderGroup</name>
+                <string>MultiMap</string>
+            </property>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>-87.337753</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-782.427979</value1>
+                    <value2>-52.286823</value2>
+                    <value3>2.773255</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:walkways:wood_walkway:WoodWalkway_LegsOnly.osg</resourceDisplayName>
+                <resource>StaticMeshes:walkways:wood_walkway:WoodWalkway_LegsOnly.osg</resource>
+            </property>
+            <property>
+                <name>Scale</name>
+                <vec3>
+                    <value1>2.000000</value1>
+                    <value2>2.000000</value2>
+                    <value3>2.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Main: Primitive Type</name>
+                <enumerated>Triangle Mesh</enumerated>
+            </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:walkways:wood_walkway:WoodWalkway.osg</resourceDisplayName>
+                <resource>StaticMeshes:walkways:wood_walkway:WoodWalkway.osg</resource>
+            </property>
+            <property>
+                <name>Main: PhysicsMeshScale</name>
+                <vec3>
+                    <value1>2.000000</value1>
+                    <value2>2.000000</value2>
+                    <value3>2.000000</value3>
+                </vec3>
+            </property>
+        </actor>
+        <actor>
+            <type>dtExample.Mesh Object</type>
             <id>b6c141d7-8621-4812-9b80-977ae036fa38</id>
             <name>palmtree_51</name>
             <property>
@@ -11125,7 +12321,7 @@
                 <name>Rotation</name>
                 <vec3>
                     <value1>-0.823274</value1>
-                    <value2>-0.623641</value2>
+                    <value2>-0.623614</value2>
                     <value3>124.004814</value3>
                 </vec3>
             </property>
@@ -11674,7 +12870,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254890</value3>
+                    <value3>-87.254868</value3>
                 </vec3>
             </property>
             <property>
@@ -11731,7 +12927,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254890</value3>
+                    <value3>-87.254868</value3>
                 </vec3>
             </property>
             <property>
@@ -11859,6 +13055,63 @@
                 <resourceType>StaticMeshes</resourceType>
                 <resourceDisplayName>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resourceDisplayName>
                 <resource>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtExample.Mesh Object</type>
+            <id>c51b0941-e415-44eb-bdbc-7539c5fb967b</id>
+            <name>walkwaylegs_25</name>
+            <property>
+                <name>ShaderGroup</name>
+                <string>MultiMap</string>
+            </property>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>-123.363152</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-642.386353</value1>
+                    <value2>-193.789886</value2>
+                    <value3>1.352698</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:walkways:wood_walkway:WoodWalkway_LegsOnly.osg</resourceDisplayName>
+                <resource>StaticMeshes:walkways:wood_walkway:WoodWalkway_LegsOnly.osg</resource>
+            </property>
+            <property>
+                <name>Scale</name>
+                <vec3>
+                    <value1>2.000000</value1>
+                    <value2>2.000000</value2>
+                    <value3>2.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Main: Primitive Type</name>
+                <enumerated>Triangle Mesh</enumerated>
+            </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:walkways:wood_walkway:WoodWalkway.osg</resourceDisplayName>
+                <resource>StaticMeshes:walkways:wood_walkway:WoodWalkway.osg</resource>
+            </property>
+            <property>
+                <name>Main: PhysicsMeshScale</name>
+                <vec3>
+                    <value1>2.000000</value1>
+                    <value2>2.000000</value2>
+                    <value3>2.000000</value3>
+                </vec3>
             </property>
         </actor>
         <actor>
@@ -12543,7 +13796,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254890</value3>
+                    <value3>-87.254868</value3>
                 </vec3>
             </property>
             <property>
@@ -12720,6 +13973,63 @@
             </property>
         </actor>
         <actor>
+            <type>dtExample.Mesh Object</type>
+            <id>d2ac2292-0a0c-402c-84e8-d116d06a5c94</id>
+            <name>walkwaylegs_14</name>
+            <property>
+                <name>ShaderGroup</name>
+                <string>MultiMap</string>
+            </property>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>-87.337753</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-742.139038</value1>
+                    <value2>-89.401337</value2>
+                    <value3>4.096457</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:walkways:wood_walkway:WoodWalkway_LegsOnly.osg</resourceDisplayName>
+                <resource>StaticMeshes:walkways:wood_walkway:WoodWalkway_LegsOnly.osg</resource>
+            </property>
+            <property>
+                <name>Scale</name>
+                <vec3>
+                    <value1>2.000000</value1>
+                    <value2>2.000000</value2>
+                    <value3>2.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Main: Primitive Type</name>
+                <enumerated>Triangle Mesh</enumerated>
+            </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:walkways:wood_walkway:WoodWalkway.osg</resourceDisplayName>
+                <resource>StaticMeshes:walkways:wood_walkway:WoodWalkway.osg</resource>
+            </property>
+            <property>
+                <name>Main: PhysicsMeshScale</name>
+                <vec3>
+                    <value1>2.000000</value1>
+                    <value2>2.000000</value2>
+                    <value3>2.000000</value3>
+                </vec3>
+            </property>
+        </actor>
+        <actor>
             <type>dtcore.Curve.Bezier Node</type>
             <id>d3c5f001-ced0-4a6a-8135-266ac77e215e</id>
             <name>Camera_C_BezierNode_04</name>
@@ -12745,7 +14055,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-59.716446</value3>
+                    <value3>-59.716415</value3>
                 </vec3>
             </property>
             <property>
@@ -13862,9 +15172,9 @@
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-585.838806</value1>
-                    <value2>-98.256332</value2>
-                    <value3>0.901801</value3>
+                    <value1>-585.915955</value1>
+                    <value2>-98.230194</value2>
+                    <value3>1.030556</value3>
                 </vec3>
             </property>
             <property>
@@ -14190,7 +15500,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254890</value3>
+                    <value3>-87.254868</value3>
                 </vec3>
             </property>
             <property>
@@ -14304,7 +15614,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254890</value3>
+                    <value3>-87.254868</value3>
                 </vec3>
             </property>
             <property>
@@ -14468,7 +15778,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254890</value3>
+                    <value3>-87.254868</value3>
                 </vec3>
             </property>
             <property>
@@ -15019,6 +16329,63 @@
         </actor>
         <actor>
             <type>dtExample.Mesh Object</type>
+            <id>f44052be-42fb-4757-858c-19b395cad6c4</id>
+            <name>walkwaylegs_16</name>
+            <property>
+                <name>ShaderGroup</name>
+                <string>MultiMap</string>
+            </property>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>91.270920</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-741.638916</value1>
+                    <value2>-103.951813</value2>
+                    <value3>4.096457</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:walkways:wood_walkway:WoodWalkway_LegsOnly.osg</resourceDisplayName>
+                <resource>StaticMeshes:walkways:wood_walkway:WoodWalkway_LegsOnly.osg</resource>
+            </property>
+            <property>
+                <name>Scale</name>
+                <vec3>
+                    <value1>2.000000</value1>
+                    <value2>2.000000</value2>
+                    <value3>2.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Main: Primitive Type</name>
+                <enumerated>Triangle Mesh</enumerated>
+            </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:walkways:wood_walkway:WoodWalkway.osg</resourceDisplayName>
+                <resource>StaticMeshes:walkways:wood_walkway:WoodWalkway.osg</resource>
+            </property>
+            <property>
+                <name>Main: PhysicsMeshScale</name>
+                <vec3>
+                    <value1>2.000000</value1>
+                    <value2>2.000000</value2>
+                    <value3>2.000000</value3>
+                </vec3>
+            </property>
+        </actor>
+        <actor>
+            <type>dtExample.Mesh Object</type>
             <id>f450f680-d155-4740-a806-29236db5b2f2</id>
             <name>walkway_81</name>
             <property>
@@ -15104,7 +16471,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254890</value3>
+                    <value3>-87.254868</value3>
                 </vec3>
             </property>
             <property>
@@ -15195,6 +16562,63 @@
                 <resourceType>StaticMeshes</resourceType>
                 <resourceDisplayName>StaticMeshes:walkways:wood_walkway:WoodWalkway_Ramp.osg</resourceDisplayName>
                 <resource>StaticMeshes:walkways:wood_walkway:WoodWalkway_Ramp.osg</resource>
+            </property>
+            <property>
+                <name>Main: PhysicsMeshScale</name>
+                <vec3>
+                    <value1>2.000000</value1>
+                    <value2>2.000000</value2>
+                    <value3>2.000000</value3>
+                </vec3>
+            </property>
+        </actor>
+        <actor>
+            <type>dtExample.Mesh Object</type>
+            <id>f799814d-0854-481f-9fc8-9cf644ee67d9</id>
+            <name>walkwaylegs_06</name>
+            <property>
+                <name>ShaderGroup</name>
+                <string>MultiMap</string>
+            </property>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>-87.337753</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-718.925354</value1>
+                    <value2>-49.282387</value2>
+                    <value3>2.773255</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:walkways:wood_walkway:WoodWalkway_LegsOnly.osg</resourceDisplayName>
+                <resource>StaticMeshes:walkways:wood_walkway:WoodWalkway_LegsOnly.osg</resource>
+            </property>
+            <property>
+                <name>Scale</name>
+                <vec3>
+                    <value1>2.000000</value1>
+                    <value2>2.000000</value2>
+                    <value3>2.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Main: Primitive Type</name>
+                <enumerated>Triangle Mesh</enumerated>
+            </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:walkways:wood_walkway:WoodWalkway.osg</resourceDisplayName>
+                <resource>StaticMeshes:walkways:wood_walkway:WoodWalkway.osg</resource>
             </property>
             <property>
                 <name>Main: PhysicsMeshScale</name>
@@ -15305,6 +16729,63 @@
                 <resourceType>StaticMeshes</resourceType>
                 <resourceDisplayName>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resourceDisplayName>
                 <resource>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtExample.Mesh Object</type>
+            <id>f8d51166-6545-4397-a567-b20f2c1089d2</id>
+            <name>walkwaylegs_04</name>
+            <property>
+                <name>ShaderGroup</name>
+                <string>MultiMap</string>
+            </property>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>-131.919144</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-627.607544</value1>
+                    <value2>-109.283585</value2>
+                    <value3>2.800628</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:walkways:wood_walkway:WoodWalkway_LegsOnly.osg</resourceDisplayName>
+                <resource>StaticMeshes:walkways:wood_walkway:WoodWalkway_LegsOnly.osg</resource>
+            </property>
+            <property>
+                <name>Scale</name>
+                <vec3>
+                    <value1>2.000000</value1>
+                    <value2>2.000000</value2>
+                    <value3>2.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Main: Primitive Type</name>
+                <enumerated>Triangle Mesh</enumerated>
+            </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:walkways:wood_walkway:WoodWalkway.osg</resourceDisplayName>
+                <resource>StaticMeshes:walkways:wood_walkway:WoodWalkway.osg</resource>
+            </property>
+            <property>
+                <name>Main: PhysicsMeshScale</name>
+                <vec3>
+                    <value1>2.000000</value1>
+                    <value2>2.000000</value2>
+                    <value3>2.000000</value3>
+                </vec3>
             </property>
         </actor>
         <actor>
@@ -15530,6 +17011,63 @@
                 <resourceType>StaticMeshes</resourceType>
                 <resourceDisplayName>StaticMeshes:walkways:wood_walkway:WoodWalkway.osg</resourceDisplayName>
                 <resource>StaticMeshes:walkways:wood_walkway:WoodWalkway.osg</resource>
+            </property>
+            <property>
+                <name>Main: PhysicsMeshScale</name>
+                <vec3>
+                    <value1>2.000000</value1>
+                    <value2>2.000000</value2>
+                    <value3>2.000000</value3>
+                </vec3>
+            </property>
+        </actor>
+        <actor>
+            <type>dtExample.Mesh Object</type>
+            <id>fbc18c1a-6530-45c6-ad2a-6a9d2e1eff2f</id>
+            <name>walkway_92</name>
+            <property>
+                <name>ShaderGroup</name>
+                <string>MultiMap</string>
+            </property>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>-131.301163</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-616.845825</value1>
+                    <value2>-118.720886</value2>
+                    <value3>1.887583</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:walkways:wood_walkway:WoodWalkway_Ramp.osg</resourceDisplayName>
+                <resource>StaticMeshes:walkways:wood_walkway:WoodWalkway_Ramp.osg</resource>
+            </property>
+            <property>
+                <name>Scale</name>
+                <vec3>
+                    <value1>2.000000</value1>
+                    <value2>2.000000</value2>
+                    <value3>2.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Main: Primitive Type</name>
+                <enumerated>Triangle Mesh</enumerated>
+            </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:walkways:wood_walkway:WoodWalkway_Ramp.osg</resourceDisplayName>
+                <resource>StaticMeshes:walkways:wood_walkway:WoodWalkway_Ramp.osg</resource>
             </property>
             <property>
                 <name>Main: PhysicsMeshScale</name>
