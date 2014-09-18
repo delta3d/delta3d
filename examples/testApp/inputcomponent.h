@@ -88,6 +88,9 @@ namespace dtExample
          void SetLampIntensity(float intensity);
 
          void SetSeaState(dtActors::WaterGridActor::SeaState&);
+         dtActors::WaterGridActor::SeaState& GetSeaState() const;
+         
+         dtActors::WaterGridActor::ChoppinessSettings& GetWaterChoppiness() const;
          void SetWaterChoppiness(dtActors::WaterGridActor::ChoppinessSettings&);
 
       protected:
