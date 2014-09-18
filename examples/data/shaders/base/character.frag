@@ -69,7 +69,7 @@ vec4 combineEffects(EffectParams e)
    result.rgb += e.envContrib.rgb * e.envContrib.a;
    result.rgb += e.specContrib.rgb * e.specContrib.a;
    result.rgb += e.illumContrib.rgb;
-   result.rgb  *= 1.5;
+   
    //float shadowAmt = SampleShadowTexture();
    //result.rgb *= shadowAmt;
 
