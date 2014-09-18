@@ -78,16 +78,16 @@ void main(void)
    gl_TexCoord[1] = gl_MultiTexCoord1;
    gl_TexCoord[2] = transformedNormal;
 
-   //vec4  ecPos  = gl_ModelViewMatrix * transformedPosition;
-   //GenerateShadowTexCoords(ecPos);
+   vViewPos = gl_ModelViewMatrix * transformedPosition;
+   //GenerateShadowTexCoords(vViewPos);
    
-   vNormal = gl_NormalMatrix * normalize(transformedNormal.xyz);
-   vTangent = gl_NormalMatrix * normalize(transformedTangent.xyz);
-   vBitangent = gl_NormalMatrix * normalize(cross(transformedNormal.xyz, transformedTangent.xyz) * tangentSpace.w);
+   vNormal = inverseView3x3 * gl_NormalMatrix * normalize(transformedNormal.xyz);
+   vTangent = inverseView3x3 * gl_NormalMatrix * normalize(transformedTangent.xyz);
+   vBitangent = inverseView3x3 * gl_NormalMatrix * normalize(cross(transformedNormal.xyz, transformedTangent.xyz) * tangentSpace.w);
    
    gl_Position = gl_ModelViewProjectionMatrix * transformedPosition;
-   vViewPos = gl_ModelViewMatrix * gl_Vertex;
-   vPos = transformedPosition.xyz;
+   
+   vPos = (osg_ViewMatrixInverse * gl_ModelViewMatrix * transformedPosition).xyz;
    
    vLightDir = normalize(inverseView3x3 * gl_LightSource[0].position.xyz);
    vLightDir2 = normalize(inverseView3x3 * gl_LightSource[1].position.xyz);
