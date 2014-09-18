@@ -532,8 +532,7 @@ namespace dtExample
       {
          std::string name(button->getName().c_str());
 
-         InputComponent* inputComp = NULL;
-         GetGameManager()->GetComponentByName(InputComponent::DEFAULT_NAME, inputComp);
+         InputComponent* inputComp = GetInputComponent();
          if (name == "GameScreen_TogglePhysicsDraw")
          {
             inputComp->TogglePhysicsDrawMode();
@@ -600,9 +599,35 @@ namespace dtExample
          std::string controlName(spinner->getName().c_str());
          double value = spinner->getCurrentValue();
 
+         InputComponent* comp = GetInputComponent();
+
          if (controlName == "GameScreen_TimeSpinner")
          {
             SendRequestTimeOffsetMessage(value);
+         }
+         else if (controlName == "GameScreen_LampSpinner")
+         {
+            comp->SetLampIntensity(value);
+         }
+         else if (controlName == "GameScreen_SeaStateSpinner")
+         {
+            size_t index = (size_t)value;
+
+            typedef dtActors::WaterGridActor::SeaState SeaState;
+            SeaState* state = NULL;
+            
+            typedef std::vector<dtUtil::Enumeration*> EnumList;
+            const EnumList& seaStates = SeaState::Enumerate();
+
+            if (index >= 0 && seaStates.size() > index)
+            {
+               state = dynamic_cast<SeaState*>(seaStates[index]);
+            }
+
+            if (state != NULL)
+            {
+               comp->SetSeaState(*state);
+            }
          }
       }
 
@@ -681,6 +706,14 @@ namespace dtExample
       message->SetActorId(actorId);
 
       gm->SendMessage(*message);
+   }
+
+   ////////////////////////////////////////////////////////////////////////
+   InputComponent* GuiComponent::GetInputComponent()
+   {
+      InputComponent* inputComp = NULL;
+      GetGameManager()->GetComponentByName(InputComponent::DEFAULT_NAME, inputComp);
+      return inputComp;
    }
 
 } // END - namsepace dtExample

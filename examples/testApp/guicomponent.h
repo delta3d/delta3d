@@ -65,6 +65,7 @@ typedef CEGUI::EventArgs GuiEventArgs;
 
 namespace dtExample
 {
+   class InputComponent;
    class MotionModelType;
 
 
@@ -140,6 +141,8 @@ namespace dtExample
          void SendRequestTimeOffsetMessage(float offset);
 
          void SendRequestAttachMessage(const dtCore::UniqueId& actorId);
+
+         InputComponent* GetInputComponent();
 
       private:
 
