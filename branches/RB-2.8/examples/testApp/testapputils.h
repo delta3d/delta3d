@@ -40,9 +40,11 @@ namespace dtExample
    class TEST_APP_EXPORT TestAppUtils
    {
    public:
-      bool GenerateTangentsForObject(dtCore::BaseActorObject& actor);
+      bool GenerateTangentsForObject(dtCore::BaseActorObject& actor) const;
 
-      bool GenerateTangentsForObject(dtCore::DeltaDrawable& drawable);
+      bool GenerateTangentsForObject(dtCore::DeltaDrawable& drawable) const;
+
+      bool IsAttachableActor(dtCore::BaseActorObject& actor) const;
    };
 
 }

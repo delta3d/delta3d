@@ -122,7 +122,7 @@ namespace dtExample
          switch (key)
          {
             // --- Menu Navigation Keys Section --- //
-            case osgGA::GUIEventAdapter::KEY_Escape:
+         case osgGA::GUIEventAdapter::KEY_BackSpace:
                SendTransitionMessage(dtExample::Transition::TRANSITION_BACK);
                break;
                
