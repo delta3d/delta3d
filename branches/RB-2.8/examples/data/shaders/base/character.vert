@@ -13,11 +13,12 @@ uniform mat4 osg_ViewMatrixInverse = mat4(1.0);
 varying vec3 vNormal;
 varying vec3 vTangent;
 varying vec3 vBitangent;
-varying vec3 vPos;
-varying vec3 vCamera;
-varying vec3 vViewDir;
 varying vec3 vLightDir;
 varying vec3 vLightDir2;
+varying vec3 vPos;
+varying vec3 vCamera;
+varying vec4 vViewPos;
+
 
 attribute vec4 boneWeights;
 attribute vec4 boneIndices;
@@ -85,9 +86,8 @@ void main(void)
    vBitangent = gl_NormalMatrix * normalize(cross(transformedNormal.xyz, transformedTangent.xyz) * tangentSpace.w);
    
    gl_Position = gl_ModelViewProjectionMatrix * transformedPosition;
-   vec4 ecPosition = gl_ModelViewMatrix * gl_Vertex;
-   vPos = ecPosition.xyz;
-   vViewDir = vPos / ecPosition.w;
+   vViewPos = gl_ModelViewMatrix * gl_Vertex;
+   vPos = transformedPosition.xyz;
    
    vLightDir = normalize(inverseView3x3 * gl_LightSource[0].position.xyz);
    vLightDir2 = normalize(inverseView3x3 * gl_LightSource[1].position.xyz);
