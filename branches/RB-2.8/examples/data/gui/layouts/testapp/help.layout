@@ -3,14 +3,18 @@
    <!-- MAIN CONTAINER WINDOW (ROOT & BACKGROUND IMAGE) -->
 
    <!-- FRAME -->
-   <Window Name="Root_Help" Type="DefaultWindow">
-      <Property Name="UnifiedSize" Value="{{0.5,0},{1.0,0}}"/>
+
+   <!-- CONTROL PANEL -->
+   <Window Name="Root_Help" Type="WindowsLook/StaticImage">
+      <Property Name="UnifiedSize" Value="{{0.2,0},{0.9,0}}"/>
       <Property Name="UnifiedPosition" Value="{{0.0,0},{0.0,0}}"/>
+      <Property Name="MousePassThroughEnabled" Value="True"/>
       <Property Name="ZOrderChangeEnabled" Value="False"/>
       <Property Name="AlwaysOnTop" Value="True"/>
       <Property Name="HorizontalAlignment" Value="Left"/>
       <Property Name="VerticalAlignment" Value="Top"/>
-      <Property Name="MousePassThroughEnabled" Value="True"/>
+      <Property Name="BackgroundColours" Value="33000000"/>
+      <Property Name="FrameColours" Value="00000000"/>
       <Property Name="Visible" Value="False"/>
 
       <!-- TEXT - 1 -->

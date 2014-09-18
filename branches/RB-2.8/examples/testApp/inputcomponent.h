@@ -77,6 +77,10 @@ namespace dtExample
 
          void Update(float simTimeDelta, float realTimeDelta);
 
+         void ToggleFireworks();
+
+         void ToggleAIWaypointDrawMode();
+
          void TogglePhysicsDrawMode();
 
          void ReloadShaders();

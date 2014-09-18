@@ -533,7 +533,15 @@ namespace dtExample
          std::string name(button->getName().c_str());
 
          InputComponent* inputComp = GetInputComponent();
-         if (name == "GameScreen_TogglePhysicsDraw")
+         if (name == "GameScreen_ToggleFirworks")
+         {
+            inputComp->ToggleFireworks();
+         }
+         else if (name == "GameScreen_ToggleAIWaypoints")
+         {
+            inputComp->ToggleAIWaypointDrawMode();
+         }
+         else if (name == "GameScreen_TogglePhysicsDraw")
          {
             inputComp->TogglePhysicsDrawMode();
          }

@@ -58,8 +58,10 @@ namespace dtCore
 
 typedef CEGUI::PushButton GuiButton;
 typedef CEGUI::Checkbox GuiCheckbox;
-typedef CEGUI::Spinner GuiSpinner;
+typedef CEGUI::Combobox GuiCombobox;
 typedef CEGUI::EventArgs GuiEventArgs;
+typedef CEGUI::ItemListbox GuiListbox;
+typedef CEGUI::Spinner GuiSpinner;
 
 
 
