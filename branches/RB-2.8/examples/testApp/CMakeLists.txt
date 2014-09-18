@@ -15,6 +15,7 @@ SET(TARGET_SRC testapp.cpp
                testappgamestates.cpp
                testappmessages.cpp
                testappmessagetypes.cpp
+               testapputils.cpp
                Nodes/ApplicationNode.cpp
                Nodes/ChangeStance.cpp
                Nodes/CivilianAvatar.cpp
@@ -45,6 +46,7 @@ SET(TARGET_H civilianactor.h
              testappgamestates.h
              testappmessages.h
              testappmessagetypes.h
+             testapputils.h
              Nodes/ApplicationNode.h
              Nodes/ChangeStance.h
              Nodes/CivilianAvatar.h
