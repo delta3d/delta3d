@@ -65,8 +65,8 @@ namespace dtAI
 
       /// @return true if any of the rendering options are enabled
       bool IsAnyRenderingEnabled() const;
-      /// Disable all the rendering options
-      void DisableAllRendering();
+      /// Enable or Disable all the rendering options
+      void SetAllRenderingOptions(bool value);
 
       // Waypoints
       DT_DECLARE_ACCESSOR(float, WaypointSize);

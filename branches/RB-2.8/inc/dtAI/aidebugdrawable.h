@@ -70,6 +70,9 @@ namespace dtAI
       osg::Node* GetOSGNode();
       const osg::Node* GetOSGNode() const;
 
+      /// @return true if this debug drawable has any renderable data.
+      bool HasWaypointData() const;
+
       /**
        * @note This clears out all existing waypoints and replaces them with those in wpArray
        * @param wpArray The array of all WaypointInterface objects to visualize
