@@ -327,10 +327,16 @@ bool BezierController::OnNextStep()
          // This needs to be false in order to restart
          mIsRunning = false;
 
+         // Notify that the restart is happening.
+         OnRestart();
+
          // Restart from the beginning
-         Start();        
+         Start();   
+
          return true;
       }
+
+      OnEnd();
 
       return false;
    }
@@ -373,6 +379,8 @@ bool BezierController::OnNextStep()
       assert(0);
    }
 
+   SignalNextStep.emit_signal(*this);
+
    return true;
 }
 
@@ -387,16 +395,32 @@ void BezierController::OnStart()
 {
    CreatePath();
    ResetIterators();
+
+   SignalStarted.emit_signal(*this);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void BezierController::OnRestart()
+{
+   SignalRestarted.emit_signal(*this);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 void BezierController::OnPause()
 {
+   SignalPaused.emit_signal(*this);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 void BezierController::OnUnPause()
 {
+   SignalUnPaused.emit_signal(*this);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void BezierController::OnEnd()
+{
+   SignalEnded.emit_signal(*this);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

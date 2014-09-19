@@ -32,6 +32,8 @@
 #include "beziernode.h"
 #include "motionaction.h"
 
+#include <dtCore/sigslot.h>
+
 namespace dtABC
 {
 
@@ -75,6 +77,13 @@ public:
 
    ///Used to identify the BezierController.
    static const std::string BEZIER_CONTROLLER_GEODE_ID;
+
+   sigslot::signal1<BezierController&> SignalStarted;
+   sigslot::signal1<BezierController&> SignalPaused;
+   sigslot::signal1<BezierController&> SignalUnPaused;
+   sigslot::signal1<BezierController&> SignalRestarted;
+   sigslot::signal1<BezierController&> SignalNextStep;
+   sigslot::signal1<BezierController&> SignalEnded;
 
    BezierController();
 
@@ -132,6 +141,7 @@ protected:
    /*virtual*/ void OnPause();
    /*virtual*/ void OnUnPause();
    /*virtual*/ void OnRestart();
+   /*virtual*/ void OnEnd();
 
 private:
 
