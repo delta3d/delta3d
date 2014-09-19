@@ -200,6 +200,7 @@ namespace dtCore
          static const std::string SHADER_ELEMENT;
          static const std::string SHADER_ATTRIBUTE_NAME;
          static const std::string SHADER_ATTRIBUTE_DEFAULT;
+         static const std::string SHADER_ATTRIBUTE_EDITOR;
          static const std::string SHADER_SOURCE_ELEMENT;
          static const std::string SHADER_SOURCE_ATTRIBUTE_TYPE;
          static const std::string SHADER_ATTRIBUTE_VERTICES_OUT;

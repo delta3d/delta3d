@@ -40,7 +40,7 @@ namespace dtCore
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void ShaderGroup::AddShader(ShaderProgram &shader, bool isDefault)
+   void ShaderGroup::AddShader(ShaderProgram &shader, bool isDefault, bool isEditor)
    {
       ShaderListType::iterator itor =
          mShaders.find(shader.GetName());
@@ -51,7 +51,13 @@ namespace dtCore
       mShaders.insert(std::make_pair(shader.GetName(),&shader));
       //shader.SetParentGroup(this);
       if (isDefault)
+      {
          mDefaultShader = &shader;
+      }
+      else if (isEditor)
+      {
+         mEditorShader = &shader;
+      }
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -138,6 +144,13 @@ namespace dtCore
       }
 
       SetDirty(false);
+   }
+
+   void ShaderGroup::RemoveAllShaders()
+   {
+       mShaders.clear();
+       mDefaultShader = NULL; 
+       mEditorShader = NULL;
    }
 
 }

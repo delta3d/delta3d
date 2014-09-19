@@ -10,6 +10,7 @@
 #include <dtCore/shadergroup.h>
 #include <dtCore/shadermanager.h>
 #include <dtCore/shaderprogram.h>
+#include <dtCore/project.h>  //for binding editor shader in edit mode
 #include <dtUtil/log.h>
 // OSG
 #include <osg/ComputeBoundsVisitor>
@@ -419,7 +420,20 @@ namespace dtCore
       // TODO: Find an explicit shader instead of just the default;
       //shaderGroup->FindShader();
 
-      const dtCore::ShaderProgram* defaultShader = shaderGroup->GetDefaultShader();
+      bool editMode = dtCore::Project::GetInstance().GetEditMode();
+
+      const dtCore::ShaderProgram* defaultShader = NULL;
+
+      if(editMode)
+      {
+         defaultShader = shaderGroup->GetEditorShader();
+      }
+
+      //if we arent in edit mode or there is no specific shader for editors
+      if(defaultShader == NULL)
+      {
+         defaultShader = shaderGroup->GetDefaultShader();
+      }
 
       try
       {
