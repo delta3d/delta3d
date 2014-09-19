@@ -11,7 +11,8 @@ SET(LIB_PUBLIC_HEADERS
     ${HEADER_PATH}/backdropactor.h
     ${HEADER_PATH}/baselightactorproxy.h
     ${HEADER_PATH}/basewateractor.h
-    ${HEADER_PATH}/beziercontrolleractorproxy.h
+    ${HEADER_PATH}/beziercontrolleractor.h
+    ${HEADER_PATH}/beziercontrolleractorcomponent.h
     ${HEADER_PATH}/beziercontrolpointactorproxy.h
     ${HEADER_PATH}/beziernodeactorproxy.h
     ${HEADER_PATH}/buildingactor.h
@@ -65,7 +66,8 @@ SET(LIB_SOURCES
     ${SOURCE_PATH}/backdropactor.cpp
     ${SOURCE_PATH}/baselightactorproxy.cpp
     ${SOURCE_PATH}/basewateractor.cpp
-    ${SOURCE_PATH}/beziercontrolleractorproxy.cpp
+    ${SOURCE_PATH}/beziercontrolleractor.cpp
+    ${SOURCE_PATH}/beziercontrolleractorcomponent.cpp
     ${SOURCE_PATH}/beziercontrolpointactorproxy.cpp
     ${SOURCE_PATH}/beziernodeactorproxy.cpp
     ${SOURCE_PATH}/buildingactor.cpp

@@ -31,7 +31,7 @@
 #include <dtActors/infiniteterrainactorproxy.h>
 #include <dtActors/autotriggeractorproxy.h>
 #include <dtActors/backdropactor.h>
-#include <dtActors/beziercontrolleractorproxy.h>
+#include <dtActors/beziercontrolleractor.h>
 #include <dtActors/meshterrainactorproxy.h>
 #include <dtActors/clouddomeactorproxy.h>
 #include <dtActors/cloudplaneactorproxy.h>
@@ -178,7 +178,7 @@ namespace dtActors
       // BezierControlPoint actor
       mActorFactory->RegisterType<BezierControlPointActorProxy>(BEZIER_CONTROL_POINT_ACTOR_TYPE.get());
       // BezierController actor
-      mActorFactory->RegisterType<BezierControllerActorProxy>(BEZIER_CONTROLLER_ACTOR_TYPE.get());
+      mActorFactory->RegisterType<BezierControllerActor>(BEZIER_CONTROLLER_ACTOR_TYPE.get());
       // CloudPlane actor...
       mActorFactory->RegisterType<CloudPlaneActorProxy>(CLOUD_PLANE_ACTOR_TYPE.get());
       // CloudDome Actor
