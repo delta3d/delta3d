@@ -63,7 +63,7 @@ namespace dtCore
           * @see GetDefaultShader()
           * @throw ShaderSourceException
           */
-         void AddShader(ShaderProgram &shader, bool isDefault = false);
+         void AddShader(ShaderProgram &shader, bool isDefault = false, bool isEditor = false);
 
          /**
           * Removes the specified shader from this shader group.
@@ -82,7 +82,7 @@ namespace dtCore
          /**
           * Clears the group's list of shaders.
           */
-         void RemoveAllShaders() { mShaders.clear(); mDefaultShader = NULL; }
+         void RemoveAllShaders();
 
          /**
           * Searches the group for a shader with the specified name.
@@ -123,6 +123,13 @@ namespace dtCore
           */
          ShaderProgram* GetDefaultShader() { return mDefaultShader.get(); }
 
+         /***
+         *   The editor shader typically just outputs diffuse or anything you would want 
+         *     to see only in the editor
+         */
+         const ShaderProgram* GetEditorShader() const { return mEditorShader.get(); }
+         ShaderProgram* GetEditorShader() { return mEditorShader.get(); }
+
          /**
           * Updates this shader group's state by calling update on each shader it is
           * currently maintaining.
@@ -158,6 +165,7 @@ namespace dtCore
          typedef dtUtil::AssocVector<std::string, dtCore::RefPtr<ShaderProgram> > ShaderListType;
          ShaderListType mShaders;
          dtCore::RefPtr<ShaderProgram> mDefaultShader;
+         dtCore::RefPtr<ShaderProgram> mEditorShader;
    };
 }
 
