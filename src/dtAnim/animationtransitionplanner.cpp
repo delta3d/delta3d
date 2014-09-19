@@ -482,12 +482,15 @@ namespace dtAnim
          gottaSequence = GenerateNewAnimationSequence();
       }
 
+      AnimationHelper* animAC = GetOwner()->GetComponent<AnimationHelper>();
+
       if (gottaSequence)
       {
          dtAI::Planner::OperatorList::iterator i, iend;
-         SequenceMixer& seqMixer = GetOwner()->GetComponent<AnimationHelper>()->GetSequenceMixer();
+         SequenceMixer& seqMixer = animAC->GetSequenceMixer();
          dtCore::RefPtr<AnimationSequence> generatedSequence = new AnimationSequence();
 
+         std::string oldSeqId = mSequenceId;
          if (mSequenceId.empty())
          {
             mSequenceId = "seq:0";
@@ -547,17 +550,19 @@ namespace dtAnim
                }
             }
 
-            seqMixer.ClearActiveAnimations(blendTime);
+            bool posesWereEnabled = animAC->IsPosesEnabled();
+            seqMixer.ClearAnimation(oldSeqId, blendTime);
+            seqMixer.ClearAnimation(AnimationOperators::ANIM_WALK_DEPLOYED, blendTime);
             seqMixer.PlayAnimation(generatedSequence.get());
+            animAC->SetPosesEnabled(posesWereEnabled);
 
             SignalAnimationsTransitioning.emit_signal(*this);
          }
       }
       else
       {
-         AnimationHelper* animAC = GetOwner()->GetComponent<AnimationHelper>();
          //This is the error-out state.
-         animAC->ClearAll(blendTime);
+         animAC->ClearAnimation(mSequenceId, blendTime);
          animAC->PlayAnimation(AnimationOperators::ANIM_WALK_DEPLOYED);
          SignalAnimationsTransitioning.emit_signal(*this);
       }
