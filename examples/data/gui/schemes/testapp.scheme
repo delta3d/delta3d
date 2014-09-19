@@ -5,6 +5,7 @@
    <Imageset Name="WindowsLook" Filename="gui/imagesets/WindowsLook.imageset" />
    <Imageset Name="TestApp" Filename="gui/imagesets/TestApp.imageset" />
    <Imageset Name="TestApp_LoadingScreen" Filename="gui/imagesets/TestApp_LoadingScreen.imageset" />
+   <Imageset Name="TestApp_TitleScreen" Filename="gui/imagesets/TestApp_TitleScreen.imageset" />
    
    <!-- FONTS -->
    <Font Name="DejaVuSans-10" Filename="gui/fonts/DejaVuSans-10.font" />
