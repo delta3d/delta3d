@@ -450,6 +450,10 @@ namespace dtAI
       }
 
       mDrawable = debugDrawable;
+      if (mDrawable.valid())
+      {
+         UpdateDebugDrawable();
+      }
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -467,11 +471,11 @@ namespace dtAI
    /////////////////////////////////////////////////////////////////////////////
    void DeltaAIInterface::UpdateDebugDrawable()
    {
-      std::vector<dtAI::WaypointInterface*> waypointList;
-      GetWaypoints(waypointList);
-
       if (mDrawable->GetRenderInfo()->IsAnyRenderingEnabled())
       {
+         std::vector<dtAI::WaypointInterface*> waypointList;
+         GetWaypoints(waypointList);
+
          mDrawable->SetWaypoints(waypointList);
 
          NavMesh* nm = mWaypointGraph->GetNavMeshAtSearchLevel(0);
@@ -479,6 +483,10 @@ namespace dtAI
          {
             mDrawable->UpdateWaypointGraph(*nm);
          }
+      }
+      else
+      {
+         mDrawable->OnRenderInfoChanged();
       }
    }
 

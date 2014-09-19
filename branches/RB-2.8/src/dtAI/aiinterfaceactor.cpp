@@ -63,7 +63,7 @@ namespace dtAI
 
       SetDrawable(*mAIInterface->GetDebugDrawable());
       // Turn off all rendering
-      mAIInterface->GetDebugDrawable()->GetRenderInfo()->DisableAllRendering();
+      mAIInterface->GetDebugDrawable()->GetRenderInfo()->SetAllRenderingOptions(false);
 
    }
 
