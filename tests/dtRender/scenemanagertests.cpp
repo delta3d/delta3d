@@ -367,7 +367,7 @@ namespace dtRender
          CPPUNIT_ASSERT_MESSAGE("The proxies drawable should be a SimpleScene class.", ss != NULL);
 
          ss->SetSceneEnum(SceneEnum::PRE_RENDER);
-         ss->SetRenderOrder(3);
+         ss->SetChildOrder(3);
 
          //try to push a scene that is not a child of the scene manager, this should fail
          //mSceneManager->PushScene(*ss);
@@ -613,7 +613,7 @@ namespace dtRender
 
          CPPUNIT_ASSERT(sb != NULL);
 
-         int newRenderOrder = sb->GetRenderOrder();
+         int newRenderOrder = sb->GetChildOrder();
 
          CPPUNIT_ASSERT_MESSAGE("The scenes should be ordered lowest to highest", lastRenderOrder <= newRenderOrder);
          lastRenderOrder = newRenderOrder;
@@ -642,7 +642,7 @@ namespace dtRender
       CPPUNIT_ASSERT_MESSAGE("The proxies drawable should be a SimpleScene class.", ss != NULL);
 
       ss->SetSceneEnum(se);
-      ss->SetRenderOrder(ro);
+      ss->SetChildOrder(ro);
 
       mGameManager->AddActor(*proxy);
 
