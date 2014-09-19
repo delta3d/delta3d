@@ -280,6 +280,24 @@ namespace dtExample
          cp->subscribeEvent(GuiNode::EventMouseLeavesArea,
             CEGUI::Event::Subscriber(&GuiComponent::OnControlPanelFocusLost, this));
 
+         // Populate the list controls.
+         /*typedef std::vector<dtUtil::Enumeration*> EnumList;
+         typedef dtActors::WaterGridActor::ChoppinessSettings Choppiness;
+         const EnumList& choppies = Choppiness::Enumerate();
+
+         {
+            GuiCombobox* combo = dynamic_cast<GuiCombobox*>(mGameScreen->GetNode("GameScreen_SeaChoppinessList"));
+            EnumList::const_iterator curIter = choppies.begin();
+            EnumList::const_iterator endIter = choppies.end();
+            for (; curIter != endIter; ++curIter)
+            {
+               std::string name((*curIter)->GetName());
+               CEGUI::ListboxItem* item = dynamic_cast<CEGUI::ListboxItem*>(CEGUI::WindowManager::getSingleton().createWindow("WindowsLook/ListboxItem"));
+               item->setText(name.c_str());
+               combo->addItem(item);
+            }
+         }*/
+
          // Hide all screens by default.
          GuiScreen * curScreen = NULL;
          GameStateScreenMap::iterator curIter = mScreens.begin();
@@ -369,7 +387,7 @@ namespace dtExample
 
 
       // Update the Sea Choppiness combobox
-      typedef dtActors::WaterGridActor::ChoppinessSettings Choppiness;
+      /*typedef dtActors::WaterGridActor::ChoppinessSettings Choppiness;
       const EnumList& choppies = Choppiness::Enumerate();
 
       Choppiness& choppiness = comp->GetWaterChoppiness();
@@ -389,7 +407,7 @@ namespace dtExample
       }
 
       GuiCombobox* combo = dynamic_cast<GuiCombobox*>(screen.GetNode("GameScreen_SeaChoppinessList"));
-      combo->setItemSelectState(index, true);
+      combo->setItemSelectState(index, true)*/;
    }
 
    //////////////////////////////////////////////////////////////////////////
