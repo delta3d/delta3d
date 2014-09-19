@@ -65,6 +65,26 @@ namespace dtRender
    //};
 
 
+   class OceanResizeCallback: public MultipassScene::ResizeCallback
+   {
+      public:
+         OceanResizeCallback(OceanScene* ocean)
+            : mOceanScene(ocean)
+         {
+
+         }
+
+         void OnResize(MultipassScene& mps, int width, int height)
+         {
+            mOceanScene->OnResize(mps, width, height);
+         }
+
+      private:
+         dtCore::ObserverPtr<OceanScene> mOceanScene;
+   };
+
+
+
    class OceanSceneImpl
    {
    public:
@@ -155,10 +175,12 @@ namespace dtRender
                   depthTextureUniform->setDataVariance(osg::Object::DYNAMIC);
                   depthTextureUniform->set(MultipassScene::TEXTURE_UNIT_PREDEPTH);
 
-                  osg::StateSet* ss = water->GetOSGNode()->getOrCreateStateSet();
+                  osg::StateSet* ss = /*water->*/GetOSGNode()->getOrCreateStateSet();
                   ss->addUniform(depthTextureUniform);
                   ss->setTextureAttributeAndModes(MultipassScene::TEXTURE_UNIT_PREDEPTH, mps->GetPreDepthTexture(), osg::StateAttribute::ON);
 
+                  OceanResizeCallback* orc = new OceanResizeCallback(this);
+                  mps->AddResizeCallback(*orc);
                }
             }
             //currently not creating multipass reflection scene
@@ -390,6 +412,23 @@ namespace dtRender
       if(mImpl->mWaterActor.valid())
       {
          mImpl->mWaterActor->SetChoppiness(choppiness_);
+      }
+   }
+
+   void OceanScene::OnResize( MultipassScene& mps, int width, int height )
+   {
+      if(mps.GetEnablePreDepthPass())
+      {
+         osg::StateSet* ss = /*water->*/GetOSGNode()->getOrCreateStateSet();
+
+         //bind the result of the pre depth texture to the scene
+         osg::Uniform* depthTextureUniform = ss->getOrCreateUniform(MultipassScene::UNIFORM_PREDEPTH_TEXTURE, osg::Uniform::SAMPLER_2D);
+         depthTextureUniform->setDataVariance(osg::Object::DYNAMIC);
+         depthTextureUniform->set(MultipassScene::TEXTURE_UNIT_PREDEPTH);
+
+         
+         ss->setTextureAttributeAndModes(MultipassScene::TEXTURE_UNIT_PREDEPTH, mps.GetPreDepthTexture(), osg::StateAttribute::ON);
+
       }
    }
 

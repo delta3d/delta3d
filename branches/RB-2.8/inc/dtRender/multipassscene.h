@@ -65,6 +65,17 @@ namespace dtRender
       static const std::string UNIFORM_DEPTH_ONLY_PASS;
       static const std::string UNIFORM_PREDEPTH_TEXTURE;
 
+      class DT_RENDER_EXPORT ResizeCallback : public osg::Referenced
+      {
+      public:
+         ResizeCallback() {};
+
+         virtual void OnResize(MultipassScene&, int width, int height) = 0;
+
+      protected:
+         virtual ~ResizeCallback() {};
+      };
+
    public:
       MultipassScene();
       MultipassScene(const SceneType& sceneId, const SceneEnum& defaultScene);
@@ -138,13 +149,23 @@ namespace dtRender
       osgPPU::Unit* GetLastUnit();
       const osgPPU::Unit* GetLastUnit() const;
 
+      virtual void Resize(osg::Camera*);
+
+      /***
+      * On resize the multipass and render buffers are recreated
+      *     use a callback to update the references to your textures.
+      */
+      void AddResizeCallback(ResizeCallback& cb);
+      void RemoveResizeCallback(ResizeCallback& cb);
 
    protected:
       void SetFirstUnit(osgPPU::Unit&);
       void SetLastUnit(osgPPU::Unit&);
 
-      osg::Texture* SetupMultipassCamera(osg::Camera& camera, osg::Viewport& vp , bool use_color, bool use_depth);
+      void SetupMultipassCamera(osg::Camera& camera, osg::Viewport& vp , bool use_color, bool use_depth, dtCore::RefPtr<osg::Texture2D>& colorTexture, dtCore::RefPtr<osg::Texture2D>& depthTexture);
       osg::Texture2D* CreateRenderTexture(int tex_width, int tex_height, bool depth, bool nearest, int imageFormat);
+
+      void DetachRenderer(osg::Camera& camera);
 
    private:
       MultipassSceneImpl* mImpl;
