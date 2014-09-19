@@ -134,6 +134,10 @@ namespace dtExample
          void BindSpinner(GuiSpinner& spinner);
    
          const GuiNode* GetWidgetFromEventArgs(const GuiEventArgs& args) const;
+
+         bool OnControlPanelFocusGained(const GuiEventArgs& args);
+
+         bool OnControlPanelFocusLost(const GuiEventArgs& args);
    
          bool OnButtonClicked(const GuiEventArgs& args);
 

@@ -58,6 +58,9 @@ namespace dtExample
          // Constructor
          InputComponent();
 
+         void SetMotionModelEnabled(bool enabled);
+         bool IsMotionModelEnabled() const;
+
          /*override*/ bool HandleKeyPressed(const dtCore::Keyboard* keyboard, int key);
 
          /*override*/ bool HandleKeyReleased(const dtCore::Keyboard* keyboard, int key);

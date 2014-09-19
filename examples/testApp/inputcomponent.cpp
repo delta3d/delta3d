@@ -111,6 +111,23 @@ namespace dtExample
    {}
 
    //////////////////////////////////////////////////////////////////////////
+   void InputComponent::SetMotionModelEnabled(bool enabled)
+   {
+      // Only change the state of the current motion model
+      // only if it exists and is allowed to be turned on.
+      if (mMotionModelsEnabled && mMotionModel)
+      {
+         mMotionModel->SetEnabled(enabled);
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   bool InputComponent::IsMotionModelEnabled() const
+   {
+      return mMotionModel.valid() && mMotionModel->IsEnabled();
+   }
+
+   //////////////////////////////////////////////////////////////////////////
    bool InputComponent::HandleKeyPressed(const dtCore::Keyboard* keyBoard, int key)
    {
       std::ostringstream ss;

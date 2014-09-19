@@ -267,6 +267,19 @@ namespace dtExample
          screen->Setup();
          RegisterScreenWithState(*screen, TestAppGameState::STATE_GAME_QUIT);
 
+         // Special setup for the control panel.
+         // Some motion models continue to operate even though the UI
+         // may consume inputs which should not be processed by motion models.
+         // As a work around, the control panel needs to disable motion models
+         // when the mouse cursor enters its frame. Certain callback methods
+         // need to be registered with events from the control panel regarding
+         // the proximity of the mouse cursor.
+         GuiNode* cp = mGameScreen->GetNode("GameScreen_ControlPanel");
+         cp->subscribeEvent(GuiNode::EventMouseEntersArea,
+            CEGUI::Event::Subscriber(&GuiComponent::OnControlPanelFocusGained, this));
+         cp->subscribeEvent(GuiNode::EventMouseLeavesArea,
+            CEGUI::Event::Subscriber(&GuiComponent::OnControlPanelFocusLost, this));
+
          // Hide all screens by default.
          GuiScreen * curScreen = NULL;
          GameStateScreenMap::iterator curIter = mScreens.begin();
@@ -568,6 +581,20 @@ namespace dtExample
          = static_cast<const CEGUI::WindowEventArgs&>(args);
 
       return winArgs.window;
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   bool GuiComponent::OnControlPanelFocusGained(const GuiEventArgs& args)
+   {
+      GetInputComponent()->SetMotionModelEnabled(false);
+      return true;
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   bool GuiComponent::OnControlPanelFocusLost(const GuiEventArgs& args)
+   {
+      GetInputComponent()->SetMotionModelEnabled(true);
+      return true;
    }
 
    /////////////////////////////////////////////////////////////////////////////
