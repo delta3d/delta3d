@@ -626,7 +626,7 @@ namespace dtPhysics
             }
             else
             {
-               throw dtUtil::Exception("Unable to create a geometry for this physics object because it is not configured to a simple shape, and it has not vertex data for a mesh.",
+               throw dtUtil::Exception("Unable to create a geometry for PhysicsObject \"" + GetName() + "\" because it neither has bounds for a shape nor vertex data for a mesh.",
                      __FILE__, __LINE__);
             }
             //Reset this because it has to be done after geometry is added.
