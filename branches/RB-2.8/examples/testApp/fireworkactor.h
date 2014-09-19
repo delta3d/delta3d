@@ -48,11 +48,15 @@ namespace dtExample
       static const dtUtil::RefString DEFAULT_LAYER_NAME_FLARE;
       static const dtUtil::RefString DEFAULT_LAYER_NAME_SPARKS;
 
+      static const dtUtil::RefString INVOKABLE_PROCESS_GAME_EVENT;
+
       static const dtUtil::RefString PROPERTY_COLOR_BEGIN;
       static const dtUtil::RefString PROPERTY_COLOR_END;
       static const dtUtil::RefString PROPERTY_LAYER_NAME_FLARE;
       static const dtUtil::RefString PROPERTY_LAYER_NAME_SPARKS;
       static const dtUtil::RefString PROPERTY_DETONATE_TIME_LIMIT;
+      static const dtUtil::RefString PROPERTY_EVENT_TO_LAUNCH;
+      static const dtUtil::RefString PROPERTY_EVENT_TO_DETONATE;
 
       FireworkActor();
 
@@ -78,15 +82,26 @@ namespace dtExample
 
       osg::Vec4 GetCurrentColor(dtCore::ParticleSystem& ps) const;
 
+      void SetEventToLaunch(dtCore::GameEvent* gameEvent);
+      dtCore::GameEvent* GetEventToLaunch() const;
+
+      void SetEventToDetonate(dtCore::GameEvent* gameEvent);
+      dtCore::GameEvent* GetEventToDetonate() const;
+
       virtual void OnLaunch();
+      virtual void OnDetonate();
 
       /*virtual*/ void OnEnteredWorld();
 
       /*virtual*/ void BuildPropertyMap();
 
+      /*virtual*/ void BuildInvokables();
+
       /*virtual*/ void BuildActorComponents();
    
       /*virtual*/ void OnTickLocal(const dtGame::TickMessage& tickMessage);
+
+      void ProcessGameEvent(const dtGame::GameEventMessage& gameEventMessage);
 
    protected:
       virtual ~FireworkActor();
@@ -112,6 +127,9 @@ namespace dtExample
       osg::Vec4 mColorEnd;
       std::string mLayerNameFlare;
       std::string mLayerNameSparks;
+
+      dtCore::RefPtr<dtCore::GameEvent> mEventToLaunch;
+      dtCore::RefPtr<dtCore::GameEvent> mEventToDetonate;
    };
 
 }
