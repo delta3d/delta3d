@@ -42,11 +42,15 @@ namespace dtExample
    const dtUtil::RefString FireworkActor::DEFAULT_LAYER_NAME_FLARE("Flare");
    const dtUtil::RefString FireworkActor::DEFAULT_LAYER_NAME_SPARKS("Sparks");
 
+   const dtUtil::RefString FireworkActor::INVOKABLE_PROCESS_GAME_EVENT("ProcessGameEvent");
+
    const dtUtil::RefString FireworkActor::PROPERTY_COLOR_BEGIN("ColorBegin");
    const dtUtil::RefString FireworkActor::PROPERTY_COLOR_END("ColorEnd");
    const dtUtil::RefString FireworkActor::PROPERTY_LAYER_NAME_FLARE("Layer Name Flare");
    const dtUtil::RefString FireworkActor::PROPERTY_LAYER_NAME_SPARKS("Layer Name Sparks");
    const dtUtil::RefString FireworkActor::PROPERTY_DETONATE_TIME_LIMIT("DetonateTimeLimit");
+   const dtUtil::RefString FireworkActor::PROPERTY_EVENT_TO_LAUNCH("Event To Launch");
+   const dtUtil::RefString FireworkActor::PROPERTY_EVENT_TO_DETONATE("Event To Detonate");
 
 
 
@@ -225,6 +229,30 @@ namespace dtExample
    }
 
    /////////////////////////////////////////////////////////////////////////////
+   void FireworkActor::SetEventToLaunch(dtCore::GameEvent* gameEvent)
+   {
+      mEventToLaunch = gameEvent;
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   dtCore::GameEvent* FireworkActor::GetEventToLaunch() const
+   {
+      return mEventToLaunch.get();
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void FireworkActor::SetEventToDetonate(dtCore::GameEvent* gameEvent)
+   {
+      mEventToDetonate = gameEvent;
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   dtCore::GameEvent* FireworkActor::GetEventToDetonate() const
+   {
+      return mEventToDetonate.get();
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
    void FireworkActor::OnLaunch()
    {
       dtCore::ParticleSystem* ps = NULL;
@@ -238,6 +266,23 @@ namespace dtExample
       else
       {
          OnLaunch(*ps);
+      }
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void FireworkActor::OnDetonate()
+   {
+      dtCore::ParticleSystem* ps = NULL;
+      GetDrawable(ps);
+
+      if (ps == NULL)
+      {
+         LOG_ERROR("Could not detonate firework \"" + GetName()
+            + "\" because its particle system could not be accessed.");
+      }
+      else
+      {
+         OnDetonate(*ps);
       }
    }
 
@@ -313,6 +358,8 @@ namespace dtExample
       // Ensure that the actor is ticked.
       RegisterForMessages(dtGame::MessageType::TICK_LOCAL,
          dtGame::GameActorProxy::TICK_LOCAL_INVOKABLE);
+      RegisterForMessages(dtGame::MessageType::INFO_GAME_EVENT,
+         INVOKABLE_PROCESS_GAME_EVENT);
 
       // Ensure the colors are set to the particle system
       // in case the default values have not changed.
@@ -380,9 +427,35 @@ namespace dtExample
          StringActorProperty::GetFuncType(this, &FireworkActor::GetLayerNameSparks),
          RefString("Name of the layer in the particle system that contains the sparks effect."),
          GROUP));
+
+      // GAME EVENT PROPERTIES
+      AddProperty(new GameEventActorProperty(*this,
+         PROPERTY_EVENT_TO_LAUNCH,
+         PROPERTY_EVENT_TO_LAUNCH,
+         GameEventActorProperty::SetFuncType(this, &FireworkActor::SetEventToLaunch),
+         GameEventActorProperty::GetFuncType(this, &FireworkActor::GetEventToLaunch),
+         RefString("Event to launch the firework, starting its detonate timer, light and particle effects."),
+         GROUP));
+
+      AddProperty(new GameEventActorProperty(*this,
+         PROPERTY_EVENT_TO_DETONATE,
+         PROPERTY_EVENT_TO_DETONATE,
+         GameEventActorProperty::SetFuncType(this, &FireworkActor::SetEventToDetonate),
+         GameEventActorProperty::GetFuncType(this, &FireworkActor::GetEventToDetonate),
+         RefString("Event to cause the firework to detonate regardless of the detonate timer."),
+         GROUP));
    }
 
-   ////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
+   void FireworkActor::BuildInvokables()
+   {
+      BaseClass::BuildInvokables();
+
+      AddInvokable(*new dtGame::Invokable(INVOKABLE_PROCESS_GAME_EVENT,
+         dtUtil::MakeFunctor(&FireworkActor::ProcessGameEvent, this)));
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
    void FireworkActor::BuildActorComponents()
    {
       BaseClass::BuildActorComponents();
@@ -491,6 +564,7 @@ namespace dtExample
 
          mSparkLifeTime = p.getLifeTime();
          mSparkLifeTimeRemaining = mSparkLifeTime;
+         mDetonateTimeRemaining = 0.0f;
       }
 
       FadeLight(mSparkLifeTime);
@@ -550,6 +624,21 @@ namespace dtExample
       {
          light->SetFadeOut(true);
          light->SetFadeOutTime(fadeTime);
+      }
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void FireworkActor::ProcessGameEvent(const dtGame::GameEventMessage& gameEventMessage)
+   {
+      const dtCore::GameEvent* gameEvent = gameEventMessage.GetGameEvent();
+
+      if (gameEvent == mEventToLaunch.get())
+      {
+         OnLaunch();
+      }
+      else if (gameEvent == mEventToDetonate.get())
+      {
+         OnDetonate();
       }
    }
 
