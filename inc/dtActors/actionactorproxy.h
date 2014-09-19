@@ -4,7 +4,7 @@
 #include <dtCore/deltadrawable.h>
 #include <dtCore/plugin_export.h>
 #include <dtABC/action.h>
-#include <dtCore/actorproxy.h>
+#include <dtGame/gameactorproxy.h>
 
 
 /* 
@@ -32,7 +32,7 @@ namespace dtActors
 {
 
 
-   class DT_PLUGIN_EXPORT ActionActorProxy: public dtCore::BaseActorObject
+   class DT_PLUGIN_EXPORT ActionActorProxy: public dtGame::GameActorProxy
    {
 
    public:
