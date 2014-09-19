@@ -66,6 +66,11 @@
 #include <dtActors/engineactorregistry.h>
 #include <iostream>
 
+#include <dtAI/aiactorregistry.h>
+#include <dtAI/aiinterfaceactor.h>
+#include <dtAI/aidebugdrawable.h>
+#include <dtAI/waypointrenderinfo.h>
+#include <dtAI/aiplugininterface.h>
 
 
 namespace dtExample
@@ -479,8 +484,6 @@ namespace dtExample
    ////////////////////////////////////////////////////////////////////////
    bool InputComponent::SetCameraPivotByName(const std::string& actorName)
    {
-      bool success = false;
-
       // Detach from the current actor.
       if (mGroundClampedXformable.valid())
       {
@@ -502,8 +505,6 @@ namespace dtExample
    ////////////////////////////////////////////////////////////////////////
    bool InputComponent::SetCameraPivotById(const dtCore::UniqueId& id)
    {
-      bool success = false;
-
       // Detach from the current actor.
       if (mGroundClampedXformable.valid())
       {
@@ -986,7 +987,25 @@ namespace dtExample
 
    void InputComponent::ToggleAIWaypointDrawMode()
    {
-      // TODO:
+      dtAI::AIInterfaceActor* interfaceActor = NULL;
+      GetGameManager()->FindActorByType(*dtAI::AIActorRegistry::AI_INTERFACE_ACTOR_TYPE, interfaceActor);
+      if (interfaceActor != NULL)
+      {
+         dtAI::AIDebugDrawable* aidd = NULL;
+         interfaceActor->GetDrawable(aidd);
+         if (aidd != NULL)
+         {
+            dtAI::WaypointRenderInfo* renderInfo = aidd->GetRenderInfo();
+            renderInfo->SetEnableDepthTest(true);
+            renderInfo->SetAllRenderingOptions(!renderInfo->IsAnyRenderingEnabled());
+            aidd->OnRenderInfoChanged();
+            if (!aidd->HasWaypointData())
+            {
+               interfaceActor->GetAIInterface()->SetDebugDrawable(NULL);
+               interfaceActor->GetAIInterface()->SetDebugDrawable(aidd);
+            }
+         }
+      }
    }
 
    void InputComponent::TogglePhysicsDrawMode()
