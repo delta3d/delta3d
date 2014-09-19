@@ -30,7 +30,7 @@ namespace dtRender
 
    SceneBase::SceneBase(const SceneType& st, const SceneEnum& defaultScene)
    : BaseClass()
-   , mRenderOrder(0)
+   , mChildOrder(0)
    , mSceneEnum(&defaultScene)
    , mType(&st)   
    {
@@ -79,14 +79,14 @@ namespace dtRender
       }
    }
 
-   void SceneBase::SetRenderOrder( RenderOrder r)
+   void SceneBase::SetChildOrder( RenderOrder r)
    {
-      mRenderOrder = r;
+      mChildOrder = r;
    }
 
-   RenderOrder SceneBase::GetRenderOrder() const
+   RenderOrder SceneBase::GetChildOrder() const
    {
-      return mRenderOrder;
+      return mChildOrder;
    }
 
    osg::Node* SceneBase::GetOSGNode()

@@ -45,6 +45,8 @@
 
 #include <osg/Texture2D>
 
+#include <osgViewer/Renderer>
+
 #include <dtCore/scene.h>
 #include <dtABC/application.h>
 
@@ -62,7 +64,7 @@ namespace dtRender
 
    //class UpdateUniformsCallback : public osg::NodeCallback
 
-
+   
    class UpdateCameraCallback : public osg::NodeCallback
    {
    public:
@@ -140,6 +142,103 @@ namespace dtRender
    };
 
 
+   class OSGPPU_EXPORT UnitVisitor : public osg::NodeVisitor
+   {
+   public:
+      META_NodeVisitor("osgPPU" , "UnitVisitor");
+
+      virtual void run(osg::Group* root) { root->traverse(*this); }
+      inline  void run(osg::Group& root) { run(&root); }
+
+      static OpenThreads::Mutex s_mutex_changeUnitSubgraph;
+   };
+
+
+   class FBOAttachmentCullCallback: public osg::NodeCallback
+   {
+   public:
+      FBOAttachmentCullCallback()
+         : mResetFBO(false)
+      {}
+
+
+      virtual void operator()(osg::Node* node, osg::NodeVisitor* nv)
+      {  
+         if(mResetFBO)
+         {
+            osg::Camera* fboCam = dynamic_cast<osg::Camera*>( node ); 
+            osgUtil::CullVisitor* cv = dynamic_cast<osgUtil::CullVisitor*>(nv); 
+
+            if ( fboCam && cv) 
+            { 
+               cv->getCurrentRenderBin()->getStage()->setFrameBufferObject(NULL); // reset frame buffer object - see RenderStage::runCameraSetUp for details, the fbo has to be created again 
+               cv->getCurrentRenderBin()->getStage()->setMultisampleResolveFramebufferObject(NULL); // reset frame buffer object - see RenderStage::runCameraSetUp for details, the fbo has to be created again 
+               cv->getCurrentRenderBin()->getStage()->setCameraRequiresSetUp( true ); // we have to ensure that the runCameraSetUp will be entered! 
+               mResetFBO = false;
+            } 
+         }
+
+         traverse(node,nv); 
+         
+      }
+
+      void SetResetFBO()
+      {
+         mResetFBO = true;
+      }
+
+      private:
+         bool mResetFBO;
+
+   };
+
+   class ResizeContainer : public osg::Referenced
+   {
+   public:
+   	ResizeContainer()
+      {
+
+      }
+      
+      void OnResized(MultipassScene& mps, int width, int height)
+      {
+         CallbackArray::iterator iter =  mCallbacks.begin(); 
+         CallbackArray::iterator iterEnd =  mCallbacks.end(); 
+
+         for(;iter != iterEnd; ++iter)
+         {
+            (*iter)->OnResize(mps, width, height);
+         }
+      }
+
+
+      void AddCallback(MultipassScene::ResizeCallback& cb)
+      {
+         mCallbacks.push_back(&cb);
+      }
+
+      void RemoveCallback(MultipassScene::ResizeCallback &cb)
+      {
+         CallbackArray::iterator iter = std::find(mCallbacks.begin(), mCallbacks.end(), &cb);
+
+         if(iter != mCallbacks.end())
+         {
+            mCallbacks.erase(iter);
+         }
+      }
+
+      
+   protected:
+      virtual ~ResizeContainer()
+      {
+         mCallbacks.clear();
+      }
+ 
+   private:
+      typedef std::vector<dtCore::RefPtr<MultipassScene::ResizeCallback> > CallbackArray;
+      CallbackArray mCallbacks;
+   };
+
    const dtCore::RefPtr<SceneType> MultipassScene::MULTIPASS_SCENE(new SceneType("Multipass Scene", "Scene", "Makes the main scene render to a render target."));
 
    class MultipassSceneImpl
@@ -153,7 +252,7 @@ namespace dtRender
          , mEnableDepthBypass(false)
          , mPreDepthImageFormat(GL_DEPTH_COMPONENT32)
          , mEnablePreDepthPass(true)
-         , mResampleColorFactor(0.25)
+         , mResampleColorFactor(0.5)
       {
          
 
@@ -187,9 +286,13 @@ namespace dtRender
       
       float mResampleColorFactor;
 
-      dtCore::RefPtr<osg::Texture> mPreDepthTexture;
       dtCore::RefPtr<osg::Camera> mMultipassCamera;
       dtCore::RefPtr<osg::Camera> mPreDepthSceneCamera;
+
+      dtCore::RefPtr<osg::Texture2D> mMainCameraTexture;
+      dtCore::RefPtr<osg::Texture2D> mMultipassCameraTexture;
+      dtCore::RefPtr<osg::Texture2D> mMultipassDepthTexture;
+      dtCore::RefPtr<osg::Texture2D> mPreDepthTexture;
 
       dtCore::RefPtr<osgPPU::Processor> mPPUProcessor;
 
@@ -203,6 +306,10 @@ namespace dtRender
       dtCore::ObserverPtr<osgPPU::Unit> mFirstUnit;
       dtCore::ObserverPtr<osgPPU::Unit> mLastUnit;
 
+      dtCore::RefPtr<FBOAttachmentCullCallback> mFBOAttachCallback;
+      dtCore::RefPtr<FBOAttachmentCullCallback> mFBOAttachCallbackDepth;
+
+      dtCore::RefPtr<ResizeContainer> mResizeCallbackContainer;
    };
 
    MultipassScene::MultipassScene()
@@ -236,6 +343,8 @@ namespace dtRender
 
       if(mainSceneCamera != NULL)
       {
+         mImpl->mResizeCallbackContainer = new ResizeContainer;
+
          osg::Camera* mainSceneOSGCamera = mainSceneCamera->GetOSGCamera();
        
          //dtCore::Camera* multiPassCamera = new dtCore::Camera();
@@ -243,8 +352,9 @@ namespace dtRender
          mImpl->mMultipassCamera = multiPassOSGCam;
 
          //setup a render to texture camera for the multi pass scene
-         SetupMultipassCamera(*mainSceneOSGCamera, *mainSceneOSGCamera->getViewport(), true, false);
-         SetupMultipassCamera(*multiPassOSGCam, *mainSceneOSGCamera->getViewport(), mImpl->mEnableColorBypass, mImpl->mEnableDepthBypass);
+         dtCore::RefPtr<osg::Texture2D> empty;
+         SetupMultipassCamera(*mainSceneOSGCamera, *mainSceneOSGCamera->getViewport(), true, false, mImpl->mMainCameraTexture, empty);
+         SetupMultipassCamera(*multiPassOSGCam, *mainSceneOSGCamera->getViewport(), mImpl->mEnableColorBypass, mImpl->mEnableDepthBypass, mImpl->mMultipassCameraTexture, mImpl->mMultipassDepthTexture);
          
          //create ppu processor
          mImpl->mPPUProcessor = new osgPPU::Processor();
@@ -261,7 +371,7 @@ namespace dtRender
          GetSceneNode()->setNodeMask(dtUtil::NodeMask::MULTIPASS);
          
          mainSceneOSGCamera->setCullMask(dtUtil::CullMask::MAIN_CAMERA_MULTIPASS);
-         multiPassOSGCam->setCullMask(dtUtil::CullMask::ADDITIONAL_CAMERA_MULTIPASS);
+         multiPassOSGCam->setCullMask(dtUtil::CullMask::ADDITIONAL_CAMERA_MULTIPASS ^ dtUtil::NodeMask::MULTIPASS);
          
          //keep the multipass camera in synch with the main camera
          multiPassOSGCam->setUpdateCallback(new UpdateCameraCallback(mainSceneOSGCamera, multiPassOSGCam));
@@ -289,7 +399,7 @@ namespace dtRender
             mImpl->mPreDepthSceneCamera->setRenderOrder(osg::Camera::PRE_RENDER);
             mImpl->mPreDepthSceneCamera->setCullMask(dtUtil::CullMask::MULTIPASS_DEPTH_ONLY_MASK);
 
-            mImpl->mPreDepthTexture = SetupMultipassCamera(*mImpl->mPreDepthSceneCamera, *mainSceneOSGCamera->getViewport(), false, true);
+            SetupMultipassCamera(*mImpl->mPreDepthSceneCamera, *mainSceneOSGCamera->getViewport(), false, true, empty, mImpl->mPreDepthTexture);
            
             //keep the predepth camera in synch with the main camera
             mImpl->mPreDepthSceneCamera->setUpdateCallback(new UpdateCameraCallback(mainSceneOSGCamera, mImpl->mPreDepthSceneCamera.get()));
@@ -432,10 +542,8 @@ namespace dtRender
 
 
    //! Setup the camera to do the render to texture
-   osg::Texture* MultipassScene::SetupMultipassCamera(osg::Camera& camera, osg::Viewport& vp, bool use_color, bool use_depth)
+   void MultipassScene::SetupMultipassCamera(osg::Camera& camera, osg::Viewport& vp, bool use_color, bool use_depth, dtCore::RefPtr<osg::Texture2D>& colorTexture, dtCore::RefPtr<osg::Texture2D>& depthTexture)
    {
-      osg::Texture* result = NULL;
-
       // set up the background color and clear mask.
       camera.setClearColor(osg::Vec4(0.0f,0.0f,0.0f,0.0f));
       int clearMask = GL_DEPTH_BUFFER_BIT;
@@ -456,25 +564,21 @@ namespace dtRender
 
       camera.setRenderTargetImplementation(osg::Camera::FRAME_BUFFER_OBJECT);
 
+      camera.detach(osg::Camera::COLOR_BUFFER0);
+
       if(use_depth)
       {
-         osg::Texture* depth_texture = CreateRenderTexture((int)vp.width(), (int)vp.height(), true, true, GetDepthBufferImageFormat());
+         depthTexture = CreateRenderTexture((int)vp.width(), (int)vp.height(), true, true, GetDepthBufferImageFormat());
 
-         if(!use_color)
-         {
-            camera.detach(osg::Camera::COLOR_BUFFER);
-         }
-
-         camera.attach(osg::Camera::DEPTH_BUFFER, depth_texture);//, 0, 0, false, 4, 4);
-         result = depth_texture;
+         camera.detach(osg::Camera::DEPTH_BUFFER);
+         camera.attach(osg::Camera::DEPTH_BUFFER, depthTexture);//, 0, 0, false, 4, 4);
       }
 
       // attach the texture and use it as the color buffer.
       if(use_color)
       {
-         osg::Texture* color_texture = CreateRenderTexture((int)vp.width(), (int)vp.height(), false, false, GetColorBufferImageFormat());
-         camera.attach(osg::Camera::COLOR_BUFFER0, color_texture);//, 0, 0, false, 4, 4);
-         result = color_texture;
+         colorTexture = CreateRenderTexture((int)vp.width(), (int)vp.height(), false, false, GetColorBufferImageFormat());
+         camera.attach(osg::Camera::COLOR_BUFFER0, colorTexture);//, 0, 0, false, 4, 4);
       }
 
       if(!use_color && !use_depth)
@@ -482,7 +586,6 @@ namespace dtRender
          LOG_ERROR("Must attach a texture either color or depth for a multipass camera.");
       }
 
-      return result;
    }
 
    osg::Texture2D* MultipassScene::CreateRenderTexture(int tex_width, int tex_height, bool depth, bool nearest, int imageFormat)
@@ -690,6 +793,74 @@ namespace dtRender
       return mImpl->mPreDepthTexture;
    }
 
+   void MultipassScene::Resize( osg::Camera* camera )
+   {
+      if(camera != NULL && mImpl->mPPUProcessor.valid() && mImpl->mMultipassCamera.valid())
+      {
+         osg::Viewport* vp = camera->getViewport();
+
+         if(!mImpl->mFBOAttachCallback.valid() )
+         {
+            mImpl->mFBOAttachCallback = new FBOAttachmentCullCallback();
+            mImpl->mMultipassCamera->setCullCallback(mImpl->mFBOAttachCallback.get());
+         }
+         
+         mImpl->mFBOAttachCallback->SetResetFBO();
+
+         DetachRenderer(*camera);
+        
+         dtCore::RefPtr<osg::Texture2D> empty;
+         SetupMultipassCamera(*camera, *vp, true, false, mImpl->mMainCameraTexture, empty);
+         SetupMultipassCamera(*mImpl->mMultipassCamera, *vp, mImpl->mEnableColorBypass, mImpl->mEnableDepthBypass, mImpl->mMultipassCameraTexture, mImpl->mMultipassDepthTexture);
+
+         if(mImpl->mEnablePreDepthPass && mImpl->mPreDepthSceneCamera.valid())
+         {
+            if(!mImpl->mFBOAttachCallbackDepth.valid())
+            {
+               mImpl->mFBOAttachCallbackDepth = new FBOAttachmentCullCallback();
+               mImpl->mPreDepthSceneCamera->setCullCallback(mImpl->mFBOAttachCallbackDepth.get());
+            }
+
+            mImpl->mFBOAttachCallbackDepth->SetResetFBO();
+
+            SetupMultipassCamera(*mImpl->mPreDepthSceneCamera, *vp, false, true, empty, mImpl->mPreDepthTexture);
+
+         }
+
+
+         mImpl->mPPUProcessor->onViewportChange();
+         mImpl->mPPUProcessor->dirtyUnitSubgraph();
+
+         mImpl->mResizeCallbackContainer->OnResized(*this, vp->width(), vp->height());
+      }
+      else
+      {
+         LOG_ERROR("One or more invalid memory addresses, cannot resize.");
+      }
+   }
+
+   void MultipassScene::DetachRenderer(osg::Camera& camera)
+   {
+      osgViewer::Renderer* renderer = (osgViewer::Renderer*)camera.getRenderer();
+      renderer->getSceneView(0)->getRenderStage()->setCameraRequiresSetUp(true);
+      renderer->getSceneView(0)->getRenderStage()->setFrameBufferObject(NULL);
+      renderer->getSceneView(0)->getRenderStage()->setMultisampleResolveFramebufferObject(NULL);
+      renderer->getSceneView(0)->getRenderStage()->setDisableFboAfterRender(true);
+      renderer->getSceneView(0)->getRenderStage()->reset();
+
+      
+   }
+
+
+   void MultipassScene::AddResizeCallback(ResizeCallback& cb)
+   {
+      mImpl->mResizeCallbackContainer->AddCallback(cb);
+   }
+
+   void MultipassScene::RemoveResizeCallback(ResizeCallback& cb)
+   {
+      mImpl->mResizeCallbackContainer->RemoveCallback(cb);
+   }
 
 
    ///////////////////////////////////////////////////////////

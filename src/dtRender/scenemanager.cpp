@@ -28,6 +28,9 @@
 #include <dtRender/uniformactcomp.h>
 #include <dtRender/optimizeractcomp.h>
 
+#include <dtCore/deltawin.h>
+#include <dtCore/windowresizecallback.h>
+
 #include <dtCore/transform.h>
 #include <dtCore/transformable.h>
 #include <osg/MatrixTransform>
@@ -84,6 +87,100 @@ namespace dtRender
       dtCore::RefPtr<osg::Uniform> mMainCameraInverseModelViewProjectionMatrix;
    };
 
+   /***
+   *  This is an update callback that waits for resizing to stop to trigger the actual
+   *     resize event.
+   */
+   class ResizeCallback : public osg::NodeCallback
+   {
+   public:
+
+      ResizeCallback(SceneManager& sm, float timeToResize)
+         : mSceneManager(&sm)
+         , mResize(false)
+         , mTimeToResize(timeToResize)
+         , mWidth(0)
+         , mHeight(0)
+      {
+      }
+
+      virtual ~ResizeCallback() {}
+
+
+      virtual void operator()(osg::Node* node, osg::NodeVisitor* nv)
+      {
+         // first update subgraph to make sure objects are all moved into postion
+         traverse(node,nv);
+         
+         if(mResize)
+         {
+            mTimeToResize -= dtCore::System::GetInstance().GetSimulationTime();
+         
+            if(mTimeToResize <= 0.0f && mSceneManager.valid())
+            {
+               mSceneManager->Resize(mWidth, mHeight);
+            }
+         }
+      }
+
+      void SetDimensions(int width, int height)
+      {
+         mWidth = width;
+         mHeight = height;
+      }
+
+      void SetResize(int width, int height, float timeToResize)
+      {
+         if(width != mWidth || height != mHeight)
+         {
+            mWidth = width;
+            mHeight = height;
+
+            mResize = true;
+            mTimeToResize = timeToResize;
+         }
+      }
+
+      void SetResizeFinish()
+      {
+         mResize = false;
+         mTimeToResize = 0.0f;
+      }
+
+     private:
+      bool mResize;
+      float mTimeToResize;
+      int mWidth;
+      int mHeight;
+      dtCore::ObserverPtr<SceneManager> mSceneManager;
+   };
+
+   /****
+   *  This callback notifies that the window has changed
+   */
+   class DeltaWinResizeCallback : public dtCore::WindowResizeCallback
+   {
+   public:
+      DeltaWinResizeCallback(ResizeCallback& rc)
+         : mResizeTime(1.5f)
+         , mResizeCallback(&rc)
+      {
+
+      }
+      ~DeltaWinResizeCallback(){}
+
+      void operator () (const dtCore::DeltaWin& win, int x, int y, int width, int height)
+      {
+         mResizeCallback->SetResize(width, height, mResizeTime);
+      }
+
+   private:
+      float mResizeTime;
+      dtCore::ObserverPtr<ResizeCallback> mResizeCallback; 
+
+   };
+
+
 
    class SceneManagerImpl
    {
@@ -93,7 +190,6 @@ namespace dtRender
          : mCreateDefaultScene(true)
          , mCreateMultipassScene(true)
          , mEnableHDR(false)
-         , mResize(false)
          , mGraphicsQuality(&GraphicsQuality::DEFAULT)
          , mMultipassScene(NULL)
          , mSceneCamera(NULL)
@@ -119,12 +215,12 @@ namespace dtRender
       bool mCreateDefaultScene;
       bool mCreateMultipassScene;
       bool mEnableHDR;
-      bool mResize;
+      
       const GraphicsQuality* mGraphicsQuality;
       typedef std::vector<dtCore::RefPtr<SceneGroup> > SceneGroupArray;
       dtCore::RefPtr<MultipassScene> mMultipassScene;
       dtCore::RefPtr<dtCore::Camera> mSceneCamera;
-
+      dtCore::RefPtr<ResizeCallback> mResizeCB;
       SMDefaultUniforms* mUniforms;
 
       SceneManagerImpl::SceneGroupArray mChildren;
@@ -203,6 +299,41 @@ namespace dtRender
       if(mImpl->mCreateMultipassScene)
       {
          CreateDefaultMultipassScene();
+      }
+
+      //add a callback to manage resizing
+
+      //if we need to resize we kick off a resize update callback to count down a timer 
+      {
+         mImpl->mResizeCB = new ResizeCallback(*this, 1.0f);
+         GetOSGNode()->addUpdateCallback(mImpl->mResizeCB);
+
+         //GM IS NULL, NEED TO GET WINDOW INSTANCE FOR RESIZE CALLBACK
+         dtABC::Application* defaultApplication = dtABC::Application::GetInstance("Application");
+         if(defaultApplication != NULL)
+         {
+            DeltaWinResizeCallback* rcb = new DeltaWinResizeCallback(*mImpl->mResizeCB);
+
+            dtCore::DeltaWin* window = defaultApplication->GetWindow();
+            if(window != NULL)
+            {
+               int x = 0;
+               int y = 0;
+               int width = 0;
+               int height = 0;
+
+               window->GetPosition(x, y, width, height);
+
+               mImpl->mResizeCB->SetDimensions(width, height);
+               window->AddResizeCallback(*rcb);
+            }
+         }
+         else
+         {
+            LOG_ERROR("Unable to create resize callback, the Application pointer is NULL");
+         }
+
+         
       }
       
    }
@@ -805,14 +936,12 @@ namespace dtRender
       {
          mImpl->mUniforms->mScreenWidth->SetValue(screenWidth);
          mImpl->mUniforms->mScreenWidth->Update();
-         mImpl->mResize = true;
       }
 
       if(screenHeight != mImpl->mUniforms->mScreenHeight->GetValue())
       {
          mImpl->mUniforms->mScreenHeight->SetValue(screenHeight);
          mImpl->mUniforms->mScreenHeight->Update();
-         mImpl->mResize = true;
       }
 
       if(pnear != mImpl->mUniforms->mNearPlane->GetValue())
@@ -860,13 +989,45 @@ namespace dtRender
          mImpl->mUniforms->mMainCameraHPR->SetValue(osg::Vec4(hpr[0], hpr[1], hpr[2], 0.0));
          mImpl->mUniforms->mMainCameraHPR->Update();
       }
+
+            
    }
 
-   /////////////////////////////////////////////////////////////
-   bool SceneManager::IsPlaceable() const
+   void SceneManager::Resize(int width, int height)
    {
-      //the scene should not be placeable
-      return false;
+      mImpl->mResizeCB->SetResizeFinish();
+    
+      OnResize(width, height);
+   }
+
+
+   void SceneManager::OnResize(int width, int height)
+   {
+      dtCore::Camera* delta_camera = GetSceneCamera();
+      if(delta_camera  != NULL)
+      {
+         double fovy = 0.0; 
+         double aspect = 0.0; 
+         double znear = 0.0; 
+         double zfar = 0.0; 
+
+         osg::Camera* camera = delta_camera->GetOSGCamera();
+
+         osg::ref_ptr<osg::Viewport> vp = new osg::Viewport(0, 0, width, height); 
+       
+         camera->setViewport(vp.get());
+         camera->getProjectionMatrixAsPerspective(fovy, aspect, znear, zfar); 
+
+         //fix aspect ratio based on new screen dimensions
+         camera->setProjectionMatrixAsPerspective(fovy, width / (double)height, znear, zfar); 
+      
+
+         MultipassScene* mps = dynamic_cast<MultipassScene*>(FindSceneByType(*MultipassScene::MULTIPASS_SCENE));
+         if(mps != NULL)
+         {
+            mps->Resize(GetSceneCamera()->GetOSGCamera());
+         }
+      }
    }
 
 

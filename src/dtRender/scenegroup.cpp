@@ -83,7 +83,7 @@ namespace dtRender
       for (;iter != iterEnd; ++iter)
       {
          SceneBase* childScene = (*iter).get();
-         if(sb.GetRenderOrder() < childScene->GetRenderOrder())
+         if(sb.GetChildOrder() < childScene->GetChildOrder())
          {
             unsigned int childNum = mImpl->mNode->getChildIndex(childScene->GetOSGNode());
 

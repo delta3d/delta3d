@@ -183,6 +183,13 @@ namespace dtRender
 
       /*virtual*/ bool IsPlaceable() const;
 
+      /***
+      *  Checks to see if a resize is needed, calls the OnResize()
+      *     once the resizing has appeared to stop.
+      */
+      void Resize(int width, int height);
+      virtual void OnResize(int width, int height);
+
    private:
       virtual void AddScene(SceneBase&);
       void InitUniforms();

@@ -52,8 +52,8 @@ namespace dtRender
 
       const SceneType& GetType() const;
 
-      void SetRenderOrder(RenderOrder);
-      RenderOrder GetRenderOrder() const;
+      void SetChildOrder(RenderOrder);
+      RenderOrder GetChildOrder() const;
       
       const SceneEnum& GetSceneEnum() const;
       void SetSceneEnum(const SceneEnum&);
@@ -86,7 +86,7 @@ namespace dtRender
       SceneBase(const SceneBase&);//not implemented
       SceneBase& operator=(const SceneBase&);//not implemented
 
-      RenderOrder mRenderOrder;
+      RenderOrder mChildOrder;
       const SceneEnum* mSceneEnum;
       dtCore::RefPtr<const SceneType> mType;
 

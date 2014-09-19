@@ -29,6 +29,7 @@
 
 namespace dtRender
 {
+   class MultipassScene;
    class OceanSceneImpl;
    class DT_RENDER_EXPORT OceanScene : public SceneBase
    {
@@ -44,6 +45,8 @@ namespace dtRender
 
       virtual osg::Group* GetSceneNode();
       virtual const osg::Group* GetSceneNode() const;
+
+      virtual void OnResize(MultipassScene& mps, int width, int height);
 
 
       DT_DECLARE_ACCESSOR(int, NumRows)
