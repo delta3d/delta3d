@@ -12,11 +12,11 @@
    <Transition>
       <Event Type="TRANSITION_FORWARD"/>
       <FromState Type="STATE_TITLE"/>
-      <ToState Type="STATE_MENU"/>
+      <ToState Type="STATE_GAME"/>
    </Transition>
 
    <!-- MENU STATE -->
-   <Transition>
+   <!--Transition>
       <Event Type="TRANSITION_BACK"/>
       <FromState Type="STATE_MENU"/>
       <ToState Type="STATE_TITLE"/>
@@ -26,7 +26,7 @@
       <Event Type="TRANSITION_FORWARD"/>
       <FromState Type="STATE_MENU"/>
       <ToState Type="STATE_GAME"/>
-   </Transition>
+   </Transition-->
 
    <!-- GAME STATE -->
    <Transition>
@@ -52,7 +52,7 @@
    <Transition>
       <Event Type="TRANSITION_FORWARD"/>
       <FromState Type="STATE_GAME_QUIT"/>
-      <ToState Type="STATE_MENU"/>
+      <ToState Type="STATE_TITLE"/>
    </Transition>
    
    <Transition>
