@@ -28,6 +28,7 @@
 #include <dtCore/shaderprogram.h>
 #include <dtCore/shadermanager.h>
 #include <dtCore/shadergroup.h>
+#include <dtCore/project.h>
 #include <dtUtil/mathdefines.h>
 #include <dtUtil/log.h>
 
@@ -187,7 +188,7 @@ dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateNode(Cal3DModelWrapper* pWrappe
       rootNode->setUpdateCallback(new UpdateCallback(createCallback, *rootNode));
 
       osg::Geode* defaultGeode = new osg::Geode();
-      osg::Cylinder* shape = new osg::Cylinder(osg::Vec3(0.f, 0.f, 0.f), 2.f, 4.f);
+      osg::Cylinder* shape = new osg::Cylinder(osg::Vec3(0.0f, 0.0f, 0.0f), 2.0f, 4.0f);
       osg::ShapeDrawable* defaultDrawable = new osg::ShapeDrawable(shape);
       defaultDrawable->setDrawCallback(createCallback);
 
@@ -434,23 +435,24 @@ dtCore::ShaderProgram* AnimNodeBuilder::LoadShaders(Cal3DModelData& modelData, o
       dtCore::ShaderGroup* spGroup = shaderManager.FindShaderGroupPrototype(modelData.GetShaderGroupName());
       if (spGroup != NULL)
       {
-         if (!modelData.GetShaderName().empty())
+         bool editMode = dtCore::Project::GetInstance().GetEditMode();
+
+         if (editMode)
+         {
+            shaderProgram = spGroup->GetEditorShader();
+         }
+
+         if (shaderProgram == NULL && !modelData.GetShaderName().empty())
          {
             shaderProgram = spGroup->FindShader(modelData.GetShaderName());
             if (shaderProgram == NULL)
             {
                LOG_ERROR("Shader program \"" + modelData.GetShaderName() + "\" from group \""
                      + modelData.GetShaderGroupName() + "\" was not found, using the default from the group.");
-               shaderProgram = spGroup->GetDefaultShader();
-
-               if (shaderProgram == NULL)
-               {
-                  LOG_ERROR("Shader Group \""  + modelData.GetShaderGroupName()
-                        + "\" was not found, overriding to use the default group.");
-               }
             }
          }
-         else
+
+         if (shaderProgram == NULL)
          {
             shaderProgram = spGroup->GetDefaultShader();
             if (shaderProgram == NULL)
