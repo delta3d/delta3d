@@ -7,7 +7,7 @@
         <comment></comment>
         <copyright></copyright>
         <createTimestamp>2014-07-15T22:49:46-05:00</createTimestamp>
-        <lastUpdateTimestamp>2014-09-20T13:27:09-05:00</lastUpdateTimestamp>
+        <lastUpdateTimestamp>2014-09-20T13:35:43-05:00</lastUpdateTimestamp>
         <editorVersion>2.8.0</editorVersion>
         <schemaVersion>1.0</schemaVersion>
     </header>
@@ -697,14 +697,14 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>-0.000000</value2>
-                    <value3>7.148784</value3>
+                    <value3>47.546051</value3>
                 </vec3>
             </property>
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-113.666550</value1>
-                    <value2>-5.945499</value2>
+                    <value1>111.745483</value1>
+                    <value2>-330.058685</value2>
                     <value3>0.000000</value3>
                 </vec3>
             </property>
@@ -2382,7 +2382,7 @@
             </property>
             <property>
                 <name>Bezier Node</name>
-                <actorId>5e9ad074-dfdc-4432-be58-53326f1f2e43</actorId>
+                <actorId>8c8be7b7-5645-4997-873b-266c7b6af1ec</actorId>
             </property>
         </actor>
         <actor>
@@ -2946,33 +2946,6 @@
                 <resourceType>StaticMeshes</resourceType>
                 <resourceDisplayName>StaticMeshes:chairs:sunchair:SunChair_PHYSICS.osg</resourceDisplayName>
                 <resource>StaticMeshes:chairs:sunchair:SunChair_PHYSICS.osg</resource>
-            </property>
-        </actor>
-        <actor>
-            <type>dtExample.Mesh Object</type>
-            <id>300c6a18-0265-4363-9aaf-e88906fa017d</id>
-            <name>Barge</name>
-            <property>
-                <name>Rotation</name>
-                <vec3>
-                    <value1>0.000000</value1>
-                    <value2>0.000000</value2>
-                    <value3>104.902779</value3>
-                </vec3>
-            </property>
-            <property>
-                <name>Translation</name>
-                <vec3>
-                    <value1>-439.752014</value1>
-                    <value2>-157.791672</value2>
-                    <value3>2.600004</value3>
-                </vec3>
-            </property>
-            <property>
-                <name>static mesh</name>
-                <resourceType>StaticMeshes</resourceType>
-                <resourceDisplayName>StaticMeshes:Barge:barge.osg</resourceDisplayName>
-                <resource>StaticMeshes:Barge:barge.osg</resource>
             </property>
         </actor>
         <actor>
@@ -6154,14 +6127,14 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>-0.000000</value2>
-                    <value3>-89.776566</value3>
+                    <value3>-87.652931</value3>
                 </vec3>
             </property>
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-997.637146</value1>
-                    <value2>-439.507080</value2>
+                    <value1>89.748421</value1>
+                    <value2>-415.388214</value2>
                     <value3>75.000000</value3>
                 </vec3>
             </property>
@@ -12009,27 +11982,27 @@
                 <propertyContainer>
                     <property>
                         <name>EnableDepthTest</name>
-                        <boolean>true</boolean>
+                        <boolean>false</boolean>
                     </property>
                     <property>
                         <name>RenderWaypoints</name>
-                        <boolean>true</boolean>
+                        <boolean>false</boolean>
                     </property>
                     <property>
                         <name>RenderWaypointID</name>
-                        <boolean>true</boolean>
+                        <boolean>false</boolean>
                     </property>
                     <property>
                         <name>RenderWaypointText</name>
-                        <boolean>true</boolean>
+                        <boolean>false</boolean>
                     </property>
                     <property>
                         <name>RenderNavMesh</name>
-                        <boolean>true</boolean>
+                        <boolean>false</boolean>
                     </property>
                     <property>
                         <name>RenderNavMeshText</name>
-                        <boolean>true</boolean>
+                        <boolean>false</boolean>
                     </property>
                     <property>
                         <name>WaypointSize</name>
@@ -14453,25 +14426,6 @@
                     <value2>2.000000</value2>
                     <value3>2.000000</value3>
                 </vec3>
-            </property>
-        </actor>
-        <actor>
-            <type>dtExample.Mesh Object</type>
-            <id>ced527e9-8c79-4c40-8671-a6af281c1ace</id>
-            <name>water</name>
-            <property>
-                <name>Translation</name>
-                <vec3>
-                    <value1>-547.917969</value1>
-                    <value2>-88.928520</value2>
-                    <value3>21.000000</value3>
-                </vec3>
-            </property>
-            <property>
-                <name>static mesh</name>
-                <resourceType>StaticMeshes</resourceType>
-                <resourceDisplayName>StaticMeshes:Ocean.obj</resourceDisplayName>
-                <resource>StaticMeshes:Ocean.obj</resource>
             </property>
         </actor>
         <actor>
