@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <map xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="delta3dMap" xsi:schemaLocation="delta3dMap map.xsd">
     <header>
         <name>TestApp</name>
@@ -8,7 +7,7 @@
         <comment></comment>
         <copyright></copyright>
         <createTimestamp>2014-07-15T22:49:46-05:00</createTimestamp>
-        <lastUpdateTimestamp>2014-09-19T22:39:58-05:00</lastUpdateTimestamp>
+        <lastUpdateTimestamp>2014-09-20T13:27:09-05:00</lastUpdateTimestamp>
         <editorVersion>2.8.0</editorVersion>
         <schemaVersion>1.0</schemaVersion>
     </header>
@@ -556,7 +555,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-133.724350</value3>
+                    <value3>-133.724335</value3>
                 </vec3>
             </property>
             <property>
@@ -698,14 +697,14 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>-0.000000</value2>
-                    <value3>47.715519</value3>
+                    <value3>7.148784</value3>
                 </vec3>
             </property>
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>152.613098</value1>
-                    <value2>-367.301392</value2>
+                    <value1>-113.666550</value1>
+                    <value2>-5.945499</value2>
                     <value3>0.000000</value3>
                 </vec3>
             </property>
@@ -729,7 +728,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254868</value3>
+                    <value3>-87.254890</value3>
                 </vec3>
             </property>
             <property>
@@ -928,9 +927,9 @@
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-577.129456</value1>
-                    <value2>-75.036438</value2>
-                    <value3>7.006354</value3>
+                    <value1>-577.124146</value1>
+                    <value2>-75.010292</value2>
+                    <value3>7.131051</value3>
                 </vec3>
             </property>
             <property>
@@ -1077,7 +1076,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtExample.Mesh Object</type>
+            <type>dtExample.Mesh Lamp</type>
             <id>16c26fe7-fadd-4bc1-87b1-7b9c55fe9345</id>
             <name>lamp_02</name>
             <property>
@@ -1111,6 +1110,26 @@
                 <resourceType>StaticMeshes</resourceType>
                 <resourceDisplayName>StaticMeshes:lamps:Lamppost_Trident_PHYSICS.osg</resourceDisplayName>
                 <resource>StaticMeshes:lamps:Lamppost_Trident_PHYSICS.osg</resource>
+            </property>
+            <property>
+                <name>Light</name>
+                <actorId>b3ea232c-6b43-4462-baa1-1b3a5487c480</actorId>
+            </property>
+            <property>
+                <name>Mesh Shader Parameter Name</name>
+                <string>effectScales</string>
+            </property>
+            <property>
+                <name>Mesh Shader Parameter Type</name>
+                <enumerated>FLOAT_VEC4</enumerated>
+            </property>
+            <property>
+                <name>Mesh Shader Parameter Element</name>
+                <enumerated>y</enumerated>
+            </property>
+            <property>
+                <name>Updates From Light Enabled</name>
+                <boolean>true</boolean>
             </property>
         </actor>
         <actor>
@@ -1171,7 +1190,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtExample.Mesh Object</type>
+            <type>dtExample.Mesh Lamp</type>
             <id>1900379a-e731-4553-8c7a-e07b69959cc9</id>
             <name>lamp_10</name>
             <property>
@@ -1205,6 +1224,26 @@
                 <resourceType>StaticMeshes</resourceType>
                 <resourceDisplayName>StaticMeshes:lamps:Lamppost_Trident_PHYSICS.osg</resourceDisplayName>
                 <resource>StaticMeshes:lamps:Lamppost_Trident_PHYSICS.osg</resource>
+            </property>
+            <property>
+                <name>Light</name>
+                <actorId>e2ee35ab-98a8-4232-99a6-6aae5bcae1a4</actorId>
+            </property>
+            <property>
+                <name>Mesh Shader Parameter Name</name>
+                <string>effectScales</string>
+            </property>
+            <property>
+                <name>Mesh Shader Parameter Type</name>
+                <enumerated>FLOAT_VEC4</enumerated>
+            </property>
+            <property>
+                <name>Mesh Shader Parameter Element</name>
+                <enumerated>y</enumerated>
+            </property>
+            <property>
+                <name>Updates From Light Enabled</name>
+                <boolean>true</boolean>
             </property>
         </actor>
         <actor>
@@ -1357,7 +1396,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtExample.Mesh Object</type>
+            <type>dtExample.Mesh Lamp</type>
             <id>1c5bfcfc-016c-4bdd-9c71-d5dfa02a07cc</id>
             <name>lamp_07</name>
             <property>
@@ -1391,6 +1430,26 @@
                 <resourceType>StaticMeshes</resourceType>
                 <resourceDisplayName>StaticMeshes:lamps:Lamppost_Trident_PHYSICS.osg</resourceDisplayName>
                 <resource>StaticMeshes:lamps:Lamppost_Trident_PHYSICS.osg</resource>
+            </property>
+            <property>
+                <name>Light</name>
+                <actorId>4ad0b6ba-82ee-4f38-bf59-2ed02d3b7788</actorId>
+            </property>
+            <property>
+                <name>Mesh Shader Parameter Name</name>
+                <string>effectScales</string>
+            </property>
+            <property>
+                <name>Mesh Shader Parameter Type</name>
+                <enumerated>FLOAT_VEC4</enumerated>
+            </property>
+            <property>
+                <name>Mesh Shader Parameter Element</name>
+                <enumerated>y</enumerated>
+            </property>
+            <property>
+                <name>Updates From Light Enabled</name>
+                <boolean>true</boolean>
             </property>
         </actor>
         <actor>
@@ -1590,7 +1649,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254868</value3>
+                    <value3>-87.254890</value3>
                 </vec3>
             </property>
             <property>
@@ -2543,7 +2602,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254868</value3>
+                    <value3>-87.254890</value3>
                 </vec3>
             </property>
             <property>
@@ -2714,7 +2773,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtExample.Mesh Object</type>
+            <type>dtExample.Mesh Lamp</type>
             <id>2d7b37fd-f5df-4ac0-8464-d3ead2f588f3</id>
             <name>lamp_06</name>
             <property>
@@ -2748,6 +2807,26 @@
                 <resourceType>StaticMeshes</resourceType>
                 <resourceDisplayName>StaticMeshes:lamps:Lamppost_Trident_PHYSICS.osg</resourceDisplayName>
                 <resource>StaticMeshes:lamps:Lamppost_Trident_PHYSICS.osg</resource>
+            </property>
+            <property>
+                <name>Light</name>
+                <actorId>384e34b0-68c7-442e-9cfb-edf587c1d42c</actorId>
+            </property>
+            <property>
+                <name>Mesh Shader Parameter Name</name>
+                <string>effectScales</string>
+            </property>
+            <property>
+                <name>Mesh Shader Parameter Type</name>
+                <enumerated>FLOAT_VEC4</enumerated>
+            </property>
+            <property>
+                <name>Mesh Shader Parameter Element</name>
+                <enumerated>y</enumerated>
+            </property>
+            <property>
+                <name>Updates From Light Enabled</name>
+                <boolean>true</boolean>
             </property>
         </actor>
         <actor>
@@ -2908,7 +2987,7 @@
                 <name>Rotation</name>
                 <vec3>
                     <value1>-0.823274</value1>
-                    <value2>-0.623614</value2>
+                    <value2>-0.623641</value2>
                     <value3>124.004814</value3>
                 </vec3>
             </property>
@@ -3642,7 +3721,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254868</value3>
+                    <value3>-87.254890</value3>
                 </vec3>
             </property>
             <property>
@@ -3789,7 +3868,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtExample.Mesh Object</type>
+            <type>dtExample.Mesh Lamp</type>
             <id>3e5391c2-5477-4e75-84b5-a24ef586ca75</id>
             <name>lamp_03</name>
             <property>
@@ -3823,6 +3902,26 @@
                 <resourceType>StaticMeshes</resourceType>
                 <resourceDisplayName>StaticMeshes:lamps:Lamppost_Trident_PHYSICS.osg</resourceDisplayName>
                 <resource>StaticMeshes:lamps:Lamppost_Trident_PHYSICS.osg</resource>
+            </property>
+            <property>
+                <name>Light</name>
+                <actorId>4d7997a1-ba7e-42dc-ad2d-eb469c20b0c3</actorId>
+            </property>
+            <property>
+                <name>Mesh Shader Parameter Name</name>
+                <string>effectScales</string>
+            </property>
+            <property>
+                <name>Mesh Shader Parameter Type</name>
+                <enumerated>FLOAT_VEC4</enumerated>
+            </property>
+            <property>
+                <name>Mesh Shader Parameter Element</name>
+                <enumerated>y</enumerated>
+            </property>
+            <property>
+                <name>Updates From Light Enabled</name>
+                <boolean>true</boolean>
             </property>
         </actor>
         <actor>
@@ -4547,7 +4646,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-134.385178</value3>
+                    <value3>-134.385162</value3>
                 </vec3>
             </property>
             <property>
@@ -4707,8 +4806,8 @@
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-737.205200</value1>
-                    <value2>-107.956497</value2>
+                    <value1>-737.280518</value1>
+                    <value2>-107.608513</value2>
                     <value3>10.313393</value3>
                 </vec3>
             </property>
@@ -4783,7 +4882,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-133.724350</value3>
+                    <value3>-133.724335</value3>
                 </vec3>
             </property>
             <property>
@@ -4844,7 +4943,7 @@
                 <vec3>
                     <value1>-709.624146</value1>
                     <value2>-237.683716</value2>
-                    <value3>7.387932</value3>
+                    <value3>7.526266</value3>
                 </vec3>
             </property>
             <property>
@@ -5068,7 +5167,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-73.005310</value3>
+                    <value3>-73.005318</value3>
                 </vec3>
             </property>
             <property>
@@ -5720,8 +5819,8 @@
                 <name>Rotation</name>
                 <vec3>
                     <value1>0.000000</value1>
-                    <value2>-0.000000</value2>
-                    <value3>-139.760941</value3>
+                    <value2>0.000000</value2>
+                    <value3>-139.760925</value3>
                 </vec3>
             </property>
             <property>
@@ -5752,7 +5851,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254868</value3>
+                    <value3>-87.254890</value3>
                 </vec3>
             </property>
             <property>
@@ -6055,14 +6154,14 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>-0.000000</value2>
-                    <value3>-87.935005</value3>
+                    <value3>-89.776566</value3>
                 </vec3>
             </property>
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-86.439423</value1>
-                    <value2>-422.198273</value2>
+                    <value1>-997.637146</value1>
+                    <value2>-439.507080</value2>
                     <value3>75.000000</value3>
                 </vec3>
             </property>
@@ -6552,7 +6651,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254868</value3>
+                    <value3>-87.254890</value3>
                 </vec3>
             </property>
             <property>
@@ -6666,7 +6765,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254868</value3>
+                    <value3>-87.254890</value3>
                 </vec3>
             </property>
             <property>
@@ -8660,7 +8759,7 @@
                 <vec3>
                     <value1>-630.145081</value1>
                     <value2>-100.569847</value2>
-                    <value3>9.398559</value3>
+                    <value3>9.527035</value3>
                 </vec3>
             </property>
             <property>
@@ -9112,7 +9211,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254868</value3>
+                    <value3>-87.254890</value3>
                 </vec3>
             </property>
             <property>
@@ -10212,7 +10311,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254868</value3>
+                    <value3>-87.254890</value3>
                 </vec3>
             </property>
             <property>
@@ -10884,7 +10983,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtExample.Mesh Object</type>
+            <type>dtExample.Mesh Lamp</type>
             <id>a782cae8-2269-4881-9a9b-9f30b6204662</id>
             <name>lamp_04</name>
             <property>
@@ -10918,6 +11017,26 @@
                 <resourceType>StaticMeshes</resourceType>
                 <resourceDisplayName>StaticMeshes:lamps:Lamppost_Trident_PHYSICS.osg</resourceDisplayName>
                 <resource>StaticMeshes:lamps:Lamppost_Trident_PHYSICS.osg</resource>
+            </property>
+            <property>
+                <name>Light</name>
+                <actorId>887bfb33-9770-45e0-95e4-bea0a1ddd56d</actorId>
+            </property>
+            <property>
+                <name>Mesh Shader Parameter Name</name>
+                <string>effectScales</string>
+            </property>
+            <property>
+                <name>Mesh Shader Parameter Type</name>
+                <enumerated>FLOAT_VEC4</enumerated>
+            </property>
+            <property>
+                <name>Mesh Shader Parameter Element</name>
+                <enumerated>y</enumerated>
+            </property>
+            <property>
+                <name>Updates From Light Enabled</name>
+                <boolean>true</boolean>
             </property>
         </actor>
         <actor>
@@ -11113,7 +11232,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254868</value3>
+                    <value3>-87.254890</value3>
                 </vec3>
             </property>
             <property>
@@ -12053,9 +12172,9 @@
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-669.195801</value1>
-                    <value2>-239.199051</value2>
-                    <value3>7.783769</value3>
+                    <value1>-669.469604</value1>
+                    <value2>-239.415283</value2>
+                    <value3>8.095939</value3>
                 </vec3>
             </property>
             <property>
@@ -12076,7 +12195,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtExample.Mesh Object</type>
+            <type>dtExample.Mesh Lamp</type>
             <id>b475f714-dd2d-4947-a27f-125a0b9e227a</id>
             <name>lamp_09</name>
             <property>
@@ -12110,6 +12229,26 @@
                 <resourceType>StaticMeshes</resourceType>
                 <resourceDisplayName>StaticMeshes:lamps:Lamppost_Trident_PHYSICS.osg</resourceDisplayName>
                 <resource>StaticMeshes:lamps:Lamppost_Trident_PHYSICS.osg</resource>
+            </property>
+            <property>
+                <name>Light</name>
+                <actorId>c67e8b6f-0fe0-4bb8-946a-06d171bba0b6</actorId>
+            </property>
+            <property>
+                <name>Mesh Shader Parameter Name</name>
+                <string>effectScales</string>
+            </property>
+            <property>
+                <name>Mesh Shader Parameter Type</name>
+                <enumerated>FLOAT_VEC4</enumerated>
+            </property>
+            <property>
+                <name>Mesh Shader Parameter Element</name>
+                <enumerated>y</enumerated>
+            </property>
+            <property>
+                <name>Updates From Light Enabled</name>
+                <boolean>true</boolean>
             </property>
         </actor>
         <actor>
@@ -12375,7 +12514,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtExample.Mesh Object</type>
+            <type>dtExample.Mesh Lamp</type>
             <id>b7b6b4ca-97ea-4a1c-af6d-465fd59700bc</id>
             <name>lamp_05</name>
             <property>
@@ -12409,6 +12548,26 @@
                 <resourceType>StaticMeshes</resourceType>
                 <resourceDisplayName>StaticMeshes:lamps:Lamppost_Trident_PHYSICS.osg</resourceDisplayName>
                 <resource>StaticMeshes:lamps:Lamppost_Trident_PHYSICS.osg</resource>
+            </property>
+            <property>
+                <name>Light</name>
+                <actorId>e0a8787f-384e-454e-a6aa-c970d1db433f</actorId>
+            </property>
+            <property>
+                <name>Mesh Shader Parameter Name</name>
+                <string>effectScales</string>
+            </property>
+            <property>
+                <name>Mesh Shader Parameter Type</name>
+                <enumerated>FLOAT_VEC4</enumerated>
+            </property>
+            <property>
+                <name>Mesh Shader Parameter Element</name>
+                <enumerated>y</enumerated>
+            </property>
+            <property>
+                <name>Updates From Light Enabled</name>
+                <boolean>true</boolean>
             </property>
         </actor>
         <actor>
@@ -12777,7 +12936,7 @@
                 <name>Rotation</name>
                 <vec3>
                     <value1>-0.823274</value1>
-                    <value2>-0.623614</value2>
+                    <value2>-0.623641</value2>
                     <value3>124.004814</value3>
                 </vec3>
             </property>
@@ -13326,7 +13485,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254868</value3>
+                    <value3>-87.254890</value3>
                 </vec3>
             </property>
             <property>
@@ -13383,7 +13542,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254868</value3>
+                    <value3>-87.254890</value3>
                 </vec3>
             </property>
             <property>
@@ -13733,9 +13892,9 @@
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-601.578796</value1>
-                    <value2>-142.545654</value2>
-                    <value3>5.621722</value3>
+                    <value1>-601.347778</value1>
+                    <value2>-142.780746</value2>
+                    <value3>6.180957</value3>
                 </vec3>
             </property>
             <property>
@@ -14252,7 +14411,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254868</value3>
+                    <value3>-87.254890</value3>
                 </vec3>
             </property>
             <property>
@@ -14522,7 +14681,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtExample.Mesh Object</type>
+            <type>dtExample.Mesh Lamp</type>
             <id>d443bf07-0910-42a6-a943-099363bcc02f</id>
             <name>lamp_11</name>
             <property>
@@ -14534,7 +14693,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-59.716415</value3>
+                    <value3>-59.716446</value3>
                 </vec3>
             </property>
             <property>
@@ -14556,6 +14715,26 @@
                 <resourceType>StaticMeshes</resourceType>
                 <resourceDisplayName>StaticMeshes:lamps:Lamppost_Trident_PHYSICS.osg</resourceDisplayName>
                 <resource>StaticMeshes:lamps:Lamppost_Trident_PHYSICS.osg</resource>
+            </property>
+            <property>
+                <name>Light</name>
+                <actorId>1486dd55-d854-44ca-959c-496cef4777fb</actorId>
+            </property>
+            <property>
+                <name>Mesh Shader Parameter Name</name>
+                <string>effectScales</string>
+            </property>
+            <property>
+                <name>Mesh Shader Parameter Type</name>
+                <enumerated>FLOAT_VEC4</enumerated>
+            </property>
+            <property>
+                <name>Mesh Shader Parameter Element</name>
+                <enumerated>y</enumerated>
+            </property>
+            <property>
+                <name>Updates From Light Enabled</name>
+                <boolean>true</boolean>
             </property>
         </actor>
         <actor>
@@ -14852,7 +15031,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtExample.Mesh Object</type>
+            <type>dtExample.Mesh Lamp</type>
             <id>d9a38556-4eb0-4bdc-8942-b88be13287ea</id>
             <name>lamp_01</name>
             <property>
@@ -14886,6 +15065,26 @@
                 <resourceType>StaticMeshes</resourceType>
                 <resourceDisplayName>StaticMeshes:lamps:Lamppost_Trident_PHYSICS.osg</resourceDisplayName>
                 <resource>StaticMeshes:lamps:Lamppost_Trident_PHYSICS.osg</resource>
+            </property>
+            <property>
+                <name>Light</name>
+                <actorId>e6afacc4-cc2d-4944-8725-c0c16518c645</actorId>
+            </property>
+            <property>
+                <name>Mesh Shader Parameter Name</name>
+                <string>effectScales</string>
+            </property>
+            <property>
+                <name>Mesh Shader Parameter Type</name>
+                <enumerated>FLOAT_VEC4</enumerated>
+            </property>
+            <property>
+                <name>Mesh Shader Parameter Element</name>
+                <enumerated>y</enumerated>
+            </property>
+            <property>
+                <name>Updates From Light Enabled</name>
+                <boolean>true</boolean>
             </property>
         </actor>
         <actor>
@@ -15328,9 +15527,9 @@
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-681.389099</value1>
-                    <value2>-68.023918</value2>
-                    <value3>10.114550</value3>
+                    <value1>-681.276062</value1>
+                    <value2>-68.108170</value2>
+                    <value3>10.323652</value3>
                 </vec3>
             </property>
             <property>
@@ -15422,9 +15621,9 @@
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-606.762756</value1>
-                    <value2>-95.353249</value2>
-                    <value3>7.009480</value3>
+                    <value1>-606.442871</value1>
+                    <value2>-95.041672</value2>
+                    <value3>7.246861</value3>
                 </vec3>
             </property>
             <property>
@@ -16006,7 +16205,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254868</value3>
+                    <value3>-87.254890</value3>
                 </vec3>
             </property>
             <property>
@@ -16120,7 +16319,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254868</value3>
+                    <value3>-87.254890</value3>
                 </vec3>
             </property>
             <property>
@@ -16301,7 +16500,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254868</value3>
+                    <value3>-87.254890</value3>
                 </vec3>
             </property>
             <property>
@@ -17019,7 +17218,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254868</value3>
+                    <value3>-87.254890</value3>
                 </vec3>
             </property>
             <property>
@@ -17337,7 +17536,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtExample.Mesh Object</type>
+            <type>dtExample.Mesh Lamp</type>
             <id>f943e25b-ba04-49e6-a438-8770e42aba40</id>
             <name>lamp</name>
             <property>
@@ -17371,6 +17570,26 @@
                 <resourceType>StaticMeshes</resourceType>
                 <resourceDisplayName>StaticMeshes:lamps:Lamppost_Trident_PHYSICS.osg</resourceDisplayName>
                 <resource>StaticMeshes:lamps:Lamppost_Trident_PHYSICS.osg</resource>
+            </property>
+            <property>
+                <name>Light</name>
+                <actorId>810fa6cb-eb47-4abb-90cb-5acb64ad405a</actorId>
+            </property>
+            <property>
+                <name>Mesh Shader Parameter Name</name>
+                <string>effectScales</string>
+            </property>
+            <property>
+                <name>Mesh Shader Parameter Type</name>
+                <enumerated>FLOAT_VEC4</enumerated>
+            </property>
+            <property>
+                <name>Mesh Shader Parameter Element</name>
+                <enumerated>y</enumerated>
+            </property>
+            <property>
+                <name>Updates From Light Enabled</name>
+                <boolean>true</boolean>
             </property>
         </actor>
         <actor>
