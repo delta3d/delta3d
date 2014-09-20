@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <map xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="delta3dMap" xsi:schemaLocation="delta3dMap map.xsd">
     <header>
         <name>TestApp</name>
@@ -7,7 +8,7 @@
         <comment></comment>
         <copyright></copyright>
         <createTimestamp>2014-07-15T22:49:46-05:00</createTimestamp>
-        <lastUpdateTimestamp>2014-09-18T11:17:20-05:00</lastUpdateTimestamp>
+        <lastUpdateTimestamp>2014-09-19T22:39:58-05:00</lastUpdateTimestamp>
         <editorVersion>2.8.0</editorVersion>
         <schemaVersion>1.0</schemaVersion>
     </header>
@@ -55,6 +56,15 @@
             <property>
                 <name>Stance</name>
                 <enumerated>LYING</enumerated>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Triggers.AutoTrigger</type>
+            <id>026adfc3-1542-44cf-a449-793887607ade</id>
+            <name>AutoTrigger_04</name>
+            <property>
+                <name>Action</name>
+                <actorId>3587b333-df2f-4a6e-a37b-969929b8ac18</actorId>
             </property>
         </actor>
         <actor>
@@ -436,6 +446,33 @@
         </actor>
         <actor>
             <type>dtExample.Civilian</type>
+            <id>080aa6f1-c300-436e-904d-3fffcd024eab</id>
+            <name>youngman_09_Statue</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>-96.726616</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-661.257263</value1>
+                    <value2>-118.493538</value2>
+                    <value3>4.484248</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Skeletal Mesh</name>
+                <resourceType>SkeletalMeshes</resourceType>
+                <resourceDisplayName>SkeletalMeshes:YoungMan:YoungMan.dtchar</resourceDisplayName>
+                <resource>SkeletalMeshes:YoungMan:YoungMan.dtchar</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtExample.Civilian</type>
             <id>09294f0a-8edb-4e89-a79d-b11a9ae665ad</id>
             <name>youngafricanman_02_Walkway</name>
             <property>
@@ -622,6 +659,64 @@
             </property>
         </actor>
         <actor>
+            <type>dtExample.Civilian</type>
+            <id>0c631ee1-f2d3-4cd5-89e2-1583af82fc12</id>
+            <name>Billy_Statue</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>96.693550</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-641.651733</value1>
+                    <value2>-119.517899</value2>
+                    <value3>5.815986</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Skeletal Mesh</name>
+                <resourceType>SkeletalMeshes</resourceType>
+                <resourceDisplayName>SkeletalMeshes:YoungMan_African:Billy.dtchar</resourceDisplayName>
+                <resource>SkeletalMeshes:YoungMan_African:Billy.dtchar</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <id>0e5ad431-cd4b-4905-81db-6a1a82b9f167</id>
+            <name>SailBoat</name>
+            <property>
+                <name>ShaderGroup</name>
+                <string>SimpleShader</string>
+            </property>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>-0.000000</value2>
+                    <value3>47.715519</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>152.613098</value1>
+                    <value2>-367.301392</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:Sailboat380:380_under_sail.osg</resourceDisplayName>
+                <resource>StaticMeshes:Sailboat380:380_under_sail.osg</resource>
+            </property>
+        </actor>
+        <actor>
             <type>dtExample.Mesh Object</type>
             <id>0eeb115d-228d-4336-bdd0-6a3be176d691</id>
             <name>walkway_26</name>
@@ -721,6 +816,27 @@
                 <resourceType>StaticMeshes</resourceType>
                 <resourceDisplayName>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resourceDisplayName>
                 <resource>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Curve.Bezier Node</type>
+            <id>10fd9a75-8568-460b-8a43-62d1177bb548</id>
+            <name>SailBoat_BezierNode_02</name>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-100.099365</value1>
+                    <value2>349.647858</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Entry Control Point</name>
+                <actorId>ea1a0129-72f8-4c04-bcdc-24f69173cff8</actorId>
+            </property>
+            <property>
+                <name>Previous Bezier Node</name>
+                <actorId>b0c2d4b0-c6b0-46b2-9c0e-f2d5eb95acd5</actorId>
             </property>
         </actor>
         <actor>
@@ -925,6 +1041,42 @@
             </property>
         </actor>
         <actor>
+            <type>dtExample.Civilian</type>
+            <id>163a24f4-587e-4227-aacb-cc2a350c310c</id>
+            <name>Bartender</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>21.350849</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-564.152954</value1>
+                    <value2>-130.024902</value2>
+                    <value3>1.869440</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Skeletal Mesh</name>
+                <resourceType>SkeletalMeshes</resourceType>
+                <resourceDisplayName>SkeletalMeshes:Gina:Gina.dtchar</resourceDisplayName>
+                <resource>SkeletalMeshes:Gina:Gina.dtchar</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Triggers.AutoTrigger</type>
+            <id>1685fedd-2c16-46d5-8bce-753da1ae7ca5</id>
+            <name>AutoTrigger_03</name>
+            <property>
+                <name>Action</name>
+                <actorId>7775666d-140c-4c7a-adfd-0383fffb66a0</actorId>
+            </property>
+        </actor>
+        <actor>
             <type>dtExample.Mesh Object</type>
             <id>16c26fe7-fadd-4bc1-87b1-7b9c55fe9345</id>
             <name>lamp_02</name>
@@ -1070,6 +1222,31 @@
             <property>
                 <name>Bezier Node</name>
                 <actorId>bdc7d53e-3e88-413a-af78-944b974f8e11</actorId>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Curve.Bezier Node</type>
+            <id>1ab03e82-8f71-4a47-801a-6741e4f30a12</id>
+            <name>SailBoat2_BezierNode_02</name>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>75.956902</value1>
+                    <value2>-418.656128</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Entry Control Point</name>
+                <actorId>6b0f719d-8b33-4126-9ef7-cf0fd2be261e</actorId>
+            </property>
+            <property>
+                <name>Next Bezier Node</name>
+                <actorId>1ab03e82-8f71-4a47-801a-6741e4f30a12</actorId>
+            </property>
+            <property>
+                <name>Previous Bezier Node</name>
+                <actorId>1ab03e82-8f71-4a47-801a-6741e4f30a12</actorId>
             </property>
         </actor>
         <actor>
@@ -1877,6 +2054,33 @@
             </property>
         </actor>
         <actor>
+            <type>dtExample.Civilian</type>
+            <id>26265d90-8ab2-45b4-a340-594ba7306b16</id>
+            <name>youngasianman_04_Walkway</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>-80.740036</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-693.932312</value1>
+                    <value2>-239.846161</value2>
+                    <value3>3.938143</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Skeletal Mesh</name>
+                <resourceType>SkeletalMeshes</resourceType>
+                <resourceDisplayName>SkeletalMeshes:YoungMan_Asian:YoungMan_Asian_Jogger.dtchar</resourceDisplayName>
+                <resource>SkeletalMeshes:YoungMan_Asian:YoungMan_Asian_Jogger.dtchar</resource>
+            </property>
+        </actor>
+        <actor>
             <type>dtExample.Mesh Object</type>
             <id>262e1105-9dd2-46ae-903c-813f52f80908</id>
             <name>barstool_02</name>
@@ -2119,7 +2323,7 @@
             </property>
             <property>
                 <name>Bezier Node</name>
-                <actorId>8c8be7b7-5645-4997-873b-266c7b6af1ec</actorId>
+                <actorId>5e9ad074-dfdc-4432-be58-53326f1f2e43</actorId>
             </property>
         </actor>
         <actor>
@@ -2284,6 +2488,33 @@
                 <resourceType>StaticMeshes</resourceType>
                 <resourceDisplayName>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resourceDisplayName>
                 <resource>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtExample.Civilian</type>
+            <id>2b837bd4-5645-46f6-b97c-7afa85cab336</id>
+            <name>Bartender_01</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>114.931023</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-554.090210</value1>
+                    <value2>-116.488052</value2>
+                    <value3>1.875597</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Skeletal Mesh</name>
+                <resourceType>SkeletalMeshes</resourceType>
+                <resourceDisplayName>SkeletalMeshes:YoungMan_African:Adam.dtchar</resourceDisplayName>
+                <resource>SkeletalMeshes:YoungMan_African:Adam.dtchar</resource>
             </property>
         </actor>
         <actor>
@@ -2472,8 +2703,8 @@
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-963.973145</value1>
-                    <value2>-298.075897</value2>
+                    <value1>-1003.265869</value1>
+                    <value2>-295.946320</value2>
                     <value3>0.000000</value3>
                 </vec3>
             </property>
@@ -2720,15 +2951,15 @@
             </property>
             <property>
                 <name>Time to Next</name>
-                <float>1</float>
+                <float>1500</float>
+            </property>
+            <property>
+                <name>Time Step</name>
+                <float>0.050000001</float>
             </property>
             <property>
                 <name>Exit Control Point</name>
                 <actorId>2d563c0a-9330-44b7-936c-7f9786073b4a</actorId>
-            </property>
-            <property>
-                <name>Next Bezier Node</name>
-                <actorId>d013163c-50b4-4247-8606-07afc7d56935</actorId>
             </property>
         </actor>
         <actor>
@@ -3004,6 +3235,35 @@
                 <resourceType>StaticMeshes</resourceType>
                 <resourceDisplayName>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resourceDisplayName>
                 <resource>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Action.Bezier Controller</type>
+            <id>3587b333-df2f-4a6e-a37b-969929b8ac18</id>
+            <name>SailBoat2_Controller</name>
+            <property>
+                <name>Time Step</name>
+                <float>0.016666669</float>
+            </property>
+            <property>
+                <name>Target Object</name>
+                <actorId>58693797-ee89-4e33-a9f5-b6b672fb8352</actorId>
+            </property>
+            <property>
+                <name>Start Node</name>
+                <actorId>f551ce6c-57ef-4d1d-a562-1f21ac37bf58</actorId>
+            </property>
+            <property>
+                <name>Render Path</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Follow Path</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Set Looping</name>
+                <boolean>true</boolean>
             </property>
         </actor>
         <actor>
@@ -3918,7 +4178,7 @@
                 <vec3>
                     <value1>-37.241295</value1>
                     <value2>-65.602554</value2>
-                    <value3>4.199999</value3>
+                    <value3>0.000000</value3>
                 </vec3>
             </property>
             <property>
@@ -4217,6 +4477,23 @@
             </property>
         </actor>
         <actor>
+            <type>dtcore.Curve.Bezier Control Point</type>
+            <id>464881af-384f-4243-a016-42108cb50084</id>
+            <name>ControlPoint_23</name>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-188.452530</value1>
+                    <value2>-103.998436</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Bezier Node</name>
+                <actorId>f551ce6c-57ef-4d1d-a562-1f21ac37bf58</actorId>
+            </property>
+        </actor>
+        <actor>
             <type>dtExample.Mesh Object</type>
             <id>4715019c-f2b5-4c3d-bee7-cf69785d8603</id>
             <name>palmtree_94</name>
@@ -4373,7 +4650,7 @@
         <actor>
             <type>dtExample.Mesh Object</type>
             <id>4a0f0412-8895-4824-9d59-f2e93acadde3</id>
-            <name>statue</name>
+            <name>Statue</name>
             <property>
                 <name>ShaderGroup</name>
                 <string>MultiMap</string>
@@ -5432,6 +5709,37 @@
             </property>
         </actor>
         <actor>
+            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <id>58693797-ee89-4e33-a9f5-b6b672fb8352</id>
+            <name>SailBoat2</name>
+            <property>
+                <name>ShaderGroup</name>
+                <string>SimpleShader</string>
+            </property>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>-0.000000</value2>
+                    <value3>-139.760941</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>75.950569</value1>
+                    <value2>-418.648651</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:Sailboat380:380_under_sail.osg</resourceDisplayName>
+                <resource>StaticMeshes:Sailboat380:380_under_sail.osg</resource>
+            </property>
+        </actor>
+        <actor>
             <type>dtExample.Mesh Object</type>
             <id>594666fc-3a02-4f60-9a6e-078d4fb3acf7</id>
             <name>walkway_32</name>
@@ -5747,14 +6055,14 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>-0.000000</value2>
-                    <value3>-88.812401</value3>
+                    <value3>-87.935005</value3>
                 </vec3>
             </property>
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-483.717834</value1>
-                    <value2>-433.591248</value2>
+                    <value1>-86.439423</value1>
+                    <value2>-422.198273</value2>
                     <value3>75.000000</value3>
                 </vec3>
             </property>
@@ -6501,7 +6809,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>91.270912</value3>
+                    <value3>91.270920</value3>
                 </vec3>
             </property>
             <property>
@@ -6808,6 +7116,23 @@
             </property>
         </actor>
         <actor>
+            <type>dtcore.Curve.Bezier Control Point</type>
+            <id>6b0f719d-8b33-4126-9ef7-cf0fd2be261e</id>
+            <name>ControlPoint_24</name>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-186.443024</value1>
+                    <value2>-108.576851</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Bezier Node</name>
+                <actorId>1ab03e82-8f71-4a47-801a-6741e4f30a12</actorId>
+            </property>
+        </actor>
+        <actor>
             <type>dtcore.Action.Bezier Controller</type>
             <id>6c2fd394-40b6-4d52-a87a-6e93d583e56d</id>
             <name>FireworkB_Controller</name>
@@ -6875,6 +7200,15 @@
                     <value2>2.000000</value2>
                     <value3>2.000000</value3>
                 </vec3>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Triggers.AutoTrigger</type>
+            <id>6de69a8f-8937-41c6-ae25-ae1f0993363b</id>
+            <name>AutoTrigger_02</name>
+            <property>
+                <name>Action</name>
+                <actorId>baa2581c-f177-4a12-8571-e9d0563f6319</actorId>
             </property>
         </actor>
         <actor>
@@ -7403,6 +7737,35 @@
                     <value2>2.000000</value2>
                     <value3>2.000000</value3>
                 </vec3>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Action.Bezier Controller</type>
+            <id>7775666d-140c-4c7a-adfd-0383fffb66a0</id>
+            <name>SailBoat_Controller</name>
+            <property>
+                <name>Time Step</name>
+                <float>0.016666669</float>
+            </property>
+            <property>
+                <name>Target Object</name>
+                <actorId>0e5ad431-cd4b-4905-81db-6a1a82b9f167</actorId>
+            </property>
+            <property>
+                <name>Start Node</name>
+                <actorId>b0c2d4b0-c6b0-46b2-9c0e-f2d5eb95acd5</actorId>
+            </property>
+            <property>
+                <name>Render Path</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Follow Path</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Set Looping</name>
+                <boolean>true</boolean>
             </property>
         </actor>
         <actor>
@@ -7939,6 +8302,37 @@
             <property>
                 <name>Bezier Node</name>
                 <actorId>d013163c-50b4-4247-8606-07afc7d56935</actorId>
+            </property>
+        </actor>
+        <actor>
+            <type>dtExample.Mesh Object</type>
+            <id>823eeb20-3171-4926-b30e-402a1e93a03b</id>
+            <name>boat</name>
+            <property>
+                <name>ShaderGroup</name>
+                <string>SimpleShader</string>
+            </property>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>2.970862</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-965.149231</value1>
+                    <value2>-1030.402344</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:CohoFerry:Coho_ferry.osg</resourceDisplayName>
+                <resource>StaticMeshes:CohoFerry:Coho_ferry.osg</resource>
             </property>
         </actor>
         <actor>
@@ -10202,7 +10596,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.337784</value3>
+                    <value3>-87.337753</value3>
                 </vec3>
             </property>
             <property>
@@ -10668,7 +11062,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-158.295029</value3>
+                    <value3>-158.294998</value3>
                 </vec3>
             </property>
             <property>
@@ -10862,6 +11256,23 @@
             <property>
                 <name>Render Path</name>
                 <boolean>false</boolean>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Curve.Bezier Control Point</type>
+            <id>ad1b6ee9-456c-4028-8b39-ddab135d5480</id>
+            <name>ControlPoint_21</name>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-137.156204</value1>
+                    <value2>-103.775070</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Bezier Node</name>
+                <actorId>b0c2d4b0-c6b0-46b2-9c0e-f2d5eb95acd5</actorId>
             </property>
         </actor>
         <actor>
@@ -11197,6 +11608,35 @@
                     <value2>2.000000</value2>
                     <value3>2.000000</value3>
                 </vec3>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Curve.Bezier Node</type>
+            <id>b0c2d4b0-c6b0-46b2-9c0e-f2d5eb95acd5</id>
+            <name>SailBoat_BezierNode_01</name>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>152.613098</value1>
+                    <value2>-367.301392</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Time to Next</name>
+                <float>1500</float>
+            </property>
+            <property>
+                <name>Time Step</name>
+                <float>0.050000001</float>
+            </property>
+            <property>
+                <name>Exit Control Point</name>
+                <actorId>ad1b6ee9-456c-4028-8b39-ddab135d5480</actorId>
+            </property>
+            <property>
+                <name>Next Bezier Node</name>
+                <actorId>10fd9a75-8568-460b-8a43-62d1177bb548</actorId>
             </property>
         </actor>
         <actor>
@@ -12111,12 +12551,28 @@
             <id>baa2581c-f177-4a12-8571-e9d0563f6319</id>
             <name>Boat_Controller</name>
             <property>
+                <name>Time Step</name>
+                <float>0.016666669</float>
+            </property>
+            <property>
+                <name>Target Object</name>
+                <actorId>823eeb20-3171-4926-b30e-402a1e93a03b</actorId>
+            </property>
+            <property>
                 <name>Start Node</name>
                 <actorId>317d308f-f0fd-4867-b65d-cf20906e80ed</actorId>
             </property>
             <property>
                 <name>Render Path</name>
                 <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Follow Path</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Set Looping</name>
+                <boolean>true</boolean>
             </property>
         </actor>
         <actor>
@@ -13907,7 +14363,7 @@
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-965.135071</value1>
+                    <value1>-1131.934937</value1>
                     <value2>425.811340</value2>
                     <value3>0.000000</value3>
                 </vec3>
@@ -13915,10 +14371,6 @@
             <property>
                 <name>Entry Control Point</name>
                 <actorId>8164d63e-d4a9-414e-99b2-c7518ff191b4</actorId>
-            </property>
-            <property>
-                <name>Previous Bezier Node</name>
-                <actorId>317d308f-f0fd-4867-b65d-cf20906e80ed</actorId>
             </property>
         </actor>
         <actor>
@@ -14027,6 +14479,33 @@
                     <value2>2.000000</value2>
                     <value3>2.000000</value3>
                 </vec3>
+            </property>
+        </actor>
+        <actor>
+            <type>dtExample.Civilian</type>
+            <id>d377484c-478a-43c8-b961-372f7af4f2ff</id>
+            <name>youngasianman_03_Sand</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>172.911896</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-812.494263</value1>
+                    <value2>-95.444183</value2>
+                    <value3>4.067979</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Skeletal Mesh</name>
+                <resourceType>SkeletalMeshes</resourceType>
+                <resourceDisplayName>SkeletalMeshes:YoungMan_Asian:YoungMan_Asian_Jogger.dtchar</resourceDisplayName>
+                <resource>SkeletalMeshes:YoungMan_Asian:YoungMan_Asian_Jogger.dtchar</resource>
             </property>
         </actor>
         <actor>
@@ -14221,6 +14700,33 @@
                 <resourceType>StaticMeshes</resourceType>
                 <resourceDisplayName>StaticMeshes:glassware:wine_bottle:WineBottle_Orange.osg</resourceDisplayName>
                 <resource>StaticMeshes:glassware:wine_bottle:WineBottle_Orange.osg</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtExample.Civilian</type>
+            <id>d654dfac-30a4-4db6-9238-17846dd6b8ea</id>
+            <name>youngafricanman_05_Walkway</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>-45.779255</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-628.877258</value1>
+                    <value2>-175.510391</value2>
+                    <value3>3.990712</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Skeletal Mesh</name>
+                <resourceType>SkeletalMeshes</resourceType>
+                <resourceDisplayName>SkeletalMeshes:YoungMan_African:YoungMan_African.dtchar</resourceDisplayName>
+                <resource>SkeletalMeshes:YoungMan_African:YoungMan_African.dtchar</resource>
             </property>
         </actor>
         <actor>
@@ -15659,6 +16165,23 @@
             </property>
         </actor>
         <actor>
+            <type>dtcore.Curve.Bezier Control Point</type>
+            <id>ea1a0129-72f8-4c04-bcdc-24f69173cff8</id>
+            <name>ControlPoint_22</name>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-139.332642</value1>
+                    <value2>-99.273613</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Bezier Node</name>
+                <actorId>10fd9a75-8568-460b-8a43-62d1177bb548</actorId>
+            </property>
+        </actor>
+        <actor>
             <type>dtExample.Mesh Object</type>
             <id>ea22411e-a6ed-49de-b3e3-70cbd8db2e60</id>
             <name>angledpalm_01</name>
@@ -16439,6 +16962,31 @@
                     <value2>2.000000</value2>
                     <value3>2.000000</value3>
                 </vec3>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Curve.Bezier Node</type>
+            <id>f551ce6c-57ef-4d1d-a562-1f21ac37bf58</id>
+            <name>SailBoat2_BezierNode_01</name>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-182.851135</value1>
+                    <value2>314.138123</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Time to Next</name>
+                <float>1500</float>
+            </property>
+            <property>
+                <name>Time Step</name>
+                <float>0.050000001</float>
+            </property>
+            <property>
+                <name>Exit Control Point</name>
+                <actorId>464881af-384f-4243-a016-42108cb50084</actorId>
             </property>
         </actor>
         <actor>
