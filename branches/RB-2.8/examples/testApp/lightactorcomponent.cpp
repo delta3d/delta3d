@@ -315,7 +315,7 @@ namespace dtExample
                LOG_ERROR("Could not create light for actor: " + GetName());
             }
             else
-            {
+            {      
                LOG_ERROR("Could not access light \"" + mLightId.ToString()
                   + "\" for actor: " + GetName());
             }
@@ -421,6 +421,17 @@ namespace dtExample
    /////////////////////////////////////////////////////////////////////////////
    void LightActorComponent::OnTickLocal(const dtGame::TickMessage& tickMessage)
    {
+      if(!mLight.valid() && !mCreateLight)
+      {
+         dtRender::DynamicLight* light = GetLightActorById(mLightId);
+
+         if(light != NULL)
+         {
+            SetLight(light);
+         }
+
+      }
+
       if (mLight.valid())
       {
          float intensity = mLight->GetIntensity();
