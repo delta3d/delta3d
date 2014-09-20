@@ -625,7 +625,7 @@ namespace dtExample
          std::string name(button->getName().c_str());
 
          InputComponent* inputComp = GetInputComponent();
-         if (name == "GameScreen_ToggleFirworks")
+         if (name == "GameScreen_ToggleFireworks")
          {
             inputComp->ToggleFireworks();
          }
