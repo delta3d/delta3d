@@ -2,7 +2,7 @@
 <director xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="delta3dDirector" xsi:schemaLocation="delta3dDirector director.xsd">
     <header>
         <createTimestamp>2014-04-11T21:34:39-05:00</createTimestamp>
-        <lastUpdateTimestamp>2014-09-16T15:57:54-05:00</lastUpdateTimestamp>
+        <lastUpdateTimestamp>2014-09-21T13:40:38-05:00</lastUpdateTimestamp>
         <editorVersion>2.8.0</editorVersion>
         <schemaVersion>2.0</schemaVersion>
         <scriptType>Scenario</scriptType>
@@ -39,7 +39,7 @@
     </libraries>
     <graph>
         <idIndex>0</idIndex>
-        <id>11AF7BBE-4FC1-4A29-B467-F5FE403D556F</id>
+        <id>7a25cd9c-bb3a-489e-9c5c-c705fb880c57</id>
         <property>
             <name>Comment</name>
             <string></string>
@@ -107,10 +107,6 @@
                 <idIndex>0</idIndex>
                 <id>45111894-BC5F-4492-8351-DF3241CDE700</id>
                 <property>
-                    <name>Enabled</name>
-                    <boolean>false</boolean>
-                </property>
-                <property>
                     <name>Position</name>
                     <vec2>
                         <value1>-334.000000</value1>
@@ -125,7 +121,7 @@
                 </property>
                 <property>
                     <name>ExistingActor</name>
-                    <actorId>9532E238-6C9B-4DB3-AAFE-44F6824F6681</actorId>
+                    <actorId>e3843d17-c778-473c-a7fb-d44420ba170a</actorId>
                 </property>
                 <property>
                     <name>DestinationName</name>
@@ -142,10 +138,6 @@
                 <idIndex>3</idIndex>
                 <id>75E2DF83-C510-4BE4-8997-24DE73EDB33B</id>
                 <property>
-                    <name>Enabled</name>
-                    <boolean>false</boolean>
-                </property>
-                <property>
                     <name>Position</name>
                     <vec2>
                         <value1>-334.000000</value1>
@@ -160,11 +152,11 @@
                 </property>
                 <property>
                     <name>ExistingActor</name>
-                    <actorId>BFF920EF-DBD9-432D-8AB8-7DE0FB8C14B1</actorId>
+                    <actorId>d654dfac-30a4-4db6-9238-17846dd6b8ea</actorId>
                 </property>
                 <property>
                     <name>DestinationName</name>
-                    <string>Statue</string>
+                    <string>View</string>
                 </property>
                 <valuelink>
                     <name>Enabled</name>
@@ -176,10 +168,6 @@
                 <category>General</category>
                 <idIndex>5</idIndex>
                 <id>B2A7193D-92DC-4FDF-8C74-A0E3EE2BC426</id>
-                <property>
-                    <name>Enabled</name>
-                    <boolean>false</boolean>
-                </property>
                 <property>
                     <name>Position</name>
                     <vec2>
@@ -195,11 +183,11 @@
                 </property>
                 <property>
                     <name>ExistingActor</name>
-                    <actorId>C26CF1D1-8850-43F3-BD72-E757468D11B6</actorId>
+                    <actorId>47549ce9-0861-40b8-8d13-1c52c4100fc1</actorId>
                 </property>
                 <property>
                     <name>DestinationName</name>
-                    <string>End</string>
+                    <string>View</string>
                 </property>
                 <valuelink>
                     <name>Enabled</name>
@@ -211,10 +199,6 @@
                 <category>General</category>
                 <idIndex>6</idIndex>
                 <id>BEA9197A-90C8-4F4E-B131-14989AC651C0</id>
-                <property>
-                    <name>Enabled</name>
-                    <boolean>false</boolean>
-                </property>
                 <property>
                     <name>Position</name>
                     <vec2>
@@ -230,7 +214,7 @@
                 </property>
                 <property>
                     <name>ExistingActor</name>
-                    <actorId>FD63B544-A798-4EE9-B518-4180652FD1CB</actorId>
+                    <actorId>d377484c-478a-43c8-b961-372f7af4f2ff</actorId>
                 </property>
                 <property>
                     <name>DestinationName</name>
@@ -282,10 +266,6 @@
                 <idIndex>8</idIndex>
                 <id>a03ba3e9-1736-4cd0-96f5-97dd8276888a</id>
                 <property>
-                    <name>Enabled</name>
-                    <boolean>false</boolean>
-                </property>
-                <property>
                     <name>Position</name>
                     <vec2>
                         <value1>-111.000000</value1>
@@ -300,11 +280,11 @@
                 </property>
                 <property>
                     <name>ExistingActor</name>
-                    <actorId>9ecceeb2-6f50-4469-a527-d3df52c3da6c</actorId>
+                    <actorId>2b837bd4-5645-46f6-b97c-7afa85cab336</actorId>
                 </property>
                 <property>
                     <name>DestinationName</name>
-                    <string>End</string>
+                    <string>Statue</string>
                 </property>
                 <valuelink>
                     <name>Enabled</name>
@@ -414,10 +394,6 @@
                 <idIndex>12</idIndex>
                 <id>9d8aecd3-d98b-46d4-8574-f7c0777a5af4</id>
                 <property>
-                    <name>Enabled</name>
-                    <boolean>false</boolean>
-                </property>
-                <property>
                     <name>Position</name>
                     <vec2>
                         <value1>-15.000000</value1>
@@ -432,11 +408,11 @@
                 </property>
                 <property>
                     <name>ExistingActor</name>
-                    <actorId>7c064c0d-9d1b-41a3-a907-d2b0b9ba9d08</actorId>
+                    <actorId>080aa6f1-c300-436e-904d-3fffcd024eab</actorId>
                 </property>
                 <property>
                     <name>DestinationName</name>
-                    <string>Photo</string>
+                    <string>View</string>
                 </property>
                 <valuelink>
                     <name>Enabled</name>
@@ -519,10 +495,6 @@
                 <idIndex>15</idIndex>
                 <id>cbf78b4a-aeeb-43ac-99be-54fa7cf4bf26</id>
                 <property>
-                    <name>Enabled</name>
-                    <boolean>false</boolean>
-                </property>
-                <property>
                     <name>Position</name>
                     <vec2>
                         <value1>79.000000</value1>
@@ -537,11 +509,11 @@
                 </property>
                 <property>
                     <name>ExistingActor</name>
-                    <actorId>95b97988-47bf-444f-a8ff-5632b3acf35b</actorId>
+                    <actorId>4089f3f6-d422-40e7-abe8-e2cdaf8464a7</actorId>
                 </property>
                 <property>
                     <name>DestinationName</name>
-                    <string>Photo</string>
+                    <string>View</string>
                 </property>
                 <valuelink>
                     <name>Enabled</name>
@@ -553,10 +525,6 @@
                 <category>General</category>
                 <idIndex>16</idIndex>
                 <id>d30c5cb8-6fca-42bc-a3c7-b6a15f9a8d00</id>
-                <property>
-                    <name>Enabled</name>
-                    <boolean>false</boolean>
-                </property>
                 <property>
                     <name>Position</name>
                     <vec2>
@@ -572,11 +540,11 @@
                 </property>
                 <property>
                     <name>ExistingActor</name>
-                    <actorId>b03c0033-b8b9-441b-b73c-339045caada8</actorId>
+                    <actorId>26265d90-8ab2-45b4-a340-594ba7306b16</actorId>
                 </property>
                 <property>
                     <name>DestinationName</name>
-                    <string>Photo</string>
+                    <string>View</string>
                 </property>
                 <valuelink>
                     <name>Enabled</name>
