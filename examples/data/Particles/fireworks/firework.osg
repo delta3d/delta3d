@@ -72,16 +72,16 @@ Group {
       particleTemplate {
         shape QUAD
         lifeTime 3
-        sizeRange 0.4 0.02
+        sizeRange 0.75 0.02
         alphaRange 1 1
-        colorRange 1 1 0.89 1 1 0 0.5 1
+        colorRange 1 1 1 1 1 1 1 1
         position 0 0 0
         velocity 0 0 0
         angle 0 0 0
         angularVelocity 0 0 0
-        radius 0.2
+        radius 0.4
         mass 0.01
-        textureTile 1 1 6
+        textureTile 1 1 8
         sizeInterpolator {
           osgParticle::LinearInterpolator {
             UniqueID LinearInterpolator_2
@@ -175,7 +175,7 @@ Group {
         angularVelocity 0 0 0
         radius 0.2
         mass 0.1
-        textureTile 1 1 2
+        textureTile 1 1 4
         sizeInterpolator {
           osgParticle::LinearInterpolator {
             UniqueID LinearInterpolator_7

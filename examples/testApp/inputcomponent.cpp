@@ -30,7 +30,10 @@
 #include "testappmessages.h"
 #include "testappmessagetypes.h"
 
+#include <dtUtil/mathdefines.h>
+
 #include <dtABC/application.h>
+#include <dtABC/trigger.h>
 #include <dtCore/camera.h>
 #include <dtCore/flymotionmodel.h>
 #include <dtCore/fpsmotionmodel.h>
@@ -64,6 +67,7 @@
 #endif
 
 #include <dtActors/engineactorregistry.h>
+#include <dtActors/beziercontrolleractor.h>
 #include <iostream>
 
 #include <dtAI/aiactorregistry.h>
@@ -980,11 +984,6 @@ namespace dtExample
       dtCore::ShaderManager::GetInstance().ReloadAndReassignShaderDefinitions("shaders/ShaderDefinitions.xml");
    }
 
-   void InputComponent::ToggleFireworks()
-   {
-      // TODO:
-   }
-
    void InputComponent::ToggleAIWaypointDrawMode()
    {
       dtAI::AIInterfaceActor* interfaceActor = NULL;
@@ -1075,6 +1074,215 @@ namespace dtExample
       return dtActors::WaterGridActor::ChoppinessSettings::CHOP_FLAT;
 
    }
+
+
+
+   std::vector<dtCore::RefPtr<dtABC::Trigger> > triggers;
+
+   void InputComponent::ToggleFireworks()
+   {
+      triggers.clear();
+
+      dtActors::BezierControllerActor* bactor = NULL;
+      GetGameManager()->FindActorByName("FireworkA_Controller", bactor);
+      if (bactor != NULL)
+      {
+         dtABC::BezierController* controller = NULL;
+         bactor->GetDrawable(controller);
+
+         dtABC::Trigger* t = new dtABC::Trigger();
+         t->SetAction(controller);
+         t->SetTimeDelay( dtUtil::RandFloat(0.0f, 2.0f));
+         t->SetEnabled(true);
+         t->Fire();
+         triggers.push_back(t);
+
+         dtABC::Trigger* t2 = new dtABC::Trigger();
+         t2->SetAction(controller);
+         t2->SetTimeDelay( dtUtil::RandFloat(10.0f, 12.0f));
+         t2->SetEnabled(true);
+         t2->Fire();
+         triggers.push_back(t2);
+
+         dtABC::Trigger* t3 = new dtABC::Trigger();
+         t3->SetAction(controller);
+         t3->SetTimeDelay( dtUtil::RandFloat(28.0f, 30.0f));
+         t3->SetEnabled(true);
+         t3->Fire();
+         triggers.push_back(t3);
+
+      }
+
+      dtActors::BezierControllerActor* bactor2 = NULL;
+      GetGameManager()->FindActorByName("FireworkB_Controller", bactor2);
+      if (bactor2 != NULL)
+      {
+         dtABC::BezierController* controller2 = NULL;
+         bactor2->GetDrawable(controller2);
+
+         dtABC::Trigger* t = new dtABC::Trigger();
+         t->SetAction(controller2);
+         t->SetTimeDelay( dtUtil::RandFloat(0.5f, 2.0f));
+         t->SetEnabled(true);
+         t->Fire();
+         triggers.push_back(t);
+
+         dtABC::Trigger* t2 = new dtABC::Trigger();
+         t2->SetAction(controller2);
+         t2->SetTimeDelay( dtUtil::RandFloat(10.5f, 12.0f));
+         t2->SetEnabled(true);
+         t2->Fire();
+         triggers.push_back(t2);
+      }
+
+      dtActors::BezierControllerActor* bactor3 = NULL;
+      GetGameManager()->FindActorByName("FireworkC_Controller", bactor3);
+      if (bactor3 != NULL)
+      {
+         dtABC::BezierController* controller3 = NULL;
+         bactor3->GetDrawable(controller3);
+
+         dtABC::Trigger* t = new dtABC::Trigger();
+         t->SetAction(controller3);
+         t->SetTimeDelay( dtUtil::RandFloat(0.5f, 2.5f));
+         t->SetEnabled(true);
+         t->Fire();
+         triggers.push_back(t);
+
+         dtABC::Trigger* t2 = new dtABC::Trigger();
+         t2->SetAction(controller3);
+         t2->SetTimeDelay( dtUtil::RandFloat(12.5f, 15.5f));
+         t2->SetEnabled(true);
+         t2->Fire();
+         triggers.push_back(t2);
+
+         dtABC::Trigger* t3 = new dtABC::Trigger();
+         t3->SetAction(controller3);
+         t3->SetTimeDelay( dtUtil::RandFloat(28.5f, 30.5f));
+         t3->SetEnabled(true);
+         t3->Fire();
+         triggers.push_back(t3);
+      }
+
+      dtActors::BezierControllerActor* bactor4 = NULL;
+      GetGameManager()->FindActorByName("FireworkD_Controller", bactor4);
+      if (bactor4 != NULL)
+      {
+         dtABC::BezierController* controller4 = NULL;
+         bactor4->GetDrawable(controller4);
+
+         dtABC::Trigger* t = new dtABC::Trigger();
+         t->SetAction(controller4);
+         t->SetTimeDelay( dtUtil::RandFloat(1.5f, 3.0f));
+         t->SetEnabled(true);
+         t->Fire();
+         triggers.push_back(t);
+
+         dtABC::Trigger* t2 = new dtABC::Trigger();
+         t2->SetAction(controller4);
+         t2->SetTimeDelay( dtUtil::RandFloat(13.5f, 16.0f));
+         t2->SetEnabled(true);
+         t2->Fire();
+         triggers.push_back(t2);
+      }
+
+      dtActors::BezierControllerActor* bactor5 = NULL;
+      GetGameManager()->FindActorByName("FireworkF_Controller", bactor5);
+      if (bactor5 != NULL)
+      {
+         dtABC::BezierController* controller5 = NULL;
+         bactor5->GetDrawable(controller5);
+
+         dtABC::Trigger* t = new dtABC::Trigger();
+         t->SetAction(controller5);
+         t->SetTimeDelay( dtUtil::RandFloat(1.5f, 3.5f));
+         t->SetEnabled(true);
+         t->Fire();
+         triggers.push_back(t);
+
+         dtABC::Trigger* t2 = new dtABC::Trigger();
+         t2->SetAction(controller5);
+         t2->SetTimeDelay( dtUtil::RandFloat(15.5f, 23.5f));
+         t2->SetEnabled(true);
+         t2->Fire();
+         triggers.push_back(t2);
+
+         dtABC::Trigger* t3 = new dtABC::Trigger();
+         t3->SetAction(controller5);
+         t3->SetTimeDelay( dtUtil::RandFloat(28.5f, 30.5f));
+         t3->SetEnabled(true);
+         t3->Fire();
+         triggers.push_back(t3);
+
+      }
+
+      dtActors::BezierControllerActor* bactor6 = NULL;
+      GetGameManager()->FindActorByName("FireworkG_Controller", bactor6);
+      if (bactor6 != NULL)
+      {
+         dtABC::BezierController* controller6 = NULL;
+         bactor6->GetDrawable(controller6);
+
+         dtABC::Trigger* t = new dtABC::Trigger();
+         t->SetAction(controller6);
+         t->SetTimeDelay( dtUtil::RandFloat(2.0f, 5.0f));
+         t->SetEnabled(true);
+         t->Fire();
+         triggers.push_back(t);
+
+         dtABC::Trigger* t2 = new dtABC::Trigger();
+         t2->SetAction(controller6);
+         t2->SetTimeDelay( dtUtil::RandFloat(16.0f, 25.0f));
+         t2->SetEnabled(true);
+         t2->Fire();
+         triggers.push_back(t2);
+      }
+
+      dtActors::BezierControllerActor* bactor7 = NULL;
+      GetGameManager()->FindActorByName("FireworkH_Controller", bactor7);
+      if (bactor7 != NULL)
+      {
+         dtABC::BezierController* controller7 = NULL;
+         bactor7->GetDrawable(controller7);
+
+         dtABC::Trigger* t = new dtABC::Trigger();
+         t->SetAction(controller7);
+         t->SetTimeDelay( dtUtil::RandFloat(2.5f, 7.0f));
+         t->SetEnabled(true);
+         t->Fire();
+         triggers.push_back(t);
+
+         dtABC::Trigger* t2 = new dtABC::Trigger();
+         t2->SetAction(controller7);
+         t2->SetTimeDelay( dtUtil::RandFloat(17.5f, 27.0f));
+         t2->SetEnabled(true);
+         t2->Fire();
+         triggers.push_back(t2);
+      }
+
+      dtActors::BezierControllerActor* bactor8 = NULL;
+      GetGameManager()->FindActorByName("FireworkI_Controller", bactor8);
+      if (bactor8 != NULL)
+      {
+         dtABC::BezierController* controller8 = NULL;
+         bactor8->GetDrawable(controller8);
+
+         dtABC::Trigger* t = new dtABC::Trigger();
+         t->SetAction(controller8);
+         t->SetTimeDelay( dtUtil::RandFloat(3.5f, 8.0f));
+         t->SetEnabled(true);
+         t->Fire();
+         triggers.push_back(t);
+
+         dtABC::Trigger* t2 = new dtABC::Trigger();
+         t2->SetAction(controller8);
+         t2->SetTimeDelay( dtUtil::RandFloat(23.5f, 28.0f));
+         t2->SetEnabled(true);
+         t2->Fire();
+         triggers.push_back(t2);
+      }
+   }
+
 
 
 } // END - namespace dtExample
