@@ -33,8 +33,10 @@ void main()
 
    vCamera = osg_ViewMatrixInverse[3].xyz;
    
-   vNormal = inverseView3x3 * gl_NormalMatrix * gl_Normal;
-   vTangent = normalize(inverseView3x3 * gl_NormalMatrix * tangentAttrib.xyz);
+   vNormal = normalize(inverseView3x3 * gl_NormalMatrix * gl_Normal);
+   vTangent = normalize(inverseView3x3 * gl_NormalMatrix * gl_MultiTexCoord1.xyz);
+   
+   vTangent = normalize(vTangent - dot(vTangent, vNormal) * vNormal);
    vBitangent = normalize(cross(vNormal, vTangent));
 
    vLightDir = normalize(inverseView3x3 * gl_LightSource[0].position.xyz);

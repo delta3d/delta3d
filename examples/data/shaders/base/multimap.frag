@@ -140,25 +140,6 @@ void main(void)
 
    // DEBUG:
    //gl_FragColor = vec4( (vec3(1.0) + f.worldNormal.rgb) * 0.5,1.0);
-   //gl_FragColor = vec4(m.specular.rgb,1.0);
-   //gl_FragColor = vec4(mNorm,1.0);
-   //gl_FragColor = vec4(e.specContrib.rgb,1.0);
-   //gl_FragColor = vec4(e.specContrib.rgb * m.diffuse.rgb,1.0);
-   //gl_FragColor = vec4(e.lightContrib.rgb,1.0);
-   //gl_FragColor = vec4((e.lightContrib.rgb + f.envContrib.rgb) * m.diffuse.rgb,1.0);
-   //gl_FragColor = vec4(e.lightContrib.rgb * m.diffuse.rgb,1.0);
-   //gl_FragColor = vec4(e.envContrib.rgb + m.diffuse.rgb,1.0);
-   //gl_FragColor = vec4(e.envContrib.rgb,1.0);
-   //gl_FragColor = vec4(e.illumContrib.rgb,1.0);
-   //gl_FragColor = vec4(tan,1.0);
-   //gl_FragColor = vec4(bitan,1.0);
-   //gl_FragColor = vec4(norm,1.0);
-   //gl_FragColor = vec4(worldNorm,1.0);
-   //gl_FragColor = vec4(worldNorm.rrr,1.0);
-   //gl_FragColor = vec4(normVaried,1.0);
-   //gl_FragColor = vec4(f.viewDir,1.0);
-   //gl_FragColor = vec4(gl_Color.rgb,1.0);
-   //gl_FragColor = vec4(e.colorContrib.aaa, 1.0);
    
    
 }
