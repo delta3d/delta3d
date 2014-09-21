@@ -80,11 +80,11 @@ namespace dtExample
          tsg->generate(geom, 0);
          osg::Array* tangentArray = tsg->getTangentArray();
 
-         if ( ! geom->getVertexAttribArray(6))
+         if ( ! geom->getTexCoordArray(1))
          {
             if (tangentArray != NULL)
             {
-               geom->setVertexAttribArray(6, tangentArray);
+               geom->setTexCoordArray(1, tangentArray);
 
                success = true;
             }
