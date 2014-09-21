@@ -104,8 +104,11 @@ namespace dtRender
 
          DT_DECLARE_ACCESSOR_INLINE(osg::Vec3, LightPosition)
 
-         // Intensity- mostly used internally to do effects like fading out and flickering
+         // Intensity scales light value
          DT_DECLARE_ACCESSOR_INLINE(float, Intensity)
+
+         // Intensity- mostly used internally to do effects like fading out and flickering
+         DT_DECLARE_ACCESSOR_INLINE(float, IntensityMod)
 
 
          dtCore::Transformable* GetTarget();
