@@ -40,6 +40,12 @@
 
 #include <dtPhysics/charactercontroller.h>
 
+
+namespace dtGame
+{
+   class TimerElapsedMessage;
+}
+
 namespace dtAnim
 {
    class BasicStanceEnum;
@@ -86,6 +92,7 @@ namespace dtExample
 
       DT_DECLARE_ACCESSOR(float, StepHeight);
       DT_DECLARE_ACCESSOR(float, MaxIncline);
+      DT_DECLARE_ACCESSOR(float, LookAtCameraRange);
 
       float GetHeading() const;
       void SetHeading(float degrees);
@@ -141,6 +148,8 @@ namespace dtExample
 
       void OnAnimationsTransitioning(dtAnim::AnimationTransitionPlanner& planner);
 
+      void OnLookAtTimer(const dtGame::TimerElapsedMessage&);
+
       void InitializeMotionBlendAnimations();
 
       void SetupWalkRunBlend(dtAnim::AnimationHelper* helper, const dtUtil::RefString& OpName,
@@ -153,6 +162,8 @@ namespace dtExample
       dtCore::Transform mLastTransform;
       bool mHasDestination;
       bool mHasArrived;
+
+      bool mLookedAtNearTarget;
 
       float mWalkSpeed;
       float mRotationSpeed;
