@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <map xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="delta3dMap" xsi:schemaLocation="delta3dMap map.xsd">
     <header>
         <name>TestApp</name>
@@ -7,7 +8,7 @@
         <comment></comment>
         <copyright></copyright>
         <createTimestamp>2014-07-15T22:49:46-05:00</createTimestamp>
-        <lastUpdateTimestamp>2014-09-20T13:35:43-05:00</lastUpdateTimestamp>
+        <lastUpdateTimestamp>2014-09-20T21:16:47-05:00</lastUpdateTimestamp>
         <editorVersion>2.8.0</editorVersion>
         <schemaVersion>1.0</schemaVersion>
     </header>
@@ -25,6 +26,38 @@
             <version>1.0</version>
         </library>
     </libraries>
+    <events>
+        <event>
+            <id>28bd3f66-487b-4394-906e-474265b5a4c7</id>
+            <name>LAUNCH_FIREWORK</name>
+            <description></description>
+        </event>
+        <event>
+            <id>b4e6dcb8-077a-45f6-a297-45059101b43a</id>
+            <name>DETONATE_FIREWORK</name>
+            <description></description>
+        </event>
+        <event>
+            <id>b5265661-0489-4c39-ae8e-7f81aaeea906</id>
+            <name>LAUNCH_FIREWORK3</name>
+            <description></description>
+        </event>
+        <event>
+            <id>c3a8f2ff-6f36-485c-8ceb-b4b672847d90</id>
+            <name>DETONATE_FIREWORK2</name>
+            <description></description>
+        </event>
+        <event>
+            <id>cb7ec169-9386-492d-bb38-13c755c16898</id>
+            <name>LAUNCH_FIREWORK2</name>
+            <description></description>
+        </event>
+        <event>
+            <id>d11c0446-d54c-49d2-9957-4bbde831b8f4</id>
+            <name>DETONATE_FIREWORK3</name>
+            <description></description>
+        </event>
+    </events>
     <actors>
         <actor>
             <type>dtExample.Civilian</type>
@@ -375,7 +408,11 @@
             </property>
             <property>
                 <name>Time to Next</name>
-                <float>1</float>
+                <float>3.5</float>
+            </property>
+            <property>
+                <name>Time Step</name>
+                <float>0.050000001</float>
             </property>
             <property>
                 <name>Exit Control Point</name>
@@ -604,12 +641,28 @@
             <id>0a6161d9-ed46-43e2-bf2c-33a5ec09e690</id>
             <name>FireworkG_Controller</name>
             <property>
+                <name>Time Step</name>
+                <float>0.050000001</float>
+            </property>
+            <property>
+                <name>Target Object</name>
+                <actorId>37f87d19-a358-4cb4-af79-bbae63d2a5d4</actorId>
+            </property>
+            <property>
                 <name>Start Node</name>
                 <actorId>068d4729-4bd8-48ba-bf4f-8d9bb8f2a00a</actorId>
             </property>
             <property>
                 <name>Render Path</name>
                 <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Event On Start</name>
+                <gameevent>28bd3f66-487b-4394-906e-474265b5a4c7</gameevent>
+            </property>
+            <property>
+                <name>Event On End</name>
+                <gameevent>b4e6dcb8-077a-45f6-a297-45059101b43a</gameevent>
             </property>
         </actor>
         <actor>
@@ -697,14 +750,14 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>-0.000000</value2>
-                    <value3>47.546051</value3>
+                    <value3>47.121227</value3>
                 </vec3>
             </property>
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>111.745483</value1>
-                    <value2>-330.058685</value2>
+                    <value1>79.413673</value1>
+                    <value2>-300.287476</value2>
                     <value3>0.000000</value3>
                 </vec3>
             </property>
@@ -2072,6 +2125,51 @@
             </property>
         </actor>
         <actor>
+            <type>dtExample.Firework</type>
+            <id>25c8d3db-7f7d-45a6-a7f4-e701b0d96ab1</id>
+            <name>Firework_PS_09</name>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>39.897572</value1>
+                    <value2>2.860759</value2>
+                    <value3>-1000.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Particle(s) File</name>
+                <resourceType>Particles</resourceType>
+                <resourceDisplayName>Particles:fireworks:firework.osg</resourceDisplayName>
+                <resource>Particles:fireworks:firework.osg</resource>
+            </property>
+            <property>
+                <name>ColorBegin</name>
+                <colorRGBA>
+                    <valueR>0.000000</valueR>
+                    <valueG>1.000000</valueG>
+                    <valueB>0.000000</valueB>
+                    <valueA>1.000000</valueA>
+                </colorRGBA>
+            </property>
+            <property>
+                <name>ColorEnd</name>
+                <colorRGBA>
+                    <valueR>0.666667</valueR>
+                    <valueG>1.000000</valueG>
+                    <valueB>0.498039</valueB>
+                    <valueA>1.000000</valueA>
+                </colorRGBA>
+            </property>
+            <property>
+                <name>Event To Launch</name>
+                <gameevent>b5265661-0489-4c39-ae8e-7f81aaeea906</gameevent>
+            </property>
+            <property>
+                <name>Event To Detonate</name>
+                <gameevent>d11c0446-d54c-49d2-9957-4bbde831b8f4</gameevent>
+            </property>
+        </actor>
+        <actor>
             <type>dtExample.Mesh Object</type>
             <id>25df6287-9757-4ef3-ad06-cba54105cae5</id>
             <name>barstool_01</name>
@@ -2321,6 +2419,46 @@
                 <resourceType>StaticMeshes</resourceType>
                 <resourceDisplayName>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resourceDisplayName>
                 <resource>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtExample.Firework</type>
+            <id>27fa9b62-d9ea-4958-9acb-d1b95abd91b8</id>
+            <name>Firework_PS_03</name>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>9.974393</value1>
+                    <value2>0.715190</value2>
+                    <value3>-1000.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Particle(s) File</name>
+                <resourceType>Particles</resourceType>
+                <resourceDisplayName>Particles:fireworks:firework.osg</resourceDisplayName>
+                <resource>Particles:fireworks:firework.osg</resource>
+            </property>
+            <property>
+                <name>ColorBegin</name>
+                <colorRGBA>
+                    <valueR>1.000000</valueR>
+                    <valueG>1.000000</valueG>
+                    <valueB>0.000000</valueB>
+                    <valueA>1.000000</valueA>
+                </colorRGBA>
+            </property>
+            <property>
+                <name>Event To Launch</name>
+                <gameevent>b5265661-0489-4c39-ae8e-7f81aaeea906</gameevent>
+            </property>
+            <property>
+                <name>Event To Detonate</name>
+                <gameevent>d11c0446-d54c-49d2-9957-4bbde831b8f4</gameevent>
+            </property>
+            <property>
+                <name>Light</name>
+                <actorId>57c79ea9-cae6-429d-bffa-6650514b138c</actorId>
             </property>
         </actor>
         <actor>
@@ -3290,6 +3428,46 @@
             </property>
         </actor>
         <actor>
+            <type>dtExample.Firework</type>
+            <id>3466275f-21ca-4c6d-bbc7-6ccb2fbc4084</id>
+            <name>Firework_PS_02</name>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>4.987196</value1>
+                    <value2>0.357595</value2>
+                    <value3>-1000.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Particle(s) File</name>
+                <resourceType>Particles</resourceType>
+                <resourceDisplayName>Particles:fireworks:firework.osg</resourceDisplayName>
+                <resource>Particles:fireworks:firework.osg</resource>
+            </property>
+            <property>
+                <name>ColorBegin</name>
+                <colorRGBA>
+                    <valueR>0.164706</valueR>
+                    <valueG>0.019608</valueG>
+                    <valueB>1.000000</valueB>
+                    <valueA>1.000000</valueA>
+                </colorRGBA>
+            </property>
+            <property>
+                <name>Event To Launch</name>
+                <gameevent>cb7ec169-9386-492d-bb38-13c755c16898</gameevent>
+            </property>
+            <property>
+                <name>Event To Detonate</name>
+                <gameevent>cb7ec169-9386-492d-bb38-13c755c16898</gameevent>
+            </property>
+            <property>
+                <name>Light</name>
+                <actorId>cdf85732-f055-447b-968c-768706117bc1</actorId>
+            </property>
+        </actor>
+        <actor>
             <type>dtcore.Action.Bezier Controller</type>
             <id>3587b333-df2f-4a6e-a37b-969929b8ac18</id>
             <name>SailBoat2_Controller</name>
@@ -3391,6 +3569,55 @@
                     <value2>-91.878761</value2>
                     <value3>3.693073</value3>
                 </vec3>
+            </property>
+        </actor>
+        <actor>
+            <type>dtExample.Firework</type>
+            <id>37f87d19-a358-4cb4-af79-bbae63d2a5d4</id>
+            <name>Firework_PS_07</name>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>29.923178</value1>
+                    <value2>2.145570</value2>
+                    <value3>-1000.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Particle(s) File</name>
+                <resourceType>Particles</resourceType>
+                <resourceDisplayName>Particles:fireworks:firework.osg</resourceDisplayName>
+                <resource>Particles:fireworks:firework.osg</resource>
+            </property>
+            <property>
+                <name>ColorBegin</name>
+                <colorRGBA>
+                    <valueR>1.000000</valueR>
+                    <valueG>0.666667</valueG>
+                    <valueB>1.000000</valueB>
+                    <valueA>1.000000</valueA>
+                </colorRGBA>
+            </property>
+            <property>
+                <name>ColorEnd</name>
+                <colorRGBA>
+                    <valueR>0.666667</valueR>
+                    <valueG>0.333333</valueG>
+                    <valueB>1.000000</valueB>
+                    <valueA>1.000000</valueA>
+                </colorRGBA>
+            </property>
+            <property>
+                <name>Event To Launch</name>
+                <gameevent>28bd3f66-487b-4394-906e-474265b5a4c7</gameevent>
+            </property>
+            <property>
+                <name>Event To Detonate</name>
+                <gameevent>b4e6dcb8-077a-45f6-a297-45059101b43a</gameevent>
+            </property>
+            <property>
+                <name>Light</name>
+                <actorId>fc34c760-cadb-4764-a0c4-fc8e917af716</actorId>
             </property>
         </actor>
         <actor>
@@ -4171,7 +4398,7 @@
                 <vec3>
                     <value1>-446.127960</value1>
                     <value2>-160.547211</value2>
-                    <value3>105.836311</value3>
+                    <value3>138.182037</value3>
                 </vec3>
             </property>
             <property>
@@ -4503,12 +4730,28 @@
             <id>458c11b3-0229-43a0-a0ef-eccc80081ab3</id>
             <name>FireworkI_Controller</name>
             <property>
+                <name>Time Step</name>
+                <float>0.050000001</float>
+            </property>
+            <property>
+                <name>Target Object</name>
+                <actorId>25c8d3db-7f7d-45a6-a7f4-e701b0d96ab1</actorId>
+            </property>
+            <property>
                 <name>Start Node</name>
                 <actorId>c776c460-2b29-4dce-8fc9-c8db12f4c9ff</actorId>
             </property>
             <property>
                 <name>Render Path</name>
                 <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Event On Start</name>
+                <gameevent>b5265661-0489-4c39-ae8e-7f81aaeea906</gameevent>
+            </property>
+            <property>
+                <name>Event On End</name>
+                <gameevent>d11c0446-d54c-49d2-9957-4bbde831b8f4</gameevent>
             </property>
         </actor>
         <actor>
@@ -5648,6 +5891,55 @@
             </property>
         </actor>
         <actor>
+            <type>dtExample.Firework</type>
+            <id>5621eccc-da70-45a3-b7f7-1ad963b7ef66</id>
+            <name>Firework_PS_04</name>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>14.961590</value1>
+                    <value2>1.072785</value2>
+                    <value3>-1000.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Particle(s) File</name>
+                <resourceType>Particles</resourceType>
+                <resourceDisplayName>Particles:fireworks:firework.osg</resourceDisplayName>
+                <resource>Particles:fireworks:firework.osg</resource>
+            </property>
+            <property>
+                <name>ColorBegin</name>
+                <colorRGBA>
+                    <valueR>0.666667</valueR>
+                    <valueG>0.000000</valueG>
+                    <valueB>0.000000</valueB>
+                    <valueA>1.000000</valueA>
+                </colorRGBA>
+            </property>
+            <property>
+                <name>ColorEnd</name>
+                <colorRGBA>
+                    <valueR>1.000000</valueR>
+                    <valueG>0.666667</valueG>
+                    <valueB>1.000000</valueB>
+                    <valueA>1.000000</valueA>
+                </colorRGBA>
+            </property>
+            <property>
+                <name>Event To Launch</name>
+                <gameevent>28bd3f66-487b-4394-906e-474265b5a4c7</gameevent>
+            </property>
+            <property>
+                <name>Event To Detonate</name>
+                <gameevent>b4e6dcb8-077a-45f6-a297-45059101b43a</gameevent>
+            </property>
+            <property>
+                <name>Light</name>
+                <actorId>61c972b9-1ab6-4292-9b2f-94b03a0b1639</actorId>
+            </property>
+        </actor>
+        <actor>
             <type>dtExample.Civilian</type>
             <id>56d03f2b-f135-409d-8510-3616fc289f89</id>
             <name>youngasianman_01_Bar</name>
@@ -6127,15 +6419,15 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>-0.000000</value2>
-                    <value3>-87.652931</value3>
+                    <value3>-89.617760</value3>
                 </vec3>
             </property>
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>89.748421</value1>
-                    <value2>-415.388214</value2>
-                    <value3>75.000000</value3>
+                    <value1>-886.849731</value1>
+                    <value2>-438.926025</value2>
+                    <value3>74.999992</value3>
                 </vec3>
             </property>
             <property>
@@ -6180,7 +6472,11 @@
             </property>
             <property>
                 <name>Time to Next</name>
-                <float>1</float>
+                <float>3</float>
+            </property>
+            <property>
+                <name>Time Step</name>
+                <float>0.050000001</float>
             </property>
             <property>
                 <name>Exit Control Point</name>
@@ -6320,7 +6616,7 @@
                 <vec3>
                     <value1>-441.799835</value1>
                     <value2>-151.355560</value2>
-                    <value3>105.836311</value3>
+                    <value3>115.162285</value3>
                 </vec3>
             </property>
             <property>
@@ -7209,12 +7505,28 @@
             <id>6c2fd394-40b6-4d52-a87a-6e93d583e56d</id>
             <name>FireworkB_Controller</name>
             <property>
+                <name>Time Step</name>
+                <float>0.050000001</float>
+            </property>
+            <property>
+                <name>Target Object</name>
+                <actorId>3466275f-21ca-4c6d-bbc7-6ccb2fbc4084</actorId>
+            </property>
+            <property>
                 <name>Start Node</name>
                 <actorId>84694483-4229-4dfd-8bea-58bb5d3f3dc3</actorId>
             </property>
             <property>
                 <name>Render Path</name>
                 <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Event On Start</name>
+                <gameevent>cb7ec169-9386-492d-bb38-13c755c16898</gameevent>
+            </property>
+            <property>
+                <name>Event On End</name>
+                <gameevent>c3a8f2ff-6f36-485c-8ceb-b4b672847d90</gameevent>
             </property>
         </actor>
         <actor>
@@ -7425,7 +7737,7 @@
                 <vec3>
                     <value1>-434.023346</value1>
                     <value2>-155.507416</value2>
-                    <value3>105.836311</value3>
+                    <value3>78.527969</value3>
                 </vec3>
             </property>
             <property>
@@ -7611,7 +7923,11 @@
             </property>
             <property>
                 <name>Time to Next</name>
-                <float>1</float>
+                <float>3.2</float>
+            </property>
+            <property>
+                <name>Time Step</name>
+                <float>0.050000001</float>
             </property>
             <property>
                 <name>Exit Control Point</name>
@@ -7698,7 +8014,11 @@
             </property>
             <property>
                 <name>Time to Next</name>
-                <float>1</float>
+                <float>4.1999998</float>
+            </property>
+            <property>
+                <name>Time Step</name>
+                <float>0.039999999</float>
             </property>
             <property>
                 <name>Exit Control Point</name>
@@ -8040,7 +8360,11 @@
             </property>
             <property>
                 <name>Time to Next</name>
-                <float>1</float>
+                <float>4.1999998</float>
+            </property>
+            <property>
+                <name>Time Step</name>
+                <float>0.050000001</float>
             </property>
             <property>
                 <name>Exit Control Point</name>
@@ -8314,12 +8638,28 @@
             <id>80ec53e9-d19c-4d1a-8f0f-ed285a0f6c2c</id>
             <name>FireworkE_Controller</name>
             <property>
+                <name>Time Step</name>
+                <float>0.050000001</float>
+            </property>
+            <property>
+                <name>Target Object</name>
+                <actorId>bd51329f-3624-463b-a939-b45111e499c7</actorId>
+            </property>
+            <property>
                 <name>Start Node</name>
                 <actorId>c668dc3a-13cd-4f5b-b9b7-a587f978aaec</actorId>
             </property>
             <property>
                 <name>Render Path</name>
                 <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Event On Start</name>
+                <gameevent>cb7ec169-9386-492d-bb38-13c755c16898</gameevent>
+            </property>
+            <property>
+                <name>Event On End</name>
+                <gameevent>c3a8f2ff-6f36-485c-8ceb-b4b672847d90</gameevent>
             </property>
         </actor>
         <actor>
@@ -8412,12 +8752,28 @@
             <id>831971ff-d7a4-4974-80bc-029e6b249b88</id>
             <name>FireworkD_Controller</name>
             <property>
+                <name>Time Step</name>
+                <float>0.050000001</float>
+            </property>
+            <property>
+                <name>Target Object</name>
+                <actorId>5621eccc-da70-45a3-b7f7-1ad963b7ef66</actorId>
+            </property>
+            <property>
                 <name>Start Node</name>
                 <actorId>73d22acc-2979-460d-8092-ac6f103ab72c</actorId>
             </property>
             <property>
                 <name>Render Path</name>
                 <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Event On Start</name>
+                <gameevent>28bd3f66-487b-4394-906e-474265b5a4c7</gameevent>
+            </property>
+            <property>
+                <name>Event On End</name>
+                <gameevent>b4e6dcb8-077a-45f6-a297-45059101b43a</gameevent>
             </property>
         </actor>
         <actor>
@@ -8533,7 +8889,11 @@
             </property>
             <property>
                 <name>Time to Next</name>
-                <float>1</float>
+                <float>2.5999999</float>
+            </property>
+            <property>
+                <name>Time Step</name>
+                <float>0.050000001</float>
             </property>
             <property>
                 <name>Exit Control Point</name>
@@ -8994,7 +9354,7 @@
                 <vec3>
                     <value1>-432.863647</value1>
                     <value2>-160.371063</value2>
-                    <value3>105.836311</value3>
+                    <value3>98.440422</value3>
                 </vec3>
             </property>
             <property>
@@ -10021,7 +10381,7 @@
                 <vec3>
                     <value1>-440.154907</value1>
                     <value2>-156.077240</value2>
-                    <value3>105.836311</value3>
+                    <value3>84.707695</value3>
                 </vec3>
             </property>
             <property>
@@ -10555,6 +10915,55 @@
                 <resourceType>StaticMeshes</resourceType>
                 <resourceDisplayName>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resourceDisplayName>
                 <resource>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtExample.Firework</type>
+            <id>a0475121-f92c-4081-9d18-9117a49953e8</id>
+            <name>Firework_PS_08</name>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>34.910374</value1>
+                    <value2>2.503165</value2>
+                    <value3>-1000.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Particle(s) File</name>
+                <resourceType>Particles</resourceType>
+                <resourceDisplayName>Particles:fireworks:firework.osg</resourceDisplayName>
+                <resource>Particles:fireworks:firework.osg</resource>
+            </property>
+            <property>
+                <name>ColorBegin</name>
+                <colorRGBA>
+                    <valueR>1.000000</valueR>
+                    <valueG>0.039216</valueG>
+                    <valueB>0.039216</valueB>
+                    <valueA>1.000000</valueA>
+                </colorRGBA>
+            </property>
+            <property>
+                <name>ColorEnd</name>
+                <colorRGBA>
+                    <valueR>1.000000</valueR>
+                    <valueG>0.666667</valueG>
+                    <valueB>0.000000</valueB>
+                    <valueA>1.000000</valueA>
+                </colorRGBA>
+            </property>
+            <property>
+                <name>Event To Launch</name>
+                <gameevent>cb7ec169-9386-492d-bb38-13c755c16898</gameevent>
+            </property>
+            <property>
+                <name>Event To Detonate</name>
+                <gameevent>c3a8f2ff-6f36-485c-8ceb-b4b672847d90</gameevent>
+            </property>
+            <property>
+                <name>Light</name>
+                <actorId>1eac1ad4-4dc2-4add-b869-7a75452555e2</actorId>
             </property>
         </actor>
         <actor>
@@ -11342,12 +11751,28 @@
             <id>ac56d360-88af-45ba-9050-cb017acac9a4</id>
             <name>FireworkA_Controller</name>
             <property>
+                <name>Time Step</name>
+                <float>0.050000001</float>
+            </property>
+            <property>
+                <name>Target Object</name>
+                <actorId>fd5a919e-318b-4447-870d-de2a3f8237ba</actorId>
+            </property>
+            <property>
                 <name>Start Node</name>
                 <actorId>5db88fc9-ed81-4a83-8547-dc5a2a466708</actorId>
             </property>
             <property>
                 <name>Render Path</name>
                 <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Event On Start</name>
+                <gameevent>28bd3f66-487b-4394-906e-474265b5a4c7</gameevent>
+            </property>
+            <property>
+                <name>Event On End</name>
+                <gameevent>b4e6dcb8-077a-45f6-a297-45059101b43a</gameevent>
             </property>
         </actor>
         <actor>
@@ -12238,7 +12663,11 @@
             </property>
             <property>
                 <name>Time to Next</name>
-                <float>1</float>
+                <float>5</float>
+            </property>
+            <property>
+                <name>Time Step</name>
+                <float>0.050000001</float>
             </property>
             <property>
                 <name>Exit Control Point</name>
@@ -12798,6 +13227,55 @@
             </property>
         </actor>
         <actor>
+            <type>dtExample.Firework</type>
+            <id>bd51329f-3624-463b-a939-b45111e499c7</id>
+            <name>Firework_PS_05</name>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>19.948786</value1>
+                    <value2>1.430380</value2>
+                    <value3>-1000.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Particle(s) File</name>
+                <resourceType>Particles</resourceType>
+                <resourceDisplayName>Particles:fireworks:firework.osg</resourceDisplayName>
+                <resource>Particles:fireworks:firework.osg</resource>
+            </property>
+            <property>
+                <name>ColorBegin</name>
+                <colorRGBA>
+                    <valueR>0.333333</valueR>
+                    <valueG>1.000000</valueG>
+                    <valueB>0.000000</valueB>
+                    <valueA>1.000000</valueA>
+                </colorRGBA>
+            </property>
+            <property>
+                <name>ColorEnd</name>
+                <colorRGBA>
+                    <valueR>0.333333</valueR>
+                    <valueG>0.666667</valueG>
+                    <valueB>0.000000</valueB>
+                    <valueA>1.000000</valueA>
+                </colorRGBA>
+            </property>
+            <property>
+                <name>Event To Launch</name>
+                <gameevent>cb7ec169-9386-492d-bb38-13c755c16898</gameevent>
+            </property>
+            <property>
+                <name>Event To Detonate</name>
+                <gameevent>c3a8f2ff-6f36-485c-8ceb-b4b672847d90</gameevent>
+            </property>
+            <property>
+                <name>Light</name>
+                <actorId>f2c529db-ada4-4a44-80c0-7f61c9b6e36f</actorId>
+            </property>
+        </actor>
+        <actor>
             <type>dtcore.Curve.Bezier Control Point</type>
             <id>bda4ab60-b906-445b-8712-cdfcdef3f25b</id>
             <name>ControlPoint_08</name>
@@ -12823,7 +13301,7 @@
                 <vec3>
                     <value1>-446.738373</value1>
                     <value2>-150.574020</value2>
-                    <value3>105.836311</value3>
+                    <value3>63.875122</value3>
                 </vec3>
             </property>
             <property>
@@ -12878,6 +13356,55 @@
                 <resourceType>StaticMeshes</resourceType>
                 <resourceDisplayName>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resourceDisplayName>
                 <resource>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtExample.Firework</type>
+            <id>be1238ba-63fd-4ece-b974-6cb52418ce4a</id>
+            <name>Firework_PS_06</name>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>24.935982</value1>
+                    <value2>1.787975</value2>
+                    <value3>-1000.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Particle(s) File</name>
+                <resourceType>Particles</resourceType>
+                <resourceDisplayName>Particles:fireworks:firework.osg</resourceDisplayName>
+                <resource>Particles:fireworks:firework.osg</resource>
+            </property>
+            <property>
+                <name>ColorBegin</name>
+                <colorRGBA>
+                    <valueR>0.666667</valueR>
+                    <valueG>0.000000</valueG>
+                    <valueB>1.000000</valueB>
+                    <valueA>1.000000</valueA>
+                </colorRGBA>
+            </property>
+            <property>
+                <name>ColorEnd</name>
+                <colorRGBA>
+                    <valueR>0.666667</valueR>
+                    <valueG>0.666667</valueG>
+                    <valueB>1.000000</valueB>
+                    <valueA>1.000000</valueA>
+                </colorRGBA>
+            </property>
+            <property>
+                <name>Event To Launch</name>
+                <gameevent>b5265661-0489-4c39-ae8e-7f81aaeea906</gameevent>
+            </property>
+            <property>
+                <name>Event To Detonate</name>
+                <gameevent>d11c0446-d54c-49d2-9957-4bbde831b8f4</gameevent>
+            </property>
+            <property>
+                <name>Light</name>
+                <actorId>1b0dfc38-8309-48f8-93bb-dbf29579eb5a</actorId>
             </property>
         </actor>
         <actor>
@@ -13839,7 +14366,11 @@
             </property>
             <property>
                 <name>Time to Next</name>
-                <float>1</float>
+                <float>2</float>
+            </property>
+            <property>
+                <name>Time Step</name>
+                <float>0.050000001</float>
             </property>
             <property>
                 <name>Exit Control Point</name>
@@ -14039,6 +14570,10 @@
                 <float>1</float>
             </property>
             <property>
+                <name>Time Step</name>
+                <float>4.5</float>
+            </property>
+            <property>
                 <name>Exit Control Point</name>
                 <actorId>29334fac-3fe2-4067-808f-65f94fd4bd2d</actorId>
             </property>
@@ -14146,12 +14681,28 @@
             <id>ca40f472-224b-440e-8671-5da4b03371ef</id>
             <name>FireworkF_Controller</name>
             <property>
+                <name>Time Step</name>
+                <float>0.050000001</float>
+            </property>
+            <property>
+                <name>Target Object</name>
+                <actorId>be1238ba-63fd-4ece-b974-6cb52418ce4a</actorId>
+            </property>
+            <property>
                 <name>Start Node</name>
                 <actorId>b56dafbd-9fa9-49dc-90e3-7d14a245d6ba</actorId>
             </property>
             <property>
                 <name>Render Path</name>
                 <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Event On Start</name>
+                <gameevent>b5265661-0489-4c39-ae8e-7f81aaeea906</gameevent>
+            </property>
+            <property>
+                <name>Event On End</name>
+                <gameevent>d11c0446-d54c-49d2-9957-4bbde831b8f4</gameevent>
             </property>
         </actor>
         <actor>
@@ -14890,12 +15441,28 @@
             <id>d8429ebd-b3f7-4847-83d4-199985ee657a</id>
             <name>FireworkH_Controller</name>
             <property>
+                <name>Time Step</name>
+                <float>0.050000001</float>
+            </property>
+            <property>
+                <name>Target Object</name>
+                <actorId>a0475121-f92c-4081-9d18-9117a49953e8</actorId>
+            </property>
+            <property>
                 <name>Start Node</name>
                 <actorId>76f83d19-d481-4cfc-87ad-e9c2f685c787</actorId>
             </property>
             <property>
                 <name>Render Path</name>
                 <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Event On Start</name>
+                <gameevent>cb7ec169-9386-492d-bb38-13c755c16898</gameevent>
+            </property>
+            <property>
+                <name>Event On End</name>
+                <gameevent>c3a8f2ff-6f36-485c-8ceb-b4b672847d90</gameevent>
             </property>
         </actor>
         <actor>
@@ -15108,12 +15675,28 @@
             <id>d9f01f81-1453-48f6-b055-1cd506be9462</id>
             <name>FireworkC_Controller</name>
             <property>
+                <name>Time Step</name>
+                <float>0.050000001</float>
+            </property>
+            <property>
+                <name>Target Object</name>
+                <actorId>27fa9b62-d9ea-4958-9acb-d1b95abd91b8</actorId>
+            </property>
+            <property>
                 <name>Start Node</name>
                 <actorId>7831b3fa-524f-4520-87a7-59eedaa89567</actorId>
             </property>
             <property>
                 <name>Render Path</name>
                 <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Event On Start</name>
+                <gameevent>b5265661-0489-4c39-ae8e-7f81aaeea906</gameevent>
+            </property>
+            <property>
+                <name>Event On End</name>
+                <gameevent>d11c0446-d54c-49d2-9957-4bbde831b8f4</gameevent>
             </property>
         </actor>
         <actor>
@@ -17883,6 +18466,46 @@
                 <resourceType>StaticMeshes</resourceType>
                 <resourceDisplayName>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resourceDisplayName>
                 <resource>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtExample.Firework</type>
+            <id>fd5a919e-318b-4447-870d-de2a3f8237ba</id>
+            <name>Firework_PS_01</name>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>-1000.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Particle(s) File</name>
+                <resourceType>Particles</resourceType>
+                <resourceDisplayName>Particles:fireworks:firework.osg</resourceDisplayName>
+                <resource>Particles:fireworks:firework.osg</resource>
+            </property>
+            <property>
+                <name>ColorBegin</name>
+                <colorRGBA>
+                    <valueR>1.000000</valueR>
+                    <valueG>0.007843</valueG>
+                    <valueB>0.239216</valueB>
+                    <valueA>1.000000</valueA>
+                </colorRGBA>
+            </property>
+            <property>
+                <name>Event To Launch</name>
+                <gameevent>28bd3f66-487b-4394-906e-474265b5a4c7</gameevent>
+            </property>
+            <property>
+                <name>Event To Detonate</name>
+                <gameevent>b4e6dcb8-077a-45f6-a297-45059101b43a</gameevent>
+            </property>
+            <property>
+                <name>Light</name>
+                <actorId>d21a0110-9018-4b51-af8a-0ab63041a20c</actorId>
             </property>
         </actor>
         <actor>
