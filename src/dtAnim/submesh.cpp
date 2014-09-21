@@ -496,13 +496,13 @@ namespace dtAnim
                glExt->glUnmapBuffer(GL_ARRAY_BUFFER_ARB);
             }
 
-			unsigned offset = mVertexOffsets[lodIndex] * VBO_STRIDE;
+            unsigned offset = mVertexOffsets[lodIndex] * VBO_STRIDE;
 
-			state.setVertexPointer(3, GL_FLOAT, VBO_STRIDE_BYTES, BUFFER_OFFSET(offset + VBO_OFFSET_POSITION));
-			state.setNormalPointer(GL_FLOAT, VBO_STRIDE_BYTES, BUFFER_OFFSET(offset + VBO_OFFSET_NORMAL));
-			state.setTexCoordPointer(0, 2, GL_FLOAT, VBO_STRIDE_BYTES, BUFFER_OFFSET(offset + VBO_OFFSET_TEXCOORD0));
-			state.setTexCoordPointer(1, 2, GL_FLOAT, VBO_STRIDE_BYTES, BUFFER_OFFSET(offset + VBO_OFFSET_TEXCOORD1));
-			state.disableColorPointer();
+            state.setVertexPointer(3, GL_FLOAT, VBO_STRIDE_BYTES, BUFFER_OFFSET(offset + VBO_OFFSET_POSITION));
+            state.setNormalPointer(GL_FLOAT, VBO_STRIDE_BYTES, BUFFER_OFFSET(offset + VBO_OFFSET_NORMAL));
+            state.setTexCoordPointer(0, 2, GL_FLOAT, VBO_STRIDE_BYTES, BUFFER_OFFSET(offset + VBO_OFFSET_TEXCOORD0));
+            state.setTexCoordPointer(1, 2, GL_FLOAT, VBO_STRIDE_BYTES, BUFFER_OFFSET(offset + VBO_OFFSET_TEXCOORD1));
+            state.disableColorPointer();
 
             //make the call to render
 #if defined(OPENSCENEGRAPH_MAJOR_VERSION) && OPENSCENEGRAPH_MAJOR_VERSION >= 3
