@@ -1011,7 +1011,8 @@ void AnimationHelper::SetPosesEnabled(bool enabled)
       {
          if (enabled)
          {
-            mSequenceMixer->PlayAnimation(mPoseSequence.get());
+            mPoseSequence = static_cast<PoseSequence*>(mPoseSequence->Clone(GetModelWrapper()).get());
+            mSequenceMixer->PlayAnimation(mPoseSequence);
          }
          else
          {

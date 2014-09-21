@@ -89,9 +89,9 @@ namespace dtAnim
          int mTriangleID;
       };
 
-      typedef std::vector<Vertex*>                VertexVector;
+      typedef std::vector<Vertex>                 VertexVector;
       typedef dtUtil::BarycentricSpace<osg::Vec3> Barycentric2D;
-      typedef std::vector<Barycentric2D*>         Barycentric2DVector;
+      typedef std::vector<Barycentric2D>          Barycentric2DVector;
       typedef std::vector<Triangle>               TriangleVector;
       typedef std::vector<TriangleEdge>           TriangleEdgeVector;
       typedef std::vector<std::string>            StringVector;
@@ -109,6 +109,7 @@ namespace dtAnim
       const Barycentric2DVector& GetBarySpaces() const   { return mBarySpaces;      }
       const TriangleVector& GetTriangles() const         { return mTriangles;       }
       const TriangleEdgeVector GetSilhouette() const     { return mSilhouetteEdges; }
+      const osg::Vec3& GetBindPoseForwardVector() const  { return mBindPoseForward; }
       const osg::Vec3& GetRootForwardAxis() const        { return mRootForward;     }
       const osg::Vec3& GetEffectorForwardAxis() const    { return mEffectorForward; }
 
@@ -154,6 +155,7 @@ namespace dtAnim
       int mRootID;
       int mEffectorID;
 
+      osg::Vec3 mBindPoseForward;
       osg::Vec3 mRootForward;
       osg::Vec3 mEffectorForward;
 

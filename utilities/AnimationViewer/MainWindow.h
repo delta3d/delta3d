@@ -251,6 +251,7 @@ private slots:
    void OnSelectModeGrab();
    void OnSelectModeBlendPick();
    void OnSelectModeErrorPick();
+   void OnSelectLookAtCamera();
 
    void OnToggleDisplayEdges(bool shouldDisplay);
    void OnToggleDisplayError(bool shouldDisplay);

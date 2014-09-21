@@ -125,7 +125,11 @@ namespace dtAnim
 
       osg::Vec3 GetForwardDirection() const;
 
-      osg::Vec3 GetHeadPosition() const;
+      /**
+       * Returns the world position of the head bone.  The transform is
+       * the transform to use for the world to mesh.
+       */
+      osg::Vec3 GetHeadPosition(const dtCore::Transform& transform) const;
 
       osg::Vec3 GetHeadDirection() const;
       
@@ -136,6 +140,8 @@ namespace dtAnim
       osg::Vec3 GetPosition(const std::string& poseMeshName) const;
 
       virtual void Update(float timeDelta);
+
+      void ClearAllPoses();
 
    protected:
       virtual ~PoseController();
@@ -148,6 +154,9 @@ namespace dtAnim
       dtCore::ObserverPtr<dtAnim::PoseMeshDatabase> mPoseDatabase;
       dtCore::RefPtr<PoseInfo> mHeadPoseInfo;
       osg::Vec3 mTargetOffset;
+
+      // for stability
+      osg::Vec3 mLastHead;
 
       PoseInfoList mPoseInfoList;
    };
@@ -171,6 +180,8 @@ namespace dtAnim
       const PoseController* GetPoseController() const;
 
       void Update(float timeDelta);
+
+      /*override*/ void ForceFadeOut(float time);
 
    protected:
       virtual ~PoseSequence();

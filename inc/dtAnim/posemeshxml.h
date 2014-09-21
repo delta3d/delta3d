@@ -35,11 +35,13 @@ namespace dtAnim
 
    struct PoseMeshData
    {
+      PoseMeshData();
       std::string  mName;            ///< an identifier for this pose mesh instance
       std::string  mRootName;        ///< an identifier for the bone that will give the global forward
-      osg::Vec3    mRootForward;     ///< the direction that end effectors are relative to
+      osg::Vec3    mBindPoseForward; ///< The forward vector of the root bone relative to the bind pose.  You can think of this as what direction does
+      //osg::Vec3    mRootForward;     ///< the direction that end effectors are relative to
       std::string  mEffectorName;    ///< an identifier for the end effector bone
-      osg::Vec3    mEffectorForward; ///< the direction that is forward in the end effector's bone's space
+      //osg::Vec3    mEffectorForward; ///< the direction that is forward in the end effector's bone's space
       StringVector mAnimations;      ///< a list of name triples for animation triangles
    };
 
@@ -67,9 +69,10 @@ namespace dtAnim
       // Attribute names
       static const char NAME_ATTRIBUTE[];
       static const char ROOT_ATTRIBUTE[];
-      static const char ROOT_FORWARD_ATTRIBUTE[];
+      static const char BIND_POSE_FORWARD_ATTRIBUTE[];
+      //static const char ROOT_FORWARD_ATTRIBUTE[];
       static const char EFFECTOR_ATTRIBUTE[];
-      static const char EFFECTOR_FORWARD_ATTRIBUTE[];
+      //static const char EFFECTOR_FORWARD_ATTRIBUTE[];
       static const char DEFAULT_VALUE[];
 
 

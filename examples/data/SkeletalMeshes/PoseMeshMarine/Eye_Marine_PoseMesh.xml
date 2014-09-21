@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PoseMeshFile>
-	<PoseMesh name="Poses_Head" root="Bip01 Pelvis"  rootForwardAxis="0.0 1.0 0.0"
-	          effector="Bip01 Head" effectorForwardAxis="0.0 1.0 0.0">	
+	<PoseMesh name="Poses_Head" root="Bip01 Pelvis" BindPoseForwardVector="0.0 -1.0 0.0"
+	          effector="Bip01 Head">	
 		<Triangle>
 			<Animation>EHeadDownRight.XAF</Animation>
 			<Animation>EHeadDownLeft.XAF</Animation>
@@ -24,8 +24,8 @@
 		</Triangle>						
 	</PoseMesh>	
 	
-	<PoseMesh name="Poses_LeftEye" root="Bip01 Pelvis"  rootForwardAxis="0.0 1.0 0.0"
-	          effector="Bone_LEye" effectorForwardAxis="1.0 0.0 0.0">	
+	<PoseMesh name="Poses_LeftEye" root="Bip01 Pelvis"
+	          effector="Bone_LEye" BindPoseForwardVector="0.0 -1.0 0.0">	
 		<Triangle>
 			<Animation>ELeftIn.XAF</Animation>
 			<Animation>ELeftMidDown.XAF</Animation>
@@ -48,8 +48,8 @@
 		</Triangle>						
 	</PoseMesh>	
 	
-	<PoseMesh name="Poses_RightEye" root="Bip01 Pelvis"  rootForwardAxis="0.0 1.0 0.0"
-	          effector="Bone_REye" effectorForwardAxis="1.0 0.0 0.0">	
+	<PoseMesh name="Poses_RightEye" root="Bip01 Pelvis" BindPoseForwardVector="0.0 -1.0 0.0"
+	          effector="Bone_REye" >	
 		<Triangle>
 			<Animation>ERightIn.XAF</Animation>
 			<Animation>ERightMidUp.XAF</Animation>
@@ -72,8 +72,8 @@
 		</Triangle>						
 	</PoseMesh>	
 	
-	<PoseMesh name="Poses_Torso" root="Bip01 Pelvis"  rootForwardAxis="0.0 1.0 0.0"
-	          effector="Bip01 Spine3" effectorForwardAxis="0.0 1.0 0.0">	
+	<PoseMesh name="Poses_Torso" root="Bip01 Pelvis"
+	          effector="Bip01 Spine3" BindPoseForwardVector="0.0 -1.0 0.0">	
 		<Triangle>
 			<Animation>AtEase_rightdown.XAF</Animation>
 			<Animation>AtEase_straight.XAF</Animation>
@@ -96,8 +96,8 @@
 		</Triangle>						
 	</PoseMesh>
 	
-	<PoseMesh name="Poses_Gun" root="Bip01 Pelvis"  rootForwardAxis="0.0 1.0 0.0"
-	          effector="Gun Barrel" effectorForwardAxis="-1.0 0.0 0.0">	
+	<PoseMesh name="Poses_Gun" root="Bip01 Pelvis" 
+	          effector="Gun Barrel" BindPoseForwardVector="0.0 -1.0 0.0">	
     <Triangle>
 		<Animation>Squat_Aim_LeftUp.XAF</Animation>
 		<Animation>Squat_Aim_FtUp.XAF</Animation>
