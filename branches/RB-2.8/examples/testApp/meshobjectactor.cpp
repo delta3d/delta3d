@@ -27,10 +27,7 @@ namespace dtExample
    void MeshObjectActor::OnEnteredWorld()
    {
       TestAppUtils util;
-      if ( ! util.GenerateTangentsForObject(*this))
-      {
-         LOG_WARNING("Could not generate tangents for MeshObjectActor: " + GetName());
-      }
+      util.GenerateTangentsForObject(*this);
    }
 
    void MeshObjectActor::BuildActorComponents()
