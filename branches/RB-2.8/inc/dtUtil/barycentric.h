@@ -44,14 +44,15 @@ namespace dtUtil
    public:
       BarycentricSpace(const VecT& a, const VecT& b, const VecT& c);
 
+      // So this can be stored in a vector.  The default copy constructor should do fine.
+      BarycentricSpace();
+
       /// transform the data point into the barycentric system.
       /// @param p the data point to be transformed into the Barycentric coordinate system.
       /// @return the Barycentric coordinate.
-      VecT Transform(const VecT& p);
+      VecT Transform(const VecT& p) const;
 
    private:
-      BarycentricSpace();  ///< not implemented by design
-
       ///\todo make RealT a template parameter
       typedef float RealT;
       RealT A,B,D,E,G,H;
@@ -74,9 +75,21 @@ namespace dtUtil
       ///\todo correct for when the X difference is zero.
    }
 
+   template<class V>
+   BarycentricSpace<V>::BarycentricSpace()
+      : A()
+      , B()
+      , D()
+      , E()
+      , G()
+      , H()
+      , P3()
+   {
+   }
+
    /////////////////////////////////////////////////////////////////////////////
    template<class V>
-   V BarycentricSpace<V>::Transform(const V& p)
+   V BarycentricSpace<V>::Transform(const V& p) const
    {
       RealT C = P3[0] - p[0];
       RealT F = P3[1] - p[1];
