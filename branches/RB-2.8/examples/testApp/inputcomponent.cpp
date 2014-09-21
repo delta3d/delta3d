@@ -191,7 +191,7 @@ namespace dtExample
             case '-':
             case osgGA::GUIEventAdapter::KEY_KP_Subtract:
             {
-               IncrementMotionModelSpeed(-5.0f);
+               IncrementMotionModelSpeed(-2.0f);
             }
             break;
 
@@ -199,7 +199,7 @@ namespace dtExample
             case '=':
             case '+':
             {
-               IncrementMotionModelSpeed(5.0f);
+               IncrementMotionModelSpeed(2.0f);
             }
             break;
 
@@ -857,10 +857,7 @@ namespace dtExample
       {
          mMotionModelSpeed += increment;
 
-         if (mMotionModelSpeed < 0.1f)
-         {
-            mMotionModelSpeed = 0.1f;
-         }
+         dtUtil::Clamp(mMotionModelSpeed, 0.1f, 100.0f);
 
          SetMotionModelSpeed(*mMotionModelMode, *mMotionModel, mMotionModelSpeed);
       }
