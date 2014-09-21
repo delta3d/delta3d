@@ -102,14 +102,15 @@ bool PoseMeshDatabase::LoadFromFile(const std::string& file)
 {
    PoseMeshLoader meshLoader;
    std::vector<PoseMeshData> meshDataVector;
-   bool result = meshLoader.Load(file, meshDataVector);
-   assert(result);
 
-   mMeshes.reserve(mMeshes.size() + meshDataVector.size());
-
-
+   bool result = false;
    try
    {
+      result = meshLoader.Load(file, meshDataVector);
+      assert(result);
+
+      mMeshes.reserve(mMeshes.size() + meshDataVector.size());
+
       std::for_each(meshDataVector.begin(),
                     meshDataVector.end(),
                     PoseBuilderFunctor<PoseMeshList>(mModel.get(), &mMeshes));

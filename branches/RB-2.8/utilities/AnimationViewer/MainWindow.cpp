@@ -710,16 +710,19 @@ void MainWindow::OnPoseMeshesLoaded(const std::vector<dtAnim::PoseMesh*>& poseMe
    QAction* grabAction  = actionGroup->addAction(modeGrabIcon, "Click-drag mode.");
    QAction* pickAction  = actionGroup->addAction(modeBlendIcon, "Blend pick mode.");
    QAction* errorAction = actionGroup->addAction(modeErrorIcon, "Error pick mode.");
+   QAction* lookAtCameraAction = actionGroup->addAction(modeBlendIcon, "Look At Camera.");
 
    poseModesToolbar->addAction(grabAction);
    poseModesToolbar->addAction(pickAction);
 
    // Not full implemented so leave out
+   // poseModesToolbar->addAction(lookAtCameraAction);
    //poseModesToolbar->addAction(errorAction);
 
    grabAction->setCheckable(true);
    pickAction->setCheckable(true);
    errorAction->setCheckable(true);
+   lookAtCameraAction->setCheckable(true);
 
    pickAction->setChecked(true);
 
@@ -766,6 +769,7 @@ void MainWindow::OnPoseMeshesLoaded(const std::vector<dtAnim::PoseMesh*>& poseMe
    connect(grabAction, SIGNAL(triggered()), this, SLOT(OnSelectModeGrab()));
    connect(pickAction, SIGNAL(triggered()), this, SLOT(OnSelectModeBlendPick()));
    connect(errorAction, SIGNAL(triggered()), this, SLOT(OnSelectModeErrorPick()));
+   connect(lookAtCameraAction, SIGNAL(triggered()), this, SLOT(OnSelectLookAtCamera()));
 
    connect(displayEdgesAction, SIGNAL(toggled(bool)), SLOT(OnToggleDisplayEdges(bool)));
    connect(displayErrorAction, SIGNAL(toggled(bool)), SLOT(OnToggleDisplayError(bool)));
@@ -1238,6 +1242,12 @@ void MainWindow::OnSelectModeBlendPick()
 void MainWindow::OnSelectModeErrorPick()
 {
    mPoseMeshViewer->SetMode(PoseMeshView::MODE_ERROR_PICK);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void MainWindow::OnSelectLookAtCamera()
+{
+
 }
 
 ////////////////////////////////////////////////////////////////////////////////

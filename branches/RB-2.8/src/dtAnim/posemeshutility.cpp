@@ -53,7 +53,7 @@ void PoseMeshUtility::ClearPoses(const PoseMesh* poseMesh, dtAnim::Cal3DModelWra
 
    for (size_t vertIndex = 0; vertIndex < verts.size(); ++vertIndex)
    {
-      model->BlendPose(verts[vertIndex]->mAnimID, 0.0f, delay);
+      model->BlendPose(verts[vertIndex].mAnimID, 0.0f, delay);
    }
 }
 
@@ -74,10 +74,10 @@ void PoseMeshUtility::BlendPoses(const PoseMesh* poseMesh,
    animIDs[2] = poly.mVertices[2]->mAnimID;
 
    const PoseMesh::Barycentric2DVector& barySpaceVector = poseMesh->GetBarySpaces();
-   dtUtil::BarycentricSpace<osg::Vec3>* barySpace = barySpaceVector[targetTriangle.mTriangleID];
+   const dtUtil::BarycentricSpace<osg::Vec3>& barySpace = barySpaceVector[targetTriangle.mTriangleID];
 
    // calculate the weights for the known animations using the corresponding barycentric space
-   weights = barySpace->Transform(osg::Vec3(targetTriangle.mAzimuth, targetTriangle.mElevation, 0.0f));
+   weights = barySpace.Transform(osg::Vec3(targetTriangle.mAzimuth, targetTriangle.mElevation, 0.0f));
 
    //now play the 3 animationIDs with the associated weights
    model->BlendPose(animIDs[0], weights[0], blendDelay);
@@ -90,7 +90,7 @@ void PoseMeshUtility::BlendPoses(const PoseMesh* poseMesh,
 
    for (unsigned int vertIndex = 0; vertIndex < numVerts; ++vertIndex)
    {
-      unsigned int anim_id = vertices[vertIndex]->mAnimID;
+      unsigned int anim_id = vertices[vertIndex].mAnimID;
 
       if (anim_id != animIDs[0] &&
           anim_id != animIDs[1] &&

@@ -72,7 +72,7 @@
 		</Triangle>						
 	</PoseMesh>
 
-  <PoseMesh name="Poses_Torso" root="mPelvis"  rootForwardAxis="0.0 0.0 1.0"
+         <PoseMesh name="Poses_Torso" root="mPelvis"  rootForwardAxis="0.0 0.0 1.0"
 	          effector="mChest" effectorForwardAxis="0.0 0.0 1.0">	
 		<Triangle>
 			<Animation>poses/TorsoDownRight.xaf</Animation>

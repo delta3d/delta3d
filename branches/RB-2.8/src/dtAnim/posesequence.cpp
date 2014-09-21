@@ -1,5 +1,5 @@
 /*
- * Delta3D Open Source Game and Simulation Engine
+  * Delta3D Open Source Game and Simulation Engine
  * Copyright (C) 2009 MOVES Institute
  *
  * This library is free software; you can redistribute it and/or modify it under
@@ -34,7 +34,8 @@
 #include <dtUtil/mathdefines.h>
 #include <cal3d/model.h>
 
-
+#include <iostream>
+#include <osg/io_utils>
 
 namespace dtAnim
 {
@@ -390,25 +391,21 @@ namespace dtAnim
          mDrawable->GetTransform(currentTransform);
 
          osg::Matrix matrix;
-         currentTransform.Get(matrix);
+         currentTransform.GetRotation(matrix);
 
-         // Many characters face backwards so we negate the forward direction
-         direction = -osg::Vec3(matrix(1, 0), matrix(1, 1), matrix(1, 2));
+         direction = mHeadPoseInfo->mPoseMesh->GetBindPoseForwardVector() * matrix;
       }
 
       return direction;
    }
 
-   osg::Vec3 PoseController::GetHeadPosition() const
+   osg::Vec3 PoseController::GetHeadPosition(const dtCore::Transform& transform) const
    {
       osg::Vec3 bonePosition;
 
       if (mModelWrapper.valid() && mHeadPoseInfo.valid() && mDrawable.valid())
       {
          dtAnim::PoseMesh* headMesh = mHeadPoseInfo->mPoseMesh.get();
-
-         dtCore::Transform transform;
-         mDrawable->GetTransform(transform);
 
          osg::Matrix rotation;
          osg::Vec3 translation;
@@ -418,7 +415,9 @@ namespace dtAnim
          // Get the bone position relative to its root
          bonePosition = mModelWrapper->GetBoneAbsoluteTranslation(headMesh->GetEffectorID());
 
-         // Get the gun position in the world
+         // TODO This is wrong.  It assumes there are no transforms between the model and the main deltadrawable transform.
+
+         // Get the head position in the world
          bonePosition  = bonePosition * rotation;
          bonePosition += translation;
       }
@@ -458,8 +457,9 @@ namespace dtAnim
          osg::Vec3 boneDirection = boneRotation * nativeBoneForward;
          boneDirection = boneDirection * modelRotation;
 
-         osg::Quat rotationCorrection(osg::DegreesToRadians(180.0f), osg::Z_AXIS);
-         direction = rotationCorrection * boneDirection;
+         //osg::Quat rotationCorrection(osg::DegreesToRadians(180.0f), osg::Z_AXIS);
+         //direction = rotationCorrection *
+         direction = boneDirection;
       }
       else
       {
@@ -533,11 +533,26 @@ namespace dtAnim
       dtCore::Transform targetTransform;
       mTarget->GetTransform(targetTransform);
 
-      // The 2 unit offset here is a crude approximation for this
-      osg::Vec3 ownPosition = GetHeadPosition();
-
       // We might want to get a point slightly offset from the base position so add it here
       osg::Vec3 targetPosition = targetTransform.GetTranslation() + mTargetOffset;
+
+      dtCore::Transform transform;
+      mDrawable->GetTransform(transform);
+      // The 2 unit offset here is a crude approximation for this
+      osg::Vec3 ownPosition = GetHeadPosition(transform);
+
+
+      // This avoids numerical instability by not updating the head pos unless it has moved significantly.
+      if (dtUtil::Equivalent(ownPosition, mLastHead, osg::Vec3::value_type(0.05)))
+      {
+         ownPosition = mLastHead;
+      }
+      else
+      {
+         mLastHead = ownPosition;
+      }
+
+      //std::cout << "\n\nUpdate Posemesh Target:" << targetPosition << " head:" << ownPosition << std::endl;
 
       // This is the direction from us to the target
       osg::Vec3 lookDirection = targetPosition - ownPosition;
@@ -545,6 +560,7 @@ namespace dtAnim
 
       osg::Vec3 actorForward = GetForwardDirection();
 
+      //std::cout << "\n\nUpdate Posemesh fwd:" << actorForward << " look:" << lookDirection << std::endl;
       //if (mMode == MODE_WATCH)
       {
          float remainingAzimuth   = 0.0f;
@@ -623,7 +639,21 @@ namespace dtAnim
       }*/
    }
 
+   /////////////////////////////////////////////////////////////////////////////
+   void PoseController::ClearAllPoses()
+   {
+      PoseInfo* curInfo = NULL;
+      dtAnim::PoseMesh* curPoseMesh = NULL;
+      PoseInfoList::iterator curIter = mPoseInfoList.begin();
+      PoseInfoList::iterator endIter = mPoseInfoList.end();
+      for ( ; curIter != endIter; ++curIter)
+      {
+         curInfo = curIter->get();
+         curPoseMesh = curInfo->mPoseMesh.get();
+         mPoseMeshUtil->ClearPoses(curPoseMesh, mModelWrapper.get(), mBlendTime);
+      }
 
+   }
 
    /////////////////////////////////////////////////////////////////////////////
    // CLASS CODE
@@ -681,5 +711,13 @@ namespace dtAnim
          controller->Update(timeDelta);
       }
    }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void PoseSequence::ForceFadeOut(float time)
+   {
+      AnimationSequence::ForceFadeOut(true);
+      mPoseController->ClearAllPoses();
+   }
+
 
 } // END - namespace dtAnim
