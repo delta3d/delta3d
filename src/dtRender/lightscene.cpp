@@ -308,8 +308,8 @@ namespace dtRender
          }
          else if(dl->GetFadeOut())
          {
-            dl->SetIntensity(dl->GetIntensity() - (dt / dl->GetFadeOutTime()));
-            if(dl->GetIntensity() <= 0.0f)
+            dl->SetIntensityMod(dl->GetIntensityMod() - (dt / dl->GetFadeOutTime()));
+            if(dl->GetIntensityMod() <= 0.0f)
             {
                dl->SetDeleteMe(true);
                //std::cout << "Auto delete on fade out" << std::endl;
@@ -326,8 +326,8 @@ namespace dtRender
 
             //keep the intensity within range of the noise flicker
             //TODO- don't assume an intensity of 1.0
-            if(dtUtil::Abs(1.0f - (dl->GetIntensity() + noiseValue)) > dl->GetFlickerScale()) noiseValue *= -1.0f;
-            dl->SetIntensity(dl->GetIntensity() + noiseValue);
+            if(dtUtil::Abs(1.0f - (dl->GetIntensityMod() + noiseValue)) > dl->GetFlickerScale()) noiseValue *= -1.0f;
+            dl->SetIntensityMod(dl->GetIntensityMod() + noiseValue);
 
             //std::cout << "Intensity " << dl->mIntensity << std::endl;
          }
@@ -456,12 +456,14 @@ namespace dtRender
          }
 
          //don't bind lights of zero intensity
-         if(dl->GetIntensity() > 0.0001f)
+         float intensity = dl->GetIntensity() * dl->GetIntensityMod();
+
+         if(intensity > 0.0001f)
          {
 
             if(useSpotLight)
             {
-               spotLightArray->setElement(numSpotLights, osg::Vec4(dl->GetLightPosition(), dl->GetIntensity()));
+               spotLightArray->setElement(numSpotLights, osg::Vec4(dl->GetLightPosition(), intensity));
                spotLightArray->setElement(numSpotLights + 1, osg::Vec4(dl->GetLightColor(), 1.0f));
                spotLightArray->setElement(numSpotLights + 2, osg::Vec4(dl->GetAttenuation(), spotExp));
                spotLightArray->setElement(numSpotLights + 3, spotParams);
@@ -469,7 +471,7 @@ namespace dtRender
             }
             else
             {
-               lightArray->setElement(numDynamicLights, osg::Vec4(dl->GetLightPosition(), dl->GetIntensity()));
+               lightArray->setElement(numDynamicLights, osg::Vec4(dl->GetLightPosition(), intensity));
                lightArray->setElement(numDynamicLights + 1, osg::Vec4(dl->GetLightColor(), 1.0f));
                lightArray->setElement(numDynamicLights + 2, osg::Vec4(dl->GetAttenuation(), 1.0f));
                numDynamicLights += numDynamicLightAttributes;

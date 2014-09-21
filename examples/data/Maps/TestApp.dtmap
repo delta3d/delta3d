@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <map xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="delta3dMap" xsi:schemaLocation="delta3dMap map.xsd">
     <header>
         <name>TestApp</name>
@@ -8,7 +7,7 @@
         <comment></comment>
         <copyright></copyright>
         <createTimestamp>2014-07-15T22:49:46-05:00</createTimestamp>
-        <lastUpdateTimestamp>2014-09-20T21:16:47-05:00</lastUpdateTimestamp>
+        <lastUpdateTimestamp>2014-09-21T14:59:03-05:00</lastUpdateTimestamp>
         <editorVersion>2.8.0</editorVersion>
         <schemaVersion>1.0</schemaVersion>
     </header>
@@ -750,14 +749,14 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>-0.000000</value2>
-                    <value3>47.121227</value3>
+                    <value3>47.496624</value3>
                 </vec3>
             </property>
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>79.413673</value1>
-                    <value2>-300.287476</value2>
+                    <value1>106.308220</value1>
+                    <value2>-325.080170</value2>
                     <value3>0.000000</value3>
                 </vec3>
             </property>
@@ -988,9 +987,17 @@
             <property>
                 <name>Attenuation</name>
                 <vec3>
+                    <value1>0.100000</value1>
+                    <value2>0.050000</value2>
+                    <value3>0.007000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Light Color</name>
+                <vec3>
                     <value1>1.000000</value1>
-                    <value2>0.090000</value2>
-                    <value3>0.032000</value3>
+                    <value2>1.000000</value2>
+                    <value3>0.900000</value3>
                 </vec3>
             </property>
             <property>
@@ -1117,6 +1124,10 @@
                 <resourceType>SkeletalMeshes</resourceType>
                 <resourceDisplayName>SkeletalMeshes:Gina:Gina.dtchar</resourceDisplayName>
                 <resource>SkeletalMeshes:Gina:Gina.dtchar</resource>
+            </property>
+            <property>
+                <name>LookAtCameraRange</name>
+                <float>3</float>
             </property>
         </actor>
         <actor>
@@ -2520,7 +2531,7 @@
             </property>
             <property>
                 <name>Bezier Node</name>
-                <actorId>8c8be7b7-5645-4997-873b-266c7b6af1ec</actorId>
+                <actorId>5e9ad074-dfdc-4432-be58-53326f1f2e43</actorId>
             </property>
         </actor>
         <actor>
@@ -3023,6 +3034,10 @@
                 <resourceType>SkeletalMeshes</resourceType>
                 <resourceDisplayName>SkeletalMeshes:Gina:Gina_SwimWear.dtchar</resourceDisplayName>
                 <resource>SkeletalMeshes:Gina:Gina_SwimWear.dtchar</resource>
+            </property>
+            <property>
+                <name>LookAtCameraRange</name>
+                <float>3</float>
             </property>
             <property>
                 <name>Stance</name>
@@ -3745,9 +3760,17 @@
             <property>
                 <name>Attenuation</name>
                 <vec3>
+                    <value1>0.100000</value1>
+                    <value2>0.050000</value2>
+                    <value3>0.007000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Light Color</name>
+                <vec3>
                     <value1>1.000000</value1>
-                    <value2>0.090000</value2>
-                    <value3>0.032000</value3>
+                    <value2>1.000000</value2>
+                    <value3>0.900000</value3>
                 </vec3>
             </property>
             <property>
@@ -5030,9 +5053,17 @@
             <property>
                 <name>Attenuation</name>
                 <vec3>
+                    <value1>0.100000</value1>
+                    <value2>0.050000</value2>
+                    <value3>0.007000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Light Color</name>
+                <vec3>
                     <value1>1.000000</value1>
-                    <value2>0.090000</value2>
-                    <value3>0.032000</value3>
+                    <value2>1.000000</value2>
+                    <value3>0.900000</value3>
                 </vec3>
             </property>
             <property>
@@ -5165,9 +5196,17 @@
             <property>
                 <name>Attenuation</name>
                 <vec3>
+                    <value1>0.100000</value1>
+                    <value2>0.050000</value2>
+                    <value3>0.007000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Light Color</name>
+                <vec3>
                     <value1>1.000000</value1>
-                    <value2>0.090000</value2>
-                    <value3>0.032000</value3>
+                    <value2>1.000000</value2>
+                    <value3>0.900000</value3>
                 </vec3>
             </property>
             <property>
@@ -5399,6 +5438,10 @@
                 <resourceType>SkeletalMeshes</resourceType>
                 <resourceDisplayName>SkeletalMeshes:Gina:Gina_SwimWear.dtchar</resourceDisplayName>
                 <resource>SkeletalMeshes:Gina:Gina_SwimWear.dtchar</resource>
+            </property>
+            <property>
+                <name>LookAtCameraRange</name>
+                <float>4</float>
             </property>
             <property>
                 <name>Body: Origin Offset</name>
@@ -6419,15 +6462,15 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>-0.000000</value2>
-                    <value3>-89.617760</value3>
+                    <value3>-87.354103</value3>
                 </vec3>
             </property>
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-886.849731</value1>
-                    <value2>-438.926025</value2>
-                    <value3>74.999992</value3>
+                    <value1>413.099945</value1>
+                    <value2>-401.170074</value2>
+                    <value3>75.000000</value3>
                 </vec3>
             </property>
             <property>
@@ -8685,9 +8728,17 @@
             <property>
                 <name>Attenuation</name>
                 <vec3>
+                    <value1>0.100000</value1>
+                    <value2>0.050000</value2>
+                    <value3>0.007000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Light Color</name>
+                <vec3>
                     <value1>1.000000</value1>
-                    <value2>0.090000</value2>
-                    <value3>0.032000</value3>
+                    <value2>1.000000</value2>
+                    <value3>0.900000</value3>
                 </vec3>
             </property>
             <property>
@@ -9098,9 +9149,17 @@
             <property>
                 <name>Attenuation</name>
                 <vec3>
+                    <value1>0.100000</value1>
+                    <value2>0.050000</value2>
+                    <value3>0.007000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Light Color</name>
+                <vec3>
                     <value1>1.000000</value1>
-                    <value2>0.090000</value2>
-                    <value3>0.032000</value3>
+                    <value2>1.000000</value2>
+                    <value3>0.900000</value3>
                 </vec3>
             </property>
             <property>
@@ -12578,9 +12637,17 @@
             <property>
                 <name>Attenuation</name>
                 <vec3>
+                    <value1>0.100000</value1>
+                    <value2>0.050000</value2>
+                    <value3>0.007000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Light Color</name>
+                <vec3>
                     <value1>1.000000</value1>
-                    <value2>0.090000</value2>
-                    <value3>0.032000</value3>
+                    <value2>1.000000</value2>
+                    <value3>0.900000</value3>
                 </vec3>
             </property>
             <property>
@@ -14404,9 +14471,17 @@
             <property>
                 <name>Attenuation</name>
                 <vec3>
+                    <value1>0.100000</value1>
+                    <value2>0.050000</value2>
+                    <value3>0.007000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Light Color</name>
+                <vec3>
                     <value1>1.000000</value1>
-                    <value2>0.090000</value2>
-                    <value3>0.032000</value3>
+                    <value2>1.000000</value2>
+                    <value3>0.900000</value3>
                 </vec3>
             </property>
             <property>
@@ -16072,9 +16147,17 @@
             <property>
                 <name>Attenuation</name>
                 <vec3>
+                    <value1>0.100000</value1>
+                    <value2>0.050000</value2>
+                    <value3>0.007000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Light Color</name>
+                <vec3>
                     <value1>1.000000</value1>
-                    <value2>0.090000</value2>
-                    <value3>0.032000</value3>
+                    <value2>1.000000</value2>
+                    <value3>0.900000</value3>
                 </vec3>
             </property>
             <property>
@@ -16166,9 +16249,17 @@
             <property>
                 <name>Attenuation</name>
                 <vec3>
+                    <value1>0.100000</value1>
+                    <value2>0.050000</value2>
+                    <value3>0.007000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Light Color</name>
+                <vec3>
                     <value1>1.000000</value1>
-                    <value2>0.090000</value2>
-                    <value3>0.032000</value3>
+                    <value2>1.000000</value2>
+                    <value3>0.900000</value3>
                 </vec3>
             </property>
             <property>
@@ -16625,9 +16716,17 @@
             <property>
                 <name>Attenuation</name>
                 <vec3>
+                    <value1>0.100000</value1>
+                    <value2>0.050000</value2>
+                    <value3>0.007000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Light Color</name>
+                <vec3>
                     <value1>1.000000</value1>
-                    <value2>0.090000</value2>
-                    <value3>0.032000</value3>
+                    <value2>1.000000</value2>
+                    <value3>0.900000</value3>
                 </vec3>
             </property>
             <property>

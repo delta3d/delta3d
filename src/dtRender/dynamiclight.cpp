@@ -55,6 +55,7 @@ namespace dtRender
          , mDeleteMe(false)
          , mLightPosition(0.0f, 0.0f, 0.0f)
          , mIntensity(1.0f)
+         , mIntensityMod(1.0f)
          , mId(++mLightCounter)
       {
          SetName("DynamicLight");
@@ -119,6 +120,13 @@ namespace dtRender
             dtCore::Vec3ActorProperty::SetFuncType(this, &DynamicLight::SetLightColor),
             dtCore::Vec3ActorProperty::GetFuncType(this, &DynamicLight::GetLightColor),
             PROPERTY_LIGHTCOLOR_DESC, LIGHT_GROUP));
+
+         static const dtUtil::RefString PROPERTY_INTENSITY("Intensity");
+         static const dtUtil::RefString PROPERTY_INTENSITY_DESC("How long the light should take to fade out (in seconds). This occurs AFTER Max Time. 0 means no fade out.");
+         AddProperty(new dtCore::FloatActorProperty(PROPERTY_INTENSITY, PROPERTY_INTENSITY, 
+            dtCore::FloatActorProperty::SetFuncType(this, &DynamicLight::SetIntensity),
+            dtCore::FloatActorProperty::GetFuncType(this, &DynamicLight::GetIntensity),
+            PROPERTY_INTENSITY_DESC, LIGHT_GROUP));
 
          static const dtUtil::RefString PROPERTY_FLICKERSCALE("Flicker Scale");
          static const dtUtil::RefString PROPERTY_FLICKERSCALE_DESC("Indicates if the light should flicker and how much. (value is the max range of variation - ex 0.1 to 0.4). 0.0 means no flicker.");
