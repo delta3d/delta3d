@@ -1,5 +1,5 @@
 #include "civilianaiactorcomponent.h"
-#include "testapputils.h"
+//#include "testapputils.h"
 #include <dtGame/messagetype.h>
 #include <dtGame/message.h>
 #include <dtGame/invokable.h>
@@ -17,8 +17,14 @@
 #include <dtAnim/animationhelper.h>
 #include <dtGame/deadreckoninghelper.h>
 #include <dtGame/drpublishingactcomp.h>
+#include <dtGame/basemessages.h>
 #include <dtUtil/functor.h>
 #include <dtUtil/mathdefines.h>
+
+
+#include <dtAnim/posesequence.h>
+#include <dtABC/application.h>
+#include <dtCore/camera.h>
 
 namespace dtExample
 {
@@ -34,10 +40,12 @@ namespace dtExample
    , mAnimationLowWalkSpeed(0.4f)
    , mStepHeight(0.3f)
    , mMaxIncline(70.0f)
+   , mLookAtCameraRange(10.0f)
    , mEntityIndex(0)
-   , mIgnoreRotation(false)
-   , mHasDestination(false)
-   , mHasArrived(false)
+   , mIgnoreRotation()
+   , mHasDestination()
+   , mHasArrived()
+   , mLookedAtNearTarget()
    , mWalkSpeed(0.79f)
    , mRotationSpeed(90.0f)
    , mHPR()
@@ -69,6 +77,7 @@ namespace dtExample
       DT_REGISTER_PROPERTY(RotationSpeed, "The speed the character turns when changing direction.", RegHelperType, propReg);
       DT_REGISTER_PROPERTY(StepHeight, "The maximum height this character can step up.", RegHelperType, propReg);
       DT_REGISTER_PROPERTY(MaxIncline, "The maximum incline in degrees the character can climb..", RegHelperType, propReg);
+      DT_REGISTER_PROPERTY(LookAtCameraRange, "The maximum range at which to look at the camera, currently when sitting or standing", RegHelperType, propReg);
       DT_REGISTER_PROPERTY(AnimationWalkSpeed, "The inherent speed of the walk animation.", RegHelperType, propReg);
       DT_REGISTER_PROPERTY(AnimationRunSpeed, "The inherent speed of the run animation.", RegHelperType, propReg);
       DT_REGISTER_PROPERTY(AnimationCrawlSpeed, "The inherent speed of the crawl animation.", RegHelperType, propReg);
@@ -79,8 +88,14 @@ namespace dtExample
    void CivilianAIActorComponent::OnEnteredWorld()
    {
       BaseClass::OnEnteredWorld();
+      dtGame::GameActorProxy* owner = NULL;
+      GetOwner(owner);
+
       RegisterForTick();
-      dtAnim::AnimationTransitionPlanner* planner = GetOwner()->GetComponent<dtAnim::AnimationTransitionPlanner>();
+
+      owner->RegisterForMessagesAboutSelf(dtGame::MessageType::INFO_TIMER_ELAPSED, dtUtil::MakeFunctor(&CivilianAIActorComponent::OnLookAtTimer, this));
+
+      dtAnim::AnimationTransitionPlanner* planner = owner->GetComponent<dtAnim::AnimationTransitionPlanner>();
       planner->SignalAnimationsTransitioning.connect_slot(this, &CivilianAIActorComponent::OnAnimationsTransitioning);
    }
 
@@ -212,6 +227,69 @@ namespace dtExample
    }
 
    ///////////////////////////////////////////////////////////////////////////////////
+   void CivilianAIActorComponent::OnLookAtTimer(const dtGame::TimerElapsedMessage& timerMsg)
+   {
+      dtGame::GameManager* gm = GetOwner<dtGame::GameActorProxy>()->GetGameManager();
+      if (gm != NULL)
+      {
+         dtAnim::AnimationHelper* animHelper = NULL;
+         GetOwner()->GetComponent(animHelper);
+         // Reset the controller so that old controls do not conflict.
+         dtAnim::PoseController* controller = animHelper->GetPoseController();
+
+         dtAnim::AnimationTransitionPlanner* transitioner = NULL;
+         GetOwner()->GetComponent(transitioner);
+
+         // Look
+         if (transitioner->GetStance() == dtAnim::BasicStanceEnum::STANDING ||
+               transitioner->GetStance() == dtAnim::BasicStanceEnum::SITTING)
+         {
+
+            dtCore::Camera* camera = gm->GetApplication().GetCamera();
+            if (camera != NULL)
+            {
+               dtCore::Transform xform, camxform;
+               camera->GetTransform(camxform);
+               mTransformable->GetTransform(xform);
+
+               osg::Vec3 dist = camxform.GetTranslation() - xform.GetTranslation();
+               if (!mLookedAtNearTarget && dist.length2() < mLookAtCameraRange * mLookAtCameraRange)
+               {
+                  controller->SetTarget(gm->GetApplication().GetCamera());
+                  controller->SetTargetOffset(osg::Vec3(0.0f, 0.0f, 11.3f));
+                  animHelper->SetPosesEnabled(true);
+                  mLookedAtNearTarget = true;
+                  gm->SetTimer("StopLooking", GetOwner<dtGame::GameActorProxy>(), 9.0f, false);
+                  LOG_ALWAYS(mTransformable->GetName() + " Starting to look.");
+               }
+               else if (timerMsg.GetTimerName() == "StopLooking")
+               {
+                  controller->SetTarget(NULL);
+                  animHelper->SetPosesEnabled(false);
+                  mLookedAtNearTarget = true;
+                  LOG_ALWAYS(mTransformable->GetName() + " Stopping looking.");
+               }
+               else if (mLookedAtNearTarget && dist.length2() > mLookAtCameraRange * mLookAtCameraRange)
+               {
+                  if (animHelper->IsPosesEnabled())
+                  {
+                     controller->SetTarget(NULL);
+                     animHelper->SetPosesEnabled(false);
+                  }
+                  mLookedAtNearTarget = false;
+                  LOG_ALWAYS(mTransformable->GetName() + " Out of range reset.");
+               }
+            }
+         }
+         else
+         {
+            animHelper->SetPosesEnabled(false);
+         }
+      }
+
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////////
    void CivilianAIActorComponent::PerformMove(float dt)
    {
       if (!mWaypointPath.empty() && mHasDestination)
@@ -221,7 +299,7 @@ namespace dtExample
          {
             mCurrentWaypoint = mWaypointPath.front();
             mWaypointPath.pop_front();
-            LOGN_ALWAYS("civilianaiactorcomponent.cpp", "Waypoint: " + dtUtil::ToString(mCurrentWaypoint->GetID()));
+            LOGN_DEBUG("civilianaiactorcomponent.cpp", "Waypoint: " + dtUtil::ToString(mCurrentWaypoint->GetID()));
          }
 
          // if we have another waypoint to goto, goto it
@@ -295,15 +373,31 @@ namespace dtExample
    void CivilianAIActorComponent::OnModelLoaded(dtAnim::AnimationHelper* animComp)
    {
       InitializeMotionBlendAnimations();
+      dtAnim::AnimationHelper* animHelper = NULL;
 
       dtGame::GameActorProxy* actor = NULL;
       GetOwner(actor);
 
-      TestAppUtils util;
-      if (actor == NULL || ! util.GenerateTangentsForObject(*actor))
+      actor->GetComponent(animHelper);
+
+      // Reset the controller so that old controls do not conflict.
+      dtAnim::PoseController* controller = animHelper->GetPoseController();
+      if (controller != NULL)
       {
-         LOG_WARNING("Could not generate tangents for CivilianActor: " + GetName());
+         controller->ClearPoseControls();
+
+         controller->AddPoseControl("Poses_LeftEye", 0);
+         controller->AddPoseControl("Poses_RightEye", 0);
+         controller->AddPoseControl("Poses_Head", 1, true);
+         controller->AddPoseControl("Poses_Torso", 2);
+         actor->GetGameManager()->SetTimer("LookAtTimer", actor, 1.0f, true);
       }
+
+//      TestAppUtils util;
+//      if (actor == NULL || ! util.GenerateTangentsForObject(*actor))
+//      {
+//         LOG_WARNING("Could not generate tangents for CivilianActor: " + GetName());
+//      }
    }
 
    /////////////////////////////////////////////////////////////////
@@ -376,7 +470,7 @@ namespace dtExample
             dtCore::RefPtr<dtAnim::Animatable> walkClone = walk->Clone(wrapper).get();
             walkClone->SetName(OpName);
             seqMixer.RegisterAnimation(walkClone);
-            LOGN_WARNING("Human.cpp", "Cannot load/find a motionless animation for: " + OpName);
+            LOGN_INFO("civilianaiactorcomponent.cpp", "Cannot load/find a motionless animation for: " + OpName);
          }
          else if (stand != NULL)
          {
@@ -384,11 +478,11 @@ namespace dtExample
             dtCore::RefPtr<dtAnim::Animatable> standClone = stand->Clone(wrapper).get();
             standClone->SetName(OpName);
             seqMixer.RegisterAnimation(standClone);
-            LOGN_WARNING("Human.cpp", "Cannot load/find a walking animation for: " + OpName);
+            LOGN_INFO("civilianaiactorcomponent.cpp", "Cannot load/find a walking animation for: " + OpName);
          }
          else
          {
-            LOGN_WARNING("Human.cpp", "Cannot load any walk or run animations for: " + OpName);
+            LOGN_INFO("civilianaiactorcomponent.cpp", "Cannot load any walk or run animations for: " + OpName);
          }
       }
    }
@@ -479,6 +573,7 @@ namespace dtExample
    DT_IMPLEMENT_ACCESSOR(CivilianAIActorComponent, float, AnimationLowWalkSpeed);
    DT_IMPLEMENT_ACCESSOR(CivilianAIActorComponent, float, StepHeight);
    DT_IMPLEMENT_ACCESSOR(CivilianAIActorComponent, float, MaxIncline);
+   DT_IMPLEMENT_ACCESSOR(CivilianAIActorComponent, float, LookAtCameraRange);
 
 
    ///////////////////////////////////////////////////////////////////////////////////
