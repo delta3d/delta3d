@@ -56,12 +56,12 @@ namespace dtRender
 
    HDRScene::HDRScene()
    : BaseClass(*HDR_SCENE, SceneEnum::MULTIPASS)
-   , mMidGrey(0.45f)
+   , mMidGrey(0.75f)
    , mHDRBlurSigma(4.0f)
    , mHDRBlurRadius(7.0f)
    , mGlareFactor(2.5f)
    , mAdaptFactor(0.01f)
-   , mMinLuminance(0.65f)
+   , mMinLuminance(0.2f)
    , mMaxLuminance(5.0f)
    {
 

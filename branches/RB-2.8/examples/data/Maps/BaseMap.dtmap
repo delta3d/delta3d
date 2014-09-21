@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <map xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="delta3dMap" xsi:schemaLocation="delta3dMap map.xsd">
     <header>
         <name>BaseMap</name>
@@ -8,7 +7,7 @@
         <comment></comment>
         <copyright></copyright>
         <createTimestamp>2014-07-29T11:17:35-05:00</createTimestamp>
-        <lastUpdateTimestamp>2014-09-15T18:34:11-05:00</lastUpdateTimestamp>
+        <lastUpdateTimestamp>2014-09-21T15:22:17-05:00</lastUpdateTimestamp>
         <editorVersion>2.8.0</editorVersion>
         <schemaVersion>1.0</schemaVersion>
     </header>
@@ -24,6 +23,19 @@
             <type>dtRender.Light Scene</type>
             <id>2ab88062-1ccb-4ab2-b460-1dd4378ed6b4</id>
             <name>LightScene_02</name>
+        </actor>
+        <actor>
+            <type>dtRender.HDR Scene</type>
+            <id>3dde57f3-292b-4001-91f5-52d0642d793b</id>
+            <name>HDRScene_01</name>
+            <property>
+                <name>MidGrey</name>
+                <float>0.75</float>
+            </property>
+            <property>
+                <name>MinLuminance</name>
+                <float>0.2</float>
+            </property>
         </actor>
         <actor>
             <type>dtRender.Ocean Scene</type>

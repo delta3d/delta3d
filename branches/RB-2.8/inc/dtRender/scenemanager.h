@@ -70,8 +70,8 @@ namespace dtRender
       static const dtUtil::RefString UNIFORM_FRAME_TIME;
       static const dtUtil::RefString UNIFORM_ELAPSED_TIME;
 
-      static const dtUtil::RefString UNIFORM_GAMMA;
-      static const dtUtil::RefString UNIFORM_BRIGHTNESS;
+      //static const dtUtil::RefString UNIFORM_GAMMA;
+      //static const dtUtil::RefString UNIFORM_BRIGHTNESS;
       static const dtUtil::RefString UNIFORM_EXPOSURE;
 
       static const dtUtil::RefString UNIFORM_SCENE_LUMINANCE;

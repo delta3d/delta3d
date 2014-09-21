@@ -75,6 +75,7 @@ namespace dtRender
 
       dtCore::RefPtr<dtCore::ShaderParamFloat> mGamma;
       dtCore::RefPtr<dtCore::ShaderParamFloat> mBrightness;
+      dtCore::RefPtr<dtCore::ShaderParamFloat> mExposure;
 
       dtCore::RefPtr<dtCore::ShaderParamFloat> mSceneLuminance;
       dtCore::RefPtr<dtCore::ShaderParamFloat> mSceneAmbience;
@@ -243,8 +244,9 @@ namespace dtRender
    const dtUtil::RefString SceneManager::UNIFORM_FRAME_TIME("d3d_FrameTime");
    const dtUtil::RefString SceneManager::UNIFORM_ELAPSED_TIME("d3d_ElapsedTime");
 
-   const dtUtil::RefString SceneManager::UNIFORM_GAMMA("d3d_Gamma");
-   const dtUtil::RefString SceneManager::UNIFORM_BRIGHTNESS("d3d_Brightness");
+   //const dtUtil::RefString SceneManager::UNIFORM_GAMMA("d3d_Gamma");
+   //const dtUtil::RefString SceneManager::UNIFORM_BRIGHTNESS("d3d_Brightness");
+   const dtUtil::RefString SceneManager::UNIFORM_EXPOSURE("d3d_Exposure");
 
    const dtUtil::RefString SceneManager::UNIFORM_SCENE_LUMINANCE("d3d_SceneLuminance");
    const dtUtil::RefString SceneManager::UNIFORM_SCENE_AMBIENCE("d3d_SceneAmbience");
@@ -765,10 +767,7 @@ namespace dtRender
       if(mImpl->mEnableHDR)
       {
 
-         mImpl->mUniforms->mSceneLuminance->SetValue(2.0);
-         mImpl->mUniforms->mSceneLuminance->Update();
-         mImpl->mUniforms->mSceneAmbience->SetValue(1.25);
-         mImpl->mUniforms->mSceneAmbience->Update();
+         mImpl->mUniforms->mExposure->SetValue(15.0f);
          
          // disable color clamping, because we want to work on real hdr values
          clamp->setClampVertexColor(GL_FALSE);
@@ -777,16 +776,15 @@ namespace dtRender
       }
       else
       {
-         mImpl->mUniforms->mSceneLuminance->SetValue(1.0);
-         mImpl->mUniforms->mSceneLuminance->Update();
-         mImpl->mUniforms->mSceneAmbience->SetValue(1.0);
-         mImpl->mUniforms->mSceneAmbience->Update();
-
+         mImpl->mUniforms->mExposure->SetValue(5.0f);
+         
          osg::ClampColor* clamp = new osg::ClampColor();
          clamp->setClampVertexColor(GL_TRUE);
          clamp->setClampFragmentColor(GL_TRUE);
          clamp->setClampReadColor(GL_TRUE);
       }
+
+      mImpl->mUniforms->mExposure->Update();
 
       // make it protected and override, so that it is done for the whole rendering pipeline
       ss->setAttribute(clamp, osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE | osg::StateAttribute::PROTECTED);     
@@ -868,11 +866,13 @@ namespace dtRender
       mImpl->mUniforms->mFrameTime = new dtCore::ShaderParamFloat(UNIFORM_FRAME_TIME);
       mImpl->mUniforms->mElapsedTime = new dtCore::ShaderParamFloat(UNIFORM_ELAPSED_TIME);
 
-      mImpl->mUniforms->mGamma = new dtCore::ShaderParamFloat(UNIFORM_GAMMA);
-      mImpl->mUniforms->mBrightness = new dtCore::ShaderParamFloat(UNIFORM_BRIGHTNESS);
+      //mImpl->mUniforms->mGamma = new dtCore::ShaderParamFloat(UNIFORM_GAMMA);
+      //mImpl->mUniforms->mBrightness = new dtCore::ShaderParamFloat(UNIFORM_BRIGHTNESS);
+      mImpl->mUniforms->mExposure = new dtCore::ShaderParamFloat(UNIFORM_EXPOSURE);
 
-      mImpl->mUniforms->mGamma->SetValue(1.0f);
-      mImpl->mUniforms->mBrightness->SetValue(1.0f);
+      //mImpl->mUniforms->mGamma->SetValue(1.0f);
+      //mImpl->mUniforms->mBrightness->SetValue(1.0f);
+      mImpl->mUniforms->mExposure->SetValue(5.0f);
 
       mImpl->mUniforms->mSceneLuminance = new dtCore::ShaderParamFloat(UNIFORM_SCENE_LUMINANCE);
       mImpl->mUniforms->mSceneAmbience = new dtCore::ShaderParamFloat(UNIFORM_SCENE_AMBIENCE);
@@ -897,8 +897,9 @@ namespace dtRender
          actComp->AddParameter(*(mImpl->mUniforms->mFarPlane));
          actComp->AddParameter(*(mImpl->mUniforms->mFrameTime));
          actComp->AddParameter(*(mImpl->mUniforms->mElapsedTime));
-         actComp->AddParameter(*(mImpl->mUniforms->mGamma));
-         actComp->AddParameter(*(mImpl->mUniforms->mBrightness));
+         //actComp->AddParameter(*(mImpl->mUniforms->mGamma));
+         //actComp->AddParameter(*(mImpl->mUniforms->mBrightness));
+         actComp->AddParameter(*(mImpl->mUniforms->mExposure));
          actComp->AddParameter(*(mImpl->mUniforms->mSceneLuminance));
          actComp->AddParameter(*(mImpl->mUniforms->mSceneAmbience));
          actComp->AddParameter(*(mImpl->mUniforms->mMainCameraPos));
