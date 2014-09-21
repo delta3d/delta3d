@@ -390,7 +390,11 @@ namespace dtExample
          controller->AddPoseControl("Poses_RightEye", 0);
          controller->AddPoseControl("Poses_Head", 1, true);
          controller->AddPoseControl("Poses_Torso", 2);
-         actor->GetGameManager()->SetTimer("LookAtTimer", actor, 1.0f, true);
+         dtGame::GameManager* gm = actor->GetGameManager();
+         if(gm != NULL)
+         {
+            gm->SetTimer("LookAtTimer", actor, 1.0f, true);
+         }
       }
 
 //      TestAppUtils util;
