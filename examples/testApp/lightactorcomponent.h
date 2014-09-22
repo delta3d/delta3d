@@ -117,6 +117,8 @@ namespace dtExample
 
       /*virtual*/ void OnTickLocal(const dtGame::TickMessage& tickMessage);
 
+      /*virtual*/ void OnMapLoaded(const dtGame::MapMessage& mapMessage);
+
       /*virtual*/ void BuildPropertyMap();
 
       /*virtual*/ void OnEnteredWorld();

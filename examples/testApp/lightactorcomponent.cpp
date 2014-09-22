@@ -293,56 +293,10 @@ namespace dtExample
    void LightActorComponent::OnEnteredWorld()
    {
       BaseClass::OnEnteredWorld();
-      
-      if ( ! mLight.valid())
-      {
-         // Use a refptr here in case a new light is created.
-         dtCore::RefPtr<dtRender::DynamicLight> light = NULL;
-         
-         if (mCreateLight)
-         {
-            light = GetOrCreateLight();
-         }
-         else
-         {
-            light = GetLightActorById(mLightId);
-         }
 
-         if ( ! light.valid())
-         {
-            if (mCreateLight)
-            {
-               LOG_ERROR("Could not create light for actor: " + GetName());
-            }
-            else
-            {      
-               LOG_ERROR("Could not access light \"" + mLightId.ToString()
-                  + "\" for actor: " + GetName());
-            }
-         }
-         else
-         {
-            // Ensure variables related to the light are updated accordingly.
-            SetLight(light);
-
-            // TODO: Ensure light is in the GameManager and positioned properly.
-         }
-      }
-
-      // Ensure the initial set intensity is applied.
-      if (mLastLightIntensity != 0.0f)
-      {
-         SetLightIntensity(mLastLightIntensity);
-      }
-      else if (mLight.valid()) // Use the intensity from the referenced light.
-      {
-         SetLightIntensity(mLight->GetIntensity());
-      }
-
-      if (mEnableUpdatesFromLight)
-      {
-         RegisterForTick();
-      }
+      // Light setup should happen after the map has finished loading
+      // so that out-of-order light references can be solved.
+      RegisterForMapLoaded();
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -442,6 +396,61 @@ namespace dtExample
          {
             SetIntensityToShader(intensity);
          }
+      }
+   }
+
+   void LightActorComponent::OnMapLoaded(const dtGame::MapMessage& mapMessage)
+   {
+      BaseClass::OnMapLoaded(mapMessage);
+
+      if ( ! mLight.valid())
+      {
+         // Use a refptr here in case a new light is created.
+         dtCore::RefPtr<dtRender::DynamicLight> light = NULL;
+         
+         if (mCreateLight)
+         {
+            light = GetOrCreateLight();
+         }
+         else
+         {
+            light = GetLightActorById(mLightId);
+         }
+
+         if ( ! light.valid())
+         {
+            if (mCreateLight)
+            {
+               LOG_ERROR("Could not create light for actor: " + GetName());
+            }
+            else
+            {      
+               LOG_ERROR("Could not access light \"" + mLightId.ToString()
+                  + "\" for actor: " + GetName());
+            }
+         }
+         else
+         {
+            // Ensure variables related to the light are updated accordingly.
+            SetLight(light);
+
+            // TODO: Ensure light is in the GameManager and positioned properly.
+         }
+      }
+
+      // Ensure the initial set intensity is applied.
+      if (mLastLightIntensity != 0.0f)
+      {
+         SetLightIntensity(mLastLightIntensity);
+      }
+      else if (mLight.valid()) // Use the intensity from the referenced light.
+      {
+         SetLightIntensity(mLight->GetIntensity());
+      }
+
+      if (mEnableUpdatesFromLight)
+      {
+         RegisterForTick();
       }
    }
 
