@@ -290,7 +290,7 @@ namespace dtRender
                static int startX = 0;
                // set viewport
                camera->setViewport(startX,0, mTexWidth, mTexHeight);
-               startX += mTexWidth + 15.0;
+               startX += mTexWidth + 15;
                // set the camera to render before the main camera.
                camera->setRenderOrder(osg::Camera::POST_RENDER);
 
