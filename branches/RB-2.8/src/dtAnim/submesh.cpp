@@ -186,15 +186,15 @@ namespace dtAnim
 
             if (mWrapper->GetMapCount() > 0)
             {
-               // TODO:
-               // OSG seems to assume all PNG files have alpha. For now let the code be simple
-               // and use material alpha to flag a metrial as translucent.
-
                unsigned i = 0;
                osg::Texture2D* texture = reinterpret_cast<osg::Texture2D*>(mWrapper->GetMapUserData(i));
 
                while (texture != NULL)
                {
+                  // TODO:
+                  // OSG seems to assume all PNG files have alpha. For now let the code be simple
+                  // and use material alpha to flag a material as translucent.
+
                   // Mark the mesh as a transparency if the image is found to have alpha values.
                   osg::Image* image = texture->getImage();
                   /*if(image != NULL && image->isImageTranslucent())
