@@ -52,6 +52,7 @@ struct MapParams
    vec4 roughness;
    vec4 illum;
    vec4 irradiance;
+   float refractionIndex;
 };
 
 
@@ -124,7 +125,7 @@ void main(void)
    e.illumContrib = zeroVec;
  
    MapParams m;
-   vec2 alpha = texture2D(alphaTexture, uv).rg * alphaScale;
+   vec3 alpha = texture2D(alphaTexture, uv).rgb * alphaScale;
    m.diffuse.rgb = texture2D(diffuseTexture, uv).rgb;
    m.diffuse.a = alpha.r;
    m.specular.rgb = texture2D(specularTexture, uv).rgb;
@@ -132,6 +133,7 @@ void main(void)
    m.illum.rgb = texture2D(illumTexture, uv).rgb * illumScale;
    m.normal.rgb = normalize(texture2D(normalTexture, uv).rgb);
    m.irradiance = vec4(0,0,0,0);
+   m.refractionIndex = alpha.b;
    
    computeMultiMapColor(m, f, e);
    
