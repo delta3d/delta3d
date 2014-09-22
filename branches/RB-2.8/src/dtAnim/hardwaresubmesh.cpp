@@ -328,7 +328,7 @@ void HardwareSubmeshDrawable::SetUpMaterial()
       // and use material alpha to flag a metrial as translucent.
 
       //get selected textures
-      /*std::vector<CalCoreMaterial::Map>& vectorMap = coreMesh.pCoreMaterial->getVectorMap();
+      std::vector<CalCoreMaterial::Map>& vectorMap = coreMesh.pCoreMaterial->getVectorMap();
       std::vector<CalCoreMaterial::Map>::iterator iter = vectorMap.begin();
       std::vector<CalCoreMaterial::Map>::iterator endIter = vectorMap.end();
 
@@ -339,14 +339,14 @@ void HardwareSubmeshDrawable::SetUpMaterial()
          {
             // Mark the mesh as a transparency if the image is found to have alpha values.
             osg::Image* image = texture->getImage();
-            if(image != NULL && image->isImageTranslucent())
+            /*if(image != NULL && image->isImageTranslucent())
             {
                materialTranslucent = true;
-            }
+            }*/
 
             ss->setTextureAttributeAndModes(i, texture, osg::StateAttribute::ON);
          }
-      }*/
+      }
    }
    else
    {
