@@ -145,11 +145,9 @@ namespace dtRender
       /***
        *  These are uniforms which effect the shading
        */
-      float GetGamma() const;
-      void SetGamma(float );
 
-      float GetBrightness() const;
-      void SetBrightness(float);
+      float GetExposure() const;
+      void SetExposure(float);
 
       float GetLuminance() const;
       void SetLuminance(float);

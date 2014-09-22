@@ -30,7 +30,7 @@
             <name>HDRScene_01</name>
             <property>
                 <name>MidGrey</name>
-                <float>0.75</float>
+                <float>0.8</float>
             </property>
             <property>
                 <name>MinLuminance</name>
