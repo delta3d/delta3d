@@ -67,6 +67,8 @@ namespace dtRender
       
       DT_DECLARE_ACCESSOR_INLINE(int, NearPlane)
       DT_DECLARE_ACCESSOR_INLINE(int, FarPlane)
+      DT_DECLARE_ACCESSOR_INLINE(float, LODScale)
+
       DT_DECLARE_ACCESSOR_INLINE(bool, ShowCubeMap)
 
       DT_DECLARE_ACCESSOR_INLINE(osg::Vec4, ClearColor)
