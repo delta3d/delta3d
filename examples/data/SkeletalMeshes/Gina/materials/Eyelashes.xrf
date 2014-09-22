@@ -6,5 +6,5 @@
     <MAP>materials/Eyelashes.png</MAP>
     <MAP>materials/NONE_NORM.png</MAP>
     <MAP>materials/NONE_SPEC.png</MAP>
-    <MAP>materials/Eyelashes.png</MAP><!--ALPHA-->
+    <MAP>materials/Eyelashes_ALPHA.png</MAP><!--ALPHA-->
 </MATERIAL>
