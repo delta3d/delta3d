@@ -7,7 +7,7 @@
         <comment></comment>
         <copyright></copyright>
         <createTimestamp>2014-07-15T22:49:46-05:00</createTimestamp>
-        <lastUpdateTimestamp>2014-09-22T19:18:17-05:00</lastUpdateTimestamp>
+        <lastUpdateTimestamp>2014-09-22T19:22:50-05:00</lastUpdateTimestamp>
         <editorVersion>2.8.0</editorVersion>
         <schemaVersion>1.0</schemaVersion>
     </header>
@@ -787,14 +787,14 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>-0.000000</value2>
-                    <value3>47.358738</value3>
+                    <value3>47.516773</value3>
                 </vec3>
             </property>
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>94.337357</value1>
-                    <value2>-314.084412</value2>
+                    <value1>108.424385</value1>
+                    <value2>-327.018829</value2>
                     <value3>0.000000</value3>
                 </vec3>
             </property>
@@ -2155,6 +2155,10 @@
                 <actorId>7a187ad8-2ac8-4167-b468-44d3bb96f160</actorId>
             </property>
             <property>
+                <name>Render Path</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
                 <name>Follow Path</name>
                 <boolean>true</boolean>
             </property>
@@ -2590,7 +2594,7 @@
             </property>
             <property>
                 <name>Bezier Node</name>
-                <actorId>8c8be7b7-5645-4997-873b-266c7b6af1ec</actorId>
+                <actorId>5e9ad074-dfdc-4432-be58-53326f1f2e43</actorId>
             </property>
         </actor>
         <actor>
@@ -4468,6 +4472,10 @@
                 <actorId>3184dfc6-6e79-47d9-a1ad-67ddb8acc6fe</actorId>
             </property>
             <property>
+                <name>Render Path</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
                 <name>Follow Path</name>
                 <boolean>true</boolean>
             </property>
@@ -4911,7 +4919,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-134.385117</value3>
+                    <value3>-134.385101</value3>
                 </vec3>
             </property>
             <property>
@@ -6511,14 +6519,14 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>-0.000000</value2>
-                    <value3>-90.393021</value3>
+                    <value3>-87.445717</value3>
                 </vec3>
             </property>
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-2115.766113</value1>
-                    <value2>-435.835876</value2>
+                    <value1>281.060608</value1>
+                    <value2>-407.173218</value2>
                     <value3>75.000000</value3>
                 </vec3>
             </property>
@@ -8622,6 +8630,10 @@
             <property>
                 <name>Start Node</name>
                 <actorId>b3b8fc1f-dc6d-40ee-887f-f8aec2aacecd</actorId>
+            </property>
+            <property>
+                <name>Render Path</name>
+                <boolean>false</boolean>
             </property>
             <property>
                 <name>Follow Path</name>
@@ -17309,6 +17321,10 @@
                 <actorId>9dc85029-c92e-4932-b1f9-5030508ed60a</actorId>
             </property>
             <property>
+                <name>Render Path</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
                 <name>Follow Path</name>
                 <boolean>true</boolean>
             </property>
@@ -17464,6 +17480,10 @@
             <type>dtcore.Action.Bezier Controller</type>
             <id>f2a16509-d18d-474a-a573-6fdd057bf6d7</id>
             <name>Controller_02</name>
+            <property>
+                <name>Render Path</name>
+                <boolean>false</boolean>
+            </property>
         </actor>
         <actor>
             <type>dtExample.Civilian</type>
