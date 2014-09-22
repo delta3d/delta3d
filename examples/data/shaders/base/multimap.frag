@@ -52,6 +52,7 @@ struct MapParams
    vec4 roughness;
    vec4 illum;
    vec4 irradiance;
+   float refractionIndex;
 };
 
 
@@ -124,7 +125,7 @@ void main(void)
    e.illumContrib = zeroVec;
  
    MapParams m;
-   vec2 alpha = texture2D(alphaTexture, uv).rg * alphaScale;
+   vec3 alpha = texture2D(alphaTexture, uv).rgb * alphaScale;
    m.diffuse.rgb = texture2D(diffuseTexture, uv).rgb;
    m.diffuse.a = alpha.r;
    m.specular.rgb = texture2D(specularTexture, uv).rgb;
@@ -132,6 +133,7 @@ void main(void)
    m.illum.rgb = texture2D(illumTexture, uv).rgb * illumScale;
    m.normal.rgb = normalize(texture2D(normalTexture, uv).rgb);
    m.irradiance = vec4(0,0,0,0);
+   m.refractionIndex = alpha.b;
    
    computeMultiMapColor(m, f, e);
    
@@ -139,7 +141,14 @@ void main(void)
    gl_FragColor = result;
 
    // DEBUG:
-   //gl_FragColor = vec4( (vec3(1.0) + f.worldNormal.rgb) * 0.5,1.0);
+   /*vec3 oneVec = vec3(1,1,1);
+   vec3 tan = (f.tbn[0] + oneVec)*0.5;
+   vec3 bitan = (f.tbn[1] + oneVec)*0.5;
+   vec3 norm = (f.tbn[2] + oneVec)*0.5;
+   vec3 mNorm = (m.normal.rgb + oneVec)*0.5;
+   vec3 worldNorm = (f.worldNormal + oneVec)*0.5;
+   vec3 normVaried = (normalize(vNormal) + oneVec)*0.5;*/
+   //gl_FragColor = vec4(m.diffuse.rgb,1.0);
    
    
 }

@@ -48,6 +48,7 @@ struct MapParams
    vec4 roughness;
    vec4 illum;
    vec4 irradiance;
+   float refractionIndex;
 };
 
 struct LightParams
@@ -98,9 +99,9 @@ void computeLightContrib_SunMoon(inout FragParams fp, inout EffectParams ep)
    
 }
 
-void computeRefraction(inout FragParams fp, inout EffectParams ep)
+void computeRefraction(inout FragParams fp, inout MapParams mp, inout EffectParams ep)
 {
-   if(ep.colorContrib.a < 0.5)
+   if(mp.diffuse.a < 1.0 && mp.refractionIndex > 0.0)
    {
       float fresnel = computeReflectionCoef(fp.viewDir, fp.worldNormal, 1.02);
 
@@ -134,7 +135,7 @@ void computeMultiMapColor(MapParams mp, inout FragParams fp, inout EffectParams 
    
    ep.colorContrib = diffuseColor * fp.color;
 
-//   computeRefraction(fp, ep);
+   computeRefraction(fp, mp, ep);
 
    
    // Compute the Light & Spec Contribution
