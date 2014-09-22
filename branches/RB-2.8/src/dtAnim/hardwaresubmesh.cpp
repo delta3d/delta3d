@@ -323,8 +323,12 @@ void HardwareSubmeshDrawable::SetUpMaterial()
 
    if (coreMesh.pCoreMaterial != NULL)
    {
+      // TODO:
+      // OSG seems to assume all PNG files have alpha. For now let the code be simple
+      // and use material alpha to flag a metrial as translucent.
+
       //get selected textures
-      std::vector<CalCoreMaterial::Map>& vectorMap = coreMesh.pCoreMaterial->getVectorMap();
+      /*std::vector<CalCoreMaterial::Map>& vectorMap = coreMesh.pCoreMaterial->getVectorMap();
       std::vector<CalCoreMaterial::Map>::iterator iter = vectorMap.begin();
       std::vector<CalCoreMaterial::Map>::iterator endIter = vectorMap.end();
 
@@ -342,7 +346,7 @@ void HardwareSubmeshDrawable::SetUpMaterial()
 
             ss->setTextureAttributeAndModes(i, texture, osg::StateAttribute::ON);
          }
-      }
+      }*/
    }
    else
    {
