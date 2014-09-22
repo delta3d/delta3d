@@ -115,9 +115,29 @@ namespace dtExample
    {
       mLight = light;
 
+      // Get the id.
       if (mLight.valid() && mLight->GameActorProxy::GetId().ToString() != mLightId.ToString())
       {
          mLightId = mLight->GameActorProxy::GetId();
+      }
+
+      // Ensure the light targets the owner actor.
+      if (light != NULL && light->GetInitialOwnership() == dtGame::GameActorProxy::Ownership::PROTOTYPE)
+      {
+         dtGame::GameActorProxy* actor = NULL;
+         GetOwner(actor);
+
+         dtCore::Transformable* drawable = NULL;
+         actor->GetDrawable(drawable);
+
+         if (drawable != NULL)
+         {
+            light->SetTarget(*drawable);
+         }
+         else
+         {
+            LOG_WARNING("Could not set target on light since it is not a Transformable, for actor: " + GetName());
+         }
       }
    }
 
@@ -158,6 +178,13 @@ namespace dtExample
          if (gm != NULL)
          {
             gm->FindActorById(id, light);
+
+            if (light == NULL)
+            {
+               dtCore::RefPtr<dtRender::DynamicLight> ptr;
+               gm->FindPrototypeByID(id, ptr);
+               light = ptr.get();
+            }
          }
       }
 
@@ -243,14 +270,16 @@ namespace dtExample
       static const dtUtil::RefString GROUP("Light");
       static const dtUtil::RefString EMPTY;
 
-      AddProperty(new dtCore::ActorIDActorProperty(
+      dtCore::RefPtr<dtCore::ActorIDActorProperty> idProp = new dtCore::ActorIDActorProperty(
          PROPERTY_LIGHT,
          PROPERTY_LIGHT,
          ActorIDActorProperty::SetFuncType(this, &LightActorComponent::SetLightActorId),
          ActorIDActorProperty::GetFuncType(this, &LightActorComponent::GetLightActorId),
          RefString("dtRender::DynamicLight"),
          RefString("Dynamic light actor to which to link and control."),
-         GROUP));
+         GROUP);
+      idProp->SetShowPrototypes(true);
+      AddProperty(idProp.get());
 
       AddProperty(new dtCore::StringActorProperty( 
          PROPERTY_MESH_SHADER_PARAMETER_NAME,
@@ -408,14 +437,14 @@ namespace dtExample
          // Use a refptr here in case a new light is created.
          dtCore::RefPtr<dtRender::DynamicLight> light = NULL;
          
-         if (mCreateLight)
+         /*if (mCreateLight)
          {
             light = GetOrCreateLight();
          }
          else
-         {
+         {*/
             light = GetLightActorById(mLightId);
-         }
+         //}
 
          if ( ! light.valid())
          {
@@ -431,10 +460,23 @@ namespace dtExample
          }
          else
          {
+            // Determine if the referenced actor is a prototype.
+            if (light.valid() && light->GetInitialOwnership() == dtGame::GameActorProxy::Ownership::PROTOTYPE)
+            {
+               dtGame::GameActorProxy* actor = NULL;
+               GetOwner(actor);
+
+               if (actor->GetInitialOwnership() != dtGame::GameActorProxy::Ownership::PROTOTYPE)
+               {
+                  dtGame::GameManager* gm = actor->GetGameManager();
+                  gm->CreateActorFromPrototype(light->GameActorProxy::GetId(), light);
+
+                  gm->AddActor(*light, false, false);
+               }
+            }
+
             // Ensure variables related to the light are updated accordingly.
             SetLight(light);
-
-            // TODO: Ensure light is in the GameManager and positioned properly.
          }
       }
 
