@@ -78,6 +78,8 @@ namespace dtRender
          , mLightType(&lt)
          , mDeleteMe(false)
          , mLightPosition(0.0f, 0.0f, 0.0f)
+         , mIntensity(1.0f)
+         , mIntensityMod(1.0f)
          , mId(++mLightCounter)
       {
          SetName("DynamicLight");
