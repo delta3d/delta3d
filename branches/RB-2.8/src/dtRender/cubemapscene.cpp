@@ -226,6 +226,7 @@ namespace dtRender
    , mTexHeight(512)
    , mNearPlane(1.0)
    , mFarPlane(25000.0)
+   , mLODScale(1.0f)
    , mShowCubeMap(false)
    , mClearColor(0.0f, 0.0f, 0.0f, 0.0f)
    , mRenderEveryFrame(true)
@@ -281,6 +282,7 @@ namespace dtRender
             // create the camera
             dtCore::RefPtr<osg::Camera> camera = new osg::Camera;
 
+            camera->setLODScale(mLODScale);
             camera->setClearMask(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
             camera->setClearColor(mClearColor);
             
@@ -416,6 +418,8 @@ namespace dtRender
       DT_REGISTER_PROPERTY_WITH_NAME(TexHeight, "TexHeight", "The height of the render target.", PropRegHelperType, propRegHelper);
       DT_REGISTER_PROPERTY_WITH_NAME(NearPlane, "NearPlane", "The near plane to use for the cubemap cameras.", PropRegHelperType, propRegHelper);
       DT_REGISTER_PROPERTY_WITH_NAME(FarPlane, "FarPlane", "The far plane to use for the cubemap cameras.", PropRegHelperType, propRegHelper);
+      DT_REGISTER_PROPERTY_WITH_NAME(LODScale, "LODScale", "The LOD scale can be used to enhance performance.", PropRegHelperType, propRegHelper);
+      
       DT_REGISTER_PROPERTY_WITH_NAME(ShowCubeMap, "ShowCubeMap", "A debug setting for rendering the cubemap cameras on screen.", PropRegHelperType, propRegHelper);
       DT_REGISTER_PROPERTY_WITH_NAME(ClearColor, "ClearColor", "The clear color for the cubemap cameras.", PropRegHelperType, propRegHelper);
 
