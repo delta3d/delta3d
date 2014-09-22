@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <director xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="delta3dDirector" xsi:schemaLocation="delta3dDirector director.xsd">
     <header>
         <createTimestamp>2014-04-15T01:18:17-05:00</createTimestamp>
-        <lastUpdateTimestamp>2014-09-16T11:51:31-05:00</lastUpdateTimestamp>
+        <lastUpdateTimestamp>2014-09-22T11:26:11-05:00</lastUpdateTimestamp>
         <editorVersion>2.8.0</editorVersion>
         <schemaVersion>2.0</schemaVersion>
         <scriptType>Scenario</scriptType>
@@ -40,7 +39,7 @@
     </libraries>
     <graph>
         <idIndex>0</idIndex>
-        <id>B05ACCE6-8FB0-45D5-9579-6D01C438FD5B</id>
+        <id>74A4C896-6FC4-4472-8FC7-71F98FEF9724</id>
         <property>
             <name>Comment</name>
             <string></string>
@@ -410,11 +409,11 @@
                 </property>
                 <property>
                     <name>Min Value</name>
-                    <float>2</float>
+                    <float>0.5</float>
                 </property>
                 <property>
                     <name>Max Value</name>
-                    <float>3.5</float>
+                    <float>1.25</float>
                 </property>
                 <valuelink>
                     <name>Enabled</name>
