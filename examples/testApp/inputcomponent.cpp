@@ -703,7 +703,7 @@ namespace dtExample
          dtCore::RefPtr<dtPhysics::Geometry> charShape = dtPhysics::Geometry::CreateCapsuleGeometry(xform, 1.0f, 0.4f, 1.0f);
          charShape->SetMargin(0.3);
          dtCore::RefPtr<dtPhysics::CharacterController> charController = new dtPhysics::CharacterController(*charShape);
-         charController->SetStepHeight(0.3f);
+         charController->SetStepHeight(0.2f);
          charController->SetSkinWidth(0.04f);
          charController->SetMaxInclineAngle(60.0f);
          charController->Init();

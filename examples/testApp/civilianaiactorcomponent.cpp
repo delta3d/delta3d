@@ -123,12 +123,16 @@ namespace dtExample
       {
          dtCore::RefPtr<dtPhysics::PhysicsActComp> physAC = new dtPhysics::PhysicsActComp();
          dtCore::RefPtr<dtPhysics::PhysicsObject> physicsObject = new dtPhysics::PhysicsObject("Body");
-         physicsObject->SetPrimitiveType(dtPhysics::PrimitiveType::CAPSULE);
+         physicsObject->SetPrimitiveType(dtPhysics::PrimitiveType::CYLINDER);
          physicsObject->SetMechanicsType(dtPhysics::MechanicsType::KINEMATIC);
          physicsObject->SetCollisionGroup(6);
          physicsObject->SetMass(100.0f);
-         physicsObject->SetExtents(dtPhysics::VectorType(1.4f, 0.2f, 0.0f));
-         physicsObject->SetOriginOffset(dtPhysics::VectorType(0.0f, 0.0f, 0.9f));
+         dtPhysics::VectorType extents = dtPhysics::VectorType(1.8f, 0.2f, 0.0f);
+         physicsObject->SetExtents(extents);
+         dtPhysics::VectorType offset = dtPhysics::VectorType(0.0f, 0.0f, extents.x( )/ 2.0f);
+         if (physicsObject->GetPrimitiveType() == dtPhysics::PrimitiveType::CAPSULE)
+            offset.z() += extents.y() * 2.0f;
+         physicsObject->SetOriginOffset(offset);
          physAC->AddPhysicsObject(*physicsObject);
          physAC->SetAutoCreateOnEnteringWorld(true);
 
