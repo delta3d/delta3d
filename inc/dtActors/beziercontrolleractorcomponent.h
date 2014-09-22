@@ -54,11 +54,6 @@ namespace dtActors
 
       static const dtUtil::RefString CLASS_NAME;
 
-      static const dtUtil::RefString PROPERTY_START_NODE;
-      static const dtUtil::RefString PROPERTY_RENDER_PATH;
-      static const dtUtil::RefString PROPERTY_FOLLOW_PATH;
-      static const dtUtil::RefString PROPERTY_SET_LOOPING;
-
       static const dtUtil::RefString PROPERTY_EVENT_TO_START;
       static const dtUtil::RefString PROPERTY_EVENT_TO_PAUSE;
       static const dtUtil::RefString PROPERTY_EVENT_TO_UNPAUSE;
@@ -75,9 +70,6 @@ namespace dtActors
 
       /*virtual*/ void BuildPropertyMap();
       /*virtual*/ void OnEnteredWorld();
-
-      dtCore::DeltaDrawable* GetActorStartNode();
-      void SetActorStartNode(dtCore::BaseActorObject* node);
 
       void SetEventToStart(dtCore::GameEvent* gameEvent);
       dtCore::GameEvent* GetEventToStart() const;

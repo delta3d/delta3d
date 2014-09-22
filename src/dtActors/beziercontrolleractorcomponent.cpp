@@ -48,11 +48,6 @@ const dtGame::ActorComponent::ACType BezierControllerActorComponent::TYPE(new dt
 
 const dtUtil::RefString BezierControllerActorComponent::CLASS_NAME("dtActors.BezierControllerActorComponent");
 
-const dtUtil::RefString BezierControllerActorComponent::PROPERTY_START_NODE("Start Node");
-const dtUtil::RefString BezierControllerActorComponent::PROPERTY_RENDER_PATH("Render Path");
-const dtUtil::RefString BezierControllerActorComponent::PROPERTY_FOLLOW_PATH("Follow Path");
-const dtUtil::RefString BezierControllerActorComponent::PROPERTY_SET_LOOPING("Set Looping");
-
 const dtUtil::RefString BezierControllerActorComponent::PROPERTY_EVENT_TO_START("Event To Start");
 const dtUtil::RefString BezierControllerActorComponent::PROPERTY_EVENT_TO_PAUSE("Event To Pause");
 const dtUtil::RefString BezierControllerActorComponent::PROPERTY_EVENT_TO_UNPAUSE("Event To Unpause");
@@ -122,39 +117,6 @@ void BezierControllerActorComponent::BuildPropertyMap()
    BezierController* bc = GetController();
 
    RefString GROUP("Controller");
-
-   AddProperty(new dtCore::ActorActorProperty(*this,
-      PROPERTY_START_NODE,
-      PROPERTY_START_NODE,
-      ActorActorProperty::SetFuncType(this, &BezierControllerActorComponent::SetActorStartNode),
-      ActorActorProperty::GetFuncType(this, &BezierControllerActorComponent::GetActorStartNode),
-      RefString("dtABC::BezierNode"),
-      RefString("Sets the start node to be used for this path"),
-      GROUP));
-
-   AddProperty(new BooleanActorProperty(
-      PROPERTY_RENDER_PATH,
-      PROPERTY_RENDER_PATH,
-      BooleanActorProperty::SetFuncType(bc, &BezierController::RenderProxyNode),
-      BooleanActorProperty::GetFuncType(bc, &BezierController::GetRenderProxyNode),
-      RefString("Toggles Rendering of the Path."),
-      GROUP));
-
-   AddProperty(new BooleanActorProperty(
-      PROPERTY_FOLLOW_PATH,
-      PROPERTY_FOLLOW_PATH,
-      BooleanActorProperty::SetFuncType(bc, &BezierController::SetFollowPath),
-      BooleanActorProperty::GetFuncType(bc, &BezierController::GetFollowPath),
-      RefString("Toggles path following oriented against start node."),
-      GROUP));
-
-   AddProperty(new BooleanActorProperty(
-      PROPERTY_SET_LOOPING,
-      PROPERTY_SET_LOOPING,
-      BooleanActorProperty::SetFuncType(bc, &BezierController::SetLooping),
-      BooleanActorProperty::GetFuncType(bc, &BezierController::GetLooping),
-      RefString("Toggles The looping of the Path."),
-      GROUP));
 
    // GAME EVENT PROPERTIES
    // --- "TO" Events
@@ -230,27 +192,6 @@ void BezierControllerActorComponent::BuildPropertyMap()
       GameEventActorProperty::GetFuncType(this, &BezierControllerActorComponent::GetEventOnEnd),
       RefString("Event to send when the controller ends"),
       GROUP));
-}
-
-dtCore::DeltaDrawable* BezierControllerActorComponent::GetActorStartNode()
-{
-   BezierController* bc = static_cast<BezierController*>(GetDrawable());
-
-   return bc->GetStartNode();
-}
-
-void BezierControllerActorComponent::SetActorStartNode(dtCore::BaseActorObject* node)
-{
-   BezierNode* bNode = NULL;
-   if (node)
-   {
-      bNode = static_cast<BezierNode*>(node->GetDrawable());
-   }
-
-   BezierController* bc = GetController();
-
-   bc->SetStartNode(bNode);
-   bc->CreatePath();
 }
 
 void BezierControllerActorComponent::SetEventToStart(dtCore::GameEvent* gameEvent)

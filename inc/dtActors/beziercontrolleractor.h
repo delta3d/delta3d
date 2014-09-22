@@ -56,11 +56,17 @@ namespace dtActors
 
       static const dtUtil::RefString INVOKABLE_PROCESS_GAME_EVENT;
 
+      static const dtUtil::RefString PROPERTY_START_NODE;
+      static const dtUtil::RefString PROPERTY_RENDER_PATH;
+      static const dtUtil::RefString PROPERTY_FOLLOW_PATH;
+      static const dtUtil::RefString PROPERTY_SET_LOOPING;
+
       BezierControllerActor();
 
       /*virtual*/ bool IsPlaceable() const;
 
       /*virtual*/ void BuildInvokables();
+      /*virtual*/ void BuildPropertyMap();
       /*virtual*/ void BuildActorComponents();
       /*virtual*/ void OnEnteredWorld();
 
