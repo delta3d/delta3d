@@ -58,6 +58,7 @@ namespace dtRender
       DT_DECLARE_ACCESSOR_INLINE(float, AdaptFactor)
       DT_DECLARE_ACCESSOR_INLINE(float, MinLuminance)
       DT_DECLARE_ACCESSOR_INLINE(float, MaxLuminance)
+      DT_DECLARE_ACCESSOR_INLINE(float, Exposure)
 
    protected:
       void CreateHDRPipeline(osgPPU::UnitBypass* bypass, osgPPU::Unit* resample);

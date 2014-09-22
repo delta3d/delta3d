@@ -766,18 +766,13 @@ namespace dtRender
 
       if(mImpl->mEnableHDR)
       {
-
-         mImpl->mUniforms->mExposure->SetValue(15.0f);
-         
          // disable color clamping, because we want to work on real hdr values
          clamp->setClampVertexColor(GL_FALSE);
          clamp->setClampFragmentColor(GL_FALSE);
          clamp->setClampReadColor(GL_FALSE);
       }
       else
-      {
-         mImpl->mUniforms->mExposure->SetValue(5.0f);
-         
+      {         
          osg::ClampColor* clamp = new osg::ClampColor();
          clamp->setClampVertexColor(GL_TRUE);
          clamp->setClampFragmentColor(GL_TRUE);
@@ -805,25 +800,6 @@ namespace dtRender
       SetEnableHDR(mImpl->mEnableHDR);
    }
 
-   float SceneManager::GetGamma() const
-   {
-      return mImpl->mUniforms->mGamma->GetValue();
-   }
-
-   void SceneManager::SetGamma( float g)
-   {
-      mImpl->mUniforms->mGamma->SetValue(g);
-   }
-
-   float SceneManager::GetBrightness() const
-   {
-      return mImpl->mUniforms->mBrightness->GetValue();
-   }
-
-   void SceneManager::SetBrightness( float b)
-   {
-      mImpl->mUniforms->mBrightness->SetValue(b);
-   }
 
    float SceneManager::GetLuminance() const
    {
@@ -833,6 +809,7 @@ namespace dtRender
    void SceneManager::SetLuminance( float l)
    {
       mImpl->mUniforms->mSceneLuminance->SetValue(l);
+      mImpl->mUniforms->mSceneLuminance->Update();
    }
 
    float SceneManager::GetAmbience() const
@@ -843,7 +820,20 @@ namespace dtRender
    void SceneManager::SetAmbience( float a)
    {
       mImpl->mUniforms->mSceneAmbience->SetValue(a);
+      mImpl->mUniforms->mSceneAmbience->Update();
    }
+
+   float SceneManager::GetExposure() const
+   {
+      return mImpl->mUniforms->mExposure->GetValue();
+   }
+
+   void SceneManager::SetExposure( float a)
+   {
+      mImpl->mUniforms->mExposure->SetValue(a);
+      mImpl->mUniforms->mExposure->Update();
+   }
+
 
    void SceneManager::InitUniforms()
    {
@@ -873,12 +863,16 @@ namespace dtRender
       //mImpl->mUniforms->mGamma->SetValue(1.0f);
       //mImpl->mUniforms->mBrightness->SetValue(1.0f);
       mImpl->mUniforms->mExposure->SetValue(5.0f);
+      mImpl->mUniforms->mExposure->Update();
 
       mImpl->mUniforms->mSceneLuminance = new dtCore::ShaderParamFloat(UNIFORM_SCENE_LUMINANCE);
       mImpl->mUniforms->mSceneAmbience = new dtCore::ShaderParamFloat(UNIFORM_SCENE_AMBIENCE);
 
       mImpl->mUniforms->mSceneLuminance->SetValue(1.0f);
+      mImpl->mUniforms->mSceneLuminance->Update();
+
       mImpl->mUniforms->mSceneAmbience->SetValue(1.0f);
+      mImpl->mUniforms->mSceneAmbience->Update();
 
       mImpl->mUniforms->mMainCameraPos = new dtCore::ShaderParamVec4(UNIFORM_MAIN_CAMERA_POS);
       mImpl->mUniforms->mMainCameraHPR = new dtCore::ShaderParamVec4(UNIFORM_MAIN_CAMERA_HPR);
