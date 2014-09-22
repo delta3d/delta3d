@@ -52,6 +52,7 @@
 #include <dtUtil/noisetexture.h>
 #include <dtUtil/matrixutil.h>
 #include <dtUtil/nodemask.h>
+#include <dtUtil/cullmask.h>
 
 #include <osg/BlendFunc>
 #include <osg/Camera>
@@ -1107,7 +1108,7 @@ namespace dtActors
       mReflectionCamera->setClearColor(osg::Vec4(0.0f, 0.0f, 0.0f, 0.0f));
 
       //turn off water bit, reflection shouldnt have water
-      mReflectionCamera->setCullMask(dtUtil::NodeMask::BACKGROUND | dtUtil::NodeMask::NON_TRANSPARENT_GEOMETRY | dtUtil::NodeMask::DEFAULT_GEOMETRY );
+      mReflectionCamera->setCullMask(dtUtil::NodeMask::BACKGROUND | dtUtil::NodeMask::TERRAIN_GEOMETRY | dtUtil::NodeMask::TRANSPARENT_EFFECTS | dtUtil::NodeMask::DEFAULT_GEOMETRY | dtUtil::NodeMask::MAT_MASKS | dtUtil::NodeMask::LIGHT_MASKS );
 
       ResetReflectionUpdate();
 
