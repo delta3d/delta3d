@@ -7,7 +7,7 @@
         <comment></comment>
         <copyright></copyright>
         <createTimestamp>2014-07-15T22:49:46-05:00</createTimestamp>
-        <lastUpdateTimestamp>2014-09-22T18:13:59-05:00</lastUpdateTimestamp>
+        <lastUpdateTimestamp>2014-09-22T19:18:17-05:00</lastUpdateTimestamp>
         <editorVersion>2.8.0</editorVersion>
         <schemaVersion>1.0</schemaVersion>
     </header>
@@ -787,14 +787,14 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>-0.000000</value2>
-                    <value3>2.086210</value3>
+                    <value3>47.358738</value3>
                 </vec3>
             </property>
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-117.463638</value1>
-                    <value2>43.146774</value2>
+                    <value1>94.337357</value1>
+                    <value2>-314.084412</value2>
                     <value3>0.000000</value3>
                 </vec3>
             </property>
@@ -818,7 +818,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254868</value3>
+                    <value3>-87.254890</value3>
                 </vec3>
             </property>
             <property>
@@ -1751,7 +1751,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254868</value3>
+                    <value3>-87.254890</value3>
                 </vec3>
             </property>
             <property>
@@ -2234,6 +2234,10 @@
                 <name>Event To Detonate</name>
                 <gameevent>d11c0446-d54c-49d2-9957-4bbde831b8f4</gameevent>
             </property>
+            <property>
+                <name>Light</name>
+                <actorId>a704a3cd-9ec3-4b4c-91b1-1c37d24890fa</actorId>
+            </property>
         </actor>
         <actor>
             <type>dtExample.Mesh Object</type>
@@ -2524,7 +2528,7 @@
             </property>
             <property>
                 <name>Light</name>
-                <actorId>57c79ea9-cae6-429d-bffa-6650514b138c</actorId>
+                <actorId>a704a3cd-9ec3-4b4c-91b1-1c37d24890fa</actorId>
             </property>
         </actor>
         <actor>
@@ -2793,7 +2797,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254868</value3>
+                    <value3>-87.254890</value3>
                 </vec3>
             </property>
             <property>
@@ -3118,7 +3122,7 @@
                 <name>Rotation</name>
                 <vec3>
                     <value1>-0.823274</value1>
-                    <value2>-0.623614</value2>
+                    <value2>-0.623641</value2>
                     <value3>124.004814</value3>
                 </vec3>
             </property>
@@ -3501,7 +3505,7 @@
             </property>
             <property>
                 <name>Light</name>
-                <actorId>cdf85732-f055-447b-968c-768706117bc1</actorId>
+                <actorId>a704a3cd-9ec3-4b4c-91b1-1c37d24890fa</actorId>
             </property>
         </actor>
         <actor>
@@ -3654,7 +3658,7 @@
             </property>
             <property>
                 <name>Light</name>
-                <actorId>fc34c760-cadb-4764-a0c4-fc8e917af716</actorId>
+                <actorId>a704a3cd-9ec3-4b4c-91b1-1c37d24890fa</actorId>
             </property>
         </actor>
         <actor>
@@ -3966,7 +3970,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254868</value3>
+                    <value3>-87.254890</value3>
                 </vec3>
             </property>
             <property>
@@ -4907,7 +4911,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-134.385132</value3>
+                    <value3>-134.385117</value3>
                 </vec3>
             </property>
             <property>
@@ -5273,6 +5277,37 @@
             </property>
         </actor>
         <actor>
+            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <id>4e6521b9-7288-4f10-9ed8-942cce3269ba</id>
+            <name>delta3d_banner</name>
+            <property>
+                <name>ShaderGroup</name>
+                <string>MultiMap</string>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>-15.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:signage:banners:airbanner_delta3d_release:AirBanner_Delta3d_Release.osg</resourceDisplayName>
+                <resource>StaticMeshes:signage:banners:airbanner_delta3d_release:AirBanner_Delta3d_Release.osg</resource>
+            </property>
+            <property>
+                <name>Model Translation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>-100000.000000</value3>
+                </vec3>
+            </property>
+        </actor>
+        <actor>
             <type>dtExample.Civilian</type>
             <id>4eb42e77-17a1-4423-95a0-83cf32bdfb39</id>
             <name>Petunia_01_Bar</name>
@@ -5419,7 +5454,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-73.005310</value3>
+                    <value3>-73.005318</value3>
                 </vec3>
             </property>
             <property>
@@ -5976,7 +6011,7 @@
             </property>
             <property>
                 <name>Light</name>
-                <actorId>61c972b9-1ab6-4292-9b2f-94b03a0b1639</actorId>
+                <actorId>a704a3cd-9ec3-4b4c-91b1-1c37d24890fa</actorId>
             </property>
         </actor>
         <actor>
@@ -6173,7 +6208,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254868</value3>
+                    <value3>-87.254890</value3>
                 </vec3>
             </property>
             <property>
@@ -6476,14 +6511,14 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>-0.000000</value2>
-                    <value3>-89.345451</value3>
+                    <value3>-90.393021</value3>
                 </vec3>
             </property>
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-730.762390</value1>
-                    <value2>-437.526703</value2>
+                    <value1>-2115.766113</value1>
+                    <value2>-435.835876</value2>
                     <value3>75.000000</value3>
                 </vec3>
             </property>
@@ -6998,7 +7033,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254868</value3>
+                    <value3>-87.254890</value3>
                 </vec3>
             </property>
             <property>
@@ -7112,7 +7147,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254868</value3>
+                    <value3>-87.254890</value3>
                 </vec3>
             </property>
             <property>
@@ -9625,7 +9660,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254868</value3>
+                    <value3>-87.254890</value3>
                 </vec3>
             </property>
             <property>
@@ -10700,7 +10735,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254868</value3>
+                    <value3>-87.254890</value3>
                 </vec3>
             </property>
             <property>
@@ -11019,7 +11054,7 @@
             </property>
             <property>
                 <name>Light</name>
-                <actorId>1eac1ad4-4dc2-4add-b869-7a75452555e2</actorId>
+                <actorId>a704a3cd-9ec3-4b4c-91b1-1c37d24890fa</actorId>
             </property>
         </actor>
         <actor>
@@ -11404,6 +11439,39 @@
             </property>
         </actor>
         <actor>
+            <type>dtRender.Dynamic Light</type>
+            <id>a704a3cd-9ec3-4b4c-91b1-1c37d24890fa</id>
+            <name>FireworkLightPrototype</name>
+            <property>
+                <name>Initial Ownership</name>
+                <enumerated>PROTOTYPE</enumerated>
+            </property>
+            <property>
+                <name>Attenuation</name>
+                <vec3>
+                    <value1>1.000000</value1>
+                    <value2>0.007000</value2>
+                    <value3>0.000200</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Intensity</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Flicker Scale</name>
+                <float>1.5</float>
+            </property>
+            <property>
+                <name>Fade Out Time</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Radius</name>
+                <float>600</float>
+            </property>
+        </actor>
+        <actor>
             <type>dtExample.Mesh Lamp</type>
             <id>a782cae8-2269-4881-9a9b-9f30b6204662</id>
             <name>lamp_04</name>
@@ -11653,7 +11721,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254868</value3>
+                    <value3>-87.254890</value3>
                 </vec3>
             </property>
             <property>
@@ -13290,7 +13358,7 @@
             </property>
             <property>
                 <name>Light</name>
-                <actorId>f2c529db-ada4-4a44-80c0-7f61c9b6e36f</actorId>
+                <actorId>a704a3cd-9ec3-4b4c-91b1-1c37d24890fa</actorId>
             </property>
         </actor>
         <actor>
@@ -13418,7 +13486,7 @@
             </property>
             <property>
                 <name>Light</name>
-                <actorId>1b0dfc38-8309-48f8-93bb-dbf29579eb5a</actorId>
+                <actorId>a704a3cd-9ec3-4b4c-91b1-1c37d24890fa</actorId>
             </property>
         </actor>
         <actor>
@@ -13446,7 +13514,7 @@
                 <name>Rotation</name>
                 <vec3>
                     <value1>-0.823274</value1>
-                    <value2>-0.623614</value2>
+                    <value2>-0.623641</value2>
                     <value3>124.004814</value3>
                 </vec3>
             </property>
@@ -13978,7 +14046,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254868</value3>
+                    <value3>-87.254890</value3>
                 </vec3>
             </property>
             <property>
@@ -14035,7 +14103,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254868</value3>
+                    <value3>-87.254890</value3>
                 </vec3>
             </property>
             <property>
@@ -14887,7 +14955,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254868</value3>
+                    <value3>-87.254890</value3>
                 </vec3>
             </property>
             <property>
@@ -15137,7 +15205,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-59.716415</value3>
+                    <value3>-59.716446</value3>
                 </vec3>
             </property>
             <property>
@@ -16612,7 +16680,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254868</value3>
+                    <value3>-87.254890</value3>
                 </vec3>
             </property>
             <property>
@@ -16726,7 +16794,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254868</value3>
+                    <value3>-87.254890</value3>
                 </vec3>
             </property>
             <property>
@@ -16907,7 +16975,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254868</value3>
+                    <value3>-87.254890</value3>
                 </vec3>
             </property>
             <property>
@@ -17596,7 +17664,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254868</value3>
+                    <value3>-87.254890</value3>
                 </vec3>
             </property>
             <property>
@@ -18363,7 +18431,7 @@
             </property>
             <property>
                 <name>Light</name>
-                <actorId>d21a0110-9018-4b51-af8a-0ab63041a20c</actorId>
+                <actorId>a704a3cd-9ec3-4b4c-91b1-1c37d24890fa</actorId>
             </property>
         </actor>
         <actor>
