@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <map xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="delta3dMap" xsi:schemaLocation="delta3dMap map.xsd">
     <header>
         <name>TestApp</name>
@@ -7,7 +8,7 @@
         <comment></comment>
         <copyright></copyright>
         <createTimestamp>2014-07-15T22:49:46-05:00</createTimestamp>
-        <lastUpdateTimestamp>2014-09-21T14:59:03-05:00</lastUpdateTimestamp>
+        <lastUpdateTimestamp>2014-09-22T11:37:58-05:00</lastUpdateTimestamp>
         <editorVersion>2.8.0</editorVersion>
         <schemaVersion>1.0</schemaVersion>
     </header>
@@ -749,14 +750,14 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>-0.000000</value2>
-                    <value3>47.496624</value3>
+                    <value3>46.681026</value3>
                 </vec3>
             </property>
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>106.308220</value1>
-                    <value2>-325.080170</value2>
+                    <value1>60.233917</value1>
+                    <value2>-282.348877</value2>
                     <value3>0.000000</value3>
                 </vec3>
             </property>
@@ -3004,10 +3005,6 @@
                 <resourceDisplayName>SkeletalMeshes:YoungMan:YoungMan_Jogger.dtchar</resourceDisplayName>
                 <resource>SkeletalMeshes:YoungMan:YoungMan_Jogger.dtchar</resource>
             </property>
-            <property>
-                <name>AnimationWalkSpeed</name>
-                <float>0.64999998</float>
-            </property>
         </actor>
         <actor>
             <type>dtExample.Civilian</type>
@@ -3054,7 +3051,7 @@
             <property>
                 <name>Body: Dimensions</name>
                 <vec3>
-                    <value1>1.200000</value1>
+                    <value1>1.600000</value1>
                     <value2>0.200000</value2>
                     <value3>0.000000</value3>
                 </vec3>
@@ -3823,7 +3820,7 @@
             <property>
                 <name>Body: Dimensions</name>
                 <vec3>
-                    <value1>1.200000</value1>
+                    <value1>1.600000</value1>
                     <value2>0.200000</value2>
                     <value3>0.000000</value3>
                 </vec3>
@@ -5316,7 +5313,7 @@
             <property>
                 <name>Body: Dimensions</name>
                 <vec3>
-                    <value1>1.200000</value1>
+                    <value1>1.600000</value1>
                     <value2>0.200000</value2>
                     <value3>0.000000</value3>
                 </vec3>
@@ -5454,7 +5451,7 @@
             <property>
                 <name>Body: Dimensions</name>
                 <vec3>
-                    <value1>1.200000</value1>
+                    <value1>1.600000</value1>
                     <value2>0.200000</value2>
                     <value3>0.000000</value3>
                 </vec3>
@@ -6462,14 +6459,14 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>-0.000000</value2>
-                    <value3>-87.354103</value3>
+                    <value3>-87.453674</value3>
                 </vec3>
             </property>
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>413.099945</value1>
-                    <value2>-401.170074</value2>
+                    <value1>271.696594</value1>
+                    <value2>-407.590271</value2>
                     <value3>75.000000</value3>
                 </vec3>
             </property>
@@ -7765,7 +7762,7 @@
             <property>
                 <name>Body: Dimensions</name>
                 <vec3>
-                    <value1>1.200000</value1>
+                    <value1>1.600000</value1>
                     <value2>0.200000</value2>
                     <value3>0.000000</value3>
                 </vec3>
@@ -8383,7 +8380,7 @@
             <property>
                 <name>Body: Dimensions</name>
                 <vec3>
-                    <value1>1.200000</value1>
+                    <value1>1.600000</value1>
                     <value2>0.200000</value2>
                     <value3>0.000000</value3>
                 </vec3>
@@ -10557,7 +10554,7 @@
             <property>
                 <name>Body: Dimensions</name>
                 <vec3>
-                    <value1>1.200000</value1>
+                    <value1>1.600000</value1>
                     <value2>0.200000</value2>
                     <value3>0.000000</value3>
                 </vec3>
@@ -11654,7 +11651,7 @@
             <property>
                 <name>Body: Dimensions</name>
                 <vec3>
-                    <value1>1.200000</value1>
+                    <value1>1.600000</value1>
                     <value2>0.200000</value2>
                     <value3>0.000000</value3>
                 </vec3>
@@ -16531,7 +16528,7 @@
             <property>
                 <name>Body: Dimensions</name>
                 <vec3>
-                    <value1>1.200000</value1>
+                    <value1>1.600000</value1>
                     <value2>0.200000</value2>
                     <value3>0.000000</value3>
                 </vec3>
@@ -17679,7 +17676,7 @@
             <property>
                 <name>Body: Dimensions</name>
                 <vec3>
-                    <value1>1.200000</value1>
+                    <value1>1.600000</value1>
                     <value2>0.200000</value2>
                     <value3>0.000000</value3>
                 </vec3>
