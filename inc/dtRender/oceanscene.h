@@ -36,6 +36,11 @@ namespace dtRender
    public:
       typedef SceneBase BaseClass;
       static const dtCore::RefPtr<SceneType> OCEAN_SCENE;
+      
+      static const dtUtil::RefString UNIFORM_WATER_HEIGHT;
+      static const dtUtil::RefString UNIFORM_WATER_COLOR;
+      static const dtUtil::RefString UNIFORM_UNDERWATER_VIEW_DISTANCE;
+
 
    public:
       OceanScene();

@@ -23,6 +23,7 @@
 #include <dtRender/scenemanager.h>
 #include <dtRender/scenegroup.h>
 #include <dtRender/multipassscene.h>
+#include <dtRender/uniformactcomp.h>
 
 #include <dtRender/ppuscene.h>
 
@@ -30,6 +31,8 @@
 
 #include <dtCore/colorrgbaactorproperty.h>
 #include <dtCore/enumactorproperty.h>
+#include <dtCore/shaderparamfloat.h>
+#include <dtCore/shaderparamvec4.h>
 
 #include <dtGame/gamemanager.h> //to create water grid actor
 #include <dtABC/application.h> //to get camera
@@ -45,24 +48,27 @@ namespace dtRender
 
    const dtCore::RefPtr<SceneType> OceanScene::OCEAN_SCENE(new SceneType("Ocean Scene", "Scene", "Creates water meshes, and allows for underwater effects."));
 
-   //class DepthPassScene : public PPUScene
-   //{
-   //public:
-   //   typedef PPUScene BaseClass;
-   //   static const dtCore::RefPtr<SceneType> DEPTH_PASS_SCENE;
+   const dtUtil::RefString OceanScene::UNIFORM_WATER_HEIGHT("WaterHeight");
+   const dtUtil::RefString OceanScene::UNIFORM_WATER_COLOR("WaterColor");
+   const dtUtil::RefString OceanScene::UNIFORM_UNDERWATER_VIEW_DISTANCE("UnderWaterViewDistance");
 
-   //public:
-   //   DepthPassScene();
-   //   virtual ~DepthPassScene();
+   class OceanUniforms
+   {
+   public:
+      OceanUniforms()
+      {
 
-   //   virtual osg::Group* GetSceneNode();
-   //   virtual const osg::Group* GetSceneNode() const;
+      }
+      ~OceanUniforms()
+      {
 
-   //   virtual void CreateScene(SceneManager&, const GraphicsQuality&);
+      }
 
-   //private:
-   //   dtCore::RefPtr<osg::Group> mRootNode;
-   //};
+      dtCore::RefPtr<dtCore::ShaderParamFloat> mWaterHeight;
+      dtCore::RefPtr<dtCore::ShaderParamFloat> mUnderWaterViewDistance;
+
+      dtCore::RefPtr<dtCore::ShaderParamVec4> mWaterColor;
+   };
 
 
    class OceanResizeCallback: public MultipassScene::ResizeCallback
@@ -90,6 +96,7 @@ namespace dtRender
    public:
       OceanSceneImpl()
          : mUseMultipassWater(true)
+         , mUniforms(new OceanUniforms())
       {
 
 
@@ -98,9 +105,13 @@ namespace dtRender
       ~OceanSceneImpl()
       {
          mRootNode = NULL;
+
+         delete mUniforms;
+         mUniforms = NULL;
       }
 
       bool mUseMultipassWater;
+      OceanUniforms* mUniforms;
       dtCore::RefPtr<osg::Group> mRootNode;
       dtCore::ObserverPtr<dtActors::WaterGridActor> mWaterActor;
    };
@@ -209,6 +220,31 @@ namespace dtRender
                water->SetSeaState(mSeaState);
                water->SetUseDebugKeys(mUseDebugKeys);
             }
+
+            //set scene uniforms for water things besides water will need
+
+            UniformActComp* uniformActComp = sm.GetOwner()->GetComponent<UniformActComp>();
+            if(uniformActComp != NULL)
+            {
+               mImpl->mUniforms->mWaterHeight = new dtCore::ShaderParamFloat(UNIFORM_WATER_HEIGHT);
+               mImpl->mUniforms->mUnderWaterViewDistance = new dtCore::ShaderParamFloat(UNIFORM_UNDERWATER_VIEW_DISTANCE);
+               mImpl->mUniforms->mWaterColor = new dtCore::ShaderParamVec4(UNIFORM_WATER_COLOR);
+
+               mImpl->mUniforms->mWaterColor->SetValue(mWaterColor);
+               mImpl->mUniforms->mWaterColor->Update();
+
+               mImpl->mUniforms->mWaterHeight->SetValue(0.0f);
+               mImpl->mUniforms->mWaterHeight->Update();
+
+               mImpl->mUniforms->mUnderWaterViewDistance->SetValue(mUnderWaterViewDistance);
+               mImpl->mUniforms->mUnderWaterViewDistance->Update();
+
+
+               uniformActComp->AddParameter(*mImpl->mUniforms->mWaterHeight);
+               uniformActComp->AddParameter(*mImpl->mUniforms->mUnderWaterViewDistance);
+               uniformActComp->AddParameter(*mImpl->mUniforms->mWaterColor);
+            }
+
 
 
             //this adds the actor to our scene
