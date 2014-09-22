@@ -100,4 +100,28 @@
          <child>Walk</child>
       </children>
    </animationSequence>
+   <animationChannel>
+      <name>Sitting</name>
+      <animationName>Sitting_BarStool</animationName>
+      <startDelay>0.0</startDelay>
+      <fadeIn>0.0</fadeIn>
+      <fadeOut>0.0</fadeOut>
+      <speed>1.0</speed>
+      <baseWeight>1.0</baseWeight>
+      <maxDuration>0.0</maxDuration>
+      <isAction>0</isAction>
+      <isLooping>1</isLooping>
+   </animationChannel>
+   <animationChannel>
+      <name>Lying</name>
+      <animationName>Lying_Sunchair</animationName>
+      <startDelay>0.0</startDelay>
+      <fadeIn>0.0</fadeIn>
+      <fadeOut>0.0</fadeOut>
+      <speed>1.0</speed>
+      <baseWeight>1.0</baseWeight>
+      <maxDuration>0.0</maxDuration>
+      <isAction>0</isAction>
+      <isLooping>1</isLooping>
+   </animationChannel>
 </character>
