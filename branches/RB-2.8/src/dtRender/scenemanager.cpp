@@ -97,11 +97,11 @@ namespace dtRender
    public:
 
       ResizeCallback(SceneManager& sm, float timeToResize)
-         : mSceneManager(&sm)
-         , mResize(false)
+         : mResize(false)
          , mTimeToResize(timeToResize)
-         , mWidth(0)
-         , mHeight(0)
+         , mWidth()
+         , mHeight()
+         , mSceneManager(&sm)
       {
       }
 
@@ -1013,6 +1013,9 @@ namespace dtRender
          double zfar = 0.0; 
 
          osg::Camera* camera = delta_camera->GetOSGCamera();
+
+         if (width < 1) width = 1;
+         if (height < 1) height = 1;
 
          osg::ref_ptr<osg::Viewport> vp = new osg::Viewport(0, 0, width, height); 
        
