@@ -37,6 +37,7 @@
 #include <dtCore/transformableactorproxy.h>
 #include <dtGame/defaultgroundclamper.h>
 #include <dtActors/watergridactor.h>
+#include <dtABC/beziercontroller.h>
 
 namespace dtInspectorQt { class InspectorQt; }
 
@@ -97,6 +98,10 @@ namespace dtExample
          /// Destructor
          virtual ~InputComponent();
 
+         bool AttachToBezierController(const dtCore::UniqueId&);
+         void DetachFromController();
+         void AttachBanner();
+
          dtCore::TransformableActorProxy* GetActorByName(const std::string& name);
          dtCore::TransformableActorProxy* GetActorById(const dtCore::UniqueId& id);
          dtCore::Transformable* GetDrawableByName(const std::string& name);
@@ -143,6 +148,7 @@ namespace dtExample
          dtCore::RefPtr<dtCore::Transformable> mCamera;
          dtCore::RefPtr<dtCore::Transformable> mCameraPivot;
          dtCore::RefPtr<dtCore::Transformable> mGroundClampedXformable;
+         dtCore::RefPtr<dtABC::BezierController> mCurrentController;
 
          // A reference to an actor is need for ground clamping.
          // Use a transformable actor to hold the camera since clamping

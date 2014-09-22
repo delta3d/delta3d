@@ -34,6 +34,7 @@
 
 #include <dtABC/application.h>
 #include <dtABC/trigger.h>
+#include <dtABC/beziercontroller.h>
 #include <dtCore/camera.h>
 #include <dtCore/flymotionmodel.h>
 #include <dtCore/fpsmotionmodel.h>
@@ -384,20 +385,26 @@ namespace dtExample
          // Attch to the actor if the name is valid.
          if ( ! mAttachActorId.ToString().empty())
          {
-            // Determine if the current motion model is proper.
-            if (mMotionModelMode != &MotionModelType::ORBIT)
+            DetachFromController();
+
+            if(!AttachToBezierController(mAttachActorId))
             {
-               SetMotionModel(MotionModelType::ORBIT);
-            }
-            else // Already using a proper motion model for attachment.
-            {
-               SetCameraPivotById(mAttachActorId);
+               // Determine if the current motion model is proper.
+               if (mMotionModelMode != &MotionModelType::ORBIT)
+               {
+                  SetMotionModel(MotionModelType::ORBIT);
+               }
+               else // Already using a proper motion model for attachment.
+               {
+                  SetCameraPivotById(mAttachActorId);
+               }
             }
          }
       }
       else if (type == dtGame::MessageType::INFO_MAP_LOADED)
       {
          SetCameraToPlayerStart();
+         AttachBanner();
       }
    }
 
@@ -1278,6 +1285,67 @@ namespace dtExample
          t2->Fire();
          triggers.push_back(t2);
       }
+   }
+
+   void InputComponent::AttachBanner()
+   {
+      dtGame::GameActorProxy* bannerProxy = NULL;
+      dtGame::GameActorProxy* planeProxy = NULL;
+      GetGameManager()->FindActorByName("delta3d_banner", bannerProxy);
+      GetGameManager()->FindActorByName("plane", planeProxy);
+      if (bannerProxy != NULL && planeProxy != NULL)
+      {
+        planeProxy->GetDrawable()->AddChild(bannerProxy->GetDrawable());
+      }
+   }
+
+   void InputComponent::DetachFromController()
+   {
+      if (mCurrentController.valid())
+      {
+         mCurrentController->SetTargetObject(NULL);
+         mCurrentController = NULL;
+      }
+   }
+
+
+   bool InputComponent::AttachToBezierController( const dtCore::UniqueId& id)
+   {
+      bool success = false;
+
+      if (mCameraPivot.valid())
+      {
+         dtActors::BezierControllerActor* actor = NULL;
+
+         dtGame::GameManager* gm = GetGameManager();
+         gm->FindActorById(id, actor);
+
+
+         if(actor != NULL)
+         {
+            dtABC::BezierController* controller = NULL;
+            actor->GetDrawable<dtABC::BezierController*>(controller);
+
+            if(controller != NULL)
+            {
+               dtCore::Transform defXform;
+               mCameraPivot->SetTransform(defXform);
+               mCamera->SetTransform(defXform);
+
+               SetMotionModel(MotionModelType::FLY);
+               SetMotionModel(MotionModelType::NONE );
+               controller->SetTargetObject(mCameraPivot.get());
+               controller->Start();
+
+               mCurrentController = controller;
+               
+               success = true;
+            }
+
+         }
+      }
+
+      return success;
    }
 
 

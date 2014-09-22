@@ -107,13 +107,15 @@ namespace dtExample
    /////////////////////////////////////////////////////////////////////////////
    bool TestAppUtils::IsAttachableActor(dtCore::BaseActorObject& actor) const
    {
+      bool result = false;
+
       const dtCore::ActorType* actorType = &actor.GetActorType();
 
-      bool valid = actorType == TestAppActorRegistry::CIVILIAN_ACTOR_TYPE.get()
-         || actorType == dtActors::EngineActorRegistry::BEZIER_CONTROLLER_ACTOR_TYPE.get();
-
-      // Determine if there are some special Mesh Actors that can be attached to.
-      if ( ! valid && &actor.GetActorType() == TestAppActorRegistry::MESH_OBJECT_ACTOR_TYPE.get())
+      if(actorType == TestAppActorRegistry::CIVILIAN_ACTOR_TYPE.get())
+      {
+         result = true;
+      }
+      else if (actorType == TestAppActorRegistry::MESH_OBJECT_ACTOR_TYPE.get())
       {
          MeshObjectActor& meshActor = static_cast<MeshObjectActor&>(actor);
 
@@ -123,11 +125,20 @@ namespace dtExample
          // Search the resource descriptor string for a hint about the model.
          if (resName.find("vehicle") != std::string::npos)
          {
-            valid = true;
+            result = true;
          }
       }
+      else if(actorType == dtActors::EngineActorRegistry::BEZIER_CONTROLLER_ACTOR_TYPE.get())
+      {
+         const std::string& resName = actor.GetName();
 
-      return valid;
+         if (resName.find("Camera") != std::string::npos)
+         {
+            result = true;
+         } 
+      }
+      
+      return result;
    }
 
 }
