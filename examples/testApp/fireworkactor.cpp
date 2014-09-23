@@ -567,6 +567,17 @@ namespace dtExample
          mDetonateTimeRemaining = 0.0f;
       }
 
+
+      //turn light on
+      LightActorComponent* lac = NULL;
+      GetComponent(lac);
+
+      dtRender::DynamicLight* light = lac->GetLight();
+      if (light != NULL)
+      {
+         light->SetIntensity(1.0f);
+      }
+
       FadeLight(mSparkLifeTime);
    }
 
@@ -574,6 +585,16 @@ namespace dtExample
    void FireworkActor::OnCleared(dtCore::ParticleSystem& ps)
    {
       ps.SetEnabled(false);
+
+      LightActorComponent* lac = NULL;
+      GetComponent(lac);
+
+      dtRender::DynamicLight* light = lac->GetLight();
+      if (light != NULL)
+      {
+         light->SetFadeOut(false);
+         light->SetIntensity(0.0f);
+      }
    }
 
    /////////////////////////////////////////////////////////////////////////////

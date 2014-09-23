@@ -73,6 +73,7 @@ namespace dtExample
 
       static const dtUtil::RefString CLASS_NAME;
       static const dtUtil::RefString PROPERTY_LIGHT;
+      static const dtUtil::RefString PROPERTY_ATTACH_LIGHT_TO_OWNER;
       static const dtUtil::RefString PROPERTY_MESH_SHADER_PARAMETER_NAME;
       static const dtUtil::RefString PROPERTY_MESH_SHADER_PARAMETER_TYPE;
       static const dtUtil::RefString PROPERTY_MESH_SHADER_PARAMETER_ELEMENT;
@@ -97,6 +98,9 @@ namespace dtExample
 
       void SetLightIntensity(float intensity);
       float GetLightIntensity() const;
+
+      bool GetAttachLightToOwner() const;
+      void SetAttachLightToOwner(bool b);
 
       void SetMeshShaderParameterName(const std::string& name);
       const std::string& GetMeshShaderParameterName() const;
@@ -127,9 +131,11 @@ namespace dtExample
 
       /*virtual*/ void OnRemovedFromActor(dtCore::BaseActorObject& actor);
 
+
    protected:
       virtual ~LightActorComponent();
 
+      bool mAttachLightToOwner;
       bool mCreateLight;
       bool mEnableUpdatesFromLight;
       float mLastLightIntensity;

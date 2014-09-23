@@ -99,7 +99,7 @@ namespace dtRender
       {
          dtCore::RefPtr<dtGame::GameActor> ga = new dtGame::GameActor(*this);
          SetDrawable(*ga);
-         SetTarget(*ga);
+         SetTarget(*GetDrawable<dtCore::Transformable>());
       }
 
       //////////////////////////////////////////////////////////
@@ -272,6 +272,7 @@ namespace dtRender
       void SpotLight::CreateDrawable()
       {
          SetDrawable(*new dtGame::GameActor(*this));
+         SetTarget(*GetDrawable<dtCore::Transformable>());
       }
 
       //////////////////////////////////////////////////////////
