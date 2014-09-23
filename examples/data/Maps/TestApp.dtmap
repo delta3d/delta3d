@@ -7,7 +7,7 @@
         <comment></comment>
         <copyright></copyright>
         <createTimestamp>2014-07-15T22:49:46-05:00</createTimestamp>
-        <lastUpdateTimestamp>2014-09-22T23:08:39-05:00</lastUpdateTimestamp>
+        <lastUpdateTimestamp>2014-09-23T11:02:56-05:00</lastUpdateTimestamp>
         <editorVersion>2.8.0</editorVersion>
         <schemaVersion>1.0</schemaVersion>
     </header>
@@ -669,23 +669,31 @@
             <id>0a6c7b74-1b8a-4edc-a399-dbfaba4426bd</id>
             <name>Camera_D_BezierNode_02</name>
             <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>55.300526</value3>
+                </vec3>
+            </property>
+            <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>300.645111</value1>
-                    <value2>-383.222015</value2>
-                    <value3>20.000000</value3>
+                    <value1>334.938416</value1>
+                    <value2>-395.395233</value2>
+                    <value3>26.400000</value3>
                 </vec3>
             </property>
             <property>
                 <name>Time to Next</name>
-                <float>10</float>
+                <float>35</float>
             </property>
             <property>
-                <name>Entry Control Point</name>
+                <name>Exit Control Point</name>
                 <actorId>c5e4d40c-3d69-409d-8612-5fc15b0853fb</actorId>
             </property>
             <property>
-                <name>Previous Bezier Node</name>
+                <name>Next Bezier Node</name>
                 <actorId>b3b8fc1f-dc6d-40ee-887f-f8aec2aacecd</actorId>
             </property>
         </actor>
@@ -743,14 +751,14 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>96.693550</value3>
+                    <value3>-96.099358</value3>
                 </vec3>
             </property>
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-641.651733</value1>
-                    <value2>-119.517899</value2>
+                    <value1>-662.477173</value1>
+                    <value2>-117.292534</value2>
                     <value3>5.815986</value3>
                 </vec3>
             </property>
@@ -787,14 +795,14 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>-0.000000</value2>
-                    <value3>46.111858</value3>
+                    <value3>47.592194</value3>
                 </vec3>
             </property>
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>42.883331</value1>
-                    <value2>-265.832825</value2>
+                    <value1>117.765953</value1>
+                    <value2>-335.561920</value2>
                     <value3>0.000000</value3>
                 </vec3>
             </property>
@@ -2165,6 +2173,14 @@
             <property>
                 <name>Time Step</name>
                 <float>0.016666669</float>
+            </property>
+            <property>
+                <name>Parent Object</name>
+                <actorId>bdc7d53e-3e88-413a-af78-944b974f8e11</actorId>
+            </property>
+            <property>
+                <name>Parent Relation</name>
+                <enumerated>TRACK_PARENT</enumerated>
             </property>
             <property>
                 <name>Start Node</name>
@@ -4516,6 +4532,18 @@
             <id>4213e10d-1695-4ce0-9b85-4b65a5ebe286</id>
             <name>Camera_B_Controller</name>
             <property>
+                <name>Target Object</name>
+                <actorId>4a0f0412-8895-4824-9d59-f2e93acadde3</actorId>
+            </property>
+            <property>
+                <name>Parent Object</name>
+                <actorId>163a24f4-587e-4227-aacb-cc2a350c310c</actorId>
+            </property>
+            <property>
+                <name>Parent Relation</name>
+                <enumerated>TRACK_PARENT</enumerated>
+            </property>
+            <property>
                 <name>Start Node</name>
                 <actorId>3184dfc6-6e79-47d9-a1ad-67ddb8acc6fe</actorId>
             </property>
@@ -6257,9 +6285,9 @@
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-646.862915</value1>
-                    <value2>-210.068237</value2>
-                    <value3>-21.167194</value3>
+                    <value1>-762.527222</value1>
+                    <value2>-101.912788</value2>
+                    <value3>23.830370</value3>
                 </vec3>
             </property>
             <property>
@@ -6583,15 +6611,15 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>-0.000000</value2>
-                    <value3>-90.235603</value3>
+                    <value3>-88.213669</value3>
                 </vec3>
             </property>
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-1552.140503</value1>
-                    <value2>-439.073517</value2>
-                    <value3>75.000015</value3>
+                    <value1>-224.243195</value1>
+                    <value2>-426.840454</value2>
+                    <value3>75.000000</value3>
                 </vec3>
             </property>
             <property>
@@ -6694,11 +6722,19 @@
             <id>5ec2c444-3a02-48f5-b152-aaff600f8bb0</id>
             <name>Camera_C_BezierNode_02</name>
             <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>-7.600679</value3>
+                </vec3>
+            </property>
+            <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-487.190552</value1>
-                    <value2>2.435188</value2>
-                    <value3>31.941971</value3>
+                    <value1>-691.058044</value1>
+                    <value2>-112.443962</value2>
+                    <value3>8.399930</value3>
                 </vec3>
             </property>
             <property>
@@ -8548,16 +8584,24 @@
             <id>7a187ad8-2ac8-4167-b468-44d3bb96f160</id>
             <name>Camera_C_BezierNode_01</name>
             <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>4.899866</value3>
+                </vec3>
+            </property>
+            <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-878.121216</value1>
-                    <value2>-600.292480</value2>
-                    <value3>90.000000</value3>
+                    <value1>-1103.762451</value1>
+                    <value2>-269.218872</value2>
+                    <value3>98.313522</value3>
                 </vec3>
             </property>
             <property>
                 <name>Time to Next</name>
-                <float>30</float>
+                <float>45</float>
             </property>
             <property>
                 <name>Exit Control Point</name>
@@ -8692,8 +8736,16 @@
             <id>7d04dafd-c1d4-4220-a1ab-6caa54c85f68</id>
             <name>Camera_D_Controller</name>
             <property>
+                <name>Parent Object</name>
+                <actorId>163a24f4-587e-4227-aacb-cc2a350c310c</actorId>
+            </property>
+            <property>
+                <name>Parent Relation</name>
+                <enumerated>TRACK_PARENT</enumerated>
+            </property>
+            <property>
                 <name>Start Node</name>
-                <actorId>b3b8fc1f-dc6d-40ee-887f-f8aec2aacecd</actorId>
+                <actorId>0a6c7b74-1b8a-4edc-a399-dbfaba4426bd</actorId>
             </property>
             <property>
                 <name>Render Path</name>
@@ -10033,11 +10085,19 @@
             <id>9473fbaf-4149-4486-baf4-10d0743bcb59</id>
             <name>ControlPoint_29</name>
             <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>32.198799</value3>
+                </vec3>
+            </property>
+            <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-706.019531</value1>
-                    <value2>-58.810196</value2>
-                    <value3>-10.924026</value3>
+                    <value1>-336.171631</value1>
+                    <value2>-25.538927</value2>
+                    <value3>15.734088</value3>
                 </vec3>
             </property>
             <property>
@@ -10703,8 +10763,8 @@
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-432.262299</value1>
-                    <value2>-88.637482</value2>
+                    <value1>-527.712891</value1>
+                    <value2>-102.078369</value2>
                     <value3>5.000000</value3>
                 </vec3>
             </property>
@@ -12015,8 +12075,8 @@
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-669.734131</value1>
-                    <value2>-232.476044</value2>
+                    <value1>-563.413696</value1>
+                    <value2>-150.483734</value2>
                     <value3>5.058908</value3>
                 </vec3>
             </property>
@@ -12759,23 +12819,27 @@
             <id>b3b8fc1f-dc6d-40ee-887f-f8aec2aacecd</id>
             <name>Camera_D_BezierNode_01</name>
             <property>
-                <name>Translation</name>
+                <name>Rotation</name>
                 <vec3>
-                    <value1>-842.202148</value1>
-                    <value2>-38.831963</value2>
-                    <value3>40.000000</value3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>16.000546</value3>
                 </vec3>
             </property>
             <property>
-                <name>Time to Next</name>
-                <float>35</float>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-486.871094</value1>
+                    <value2>-107.723770</value2>
+                    <value3>10.635692</value3>
+                </vec3>
             </property>
             <property>
-                <name>Exit Control Point</name>
+                <name>Entry Control Point</name>
                 <actorId>9473fbaf-4149-4486-baf4-10d0743bcb59</actorId>
             </property>
             <property>
-                <name>Next Bezier Node</name>
+                <name>Previous Bezier Node</name>
                 <actorId>0a6c7b74-1b8a-4edc-a399-dbfaba4426bd</actorId>
             </property>
         </actor>
@@ -13139,11 +13203,19 @@
             <id>b7b660fb-61c1-4036-a0f5-2f004dafbb87</id>
             <name>Camera_B_BezierNode_02</name>
             <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>17.199570</value3>
+                </vec3>
+            </property>
+            <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-741.290100</value1>
-                    <value2>-100.980621</value2>
-                    <value3>14.671365</value3>
+                    <value1>-634.824097</value1>
+                    <value2>-134.623703</value2>
+                    <value3>10.071362</value3>
                 </vec3>
             </property>
             <property>
@@ -14475,8 +14547,8 @@
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-281.260529</value1>
-                    <value2>-184.367813</value2>
+                    <value1>-174.362793</value1>
+                    <value2>-303.042480</value2>
                     <value3>4.517242</value3>
                 </vec3>
             </property>
@@ -15235,8 +15307,8 @@
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-588.190796</value1>
-                    <value2>-97.321899</value2>
+                    <value1>-604.027405</value1>
+                    <value2>-131.665680</value2>
                     <value3>5.000000</value3>
                 </vec3>
             </property>
@@ -15943,8 +16015,8 @@
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-533.517517</value1>
-                    <value2>-105.438316</value2>
+                    <value1>-579.362610</value1>
+                    <value2>-77.417053</value2>
                     <value3>5.000000</value3>
                 </vec3>
             </property>
@@ -17462,16 +17534,20 @@
                 <float>0.016666669</float>
             </property>
             <property>
+                <name>Parent Object</name>
+                <actorId>163a24f4-587e-4227-aacb-cc2a350c310c</actorId>
+            </property>
+            <property>
+                <name>Parent Relation</name>
+                <enumerated>TRACK_PARENT</enumerated>
+            </property>
+            <property>
                 <name>Start Node</name>
                 <actorId>9dc85029-c92e-4932-b1f9-5030508ed60a</actorId>
             </property>
             <property>
                 <name>Render Path</name>
                 <boolean>false</boolean>
-            </property>
-            <property>
-                <name>Follow Path</name>
-                <boolean>true</boolean>
             </property>
             <property>
                 <name>Set Looping</name>
@@ -17937,8 +18013,8 @@
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-602.888916</value1>
-                    <value2>-163.494003</value2>
+                    <value1>-878.741394</value1>
+                    <value2>-96.202293</value2>
                     <value3>8.380196</value3>
                 </vec3>
             </property>
