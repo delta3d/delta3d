@@ -1350,6 +1350,26 @@ namespace dtExample
       return success;
    }
 
+   void InputComponent::IncrementAmbience( float amt )
+   {
+      dtRender::SceneManager* sm = dynamic_cast<dtRender::SceneManager*>(GetGameManager()->GetEnvironmentActor()->GetDrawable());
+
+      if(sm != NULL)
+      {
+         sm->SetAmbience(sm->GetAmbience() + amt);
+      }
+   }
+
+   void InputComponent::IncrementLuminance( float amt )
+   {
+      dtRender::SceneManager* sm = dynamic_cast<dtRender::SceneManager*>(GetGameManager()->GetEnvironmentActor()->GetDrawable());
+
+      if(sm != NULL)
+      {
+         sm->SetLuminance(sm->GetLuminance() + amt);
+      }
+   }
+
 
 
 } // END - namespace dtExample

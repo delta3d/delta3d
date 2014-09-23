@@ -124,6 +124,8 @@ namespace dtExample
          void SetMotionModel(const dtExample::MotionModelType& motionModelType);
 
          void IncrementTime(float numSeconds);
+         void IncrementAmbience(float amt);
+         void IncrementLuminance(float amt);
 
          void IncrementMotionModelSpeed(float increment);
 
