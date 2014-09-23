@@ -523,10 +523,14 @@ namespace dtAnim
    void PoseController::Update(float timeDelta)
    {
       // Avoid the base functionality because it will prune pose animations.
-      //BaseClass::Update(timeDelta);
+      // BaseClass::Update(timeDelta);
 
       if ( ! mTarget.valid() || ! mModelWrapper.valid())
       {
+         if (dtUtil::Abs(mLastAzimuth)  > FLT_EPSILON || dtUtil::Abs(mLastElevation) > FLT_EPSILON)
+         {
+            ClearAllPoses();
+         }
          return;
       }
 
@@ -541,9 +545,8 @@ namespace dtAnim
       // The 2 unit offset here is a crude approximation for this
       osg::Vec3 ownPosition = GetHeadPosition(transform);
 
-
       // This avoids numerical instability by not updating the head pos unless it has moved significantly.
-      if (dtUtil::Equivalent(ownPosition, mLastHead, osg::Vec3::value_type(0.05)))
+      if (dtUtil::Equivalent(ownPosition, mLastHead, osg::Vec3::value_type(0.2)))
       {
          ownPosition = mLastHead;
       }
@@ -565,9 +568,19 @@ namespace dtAnim
       {
          float remainingAzimuth   = 0.0f;
          float remainingElevation = 0.0f;
+         float curPriorityRemAz   = 0.0f;
+         float curPriorityRemEl   = 0.0f;
 
          // Get the relative azimuth and elevation
          dtAnim::GetCelestialCoordinates(lookDirection, actorForward, remainingAzimuth, remainingElevation);
+
+         //std::cout << "Update Target Az:" << osg::RadiansToDegrees(remainingAzimuth) << " elev:" << osg::RadiansToDegrees(remainingElevation) << std::endl;
+         remainingAzimuth   -= mLastAzimuth;
+         remainingElevation -= mLastElevation;
+         //std::cout << "Update Last Az:" << osg::RadiansToDegrees(mLastAzimuth) << " elev:" << osg::RadiansToDegrees(mLastElevation) << std::endl;
+         //std::cout << "    DT Az:" << osg::RadiansToDegrees(remainingAzimuth) << " elev:" << osg::RadiansToDegrees(remainingElevation) << std::endl;
+
+         mLastAzimuth = mLastElevation = 0.0f;
 
          PoseInfo* curInfo = NULL;
          int lastPriority = -1;
@@ -596,12 +609,20 @@ namespace dtAnim
             }
             else
             {
-               curPoseMesh->GetTargetTriangleData(remainingAzimuth, remainingElevation, *curPoseTri);
-
-               if (lastPriority < curPriority)
+               if (lastPriority == curPriority)
                {
-                  remainingAzimuth   -= curPoseTri->mAzimuth;
-                  remainingElevation -= curPoseTri->mElevation;
+                  curPoseMesh->GetTargetTriangleData(curPriorityRemAz, curPriorityRemEl, *curPoseTri);
+               }
+               else if (lastPriority < curPriority)
+               {
+                  osg::Vec2 deltaChange = curPoseMesh->GetTargetTriangleData(remainingAzimuth, remainingElevation, *curPoseTri);
+                  curPriorityRemAz   = remainingAzimuth;
+                  curPriorityRemEl   = remainingElevation;
+                  remainingAzimuth   -= deltaChange.x();
+                  remainingElevation -= deltaChange.y();
+                  mLastAzimuth       += curPoseTri->mAzimuth;
+                  mLastElevation     += curPoseTri->mElevation;
+                  //std::cout << " LastValuesAdd Az:" << osg::RadiansToDegrees(mLastAzimuth) << " elev:" << osg::RadiansToDegrees(mLastElevation) << std::endl;
                   lastPriority = curPriority;
                }
 
@@ -612,6 +633,7 @@ namespace dtAnim
             // was removed and current iterator was updated.
             ++curIter;
          }
+
       }
       /*else // Aim - over time
       {
@@ -652,7 +674,8 @@ namespace dtAnim
          curPoseMesh = curInfo->mPoseMesh.get();
          mPoseMeshUtil->ClearPoses(curPoseMesh, mModelWrapper.get(), mBlendTime);
       }
-
+      mLastAzimuth = mLastElevation = 0.0f;
+      mLastHead.set(0.0f, 0.0f, 0.0f);
    }
 
    /////////////////////////////////////////////////////////////////////////////

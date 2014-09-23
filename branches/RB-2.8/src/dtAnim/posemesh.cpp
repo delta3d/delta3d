@@ -28,7 +28,8 @@
 #include <dtUtil/exception.h>
 #include <dtAnim/cal3dmodelwrapper.h>
 
-using namespace dtAnim;
+namespace dtAnim
+{
 
 #include <iostream>
 #include <sstream>
@@ -309,11 +310,19 @@ void PoseMesh::GetAnimationIDsByName(const dtAnim::Cal3DModelWrapper* model,
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void PoseMesh::GetTargetTriangleData(const float azimuth,
-                                     const float elevation,
+osg::Vec2 PoseMesh::GetTargetTriangleData(const float deltaAzimuth,
+                                     const float deltaElevation,
                                      TargetTriangle& outTriangle) const
 {
-   int triangleID = FindPoseTriangleID(azimuth, elevation);
+   float targetAz = outTriangle.mAzimuth + deltaAzimuth;
+   float targetEl = outTriangle.mElevation + deltaElevation;
+   float origAz = outTriangle.mAzimuth;
+   float origEl = outTriangle.mElevation;
+
+   int triangleID = FindPoseTriangleID(targetAz, targetEl);
+
+   //printf ("-Posemesh target Az %f El %f\n", osg::RadiansToDegrees(targetAz), osg::RadiansToDegrees(targetEl));
+   //printf ("    posemesh last Az %f El %f\n", osg::RadiansToDegrees(outTriangle.mAzimuth), osg::RadiansToDegrees(outTriangle.mElevation));
 
    // At this point, we know if we're in or out
    outTriangle.mIsInside = (triangleID != -1);
@@ -324,7 +333,7 @@ void PoseMesh::GetTargetTriangleData(const float azimuth,
       osg::Vec3 closestPoint;
       int closestTriangleID = 0;
 
-      osg::Vec3 refPoint(azimuth, elevation, 0);
+      osg::Vec3 refPoint(targetAz, targetEl, 0);
       float minDistance = FLT_MAX;
 
       const PoseMesh::TriangleEdgeVector& silhouetteList = GetSilhouette();
@@ -345,23 +354,26 @@ void PoseMesh::GetTargetTriangleData(const float azimuth,
 
          if (distance < minDistance)
          {
-            //printf ("posemesh triangle %d distance %f\n", triangleID, distance);
             minDistance       = distance;
             closestPoint      = closestPointToCurrentEdge;
             closestTriangleID = silhouetteList[edgeIndex].mTriangleID;
+            //printf ("    posemesh triangle %d distance %f\n", closestTriangleID, distance);
          }
       }
 
       outTriangle.mTriangleID = closestTriangleID;
       outTriangle.mAzimuth    = closestPoint.x();
       outTriangle.mElevation  = closestPoint.y();
-      return;
+      //printf ("  posemesh triangle %d azimuth %f elevation %f\n", closestTriangleID, osg::RadiansToDegrees(closestPoint.x()), osg::RadiansToDegrees(closestPoint.y()));
+      //printf ("  posemesh deltas %d azimuth %f elevation %f\n", closestTriangleID, osg::RadiansToDegrees(closestPoint.x() - origAz), osg::RadiansToDegrees(closestPoint.y() - origEl));
+      return osg::Vec2(closestPoint.x() - origAz, closestPoint.y() - origEl);
    }
 
    outTriangle.mTriangleID = triangleID;
-   outTriangle.mAzimuth    = azimuth;
-   outTriangle.mElevation  = elevation;
-   //printf ("posemesh triangle %d azimuth %f elevation %f\n", triangleID, azimuth, elevation);
+   outTriangle.mAzimuth    = targetAz;
+   outTriangle.mElevation  = targetEl;
+   //printf ("  posemesh triangle %d azimuth %f elevation %f\n", triangleID, osg::RadiansToDegrees(targetAz), osg::RadiansToDegrees(targetEl));
+   return osg::Vec2(deltaAzimuth, deltaElevation);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -391,4 +403,4 @@ int PoseMesh::FindPoseTriangleID(float azimuth, float elevation) const
    return animationIndex;
 }
 
-
+}
