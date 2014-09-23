@@ -149,7 +149,7 @@
             </Window>
 
             <!-- LABEL - SEA CHOPPINESS -->
-            <!--Window Name="GameScreen_SeaChoppinessLabel" Type="WindowsLook/StaticText">
+            <Window Name="GameScreen_SeaChoppinessLabel" Type="WindowsLook/StaticText">
                <Property Name="UnifiedSize" Value="{{0.5,0},{0.1,0}}"/>
                <Property Name="UnifiedPosition" Value="{{0.0,0},{0.4,0}}"/>
                <Property Name="ZOrderChangeEnabled" Value="False"/>
@@ -160,37 +160,21 @@
                <Property Name="AlwaysOnTop" Value="True"/>
                <Property Name="TextColours" Value="FFFFFFFF"/>
                <Property Name="Text" Value="Sea Choppy"/>
-            </Window-->
+            </Window>
 
-            <!-- DROP LIST SEA CHOPPINESS -->
-            <!--Window Name="GameScreen_SeaChoppinessList" Type ="WindowsLook/Combobox">
-               <Property Name="UnifiedSize" Value="{{0.5,0},{1.0,180}}"/>
+            <!-- SEA CHOPPINESS SPINNER -->
+            <Window Name="GameScreen_SeaChoppinessSpinner" Type="WindowsLook/Spinner">
+               <Property Name="UnifiedSize" Value="{{0.25,0},{0.08,0}}"/>
                <Property Name="UnifiedPosition" Value="{{0.0,0},{0.4,0}}"/>
                <Property Name="ZOrderChangeEnabled" Value="False"/>
                <Property Name="AlwaysOnTop" Value="True"/>
                <Property Name="HorizontalAlignment" Value="Right"/>
-               <Property Name="SingleClickMode" Value="True"/>
-               <Property Name="ReadOnly" Value="True"/>
-               <Property Name="ForceVertScrollbar" Value="True"/>
-
-               <!- -Window Type ="WindowsLook/ListboxItem" Name="SeaChoppiness_Flat">
-                  <Property Name="UnifiedSize" Value="{{1.0,0},{0.0,30}}"/>
-                  <Property Name="Text" Value="Flat"/>
-               </Window>
-               <Window Type ="WindowsLook/ListboxItem" Name="SeaChoppiness_Mild">
-                  <Property Name="UnifiedSize" Value="{{1.0,0},{0.0,30}}"/>
-                  <Property Name="Text" Value="Mild"/>
-               </Window>
-               <Window Type ="WindowsLook/ListboxItem" Name="SeaChoppiness_Medium">
-                  <Property Name="UnifiedSize" Value="{{1.0,0},{0.0,30}}"/>
-                  <Property Name="Text" Value="Medium"/>
-               </Window>
-               <Window Type ="WindowsLook/ListboxItem" Name="SeaChoppiness_Rough">
-                  <Property Name="UnifiedSize" Value="{{1.0,0},{0.0,30}}"/>
-                  <Property Name="Text" Value="Rough"/>
-               </Window- ->
-               
-            </Window-->
+               <Property Name="MousePassThroughEnabled" Value="False"/>
+               <Property Name="TextInputMode" Value="Integer"/>
+               <Property Name="StepSize" Value="1"/>
+               <Property Name="MinimumValue" Value="0"/>
+               <Property Name="MaximumValue" Value="3"/>
+            </Window>
 
             <!-- BUTTON - TOGGLE FIREWORKS -->
             <Window Name="GameScreen_ToggleFireworks" Type="WindowsLook/Button">
