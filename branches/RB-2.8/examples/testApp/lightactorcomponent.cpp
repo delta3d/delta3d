@@ -36,7 +36,7 @@
 #include <dtGame/message.h>
 #include <dtGame/messagetype.h>
 #include <dtCore/propertymacros.h>
-
+#include <dtRender/dtrenderactorregistry.h>
 
 
 namespace dtExample
@@ -61,8 +61,8 @@ namespace dtExample
    const dtUtil::RefString LightActorComponent::PROPERTY_MESH_SHADER_PARAMETER_NAME("Mesh Shader Parameter Name");
    const dtUtil::RefString LightActorComponent::PROPERTY_MESH_SHADER_PARAMETER_TYPE("Mesh Shader Parameter Type");
    const dtUtil::RefString LightActorComponent::PROPERTY_MESH_SHADER_PARAMETER_ELEMENT("Mesh Shader Parameter Element");
-   const dtUtil::RefString LightActorComponent::PROPERTY_UDPATES_FROM_LIGHT_ENABLED("Updates From Light Enabled");
-   
+   const dtUtil::RefString LightActorComponent::PROPERTY_UDPATES_FROM_LIGHT_ENABLED("Updates From Light Enabled");   
+   const dtUtil::RefString LightActorComponent::PROPERTY_ATTACH_LIGHT_TO_OWNER("Attach light to owner");
 
 
    /////////////////////////////////////////////////////////////////////////////
@@ -70,6 +70,7 @@ namespace dtExample
    /////////////////////////////////////////////////////////////////////////////
    LightActorComponent::LightActorComponent(const ACType& type)
       : dtGame::ActorComponent(type)
+      , mAttachLightToOwner(true)
       , mCreateLight(false)
       , mEnableUpdatesFromLight(false)
       , mLastLightIntensity(0.0f)
@@ -91,8 +92,17 @@ namespace dtExample
 
       if ( ! light.valid())
       {
-         light = new dtRender::DynamicLight(
-            dtRender::DynamicLight::LightType::OMNI_DIRECTIONAL);
+         dtGame::GameActorProxy* act = NULL;
+         GetOwner(act);
+
+         if(act->GetDrawable() != NULL )
+         {
+            act->GetGameManager()->CreateActor(*dtRender::RenderActorRegistry::DYNAMIC_LIGHT_ACTOR_TYPE, light);
+            light->SetAttenuation(osg::Vec3(0.00001, 0.000014, 0.000007));
+            light->SetLightColor(osg::Vec3(1.0, 1.0, 1.0));
+            light->SetTarget(*dynamic_cast<dtCore::Transformable*>(act->GetDrawable()));
+            act->GetGameManager()->AddActor(*light, false, false);
+         }
       }
 
       return light;
@@ -122,7 +132,7 @@ namespace dtExample
       }
 
       // Ensure the light targets the owner actor.
-      if (light != NULL && light->GetInitialOwnership() == dtGame::GameActorProxy::Ownership::PROTOTYPE)
+      if (light != NULL && light->GetInitialOwnership() != dtGame::GameActorProxy::Ownership::PROTOTYPE && mAttachLightToOwner)
       {
          dtGame::GameActorProxy* actor = NULL;
          GetOwner(actor);
@@ -155,6 +165,8 @@ namespace dtExample
          mLightId = id;
 
          SetLight(GetLightActorById(id));
+
+         mCreateLight = false;
       }
    }
 
@@ -316,6 +328,14 @@ namespace dtExample
          BooleanActorProperty::GetFuncType(this,&LightActorComponent::IsUpdatesFromLightEnabled),
          RefString("Enables the actor to update its shader by using values from the referenced light actor."),
          GROUP));
+
+      AddProperty(new dtCore::BooleanActorProperty( 
+         PROPERTY_ATTACH_LIGHT_TO_OWNER,
+         PROPERTY_ATTACH_LIGHT_TO_OWNER,
+         BooleanActorProperty::SetFuncType(this,&LightActorComponent::SetAttachLightToOwner),
+         BooleanActorProperty::GetFuncType(this,&LightActorComponent::GetAttachLightToOwner),
+         RefString("This property will ignore the lights position and attach it to the owner of this actor."),
+         GROUP));
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -469,7 +489,7 @@ namespace dtExample
                if (actor->GetInitialOwnership() != dtGame::GameActorProxy::Ownership::PROTOTYPE)
                {
                   dtGame::GameManager* gm = actor->GetGameManager();
-                  gm->CreateActorFromPrototype(light->GameActorProxy::GetId(), light);
+                  gm->CreateActorFromPrototype(light->GetId(), light);
 
                   gm->AddActor(*light, false, false);
                }
@@ -494,6 +514,16 @@ namespace dtExample
       {
          RegisterForTick();
       }
+   }
+
+   bool LightActorComponent::GetAttachLightToOwner() const
+   {
+      return mAttachLightToOwner;
+   }
+
+   void LightActorComponent::SetAttachLightToOwner( bool b )
+   {
+      mAttachLightToOwner = b;
    }
 
 }

@@ -62,7 +62,7 @@ namespace dtRender
       template<class T>
       bool operator()(T lightPtr)
       {
-         return lightPtr->GetId() == mId;
+         return lightPtr->GetLightId() == mId;
       }
    private:
 
@@ -348,12 +348,9 @@ namespace dtRender
       for(;iter != endIter; ++iter)
       {
          DynamicLight* dl = (*iter).get();
-         if(dl->GetTarget() != NULL)
-         {
-            //update the light's position
-            SetPosition(dl);
-         }
-
+         //update the light's position
+         SetPosition(dl);
+      
          if (dl->GetLightType() == DynamicLight::LightType::SPOT_LIGHT)
          {
             SpotLight* sLight = dynamic_cast<SpotLight*>(dl);
@@ -500,13 +497,23 @@ namespace dtRender
    ///////////////////////////////////////////////////////////////////////////////////////////////////
    void LightScene::SetPosition(DynamicLight* dl)
    {
-      if(dl != NULL && dl->GetTarget() != NULL)
+      if(dl != NULL)
       {
-         dtCore::Transform xform;
-         dl->GetTarget()->GetTransform(xform);
          osg::Vec3 newPos;
-         xform.GetTranslation(newPos);
-         dl->SetLightPosition(newPos);
+         dtCore::Transform xform;
+
+         //if the light has a target set use the target position
+         if(dl->GetTarget() != NULL)
+         {
+            dl->GetTarget()->GetTransform(xform);
+            xform.GetTranslation(newPos);
+            dl->SetLightPosition(newPos);
+         }
+         else //use the actor position
+         {
+            newPos = dl->GetTranslation();
+            dl->SetLightPosition(newPos);
+         }
       }
    }
 

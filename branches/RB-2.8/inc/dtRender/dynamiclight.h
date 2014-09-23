@@ -116,7 +116,7 @@ namespace dtRender
          void SetTarget(dtCore::Transformable&);
 
          static LightID GetCurrentLightIdCounter() { return mLightCounter; }
-         LightID GetId() const { return mId; }
+         LightID GetLightId() const { return mId; }
 
       protected:
          /// Destructor
