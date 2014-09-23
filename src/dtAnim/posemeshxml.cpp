@@ -35,7 +35,7 @@ const char PoseMeshFileHandler::ANIMATION_NODE[] = { "Animation\0" };
 
 const char PoseMeshFileHandler::NAME_ATTRIBUTE[]             = { "name\0"                };
 const char PoseMeshFileHandler::ROOT_ATTRIBUTE[]             = { "root\0"                };
-const char PoseMeshFileHandler::BIND_POSE_FORWARD_ATTRIBUTE[]     = { "BindPoseForwardVector\0"     };
+const char PoseMeshFileHandler::BIND_POSE_FORWARD_ATTRIBUTE[]     = { "bindPoseForwardVector\0"     };
 //const char PoseMeshFileHandler::ROOT_FORWARD_ATTRIBUTE[]     = { "rootForwardAxis\0"     };
 const char PoseMeshFileHandler::EFFECTOR_ATTRIBUTE[]         = { "effector\0"            };
 //const char PoseMeshFileHandler::EFFECTOR_FORWARD_ATTRIBUTE[] = { "effectorForwardAxis\0" };

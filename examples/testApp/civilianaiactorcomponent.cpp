@@ -40,7 +40,7 @@ namespace dtExample
    , mAnimationLowWalkSpeed(0.4f)
    , mStepHeight(0.3f)
    , mMaxIncline(70.0f)
-   , mLookAtCameraRange(10.0f)
+   , mLookAtCameraRange(15.0f)
    , mEntityIndex(0)
    , mIgnoreRotation()
    , mHasDestination()
@@ -263,7 +263,7 @@ namespace dtExample
                   controller->SetTargetOffset(osg::Vec3(0.0f, 0.0f, 11.3f));
                   animHelper->SetPosesEnabled(true);
                   mLookedAtNearTarget = true;
-                  gm->SetTimer("StopLooking", GetOwner<dtGame::GameActorProxy>(), 9.0f, false);
+                  gm->SetTimer("StopLooking", GetOwner<dtGame::GameActorProxy>(), 10.0f, false);
                   LOG_ALWAYS(mTransformable->GetName() + " Starting to look.");
                }
                else if (timerMsg.GetTimerName() == "StopLooking")

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PoseMeshFile>
-	<PoseMesh name="Poses_Head" root="mPelvis"  rootForwardAxis="0.0 0.0 1.0"
-	          effector="mHead" effectorForwardAxis="0.0 0.0 1.0">	
+	<PoseMesh name="Poses_Head" root="mPelvis" bindPoseForwardVector="0.0 1.0 0.0"
+	          effector="mHead">	
 		<Triangle>
 			<Animation>poses/HeadDownRight.xaf</Animation>
 			<Animation>poses/HeadDownLeft.xaf</Animation>
@@ -24,8 +24,8 @@
 		</Triangle>						
 	</PoseMesh>	
 	
-	<PoseMesh name="Poses_LeftEye" root="mPelvis"  rootForwardAxis="0.0 0.0 1.0"
-	          effector="mEyeLeft" effectorForwardAxis="0.0 1.0 0.0">	
+	<PoseMesh name="Poses_LeftEye" root="mPelvis" bindPoseForwardVector="0.0 1.0 0.0"
+	          effector="mEyeLeft">	
 		<Triangle>
 			<Animation>poses/EyeLeftIn.xaf</Animation>
 			<Animation>poses/EyeLeftMidDown.xaf</Animation>
@@ -48,8 +48,8 @@
 		</Triangle>						
 	</PoseMesh>	
 	
-	<PoseMesh name="Poses_RightEye" root="mPelvis"  rootForwardAxis="0.0 0.0 1.0"
-	          effector="mEyeRight" effectorForwardAxis="0.0 1.0 0.0">	
+	<PoseMesh name="Poses_RightEye" root="mPelvis" bindPoseForwardVector="0.0 1.0 0.0"
+	          effector="mEyeRight">	
 		<Triangle>
 			<Animation>poses/EyeRightIn.xaf</Animation>
 			<Animation>poses/EyeRightMidUp.xaf</Animation>
@@ -72,8 +72,8 @@
 		</Triangle>						
 	</PoseMesh>
 
-  <PoseMesh name="Poses_Torso" root="mPelvis"  rootForwardAxis="0.0 0.0 1.0"
-	          effector="mChest" effectorForwardAxis="0.0 0.0 1.0">	
+        <PoseMesh name="Poses_Torso" root="mPelvis" bindPoseForwardVector="0.0 1.0 0.0"
+	          effector="mChest">	
 		<Triangle>
 			<Animation>poses/TorsoDownRight.xaf</Animation>
 			<Animation>poses/TorsoForward.xaf</Animation>

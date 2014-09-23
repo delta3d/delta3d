@@ -116,12 +116,15 @@ namespace dtAnim
       /**
       *  GetTargetTriangleData Finds the triangle in the mesh for the given azimuth elevation
       *                        if it exists, otherwise it returns the closest triangle and its coordinates
-      *  @param azimuth the horizontal angle between our forward and our target
-      *  @param elevation the vertical angle between our forward and our target
-      *  @return outTriangle struct containing the nearest triangle and it's location
+      *  @param deltaAzimuth the change in horizontal angle between our forward and our target
+      *  @param deltaElevation the change in vertical angle between our forward and our target
+      *  @param outTriangle struct containing the nearest triangle and it's location.  Passing in the last triangle
+      *                      so it can use the old values for azimuth and elevation, or pass in a zeroed one for absolutes.
+      *  @return a pair with the actual delta values.  If the maximums were exceeded, these will not be the same as the values
+      *          passed in.
       */
-      void GetTargetTriangleData(const float azimuth,
-                                 const float elevation,
+      osg::Vec2 GetTargetTriangleData(const float deltaAzimuth,
+                                 const float deltaElevation,
                                  TargetTriangle& outTriangle) const;
 
       /**

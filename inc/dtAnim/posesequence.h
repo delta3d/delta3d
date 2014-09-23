@@ -157,6 +157,8 @@ namespace dtAnim
 
       // for stability
       osg::Vec3 mLastHead;
+      float mLastAzimuth;
+      float mLastElevation;
 
       PoseInfoList mPoseInfoList;
    };
