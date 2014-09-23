@@ -407,6 +407,16 @@ namespace dtExample
    }
 
    //////////////////////////////////////////////////////////////////////////
+   // HELPER CLASS
+   struct SortActorPred
+   {
+      bool operator() (dtCore::BaseActorObject* a, dtCore::BaseActorObject* b) const
+      {
+         return strcmp(a->GetName().c_str(), b->GetName().c_str()) < 0;
+      }
+   };
+
+   //////////////////////////////////////////////////////////////////////////
    void GuiComponent::UpdateActorList(GuiScreen& screen)
    {
       TestAppUtils util;
@@ -426,6 +436,9 @@ namespace dtExample
          typedef std::vector<dtCore::BaseActorObject*> ActorList;
          ActorList actors;
          GetGameManager()->GetAllActors(actors);
+
+         SortActorPred pred;
+         std::sort(actors.begin(), actors.end(), pred);
 
          dtCore::BaseActorObject* curActor = NULL;
          ActorList::iterator curIter = actors.begin();
