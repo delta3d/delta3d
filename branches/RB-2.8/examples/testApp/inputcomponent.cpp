@@ -111,9 +111,11 @@ namespace dtExample
       , mGroundClampedObject(NULL)
       , mGroundClamper(NULL)
    {
+#if defined(USE_INSPECTOR)
       int argc = 0;
       mInspector = new dtInspectorQt::InspectorQt(argc, NULL);
       mInspector->SetVisible(false);
+#endif
    }
 
    ////////////////////////////////////////////////////////////////////////
