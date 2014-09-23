@@ -41,6 +41,8 @@
 #include <dtRender/scenemanager.h> //needed to get the camera
 #include <dtCore/camera.h> //needed to set the clear color to get rid of rendering artifact
 
+#include <dtUtil/mathdefines.h>
+
 namespace dtRender
 {
    const dtCore::RefPtr<SceneType> EphemerisScene::EPHEMERIS_SCENE(new SceneType("Ephemeris Scene", "Scene", "Uses osgEphemeris to render a sky dome."));
@@ -539,6 +541,9 @@ namespace dtRender
          return;
       }
 
+      if (dtUtil::Equivalent(mImpl->mVisibility, 0.0f))
+         return;
+
       mImpl->mVisibility = distance;
 
       double sqrt_m_log01 = sqrt(-log(0.01));
@@ -570,12 +575,8 @@ namespace dtRender
 
       if (ephem != NULL)
       {
-         ephem->dateTime.setYear(dt.GetYear()); // DateTime uses _actual_ year (not since 1900)
-         ephem->dateTime.setMonth(dt.GetMonth());    // DateTime numbers months from 1 to 12, not 0 to 11
-         ephem->dateTime.setDayOfMonth(dt.GetDay()); // DateTime numbers days from 1 to 31, not 0 to 30
-         ephem->dateTime.setHour(dt.GetHour());
-         ephem->dateTime.setMinute(dt.GetMinute());
-         ephem->dateTime.setSecond(unsigned(dt.GetSecond()));
+         ephem->dateTime = osgEphemeris::DateTime(dt.GetYear(),
+               dt.GetMonth(), dt.GetDay(), dt.GetHour(), dt.GetMinute(), int(dt.GetSecond()));
       }
       else
       {
