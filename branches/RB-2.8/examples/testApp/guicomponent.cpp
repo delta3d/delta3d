@@ -280,24 +280,6 @@ namespace dtExample
          cp->subscribeEvent(GuiNode::EventMouseLeavesArea,
             CEGUI::Event::Subscriber(&GuiComponent::OnControlPanelFocusLost, this));
 
-         // Populate the list controls.
-         /*typedef std::vector<dtUtil::Enumeration*> EnumList;
-         typedef dtActors::WaterGridActor::ChoppinessSettings Choppiness;
-         const EnumList& choppies = Choppiness::Enumerate();
-
-         {
-            GuiCombobox* combo = dynamic_cast<GuiCombobox*>(mGameScreen->GetNode("GameScreen_SeaChoppinessList"));
-            EnumList::const_iterator curIter = choppies.begin();
-            EnumList::const_iterator endIter = choppies.end();
-            for (; curIter != endIter; ++curIter)
-            {
-               std::string name((*curIter)->GetName());
-               CEGUI::ListboxItem* item = dynamic_cast<CEGUI::ListboxItem*>(CEGUI::WindowManager::getSingleton().createWindow("WindowsLook/ListboxItem"));
-               item->setText(name.c_str());
-               combo->addItem(item);
-            }
-         }*/
-
          // Hide all screens by default.
          GuiScreen * curScreen = NULL;
          GameStateScreenMap::iterator curIter = mScreens.begin();
@@ -387,7 +369,7 @@ namespace dtExample
 
 
       // Update the Sea Choppiness combobox
-      /*typedef dtActors::WaterGridActor::ChoppinessSettings Choppiness;
+      typedef dtActors::WaterGridActor::ChoppinessSettings Choppiness;
       const EnumList& choppies = Choppiness::Enumerate();
 
       Choppiness& choppiness = comp->GetWaterChoppiness();
@@ -406,8 +388,8 @@ namespace dtExample
          }
       }
 
-      GuiCombobox* combo = dynamic_cast<GuiCombobox*>(screen.GetNode("GameScreen_SeaChoppinessList"));
-      combo->setItemSelectState(index, true)*/;
+      spinner = dynamic_cast<GuiSpinner*>(screen.GetNode("GameScreen_SeaChoppinessSpinner"));
+      spinner->setCurrentValue(index);
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -705,17 +687,7 @@ namespace dtExample
             value = item->getText().c_str();
          }
 
-         if (controlName == "GameScreen_SeaChoppinessList")
-         {
-            typedef dtActors::WaterGridActor::ChoppinessSettings Choppiness;
-            Choppiness* choppiness = Choppiness::GetValueForName(value);
-
-            if (choppiness != NULL)
-            {
-               InputComponent* comp = GetInputComponent();
-               comp->SetWaterChoppiness(*choppiness);
-            }
-         }
+         // TODO:
       }
 
       return true;
@@ -725,6 +697,8 @@ namespace dtExample
    bool GuiComponent::OnSpinnerChanged(const GuiEventArgs& args)
    {
       const GuiSpinner* spinner = dynamic_cast<const GuiSpinner*>(GetWidgetFromEventArgs(args));
+
+      typedef std::vector<dtUtil::Enumeration*> EnumList;
 
       if (spinner != NULL)
       {
@@ -746,11 +720,9 @@ namespace dtExample
             size_t index = (size_t)value;
 
             typedef dtActors::WaterGridActor::SeaState SeaState;
-            SeaState* state = NULL;
-            
-            typedef std::vector<dtUtil::Enumeration*> EnumList;
             const EnumList& seaStates = SeaState::Enumerate();
 
+            SeaState* state = NULL;
             if (index >= 0 && seaStates.size() > index)
             {
                state = dynamic_cast<SeaState*>(seaStates[index]);
@@ -759,6 +731,24 @@ namespace dtExample
             if (state != NULL)
             {
                comp->SetSeaState(*state);
+            }
+         }
+         else if (controlName == "GameScreen_SeaChoppinessSpinner")
+         {
+            size_t index = (size_t)value;
+
+            typedef dtActors::WaterGridActor::ChoppinessSettings Choppiness;
+            const EnumList& choppies = Choppiness::Enumerate();
+
+            Choppiness* choppiness = NULL;
+            if (index >= 0 && choppies.size() > index)
+            {
+               choppiness = dynamic_cast<Choppiness*>(choppies[index]);
+            }
+
+            if (choppiness != NULL)
+            {
+               comp->SetWaterChoppiness(*choppiness);
             }
          }
       }
