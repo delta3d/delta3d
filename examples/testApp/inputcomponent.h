@@ -39,7 +39,22 @@
 #include <dtActors/watergridactor.h>
 #include <dtABC/beziercontroller.h>
 
-namespace dtInspectorQt { class InspectorQt; }
+
+
+////////////////////////////////////////////////////////////////////////////////
+// FORWARD DECLARATIONS
+////////////////////////////////////////////////////////////////////////////////
+namespace dtInspectorQt
+{
+   class InspectorQt;
+}
+
+namespace dtRender
+{
+   class SceneManager;
+}
+
+
 
 namespace dtExample
 {
@@ -93,6 +108,12 @@ namespace dtExample
          dtActors::WaterGridActor::ChoppinessSettings& GetWaterChoppiness() const;
          void SetWaterChoppiness(dtActors::WaterGridActor::ChoppinessSettings&);
 
+         void SetAmbience(float amt);
+         float GetAmbience();
+
+         void SetLuminance(float amt);
+         float GetLuminance();
+
       protected:
 
          /// Destructor
@@ -124,8 +145,6 @@ namespace dtExample
          void SetMotionModel(const dtExample::MotionModelType& motionModelType);
 
          void IncrementTime(float numSeconds);
-         void IncrementAmbience(float amt);
-         void IncrementLuminance(float amt);
 
          void IncrementMotionModelSpeed(float increment);
 
@@ -134,6 +153,8 @@ namespace dtExample
             dtCore::MotionModel& motionModel, float speed);
          
          void DoGroundClamping(float simTime);
+
+         dtRender::SceneManager* GetSceneManager();
 
       private:
          float mTimeOffset;

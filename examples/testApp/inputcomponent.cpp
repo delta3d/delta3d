@@ -171,7 +171,7 @@ namespace dtExample
             // --- Control Adjustment Section --- //
             case '0':
             {
-               dtRender::SceneManager* sm = dynamic_cast<dtRender::SceneManager*>(GetGameManager()->GetEnvironmentActor()->GetDrawable());
+               dtRender::SceneManager* sm = GetSceneManager();
 
                if(sm != NULL)
                {
@@ -845,7 +845,7 @@ namespace dtExample
    //////////////////////////////////////////////////////////////////////////
    void InputComponent::IncrementTime(float numSeconds)
    {
-      dtRender::SceneManager* sm = dynamic_cast<dtRender::SceneManager*>(GetGameManager()->GetEnvironmentActor()->GetDrawable());
+      dtRender::SceneManager* sm = GetSceneManager();
       
       if(sm != NULL)
       {
@@ -1350,24 +1350,43 @@ namespace dtExample
       return success;
    }
 
-   void InputComponent::IncrementAmbience( float amt )
+   void InputComponent::SetAmbience( float amt )
    {
-      dtRender::SceneManager* sm = dynamic_cast<dtRender::SceneManager*>(GetGameManager()->GetEnvironmentActor()->GetDrawable());
+      dtRender::SceneManager* sm = GetSceneManager();
 
       if(sm != NULL)
       {
-         sm->SetAmbience(sm->GetAmbience() + amt);
+         sm->SetAmbience(amt);
       }
    }
 
-   void InputComponent::IncrementLuminance( float amt )
+   float InputComponent::GetAmbience()
    {
-      dtRender::SceneManager* sm = dynamic_cast<dtRender::SceneManager*>(GetGameManager()->GetEnvironmentActor()->GetDrawable());
+      dtRender::SceneManager* sm = GetSceneManager();
+
+      return sm != NULL ? sm->GetAmbience() : 0.0f;
+   }
+
+   void InputComponent::SetLuminance( float amt )
+   {
+      dtRender::SceneManager* sm = GetSceneManager();
 
       if(sm != NULL)
       {
-         sm->SetLuminance(sm->GetLuminance() + amt);
+         sm->SetLuminance(amt);
       }
+   }
+
+   float InputComponent::GetLuminance()
+   {
+      dtRender::SceneManager* sm = GetSceneManager();
+
+      return sm != NULL ? sm->GetLuminance() : 1.0f;
+   }
+
+   dtRender::SceneManager* InputComponent::GetSceneManager()
+   {
+      return dynamic_cast<dtRender::SceneManager*>(GetGameManager()->GetEnvironmentActor()->GetDrawable());
    }
 
 
