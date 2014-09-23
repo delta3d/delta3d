@@ -578,7 +578,7 @@ namespace dtExample
          light->SetIntensity(1.0f);
       }
 
-      FadeLight(mSparkLifeTime);
+      //FadeLight(mSparkLifeTime);
    }
 
    /////////////////////////////////////////////////////////////////////////////
