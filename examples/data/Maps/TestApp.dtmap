@@ -7,7 +7,7 @@
         <comment></comment>
         <copyright></copyright>
         <createTimestamp>2014-07-15T22:49:46-05:00</createTimestamp>
-        <lastUpdateTimestamp>2014-09-22T21:18:01-05:00</lastUpdateTimestamp>
+        <lastUpdateTimestamp>2014-09-22T22:55:54-05:00</lastUpdateTimestamp>
         <editorVersion>2.8.0</editorVersion>
         <schemaVersion>1.0</schemaVersion>
     </header>
@@ -787,14 +787,14 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>-0.000000</value2>
-                    <value3>47.638466</value3>
+                    <value3>47.291824</value3>
                 </vec3>
             </property>
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>125.326981</value1>
-                    <value2>-342.462158</value2>
+                    <value1>89.595505</value1>
+                    <value2>-309.712708</value2>
                     <value3>0.000000</value3>
                 </vec3>
             </property>
@@ -818,7 +818,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254868</value3>
+                    <value3>-87.254890</value3>
                 </vec3>
             </property>
             <property>
@@ -1046,6 +1046,10 @@
                 <name>Radius</name>
                 <float>25</float>
             </property>
+            <property>
+                <name>Delete When Target Is Null</name>
+                <boolean>false</boolean>
+            </property>
         </actor>
         <actor>
             <type>dtExample.Mesh Object</type>
@@ -1233,6 +1237,10 @@
                 <name>Updates From Light Enabled</name>
                 <boolean>true</boolean>
             </property>
+            <property>
+                <name>Attach light to owner</name>
+                <boolean>false</boolean>
+            </property>
         </actor>
         <actor>
             <type>dtExample.Mesh Object</type>
@@ -1346,6 +1354,10 @@
             <property>
                 <name>Updates From Light Enabled</name>
                 <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Attach light to owner</name>
+                <boolean>false</boolean>
             </property>
         </actor>
         <actor>
@@ -1553,6 +1565,10 @@
                 <name>Updates From Light Enabled</name>
                 <boolean>true</boolean>
             </property>
+            <property>
+                <name>Attach light to owner</name>
+                <boolean>false</boolean>
+            </property>
         </actor>
         <actor>
             <type>dtExample.Mesh Object</type>
@@ -1751,7 +1767,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254868</value3>
+                    <value3>-87.254890</value3>
                 </vec3>
             </property>
             <property>
@@ -2242,6 +2258,10 @@
                 <name>Light</name>
                 <actorId>a704a3cd-9ec3-4b4c-91b1-1c37d24890fa</actorId>
             </property>
+            <property>
+                <name>Updates From Light Enabled</name>
+                <boolean>true</boolean>
+            </property>
         </actor>
         <actor>
             <type>dtExample.Mesh Object</type>
@@ -2534,6 +2554,10 @@
                 <name>Light</name>
                 <actorId>a704a3cd-9ec3-4b4c-91b1-1c37d24890fa</actorId>
             </property>
+            <property>
+                <name>Updates From Light Enabled</name>
+                <boolean>true</boolean>
+            </property>
         </actor>
         <actor>
             <type>dtExample.Mesh Object</type>
@@ -2801,7 +2825,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254868</value3>
+                    <value3>-87.254890</value3>
                 </vec3>
             </property>
             <property>
@@ -2994,6 +3018,10 @@
                 <name>Updates From Light Enabled</name>
                 <boolean>true</boolean>
             </property>
+            <property>
+                <name>Attach light to owner</name>
+                <boolean>false</boolean>
+            </property>
         </actor>
         <actor>
             <type>dtExample.Civilian</type>
@@ -3126,7 +3154,7 @@
                 <name>Rotation</name>
                 <vec3>
                     <value1>-0.823274</value1>
-                    <value2>-0.623614</value2>
+                    <value2>-0.623641</value2>
                     <value3>124.004814</value3>
                 </vec3>
             </property>
@@ -3511,6 +3539,10 @@
                 <name>Light</name>
                 <actorId>a704a3cd-9ec3-4b4c-91b1-1c37d24890fa</actorId>
             </property>
+            <property>
+                <name>Updates From Light Enabled</name>
+                <boolean>true</boolean>
+            </property>
         </actor>
         <actor>
             <type>dtcore.Action.Bezier Controller</type>
@@ -3594,6 +3626,10 @@
                 <name>Radius</name>
                 <float>10</float>
             </property>
+            <property>
+                <name>Delete When Target Is Null</name>
+                <boolean>false</boolean>
+            </property>
         </actor>
         <actor>
             <type>dtcore.Player Start</type>
@@ -3663,6 +3699,10 @@
             <property>
                 <name>Light</name>
                 <actorId>a704a3cd-9ec3-4b4c-91b1-1c37d24890fa</actorId>
+            </property>
+            <property>
+                <name>Updates From Light Enabled</name>
+                <boolean>true</boolean>
             </property>
         </actor>
         <actor>
@@ -3810,6 +3850,10 @@
             <property>
                 <name>Radius</name>
                 <float>25</float>
+            </property>
+            <property>
+                <name>Delete When Target Is Null</name>
+                <boolean>false</boolean>
             </property>
         </actor>
         <actor>
@@ -3974,7 +4018,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254868</value3>
+                    <value3>-87.254890</value3>
                 </vec3>
             </property>
             <property>
@@ -4175,6 +4219,10 @@
             <property>
                 <name>Updates From Light Enabled</name>
                 <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Attach light to owner</name>
+                <boolean>false</boolean>
             </property>
         </actor>
         <actor>
@@ -4847,6 +4895,10 @@
                 <name>Radius</name>
                 <float>10</float>
             </property>
+            <property>
+                <name>Delete When Target Is Null</name>
+                <boolean>false</boolean>
+            </property>
         </actor>
         <actor>
             <type>dtcore.Curve.Bezier Control Point</type>
@@ -5083,6 +5135,10 @@
                 <name>Radius</name>
                 <float>25</float>
             </property>
+            <property>
+                <name>Delete When Target Is Null</name>
+                <boolean>false</boolean>
+            </property>
         </actor>
         <actor>
             <type>dtExample.Mesh Object</type>
@@ -5225,6 +5281,10 @@
             <property>
                 <name>Radius</name>
                 <float>25</float>
+            </property>
+            <property>
+                <name>Delete When Target Is Null</name>
+                <boolean>false</boolean>
             </property>
         </actor>
         <actor>
@@ -5462,7 +5522,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-73.005310</value3>
+                    <value3>-73.005318</value3>
                 </vec3>
             </property>
             <property>
@@ -6021,6 +6081,10 @@
                 <name>Light</name>
                 <actorId>a704a3cd-9ec3-4b4c-91b1-1c37d24890fa</actorId>
             </property>
+            <property>
+                <name>Updates From Light Enabled</name>
+                <boolean>true</boolean>
+            </property>
         </actor>
         <actor>
             <type>dtExample.Civilian</type>
@@ -6216,7 +6280,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254868</value3>
+                    <value3>-87.254890</value3>
                 </vec3>
             </property>
             <property>
@@ -6519,14 +6583,14 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>-0.000000</value2>
-                    <value3>-88.892181</value3>
+                    <value3>-90.278633</value3>
                 </vec3>
             </property>
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-518.209839</value1>
-                    <value2>-434.282166</value2>
+                    <value1>-1653.766846</value1>
+                    <value2>-438.616211</value2>
                     <value3>75.000000</value3>
                 </vec3>
             </property>
@@ -7041,7 +7105,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254868</value3>
+                    <value3>-87.254890</value3>
                 </vec3>
             </property>
             <property>
@@ -7155,7 +7219,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254868</value3>
+                    <value3>-87.254890</value3>
                 </vec3>
             </property>
             <property>
@@ -8852,6 +8916,10 @@
                 <name>Radius</name>
                 <float>25</float>
             </property>
+            <property>
+                <name>Delete When Target Is Null</name>
+                <boolean>false</boolean>
+            </property>
         </actor>
         <actor>
             <type>dtcore.Curve.Bezier Control Point</type>
@@ -9255,6 +9323,10 @@
             <property>
                 <name>Radius</name>
                 <float>25</float>
+            </property>
+            <property>
+                <name>Delete When Target Is Null</name>
+                <boolean>false</boolean>
             </property>
         </actor>
         <actor>
@@ -9672,7 +9744,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254868</value3>
+                    <value3>-87.254890</value3>
                 </vec3>
             </property>
             <property>
@@ -10764,7 +10836,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254868</value3>
+                    <value3>-87.254890</value3>
                 </vec3>
             </property>
             <property>
@@ -11084,6 +11156,10 @@
             <property>
                 <name>Light</name>
                 <actorId>a704a3cd-9ec3-4b4c-91b1-1c37d24890fa</actorId>
+            </property>
+            <property>
+                <name>Updates From Light Enabled</name>
+                <boolean>true</boolean>
             </property>
         </actor>
         <actor>
@@ -11556,6 +11632,10 @@
                 <name>Updates From Light Enabled</name>
                 <boolean>true</boolean>
             </property>
+            <property>
+                <name>Attach light to owner</name>
+                <boolean>false</boolean>
+            </property>
         </actor>
         <actor>
             <type>dtExample.Mesh Object</type>
@@ -11750,7 +11830,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254868</value3>
+                    <value3>-87.254890</value3>
                 </vec3>
             </property>
             <property>
@@ -12082,6 +12162,10 @@
             <property>
                 <name>Radius</name>
                 <float>10</float>
+            </property>
+            <property>
+                <name>Delete When Target Is Null</name>
+                <boolean>false</boolean>
             </property>
         </actor>
         <actor>
@@ -12739,6 +12823,10 @@
                 <name>Radius</name>
                 <float>25</float>
             </property>
+            <property>
+                <name>Delete When Target Is Null</name>
+                <boolean>false</boolean>
+            </property>
         </actor>
         <actor>
             <type>dtExample.Mesh Lamp</type>
@@ -12795,6 +12883,10 @@
             <property>
                 <name>Updates From Light Enabled</name>
                 <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Attach light to owner</name>
+                <boolean>false</boolean>
             </property>
         </actor>
         <actor>
@@ -13119,6 +13211,10 @@
                 <name>Updates From Light Enabled</name>
                 <boolean>true</boolean>
             </property>
+            <property>
+                <name>Attach light to owner</name>
+                <boolean>false</boolean>
+            </property>
         </actor>
         <actor>
             <type>dtExample.Mesh Object</type>
@@ -13389,6 +13485,10 @@
                 <name>Light</name>
                 <actorId>a704a3cd-9ec3-4b4c-91b1-1c37d24890fa</actorId>
             </property>
+            <property>
+                <name>Updates From Light Enabled</name>
+                <boolean>true</boolean>
+            </property>
         </actor>
         <actor>
             <type>dtcore.Curve.Bezier Control Point</type>
@@ -13517,6 +13617,10 @@
                 <name>Light</name>
                 <actorId>a704a3cd-9ec3-4b4c-91b1-1c37d24890fa</actorId>
             </property>
+            <property>
+                <name>Updates From Light Enabled</name>
+                <boolean>true</boolean>
+            </property>
         </actor>
         <actor>
             <type>dtcore.Curve.Bezier Control Point</type>
@@ -13543,7 +13647,7 @@
                 <name>Rotation</name>
                 <vec3>
                     <value1>-0.823274</value1>
-                    <value2>-0.623614</value2>
+                    <value2>-0.623641</value2>
                     <value3>124.004814</value3>
                 </vec3>
             </property>
@@ -14075,7 +14179,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254868</value3>
+                    <value3>-87.254890</value3>
                 </vec3>
             </property>
             <property>
@@ -14132,7 +14236,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254868</value3>
+                    <value3>-87.254890</value3>
                 </vec3>
             </property>
             <property>
@@ -14498,6 +14602,10 @@
             <property>
                 <name>Radius</name>
                 <float>25</float>
+            </property>
+            <property>
+                <name>Delete When Target Is Null</name>
+                <boolean>false</boolean>
             </property>
         </actor>
         <actor>
@@ -14984,7 +15092,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254868</value3>
+                    <value3>-87.254890</value3>
                 </vec3>
             </property>
             <property>
@@ -15234,7 +15342,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-59.716415</value3>
+                    <value3>-59.716446</value3>
                 </vec3>
             </property>
             <property>
@@ -15276,6 +15384,10 @@
             <property>
                 <name>Updates From Light Enabled</name>
                 <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Attach light to owner</name>
+                <boolean>false</boolean>
             </property>
         </actor>
         <actor>
@@ -15642,6 +15754,10 @@
             <property>
                 <name>Updates From Light Enabled</name>
                 <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Attach light to owner</name>
+                <boolean>false</boolean>
             </property>
         </actor>
         <actor>
@@ -16082,6 +16198,10 @@
                 <name>Radius</name>
                 <float>25</float>
             </property>
+            <property>
+                <name>Delete When Target Is Null</name>
+                <boolean>false</boolean>
+            </property>
         </actor>
         <actor>
             <type>dtExample.Mesh Object</type>
@@ -16183,6 +16303,10 @@
             <property>
                 <name>Radius</name>
                 <float>25</float>
+            </property>
+            <property>
+                <name>Delete When Target Is Null</name>
+                <boolean>false</boolean>
             </property>
         </actor>
         <actor>
@@ -16605,6 +16729,10 @@
                 <name>Radius</name>
                 <float>25</float>
             </property>
+            <property>
+                <name>Delete When Target Is Null</name>
+                <boolean>false</boolean>
+            </property>
         </actor>
         <actor>
             <type>dtExample.Mesh Object</type>
@@ -16709,7 +16837,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254868</value3>
+                    <value3>-87.254890</value3>
                 </vec3>
             </property>
             <property>
@@ -16823,7 +16951,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254868</value3>
+                    <value3>-87.254890</value3>
                 </vec3>
             </property>
             <property>
@@ -17004,7 +17132,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254868</value3>
+                    <value3>-87.254890</value3>
                 </vec3>
             </property>
             <property>
@@ -17701,7 +17829,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254868</value3>
+                    <value3>-87.254890</value3>
                 </vec3>
             </property>
             <property>
@@ -18091,6 +18219,10 @@
                 <name>Updates From Light Enabled</name>
                 <boolean>true</boolean>
             </property>
+            <property>
+                <name>Attach light to owner</name>
+                <boolean>false</boolean>
+            </property>
         </actor>
         <actor>
             <type>dtRender.Dynamic Light</type>
@@ -18127,6 +18259,10 @@
             <property>
                 <name>Radius</name>
                 <float>10</float>
+            </property>
+            <property>
+                <name>Delete When Target Is Null</name>
+                <boolean>false</boolean>
             </property>
         </actor>
         <actor>
@@ -18469,6 +18605,10 @@
             <property>
                 <name>Light</name>
                 <actorId>a704a3cd-9ec3-4b4c-91b1-1c37d24890fa</actorId>
+            </property>
+            <property>
+                <name>Updates From Light Enabled</name>
+                <boolean>true</boolean>
             </property>
         </actor>
         <actor>
