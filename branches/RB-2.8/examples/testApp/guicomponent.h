@@ -85,9 +85,6 @@ namespace dtExample
          static const dtUtil::RefString TESTAPP_BUTTON_TYPE;
          static const dtUtil::RefString TESTAPP_BUTTON_PROPERTY_ACTION;
          static const dtUtil::RefString TESTAPP_BUTTON_PROPERTY_TYPE;
-         static const dtUtil::RefString UI_BACKGROUND;
-         static const dtUtil::RefString UI_TEXT_MOTION_MODEL;
-         static const dtUtil::RefString UI_TEXT_STATUS;
 
          GuiComponent();
 

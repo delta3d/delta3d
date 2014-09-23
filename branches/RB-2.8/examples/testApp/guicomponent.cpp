@@ -64,9 +64,17 @@ namespace dtExample
    const dtUtil::RefString GuiComponent::TESTAPP_BUTTON_TYPE("TestApp/Button");
    const dtUtil::RefString GuiComponent::TESTAPP_BUTTON_PROPERTY_ACTION("Action");
    const dtUtil::RefString GuiComponent::TESTAPP_BUTTON_PROPERTY_TYPE("ButtonType");
-   const dtUtil::RefString GuiComponent::UI_BACKGROUND("GlobalOverlay_Background");
-   const dtUtil::RefString GuiComponent::UI_TEXT_MOTION_MODEL("GameScreen_MotionModelType");
-   const dtUtil::RefString GuiComponent::UI_TEXT_STATUS("GlobalOverlay_Status");
+
+   const dtUtil::RefString UI_BACKGROUND("GlobalOverlay_Background");
+   const dtUtil::RefString UI_TEXT_MOTION_MODEL("GameScreen_MotionModelType");
+   const dtUtil::RefString UI_TEXT_STATUS("GlobalOverlay_Status");
+
+   static const dtUtil::RefString UI_CONTROL_AMBIENCE("GameScreen_AmbienceSpinner");
+   static const dtUtil::RefString UI_CONTROL_LAMP("GameScreen_LampSpinner");
+   static const dtUtil::RefString UI_CONTROL_LUMINANCE("GameScreen_LuminanceSpinner");
+   static const dtUtil::RefString UI_CONTROL_SEA_CHOPPINESS("GameScreen_SeaChoppinessSpinner");
+   static const dtUtil::RefString UI_CONTROL_SEA_STATE("GameScreen_SeaStateSpinner");
+   static const dtUtil::RefString UI_CONTROL_TIME("GameScreen_TimeSpinner");
 
 
 
@@ -343,6 +351,12 @@ namespace dtExample
 
       // Update the Sea State spinner.
       InputComponent* comp = GetInputComponent();
+      
+      GuiSpinner* spinner = dynamic_cast<GuiSpinner*>(screen.GetNode(UI_CONTROL_LUMINANCE.Get()));
+      spinner->setCurrentValue(comp->GetLuminance());
+      
+      spinner = dynamic_cast<GuiSpinner*>(screen.GetNode(UI_CONTROL_AMBIENCE.Get()));
+      spinner->setCurrentValue(comp->GetAmbience());
 
       typedef dtActors::WaterGridActor::SeaState SeaState;
       const SeaState& state = comp->GetSeaState();
@@ -364,7 +378,7 @@ namespace dtExample
          }
       }
 
-      GuiSpinner* spinner = dynamic_cast<GuiSpinner*>(screen.GetNode("GameScreen_SeaStateSpinner"));
+      spinner = dynamic_cast<GuiSpinner*>(screen.GetNode(UI_CONTROL_SEA_STATE.Get()));
       spinner->setCurrentValue(index);
 
 
@@ -388,7 +402,7 @@ namespace dtExample
          }
       }
 
-      spinner = dynamic_cast<GuiSpinner*>(screen.GetNode("GameScreen_SeaChoppinessSpinner"));
+      spinner = dynamic_cast<GuiSpinner*>(screen.GetNode(UI_CONTROL_SEA_CHOPPINESS.Get()));
       spinner->setCurrentValue(index);
    }
 
@@ -707,15 +721,23 @@ namespace dtExample
 
          InputComponent* comp = GetInputComponent();
 
-         if (controlName == "GameScreen_TimeSpinner")
+         if (controlName == UI_CONTROL_TIME.Get())
          {
             SendRequestTimeOffsetMessage(value);
          }
-         else if (controlName == "GameScreen_LampSpinner")
+         else if (controlName == UI_CONTROL_LAMP.Get())
          {
             comp->SetLampIntensity(value);
          }
-         else if (controlName == "GameScreen_SeaStateSpinner")
+         else if (controlName == UI_CONTROL_LUMINANCE.Get())
+         {
+            comp->SetLuminance(value);
+         }
+         else if (controlName == UI_CONTROL_AMBIENCE.Get())
+         {
+            comp->SetAmbience(value);
+         }
+         else if (controlName == UI_CONTROL_SEA_STATE.Get())
          {
             size_t index = (size_t)value;
 
@@ -733,7 +755,7 @@ namespace dtExample
                comp->SetSeaState(*state);
             }
          }
-         else if (controlName == "GameScreen_SeaChoppinessSpinner")
+         else if (controlName == UI_CONTROL_SEA_CHOPPINESS.Get())
          {
             size_t index = (size_t)value;
 
