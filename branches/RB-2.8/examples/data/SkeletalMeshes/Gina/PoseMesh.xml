@@ -3,25 +3,45 @@
 	<PoseMesh name="Poses_Head" root="mPelvis"
 	          effector="mHead" >	
 		<Triangle>
-			<Animation>poses/HeadDownRight.xaf</Animation>
-			<Animation>poses/HeadDownLeft.xaf</Animation>
-			<Animation>poses/HeadRight.xaf</Animation>
-		</Triangle>	
-		<Triangle>
-			<Animation>poses/HeadRight.xaf</Animation>
-			<Animation>poses/HeadDownLeft.xaf</Animation>
-			<Animation>poses/HeadLeft.xaf</Animation>
-		</Triangle>	
-		<Triangle>
-			<Animation>poses/HeadRight.xaf</Animation>
-			<Animation>poses/HeadLeft.xaf</Animation>
-			<Animation>poses/HeadUpRight.xaf</Animation>
-		</Triangle>	
-		<Triangle>
-			<Animation>poses/HeadUpRight.xaf</Animation>
-			<Animation>poses/HeadLeft.xaf</Animation>
+			<Animation>poses/HeadUp.xaf</Animation>
 			<Animation>poses/HeadUpLeft.xaf</Animation>
-		</Triangle>						
+			<Animation>poses/HeadForward.xaf</Animation>
+		</Triangle>
+      <Triangle>
+         <Animation>poses/HeadUp.xaf</Animation>
+         <Animation>poses/HeadUpRight.xaf</Animation>
+         <Animation>poses/HeadForward.xaf</Animation>
+      </Triangle>
+      <Triangle>
+         <Animation>poses/HeadLeft.xaf</Animation>
+         <Animation>poses/HeadUpLeft.xaf</Animation>
+         <Animation>poses/HeadForward.xaf</Animation>
+      </Triangle>
+      <Triangle>
+         <Animation>poses/HeadRight.xaf</Animation>
+         <Animation>poses/HeadUpRight.xaf</Animation>
+         <Animation>poses/HeadForward.xaf</Animation>
+      </Triangle>
+      <Triangle>
+         <Animation>poses/HeadLeft.xaf</Animation>
+         <Animation>poses/HeadDownLeft.xaf</Animation>
+         <Animation>poses/HeadForward.xaf</Animation>
+      </Triangle>
+      <Triangle>
+         <Animation>poses/HeadRight.xaf</Animation>
+         <Animation>poses/HeadDownRight.xaf</Animation>
+         <Animation>poses/HeadForward.xaf</Animation>
+      </Triangle>
+      <Triangle>
+         <Animation>poses/HeadDown.xaf</Animation>
+         <Animation>poses/HeadDownLeft.xaf</Animation>
+         <Animation>poses/HeadForward.xaf</Animation>
+      </Triangle>
+      <Triangle>
+         <Animation>poses/HeadDown.xaf</Animation>
+         <Animation>poses/HeadDownRight.xaf</Animation>
+         <Animation>poses/HeadForward.xaf</Animation>
+      </Triangle>					
 	</PoseMesh>	
 	
 	<PoseMesh name="Poses_LeftEye" root="mPelvis"

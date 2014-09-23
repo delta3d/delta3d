@@ -20,10 +20,13 @@
    <animation fileName="poses/EyeRightOut.xaf"/>
    <animation fileName="poses/EyeRightUp.xaf"/>
    <animation fileName="poses/HeadDownLeft.xaf"/>
+   <animation fileName="poses/HeadDown.xaf"/>
    <animation fileName="poses/HeadDownRight.xaf"/>
    <animation fileName="poses/HeadLeft.xaf"/>
+   <animation fileName="poses/HeadForward.xaf"/>
    <animation fileName="poses/HeadRight.xaf"/>
    <animation fileName="poses/HeadUpLeft.xaf"/>
+   <animation fileName="poses/HeadUp.xaf"/>
    <animation fileName="poses/HeadUpRight.xaf"/>
    <animation fileName="poses/TorsoDownLeft.xaf"/>
    <animation fileName="poses/TorsoDownRight.xaf"/>
