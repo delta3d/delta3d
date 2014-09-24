@@ -19,8 +19,8 @@
  * William E. Johnson II
  */
 
-#ifndef DELTA_PARTICLE_SYSTEM_ACTOR_PROXY
-#define DELTA_PARTICLE_SYSTEM_ACTOR_PROXY
+#ifndef DELTA_PARTICLE_SYSTEM_ACTOR
+#define DELTA_PARTICLE_SYSTEM_ACTOR
 
 #include <dtCore/plugin_export.h>
 #include <dtGame/gameactorproxy.h>
@@ -30,19 +30,20 @@
 namespace dtActors
 {
    /**
-    * @class ParticleSystemActorProxy
-    * @brief This proxy wraps the ParticleSystem Delta3D object.
+    * @class ParticleSystemActor
+    * @brief This actor wraps the ParticleSystem object.
     */
-   class DT_PLUGIN_EXPORT ParticleSystemActorProxy : public dtGame::GameActorProxy
+   class DT_PLUGIN_EXPORT ParticleSystemActor : public dtGame::GameActorProxy
    {
    public:
 
       typedef dtGame::GameActorProxy BaseClass;
 
-      /**
-       * Constructor
-       */
-      ParticleSystemActorProxy();
+      static const dtUtil::RefString PROPERTY_ENABLED;
+      static const dtUtil::RefString PROPERTY_PARENT_RELATIVE;
+      static const dtUtil::RefString PROPERTY_PARTICLE_FILE;
+
+      ParticleSystemActor();
 
       /**
        * Adds the properties that are common to all Delta3D particle system objects.
@@ -74,11 +75,13 @@ namespace dtActors
        */
       virtual void CreateDrawable();
 
-      /**
-       * Destructor
-       */
-      virtual ~ParticleSystemActorProxy();
+      virtual ~ParticleSystemActor();
    };
+
+   // The term "Proxy" is going to be dropped.
+   // Other programs refer to the old name, so
+   // for now allow them to build with it.
+   typedef ParticleSystemActor ParticleSystemActorProxy;
 }
 
 #endif

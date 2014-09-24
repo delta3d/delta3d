@@ -24,6 +24,7 @@ SET(LIB_PUBLIC_HEADERS
     ${HEADER_PATH}/deltaobjectactorproxy.h
     ${HEADER_PATH}/directoractor.h
     ${HEADER_PATH}/distancesensoractor.h
+    ${HEADER_PATH}/dynamicparticlesystemactor.h
     ${HEADER_PATH}/engineactorregistry.h
     ${HEADER_PATH}/enveffectactorproxy.h
     ${HEADER_PATH}/fenceactor.h
@@ -79,6 +80,7 @@ SET(LIB_SOURCES
     ${SOURCE_PATH}/deltaobjectactorproxy.cpp
     ${SOURCE_PATH}/directoractor.cpp
     ${SOURCE_PATH}/distancesensoractor.cpp
+    ${SOURCE_PATH}/dynamicparticlesystemactor.cpp
     ${SOURCE_PATH}/engineactorregistry.cpp
     ${SOURCE_PATH}/enveffectactorproxy.cpp
     ${SOURCE_PATH}/fenceactor.cpp
