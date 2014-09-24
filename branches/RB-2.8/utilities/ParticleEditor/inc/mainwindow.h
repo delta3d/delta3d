@@ -29,7 +29,18 @@ namespace psEditor
       void SetupUI();
       void LoadFile(QString filename, bool import = false);
 
+      void OnInitialization();
+      void SaveSettings();
+      bool IsShaderDefFileValid() const;
+      bool EnsureShaderDefFileValid();
+      bool AskUserToLoadShaderDef();
+
    public slots:
+      void OnLoadShaderDefinition();
+      void OnLoadShaderFile(const QString& filename);
+      void OnReloadShaderFiles();
+      void OnSaveComplete();
+      void SetSelectedShader(const QString& shaderName);
       void UpdateWindowTitle(const QString& title);
       void UpdateHistory(const QString& filename);
       void OnReferenceObjectLoaded(const QString &filename);
@@ -61,6 +72,9 @@ namespace psEditor
       PlacerTab*      mpPlacerTab;
       ShooterTab*     mpShooterTab;
       ProgramTab*     mpProgramTab;
+
+      std::string mContextPath;
+      std::string mShaderDefFile;
    };
 }
 
