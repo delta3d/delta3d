@@ -186,9 +186,6 @@ namespace dtExample
    {
       BaseClass::OnEnteredWorld();
 
-      // DEBUG:
-      printf("\n\tEntered world!\n\n");
-
       // Full initialization of this component may require
       // the map to be fully loaded.
       RegisterForMapLoaded();
@@ -200,9 +197,6 @@ namespace dtExample
    void SurfaceVesselActorComponent::OnMapLoaded(const dtGame::MapMessage& mapMessage)
    {
       BaseClass::OnMapLoaded(mapMessage);
-
-      // DEBUG:
-      printf("\n\tMap loaded!\n\n");
 
       CreateSprayEffects();
 
@@ -466,11 +460,6 @@ namespace dtExample
          mSprayBackActor = CreatDynamicParticleSystemActor(mFileSprayBack, "SprayBack");
          mSprayBack = GetDynamicParticles(mSprayBackActor.get());
       }
-
-      // DEBUG:
-      printf("\n\tFront spray valid: %d\n", mSprayFront.valid());
-      printf("\tSide spray valid: %d\n", mSpraySideRight.valid());
-      printf("\tBack spray valid: %d\n\n", mSprayBack.valid());
    }
 
    //////////////////////////////////////////////////////////
@@ -478,32 +467,20 @@ namespace dtExample
    {
       mSprayEnabled = enable;
 
-      // DEBUG:
-      printf("\n\tSpary effect enabled: %d\n\n", mSprayEnabled);
-
       if(mSprayFront.valid())
       {
          mSprayFront->SetEnabled(enable);
-
-      // DEBUG:
-         printf("\n\tFront spary VALID!\n\n");
       }
 
       if(mSpraySideRight.valid() && mSpraySideLeft.valid())
       {
          mSpraySideRight->SetEnabled(enable);
          mSpraySideLeft->SetEnabled(enable);
-
-      // DEBUG:
-         printf("\n\tSide spary VALID!\n\n");
       }
 
       if(mSprayBack.valid())
       {
          mSprayBack->SetEnabled(enable);
-         
-      // DEBUG:
-         printf("\n\tBack spary VALID!\n\n");
       }
    }
 
