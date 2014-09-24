@@ -158,6 +158,7 @@ SET(LIB_PUBLIC_HEADERS
                 ${HEADER_PATH}/odeworldwrap.h
                 ${HEADER_PATH}/orbitmotionmodel.h
                 ${HEADER_PATH}/particlesystem.h
+                ${HEADER_PATH}/particleutil.h
                 ${HEADER_PATH}/physical.h
                 ${HEADER_PATH}/physicalactorproxy.h
                 ${HEADER_PATH}/plugin_export.h
@@ -347,6 +348,7 @@ SET(LIB_SOURCES
                 ${SOURCE_PATH}/odeworldwrap.cpp
                 ${SOURCE_PATH}/orbitmotionmodel.cpp
                 ${SOURCE_PATH}/particlesystem.cpp
+                ${SOURCE_PATH}/particleutil.cpp
                 ${SOURCE_PATH}/physical.cpp
                 ${SOURCE_PATH}/physicalactorproxy.cpp
                 ${SOURCE_PATH}/pointaxis.cpp
