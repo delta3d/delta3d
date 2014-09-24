@@ -24,6 +24,8 @@
 #include <dtUtil/log.h>
 #include <dtUtil/nodemask.h>
 
+#include <dtCore/propertymacros.h>
+
 #include <osg/StateSet>
 #include <osg/Group>
 #include <osg/Depth>
@@ -42,6 +44,7 @@
 #include <dtCore/camera.h> //needed to set the clear color to get rid of rendering artifact
 
 #include <dtUtil/mathdefines.h>
+
 
 namespace dtRender
 {
@@ -161,7 +164,7 @@ namespace dtRender
    {
    public:
          EphemerisImpl()
-            : mFogEnabled(false)
+            : mFogEnabled(true)
             , mFogNear(1.0f)
             , mVisibility(25000.0f)
             , mFogMode(EphemerisScene::EXP2)
@@ -169,6 +172,20 @@ namespace dtRender
             , mFog(new osg::Fog())
             , mEphemerisModel()
          {
+            //default the date time to fourth of july
+            mDateTime.SetYear(2014);
+            mDateTime.SetMonth(07);
+            mDateTime.SetDay(04);
+            mDateTime.SetHour(12);
+            mDateTime.SetMinute(0);
+            mDateTime.SetSecond(0);
+
+            //set some default fog values
+            mFog->setColor(osg::Vec4(1.0f, 1.0f, 1.0f, 1.0f));
+            mFog->setMode(osg::Fog::EXP2);
+
+            mFog->setStart(mFogNear);
+            mFog->setEnd(mVisibility);
          }
 
 
@@ -281,9 +298,13 @@ namespace dtRender
 
    EphemerisScene::EphemerisScene()
    : BaseClass(*EPHEMERIS_SCENE, SceneEnum::BACKGROUND)   
+   , mSetToLocalTime(false)
+   , mSetTimeFromSystem(false)
+   , mLatLong(19.3333f, 81.2167f)
    , mImpl(new EphemerisImpl())
    {
       SetName("EphemerisScene");
+      SetFogDensity(mImpl->mVisibility);
    }
 
    EphemerisScene::~EphemerisScene()
@@ -304,35 +325,27 @@ namespace dtRender
 
       mImpl->Init(*cam);
 
-      //set time, todo make property
-      dtUtil::DateTime dt = GetDateTime();
-      
-      //set to July 4th
-      dt.SetMonth(8);
-      dt.SetDay(15);
-      dt.SetYear(2014);
-      //make day time
-      dt.SetHour(10);
-      dt.SetMinute(0);
-      dt.SetSecond(0);
-      
-      SetDateTime(dt);
-
       //set default lat long, grand cayman
-      SetLatitudeLongitude(19.3333f, 81.2167f);
-      //SetTimeFromSystem();
+      SetLatitudeLongitude(mLatLong.x(), mLatLong.y());
+      
+      
+      if(mSetToLocalTime)
+      {
+         SetTimeToLocalTime();
+      }
+      else if(mSetTimeFromSystem)
+      {
+         SetTimeFromSystem();
+      }
+      else
+      {
+         SetDateTime(mImpl->mDateTime);
+      }
 
       //setup default fog state
-      mImpl->mFogStateSet = sm.GetOSGNode()->getOrCreateStateSet();
-      
-      osg::Vec4 fogColor(0.84f, 0.87f, 1.0f, 1.0f);
-      SetFogColor(fogColor);
-      SetFogMode(EXP2);
-      SetVisibility(10000.0f);
-
-      mImpl->mFogStateSet->setAttributeAndModes(mImpl->mFog.get());
-
-      SetFogEnable(true);
+      mImpl->mFogStateSet = sm.GetOSGNode()->getOrCreateStateSet();            
+      SetVisibility(mImpl->mVisibility);
+      SetFogEnable(mImpl->mFogEnabled);
 
       //////////////////////////////////////////////////////////
       //these are camera settings required by ephemeris   
@@ -372,7 +385,12 @@ namespace dtRender
       return mImpl->mEphemerisModel->getMoonTransform()->getMatrix().getTrans();
    }
 
-   bool EphemerisScene::SetDateTimeAsString(const std::string& timeAndDate)
+   std::string EphemerisScene::GetDateTimeAsString() const
+   {
+      return mImpl->mDateTime.ToString();
+   }
+
+   void EphemerisScene::SetDateTimeAsString(const std::string& timeAndDate)
    {
       bool result = false;
 
@@ -381,7 +399,7 @@ namespace dtRender
          std::istringstream iss( timeAndDate );
          // The time is stored in the universal format of:
          // yyyy-mm-ddThh:min:ss-some number
-         // So we need to use a delimeter to ensure that we don't choke on the seperators
+         // So we need to use a delimeter to ensure that we don't choke on the separators
          result = SetTimeAndDate( iss );
          if( !result  )
          {
@@ -394,7 +412,6 @@ namespace dtRender
          LOG_ERROR("Error setting time with empty string");
       }
 
-      return result;
    }
 
    bool EphemerisScene::SetTimeAndDate(std::istringstream& iss)
@@ -459,28 +476,21 @@ namespace dtRender
 
    void EphemerisScene::SetFogEnable(bool enable)
    {
-      if (mImpl->mFogEnabled == enable)
-      {
-         return;
-      }
-
+      mImpl->mFogEnabled = enable;
+      
       if(mImpl->mFogStateSet.valid())
       {
          osg::StateSet* state = mImpl->mFogStateSet.get();
 
-         short attr = osg::StateAttribute::ON;
-
-         if (enable)
+         if(mImpl->mFogEnabled)
          {
-            attr = osg::StateAttribute::ON;
+            state->setMode(GL_FOG, osg::StateAttribute::ON);
+            mImpl->mFogStateSet->setAttributeAndModes(mImpl->mFog.get());
          }
          else
          {
-            attr = osg::StateAttribute::OFF;
+            state->setMode(GL_FOG, osg::StateAttribute::OFF);
          }
-
-         mImpl->mFogEnabled = enable;
-         state->setMode(GL_FOG, attr);
       }
       
    }
@@ -536,14 +546,12 @@ namespace dtRender
 
    void EphemerisScene::SetVisibility(float distance)
    {
-      if (mImpl->mVisibility == distance)
+      if (dtUtil::Equivalent(mImpl->mVisibility, 0.0f))
       {
+         SetFogEnable(false);
          return;
       }
-
-      if (dtUtil::Equivalent(mImpl->mVisibility, 0.0f))
-         return;
-
+      
       mImpl->mVisibility = distance;
 
       double sqrt_m_log01 = sqrt(-log(0.01));
@@ -567,22 +575,38 @@ namespace dtRender
 
    void EphemerisScene::OnTimeChanged()
    {
-      mImpl->mEphemerisModel->setAutoDateTime( false );
-
-      osgEphemeris::EphemerisData* ephem = mImpl->mEphemerisModel->getEphemerisData();
-
-      dtUtil::DateTime dt(GetDateTime().GetGMTTime());
-
-      if (ephem != NULL)
+      if(mImpl->mEphemerisModel.valid())
       {
-         ephem->dateTime = osgEphemeris::DateTime(dt.GetYear(),
-               dt.GetMonth(), dt.GetDay(), dt.GetHour(), dt.GetMinute(), int(dt.GetSecond()));
+         mImpl->mEphemerisModel->setAutoDateTime( false );
+
+         osgEphemeris::EphemerisData* ephem = mImpl->mEphemerisModel->getEphemerisData();
+
+         dtUtil::DateTime dt = GetDateTime().GetGMTTime();
+
+         if (ephem != NULL)
+         {
+            //ephem->dateTime = osgEphemeris::DateTime(dt.GetYear(),
+            //      dt.GetMonth(), dt.GetDay(), dt.GetHour(), dt.GetMinute(), int(dt.GetSecond()));
+            
+            osgEphemeris::DateTime ephDT(true);
+            ephDT.setTimeZoneOffset(false, 0);
+            ephDT.setYear(dt.GetYear());
+            ephDT.setMonth(dt.GetMonth());
+            ephDT.setDayOfMonth(dt.GetDay());
+            ephDT.setHour(dt.GetHour());
+            ephDT.setMinute(dt.GetMinute());
+            ephDT.setSecond(dt.GetSecond());
+
+            mImpl->mEphemerisModel->setDateTime(ephDT);
+         }
       }
-      else
-      {
-         LOG_ERROR("Ephemeris Data is NULL");
-      }
-      LOG_ALWAYS("Changing Time");
+   }
+
+   void EphemerisScene::SetTimeToLocalTime()
+   {
+      dtUtil::DateTime dt = GetDateTime();
+      dt.SetToLocalTime();
+      SetDateTime(dt);
    }
 
 
@@ -676,13 +700,54 @@ namespace dtRender
    {
       BaseClass::BuildPropertyMap();
 
+      EphemerisScene* es = NULL;
+      GetDrawable(es);
+
+
+      std::string group("EphemerisScene");
+      typedef dtCore::PropertyRegHelper<EphemerisSceneActor&, EphemerisScene> PropRegHelperType;
+      PropRegHelperType propRegHelper(*this, es, group);
+
+      DT_REGISTER_PROPERTY_WITH_NAME_AND_LABEL(LatLong, "Lattitude and Longitude", "Lattitude and Longitude", 
+         "This property sets the ephemeris lattitude and longitude which effects the sun, moon and star positions.",
+         PropRegHelperType, propRegHelper);
+
+      DT_REGISTER_PROPERTY_WITH_NAME_AND_LABEL(SetTimeFromSystem, "SetTimeFromSystem", "Set Time From System Clock", 
+         "Set this property to have the time set to the system clock on startup, this ignores the date time string, and assumes the system clock will be set elsewhere.",
+         PropRegHelperType, propRegHelper);
+
+      DT_REGISTER_PROPERTY_WITH_NAME_AND_LABEL(SetToLocalTime, "SetToLocalTime", "Set To Local Time", 
+         "Set this property to have the time set to the real pc clock time on startup, this ignores the date time string.",
+         PropRegHelperType, propRegHelper);
+
+      
+      AddProperty(new dtCore::StringActorProperty("Date and Time", "Date and Time",
+         dtCore::StringActorProperty::SetFuncType(es, &EphemerisScene::SetDateTimeAsString),
+         dtCore::StringActorProperty::GetFuncType(es, &EphemerisScene::GetDateTimeAsString),
+         "Sets the system clock at startup. This string must be in the following UTC format: yyyy-mm-ddThh:mm:ss.", group));
+
+
+      DT_REGISTER_PROPERTY_WITH_NAME_AND_LABEL(FogEnable, "Enable Fog", "Enable Fog", 
+         "Sets the fog state on the scene root.",
+         PropRegHelperType, propRegHelper);
+
+      DT_REGISTER_PROPERTY_WITH_NAME_AND_LABEL(FogColor, "Fog Color", "Fog Color", 
+         "The color of the fog.",
+         PropRegHelperType, propRegHelper);
+
+      DT_REGISTER_PROPERTY_WITH_NAME_AND_LABEL(Visibility, "Visibility", "Visibility", 
+         "How far things are visible before they become the full fog color.",
+         PropRegHelperType, propRegHelper);
+
    }
 
    void EphemerisSceneActor::CreateDrawable()
    {
       dtCore::RefPtr<EphemerisScene> es = new EphemerisScene();
       SetDrawable(*es);
+
    }
+
 
    bool EphemerisSceneActor::IsPlaceable() const
    {

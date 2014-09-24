@@ -25,8 +25,9 @@
 
 #include <dtUtil/datetime.h>
 #include <dtCore/baseactorobject.h>
+#include <osg/Vec2>
 #include <osg/Vec4>
-
+#include <dtUtil/getsetmacros.h>
 #include <string>
 
 namespace osg
@@ -65,12 +66,14 @@ namespace dtRender
 
       virtual void SetLatitudeLongitude(float latitude, float longitude);
 
-      bool SetDateTimeAsString(const std::string& timeAndDate);
+      void SetDateTimeAsString(const std::string& timeAndDate);
+      std::string GetDateTimeAsString() const;
       
       void SetDateTime(dtUtil::DateTime&);
       dtUtil::DateTime GetDateTime() const;
 
       void SetTimeFromSystem();
+      void SetTimeToLocalTime();
 
       void SetFogDensity(float density);
       float GetFogDensity();
@@ -90,6 +93,12 @@ namespace dtRender
 
       osg::LightSource* GetLightSource();
       const osg::LightSource* GetLightSource() const;
+
+      DT_DECLARE_ACCESSOR_INLINE(bool, SetToLocalTime)
+      DT_DECLARE_ACCESSOR_INLINE(bool, SetTimeFromSystem)
+      DT_DECLARE_ACCESSOR_INLINE(osg::Vec2, LatLong)
+
+      
 
    protected:
       virtual void OnTimeChanged();
