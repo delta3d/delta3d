@@ -277,7 +277,9 @@ namespace dtCore
       // Get the end range settings.
       GetDefaultSettingsFromLayer( layer, *mEnd );
 
-      // Set the start settings to the same as the end range settings.
+      // Set the start settings to the same as the end range settings,
+      // since individual properties can be interpolated without affecting
+      // other properties.
       *mStart = *mEnd;
    }
 

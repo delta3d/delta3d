@@ -216,19 +216,29 @@ namespace dtActors
 
       PSLayerList& layers = GetAllLayers();
 
+      dtCore::RefPtr<ParticleSystemSettings> emptySettings = new ParticleSystemSettings;
+
       // Maintain a map to all particle layers by their associated particle system's name.
       PSLayerList::iterator curLayer = layers.begin();
       PSLayerList::iterator endLayerList = layers.end();
       for( ; curLayer != endLayerList; ++curLayer )
       {
+         dtCore::RefPtr<ParticleLayerInterpolator> newInterp = new ParticleLayerInterpolator(*curLayer);
+
+         // Use empty settings as the start settings for interpolation.
+         // The full particle system effect will be used for end settings.
+         newInterp->GetStartSettings() = *emptySettings;
+
          // Map the layers to the name of the associated OSG particle system.
          // This will allow for quick access to a particular layer by name.
          if( mLayerInterps.insert( std::make_pair( curLayer->GetLayerName(),
-            new ParticleLayerInterpolator(*curLayer) ) ).second )
+            newInterp.get()) ).second )
          {
             ++successes;
          }
       }
+
+      Reset();
 
       return successes;
    }
@@ -254,6 +264,8 @@ namespace dtActors
    void DynamicParticleSystem::Init()
    {
       ResetParticleLayers();
+
+      SetInterpolation(0.0f);
    }
 
 
