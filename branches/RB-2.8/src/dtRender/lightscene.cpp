@@ -137,8 +137,8 @@ namespace dtRender
 
    LightScene::LightScene()
    : BaseClass(*LIGHT_SCENE, SceneEnum::PRE_RENDER)
-   , mMaxDynamicLights(14)
-   , mMaxSpotLights(6)
+   , mMaxDynamicLights(25)
+   , mMaxSpotLights(10)
    , mRootNode(new osg::Group())
    {
       SetName("LightScene");  
