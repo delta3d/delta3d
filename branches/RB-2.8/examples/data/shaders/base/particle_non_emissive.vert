@@ -15,6 +15,7 @@ uniform mat4 osg_ViewMatrixInverse = mat4(1.0);
 
 varying vec3 dynLightContrib;
 varying vec3 worldNormal;
+varying vec3 worldPos;
 varying vec4 vertexColor;
 varying float vDistance;
 
@@ -30,7 +31,7 @@ void main()
 
    vDistance = calculateDistance(gl_ModelViewMatrix, gl_Vertex);
    
-   vec3 worldPos = (osg_ViewMatrixInverse * gl_ModelViewMatrix * gl_Vertex).xyz;
+   worldPos = (osg_ViewMatrixInverse * gl_ModelViewMatrix * gl_Vertex).xyz;
    
    mat3 inverseView3x3 = mat3(osg_ViewMatrixInverse[0].xyz, osg_ViewMatrixInverse[1].xyz, osg_ViewMatrixInverse[2].xyz);
    vec3 lightDir = normalize(inverseView3x3 * gl_LightSource[0].position.xyz);   
