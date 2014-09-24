@@ -42,6 +42,7 @@ namespace dtExample
          static dtCore::RefPtr<dtCore::ActorType> FIREWORK_ACTOR_TYPE;
          static dtCore::RefPtr<dtCore::ActorType> MESH_OBJECT_ACTOR_TYPE;
          static dtCore::RefPtr<dtCore::ActorType> MESH_LAMP_ACTOR_TYPE;
+         static dtCore::RefPtr<dtCore::ActorType> VESSEL_ACTOR_TYPE;
          
          /// Constructor
          TestAppActorRegistry();

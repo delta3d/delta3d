@@ -9,6 +9,7 @@ SET(TARGET_SRC testapp.cpp
                lightactorcomponent.cpp
                meshlampactor.cpp
                meshobjectactor.cpp
+               surfacevesselactorcomponent.cpp
                terrainactor.cpp
                testappactorregistry.cpp
                testappconstants.cpp
@@ -16,6 +17,7 @@ SET(TARGET_SRC testapp.cpp
                testappmessages.cpp
                testappmessagetypes.cpp
                testapputils.cpp
+               vesselactor.cpp
                Nodes/ApplicationNode.cpp
                Nodes/ChangeStance.cpp
                Nodes/CivilianAvatar.cpp
@@ -40,6 +42,7 @@ SET(TARGET_H civilianactor.h
              lightactorcomponent.h
              meshlampactor.h
              meshobjectactor.h
+             surfacevesselactorcomponent.h
              terrainactor.h
              testappactorregistry.h
              testappconstants.h
@@ -47,6 +50,7 @@ SET(TARGET_H civilianactor.h
              testappmessages.h
              testappmessagetypes.h
              testapputils.h
+             vesselactor.h
              Nodes/ApplicationNode.h
              Nodes/ChangeStance.h
              Nodes/CivilianAvatar.h

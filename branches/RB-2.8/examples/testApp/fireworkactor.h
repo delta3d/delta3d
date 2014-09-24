@@ -38,11 +38,11 @@ namespace dtExample
    /////////////////////////////////////////////////////////////////////////////
    // CLASS CODE
    /////////////////////////////////////////////////////////////////////////////
-   class FireworkActor : public dtActors::ParticleSystemActorProxy
+   class FireworkActor : public dtActors::ParticleSystemActor
    {
    public:
 
-      typedef dtActors::ParticleSystemActorProxy BaseClass;
+      typedef dtActors::ParticleSystemActor BaseClass;
 
       static const float DEFAULT_DETONATE_TIME_LIMIT;
       static const dtUtil::RefString DEFAULT_LAYER_NAME_FLARE;

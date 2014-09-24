@@ -111,7 +111,8 @@ namespace dtExample
 
       const dtCore::ActorType* actorType = &actor.GetActorType();
 
-      if(actorType == TestAppActorRegistry::CIVILIAN_ACTOR_TYPE.get())
+      if(actorType == TestAppActorRegistry::CIVILIAN_ACTOR_TYPE.get()
+         || actorType == TestAppActorRegistry::VESSEL_ACTOR_TYPE.get())
       {
          result = true;
       }

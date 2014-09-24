@@ -32,7 +32,6 @@
 #include <dtCore/shaderparamvec4.h>
 #include <dtGame/gameactor.h>
 #include <dtGame/gamemanager.h>
-#include <dtGame/invokable.h>
 #include <dtGame/message.h>
 #include <dtGame/messagetype.h>
 #include <dtCore/propertymacros.h>

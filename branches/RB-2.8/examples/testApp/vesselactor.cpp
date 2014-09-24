@@ -21,13 +21,11 @@
  * THE SOFTWARE.
  */
 
-#ifndef DELTA_TEST_APP_MESH_LAMP_ACTOR_H
-#define DELTA_TEST_APP_MESH_LAMP_ACTOR_H
-
 ////////////////////////////////////////////////////////////////////////////////
 // INCLUDE DIRECTIVES
 ////////////////////////////////////////////////////////////////////////////////
-#include "meshobjectactor.h"
+#include "vesselactor.h"
+#include "surfacevesselactorcomponent.h"
 
 
 
@@ -36,20 +34,18 @@ namespace dtExample
    /////////////////////////////////////////////////////////////////////////////
    // CLASS CODE
    /////////////////////////////////////////////////////////////////////////////
-   class MeshLampActor : public MeshObjectActor
+   VesselActor::VesselActor()
+   {}
+
+   VesselActor::~VesselActor()
+   {}
+
+   void VesselActor::BuildActorComponents()
    {
-   public:
+      BaseClass::BuildActorComponents();
 
-      typedef MeshObjectActor BaseClass;
-
-      MeshLampActor();
-
-      /*virtual*/ void BuildActorComponents();
-
-   protected:
-      virtual ~MeshLampActor();
-   };
+      dtCore::RefPtr<SurfaceVesselActorComponent> comp = new SurfaceVesselActorComponent;
+      AddComponent(*comp);
+   }
 
 }
-
-#endif
