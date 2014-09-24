@@ -24,6 +24,7 @@
 #include <dtActors/deltaobjectactorproxy.h>
 #include <dtActors/staticmeshactorproxy.h>
 #include <dtActors/particlesystemactorproxy.h>
+#include <dtActors/dynamicparticlesystemactor.h>
 #include <dtActors/positionallightactorproxy.h>
 #include <dtActors/spotlightactorproxy.h>
 
@@ -77,6 +78,7 @@ namespace dtActors
    dtCore::RefPtr<dtCore::ActorType> EngineActorRegistry::SPOT_LIGHT_ACTOR_TYPE(new dtCore::ActorType("Spotlight", "dtcore.Lights", "Spotlight light actor."));
    dtCore::RefPtr<dtCore::ActorType> EngineActorRegistry::STATIC_MESH_ACTOR_TYPE(new dtCore::ActorType("Static Mesh", "dtcore", "Loadable static mesh actor."));
    dtCore::RefPtr<dtCore::ActorType> EngineActorRegistry::PARTICLE_SYSTEM_ACTOR_TYPE(new dtCore::ActorType("Particle System", "dtcore", "dtCore::ParticleSystem actor."));
+   dtCore::RefPtr<dtCore::ActorType> EngineActorRegistry::DYNAMIC_PARTICLE_SYSTEM_ACTOR_TYPE(new dtCore::ActorType("Dynamic Particle System", "dtcore", "dtCore::DynamicParticleSystem actor."));
    dtCore::RefPtr<dtCore::ActorType> EngineActorRegistry::INFINITE_TERRAIN_ACTOR_TYPE(new dtCore::ActorType("Infinite Terrain", "dtcore.Terrain", "dtCore::InfiniteTerrain actor."));
    dtCore::RefPtr<dtCore::ActorType> EngineActorRegistry::MESH_TERRAIN_ACTOR_TYPE(new dtCore::ActorType("Mesh Terrain", "dtcore.Terrain", "An terrain actor who's geometry is represented via a mesh file."));
    dtCore::RefPtr<dtCore::ActorType> EngineActorRegistry::SKY_BOX_ACTOR_TYPE(new dtCore::ActorType("Sky Box", "dtcore.Environment", "dtCore::SkyBox Actor."));
@@ -163,8 +165,9 @@ namespace dtActors
       mActorFactory->RegisterType<SpotlightActorProxy>(SPOT_LIGHT_ACTOR_TYPE.get());
       // Static Mesh...
       mActorFactory->RegisterType<StaticMeshActorProxy>(STATIC_MESH_ACTOR_TYPE.get());
-      // Particle System...
-      mActorFactory->RegisterType<ParticleSystemActorProxy>(PARTICLE_SYSTEM_ACTOR_TYPE.get());
+      // Particle Systems...
+      mActorFactory->RegisterType<ParticleSystemActor>(PARTICLE_SYSTEM_ACTOR_TYPE.get());
+      mActorFactory->RegisterType<DynamicParticleSystemActor>(DYNAMIC_PARTICLE_SYSTEM_ACTOR_TYPE.get());
       // Infinite terrain...
       mActorFactory->RegisterType<InfiniteTerrainActorProxy>(INFINITE_TERRAIN_ACTOR_TYPE.get());
       // Terrain mesh actor...
