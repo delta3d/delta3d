@@ -4,20 +4,25 @@ uniform sampler2D diffuseTexture;
 
 uniform float diffuseRadiance;
 uniform float ambientRadiance;
-uniform float NVG_Enable;
 uniform bool writeLinearDepth;
+uniform float aboveWaterOnly = 0.0;
+uniform float WaterHeight = 0.0;
 
 uniform float Intensity;
 
 varying vec3 dynLightContrib;
 varying vec4 vertexColor;
 varying float vDistance;
+varying vec3 worldPos;
 
 float computeFragDepth(float, float);
 
 
 void main(void)
 {
+   if (aboveWaterOnly > 0.0 && worldPos.z - WaterHeight < 0.0)
+      discard;
+      
    float fragDepth = gl_FragCoord.z;
 // HACK:   float fragDepth = computeFragDepth(vDistance, gl_FragCoord.z);
    gl_FragDepth = fragDepth;
@@ -33,7 +38,7 @@ void main(void)
    
    //add in the nvg components
    vec3 diffuseLight = vec3(diffuseRadiance, gl_LightSource[1].diffuse.g, gl_LightSource[1].diffuse.b);
-   vec3 lightContrib = NVG_Enable * diffuseLight + vec3(ambientRadiance, gl_LightSource[1].ambient.g, gl_LightSource[1].ambient.b);
+   vec3 lightContrib = diffuseLight + vec3(ambientRadiance, gl_LightSource[1].ambient.g, gl_LightSource[1].ambient.b);
    
    lightContrib += dynLightContrib;
    
