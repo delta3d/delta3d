@@ -450,13 +450,7 @@
            </layout>
           </item>
           <item>
-           <widget class="Line" name="line">
-            <property name="frameShadow">
-             <enum>QFrame::Plain</enum>
-            </property>
-            <property name="lineWidth">
-             <number>3</number>
-            </property>
+           <widget class="Line" name="line_2">
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
             </property>
@@ -545,6 +539,37 @@
              </size>
             </property>
            </spacer>
+          </item>
+          <item>
+           <widget class="Line" name="line">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <layout class="QVBoxLayout" name="verticalLayout_8">
+            <property name="topMargin">
+             <number>5</number>
+            </property>
+            <item>
+             <widget class="QLabel" name="label_2">
+              <property name="text">
+               <string>Shader</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QComboBox" name="ShaderGroup"/>
+            </item>
+            <item>
+             <widget class="QPushButton" name="ButtonRecompileShaders">
+              <property name="text">
+               <string>Recompile Shaders</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
           </item>
          </layout>
         </widget>
@@ -6988,6 +7013,8 @@
     <addaction name="actionImport"/>
     <addaction name="actionLoad_Reference"/>
     <addaction name="separator"/>
+    <addaction name="actionLoad_Shaderdef"/>
+    <addaction name="separator"/>
     <addaction name="actionSave"/>
     <addaction name="actionSave_As"/>
     <addaction name="separator"/>
@@ -7105,6 +7132,14 @@
    </property>
    <property name="text">
     <string>&amp;Reference Object</string>
+   </property>
+  </action>
+  <action name="actionLoad_Shaderdef">
+   <property name="text">
+    <string>Load Shaderdef</string>
+   </property>
+   <property name="toolTip">
+    <string>Set the shader definitions that may contain custom shaders.</string>
    </property>
   </action>
  </widget>
