@@ -32,6 +32,7 @@
 #include "meshlampactor.h"
 #include "meshobjectactor.h"
 #include "terrainactor.h"
+#include "vesselactor.h"
 #include <dtActors/engineactorregistry.h>
 #include <dtAnim/animactorregistry.h>
 #include <dtCore/shadermanager.h>
@@ -55,6 +56,8 @@ namespace dtExample
       new dtCore::ActorType("Mesh Object", "dtExample", "Mesh object with automated physics.", dtActors::EngineActorRegistry::GAME_MESH_ACTOR_TYPE));
    RefPtr<dtCore::ActorType> TestAppActorRegistry::MESH_LAMP_ACTOR_TYPE(
       new dtCore::ActorType("Mesh Lamp", "dtExample", "Mesh object with automated physics AND light properties.", TestAppActorRegistry::MESH_OBJECT_ACTOR_TYPE));
+   RefPtr<dtCore::ActorType> TestAppActorRegistry::VESSEL_ACTOR_TYPE(
+      new dtCore::ActorType("Vessel", "dtExample", "Mesh object with automated physics AND surface vessel properties.", TestAppActorRegistry::MESH_OBJECT_ACTOR_TYPE));
   
 
 
@@ -92,6 +95,7 @@ namespace dtExample
       mActorFactory->RegisterType<FireworkActor>(FIREWORK_ACTOR_TYPE.get());
       mActorFactory->RegisterType<MeshObjectActor>(MESH_OBJECT_ACTOR_TYPE.get());
       mActorFactory->RegisterType<MeshLampActor>(MESH_LAMP_ACTOR_TYPE.get());
+      mActorFactory->RegisterType<VesselActor>(VESSEL_ACTOR_TYPE.get());
 
       mActorFactory->RegisterType<CivilianAIActorComponent>(CivilianAIActorComponent::TYPE.get());
       mActorFactory->RegisterType<LightActorComponent>(LightActorComponent::TYPE.get());

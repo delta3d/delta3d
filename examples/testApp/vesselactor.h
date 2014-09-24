@@ -21,8 +21,8 @@
  * THE SOFTWARE.
  */
 
-#ifndef DELTA_TEST_APP_MESH_LAMP_ACTOR_H
-#define DELTA_TEST_APP_MESH_LAMP_ACTOR_H
+#ifndef DELTA_TEST_APP_VESSEL_ACTOR_H
+#define DELTA_TEST_APP_VESSEL_ACTOR_H
 
 ////////////////////////////////////////////////////////////////////////////////
 // INCLUDE DIRECTIVES
@@ -36,18 +36,18 @@ namespace dtExample
    /////////////////////////////////////////////////////////////////////////////
    // CLASS CODE
    /////////////////////////////////////////////////////////////////////////////
-   class MeshLampActor : public MeshObjectActor
+   class VesselActor : public MeshObjectActor
    {
    public:
 
       typedef MeshObjectActor BaseClass;
 
-      MeshLampActor();
+      VesselActor();
 
       /*virtual*/ void BuildActorComponents();
 
    protected:
-      virtual ~MeshLampActor();
+      virtual ~VesselActor();
    };
 
 }

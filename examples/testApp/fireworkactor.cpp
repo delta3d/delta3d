@@ -348,7 +348,7 @@ namespace dtExample
    void FireworkActor::OnEnteredWorld()
    {
       // NOTE: For now the BaseClass does not define OnEnteredWorld
-      // since the old ParticleSystemActorProxy does not extend the
+      // since the old ParticleSystemActor does not extend the
       // base class that defines it. Thus this method override may
       // not be called. The user will have to define a particle system
       // file first then set either of the color properties so that
