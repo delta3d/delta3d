@@ -171,18 +171,18 @@ namespace dtActors
 
 
    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-   IMPLEMENT_ENUM(WaterGridActor::ChoppinessSettings);
-   WaterGridActor::ChoppinessSettings WaterGridActor::ChoppinessSettings::
+   IMPLEMENT_ENUM(WaterGridActor::ChopSettings);
+   WaterGridActor::ChopSettings WaterGridActor::ChopSettings::
       CHOP_FLAT("CHOP_FLAT", 0.0f, 20.0f);
-   WaterGridActor::ChoppinessSettings WaterGridActor::ChoppinessSettings::
+   WaterGridActor::ChopSettings WaterGridActor::ChopSettings::
       CHOP_MILD("CHOP_MILD", 0.51f, 35.0f);
-   WaterGridActor::ChoppinessSettings WaterGridActor::ChoppinessSettings::
+   WaterGridActor::ChopSettings WaterGridActor::ChopSettings::
       CHOP_MED("CHOP_MED", 1.0f, 65.0f);
-   WaterGridActor::ChoppinessSettings WaterGridActor::ChoppinessSettings::
+   WaterGridActor::ChopSettings WaterGridActor::ChopSettings::
       CHOP_ROUGH("CHOP_ROUGH", 2.5f, 130.0f);
 
 
-   WaterGridActor::ChoppinessSettings::ChoppinessSettings(const std::string &name, float rotationSpread, float texMod)
+   WaterGridActor::ChopSettings::ChopSettings(const std::string &name, float rotationSpread, float texMod)
       : dtUtil::Enumeration(name), mRotationSpread(rotationSpread), mTextureWaveModifier(texMod)
    {  
       AddInstance(this);
@@ -280,7 +280,7 @@ namespace dtActors
       , mWaterColor(0.117187, 0.3125, 0.58593, 1.0)
       , mLastCameraOffsetPos()
       , mCurrentCameraPos()
-      , mChoppinessEnum(&ChoppinessSettings::CHOP_ROUGH)
+      , mChopEnum(&ChopSettings::CHOP_ROUGH)
       , mSeaStateEnum(&SeaState::SeaState_4)
    {
       SetName("WaterGridActor"); // Set a default name
@@ -314,16 +314,16 @@ namespace dtActors
    }
 
    ////////////////////////////////////////////////////////////////////////////////////
-   void WaterGridActor::SetChoppiness(WaterGridActor::ChoppinessSettings &choppiness)
+   void WaterGridActor::SetChop(WaterGridActor::ChopSettings &choppiness)
    {
-      //std::cout << "Setting Choppiness to ["<< choppiness.GetName() << "]." << std::endl;
-      mChoppinessEnum = &choppiness;
+      //std::cout << "Setting Chop to ["<< choppiness.GetName() << "]." << std::endl;
+      mChopEnum = &choppiness;
    }
 
    ////////////////////////////////////////////////////////////////////////////////////
-   WaterGridActor::ChoppinessSettings& WaterGridActor::GetChoppiness() const
+   WaterGridActor::ChopSettings& WaterGridActor::GetChop() const
    {
-      return *mChoppinessEnum;
+      return *mChopEnum;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -519,25 +519,25 @@ namespace dtActors
 
          if(kb->GetKeyState(osgGA::GUIEventAdapter::KEY_Home))
          {
-            static int testChoppiness = 0;
-            testChoppiness++;
-            testChoppiness %= 4;
+            static int testChop = 0;
+            testChop++;
+            testChop %= 4;
 
-            if (testChoppiness == 0)
+            if (testChop == 0)
             {
-               SetChoppiness(ChoppinessSettings::CHOP_FLAT);
+               SetChop(ChopSettings::CHOP_FLAT);
             }
-            else if (testChoppiness == 1)
+            else if (testChop == 1)
             {
-               SetChoppiness(ChoppinessSettings::CHOP_MILD);
+               SetChop(ChopSettings::CHOP_MILD);
             }
-            else if (testChoppiness == 2)
+            else if (testChop == 2)
             {
-               SetChoppiness(ChoppinessSettings::CHOP_MED);
+               SetChop(ChopSettings::CHOP_MED);
             }
-            else if (testChoppiness == 3)
+            else if (testChop == 3)
             {
-               SetChoppiness(ChoppinessSettings::CHOP_ROUGH);
+               SetChop(ChopSettings::CHOP_ROUGH);
             }
 
             keyTimeOut = 0.5;
@@ -793,7 +793,7 @@ namespace dtActors
 
       //set the TextureWaveChopModifier, changes the range of angles used to compute the wave directions
       osg::Uniform* twcModifier = ss->getOrCreateUniform("textureWaveChopModifier", osg::Uniform::FLOAT);
-      twcModifier->set(mChoppinessEnum->mTextureWaveModifier);
+      twcModifier->set(mChopEnum->mTextureWaveModifier);
       twcModifier->setDataVariance(osg::Object::DYNAMIC);
       
    //   osg::Uniform* textureWaveArray = ss->getOrCreateUniform(UNIFORM_TEXTURE_WAVE_ARRAY, osg::Uniform::FLOAT_VEC4, MAX_TEXTURE_WAVES);
@@ -879,7 +879,7 @@ namespace dtActors
 
       // The choppiness rotation spreads out the 8 waves so that they come at wider angles
       // which causes then to be choppier.
-      float choppinessRotationAmount = mChoppinessEnum->mRotationSpread * mModForAmplitude;
+      float choppinessRotationAmount = mChopEnum->mRotationSpread * mModForAmplitude;
       float choppinessSign = 1.0;
       for(;count < MAX_WAVES * 2;)
       {
@@ -1439,7 +1439,7 @@ namespace dtActors
    //WATER GRID PROXY
    ////////////////////////////////////////////////////////////////////////////////
    const dtUtil::RefString WaterGridActorProxy::CLASSNAME("WaterGridActor");
-   const dtUtil::RefString WaterGridActorProxy::PROPERTY_CHOPPINESS("Choppiness");
+   const dtUtil::RefString WaterGridActorProxy::PROPERTY_CHOPPINESS("Chop");
    const dtUtil::RefString WaterGridActorProxy::PROPERTY_WATER_COLOR("Water Color");
    const dtUtil::RefString WaterGridActorProxy::PROPERTY_SCENE_CAMERA("Scene Camera Name");
    const dtUtil::RefString WaterGridActorProxy::INVOKABLE_MAP_LOADED("Map Loaded");
@@ -1527,9 +1527,9 @@ namespace dtActors
          dtCore::ColorRgbaActorProperty::GetFuncType(actor,&WaterGridActor::GetWaterColor),
          "Sets the color of the water.", GROUPNAME));
 
-      AddProperty(new dtCore::EnumActorProperty<WaterGridActor::ChoppinessSettings>(PROPERTY_CHOPPINESS, PROPERTY_CHOPPINESS,
-         dtCore::EnumActorProperty<WaterGridActor::ChoppinessSettings>::SetFuncType(actor, &WaterGridActor::SetChoppiness),
-         dtCore::EnumActorProperty<WaterGridActor::ChoppinessSettings>::GetFuncType(actor, &WaterGridActor::GetChoppiness),
+      AddProperty(new dtCore::EnumActorProperty<WaterGridActor::ChopSettings>(PROPERTY_CHOPPINESS, PROPERTY_CHOPPINESS,
+         dtCore::EnumActorProperty<WaterGridActor::ChopSettings>::SetFuncType(actor, &WaterGridActor::SetChop),
+         dtCore::EnumActorProperty<WaterGridActor::ChopSettings>::GetFuncType(actor, &WaterGridActor::GetChop),
          "Sets the choppiness for the water.", GROUPNAME));
 
       AddProperty(new dtCore::StringActorProperty(PROPERTY_SCENE_CAMERA, PROPERTY_SCENE_CAMERA,

@@ -1036,7 +1036,7 @@ namespace dtExample
       }
    }
 
-   void InputComponent::SetWaterChoppiness(dtActors::WaterGridActor::ChoppinessSettings& chop)
+   void InputComponent::SetWaterChop(dtActors::WaterGridActor::ChopSettings& chop)
    {
       dtActors::WaterGridActorProxy* waterActor =NULL;
       GetGameManager()->FindActorByType(*dtActors::EngineActorRegistry::WATER_GRID_ACTOR_TYPE, waterActor);
@@ -1045,7 +1045,7 @@ namespace dtExample
          dtActors::WaterGridActor* water = NULL;
          waterActor->GetDrawable(water);
 
-         water->SetChoppiness(chop);
+         water->SetChop(chop);
       }
    }
 
@@ -1065,7 +1065,7 @@ namespace dtExample
       return dtActors::WaterGridActor::SeaState::SeaState_0;
    }
 
-   dtActors::WaterGridActor::ChoppinessSettings& InputComponent::GetWaterChoppiness() const
+   dtActors::WaterGridActor::ChopSettings& InputComponent::GetWaterChop() const
    {
       dtActors::WaterGridActorProxy* waterActor =NULL;
       GetGameManager()->FindActorByType(*dtActors::EngineActorRegistry::WATER_GRID_ACTOR_TYPE, waterActor);
@@ -1074,10 +1074,10 @@ namespace dtExample
          dtActors::WaterGridActor* water = NULL;
          waterActor->GetDrawable(water);
 
-         return water->GetChoppiness();
+         return water->GetChop();
       }
 
-      return dtActors::WaterGridActor::ChoppinessSettings::CHOP_FLAT;
+      return dtActors::WaterGridActor::ChopSettings::CHOP_FLAT;
 
    }
 

@@ -54,7 +54,7 @@
                 <float>1.2</float>
             </property>
             <property>
-                <name>Choppiness</name>
+                <name>Chop</name>
                 <enumerated>CHOP_MILD</enumerated>
             </property>
             <property>

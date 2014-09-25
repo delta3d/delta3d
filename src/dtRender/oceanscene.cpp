@@ -134,7 +134,7 @@ namespace dtRender
    , mTexWaveSpreadScalar(1.35)
    , mTexWaveSteepness(2.0)
    , mSeaState(&dtActors::WaterGridActor::SeaState::SeaState_4)
-   , mChoppiness(&dtActors::WaterGridActor::ChoppinessSettings::CHOP_FLAT)
+   , mChop(&dtActors::WaterGridActor::ChopSettings::CHOP_FLAT)
    , mUseDebugKeys(false)
    , mImpl(new OceanSceneImpl())
    {
@@ -216,7 +216,7 @@ namespace dtRender
                water->SetTexWaveAmpScalar(mTexWaveAmpScalar);
                water->SetTexWaveSpreadScalar(mTexWaveSpreadScalar);
                water->SetTexWaveSteepness(mTexWaveSteepness);
-               water->SetChoppiness(mChoppiness);
+               water->SetChop(mChop);
                water->SetSeaState(mSeaState);
                water->SetUseDebugKeys(mUseDebugKeys);
             }
@@ -288,7 +288,7 @@ namespace dtRender
    DT_IMPLEMENT_ACCESSOR_GETTER(OceanScene, float, TexWaveSteepness);
    DT_IMPLEMENT_ACCESSOR_GETTER(OceanScene, osg::Vec4, WaterColor);
    DT_IMPLEMENT_ACCESSOR_GETTER(OceanScene, dtUtil::EnumerationPointer<dtActors::WaterGridActor::SeaState>, SeaState);
-   DT_IMPLEMENT_ACCESSOR_GETTER(OceanScene, dtUtil::EnumerationPointer<dtActors::WaterGridActor::ChoppinessSettings>, Choppiness);
+   DT_IMPLEMENT_ACCESSOR_GETTER(OceanScene, dtUtil::EnumerationPointer<dtActors::WaterGridActor::ChopSettings>, Chop);
 
    /////////////////////////////////////////////////////////////////////////////
    void OceanScene::SetUseDebugKeys(bool b)
@@ -442,12 +442,12 @@ namespace dtRender
    }
    
    /////////////////////////////////////////////////////////////////////////////
-   void OceanScene::SetChoppiness(dtActors::WaterGridActor::ChoppinessSettings&  choppiness_)
+   void OceanScene::SetChop(dtActors::WaterGridActor::ChopSettings&  chop_)
    {
-      mChoppiness = choppiness_;
+      mChop = chop_;
       if(mImpl->mWaterActor.valid())
       {
-         mImpl->mWaterActor->SetChoppiness(choppiness_);
+         mImpl->mWaterActor->SetChop(chop_);
       }
    }
 
@@ -501,7 +501,7 @@ namespace dtRender
       DT_REGISTER_PROPERTY(UnderWaterViewDistance, "How far you can see under water.", RegHelperType, propReg);
 
       DT_REGISTER_PROPERTY(SeaState, "A value representing the overall sea state based on the beaufort scale 1-12.", RegHelperType, propReg);
-      DT_REGISTER_PROPERTY(Choppiness, "A value representing the overall choppiness of the waves.", RegHelperType, propReg);
+      DT_REGISTER_PROPERTY(Chop, "A value representing the overall chop of the waves.", RegHelperType, propReg);
 
       DT_REGISTER_PROPERTY(ReflectionMapResolution, "The resolution of the render to texture reflection map.", RegHelperType, propReg);
       DT_REGISTER_PROPERTY(TexWaveTextureResolution, "The resolution of the render to texture texture wave map.", RegHelperType, propReg);
