@@ -204,8 +204,8 @@
                <Property Name="MaximumValue" Value="12"/>
             </Window>
 
-            <!-- LABEL - SEA CHOPPINESS -->
-            <Window Name="GameScreen_SeaChoppinessLabel" Type="WindowsLook/StaticText">
+            <!-- LABEL - SEA CHOP -->
+            <Window Name="GameScreen_SeaChopLabel" Type="WindowsLook/StaticText">
                <Property Name="UnifiedSize" Value="{{0.5,0},{0.1,0}}"/>
                <Property Name="UnifiedPosition" Value="{{0.0,0},{0.54,0}}"/>
                <Property Name="ZOrderChangeEnabled" Value="False"/>
@@ -215,11 +215,11 @@
                <Property Name="Font" Value="DejaVuSans-10"/>
                <Property Name="AlwaysOnTop" Value="True"/>
                <Property Name="TextColours" Value="FFFFFFFF"/>
-               <Property Name="Text" Value="Sea Choppy"/>
+               <Property Name="Text" Value="Sea Chop"/>
             </Window>
 
-            <!-- SEA CHOPPINESS SPINNER -->
-            <Window Name="GameScreen_SeaChoppinessSpinner" Type="WindowsLook/Spinner">
+            <!-- SEA CHOP SPINNER -->
+            <Window Name="GameScreen_SeaChopSpinner" Type="WindowsLook/Spinner">
                <Property Name="UnifiedSize" Value="{{0.25,0},{0.08,0}}"/>
                <Property Name="UnifiedPosition" Value="{{0.0,0},{0.54,0}}"/>
                <Property Name="ZOrderChangeEnabled" Value="False"/>

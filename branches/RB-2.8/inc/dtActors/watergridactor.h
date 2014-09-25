@@ -82,22 +82,22 @@ namespace dtActors
       typedef std::vector<TextureWave> TextureWaveArray;
 
       //////////////////////////////////////////////
-      // Choppiness settings are used to cycle between some basic versions of the waves.
-      class DT_PLUGIN_EXPORT ChoppinessSettings : public dtUtil::Enumeration
+      // Chop settings are used to cycle between some basic versions of the waves.
+      class DT_PLUGIN_EXPORT ChopSettings : public dtUtil::Enumeration
       {
-         DECLARE_ENUM(ChoppinessSettings);
+         DECLARE_ENUM(ChopSettings);
       public:
-         static ChoppinessSettings CHOP_FLAT;
-         static ChoppinessSettings CHOP_MILD;
-         static ChoppinessSettings CHOP_MED;
-         static ChoppinessSettings CHOP_ROUGH;
+         static ChopSettings CHOP_FLAT;
+         static ChopSettings CHOP_MILD;
+         static ChopSettings CHOP_MED;
+         static ChopSettings CHOP_ROUGH;
 
          float mRotationSpread;
          float mTextureWaveModifier;
 
       private:
          //////////////////////////////////////////////////////////////////////////
-         ChoppinessSettings(const std::string& name, float rotationSpread, float texMod);
+         ChopSettings(const std::string& name, float rotationSpread, float texMod);
       };
 
 
@@ -166,8 +166,8 @@ namespace dtActors
       void SetWaterColor(const osg::Vec4& color);
       osg::Vec4 GetWaterColor() const;
 
-      void SetChoppiness(ChoppinessSettings& choppiness);
-      ChoppinessSettings& GetChoppiness() const;
+      void SetChop(ChopSettings& choppiness);
+      ChopSettings& GetChop() const;
 
       //this alternatively sets it by number, valid ranges from 0-12, see comment on SeaStateEnum above
       void SetSeaState(SeaState& choppiness);
@@ -273,7 +273,7 @@ namespace dtActors
       osg::Vec4 mWaterColor;
       osg::Vec3 mLastCameraOffsetPos, mCurrentCameraPos;
 
-      ChoppinessSettings* mChoppinessEnum;
+      ChopSettings* mChopEnum;
       SeaState* mSeaStateEnum;
 
       // Each frame (or as needed), the current set of waves is computed. This data

@@ -105,8 +105,8 @@ namespace dtExample
          void SetSeaState(dtActors::WaterGridActor::SeaState&);
          dtActors::WaterGridActor::SeaState& GetSeaState() const;
          
-         dtActors::WaterGridActor::ChoppinessSettings& GetWaterChoppiness() const;
-         void SetWaterChoppiness(dtActors::WaterGridActor::ChoppinessSettings&);
+         dtActors::WaterGridActor::ChopSettings& GetWaterChop() const;
+         void SetWaterChop(dtActors::WaterGridActor::ChopSettings&);
 
          void SetAmbience(float amt);
          float GetAmbience();

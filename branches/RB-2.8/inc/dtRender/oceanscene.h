@@ -71,7 +71,7 @@ namespace dtRender
       DT_DECLARE_ACCESSOR(float, TexWaveSteepness)
 
       DT_DECLARE_ACCESSOR(dtUtil::EnumerationPointer<dtActors::WaterGridActor::SeaState>, SeaState);
-      DT_DECLARE_ACCESSOR(dtUtil::EnumerationPointer<dtActors::WaterGridActor::ChoppinessSettings>, Choppiness);
+      DT_DECLARE_ACCESSOR(dtUtil::EnumerationPointer<dtActors::WaterGridActor::ChopSettings>, Chop);
 
       DT_DECLARE_ACCESSOR(bool, UseDebugKeys)
 

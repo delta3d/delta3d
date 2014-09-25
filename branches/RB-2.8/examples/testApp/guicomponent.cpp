@@ -72,7 +72,7 @@ namespace dtExample
    static const dtUtil::RefString UI_CONTROL_AMBIENCE("GameScreen_AmbienceSpinner");
    static const dtUtil::RefString UI_CONTROL_LAMP("GameScreen_LampSpinner");
    static const dtUtil::RefString UI_CONTROL_LUMINANCE("GameScreen_LuminanceSpinner");
-   static const dtUtil::RefString UI_CONTROL_SEA_CHOPPINESS("GameScreen_SeaChoppinessSpinner");
+   static const dtUtil::RefString UI_CONTROL_SEA_CHOP("GameScreen_SeaChopSpinner");
    static const dtUtil::RefString UI_CONTROL_SEA_STATE("GameScreen_SeaStateSpinner");
    static const dtUtil::RefString UI_CONTROL_TIME("GameScreen_TimeSpinner");
 
@@ -382,11 +382,11 @@ namespace dtExample
       spinner->setCurrentValue(index);
 
 
-      // Update the Sea Choppiness combobox
-      typedef dtActors::WaterGridActor::ChoppinessSettings Choppiness;
-      const EnumList& choppies = Choppiness::Enumerate();
+      // Update the Sea Chop combobox
+      typedef dtActors::WaterGridActor::ChopSettings Chop;
+      const EnumList& choppies = Chop::Enumerate();
 
-      Choppiness& choppiness = comp->GetWaterChoppiness();
+      Chop& chop = comp->GetWaterChop();
 
       index = 0;
       {
@@ -394,7 +394,7 @@ namespace dtExample
          EnumList::const_iterator endIter = choppies.end();
          for (int i = 0; curIter != endIter; ++curIter, ++i)
          {
-            if ((*curIter) == &choppiness)
+            if ((*curIter) == &chop)
             {
                index = i;
                break;
@@ -402,7 +402,7 @@ namespace dtExample
          }
       }
 
-      spinner = dynamic_cast<GuiSpinner*>(screen.GetNode(UI_CONTROL_SEA_CHOPPINESS.Get()));
+      spinner = dynamic_cast<GuiSpinner*>(screen.GetNode(UI_CONTROL_SEA_CHOP.Get()));
       spinner->setCurrentValue(index);
    }
 
@@ -768,22 +768,22 @@ namespace dtExample
                comp->SetSeaState(*state);
             }
          }
-         else if (controlName == UI_CONTROL_SEA_CHOPPINESS.Get())
+         else if (controlName == UI_CONTROL_SEA_CHOP.Get())
          {
             size_t index = (size_t)value;
 
-            typedef dtActors::WaterGridActor::ChoppinessSettings Choppiness;
-            const EnumList& choppies = Choppiness::Enumerate();
+            typedef dtActors::WaterGridActor::ChopSettings Chop;
+            const EnumList& choppies = Chop::Enumerate();
 
-            Choppiness* choppiness = NULL;
+            Chop* chop = NULL;
             if (index >= 0 && choppies.size() > index)
             {
-               choppiness = dynamic_cast<Choppiness*>(choppies[index]);
+               chop = dynamic_cast<Chop*>(choppies[index]);
             }
 
-            if (choppiness != NULL)
+            if (chop != NULL)
             {
-               comp->SetWaterChoppiness(*choppiness);
+               comp->SetWaterChop(*chop);
             }
          }
       }
