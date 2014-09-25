@@ -608,8 +608,8 @@ namespace dtExample
          mSprayUpdateTimer = 0.0f;
 
          // DEBUG:
-         printf("\n\tUpdating particles (%f / %f = %f)\n\n",
-            velocity, GetSprayVelocityMax(), ratio);
+         //printf("\n\tUpdating particles (%f / %f = %f)\n\n",
+         //   velocity, GetSprayVelocityMax(), ratio);
       }
 
       // Update the particle systems.
@@ -623,15 +623,23 @@ namespace dtExample
          }
       }
 
-      if(mSpraySideRight.valid() && mSpraySideLeft.valid())
+      if(mSpraySideLeft.valid())
       {
-         mSpraySideRight->Update(simTimeDelta);
          mSpraySideLeft->Update(simTimeDelta);
 
          if(allowInterpolation)
          {
-            mSpraySideRight->InterpolateAllLayers(interpTime, ratio);
             mSpraySideLeft->InterpolateAllLayers(interpTime, ratio);
+         }
+      }
+
+      if(mSpraySideRight.valid())
+      {
+         mSpraySideRight->Update(simTimeDelta);
+
+         if(allowInterpolation)
+         {
+            mSpraySideRight->InterpolateAllLayers(interpTime, ratio);
          }
       }
 
