@@ -54,7 +54,8 @@ namespace dtExample
 
    const dtUtil::RefString SurfaceVesselActorComponent::PROPERTY_SPRAY_ENABLED("Spray Enabled");
    const dtUtil::RefString SurfaceVesselActorComponent::PROPERTY_SPRAY_FRONT_FILE("Spray Front File");
-   const dtUtil::RefString SurfaceVesselActorComponent::PROPERTY_SPRAY_SIDE_FILE("Spray Side File");
+   const dtUtil::RefString SurfaceVesselActorComponent::PROPERTY_SPRAY_SIDE_LEFT_FILE("Spray Side Left File");
+   const dtUtil::RefString SurfaceVesselActorComponent::PROPERTY_SPRAY_SIDE_RIGHT_FILE("Spray Side Right File");
    const dtUtil::RefString SurfaceVesselActorComponent::PROPERTY_SPRAY_BACK_FILE("Spray Back File");
    const dtUtil::RefString SurfaceVesselActorComponent::PROPERTY_SPRAY_FRONT_OFFSET("Spray Front Offset");
    const dtUtil::RefString SurfaceVesselActorComponent::PROPERTY_SPRAY_SIDE_OFFSET_LEFT("Spray Side Offset Left");
@@ -110,10 +111,18 @@ namespace dtExample
 
       AddProperty(new ResourceActorProperty(*this,
          DataType::PARTICLE_SYSTEM,
-         PROPERTY_SPRAY_SIDE_FILE,
-         PROPERTY_SPRAY_SIDE_FILE,
-         ResourceActorProperty::SetFuncType(this, &SurfaceVesselActorComponent::SetSpraySideFile),
-         RefString("Loads the particle system for the water spray effect on the side of the vessel"),
+         PROPERTY_SPRAY_SIDE_LEFT_FILE,
+         PROPERTY_SPRAY_SIDE_LEFT_FILE,
+         ResourceActorProperty::SetFuncType(this, &SurfaceVesselActorComponent::SetSpraySideLeftFile),
+         RefString("Loads the particle system for the water spray effect on the left side of the vessel"),
+         GROUP));
+
+      AddProperty(new ResourceActorProperty(*this,
+         DataType::PARTICLE_SYSTEM,
+         PROPERTY_SPRAY_SIDE_RIGHT_FILE,
+         PROPERTY_SPRAY_SIDE_RIGHT_FILE,
+         ResourceActorProperty::SetFuncType(this, &SurfaceVesselActorComponent::SetSpraySideRightFile),
+         RefString("Loads the particle system for the water spray effect on the right side of the vessel"),
          GROUP));
 
       AddProperty(new ResourceActorProperty(*this,
@@ -223,23 +232,32 @@ namespace dtExample
          mSprayFront->SetTransform(transform, dtCore::Transformable::REL_CS);          
       }
  
-      if(mSpraySideRight.valid() && mSpraySideLeft.valid())
+      if(mSpraySideLeft.valid())
       {
-         BindShaderToParticleSystem(*mSpraySideRight, "WaterSprayParticles");
          BindShaderToParticleSystem(*mSpraySideLeft, "WaterSprayParticles");
 
          // Attach the particles to the parent
-         drawable->GetOSGNode()->asGroup()->addChild(mSpraySideRight->GetOSGNode());
          drawable->GetOSGNode()->asGroup()->addChild(mSpraySideLeft->GetOSGNode());
+
+         // Offset the particles 
+         dtCore::Transform transform;
+
+         transform.SetTranslation(mSpraySideOffsetLeft);
+         mSpraySideLeft->SetTransform(transform, dtCore::Transformable::REL_CS);
+      }
+ 
+      if(mSpraySideRight.valid())
+      {
+         BindShaderToParticleSystem(*mSpraySideRight, "WaterSprayParticles");
+
+         // Attach the particles to the parent
+         drawable->GetOSGNode()->asGroup()->addChild(mSpraySideRight->GetOSGNode());
 
          // Offset the particles 
          dtCore::Transform transform;
 
          transform.SetTranslation(mSpraySideOffsetRight);
          mSpraySideRight->SetTransform(transform, dtCore::Transformable::REL_CS);
-
-         transform.SetTranslation(mSpraySideOffsetLeft);
-         mSpraySideLeft->SetTransform(transform, dtCore::Transformable::REL_CS);
       }
 
       if(mSprayBack.valid())
@@ -365,6 +383,7 @@ namespace dtExample
          // Create the actor.
          DynamicParticles* drawable = NULL;
          gm->CreateActor(*dtActors::EngineActorRegistry::DYNAMIC_PARTICLE_SYSTEM_ACTOR_TYPE, actor);
+
          actor->GetDrawable(drawable);
          drawable->SetName(actorName);
          drawable->LoadFile(filename);
@@ -382,6 +401,8 @@ namespace dtExample
             settings.mRangeRate *= 0.0f;
             settings.mRangeSpeed *= 0.0f;
          }
+
+         gm->AddActor(*actor, false, false);
       }
 
       return actor;
@@ -411,15 +432,27 @@ namespace dtExample
    }
 
    //////////////////////////////////////////////////////////
-   void SurfaceVesselActorComponent::SetSpraySideFile(const std::string& fileName)
+   void SurfaceVesselActorComponent::SetSpraySideLeftFile(const std::string& fileName)
    {
-      mFileSpraySide = fileName;
+      mFileSpraySideLeft = fileName;
    }
    
    //////////////////////////////////////////////////////////
-   const std::string& SurfaceVesselActorComponent::GetSpraySideFile() const
+   const std::string& SurfaceVesselActorComponent::GetSpraySideLeftFile() const
    {
-      return mFileSpraySide;
+      return mFileSpraySideLeft;
+   }
+
+   //////////////////////////////////////////////////////////
+   void SurfaceVesselActorComponent::SetSpraySideRightFile(const std::string& fileName)
+   {
+      mFileSpraySideRight = fileName;
+   }
+   
+   //////////////////////////////////////////////////////////
+   const std::string& SurfaceVesselActorComponent::GetSpraySideRightFile() const
+   {
+      return mFileSpraySideRight;
    }
 
    //////////////////////////////////////////////////////////
@@ -443,16 +476,16 @@ namespace dtExample
          mSprayFront = GetDynamicParticles(mSprayFrontActor.get());
       }
 
-      if(!mSpraySideRight.valid())
-      {
-         mSpraySideRightActor = CreatDynamicParticleSystemActor(mFileSpraySide, "SpraySideRight");
-         mSpraySideRight = GetDynamicParticles(mSpraySideRightActor.get());
-      }
-
       if(!mSpraySideLeft.valid())
       {
-         mSpraySideLeftActor = CreatDynamicParticleSystemActor(mFileSpraySide, "SpraySideLeft");
+         mSpraySideLeftActor = CreatDynamicParticleSystemActor(mFileSpraySideLeft, "SpraySideLeft");
          mSpraySideLeft = GetDynamicParticles(mSpraySideLeftActor.get());
+      }
+
+      if(!mSpraySideRight.valid())
+      {
+         mSpraySideRightActor = CreatDynamicParticleSystemActor(mFileSpraySideRight, "SpraySideRight");
+         mSpraySideRight = GetDynamicParticles(mSpraySideRightActor.get());
       }
 
       if(!mSprayBack.valid())
@@ -566,7 +599,7 @@ namespace dtExample
 
       mSprayUpdateTimer += simTimeDelta;
 
-      bool allowInterpolation = mSprayUpdateTimer > simTimeDelta || dtUtil::Abs(mLastSprayRatio - ratio) > 0.1f;
+      bool allowInterpolation = /*mSprayUpdateTimer > simTimeDelta || */dtUtil::Abs(mLastSprayRatio - ratio) > 0.1f;
 
       if(allowInterpolation)
       {
@@ -575,7 +608,8 @@ namespace dtExample
          mSprayUpdateTimer = 0.0f;
 
          // DEBUG:
-         //std::cout << "\n\tUpdating particles ("<< GetLastKnownVelocity().length2() <<" / "<< GetSprayVelocityMax() <<" = "<< ratio <<")\n\n";
+         printf("\n\tUpdating particles (%f / %f = %f)\n\n",
+            velocity, GetSprayVelocityMax(), ratio);
       }
 
       // Update the particle systems.
