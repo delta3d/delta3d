@@ -50,7 +50,8 @@ namespace dtExample
       static const dtUtil::RefString CLASS_NAME;
       static const dtUtil::RefString PROPERTY_SPRAY_ENABLED;
       static const dtUtil::RefString PROPERTY_SPRAY_FRONT_FILE;
-      static const dtUtil::RefString PROPERTY_SPRAY_SIDE_FILE;
+      static const dtUtil::RefString PROPERTY_SPRAY_SIDE_LEFT_FILE;
+      static const dtUtil::RefString PROPERTY_SPRAY_SIDE_RIGHT_FILE;
       static const dtUtil::RefString PROPERTY_SPRAY_BACK_FILE;
       static const dtUtil::RefString PROPERTY_SPRAY_FRONT_OFFSET;
       static const dtUtil::RefString PROPERTY_SPRAY_SIDE_OFFSET_LEFT;
@@ -71,8 +72,11 @@ namespace dtExample
       void SetSprayFrontFile(const std::string& fileName);
       const std::string& GetSprayFrontFile() const;
 
-      void SetSpraySideFile(const std::string& fileName);
-      const std::string& GetSpraySideFile() const;
+      void SetSpraySideLeftFile(const std::string& fileName);
+      const std::string& GetSpraySideLeftFile() const;
+
+      void SetSpraySideRightFile(const std::string& fileName);
+      const std::string& GetSpraySideRightFile() const;
 
       void SetSprayBackFile(const std::string& fileName);
       const std::string& GetSprayBackFile() const;
@@ -140,7 +144,8 @@ namespace dtExample
 
       std::string mParticleShaderGroup;
       std::string mFileSprayFront;
-      std::string mFileSpraySide;
+      std::string mFileSpraySideLeft;
+      std::string mFileSpraySideRight;
       std::string mFileSprayBack;
 
       dtCore::RefPtr<DynamicParticlesActor> mSprayFrontActor;
