@@ -585,19 +585,8 @@ namespace dtRender
 
          if (ephem != NULL)
          {
-            //ephem->dateTime = osgEphemeris::DateTime(dt.GetYear(),
-            //      dt.GetMonth(), dt.GetDay(), dt.GetHour(), dt.GetMinute(), int(dt.GetSecond()));
-            
-            osgEphemeris::DateTime ephDT(true);
-            ephDT.setTimeZoneOffset(false, 0);
-            ephDT.setYear(dt.GetYear());
-            ephDT.setMonth(dt.GetMonth());
-            ephDT.setDayOfMonth(dt.GetDay());
-            ephDT.setHour(dt.GetHour());
-            ephDT.setMinute(dt.GetMinute());
-            ephDT.setSecond(dt.GetSecond());
-
-            mImpl->mEphemerisModel->setDateTime(ephDT);
+            mImpl->mEphemerisModel->setDateTime(osgEphemeris::DateTime(dt.GetYear(),
+                 dt.GetMonth(), dt.GetDay(), dt.GetHour(), dt.GetMinute(), int(dt.GetSecond())));
          }
       }
    }
