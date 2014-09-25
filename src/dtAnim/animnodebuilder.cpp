@@ -358,9 +358,9 @@ dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateHardware(osg::RenderInfo* rende
 
       std::string boneTransformUniform = BONE_TRANSFORM_UNIFORM;
 
-      if (prog->getPCP(0) != NULL && prog->getPCP(0)->getUniformLocation(boneTransformUniform) == -1)
+      if (prog->getPCP(renderInfo->getContextID()) != NULL && prog->getPCP(renderInfo->getContextID())->getUniformLocation(boneTransformUniform) == -1)
       {
-         if (prog->getPCP(0) != NULL && prog->getPCP(0)->getUniformLocation(boneTransformUniform + "[0]") == -1)
+         if (prog->getPCP(renderInfo->getContextID()) != NULL && prog->getPCP(renderInfo->getContextID())->getUniformLocation(boneTransformUniform + "[0]") == -1)
          {
             LOG_ERROR("Can't find uniform named \"" + boneTransformUniform
                       + "\" which is required for skinning.");
