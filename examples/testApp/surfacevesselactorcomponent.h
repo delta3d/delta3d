@@ -59,12 +59,16 @@ namespace dtExample
       static const dtUtil::RefString PROPERTY_SPRAY_BACK_OFFSET;
       static const dtUtil::RefString PROPERTY_SPRAY_VELOCITY_MIN;
       static const dtUtil::RefString PROPERTY_SPRAY_VELOCITY_MAX;
+      static const dtUtil::RefString PROPERTY_SPRAY_UPDATE_FREQUENCY;
       static const dtUtil::RefString PROPERTY_SPRAY_SHADER_GROUP;
 
       SurfaceVesselActorComponent(const ACType& type = TYPE);
 
       void SetSprayEnabled( bool enable );
       bool IsSprayEnabled();
+
+      void SetSprayUpdateFrequency(float frequency);
+      float GetSprayUpdateFrequency() const;
 
       void SetSprayShaderGroup(const std::string& shaderGroup);
       const std::string& GetSprayShaderGroup() const;
@@ -128,12 +132,15 @@ namespace dtExample
          const std::string& actorName);
       DynamicParticles* GetDynamicParticles(DynamicParticlesActor* actor);
 
+      void InterpolateParticleSystem(DynamicParticles& particles, float ratio);
+
    private:
       bool mSprayEnabled;
       float mLastSprayRatio;
       float mSprayVelocityMin;
       float mSprayVelocityMax;
       float mSprayUpdateTimer;
+      float mSprayUpdateFrequency;
 
       osg::Vec3 mSprayFrontOffset;
       osg::Vec3 mSpraySideOffsetRight;
