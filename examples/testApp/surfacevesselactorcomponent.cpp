@@ -220,7 +220,7 @@ namespace dtExample
 
       if(mSprayFront.valid())
       {
-         BindShaderToParticleSystem(*mSprayFront, "WaterSprayParticles");
+         BindShaderToParticleSystem(*mSprayFront);
 
          // Attach the particles to the parent
          drawable->GetOSGNode()->asGroup()->addChild(mSprayFront->GetOSGNode());
@@ -234,7 +234,7 @@ namespace dtExample
  
       if(mSpraySideLeft.valid())
       {
-         BindShaderToParticleSystem(*mSpraySideLeft, "WaterSprayParticles");
+         BindShaderToParticleSystem(*mSpraySideLeft);
 
          // Attach the particles to the parent
          drawable->GetOSGNode()->asGroup()->addChild(mSpraySideLeft->GetOSGNode());
@@ -248,7 +248,7 @@ namespace dtExample
  
       if(mSpraySideRight.valid())
       {
-         BindShaderToParticleSystem(*mSpraySideRight, "WaterSprayParticles");
+         BindShaderToParticleSystem(*mSpraySideRight);
 
          // Attach the particles to the parent
          drawable->GetOSGNode()->asGroup()->addChild(mSpraySideRight->GetOSGNode());
@@ -262,7 +262,7 @@ namespace dtExample
 
       if(mSprayBack.valid())
       {
-         BindShaderToParticleSystem(*mSprayBack, "WaterSprayParticles");
+         BindShaderToParticleSystem(*mSprayBack);
 
          // Attach the particles to the parent
          drawable->GetOSGNode()->asGroup()->addChild(mSprayBack->GetOSGNode());
@@ -279,7 +279,7 @@ namespace dtExample
    }
 
    //////////////////////////////////////////////////////////
-   void SurfaceVesselActorComponent::BindShaderToParticleSystem(dtCore::ParticleSystem& particles, const std::string& shaderName)
+   void SurfaceVesselActorComponent::BindShaderToParticleSystem(dtCore::ParticleSystem& particles)
    {
       dtCore::ParticleSystem::LayerList& layers = particles.GetAllLayers();
       dtCore::ParticleSystem::LayerList::iterator iter = layers.begin();
@@ -287,18 +287,18 @@ namespace dtExample
       {
          //osgParticle::ParticleSystem* ref = &iter->GetParticleSystem();
          dtCore::ParticleLayer& pLayer = *iter;
-         BindShaderToNode(shaderName, pLayer.GetGeode());
+         BindShaderToNode(pLayer.GetGeode());
       }
    }
 
    //////////////////////////////////////////////////////////
-   void SurfaceVesselActorComponent::BindShaderToNode(const std::string& shaderName, osg::Node& node)
+   void SurfaceVesselActorComponent::BindShaderToNode(osg::Node& node)
    {
       dtCore::ShaderManager& sm = dtCore::ShaderManager::GetInstance();
       dtCore::ShaderGroup* sg = sm.FindShaderGroupPrototype(mParticleShaderGroup);
       if(sg)
       {
-         dtCore::ShaderProgram* sp = sg->FindShader(shaderName);
+         dtCore::ShaderProgram* sp = sg->GetDefaultShader();
 
          if(sp != NULL)
          {
@@ -306,7 +306,7 @@ namespace dtExample
          }
          else
          {
-            LOG_ERROR("Unable to find a particle system shader with the name '." + shaderName + "' ");
+            LOG_ERROR("Unable to find particle system shader group: \"" + mParticleShaderGroup + "\" ");
          }
       }
       else
