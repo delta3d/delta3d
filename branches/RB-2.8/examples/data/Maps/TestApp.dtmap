@@ -7,7 +7,7 @@
         <comment></comment>
         <copyright></copyright>
         <createTimestamp>2014-07-15T22:49:46-05:00</createTimestamp>
-        <lastUpdateTimestamp>2014-09-23T11:02:56-05:00</lastUpdateTimestamp>
+        <lastUpdateTimestamp>2014-09-26T09:26:18-05:00</lastUpdateTimestamp>
         <editorVersion>2.8.0</editorVersion>
         <schemaVersion>1.0</schemaVersion>
     </header>
@@ -698,6 +698,23 @@
             </property>
         </actor>
         <actor>
+            <type>dtcore.Curve.Bezier Control Point</type>
+            <id>0a72d2c3-7c6a-4790-b238-b98efdb21f24</id>
+            <name>ControlPoint_38</name>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-479.924164</value1>
+                    <value2>-210.802048</value2>
+                    <value3>60.702522</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Bezier Node</name>
+                <actorId>610142e6-443d-4799-b02c-091a1506a325</actorId>
+            </property>
+        </actor>
+        <actor>
             <type>dtExample.Mesh Object</type>
             <id>0bbfab75-ab73-44a9-a388-3d22de38f08a</id>
             <name>palmtree_75</name>
@@ -795,14 +812,14 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>-0.000000</value2>
-                    <value3>47.592194</value3>
+                    <value3>25.821426</value3>
                 </vec3>
             </property>
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>117.765953</value1>
-                    <value2>-335.561920</value2>
+                    <value1>-84.579010</value1>
+                    <value2>-108.407585</value2>
                     <value3>0.000000</value3>
                 </vec3>
             </property>
@@ -826,7 +843,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254890</value3>
+                    <value3>-87.254868</value3>
                 </vec3>
             </property>
             <property>
@@ -963,6 +980,23 @@
                 <resourceType>StaticMeshes</resourceType>
                 <resourceDisplayName>StaticMeshes:glassware:wine_bottle:WineBottle_Purple.osg</resourceDisplayName>
                 <resource>StaticMeshes:glassware:wine_bottle:WineBottle_Purple.osg</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Curve.Bezier Control Point</type>
+            <id>12d5be9c-147d-413b-9bff-2efdbe9fa918</id>
+            <name>ControlPoint_40</name>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-240.419220</value1>
+                    <value2>-92.588531</value2>
+                    <value3>10.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Bezier Node</name>
+                <actorId>9d732c75-56df-4f85-9d7e-10ac630b26e4</actorId>
             </property>
         </actor>
         <actor>
@@ -1245,10 +1279,6 @@
                 <name>Updates From Light Enabled</name>
                 <boolean>true</boolean>
             </property>
-            <property>
-                <name>Attach light to owner</name>
-                <boolean>false</boolean>
-            </property>
         </actor>
         <actor>
             <type>dtExample.Mesh Object</type>
@@ -1363,10 +1393,6 @@
                 <name>Updates From Light Enabled</name>
                 <boolean>true</boolean>
             </property>
-            <property>
-                <name>Attach light to owner</name>
-                <boolean>false</boolean>
-            </property>
         </actor>
         <actor>
             <type>dtcore.Curve.Bezier Control Point</type>
@@ -1392,8 +1418,8 @@
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>75.956902</value1>
-                    <value2>-418.656128</value2>
+                    <value1>-425.738739</value1>
+                    <value2>-243.028458</value2>
                     <value3>0.000000</value3>
                 </vec3>
             </property>
@@ -1402,12 +1428,8 @@
                 <actorId>6b0f719d-8b33-4126-9ef7-cf0fd2be261e</actorId>
             </property>
             <property>
-                <name>Next Bezier Node</name>
-                <actorId>1ab03e82-8f71-4a47-801a-6741e4f30a12</actorId>
-            </property>
-            <property>
                 <name>Previous Bezier Node</name>
-                <actorId>1ab03e82-8f71-4a47-801a-6741e4f30a12</actorId>
+                <actorId>f551ce6c-57ef-4d1d-a562-1f21ac37bf58</actorId>
             </property>
         </actor>
         <actor>
@@ -1572,10 +1594,6 @@
             <property>
                 <name>Updates From Light Enabled</name>
                 <boolean>true</boolean>
-            </property>
-            <property>
-                <name>Attach light to owner</name>
-                <boolean>false</boolean>
             </property>
         </actor>
         <actor>
@@ -1775,7 +1793,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254890</value3>
+                    <value3>-87.254868</value3>
                 </vec3>
             </property>
             <property>
@@ -2187,10 +2205,6 @@
                 <actorId>7a187ad8-2ac8-4167-b468-44d3bb96f160</actorId>
             </property>
             <property>
-                <name>Render Path</name>
-                <boolean>false</boolean>
-            </property>
-            <property>
                 <name>Follow Path</name>
                 <boolean>true</boolean>
             </property>
@@ -2224,6 +2238,23 @@
                 <resourceType>StaticMeshes</resourceType>
                 <resourceDisplayName>StaticMeshes:glassware:wine_bottle:WineBottle_Purple.osg</resourceDisplayName>
                 <resource>StaticMeshes:glassware:wine_bottle:WineBottle_Purple.osg</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Curve.Bezier Control Point</type>
+            <id>258d5302-f5ca-4f5b-81d9-6be267dcf11f</id>
+            <name>ControlPoint_39</name>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-238.170135</value1>
+                    <value2>-78.091362</value2>
+                    <value3>10.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Bezier Node</name>
+                <actorId>92307c86-7d6a-41a2-bea6-ce56526d0d42</actorId>
             </property>
         </actor>
         <actor>
@@ -2841,7 +2872,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254890</value3>
+                    <value3>-87.254868</value3>
                 </vec3>
             </property>
             <property>
@@ -3034,10 +3065,6 @@
                 <name>Updates From Light Enabled</name>
                 <boolean>true</boolean>
             </property>
-            <property>
-                <name>Attach light to owner</name>
-                <boolean>false</boolean>
-            </property>
         </actor>
         <actor>
             <type>dtExample.Civilian</type>
@@ -3170,7 +3197,7 @@
                 <name>Rotation</name>
                 <vec3>
                     <value1>-0.823274</value1>
-                    <value2>-0.623641</value2>
+                    <value2>-0.623614</value2>
                     <value3>124.004814</value3>
                 </vec3>
             </property>
@@ -3577,10 +3604,6 @@
                 <actorId>f551ce6c-57ef-4d1d-a562-1f21ac37bf58</actorId>
             </property>
             <property>
-                <name>Render Path</name>
-                <boolean>false</boolean>
-            </property>
-            <property>
                 <name>Follow Path</name>
                 <boolean>true</boolean>
             </property>
@@ -3764,6 +3787,31 @@
                 <resourceType>StaticMeshes</resourceType>
                 <resourceDisplayName>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resourceDisplayName>
                 <resource>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Curve.Bezier Node</type>
+            <id>381f6f1e-0d8a-4f21-9475-ecff7c031ea6</id>
+            <name>Camera_E_BezierNode_01</name>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-457.533722</value1>
+                    <value2>-227.035309</value2>
+                    <value3>6.821356</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Time to Next</name>
+                <float>30</float>
+            </property>
+            <property>
+                <name>Exit Control Point</name>
+                <actorId>81b71048-7d49-4d5f-859c-a41b4437c2d2</actorId>
+            </property>
+            <property>
+                <name>Next Bezier Node</name>
+                <actorId>51caf4e2-3c56-4212-9bc4-8ba814c54518</actorId>
             </property>
         </actor>
         <actor>
@@ -4034,7 +4082,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254890</value3>
+                    <value3>-87.254868</value3>
                 </vec3>
             </property>
             <property>
@@ -4133,6 +4181,31 @@
                     <value2>2.000000</value2>
                     <value3>2.000000</value3>
                 </vec3>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Curve.Bezier Node</type>
+            <id>3bcec58d-9ed1-423b-875f-4535faf50154</id>
+            <name>Camera_A_BezierNode_02</name>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-571.978943</value1>
+                    <value2>-141.615967</value2>
+                    <value3>4.520442</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Time to Next</name>
+                <float>30</float>
+            </property>
+            <property>
+                <name>Entry Control Point</name>
+                <actorId>69bb0439-47fc-4a06-870a-89036ec1c049</actorId>
+            </property>
+            <property>
+                <name>Exit Control Point</name>
+                <actorId>d1cf3a76-84a7-419f-9244-e75bb3739dec</actorId>
             </property>
         </actor>
         <actor>
@@ -4235,10 +4308,6 @@
             <property>
                 <name>Updates From Light Enabled</name>
                 <boolean>true</boolean>
-            </property>
-            <property>
-                <name>Attach light to owner</name>
-                <boolean>false</boolean>
             </property>
         </actor>
         <actor>
@@ -4532,10 +4601,6 @@
             <id>4213e10d-1695-4ce0-9b85-4b65a5ebe286</id>
             <name>Camera_B_Controller</name>
             <property>
-                <name>Target Object</name>
-                <actorId>4a0f0412-8895-4824-9d59-f2e93acadde3</actorId>
-            </property>
-            <property>
                 <name>Parent Object</name>
                 <actorId>163a24f4-587e-4227-aacb-cc2a350c310c</actorId>
             </property>
@@ -4546,10 +4611,6 @@
             <property>
                 <name>Start Node</name>
                 <actorId>3184dfc6-6e79-47d9-a1ad-67ddb8acc6fe</actorId>
-            </property>
-            <property>
-                <name>Render Path</name>
-                <boolean>false</boolean>
             </property>
             <property>
                 <name>Follow Path</name>
@@ -5085,17 +5146,17 @@
             <property>
                 <name>Rotation</name>
                 <vec3>
-                    <value1>0.000000</value1>
+                    <value1>7.205602</value1>
                     <value2>0.000000</value2>
-                    <value3>-105.573868</value3>
+                    <value3>60.607533</value3>
                 </vec3>
             </property>
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-652.440613</value1>
-                    <value2>-125.185844</value2>
-                    <value3>4.940485</value3>
+                    <value1>-650.694519</value1>
+                    <value2>-126.626129</value2>
+                    <value3>5.201663</value3>
                 </vec3>
             </property>
             <property>
@@ -5550,7 +5611,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-73.005318</value3>
+                    <value3>-73.005310</value3>
                 </vec3>
             </property>
             <property>
@@ -5691,6 +5752,39 @@
                 <resourceType>StaticMeshes</resourceType>
                 <resourceDisplayName>StaticMeshes:chairs:sunchair:SunChair_PHYSICS.osg</resourceDisplayName>
                 <resource>StaticMeshes:chairs:sunchair:SunChair_PHYSICS.osg</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Curve.Bezier Node</type>
+            <id>51caf4e2-3c56-4212-9bc4-8ba814c54518</id>
+            <name>Camera_E_BezierNode_02</name>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-389.345673</value1>
+                    <value2>-137.796173</value2>
+                    <value3>32.971954</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Time to Next</name>
+                <float>30</float>
+            </property>
+            <property>
+                <name>Entry Control Point</name>
+                <actorId>b788cba3-9f42-451e-bc5c-9569ee5e1eb7</actorId>
+            </property>
+            <property>
+                <name>Exit Control Point</name>
+                <actorId>f1afa163-3e53-40ed-a1a6-447e9e66f8a7</actorId>
+            </property>
+            <property>
+                <name>Next Bezier Node</name>
+                <actorId>92122742-fc97-4aa2-91f6-ecee43fb92f2</actorId>
+            </property>
+            <property>
+                <name>Previous Bezier Node</name>
+                <actorId>381f6f1e-0d8a-4f21-9475-ecff7c031ea6</actorId>
             </property>
         </actor>
         <actor>
@@ -5891,6 +5985,23 @@
                     <value2>2.000000</value2>
                     <value3>2.000000</value3>
                 </vec3>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Curve.Bezier Control Point</type>
+            <id>540cde08-903d-4636-8c1a-53ec48cfe800</id>
+            <name>ControlPoint_31</name>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-507.174896</value1>
+                    <value2>-151.039459</value2>
+                    <value3>1.323961</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Bezier Node</name>
+                <actorId>7196eb8f-cf8e-4454-8c52-73de5a15fff9</actorId>
             </property>
         </actor>
         <actor>
@@ -6259,15 +6370,15 @@
                 <name>Rotation</name>
                 <vec3>
                     <value1>0.000000</value1>
-                    <value2>0.000000</value2>
-                    <value3>-139.760925</value3>
+                    <value2>-0.000000</value2>
+                    <value3>160.565521</value3>
                 </vec3>
             </property>
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>75.950569</value1>
-                    <value2>-418.648651</value2>
+                    <value1>-211.206940</value1>
+                    <value2>-56.828239</value2>
                     <value3>0.000000</value3>
                 </vec3>
             </property>
@@ -6308,7 +6419,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254890</value3>
+                    <value3>-87.254868</value3>
                 </vec3>
             </property>
             <property>
@@ -6611,14 +6722,14 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>-0.000000</value2>
-                    <value3>-88.213669</value3>
+                    <value3>-87.289612</value3>
                 </vec3>
             </property>
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-224.243195</value1>
-                    <value2>-426.840454</value2>
+                    <value1>560.760437</value1>
+                    <value2>-394.255554</value2>
                     <value3>75.000000</value3>
                 </vec3>
             </property>
@@ -6826,6 +6937,27 @@
                 <resourceType>StaticMeshes</resourceType>
                 <resourceDisplayName>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resourceDisplayName>
                 <resource>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Curve.Bezier Node</type>
+            <id>610142e6-443d-4799-b02c-091a1506a325</id>
+            <name>Camera_E_BezierNode_04</name>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-425.113617</value1>
+                    <value2>-220.111450</value2>
+                    <value3>73.672386</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Entry Control Point</name>
+                <actorId>0a72d2c3-7c6a-4790-b238-b98efdb21f24</actorId>
+            </property>
+            <property>
+                <name>Previous Bezier Node</name>
+                <actorId>92122742-fc97-4aa2-91f6-ecee43fb92f2</actorId>
             </property>
         </actor>
         <actor>
@@ -7141,7 +7273,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254890</value3>
+                    <value3>-87.254868</value3>
                 </vec3>
             </property>
             <property>
@@ -7255,7 +7387,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254890</value3>
+                    <value3>-87.254868</value3>
                 </vec3>
             </property>
             <property>
@@ -7604,6 +7736,23 @@
                     <value2>2.000000</value2>
                     <value3>2.000000</value3>
                 </vec3>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Curve.Bezier Control Point</type>
+            <id>69bb0439-47fc-4a06-870a-89036ec1c049</id>
+            <name>ControlPoint_32</name>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-523.079529</value1>
+                    <value2>-165.131378</value2>
+                    <value3>4.154537</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Bezier Node</name>
+                <actorId>add9de85-adbd-45dd-b7db-054ac6405398</actorId>
             </property>
         </actor>
         <actor>
@@ -8028,6 +8177,31 @@
             </property>
         </actor>
         <actor>
+            <type>dtcore.Curve.Bezier Node</type>
+            <id>7196eb8f-cf8e-4454-8c52-73de5a15fff9</id>
+            <name>Camera_A_BezierNode_01</name>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-463.454163</value1>
+                    <value2>-130.276367</value2>
+                    <value3>-9.740564</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Time to Next</name>
+                <float>30</float>
+            </property>
+            <property>
+                <name>Exit Control Point</name>
+                <actorId>540cde08-903d-4636-8c1a-53ec48cfe800</actorId>
+            </property>
+            <property>
+                <name>Next Bezier Node</name>
+                <actorId>add9de85-adbd-45dd-b7db-054ac6405398</actorId>
+            </property>
+        </actor>
+        <actor>
             <type>dtExample.Terrain</type>
             <id>73193a31-2ba5-49dd-8a36-9e9ce2ea9c3a</id>
             <name>Terrain</name>
@@ -8350,10 +8524,6 @@
             <property>
                 <name>Start Node</name>
                 <actorId>b0c2d4b0-c6b0-46b2-9c0e-f2d5eb95acd5</actorId>
-            </property>
-            <property>
-                <name>Render Path</name>
-                <boolean>false</boolean>
             </property>
             <property>
                 <name>Follow Path</name>
@@ -8748,10 +8918,6 @@
                 <actorId>0a6c7b74-1b8a-4edc-a399-dbfaba4426bd</actorId>
             </property>
             <property>
-                <name>Render Path</name>
-                <boolean>false</boolean>
-            </property>
-            <property>
                 <name>Follow Path</name>
                 <boolean>true</boolean>
             </property>
@@ -8988,6 +9154,40 @@
             <property>
                 <name>Bezier Node</name>
                 <actorId>d013163c-50b4-4247-8606-07afc7d56935</actorId>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Curve.Bezier Control Point</type>
+            <id>81b71048-7d49-4d5f-859c-a41b4437c2d2</id>
+            <name>ControlPoint_33</name>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-398.526855</value1>
+                    <value2>-193.769363</value2>
+                    <value3>21.764896</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Bezier Node</name>
+                <actorId>381f6f1e-0d8a-4f21-9475-ecff7c031ea6</actorId>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Curve.Bezier Control Point</type>
+            <id>8203109f-5046-4296-85e2-85788477090c</id>
+            <name>ControlPoint_36</name>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-431.870605</value1>
+                    <value2>-83.659904</value2>
+                    <value3>50.716431</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Bezier Node</name>
+                <actorId>92122742-fc97-4aa2-91f6-ecee43fb92f2</actorId>
             </property>
         </actor>
         <actor>
@@ -9313,6 +9513,23 @@
                 <resourceType>StaticMeshes</resourceType>
                 <resourceDisplayName>StaticMeshes:chairs:sunchair:SunChair_PHYSICS.osg</resourceDisplayName>
                 <resource>StaticMeshes:chairs:sunchair:SunChair_PHYSICS.osg</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Curve.Bezier Control Point</type>
+            <id>865fd0fc-4bdb-43cf-952c-68ef4296d4d2</id>
+            <name>ControlPoint_37</name>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-502.734253</value1>
+                    <value2>-159.774597</value2>
+                    <value3>60.702538</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Bezier Node</name>
+                <actorId>92122742-fc97-4aa2-91f6-ecee43fb92f2</actorId>
             </property>
         </actor>
         <actor>
@@ -9796,7 +10013,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254890</value3>
+                    <value3>-87.254868</value3>
                 </vec3>
             </property>
             <property>
@@ -10000,6 +10217,64 @@
             </property>
         </actor>
         <actor>
+            <type>dtcore.Curve.Bezier Node</type>
+            <id>92122742-fc97-4aa2-91f6-ecee43fb92f2</id>
+            <name>Camera_E_BezierNode_03</name>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-475.601868</value1>
+                    <value2>-123.731476</value2>
+                    <value3>58.889832</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Time to Next</name>
+                <float>30</float>
+            </property>
+            <property>
+                <name>Entry Control Point</name>
+                <actorId>8203109f-5046-4296-85e2-85788477090c</actorId>
+            </property>
+            <property>
+                <name>Exit Control Point</name>
+                <actorId>865fd0fc-4bdb-43cf-952c-68ef4296d4d2</actorId>
+            </property>
+            <property>
+                <name>Next Bezier Node</name>
+                <actorId>610142e6-443d-4799-b02c-091a1506a325</actorId>
+            </property>
+            <property>
+                <name>Previous Bezier Node</name>
+                <actorId>51caf4e2-3c56-4212-9bc4-8ba814c54518</actorId>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Curve.Bezier Node</type>
+            <id>92307c86-7d6a-41a2-bea6-ce56526d0d42</id>
+            <name>Camera_F_BezierNode_01</name>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-210.541260</value1>
+                    <value2>306.112305</value2>
+                    <value3>10.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Time to Next</name>
+                <float>1000</float>
+            </property>
+            <property>
+                <name>Exit Control Point</name>
+                <actorId>258d5302-f5ca-4f5b-81d9-6be267dcf11f</actorId>
+            </property>
+            <property>
+                <name>Next Bezier Node</name>
+                <actorId>9d732c75-56df-4f85-9d7e-10ac630b26e4</actorId>
+            </property>
+        </actor>
+        <actor>
             <type>dtcore.Particle System</type>
             <id>9247dcab-0872-4c01-874f-d4e987928762</id>
             <name>torch_02</name>
@@ -10070,10 +10345,6 @@
             <property>
                 <name>Start Node</name>
                 <actorId>b3b8fc1f-dc6d-40ee-887f-f8aec2aacecd</actorId>
-            </property>
-            <property>
-                <name>Render Path</name>
-                <boolean>false</boolean>
             </property>
             <property>
                 <name>Follow Path</name>
@@ -10758,8 +11029,29 @@
         </actor>
         <actor>
             <type>dtcore.Curve.Bezier Node</type>
+            <id>9d732c75-56df-4f85-9d7e-10ac630b26e4</id>
+            <name>Camera_F_BezierNode_02</name>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-433.658936</value1>
+                    <value2>-223.814240</value2>
+                    <value3>10.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Entry Control Point</name>
+                <actorId>12d5be9c-147d-413b-9bff-2efdbe9fa918</actorId>
+            </property>
+            <property>
+                <name>Previous Bezier Node</name>
+                <actorId>92307c86-7d6a-41a2-bea6-ce56526d0d42</actorId>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Curve.Bezier Node</type>
             <id>9dc85029-c92e-4932-b1f9-5030508ed60a</id>
-            <name>Camera_A_BezierNode_01</name>
+            <name>Camera_A_BezierNode_03</name>
             <property>
                 <name>Translation</name>
                 <vec3>
@@ -10773,11 +11065,11 @@
                 <float>30</float>
             </property>
             <property>
-                <name>Exit Control Point</name>
+                <name>Entry Control Point</name>
                 <actorId>ddea0dad-08bd-4112-911b-5f729167b96a</actorId>
             </property>
             <property>
-                <name>Next Bezier Node</name>
+                <name>Previous Bezier Node</name>
                 <actorId>add9de85-adbd-45dd-b7db-054ac6405398</actorId>
             </property>
         </actor>
@@ -10896,7 +11188,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254890</value3>
+                    <value3>-87.254868</value3>
                 </vec3>
             </property>
             <property>
@@ -11692,10 +11984,6 @@
                 <name>Updates From Light Enabled</name>
                 <boolean>true</boolean>
             </property>
-            <property>
-                <name>Attach light to owner</name>
-                <boolean>false</boolean>
-            </property>
         </actor>
         <actor>
             <type>dtExample.Mesh Object</type>
@@ -11752,6 +12040,27 @@
                     <value2>2.000000</value2>
                     <value3>2.000000</value3>
                 </vec3>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Action.Bezier Controller</type>
+            <id>a7e3a745-e08d-42b7-98b2-ff6630570157</id>
+            <name>Camera_F_Controller</name>
+            <property>
+                <name>Parent Object</name>
+                <actorId>58693797-ee89-4e33-a9f5-b6b672fb8352</actorId>
+            </property>
+            <property>
+                <name>Parent Relation</name>
+                <enumerated>TRACK_PARENT</enumerated>
+            </property>
+            <property>
+                <name>Start Node</name>
+                <actorId>92307c86-7d6a-41a2-bea6-ce56526d0d42</actorId>
+            </property>
+            <property>
+                <name>Follow Path</name>
+                <boolean>true</boolean>
             </property>
         </actor>
         <actor>
@@ -11890,7 +12199,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254890</value3>
+                    <value3>-87.254868</value3>
                 </vec3>
             </property>
             <property>
@@ -12082,15 +12391,23 @@
             </property>
             <property>
                 <name>Time to Next</name>
-                <float>5</float>
+                <float>30</float>
             </property>
             <property>
                 <name>Entry Control Point</name>
+                <actorId>69bb0439-47fc-4a06-870a-89036ec1c049</actorId>
+            </property>
+            <property>
+                <name>Exit Control Point</name>
                 <actorId>d1cf3a76-84a7-419f-9244-e75bb3739dec</actorId>
             </property>
             <property>
-                <name>Previous Bezier Node</name>
+                <name>Next Bezier Node</name>
                 <actorId>9dc85029-c92e-4932-b1f9-5030508ed60a</actorId>
+            </property>
+            <property>
+                <name>Previous Bezier Node</name>
+                <actorId>7196eb8f-cf8e-4454-8c52-73de5a15fff9</actorId>
             </property>
         </actor>
         <actor>
@@ -12413,7 +12730,7 @@
             </property>
             <property>
                 <name>Time to Next</name>
-                <float>1500</float>
+                <float>1000</float>
             </property>
             <property>
                 <name>Time Step</name>
@@ -12948,10 +13265,6 @@
                 <name>Updates From Light Enabled</name>
                 <boolean>true</boolean>
             </property>
-            <property>
-                <name>Attach light to owner</name>
-                <boolean>false</boolean>
-            </property>
         </actor>
         <actor>
             <type>dtcore.Curve.Bezier Node</type>
@@ -13199,6 +13512,23 @@
             </property>
         </actor>
         <actor>
+            <type>dtcore.Curve.Bezier Control Point</type>
+            <id>b788cba3-9f42-451e-bc5c-9569ee5e1eb7</id>
+            <name>ControlPoint_34</name>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-392.055786</value1>
+                    <value2>-161.864029</value2>
+                    <value3>29.294199</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Bezier Node</name>
+                <actorId>51caf4e2-3c56-4212-9bc4-8ba814c54518</actorId>
+            </property>
+        </actor>
+        <actor>
             <type>dtcore.Curve.Bezier Node</type>
             <id>b7b660fb-61c1-4036-a0f5-2f004dafbb87</id>
             <name>Camera_B_BezierNode_02</name>
@@ -13282,10 +13612,6 @@
             <property>
                 <name>Updates From Light Enabled</name>
                 <boolean>true</boolean>
-            </property>
-            <property>
-                <name>Attach light to owner</name>
-                <boolean>false</boolean>
             </property>
         </actor>
         <actor>
@@ -13719,7 +14045,7 @@
                 <name>Rotation</name>
                 <vec3>
                     <value1>-0.823274</value1>
-                    <value2>-0.623641</value2>
+                    <value2>-0.623614</value2>
                     <value3>124.004814</value3>
                 </vec3>
             </property>
@@ -14251,7 +14577,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254890</value3>
+                    <value3>-87.254868</value3>
                 </vec3>
             </property>
             <property>
@@ -14308,7 +14634,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254890</value3>
+                    <value3>-87.254868</value3>
                 </vec3>
             </property>
             <property>
@@ -14869,6 +15195,23 @@
             </property>
         </actor>
         <actor>
+            <type>dtcore.Action.Bezier Controller</type>
+            <id>c9557155-a31c-4c1b-a1e7-b7b74f529d34</id>
+            <name>Camera_E_Controller</name>
+            <property>
+                <name>Parent Object</name>
+                <actorId>5da5c7f2-482a-4c79-95c8-9555b564f4c5</actorId>
+            </property>
+            <property>
+                <name>Parent Relation</name>
+                <enumerated>TRACK_PARENT</enumerated>
+            </property>
+            <property>
+                <name>Start Node</name>
+                <actorId>381f6f1e-0d8a-4f21-9475-ecff7c031ea6</actorId>
+            </property>
+        </actor>
+        <actor>
             <type>dtExample.Mesh Object</type>
             <id>c96c4b72-2d08-4c11-8912-f0d33174e81f</id>
             <name>bottle_08</name>
@@ -15164,7 +15507,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254890</value3>
+                    <value3>-87.254868</value3>
                 </vec3>
             </property>
             <property>
@@ -15414,7 +15757,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-59.716446</value3>
+                    <value3>-59.716415</value3>
                 </vec3>
             </property>
             <property>
@@ -15456,10 +15799,6 @@
             <property>
                 <name>Updates From Light Enabled</name>
                 <boolean>true</boolean>
-            </property>
-            <property>
-                <name>Attach light to owner</name>
-                <boolean>false</boolean>
             </property>
         </actor>
         <actor>
@@ -15826,10 +16165,6 @@
             <property>
                 <name>Updates From Light Enabled</name>
                 <boolean>true</boolean>
-            </property>
-            <property>
-                <name>Attach light to owner</name>
-                <boolean>false</boolean>
             </property>
         </actor>
         <actor>
@@ -16909,7 +17244,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254890</value3>
+                    <value3>-87.254868</value3>
                 </vec3>
             </property>
             <property>
@@ -17023,7 +17358,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254890</value3>
+                    <value3>-87.254868</value3>
                 </vec3>
             </property>
             <property>
@@ -17204,7 +17539,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254890</value3>
+                    <value3>-87.254868</value3>
                 </vec3>
             </property>
             <property>
@@ -17543,11 +17878,7 @@
             </property>
             <property>
                 <name>Start Node</name>
-                <actorId>9dc85029-c92e-4932-b1f9-5030508ed60a</actorId>
-            </property>
-            <property>
-                <name>Render Path</name>
-                <boolean>false</boolean>
+                <actorId>7196eb8f-cf8e-4454-8c52-73de5a15fff9</actorId>
             </property>
             <property>
                 <name>Set Looping</name>
@@ -17695,6 +18026,23 @@
                     <value2>2.000000</value2>
                     <value3>2.000000</value3>
                 </vec3>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Curve.Bezier Control Point</type>
+            <id>f1afa163-3e53-40ed-a1a6-447e9e66f8a7</id>
+            <name>ControlPoint_35</name>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-391.592682</value1>
+                    <value2>-88.691528</value2>
+                    <value3>42.525528</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Bezier Node</name>
+                <actorId>51caf4e2-3c56-4212-9bc4-8ba814c54518</actorId>
             </property>
         </actor>
         <actor>
@@ -17881,7 +18229,7 @@
             </property>
             <property>
                 <name>Time to Next</name>
-                <float>1500</float>
+                <float>1000</float>
             </property>
             <property>
                 <name>Time Step</name>
@@ -17890,6 +18238,10 @@
             <property>
                 <name>Exit Control Point</name>
                 <actorId>464881af-384f-4243-a016-42108cb50084</actorId>
+            </property>
+            <property>
+                <name>Next Bezier Node</name>
+                <actorId>1ab03e82-8f71-4a47-801a-6741e4f30a12</actorId>
             </property>
         </actor>
         <actor>
@@ -17905,7 +18257,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254890</value3>
+                    <value3>-87.254868</value3>
                 </vec3>
             </property>
             <property>
@@ -18294,10 +18646,6 @@
             <property>
                 <name>Updates From Light Enabled</name>
                 <boolean>true</boolean>
-            </property>
-            <property>
-                <name>Attach light to owner</name>
-                <boolean>false</boolean>
             </property>
         </actor>
         <actor>
