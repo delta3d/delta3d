@@ -34,17 +34,9 @@ void main(void)
       return;
    }
 
-   vec4 baseColor = texture2D(diffuseTexture, gl_TexCoord[0].st); 
+   vec4 baseColor = texture2D(diffuseTexture, gl_TexCoord[0].st);
    
-   //add in the nvg components
-   vec3 diffuseLight = vec3(diffuseRadiance, gl_LightSource[1].diffuse.g, gl_LightSource[1].diffuse.b);
-   vec3 lightContrib = diffuseLight + vec3(ambientRadiance, gl_LightSource[1].ambient.g, gl_LightSource[1].ambient.b);
-   
-   lightContrib += dynLightContrib;
-   
-   lightContrib = clamp(lightContrib, 0.0, 1.0);
-   
-   baseColor.xyz *= lightContrib;
+   baseColor.xyz *= dynLightContrib;
    gl_FragColor = baseColor * vertexColor;
 }
 
