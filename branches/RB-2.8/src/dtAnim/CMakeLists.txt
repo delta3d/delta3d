@@ -29,6 +29,7 @@ SET(LIB_SOURCES
   ${SOURCE_PATH}/characterfilewriter.cpp
   ${SOURCE_PATH}/characterwrapper.cpp
   ${SOURCE_PATH}/chardrawable.cpp
+  ${SOURCE_PATH}/geometrybuilder.cpp
   ${SOURCE_PATH}/hardwaresubmesh.cpp
   ${SOURCE_PATH}/hotspotdriver.cpp
   ${SOURCE_PATH}/lodcullcallback.cpp
@@ -76,6 +77,7 @@ SET(LIB_PUBLIC_HEADERS
   ${HEADER_PATH}/chardrawable.h
   ${HEADER_PATH}/dtanim.h
   ${HEADER_PATH}/export.h
+  ${HEADER_PATH}/geometrybuilder.h
   ${HEADER_PATH}/hardwaresubmesh.h
   ${HEADER_PATH}/hotspotdriver.h
   ${HEADER_PATH}/ical3ddriver.h
