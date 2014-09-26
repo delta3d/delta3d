@@ -63,6 +63,7 @@ namespace dtExample
    const dtUtil::RefString SurfaceVesselActorComponent::PROPERTY_SPRAY_BACK_OFFSET("Spray Back Offset");
    const dtUtil::RefString SurfaceVesselActorComponent::PROPERTY_SPRAY_VELOCITY_MIN("Spray Velocity Min");
    const dtUtil::RefString SurfaceVesselActorComponent::PROPERTY_SPRAY_VELOCITY_MAX("Spray Velocity Max");
+   const dtUtil::RefString SurfaceVesselActorComponent::PROPERTY_SPRAY_UPDATE_FREQUENCY("Spray Update Frequency");
    const dtUtil::RefString SurfaceVesselActorComponent::PROPERTY_SPRAY_SHADER_GROUP("Spray Shader Group");
 
    //////////////////////////////////////////////////////////
@@ -73,6 +74,7 @@ namespace dtExample
       , mSprayVelocityMin(1.0f)
       , mSprayVelocityMax(8.0f)
       , mSprayUpdateTimer(0.0f)
+      , mSprayUpdateFrequency(3.0f)
    {
       SetClassName(SurfaceVesselActorComponent::CLASS_NAME);
    }
@@ -99,6 +101,14 @@ namespace dtExample
          BooleanActorProperty::SetFuncType(this, &SurfaceVesselActorComponent::SetSprayEnabled),
          BooleanActorProperty::GetFuncType(this, &SurfaceVesselActorComponent::IsSprayEnabled),
          RefString("Turns the Spray particle system on or off"),
+         GROUP));
+
+      AddProperty(new FloatActorProperty(
+         PROPERTY_SPRAY_UPDATE_FREQUENCY,
+         PROPERTY_SPRAY_UPDATE_FREQUENCY,
+         FloatActorProperty::SetFuncType(this, &SurfaceVesselActorComponent::SetSprayUpdateFrequency),
+         FloatActorProperty::GetFuncType(this, &SurfaceVesselActorComponent::GetSprayUpdateFrequency),
+         RefString("Set the number of seconds between updates to the particle system effect interpolation"),
          GROUP));
 
       AddProperty(new ResourceActorProperty(*this,
@@ -220,8 +230,6 @@ namespace dtExample
 
       if(mSprayFront.valid())
       {
-         BindShaderToParticleSystem(*mSprayFront);
-
          // Attach the particles to the parent
          drawable->GetOSGNode()->asGroup()->addChild(mSprayFront->GetOSGNode());
 
@@ -229,13 +237,13 @@ namespace dtExample
          dtCore::Transform transform;
 
          transform.SetTranslation(mSprayFrontOffset);
-         mSprayFront->SetTransform(transform, dtCore::Transformable::REL_CS);          
+         mSprayFront->SetTransform(transform, dtCore::Transformable::REL_CS);  
+
+         BindShaderToParticleSystem(*mSprayFront);        
       }
  
       if(mSpraySideLeft.valid())
       {
-         BindShaderToParticleSystem(*mSpraySideLeft);
-
          // Attach the particles to the parent
          drawable->GetOSGNode()->asGroup()->addChild(mSpraySideLeft->GetOSGNode());
 
@@ -244,12 +252,12 @@ namespace dtExample
 
          transform.SetTranslation(mSpraySideOffsetLeft);
          mSpraySideLeft->SetTransform(transform, dtCore::Transformable::REL_CS);
+
+         BindShaderToParticleSystem(*mSpraySideLeft);
       }
  
       if(mSpraySideRight.valid())
       {
-         BindShaderToParticleSystem(*mSpraySideRight);
-
          // Attach the particles to the parent
          drawable->GetOSGNode()->asGroup()->addChild(mSpraySideRight->GetOSGNode());
 
@@ -258,12 +266,12 @@ namespace dtExample
 
          transform.SetTranslation(mSpraySideOffsetRight);
          mSpraySideRight->SetTransform(transform, dtCore::Transformable::REL_CS);
+
+         BindShaderToParticleSystem(*mSpraySideRight);
       }
 
       if(mSprayBack.valid())
       {
-         BindShaderToParticleSystem(*mSprayBack);
-
          // Attach the particles to the parent
          drawable->GetOSGNode()->asGroup()->addChild(mSprayBack->GetOSGNode());
 
@@ -272,6 +280,8 @@ namespace dtExample
 
          transform.SetTranslation(mSprayBackOffset);
          mSprayBack->SetTransform(transform, dtCore::Transformable::REL_CS);
+
+         BindShaderToParticleSystem(*mSprayBack);
       }
 
       // Ensure the particle systems have the current enabled state.
@@ -313,6 +323,18 @@ namespace dtExample
       {
          LOG_ERROR("Unable to find shader group for particle system manager.");
       }
+   }
+
+   //////////////////////////////////////////////////////////
+   void SurfaceVesselActorComponent::SetSprayUpdateFrequency(float frequency)
+   {
+      mSprayUpdateFrequency = frequency;
+   }
+
+   //////////////////////////////////////////////////////////
+   float SurfaceVesselActorComponent::GetSprayUpdateFrequency() const
+   {
+      return mSprayUpdateFrequency;
    }
 
    //////////////////////////////////////////////////////////
@@ -505,10 +527,14 @@ namespace dtExample
          mSprayFront->SetEnabled(enable);
       }
 
-      if(mSpraySideRight.valid() && mSpraySideLeft.valid())
+      if(mSpraySideLeft.valid())
+      {
+         mSpraySideLeft->SetEnabled(enable);
+      }
+
+      if(mSpraySideRight.valid())
       {
          mSpraySideRight->SetEnabled(enable);
-         mSpraySideLeft->SetEnabled(enable);
       }
 
       if(mSprayBack.valid())
@@ -595,11 +621,10 @@ namespace dtExample
       // Get the velocity and its amount of spray effect.
       float velocity = dif.length2() > 0.0f ? dif.length() : 0.0f;
       float ratio = GetVelocityRatio(velocity * (simTimeDelta!=0.0f ? 1.0f/simTimeDelta : 0.0f));
-      float interpTime = 0.01f;
 
       mSprayUpdateTimer += simTimeDelta;
 
-      bool allowInterpolation = /*mSprayUpdateTimer > simTimeDelta || */dtUtil::Abs(mLastSprayRatio - ratio) > 0.1f;
+      bool allowInterpolation = mSprayUpdateTimer > mSprayUpdateFrequency || dtUtil::Abs(mLastSprayRatio - ratio) > 0.1f;
 
       if(allowInterpolation)
       {
@@ -615,45 +640,44 @@ namespace dtExample
       // Update the particle systems.
       if(mSprayFront.valid())
       {
-         mSprayFront->Update(simTimeDelta);
-
          if(allowInterpolation)
          {
-            mSprayFront->InterpolateAllLayers(interpTime, ratio);
+            InterpolateParticleSystem(*mSprayFront, ratio);
          }
       }
 
       if(mSpraySideLeft.valid())
       {
-         mSpraySideLeft->Update(simTimeDelta);
-
          if(allowInterpolation)
          {
-            mSpraySideLeft->InterpolateAllLayers(interpTime, ratio);
+            InterpolateParticleSystem(*mSpraySideLeft, ratio);
          }
       }
 
       if(mSpraySideRight.valid())
       {
-         mSpraySideRight->Update(simTimeDelta);
-
          if(allowInterpolation)
          {
-            mSpraySideRight->InterpolateAllLayers(interpTime, ratio);
+            InterpolateParticleSystem(*mSpraySideRight, ratio);
          }
       }
 
       if(mSprayBack.valid())
       {
-         mSprayBack->Update(simTimeDelta);
-
          if(allowInterpolation)
          {
-            mSprayBack->InterpolateAllLayers(interpTime, ratio);
+            InterpolateParticleSystem(*mSprayBack, ratio);
          }
       }
    }
    
+   //////////////////////////////////////////////////////////
+   void SurfaceVesselActorComponent::InterpolateParticleSystem(DynamicParticles& particles, float ratio)
+   {
+      particles.InterpolateAllLayers(dtCore::ParticlePropertyEnum::PS_EMIT_SPEED, ratio);
+      particles.InterpolateAllLayers(dtCore::ParticlePropertyEnum::PS_PARTICLE_SIZE, ratio);
+   }
+
    //////////////////////////////////////////////////////////
    void SurfaceVesselActorComponent::OnTickLocal(const dtGame::TickMessage& tickMessage)
    {

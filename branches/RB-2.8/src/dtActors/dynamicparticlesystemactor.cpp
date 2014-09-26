@@ -151,12 +151,7 @@ namespace dtActors
    //////////////////////////////////////////////////////////////////////////
    void DynamicParticleSystem::SetInterpolation( float interpolationRatio )
    {
-      // Queue the time for interpolating all properties.
-      InterpolateAllLayers( 0.01f, interpolationRatio );
-
-      // Force the properties to the specified interpolation
-      // by artificially ticking the interpolation effect.
-      Update( 0.01f );
+      InterpolateAllLayers(interpolationRatio);
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -190,9 +185,41 @@ namespace dtActors
    }
 
    //////////////////////////////////////////////////////////////////////////
+   int DynamicParticleSystem::InterpolateAllLayers(dtCore::ParticlePropertyEnum prop, float interpolation)
+   {
+      int layers = 0;
+
+      ParticleLayerInterpMap::iterator curInterp = mLayerInterps.begin();
+      ParticleLayerInterpMap::iterator endInterpMap = mLayerInterps.end();
+      for( ; curInterp != endInterpMap; ++curInterp )
+      {
+         curInterp->second->Interpolate(prop, interpolation);
+         ++layers;
+      }
+
+      return layers;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
    int DynamicParticleSystem::InterpolateAllLayers( float time, float interpolation )
    {
       return InterpolateAllLayers( PS_ALL_PROPERTIES, time, interpolation );
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   int DynamicParticleSystem::InterpolateAllLayers(float targetInterpolationRatio)
+   {
+      int layers = 0;
+
+      ParticleLayerInterpMap::iterator curInterp = mLayerInterps.begin();
+      ParticleLayerInterpMap::iterator endInterpMap = mLayerInterps.end();
+      for( ; curInterp != endInterpMap; ++curInterp )
+      {
+         curInterp->second->InterpolateAllProperties(targetInterpolationRatio);
+         ++layers;
+      }
+
+      return layers;
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -264,8 +291,6 @@ namespace dtActors
    void DynamicParticleSystem::Init()
    {
       ResetParticleLayers();
-
-      SetInterpolation(0.0f);
    }
 
 

@@ -241,8 +241,12 @@ namespace dtCore
           * Restore the particle layer back to its original end settings.
           */
          void Reset();
+         
+         void Interpolate( ParticlePropertyEnum prop, float targetInterpolationRatio );
 
          void InterpolateOverTime( ParticlePropertyEnum prop, float time, float targetInterpolationRatio );
+   
+         void InterpolateAllProperties(float interpolationRatio);
 
          float GetParticlePropertyInterpolation( ParticlePropertyEnum prop ) const;
 

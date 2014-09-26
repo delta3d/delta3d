@@ -637,6 +637,16 @@ namespace dtCore
 
                params.mInterpCurrent = params.mInterpStart + diff;
 
+               float minValue = params.mInterpStart;
+               float maxValue = params.mInterpEnd;
+               if (maxValue < minValue)
+               {
+                  float temp = minValue;
+                  minValue = maxValue;
+                  maxValue = temp;
+               }
+
+               dtUtil::Clamp( params.mInterpCurrent, minValue, maxValue );
                dtUtil::Clamp( params.mInterpCurrent, 0.0f, 1.0f );
 
                // Interpolate the specified property.
@@ -644,12 +654,12 @@ namespace dtCore
                {
                   // This should be the only loop.
                   // Interpolate all the properties at one time.
-                  InterpolateAllProperties( *mLayer, params.mInterpCurrent );
+                  BaseClass::InterpolateAllProperties( *mLayer, params.mInterpCurrent );
                   break;
                }
                else // Individual property
                {
-                  Interpolate( *mLayer, curInterp->first, params.mInterpCurrent );
+                  BaseClass::Interpolate( *mLayer, curInterp->first, params.mInterpCurrent );
                }
             }
          }
@@ -663,7 +673,7 @@ namespace dtCore
       GetEndSettings() = *mDefaultSettings;
 
       // Change the particle system to have the end settings.
-      InterpolateAllProperties( *mLayer, 1.0f );
+      BaseClass::InterpolateAllProperties( *mLayer, 1.0f );
 
       // Restore the default particle properties.
       SetDefaultParticle( *mLayer, mDefaultParticle );
@@ -674,6 +684,25 @@ namespace dtCore
       for( ; curInterp != endInterpMap; ++curInterp )
       {
          curInterp->second->Reset();
+      }
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void ParticleLayerInterpolator::Interpolate( ParticlePropertyEnum prop,
+      float targetInterpolationRatio )
+   {
+      dtUtil::Clamp( targetInterpolationRatio, 0.0f, 1.0f );
+
+      // Interpolate the specified property.
+      if( prop == PS_ALL_PROPERTIES )
+      {
+         // This should be the only loop.
+         // Interpolate all the properties at one time.
+         BaseClass::InterpolateAllProperties( *mLayer, targetInterpolationRatio );
+      }
+      else // Individual property
+      {
+         BaseClass::Interpolate( *mLayer, prop, targetInterpolationRatio );
       }
    }
 
@@ -696,19 +725,16 @@ namespace dtCore
          wasCreated = true;
       }
 
-      // Set the other properties.
+      // Set the other interpolation variables.
       params->mInterpStart = params->mInterpCurrent;
       params->mInterpEnd = targetInterpolationRatio;
       params->mTime = time;
       params->mTimeCurrent = 0.0f;
 
       // If this is for all properties, then remove all other ones.
-      if( prop == PS_ALL_PROPERTIES )
+      if(wasCreated && prop == PS_ALL_PROPERTIES && ! mInterpMap.empty())
       {
-         if( wasCreated )
-         {
-            mInterpMap.clear();
-         }
+         mInterpMap.clear();
       }
 
       // Add the new entry if this was created.
@@ -716,6 +742,12 @@ namespace dtCore
       {
          mInterpMap.insert( std::make_pair( prop, params.get() ) );
       }
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void ParticleLayerInterpolator::InterpolateAllProperties(float interpolationRatio)
+   {
+      BaseClass::InterpolateAllProperties(*mLayer, interpolationRatio);
    }
 
    /////////////////////////////////////////////////////////////////////////////

@@ -90,12 +90,27 @@ namespace dtActors
          int InterpolateAllLayers(dtCore::ParticlePropertyEnum prop, float time, float interpolation );
 
          /**
+          * Interpolate a single property type for all layers.
+          * @param prop Property type to be interpolated
+          * @param interpolation Target interpolation
+          * @return Number of layers updated
+          */
+         int InterpolateAllLayers(dtCore::ParticlePropertyEnum prop, float interpolation );
+
+         /**
           * Interpolate all properties of all layers to the specified interpolation.
           * @param time Seconds over which to interpolate
           * @param interpolation Target interpolation to interpolate to over the specified time
           * @return Number of layers updated
           */
          int InterpolateAllLayers( float time, float interpolation );
+
+         /**
+          * Interpolate all properties of all layers to the specified interpolation.
+          * @param interpolation Target interpolation
+          * @return Number of layers updated
+          */
+         int InterpolateAllLayers(float interpolation);
 
          void Reset();
 
