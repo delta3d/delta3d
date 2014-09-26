@@ -121,7 +121,6 @@ namespace dtExample
 
          bool AttachToBezierController(const dtCore::UniqueId&);
          void DetachFromController();
-         void AttachBanner();
 
          dtCore::TransformableActorProxy* GetActorByName(const std::string& name);
          dtCore::TransformableActorProxy* GetActorById(const dtCore::UniqueId& id);
@@ -155,6 +154,10 @@ namespace dtExample
          void DoGroundClamping(float simTime);
 
          dtRender::SceneManager* GetSceneManager();
+         
+         // TEMP:
+         // This is a temporary method for attaching the banner geometry to the plane.
+         void AttachBanner();
 
       private:
          float mTimeOffset;

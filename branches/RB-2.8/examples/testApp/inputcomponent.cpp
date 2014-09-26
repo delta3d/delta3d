@@ -1289,18 +1289,6 @@ namespace dtExample
       }
    }
 
-   void InputComponent::AttachBanner()
-   {
-      dtGame::GameActorProxy* bannerProxy = NULL;
-      dtGame::GameActorProxy* planeProxy = NULL;
-      GetGameManager()->FindActorByName("delta3d_banner", bannerProxy);
-      GetGameManager()->FindActorByName("plane", planeProxy);
-      if (bannerProxy != NULL && planeProxy != NULL)
-      {
-        planeProxy->GetDrawable()->AddChild(bannerProxy->GetDrawable());
-      }
-   }
-
    void InputComponent::DetachFromController()
    {
       if (mCurrentController.valid())
@@ -1309,7 +1297,6 @@ namespace dtExample
          mCurrentController = NULL;
       }
    }
-
 
    bool InputComponent::AttachToBezierController( const dtCore::UniqueId& id)
    {
@@ -1389,6 +1376,55 @@ namespace dtExample
       return dynamic_cast<dtRender::SceneManager*>(GetGameManager()->GetEnvironmentActor()->GetDrawable());
    }
 
+   void InputComponent::AttachBanner()
+   {
+      /* NOTE: This method is temporary, due to shortage of time for the release.
+      * This method simply attaches one actor to another. Currently delta3d does
+      * not give actors the ability to do this directly, so some workaround code
+      * may need to be written, such as this or else where in a custom actor component.
+      */
 
+      dtGame::GameActorProxy* plane = NULL;
+      dtGame::GameActorProxy* banner = NULL;
+
+      dtGame::GameManager* gm = GetGameManager();
+      gm->FindActorByName("plane", plane);
+      gm->FindActorByName("delta3d_banner", banner);
+
+      if (plane != NULL && banner != NULL)
+      {
+         dtCore::Transformable* planeDrawable = NULL;
+         dtCore::Transformable* bannerDrawable = NULL;
+
+         plane->GetDrawable(planeDrawable);
+         banner->GetDrawable(bannerDrawable);
+
+         if (planeDrawable != NULL && bannerDrawable != NULL)
+         {
+            // This removes the drawable from the scene draw traversal.
+            bannerDrawable->Emancipate();
+
+            dtCore::Transform xform;
+            planeDrawable->GetTransform(xform);
+
+            // This will add the banner drawable to the plane hierarchy
+            // and also add it back to the scene draw traversal.
+            planeDrawable->AddChild(bannerDrawable);
+
+            bannerDrawable->SetTransform(xform);
+         }
+      }
+      else
+      {
+         if (plane == NULL)
+         {
+            LOG_ERROR("Could not access plane actor.");
+         }
+         else
+         {
+            LOG_ERROR("Could not access banner actor.");
+         }
+      }
+   }
 
 } // END - namespace dtExample

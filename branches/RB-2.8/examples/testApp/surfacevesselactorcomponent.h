@@ -119,8 +119,8 @@ namespace dtExample
 
       void CreateSprayEffects();
 
-      void BindShaderToParticleSystem(dtCore::ParticleSystem& particles, const std::string& shaderName);
-      void BindShaderToNode(const std::string& shaderName, osg::Node& node);
+      void BindShaderToParticleSystem(dtCore::ParticleSystem& particles);
+      void BindShaderToNode(osg::Node& node);
 
       typedef dtActors::DynamicParticleSystem DynamicParticles;
       typedef dtActors::DynamicParticleSystemActor DynamicParticlesActor;
