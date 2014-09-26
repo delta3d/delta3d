@@ -173,7 +173,7 @@
                <Property Name="TextInputMode" Value="FloatingPoint"/>
                <Property Name="StepSize" Value="0.05"/>
                <Property Name="MinimumValue" Value="0.0"/>
-               <Property Name="MaximumValue" Value="1.0"/>
+               <Property Name="MaximumValue" Value="5.0"/>
             </Window>
 
             <!-- LABEL - SEA STATE SPINNER -->
