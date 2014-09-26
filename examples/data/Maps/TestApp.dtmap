@@ -868,6 +868,12 @@
                 <boolean>true</boolean>
             </property>
             <property>
+                <name>Spray Front File</name>
+                <resourceType>Particles</resourceType>
+                <resourceDisplayName>Particles:water:spray:water_spray_front.osg</resourceDisplayName>
+                <resource>Particles:water:spray:water_spray_front.osg</resource>
+            </property>
+            <property>
                 <name>Spray Side Left File</name>
                 <resourceType>Particles</resourceType>
                 <resourceDisplayName>Particles:water:spray:water_spray_left_6m.osg</resourceDisplayName>
@@ -883,7 +889,7 @@
                 <name>Spray Front Offset</name>
                 <vec3>
                     <value1>0.000000</value1>
-                    <value2>1.000000</value2>
+                    <value2>7.20000</value2>
                     <value3>0.000000</value3>
                 </vec3>
             </property>
@@ -5536,7 +5542,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <type>dtExample.Vessel</type>
             <id>4e005120-78f2-4c4d-a0aa-21c26489046b</id>
             <name>SailBoat_03</name>
             <property>
@@ -5564,6 +5570,72 @@
                 <resourceType>StaticMeshes</resourceType>
                 <resourceDisplayName>StaticMeshes:Sailboat380:380_under_sail.osg</resourceDisplayName>
                 <resource>StaticMeshes:Sailboat380:380_under_sail.osg</resource>
+            </property>
+            <property>
+                <name>Spray Enabled</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Spray Front File</name>
+                <resourceType>Particles</resourceType>
+                <resourceDisplayName>Particles:water:spray:water_spray_front.osg</resourceDisplayName>
+                <resource>Particles:water:spray:water_spray_front.osg</resource>
+            </property>
+            <property>
+                <name>Spray Side Left File</name>
+                <resourceType>Particles</resourceType>
+                <resourceDisplayName>Particles:water:spray:water_spray_left_6m.osg</resourceDisplayName>
+                <resource>Particles:water:spray:water_spray_left_6m.osg</resource>
+            </property>
+            <property>
+                <name>Spray Side Right File</name>
+                <resourceType>Particles</resourceType>
+                <resourceDisplayName>Particles:water:spray:water_spray_right_6m.osg</resourceDisplayName>
+                <resource>Particles:water:spray:water_spray_right_6m.osg</resource>
+            </property>
+            <property>
+                <name>Spray Front Offset</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>7.20000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Spray Side Offset Right</name>
+                <vec3>
+                    <value1>1.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Spray Side Offset Left</name>
+                <vec3>
+                    <value1>-1.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Spray Back Offset</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>-2.400000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Spray Velocity Min</name>
+                <float>0.0</float>
+            </property>
+            <property>
+                <name>Spray Velocity Max</name>
+                <float>2.0</float>
+            </property>
+            <property>
+                <name>Spray Shader Group</name>
+                <string>ParticleWaterSpray</string>
             </property>
         </actor>
         <actor>
@@ -6595,6 +6667,12 @@
                 <boolean>true</boolean>
             </property>
             <property>
+                <name>Spray Front File</name>
+                <resourceType>Particles</resourceType>
+                <resourceDisplayName>Particles:water:spray:water_spray_front.osg</resourceDisplayName>
+                <resource>Particles:water:spray:water_spray_front.osg</resource>
+            </property>
+            <property>
                 <name>Spray Side Left File</name>
                 <resourceType>Particles</resourceType>
                 <resourceDisplayName>Particles:water:spray:water_spray_left_6m.osg</resourceDisplayName>
@@ -6610,7 +6688,7 @@
                 <name>Spray Front Offset</name>
                 <vec3>
                     <value1>0.000000</value1>
-                    <value2>1.000000</value2>
+                    <value2>7.20000</value2>
                     <value3>0.000000</value3>
                 </vec3>
             </property>
