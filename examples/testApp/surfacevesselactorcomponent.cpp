@@ -628,43 +628,31 @@ namespace dtExample
 
       if(allowInterpolation)
       {
-         // Reset control variables that determine the next update should occur.
+         // Reset timer and control variables.
          mLastSprayRatio = ratio;
          mSprayUpdateTimer = 0.0f;
 
          // DEBUG:
          //printf("\n\tUpdating particles (%f / %f = %f)\n\n",
          //   velocity, GetSprayVelocityMax(), ratio);
-      }
 
-      // Update the particle systems.
-      if(mSprayFront.valid())
-      {
-         if(allowInterpolation)
+         // Update the particle systems.
+         if(mSprayFront.valid())
          {
             InterpolateParticleSystem(*mSprayFront, ratio);
          }
-      }
 
-      if(mSpraySideLeft.valid())
-      {
-         if(allowInterpolation)
+         if(mSpraySideLeft.valid())
          {
             InterpolateParticleSystem(*mSpraySideLeft, ratio);
          }
-      }
 
-      if(mSpraySideRight.valid())
-      {
-         if(allowInterpolation)
+         if(mSpraySideRight.valid())
          {
             InterpolateParticleSystem(*mSpraySideRight, ratio);
          }
-      }
 
-      if(mSprayBack.valid())
-      {
-         if(allowInterpolation)
+         if(mSprayBack.valid())
          {
             InterpolateParticleSystem(*mSprayBack, ratio);
          }
