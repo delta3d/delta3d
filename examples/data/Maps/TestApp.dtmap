@@ -7,7 +7,7 @@
         <comment></comment>
         <copyright></copyright>
         <createTimestamp>2014-07-15T22:49:46-05:00</createTimestamp>
-        <lastUpdateTimestamp>2014-09-26T10:45:24-05:00</lastUpdateTimestamp>
+        <lastUpdateTimestamp>2014-09-26T12:51:42-05:00</lastUpdateTimestamp>
         <editorVersion>2.8.0</editorVersion>
         <schemaVersion>1.0</schemaVersion>
     </header>
@@ -62,6 +62,10 @@
             <type>dtExample.Civilian</type>
             <id>019e6cce-5c52-4c1d-b82d-5e00c32e3516</id>
             <name>youngafricanman_04_BeachChair</name>
+            <property>
+                <name>ShaderGroup</name>
+                <string>MultiMap</string>
+            </property>
             <property>
                 <name>Rotation</name>
                 <vec3>
@@ -484,6 +488,10 @@
             <id>080aa6f1-c300-436e-904d-3fffcd024eab</id>
             <name>youngman_09_Statue</name>
             <property>
+                <name>ShaderGroup</name>
+                <string>MultiMap</string>
+            </property>
+            <property>
                 <name>Rotation</name>
                 <vec3>
                     <value1>0.000000</value1>
@@ -510,6 +518,10 @@
             <type>dtExample.Civilian</type>
             <id>09294f0a-8edb-4e89-a79d-b11a9ae665ad</id>
             <name>youngafricanman_02_Walkway</name>
+            <property>
+                <name>ShaderGroup</name>
+                <string>MultiMap</string>
+            </property>
             <property>
                 <name>Rotation</name>
                 <vec3>
@@ -764,6 +776,10 @@
             <id>0c631ee1-f2d3-4cd5-89e2-1583af82fc12</id>
             <name>Billy_Statue</name>
             <property>
+                <name>ShaderGroup</name>
+                <string>MultiMap</string>
+            </property>
+            <property>
                 <name>Rotation</name>
                 <vec3>
                     <value1>0.000000</value1>
@@ -805,7 +821,7 @@
             <name>SailBoat_01</name>
             <property>
                 <name>ShaderGroup</name>
-                <string>SimpleShader</string>
+                <string>MultimapShader</string>
             </property>
             <property>
                 <name>Rotation</name>
@@ -825,6 +841,24 @@
             </property>
             <property>
                 <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:Sailboat380:380_under_sail.osg</resourceDisplayName>
+                <resource>StaticMeshes:Sailboat380:380_under_sail.osg</resource>
+            </property>
+            <property>
+                <name>Main: Mechanics Type</name>
+                <enumerated>Dynamic</enumerated>
+            </property>
+            <property>
+                <name>Main: Primitive Type</name>
+                <enumerated>Box</enumerated>
+            </property>
+            <property>
+                <name>Main: Mass</name>
+                <float>500</float>
+            </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
                 <resourceType>StaticMeshes</resourceType>
                 <resourceDisplayName>StaticMeshes:Sailboat380:380_under_sail.osg</resourceDisplayName>
                 <resource>StaticMeshes:Sailboat380:380_under_sail.osg</resource>
@@ -1247,6 +1281,10 @@
             <type>dtExample.Civilian</type>
             <id>163a24f4-587e-4227-aacb-cc2a350c310c</id>
             <name>Bartender</name>
+            <property>
+                <name>ShaderGroup</name>
+                <string>MultiMap</string>
+            </property>
             <property>
                 <name>Rotation</name>
                 <vec3>
@@ -2420,6 +2458,10 @@
             <id>26265d90-8ab2-45b4-a340-594ba7306b16</id>
             <name>youngasianman_04_Walkway</name>
             <property>
+                <name>ShaderGroup</name>
+                <string>MultiMap</string>
+            </property>
+            <property>
                 <name>Rotation</name>
                 <vec3>
                     <value1>0.000000</value1>
@@ -2901,6 +2943,10 @@
             <id>2b837bd4-5645-46f6-b97c-7afa85cab336</id>
             <name>Bartender_01</name>
             <property>
+                <name>ShaderGroup</name>
+                <string>MultiMap</string>
+            </property>
+            <property>
                 <name>Rotation</name>
                 <vec3>
                     <value1>0.000000</value1>
@@ -3139,6 +3185,10 @@
             <id>2daea1bf-96c4-4fe2-b371-d1fd65faca5c</id>
             <name>youngman_01</name>
             <property>
+                <name>ShaderGroup</name>
+                <string>MultiMap</string>
+            </property>
+            <property>
                 <name>Rotation</name>
                 <vec3>
                     <value1>0.000000</value1>
@@ -3165,6 +3215,10 @@
             <type>dtExample.Civilian</type>
             <id>2dbb847e-9c08-4d86-bfcf-c98626cb4164</id>
             <name>Gina_04_Bar</name>
+            <property>
+                <name>ShaderGroup</name>
+                <string>MultiMap</string>
+            </property>
             <property>
                 <name>Rotation</name>
                 <vec3>
@@ -3997,6 +4051,10 @@
             <id>3945a089-2902-49da-a0aa-186ca23720e9</id>
             <name>Eve_02_Bar</name>
             <property>
+                <name>ShaderGroup</name>
+                <string>MultiMap</string>
+            </property>
+            <property>
                 <name>Rotation</name>
                 <vec3>
                     <value1>0.000000</value1>
@@ -4584,6 +4642,10 @@
             <id>4089f3f6-d422-40e7-abe8-e2cdaf8464a7</id>
             <name>youngman_02</name>
             <property>
+                <name>ShaderGroup</name>
+                <string>MultiMap</string>
+            </property>
+            <property>
                 <name>Rotation</name>
                 <vec3>
                     <value1>0.000000</value1>
@@ -5149,6 +5211,10 @@
             <id>47549ce9-0861-40b8-8d13-1c52c4100fc1</id>
             <name>youngman_08_Walkway</name>
             <property>
+                <name>ShaderGroup</name>
+                <string>MultiMap</string>
+            </property>
+            <property>
                 <name>Rotation</name>
                 <vec3>
                     <value1>0.000000</value1>
@@ -5593,6 +5659,10 @@
             <id>4eb42e77-17a1-4423-95a0-83cf32bdfb39</id>
             <name>Petunia_01_Bar</name>
             <property>
+                <name>ShaderGroup</name>
+                <string>MultiMap</string>
+            </property>
+            <property>
                 <name>Rotation</name>
                 <vec3>
                     <value1>0.000000</value1>
@@ -5730,6 +5800,10 @@
             <type>dtExample.Civilian</type>
             <id>4f4bc6bb-8c7f-4361-b6a9-5227aa17f1ad</id>
             <name>Gina_01</name>
+            <property>
+                <name>ShaderGroup</name>
+                <string>MultiMap</string>
+            </property>
             <property>
                 <name>Rotation</name>
                 <vec3>
@@ -6354,6 +6428,10 @@
             <id>56d03f2b-f135-409d-8510-3616fc289f89</id>
             <name>youngasianman_01_Bar</name>
             <property>
+                <name>ShaderGroup</name>
+                <string>MultiMap</string>
+            </property>
+            <property>
                 <name>Rotation</name>
                 <vec3>
                     <value1>0.000000</value1>
@@ -6906,15 +6984,15 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>-0.000000</value2>
-                    <value3>-87.326416</value3>
+                    <value3>-90.197922</value3>
                 </vec3>
             </property>
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>467.133362</value1>
-                    <value2>-398.659607</value2>
-                    <value3>75.000000</value3>
+                    <value1>-1477.247925</value1>
+                    <value2>-439.357483</value2>
+                    <value3>75.000008</value3>
                 </vec3>
             </property>
             <property>
@@ -8265,6 +8343,10 @@
             <id>6f7766cc-9d34-44a5-8c0d-5dc677c39079</id>
             <name>Eve_01_BeachChair</name>
             <property>
+                <name>ShaderGroup</name>
+                <string>MultiMap</string>
+            </property>
+            <property>
                 <name>Rotation</name>
                 <vec3>
                     <value1>0.000000</value1>
@@ -8738,14 +8820,6 @@
                 <name>Render Path</name>
                 <boolean>false</boolean>
             </property>
-            <property>
-                <name>Follow Path</name>
-                <boolean>true</boolean>
-            </property>
-            <property>
-                <name>Set Looping</name>
-                <boolean>true</boolean>
-            </property>
         </actor>
         <actor>
             <type>dtExample.Mesh Object</type>
@@ -8890,6 +8964,10 @@
             <type>dtExample.Civilian</type>
             <id>77f73282-779d-4d83-bae7-d79633bb4523</id>
             <name>Gina_05_Bench</name>
+            <property>
+                <name>ShaderGroup</name>
+                <string>MultiMap</string>
+            </property>
             <property>
                 <name>Rotation</name>
                 <vec3>
@@ -9583,6 +9661,10 @@
             <id>8476d220-812c-4510-b750-9ecc68abe40c</id>
             <name>youngman_04_BeachChair</name>
             <property>
+                <name>ShaderGroup</name>
+                <string>MultiMap</string>
+            </property>
+            <property>
                 <name>Rotation</name>
                 <vec3>
                     <value1>0.000000</value1>
@@ -10195,6 +10277,10 @@
             <id>8e60434f-2103-40a8-ae68-c50f872a9107</id>
             <name>youngafricanman_01_Bar</name>
             <property>
+                <name>ShaderGroup</name>
+                <string>MultiMap</string>
+            </property>
+            <property>
                 <name>Rotation</name>
                 <vec3>
                     <value1>0.000000</value1>
@@ -10770,6 +10856,10 @@
             <id>96721874-a69b-44cf-9929-ac9757bcb1bc</id>
             <name>youngman_03_Bar</name>
             <property>
+                <name>ShaderGroup</name>
+                <string>MultiMap</string>
+            </property>
+            <property>
                 <name>Rotation</name>
                 <vec3>
                     <value1>0.000000</value1>
@@ -11222,6 +11312,10 @@
             <type>dtExample.Civilian</type>
             <id>9d0a0692-85c6-4dd3-aeb4-9a6542c2e0f3</id>
             <name>Gina_02_BeachChair</name>
+            <property>
+                <name>ShaderGroup</name>
+                <string>MultiMap</string>
+            </property>
             <property>
                 <name>Rotation</name>
                 <vec3>
@@ -12115,6 +12209,10 @@
             <id>a58a4383-0213-427f-b802-43cc10c07084</id>
             <name>youngman_05_Sand</name>
             <property>
+                <name>ShaderGroup</name>
+                <string>MultiMap</string>
+            </property>
+            <property>
                 <name>Rotation</name>
                 <vec3>
                     <value1>0.000000</value1>
@@ -12359,6 +12457,10 @@
             <id>a861b3a1-5f56-4722-a80f-5713450b250a</id>
             <name>youngafricanman_03_BeachChair</name>
             <property>
+                <name>ShaderGroup</name>
+                <string>MultiMap</string>
+            </property>
+            <property>
                 <name>Rotation</name>
                 <vec3>
                     <value1>0.000000</value1>
@@ -12389,6 +12491,10 @@
             <type>dtExample.Civilian</type>
             <id>a881e5f6-40c5-4342-831b-ddc6020237ab</id>
             <name>Eve_03_BeachChair</name>
+            <property>
+                <name>ShaderGroup</name>
+                <string>MultiMap</string>
+            </property>
             <property>
                 <name>Rotation</name>
                 <vec3>
@@ -12493,6 +12599,10 @@
             <type>dtExample.Civilian</type>
             <id>aa190316-04b4-4ab5-a04f-052b8aec1b97</id>
             <name>youngman_07_BeachChair</name>
+            <property>
+                <name>ShaderGroup</name>
+                <string>MultiMap</string>
+            </property>
             <property>
                 <name>Rotation</name>
                 <vec3>
@@ -16035,6 +16145,10 @@
             <id>d377484c-478a-43c8-b961-372f7af4f2ff</id>
             <name>youngasianman_03_Sand</name>
             <property>
+                <name>ShaderGroup</name>
+                <string>MultiMap</string>
+            </property>
+            <property>
                 <name>Rotation</name>
                 <vec3>
                     <value1>0.000000</value1>
@@ -16262,6 +16376,10 @@
             <type>dtExample.Civilian</type>
             <id>d654dfac-30a4-4db6-9238-17846dd6b8ea</id>
             <name>youngafricanman_05_Walkway</name>
+            <property>
+                <name>ShaderGroup</name>
+                <string>MultiMap</string>
+            </property>
             <property>
                 <name>Rotation</name>
                 <vec3>
@@ -16760,7 +16878,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtExample.Mesh Object</type>
+            <type>dtExample.Vessel</type>
             <id>df7d89fe-a709-4fb8-9375-3a693d2ff015</id>
             <name>Beachball</name>
             <property>
@@ -16768,11 +16886,19 @@
                 <string>MultiMap</string>
             </property>
             <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>6.715353</value3>
+                </vec3>
+            </property>
+            <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-581.565979</value1>
-                    <value2>-112.361481</value2>
-                    <value3>0.868672</value3>
+                    <value1>-532.762512</value1>
+                    <value2>-160.221069</value2>
+                    <value3>8.900000</value3>
                 </vec3>
             </property>
             <property>
@@ -16782,12 +16908,28 @@
                 <resource>StaticMeshes:beachball:Beachball.osg</resource>
             </property>
             <property>
+                <name>Scale</name>
+                <vec3>
+                    <value1>1.144190</value1>
+                    <value2>1.000000</value2>
+                    <value3>1.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Main: Mechanics Type</name>
+                <enumerated>Dynamic</enumerated>
+            </property>
+            <property>
                 <name>Main: Primitive Type</name>
                 <enumerated>Sphere</enumerated>
             </property>
             <property>
                 <name>Main: Mass</name>
-                <float>0.5</float>
+                <float>10</float>
+            </property>
+            <property>
+                <name>Main: LinearDamping</name>
+                <float>0.1</float>
             </property>
             <property>
                 <name>Main: PhysicsMesh</name>
@@ -17091,6 +17233,10 @@
             <id>e3843d17-c778-473c-a7fb-d44420ba170a</id>
             <name>youngasianman_02_Walkway</name>
             <property>
+                <name>ShaderGroup</name>
+                <string>MultiMap</string>
+            </property>
+            <property>
                 <name>Rotation</name>
                 <vec3>
                     <value1>0.000000</value1>
@@ -17219,6 +17365,10 @@
             <type>dtExample.Civilian</type>
             <id>e4d99a02-be41-4847-b6d0-1d16153bca50</id>
             <name>Petunia_02_BeachChair</name>
+            <property>
+                <name>ShaderGroup</name>
+                <string>MultiMap</string>
+            </property>
             <property>
                 <name>Rotation</name>
                 <vec3>
@@ -17901,6 +18051,10 @@
             <id>eca47081-80b9-47cf-8c4b-c94be3163c99</id>
             <name>youngman_06_BeachChair</name>
             <property>
+                <name>ShaderGroup</name>
+                <string>MultiMap</string>
+            </property>
+            <property>
                 <name>Rotation</name>
                 <vec3>
                     <value1>0.000000</value1>
@@ -18375,6 +18529,10 @@
             <type>dtExample.Civilian</type>
             <id>f3b44211-60c2-412b-812c-2a6ad2cfb7a8</id>
             <name>Gina_03_BeachChair</name>
+            <property>
+                <name>ShaderGroup</name>
+                <string>MultiMap</string>
+            </property>
             <property>
                 <name>Rotation</name>
                 <vec3>
