@@ -73,15 +73,15 @@ Group {
         shape QUAD
         lifeTime 1
         sizeRange 0.3 0.6
-        alphaRange 0.01 1
+        alphaRange 1 0
         colorRange 1 1 1 1 0.83 1 1 1
         position 0 0 0
         velocity 0 0 0
         angle 0 0 0
         angularVelocity 0 0 0
         radius 0.2
-        mass 0.1
-        textureTile 1 1 5
+        mass 0.37
+        textureTile 1 1 11
         sizeInterpolator {
           osgParticle::LinearInterpolator {
             UniqueID LinearInterpolator_2
@@ -137,14 +137,14 @@ Group {
         rateRange 240 240
       }
       osgParticle::SegmentPlacer {
-        vertex_A 0 -3 0
-        vertex_B 0 3 0
+        vertex_A 0 -2 0
+        vertex_B 0 4 0
       }
       osgParticle::RadialShooter {
-        thetaRange -1.21 -1.29
+        thetaRange -1.56 -1.82
         phiRange -3.9 -4.07
         initialSpeedRange 5 5
-        initialRotationalSpeedRange 0 0 -4 0 0 4
+        initialRotationalSpeedRange 0 0 0 0 0 8
       }
     }
   }
@@ -160,8 +160,5 @@ Group {
     startTime 0
     currentTime 0
     resetTime 0
-    osgParticle::AccelOperator {
-      acceleration 0 0 -4
-    }
   }
 }
