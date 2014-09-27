@@ -17,7 +17,8 @@ void main(void)
   
    vec3 finalColor = scale * diffuseColor * vec3(0.85, 0.9, 0.85);
    
-   finalColor += pow(finalColor, vec3(6.5));
+   finalColor += 0.5 * pow(finalColor, vec3(6.5));
+   finalColor += 1.0 * pow(finalColor, vec3(12.5));
    float multiplier = 1.35 + (d3d_Exposure * 0.035);
   
    
