@@ -26,6 +26,8 @@
 #include <dtAnim/cal3ddatabase.h>
 #include <dtAnim/cal3dmodeldata.h>
 
+#include <dtAnim/lodcullcallback.h>
+
 #include <dtCore/shaderprogram.h>
 #include <dtCore/shadermanager.h>
 #include <dtCore/shadergroup.h>
@@ -75,8 +77,6 @@ namespace dtAnim
       /** do customized update code.*/
       virtual void update(osg::NodeVisitor*, osg::Drawable*)
       {
-         //traverse(node,nv);
-
          // select the proper hardware mesh
          if (mHardwareModel->selectHardwareMesh(mHardwareMeshID))
          {
@@ -105,6 +105,7 @@ namespace dtAnim
                mBoneTransforms->setElement(bone * 3 + 1, rotY);
                mBoneTransforms->setElement(bone * 3 + 2, rotZ);
             }
+
          }
 
       }
@@ -142,7 +143,7 @@ GeometryBuilder::GeometryCache::~GeometryCache()
    mLoadedModels.clear();
 }
 
-osg::ref_ptr<osg::Geometry> GeometryBuilder::GeometryCache::GetOrCreateHardwareMeshSubMesh(CalHardwareModel* hardwareModel, Cal3DModelWrapper* pWrapper, int meshId, int subMeshId, int vertexCount, int faceCount, int boneCount, int baseIndex, int startIndex)
+osg::ref_ptr<osg::Geometry> GeometryBuilder::GeometryCache::CreateMeshSubMesh(CalHardwareModel* hardwareModel, Cal3DModelWrapper* pWrapper, int meshId, int subMeshId, int vertexCount, int faceCount, int boneCount, int baseIndex, int startIndex)
 {
       if (pWrapper == NULL)
       {
@@ -258,97 +259,30 @@ osg::ref_ptr<osg::Geometry> GeometryBuilder::GeometryCache::GetOrCreateHardwareM
       return geom;
 }
 
-osg::ref_ptr<osg::Geode> GeometryBuilder::GeometryCache::CreateSubmeshGeode(Cal3DModelWrapper* pWrapper, CalHardwareModel* hardwareModel, GeometryBuilder::MeshCacheData& mcd)
+osg::ref_ptr<osg::Geometry> GeometryBuilder::GeometryCache::CopySubmeshGeometry(Cal3DModelWrapper* pWrapper, CalHardwareModel* hardwareModel, GeometryBuilder::MeshCacheData& mcd)
 {
-   osg::ref_ptr<osg::Geode> geode = new osg::Geode();
-   osg::StateSet* geodeSS = mcd.mGeometry->getOrCreateStateSet();
+   osg::ref_ptr<osg::Geometry> geom = new osg::Geometry(*mcd.mGeometry, osg::CopyOp::SHALLOW_COPY);
+
+   osg::StateSet* ss = geom->getOrCreateStateSet();
 
    dtCore::RefPtr<osg::Uniform> boneTransforms = new osg::Uniform(osg::Uniform::FLOAT_VEC4, "boneTransforms", hardwareModel->getBoneCount() * 3);
-   geodeSS->addUniform(boneTransforms.get());
-   geodeSS->setDataVariance(osg::Object::DYNAMIC);
+   ss->addUniform(boneTransforms.get());
+   ss->setDataVariance(osg::Object::DYNAMIC);
+   
+   geom->setUpdateCallback(new UpdateSkeletonCallback(*pWrapper->GetCalModel()->getSkeleton(), *hardwareModel, *boneTransforms, mcd.mId.second));
 
-   geode->addDrawable(mcd.mGeometry.get());
+   int guessedMeshID = mcd.mId.second;
+   if (guessedMeshID >= pWrapper->GetMeshCount())
+   {
+      // this is an ugly hack which attempts to get the correct mesh ID from the hardware mesh ID
+      // it is a result of the fact that there is no way to get the original mesh ID from the Cal Hardware Model
+      // this only works if there is one submesh per mesh ID
+      guessedMeshID = pWrapper->GetMeshCount() - 1;
+   }
 
-   mcd.mGeometry->setUpdateCallback(new UpdateSkeletonCallback(*pWrapper->GetCalModel()->getSkeleton(), *hardwareModel, *boneTransforms, mcd.mId.second));
+   geom->setCullCallback(new LODCullCallback(*pWrapper, guessedMeshID)); //for LOD handling
 
-   return geode;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-osg::ref_ptr<osg::Geometry> GeometryBuilder::GeometryCache::GetOrCreateMeshSubMesh(Cal3DModelWrapper* pWrapper, int meshId, int subMeshId)
-{
-     osg::ref_ptr<osg::Geometry> geom = new osg::Geometry();
-
-     geom->setSupportsDisplayList(false);
-     geom->setUseDisplayList(false);
-     geom->setUseVertexBufferObjects(true);
-
-
-     // select mesh and submesh for further data access
-     if(pWrapper->SelectMeshSubmesh(meshId, subMeshId))
-     {
-        int vertexCount = pWrapper->GetVertexCount();
-        int faceCount = pWrapper->GetFaceCount();
-        
-        osg::Vec3Array* vertArray = new osg::Vec3Array();
-        vertArray->resizeArray(vertexCount);
-
-        osg::Vec3Array* normalArray = new osg::Vec3Array();
-        normalArray->resizeArray(vertexCount);
-
-        osg::Vec2Array* texCoordArray = new osg::Vec2Array();
-        texCoordArray->resizeArray(vertexCount);
-
-
-        // get the transformed vertices of the submesh
-        pWrapper->GetVertices(&(*vertArray)[0][0]);
-
-        // get the transformed normals of the submesh
-        pWrapper->GetNormals(&(*normalArray)[0][0]);
-
-        pWrapper->GetTextureCoords(0, &(*texCoordArray)[0][0]);
-
-        // flip vertical coordinates
-        for (int i = 1; i < vertexCount; ++i)
-        {
-           (*texCoordArray)[i][1] = 1.0f - (*texCoordArray)[i][1];
-        }
-
-        //set vertex array data
-        geom->setVertexArray(vertArray);
-        geom->setNormalArray(normalArray);
-        geom->setNormalBinding(osg::Geometry::BIND_PER_VERTEX);
-
-        geom->setTexCoordArray(0, texCoordArray);
-
-        //create draw triangle data
-
-        osg::DrawElements* drawElements = NULL;
-
-        int numIndices = 3 * faceCount;
-        CalIndex* indexArray = new CalIndex[numIndices];
-        pWrapper->GetFaces(indexArray);
-
-        if (sizeof(CalIndex) < 4)
-        {
-           drawElements = new osg::DrawElementsUShort(GL_TRIANGLES, numIndices, (GLushort*)indexArray);
-        }
-        else
-        {
-           drawElements = new osg::DrawElementsUInt(GL_TRIANGLES, numIndices, (GLuint*)indexArray);
-        }
-
-        geom->addPrimitiveSet(drawElements);
-
-        //generate tangents
-        osg::ref_ptr<osgUtil::TangentSpaceGenerator> tsg = new osgUtil::TangentSpaceGenerator;
-        tsg->generate(geom, 0);
-        
-        geom->setTexCoordArray(1, tsg->getTangentArray());
-
-     }
-
-     return geom;
+   return geom;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -361,7 +295,7 @@ osg::ref_ptr<osg::Node> GeometryBuilder::GeometryCache::GetOrCreateModel(Cal3DMo
       return NULL;
    }
 
-   dtCore::RefPtr<osg::Group> modelRoot = new osg::Group();
+   dtCore::RefPtr<osg::Geode> geode = new osg::Geode();
 
    CalCoreModel* model = pWrapper->GetCalModel()->getCoreModel();
    std::string modelName = model->getName();
@@ -370,49 +304,34 @@ osg::ref_ptr<osg::Node> GeometryBuilder::GeometryCache::GetOrCreateModel(Cal3DMo
 
    CalHardwareModel* hardwareModel = modelData->GetOrCreateCalHardwareModel();
 
-
    GeometryMap::iterator iterBegin = mLoadedModels.lower_bound(modelName);
    GeometryMap::iterator iterEnd = mLoadedModels.upper_bound(modelName);
 
-   if(false)//iterBegin != iterEnd)
+   pWrapper->SetLODLevel(1);
+   pWrapper->Update(0);
+
+   if (pWrapper->BeginRenderingQuery())
    {
-      for (; iterBegin != iterEnd; ++iterBegin)
+      if(false && iterBegin != iterEnd)
       {
-         MeshCacheData& meshData = (*iterBegin).second;
+         for (; iterBegin != iterEnd; ++iterBegin)
+         {
+            MeshCacheData& meshData = (*iterBegin).second;
 
-         hardwareModel->selectHardwareMesh(meshData.mId.second);
+            hardwareModel->selectHardwareMesh(meshData.mId.second);
 
-         osg::ref_ptr<osg::Geode> geode = CreateSubmeshGeode(pWrapper, hardwareModel, meshData);
+            osg::ref_ptr<osg::Geometry> geom = CopySubmeshGeometry(pWrapper, hardwareModel, meshData);
 
-         modelRoot->addChild(geode.get());
+            geode->addDrawable(geom.get());
+         }
       }
-   }
-   else
-   {
-      pWrapper->SetLODLevel(1);
-      pWrapper->Update(0);
-
-      if (pWrapper->BeginRenderingQuery())
+      else
       {
          int meshCount = 0;
          int meshId = 0;
          int submeshId = 0;
 
          CalCoreMesh* calMesh = model->getCoreMesh(0);
-
-#ifdef BUILD_CAL3D_SOFTWARE
-
-         meshCount = model->getCoreMeshCount();
-
-         for (meshId = 0; meshId < meshCount; meshId++)
-         {
-            calMesh = model->getCoreMesh(meshId);
-            int submeshCount = calMesh->getCoreSubmeshCount();
-
-            for (submeshId = 0; submeshId < submeshCount; submeshId++)
-            {
-               CalCoreSubmesh* subMesh = calMesh->getCoreSubmesh(submeshId);
-#else
          
          if (modelData == NULL)
          {
@@ -422,43 +341,41 @@ osg::ref_ptr<osg::Node> GeometryBuilder::GeometryCache::GetOrCreateModel(Cal3DMo
 
          meshCount = hardwareModel->getHardwareMeshCount();
 
-         for (submeshId = 0; submeshId < meshCount; submeshId++) {
+         for (submeshId = 0; submeshId < meshCount; submeshId++) 
+         {
 
             hardwareModel->selectHardwareMesh(submeshId);
-
+            
+            //create a cached version of the model            
             int vertexCount = hardwareModel->getVertexCount();
             int faceCount = hardwareModel->getFaceCount();
             int boneCount = hardwareModel->getBoneCount();
             int startIndex = hardwareModel->getStartIndex();
             int baseIndex = hardwareModel->getBaseVertexIndex();
-#endif
-               MeshCacheData mcd;
-               mcd.mId.first = meshId;
-               mcd.mId.second = submeshId;
-               mcd.mName = calMesh->getName();
 
-#ifdef BUILD_CAL3D_SOFTWARE
-               mcd.mGeometry = GetOrCreateMeshSubMesh(pWrapper, meshId, submeshId);
-#else
+            MeshCacheData mcd;
+            mcd.mId.first = meshId;
+            mcd.mId.second = submeshId;
+            mcd.mName = calMesh->getName();
 
-               mcd.mGeometry = GetOrCreateHardwareMeshSubMesh(hardwareModel, pWrapper, meshId, submeshId, vertexCount, faceCount, boneCount, baseIndex, startIndex);
+            mcd.mGeometry = CreateMeshSubMesh(hardwareModel, pWrapper, meshId, submeshId, vertexCount, faceCount, boneCount, baseIndex, startIndex);            
+            SetUpMaterial(mcd.mGeometry.get(), hardwareModel, pWrapper, meshId, submeshId);
+            mLoadedModels.insert(std::make_pair(modelName, mcd));
+            //end create cached version of model
 
-               osg::ref_ptr<osg::Geode> geode = CreateSubmeshGeode(pWrapper, hardwareModel, mcd);
-               modelRoot->addChild(geode.get());
-#endif
+            //make a soft copy of cached model and use that
+            osg::ref_ptr<osg::Geometry> geom = CopySubmeshGeometry(pWrapper, hardwareModel, mcd);
 
-               SetUpMaterial(mcd.mGeometry.get(), hardwareModel, pWrapper, meshId, submeshId);
-
-               mLoadedModels.insert(std::make_pair(modelName, mcd));
-            }
+            geode->addDrawable(geom.get());
          }
-
-         pWrapper->EndRenderingQuery();
       }
 
-   pWrapper->Update(0);
+      pWrapper->EndRenderingQuery();
+      pWrapper->Update(0);
+   }
 
-   return modelRoot;
+
+   return geode;
 }
 
 
@@ -615,7 +532,7 @@ void GeometryBuilder::GeometryCache::SetUpMaterial(osg::Geometry* geom, CalHardw
 
    std::vector<CalHardwareModel::CalHardwareMesh>& meshVec = hardwareModel->getVectorHardwareMesh();
 
-   if (subMeshId >= meshVec.size())
+   if (size_t(subMeshId) >= meshVec.size())
    {
       LOG_WARNING("MeshID isn't defined in the list of meshes");
       return;

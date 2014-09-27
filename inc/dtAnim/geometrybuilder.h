@@ -84,9 +84,8 @@ namespace dtAnim
             osg::ref_ptr<osg::Node> GetOrCreateModel(Cal3DModelWrapper* pWrapper);
 
          private:
-            osg::ref_ptr<osg::Geometry> GetOrCreateMeshSubMesh(Cal3DModelWrapper* pWrapper, int meshId, int subMeshId);
-            osg::ref_ptr<osg::Geometry> GetOrCreateHardwareMeshSubMesh(CalHardwareModel* hardwareModel, Cal3DModelWrapper* pWrapper, int meshId, int subMeshId, int vertexCount, int faceCount, int boneCount, int baseIndex, int startIndex);
-            osg::ref_ptr<osg::Geode> CreateSubmeshGeode(Cal3DModelWrapper* pWrapper, CalHardwareModel* hardwareModel, GeometryBuilder::MeshCacheData& mcd);
+            osg::ref_ptr<osg::Geometry> CreateMeshSubMesh(CalHardwareModel* hardwareModel, Cal3DModelWrapper* pWrapper, int meshId, int subMeshId, int vertexCount, int faceCount, int boneCount, int baseIndex, int startIndex);
+            osg::ref_ptr<osg::Geometry> CopySubmeshGeometry(Cal3DModelWrapper* pWrapper, CalHardwareModel* hardwareModel, GeometryBuilder::MeshCacheData& mcd);
 
             void SetUpMaterial(osg::Geometry* geom, CalHardwareModel* hardwareModel, Cal3DModelWrapper* pWrapper, int meshId, int subMeshId);
 
