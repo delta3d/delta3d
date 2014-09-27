@@ -67,7 +67,8 @@ namespace dtPhysics
 
       palBodyBase& GetPalBodyBase();
 
-      void GetTransform(TransformType& xform) const;
+      /// @see dtPhysics::PhysicsObject::GetTransform
+      void GetTransform(TransformType& xform, bool interpolated) const;
 
    protected:
       ~BaseBodyWrapper();

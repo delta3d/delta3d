@@ -324,7 +324,8 @@ namespace dtPhysics
       dtCore::RefPtr<osgDB::ReaderWriter::Options> options = PhysOptions::CreateOSGOptions(*physOptions);
 
       bool result = false;
-      if (fileUtils.ReadObject(filename, options.get()) != NULL)
+      fileUtils.ReadObject(filename, options.get());
+      if (!triangleData->mVertices.empty())
       {
          std::vector<VectorType>::iterator i,iend;
          i = triangleData->mVertices.begin();
