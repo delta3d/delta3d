@@ -1162,7 +1162,8 @@ namespace dtAnim
 
       LODOptions& lodOptions = modelData.GetLODOptions();
 
-      if (handler.mFoundLODOptions)
+      //always set default lod values
+      //if (handler.mFoundLODOptions)
       {
          lodOptions.SetStartDistance(handler.mLODStartDistance);
          lodOptions.SetEndDistance(handler.mLODEndDistance);
