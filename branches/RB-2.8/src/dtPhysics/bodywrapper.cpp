@@ -175,13 +175,20 @@ namespace dtPhysics
    }
 
    ///////////////////////////////////////////////////////////////////////////
-   void BaseBodyWrapper::GetTransform(TransformType& xform) const
+   void BaseBodyWrapper::GetTransform(TransformType& xform, bool interpolated) const
    {
       // set initial matrix
       palMatrix4x4 palmatrix;
 
-      // this sets orientation and matrix
-      palmatrix = mImpl->mBody->GetLocationMatrix();
+      if (interpolated)
+      {
+         palmatrix = mImpl->mBody->GetLocationMatrixInterpolated();
+      }
+      else
+      {
+         palmatrix = mImpl->mBody->GetLocationMatrix();
+      }
+
 
       // convert to correct matrix
       PalMatrixToTransform(xform, palmatrix);

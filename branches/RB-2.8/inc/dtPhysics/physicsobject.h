@@ -115,8 +115,13 @@ namespace dtPhysics
 
       /**
        * Get the world position of this physics object/body
+       * @param interpolated Get the position iterpolated for the visual.  The GetTransformAsVisual always does this, but it also
+       *        takes into account the visual to simulated position.  If you are doing physics calculations, the default of false is what you want.
+       *        If you are planning on setting or comparing something with something in a visual, pass true, but GetTransformAsVisual is more likely what you want.
+       *        In System::FixedTimeStep == true this usually won't matter unless the fixed time step and physics step are not clean multiples of each other,
+       *        or if you are doing anything in an action update, where you have to to impulses and the interpolated position isn't up to date.
        */
-      virtual void GetTransform(TransformType&) const;
+      virtual void GetTransform(TransformType&, bool interpolated = false) const;
 
       /**
        * Set the transform of the body, but offset it using the SetVisualToBodyTransform transform.

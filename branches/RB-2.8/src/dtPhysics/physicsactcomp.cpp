@@ -733,10 +733,22 @@ namespace dtPhysics
          for (unsigned i = 0; i < mPhysicsObjects.size(); ++i)
          {
             dtPhysics::PhysicsObject* physObj = mPhysicsObjects[i];
-            if (physObj->GetMechanicsType() != MechanicsType::DYNAMIC)
+            bool setTransform = physObj->GetMechanicsType() == MechanicsType::KINEMATIC;
+
+            // It's in efficient to set the position of static objects
+            // and it can mess up dynamic objects to set the position every frame
+            // so we check to see if you moved it since the last update before setting the value.
+            if (!setTransform)
             {
-               physObj->SetTransformAsVisual(xform);
+               dtCore::Transform xformP;
+               physObj->GetTransformAsVisual(xformP);
+               if (!xformP.EpsilonEquals(xform, 0.01))
+               {
+                  setTransform = true;
+               }
             }
+            if (setTransform)
+               physObj->SetTransformAsVisual(xform);
          }
       }
       else
@@ -777,7 +789,7 @@ namespace dtPhysics
          {
             debugInfo += actor->GetName() + " " + actor->GetActorType().GetFullName();
          }
-         LOGN_ERROR("physicsactcomp.cpp", "Invalid transform on physics actor component: ");
+         LOGN_ERROR("physicsactcomp.cpp", debugInfo);
       }
    }
 

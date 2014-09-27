@@ -418,22 +418,42 @@ namespace dtPhysics
    void PhysicsObject::CalculateBoundsAndOrigin(const osg::Node* nodeToLoad, bool calcDimensions, bool adjustOriginOffsetForGeometry)
    {
       VectorType center, newDimensions;
+      osg::BoundingBox bBox;
 
-      osg::ComputeBoundsVisitor bb;
-      // sorry about the const cast.  The node SHOULD be const since we aren't changing it
-      // but accept doesn't work as const.
-      const_cast<osg::Node&>(*nodeToLoad).accept(bb);
+      if (nodeToLoad != NULL)
+      {
+         osg::ComputeBoundsVisitor bb;
+         // sorry about the const cast.  The node SHOULD be const since we aren't changing it
+         // but accept doesn't work as const.
+         const_cast<osg::Node&>(*nodeToLoad).accept(bb);
+         bBox = bb.getBoundingBox();
+      }
+      else if (GetMeshResource() != dtCore::ResourceDescriptor::NULL_RESOURCE)
+      {
+         std::string fileToLoad = dtCore::Project::GetInstance().GetResourcePath(GetMeshResource());
+         dtPhysics::PhysicsReaderWriter::LoadFileGetExtents(bBox, fileToLoad);
+      }
 
       if (calcDimensions)
       {
-         CalculateOriginAndExtentsForNode(GetPrimitiveType(), bb.getBoundingBox(), center, newDimensions);
+         CalculateOriginAndExtentsForNode(GetPrimitiveType(), bBox, center, newDimensions);
+         for (unsigned i = 0; i < VectorType::num_components; ++i)
+         {
+            newDimensions[i] *= mDataMembers->mMeshScale[i];
+            center[i] *= mDataMembers->mMeshScale[i];
+         }
          SetExtents(newDimensions);
+      }
+      else
+      {
+         center = bBox.center();
       }
 
       if (adjustOriginOffsetForGeometry)
       {
          SetOriginOffset(GetOriginOffset() + center);
       }
+
 
    }
 
@@ -448,7 +468,7 @@ namespace dtPhysics
          VectorType dimensions = GetExtents();
          bool calcDimensions = GetPrimitiveType().IsSimpleShape() && dimensions[0] <= 0.0f && dimensions[1] <= 0.0f && dimensions[2] <= 0.0f;
 
-         if ((calcDimensions || adjustOriginOffsetForGeometry) && nodeToLoad != NULL)
+         if ((calcDimensions || adjustOriginOffsetForGeometry))
          {
             CalculateBoundsAndOrigin(nodeToLoad, calcDimensions, adjustOriginOffsetForGeometry);
          }
@@ -1147,11 +1167,11 @@ namespace dtPhysics
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void PhysicsObject::GetTransform(TransformType& xform) const
+   void PhysicsObject::GetTransform(TransformType& xform, bool interpolated) const
    {
       if (mDataMembers->mBody.valid())
       {
-         mDataMembers->mBody->GetTransform(xform);
+         mDataMembers->mBody->GetTransform(xform, interpolated);
       }
       else
       {
@@ -1180,7 +1200,7 @@ namespace dtPhysics
    /////////////////////////////////////////////////////////////////////////////
    void PhysicsObject::GetTransformAsVisual(TransformType& xform) const
    {
-      GetTransform(xform);
+      GetTransform(xform, true);
       if (!mDataMembers->mVisualToBodyIsIdentity)
       {
          osg::Matrix m;
