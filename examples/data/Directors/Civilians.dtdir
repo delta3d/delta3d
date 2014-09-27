@@ -2,7 +2,7 @@
 <director xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="delta3dDirector" xsi:schemaLocation="delta3dDirector director.xsd">
     <header>
         <createTimestamp>2014-04-11T21:34:39-05:00</createTimestamp>
-        <lastUpdateTimestamp>2014-09-22T14:12:14-05:00</lastUpdateTimestamp>
+        <lastUpdateTimestamp>2014-09-26T21:23:52-05:00</lastUpdateTimestamp>
         <editorVersion>2.8.0</editorVersion>
         <schemaVersion>2.0</schemaVersion>
         <scriptType>Scenario</scriptType>
@@ -39,7 +39,7 @@
     </libraries>
     <graph>
         <idIndex>0</idIndex>
-        <id>705372ea-c9e0-4062-8739-e95b53038f51</id>
+        <id>c010375d-f2d5-498d-9f73-939620994d14</id>
         <property>
             <name>Comment</name>
             <string></string>
@@ -377,7 +377,7 @@
                 </property>
                 <property>
                     <name>DestinationName</name>
-                    <string>Start</string>
+                    <string>Bar</string>
                 </property>
                 <valuelink>
                     <name>Enabled</name>
