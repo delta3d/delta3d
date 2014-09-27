@@ -28,7 +28,8 @@
 
 #include <osg/Referenced>
 #include <osg/State>
-#include <osg/Node> // needed for the bounding sphere callback
+#include <osg/Geometry>
+#include <osg/Node>
 
 #include <cal3d/global.h>
 
@@ -54,7 +55,7 @@ namespace dtAnim
    class Cal3DModelData;
    class Array;
 
-   class DT_ANIM_EXPORT GeometryBuilder: public osg::Referenced
+   class DT_ANIM_EXPORT GeometryBuilder
    {
    public:
       
@@ -94,19 +95,17 @@ namespace dtAnim
 
       
       GeometryBuilder();
-      
+      virtual ~GeometryBuilder();
             
       virtual dtCore::RefPtr<osg::Node> CreateGeometry(osg::RenderInfo* renderInfo, Cal3DModelWrapper* pWrapper);
       
 
    protected:
-      virtual ~GeometryBuilder();
-      GeometryBuilder(const GeometryBuilder&);
-      GeometryBuilder& operator=(const GeometryBuilder&);
-
       dtCore::ShaderProgram* LoadShaders(Cal3DModelData& modelData, osg::Node& geode) const;
 
    private:
+      GeometryBuilder(const GeometryBuilder&); //not implemented
+      GeometryBuilder& operator=(const GeometryBuilder&); //not implemented
 
       GeometryCache mGeometries;
    };

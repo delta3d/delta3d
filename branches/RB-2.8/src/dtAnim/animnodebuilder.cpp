@@ -51,6 +51,7 @@
 
 namespace dtAnim
 {
+   GeometryBuilder AnimNodeBuilder::mGeometryBuilder;
 
    ///Used to delay the building of the animated characters geometry until
    ///it is first rendered, at which point a valid OpenGL context should be valid
@@ -135,7 +136,6 @@ osg::BoundingSphere AnimNodeBuilder::Cal3DBoundingSphereCalculator::computeBound
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-GeometryBuilder* gBuilder = new GeometryBuilder();
 AnimNodeBuilder::AnimNodeBuilder(bool useDeprecatedHardwareModel)
    : mUseDeprecatedHardwareModel(useDeprecatedHardwareModel)
 {
@@ -147,7 +147,7 @@ AnimNodeBuilder::AnimNodeBuilder(bool useDeprecatedHardwareModel)
       }
       else
       {
-         SetCreate(CreateFunc(gBuilder, &GeometryBuilder::CreateGeometry));
+         SetCreate(CreateFunc(&mGeometryBuilder, &GeometryBuilder::CreateGeometry));
       }
    }
    else
