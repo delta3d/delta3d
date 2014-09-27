@@ -6,7 +6,7 @@ uniform sampler2D specularTexture;
 uniform sampler2D illumTexture;
 uniform sampler2D normalTexture;
 uniform sampler2D alphaTexture;
-uniform float d3d_SceneLuminance; // = 1.0;
+uniform float d3d_SceneLuminance = 1.0;
 uniform bool d3d_DepthOnlyPass = false;
 uniform bool d3d_ShadowOnlyPass = false;
 
