@@ -11,6 +11,10 @@
          <source type="Fragment">shaders/base/fragment_functions.frag</source>      
        <source type="Fragment">shaders/shadow/shadow_functions.frag</source>
       </shader>
+      <shader name="TestAppDefaultShader_Editor" editor="yes">
+         <source type="Vertex">shaders/base/simpleshader.vert</source>
+         <source type="Fragment">shaders/base/simpleshader.frag</source>
+      </shader>
    </shadergroup>
    
    <shadergroup name="EphemerisGroup">
@@ -72,7 +76,7 @@
             </texture2D>
          </parameter>
          <!--parameter name="d3d_ReflectionCubeMap">
-            <textureCubeMap textureUnit="6">
+            <textureCubeMap textureUnit="10">
                <source type="ImagePositiveX">textures/right.jpg</source>
                <source type="ImageNegativeX">textures/left.jpg</source>
                <source type="ImagePositiveY">textures/front.jpg</source>
@@ -121,6 +125,18 @@
                <source type="Image">textures/ShaderBase/NONE.png</source>
             </texture2D>
          </parameter>
+         <!--parameter name="d3d_ReflectionCubeMap">
+            <textureCubeMap textureUnit="10">
+               <source type="ImagePositiveX">textures/right.jpg</source>
+               <source type="ImageNegativeX">textures/left.jpg</source>
+               <source type="ImagePositiveY">textures/front.jpg</source>
+               <source type="ImageNegativeY">textures/back.jpg</source>
+               <source type="ImagePositiveZ">textures/top.jpg</source>
+               <source type="ImageNegativeZ">textures/bottom.jpg</source>
+               <wrap axis="S" mode="Repeat"/>
+               <wrap axis="T" mode="Repeat"/>
+            </textureCubeMap>
+         </parameter-->
       </shader>
    </shadergroup>
 
@@ -176,7 +192,7 @@
             </texture2D>
          </parameter>
          <!--parameter name="d3d_ReflectionCubeMap">
-            <textureCubeMap textureUnit="6">
+            <textureCubeMap textureUnit="10">
                <source type="ImagePositiveX">textures/right.jpg</source>
                <source type="ImageNegativeX">textures/left.jpg</source>
                <source type="ImagePositiveY">textures/front.jpg</source>
@@ -226,7 +242,18 @@
                <source type="Image">textures/ShaderBase/NONE.png</source>
             </texture2D>
          </parameter>
-         
+         <!--parameter name="d3d_ReflectionCubeMap">
+            <textureCubeMap textureUnit="10">
+               <source type="ImagePositiveX">textures/right.jpg</source>
+               <source type="ImageNegativeX">textures/left.jpg</source>
+               <source type="ImagePositiveY">textures/front.jpg</source>
+               <source type="ImageNegativeY">textures/back.jpg</source>
+               <source type="ImagePositiveZ">textures/top.jpg</source>
+               <source type="ImageNegativeZ">textures/bottom.jpg</source>
+               <wrap axis="S" mode="Repeat"/>
+               <wrap axis="T" mode="Repeat"/>
+            </textureCubeMap>
+         </parameter-->
       </shader>
    </shadergroup>
    
@@ -713,7 +740,7 @@
             </texture2D>
          </parameter>
          <!--parameter name="d3d_ReflectionCubeMap">
-            <textureCubeMap textureUnit="6">
+            <textureCubeMap textureUnit="10">
                <source type="ImagePositiveX">textures/right.jpg</source>
                <source type="ImageNegativeX">textures/left.jpg</source>
                <source type="ImagePositiveY">textures/front.jpg</source>
