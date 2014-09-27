@@ -24,6 +24,7 @@
 #include <dtAnim/hardwaresubmesh.h>
 #include <dtAnim/cal3ddatabase.h>
 #include <dtAnim/cal3dmodeldata.h>
+#include <dtAnim/geometrybuilder.h>
 
 #include <dtCore/shaderprogram.h>
 #include <dtCore/shadermanager.h>
@@ -42,6 +43,8 @@
 #include <osg/MatrixTransform>
 
 #include <cal3d/hardwaremodel.h>
+
+#include <cal3d/error.h>
 
 //For the bounding box class, who knew.
 #include <cal3d/vector.h>
@@ -132,11 +135,20 @@ osg::BoundingSphere AnimNodeBuilder::Cal3DBoundingSphereCalculator::computeBound
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-AnimNodeBuilder::AnimNodeBuilder()
+GeometryBuilder* gBuilder = new GeometryBuilder();
+AnimNodeBuilder::AnimNodeBuilder(bool useDeprecatedHardwareModel)
+   : mUseDeprecatedHardwareModel(useDeprecatedHardwareModel)
 {
    if (SupportsHardware())
    {
-      SetCreate(CreateFunc(this, &AnimNodeBuilder::CreateHardware));
+      if(mUseDeprecatedHardwareModel)
+      {
+         SetCreate(CreateFunc(this, &AnimNodeBuilder::CreateHardware));
+      }
+      else
+      {
+         SetCreate(CreateFunc(gBuilder, &GeometryBuilder::CreateGeometry));
+      }
    }
    else
    if (SupportsSoftware())
@@ -153,6 +165,7 @@ AnimNodeBuilder::AnimNodeBuilder()
 ////////////////////////////////////////////////////////////////////////////////
 AnimNodeBuilder::AnimNodeBuilder(const CreateFunc& pCreate)
 : mCreateFunc(pCreate)
+, mUseDeprecatedHardwareModel(false)
 {
 }
 

@@ -10,13 +10,17 @@ const int MAX_BONES = 82;
 uniform vec4 boneTransforms[MAX_BONES * 3];
 uniform mat4 osg_ViewMatrixInverse = mat4(1.0);
 
-attribute vec4 boneWeights;
-attribute vec4 boneIndices;
-attribute vec4 tangentSpace;
+//attribute vec4 boneWeights;
+//attribute vec4 boneIndices;
+//attribute vec4 tangentSpace;
 
 void main(void)
 {
    mat3 inverseView3x3 = mat3(osg_ViewMatrixInverse[0].xyz, osg_ViewMatrixInverse[1].xyz, osg_ViewMatrixInverse[2].xyz);
+
+   vec4 boneWeights = gl_MultiTexCoord1;
+   vec4 boneIndices = gl_MultiTexCoord2;
+   vec4 tangentSpace = gl_MultiTexCoord3;
 
    //initialize our data
    vec4 transformedPosition = vec4(0.0, 0.0, 0.0, 1.0);
