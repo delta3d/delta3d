@@ -7,7 +7,7 @@ uniform sampler2D illumTexture;
 uniform sampler2D normalTexture;
 uniform sampler2D alphaTexture;
 uniform float d3d_SceneLuminance = 1.0;
-uniform bool d3d_DepthOnlyPass = false;
+
 uniform bool d3d_ShadowOnlyPass = false;
 
 varying vec3 vNormal;
@@ -83,17 +83,7 @@ void main(void)
    float dist = length(ecPosition);
    vec3 viewDir = ecPosition / dist;
    
-   //if your shader ever sets the frag depth it must always
-   if(d3d_DepthOnlyPass)
-   {
-      gl_FragDepth = computeFragDepth(dist);
-   }
-   else
-   {
-      gl_FragDepth = gl_FragCoord.z;
-   }
-
-   if(d3d_DepthOnlyPass || d3d_ShadowOnlyPass)
+   if(d3d_ShadowOnlyPass)
    {
       return;
    }
