@@ -17,6 +17,10 @@
 * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 *
 * Bradley Anderegg
+*
+*  Portions of this code were taken from the osgPPU examples
+*     please see-     http://projects.tevs.eu/osgppu/ 
+*
 */
 
 #include <dtRender/ssaoscene.h>
