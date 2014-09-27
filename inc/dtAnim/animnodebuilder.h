@@ -23,6 +23,7 @@
 #define __DELTA_ANIMNODEBUILDER_H__
 
 #include <dtAnim/export.h>
+#include <dtAnim/geometrybuilder.h>
 #include <dtCore/refptr.h>
 #include <dtUtil/functor.h>
 
@@ -170,6 +171,8 @@ namespace dtAnim
       bool SupportsVertexBuffers() const;
 
       bool mUseDeprecatedHardwareModel;
+
+      static GeometryBuilder mGeometryBuilder;
    };
 
 } // namespace dtAnim
