@@ -28,9 +28,7 @@
 // INCLUDE DIRECTIVES
 ////////////////////////////////////////////////////////////////////////////////
 #include "meshobjectactor.h"
-
-
-
+#include <dtPhysics/buoyancyaction.h>
 namespace dtExample
 {
    /////////////////////////////////////////////////////////////////////////////
@@ -44,10 +42,14 @@ namespace dtExample
 
       VesselActor();
 
-      /*virtual*/ void BuildActorComponents();
+      /*override*/ void BuildActorComponents();
+      /*override*/ void OnEnteredWorld();
+
+      virtual void OnMapLoaded(const dtGame::MapMessage& /*mapMessage*/);
 
    protected:
       virtual ~VesselActor();
+      dtCore::RefPtr<dtPhysics::BuoyancyAction> mBuoyancyAction;
    };
 
 }
