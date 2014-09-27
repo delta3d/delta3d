@@ -1,3 +1,5 @@
+INCLUDE_DIRECTORIES(${PAL_INCLUDE_DIR})
+
 SET(TARGET_SRC testapp.cpp
                civilianactor.cpp
                civilianaiactorcomponent.cpp
@@ -18,6 +20,7 @@ SET(TARGET_SRC testapp.cpp
                testappmessagetypes.cpp
                testapputils.cpp
                vesselactor.cpp
+               wateractorheightquery.cpp
                Nodes/ApplicationNode.cpp
                Nodes/ChangeStance.cpp
                Nodes/CivilianAvatar.cpp
@@ -51,6 +54,7 @@ SET(TARGET_H civilianactor.h
              testappmessagetypes.h
              testapputils.h
              vesselactor.h
+             wateractorheightquery.h
              Nodes/ApplicationNode.h
              Nodes/ChangeStance.h
              Nodes/CivilianAvatar.h
@@ -66,9 +70,6 @@ SET(TARGET_H civilianactor.h
 
 IF (QT4_FOUND)
    SET(LIBS_TO_LINK  dtInspectorQt)
-ENDIF (QT4_FOUND)
-
-IF (QT4_FOUND) 
    ADD_DEFINITIONS(-DUSE_INSPECTOR)
 ENDIF (QT4_FOUND)
 
