@@ -83,7 +83,7 @@ namespace dtAnim
           dtCore::RefPtr<Cal3DModelWrapper> mWrapper;
       };
 
-      AnimNodeBuilder(); //creates default builder
+      AnimNodeBuilder(bool useDeprecatedHardwareModel = false); //creates default builder
       AnimNodeBuilder(const CreateFunc& pCreate); //uses custom builder
 
       /// @return the create function
@@ -168,6 +168,8 @@ namespace dtAnim
 
       ///Does the hardware support vertex buffers?
       bool SupportsVertexBuffers() const;
+
+      bool mUseDeprecatedHardwareModel;
    };
 
 } // namespace dtAnim

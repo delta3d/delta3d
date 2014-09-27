@@ -20,9 +20,9 @@ varying vec3 vCamera;
 varying vec4 vViewPos;
 
 
-attribute vec4 boneWeights;
-attribute vec4 boneIndices;
-attribute vec4 tangentSpace;
+//attribute vec4 boneWeights;
+//attribute vec4 boneIndices;
+//attribute vec4 tangentSpace;
 
 
 void GenerateShadowTexCoords( in vec4 ecPosition );
@@ -31,6 +31,11 @@ void GenerateShadowTexCoords( in vec4 ecPosition );
 void main(void)
 {
    mat3 inverseView3x3 = mat3(osg_ViewMatrixInverse[0].xyz, osg_ViewMatrixInverse[1].xyz, osg_ViewMatrixInverse[2].xyz);
+
+   vec4 boneWeights = gl_MultiTexCoord1;
+   vec4 boneIndices = gl_MultiTexCoord2;
+   vec4 tangentSpace = gl_MultiTexCoord3;
+
 
    //initialize our data
    vec4 transformedPosition = vec4(0.0, 0.0, 0.0, 1.0);
@@ -75,9 +80,7 @@ void main(void)
    //set proper varyings
    gl_FrontColor = gl_Color;
    gl_TexCoord[0] = gl_MultiTexCoord0;
-   gl_TexCoord[1] = gl_MultiTexCoord1;
-   gl_TexCoord[2] = transformedNormal;
-
+   
    vViewPos = gl_ModelViewMatrix * transformedPosition;
    //GenerateShadowTexCoords(vViewPos);
    
