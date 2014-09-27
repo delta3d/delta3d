@@ -394,8 +394,8 @@ namespace dtActors
             float freq = mProcessedWaveData[i][3]; //waveArray[i].w;
             float amp = mProcessedWaveData[i][2]; //waveArray[i].z;
             float waveDirX = mProcessedWaveData[i][6]; //waveArray[i + 1].zw;
-            float waveDirY = mProcessedWaveData[i][7];
-            float k = mProcessedWaveData[i][4]; //(waveArray[i+1].x);
+            float waveDirY = mProcessedWaveData[i][7];            
+            float k = std::max(1.5 * mProcessedWaveData[i][4], 4.00001);
 
             // This math MUST match the calculations done in water_functions.vert AND water.vert
             float mPlusPhi = (freq * (speed * mElapsedTime +
