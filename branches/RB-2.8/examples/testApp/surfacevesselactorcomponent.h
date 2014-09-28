@@ -31,8 +31,14 @@
 #include <dtCore/particlesystem.h>
 #include <dtCore/refptr.h>
 #include <dtGame/actorcomponent.h>
+#include <dtCore/gameevent.h>
 #include <osg/Vec3>
 
+
+namespace dtGame
+{
+   class GameEventMessage;
+}
 
 
 namespace dtExample
@@ -66,6 +72,7 @@ namespace dtExample
 
       DT_DECLARE_ACCESSOR(float, SprayVelocityMin);
       DT_DECLARE_ACCESSOR(float, SprayVelocityMax);
+      DT_DECLARE_ACCESSOR(dtCore::RefPtr<dtCore::GameEvent>, UpdateFromControllerEvent);
 
       float GetVelocityRatio(float velocity) const;
 
@@ -73,7 +80,8 @@ namespace dtExample
 
       /*virtual*/ void OnTickLocal(const dtGame::TickMessage& tickMessage);
       /*virtual*/ void OnTickRemote(const dtGame::TickMessage& tickMessage);
-      /*virtual*/ void OnMapLoaded(const dtGame::MapMessage& mapMessage);
+      virtual void OnMapLoaded(const dtGame::MapMessage& mapMessage);
+      virtual void OnGameEvent(const dtGame::GameEventMessage& gameEvent);
 
       /// Adds the properties associated with this actor
       /*virtual*/ void BuildPropertyMap();
