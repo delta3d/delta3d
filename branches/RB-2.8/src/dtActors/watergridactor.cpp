@@ -392,7 +392,7 @@ namespace dtActors
       float scalar = std::min(10.0f, std::log(cameraHeight/20.0f + 1.0f)) + std::min(10.0f, std::max(0.0f, (cameraHeight-10.0f))/50.0f);
       scalar = 1.15f * std::max(1.1f, scalar);
 
-      float distBetweenVertsScalar = 10.0 + (distBetweenVerts * scalar * 4.0f);
+      float distBetweenVertsScalar = 10.0 + (distBetweenVerts * scalar);
       
       outHeight = GetWaterHeight();
 
