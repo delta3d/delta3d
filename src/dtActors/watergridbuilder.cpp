@@ -180,120 +180,112 @@ namespace dtActors
    {
       int numWaves = 16;
 
-      float waveLenMod = 0.35f;
-      float ampMod = 0.4f;
+      float waveLenMod = 2.0;
+      float ampMod = 0.25f;
 
       if(seaState == &WaterGridActor::SeaState::SeaState_0)
       {
-         AddRandomWaves(waveList, waveLenMod * 9.1667f, ampMod * 1.4217f, 1.0f, 2.5f, 4);
-         AddRandomWaves(waveList, waveLenMod * 17.3667f, ampMod * 1.7533f, 1.15f, 3.0f, 4);
-         AddRandomWaves(waveList, waveLenMod * 21.5667f, ampMod * 1.0831f, 2.1f, 4.5f, 4);
-         AddRandomWaves(waveList, waveLenMod * 45.766f, ampMod * 1.1757f, 1.0f, 5.5f, 3);
-         AddRandomWaves(waveList, waveLenMod * 75.766f, ampMod * 2.1757f, 1.0f, 5.5f, 1);
+         AddRandomWaves(waveList, waveLenMod * 13.1667f, ampMod * 0.64217f, 1.0f, 2.5f, 1);
+         AddRandomWaves(waveList, waveLenMod * 12.3667f, ampMod * 0.7533f, 1.15f, 3.0f, 1);
+         AddRandomWaves(waveList, waveLenMod * 17.5667f, ampMod * 0.931f, 2.1f, 4.5f, 1);
+         AddRandomWaves(waveList, waveLenMod * 19.766f, ampMod * 1.357f, 1.0f, 5.5f, 1);
       }
       else if(seaState == &WaterGridActor::SeaState::SeaState_1)
       {
-         //AddRandomWaves(waveList, waveLenMod * 8.667f, ampMod * 00.9667f, 1.5f, 5.0f, numWaves);
-         AddRandomWaves(waveList, waveLenMod * 11.1667f, ampMod * 1.4217f, 1.0f, 2.5f, 4);
-         AddRandomWaves(waveList, waveLenMod * 15.3667f, ampMod * 1.7533f, 1.15f, 3.0f, 4);
-         AddRandomWaves(waveList, waveLenMod * 31.5667f, ampMod * 1.0831f, 2.1f, 4.5f, 4);
-         AddRandomWaves(waveList, waveLenMod * 85.766f, ampMod * 2.1757f, 1.0f, 5.5f, 3);
-         AddRandomWaves(waveList, waveLenMod * 115.766f, ampMod * 2.1757f, 1.0f, 5.5f, 1);
+         AddRandomWaves(waveList, waveLenMod * 13.1667f, ampMod * 0.64217f, 1.0f, 2.5f, 1);
+         AddRandomWaves(waveList, waveLenMod * 12.3667f, ampMod * 0.7533f, 1.15f, 3.0f, 1);
+         AddRandomWaves(waveList, waveLenMod * 17.5667f, ampMod * 1.0831f, 2.1f, 4.5f, 1);
+         AddRandomWaves(waveList, waveLenMod * 19.766f, ampMod * 1.757f, 1.0f, 5.5f, 1);
       }
       else if(seaState == &WaterGridActor::SeaState::SeaState_2)
       {         
-         //AddRandomWaves(waveList, waveLenMod * 12.667f, ampMod * 1.29667f, 1.75f, 6.0f, numWaves);
-         AddRandomWaves(waveList, waveLenMod * 14.1667f, ampMod * 1.427f, 1.0f, 2.5f, 4);
-         AddRandomWaves(waveList, waveLenMod * 27.3667f, ampMod * 1.676f, 1.15f, 3.0f, 4);
-         AddRandomWaves(waveList, waveLenMod * 43.5667f, ampMod * 1.387f, 2.1f, 4.5f, 4);
-         AddRandomWaves(waveList, waveLenMod * 95.766f, ampMod * 2.4951f, 1.0f, 5.5f, 3);
-         AddRandomWaves(waveList, waveLenMod * 175.766f, ampMod * 3.0951f, 1.0f, 5.5f, 1);
+         AddRandomWaves(waveList, waveLenMod * 11.667f, ampMod * 00.9667f, 1.5f, 5.0f, 2);
+         AddRandomWaves(waveList, waveLenMod * 13.1667f, ampMod * 1.14217f, 1.0f, 2.5f, 2);
+         AddRandomWaves(waveList, waveLenMod * 19.3667f, ampMod * 1.231f, 1.15f, 3.0f, 2);
+         AddRandomWaves(waveList, waveLenMod * 21.5667f, ampMod * 1.36831f, 2.1f, 4.5f, 2);
       }
       else if(seaState == &WaterGridActor::SeaState::SeaState_3)
       {
-         //AddRandomWaves(waveList, waveLenMod * 16.667f, ampMod * 1.5667f, 2.0f, 6.5f, numWaves);
-
-         AddRandomWaves(waveList, waveLenMod * 19.1667f, ampMod * 1.0431f, 1.0f, 2.5f, 4);
-         AddRandomWaves(waveList, waveLenMod * 29.3667f, ampMod * 1.2761f, 1.15f, 3.0f, 4);
-         AddRandomWaves(waveList, waveLenMod * 34.5667f, ampMod * 1.63f, 2.1f, 4.5f, 4);
-         AddRandomWaves(waveList, waveLenMod * 118.766f, ampMod * 2.1791f, 1.0f, 5.5f, 3);
-         AddRandomWaves(waveList, waveLenMod * 238.766f, ampMod * 2.91f, 1.0f, 5.5f, 1);
+         AddRandomWaves(waveList, waveLenMod * 15.1667f, ampMod * 0.9331f, 1.0f, 2.5f, 4);
+         AddRandomWaves(waveList, waveLenMod * 17.3667f, ampMod * 1.046f, 1.15f, 3.0f, 4);
+         AddRandomWaves(waveList, waveLenMod * 19.5667f, ampMod * 1.187f, 2.1f, 4.5f, 4);
+         AddRandomWaves(waveList, waveLenMod * 23.766f, ampMod * 1.2951f, 1.0f, 5.5f, 3);
+         AddRandomWaves(waveList, waveLenMod * 28.766f, ampMod * 1.391f, 1.0f, 5.5f, 1);
       }
       else if(seaState == &WaterGridActor::SeaState::SeaState_4)
       {
-         AddRandomWaves(waveList, waveLenMod * 18.3167f, ampMod * 1.1167f, 1.0f, 2.5f, 4);
-         AddRandomWaves(waveList, waveLenMod * 22.667f, ampMod * 1.331f, 1.15f, 3.0f, 4);
-         AddRandomWaves(waveList, waveLenMod * 44.1667f, ampMod * 1.71f, 2.1f, 4.5f, 4);
-         AddRandomWaves(waveList, waveLenMod * 147.66f, ampMod * 2.3517f, 1.0f, 5.5f, 3);
-         AddRandomWaves(waveList, waveLenMod * 277.66f, ampMod * 3.0517f, 1.0f, 5.5f, 1);
+         AddRandomWaves(waveList, waveLenMod * 15.1667f, ampMod * 0.9331f, 1.0f, 2.5f, 4);
+         AddRandomWaves(waveList, waveLenMod * 19.3667f, ampMod * 1.046f, 1.15f, 3.0f, 4);
+         AddRandomWaves(waveList, waveLenMod * 25.5667f, ampMod * 1.187f, 2.1f, 4.5f, 4);
+         AddRandomWaves(waveList, waveLenMod * 28.766f, ampMod * 1.2951f, 1.0f, 5.5f, 3);
+         AddRandomWaves(waveList, waveLenMod * 31.766f, ampMod * 1.391f, 1.0f, 5.5f, 1);
 
       }
       else if(seaState == &WaterGridActor::SeaState::SeaState_5)
       {
-         AddRandomWaves(waveList, waveLenMod * 39.667f, ampMod * 1.1967f, 1.75f, 4.0f, 4);
-         AddRandomWaves(waveList, waveLenMod * 51.667f, ampMod * 1.667f, 1.0f, 4.5f, 4);
-         AddRandomWaves(waveList, waveLenMod * 97.66f, ampMod * 1.3f, 1.5f, 5.5f, 4);
-         AddRandomWaves(waveList, waveLenMod * 151.66f, ampMod * 2.191f, 1.5f, 5.5f, 3);
-         AddRandomWaves(waveList, waveLenMod * 521.66f, ampMod * 3.91f, 1.5f, 5.5f, 1);
+         AddRandomWaves(waveList, waveLenMod * 11.1667f, ampMod * 1.1431f, 1.0f, 2.5f, 4);
+         AddRandomWaves(waveList, waveLenMod * 15.3667f, ampMod * 1.2761f, 1.15f, 3.0f, 4);
+         AddRandomWaves(waveList, waveLenMod * 18.5667f, ampMod * 1.63f, 2.1f, 4.5f, 4);
+         AddRandomWaves(waveList, waveLenMod * 24.766f, ampMod * 2.1791f, 1.0f, 5.5f, 3);
+         AddRandomWaves(waveList, waveLenMod * 31.766f, ampMod * 2.821f, 1.0f, 5.5f, 1);
       }
       else if(seaState == &WaterGridActor::SeaState::SeaState_6)
       {
-         AddRandomWaves(waveList, waveLenMod * 91.667f, ampMod * 0.9147f, 1.0f, 4.5f, 4);
-         AddRandomWaves(waveList, waveLenMod * 152.66f, ampMod * 1.514f, 1.5f, 4.5f, 4);
-         AddRandomWaves(waveList, waveLenMod * 164.33, ampMod * 2.7541f, 1.5f, 5.0f, 4);
-         AddRandomWaves(waveList, waveLenMod * 235.33, ampMod * 3.4667, 2.0f, 5.0f, 3);
-         AddRandomWaves(waveList, waveLenMod * 849.667, ampMod * 4.133f, 2.5f, 5.0f, 1);
+         AddRandomWaves(waveList, waveLenMod * 11.1667f, ampMod * 1.431f, 1.0f, 2.5f, 4);
+         AddRandomWaves(waveList, waveLenMod * 15.3667f, ampMod * 2.2761f, 1.15f, 3.0f, 4);
+         AddRandomWaves(waveList, waveLenMod * 18.5667f, ampMod * 2.63f, 2.1f, 4.5f, 4);
+         AddRandomWaves(waveList, waveLenMod * 24.766f, ampMod * 3.1791f, 1.0f, 5.5f, 3);
+         AddRandomWaves(waveList, waveLenMod * 31.766f, ampMod * 3.821f, 1.0f, 5.5f, 1);
       }
       else if(seaState == &WaterGridActor::SeaState::SeaState_7)
       {
-         AddRandomWaves(waveList, waveLenMod * 105.667f, ampMod * 1.167f, 1.0f, 4.5f, 4);
-         AddRandomWaves(waveList, waveLenMod * 217.66f, ampMod * 1.41f, 1.5f, 4.5f, 4);
-         AddRandomWaves(waveList, waveLenMod * 320.533, ampMod * 2.341f, 2.0f, 5.0f, 4);
-         AddRandomWaves(waveList, waveLenMod * 412.233, ampMod * 3.667, 2.0f, 5.0f, 2);
-         AddRandomWaves(waveList, waveLenMod * 1019.667, ampMod * 5.33f, 2.5f, 5.0f, 2);
+         AddRandomWaves(waveList, waveLenMod * 11.1667f, ampMod * 1.7431f, 1.0f, 2.5f, 4);
+         AddRandomWaves(waveList, waveLenMod * 15.3667f, ampMod * 2.2761f, 1.15f, 3.0f, 4);
+         AddRandomWaves(waveList, waveLenMod * 28.5667f, ampMod * 3.63f, 2.1f, 4.5f, 4);
+         AddRandomWaves(waveList, waveLenMod * 34.766f, ampMod * 3.791f, 1.0f, 5.5f, 3);
+         AddRandomWaves(waveList, waveLenMod * 41.766f, ampMod * 4.821f, 1.0f, 5.5f, 1);
       }
       else if(seaState == &WaterGridActor::SeaState::SeaState_8)
       {
-         AddRandomWaves(waveList, waveLenMod * 219.667f, ampMod * 1.167f, 1.0f, 4.5f, 4);
-         AddRandomWaves(waveList, waveLenMod * 321.66f, ampMod * 2.14f, 1.5f, 4.5f, 4);
-         AddRandomWaves(waveList, waveLenMod * 323.33, ampMod * 2.341f, 3.0f, 5.0f, 4);
-         AddRandomWaves(waveList, waveLenMod * 543.33, ampMod * 4.667, 2.0f, 5.0f, 2);
-         AddRandomWaves(waveList, waveLenMod * 1250.667, ampMod * 9.33f, 1.5f, 2.5f, 2);
+         AddRandomWaves(waveList, waveLenMod * 15.3167f, ampMod * 2.167f, 1.0f, 2.5f, 4);
+         AddRandomWaves(waveList, waveLenMod * 21.667f, ampMod * 3.231f, 1.15f, 3.0f, 4);
+         AddRandomWaves(waveList, waveLenMod * 34.1667f, ampMod * 4.361f, 2.1f, 4.5f, 4);
+         AddRandomWaves(waveList, waveLenMod * 45.66f, ampMod * 4.0517f, 1.0f, 5.5f, 3);
+         AddRandomWaves(waveList, waveLenMod * 52.66f, ampMod * 5.2517f, 1.0f, 5.5f, 1);
       }
       else if(seaState == &WaterGridActor::SeaState::SeaState_9)
       {
-         AddRandomWaves(waveList, waveLenMod * 220.667f, ampMod * 1.1667f, 1.0f, 4.5f, 4);
-         AddRandomWaves(waveList, waveLenMod * 260.66f, ampMod * 1.14f, 1.5f, 4.5f, 4);
-         AddRandomWaves(waveList, waveLenMod * 490.133, ampMod * 2.341f, 1.5f, 5.0f, 3);
-         AddRandomWaves(waveList, waveLenMod * 510.63, ampMod * 2.667, 2.0f, 5.0f, 4);
-         AddRandomWaves(waveList, waveLenMod * 1500.667, ampMod * 11.33f, 1.5f, 2.5f, 1);
+         AddRandomWaves(waveList, waveLenMod * 19.667f, ampMod * 2.1967f, 1.75f, 4.0f, 4);
+         AddRandomWaves(waveList, waveLenMod * 21.667f, ampMod * 3.667f, 1.0f, 4.5f, 4);
+         AddRandomWaves(waveList, waveLenMod * 37.66f, ampMod * 4.13f, 1.5f, 5.5f, 4);
+         AddRandomWaves(waveList, waveLenMod * 41.66f, ampMod * 5.391f, 1.5f, 5.5f, 3);
+         AddRandomWaves(waveList, waveLenMod * 51.66f, ampMod * 6.91f, 1.5f, 5.5f, 1);
       }
       else if(seaState == &WaterGridActor::SeaState::SeaState_10)
       {
-         AddRandomWaves(waveList, waveLenMod * 227.667f, ampMod * 1.1667f, 1.0f, 4.5f, 4);
-         AddRandomWaves(waveList, waveLenMod * 267.66f, ampMod * 2.14f, 1.5f, 4.5f, 4);
-         AddRandomWaves(waveList, waveLenMod * 5213.33, ampMod * 4.341f, 2.0f, 5.0f, 4);
-         AddRandomWaves(waveList, waveLenMod * 533.33, ampMod * 4.667, 2.0f, 5.0f, 3);
-         AddRandomWaves(waveList, waveLenMod * 1500.667, ampMod * 18.33f, 1.5f, 2.5f, 1);
+         AddRandomWaves(waveList, waveLenMod * 19.667f, ampMod * 3.9147f, 1.0f, 4.5f, 4);
+         AddRandomWaves(waveList, waveLenMod * 29.66f, ampMod * 4.514f, 1.5f, 4.5f, 4);
+         AddRandomWaves(waveList, waveLenMod * 34.33, ampMod * 5.7541f, 1.5f, 5.0f, 4);
+         AddRandomWaves(waveList, waveLenMod * 51.33, ampMod * 6.4667, 2.0f, 5.0f, 3);
+         AddRandomWaves(waveList, waveLenMod * 63.667, ampMod * 7.133f, 2.5f, 5.0f, 1);
       }
       else if(seaState == &WaterGridActor::SeaState::SeaState_11)
       {
-         AddRandomWaves(waveList, waveLenMod * 177.667f, ampMod * 2.1667f, 1.0f, 4.5f, 4);
-         AddRandomWaves(waveList, waveLenMod * 212.667f, ampMod * 3.1667f, 1.0f, 4.5f, 4);
-         AddRandomWaves(waveList, waveLenMod * 523.33, ampMod * 4.20f, 2.0f, 5.0f, 4);
-         AddRandomWaves(waveList, waveLenMod * 528.33, ampMod * 4.667, 2.0f, 5.0f, 3);
-         AddRandomWaves(waveList, waveLenMod * 1500.667, ampMod * 24.33f, 1.5f, 2.5f, 1);
-
+         AddRandomWaves(waveList, waveLenMod * 29.667f, ampMod * 6.9147f, 1.0f, 4.5f, 4);
+         AddRandomWaves(waveList, waveLenMod * 39.66f, ampMod * 7.514f, 1.5f, 4.5f, 4);
+         AddRandomWaves(waveList, waveLenMod * 54.33, ampMod * 8.7541f, 1.5f, 5.0f, 4);
+         AddRandomWaves(waveList, waveLenMod * 73.33, ampMod * 11.4667, 2.0f, 5.0f, 3);
+         AddRandomWaves(waveList, waveLenMod * 101.667, ampMod * 15.133f, 2.5f, 5.0f, 1);
       }
       else if(seaState == &WaterGridActor::SeaState::SeaState_12)
-      {        
-         AddRandomWaves(waveList, waveLenMod * 218.667f, ampMod * 2.1667f, 2.0f, 4.5f, 3);
-         AddRandomWaves(waveList, waveLenMod * 326.667f, ampMod * 3.1667f, 2.0f, 4.5f, 4);
-         AddRandomWaves(waveList, waveLenMod * 533.33, ampMod * 3.667, 2.0f, 5.0f, 4);
-         AddRandomWaves(waveList, waveLenMod * 538.33, ampMod * 4.67f, 2.5f, 5.0f, 4);
-         AddRandomWaves(waveList, waveLenMod * 1500.667, ampMod * 29.33f, 1.5f, 2.5f, 1);
+      {
+         AddRandomWaves(waveList, waveLenMod * 39.667f, ampMod * 7.9147f, 1.0f, 4.5f, 4);
+         AddRandomWaves(waveList, waveLenMod * 49.66f, ampMod * 8.514f, 1.5f, 4.5f, 4);
+         AddRandomWaves(waveList, waveLenMod * 64.33, ampMod * 9.7541f, 1.5f, 5.0f, 4);
+         AddRandomWaves(waveList, waveLenMod * 91.33, ampMod * 15.4667, 2.0f, 5.0f, 3);
+         AddRandomWaves(waveList, waveLenMod * 114.667, ampMod * 19.133f, 2.5f, 5.0f, 1);
       }
-
+      
    }
 
 
@@ -313,7 +305,7 @@ namespace dtActors
          w.mAmplitude = ampStart;
          w.mSpeed = dtUtil::RandFloat(minPeriod, maxPeriod);
          w.mSteepness = 1.0f;
-         w.mDirectionInDegrees = 90.0f + dtUtil::RandFloat(-10.3333f, 10.3333f);
+         w.mDirectionInDegrees = 90.0f + dtUtil::RandFloat(-7.3333f, 7.3333f);
          SetWaveDirection(w);
          waveList.push_back(w); // -3
       }

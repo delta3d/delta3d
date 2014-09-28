@@ -218,6 +218,7 @@ namespace dtActors
       DT_DECLARE_ACCESSOR_INLINE(osg::Vec2, TexWaveTextureResolution)
       DT_DECLARE_ACCESSOR_INLINE(float, TexWaveResolutionScalar)
       DT_DECLARE_ACCESSOR_INLINE(float, TexWaveAmpScalar)
+      DT_DECLARE_ACCESSOR_INLINE(float, TexWaveAmpInternal)
       DT_DECLARE_ACCESSOR_INLINE(float, TexWaveSpreadScalar)
       DT_DECLARE_ACCESSOR_INLINE(float, TexWaveSteepness)
 

@@ -63,7 +63,7 @@ void main(void)
 
    float distance = length(localVert.xy);
    
-   distBetweenVertsScalar = gl_Vertex.z * scalar * 4.0;// / modForFOV;
+   distBetweenVertsScalar = 10.0 + (gl_Vertex.z * scalar * 4.0);// / modForFOV;
  
    pos = camPos + localVert;   
    pos.z = WaterHeight;

@@ -190,20 +190,20 @@ namespace dtActors
 
 
    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-   IMPLEMENT_ENUM(WaterGridActor::SeaState);///////////////////////////////// AMP  WaveLen  Speed
-   WaterGridActor::SeaState WaterGridActor::SeaState::SeaState_0("SeaState_0", 0.1, 0.1, 0.2);
-   WaterGridActor::SeaState WaterGridActor::SeaState::SeaState_1("SeaState_1", 0.15, 0.15, 0.4);
-   WaterGridActor::SeaState WaterGridActor::SeaState::SeaState_2("SeaState_2", 0.25, 0.25, 0.6);
-   WaterGridActor::SeaState WaterGridActor::SeaState::SeaState_3("SeaState_3", 0.45, 0.45, 0.8);
-   WaterGridActor::SeaState WaterGridActor::SeaState::SeaState_4("SeaState_4", 0.65, 0.65, 1.0);
-   WaterGridActor::SeaState WaterGridActor::SeaState::SeaState_5("SeaState_5", 0.85, 0.85, 1.25);
-   WaterGridActor::SeaState WaterGridActor::SeaState::SeaState_6("SeaState_6", 1.0, 1.0, 1.5);
-   WaterGridActor::SeaState WaterGridActor::SeaState::SeaState_7("SeaState_7", 1.15, 1.15, 1.75);
-   WaterGridActor::SeaState WaterGridActor::SeaState::SeaState_8("SeaState_8", 1.25, 1.25, 2.25);
-   WaterGridActor::SeaState WaterGridActor::SeaState::SeaState_9("SeaState_9", 1.45, 1.45, 2.5);
-   WaterGridActor::SeaState WaterGridActor::SeaState::SeaState_10("SeaState_10", 1.55, 1.55, 3.0);
-   WaterGridActor::SeaState WaterGridActor::SeaState::SeaState_11("SeaState_11", 1.65, 1.65, 4.0);
-   WaterGridActor::SeaState WaterGridActor::SeaState::SeaState_12("SeaState_12", 2.0, 2.0, 8.0);
+   IMPLEMENT_ENUM(WaterGridActor::SeaState);//These can be used to customize sea state behavior- AMP  WaveLen  Speed
+   WaterGridActor::SeaState WaterGridActor::SeaState::SeaState_0("SeaState_0", 1.0, 1.0, 1.0);
+   WaterGridActor::SeaState WaterGridActor::SeaState::SeaState_1("SeaState_1", 1.0, 1.0, 0.4);
+   WaterGridActor::SeaState WaterGridActor::SeaState::SeaState_2("SeaState_2", 1.0, 1.0, 1.0);
+   WaterGridActor::SeaState WaterGridActor::SeaState::SeaState_3("SeaState_3", 1.0, 1.0, 0.8);
+   WaterGridActor::SeaState WaterGridActor::SeaState::SeaState_4("SeaState_4", 1.0, 1.0, 1.0);
+   WaterGridActor::SeaState WaterGridActor::SeaState::SeaState_5("SeaState_5", 1.0, 1.0, 1.0);
+   WaterGridActor::SeaState WaterGridActor::SeaState::SeaState_6("SeaState_6", 1.0, 1.0, 1.0);
+   WaterGridActor::SeaState WaterGridActor::SeaState::SeaState_7("SeaState_7", 1.0, 1.0, 1.0);
+   WaterGridActor::SeaState WaterGridActor::SeaState::SeaState_8("SeaState_8", 1.0, 1.0, 1.0);
+   WaterGridActor::SeaState WaterGridActor::SeaState::SeaState_9("SeaState_9", 1.0, 1.0, 1.0);
+   WaterGridActor::SeaState WaterGridActor::SeaState::SeaState_10("SeaState_10", 1.0, 1.0, 1.0);
+   WaterGridActor::SeaState WaterGridActor::SeaState::SeaState_11("SeaState_11", 1.0, 1.0, 1.0);
+   WaterGridActor::SeaState WaterGridActor::SeaState::SeaState_12("SeaState_12", 1.0, 1.0, 1.0);
 
 
 
@@ -266,6 +266,7 @@ namespace dtActors
       , mTexWaveTextureResolution(512, 512)
       , mTexWaveResolutionScalar(2.0)
       , mTexWaveAmpScalar(1.0)
+      , mTexWaveAmpInternal(1.0)
       , mTexWaveSpreadScalar(1.35)
       , mTexWaveSteepness(2.0)
       , mElapsedTime(0.0f)
@@ -391,7 +392,7 @@ namespace dtActors
       float scalar = std::min(10.0f, std::log(cameraHeight/20.0f + 1.0f)) + std::min(10.0f, std::max(0.0f, (cameraHeight-10.0f))/50.0f);
       scalar = 1.15f * std::max(1.1f, scalar);
 
-      float distBetweenVertsScalar = distBetweenVerts * scalar * 2.0f;
+      float distBetweenVertsScalar = 10.0 + (distBetweenVerts * scalar * 4.0f);
       
       outHeight = GetWaterHeight();
 
@@ -784,7 +785,7 @@ namespace dtActors
       texWaveResScalar->set(mTexWaveResolutionScalar);
 
       osg::Uniform* texWaveAmpScalar = ss->getOrCreateUniform(UNIFORM_TEXWAVE_AMPLITUDE_SCALAR, osg::Uniform::FLOAT);
-      texWaveAmpScalar->set(mTexWaveAmpScalar);
+      texWaveAmpScalar->set(mTexWaveAmpInternal);
 
       osg::Uniform* texWaveSpreadScalar = ss->getOrCreateUniform(UNIFORM_TEXWAVE_SPREAD_SCALAR, osg::Uniform::FLOAT);
       texWaveSpreadScalar->set(mTexWaveSpreadScalar);
@@ -1381,6 +1382,35 @@ namespace dtActors
    void WaterGridActor::SetSeaState(WaterGridActor::SeaState& seaState)
    {
       mSeaStateEnum = &seaState;
+
+      if(seaState == SeaState::SeaState_0)
+      {
+         mTexWaveAmpInternal = 0.05;
+      }
+      else if(seaState == SeaState::SeaState_1)
+      {
+         mTexWaveAmpInternal = mTexWaveAmpScalar * 0.1;
+      }
+      else if(seaState == SeaState::SeaState_2)
+      {
+         mTexWaveAmpInternal = mTexWaveAmpScalar * 0.2;
+      }
+      else if(seaState == SeaState::SeaState_3)
+      {
+         mTexWaveAmpInternal = mTexWaveAmpScalar * 0.35;
+      }
+      else if(seaState == SeaState::SeaState_4)
+      {
+         mTexWaveAmpInternal = mTexWaveAmpScalar * 0.5;
+      }
+      else if(seaState == SeaState::SeaState_5)
+      {
+         mTexWaveAmpInternal = mTexWaveAmpScalar * 0.75;
+      }
+      else
+      {
+         mTexWaveAmpInternal = mTexWaveAmpScalar * 1.0;
+      }
 
       mWaves.clear();
       WaterGridBuilder::BuildWavesFromSeaState(&seaState, mWaves);
