@@ -77,6 +77,7 @@ void main (void)
    //float fresnel = FastFresnel(waveNDotL, 0.15, 6.15);
    float fresnel = computeReflectionCoef(-normalize(viewPos.xyz / viewPos.w), normalize(gl_NormalMatrix * normal), 1.333);
    fresnel = clamp(fresnel, 0.0, 1.0);
+   
    vec3 reflectColor = waterSamplePlanarReflectTexture(normal, gl_FragCoord.xy);
    
    vec3 lightContribSun;
@@ -158,7 +159,14 @@ void main (void)
       
       //foam overrides reflection
       reflectColor = (opacity * foamColor.rgb * reflectColor) + ((1.0 - opacity) * reflectColor);
-
+   
+      //get rid of planar reflections looking back at us
+      float planarReflectCoef = max(0.0, dot(vec3(0.0, 0.0, 1.0), vertexNormal));   
+      planarReflectCoef = smoothstep(0.97, 1.0, planarReflectCoef);
+      
+      float reflectLightContrib = min(0.35 + lightContrib, 1.0);
+      reflectColor = mix(reflectLightContrib * WaterColor.rgb, reflectColor, planarReflectCoef);
+   
 
       vec3 resultColor = mix(refractionColor, reflectColor, fresnel);
       
