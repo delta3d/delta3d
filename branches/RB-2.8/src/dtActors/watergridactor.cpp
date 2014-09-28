@@ -393,7 +393,7 @@ namespace dtActors
 
       float distBetweenVerts = dtUtil::MapRangeValue(distanceToCamera, 0.0f, mComputedRadialDistance, 2.0f * mNearDistanceBetweenVerts, mFarDistanceBetweenVerts);
 
-      float cameraHeight = std::max(0.1f, std::abs(mCurrentCameraPos.z() - float(GetWaterHeight())));
+      float cameraHeight = 10.0;//std::max(0.1f, std::abs(mCurrentCameraPos.z() - float(GetWaterHeight())));
 
       float scalar = std::min(10.0f, std::log(cameraHeight/20.0f + 1.0f)) + std::min(10.0f, std::max(0.0f, (cameraHeight-10.0f))/50.0f);
       scalar = 1.15f * std::max(1.1f, scalar);
