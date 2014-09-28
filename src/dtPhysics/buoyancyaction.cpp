@@ -36,6 +36,9 @@ namespace dtPhysics
    BuoyancyAction::BuoyancyAction()
    : mBuoyancy()
    , mDrag()
+   , mLiquidDensityGramsPerSqCm(0.998232f)
+   , mCD(0.47f)
+   , mSurfaceAreaSqM(100.0f)
    {
    }
 
@@ -47,6 +50,11 @@ namespace dtPhysics
       delete mDrag;
       mDrag = NULL;
    }
+
+   DT_IMPLEMENT_ACCESSOR(BuoyancyAction, float, LiquidDensityGramsPerSqCm);
+   DT_IMPLEMENT_ACCESSOR(BuoyancyAction, float, CD);
+   DT_IMPLEMENT_ACCESSOR(BuoyancyAction, float, SurfaceAreaSqM);
+
 
    ///////////////////////////////////////////////
    void BuoyancyAction::Register(dtPhysics::PhysicsObject& po)
@@ -62,8 +70,9 @@ namespace dtPhysics
          mDrag = dynamic_cast<palLiquidDrag*>(palFactory::GetInstance()->CreateObject("palLiquidDrag"));
          assert(mDrag != NULL);
 
-         mDrag->Init(&body,200.2, 0.47, 0.998232);
-         mBuoyancy->Init(&body, 998.232, mDrag);
+         mDrag->Init(&body, mSurfaceAreaSqM, mCD, mLiquidDensityGramsPerSqCm);
+         // The 100 is a unit conversion to kg per square M.
+         mBuoyancy->Init(&body, mLiquidDensityGramsPerSqCm * 100.0f, mDrag);
          dtPhysics::PhysicsActComp* pac = dynamic_cast<dtPhysics::PhysicsActComp*>(po.GetUserData());
          if (pac != NULL)
          {
