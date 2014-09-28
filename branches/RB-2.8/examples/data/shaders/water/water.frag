@@ -161,10 +161,10 @@ void main (void)
       reflectColor = (opacity * foamColor.rgb * reflectColor) + ((1.0 - opacity) * reflectColor);
    
       //get rid of planar reflections looking back at us
-      float planarReflectCoef = max(vec3(0.0), dot(vec3(0.0, 0.0, 1.0), vertexNormal));   
+      float planarReflectCoef = max(0.0, dot(vec3(0.0, 0.0, 1.0), vertexNormal));   
       planarReflectCoef = smoothstep(0.97, 1.0, planarReflectCoef);
       
-      float reflectLightContrib = min(vec3(0.35) + lightContrib, vec3(1.0));
+      vec3 reflectLightContrib = min(vec3(0.35) + lightContrib, vec3(1.0));
       reflectColor = mix(reflectLightContrib * WaterColor.rgb, reflectColor, planarReflectCoef);
    
 
