@@ -61,21 +61,15 @@ void main(void)
 
    localVert = vec4(localVert.x * scalar, localVert.y * scalar, 0.0, 1.0);
 
-   // Compute a scalar based on the verts proximity to the clip plane. As it approaches
-   // the clip plane, we don't want to adjust the height (so it's sort of flat at the horizon).
    float distance = length(localVert.xy);
-   float maxDistance = 2000.0;
-
-   distanceScale = (1.0 - clamp(distance / (maxDistance * modForFOV), 0.0, 1.0));   
-   float distFromCamera = distance;
-   float distBetweenVerts = gl_Vertex.z;
+   
    distBetweenVertsScalar = gl_Vertex.z * scalar * 4.0;// / modForFOV;
  
    pos = camPos + localVert;   
    pos.z = WaterHeight;
    vec2 offsetPos = pos.xy - cameraRecenter.xy;
    vOffsetPos.xy = offsetPos.xy;
-   vOffsetPos.z = distBetweenVerts;
+   vOffsetPos.z = gl_Vertex.z;
 
 
    float zModifier = 0.0;

@@ -274,6 +274,8 @@ namespace dtActors
       , mWireframe(false)
       , mDeveloperMode(false)
       , mComputedRadialDistance(0.0)
+      , mFarDistanceBetweenVerts(1.0)
+      , mNearDistanceBetweenVerts(0.0)
       , mTextureWaveAmpOverLength(1.0 / 64.0)
       , mModForFOV(1.0f)
       , mCameraFoVScalar(1.0f)
@@ -377,36 +379,53 @@ namespace dtActors
    bool WaterGridActor::GetHeightAndNormalAtPoint(const osg::Vec3& detectionPoint,
                                                   float& outHeight, osg::Vec3& outNormal) const
    {
-      float distanceToCamera = (detectionPoint - mCurrentCameraPos).length();
-      float heightScalar = 1.0f - std::min(1.0f, std::max(0.0001f, (distanceToCamera - 100.0f) / 200.0f));
-      outHeight = 0.0f;
+      osg::Vec2 point2d(detectionPoint.x(), detectionPoint.y());
+      osg::Vec2 cameraPos2d(mCurrentCameraPos.x(), mCurrentCameraPos.y());
 
-      //we scale out the waves based on distance to keep the water from going through the terrain
-      if(heightScalar > 0.01)
+      float distanceToCamera = (point2d - cameraPos2d).length();
+
+      float distBetweenVerts = dtUtil::MapRangeValue(distanceToCamera, 0.0f, mComputedRadialDistance, 2.0f * mNearDistanceBetweenVerts, mFarDistanceBetweenVerts);
+
+      float cameraHeight = std::max(0.1f, std::abs(mCurrentCameraPos.z() - float(GetWaterHeight())));
+
+      float scalar = std::min(10.0f, std::log(cameraHeight/20.0f + 1.0f)) + std::min(10.0f, std::max(0.0f, (cameraHeight-10.0f))/50.0f);
+      scalar = 1.15f * std::max(1.1f, scalar);
+
+      float distBetweenVertsScalar = distBetweenVerts * scalar * 2.0f;
+      
+      outHeight = GetWaterHeight();
+
       {
-         float xPos = detectionPoint[0] - mLastCameraOffsetPos[0];
-         float yPos = detectionPoint[1] - mLastCameraOffsetPos[1];
+         
+         float xPos = detectionPoint[0];
+         float yPos = detectionPoint[1];
+
          // There are 2 vec4's of data per wave, so the loop is MAX_WAVES * 2 but increments by 2's
-         for(int i = 0; i < MAX_WAVES; i++)
+         for(int i = 0; i < 16/*MAX_WAVES*/; i++)
          {
             // Order is: waveLength, speed, amp, freq, UNUSED, UNUSED, dirX, dirY
+            float waveLen = mProcessedWaveData[i][0]; //waveArray[i].x;
             float speed = mProcessedWaveData[i][1]; //waveArray[i].y;
             float freq = mProcessedWaveData[i][3]; //waveArray[i].w;
             float amp = mProcessedWaveData[i][2]; //waveArray[i].z;
             float waveDirX = mProcessedWaveData[i][6]; //waveArray[i + 1].zw;
             float waveDirY = mProcessedWaveData[i][7];            
-            float k = std::max(1.5 * mProcessedWaveData[i][4], 4.00001);
+            float k = std::max(1.5f * mProcessedWaveData[i][4], 4.00001f);
 
+            float scaledDownAmp = distBetweenVertsScalar / waveLen;
+            dtUtil::Clamp(scaledDownAmp, 0.0f, 0.999f);
+            amp *= 1.0f - scaledDownAmp;
+            
             // This math MUST match the calculations done in water_functions.vert AND water.vert
             float mPlusPhi = (freq * (speed * mElapsedTime +
                xPos * waveDirX + waveDirY * yPos));
             float sinDir = pow((std::sin(mPlusPhi) + 1.0f) / 2.0f, k);
 
-            outHeight += amp * sinDir;
+            outHeight += (amp * sinDir);
          }
       }
 
-      outHeight = GetWaterHeight() + (outHeight * heightScalar);
+      outHeight -= 0.5;
 
       outNormal.set(0.0f, 0.0f, 1.0f);
 
@@ -583,7 +602,7 @@ namespace dtActors
       mGeode->setDataVariance(osg::Object::DYNAMIC);
       mGeode->setNodeMask(dtUtil::NodeMask::WATER);
 
-      mGeometry = WaterGridBuilder::BuildRadialGrid(mComputedRadialDistance, mNumRows, mNumColumns);
+      mGeometry = WaterGridBuilder::BuildRadialGrid(mNumRows, mNumColumns, mComputedRadialDistance, mNearDistanceBetweenVerts, mFarDistanceBetweenVerts);
       mGeometry->setCullCallback(new WaterCullCallback());
 
       BindShader(mGeode, "WaterShader");
@@ -855,27 +874,24 @@ namespace dtActors
 
       float cameraCutPoint = 0.5 + cameraHeight / (24.0 * mModForWaveLength * mCameraFoVScalar * mModForFOV); // Used to pick waves
 
-      //just use them all if we can
-      if(numWaves <= MAX_WAVES)
+
+      // Search for the next wave that is big enough to be worth showing.
+      // Camera Cut Point is an estimated value for the cut point - scaled by all the FoV modifiers.
+      bool quitLooking = false;
+      int numIgnored = 0;
+      /*while(iter != endIter && !quitLooking)
       {
-         // Search for the next wave that is big enough to be worth showing.
-         // Camera Cut Point is an estimated value for the cut point - scaled by all the FoV modifiers.
-         bool quitLooking = false;
-         int numIgnored = 0;
-         while(iter != endIter && !quitLooking)
+         Wave &nextWave = (*iter);
+         if (nextWave.mWaveLength > (cameraCutPoint) || (numWaves - numIgnored) <= MAX_WAVES)
          {
-            Wave &nextWave = (*iter);
-            if (nextWave.mWaveLength > (cameraCutPoint) || (numWaves - numIgnored) <= MAX_WAVES)
-            {
-               quitLooking = true;
-            }
-            else
-            {
-               ++iter;
-               numIgnored ++;
-            }
+            quitLooking = true;
          }
-      }
+         else
+         {
+            ++iter;
+            numIgnored ++;
+         }
+      }*/
 
       // The choppiness rotation spreads out the 8 waves so that they come at wider angles
       // which causes then to be choppier.
@@ -898,7 +914,7 @@ namespace dtActors
             steepness = dtUtil::Max(steepness, 1.0f);
 
             //don't bind waves that have a zero amplitude
-            if(amp > 0.001f)
+            if(amp > 0.00001f)
             {
                choppinessSign *= -1.0f;
                float choppinessRotationOffset = choppinessSign * choppinessRotationAmount * count;
