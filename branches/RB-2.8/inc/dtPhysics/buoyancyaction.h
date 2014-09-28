@@ -24,6 +24,7 @@
 
 #include <dtPhysics/physicsexport.h>
 #include <osg/Referenced>
+#include <dtUtil/getsetmacros.h>
 
 class palFakeBuoyancy;
 class palLiquidDrag;
@@ -46,6 +47,10 @@ namespace dtPhysics
 
       palWaterHeightQuery* GetWaterHeightQuery();
       void SetWaterHeightQuery(palWaterHeightQuery* query);
+
+      DT_DECLARE_ACCESSOR(float, LiquidDensityGramsPerSqCm);
+      DT_DECLARE_ACCESSOR(float, CD);
+      DT_DECLARE_ACCESSOR(float, SurfaceAreaSqM);
 
       virtual void Update(float dt);
 
