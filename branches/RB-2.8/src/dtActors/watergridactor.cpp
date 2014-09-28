@@ -89,9 +89,10 @@ namespace dtActors
    {
    public:
 
-      UpdateReflectionCameraCallback(osg::Camera* trans, osg::Camera* camera)
+      UpdateReflectionCameraCallback(WaterGridActor& actor, osg::Camera* trans, osg::Camera* camera)
          : mTarget(trans)
          , mCamera(camera)
+         , mWaterActor(&actor)
       {
       }
 
@@ -107,8 +108,12 @@ namespace dtActors
          osg::Matrix inverseView = mTarget->getInverseViewMatrix();
          osg::Vec3 pos = dtUtil::MatrixUtil::GetRow3(inverseView, 3);
 
+         float waterHeight;
+         osg::Vec3 waterNormal;
+
+         mWaterActor->GetHeightAndNormalAtPoint(pos, waterHeight, waterNormal);
          //adds 1 to avoid light coming through
-         if(pos.z() > 1.0f)//WaterHeight) need to get water height here
+         if(pos.z() > waterHeight)
          {
             viewMat.preMult( osg::Matrix::scale(1.0f, 1.0f, -1.0f) );
 
@@ -140,6 +145,7 @@ namespace dtActors
 
       dtCore::ObserverPtr<osg::Camera> mTarget;
       dtCore::ObserverPtr<osg::Camera>      mCamera;
+      dtCore::ObserverPtr<WaterGridActor>      mWaterActor;
    };
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -1207,7 +1213,7 @@ namespace dtActors
    {
       if (mReflectionCamera.valid() && mSceneCamera.valid())
       {
-         mReflectionCamera->setUpdateCallback(new UpdateReflectionCameraCallback(
+         mReflectionCamera->setUpdateCallback(new UpdateReflectionCameraCallback(*this,
             mSceneCamera.get(), mReflectionCamera.get()));
       }
    }
