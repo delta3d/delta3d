@@ -342,9 +342,15 @@ namespace dtExample
    {
       BaseClass::OnEnteredWorld();
 
-      // Light setup should happen after the map has finished loading
-      // so that out-of-order light references can be solved.
-      RegisterForMapLoaded();
+      if (mEnableUpdatesFromLight)
+      {
+         RegisterForTick();
+      }
+
+      dtGame::GameActorProxy* owner;
+      GetOwner(owner);
+      owner->RegisterForMessages(dtGame::MessageType::INFO_MAP_CHANGE_LOAD_END, dtUtil::MakeFunctor(&LightActorComponent::OnMapLoaded, this));
+      owner->RegisterForMessages(dtGame::MessageType::INFO_MAPS_OPENED, dtUtil::MakeFunctor(&LightActorComponent::OnMapLoaded, this));
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -449,8 +455,6 @@ namespace dtExample
 
    void LightActorComponent::OnMapLoaded(const dtGame::MapMessage& mapMessage)
    {
-      BaseClass::OnMapLoaded(mapMessage);
-
       if ( ! mLight.valid())
       {
          // Use a refptr here in case a new light is created.
@@ -509,10 +513,6 @@ namespace dtExample
          SetLightIntensity(mLight->GetIntensity());
       }
 
-      if (mEnableUpdatesFromLight)
-      {
-         RegisterForTick();
-      }
    }
 
    bool LightActorComponent::GetAttachLightToOwner() const
