@@ -346,7 +346,7 @@ namespace dtPhysics
 
       mImpl->mPalPhysicsScene = palFactory->CreatePhysics();
 
-      mImpl->mPalCollisionDetection = dynamic_cast<palCollisionDetection*>(mImpl->mPalPhysicsScene);
+      mImpl->mPalCollisionDetection = mImpl->mPalPhysicsScene->asCollisionDetection();
       mImpl->mPalCollisionDetectionEx = dynamic_cast<palCollisionDetectionExtended*>(mImpl->mPalPhysicsScene);
 
       palSolver* tempSolver = dynamic_cast<palSolver*>(mImpl->mPalPhysicsScene);
