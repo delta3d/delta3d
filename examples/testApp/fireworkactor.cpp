@@ -42,8 +42,6 @@ namespace dtExample
    const dtUtil::RefString FireworkActor::DEFAULT_LAYER_NAME_FLARE("Flare");
    const dtUtil::RefString FireworkActor::DEFAULT_LAYER_NAME_SPARKS("Sparks");
 
-   const dtUtil::RefString FireworkActor::INVOKABLE_PROCESS_GAME_EVENT("ProcessGameEvent");
-
    const dtUtil::RefString FireworkActor::PROPERTY_COLOR_BEGIN("ColorBegin");
    const dtUtil::RefString FireworkActor::PROPERTY_COLOR_END("ColorEnd");
    const dtUtil::RefString FireworkActor::PROPERTY_LAYER_NAME_FLARE("Layer Name Flare");
@@ -359,7 +357,7 @@ namespace dtExample
       RegisterForMessages(dtGame::MessageType::TICK_LOCAL,
          dtGame::GameActorProxy::TICK_LOCAL_INVOKABLE);
       RegisterForMessages(dtGame::MessageType::INFO_GAME_EVENT,
-         INVOKABLE_PROCESS_GAME_EVENT);
+            dtUtil::MakeFunctor(&FireworkActor::ProcessGameEvent, this));
 
       // Ensure the colors are set to the particle system
       // in case the default values have not changed.
@@ -447,15 +445,6 @@ namespace dtExample
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void FireworkActor::BuildInvokables()
-   {
-      BaseClass::BuildInvokables();
-
-      AddInvokable(*new dtGame::Invokable(INVOKABLE_PROCESS_GAME_EVENT,
-         dtUtil::MakeFunctor(&FireworkActor::ProcessGameEvent, this)));
-   }
-
-   /////////////////////////////////////////////////////////////////////////////
    void FireworkActor::BuildActorComponents()
    {
       BaseClass::BuildActorComponents();
@@ -485,7 +474,7 @@ namespace dtExample
 
             if (ps == NULL)
             {
-               LOG_WARNING("Firework actor \"" + GetName()
+               LOGN_WARNING("fireworkactor.cpp", "Firework actor \"" + GetName()
                   + "\" has no valid particle system.");
             }
             else

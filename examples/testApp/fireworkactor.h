@@ -48,8 +48,6 @@ namespace dtExample
       static const dtUtil::RefString DEFAULT_LAYER_NAME_FLARE;
       static const dtUtil::RefString DEFAULT_LAYER_NAME_SPARKS;
 
-      static const dtUtil::RefString INVOKABLE_PROCESS_GAME_EVENT;
-
       static const dtUtil::RefString PROPERTY_COLOR_BEGIN;
       static const dtUtil::RefString PROPERTY_COLOR_END;
       static const dtUtil::RefString PROPERTY_LAYER_NAME_FLARE;
@@ -94,8 +92,6 @@ namespace dtExample
       /*virtual*/ void OnEnteredWorld();
 
       /*virtual*/ void BuildPropertyMap();
-
-      /*virtual*/ void BuildInvokables();
 
       /*virtual*/ void BuildActorComponents();
    
