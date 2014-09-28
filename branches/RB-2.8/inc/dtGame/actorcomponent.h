@@ -189,31 +189,11 @@ namespace dtGame
       void UnregisterForTick();
 
       /**
-       * Registers for messages that notify when maps have finished loading.
-       * This can be used to resolve actor-to-actor or data referencing issues
-       * that cannot be solved during sequential loading of actors and/or resources.
-       */
-      void RegisterForMapLoaded();
-
-      /**
-       * Unregisters for messages that notify when maps have loaded.
-       */
-      void UnregisterForMapLoaded();
-
-      /**
        * Default update method. Override to execute stuff for
        * each physics step. Call RegisterForTicks() to let this get called.
        */
       virtual void OnTickLocal(const TickMessage& /*tickMessage*/) {};
       virtual void OnTickRemote(const TickMessage& /*tickMessage*/) {};
-
-      /**
-       * Method to override to pick up on messages that notify when
-       * maps have finished loading. This requires that this object
-       * has registered for the type of message. See the method
-       * RegisterForMapLoaded.
-       */
-      virtual void OnMapLoaded(const MapMessage& /*mapMessage*/) {};
 
       virtual bool IsPlaceable() const { return false; }
 
