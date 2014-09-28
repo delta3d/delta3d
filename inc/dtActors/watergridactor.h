@@ -264,6 +264,8 @@ namespace dtActors
       float mDeltaTime;
       bool  mRenderWaveTexture, mWireframe, mDeveloperMode;
       float mComputedRadialDistance;
+      float mFarDistanceBetweenVerts;
+      float mNearDistanceBetweenVerts;
       float mTextureWaveAmpOverLength;
 
       

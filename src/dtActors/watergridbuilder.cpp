@@ -70,7 +70,7 @@ namespace dtActors
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   osg::Geometry* WaterGridBuilder::BuildRadialGrid(float &outComputedRadialDistance, float numRows, float numColumns)
+   osg::Geometry* WaterGridBuilder::BuildRadialGrid(float numRows, float numColumns, float& outComputedRadialDistance, float& outNearDistBetweenVerts, float& outFarDistBetweenVerts)
    {
       osg::Geometry* geometry = new osg::Geometry();
 
@@ -130,12 +130,26 @@ namespace dtActors
             }
             float y = r;
             float z = radiusIncrement; // We put the radius increment into the Z so we can use it in the shader
+
             float groupNum = float(i);
             (*pVerts)[(i * K) + j ].set(x, y, z, groupNum);
          }
+
+
+         //save the radius increment for cpu calculations
+         if(i == 0)
+         {
+            outNearDistBetweenVerts = radiusIncrement;
+         }
+         else if(i == (N - numOuterRings ) )
+         {
+            outFarDistBetweenVerts = radiusIncrement;
+            outComputedRadialDistance = r;
+         }
+
       }
 
-      LOG_ALWAYS("WATER GRID REACH IN METERS = " + dtUtil::ToString(r));
+      //LOG_ALWAYS("WATER GRID REACH IN METERS = " + dtUtil::ToString(r));            
 
       for(int i = 0; i < N - 1; ++i)
       {
