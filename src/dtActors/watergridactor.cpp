@@ -425,7 +425,6 @@ namespace dtActors
          }
       }
 
-      outHeight -= 0.5;
 
       outNormal.set(0.0f, 0.0f, 1.0f);
 
