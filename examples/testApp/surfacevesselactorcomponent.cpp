@@ -38,7 +38,7 @@
 #include <dtGame/messagetype.h>
 #include <dtUtil/mathdefines.h>
 #include <dtActors/dynamicparticlesystemactor.h>
-
+#include <dtABC/beziercontroller.h>
 #include <osg/MatrixTransform>
 #include <osg/Geode>
 
@@ -85,8 +85,9 @@ namespace dtExample
    DT_IMPLEMENT_ACCESSOR(SurfaceVesselActorComponent, osg::Vec3, SprayLeftOffset);
    DT_IMPLEMENT_ACCESSOR(SurfaceVesselActorComponent, osg::Vec3, SprayBackOffset);
 
-   DT_IMPLEMENT_ACCESSOR(SurfaceVesselActorComponent,float, SprayVelocityMin);
-   DT_IMPLEMENT_ACCESSOR(SurfaceVesselActorComponent,float, SprayVelocityMax);
+   DT_IMPLEMENT_ACCESSOR(SurfaceVesselActorComponent, float, SprayVelocityMin);
+   DT_IMPLEMENT_ACCESSOR(SurfaceVesselActorComponent, float, SprayVelocityMax);
+   DT_IMPLEMENT_ACCESSOR(SurfaceVesselActorComponent, dtCore::RefPtr<dtCore::GameEvent>, UpdateFromControllerEvent);
 
    //////////////////////////////////////////////////////////
    void SurfaceVesselActorComponent::BuildPropertyMap()
@@ -111,6 +112,8 @@ namespace dtExample
       DT_REGISTER_PROPERTY(SprayVelocityMin, "The speed at which to start the water spray particle effect.", RegHelperType, propReg);
       DT_REGISTER_PROPERTY(SprayVelocityMax, "The speed at which to clamp the water spray particle systems' maximum effect.", RegHelperType, propReg);
       DT_REGISTER_PROPERTY(SprayShaderGroup, "Shader to apply to the particle systems.", RegHelperType, propReg);
+
+      DT_REGISTER_PROPERTY(UpdateFromControllerEvent, "GameEvent to use to tell it to update from the bezier controller.", RegHelperType, propReg);
    }
 
    //////////////////////////////////////////////////////////
@@ -124,6 +127,7 @@ namespace dtExample
       GetOwner(owner);
       owner->RegisterForMessages(dtGame::MessageType::INFO_MAP_CHANGE_LOAD_END, dtUtil::MakeFunctor(&SurfaceVesselActorComponent::OnMapLoaded, this));
       owner->RegisterForMessages(dtGame::MessageType::INFO_MAPS_OPENED, dtUtil::MakeFunctor(&SurfaceVesselActorComponent::OnMapLoaded, this));
+      owner->RegisterForMessages(dtGame::MessageType::INFO_GAME_EVENT, dtUtil::MakeFunctor(&SurfaceVesselActorComponent::OnGameEvent, this));
    }
 
 
@@ -151,7 +155,7 @@ namespace dtExample
          transform.SetTranslation(mSprayFrontOffset);
          mSprayFront->SetTransform(transform, dtCore::Transformable::REL_CS);  
 
-         BindShaderToParticleSystem(*mSprayFront);        
+         BindShaderToParticleSystem(*mSprayFront);
       }
  
       if(mSpraySideLeft.valid())
@@ -198,6 +202,24 @@ namespace dtExample
 
       // Ensure the particle systems have the current enabled state.
       SetSprayEnabled(mSprayEnabled);
+   }
+
+   //////////////////////////////////////////////////////////
+   void SurfaceVesselActorComponent::OnGameEvent(const dtGame::GameEventMessage& gameEventMsg)
+   {
+      const dtCore::GameEvent* gameEvent = gameEventMsg.GetGameEvent();
+
+      if (gameEvent == mUpdateFromControllerEvent.get())
+      {
+         dtGame::GameActorProxy* owner = NULL,* bez = NULL;
+         GetOwner(owner);
+         owner->GetGameManager()->FindActorById(gameEventMsg.GetSendingActorId(), bez);
+         if (bez != NULL)
+         {
+            dtCore::Transform xform = bez->GetDrawable<dtABC::BezierController>()->GetLocalTransform();
+            mOwnerDrawable->SetTransform(xform);
+         }
+      }
    }
 
    //////////////////////////////////////////////////////////
