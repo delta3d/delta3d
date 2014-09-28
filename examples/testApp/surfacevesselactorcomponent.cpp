@@ -30,7 +30,8 @@
 #include <dtCore/shadermanager.h>
 #include <dtCore/particlesystem.h>
 #include <dtCore/transform.h>
-#include <dtCore/enginepropertytypes.h>
+#include <dtCore/project.h>
+#include <dtCore/propertymacros.h>
 #include <dtGame/gamemanager.h>
 #include <dtGame/invokable.h>
 #include <dtGame/basemessages.h>
@@ -52,29 +53,15 @@ namespace dtExample
    
    const dtUtil::RefString SurfaceVesselActorComponent::CLASS_NAME("dtExample.SurfaceVesselActorComponent");
 
-   const dtUtil::RefString SurfaceVesselActorComponent::PROPERTY_SPRAY_ENABLED("Spray Enabled");
-   const dtUtil::RefString SurfaceVesselActorComponent::PROPERTY_SPRAY_FRONT_FILE("Spray Front File");
-   const dtUtil::RefString SurfaceVesselActorComponent::PROPERTY_SPRAY_SIDE_LEFT_FILE("Spray Side Left File");
-   const dtUtil::RefString SurfaceVesselActorComponent::PROPERTY_SPRAY_SIDE_RIGHT_FILE("Spray Side Right File");
-   const dtUtil::RefString SurfaceVesselActorComponent::PROPERTY_SPRAY_BACK_FILE("Spray Back File");
-   const dtUtil::RefString SurfaceVesselActorComponent::PROPERTY_SPRAY_FRONT_OFFSET("Spray Front Offset");
-   const dtUtil::RefString SurfaceVesselActorComponent::PROPERTY_SPRAY_SIDE_OFFSET_LEFT("Spray Side Offset Left");
-   const dtUtil::RefString SurfaceVesselActorComponent::PROPERTY_SPRAY_SIDE_OFFSET_RIGHT("Spray Side Offset Right");
-   const dtUtil::RefString SurfaceVesselActorComponent::PROPERTY_SPRAY_BACK_OFFSET("Spray Back Offset");
-   const dtUtil::RefString SurfaceVesselActorComponent::PROPERTY_SPRAY_VELOCITY_MIN("Spray Velocity Min");
-   const dtUtil::RefString SurfaceVesselActorComponent::PROPERTY_SPRAY_VELOCITY_MAX("Spray Velocity Max");
-   const dtUtil::RefString SurfaceVesselActorComponent::PROPERTY_SPRAY_UPDATE_FREQUENCY("Spray Update Frequency");
-   const dtUtil::RefString SurfaceVesselActorComponent::PROPERTY_SPRAY_SHADER_GROUP("Spray Shader Group");
-
    //////////////////////////////////////////////////////////
    SurfaceVesselActorComponent::SurfaceVesselActorComponent(const ACType& type)
       : BaseClass(type)
       , mSprayEnabled(false)
-      , mLastSprayRatio(0.0f)
+      , mSprayUpdateFrequency(3.0f)
       , mSprayVelocityMin(1.0f)
       , mSprayVelocityMax(8.0f)
+      , mLastSprayRatio()
       , mSprayUpdateTimer(0.0f)
-      , mSprayUpdateFrequency(3.0f)
    {
       SetClassName(SurfaceVesselActorComponent::CLASS_NAME);
    }
@@ -85,119 +72,45 @@ namespace dtExample
       SetSprayEnabled(false);
    }
 
+   DT_IMPLEMENT_ACCESSOR_GETTER(SurfaceVesselActorComponent, bool, SprayEnabled);
+   DT_IMPLEMENT_ACCESSOR(SurfaceVesselActorComponent, float, SprayUpdateFrequency);
+   DT_IMPLEMENT_ACCESSOR(SurfaceVesselActorComponent, std::string, SprayShaderGroup);
+   DT_IMPLEMENT_ACCESSOR(SurfaceVesselActorComponent, dtCore::ResourceDescriptor, SprayFrontResource);
+   DT_IMPLEMENT_ACCESSOR(SurfaceVesselActorComponent, dtCore::ResourceDescriptor, SpraySideLeftResource);
+   DT_IMPLEMENT_ACCESSOR(SurfaceVesselActorComponent, dtCore::ResourceDescriptor, SpraySideRightResource);
+   DT_IMPLEMENT_ACCESSOR(SurfaceVesselActorComponent, dtCore::ResourceDescriptor, SprayBackResource);
+
+   DT_IMPLEMENT_ACCESSOR(SurfaceVesselActorComponent, osg::Vec3, SprayFrontOffset);
+   DT_IMPLEMENT_ACCESSOR(SurfaceVesselActorComponent, osg::Vec3, SprayRightOffset);
+   DT_IMPLEMENT_ACCESSOR(SurfaceVesselActorComponent, osg::Vec3, SprayLeftOffset);
+   DT_IMPLEMENT_ACCESSOR(SurfaceVesselActorComponent, osg::Vec3, SprayBackOffset);
+
+   DT_IMPLEMENT_ACCESSOR(SurfaceVesselActorComponent,float, SprayVelocityMin);
+   DT_IMPLEMENT_ACCESSOR(SurfaceVesselActorComponent,float, SprayVelocityMax);
+
    //////////////////////////////////////////////////////////
    void SurfaceVesselActorComponent::BuildPropertyMap()
    {
       BaseClass::BuildPropertyMap();
 
-      using namespace dtCore;
-      using namespace dtUtil;
+      const dtUtil::RefString GROUP("SurfaceVessel");
+      typedef dtCore::PropertyRegHelper<SurfaceVesselActorComponent&, SurfaceVesselActorComponent> RegHelperType;
+      RegHelperType propReg(*this, this, GROUP);
 
-      RefString GROUP("SurfaceVessel");
+      DT_REGISTER_PROPERTY(SprayEnabled, "Turns the Spray particle system on or off", RegHelperType, propReg);
+      DT_REGISTER_PROPERTY(SprayUpdateFrequency, "Set the number of seconds between updates to the particle system effect interpolation", RegHelperType, propReg);
+      DT_REGISTER_RESOURCE_PROPERTY(dtCore::DataType::PARTICLE_SYSTEM, SprayFrontResource, "Spray Resource Front", "Loads the particle system for the water spray effect on the front of the vessel", RegHelperType, propReg);
+      DT_REGISTER_RESOURCE_PROPERTY(dtCore::DataType::PARTICLE_SYSTEM, SpraySideLeftResource,"Spray Resource Left", "Loads the particle system for the water spray effect on the left side of the vessel", RegHelperType, propReg);
+      DT_REGISTER_RESOURCE_PROPERTY(dtCore::DataType::PARTICLE_SYSTEM, SpraySideRightResource,"Spray Resource Right", "Loads the particle system for the water spray effect on the right side of the vessel", RegHelperType, propReg);
+      DT_REGISTER_RESOURCE_PROPERTY(dtCore::DataType::PARTICLE_SYSTEM, SprayBackResource, "Spray Resource Back", "Loads the particle system for the water spray effect on the back of the vessel", RegHelperType, propReg);
+      DT_REGISTER_PROPERTY(SprayFrontOffset, "The local offset on the right side to apply the water spray particle effect on the front of the vessel.", RegHelperType, propReg);
+      DT_REGISTER_PROPERTY(SprayLeftOffset, "The local offset on the right side to apply the water spray particle effect on the left of the vessel.", RegHelperType, propReg);
+      DT_REGISTER_PROPERTY(SprayRightOffset, "The local offset on the right side to apply the water spray particle effect on the right of the vessel.", RegHelperType, propReg);
+      DT_REGISTER_PROPERTY(SprayBackOffset, "The local offset on the right side to apply the water spray particle effect on the back of the vessel.", RegHelperType, propReg);
 
-      AddProperty(new BooleanActorProperty(
-         PROPERTY_SPRAY_ENABLED,
-         PROPERTY_SPRAY_ENABLED,
-         BooleanActorProperty::SetFuncType(this, &SurfaceVesselActorComponent::SetSprayEnabled),
-         BooleanActorProperty::GetFuncType(this, &SurfaceVesselActorComponent::IsSprayEnabled),
-         RefString("Turns the Spray particle system on or off"),
-         GROUP));
-
-      AddProperty(new FloatActorProperty(
-         PROPERTY_SPRAY_UPDATE_FREQUENCY,
-         PROPERTY_SPRAY_UPDATE_FREQUENCY,
-         FloatActorProperty::SetFuncType(this, &SurfaceVesselActorComponent::SetSprayUpdateFrequency),
-         FloatActorProperty::GetFuncType(this, &SurfaceVesselActorComponent::GetSprayUpdateFrequency),
-         RefString("Set the number of seconds between updates to the particle system effect interpolation"),
-         GROUP));
-
-      AddProperty(new ResourceActorProperty(*this,
-         DataType::PARTICLE_SYSTEM,
-         PROPERTY_SPRAY_FRONT_FILE,
-         PROPERTY_SPRAY_FRONT_FILE,
-         ResourceActorProperty::SetFuncType(this, &SurfaceVesselActorComponent::SetSprayFrontFile),
-         RefString("Loads the particle system for the water spray effect on the front of the vessel"),
-         GROUP));
-
-      AddProperty(new ResourceActorProperty(*this,
-         DataType::PARTICLE_SYSTEM,
-         PROPERTY_SPRAY_SIDE_LEFT_FILE,
-         PROPERTY_SPRAY_SIDE_LEFT_FILE,
-         ResourceActorProperty::SetFuncType(this, &SurfaceVesselActorComponent::SetSpraySideLeftFile),
-         RefString("Loads the particle system for the water spray effect on the left side of the vessel"),
-         GROUP));
-
-      AddProperty(new ResourceActorProperty(*this,
-         DataType::PARTICLE_SYSTEM,
-         PROPERTY_SPRAY_SIDE_RIGHT_FILE,
-         PROPERTY_SPRAY_SIDE_RIGHT_FILE,
-         ResourceActorProperty::SetFuncType(this, &SurfaceVesselActorComponent::SetSpraySideRightFile),
-         RefString("Loads the particle system for the water spray effect on the right side of the vessel"),
-         GROUP));
-
-      AddProperty(new ResourceActorProperty(*this,
-         DataType::PARTICLE_SYSTEM,
-         PROPERTY_SPRAY_BACK_FILE,
-         PROPERTY_SPRAY_BACK_FILE,
-         ResourceActorProperty::SetFuncType(this, &SurfaceVesselActorComponent::SetSprayBackFile),
-         RefString("Loads the particle system for the water spray effect on the back of the vessel"),
-         GROUP));
-
-      AddProperty(new Vec3ActorProperty(
-         PROPERTY_SPRAY_FRONT_OFFSET,
-         PROPERTY_SPRAY_FRONT_OFFSET, 
-         Vec3ActorProperty::SetFuncType(this, &SurfaceVesselActorComponent::SetSprayFrontOffset),
-         Vec3ActorProperty::GetFuncType(this, &SurfaceVesselActorComponent::GetSprayFrontOffset),
-         RefString("The local offset on the right side to apply the water spray particle effect on the front of the vessel."),
-         GROUP));
-
-      AddProperty(new Vec3ActorProperty(
-         PROPERTY_SPRAY_SIDE_OFFSET_RIGHT,
-         PROPERTY_SPRAY_SIDE_OFFSET_RIGHT, 
-         Vec3ActorProperty::SetFuncType(this, &SurfaceVesselActorComponent::SetSpraySideOffsetRight),
-         Vec3ActorProperty::GetFuncType(this, &SurfaceVesselActorComponent::GetSpraySideOffsetRight),
-         RefString("The local offset on the right side to apply the water spray particle effect on the side of the vessel."),
-         GROUP));
-
-      AddProperty(new Vec3ActorProperty(
-         PROPERTY_SPRAY_SIDE_OFFSET_LEFT,
-         PROPERTY_SPRAY_SIDE_OFFSET_LEFT, 
-         Vec3ActorProperty::SetFuncType(this, &SurfaceVesselActorComponent::SetSpraySideOffsetLeft),
-         Vec3ActorProperty::GetFuncType(this, &SurfaceVesselActorComponent::GetSpraySideOffsetLeft),
-         RefString("The local offset on the left side to apply the water spray particle effect on the side of the vessel."),
-         GROUP));
-
-      AddProperty(new Vec3ActorProperty(
-         PROPERTY_SPRAY_BACK_OFFSET,
-         PROPERTY_SPRAY_BACK_OFFSET, 
-         Vec3ActorProperty::SetFuncType(this, &SurfaceVesselActorComponent::SetSprayBackOffset),
-         Vec3ActorProperty::GetFuncType(this, &SurfaceVesselActorComponent::GetSprayBackOffset),
-         RefString("The local offset on the back side to apply the water spray particle effect on the back of the vessel."),
-         GROUP));
-
-      AddProperty(new FloatActorProperty(
-         PROPERTY_SPRAY_VELOCITY_MIN,
-         PROPERTY_SPRAY_VELOCITY_MIN, 
-         FloatActorProperty::SetFuncType(this, &SurfaceVesselActorComponent::SetSprayVelocityMin),
-         FloatActorProperty::GetFuncType(this, &SurfaceVesselActorComponent::GetSprayVelocityMin),
-         RefString("The speed at which to start the water spray particle effect."),
-         GROUP));
-
-      AddProperty(new FloatActorProperty(
-         PROPERTY_SPRAY_VELOCITY_MAX,
-         PROPERTY_SPRAY_VELOCITY_MAX, 
-         FloatActorProperty::SetFuncType(this, &SurfaceVesselActorComponent::SetSprayVelocityMax),
-         FloatActorProperty::GetFuncType(this, &SurfaceVesselActorComponent::GetSprayVelocityMax),
-         RefString("The speed at which to clamp the water spray particle systems' maximum effect."),
-         GROUP));
-
-      AddProperty(new StringActorProperty(
-         PROPERTY_SPRAY_SHADER_GROUP,
-         PROPERTY_SPRAY_SHADER_GROUP, 
-         StringActorProperty::SetFuncType(this, &SurfaceVesselActorComponent::SetSprayShaderGroup),
-         StringActorProperty::GetFuncType(this, &SurfaceVesselActorComponent::GetSprayShaderGroup),
-         RefString("Shader to apply to the particle systems."),
-         GROUP));
+      DT_REGISTER_PROPERTY(SprayVelocityMin, "The speed at which to start the water spray particle effect.", RegHelperType, propReg);
+      DT_REGISTER_PROPERTY(SprayVelocityMax, "The speed at which to clamp the water spray particle systems' maximum effect.", RegHelperType, propReg);
+      DT_REGISTER_PROPERTY(SprayShaderGroup, "Shader to apply to the particle systems.", RegHelperType, propReg);
    }
 
    //////////////////////////////////////////////////////////
@@ -205,9 +118,12 @@ namespace dtExample
    {
       BaseClass::OnEnteredWorld();
 
-      // Full initialization of this component may require
-      // the map to be fully loaded.
-      RegisterForMapLoaded();
+      RegisterForTick();
+
+      dtGame::GameActorProxy* owner;
+      GetOwner(owner);
+      owner->RegisterForMessages(dtGame::MessageType::INFO_MAP_CHANGE_LOAD_END, dtUtil::MakeFunctor(&SurfaceVesselActorComponent::OnMapLoaded, this));
+      owner->RegisterForMessages(dtGame::MessageType::INFO_MAPS_OPENED, dtUtil::MakeFunctor(&SurfaceVesselActorComponent::OnMapLoaded, this));
    }
 
 
@@ -215,8 +131,6 @@ namespace dtExample
    //////////////////////////////////////////////////////////
    void SurfaceVesselActorComponent::OnMapLoaded(const dtGame::MapMessage& mapMessage)
    {
-      BaseClass::OnMapLoaded(mapMessage);
-
       CreateSprayEffects();
 
       dtGame::GameActorProxy* owner = NULL;
@@ -225,8 +139,6 @@ namespace dtExample
       dtCore::Transformable* drawable = NULL;
       owner->GetDrawable(drawable);
       mOwnerDrawable = drawable;
-
-      RegisterForTick();
 
       if(mSprayFront.valid())
       {
@@ -250,7 +162,7 @@ namespace dtExample
          // Offset the particles 
          dtCore::Transform transform;
 
-         transform.SetTranslation(mSpraySideOffsetLeft);
+         transform.SetTranslation(mSprayLeftOffset);
          mSpraySideLeft->SetTransform(transform, dtCore::Transformable::REL_CS);
 
          BindShaderToParticleSystem(*mSpraySideLeft);
@@ -264,7 +176,7 @@ namespace dtExample
          // Offset the particles 
          dtCore::Transform transform;
 
-         transform.SetTranslation(mSpraySideOffsetRight);
+         transform.SetTranslation(mSprayRightOffset);
          mSpraySideRight->SetTransform(transform, dtCore::Transformable::REL_CS);
 
          BindShaderToParticleSystem(*mSpraySideRight);
@@ -305,7 +217,7 @@ namespace dtExample
    void SurfaceVesselActorComponent::BindShaderToNode(osg::Node& node)
    {
       dtCore::ShaderManager& sm = dtCore::ShaderManager::GetInstance();
-      dtCore::ShaderGroup* sg = sm.FindShaderGroupPrototype(mParticleShaderGroup);
+      dtCore::ShaderGroup* sg = sm.FindShaderGroupPrototype(mSprayShaderGroup);
       if(sg)
       {
          dtCore::ShaderProgram* sp = sg->GetDefaultShader();
@@ -316,7 +228,7 @@ namespace dtExample
          }
          else
          {
-            LOG_ERROR("Unable to find particle system shader group: \"" + mParticleShaderGroup + "\" ");
+            LOG_ERROR("Unable to find particle system shader group: \"" + mSprayShaderGroup + "\" ");
          }
       }
       else
@@ -325,71 +237,23 @@ namespace dtExample
       }
    }
 
-   //////////////////////////////////////////////////////////
-   void SurfaceVesselActorComponent::SetSprayUpdateFrequency(float frequency)
-   {
-      mSprayUpdateFrequency = frequency;
-   }
-
-   //////////////////////////////////////////////////////////
-   float SurfaceVesselActorComponent::GetSprayUpdateFrequency() const
-   {
-      return mSprayUpdateFrequency;
-   }
-
-   //////////////////////////////////////////////////////////
-   osg::Vec3 SurfaceVesselActorComponent::GetSprayFrontOffset() const
-   {
-      return mSprayFrontOffset;
-   }
-
-   //////////////////////////////////////////////////////////
-   void SurfaceVesselActorComponent::SetSprayFrontOffset( const osg::Vec3& vec )
-   {
-      mSprayFrontOffset = vec;
-   }
-
-   //////////////////////////////////////////////////////////
-   void SurfaceVesselActorComponent::SetSpraySideOffsetLeft( const osg::Vec3& vec )
-   {
-      mSpraySideOffsetLeft = vec;
-   }
-
-   //////////////////////////////////////////////////////////
-   osg::Vec3 SurfaceVesselActorComponent::GetSpraySideOffsetLeft() const
-   {
-      return mSpraySideOffsetLeft;
-   }
-
-   //////////////////////////////////////////////////////////
-   osg::Vec3 SurfaceVesselActorComponent::GetSpraySideOffsetRight() const
-   {
-      return mSpraySideOffsetRight;
-   }
-
-   //////////////////////////////////////////////////////////
-   void SurfaceVesselActorComponent::SetSpraySideOffsetRight( const osg::Vec3& vec )
-   {
-      mSpraySideOffsetRight = vec;
-   }
-
-   //////////////////////////////////////////////////////////
-   void SurfaceVesselActorComponent::SetSprayBackOffset( const osg::Vec3& vec )
-   {
-      mSprayBackOffset = vec;
-   }
-
-   //////////////////////////////////////////////////////////
-   osg::Vec3 SurfaceVesselActorComponent::GetSprayBackOffset() const
-   {
-      return mSprayBackOffset;
-   }
 
    //////////////////////////////////////////////////////////
    dtCore::RefPtr<SurfaceVesselActorComponent::DynamicParticlesActor>
       SurfaceVesselActorComponent::CreatDynamicParticleSystemActor(
-      const std::string& filename, const std::string& actorName)
+      const dtCore::ResourceDescriptor& rd, const std::string& actorName)
    {
+      std::string fileName;
+      try
+      {
+         fileName = dtCore::Project::GetInstance().GetResourcePath(rd);
+      }
+      catch(const dtUtil::Exception& ex)
+      {
+         ex.LogException();
+         return NULL;
+      }
+
       dtGame::GameActorProxy* owner = NULL;
       GetOwner(owner);
       if (owner == NULL)
@@ -408,7 +272,7 @@ namespace dtExample
 
          actor->GetDrawable(drawable);
          drawable->SetName(actorName);
-         drawable->LoadFile(filename);
+         drawable->LoadFile(fileName);
 
          // Set default settings.
          typedef DynamicParticles::InterpolatorArray InterpolatorArray;
@@ -442,77 +306,29 @@ namespace dtExample
    }
 
    //////////////////////////////////////////////////////////
-   void SurfaceVesselActorComponent::SetSprayFrontFile(const std::string& fileName)
-   {
-      mFileSprayFront = fileName;
-   }
-   
-   //////////////////////////////////////////////////////////
-   const std::string& SurfaceVesselActorComponent::GetSprayFrontFile() const
-   {
-      return mFileSprayFront;
-   }
-
-   //////////////////////////////////////////////////////////
-   void SurfaceVesselActorComponent::SetSpraySideLeftFile(const std::string& fileName)
-   {
-      mFileSpraySideLeft = fileName;
-   }
-   
-   //////////////////////////////////////////////////////////
-   const std::string& SurfaceVesselActorComponent::GetSpraySideLeftFile() const
-   {
-      return mFileSpraySideLeft;
-   }
-
-   //////////////////////////////////////////////////////////
-   void SurfaceVesselActorComponent::SetSpraySideRightFile(const std::string& fileName)
-   {
-      mFileSpraySideRight = fileName;
-   }
-   
-   //////////////////////////////////////////////////////////
-   const std::string& SurfaceVesselActorComponent::GetSpraySideRightFile() const
-   {
-      return mFileSpraySideRight;
-   }
-
-   //////////////////////////////////////////////////////////
-   void SurfaceVesselActorComponent::SetSprayBackFile(const std::string& fileName)
-   {
-      mFileSprayBack = fileName;
-   }
-   
-   //////////////////////////////////////////////////////////
-   const std::string& SurfaceVesselActorComponent::GetSprayBackFile() const
-   {
-      return mFileSprayBack;
-   }
-
-   //////////////////////////////////////////////////////////
    void SurfaceVesselActorComponent::CreateSprayEffects()
    {
       if(!mSprayFront.valid())
       {
-         mSprayFrontActor = CreatDynamicParticleSystemActor(mFileSprayFront, "SprayFrontRight");
+         mSprayFrontActor = CreatDynamicParticleSystemActor(mSprayFrontResource, "SprayFrontRight");
          mSprayFront = GetDynamicParticles(mSprayFrontActor.get());
       }
 
       if(!mSpraySideLeft.valid())
       {
-         mSpraySideLeftActor = CreatDynamicParticleSystemActor(mFileSpraySideLeft, "SpraySideLeft");
+         mSpraySideLeftActor = CreatDynamicParticleSystemActor(mSpraySideLeftResource, "SpraySideLeft");
          mSpraySideLeft = GetDynamicParticles(mSpraySideLeftActor.get());
       }
 
       if(!mSpraySideRight.valid())
       {
-         mSpraySideRightActor = CreatDynamicParticleSystemActor(mFileSpraySideRight, "SpraySideRight");
+         mSpraySideRightActor = CreatDynamicParticleSystemActor(mSpraySideRightResource, "SpraySideRight");
          mSpraySideRight = GetDynamicParticles(mSpraySideRightActor.get());
       }
 
       if(!mSprayBack.valid())
       {
-         mSprayBackActor = CreatDynamicParticleSystemActor(mFileSprayBack, "SprayBack");
+         mSprayBackActor = CreatDynamicParticleSystemActor(mSprayBackResource, "SprayBack");
          mSprayBack = GetDynamicParticles(mSprayBackActor.get());
       }
    }
@@ -521,69 +337,27 @@ namespace dtExample
    void SurfaceVesselActorComponent::SetSprayEnabled( bool enable )
    {
       mSprayEnabled = enable;
-
       if(mSprayFront.valid())
       {
-         mSprayFront->SetEnabled(enable);
+         mSprayFront->SetEnabled(mSprayEnabled);
       }
 
       if(mSpraySideLeft.valid())
       {
-         mSpraySideLeft->SetEnabled(enable);
+         mSpraySideLeft->SetEnabled(mSprayEnabled);
       }
 
       if(mSpraySideRight.valid())
       {
-         mSpraySideRight->SetEnabled(enable);
+         mSpraySideRight->SetEnabled(mSprayEnabled);
       }
 
       if(mSprayBack.valid())
       {
-         mSprayBack->SetEnabled(enable);
+         mSprayBack->SetEnabled(mSprayEnabled);
       }
    }
 
-   //////////////////////////////////////////////////////////
-   bool SurfaceVesselActorComponent::IsSprayEnabled()
-   {
-      return mSprayEnabled;
-   }
-
-   //////////////////////////////////////////////////////////
-   void SurfaceVesselActorComponent::SetSprayShaderGroup(const std::string& shaderGroup)
-   {
-      mParticleShaderGroup = shaderGroup;
-   }
-   
-   //////////////////////////////////////////////////////////
-   const std::string& SurfaceVesselActorComponent::GetSprayShaderGroup() const
-   {
-      return mParticleShaderGroup;
-   }
-
-   //////////////////////////////////////////////////////////
-   void SurfaceVesselActorComponent::SetSprayVelocityMin(float minVelocity)
-   {
-      mSprayVelocityMin = minVelocity;
-   }
-
-   //////////////////////////////////////////////////////////
-   float SurfaceVesselActorComponent::GetSprayVelocityMin() const
-   {
-      return mSprayVelocityMin;
-   }
-
-   //////////////////////////////////////////////////////////
-   void SurfaceVesselActorComponent::SetSprayVelocityMax(float maxVelocity)
-   {
-      mSprayVelocityMax = maxVelocity;
-   }
-   
-   //////////////////////////////////////////////////////////
-   float SurfaceVesselActorComponent::GetSprayVelocityMax() const
-   {
-      return mSprayVelocityMax;
-   }
 
    //////////////////////////////////////////////////////////
    float SurfaceVesselActorComponent::GetVelocityRatio(float velocity) const

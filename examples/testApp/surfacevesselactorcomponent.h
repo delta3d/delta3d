@@ -48,60 +48,24 @@ namespace dtExample
       static const ACType TYPE;
 
       static const dtUtil::RefString CLASS_NAME;
-      static const dtUtil::RefString PROPERTY_SPRAY_ENABLED;
-      static const dtUtil::RefString PROPERTY_SPRAY_FRONT_FILE;
-      static const dtUtil::RefString PROPERTY_SPRAY_SIDE_LEFT_FILE;
-      static const dtUtil::RefString PROPERTY_SPRAY_SIDE_RIGHT_FILE;
-      static const dtUtil::RefString PROPERTY_SPRAY_BACK_FILE;
-      static const dtUtil::RefString PROPERTY_SPRAY_FRONT_OFFSET;
-      static const dtUtil::RefString PROPERTY_SPRAY_SIDE_OFFSET_LEFT;
-      static const dtUtil::RefString PROPERTY_SPRAY_SIDE_OFFSET_RIGHT;
-      static const dtUtil::RefString PROPERTY_SPRAY_BACK_OFFSET;
-      static const dtUtil::RefString PROPERTY_SPRAY_VELOCITY_MIN;
-      static const dtUtil::RefString PROPERTY_SPRAY_VELOCITY_MAX;
-      static const dtUtil::RefString PROPERTY_SPRAY_UPDATE_FREQUENCY;
-      static const dtUtil::RefString PROPERTY_SPRAY_SHADER_GROUP;
 
       SurfaceVesselActorComponent(const ACType& type = TYPE);
 
-      void SetSprayEnabled( bool enable );
-      bool IsSprayEnabled();
+      DT_DECLARE_ACCESSOR(bool, SprayEnabled);
+      DT_DECLARE_ACCESSOR(float, SprayUpdateFrequency);
+      DT_DECLARE_ACCESSOR(std::string, SprayShaderGroup);
+      DT_DECLARE_ACCESSOR(dtCore::ResourceDescriptor, SprayFrontResource);
+      DT_DECLARE_ACCESSOR(dtCore::ResourceDescriptor, SpraySideLeftResource);
+      DT_DECLARE_ACCESSOR(dtCore::ResourceDescriptor, SpraySideRightResource);
+      DT_DECLARE_ACCESSOR(dtCore::ResourceDescriptor, SprayBackResource);
 
-      void SetSprayUpdateFrequency(float frequency);
-      float GetSprayUpdateFrequency() const;
+      DT_DECLARE_ACCESSOR(osg::Vec3, SprayFrontOffset);
+      DT_DECLARE_ACCESSOR(osg::Vec3, SprayRightOffset);
+      DT_DECLARE_ACCESSOR(osg::Vec3, SprayLeftOffset);
+      DT_DECLARE_ACCESSOR(osg::Vec3, SprayBackOffset);
 
-      void SetSprayShaderGroup(const std::string& shaderGroup);
-      const std::string& GetSprayShaderGroup() const;
-
-      void SetSprayFrontFile(const std::string& fileName);
-      const std::string& GetSprayFrontFile() const;
-
-      void SetSpraySideLeftFile(const std::string& fileName);
-      const std::string& GetSpraySideLeftFile() const;
-
-      void SetSpraySideRightFile(const std::string& fileName);
-      const std::string& GetSpraySideRightFile() const;
-
-      void SetSprayBackFile(const std::string& fileName);
-      const std::string& GetSprayBackFile() const;
-    
-      void SetSprayFrontOffset(const osg::Vec3& vec);
-      osg::Vec3 GetSprayFrontOffset() const;
-
-      void SetSpraySideOffsetRight(const osg::Vec3& vec);
-      osg::Vec3 GetSpraySideOffsetRight() const;
-
-      void SetSpraySideOffsetLeft(const osg::Vec3& vec);
-      osg::Vec3 GetSpraySideOffsetLeft() const;
-
-      void SetSprayBackOffset(const osg::Vec3& vec);
-      osg::Vec3 GetSprayBackOffset() const;
-
-      void SetSprayVelocityMin(float minVelocity);
-      float GetSprayVelocityMin() const;
-
-      void SetSprayVelocityMax(float maxVelocity);
-      float GetSprayVelocityMax() const;
+      DT_DECLARE_ACCESSOR(float, SprayVelocityMin);
+      DT_DECLARE_ACCESSOR(float, SprayVelocityMax);
 
       float GetVelocityRatio(float velocity) const;
 
@@ -128,32 +92,16 @@ namespace dtExample
 
       typedef dtActors::DynamicParticleSystem DynamicParticles;
       typedef dtActors::DynamicParticleSystemActor DynamicParticlesActor;
-      dtCore::RefPtr<DynamicParticlesActor> CreatDynamicParticleSystemActor(const std::string& filename,
+      dtCore::RefPtr<DynamicParticlesActor> CreatDynamicParticleSystemActor(const dtCore::ResourceDescriptor& rd,
          const std::string& actorName);
       DynamicParticles* GetDynamicParticles(DynamicParticlesActor* actor);
 
       void InterpolateParticleSystem(DynamicParticles& particles, float ratio);
 
    private:
-      bool mSprayEnabled;
-      float mLastSprayRatio;
-      float mSprayVelocityMin;
-      float mSprayVelocityMax;
-      float mSprayUpdateTimer;
-      float mSprayUpdateFrequency;
 
-      osg::Vec3 mSprayFrontOffset;
-      osg::Vec3 mSpraySideOffsetRight;
-      osg::Vec3 mSpraySideOffsetLeft;
-      osg::Vec3 mSprayBackOffset;
-
+      float mLastSprayRatio, mSprayUpdateTimer;
       osg::Vec3 mLastPos;
-
-      std::string mParticleShaderGroup;
-      std::string mFileSprayFront;
-      std::string mFileSpraySideLeft;
-      std::string mFileSpraySideRight;
-      std::string mFileSprayBack;
 
       dtCore::RefPtr<DynamicParticlesActor> mSprayFrontActor;
       dtCore::RefPtr<DynamicParticlesActor> mSpraySideRightActor;

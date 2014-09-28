@@ -39,7 +39,6 @@ namespace dtGame
    /////////////////////////////////////////////////////////////////////////////
    static const dtUtil::RefString INVOKABLE_PREFIX_TICK_LOCAL("Tick Local ");
    static const dtUtil::RefString INVOKABLE_PREFIX_TICK_REMOTE("Tick Remote ");
-   static const dtUtil::RefString INVOKABLE_PREFIX_MAP_LOADED("Map Loaded ");
 
 const ActorComponent::ACType ActorComponent::BaseActorComponentType(new dtCore::ActorType("Base", "ActorComponents", "A base type so that all actor component types should set as a parent"));
 
@@ -127,32 +126,6 @@ void ActorComponent::UnregisterForTick()
    {
       std::string tickInvokable = INVOKABLE_PREFIX_TICK_REMOTE.Get() + GetType()->GetFullName();
       owner->UnregisterForMessages(MessageType::TICK_REMOTE, tickInvokable);
-   }
-}
-
-void ActorComponent::RegisterForMapLoaded()
-{
-   GameActorProxy* owner = NULL;
-   GetOwner(owner);
-   if (!owner->IsRemote())
-   {
-      std::string invokableName = INVOKABLE_PREFIX_MAP_LOADED.Get() + GetType()->GetFullName();
-      if(!owner->GetInvokable(invokableName))
-      {
-         owner->AddInvokable(*new Invokable(invokableName, dtUtil::MakeFunctor(&ActorComponent::OnMapLoaded, this)));
-      }
-      owner->RegisterForMessages(MessageType::INFO_MAP_LOADED, invokableName);
-   }
-}
-
-void ActorComponent::UnregisterForMapLoaded()
-{
-   GameActorProxy* owner = NULL;
-   GetOwner(owner);
-   if (!owner->IsRemote())
-   {
-      std::string invokableName = INVOKABLE_PREFIX_MAP_LOADED.Get() + GetType()->GetFullName();
-      owner->UnregisterForMessages(MessageType::INFO_MAP_LOADED, invokableName);
    }
 }
 

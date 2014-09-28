@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+
 
 <map xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="delta3dMap" xsi:schemaLocation="delta3dMap map.xsd">
     <header>
@@ -8,7 +8,7 @@
         <comment></comment>
         <copyright></copyright>
         <createTimestamp>2014-07-15T22:49:46-05:00</createTimestamp>
-        <lastUpdateTimestamp>2014-09-26T23:10:50-05:00</lastUpdateTimestamp>
+        <lastUpdateTimestamp>2014-09-27T21:06:45-05:00</lastUpdateTimestamp>
         <editorVersion>2.8.0</editorVersion>
         <schemaVersion>1.0</schemaVersion>
     </header>
@@ -30,6 +30,21 @@
         <event>
             <id>28bd3f66-487b-4394-906e-474265b5a4c7</id>
             <name>LAUNCH_FIREWORK</name>
+            <description></description>
+        </event>
+        <event>
+            <id>82548F79-C8C0-4018-A7D3-3AAC58C50643</id>
+            <name>STEP_SAILBOAT2</name>
+            <description></description>
+        </event>
+        <event>
+            <id>8962C7E0-8E14-4055-8AD4-A3B3BB58D664</id>
+            <name>STEP_SAILBOAT3</name>
+            <description></description>
+        </event>
+        <event>
+            <id>9442D20A-807F-40E6-8A5D-E5694E9E02DC</id>
+            <name>STEP_SAILBOAT1</name>
             <description></description>
         </event>
         <event>
@@ -822,13 +837,13 @@
             <name>SailBoat_01</name>
             <property>
                 <name>ShaderGroup</name>
-                <string>MultimapShader</string>
+                <string>SimpleShader</string>
             </property>
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>89.925468</value1>
-                    <value2>-310.017273</value2>
+                    <value1>33.662899</value1>
+                    <value2>-256.905029</value2>
                     <value3>0.000000</value3>
                 </vec3>
             </property>
@@ -847,8 +862,28 @@
                 <enumerated>Box</enumerated>
             </property>
             <property>
+                <name>Main: Origin Offset</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>4.000000</value3>
+                </vec3>
+            </property>
+            <property>
                 <name>Main: Mass</name>
-                <float>500</float>
+                <float>2000</float>
+            </property>
+            <property>
+                <name>Main: ActivationLinearVelocityThreshold</name>
+                <float>9.9999997e-05</float>
+            </property>
+            <property>
+                <name>Main: LinearDamping</name>
+                <float>0.1</float>
+            </property>
+            <property>
+                <name>Main: AngularDamping</name>
+                <float>0.1</float>
             </property>
             <property>
                 <name>Main: PhysicsMesh</name>
@@ -857,23 +892,23 @@
                 <resource>StaticMeshes:Sailboat380:380_under_sail.osg</resource>
             </property>
             <property>
-                <name>Spray Enabled</name>
+                <name>SprayEnabled</name>
                 <boolean>true</boolean>
             </property>
             <property>
-                <name>Spray Front File</name>
+                <name>SprayFrontResource</name>
                 <resourceType>Particles</resourceType>
                 <resourceDisplayName>Particles:water:spray:water_spray_front.osg</resourceDisplayName>
                 <resource>Particles:water:spray:water_spray_front.osg</resource>
             </property>
             <property>
-                <name>Spray Side Left File</name>
+                <name>SpraySideLeftResource</name>
                 <resourceType>Particles</resourceType>
                 <resourceDisplayName>Particles:water:spray:water_spray_left_6m.osg</resourceDisplayName>
                 <resource>Particles:water:spray:water_spray_left_6m.osg</resource>
             </property>
             <property>
-                <name>Spray Side Right File</name>
+                <name>SpraySideRightResource</name>
                 <resourceType>Particles</resourceType>
                 <resourceDisplayName>Particles:water:spray:water_spray_right_6m.osg</resourceDisplayName>
                 <resource>Particles:water:spray:water_spray_right_6m.osg</resource>
@@ -887,7 +922,7 @@
                 </vec3>
             </property>
             <property>
-                <name>Spray Side Offset Right</name>
+                <name>SprayRightOffset</name>
                 <vec3>
                     <value1>1.000000</value1>
                     <value2>0.000000</value2>
@@ -895,7 +930,7 @@
                 </vec3>
             </property>
             <property>
-                <name>Spray Side Offset Left</name>
+                <name>SprayLeftOffset</name>
                 <vec3>
                     <value1>-1.000000</value1>
                     <value2>0.000000</value2>
@@ -903,7 +938,7 @@
                 </vec3>
             </property>
             <property>
-                <name>Spray Back Offset</name>
+                <name>SprayBackOffset</name>
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>-2.400000</value2>
@@ -911,15 +946,15 @@
                 </vec3>
             </property>
             <property>
-                <name>Spray Velocity Min</name>
+                <name>SprayVelocityMin</name>
                 <float>0</float>
             </property>
             <property>
-                <name>Spray Velocity Max</name>
+                <name>SprayVelocityMax</name>
                 <float>2</float>
             </property>
             <property>
-                <name>Spray Shader Group</name>
+                <name>SprayShaderGroup</name>
                 <string>ParticleWaterSpray</string>
             </property>
         </actor>
@@ -2770,7 +2805,7 @@
             </property>
             <property>
                 <name>Bezier Node</name>
-                <actorId>8c8be7b7-5645-4997-873b-266c7b6af1ec</actorId>
+                <actorId>5e9ad074-dfdc-4432-be58-53326f1f2e43</actorId>
             </property>
         </actor>
         <actor>
@@ -3715,10 +3750,6 @@
             <property>
                 <name>Time Step</name>
                 <float>0.016666669</float>
-            </property>
-            <property>
-                <name>Target Object</name>
-                <actorId>58693797-ee89-4e33-a9f5-b6b672fb8352</actorId>
             </property>
             <property>
                 <name>Start Node</name>
@@ -5547,14 +5578,14 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>-0.000000</value2>
-                    <value3>-99.142555</value3>
+                    <value3>-99.299751</value3>
                 </vec3>
             </property>
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-363.229309</value1>
-                    <value2>-308.455078</value2>
+                    <value1>-303.746765</value1>
+                    <value2>-318.113373</value2>
                     <value3>0.000000</value3>
                 </vec3>
             </property>
@@ -5565,23 +5596,61 @@
                 <resource>StaticMeshes:Sailboat380:380_under_sail.osg</resource>
             </property>
             <property>
-                <name>Spray Enabled</name>
+                <name>Main: Mechanics Type</name>
+                <enumerated>Dynamic</enumerated>
+            </property>
+            <property>
+                <name>Main: Primitive Type</name>
+                <enumerated>Box</enumerated>
+            </property>
+            <property>
+                <name>Main: Origin Offset</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>4.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Main: Mass</name>
+                <float>2000</float>
+            </property>
+            <property>
+                <name>Main: ActivationLinearVelocityThreshold</name>
+                <float>9.9999997e-05</float>
+            </property>
+            <property>
+                <name>Main: LinearDamping</name>
+                <float>0.1</float>
+            </property>
+            <property>
+                <name>Main: AngularDamping</name>
+                <float>0.1</float>
+            </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:Sailboat380:380_under_sail.osg</resourceDisplayName>
+                <resource>StaticMeshes:Sailboat380:380_under_sail.osg</resource>
+            </property>
+            <property>
+                <name>SprayEnabled</name>
                 <boolean>true</boolean>
             </property>
             <property>
-                <name>Spray Front File</name>
+                <name>SprayFrontResource</name>
                 <resourceType>Particles</resourceType>
                 <resourceDisplayName>Particles:water:spray:water_spray_front.osg</resourceDisplayName>
                 <resource>Particles:water:spray:water_spray_front.osg</resource>
             </property>
             <property>
-                <name>Spray Side Left File</name>
+                <name>SpraySideLeftResource</name>
                 <resourceType>Particles</resourceType>
                 <resourceDisplayName>Particles:water:spray:water_spray_left_6m.osg</resourceDisplayName>
                 <resource>Particles:water:spray:water_spray_left_6m.osg</resource>
             </property>
             <property>
-                <name>Spray Side Right File</name>
+                <name>SpraySideRightResource</name>
                 <resourceType>Particles</resourceType>
                 <resourceDisplayName>Particles:water:spray:water_spray_right_6m.osg</resourceDisplayName>
                 <resource>Particles:water:spray:water_spray_right_6m.osg</resource>
@@ -5595,7 +5664,7 @@
                 </vec3>
             </property>
             <property>
-                <name>Spray Side Offset Right</name>
+                <name>SprayRightOffset</name>
                 <vec3>
                     <value1>1.000000</value1>
                     <value2>0.000000</value2>
@@ -5603,7 +5672,7 @@
                 </vec3>
             </property>
             <property>
-                <name>Spray Side Offset Left</name>
+                <name>SprayLeftOffset</name>
                 <vec3>
                     <value1>-1.000000</value1>
                     <value2>0.000000</value2>
@@ -5611,7 +5680,7 @@
                 </vec3>
             </property>
             <property>
-                <name>Spray Back Offset</name>
+                <name>SprayBackOffset</name>
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>-2.400000</value2>
@@ -5619,15 +5688,15 @@
                 </vec3>
             </property>
             <property>
-                <name>Spray Velocity Min</name>
+                <name>SprayVelocityMin</name>
                 <float>0</float>
             </property>
             <property>
-                <name>Spray Velocity Max</name>
+                <name>SprayVelocityMax</name>
                 <float>2</float>
             </property>
             <property>
-                <name>Spray Shader Group</name>
+                <name>SprayShaderGroup</name>
                 <string>ParticleWaterSpray</string>
             </property>
         </actor>
@@ -6630,14 +6699,14 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>-0.000000</value2>
-                    <value3>179.048309</value3>
+                    <value3>127.209305</value3>
                 </vec3>
             </property>
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-184.141418</value1>
-                    <value2>223.564362</value2>
+                    <value1>-289.897766</value1>
+                    <value2>-159.790848</value2>
                     <value3>0.000000</value3>
                 </vec3>
             </property>
@@ -6648,29 +6717,67 @@
                 <resource>StaticMeshes:Sailboat380:380_under_sail.osg</resource>
             </property>
             <property>
-                <name>Spray Enabled</name>
+                <name>Main: Mechanics Type</name>
+                <enumerated>Dynamic</enumerated>
+            </property>
+            <property>
+                <name>Main: Primitive Type</name>
+                <enumerated>Box</enumerated>
+            </property>
+            <property>
+                <name>Main: Origin Offset</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>4.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Main: Mass</name>
+                <float>2000</float>
+            </property>
+            <property>
+                <name>Main: ActivationLinearVelocityThreshold</name>
+                <float>9.9999997e-05</float>
+            </property>
+            <property>
+                <name>Main: LinearDamping</name>
+                <float>0.1</float>
+            </property>
+            <property>
+                <name>Main: AngularDamping</name>
+                <float>0.1</float>
+            </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:Sailboat380:380_under_sail.osg</resourceDisplayName>
+                <resource>StaticMeshes:Sailboat380:380_under_sail.osg</resource>
+            </property>
+            <property>
+                <name>SprayEnabled</name>
                 <boolean>true</boolean>
             </property>
             <property>
-                <name>Spray Front File</name>
+                <name>SprayFrontResource</name>
                 <resourceType>Particles</resourceType>
                 <resourceDisplayName>Particles:water:spray:water_spray_front.osg</resourceDisplayName>
                 <resource>Particles:water:spray:water_spray_front.osg</resource>
             </property>
             <property>
-                <name>Spray Side Left File</name>
+                <name>SpraySideLeftResource</name>
                 <resourceType>Particles</resourceType>
                 <resourceDisplayName>Particles:water:spray:water_spray_left_6m.osg</resourceDisplayName>
                 <resource>Particles:water:spray:water_spray_left_6m.osg</resource>
             </property>
             <property>
-                <name>Spray Side Right File</name>
+                <name>SpraySideRightResource</name>
                 <resourceType>Particles</resourceType>
                 <resourceDisplayName>Particles:water:spray:water_spray_right_6m.osg</resourceDisplayName>
                 <resource>Particles:water:spray:water_spray_right_6m.osg</resource>
             </property>
             <property>
-                <name>Spray Front Offset</name>
+                <name>SprayFrontOffset</name>
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>7.200000</value2>
@@ -6678,7 +6785,7 @@
                 </vec3>
             </property>
             <property>
-                <name>Spray Side Offset Right</name>
+                <name>SprayRightOffset</name>
                 <vec3>
                     <value1>1.000000</value1>
                     <value2>0.000000</value2>
@@ -6686,7 +6793,7 @@
                 </vec3>
             </property>
             <property>
-                <name>Spray Side Offset Left</name>
+                <name>SprayLeftOffset</name>
                 <vec3>
                     <value1>-1.000000</value1>
                     <value2>0.000000</value2>
@@ -6694,7 +6801,7 @@
                 </vec3>
             </property>
             <property>
-                <name>Spray Back Offset</name>
+                <name>SprayBackOffset</name>
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>-2.400000</value2>
@@ -6702,15 +6809,15 @@
                 </vec3>
             </property>
             <property>
-                <name>Spray Velocity Min</name>
+                <name>SprayVelocityMin</name>
                 <float>0</float>
             </property>
             <property>
-                <name>Spray Velocity Max</name>
+                <name>SprayVelocityMax</name>
                 <float>2</float>
             </property>
             <property>
-                <name>Spray Shader Group</name>
+                <name>SprayShaderGroup</name>
                 <string>ParticleWaterSpray</string>
             </property>
         </actor>
@@ -7047,15 +7154,15 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>-0.000000</value2>
-                    <value3>-87.515846</value3>
+                    <value3>-90.079140</value3>
                 </vec3>
             </property>
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>205.656754</value1>
-                    <value2>-410.492279</value2>
-                    <value3>75.000000</value3>
+                    <value1>-1294.137817</value1>
+                    <value2>-439.811218</value2>
+                    <value3>74.999992</value3>
                 </vec3>
             </property>
             <property>
@@ -7666,10 +7773,6 @@
             <property>
                 <name>Time Step</name>
                 <float>0.016666668</float>
-            </property>
-            <property>
-                <name>Target Object</name>
-                <actorId>4e005120-78f2-4c4d-a0aa-21c26489046b</actorId>
             </property>
             <property>
                 <name>Start Node</name>
@@ -8893,16 +8996,20 @@
                 <float>0.016666669</float>
             </property>
             <property>
-                <name>Target Object</name>
-                <actorId>0e5ad431-cd4b-4905-81db-6a1a82b9f167</actorId>
-            </property>
-            <property>
                 <name>Start Node</name>
                 <actorId>b0c2d4b0-c6b0-46b2-9c0e-f2d5eb95acd5</actorId>
             </property>
             <property>
                 <name>Render Path</name>
                 <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Follow Path</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Set Looping</name>
+                <boolean>true</boolean>
             </property>
         </actor>
         <actor>
@@ -17052,6 +17159,10 @@
             <property>
                 <name>Main: Mass</name>
                 <float>10</float>
+            </property>
+            <property>
+                <name>Main: ActivationLinearVelocityThreshold</name>
+                <float>9.9999997e-06</float>
             </property>
             <property>
                 <name>Main: LinearDamping</name>
