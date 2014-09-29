@@ -440,7 +440,7 @@ dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateNULL(osg::RenderInfo* renderInf
 ////////////////////////////////////////////////////////////////////////////////
 dtCore::ShaderProgram* AnimNodeBuilder::LoadShaders(Cal3DModelData& modelData, osg::Geode& geode) const
 {
-   static const std::string hardwareSkinningSPGroup = "HardwareSkinning";
+   static const std::string hardwareSkinningSPGroup = "HardwareSkinningLegacy";
    dtCore::ShaderManager& shaderManager = dtCore::ShaderManager::GetInstance();
    dtCore::ShaderProgram* shaderProgram = NULL;
    if (!modelData.GetShaderGroupName().empty())

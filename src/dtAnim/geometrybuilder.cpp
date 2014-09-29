@@ -261,7 +261,20 @@ osg::ref_ptr<osg::Geometry> GeometryBuilder::GeometryCache::CreateMeshSubMesh(Ca
 
 osg::ref_ptr<osg::Geometry> GeometryBuilder::GeometryCache::CopySubmeshGeometry(Cal3DModelWrapper* pWrapper, CalHardwareModel* hardwareModel, GeometryBuilder::MeshCacheData& mcd)
 {
-   osg::ref_ptr<osg::Geometry> geom = new osg::Geometry(*mcd.mGeometry, osg::CopyOp::SHALLOW_COPY);
+   osg::ref_ptr<osg::Geometry> geom = new osg::Geometry;//new osg::Geometry(*mcd.mGeometry, osg::CopyOp::DEEP_COPY_STATESETS );
+
+   geom->setVertexArray(mcd.mGeometry->getVertexArray());
+   geom->setNormalArray(mcd.mGeometry->getNormalArray());
+   geom->setTexCoordArray(0, mcd.mGeometry->getTexCoordArray(0));
+   geom->setTexCoordArray(1, mcd.mGeometry->getTexCoordArray(1));
+   geom->setTexCoordArray(2, mcd.mGeometry->getTexCoordArray(2));
+   geom->setTexCoordArray(3, mcd.mGeometry->getTexCoordArray(3));
+   geom->addPrimitiveSet(mcd.mGeometry->getPrimitiveSet(0));
+
+   geom->setSupportsDisplayList(false);
+   geom->setUseDisplayList(false);
+   geom->setUseVertexBufferObjects(true);
+   geom->setNormalBinding(osg::Geometry::BIND_PER_VERTEX);
 
    osg::StateSet* ss = geom->getOrCreateStateSet();
 
@@ -281,6 +294,8 @@ osg::ref_ptr<osg::Geometry> GeometryBuilder::GeometryCache::CopySubmeshGeometry(
    }
 
    geom->setCullCallback(new LODCullCallback(*pWrapper, guessedMeshID)); //for LOD handling
+
+   geom->setUserData(mcd.mGeometry.get());
 
    return geom;
 }
@@ -312,15 +327,24 @@ osg::ref_ptr<osg::Node> GeometryBuilder::GeometryCache::GetOrCreateModel(Cal3DMo
 
    if (pWrapper->BeginRenderingQuery())
    {
+      // If the model has been unloaded because the observers were cleared...
+      if(iterBegin != iterEnd && !iterBegin->second.mGeometry.valid())
+      {
+         mLoadedModels.erase(iterBegin, iterEnd);
+         iterBegin = mLoadedModels.end();
+         iterEnd = mLoadedModels.end();
+      }
+
       if(false && iterBegin != iterEnd)
       {
          for (; iterBegin != iterEnd; ++iterBegin)
          {
-            MeshCacheData& meshData = (*iterBegin).second;
+            MeshCacheData& meshData = iterBegin->second;
 
             hardwareModel->selectHardwareMesh(meshData.mId.second);
 
             osg::ref_ptr<osg::Geometry> geom = CopySubmeshGeometry(pWrapper, hardwareModel, meshData);
+            SetUpMaterial(geom.get(), hardwareModel, pWrapper, meshData.mId.first, meshData.mId.second);
 
             geode->addDrawable(geom.get());
          }
@@ -358,13 +382,15 @@ osg::ref_ptr<osg::Node> GeometryBuilder::GeometryCache::GetOrCreateModel(Cal3DMo
             mcd.mId.second = submeshId;
             mcd.mName = calMesh->getName();
 
-            mcd.mGeometry = CreateMeshSubMesh(hardwareModel, pWrapper, meshId, submeshId, vertexCount, faceCount, boneCount, baseIndex, startIndex);            
-            SetUpMaterial(mcd.mGeometry.get(), hardwareModel, pWrapper, meshId, submeshId);
+            // tmp observer to hold an instance because the cache uses an observer.
+            osg::ref_ptr<osg::Geometry> tmp = CreateMeshSubMesh(hardwareModel, pWrapper, meshId, submeshId, vertexCount, faceCount, boneCount, baseIndex, startIndex);
+            mcd.mGeometry = tmp.get();
             mLoadedModels.insert(std::make_pair(modelName, mcd));
             //end create cached version of model
 
             //make a soft copy of cached model and use that
             osg::ref_ptr<osg::Geometry> geom = CopySubmeshGeometry(pWrapper, hardwareModel, mcd);
+            SetUpMaterial(geom.get(), hardwareModel, pWrapper, meshId, submeshId);
 
             geode->addDrawable(geom.get());
          }
@@ -468,7 +494,7 @@ dtCore::ShaderProgram* GeometryBuilder::LoadShaders(Cal3DModelData& modelData, o
       {
          defSPGroup = new dtCore::ShaderGroup(hardwareSkinningSPGroup);
          shaderProgram = new dtCore::ShaderProgram("Default");
-         shaderProgram->AddVertexShader("shaders/HardwareCharacter.vert");
+         shaderProgram->AddVertexShader("shaders/OsgGeometryCharacter.vert");
          defSPGroup->AddShader(*shaderProgram, true);
          shaderManager.AddShaderGroupPrototype(*defSPGroup);
       }
