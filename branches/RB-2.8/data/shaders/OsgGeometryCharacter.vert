@@ -12,12 +12,17 @@ varying vec3 vNormal;
 varying vec3 vTangent;
 varying vec3 vBitangent;
 
-attribute vec4 boneWeights;
-attribute vec4 boneIndices;
-attribute vec4 tangentSpace;
+//attribute vec4 boneWeights;
+//attribute vec4 boneIndices;
+//attribute vec4 tangentSpace;
 
 void main(void)
 {
+
+   vec4 boneWeights = gl_MultiTexCoord1;
+   vec4 boneIndices = gl_MultiTexCoord2;
+   vec4 tangentSpace = gl_MultiTexCoord3;
+
    //initialize our data
    vec4 transformedPosition = vec4(0.0, 0.0, 0.0, 1.0);
    vec4 transformedNormal = vec4(0.0, 0.0, 0.0, 1.0);
