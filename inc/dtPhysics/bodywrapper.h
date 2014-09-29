@@ -43,18 +43,15 @@ namespace dtPhysics
 
    class Geometry;
    class BaseBodyWrapperImpl;
+   class GenericBodyWrapper;
 
    class DT_PHYSICS_EXPORT BaseBodyWrapper: public osg::Referenced
    {
    public:
       BaseBodyWrapper(palBodyBase& body);
 
-      static dtCore::RefPtr<BaseBodyWrapper> CreateBox(const TransformType& worldPos,
-               const VectorType& dimensions, Real mass);
-      ///////////////////////////////////////////////////////////////////////////
-
       /// Creates a generic body.  You must call Init manually after adding geometry.
-      static dtCore::RefPtr<BaseBodyWrapper> CreateGenericBody(const TransformType& worldPos,
+      static dtCore::RefPtr<GenericBodyWrapper> CreateGenericBody(const TransformType& worldPos,
                MechanicsType& mechType, CollisionGroup collisionGroup, Real mass);
 
       /// Changes the collision group for the body.

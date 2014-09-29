@@ -616,7 +616,7 @@ namespace dtPhysics
       for (; i != iend; ++i)
       {
          PhysicsObject* curPo = *i;
-         if (curPo->GetBaseBodyWrapper() != NULL)
+         if (curPo->GetBodyWrapper() != NULL)
          {
             if (PhysicsWorld::GetInstance().IsBackgroundUpdateStepRunning())
             {

@@ -684,11 +684,11 @@ namespace dtPhysics
    //////////////////////////////////////////////////////////////////////////
    void PhysicsWorld::NotifyCollision(PhysicsObject& obj1, PhysicsObject& obj2, bool enabled)
    {
-      CheckBody(obj1.GetBaseBodyWrapper(), __LINE__);
-      CheckBody(obj2.GetBaseBodyWrapper(), __LINE__);
+      CheckBody(obj1.GetBodyWrapper(), __LINE__);
+      CheckBody(obj2.GetBodyWrapper(), __LINE__);
 
-      palBodyBase& body1 = obj1.GetBaseBodyWrapper()->GetPalBodyBase();
-      palBodyBase& body2 = obj2.GetBaseBodyWrapper()->GetPalBodyBase();
+      palBodyBase& body1 = obj1.GetBodyWrapper()->GetPalBodyBase();
+      palBodyBase& body2 = obj2.GetBodyWrapper()->GetPalBodyBase();
 
       mImpl->mPalCollisionDetection->NotifyCollision(&body1, &body2, enabled);
    }
@@ -696,8 +696,8 @@ namespace dtPhysics
    //////////////////////////////////////////////////////////////////////////
    void PhysicsWorld::NotifyCollision(PhysicsObject& obj, bool enabled)
    {
-      CheckBody(obj.GetBaseBodyWrapper(), __LINE__);
-      palBodyBase& body = obj.GetBaseBodyWrapper()->GetPalBodyBase();
+      CheckBody(obj.GetBodyWrapper(), __LINE__);
+      palBodyBase& body = obj.GetBodyWrapper()->GetPalBodyBase();
 
       mImpl->mPalCollisionDetection->NotifyCollision(&body, enabled);
    }
@@ -739,8 +739,8 @@ namespace dtPhysics
    //////////////////////////////////////////////////////////////////////////
    void PhysicsWorld::GetContacts(PhysicsObject& obj, std::vector<CollisionContact>& contacts)
    {
-      CheckBody(obj.GetBaseBodyWrapper(), __LINE__);
-      palBodyBase& body = obj.GetBaseBodyWrapper()->GetPalBodyBase();
+      CheckBody(obj.GetBodyWrapper(), __LINE__);
+      palBodyBase& body = obj.GetBodyWrapper()->GetPalBodyBase();
 
       palContact palContact;
 
@@ -753,11 +753,11 @@ namespace dtPhysics
    //////////////////////////////////////////////////////////////////////////
    void PhysicsWorld::GetContacts(PhysicsObject& obj1, PhysicsObject& obj2, std::vector<CollisionContact>& contacts)
    {
-      CheckBody(obj1.GetBaseBodyWrapper(), __LINE__);
-      CheckBody(obj2.GetBaseBodyWrapper(), __LINE__);
+      CheckBody(obj1.GetBodyWrapper(), __LINE__);
+      CheckBody(obj2.GetBodyWrapper(), __LINE__);
 
-      palBodyBase& body1 = obj1.GetBaseBodyWrapper()->GetPalBodyBase();
-      palBodyBase& body2 = obj2.GetBaseBodyWrapper()->GetPalBodyBase();
+      palBodyBase& body1 = obj1.GetBodyWrapper()->GetPalBodyBase();
+      palBodyBase& body2 = obj2.GetBodyWrapper()->GetPalBodyBase();
 
       palContact palContact;
 
