@@ -25,6 +25,7 @@
 #include <dtAnim/export.h>
 #include <dtCore/refptr.h>
 #include <dtUtil/functor.h>
+#include <dtCore/observerptr.h>
 
 #include <osg/Referenced>
 #include <osg/State>
@@ -70,7 +71,7 @@ namespace dtAnim
 
          MeshSubMeshIdPair mId;
          std::string mName;       
-         dtCore::RefPtr<osg::Geometry> mGeometry;
+         dtCore::ObserverPtr<osg::Geometry> mGeometry;
       };
 
 

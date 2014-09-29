@@ -31,6 +31,7 @@
 #include <dtAnim/animationhelper.h>
 #include <dtAnim/hardwaresubmesh.h>
 #include <dtAnim/submesh.h>
+#include <dtAnim/geometrybuilder.h>
 
 #include <dtCore/project.h>
 #include <dtCore/transform.h>
@@ -45,6 +46,7 @@
 
 #include <osg/Geode>
 #include <osg/MatrixTransform>
+#include <osg/Geometry>
 #include <osg/Drawable>
 #include <osgViewer/Viewer>
 
@@ -61,6 +63,7 @@ namespace dtAnim
       CPPUNIT_TEST_SUITE(AnimNodeBuilderTests);
          CPPUNIT_TEST(TestBuildSoftware);
          CPPUNIT_TEST(TestBuildHardware);
+         CPPUNIT_TEST(TestBuildOsgGeometry);
          CPPUNIT_TEST(TestBuildWithScale);
       CPPUNIT_TEST_SUITE_END();
 
@@ -114,6 +117,92 @@ namespace dtAnim
       };
 
 
+      GeometryBuilder gTestInstance;
+      //////////////////////////////////////////////////////////////////////////
+      void TestBuildOsgGeometry()
+      {
+         AnimNodeBuilder& nodeBuilder = Cal3DDatabase::GetInstance().GetNodeBuilder();
+
+         //see if we can even do hardware building...
+         if (nodeBuilder.SupportsHardware() == false)
+         {
+            return;
+         }
+
+         nodeBuilder.SetCreate(AnimNodeBuilder::CreateFunc(&gTestInstance, &GeometryBuilder::CreateGeometry));
+         mHelper->LoadModel(mModelPath);
+
+         osg::Node* node = mHelper->GetNode();
+         dtCore::RefPtr<TestDrawable> drawable = new TestDrawable(*node);
+         GetGlobalApplication().GetScene()->AddChild(drawable.get());
+
+         dtCore::System::GetInstance().Step(0.016f);
+         dtCore::System::GetInstance().Step(0.016f);
+
+         const osg::Group* group = node->asGroup();
+         CPPUNIT_ASSERT_MESSAGE("AnimNodeBuilder didn't generate a valid group node",
+                                 group != NULL);
+
+         CPPUNIT_ASSERT_MESSAGE("AnimNodeBuilder group node doesn't have any children",
+                                 group->getNumChildren() > 0);
+
+         const osg::Geode* geode = dynamic_cast<const osg::Geode*>(group->getChild(0));
+         CPPUNIT_ASSERT_MESSAGE("AnimNodeBuilder's first child isn't a Geode",
+                                 geode != NULL);
+
+         CheckOsgGeode(geode);
+
+         dtCore::RefPtr<dtAnim::AnimationHelper> secondHelper = new AnimationHelper();
+         secondHelper->LoadModel(mModelPath);
+
+         osg::Node* node2 = secondHelper->GetNode();
+         dtCore::RefPtr<TestDrawable> drawable2 = new TestDrawable(*node2);
+         GetGlobalApplication().GetScene()->AddChild(drawable2.get());
+
+         dtCore::System::GetInstance().Step(0.016f);
+         dtCore::System::GetInstance().Step(0.016f);
+
+         const osg::Group* group2 = node->asGroup();
+         CPPUNIT_ASSERT_MESSAGE("AnimNodeBuilder didn't generate a valid group node",
+                                 group2 != NULL);
+
+         CPPUNIT_ASSERT_MESSAGE("AnimNodeBuilder group node doesn't have any children",
+                                 group2->getNumChildren() > 0);
+
+         const osg::Geode* geode2 = dynamic_cast<const osg::Geode*>(group->getChild(0));
+         CPPUNIT_ASSERT_MESSAGE("AnimNodeBuilder's first child isn't a Geode",
+                                 geode2 != NULL);
+
+         CPPUNIT_ASSERT_EQUAL(geode->getNumDrawables(), geode2->getNumDrawables());
+
+         dtCore::ObserverPtr<const osg::Referenced> testOb;
+
+         for (unsigned i = 0; i < geode->getNumDrawables(); ++i)
+         {
+            const osg::Drawable* draw = geode->getDrawable(i);
+            const osg::Drawable* draw2 = geode2->getDrawable(i);
+
+            CPPUNIT_ASSERT_MESSAGE("The user data should be the same, showing it is cached.", draw->getUserData() == draw2->getUserData());
+            const osg::Geometry* g = dynamic_cast<const osg::Geometry*>(draw->getUserData());
+            const osg::Geometry* g2 = dynamic_cast<const osg::Geometry*>(draw2->getUserData());
+            CPPUNIT_ASSERT(g != NULL);
+            CPPUNIT_ASSERT(g2 != NULL);
+
+            CPPUNIT_ASSERT(g2->getVertexArray() == g->getVertexArray());
+
+            testOb = draw->getUserData();
+         }
+
+
+         GetGlobalApplication().GetScene()->RemoveChild(drawable.get());
+         GetGlobalApplication().GetScene()->RemoveChild(drawable2.get());
+         drawable = NULL;
+         drawable2 = NULL;
+         secondHelper->UnloadModel();
+         mHelper->UnloadModel();
+         CPPUNIT_ASSERT(!testOb.valid());
+      }
+
       //////////////////////////////////////////////////////////////////////////
       void TestBuildHardware()
       {
@@ -132,8 +221,8 @@ namespace dtAnim
          dtCore::RefPtr<TestDrawable> drawable = new TestDrawable(*node);
          GetGlobalApplication().GetScene()->AddChild(drawable.get());
 
-         dtCore::System::GetInstance().Step();
-         dtCore::System::GetInstance().Step();
+         dtCore::System::GetInstance().Step(0.016f);
+         dtCore::System::GetInstance().Step(0.016f);
 
          const osg::Group* group = node->asGroup();
          CPPUNIT_ASSERT_MESSAGE("AnimNodeBuilder didn't generate a valid group node",
@@ -179,8 +268,8 @@ namespace dtAnim
 
          dtCore::RefPtr<TestDrawable> drawable = new TestDrawable(*node);
          GetGlobalApplication().GetScene()->AddChild(drawable.get());
-         dtCore::System::GetInstance().Step();
-         dtCore::System::GetInstance().Step();
+         dtCore::System::GetInstance().Step(0.016f);
+         dtCore::System::GetInstance().Step(0.016f);
 
          const osg::Group* group = node->asGroup();
          CPPUNIT_ASSERT_MESSAGE("AnimNodeBuilder didn't generate a valid group node",
@@ -249,9 +338,34 @@ namespace dtAnim
          GetGlobalApplication().GetScene()->RemoveChild(drawable.get());
       }
    private:
+      void CheckOsgGeode(const osg::Geode* toCheck)
+      {
+         CPPUNIT_ASSERT_MESSAGE("AnimNodeBuilder didn't generate a valid node",
+                                 toCheck != NULL);
+         CPPUNIT_ASSERT(toCheck->getNumDrawables() > 0);
+
+         bool hasSubmesh = false;
+
+         for (unsigned i = 0; i < toCheck->getNumDrawables(); ++i)
+         {
+            const osg::Drawable* draw = toCheck->getDrawable(i);
+
+            hasSubmesh = dynamic_cast<const osg::Geometry*>(draw) != NULL;
+
+            if (hasSubmesh)
+            {
+               break;
+            }
+         }
+
+         CPPUNIT_ASSERT_EQUAL_MESSAGE("The Geode didn't have any of the anticipated Drawables",
+                                      true, hasSubmesh);
+
+      }
+
       void CheckGeode(const osg::Geode* toCheck, bool hardware)
       {
-         CPPUNIT_ASSERT_MESSAGE("AnimNodeBUilder didn't generate a valid node",
+         CPPUNIT_ASSERT_MESSAGE("AnimNodeBuilder didn't generate a valid node",
                                  toCheck != NULL);
          CPPUNIT_ASSERT(toCheck->getNumDrawables() > 0);
 
