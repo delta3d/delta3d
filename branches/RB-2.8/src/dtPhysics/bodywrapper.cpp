@@ -152,7 +152,7 @@ namespace dtPhysics
    }
 
    ////////////////////////////////////////////////////////////////
-   dtCore::RefPtr<BaseBodyWrapper> BaseBodyWrapper::CreateGenericBody(const TransformType& worldPos,
+   dtCore::RefPtr<GenericBodyWrapper> BaseBodyWrapper::CreateGenericBody(const TransformType& worldPos,
             MechanicsType& mechType, CollisionGroup collisionGroup, Real mass)
    {
       // cast so we can call our specific initialization function

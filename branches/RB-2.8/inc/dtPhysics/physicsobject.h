@@ -99,7 +99,7 @@ namespace dtPhysics
       bool CreateFromGeometry(dtPhysics::Geometry& geometry);
 
       /// Creates this physics object giving it a pre-set and configured body.
-      void CreateWithBody(BaseBodyWrapper& body);
+      void CreateWithBody(GenericBodyWrapper& body);
 
       /**
        * Deletes the internal data structures created in one of the Create methods.
@@ -196,7 +196,6 @@ namespace dtPhysics
       /// @return true if this body and whatever collides with it responds to collisions.
       bool IsCollisionResponseEnabled() const;
 
-      BaseBodyWrapper* GetBaseBodyWrapper();
       BodyWrapper* GetBodyWrapper();
       GenericBodyWrapper* GetGenericBodyWrapper();
 

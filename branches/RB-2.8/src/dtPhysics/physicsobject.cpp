@@ -117,8 +117,6 @@ namespace dtPhysics
       Real mActivationLinearVelocityThreshold, mActivationAngularVelocityThreshold, mActivationTimeThreshold;
       Real mLinearDamping, mAngularDamping;
 
-      dtCore::RefPtr<BaseBodyWrapper> mBaseBody;
-      dtCore::RefPtr<BodyWrapper> mBody;
       dtCore::RefPtr<GenericBodyWrapper> mGenericBody;
       palActivationSettings* mActivationSettings;
 
@@ -234,7 +232,7 @@ namespace dtPhysics
    /////////////////////////////////////////////////////////////////////////////
    void PhysicsObject::SetNotifyCollisions(bool value)
    {
-      if (mDataMembers->mBaseBody.valid())
+      if (mDataMembers->mGenericBody.valid())
          PhysicsWorld::GetInstance().NotifyCollision(*this, value);
       mDataMembers->mNotifyCollisions = value;
    }
@@ -254,9 +252,9 @@ namespace dtPhysics
    /////////////////////////////////////////////////////////////////////////////
    void PhysicsObject::SetMaterial(Material* mat)
    {
-      if (mDataMembers->mBaseBody.valid())
+      if (mDataMembers->mGenericBody.valid())
       {
-         mDataMembers->mBaseBody->SetMaterial(mat);
+         mDataMembers->mGenericBody->SetMaterial(mat);
       }
       mDataMembers->mMaterial = mat;
    }
@@ -494,7 +492,6 @@ namespace dtPhysics
          {
             bool polytope = GetPrimitiveType() == PrimitiveType::CONVEX_HULL;
             VertexData::GetOrCreateCachedDataForNode(data, nodeToLoad, polytope && !cachingKey.empty() ? cachingKey + POLYTOPE_SUFFIX : cachingKey, polytope);
-
          }
          else
          {
@@ -568,33 +565,21 @@ namespace dtPhysics
 
       mDataMembers->mGeometries.clear();
 
-      mDataMembers->mBaseBody = BaseBodyWrapper::CreateGenericBody(transform, *mDataMembers->mMechanicsType, mDataMembers->mCollisionGroup, mDataMembers->mMassOfObject);
+      mDataMembers->mGenericBody = BaseBodyWrapper::CreateGenericBody(transform, *mDataMembers->mMechanicsType, mDataMembers->mCollisionGroup, mDataMembers->mMassOfObject);
 
-      if (mDataMembers->mBaseBody.valid())
+      if (mDataMembers->mGenericBody.valid())
       {
-         mDataMembers->mGenericBody = dynamic_cast<GenericBodyWrapper*>(mDataMembers->mBaseBody.get());
+         mDataMembers->mGenericBody->Init();
 
-         if (mDataMembers->mGenericBody.valid())
-         {
-            mDataMembers->mGenericBody->Init();
+         AddGeometry(geometry);
 
-            AddGeometry(geometry);
-
-            //Reset this because it has to be done after geometry is added.
-            SetMomentOfInertia(mDataMembers->mMomentOfInertia);
-         }
-         else
-         {
-            LOGN_ERROR("physicsobject.cpp", "Created a GenericBodyWrapper, but dynamic casting it to one failed.  Bailing out.");
-            mDataMembers->mBaseBody = NULL;
-            mDataMembers->mBody = NULL;
-            mDataMembers->mGenericBody = NULL;
-            return false;
-         }
+         //Reset this because it has to be done after geometry is added.
+         SetMomentOfInertia(mDataMembers->mMomentOfInertia);
       }
       else
       {
-         LOGN_ERROR("physicsobject.cpp", "Unable to create a palGenericBody.  Bailing out.");
+         LOGN_ERROR("physicsobject.cpp", "Created a GenericBodyWrapper, but dynamic casting it to one failed.  Bailing out.");
+         mDataMembers->mGenericBody = NULL;
          return false;
       }
 
@@ -621,82 +606,67 @@ namespace dtPhysics
       GetTransform(xform);
       mDataMembers->mGeometries.clear();
 
-      mDataMembers->mBaseBody = BaseBodyWrapper::CreateGenericBody(xform, *mDataMembers->mMechanicsType, mDataMembers->mCollisionGroup, mDataMembers->mMassOfObject);
+      mDataMembers->mGenericBody = BaseBodyWrapper::CreateGenericBody(xform, *mDataMembers->mMechanicsType, mDataMembers->mCollisionGroup, mDataMembers->mMassOfObject);
 
-      if (mDataMembers->mBaseBody.valid())
+      if (mDataMembers->mGenericBody.valid())
       {
-         mDataMembers->mGenericBody = dynamic_cast<GenericBodyWrapper*>(mDataMembers->mBaseBody.get());
-         if (mDataMembers->mGenericBody.valid())
+         mDataMembers->mGenericBody->Init();
+         dtCore::Transform geometryWorld;
+         GetOriginOffsetInWorldSpace(geometryWorld);
+         if (GetPrimitiveType().IsSimpleShape())
          {
-            mDataMembers->mGenericBody->Init();
-            dtCore::Transform geometryWorld;
-            GetOriginOffsetInWorldSpace(geometryWorld);
-            if (GetPrimitiveType().IsSimpleShape())
-            {
-               mDataMembers->CreateSimpleGeometry(GetPrimitiveType(), GetExtents(), geometryWorld, GetMass());
-            }
-            else if (data != NULL)
-            {
-               // Scale the data in place, which is actually the cached one.
-               // Each user will just rescale the data to what they need, but
-               // chances are good that the same scale will end up being used over and over.
-               data->Scale(mDataMembers->mMeshScale);
+            mDataMembers->CreateSimpleGeometry(GetPrimitiveType(), GetExtents(), geometryWorld, GetMass());
+         }
+         else if (data != NULL)
+         {
+            // Scale the data in place, which is actually the cached one.
+            // Each user will just rescale the data to what they need, but
+            // chances are good that the same scale will end up being used over and over.
+            data->Scale(mDataMembers->mMeshScale);
 
-               mDataMembers->CreateComplexGeometry(GetPrimitiveType(), geometryWorld, *data, GetMass());
-            }
-            else
-            {
-               throw dtUtil::Exception("Unable to create a geometry for PhysicsObject \"" + GetName() + "\" because it neither has bounds for a shape nor vertex data for a mesh.",
-                     __FILE__, __LINE__);
-            }
-            //Reset this because it has to be done after geometry is added.
-            SetMomentOfInertia(mDataMembers->mMomentOfInertia);
+            mDataMembers->CreateComplexGeometry(GetPrimitiveType(), geometryWorld, *data, GetMass());
          }
          else
          {
-            LOGN_ERROR("physicsobject.cpp", "Created a GenericBodyWrapper, but dynamic casting it to one failed.  Bailing out.");
-            mDataMembers->mBaseBody = NULL;
-            mDataMembers->mBody = NULL;
-            mDataMembers->mGenericBody = NULL;
-            return false;
+            throw dtUtil::Exception("Unable to create a geometry for PhysicsObject \"" + GetName() + "\" because it neither has bounds for a shape nor vertex data for a mesh.",
+                  __FILE__, __LINE__);
          }
-      }
-
-
-      if (!mDataMembers->mBaseBody.valid())
-      {
-         LOG_ERROR("Creation of Physics Object failed : PhysicsObject::CreateFromPrimitive");
+         //Reset this because it has to be done after geometry is added.
+         SetMomentOfInertia(mDataMembers->mMomentOfInertia);
       }
       else
       {
-         // Set the default material if nothing is set.
-         if (GetMaterial() == NULL)
-         {
-            SetMaterial(PhysicsWorld::GetInstance().GetMaterials().GetMaterial(PhysicsMaterials::DEFAULT_MATERIAL_NAME));
-         }
-         SetSkinThickness(mDataMembers->mSkinThickness);
-         SetNotifyCollisions(GetNotifyCollisions());
-
-         CreateWithBody(*mDataMembers->mBaseBody);
-
-         mDataMembers->ApplyActivationSettings();
-         SetLinearDamping(mDataMembers->mLinearDamping);
-         SetAngularDamping(mDataMembers->mAngularDamping);
+         LOGN_ERROR("physicsobject.cpp", "Created a GenericBodyWrapper, but dynamic casting it to one failed.  Bailing out.");
+         mDataMembers->mGenericBody = NULL;
+         return false;
       }
 
-      return mDataMembers->mBaseBody.valid();
+
+      // Set the default material if nothing is set.
+      if (GetMaterial() == NULL)
+      {
+         SetMaterial(PhysicsWorld::GetInstance().GetMaterials().GetMaterial(PhysicsMaterials::DEFAULT_MATERIAL_NAME));
+      }
+      SetSkinThickness(mDataMembers->mSkinThickness);
+      SetNotifyCollisions(GetNotifyCollisions());
+
+      CreateWithBody(*mDataMembers->mGenericBody);
+
+      mDataMembers->ApplyActivationSettings();
+      SetLinearDamping(mDataMembers->mLinearDamping);
+      SetAngularDamping(mDataMembers->mAngularDamping);
+
+      return mDataMembers->mGenericBody.valid();
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void PhysicsObject::CreateWithBody(BaseBodyWrapper& body)
+   void PhysicsObject::CreateWithBody(GenericBodyWrapper& body)
    {
       // TODO, if this is called on an already configured body, this won't clear the geometries
       // list, and that list may be wrong. It can't clear the list because this method is called
       // from the other create methods that setup that list before calling this one.
-      mDataMembers->mBaseBody = &body;
-      mDataMembers->mBaseBody->GetPalBodyBase().SetUserData(this);
-      mDataMembers->mBody = dynamic_cast<BodyWrapper*>(mDataMembers->mBaseBody.get());
-      mDataMembers->mGenericBody = dynamic_cast<GenericBodyWrapper*>(mDataMembers->mBaseBody.get());
+      mDataMembers->mGenericBody = &body;
+      mDataMembers->mGenericBody->GetPalBodyBase().SetUserData(this);
       mDataMembers->mActivationSettings = dynamic_cast<palActivationSettings*>(&body.GetPalBodyBase());
    }
 
@@ -708,8 +678,6 @@ namespace dtPhysics
       mDataMembers->mActivationSettings = NULL;
       // These are ref ptrs, so they should get cleaned up
       mDataMembers->mGenericBody = NULL;
-      mDataMembers->mBody = NULL;
-      mDataMembers->mBaseBody = NULL;
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -734,15 +702,9 @@ namespace dtPhysics
    }
 
    //////////////////////////////////////////////////////
-   BaseBodyWrapper* PhysicsObject::GetBaseBodyWrapper()
-   {
-      return mDataMembers->mBaseBody.get();
-   }
-
-   //////////////////////////////////////////////////////
    BodyWrapper* PhysicsObject::GetBodyWrapper()
    {
-      return mDataMembers->mBody.get();
+      return mDataMembers->mGenericBody.get();
    }
 
    //////////////////////////////////////////////////////
@@ -773,9 +735,9 @@ namespace dtPhysics
    CollisionGroup PhysicsObject::GetCollisionGroup() const
    {
       CollisionGroup g = mDataMembers->mCollisionGroup;
-      if (mDataMembers->mBaseBody != NULL)
+      if (mDataMembers->mGenericBody != NULL)
       {
-         g = mDataMembers->mBaseBody->GetGroup();
+         g = mDataMembers->mGenericBody->GetGroup();
       }
       return g;
    }
@@ -784,9 +746,9 @@ namespace dtPhysics
    void PhysicsObject::SetCollisionGroup(CollisionGroup group)
    {
       mDataMembers->mCollisionGroup = group;
-      if (mDataMembers->mBaseBody != NULL)
+      if (mDataMembers->mGenericBody != NULL)
       {
-         mDataMembers->mBaseBody->SetGroup(group);
+         mDataMembers->mGenericBody->SetGroup(group);
       }
    }
 
@@ -805,27 +767,27 @@ namespace dtPhysics
    /////////////////////////////////////////////////////////////////////////////
    void PhysicsObject::AddForce(const VectorType& forceToAdd)
    {
-      if (mDataMembers->mBody.valid())
+      if (mDataMembers->mGenericBody.valid())
       {
-         mDataMembers->mBody->AddForce(forceToAdd);
+         mDataMembers->mGenericBody->AddForce(forceToAdd);
       }
    }
 
    /////////////////////////////////////////////////////////////////////////////
    void PhysicsObject::AddLocalForce(const VectorType& forceToAdd)
    {
-      if (mDataMembers->mBody.valid())
+      if (mDataMembers->mGenericBody.valid())
       {
-         mDataMembers->mBody->AddForce(TransformToWorldSpace(forceToAdd));
+         mDataMembers->mGenericBody->AddForce(TransformToWorldSpace(forceToAdd));
       }
    }
 
    /////////////////////////////////////////////////////////////////////////////
    void PhysicsObject::AddLocalTorque( const VectorType& torqueToAdd )
    {
-      if (mDataMembers->mBody.valid())
+      if (mDataMembers->mGenericBody.valid())
       {
-         mDataMembers->mBody->AddTorque(TransformToWorldSpace(torqueToAdd));
+         mDataMembers->mGenericBody->AddTorque(TransformToWorldSpace(torqueToAdd));
       }
    }
 
@@ -845,16 +807,16 @@ namespace dtPhysics
    /////////////////////////////////////////////////////////////////////////////
    void PhysicsObject::AddForceAtPosition(const VectorType& position, const VectorType& force)
    {
-      if (mDataMembers->mBody.valid())
+      if (mDataMembers->mGenericBody.valid())
       {
-         mDataMembers->mBody->AddForceAtPosition(position, force);
+         mDataMembers->mGenericBody->AddForceAtPosition(position, force);
       }
    }
 
    /////////////////////////////////////////////////////////////////////////////
    void PhysicsObject::AddLocalForceAtPosition(const VectorType& position, const VectorType& force)
    {
-      if (mDataMembers->mBody.valid())
+      if (mDataMembers->mGenericBody.valid())
       {
          dtCore::Transform xform;
          GetTransform(xform);
@@ -863,50 +825,50 @@ namespace dtPhysics
          xform.Get(m);
          VectorType worldPos = m.preMult(position);
 
-         mDataMembers->mBody->AddForceAtPosition(worldPos, TransformToWorldSpace(force));
+         mDataMembers->mGenericBody->AddForceAtPosition(worldPos, TransformToWorldSpace(force));
       }
    }
 
    /////////////////////////////////////////////////////////////////////////////
    void PhysicsObject::ApplyImpulse(const VectorType& impulse)
    {
-      if (mDataMembers->mBody.valid())
+      if (mDataMembers->mGenericBody.valid())
       {
-         mDataMembers->mBody->ApplyImpulse(impulse);
+         mDataMembers->mGenericBody->ApplyImpulse(impulse);
       }
    }
 
    /////////////////////////////////////////////////////////////////////////////
    void PhysicsObject::ApplyLocalImpulse(const VectorType& impulse)
    {
-      if (mDataMembers->mBody.valid())
+      if (mDataMembers->mGenericBody.valid())
       {
-         mDataMembers->mBody->ApplyImpulse(TransformToWorldSpace(impulse));
+         mDataMembers->mGenericBody->ApplyImpulse(TransformToWorldSpace(impulse));
       }
    }
 
    /////////////////////////////////////////////////////////////////////////////
    void PhysicsObject::ApplyAngularImpulse(const VectorType& angularImpulse)
    {
-      if (mDataMembers->mBody.valid())
+      if (mDataMembers->mGenericBody.valid())
       {
-         mDataMembers->mBody->ApplyAngularImpulse(angularImpulse);
+         mDataMembers->mGenericBody->ApplyAngularImpulse(angularImpulse);
       }
    }
 
    /////////////////////////////////////////////////////////////////////////////
    void PhysicsObject::ApplyImpulseAtPosition(const VectorType& position, const VectorType& impulse)
    {
-      if (mDataMembers->mBody.valid())
+      if (mDataMembers->mGenericBody.valid())
       {
-         mDataMembers->mBody->ApplyImpulseAtPosition(position, impulse);
+         mDataMembers->mGenericBody->ApplyImpulseAtPosition(position, impulse);
       }
    }
 
    /////////////////////////////////////////////////////////////////////////////
    void PhysicsObject::ApplyLocalImpulseAtPosition(const VectorType& position, const VectorType& impulse)
    {
-      if (mDataMembers->mBody.valid())
+      if (mDataMembers->mGenericBody.valid())
       {
          dtCore::Transform xform;
          GetTransform(xform);
@@ -915,43 +877,43 @@ namespace dtPhysics
          xform.Get(m);
          VectorType worldPos = m.preMult(position);
 
-         mDataMembers->mBody->ApplyImpulseAtPosition(worldPos, TransformToWorldSpace(impulse));
+         mDataMembers->mGenericBody->ApplyImpulseAtPosition(worldPos, TransformToWorldSpace(impulse));
       }
    }
 
    /////////////////////////////////////////////////////////////////////////////
    void PhysicsObject::AddTorque(const VectorType& torque)
    {
-      if (mDataMembers->mBody.valid())
+      if (mDataMembers->mGenericBody.valid())
       {
-         mDataMembers->mBody->AddTorque(torque);
+         mDataMembers->mGenericBody->AddTorque(torque);
       }
    }
 
    /////////////////////////////////////////////////////////////////////////////
    void PhysicsObject::SetLinearVelocity(const VectorType& velocity)
    {
-      if (mDataMembers->mBody.valid())
+      if (mDataMembers->mGenericBody.valid())
       {
-         mDataMembers->mBody->SetLinearVelocity(velocity);
+         mDataMembers->mGenericBody->SetLinearVelocity(velocity);
       }
    }
 
    /////////////////////////////////////////////////////////////////////////////
    void PhysicsObject::SetAngularVelocity(const VectorType& velocity_rad)
    {
-      if (mDataMembers->mBody.valid())
+      if (mDataMembers->mGenericBody.valid())
       {
-         mDataMembers->mBody->SetAngularVelocity(velocity_rad);
+         mDataMembers->mGenericBody->SetAngularVelocity(velocity_rad);
       }
    }
 
    /////////////////////////////////////////////////////////////////////////////
    VectorType PhysicsObject::GetLinearVelocity() const
    {
-      if (mDataMembers->mBody.valid())
+      if (mDataMembers->mGenericBody.valid())
       {
-         return mDataMembers->mBody->GetLinearVelocity();
+         return mDataMembers->mGenericBody->GetLinearVelocity();
       }
       return VectorType();
    }
@@ -959,9 +921,9 @@ namespace dtPhysics
    /////////////////////////////////////////////////////////////////////////////
    VectorType PhysicsObject::GetAngularVelocity() const
    {
-      if (mDataMembers->mBody.valid())
+      if (mDataMembers->mGenericBody.valid())
       {
-         return mDataMembers->mBody->GetAngularVelocity();
+         return mDataMembers->mGenericBody->GetAngularVelocity();
       }
       return VectorType();
    }
@@ -1138,9 +1100,9 @@ namespace dtPhysics
    /////////////////////////////////////////////////////////////////////////////
    Real PhysicsObject::GetMass() const
    {
-      if (mDataMembers->mBody.valid())
+      if (mDataMembers->mGenericBody.valid())
       {
-         return mDataMembers->mBody->GetMass();
+         return mDataMembers->mGenericBody->GetMass();
       }
       return mDataMembers->mMassOfObject;
    }
@@ -1160,18 +1122,18 @@ namespace dtPhysics
    {
       mDataMembers->mTransform = t;
 
-      if(mDataMembers->mBody.valid())
+      if(mDataMembers->mGenericBody.valid())
       {
-         mDataMembers->mBody->SetTransform(t);
+         mDataMembers->mGenericBody->SetTransform(t);
       }
    }
 
    /////////////////////////////////////////////////////////////////////////////
    void PhysicsObject::GetTransform(TransformType& xform, bool interpolated) const
    {
-      if (mDataMembers->mBody.valid())
+      if (mDataMembers->mGenericBody.valid())
       {
-         mDataMembers->mBody->GetTransform(xform, interpolated);
+         mDataMembers->mGenericBody->GetTransform(xform, interpolated);
       }
       else
       {
@@ -1285,18 +1247,18 @@ namespace dtPhysics
    /////////////////////////////////////////////////////////////////////////////
    void PhysicsObject::SetActive(bool active)
    {
-      if(mDataMembers->mBody.valid())
+      if(mDataMembers->mGenericBody.valid())
       {
-         mDataMembers->mBody->SetActive(active);
+         mDataMembers->mGenericBody->SetActive(active);
       }
    }
 
    /////////////////////////////////////////////////////////////////////////////
    bool PhysicsObject::IsActive() const
    {
-      if(mDataMembers->mBody.valid())
+      if(mDataMembers->mGenericBody.valid())
       {
-         return mDataMembers->mBody->IsActive();
+         return mDataMembers->mGenericBody->IsActive();
       }
       return false;
    }
