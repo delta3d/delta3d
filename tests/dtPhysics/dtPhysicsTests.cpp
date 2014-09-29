@@ -766,7 +766,7 @@ namespace dtPhysics
 
       physicsObject->SetMaterial(uniqueMaterial);
 
-      BaseBodyWrapper* baseBodyWrapper = physicsObject->GetBaseBodyWrapper();
+      BaseBodyWrapper* baseBodyWrapper = physicsObject->GetBodyWrapper();
 
       CPPUNIT_ASSERT(baseBodyWrapper != NULL);
 
@@ -1120,7 +1120,7 @@ namespace dtPhysics
 
       po->Create();
 
-      palActivationSettings* activationImpl = dynamic_cast<palActivationSettings*>(&po->GetBaseBodyWrapper()->GetPalBodyBase());
+      palActivationSettings* activationImpl = dynamic_cast<palActivationSettings*>(&po->GetBodyWrapper()->GetPalBodyBase());
       // No activation support, so return
       if (activationImpl == NULL)
       {
@@ -1205,10 +1205,10 @@ namespace dtPhysics
       poB->SetMass(50.0f);
       poB->Create();
 
-      palLink* rigidLinkBefore = dtPhysics::PhysicsWorld::GetInstance().GetPalFactory()->CreateRigidLink(&poA->GetBaseBodyWrapper()->GetPalBodyBase(),
-            &poB->GetBaseBodyWrapper()->GetPalBodyBase());
-      palLink* rigidLinkAfter = dtPhysics::PhysicsWorld::GetInstance().GetPalFactory()->CreateRigidLink(&poA->GetBaseBodyWrapper()->GetPalBodyBase(),
-            &poB->GetBaseBodyWrapper()->GetPalBodyBase());
+      palLink* rigidLinkBefore = dtPhysics::PhysicsWorld::GetInstance().GetPalFactory()->CreateRigidLink(&poA->GetBodyWrapper()->GetPalBodyBase(),
+            &poB->GetBodyWrapper()->GetPalBodyBase());
+      palLink* rigidLinkAfter = dtPhysics::PhysicsWorld::GetInstance().GetPalFactory()->CreateRigidLink(&poA->GetBodyWrapper()->GetPalBodyBase(),
+            &poB->GetBodyWrapper()->GetPalBodyBase());
 
       CPPUNIT_ASSERT(rigidLinkBefore != NULL);
       CPPUNIT_ASSERT(rigidLinkAfter != NULL);
@@ -1251,7 +1251,7 @@ namespace dtPhysics
       dtCore::RefPtr<Geometry> geom = Geometry::CreateBoxGeometry(TransformType(), VectorType(1.0, 1.0, 1.0), 1.0f);
       po->CreateFromGeometry(*geom);
 
-      palActivationSettings* activationImpl = dynamic_cast<palActivationSettings*>(&po->GetBaseBodyWrapper()->GetPalBodyBase());
+      palActivationSettings* activationImpl = dynamic_cast<palActivationSettings*>(&po->GetBodyWrapper()->GetPalBodyBase());
 
       if (activationImpl != NULL)
       {
