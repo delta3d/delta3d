@@ -8,7 +8,7 @@
         <comment></comment>
         <copyright></copyright>
         <createTimestamp>2014-07-15T22:49:46-05:00</createTimestamp>
-        <lastUpdateTimestamp>2014-09-28T00:19:05-05:00</lastUpdateTimestamp>
+        <lastUpdateTimestamp>2014-09-28T23:21:56-05:00</lastUpdateTimestamp>
         <editorVersion>2.8.0</editorVersion>
         <schemaVersion>1.0</schemaVersion>
     </header>
@@ -865,13 +865,21 @@
                 <name>Main: Origin Offset</name>
                 <vec3>
                     <value1>0.000000</value1>
-                    <value2>0.000000</value2>
-                    <value3>2.000000</value3>
+                    <value2>1.300000</value2>
+                    <value3>2.400001</value3>
                 </vec3>
             </property>
             <property>
                 <name>Main: Mass</name>
                 <float>2000</float>
+            </property>
+            <property>
+                <name>Main: Moment Of Inertia</name>
+                <vec3>
+                    <value1>35000.000000</value1>
+                    <value2>35000.000000</value2>
+                    <value3>14900.000000</value3>
+                </vec3>
             </property>
             <property>
                 <name>Main: ActivationLinearVelocityThreshold</name>
@@ -2801,7 +2809,7 @@
             </property>
             <property>
                 <name>Bezier Node</name>
-                <actorId>8c8be7b7-5645-4997-873b-266c7b6af1ec</actorId>
+                <actorId>5e9ad074-dfdc-4432-be58-53326f1f2e43</actorId>
             </property>
         </actor>
         <actor>
@@ -5603,13 +5611,21 @@
                 <name>Main: Origin Offset</name>
                 <vec3>
                     <value1>0.000000</value1>
-                    <value2>0.000000</value2>
-                    <value3>2.000000</value3>
+                    <value2>1.300000</value2>
+                    <value3>2.400001</value3>
                 </vec3>
             </property>
             <property>
                 <name>Main: Mass</name>
                 <float>2000</float>
+            </property>
+            <property>
+                <name>Main: Moment Of Inertia</name>
+                <vec3>
+                    <value1>35000.000000</value1>
+                    <value2>35000.000000</value2>
+                    <value3>14900.000000</value3>
+                </vec3>
             </property>
             <property>
                 <name>Main: ActivationLinearVelocityThreshold</name>
@@ -5621,7 +5637,7 @@
             </property>
             <property>
                 <name>Main: AngularDamping</name>
-                <float>0.1</float>
+                <float>0.2</float>
             </property>
             <property>
                 <name>Main: PhysicsMesh</name>
@@ -6691,7 +6707,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>127.209312</value3>
+                    <value3>127.209320</value3>
                 </vec3>
             </property>
             <property>
@@ -6720,13 +6736,21 @@
                 <name>Main: Origin Offset</name>
                 <vec3>
                     <value1>0.000000</value1>
-                    <value2>0.000000</value2>
-                    <value3>2.000000</value3>
+                    <value2>1.300000</value2>
+                    <value3>2.400001</value3>
                 </vec3>
             </property>
             <property>
                 <name>Main: Mass</name>
                 <float>2000</float>
+            </property>
+            <property>
+                <name>Main: Moment Of Inertia</name>
+                <vec3>
+                    <value1>35000.000000</value1>
+                    <value2>35000.000000</value2>
+                    <value3>14900.000000</value3>
+                </vec3>
             </property>
             <property>
                 <name>Main: ActivationLinearVelocityThreshold</name>
@@ -6738,7 +6762,7 @@
             </property>
             <property>
                 <name>Main: AngularDamping</name>
-                <float>0.1</float>
+                <float>0.2</float>
             </property>
             <property>
                 <name>Main: PhysicsMesh</name>
@@ -7150,14 +7174,14 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>-0.000000</value2>
-                    <value3>-87.356934</value3>
+                    <value3>-87.290283</value3>
                 </vec3>
             </property>
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>408.092957</value1>
-                    <value2>-401.401337</value2>
+                    <value1>558.679810</value1>
+                    <value2>-394.354004</value2>
                     <value3>75.000000</value3>
                 </vec3>
             </property>
@@ -8222,7 +8246,7 @@
             </property>
             <property>
                 <name>Bezier Node</name>
-                <actorId>3bcec58d-9ed1-423b-875f-4535faf50154</actorId>
+                <actorId>add9de85-adbd-45dd-b7db-054ac6405398</actorId>
             </property>
         </actor>
         <actor>
@@ -16309,7 +16333,7 @@
             </property>
             <property>
                 <name>Bezier Node</name>
-                <actorId>3bcec58d-9ed1-423b-875f-4535faf50154</actorId>
+                <actorId>add9de85-adbd-45dd-b7db-054ac6405398</actorId>
             </property>
         </actor>
         <actor>
