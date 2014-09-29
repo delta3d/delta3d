@@ -122,6 +122,7 @@ namespace dtExample
       dtCore::RefPtr<DynamicParticles> mSprayBack;
 
       dtCore::ObserverPtr<dtCore::Transformable> mOwnerDrawable;
+      dtCore::ObserverPtr<dtCore::Transformable> mWhomToFollow;
    };
 }
 

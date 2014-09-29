@@ -330,7 +330,7 @@ void BezierControllerActorComponent::SendGameEvent(dtCore::GameEvent* gameEvent)
             dtCore::RefPtr<dtGame::GameEventMessage> message;
             gm->GetMessageFactory().CreateMessage(dtGame::MessageType::INFO_GAME_EVENT, message);
 
-            message->SetSendingActorId(GetId());
+            message->SetSendingActorId(actor->GetId());
             message->SetGameEvent(*gameEvent);
 
             gm->SendMessage(*message);

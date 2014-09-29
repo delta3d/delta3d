@@ -42,7 +42,8 @@
 #include <osg/MatrixTransform>
 #include <osg/Geode>
 
-
+#include <dtPhysics/physicsobject.h>
+#include <dtPhysics/physicsactcomp.h>
 
 namespace dtExample
 {
@@ -216,8 +217,7 @@ namespace dtExample
          owner->GetGameManager()->FindActorById(gameEventMsg.GetSendingActorId(), bez);
          if (bez != NULL)
          {
-            dtCore::Transform xform = bez->GetDrawable<dtABC::BezierController>()->GetLocalTransform();
-            mOwnerDrawable->SetTransform(xform);
+            mWhomToFollow = bez->GetDrawable<dtABC::BezierController>()->GetTargetObject();
          }
       }
    }
@@ -469,6 +469,46 @@ namespace dtExample
 
       float simTimeDelta = tickMessage.GetDeltaSimTime();
       UpdateSpray(simTimeDelta);
+
+      if (mWhomToFollow.valid())
+      {
+         dtCore::Transform targetTransform;
+         mWhomToFollow->GetTransform(targetTransform);
+
+         using namespace dtPhysics;
+         bool physicsDynamicsWorked = false;
+         PhysicsActComp* pac = GetOwner()->GetComponent<PhysicsActComp>();
+         if (pac != NULL)
+         {
+            PhysicsObject* po = pac->GetMainPhysicsObject();
+            if (po != NULL && po->GetMechanicsType() == MechanicsType::DYNAMIC)
+            {
+               dtCore::Transform curTransform;
+               physicsDynamicsWorked = true;
+               VectorType linVel = po->GetLinearVelocity();
+               po->GetTransform(curTransform);
+
+               VectorType ypr, targetYpr;
+               curTransform.GetRotation(ypr);
+               targetTransform.GetRotation(targetYpr);
+               float delta = targetYpr[0] - ypr[0];
+               if (delta > 180.0)
+                  delta -= 360.0;
+               if (delta < -180.0)
+                  delta += 360.0;
+               po->AddTorque(VectorType(0.0,0.0,osg::DegreesToRadians(delta * po->GetMass())));
+
+               VectorType deltaXY = targetTransform.GetTranslation() - curTransform.GetTranslation();
+               deltaXY.z() = linVel.z();
+
+               po->SetLinearVelocity(deltaXY);
+            }
+         }
+         if (!physicsDynamicsWorked)
+         {
+            mOwnerDrawable->SetTransform(targetTransform);
+         }
+      }
    }
 
    //////////////////////////////////////////////////////////

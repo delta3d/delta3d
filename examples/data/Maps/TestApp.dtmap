@@ -7,7 +7,7 @@
         <comment></comment>
         <copyright></copyright>
         <createTimestamp>2014-07-15T22:49:46-05:00</createTimestamp>
-        <lastUpdateTimestamp>2014-09-29T17:33:33-05:00</lastUpdateTimestamp>
+        <lastUpdateTimestamp>2014-09-29T18:04:56-05:00</lastUpdateTimestamp>
         <editorVersion>2.8.0</editorVersion>
         <schemaVersion>1.0</schemaVersion>
     </header>
@@ -2774,7 +2774,7 @@
             </property>
             <property>
                 <name>Bezier Node</name>
-                <actorId>5e9ad074-dfdc-4432-be58-53326f1f2e43</actorId>
+                <actorId>8c8be7b7-5645-4997-873b-266c7b6af1ec</actorId>
             </property>
         </actor>
         <actor>
@@ -3721,6 +3721,10 @@
                 <float>0.016666669</float>
             </property>
             <property>
+                <name>Target Object</name>
+                <actorId>D713430F-2D2D-446B-BA82-908219F81DF9</actorId>
+            </property>
+            <property>
                 <name>Start Node</name>
                 <actorId>f551ce6c-57ef-4d1d-a562-1f21ac37bf58</actorId>
             </property>
@@ -3735,6 +3739,10 @@
             <property>
                 <name>Set Looping</name>
                 <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Event On Next Step</name>
+                <gameevent>82548F79-C8C0-4018-A7D3-3AAC58C50643</gameevent>
             </property>
         </actor>
         <actor>
@@ -4727,6 +4735,39 @@
             <property>
                 <name>Previous Bezier Node</name>
                 <actorId>c776c460-2b29-4dce-8fc9-c8db12f4c9ff</actorId>
+            </property>
+        </actor>
+        <actor>
+            <type>dtutil.Volume Edit</type>
+            <id>41D6E86C-8C0C-45D4-8B43-3F0359DB56DF</id>
+            <name>SailBoat3Target</name>
+            <property>
+                <name>IsActive</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>-99.432762</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-212.188553</value1>
+                    <value2>-333.245850</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Scale</name>
+                <vec3>
+                    <value1>0.001000</value1>
+                    <value2>0.001000</value2>
+                    <value3>0.001000</value3>
+                </vec3>
             </property>
         </actor>
         <actor>
@@ -7160,15 +7201,15 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>-0.000000</value2>
-                    <value3>-87.273262</value3>
+                    <value3>-90.319931</value3>
                 </vec3>
             </property>
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>617.338501</value1>
-                    <value2>-391.568695</value2>
-                    <value3>75.000000</value3>
+                    <value1>-1775.518066</value1>
+                    <value2>-437.978394</value2>
+                    <value3>74.999992</value3>
                 </vec3>
             </property>
             <property>
@@ -7781,6 +7822,10 @@
                 <float>0.016666668</float>
             </property>
             <property>
+                <name>Target Object</name>
+                <actorId>41D6E86C-8C0C-45D4-8B43-3F0359DB56DF</actorId>
+            </property>
+            <property>
                 <name>Start Node</name>
                 <actorId>c9a3d889-00eb-41f4-ab30-4a88c1d12d6d</actorId>
             </property>
@@ -7795,6 +7840,10 @@
             <property>
                 <name>Set Looping</name>
                 <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Event On Next Step</name>
+                <gameevent>8962C7E0-8E14-4055-8AD4-A3B3BB58D664</gameevent>
             </property>
         </actor>
         <actor>
@@ -8232,7 +8281,7 @@
             </property>
             <property>
                 <name>Bezier Node</name>
-                <actorId>add9de85-adbd-45dd-b7db-054ac6405398</actorId>
+                <actorId>3bcec58d-9ed1-423b-875f-4535faf50154</actorId>
             </property>
         </actor>
         <actor>
@@ -9002,6 +9051,10 @@
                 <float>0.016666669</float>
             </property>
             <property>
+                <name>Target Object</name>
+                <actorId>FD376F63-C490-41E9-AF74-941F7B94A504</actorId>
+            </property>
+            <property>
                 <name>Start Node</name>
                 <actorId>b0c2d4b0-c6b0-46b2-9c0e-f2d5eb95acd5</actorId>
             </property>
@@ -9016,6 +9069,10 @@
             <property>
                 <name>Set Looping</name>
                 <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Event On Next Step</name>
+                <gameevent>9442D20A-807F-40E6-8A5D-E5694E9E02DC</gameevent>
             </property>
         </actor>
         <actor>
@@ -11964,6 +12021,72 @@
                 <resourceType>StaticMeshes</resourceType>
                 <resourceDisplayName>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resourceDisplayName>
                 <resource>StaticMeshes:trees:palmtree:PalmTree_PHYSICS.osg</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtutil.Volume Edit</type>
+            <id>D713430F-2D2D-446B-BA82-908219F81DF9</id>
+            <name>SailBoat2Target</name>
+            <property>
+                <name>IsActive</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>-0.000000</value2>
+                    <value3>173.276901</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-193.440216</value1>
+                    <value2>26.954453</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Scale</name>
+                <vec3>
+                    <value1>0.001000</value1>
+                    <value2>0.001000</value2>
+                    <value3>0.001000</value3>
+                </vec3>
+            </property>
+        </actor>
+        <actor>
+            <type>dtutil.Volume Edit</type>
+            <id>FD376F63-C490-41E9-AF74-941F7B94A504</id>
+            <name>SailBoat1Target</name>
+            <property>
+                <name>IsActive</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>-0.000000</value2>
+                    <value3>38.234192</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-42.149055</value1>
+                    <value2>-174.859482</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Scale</name>
+                <vec3>
+                    <value1>0.001000</value1>
+                    <value2>0.001000</value2>
+                    <value3>0.001000</value3>
+                </vec3>
             </property>
         </actor>
         <actor>
@@ -16298,7 +16421,7 @@
             </property>
             <property>
                 <name>Bezier Node</name>
-                <actorId>add9de85-adbd-45dd-b7db-054ac6405398</actorId>
+                <actorId>3bcec58d-9ed1-423b-875f-4535faf50154</actorId>
             </property>
         </actor>
         <actor>
