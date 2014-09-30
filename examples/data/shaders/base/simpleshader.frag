@@ -75,6 +75,6 @@ void main(void)
    
    result = mix(fogColor, result, fogAmt);
 
-   gl_FragColor = vec4(result, 1.0);
+   gl_FragColor = vec4(result, diffuse.a);
 }
 
