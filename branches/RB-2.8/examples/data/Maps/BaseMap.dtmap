@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <map xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="delta3dMap" xsi:schemaLocation="delta3dMap map.xsd">
     <header>
         <name>BaseMap</name>
@@ -7,7 +8,7 @@
         <comment></comment>
         <copyright></copyright>
         <createTimestamp>2014-07-29T11:17:35-05:00</createTimestamp>
-        <lastUpdateTimestamp>2014-09-21T15:22:17-05:00</lastUpdateTimestamp>
+        <lastUpdateTimestamp>2014-09-30T00:01:56-05:00</lastUpdateTimestamp>
         <editorVersion>2.8.0</editorVersion>
         <schemaVersion>1.0</schemaVersion>
     </header>
@@ -30,11 +31,7 @@
             <name>HDRScene_01</name>
             <property>
                 <name>MidGrey</name>
-                <float>0.8</float>
-            </property>
-            <property>
-                <name>MinLuminance</name>
-                <float>0.2</float>
+                <float>0.80000001</float>
             </property>
         </actor>
         <actor>
@@ -82,6 +79,10 @@
             <type>dtRender.Ephemeris Scene</type>
             <id>90c64a56-1ee4-4297-bede-e4b46990fef7</id>
             <name>EphemerisScene_03</name>
+            <property>
+                <name>Date and Time</name>
+                <string>2014-07-26T05:30:00+00:00</string>
+            </property>
         </actor>
         <actor>
             <type>dtRender.Cube Map Scene</type>
