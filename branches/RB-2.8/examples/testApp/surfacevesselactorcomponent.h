@@ -32,6 +32,7 @@
 #include <dtCore/refptr.h>
 #include <dtGame/actorcomponent.h>
 #include <dtCore/gameevent.h>
+#include <dtPhysics/buoyancyaction.h>
 #include <osg/Vec3>
 
 
@@ -43,6 +44,7 @@ namespace dtGame
 
 namespace dtExample
 {
+   class WaterActorHeightQuery;
    /////////////////////////////////////////////////////////////////////////////
    // CLASS CODE
    /////////////////////////////////////////////////////////////////////////////
@@ -85,6 +87,7 @@ namespace dtExample
 
       /// Adds the properties associated with this actor
       /*virtual*/ void BuildPropertyMap();
+      /*virtual*/ void OnRemovedFromWorld();
 
       /*virtual*/ void OnEnteredWorld();
 
@@ -123,6 +126,8 @@ namespace dtExample
 
       dtCore::ObserverPtr<dtCore::Transformable> mOwnerDrawable;
       dtCore::ObserverPtr<dtCore::Transformable> mWhomToFollow;
+      dtCore::RefPtr<dtPhysics::BuoyancyAction> mBuoyancyAction;
+      WaterActorHeightQuery* mWaterHeightQuery;
    };
 }
 

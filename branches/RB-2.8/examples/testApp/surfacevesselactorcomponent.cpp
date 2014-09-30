@@ -44,6 +44,10 @@
 
 #include <dtPhysics/physicsobject.h>
 #include <dtPhysics/physicsactcomp.h>
+#include <dtPhysics/buoyancyaction.h>
+#include <dtActors/watergridactor.h>
+#include <dtActors/engineactorregistry.h>
+#include "wateractorheightquery.h"
 
 namespace dtExample
 {
@@ -63,6 +67,8 @@ namespace dtExample
       , mSprayVelocityMax(8.0f)
       , mLastSprayRatio()
       , mSprayUpdateTimer(0.0f)
+      , mBuoyancyAction(new dtPhysics::BuoyancyAction())
+      , mWaterHeightQuery(NULL)
    {
       SetClassName(SurfaceVesselActorComponent::CLASS_NAME);
    }
@@ -115,6 +121,15 @@ namespace dtExample
       DT_REGISTER_PROPERTY(SprayShaderGroup, "Shader to apply to the particle systems.", RegHelperType, propReg);
 
       DT_REGISTER_PROPERTY(UpdateFromControllerEvent, "GameEvent to use to tell it to update from the bezier controller.", RegHelperType, propReg);
+
+      const dtUtil::RefString GROUP_BUOY("Buoyancy");
+      typedef dtCore::PropertyRegHelper<SurfaceVesselActorComponent&, dtPhysics::BuoyancyAction> RegHelperTypeBuoy;
+      RegHelperTypeBuoy propRegBuoy(*this, mBuoyancyAction, GROUP_BUOY);
+
+      DT_REGISTER_PROPERTY(LiquidDensityGramsPerSqCm, "The density of the liquid to float in.  This can change at altitude and for the fluid type. Water at sea level is the default.", RegHelperTypeBuoy, propRegBuoy);
+      DT_REGISTER_PROPERTY_WITH_LABEL(CD, "Drag Coefficient", "The drag coefficient = Fd / 0.5pv^2A.  p = mass density. v = velocity. A = area. Fd = fluid drag.  Defaults to the value for a sphere.", RegHelperTypeBuoy, propRegBuoy);
+      DT_REGISTER_PROPERTY(SurfaceAreaSqM, "The surface area of the object in the liquid in square meters.", RegHelperTypeBuoy, propRegBuoy);
+
    }
 
    //////////////////////////////////////////////////////////
@@ -129,8 +144,21 @@ namespace dtExample
       owner->RegisterForMessages(dtGame::MessageType::INFO_MAP_CHANGE_LOAD_END, dtUtil::MakeFunctor(&SurfaceVesselActorComponent::OnMapLoaded, this));
       owner->RegisterForMessages(dtGame::MessageType::INFO_MAPS_OPENED, dtUtil::MakeFunctor(&SurfaceVesselActorComponent::OnMapLoaded, this));
       owner->RegisterForMessages(dtGame::MessageType::INFO_GAME_EVENT, dtUtil::MakeFunctor(&SurfaceVesselActorComponent::OnGameEvent, this));
+
+      dtPhysics::PhysicsActComp* pac = GetOwner()->GetComponent<dtPhysics::PhysicsActComp>();
+      if (pac != NULL)
+      {
+         mBuoyancyAction->Register(*pac->GetMainPhysicsObject());
+      }
    }
 
+   //////////////////////////////////////////////////////////
+   void SurfaceVesselActorComponent::OnRemovedFromWorld()
+   {
+      BaseClass::OnRemovedFromWorld();
+      delete mWaterHeightQuery;
+      mWaterHeightQuery = NULL;
+   }
 
 
    //////////////////////////////////////////////////////////
@@ -207,6 +235,17 @@ namespace dtExample
 
       // Ensure the particle systems have the current enabled state.
       SetSprayEnabled(mSprayEnabled);
+
+      if (mWaterHeightQuery == NULL)
+      {
+         dtActors::WaterGridActorProxy* waterGrid = NULL;
+         owner->GetGameManager()->FindActorByType(*dtActors::EngineActorRegistry::WATER_GRID_ACTOR_TYPE, waterGrid);
+         if (waterGrid != NULL)
+         {
+            mWaterHeightQuery = new WaterActorHeightQuery(*waterGrid->GetDrawable<dtActors::WaterGridActor>());
+            mBuoyancyAction->SetWaterHeightQuery(mWaterHeightQuery);
+         }
+      }
    }
 
    //////////////////////////////////////////////////////////

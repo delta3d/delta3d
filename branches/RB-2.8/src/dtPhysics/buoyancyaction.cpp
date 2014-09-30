@@ -36,7 +36,7 @@ namespace dtPhysics
    BuoyancyAction::BuoyancyAction()
    : mLiquidDensityGramsPerSqCm(0.998232f)
    , mCD(0.47f)
-   , mSurfaceAreaSqM(100.0f)
+   , mSurfaceAreaSqM(1.0f)
    , mBuoyancy()
    , mDrag()
    {

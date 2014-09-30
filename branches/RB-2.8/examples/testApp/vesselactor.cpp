@@ -27,14 +27,6 @@
 #include "vesselactor.h"
 #include "surfacevesselactorcomponent.h"
 
-#include <dtPhysics/physicsactcomp.h>
-#include <dtPhysics/buoyancyaction.h>
-#include <dtActors/watergridactor.h>
-#include <dtActors/engineactorregistry.h>
-#include "wateractorheightquery.h"
-#include <dtGame/gamemanager.h>
-#include <dtGame/basemessages.h>
-
 namespace dtExample
 {
 
@@ -56,23 +48,6 @@ namespace dtExample
    }
    void VesselActor::OnEnteredWorld()
    {
-      RegisterForMessages(dtGame::MessageType::INFO_MAP_CHANGE_LOAD_END, dtUtil::MakeFunctor(&VesselActor::OnMapLoaded, this));
-      RegisterForMessages(dtGame::MessageType::INFO_MAPS_OPENED, dtUtil::MakeFunctor(&VesselActor::OnMapLoaded, this));
-   }
-
-   void VesselActor::OnMapLoaded(const dtGame::MapMessage& /*mapMessage*/)
-   {
-      if (mBuoyancyAction == NULL)
-      {
-         mBuoyancyAction = new dtPhysics::BuoyancyAction();
-         mBuoyancyAction->Register(*GetComponent<dtPhysics::PhysicsActComp>()->GetMainPhysicsObject());
-         dtActors::WaterGridActorProxy* waterGrid = NULL;
-         GetGameManager()->FindActorByType(*dtActors::EngineActorRegistry::WATER_GRID_ACTOR_TYPE, waterGrid);
-         if (waterGrid != NULL)
-         {
-            mBuoyancyAction->SetWaterHeightQuery(new WaterActorHeightQuery(*waterGrid->GetDrawable<dtActors::WaterGridActor>()));
-         }
-      }
    }
 
 
