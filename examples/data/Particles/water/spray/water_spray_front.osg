@@ -81,7 +81,7 @@ Group {
         angularVelocity 0 0 0
         radius 0.2
         mass 0.1
-        textureTile 1 1 10
+        textureTile 1 1 11
         sizeInterpolator {
           osgParticle::LinearInterpolator {
             UniqueID LinearInterpolator_2
@@ -142,8 +142,8 @@ Group {
       }
       osgParticle::RadialShooter {
         thetaRange -1.56 -1.66
-        phiRange -5.18 -4.33
-        initialSpeedRange 5 5
+        phiRange -5.35 -4.16
+        initialSpeedRange 6 6
         initialRotationalSpeedRange 0 0 -8 0 0 0
       }
     }
