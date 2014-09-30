@@ -148,6 +148,7 @@ namespace dtExample
       if(mSprayFront.valid())
       {
          // Attach the particles to the parent
+         mSprayFront->Emancipate();
          drawable->GetOSGNode()->asGroup()->addChild(mSprayFront->GetOSGNode());
 
          // Offset the particles 
@@ -162,6 +163,7 @@ namespace dtExample
       if(mSpraySideLeft.valid())
       {
          // Attach the particles to the parent
+         mSpraySideLeft->Emancipate();
          drawable->GetOSGNode()->asGroup()->addChild(mSpraySideLeft->GetOSGNode());
 
          // Offset the particles 
@@ -176,6 +178,7 @@ namespace dtExample
       if(mSpraySideRight.valid())
       {
          // Attach the particles to the parent
+         mSpraySideRight->Emancipate();
          drawable->GetOSGNode()->asGroup()->addChild(mSpraySideRight->GetOSGNode());
 
          // Offset the particles 
@@ -190,6 +193,7 @@ namespace dtExample
       if(mSprayBack.valid())
       {
          // Attach the particles to the parent
+         mSprayBack->Emancipate();
          drawable->GetOSGNode()->asGroup()->addChild(mSprayBack->GetOSGNode());
 
          // Offset the particles 
