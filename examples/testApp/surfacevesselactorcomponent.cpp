@@ -373,25 +373,25 @@ namespace dtExample
    //////////////////////////////////////////////////////////
    void SurfaceVesselActorComponent::CreateSprayEffects()
    {
-      if(!mSprayFront.valid())
+      if(!mSprayFront.valid() && !mSprayFrontResource.IsEmpty())
       {
          mSprayFrontActor = CreatDynamicParticleSystemActor(mSprayFrontResource, "SprayFrontRight");
          mSprayFront = GetDynamicParticles(mSprayFrontActor.get());
       }
 
-      if(!mSpraySideLeft.valid())
+      if(!mSpraySideLeft.valid() && !mSpraySideLeftResource.IsEmpty())
       {
          mSpraySideLeftActor = CreatDynamicParticleSystemActor(mSpraySideLeftResource, "SpraySideLeft");
          mSpraySideLeft = GetDynamicParticles(mSpraySideLeftActor.get());
       }
 
-      if(!mSpraySideRight.valid())
+      if(!mSpraySideRight.valid() && !mSpraySideRightResource.IsEmpty())
       {
          mSpraySideRightActor = CreatDynamicParticleSystemActor(mSpraySideRightResource, "SpraySideRight");
          mSpraySideRight = GetDynamicParticles(mSpraySideRightActor.get());
       }
 
-      if(!mSprayBack.valid())
+      if(!mSprayBack.valid() && !mSprayBackResource.IsEmpty())
       {
          mSprayBackActor = CreatDynamicParticleSystemActor(mSprayBackResource, "SprayBack");
          mSprayBack = GetDynamicParticles(mSprayBackActor.get());
