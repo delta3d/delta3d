@@ -2033,7 +2033,7 @@ namespace dtCore
       if (resource == ResourceDescriptor::NULL_RESOURCE)
       {
          throw ProjectFileNotFoundException(
-            std::string("A empty resource was passed in: [") + resource.GetResourceIdentifier() + "]", __FILE__, __LINE__);
+            std::string("An empty resource was passed in to process: [") + resource.GetResourceIdentifier() + "]", __FILE__, __LINE__);
       }
 
       const std::string& path = mImpl->mResourceHelper.GetResourcePath(resource);
