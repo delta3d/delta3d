@@ -29,7 +29,7 @@ MatrixTransform {
       0 0 1 0
       0 0 0 1
     }
-    num_children 2
+    num_children 3
     MatrixTransform {
       DataVariance STATIC
       name "Sailboat_Hull"
@@ -8055,6 +8055,182 @@ MatrixTransform {
             0.479838 0.0368789
             0.402198 0.707963
             0.438148 0.0442306
+          }
+        }
+      }
+    }
+    MatrixTransform {
+      DataVariance STATIC
+      name "SailboatSpace"
+      nodeMask 0xffffffff
+      cullingActive TRUE
+      referenceFrame RELATIVE
+      Matrix {
+        1 0 0 0
+        0 1 0 0
+        0 0 1 0
+        0 0 0.651157 1
+      }
+      num_children 1
+      Geode {
+        UniqueID Geode_10
+        DataVariance STATIC
+        name "SailboatSpace-GEODE"
+        nodeMask 0xffffffff
+        cullingActive TRUE
+        num_drawables 1
+        Geometry {
+          name "SailboatSpace"
+          StateSet {
+            UniqueID StateSet_11
+            name "SailboatSpace"
+            rendering_hint DEFAULT_BIN
+            renderBinMode INHERIT
+            GL_CULL_FACE ON
+            GL_LIGHTING ON
+            GL_NORMALIZE ON
+            GL_BLEND ON
+            Material {
+              ColorMode OFF
+              ambientColor 0.588235 0.588235 0.588235 1
+              diffuseColor 1 1 1 1
+              specularColor 0 0 0 1
+              emissionColor 0 0 0 1
+              shininess 0
+            }
+            BlendFunc {
+              source SRC_ALPHA
+              destination ONE_MINUS_SRC_ALPHA
+            }
+            textureUnit 0 {
+              GL_TEXTURE_2D ON
+              Texture2D {
+                UniqueID Texture2D_12
+                file "images\\SailboatSpace.png"
+                wrap_s REPEAT
+                wrap_t REPEAT
+                wrap_r CLAMP_TO_EDGE
+                min_filter LINEAR_MIPMAP_LINEAR
+                mag_filter LINEAR
+                maxAnisotropy 1
+                borderColor 0 0 0 0
+                borderWidth 0
+                useHardwareMipMapGeneration TRUE
+                unRefImageDataAfterApply TRUE
+                internalFormatMode USE_IMAGE_DATA_FORMAT
+                resizeNonPowerOfTwo TRUE
+                shadowComparison FALSE
+                shadowCompareFunc GL_LEQUAL
+                shadowTextureMode GL_LUMINANCE
+              }
+            }
+            textureUnit 3 {
+              GL_TEXTURE_2D ON
+              Texture2D {
+                UniqueID Texture2D_8
+                file "images\\NONE.png"
+                wrap_s REPEAT
+                wrap_t REPEAT
+                wrap_r CLAMP_TO_EDGE
+                min_filter LINEAR_MIPMAP_LINEAR
+                mag_filter LINEAR
+                maxAnisotropy 1
+                borderColor 0 0 0 0
+                borderWidth 0
+                useHardwareMipMapGeneration TRUE
+                unRefImageDataAfterApply TRUE
+                internalFormatMode USE_IMAGE_DATA_FORMAT
+                resizeNonPowerOfTwo TRUE
+                shadowComparison FALSE
+                shadowCompareFunc GL_LEQUAL
+                shadowTextureMode GL_LUMINANCE
+              }
+            }
+            textureUnit 2 {
+              GL_TEXTURE_2D ON
+              Texture2D {
+                file "images\\NONE.png"
+                wrap_s REPEAT
+                wrap_t REPEAT
+                wrap_r CLAMP_TO_EDGE
+                min_filter LINEAR_MIPMAP_LINEAR
+                mag_filter LINEAR
+                maxAnisotropy 1
+                borderColor 0 0 0 0
+                borderWidth 0
+                useHardwareMipMapGeneration TRUE
+                unRefImageDataAfterApply TRUE
+                internalFormatMode USE_IMAGE_DATA_FORMAT
+                resizeNonPowerOfTwo TRUE
+                shadowComparison FALSE
+                shadowCompareFunc GL_LEQUAL
+                shadowTextureMode GL_LUMINANCE
+              }
+              TexEnvCombine {
+                combine_RGB REPLACE
+                combine_Alpha INTERPOLATE
+                source0_RGB PREVIOUS
+                source1_RGB PREVIOUS
+                source2_RGB CONSTANT
+                source0_Alpha TEXTURE
+                source1_Alpha PREVIOUS
+                source2_Alpha CONSTANT
+                operand0_RGB SRC_COLOR
+                operand1_RGB SRC_COLOR
+                operand2_RGB SRC_ALPHA
+                operand0_Alpha SRC_ALPHA
+                operand1_Alpha SRC_ALPHA
+                operand2_Alpha SRC_ALPHA
+                scale_RGB 1
+                scale_Alpha 1
+                constantColor 1 1 1 1
+              }
+            }
+          }
+          useDisplayList TRUE
+          useVertexBufferObjects FALSE
+          PrimitiveSets 1
+          {
+            DrawElementsUShort TRIANGLES 6
+            {
+              0 1 2 2 3 0 
+            }
+          }
+          VertexArray Vec3Array 4
+          {
+            0.677565 0.416883 -0.104244
+            -0.677565 0.416883 -0.104446
+            -0.677565 -1.57192 -0.104446
+            0.677565 -1.57192 -0.104245
+          }
+          NormalBinding PER_VERTEX
+          NormalArray Vec3Array 4
+          {
+            -0.000148503 -2.24748e-008 1
+            -0.000148503 -2.24731e-008 1
+            -0.000148503 -2.24759e-008 1
+            -0.000148503 -2.24776e-008 1
+          }
+          TexCoordArray 0 Vec2Array 4
+          {
+            0.342688 0.852765
+            0.342693 0.892008
+            0.28625 0.892008
+            0.28625 0.852765
+          }
+          TexCoordArray 1 Vec2Array 4
+          {
+            0.342688 0.852765
+            0.342693 0.892008
+            0.28625 0.892008
+            0.28625 0.852765
+          }
+          TexCoordArray 2 Vec2Array 4
+          {
+            0.342688 0.852765
+            0.342693 0.892008
+            0.28625 0.892008
+            0.28625 0.852765
           }
         }
       }
