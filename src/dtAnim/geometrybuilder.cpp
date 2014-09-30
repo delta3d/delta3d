@@ -301,6 +301,13 @@ osg::ref_ptr<osg::Node> GeometryBuilder::GeometryCache::GetOrCreateModel(Cal3DMo
 
    Cal3DModelData* modelData = Cal3DDatabase::GetInstance().GetModelData(*pWrapper);
 
+   if (modelData == NULL)
+   {
+      LOG_ERROR("Model does not have model data.  Unable to create hardware submesh.");
+      return NULL;
+   }
+
+
    std::string filename = modelData->GetFilename();
 
    CalHardwareModel* hardwareModel = modelData->GetOrCreateCalHardwareModel();
@@ -344,12 +351,6 @@ osg::ref_ptr<osg::Node> GeometryBuilder::GeometryCache::GetOrCreateModel(Cal3DMo
          CalCoreModel* model = pWrapper->GetCalModel()->getCoreModel();
          CalCoreMesh* calMesh = model->getCoreMesh(0);
          
-         if (modelData == NULL)
-         {
-            LOG_ERROR("Model does not have model data.  Unable to create hardware submesh.");
-            return NULL;
-         }
-
          meshCount = hardwareModel->getHardwareMeshCount();
 
          for (submeshId = 0; submeshId < meshCount; submeshId++) 
