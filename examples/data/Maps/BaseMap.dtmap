@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <map xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="delta3dMap" xsi:schemaLocation="delta3dMap map.xsd">
     <header>
         <name>BaseMap</name>
@@ -8,7 +7,7 @@
         <comment></comment>
         <copyright></copyright>
         <createTimestamp>2014-07-29T11:17:35-05:00</createTimestamp>
-        <lastUpdateTimestamp>2014-09-30T00:01:56-05:00</lastUpdateTimestamp>
+        <lastUpdateTimestamp>2014-09-30T00:14:46-05:00</lastUpdateTimestamp>
         <editorVersion>2.8.0</editorVersion>
         <schemaVersion>1.0</schemaVersion>
     </header>
@@ -82,6 +81,10 @@
             <property>
                 <name>Date and Time</name>
                 <string>2014-07-26T05:30:00+00:00</string>
+            </property>
+            <property>
+                <name>Visibility</name>
+                <float>5000</float>
             </property>
         </actor>
         <actor>
