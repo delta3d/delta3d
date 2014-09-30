@@ -123,10 +123,7 @@ void computeMultiMapColor(MapParams mp, inout FragParams fp, inout EffectParams 
    vec4 normalColor = mp.normal;
    vec4 specColor = mp.specular;
    vec4 illumColor = mp.illum;
-   
-   //mat3 tbn;
-   //fp.worldNormal = computeWorldSpaceNormal(fp.pos, normalize(fp.normal), normalize(normalColor.rgb), uv, fp.tbn);
-   
+      
    fp.worldNormal = normalize((2.0 * normalize(normalColor.rgb)) - vec3(1.0, 1.0, 1.0));
    fp.worldNormal = normalize(fp.tbn * fp.worldNormal);
 
@@ -138,6 +135,55 @@ void computeMultiMapColor(MapParams mp, inout FragParams fp, inout EffectParams 
    computeRefraction(fp, mp, ep);
 
    
+   // Compute the Light & Spec Contribution
+   computeLightContrib_SunMoon(fp, ep);
+
+   //add dynamic lights
+   vec3 dynamicLightContrib = computeDynamicLightContrib(fp.worldNormal, fp.pos);
+   ep.lightContrib = clamp(ep.lightContrib + dynamicLightContrib, 0.0, 1.0);
+
+
+   // Compute the reflection contribution
+   //vec3 reflectVec = reflect(fp.viewDir, fp.worldNormal);
+   vec3 reflectVec = reflect(fp.viewDir, fp.worldNormal.xyz);
+   float reflectionAngle =  dot(reflectVec, fp.viewDir);
+   float reflectContrib = max(0.0,reflectionAngle);
+   
+   vec3 minLightSpec = min(ep.lightContrib.rgb, specColor.rgb);
+   
+   vec3 reflectCubeMap = sampleCubeMapReflection(fp.pos, fp.cameraPos, fp.worldNormal);
+   ep.envContrib = vec4(reflectCubeMap, reflectContrib); 
+   ep.envContrib *= mp.specular;
+   
+   // Don't apply specular greater than the light contrib or objects will glow in the dark...
+   ep.specContrib.a *= specColor.a;
+   float specLevel = ep.specContrib.a;
+   ep.specContrib.rgb = ep.lightContrib * specColor.rgb * specLevel;
+   ep.illumContrib.rgb += fp.sceneLuminance * illumColor.rgb;
+   
+   // Apply Fog 
+   float dist = length(fp.pos - fp.cameraPos);
+   float fogAmt = computeExpFog(dist);
+   ep.fogContrib = vec4(gl_Fog.color.rgb, fogAmt);
+   
+}
+
+void computeMultiMapColorSimple(MapParams mp, inout FragParams fp, inout EffectParams ep)
+{
+   vec2 uv = gl_TexCoord[0].xy;
+   
+   vec4 diffuseColor = mp.diffuse;
+   vec4 normalColor = mp.normal;
+   vec4 specColor = mp.specular;
+   vec4 illumColor = mp.illum;
+      
+   fp.worldNormal = fp.normal;
+
+   // Normalize all incoming vectors 
+   vec3 viewDir = normalize(fp.viewDir);
+   
+   ep.colorContrib = diffuseColor * fp.color;
+
    // Compute the Light & Spec Contribution
    computeLightContrib_SunMoon(fp, ep);
 
