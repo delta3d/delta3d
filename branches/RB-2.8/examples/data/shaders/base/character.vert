@@ -11,18 +11,11 @@ uniform vec4 boneTransforms[MAX_BONES * 3];
 uniform mat4 osg_ViewMatrixInverse = mat4(1.0);
 
 varying vec3 vNormal;
-varying vec3 vTangent;
-varying vec3 vBitangent;
 varying vec3 vLightDir;
 varying vec3 vLightDir2;
 varying vec3 vPos;
 varying vec3 vCamera;
 varying vec4 vViewPos;
-
-
-//attribute vec4 boneWeights;
-//attribute vec4 boneIndices;
-//attribute vec4 tangentSpace;
 
 
 void GenerateShadowTexCoords( in vec4 ecPosition );
@@ -34,13 +27,12 @@ void main(void)
 
    vec4 boneWeights = gl_MultiTexCoord1;
    vec4 boneIndices = gl_MultiTexCoord2;
-   vec4 tangentSpace = gl_MultiTexCoord3;
-
+   
 
    //initialize our data
    vec4 transformedPosition = vec4(0.0, 0.0, 0.0, 1.0);
    vec4 transformedNormal = vec4(0.0, 0.0, 0.0, 1.0);
-   vec4 transformedTangent = vec4(0.0, 0.0, 0.0, 1.0);
+   
    float boneWeightsA[4];
    float boneIndicesA[4];
    
@@ -72,9 +64,6 @@ void main(void)
       transformedNormal.y += boneWeight * dot(gl_Normal.xyz, bty.xyz);
       transformedNormal.z += boneWeight * dot(gl_Normal.xyz, btz.xyz);
       
-      transformedTangent.x += boneWeight * dot(tangentSpace.xyz, btx.xyz);
-      transformedTangent.y += boneWeight * dot(tangentSpace.xyz, bty.xyz);
-      transformedTangent.z += boneWeight * dot(tangentSpace.xyz, btz.xyz);
    }
 
    //set proper varyings
@@ -82,12 +71,11 @@ void main(void)
    gl_TexCoord[0] = gl_MultiTexCoord0;
    
    vViewPos = gl_ModelViewMatrix * transformedPosition;
-   //GenerateShadowTexCoords(vViewPos);
+
    
    vNormal = inverseView3x3 * gl_NormalMatrix * normalize(transformedNormal.xyz);
-   vTangent = inverseView3x3 * gl_NormalMatrix * normalize(transformedTangent.xyz);
-   vBitangent = inverseView3x3 * gl_NormalMatrix * normalize(cross(transformedNormal.xyz, transformedTangent.xyz) * tangentSpace.w);
-   
+    
+
    gl_Position = gl_ModelViewProjectionMatrix * transformedPosition;
    
    vPos = (osg_ViewMatrixInverse * gl_ModelViewMatrix * transformedPosition).xyz;

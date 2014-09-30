@@ -11,8 +11,6 @@ uniform float d3d_SceneLuminance = 1.0;
 uniform bool d3d_ShadowOnlyPass = false;
 
 varying vec3 vNormal;
-varying vec3 vTangent;
-varying vec3 vBitangent;
 varying vec3 vLightDir;
 varying vec3 vLightDir2;
 varying vec3 vPos;
@@ -58,8 +56,7 @@ struct MapParams
 
 
 // External Functions
-void computeMultiMapColor(MapParams m, inout FragParams f, inout EffectParams e);
-float SampleShadowTexture();
+void computeMultiMapColorSimple(MapParams m, inout FragParams f, inout EffectParams e);
 float computeFragDepth(float);
 
 
@@ -70,9 +67,6 @@ vec4 combineEffects(EffectParams e)
    result.rgb += e.envContrib.rgb * e.envContrib.a;
    result.rgb += e.specContrib.rgb * e.specContrib.a;
    result.rgb += e.illumContrib.rgb;
-   
-   //float shadowAmt = SampleShadowTexture();
-   //result.rgb *= shadowAmt;
 
    return result;
 }
@@ -103,9 +97,6 @@ void main(void)
    f.cameraPos = vCamera;
    f.color = gl_Color;
    f.sceneLuminance = d3d_SceneLuminance;
-   f.tbn[0] = normalize(vTangent);
-   f.tbn[1] = normalize(vBitangent);
-   f.tbn[2] = f.normal;
    
    EffectParams e;
    e.lightContrib = zeroVec.rgb;
@@ -118,39 +109,17 @@ void main(void)
    vec3 alpha = texture2D(alphaTexture, uv).rgb * alphaScale;
    m.diffuse.rgb = texture2D(diffuseTexture, uv).rgb;
    m.diffuse.a = alpha.r;
-   m.specular.rgb = texture2D(specularTexture, uv).rgb;
+   m.specular.rgb = 0.5 * texture2D(specularTexture, uv).rgb;
    m.specular.a = alpha.g;
    m.illum.rgb = texture2D(illumTexture, uv).rgb * illumScale;
    m.normal.rgb = normalize(texture2D(normalTexture, uv).rgb);
    m.irradiance = vec4(0,0,0,0);
    m.refractionIndex = alpha.b;
    
-   computeMultiMapColor(m, f, e);
+   computeMultiMapColorSimple(m, f, e);
    
    vec4 result = combineEffects(e);
    gl_FragColor = result;
 
-   // DEBUG:
-   //gl_FragColor = vec4( (vec3(1.0) + vTangent.rgb) * 0.5,1.0);
-   //gl_FragColor = vec4(m.specular.rgb,1.0);
-   //gl_FragColor = vec4(mNorm,1.0);
-   //gl_FragColor = vec4(e.specContrib.rgb,1.0);
-   //gl_FragColor = vec4(e.specContrib.rgb * m.diffuse.rgb,1.0);
-   //gl_FragColor = vec4(e.lightContrib.rgb,1.0);
-   //gl_FragColor = vec4((e.lightContrib.rgb + f.envContrib.rgb) * m.diffuse.rgb,1.0);
-   //gl_FragColor = vec4(e.lightContrib.rgb * m.diffuse.rgb,1.0);
-   //gl_FragColor = vec4(e.envContrib.rgb + m.diffuse.rgb,1.0);
-   //gl_FragColor = vec4(e.envContrib.rgb,1.0);
-   //gl_FragColor = vec4(e.illumContrib.rgb,1.0);
-   //gl_FragColor = vec4(tan,1.0);
-   //gl_FragColor = vec4(bitan,1.0);
-   //gl_FragColor = vec4(norm,1.0);
-   //gl_FragColor = vec4(worldNorm,1.0);
-   //gl_FragColor = vec4(worldNorm.rrr,1.0);
-   //gl_FragColor = vec4(normVaried,1.0);
-   //gl_FragColor = vec4(f.viewDir,1.0);
-   //gl_FragColor = vec4(gl_Color.rgb,1.0);
-   //gl_FragColor = vec4(e.colorContrib.aaa, 1.0);
-   
    
 }
