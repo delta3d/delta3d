@@ -56,6 +56,9 @@ namespace dtRender
       DT_DECLARE_ACCESSOR_INLINE(float, Intensity)
       DT_DECLARE_ACCESSOR_INLINE(bool, ShowOnlyAOMap)
 
+
+      /*virtual*/ void OnAddedToPPUScene(MultipassScene& mps);
+
    protected:
       void CreateSSAOPipeline(osgPPU::UnitBypass* colorbypass, osgPPU::UnitBypass* depthbypass);
 

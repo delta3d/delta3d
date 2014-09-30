@@ -249,7 +249,7 @@ namespace dtRender
          , mEnableColorBypass(true)
          , mEnableResampleColor(true)
          , mDepthImageFormat(GL_DEPTH_COMPONENT)
-         , mEnableDepthBypass(false)
+         , mEnableDepthBypass(true)
          , mPreDepthImageFormat(GL_DEPTH_COMPONENT32)
          , mEnablePreDepthPass(true)
          , mResampleColorFactor(0.5)
@@ -296,6 +296,8 @@ namespace dtRender
 
       dtCore::RefPtr<osgPPU::Processor> mPPUProcessor;
 
+      dtCore::RefPtr<osgPPU::UnitCamera> mMultipassPPUCamera;
+      
       dtCore::RefPtr<osgPPU::UnitBypass> mColorBypass;
       dtCore::RefPtr<osgPPU::UnitInResampleOut> mResampleColor;
       dtCore::RefPtr<osgPPU::UnitDepthbufferBypass> mPreDepthBufferBypass;
@@ -378,9 +380,9 @@ namespace dtRender
                 
 
          // setup unit, which will bring the camera and its output into the pipeline
-         osgPPU::UnitCamera* unitMultipassCamera = new osgPPU::UnitCamera;
-         unitMultipassCamera->setCamera(multiPassOSGCam);
-         mImpl->mPPUProcessor->addChild(unitMultipassCamera);
+         mImpl->mMultipassPPUCamera = new osgPPU::UnitCamera;
+         mImpl->mMultipassPPUCamera->setCamera(multiPassOSGCam);
+         mImpl->mPPUProcessor->addChild(mImpl->mMultipassPPUCamera.get());
 
          mImpl->mUnitOut = new osgPPU::UnitOut();
          mImpl->mUnitOut->setName("PipelineResult");
@@ -404,17 +406,6 @@ namespace dtRender
             //keep the predepth camera in synch with the main camera
             mImpl->mPreDepthSceneCamera->setUpdateCallback(new UpdateCameraCallback(mainSceneOSGCamera, mImpl->mPreDepthSceneCamera.get()));
 
-            /*osgPPU::UnitCamera* unitPreDepthCamera = new osgPPU::UnitCamera;
-            unitPreDepthCamera->setCamera(mImpl->mPreDepthSceneCamera.get());
-            mImpl->mPPUProcessor->addChild(unitPreDepthCamera);
-
-            mImpl->mPreDepthBufferBypass = new osgPPU::UnitDepthbufferBypass();
-            mImpl->mPreDepthBufferBypass->setName("DepthBypass");
-            unitPreDepthCamera->addChild(mImpl->mPreDepthBufferBypass.get());
-
-            SetFirstUnit(*mImpl->mPreDepthBufferBypass);
-            SetLastUnit(*mImpl->mPreDepthBufferBypass);*/
-            
             mImpl->mPreDepthSceneCamera->addChild(sm.GetOSGNode());
             mainSceneOSGCamera->addChild(mImpl->mPreDepthSceneCamera);
 
@@ -435,7 +426,7 @@ namespace dtRender
 
             SetLastUnit(*mImpl->mColorBypass);
             
-            unitMultipassCamera->addChild(mImpl->mColorBypass.get());
+            mImpl->mMultipassPPUCamera->addChild(mImpl->mColorBypass.get());
          }
 
          if(mImpl->mEnableDepthBypass)
@@ -450,7 +441,7 @@ namespace dtRender
 
             SetLastUnit(*mImpl->mDepthBufferBypass);
 
-            unitMultipassCamera->addChild(mImpl->mDepthBufferBypass.get());
+            mImpl->mMultipassPPUCamera->addChild(mImpl->mDepthBufferBypass.get());
          }
 
          if(mImpl->mEnableResampleColor)
@@ -488,18 +479,7 @@ namespace dtRender
          osgPPU::Processor* proc = GetPPUProcessor();
          if(proc != NULL)
          {
-            if(ppu->GetAddToRootPPUScene())
-            {
-               proc->addChild(ppu->GetSceneNode());
-            }
-            else if(ppu->GetAddToMultipassOutput())
-            {
-               GetLastUnit()->addChild(ppu->GetSceneNode());
-            }
-            else
-            {
-               LOG_ERROR("PPU not added to scene no add method specified");
-            }
+            ppu->OnAddedToPPUScene(*this);
 
             SceneGroup::GetChildArray().push_back(&sb);
             return DeltaDrawable::AddChild(&sb);
@@ -860,6 +840,39 @@ namespace dtRender
    void MultipassScene::RemoveResizeCallback(ResizeCallback& cb)
    {
       mImpl->mResizeCallbackContainer->RemoveCallback(cb);
+   }
+
+   osgPPU::UnitCamera* MultipassScene::GetMultipassPPUCamera()
+   {
+      return mImpl->mMultipassPPUCamera.get();
+   }
+
+   const osgPPU::UnitCamera* MultipassScene::GetMultipassPPUCamera() const
+   {
+      return mImpl->mMultipassPPUCamera.get();
+   }
+
+   bool MultipassScene::DetachDefaultUnitOut()
+   {
+      bool result = false;
+
+      if(GetUsingDefaultUnitOut())
+      {
+         GetColorBypass()->removeChild(GetUnitOut());
+      }
+      
+      return result;
+   }
+
+   bool MultipassScene::GetUsingDefaultUnitOut()
+   {
+      bool result = false;
+
+      if(GetUnitOut() && GetUnitOut()->getParent(0) != NULL)
+      {
+         result = GetUnitOut()->getParent(0) == GetColorBypass();      
+      }
+      return result;
    }
 
 
