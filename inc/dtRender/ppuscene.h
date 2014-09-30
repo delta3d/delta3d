@@ -38,6 +38,7 @@ namespace osgPPU
 
 namespace dtRender
 {
+   class MultipassScene;
    class PPUSceneImpl;
 
    class DT_RENDER_EXPORT PPUScene : public SceneBase
@@ -62,10 +63,8 @@ namespace dtRender
 
       osgPPU::Unit* GetLastUnit();
       const osgPPU::Unit* GetLastUnit() const;
-
-      DT_DECLARE_ACCESSOR_INLINE(bool, AddToRootPPUScene)
-      DT_DECLARE_ACCESSOR_INLINE(bool, AddToMultipassOutput)
-
+         
+      virtual void OnAddedToPPUScene(MultipassScene& mps);
       
    protected:
       void SetFirstUnit(osgPPU::Unit&);

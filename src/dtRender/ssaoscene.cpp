@@ -41,6 +41,7 @@
 
 #include <osgPPU/Processor.h>
 #include <osgPPU/Unit.h>
+#include <osgPPU/UnitCamera.h>
 #include <osgPPU/UnitDepthbufferBypass.h>
 #include <osgPPU/UnitBypass.h>
 #include <osgPPU/UnitCameraAttachmentBypass.h>
@@ -67,7 +68,7 @@ namespace dtRender
    : BaseClass(*SSAO_SCENE, SceneEnum::MULTIPASS)
    , mBlurSigma(40.0f)
    , mBlurRadius(15.0f)
-   , mIntensity(0.5f)
+   , mIntensity(2.0f)
    , mShowOnlyAOMap(false)
    {
       SetName("SSAOScene");  
@@ -94,22 +95,12 @@ namespace dtRender
 
       if(mps != NULL)
       {
-         SetAddToMultipassOutput(true);
-         SetAddToRootPPUScene(false);
-
          
          CreateSSAOPipeline(mps->GetColorBypass(), mps->GetDepthBypass());
 
+         mps->DetachDefaultUnitOut();
 
-         //the multipass unit connects its out to the last unit, 
-         //we need to undo this to to insert ourselves in the pipeline
-         dtCore::RefPtr<osgPPU::UnitOut> unitOut = mps->GetUnitOut();
-         if(unitOut->getParent(0) == mps->GetColorBypass() )
-         {
-            mps->GetColorBypass()->removeChild(unitOut);
-         }
-
-         GetLastUnit()->addChild(unitOut);
+         GetLastUnit()->addChild(mps->GetUnitOut());
       }
       else
       {
@@ -236,7 +227,20 @@ namespace dtRender
     }
     SetLastUnit(*aoUnit);
 }
-   
+
+void SSAOScene::OnAddedToPPUScene( MultipassScene& mps )
+{
+   if(mps.GetDepthBypass() != NULL)
+   {
+      mps.GetDepthBypass()->addChild(GetSceneNode());
+   }
+   else
+   {
+      mps.GetMultipassPPUCamera()->addChild(GetSceneNode());
+   }
+}
+
+
    //proxy
    SSAOSceneActor::SSAOSceneActor()
    {

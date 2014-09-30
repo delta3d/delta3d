@@ -97,26 +97,30 @@ namespace dtRender
          sm.SetEnableHDR(true);
          sm.SetExposure(mExposure);
 
-         SetAddToMultipassOutput(true);
-         SetAddToRootPPUScene(false);
-
          CreateHDRPipeline(mps->GetColorBypass(), mps->GetResampleColor());
 
-         //the multipass unit connects its out to the last unit, 
-         //we need to undo this to to insert ourselves in the pipeline
-         dtCore::RefPtr<osgPPU::UnitOut> unitOut = mps->GetUnitOut();
-         if(unitOut->getParent(0) == mps->GetColorBypass() )
-         {
-            mps->GetColorBypass()->removeChild(unitOut);
-         }
+         mps->DetachDefaultUnitOut();
 
-         GetLastUnit()->addChild(unitOut);
+         GetLastUnit()->addChild(mps->GetUnitOut());
       }
       else
       {
          LOG_ERROR("Must have a valid Multipass Scene to use HDR.");
       }
    }
+
+   void HDRScene::OnAddedToPPUScene( MultipassScene& mps )
+   {
+      if(mps.GetResampleColor() != NULL)
+      {
+         mps.GetResampleColor()->addChild(GetSceneNode());
+      }
+      else
+      {
+         mps.GetColorBypass()->addChild(GetSceneNode());
+      }
+   }
+
 
       
    //---------------------------------------------------------------

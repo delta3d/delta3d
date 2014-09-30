@@ -42,6 +42,7 @@ namespace osgPPU
    class Processor;
    class Unit;
    class UnitOut;
+   class UnitCamera;
    class UnitBypass;
    class UnitDepthbufferBypass;
    class UnitInResampleOut;
@@ -87,6 +88,9 @@ namespace dtRender
       osgPPU::Processor* GetPPUProcessor();
       const osgPPU::Processor* GetPPUProcessor() const;
       
+      bool GetUsingDefaultUnitOut();
+      bool DetachDefaultUnitOut();
+
       osgPPU::UnitOut* GetUnitOut();
       const osgPPU::UnitOut* GetUnitOut() const;
       
@@ -131,6 +135,9 @@ namespace dtRender
 
       osg::Camera* GetPreDepthCamera();
       const osg::Camera* GetPreDepthCamera() const;
+
+      osgPPU::UnitCamera* GetMultipassPPUCamera();
+      const osgPPU::UnitCamera* GetMultipassPPUCamera() const;
 
       osg::Texture* GetPreDepthTexture();
       const osg::Texture* GetPreDepthTexture() const;

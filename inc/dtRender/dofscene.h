@@ -59,10 +59,13 @@ namespace dtRender
       DT_DECLARE_ACCESSOR_INLINE(float, GaussSigma)
       DT_DECLARE_ACCESSOR_INLINE(float, GaussRadius)
 
+      void OnAddedToPPUScene( MultipassScene& mps );
+
    protected:
       void CreateDOFPipeline(osgPPU::UnitBypass* bypass, osgPPU::UnitBypass* depthbypass, osgPPU::Unit* resampleLight);
 
    private:
+      
    };
 
    class DT_RENDER_EXPORT DOFSceneActor : public dtCore::BaseActorObject

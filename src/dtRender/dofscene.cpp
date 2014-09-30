@@ -42,6 +42,7 @@
 
 #include <osgPPU/Processor.h>
 #include <osgPPU/Unit.h>
+#include <osgPPU/UnitCamera.h>
 #include <osgPPU/UnitCameraAttachmentBypass.h>
 #include <osgPPU/UnitDepthbufferBypass.h>
 #include <osgPPU/UnitInOut.h>
@@ -91,9 +92,6 @@ namespace dtRender
 
       if(mps != NULL)
       {
-         SetAddToMultipassOutput(true);
-         SetAddToRootPPUScene(false);
-         
          //set znear, zfar
          double vfov, asp, nearp, farp;
          sm.GetSceneCamera()->GetPerspectiveParams(vfov, asp, nearp, farp);
@@ -101,18 +99,24 @@ namespace dtRender
          SetZNear(nearp);
          SetZFar(farp);
 
-         CreateDOFPipeline(mps->GetColorBypass(), mps->GetDepthBypass(), mps->GetResampleColor());
+         mps->DetachDefaultUnitOut();
 
 
-         //the multipass unit connects its out to the last unit, 
-         //we need to undo this to to insert ourselves in the pipeline
-         dtCore::RefPtr<osgPPU::UnitOut> unitOut = mps->GetUnitOut();
-         if(unitOut->getParent(0) == mps->GetColorBypass() )
-         {
-            mps->GetColorBypass()->removeChild(unitOut);
+         osgPPU::UnitDepthbufferBypass* depthbypass = mps->GetDepthBypass();
+
+         if(depthbypass == NULL)
+         {         
+            // next unit will bypass the depth output of the camera
+            depthbypass = new osgPPU::UnitDepthbufferBypass();
+            depthbypass->setName("DepthBypass");
+            mps->GetMultipassPPUCamera()->addChild(depthbypass);
          }
 
-         GetLastUnit()->addChild(unitOut);
+
+         CreateDOFPipeline(mps->GetColorBypass(), depthbypass, mps->GetResampleColor());
+
+         GetLastUnit()->addChild(mps->GetUnitOut());
+
       }
       else
       {
@@ -120,22 +124,23 @@ namespace dtRender
       }
    }
 
+   void DOFScene::OnAddedToPPUScene( MultipassScene& mps )
+   {
+      if(mps.GetResampleColor() != NULL)
+      {
+         mps.GetResampleColor()->addChild(GetSceneNode());
+      }
+      else
+      {
+         mps.GetColorBypass()->addChild(GetSceneNode());
+      }
+      
+   }
 
    void DOFScene::CreateDOFPipeline(osgPPU::UnitBypass* bypass, osgPPU::UnitBypass* depthbypass, osgPPU::Unit* resampleLight)
    {
       osg::ref_ptr<osgDB::ReaderWriter::Options> fragmentOptions = new osgDB::ReaderWriter::Options("fragment");
       osg::ref_ptr<osgDB::ReaderWriter::Options> vertexOptions = new osgDB::ReaderWriter::Options("vertex");
-
-      // the first unit will bypass the color output of the camera
-      //osgPPU::UnitBypass* bypass = new osgPPU::UnitBypass();
-      //bypass->setName("ColorBypass");
-      //parent->addChild(bypass); 
-
-
-      // next unit will bypass the depth output of the camera
-      //osgPPU::UnitDepthbufferBypass* depthbypass = new osgPPU::UnitDepthbufferBypass();
-      //depthbypass->setName("DepthBypass");
-      //parent->addChild(depthbypass);
 
       // we need to blur the output of the color texture to emulate
       // the depth of field. Therefor first we just resample
@@ -147,9 +152,11 @@ namespace dtRender
          resample->setFactorX(0.5);
          resample->setFactorY(0.5);
 
-         resampleLight = resample;
          SetFirstUnit(*resample);
+         
+         resampleLight = resample;
       }
+      
       
 
       // helper shader class to perform gauss blur
@@ -201,7 +208,16 @@ namespace dtRender
          blurxlight->getOrCreateStateSet()->setAttributeAndModes(gaussx);
          blurylight->getOrCreateStateSet()->setAttributeAndModes(gaussy);
       }
-      resampleLight->addChild(blurxlight);
+
+      if(GetFirstUnit() == NULL)
+      {
+         SetFirstUnit(*blurxlight);
+      }
+      else
+      {
+         resampleLight->addChild(blurxlight);
+      }
+
       blurxlight->addChild(blurylight);
 
 
@@ -264,6 +280,7 @@ namespace dtRender
       }
 
       // this is the last unit
+      
       SetLastUnit(*dof);
    }
 

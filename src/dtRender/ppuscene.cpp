@@ -20,6 +20,7 @@
 */
 
 #include <dtRender/ppuscene.h>
+#include <dtRender/multipassscene.h>
 
 #include <dtCore/observerptr.h>
 
@@ -64,8 +65,6 @@ namespace dtRender
 
    PPUScene::PPUScene(const SceneType& sceneId, const SceneEnum& defaultScene)
       : BaseClass(sceneId, defaultScene)
-      , mAddToRootPPUScene(true)
-      , mAddToMultipassOutput(false)
       , mImpl(new PPUSceneImpl())
    {
       SetName("PPUScene");
@@ -123,6 +122,11 @@ namespace dtRender
    const osg::Group* PPUScene::GetSceneNode() const
    {
       return mImpl->mFirstUnit;
+   }
+
+   void PPUScene::OnAddedToPPUScene( MultipassScene& mps )
+   {
+      mps.GetPPUProcessor()->addChild(GetSceneNode());
    }
 
    

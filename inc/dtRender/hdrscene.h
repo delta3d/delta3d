@@ -60,6 +60,8 @@ namespace dtRender
       DT_DECLARE_ACCESSOR_INLINE(float, MaxLuminance)
       DT_DECLARE_ACCESSOR_INLINE(float, Exposure)
 
+      void OnAddedToPPUScene( MultipassScene& mps );
+
    protected:
       void CreateHDRPipeline(osgPPU::UnitBypass* bypass, osgPPU::Unit* resample);
 
