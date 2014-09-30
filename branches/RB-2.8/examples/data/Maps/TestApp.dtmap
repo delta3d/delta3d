@@ -837,7 +837,7 @@
             <name>SailBoat_01</name>
             <property>
                 <name>ShaderGroup</name>
-                <string>SimpleShader</string>
+                <string>MultiMapWater</string>
             </property>
             <property>
                 <name>Translation</name>
@@ -5678,7 +5678,7 @@
             <name>SailBoat_03</name>
             <property>
                 <name>ShaderGroup</name>
-                <string>SimpleShader</string>
+                <string>MultiMapWater</string>
             </property>
             <property>
                 <name>Rotation</name>
@@ -6815,7 +6815,7 @@
             <name>SailBoat_02</name>
             <property>
                 <name>ShaderGroup</name>
-                <string>SimpleShader</string>
+                <string>MultiMapWater</string>
             </property>
             <property>
                 <name>Rotation</name>
@@ -9872,7 +9872,7 @@
             <name>boat</name>
             <property>
                 <name>ShaderGroup</name>
-                <string>SimpleShader</string>
+                <string>MultiMapWater</string>
             </property>
             <property>
                 <name>Rotation</name>
