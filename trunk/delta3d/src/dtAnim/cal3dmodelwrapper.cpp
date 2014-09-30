@@ -132,7 +132,7 @@ namespace dtAnim
       for (int id = 0; id < limit; ++id)
       {
          mesh = model->getMesh(id);
-         if (hardwareModel != NULL)
+         if (hardwareModel != NULL && model->getCoreModel()->getCoreMesh(id) != NULL)
          {
             name = model->getCoreModel()->getCoreMesh(id)->getName();
             dtCore::RefPtr<dtAnim::Cal3dHardwareMesh> newMesh = new dtAnim::Cal3dHardwareMesh(*mModel, *hardwareModel, id);
