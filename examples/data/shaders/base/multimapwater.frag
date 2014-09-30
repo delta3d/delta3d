@@ -67,6 +67,7 @@ struct MapParams
 void computeMultiMapColor(MapParams m, inout FragParams f, inout EffectParams e);
 float SampleShadowTexture();
 float computeFragDepth(float);
+float computeExpFog(float);
 float computeLinearFog(float, float, float); //for underwater fog
 
 
@@ -149,22 +150,33 @@ void main(void)
    
    vec4 result = combineEffects(e);
    
+   vec3 fogColor = gl_Fog.color.rgb;
+
    // --- WATER SECTION --- //
+   //This adds the under water effects 
+   float fogAmt = 0.0;
+
    if(altitude < WaterHeight)
    {
       //camera height over the water
       float heightOverWater = 20.5 * max(vCamera.z - WaterHeight, 0.0);
 
-      float fogAmt = computeLinearFog(0.0, 3.0 * UnderWaterViewDistance, (dist - heightOverWater));
+      fogAmt = computeLinearFog(0.0, 3.0 * UnderWaterViewDistance, (dist - heightOverWater));
 
       //fade under water fog in over depth
       float depth = clamp(WaterHeight - altitude, 0.0, 30.0 * UnderWaterViewDistance);
       vec3 waterColorAtDepth = 0.85 * WaterColor.rgb;
-      vec3 fogColor = (gl_LightSource[0].ambient.rgb * waterColorAtDepth)  + (gl_LightSource[0].diffuse.rgb * waterColorAtDepth);
+      fogColor = (gl_LightSource[0].ambient.rgb * waterColorAtDepth)  + (gl_LightSource[0].diffuse.rgb * waterColorAtDepth);
       
       //considering the underwater color essentially removing light
       result.rgb = mix(result.rgb, 1.2 * vec3(result.rgb * WaterColor.rgb), depth / (3.0 * UnderWaterViewDistance));
    }
+   else
+   {
+      fogAmt = computeExpFog(dist);
+   }
+
+   result.rgb = mix(fogColor, result.rgb, fogAmt);
    
    gl_FragColor = result;
 
