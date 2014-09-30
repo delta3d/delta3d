@@ -261,20 +261,7 @@ osg::ref_ptr<osg::Geometry> GeometryBuilder::GeometryCache::CreateMeshSubMesh(Ca
 
 osg::ref_ptr<osg::Geometry> GeometryBuilder::GeometryCache::CopySubmeshGeometry(Cal3DModelWrapper* pWrapper, CalHardwareModel* hardwareModel, GeometryBuilder::MeshCacheData& mcd)
 {
-   osg::ref_ptr<osg::Geometry> geom = new osg::Geometry;//new osg::Geometry(*mcd.mGeometry, osg::CopyOp::DEEP_COPY_STATESETS );
-
-   geom->setVertexArray(mcd.mGeometry->getVertexArray());
-   geom->setNormalArray(mcd.mGeometry->getNormalArray());
-   geom->setTexCoordArray(0, mcd.mGeometry->getTexCoordArray(0));
-   geom->setTexCoordArray(1, mcd.mGeometry->getTexCoordArray(1));
-   geom->setTexCoordArray(2, mcd.mGeometry->getTexCoordArray(2));
-   geom->setTexCoordArray(3, mcd.mGeometry->getTexCoordArray(3));
-   geom->addPrimitiveSet(mcd.mGeometry->getPrimitiveSet(0));
-
-   geom->setSupportsDisplayList(false);
-   geom->setUseDisplayList(false);
-   geom->setUseVertexBufferObjects(true);
-   geom->setNormalBinding(osg::Geometry::BIND_PER_VERTEX);
+   osg::ref_ptr<osg::Geometry> geom = new osg::Geometry(*mcd.mGeometry, osg::CopyOp::SHALLOW_COPY);
 
    osg::StateSet* ss = geom->getOrCreateStateSet();
 
@@ -312,15 +299,14 @@ osg::ref_ptr<osg::Node> GeometryBuilder::GeometryCache::GetOrCreateModel(Cal3DMo
 
    dtCore::RefPtr<osg::Geode> geode = new osg::Geode();
 
-   CalCoreModel* model = pWrapper->GetCalModel()->getCoreModel();
-   std::string modelName = model->getName();
-
    Cal3DModelData* modelData = Cal3DDatabase::GetInstance().GetModelData(*pWrapper);
+
+   std::string filename = modelData->GetFilename();
 
    CalHardwareModel* hardwareModel = modelData->GetOrCreateCalHardwareModel();
 
-   GeometryMap::iterator iterBegin = mLoadedModels.lower_bound(modelName);
-   GeometryMap::iterator iterEnd = mLoadedModels.upper_bound(modelName);
+   GeometryMap::iterator iterBegin = mLoadedModels.lower_bound(filename);
+   GeometryMap::iterator iterEnd = mLoadedModels.upper_bound(filename);
 
    pWrapper->SetLODLevel(1);
    pWrapper->Update(0);
@@ -335,7 +321,7 @@ osg::ref_ptr<osg::Node> GeometryBuilder::GeometryCache::GetOrCreateModel(Cal3DMo
          iterEnd = mLoadedModels.end();
       }
 
-      if(false && iterBegin != iterEnd)
+      if(iterBegin != iterEnd)
       {
          for (; iterBegin != iterEnd; ++iterBegin)
          {
@@ -355,6 +341,7 @@ osg::ref_ptr<osg::Node> GeometryBuilder::GeometryCache::GetOrCreateModel(Cal3DMo
          int meshId = 0;
          int submeshId = 0;
 
+         CalCoreModel* model = pWrapper->GetCalModel()->getCoreModel();
          CalCoreMesh* calMesh = model->getCoreMesh(0);
          
          if (modelData == NULL)
@@ -385,7 +372,7 @@ osg::ref_ptr<osg::Node> GeometryBuilder::GeometryCache::GetOrCreateModel(Cal3DMo
             // tmp observer to hold an instance because the cache uses an observer.
             osg::ref_ptr<osg::Geometry> tmp = CreateMeshSubMesh(hardwareModel, pWrapper, meshId, submeshId, vertexCount, faceCount, boneCount, baseIndex, startIndex);
             mcd.mGeometry = tmp.get();
-            mLoadedModels.insert(std::make_pair(modelName, mcd));
+            mLoadedModels.insert(std::make_pair(filename, mcd));
             //end create cached version of model
 
             //make a soft copy of cached model and use that
