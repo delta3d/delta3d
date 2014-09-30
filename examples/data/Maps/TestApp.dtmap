@@ -921,6 +921,14 @@
                 <resource>Particles:water:spray:water_spray_right_6m.osg</resource>
             </property>
             <property>
+                <name>SprayFrontOffset</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>7.000000</value2>
+                    <value3>-0.2500000</value3>
+                </vec3>
+            </property>
+            <property>
                 <name>SprayLeftOffset</name>
                 <vec3>
                     <value1>-1.000000</value1>
@@ -950,7 +958,7 @@
             </property>
             <property>
                 <name>SprayVelocityMax</name>
-                <float>2</float>
+                <float>4</float>
             </property>
             <property>
                 <name>SprayShaderGroup</name>
@@ -5695,6 +5703,14 @@
                 <resource>Particles:water:spray:water_spray_right_6m.osg</resource>
             </property>
             <property>
+                <name>SprayFrontOffset</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>7.000000</value2>
+                    <value3>-0.2500000</value3>
+                </vec3>
+            </property>
+            <property>
                 <name>SprayLeftOffset</name>
                 <vec3>
                     <value1>-1.000000</value1>
@@ -5724,7 +5740,7 @@
             </property>
             <property>
                 <name>SprayVelocityMax</name>
-                <float>2</float>
+                <float>4</float>
             </property>
             <property>
                 <name>SprayShaderGroup</name>
@@ -6823,8 +6839,8 @@
                 <name>SprayFrontOffset</name>
                 <vec3>
                     <value1>0.000000</value1>
-                    <value2>7.200000</value2>
-                    <value3>0.000000</value3>
+                    <value2>7.000000</value2>
+                    <value3>-0.250000</value3>
                 </vec3>
             </property>
             <property>
@@ -6857,7 +6873,7 @@
             </property>
             <property>
                 <name>SprayVelocityMax</name>
-                <float>2</float>
+                <float>4</float>
             </property>
             <property>
                 <name>SprayShaderGroup</name>
