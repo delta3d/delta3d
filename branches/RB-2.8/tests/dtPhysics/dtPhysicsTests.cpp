@@ -254,7 +254,7 @@ namespace dtPhysics
          mGM->SetApplication(GetGlobalApplication());
          mGM->LoadActorRegistry(DTPHYSICS_REGISTRY);
 
-         dtCore::System::GetInstance().Step();
+         dtCore::System::GetInstance().Step(0.1667);
          //SimCore::MessageType::RegisterMessageTypes(mGM->GetMessageFactory());
       }
       catch(const dtUtil::Exception& ex)
@@ -1600,7 +1600,7 @@ namespace dtPhysics
       int steps = dtPhysics::PhysicsWorld::GetInstance().GetNumStepsSinceStartup();
       // Quick check to make sure the physics didn't step.
       mPhysicsComp->SetSteppingEnabled(false);
-      dtCore::System::GetInstance().Step();
+      dtCore::System::GetInstance().Step(0.1667);
       int stepsNext = dtPhysics::PhysicsWorld::GetInstance().GetNumStepsSinceStartup();
       CPPUNIT_ASSERT_EQUAL(steps, stepsNext);
       CPPUNIT_ASSERT(!cb1.HasCalledPre());
@@ -1612,7 +1612,7 @@ namespace dtPhysics
 
       dtCore::AppSleep(20);
       mPhysicsComp->SetSteppingEnabled(true);
-      dtCore::System::GetInstance().Step();
+      dtCore::System::GetInstance().Step(0.1667);
       stepsNext = dtPhysics::PhysicsWorld::GetInstance().GetNumStepsSinceStartup();
       CPPUNIT_ASSERT(steps < stepsNext);
       CPPUNIT_ASSERT(cb1.HasCalledPre());
@@ -1634,7 +1634,7 @@ namespace dtPhysics
       tehVoodoo2->SetPostPhysicsCallback(PhysicsActComp::UpdateCallback());
       tehVoodoo2->SetActionUpdateCallback(PhysicsActComp::ActionUpdateCallback());
 
-      dtCore::System::GetInstance().Step();
+      dtCore::System::GetInstance().Step(0.1667);
 
       CPPUNIT_ASSERT(!cb1.HasCalledPre());
       CPPUNIT_ASSERT(!cb1.HasCalledPost());
