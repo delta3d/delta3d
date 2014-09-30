@@ -269,14 +269,17 @@ void Viewer::OnNewCharFile()
 ////////////////////////////////////////////////////////////////////////////////
 void Viewer::OnLoadCharFile(const QString& filename)
 {
-   LOG_DEBUG("Loading file: " + filename.toStdString());
+   std::string fileStdStr = filename.toStdString();
 
-   QDir dir(filename);
-   std::string baseName = dir.dirName().toStdString();
-   dir.cdUp();
+   dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
+   if (!fileUtils.FileExists(fileStdStr, false))
+   {
+      emit ErrorOccured(QString(("Unable to load file \"" + fileStdStr + "\": it does not exist.  Current Directory:" + dtUtil::FileUtils::GetInstance().CurrentDirectory()).c_str()));
+      return;
+   }
 
-
-   dtCore::ResourceDescriptor resource(baseName);
+   dtUtil::FileInfo fi = fileUtils.GetFileInfo(fileStdStr);
+   dtCore::ResourceDescriptor resource(fi.baseName);
 
    OnUnloadCharFile();
 
@@ -286,7 +289,7 @@ void Viewer::OnLoadCharFile(const QString& filename)
    dtCore::RefPtr<dtAnim::BaseModelWrapper> wrapper;
    try
    {
-      dtCore::Project::GetInstance().SetContext(dir.absolutePath().toStdString());
+      dtCore::Project::GetInstance().SetContext(fileUtils.GetAbsolutePath(filename.toStdString(), true));
       mModelLoader->LoadModel(resource, false);
       if (mModelLoader->GetLoadingState() == dtAnim::ModelLoader::COMPLETE)
          wrapper = mModelLoader->CreateModel();
@@ -325,6 +328,7 @@ void Viewer::OnLoadCharFile(const QString& filename)
       QString errorMsg;
       errorMsg = QString("Exception thrown: %1").arg(ex.ToString().c_str());
       emit ErrorOccured(errorMsg);
+      return;
    }
    catch (const XERCES_CPP_NAMESPACE_QUALIFIER SAXParseException& e)
    {
