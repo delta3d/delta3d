@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <map xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="delta3dMap" xsi:schemaLocation="delta3dMap map.xsd">
     <header>
         <name>TestApp</name>
@@ -7,7 +8,7 @@
         <comment></comment>
         <copyright></copyright>
         <createTimestamp>2014-07-15T22:49:46-05:00</createTimestamp>
-        <lastUpdateTimestamp>2014-09-30T01:36:38-05:00</lastUpdateTimestamp>
+        <lastUpdateTimestamp>2014-09-30T02:02:00-05:00</lastUpdateTimestamp>
         <editorVersion>2.8.0</editorVersion>
         <schemaVersion>1.0</schemaVersion>
     </header>
@@ -924,8 +925,8 @@
                 <name>SprayFrontOffset</name>
                 <vec3>
                     <value1>0.000000</value1>
-                    <value2>7.000000</value2>
-                    <value3>-0.2500000</value3>
+                    <value2>7.200000</value2>
+                    <value3>0.000000</value3>
                 </vec3>
             </property>
             <property>
@@ -958,7 +959,7 @@
             </property>
             <property>
                 <name>SprayVelocityMax</name>
-                <float>4</float>
+                <float>2</float>
             </property>
             <property>
                 <name>SprayShaderGroup</name>
@@ -2429,6 +2430,12 @@
                 <resourceType>StaticMeshes</resourceType>
                 <resourceDisplayName>StaticMeshes:glassware:wine_bottle:WineBottle_Purple.osg</resourceDisplayName>
                 <resource>StaticMeshes:glassware:wine_bottle:WineBottle_Purple.osg</resource>
+            </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:glassware:wine_bottle:WineBottle_Green.osg</resourceDisplayName>
+                <resource>StaticMeshes:glassware:wine_bottle:WineBottle_Green.osg</resource>
             </property>
         </actor>
         <actor>
@@ -4819,14 +4826,14 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>-0.000000</value2>
-                    <value3>-99.119514</value3>
+                    <value3>-97.597900</value3>
                 </vec3>
             </property>
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-371.588776</value1>
-                    <value2>-307.111511</value2>
+                    <value1>155.082657</value1>
+                    <value2>-388.844818</value2>
                     <value3>0.000000</value3>
                 </vec3>
             </property>
@@ -5767,8 +5774,8 @@
                 <name>SprayFrontOffset</name>
                 <vec3>
                     <value1>0.000000</value1>
-                    <value2>7.000000</value2>
-                    <value3>-0.2500000</value3>
+                    <value2>7.200000</value2>
+                    <value3>0.000000</value3>
                 </vec3>
             </property>
             <property>
@@ -5801,7 +5808,7 @@
             </property>
             <property>
                 <name>SprayVelocityMax</name>
-                <float>4</float>
+                <float>2</float>
             </property>
             <property>
                 <name>SprayShaderGroup</name>
@@ -6904,8 +6911,8 @@
                 <name>SprayFrontOffset</name>
                 <vec3>
                     <value1>0.000000</value1>
-                    <value2>7.000000</value2>
-                    <value3>-0.250000</value3>
+                    <value2>7.200000</value2>
+                    <value3>0.000000</value3>
                 </vec3>
             </property>
             <property>
@@ -6938,7 +6945,7 @@
             </property>
             <property>
                 <name>SprayVelocityMax</name>
-                <float>4</float>
+                <float>2</float>
             </property>
             <property>
                 <name>SprayShaderGroup</name>
@@ -7286,19 +7293,33 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>-0.000000</value2>
-                    <value3>-87.892578</value3>
+                    <value3>-87.266655</value3>
                 </vec3>
             </property>
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-63.123440</value1>
-                    <value2>-421.348877</value2>
+                    <value1>645.125916</value1>
+                    <value2>-390.243652</value2>
                     <value3>75.000000</value3>
                 </vec3>
             </property>
             <property>
                 <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:vehicles:aircraft:biplane_pontoons:Biplane_Pontoons.osg</resourceDisplayName>
+                <resource>StaticMeshes:vehicles:aircraft:biplane_pontoons:Biplane_Pontoons.osg</resource>
+            </property>
+            <property>
+                <name>Auto-Create Physics Objects</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Main: Mechanics Type</name>
+                <enumerated>Kinematic</enumerated>
+            </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
                 <resourceType>StaticMeshes</resourceType>
                 <resourceDisplayName>StaticMeshes:vehicles:aircraft:biplane_pontoons:Biplane_Pontoons.osg</resourceDisplayName>
                 <resource>StaticMeshes:vehicles:aircraft:biplane_pontoons:Biplane_Pontoons.osg</resource>
@@ -9875,6 +9896,12 @@
                 <resourceDisplayName>StaticMeshes:CohoFerry:Coho_ferry.osg</resourceDisplayName>
                 <resource>StaticMeshes:CohoFerry:Coho_ferry.osg</resource>
             </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:CohoFerry:Coho_ferry.osg</resourceDisplayName>
+                <resource>StaticMeshes:CohoFerry:Coho_ferry.osg</resource>
+            </property>
         </actor>
         <actor>
             <type>dtcore.Action.Bezier Controller</type>
@@ -10816,6 +10843,18 @@
                     <value1>0.877454</value1>
                     <value2>1.000000</value2>
                     <value3>1.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Main: Primitive Type</name>
+                <enumerated>Sphere</enumerated>
+            </property>
+            <property>
+                <name>Main: Dimensions</name>
+                <vec3>
+                    <value1>0.100000</value1>
+                    <value2>0.100000</value2>
+                    <value3>0.100000</value3>
                 </vec3>
             </property>
         </actor>
@@ -12121,14 +12160,14 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>-0.000000</value2>
-                    <value3>179.097931</value3>
+                    <value3>145.074234</value3>
                 </vec3>
             </property>
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-183.977966</value1>
-                    <value2>233.675751</value2>
+                    <value1>-235.964676</value1>
+                    <value2>-105.730003</value2>
                     <value3>0.000000</value3>
                 </vec3>
             </property>
@@ -12154,14 +12193,14 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>-0.000000</value2>
-                    <value3>47.391979</value3>
+                    <value3>10.088344</value3>
                 </vec3>
             </property>
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>96.908875</value1>
-                    <value2>-316.451080</value2>
+                    <value1>-110.517021</value1>
+                    <value2>-26.825792</value2>
                     <value3>0.000000</value3>
                 </vec3>
             </property>
