@@ -7,7 +7,7 @@
         <comment></comment>
         <copyright></copyright>
         <createTimestamp>2014-07-15T22:49:46-05:00</createTimestamp>
-        <lastUpdateTimestamp>2014-09-29T18:04:56-05:00</lastUpdateTimestamp>
+        <lastUpdateTimestamp>2014-09-30T01:36:38-05:00</lastUpdateTimestamp>
         <editorVersion>2.8.0</editorVersion>
         <schemaVersion>1.0</schemaVersion>
     </header>
@@ -882,7 +882,7 @@
             </property>
             <property>
                 <name>Main: ActivationLinearVelocityThreshold</name>
-                <float>9.9999997e-005</float>
+                <float>9.9999997e-05</float>
             </property>
             <property>
                 <name>Main: LinearDamping</name>
@@ -968,6 +968,10 @@
                 <name>UpdateFromControllerEvent</name>
                 <gameevent>9442D20A-807F-40E6-8A5D-E5694E9E02DC</gameevent>
             </property>
+            <property>
+                <name>SurfaceAreaSqM</name>
+                <float>100</float>
+            </property>
         </actor>
         <actor>
             <type>dtExample.Mesh Object</type>
@@ -982,7 +986,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254868</value3>
+                    <value3>-87.254890</value3>
                 </vec3>
             </property>
             <property>
@@ -1464,6 +1468,63 @@
             </property>
         </actor>
         <actor>
+            <type>dtExample.Vessel</type>
+            <id>17C107A9-6913-49C6-9F20-838E1BEA2AE2</id>
+            <name>Beachball_02</name>
+            <property>
+                <name>ShaderGroup</name>
+                <string>MultiMap</string>
+            </property>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>1.838673</value1>
+                    <value2>-0.000072</value2>
+                    <value3>-0.384311</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-597.274109</value1>
+                    <value2>-131.408386</value2>
+                    <value3>2.155128</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:beachball:Beachball.osg</resourceDisplayName>
+                <resource>StaticMeshes:beachball:Beachball.osg</resource>
+            </property>
+            <property>
+                <name>Main: Mechanics Type</name>
+                <enumerated>Dynamic</enumerated>
+            </property>
+            <property>
+                <name>Main: Primitive Type</name>
+                <enumerated>Sphere</enumerated>
+            </property>
+            <property>
+                <name>Main: Mass</name>
+                <float>10</float>
+            </property>
+            <property>
+                <name>Main: ActivationLinearVelocityThreshold</name>
+                <float>9.9999997e-06</float>
+            </property>
+            <property>
+                <name>Main: LinearDamping</name>
+                <float>0.1</float>
+            </property>
+            <property>
+                <name>Main: PhysicsMesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:beachball:Beachball.osg</resourceDisplayName>
+                <resource>StaticMeshes:beachball:Beachball.osg</resource>
+            </property>
+        </actor>
+        <actor>
             <type>dtExample.Mesh Lamp</type>
             <id>1900379a-e731-4553-8c7a-e07b69959cc9</id>
             <name>lamp_10</name>
@@ -1919,7 +1980,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254868</value3>
+                    <value3>-87.254890</value3>
                 </vec3>
             </property>
             <property>
@@ -2782,7 +2843,7 @@
             </property>
             <property>
                 <name>Bezier Node</name>
-                <actorId>8c8be7b7-5645-4997-873b-266c7b6af1ec</actorId>
+                <actorId>5e9ad074-dfdc-4432-be58-53326f1f2e43</actorId>
             </property>
         </actor>
         <actor>
@@ -2993,7 +3054,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254868</value3>
+                    <value3>-87.254890</value3>
                 </vec3>
             </property>
             <property>
@@ -3330,7 +3391,7 @@
                 <name>Rotation</name>
                 <vec3>
                     <value1>-0.823274</value1>
-                    <value2>-0.623614</value2>
+                    <value2>-0.623641</value2>
                     <value3>124.004814</value3>
                 </vec3>
             </property>
@@ -4227,7 +4288,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254868</value3>
+                    <value3>-87.254890</value3>
                 </vec3>
             </property>
             <property>
@@ -4757,15 +4818,15 @@
                 <name>Rotation</name>
                 <vec3>
                     <value1>0.000000</value1>
-                    <value2>0.000000</value2>
-                    <value3>-99.432762</value3>
+                    <value2>-0.000000</value2>
+                    <value3>-99.119514</value3>
                 </vec3>
             </property>
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-212.188553</value1>
-                    <value2>-333.245850</value2>
+                    <value1>-371.588776</value1>
+                    <value2>-307.111511</value2>
                     <value3>0.000000</value3>
                 </vec3>
             </property>
@@ -5664,7 +5725,7 @@
             </property>
             <property>
                 <name>Main: ActivationLinearVelocityThreshold</name>
-                <float>9.9999997e-005</float>
+                <float>9.9999997e-05</float>
             </property>
             <property>
                 <name>Main: LinearDamping</name>
@@ -5749,6 +5810,10 @@
             <property>
                 <name>UpdateFromControllerEvent</name>
                 <gameevent>8962C7E0-8E14-4055-8AD4-A3B3BB58D664</gameevent>
+            </property>
+            <property>
+                <name>SurfaceAreaSqM</name>
+                <float>100</float>
             </property>
         </actor>
         <actor>
@@ -5986,7 +6051,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-73.005310</value3>
+                    <value3>-73.005318</value3>
                 </vec3>
             </property>
             <property>
@@ -6797,7 +6862,7 @@
             </property>
             <property>
                 <name>Main: ActivationLinearVelocityThreshold</name>
-                <float>9.9999997e-005</float>
+                <float>9.9999997e-05</float>
             </property>
             <property>
                 <name>Main: LinearDamping</name>
@@ -6883,6 +6948,10 @@
                 <name>UpdateFromControllerEvent</name>
                 <gameevent>82548F79-C8C0-4018-A7D3-3AAC58C50643</gameevent>
             </property>
+            <property>
+                <name>SurfaceAreaSqM</name>
+                <float>100</float>
+            </property>
         </actor>
         <actor>
             <type>dtcore.Curve.Bezier Control Point</type>
@@ -6914,7 +6983,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254868</value3>
+                    <value3>-87.254890</value3>
                 </vec3>
             </property>
             <property>
@@ -7217,15 +7286,15 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>-0.000000</value2>
-                    <value3>-90.319931</value3>
+                    <value3>-87.892578</value3>
                 </vec3>
             </property>
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-1775.518066</value1>
-                    <value2>-437.978394</value2>
-                    <value3>74.999992</value3>
+                    <value1>-63.123440</value1>
+                    <value2>-421.348877</value2>
+                    <value3>75.000000</value3>
                 </vec3>
             </property>
             <property>
@@ -7785,7 +7854,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254868</value3>
+                    <value3>-87.254890</value3>
                 </vec3>
             </property>
             <property>
@@ -7932,7 +8001,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254868</value3>
+                    <value3>-87.254890</value3>
                 </vec3>
             </property>
             <property>
@@ -8297,7 +8366,7 @@
             </property>
             <property>
                 <name>Bezier Node</name>
-                <actorId>3bcec58d-9ed1-423b-875f-4535faf50154</actorId>
+                <actorId>add9de85-adbd-45dd-b7db-054ac6405398</actorId>
             </property>
         </actor>
         <actor>
@@ -10628,7 +10697,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254868</value3>
+                    <value3>-87.254890</value3>
                 </vec3>
             </property>
             <property>
@@ -11811,7 +11880,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254868</value3>
+                    <value3>-87.254890</value3>
                 </vec3>
             </property>
             <property>
@@ -12052,14 +12121,14 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>-0.000000</value2>
-                    <value3>173.276901</value3>
+                    <value3>179.097931</value3>
                 </vec3>
             </property>
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-193.440216</value1>
-                    <value2>26.954453</value2>
+                    <value1>-183.977966</value1>
+                    <value2>233.675751</value2>
                     <value3>0.000000</value3>
                 </vec3>
             </property>
@@ -12085,14 +12154,14 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>-0.000000</value2>
-                    <value3>38.234192</value3>
+                    <value3>47.391979</value3>
                 </vec3>
             </property>
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-42.149055</value1>
-                    <value2>-174.859482</value2>
+                    <value1>96.908875</value1>
+                    <value2>-316.451080</value2>
                     <value3>0.000000</value3>
                 </vec3>
             </property>
@@ -12883,7 +12952,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254868</value3>
+                    <value3>-87.254890</value3>
                 </vec3>
             </property>
             <property>
@@ -14775,7 +14844,7 @@
                 <name>Rotation</name>
                 <vec3>
                     <value1>-0.823274</value1>
-                    <value2>-0.623614</value2>
+                    <value2>-0.623641</value2>
                     <value3>124.004814</value3>
                 </vec3>
             </property>
@@ -15307,7 +15376,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254868</value3>
+                    <value3>-87.254890</value3>
                 </vec3>
             </property>
             <property>
@@ -15364,7 +15433,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254868</value3>
+                    <value3>-87.254890</value3>
                 </vec3>
             </property>
             <property>
@@ -16287,7 +16356,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254868</value3>
+                    <value3>-87.254890</value3>
                 </vec3>
             </property>
             <property>
@@ -16437,7 +16506,7 @@
             </property>
             <property>
                 <name>Bezier Node</name>
-                <actorId>3bcec58d-9ed1-423b-875f-4535faf50154</actorId>
+                <actorId>add9de85-adbd-45dd-b7db-054ac6405398</actorId>
             </property>
         </actor>
         <actor>
@@ -16541,7 +16610,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-59.716415</value3>
+                    <value3>-59.716446</value3>
                 </vec3>
             </property>
             <property>
@@ -17245,17 +17314,17 @@
             <property>
                 <name>Rotation</name>
                 <vec3>
-                    <value1>0.000000</value1>
+                    <value1>37.505024</value1>
                     <value2>0.000000</value2>
-                    <value3>6.715353</value3>
+                    <value3>-47.484341</value3>
                 </vec3>
             </property>
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-532.762512</value1>
-                    <value2>-160.221069</value2>
-                    <value3>8.900000</value3>
+                    <value1>-619.655579</value1>
+                    <value2>-132.131393</value2>
+                    <value3>2.988575</value3>
                 </vec3>
             </property>
             <property>
@@ -17263,14 +17332,6 @@
                 <resourceType>StaticMeshes</resourceType>
                 <resourceDisplayName>StaticMeshes:beachball:Beachball.osg</resourceDisplayName>
                 <resource>StaticMeshes:beachball:Beachball.osg</resource>
-            </property>
-            <property>
-                <name>Scale</name>
-                <vec3>
-                    <value1>1.144190</value1>
-                    <value2>1.000000</value2>
-                    <value3>1.000000</value3>
-                </vec3>
             </property>
             <property>
                 <name>Main: Mechanics Type</name>
@@ -17286,7 +17347,7 @@
             </property>
             <property>
                 <name>Main: ActivationLinearVelocityThreshold</name>
-                <float>9.9999997e-006</float>
+                <float>9.9999997e-06</float>
             </property>
             <property>
                 <name>Main: LinearDamping</name>
@@ -18085,7 +18146,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254868</value3>
+                    <value3>-87.254890</value3>
                 </vec3>
             </property>
             <property>
@@ -18199,7 +18260,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254868</value3>
+                    <value3>-87.254890</value3>
                 </vec3>
             </property>
             <property>
@@ -18380,7 +18441,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254868</value3>
+                    <value3>-87.254890</value3>
                 </vec3>
             </property>
             <property>
@@ -19127,7 +19188,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-87.254868</value3>
+                    <value3>-87.254890</value3>
                 </vec3>
             </property>
             <property>
