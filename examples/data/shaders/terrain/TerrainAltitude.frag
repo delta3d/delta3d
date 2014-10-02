@@ -243,6 +243,7 @@ void main(void)
    }
    else
    {
+      fogColor *= gl_LightSource[0].diffuse.rgb;
       fogAmt = computeExpFog(dist);
    }
 
