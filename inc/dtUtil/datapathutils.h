@@ -27,6 +27,8 @@
 
 namespace dtUtil
 {
+   DT_UTIL_EXPORT std::string GetHomeDirectory();
+
    /// Set the list of data file paths
    DT_UTIL_EXPORT void SetDataFilePathList(const std::string& pathList);
 

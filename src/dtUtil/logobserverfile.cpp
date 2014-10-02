@@ -20,6 +20,8 @@
  */
 #include <prefix/dtutilprefix.h>
 #include <dtUtil/logobserverfile.h>
+#include <dtUtil/fileutils.h>
+#include <dtUtil/datapathutils.h>
 #include <iostream>
 #include <iomanip>
 
@@ -61,18 +63,47 @@ void dtUtil::LogObserverFile::OpenFile()
       logFile.close();
    }
 
-   //First attempt to create the log file.
-   logFile.open(LogFile::GetFileName().c_str());
+   std::string fullLogPath = LogFile::GetFileName();
+   if (LogFile::GetFileName().find(dtUtil::FileUtils::PATH_SEPARATOR) == std::string::npos)
+   {
+      //Store logs in a system dependent place.
+      std::string homePath = dtUtil::GetHomeDirectory();
+      if (!homePath.empty())
+      {
+#ifdef __APPLE__
+         std::string logDir = homePath + "/Library/Logs/delta3d/";
+#elif defined(DELTA_WIN32)
+         std::string logDir = homePath + "\\delta3d\\logs\\";
+#else
+         std::string logDir = homePath + "/.delta3d/logs/";
+#endif
+         try
+         {
+            dtUtil::FileUtils::GetInstance().MakeDirectoryEX(logDir);
+         }
+         catch (const dtUtil::Exception& ex)
+         {
+            std::cerr << "Unable to create the log directory : \""<<logDir<<"\".  The log file will be written to the current working directory if possible." << std::endl;
+            logDir.clear();
+         }
+
+         fullLogPath = logDir + LogFile::GetFileName();
+
+      }
+      //First attempt to create the log file.
+   }
+   logFile.open(fullLogPath);
+
    if (!logFile.is_open())
    {
-      std::cerr << "Could not open the Log file \""<<LogFile::GetFileName()<<"\"" << std::endl;
+      std::cerr << "Could not open the Log file \""<<fullLogPath<<"\"" << std::endl;
       mOpenFailed = true;
       return;
    }
-   else
-   {
-      //std::cout << "Using file \"delta3d_log.html\" for logging" << std::endl;
-   }
+//   else
+//   {
+//      std::cout << "Using file \""<< fullLogPath << "\" for logging" << std::endl;
+//   }
    //Write a decent header to the html file.
    logFile << "<html><title>" << LogFile::GetTitle() <<"</title><body>" << std::endl;
    logFile << "<h1 align=\"center\">" << LogFile::GetTitle() << "</h1><hr>" << std::endl;

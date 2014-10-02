@@ -30,9 +30,42 @@
 
 #include <sstream>
 
+#ifdef __APPLE__
+#include <AvailabilityMacros.h>
+#include <Foundation/Foundation.h>
+#endif
+#ifdef DELTA_WIN32
+#include <Shlobj.h>
+#else
+#include <pwd.h>
+#endif
+
 namespace dtUtil
 {
    static OpenThreads::Mutex gDatapathMutex;
+
+   std::string GetHomeDirectory()
+   {
+      std::string homedir;
+#ifdef DELTA_WIN32
+      char path[MAX_PATH];
+      if (SUCCEEDED(SHGetFolderPathA(NULL, CSIDL_PROFILE, NULL, 0, path)) {
+         homedir = path;
+      }
+#else
+      int maxSize = sysconf(_SC_GETPW_R_SIZE_MAX);
+      char* buffer = new char[maxSize];
+      struct passwd pw, *resultOut = NULL;
+      int rc = getpwuid_r(getuid(), &pw, buffer, maxSize, &resultOut);
+      if (rc == 0 && resultOut != NULL)
+      {
+         homedir = pw.pw_dir;
+      }
+      delete[] buffer;
+      buffer = NULL;
+      return homedir;
+#endif
+   }
 
    /////////////////////////////////////////////////////////////////////////////
    void SetDataFilePathList(const std::string& pathList)
@@ -107,6 +140,7 @@ namespace dtUtil
       }
 
       return filePath;
+
       /**
       std::vector<std::string> pathList;
       std::vector<std::string>::const_iterator itor;
@@ -198,6 +232,34 @@ namespace dtUtil
 #endif
    }
 
+#ifdef __APPLE__
+   /**
+    * Internal function for finding the OS X app bundle resource path.
+    */
+   static std::string GetBundleResourcesPath()
+   {
+      // Since this is currently the only Objective-C code in the
+      // library, we need an autoreleasepool for obj-c memory management.
+      // If more Obj-C is added, we might move this pool to another
+      // location so it can be shared. Pools seem to be stackable,
+      // so I don't think there will be a problem if multiple pools
+      // exist at a time.
+      NSAutoreleasePool* mypool = [[NSAutoreleasePool alloc] init];
+
+      NSString* resourcePathNS;
+
+      // This is the path to the resources inside the app bundle.
+      resourcePathNS = [[NSBundle mainBundle] resourcePath];
+
+      // Make a c string from the cocoa one tack data on the end.
+      std::string result = std::string([resourcePathNS UTF8String]);
+
+      // Clean up the autorelease pool
+      [mypool release];
+      return result;
+   }
+#endif
+
    /**
     * Get the Delta Data file path.  This comes directly from the environment 
     * variable "DELTA_DATA".  If the environment variable is not set, the local
@@ -206,7 +268,16 @@ namespace dtUtil
     */
    std::string GetDeltaDataPathList()
    {
-      return GetEnvironment("DELTA_DATA");
+      std::string result = GetEnvironment("DELTA_DATA");
+#ifdef __APPLE__
+      // Have to recheck because the get environment call doesn't currently return empty when it doesn't exist.
+      char* ptr = getenv("DELTA_DATA");
+      if(ptr == NULL)
+      {
+         result = GetBundleResourcesPath() + "/deltaData";
+      }
+#endif
+      return result;
    }
 
    /** 
@@ -215,7 +286,16 @@ namespace dtUtil
     */
    std::string GetDeltaRootPath()
    {
-      return GetEnvironment("DELTA_ROOT");
+      std::string result = GetEnvironment("DELTA_ROOT");
+#ifdef __APPLE__
+      // Have to recheck because the get environment call doesn't currently return empty when it doesn't exist.
+      char* ptr = getenv("DELTA_ROOT");
+      if(ptr == NULL)
+      {
+         result = GetBundleResourcesPath();
+      }
+#endif
+      return result;
    }
 
    /////////////////////////////////////////////////////////////////////////////

@@ -30,6 +30,7 @@ namespace dtTest
    class DataPathUtilsTests : public CPPUNIT_NS::TestFixture
    {
       CPPUNIT_TEST_SUITE(DataPathUtilsTests);
+      CPPUNIT_TEST(TestGetHomeDirectory);
       CPPUNIT_TEST(TestEnvironment);
       CPPUNIT_TEST(TestFindFileInPathList);
       CPPUNIT_TEST_SUITE_END();
@@ -39,6 +40,17 @@ namespace dtTest
          {}
          void tearDown()
          {}
+
+         void TestGetHomeDirectory()
+         {
+            std::string testHomeDir = "./";
+#ifdef DELTA_WIN32
+            testHomeDir = dtUtil::GetEnvironment("SystemDrive") + dtUtil::GetEnvironment("HOMEPATH")
+#else
+            testHomeDir = dtUtil::GetEnvironment("HOME");
+#endif
+            CPPUNIT_ASSERT_EQUAL(testHomeDir, dtUtil::GetHomeDirectory());
+         }
 
          /// tests handling and order of handling of multiple listeners for state changes.
          void TestEnvironment()
