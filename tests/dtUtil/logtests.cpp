@@ -272,7 +272,7 @@ void LogTests::TestLogFilename()
 #ifdef __APPLE__
    std::string newFileName = dtUtil::GetEnvironment("HOME") + "/Library/Logs/delta3d/logtest.html";
 #elif defined(DELTA_WIN32)
-   std::string newFileName = "logtest.html";
+   std::string newFileName = dtUtil::GetEnvironment("SystemDrive") + dtUtil::GetEnvironment("HOMEPATH") +"\\delta3d\\logs\\logtest.html";
 #else
    std::string newFileName = dtUtil::GetEnvironment("HOME") + "/.delta3d/logs/logtest.html";
 #endif
@@ -289,6 +289,8 @@ void LogTests::TestLogFilename()
    LOG_ALWAYS("Filename test");
 
    bool exists = dtUtil::FileUtils::GetInstance().FileExists(newFileName);
+   if (exists)
+      dtUtil::FileUtils::GetInstance().FileDelete(newFileName);
 
    CPPUNIT_ASSERT(exists);
 }
@@ -311,6 +313,9 @@ void LogTests::TestLogFilenameWithPath()
    LOG_ALWAYS("Filename test");
 
    bool exists = dtUtil::FileUtils::GetInstance().FileExists(newFileName);
+   //make sure the file is deleted first
+   if (exists)
+      dtUtil::FileUtils::GetInstance().FileDelete(newFileName);
 
    CPPUNIT_ASSERT(exists);
 }
