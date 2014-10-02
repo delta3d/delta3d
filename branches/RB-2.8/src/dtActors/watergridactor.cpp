@@ -1073,7 +1073,7 @@ namespace dtActors
       {
          //try to load the default shaders
          //sm.LoadShaderDefinitions("shaders/WaterGroup.dtshader");
-         sm.LoadShaderDefinitions("shaders/ShaderDefinitions.xml");
+         sm.LoadShaderDefinitions("Shaders/ShaderDefinitions.xml");
          shaderGroup = sm.FindShaderGroupPrototype("WaterGroup");
 
          if (shaderGroup == NULL)
