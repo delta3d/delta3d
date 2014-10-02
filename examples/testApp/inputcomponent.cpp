@@ -164,6 +164,14 @@ namespace dtExample
                SendUIToggleMessage(dtExample::UINames::UI_HELP);
                break;
                
+            case osgGA::GUIEventAdapter::KEY_Page_Up :
+               IncrementTime(250.0f);
+               break;
+
+            case osgGA::GUIEventAdapter::KEY_Page_Down :
+               IncrementTime(-250.0f);
+               break;
+
             case 'c':
                SendUIToggleMessage(dtExample::UINames::UI_CONTROL_PANEL);
                break;
@@ -180,6 +188,12 @@ namespace dtExample
                   if(eph != NULL)
                   {
                      eph->SetTimeFromSystem();
+                     
+                     dtUtil::DateTime dt;
+                     dt.SetToLocalTime();
+                     dt.SetMonth(10);
+                     dt.SetDay(8);
+                     eph->SetDateTime(dt);
                   }
                }
             }
@@ -673,12 +687,16 @@ namespace dtExample
    ////////////////////////////////////////////////////////////////////////
    void InputComponent::SetMotionModel(const dtExample::MotionModelType& motionModelType)
    {
+
+      DetachFromController();
+
       // Prevent changing the motion model if it exists
       // and is the same type that is specified.
       if ( ! mCamera.valid() || (mMotionModel.valid() && mMotionModelMode == &motionModelType))
       {
          return;
       }
+
 
       // If the type is set to NONE, just disable the current
       // motion model and ground clamping, then escape.
@@ -1324,6 +1342,7 @@ namespace dtExample
                SetMotionModel(MotionModelType::FLY);
                SetMotionModel(MotionModelType::NONE );
                controller->SetTargetObject(mCameraPivot.get());
+               controller->Pause();
                controller->Start();
 
                mCurrentController = controller;
