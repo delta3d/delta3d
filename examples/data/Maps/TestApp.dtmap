@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <map xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="delta3dMap" xsi:schemaLocation="delta3dMap map.xsd">
     <header>
         <name>TestApp</name>
@@ -8,7 +7,7 @@
         <comment></comment>
         <copyright></copyright>
         <createTimestamp>2014-07-15T22:49:46-05:00</createTimestamp>
-        <lastUpdateTimestamp>2014-09-30T02:02:00-05:00</lastUpdateTimestamp>
+        <lastUpdateTimestamp>2014-10-01T23:24:58-05:00</lastUpdateTimestamp>
         <editorVersion>2.8.0</editorVersion>
         <schemaVersion>1.0</schemaVersion>
     </header>
@@ -701,20 +700,24 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>55.300526</value3>
+                    <value3>47.700813</value3>
                 </vec3>
             </property>
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>334.938416</value1>
-                    <value2>-395.395233</value2>
-                    <value3>26.400000</value3>
+                    <value1>466.180817</value1>
+                    <value2>-426.987000</value2>
+                    <value3>16.922848</value3>
                 </vec3>
             </property>
             <property>
                 <name>Time to Next</name>
-                <float>35</float>
+                <float>45</float>
+            </property>
+            <property>
+                <name>Time Step</name>
+                <float>0.016000001</float>
             </property>
             <property>
                 <name>Exit Control Point</name>
@@ -730,11 +733,19 @@
             <id>0a72d2c3-7c6a-4790-b238-b98efdb21f24</id>
             <name>ControlPoint_38</name>
             <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>-0.500042</value3>
+                </vec3>
+            </property>
+            <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-479.924164</value1>
-                    <value2>-210.802048</value2>
-                    <value3>60.702522</value3>
+                    <value1>-695.916748</value1>
+                    <value2>-185.938080</value2>
+                    <value3>8.425720</value3>
                 </vec3>
             </property>
             <property>
@@ -883,7 +894,7 @@
             </property>
             <property>
                 <name>Main: ActivationLinearVelocityThreshold</name>
-                <float>9.9999997e-05</float>
+                <float>9.9999997e-005</float>
             </property>
             <property>
                 <name>Main: LinearDamping</name>
@@ -1342,7 +1353,7 @@
             </property>
             <property>
                 <name>LookAtCameraRange</name>
-                <float>3</float>
+                <float>7</float>
             </property>
         </actor>
         <actor>
@@ -1479,17 +1490,17 @@
             <property>
                 <name>Rotation</name>
                 <vec3>
-                    <value1>1.838673</value1>
-                    <value2>-0.000072</value2>
-                    <value3>-0.384311</value3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>-12.499947</value3>
                 </vec3>
             </property>
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-597.274109</value1>
-                    <value2>-131.408386</value2>
-                    <value3>2.155128</value3>
+                    <value1>-600.475830</value1>
+                    <value2>-180.993759</value2>
+                    <value3>1.625028</value3>
                 </vec3>
             </property>
             <property>
@@ -1512,7 +1523,7 @@
             </property>
             <property>
                 <name>Main: ActivationLinearVelocityThreshold</name>
-                <float>9.9999997e-06</float>
+                <float>9.9999997e-006</float>
             </property>
             <property>
                 <name>Main: LinearDamping</name>
@@ -1606,17 +1617,25 @@
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-425.738739</value1>
-                    <value2>-243.028458</value2>
+                    <value1>-468.371582</value1>
+                    <value2>-223.504303</value2>
                     <value3>0.000000</value3>
                 </vec3>
             </property>
             <property>
-                <name>Entry Control Point</name>
+                <name>Time to Next</name>
+                <float>600</float>
+            </property>
+            <property>
+                <name>Time Step</name>
+                <float>0.050000001</float>
+            </property>
+            <property>
+                <name>Exit Control Point</name>
                 <actorId>6b0f719d-8b33-4126-9ef7-cf0fd2be261e</actorId>
             </property>
             <property>
-                <name>Previous Bezier Node</name>
+                <name>Next Bezier Node</name>
                 <actorId>f551ce6c-57ef-4d1d-a562-1f21ac37bf58</actorId>
             </property>
         </actor>
@@ -2559,8 +2578,8 @@
             <property>
                 <name>Skeletal Mesh</name>
                 <resourceType>SkeletalMeshes</resourceType>
-                <resourceDisplayName>SkeletalMeshes:YoungMan_Asian:YoungMan_Asian_Jogger.dtchar</resourceDisplayName>
-                <resource>SkeletalMeshes:YoungMan_Asian:YoungMan_Asian_Jogger.dtchar</resource>
+                <resourceDisplayName>SkeletalMeshes:YoungMan_African:Adam.dtchar</resourceDisplayName>
+                <resource>SkeletalMeshes:YoungMan_African:Adam.dtchar</resource>
             </property>
         </actor>
         <actor>
@@ -3322,7 +3341,7 @@
             </property>
             <property>
                 <name>LookAtCameraRange</name>
-                <float>3</float>
+                <float>8</float>
             </property>
             <property>
                 <name>Stance</name>
@@ -3802,7 +3821,7 @@
             </property>
             <property>
                 <name>Start Node</name>
-                <actorId>f551ce6c-57ef-4d1d-a562-1f21ac37bf58</actorId>
+                <actorId>1ab03e82-8f71-4a47-801a-6741e4f30a12</actorId>
             </property>
             <property>
                 <name>Render Path</name>
@@ -4005,14 +4024,14 @@
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-457.533722</value1>
-                    <value2>-227.035309</value2>
-                    <value3>6.821356</value3>
+                    <value1>-331.488342</value1>
+                    <value2>-401.270142</value2>
+                    <value3>5.000000</value3>
                 </vec3>
             </property>
             <property>
                 <name>Time to Next</name>
-                <float>30</float>
+                <float>10</float>
             </property>
             <property>
                 <name>Exit Control Point</name>
@@ -4826,14 +4845,14 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>-0.000000</value2>
-                    <value3>-97.597900</value3>
+                    <value3>-61.332611</value3>
                 </vec3>
             </property>
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>155.082657</value1>
-                    <value2>-388.844818</value2>
+                    <value1>-114.768776</value1>
+                    <value2>-322.446198</value2>
                     <value3>0.000000</value3>
                 </vec3>
             </property>
@@ -4853,8 +4872,8 @@
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-96.972046</value1>
-                    <value2>-355.391541</value2>
+                    <value1>-102.213013</value1>
+                    <value2>-399.763733</value2>
                     <value3>0.000000</value3>
                 </vec3>
             </property>
@@ -5267,8 +5286,8 @@
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-188.452530</value1>
-                    <value2>-103.998436</value2>
+                    <value1>-507.057220</value1>
+                    <value2>-36.620834</value2>
                     <value3>0.000000</value3>
                 </vec3>
             </property>
@@ -5511,9 +5530,9 @@
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-72.016991</value1>
-                    <value2>-357.327515</value2>
-                    <value3>15.000000</value3>
+                    <value1>-222.301224</value1>
+                    <value2>-173.661209</value2>
+                    <value3>5.752715</value3>
                 </vec3>
             </property>
             <property>
@@ -5691,8 +5710,8 @@
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-303.746765</value1>
-                    <value2>-318.113373</value2>
+                    <value1>-426.227905</value1>
+                    <value2>-208.462250</value2>
                     <value3>0.000000</value3>
                 </vec3>
             </property>
@@ -5732,7 +5751,7 @@
             </property>
             <property>
                 <name>Main: ActivationLinearVelocityThreshold</name>
-                <float>9.9999997e-05</float>
+                <float>9.9999997e-005</float>
             </property>
             <property>
                 <name>Main: LinearDamping</name>
@@ -6208,14 +6227,14 @@
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-389.345673</value1>
-                    <value2>-137.796173</value2>
-                    <value3>32.971954</value3>
+                    <value1>49.635857</value1>
+                    <value2>-41.662560</value2>
+                    <value3>5.000000</value3>
                 </vec3>
             </property>
             <property>
                 <name>Time to Next</name>
-                <float>30</float>
+                <float>10</float>
             </property>
             <property>
                 <name>Entry Control Point</name>
@@ -6441,9 +6460,9 @@
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-507.174896</value1>
-                    <value2>-151.039459</value2>
-                    <value3>1.323961</value3>
+                    <value1>-530.391663</value1>
+                    <value2>-118.039536</value2>
+                    <value3>5.000000</value3>
                 </vec3>
             </property>
             <property>
@@ -6869,7 +6888,7 @@
             </property>
             <property>
                 <name>Main: ActivationLinearVelocityThreshold</name>
-                <float>9.9999997e-05</float>
+                <float>9.9999997e-005</float>
             </property>
             <property>
                 <name>Main: LinearDamping</name>
@@ -7531,8 +7550,8 @@
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-567.294495</value1>
-                    <value2>-113.804115</value2>
+                    <value1>-569.248047</value1>
+                    <value2>-114.136063</value2>
                     <value3>3.457617</value3>
                 </vec3>
             </property>
@@ -7546,11 +7565,19 @@
             <id>610142e6-443d-4799-b02c-091a1506a325</id>
             <name>Camera_E_BezierNode_04</name>
             <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>3.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-425.113617</value1>
-                    <value2>-220.111450</value2>
-                    <value3>73.672386</value3>
+                    <value1>-719.427002</value1>
+                    <value2>-229.763306</value2>
+                    <value3>8.190310</value3>
                 </vec3>
             </property>
             <property>
@@ -8380,9 +8407,9 @@
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-523.079529</value1>
-                    <value2>-165.131378</value2>
-                    <value3>4.154537</value3>
+                    <value1>-543.095032</value1>
+                    <value2>-150.529648</value2>
+                    <value3>5.000000</value3>
                 </vec3>
             </property>
             <property>
@@ -8495,8 +8522,8 @@
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-186.443024</value1>
-                    <value2>-108.576851</value2>
+                    <value1>-277.945435</value1>
+                    <value2>-54.508141</value2>
                     <value3>0.000000</value3>
                 </vec3>
             </property>
@@ -8822,14 +8849,18 @@
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-463.454163</value1>
-                    <value2>-130.276367</value2>
-                    <value3>3.121216</value3>
+                    <value1>-555.737122</value1>
+                    <value2>-106.913597</value2>
+                    <value3>8.000000</value3>
                 </vec3>
             </property>
             <property>
                 <name>Time to Next</name>
                 <float>30</float>
+            </property>
+            <property>
+                <name>Time Step</name>
+                <float>0.025</float>
             </property>
             <property>
                 <name>Exit Control Point</name>
@@ -9280,6 +9311,14 @@
             <id>77c703af-e710-47e0-a4bf-1fbf93c047ce</id>
             <name>Camera_F_Controller</name>
             <property>
+                <name>Parent Object</name>
+                <actorId>58693797-ee89-4e33-a9f5-b6b672fb8352</actorId>
+            </property>
+            <property>
+                <name>Parent Relation</name>
+                <enumerated>TRACK_AND_FOLLOW</enumerated>
+            </property>
+            <property>
                 <name>Start Node</name>
                 <actorId>aef2ab1d-cb74-4809-bba3-905e67ff9185</actorId>
             </property>
@@ -9289,10 +9328,6 @@
             </property>
             <property>
                 <name>Follow Path</name>
-                <boolean>true</boolean>
-            </property>
-            <property>
-                <name>Set Looping</name>
                 <boolean>true</boolean>
             </property>
         </actor>
@@ -9436,14 +9471,14 @@
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-1103.762451</value1>
-                    <value2>-269.218872</value2>
-                    <value3>98.313522</value3>
+                    <value1>-1847.757813</value1>
+                    <value2>-333.000031</value2>
+                    <value3>75.000000</value3>
                 </vec3>
             </property>
             <property>
                 <name>Time to Next</name>
-                <float>45</float>
+                <float>100</float>
             </property>
             <property>
                 <name>Exit Control Point</name>
@@ -9839,9 +9874,9 @@
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-398.526855</value1>
-                    <value2>-193.769363</value2>
-                    <value3>21.764896</value3>
+                    <value1>-129.018677</value1>
+                    <value2>-419.079285</value2>
+                    <value3>10.000000</value3>
                 </vec3>
             </property>
             <property>
@@ -9856,9 +9891,9 @@
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-431.870605</value1>
-                    <value2>-83.659904</value2>
-                    <value3>50.716431</value3>
+                    <value1>-286.868011</value1>
+                    <value2>148.593445</value2>
+                    <value3>5.000000</value3>
                 </vec3>
             </property>
             <property>
@@ -10206,11 +10241,19 @@
             <id>865fd0fc-4bdb-43cf-952c-68ef4296d4d2</id>
             <name>ControlPoint_37</name>
             <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>-174.236099</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-502.734253</value1>
-                    <value2>-159.774597</value2>
-                    <value3>60.702538</value3>
+                    <value1>-693.470764</value1>
+                    <value2>-52.553802</value2>
+                    <value3>34.034748</value3>
                 </vec3>
             </property>
             <property>
@@ -10420,11 +10463,19 @@
             <id>8acf68da-d8de-42de-b407-1ead7dcc9dfa</id>
             <name>Camera_G_BezierNode_02</name>
             <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>8.500096</value3>
+                </vec3>
+            </property>
+            <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-564.982056</value1>
-                    <value2>-125.881660</value2>
-                    <value3>2.958198</value3>
+                    <value1>-563.633728</value1>
+                    <value2>-127.232811</value2>
+                    <value3>3.532558</value3>
                 </vec3>
             </property>
             <property>
@@ -10976,14 +11027,14 @@
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-475.601868</value1>
-                    <value2>-123.731476</value2>
-                    <value3>58.889832</value3>
+                    <value1>-395.453461</value1>
+                    <value2>102.507614</value2>
+                    <value3>5.000000</value3>
                 </vec3>
             </property>
             <property>
                 <name>Time to Next</name>
-                <float>30</float>
+                <float>10</float>
             </property>
             <property>
                 <name>Entry Control Point</name>
@@ -11778,6 +11829,10 @@
                 <name>Render Path</name>
                 <boolean>false</boolean>
             </property>
+            <property>
+                <name>Follow Path</name>
+                <boolean>true</boolean>
+            </property>
         </actor>
         <actor>
             <type>dtcore.Curve.Bezier Node</type>
@@ -11786,9 +11841,9 @@
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-549.746887</value1>
-                    <value2>-129.538544</value2>
-                    <value3>5.000000</value3>
+                    <value1>-554.565491</value1>
+                    <value2>-128.662445</value2>
+                    <value3>3.500000</value3>
                 </vec3>
             </property>
             <property>
@@ -12160,14 +12215,14 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>-0.000000</value2>
-                    <value3>145.074234</value3>
+                    <value3>-60.046791</value3>
                 </vec3>
             </property>
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-235.964676</value1>
-                    <value2>-105.730003</value2>
+                    <value1>-304.971069</value1>
+                    <value2>53.485939</value2>
                     <value3>0.000000</value3>
                 </vec3>
             </property>
@@ -12193,14 +12248,14 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>-0.000000</value2>
-                    <value3>10.088344</value3>
+                    <value3>14.485877</value3>
                 </vec3>
             </property>
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-110.517021</value1>
-                    <value2>-26.825792</value2>
+                    <value1>-104.862137</value1>
+                    <value2>-52.920502</value2>
                     <value3>0.000000</value3>
                 </vec3>
             </property>
@@ -13077,8 +13132,8 @@
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-164.972107</value1>
-                    <value2>-339.517365</value2>
+                    <value1>-269.438782</value1>
+                    <value2>-362.552124</value2>
                     <value3>0.000000</value3>
                 </vec3>
             </property>
@@ -13197,14 +13252,18 @@
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-563.413696</value1>
-                    <value2>-150.483734</value2>
+                    <value1>-560.785400</value1>
+                    <value2>-144.443344</value2>
                     <value3>5.058908</value3>
                 </vec3>
             </property>
             <property>
                 <name>Time to Next</name>
-                <float>50</float>
+                <float>40</float>
+            </property>
+            <property>
+                <name>Time Step</name>
+                <float>0.016000001</float>
             </property>
             <property>
                 <name>Entry Control Point</name>
@@ -13322,16 +13381,24 @@
             <id>aef2ab1d-cb74-4809-bba3-905e67ff9185</id>
             <name>Camera_F_BezierNode_01</name>
             <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>-135.600571</value3>
+                </vec3>
+            </property>
+            <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-261.885223</value1>
-                    <value2>127.412781</value2>
-                    <value3>15.000000</value3>
+                    <value1>-356.273041</value1>
+                    <value2>-194.021408</value2>
+                    <value3>-5.000000</value3>
                 </vec3>
             </property>
             <property>
                 <name>Time to Next</name>
-                <float>20</float>
+                <float>25</float>
             </property>
             <property>
                 <name>Exit Control Point</name>
@@ -13978,15 +14045,15 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>16.000546</value3>
+                    <value3>13.500974</value3>
                 </vec3>
             </property>
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-486.871094</value1>
-                    <value2>-107.723770</value2>
-                    <value3>10.635692</value3>
+                    <value1>-534.422974</value1>
+                    <value2>-120.022934</value2>
+                    <value3>4.035697</value3>
                 </vec3>
             </property>
             <property>
@@ -14356,9 +14423,9 @@
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-392.055786</value1>
-                    <value2>-161.864029</value2>
-                    <value3>29.294199</value3>
+                    <value1>112.803314</value1>
+                    <value2>-377.015167</value2>
+                    <value3>5.000000</value3>
                 </vec3>
             </property>
             <property>
@@ -15711,8 +15778,8 @@
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-174.362793</value1>
-                    <value2>-303.042480</value2>
+                    <value1>-378.104187</value1>
+                    <value2>-299.007996</value2>
                     <value3>4.517242</value3>
                 </vec3>
             </property>
@@ -16038,7 +16105,7 @@
             <name>Camera_E_Controller</name>
             <property>
                 <name>Parent Object</name>
-                <actorId>5da5c7f2-482a-4c79-95c8-9555b564f4c5</actorId>
+                <actorId>9a4b6dae-a108-4fc5-8eeb-79405ebfac36</actorId>
             </property>
             <property>
                 <name>Parent Relation</name>
@@ -16097,8 +16164,8 @@
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-437.475372</value1>
-                    <value2>-296.641022</value2>
+                    <value1>-427.788300</value1>
+                    <value2>-296.488312</value2>
                     <value3>0.000000</value3>
                 </vec3>
             </property>
@@ -16213,8 +16280,8 @@
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>164.724854</value1>
-                    <value2>-390.127808</value2>
+                    <value1>-0.003723</value1>
+                    <value2>-190.921188</value2>
                     <value3>0.000000</value3>
                 </vec3>
             </property>
@@ -16538,8 +16605,8 @@
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-604.027405</value1>
-                    <value2>-131.665680</value2>
+                    <value1>-586.249329</value1>
+                    <value2>-133.877884</value2>
                     <value3>5.000000</value3>
                 </vec3>
             </property>
@@ -17246,9 +17313,9 @@
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-563.424255</value1>
-                    <value2>-106.391228</value2>
-                    <value3>5.000000</value3>
+                    <value1>-562.841736</value1>
+                    <value2>-109.605873</value2>
+                    <value3>3.500000</value3>
                 </vec3>
             </property>
             <property>
@@ -17353,17 +17420,17 @@
             <property>
                 <name>Rotation</name>
                 <vec3>
-                    <value1>37.505024</value1>
+                    <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-47.484341</value3>
+                    <value3>-24.800135</value3>
                 </vec3>
             </property>
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-619.655579</value1>
-                    <value2>-132.131393</value2>
-                    <value3>2.988575</value3>
+                    <value1>-651.053894</value1>
+                    <value2>-213.949661</value2>
+                    <value3>4.223375</value3>
                 </vec3>
             </property>
             <property>
@@ -17386,7 +17453,7 @@
             </property>
             <property>
                 <name>Main: ActivationLinearVelocityThreshold</name>
-                <float>9.9999997e-06</float>
+                <float>9.9999997e-006</float>
             </property>
             <property>
                 <name>Main: LinearDamping</name>
@@ -17590,8 +17657,8 @@
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-566.407898</value1>
-                    <value2>-112.669846</value2>
+                    <value1>-560.450500</value1>
+                    <value2>-115.936783</value2>
                     <value3>3.515972</value3>
                 </vec3>
             </property>
@@ -18768,10 +18835,6 @@
                 <float>0.016666668</float>
             </property>
             <property>
-                <name>Target Object</name>
-                <actorId>5d58f27a-528b-486e-9507-632e12ea9c94</actorId>
-            </property>
-            <property>
                 <name>Start Node</name>
                 <actorId>44f7492b-42cb-4a0a-8ae8-8258ad12a904</actorId>
             </property>
@@ -18815,7 +18878,7 @@
             </property>
             <property>
                 <name>Parent Object</name>
-                <actorId>163a24f4-587e-4227-aacb-cc2a350c310c</actorId>
+                <actorId>258a80cf-dcf9-43d3-b2a6-4ec387cd9076</actorId>
             </property>
             <property>
                 <name>Parent Relation</name>
@@ -18828,10 +18891,6 @@
             <property>
                 <name>Render Path</name>
                 <boolean>false</boolean>
-            </property>
-            <property>
-                <name>Set Looping</name>
-                <boolean>true</boolean>
             </property>
         </actor>
         <actor>
@@ -18984,9 +19043,9 @@
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-391.592682</value1>
-                    <value2>-88.691528</value2>
-                    <value3>42.525528</value3>
+                    <value1>-69.280212</value1>
+                    <value2>191.444992</value2>
+                    <value3>5.000000</value3>
                 </vec3>
             </property>
             <property>
@@ -19001,9 +19060,9 @@
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-108.175415</value1>
-                    <value2>-77.810715</value2>
-                    <value3>15.000000</value3>
+                    <value1>-209.705719</value1>
+                    <value2>-97.991768</value2>
+                    <value3>8.831515</value3>
                 </vec3>
             </property>
             <property>
@@ -19192,25 +19251,25 @@
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-182.851135</value1>
-                    <value2>314.138123</value2>
+                    <value1>-245.399918</value1>
+                    <value2>83.799881</value2>
                     <value3>0.000000</value3>
                 </vec3>
             </property>
             <property>
                 <name>Time to Next</name>
-                <float>1000</float>
+                <float>600</float>
             </property>
             <property>
                 <name>Time Step</name>
                 <float>0.050000001</float>
             </property>
             <property>
-                <name>Exit Control Point</name>
+                <name>Entry Control Point</name>
                 <actorId>464881af-384f-4243-a016-42108cb50084</actorId>
             </property>
             <property>
-                <name>Next Bezier Node</name>
+                <name>Previous Bezier Node</name>
                 <actorId>1ab03e82-8f71-4a47-801a-6741e4f30a12</actorId>
             </property>
         </actor>
@@ -19968,9 +20027,9 @@
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-152.011383</value1>
-                    <value2>-50.315353</value2>
-                    <value3>15.000000</value3>
+                    <value1>-379.900574</value1>
+                    <value2>-87.754158</value2>
+                    <value3>5.000000</value3>
                 </vec3>
             </property>
             <property>
@@ -20070,14 +20129,14 @@
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-569.081299</value1>
-                    <value2>-101.133362</value2>
-                    <value3>2.616467</value3>
+                    <value1>-604.150208</value1>
+                    <value2>-127.971207</value2>
+                    <value3>3.950192</value3>
                 </vec3>
             </property>
             <property>
                 <name>Time to Next</name>
-                <float>30</float>
+                <float>25</float>
             </property>
             <property>
                 <name>Exit Control Point</name>
