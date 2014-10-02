@@ -421,6 +421,7 @@ namespace dtExample
       {
          SetCameraToPlayerStart();
          AttachBanner();
+         SetLampIntensity(0.0f);
       }
    }
 
