@@ -667,7 +667,7 @@ namespace dtExample
 
       if (item != NULL)
       {
-         GuiNode* content = NULL;
+         //GuiNode* content = NULL;
          dtCore::UniqueId actorID(item->getName().c_str());
 
          // DEBUG:

@@ -273,7 +273,7 @@ void TestAnim::InitializeAnimationActor(dtAnim::AnimationGameActor* gameProxy,
             // proper locations.
             dtCore::Transform xform;
             osg::Vec3 offset;
-            osg::Vec3 originalPos = originalXform.GetTranslation();
+            //osg::Vec3 originalPos = originalXform.GetTranslation();
             xform.SetTranslation(offset);
 
             dtCore::RefPtr<dtCore::Transformable> cameraPivot = new dtCore::Transformable;

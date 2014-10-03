@@ -149,7 +149,7 @@ void TestApp::Initialize(dtABC::BaseABC& app, int argc, char** argv)
       projectPaths.push_back(executablePath + "/../examples");
       projectPaths.push_back(executablePath + "/../share/delta3d/examples");
       projectPaths.push_back(executablePath + "/../../examples");
-      projectPaths.push_back(executablePath + "/../Resources");
+      projectPaths.push_back(executablePath + "/../Resources/examples");
       // TODO compile in the install prefix for linux?
       projectPaths.push_back("/usr/share/delta3d/examples");
       projectPaths.push_back("/usr/local/share/delta3d/examples");

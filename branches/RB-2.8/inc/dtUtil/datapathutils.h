@@ -72,6 +72,19 @@ namespace dtUtil
     *
     */
    DT_UTIL_EXPORT std::string FindFileInPathList(const std::string& fileName, std::vector<std::string> paths, bool caseInsensitive = true);
+
+#ifdef __APPLE__
+   /**
+    * @return the resource path inside the current application bundle.
+    * This is used internally, and this api is subject to change.
+    */
+   std::string GetBundleResourcesPath();
+   /**
+    * @return the plugins path inside the current application bundle.
+    * This is used internally, and this api is subject to change.
+    */
+   std::string GetBundlePlugInsPath();
+#endif
 }
 
 #endif // DELTA_DATA_FILE_PATH_LIST
