@@ -159,12 +159,43 @@ function (BUILD_GAME_START libraryTargetName linkBool)
    set(PROG_SOURCES "${SOURCE_PATH}/Main.cpp")
    
    set(APP_NAME ${libraryTargetName}_START)
-   
-   ADD_EXECUTABLE(${libraryTargetName}_START
-       ${PROG_SOURCES}
-   )
 
-   SET_TARGET_PROPERTIES(${libraryTargetName}_START PROPERTIES OUTPUT_NAME ${libraryTargetName})
+   if (APPLE)
+      if (PROG_ICON)
+         SET(apple_bundle_sources ${iconFile})
+      else()
+         SET(apple_bundle_sources "${CMAKE_SOURCE_DIR}/CMakeModules/Example.icns")
+      endif()
+      SET_SOURCE_FILES_PROPERTIES(
+       ${apple_bundle_sources}
+       PROPERTIES
+       MACOSX_PACKAGE_LOCATION Resources
+      )
+      
+      if (PROG_CONFIG_FILE)
+         LIST(APPEND apple_bundle_sources ${PROG_CONFIG_FILE})
+         SET_SOURCE_FILES_PROPERTIES(
+          ${PROG_CONFIG_FILE}
+          PROPERTIES
+          MACOSX_PACKAGE_LOCATION Resources/deltaData
+         )
+      endif()
+   
+      ADD_EXECUTABLE(${libraryTargetName}_START MACOSX_BUNDLE
+          ${PROG_SOURCES}
+          ${apple_bundle_sources}
+      )
+      SET_TARGET_PROPERTIES(${libraryTargetName}_START PROPERTIES
+      MACOSX_BUNDLE_INFO_PLIST delta3dAppBundle.plist.in
+      MACOSX_BUNDLE_ICON_FILE Example)
+   else ()
+      ADD_EXECUTABLE(${libraryTargetName}_START
+          ${PROG_SOURCES}
+      )
+   endif ()
+
+   SET_TARGET_PROPERTIES(${libraryTargetName}_START PROPERTIES 
+       OUTPUT_NAME ${libraryTargetName})
 
    TARGET_LINK_LIBRARIES(${libraryTargetName}_START
                          ${DTUTIL_LIBRARIES}

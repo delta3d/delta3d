@@ -355,8 +355,8 @@ MACRO(DELTA3D_ADD_PROGRAM APP_NAME)
          ${apple_bundle_sources}
       )
       SET_TARGET_PROPERTIES(${APP_NAME} PROPERTIES
+          MACOSX_BUNDLE_INFO_PLIST delta3dAppBundle.plist.in
           MACOSX_BUNDLE_ICON_FILE ${APP_NAME})
-
    else ()
       ADD_EXECUTABLE(${APP_NAME} ${APP_TYPE}
          ${PROG_HEADERS}
