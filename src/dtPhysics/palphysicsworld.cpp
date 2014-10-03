@@ -257,7 +257,7 @@ namespace dtPhysics
 
    static dtCore::ObserverPtr<PhysicsWorld> TheWorld;
 
-   const std::string PhysicsWorld::DIRECTORY_NAME = "/ext/PalPlugins";
+   const std::string PhysicsWorld::DIRECTORY_NAME = "PalPlugins";
    const std::string PhysicsWorld::PHYSX_ENGINE   = "Novodex";
    const std::string PhysicsWorld::BULLET_ENGINE  = "Bullet";
    const std::string PhysicsWorld::ODE_ENGINE     = "ODE";
@@ -789,14 +789,20 @@ namespace dtPhysics
       
          if (!dtUtil::GetDeltaRootPath().empty())
          {
-            finalPath = dtUtil::GetDeltaRootPath() + DIRECTORY_NAME;
+            finalPath = dtUtil::GetDeltaRootPath() + dtUtil::FileUtils::PATH_SEPARATOR + "ext" + dtUtil::FileUtils::PATH_SEPARATOR + DIRECTORY_NAME;
          }
 
          if (finalPath.empty() || !fileUtils.DirExists(finalPath)) 
          {
-            finalPath = fileUtils.CurrentDirectory()
+            finalPath = fileUtils.CurrentDirectory() + dtUtil::FileUtils::PATH_SEPARATOR + "ext" + dtUtil::FileUtils::PATH_SEPARATOR
                              + DIRECTORY_NAME;
          }
+#ifdef __APPLE__
+         if (finalPath.empty() || !fileUtils.DirExists(finalPath))
+         {
+            finalPath = dtUtil::GetBundlePlugInsPath() + "/" + DIRECTORY_NAME;
+         }
+#endif
       }
       else
       {
@@ -807,7 +813,6 @@ namespace dtPhysics
       std::locale loc;
       for (unsigned i = 0; i < engineName.length(); ++i)
       {
-
          engineName[i] = std::tolower(engineName[i], loc);
       }
 #ifndef PAL_PLUGIN_ARCH_PATH
