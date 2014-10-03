@@ -67,7 +67,6 @@ namespace dtRender
    , mAdaptFactor(0.01f)
    , mMinLuminance(0.2f)
    , mMaxLuminance(5.0f)
-   , mExposure(5.0f)
    {
 
       SetName("HDRScene");  
@@ -95,8 +94,7 @@ namespace dtRender
       if(mps != NULL)
       {
          sm.SetEnableHDR(true);
-         sm.SetExposure(mExposure);
-
+         
          CreateHDRPipeline(mps->GetColorBypass(), mps->GetResampleColor());
 
          mps->DetachDefaultUnitOut();
@@ -422,7 +420,6 @@ namespace dtRender
       DT_REGISTER_PROPERTY_WITH_NAME(AdaptFactor, "AdaptFactor", "The rate at which the camera can change its exposure to light.", PropRegHelperType, propRegHelper);
       DT_REGISTER_PROPERTY_WITH_NAME(MinLuminance, "MinLuminance", "The minimum luminance of the scene.", PropRegHelperType, propRegHelper);
       DT_REGISTER_PROPERTY_WITH_NAME(MaxLuminance, "MaxLuminance", "The maximum luminance of the scene.", PropRegHelperType, propRegHelper);
-      DT_REGISTER_PROPERTY_WITH_NAME(Exposure, "Exposure", "The exposure effects the overall brightness.", PropRegHelperType, propRegHelper);
 
    }
 
