@@ -34,31 +34,21 @@ qt4_wrap_ui(UI_SOURCES AnimationControlPanel.ui)
 
 SOURCE_GROUP("Generated Files" REGULAR_EXPRESSION qrc_.*cxx|moc_.*cxx)
 
-ADD_EXECUTABLE(${APP_NAME}
-    ${PROG_HEADERS}
-    ${PROG_SOURCES}
-    ${MOC_SOURCES}
-    ${RCC_SOURCES}
-    ${UI_SOURCES}
-)
-
-LINK_WITH_VARIABLES(${APP_NAME}
+SET(APP_EXTERNAL_DEPS
                      QT_QTCORE_LIBRARY
                      QT_QTGUI_LIBRARY
                      QT_QTOPENGL_LIBRARY
                      OSGANIMATION_LIBRARY
 )
 
-TARGET_LINK_LIBRARIES( ${APP_NAME}
+SET(APP_DEPS
                        ${DTUTIL_LIBRARY}
                        ${DTCORE_LIBRARY}
                        ${DTANIM_LIBRARY}
                        ${DTQT_LIBRARY}
 )
 
-
-INCLUDE(ProgramInstall OPTIONAL)
-
+DELTA3D_ADD_PROGRAM(${APP_NAME} MACOSX_BUNDLE DT_OBJECT_VIEWER)
 
 IF (MSVC)
   SET_TARGET_PROPERTIES(${APP_NAME} PROPERTIES DEBUG_POSTFIX "${CMAKE_DEBUG_POSTFIX}")
