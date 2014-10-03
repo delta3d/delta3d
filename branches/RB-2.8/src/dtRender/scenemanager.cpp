@@ -191,6 +191,9 @@ namespace dtRender
          : mCreateDefaultScene(true)
          , mCreateMultipassScene(true)
          , mEnableHDR(false)
+         , mExposure(5.0f)
+         , mLuminance(1.0f)
+         , mAmbience(1.0f)
          , mGraphicsQuality(&GraphicsQuality::DEFAULT)
          , mMultipassScene(NULL)
          , mSceneCamera(NULL)
@@ -217,6 +220,10 @@ namespace dtRender
       bool mCreateMultipassScene;
       bool mEnableHDR;
       
+      float mExposure;
+      float mLuminance;
+      float mAmbience;
+
       const GraphicsQuality* mGraphicsQuality;
       typedef std::vector<dtCore::RefPtr<SceneGroup> > SceneGroupArray;
       dtCore::RefPtr<MultipassScene> mMultipassScene;
@@ -779,8 +786,6 @@ namespace dtRender
          clamp->setClampReadColor(GL_TRUE);
       }
 
-      mImpl->mUniforms->mExposure->Update();
-
       // make it protected and override, so that it is done for the whole rendering pipeline
       ss->setAttribute(clamp, osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE | osg::StateAttribute::PROTECTED);     
 
@@ -803,35 +808,47 @@ namespace dtRender
 
    float SceneManager::GetLuminance() const
    {
-      return mImpl->mUniforms->mSceneLuminance->GetValue();
+      return mImpl->mLuminance;
    }
 
    void SceneManager::SetLuminance( float l)
    {
-      mImpl->mUniforms->mSceneLuminance->SetValue(l);
-      mImpl->mUniforms->mSceneLuminance->Update();
+      mImpl->mLuminance = l;
+      if(mImpl->mUniforms->mSceneLuminance.valid())
+      {
+         mImpl->mUniforms->mSceneLuminance->SetValue(mImpl->mLuminance);
+         mImpl->mUniforms->mSceneLuminance->Update();
+      }
    }
 
    float SceneManager::GetAmbience() const
    {
-      return mImpl->mUniforms->mSceneAmbience->GetValue();
+      return mImpl->mAmbience;
    }
 
    void SceneManager::SetAmbience( float a)
    {
-      mImpl->mUniforms->mSceneAmbience->SetValue(a);
-      mImpl->mUniforms->mSceneAmbience->Update();
+      mImpl->mAmbience = a;
+      if(mImpl->mUniforms->mSceneAmbience.valid())
+      {
+         mImpl->mUniforms->mSceneAmbience->SetValue(mImpl->mAmbience);
+         mImpl->mUniforms->mSceneAmbience->Update();
+      }
    }
 
    float SceneManager::GetExposure() const
    {
-      return mImpl->mUniforms->mExposure->GetValue();
+      return mImpl->mExposure;
    }
 
    void SceneManager::SetExposure( float a)
    {
-      mImpl->mUniforms->mExposure->SetValue(a);
-      mImpl->mUniforms->mExposure->Update();
+      mImpl->mExposure = a;
+      if(mImpl->mUniforms->mExposure.valid())
+      {
+         mImpl->mUniforms->mExposure->SetValue(mImpl->mExposure);
+         mImpl->mUniforms->mExposure->Update();
+      }
    }
 
 
@@ -862,16 +879,16 @@ namespace dtRender
 
       //mImpl->mUniforms->mGamma->SetValue(1.0f);
       //mImpl->mUniforms->mBrightness->SetValue(1.0f);
-      mImpl->mUniforms->mExposure->SetValue(5.0f);
+      mImpl->mUniforms->mExposure->SetValue(mImpl->mExposure);
       mImpl->mUniforms->mExposure->Update();
 
       mImpl->mUniforms->mSceneLuminance = new dtCore::ShaderParamFloat(UNIFORM_SCENE_LUMINANCE);
       mImpl->mUniforms->mSceneAmbience = new dtCore::ShaderParamFloat(UNIFORM_SCENE_AMBIENCE);
 
-      mImpl->mUniforms->mSceneLuminance->SetValue(1.0f);
+      mImpl->mUniforms->mSceneLuminance->SetValue(mImpl->mLuminance);
       mImpl->mUniforms->mSceneLuminance->Update();
 
-      mImpl->mUniforms->mSceneAmbience->SetValue(1.0f);
+      mImpl->mUniforms->mSceneAmbience->SetValue(mImpl->mAmbience);
       mImpl->mUniforms->mSceneAmbience->Update();
 
       mImpl->mUniforms->mMainCameraPos = new dtCore::ShaderParamVec4(UNIFORM_MAIN_CAMERA_POS);
@@ -1043,16 +1060,25 @@ namespace dtRender
    {
       dtGame::GameActorProxy::BuildPropertyMap();
 
-      //SceneManager *env;
-      //GetDrawable(env);
+      SceneManager *env;
+      GetDrawable(env);
 
-      //todo- setup a default state set
-      /*osg::Camera* cam = GetGameManager()->GetApplication().GetCamera()->GetOSGCamera();
+      std::string group("Lighting");
+      typedef dtCore::PropertyRegHelper<SceneManagerActor&, SceneManager> PropRegHelperType;
+      PropRegHelperType propRegHelper(*this, env, group);
 
-      cam->setClearColor(osg::Vec4(0, 0, 0, 0));
-      cam->setComputeNearFarMode(osg::CullSettings::DO_NOT_COMPUTE_NEAR_FAR);
-      cam->setCullingMode(osg::CullSettings::ENABLE_ALL_CULLING);
-*/
+
+      DT_REGISTER_PROPERTY_WITH_NAME_AND_LABEL(Ambience, "Ambience", "Ambience",
+         "Percentage increase in overall lighting by a constant contribution.",
+         PropRegHelperType, propRegHelper);
+
+      DT_REGISTER_PROPERTY_WITH_NAME_AND_LABEL(Luminance, "Luminance", "Luminance",
+         "Scales colors by a percentage of light contribution.",
+         PropRegHelperType, propRegHelper);
+
+      DT_REGISTER_PROPERTY_WITH_NAME_AND_LABEL(Exposure, "Exposure", "Exposure",
+         "This currently sets the maximum value of accumulated light per pixel.",
+         PropRegHelperType, propRegHelper);
 
    }
 
