@@ -12,10 +12,6 @@ uniform float d3d_FarPlane;
 
 uniform sampler2D reflectionMap;
 
-//used for Lighting
-uniform float d3d_SceneLuminance = 1.0;
-uniform float d3d_SceneAmbience = 1.0;
-
 const float cDeepWaterScalar = 0.64;
 const float cViewDistance = 100.0; 
 
@@ -32,7 +28,7 @@ vec3 waterSamplePlanarReflectTexture(vec3 normal, vec2 fragCoord)
 {
    vec2 refTexCoords = vec2(fragCoord.x / ScreenWidth, (fragCoord.y / ScreenHeight));      
    refTexCoords = clamp(refTexCoords.xy + 0.05 * normal.xy, 0.0, 1.0);
-   return d3d_SceneLuminance * texture2D(reflectionMap, refTexCoords).rgb;   
+   return texture2D(reflectionMap, refTexCoords).rgb;   
 }
 
 float computeWaterColumn(vec4 viewPos, vec2 fragCoord)
