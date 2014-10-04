@@ -281,6 +281,29 @@ namespace dtUtil
       [mypool release];
       return result;
    }
+
+   void RemovePSNCommandLineOption(int& argc, char**& argv)
+   {
+      static std::string osxPSN("-psn_");
+      for (int i = 0; i < argc; ++i)
+      {
+         if (std::string(argv[i]).compare(0, osxPSN.length(), osxPSN) == 0)
+         {
+            for (int j = i; j < argc; ++j)
+            {
+               if (j == argc-1)
+               {
+                  argv[j] = 0;
+               }
+               else
+               {
+                  argv[j] = argv[j+1];
+               }
+            }
+            --argc;
+         }
+      }
+   }
 #endif
 
    /**

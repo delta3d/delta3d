@@ -8,6 +8,7 @@ for token in *.app ; do
    ln -sf ../../../../lib/stplugins;
    ln -sf ../../../../lib/directorplugins;
    ln -sf ../../../../PalPlugins;
+   ln -sf ../../../../QtPlugins/imageformats;
    popd;
    pushd Resources; 
    rm -f deltaData;
