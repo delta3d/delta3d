@@ -49,7 +49,7 @@ namespace dtUtil
       std::string homedir;
 #ifdef DELTA_WIN32
       char path[MAX_PATH];
-      if (SUCCEEDED(SHGetFolderPathA(NULL, CSIDL_PROFILE, NULL, 0, path)) {
+      if (SUCCEEDED(SHGetFolderPathA(NULL, CSIDL_PROFILE, NULL, 0, path))) {
          homedir = path;
       }
 #else
