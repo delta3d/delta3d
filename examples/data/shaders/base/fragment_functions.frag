@@ -15,10 +15,11 @@ uniform float ScreenWidth = 768;
 uniform sampler2D reflectionMap;
 uniform samplerCube d3d_ReflectionCubeMap;
 
-
 //used for HDR
 uniform float d3d_SceneLuminance = 1.0;
 uniform float d3d_SceneAmbience = 1.0;
+uniform float d3d_Exposure = 1.0;
+
 
 float computeFragDepth(float distance)
 {
@@ -33,9 +34,12 @@ void alphaMix(vec3 color1, vec3 color2, float fogContrib, float alpha, out vec4 
 void lightContribution(vec3 normal, vec3 lightDir, vec3 diffuseLightSource, vec3 ambientLightSource, out vec3 lightContrib)
 {
    float diffuseSurfaceContrib = max(dot(normal, lightDir),0.0);
-   
+   float fUpContribution = max(dot(vec3(0.0, 0.0, 1.0), lightDir), -0.1);
+   fUpContribution = (fUpContribution + 0.1) / 1.1;  // we use a bit past horizontal, else it darkens too soon.
+   float diffuseContrib = d3d_SceneLuminance * ((fUpContribution * 0.5) + (diffuseSurfaceContrib * 0.5));
+
    // Lit Color (Diffuse plus Ambient)
-   vec3 diffuseLight = d3d_SceneLuminance * diffuseSurfaceContrib * diffuseLightSource;
+   vec3 diffuseLight = diffuseLightSource * diffuseContrib;
    lightContrib = vec3(diffuseLight + (d3d_SceneAmbience * ambientLightSource ));
 }
 

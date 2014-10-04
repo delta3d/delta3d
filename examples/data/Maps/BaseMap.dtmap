@@ -7,7 +7,7 @@
         <comment></comment>
         <copyright></copyright>
         <createTimestamp>2014-07-29T11:17:35-05:00</createTimestamp>
-        <lastUpdateTimestamp>2014-09-30T00:14:46-05:00</lastUpdateTimestamp>
+        <lastUpdateTimestamp>2014-10-04T13:13:42-05:00</lastUpdateTimestamp>
         <editorVersion>2.8.0</editorVersion>
         <schemaVersion>1.0</schemaVersion>
     </header>
@@ -84,7 +84,7 @@
             </property>
             <property>
                 <name>Visibility</name>
-                <float>5000</float>
+                <float>3500</float>
             </property>
         </actor>
         <actor>
@@ -112,6 +112,18 @@
             <type>dtRender.Scene Manager</type>
             <id>a48fb972-ecf3-4bf3-9d00-0158e95e409e</id>
             <name>SceneManager_01</name>
+            <property>
+                <name>Ambience</name>
+                <float>1.25</float>
+            </property>
+            <property>
+                <name>Luminance</name>
+                <float>1.2</float>
+            </property>
+            <property>
+                <name>Exposure</name>
+                <float>1.5</float>
+            </property>
             <property>
                 <name>SpatializeGroups</name>
                 <boolean>true</boolean>

@@ -191,7 +191,7 @@ namespace dtRender
          : mCreateDefaultScene(true)
          , mCreateMultipassScene(true)
          , mEnableHDR(false)
-         , mExposure(5.0f)
+         , mExposure(1.0f)
          , mLuminance(1.0f)
          , mAmbience(1.0f)
          , mGraphicsQuality(&GraphicsQuality::DEFAULT)
