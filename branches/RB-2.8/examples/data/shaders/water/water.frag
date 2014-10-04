@@ -17,7 +17,7 @@ uniform mat4 inverseViewMatrix;
 uniform vec4 WaterColor;
 uniform vec3 cameraRecenter;
 uniform float UnderWaterViewDistance;
-uniform float d3d_SceneLuminance = 1.0;
+uniform float d3d_Exposure = 1.0;
 
 uniform float modForFOV;	
 uniform float foamMaxHeight;	
@@ -91,7 +91,7 @@ void main (void)
 
    vec3 dynamicLightContrib = computeDynamicLightContrib(normal.xyz, combinedPos.xyz);
 
-   vec3 lightContrib = clamp(lightContribSun + lightContribMoon + dynamicLightContrib, vec3(0.0), vec3(1.0)) ;
+   vec3 lightContrib =  clamp(lightContribSun + lightContribMoon + dynamicLightContrib, vec3(0.0), vec3(d3d_Exposure)) ;
 
 
    //calculates a specular contribution
@@ -105,8 +105,8 @@ void main (void)
    float specularContribMoon = max(0.0, dot(normRefLightVecMoon, viewDir));
    specularContribMoon = 0.5 * pow(specularContribMoon, 50.0);
    
-   vec3 resultSpecular = d3d_SceneLuminance * specularContribSun * gl_LightSource[0].specular.rgb;     
-   resultSpecular += d3d_SceneLuminance * specularContribMoon * gl_LightSource[1].specular.rgb;     
+   vec3 resultSpecular = specularContribSun * gl_LightSource[0].specular.rgb;     
+   resultSpecular += specularContribMoon * gl_LightSource[1].specular.rgb;     
    
    if (gl_FrontFacing)
    {  

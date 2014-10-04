@@ -1,5 +1,9 @@
 #version 120
 
+uniform float d3d_SceneLuminance = 1.0;
+uniform float d3d_SceneAmbience = 1.0;
+uniform float d3d_Exposure = 1.0;
+
 const int MAX_DYNAMIC_LIGHTS = 25;
 const int MAX_SPOT_LIGHTS = 10;
 
@@ -8,10 +12,6 @@ const int NUM_SPOT_LIGHT_ATTRIBS = 4;
 
 uniform int NUM_DYNAMIC_LIGHTS_TO_USE = 0;
 uniform int NUM_SPOT_LIGHTS_TO_USE = 0;
-
-//used for HDR
-uniform float d3d_SceneLuminance = 1.0;
-uniform float d3d_SceneAmbience = 1.0;
 
 //each dynamic light has 3 associated vec4's
 //the first vec4 is a vec3 position and an intensity
@@ -51,18 +51,24 @@ void dynamic_light_fragment(vec3 normal, vec3 pos, out vec3 totalLightContrib)
 
    for(int i = 0; i < NUM_DYNAMIC_LIGHTS_TO_USE * 3; i+=3)
    {      
-     //if(d3d_DynamicLights[i].w > 0.000001) // Note - if's are terrible on the GPU and this ran slower.
-      vec3 lightDir = vec3(d3d_DynamicLights[i].xyz) - pos;
+      vec3 lightPos = d3d_DynamicLights[i].xyz;
+     
+      vec3 lightDir = lightPos - pos;
+      
       float dist = length(lightDir);      
       float dist2 = dist * dist;
       
+      //normalize, we already have the length
+      lightDir /= dist;
+
+
       //this computes the attenuation which keeps the positional lights lighting within range of the light
       float atten = 1.0 / ( d3d_DynamicLights[i + 2].x + (d3d_DynamicLights[i + 2].y * dist) + (d3d_DynamicLights[i + 2].z * dist2));      
-      float normalDotLight = max(0.0, dot(normal, normalize(lightDir)));
+      float normalDotLight = max(0.0, dot(normal, lightDir));
             
       //we use 50% of the dot product lighting contribution and then add 50% of the ambient contribution
       //which is basically taken as just the light color
-      vec3 dotProductLightingAndAmbient = 0.5 * ((1.0 + normalDotLight) * d3d_DynamicLights[i+1].xyz);
+      vec3 dotProductLightingAndAmbient = 0.5 * d3d_SceneLuminance * ((d3d_SceneAmbience + normalDotLight) * d3d_DynamicLights[i+1].xyz);
          
       //we attenuate the resulting contribution of the dot product and ambient lighting,
       //multiply it by the intensity and then accumulate it into the resulting color
@@ -118,7 +124,7 @@ void spot_light_fragment(vec3 normal, vec3 pos, out vec3 totalLightContrib)
       }
    } 
    
-   totalLightContrib = d3d_SceneLuminance *clamp(totalLightContrib, 0.0, 1.0);
+   totalLightContrib = d3d_SceneLuminance * clamp(totalLightContrib, 0.0, 1.0);
 }
 
 

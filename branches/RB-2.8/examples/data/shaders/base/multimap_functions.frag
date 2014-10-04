@@ -5,6 +5,11 @@ varying vec3 vLightDir2;
 
 uniform samplerCube d3d_ReflectionCubeMap;
 
+//used for HDR
+uniform float d3d_SceneLuminance = 1.0;
+uniform float d3d_SceneAmbience = 1.0;
+uniform float d3d_Exposure = 1.0;
+
 
 // External Functions
 void lightContribution(vec3, vec3, vec3, vec3, out vec3);
@@ -91,7 +96,8 @@ void computeLightContrib_SunMoon(inout FragParams fp, inout EffectParams ep)
 
 
    // Sun
-   lp.color = gl_LightSource[0].diffuse.rgb;
+   //we give a little extra brightness to the sunlight using d3d_SceneLuminance
+   lp.color = d3d_SceneLuminance * gl_LightSource[0].diffuse.rgb;
    lp.colorAmbient = gl_LightSource[0].ambient.rgb;
    lp.dir = normalize(vLightDir);
    
@@ -140,7 +146,7 @@ void computeMultiMapColor(MapParams mp, inout FragParams fp, inout EffectParams 
 
    //add dynamic lights
    vec3 dynamicLightContrib = computeDynamicLightContrib(fp.worldNormal, fp.pos);
-   ep.lightContrib = clamp(ep.lightContrib + dynamicLightContrib, 0.0, 1.0);
+   ep.lightContrib = clamp(ep.lightContrib + dynamicLightContrib, vec3(0.0), vec3(d3d_Exposure));
 
 
    // Compute the reflection contribution
@@ -189,7 +195,7 @@ void computeMultiMapColorSimple(MapParams mp, inout FragParams fp, inout EffectP
 
    //add dynamic lights
    vec3 dynamicLightContrib = computeDynamicLightContrib(fp.worldNormal, fp.pos);
-   ep.lightContrib = clamp(ep.lightContrib + dynamicLightContrib, 0.0, 1.0);
+   ep.lightContrib = clamp(ep.lightContrib + dynamicLightContrib, vec3(0.0), vec3(d3d_Exposure));
 
 
    // Compute the reflection contribution

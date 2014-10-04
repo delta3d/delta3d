@@ -7,6 +7,8 @@ uniform float ambientRadiance;
 uniform bool writeLinearDepth;
 uniform float aboveWaterOnly = 0.0;
 uniform float WaterHeight = 0.0;
+uniform float d3d_SceneLuminance = 1.0;
+uniform float d3d_SceneAmbience = 1.0;
 
 uniform float Intensity;
 
@@ -36,7 +38,7 @@ void main(void)
 
    vec4 baseColor = texture2D(diffuseTexture, gl_TexCoord[0].st);
    
-   baseColor.xyz *= dynLightContrib;
+   baseColor.xyz *= d3d_SceneLuminance * dynLightContrib;
    gl_FragColor = baseColor * vertexColor;
 }
 
