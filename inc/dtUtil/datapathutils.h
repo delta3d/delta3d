@@ -84,7 +84,12 @@ namespace dtUtil
     * This is used internally, and this api is subject to change.
     */
    std::string GetBundlePlugInsPath();
+
+   void RemovePSNCommandLineOption(int& argc, char**& argv);
+#else
+   inline void RemovePSNCommandLineOption(int& argc, char**& argv) {}
 #endif
+
 }
 
 #endif // DELTA_DATA_FILE_PATH_LIST

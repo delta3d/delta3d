@@ -161,11 +161,16 @@ function (BUILD_GAME_START libraryTargetName linkBool)
    set(APP_NAME ${libraryTargetName}_START)
 
    if (APPLE)
+      if (NOT PROG_QT_CONF_FILE)
+         set(PROG_QT_CONF_FILE "${CMAKE_SOURCE_DIR}/CMakeModules/OSX/qt.conf")
+      endif()
+   
       if (PROG_ICON)
          SET(apple_bundle_sources ${iconFile})
       else()
-         SET(apple_bundle_sources "${CMAKE_SOURCE_DIR}/CMakeModules/Example.icns")
+         SET(apple_bundle_sources "${CMAKE_SOURCE_DIR}/CMakeModules/OSX/Example.icns")
       endif()
+      LIST(APPEND apple_bundle_sources ${PROG_QT_CONF_FILE})
       SET_SOURCE_FILES_PROPERTIES(
        ${apple_bundle_sources}
        PROPERTIES
@@ -186,7 +191,7 @@ function (BUILD_GAME_START libraryTargetName linkBool)
           ${apple_bundle_sources}
       )
       SET_TARGET_PROPERTIES(${libraryTargetName}_START PROPERTIES
-      MACOSX_BUNDLE_INFO_PLIST delta3dAppBundle.plist.in
+      MACOSX_BUNDLE_INFO_PLIST OSX/delta3dAppBundle.plist.in
       MACOSX_BUNDLE_ICON_FILE Example)
    else ()
       ADD_EXECUTABLE(${libraryTargetName}_START

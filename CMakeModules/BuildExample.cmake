@@ -5,7 +5,12 @@
 function(BUILD_EXE_EXAMPLE TGTNAME)
   
    if (APPLE)
-      SET(apple_bundle_sources "${CMAKE_SOURCE_DIR}/CMakeModules/Example.icns")
+      if (NOT PROG_QT_CONF_FILE)
+         set(PROG_QT_CONF_FILE "${CMAKE_SOURCE_DIR}/CMakeModules/OSX/qt.conf")
+      endif()
+    
+      SET(apple_bundle_sources "${CMAKE_SOURCE_DIR}/CMakeModules/OSX/Example.icns" ${PROG_QT_CONF_FILE})
+ 
       SET_SOURCE_FILES_PROPERTIES(
        ${apple_bundle_sources}
        PROPERTIES
@@ -29,7 +34,7 @@ function(BUILD_EXE_EXAMPLE TGTNAME)
           ${apple_bundle_sources}
       )
       SET_TARGET_PROPERTIES(${TGTNAME} PROPERTIES 
-         MACOSX_BUNDLE_INFO_PLIST delta3dAppBundle.plist.in
+         MACOSX_BUNDLE_INFO_PLIST OSX/delta3dAppBundle.plist.in
          MACOSX_BUNDLE_ICON_FILE Example)
    else ()
       ADD_EXECUTABLE(${TGTNAME} ${TARGET_SRC} ${TARGET_H})
