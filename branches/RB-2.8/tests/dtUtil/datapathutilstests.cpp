@@ -45,7 +45,7 @@ namespace dtTest
          {
             std::string testHomeDir = "./";
 #ifdef DELTA_WIN32
-            testHomeDir = dtUtil::GetEnvironment("SystemDrive") + dtUtil::GetEnvironment("HOMEPATH")
+            testHomeDir = dtUtil::GetEnvironment("SystemDrive") + dtUtil::GetEnvironment("HOMEPATH");
 #else
             testHomeDir = dtUtil::GetEnvironment("HOME");
 #endif
