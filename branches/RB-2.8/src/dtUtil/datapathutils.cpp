@@ -63,8 +63,8 @@ namespace dtUtil
       }
       delete[] buffer;
       buffer = NULL;
-      return homedir;
 #endif
+      return homedir;
    }
 
    /////////////////////////////////////////////////////////////////////////////
