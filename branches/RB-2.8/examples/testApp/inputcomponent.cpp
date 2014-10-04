@@ -345,7 +345,7 @@ namespace dtExample
 
             if (newMode == &MotionModelType::NONE)
             {
-               newMode = &MotionModelType::FLY;
+               newMode = &MotionModelType::WALK;
             }
          }
          else
