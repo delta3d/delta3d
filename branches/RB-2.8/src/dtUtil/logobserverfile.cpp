@@ -92,7 +92,7 @@ void dtUtil::LogObserverFile::OpenFile()
       }
       //First attempt to create the log file.
    }
-   logFile.open(fullLogPath);
+   logFile.open(fullLogPath.c_str());
 
    if (!logFile.is_open())
    {
