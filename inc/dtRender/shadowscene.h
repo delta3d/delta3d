@@ -112,6 +112,7 @@ namespace dtRender
       DT_DECLARE_ACCESSOR_INLINE(float, MinNearDistance)
       DT_DECLARE_ACCESSOR_INLINE(float, MaxFarDistance)
       
+      DT_DECLARE_ACCESSOR_INLINE(bool, ComputeBestLightFromEphemeris)
       DT_DECLARE_ACCESSOR_INLINE(bool, UseShadowEffectScalar)
       
       void SetShadowEffectsScalar(float f);
