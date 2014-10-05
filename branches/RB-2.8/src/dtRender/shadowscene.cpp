@@ -97,7 +97,12 @@ namespace dtRender
    public:
 
       UpdateShadowLightCallback(SceneManager* sm, ShadowScene* ss)
-         : mLightDir(0.0, 0.0, 0.0)
+         : mLightDirToSun(0.0, 0.0, 1.0)
+         , mLastShadowLightDirToSun(0.0, 0.0, 1.0)
+         , mLastShadowLightPosSun(0.0, 0.0, 1.0)
+         , mLightDirToMoon(0.0, 0.0, 1.0)
+         , mLastShadowLightDirToMoon(0.0, 0.0, 1.0)
+         , mLastShadowLightPosMoon(0.0, 0.0, 1.0)
          , mSceneManager(sm)
          , mEphemerisScene(NULL)
          , mShadowScene(ss)
@@ -109,6 +114,8 @@ namespace dtRender
          // first update subgraph to make sure objects are all moved into postion
          traverse(node,nv);
 
+         osg::Vec3 up (0.0, 0.0, 1.0);
+
          if(!mEphemerisScene.valid())
          {
             mEphemerisScene = dynamic_cast<EphemerisScene*>(mSceneManager->FindSceneByType(*EphemerisScene::EPHEMERIS_SCENE));
@@ -117,77 +124,117 @@ namespace dtRender
 
          if(mEphemerisScene.valid())
          {
-            osg::Vec3 up (0.0, 0.0, 1.0);
             float shadowScalar = 1.0f;
             osg::Vec3 sunPos = mEphemerisScene->GetSunPosition();
+            osg::Vec3 moonPos = mEphemerisScene->GetMoonPosition();
 
-            osg::Vec3 lightDir =  sunPos;
+            osg::Vec3 lightVectorToSun = sunPos;
+            lightVectorToSun.normalize();
 
-            osg::Vec3 lightVector = lightDir;
-            lightVector.normalize();
+            osg::Vec3 lightVectorToMoon = moonPos;
+            lightVectorToMoon.normalize();
 
-            float diff = mLightDir * lightVector;
+            float diffSun = mLightDirToSun * lightVectorToSun;
+            float diffMoon = mLightDirToMoon * lightVectorToMoon;
 
-            if(diff < 0.9999)
+            float sunLightDotUp = lightVectorToSun * up;
+            float moonLightDotUp = lightVectorToMoon * up;
+
+            bool lightChanged = false;
+
+            if(diffSun < 0.9999)
             {
+               //at oblique angles we do not want to update the light vector 
+               if(sunLightDotUp > 0.2)
+               {
+                  mLastShadowLightDirToSun = lightVectorToSun;
+                  mLastShadowLightPosSun = sunPos;
+               }
+               else
+               {
+                  float dotWithLasSunDir = lightVectorToSun * mLastShadowLightDirToSun;
+                  //if we are not closely aligned with the sun reset the shadow light pos
+                  //to something reasonable
+                  if(dotWithLasSunDir < 0.5)
+                  {
+                     mLastShadowLightDirToSun.set(0.0f, 0.0f, 1.0f);
+                     mLastShadowLightPosSun.set(up * 1000000.0);
+                  }
+               }
+
+               mLightDirToSun = lightVectorToSun;
                mShadowScene->SetLightChanged(true);
-               mLightDir = lightVector;
+               lightChanged = true;
             }
-            else
+
+            if(diffMoon < 0.9999)
+            {               
+               //at oblique angles we do not want to update the light vector 
+               if(moonLightDotUp > 0.2)
+               {
+                  mLastShadowLightDirToMoon = lightVectorToMoon;
+                  mLastShadowLightPosMoon = moonPos;
+               }
+               else
+               {
+                  float dotWithLasMoonDir = lightVectorToMoon * mLastShadowLightDirToMoon;
+                  //if we are not closely aligned with the Moon reset the shadow light pos
+                  //to something reasonable
+                  if(dotWithLasMoonDir < 0.5)
+                  {
+                     mLastShadowLightDirToMoon.set(0.0f, 0.0f, 1.0f);
+                     mLastShadowLightPosMoon.set(up * 1000000.0);
+                  }
+               }
+
+               mLightDirToMoon = lightVectorToMoon;
+               mShadowScene->SetLightChanged(true);               
+               lightChanged = true;
+            }
+
+            if(!lightChanged)
             {
                mShadowScene->SetLightChanged(false);
             }         
 
-            float lightDotUp = lightVector * up;
-            if (lightDotUp < 0.0)
-            {
-               lightDir = mEphemerisScene->GetMoonPosition();
-
-               lightVector = lightDir;
-               lightVector.normalize();
-               lightDotUp = lightVector * up;
-               
-               if (lightDotUp < 0.2)
+            //choose best shadow casting light, if the sun is below the horizon use the moonlight            
+            if (sunLightDotUp < 0.0)
+            {               
+               if (moonLightDotUp < 0.0)
                {
-                  lightDir = up * 1000000.0;
+                  lightVectorToSun = up * 1000000.0;
                
-                  shadowScalar = dtUtil::MapRangeValue<float>(lightDotUp, 0.0f, 0.2f, 0.5f, 1.0f);
+                  shadowScalar = 0.3f;
+
+                  //use a soft light from above since there is no valid sun or moon
+                  mShadowScene->GetLightSource()->getLight()->setPosition(osg::Vec4(lightVectorToSun, 0.0) );
+                  mShadowScene->GetLightSource()->getLight()->setDirection(up);
                }
                else
                {
-                  shadowScalar = 0.5f;
+                  shadowScalar = dtUtil::MapRangeValue<float>(moonLightDotUp, 0.0f, 0.5f, 0.25f, 0.5f);
+                  dtUtil::Clamp(shadowScalar, 0.3f, 0.5f);
+
+                  //use moon for shadow light
+                  mShadowScene->GetLightSource()->getLight()->setPosition(osg::Vec4(mLastShadowLightPosMoon, 0.0) );
+                  mShadowScene->GetLightSource()->getLight()->setDirection(mLastShadowLightDirToMoon * -1.0f);
                }
+
             }
-            else if(lightDotUp < 0.2)
+            else //use sun for shadow light
             {
-               //this might be a problem if the light was never set?
-               shadowScalar = 0.7f * dtUtil::Max(0.0f, dtUtil::MapRangeValue<float>(lightDotUp, 0.0f, 0.1f, 0.5f, 1.0f));
-               
-               if(mShadowScene->GetUseShadowEffectScalar())
-               {
-                  mShadowScene->SetShadowEffectsScalar(shadowScalar);
-               }
+               shadowScalar = dtUtil::MapRangeValue<float>(sunLightDotUp, 0.0f, 0.5f, 0.3f, 0.75f);
+               dtUtil::Clamp(shadowScalar, 0.35f, 0.75f);
 
-               return;
+               mShadowScene->GetLightSource()->getLight()->setPosition(osg::Vec4(mLastShadowLightPosSun, 0.0) );
+               mShadowScene->GetLightSource()->getLight()->setDirection(mLastShadowLightDirToSun * -1.0f);
             }
-                        
-            shadowScalar *= 0.7f;
-
-            shadowScalar = dtUtil::Max(0.3f, shadowScalar);
-
+            
             if(mShadowScene->GetUseShadowEffectScalar())
             {
                mShadowScene->SetShadowEffectsScalar(shadowScalar);
             }
 
-
-            mShadowScene->GetLightSource()->getLight()->setPosition(osg::Vec4(lightDir, 0.0) );
-
-            lightDir.normalize();
-            lightDir *= -1.0;
-
-            mShadowScene->GetLightSource()->getLight()->setDirection(lightDir);
-         
 
             mShadowScene->SetTraversal(nv->getTraversalNumber());
          }
@@ -198,7 +245,12 @@ namespace dtRender
 
       virtual ~UpdateShadowLightCallback() {}
 
-      osg::Vec3 mLightDir;
+      osg::Vec3 mLightDirToSun;
+      osg::Vec3 mLastShadowLightDirToSun;
+      osg::Vec3 mLastShadowLightPosSun;
+      osg::Vec3 mLightDirToMoon;
+      osg::Vec3 mLastShadowLightDirToMoon;
+      osg::Vec3 mLastShadowLightPosMoon;
       dtCore::ObserverPtr<dtRender::SceneManager> mSceneManager;            
       dtCore::ObserverPtr<dtRender::EphemerisScene> mEphemerisScene;            
       dtCore::ObserverPtr<dtRender::ShadowScene> mShadowScene;            
@@ -235,13 +287,14 @@ namespace dtRender
    ShadowScene::ShadowScene()
    : BaseClass(*SHADOW_SCENE, SceneEnum::NON_TRANSPARENT_OBJECTS)   
    , mShadowMapType(&ShadowMapType::PSSM)
-   , mShadowResolution(&ShadowResolution::SR_MEDIUM)
+   , mShadowResolution(&ShadowResolution::SR_HIGH)
    , mAmbientBias(0.4f, 0.6f)
    , mPolygonOffset(10.0f, 20.0f)
    , mTextureUnitOffset(5)
    , mNumPSSMSplits(3)
    , mMinNearDistance(1.0f)
    , mMaxFarDistance(1000.0f)
+   , mComputeBestLightFromEphemeris(true)
    , mUseShadowEffectScalar(true)
    , mRenderEveryFrame(true)
    , mRenderOnLightChanged(true)
@@ -307,8 +360,11 @@ namespace dtRender
                uniformActComp->AddParameter(*mImpl->mShadowEffectScalar);
             }
 
-            UpdateShadowLightCallback* usc = new UpdateShadowLightCallback(&sm, this);
-            GetSceneNode()->setUpdateCallback(usc);
+            if(mComputeBestLightFromEphemeris)
+            {
+               UpdateShadowLightCallback* usc = new UpdateShadowLightCallback(&sm, this);
+               GetSceneNode()->setUpdateCallback(usc);
+            }
             
             //this creates the shadow technique
             SetShadowsEnabled(true);
@@ -645,6 +701,10 @@ namespace dtRender
 
       DT_REGISTER_PROPERTY_WITH_NAME_AND_LABEL(UseShadowEffectScalar, "UseShadowEffectScalar", "UseShadowEffectScalar",
          "This option scales the effect of the shadow map based on the sun, moon, and how shallow the angle to surface is.",
+         PropRegHelperType, propRegHelper);
+
+      DT_REGISTER_PROPERTY_WITH_NAME_AND_LABEL(ComputeBestLightFromEphemeris, "ComputeBestLightFromEphemeris", "ComputeBestLightFromEphemeris",
+         "Setting this option true creates an update callback which monitors the Ephemeris scene for changes in lighting to select best shadow light.",
          PropRegHelperType, propRegHelper);
 
       DT_REGISTER_PROPERTY_WITH_NAME_AND_LABEL(RenderEveryFrame, "RenderEveryFrame", "Render Every Frame",
