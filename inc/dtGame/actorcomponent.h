@@ -30,11 +30,13 @@
 #include <dtCore/sigslot.h>
 #include <dtUtil/refstring.h>
 #include <dtUtil/getsetmacros.h>
+#include <typeinfo>  //for bad_cast
 
 namespace dtGame
 {
    class GameActor;
    class ActorComponentContainer;
+   class MapMessage;
    class TickMessage;
 
    /**
@@ -151,6 +153,14 @@ namespace dtGame
          }
       }
 
+      template <typename TOwner>
+      TOwner* GetOwner() const
+      {
+         TOwner* owner = NULL;
+         GetOwner(owner);
+         return owner;
+      }
+
       /**
        * Set the ComponentBase that this component is a part of.
        * Don't call this! Should only be called by ComponentBase.
@@ -169,22 +179,21 @@ namespace dtGame
       virtual ~ActorComponent();
 
       /**
-       * Let GameManager call the OnTickLocal method on each tick.
-       * This method can only be called when the OnAddedToActor method
-       * was already called.
+       * Registers for tick local or tick remote depending on the actor state.
        */
-      void RegisterForTicks();
+      void RegisterForTick();
 
       /**
-       * Unregister from game tick messages
+       * Unregisters for tick local or tick remote depending on the actor state.
        */
-      void UnregisterForTicks();
+      void UnregisterForTick();
 
       /**
        * Default update method. Override to execute stuff for
        * each physics step. Call RegisterForTicks() to let this get called.
        */
       virtual void OnTickLocal(const TickMessage& /*tickMessage*/) {};
+      virtual void OnTickRemote(const TickMessage& /*tickMessage*/) {};
 
       virtual bool IsPlaceable() const { return false; }
 

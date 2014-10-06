@@ -39,7 +39,7 @@ namespace dtCore
 
 namespace dtActors
 {
-   class GameMeshActorProxy;
+   class GameMeshActor;
 
    /**
     * This class is the game actor for a basic game object that has a single static mesh.
@@ -50,7 +50,7 @@ namespace dtActors
     * @see GameMeshProxy
     * @see StaticMeshActor
     */
-   class DT_PLUGIN_EXPORT GameMeshActor : public dtGame::GameActor
+   class DT_PLUGIN_EXPORT GameMeshDrawable : public dtGame::GameActor
    {
    public:
       /**
@@ -58,7 +58,7 @@ namespace dtActors
        * @param proxy The actor proxy owning this task actor.
        * @param desc An optional description of this task actor.
        */
-      GameMeshActor(dtGame::GameActorProxy& parent);
+      GameMeshDrawable(dtGame::GameActorProxy& parent);
 
       /**
        * Loads a mesh file.
@@ -152,7 +152,7 @@ namespace dtActors
       /**
        * Destroys this actor.
        */
-      virtual ~GameMeshActor();
+      virtual ~GameMeshDrawable();
 
       /**
        * Inner class for implementing the loadable interface
@@ -197,14 +197,14 @@ namespace dtActors
     * @see GameMeshActor
     * @see StaticMeshActorProxy
     */
-   class DT_PLUGIN_EXPORT GameMeshActorProxy : public dtGame::GameActorProxy
+   class DT_PLUGIN_EXPORT GameMeshActor : public dtGame::GameActorProxy
    {
    public:
 
       /**
        * Constructs the proxy.
        */
-      GameMeshActorProxy();
+      GameMeshActor();
 
       /**
        * Builds the property map for the task actor proxy.  These properties
@@ -241,7 +241,7 @@ namespace dtActors
       /**
        * Destroys the proxy.
        */
-      virtual ~GameMeshActorProxy();
+      virtual ~GameMeshActor();
 
       /**
        * Called by the game manager during creation of the proxy.  This method

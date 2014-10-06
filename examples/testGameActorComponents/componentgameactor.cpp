@@ -10,7 +10,7 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 ComponentGameActor::ComponentGameActor(dtGame::GameActorProxy& parent)
-: dtActors::GameMeshActor(parent)
+: dtActors::GameMeshDrawable(parent)
 {
 }
 
@@ -26,7 +26,7 @@ void ComponentGameActor::Interaction()
 ////////////////////////////////////////////////////////////////////////////////
 void ComponentGameActorProxy::BuildPropertyMap()
 {
-   dtActors::GameMeshActorProxy::BuildPropertyMap();  
+   dtActors::GameMeshActor::BuildPropertyMap();  
 
    ComponentGameActor* actor = static_cast<ComponentGameActor*>(GetDrawable());
 

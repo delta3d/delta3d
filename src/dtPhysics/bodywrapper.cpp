@@ -151,209 +151,8 @@ namespace dtPhysics
       delete mImpl;
    }
 
-   ///////////////////////////////////////////////////////////////////////////
-   dtCore::RefPtr<BaseBodyWrapper> BaseBodyWrapper::CreateBox(const TransformType& worldPos,
-                           const VectorType& dimensions, Real mass)
-   {
-      // cast so we can call our specific initialization function
-      palBox* ourBox = palFactory::GetInstance()->CreateBox();
-
-      if (ourBox == NULL)
-      {
-         return NULL;
-      }
-
-      dtCore::RefPtr<BodyWrapper> bodyWrapper = new BodyWrapper(*ourBox);
-
-      palMatrix4x4 palOrigin;
-      TransformToPalMatrix(palOrigin, worldPos);
-
-      ourBox->Init(0.0, 0.0, 0.0,
-                   dimensions[0], dimensions[1], dimensions[2], mass);
-      ourBox->SetPosition(palOrigin);
-
-      return bodyWrapper.get();
-   }
-
-   ///////////////////////////////////////////////////////////////////////////
-   dtCore::RefPtr<BaseBodyWrapper> BaseBodyWrapper::CreateStaticBox(const TransformType& worldPos,
-                           const VectorType& dimensions)
-   {
-      // cast so we can call our specific initialization function
-      static const std::string palStaticBoxName("palStaticBox");
-      palStaticBox* ourBox = dynamic_cast<palStaticBox*>(palFactory::GetInstance()->CreateObject(palStaticBoxName));
-
-      if (ourBox == NULL)
-      {
-         return NULL;
-      }
-
-      dtCore::RefPtr<BaseBodyWrapper> bodyWrapper = new BaseBodyWrapper(*ourBox);
-
-      palMatrix4x4 palOrigin;
-      TransformToPalMatrix(palOrigin, worldPos);
-
-      ourBox->Init(palOrigin,
-                   dimensions[0], dimensions[1], dimensions[2]);
-
-      return bodyWrapper;
-   }
-
-   ///////////////////////////////////////////////////////////////////////////
-   dtCore::RefPtr<BaseBodyWrapper> BaseBodyWrapper::CreateSphere(const TransformType& worldPos,
-                             const VectorType& dimensions, Real mass)
-   {
-      // cast so we can call our specific initialization function
-      palSphere* ourSphere = palFactory::GetInstance()->CreateSphere();
-
-      if (ourSphere == NULL)
-      {
-         return NULL;
-      }
-
-      dtCore::RefPtr<BodyWrapper> bodyWrapper = new BodyWrapper(*ourSphere);
-
-      palMatrix4x4 palOrigin;
-      TransformToPalMatrix(palOrigin, worldPos);
-
-      // init
-      ourSphere->Init(0.0, 0.0, 0.0,
-                      dimensions[0],
-                      mass);
-
-      ourSphere->SetPosition(palOrigin);
-
-      return bodyWrapper.get();
-   }
-
-   ///////////////////////////////////////////////////////////////////////////
-   dtCore::RefPtr<BaseBodyWrapper> BaseBodyWrapper::CreateCylinder(const TransformType& worldPos,
-                               const VectorType& dimensions, Real mass)
-   {
-      // cast so we can call our specific initialization function
-      palCapsule* ourCylinder = palFactory::GetInstance()->CreateCapsule();
-
-      if (ourCylinder == NULL)
-      {
-         return NULL;
-      }
-
-      dtCore::RefPtr<BodyWrapper> bodyWrapper = new BodyWrapper(*ourCylinder);
-
-      palMatrix4x4 palOrigin;
-      TransformToPalMatrix(palOrigin, worldPos);
-
-      // init
-      ourCylinder->Init(0.0, 0.0, 0.0,
-        dimensions[1], dimensions[0], mass);
-
-      ourCylinder->SetPosition(palOrigin);
-
-      return bodyWrapper.get();
-   }
-
-
-
-   ///////////////////////////////////////////////////////////////////////////
-   dtCore::RefPtr<BaseBodyWrapper> BaseBodyWrapper::CreateConvexHull(const TransformType& worldPos,
-                                 const osg::Node* mesh, Real mass)
-   {
-      TriangleRecorder recorder;
-      recorder.Record(*mesh);
-      if (recorder.mVertices.size() == 0 || recorder.mIndices.size() == 0)
-      {
-         throw dtUtil::Exception("Unable to create convex mesh, no vertex data was found when traversing the osg Node.", __FILE__, __LINE__);
-      }
-
-      // cast so we can call our specific initialization function
-      palConvex* ourBody = palFactory::GetInstance()->CreateConvex();
-
-      if (ourBody == NULL)
-      {
-         return NULL;
-      }
-
-      dtCore::RefPtr<BodyWrapper> bodyWrapper = new BodyWrapper(*ourBody);
-
-      palMatrix4x4 palOrigin;
-      TransformToPalMatrix(palOrigin, worldPos);
-
-      ourBody->Init(0.0, 0.0, 0.0,
-               (Real*)(&recorder.mVertices.front()), recorder.mVertices.size(), mass);
-
-      ourBody->SetPosition(palOrigin);
-
-      return bodyWrapper.get();
-   }
-
-   ///////////////////////////////////////////////////////////////////////////
-   dtCore::RefPtr<BaseBodyWrapper> BaseBodyWrapper::CreateTriangleMesh(const TransformType& worldPos,
-            const osg::Node* mesh, Real mass)
-   {
-      // cast so we can call our specific initialization function
-      palCompoundBody* ourBody = palFactory::GetInstance()->CreateCompoundBody();
-
-      if (ourBody == NULL)
-      {
-         return NULL;
-      }
-
-      dtCore::RefPtr<BodyWrapper> bodyWrapper = new BodyWrapper(*ourBody);
-
-      palMatrix4x4 palOrigin;
-      TransformToPalMatrix(palOrigin, worldPos);
-
-      //palConcaveGeometry* pgeom = dynamic_cast<palConcaveGeometry*>(ourBody->AddGeometry("palConvexGeometry"));
-
-//      pgeom->Init()
-//
-//      ourBody->Init(0.0, 0.0, 0.0);
-
-      ourBody->SetPosition(palOrigin);
-
-      return bodyWrapper.get();
-   }
-
-   ///////////////////////////////////////////////////////////////////////////
-   dtCore::RefPtr<BaseBodyWrapper> BaseBodyWrapper::CreateHeightfield(const TransformType& worldPos,
-                                  const osg::Node* mesh)
-   {
-      return BaseBodyWrapper::CreateTerrainMesh(worldPos, mesh);
-   }
-
-   ///////////////////////////////////////////////////////////////////////////
-   dtCore::RefPtr<BaseBodyWrapper> BaseBodyWrapper::CreateTerrainMesh(const TransformType& worldPos,
-                                  const osg::Node* mesh)
-   {
-      TriangleRecorder recorder;
-      recorder.Record(*mesh);
-      if (recorder.mVertices.size() == 0 || recorder.mIndices.size() == 0)
-      {
-         throw dtUtil::Exception("Unable to create terrain mesh, no vertex data was found when traversing the osg Node.", __FILE__, __LINE__);
-      }
-
-      // cast so we can call our specific initialization function
-      palTerrainMesh* ourTerrainMesh = palFactory::GetInstance()->CreateTerrainMesh();
-
-      if (ourTerrainMesh == NULL)
-      {
-         return NULL;
-      }
-
-      dtCore::RefPtr<BaseBodyWrapper> bodyWrapper = new BaseBodyWrapper(*ourTerrainMesh);
-
-      osg::Vec3d trans;
-      worldPos.GetTranslation(trans);
-
-      ourTerrainMesh->Init(trans.x(), trans.y(), trans.z(),
-               (Real*)(&recorder.mVertices.front()), recorder.mVertices.size(),
-               reinterpret_cast<int*>(&recorder.mIndices.front()), recorder.mIndices.size());
-
-      return bodyWrapper;
-   }
-
    ////////////////////////////////////////////////////////////////
-   dtCore::RefPtr<BaseBodyWrapper> BaseBodyWrapper::CreateGenericBody(const TransformType& worldPos,
+   dtCore::RefPtr<GenericBodyWrapper> BaseBodyWrapper::CreateGenericBody(const TransformType& worldPos,
             MechanicsType& mechType, CollisionGroup collisionGroup, Real mass)
    {
       // cast so we can call our specific initialization function
@@ -376,13 +175,20 @@ namespace dtPhysics
    }
 
    ///////////////////////////////////////////////////////////////////////////
-   void BaseBodyWrapper::GetTransform(TransformType& xform) const
+   void BaseBodyWrapper::GetTransform(TransformType& xform, bool interpolated) const
    {
       // set initial matrix
       palMatrix4x4 palmatrix;
 
-      // this sets orientation and matrix
-      palmatrix = mImpl->mBody->GetLocationMatrix();
+      if (interpolated)
+      {
+         palmatrix = mImpl->mBody->GetLocationMatrixInterpolated();
+      }
+      else
+      {
+         palmatrix = mImpl->mBody->GetLocationMatrix();
+      }
+
 
       // convert to correct matrix
       PalMatrixToTransform(xform, palmatrix);

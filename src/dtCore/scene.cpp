@@ -13,16 +13,13 @@
 #include <dtCore/databasepager.h>
 #include <dtCore/view.h>
 #include <dtCore/batchisector.h>
-
+#include <dtUtil/cullmask.h>
 #include <dtUtil/log.h>
 
 using namespace dtUtil;
 
 namespace dtCore
 {
-
-///the intersect traversal mask the Scene uses
-const int SCENE_INTERSECT_MASK = 0x0fffffff;
 
 class SceneImpl
 {
@@ -437,7 +434,7 @@ bool Scene::GetHeightOfTerrain(float& heightOfTerrain, float x, float y, float m
       isector->EnableAndGetISector(0).SetSectorAsLineSegment(start, end);
 
       // set the traversal mask so we don't collide with the skybox
-      isector->SetTraversalMask(SCENE_INTERSECT_MASK);
+      isector->SetTraversalMask(dtUtil::CullMask::SCENE_INTERSECT_MASK);
 
       heightFound = isector->Update();
 
@@ -479,7 +476,7 @@ osg::Vec3 Scene::GetGravity() const
    }
    else
    {
-      return osg::Vec3(0.f, 0.f, 0.f);
+      return osg::Vec3(0.0f, 0.0f, 0.0f);
    }
 }
 

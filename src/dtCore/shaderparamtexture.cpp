@@ -19,7 +19,9 @@
  * Matthew W. Campbell
  */
 #include <prefix/dtcoreprefix.h>
+#include <dtCore/project.h>
 #include <dtCore/shaderparamtexture.h>
+#include <dtUtil/log.h>
 
 #include <osg/StateSet>
 #include <osg/Uniform>
@@ -82,7 +84,7 @@ namespace dtCore
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   const ShaderParamTexture::AddressMode &ShaderParamTexture::GetAddressMode(
+   const ShaderParamTexture::AddressMode& ShaderParamTexture::GetAddressMode(
       const ShaderParamTexture::TextureAxis &axis)
    {
       if (axis == TextureAxis::S)
@@ -94,4 +96,42 @@ namespace dtCore
       else
          return *mTextureAddressMode[3];
    }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void ShaderParamTexture::SetTexture(const std::string &path)
+   {
+      mTexturePath = path;
+      
+      SetDirty(true);
+      SetImageSourceDirty(true);
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void ShaderParamTexture::SetTextureResource(const dtCore::ResourceDescriptor& value)
+   {
+      mDescriptor = value;
+
+      if (dtCore::Project::GetInstance().IsContextValid())
+      {
+         if ( ! mDescriptor.IsEmpty())
+         {
+            std::string filePath = dtCore::Project::GetInstance().GetResourcePath(value);
+            SetTexture(filePath);
+         }
+         else
+         {
+            SetTexture("");
+         }
+      }
+      else
+      {
+         LOG_WARNING("Cannot access the project context for assigning texture file: " + value.GetResourceIdentifier());
+      }
+   }
+
+   dtCore::ResourceDescriptor ShaderParamTexture::GetTextureResource() const
+   {
+      return mDescriptor;
+   }
+
 }

@@ -25,6 +25,7 @@
 #include <dtAnim/export.h>
 #include <dtAnim/basemodelwrapper.h>
 #include <dtAnim/nodebuilderinterface.h>
+#include <dtAnim/geometrybuilder.h>
 #include <dtCore/refptr.h>
 #include <dtUtil/functor.h>
 
@@ -69,7 +70,7 @@ namespace dtAnim
        */
       typedef dtUtil::Functor<dtCore::RefPtr<osg::Node>, TYPELIST_1(dtAnim::BaseModelWrapper*)> CreateFunc;
 
-      AnimNodeBuilder(); //creates default builder
+      AnimNodeBuilder(bool useDeprecatedHardwareModel = false); //creates default builder
       AnimNodeBuilder(const CreateFunc& pCreate); //uses custom builder
       
       dtCore::RefPtr<dtAnim::NodeBuilderInterface> CreateNodeBuilder(const std::string& charSystem);
@@ -152,6 +153,10 @@ namespace dtAnim
 
       ///Does the hardware support vertex buffers?
       bool SupportsVertexBuffers() const;
+
+      bool mUseDeprecatedHardwareModel;
+
+      static GeometryBuilder mGeometryBuilder;
    };
 
 } // namespace dtAnim

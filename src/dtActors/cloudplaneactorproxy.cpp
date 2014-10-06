@@ -27,7 +27,7 @@ namespace dtActors
 {
    void CloudPlaneActorProxy::CreateDrawable()
    {
-       SetDrawable(*new dtCore::CloudPlane(6, 0.5f, 6, 1.f, 0.3f, 0.96f, 256, 1800.f));
+       SetDrawable(*new dtCore::CloudPlane(6, 0.5f, 6, 1.0f, 0.3f, 0.96f, 256, 1800.0f));
    }
 
    ///////////////////////////////////////////////////////////////////////////////

@@ -1302,7 +1302,11 @@ void MessageTests::TestChangeMap()
       {
          dtGame::GameActorProxy* gap = gameActorProxyVec[i];
          CPPUNIT_ASSERT(gap != NULL);
-         CPPUNIT_ASSERT_MESSAGE("The game actor proxy should be assigned to the game actor.", &gap->GetGameActor().GetGameActorProxy() == gap);
+         // Not all game actors proxys have game actors now.
+         if (gap->GetDrawable<dtGame::GameActor>() != NULL)
+         {
+            CPPUNIT_ASSERT_MESSAGE("The game actor proxy should be assigned to the game actor.", &gap->GetGameActor().GetGameActorProxy() == gap);
+         }
          std::vector<const dtGame::Invokable*> invokables;
          gap->GetInvokables(invokables);
          CPPUNIT_ASSERT_MESSAGE("There should be invokables on the game actor proxies if BuildInvokables was called.", invokables.size() > 0);

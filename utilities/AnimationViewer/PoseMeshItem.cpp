@@ -427,7 +427,7 @@ void PoseMeshItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* opti
 
    for (size_t vertIndex = 0; vertIndex < verts.size(); ++vertIndex)
    {
-      osg::Vec3 vertPosition = verts[vertIndex]->mData * VERT_SCALE;
+      osg::Vec3 vertPosition = verts[vertIndex].mData * VERT_SCALE;
       vertPosition.x() *= mScaleHoriz;
       vertPosition.y() *= mScaleVert;
 
@@ -601,8 +601,8 @@ void PoseMeshItem::ExtractEdgesFromMesh(const dtAnim::PoseMesh& mesh)
 
       assert(rangeStart != edgeMap.end());
 
-      dtAnim::PoseMesh::Vertex* vert0 = vertList[key.first];
-      dtAnim::PoseMesh::Vertex* vert1 = vertList[key.second];
+      const dtAnim::PoseMesh::Vertex* vert0 = &vertList[key.first];
+      const dtAnim::PoseMesh::Vertex* vert1 = &vertList[key.second];
 
       EdgeInfo newInfo;
       newInfo.first.rx()  = vert0->mData.x() * VERT_SCALE;
@@ -844,7 +844,7 @@ void PoseMeshItem::GetAnchorBoneDirection(const dtAnim::PoseMesh::TargetTriangle
       // Get the bone's rotation without this pose mesh's animations applied
       osg::Quat boneRotation = modelWrapper->GetBoneByIndex(mPoseMesh->GetEffectorID())->GetAbsoluteRotation();
 
-      const osg::Vec3 &nativeBoneForward = mPoseMesh->GetEffectorForwardAxis();
+      const osg::Vec3& nativeBoneForward = mPoseMesh->GetEffectorForwardAxis();
 
       // Transform the native forward by base rotation
       outDirection = boneRotation * nativeBoneForward;
@@ -892,7 +892,7 @@ void PoseMeshItem::UpdateItemBoundingRect()
    // Determine the bounding box for this item
    for (size_t vertIndex = 0; vertIndex < verts.size(); ++vertIndex)
    {
-      osg::Vec3 vertPosition = verts[vertIndex]->mData * VERT_SCALE;
+      osg::Vec3 vertPosition = verts[vertIndex].mData * VERT_SCALE;
       vertPosition.x() *= mScaleHoriz;
       vertPosition.y() *= mScaleVert;
 
@@ -1006,8 +1006,8 @@ void PoseMeshItem::AssertZeroErrorAtVertices()
    for (size_t vertIndex = 0; vertIndex < vertList.size(); ++vertIndex)
    {
       dtAnim::PoseMesh::TargetTriangle trianglePick;
-      mPoseMesh->GetTargetTriangleData(vertList[vertIndex]->mData.x(),
-                                       vertList[vertIndex]->mData.y(),
+      mPoseMesh->GetTargetTriangleData(vertList[vertIndex].mData.x(),
+                                       vertList[vertIndex].mData.y(),
                                        trianglePick);
 
       //osg::Vec3 debugDirection = vertList[vertIndex]->mDebugData;
@@ -1082,11 +1082,11 @@ void PoseMeshItem::AssertAzElConversion()
 
    for (size_t vertIndex = 0; vertIndex < vertList.size(); ++vertIndex)
    {
-      float azimuth = vertList[vertIndex]->mData.x();
-      float elevation = vertList[vertIndex]->mData.y();
+      float azimuth = vertList[vertIndex].mData.x();
+      float elevation = vertList[vertIndex].mData.y();
 
-      osg::Vec3 debugDirection = vertList[vertIndex]->mDebugData;
-      osg::Quat debugRotation  = vertList[vertIndex]->mDebugRotation;
+      osg::Vec3 debugDirection = vertList[vertIndex].mDebugData;
+      //const osg::Quat& debugRotation  = vertList[vertIndex].mDebugRotation;
 
       //int animID = vertList[vertIndex]->mAnimID;
 
@@ -1104,6 +1104,6 @@ void PoseMeshItem::AssertAzElConversion()
       float newAzimuth, newElevation;
       dtAnim::GetCelestialCoordinates(directionFromAzEl, -osg::Y_AXIS, newAzimuth, newElevation);
 
-      directionFromAzEl = directionFromAzEl;
+      //directionFromAzEl = directionFromAzEl;
    }
 }

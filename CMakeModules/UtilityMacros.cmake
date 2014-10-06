@@ -333,6 +333,77 @@ MACRO(DELTA3D_ADD_LIBRARY LIB_NAME EXPORT_MACRO)
 
 ENDMACRO()
 
+MACRO(DELTA3D_ADD_PROGRAM APP_NAME)
+   SET(APP_TYPE ${ARGV1})
+   SET(EXPORT_MACRO ${ARGV2})
+
+
+   if (APPLE)
+      if (NOT PROG_QT_CONF_FILE)
+         set(PROG_QT_CONF_FILE "${CMAKE_SOURCE_DIR}/CMakeModules/OSX/qt.conf")
+      endif()
+
+      if (NOT PROG_INFO_PLIST)
+         set(PROG_INFO_PLIST "OSX/delta3dAppBundle.plist.in")
+      endif()
+    
+      SET(apple_bundle_sources "${APP_NAME}.icns" ${PROG_QT_CONF_FILE})
+      SET_SOURCE_FILES_PROPERTIES(
+          ${apple_bundle_sources}
+          PROPERTIES
+          MACOSX_PACKAGE_LOCATION Resources
+      )
+
+      ADD_EXECUTABLE(${APP_NAME} ${APP_TYPE}
+         ${PROG_HEADERS}
+         ${PROG_SOURCES}
+         ${MOC_SOURCES}
+         ${RCC_SOURCES}
+         ${UI_SOURCES}
+         ${apple_bundle_sources}
+      )
+      SET_TARGET_PROPERTIES(${APP_NAME} PROPERTIES
+          MACOSX_BUNDLE_INFO_PLIST ${PROG_INFO_PLIST}
+          MACOSX_BUNDLE_ICON_FILE ${APP_NAME}
+          MACOSX_BUNDLE_INFO_STRING "${APP_NAME}"
+          MACOSX_BUNDLE_GUI_IDENTIFIER "${APP_NAME}"
+          MACOSX_BUNDLE_LONG_VERSION_STRING "${delta3d_VERSION_MAJOR}.${delta3d_VERSION_MINOR}.${delta3d_VERSION_PATCH}"
+          MACOSX_BUNDLE_BUNDLE_NAME "${APP_NAME}"
+          MACOSX_BUNDLE_SHORT_VERSION_STRING "${delta3d_VERSION_MAJOR}.${delta3d_VERSION_MINOR}"
+          MACOSX_BUNDLE_BUNDLE_VERSION  1
+          MACOSX_BUNDLE_COPYRIGHT "2014 CaperHoldings LLC.")
+   else ()
+      ADD_EXECUTABLE(${APP_NAME} ${APP_TYPE}
+         ${PROG_HEADERS}
+         ${PROG_SOURCES}
+         ${MOC_SOURCES}
+         ${RCC_SOURCES}
+         ${UI_SOURCES}
+      )
+   endif ()
+
+
+   LINK_WITH_VARIABLES(${APP_NAME}
+                       ${APP_EXTERNAL_DEPS}
+                      )
+
+   TARGET_LINK_LIBRARIES(${APP_NAME}
+                         ${APP_DEPS}
+                        )
+
+   if (EXPORT_MACRO)
+      SET_TARGET_PROPERTIES(${APP_NAME}
+                           PROPERTIES DEFINE_SYMBOL ${EXPORT_MACRO} 
+      )
+      # export symbols so plugins get access
+      SET_TARGET_PROPERTIES(${APP_NAME} PROPERTIES ENABLE_EXPORTS true)
+   endif()
+   
+   INCLUDE(ProgramInstall OPTIONAL)
+   
+ENDMACRO()
+
+
 MACRO (SETUP_PLUGIN_WITH_OUTPUT_DIRS LIB_NAME EXPORT_MACRO SUBFOLDER)
    #put the binary into a "STAGE plugins" folder
    if (WIN32)

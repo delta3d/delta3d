@@ -7,6 +7,7 @@ SET(SOURCE_PATH ${CMAKE_SOURCE_DIR}/src/${LIB_NAME})
 SET( LIB_SOURCES 
     ${SOURCE_PATH}/configproperties.cpp
     ${SOURCE_PATH}/coordinates.cpp
+    ${SOURCE_PATH}/cullmask.cpp
     ${SOURCE_PATH}/datapathutils.cpp
     ${SOURCE_PATH}/datastream.cpp
     ${SOURCE_PATH}/datetime.cpp
@@ -21,6 +22,7 @@ SET( LIB_SOURCES
     ${SOURCE_PATH}/logobserverfile.cpp
     ${SOURCE_PATH}/matrixutil.cpp
     ${SOURCE_PATH}/nodecollector.cpp
+    ${SOURCE_PATH}/nodemask.cpp
     ${SOURCE_PATH}/nodeprintout.cpp
     ${SOURCE_PATH}/noisetexture.cpp
     ${SOURCE_PATH}/polardecomp.cpp
@@ -50,6 +52,7 @@ SET( LIB_PUBLIC_HEADERS
     ${HEADER_PATH}/command.h
     ${HEADER_PATH}/configproperties.h
     ${HEADER_PATH}/coordinates.h
+    ${HEADER_PATH}/cullmask.h
     ${HEADER_PATH}/datapathutils.h
     ${HEADER_PATH}/datastream.h
     ${HEADER_PATH}/datetime.h
@@ -84,6 +87,7 @@ SET( LIB_PUBLIC_HEADERS
     ${HEADER_PATH}/mswin.h
     ${HEADER_PATH}/mswinmacros.h
     ${HEADER_PATH}/nodecollector.h
+    ${HEADER_PATH}/nodemask.h
     ${HEADER_PATH}/nodeprintout.h
     ${HEADER_PATH}/noise1.h
     ${HEADER_PATH}/noise2.h
@@ -122,7 +126,18 @@ SET(LIB_EXTERNAL_DEPS
    OSGUTIL_LIBRARY
    OSGSIM_LIBRARY
    XERCES_LIBRARY
-   OPENTHREADS_LIBRARY)
+   OPENTHREADS_LIBRARY
+   COREFOUNDATION_LIBRARY
+   COCOA_LIBRARY)
+
+IF(APPLE AND NOT ANDROID)
+   ##IF(OSG_BUILD_PLATFORM_IPHONE OR OSG_BUILD_PLATFORM_IPHONE_SIMULATOR)
+     # compile datapathutils.cpp as objective-c++
+     SET_SOURCE_FILES_PROPERTIES(datapathutils.cpp
+       PROPERTIES COMPILE_FLAGS "-x objective-c++"
+     )
+   ##ENDIF()
+ENDIF()
 
 if (MSVC)
    # PCH doesn't help with dtUtil on g++.

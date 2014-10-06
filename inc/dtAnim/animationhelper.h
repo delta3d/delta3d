@@ -65,6 +65,8 @@ namespace dtAnim
    class AnimationGameActor;
    class AnimationComponent;
    class AnimationUpdaterInterface;
+   class PoseController;
+   class PoseSequence;
 
 
 
@@ -257,6 +259,14 @@ namespace dtAnim
       void SetAttachmentController(AttachmentController* newController);
 
       /**
+       * Gets a pose controller to manage poses if poses have been loaded.
+       */
+      PoseController* GetPoseController();
+
+      void SetPosesEnabled(bool enabled);
+      bool IsPosesEnabled() const;
+
+      /**
        * Set whether command callbacks should be handled for this helper.
        */
       void SetCommandCallbacksEnabled(bool enable);
@@ -387,6 +397,8 @@ namespace dtAnim
       virtual void OnLoadCompleted(AnimationHelper*);
       virtual void OnUnloadCompleted(AnimationHelper*);
 
+      virtual bool SetupPoses(const dtAnim::Cal3DModelData& modelData);
+
    private:
 
       /**
@@ -472,6 +484,7 @@ namespace dtAnim
       dtCore::RefPtr<SequenceMixer> mSequenceMixer;
       dtCore::RefPtr<AttachmentController> mAttachmentController;
       dtCore::RefPtr<dtAnim::BaseModelWrapper> mModelWrapper;
+      dtCore::RefPtr<PoseSequence> mPoseSequence;
 
       typedef std::multimap<std::string, dtCore::RefPtr<TimeOffsetCommand> > CommandMap;
       CommandMap mCommandMap;

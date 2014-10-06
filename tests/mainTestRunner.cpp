@@ -42,6 +42,7 @@
 #include <dtCore/timer.h>
 #include <dtCore/scene.h>
 #include <dtCore/exceptionenum.h>
+#include <dtCore/system.h>
 #include <dtABC/application.h>
 
 #include <dtUtil/fileutils.h>
@@ -242,6 +243,7 @@ int main(int argc, char* argv[])
    }
 
    GlobalApplication->Config();
+   dtCore::System::GetInstance().SetUseFixedTimeStep(false);
 
    ///Reset the windowing system for osg to use an embedded one.
    osg::GraphicsContext::WindowingSystemInterface* winSys = osg::GraphicsContext::getWindowingSystemInterface();

@@ -3,7 +3,7 @@
 #include <dtActors/gamemeshactor.h>
 
 
-class ComponentGameActor : public dtActors::GameMeshActor
+class ComponentGameActor : public dtActors::GameMeshDrawable
 {
   
 public:
@@ -18,7 +18,7 @@ public:
 
 };
 
-class ComponentGameActorProxy : public dtActors::GameMeshActorProxy
+class ComponentGameActorProxy : public dtActors::GameMeshActor
 {
 public:
 

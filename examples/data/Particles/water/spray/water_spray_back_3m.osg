@@ -1,0 +1,167 @@
+Group {
+  nodeMask 0xffffffff
+  cullingActive TRUE
+  num_children 4
+  osgParticle::ParticleSystemUpdater {
+    nodeMask 0xffffffff
+    cullingActive FALSE
+    osgParticle::ParticleSystem {
+      UniqueID ParticleSystem_0
+      StateSet {
+        UniqueID StateSet_1
+        rendering_hint TRANSPARENT_BIN
+        renderBinMode USE
+        binNumber 10
+        binName DepthSortedBin
+        GL_LIGHTING OFF
+        GL_BLEND ON
+        Material {
+          ColorMode OFF
+          ambientColor 0.2 0.2 0.2 1
+          diffuseColor 0.8 0.8 0.8 1
+          specularColor FRONT 0 0 0 1
+          specularColor BACK  0 0 0 1
+          emissionColor FRONT 0 0 0 1
+          emissionColor BACK  0 0 0 1
+          shininess 0
+        }
+        BlendFunc {
+          source SRC_ALPHA
+          destination ONE_MINUS_SRC_ALPHA
+        }
+        textureUnit 0 {
+          GL_TEXTURE_2D ON
+          Texture2D {
+            file "images/water.png"
+            wrap_s MIRROR
+            wrap_t MIRROR
+            wrap_r CLAMP
+            min_filter LINEAR
+            mag_filter LINEAR
+            maxAnisotropy 1
+            borderColor 0 0 0 0
+            borderWidth 0
+            useHardwareMipMapGeneration TRUE
+            unRefImageDataAfterApply FALSE
+            internalFormatMode USE_IMAGE_DATA_FORMAT
+            resizeNonPowerOfTwo TRUE
+            shadowComparison FALSE
+            shadowCompareFunc GL_LEQUAL
+            shadowTextureMode GL_LUMINANCE
+          }
+          TexEnv {
+            mode MODULATE
+          }
+        }
+      }
+      supportsDisplayList FALSE
+      useDisplayList FALSE
+      useVertexBufferObjects FALSE
+      particleAlignment BILLBOARD
+      particleScaleReferenceFrame WORLD_COORDINATES
+      alignVectorX 1 0 0
+      alignVectorY 0 1 0
+      useVertexArray FALSE
+      useShaders FALSE
+      doublePassRendering FALSE
+      frozen FALSE
+      freezeOnCull FALSE
+      defaultBoundingBox -10 -10 -10 10 10 10
+      sortMode NO_SORT
+      visibilityDistance -1
+      particleTemplate {
+        shape QUAD
+        lifeTime 1
+        sizeRange 0.3 0.6
+        alphaRange 0.01 1
+        colorRange 1 1 1 1 0.83 1 1 1
+        position 0 0 0
+        velocity 0 0 0
+        angle 0 0 0
+        angularVelocity 0 0 0
+        radius 0.2
+        mass 0.1
+        textureTile 1 1 5
+        sizeInterpolator {
+          osgParticle::LinearInterpolator {
+            UniqueID LinearInterpolator_2
+          }
+        }
+        alphaInterpolator {
+          osgParticle::LinearInterpolator {
+            UniqueID LinearInterpolator_3
+          }
+        }
+        colorInterpolator {
+          osgParticle::LinearInterpolator {
+            UniqueID LinearInterpolator_4
+          }
+        }
+      }
+    }
+  }
+  Geode {
+    UniqueID Geode_5
+    name "Layer 0"
+    nodeMask 0xffffffff
+    cullingActive TRUE
+    num_drawables 1
+    Use ParticleSystem_0
+  }
+  MatrixTransform {
+    UniqueID MatrixTransform_6
+    nodeMask 0xffffffff
+    cullingActive TRUE
+    referenceFrame RELATIVE
+    Matrix {
+      1 0 0 0
+      0 1 0 0
+      0 0 1 0
+      0 0 0 1
+    }
+    num_children 1
+    osgParticle::ModularEmitter {
+      UniqueID ModularEmitter_7
+      nodeMask 0xffffffff
+      cullingActive FALSE
+      Use ParticleSystem_0
+      enabled TRUE
+      referenceFrame RELATIVE
+      endless TRUE
+      lifeTime 5
+      startTime 0
+      currentTime 0
+      resetTime 0
+      useDefaultTemplate TRUE
+      osgParticle::RandomRateCounter {
+        rateRange 240 240
+      }
+      osgParticle::SegmentPlacer {
+        vertex_A -1.5 0 0
+        vertex_B 1.5 0 0
+      }
+      osgParticle::RadialShooter {
+        thetaRange -1.25 -1.26
+        phiRange -5.09 -4.33
+        initialSpeedRange 5 5
+        initialRotationalSpeedRange 0 0 -4 0 0 4
+      }
+    }
+  }
+  osgParticle::ModularProgram {
+    UniqueID ModularProgram_8
+    nodeMask 0xffffffff
+    cullingActive FALSE
+    Use ParticleSystem_0
+    enabled TRUE
+    referenceFrame RELATIVE
+    endless TRUE
+    lifeTime 0
+    startTime 0
+    currentTime 0
+    resetTime 0
+    osgParticle::AccelOperator {
+      acceleration 0 0 -4
+    }
+  }
+}

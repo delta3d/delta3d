@@ -186,10 +186,17 @@ namespace dtPhysics
       for (unsigned i = 0; i < GetPhysicsEngineList().size(); ++i)
       {
          mCurrentEngine = GetPhysicsEngineList()[i];
-         TestPhysicsBasics();
-         TestPhysicsStep();
-         TestRayCast();
-         TestRayCastSorted();
+         try
+         {
+            TestPhysicsBasics();
+            TestPhysicsStep();
+            TestRayCast();
+            TestRayCastSorted();
+         }
+         catch (const dtUtil::Exception& ex)
+         {
+            CPPUNIT_FAIL(mCurrentEngine  +": "+ ex.ToString());
+         }
       }
    }
 
@@ -199,7 +206,14 @@ namespace dtPhysics
       for (unsigned i = 0; i < GetPhysicsEngineList().size(); ++i)
       {
          mCurrentEngine = GetPhysicsEngineList()[i];
-         TestSolver();
+         try
+         {
+            TestSolver();
+         }
+         catch (const dtUtil::Exception& ex)
+         {
+            CPPUNIT_FAIL(mCurrentEngine  +": "+ ex.ToString());
+         }
       }
    }
 
@@ -209,7 +223,14 @@ namespace dtPhysics
       for (unsigned i = 0; i < GetPhysicsEngineList().size(); ++i)
       {
          mCurrentEngine = GetPhysicsEngineList()[i];
-         TestActions();
+         try
+         {
+            TestActions();
+         }
+         catch (const dtUtil::Exception& ex)
+         {
+            CPPUNIT_FAIL(mCurrentEngine  +": "+ ex.ToString());
+         }
       }
    }
 
@@ -303,7 +324,7 @@ namespace dtPhysics
       dtCore::RefPtr<PhysicsObject> obj = new PhysicsObject(name);
       obj->SetPrimitiveType(type);
       obj->SetExtents(extents);
-      obj->CreateFromProperties();
+      obj->Create();
       obj->SetCollisionGroup(g);
       dtCore::Transform xform;
       xform.SetTranslation(pos);

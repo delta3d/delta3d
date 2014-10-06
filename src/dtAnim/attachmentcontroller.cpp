@@ -156,7 +156,7 @@ namespace dtAnim
 
       // transform the local point by the total transformation
       // and store result in the absolute point
-      osg::Vec3 bodyTranslation = boneTrans + (parentRot * spotDef.mLocalTranslation);
+      osg::Vec3 bodyTranslation = (boneTrans + (parentRot * spotDef.mLocalTranslation)) * mModel->GetScale();
 
       dtCore::Transform x;
       x.Set(bodyTranslation, osg::Matrix(bodyRotation));

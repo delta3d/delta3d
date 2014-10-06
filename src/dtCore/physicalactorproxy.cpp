@@ -66,6 +66,7 @@ namespace dtCore
    void PhysicalActorProxy::SetMass(float mass)
    {
       dtCore::Physical* phys = GetDrawable<Physical>();
+      if (phys == NULL) return;
 
       phys->SetMass(mass);
    }
@@ -74,6 +75,7 @@ namespace dtCore
    float PhysicalActorProxy::GetMass() const
    {
       const dtCore::Physical* phys = GetDrawable<Physical>();
+      if (phys == NULL) return 0.0f;
 
       return phys->GetMass();
    }
@@ -82,6 +84,7 @@ namespace dtCore
    void PhysicalActorProxy::SetCenterOfGravity(const osg::Vec3& g)
    {
       dtCore::Physical* phys = GetDrawable<Physical>();
+      if (phys == NULL) return;
 
       phys->SetCenterOfGravity(g);
    }
@@ -92,7 +95,8 @@ namespace dtCore
       const dtCore::Physical* phys = GetDrawable<Physical>();
 
       osg::Vec3 r;
-      phys->GetCenterOfGravity(r);
+      if (phys != NULL)
+         phys->GetCenterOfGravity(r);
       return r;
    }
 }

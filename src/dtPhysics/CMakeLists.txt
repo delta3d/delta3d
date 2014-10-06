@@ -12,6 +12,7 @@ file(GLOB LIB_PUBLIC_HEADERS
 set(LIB_SOURCES 
 action.cpp
 bodywrapper.cpp
+buoyancyaction.cpp
 charactercontroller.cpp
 charactermotionmodel.cpp
 collisioncontact.cpp

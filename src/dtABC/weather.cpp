@@ -123,7 +123,7 @@ namespace dtABC
          {
             if (!mClouds[CLOUD_FEW - 1].valid())
             {
-               mClouds[CLOUD_FEW - 1] = new dtCore::CloudPlane(6, 0.75f, 2, 1.f, 0.2f, 0.96f, 512, 1100.f,
+               mClouds[CLOUD_FEW - 1] = new dtCore::CloudPlane(6, 0.75f, 2, 1.0f, 0.2f, 0.96f, 512, 1100.0f,
                   "Clouds Few", textureDirectory);//few
             }
             mEnvironment->AddEffect(mClouds[CLOUD_FEW-1].get());
@@ -133,7 +133,7 @@ namespace dtABC
          {
             if (!mClouds[CLOUD_SCATTERED - 1].valid())
             {
-               mClouds[CLOUD_SCATTERED - 1] = new dtCore::CloudPlane(6, 0.5f, 4, 1.f, 0.3f, 0.97f,  512, 1000.f,
+               mClouds[CLOUD_SCATTERED - 1] = new dtCore::CloudPlane(6, 0.5f, 4, 1.0f, 0.3f, 0.97f,  512, 1000.0f,
                   "Clouds Scattered", textureDirectory);// scattered
             }
             mEnvironment->AddEffect(mClouds[CLOUD_SCATTERED - 1].get());
@@ -143,7 +143,7 @@ namespace dtABC
          {
             if (!mClouds[CLOUD_BROKEN - 1].valid())
             {
-               mClouds[CLOUD_BROKEN - 1] = new dtCore::CloudPlane(6, 0.5f, 4, 1.f, 0.3f, 0.96f,  512, 800.f,
+               mClouds[CLOUD_BROKEN - 1] = new dtCore::CloudPlane(6, 0.5f, 4, 1.0f, 0.3f, 0.96f,  512, 800.0f,
                   "Clouds Broken", textureDirectory); //broken
             }
             mEnvironment->AddEffect( mClouds[CLOUD_BROKEN - 1].get() );
@@ -153,7 +153,7 @@ namespace dtABC
          {
             if (!mClouds[CLOUD_OVERCAST - 1].valid())
             {
-               mClouds[CLOUD_OVERCAST - 1] = new dtCore::CloudPlane(6, 0.4f, 6, 1.f, 0.2f, 0.98f,  512, 600.f,
+               mClouds[CLOUD_OVERCAST - 1] = new dtCore::CloudPlane(6, 0.4f, 6, 1.0f, 0.2f, 0.98f,  512, 600.0f,
                   "Clouds Overcast", textureDirectory);//overcast
             }
             mEnvironment->AddEffect(mClouds[CLOUD_OVERCAST-1].get());
@@ -277,19 +277,19 @@ namespace dtABC
       switch (mVisType)
       {
          case VIS_UNLIMITED:
-            mEnvironment->SetVisibility(100000.f);
+            mEnvironment->SetVisibility(100000.0f);
             break;
          case VIS_FAR:
-            mEnvironment->SetVisibility(40000.f);
+            mEnvironment->SetVisibility(40000.0f);
             break;
          case VIS_MODERATE:
-            mEnvironment->SetVisibility(16000.f);
+            mEnvironment->SetVisibility(16000.0f);
             break;
          case VIS_LIMITED:
-            mEnvironment->SetVisibility(8000.f);
+            mEnvironment->SetVisibility(8000.0f);
             break;
          case VIS_CLOSE:
-            mEnvironment->SetVisibility(1500.f);
+            mEnvironment->SetVisibility(1500.0f);
             break;
          default:
             LOG_WARNING("Weather: unhandled visibility type" );

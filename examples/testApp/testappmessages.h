@@ -19,9 +19,6 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
- *
- * This software was developed by Alion Science and Technology Corporation under
- * circumstances in which the U. S. Government may have rights in the software.
  */
 
 #ifndef TEST_APP_MESSAGES_H
@@ -51,6 +48,28 @@ namespace dtExample
       
    private:
       dtCore::RefPtr<dtGame::EnumMessageParameter> mNewMotionModelParam;
+
+   DT_DECLARE_MESSAGE_END()
+
+
+
+   /////////////////////////////////////////////////////////////////////////////
+   // CLASS CODE
+   /////////////////////////////////////////////////////////////////////////////
+   DT_DECLARE_MESSAGE_BEGIN(RequestAttachMessage, dtGame::Message, TEST_APP_EXPORT)
+
+      DECLARE_PARAMETER_INLINE(dtCore::UniqueId, ActorId)
+
+   DT_DECLARE_MESSAGE_END()
+
+
+
+   /////////////////////////////////////////////////////////////////////////////
+   // CLASS CODE
+   /////////////////////////////////////////////////////////////////////////////
+   DT_DECLARE_MESSAGE_BEGIN(RequestTimeOffsetMessage, dtGame::Message, TEST_APP_EXPORT)
+
+      DECLARE_PARAMETER_INLINE(float, Offset)
 
    DT_DECLARE_MESSAGE_END()
 

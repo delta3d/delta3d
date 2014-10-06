@@ -19,10 +19,6 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
- *
- * This software was developed by Alion Science and Technology Corporation under
- * circumstances in which the U. S. Government may have rights in the software.
- *
  */
 
 #ifndef DELTA_TEST_APP_GUI_COMPONENT
@@ -61,12 +57,17 @@ namespace dtCore
 }
 
 typedef CEGUI::PushButton GuiButton;
+typedef CEGUI::Checkbox GuiCheckbox;
+typedef CEGUI::Combobox GuiCombobox;
 typedef CEGUI::EventArgs GuiEventArgs;
+typedef CEGUI::ItemListbox GuiListbox;
+typedef CEGUI::Spinner GuiSpinner;
 
 
 
 namespace dtExample
 {
+   class InputComponent;
    class MotionModelType;
 
 
@@ -77,12 +78,13 @@ namespace dtExample
    class TEST_APP_EXPORT GuiComponent : public dtGame::GMComponent
    {
       public:
+         static const dtUtil::RefString CHECKBOX_TYPE;
+         static const dtUtil::RefString COMBOBOX_TYPE;
+         static const dtUtil::RefString SPINNER_TYPE;
          static const dtUtil::RefString BUTTON_TYPE;
-         static const dtUtil::RefString BUTTON_PROPERTY_ACTION;
-         static const dtUtil::RefString BUTTON_PROPERTY_TYPE;
-         static const dtUtil::RefString UI_BACKGROUND;
-         static const dtUtil::RefString UI_TEXT_MOTION_MODEL;
-         static const dtUtil::RefString UI_TEXT_STATUS;
+         static const dtUtil::RefString TESTAPP_BUTTON_TYPE;
+         static const dtUtil::RefString TESTAPP_BUTTON_PROPERTY_ACTION;
+         static const dtUtil::RefString TESTAPP_BUTTON_PROPERTY_TYPE;
 
          GuiComponent();
 
@@ -108,25 +110,51 @@ namespace dtExample
 
          void Update(float simTimeDelta, float realTimeDelta);
 
+         void UpdateUIValues(GuiScreen& screen);
+
+         void UpdateActorList(GuiScreen& screen);
+
       protected:
 
          virtual ~GuiComponent();
 
          bool RegisterScreenWithState(GuiScreen& screen, const dtGame::GameStateType& gameStateType);
    
-         void BindButtons(GuiNode& rootWindow);
+         void BindControls(GuiNode& rootWindow);
    
          void BindButton(GuiButton& button);
+
+         void BindCheckbox(GuiCheckbox& checkbox);
+
+         void BindCombobox(GuiCombobox& combobox);
+
+         void BindSpinner(GuiSpinner& spinner);
    
-         const GuiNode* GetWidgetFromEventArgs( const GuiEventArgs& args ) const;
+         const GuiNode* GetWidgetFromEventArgs(const GuiEventArgs& args) const;
+
+         bool OnControlPanelFocusGained(const GuiEventArgs& args);
+
+         bool OnControlPanelFocusLost(const GuiEventArgs& args);
    
-         bool OnButtonClicked( const GuiEventArgs& args );
-   
+         bool OnButtonClicked(const GuiEventArgs& args);
+
+         bool OnListItemClicked(const GuiEventArgs& args);
+
+         bool OnCheckboxChanged(const GuiEventArgs& args);
+
+         bool OnComboboxChanged(const GuiEventArgs& args);
+
+         bool OnSpinnerChanged(const GuiEventArgs& args);
+
          void HandleButton(const GuiNode& button);
 
+         void SendRequestTimeOffsetMessage(float offset);
+
+         void SendRequestAttachMessage(const dtCore::UniqueId& actorId);
+
+         InputComponent* GetInputComponent();
+
       private:
-
-
          dtCore::RefPtr<dtCore::DeltaWin> mWindow;
          dtCore::RefPtr<dtGUI::GUI> mGUIScene;
 
@@ -134,6 +162,7 @@ namespace dtExample
 
          GameStateScreenMap mScreens;
          dtCore::RefPtr<GuiScreen> mCurrentScreen;
+         dtCore::RefPtr<GuiScreen> mGameScreen;
          dtCore::RefPtr<GuiScreen> mHelpOverlay;
          dtCore::RefPtr<GuiScreen> mGlobalOverlay;
    };

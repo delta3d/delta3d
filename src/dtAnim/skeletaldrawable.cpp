@@ -136,7 +136,7 @@ SkeletalDrawable::~SkeletalDrawable()
 
 void SkeletalDrawable::drawImplementation(osg::RenderInfo& /*renderInfo*/) const
 {
-   glPointSize(4.f);
+   glPointSize(4.0f);
 
    std::for_each(mRootPrimitives.begin(),
                  mRootPrimitives.end(),

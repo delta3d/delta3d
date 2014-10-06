@@ -462,7 +462,7 @@ void ProxyTest::testProp(dtCore::BaseActorObject& proxy, dtCore::ActorProperty* 
       ///uncovers a problem with dtCore::Object due to multiple matrices affecting
       ///the end translation/rotation.
       //osg::Vec3 test(9.0f, 2.0f, 7.34f);
-      osg::Vec3 test(1.f, 1.f, 1.f);
+      osg::Vec3 test(1.0f, 1.0f, 1.0f);
 
       //The character is currently broken.
       if (proxyTypeName == "Character")

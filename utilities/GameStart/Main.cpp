@@ -39,6 +39,7 @@
 #include <osg/ArgumentParser>
 #include <osgDB/FileNameUtils>
 #include <sstream>
+#include <dtUtil/mswinmacros.h>
 
 void ParseCLI(int& argc, char** argv, std::string& configFileName, std::string& appToLoad, std::string& logFileName)
 {
@@ -86,6 +87,13 @@ int main(int argc, char** argv)
    // the name of the library to load.
    appToLoad = osgDB::getSimpleFileName(appToLoad);
    appToLoad = osgDB::getNameLessExtension(appToLoad);
+
+#if defined(_DEBUG) && defined(DELTA_WIN32)
+   if (!appToLoad.empty() && appToLoad[appToLoad.size() - 1] == 'd')
+   {
+      appToLoad.resize(appToLoad.size() - 1);
+   }
+#endif
 
    // We don't want to try to load a library named "GameStart"
    if (appToLoad == "GameStart")

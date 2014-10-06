@@ -1,11 +1,18 @@
+
+////////////////////////////////////////////////////////////////////////////////
+// INCLUDE DIRECTIVES
+////////////////////////////////////////////////////////////////////////////////
 #include <prefix/dtcoreprefix.h>
-
 #include <cassert>
-
+// DELTA3D
 #include <dtCore/deltadrawable.h>
 #include <dtCore/scene.h>
+#include <dtCore/shadergroup.h>
+#include <dtCore/shadermanager.h>
+#include <dtCore/shaderprogram.h>
+#include <dtCore/project.h>  //for binding editor shader in edit mode
 #include <dtUtil/log.h>
-
+// OSG
 #include <osg/ComputeBoundsVisitor>
 #include <osg/Node>
 #include <osg/Switch>
@@ -22,6 +29,8 @@ namespace dtCore
    public:
       DeltaDrawablePrivate();
       ~DeltaDrawablePrivate();
+
+      void SetOwner(DeltaDrawable* owner);
 
       void SetParent(DeltaDrawable* parent);
       DeltaDrawable* GetParent();
@@ -64,6 +73,11 @@ namespace dtCore
       void SetDescription(const std::string& description);
       const std::string& GetDescription() const;
 
+      void SetShaderGroup(const std::string& groupName);
+      std::string GetShaderGroup() const;
+
+      void ApplyShaderGroup();
+
    private:
       ///Insert a new Switch Node above GetOSGNode() and below it's parents
       void InsertSwitchNode(osg::Node *node);
@@ -71,6 +85,7 @@ namespace dtCore
       ///Remove Switch Node above GetOSGNode()
       void RemoveSwitchNode(osg::Node* node);
 
+      DeltaDrawable* mOwner;
       DeltaDrawable* mParent; ///< Any immediate parent of this instance (Weak pointer to prevent circular reference).
 
       typedef std::vector< RefPtr<DeltaDrawable> > ChildList;
@@ -79,7 +94,14 @@ namespace dtCore
       RefPtr<osg::Node> mProxyNode; ///< Handle to the rendered proxy node (or NULL)
       bool mIsActive; ///<Is this DeltaDrawable active (rendering)
       std::string mDescription; ///<description string
+      std::string mShaderGroup;
    };
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void DeltaDrawablePrivate::SetOwner(DeltaDrawable* owner)
+   {
+      mOwner = owner;
+   }
 
    ////////////////////////////////////////////////////////////////////////////////
    void DeltaDrawablePrivate::SetParent(DeltaDrawable* parent)
@@ -342,6 +364,97 @@ namespace dtCore
       return mDescription;
    }
 
+   /////////////////////////////////////////////////////////////////////////////
+   void DeltaDrawablePrivate::SetShaderGroup(const std::string& groupName)
+   {
+      // Setting the shader group, when it didn't change can cause a massive
+      // hit on performance because it unassigns everything and will make a new
+      // instance of the shader and all its params. Could also cause anomalies with
+      // oscilating shader params.
+      if (groupName != mShaderGroup)
+      {
+         mShaderGroup = groupName;
+
+         ApplyShaderGroup();
+
+         mOwner->OnShaderGroupChanged();
+      }
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   std::string DeltaDrawablePrivate::GetShaderGroup() const
+   {
+      return mShaderGroup;
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////////////////////////////
+   void DeltaDrawablePrivate::ApplyShaderGroup()
+   {
+      if (mShaderGroup.empty())
+         return; // Do nothing, since there is nothing to load.
+
+      osg::Node* node = mOwner->GetOSGNode();
+
+      if (node == NULL)
+      {
+         LOG_ERROR("Cannot assign shader group \"" + mShaderGroup
+            + "\" to actor \"" + mOwner->GetName()
+            + "\" because it has no drawable.");
+         return;
+      }
+
+      // Unassign any old setting on this, if any - works regardless if there's a node or not
+      dtCore::ShaderManager::GetInstance().UnassignShaderFromNode(*node);
+
+      //First get the shader group assigned to this actor.
+      const dtCore::ShaderGroup* shaderGroup =
+         dtCore::ShaderManager::GetInstance().FindShaderGroupPrototype(mShaderGroup);
+
+      if (shaderGroup == NULL)
+      {
+         LOG_INFO("Could not find shader group \""
+            + mShaderGroup + "\" for actor \"" + mOwner->GetName() +"\"");
+         return;
+      }
+
+      // TODO: Find an explicit shader instead of just the default;
+      //shaderGroup->FindShader();
+
+      bool editMode = dtCore::Project::GetInstance().GetEditMode();
+
+      const dtCore::ShaderProgram* defaultShader = NULL;
+
+      if(editMode)
+      {
+         defaultShader = shaderGroup->GetEditorShader();
+      }
+
+      //if we arent in edit mode or there is no specific shader for editors
+      if(defaultShader == NULL)
+      {
+         defaultShader = shaderGroup->GetDefaultShader();
+      }
+
+      try
+      {
+         if (defaultShader != NULL)
+         {
+            dtCore::ShaderManager::GetInstance().AssignShaderFromPrototype(*defaultShader, *node);
+         }
+         else
+         {
+            LOG_WARNING("Could not find a default shader in shader group \"" + mShaderGroup +"\"");
+            return;
+         }
+      }
+      catch (const dtUtil::Exception& e)
+      {
+         LOG_WARNING("Caught Exception while assigning shader group \""
+            + mShaderGroup + "\": " + e.ToString());
+         return;
+      }
+   }
+
    ////////////////////////////////////////////////////////////////////////////////
    void DeltaDrawablePrivate::AddedToScene(Scene* scene, osg::Node* node)
    {
@@ -429,12 +542,12 @@ namespace dtCore
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   DeltaDrawablePrivate::DeltaDrawablePrivate():
-   mParent(NULL)
+   DeltaDrawablePrivate::DeltaDrawablePrivate()
+      : mOwner(NULL)
+      , mParent(NULL)
       , mParentScene(NULL)
       , mIsActive(true)
    {
-
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -452,6 +565,8 @@ DeltaDrawable::DeltaDrawable(const std::string& name)
    : Base(name)
    , mPvt(new DeltaDrawablePrivate())
 {
+   mPvt->SetOwner(this);
+
    RegisterInstance(this);
 }
 
@@ -466,6 +581,7 @@ DeltaDrawable::~DeltaDrawable()
       child->OnOrphaned();
    }
 
+   mPvt->SetOwner(NULL);
    delete mPvt;
 }
 
@@ -709,4 +825,28 @@ void dtCore::DeltaDrawable::SetDescription(const std::string& description)
 const std::string& dtCore::DeltaDrawable::GetDescription() const
 {
    return mPvt->GetDescription();
+}
+
+/////////////////////////////////////////////////////////////////////////////
+void dtCore::DeltaDrawable::SetShaderGroup(const std::string& groupName)
+{
+   mPvt->SetShaderGroup(groupName);
+}
+
+/////////////////////////////////////////////////////////////////////////////
+std::string dtCore::DeltaDrawable::GetShaderGroup() const
+{
+   return mPvt->GetShaderGroup();
+}
+
+/////////////////////////////////////////////////////////////////////////////
+void dtCore::DeltaDrawable::ApplyShaderGroup()
+{
+   return mPvt->ApplyShaderGroup();
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+void dtCore::DeltaDrawable::OnShaderGroupChanged()
+{
+   // OVERRIDE:
 }

@@ -25,6 +25,7 @@
 #include <dtCore/system.h>
 #include <dtUtil/datapathutils.h>
 #include <dtUtil/log.h>
+#include <dtUtil/nodemask.h>
 
 #include <osg/Depth>
 #include <osg/Geometry>
@@ -44,8 +45,6 @@
 using namespace dtCore;
 using namespace dtUtil;
 
-///Used to "hide" the SkyBox's geometry from the Scene's intersect visitor
-const int SKYBOX_NODE_MASK = 0xf0000000;
 
 ////////////////////////////////////////////////////////////////////////////////
 AngularMapProfile::AngularMapProfile()
@@ -413,7 +412,7 @@ osg::Node* FixedFunctionProfile::MakeBox()
    osg::Geometry *polyGeom[6];
 
    osg::Vec4Array *colors = new osg::Vec4Array(1);
-   (*colors)[0] = osg::Vec4(1.f, 1.f, 1.f, 1.f);
+   (*colors)[0] = osg::Vec4(1.0f, 1.0f, 1.0f, 1.0f);
 
    osg::Vec3Array *vArray[6];
    vArray[0] = new osg::Vec3Array(4, coords0);
@@ -462,7 +461,7 @@ osg::Node* FixedFunctionProfile::MakeBox()
 
    //not a great solution, but this is here to prevent the Scene's intersection
    //visitor from hitting this geometry (see Scene::GetHeightOfTerrain())
-   mGeode->setNodeMask(SKYBOX_NODE_MASK);
+   mGeode->setNodeMask(dtUtil::NodeMask::BACKGROUND);
    return mGeode.get();
 }
 

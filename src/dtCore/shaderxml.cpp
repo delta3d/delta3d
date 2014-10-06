@@ -62,6 +62,7 @@ namespace dtCore
    const std::string ShaderXML::SHADER_ATTRIBUTE_NAME("name");
    const std::string ShaderXML::SHADER_ATTRIBUTE_VERTICES_OUT("verticesout");
    const std::string ShaderXML::SHADER_ATTRIBUTE_DEFAULT("default");
+   const std::string ShaderXML::SHADER_ATTRIBUTE_EDITOR("editor");
    const std::string ShaderXML::SHADER_SOURCE_ELEMENT("source");
    const std::string ShaderXML::SHADER_SOURCE_ATTRIBUTE_TYPE("type");
    const std::string ShaderXML::SHADER_SOURCE_TYPE_VERTEX("Vertex");
@@ -299,6 +300,7 @@ namespace dtCore
       //shader group that this shader is the default.
       std::string shaderName = GetElementAttribute(*shaderElem, ShaderXML::SHADER_ATTRIBUTE_NAME);
       std::string isDefault = GetElementAttribute(*shaderElem, ShaderXML::SHADER_ATTRIBUTE_DEFAULT);
+      std::string isEditor = GetElementAttribute(*shaderElem, ShaderXML::SHADER_ATTRIBUTE_EDITOR);
       std::string verticesout = GetElementAttribute(*shaderElem, ShaderXML::SHADER_ATTRIBUTE_VERTICES_OUT);
 
       dtCore::RefPtr<ShaderProgram> newShader = new ShaderProgram(shaderName);
@@ -347,6 +349,10 @@ namespace dtCore
       if (isDefault == "yes")
       {
          group.AddShader(*newShader,true);
+      }
+      else if (isEditor == "yes")
+      {
+         group.AddShader(*newShader,false, true);
       }
       else
       {

@@ -33,16 +33,20 @@ namespace dtPhysics
 
    ////////////////////////////////////////////////////////////
    ConvexHull::ConvexHull(VertexData& meshData, unsigned margin)
+   : mNewVertexData(new VertexData)
    {
 
       HullDesc desc;
       desc.SetHullFlag(QF_TRIANGLES);
-      desc.mVcount       = meshData.mNumVertices;
+      desc.mVcount       = meshData.mVertices.size();
       desc.mVertices     = new double[desc.mVcount*3];
 
-      for (unsigned i = 0; i < desc.mVcount * 3; i++)
+      for (unsigned i = 0; i < desc.mVcount; ++i)
       {
-         desc.mVertices[i] = meshData.mVertices[i];
+         unsigned hullIdx = i*3;
+         desc.mVertices[hullIdx] = meshData.mVertices[i][0];
+         desc.mVertices[hullIdx+1] = meshData.mVertices[i][1];
+         desc.mVertices[hullIdx+2] = meshData.mVertices[i][2];
       }
 
       desc.mVertexStride = sizeof(double)*3;
@@ -53,19 +57,18 @@ namespace dtPhysics
       //HullError ret =
       hl.CreateConvexHull(desc,dresult);
 
-      mNewVertexData.mIndices = new unsigned[dresult.mNumIndices];
-      mNewVertexData.mVertices = new Real[dresult.mNumOutputVertices * 3];
-      mNewVertexData.mNumIndices = dresult.mNumIndices;
-      mNewVertexData.mNumVertices = dresult.mNumOutputVertices;
+      mNewVertexData->mIndices.resize(dresult.mNumIndices);
+      mNewVertexData->mVertices.resize(dresult.mNumOutputVertices);
 
-      for (unsigned i = 0; i < dresult.mNumIndices; i++)
+      for (unsigned i = 0; i < dresult.mNumIndices; ++i)
       {
-         mNewVertexData.mIndices[i] = dresult.mIndices[i];
+         mNewVertexData->mIndices[i] = dresult.mIndices[i];
       }
 
-      for (unsigned i = 0; i < dresult.mNumOutputVertices * 3; i++)
+      for (unsigned i = 0; i < dresult.mNumOutputVertices; ++i)
       {
-         mNewVertexData.mVertices[i] = Real(dresult.mOutputVertices[i]);
+         unsigned resultIdx = i*3;
+         mNewVertexData->mVertices[i] = VectorType(dresult.mOutputVertices[resultIdx], dresult.mOutputVertices[resultIdx+1], dresult.mOutputVertices[resultIdx+2]);
       }
 
       hl.ReleaseResult(dresult);
@@ -74,15 +77,14 @@ namespace dtPhysics
    ////////////////////////////////////////////////////////////
    ConvexHull::~ConvexHull()
    {
-      mNewVertexData.DeleteData();
    }
 
    ////////////////////////////////////////////////////////////
-   VertexData ConvexHull::ReleaseNewVertexData()
+   void ConvexHull::GetVertexData(VertexData& v)
    {
-      VertexData v = mNewVertexData;
-      mNewVertexData.NullData();
-      return v;
+      v.mIndices.swap(mNewVertexData->mIndices);
+      v.mVertices.swap(mNewVertexData->mVertices);
+      v.mMaterialFlags.clear();
    }
 
    ////////////////////////////////////////////////////////////

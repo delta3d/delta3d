@@ -11,7 +11,8 @@ SET(LIB_PUBLIC_HEADERS
     ${HEADER_PATH}/backdropactor.h
     ${HEADER_PATH}/baselightactorproxy.h
     ${HEADER_PATH}/basewateractor.h
-    ${HEADER_PATH}/beziercontrolleractorproxy.h
+    ${HEADER_PATH}/beziercontrolleractor.h
+    ${HEADER_PATH}/beziercontrolleractorcomponent.h
     ${HEADER_PATH}/beziercontrolpointactorproxy.h
     ${HEADER_PATH}/beziernodeactorproxy.h
     ${HEADER_PATH}/buildingactor.h
@@ -21,8 +22,9 @@ SET(LIB_PUBLIC_HEADERS
     ${HEADER_PATH}/cloudplaneactorproxy.h
     ${HEADER_PATH}/coordinateconfigactor.h
     ${HEADER_PATH}/deltaobjectactorproxy.h
-    ${HEADER_PATH}/directoractorproxy.h
+    ${HEADER_PATH}/directoractor.h
     ${HEADER_PATH}/distancesensoractor.h
+    ${HEADER_PATH}/dynamicparticlesystemactor.h
     ${HEADER_PATH}/engineactorregistry.h
     ${HEADER_PATH}/enveffectactorproxy.h
     ${HEADER_PATH}/fenceactor.h
@@ -65,7 +67,8 @@ SET(LIB_SOURCES
     ${SOURCE_PATH}/backdropactor.cpp
     ${SOURCE_PATH}/baselightactorproxy.cpp
     ${SOURCE_PATH}/basewateractor.cpp
-    ${SOURCE_PATH}/beziercontrolleractorproxy.cpp
+    ${SOURCE_PATH}/beziercontrolleractor.cpp
+    ${SOURCE_PATH}/beziercontrolleractorcomponent.cpp
     ${SOURCE_PATH}/beziercontrolpointactorproxy.cpp
     ${SOURCE_PATH}/beziernodeactorproxy.cpp
     ${SOURCE_PATH}/buildingactor.cpp
@@ -75,8 +78,9 @@ SET(LIB_SOURCES
     ${SOURCE_PATH}/cloudplaneactorproxy.cpp
     ${SOURCE_PATH}/coordinateconfigactor.cpp
     ${SOURCE_PATH}/deltaobjectactorproxy.cpp
-    ${SOURCE_PATH}/directoractorproxy.cpp
+    ${SOURCE_PATH}/directoractor.cpp
     ${SOURCE_PATH}/distancesensoractor.cpp
+    ${SOURCE_PATH}/dynamicparticlesystemactor.cpp
     ${SOURCE_PATH}/engineactorregistry.cpp
     ${SOURCE_PATH}/enveffectactorproxy.cpp
     ${SOURCE_PATH}/fenceactor.cpp

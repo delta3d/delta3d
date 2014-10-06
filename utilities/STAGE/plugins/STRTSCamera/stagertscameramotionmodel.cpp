@@ -27,7 +27,7 @@ STAGERTSCameraMotionModel::STAGERTSCameraMotionModel(dtCore::Mouse* mouse, const
    , mDistance(100.0f)
    , mCurrentDistance(100.0f)
    , mLinearRate(1.0f)
-   , mMinCameraHeight(-5.f)
+   , mMinCameraHeight(-5.0f)
    , mTransitionSpeed(2.0f)
    , mMouse(mouse)
 {
@@ -266,7 +266,7 @@ bool STAGERTSCameraMotionModel::WheelEvent(int delta)
       if (mFocalPoint.z() < mMinCameraHeight) mFocalPoint.z() = mMinCameraHeight;
 
       mDistance = (mFocalPoint.z() - mMinCameraHeight);
-      dtUtil::ClampMin(mDistance, 1.f);
+      dtUtil::ClampMin(mDistance, 1.0f);
 
       return true;
    }

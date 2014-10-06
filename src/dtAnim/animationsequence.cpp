@@ -317,10 +317,6 @@ void AnimationSequence::ClearAnimation(const std::string& pAnimName, float fadeT
    {
       anim->ForceFadeOut(fadeTime);
    }
-   else
-   {
-      LOG_ERROR("Unable to ClearAnimation '" + pAnimName + "'");
-   }
 }
 
 ////////////////////////////////////////////////////////////////////////////////

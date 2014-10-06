@@ -92,7 +92,7 @@ class BatchISectorTests : public CPPUNIT_NS::TestFixture
          iSector.SetToCheckForClosestDrawable(true);
 
          dtCore::RefPtr<dtCore::InfiniteTerrain> terrain = new dtCore::InfiniteTerrain();
-         terrain->SetBuildDistance(1500.f);
+         terrain->SetBuildDistance(1500.0f);
          terrain->SetSegmentDivisions(64);
          mBatchIsector->SetScene(mScene.get());
          mScene->AddChild(terrain.get());

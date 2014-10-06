@@ -174,12 +174,16 @@ namespace dtAnim
 
                while (texture != NULL)
                {
+                  // TODO:
+                  // OSG seems to assume all PNG files have alpha. For now let the code be simple
+                  // and use material alpha to flag a material as translucent.
+
                   // Mark the mesh as a transparency if the image is found to have alpha values.
                   osg::Image* image = texture->getImage();
-                  if(image != NULL && image->isImageTranslucent())
+                  /*if(image != NULL && image->isImageTranslucent())
                   {
                      materialTranslucent = true;
-                  }
+                  }*/
 
                   set->setTextureAttributeAndModes(i, texture, osg::StateAttribute::ON);
                   texture = dynamic_cast<osg::Texture2D*>(calMaterial->GetTexture(++i));
@@ -344,23 +348,15 @@ namespace dtAnim
 
       /// this processes the lowest LOD at the moment,
       /// because that's what's loaded at the front of the VBO.
-      osg::Drawable::Extensions* glExt = osg::Drawable::getExtensions(0, true);
-#if defined(OPENSCENEGRAPH_MAJOR_VERSION) && OPENSCENEGRAPH_MAJOR_VERSION >= 3
-      mMeshVBO->getOrCreateGLBufferObject(0)->bindBuffer();
-#else
-      mMeshVBO->bindBuffer(0);
-#endif
-      osg::Vec3f* vertexArray = reinterpret_cast<osg::Vec3f*>(glExt->glMapBuffer(GL_ARRAY_BUFFER_ARB, GL_READ_WRITE_ARB));
 
-      functor.setVertexArray(mVertexCount[0], vertexArray);
+      //osg::Vec3f* vertexArray =
+      osg::BufferData* vertexArray = mMeshVBO->getBufferData(0);
+      if (vertexArray->asArray()->getType() != osg::Array::Vec3ArrayType)
+         return;
+
+      functor.setVertexArray(mVertexCount[0], reinterpret_cast<const osg::Vec3*>(vertexArray->getDataPointer()));
      
-#if defined(OPENSCENEGRAPH_MAJOR_VERSION) && OPENSCENEGRAPH_MAJOR_VERSION >= 3
-      mMeshEBO->getOrCreateGLBufferObject(0)->bindBuffer();
-#else
-      mMeshEBO->bindBuffer(0);
-#endif
-
-      void* indexArray = glExt->glMapBuffer(GL_ELEMENT_ARRAY_BUFFER_ARB, GL_READ_WRITE_ARB);
+      const GLvoid* indexArray = mMeshEBO->getBufferData(0)->getDataPointer();
       if (indexArray != NULL)
       {
          if (sizeof(CalIndex) == sizeof(short))
@@ -376,16 +372,6 @@ namespace dtAnim
             pset->accept(functor);
          }
       }
-
-      glExt->glUnmapBuffer(GL_ELEMENT_ARRAY_BUFFER_ARB);
-      glExt->glUnmapBuffer(GL_ARRAY_BUFFER_ARB);
-#if defined(OPENSCENEGRAPH_MAJOR_VERSION) && OPENSCENEGRAPH_MAJOR_VERSION >= 3
-      mMeshVBO->getOrCreateGLBufferObject(0)->unbindBuffer();
-      mMeshEBO->getOrCreateGLBufferObject(0)->unbindBuffer();
-#else
-      mMeshVBO->unbindBuffer(0);
-      mMeshEBO->unbindBuffer(0);
-#endif
    }
 
    ////////////////////////////////////////////////////////////////////////////////////////
@@ -505,9 +491,13 @@ namespace dtAnim
                glExt->glUnmapBuffer(GL_ARRAY_BUFFER_ARB);
             }
 
-            unsigned offset = mVertexOffsets[lodIndex] * STRIDE;
+            unsigned offset = mVertexOffsets[lodIndex] * VBO_STRIDE;
 
-            state.setVertexPointer(3, GL_FLOAT, STRIDE_BYTES, BUFFER_OFFSET(0 + offset));
+            state.setVertexPointer(3, GL_FLOAT, VBO_STRIDE_BYTES, BUFFER_OFFSET(offset + VBO_OFFSET_POSITION));
+            state.setNormalPointer(GL_FLOAT, VBO_STRIDE_BYTES, BUFFER_OFFSET(offset + VBO_OFFSET_NORMAL));
+            state.setTexCoordPointer(0, 2, GL_FLOAT, VBO_STRIDE_BYTES, BUFFER_OFFSET(offset + VBO_OFFSET_TEXCOORD0));
+            state.setTexCoordPointer(1, 2, GL_FLOAT, VBO_STRIDE_BYTES, BUFFER_OFFSET(offset + VBO_OFFSET_TEXCOORD1));
+            state.disableColorPointer();
 
             state.setNormalPointer(GL_FLOAT, STRIDE_BYTES, BUFFER_OFFSET(3 + offset));
             state.setTexCoordPointer(0, 2, GL_FLOAT, STRIDE_BYTES, BUFFER_OFFSET(6 + offset));

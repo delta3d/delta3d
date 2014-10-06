@@ -235,6 +235,8 @@ namespace dtCore
 
    void Map::AddProxy(BaseActorObject& proxy, bool reNumber)
    {
+      // TODO this renumber code should not be here at all.  Only editor should do this.
+
       // Check if this proxy already has a number associated with it.
       std::string proxyName = proxy.GetName();
       std::string name, number;

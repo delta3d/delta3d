@@ -1,3 +1,4 @@
+#version 120
 // Basic  directional light implementation
 // MG 12/10/09
 

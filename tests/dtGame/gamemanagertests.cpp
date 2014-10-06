@@ -270,7 +270,7 @@ void GameManagerTests::TestFindActorByType()
    std::vector<dtCore::BaseActorObject*> proxies;
    for (unsigned short int i = 0; i < numProxies; ++i)
    {
-      dtCore::RefPtr<dtActors::GameMeshActorProxy> p;
+      dtCore::RefPtr<dtActors::GameMeshActor> p;
       mManager->CreateActor(*dtActors::EngineActorRegistry::GAME_MESH_ACTOR_TYPE, p);
       CPPUNIT_ASSERT(p != NULL);
       mManager->AddActor(*p, false, false);
@@ -281,7 +281,7 @@ void GameManagerTests::TestFindActorByType()
    CPPUNIT_ASSERT(testEventProxy != NULL);
    mManager->AddActor(*testEventProxy, false, false);
 
-   dtActors::GameMeshActorProxy* meshActorProxy = NULL;
+   dtActors::GameMeshActor* meshActorProxy = NULL;
    mManager->FindActorsByType(*dtActors::EngineActorRegistry::GAME_MESH_ACTOR_TYPE, proxies);
    CPPUNIT_ASSERT_MESSAGE("The GameManager didn't find the actor by type", !proxies.empty());
 
@@ -299,7 +299,7 @@ void GameManagerTests::TestFindActorByType()
 /////////////////////////////////////////////////
 void GameManagerTests::TestFindActorByWrongType()
 {
-   dtCore::RefPtr<dtActors::GameMeshActorProxy> meshActorProxy;
+   dtCore::RefPtr<dtActors::GameMeshActor> meshActorProxy;
    mManager->CreateActor(*dtActors::EngineActorRegistry::GAME_MESH_ACTOR_TYPE, meshActorProxy);
    CPPUNIT_ASSERT(meshActorProxy != NULL);
    mManager->AddActor(*meshActorProxy, false, false);
@@ -317,7 +317,7 @@ void GameManagerTests::TestFindActorByWrongType()
    CPPUNIT_ASSERT_MESSAGE("The GameManager returned back a proxy of the wrong type", testEventProxy == NULL);
 
    //should not be able to mix up variable type and queried actor types
-   dtActors::GameMeshActorProxy* testMeshProxy = NULL;
+   dtActors::GameMeshActor* testMeshProxy = NULL;
    mManager->FindActorByName(eventName, testMeshProxy);
    CPPUNIT_ASSERT_MESSAGE("GameManager returned back a proxy of the wrong type.", testMeshProxy == NULL);
 }
@@ -328,7 +328,7 @@ void GameManagerTests::TestFindActorByName()
    const unsigned short int numProxies = 10;
    for (unsigned short int i = 0; i < numProxies; ++i)
    {
-      dtCore::RefPtr<dtActors::GameMeshActorProxy> p;
+      dtCore::RefPtr<dtActors::GameMeshActor> p;
       mManager->CreateActor(*dtActors::EngineActorRegistry::GAME_MESH_ACTOR_TYPE, p);
       CPPUNIT_ASSERT(p != NULL);
       mManager->AddActor(*p, false, false);
@@ -361,7 +361,7 @@ void GameManagerTests::TestFindActorByName()
 void GameManagerTests::TestPrototypeActors()
 {
    //GameManager::CreateActor()
-   dtCore::RefPtr<dtActors::GameMeshActorProxy> toMakeAsAPrototype;
+   dtCore::RefPtr<dtActors::GameMeshActor> toMakeAsAPrototype;
    mManager->CreateActor(*dtActors::EngineActorRegistry::GAME_MESH_ACTOR_TYPE, toMakeAsAPrototype);
    toMakeAsAPrototype->SetName("PrototypeActorProxy");
 
@@ -384,14 +384,14 @@ void GameManagerTests::TestPrototypeActors()
    CPPUNIT_ASSERT_MESSAGE("Tried cloning from a prototype, didn't work out too well...", ourActualActor != NULL);
    CPPUNIT_ASSERT_MESSAGE("Tried cloning from a prototype, didn't work out too well...", ourActualActor->GetName() == toMakeAsAPrototype->GetName());
 
-   dtCore::RefPtr<dtActors::GameMeshActorProxy> testFindPrototype;
+   dtCore::RefPtr<dtActors::GameMeshActor> testFindPrototype;
    mManager->FindPrototypeByID(toMakeAsAPrototype->GetId(), testFindPrototype);
    CPPUNIT_ASSERT_MESSAGE("The prototype find by Id method should have been able to find the prototype",
       testFindPrototype.valid());
    CPPUNIT_ASSERT_MESSAGE("The prototype find by Id method should have found the correct prototype",
       testFindPrototype->GetId() == toMakeAsAPrototype->GetId());
 
-   dtActors::GameMeshActorProxy* testFindPrototypeByName = NULL;
+   dtActors::GameMeshActor* testFindPrototypeByName = NULL;
    mManager->FindPrototypeByName(toMakeAsAPrototype->GetName(), testFindPrototypeByName);
    CPPUNIT_ASSERT_MESSAGE("The prototype find by name method should have been able to find the prototype",
       testFindPrototypeByName != NULL);
@@ -401,7 +401,7 @@ void GameManagerTests::TestPrototypeActors()
    // set this so that when i creates an actor, I can see that it changes the value.
    toMakeAsAPrototype->SetInitialOwnership(dtGame::GameActorProxy::Ownership::PROTOTYPE);
 
-   dtCore::RefPtr<dtActors::GameMeshActorProxy> testCreatePrototype;
+   dtCore::RefPtr<dtActors::GameMeshActor> testCreatePrototype;
    mManager->CreateActorFromPrototype(toMakeAsAPrototype->GetId(), testCreatePrototype);
    CPPUNIT_ASSERT_MESSAGE("The prototyped method should have been able to create the prototype",
       testCreatePrototype.valid());
@@ -1963,7 +1963,7 @@ void GameManagerTests::TestGMSettingsServerClientRoles()
    mManager->GetAllActors(proxies);
    CPPUNIT_ASSERT_EQUAL_MESSAGE("Should be 3 total actors.", 3, (int) proxies.size());
 
-   dtActors::GameMeshActorProxy* testMeshProxy = NULL;
+   dtActors::GameMeshActor* testMeshProxy = NULL;
    mManager->FindActorByName("CLIENT_LOCAL", testMeshProxy);
    CPPUNIT_ASSERT_MESSAGE("CLIENT_LOCAL should NOT be in GM.", testMeshProxy == NULL);
 
@@ -1986,7 +1986,7 @@ void GameManagerTests::TestGMSettingsServerClientRoles()
 
 void GameManagerTests::TestSwitchToLocal()
 {
-   dtCore::RefPtr<dtActors::GameMeshActorProxy> gameMeshActor;
+   dtCore::RefPtr<dtActors::GameMeshActor> gameMeshActor;
    mManager->CreateActor(*dtActors::EngineActorRegistry::GAME_MESH_ACTOR_TYPE, gameMeshActor);
 
    mManager->AddActor(*gameMeshActor, true, false);
@@ -2005,7 +2005,7 @@ void GameManagerTests::TestSwitchToLocal()
 
 void GameManagerTests::TestSwitchToRemote()
 {
-   dtCore::RefPtr<dtActors::GameMeshActorProxy> gameMeshActor;
+   dtCore::RefPtr<dtActors::GameMeshActor> gameMeshActor;
    mManager->CreateActor(*dtActors::EngineActorRegistry::GAME_MESH_ACTOR_TYPE, gameMeshActor);
 
    mManager->AddActor(*gameMeshActor, false, true);

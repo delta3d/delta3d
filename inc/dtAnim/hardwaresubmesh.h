@@ -51,7 +51,10 @@ namespace dtAnim
    public:
       HardwareSubmeshDrawable(Cal3DModelWrapper* wrapper, CalHardwareModel* model,
             const std::string& boneUniformName, unsigned numBones,
-            unsigned mesh, osg::VertexBufferObject* vertexVBO, osg::ElementBufferObject* indexEBO);
+            unsigned mesh, osg::VertexBufferObject* vertexVBO, osg::ElementBufferObject* indexEBO,
+            int boneWeightsLocation,
+            int boneIndicesLocation,
+            int tangentSpaceLocation);
 
       virtual void drawImplementation(osg::RenderInfo& renderInfo) const;
 
@@ -70,9 +73,9 @@ namespace dtAnim
       dtCore::RefPtr<osg::Uniform> mBoneTransforms;
       std::string mBoneUniformName;
       unsigned int mNumBones, mMeshID;
-      osg::VertexBufferObject* mVertexVBO;
-      osg::ElementBufferObject* mIndexEBO;
-      OpenThreads::Mutex mUpdateMutex; ///Used to support rendering with multiple threads
+      dtCore::RefPtr<osg::VertexBufferObject> mVertexVBO;
+      dtCore::RefPtr<osg::ElementBufferObject> mIndexEBO;
+      mutable OpenThreads::Mutex mUpdateMutex; ///Used to support rendering with multiple threads
    };
 
 }; //namespace dtAnim

@@ -238,7 +238,7 @@ namespace dtDirector
             count = GetPropertyCount("Actor");
             for (int index = 0; index < count; ++index)
             {
-               dtAnim::AnimationGameActorProxy* actor = dynamic_cast<dtAnim::AnimationGameActorProxy*>(GetActor("Actor", index));
+               dtAnim::AnimationGameActor* actor = dynamic_cast<dtAnim::AnimationGameActor*>(GetActor("Actor", index));
                if (actor)
                {
 #ifdef MANUAL_ANIMATIONS
@@ -402,7 +402,7 @@ namespace dtDirector
             int count = GetPropertyCount("Actor");
             for (int index = 0; index < count; ++index)
             {
-               dtAnim::AnimationGameActorProxy* actor = dynamic_cast<dtAnim::AnimationGameActorProxy*>(GetActor("Actor", index));
+               dtAnim::AnimationGameActor* actor = dynamic_cast<dtAnim::AnimationGameActor*>(GetActor("Actor", index));
                if (actor)
                {
                      // Clear all animations currently playing in this actor.

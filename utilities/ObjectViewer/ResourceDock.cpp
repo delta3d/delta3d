@@ -187,6 +187,29 @@ QTreeWidgetItem* ResourceDock::FindGeometryItem(const std::string& fullName) con
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+bool ResourceDock::RemoveGeometryItem(QTreeWidgetItem* item)
+{
+   bool success = false;
+
+   if (item != NULL)
+   {
+      while (item->childCount() > 0)
+      {
+         QTreeWidgetItem* child = item->child(0);
+         item->removeChild(item->child(0));
+         delete child;
+      }
+
+      mGeometryTreeWidget->removeItemWidget(item,0);
+      delete item;
+
+      success = true;
+   }
+
+   return success;
+}
+
+////////////////////////////////////////////////////////////////////////////////
 QTreeWidgetItem* ResourceDock::FindShaderFileItem(const std::string& filename) const
 {
    for (int itemIndex = 0; itemIndex < mShaderTreeWidget->topLevelItemCount(); ++itemIndex)
@@ -349,14 +372,32 @@ void ResourceDock::OnNewGeometry(const std::string& path, const std::string& fil
    QString qtFilename(filename.c_str());
    std::string listLabel;
 
-   if (qtFilename.endsWith(".dtChar"))
+   listLabel = STATIC_MESH_LABEL.toStdString();
+
+   QTreeWidgetItem* listItem = FindListItem(listLabel);
+   if (listItem)
    {
-      listLabel = SKELETAL_MESH_LABEL.toStdString();
+      listItem->addChild(geometryItem);
    }
-   else
-   {
-      listLabel = STATIC_MESH_LABEL.toStdString();
-   }
+}
+
+///////////////////////////////////////////////////////////////////////////////
+void ResourceDock::OnNewSkinnedMesh(const std::string& path, const std::string& filename)
+{
+   QTreeWidgetItem *geometryItem = new QTreeWidgetItem();
+   geometryItem->setText(0, filename.c_str());
+   geometryItem->setToolTip(0, (path + "/" + filename).c_str());
+
+   geometryItem->setFlags(Qt::ItemIsSelectable |
+      Qt::ItemIsUserCheckable |
+      Qt::ItemIsEnabled);
+
+   geometryItem->setCheckState(0, Qt::Unchecked);
+
+   QString qtFilename(filename.c_str());
+   std::string listLabel;
+
+   listLabel = SKELETAL_MESH_LABEL.toStdString();
 
    QTreeWidgetItem* listItem = FindListItem(listLabel);
    if (listItem)

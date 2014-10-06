@@ -127,6 +127,7 @@ namespace dtAI
 
       virtual ~DeltaAIInterface();
       void Optimize();
+      void UpdateDebugDrawable();
 
    private:
       dtCore::RefPtr<AIDebugDrawable> mDrawable;

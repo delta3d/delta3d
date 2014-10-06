@@ -257,7 +257,7 @@ namespace dtPhysics
 
    static dtCore::ObserverPtr<PhysicsWorld> TheWorld;
 
-   const std::string PhysicsWorld::DIRECTORY_NAME = "/ext/PalPlugins";
+   const std::string PhysicsWorld::DIRECTORY_NAME = "PalPlugins";
    const std::string PhysicsWorld::PHYSX_ENGINE   = "Novodex";
    const std::string PhysicsWorld::BULLET_ENGINE  = "Bullet";
    const std::string PhysicsWorld::ODE_ENGINE     = "ODE";
@@ -346,7 +346,7 @@ namespace dtPhysics
 
       mImpl->mPalPhysicsScene = palFactory->CreatePhysics();
 
-      mImpl->mPalCollisionDetection = dynamic_cast<palCollisionDetection*>(mImpl->mPalPhysicsScene);
+      mImpl->mPalCollisionDetection = mImpl->mPalPhysicsScene->asCollisionDetection();
       mImpl->mPalCollisionDetectionEx = dynamic_cast<palCollisionDetectionExtended*>(mImpl->mPalPhysicsScene);
 
       palSolver* tempSolver = dynamic_cast<palSolver*>(mImpl->mPalPhysicsScene);
@@ -684,11 +684,11 @@ namespace dtPhysics
    //////////////////////////////////////////////////////////////////////////
    void PhysicsWorld::NotifyCollision(PhysicsObject& obj1, PhysicsObject& obj2, bool enabled)
    {
-      CheckBody(obj1.GetBaseBodyWrapper(), __LINE__);
-      CheckBody(obj2.GetBaseBodyWrapper(), __LINE__);
+      CheckBody(obj1.GetBodyWrapper(), __LINE__);
+      CheckBody(obj2.GetBodyWrapper(), __LINE__);
 
-      palBodyBase& body1 = obj1.GetBaseBodyWrapper()->GetPalBodyBase();
-      palBodyBase& body2 = obj2.GetBaseBodyWrapper()->GetPalBodyBase();
+      palBodyBase& body1 = obj1.GetBodyWrapper()->GetPalBodyBase();
+      palBodyBase& body2 = obj2.GetBodyWrapper()->GetPalBodyBase();
 
       mImpl->mPalCollisionDetection->NotifyCollision(&body1, &body2, enabled);
    }
@@ -696,8 +696,8 @@ namespace dtPhysics
    //////////////////////////////////////////////////////////////////////////
    void PhysicsWorld::NotifyCollision(PhysicsObject& obj, bool enabled)
    {
-      CheckBody(obj.GetBaseBodyWrapper(), __LINE__);
-      palBodyBase& body = obj.GetBaseBodyWrapper()->GetPalBodyBase();
+      CheckBody(obj.GetBodyWrapper(), __LINE__);
+      palBodyBase& body = obj.GetBodyWrapper()->GetPalBodyBase();
 
       mImpl->mPalCollisionDetection->NotifyCollision(&body, enabled);
    }
@@ -739,8 +739,8 @@ namespace dtPhysics
    //////////////////////////////////////////////////////////////////////////
    void PhysicsWorld::GetContacts(PhysicsObject& obj, std::vector<CollisionContact>& contacts)
    {
-      CheckBody(obj.GetBaseBodyWrapper(), __LINE__);
-      palBodyBase& body = obj.GetBaseBodyWrapper()->GetPalBodyBase();
+      CheckBody(obj.GetBodyWrapper(), __LINE__);
+      palBodyBase& body = obj.GetBodyWrapper()->GetPalBodyBase();
 
       palContact palContact;
 
@@ -753,11 +753,11 @@ namespace dtPhysics
    //////////////////////////////////////////////////////////////////////////
    void PhysicsWorld::GetContacts(PhysicsObject& obj1, PhysicsObject& obj2, std::vector<CollisionContact>& contacts)
    {
-      CheckBody(obj1.GetBaseBodyWrapper(), __LINE__);
-      CheckBody(obj2.GetBaseBodyWrapper(), __LINE__);
+      CheckBody(obj1.GetBodyWrapper(), __LINE__);
+      CheckBody(obj2.GetBodyWrapper(), __LINE__);
 
-      palBodyBase& body1 = obj1.GetBaseBodyWrapper()->GetPalBodyBase();
-      palBodyBase& body2 = obj2.GetBaseBodyWrapper()->GetPalBodyBase();
+      palBodyBase& body1 = obj1.GetBodyWrapper()->GetPalBodyBase();
+      palBodyBase& body2 = obj2.GetBodyWrapper()->GetPalBodyBase();
 
       palContact palContact;
 
@@ -789,14 +789,20 @@ namespace dtPhysics
       
          if (!dtUtil::GetDeltaRootPath().empty())
          {
-            finalPath = dtUtil::GetDeltaRootPath() + DIRECTORY_NAME;
+            finalPath = dtUtil::GetDeltaRootPath() + dtUtil::FileUtils::PATH_SEPARATOR + "ext" + dtUtil::FileUtils::PATH_SEPARATOR + DIRECTORY_NAME;
          }
 
          if (finalPath.empty() || !fileUtils.DirExists(finalPath)) 
          {
-            finalPath = fileUtils.CurrentDirectory()
+            finalPath = fileUtils.CurrentDirectory() + dtUtil::FileUtils::PATH_SEPARATOR + "ext" + dtUtil::FileUtils::PATH_SEPARATOR
                              + DIRECTORY_NAME;
          }
+#ifdef __APPLE__
+         if (finalPath.empty() || !fileUtils.DirExists(finalPath))
+         {
+            finalPath = dtUtil::GetBundlePlugInsPath() + "/" + DIRECTORY_NAME;
+         }
+#endif
       }
       else
       {
@@ -807,7 +813,6 @@ namespace dtPhysics
       std::locale loc;
       for (unsigned i = 0; i < engineName.length(); ++i)
       {
-
          engineName[i] = std::tolower(engineName[i], loc);
       }
 #ifndef PAL_PLUGIN_ARCH_PATH

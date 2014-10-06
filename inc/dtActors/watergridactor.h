@@ -33,6 +33,8 @@
 #include <vector>
 #include <dtCore/camera.h>
 
+#include <dtCore/propertymacros.h>
+
 #include <osg/Geode>
 #include <osg/Geometry>
 #include <osg/Vec3>
@@ -80,37 +82,61 @@ namespace dtActors
       typedef std::vector<TextureWave> TextureWaveArray;
 
       //////////////////////////////////////////////
-      // Choppiness settings are used to cycle between some basic versions of the waves.
-      class DT_PLUGIN_EXPORT ChoppinessSettings : public dtUtil::Enumeration
+      // Chop settings are used to cycle between some basic versions of the waves.
+      class DT_PLUGIN_EXPORT ChopSettings : public dtUtil::Enumeration
       {
-         DECLARE_ENUM(ChoppinessSettings);
+         DECLARE_ENUM(ChopSettings);
       public:
-         static ChoppinessSettings CHOP_FLAT;
-         static ChoppinessSettings CHOP_MILD;
-         static ChoppinessSettings CHOP_MED;
-         static ChoppinessSettings CHOP_ROUGH;
+         static ChopSettings CHOP_FLAT;
+         static ChopSettings CHOP_MILD;
+         static ChopSettings CHOP_MED;
+         static ChopSettings CHOP_ROUGH;
 
-         // These attributes are public since this is essentially a struct.
-         std::string name;
-         float mSpeedMod;
          float mRotationSpread;
-         float mWaveLengthModifier;
-         float mAmpModifier;
          float mTextureWaveModifier;
 
       private:
          //////////////////////////////////////////////////////////////////////////
-         ChoppinessSettings(const std::string &name,  float speedMod,
-            float rotationSpread, float waveLengthModifier, float ampModifier, float texMod)
-               : dtUtil::Enumeration(name) , mSpeedMod(speedMod) , mRotationSpread(rotationSpread)
-               , mWaveLengthModifier(waveLengthModifier) , mAmpModifier(ampModifier), mTextureWaveModifier(texMod)
-         { 
-            AddInstance(this);
-         }
+         ChopSettings(const std::string& name, float rotationSpread, float texMod);
+      };
+
+
+      //////////////////////////////////////////////
+      // Sea State Settings control the significant wave height
+      // they are based on the Beaufort Wind Force Scale and Sea State
+      // which is enumerated from 1-12 with 1 being a calm sea and 12 being a hurricane
+      // see: http://www.seakayak.ws/kayak/kayak.nsf/8db4c87cad13b187852569ff0050c911/e4e2c690916a3a24852570da0057e036!OpenDocument
+      class DT_PLUGIN_EXPORT SeaState : public dtUtil::Enumeration
+      {
+         DECLARE_ENUM(SeaState);
+      public:
+         static SeaState SeaState_0;
+         static SeaState SeaState_1;
+         static SeaState SeaState_2;
+         static SeaState SeaState_3;
+         static SeaState SeaState_4;
+         static SeaState SeaState_5;
+         static SeaState SeaState_6;
+         static SeaState SeaState_7;
+         static SeaState SeaState_8;
+         static SeaState SeaState_9;
+         static SeaState SeaState_10;
+         static SeaState SeaState_11;
+         static SeaState SeaState_12;
+
+
+         // These attributes are public since this is essentially a struct.
+         float mAmplitudeModifier;
+         float mWaveLengthModifier;
+         float mSpeedModifier;
+
+      private:
+         //////////////////////////////////////////////
+         SeaState(const std::string& name, float ampMod, float waveLenMod, float speedMod);
       };
 
       //////////////////////////////////////////////
-      static const int MAX_WAVES = 8;
+      static const int MAX_WAVES = 32;
       static const int MAX_TEXTURE_WAVES;
       static const dtUtil::RefString UNIFORM_ELAPSED_TIME;
       static const dtUtil::RefString UNIFORM_MAX_COMPUTED_DISTANCE;
@@ -121,12 +147,16 @@ namespace dtActors
       static const dtUtil::RefString UNIFORM_WAVE_TEXTURE;
       static const dtUtil::RefString UNIFORM_SCREEN_WIDTH;
       static const dtUtil::RefString UNIFORM_SCREEN_HEIGHT;
-      static const dtUtil::RefString UNIFORM_TEXTURE_WAVE_AMP;
       static const dtUtil::RefString UNIFORM_WATER_HEIGHT;
       static const dtUtil::RefString UNIFORM_CENTER_OFFSET;
       static const dtUtil::RefString UNIFORM_WAVE_DIRECTION;
       static const dtUtil::RefString UNIFORM_WATER_COLOR;
-
+      static const dtUtil::RefString UNIFORM_UNDERWATER_VIEW_DISTANCE;      
+      static const dtUtil::RefString UNIFORM_TEXWAVE_RESOLUTION_SCALAR;
+      static const dtUtil::RefString UNIFORM_TEXWAVE_AMPLITUDE_SCALAR;
+      static const dtUtil::RefString UNIFORM_TEXWAVE_SPREAD_SCALAR;
+      static const dtUtil::RefString UNIFORM_TEXWAVE_STEEPNESS;
+      
    public:
       WaterGridActor(WaterGridActorProxy& proxy);
 
@@ -136,12 +166,15 @@ namespace dtActors
       void SetWaterColor(const osg::Vec4& color);
       osg::Vec4 GetWaterColor() const;
 
-      void SetChoppiness(WaterGridActor::ChoppinessSettings& choppiness);
-      WaterGridActor::ChoppinessSettings& GetChoppiness() const;
+      void SetChop(ChopSettings& choppiness);
+      ChopSettings& GetChop() const;
+
+      //this alternatively sets it by number, valid ranges from 0-12, see comment on SeaStateEnum above
+      void SetSeaState(SeaState& choppiness);
+      SeaState& GetSeaState() const;
+      void SetSeaStateByNumber(unsigned force);
 
       void SetEnableWater(bool enable);
-
-      void SetTextureWaveAmpOverLength(float ampOverLength);
 
       // Reflection related functions
       void SetReflectionScene(osg::Node* sceneNode);
@@ -165,6 +198,30 @@ namespace dtActors
       virtual bool GetHeightAndNormalAtPoint(const osg::Vec3& detectionPoint,
          float& outHeight, osg::Vec3& outNormal) const;
 
+
+      void ClearWaves();
+      void AddRandomizedWaves(float meanWaveLength, float meanAmplitude, float minPeriod, float maxPeriod, unsigned numWaves);
+
+      // Modulation of the base wave structures.
+      DT_DECLARE_ACCESSOR_INLINE(float, ModForWaveLength)
+      DT_DECLARE_ACCESSOR_INLINE(float, ModForSpeed)
+      DT_DECLARE_ACCESSOR_INLINE(float, ModForSteepness)         
+      DT_DECLARE_ACCESSOR_INLINE(float, ModForAmplitude)
+      DT_DECLARE_ACCESSOR_INLINE(float, ModForDirectionInDegrees)
+      DT_DECLARE_ACCESSOR_INLINE(float, UnderWaterViewDistance)
+
+      DT_DECLARE_ACCESSOR_INLINE(int, NumRows)
+      DT_DECLARE_ACCESSOR_INLINE(int, NumColumns)
+      DT_DECLARE_ACCESSOR_INLINE(bool, UseDebugKeys)
+      
+      DT_DECLARE_ACCESSOR_INLINE(osg::Vec2, ReflectionMapResolution)
+      DT_DECLARE_ACCESSOR_INLINE(osg::Vec2, TexWaveTextureResolution)
+      DT_DECLARE_ACCESSOR_INLINE(float, TexWaveResolutionScalar)
+      DT_DECLARE_ACCESSOR_INLINE(float, TexWaveAmpScalar)
+      DT_DECLARE_ACCESSOR_INLINE(float, TexWaveAmpInternal)
+      DT_DECLARE_ACCESSOR_INLINE(float, TexWaveSpreadScalar)
+      DT_DECLARE_ACCESSOR_INLINE(float, TexWaveSteepness)
+
    protected:
 
       ~WaterGridActor();
@@ -176,9 +233,11 @@ namespace dtActors
       osg::Node* BuildSubmergedGeometry();
       void CreateWaveTexture();
       void CreateReflectionCamera();
+      void CreateFoamTexture();
+      void CreateNoiseTexture();
 
       void BindTextureUniformToNode(osg::Node*, osg::Texture2D*, const std::string& name, unsigned texUnit);
-      void InitAndBindToTarget(osg::Camera*, osg::Texture2D*, int width, int height);
+      void InitAndBindToTarget(osg::Camera*, osg::Texture2D*, int width, int height, bool mipmap);
       void AddOrthoQuad(osg::Camera*, osg::Texture2D*, const std::string& shader, const std::string& texUniform);
       void BindShader(osg::Node* node, const std::string& shaderName);
 
@@ -206,16 +265,19 @@ namespace dtActors
       float mDeltaTime;
       bool  mRenderWaveTexture, mWireframe, mDeveloperMode;
       float mComputedRadialDistance;
+      float mFarDistanceBetweenVerts;
+      float mNearDistanceBetweenVerts;
       float mTextureWaveAmpOverLength;
 
-      // Modulation of the base wave structures.
-      float mModForWaveLength;
-      float mModForSpeed;
-      float mModForSteepness;
-      float mModForAmplitude;
-      float mModForDirectionInDegrees;
+      
       float mModForFOV;
       float mCameraFoVScalar; // changes wave detail based on how much FoV is visible
+
+      osg::Vec4 mWaterColor;
+      osg::Vec3 mLastCameraOffsetPos, mCurrentCameraPos;
+
+      ChopSettings* mChopEnum;
+      SeaState* mSeaStateEnum;
 
       // Each frame (or as needed), the current set of waves is computed. This data
       // is pulled from the mWaves list based on the current camera height and wavelengths
@@ -223,10 +285,6 @@ namespace dtActors
       // Order is: waveLength, speed, amp, freq, steepness, UNUSED, dirX, dirY
       float mProcessedWaveData[MAX_WAVES][8];
 
-      osg::Vec4 mWaterColor;
-      osg::Vec3 mLastCameraOffsetPos, mCurrentCameraPos;
-
-      ChoppinessSettings* mChoppinessEnum;
 
       osg::ref_ptr<osg::Camera>   mWaveCamera;
       osg::ref_ptr<osg::Camera>   mWaveCameraScreen;
@@ -286,6 +344,11 @@ namespace dtActors
       std::string GetSceneCamera() const;
 
       void ResetSceneCamera();
+
+      DT_DECLARE_ACCESSOR(float, WaveDirection);
+      DT_DECLARE_ACCESSOR(float, AmplitudeModifier);
+      DT_DECLARE_ACCESSOR(float, WavelengthModifier);
+      DT_DECLARE_ACCESSOR(float, SpeedModifier);
 
    protected:
 

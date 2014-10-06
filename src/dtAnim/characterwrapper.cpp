@@ -23,6 +23,7 @@
 #include <dtCore/isector.h>
 #include <dtCore/transform.h>
 #include <dtUtil/matrixutil.h>
+#include <dtUtil/nodemask.h>
 #include <dtAnim/sequencemixer.h>
 #include <dtAnim/cal3danimator.h>
 #include <dtAnim/attachmentcontroller.h>
@@ -80,7 +81,7 @@ namespace dtAnim
       {
          //we disable our nodemask so we don't intersect ourself
          unsigned nodeMask = BaseClass::GetOSGNode()->getNodeMask();
-         BaseClass::GetOSGNode()->setNodeMask(0x0);
+         BaseClass::GetOSGNode()->setNodeMask(dtUtil::NodeMask::NOTHING);
 
          mIsector->SetStartPosition(pos + osg::Vec3(0.0f, 0.0f, mHeightAboveGround + 1.0f)); //start the intersect 1 meter above the target
          mIsector->SetDirection(osg::Vec3(0.0f, 0.0f, -1.0f)); //straight down

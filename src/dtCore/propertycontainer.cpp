@@ -259,9 +259,9 @@ namespace dtCore
    ////////////////////////////////////////////////////////////////////////////////
    bool PropertyContainer::ShouldPropertySave(const dtCore::ActorProperty& prop) const
    {
-      if (prop.IsReadOnly()) return false;
+      if (prop.IsReadOnly() || prop.GetIgnoreWhenSaving()) return false;
 
-      return !IsPropertyDefault(prop);
+      return !IsPropertyDefault(prop) || prop.GetAlwaysSave();
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////

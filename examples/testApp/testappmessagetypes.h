@@ -19,9 +19,6 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
- *
- * This software was developed by Alion Science and Technology Corporation under
- * circumstances in which the U. S. Government may have rights in the software.
  */
 
 #ifndef TEST_APP_MESSAGE_TYPES
@@ -54,6 +51,8 @@ namespace dtExample
       static const int TEST_APP_MESSAGE_TYPE_ID = 2048;
 
       static const TestAppMessageType MOTION_MODEL_CHANGED;
+      static const TestAppMessageType REQUEST_ATTACH;
+      static const TestAppMessageType REQUEST_TIME_OFFSET;
       static const TestAppMessageType UI_TOGGLE;
       static const TestAppMessageType UI_SHOW;
       static const TestAppMessageType UI_HIDE;

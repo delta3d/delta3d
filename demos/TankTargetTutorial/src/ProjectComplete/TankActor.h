@@ -40,7 +40,7 @@
  * "ToggleEngine" & "SpeedBoost" GameEvents.  This actor correctly handles
  * TickLocal versus TickRemote.
  */
-class TUTORIAL_TANK_EXPORT TankActor : public dtActors::GameMeshActor
+class TUTORIAL_TANK_EXPORT TankActor : public dtActors::GameMeshDrawable
 {
    public:
 
@@ -139,7 +139,7 @@ class TUTORIAL_TANK_EXPORT TankActor : public dtActors::GameMeshActor
  * Our proxy class for the hover tank actor.  The proxy contains properties,
  * invokables, and hover tank actor.
  */
-class TUTORIAL_TANK_EXPORT TankActorProxy : public dtActors::GameMeshActorProxy
+class TUTORIAL_TANK_EXPORT TankActorProxy : public dtActors::GameMeshActor
 {
 public:
    // Constructs the proxy.

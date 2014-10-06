@@ -154,7 +154,7 @@ public:
          obj3->LoadFile("StaticMeshes/physics_crate.ive");
 
          // position the crate on the ground
-         position.Set(0.0f, 0.0f, 4.f, 0.0f, 0.0f, 0.0f);
+         position.Set(0.0f, 0.0f, 4.0f, 0.0f, 0.0f, 0.0f);
          obj3->SetTransform(position);
 
          // create collision mesh
@@ -376,8 +376,8 @@ protected:
 
       if (phys->DynamicsEnabled() == false) { return false; } // not enabled
 
-      phys->GetBodyWrapper()->ApplyForce(osg::Vec3(0.f, 0.f, 120.f));
-      phys->GetBodyWrapper()->ApplyTorque(osg::Vec3(0.f, 0.f, 60.f));
+      phys->GetBodyWrapper()->ApplyForce(osg::Vec3(0.0f, 0.0f, 120.0f));
+      phys->GetBodyWrapper()->ApplyTorque(osg::Vec3(0.0f, 0.0f, 60.0f));
       return true;
    }
 

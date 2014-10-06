@@ -21,8 +21,8 @@ using namespace dtABC;
 using namespace dtUtil;
 
 ///colors to reflect the button states
-CEGUI::colour kOff(0.f, 0.f, 0.f, 1.f);
-CEGUI::colour kOn(1.f, 0.f, 0.f, 1.f);
+CEGUI::colour kOff(0.0f, 0.0f, 0.0f, 1.0f);
+CEGUI::colour kOn(1.0f, 0.0f, 0.0f, 1.0f);
 
 static int KBUTTON1 = 0xAAAA;
 static int KBUTTON2 = 0xAAAB;
@@ -266,11 +266,11 @@ protected:
 
 
       CEGUI::ProgressBar* bar1 = static_cast<CEGUI::ProgressBar*>(mUIDrawable->GetWidget("Axis 1 Slider"));
-      bar1->setProgress((mApplicationInputDevice->GetAxis(0)->GetState() + 1.f) * 0.5f);
+      bar1->setProgress((mApplicationInputDevice->GetAxis(0)->GetState() + 1.0f) * 0.5f);
 
 
       CEGUI::ProgressBar* bar2 = static_cast<CEGUI::ProgressBar*>(mUIDrawable->GetWidget("Axis 2 Slider"));
-      bar2->setProgress((mApplicationInputDevice->GetAxis(1)->GetState() + 1.f) * 0.5f);
+      bar2->setProgress((mApplicationInputDevice->GetAxis(1)->GetState() + 1.0f) * 0.5f);
 
    }
 

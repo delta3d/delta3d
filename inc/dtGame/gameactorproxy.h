@@ -62,15 +62,13 @@ namespace dtGame
        */
       static const std::string PROCESS_MSG_INVOKABLE;
       /**
-       * DEPRECATED  Put all your message handling logic on you subclass of GameActorProxy (name change pending) and call that
-       * your actor.  The class that is a descendent of DeltaDrawable or GameActor (slated for eventual remove) is your drawable
-       * and should do only rendering related things.
+       * This is not deprecated, but it works differently.  If you don't override it, it will attempt to call the one on GameActor
+       * if you have one of those.
        */
       static const std::string TICK_LOCAL_INVOKABLE;
       /**
-       * DEPRECATED  Put all your message handling logic on you subclass of GameActorProxy (name change pending) and call that
-       * your actor.  The class that is a descendent of DeltaDrawable or GameActor (slated for eventual remove) is your drawable
-       * and should do only rendering related things.
+       * This is not deprecated, but it works differently.  If you don't override it, it will attempt to call the one on GameActor
+       * if you have one of those.
        */
       static const std::string TICK_REMOTE_INVOKABLE;
 
@@ -478,6 +476,23 @@ namespace dtGame
        */
       virtual void RemoveComponent(ActorComponent& component);
 
+      /**
+       * Method for handling local ticks.  This will called by the "Tick Local" invokable.
+       * This is designed to be registered to receive TICK_LOCAL messages, but that registration is not done
+       * be default
+       * @see GameManager#RegisterForMessages
+       * @param tickMessage the actual message
+       */
+      virtual void OnTickLocal(const TickMessage& tickMessage);
+
+      /**
+       * Method for handling remote ticks.  This will called by the "Tick Remote" invokable
+       * This is designed to be registered to receive TICK_REMOTE messages, but that registration is not done
+       * be default
+       * @see GameManager#RegisterForMessages
+       * @param tickMessage the actual message
+       */
+      virtual void OnTickRemote(const TickMessage& tickMessage);
 
       /**
        * @see dtGame::GameActorProxy::PROCESS_MSG_INVOKABLE
@@ -652,6 +667,7 @@ namespace dtGame
       bool mIsInGM;
       bool mPublished;
       bool mRemote;
+      bool mDrawableIsAGameActor;
 
    };
 }

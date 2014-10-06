@@ -1,3 +1,4 @@
+#version 120
 //////////////////////////////////////////////
 //A generic ocean water shader
 //by Bradley Anderegg
@@ -12,12 +13,14 @@ const int NUMWAVES = 16;
 const int MAX_WAVES = 32;
 uniform vec4 waveArray[2 * MAX_WAVES];
 uniform float waterPlaneFOV;
-uniform float WaterHeight;// = 443.0;
-const float UnderWaterViewDistance = 50.0;
+uniform float WaterHeight;
+uniform float UnderWaterViewDistance;
 
  
 varying vec4 pos;
+varying vec4 viewPos;
 varying vec3 lightVector;
+varying vec3 lightVector2;
 varying float distanceScale;
 varying vec2 vFog;
 varying vec2 vertexWaveDir;
@@ -32,20 +35,21 @@ uniform float waveDirection;
 uniform vec3 cameraHPR;
 uniform vec3 cameraRecenter;
 
-float computeFog(float, float, float);
+float computeExpFog(float);
+float computeLinearFog(float, float, float);
+
 
 void main(void)
 {   
    float distBetweenVertsScalar;
    vec4 camPos = inverseViewMatrix[3];
- 
-
+   
    // This scalar stretches the verts out, so we don't waste 50,000 verts directly under us.
    // As we move up, it pushes the verts out.
    float cameraHeight = max(0.1, abs(camPos.z - WaterHeight));
-   float scalar = min(15.0, log(cameraHeight/20.0 + 1.0)) + min(10.0, max(0.0, (cameraHeight-10.0))/50.0);
-   scalar = max(0.1, scalar);
-
+   float scalar = min(10.0, log(cameraHeight/20.0 + 1.0)) + min(10.0, max(0.0, (cameraHeight-10.0))/50.0);
+   scalar = 1.15 * max(1.1, scalar);
+   
    camPos.z = 0.0;
    camPos.w = 0.0;
    
@@ -57,29 +61,24 @@ void main(void)
 
    localVert = vec4(localVert.x * scalar, localVert.y * scalar, 0.0, 1.0);
 
-   // Compute a scalar based on the verts proximity to the clip plane. As it approaches
-   // the clip plane, we don't want to adjust the height (so it's sort of flat at the horizon).
    float distance = length(localVert.xy);
-   float maxDistance = 2000.0;
-
-   distanceScale = (1.0 - clamp(distance / (maxDistance * modForFOV), 0.0, 1.0));   
-   float distFromCamera = distance;
-   float distBetweenVerts = gl_Vertex.z;
-   distBetweenVertsScalar = gl_Vertex.z * scalar * 3.5;// / modForFOV;
+   
+   distBetweenVertsScalar = 10.0 + (gl_Vertex.z * scalar * 4.0);// / modForFOV;
  
    pos = camPos + localVert;   
    pos.z = WaterHeight;
    vec2 offsetPos = pos.xy - cameraRecenter.xy;
    vOffsetPos.xy = offsetPos.xy;
-   vOffsetPos.z = distBetweenVerts;
+   vOffsetPos.z = gl_Vertex.z;
 
 
    float zModifier = 0.0;
    vertexWaveDir = vec2(0.0);
 
    shaderVertexNormal = vec3(0.0, 0.0, 1.0);
-   int offset = WAVE_OFFSET;//gl_Vertex.w;//23 * clamp(distance / maxDistance, 0.0, 1.0);  
+   int offset = WAVE_OFFSET;
 
+   //From GPUGems 1 edited by Randima Fernando, ch1 article by Mark Finch
    // There are 2 vec4's of data per wave, so the loop is MAX_WAVES * 2 but increments by 2's
    for(int i = 2 * offset; i < (offset + NUMWAVES) * 2; i+=2)
    {           
@@ -120,17 +119,22 @@ void main(void)
    //transform our vector into screen space
    mat4 mvp = gl_ModelViewProjectionMatrix;
    gl_Position = mvp * pos;
+   viewPos = gl_ModelViewMatrix * pos;   
    
    float fog_distance = length(pos - inverseViewMatrix[3]);
    pos.xy = localVert.xy; // used to allow more precision in the frag shader.
+
 
    mat3 inverseView3x3 = mat3(inverseViewMatrix[0].xyz, 
        inverseViewMatrix[1].xyz, inverseViewMatrix[2].xyz);
    
    //very far off in worldspace
    lightVector = (inverseView3x3 * gl_LightSource[0].position.xyz);
+   lightVector2 = (inverseView3x3 * gl_LightSource[1].position.xyz);
    //compute fog color for above water and under water
-   vFog.x = computeFog(gl_Fog.end * 0.15, gl_Fog.end, fog_distance);  
-   vFog.y = computeFog(1.0, UnderWaterViewDistance, fog_distance);
+   vFog.x = computeExpFog(fog_distance);  
+   
+   float underWaterDist = clamp(abs(distance), 1.0, 1000.0);
+   vFog.y = computeLinearFog(underWaterDist, 1.0, UnderWaterViewDistance);
 
 }

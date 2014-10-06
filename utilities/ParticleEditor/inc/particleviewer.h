@@ -86,12 +86,16 @@ public:
 
    virtual bool KeyPressed(const dtCore::Keyboard* keyboard, int kc);
 
+   QString GetCurrentShader();
+   void SetShaderToLayer(const QString& shaderName, ParticleSystemLayer& layer);
+   void ReapplyShadersToLayers();
 
 signals:
    ///> Main Window signals
    void UpdateWindowTitle(const QString& title);
    void UpdateHistory(const QString& filename);
    void ReferenceObjectLoaded(const QString& filename);
+   void SaveComplete();
 
    ///> Layer Browser signals
    void ClearLayerList();
@@ -99,6 +103,7 @@ signals:
    void SelectIndexOfLayersList(int newIndex);
    void LayerHiddenChanged(bool hidden);
    void LayerRenderBinChanged(int renderbin);
+   void ShaderChanged(const QString& shaderName);
 
    ///> Particles Tab signals
    // Particle UI
@@ -219,6 +224,7 @@ public slots:
    void UpdateSelectionIndex(int newIndex);
    void RenameParticleLayer(const QString& name);
    void SetParticleLayerRenderBin(int value);
+   void SetShader(const QString& shaderName);
 
    ///> Particles Tab slots
    // Particle UI

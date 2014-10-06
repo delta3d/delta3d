@@ -4,4 +4,6 @@
     <SPECULAR>6 6 6 0</SPECULAR>
     <SHININESS>1</SHININESS>
     <MAP>materials/TShirt_Delta3D_White.png</MAP>
+    <MAP>materials/TShirt_Normals.png</MAP>
+    <MAP>materials/NONE_SPEC.png</MAP>
 </MATERIAL>

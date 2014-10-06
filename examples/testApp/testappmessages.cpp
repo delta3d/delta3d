@@ -19,9 +19,6 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
- *
- * This software was developed by Alion Science and Technology Corporation under
- * circumstances in which the U. S. Government may have rights in the software.
  */
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -54,6 +51,28 @@ namespace dtExample
    {
       mNewMotionModelParam->SetValue(motionModelType.GetName());
    }
+
+
+
+   /////////////////////////////////////////////////////////////////////////////
+   // CLASS CODE
+   /////////////////////////////////////////////////////////////////////////////
+   DT_IMPLEMENT_MESSAGE_BEGIN(RequestAttachMessage)
+
+      DT_ADD_PARAMETER(dtCore::UniqueId, ActorId)
+
+   DT_IMPLEMENT_MESSAGE_END()
+
+
+
+   /////////////////////////////////////////////////////////////////////////////
+   // CLASS CODE
+   /////////////////////////////////////////////////////////////////////////////
+   DT_IMPLEMENT_MESSAGE_BEGIN(RequestTimeOffsetMessage)
+
+      DT_ADD_PARAMETER(float, Offset)
+
+   DT_IMPLEMENT_MESSAGE_END()
 
 
 

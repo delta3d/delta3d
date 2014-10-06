@@ -541,10 +541,7 @@ namespace dtAnim
    /////////////////////////////////////////////////////////////////////////////
    void Cal3DModelWrapper::SetScale(float scale)
    {
-      // TODO: Change this to work per instance
-      // rather than on a shared model.
-
-      GetModelData()->SetScale(scale);
+      // DG - The core model scale is problematic for reusing core models.
       mScale = scale;
    }
 
