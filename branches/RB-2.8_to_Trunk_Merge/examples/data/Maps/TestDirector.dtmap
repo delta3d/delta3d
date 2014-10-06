@@ -1,0 +1,3416 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="delta3dMap" xsi:schemaLocation="delta3dMap map.xsd">
+    <header>
+        <name>TestDirector</name>
+        <description>Director Test Map.</description>
+        <author></author>
+        <comment></comment>
+        <copyright></copyright>
+        <createTimestamp>2009-12-21T16:14:44-08:00</createTimestamp>
+        <lastUpdateTimestamp>2011-12-15T13:32:10-08:00</lastUpdateTimestamp>
+        <editorVersion>2.7.3</editorVersion>
+        <schemaVersion>1.0</schemaVersion>
+    </header>
+    <libraries>
+        <library>
+            <name>dtActors</name>
+            <version></version>
+        </library>
+    </libraries>
+    <events>
+        <event>
+            <id>15348d9e-07a2-4a73-a695-4c11f0223d90</id>
+            <name>Slide Door Open</name>
+            <description></description>
+        </event>
+        <event>
+            <id>93f3bcf8-018d-4973-babe-efc350e755f5</id>
+            <name>Slide Door Close</name>
+            <description></description>
+        </event>
+    </events>
+    <actors>
+        <actor>
+            <type>dtcore.Label</type>
+            <id>004c16aa-497a-4740-9d23-f9ff5ac008cb</id>
+            <name>LabelActor_12b</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>90.000000</value1>
+                    <value2>90.000053</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>36.169052</value1>
+                    <value2>11.036538</value2>
+                    <value3>2.564243</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Text</name>
+                <string>12</string>
+            </property>
+            <property>
+                <name>Font Size</name>
+                <float>0.5</float>
+            </property>
+            <property>
+                <name>Back Visible</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Lighting Enabled</name>
+                <boolean>false</boolean>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Label</type>
+            <id>01cc7032-ee5c-4a25-bcd4-db309bb72dd2</id>
+            <name>LabelActor_03b</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>90.000000</value1>
+                    <value2>0.000057</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>0.020734</value1>
+                    <value2>7.039333</value2>
+                    <value3>2.564243</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Text</name>
+                <string>03</string>
+            </property>
+            <property>
+                <name>Font Size</name>
+                <float>0.5</float>
+            </property>
+            <property>
+                <name>Back Visible</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Lighting Enabled</name>
+                <boolean>false</boolean>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <id>02a8c7cf-0019-40a7-8c0e-1682ab192fb5</id>
+            <name>Crate_06</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>-6.799252</value1>
+                    <value2>-5.637355</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>32.131702</value1>
+                    <value2>16.645224</value2>
+                    <value3>4.932168</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>CUBE</enumerated>
+            </property>
+            <property>
+                <name>Enable Collision</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Collision Category Mask</name>
+                <bitMask>160</bitMask>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:physics_crate.ive</resourceDisplayName>
+                <resource>StaticMeshes:physics_crate.ive</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Label</type>
+            <id>02acf5d4-60f9-4056-a28b-e1523e5b750c</id>
+            <name>LabelActor_08b</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>90.000000</value1>
+                    <value2>-179.999954</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>24.054594</value1>
+                    <value2>15.007236</value2>
+                    <value3>2.564244</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Text</name>
+                <string>08</string>
+            </property>
+            <property>
+                <name>Font Size</name>
+                <float>0.5</float>
+            </property>
+            <property>
+                <name>Back Visible</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Lighting Enabled</name>
+                <boolean>false</boolean>
+            </property>
+        </actor>
+        <actor>
+            <type>dtActors.Trigger Volume Actor</type>
+            <id>040d8c0b-22ba-4187-8613-bbcc104c6bd4</id>
+            <name>TriggerVolume_06</name>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>16.030802</value1>
+                    <value2>14.966557</value2>
+                    <value3>0.467493</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>CUBE</enumerated>
+            </property>
+            <property>
+                <name>Collision Box</name>
+                <vec3>
+                    <value1>5.000000</value1>
+                    <value2>7.000000</value2>
+                    <value3>5.000000</value3>
+                </vec3>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Label</type>
+            <id>0b2b5f41-58cd-4c56-a863-c8325e5753d1</id>
+            <name>LabelActor_08a</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>90.000000</value1>
+                    <value2>0.000047</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>24.048498</value1>
+                    <value2>14.930605</value2>
+                    <value3>2.564244</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Text</name>
+                <string>08</string>
+            </property>
+            <property>
+                <name>Font Size</name>
+                <float>0.5</float>
+            </property>
+            <property>
+                <name>Back Visible</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Lighting Enabled</name>
+                <boolean>false</boolean>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Particle System</type>
+            <id>0b37926f-66d3-440e-a943-9d176bf0bed2</id>
+            <name>Fire_Particle</name>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-12.265947</value1>
+                    <value2>11.016783</value2>
+                    <value3>-0.010767</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Particle(s) File</name>
+                <resourceType>Particles</resourceType>
+                <resourceDisplayName>Particles:fire.osg</resourceDisplayName>
+                <resource>Particles:fire.osg</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtActors.Trigger Volume Actor</type>
+            <id>13b71cff-0ae3-47d3-ae18-f5256ae27ff4</id>
+            <name>TriggerVolume_15</name>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>24.048241</value1>
+                    <value2>18.951477</value2>
+                    <value3>2.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>SPHERE</enumerated>
+            </property>
+            <property>
+                <name>Collision Radius</name>
+                <float>0.69999999</float>
+            </property>
+        </actor>
+        <actor>
+            <type>dtActors.Trigger Volume Actor</type>
+            <id>15ec80a9-a7f5-44d1-8699-b0135bc1a82e</id>
+            <name>TriggerVolume_09</name>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>24.048241</value1>
+                    <value2>7.097543</value2>
+                    <value3>0.467493</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>CUBE</enumerated>
+            </property>
+            <property>
+                <name>Collision Box</name>
+                <vec3>
+                    <value1>5.000000</value1>
+                    <value2>7.000000</value2>
+                    <value3>5.000000</value3>
+                </vec3>
+            </property>
+        </actor>
+        <actor>
+            <type>dtanim.AnimationGameActor</type>
+            <id>18fa9c48-9524-40d5-8206-6126dac12e8c</id>
+            <name>Marine</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>-90.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>14.056686</value1>
+                    <value2>8.538706</value2>
+                    <value3>0.073650</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Skeletal Mesh</name>
+                <resourceType>SkeletalMeshes</resourceType>
+                <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
+                <resource>SkeletalMeshes:Marine:marine.xml</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Player Start</type>
+            <id>1af6ec4e-1270-44b3-b30b-20ebbfac269d</id>
+            <name>PlayerStart</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>-90.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-10.868170</value1>
+                    <value2>11.031294</value2>
+                    <value3>1.500000</value3>
+                </vec3>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Static Mesh</type>
+            <id>1b61b5e1-d329-487d-b0ec-07720f8a6dbf</id>
+            <name>TerrainMesh_11</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>-179.999954</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>7.097543</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>MESH</enumerated>
+            </property>
+            <property>
+                <name>Enable Collision</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Collision Collide Mask</name>
+                <bitMask>2</bitMask>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes::Door_Pivot_Room.IVE</resourceDisplayName>
+                <resource>StaticMeshes::Door_Pivot_Room.IVE</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Camera</type>
+            <id>1b916b8e-69d2-4a6c-a539-e9192aaaaebb</id>
+            <name>Video_Interaction_Actor</name>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>3.838950</value1>
+                    <value2>7.162930</value2>
+                    <value3>1.466454</value3>
+                </vec3>
+            </property>
+        </actor>
+        <actor>
+            <type>dtActors.Trigger Volume Actor</type>
+            <id>1c7a86da-9768-495d-bcba-fd7d500006e4</id>
+            <name>TriggerVolume_11</name>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>32.067413</value1>
+                    <value2>7.097543</value2>
+                    <value3>0.467493</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>CUBE</enumerated>
+            </property>
+            <property>
+                <name>Collision Box</name>
+                <vec3>
+                    <value1>5.000000</value1>
+                    <value2>7.000000</value2>
+                    <value3>5.000000</value3>
+                </vec3>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Label</type>
+            <id>1d6ebd46-13f0-425d-849a-1b2602696c5c</id>
+            <name>LabelActor_07b</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>90.000000</value1>
+                    <value2>0.000057</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>16.032543</value1>
+                    <value2>7.039350</value2>
+                    <value3>2.564243</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Text</name>
+                <string>07</string>
+            </property>
+            <property>
+                <name>Font Size</name>
+                <float>0.5</float>
+            </property>
+            <property>
+                <name>Back Visible</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Lighting Enabled</name>
+                <boolean>false</boolean>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <id>1e5ada9e-46b5-4ff5-a732-2c88699d4e8f</id>
+            <name>Wall_Button_01</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000017</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>8.763195</value1>
+                    <value2>7.172547</value2>
+                    <value3>1.336943</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:button.ive</resourceDisplayName>
+                <resource>StaticMeshes:button.ive</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Label</type>
+            <id>1efe076f-4ce4-4152-a3a9-20503fdf0280</id>
+            <name>LabelActor_10a</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>90.000000</value1>
+                    <value2>0.000047</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>32.066250</value1>
+                    <value2>14.930612</value2>
+                    <value3>2.564244</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Text</name>
+                <string>10</string>
+            </property>
+            <property>
+                <name>Font Size</name>
+                <float>0.5</float>
+            </property>
+            <property>
+                <name>Back Visible</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Lighting Enabled</name>
+                <boolean>false</boolean>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Label</type>
+            <id>231a5b28-23b9-40b3-847c-ed773468585c</id>
+            <name>LabelActor_11a</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>90.000000</value1>
+                    <value2>-179.999954</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>32.042667</value1>
+                    <value2>7.136574</value2>
+                    <value3>2.564243</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Text</name>
+                <string>11</string>
+            </property>
+            <property>
+                <name>Font Size</name>
+                <float>0.5</float>
+            </property>
+            <property>
+                <name>Back Visible</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Lighting Enabled</name>
+                <boolean>false</boolean>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Label</type>
+            <id>23aafc59-ef52-49c8-9809-83404a022bd6</id>
+            <name>LabelActor_07a</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>90.000000</value1>
+                    <value2>-179.999954</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>16.004944</value1>
+                    <value2>7.136561</value2>
+                    <value3>2.564243</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Text</name>
+                <string>07</string>
+            </property>
+            <property>
+                <name>Font Size</name>
+                <float>0.5</float>
+            </property>
+            <property>
+                <name>Back Visible</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Lighting Enabled</name>
+                <boolean>false</boolean>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Label</type>
+            <id>2b0d9462-0fe6-43fd-afd6-95c349ef5e4d</id>
+            <name>LabelActor_09a</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>90.000000</value1>
+                    <value2>-179.999954</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>24.038252</value1>
+                    <value2>7.136568</value2>
+                    <value3>2.564243</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Text</name>
+                <string>09</string>
+            </property>
+            <property>
+                <name>Font Size</name>
+                <float>0.5</float>
+            </property>
+            <property>
+                <name>Back Visible</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Lighting Enabled</name>
+                <boolean>false</boolean>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Static Mesh</type>
+            <id>34d10ee1-74a1-42fa-acba-fa0a3f277eb8</id>
+            <name>Door_01</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>90.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-4.045161</value1>
+                    <value2>10.546842</value2>
+                    <value3>0.001683</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>CUBE</enumerated>
+            </property>
+            <property>
+                <name>Enable Collision</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Collision Collide Mask</name>
+                <bitMask>2</bitMask>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes::Door_Pivot.IVE</resourceDisplayName>
+                <resource>StaticMeshes::Door_Pivot.IVE</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Static Mesh</type>
+            <id>352f2d91-2296-45cc-ad31-4b38d43d88d7</id>
+            <name>TerrainMesh_01</name>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>14.966557</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>MESH</enumerated>
+            </property>
+            <property>
+                <name>Enable Collision</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Collision Collide Mask</name>
+                <bitMask>2</bitMask>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes::Door_Pivot_Room.IVE</resourceDisplayName>
+                <resource>StaticMeshes::Door_Pivot_Room.IVE</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <id>36d1340e-3956-4834-b0ab-235c7b604f50</id>
+            <name>Crate_16</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>-10.505423</value1>
+                    <value2>0.629838</value2>
+                    <value3>3.177359</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>33.541294</value1>
+                    <value2>16.550228</value2>
+                    <value3>3.554796</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>CUBE</enumerated>
+            </property>
+            <property>
+                <name>Enable Collision</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Collision Category Mask</name>
+                <bitMask>160</bitMask>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:physics_crate.ive</resourceDisplayName>
+                <resource>StaticMeshes:physics_crate.ive</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <id>373238ce-e557-4ebc-92af-37ff5d646bb5</id>
+            <name>Crate_30</name>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>33.541294</value1>
+                    <value2>21.274246</value2>
+                    <value3>6.235940</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>CUBE</enumerated>
+            </property>
+            <property>
+                <name>Enable Collision</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Collision Category Mask</name>
+                <bitMask>160</bitMask>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:physics_crate.ive</resourceDisplayName>
+                <resource>StaticMeshes:physics_crate.ive</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <id>3840e55f-b00d-4123-ba70-379e9810350e</id>
+            <name>Crate_26</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>-5.225877</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>33.541294</value1>
+                    <value2>16.553099</value2>
+                    <value3>6.212490</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>CUBE</enumerated>
+            </property>
+            <property>
+                <name>Enable Collision</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Collision Category Mask</name>
+                <bitMask>160</bitMask>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:physics_crate.ive</resourceDisplayName>
+                <resource>StaticMeshes:physics_crate.ive</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Label</type>
+            <id>3ee97afa-2d89-4fae-8109-71837605d41d</id>
+            <name>LabelActor_05b</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>90.000000</value1>
+                    <value2>0.000057</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>8.034682</value1>
+                    <value2>7.039341</value2>
+                    <value3>2.564243</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Text</name>
+                <string>05</string>
+            </property>
+            <property>
+                <name>Font Size</name>
+                <float>0.5</float>
+            </property>
+            <property>
+                <name>Back Visible</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Lighting Enabled</name>
+                <boolean>false</boolean>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Label</type>
+            <id>4380e5ef-bd11-4223-a0e7-b75d7e460116</id>
+            <name>LabelActor_04a</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>90.000000</value1>
+                    <value2>0.000047</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>8.030293</value1>
+                    <value2>14.930592</value2>
+                    <value3>2.564244</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Text</name>
+                <string>04</string>
+            </property>
+            <property>
+                <name>Font Size</name>
+                <float>0.5</float>
+            </property>
+            <property>
+                <name>Back Visible</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Lighting Enabled</name>
+                <boolean>false</boolean>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Static Mesh</type>
+            <id>44072ca2-c5ad-46e7-ac8e-29985790e03f</id>
+            <name>TerrainMesh_03</name>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>16.030802</value1>
+                    <value2>14.966557</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>MESH</enumerated>
+            </property>
+            <property>
+                <name>Enable Collision</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Collision Collide Mask</name>
+                <bitMask>2</bitMask>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes::Door_Pivot_Room.IVE</resourceDisplayName>
+                <resource>StaticMeshes::Door_Pivot_Room.IVE</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Static Mesh</type>
+            <id>46281d40-658d-40a8-b033-5434a7153b33</id>
+            <name>TerrainMesh_13</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>-179.999954</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>16.030802</value1>
+                    <value2>7.097543</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>MESH</enumerated>
+            </property>
+            <property>
+                <name>Enable Collision</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Collision Collide Mask</name>
+                <bitMask>2</bitMask>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes::Door_Pivot_Room.IVE</resourceDisplayName>
+                <resource>StaticMeshes::Door_Pivot_Room.IVE</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <id>47c2339b-8879-4505-a61d-5abc4f1cb8b7</id>
+            <name>Crate_12</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>3.099205</value1>
+                    <value2>-5.914005</value2>
+                    <value3>4.485304</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>32.067413</value1>
+                    <value2>17.734758</value2>
+                    <value3>6.235940</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>CUBE</enumerated>
+            </property>
+            <property>
+                <name>Enable Collision</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Collision Category Mask</name>
+                <bitMask>160</bitMask>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:physics_crate.ive</resourceDisplayName>
+                <resource>StaticMeshes:physics_crate.ive</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Camera</type>
+            <id>4a2682b1-c611-4728-b015-9382eb488a61</id>
+            <name>Door_06_Interaction_01</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>-180.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>16.030802</value1>
+                    <value2>14.942877</value2>
+                    <value3>1.359276</value3>
+                </vec3>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Static Mesh</type>
+            <id>4ad8b969-83c2-42e1-9174-fd50f4cd2416</id>
+            <name>Door_05</name>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>7.535805</value1>
+                    <value2>7.097942</value2>
+                    <value3>2.201439</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>CUBE</enumerated>
+            </property>
+            <property>
+                <name>Enable Collision</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Collision Collide Mask</name>
+                <bitMask>2</bitMask>
+            </property>
+            <property>
+                <name>Model Translation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>-2.200000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes::Door_Pivot.IVE</resourceDisplayName>
+                <resource>StaticMeshes::Door_Pivot.IVE</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <id>4b821a89-62b2-4551-82dd-7281f44054f5</id>
+            <name>Wall_Button_02</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>-179.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>8.763195</value1>
+                    <value2>7.023119</value2>
+                    <value3>1.336943</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:button.ive</resourceDisplayName>
+                <resource>StaticMeshes:button.ive</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <id>4ddabba4-fa7a-47f7-99fc-c208e7ec62a9</id>
+            <name>Crate_02</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.776569</value1>
+                    <value2>9.137197</value2>
+                    <value3>4.816681</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>32.067413</value1>
+                    <value2>20.099140</value2>
+                    <value3>3.554796</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>CUBE</enumerated>
+            </property>
+            <property>
+                <name>Enable Collision</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Collision Category Mask</name>
+                <bitMask>160</bitMask>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:physics_crate.ive</resourceDisplayName>
+                <resource>StaticMeshes:physics_crate.ive</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <id>52d2e59e-f617-4689-bc70-e329f4414be1</id>
+            <name>Crate_04</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>-3.364213</value1>
+                    <value2>0.705246</value2>
+                    <value3>-6.166257</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>32.067413</value1>
+                    <value2>17.734758</value2>
+                    <value3>3.554796</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>CUBE</enumerated>
+            </property>
+            <property>
+                <name>Enable Collision</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Collision Category Mask</name>
+                <bitMask>160</bitMask>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:physics_crate.ive</resourceDisplayName>
+                <resource>StaticMeshes:physics_crate.ive</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Static Mesh</type>
+            <id>58552008-f8df-446c-a48f-cf2ff4100a24</id>
+            <name>TerrainMesh_14</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>-179.999954</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>24.048241</value1>
+                    <value2>7.097543</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>MESH</enumerated>
+            </property>
+            <property>
+                <name>Enable Collision</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Collision Collide Mask</name>
+                <bitMask>2</bitMask>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes::Door_Pivot_Room.IVE</resourceDisplayName>
+                <resource>StaticMeshes::Door_Pivot_Room.IVE</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <id>5f336647-b5e3-4d1c-bcf9-d93cdd1a906a</id>
+            <name>Crate_10</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.375519</value1>
+                    <value2>-3.937976</value2>
+                    <value3>-5.434389</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>32.131702</value1>
+                    <value2>21.369242</value2>
+                    <value3>4.932168</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>CUBE</enumerated>
+            </property>
+            <property>
+                <name>Enable Collision</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Collision Category Mask</name>
+                <bitMask>160</bitMask>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:physics_crate.ive</resourceDisplayName>
+                <resource>StaticMeshes:physics_crate.ive</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Static Mesh</type>
+            <id>601dce08-3f58-4f75-8512-f6f7458c9bc5</id>
+            <name>Door_10</name>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>31.589014</value1>
+                    <value2>14.969722</value2>
+                    <value3>0.001683</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>CUBE</enumerated>
+            </property>
+            <property>
+                <name>Enable Collision</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Collision Collide Mask</name>
+                <bitMask>2</bitMask>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes::Door_Pivot.IVE</resourceDisplayName>
+                <resource>StaticMeshes::Door_Pivot.IVE</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Label</type>
+            <id>6a5b7d18-0915-4ed1-896c-6cd33e7c7440</id>
+            <name>LabelActor_06a</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>90.000000</value1>
+                    <value2>0.000047</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>16.038866</value1>
+                    <value2>14.930598</value2>
+                    <value3>2.564244</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Text</name>
+                <string>06</string>
+            </property>
+            <property>
+                <name>Font Size</name>
+                <float>0.5</float>
+            </property>
+            <property>
+                <name>Back Visible</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Lighting Enabled</name>
+                <boolean>false</boolean>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <id>784b815e-cc94-4b59-a742-5e326d726ccf</id>
+            <name>Video_Screen</name>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>3.850530</value1>
+                    <value2>7.169437</value2>
+                    <value3>0.088118</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:VidBox.IVE</resourceDisplayName>
+                <resource>StaticMeshes:VidBox.IVE</resource>
+            </property>
+            <property>
+                <name>Scale</name>
+                <vec3>
+                    <value1>0.581288</value1>
+                    <value2>0.581288</value2>
+                    <value3>0.581288</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Model Rotation</name>
+                <vec3>
+                    <value1>-180.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>-0.000000</value3>
+                </vec3>
+            </property>
+        </actor>
+        <actor>
+            <type>dtActors.Trigger Volume Actor</type>
+            <id>7976b757-acbf-4a8f-a44f-b5a1c7c0077f</id>
+            <name>TriggerVolume_07</name>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>16.030802</value1>
+                    <value2>7.097543</value2>
+                    <value3>0.467493</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>CUBE</enumerated>
+            </property>
+            <property>
+                <name>Collision Box</name>
+                <vec3>
+                    <value1>5.000000</value1>
+                    <value2>7.000000</value2>
+                    <value3>5.000000</value3>
+                </vec3>
+            </property>
+        </actor>
+        <actor>
+            <type>dtActors.Trigger Volume Actor</type>
+            <id>7a2e0fdd-c53f-4847-8673-f38f7052ba69</id>
+            <name>TriggerVolume_02</name>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>14.966557</value2>
+                    <value3>0.467493</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>CUBE</enumerated>
+            </property>
+            <property>
+                <name>Collision Box</name>
+                <vec3>
+                    <value1>5.000000</value1>
+                    <value2>7.000000</value2>
+                    <value3>5.000000</value3>
+                </vec3>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Camera</type>
+            <id>7de724f7-1912-4255-973c-349f6648e906</id>
+            <name>Door_06_Interaction_02</name>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>16.030802</value1>
+                    <value2>14.942877</value2>
+                    <value3>1.359276</value3>
+                </vec3>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Static Mesh</type>
+            <id>7e4d26e9-c882-4178-9e28-9f420e48b5f5</id>
+            <name>Door_08</name>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>23.570126</value1>
+                    <value2>14.969722</value2>
+                    <value3>0.001683</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>CUBE</enumerated>
+            </property>
+            <property>
+                <name>Enable Collision</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Collision Collide Mask</name>
+                <bitMask>2</bitMask>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes::Door_Pivot.IVE</resourceDisplayName>
+                <resource>StaticMeshes::Door_Pivot.IVE</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtActors.Trigger Volume Actor</type>
+            <id>813322af-95a7-42f7-9f12-1ea34be2c858</id>
+            <name>TriggerVolume_13</name>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-9.495893</value1>
+                    <value2>11.031294</value2>
+                    <value3>0.467493</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>CUBE</enumerated>
+            </property>
+            <property>
+                <name>Collision Box</name>
+                <vec3>
+                    <value1>5.000000</value1>
+                    <value2>5.000000</value2>
+                    <value3>5.000000</value3>
+                </vec3>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Label</type>
+            <id>813cb00c-88a8-42dc-b4a6-0b1f8596ec5f</id>
+            <name>LabelActor_12a</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>90.000000</value1>
+                    <value2>-89.999969</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>36.063778</value1>
+                    <value2>11.036539</value2>
+                    <value3>2.564243</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Text</name>
+                <string>12</string>
+            </property>
+            <property>
+                <name>Font Size</name>
+                <float>0.5</float>
+            </property>
+            <property>
+                <name>Back Visible</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Lighting Enabled</name>
+                <boolean>false</boolean>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Static Mesh</type>
+            <id>82ce6904-557d-40de-b861-13b93be82aa7</id>
+            <name>Door_04</name>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>7.538284</value1>
+                    <value2>14.969722</value2>
+                    <value3>0.001683</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>CUBE</enumerated>
+            </property>
+            <property>
+                <name>Enable Collision</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Collision Collide Mask</name>
+                <bitMask>2</bitMask>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes::Door_Pivot.IVE</resourceDisplayName>
+                <resource>StaticMeshes::Door_Pivot.IVE</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Environment.Sound Actor</type>
+            <id>849f2b35-10d2-4d99-b92d-a5a8ef7a587f</id>
+            <name>Fire_Sound</name>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-12.220284</value1>
+                    <value2>11.010956</value2>
+                    <value3>1.835056</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Looping</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Play Sound at Startup</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>The Sound Effect</name>
+                <resourceType>Sounds</resourceType>
+                <resourceDisplayName>Sounds:fire.wav</resourceDisplayName>
+                <resource>Sounds:fire.wav</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <id>88976c13-1616-4f0a-9384-8b9624be5bf8</id>
+            <name>Crate_08</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>-16.778130</value1>
+                    <value2>4.111011</value2>
+                    <value3>13.981529</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>32.131702</value1>
+                    <value2>19.046465</value2>
+                    <value3>4.932168</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>CUBE</enumerated>
+            </property>
+            <property>
+                <name>Enable Collision</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Collision Category Mask</name>
+                <bitMask>160</bitMask>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:physics_crate.ive</resourceDisplayName>
+                <resource>StaticMeshes:physics_crate.ive</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Label</type>
+            <id>8a78bca4-7b24-4f76-8d44-b966d434ba72</id>
+            <name>LabelActor_14</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>90.000000</value1>
+                    <value2>-179.999939</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>11.968168</value1>
+                    <value2>7.117031</value2>
+                    <value3>1.579554</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Text</name>
+                <string>14</string>
+            </property>
+            <property>
+                <name>Font Size</name>
+                <float>0.5</float>
+            </property>
+            <property>
+                <name>Back Visible</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Lighting Enabled</name>
+                <boolean>false</boolean>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Static Mesh</type>
+            <id>9265fb37-9cca-4705-9384-a020f418cc72</id>
+            <name>TerrainMesh_17</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>90.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-4.047139</value1>
+                    <value2>11.031294</value2>
+                    <value3>-0.010767</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>MESH</enumerated>
+            </property>
+            <property>
+                <name>Enable Collision</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Collision Collide Mask</name>
+                <bitMask>2</bitMask>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes::Door_Pivot_Room.IVE</resourceDisplayName>
+                <resource>StaticMeshes::Door_Pivot_Room.IVE</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Label</type>
+            <id>937c2f6c-f605-48c0-8d8a-d4cc19bd6f73</id>
+            <name>LabelActor_16</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>90.000000</value1>
+                    <value2>-179.999954</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>3.840824</value1>
+                    <value2>7.136552</value2>
+                    <value3>2.564243</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Text</name>
+                <string>16</string>
+            </property>
+            <property>
+                <name>Font Size</name>
+                <float>0.5</float>
+            </property>
+            <property>
+                <name>Back Visible</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Lighting Enabled</name>
+                <boolean>false</boolean>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Label</type>
+            <id>9495b123-8ae6-4274-b401-87a9667fb776</id>
+            <name>LabelActor_10b</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>90.000000</value1>
+                    <value2>-179.999954</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>32.072418</value1>
+                    <value2>15.007242</value2>
+                    <value3>2.564244</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Text</name>
+                <string>10</string>
+            </property>
+            <property>
+                <name>Font Size</name>
+                <float>0.5</float>
+            </property>
+            <property>
+                <name>Back Visible</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Lighting Enabled</name>
+                <boolean>false</boolean>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <id>95a324e6-537f-4e3d-aeb3-5817b729c970</id>
+            <name>Crate_24</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>-3.841179</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>33.605583</value1>
+                    <value2>20.194136</value2>
+                    <value3>4.932168</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>CUBE</enumerated>
+            </property>
+            <property>
+                <name>Enable Collision</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Collision Category Mask</name>
+                <bitMask>160</bitMask>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:physics_crate.ive</resourceDisplayName>
+                <resource>StaticMeshes:physics_crate.ive</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtActors.Trigger Volume Actor</type>
+            <id>96ec5940-ba21-495e-a5fb-4e0d08c9ab57</id>
+            <name>TriggerVolume_01</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>-89.999969</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-4.047139</value1>
+                    <value2>11.031294</value2>
+                    <value3>0.467493</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>CUBE</enumerated>
+            </property>
+            <property>
+                <name>Collision Box</name>
+                <vec3>
+                    <value1>5.000000</value1>
+                    <value2>12.000000</value2>
+                    <value3>5.000000</value3>
+                </vec3>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <id>997d60b4-4b64-4d02-b1e4-b0ea490fbea2</id>
+            <name>Crate_22</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>-6.744556</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>33.605583</value1>
+                    <value2>17.829754</value2>
+                    <value3>4.932168</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>CUBE</enumerated>
+            </property>
+            <property>
+                <name>Enable Collision</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Collision Category Mask</name>
+                <bitMask>160</bitMask>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:physics_crate.ive</resourceDisplayName>
+                <resource>StaticMeshes:physics_crate.ive</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtActors.Trigger Volume Actor</type>
+            <id>9ccf3116-d2ec-4286-804a-63a93bd71435</id>
+            <name>TriggerVolume_08</name>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>24.048241</value1>
+                    <value2>14.966557</value2>
+                    <value3>0.467493</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>CUBE</enumerated>
+            </property>
+            <property>
+                <name>Collision Box</name>
+                <vec3>
+                    <value1>5.000000</value1>
+                    <value2>7.000000</value2>
+                    <value3>5.000000</value3>
+                </vec3>
+            </property>
+        </actor>
+        <actor>
+            <type>dtActors.Trigger Volume Actor</type>
+            <id>9f9d848f-4b7c-4429-a4ec-0c1b1fcfa1dc</id>
+            <name>TriggerVolume_14</name>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>12.203482</value1>
+                    <value2>11.031294</value2>
+                    <value3>0.000001</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>CUBE</enumerated>
+            </property>
+            <property>
+                <name>Collision Box</name>
+                <vec3>
+                    <value1>20.000000</value1>
+                    <value2>7.500000</value2>
+                    <value3>5.000000</value3>
+                </vec3>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <id>a37f7b69-99c2-47e5-b3ce-bf832f6f4b76</id>
+            <name>Crate_14</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>6.394256</value1>
+                    <value2>4.453060</value2>
+                    <value3>-10.618365</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>32.067413</value1>
+                    <value2>20.099140</value2>
+                    <value3>6.235940</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>CUBE</enumerated>
+            </property>
+            <property>
+                <name>Enable Collision</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Collision Category Mask</name>
+                <bitMask>160</bitMask>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:physics_crate.ive</resourceDisplayName>
+                <resource>StaticMeshes:physics_crate.ive</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Static Mesh</type>
+            <id>a4918859-e2f2-4f56-8a20-c60768f363c1</id>
+            <name>TerrainMesh_15</name>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>32.067413</value1>
+                    <value2>14.966557</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>MESH</enumerated>
+            </property>
+            <property>
+                <name>Enable Collision</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Collision Collide Mask</name>
+                <bitMask>2</bitMask>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes::Door_Pivot_Room.IVE</resourceDisplayName>
+                <resource>StaticMeshes::Door_Pivot_Room.IVE</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Static Mesh</type>
+            <id>aa68b82e-e9b0-43aa-9e4f-4093bd6a58cd</id>
+            <name>TerrainMesh_12</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>-179.999969</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>8.017442</value1>
+                    <value2>7.097543</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>MESH</enumerated>
+            </property>
+            <property>
+                <name>Enable Collision</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Collision Collide Mask</name>
+                <bitMask>2</bitMask>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes::Door_Pivot_Room.IVE</resourceDisplayName>
+                <resource>StaticMeshes::Door_Pivot_Room.IVE</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Label</type>
+            <id>abbd57a6-8935-4711-ba2f-62892fe1cedd</id>
+            <name>LabelActor_02b</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>90.000000</value1>
+                    <value2>-179.999954</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-0.003339</value1>
+                    <value2>15.007215</value2>
+                    <value3>2.564244</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Text</name>
+                <string>02</string>
+            </property>
+            <property>
+                <name>Font Size</name>
+                <float>0.5</float>
+            </property>
+            <property>
+                <name>Back Visible</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Lighting Enabled</name>
+                <boolean>false</boolean>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Label</type>
+            <id>abfcc9ca-65a5-4d04-abbc-cb4ff3a2da14</id>
+            <name>LabelActor_06b</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>90.000000</value1>
+                    <value2>-179.999954</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>16.019798</value1>
+                    <value2>15.007229</value2>
+                    <value3>2.564244</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Text</name>
+                <string>06</string>
+            </property>
+            <property>
+                <name>Font Size</name>
+                <float>0.5</float>
+            </property>
+            <property>
+                <name>Back Visible</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Lighting Enabled</name>
+                <boolean>false</boolean>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Label</type>
+            <id>b06a6278-2d8d-480e-91cc-4d99bbb9e814</id>
+            <name>LabelActor_01b</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>90.000000</value1>
+                    <value2>90.000031</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-3.999078</value1>
+                    <value2>11.048223</value2>
+                    <value3>2.564243</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Text</name>
+                <string>01</string>
+            </property>
+            <property>
+                <name>Font Size</name>
+                <float>0.5</float>
+            </property>
+            <property>
+                <name>Back Visible</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Lighting Enabled</name>
+                <boolean>false</boolean>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Static Mesh</type>
+            <id>b2acefd8-12a5-47a1-8035-b6537de811d7</id>
+            <name>TerrainMesh_02</name>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>8.017442</value1>
+                    <value2>14.966557</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>MESH</enumerated>
+            </property>
+            <property>
+                <name>Enable Collision</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Collision Collide Mask</name>
+                <bitMask>2</bitMask>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes::Door_Pivot_Room.IVE</resourceDisplayName>
+                <resource>StaticMeshes::Door_Pivot_Room.IVE</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtActors.Trigger Volume Actor</type>
+            <id>b2b23974-6395-4543-b2ad-bd3d6dc44125</id>
+            <name>TriggerVolume_05</name>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>8.017442</value1>
+                    <value2>7.097543</value2>
+                    <value3>0.467493</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>CUBE</enumerated>
+            </property>
+            <property>
+                <name>Collision Box</name>
+                <vec3>
+                    <value1>5.000000</value1>
+                    <value2>7.000000</value2>
+                    <value3>5.000000</value3>
+                </vec3>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Label</type>
+            <id>b379c684-c8ea-49f1-9cd1-3dba2a69e38a</id>
+            <name>LabelActor_11b</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>90.000000</value1>
+                    <value2>0.000057</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>32.084217</value1>
+                    <value2>7.039366</value2>
+                    <value3>2.564243</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Text</name>
+                <string>11</string>
+            </property>
+            <property>
+                <name>Font Size</name>
+                <float>0.5</float>
+            </property>
+            <property>
+                <name>Back Visible</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Lighting Enabled</name>
+                <boolean>false</boolean>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Static Mesh</type>
+            <id>b636db5e-420e-4eb1-959f-c90907f243cf</id>
+            <name>Door_02</name>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-0.478851</value1>
+                    <value2>14.969722</value2>
+                    <value3>0.001683</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>CUBE</enumerated>
+            </property>
+            <property>
+                <name>Enable Collision</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Collision Collide Mask</name>
+                <bitMask>2</bitMask>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes::Door_Pivot.IVE</resourceDisplayName>
+                <resource>StaticMeshes::Door_Pivot.IVE</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Static Mesh</type>
+            <id>b64986aa-9b84-4ded-9ee0-21c7af3ea01c</id>
+            <name>TerrainMesh_18</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>-90.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>36.099609</value1>
+                    <value2>11.031294</value2>
+                    <value3>-0.010767</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>MESH</enumerated>
+            </property>
+            <property>
+                <name>Enable Collision</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Collision Collide Mask</name>
+                <bitMask>2</bitMask>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes::Door_Pivot_Room.IVE</resourceDisplayName>
+                <resource>StaticMeshes::Door_Pivot_Room.IVE</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Label</type>
+            <id>b6690024-6281-4032-b351-068237d711a8</id>
+            <name>LabelActor_03a</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>90.000000</value1>
+                    <value2>-179.999954</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>0.020734</value1>
+                    <value2>7.136549</value2>
+                    <value3>2.564243</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Text</name>
+                <string>03</string>
+            </property>
+            <property>
+                <name>Font Size</name>
+                <float>0.5</float>
+            </property>
+            <property>
+                <name>Back Visible</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Lighting Enabled</name>
+                <boolean>false</boolean>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <id>b7d2dcb7-f894-44fb-8554-72fbfff9c3de</id>
+            <name>Crate_27</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>3.890079</value1>
+                    <value2>7.993374</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>33.541294</value1>
+                    <value2>18.951469</value2>
+                    <value3>6.235940</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>CUBE</enumerated>
+            </property>
+            <property>
+                <name>Enable Collision</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Collision Category Mask</name>
+                <bitMask>160</bitMask>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:physics_crate.ive</resourceDisplayName>
+                <resource>StaticMeshes:physics_crate.ive</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Static Mesh</type>
+            <id>b8e97236-f4f7-4ed1-a720-d6de419470a2</id>
+            <name>Door_03</name>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-0.479626</value1>
+                    <value2>7.097942</value2>
+                    <value3>0.001683</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>CUBE</enumerated>
+            </property>
+            <property>
+                <name>Enable Collision</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Collision Collide Mask</name>
+                <bitMask>2</bitMask>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes::Door_Pivot.IVE</resourceDisplayName>
+                <resource>StaticMeshes::Door_Pivot.IVE</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Label</type>
+            <id>bd08fe13-d6fc-4fea-9005-ffe28c376514</id>
+            <name>LabelActor_02a</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>90.000000</value1>
+                    <value2>0.000047</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>0.020728</value1>
+                    <value2>14.930585</value2>
+                    <value3>2.564244</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Text</name>
+                <string>02</string>
+            </property>
+            <property>
+                <name>Font Size</name>
+                <float>0.5</float>
+            </property>
+            <property>
+                <name>Back Visible</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Lighting Enabled</name>
+                <boolean>false</boolean>
+            </property>
+        </actor>
+        <actor>
+            <type>dtActors.Trigger Volume Actor</type>
+            <id>c492ee93-a582-4f30-abd1-115e1b800ab5</id>
+            <name>TriggerVolume_04</name>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>8.017442</value1>
+                    <value2>14.966557</value2>
+                    <value3>0.467493</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>CUBE</enumerated>
+            </property>
+            <property>
+                <name>Collision Box</name>
+                <vec3>
+                    <value1>5.000000</value1>
+                    <value2>7.000000</value2>
+                    <value3>5.000000</value3>
+                </vec3>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <id>c7b1f211-4cae-4865-bd82-92cda65f2430</id>
+            <name>Crate_18</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>1.658467</value1>
+                    <value2>-0.825896</value2>
+                    <value3>4.348612</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>33.541294</value1>
+                    <value2>18.951469</value2>
+                    <value3>3.554796</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>CUBE</enumerated>
+            </property>
+            <property>
+                <name>Enable Collision</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Collision Category Mask</name>
+                <bitMask>160</bitMask>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:physics_crate.ive</resourceDisplayName>
+                <resource>StaticMeshes:physics_crate.ive</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Static Mesh</type>
+            <id>c86d5c63-aee3-4266-9826-316fb7966e8b</id>
+            <name>Floor_Button</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>90.000000</value1>
+                    <value2>0.000021</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>24.048241</value1>
+                    <value2>18.951477</value2>
+                    <value3>0.244795</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>CUBE</enumerated>
+            </property>
+            <property>
+                <name>Collision Box</name>
+                <vec3>
+                    <value1>1.500000</value1>
+                    <value2>0.500000</value2>
+                    <value3>1.500000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Enable Collision</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Collision Collide Mask</name>
+                <bitMask>2</bitMask>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:bigbutton.ive</resourceDisplayName>
+                <resource>StaticMeshes:bigbutton.ive</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtActors.Trigger Volume Actor</type>
+            <id>c8e55be4-6c10-48a9-b45c-5a32709935a0</id>
+            <name>TriggerVolume_03</name>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>7.097543</value2>
+                    <value3>0.467493</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>CUBE</enumerated>
+            </property>
+            <property>
+                <name>Collision Box</name>
+                <vec3>
+                    <value1>5.000000</value1>
+                    <value2>7.000000</value2>
+                    <value3>5.000000</value3>
+                </vec3>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Label</type>
+            <id>c8e86f07-332d-4359-bc68-d17ee57a885e</id>
+            <name>LabelActor_05a</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>90.000000</value1>
+                    <value2>-179.999954</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>7.996853</value1>
+                    <value2>7.136555</value2>
+                    <value3>2.564243</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Text</name>
+                <string>05</string>
+            </property>
+            <property>
+                <name>Font Size</name>
+                <float>0.5</float>
+            </property>
+            <property>
+                <name>Back Visible</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Lighting Enabled</name>
+                <boolean>false</boolean>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Label</type>
+            <id>ccd1a115-4565-4566-b4d4-da692f7cf9db</id>
+            <name>LabelActor_04b</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>90.000000</value1>
+                    <value2>-179.999954</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>8.004589</value1>
+                    <value2>15.007222</value2>
+                    <value3>2.564244</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Text</name>
+                <string>04</string>
+            </property>
+            <property>
+                <name>Font Size</name>
+                <float>0.5</float>
+            </property>
+            <property>
+                <name>Back Visible</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Lighting Enabled</name>
+                <boolean>false</boolean>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <id>d672aa28-5cac-4969-a9cf-28d4e80f61c1</id>
+            <name>Crate_20</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>4.468463</value1>
+                    <value2>5.815420</value2>
+                    <value3>-2.638383</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>33.541294</value1>
+                    <value2>21.274246</value2>
+                    <value3>3.554796</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>CUBE</enumerated>
+            </property>
+            <property>
+                <name>Enable Collision</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Collision Category Mask</name>
+                <bitMask>160</bitMask>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:physics_crate.ive</resourceDisplayName>
+                <resource>StaticMeshes:physics_crate.ive</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtActors.Trigger Volume Actor</type>
+            <id>d749c924-886c-4483-ad0c-06a695b99eca</id>
+            <name>TriggerVolume_12</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>89.999992</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>36.099609</value1>
+                    <value2>11.031294</value2>
+                    <value3>0.467493</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>CUBE</enumerated>
+            </property>
+            <property>
+                <name>Collision Box</name>
+                <vec3>
+                    <value1>5.000000</value1>
+                    <value2>12.000000</value2>
+                    <value3>5.000000</value3>
+                </vec3>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Static Mesh</type>
+            <id>d92ca978-6864-4ba6-86b0-500d20069db6</id>
+            <name>Door_09</name>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>23.568981</value1>
+                    <value2>7.097942</value2>
+                    <value3>0.001683</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>CUBE</enumerated>
+            </property>
+            <property>
+                <name>Enable Collision</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Collision Collide Mask</name>
+                <bitMask>2</bitMask>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes::Door_Pivot.IVE</resourceDisplayName>
+                <resource>StaticMeshes::Door_Pivot.IVE</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Static Mesh</type>
+            <id>db497d67-d757-40a8-8c0e-894e0f491b9c</id>
+            <name>TerrainMesh_04</name>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>24.048241</value1>
+                    <value2>14.966557</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>MESH</enumerated>
+            </property>
+            <property>
+                <name>Enable Collision</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Collision Collide Mask</name>
+                <bitMask>2</bitMask>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes::Door_Pivot_Room.IVE</resourceDisplayName>
+                <resource>StaticMeshes::Door_Pivot_Room.IVE</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Static Mesh</type>
+            <id>dcb940c3-0b75-4a28-9366-aedd649a8050</id>
+            <name>Door_11</name>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>31.588476</value1>
+                    <value2>7.097942</value2>
+                    <value3>0.001683</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>CUBE</enumerated>
+            </property>
+            <property>
+                <name>Enable Collision</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Collision Collide Mask</name>
+                <bitMask>2</bitMask>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes::Door_Pivot.IVE</resourceDisplayName>
+                <resource>StaticMeshes::Door_Pivot.IVE</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtActors.Director Actor</type>
+            <id>e22b0c10-9d83-4280-af6d-fe4c379dcdd5</id>
+            <name>Director_Graph_Actor_01</name>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>15.894126</value1>
+                    <value2>2.523480</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>DirectorArray</name>
+                <array>
+                    <size>2</size>
+                    <element>
+                        <index>0</index>
+                        <property>
+                            <name>DirectorGraph</name>
+                            <resourceType>Directors</resourceType>
+                            <resourceDisplayName>Directors:Init.dtdir</resourceDisplayName>
+                            <resource>Directors:Init.dtdir</resource>
+                        </property>
+                    </element>
+                    <element>
+                        <index>1</index>
+                        <property>
+                            <name>DirectorGraph</name>
+                            <resourceType>Directors</resourceType>
+                            <resourceDisplayName>Directors:TestDirector.dtdir</resourceDisplayName>
+                            <resource>Directors:TestDirector.dtdir</resource>
+                        </property>
+                    </element>
+                </array>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Static Mesh</type>
+            <id>e51674f5-5dd6-4088-af8f-dbbe5a3d1d0d</id>
+            <name>Door_07</name>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>15.552166</value1>
+                    <value2>7.097942</value2>
+                    <value3>0.001683</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>CUBE</enumerated>
+            </property>
+            <property>
+                <name>Enable Collision</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Collision Collide Mask</name>
+                <bitMask>2</bitMask>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes::Door_Pivot.IVE</resourceDisplayName>
+                <resource>StaticMeshes::Door_Pivot.IVE</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtActors.Trigger Volume Actor</type>
+            <id>eb3314a6-4b6f-4e41-9c71-fde24094774a</id>
+            <name>TriggerVolume_10</name>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>32.067413</value1>
+                    <value2>14.966557</value2>
+                    <value3>0.467493</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>CUBE</enumerated>
+            </property>
+            <property>
+                <name>Collision Box</name>
+                <vec3>
+                    <value1>5.000000</value1>
+                    <value2>7.000000</value2>
+                    <value3>5.000000</value3>
+                </vec3>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Label</type>
+            <id>eea3dde2-5c76-43ac-ac54-156435a6cb33</id>
+            <name>LabelActor_13</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>90.000000</value1>
+                    <value2>90.000061</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-11.944897</value1>
+                    <value2>11.036513</value2>
+                    <value3>1.469474</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Text</name>
+                <string>13</string>
+            </property>
+            <property>
+                <name>Font Size</name>
+                <float>0.5</float>
+            </property>
+            <property>
+                <name>Back Visible</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Lighting Enabled</name>
+                <boolean>false</boolean>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Label</type>
+            <id>efea905c-d97f-498c-9629-042512f825f9</id>
+            <name>LabelActor_01a</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>90.000000</value1>
+                    <value2>-89.999969</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-4.078461</value1>
+                    <value2>11.016390</value2>
+                    <value3>2.564243</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Text</name>
+                <string>01</string>
+            </property>
+            <property>
+                <name>Font Size</name>
+                <float>0.5</float>
+            </property>
+            <property>
+                <name>Back Visible</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Lighting Enabled</name>
+                <boolean>false</boolean>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Static Mesh</type>
+            <id>f2588a57-5422-48da-9bdc-09ab214081e4</id>
+            <name>Door_06</name>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>15.549805</value1>
+                    <value2>14.969722</value2>
+                    <value3>0.001683</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>CUBE</enumerated>
+            </property>
+            <property>
+                <name>Enable Collision</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Collision Collide Mask</name>
+                <bitMask>2</bitMask>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes::Door_Pivot.IVE</resourceDisplayName>
+                <resource>StaticMeshes::Door_Pivot.IVE</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Static Mesh</type>
+            <id>f29947de-1f1b-4cb3-a2f8-90e73bf169f4</id>
+            <name>TerrainMesh_16</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>-179.999954</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>32.067413</value1>
+                    <value2>7.097543</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>MESH</enumerated>
+            </property>
+            <property>
+                <name>Enable Collision</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Collision Collide Mask</name>
+                <bitMask>2</bitMask>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes::Door_Pivot_Room.IVE</resourceDisplayName>
+                <resource>StaticMeshes::Door_Pivot_Room.IVE</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Static Mesh</type>
+            <id>fa229e7e-002d-4254-abd0-7e77b5ec9625</id>
+            <name>Door_12</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>-90.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>36.097630</value1>
+                    <value2>11.512392</value2>
+                    <value3>0.001683</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>CUBE</enumerated>
+            </property>
+            <property>
+                <name>Enable Collision</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Collision Collide Mask</name>
+                <bitMask>2</bitMask>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes::Door_Pivot.IVE</resourceDisplayName>
+                <resource>StaticMeshes::Door_Pivot.IVE</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Label</type>
+            <id>fadf6df8-d553-4e27-b13c-c9def769da35</id>
+            <name>LabelActor_15</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>90.000000</value1>
+                    <value2>-89.999947</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>36.054039</value1>
+                    <value2>18.951469</value2>
+                    <value3>1.579554</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Text</name>
+                <string>15</string>
+            </property>
+            <property>
+                <name>Font Size</name>
+                <float>0.5</float>
+            </property>
+            <property>
+                <name>Back Visible</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Lighting Enabled</name>
+                <boolean>false</boolean>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Label</type>
+            <id>fdfc2129-c082-41db-96e9-78a8c98a4e5f</id>
+            <name>LabelActor_09b</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>90.000000</value1>
+                    <value2>0.000057</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>24.066254</value1>
+                    <value2>7.039358</value2>
+                    <value3>2.564243</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Text</name>
+                <string>09</string>
+            </property>
+            <property>
+                <name>Font Size</name>
+                <float>0.5</float>
+            </property>
+            <property>
+                <name>Back Visible</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Lighting Enabled</name>
+                <boolean>false</boolean>
+            </property>
+        </actor>
+    </actors>
+    <groups></groups>
+    <drawablehierarchy></drawablehierarchy>
+    <presetCameras>
+        <presetCamera>
+            <index>1</index>
+            <perspectiveView>
+                <positionX>-8.317092</positionX>
+                <positionY>10.927827</positionY>
+                <positionZ>4.724241</positionZ>
+                <rotationX>-0.278165</rotationX>
+                <rotationY>0.273258</rotationY>
+                <rotationZ>-0.645315</rotationZ>
+                <rotationW>0.656904</rotationW>
+            </perspectiveView>
+            <topView>
+                <positionX>10.873669</positionX>
+                <positionY>9.263972</positionY>
+                <positionZ>-0.000000</positionZ>
+                <zoom>8.636088</zoom>
+            </topView>
+            <sideView>
+                <positionX>-0.000000</positionX>
+                <positionY>9.789291</positionY>
+                <positionZ>0.542865</positionZ>
+                <zoom>12.985484</zoom>
+            </sideView>
+            <frontView>
+                <positionX>0.000000</positionX>
+                <positionY>0.000000</positionY>
+                <positionZ>0.000000</positionZ>
+                <zoom>9.703509</zoom>
+            </frontView>
+        </presetCamera>
+        <presetCamera>
+            <index>2</index>
+            <perspectiveView>
+                <positionX>-0.036054</positionX>
+                <positionY>10.831696</positionY>
+                <positionZ>5.141783</positionZ>
+                <rotationX>-0.389128</rotationX>
+                <rotationY>0.000001</rotationY>
+                <rotationZ>-0.000002</rotationZ>
+                <rotationW>0.921184</rotationW>
+            </perspectiveView>
+            <topView>
+                <positionX>0.000000</positionX>
+                <positionY>0.000000</positionY>
+                <positionZ>0.000000</positionZ>
+                <zoom>1.000000</zoom>
+            </topView>
+            <sideView>
+                <positionX>0.000000</positionX>
+                <positionY>0.000000</positionY>
+                <positionZ>0.000000</positionZ>
+                <zoom>1.000000</zoom>
+            </sideView>
+            <frontView>
+                <positionX>0.000000</positionX>
+                <positionY>0.000000</positionY>
+                <positionZ>0.000000</positionZ>
+                <zoom>1.000000</zoom>
+            </frontView>
+        </presetCamera>
+        <presetCamera>
+            <index>3</index>
+            <perspectiveView>
+                <positionX>-0.036054</positionX>
+                <positionY>10.831696</positionY>
+                <positionZ>5.141783</positionZ>
+                <rotationX>0.000331</rotationX>
+                <rotationY>-0.382690</rotationY>
+                <rotationZ>0.923876</rotationZ>
+                <rotationW>-0.000800</rotationW>
+            </perspectiveView>
+            <topView>
+                <positionX>0.000000</positionX>
+                <positionY>0.000000</positionY>
+                <positionZ>0.000000</positionZ>
+                <zoom>1.000000</zoom>
+            </topView>
+            <sideView>
+                <positionX>0.000000</positionX>
+                <positionY>0.000000</positionY>
+                <positionZ>0.000000</positionZ>
+                <zoom>1.000000</zoom>
+            </sideView>
+            <frontView>
+                <positionX>0.000000</positionX>
+                <positionY>0.000000</positionY>
+                <positionZ>0.000000</positionZ>
+                <zoom>1.000000</zoom>
+            </frontView>
+        </presetCamera>
+        <presetCamera>
+            <index>4</index>
+            <perspectiveView>
+                <positionX>8.136114</positionX>
+                <positionY>10.618669</positionY>
+                <positionZ>4.981430</positionZ>
+                <rotationX>-0.331341</rotationX>
+                <rotationY>-0.002021</rotationY>
+                <rotationZ>0.005755</rotationZ>
+                <rotationW>0.943491</rotationW>
+            </perspectiveView>
+            <topView>
+                <positionX>0.000000</positionX>
+                <positionY>0.000000</positionY>
+                <positionZ>0.000000</positionZ>
+                <zoom>1.000000</zoom>
+            </topView>
+            <sideView>
+                <positionX>0.000000</positionX>
+                <positionY>0.000000</positionY>
+                <positionZ>0.000000</positionZ>
+                <zoom>1.000000</zoom>
+            </sideView>
+            <frontView>
+                <positionX>0.000000</positionX>
+                <positionY>0.000000</positionY>
+                <positionZ>0.000000</positionZ>
+                <zoom>1.000000</zoom>
+            </frontView>
+        </presetCamera>
+        <presetCamera>
+            <index>5</index>
+            <perspectiveView>
+                <positionX>8.136114</positionX>
+                <positionY>10.618669</positionY>
+                <positionZ>4.981430</positionZ>
+                <rotationX>0.000634</rotationX>
+                <rotationY>-0.366514</rotationY>
+                <rotationZ>0.930411</rotationZ>
+                <rotationW>-0.001609</rotationW>
+            </perspectiveView>
+            <topView>
+                <positionX>0.000000</positionX>
+                <positionY>0.000000</positionY>
+                <positionZ>0.000000</positionZ>
+                <zoom>1.000000</zoom>
+            </topView>
+            <sideView>
+                <positionX>0.000000</positionX>
+                <positionY>0.000000</positionY>
+                <positionZ>0.000000</positionZ>
+                <zoom>1.000000</zoom>
+            </sideView>
+            <frontView>
+                <positionX>0.000000</positionX>
+                <positionY>0.000000</positionY>
+                <positionZ>0.000000</positionZ>
+                <zoom>1.000000</zoom>
+            </frontView>
+        </presetCamera>
+        <presetCamera>
+            <index>6</index>
+            <perspectiveView>
+                <positionX>27.529316</positionX>
+                <positionY>10.612139</positionY>
+                <positionZ>4.867239</positionZ>
+                <rotationX>-0.228877</rotationX>
+                <rotationY>0.225703</rotationY>
+                <rotationZ>-0.664888</rotationZ>
+                <rotationW>0.674238</rotationW>
+            </perspectiveView>
+            <topView>
+                <positionX>34.212406</positionX>
+                <positionY>10.702178</positionY>
+                <positionZ>-0.000001</positionZ>
+                <zoom>1.000000</zoom>
+            </topView>
+            <sideView>
+                <positionX>34.212406</positionX>
+                <positionY>10.702178</positionY>
+                <positionZ>-0.000001</positionZ>
+                <zoom>1.000000</zoom>
+            </sideView>
+            <frontView>
+                <positionX>34.212406</positionX>
+                <positionY>10.702178</positionY>
+                <positionZ>-0.000001</positionZ>
+                <zoom>1.000000</zoom>
+            </frontView>
+        </presetCamera>
+        <presetCamera>
+            <index>7</index>
+            <perspectiveView>
+                <positionX>11.853666</positionX>
+                <positionY>12.155996</positionY>
+                <positionZ>4.730078</positionZ>
+                <rotationX>-0.000683</rotationX>
+                <rotationY>-0.389936</rotationY>
+                <rotationZ>0.920840</rotationZ>
+                <rotationW>0.001612</rotationW>
+            </perspectiveView>
+            <topView>
+                <positionX>34.212406</positionX>
+                <positionY>10.702178</positionY>
+                <positionZ>-0.000001</positionZ>
+                <zoom>1.000000</zoom>
+            </topView>
+            <sideView>
+                <positionX>34.212406</positionX>
+                <positionY>10.702178</positionY>
+                <positionZ>-0.000001</positionZ>
+                <zoom>1.000000</zoom>
+            </sideView>
+            <frontView>
+                <positionX>34.212406</positionX>
+                <positionY>10.702178</positionY>
+                <positionZ>-0.000001</positionZ>
+                <zoom>1.000000</zoom>
+            </frontView>
+        </presetCamera>
+        <presetCamera>
+            <index>9</index>
+            <perspectiveView>
+                <positionX>30.971733</positionX>
+                <positionY>11.016611</positionY>
+                <positionZ>5.613703</positionZ>
+                <rotationX>0.238484</rotationX>
+                <rotationY>-0.240584</rotationY>
+                <rotationZ>0.668209</rotationZ>
+                <rotationW>-0.662376</rotationW>
+            </perspectiveView>
+            <topView>
+                <positionX>0.000000</positionX>
+                <positionY>0.000000</positionY>
+                <positionZ>0.000000</positionZ>
+                <zoom>1.000000</zoom>
+            </topView>
+            <sideView>
+                <positionX>0.000000</positionX>
+                <positionY>0.000000</positionY>
+                <positionZ>0.000000</positionZ>
+                <zoom>1.000000</zoom>
+            </sideView>
+            <frontView>
+                <positionX>0.000000</positionX>
+                <positionY>0.000000</positionY>
+                <positionZ>0.000000</positionZ>
+                <zoom>1.000000</zoom>
+            </frontView>
+        </presetCamera>
+    </presetCameras>
+</map>

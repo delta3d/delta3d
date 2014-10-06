@@ -1,0 +1,8 @@
+##############################
+#                            #
+# Delta3D: Version Changes   # 
+#                            #
+##############################
+
+See (http://delta3d.org/deltawiki/index.php?title=Changes) for a
+list of the major changes.
