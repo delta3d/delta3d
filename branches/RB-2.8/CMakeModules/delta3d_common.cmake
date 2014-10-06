@@ -191,8 +191,15 @@ function (BUILD_GAME_START libraryTargetName linkBool)
           ${apple_bundle_sources}
       )
       SET_TARGET_PROPERTIES(${libraryTargetName}_START PROPERTIES
-      MACOSX_BUNDLE_INFO_PLIST OSX/delta3dAppBundle.plist.in
-      MACOSX_BUNDLE_ICON_FILE Example)
+         MACOSX_BUNDLE_INFO_PLIST OSX/delta3dAppBundle.plist.in
+         MACOSX_BUNDLE_ICON_FILE Example
+         MACOSX_BUNDLE_INFO_STRING "delta3d Application"
+         MACOSX_BUNDLE_GUI_IDENTIFIER "delta3d Application"
+         MACOSX_BUNDLE_LONG_VERSION_STRING "${delta3d_VERSION_MAJOR}.${delta3d_VERSION_MINOR}.${delta3d_VERSION_PATCH}"
+         MACOSX_BUNDLE_BUNDLE_NAME "${libraryTargetName}"
+         MACOSX_BUNDLE_SHORT_VERSION_STRING "${delta3d_VERSION_MAJOR}.${delta3d_VERSION_MINOR}"
+         MACOSX_BUNDLE_BUNDLE_VERSION  1
+         MACOSX_BUNDLE_COPYRIGHT "2014 CaperHoldings LLC.")
    else ()
       ADD_EXECUTABLE(${libraryTargetName}_START
           ${PROG_SOURCES}
