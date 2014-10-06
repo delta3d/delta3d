@@ -33,9 +33,17 @@ function(BUILD_EXE_EXAMPLE TGTNAME)
           ${TARGET_SRC} ${TARGET_H}
           ${apple_bundle_sources}
       )
+            
       SET_TARGET_PROPERTIES(${TGTNAME} PROPERTIES 
          MACOSX_BUNDLE_INFO_PLIST OSX/delta3dAppBundle.plist.in
-         MACOSX_BUNDLE_ICON_FILE Example)
+         MACOSX_BUNDLE_ICON_FILE Example
+         MACOSX_BUNDLE_INFO_STRING "delta3d Example"
+         MACOSX_BUNDLE_GUI_IDENTIFIER "delta3d Example"
+         MACOSX_BUNDLE_LONG_VERSION_STRING "${delta3d_VERSION_MAJOR}.${delta3d_VERSION_MINOR}.${delta3d_VERSION_PATCH}"
+         MACOSX_BUNDLE_BUNDLE_NAME "${TGTNAME}"
+         MACOSX_BUNDLE_SHORT_VERSION_STRING "${delta3d_VERSION_MAJOR}.${delta3d_VERSION_MINOR}"
+         MACOSX_BUNDLE_BUNDLE_VERSION  1
+         MACOSX_BUNDLE_COPYRIGHT "2014 CaperHoldings LLC.")
    else ()
       ADD_EXECUTABLE(${TGTNAME} ${TARGET_SRC} ${TARGET_H})
    endif ()
