@@ -62,7 +62,7 @@ void TestNestedView::Config()
    //create second Camera, added to second View
    mCam2 = new Camera("Camera 2");
    mCam2->SetWindow(GetWindow());   
-   mCam2->SetClearColor(0.f, 1.0f, 0.f, 1.f);
+   mCam2->SetClearColor(0.0f, 1.0f, 0.0f, 1.0f);
    mCam2->SetAspectRatio(DEFAULT_ASPECT_RATIO);
    mCam2->GetOSGCamera()->setViewport(new osg::Viewport((float) DEFAULT_VIEW_WIDTH / 2.0f, (float) DEFAULT_VIEW_HEIGHT / 4.0f,
                                      (float)DEFAULT_VIEW_WIDTH, (float)DEFAULT_VIEW_HEIGHT));
@@ -84,7 +84,7 @@ void TestNestedView::Config()
    mCam3->SetWindow(GetWindow());
    mCam3->GetOSGCamera()->setViewport(new osg::Viewport(0.0, (float) DEFAULT_VIEW_HEIGHT / 2.0f,
                                      (float) DEFAULT_VIEW_WIDTH, (float) DEFAULT_VIEW_HEIGHT));
-   mCam3->SetClearColor(0.f, 0.f, 1.0f, 1.f);
+   mCam3->SetClearColor(0.0f, 0.0f, 1.0f, 1.0f);
    mCam3->SetAspectRatio(DEFAULT_ASPECT_RATIO);
 
    //3rd view frame bin

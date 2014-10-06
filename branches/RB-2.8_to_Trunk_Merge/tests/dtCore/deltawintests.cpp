@@ -110,14 +110,14 @@ void DeltaWinTests::TestWindowOrigin()
    dtCore::RefPtr<dtCore::DeltaWin> win = GetGlobalApplication().GetWindow();
    
    float pixelX, pixelY;
-   bool result = win->CalcPixelCoords(-1.f, -1.f, pixelX, pixelY);
+   bool result = win->CalcPixelCoords(-1.0f, -1.0f, pixelX, pixelY);
    CPPUNIT_ASSERT_EQUAL_MESSAGE("CalcPixelCoords didn't like the supplied normalized coordinates",
                                  true, result);
 
    CPPUNIT_ASSERT_EQUAL_MESSAGE("CalcPixelCoords doesn't think window x = -1.f is pixel 0",
-                                 0.f, pixelX);
+                                 0.0f, pixelX);
    CPPUNIT_ASSERT_EQUAL_MESSAGE("CalcPixelCoords doesn't think window y = -1.f is pixel 0",
-                                 0.f, pixelY);
+                                 0.0f, pixelY);
 }
 
 void DeltaWinTests::TestNormalizedWindowCoordConversion()

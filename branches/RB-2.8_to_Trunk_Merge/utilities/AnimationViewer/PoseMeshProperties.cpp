@@ -60,8 +60,8 @@ void PoseMeshProperties::AddMesh(const dtAnim::PoseMesh& newMesh, const dtAnim::
    // Add data values for the vertex items
    for (size_t vertIndex = 0; vertIndex < rawVerts.size(); ++vertIndex)
    {
-      int animID = rawVerts[vertIndex]->mAnimID;
-      osg::Vec3 rawData = rawVerts[vertIndex]->mData;
+      int animID = rawVerts[vertIndex].mAnimID;
+      osg::Vec3 rawData = rawVerts[vertIndex].mData;
 
       dtAnim::AnimationInterface* anim = model.GetAnimationByIndex(animID);
       std::string animName;

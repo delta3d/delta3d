@@ -105,7 +105,7 @@ void TestAI::Config()
 
    // set overhead camera offset
    trans.SetTranslation(0.0f, -5.0f, 70.0f);
-   trans.SetRotation(0.0f, -90.f, 0.0f);
+   trans.SetRotation(0.0f, -90.0f, 0.0f);
    trans.Get(mCameraOffset);
    mOverheadCamera->GetMatrixNode()->setMatrix(mCameraOffset);
 

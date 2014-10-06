@@ -95,6 +95,8 @@ class GameActorTests : public CPPUNIT_NS::TestFixture
       CPPUNIT_TEST(TestActorIsInGM);
       CPPUNIT_TEST(TestOnRemovedActor);
       CPPUNIT_TEST(TestUnregisterNextInvokable);
+      CPPUNIT_TEST(TestFullUpdateFlags);
+      CPPUNIT_TEST(TestPartialUpdateFlags);
 
    CPPUNIT_TEST_SUITE_END();
 
@@ -117,6 +119,8 @@ public:
    void TestActorIsInGM();
    void TestOnRemovedActor();
    void TestUnregisterNextInvokable();
+   void TestFullUpdateFlags();
+   void TestPartialUpdateFlags();
 
 private:
    static const std::string mTestGameActorLibrary;
@@ -699,9 +703,14 @@ void GameActorTests::TestAddRemoveFromEnvActor()
       // Ensure all actors are removed from the environment
       ea->GetAllActors(actors);
       CPPUNIT_ASSERT(actors.empty());
+      dtCore::RefPtr<osg::ObserverSet> obSet = ap->getOrCreateObserverSet();
 
+      CPPUNIT_ASSERT_EQUAL(1, ap->referenceCount());
+      CPPUNIT_ASSERT_EQUAL(1, ap2->referenceCount());
       ap  = NULL;
       ap2 = NULL;
+
+      CPPUNIT_ASSERT(obSet->getObserverdObject() == NULL);
       CPPUNIT_ASSERT_MESSAGE("Actor 1 should have been deleted.", !apObserver1.valid());
       CPPUNIT_ASSERT_MESSAGE("Actor 2 should have been deleted.", !apObserver2.valid());
 
@@ -939,6 +948,88 @@ void GameActorTests::TestEnvironmentTimeConversions()
    CPPUNIT_ASSERT_MESSAGE("The time and date string should be equal to the original value", newValue == testTime);
 }
 
+void GameActorTests::TestPartialUpdateFlags()
+{
+   dtCore::RefPtr<const dtCore::ActorType> actor1Type = mManager->FindActorType("ExampleActors", "TestGamePropertyActor");
+   dtCore::RefPtr<TestGamePropertyActor> actor1;
+   mManager->CreateActor(*actor1Type, actor1);
+   CPPUNIT_ASSERT_MESSAGE("Actor should not be NULL", actor1 != NULL);
+
+   std::vector<dtUtil::RefString> names;
+   actor1->GetPartialUpdateProperties(names);
+
+   // DG - No properties are in the partial list by default, unless you have a dr helper.
+   CPPUNIT_ASSERT_EQUAL(0U, unsigned(names.size()));
+//   // Check the list for the required ones.
+//   CPPUNIT_ASSERT(std::find(names.begin(), names.end(), dtCore::TransformableActorProxy::PROPERTY_TRANSLATION) != names.end());
+//   CPPUNIT_ASSERT(std::find(names.begin(), names.end(), dtCore::TransformableActorProxy::PROPERTY_ROTATION) != names.end());
+
+   dtCore::PropertyContainer::PropertyVector pv;
+
+   actor1->GetPropertyList(pv);
+
+   for(unsigned i = 0; i < pv.size(); ++i)
+   {
+      dtCore::ActorProperty* prop = pv[i];
+      // Set half to false;
+      prop->SetSendInPartialUpdate((i % 2) == 1);
+   }
+   names.clear();
+   actor1->GetPartialUpdateProperties(names);
+
+   for(unsigned i = 0; i < pv.size(); ++i)
+   {
+      dtCore::ActorProperty* prop = pv[i];
+      bool found = std::find(names.begin(), names.end(), prop->GetName()) != names.end();
+      if (prop->GetSendInPartialUpdate())
+      {
+         CPPUNIT_ASSERT(found);
+      }
+      else
+      {
+         CPPUNIT_ASSERT(!found);
+      }
+   }
+}
+
+void GameActorTests::TestFullUpdateFlags()
+{
+   dtCore::RefPtr<const dtCore::ActorType> actor1Type = mManager->FindActorType("ExampleActors", "TestGamePropertyActor");
+   dtCore::RefPtr<TestGamePropertyActor> actor1;
+   mManager->CreateActor(*actor1Type, actor1);
+   CPPUNIT_ASSERT_MESSAGE("Actor should not be NULL", actor1 != NULL);
+
+
+   dtCore::PropertyContainer::PropertyVector pv;
+   actor1->GetPropertyList(pv);
+
+   dtCore::RefPtr<dtGame::ActorUpdateMessage> updateMsg;
+   mManager->GetMessageFactory().CreateMessage(dtGame::MessageType::INFO_ACTOR_UPDATED, updateMsg);
+
+   for(unsigned i = 0; i < pv.size(); ++i)
+   {
+      dtCore::ActorProperty* prop = pv[i];
+      // Set half to false;
+      prop->SetSendInFullUpdate((i % 2) == 1);
+   }
+
+   actor1->PopulateActorUpdate(*updateMsg);
+
+   for(unsigned i = 0; i < pv.size(); ++i)
+   {
+      dtCore::ActorProperty* prop = pv[i];
+      if (prop->GetSendInFullUpdate() && !prop->IsReadOnly())
+      {
+         CPPUNIT_ASSERT(updateMsg->GetUpdateParameter(prop->GetName()) != NULL);
+      }
+      else
+      {
+         CPPUNIT_ASSERT(updateMsg->GetUpdateParameter(prop->GetName()) == NULL);
+      }
+   }
+
+}
+
 void GameActorTests::TestMessageProcessingPerformance()
 {
    int numActors = 20;
@@ -972,7 +1063,7 @@ void GameActorTests::TestMessageProcessingPerformance()
          testActors.push_back(actor1);
       }
 
-      dtCore::System::GetInstance().Step();
+      dtCore::System::GetInstance().Step(0.016);
 
       // loop multiple ticks.
       for (int tickCounter = 0; tickCounter < numTicks; ++tickCounter)
@@ -987,7 +1078,7 @@ void GameActorTests::TestMessageProcessingPerformance()
             mManager->SendMessage(*updateMsg);
          }
 
-         dtCore::System::GetInstance().Step();
+         dtCore::System::GetInstance().Step(0.016);
       }
 
       dtUtil::FileUtils::GetInstance().DirDelete("Working Project", true);

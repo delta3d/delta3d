@@ -77,7 +77,7 @@ const std::string& KillableTargetActor::SwitchVisitor::GetSwitchState() const
 
 ///////////////////////////////////////////////////////////////////////////////
 KillableTargetActor::KillableTargetActor(dtGame::GameActorProxy& parent)
-   : dtActors::GameMeshActor(parent)
+   : dtActors::GameMeshDrawable(parent)
    , mShaderEffect()
    , mMaxHealth(100)
    , mCurrentHealth(0)
@@ -297,7 +297,7 @@ void KillableTargetActor::SetCurrentHealth(int currentHealth)
 void KillableTargetActor::OnEnteredWorld()
 {
    // Initialize private state
-   dtActors::GameMeshActor::OnEnteredWorld();
+   dtActors::GameMeshDrawable::OnEnteredWorld();
 
    // small explosion
    mSmallExplosion = new dtCore::ParticleSystem();
@@ -348,7 +348,7 @@ void KillableTargetActorProxy::BuildPropertyMap()
 {
    const std::string GROUP = "KillableTarget";
 
-   dtActors::GameMeshActorProxy::BuildPropertyMap();
+   dtActors::GameMeshActor::BuildPropertyMap();
    KillableTargetActor* actor = GetDrawable<KillableTargetActor>();
 
    // override the default behavior on initial creation. This can be overridden by the user in the map
@@ -391,5 +391,5 @@ void KillableTargetActorProxy::OnEnteredWorld()
    RegisterForMessages(dtGame::MessageType::INFO_GAME_EVENT);
    RegisterForMessages(TutorialMessageType::TANK_TARGET_CHANGED);
 
-   dtActors::GameMeshActorProxy::OnEnteredWorld();
+   dtActors::GameMeshActor::OnEnteredWorld();
 }

@@ -29,6 +29,7 @@
 #include <dtAnim/animnodebuilder.h>
 #include <dtAnim/basemodeldata.h>
 #include <dtAnim/modeldatabase.h>
+#include <dtAnim/posesequence.h>
 
 #include <dtCore/hotspotattachment.h>
 
@@ -132,9 +133,7 @@ void AnimationHelper::Update(float dt)
             mAttachmentController->Update(*GetModelWrapper());
          }
       }
-
    }
-
 }
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -899,5 +898,119 @@ void AnimationHelper::OnModelLoadCompleted(dtAnim::BaseModelWrapper* newModel, d
       LOGN_ERROR("AnimationHelper.cpp", std::string("Loading character model \"") + mModelLoader->GetResourceDescriptor().GetResourceIdentifier() + "\" failed.");
    }
 }
+
+////////////////////////////////////////////////////////////////////////////////
+PoseController* AnimationHelper::GetPoseController()
+{
+   PoseController* controller = NULL;
+
+   if ( ! mPoseSequence.valid())
+   {
+      Cal3DModelWrapper* model = GetModelWrapper();
+      if (model != NULL && NULL != Cal3DDatabase::GetInstance().GetPoseMeshDatabase(*model))
+      {
+         mPoseSequence = new PoseSequence;
+         mPoseSequence->SetName("DefaultPoseSequence");
+         mSequenceMixer->RegisterAnimation(mPoseSequence.get());
+      }
+   }
+
+   if (mPoseSequence.valid())
+   {
+      controller = mPoseSequence->GetPoseController();
+   }
+
+   return controller;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void AnimationHelper::SetPosesEnabled(bool enabled)
+{
+   if (IsPosesEnabled() != enabled)
+   {
+      if (mPoseSequence.valid())
+      {
+         if (enabled)
+         {
+            mPoseSequence = static_cast<PoseSequence*>(mPoseSequence->Clone(GetModelWrapper()).get());
+            mSequenceMixer->PlayAnimation(mPoseSequence);
+         }
+         else
+         {
+            float blendTime = mPoseSequence->GetPoseController()->GetBlendTime();
+            mSequenceMixer->ClearAnimation(mPoseSequence->GetName(), blendTime);
+         }
+      }
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+bool AnimationHelper::IsPosesEnabled() const
+{
+   return mPoseSequence.valid() && mSequenceMixer->IsAnimationPlaying(mPoseSequence->GetName());
+}
+
+////////////////////////////////////////////////////////////////////////////////
+bool AnimationHelper::SetupPoses(const dtAnim::Cal3DModelData& modelData)
+{
+   // Characters may not have pose meshes defined.
+   // Avoid extra work and error reports if this is the case.
+   if (modelData.GetPoseMeshFilename().empty())
+   {
+      return false;
+   }
+
+   bool success = false;
+
+   Cal3DDatabase& database = Cal3DDatabase::GetInstance();
+
+   dtCore::TransformableActorProxy* actor = NULL;
+   GetOwner(actor);
+
+   dtCore::Transformable* drawable = NULL;
+   if (actor != NULL)
+   {
+      drawable = actor->GetDrawable()->AsTransformable();
+   }
+
+   Cal3DModelWrapper* model = GetModelWrapper();
+   if (drawable != NULL)
+   {
+      PoseMeshDatabase* poseDatabase = database.GetPoseMeshDatabase(*model);
+
+      if (poseDatabase == NULL)
+      {
+         std::string modelName;
+         if (model->GetCalModel() != NULL)
+         {
+            modelName = model->GetCalModel()->getCoreModel()->getName();
+         }
+
+         LOG_ERROR("Cannot setup PoseController for model \"" + modelName 
+            + "\" because its PoseMeshDatabase is not available.");
+      }
+      else
+      {
+         PoseController* poseController = GetPoseController();
+         
+         poseController->SetPoseMeshDatabase(poseDatabase);
+         poseController->SetPoseDrawable(drawable);
+         poseController->SetModelWrapper(model);
+
+         // Attempt setting some defaults. This may have to be removed later.
+         /*poseController->AddPoseControl("Poses_LeftEye", 0);
+         poseController->AddPoseControl("Poses_RightEye", 0);
+         poseController->AddPoseControl("Poses_Head", 1, true);
+         poseController->AddPoseControl("Poses_Torso", 2);*/
+
+         SetPosesEnabled(true);
+
+         success = true;
+      }
+   }
+
+   return success;
+}
+
 
 } // namespace dtAnim

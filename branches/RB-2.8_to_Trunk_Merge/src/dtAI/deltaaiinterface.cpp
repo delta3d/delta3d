@@ -24,6 +24,7 @@
 #include <dtAI/waypointcollection.h>
 #include <dtAI/aidebugdrawable.h>
 #include <dtAI/waypointreaderwriter.h>
+#include <dtAI/waypointrenderinfo.h>
 #include <dtUtil/templateutility.h>
 #include <iterator>
 
@@ -404,12 +405,23 @@ namespace dtAI
    bool DeltaAIInterface::LoadWaypointFile(const std::string& filename)
    {
       dtCore::RefPtr<WaypointReaderWriter> reader = new WaypointReaderWriter(*this);
+      // Hide the drawable for a moment so that it doesn't repeatedly call the geometry changed code.
+      dtCore::RefPtr<AIDebugDrawable> tempDrawable = mDrawable;
+      mDrawable = NULL;
       bool result = reader->LoadWaypointFile(filename);
+      mDrawable = tempDrawable;
 
       if (!result)
       {
          //this is temporary to support the old waypoint file
          result = LoadLegacyWaypointFile(filename);
+      }
+      else
+      {
+         if (mDrawable.valid())
+         {
+            UpdateDebugDrawable();
+         }
       }
 
       mLastFileLoaded = filename;
@@ -439,6 +451,10 @@ namespace dtAI
       }
 
       mDrawable = debugDrawable;
+      if (mDrawable.valid())
+      {
+         UpdateDebugDrawable();
+      }
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -446,10 +462,21 @@ namespace dtAI
    {
       if (!mDrawable.valid())
       {
+         mDrawable = new AIDebugDrawable();
+         UpdateDebugDrawable();
+      }
+
+      return mDrawable.get();
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void DeltaAIInterface::UpdateDebugDrawable()
+   {
+      if (mDrawable->GetRenderInfo()->IsAnyRenderingEnabled())
+      {
          std::vector<dtAI::WaypointInterface*> waypointList;
          GetWaypoints(waypointList);
 
-         mDrawable = new AIDebugDrawable();
          mDrawable->SetWaypoints(waypointList);
 
          NavMesh* nm = mWaypointGraph->GetNavMeshAtSearchLevel(0);
@@ -458,8 +485,10 @@ namespace dtAI
             mDrawable->UpdateWaypointGraph(*nm);
          }
       }
-
-      return mDrawable.get();
+      else
+      {
+         mDrawable->OnRenderInfoChanged();
+      }
    }
 
    /////////////////////////////////////////////////////////////////////////////

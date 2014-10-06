@@ -1,6 +1,6 @@
 <RCC>
   <qresource prefix="psEditor" >
-    <file>particle.ico</file>
+    <file>ParticleEditor.ico</file>
     <file>trashlayer.png</file>
     <file>hidelayer.png</file>
     <file>newlayer.png</file>

@@ -45,7 +45,7 @@ namespace dtAnim
 {
    class AnimationHelper;
    class AnimationComponent;
-   class AnimationGameActorProxy;
+   class AnimationGameActor;
 }
 
 

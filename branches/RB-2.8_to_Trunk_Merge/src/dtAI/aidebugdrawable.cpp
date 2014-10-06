@@ -57,9 +57,9 @@ namespace dtAI
 
       //////////////////////////////////////////////////////////////////////////
       AIDebugDrawableImpl(WaypointRenderInfo& pRenderInfo)
-         : mRenderInfo(&pRenderInfo)
-      {
-      }
+   : mRenderInfo(&pRenderInfo)
+   {
+   }
 
       //////////////////////////////////////////////////////////////////////////
       void Init()
@@ -105,7 +105,7 @@ namespace dtAI
          mGeodeWayPoints->setNodeMask(mRenderInfo->GetRenderWaypoints() ? ~0: 0);
 
          osg::StateAttribute::Values depthAttrib =
-            (mRenderInfo->GetEnableDepthTest()) ? osg::StateAttribute::ON : osg::StateAttribute::OFF;
+               (mRenderInfo->GetEnableDepthTest()) ? osg::StateAttribute::ON : osg::StateAttribute::OFF;
 
          // Allow waypoint data to be obscured or always visible?
          mNode->getOrCreateStateSet()->setMode(GL_DEPTH_TEST, depthAttrib);
@@ -248,23 +248,26 @@ namespace dtAI
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void AIDebugDrawable::SetRenderInfo(WaypointRenderInfo& pRenderInfo)
+   void AIDebugDrawable::SetRenderInfo(WaypointRenderInfo* pRenderInfo)
    {
-      mImpl->mRenderInfo = &pRenderInfo;
+      if (pRenderInfo != NULL)
+      {
+         mImpl->mRenderInfo = pRenderInfo;
 
-      mImpl->OnRenderInfoChanged();
+         mImpl->OnRenderInfoChanged();
+      }
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   WaypointRenderInfo& AIDebugDrawable::GetRenderInfo()
+   WaypointRenderInfo* AIDebugDrawable::GetRenderInfo()
    {
-      return *mImpl->mRenderInfo;
+      return mImpl->mRenderInfo;
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   const WaypointRenderInfo& AIDebugDrawable::GetRenderInfo() const
+   const WaypointRenderInfo* AIDebugDrawable::GetRenderInfoConst() const
    {
-      return *mImpl->mRenderInfo;
+      return mImpl->mRenderInfo;
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -273,11 +276,33 @@ namespace dtAI
       mImpl->OnRenderInfoChanged();
    }
 
+   class RenderInfoUpdateCallback : public osg::NodeCallback
+   {
+   public:
+      RenderInfoUpdateCallback(AIDebugDrawable& debugDraw)
+      :mAIDebugDrawable(&debugDraw)
+      {
+
+      }
+
+      virtual void operator()(osg::Node* node, osg::NodeVisitor* nv)
+      {
+         mAIDebugDrawable->OnRenderInfoChanged();
+         // note, callback is responsible for scenegraph traversal so
+         // they must call traverse(node,nv) to ensure that the
+         // scene graph subtree (and associated callbacks) are traversed.
+         traverse(node,nv);
+      }
+   private:
+      dtCore::RefPtr<AIDebugDrawable> mAIDebugDrawable;
+   };
+
    /////////////////////////////////////////////////////////////////////////////
    void AIDebugDrawable::Init()
    {
       mImpl->Init();
       mImpl->OnRenderInfoChanged();
+      GetOSGNode()->setUpdateCallback(new RenderInfoUpdateCallback(*this));
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -294,6 +319,12 @@ namespace dtAI
 
       // Existing primitive sets will be cleared here (mWaypointGeometry,mNavMeshGeometry)
       OnGeometryChanged();
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   bool AIDebugDrawable::HasWaypointData() const
+   {
+      return !mImpl->mWaypointIDs->empty();
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -525,6 +556,7 @@ namespace dtAI
          const WaypointPair* wp = (*iter).second;
          AddPathSegment(wp->GetWaypointFrom(), wp->GetWaypointTo());
       }
+      OnRenderInfoChanged();
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -562,7 +594,7 @@ namespace dtAI
          for (size_t pairIndex = 0; pairIndex < mImpl->mWaypointPairs->size() - 1; pairIndex += 2)
          {
             if (int(mImpl->mWaypointPairs->at(pairIndex)) == indexFrom &&
-                int(mImpl->mWaypointPairs->at(pairIndex + 1)) == indexTo)
+                  int(mImpl->mWaypointPairs->at(pairIndex + 1)) == indexTo)
             {
                mImpl->mWaypointPairs->erase(mImpl->mWaypointPairs->begin() + (pairIndex + 1));
                mImpl->mWaypointPairs->erase(mImpl->mWaypointPairs->begin() + pairIndex);
@@ -588,7 +620,7 @@ namespace dtAI
          for (size_t pairIndex = 0; pairIndex < mImpl->mWaypointPairs->size() - 1; pairIndex += 2)
          {
             if (int(mImpl->mWaypointPairs->at(pairIndex)) == indexFrom ||
-               int(mImpl->mWaypointPairs->at(pairIndex + 1)) == indexFrom)
+                  int(mImpl->mWaypointPairs->at(pairIndex + 1)) == indexFrom)
             {
                size_t currentSize = mImpl->mWaypointPairs->size();
 

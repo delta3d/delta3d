@@ -3,8 +3,47 @@
              xsi:noNamespaceSchemaLocation="../../data/application.xsd">
 
    <!-- Window & View Settings -->
-	<Window Name="testApp" X="100" Y="100" Width="640" Height="480" PixelDepth="32" RefreshRate="60" ShowCursor="1" FullScreen="0" ChangeDisplayResolution="0"/>
+	<Window Name="testApp" X="100" Y="100" Width="1080" Height="720" PixelDepth="32" RefreshRate="60" ShowCursor="1" FullScreen="0" MultiSample="1" ChangeDisplayResolution="0"/>
 	<Scene Name="defaultScene"/>
 	<Camera Name="defaultCam" WindowInstance="testApp"/>
 	<View Name="defaultView" CameraInstance="defaultCam" SceneInstance="defaultScene"/>
+        <Log Name="animationtransitionplanner.cpp" Level="Warning"/>
+   
+   <Properties>
+   <!-- Possible threading models:
+	 SingleThreaded,
+	 CullDrawThreadPerContext,
+	 DrawThreadPerContext,
+	 CullThreadPerCameraDrawThreadPerContext,
+	 AutomaticSelection -->
+   <Property Name="System.OSGThreadingModel">CullThreadPerCameraDrawThreadPerContext</Property>
+
+   <Property Name="DeveloperMode">true</Property>
+   <Property Name="GameManager.Statistics.Interval">0</Property>
+   <Property Name="GameManager.Statistics.ToConsole">true</Property>
+
+   <Property Name="System.SimFrameRate">30</Property>
+   <Property Name="System.MaxTimeBetweenDraws">0.5</Property>
+   <Property Name="System.UseFixedTimeStep">true</Property>
+      
+   <Property Name="dtPhysics.PhysicsEngine">Bullet</Property>
+   <!--Property Name="dtPhysics.PalPluginPath">./bin/PalPlugins</Property-->
+   <Property Name="dtPhysics.EnableStepPhysicsInBackground">true</Property>
+   <!-- This is the number of steps the physics engine will use for solving
+    constraints per engine substep -->
+   <Property Name="dtPhysics.SolverIterationCount">20</Property>
+   <Property Name="dtPhysics.TicksPerSecond">60</Property>
+   <!-- This is the number of threads to run the physics on, which
+         defaults to the number of cores you have, except that not all engines
+         will run in a background thread.-->
+   <Property Name="dtPhysics.NumProcessingElements">1</Property>
+   <!-- The range from the main camera to use for debug-drawing
+         the physics.  Setting this to 0 is infinite range.  Physics debug
+         drawing has lots of overhead and is completely brute force, so if you
+         have a large complex physics scene with lots of triangle mesh data,
+         you should probably set this to something small or you likely won't be
+         able to run at an interactive framerate. -->
+   <Property Name="dtPhysics.DebugDrawRange">100.0</Property>
+   </Properties>
+   
 </Application>

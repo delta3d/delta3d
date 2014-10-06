@@ -18,35 +18,27 @@ SOURCE_GROUP("Generated Files" REGULAR_EXPRESSION qrc_.*cxx|moc_.*cxx)
 
 #ADD_PRECOMPILED_HEADER(${APP_NAME} prefix/dtcoreprefix.h prefix/dtdalprefix.cpp PROG_SOURCES)
 
-ADD_EXECUTABLE(${APP_NAME}
-    ${PROG_HEADERS}
-    ${PROG_SOURCES}
-    ${MOC_SOURCES}
-    ${RCC_SOURCES}
-    ${UI_SOURCES}
+
+SET(APP_EXTERNAL_DEPS
+        QT_QTCORE_LIBRARY
+        QT_QTGUI_LIBRARY
+        QT_QTOPENGL_LIBRARY
+        OSGFX_LIBRARY
+        AGL_LIBRARY)
+
+SET(APP_DEPS
+          ${DTUTIL_LIBRARY}
+          ${DTCORE_LIBRARY}
+          ${DTABC_LIBRARY}
+          ${DTQT_LIBRARY}
 )
 
-LINK_WITH_VARIABLES(${APP_NAME}
-                                         QT_QTCORE_LIBRARY
-                                         QT_QTGUI_LIBRARY
-                                         QT_QTOPENGL_LIBRARY
-                                         OSGFX_LIBRARY
-                                         AGL_LIBRARY)
-
-TARGET_LINK_LIBRARIES(${APP_NAME}
-                      ${DTUTIL_LIBRARY}
-                      ${DTCORE_LIBRARY}
-                      ${DTABC_LIBRARY}
-                      ${DTQT_LIBRARY}
-)
+DELTA3D_ADD_PROGRAM(${APP_NAME} MACOSX_BUNDLE DT_OBJECT_VIEWER)
 
 IF(WIN32)
-  TARGET_LINK_LIBRARIES(${APP_NAME} User32 Gdi32 shell32 Advapi32 ole32 Ws2_32 Comctl32)
+  SET_TARGET_PROPERTIES(${APP_NAME} PROPERTIES DEBUG_POSTFIX "${CMAKE_DEBUG_POSTFIX}")
 ENDIF(WIN32)
 
-INCLUDE(ProgramInstall OPTIONAL)
-
-
 IF (MSVC)
-  SET_TARGET_PROPERTIES(${APP_NAME} PROPERTIES DEBUG_POSTFIX "${CMAKE_DEBUG_POSTFIX}")
+  TARGET_LINK_LIBRARIES(${APP_NAME} User32 Gdi32 shell32 Advapi32 ole32 Ws2_32 Comctl32)
 ENDIF (MSVC)

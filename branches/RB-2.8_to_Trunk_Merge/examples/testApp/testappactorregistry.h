@@ -19,10 +19,6 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
- *
- * This software was developed by Alion Science and Technology Corporation under
- * circumstances in which the U. S. Government may have rights in the software.
- *
  */
 
 #ifndef DELTA_TEST_APP_ACTOR_REGISTRY
@@ -42,6 +38,11 @@ namespace dtExample
          typedef dtCore::ActorPluginRegistry BaseClass;
 
          static dtCore::RefPtr<dtCore::ActorType> TERRAIN_ACTOR_TYPE;
+         static dtCore::RefPtr<dtCore::ActorType> CIVILIAN_ACTOR_TYPE;
+         static dtCore::RefPtr<dtCore::ActorType> FIREWORK_ACTOR_TYPE;
+         static dtCore::RefPtr<dtCore::ActorType> MESH_OBJECT_ACTOR_TYPE;
+         static dtCore::RefPtr<dtCore::ActorType> MESH_LAMP_ACTOR_TYPE;
+         static dtCore::RefPtr<dtCore::ActorType> VESSEL_ACTOR_TYPE;
          
          /// Constructor
          TestAppActorRegistry();

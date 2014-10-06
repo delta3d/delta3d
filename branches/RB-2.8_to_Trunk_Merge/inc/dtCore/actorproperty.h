@@ -108,12 +108,65 @@ namespace dtCore
          void SetReadOnly(bool readOnly) { mReadOnly = readOnly; }
 
          /**
+          * @return true if this property should be send is partial network update messages.
+          * @note defaults to false
+          */
+         bool GetSendInPartialUpdate() const { return mSendInPartialUpdate; }
+
+         /**
+          * Sets if this property should be send is partial network update messages.
+          */
+         void SetSendInPartialUpdate(bool sendInPartialUpdate) { mSendInPartialUpdate = sendInPartialUpdate; }
+
+         /**
+          * @return true if this property should be sent in full network update messages.
+          * @note defaults to true;
+          */
+         bool GetSendInFullUpdate() const { return mSendInFullUpdate; }
+
+         /**
+          * Sets if this property should be sent in full network update messages.
+          */
+         void SetSendInFullUpdate(bool sendInFullUpdate) { mSendInFullUpdate = sendInFullUpdate; }
+
+         /**
+          * @return true if this property should be ignored when saving even if it is not read-only and value has been set.
+          * @note defaults to false
+          */
+         bool GetIgnoreWhenSaving() const { return mIgnoreWhenSaving; }
+
+         /**
+          * Sets if this property should be ignored when saving even if it is not read-only and value has been set.
+          */
+         void SetIgnoreWhenSaving(bool ignore) { mIgnoreWhenSaving = ignore; }
+
+         /*
+          * @return true if this property should be always saved even if it is not read-only and value has been set.
+          * @note defaults to false
+          */
+         bool GetAlwaysSave() const { return mAlwaysSave; }
+
+         /**
+          * Sets if this property should be send is partial network update messages.
+          */
+         void SetAlwaysSave(bool alwaysSave) { mAlwaysSave = alwaysSave; }
+
+         /**
           *	Sets whether this property can be edited when there are multiple
           * containers selected with this property.
           */
          void SetMultipleEdit(bool enabled) { mMultipleEdit = enabled; }
 
          bool GetMultipleEdit() const { return mMultipleEdit; }
+
+         /**
+          * Sets if this property is advanced, and could be hidden as an advanced property.
+          * @note defaults to false
+          */
+         void SetAdvanced(bool enabled) { mAdvanced = enabled; }
+
+         /// @return true if this property is marked as advanced
+         bool GetAdvanced() const { return mAdvanced; }
 
          /**
           * Set the group name
@@ -181,17 +234,6 @@ namespace dtCore
          unsigned int mNumberPrecision;
 
          /**
-          * Flag the identifies if a property is read only or read/write
-          */
-         bool mReadOnly;
-
-         /**
-          *	Flag that indicates whether this property is read only when there
-          * are multiple containers selected.
-          */
-         bool mMultipleEdit;
-
-         /**
           * hidden copy constructor
           */
          ActorProperty(const ActorProperty& toCopy);
@@ -200,6 +242,27 @@ namespace dtCore
           * hidden operator=
           */
          ActorProperty& operator=(const ActorProperty&);
+
+         /* **********
+          * Flags Section.  Should should remain at the end so that they pack nicely.
+          */
+
+         /**
+          * Flag the identifies if a property is read only or read/write
+          */
+         bool mReadOnly : 1;
+
+         /**
+          *	Flag that indicates whether this property is read only when there
+          * are multiple containers selected.
+          */
+         bool mMultipleEdit : 1;
+
+         bool mSendInPartialUpdate : 1;
+         bool mSendInFullUpdate : 1;
+         bool mAdvanced : 1;
+         bool mIgnoreWhenSaving : 1;
+         bool mAlwaysSave : 1;
 
    };
 

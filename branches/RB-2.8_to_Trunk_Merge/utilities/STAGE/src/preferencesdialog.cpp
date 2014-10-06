@@ -27,7 +27,7 @@
  * William E. Johnson II, Curtiss Murphy
  */
 #include <prefix/stageprefix.h>
-#include <QtGui/QGridLayout>
+#include <QtGui/QFormLayout>
 #include <QtGui/QVBoxLayout>
 #include <QtGui/QHBoxLayout>
 #include <QtGui/QCheckBox>
@@ -61,11 +61,10 @@ namespace dtEditQt
    {
       QVBoxLayout* vLay   = new QVBoxLayout(this);
       QGroupBox*   group  = new QGroupBox(tr("Preferences"));
-      QGridLayout* grid   = new QGridLayout(group);
+      QFormLayout* form   = new QFormLayout(group);
       QHBoxLayout* hLay   = new QHBoxLayout;
       QPushButton* ok     = new QPushButton(tr("OK"));
       QPushButton* cancel = new QPushButton(tr("Cancel"));
-      QLabel*      label  = new QLabel(tr("Load Last Project on Startup"));
       mColor              = new QPushButton;
       mProjectCheck       = new QCheckBox;
       mMapCheck           = new QCheckBox;
@@ -91,51 +90,27 @@ namespace dtEditQt
 
       vLay->addWidget(group);
 
-      label->setToolTip(tr("Enables the loading of the last project on startup."));
-      grid->addWidget(label, 0, 0);
-      grid->addWidget(mProjectCheck, 0, 2);
-
-      label = new QLabel(tr("Load Last Map on Startup"));
-      label->setToolTip(tr("Enables the loading of the last map on startup. Note that a map cannot be loaded without a project."));
-      grid->addWidget(label, 1, 0);
-      grid->addWidget(mMapCheck, 1, 2);
-
-      label = new QLabel(tr("Rigid Body Camera"));
-      label->setToolTip(tr("Enables the rigid body movement of a camera in a scene."));
-      grid->addWidget(label, 2, 0);
-      grid->addWidget(mRigidCamCheck, 2, 2);
-
-      label = new QLabel(tr("Autosave Delay"));
-      label->setToolTip(tr("Selects the number of minutes in between autosaves. Setting the number of minutes to zero will disable autosave."));
-      grid->addWidget(label, 4, 0);
-      grid->addWidget(mSaveMins,  4, 2);
-
-      label = new QLabel(tr("Selection Color"));
-      label->setToolTip(tr("Selects the color that will be used to highlight selected actors."));
-      grid->addWidget(label, 5, 0);
-      grid->addWidget(mColor, 5, 2);
-
-      label = new QLabel(tr("Actor Creation Offset"));
-      label->setToolTip(tr("How far away new or duplicated objects should be. Should be small (1.0) for indoor maps, large for big objects, outdoors (10.0)."));
-      grid->addWidget(label, 6, 0);
-      grid->addWidget(mActorOffsetDistance, 6, 2);
-
-      label = new QLabel(tr("Number of Recent Projects"));
-      label->setToolTip(tr("The number of recent projects that will be listed in the File->Recent Projects menu."));
-      grid->addWidget(label, 7, 0);
-      grid->addWidget(mNumRecentProjects, 7, 2);
+      form->addRow(tr("Load Last &Project on Startup:"), mProjectCheck);
+      form->addRow(tr("Load Last &Map on Startup"), mMapCheck);
+      form->addRow(tr("&Rigid Body Camera"), mRigidCamCheck);
+      form->addRow(tr("&Autosave Delay"), mSaveMins);
+      form->addRow(tr("Selection &Color"), mColor);
+      form->addRow(tr("Actor Creation &Offset"), mActorOffsetDistance);
+      form->addRow(tr("&Number of Recent Projects"), mNumRecentProjects);
 
       mSaveMins->setMinimum(0);
       mSaveMins->setMaximum(60);
       mSaveMins->setSuffix(tr(" min(s)"));
 
-      hLay->setParent(vLay);
       hLay->addStretch(1);
       hLay->addWidget(ok);
       hLay->addWidget(cancel);
       hLay->addStretch(1);
 
-      vLay->addLayout(hLay);
+      QWidget* buttonWidget = new QWidget;
+      buttonWidget->setLayout(hLay);
+
+      vLay->addWidget(buttonWidget);
 
       connect(mProjectCheck,  SIGNAL(stateChanged(int)), this, SLOT(onLastProjectCheckBox(int)));
       connect(mMapCheck,      SIGNAL(stateChanged(int)), this, SLOT(onLastMapCheckBox(int)));
@@ -144,28 +119,28 @@ namespace dtEditQt
       connect(cancel,         SIGNAL(clicked()),         this, SLOT(reject()));
 
       setWindowTitle(tr("Preference Editor"));
-
+      EditorActions& ea = EditorActions::GetInstance();
       // Set the existing values
-      mSaveMins->setValue((EditorActions::GetInstance().mSaveMilliSeconds / 1000) / 60);
+      mSaveMins->setValue((ea.mSaveMilliSeconds / 1000) / 60);
 
       setNewPalette();
 
-      bool loadProject = EditorData::GetInstance().getLoadLastProject();
-      bool loadMap     = EditorData::GetInstance().getLoadLastMap();
-      bool rigidCamera = EditorData::GetInstance().getRigidCamera();
+      EditorData& edData = EditorData::GetInstance();
+      bool loadProject = edData.getLoadLastProject();
+      bool loadMap     = edData.getLoadLastMap();
+      bool rigidCamera = edData.getRigidCamera();
 
       mProjectCheck->setChecked(loadProject);
       mMapCheck->setChecked((loadProject && loadMap));
       mRigidCamCheck->setChecked(rigidCamera);
 
-      float actorOffsetDistance = EditorData::GetInstance().GetActorCreationOffset();
+      float actorOffsetDistance = edData.GetActorCreationOffset();
       mActorOffsetDistance->setText(QString::number(actorOffsetDistance, 'f', 5));
 
-      mNumRecentProjects->setValue(EditorData::GetInstance().GetNumRecentProjects());
+      mNumRecentProjects->setValue(edData.GetNumRecentProjects());
 
       setModal(true);
-      //resize(200, 300);
-      setFixedSize(325, 300);
+      setFixedSize(minimumSize());
    }
 
    //////////////////////////////////////////////////////////////////
@@ -194,7 +169,10 @@ namespace dtEditQt
    void PreferencesDialog::onColorSelect()
    {
       QColor selectedColor = QColorDialog::getColor(EditorData::GetInstance().getSelectionColor(), this);
-      EditorData::GetInstance().setSelectionColor(selectedColor);
+      if (selectedColor.isValid())
+      {
+         EditorData::GetInstance().setSelectionColor(selectedColor);
+      }
 
       setNewPalette();
    }

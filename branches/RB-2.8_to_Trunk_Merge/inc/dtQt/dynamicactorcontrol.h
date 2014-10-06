@@ -125,7 +125,7 @@ namespace dtQt
           * @param className The class name to search for
           * @return A vector with the name and proxy pointer mapped
           */
-         void GetActorProxies(std::vector< dtCore::RefPtr<dtCore::BaseActorObject> >& toFill, const std::string& className);
+         void GetActors(std::vector< dtCore::RefPtr<dtCore::BaseActorObject> >& toFill, const std::string& className);
 
          dtCore::ActorActorProperty*   mProperty;
          dtCore::ActorIDActorProperty* mIdProperty;

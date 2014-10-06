@@ -4,4 +4,6 @@
     <SPECULAR>127 127 127 0</SPECULAR>
     <SHININESS>1</SHININESS>
     <MAP>materials/Shorts_Jogger_Green.png</MAP>
+    <MAP>materials/NONE_NORM.png</MAP>
+    <MAP>materials/NONE_SPEC.png</MAP>
 </MATERIAL>

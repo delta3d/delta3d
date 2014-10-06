@@ -135,94 +135,99 @@ namespace dtAnim
          return NULL;
       }
 
-      dtCore::RefPtr<osg::Geode> geode = new osg::Geode();
+      dtCore::RefPtr<osg::VertexBufferObject> vertexVBO = modelData->GetVertexBufferObject();
+      dtCore::RefPtr<osg::ElementBufferObject> indexEBO = modelData->GetElementBufferObject();
 
-      wrapper->SetLODLevel(1);
-      wrapper->UpdateAnimations(0.0f);
-
-      if (wrapper->BeginRenderingQuery() == false)
+      if (!vertexVBO.valid() || !indexEBO.valid())
       {
-         LOG_ERROR("Can't begin the rendering query.");
-         return NULL;
+         vertexVBO = new osg::VertexBufferObject;
+         indexEBO = new osg::ElementBufferObject;
+
+         vertexVBO->addArray(vertexArray);
+
+         // Store the buffers with the model data for possible re-use later
+         modelData->SetVertexBufferObject(vertexVBO);
+         modelData->SetElementBufferObject(indexEBO);
+
+         osg::DrawElements* drawElements = NULL;
+
+         // Allocate the draw elements for the element size that CalIndex defines
+         if (sizeof(CalIndex) < 4)
+         {
+            drawElements = new osg::DrawElementsUShort(GL_TRIANGLES, numIndices, (GLushort*)indexArray);
+         }
+         else
+         {
+            drawElements = new osg::DrawElementsUInt(GL_TRIANGLES, numIndices, (GLuint*)indexArray);
+         }
+
+         modelData->SetDrawElements(drawElements);
       }
 
-      int numVerts = 0;
-      int numIndices = 0;
+      dtCore::ShaderProgram* shadProg = LoadShaders(*modelData, *geode);
 
-      CalcNumVertsAndIndices(wrapper, numVerts, numIndices);
 
-      CalHardwareModel* hardwareModel = modelData->GetOrCreateCalHardwareModel();
+      /* Begin figure out if this open gl implementation uses [0] on array uniforms
+       * This seems to be an ATI/NVIDIA thing.
+       * This requires me to force the shader to compile.
+       * The latest developer version of Open Scene Graph has a workaround
+       * in the shader program class for this issue, but the current stable
+       * osg release as of this writing (3.0.1) lacks the fix so
+       * include this hack here.
+       */
+      osg::Program* prog = shadProg->GetShaderProgram();
+      prog->compileGLObjects(*renderInfo->getState());
 
-      osg::IntArray* indexArray = modelData->GetSourceIndexArray();
-      osg::FloatArray* vertexArray = modelData->GetSourceVertexArray();
+      std::string boneTransformUniform = BONE_TRANSFORM_UNIFORM;
 
-      // Create GPU resources from our source data
+      if (prog->getPCP(renderInfo->getContextID()) != NULL && prog->getPCP(renderInfo->getContextID())->getUniformLocation(boneTransformUniform) == -1)
       {
-         osg::VertexBufferObject* vertexVBO = modelData->GetVertexBufferObject();
-         osg::ElementBufferObject* indexEBO = modelData->GetElementBufferObject();
-
-         if (vertexVBO == NULL)
+         if (prog->getPCP(renderInfo->getContextID()) != NULL && prog->getPCP(renderInfo->getContextID())->getUniformLocation(boneTransformUniform + "[0]") == -1)
          {
-            // Either both should be NULL, or both non NULL
-            assert(indexEBO == NULL);
-
-            vertexVBO = new osg::VertexBufferObject;
-            indexEBO = new osg::ElementBufferObject;
-
-            vertexVBO->addArray(vertexArray);
-
-            // Store the buffers with the model data for possible re-use later
-            modelData->SetVertexBufferObject(vertexVBO);
-            modelData->SetElementBufferObject(indexEBO);
-
-            osg::DrawElements* drawElements = NULL;
-
-            // Allocate the draw elements for the element size that CalIndex defines
-            if (sizeof(CalIndex) < 4)
-            {
-               // WARNING! Ensure that the array pointer is actually of type short.
-               drawElements = new osg::DrawElementsUShort(GL_TRIANGLES, numIndices, (GLushort*)indexArray->getDataPointer());
-            }
-            else
-            {
-               drawElements = new osg::DrawElementsUInt(GL_TRIANGLES, numIndices, (GLuint*)indexArray->getDataPointer());
-            }
-
-            modelData->SetDrawElements(drawElements);
+            LOG_ERROR("Can't find uniform named \"" + boneTransformUniform
+                      + "\" which is required for skinning.");
          }
-
-         dtCore::RefPtr<dtAnim::CharacterShaderBuilder> shaderBuilder;
-         //dtCore::ShaderProgram* shadProg =
-         shaderBuilder->LoadShaders(*modelData, *geode);
-         //End check.
-
-         // Compute this only once
-         osg::BoundingBox boundingBox = wrapper->GetBoundingBox();
-         if (boundingBox.radius2() <= FLT_EPSILON)
+         else
          {
-            boundingBox.expandBy(osg::Vec3f(1.0f, 1.0f, 1.0f));
+            boneTransformUniform.append("[0]");
          }
+      }
+      //End check.
 
-         for (int meshCount = 0; meshCount < hardwareModel->getHardwareMeshCount(); ++meshCount)
-         {
-            HardwareSubmeshDrawable* drawable = new HardwareSubmeshDrawable(wrapper, hardwareModel,
-                                                    CharacterShaderBuilder::BONE_TRANSFORM_UNIFORM, modelData->GetShaderMaxBones(),
-                                                    meshCount, vertexVBO, indexEBO);
-            drawable->setInitialBound(boundingBox);
-            geode->addDrawable(drawable);
+      // Compute this only once
+      osg::BoundingBox boundingBox = pWrapper->GetBoundingBox();
 
-            // Register the drawable instance with the associated interface object.
-            dtAnim::Cal3dHardwareMesh* mesh = dynamic_cast<dtAnim::Cal3dHardwareMesh*>(wrapper->GetMeshByIndex(meshCount));
-            if (mesh != NULL)
-            {
-               mesh->SetDrawable(drawable);
-            }
-         }
+      int boneTransformLocation = prog->getPCP(renderInfo->getContextID())->getUniformLocation(boneTransformUniform);
+      int boneWeightsLocation = prog->getPCP(renderInfo->getContextID())->getAttribLocation(BONE_WEIGHTS_ATTRIB);
+      int boneIndicesLocation = prog->getPCP(renderInfo->getContextID())->getAttribLocation(BONE_INDICES_ATTRIB);
+      int tangentsLocation = prog->getPCP(renderInfo->getContextID())->getAttribLocation(TANGENT_SPACE_ATTRIB);
 
-         geode->setComputeBoundingSphereCallback(new Cal3dBoundingSphereCalculator(*wrapper));
+      if (boneTransformLocation == -1) {
+          LOG_ERROR("Can't find uniform named \"" + BONE_TRANSFORM_UNIFORM
+              + "\" which is required for skinning.");
+      }
+      else if (boneWeightsLocation== -1) {
+          LOG_ERROR("Can't find attribute named \"" + BONE_WEIGHTS_ATTRIB
+              + "\" which is required for skinning.");
+      }
+      else if (boneIndicesLocation == -1) {
+          LOG_ERROR("Can't find attribute named \"" + BONE_INDICES_ATTRIB
+              + "\" which is required for skinning.");
+      }
+      else {
+          for (int meshCount = 0; meshCount < hardwareModel->getHardwareMeshCount(); ++meshCount) {
+              HardwareSubmeshDrawable* drawable = new HardwareSubmeshDrawable(pWrapper, hardwareModel,
+                  BONE_TRANSFORM_UNIFORM, modelData->GetShaderMaxBones(),
+                  meshCount, vertexVBO, indexEBO,
+                  boneWeightsLocation,
+                  boneIndicesLocation,
+                  tangentsLocation);
+              drawable->SetBoundingBox(boundingBox);
+              geode->addDrawable(drawable);
+          }
       }
 
-      wrapper->EndRenderingQuery();
+      geode->setComputeBoundingSphereCallback(new Cal3DBoundingSphereCalculator(*pWrapper));
 
       return geode;
    }

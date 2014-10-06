@@ -34,6 +34,7 @@ SET(LIB_SOURCES
   ${SOURCE_PATH}/characterwrapper.cpp
   ${SOURCE_PATH}/chardrawable.cpp
   ${SOURCE_PATH}/constants.cpp
+  ${SOURCE_PATH}/geometrybuilder.cpp
   ${SOURCE_PATH}/hardwaresubmesh.cpp
   ${SOURCE_PATH}/hotspotdriver.cpp
   ${SOURCE_PATH}/lodcullcallback.cpp
@@ -54,10 +55,12 @@ SET(LIB_SOURCES
   ${SOURCE_PATH}/posemeshloader.cpp
   ${SOURCE_PATH}/posemeshutility.cpp
   ${SOURCE_PATH}/posemeshxml.cpp
+  ${SOURCE_PATH}/posesequence.cpp
   ${SOURCE_PATH}/sequencemixer.cpp
   ${SOURCE_PATH}/skeletaldrawable.cpp
   ${SOURCE_PATH}/skeletondriver.cpp
   ${SOURCE_PATH}/springdriver.cpp
+  ${SOURCE_PATH}/animationtransitionplanner.cpp
   ${SOURCE_PATH}/submesh.cpp
   ${SOURCE_PATH}/walkrunblend.cpp
 )
@@ -97,6 +100,7 @@ SET(LIB_PUBLIC_HEADERS
   ${HEADER_PATH}/constants.h
   ${HEADER_PATH}/dtanim.h
   ${HEADER_PATH}/export.h
+  ${HEADER_PATH}/geometrybuilder.h
   ${HEADER_PATH}/hardwaresubmesh.h
   ${HEADER_PATH}/hotspotdriver.h
   ${HEADER_PATH}/ical3ddriver.h
@@ -122,11 +126,13 @@ SET(LIB_PUBLIC_HEADERS
   ${HEADER_PATH}/posemeshloader.h
   ${HEADER_PATH}/posemeshutility.h
   ${HEADER_PATH}/posemeshxml.h
+  ${HEADER_PATH}/posesequence.h
   ${HEADER_PATH}/sequencemixer.h
   ${HEADER_PATH}/skeletaldrawable.h
   ${HEADER_PATH}/skeletondriver.h
   ${HEADER_PATH}/skeletoninterface.h
   ${HEADER_PATH}/springdriver.h
+  ${HEADER_PATH}/animationtransitionplanner.h
   ${HEADER_PATH}/submesh.h
   ${HEADER_PATH}/walkrunblend.h
 )
@@ -144,7 +150,8 @@ SET(LIB_DEPS
     ${DTUTIL_LIBRARY}
     ${DTCORE_LIBRARY}
     ${DTGAME_LIBRARY}
-)
+    ${DTAI_LIBRARY}
+ )
 
 DELTA3D_ADD_LIBRARY(${LIB_NAME} DT_ANIM_LIBRARY SHARED)
 

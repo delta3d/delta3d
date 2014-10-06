@@ -134,7 +134,6 @@ namespace dtEditQt
       // Create our "toolbar" widget.
       mToolBar = new QFrame(this);
       mToolBar->setFrameStyle(QFrame::Box | QFrame::Raised);
-      mToolBar->setFixedHeight(25);
 
       QBoxLayout* layout = new QHBoxLayout(mToolBar);
 
@@ -145,6 +144,7 @@ namespace dtEditQt
 
       SetupSnapWidgets(layout);
       layout->addSpacing(5);
+      mToolBar->setFixedHeight(layout->sizeHint().height());
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -155,7 +155,6 @@ namespace dtEditQt
       mCheckBoxTrans = new QCheckBox(this);
       mCheckBoxTrans->setCheckable(true);
       mCheckBoxTrans->setToolTip(tr("Enables the translation snap tool."));
-      mCheckBoxTrans->setMaximumWidth(15);
       layout->addWidget(mCheckBoxTrans);
 
       label = new QLabel(mToolBar);
@@ -174,7 +173,6 @@ namespace dtEditQt
       mCheckBoxAngle = new QCheckBox(this);
       mCheckBoxAngle->setCheckable(true);
       mCheckBoxAngle->setToolTip(tr("Enables the translation snap tool."));
-      mCheckBoxAngle->setMaximumWidth(15);
       layout->addWidget(mCheckBoxAngle);
 
       label = new QLabel(mToolBar);
@@ -193,7 +191,6 @@ namespace dtEditQt
       mCheckBoxScale = new QCheckBox(this);
       mCheckBoxScale->setCheckable(true);
       mCheckBoxScale->setToolTip(tr("Enables the translation snap tool."));
-      mCheckBoxScale->setMaximumWidth(15);
       layout->addWidget(mCheckBoxScale);
 
       label = new QLabel(mToolBar);

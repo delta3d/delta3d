@@ -19,9 +19,6 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
- *
- * This software was developed by Alion Science and Technology Corporation under
- * circumstances in which the U. S. Government may have rights in the software.
  */
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -289,6 +286,70 @@ namespace dtExample
       }
 
       return visible;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   bool GuiScreen::IsControlOfType(const GuiNode& control, const std::string& typeName) const
+   {
+      return strcmp(control.getLookNFeel().c_str(), typeName.c_str()) == 0;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   GuiListbox* GuiScreen::GetListbox(const std::string& controlName) const
+   {
+      GuiListbox* listbox = NULL;
+      GuiNode* control = GetNode(controlName);
+
+      if (control != NULL && IsControlOfType(*control, GuiListItem::LISTBOX_TYPE))
+      {
+         listbox = static_cast<GuiListbox*>(control);
+      }
+      else
+      {
+         LOG_ERROR("Could not access listbox control: " + controlName);
+      }
+
+      return listbox;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   GuiListItem* GuiScreen::AddListItem(const std::string& listControlName, GuiNode& itemNode) const
+   {
+      GuiListItem* listItem = NULL;
+      GuiListbox* listbox = GetListbox(listControlName);
+
+      if (listbox != NULL)
+      {
+         listItem = AddListItem(*listbox, itemNode);
+      }
+
+      return listItem;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   GuiListItem* GuiScreen::AddListItem(GuiListbox& listControl, GuiNode& itemNode) const
+   {
+      GuiListItem* result = NULL;
+
+      std::ostringstream itemName;
+      itemName << listControl.getName().c_str() << "@" << itemNode.getName().c_str();
+
+      result = GuiListItem::Create(itemName.str());
+      result->addChildWindow(&itemNode);
+
+      CEGUI::UVector2 itemSize = result->getSize();
+
+      // CEGUI cannot be trusted to arrange complex items
+      // in a listbox. Set the relative positioning of
+      // the items manually.
+      int index = listControl.getItemCount();
+      CEGUI::UVector2 pos;
+      pos.d_y.d_offset = index * itemSize.d_y.d_offset;
+      result->setPosition(pos);
+
+      listControl.addItem(result);
+
+      return result;
    }
 
 }

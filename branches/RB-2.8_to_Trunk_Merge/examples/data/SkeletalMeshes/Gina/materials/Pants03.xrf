@@ -4,4 +4,6 @@
     <SPECULAR>127 127 127 0</SPECULAR>
     <SHININESS>1</SHININESS>
     <MAP>materials/Pants03.png</MAP>
+    <MAP>materials/Pants_Normals.png</MAP>
+    <MAP>materials/NONE_SPEC.png</MAP>
 </MATERIAL>

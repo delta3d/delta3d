@@ -89,23 +89,24 @@ DT_DISABLE_WARNING_END
    ////////////////////////////////////////////////////////////////////////////////
    void Cal3DModelData::SetScale(float scale)
    {
-      // Ensure scale never goes to 0, to prevent the NAN plague.
-      if(scale <= 0.0f)
-      {
-         scale = 0.001f;
-      }
+      mScale = scale;
+   }
 
-      float prevScale = GetScale();
-      BaseClass::SetScale(scale);
+   ////////////////////////////////////////////////////////////////////////////////
+   float Cal3DModelData::GetScale() const
+   {
+      return mScale;
+   }
 
-      // If the previous scale was not 1...
-      if(prevScale != 1.0f)
-      {
-         // ...reverse its effect by 1/prevScale and then apply the new scale.
-         scale = 1.0f/prevScale * scale;
-      }
+   ////////////////////////////////////////////////////////////////////////////////
+   AnimationWrapper* Cal3DModelData::GetAnimationWrapperByName(const std::string& name)
+   {
+      AnimationWrapper* anim = NULL;
 
-      if (scale != 1.0f)
+      AnimationWrapper* curAnim = NULL;
+      AnimationWrapperArray::iterator curIter = mAnimWrappers.begin();
+      AnimationWrapperArray::iterator endIter = mAnimWrappers.end();
+      for (;curIter != endIter; ++curIter)
       {
          // Apply the final scale effect.
          mCoreModel->scale(scale);

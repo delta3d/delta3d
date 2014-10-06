@@ -21,31 +21,31 @@
          <Property Name="HorzFormatting" Value="HorzCentred"/>
          <Property Name="HorizontalAlignment" Value="Centre"/>
          <Property Name="VerticalAlignment" Value="Top"/>
-         <Property Name="Font" Value="DejaVuSans-10"/>
+         <Property Name="Font" Value="Hobo"/>
          <Property Name="AlwaysOnTop" Value="True"/>
          <Property Name="TextColours" Value="FFFFFFFF"/>
          <Property Name="Text" Value="Game Quit Screen"/>
       </Window>
 
       <!-- BUTTON -->
-      <Window Name="GameQuitScreen_Button_Quit" Type="WindowsLook/Button">
+      <Window Name="GameQuitScreen_Button_Quit" Type="TestApp/Button">
          <Property Name="UnifiedSize" Value="{{0.2,0},{0.075,0}}"/>
          <Property Name="UnifiedPosition" Value="{{-0.15,0},{0.0,0}}"/>
          <Property Name="HorizontalAlignment" Value="Centre"/>
          <Property Name="VerticalAlignment" Value="Centre"/>
-         <Property Name="Font" Value="DejaVuSans-10"/>
+         <Property Name="Font" Value="Hobo"/>
          <Property Name="AlwaysOnTop" Value="True"/>
          <Property Name="Text" Value="Quit"/>
          <Property Name="Action" Value="TRANSITION_FORWARD"/>
       </Window>
 
       <!-- BUTTON -->
-      <Window Name="GameQuitScreen_Button_Continue" Type="WindowsLook/Button">
+      <Window Name="GameQuitScreen_Button_Continue" Type="TestApp/Button">
          <Property Name="UnifiedSize" Value="{{0.2,0},{0.075,0}}"/>
          <Property Name="UnifiedPosition" Value="{{0.15,0},{0.0,0}}"/>
          <Property Name="HorizontalAlignment" Value="Centre"/>
          <Property Name="VerticalAlignment" Value="Centre"/>
-         <Property Name="Font" Value="DejaVuSans-10"/>
+         <Property Name="Font" Value="Hobo"/>
          <Property Name="AlwaysOnTop" Value="True"/>
          <Property Name="Text" Value="Continue"/>
          <Property Name="Action" Value="TRANSITION_BACK"/>

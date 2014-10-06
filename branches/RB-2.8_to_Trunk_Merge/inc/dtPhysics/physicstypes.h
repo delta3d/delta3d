@@ -25,7 +25,7 @@
 #include <osg/Vec3>
 #include <osg/Vec4>
 #include <osg/Matrix>
-#include <osg/Array>
+//#include <osg/Array>
 #include <dtCore/transform.h>
 #include <string>
 
@@ -40,21 +40,21 @@ class palDebugDraw;
 
 namespace dtPhysics
 {
-   typedef DT_PHYSICS_EXPORT osg::Vec3 VectorType;
-   typedef DT_PHYSICS_EXPORT osg::Vec4 Vector4Type;
-   typedef DT_PHYSICS_EXPORT osg::Matrix MatrixType;
-   typedef DT_PHYSICS_EXPORT dtCore::Transform TransformType;
-   typedef DT_PHYSICS_EXPORT osg::Vec3Array VectorArrayType;
+   typedef osg::Vec3 VectorType;
+   typedef osg::Vec4 Vector4Type;
+   typedef osg::Matrix MatrixType;
+   typedef dtCore::Transform TransformType;
+   //typedef DT_PHYSICS_EXPORT osg::Vec3Array VectorArrayType;
 
-   typedef DT_PHYSICS_EXPORT float Real;
+   typedef float Real;
 
-   typedef DT_PHYSICS_EXPORT int CollisionGroup;
-   typedef DT_PHYSICS_EXPORT unsigned long CollisionGroupFilter;
+   typedef int CollisionGroup;
+   typedef unsigned long CollisionGroupFilter;
 
-   typedef DT_PHYSICS_EXPORT palMaterial Material;
+   typedef palMaterial Material;
    typedef DT_PHYSICS_EXPORT palMaterialInteractionCollisionCallback MaterialInteractionCollisionCallback;
 
-   typedef DT_PHYSICS_EXPORT palDebugDraw DebugDraw;
+   typedef palDebugDraw DebugDraw;
 
 }
 

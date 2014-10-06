@@ -54,7 +54,7 @@ CloudDome::CloudDome(int   octaves,
    , mSpeedY(0.05f)
    , mBias(1.0f)
    , mCloudColor(1.0f, 1.0f, 1.0f)
-   , mOffset(.01f, .01f, 0.f)
+   , mOffset(.01f, .01f, 0.0f)
 {
    RegisterInstance(this);
    SetOSGNode(new osg::Group());

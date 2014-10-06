@@ -193,13 +193,10 @@ namespace dtGame
    const MessageType MessageType::INFO_CLIENT_CONNECTED("Client Connected", "Info", "Sent to other clients when a new client has connected", 15, (MachineInfoMessage*)(NULL));
    const MessageType MessageType::INFO_MAP_CHANGE_LOAD_END("Map Loaded", "Info", "Sent after a new map has been loaded successfully", 16, (MapMessage*)(NULL));
    const MessageType MessageType::INFO_MAP_CHANGE_UNLOAD_END("Map UnLoaded", "Info", "Sent after an old map has been unloaded successfully", 31, (MapMessage*)(NULL));
-   const MessageType& MessageType::INFO_MAP_LOADED(INFO_MAP_CHANGE_LOAD_END);
-   const MessageType& MessageType::INFO_MAP_UNLOADED(INFO_MAP_CHANGE_UNLOAD_END);
 
    // TODO check message IDs, not to overlap with anything else in Delta
    const MessageType MessageType::INFO_MAPS_OPENED("Maps Opened", "Info", "Sent after a (set of) new map(s) has been loaded", 32, (MapMessage*)(NULL));
    const MessageType MessageType::INFO_MAPS_CLOSED("Maps Closed", "Info", "Sent after a (set of) old map(s) has been unloaded", 33, (MapMessage*)(NULL));
-
 
    const MessageType MessageType::INFO_PAUSED("Paused", "Info", "Sent when a game manager pauses the game or simulation", 17, (Message*)(NULL));
    const MessageType MessageType::INFO_RESUMED("Resumed", "Info", "Sent when a game manager resumes from a paused state", 18, (Message*)(NULL));
@@ -209,11 +206,17 @@ namespace dtGame
    const MessageType MessageType::INFO_ENVIRONMENT_CHANGED("Environment Changed", "Info", "Sent when an environment actor is set on the game manager", 22, (Message*)(NULL));
    const MessageType MessageType::INFO_MAP_CHANGE_LOAD_BEGIN("Map Load Began", "Info", "Sent when loading a map has begun.", 23, (MapMessage*)(NULL));
    const MessageType MessageType::INFO_MAP_CHANGE_UNLOAD_BEGIN("Map Unload Began", "Info", "Sent when unloading a map has begun.", 24, (MapMessage*)(NULL));
-   const MessageType& MessageType::INFO_MAP_LOAD_BEGIN(INFO_MAP_CHANGE_LOAD_BEGIN);
-   const MessageType& MessageType::INFO_MAP_UNLOAD_BEGIN(INFO_MAP_CHANGE_UNLOAD_BEGIN);
    const MessageType MessageType::INFO_MAP_CHANGE_BEGIN("Map Change Began", "Info", "Sent when the program has begun to unload a map and load a new one.  Unload and load messages will be sent", 25, (MapMessage*)(NULL));
    const MessageType MessageType::INFO_MAP_CHANGE_END("Map Changed", "Info", "Sent when the program has completed unloading and loading a new map.", 26, (MapMessage*)(NULL));
+
+   ////////////////////
+   // Deprecated
+   const MessageType& MessageType::INFO_MAP_LOAD_BEGIN(INFO_MAP_CHANGE_LOAD_BEGIN);
+   const MessageType& MessageType::INFO_MAP_UNLOAD_BEGIN(INFO_MAP_CHANGE_UNLOAD_BEGIN);
+   const MessageType& MessageType::INFO_MAP_LOADED(INFO_MAP_CHANGE_LOAD_END);
+   const MessageType& MessageType::INFO_MAP_UNLOADED(INFO_MAP_CHANGE_UNLOAD_END);
    const MessageType& MessageType::INFO_MAP_CHANGED(INFO_MAP_CHANGE_END);
+   ////////////////////
 
    const MessageType MessageType::INFO_PLAYER_ENTERED_WORLD("Player entered world", "Info", "Sent when the player of a game enters the world.", 30, (Message*)(NULL));
 

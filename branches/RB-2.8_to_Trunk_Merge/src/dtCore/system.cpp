@@ -52,7 +52,7 @@ namespace dtCore
       , mMaxTimeBetweenDraws(30000)
       , mMaxSimulationStep(1000000000)
       , mSystemStages(System::STAGES_DEFAULT)
-      , mUseFixedTimeStep(false)
+      , mUseFixedTimeStep(true)
       , mRunning(false)
       , mShutdownOnWindowClose(true)
       , mPaused(false)

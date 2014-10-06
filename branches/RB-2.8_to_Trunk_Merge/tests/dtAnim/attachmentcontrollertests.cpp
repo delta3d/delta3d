@@ -107,6 +107,7 @@ namespace dtAnim
             dtCore::ResourceDescriptor charModel("SkeletalMeshes:Marine:marine_test.xml");
 
             LoadModel(mAnimHelper, charModel);
+            CPPUNIT_ASSERT_DOUBLES_EQUAL(testScale, mAnimHelper->GetModelWrapper()->GetScale(), 0.01f);
          }
 
          void tearDown()
@@ -208,7 +209,7 @@ namespace dtAnim
             osg::Vec3 boneTrans = bone->GetAbsoluteTranslation();
 
             osg::Quat expectedRot = spotDef.mLocalRotation * boneRot;
-            osg::Vec3 expectedPos = boneTrans + (boneRot * spotDef.mLocalTranslation);
+            osg::Vec3 expectedPos = boneTrans + (boneRot * spotDef.mLocalTranslation) * wrapper->GetScale();
 
             dtCore::Transform xform;
             attachment->GetTransform(xform, dtCore::Transformable::REL_CS);

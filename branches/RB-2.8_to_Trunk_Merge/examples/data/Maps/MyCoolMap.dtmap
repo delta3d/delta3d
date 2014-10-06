@@ -249,8 +249,8 @@
             <property>
                 <name>static mesh</name>
                 <resourceType>StaticMeshes</resourceType>
-                <resourceDisplayName>StaticMeshes::uh-1n.ive</resourceDisplayName>
-                <resource>StaticMeshes::uh-1n.ive</resource>
+                <resourceDisplayName>StaticMeshes:uh-1n.ive</resourceDisplayName>
+                <resource>StaticMeshes:uh-1n.ive</resource>
             </property>
             <property>
                 <name>use cache object</name>
@@ -461,8 +461,8 @@
             <property>
                 <name>static mesh</name>
                 <resourceType>StaticMeshes</resourceType>
-                <resourceDisplayName>StaticMeshes::cypress1.ive</resourceDisplayName>
-                <resource>StaticMeshes::cypress1.ive</resource>
+                <resourceDisplayName>StaticMeshes:cypress1.ive</resourceDisplayName>
+                <resource>StaticMeshes:cypress1.ive</resource>
             </property>
         </actor>
         <actor>
@@ -549,38 +549,38 @@
             <property>
                 <name>Top Texture</name>
                 <resourceType>Textures</resourceType>
-                <resourceDisplayName>Textures::top.jpg</resourceDisplayName>
-                <resource>Textures::top.jpg</resource>
+                <resourceDisplayName>Textures:top.jpg</resourceDisplayName>
+                <resource>Textures:top.jpg</resource>
             </property>
             <property>
                 <name>Bottom Texture</name>
                 <resourceType>Textures</resourceType>
-                <resourceDisplayName>Textures::bottom.jpg</resourceDisplayName>
-                <resource>Textures::bottom.jpg</resource>
+                <resourceDisplayName>Textures:bottom.jpg</resourceDisplayName>
+                <resource>Textures:bottom.jpg</resource>
             </property>
             <property>
                 <name>Left Texture</name>
                 <resourceType>Textures</resourceType>
-                <resourceDisplayName>Textures::left.jpg</resourceDisplayName>
-                <resource>Textures::left.jpg</resource>
+                <resourceDisplayName>Textures:left.jpg</resourceDisplayName>
+                <resource>Textures:left.jpg</resource>
             </property>
             <property>
                 <name>Right Texture</name>
                 <resourceType>Textures</resourceType>
-                <resourceDisplayName>Textures::right.jpg</resourceDisplayName>
-                <resource>Textures::right.jpg</resource>
+                <resourceDisplayName>Textures:right.jpg</resourceDisplayName>
+                <resource>Textures:right.jpg</resource>
             </property>
             <property>
                 <name>Front Texture</name>
                 <resourceType>Textures</resourceType>
-                <resourceDisplayName>Textures::front.jpg</resourceDisplayName>
-                <resource>Textures::front.jpg</resource>
+                <resourceDisplayName>Textures:front.jpg</resourceDisplayName>
+                <resource>Textures:front.jpg</resource>
             </property>
             <property>
                 <name>Back Texture</name>
                 <resourceType>Textures</resourceType>
-                <resourceDisplayName>Textures::back.jpg</resourceDisplayName>
-                <resource>Textures::back.jpg</resource>
+                <resourceDisplayName>Textures:back.jpg</resourceDisplayName>
+                <resource>Textures:back.jpg</resource>
             </property>
         </actor>
         <actor>
@@ -869,8 +869,8 @@
             <property>
                 <name>static mesh</name>
                 <resourceType>StaticMeshes</resourceType>
-                <resourceDisplayName>StaticMeshes::terrain_simple.ive</resourceDisplayName>
-                <resource>StaticMeshes::terrain_simple.ive</resource>
+                <resourceDisplayName>StaticMeshes:terrain_simple.ive</resourceDisplayName>
+                <resource>StaticMeshes:terrain_simple.ive</resource>
             </property>
         </actor>
         <actor>

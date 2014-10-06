@@ -170,7 +170,7 @@ void TestAnim::OnStartup(dtABC::BaseABC& app, dtGame::GameManager& gameManager)
 
    for (;iter != endIter; ++iter)
    {
-      dtAnim::AnimationGameActorProxy* gameProxy = dynamic_cast<dtAnim::AnimationGameActorProxy*>(*iter);
+      dtAnim::AnimationGameActor* gameProxy = dynamic_cast<dtAnim::AnimationGameActor*>(*iter);
 
       if (gameProxy != NULL)
       {
@@ -196,7 +196,7 @@ void TestAnim::OnStartup(dtABC::BaseABC& app, dtGame::GameManager& gameManager)
       {
          for (int j = 0; j < 10; ++j, startPos[1] += 2.0f)
          {
-            dtCore::RefPtr<dtAnim::AnimationGameActorProxy> proxy;
+            dtCore::RefPtr<dtAnim::AnimationGameActor> proxy;
             gameManager.CreateActor(*dtAnim::AnimActorRegistry::ANIMATION_ACTOR_TYPE, proxy);
             if (proxy.valid())
             {
@@ -239,11 +239,11 @@ void TestAnim::OnShutdown(dtABC::BaseABC& app, dtGame::GameManager& gm)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void TestAnim::InitializeAnimationActor(dtAnim::AnimationGameActorProxy* gameProxy,
+void TestAnim::InitializeAnimationActor(dtAnim::AnimationGameActor* gameProxy,
                                         dtAnim::AnimationComponent* animComp,
                                         bool isPlayer, dtCore::Camera *camera)
 {
-   dtAnim::AnimationGameActorProxy* actor = dynamic_cast<dtAnim::AnimationGameActorProxy*>(gameProxy);
+   dtAnim::AnimationGameActor* actor = dynamic_cast<dtAnim::AnimationGameActor*>(gameProxy);
 
    if (actor != NULL)
    {

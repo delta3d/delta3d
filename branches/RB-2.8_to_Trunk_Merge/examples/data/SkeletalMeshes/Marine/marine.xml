@@ -13,7 +13,10 @@
    <material fileName="BODY.crf" name="Body Material" />
    <material fileName="Helmet.crf" name="Helmet Material" />
    <material fileName="M16m80.crf" name="M16 Material" />
-   <LOD>
+    <scale>
+      <scalingFactor>0.9</scalingFactor>
+    </scale>
+    <LOD>
       <lodStartDistance>10.0</lodStartDistance>
       <lodEndDistance>500.0</lodEndDistance>
       <maxVisibleDistance>1000.0</maxVisibleDistance>

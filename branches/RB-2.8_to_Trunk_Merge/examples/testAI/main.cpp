@@ -29,6 +29,8 @@
 // if none is present we call the default constructor which has a default map name
 int main (int argc, char* argv[])
 {
+   dtUtil::RemovePSNCommandLineOption(argc, argv);
+
    // set data search path to parent delta3d/data
    std::string dataPath = dtUtil::GetDeltaDataPathList();
    dtUtil::SetDataFilePathList(dataPath + ";" + 
@@ -36,7 +38,7 @@ int main (int argc, char* argv[])
 
    dtCore::RefPtr<TestAI> app;
 
-   if (argc != 2) 
+   if (argc < 2)
    {
       app = new TestAI();
    }

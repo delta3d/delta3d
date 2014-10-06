@@ -891,6 +891,14 @@ namespace dtAnim
       }
 
       // Morph Animations
+      modelData.SetShaderGroupName(handler.mShaderGroup);
+      modelData.SetShaderName(handler.mShaderName);
+      modelData.SetShaderMaxBones(handler.mShaderMaxBones);
+
+      LODOptions& lodOptions = modelData.GetLODOptions();
+
+      //always set default lod values
+      //if (handler.mFoundLODOptions)
       {
          int count = calModel->getMorphTargetMixer()->getMorphTargetCount();
          for (int index = 0; index < count; ++index)

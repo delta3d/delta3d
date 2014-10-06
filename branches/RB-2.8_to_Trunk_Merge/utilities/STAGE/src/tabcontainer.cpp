@@ -42,6 +42,8 @@ namespace dtEditQt
       : QObject(parent)
    {
       tabC = new QTabWidget (parent);
+      tabC->setUsesScrollButtons(true);
+      tabC->setTabPosition(QTabWidget::West);
    }
    ///////////////////////////////////////////////////////////////////////////////
    TabContainer::~TabContainer()

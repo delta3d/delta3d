@@ -54,12 +54,12 @@ namespace dtAI
       /// Destructor
       virtual ~BaseAIComponent();
       virtual void CleanUp();
-      void SetAIPluginInterfaceProxy(AIInterfaceActorProxy* proxy) { mAIInterfaceProxy = proxy; }
+      void SetAIPluginInterface(AIInterfaceActor* actor) { mAIInterfaceActor = actor; }
 
    private:
       void TickLocal(float dt);
 
-      dtCore::RefPtr<AIInterfaceActorProxy> mAIInterfaceProxy;
+      dtCore::RefPtr<AIInterfaceActor> mAIInterfaceActor;
    };
 
 } // namespace dtAI

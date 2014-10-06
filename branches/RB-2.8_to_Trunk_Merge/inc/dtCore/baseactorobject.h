@@ -134,15 +134,6 @@ namespace dtCore
       virtual void Init(const dtCore::ActorType& actorType);
 
       /**
-       * Checks if a given property should be saved out to file data.
-       *
-       * @param[in]  prop  The property.
-       *
-       * @return     True if the given property should be saved.
-       */
-      virtual bool ShouldPropertySave(const dtCore::ActorProperty& prop) const;
-
-      /**
        * Gets the UniqueID object assigned to this actor proxy.
        * @return The UniqueID.
        */
@@ -273,7 +264,7 @@ namespace dtCore
       template <typename T>
       void GetDrawable(dtCore::RefPtr<T>& drawable)
       {
-         drawable = static_cast<T*>(GetDrawable());
+         drawable = dynamic_cast<T*>(GetDrawable());
       }
 
       /// Templated version of GetDrawable that returns the drawable with a dynamic cast to the type requested.
@@ -287,7 +278,7 @@ namespace dtCore
       template <typename TPtr>
       void GetDrawable(TPtr& drawable) const
       {
-         drawable = static_cast<TPtr>(GetDrawable());
+         drawable = dynamic_cast<TPtr>(GetDrawable());
       }
 
 

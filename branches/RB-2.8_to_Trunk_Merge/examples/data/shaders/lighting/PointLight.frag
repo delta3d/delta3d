@@ -1,3 +1,4 @@
+#version 120
 // Basic  point light implementation
 // MG 12/09/09
 

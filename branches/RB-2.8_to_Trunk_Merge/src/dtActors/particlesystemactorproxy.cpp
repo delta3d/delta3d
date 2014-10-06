@@ -28,19 +28,42 @@
 #include <dtCore/resourceactorproperty.h>
 
 using namespace dtCore;
-using namespace dtCore;
 
 namespace dtActors
 {
-   void ParticleSystemActorProxy::CreateDrawable()
+   //////////////////////////////////////////////////////////////////////////
+   // CONSTANTS
+   //////////////////////////////////////////////////////////////////////////
+   const dtUtil::RefString ParticleSystemActor::PROPERTY_ENABLED("Enabled");
+   const dtUtil::RefString ParticleSystemActor::PROPERTY_PARENT_RELATIVE("Parent Relative");
+   const dtUtil::RefString ParticleSystemActor::PROPERTY_PARTICLE_FILE("Particle(s) File");
+
+
+   //////////////////////////////////////////////////////////////////////////
+   // CLASS CODE
+   //////////////////////////////////////////////////////////////////////////
+   ParticleSystemActor::ParticleSystemActor()
+   {
+      SetClassName("dtCore::ParticleSystem");
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   ParticleSystemActor::~ParticleSystemActor()
+   {
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void ParticleSystemActor::CreateDrawable()
    {
       SetDrawable(*new dtCore::ParticleSystem);
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void ParticleSystemActorProxy::BuildPropertyMap()
+   void ParticleSystemActor::BuildPropertyMap()
    {
-      const std::string &GROUPNAME = "Particle System";
+      using namespace dtUtil;
+
+      RefString GROUP("Particle System");
       TransformableActorProxy::BuildPropertyMap();
 
       ParticleSystem *ps = static_cast<ParticleSystem*>(GetDrawable());
@@ -53,7 +76,8 @@ namespace dtActors
       AddProperty(new BooleanActorProperty("Enable", "Enabled",
          BooleanActorProperty::SetFuncType(ps, &ParticleSystem::SetEnabled),
          BooleanActorProperty::GetFuncType(ps, &ParticleSystem::IsEnabled),
-         "Toggles the visibility of a particle system to the camera.", GROUPNAME));
+         RefString("Toggles the visibility of a particle system to the camera."),
+         GROUP));
 
       // This property toggles whether or not a Particle System is parent
       // relative. Sets the parent-relative state of this particle system.
@@ -63,16 +87,44 @@ namespace dtActors
       AddProperty(new BooleanActorProperty("Parent Relative", "Parent Relative",
          BooleanActorProperty::SetFuncType(ps, &ParticleSystem::SetParentRelative),
          BooleanActorProperty::GetFuncType(ps, &ParticleSystem::IsParentRelative),
-         "Sets if a partical system is relative to its parent, if any. ", GROUPNAME));
+         RefString("Sets if a partical system is relative to its parent, if any. "),
+         GROUP));
 
       // This property enables the loading of a particle resource file.
       AddProperty(new ResourceActorProperty(DataType::PARTICLE_SYSTEM, "Particle(s) File",
-         "particle file", ResourceActorProperty::SetFuncType(this, &ParticleSystemActorProxy::LoadFile),
-         "Sets the resource file of this particle system", GROUPNAME));
+         "particle file", ResourceActorProperty::SetFuncType(this, &ParticleSystemActor::LoadFile),
+         RefString("Sets the resource file of this particle system"),
+         GROUP));
    }
 
    //////////////////////////////////////////////////////////////////////////
-   dtCore::ActorProxyIcon* ParticleSystemActorProxy::GetBillBoardIcon()
+   const dtCore::BaseActorObject::RenderMode& ParticleSystemActor::GetRenderMode()
+   {
+      return GetDrawable() != NULL
+         ? dtCore::BaseActorObject::RenderMode::DRAW_ACTOR
+         : dtCore::BaseActorObject::RenderMode::DRAW_BILLBOARD_ICON;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void ParticleSystemActor::LoadFile(const std::string &fileName)
+   {
+      dtCore::ParticleSystem* ps = NULL;
+      GetDrawable(ps);
+
+      if (ps == NULL)
+      {
+         throw dtCore::InvalidActorException(
+         "Actor should be type dtCore::ParticleSystem", __FILE__, __LINE__);
+      }
+
+      if (ps->LoadFile(fileName) == NULL)
+      {
+         LOG_ERROR("Could not load the file" + fileName);
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   dtCore::ActorProxyIcon* ParticleSystemActor::GetBillBoardIcon()
    {
       if (!mBillBoardIcon.valid())
       {

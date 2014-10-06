@@ -515,7 +515,7 @@ namespace dtGame
          osg::Vec3 angularVelocity = GetAngularVelocity();
          if (angularVelocity.length2() < 0.00001)  // If close to 0, set to 0 to prevent wiggling/shaking
          {
-            angularVelocity = osg::Vec3(0.f, 0.f, 0.f);
+            angularVelocity = osg::Vec3(0.0f, 0.0f, 0.0f);
          }
          GetDeadReckoningHelper()->SetLastKnownAngularVelocity(angularVelocity);
       }

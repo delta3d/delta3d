@@ -245,9 +245,9 @@ void ObjectViewer::Config()
 
    //adjust the Camera position
    dtCore::Transform camPos;
-   osg::Vec3 camXYZ(0.f, -5.f, 1.f);
-   osg::Vec3 lookAtXYZ (0.f, 0.f, 1.f);
-   osg::Vec3 upVec (0.f, 0.f, 1.f);
+   osg::Vec3 camXYZ(0.0f, -5.0f, 1.0f);
+   osg::Vec3 lookAtXYZ (0.0f, 0.0f, 1.0f);
+   osg::Vec3 upVec (0.0f, 0.0f, 1.0f);
    camPos.Set(camXYZ, lookAtXYZ, upVec);
 
    GetCamera()->SetTransform(camPos);
@@ -263,7 +263,7 @@ void ObjectViewer::Config()
 
    mModelMotion = new dtCore::OrbitMotionModel(GetKeyboard(), GetMouse());
    mModelMotion->SetTarget(GetCamera());
-   mModelMotion->SetDistance(5.f);
+   mModelMotion->SetDistance(5.0f);
 
    mWireDecorator  = new osg::Group;
    mShadeDecorator = new osg::Group;
@@ -576,7 +576,7 @@ void ObjectViewer::OnLoadGeometryFile(const std::string& filename)
    {
        // If this is a static mesh
       mObject = new dtCore::Object;
-      mObject->LoadFile(filename);
+      mObject->LoadFile(filename, false);
 
       //print out stats
       CountPrimitives ( *(mObject->GetOSGNode()), filename );
@@ -956,7 +956,7 @@ void ObjectViewer::InitGridPlanes()
    const float GRID_LINE_SPACING = 2.0f;
 
    const int numVerts(2 * 2 * GRID_LINE_COUNT);
-   const float length(((GRID_LINE_COUNT - 1) * GRID_LINE_SPACING) / 2.f);
+   const float length(((GRID_LINE_COUNT - 1) * GRID_LINE_SPACING) / 2.0f);
 
    osg::Vec3 verts[numVerts];
    int indx(0L);
@@ -1001,7 +1001,7 @@ void ObjectViewer::InitLights()
          GetScene()->RegisterLight(light);
          light->SetEnabled(false);
 
-         light->SetAmbient(0.2f, 0.2f, 0.2f, 1.f);
+         light->SetAmbient(0.2f, 0.2f, 0.2f, 1.0f);
          light->SetDiffuse(1.0f, 1.0f, 1.0f, 1.0f);
          light->SetSpecular(1.0f, 1.0f, 1.0f, 1.0f);
 
@@ -1191,11 +1191,19 @@ void ObjectViewer::GenerateTangentsForObject(dtCore::Object* object)
 
       osg::ref_ptr<osgUtil::TangentSpaceGenerator> tsg = new osgUtil::TangentSpaceGenerator;
       tsg->generate(geom, 0);
+      osg::Array* tangentArray = tsg->getTangentArray();
 
       if (!geom->getVertexAttribArray(6))
       {
-         //geom->setVertexAttribData(6, osg::Geometry::ArrayData(tsg->getTangentArray(), osg::Geometry::BIND_PER_VERTEX, GL_FALSE));
-         geom->setVertexAttribArray(6, tsg->getTangentArray());
+         if (tangentArray != NULL)
+         {
+            //geom->setVertexAttribData(6, osg::Geometry::ArrayData(tsg->getTangentArray(), osg::Geometry::BIND_PER_VERTEX, GL_FALSE));
+            geom->setVertexAttribArray(6, tangentArray);
+         }
+         else
+         {
+            LOG_WARNING("Could not generate tangent space for object: " + object->GetName());
+         }
       }
    }
 }

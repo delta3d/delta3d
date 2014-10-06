@@ -4,4 +4,6 @@
     <SPECULAR>8 7 7 0</SPECULAR>
     <SHININESS>1</SHININESS>
     <MAP>materials/Suit_Black.png</MAP>
+    <MAP>materials/NONE_NORM.png</MAP>
+    <MAP>materials/NONE_SPEC.png</MAP>
 </MATERIAL>

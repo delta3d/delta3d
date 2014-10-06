@@ -101,7 +101,7 @@ namespace dtActors
    ////////////////////////////////////////////////////
    DistanceSensorActor::DistanceSensorActor(dtGame::GameActorProxy& parent):
    dtGame::GameActor(parent),
-   mTriggerDistance(0.f)
+   mTriggerDistance(0.0f)
    {
    }
 

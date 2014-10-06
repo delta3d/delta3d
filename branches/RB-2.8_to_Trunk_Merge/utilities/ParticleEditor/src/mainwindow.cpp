@@ -1,11 +1,26 @@
 #include <mainwindow.h>
 #include <QtCore/QSettings>
 #include <QtCore/QFileInfo>
+#include <QtGui/QFileDialog>
+#include <QtGui/QMessageBox>
 #include <QtOpenGL/QGLWidget>
 #include <dtQt/osggraphicswindowqt.h>
 #include <dtCore/deltawin.h>
+#include <dtCore/shadermanager.h>
+#include <dtUtil/exception.h>
+#include <dtUtil/fileutils.h>
 #include <dtUtil/log.h>
 using namespace psEditor;
+
+
+
+////////////////////////////////////////////////////////////////////////////////
+// CONSTANTS
+////////////////////////////////////////////////////////////////////////////////
+dtUtil::RefString APP_SETTINGS_NAME("delta3d");
+dtUtil::RefString APP_TITLE("Particle Editor");
+dtUtil::RefString SETTING_PROJECT_CONTEXT("projectContextPath");
+dtUtil::RefString SETTING_SHADERDEFS_FILE("shaderDefsFile");
 
 ///////////////////////////////////////////////////////////////////////////////
 MainWindow::MainWindow(QMainWindow* parent):
@@ -112,6 +127,7 @@ void MainWindow::SetupMenuConnections()
    }
    connect(mUI.actionImport, SIGNAL(triggered()), mpParticleViewer, SLOT(ImportParticleSystem()));
    connect(mUI.actionLoad_Reference, SIGNAL(triggered()), mpParticleViewer, SLOT(LoadReferenceObject()));
+   connect(mUI.actionLoad_Shaderdef, SIGNAL(triggered()), this, SLOT(OnLoadShaderDefinition()));
    connect(mUI.actionSave, SIGNAL(triggered()), mpParticleViewer, SLOT(SaveParticleToFile()));
    connect(mUI.actionSave_As, SIGNAL(triggered()), mpParticleViewer, SLOT(SaveParticleAs()));
    connect(mUI.actionExit, SIGNAL(triggered()), this, SLOT(close()));
@@ -153,6 +169,8 @@ void MainWindow::SetupLayersBrowserConnections()
    connect(mUI.HideLayerCheckbox, SIGNAL(clicked()), mpParticleViewer, SLOT(ToggleSelectedLayerHidden()));
    connect(mUI.ResetParticlesButton, SIGNAL(clicked()), mpParticleViewer, SLOT(ResetEmitters()));
    connect(mUI.LayerRenderBinEntry, SIGNAL(valueChanged(int)), mpParticleViewer, SLOT(SetParticleLayerRenderBin(int)));
+   connect(mUI.ShaderGroup, SIGNAL(currentIndexChanged(const QString&)), mpParticleViewer, SLOT(SetShader(const QString&)));
+   connect(mUI.ButtonRecompileShaders, SIGNAL(clicked()), this, SLOT(OnReloadShaderFiles()));
 
    // Connections from particle viewer to UI
    connect(mpParticleViewer, SIGNAL(ClearLayerList()), mpLayersBrowser, SLOT(ClearLayerList()));
@@ -160,6 +178,7 @@ void MainWindow::SetupLayersBrowserConnections()
    connect(mpParticleViewer, SIGNAL(SelectIndexOfLayersList(int)), mpLayersBrowser, SLOT(SelectIndexOfLayersList(int)));
    connect(mpParticleViewer, SIGNAL(LayerHiddenChanged(bool)), mUI.HideLayerCheckbox, SLOT(setChecked(bool)));
    connect(mpParticleViewer, SIGNAL(LayerRenderBinChanged(int)), mUI.LayerRenderBinEntry, SLOT(setValue(int)));
+   connect(mpParticleViewer, SIGNAL(ShaderChanged(const QString&)), this, SLOT(SetSelectedShader(const QString&)));
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -286,6 +305,9 @@ void MainWindow::SetupParticlesTabConnections()
    connect(mpParticleViewer, SIGNAL(EmitterStartUpdated(double)), mUI.EmitterStartSpinBox, SLOT(setValue(double)));
    connect(mpParticleViewer, SIGNAL(EmitterResetUpdated(double)), mUI.EmitterResetSpinBox, SLOT(setValue(double)));
    connect(mpParticleViewer, SIGNAL(EndlessLifetimeUpdated(bool)), mUI.ForeverCheckbox, SLOT(setChecked(bool)));
+
+   // Special file signals
+   connect(mpParticleViewer, SIGNAL(SaveComplete()), this, SLOT(OnSaveComplete()));
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -628,4 +650,183 @@ void MainWindow::UpdateRecentFileActions()
 void MainWindow::OnReferenceObjectLoaded(const QString &filename)
 {
    mUI.actionReference_Object->setEnabled(true);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void MainWindow::OnInitialization()
+{
+   QSettings settings(APP_SETTINGS_NAME.c_str(), APP_TITLE.c_str());
+   mContextPath = settings.value(
+      SETTING_PROJECT_CONTEXT.c_str()).toString().toStdString();
+   mShaderDefFile = settings.value(
+      SETTING_SHADERDEFS_FILE.c_str()).toString().toStdString();
+
+   if (EnsureShaderDefFileValid())
+   {
+      QString qstr(mShaderDefFile.c_str());
+      OnLoadShaderFile(qstr);
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void MainWindow::SaveSettings()
+{
+   QSettings settings(APP_SETTINGS_NAME.c_str(), APP_TITLE.c_str());
+
+   try
+   {
+      // Update the registry entry based on the current valid context
+      settings.setValue(SETTING_PROJECT_CONTEXT.c_str(), mContextPath.c_str());
+      settings.setValue(SETTING_SHADERDEFS_FILE.c_str(), mShaderDefFile.c_str());
+      settings.sync();
+   }
+   catch (const dtUtil::Exception &e)
+   {
+      // The context path is not valid, clear the registry entry
+      settings.remove(SETTING_PROJECT_CONTEXT.c_str());
+      settings.remove(SETTING_SHADERDEFS_FILE.c_str());
+      settings.sync();
+
+      QMessageBox::critical((QWidget *)this, tr("Error"), tr(e.What().c_str()), tr("Ok"));
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void MainWindow::OnLoadShaderDefinition()
+{
+   QString filename = QFileDialog::getOpenFileName(this, tr("Load Shader Definition File"),
+      mContextPath.c_str(), tr("Shaders(*.dtShader)") + " " + tr("Shaders(*.xml)") );
+
+   if (!filename.isEmpty())
+   {
+      if (dtUtil::FileUtils::GetInstance().FileExists(filename.toStdString()))
+      {
+         OnLoadShaderFile(filename);
+      }
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void MainWindow::OnLoadShaderFile(const QString& filename)
+{
+   try
+   {
+      dtCore::ShaderManager& shaderManager = dtCore::ShaderManager::GetInstance();
+
+      QString lastValue = mUI.ShaderGroup->currentText();
+
+      // Since the shader manager cannot deal with duplicate shader names,
+      // we clear it out before we load each file.  This means that in order
+      // to reference shaders later, the file just be reloaded.
+      shaderManager.Clear();
+
+      mShaderDefFile = filename.toStdString();
+      shaderManager.LoadShaderDefinitions(mShaderDefFile);
+
+      mUI.ShaderGroup->clear();
+      typedef std::vector<dtCore::RefPtr<dtCore::ShaderGroup> > ShaderGroupList;
+      ShaderGroupList shaderGroups;
+      shaderManager.GetAllShaderGroupPrototypes(shaderGroups);
+
+      QString qempty;
+      mUI.ShaderGroup->addItem(qempty);
+
+      ShaderGroupList::iterator curIter = shaderGroups.begin();
+      ShaderGroupList::iterator endIter = shaderGroups.end();
+      for (; curIter != endIter; ++curIter)
+      {
+         QString qstr((*curIter)->GetName().c_str());
+         mUI.ShaderGroup->addItem(qstr);
+      }
+
+      // Default to nothing.
+      SetSelectedShader(lastValue);
+
+      mContextPath = dtUtil::FileUtils::GetInstance().GetFileInfo(mShaderDefFile).path;
+
+      SaveSettings();
+   }
+   catch (dtUtil::Exception& e)
+   {
+      QMessageBox::critical(NULL, "Error", e.ToString().c_str());
+   }
+}
+
+///////////////////////////////////////////////////////////////////////////////
+bool MainWindow::IsShaderDefFileValid() const
+{
+   return dtUtil::FileUtils::GetInstance().FileExists(mShaderDefFile);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+bool MainWindow::EnsureShaderDefFileValid()
+{
+   bool valid = IsShaderDefFileValid();
+
+   if ( ! valid)
+   {
+      if (AskUserToLoadShaderDef())
+      {
+         OnLoadShaderDefinition();
+
+         valid = IsShaderDefFileValid();
+      }
+   }
+
+   if ( ! valid)
+   {
+      std::string title("Invalid ShaderDef");
+      std::string message("Could not load shader definition file:\n\t" + mShaderDefFile
+         + "\nParticle systems may not display correctly.");
+      QMessageBox::warning(NULL, title.c_str(), message.c_str());
+   }
+
+   return valid;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+void MainWindow::OnReloadShaderFiles()
+{
+   if (EnsureShaderDefFileValid())
+   {
+      dtCore::ShaderManager& shaderManager = dtCore::ShaderManager::GetInstance();
+      shaderManager.Clear();
+
+      try
+      {
+         shaderManager.LoadShaderDefinitions(mShaderDefFile);
+
+         mpParticleViewer->ReapplyShadersToLayers();
+      }
+      catch (dtUtil::Exception& e)
+      {
+         QMessageBox::critical(NULL, "Error", e.ToString().c_str());
+      }
+   }
+}
+
+///////////////////////////////////////////////////////////////////////////////
+void MainWindow::OnSaveComplete()
+{
+   OnReloadShaderFiles();
+}
+
+///////////////////////////////////////////////////////////////////////////////
+void MainWindow::SetSelectedShader(const QString& shaderName)
+{
+   int index = mUI.ShaderGroup->findText(shaderName);
+
+   if (index >= 0 && mUI.ShaderGroup->currentIndex())
+   {
+      mUI.ShaderGroup->setCurrentIndex(index);
+   }
+}
+
+///////////////////////////////////////////////////////////////////////////////
+bool MainWindow::AskUserToLoadShaderDef()
+{
+   std::string title("Load ShaderDef File?");
+   std::string message("Particle systems may need custom shaders to render. Would you like to load your project's ShaderDef file?");
+
+   return QMessageBox::Ok == QMessageBox::information(NULL, title.c_str(), message.c_str(), QMessageBox::Ok, QMessageBox::Cancel);
 }

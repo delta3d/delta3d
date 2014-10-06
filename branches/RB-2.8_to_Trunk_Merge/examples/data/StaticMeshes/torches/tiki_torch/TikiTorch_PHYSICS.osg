@@ -1,0 +1,155 @@
+MatrixTransform {
+  DataVariance STATIC
+  name "Scene Root"
+  nodeMask 0xffffffff
+  cullingActive TRUE
+  description "# osgmaxexp material data
+Name	PHYSICS
+Type	Standard
+SelfIlluminationColorMode	0	0
+"
+  StateSet {
+    rendering_hint DEFAULT_BIN
+    renderBinMode INHERIT
+    GL_LIGHTING ON
+    GL_NORMALIZE ON
+  }
+  referenceFrame RELATIVE
+  Matrix {
+    1 0 0 0
+    0 1 0 0
+    0 0 1 0
+    0 0 0 1
+  }
+  num_children 1
+  MatrixTransform {
+    DataVariance STATIC
+    name "PHYSICS_ROOT_TikiTorch"
+    nodeMask 0xffffffff
+    cullingActive TRUE
+    referenceFrame RELATIVE
+    Matrix {
+      1 0 0 0
+      0 1 0 0
+      0 0 1 0
+      0 0 0 1
+    }
+    num_children 1
+    MatrixTransform {
+      DataVariance STATIC
+      name "PHYSICS_TikiTorch"
+      nodeMask 0xffffffff
+      cullingActive TRUE
+      referenceFrame RELATIVE
+      Matrix {
+        1 0 0 0
+        0 1 0 0
+        0 0 1 0
+        0 0 0 1
+      }
+      num_children 1
+      Geode {
+        UniqueID Geode_0
+        DataVariance STATIC
+        name "PHYSICS_TikiTorch-GEODE"
+        nodeMask 0xffffffff
+        cullingActive TRUE
+        num_drawables 1
+        Geometry {
+          name "PHYSICS"
+          StateSet {
+            UniqueID StateSet_1
+            name "PHYSICS"
+            rendering_hint TRANSPARENT_BIN
+            renderBinMode USE
+            binNumber 10
+            binName DepthSortedBin
+            GL_CULL_FACE ON
+            GL_LIGHTING ON
+            GL_NORMALIZE ON
+            GL_BLEND ON
+            Material {
+              ColorMode OFF
+              ambientColor 0.588 0.588 0.588 0.5
+              diffuseColor 1 0 0 0.5
+              specularColor 0 0 0 1
+              emissionColor 0 0 0 0.5
+              shininess 0
+            }
+            BlendFunc {
+              source SRC_ALPHA
+              destination ONE_MINUS_SRC_ALPHA
+            }
+          }
+          useDisplayList TRUE
+          useVertexBufferObjects FALSE
+          PrimitiveSets 1
+          {
+            DrawElementsUShort TRIANGLES 36
+            {
+              0 1 2 2 3 0 4 5 6 6
+              7 4 8 9 10 10 11 8 12 13
+              14 14 15 12 16 17 18 18 19 16
+              20 21 22 22 23 20 
+            }
+          }
+          VertexArray Vec3Array 24
+          {
+            -0.0488435 -0.0488435 0
+            -0.0488435 0.0488435 0
+            0.0488435 0.0488435 0
+            0.0488435 -0.0488435 0
+            -0.0488435 -0.0488435 1.4975
+            0.0488435 -0.0488435 1.4975
+            0.0488435 0.0488435 1.4975
+            -0.0488435 0.0488435 1.4975
+            -0.0488435 -0.0488435 0
+            0.0488435 -0.0488435 0
+            0.0488435 -0.0488435 1.4975
+            -0.0488435 -0.0488435 1.4975
+            0.0488435 -0.0488435 0
+            0.0488435 0.0488435 0
+            0.0488435 0.0488435 1.4975
+            0.0488435 -0.0488435 1.4975
+            0.0488435 0.0488435 0
+            -0.0488435 0.0488435 0
+            -0.0488435 0.0488435 1.4975
+            0.0488435 0.0488435 1.4975
+            -0.0488435 0.0488435 0
+            -0.0488435 -0.0488435 0
+            -0.0488435 -0.0488435 1.4975
+            -0.0488435 0.0488435 1.4975
+          }
+          NormalBinding PER_VERTEX
+          NormalArray Vec3Array 24
+          {
+            0 0 -1
+            0 0 -1
+            0 0 -1
+            0 0 -1
+            0 0 1
+            0 -0 1
+            0 0 1
+            -0 0 1
+            0 -1 0
+            0 -1 0
+            0 -1 0
+            0 -1 0
+            1 0 0
+            1 0 -0
+            1 0 0
+            1 -0 0
+            0 1 0
+            0 1 0
+            0 1 0
+            0 1 0
+            -1 0 0
+            -1 0 0
+            -1 0 0
+            -1 -0 -0
+          }
+        }
+      }
+    }
+  }
+}

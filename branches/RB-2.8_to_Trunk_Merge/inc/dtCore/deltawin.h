@@ -160,7 +160,7 @@ namespace dtCore
 
       /** Calculate the normalized window coords given the screen pixel coords.  Pixel
        *  coordinate (0,0) is the lower left of the display which equates to the
-       *  normalized window coordinate of (-1.0, -1.f).
+       *  normalized window coordinate of (-1.0, -1.0f).
        * @param pixel_x : The screen X pixel [0..window width]
        * @param pixel y : The screen Y pixel [0..window height]
        * @param x : The normalized window X coordinate [-1.0..1.0]

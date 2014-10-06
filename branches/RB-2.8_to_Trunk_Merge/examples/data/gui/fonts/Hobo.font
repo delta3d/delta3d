@@ -1,0 +1,85 @@
+<?xml version="1.0" ?>
+<Font Name="Hobo" Filename="gui/fonts/Hobo.imageset" Type="Pixmap" NativeHorzRes="1280" NativeVertRes="960" AutoScaled="true">
+   
+   <Mapping Codepoint="65" Image="A" HorzAdvance="22" />
+   <Mapping Codepoint="66" Image="B" HorzAdvance="20" />
+   <Mapping Codepoint="67" Image="C" HorzAdvance="19" />
+   <Mapping Codepoint="68" Image="D" HorzAdvance="21" />
+   <Mapping Codepoint="69" Image="E" HorzAdvance="20" />
+   <Mapping Codepoint="70" Image="F" HorzAdvance="16" />
+   <Mapping Codepoint="71" Image="G" HorzAdvance="21" />
+   <Mapping Codepoint="72" Image="H" HorzAdvance="21" />
+   <Mapping Codepoint="73" Image="I" HorzAdvance="10" />
+   <Mapping Codepoint="74" Image="J" HorzAdvance="15" />
+   <Mapping Codepoint="75" Image="K" HorzAdvance="20" />
+   <Mapping Codepoint="76" Image="L" HorzAdvance="18" />
+   <Mapping Codepoint="77" Image="M" HorzAdvance="26" />
+   <Mapping Codepoint="78" Image="N" HorzAdvance="22" />
+   <Mapping Codepoint="79" Image="O" HorzAdvance="22" />
+   <Mapping Codepoint="80" Image="P" HorzAdvance="19" />
+   <Mapping Codepoint="81" Image="Q" HorzAdvance="21" />
+   <Mapping Codepoint="82" Image="R" HorzAdvance="20" />
+   <Mapping Codepoint="83" Image="S" HorzAdvance="19" />
+   <Mapping Codepoint="84" Image="T" HorzAdvance="22" />
+   <Mapping Codepoint="85" Image="U" HorzAdvance="21" />
+   <Mapping Codepoint="86" Image="V" HorzAdvance="21" />
+   <Mapping Codepoint="87" Image="W" HorzAdvance="27" />
+   <Mapping Codepoint="88" Image="X" HorzAdvance="20" />
+   <Mapping Codepoint="89" Image="Y" HorzAdvance="20" />
+   <Mapping Codepoint="90" Image="Z" HorzAdvance="20" />
+
+   <Mapping Codepoint="97" Image="a" HorzAdvance="17" />
+   <Mapping Codepoint="98" Image="b" HorzAdvance="18" />
+   <Mapping Codepoint="99" Image="c" HorzAdvance="17" />
+   <Mapping Codepoint="100" Image="d" HorzAdvance="19" />
+   <Mapping Codepoint="101" Image="e" HorzAdvance="18" />
+   <Mapping Codepoint="102" Image="f" HorzAdvance="14" />
+   <Mapping Codepoint="103" Image="g" HorzAdvance="19" />
+   <Mapping Codepoint="104" Image="h" HorzAdvance="18" />
+   <Mapping Codepoint="105" Image="i" HorzAdvance="10" />
+   <Mapping Codepoint="106" Image="j" HorzAdvance="12" />
+   <Mapping Codepoint="107" Image="k" HorzAdvance="18" />
+   <Mapping Codepoint="108" Image="l" HorzAdvance="9" />
+   <Mapping Codepoint="109" Image="m" HorzAdvance="26" />
+   <Mapping Codepoint="110" Image="n" HorzAdvance="18" />
+   <Mapping Codepoint="111" Image="o" HorzAdvance="18" />
+   <Mapping Codepoint="112" Image="p" HorzAdvance="18" />
+   <Mapping Codepoint="113" Image="q" HorzAdvance="17" />
+   <Mapping Codepoint="114" Image="r" HorzAdvance="13" />
+   <Mapping Codepoint="115" Image="s" HorzAdvance="16" />
+   <Mapping Codepoint="116" Image="t" HorzAdvance="12" />
+   <Mapping Codepoint="117" Image="u" HorzAdvance="18" />
+   <Mapping Codepoint="118" Image="v" HorzAdvance="18" />
+   <Mapping Codepoint="119" Image="w" HorzAdvance="22" />
+   <Mapping Codepoint="120" Image="x" HorzAdvance="17" />
+   <Mapping Codepoint="121" Image="y" HorzAdvance="17" />
+   <Mapping Codepoint="122" Image="z" HorzAdvance="16" />
+
+   <Mapping Codepoint="48" Image="0" HorzAdvance="19" />
+   <Mapping Codepoint="49" Image="1" HorzAdvance="11" />
+   <Mapping Codepoint="50" Image="2" HorzAdvance="18" />
+   <Mapping Codepoint="51" Image="3" HorzAdvance="18" />
+   <Mapping Codepoint="52" Image="4" HorzAdvance="19" />
+   <Mapping Codepoint="53" Image="5" HorzAdvance="17" />
+   <Mapping Codepoint="54" Image="6" HorzAdvance="19" />
+   <Mapping Codepoint="55" Image="7" HorzAdvance="18" />
+   <Mapping Codepoint="56" Image="8" HorzAdvance="19" />
+   <Mapping Codepoint="57" Image="9" HorzAdvance="19" />
+   <Mapping Codepoint="46" Image="." HorzAdvance="11" />
+   <Mapping Codepoint="58" Image=":" HorzAdvance="11" />
+   <Mapping Codepoint="44" Image="," HorzAdvance="10" />
+   <Mapping Codepoint="59" Image=";" HorzAdvance="11" />
+   <Mapping Codepoint="39" Image="'" HorzAdvance="8" />
+   <!--Mapping Codepoint="34" Image=""" HorzAdvance="13" /-->
+   <Mapping Codepoint="40" Image="(" HorzAdvance="13" />
+   <Mapping Codepoint="33" Image="!" HorzAdvance="11" />
+   <Mapping Codepoint="63" Image="?" HorzAdvance="16" />
+   <Mapping Codepoint="41" Image=")" HorzAdvance="13" />
+   <Mapping Codepoint="43" Image="+" HorzAdvance="18" />
+   <Mapping Codepoint="45" Image="-" HorzAdvance="12" />
+   <Mapping Codepoint="42" Image="*" HorzAdvance="15" />
+   <Mapping Codepoint="47" Image="/" HorzAdvance="14" />
+   <Mapping Codepoint="61" Image="=" HorzAdvance="18" />
+   <Mapping Codepoint="32" Image=" " HorzAdvance="10" />
+   
+</Font>

@@ -204,7 +204,7 @@ namespace dtABC
       float pos_y;  //>y coordinate
       int   button; //>event button
 
-      MouseEvent(int ev = NO_EVENT, float px = 0.f, float py = 0.f, int bt = 0L);
+      MouseEvent(int ev = NO_EVENT, float px = 0.0f, float py = 0.0f, int bt = 0L);
       MouseEvent(const MouseEvent& that);
       MouseEvent& operator=(const MouseEvent& that);
 

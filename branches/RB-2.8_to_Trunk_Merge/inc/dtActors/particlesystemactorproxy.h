@@ -19,28 +19,31 @@
  * William E. Johnson II
  */
 
-#ifndef DELTA_PARTICLE_SYSTEM_ACTOR_PROXY
-#define DELTA_PARTICLE_SYSTEM_ACTOR_PROXY
+#ifndef DELTA_PARTICLE_SYSTEM_ACTOR
+#define DELTA_PARTICLE_SYSTEM_ACTOR
 
 #include <dtCore/plugin_export.h>
-#include <dtCore/transformableactorproxy.h>
+#include <dtGame/gameactorproxy.h>
 #include <dtCore/particlesystem.h>
 #include <dtCore/exceptionenum.h>
 
 namespace dtActors
 {
    /**
-    * @class ParticleSystemActorProxy
-    * @brief This proxy wraps the ParticleSystem Delta3D object.
+    * @class ParticleSystemActor
+    * @brief This actor wraps the ParticleSystem object.
     */
-   class DT_PLUGIN_EXPORT ParticleSystemActorProxy : public dtCore::TransformableActorProxy
+   class DT_PLUGIN_EXPORT ParticleSystemActor : public dtGame::GameActorProxy
    {
    public:
 
-      /**
-       * Constructor
-       */
-      ParticleSystemActorProxy() { SetClassName("dtCore::ParticleSystem"); }
+      typedef dtGame::GameActorProxy BaseClass;
+
+      static const dtUtil::RefString PROPERTY_ENABLED;
+      static const dtUtil::RefString PROPERTY_PARENT_RELATIVE;
+      static const dtUtil::RefString PROPERTY_PARTICLE_FILE;
+
+      ParticleSystemActor();
 
       /**
        * Adds the properties that are common to all Delta3D particle system objects.
@@ -51,29 +54,13 @@ namespace dtActors
        * Loads in a particle system file
        * @param fileName The particle system file to load
        */
-      void LoadFile(const std::string &fileName)
-      {
-         dtCore::ParticleSystem* ps = dynamic_cast<dtCore::ParticleSystem*>(GetDrawable());
-         if (!ps)
-         {
-            throw dtCore::InvalidActorException(
-            "Actor should be type dtCore::ParticleSystem", __FILE__, __LINE__);
-         }
-
-         if (!ps->LoadFile(fileName))
-         {
-            LOG_ERROR("Could not load the file" + fileName);
-         }
-      }
+      void LoadFile(const std::string& fileName);
 
       /**
        * Gets the method by which a particle system is rendered.
        * @return dtCore::BaseActorObject::RenderMode::DRAW_BILLBOARD_ICON.
        */
-      virtual const dtCore::BaseActorObject::RenderMode& GetRenderMode()
-      {
-         return dtCore::BaseActorObject::RenderMode::DRAW_BILLBOARD_ICON;
-      }
+      virtual const dtCore::BaseActorObject::RenderMode& GetRenderMode();
 
       /**
        * Gets the billboard used to represent particle systems.
@@ -88,11 +75,13 @@ namespace dtActors
        */
       virtual void CreateDrawable();
 
-      /**
-       * Destructor
-       */
-      virtual ~ParticleSystemActorProxy() { }
+      virtual ~ParticleSystemActor();
    };
+
+   // The term "Proxy" is going to be dropped.
+   // Other programs refer to the old name, so
+   // for now allow them to build with it.
+   typedef ParticleSystemActor ParticleSystemActorProxy;
 }
 
 #endif

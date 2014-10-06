@@ -55,7 +55,9 @@ SkyBox::SkyBox(const std::string& name, RenderProfileEnum pRenderProfile)
 
    SetOSGNode(new osg::Group());
 
-   GetOSGNode()->setCullCallback(new SkyBox::ConfigCallback(this));
+   GetOSGNode()->setUpdateCallback(new SkyBox::ConfigCallback(this));
+
+   CheckHardware();
 
    memset(mTexPreSetList, 0, sizeof(bool) * 6);
 }
@@ -90,8 +92,6 @@ void SkyBox::Config()
 ////////////////////////////////////////////////////////////////////////////////
 void SkyBox::SetRenderProfile(RenderProfileEnum pRenderProfile)
 {
-   CheckHardware();
-
    switch(pRenderProfile)
    {
       case RP_CUBE_MAP:
@@ -135,11 +135,11 @@ void SkyBox::SetRenderProfile(RenderProfileEnum pRenderProfile)
             }
 
          }
+         break;
 
       default:
          {
             mRenderProfile = new FixedFunctionProfile();
-            return;
          }
    }
 
