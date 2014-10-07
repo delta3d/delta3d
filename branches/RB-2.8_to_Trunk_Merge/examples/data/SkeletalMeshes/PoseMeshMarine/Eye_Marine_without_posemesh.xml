@@ -1,11 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <character name="eye_marine">
-     <skinningShader>
-		<shaderGroup>CharacterGroup</shaderGroup>
-		<shaderName>Default</shaderName>
-		<maxBones>71</maxBones>
-     </skinningShader>
-	 
    <skeleton fileName="Skeleton.XSF" />   
   
    <animation fileName="ET_Pose_Legs.XAF" name="stand" />
@@ -81,6 +75,12 @@
    <material fileName="REye.XRF" />
    <material fileName="Ak47.XRF" />
    <material fileName="M16.XRF" />
+   
+   <skinningShader>
+      <shaderGroup>CharacterGroup</shaderGroup>
+      <shaderName>Default</shaderName>
+      <maxBones>71</maxBones>
+   </skinningShader>
 
    
 </character>

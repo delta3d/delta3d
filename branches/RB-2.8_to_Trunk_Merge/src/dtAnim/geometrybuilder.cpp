@@ -156,6 +156,11 @@ osg::ref_ptr<osg::Geometry> GeometryBuilder::GeometryCache::CreateMeshSubMesh(Ca
          return NULL;
       }
 
+      osg::IntArray& sourceIndex = *modelData->GetSourceIndexArray();
+      osg::FloatArray& sourceVertex = *modelData->GetSourceVertexArray();
+      bool hasTangents = ! sourceVertex.empty()
+         && 0 == (sourceVertex.size() % dtAnim::HardwareSubmeshDrawable::VBO_STRIDE);
+
       osg::ref_ptr<osg::Geometry> geom = new osg::Geometry();
 
       geom->setSupportsDisplayList(false);
@@ -165,30 +170,39 @@ osg::ref_ptr<osg::Geometry> GeometryBuilder::GeometryCache::CreateMeshSubMesh(Ca
       int numIndices = faceCount * 3;
       CalIndex* indexArray = new CalIndex[numIndices];
 
-      osg::Vec3Array* vertArray = new osg::Vec3Array();
+      dtCore::RefPtr<osg::Vec3Array> vertArray = new osg::Vec3Array();
       vertArray->resizeArray(vertexCount);
 
-      osg::Vec3Array* normalArray = new osg::Vec3Array();
+      dtCore::RefPtr<osg::Vec3Array> normalArray = new osg::Vec3Array();
       normalArray->resizeArray(vertexCount);
 
-      osg::Vec4Array* tangentArray = new osg::Vec4Array();
-      tangentArray->resizeArray(vertexCount);
+      dtCore::RefPtr<osg::Vec4Array> tangentArray;
+      if (hasTangents)
+      {
+         tangentArray = new osg::Vec4Array();
+         tangentArray->resizeArray(vertexCount);
+      }
 
-      osg::Vec2Array* texCoordArray = new osg::Vec2Array();
+      dtCore::RefPtr<osg::Vec2Array> texCoordArray = new osg::Vec2Array();
       texCoordArray->resizeArray(vertexCount);
 
-      osg::Vec4Array* boneInfluenceArray = new osg::Vec4Array();
+      dtCore::RefPtr<osg::Vec4Array> boneInfluenceArray = new osg::Vec4Array();
       boneInfluenceArray->resizeArray(vertexCount);
 
-      osg::Vec4Array* boneIndexArray = new osg::Vec4Array();
+      dtCore::RefPtr<osg::Vec4Array> boneIndexArray = new osg::Vec4Array();
       boneIndexArray->resizeArray(vertexCount);
 
-      osg::IntArray& sourceIndex = *modelData->GetSourceIndexArray();
-      osg::FloatArray& sourceVertex = *modelData->GetSourceVertexArray();
-
       int stride = dtAnim::HardwareSubmeshDrawable::VBO_STRIDE;
-      int vertexNum = 0;
-      for (int i = baseIndex * stride; i < (baseIndex + vertexCount) * stride; i+= stride)
+      if ( ! hasTangents)
+      {
+         stride -= 4;
+      }
+
+      int vertexIndex = 0;
+      int limit = (baseIndex + vertexCount) * stride;
+      for (int i = baseIndex * stride;
+         i < limit && vertexIndex < vertexCount;
+         i+= stride)
       {
          osg::Vec3 pos(sourceVertex[i], sourceVertex[i + 1], sourceVertex[i + 2]);
          osg::Vec3 normal(sourceVertex[i + 3], sourceVertex[i + 4], sourceVertex[i + 5]);
@@ -196,15 +210,20 @@ osg::ref_ptr<osg::Geometry> GeometryBuilder::GeometryCache::CreateMeshSubMesh(Ca
          osg::Vec2 tx1(sourceVertex[i + 8], sourceVertex[i + 9]);
          osg::Vec4 weight(sourceVertex[i + 10], sourceVertex[i + 11], sourceVertex[i + 12], sourceVertex[i + 13]);
          osg::Vec4 bones(sourceVertex[i + 14], sourceVertex[i + 15], sourceVertex[i + 16], sourceVertex[i + 17]);
-         osg::Vec4 tangent(sourceVertex[i + 18], sourceVertex[i + 19], sourceVertex[i + 20], sourceVertex[i + 21]);
 
-         (*vertArray)[vertexNum] = pos;
-         (*normalArray)[vertexNum] = normal;
-         (*texCoordArray)[vertexNum] = tx0;
-         (*boneInfluenceArray)[vertexNum] = weight;
-         (*boneIndexArray)[vertexNum] = bones;
-         (*tangentArray)[vertexNum] = tangent;
-         ++vertexNum;
+         if (hasTangents)
+         {
+            osg::Vec4 tangent(sourceVertex[i + 18], sourceVertex[i + 19], sourceVertex[i + 20], sourceVertex[i + 21]);
+            (*tangentArray)[vertexIndex] = tangent;
+         }
+
+         (*vertArray)[vertexIndex] = pos;
+         (*normalArray)[vertexIndex] = normal;
+         (*texCoordArray)[vertexIndex] = tx0;
+         (*boneInfluenceArray)[vertexIndex] = weight;
+         (*boneIndexArray)[vertexIndex] = bones;
+
+         ++vertexIndex;
       }
 
       //set vertex array data
@@ -224,7 +243,11 @@ osg::ref_ptr<osg::Geometry> GeometryBuilder::GeometryCache::CreateMeshSubMesh(Ca
       geom->setTexCoordArray(0, texCoordArray);
       geom->setTexCoordArray(1, boneInfluenceArray);
       geom->setTexCoordArray(2, boneIndexArray);
-      geom->setTexCoordArray(3, tangentArray);
+
+      if (tangentArray.valid())
+      {
+         geom->setTexCoordArray(3, tangentArray);
+      }
 
       for (int face = 0; face < faceCount; ++face)
       {
@@ -303,12 +326,12 @@ osg::ref_ptr<osg::Node> GeometryBuilder::GeometryCache::GetOrCreateModel(Cal3DMo
       return NULL;
    }
 
-   std::string filename = modelData->GetFilename();
+   const std::string& modelRes = modelData->GetResource().GetResourceIdentifier();
 
    CalHardwareModel* hardwareModel = modelData->GetOrCreateCalHardwareModel();
 
-   GeometryMap::iterator iterBegin = mLoadedModels.lower_bound(filename);
-   GeometryMap::iterator iterEnd = mLoadedModels.upper_bound(filename);
+   GeometryMap::iterator iterBegin = mLoadedModels.lower_bound(modelRes);
+   GeometryMap::iterator iterEnd = mLoadedModels.upper_bound(modelRes);
 
    pWrapper->SetLODLevel(1);
    pWrapper->UpdateAnimations(0);
@@ -368,7 +391,7 @@ osg::ref_ptr<osg::Node> GeometryBuilder::GeometryCache::GetOrCreateModel(Cal3DMo
             // tmp observer to hold an instance because the cache uses an observer.
             osg::ref_ptr<osg::Geometry> tmp = CreateMeshSubMesh(hardwareModel, pWrapper, meshId, submeshId, vertexCount, faceCount, boneCount, baseIndex, startIndex);
             mcd.mGeometry = tmp.get();
-            mLoadedModels.insert(std::make_pair(filename, mcd));
+            mLoadedModels.insert(std::make_pair(modelRes, mcd));
             //end create cached version of model
 
             //make a soft copy of cached model and use that

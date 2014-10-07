@@ -1,10 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <character name="eye_marine">
-     <skinningShader>
-		<shaderGroup>CharacterGroup</shaderGroup>
-		<shaderName>Default</shaderName>
-		<maxBones>71</maxBones>
-   </skinningShader>
    
    <poseMesh fileName="Eye_Marine_PoseMesh.xml" />
    
@@ -83,6 +78,12 @@
    <material fileName="REye.XRF" />
    <material fileName="Ak47.XRF" />
    <material fileName="M16.XRF" />
+   
+   <skinningShader>
+      <shaderGroup>CharacterGroup</shaderGroup>
+      <shaderName>Default</shaderName>
+      <maxBones>71</maxBones>
+   </skinningShader>
 
    
 </character>

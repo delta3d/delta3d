@@ -105,8 +105,6 @@ namespace dtAnim
 
       DT_DECLARE_ACCESSOR(dtCore::ResourceDescriptor, Resource);
 
-      DT_DECLARE_ACCESSOR(std::string, Filename);
-
       DT_DECLARE_ACCESSOR(std::string, ModelName);
 
       DT_DECLARE_ACCESSOR(float, Scale);
