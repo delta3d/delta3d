@@ -58,8 +58,8 @@
   <xs:group name="parametersGroup">
     <xs:sequence>
       <xs:element ref="LOD" minOccurs="0" maxOccurs="1"/>
-      <xs:element ref="skinningShader" minOccurs="0" maxOccurs="1" />
       <xs:element ref="scale" minOccurs="0" maxOccurs="1"/>
+      <xs:element ref="skinningShader" minOccurs="0" maxOccurs="1" />
     </xs:sequence>
   </xs:group>
 
