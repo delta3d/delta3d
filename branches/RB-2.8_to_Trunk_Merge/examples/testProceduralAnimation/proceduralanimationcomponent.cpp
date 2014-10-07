@@ -64,7 +64,7 @@ void ProceduralAnimationComponent::ProcessMessage(const dtGame::Message& message
          AnimActorList::iterator endIter = mActorList.end();
          for ( ; curIter != endIter; ++curIter)
          {
-            (*curIter)->GetModelWrapper()->Update(tickMessage.GetDeltaSimTime());
+            (*curIter)->GetModelWrapper()->UpdateAnimation(tickMessage.GetDeltaSimTime());
          }
       }
    }
