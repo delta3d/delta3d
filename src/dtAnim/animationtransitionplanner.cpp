@@ -1016,12 +1016,12 @@ namespace dtAnim
    ////////////////////////////////////////////////////////////////////////////
    ////////////////////////////////////////////////////////////////////////////
    IMPLEMENT_ENUM(BasicStanceEnum);
-   BasicStanceEnum BasicStanceEnum::IDLE("IDLE", 1.75);
-   BasicStanceEnum BasicStanceEnum::STANDING("STANDING", 1.75);
-   BasicStanceEnum BasicStanceEnum::SITTING("SITTING", 1.10);
-   BasicStanceEnum BasicStanceEnum::LYING("LYING", 1.05);
-   BasicStanceEnum BasicStanceEnum::KNEELING("KNEELING", 1.00);
-   BasicStanceEnum BasicStanceEnum::PRONE("PRONE", 0.00);
+   BasicStanceEnum BasicStanceEnum::IDLE("IDLE", 1.75f);
+   BasicStanceEnum BasicStanceEnum::STANDING("STANDING", 1.75f);
+   BasicStanceEnum BasicStanceEnum::SITTING("SITTING", 1.10f);
+   BasicStanceEnum BasicStanceEnum::LYING("LYING", 1.05f);
+   BasicStanceEnum BasicStanceEnum::KNEELING("KNEELING", 1.0f);
+   BasicStanceEnum BasicStanceEnum::PRONE("PRONE", 0.0f);
 
    ////////////////////////////////////////////////////////////////////////////
    BasicStanceEnum::BasicStanceEnum(const std::string& name, float costValue)
