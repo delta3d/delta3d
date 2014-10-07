@@ -122,7 +122,7 @@ namespace dtAnim
       //////////////////////////////////////////////////////////////////////////
       void TestBuildOsgGeometry()
       {
-         AnimNodeBuilder& nodeBuilder = Cal3DDatabase::GetInstance().GetNodeBuilder();
+         AnimNodeBuilder& nodeBuilder = *ModelDatabase::GetInstance().GetNodeBuilder();
 
          //see if we can even do hardware building...
          if (nodeBuilder.SupportsHardware() == false)
@@ -292,7 +292,9 @@ namespace dtAnim
 
       void TestBuildWithScale()
       {
-         AnimNodeBuilder& nodeBuilder = Cal3DDatabase::GetInstance().GetNodeBuilder();
+         dtAnim::ModelDatabase& database = ModelDatabase::GetInstance();
+
+         AnimNodeBuilder& nodeBuilder = *database.GetNodeBuilder();
 
          if (nodeBuilder.SupportsSoftware() == false)
          {
@@ -300,9 +302,16 @@ namespace dtAnim
          }
 
          nodeBuilder.SetCreate(AnimNodeBuilder::CreateFunc(&nodeBuilder, &AnimNodeBuilder::CreateSoftware));
-         dtCore::RefPtr<Cal3DModelWrapper> wrapper = Cal3DDatabase::GetInstance().Load(mModelPath);
+
+         CPPUNIT_ASSERT(database.Load(mModelPath));
+         dtCore::RefPtr<dtAnim::BaseModelData> modelData;
+         modelData = database.Find(mModelPath);
+         CPPUNIT_ASSERT(modelData.valid());
+
+         dtCore::RefPtr<BaseModelWrapper> wrapper = database.CreateModelWrapper(*modelData);
          CPPUNIT_ASSERT(wrapper.valid());
-         dtCore::RefPtr<Cal3DModelData> modelData = Cal3DDatabase::GetInstance().GetModelData(*wrapper);
+         CPPUNIT_ASSERT(wrapper->GetModelData() == modelData.get());
+
          float testScale = 3.5f;
          modelData->SetScale(testScale);
          CPPUNIT_ASSERT_DOUBLES_EQUAL(testScale, modelData->GetScale(), 0.1f);
@@ -400,8 +409,8 @@ namespace dtAnim
                                       true, hasSubmesh);
 
 
-         const dtAnim::Cal3dBoundingSphereCalculator* sphereCallback =
-            dynamic_cast<const dtAnim::Cal3dBoundingSphereCalculator*>(toCheck->getComputeBoundingSphereCallback());
+         const dtAnim::Cal3DBoundingSphereCalculator* sphereCallback =
+            dynamic_cast<const dtAnim::Cal3DBoundingSphereCalculator*>(toCheck->getComputeBoundingSphereCallback());
          CPPUNIT_ASSERT(sphereCallback != NULL);
       }
 

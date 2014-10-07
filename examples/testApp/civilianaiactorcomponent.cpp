@@ -409,7 +409,7 @@ namespace dtExample
    }
 
    /////////////////////////////////////////////////////////////////
-   void SearchAndRegisterAnimationOptions(dtAnim::SequenceMixer& seqMixer, const dtUtil::RefString& name, const std::vector<dtUtil::RefString>& options, dtAnim::Cal3DModelWrapper& wrapper)
+   void SearchAndRegisterAnimationOptions(dtAnim::SequenceMixer& seqMixer, const dtUtil::RefString& name, const std::vector<dtUtil::RefString>& options, dtAnim::BaseModelWrapper& wrapper)
    {
       dtCore::RefPtr<const dtAnim::Animatable> anim = seqMixer.GetRegisteredAnimation(name);
       if (anim != NULL) return;
