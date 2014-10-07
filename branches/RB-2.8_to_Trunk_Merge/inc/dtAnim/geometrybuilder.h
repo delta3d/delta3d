@@ -52,6 +52,7 @@ class CalHardwareModel;
 
 namespace dtAnim
 {
+   class BaseModelWrapper;
    class Cal3DModelWrapper;
    class Cal3DModelData;
    class Array;
@@ -98,7 +99,7 @@ namespace dtAnim
       GeometryBuilder();
       virtual ~GeometryBuilder();
             
-      virtual dtCore::RefPtr<osg::Node> CreateGeometry(osg::RenderInfo* renderInfo, Cal3DModelWrapper* pWrapper);
+      virtual dtCore::RefPtr<osg::Node> CreateGeometry(osg::RenderInfo* renderInfo, dtAnim::BaseModelWrapper* wrapper);
       
 
    protected:

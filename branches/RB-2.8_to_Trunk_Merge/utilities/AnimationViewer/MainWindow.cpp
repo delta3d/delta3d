@@ -10,6 +10,7 @@
 #include "ResourceDelegates.h"
 #include "ResourceDialogs.h"
 #include <dtQt/osggraphicswindowqt.h>
+#include <dtQt/projectcontextdialog.h>
 
 #include <osg/Geode> ///needed for the node builder
 #include <dtAnim/animatable.h>
@@ -20,9 +21,11 @@
 #include <dtAnim/osgmodelwrapper.h>
 #include <dtCore/deltawin.h>
 #include <dtQt/nodetreepanel.h>
+#include <dtCore/shadermanager.h>
 #include <dtUtil/fileutils.h>
 #include <dtUtil/log.h>
 
+#include <QtGui/QAction>
 #include <QtGui/QApplication>
 #include <QtGui/QMenuBar>
 #include <QtGui/QAction>
@@ -57,12 +60,18 @@
 #include <QtGui/QGraphicsEllipseItem>
 #include <cassert>
 
+
+
 ////////////////////////////////////////////////////////////////////////////////
 // CONSTANTS
 ////////////////////////////////////////////////////////////////////////////////
 static const QString APP_TITLE("Animation Viewer");
-static const QString SETTINGS_NAME("delta3d");
+static const QString APP_SETTINGS_NAME("delta3d");
 static const QString SETTINGS_RECENT_FILES("recentFileList");
+static const QString SETTING_PROJECT_CONTEXT("projectContextPath");
+static const QString SETTING_SHADERDEFS_FILE("shaderDefsFile");
+
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // Helper Function
@@ -298,10 +307,16 @@ void MainWindow::CreateMenus()
       windowMenu->addAction(mRecentFilesAct[actionIndex]);
    }
 
+   windowMenu->addSeparator();
+   QAction* loadShaderDef = new QAction(tr("Load Shader Defs..."), this);
+   loadShaderDef->setStatusTip(tr("Set the shader defs that may contain custom character shaders."));
+   connect(loadShaderDef, SIGNAL(triggered()), this, SLOT(OnLoadShaderDefinition()));
+   windowMenu->addAction(loadShaderDef);
+
    menuBar()->addSeparator();
    windowMenu->addSeparator();
    windowMenu->addAction(mExitAct);
-
+   
    UpdateRecentFileActions();
 }
 
@@ -747,16 +762,19 @@ void MainWindow::OnPoseMeshesLoaded(const std::vector<dtAnim::PoseMesh*>& poseMe
    QAction* grabAction  = actionGroup->addAction(modeGrabIcon, "Click-drag mode.");
    QAction* pickAction  = actionGroup->addAction(modeBlendIcon, "Blend pick mode.");
    QAction* errorAction = actionGroup->addAction(modeErrorIcon, "Error pick mode.");
+   QAction* lookAtCameraAction = actionGroup->addAction(modeBlendIcon, "Look At Camera.");
 
    poseModesToolbar->addAction(grabAction);
    poseModesToolbar->addAction(pickAction);
 
    // Not full implemented so leave out
+   // poseModesToolbar->addAction(lookAtCameraAction);
    //poseModesToolbar->addAction(errorAction);
 
    grabAction->setCheckable(true);
    pickAction->setCheckable(true);
    errorAction->setCheckable(true);
+   lookAtCameraAction->setCheckable(true);
 
    pickAction->setChecked(true);
 
@@ -803,6 +821,7 @@ void MainWindow::OnPoseMeshesLoaded(const std::vector<dtAnim::PoseMesh*>& poseMe
    connect(grabAction, SIGNAL(triggered()), this, SLOT(OnSelectModeGrab()));
    connect(pickAction, SIGNAL(triggered()), this, SLOT(OnSelectModeBlendPick()));
    connect(errorAction, SIGNAL(triggered()), this, SLOT(OnSelectModeErrorPick()));
+   connect(lookAtCameraAction, SIGNAL(triggered()), this, SLOT(OnSelectLookAtCamera()));
 
    connect(displayEdgesAction, SIGNAL(toggled(bool)), SLOT(OnToggleDisplayEdges(bool)));
    connect(displayErrorAction, SIGNAL(toggled(bool)), SLOT(OnToggleDisplayError(bool)));
@@ -1065,7 +1084,7 @@ void MainWindow::OnToggleHardwareSkinning()
    // HACK: Currently CAL3D needs to reload files for hardware mode toggling.
    if (isCal3dSystem)
    {
-      QSettings settings(SETTINGS_NAME, APP_TITLE);
+      QSettings settings(APP_SETTINGS_NAME, APP_TITLE);
       QStringList files = settings.value(SETTINGS_RECENT_FILES).toStringList();
       LoadCharFile(files.first());
    }
@@ -1094,7 +1113,7 @@ void MainWindow::OnToggleLightingToolbar()
 ////////////////////////////////////////////////////////////////////////////////
 void MainWindow::UpdateRecentFileActions()
 {
-   QSettings settings(SETTINGS_NAME, APP_TITLE);
+   QSettings settings(APP_SETTINGS_NAME, APP_TITLE);
    QStringList files = settings.value(SETTINGS_RECENT_FILES).toStringList();
 
    int numRecentFiles = qMin(files.size(), 5);
@@ -1129,7 +1148,7 @@ void MainWindow::SetCurrentFile(const QString& filename)
    setWindowTitle(tr("%1 - %2").arg(QFileInfo(filename).fileName()).arg(APP_TITLE));
    mCloseCharAction->setEnabled(true);
 
-   QSettings settings(SETTINGS_NAME, APP_TITLE);
+   QSettings settings(APP_SETTINGS_NAME, APP_TITLE);
    QStringList files = settings.value(SETTINGS_RECENT_FILES).toStringList();
    files.removeAll(filename);
    files.prepend(filename);
@@ -1298,6 +1317,12 @@ void MainWindow::OnSelectModeErrorPick()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+void MainWindow::OnSelectLookAtCamera()
+{
+
+}
+
+////////////////////////////////////////////////////////////////////////////////
 void MainWindow::OnToggleDisplayEdges(bool shouldDisplay)
 {
    mPoseMeshViewer->SetDisplayEdges(shouldDisplay);
@@ -1404,14 +1429,6 @@ void MainWindow::dropEvent(QDropEvent* event)
 bool MainWindow::IsAnimNodeBuildingUsingHW() const
 {
    return dtAnim::ModelDatabase::GetInstance().IsHardwareSupported();
-}
-
-//////////////////////////////////////////////////////////////////////////
-void MainWindow::OnConfiged()
-{
-   //theoretically, everything is in place, the window is rendering, openGL
-   //context is valid, etc.
-   mHardwareSkinningAction->setChecked(IsAnimNodeBuildingUsingHW());
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -2046,4 +2063,147 @@ void MainWindow::OnUpdateCharacter()
 
       mAttachmentPanel->OnCharacterUpdated(mViewer->GetCharacter());
    }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void MainWindow::OnInitialization()
+{
+   //theoretically, everything is in place, the window is rendering, openGL
+   //context is valid, etc.
+   mHardwareSkinningAction->setChecked(IsAnimNodeBuildingUsingHW());
+
+   QSettings settings(APP_SETTINGS_NAME, APP_TITLE);
+   mContextPath = settings.value(
+      SETTING_PROJECT_CONTEXT).toString().toStdString();
+   mShaderDefFile = settings.value(
+      SETTING_SHADERDEFS_FILE).toString().toStdString();
+
+   if (EnsureShaderDefFileValid())
+   {
+      QString qstr(mShaderDefFile.c_str());
+      OnLoadShaderFile(qstr);
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void MainWindow::SaveSettings()
+{
+   QSettings settings(APP_SETTINGS_NAME, APP_TITLE);
+
+   try
+   {
+      // Update the registry entry based on the current valid context
+      settings.setValue(SETTING_PROJECT_CONTEXT, mContextPath.c_str());
+      settings.setValue(SETTING_SHADERDEFS_FILE, mShaderDefFile.c_str());
+      settings.sync();
+   }
+   catch (const dtUtil::Exception &e)
+   {
+      // The context path is not valid, clear the registry entry
+      settings.remove(SETTING_PROJECT_CONTEXT);
+      settings.remove(SETTING_SHADERDEFS_FILE);
+      settings.sync();
+
+      QMessageBox::critical((QWidget *)this, tr("Error"), tr(e.What().c_str()), tr("Ok"));
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void MainWindow::OnLoadShaderDefinition()
+{
+   QString filename = QFileDialog::getOpenFileName(this, tr("Load Shader Definition File"),
+      mContextPath.c_str(), tr("Shaders(*.dtShader)") + " " + tr("Shaders(*.xml)") );
+
+   if (!filename.isEmpty())
+   {
+      if (dtUtil::FileUtils::GetInstance().FileExists(filename.toStdString()))
+      {
+         OnLoadShaderFile(filename);
+      }
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void MainWindow::OnLoadShaderFile(const QString& filename)
+{
+   try
+   {
+      dtCore::ShaderManager& shaderManager = dtCore::ShaderManager::GetInstance();
+
+      // Since the shader manager cannot deal with duplicate shader names,
+      // we clear it out before we load each file.  This means that in order
+      // to reference shaders later, the file just be reloaded.
+      shaderManager.Clear();
+
+      mShaderDefFile = filename.toStdString();
+      shaderManager.LoadShaderDefinitions(mShaderDefFile);
+
+      mContextPath = dtUtil::FileUtils::GetInstance().GetFileInfo(mShaderDefFile).path;
+
+      SaveSettings();
+   }
+   catch (dtUtil::Exception& e)
+   {
+      QMessageBox::critical(NULL, "Error", e.ToString().c_str());
+   }
+}
+
+///////////////////////////////////////////////////////////////////////////////
+bool MainWindow::IsShaderDefFileValid() const
+{
+   return dtUtil::FileUtils::GetInstance().FileExists(mShaderDefFile);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+bool MainWindow::EnsureShaderDefFileValid()
+{
+   bool valid = IsShaderDefFileValid();
+
+   if ( ! valid)
+   {
+      if (AskUserToLoadShaderDef())
+      {
+         OnLoadShaderDefinition();
+
+         valid = IsShaderDefFileValid();
+      }
+   }
+
+   if ( ! valid)
+   {
+      std::string title("Invalid ShaderDef");
+      std::string message("Could not load shader definition file:\n\t" + mShaderDefFile
+         + "\nCharacter models may not display correctly.");
+      QMessageBox::warning(NULL, title.c_str(), message.c_str());
+   }
+
+   return valid;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+void MainWindow::OnReloadShaderFiles()
+{
+   if (EnsureShaderDefFileValid())
+   {
+      dtCore::ShaderManager& shaderManager = dtCore::ShaderManager::GetInstance();
+      shaderManager.Clear();
+
+      try
+      {
+         shaderManager.LoadShaderDefinitions(mShaderDefFile);
+      }
+      catch (dtUtil::Exception& e)
+      {
+         QMessageBox::critical(NULL, "Error", e.ToString().c_str());
+      }
+   }
+}
+
+///////////////////////////////////////////////////////////////////////////////
+bool MainWindow::AskUserToLoadShaderDef()
+{
+   std::string title("Load ShaderDef File?");
+   std::string message("Character models may need custom shaders to render. Would you like to load your project's ShaderDef file?");
+
+   return QMessageBox::Ok == QMessageBox::information(NULL, title.c_str(), message.c_str(), QMessageBox::Ok, QMessageBox::Cancel);
 }

@@ -32,8 +32,8 @@ namespace dtAnim
    class BaseModelWrapper;
 
 /**
-* AnimationChannel derives from Animatable and holds an AnimationWrapper, and
-* contains semantics for playing an animation using the Cal3DModelWrapper API.
+* AnimationChannel derives from Animatable and
+* contains semantics for playing an animation using the BaseModelWrapper API.
 */
 class DT_ANIM_EXPORT AnimationChannel : public Animatable
 {

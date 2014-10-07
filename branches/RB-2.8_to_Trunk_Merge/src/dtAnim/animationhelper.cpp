@@ -906,8 +906,8 @@ PoseController* AnimationHelper::GetPoseController()
 
    if ( ! mPoseSequence.valid())
    {
-      Cal3DModelWrapper* model = GetModelWrapper();
-      if (model != NULL && NULL != Cal3DDatabase::GetInstance().GetPoseMeshDatabase(*model))
+      BaseModelWrapper* model = GetModelWrapper();
+      if (model != NULL && NULL != ModelDatabase::GetInstance().GetPoseMeshDatabase(*model))
       {
          mPoseSequence = new PoseSequence;
          mPoseSequence->SetName("DefaultPoseSequence");
@@ -951,7 +951,7 @@ bool AnimationHelper::IsPosesEnabled() const
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-bool AnimationHelper::SetupPoses(const dtAnim::Cal3DModelData& modelData)
+bool AnimationHelper::SetupPoses(const dtAnim::BaseModelData& modelData)
 {
    // Characters may not have pose meshes defined.
    // Avoid extra work and error reports if this is the case.
@@ -962,7 +962,7 @@ bool AnimationHelper::SetupPoses(const dtAnim::Cal3DModelData& modelData)
 
    bool success = false;
 
-   Cal3DDatabase& database = Cal3DDatabase::GetInstance();
+   ModelDatabase& database = ModelDatabase::GetInstance();
 
    dtCore::TransformableActorProxy* actor = NULL;
    GetOwner(actor);
@@ -973,7 +973,7 @@ bool AnimationHelper::SetupPoses(const dtAnim::Cal3DModelData& modelData)
       drawable = actor->GetDrawable()->AsTransformable();
    }
 
-   Cal3DModelWrapper* model = GetModelWrapper();
+   BaseModelWrapper* model = GetModelWrapper();
    if (drawable != NULL)
    {
       PoseMeshDatabase* poseDatabase = database.GetPoseMeshDatabase(*model);
@@ -981,9 +981,9 @@ bool AnimationHelper::SetupPoses(const dtAnim::Cal3DModelData& modelData)
       if (poseDatabase == NULL)
       {
          std::string modelName;
-         if (model->GetCalModel() != NULL)
+         if (model->GetModelData() != NULL)
          {
-            modelName = model->GetCalModel()->getCoreModel()->getName();
+            modelName = model->GetModelData()->GetModelName();
          }
 
          LOG_ERROR("Cannot setup PoseController for model \"" + modelName 

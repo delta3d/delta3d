@@ -70,7 +70,6 @@ namespace dtAnim
       virtual dtAnim::AnimationInterface* GetAnimationByIndex(int index) const = 0;
       virtual dtAnim::BoneInterface* GetBoneByIndex(int index) const = 0;
 
-      // NEW: BEGIN ---------------------------------------
       virtual dtAnim::AnimationInterface* GetAnimation(const std::string& name) const = 0;
       virtual int GetAnimations(dtAnim::AnimationArray& outAnims) const = 0;
 

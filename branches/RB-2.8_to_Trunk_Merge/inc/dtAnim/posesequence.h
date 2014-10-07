@@ -44,7 +44,7 @@ namespace dtCore
 
 namespace dtAnim
 {
-   class Cal3DModelWrapper;
+   class BaseModelWrapper;
    class PoseMeshDatabase;
    class PoseMeshUtility;
 }
@@ -103,8 +103,8 @@ namespace dtAnim
       void SetPoseDrawable(dtCore::Transformable* drawable);
       dtCore::Transformable* GetPoseDrawable() const;
 
-      void SetModelWrapper(dtAnim::Cal3DModelWrapper* model);
-      dtAnim::Cal3DModelWrapper* GetModelWrapper() const;
+      void SetModelWrapper(dtAnim::BaseModelWrapper* model);
+      dtAnim::BaseModelWrapper* GetModelWrapper() const;
 
       void SetPoseMeshDatabase(dtAnim::PoseMeshDatabase* poseDatabase);
       dtAnim::PoseMeshDatabase* GetPoseMeshDatabase() const;
@@ -150,7 +150,7 @@ namespace dtAnim
       dtCore::RefPtr<dtAnim::PoseMeshUtility> mPoseMeshUtil;
       dtCore::ObserverPtr<dtCore::Transformable> mTarget;
       dtCore::ObserverPtr<dtCore::Transformable> mDrawable;
-      dtCore::ObserverPtr<dtAnim::Cal3DModelWrapper> mModelWrapper;
+      dtCore::ObserverPtr<dtAnim::BaseModelWrapper> mModelWrapper;
       dtCore::ObserverPtr<dtAnim::PoseMeshDatabase> mPoseDatabase;
       dtCore::RefPtr<PoseInfo> mHeadPoseInfo;
       osg::Vec3 mTargetOffset;
@@ -176,7 +176,7 @@ namespace dtAnim
 
       PoseSequence();
 
-      dtCore::RefPtr<dtAnim::Animatable> Clone(dtAnim::Cal3DModelWrapper* modelWrapper) const;
+      dtCore::RefPtr<dtAnim::Animatable> Clone(dtAnim::BaseModelWrapper* modelWrapper) const;
 
       PoseController* GetPoseController();
       const PoseController* GetPoseController() const;
@@ -189,7 +189,7 @@ namespace dtAnim
       virtual ~PoseSequence();
 
       /// No one should be calling the copy canstructor except the clone method.
-      PoseSequence(const PoseSequence& other, Cal3DModelWrapper* wrapper);
+      PoseSequence(const PoseSequence& other, BaseModelWrapper* wrapper);
 
       //not implemented
       PoseSequence& operator=(const PoseSequence&);

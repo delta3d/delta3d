@@ -23,17 +23,17 @@
 // INCLUDE DIRECTIVES
 ////////////////////////////////////////////////////////////////////////////////
 #include <dtAnim/posesequence.h>
-#include <dtAnim/cal3dmodelwrapper.h>
-#include <dtAnim/cal3dmodeldata.h>
-#include <dtAnim/cal3ddatabase.h>
+#include <dtAnim/basemodeldata.h>
+#include <dtAnim/basemodelwrapper.h>
+#include <dtAnim/modeldatabase.h>
 #include <dtAnim/posemath.h>
 #include <dtAnim/posemeshutility.h>
 #include <dtCore/transform.h>
 #include <dtCore/transformable.h>
 #include <dtUtil/log.h>
 #include <dtUtil/mathdefines.h>
-#include <cal3d/model.h>
 
+#include <algorithm>
 #include <iostream>
 #include <osg/io_utils>
 
@@ -190,12 +190,12 @@ namespace dtAnim
       return mDrawable.get();
    }
 
-   void PoseController::SetModelWrapper(dtAnim::Cal3DModelWrapper* model)
+   void PoseController::SetModelWrapper(dtAnim::BaseModelWrapper* model)
    {
       mModelWrapper = model;
    }
 
-   dtAnim::Cal3DModelWrapper* PoseController::GetModelWrapper() const
+   dtAnim::BaseModelWrapper* PoseController::GetModelWrapper() const
    {
       return mModelWrapper.get();
    }
@@ -232,7 +232,7 @@ namespace dtAnim
          std::string modelName;
          if (mModelWrapper.valid())
          {
-            modelName = mModelWrapper->GetCalModel()->getCoreModel()->getName();
+            modelName = mModelWrapper->GetModelData()->GetModelName();
          }
          LOG_WARNING("Cannot find pose \"" + poseMeshName + "\" for model \"" + modelName + "\"");
       }
@@ -413,7 +413,7 @@ namespace dtAnim
          transform.GetTranslation(translation);
 
          // Get the bone position relative to its root
-         bonePosition = mModelWrapper->GetBoneAbsoluteTranslation(headMesh->GetEffectorID());
+         bonePosition = mModelWrapper->GetBoneByIndex(headMesh->GetEffectorID())->GetAbsoluteTranslation();
 
          // TODO This is wrong.  It assumes there are no transforms between the model and the main deltadrawable transform.
 
@@ -444,7 +444,7 @@ namespace dtAnim
       // If we have the ik system attached
       if (poseMesh != NULL && mModelWrapper.valid() && mDrawable.valid())
       {
-         osg::Quat boneRotation = mModelWrapper->GetBoneAbsoluteRotation(poseMesh->GetEffectorID());
+         osg::Quat boneRotation = mModelWrapper->GetBoneByIndex(poseMesh->GetEffectorID())->GetAbsoluteRotation();
          osg::Vec3 nativeBoneForward = poseMesh->GetEffectorForwardAxis();
 
          dtCore::Transform transform;
@@ -497,7 +497,7 @@ namespace dtAnim
          transform.GetTranslation(translation);
 
          // Get the bone position relative to its root
-         bonePosition = mModelWrapper->GetBoneAbsoluteTranslation(poseMesh->GetEffectorID());
+         bonePosition = mModelWrapper->GetBoneByIndex(poseMesh->GetEffectorID())->GetAbsoluteTranslation();
 
          // Get the gun position in the world
          bonePosition  = bonePosition * rotation;
@@ -690,7 +690,7 @@ namespace dtAnim
 
    /////////////////////////////////////////////////////////////////////////////
    /// No one should be calling the copy canstructor except the clone method.
-   PoseSequence::PoseSequence(const PoseSequence& other, Cal3DModelWrapper* wrapper)
+   PoseSequence::PoseSequence(const PoseSequence& other, BaseModelWrapper* wrapper)
       : BaseClass(other, wrapper)
    {
       // NOTE: Base class will clone controller and animations.
@@ -703,7 +703,7 @@ namespace dtAnim
    {}
 
    /////////////////////////////////////////////////////////////////////////////
-   dtCore::RefPtr<dtAnim::Animatable> PoseSequence::Clone(dtAnim::Cal3DModelWrapper* modelWrapper) const
+   dtCore::RefPtr<dtAnim::Animatable> PoseSequence::Clone(dtAnim::BaseModelWrapper* modelWrapper) const
    {
       return new PoseSequence(*this, modelWrapper);
    }

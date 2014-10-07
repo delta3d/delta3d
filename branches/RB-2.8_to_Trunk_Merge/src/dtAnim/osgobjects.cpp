@@ -861,21 +861,22 @@ namespace dtAnim
    void OsgAnimation::SetPlayMode(const dtAnim::PlayModeEnum& playMode)
    {
       typedef dtAnim::PlayModeEnum PlayMode;
+      typedef osgAnimation::Animation OsgAnim;
       typedef osgAnimation::Animation::PlayMode OsgPlayMode;
 
-      OsgPlayMode mode = OsgPlayMode::ONCE;
+      OsgPlayMode mode = OsgAnim::ONCE;
 
       if (&playMode == &PlayMode::LOOP)
       {
-         mode = OsgPlayMode::LOOP;
+         mode = OsgAnim::LOOP;
       }
       else if (&playMode == &PlayMode::SWING)
       {
-         mode = OsgPlayMode::PPONG;
+         mode = OsgAnim::PPONG;
       }
       else if (&playMode == &PlayMode::POSE)
       {
-         mode = OsgPlayMode::STAY;
+         mode = OsgAnim::STAY;
       }
       
       mAnim->setPlayMode(mode);
@@ -884,6 +885,7 @@ namespace dtAnim
    const dtAnim::PlayModeEnum& OsgAnimation::GetPlayMode() const
    {
       typedef dtAnim::PlayModeEnum PlayMode;
+      typedef osgAnimation::Animation OsgAnim;
       typedef osgAnimation::Animation::PlayMode OsgPlayMode;
 
       const PlayMode* playMode = &PlayMode::NONE;
@@ -891,16 +893,16 @@ namespace dtAnim
       OsgPlayMode osgMode = mAnim->getPlayMode();
       switch (osgMode)
       {
-      case OsgPlayMode::ONCE:
+      case OsgAnim::ONCE:
          playMode = &PlayMode::ONCE;
          break;
-      case OsgPlayMode::LOOP:
+      case OsgAnim::LOOP:
          playMode = &PlayMode::LOOP;
          break;
-      case OsgPlayMode::PPONG:
+      case OsgAnim::PPONG:
          playMode = &PlayMode::SWING;
          break;
-      case OsgPlayMode::STAY:
+      case OsgAnim::STAY:
          playMode = &PlayMode::POSE;
          break;
       default:

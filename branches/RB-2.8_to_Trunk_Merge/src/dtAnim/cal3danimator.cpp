@@ -77,12 +77,18 @@ namespace dtAnim
       , mMinBlendTime(DEFAULT_MINIMUM_BLEND_TIME)
       , mPreDriver(0)
       , mPostDriver(0)
-      , mAnimDriver(new AnimDriver(this))
-      , mSkelDriver(new SkeletonDriver(this))
-      , mMorphDriver(new MorphDriver(this))
-      , mSpringDriver(new SpringDriver(this))
-      , mPhysiqueDriver(new PhysiqueDriver(this))
+      , mAnimDriver(NULL)
+      , mSkelDriver(NULL)
+      , mMorphDriver(NULL)
+      , mSpringDriver(NULL)
+      , mPhysiqueDriver(NULL)
    {
+      mAnimDriver = new AnimDriver(this);
+      mSkelDriver = new SkeletonDriver(this);
+      mMorphDriver = new MorphDriver(this);
+      mSpringDriver = new SpringDriver(this);
+      mPhysiqueDriver = new PhysiqueDriver(this);
+
       SetWrapper(wrapper);
    }
 
@@ -272,6 +278,18 @@ namespace dtAnim
    float Cal3DAnimator::GetMinimumBlendTime() const
    {
       return mMinBlendTime;
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   bool Cal3DAnimator::BlendPose(int id, float weight, float delay)
+   {
+      return mMixer->blendPose(id, weight, delay);
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   bool Cal3DAnimator::ClearPose(int id, float delay)
+   {
+      return mMixer->clearPose(id, delay);
    }
 
 } // namespace dtAnim

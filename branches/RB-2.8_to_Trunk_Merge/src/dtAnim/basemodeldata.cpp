@@ -116,6 +116,8 @@
 
    DT_IMPLEMENT_ACCESSOR(BaseModelData, dtCore::ResourceDescriptor, Resource);
 
+   DT_IMPLEMENT_ACCESSOR(BaseModelData, std::string, Filename);
+
    DT_IMPLEMENT_ACCESSOR(BaseModelData, std::string, ModelName);
 
    DT_IMPLEMENT_ACCESSOR_GETTER(BaseModelData, float, Scale);

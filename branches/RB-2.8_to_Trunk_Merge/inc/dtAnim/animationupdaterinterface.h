@@ -52,6 +52,9 @@ namespace dtAnim
 
       virtual bool IsPaused() const = 0;
 
+      virtual bool BlendPose(int id, float weight, float delay) = 0;
+      virtual bool ClearPose(int id, float delay) = 0;
+
    protected:
       virtual ~AnimationUpdaterInterface() {}
    };

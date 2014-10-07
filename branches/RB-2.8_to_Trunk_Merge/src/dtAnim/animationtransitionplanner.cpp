@@ -9,7 +9,6 @@
 #include <dtAnim/animationchannel.h>
 #include <dtAnim/animationsequence.h>
 #include <dtAnim/animationhelper.h>
-#include <dtAnim/animationwrapper.h>
 #include <dtAnim/sequencemixer.h>
 #include <dtGame/actorcomponentcontainer.h>
 #include <dtAI/worldstate.h>

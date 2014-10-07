@@ -448,7 +448,7 @@ namespace dtExample
       newWRBlend->SetName(OpName);
 
       dtAnim::SequenceMixer& seqMixer = helper->GetSequenceMixer();
-      dtAnim::Cal3DModelWrapper* wrapper = helper->GetModelWrapper();
+      dtAnim::BaseModelWrapper* wrapper = helper->GetModelWrapper();
 
       SearchAndRegisterAnimationOptions(seqMixer, newWalkAnimName, nameWalkOptions, *wrapper);
       SearchAndRegisterAnimationOptions(seqMixer, newRunAnimName, nameRunOptions, *wrapper);

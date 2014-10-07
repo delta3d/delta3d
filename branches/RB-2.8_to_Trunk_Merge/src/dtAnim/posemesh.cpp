@@ -44,17 +44,11 @@ PoseMesh::PoseMesh(dtAnim::BaseModelWrapper* model,
    std::vector<unsigned int> animids;
    GetAnimationIDsByName(model, meshData.mAnimations, animids);
 
-   // Create a temporary reverse lookup map to
-   // map an ID back to a bone object.
-   // The array should be sorted.
-   dtAnim::BoneArray bones;
-   model->GetBones(bones);
-
+   dtAnim::AnimationUpdaterInterface* animator = model->GetAnimator();
    dtAnim::BoneInterface* rootBone = model->GetBone(meshData.mRootName);
    dtAnim::BoneInterface* effectorBone = model->GetBone(meshData.mEffectorName);
-
-   mRootID     = rootBone == NULL ? -1 : rootBone->GetID();
-   mEffectorID = effectorBone == NULL ? -1 : effectorBone->GetID();
+   mRootID     = rootBone->GetID();
+   mEffectorID = effectorBone->GetID();
 
    // We need to have valid bones here in order to continue
    if (mRootID == -1 || mEffectorID == -1)
@@ -66,7 +60,6 @@ PoseMesh::PoseMesh(dtAnim::BaseModelWrapper* model,
    mBindPoseForward = meshData.mBindPoseForward;
 
    // Update the skeleton to initialize bone data
-   dtAnim::AnimationUpdaterInterface* animator = model->GetAnimator();
    animator->ClearAll(0.0f);
    animator->Update(0.0f);
 
@@ -75,7 +68,7 @@ PoseMesh::PoseMesh(dtAnim::BaseModelWrapper* model,
 
    mRootForward = rootRotation.inverse() * mBindPoseForward;
 
-   osg::Quat bindRotation = model->GetBoneAbsoluteRotation(mEffectorID);
+   osg::Quat bindRotation = effectorBone->GetAbsoluteRotation();
 
    mEffectorForward = bindRotation.inverse() * mBindPoseForward;
 
@@ -89,31 +82,37 @@ PoseMesh::PoseMesh(dtAnim::BaseModelWrapper* model,
    typedef std::map<unsigned int, unsigned int> AnimVertMap;
    AnimVertMap vertMap;
 
-   typedef std::vector<unsigned int> UIVector;
-   UIVector::const_iterator animID = animids.begin();
-   UIVector::const_iterator endanimID = animids.end();
-   for (unsigned int vertIndex = 0; animID != endanimID; ++animID)
+   typedef unsigned int AnimId;
+   typedef unsigned int VertIndex;
+   typedef std::vector<AnimId> UIVector;
+   UIVector::const_iterator curIter = animids.begin();
+   UIVector::const_iterator endIter = animids.end();
+
+   VertIndex vertIndex = 0;
+   AnimId animID = -1;
+   for ( ; curIter != endIter; ++curIter)
    {
+      animID = *curIter;
+
       // If we've already handled this animation,
       // map it to the previously computed data
-      AnimVertMap::iterator mapIter = vertMap.find(*animID);
+      AnimVertMap::iterator mapIter = vertMap.find(animID);
 
       if (mapIter != vertMap.end())
       {
+         vertMap[animID] = mapIter->second;
          continue;
       }
 
       // This anim maps to this vert
-      vertMap[*animID] = vertIndex;
+      vertMap[animID] = vertIndex;
 
-      int curAnimID = *animID;
-      dtAnim::AnimationInterface* anim = model->GetAnimationByIndex(curAnimID);
-      anim->PlayCycle(1.0f, 0.0f);
+      animator->BlendPose(animID, 1.0f, 0.0f);
       animator->Update(0.0f);
 
       osg::Quat finalRotation = effectorBone->GetAbsoluteRotation();
 
-      anim->ClearCycle(0.0f);
+      animator->ClearPose(animID, 0.0f);
       animator->Update(0.0f);
 
       // calculate a vector transformed by the rotation data.
@@ -126,7 +125,7 @@ PoseMesh::PoseMesh(dtAnim::BaseModelWrapper* model,
 
       dtAnim::GetCelestialCoordinates(worldForward, mBindPoseForward, az, el);
 
-      std::string debugName = anim->GetName();
+      std::string debugName = model->GetAnimationByIndex(animID)->GetName();
 
       osg::Vec3 debugDirection;
       dtAnim::GetCelestialDirection(az, el, mBindPoseForward, osg::Z_AXIS, debugDirection);
@@ -144,7 +143,7 @@ PoseMesh::PoseMesh(dtAnim::BaseModelWrapper* model,
       posePoints.push_back(newVertPoint);
 
       // add a (az,el) vertex
-      PoseMesh::Vertex newVert(newVertPoint, *anim);
+      PoseMesh::Vertex newVert(newVertPoint, animID);
       mVertices.push_back(newVert);
 
       // Store debug info
@@ -161,15 +160,15 @@ PoseMesh::PoseMesh(dtAnim::BaseModelWrapper* model,
    EdgeCountMap edgeCounts;
 
    // Populate the mesh with triangles
-   for (unsigned int vertIndex = 0; vertIndex < animids.size(); vertIndex += 3)
+   for (VertIndex vertIndex = 0; vertIndex < animids.size(); vertIndex += 3)
    {
-      int anim0 = animids.at(vertIndex + 0);
-      int anim1 = animids.at(vertIndex + 1);
-      int anim2 = animids.at(vertIndex + 2);
+      int animId0 = animids.at(vertIndex + 0);
+      int animId1 = animids.at(vertIndex + 1);
+      int animId2 = animids.at(vertIndex + 2);
 
-      int vertIndex0 = vertMap[anim0];
-      int vertIndex1 = vertMap[anim1];
-      int vertIndex2 = vertMap[anim2];
+      int vertIndex0 = vertMap[animId0];
+      int vertIndex1 = vertMap[animId1];
+      int vertIndex2 = vertMap[animId2];
 
       PoseMesh::VertexVector::value_type& vert0 = mVertices[vertIndex0];
       PoseMesh::VertexVector::value_type& vert1 = mVertices[vertIndex1];
@@ -179,10 +178,13 @@ PoseMesh::PoseMesh(dtAnim::BaseModelWrapper* model,
       mTriangles.push_back(newTri);
 
       // Debug
-      unsigned int triIndex = vertIndex / 3;
-      std::string animName0(model->GetCoreAnimationName(mVertices[vertIndex0].mAnimID));
-      std::string animName1(model->GetCoreAnimationName(mVertices[vertIndex1].mAnimID));
-      std::string animName2(model->GetCoreAnimationName(mVertices[vertIndex2].mAnimID));
+      VertIndex triIndex = vertIndex / 3;
+      dtAnim::AnimationInterface* anim0 = model->GetAnimationByIndex(mVertices[vertIndex0].mAnimID);
+      dtAnim::AnimationInterface* anim1 = model->GetAnimationByIndex(mVertices[vertIndex1].mAnimID);
+      dtAnim::AnimationInterface* anim2 = model->GetAnimationByIndex(mVertices[vertIndex2].mAnimID);
+      const std::string& animName0 = anim0->GetName();
+      const std::string& animName1 = anim1->GetName();
+      const std::string& animName2 = anim2->GetName();
 
       // Tally the number of edges so that we can determine
       // which ones are the silhouettes
@@ -234,9 +236,9 @@ PoseMesh::PoseMesh(dtAnim::BaseModelWrapper* model,
    }
 
    ///\todo now also build the barycentric array
-   unsigned int numpolygons = mTriangles.size();
+   size_t numpolygons = mTriangles.size();
    mBarySpaces.resize(numpolygons);
-   for (unsigned int polygon=0; polygon < numpolygons; ++polygon)
+   for (size_t polygon=0; polygon < numpolygons; ++polygon)
    {
       const osg::Vec3& a = mTriangles[polygon].mVertices[0]->mData;
       const osg::Vec3& b = mTriangles[polygon].mVertices[1]->mData;

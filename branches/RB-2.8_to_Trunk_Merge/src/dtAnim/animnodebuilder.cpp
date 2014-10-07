@@ -66,12 +66,12 @@ namespace dtAnim
       {
       };
 
-      virtual void drawImplementation(osg::RenderInfo&, const osg::Drawable*) const
+      virtual void drawImplementation(osg::RenderInfo& renderInfo, const osg::Drawable*) const
       {
          if (!mCreatedNode.valid())
          {
             CreateGeometryDrawCallback* const_this = const_cast<CreateGeometryDrawCallback*>(this);
-            const_this->mCreatedNode = mCreateFunc(mWrapper);
+            const_this->mCreatedNode = mCreateFunc(&renderInfo, mWrapper);
          }
       }
 
@@ -157,7 +157,6 @@ AnimNodeBuilder::~AnimNodeBuilder()
 ////////////////////////////////////////////////////////////////////////////////
 dtCore::RefPtr<dtAnim::NodeBuilderInterface>
    AnimNodeBuilder::CreateNodeBuilder(const std::string& charSystem)
-, mUseDeprecatedHardwareModel(false)
 {
    dtCore::RefPtr<dtAnim::NodeBuilderInterface> nodeBuilder;
 
@@ -226,10 +225,10 @@ dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateNode(dtAnim::BaseModelWrapper* 
    }
    else
    {
-      result = mCreateFunc(0, pWrapper);
+      result = mCreateFunc(0, wrapper);
    }
 
-   float scale = pWrapper->GetScale();
+   float scale = wrapper->GetScale();
    if (result.valid() && dtUtil::Abs(1.0f - scale) > FLT_EPSILON)
    {
       osg::Matrix scaleXform;
@@ -243,14 +242,14 @@ dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateNode(dtAnim::BaseModelWrapper* 
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateSoftware(dtAnim::BaseModelWrapper* wrapper)
+dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateSoftware(osg::RenderInfo* renderInfo, dtAnim::BaseModelWrapper* wrapper)
 {
    dtCore::RefPtr<osg::Node> node;
    dtCore::RefPtr<dtAnim::NodeBuilderInterface> nodeBuilder = CreateNodeBuilder(*wrapper);
    
    if (nodeBuilder.valid())
    {
-      node = nodeBuilder->CreateSoftware(wrapper);
+      node = nodeBuilder->CreateSoftware(renderInfo, wrapper);
    }
    
    if ( ! node.valid())
@@ -262,14 +261,14 @@ dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateSoftware(dtAnim::BaseModelWrapp
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateSoftwareNoVBO(dtAnim::BaseModelWrapper* wrapper)
+dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateSoftwareNoVBO(osg::RenderInfo* renderInfo, dtAnim::BaseModelWrapper* wrapper)
 {
    dtCore::RefPtr<osg::Node> node;
    dtCore::RefPtr<dtAnim::NodeBuilderInterface> nodeBuilder = CreateNodeBuilder(*wrapper);
    
    if (nodeBuilder.valid())
    {
-      node = nodeBuilder->CreateSoftwareNoVBO(wrapper);
+      node = nodeBuilder->CreateSoftwareNoVBO(renderInfo, wrapper);
    }
    
    if ( ! node.valid())
@@ -281,14 +280,14 @@ dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateSoftwareNoVBO(dtAnim::BaseModel
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateHardware(dtAnim::BaseModelWrapper* wrapper)
+dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateHardware(osg::RenderInfo* renderInfo, dtAnim::BaseModelWrapper* wrapper)
 {
    dtCore::RefPtr<osg::Node> node;
    dtCore::RefPtr<dtAnim::NodeBuilderInterface> nodeBuilder = CreateNodeBuilder(*wrapper);
    
    if (nodeBuilder.valid())
    {
-      node = nodeBuilder->CreateHardware(wrapper);
+      node = nodeBuilder->CreateHardware(renderInfo, wrapper);
    }
    
    if ( ! node.valid())
@@ -300,7 +299,7 @@ dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateHardware(dtAnim::BaseModelWrapp
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateNULL(dtAnim::BaseModelWrapper* wrapper)
+dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateNULL(osg::RenderInfo* renderInfo, dtAnim::BaseModelWrapper* wrapper)
 {
    DTUNREFERENCED_PARAMETER(wrapper);
 
@@ -311,7 +310,7 @@ dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateNULL(dtAnim::BaseModelWrapper* 
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-dtCore::ShaderProgram* AnimNodeBuilder::LoadShaders(Cal3DModelData& modelData, osg::Geode& geode) const
+dtCore::ShaderProgram* AnimNodeBuilder::LoadShaders(BaseModelData& modelData, osg::Geode& geode)
 {
    static const std::string hardwareSkinningSPGroup = "HardwareSkinningLegacy";
    dtCore::ShaderManager& shaderManager = dtCore::ShaderManager::GetInstance();
@@ -369,29 +368,6 @@ dtCore::ShaderProgram* AnimNodeBuilder::LoadShaders(Cal3DModelData& modelData, o
       modelData.SetShaderGroupName(hardwareSkinningSPGroup);
    }
    return shaderManager.AssignShaderFromPrototype(*shaderProgram, geode);
-}
-
-////////////////////////////////////////////////////////////////////////////////
-void AnimNodeBuilder::CalcNumVertsAndIndices(Cal3DModelWrapper* pWrapper,
-                                             int& numVerts, int& numIndices)
-{
-   CalCoreModel* model = pWrapper->GetCalModel()->getCoreModel();
-
-
-   const int meshCount = model->getCoreMeshCount();
-
-   for (int meshId = 0; meshId < meshCount; meshId++)
-   {
-      CalCoreMesh* calMesh = model->getCoreMesh(meshId);
-      int submeshCount = calMesh->getCoreSubmeshCount();
-
-      for (int submeshId = 0; submeshId < submeshCount; submeshId++)
-      {
-         CalCoreSubmesh* subMesh = calMesh->getCoreSubmesh(submeshId);
-         numVerts += subMesh->getVertexCount();
-         numIndices += 3 * subMesh->getFaceCount();
-      }
-   }
 }
 
 ////////////////////////////////////////////////////////////////////////////////

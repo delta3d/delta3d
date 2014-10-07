@@ -269,7 +269,7 @@ namespace dtAnim
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   dtAnim::Cal3DModelData* Cal3DModelWrapper::GetCalModelData()
+   dtAnim::Cal3DModelData* Cal3DModelWrapper::GetCalModelData() const
    {
       return dynamic_cast<Cal3DModelData*>(GetModelData());
    }

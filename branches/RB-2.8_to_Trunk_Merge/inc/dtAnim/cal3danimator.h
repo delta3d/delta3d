@@ -123,6 +123,9 @@ namespace dtAnim
 
       void SetMinimumBlendTime(float seconds);
       float GetMinimumBlendTime() const;
+
+      /*virtual*/ bool BlendPose(int id, float weight, float delay);
+      /*virtual*/ bool ClearPose(int id, float delay);
       
       /**
        * Globally set whether characters should be allowed to go back to bind pose
