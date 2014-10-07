@@ -259,6 +259,17 @@ namespace dtAnim
    dtCore::RefPtr<osg::Node> Cal3DModelWrapper::CreateDrawableNode(bool immediate)
    {
       mDrawable = dtAnim::ModelDatabase::GetInstance().CreateNode(*this, immediate);
+      
+      // Now that the drawable node is accessible from this wrapper, call the
+      // base functionality to commit the scale to the character model.
+      UpdateScale();
+
+      osg::MatrixTransform* scaleNode = GetScaleTransform();
+      if (scaleNode != NULL)
+      {
+         mDrawable = scaleNode;
+      }
+
       return mDrawable.get();
    }
 
@@ -543,6 +554,8 @@ namespace dtAnim
    {
       // DG - The core model scale is problematic for reusing core models.
       mScale = scale;
+
+      UpdateScale();
    }
 
    /////////////////////////////////////////////////////////////////////////////

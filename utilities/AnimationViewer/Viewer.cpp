@@ -674,7 +674,6 @@ void Viewer::OnScaleFactorChanged(float scaleFactorValue)
    {
       dtAnim::BaseModelWrapper* model = mCharacter->GetModelWrapper();
       model->SetScale(scaleFactorValue);
-      //mCharacter->RebuildSubmeshes();//need to rebuild our geometry to match the new mesh size
    }
 }
 
