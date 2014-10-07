@@ -8,9 +8,10 @@
 #include <dtQt/projectcontextdialog.h>
 #include <dtUtil/fileutils.h>
 #include <dtUtil/xercesparser.h>
-#include <dtCore/project.h>
-#include <dtCore/map.h>
+#include <dtCore/datatype.h>
 #include <dtCore/deltawin.h>
+#include <dtCore/map.h>
+#include <dtCore/project.h>
 
 #include <QtGui/QMenuBar>
 #include <QtGui/QAction>
@@ -477,7 +478,7 @@ void ObjectWorkspace::UpdateGeometryList()
    QDir directory(mContextPath.c_str());
 
    // Populate the static mesh list.
-   QString staticMeshDir = QString(mContextPath.c_str()) + "/staticmeshes";
+   QString staticMeshDir = QString(mContextPath.c_str()) + "/" + dtCore::DataType::STATIC_MESH.GetName().c_str();
 
    QStringList staticMeshNameFilters;
    staticMeshNameFilters << "*.ive" << "*.osg" << "*.earth";
@@ -495,7 +496,7 @@ void ObjectWorkspace::UpdateGeometryList()
    }
 
    // Populate the skeletal mesh list.
-   QString skeletalMeshDir = QString(mContextPath.c_str()) + "/skeletalmeshes";
+   QString skeletalMeshDir = QString(mContextPath.c_str()) + "/" + dtCore::DataType::SKELETAL_MESH.GetName().c_str();
 
    QStringList skeltalMeshNameFilter;
    skeltalMeshNameFilter << "*.dtChar";
@@ -509,7 +510,7 @@ void ObjectWorkspace::UpdateGeometryList()
 
       std::string pathName = fileInfo.absolutePath().toStdString();
       std::string fileName = fileInfo.fileName().toStdString();
-      mResourceDock->OnNewGeometry(pathName, fileName);
+      mResourceDock->OnNewSkinnedMesh(pathName, fileName);
    }
 }
 
@@ -518,7 +519,7 @@ void ObjectWorkspace::UpdateShaderList()
 {
    QDir directory(mContextPath.c_str());
 
-   if (directory.cd(QString(mContextPath.c_str()) + "/shaders"))
+   if (directory.cd(QString(mContextPath.c_str()) + "/" + dtCore::DataType::SHADER.GetName().c_str()))
    {
       QStringList nameFilters;
       nameFilters << "*.dtShader" << "*.xml";
@@ -529,7 +530,7 @@ void ObjectWorkspace::UpdateShaderList()
       while (!fileList.empty())
       {
          QFileInfo fileInfo = fileList.takeFirst();
-         mShaderDefinitionName = QString("%1/shaders/%2").arg(QString(mContextPath.c_str()), fileInfo.fileName());
+         mShaderDefinitionName = QString("%1/%2/%3").arg(QString(mContextPath.c_str()), QString(dtCore::DataType::SHADER.GetName().c_str()), fileInfo.fileName());
          emit LoadShaderDefinition(mShaderDefinitionName);
       }
 
@@ -630,15 +631,26 @@ void ObjectWorkspace::OnLoadGeometry()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ObjectWorkspace::OnLoadGeometry(const std::string &fullName)
+void ObjectWorkspace::OnLoadGeometry(const std::string& fullName)
 {
    if (dtUtil::FileUtils::GetInstance().FileExists(fullName))
    {
       QFileInfo fileInfo(fullName.c_str());
-      QTreeWidgetItem *geometryItem = mResourceDock->FindGeometryItem(fullName);
+      QTreeWidgetItem* geometryItem = mResourceDock->FindGeometryItem(fullName);
+      
+      // NOTE: The resource dock sends a signal to the viewer
+      // load the actual file when the resource dock adds an
+      // item to its treeview.
 
-      // Only reload the item if it has not already been loaded
-      if (!geometryItem)
+      // Remove the current model if it currently exists.
+      if (geometryItem != NULL)
+      {
+         mResourceDock->RemoveGeometryItem(geometryItem);
+         geometryItem = mResourceDock->FindGeometryItem(fullName);
+      }
+
+      // Only reload the item if it does not exist.
+      if (geometryItem == NULL)
       {
          // Give the required information to the resource manager(dock)
          mResourceDock->OnNewGeometry(fileInfo.absolutePath().toStdString(),

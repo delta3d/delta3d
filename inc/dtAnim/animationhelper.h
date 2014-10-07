@@ -397,7 +397,7 @@ namespace dtAnim
       virtual void OnLoadCompleted(AnimationHelper*);
       virtual void OnUnloadCompleted(AnimationHelper*);
 
-      virtual bool SetupPoses(const dtAnim::Cal3DModelData& modelData);
+      virtual bool SetupPoses(const dtAnim::BaseModelData& modelData);
 
    private:
 

@@ -85,33 +85,6 @@ DT_DISABLE_WARNING_END
    {
       return mCoreModel;
    }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   void Cal3DModelData::SetScale(float scale)
-   {
-      mScale = scale;
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   float Cal3DModelData::GetScale() const
-   {
-      return mScale;
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   AnimationWrapper* Cal3DModelData::GetAnimationWrapperByName(const std::string& name)
-   {
-      AnimationWrapper* anim = NULL;
-
-      AnimationWrapper* curAnim = NULL;
-      AnimationWrapperArray::iterator curIter = mAnimWrappers.begin();
-      AnimationWrapperArray::iterator endIter = mAnimWrappers.end();
-      for (;curIter != endIter; ++curIter)
-      {
-         // Apply the final scale effect.
-         mCoreModel->scale(scale);
-      }
-   }
    
    ////////////////////////////////////////////////////////////////////////////////
    float Cal3DModelData::GetAnimationDuration(const std::string& name) const

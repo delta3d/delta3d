@@ -380,7 +380,7 @@ namespace dtAnim
    OsgNodeBuilder::~OsgNodeBuilder()
    {}
 
-   dtCore::RefPtr<osg::Node> OsgNodeBuilder::CreateSoftware(dtAnim::OsgModelWrapper* wrapper)
+   dtCore::RefPtr<osg::Node> OsgNodeBuilder::CreateSoftware(osg::RenderInfo* renderInfo, dtAnim::OsgModelWrapper* wrapper)
    {
       dtCore::RefPtr<osg::Node> node = CreateNode(*wrapper);
       
@@ -395,14 +395,14 @@ namespace dtAnim
       return node;
    }
 
-   dtCore::RefPtr<osg::Node> OsgNodeBuilder::CreateSoftwareNoVBO(dtAnim::OsgModelWrapper* wrapper)
+   dtCore::RefPtr<osg::Node> OsgNodeBuilder::CreateSoftwareNoVBO(osg::RenderInfo* renderInfo, dtAnim::OsgModelWrapper* wrapper)
    {
       // TODO:
 
-      return CreateSoftware(wrapper);
+      return CreateSoftware(renderInfo, wrapper);
    }
 
-   dtCore::RefPtr<osg::Node> OsgNodeBuilder::CreateHardware(dtAnim::OsgModelWrapper* wrapper)
+   dtCore::RefPtr<osg::Node> OsgNodeBuilder::CreateHardware(osg::RenderInfo* renderInfo, dtAnim::OsgModelWrapper* wrapper)
    {
       dtCore::RefPtr<osg::Node> node = CreateNode(*wrapper);
 

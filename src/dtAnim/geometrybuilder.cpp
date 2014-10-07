@@ -20,22 +20,19 @@
  */
 
 #include <dtAnim/geometrybuilder.h>
-#include <dtAnim/cal3dmodelwrapper.h>
-#include <dtAnim/submesh.h>
-#include <dtAnim/hardwaresubmesh.h>
-#include <dtAnim/cal3ddatabase.h>
 #include <dtAnim/cal3dmodeldata.h>
-
+#include <dtAnim/cal3dmodelwrapper.h>
+#include <dtAnim/hardwaresubmesh.h>
 #include <dtAnim/lodcullcallback.h>
-
-#include <dtCore/shaderprogram.h>
-#include <dtCore/shadermanager.h>
-#include <dtCore/shadergroup.h>
+#include <dtAnim/modeldatabase.h>
+#include <dtAnim/submesh.h>
 #include <dtCore/project.h>
+#include <dtCore/shadergroup.h>
+#include <dtCore/shadermanager.h>
+#include <dtCore/shaderprogram.h>
+#include <dtUtil/log.h>
 #include <dtUtil/mathdefines.h>
 #include <dtUtil/matrixutil.h>
-
-#include <dtUtil/log.h>
 
 #include <osg/Geode>
 #include <osg/State>
@@ -84,7 +81,6 @@ namespace dtAnim
             const int numBones = mHardwareModel->getBoneCount();
             for (int bone = 0; bone < numBones; ++bone)
             {
-               
                const CalQuaternion& quat = mHardwareModel->getRotationBoneSpace(bone, mSkeleton);
                const CalVector& vec = mHardwareModel->getTranslationBoneSpace(bone, mSkeleton);
 
@@ -151,15 +147,14 @@ osg::ref_ptr<osg::Geometry> GeometryBuilder::GeometryCache::CreateMeshSubMesh(Ca
          return NULL;
       }
 
-      Cal3DModelData* modelData = Cal3DDatabase::GetInstance().GetModelData(*pWrapper);
+      Cal3DModelData* modelData
+         = dynamic_cast<Cal3DModelData*>(pWrapper->GetModelData());
 
       if (modelData == NULL)
       {
          LOG_ERROR("Model does not have model data.  Unable to create hardware submesh.");
          return NULL;
       }
-
-
 
       osg::ref_ptr<osg::Geometry> geom = new osg::Geometry();
 
@@ -188,7 +183,7 @@ osg::ref_ptr<osg::Geometry> GeometryBuilder::GeometryCache::CreateMeshSubMesh(Ca
       osg::Vec4Array* boneIndexArray = new osg::Vec4Array();
       boneIndexArray->resizeArray(vertexCount);
 
-      CalIndex* sourceIndex = modelData->GetSourceIndexArray();
+      osg::IntArray& sourceIndex = *modelData->GetSourceIndexArray();
       osg::FloatArray& sourceVertex = *modelData->GetSourceVertexArray();
 
       int stride = dtAnim::HardwareSubmeshDrawable::VBO_STRIDE;
@@ -299,14 +294,14 @@ osg::ref_ptr<osg::Node> GeometryBuilder::GeometryCache::GetOrCreateModel(Cal3DMo
 
    dtCore::RefPtr<osg::Geode> geode = new osg::Geode();
 
-   Cal3DModelData* modelData = Cal3DDatabase::GetInstance().GetModelData(*pWrapper);
+   Cal3DModelData* modelData
+      = dynamic_cast<Cal3DModelData*>(pWrapper->GetModelData());
 
    if (modelData == NULL)
    {
       LOG_ERROR("Model does not have model data.  Unable to create hardware submesh.");
       return NULL;
    }
-
 
    std::string filename = modelData->GetFilename();
 
@@ -316,7 +311,7 @@ osg::ref_ptr<osg::Node> GeometryBuilder::GeometryCache::GetOrCreateModel(Cal3DMo
    GeometryMap::iterator iterEnd = mLoadedModels.upper_bound(filename);
 
    pWrapper->SetLODLevel(1);
-   pWrapper->Update(0);
+   pWrapper->UpdateAnimations(0);
 
    if (pWrapper->BeginRenderingQuery())
    {
@@ -385,7 +380,7 @@ osg::ref_ptr<osg::Node> GeometryBuilder::GeometryCache::GetOrCreateModel(Cal3DMo
       }
 
       pWrapper->EndRenderingQuery();
-      pWrapper->Update(0);
+      pWrapper->UpdateAnimations(0);
    }
 
 
@@ -405,30 +400,20 @@ GeometryBuilder::~GeometryBuilder()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-dtCore::RefPtr<osg::Node> GeometryBuilder::CreateGeometry( osg::RenderInfo* renderInfo, Cal3DModelWrapper* pWrapper )
+dtCore::RefPtr<osg::Node> GeometryBuilder::CreateGeometry(osg::RenderInfo* renderInfo, dtAnim::BaseModelWrapper* wrapper )
 {
+   dtAnim::Cal3DModelWrapper* pWrapper = dynamic_cast<dtAnim::Cal3DModelWrapper*>(wrapper);
    dtCore::RefPtr<osg::Node> result = mGeometries.GetOrCreateModel(pWrapper);
 
-   Cal3DModelData* modelData = Cal3DDatabase::GetInstance().GetModelData(*pWrapper);
+   Cal3DModelData* modelData = pWrapper->GetCalModelData();
 
    if (modelData == NULL)
    {
-      LOG_ERROR("Model does not have model data.  Unable to create hardware submesh.");
+      LOG_ERROR("Model does not have model data. Unable to create hardware submesh.");
       return NULL;
    }
 
-
    dtCore::ShaderProgram* shadProg = LoadShaders(*modelData, *result);
-
-   /*#ifndef BUILD_CAL3D_SOFTWARE
-   static const std::string BONE_WEIGHTS_ATTRIB("boneWeights");
-   static const std::string BONE_INDICES_ATTRIB("boneIndices");
-   static const std::string TANGENT_SPACE_ATTRIB("tangentSpace");
-
-   shadProg->GetShaderProgram()->addBindAttribLocation(BONE_WEIGHTS_ATTRIB, 3);
-   shadProg->GetShaderProgram()->addBindAttribLocation(BONE_INDICES_ATTRIB, 4);
-   shadProg->GetShaderProgram()->addBindAttribLocation(TANGENT_SPACE_ATTRIB, 5);
-   #endif*/
 
    return result;
 }

@@ -62,10 +62,6 @@ namespace dtAnim
       CalCoreModel* GetCoreModel();
       const CalCoreModel* GetCoreModel() const;
 
-      /// This just stores the scale.  The core scale is not used.
-      void SetScale(float scale);
-      float GetScale() const;
-
       virtual float GetAnimationDuration(const std::string& name) const;
 
       /// @return the list of non-character bone attachments

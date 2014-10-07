@@ -64,11 +64,11 @@ namespace dtAnim
       /**
        * Prototype of the Create method.  Returns the Node containing the animated
        * character's geometry.
-       * @code dtCore::RefPtr<osg::Node> MyCreateFunc(osg::Geode& geode, BaseModelWrapper* wrapper);
+       * @code dtCore::RefPtr<osg::Node> MyCreateFunc(osg::Geode& geode, osg::RenderInfo* renderInfo, BaseModelWrapper* wrapper);
        * @endcode
        * @see CreateNode()
        */
-      typedef dtUtil::Functor<dtCore::RefPtr<osg::Node>, TYPELIST_1(dtAnim::BaseModelWrapper*)> CreateFunc;
+      typedef dtUtil::Functor<dtCore::RefPtr<osg::Node>, TYPELIST_2(osg::RenderInfo*, dtAnim::BaseModelWrapper*)> CreateFunc;
 
       AnimNodeBuilder(bool useDeprecatedHardwareModel = false); //creates default builder
       AnimNodeBuilder(const CreateFunc& pCreate); //uses custom builder
@@ -104,10 +104,10 @@ namespace dtAnim
        */
       dtCore::RefPtr<osg::Node> CreateNode(dtAnim::BaseModelWrapper* wrapper, bool immediate = false);
 
-      virtual dtCore::RefPtr<osg::Node> CreateSoftware(dtAnim::BaseModelWrapper* wrapper);
-      virtual dtCore::RefPtr<osg::Node> CreateSoftwareNoVBO(dtAnim::BaseModelWrapper* wrapper);
-      virtual dtCore::RefPtr<osg::Node> CreateHardware(dtAnim::BaseModelWrapper* wrapper);
-      virtual dtCore::RefPtr<osg::Node> CreateNULL(dtAnim::BaseModelWrapper* wrapper);
+      virtual dtCore::RefPtr<osg::Node> CreateSoftware(osg::RenderInfo* renderInfo, dtAnim::BaseModelWrapper* wrapper);
+      virtual dtCore::RefPtr<osg::Node> CreateSoftwareNoVBO(osg::RenderInfo* renderInfo, dtAnim::BaseModelWrapper* wrapper);
+      virtual dtCore::RefPtr<osg::Node> CreateHardware(osg::RenderInfo* renderInfo, dtAnim::BaseModelWrapper* wrapper);
+      virtual dtCore::RefPtr<osg::Node> CreateNULL(osg::RenderInfo* renderInfo, dtAnim::BaseModelWrapper* wrapper);
 
 
       ///Does the hardware support hardware skinning?
@@ -116,12 +116,12 @@ namespace dtAnim
       ///Does the hardware support software skinning?
       bool SupportsSoftware() const;
 
+      static dtCore::ShaderProgram* LoadShaders(dtAnim::BaseModelData& modelData, osg::Geode& geode);
+
    protected:
       virtual ~AnimNodeBuilder();
       AnimNodeBuilder(const AnimNodeBuilder&);
       AnimNodeBuilder& operator=(const AnimNodeBuilder&);
-
-      dtCore::ShaderProgram* LoadShaders(dtAnim::BaseModelData& modelData, osg::Geode& geode) const;
 
    private:
       template <typename T>

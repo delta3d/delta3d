@@ -54,7 +54,7 @@ void PoseMeshUtility::ClearPoses(const PoseMesh* poseMesh, dtAnim::BaseModelWrap
 
    for (size_t vertIndex = 0; vertIndex < verts.size(); ++vertIndex)
    {
-      model->BlendPose(verts[vertIndex].mAnimID, 0.0f, delay);
+      model->GetAnimator()->BlendPose(verts[vertIndex].mAnimID, 0.0f, delay);
    }
 }
 

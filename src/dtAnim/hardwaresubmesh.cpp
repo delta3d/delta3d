@@ -40,7 +40,9 @@ DT_DISABLE_WARNING_END
 
 namespace dtAnim
 {
-
+   /////////////////////////////////////////////////////////////////////////////
+   // CLASS CODE
+   /////////////////////////////////////////////////////////////////////////////
    class HardwareSubmeshComputeBound : public osg::Drawable::ComputeBoundingBoxCallback
    {
       public:
@@ -119,10 +121,16 @@ namespace dtAnim
    };
 
 ////////////////////////////////////////////////////////////////////////////////
-HardwareSubmeshDrawable::HardwareSubmeshDrawable(Cal3DModelWrapper* wrapper, CalHardwareModel* model,
-      const std::string& boneUniformName, unsigned numBones, unsigned mesh,
-      osg::VertexBufferObject* vertexVBO, osg::ElementBufferObject* indexEBO)
-   : osg::Drawable()
+HardwareSubmeshDrawable::HardwareSubmeshDrawable(
+   Cal3DModelWrapper* wrapper, CalHardwareModel* model,
+   const std::string& boneUniformName,
+   unsigned numBones, unsigned mesh,
+   osg::VertexBufferObject* vertexVBO,
+   osg::ElementBufferObject* indexEBO,
+   int boneWeightsLocation,
+   int boneIndicesLocation,
+   int tangentSpaceLocation)
+   : BaseClass()
    , mWrapper(wrapper)
    , mHardwareModel(model)
    , mScale(new osg::Uniform(osg::Uniform::FLOAT, "scale", 1))
@@ -132,6 +140,9 @@ HardwareSubmeshDrawable::HardwareSubmeshDrawable(Cal3DModelWrapper* wrapper, Cal
    , mMeshID(mesh)
    , mVertexVBO(vertexVBO)
    , mIndexEBO(indexEBO)
+   , mBoneWeightsLocation(boneWeightsLocation)
+   , mBoneIndicesLocation(boneIndicesLocation)
+   , mTangentSpaceLocation(tangentSpaceLocation)
 {
    setUseDisplayList(false);
    setUseVertexBufferObjects(true);
@@ -171,6 +182,12 @@ HardwareSubmeshDrawable::HardwareSubmeshDrawable(Cal3DModelWrapper* wrapper, Cal
 ////////////////////////////////////////////////////////////////////////////////
 HardwareSubmeshDrawable::~HardwareSubmeshDrawable(void)
 {
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void HardwareSubmeshDrawable::SetBoundingBox(const osg::BoundingBox& boundingBox)
+{
+   mBoundingBox = boundingBox;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -243,14 +260,16 @@ void HardwareSubmeshDrawable::drawImplementation(osg::RenderInfo& renderInfo) co
 osg::Object* HardwareSubmeshDrawable::clone(const osg::CopyOp&) const
 {
    return new HardwareSubmeshDrawable(mWrapper.get(), mHardwareModel, mBoneUniformName,
-         mNumBones, mMeshID, mVertexVBO, mIndexEBO);
+         mNumBones, mMeshID, mVertexVBO, mIndexEBO,
+         mBoneWeightsLocation, mBoneIndicesLocation, mTangentSpaceLocation);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 osg::Object* HardwareSubmeshDrawable::cloneType() const
 {
    return new HardwareSubmeshDrawable(mWrapper.get(), mHardwareModel,
-         mBoneUniformName, mNumBones, mMeshID, mVertexVBO, mIndexEBO);
+         mBoneUniformName, mNumBones, mMeshID, mVertexVBO, mIndexEBO,
+         mBoneWeightsLocation, mBoneIndicesLocation, mTangentSpaceLocation);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -355,8 +374,6 @@ void HardwareSubmeshDrawable::SetUpMaterial()
 
    mWrapper->EndRenderingQuery();
 }
-
-////////////////////////////////////////////////////////////////////////////////
 
 } //namespace dtAnim
 

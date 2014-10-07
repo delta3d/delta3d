@@ -896,5 +896,19 @@ namespace dtAnim
       return result;
    }
 
+   bool OsgAnimator::BlendPose(int id, float weight, float delay)
+   {
+      // TODO:
+
+      return false;
+   }
+
+   bool OsgAnimator::ClearPose(int id, float delay)
+   {
+      // TODO:
+      
+      return false;
+   }
+
 } // namespace dtAnim
 

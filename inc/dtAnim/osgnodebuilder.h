@@ -23,9 +23,9 @@ namespace dtAnim
 
       OsgNodeBuilder();
 
-      virtual dtCore::RefPtr<osg::Node> CreateSoftware(dtAnim::OsgModelWrapper* wrapper);
-      virtual dtCore::RefPtr<osg::Node> CreateSoftwareNoVBO(dtAnim::OsgModelWrapper* wrapper);
-      virtual dtCore::RefPtr<osg::Node> CreateHardware(dtAnim::OsgModelWrapper* wrapper);
+      virtual dtCore::RefPtr<osg::Node> CreateSoftware(osg::RenderInfo* renderInfo, dtAnim::OsgModelWrapper* wrapper);
+      virtual dtCore::RefPtr<osg::Node> CreateSoftwareNoVBO(osg::RenderInfo* renderInfo, dtAnim::OsgModelWrapper* wrapper);
+      virtual dtCore::RefPtr<osg::Node> CreateHardware(osg::RenderInfo* renderInfo, dtAnim::OsgModelWrapper* wrapper);
       
       dtCore::RefPtr<osg::Node> CreateNode(dtAnim::OsgModelWrapper& wrapper);
 

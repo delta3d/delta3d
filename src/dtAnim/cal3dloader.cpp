@@ -773,6 +773,7 @@ namespace dtAnim
    bool Cal3dLoader::Save(const std::string& file, const dtAnim::BaseModelWrapper& wrapper)
    {
       const dtAnim::Cal3DModelWrapper* calWrapper = dynamic_cast<const dtAnim::Cal3DModelWrapper*>(&wrapper);
+      dtAnim::Cal3DModelData* modelData = calWrapper->GetCalModelData();
       const CalModel* calModel = calWrapper->GetCalModel();
 
 #if defined(CAL3D_VERSION) && CAL3D_VERSION >= 1300
@@ -891,14 +892,6 @@ namespace dtAnim
       }
 
       // Morph Animations
-      modelData.SetShaderGroupName(handler.mShaderGroup);
-      modelData.SetShaderName(handler.mShaderName);
-      modelData.SetShaderMaxBones(handler.mShaderMaxBones);
-
-      LODOptions& lodOptions = modelData.GetLODOptions();
-
-      //always set default lod values
-      //if (handler.mFoundLODOptions)
       {
          int count = calModel->getMorphTargetMixer()->getMorphTargetCount();
          for (int index = 0; index < count; ++index)

@@ -136,7 +136,7 @@ namespace dtAnim
 
       virtual osg::Node* GetDrawableNode();
 
-      virtual dtAnim::Cal3DModelData* GetCalModelData();
+      virtual dtAnim::Cal3DModelData* GetCalModelData() const;
 
       virtual dtAnim::AnimationUpdaterInterface* GetAnimator();
 
