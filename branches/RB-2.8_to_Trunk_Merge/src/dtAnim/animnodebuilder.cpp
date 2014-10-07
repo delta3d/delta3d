@@ -41,7 +41,6 @@
 #include <osg/Texture2D>
 #include <osg/GLExtensions>
 #include <osg/ShapeDrawable>
-#include <osg/MatrixTransform>
 
 
 
@@ -228,16 +227,6 @@ dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateNode(dtAnim::BaseModelWrapper* 
       result = mCreateFunc(0, wrapper);
    }
 
-   float scale = wrapper->GetScale();
-   if (result.valid() && dtUtil::Abs(1.0f - scale) > FLT_EPSILON)
-   {
-      osg::Matrix scaleXform;
-      scaleXform.makeScale(scale, scale, scale);
-      dtCore::RefPtr<osg::MatrixTransform> scaleTransform = new osg::MatrixTransform(scaleXform);
-      scaleTransform->setName("Scale Transform");
-      scaleTransform->addChild(result);
-      result = scaleTransform.get();
-   }
    return result;
 }
 

@@ -20,6 +20,7 @@ SET(LIB_SOURCES
   ${SOURCE_PATH}/attachmentcontroller.cpp
   ${SOURCE_PATH}/basemodeldata.cpp
   ${SOURCE_PATH}/basemodelloader.cpp
+  ${SOURCE_PATH}/basemodelwrapper.cpp
   ${SOURCE_PATH}/cal3danimator.cpp
   ${SOURCE_PATH}/cal3dloader.cpp
   ${SOURCE_PATH}/cal3dmodeldata.cpp

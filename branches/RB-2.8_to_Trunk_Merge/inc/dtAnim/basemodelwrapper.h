@@ -37,6 +37,7 @@
 #include <dtAnim/skeletoninterface.h>
 // OSG
 #include <osg/BoundingBox>
+#include <osg/MatrixTransform>
 #include <osg/Node>
 #include <osg/Quat>
 #include <osg/Vec3>
@@ -53,17 +54,12 @@ namespace dtAnim
    class DT_ANIM_EXPORT BaseModelWrapper : public osg::Referenced
    {
    public:
-      BaseModelWrapper(dtAnim::BaseModelData& modelData)
-         : mModelData(&modelData)
-      {}
+      BaseModelWrapper(dtAnim::BaseModelData& modelData);
 
       virtual dtCore::RefPtr<osg::Node> CreateDrawableNode(bool immediate) = 0;
       virtual osg::Node* GetDrawableNode() = 0;
 
-      virtual dtAnim::BaseModelData* GetModelData() const
-      {
-         return mModelData.get();
-      }
+      virtual dtAnim::BaseModelData* GetModelData() const;
 
       virtual dtAnim::AnimationUpdaterInterface* GetAnimator() = 0;
 
@@ -113,10 +109,18 @@ namespace dtAnim
       /**
        * Method to nofity this object that the associated drawable model has been modified/rebuilt.
        */
-      virtual void HandleModelUpdated() {}
+      virtual void HandleModelUpdated();
+
+      virtual void UpdateScale();
+
+   protected:
+      virtual ~BaseModelWrapper();
+
+      osg::MatrixTransform* GetScaleTransform() const;
 
    private:
       dtCore::ObserverPtr<dtAnim::BaseModelData> mModelData;
+      dtCore::RefPtr<osg::MatrixTransform> mScaleTransform;
    };
 
 } // namespace dtAnim
