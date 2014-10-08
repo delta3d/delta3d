@@ -131,7 +131,10 @@ namespace dtAnim
       {
           std::string file = dtCore::Project::GetInstance().GetResourcePath(resource);
           result = LoadCharacterFile(file);
-          result->mResource = resource;
+          if (result.valid())
+          {
+             result->mResource = resource;
+          }
       }
       catch(const dtUtil::Exception& ex)
       {
