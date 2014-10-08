@@ -263,7 +263,7 @@ namespace dtPhysics
       {
          basePath = dtUtil::FileUtils::GetInstance().CurrentDirectory();
       }
-      std::string expectedPath = basePath + PhysicsWorld::DIRECTORY_NAME
+      std::string expectedPath = basePath + "/" + "ext" + "/" + PhysicsWorld::DIRECTORY_NAME
                + "/" + engineLower + "/";
 #ifdef PAL_PLUGIN_ARCH_PATH
       expectedPath += PAL_PLUGIN_ARCH_PATH + "/";
