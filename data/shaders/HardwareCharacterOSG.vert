@@ -1,3 +1,5 @@
+#version 120
+
 /*  -*-c++-*- 
  *  Copyright (C) 2008 Cedric Pinson <cedric.pinson@plopbyte.net>
  *
@@ -18,10 +20,10 @@ in vec4 boneWeight2;
 in vec4 boneWeight3;
 
 uniform vec4 boneTransforms[MAX_BONES * 3];
+uniform scale = 1.0;
 
 vec4 transformedPosition;
 vec4 transformedNormal;
-float scale = 1.0;
 
 void main( void )
 {

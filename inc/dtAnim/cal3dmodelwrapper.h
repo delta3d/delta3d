@@ -208,7 +208,7 @@ namespace dtAnim
       virtual void SetLODLevel(float level);
 
       /// Update the Cal3D system using the CalModel's update.
-      virtual void UpdateAnimations(float deltaTime);
+      virtual void UpdateAnimation(float deltaTime);
       
       /// Remove all existing animations from the mixer
       virtual void ClearAllAnimations(float delay = 0.0f);
