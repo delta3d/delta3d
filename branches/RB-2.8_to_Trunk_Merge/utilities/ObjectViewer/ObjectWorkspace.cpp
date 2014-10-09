@@ -12,6 +12,7 @@
 #include <dtCore/deltawin.h>
 #include <dtCore/map.h>
 #include <dtCore/project.h>
+#include <dtCore/shaderprogram.h>
 
 #include <QtGui/QMenuBar>
 #include <QtGui/QAction>
@@ -666,8 +667,21 @@ void ObjectWorkspace::OnLoadGeometry(const std::string& fullName)
 
       mAnimationControlDock->OnGeometryLoaded(mViewer->GetDeltaObject());
 
-      mNodeTree->SetNode(mViewer->GetDeltaObject()->GetOSGNode());
+      OnGeometryChanged();
    }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ObjectWorkspace::OnGeometryChanged()
+{
+   osg::Node* node = NULL;
+   
+   if (mViewer->GetDeltaObject() != NULL)
+   {
+      node = mViewer->GetDeltaObject()->GetOSGNode();
+   }
+
+   mNodeTree->SetNode(node);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -780,6 +794,11 @@ void ObjectWorkspace::SetViewer(ObjectViewer* viewer)
    SetupConnectionsWithViewer();
 }
 
+////////////////////////////////////////////////////////////////////////////////
+void ObjectWorkspace::OnShaderApplied(dtCore::ShaderProgram* shaderProgram)
+{
+   // TODO: Show properties on property panel. To be committed soon...
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 void ObjectWorkspace::SetupConnectionsWithViewer()
@@ -791,84 +810,96 @@ void ObjectWorkspace::SetupConnectionsWithViewer()
    connect((QObject*)this, SIGNAL(SetGenerateTangentAttribute(bool)),
       mViewer, SLOT(OnSetGenerateTangentAttribute(bool)));
 
-   connect(this, SIGNAL(ReloadShaderDefinition()),
-      this->GetResourceObject(), SLOT(OnReloadShaderFiles()));
-
    // Resource dock connections
-   connect(this->GetResourceObject(), SIGNAL(LoadGeometry(const std::string&)),
+   QObject* resObj = GetResourceObject();
+
+   connect(this, SIGNAL(ReloadShaderDefinition()),
+      resObj, SLOT(OnReloadShaderFiles()));
+
+   connect(resObj, SIGNAL(LoadGeometry(const std::string&)),
       mViewer, SLOT(OnLoadGeometryFile(const std::string&)));
 
-   connect(this->GetResourceObject(), SIGNAL(LoadMap(const std::string&)),
+   connect(resObj, SIGNAL(LoadMap(const std::string&)),
       mViewer, SLOT(OnLoadMapFile(const std::string&)));
 
-   connect(this->GetResourceObject(), SIGNAL(UnloadGeometry()),
+   connect(resObj, SIGNAL(UnloadGeometry()),
       mViewer, SLOT(OnUnloadGeometryFile()));
 
    connect(mViewer, SIGNAL(ShaderLoaded(const std::string&, const std::string&, const std::string&)),
-      this->GetResourceObject(), SLOT(OnNewShader(const std::string&, const std::string&, const std::string&)));
+      resObj, SLOT(OnNewShader(const std::string&, const std::string&, const std::string&)));
 
-   connect(this->GetResourceObject(), SIGNAL(ApplyShader(const std::string&, const std::string&)),
+   connect(resObj, SIGNAL(ApplyShader(const std::string&, const std::string&)),
       mViewer, SLOT(OnApplyShader(const std::string&, const std::string&)));
 
    connect(mViewer, SIGNAL(LightUpdate(const LightInfo&)),
-      this->GetResourceObject(), SLOT(OnLightUpdate(const LightInfo&)));
+      resObj, SLOT(OnLightUpdate(const LightInfo&)));
 
-   connect(this->GetResourceObject(), SIGNAL(RemoveShader()),
+   connect(resObj, SIGNAL(RemoveShader()),
       mViewer, SLOT(OnRemoveShader()));
 
-   connect(this->GetResourceObject(), SIGNAL(FixLights()),
+   connect(resObj, SIGNAL(FixLights()),
       mViewer, SLOT(OnFixLights()));
 
-   connect(this->GetResourceObject(), SIGNAL(SetLightEnabled(int, bool)),
+   connect(resObj, SIGNAL(SetLightEnabled(int, bool)),
       mViewer, SLOT(OnSetLightEnabled(int, bool)));
 
-   connect(this->GetResourceObject(), SIGNAL(SetLightType(int, int)),
+   connect(resObj, SIGNAL(SetLightType(int, int)),
       mViewer, SLOT(OnSetLightType(int, int)));
 
-   connect(this->GetResourceObject(), SIGNAL(SetLightPosition(int, const osg::Vec3&)),
+   connect(resObj, SIGNAL(SetLightPosition(int, const osg::Vec3&)),
       mViewer, SLOT(OnSetLightPosition(int, const osg::Vec3&)));
 
-   connect(this->GetResourceObject(), SIGNAL(SetLightRotation(int, const osg::Vec3&)),
+   connect(resObj, SIGNAL(SetLightRotation(int, const osg::Vec3&)),
       mViewer, SLOT(OnSetLightRotation(int, const osg::Vec3&)));
 
-   connect(this->GetResourceObject(), SIGNAL(SetAmbient(int, const osg::Vec4&)),
+   connect(resObj, SIGNAL(SetAmbient(int, const osg::Vec4&)),
       mViewer, SLOT(OnSetAmbient(int, const osg::Vec4&)));
 
-   connect(this->GetResourceObject(), SIGNAL(SetDiffuse(int, const osg::Vec4&)),
+   connect(resObj, SIGNAL(SetDiffuse(int, const osg::Vec4&)),
       mViewer, SLOT(OnSetDiffuse(int, const osg::Vec4&)));
 
-   connect(this->GetResourceObject(), SIGNAL(SetSpecular(int, const osg::Vec4&)),
+   connect(resObj, SIGNAL(SetSpecular(int, const osg::Vec4&)),
       mViewer, SLOT(OnSetSpecular(int, const osg::Vec4&)));
 
-   connect(this->GetResourceObject(), SIGNAL(SetLightCutoff(int, float)),
+   connect(resObj, SIGNAL(SetLightCutoff(int, float)),
       mViewer, SLOT(OnSetLightCutoff(int, float)));
 
-   connect(this->GetResourceObject(), SIGNAL(SetLightExponent(int, float)),
+   connect(resObj, SIGNAL(SetLightExponent(int, float)),
       mViewer, SLOT(OnSetLightExponent(int, float)));
 
-   connect(this->GetResourceObject(), SIGNAL(SetLightConstant(int, float)),
+   connect(resObj, SIGNAL(SetLightConstant(int, float)),
       mViewer, SLOT(OnSetLightConstant(int, float)));
 
-   connect(this->GetResourceObject(), SIGNAL(SetLightLinear(int, float)),
+   connect(resObj, SIGNAL(SetLightLinear(int, float)),
       mViewer, SLOT(OnSetLightLinear(int, float)));
 
-   connect(this->GetResourceObject(), SIGNAL(SetLightQuadratic(int, float)),
+   connect(resObj, SIGNAL(SetLightQuadratic(int, float)),
       mViewer, SLOT(OnSetLightQuadratic(int, float)));
 
    connect(this, SIGNAL(ToggleGrid(bool)), mViewer, SLOT(OnToggleGrid(bool)));
    connect(mStatisticsAction, SIGNAL(triggered()), mViewer, SLOT(OnNextStatistics()));
 
-   connect(this->GetResourceObject(), SIGNAL(ToggleVertexShaderSources(bool)),
+   connect(resObj, SIGNAL(ToggleVertexShaderSources(bool)),
       this, SLOT(OnToggleVertexShaderSource(bool)));
 
-   connect(this->GetResourceObject(), SIGNAL(ToggleGeometryShaderSources(bool)),
+   connect(resObj, SIGNAL(ToggleGeometryShaderSources(bool)),
       this, SLOT(OnToggleGeometryShaderSource(bool)));
 
-   connect(this->GetResourceObject(), SIGNAL(ToggleFragmentShaderSources(bool)),
+   connect(resObj, SIGNAL(ToggleFragmentShaderSources(bool)),
       this, SLOT(OnToggleFragmentShaderSource(bool)));
 
-   connect(this->GetResourceObject(), SIGNAL(RemoveShaderDef(const std::string&)),
+   connect(resObj, SIGNAL(RemoveShaderDef(const std::string&)),
       this, SLOT(OnRemoveShaderDef(const std::string&)));
+
+   connect(mViewer, SIGNAL(SignalShaderApplied(dtCore::ShaderProgram*)),
+      this, SLOT(OnShaderApplied(dtCore::ShaderProgram*)));
+
+   // Node Tree Panel
+   connect(resObj, SIGNAL(LoadGeometry(const std::string&)),
+      this, SLOT(OnGeometryChanged()));
+
+   connect(resObj, SIGNAL(UnloadGeometry()),
+      this, SLOT(OnGeometryChanged()));
 
    // Toolbar connections
    connect((QObject*)this->mShadedAction, SIGNAL(triggered()), mViewer, SLOT(OnSetShaded()));

@@ -6,15 +6,15 @@
 ////////////////////////////////////////////////////////////////////////////////
 #include <dtQt/export.h>
 #include <dtCore/observerptr.h>
+#include <dtCore/refptr.h>
 #include <QtGui/qwidget.h>
 #include <QtGui/qtreewidget.h>
-#include <dtCore/refptr.h>
 #include <osg/Node>
 
 
 
 ////////////////////////////////////////////////////////////////////////////////
-// IFORWARD DECLARATIONS
+// FORWARD DECLARATIONS
 ////////////////////////////////////////////////////////////////////////////////
 namespace Ui
 {
@@ -38,6 +38,8 @@ namespace dtQt
 
       void SetNode(osg::Node* node);
       osg::Node* GetNode() const;
+      
+      void UpdateDescription();
 
    protected:
       dtCore::ObserverPtr<osg::Node> mNode;
