@@ -100,7 +100,7 @@ namespace dtAnim
       virtual void SetScale(float scale) = 0;
       virtual float GetScale() const = 0;
       
-      virtual void UpdateAnimations(float deltaTime) = 0;
+      virtual void UpdateAnimation(float deltaTime) = 0;
 
       virtual void ClearAllAnimations(float delay = 0.0f) = 0;
 

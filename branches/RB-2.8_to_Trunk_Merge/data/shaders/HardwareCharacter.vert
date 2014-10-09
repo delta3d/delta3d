@@ -1,3 +1,4 @@
+#version 120
 
 /*
  *  This shader provides hardware skinning and is used in dtAnim
@@ -6,7 +7,7 @@
 
 const int MAX_BONES = 82;
 uniform vec4 boneTransforms[MAX_BONES * 3];
-uniform float scale;
+uniform float scale = 1.0;
 
 void main(void)
 {

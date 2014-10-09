@@ -334,7 +334,7 @@ osg::ref_ptr<osg::Node> GeometryBuilder::GeometryCache::GetOrCreateModel(Cal3DMo
    GeometryMap::iterator iterEnd = mLoadedModels.upper_bound(modelRes);
 
    pWrapper->SetLODLevel(1);
-   pWrapper->UpdateAnimations(0);
+   pWrapper->UpdateAnimation(0);
 
    if (pWrapper->BeginRenderingQuery())
    {
@@ -403,7 +403,7 @@ osg::ref_ptr<osg::Node> GeometryBuilder::GeometryCache::GetOrCreateModel(Cal3DMo
       }
 
       pWrapper->EndRenderingQuery();
-      pWrapper->UpdateAnimations(0);
+      pWrapper->UpdateAnimation(0);
    }
 
 

@@ -143,7 +143,7 @@ namespace dtAnim
 
       virtual void SetLODLevel(float level);
 
-      virtual void UpdateAnimations(float deltaTime);
+      virtual void UpdateAnimation(float deltaTime);
       
       virtual void ClearAllAnimations(float delay = 0.0f);
 

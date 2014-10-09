@@ -116,7 +116,7 @@ namespace dtAnim
          wrapper->EndRenderingQuery();
       }
 
-      wrapper->UpdateAnimations(0.0f);
+      wrapper->UpdateAnimation(0.0f);
 
       return geode;
    }
@@ -140,7 +140,7 @@ namespace dtAnim
       dtCore::RefPtr<osg::Geode> geode = new osg::Geode();
 
       wrapper->SetLODLevel(1);
-      wrapper->UpdateAnimations(0);
+      wrapper->UpdateAnimation(0);
 
       if (wrapper->BeginRenderingQuery() == false)
       {
