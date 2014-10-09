@@ -195,7 +195,7 @@
                <source type="Auto"/>
             </texture2D>
          </parameter>
-         <!--parameter name="d3d_ReflectionCubeMap">
+         <parameter name="d3d_ReflectionCubeMap">
             <textureCubeMap textureUnit="10">
                <source type="ImagePositiveX">textures/right.jpg</source>
                <source type="ImageNegativeX">textures/left.jpg</source>
@@ -206,7 +206,7 @@
                <wrap axis="S" mode="Repeat"/>
                <wrap axis="T" mode="Repeat"/>
             </textureCubeMap>
-         </parameter-->
+         </parameter>
       </shader>
       <shader name="MultiMapEditor" editor="yes">
          <source type="Vertex">shaders/base/multimap_editor.vert</source>

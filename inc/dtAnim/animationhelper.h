@@ -480,7 +480,6 @@ namespace dtAnim
       double mLastUpdateTime;
       std::string mAsyncFile;
       dtCore::RefPtr<osg::Group> mParent;
-      dtCore::RefPtr<osg::Node> mNode;
       dtCore::RefPtr<SequenceMixer> mSequenceMixer;
       dtCore::RefPtr<AttachmentController> mAttachmentController;
       dtCore::RefPtr<dtAnim::BaseModelWrapper> mModelWrapper;

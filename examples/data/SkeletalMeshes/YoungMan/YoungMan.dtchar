@@ -45,14 +45,14 @@
    <material fileName="materials/Jeans_Blue.xrf" name="Pants" />
    <material fileName="materials/Shirt_Long_Red.xrf" name="Shirt" />
   <material fileName="materials/Shoes_Classic.xrf" name="Classic Shoes" />
-  <scale>
-    <scalingFactor>0.1</scalingFactor>
-  </scale>
   <skinningShader>
       <shaderGroup>MultiMapCharacter</shaderGroup>
       <shaderName>MultiMapCharacter</shaderName>
       <maxBones>200</maxBones>
    </skinningShader>
+  <scale>
+    <scalingFactor>0.1</scalingFactor>
+  </scale>
    <animationChannel>
       <name>Idle</name>
       <animationName>Idle</animationName>

@@ -45,14 +45,14 @@
    <material fileName="materials/Shorts_Jogger_Green.xrf" name="Pants" />
    <material fileName="materials/TShirt_Delta3D_White.xrf" name="Shirt" />
    <material fileName="materials/Shoes_Runner_Brown.xrf" name="Classic Shoes" />
-   <scale>
-      <scalingFactor>0.1</scalingFactor>
-   </scale>
   <skinningShader>
       <shaderGroup>MultiMapCharacter</shaderGroup>
       <shaderName>MultiMapCharacter</shaderName>
       <maxBones>200</maxBones>
    </skinningShader>
+   <scale>
+      <scalingFactor>0.1</scalingFactor>
+   </scale>
    <animationChannel>
       <name>Idle</name>
       <animationName>Idle</animationName>
