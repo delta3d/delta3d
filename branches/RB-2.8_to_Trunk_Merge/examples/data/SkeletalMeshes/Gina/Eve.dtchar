@@ -50,14 +50,14 @@
    <material fileName="materials/Shoes.xrf" name="Shoes" />
   <material fileName="materials/Eyebrows.xrf" name="Eyebrows" />
   <material fileName="materials/Eyelashes.xrf" name="Eyelashes" />
-  <scale>
-    <scalingFactor>0.1</scalingFactor>
-  </scale>
   <skinningShader>
       <shaderGroup>MultiMapCharacter</shaderGroup>
       <shaderName>MultiMapCharacter</shaderName>
       <maxBones>200</maxBones>
    </skinningShader>
+  <scale>
+    <scalingFactor>0.1</scalingFactor>
+  </scale>
    <animationChannel>
       <name>Idle</name>
       <animationName>Idle</animationName>

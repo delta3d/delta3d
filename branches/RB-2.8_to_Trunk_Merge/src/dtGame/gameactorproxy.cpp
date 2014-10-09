@@ -242,7 +242,7 @@ namespace dtGame
          GetDrawable(ga);
       if (ga == NULL)
       {
-         throw dtGame::InvalidActorStateException("The Drawable is not of type GameActor, but the code called GetGameActor().", __FILE__, __LINE__);
+         throw dtGame::InvalidActorStateException("The Drawable for " + GetName() + " is not of type GameActor, but the code called GetGameActor().", __FILE__, __LINE__);
       }
       return *ga;
    }
@@ -255,7 +255,7 @@ namespace dtGame
          GetDrawable(ga);
       if (ga == NULL)
       {
-         throw dtGame::InvalidActorStateException("The Drawable is not of type GameActor, but the code called GetGameActor().", __FILE__, __LINE__);
+         throw dtGame::InvalidActorStateException("The Drawable for " + GetName() + " is not of type GameActor, but the code called GetGameActor().", __FILE__, __LINE__);
       }
       return *ga;
    }

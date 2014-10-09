@@ -70,7 +70,6 @@ AnimationHelper::AnimationHelper()
    , mGroundClamp(false)
    , mEnableCommands(false)
    , mLastUpdateTime(0.0)
-   , mNode(NULL)
    , mSequenceMixer(new SequenceMixer())
    , mAttachmentController(NULL)
 {
@@ -105,7 +104,7 @@ void AnimationHelper::Update(float dt)
    ModelLoader::LoadingState loadingState = mModelLoader.valid() ? mModelLoader->GetLoadingState(): ModelLoader::IDLE;
    if (loadingState == ModelLoader::COMPLETE)
    {
-      mNode = mModelWrapper->CreateDrawableNode(false);
+      mModelWrapper->CreateDrawableNode(false);
 
       mAttachmentController = mModelLoader->GetAttachmentController();
 
@@ -223,7 +222,6 @@ void AnimationHelper::UnloadModel()
    // Set these to null after so that they can be accessed in the callback.
    mModelWrapper = NULL;
    mModelLoader = NULL;
-   mNode = NULL;
 }
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -231,7 +229,7 @@ bool AnimationHelper::LoadModel(const dtCore::ResourceDescriptor& resource, bool
 {
    if (!resource.IsEmpty())
    {
-      if (mNode.valid())
+      if (GetNode() != NULL)
       {
          UnloadModel();
       }
@@ -324,13 +322,13 @@ void AnimationHelper::BuildPropertyMap()
 /////////////////////////////////////////////////////////////////////////////////
 osg::Node* AnimationHelper::GetNode()
 {
-   return mNode.get();
+   return mModelWrapper.valid() ? mModelWrapper->GetDrawableNode() : NULL;
 }
 
 /////////////////////////////////////////////////////////////////////////////////
 const osg::Node* AnimationHelper::GetNode() const
 {
-   return mNode.get();
+   return mModelWrapper.valid() ? mModelWrapper->GetDrawableNode() : NULL;
 }
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -892,6 +890,10 @@ void AnimationHelper::OnModelLoadCompleted(dtAnim::BaseModelWrapper* newModel, d
    if (loadState == dtAnim::ModelLoader::COMPLETE)
    {
       mModelWrapper = newModel;
+      if (mModelWrapper->GetDrawableNode() == NULL)
+      {
+         mModelWrapper->CreateDrawableNode(false);
+      }
    }
    else
    {

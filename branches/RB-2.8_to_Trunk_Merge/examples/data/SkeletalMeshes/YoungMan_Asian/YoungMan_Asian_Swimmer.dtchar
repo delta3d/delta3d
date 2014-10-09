@@ -42,14 +42,14 @@
   <material fileName="materials/Eyebrows_Black.xrf" name="Eyebrows Black" />
    <material fileName="materials/Hair_Black.xrf" name="Hair" />
    <material fileName="materials/SwimTrunks_Blue.xrf" name="Pants" />
-  <scale>
-    <scalingFactor>0.1</scalingFactor>
-  </scale>
   <skinningShader>
       <shaderGroup>MultiMapCharacter</shaderGroup>
       <shaderName>MultiMapCharacter</shaderName>
       <maxBones>200</maxBones>
    </skinningShader>
+  <scale>
+    <scalingFactor>0.1</scalingFactor>
+  </scale>
    <animationChannel>
       <name>Idle</name>
       <animationName>Idle</animationName>
