@@ -3,6 +3,7 @@
 // INCLUDE DIRECTIVES
 ////////////////////////////////////////////////////////////////////////////////
 #include "ui_nodetreepanel.h"
+#include <QtCore/QString.h>
 #include <QtGui/qtreewidget.h>
 #include <dtQt/nodetreepanel.h>
 #include <osg/Group>
@@ -31,7 +32,9 @@ namespace dtQt
    NodeTreeItem::NodeTreeItem(osg::Node& node, QTreeWidget* parent)
       : BaseClass(parent)
       , mNode(&node)
-   {}
+   {
+      UpdateDescription();
+   }
 
    NodeTreeItem::~NodeTreeItem()
    {}
@@ -39,11 +42,41 @@ namespace dtQt
    void NodeTreeItem::SetNode(osg::Node* node)
    {
       mNode = node;
+
+      UpdateDescription();
    }
 
    osg::Node* NodeTreeItem::GetNode() const
    {
       return mNode.get();
+   }
+
+   void NodeTreeItem::UpdateDescription()
+   {
+      QString qstr;
+
+      if (mNode.valid())
+      {
+         typedef osg::Node::DescriptionList StrArray;
+         
+         StrArray& descriptions = mNode->getDescriptions();
+
+         const std::string* curDesc = NULL;
+         StrArray::const_iterator curIter = descriptions.begin();
+         StrArray::const_iterator endIter = descriptions.end();
+         for (size_t i = 0; curIter != endIter; ++curIter, ++i)
+         {
+            curDesc = &(*curIter);
+
+            qstr += QString(curDesc->c_str());
+            if (i + 1 < descriptions.size())
+            {
+               qstr += QString("\n");
+            }
+         }
+      }
+
+      setText(1, qstr);
    }
 
 

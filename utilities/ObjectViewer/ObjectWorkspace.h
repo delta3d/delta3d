@@ -33,6 +33,11 @@ class QAction;
 class QToolBar;
 class QHBoxLayout;
 
+namespace dtCore
+{
+   class ShaderProgram;
+}
+
 namespace dtQt
 {
    class NodeTreePanel;
@@ -82,6 +87,8 @@ public slots:
    void OnRemoveShaderDef(const std::string& filename);
    void OnLoadMap(const std::string& mapName);
    void OnLoadGeometry(const std::string& fullName);
+   void OnGeometryChanged();
+   void OnShaderApplied(dtCore::ShaderProgram* shaderProgram);
 
 private:
 
