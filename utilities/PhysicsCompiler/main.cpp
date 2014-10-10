@@ -55,6 +55,27 @@ typedef dtPhysics::TriangleRecorderVisitor<dtPhysics::TriangleRecorder> Triangle
 
 
 ////////////////////////////////////////////////////////////////////////////////
+// HELPER FUNCTIONS
+////////////////////////////////////////////////////////////////////////////////
+std::string TrimPropertyName(const std::string& propString)
+{
+   std::string desc(propString);
+
+   // Determine if a physics property name string needs to be removed.
+   static const std::string PROP_ASSIGNMENT(" = ");
+   size_t foundIndex = propString.find(PROP_ASSIGNMENT);
+   if (foundIndex != std::string::npos)
+   {
+      foundIndex += PROP_ASSIGNMENT.size();
+      desc = propString.substr(foundIndex);
+   }
+
+   return desc;
+}
+
+
+
+////////////////////////////////////////////////////////////////////////////////
 // CLASSS CODE
 ////////////////////////////////////////////////////////////////////////////////
 class GeodeCounter : public osg::NodeVisitor
@@ -184,6 +205,8 @@ public:
 
       if(!commentFlag.empty())
       {
+         std::string desc(TrimPropertyName(commentFlag));
+
          typedef std::vector<dtCore::ActorProxy* > ProxyContainer;
          ProxyContainer proxies;
 
@@ -198,7 +221,7 @@ public:
             for(;iter != iterEnd && notFound; ++iter)
             {
                dtPhysics::MaterialActor* actor = dynamic_cast<dtPhysics::MaterialActor*>((*iter)->GetDrawable());
-               if(actor != NULL && actor->GetName() == commentFlag)
+               if(actor != NULL && actor->GetName() == desc)
                {
                   index = dtPhysics::MaterialIndex(actor->GetMateralDef().GetMaterialIndex());
                   notFound = false;
@@ -208,7 +231,7 @@ public:
 
          if(notFound)
          {
-            LOG_ERROR("Cannot find physics material with the name: " + commentFlag + ".");
+            LOG_ERROR("Cannot find physics material with the name: " + desc + ".");
          }
       }
 
@@ -424,6 +447,8 @@ void CookPhysicsFromNode(osg::Node* node, float maxPerMesh, float maxEdge)
       node->accept(mv);
 
       if ( materialName.empty() ) materialName = "_default_";
+
+      materialName = TrimPropertyName(materialName);
 
       std::string materialFileNamePath = GlobalApp->GetDirectory() + "/" + GlobalApp->GetFilePrefix() + materialName;
 
