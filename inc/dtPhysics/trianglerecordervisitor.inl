@@ -37,17 +37,51 @@ namespace dtPhysics
    {}
 
    template<class T>
-   void TriangleRecorderVisitor<T>::CheckDesc(osg::Node& node)
+   std::string TriangleRecorderVisitor<T>::GetDescription(osg::Node& node)
    {
-      if(!node.getDescriptions().empty())
+      std::string desc;
+      
+      if ( ! node.getDescriptions().empty())
       {
          // Use *last* description as material tag
-         mCurrentDescription = node.getDescription(node.getNumDescriptions()-1);
+         desc = node.getDescription(node.getNumDescriptions()-1);
       }
-      else
+
+      return desc;
+   }
+
+   template<class T>
+   void TriangleRecorderVisitor<T>::CheckDesc(osg::Node& node)
+   {
+      mCurrentDescription = GetDescription(node);
+   }
+
+   template<class T>
+   std::string TriangleRecorderVisitor<T>::CheckDescriptionInAncestors(osg::Node& node)
+   {
+      std::string desc;
+
+      osg::Node* curNode = &node;
+      while (curNode != NULL)
       {
-         mCurrentDescription.clear();
+         desc = GetDescription(*curNode);
+         if ( ! desc.empty())
+         {
+            break;
+         }
+
+         // Assume a single parent.
+         if ( ! curNode->getParents().empty())
+         {
+            curNode = curNode->getParent(0);
+         }
+         else
+         {
+            curNode = NULL;
+         }
       }
+
+      return desc;
    }
 
    template<class T>
@@ -64,12 +98,24 @@ namespace dtPhysics
    template<class T>
    void TriangleRecorderVisitor<T>::apply(osg::Geode& node)
    {
+      // Obtain the description for the current node.
       CheckDesc(node);
-      //allow skipping one specific material or only exporting one material
-      if((mExportSpecificMaterial && (mCurrentDescription != mSpecificDescription))
-         || (mSkipSpecificMaterial && (mCurrentDescription == mSpecificDescription)))
+      std::string desc = mCurrentDescription;
+
+      // Find a description that might be contained in ancestors.
+      // This treats the description as if it were inherited.
+      // Description information may not be applied to geodes directly
+      // depending on how art tools export models for OSG.
+      if (desc.empty())
       {
-         std::cout << "Skipping material: " << mCurrentDescription << std::endl;
+         desc = CheckDescriptionInAncestors(node);
+      }
+
+      //allow skipping one specific material or only exporting one material
+      if((mExportSpecificMaterial && (desc != mSpecificDescription))
+         || (mSkipSpecificMaterial && (desc == mSpecificDescription)))
+      {
+         std::cout << "Skipping material: " << desc << std::endl;
          return;
       }
 

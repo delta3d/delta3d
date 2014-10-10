@@ -1,5 +1,8 @@
 // made for mts ship fire fighter level. this will prebuild the geometry.
 
+////////////////////////////////////////////////////////////////////////////////
+// INCLUDE DIRECTIVES
+////////////////////////////////////////////////////////////////////////////////
 #include <iostream>
 #include <osg/ArgumentParser>
 #include <osg/Matrix>
@@ -42,6 +45,18 @@
 
 #include <cmath>
 
+
+
+////////////////////////////////////////////////////////////////////////////////
+// FORWARD DECLARATIONS
+////////////////////////////////////////////////////////////////////////////////
+typedef dtPhysics::TriangleRecorderVisitor<dtPhysics::TriangleRecorder> TriangleRecorderVisitor;
+
+
+
+////////////////////////////////////////////////////////////////////////////////
+// CLASSS CODE
+////////////////////////////////////////////////////////////////////////////////
 class GeodeCounter : public osg::NodeVisitor
 {
 public:
@@ -82,9 +97,16 @@ public:
    virtual void apply(osg::Geode& node)
    {
       CheckDesc(node);
+      std::string desc = mCurrentDescription;
+
+      if (desc.empty())
+      {
+         desc = TriangleRecorderVisitor::CheckDescriptionInAncestors(node);
+      }
 
       //allow skipping one specific material or only exporting one material
-      if((mExportSpecificMaterial && (mCurrentDescription != mSpecificDescription)) || (mSkipSpecificMaterial && (mCurrentDescription == mSpecificDescription)))
+      if((mExportSpecificMaterial && (desc != mSpecificDescription))
+         || (mSkipSpecificMaterial && (desc == mSpecificDescription)))
       {
          //std::cout << "Skipping material: " << mCurrentDescription << std::endl;
          return;
@@ -105,6 +127,11 @@ public:
 
 };
 
+
+
+////////////////////////////////////////////////////////////////////////////////
+// CLASS CODE
+////////////////////////////////////////////////////////////////////////////////
 class ApplicationHandler : public osg::Referenced
 {
 public:
@@ -224,7 +251,7 @@ public:
 
       if (!dir.empty())
       {
-         mSaveDirectory = dtCore::Project::GetInstance().GetContext() + "/" + dtCore::DataType::STATIC_MESH.GetName() +  "/" + dir;
+         mSaveDirectory = dtCore::Project::GetInstance().GetContext() + "/" + dir;
 
          if(!dtUtil::FileUtils::GetInstance().DirExists(mSaveDirectory))
          {
@@ -291,7 +318,9 @@ void Simplify(osg::Node* n)
 
 
 
-////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+// CLASS CODE
+////////////////////////////////////////////////////////////////////////////////
 class CollectDescVisitor : public osg::NodeVisitor
 {
 public:
@@ -303,7 +332,7 @@ public:
    * Constructor.
    */
    CollectDescVisitor(std::set<std::string>& desc)
-      : osg::NodeVisitor(osg::NodeVisitor::TRAVERSE_ACTIVE_CHILDREN)
+      : osg::NodeVisitor(osg::NodeVisitor::TRAVERSE_ALL_CHILDREN)
       , mDescriptionList(desc)
    {}
 
@@ -339,10 +368,16 @@ public:
    *
    * @param node the geode to visit
    */
-   virtual void apply(osg::Geode& node)
+   virtual void apply(osg::Node& node)
    {
       CheckDesc(node);
-      mDescriptionList.insert(mCurrentDescription);
+
+      if ( ! mCurrentDescription.empty())
+      {
+         mDescriptionList.insert(mCurrentDescription);
+      }
+
+      traverse(node);
    }
 
    virtual void apply(osg::Billboard& node)
@@ -380,13 +415,17 @@ void CookPhysicsFromNode(osg::Node* node, float maxPerMesh, float maxEdge)
    std::set<std::string>::iterator iterEnd = descList.end();
    for(;iter != iterEnd; ++iter)
    {
-      dtPhysics::TriangleRecorderVisitor<dtPhysics::TriangleRecorder> mv(materialLookup);
+      std::string materialName = (*iter);
+
+      TriangleRecorderVisitor mv(materialLookup);
       mv.mFunctor.SetMaxEdgeLength(maxEdge);
       mv.mExportSpecificMaterial = true;
-      mv.mSpecificDescription = (*iter);
+      mv.mSpecificDescription = materialName;
       node->accept(mv);
-      std::string materialName = (*iter);
+
       if ( materialName.empty() ) materialName = "_default_";
+
+      std::string materialFileNamePath = GlobalApp->GetDirectory() + "/" + GlobalApp->GetFilePrefix() + materialName;
 
       GeodeCounter gc;
       gc.mExportSpecificMaterial = true;
@@ -412,7 +451,7 @@ void CookPhysicsFromNode(osg::Node* node, float maxPerMesh, float maxEdge)
 
          for (unsigned i = 0; i <= exportCount; ++i)
          {
-            dtPhysics::TriangleRecorderVisitor<dtPhysics::TriangleRecorder> mv2(materialLookup);
+            TriangleRecorderVisitor mv2(materialLookup);
             mv2.mExportSpecificMaterial = true;
             mv2.mSpecificDescription = (*iter);
             mv2.mSplit = i;
@@ -428,7 +467,7 @@ void CookPhysicsFromNode(osg::Node* node, float maxPerMesh, float maxEdge)
             }
             else
             {
-                std::string fileWithPath = GlobalApp->GetDirectory() + "/" + GlobalApp->GetFilePrefix() + materialName + "_Split" + dtUtil::ToString(i + 1) + ".dtphys";
+                std::string fileWithPath = materialFileNamePath + "_Split" + dtUtil::ToString(i + 1) + ".dtphys";
                 std::cout << std::endl << "Cooking mesh for material name \"" << materialName << "\", with full path \"" << fileWithPath << "\"." << std::endl;
                 if ( !CookMesh(mv2.mFunctor, fileWithPath) )
                 {
@@ -439,7 +478,7 @@ void CookPhysicsFromNode(osg::Node* node, float maxPerMesh, float maxEdge)
       }
       else
       {
-         std::string fileWithPath = GlobalApp->GetDirectory() + "/" + GlobalApp->GetFilePrefix() + materialName + ".dtphys";
+         std::string fileWithPath = materialFileNamePath + ".dtphys";
          std::cout << std::endl << "Cooking mesh for material name \"" << materialName << "\", with full path \"" << fileWithPath << "\"." << std::endl;
          if (mv.mFunctor.mData->mIndices.empty() || !CookMesh(mv.mFunctor, fileWithPath))
          {
@@ -469,6 +508,10 @@ osg::Node* loadFile(const std::string& filename)
 }
 
 
+
+////////////////////////////////////////////////////////////////////////////////
+// MAIN PROGRAM
+////////////////////////////////////////////////////////////////////////////////
 int main(int argc, char** argv)
 {
    osg::ArgumentParser parser(&argc, argv);
@@ -524,6 +567,7 @@ int main(int argc, char** argv)
    else
    {
       std::cerr << "Error: no material map specified" << std::endl;
+      GlobalApp->Shutdown();
       return 1;
    }
 
@@ -544,6 +588,7 @@ int main(int argc, char** argv)
    else
    {
       std::cerr << "Error: no save directory specified, refers to a directory in the Terrains folder, e.g. \"--directoryName Physics\"" << std::endl;
+      GlobalApp->Shutdown();
       return 1;
    }
 
@@ -554,6 +599,7 @@ int main(int argc, char** argv)
    else
    {
       std::cerr << "Error: no file prefix specified, e.g. \"--filePrefix Terrain\"" << std::endl;
+      GlobalApp->Shutdown();
       return 1;
    }
 
