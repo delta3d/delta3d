@@ -51,6 +51,13 @@ namespace dtPhysics
       TriangleRecorderVisitor(TriangleRecorder::MaterialLookupFunc func);
       virtual ~TriangleRecorderVisitor() {}
 
+      // Returns a description string that may be contained in the specified node.
+      static std::string GetDescription(osg::Node& node);
+
+      // Returns the nearest parent description.
+      static std::string CheckDescriptionInAncestors(osg::Node& node);
+
+      // Acquires the current description from the specified node.
       void CheckDesc(osg::Node& node);
 
       virtual dtPhysics::MaterialIndex GetMaterialID(const std::string& str);
