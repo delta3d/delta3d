@@ -621,12 +621,6 @@ int main(int argc, char** argv)
    {
       GlobalApp->SetFilePrefix(tempString);
    }
-   else
-   {
-      std::cerr << "Error: no file prefix specified, e.g. \"--filePrefix Terrain\"" << std::endl;
-      GlobalApp->Shutdown();
-      return 1;
-   }
 
    int tempInt = -1;
    if(parser.read("--maxPerMesh", tempInt))
