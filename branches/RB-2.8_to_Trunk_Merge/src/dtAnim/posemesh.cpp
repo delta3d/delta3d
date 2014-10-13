@@ -28,6 +28,7 @@
 #include <dtUtil/mathdefines.h>
 #include <dtUtil/matrixutil.h>
 #include <dtUtil/exception.h>
+#include <dtUtil/stringutils.h>
 
 #include <iostream>
 #include <sstream>
@@ -35,6 +36,22 @@
 
 using namespace dtAnim;
 
+
+
+////////////////////////////////////////////////////////////////////////////////
+// CLASS CODE
+////////////////////////////////////////////////////////////////////////////////
+PoseMesh::TargetTriangle::TargetTriangle()
+   : mIsInside(false)
+   , mTriangleID(-1)
+   , mAzimuth(0.0f)
+   , mElevation(0.0f)
+{}
+
+
+
+////////////////////////////////////////////////////////////////////////////////
+// CLASS CODE
 ////////////////////////////////////////////////////////////////////////////////
 PoseMesh::PoseMesh(dtAnim::BaseModelWrapper* model,
                    const PoseMeshData& meshData)
@@ -90,6 +107,7 @@ PoseMesh::PoseMesh(dtAnim::BaseModelWrapper* model,
 
    VertIndex vertIndex = 0;
    AnimId animID = -1;
+   AnimationInterface* curAnim = NULL;
    for ( ; curIter != endIter; ++curIter)
    {
       animID = *curIter;
@@ -97,6 +115,14 @@ PoseMesh::PoseMesh(dtAnim::BaseModelWrapper* model,
       // If we've already handled this animation,
       // map it to the previously computed data
       AnimVertMap::iterator mapIter = vertMap.find(animID);
+
+      curAnim = model->GetAnimationByIndex(animID);
+      if (curAnim == NULL)
+      {
+         LOG_ERROR("Could not access pose animation [" + dtUtil::ToString(animID)
+            + "] for character model \"" + model->GetModelData()->GetModelName() + "\"");
+         continue;
+      }
 
       if (mapIter != vertMap.end())
       {
@@ -107,12 +133,12 @@ PoseMesh::PoseMesh(dtAnim::BaseModelWrapper* model,
       // This anim maps to this vert
       vertMap[animID] = vertIndex;
 
-      animator->BlendPose(animID, 1.0f, 0.0f);
+      animator->BlendPose(*curAnim, 1.0f, 0.0f);
       animator->Update(0.0f);
 
       osg::Quat finalRotation = effectorBone->GetAbsoluteRotation();
 
-      animator->ClearPose(animID, 0.0f);
+      animator->ClearPose(*curAnim, 0.0f);
       animator->Update(0.0f);
 
       // calculate a vector transformed by the rotation data.
@@ -125,7 +151,7 @@ PoseMesh::PoseMesh(dtAnim::BaseModelWrapper* model,
 
       dtAnim::GetCelestialCoordinates(worldForward, mBindPoseForward, az, el);
 
-      std::string debugName = model->GetAnimationByIndex(animID)->GetName();
+      std::string debugName = curAnim->GetName();
 
       osg::Vec3 debugDirection;
       dtAnim::GetCelestialDirection(az, el, mBindPoseForward, osg::Z_AXIS, debugDirection);

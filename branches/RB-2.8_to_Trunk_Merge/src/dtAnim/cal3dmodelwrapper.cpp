@@ -579,7 +579,6 @@ namespace dtAnim
    /////////////////////////////////////////////////////////////////////////////
    void Cal3DModelWrapper::UpdateAnimation(float deltaTime)
    {
-      //mCalModel->update(deltaTime);
       mAnimator->Update(deltaTime);
    }
 

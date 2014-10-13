@@ -24,6 +24,7 @@
 
 #include <dtUtil/mathdefines.h>
 #include <dtUtil/log.h>
+#include <dtUtil/stringutils.h>
 
 #include <algorithm>
 #include <cassert>
@@ -52,9 +53,21 @@ void PoseMeshUtility::ClearPoses(const PoseMesh* poseMesh, dtAnim::BaseModelWrap
 {
    const PoseMesh::VertexVector& verts = poseMesh->GetVertices();
 
+   int animId = 0;
+   dtAnim::AnimationInterface* curAnim = NULL;
    for (size_t vertIndex = 0; vertIndex < verts.size(); ++vertIndex)
    {
-      model->GetAnimator()->BlendPose(verts[vertIndex].mAnimID, 0.0f, delay);
+      animId = verts[vertIndex].mAnimID;
+      curAnim = model->GetAnimationByIndex(animId);
+      if (curAnim == NULL)
+      {
+         LOG_ERROR("Could not clear pose [" + dtUtil::ToString(animId) + "] for character model \""
+            + model->GetModelData()->GetModelName() + "\"");
+      }
+      else
+      {
+         model->GetAnimator()->BlendPose(*curAnim, 0.0f, delay);
+      }
    }
 }
 
@@ -67,6 +80,7 @@ void PoseMeshUtility::BlendPoses(const PoseMesh* poseMesh,
    osg::Vec3 weights;
    unsigned int animIDs[3];
    dtAnim::AnimationInterface* anims[3];
+   dtAnim::AnimationUpdaterInterface* animator = model->GetAnimator();
 
    // grab the animation ids now that we know which polygon we are using
    const PoseMesh::TriangleVector& triangles = poseMesh->GetTriangles();
@@ -84,10 +98,14 @@ void PoseMeshUtility::BlendPoses(const PoseMesh* poseMesh,
    // calculate the weights for the known animations using the corresponding barycentric space
    weights = barySpace.Transform(osg::Vec3(targetTriangle.mAzimuth, targetTriangle.mElevation, 0.0f));
 
+   dtUtil::Clamp(weights[0], 0.0f, 1.0f);
+   dtUtil::Clamp(weights[1], 0.0f, 1.0f);
+   dtUtil::Clamp(weights[2], 0.0f, 1.0f);
+
    //now play the 3 animationIDs with the associated weights
-   anims[0]->PlayCycle(weights[0], blendDelay);
-   anims[1]->PlayCycle(weights[1], blendDelay);
-   anims[2]->PlayCycle(weights[2], blendDelay);
+   animator->BlendPose(*anims[0], weights[0], blendDelay);
+   animator->BlendPose(*anims[1], weights[1], blendDelay);
+   animator->BlendPose(*anims[2], weights[2], blendDelay);
 
    // turn off the animations for the rest of the celestial points
    const PoseMesh::VertexVector& vertices = poseMesh->GetVertices();
@@ -106,7 +124,7 @@ void PoseMeshUtility::BlendPoses(const PoseMesh* poseMesh,
 
          if (anim != NULL)
          {
-            anim->PlayCycle(weight, blendDelay);
+            animator->BlendPose(*anim, weight, blendDelay);
          }
       }
    }

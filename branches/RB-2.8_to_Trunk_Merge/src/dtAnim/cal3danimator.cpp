@@ -209,6 +209,7 @@ namespace dtAnim
    {
       return ! mMixer->getAnimationActionList().empty()
          || ! mMixer->getAnimationCycle().empty()
+         || ! mMixer->getAnimationPose().empty()
          || IsBindPoseAllowed();
    }
 
@@ -281,15 +282,15 @@ namespace dtAnim
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   bool Cal3DAnimator::BlendPose(int id, float weight, float delay)
+   bool Cal3DAnimator::BlendPose(dtAnim::AnimationInterface& anim, float weight, float delay)
    {
-      return mMixer->blendPose(id, weight, delay);
+      return mMixer->blendPose(anim.GetID(), weight, delay);
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   bool Cal3DAnimator::ClearPose(int id, float delay)
+   bool Cal3DAnimator::ClearPose(dtAnim::AnimationInterface& anim, float delay)
    {
-      return mMixer->clearPose(id, delay);
+      return mMixer->clearPose(anim.GetID(), delay);
    }
 
 } // namespace dtAnim
