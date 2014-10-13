@@ -194,7 +194,7 @@ void AnimationHelper::LoadSkeletalMesh()
 {
    try
    {
-      LoadModel(mSkeletalMesh, false);
+      LoadModel(mSkeletalMesh);
    }
    catch (const dtUtil::Exception& ex)
    {
@@ -218,32 +218,30 @@ void AnimationHelper::UnloadModel()
    {
       mAttachmentController->Clear();
    }
-   ModelUnloadedSignal(this);
+   if (GetNode() == NULL)
+      ModelUnloadedSignal(this);
    // Set these to null after so that they can be accessed in the callback.
    mModelWrapper = NULL;
    mModelLoader = NULL;
 }
 
 /////////////////////////////////////////////////////////////////////////////////
-bool AnimationHelper::LoadModel(const dtCore::ResourceDescriptor& resource, bool immediate)
+bool AnimationHelper::LoadModel(const dtCore::ResourceDescriptor& resource)
 {
    if (!resource.IsEmpty())
    {
-      if (GetNode() != NULL)
-      {
-         UnloadModel();
-      }
+      UnloadModel();
 
       mModelLoader = new dtAnim::ModelLoader();
       mModelLoader->ModelLoaded.connect_slot(this, &AnimationHelper::OnModelLoadCompleted);
       mModelLoader->SetAttachmentController(mAttachmentController);
-      mModelLoader->LoadModel(resource);
+      mModelLoader->LoadModel(resource, mLoadModelAsynchronously);
 
    }
    else
    {
       UnloadModel();
-  }
+   }
 
    return true;
 }
@@ -256,7 +254,7 @@ void AnimationHelper::AttachNodeToDrawable(osg::Group* parent)
    {
       if (parent == NULL)
       {
-         dtGame::GameActorProxy* gap;
+         dtGame::GameActorProxy* gap = NULL;
          GetOwner(gap);
          if (gap != NULL)
          {
@@ -432,7 +430,7 @@ void AnimationHelper::SetCommandCallbacksEnabled(bool enable)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-bool AnimationHelper::IsCommandCallbacksEnabled() const
+bool AnimationHelper::GetCommandCallbacksEnabled() const
 {
    return mEnableCommands;
 }
@@ -928,7 +926,7 @@ PoseController* AnimationHelper::GetPoseController()
 ////////////////////////////////////////////////////////////////////////////////
 void AnimationHelper::SetPosesEnabled(bool enabled)
 {
-   if (IsPosesEnabled() != enabled)
+   if (GetPosesEnabled() != enabled)
    {
       if (mPoseSequence.valid())
       {
@@ -947,7 +945,7 @@ void AnimationHelper::SetPosesEnabled(bool enabled)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-bool AnimationHelper::IsPosesEnabled() const
+bool AnimationHelper::GetPosesEnabled() const
 {
    return mPoseSequence.valid() && mSequenceMixer->IsAnimationPlaying(mPoseSequence->GetName());
 }

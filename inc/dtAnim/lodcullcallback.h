@@ -22,7 +22,7 @@
 #ifndef lodcullcallback_h__
 #define lodcullcallback_h__
 
-#include <dtCore/refptr.h>
+#include <dtCore/observerptr.h>
 #include <osg/Drawable>
 
 namespace dtAnim
@@ -42,7 +42,8 @@ namespace dtAnim
       virtual bool cull(osg::NodeVisitor* nv, osg::Drawable* drawable, osg::RenderInfo* renderInfo) const;
 
    private:
-      dtCore::RefPtr<Cal3DModelWrapper> mWrapper;
+      // To avoid a circular reference.
+      dtCore::ObserverPtr<Cal3DModelWrapper> mWrapper;
       //CalHardwareModel* mHardwareModel;
       int mMeshID;
    };

@@ -139,12 +139,9 @@ namespace dtAnim
        * and then calls CreateGeode() on the AnimNodeBuilder
        *
        * @param pFilename the name of the file to load
-       * @param immediate Optional parameter to immediately load the character.  True
-       * requires that an OpenGL context is available.  False will defer the loading
-       * until a valid OpenGL context is present. (default = false)
        * @return whether or not we successfully loaded the file
        */
-      bool LoadModel(const dtCore::ResourceDescriptor& resource, bool immediate = false);
+      bool LoadModel(const dtCore::ResourceDescriptor& resource);
 
       /**
        * @note Just because this function returns false doesn't mean you have a loaded
@@ -264,13 +261,13 @@ namespace dtAnim
       PoseController* GetPoseController();
 
       void SetPosesEnabled(bool enabled);
-      bool IsPosesEnabled() const;
+      bool GetPosesEnabled() const;
 
       /**
        * Set whether command callbacks should be handled for this helper.
        */
       void SetCommandCallbacksEnabled(bool enable);
-      bool IsCommandCallbacksEnabled() const;
+      bool GetCommandCallbacksEnabled() const;
 
       /**
        * Set the callback that is responsible for sending game events.

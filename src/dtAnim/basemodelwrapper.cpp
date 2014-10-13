@@ -52,7 +52,7 @@ namespace dtAnim
 
       float scale = GetScale();
 
-      if (node != NULL && ! mScaleTransform.valid())
+      if (!dtUtil::Equivalent(scale, 1.0f, 0.001f) && node != NULL && ! mScaleTransform.valid())
       {
          mScaleTransform = new osg::MatrixTransform;
          mScaleTransform->setName("Scale Transform");

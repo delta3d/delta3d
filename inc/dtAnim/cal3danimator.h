@@ -29,7 +29,7 @@
 #include <dtAnim/animationupdaterinterface.h>
 #include <dtAnim/cal3dmodelwrapper.h>
 #include <dtAnim/ical3ddriver.h>
-#include <dtCore/refptr.h>
+#include <dtCore/observerptr.h>
 #include <osg/Referenced>
 
 
@@ -138,7 +138,7 @@ namespace dtAnim
       virtual ~Cal3DAnimator();
 
    private:
-      dtCore::RefPtr<dtAnim::Cal3DModelWrapper> mWrapper;
+      dtCore::ObserverPtr<dtAnim::Cal3DModelWrapper> mWrapper;
       CalModel* mCalModel;
       CalMixer* mMixer;
       float mMinBlendTime;

@@ -241,11 +241,11 @@ namespace dtAnim
             CPPUNIT_ASSERT_DOUBLES_EQUAL(lodOptions.GetMaxVisibleDistance(), 401.0, 0.1);
 
             std::string testString("abc");
-            CPPUNIT_ASSERT_EQUAL(std::string("Default"), modelData->GetShaderName());
+            CPPUNIT_ASSERT_EQUAL(std::string("MultiMapCharacter"), modelData->GetShaderName());
             modelData->SetShaderName(testString);
             CPPUNIT_ASSERT_EQUAL(testString, modelData->GetShaderName());
 
-            CPPUNIT_ASSERT_EQUAL(std::string("HardwareSkinning"), modelData->GetShaderGroupName());
+            CPPUNIT_ASSERT_EQUAL(std::string("MultiMapCharacter"), modelData->GetShaderGroupName());
             modelData->SetShaderGroupName(testString);
             CPPUNIT_ASSERT_EQUAL(testString, modelData->GetShaderGroupName());
 

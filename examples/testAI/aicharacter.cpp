@@ -58,17 +58,12 @@ namespace dtAI
    /////////////////////////////////////////////////////////////////////////////
    AICharacter::AICharacter(dtCore::Scene* pScene, const WaypointInterface* pWaypoint, const dtCore::ResourceDescriptor& pResource, unsigned pSpeed)
       : mSpeed(pSpeed)
-      , mCharacter(new dtAnim::CharacterWrapper(pResource))
       , mCurrentWaypoint(pWaypoint)
       , mWaypointPath()
       , mAStar()
       , mScene(pScene)
    {
-      mCharacter->SetGroundClamp(pScene, 0.0f);
-
       SetPosition(pWaypoint);
-
-      pScene->AddChild(mCharacter.get());
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -84,7 +79,6 @@ namespace dtAI
       mat(3,1) = pWaypoint->GetPosition()[1];
       mat(3,2) = pWaypoint->GetPosition()[2] + 3.5f;
 
-      mCharacter->GetMatrixNode()->setMatrix(mat);
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -130,7 +124,7 @@ namespace dtAI
    {
       // simple... just rotate to the waypoint over time and set a
       // positive velocity to go there
-      mCharacter->RotateToPoint(pWaypoint->GetPosition(), dt * 3.0f);
+      //mCharacter->RotateToPoint(pWaypoint->GetPosition(), dt * 3.0f);
 
       //osg::Vec3 pVector = pWaypoint->GetPosition() - GetPosition();
 
@@ -143,13 +137,13 @@ namespace dtAI
       //std::cout << dir << std::endl;
       //if (dir < 5.0f)
       //{
-      mCharacter->SetSpeed(-float(mSpeed));
-
-      if (!mCharacter->IsAnimationPlaying("Walk"))
-      {
-         mCharacter->ClearAllAnimations(0.5f);
-         mCharacter->PlayAnimation("Walk");
-      }
+//      mCharacter->SetSpeed(-float(mSpeed));
+//
+//      if (!mCharacter->IsAnimationPlaying("Walk"))
+//      {
+//         mCharacter->ClearAllAnimations(0.5f);
+//         mCharacter->PlayAnimation("Walk");
+//      }
       //}
       //else
       //{
@@ -160,17 +154,19 @@ namespace dtAI
    /////////////////////////////////////////////////////////////////////////////
    osg::Vec3 AICharacter::GetPosition() const
    {
-     osg::Matrix mat = mCharacter->GetMatrixNode()->getMatrix();
-     osg::Vec3 pos(mat(3, 0), mat(3, 1), mat(3, 2));
-     return pos;
+//     osg::Matrix mat = mCharacter->GetMatrixNode()->getMatrix();
+//     osg::Vec3 pos(mat(3, 0), mat(3, 1), mat(3, 2));
+//     return pos;
+      return osg::Vec3();
    }
 
    /////////////////////////////////////////////////////////////////////////////
    osg::Vec3 AICharacter::GetForward() const
    {
-      osg::Matrix mat = mCharacter->GetMatrixNode()->getMatrix();
-      osg::Vec3 forward(mat(1, 0), mat(1, 1), mat(1, 2));
-      return forward;
+//      osg::Matrix mat = mCharacter->GetMatrixNode()->getMatrix();
+//      osg::Vec3 forward(mat(1, 0), mat(1, 1), mat(1, 2));
+//      return forward;
+      return osg::Vec3();
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -225,16 +221,16 @@ namespace dtAI
          // else stop walking
          else
          {
-            mCharacter->SetSpeed(0);
-            if (!mCharacter->IsAnimationPlaying("Idle"))
-            {
-               mCharacter->ClearAllAnimations(0.5f);
-               mCharacter->PlayAnimation("Idle");
-            }
+//            mCharacter->SetSpeed(0);
+//            if (!mCharacter->IsAnimationPlaying("Idle"))
+//            {
+//               mCharacter->ClearAllAnimations(0.5f);
+//               mCharacter->PlayAnimation("Idle");
+//            }
          }
       }
 
-      mCharacter->Update(dt);
+//      mCharacter->Update(dt);
    }
 
    /////////////////////////////////////////////////////////////////////////////

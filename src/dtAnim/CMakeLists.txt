@@ -32,7 +32,6 @@ SET(LIB_SOURCES
   ${SOURCE_PATH}/characterfileloader.cpp
   ${SOURCE_PATH}/characterfilewriter.cpp
   ${SOURCE_PATH}/charactershaderbuilder.cpp
-  ${SOURCE_PATH}/characterwrapper.cpp
   ${SOURCE_PATH}/chardrawable.cpp
   ${SOURCE_PATH}/constants.cpp
   ${SOURCE_PATH}/geometrybuilder.cpp
@@ -96,7 +95,6 @@ SET(LIB_PUBLIC_HEADERS
   ${HEADER_PATH}/characterfileloader.h
   ${HEADER_PATH}/characterfilewriter.h
   ${HEADER_PATH}/charactershaderbuilder.h
-  ${HEADER_PATH}/characterwrapper.h
   ${HEADER_PATH}/chardrawable.h
   ${HEADER_PATH}/constants.h
   ${HEADER_PATH}/dtanim.h

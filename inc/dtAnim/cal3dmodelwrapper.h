@@ -101,8 +101,8 @@ namespace dtAnim
       virtual ~Cal3dInterfaceObjectCache();
 
    private:
-      typedef std::map<int, Cal3dAnimation*> IDAnimMap;
-      typedef std::map<int, Cal3dBone*> IDBoneMap;
+      typedef std::map<int, dtCore::ObserverPtr<Cal3dAnimation> > IDAnimMap;
+      typedef std::map<int, dtCore::ObserverPtr<Cal3dBone> > IDBoneMap;
 
       IDAnimMap mIDAnimMap;
       IDBoneMap mIDBoneMap;

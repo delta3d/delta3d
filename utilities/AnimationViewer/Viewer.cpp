@@ -21,7 +21,6 @@
 #include <dtAnim/basemodeldata.h>
 #include <dtAnim/basemodelwrapper.h>
 #include <dtAnim/characterfilehandler.h>
-#include <dtAnim/characterwrapper.h>
 #include <dtAnim/chardrawable.h>
 #include <dtAnim/osgmodeldata.h>
 #include <dtAnim/osgmodelwrapper.h>

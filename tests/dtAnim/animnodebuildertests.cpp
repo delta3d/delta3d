@@ -131,9 +131,10 @@ namespace dtAnim
          }
 
          nodeBuilder.SetCreate(AnimNodeBuilder::CreateFunc(&gTestInstance, &GeometryBuilder::CreateGeometry));
-         mHelper->LoadModel(mModelPath);
+         LoadModel(mHelper, mModelPath);
 
          osg::Node* node = mHelper->GetNode();
+         CPPUNIT_ASSERT(node != NULL);
          dtCore::RefPtr<TestDrawable> drawable = new TestDrawable(*node);
          GetGlobalApplication().GetScene()->AddChild(drawable.get());
 
@@ -154,7 +155,9 @@ namespace dtAnim
          CheckOsgGeode(geode);
 
          dtCore::RefPtr<dtAnim::AnimationHelper> secondHelper = new AnimationHelper();
+         secondHelper->SetLoadModelAsynchronously(false);
          secondHelper->LoadModel(mModelPath);
+         secondHelper->Update(0.016);
 
          osg::Node* node2 = secondHelper->GetNode();
          dtCore::RefPtr<TestDrawable> drawable2 = new TestDrawable(*node2);
@@ -163,25 +166,29 @@ namespace dtAnim
          dtCore::System::GetInstance().Step(0.016f);
          dtCore::System::GetInstance().Step(0.016f);
 
-         const osg::Group* group2 = node->asGroup();
+         const osg::Group* group2 = node2->asGroup();
          CPPUNIT_ASSERT_MESSAGE("AnimNodeBuilder didn't generate a valid group node",
                                  group2 != NULL);
 
          CPPUNIT_ASSERT_MESSAGE("AnimNodeBuilder group node doesn't have any children",
                                  group2->getNumChildren() > 0);
 
-         const osg::Geode* geode2 = dynamic_cast<const osg::Geode*>(group->getChild(0));
+         const osg::Geode* geode2 = dynamic_cast<const osg::Geode*>(group2->getChild(0));
          CPPUNIT_ASSERT_MESSAGE("AnimNodeBuilder's first child isn't a Geode",
                                  geode2 != NULL);
 
+         CPPUNIT_ASSERT(geode->getNumDrawables() > 0);
          CPPUNIT_ASSERT_EQUAL(geode->getNumDrawables(), geode2->getNumDrawables());
 
          dtCore::ObserverPtr<const osg::Referenced> testOb;
+         dtCore::ObserverPtr<const osg::Referenced> mrOb = mHelper->GetModelWrapper();
 
          for (unsigned i = 0; i < geode->getNumDrawables(); ++i)
          {
             const osg::Drawable* draw = geode->getDrawable(i);
             const osg::Drawable* draw2 = geode2->getDrawable(i);
+
+            CPPUNIT_ASSERT(draw != draw2);
 
             CPPUNIT_ASSERT_MESSAGE("The user data should be the same, showing it is cached.", draw->getUserData() == draw2->getUserData());
             const osg::Geometry* g = dynamic_cast<const osg::Geometry*>(draw->getUserData());
@@ -190,17 +197,27 @@ namespace dtAnim
             CPPUNIT_ASSERT(g2 != NULL);
 
             CPPUNIT_ASSERT(g2->getVertexArray() == g->getVertexArray());
-
             testOb = draw->getUserData();
          }
 
 
          GetGlobalApplication().GetScene()->RemoveChild(drawable.get());
          GetGlobalApplication().GetScene()->RemoveChild(drawable2.get());
+         CPPUNIT_ASSERT_EQUAL(2, testOb->referenceCount());
          drawable = NULL;
          drawable2 = NULL;
-         secondHelper->UnloadModel();
          mHelper->UnloadModel();
+         if (mrOb.valid())
+         {
+            CPPUNIT_ASSERT_EQUAL(0, mrOb->referenceCount());
+         }
+         CPPUNIT_ASSERT(!mrOb.valid());
+         CPPUNIT_ASSERT_EQUAL(1, testOb->referenceCount());
+         secondHelper->UnloadModel();
+         if (testOb.valid())
+         {
+            CPPUNIT_ASSERT_EQUAL(0, testOb->referenceCount());
+         }
          CPPUNIT_ASSERT(!testOb.valid());
       }
 
@@ -236,7 +253,7 @@ namespace dtAnim
                                  group->getNumChildren() > 0);
 
          const osg::Geode* geode = dynamic_cast<const osg::Geode*>(group->getChild(0));
-         CPPUNIT_ASSERT_MESSAGE("AnimNodeBuilder's first child isn't a Geode",
+         CPPUNIT_ASSERT_MESSAGE(std::string("AnimNodeBuilder's first child isn't a Geode, it's a ") + group->getChild(0)->className(),
                                  geode != NULL);
 
          CheckGeode(geode, true);
@@ -315,7 +332,7 @@ namespace dtAnim
          float testScale = 3.5f;
          modelData->SetScale(testScale);
          CPPUNIT_ASSERT_DOUBLES_EQUAL(testScale, modelData->GetScale(), 0.1f);
-         mHelper->LoadModel(mModelPath);
+         LoadModel(mHelper, mModelPath);
          dtCore::RefPtr<osg::Node> node = mHelper->GetNode();
          // The model wrapper should get the scale from the cached database.
          CPPUNIT_ASSERT_DOUBLES_EQUAL(testScale, mHelper->GetModelWrapper()->GetScale(), 0.1f);
