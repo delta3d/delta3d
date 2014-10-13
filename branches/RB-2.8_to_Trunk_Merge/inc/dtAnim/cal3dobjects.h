@@ -95,7 +95,7 @@ namespace dtAnim
       virtual ~Cal3dBone();
 
    private:
-      dtCore::RefPtr<Cal3DModelWrapper> mModel;
+      dtCore::ObserverPtr<Cal3DModelWrapper> mModel;
       CalBone* mBone;
       int mID;
    };
@@ -129,7 +129,7 @@ namespace dtAnim
       virtual ~Cal3dSkeleton();
 
    private:
-      dtCore::RefPtr<Cal3DModelWrapper> mModel;
+      dtCore::ObserverPtr<Cal3DModelWrapper> mModel;
       CalSkeleton* mSkeleton;
    };
 
@@ -169,7 +169,7 @@ namespace dtAnim
       virtual ~Cal3dMaterial();
 
    private:
-      dtCore::RefPtr<Cal3DModelWrapper> mModel;
+      dtCore::ObserverPtr<Cal3DModelWrapper> mModel;
       CalCoreMaterialPtr mMaterial;
       int mID;
    };
@@ -202,7 +202,7 @@ namespace dtAnim
       virtual ~Cal3dMorphTarget();
 
    private:
-      dtCore::RefPtr<dtAnim::Cal3dSubmesh> mSubmesh;
+      dtCore::ObserverPtr<dtAnim::Cal3dSubmesh> mSubmesh;
       CalCoreSubMorphTarget* mMorphTarget;
       int mID;
       std::string mName;
@@ -370,7 +370,7 @@ namespace dtAnim
       virtual ~Cal3dMesh();
 
    private:
-      dtCore::RefPtr<Cal3DModelWrapper> mModel;
+      dtCore::ObserverPtr<Cal3DModelWrapper> mModel;
       CalMesh* mMesh;
       int mID;
       bool mVisible;
@@ -416,7 +416,7 @@ namespace dtAnim
       virtual ~Cal3dHardwareMesh();
 
    private:
-      dtCore::RefPtr<Cal3DModelWrapper> mModel;
+      dtCore::ObserverPtr<Cal3DModelWrapper> mModel;
       CalHardwareModel* mHardwareModel;
       int mID;
       bool mVisible;
@@ -494,7 +494,7 @@ namespace dtAnim
       virtual ~Cal3dAnimation();
 
    private:
-      dtCore::RefPtr<Cal3DModelWrapper> mModel;
+      dtCore::ObserverPtr<Cal3DModelWrapper> mModel;
       CalCoreAnimation* mAnim;
       int mID;
 

@@ -69,16 +69,16 @@ namespace dtAnim
       {
          if (!mCreatedNode.valid())
          {
-            CreateGeometryDrawCallback* const_this = const_cast<CreateGeometryDrawCallback*>(this);
-            const_this->mCreatedNode = mCreateFunc(&renderInfo, mWrapper);
+            mCreatedNode = mCreateFunc(&renderInfo, mWrapper);
+            mWrapper = NULL;
          }
       }
 
-      dtCore::RefPtr<osg::Node> mCreatedNode;
+      mutable dtCore::RefPtr<osg::Node> mCreatedNode;
 
    private:
       AnimNodeBuilder::CreateFunc mCreateFunc;
-      dtCore::RefPtr<dtAnim::BaseModelWrapper> mWrapper;
+      mutable dtCore::RefPtr<dtAnim::BaseModelWrapper> mWrapper;
    };
 
    ///Used to grab the created geometry from the CreateGeometryDrawCallback

@@ -275,7 +275,7 @@ namespace dtExample
                }
                else if (mLookedAtNearTarget && dist.length2() > mLookAtCameraRange * mLookAtCameraRange)
                {
-                  if (animHelper->IsPosesEnabled())
+                  if (animHelper->GetPosesEnabled())
                   {
                      controller->SetTarget(NULL);
                      animHelper->SetPosesEnabled(false);

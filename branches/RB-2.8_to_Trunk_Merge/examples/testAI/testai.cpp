@@ -121,12 +121,12 @@ void TestAI::Config()
 
    dtCore::ResourceDescriptor characterFile("SkeletalMeshes:Marine:marine.xml");
 
-   // spawn our character
+//   // spawn our character
    mCharacter = new dtAI::AICharacter(GetScene(), pWaypoint, characterFile, 3);
-
-   // add the two Cameras as children so they get moved along with the character
-   mCharacter->GetCharacter()->AddChild(GetCamera());
-   mCharacter->GetCharacter()->AddChild(mOverheadCamera.get());
+//
+//   // add the two Cameras as children so they get moved along with the character
+//   mCharacter->GetCharacter()->AddChild(GetCamera());
+//   mCharacter->GetCharacter()->AddChild(mOverheadCamera.get());
 
    GoToWaypoint(1);
 

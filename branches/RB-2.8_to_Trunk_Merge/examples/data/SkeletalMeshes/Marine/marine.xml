@@ -23,9 +23,6 @@
       <shaderName>MultiMapCharacter</shaderName>
       <maxBones>71</maxBones>
    </skinningShader>
-   <scale>
-      <scalingFactor>0.9</scalingFactor>
-   </scale>
    <animationChannel>
       <name>Run</name>
       <animationName>Run</animationName>

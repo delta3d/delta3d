@@ -32,7 +32,6 @@
 #include <dtAnim/boneinterface.h>
 #include <dtAnim/materialinterface.h>
 #include <dtAnim/meshinterface.h>
-#include <dtCore/observerptr.h>
 #include <dtCore/refptr.h>
 #include <dtAnim/skeletoninterface.h>
 // OSG
@@ -107,7 +106,7 @@ namespace dtAnim
       virtual void HandleModelResourceUpdate(dtAnim::ModelResourceType resourceType) = 0;
       
       /**
-       * Method to nofity this object that the associated drawable model has been modified/rebuilt.
+       * Method to notify this object that the associated drawable model has been modified/rebuilt.
        */
       virtual void HandleModelUpdated();
 
@@ -119,7 +118,7 @@ namespace dtAnim
       osg::MatrixTransform* GetScaleTransform() const;
 
    private:
-      dtCore::ObserverPtr<dtAnim::BaseModelData> mModelData;
+      dtCore::RefPtr<dtAnim::BaseModelData> mModelData;
       dtCore::RefPtr<osg::MatrixTransform> mScaleTransform;
    };
 

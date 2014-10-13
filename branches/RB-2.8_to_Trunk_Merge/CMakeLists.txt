@@ -131,6 +131,8 @@ set (delta3d_VERSION_PATCH 0)
 
 ################################################################################
 # User Options
+OPTION(BUILD_STATIC          "Builds delta3d as static libraries.(Experimental)" OFF)
+
 OPTION(BUILD_ANIM          "Enables the building of dtAnim (requires CAL3D)" ON)
 OPTION(BUILD_AUDIO         "Enables the building of dtAudio (requires openAL/ALUT)" ON)
 OPTION(BUILD_BINDINGS      "Enabled the building of the bindings (requires Python, Boost.Python)" OFF)

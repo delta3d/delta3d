@@ -549,7 +549,7 @@ namespace dtAnim
                }
             }
 
-            bool posesWereEnabled = animAC->IsPosesEnabled();
+            bool posesWereEnabled = animAC->GetPosesEnabled();
             seqMixer.ClearAnimation(oldSeqId, blendTime);
             seqMixer.ClearAnimation(AnimationOperators::ANIM_WALK_DEPLOYED, blendTime);
             seqMixer.PlayAnimation(generatedSequence.get());
