@@ -76,7 +76,6 @@
       const std::string& characterSystemType)
       : mResource(resource)
       , mScale(1.0f)
-      , mScaleInFile(1.0f)
       , mCharacterSystemType(characterSystemType)
       , mStride(-1)
       , mIndexArray(NULL)
@@ -130,8 +129,6 @@
 
       mScale = scale;
    }
-
-   DT_IMPLEMENT_ACCESSOR(BaseModelData, float, ScaleInFile);
 
    DT_IMPLEMENT_ACCESSOR(BaseModelData, std::string, ShaderGroupName);
    DT_IMPLEMENT_ACCESSOR(BaseModelData, std::string, ShaderName);
