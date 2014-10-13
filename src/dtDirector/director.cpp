@@ -168,7 +168,7 @@ namespace dtDirector
       if (gm)
       {
          // First check if this component has been created already.
-         mMessageGMComponent = dynamic_cast<dtDirector::MessageGMComponent*>(gm->GetComponentByName("DirectorMessageGMComponent"));
+         mMessageGMComponent = dynamic_cast<dtDirector::MessageGMComponent*>(gm->GetComponentByName(dtDirector::MessageGMComponent::TYPE->GetName()));
 
          // If it hasn't, then create one.
          if (!mMessageGMComponent.valid())
