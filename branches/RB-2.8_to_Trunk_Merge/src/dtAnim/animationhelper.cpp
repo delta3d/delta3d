@@ -231,7 +231,10 @@ void AnimationHelper::LoadSkeletalMesh()
 bool AnimationHelper::IsLoadingAsynchronously()
 {
    // This can't be const because GetLoadingState isn't const.
-   return mModelLoader.valid() && mModelLoader->GetLoadingState(false) == ModelLoader::LOADING;
+   // We check for complete because the main thread has to handle the complete state and call the callbacks
+   // before it's actually done.
+   return mModelLoader.valid() && (mModelLoader->GetLoadingState(false) == ModelLoader::LOADING ||
+         mModelLoader->GetLoadingState(false) == ModelLoader::COMPLETE);
 }
 
 /////////////////////////////////////////////////////////////////////////////////
