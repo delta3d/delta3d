@@ -54,6 +54,9 @@ TestActorComponent1::TestActorComponent1()
 , mEnteredWorld(false)
 , mLeftWorld(false)
 {
+   // These shouldn't crash if called before being added.
+   RegisterForTick();
+   UnregisterForTick();
 }
 
 void TestActorComponent1::OnAddedToActor(dtCore::BaseActorObject& /*actor*/)

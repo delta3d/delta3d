@@ -151,7 +151,7 @@ namespace dtAnim
       dtCore::ObserverPtr<dtCore::Transformable> mTarget;
       dtCore::ObserverPtr<dtCore::Transformable> mDrawable;
       dtCore::ObserverPtr<dtAnim::BaseModelWrapper> mModelWrapper;
-      dtCore::ObserverPtr<dtAnim::PoseMeshDatabase> mPoseDatabase;
+      dtCore::RefPtr<dtAnim::PoseMeshDatabase> mPoseDatabase;
       dtCore::RefPtr<PoseInfo> mHeadPoseInfo;
       osg::Vec3 mTargetOffset;
 

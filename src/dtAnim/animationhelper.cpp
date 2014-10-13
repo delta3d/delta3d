@@ -101,21 +101,7 @@ void AnimationHelper::OnRemovedFromWorld()
 /////////////////////////////////////////////////////////////////////////////////
 void AnimationHelper::Update(float dt)
 {
-   ModelLoader::LoadingState loadingState = mModelLoader.valid() ? mModelLoader->GetLoadingState(): ModelLoader::IDLE;
-   if (loadingState == ModelLoader::COMPLETE)
-   {
-      mModelWrapper->CreateDrawableNode(false);
-
-      mAttachmentController = mModelLoader->GetAttachmentController();
-
-      dtAnim::BaseModelData* modelData = mModelWrapper->GetModelData();
-
-      RegisterAnimations(*modelData);
-
-      // Notify observers that the model has been loaded
-      ModelLoadedSignal(this);
-   }
-
+   ModelLoader::LoadingState loadingState = mModelLoader.valid() ? mModelLoader->GetLoadingState(false): ModelLoader::IDLE;
    // We don't want to check the wrapper if we are curretly loading for threading reasons.
    if (loadingState != ModelLoader::LOADING && mModelWrapper != NULL)
    {
@@ -134,6 +120,44 @@ void AnimationHelper::Update(float dt)
       }
    }
 }
+
+/////////////////////////////////////////////////////////////////////////////////
+void AnimationHelper::CheckLoadingState()
+{
+   ModelLoader::LoadingState loadingState = mModelLoader.valid() ? mModelLoader->GetLoadingState(): ModelLoader::IDLE;
+   if (loadingState == ModelLoader::COMPLETE)
+   {
+      mModelWrapper->CreateDrawableNode(false);
+
+      mAttachmentController = mModelLoader->GetAttachmentController();
+
+      dtAnim::BaseModelData* modelData = mModelWrapper->GetModelData();
+
+      RegisterAnimations(*modelData);
+      SetupPoses(*modelData);
+
+      // Notify observers that the model has been loaded
+      ModelLoadedSignal(this);
+   }
+
+   if (loadingState != ModelLoader::LOADING && GetIsInGM())
+   {
+      UnregisterForTick();
+   }
+}
+
+/////////////////////////////////////////////////////////////////////////////////
+void AnimationHelper::OnTickLocal(const dtGame::TickMessage& /*tickMessage*/)
+{
+   CheckLoadingState();
+}
+
+/////////////////////////////////////////////////////////////////////////////////
+void AnimationHelper::OnTickRemote(const dtGame::TickMessage& tickMessage)
+{
+   CheckLoadingState();
+}
+
 
 /////////////////////////////////////////////////////////////////////////////////
 void AnimationHelper::PlayAnimation(const std::string& pAnim)
@@ -218,7 +242,7 @@ void AnimationHelper::UnloadModel()
    {
       mAttachmentController->Clear();
    }
-   if (GetNode() == NULL)
+   if (GetNode() != NULL)
       ModelUnloadedSignal(this);
    // Set these to null after so that they can be accessed in the callback.
    mModelWrapper = NULL;
@@ -235,8 +259,18 @@ bool AnimationHelper::LoadModel(const dtCore::ResourceDescriptor& resource)
       mModelLoader = new dtAnim::ModelLoader();
       mModelLoader->ModelLoaded.connect_slot(this, &AnimationHelper::OnModelLoadCompleted);
       mModelLoader->SetAttachmentController(mAttachmentController);
-      mModelLoader->LoadModel(resource, mLoadModelAsynchronously);
-
+      dtCore::Project& proj = dtCore::Project::GetInstance();
+      bool background = mLoadModelAsynchronously && GetIsInGM() && !proj.GetEditMode();
+      mModelLoader->LoadModel(resource, background);
+      if (background)
+      {
+         // Need the regular tick to check for the loaded model.
+         RegisterForTick();
+      }
+      else
+      {
+         CheckLoadingState();
+      }
    }
    else
    {
@@ -974,7 +1008,7 @@ bool AnimationHelper::SetupPoses(const dtAnim::BaseModelData& modelData)
    }
 
    BaseModelWrapper* model = GetModelWrapper();
-   if (drawable != NULL)
+   if (drawable != NULL && model != NULL)
    {
       PoseMeshDatabase* poseDatabase = database.GetPoseMeshDatabase(*model);
 
