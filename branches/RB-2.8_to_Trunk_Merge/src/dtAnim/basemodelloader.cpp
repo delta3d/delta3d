@@ -59,7 +59,7 @@ namespace dtAnim
 
       if (handler.mFoundScale)
       {
-         modelData.SetScaleInFile(handler.mScale);
+         modelData.SetScale(handler.mScale);
       }
    }
 

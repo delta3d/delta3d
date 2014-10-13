@@ -749,13 +749,6 @@ namespace dtAnim
       BaseClass::SetModelParameters(handler, *modelData);
       CreateAttachments(handler, *modelData);
 
-      // NOTE: Hardware mesh scale will be fixed to the
-      // scale specified in the character file. A shader
-      // uniform for scale will be used for scaling a mesh
-      // in hardware mode. Scale the model before the
-      // hardware drawables are created.
-      coreModel->scale(modelData->GetScaleInFile());
-
       // todo remove this if hardware isn't being used
       LoadHardwareData(calModelData);
 
