@@ -31,6 +31,8 @@ namespace dtExample
 
    const dtGame::ActorComponent::ACType CivilianAIActorComponent::TYPE( new dtCore::ActorType("CivilianAI", "ActorComponents", "", dtGame::ActorComponent::BaseActorComponentType));
 
+   static const std::string LOG_NAME("civilianaiactorcomponent.cpp");
+
    ////////////////////////////////////////////////////////////////////////
    CivilianAIActorComponent::CivilianAIActorComponent(const ACType& type)
    : dtGame::ActorComponent(type)
@@ -56,6 +58,8 @@ namespace dtExample
    , mWaypointPath()
    {
       SetClassName("dtExample.CivilianAIActorComponent");
+      // Things run on many threads here, so initialize the logger up front.
+      dtUtil::Log::GetInstance(LOG_NAME);
    }
 
    ////////////////////////////////////////////////////////////////////////
@@ -303,7 +307,7 @@ namespace dtExample
          {
             mCurrentWaypoint = mWaypointPath.front();
             mWaypointPath.pop_front();
-            LOGN_DEBUG("civilianaiactorcomponent.cpp", "Waypoint: " + dtUtil::ToString(mCurrentWaypoint->GetID()));
+            LOGN_DEBUG(LOG_NAME, "Waypoint: " + dtUtil::ToString(mCurrentWaypoint->GetID()));
          }
 
          // if we have another waypoint to goto, goto it
@@ -478,7 +482,7 @@ namespace dtExample
             dtCore::RefPtr<dtAnim::Animatable> walkClone = walk->Clone(wrapper).get();
             walkClone->SetName(OpName);
             seqMixer.RegisterAnimation(walkClone);
-            LOGN_INFO("civilianaiactorcomponent.cpp", "Cannot load/find a motionless animation for: " + OpName);
+            LOGN_INFO(LOG_NAME, "Cannot load/find a motionless animation for: " + OpName);
          }
          else if (stand != NULL)
          {
@@ -486,11 +490,11 @@ namespace dtExample
             dtCore::RefPtr<dtAnim::Animatable> standClone = stand->Clone(wrapper).get();
             standClone->SetName(OpName);
             seqMixer.RegisterAnimation(standClone);
-            LOGN_INFO("civilianaiactorcomponent.cpp", "Cannot load/find a walking animation for: " + OpName);
+            LOGN_INFO(LOG_NAME, "Cannot load/find a walking animation for: " + OpName);
          }
          else
          {
-            LOGN_INFO("civilianaiactorcomponent.cpp", "Cannot load any walk or run animations for: " + OpName);
+            LOGN_INFO(LOG_NAME, "Cannot load any walk or run animations for: " + OpName);
          }
       }
    }
@@ -792,14 +796,14 @@ namespace dtExample
          RotateToPoint(pWaypoint->GetPosition(), dt);
       }
 
-      //LOGN_ALWAYS("civilianaiactorcomponent.cpp", "Walking to/from: " + dtUtil::ToString(pWaypoint->GetID()) + " " + dtUtil::ToString(pWaypoint->GetPosition()) + " " + dtUtil::ToString(GetPosition()));
+      //LOGN_ALWAYS(LOG_NAME, "Walking to/from: " + dtUtil::ToString(pWaypoint->GetID()) + " " + dtUtil::ToString(pWaypoint->GetPosition()) + " " + dtUtil::ToString(GetPosition()));
 
       osg::Vec3 dir = pWaypoint->GetPosition() - GetPosition();
       dir[2] = 0.0f;
       dir.normalize();
 
       osg::Vec3 vel =  dir * mWalkSpeed;
-      //LOGN_ALWAYS("civilianaiactorcomponent.cpp", "Walk Vector: " + dtUtil::ToString(vel));
+      //LOGN_ALWAYS(LOG_NAME, "Walk Vector: " + dtUtil::ToString(vel));
       mCharacterController->Walk(vel, 1.0f);
    }
 

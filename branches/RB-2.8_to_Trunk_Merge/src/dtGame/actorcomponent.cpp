@@ -89,6 +89,10 @@ void ActorComponent::RegisterForTick()
 {
    GameActorProxy* owner = NULL;
    GetOwner(owner);
+
+   if (owner == NULL) // This should probably be an error log
+      return;
+
    if (!owner->IsRemote())
    {
       std::string tickInvokable = INVOKABLE_PREFIX_TICK_LOCAL.Get() + GetType()->GetFullName();
@@ -114,6 +118,10 @@ void ActorComponent::UnregisterForTick()
 {
    GameActorProxy* owner = NULL;
    GetOwner(owner);
+
+   if (owner == NULL)
+      return;
+
    if (!owner->IsRemote())
    {
       std::string tickInvokable = INVOKABLE_PREFIX_TICK_LOCAL.Get() + GetType()->GetFullName();

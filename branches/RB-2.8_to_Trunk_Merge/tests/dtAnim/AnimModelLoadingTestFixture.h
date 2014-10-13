@@ -18,7 +18,7 @@ public:
       int count = 10;
       while (!mModelLoaded && count > 0)
       {
-         helper->Update(0.016f);
+         helper->CheckLoadingState();
          dtCore::AppSleep(50);
          --count;
       }

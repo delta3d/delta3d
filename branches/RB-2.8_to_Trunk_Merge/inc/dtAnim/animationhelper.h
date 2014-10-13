@@ -388,6 +388,10 @@ namespace dtAnim
 
       /// Detaches the skeletal mesh node from all osg node parents.
       virtual void DetachNodeFromDrawable();
+
+      // This is public for test reasons.  It may be removed with no deprecation.  It just checks for completion of a background load.
+      virtual void CheckLoadingState();
+
    protected:
       virtual ~AnimationHelper();
 
@@ -395,6 +399,10 @@ namespace dtAnim
       virtual void OnUnloadCompleted(AnimationHelper*);
 
       virtual bool SetupPoses(const dtAnim::BaseModelData& modelData);
+
+      /*override*/ void OnTickLocal(const dtGame::TickMessage& /*tickMessage*/);
+      /*override*/ void OnTickRemote(const dtGame::TickMessage& /*tickMessage*/);
+
 
    private:
 
