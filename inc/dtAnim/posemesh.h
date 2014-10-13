@@ -52,6 +52,8 @@ namespace dtAnim
          int   mTriangleID;
          float mAzimuth;
          float mElevation;
+
+         TargetTriangle();
       };
 
       struct DT_ANIM_EXPORT Vertex

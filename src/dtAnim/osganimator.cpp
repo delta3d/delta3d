@@ -896,14 +896,14 @@ namespace dtAnim
       return result;
    }
 
-   bool OsgAnimator::BlendPose(int id, float weight, float delay)
+   bool OsgAnimator::BlendPose(dtAnim::AnimationInterface& anim, float weight, float delay)
    {
       // TODO:
 
       return false;
    }
 
-   bool OsgAnimator::ClearPose(int id, float delay)
+   bool OsgAnimator::ClearPose(dtAnim::AnimationInterface& anim, float delay)
    {
       // TODO:
       

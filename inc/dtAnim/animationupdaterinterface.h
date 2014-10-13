@@ -26,6 +26,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 // DELTA3D
 #include <dtAnim/export.h>
+#include <dtAnim/animationinterface.h>
 #include <dtUtil/referencedinterface.h>
 
 
@@ -52,8 +53,8 @@ namespace dtAnim
 
       virtual bool IsPaused() const = 0;
 
-      virtual bool BlendPose(int id, float weight, float delay) = 0;
-      virtual bool ClearPose(int id, float delay) = 0;
+      virtual bool BlendPose(dtAnim::AnimationInterface& anim, float weight, float delay) = 0;
+      virtual bool ClearPose(dtAnim::AnimationInterface& anim, float delay) = 0;
 
    protected:
       virtual ~AnimationUpdaterInterface() {}
