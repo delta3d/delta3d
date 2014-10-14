@@ -68,6 +68,7 @@ std::string TrimPropertyName(const std::string& propString)
    {
       foundIndex += PROP_ASSIGNMENT.size();
       desc = propString.substr(foundIndex);
+      desc = dtUtil::Trim(desc);
    }
 
    return desc;
