@@ -115,7 +115,7 @@ namespace dtGame
 
 
    ////////////////////////////////////////////////////////////////////////////////
-   void DRPublishingActComp::OnTickRemote(const dtGame::TickMessage& tickMessage)
+   void DRPublishingActComp::UpdatePublishingData(const dtGame::TickMessage& tickMessage)
    {
       // Note - We do this behavior for local actors, but it happens during Tick Remote. 
 
@@ -220,7 +220,7 @@ namespace dtGame
       {
          // Now we register for tick remote, so that we guarantee it happens AFTER our actor 
          // It also needs to run AFTER the DeadReckoningComponent
-         mTickInvokable = actor->RegisterForMessages(dtGame::MessageType::TICK_REMOTE, dtUtil::MakeFunctor(&DRPublishingActComp::OnTickRemote, this));
+         mTickInvokable = actor->RegisterForMessages(dtGame::MessageType::TICK_REMOTE, dtUtil::MakeFunctor(&DRPublishingActComp::UpdatePublishingData, this));
 
 
          ResetFullUpdateTimer(true);
