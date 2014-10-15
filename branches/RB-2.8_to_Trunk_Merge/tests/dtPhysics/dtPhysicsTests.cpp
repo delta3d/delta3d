@@ -88,6 +88,7 @@ namespace dtPhysics
       CPPUNIT_TEST(testMaterialActor);
       CPPUNIT_TEST(testGeometryMarginPerEngine);
       CPPUNIT_TEST(testObjectPerEngine);
+      CPPUNIT_TEST(testObjectConvexPerEngine);
       CPPUNIT_TEST(testObjectCollisionPerEngine);
       CPPUNIT_TEST(testObjectOffsetPerEngine);
       CPPUNIT_TEST(testObjectVisualTransformPerEngine);
@@ -122,6 +123,7 @@ namespace dtPhysics
       void testObjectCollisionPerEngine();
       void testObjectOffsetPerEngine();
       void testObjectVisualTransformPerEngine();
+      void testObjectConvexPerEngine();
       void testObjectDynamicsPerEngine();
       void testObjectKinematicPerEngine();
       void testObjectVelocityAtPointPerEngine();
@@ -151,6 +153,7 @@ namespace dtPhysics
       void testPhysicsObjectWithOffset(const std::string& engine);
       void testPhysicsObjectWithOffsetAndShape(dtPhysics::PrimitiveType& shapeType);
       void testPhysicsObjectVisualTransform(const std::string& engine);
+      void testPhysicsObjectConvex(const std::string& engine);
       void testPhysicsObjectDynamics(const std::string& engine);
       void testPhysicsObjectKinematic(const std::string& engine);
 
@@ -250,6 +253,8 @@ namespace dtPhysics
          dtCore::System::GetInstance().SetShutdownOnWindowClose(false);
          dtCore::System::GetInstance().Start();
 
+         dtCore::Project::GetInstance().SetContext(dtUtil::GetDeltaRootPath() + "/examples/data", true);
+
          mGM = new dtGame::GameManager(*GetGlobalApplication().GetScene());
          mGM->SetApplication(GetGlobalApplication());
          mGM->LoadActorRegistry(DTPHYSICS_REGISTRY);
@@ -277,6 +282,8 @@ namespace dtPhysics
          mGM->UnloadActorRegistry(DTPHYSICS_REGISTRY);
          mGM = NULL;
       }
+      dtCore::Project::GetInstance().ClearAllContexts();
+
    }
 
    /////////////////////////////////////////////////////////
@@ -333,6 +340,13 @@ namespace dtPhysics
    {
       std::for_each(GetPhysicsEngineList().begin(), GetPhysicsEngineList().end(),
                dtUtil::MakeFunctor(&dtPhysicsTests::testPhysicsObjectVisualTransform, this));
+   }
+
+   /////////////////////////////////////////////////////////
+   void dtPhysicsTests::testObjectConvexPerEngine()
+   {
+      std::for_each(GetPhysicsEngineList().begin(), GetPhysicsEngineList().end(),
+               dtUtil::MakeFunctor(&dtPhysicsTests::testPhysicsObjectConvex, this));
    }
 
    /////////////////////////////////////////////////////////
@@ -525,8 +539,40 @@ namespace dtPhysics
       }
    }
 
-
    /////////////////////////////////////////////////////////
+   void dtPhysicsTests::testPhysicsObjectConvex(const std::string& engine)
+   {
+      ChangeEngine(engine);
+      // test constructor name
+      dtCore::RefPtr<PhysicsObject> physicsObject = new PhysicsObject("mypalFriend");
+      physicsObject->SetMass(20.0);
+      physicsObject->SetPrimitiveType(PrimitiveType::CONVEX_HULL);
+      physicsObject->SetMeshResource(dtCore::ResourceDescriptor("StaticMeshes:chairs:sunchair:SunChair_PHYSICS.osg"));
+      physicsObject->SetMeshScale(VectorType(20.0f, 20.0f, 20.0f));
+      physicsObject->SetOriginOffset(VectorType(0.0f, 0.0f, 0.0f));
+      VectorType position(0.0f, 0.0f, 100.0f);
+      physicsObject->SetTranslation(position);
+      CPPUNIT_ASSERT(physicsObject->Create(NULL, true));
+
+      CPPUNIT_ASSERT_MESSAGE("The auto compute origin offset should not occur on a mesh.", dtUtil::Equivalent(VectorType(0.0f, 0.0f, 0.0f), VectorType(0.0f, 0.0f, 0.0f), 0.001f));
+      dtPhysics::RayCast ray;
+      dtPhysics::RayCast::Report report;
+
+      ray.SetOrigin(VectorType(0.0f, 0.0f, 0.0f));
+      // The ray is set to hit the chair off the origin by 15 units to make sure the scale by 20 worked.  The 1.5 just makes
+      // sure it overshoots to go through the target.
+      ray.SetDirection((position + VectorType(0.0f, 15.0f, 0.0f)) * 1.5f);
+
+      std::string shapeMsg("The Convex Hull should have been hit with the ray because the chair is scaled up.");
+
+      shapeMsg +=" on engine "+ PhysicsWorld::GetInstance().GetEngineName();
+
+      PhysicsWorld::GetInstance().TraceRay(ray, report);
+
+      CPPUNIT_ASSERT_MESSAGE(shapeMsg, report.mHasHitObject);
+
+   }
+
    void dtPhysicsTests::testPhysicsObjectDynamics(const std::string& engine)
    {
       ChangeEngine(engine);
