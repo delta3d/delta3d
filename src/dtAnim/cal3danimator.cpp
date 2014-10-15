@@ -260,6 +260,10 @@ namespace dtAnim
                {
                   animInterface->ClearAction();
                }
+               else if (currentAnim->getType() == CalAnimation::TYPE_POSE)
+               {
+                  ClearPose(*animInterface, delay);
+               }
             }
             else
             {
