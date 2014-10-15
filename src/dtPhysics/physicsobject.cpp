@@ -466,6 +466,11 @@ namespace dtPhysics
          VectorType dimensions = GetExtents();
          bool calcDimensions = GetPrimitiveType().IsSimpleShape() && dimensions[0] <= 0.0f && dimensions[1] <= 0.0f && dimensions[2] <= 0.0f;
 
+         if (!GetPrimitiveType().IsSimpleShape())
+         {
+            adjustOriginOffsetForGeometry = false;
+         }
+
          if ((calcDimensions || adjustOriginOffsetForGeometry))
          {
             CalculateBoundsAndOrigin(nodeToLoad, calcDimensions, adjustOriginOffsetForGeometry);
