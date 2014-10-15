@@ -364,7 +364,7 @@ void PoseMeshItem::BlendPosesFromItemCoordinates(float xCoord, float yCoord)
          AddBoneLinesToScene(targetTri);
       }
 
-      // Store the last valie visual location of the blend
+      // Store the last valid visual location of the blend
       mLastBlendPos.setX(xCoord);
       mLastBlendPos.setY(yCoord);
       mLastTriangleID = targetTri.mTriangleID;
@@ -1037,7 +1037,7 @@ void PoseMeshItem::AssertZeroErrorAtVertices()
          //osg::Quat boneRotation = modelWrapper->GetBoneAbsoluteRotationForKeyFrame(animID, mPoseMesh->GetBoneID(), 30);
 
          // Get the direction that points forward for this pose mesh's bone
-         const osg::Vec3 &nativeBoneForward = mPoseMesh->GetEffectorForwardAxis();
+         const osg::Vec3& nativeBoneForward = mPoseMesh->GetEffectorForwardAxis();
 
          // calculate a vector transformed by the rotation data.
          blendDirection = boneRotation * nativeBoneForward;
