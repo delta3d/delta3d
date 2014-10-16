@@ -141,7 +141,10 @@ namespace dtPhysics
          {
             mPhysWorld = NULL;
             mPhysWorld = new PhysicsWorld(mCurrentEngine);
+
+            CPPUNIT_ASSERT( ! PhysicsWorld::IsInitialized());
             mPhysWorld->Init();
+            CPPUNIT_ASSERT(PhysicsWorld::IsInitialized());
          }
          catch (dtUtil::Exception& ex)
          {

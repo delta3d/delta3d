@@ -23,6 +23,7 @@ mechanicstype.cpp
 palphysicsworld.cpp
 physicsactcomp.cpp
 physicsactorregistry.cpp
+physicscompiler.cpp
 physicscomponent.cpp
 physicsinterface.cpp
 physicsmaterialactor.cpp

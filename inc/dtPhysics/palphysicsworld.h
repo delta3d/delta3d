@@ -159,6 +159,14 @@ namespace dtPhysics
        */
       void Init();
 
+      /**
+       * Flags whether the world has been initialized.
+       * Since the world can be accessed as a singleton, one may need
+       * to check if it has been initialized before it can be used.
+       * If the world is not initialized before use, a program crash may result.
+       */
+      static bool IsInitialized();
+
       /// Do a closest hit ray cast and call the given callback if it hits something.
       void TraceRay(RayCast& ray, dtPhysics::RayCast::RayCastCallback callback);
       /// Do a closest hit ray cast return true if it there is a hit.  The report will be filled in with closest hit.

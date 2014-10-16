@@ -66,7 +66,8 @@ namespace dtPhysics
    {
    public:
       PhysicsWorldImpl(const std::string& engineToLoad, const std::string& basePath)
-      : mEngineName(engineToLoad)
+      : mInitialized(false)
+      , mEngineName(engineToLoad)
       , mBasePath(basePath)
       , mPalPhysicsScene(NULL)
       , mPalCollisionDetection(NULL)
@@ -173,6 +174,7 @@ namespace dtPhysics
       std::set<dtCore::RefPtr<Action> > mActions;
       dtCore::RefPtr<StepTask> mBackgroundStepTask;
 
+      bool mInitialized;
       std::string mEngineName;
       std::string mBasePath;
 
@@ -342,14 +344,15 @@ namespace dtPhysics
       palFactory->LoadPALfromDLL(const_cast<char*>(GetPluginPath().c_str()));
 
       // load specific physics
-      palFactory->SelectEngine(mImpl->mEngineName);
+      if ( ! palFactory->SelectEngine(mImpl->mEngineName))
+      {
+         std::string error = "Failure to select physics engine [" + 
+            mImpl->mEngineName + "] from path [" + GetPluginPath() + "]. Make sure: working dir is right; config.xml has correct paths; dependent DLLS are available; and paths are setup for all relevant physics engines.";
+         throw dtUtil::Exception(error, __FUNCTION__, __LINE__);
+      }
 
       mImpl->mPalPhysicsScene = palFactory->CreatePhysics();
 
-      mImpl->mPalCollisionDetection = mImpl->mPalPhysicsScene->asCollisionDetection();
-      mImpl->mPalCollisionDetectionEx = dynamic_cast<palCollisionDetectionExtended*>(mImpl->mPalPhysicsScene);
-
-      palSolver* tempSolver = dynamic_cast<palSolver*>(mImpl->mPalPhysicsScene);
       // test to see if it was created correctly
       if (mImpl->mPalPhysicsScene == NULL)
       {
@@ -357,6 +360,11 @@ namespace dtPhysics
             mImpl->mEngineName + "] from path [" + GetPluginPath() + "]. Make sure: working dir is right; config.xml has correct paths; dependent DLLS are available; and paths are setup for all relevant physics engines.";
          throw dtUtil::Exception(error, __FUNCTION__, __LINE__);
       }
+
+      mImpl->mPalCollisionDetection = mImpl->mPalPhysicsScene->asCollisionDetection();
+      mImpl->mPalCollisionDetectionEx = dynamic_cast<palCollisionDetectionExtended*>(mImpl->mPalPhysicsScene);
+
+      palSolver* tempSolver = dynamic_cast<palSolver*>(mImpl->mPalPhysicsScene);
 
       if (mImpl->mPalCollisionDetection == NULL)
       {
@@ -488,6 +496,14 @@ namespace dtPhysics
 
          mImpl->mMaterials->NewMaterial(dtPhysics::PhysicsMaterials::DEFAULT_MATERIAL_NAME, def);
       }
+
+      mImpl->mInitialized = true;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   bool PhysicsWorld::IsInitialized()
+   {
+      return TheWorld.valid() && TheWorld->mImpl->mInitialized;
    }
 
    //////////////////////////////////////////////////////////////////////////
