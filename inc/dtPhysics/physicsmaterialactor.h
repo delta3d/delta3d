@@ -48,10 +48,10 @@ namespace dtPhysics
       MaterialActor();
 
       /// @return the material def object with all the data.
-      const MaterialDef& GetMateralDef() const;
+      const MaterialDef& GetMaterialDef() const;
 
       /// @return the material def object with all the data.
-      MaterialDef& GetMateralDef();
+      MaterialDef& GetMaterialDef();
 
       ///required by DeltaDrawable
       osg::Node* GetOSGNode();
