@@ -37,7 +37,7 @@ namespace dtPhysics
    {}
 
    template<class T>
-   std::string TriangleRecorderVisitor<T>::GetDescription(osg::Node& node)
+   std::string TriangleRecorderVisitor<T>::GetDescription(const osg::Node& node)
    {
       std::string desc;
       
@@ -57,11 +57,11 @@ namespace dtPhysics
    }
 
    template<class T>
-   std::string TriangleRecorderVisitor<T>::CheckDescriptionInAncestors(osg::Node& node)
+   std::string TriangleRecorderVisitor<T>::CheckDescriptionInAncestors(const osg::Node& node)
    {
       std::string desc;
 
-      osg::Node* curNode = &node;
+      const osg::Node* curNode = &node;
       while (curNode != NULL)
       {
          desc = GetDescription(*curNode);
