@@ -33,8 +33,6 @@ class palMaterials;
 
 namespace dtPhysics
 {
-   typedef int MaterialIndex;
-
    /**
     * This is a little helper class for defining a material.  It allows one to add more
     * material parameters laters without changing method signatures.
@@ -112,14 +110,31 @@ namespace dtPhysics
       ///@return a material by name or NULL if it doesn't exist.
       const Material* GetMaterial(const std::string& name) const;
 
-      /// Changes the definition of a material.
-      void SetMaterialDef(const std::string& name, const MaterialDef& def);
+      /**
+       * Changes the definition of a material.
+       * @param name Name of the material to modify.
+       * @param def Material defition containing the parameters to update.
+       * @return TRUE if a material was found and modified.
+       */
+      bool SetMaterialDef(const std::string& name, const MaterialDef& def);
 
       /// Changes the definition of a material directly.
-      void SetMaterialDef(Material* mat, const MaterialDef& def);
+      void SetMaterialDef(Material& mat, const MaterialDef& def);
 
-      /// retrieves the definition of a material.
-      void GetMaterialDef(const std::string& name, MaterialDef& def) const;
+      /**
+       * Retrieves the definition of a material.
+       * @param name Name of the material for which to retrieve the definition.
+       * @param outDef The definition to capture information about the specified material.
+       * @return TRUE if a material was found by the specified name.
+       */
+      bool GetMaterialDef(const std::string& name, MaterialDef& outDef) const;
+   
+      /**
+       * Retrieves the definition of a material.
+       * @param mat Material for which to retrieve the definition.
+       * @param outDef The definition to capture information about the specified material.
+       */
+      void GetMaterialDef(const Material& mat, MaterialDef& outDef) const;
 
       /**
        * Defines the interaction between two materials by name.
@@ -127,15 +142,17 @@ namespace dtPhysics
        * @param name1 the name of the first material
        * @param name2 the name of the second material
        * @param def the definintion of the material.
-       * @param
        */
       void SetMaterialInteraction(const std::string& name1, const std::string& name2, const MaterialDef& def);
+
       /**
        * Defines the interaction between two materials by name.
-       * @param name The name for the new material.
-       * @param def the definintion of the material.
+       * @param mat1 First material
+       * @param mat2 Second material
+       * @param def Definintion of the material.
+       * @param callback Method to be called when interaction between the two specified materials occurs.
        */
-      void SetMaterialInteraction(Material* mat1, Material* mat2, MaterialDef& def, MaterialInteractionCollisionCallback* callback = NULL);
+      void SetMaterialInteraction(Material& mat1, Material& mat2, MaterialDef& def, MaterialInteractionCollisionCallback* callback = NULL);
 
       /**
        * Retrieves the interaction between two materials.  The order of the material names does not matter.
@@ -156,9 +173,28 @@ namespace dtPhysics
        *    If the method returns false, the values in the def object are not changed.
        * @return true if the material interaction exists.
        */
-      bool GetMaterialInteraction(Material* mat1, Material* mat2, MaterialDef& defToFill);
+      bool GetMaterialInteraction(Material& mat1, Material& mat2, MaterialDef& defToFill);
 
       palMaterials& GetPalMaterials();
+
+      /// Returns the number of materials referenced in this collection.
+      int GetMaterialCount() const;
+
+      /**
+       * Convenience method for acquiring a material by its index.
+       * @param index Id of the material to be find.
+       * @return Material matching the index; NULL if not found.
+       */
+      Material* GetMaterialByIndex(MaterialIndex index) const;
+      
+      /**
+       * Convenience method for acquiring a material by its index.
+       * @param index Id of the material to be find.
+       * @param outDef The definition to capture information about the found material.
+       * @return TRUE if a material was found and the definition set.
+       */
+      bool GetMaterialDefByIndex(MaterialIndex index, MaterialDef& outDef) const;
+
    protected:
       virtual ~PhysicsMaterials();
    private:

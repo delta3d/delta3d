@@ -349,7 +349,7 @@ namespace dtPhysics
       Material* uniqueMaterial = materials.GetMaterial(drawable->GetName());
       if (uniqueMaterial == NULL)
       {
-         materials.SetMaterialDef(uniqueMaterial, drawable->GetMaterialDef());
+         materials.SetMaterialDef(*uniqueMaterial, drawable->GetMaterialDef());
       }
       else
       {

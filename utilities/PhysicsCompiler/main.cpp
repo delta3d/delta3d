@@ -345,12 +345,12 @@ int main(int argc, char** argv)
 
    if(parser.read("--defaultMaterial", tempString))
    {
-      GlobalApp->GetCompiler().SetDefaultMaterial(tempString);
+      GlobalApp->GetCompiler().SetDefaultMaterialName(tempString);
    }
    else
    {
       //none specified so just use road
-      GlobalApp->GetCompiler().SetDefaultMaterial("Mat_Road");
+      GlobalApp->GetCompiler().SetDefaultMaterialName("Mat_Road");
    }
 
    if(parser.read("--directoryName", tempString) && GlobalApp->SetDirectory(tempString))
