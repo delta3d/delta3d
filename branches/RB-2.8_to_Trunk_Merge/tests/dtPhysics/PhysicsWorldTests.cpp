@@ -609,6 +609,7 @@ namespace dtPhysics
       Material* cheeseMat = materials.NewMaterial(testMaterialName, def);
       CPPUNIT_ASSERT(cheeseMat != NULL);
       CPPUNIT_ASSERT(materials.GetMaterialCount() == 2);
+      CPPUNIT_ASSERT(cheeseMat->GetId() == def.GetMaterialIndex());
       index = cheeseMat->GetId();
       CPPUNIT_ASSERT(cheeseMat == materials.GetMaterialByIndex(index));
 
@@ -637,12 +638,17 @@ namespace dtPhysics
       Material* test1 = materials.NewMaterial(testMaterialName +"1", def);
       CPPUNIT_ASSERT_MESSAGE("Recreating the same named material doesn't work.", materials.NewMaterial(testMaterialName +"1", def) == NULL);
       CPPUNIT_ASSERT(test1 == materials.GetMaterial(testMaterialName +"1"));
+      CPPUNIT_ASSERT(test1->GetId() == def.GetMaterialIndex());
+      
       def.SetStaticFriction(3.77f);
       Material* test2 = materials.NewMaterial(testMaterialName +"2", def);
       CPPUNIT_ASSERT(test2 == materials.GetMaterial(testMaterialName +"2"));
+      CPPUNIT_ASSERT(test2->GetId() == def.GetMaterialIndex());
+      
       def.SetRestitution(0.61f);
       Material* test3 = materials.NewMaterial(testMaterialName +"3", def);
       CPPUNIT_ASSERT(test3 == materials.GetMaterial(testMaterialName +"3"));
+      CPPUNIT_ASSERT(test3->GetId() == def.GetMaterialIndex());
       
       // 3 more materials were added, so there should be a total of 4.
       CPPUNIT_ASSERT(materials.GetMaterialCount() == 5);
