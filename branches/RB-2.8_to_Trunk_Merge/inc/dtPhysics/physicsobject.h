@@ -275,6 +275,13 @@ namespace dtPhysics
        * which will make it use the default material.  Setting it to NULL after that is not defined.
        */
       void SetMaterial(Material*);
+   
+      /**
+       * Convenience method for assigning the material instance by an index.
+       * @param index Id of the material to reference.
+       * @return TRUE if a material is found that matches the specified index.
+       */
+      bool SetMaterialByIndex(dtPhysics::MaterialIndex index);
 
       /**
        * This mesh resource will be loaded to set the physics data for a triangle mesh or convex.

@@ -811,6 +811,21 @@ namespace dtPhysics
                physicsObject->GetMaterial() == materials.GetMaterial(PhysicsMaterials::DEFAULT_MATERIAL_NAME));
 
       physicsObject->SetMaterial(uniqueMaterial);
+      CPPUNIT_ASSERT(physicsObject->GetMaterial() == uniqueMaterial);
+
+      
+      // Test assignment of a material by index.
+      Material* newMat = materials.NewMaterial("AnotherMaterial", matDD->GetMaterialDef());
+      MaterialIndex newMatIndex = newMat->GetId();
+
+      CPPUNIT_ASSERT(physicsObject->GetMaterial() != newMat);
+      CPPUNIT_ASSERT(physicsObject->SetMaterialByIndex(newMatIndex));
+      CPPUNIT_ASSERT(physicsObject->GetMaterial() == newMat);
+
+      // Ensure assigning a bad index does not change the current material assignment.
+      CPPUNIT_ASSERT( ! physicsObject->SetMaterialByIndex(12345));
+      CPPUNIT_ASSERT(physicsObject->GetMaterial() == newMat);
+
 
       BaseBodyWrapper* baseBodyWrapper = physicsObject->GetBodyWrapper();
 

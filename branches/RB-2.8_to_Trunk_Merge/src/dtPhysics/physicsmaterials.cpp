@@ -27,6 +27,8 @@
 
 namespace dtPhysics
 {
+   typedef std::map<std::string, Material*> NameToMaterialMap;
+
    class PhysicsMaterialsImpl
    {
    public:
@@ -35,6 +37,7 @@ namespace dtPhysics
       {
       }
       palMaterials& mPalMaterials;
+      NameToMaterialMap mMaterialMap;
    };
 
 
@@ -59,7 +62,11 @@ namespace dtPhysics
       palMaterials& pm = mImpl->mPalMaterials;
       palMaterialDesc desc;
       MatDefToPalMatDesc(desc, def);
-      return pm.NewMaterial(name, desc);
+      Material* mat = pm.NewMaterial(name, desc);
+
+      mImpl->mMaterialMap.insert(std::make_pair(name, mat));
+
+      return mat;
    }
 
    //////////////////////////////////////
@@ -73,15 +80,15 @@ namespace dtPhysics
    }
 
    //////////////////////////////////////
-   void PhysicsMaterials::SetMaterialInteraction(Material* mat1, Material* mat2, MaterialDef& def, MaterialInteractionCollisionCallback* callback)
+   void PhysicsMaterials::SetMaterialInteraction(Material& mat1, Material& mat2, MaterialDef& def, MaterialInteractionCollisionCallback* callback)
    {
       palMaterials& pm = mImpl->mPalMaterials;
       palMaterialDesc desc;
       MatDefToPalMatDesc(desc, def);
 
       // Set this to make sure it exists.
-      pm.SetMaterialInteraction(mat1, mat2, desc);
-      palMaterialInteraction* pmi = pm.GetMaterialInteraction(mat1, mat2);
+      pm.SetMaterialInteraction(&mat1, &mat2, desc);
+      palMaterialInteraction* pmi = pm.GetMaterialInteraction(&mat1, &mat2);
       if (pmi != NULL)
       {
          pmi->SetCollisionCallback(callback);
@@ -103,29 +110,39 @@ namespace dtPhysics
    }
 
    //////////////////////////////////////
-   void PhysicsMaterials::SetMaterialDef(const std::string& name, const MaterialDef& def)
+   bool PhysicsMaterials::SetMaterialDef(const std::string& name, const MaterialDef& def)
    {
       Material* m = GetMaterial(name);
-      SetMaterialDef(m, def);
-   }
-
-   //////////////////////////////////////
-   void PhysicsMaterials::SetMaterialDef(Material* mat, const MaterialDef& def)
-   {
-      if (mat != NULL)
+      if (m != NULL)
       {
-         MatDefToPalMatDesc(*mat, def);
+         SetMaterialDef(*m, def);
       }
+      return m != NULL;
    }
 
    //////////////////////////////////////
-   void PhysicsMaterials::GetMaterialDef(const std::string& name, MaterialDef& def) const
+   void PhysicsMaterials::SetMaterialDef(Material& mat, const MaterialDef& def)
+   {
+      MatDefToPalMatDesc(mat, def);
+   }
+
+   //////////////////////////////////////
+   bool PhysicsMaterials::GetMaterialDef(const std::string& name, MaterialDef& outDef) const
    {
       const Material* mat = GetMaterial(name);
       if (mat != NULL)
       {
-         PalMatDescToMatDef(def, *mat);
+         GetMaterialDef(*mat, outDef);
       }
+      return mat != NULL;
+   }
+
+   //////////////////////////////////////
+   void PhysicsMaterials::GetMaterialDef(const Material& mat, MaterialDef& outDef) const
+   {
+      PalMatDescToMatDef(outDef, mat);
+
+      outDef.SetMaterialIndex(mat.GetId());
    }
 
    //////////////////////////////////////
@@ -136,23 +153,20 @@ namespace dtPhysics
       if (pMI != NULL)
       {
          PalMatDescToMatDef(defToFill, *pMI);
-         return true;
       }
-      return false;
+      return pMI != NULL;
    }
 
    //////////////////////////////////////
-   bool PhysicsMaterials::GetMaterialInteraction(Material* mat1, Material* mat2, MaterialDef& defToFill)
+   bool PhysicsMaterials::GetMaterialInteraction(Material& mat1, Material& mat2, MaterialDef& defToFill)
    {
       palMaterials& pm = mImpl->mPalMaterials;
-      palMaterialInteraction* pMI = pm.GetMaterialInteraction(mat1, mat2);
+      palMaterialInteraction* pMI = pm.GetMaterialInteraction(&mat1, &mat2);
       if (pMI != NULL)
       {
          PalMatDescToMatDef(defToFill, *pMI);
-         return true;
       }
-      return false;
-
+      return pMI != NULL;
    }
 
    //////////////////////////////////////
@@ -160,6 +174,47 @@ namespace dtPhysics
    {
       return mImpl->mPalMaterials;
    }
+
+   //////////////////////////////////////
+   int PhysicsMaterials::GetMaterialCount() const
+   {
+      return mImpl->mMaterialMap.size();
+   }
+
+   //////////////////////////////////////
+   Material* PhysicsMaterials::GetMaterialByIndex(MaterialIndex index) const
+   {
+      Material* curMat = NULL;
+      NameToMaterialMap::const_iterator curIter = mImpl->mMaterialMap.begin();
+      NameToMaterialMap::const_iterator endIter = mImpl->mMaterialMap.end();
+      for (; curIter != endIter; ++curIter)
+      {
+         curMat = curIter->second;
+         if (curMat->GetId() == index)
+         {
+            break;
+         }
+
+         // Material is not a match.
+         // Clear the reference so that it is not returned.
+         curMat = NULL;
+      }
+
+      return curMat;
+   }
+
+   //////////////////////////////////////
+   bool PhysicsMaterials::GetMaterialDefByIndex(MaterialIndex index, MaterialDef& outDef) const
+   {
+      Material* mat = GetMaterialByIndex(index);
+      if (mat != NULL)
+      {
+         GetMaterialDef(*mat, outDef);
+      }
+      return mat != NULL;
+   }
+
+
    //////////////////////////////////////////////////////////////////////////
    MaterialDef::MaterialDef()
    : mStaticFriction(0.5f)

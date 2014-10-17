@@ -590,17 +590,31 @@ namespace dtPhysics
    void PhysicsWorldTests::TestMaterials()
    {
       PhysicsMaterials& materials = mPhysWorld->GetMaterials();
+      // The default material should be the first registered material.
+      CPPUNIT_ASSERT(materials.GetMaterialCount() == 1);
+
       CPPUNIT_ASSERT(materials.GetMaterial("Dumb") == NULL);
-      CPPUNIT_ASSERT(materials.GetMaterial(PhysicsMaterials::DEFAULT_MATERIAL_NAME) != NULL);
+
+      Material* defaultMat = materials.GetMaterial(PhysicsMaterials::DEFAULT_MATERIAL_NAME);
+      CPPUNIT_ASSERT(defaultMat != NULL);
+      MaterialIndex index = defaultMat->GetId();
+      CPPUNIT_ASSERT(defaultMat == materials.GetMaterialByIndex(index));
+
       const std::string testMaterialName("cheese");
       MaterialDef def;
       def.SetKineticFriction(Real(0.55));
       def.SetStaticFriction(Real(0.34));
       def.SetRestitution(Real(0.91));
-      materials.NewMaterial(testMaterialName, def);
+
+      Material* cheeseMat = materials.NewMaterial(testMaterialName, def);
+      CPPUNIT_ASSERT(cheeseMat != NULL);
+      CPPUNIT_ASSERT(materials.GetMaterialCount() == 2);
+      index = cheeseMat->GetId();
+      CPPUNIT_ASSERT(cheeseMat == materials.GetMaterialByIndex(index));
 
       Material* uniqueMaterial = materials.GetMaterial(testMaterialName);
       CPPUNIT_ASSERT(uniqueMaterial != NULL);
+      CPPUNIT_ASSERT(uniqueMaterial == cheeseMat);
       CPPUNIT_ASSERT_DOUBLES_EQUAL(def.GetKineticFriction(), uniqueMaterial->m_fKinetic, 0.01f);
       CPPUNIT_ASSERT_DOUBLES_EQUAL(def.GetStaticFriction(), uniqueMaterial->m_fStatic, 0.01f);
       CPPUNIT_ASSERT_DOUBLES_EQUAL(def.GetRestitution(), uniqueMaterial->m_fRestitution, 0.01f);
@@ -608,7 +622,10 @@ namespace dtPhysics
       def.SetKineticFriction(Real(6.3));
       def.SetStaticFriction(Real(4.2));
       def.SetRestitution(Real(0.43));
-      materials.SetMaterialDef(testMaterialName, def);
+      CPPUNIT_ASSERT(materials.SetMaterialDef(testMaterialName, def));
+      
+      // Ensure that set fails for an unrecognized material
+      CPPUNIT_ASSERT( ! materials.SetMaterialDef("fake", def));
 
       uniqueMaterial = materials.GetMaterial(testMaterialName);
       CPPUNIT_ASSERT(uniqueMaterial != NULL);
@@ -626,21 +643,45 @@ namespace dtPhysics
       def.SetRestitution(0.61f);
       Material* test3 = materials.NewMaterial(testMaterialName +"3", def);
       CPPUNIT_ASSERT(test3 == materials.GetMaterial(testMaterialName +"3"));
+      
+      // 3 more materials were added, so there should be a total of 4.
+      CPPUNIT_ASSERT(materials.GetMaterialCount() == 5);
 
       CPPUNIT_ASSERT_DOUBLES_EQUAL(float(test1->m_fKinetic), float(def.GetKineticFriction()), 0.01f);
       CPPUNIT_ASSERT_DOUBLES_EQUAL(float(test1->m_fStatic), 4.2f, 0.01f);
       CPPUNIT_ASSERT_DOUBLES_EQUAL(float(test1->m_fRestitution), 0.43f, 0.01f);
       CPPUNIT_ASSERT_EQUAL(2U, test1->GetId());
+      CPPUNIT_ASSERT(test1 == materials.GetMaterialByIndex(2U));
 
       CPPUNIT_ASSERT_DOUBLES_EQUAL(float(test2->m_fKinetic), float(def.GetKineticFriction()), 0.01f);
       CPPUNIT_ASSERT_DOUBLES_EQUAL(float(test2->m_fStatic), float(def.GetStaticFriction()), 0.01f);
       CPPUNIT_ASSERT_DOUBLES_EQUAL(float(test2->m_fRestitution), 0.43f, 0.01f);
       CPPUNIT_ASSERT_EQUAL(3U, test2->GetId());
+      CPPUNIT_ASSERT(test2 == materials.GetMaterialByIndex(3U));
 
       CPPUNIT_ASSERT_DOUBLES_EQUAL(float(test3->m_fKinetic), float(def.GetKineticFriction()), 0.01f);
       CPPUNIT_ASSERT_DOUBLES_EQUAL(float(test3->m_fStatic), float(def.GetStaticFriction()), 0.01f);
       CPPUNIT_ASSERT_DOUBLES_EQUAL(float(test3->m_fRestitution), float(def.GetRestitution()), 0.01f);
       CPPUNIT_ASSERT_EQUAL(4U, test3->GetId());
+      CPPUNIT_ASSERT(test3 == materials.GetMaterialByIndex(4U));
+
+
+      // Test accessing the same def by index.
+      // --- Retrieve the original again.
+      CPPUNIT_ASSERT(materials.GetMaterialDef(testMaterialName, def));
+      // --- Retrieve the same information by index with another struct.
+      MaterialDef def2;
+      CPPUNIT_ASSERT(materials.GetMaterialDefByIndex(index, def2));
+      CPPUNIT_ASSERT_DOUBLES_EQUAL(def.GetKineticFriction(), def2.GetKineticFriction(), 0.01f);
+      CPPUNIT_ASSERT_DOUBLES_EQUAL(def.GetStaticFriction(), def2.GetStaticFriction(), 0.01f);
+      CPPUNIT_ASSERT_DOUBLES_EQUAL(def.GetRestitution(), def2.GetRestitution(), 0.01f);
+      CPPUNIT_ASSERT(def.GetMaterialIndex() == def2.GetMaterialIndex());
+      CPPUNIT_ASSERT(def.GetMaterialIndex() == index);
+      CPPUNIT_ASSERT(def2.GetMaterialIndex() == index);
+
+      // Test that accessing an unrecognized material should fail.
+      CPPUNIT_ASSERT(NULL == materials.GetMaterialByIndex(12345));
+      CPPUNIT_ASSERT( ! materials.GetMaterialDefByIndex(12345, def));
    }
 
    /////////////////////////////////////////////////////////
@@ -684,7 +725,7 @@ namespace dtPhysics
       def.SetStaticFriction(Real(0.4));
       def.SetRestitution(Real(0.92));
 
-      materials.SetMaterialInteraction(mat1, mat1, def);
+      materials.SetMaterialInteraction(*mat1, *mat1, def);
       materials.GetMaterialInteraction(cheeseMaterialName, cheeseMaterialName, actualDef);
       CPPUNIT_ASSERT_DOUBLES_EQUAL(def.GetKineticFriction(), actualDef.GetKineticFriction(), 0.01);
       CPPUNIT_ASSERT_DOUBLES_EQUAL(def.GetStaticFriction(), actualDef.GetStaticFriction(), 0.01);
@@ -694,8 +735,8 @@ namespace dtPhysics
       def.SetStaticFriction(Real(0.56));
       def.SetRestitution(Real(0.97));
 
-      materials.SetMaterialInteraction(mat2, mat2, def);
-      materials.GetMaterialInteraction(mat2, mat2, actualDef);
+      materials.SetMaterialInteraction(*mat2, *mat2, def);
+      materials.GetMaterialInteraction(*mat2, *mat2, actualDef);
       CPPUNIT_ASSERT_DOUBLES_EQUAL(def.GetKineticFriction(), actualDef.GetKineticFriction(), 0.01);
       CPPUNIT_ASSERT_DOUBLES_EQUAL(def.GetStaticFriction(), actualDef.GetStaticFriction(), 0.01);
       CPPUNIT_ASSERT_DOUBLES_EQUAL(def.GetRestitution(), actualDef.GetRestitution(), 0.01);

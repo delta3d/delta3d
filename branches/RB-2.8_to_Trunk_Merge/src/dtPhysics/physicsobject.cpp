@@ -250,6 +250,26 @@ namespace dtPhysics
    }
 
    /////////////////////////////////////////////////////////////////////////////
+   bool PhysicsObject::SetMaterialByIndex(dtPhysics::MaterialIndex index)
+   {
+      bool success = false;
+
+      if (PhysicsWorld::IsInitialized())
+      {
+         dtPhysics::PhysicsMaterials& materials = PhysicsWorld::GetInstance().GetMaterials();
+
+         Material* mat = materials.GetMaterialByIndex(index);
+         if (mat != NULL)
+         {
+            SetMaterial(mat);
+            success = true;
+         }
+      }
+
+      return success;
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
    void PhysicsObject::SetMaterial(Material* mat)
    {
       if (mDataMembers->mGenericBody.valid())
