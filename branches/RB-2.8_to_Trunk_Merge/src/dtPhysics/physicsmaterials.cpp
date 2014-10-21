@@ -57,7 +57,7 @@ namespace dtPhysics
    }
 
    //////////////////////////////////////
-   Material* PhysicsMaterials::NewMaterial(const std::string& name, const MaterialDef& def)
+   Material* PhysicsMaterials::NewMaterial(const std::string& name, MaterialDef& def)
    {
       palMaterials& pm = mImpl->mPalMaterials;
       palMaterialDesc desc;

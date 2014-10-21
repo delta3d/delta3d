@@ -30,6 +30,7 @@
 #include <dtPhysics/physicsexport.h>
 #include <dtCore/propertymacros.h>
 #include <dtPhysics/geometry.h>
+#include <dtPhysics/physicsobject.h>
 #include <dtPhysics/physicsmaterials.h>
 #include <osg/NodeVisitor>
 
@@ -47,6 +48,10 @@ namespace dtGame
 
 namespace dtPhysics
 {
+   typedef std::vector<dtCore::RefPtr<dtPhysics::PhysicsObject> > PhysicsObjectArray;
+
+
+
    /////////////////////////////////////////////////////////////////////////////
    // CLASS CODE
    /////////////////////////////////////////////////////////////////////////////
@@ -93,6 +98,30 @@ namespace dtPhysics
       unsigned int mMaxVertsPerMesh;
       float mMaxEdgeLength;
       bool mAllowDefaultMaterial;
+   };
+
+
+
+   /////////////////////////////////////////////////////////////////////////////
+   // CLASS CODE
+   /////////////////////////////////////////////////////////////////////////////
+   struct DT_PHYSICS_EXPORT PhysicsObjectOptions
+   {
+      static const dtPhysics::Real DEFAULT_COLLISION_MARGIN;
+      static const dtPhysics::Real DEFAULT_MASS;
+      static const PrimitiveType *const DEFAULT_PRIMITIVE_TYPE;
+      static const MechanicsType *const DEFAULT_MECHANICS_TYPE;
+
+      PhysicsObjectOptions();
+
+      // Geometry & Object Setup Options
+      const PrimitiveType* mPrimitiveType;
+      const MechanicsType* mMechanicsType;
+      bool mIsPolytope; // For convex hull only
+      bool mClearExistingObjects;
+      dtPhysics::Real mMass;
+      dtPhysics::Real mCollisionMargin;
+      dtPhysics::VectorType mDimensions;
    };
 
 
@@ -215,6 +244,22 @@ namespace dtPhysics
       dtPhysics::MaterialIndex GetDefaultMaterialIndex() const;
 
       /**
+       * Convenience method for determining the material associated with
+       * the specified geometry data.
+       * @param geometry Geometric data that may have material data.
+       * @return Index of the physics material associated with the geometry data.
+       */
+      dtPhysics::MaterialIndex GetMaterialIndexForGeometry(const VertexData& geometry) const;
+
+      /**
+       * Convenience method for acquiriing the material object associated with
+       * the specified geometry data.
+       * @param geometry Geometric data that may have material data.
+       * @return Index of the physics material associated with the geometry data.
+       */
+      dtPhysics::Material* GetMaterialForGeometry(const VertexData& geometry) const;
+
+      /**
        * Sets a custom string filter function that attempts parsing a valid
        * material name from node description strings.
        * @param filterFunc Custom function to filter processed node descriptions.
@@ -276,6 +321,29 @@ namespace dtPhysics
        */
       void SetGeometryCompiledCallback(GeometryCompiledCallback geomCompiledCallback);
 
+      /**
+       * Convenience method for general setup of physics objects
+       * via physics geometry as primary input.
+       * @param options Collection of object/geometry creation parameters.
+       * @param vertData Collection of geometry data with which to create physics objects.
+       * @param outObjects Collection to capture the generated physics objects.
+       * @return Number of objects created.
+       */
+      int CreatePhysicsObjectsForGeometry(const PhysicsObjectOptions& options,
+         VertexDataArray& vertData, PhysicsObjectArray& outObjects) const;
+      
+      /**
+       * Method for creating geometry using options.
+       * @param options Collection of object/geometry creation parameters.
+       * @param xform Position and orientation for the new geometry.
+       * @param vertData* Geometry data with which to create a geometry object; this is used for complex shapes such as terrain.
+       * @return New geometry object; NULL if creation failed.
+       */
+      dtCore::RefPtr<Geometry> CreateGeometry(
+         const PhysicsObjectOptions& options,
+         const TransformType& xform,
+         VertexData* vertData = NULL) const;
+
    protected:
       virtual ~PhysicsCompiler();
 
@@ -288,7 +356,7 @@ namespace dtPhysics
 
       MaterialSearchFunc mMatSearchFunc;
       FilterStringFunc mNodeDescFilterFunc;
-      GeometryCompiledCallback mCompileCompleteCallback;
+      GeometryCompiledCallback mGeometryCompiledCallback;
 
       dtPhysics::MaterialIndex mDefaultMatId;
       dtCore::ObserverPtr<dtGame::GameManager> mGM;

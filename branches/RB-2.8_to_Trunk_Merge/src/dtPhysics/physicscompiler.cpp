@@ -72,6 +72,26 @@ namespace dtPhysics
 
 
 
+   /////////////////////////////////////////////////////////////////////////////
+   // CLASS CODE
+   /////////////////////////////////////////////////////////////////////////////
+   const dtPhysics::Real PhysicsObjectOptions::DEFAULT_COLLISION_MARGIN(0.02);
+   const dtPhysics::Real PhysicsObjectOptions::DEFAULT_MASS(1.0);
+   const PrimitiveType* const PhysicsObjectOptions::DEFAULT_PRIMITIVE_TYPE = &PrimitiveType::TRIANGLE_MESH;
+   const MechanicsType* const PhysicsObjectOptions::DEFAULT_MECHANICS_TYPE = &MechanicsType::STATIC;
+
+   PhysicsObjectOptions::PhysicsObjectOptions()
+      : mPrimitiveType(DEFAULT_PRIMITIVE_TYPE)
+      , mMechanicsType(DEFAULT_MECHANICS_TYPE)
+      , mIsPolytope(true)
+      , mClearExistingObjects(true)
+      , mMass(DEFAULT_MASS)
+      , mCollisionMargin(DEFAULT_COLLISION_MARGIN)
+      , mDimensions()
+   {}
+
+
+
    ////////////////////////////////////////////////////////////////////////////////
    // CLASSS CODE
    ////////////////////////////////////////////////////////////////////////////////
@@ -295,6 +315,18 @@ namespace dtPhysics
       return mDefaultMatId;
    }
 
+   dtPhysics::MaterialIndex PhysicsCompiler::GetMaterialIndexForGeometry(const VertexData& geometry) const
+   {
+      MaterialIndex index = mDefaultMatId;
+
+      if ( ! geometry.mMaterialFlags.empty())
+      {
+         index = geometry.mMaterialFlags.front();
+      }
+
+      return index;
+   }
+
    void PhysicsCompiler::SetNodeDescriptionFilter(FilterStringFunc filterFunc)
    {
       if (filterFunc.valid())
@@ -488,7 +520,7 @@ namespace dtPhysics
                 ++results;
 
                // Notify that a geometry was compiled.
-               if (mCompileCompleteCallback.valid())
+               if (mGeometryCompiledCallback.valid())
                {
                   dtCore::RefPtr<PhysicsCompileResult> result = new PhysicsCompileResult;
                   result->mPartIndex = (int)i;
@@ -496,7 +528,7 @@ namespace dtPhysics
                   result->mMaterialName = matName;
                   result->mVertData = vertData;
 
-                  mCompileCompleteCallback(*result);
+                  mGeometryCompiledCallback(*result);
                }
             }
          }
@@ -516,7 +548,7 @@ namespace dtPhysics
             ++results;
 
             // Notify that a geometry was compiled.
-            if (mCompileCompleteCallback.valid())
+            if (mGeometryCompiledCallback.valid())
             {
                dtCore::RefPtr<PhysicsCompileResult> result = new PhysicsCompileResult;
                result->mPartIndex = 0;
@@ -524,7 +556,7 @@ namespace dtPhysics
                result->mMaterialName = matName;
                result->mVertData = vertData;
 
-               mCompileCompleteCallback(*result);
+               mGeometryCompiledCallback(*result);
             }
          }
       }
@@ -545,7 +577,111 @@ namespace dtPhysics
 
    void PhysicsCompiler::SetGeometryCompiledCallback(GeometryCompiledCallback geomCompiledCallback)
    {
-      mCompileCompleteCallback = geomCompiledCallback;
+      mGeometryCompiledCallback = geomCompiledCallback;
+   }
+
+   int PhysicsCompiler::CreatePhysicsObjectsForGeometry(
+      const PhysicsObjectOptions& options,
+      VertexDataArray& vertData,
+      PhysicsObjectArray& outObjects) const
+   {
+      int results = 0;
+            
+      // HACK:
+      // This is not a good thing to do.
+      // Remove this when EnumProperties can take "const" enum values.
+      PrimitiveType* primType = const_cast<PrimitiveType*>(options.mPrimitiveType);
+      MechanicsType* mechType = const_cast<MechanicsType*>(options.mMechanicsType);
+
+      VertexData* curData = NULL;
+      VertexDataArray::const_iterator curIter = vertData.begin();
+      VertexDataArray::const_iterator endIter = vertData.end();
+      for (; curIter != endIter; ++curIter)
+      {
+         curData = curIter->get();
+
+         dtCore::Transform xform;
+         dtCore::RefPtr<dtPhysics::Geometry> geom
+            = CreateGeometry(options, xform, curData);
+
+         if (geom.valid())
+         {
+            dtCore::RefPtr<PhysicsObject> po = new PhysicsObject("PhysicsObject");
+
+            MaterialIndex matIndex = GetMaterialIndexForGeometry(*curData);
+
+            po->SetPrimitiveType(*primType);
+            po->SetMechanicsType(*mechType);
+            po->SetMaterialByIndex(matIndex);
+            po->CreateFromGeometry(*geom);
+
+            outObjects.push_back(po.get());
+         
+            ++results;
+         }
+         else
+         {
+            LOG_ERROR("Could not create physics object.");
+         }
+      }
+
+      return results;
+   }
+
+   dtCore::RefPtr<Geometry> PhysicsCompiler::CreateGeometry(
+      const PhysicsObjectOptions& options,
+      const TransformType& xform,
+      VertexData* vertData) const
+   {
+      dtCore::RefPtr<Geometry> geom;
+
+      const PrimitiveType& primType = *options.mPrimitiveType;
+      Real mass = options.mMass;
+      const VectorType& dimensions = options.mDimensions;
+
+      // --- SIMPLE TYPES --- //
+      if (PrimitiveType::BOX == primType)
+      {
+         geom = Geometry::CreateBoxGeometry(xform, dimensions, mass);
+      }
+      else if(PrimitiveType::SPHERE == primType)
+      {
+         geom = Geometry::CreateSphereGeometry(xform, dimensions[0], mass);
+      }
+      else if(PrimitiveType::CYLINDER == primType)
+      {
+         geom = Geometry::CreateCylinderGeometry(xform, dimensions[0], dimensions[1], mass);
+      }
+      else if(PrimitiveType::CAPSULE == primType)
+      {
+         geom = Geometry::CreateCapsuleGeometry(xform, dimensions[0], dimensions[1], mass);
+      }
+      else if (vertData != NULL)// --- COMPLEX TYPES --- //
+      {
+         if(PrimitiveType::CONVEX_HULL == primType)
+         {
+            geom = Geometry::CreateConvexGeometry(xform, *vertData, mass, options.mIsPolytope);
+         }
+         else if(PrimitiveType::TRIANGLE_MESH == primType)
+         {
+            geom = Geometry::CreateConcaveGeometry(xform, *vertData, mass);
+         }
+         else if (PrimitiveType::TERRAIN_MESH == primType)
+         {
+            geom = Geometry::CreateConcaveGeometry(xform, *vertData, mass);
+         }
+      }
+
+      if (geom.valid())
+      {
+         geom->SetMargin(options.mCollisionMargin);
+      }
+      else
+      {
+         LOG_WARNING("Could not create geometry. Check options or vertex data.");
+      }
+
+      return geom;
    }
 
 } // END - namespace dtPhysics

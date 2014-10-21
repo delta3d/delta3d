@@ -1,5 +1,5 @@
-#ifndef FENCE_TOOL_PLUGIN
-#define FENCE_TOOL_PLUGIN
+#ifndef BUILDING_TOOL_PLUGIN
+#define BUILDING_TOOL_PLUGIN
 
 #include "export.h"
 #include <dtEditQt/mainwindow.h>
