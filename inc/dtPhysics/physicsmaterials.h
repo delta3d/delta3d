@@ -103,7 +103,7 @@ namespace dtPhysics
        * @param name The name for the new material.
        * @param def the definintion of the material.
        */
-      Material* NewMaterial(const std::string& name, const MaterialDef& def);
+      Material* NewMaterial(const std::string& name, MaterialDef& def);
 
       ///@return a material by name or NULL if it doesn't exist.
       Material* GetMaterial(const std::string& name);

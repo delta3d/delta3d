@@ -6,6 +6,7 @@ ADD_SUBDIRECTORY(plugins/STFenceTool)
 ADD_SUBDIRECTORY(plugins/STLinkedPointsActorTool)
 ADD_SUBDIRECTORY(plugins/STMapHierarchyEditor)
 ADD_SUBDIRECTORY(plugins/STMapStatistics)
+ADD_SUBDIRECTORY(plugins/STPhysicsCompiler)
 ADD_SUBDIRECTORY(plugins/STPluginDialog)
 ADD_SUBDIRECTORY(plugins/STMassImporter)
 ADD_SUBDIRECTORY(plugins/STRandomActorGenerator)
@@ -47,14 +48,15 @@ SET(APP_EXTERNAL_DEPS
 )
 
 SET(APP_DEPS
-                      ${DTUTIL_LIBRARY}
-                      ${DTCORE_LIBRARY}
+                      ${DTACTORS_LIBRARY}
+                      ${DTABC_LIBRARY}
                       ${DTANIM_LIBRARY}
                       ${DTAUDIO_LIBRARY}
-                      ${DTABC_LIBRARY}
+                      ${DTCORE_LIBRARY}
                       ${DTGAME_LIBRARY}
+                      ${DTPHYSICS_LIBRARY}
                       ${DTQT_LIBRARY}
-                      ${DTACTORS_LIBRARY}
+                      ${DTUTIL_LIBRARY}
 )
 SET(PROG_INFO_PLIST ${CMAKE_CURRENT_SOURCE_DIR}/STAGE.plist.in)
 

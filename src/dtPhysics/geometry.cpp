@@ -55,10 +55,13 @@ namespace dtPhysics
    static MeshCache gMeshCache;
 
    /////////////////////////////////////////////////
-   VertexData::VertexData() : mCurrentScale(Real(1.0), Real(1.0), Real(1.0)) {}
+   VertexData::VertexData()
+      : mCurrentScale(Real(1.0), Real(1.0), Real(1.0))
+   {}
 
    /////////////////////////////////////////////////
-    VertexData::~VertexData() {}
+   VertexData::~VertexData()
+   {}
 
    /////////////////////////////////////////////////
    VertexData& VertexData::Swap(VertexData& readerData)
@@ -324,6 +327,11 @@ namespace dtPhysics
       dtCore::RefPtr<Geometry> geometry = new Geometry(PrimitiveType::CONVEX_HULL);
 
       palConvexGeometry* convGeom = palFactory::GetInstance()->CreateConvexGeometry();
+      if(convGeom == NULL)
+      {
+         LOG_ERROR("Failed to create convex geometry.");
+         return NULL;
+      }
 
       geometry->mImpl->mGeom = convGeom;
 
@@ -358,6 +366,7 @@ namespace dtPhysics
       if(convGeom == NULL)
       {
          LOG_ERROR("Failed to create triangle mesh/concave geometry.");
+         return NULL;
       }
 
       geometry->mImpl->mGeom = convGeom;
