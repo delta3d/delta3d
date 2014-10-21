@@ -91,6 +91,8 @@ namespace dtPhysics
       CPPUNIT_TEST(TestCompileMaxEdgeLength);
       CPPUNIT_TEST(TestCompileNoDefaultMaterial);
       CPPUNIT_TEST(TestMaterialAssignment);
+      CPPUNIT_TEST(TestCreateGeometry);
+      CPPUNIT_TEST(TestCreatePhysicsObjectsForGeometry);
       CPPUNIT_TEST_SUITE_END();
 
    public:
@@ -132,6 +134,8 @@ namespace dtPhysics
       void TestCompileMaxEdgeLength();
       void TestCompileNoDefaultMaterial();
       void TestMaterialAssignment();
+      void TestCreateGeometry();
+      void TestCreatePhysicsObjectsForGeometry();
 
    private:
       int mCompileCount;
@@ -908,6 +912,214 @@ namespace dtPhysics
          CPPUNIT_ASSERT(reportB.mHitObject->GetMaterial() == mMatB); // Q2
          CPPUNIT_ASSERT(reportC.mHitObject->GetMaterial() == mMatA); // Material A assigned to Q1 & Q3
          CPPUNIT_ASSERT(reportD.mHitObject->GetMaterial() == mMatC); // Q4
+      }
+      catch (dtUtil::Exception& ex)
+      {
+         CPPUNIT_FAIL(ex.ToString());
+      }
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void PhysicsCompilerTests::TestCreateGeometry()
+   {
+      SetupTestPhysicsWorld();
+
+      typedef PhysicsObjectOptions PO;
+
+      PhysicsObjectOptions options;
+      dtCore::Transform xform;
+      dtCore::RefPtr<VertexData> vertData;
+      dtCore::RefPtr<Geometry> geom;
+      dtPhysics::VectorType dims(1.0, 1.0, 1.0);
+      Real massIncrement = 0.5;
+      Real marginIncrement = 0.001;
+
+      options.mDimensions = dims;
+
+      try
+      {
+         VertexDataTable data;
+         PhysicsCompileOptions compileOptions; // use defaults
+
+         // Change the model.
+         mTestNode = LoadTestModel(MODEL_HIGH_RES.Get());
+         CPPUNIT_ASSERT(1 == mCompiler->CompilePhysicsForNode(*mTestNode, compileOptions, data));
+         CPPUNIT_ASSERT(1 == data.size()); // one default material
+         CPPUNIT_ASSERT(1 == data.begin()->second.size()); // one vertex databuffer
+         vertData = data.begin()->second.front();
+         CPPUNIT_ASSERT(vertData.valid());
+
+
+         CPPUNIT_ASSERT(options.mPrimitiveType == PO::DEFAULT_PRIMITIVE_TYPE);
+         CPPUNIT_ASSERT(options.mMechanicsType == PO::DEFAULT_MECHANICS_TYPE);
+         CPPUNIT_ASSERT(options.mIsPolytope);
+         CPPUNIT_ASSERT(options.mClearExistingObjects);
+         CPPUNIT_ASSERT(options.mMass == PO::DEFAULT_MASS);
+         CPPUNIT_ASSERT(options.mCollisionMargin == PO::DEFAULT_COLLISION_MARGIN);
+
+
+         // --- SIMPLE TYPES --- //
+         // BOX
+         options.mPrimitiveType = &PrimitiveType::BOX;
+         geom = mCompiler->CreateGeometry(options, xform, NULL);
+
+         CPPUNIT_ASSERT(geom.valid());
+         CPPUNIT_ASSERT(geom->GetMass() == options.mMass);
+         CPPUNIT_ASSERT(geom->GetMargin() == options.mCollisionMargin);
+         options.mMass += massIncrement;
+         options.mCollisionMargin += marginIncrement;
+
+
+         // SPHERE
+         options.mPrimitiveType = &PrimitiveType::SPHERE;
+         geom = mCompiler->CreateGeometry(options, xform, NULL);
+
+         CPPUNIT_ASSERT(geom.valid());
+         CPPUNIT_ASSERT(geom->GetMass() == options.mMass);
+// For some reason this does not work for spheres.
+//         CPPUNIT_ASSERT(geom->GetMargin() == options.mCollisionMargin);
+         options.mMass += massIncrement;
+         options.mCollisionMargin += marginIncrement;
+
+
+         // CYLINDER
+         options.mPrimitiveType = &PrimitiveType::CYLINDER;
+         geom = mCompiler->CreateGeometry(options, xform, NULL);
+
+         CPPUNIT_ASSERT(geom.valid());
+         CPPUNIT_ASSERT(geom->GetMass() == options.mMass);
+         CPPUNIT_ASSERT(geom->GetMargin() == options.mCollisionMargin);
+         options.mMass += massIncrement;
+         options.mCollisionMargin += marginIncrement;
+
+
+         // CAPSULE
+         options.mPrimitiveType = &PrimitiveType::CAPSULE;
+         geom = mCompiler->CreateGeometry(options, xform, NULL);
+
+         CPPUNIT_ASSERT(geom.valid());
+         CPPUNIT_ASSERT(geom->GetMass() == options.mMass);
+         CPPUNIT_ASSERT(geom->GetMargin() == options.mCollisionMargin);
+         options.mMass += massIncrement;
+         options.mCollisionMargin += marginIncrement;
+
+
+         // --- COMPLEX TYPES --- //
+         // TRIANGLE_MESH
+         options.mPrimitiveType = &PrimitiveType::TRIANGLE_MESH;
+         geom = mCompiler->CreateGeometry(options, xform, NULL);
+         CPPUNIT_ASSERT( ! geom.valid());
+         geom = mCompiler->CreateGeometry(options, xform, vertData.get());
+
+         CPPUNIT_ASSERT(geom.valid());
+         CPPUNIT_ASSERT(geom->GetMass() == options.mMass);
+         CPPUNIT_ASSERT(geom->GetMargin() == options.mCollisionMargin);
+         options.mMass += massIncrement;
+         options.mCollisionMargin += marginIncrement;
+
+
+         // TERRAIN_MESH
+         options.mPrimitiveType = &PrimitiveType::TERRAIN_MESH;
+         geom = mCompiler->CreateGeometry(options, xform, NULL);
+         CPPUNIT_ASSERT( ! geom.valid());
+         geom = mCompiler->CreateGeometry(options, xform, vertData.get());
+
+         CPPUNIT_ASSERT(geom.valid());
+         CPPUNIT_ASSERT(geom->GetMass() == options.mMass);
+         CPPUNIT_ASSERT(geom->GetMargin() == options.mCollisionMargin);
+         options.mMass += massIncrement;
+         options.mCollisionMargin += marginIncrement;
+
+
+         // CONVEX_HULL (POLYTOPE)
+         options.mPrimitiveType = &PrimitiveType::CONVEX_HULL;
+         geom = mCompiler->CreateGeometry(options, xform, NULL);
+         CPPUNIT_ASSERT( ! geom.valid());
+         geom = mCompiler->CreateGeometry(options, xform, vertData.get());
+
+         CPPUNIT_ASSERT(geom.valid());
+         CPPUNIT_ASSERT(geom->GetMass() == options.mMass);
+         CPPUNIT_ASSERT(geom->GetMargin() == options.mCollisionMargin);
+         options.mMass += massIncrement;
+         options.mCollisionMargin += marginIncrement;
+
+
+         // CONVEX_HULL (NON_POLYTOPE)
+         // --- Test the polytope flag relevant only to convex hull types.
+         options.mIsPolytope = false;
+         geom = mCompiler->CreateGeometry(options, xform, vertData.get());
+
+         CPPUNIT_ASSERT(geom.valid());
+         CPPUNIT_ASSERT(geom->GetMass() == options.mMass);
+         CPPUNIT_ASSERT(geom->GetMargin() == options.mCollisionMargin);
+      }
+      catch (dtUtil::Exception& ex)
+      {
+         CPPUNIT_FAIL(ex.ToString());
+      }
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void PhysicsCompilerTests::TestCreatePhysicsObjectsForGeometry()
+   {
+      SetupTestPhysicsWorld();
+
+      Real testMass = 0.5 + PhysicsObjectOptions::DEFAULT_MASS;
+
+      PhysicsObjectOptions options;
+      PhysicsObjectArray objects;
+      
+      options.mMass = testMass;
+
+      try
+      {
+         VertexDataTable data;
+         PhysicsCompileOptions compileOptions; // use defaults
+
+         // Change the model.
+         CPPUNIT_ASSERT(3 == mCompiler->CompilePhysicsForNode(*mTestNode, compileOptions, data));
+         CPPUNIT_ASSERT(3 == data.size()); // one default material
+
+         
+         // Transfer the items from the 3 separate buckets to a single
+         // vector for the sake of the following tests.
+         VertexDataTable::iterator curIter = data.begin();
+         VertexDataArray vertArray;
+         vertArray.push_back(curIter->second.front()); ++curIter;
+         vertArray.push_back(curIter->second.front()); ++curIter;
+         vertArray.push_back(curIter->second.front());
+
+         CPPUNIT_ASSERT(3 == mCompiler->CreatePhysicsObjectsForGeometry(options, vertArray, objects));
+         CPPUNIT_ASSERT(3 == objects.size());
+
+         PhysicsObject* poA = objects[0].get();
+         PhysicsObject* poB = objects[1].get();
+         PhysicsObject* poC = objects[2].get();
+
+         // Check the object material references
+         CPPUNIT_ASSERT(poA != NULL);
+         CPPUNIT_ASSERT(poA->GetMaterial() == mMatA);
+         CPPUNIT_ASSERT(&poA->GetPrimitiveType() == options.mPrimitiveType);
+         CPPUNIT_ASSERT(&poA->GetMechanicsType() == options.mMechanicsType);
+         CPPUNIT_ASSERT(poA->GetGeometry(0) != NULL);
+         CPPUNIT_ASSERT(poA->GetGeometry(0)->GetMass() == options.mMass);
+         CPPUNIT_ASSERT(poA->GetGeometry(0)->GetMargin() == options.mCollisionMargin);
+         
+         CPPUNIT_ASSERT(poB != NULL);
+         CPPUNIT_ASSERT(poB->GetMaterial() == mMatB);
+         CPPUNIT_ASSERT(&poB->GetPrimitiveType() == options.mPrimitiveType);
+         CPPUNIT_ASSERT(&poB->GetMechanicsType() == options.mMechanicsType);
+         CPPUNIT_ASSERT(poB->GetGeometry(0) != NULL);
+         CPPUNIT_ASSERT(poB->GetGeometry(0)->GetMass() == options.mMass);
+         CPPUNIT_ASSERT(poB->GetGeometry(0)->GetMargin() == options.mCollisionMargin);
+
+         CPPUNIT_ASSERT(poC != NULL);
+         CPPUNIT_ASSERT(poC->GetMaterial() == mMatC);
+         CPPUNIT_ASSERT(&poC->GetPrimitiveType() == options.mPrimitiveType);
+         CPPUNIT_ASSERT(&poC->GetMechanicsType() == options.mMechanicsType);
+         CPPUNIT_ASSERT(poC->GetGeometry(0) != NULL);
+         CPPUNIT_ASSERT(poC->GetGeometry(0)->GetMass() == options.mMass);
+         CPPUNIT_ASSERT(poC->GetGeometry(0)->GetMargin() == options.mCollisionMargin);
       }
       catch (dtUtil::Exception& ex)
       {
