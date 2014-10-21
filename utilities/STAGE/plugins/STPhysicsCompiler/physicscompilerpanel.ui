@@ -51,6 +51,9 @@
          <height>16777215</height>
         </size>
        </property>
+       <property name="toolTip">
+        <string>Button to move the view to the currently selected actor for physics compilation.</string>
+       </property>
        <property name="text">
         <string>Target Actor</string>
        </property>
@@ -60,6 +63,9 @@
       <widget class="QLineEdit" name="mTargetActorName">
        <property name="enabled">
         <bool>false</bool>
+       </property>
+       <property name="toolTip">
+        <string>Currently selected actor(s) for which to compile physics geometry.</string>
        </property>
       </widget>
      </item>
@@ -96,6 +102,9 @@
         </property>
         <item>
          <widget class="QLabel" name="label">
+          <property name="toolTip">
+           <string>Estimated max number of vertices to use for each physics mesh split out from the original mesh.</string>
+          </property>
           <property name="text">
            <string>Max Verts Per Mesh</string>
           </property>
@@ -139,6 +148,9 @@
         </property>
         <item>
          <widget class="QLabel" name="label_2">
+          <property name="toolTip">
+           <string>Mesh splitting determined by maximum edge length.</string>
+          </property>
           <property name="text">
            <string>Max Edge Length</string>
           </property>
@@ -209,6 +221,9 @@
         </property>
         <item>
          <widget class="QLabel" name="label_9">
+          <property name="toolTip">
+           <string>Delete existing physics objects of the currently selected actors when new physics objects are created.</string>
+          </property>
           <property name="text">
            <string>Clear Existing Objects</string>
           </property>
@@ -387,6 +402,9 @@
    </item>
    <item>
     <widget class="QGroupBox" name="mFileOptions">
+     <property name="toolTip">
+      <string>Physics geometry file output will be enabled if the File Options group is checked.</string>
+     </property>
      <property name="title">
       <string>File Options</string>
      </property>
@@ -425,6 +443,9 @@
             <height>16777215</height>
            </size>
           </property>
+          <property name="toolTip">
+           <string>Button to select the directory to which physics geometry files will be written.</string>
+          </property>
           <property name="text">
            <string>Directory</string>
           </property>
@@ -446,6 +467,9 @@
         </property>
         <item>
          <widget class="QLabel" name="label_10">
+          <property name="toolTip">
+           <string>Prefix to add to file names for generated physics files.</string>
+          </property>
           <property name="text">
            <string>File Prefix</string>
           </property>
@@ -467,7 +491,7 @@
         <item>
          <widget class="QLineEdit" name="mFilePrefix">
           <property name="toolTip">
-           <string>Prefix to add to file names for generated physics files.</string>
+           <string/>
           </property>
          </widget>
         </item>
@@ -480,6 +504,9 @@
         </property>
         <item>
          <widget class="QLabel" name="label_5">
+          <property name="toolTip">
+           <string>Suffix to append to the file name if object geometry is split into multiple parts.</string>
+          </property>
           <property name="text">
            <string>File Suffix</string>
           </property>
@@ -501,7 +528,7 @@
         <item>
          <widget class="QLineEdit" name="mFileSuffix">
           <property name="toolTip">
-           <string>Suffix to append to the file name if object geometry is split into multiple parts.</string>
+           <string/>
           </property>
          </widget>
         </item>
@@ -524,6 +551,9 @@
      </property>
      <item>
       <widget class="QCheckBox" name="mAllowDefaultMaterial">
+       <property name="toolTip">
+        <string>If checked, physics geometry referencing the default physics material will be generated for meshes not explicitly flagged with materials.</string>
+       </property>
        <property name="text">
         <string>Allow Default Material</string>
        </property>
@@ -561,6 +591,9 @@
      </item>
      <item>
       <widget class="QPushButton" name="mButtonCompile">
+       <property name="toolTip">
+        <string>Button to start the compile process, physics object creation and file ouput.</string>
+       </property>
        <property name="text">
         <string>Compile</string>
        </property>
@@ -575,6 +608,9 @@
      </property>
      <item>
       <widget class="QLabel" name="label_3">
+       <property name="toolTip">
+        <string>Lists the materials detected and used in the compile process.</string>
+       </property>
        <property name="text">
         <string>Materials</string>
        </property>

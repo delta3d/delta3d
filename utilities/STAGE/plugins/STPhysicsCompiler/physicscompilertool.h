@@ -161,6 +161,9 @@ protected:
 
    void ShowWarningMessage(const std::string& text,
       const std::string& infoText, const std::string& detailsText = "");
+   
+   void SaveSettings();
+   void LoadSettings();
 
 private:
    dtEditQt::MainWindow* mMainWindow;

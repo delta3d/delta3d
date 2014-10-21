@@ -39,6 +39,7 @@
 #include <dtUtil/fileutils.h>
 #include <dtUtil/threadpool.h>
 // QT
+#include <QtCore/QSettings>
 #include <QtGui/QFileDialog>
 #include <QtGui/QMessageBox>
 #include <QtGui/QMouseEvent>
@@ -50,7 +51,21 @@ using namespace dtPhysics;
 ////////////////////////////////////////////////////////////////////////////////
 // CONSTANTS
 ////////////////////////////////////////////////////////////////////////////////
-const std::string PhysicsCompilerToolPlugin::PLUGIN_NAME = "Physics Compiler Tool";
+const std::string PhysicsCompilerToolPlugin::PLUGIN_NAME("Physics Compiler Tool");
+static const QString PLUGIN_TITLE(PhysicsCompilerToolPlugin::PLUGIN_NAME.c_str());
+static const QString PLUGIN_SETTINGS_NAME("STAGE");
+// File Settings
+static const QString SETTING_FILE_OPTIONS_ENABLED("FileOptionsEnabled");
+static const QString SETTING_TARGET_DIRECTORY("TargetDirectory");
+static const QString SETTING_FILE_PREFIX("FilePrefix");
+static const QString SETTING_FILE_SUFFIX("FileSuffix");
+// Compile Settings
+static const QString SETTING_MAX_VERTS_PER_MESH("MaxVertsPerMesh");
+static const QString SETTING_MAX_EDGE_LENGTH("MaxEdgeLength");
+// Object Settings
+static const QString SETTING_MASS("Mass");
+static const QString SETTING_COLLISION_MARGIN("CollisionMargin");
+static const QString SETTING_CLEAR_EXISTING_OBJECTS("ClearExistingObjects");
 
 
 
@@ -120,6 +135,8 @@ PhysicsCompilerToolPlugin::PhysicsCompilerToolPlugin(dtEditQt::MainWindow* mw)
    //add dock widget to STAGE main window
    mw->addDockWidget(Qt::RightDockWidgetArea, this);
 
+   LoadSettings();
+
    SetupComboboxes();
 
    // Set default values on UI before setting up connections
@@ -127,7 +144,6 @@ PhysicsCompilerToolPlugin::PhysicsCompilerToolPlugin(dtEditQt::MainWindow* mw)
    UpdateUI();
 
    mUI.mProgress->setVisible(false);
-   mUI.mFileOptions->setChecked(mUI.mTargetDirectory->text().length() > 0);
 
    CreateConnections();
 
@@ -142,6 +158,10 @@ PhysicsCompilerToolPlugin::~PhysicsCompilerToolPlugin()
 ////////////////////////////////////////////////////////////////////////////////
 void PhysicsCompilerToolPlugin::Destroy()
 {
+   // Plugin instance is about to shutdown.
+   // Backup settings to be used for the next session.
+   SaveSettings();
+
    // TODO: Ensure compile thread is dead if it is running.
 }
 
@@ -232,7 +252,7 @@ void PhysicsCompilerToolPlugin::SetupComboboxes()
 ////////////////////////////////////////////////////////////////////////////////
 void PhysicsCompilerToolPlugin::EnsurePhysicsWorld()
 {
-   if (PhysicsWorld::IsInitialized())
+   if ( ! PhysicsWorld::IsInitialized())
    {
       try
       {
@@ -658,6 +678,80 @@ void PhysicsCompilerToolPlugin::ShowWarningMessage(const std::string& text,
    }
 
    mbox.exec();
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void PhysicsCompilerToolPlugin::SaveSettings()
+{
+   QSettings settings(PLUGIN_SETTINGS_NAME, PLUGIN_TITLE);
+
+   try
+   {
+      // File Settings
+      settings.setValue(SETTING_FILE_OPTIONS_ENABLED, mUI.mFileOptions->isChecked());
+      settings.setValue(SETTING_TARGET_DIRECTORY, mFileOptions.mTargetDir.c_str());
+      settings.setValue(SETTING_FILE_PREFIX, mFileOptions.mFilePrefix.c_str());
+      settings.setValue(SETTING_FILE_SUFFIX, mFileOptions.mFileSuffix.c_str());
+
+      // Compile Settings
+      settings.setValue(SETTING_MAX_VERTS_PER_MESH, mCompileOptions.mMaxVertsPerMesh);
+      settings.setValue(SETTING_MAX_EDGE_LENGTH, mCompileOptions.mMaxEdgeLength);
+
+      // Object Settings
+      settings.setValue(SETTING_MASS, mObjectOptions.mMass);
+      settings.setValue(SETTING_COLLISION_MARGIN, mObjectOptions.mCollisionMargin);
+      settings.setValue(SETTING_CLEAR_EXISTING_OBJECTS, mObjectOptions.mClearExistingObjects);
+
+      settings.sync();
+   }
+   catch (const dtUtil::Exception &e)
+   {
+      QMessageBox::critical((QWidget *)this, tr("Error"), tr(e.What().c_str()), tr("Ok"));
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void PhysicsCompilerToolPlugin::LoadSettings()
+{
+   QSettings settings(PLUGIN_SETTINGS_NAME, PLUGIN_TITLE);
+
+   try
+   {
+      // Only load settings if they were previously set.
+      // Otherwise, the options structs will have sensible default values
+      // and should not be nullified by non-existant setting values.
+      if (settings.contains(SETTING_TARGET_DIRECTORY))
+      {
+         // File Settings
+         mFileOptions.mTargetDir = settings.value(SETTING_TARGET_DIRECTORY).toString().toStdString();
+         mFileOptions.mFilePrefix = settings.value(SETTING_FILE_PREFIX).toString().toStdString();
+         mFileOptions.mFileSuffix = settings.value(SETTING_FILE_SUFFIX).toString().toStdString();
+         bool enableFileOptions = settings.value(SETTING_FILE_OPTIONS_ENABLED).toBool();
+         mUI.mFileOptions->setChecked(enableFileOptions);
+
+         // Compile Settings
+         mCompileOptions.mMaxVertsPerMesh = settings.value(SETTING_MAX_VERTS_PER_MESH).toUInt();
+         mCompileOptions.mMaxEdgeLength = settings.value(SETTING_MAX_EDGE_LENGTH).toFloat();
+         
+         // Object Settings
+         mObjectOptions.mMass = settings.value(SETTING_MASS).toDouble();
+         mObjectOptions.mCollisionMargin = settings.value(SETTING_COLLISION_MARGIN).toDouble();
+         mObjectOptions.mClearExistingObjects = settings.value(SETTING_CLEAR_EXISTING_OBJECTS).toBool();
+
+         // Validate the target directory.
+         if ( ! mFileOptions.mTargetDir.empty()
+            && ! dtUtil::FileUtils::GetInstance().DirExists(mFileOptions.mTargetDir))
+         {
+            std::string message("Target directory could not be found.");
+
+            ShowWarningMessage(message, mFileOptions.mTargetDir);
+         }
+      }
+   }
+   catch (const dtUtil::Exception &e)
+   {
+      QMessageBox::critical((QWidget *)this, tr("Error"), tr(e.What().c_str()), tr("Ok"));
+   }
 }
 
 
