@@ -27,16 +27,14 @@ void main (void)
    float depthScalar = (depth / UnderWaterViewDistance);
    
    vec3 color = gl_LightSource[0].ambient.xyz * deepWaterColor.xyz;
-   color += (gl_LightSource[0].diffuse.xyz * mix(deepWaterColor.xyz, color, 1.25 * depthScalar));
-
-   if(worldSpacePos.z < waterHeightScreenSpace)
+   color += gl_LightSource[0].diffuse.xyz * deepWaterColor.xyz;
+   
+   if(worldSpacePos.z < 0.0)
    {
       gl_FragColor = vec4(color, 1.0);     
    }
    else
    {
-      //gl_FragColor = vec4(1.0, 1.0, 1.0, 0.0);     
-
       discard;
    }
 }
