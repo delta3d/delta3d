@@ -8,60 +8,10 @@ ENDIF (WIN32)
 SET(HEADER_PATH ${DELTA3D_SOURCE_DIR}/inc/${LIB_NAME})
 SET(SOURCE_PATH ${DELTA3D_SOURCE_DIR}/src/${LIB_NAME})
 
-SET(LIB_PUBLIC_HEADERS
-    ${HEADER_PATH}/actorcomponent.h
-    ${HEADER_PATH}/actorcomponentbase.h
-    ${HEADER_PATH}/actorcomponentcontainer.h
-    ${HEADER_PATH}/actorupdatemessage.h
-    ${HEADER_PATH}/basegroundclamper.h
-    ${HEADER_PATH}/baseinputcomponent.h
-    ${HEADER_PATH}/basemessages.h
-    ${HEADER_PATH}/binarylogstream.h
-    ${HEADER_PATH}/cascadingdeleteactorcomponent.h
-    ${HEADER_PATH}/deadreckoningcomponent.h
-    ${HEADER_PATH}/deadreckoninghelper.h
-    ${HEADER_PATH}/defaultgroundclamper.h
-    ${HEADER_PATH}/defaultmessageprocessor.h
-    ${HEADER_PATH}/defaultnetworkpublishingcomponent.h
-    ${HEADER_PATH}/drpublishingactcomp.h
-    ${HEADER_PATH}/dtgame.h
-    ${HEADER_PATH}/environmentactor.h
-    ${HEADER_PATH}/exceptionenum.h
-    ${HEADER_PATH}/export.h
-    ${HEADER_PATH}/gameactor.h
-    ${HEADER_PATH}/gameactorproxy.h
-    ${HEADER_PATH}/gameapplication.h
-    ${HEADER_PATH}/gameentrypoint.h
-    ${HEADER_PATH}/gamemanager.h
-    ${HEADER_PATH}/gamemanager.inl
-    ${HEADER_PATH}/gamestate.h
-    ${HEADER_PATH}/gamestatecomponent.h
-    ${HEADER_PATH}/gamestatemessages.h
-    ${HEADER_PATH}/gmcomponent.h
-    ${HEADER_PATH}/gmsettings.h
-    ${HEADER_PATH}/gmimpl.h
-    ${HEADER_PATH}/gmstatistics.h
-    ${HEADER_PATH}/invokable.h
-    ${HEADER_PATH}/logcontroller.h
-    ${HEADER_PATH}/loggermessages.h
-    ${HEADER_PATH}/logkeyframe.h
-    ${HEADER_PATH}/logkeyframeindex.h
-    ${HEADER_PATH}/logstatus.h
-    ${HEADER_PATH}/logstream.h
-    ${HEADER_PATH}/logtag.h
-    ${HEADER_PATH}/logtagindex.h
-    ${HEADER_PATH}/machineinfo.h
-    ${HEADER_PATH}/mapchangestatedata.h
-    ${HEADER_PATH}/message.h
-    ${HEADER_PATH}/messagefactory.h
-    ${HEADER_PATH}/messagemacros.h
-    ${HEADER_PATH}/messageparameter.h
-    ${HEADER_PATH}/messagetype.h
-    ${HEADER_PATH}/serverloggercomponent.h
-    ${HEADER_PATH}/shaderactorcomponent.h
-    ${HEADER_PATH}/taskcomponent.h
-    ${HEADER_PATH}/transitionxmlhandler.h
-)
+
+file(GLOB LIB_PUBLIC_HEADERS
+   "${HEADER_PATH}/*.h"
+   )
 
 SET(LIB_SOURCES
     ${SOURCE_PATH}/actorcomponent.cpp
