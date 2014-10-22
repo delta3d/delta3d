@@ -1,16 +1,13 @@
 #version 120
 //////////////////////////////////////////////
-//An under water shader
+//This shader is used to color the far plane with 
+// the underwater color to give the effect of an ocean
 //by Bradley Anderegg
 //////////////////////////////////////////////
 
-uniform float waterHeightScreenSpace;
 uniform mat4 modelViewProjectionInverse;
-uniform mat4 inverseViewMatrix;
 
 varying vec4 worldSpacePos;
-varying vec3 lightVector;
-varying vec4 camPos;
 
 const float FarPlane = 100.0;
 
@@ -23,14 +20,6 @@ void main(void)
    screenPos.z = 1.0;
    worldSpacePos = (modelViewProjectionInverse * screenPos);
 
-
-   mat3 inverseView3x3 = mat3(inverseViewMatrix[0].xyz, 
-       inverseViewMatrix[1].xyz, inverseViewMatrix[2].xyz);
-   
-   camPos = inverseViewMatrix[3];
-   
-   //very far off in worldspace
-   lightVector = (inverseView3x3 * gl_LightSource[0].position.xyz);
 }
 
 
