@@ -800,11 +800,17 @@ namespace dtExample
 
       osg::Vec3 dir = pWaypoint->GetPosition() - GetPosition();
       dir[2] = 0.0f;
-      dir.normalize();
 
-      osg::Vec3 vel =  dir * mWalkSpeed;
-      //LOGN_ALWAYS(LOG_NAME, "Walk Vector: " + dtUtil::ToString(vel));
-      mCharacterController->Walk(vel, 1.0f);
+      if (dir.normalize() > FLT_EPSILON && mWalkSpeed > FLT_EPSILON)
+      {
+         osg::Vec3 vel =  dir * mWalkSpeed;
+         //LOGN_ALWAYS("civilianaiactorcomponent.cpp", "Walk Vector: " + dtUtil::ToString(vel));
+         mCharacterController->Walk(vel, 1.0f);
+      }
+      else
+      {
+         mCharacterController->WalkClear();
+      }
    }
 
 
