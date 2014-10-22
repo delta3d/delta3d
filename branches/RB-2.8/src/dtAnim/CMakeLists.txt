@@ -51,55 +51,9 @@ SET(LIB_SOURCES
   ${SOURCE_PATH}/walkrunblend.cpp
 )
 
-SET(LIB_PUBLIC_HEADERS
-  ${HEADER_PATH}/animactorregistry.h
-  ${HEADER_PATH}/animatable.h
-  ${HEADER_PATH}/animationchannel.h
-  ${HEADER_PATH}/animationcomponent.h
-  ${HEADER_PATH}/animationgameactor.h
-  ${HEADER_PATH}/animationhelper.h
-  ${HEADER_PATH}/animationsequence.h
-  ${HEADER_PATH}/animationwrapper.h
-  ${HEADER_PATH}/animdriver.h
-  ${HEADER_PATH}/animnodebuilder.h
-  ${HEADER_PATH}/animclippath.h
-  ${HEADER_PATH}/attachmentcontroller.h
-  ${HEADER_PATH}/cal3danimator.h
-  ${HEADER_PATH}/cal3ddatabase.h
-  ${HEADER_PATH}/cal3dgameactor.h
-  ${HEADER_PATH}/cal3dloader.h
-  ${HEADER_PATH}/cal3dmodeldata.h
-  ${HEADER_PATH}/cal3dmodelwrapper.h
-  ${HEADER_PATH}/characterfileelements.h
-  ${HEADER_PATH}/characterfilehandler.h
-  ${HEADER_PATH}/characterfilewriter.h
-  ${HEADER_PATH}/characterwrapper.h
-  ${HEADER_PATH}/chardrawable.h
-  ${HEADER_PATH}/dtanim.h
-  ${HEADER_PATH}/export.h
-  ${HEADER_PATH}/geometrybuilder.h
-  ${HEADER_PATH}/hardwaresubmesh.h
-  ${HEADER_PATH}/hotspotdriver.h
-  ${HEADER_PATH}/ical3ddriver.h
-  ${HEADER_PATH}/lodcullcallback.h
-  ${HEADER_PATH}/macros.h
-  ${HEADER_PATH}/morphdriver.h
-  ${HEADER_PATH}/physiquedriver.h
-  ${HEADER_PATH}/posemath.h
-  ${HEADER_PATH}/posemesh.h
-  ${HEADER_PATH}/posemeshdatabase.h
-  ${HEADER_PATH}/posemeshloader.h
-  ${HEADER_PATH}/posemeshutility.h
-  ${HEADER_PATH}/posemeshxml.h
-  ${HEADER_PATH}/posesequence.h
-  ${HEADER_PATH}/sequencemixer.h
-  ${HEADER_PATH}/skeletaldrawable.h
-  ${HEADER_PATH}/skeletondriver.h
-  ${HEADER_PATH}/springdriver.h
-  ${HEADER_PATH}/animationtransitionplanner.h
-  ${HEADER_PATH}/submesh.h
-  ${HEADER_PATH}/walkrunblend.h
-)
+file(GLOB LIB_PUBLIC_HEADERS
+   "${HEADER_PATH}/*.h"
+   )
 
 INCLUDE_DIRECTORIES( ${CAL3D_INCLUDE_DIR} )#for dtAnim
 
