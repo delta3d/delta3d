@@ -62,7 +62,10 @@ namespace dtAnim
    {
       CPPUNIT_TEST_SUITE(AnimNodeBuilderTests);
          CPPUNIT_TEST(TestBuildSoftware);
+//The old hardware model crashes in many cases on OS X.  It's deprecated anyway.
+#ifndef __APPLE__
          CPPUNIT_TEST(TestBuildHardware);
+#endif  
          CPPUNIT_TEST(TestBuildOsgGeometry);
          CPPUNIT_TEST(TestBuildWithScale);
       CPPUNIT_TEST_SUITE_END();
