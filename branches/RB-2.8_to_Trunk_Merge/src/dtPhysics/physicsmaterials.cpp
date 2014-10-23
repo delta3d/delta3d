@@ -64,9 +64,13 @@ namespace dtPhysics
       MatDefToPalMatDesc(desc, def);
 
       Material* mat = pm.NewMaterial(name, desc);
-      def.SetMaterialIndex(mat->GetId());
+      if (mat != NULL)
+      {
+         def.SetMaterialIndex(mat->GetId());
 
-      mImpl->mMaterialMap.insert(std::make_pair(name, mat));
+         mImpl->mMaterialMap.insert(std::make_pair(name, mat));
+      }
+
 
       return mat;
    }
