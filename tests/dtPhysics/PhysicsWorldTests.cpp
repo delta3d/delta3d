@@ -514,6 +514,10 @@ namespace dtPhysics
 
       world.AddAction(*action);
 
+      // The world may not step if there are no object in it.
+      dtCore::RefPtr<PhysicsObject> obj = CreateTestPhysObject("Jo", PrimitiveType::BOX, VectorType(10.0, 10.0, 10.0),
+            VectorType(0.0, 12.0, 0.0), 4);
+
       world.UpdateStep(1.0f/60.0f);
 
       CPPUNIT_ASSERT_MESSAGE("The action should have been added to the world, so it should have been called.",

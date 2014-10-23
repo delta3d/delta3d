@@ -1635,6 +1635,11 @@ namespace dtPhysics
       dtCore::RefPtr<PhysicsActComp> tehVoodoo1 = new PhysicsActComp();
       dtCore::RefPtr<PhysicsActComp> tehVoodoo2 = new PhysicsActComp();
 
+      // Need to create a physics object because, if not, the physics may not step.
+      dtCore::RefPtr<PhysicsObject> poA = new PhysicsObject("jojo");
+      poA->SetMass(30.0f);
+      poA->Create();
+
       // fill in their names
       tehVoodoo1->SetName("tehVoodooActorComp1");
       tehVoodoo2->SetName("tehVoodooActorComp2");
