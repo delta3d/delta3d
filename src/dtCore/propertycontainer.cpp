@@ -28,8 +28,7 @@
 #include <dtCore/defaultpropertymanager.h>
 #include <dtUtil/exception.h>
 #include <dtUtil/log.h>
-
-#include <sstream>
+#include <algorithm>
 
 namespace dtCore
 {
@@ -92,10 +91,7 @@ namespace dtCore
          mPropertyMap.find(newProp->GetName());
       if(itor != mPropertyMap.end())
       {
-         std::ostringstream ss;
-         ss << "Could not add new property " << newProp->GetName() << " because "
-            << "a property with that name already exists.";
-         LOG_ERROR(ss.str());
+         LOGN_ERROR("propertycontainer.cpp", "Could not add new property " + newProp->GetName() + " because a property with that name already exists.");
       }
       else
       {
@@ -109,6 +105,19 @@ namespace dtCore
          {
             mProperties.push_back(newProp);
          }
+      }
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////////////
+   void PropertyContainer::RemoveProperty(ActorProperty* toRemove)
+   {
+      if (toRemove == NULL) return;
+      PropertyMapType::iterator itor =
+         mPropertyMap.find(toRemove->GetName());
+      if (itor != mPropertyMap.end() && itor->second == toRemove)
+      {
+         mPropertyMap.erase(itor);
+         mProperties.erase(std::remove(mProperties.begin(), mProperties.end(), dtCore::RefPtr<ActorProperty>(toRemove)), mProperties.end());
       }
    }
 
@@ -131,9 +140,7 @@ namespace dtCore
       }
       else
       {
-         std::ostringstream msg;
-         msg << "Could not find property " << nameToRemove << " to remove. Reason was: " << "was not found in mPropertyMap";
-         LOG_DEBUG(msg.str());
+         LOGN_INFO("propertycontainer.cpp", "Could not find property " + nameToRemove + " to remove. Reason was: Was not found in propertyMap");
       }
    }
 

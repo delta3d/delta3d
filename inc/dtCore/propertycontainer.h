@@ -81,6 +81,16 @@ namespace dtCore
       void AddProperty(ActorProperty* newProp);
 
       /**
+       * Removes a property from this property container by name.
+       */
+      void RemoveProperty(const std::string& nameToRemove);
+
+      /**
+       * Removes a property from this property container.
+       */
+      void RemoveProperty(ActorProperty* newProp);
+
+      /**
        * Inserts a new property into the container at a given index.
        *
        * @param[in]  newProp  The property to insert.
@@ -177,8 +187,6 @@ namespace dtCore
 
    protected:
       virtual ~PropertyContainer();
-
-      void RemoveProperty(const std::string& nameToRemove);
 
    private:
       typedef std::map<dtUtil::RefString, dtCore::RefPtr<ActorProperty> > PropertyMapType;
