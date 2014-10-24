@@ -122,6 +122,7 @@ class MapTests : public CPPUNIT_NS::TestFixture
       CPPUNIT_TEST(TestEnvironmentMapLoading);
       CPPUNIT_TEST(TestLoadEnvironmentMapIntoScene);
       CPPUNIT_TEST(TestActorProxyRemoveProperties);
+      CPPUNIT_TEST(TestRemovePropertiesByPointer);
       CPPUNIT_TEST(TestCreateMapsMultiContext);
       CPPUNIT_TEST(TestSaveAsMultiContext);
       CPPUNIT_TEST(TestParsingMapHeaderData);
@@ -150,6 +151,7 @@ class MapTests : public CPPUNIT_NS::TestFixture
       void TestLoadEnvironmentMapIntoScene();
       void TestWildCard();
       void TestActorProxyRemoveProperties();
+      void TestRemovePropertiesByPointer();
       void TestCreateMapsMultiContext();
       void TestSaveAsMultiContext();
       void TestParsingMapHeaderData();
@@ -1805,6 +1807,18 @@ public:
       return (GetProperty(stringToRemove) == NULL);
    }
 
+   bool RemoveTheProperty(dtCore::ActorProperty* prop)
+   {
+      if (prop == NULL) return false;
+      // Save it in a ref ptr because it will be deleted otherwise.
+      dtCore::RefPtr<dtCore::ActorProperty> saveProp = prop;
+      // not in the list
+      if (GetProperty(prop->GetName()) == NULL) return false;
+      // is in the list
+      RemoveProperty(prop);
+      return (GetProperty(saveProp->GetName()) == NULL);
+   }
+
 protected:
    virtual ~OverriddenActorProxy() {}
 };
@@ -1814,13 +1828,28 @@ void MapTests::TestActorProxyRemoveProperties()
 {
    dtCore::RefPtr<OverriddenActorProxy> actorProxy = new OverriddenActorProxy;
    std::string NameToRemove = dtCore::TransformableActorProxy::PROPERTY_ROTATION;
-   std::string DoesntExist = "TeagueHasAHawtMom";
+   std::string DoesntExist = "TeagueGrowsRutabaga";
    CPPUNIT_ASSERT_MESSAGE("Tried to remove a property before initialized should have returned false", actorProxy->RemoveTheProperty(NameToRemove) == false );
    actorProxy->CreateDrawable();
    actorProxy->BuildPropertyMap();
    CPPUNIT_ASSERT_MESSAGE("Tried to remove a property after initialized should have returned true", actorProxy->RemoveTheProperty(NameToRemove) == true );
    CPPUNIT_ASSERT_MESSAGE("Tried to remove a property after initialized for a second time should have returned false", actorProxy->RemoveTheProperty(NameToRemove) == false );
    CPPUNIT_ASSERT_MESSAGE("Tried to remove a property that we know doesnt exist should have returned false", actorProxy->RemoveTheProperty(DoesntExist) == false );
+}
+
+
+///////////////////////////////////////////////////////////////////////////////////////
+void MapTests::TestRemovePropertiesByPointer()
+{
+   dtCore::RefPtr<OverriddenActorProxy> actorProxy = new OverriddenActorProxy;
+   std::string NameToRemove = dtCore::TransformableActorProxy::PROPERTY_ROTATION;
+   CPPUNIT_ASSERT_MESSAGE("Tried to remove a property before initialized should have returned false", actorProxy->RemoveTheProperty(actorProxy->GetProperty(NameToRemove)) == false );
+   actorProxy->CreateDrawable();
+   actorProxy->BuildPropertyMap();
+   CPPUNIT_ASSERT_MESSAGE("Tried to remove a property after initialized should have returned true", actorProxy->RemoveTheProperty(actorProxy->GetProperty(NameToRemove)) == true );
+   CPPUNIT_ASSERT_MESSAGE("Tried to remove a property after initialized for a second time should have returned false", actorProxy->RemoveTheProperty(actorProxy->GetProperty(NameToRemove)) == false );
+   // This shouldn't crash.
+   actorProxy->RemoveProperty(NULL);
 }
 
 void MapTests::TestCreateMapsMultiContext()
