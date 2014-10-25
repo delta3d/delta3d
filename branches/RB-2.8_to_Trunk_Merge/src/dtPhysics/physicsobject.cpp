@@ -285,7 +285,7 @@ namespace dtPhysics
       // Don't make this static since it's generated.
       const dtUtil::RefString GROUP("PhysicsObject-" + GetName());
 
-      typedef dtCore::PropertyRegHelper<PhysicsObject&, PhysicsObject> PropRegType;
+      typedef dtCore::PropertyRegHelper<PhysicsObject> PropRegType;
       PropRegType propRegHelper(*this, this, GROUP);
 
       std::string generatedName;

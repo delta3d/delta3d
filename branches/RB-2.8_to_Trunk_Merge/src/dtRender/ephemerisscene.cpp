@@ -694,7 +694,7 @@ namespace dtRender
 
 
       std::string group("EphemerisScene");
-      typedef dtCore::PropertyRegHelper<EphemerisSceneActor&, EphemerisScene> PropRegHelperType;
+      typedef dtCore::PropertyRegHelper<EphemerisSceneActor, EphemerisScene> PropRegHelperType;
       PropRegHelperType propRegHelper(*this, es, group);
 
       DT_REGISTER_PROPERTY_WITH_NAME_AND_LABEL(LatLong, "Lattitude and Longitude", "Lattitude and Longitude", 

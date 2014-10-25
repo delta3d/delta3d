@@ -266,7 +266,7 @@ namespace dtGame
    {
       //static const dtUtil::RefString GROUPNAME = "DR Publishing";
 
-      typedef dtCore::PropertyRegHelper<DRPublishingActComp&, DRPublishingActComp> PropRegType;
+      typedef dtCore::PropertyRegHelper<DRPublishingActComp> PropRegType;
       PropRegType propRegHelper(*this, this, "DR Publishing");
 
       DT_REGISTER_PROPERTY_WITH_NAME_AND_LABEL(VelocityAverageFrameCount, "VelocityAveragingFrameCount", "Velocity Averaging Frame Count",

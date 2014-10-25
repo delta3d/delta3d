@@ -299,7 +299,7 @@ namespace dtRender
       BaseClass::BuildPropertyMap();
 
       std::string group("DOFScene");
-      typedef dtCore::PropertyRegHelper<DOFSceneActor&, DOFScene> PropRegHelperType;
+      typedef dtCore::PropertyRegHelper<DOFSceneActor, DOFScene> PropRegHelperType;
       PropRegHelperType propRegHelper(*this, GetDrawable<DOFScene>(), group);
 
 

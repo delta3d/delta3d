@@ -82,7 +82,7 @@ namespace dtCore
       static const dtUtil::RefString GROUPNAME = "Transformable";
       static const dtUtil::RefString COLLISION_GROUP = "ODE Collision";
 
-      typedef dtCore::PropertyRegHelper<TransformableActorProxy&, TransformableActorProxy> PropRegHelperType;
+      typedef dtCore::PropertyRegHelper<TransformableActorProxy> PropRegHelperType;
       PropRegHelperType propRegHelper(*this, this, COLLISION_GROUP);
 
       dtCore::Transformable* trans = NULL;

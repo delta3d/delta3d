@@ -487,7 +487,7 @@ namespace dtRender
 
       OceanScene* actor = GetDrawable<OceanScene>();
 
-      typedef dtCore::PropertyRegHelper<dtCore::PropertyContainer&, OceanScene> RegHelperType;
+      typedef dtCore::PropertyRegHelper<dtCore::PropertyContainer, OceanScene> RegHelperType;
       RegHelperType propReg(*this, actor, GROUPNAME);
 
       DT_REGISTER_PROPERTY(NumRows, "The number of rows of tesselation for the water surface.", RegHelperType, propReg);
