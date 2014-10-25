@@ -1564,7 +1564,7 @@ namespace dtActors
 
       WaterGridActor* actor = GetDrawable<WaterGridActor>();
       
-      typedef dtCore::PropertyRegHelper<dtCore::PropertyContainer&, WaterGridActorProxy> RegHelperType;
+      typedef dtCore::PropertyRegHelper<WaterGridActorProxy> RegHelperType;
       RegHelperType propReg(*this, this, GROUPNAME);
 
       DT_REGISTER_PROPERTY(WaveDirection, "The direction the waves are moving.", RegHelperType, propReg);

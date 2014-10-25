@@ -216,7 +216,7 @@ namespace dtAnim
       BaseClass::BuildPropertyMap();
 
       const dtUtil::RefString ATP_GROUP("Animation Transition Planner");
-      typedef dtCore::PropertyRegHelper<AnimationTransitionPlanner&, AnimationTransitionPlanner> RegHelperType;
+      typedef dtCore::PropertyRegHelper<AnimationTransitionPlanner> RegHelperType;
       RegHelperType propReg(*this, this, ATP_GROUP);
 
       DT_REGISTER_PROPERTY(Stance, "The target stance of the animated character.", RegHelperType, propReg);

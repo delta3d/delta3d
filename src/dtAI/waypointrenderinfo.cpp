@@ -89,7 +89,7 @@ namespace dtAI
    void WaypointRenderInfo::BuildPropertyMap()
    {
       //TODO Create Properties
-      typedef dtCore::PropertyRegHelper<dtCore::PropertyContainer&, WaypointRenderInfo> RegHelperType;
+      typedef dtCore::PropertyRegHelper<dtCore::PropertyContainer, WaypointRenderInfo> RegHelperType;
 
       RegHelperType regHelper(*this, this, "WaypointRenderInfo");
 

@@ -892,7 +892,7 @@ namespace dtRender
 
 
       std::string group("MultipassScene");
-      typedef dtCore::PropertyRegHelper<MultipassSceneActor&, MultipassScene> PropRegHelperType;
+      typedef dtCore::PropertyRegHelper<MultipassSceneActor, MultipassScene> PropRegHelperType;
       PropRegHelperType propRegHelper(*this, GetDrawable<MultipassScene>(), group);
 
       //DT_REGISTER_PROPERTY_WITH_NAME_AND_LABEL(MainSceneCullMask, "MainSceneCullMask", "Main Scene Cull Mask", 

@@ -415,7 +415,7 @@ namespace dtRender
       BaseClass::BuildPropertyMap();
 
       std::string group("CubeMapScene");
-      typedef dtCore::PropertyRegHelper<CubeMapSceneActor&, CubeMapScene> PropRegHelperType;
+      typedef dtCore::PropertyRegHelper<CubeMapSceneActor, CubeMapScene> PropRegHelperType;
       PropRegHelperType propRegHelper(*this, GetDrawable<CubeMapScene>(), group);
 
       DT_REGISTER_PROPERTY_WITH_NAME(TexWidth, "TexWidth", "The width of the render target.", PropRegHelperType, propRegHelper);

@@ -547,7 +547,7 @@ namespace dtGame
    void DeadReckoningHelper::BuildPropertyMap()
    {
       static const dtUtil::RefString DEADRECKONING_GROUP = "Dead Reckoning";
-      typedef dtCore::PropertyRegHelper<DeadReckoningHelper&, DeadReckoningHelper> PropRegType;
+      typedef dtCore::PropertyRegHelper<DeadReckoningHelper> PropRegType;
       PropRegType propRegHelper(*this, this, DEADRECKONING_GROUP);//"Dead Reckoning");
 
 

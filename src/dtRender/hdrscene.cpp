@@ -410,7 +410,7 @@ namespace dtRender
       BaseClass::BuildPropertyMap();
 
       std::string group("HDRScene");
-      typedef dtCore::PropertyRegHelper<HDRSceneActor&, HDRScene> PropRegHelperType;
+      typedef dtCore::PropertyRegHelper<HDRSceneActor, HDRScene> PropRegHelperType;
       PropRegHelperType propRegHelper(*this, GetDrawable<HDRScene>(), group);
 
       DT_REGISTER_PROPERTY_WITH_NAME(MidGrey, "MidGrey", "The mid range value to use for processing the HDR.", PropRegHelperType, propRegHelper);
