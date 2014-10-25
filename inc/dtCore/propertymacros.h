@@ -41,14 +41,14 @@
 namespace dtCore
 {
 
-   template <class ContainerType, class FuncObj>
+   template <class ContainerType, class FuncObj = ContainerType>
    struct PropertyRegHelper
    {
       //typedef PropertyRegHelper<ContainerType, FuncObj> Type;
-      typedef FuncObj FunctorObjectType;
-      typedef ContainerType ContainerObjectType;
+      typedef typename dtUtil::TypeTraits<FuncObj>::value_type FunctorObjectType;
+      typedef typename dtUtil::TypeTraits<ContainerType>::reference ContainerObjectType;
 
-      PropertyRegHelper(ContainerType con, FuncObj* objPtr, const dtUtil::RefString& groupName)
+      PropertyRegHelper(ContainerObjectType con, FunctorObjectType* objPtr, const dtUtil::RefString& groupName)
          : mPropCon(con)
          , mFuncObj(objPtr)
          , mGroup(groupName)
@@ -94,8 +94,8 @@ namespace dtCore
             baseClass, desc, mGroup));
       }
 
-      ContainerType mPropCon;
-      FuncObj* mFuncObj;
+      ContainerObjectType mPropCon;
+      FunctorObjectType* mFuncObj;
 
       const dtUtil::RefString mGroup;
    };

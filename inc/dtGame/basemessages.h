@@ -93,7 +93,7 @@ namespace dtGame
 
       protected:
          /// Destructor
-         virtual ~MapMessage() { }
+         virtual ~MapMessage();
          dtCore::RefPtr<ArrayMessageParameter> mMapNames;
    };
 
@@ -123,34 +123,14 @@ namespace dtGame
          const dtCore::GameEvent* GetGameEvent() const;
 
       protected:
-         virtual ~GameEventMessage() { }
+         virtual ~GameEventMessage();
    };
 
-   class DT_GAME_EXPORT NetServerRejectMessage : public Message
-   {
-      public:
-         /// Constructor
-         NetServerRejectMessage() : Message()
-         {
-            AddParameter(new StringMessageParameter("RejectionMessage"));
-         }
+   DT_DECLARE_MESSAGE_BEGIN(NetServerRejectMessage, Message, DT_GAME_EXPORT)
+      /// Describes the reason for rejection
+      DECLARE_PARAMETER_INLINE(std::string, RejectionMessage)
+   DT_DECLARE_MESSAGE_END()
 
-         /**
-          * Gets the rejection reason of the message
-          * @return The message string
-          */
-         const std::string& GetRejectionMessage() const;
-
-         /**
-          * Sets the rejection message
-          * @param The message
-          */
-         void SetRejectionMessage(const std::string &msg);
-      protected:
-         /// Destructor
-         virtual ~NetServerRejectMessage() { }
-
-   };
 
    class DT_GAME_EXPORT RestartMessage : public Message
    {
@@ -175,7 +155,7 @@ namespace dtGame
 
       protected:
          ///Destructor
-         virtual ~RestartMessage() {};
+         virtual ~RestartMessage();
    };
 
    class DT_GAME_EXPORT ServerMessageRejected : public Message
@@ -201,7 +181,7 @@ namespace dtGame
 
       protected:
          ///Destructor
-         virtual ~ServerMessageRejected() {}
+         virtual ~ServerMessageRejected();
    };
 
    /**
@@ -302,7 +282,7 @@ namespace dtGame
 
    protected:
       /// Destructor
-      virtual ~MachineInfoMessage() { }
+      virtual ~MachineInfoMessage();
    };
 
    /**
@@ -359,7 +339,7 @@ namespace dtGame
 
    protected:
       /// Destructor
-      virtual ~ServerFrameSyncMessage() { }
+      virtual ~ServerFrameSyncMessage();
    };
 
    /**
@@ -429,7 +409,7 @@ namespace dtGame
 
    protected:
       /// Destructor
-      virtual ~ServerSyncControlMessage() { }
+      virtual ~ServerSyncControlMessage();
    };
 }
 

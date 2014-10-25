@@ -64,6 +64,11 @@ namespace dtGame
    {
       DECLARE_ENUM(MessageType);
       public:
+         static const std::string CATEGORY_INFO;
+         static const std::string CATEGORY_REQUEST;
+         static const std::string CATEGORY_COMMAND;
+         static const std::string CATEGORY_TICK;
+
          /// his should never be used.  It is the default when creating a message object.
          static const MessageType UNKNOWN;
        
