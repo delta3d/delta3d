@@ -142,19 +142,9 @@ namespace dtGame
 
    //////////////////////////////////////////////////////////////////////////////
    //////////////////////////////////////////////////////////////////////////////
-
-   const std::string& NetServerRejectMessage::GetRejectionMessage() const
-   {
-      const StringMessageParameter *mp = static_cast<const StringMessageParameter*> (GetParameter("RejectionMessage"));
-      return mp->GetValue();
-   }
-
-   //////////////////////////////////////////////////////////////////////////////
-   void NetServerRejectMessage::SetRejectionMessage(const std::string &msg)
-   {
-      StringMessageParameter *mp = static_cast<StringMessageParameter*> (GetParameter("RejectionMessage"));
-      mp->SetValue(msg);
-   }
+   DT_IMPLEMENT_MESSAGE_BEGIN(NetServerRejectMessage)
+      DT_ADD_PARAMETER(std::string, RejectionMessage)
+   DT_IMPLEMENT_MESSAGE_END()
 
    //////////////////////////////////////////////////////////////////////////////
    //////////////////////////////////////////////////////////////////////////////
@@ -395,4 +385,15 @@ namespace dtGame
       dtGame::FloatMessageParameter* mp = static_cast<dtGame::FloatMessageParameter*>(GetParameter("MaxWaitTime"));
       mp->SetValue(newValue);
    }
+
+
+   // Destructors
+   ServerSyncControlMessage::~ServerSyncControlMessage() { }
+   ServerFrameSyncMessage::~ServerFrameSyncMessage() { }
+   MachineInfoMessage::~MachineInfoMessage() { }
+   ServerMessageRejected::~ServerMessageRejected() {}
+   MapMessage::~MapMessage() { }
+   GameEventMessage::~GameEventMessage() { }
+   RestartMessage::~RestartMessage() { }
+
 }

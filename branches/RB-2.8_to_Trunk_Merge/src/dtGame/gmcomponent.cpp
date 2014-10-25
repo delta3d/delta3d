@@ -119,6 +119,9 @@ namespace dtGame
    //////////////////////////////////////////////
    GMComponent::GMComponent(const GMComponent&)
    : mComponentPriority(&GameManager::ComponentPriority::NORMAL)
+   , mType(NULL)
+   , mParent(NULL)
+   , mInitialized(false)
    {
    }
 

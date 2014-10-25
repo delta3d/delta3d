@@ -23,6 +23,7 @@
 #define DELTA_DEFAULTMESSAGEPROCESSOR
 
 #include <dtGame/gmcomponent.h>
+#include <dtUtil/getsetmacros.h>
 
 namespace dtGame
 {
@@ -48,7 +49,13 @@ namespace dtGame
        * pass it off to its correct handler function based on its type
        * @param msg The message
        */
-      virtual void ProcessMessage(const Message& msg);
+      /*override*/ void ProcessMessage(const Message& msg);
+
+      /*override*/ void BuildPropertyMap();
+
+      DT_DECLARE_ACCESSOR(bool, AcceptMapLoadRequests);
+      DT_DECLARE_ACCESSOR(bool, AcceptMapChangeRequests);
+      DT_DECLARE_ACCESSOR(bool, AcceptTimeRequests);
 
    protected:
 
@@ -162,6 +169,26 @@ namespace dtGame
        * @param msg The message
        */
       virtual void ProcessPlayerEnteredWorldMessage(const Message& /*msg*/) { }
+
+      /**
+       * Starts a map change.  This closes all the existing maps and loads new ones.
+       * This process takes several frames.
+       * @see GameManager::ChangeMapSet
+       */
+      virtual void ProcessMapChange(const MapMessage& msg);
+
+      /**
+       * Opens the maps listed in the message and loads them into the GM.
+       * @see GameManager::OpenAdditionalMapSet
+       */
+      virtual void ProcessMapLoad(const MapMessage& msg);
+
+      /**
+       * Closes the maps listed in the message and removes the actors from the GM, if they exist.
+       * @see GameManager::CloseAdditionalMapSet
+       */
+      virtual void ProcessMapUnload(const MapMessage& msg);
+
 
    private:
    };

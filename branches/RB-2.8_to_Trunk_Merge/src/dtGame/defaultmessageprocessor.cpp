@@ -22,6 +22,7 @@
 #include <dtGame/defaultmessageprocessor.h>
 
 #include <dtCore/actortype.h>
+#include <dtCore/timer.h>
 
 #include <dtGame/actorupdatemessage.h>
 #include <dtGame/basemessages.h>
@@ -33,14 +34,17 @@
 
 #include <dtUtil/log.h>
 
-using namespace dtCore;
+#include <dtCore/propertymacros.h>
 
 namespace dtGame
 {
 
    ///////////////////////////////////////////////////////////////////////////////
    DefaultMessageProcessor::DefaultMessageProcessor(dtCore::SystemComponentType& type)
-      : GMComponent(type)
+   : GMComponent(type)
+   , mAcceptMapLoadRequests(true)
+   , mAcceptMapChangeRequests(true)
+   , mAcceptTimeRequests(true)
    {
       // So subclasses will use the same name.
       SetName(DEFAULT_NAME);
@@ -70,53 +74,132 @@ namespace dtGame
          }
       }
 
-      if (msg.GetMessageType() == MessageType::TICK_LOCAL ||
-            msg.GetMessageType() == MessageType::TICK_REMOTE)
+      const dtGame::MessageType& msgType = msg.GetMessageType();
+
+      bool processed = false;
+
+      if (msgType == MessageType::TICK_LOCAL ||
+            msgType == MessageType::TICK_REMOTE)
       {
          ProcessTick(static_cast<const TickMessage&>(msg));
+         processed = true;
       }
-      else if (msg.GetMessageType() == MessageType::INFO_ACTOR_UPDATED)
+      else if (msgType.GetCategory() == MessageType::CATEGORY_INFO)
       {
-         ProcessUpdateActor(static_cast<const ActorUpdateMessage&>(msg));
+         processed = true;
+         if (msgType == MessageType::INFO_ACTOR_UPDATED)
+         {
+            ProcessUpdateActor(static_cast<const ActorUpdateMessage&>(msg));
+         }
+         else if (msgType == MessageType::INFO_ACTOR_CREATED)
+         {
+            ProcessCreateActor(static_cast<const ActorUpdateMessage&>(msg));
+         }
+         else if (msgType == MessageType::INFO_ACTOR_DELETED)
+         {
+            ProcessDeleteActor(msg);
+         }
+         else if (msgType == MessageType::INFO_PLAYER_ENTERED_WORLD)
+         {
+            ProcessPlayerEnteredWorldMessage(msg);
+         }
+         else
+         {
+            processed = false;
+         }
       }
-      else if (msg.GetMessageType() == MessageType::INFO_ACTOR_CREATED)
-      {
-         ProcessCreateActor(static_cast<const ActorUpdateMessage&>(msg));
-      }
-      else if (msg.GetMessageType() == MessageType::INFO_ACTOR_DELETED)
-      {
-         ProcessDeleteActor(msg);
-      }
-      else if (msg.GetMessageType() == MessageType::INFO_PLAYER_ENTERED_WORLD)
-      {
-         ProcessPlayerEnteredWorldMessage(msg);
-      }
-      else
+      else if (msgType.GetCategory() == MessageType::CATEGORY_COMMAND)
       {
          //remote = GetGameManager()->GetMachineInfo() != msg.GetSource();
-
-         if (msg.GetMessageType() == MessageType::COMMAND_PAUSE)
+         processed = true;
+         if (msgType == MessageType::COMMAND_PAUSE)
          {
             ProcessPauseCommand(msg);
          }
-         else if (msg.GetMessageType() == MessageType::COMMAND_RESUME)
+         else if (msgType == MessageType::COMMAND_RESUME)
          {
             ProcessResumeCommand(msg);
          }
-         else if (msg.GetMessageType() == MessageType::COMMAND_RESTART)
+         else if (msgType == MessageType::COMMAND_RESTART)
          {
             ProcessRestartCommand(static_cast<const RestartMessage&>(msg));
          }
-         else if (msg.GetMessageType() == MessageType::COMMAND_SET_TIME)
+         else if (msgType == MessageType::COMMAND_SET_TIME)
          {
             ProcessTimeChangeCommand(static_cast<const TimeChangeMessage&>(msg));
          }
          else
          {
-            LOG_DEBUG("DefaultMessageProcessor is processing an unhandled local message of type: " + msg.GetMessageType().GetName());
-            ProcessUnhandledLocalMessage(msg);
+            processed = false;
          }
       }
+      else if (msgType.GetCategory() == MessageType::CATEGORY_REQUEST)
+      {
+         if (mAcceptTimeRequests)
+         {
+            if (msgType == MessageType::REQUEST_PAUSE)
+            {
+               ProcessPauseCommand(msg);
+               processed = true;
+            }
+            else if (msgType == MessageType::REQUEST_RESUME)
+            {
+               ProcessResumeCommand(msg);
+               processed = true;
+            }
+            else if (msgType == MessageType::REQUEST_RESTART)
+            {
+               ProcessRestartCommand(static_cast<const RestartMessage&>(msg));
+               processed = true;
+            }
+            else if (msgType == MessageType::REQUEST_SET_TIME)
+            {
+               ProcessTimeChangeCommand(static_cast<const TimeChangeMessage&>(msg));
+               processed = true;
+            }
+         }
+         if (!processed && mAcceptMapChangeRequests && msgType == MessageType::REQUEST_CHANGE_MAP)
+         {
+            ProcessMapChange(static_cast<const MapMessage&>(msg));
+            processed = true;
+         }
+         if (!processed && mAcceptMapLoadRequests)
+         {
+            if (msgType == MessageType::REQUEST_LOAD_MAP)
+            {
+               ProcessMapLoad(static_cast<const MapMessage&>(msg));
+               processed = true;
+            }
+            else if (msgType == MessageType::REQUEST_UNLOAD_MAP)
+            {
+               ProcessMapUnload(static_cast<const MapMessage&>(msg));
+               processed = true;
+            }
+         }
+      }
+
+      if (!processed)
+      {
+         LOG_DEBUG("DefaultMessageProcessor is processing an unhandled local message of type: " + msgType.GetName());
+         ProcessUnhandledLocalMessage(msg);
+      }
+   }
+
+   DT_IMPLEMENT_ACCESSOR(DefaultMessageProcessor, bool, AcceptMapLoadRequests);
+   DT_IMPLEMENT_ACCESSOR(DefaultMessageProcessor, bool, AcceptMapChangeRequests);
+   DT_IMPLEMENT_ACCESSOR(DefaultMessageProcessor, bool, AcceptTimeRequests);
+
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void DefaultMessageProcessor::BuildPropertyMap()
+   {
+      const dtUtil::RefString GROUP(TYPE->GetName());
+      typedef dtCore::PropertyRegHelper<DefaultMessageProcessor> RegHelperType;
+      RegHelperType propReg(*this, this, GROUP);
+
+      DT_REGISTER_PROPERTY(AcceptMapLoadRequests, "Accept request messages to load or unload additional maps into or out of the GM.", RegHelperType, propReg);
+      DT_REGISTER_PROPERTY(AcceptMapChangeRequests, "Accept request messages to Change the map set in the GM.", RegHelperType, propReg);
+      DT_REGISTER_PROPERTY(AcceptTimeRequests, "Accept request messages to Change the map set in the GM.", RegHelperType, propReg);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -311,7 +394,7 @@ namespace dtGame
    ///////////////////////////////////////////////////////////////////////////////
    void DefaultMessageProcessor::ProcessTimeChangeCommand(const TimeChangeMessage& msg)
    {
-      GetGameManager()->ChangeTimeSettings(msg.GetSimulationTime(), msg.GetTimeScale(), (Timer_t)(msg.GetSimulationClockTime() * 1000000));
+      GetGameManager()->ChangeTimeSettings(msg.GetSimulationTime(), msg.GetTimeScale(), (dtCore::Timer_t)(msg.GetSimulationClockTime() * 1000000));
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -323,5 +406,30 @@ namespace dtGame
    void DefaultMessageProcessor::ProcessUnhandledRemoteMessage(const Message& msg)
    {
    }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void DefaultMessageProcessor::ProcessMapChange(const MapMessage& msg)
+   {
+      dtGame::GameManager::NameVector names;
+      msg.GetMapNames(names);
+      GetGameManager()->ChangeMapSet(names);
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void DefaultMessageProcessor::ProcessMapLoad(const MapMessage& msg)
+   {
+      dtGame::GameManager::NameVector names;
+      msg.GetMapNames(names);
+      GetGameManager()->OpenAdditionalMapSet(names);
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void DefaultMessageProcessor::ProcessMapUnload(const MapMessage& msg)
+   {
+      dtGame::GameManager::NameVector names;
+      msg.GetMapNames(names);
+      GetGameManager()->CloseAdditionalMapSet(names);
+   }
+
 
 } // namespace dtGame
