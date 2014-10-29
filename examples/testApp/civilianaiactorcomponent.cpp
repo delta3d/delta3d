@@ -264,14 +264,14 @@ namespace dtExample
                   animHelper->SetPosesEnabled(true);
                   mLookedAtNearTarget = true;
                   gm->SetTimer("StopLooking", GetOwner<dtGame::GameActorProxy>(), 10.0f, false);
-                  LOG_ALWAYS(mTransformable->GetName() + " Starting to look.");
+                  //LOG_ALWAYS(mTransformable->GetName() + " Starting to look.");
                }
                else if (timerMsg.GetTimerName() == "StopLooking")
                {
                   controller->SetTarget(NULL);
                   animHelper->SetPosesEnabled(false);
                   mLookedAtNearTarget = true;
-                  LOG_ALWAYS(mTransformable->GetName() + " Stopping looking.");
+                  //LOG_ALWAYS(mTransformable->GetName() + " Stopping looking.");
                }
                else if (mLookedAtNearTarget && dist.length2() > mLookAtCameraRange * mLookAtCameraRange)
                {
@@ -281,7 +281,7 @@ namespace dtExample
                      animHelper->SetPosesEnabled(false);
                   }
                   mLookedAtNearTarget = false;
-                  LOG_ALWAYS(mTransformable->GetName() + " Out of range reset.");
+                  //LOG_ALWAYS(mTransformable->GetName() + " Out of range reset.");
                }
             }
          }
