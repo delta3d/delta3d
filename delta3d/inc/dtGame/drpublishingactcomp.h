@@ -67,9 +67,6 @@ namespace dtGame
       virtual void OnAddedToActor(dtGame::GameActor& actor);
       virtual void OnRemovedFromActor(dtGame::GameActor& actor);
 
-      /// react to game tick messages - Note, we check for publish in 'remote' even for local actors.
-      virtual void OnTickRemote(const dtGame::TickMessage& tickMessage);
-
       /// Called when the parent actor enters the "world".
       virtual void OnEnteredWorld();
 
@@ -253,6 +250,9 @@ namespace dtGame
         * @see SetVelocityAverageFrameCount
         */
        virtual void CalculateCurrentVelocity(float deltaTime, const osg::Vec3& pos, const osg::Vec3& rot);
+
+       /// react to game tick messages - Note, we check for publish in 'remote' even for local actors.
+       virtual void UpdatePublishingData(const dtGame::TickMessage& tickMessage);
 
    private:
        dtCore::RefPtr<Invokable> mTickInvokable;

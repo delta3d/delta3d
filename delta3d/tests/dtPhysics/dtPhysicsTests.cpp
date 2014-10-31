@@ -66,6 +66,7 @@
 #include <osg/Geode>
 #include <osg/Shape>
 #include <osg/ShapeDrawable>
+#include <osg/ComputeBoundsVisitor>
 
 #include <pal/pal.h>
 #include <pal/palFactory.h>
@@ -87,6 +88,7 @@ namespace dtPhysics
       CPPUNIT_TEST(testMaterialActor);
       CPPUNIT_TEST(testGeometryMarginPerEngine);
       CPPUNIT_TEST(testObjectPerEngine);
+      CPPUNIT_TEST(testObjectConvexPerEngine);
       CPPUNIT_TEST(testObjectCollisionPerEngine);
       CPPUNIT_TEST(testObjectOffsetPerEngine);
       CPPUNIT_TEST(testObjectVisualTransformPerEngine);
@@ -101,8 +103,6 @@ namespace dtPhysics
       CPPUNIT_TEST(testObjectShapeCalcOriginOffsetPerEngine);
       CPPUNIT_TEST(testObjectDeleteWithConstraintsPerEngine);
       CPPUNIT_TEST(testActCompPerEngine);
-      CPPUNIT_TEST(testActCompDeprecatedPropsNoObjectPerEngine);
-      CPPUNIT_TEST(testActCompDeprecatedPropsWithObjectPerEngine);
       CPPUNIT_TEST(testConvexHullCachingPerEngine);
       CPPUNIT_TEST(testComponentPerEngine);
       CPPUNIT_TEST(testCallbacksPerEngine);
@@ -123,6 +123,7 @@ namespace dtPhysics
       void testObjectCollisionPerEngine();
       void testObjectOffsetPerEngine();
       void testObjectVisualTransformPerEngine();
+      void testObjectConvexPerEngine();
       void testObjectDynamicsPerEngine();
       void testObjectKinematicPerEngine();
       void testObjectVelocityAtPointPerEngine();
@@ -134,8 +135,6 @@ namespace dtPhysics
       void testObjectShapeCalcOriginOffsetPerEngine();
       void testObjectDeleteWithConstraintsPerEngine();
       void testActCompPerEngine();
-      void testActCompDeprecatedPropsNoObjectPerEngine();
-      void testActCompDeprecatedPropsWithObjectPerEngine();
       void testConvexHullCachingPerEngine();
       void testComponentPerEngine();
       void testCallbacksPerEngine();
@@ -154,6 +153,7 @@ namespace dtPhysics
       void testPhysicsObjectWithOffset(const std::string& engine);
       void testPhysicsObjectWithOffsetAndShape(dtPhysics::PrimitiveType& shapeType);
       void testPhysicsObjectVisualTransform(const std::string& engine);
+      void testPhysicsObjectConvex(const std::string& engine);
       void testPhysicsObjectDynamics(const std::string& engine);
       void testPhysicsObjectKinematic(const std::string& engine);
 
@@ -166,9 +166,6 @@ namespace dtPhysics
       void testPhysicsObjectDeleteWithConstraints(const std::string& engine);
 
       void testPhysicsActComp(const std::string& engine);
-      void testPhysicsActCompDeprecatedProps(const std::string& engine, bool createObject);
-      void testPhysicsActCompDeprecatedPropsNoObject(const std::string& engine);
-      void testPhysicsActCompDeprecatedPropsWithObject(const std::string& engine);
       void testConvexHullCaching(const std::string& engine);
       void testPhysicsWorld(const std::string& engine);
       void testCallbacks(const std::string& engine);
@@ -256,11 +253,13 @@ namespace dtPhysics
          dtCore::System::GetInstance().SetShutdownOnWindowClose(false);
          dtCore::System::GetInstance().Start();
 
+         dtCore::Project::GetInstance().SetContext(dtUtil::GetDeltaRootPath() + "/examples/data", true);
+
          mGM = new dtGame::GameManager(*GetGlobalApplication().GetScene());
          mGM->SetApplication(GetGlobalApplication());
          mGM->LoadActorRegistry(DTPHYSICS_REGISTRY);
 
-         dtCore::System::GetInstance().Step();
+         dtCore::System::GetInstance().Step(0.1667);
          //SimCore::MessageType::RegisterMessageTypes(mGM->GetMessageFactory());
       }
       catch(const dtUtil::Exception& ex)
@@ -283,6 +282,8 @@ namespace dtPhysics
          mGM->UnloadActorRegistry(DTPHYSICS_REGISTRY);
          mGM = NULL;
       }
+      dtCore::Project::GetInstance().ClearAllContexts();
+
    }
 
    /////////////////////////////////////////////////////////
@@ -339,6 +340,13 @@ namespace dtPhysics
    {
       std::for_each(GetPhysicsEngineList().begin(), GetPhysicsEngineList().end(),
                dtUtil::MakeFunctor(&dtPhysicsTests::testPhysicsObjectVisualTransform, this));
+   }
+
+   /////////////////////////////////////////////////////////
+   void dtPhysicsTests::testObjectConvexPerEngine()
+   {
+      std::for_each(GetPhysicsEngineList().begin(), GetPhysicsEngineList().end(),
+               dtUtil::MakeFunctor(&dtPhysicsTests::testPhysicsObjectConvex, this));
    }
 
    /////////////////////////////////////////////////////////
@@ -401,10 +409,13 @@ namespace dtPhysics
          CPPUNIT_ASSERT(box.valid());
 
          VectorType center, extents;
-         PhysicsObject::CalculateOriginAndExtentsForNode(PrimitiveType::BOX, *box, center, extents);
+         osg::ComputeBoundsVisitor bb;
+
+         const_cast<osg::Node&>(*box).accept(bb);
+         PhysicsObject::CalculateOriginAndExtentsForNode(PrimitiveType::BOX, bb.getBoundingBox(), center, extents);
 
          CPPUNIT_ASSERT(dtUtil::Equivalent(center, VectorType(0.0f, 0.0f, 0.0f), 0.01f));
-         CPPUNIT_ASSERT_EQUAL(extents, VectorType(1.0f, 1.0f, 1.0f));
+         CPPUNIT_ASSERT_EQUAL(VectorType(1.0f, 1.0f, 1.0f), extents);
          center.set(0.0f, 0.0f, 0.0f);
          extents.set(0.0f, 0.0f, 0.0f);
 
@@ -415,28 +426,40 @@ namespace dtPhysics
          xform.SetTranslation(offsetCenter);
          xformable->SetTransform(xform);
 
-         PhysicsObject::CalculateOriginAndExtentsForNode(PrimitiveType::BOX, *xformable->GetOSGNode(), center, extents);
+         bb.reset();
+         const_cast<osg::Node&>(*xformable->GetOSGNode()).accept(bb);
+         PhysicsObject::CalculateOriginAndExtentsForNode(PrimitiveType::BOX, bb.getBoundingBox(), center, extents);
          CPPUNIT_ASSERT_EQUAL(offsetCenter, center);
          CPPUNIT_ASSERT_EQUAL(VectorType(1.0f, 1.0f, 1.0f), extents);
 
-         PhysicsObject::CalculateOriginAndExtentsForNode(PrimitiveType::SPHERE, *xformable->GetOSGNode(), center, extents);
+         bb.reset();
+         const_cast<osg::Node&>(*xformable->GetOSGNode()).accept(bb);
+         PhysicsObject::CalculateOriginAndExtentsForNode(PrimitiveType::SPHERE, bb.getBoundingBox(), center, extents);
          CPPUNIT_ASSERT_EQUAL(offsetCenter, center);
          CPPUNIT_ASSERT_EQUAL(VectorType(0.5f, 0.0f, 0.0f), extents);
 
-         PhysicsObject::CalculateOriginAndExtentsForNode(PrimitiveType::CYLINDER, *xformable->GetOSGNode(), center, extents);
+         bb.reset();
+         const_cast<osg::Node&>(*xformable->GetOSGNode()).accept(bb);
+         PhysicsObject::CalculateOriginAndExtentsForNode(PrimitiveType::CYLINDER, bb.getBoundingBox(), center, extents);
+         CPPUNIT_ASSERT_EQUAL(offsetCenter, center);
+         CPPUNIT_ASSERT_EQUAL(VectorType(1.0f, 0.5f, 0.0f), extents);
+
+         bb.reset();
+         const_cast<osg::Node&>(*xformable->GetOSGNode()).accept(bb);
+         PhysicsObject::CalculateOriginAndExtentsForNode(PrimitiveType::CAPSULE, bb.getBoundingBox(), center, extents);
          CPPUNIT_ASSERT_EQUAL(offsetCenter, center);
          CPPUNIT_ASSERT_EQUAL(VectorType(1.0f, 0.5f, 0.0f), extents);
 
          VectorType zeroVec(0.0f, 0.0f, 0.0f);
-         PhysicsObject::CalculateOriginAndExtentsForNode(PrimitiveType::CONVEX_HULL, *xformable->GetOSGNode(), center, extents);
+         PhysicsObject::CalculateOriginAndExtentsForNode(PrimitiveType::CONVEX_HULL, bb.getBoundingBox(), center, extents);
          CPPUNIT_ASSERT_EQUAL(zeroVec, center);
          CPPUNIT_ASSERT_EQUAL(zeroVec, extents);
 
-         PhysicsObject::CalculateOriginAndExtentsForNode(PrimitiveType::TRIANGLE_MESH, *xformable->GetOSGNode(), center, extents);
+         PhysicsObject::CalculateOriginAndExtentsForNode(PrimitiveType::TRIANGLE_MESH, bb.getBoundingBox(), center, extents);
          CPPUNIT_ASSERT_EQUAL(zeroVec, center);
          CPPUNIT_ASSERT_EQUAL(zeroVec, extents);
 
-         PhysicsObject::CalculateOriginAndExtentsForNode(PrimitiveType::TERRAIN_MESH, *xformable->GetOSGNode(), center, extents);
+         PhysicsObject::CalculateOriginAndExtentsForNode(PrimitiveType::TERRAIN_MESH, bb.getBoundingBox(), center, extents);
          CPPUNIT_ASSERT_EQUAL(zeroVec, center);
          CPPUNIT_ASSERT_EQUAL(zeroVec, extents);
 
@@ -474,20 +497,6 @@ namespace dtPhysics
    {
       std::for_each(GetPhysicsEngineList().begin(), GetPhysicsEngineList().end(),
                dtUtil::MakeFunctor(&dtPhysicsTests::testPhysicsActComp, this));
-   }
-
-   /////////////////////////////////////////////////////////
-   void dtPhysicsTests::testActCompDeprecatedPropsNoObjectPerEngine()
-   {
-      std::for_each(GetPhysicsEngineList().begin(), GetPhysicsEngineList().end(),
-               dtUtil::MakeFunctor(&dtPhysicsTests::testPhysicsActCompDeprecatedPropsNoObject, this));
-   }
-
-   /////////////////////////////////////////////////////////
-   void dtPhysicsTests::testActCompDeprecatedPropsWithObjectPerEngine()
-   {
-      std::for_each(GetPhysicsEngineList().begin(), GetPhysicsEngineList().end(),
-               dtUtil::MakeFunctor(&dtPhysicsTests::testPhysicsActCompDeprecatedPropsWithObject, this));
    }
 
    /////////////////////////////////////////////////////////
@@ -530,8 +539,40 @@ namespace dtPhysics
       }
    }
 
-
    /////////////////////////////////////////////////////////
+   void dtPhysicsTests::testPhysicsObjectConvex(const std::string& engine)
+   {
+      ChangeEngine(engine);
+      // test constructor name
+      dtCore::RefPtr<PhysicsObject> physicsObject = new PhysicsObject("mypalFriend");
+      physicsObject->SetMass(20.0);
+      physicsObject->SetPrimitiveType(PrimitiveType::CONVEX_HULL);
+      physicsObject->SetMeshResource(dtCore::ResourceDescriptor("StaticMeshes:chairs:sunchair:SunChair_PHYSICS.osg"));
+      physicsObject->SetMeshScale(VectorType(20.0f, 20.0f, 20.0f));
+      physicsObject->SetOriginOffset(VectorType(0.0f, 0.0f, 0.0f));
+      VectorType position(0.0f, 0.0f, 100.0f);
+      physicsObject->SetTranslation(position);
+      CPPUNIT_ASSERT(physicsObject->Create(NULL, true));
+
+      CPPUNIT_ASSERT_MESSAGE("The auto compute origin offset should not occur on a mesh.", dtUtil::Equivalent(VectorType(0.0f, 0.0f, 0.0f), VectorType(0.0f, 0.0f, 0.0f), 0.001f));
+      dtPhysics::RayCast ray;
+      dtPhysics::RayCast::Report report;
+
+      ray.SetOrigin(VectorType(0.0f, 0.0f, 0.0f));
+      // The ray is set to hit the chair off the origin by 15 units to make sure the scale by 20 worked.  The 1.5 just makes
+      // sure it overshoots to go through the target.
+      ray.SetDirection((position + VectorType(0.0f, 15.0f, 0.0f)) * 1.5f);
+
+      std::string shapeMsg("The Convex Hull should have been hit with the ray because the chair is scaled up.");
+
+      shapeMsg +=" on engine "+ PhysicsWorld::GetInstance().GetEngineName();
+
+      PhysicsWorld::GetInstance().TraceRay(ray, report);
+
+      CPPUNIT_ASSERT_MESSAGE(shapeMsg, report.mHasHitObject);
+
+   }
+
    void dtPhysicsTests::testPhysicsObjectDynamics(const std::string& engine)
    {
       ChangeEngine(engine);
@@ -560,7 +601,7 @@ namespace dtPhysics
       CPPUNIT_ASSERT_EQUAL_MESSAGE("If the body has not been created, the angular velocity should always be 0.",
                VectorType(), physicsObject->GetAngularVelocity());
 
-      physicsObject->CreateFromProperties();
+      physicsObject->Create();
 
       // These just make sure it doesn't crash.  TODO make a test to really test this works
       physicsObject->AddForce(force);
@@ -597,7 +638,7 @@ namespace dtPhysics
          // Set different collision groups.
          physicsObject[i]->SetCollisionGroup(i);
          physicsObject[i]->SetNotifyCollisions(false);
-         physicsObject[i]->CreateFromProperties();
+         physicsObject[i]->Create();
       }
 
       dtPhysics::PhysicsWorld::GetInstance().UpdateStep(0.01666666f);
@@ -677,7 +718,7 @@ namespace dtPhysics
       physicsObject->SetExtents(VectorType(1.0, 1.0, 1.0));
       physicsObject->SetVisualToBodyTransform(xformOffset);
 
-      physicsObject->CreateFromProperties();
+      physicsObject->Create();
 
       physicsObject->SetTransformAsVisual(xformVisual);
       TransformType xformVisualRetrieved;
@@ -743,7 +784,7 @@ namespace dtPhysics
       CPPUNIT_ASSERT(mat != NULL);
 
       PhysicsMaterials& materials = PhysicsWorld::GetInstance().GetMaterials();
-      materials.NewMaterial(matDD->GetName(), matDD->GetMateralDef());
+      materials.NewMaterial(matDD->GetName(), matDD->GetMaterialDef());
       Material* uniqueMaterial = materials.GetMaterial(matDD->GetName());
 
       // Pre set this to make sure it gets set propertly on create from properties.
@@ -764,14 +805,29 @@ namespace dtPhysics
 
       ///////// CREATE //////////////
       CPPUNIT_ASSERT_MESSAGE("Should be able to call CreateFromPrimitive on a physics object",
-               physicsObject->CreateFromProperties());
+               physicsObject->Create());
 
       CPPUNIT_ASSERT_MESSAGE("The Material should default to, of all things, the default one.",
                physicsObject->GetMaterial() == materials.GetMaterial(PhysicsMaterials::DEFAULT_MATERIAL_NAME));
 
       physicsObject->SetMaterial(uniqueMaterial);
+      CPPUNIT_ASSERT(physicsObject->GetMaterial() == uniqueMaterial);
 
-      BaseBodyWrapper* baseBodyWrapper = physicsObject->GetBaseBodyWrapper();
+      
+      // Test assignment of a material by index.
+      Material* newMat = materials.NewMaterial("AnotherMaterial", matDD->GetMaterialDef());
+      MaterialIndex newMatIndex = newMat->GetId();
+
+      CPPUNIT_ASSERT(physicsObject->GetMaterial() != newMat);
+      CPPUNIT_ASSERT(physicsObject->SetMaterialByIndex(newMatIndex));
+      CPPUNIT_ASSERT(physicsObject->GetMaterial() == newMat);
+
+      // Ensure assigning a bad index does not change the current material assignment.
+      CPPUNIT_ASSERT( ! physicsObject->SetMaterialByIndex(12345));
+      CPPUNIT_ASSERT(physicsObject->GetMaterial() == newMat);
+
+
+      BaseBodyWrapper* baseBodyWrapper = physicsObject->GetBodyWrapper();
 
       CPPUNIT_ASSERT(baseBodyWrapper != NULL);
 
@@ -842,8 +898,8 @@ namespace dtPhysics
 
       for (unsigned i = 0; i < 20; ++i)
       {
-         CPPUNIT_ASSERT_MESSAGE("Should be able to call CreateFromProperties multiple times to regenerate the object",
-                  physicsObject->CreateFromProperties());
+         CPPUNIT_ASSERT_MESSAGE("Should be able to call Create multiple times to regenerate the object",
+                  physicsObject->Create());
          CPPUNIT_ASSERT_EQUAL(1U, physicsObject->GetNumGeometries());
       }
 
@@ -875,6 +931,7 @@ namespace dtPhysics
          testPhysicsObjectWithOffsetAndShape(PrimitiveType::BOX);
          testPhysicsObjectWithOffsetAndShape(PrimitiveType::SPHERE);
          testPhysicsObjectWithOffsetAndShape(PrimitiveType::CYLINDER);
+         testPhysicsObjectWithOffsetAndShape(PrimitiveType::CAPSULE);
          testPhysicsObjectWithOffsetAndShape(PrimitiveType::CONVEX_HULL);
          testPhysicsObjectWithOffsetAndShape(PrimitiveType::TRIANGLE_MESH);
       }
@@ -904,7 +961,7 @@ namespace dtPhysics
       dtCore::RefPtr<osg::Sphere> sphere = new osg::Sphere(osg::Vec3(0.0f, 0.0f, 0.0f), 3.0f);
       dtCore::RefPtr<osg::ShapeDrawable> shapeDraw = new osg::ShapeDrawable(sphere.get());
       geode->addDrawable(shapeDraw.get());
-      po->CreateFromProperties(geode);
+      po->Create(geode);
 
       dtCore::Transform xformActual;
 
@@ -942,11 +999,11 @@ namespace dtPhysics
          dtCore::RefPtr<osg::Sphere> sphere = new osg::Sphere(osg::Vec3(0.0f, 0.0f, 0.0f), 3.0f);
          dtCore::RefPtr<osg::ShapeDrawable> shapeDraw = new osg::ShapeDrawable(sphere.get());
          geode->addDrawable(shapeDraw.get());
-         po->CreateFromProperties(geode);
+         po->Create(geode);
       }
       else
       {
-         po->CreateFromProperties();
+         po->Create();
       }
 
       CPPUNIT_ASSERT_EQUAL(1U, po->GetNumGeometries());
@@ -1054,7 +1111,7 @@ namespace dtPhysics
          po->SetOriginOffset(originOffset);
          po->SetPrimitiveType(PrimitiveType::BOX);
 
-         po->CreateFromProperties(xformable->GetOSGNode(), true);
+         po->Create(xformable->GetOSGNode(), true);
 
          CPPUNIT_ASSERT_EQUAL_MESSAGE("The extents should have been calculated from the unit box",
                   /*dtUtil::Equivalent(*/VectorType(1.0f, 1.0f, 1.0f), po->GetExtents());//, 0.01f));
@@ -1077,7 +1134,7 @@ namespace dtPhysics
       po->SetPrimitiveType(PrimitiveType::SPHERE);
       po->SetExtents(VectorType(1.0f, 0.0f, 0.0f));
       po->SetMass(30.0f);
-      po->CreateFromProperties();
+      po->Create();
 
       po->SetAngularVelocity(VectorType(0.0f, 20.0f, 0.0f));
       po->SetLinearVelocity(VectorType(30.0f, 25.0f, 19.7f));
@@ -1095,7 +1152,7 @@ namespace dtPhysics
       po->SetPrimitiveType(PrimitiveType::SPHERE);
       po->SetExtents(VectorType(1.0f, 0.0f, 0.0f));
       po->SetMass(30.0f);
-      po->CreateFromProperties();
+      po->Create();
 
       VectorType inertia = po->GetMomentOfInertia();
       po->SetMomentOfInertia(VectorType(0.0f, 0.0f, 0.0f));
@@ -1122,9 +1179,9 @@ namespace dtPhysics
       CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("All activation setting should default to -1, engine default",
                po->GetActivationTimeThreshold(), Real(-1.0), Real(0.1));
 
-      po->CreateFromProperties();
+      po->Create();
 
-      palActivationSettings* activationImpl = dynamic_cast<palActivationSettings*>(&po->GetBaseBodyWrapper()->GetPalBodyBase());
+      palActivationSettings* activationImpl = dynamic_cast<palActivationSettings*>(&po->GetBodyWrapper()->GetPalBodyBase());
       // No activation support, so return
       if (activationImpl == NULL)
       {
@@ -1179,7 +1236,7 @@ namespace dtPhysics
       CPPUNIT_ASSERT_DOUBLES_EQUAL(Real(0.1), po->GetLinearDamping(), Real(0.01));
       CPPUNIT_ASSERT_DOUBLES_EQUAL(Real(0.2), po->GetAngularDamping(), Real(0.01));
 
-      po->CreateFromProperties();
+      po->Create();
 
       CPPUNIT_ASSERT_DOUBLES_EQUAL(Real(0.1), po->GetLinearDamping(), Real(0.01));
       CPPUNIT_ASSERT_DOUBLES_EQUAL(Real(0.2), po->GetAngularDamping(), Real(0.01));
@@ -1203,16 +1260,16 @@ namespace dtPhysics
       ChangeEngine(engine);
       dtCore::RefPtr<PhysicsObject> poA = new PhysicsObject("jojo");
       poA->SetMass(30.0f);
-      poA->CreateFromProperties();
+      poA->Create();
 
       dtCore::RefPtr<PhysicsObject> poB = new PhysicsObject("mojo");
       poB->SetMass(50.0f);
-      poB->CreateFromProperties();
+      poB->Create();
 
-      palLink* rigidLinkBefore = dtPhysics::PhysicsWorld::GetInstance().GetPalFactory()->CreateRigidLink(&poA->GetBaseBodyWrapper()->GetPalBodyBase(),
-            &poB->GetBaseBodyWrapper()->GetPalBodyBase());
-      palLink* rigidLinkAfter = dtPhysics::PhysicsWorld::GetInstance().GetPalFactory()->CreateRigidLink(&poA->GetBaseBodyWrapper()->GetPalBodyBase(),
-            &poB->GetBaseBodyWrapper()->GetPalBodyBase());
+      palLink* rigidLinkBefore = dtPhysics::PhysicsWorld::GetInstance().GetPalFactory()->CreateRigidLink(&poA->GetBodyWrapper()->GetPalBodyBase(),
+            &poB->GetBodyWrapper()->GetPalBodyBase());
+      palLink* rigidLinkAfter = dtPhysics::PhysicsWorld::GetInstance().GetPalFactory()->CreateRigidLink(&poA->GetBodyWrapper()->GetPalBodyBase(),
+            &poB->GetBodyWrapper()->GetPalBodyBase());
 
       CPPUNIT_ASSERT(rigidLinkBefore != NULL);
       CPPUNIT_ASSERT(rigidLinkAfter != NULL);
@@ -1255,7 +1312,7 @@ namespace dtPhysics
       dtCore::RefPtr<Geometry> geom = Geometry::CreateBoxGeometry(TransformType(), VectorType(1.0, 1.0, 1.0), 1.0f);
       po->CreateFromGeometry(*geom);
 
-      palActivationSettings* activationImpl = dynamic_cast<palActivationSettings*>(&po->GetBaseBodyWrapper()->GetPalBodyBase());
+      palActivationSettings* activationImpl = dynamic_cast<palActivationSettings*>(&po->GetBodyWrapper()->GetPalBodyBase());
 
       if (activationImpl != NULL)
       {
@@ -1415,66 +1472,6 @@ namespace dtPhysics
    }
 
    /////////////////////////////////////////////////////////
-   void dtPhysicsTests::testPhysicsActCompDeprecatedProps(const std::string& engine, bool createObject)
-   {
-      ChangeEngine(engine);
-      dtCore::RefPtr<PhysicsActComp> testAC = new PhysicsActComp();
-      dtCore::RefPtr<PhysicsObject> po = new PhysicsObject("jojo");
-
-      if (createObject)
-      {
-         testAC->AddPhysicsObject(*po);
-      }
-
-      // just call this to create the properties.
-      testAC->BuildPropertyMap();
-
-      dtCore::RefPtr<dtCore::ActorProperty> tempProp;
-
-      tempProp = testAC->GetDeprecatedProperty("MassForAgeia");
-      CPPUNIT_ASSERT_MESSAGE("A deprecated property should exist for MassForAgeia", tempProp.valid());
-      tempProp->FromString("35.0");
-
-      tempProp = testAC->GetDeprecatedProperty("Collision Group");
-      CPPUNIT_ASSERT_MESSAGE("A deprecated property should exist for Collision Group", tempProp.valid());
-      tempProp->FromString("12");
-
-      tempProp = testAC->GetDeprecatedProperty("Dimensions");
-      CPPUNIT_ASSERT_MESSAGE("A deprecated property should exist for Dimensions", tempProp.valid());
-      tempProp->FromString("1.0 3.5 2.7");
-
-      tempProp = testAC->GetDeprecatedProperty("IsActorKinematic");
-      CPPUNIT_ASSERT_MESSAGE("A deprecated property should exist for IsActorKinematic", tempProp.valid());
-      tempProp->FromString("true");
-
-      if (createObject)
-      {
-         CPPUNIT_ASSERT_DOUBLES_EQUAL(35.0f, po->GetMass(), 0.1f);
-         CPPUNIT_ASSERT_EQUAL(12, po->GetCollisionGroup());
-         CPPUNIT_ASSERT(dtUtil::Equivalent(osg::Vec3(1.0f, 3.5f, 2.7f), po->GetExtents(), 0.1f));
-         CPPUNIT_ASSERT_EQUAL(MechanicsType::KINEMATIC, po->GetMechanicsType());
-      }
-      else
-      {
-         CPPUNIT_ASSERT_DOUBLES_EQUAL(35.0f, testAC->GetMass(), 0.1f);
-         CPPUNIT_ASSERT_EQUAL(12, testAC->GetDefaultCollisionGroup());
-         CPPUNIT_ASSERT(dtUtil::Equivalent(osg::Vec3(1.0f, 3.5f, 2.7f), testAC->GetDimensions(), 0.1f));
-      }
-   }
-
-   /////////////////////////////////////////////////////////
-   void dtPhysicsTests::testPhysicsActCompDeprecatedPropsNoObject(const std::string& engine)
-   {
-      testPhysicsActCompDeprecatedProps(engine, false);
-   }
-
-   /////////////////////////////////////////////////////////
-   void dtPhysicsTests::testPhysicsActCompDeprecatedPropsWithObject(const std::string& engine)
-   {
-      testPhysicsActCompDeprecatedProps(engine, true);
-   }
-
-   /////////////////////////////////////////////////////////
    void dtPhysicsTests::testConvexHullCaching(const std::string& engine)
    {
       dtPhysics::VertexData::ClearAllCachedData();
@@ -1507,19 +1504,19 @@ namespace dtPhysics
          po->SetPrimitiveType(PrimitiveType::CONVEX_HULL);
 
          dtCore::Timer_t timerBegin = dtCore::Timer::Instance()->Tick();
-         po->CreateFromProperties(xformable->GetOSGNode(), true, cachingString);
+         po->Create(xformable->GetOSGNode(), true, cachingString);
          dtCore::Timer_t timerEnd = dtCore::Timer::Instance()->Tick();
 
          po->CleanUp();
 
          double elapsedFirst = dtCore::Timer::Instance()->DeltaMil(timerBegin, timerEnd);
 
-         CPPUNIT_ASSERT_MESSAGE("A cached convex hull should exist",
-                  dtPhysics::VertexData::FindCachedData(cachingString) != NULL);
+         CPPUNIT_ASSERT_MESSAGE("A cached convex hull should exist with name " + cachingString + "_Polytope",
+                  dtPhysics::VertexData::FindCachedData(cachingString + "_Polytope") != NULL);
 
          // Creating it a second time should use the cache.
          timerBegin = dtCore::Timer::Instance()->Tick();
-         po->CreateFromProperties(xformable->GetOSGNode(), true, cachingString);
+         po->Create(xformable->GetOSGNode(), true, cachingString);
          timerEnd = dtCore::Timer::Instance()->Tick();
 
          double elapsedSecond = dtCore::Timer::Instance()->DeltaMil(timerBegin, timerEnd);
@@ -1638,6 +1635,11 @@ namespace dtPhysics
       dtCore::RefPtr<PhysicsActComp> tehVoodoo1 = new PhysicsActComp();
       dtCore::RefPtr<PhysicsActComp> tehVoodoo2 = new PhysicsActComp();
 
+      // Need to create a physics object because, if not, the physics may not step.
+      dtCore::RefPtr<PhysicsObject> poA = new PhysicsObject("jojo");
+      poA->SetMass(30.0f);
+      poA->Create();
+
       // fill in their names
       tehVoodoo1->SetName("tehVoodooActorComp1");
       tehVoodoo2->SetName("tehVoodooActorComp2");
@@ -1661,7 +1663,7 @@ namespace dtPhysics
       int steps = dtPhysics::PhysicsWorld::GetInstance().GetNumStepsSinceStartup();
       // Quick check to make sure the physics didn't step.
       mPhysicsComp->SetSteppingEnabled(false);
-      dtCore::System::GetInstance().Step(0.016667);
+      dtCore::System::GetInstance().Step(0.1667);
       int stepsNext = dtPhysics::PhysicsWorld::GetInstance().GetNumStepsSinceStartup();
       CPPUNIT_ASSERT_EQUAL(steps, stepsNext);
       CPPUNIT_ASSERT(!cb1.HasCalledPre());
@@ -1672,7 +1674,7 @@ namespace dtPhysics
       CPPUNIT_ASSERT(!cb2.HasCalledAction());
 
       mPhysicsComp->SetSteppingEnabled(true);
-      dtCore::System::GetInstance().Step(0.016667);
+      dtCore::System::GetInstance().Step(0.1667);
       stepsNext = dtPhysics::PhysicsWorld::GetInstance().GetNumStepsSinceStartup();
       CPPUNIT_ASSERT(steps < stepsNext);
       CPPUNIT_ASSERT(cb1.HasCalledPre());
@@ -1694,7 +1696,7 @@ namespace dtPhysics
       tehVoodoo2->SetPostPhysicsCallback(PhysicsActComp::UpdateCallback());
       tehVoodoo2->SetActionUpdateCallback(PhysicsActComp::ActionUpdateCallback());
 
-      dtCore::System::GetInstance().Step(0.016667);
+      dtCore::System::GetInstance().Step(0.1667);
 
       CPPUNIT_ASSERT(!cb1.HasCalledPre());
       CPPUNIT_ASSERT(!cb1.HasCalledPost());
@@ -1720,83 +1722,80 @@ namespace dtPhysics
       dtCore::RefPtr<dtPhysics::MaterialActor> matActor = dynamic_cast<dtPhysics::MaterialActor*>(mat->GetDrawable());
       CPPUNIT_ASSERT_MESSAGE("Failed to create material actor", matActor != NULL);
 
-      CPPUNIT_ASSERT_EQUAL_MESSAGE("The Default is wrong", matActor->GetMateralDef().GetRestitution(), 0.2f);
-      CPPUNIT_ASSERT_EQUAL_MESSAGE("The Default is wrong", matActor->GetMateralDef().GetStaticFriction(), 0.5f);
-      CPPUNIT_ASSERT_EQUAL_MESSAGE("The Default is wrong", matActor->GetMateralDef().GetKineticFriction(), 0.5f);
-      CPPUNIT_ASSERT_MESSAGE("The Default is wrong", !matActor->GetMateralDef().GetDisableStrongFriction());
-      CPPUNIT_ASSERT_MESSAGE("The Default is wrong", !matActor->GetMateralDef().GetEnableAnisotropicFriction());
-      CPPUNIT_ASSERT_EQUAL_MESSAGE("The Default is wrong", matActor->GetMateralDef().GetStaticAnisotropicFriction(), osg::Vec3(1.0f, 1.0f, 1.0f));
-      CPPUNIT_ASSERT_EQUAL_MESSAGE("The Default is wrong", matActor->GetMateralDef().GetKineticAnisotropicFriction(), osg::Vec3(1.0f, 1.0f, 1.0f));
-      CPPUNIT_ASSERT_EQUAL_MESSAGE("The Default is wrong", matActor->GetMateralDef().GetDirOfAnisotropy(), osg::Vec3(1.0f, 0.0f, 0.0f));
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("The Default is wrong", matActor->GetMaterialDef().GetRestitution(), 0.2f);
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("The Default is wrong", matActor->GetMaterialDef().GetStaticFriction(), 0.5f);
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("The Default is wrong", matActor->GetMaterialDef().GetKineticFriction(), 0.5f);
+      CPPUNIT_ASSERT_MESSAGE("The Default is wrong", !matActor->GetMaterialDef().GetDisableStrongFriction());
+      CPPUNIT_ASSERT_MESSAGE("The Default is wrong", !matActor->GetMaterialDef().GetEnableAnisotropicFriction());
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("The Default is wrong", matActor->GetMaterialDef().GetStaticAnisotropicFriction(), osg::Vec3(1.0f, 1.0f, 1.0f));
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("The Default is wrong", matActor->GetMaterialDef().GetKineticAnisotropicFriction(), osg::Vec3(1.0f, 1.0f, 1.0f));
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("The Default is wrong", matActor->GetMaterialDef().GetDirOfAnisotropy(), osg::Vec3(1.0f, 0.0f, 0.0f));
 
       // check properties on the material.
-      matActor->GetMateralDef().SetRestitution(0.3f);
-      matActor->GetMateralDef().SetStaticFriction(71.0f);
-      matActor->GetMateralDef().SetKineticFriction(9.0f);
-      matActor->GetMateralDef().SetDisableStrongFriction(true);
-      matActor->GetMateralDef().SetEnableAnisotropicFriction(true);
-      matActor->GetMateralDef().SetStaticAnisotropicFriction(osg::Vec3(1.0, 1.1, 0.3));
-      matActor->GetMateralDef().SetKineticAnisotropicFriction(osg::Vec3(0.9, 1.2, 0.4));
-      matActor->GetMateralDef().SetDirOfAnisotropy(osg::Vec3(0.707, 0.0, 0.707));
+      matActor->GetMaterialDef().SetRestitution(0.3f);
+      matActor->GetMaterialDef().SetStaticFriction(71.0f);
+      matActor->GetMaterialDef().SetKineticFriction(9.0f);
+      matActor->GetMaterialDef().SetDisableStrongFriction(true);
+      matActor->GetMaterialDef().SetEnableAnisotropicFriction(true);
+      matActor->GetMaterialDef().SetStaticAnisotropicFriction(osg::Vec3(1.0, 1.1, 0.3));
+      matActor->GetMaterialDef().SetKineticAnisotropicFriction(osg::Vec3(0.9, 1.2, 0.4));
+      matActor->GetMaterialDef().SetDirOfAnisotropy(osg::Vec3(0.707, 0.0, 0.707));
 
       // test to see if they were set correctly.
-      CPPUNIT_ASSERT_EQUAL_MESSAGE("Failed to set property", matActor->GetMateralDef().GetRestitution(), 0.3f);
-      CPPUNIT_ASSERT_EQUAL_MESSAGE("Failed to set property", matActor->GetMateralDef().GetStaticFriction(), 71.0f);
-      CPPUNIT_ASSERT_EQUAL_MESSAGE("Failed to set property", matActor->GetMateralDef().GetKineticFriction(), 9.0f);
-      CPPUNIT_ASSERT_MESSAGE("Failed to set property", matActor->GetMateralDef().GetDisableStrongFriction());
-      CPPUNIT_ASSERT_MESSAGE("Failed to set property", matActor->GetMateralDef().GetEnableAnisotropicFriction());
-      CPPUNIT_ASSERT_EQUAL_MESSAGE("Failed to set property", matActor->GetMateralDef().GetStaticAnisotropicFriction(), osg::Vec3(1.0, 1.1, 0.3));
-      CPPUNIT_ASSERT_EQUAL_MESSAGE("Failed to set property", matActor->GetMateralDef().GetKineticAnisotropicFriction(), osg::Vec3(0.9, 1.2, 0.4));
-      CPPUNIT_ASSERT_EQUAL_MESSAGE("Failed to set property", matActor->GetMateralDef().GetDirOfAnisotropy(), osg::Vec3(0.707, 0.0, 0.707));
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("Failed to set property", matActor->GetMaterialDef().GetRestitution(), 0.3f);
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("Failed to set property", matActor->GetMaterialDef().GetStaticFriction(), 71.0f);
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("Failed to set property", matActor->GetMaterialDef().GetKineticFriction(), 9.0f);
+      CPPUNIT_ASSERT_MESSAGE("Failed to set property", matActor->GetMaterialDef().GetDisableStrongFriction());
+      CPPUNIT_ASSERT_MESSAGE("Failed to set property", matActor->GetMaterialDef().GetEnableAnisotropicFriction());
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("Failed to set property", matActor->GetMaterialDef().GetStaticAnisotropicFriction(), osg::Vec3(1.0, 1.1, 0.3));
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("Failed to set property", matActor->GetMaterialDef().GetKineticAnisotropicFriction(), osg::Vec3(0.9, 1.2, 0.4));
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("Failed to set property", matActor->GetMaterialDef().GetDirOfAnisotropy(), osg::Vec3(0.707, 0.0, 0.707));
    }
 
    /////////////////////////////////////////////////////////
    void dtPhysicsTests::testPhysicsReaderWriter()
    {
 
-      dtPhysics::PhysicsReaderWriter::PhysicsTriangleData data;
-      data.mFaces = new osg::UIntArray();
-      data.mMaterialFlags = new osg::UIntArray();
-      data.mVertices = new osg::Vec3Array();
+      dtCore::RefPtr<dtPhysics::VertexData> data = new dtPhysics::VertexData;
       
       unsigned i = 0;
       for(; i < 100; ++i)
       {
-         data.mFaces->push_back(i);
+         data->mIndices.push_back(i);
       }
 
       for(;i < 200; ++i)
       {
-         data.mMaterialFlags->push_back(i);
+         data->mMaterialFlags.push_back(i);
       }
 
       for(;i < 300; ++i)
       {
-         data.mVertices->push_back(osg::Vec3(0.0f, 0.0f, i));
+         data->mVertices.push_back(osg::Vec3(0.0f, 0.0f, i));
       }
 
       std::string filename("temp_dtPhysicsTests.phys");
-      dtPhysics::PhysicsReaderWriter::SaveTriangleDataFile(data, filename);
+      dtPhysics::PhysicsReaderWriter::SaveTriangleDataFile(*data, filename);
 
-      data.mFaces->clear();
-      data.mMaterialFlags->clear();
-      data.mVertices->clear();
+      data->mIndices.clear();
+      data->mMaterialFlags.clear();
+      data->mVertices.clear();
 
-      dtPhysics::PhysicsReaderWriter::LoadTriangleDataFile(data, filename);
+      dtPhysics::PhysicsReaderWriter::LoadTriangleDataFile(*data, filename);
 
       for(i = 0; i < 100; ++i)
       {         
-         CPPUNIT_ASSERT_EQUAL(i, data.mFaces->at(i));
+         CPPUNIT_ASSERT_EQUAL(i, data->mIndices.at(i));
       }
 
       for(;i < 200; ++i)
       {
-         CPPUNIT_ASSERT_EQUAL(i, data.mMaterialFlags->at(i - 100));
+         CPPUNIT_ASSERT_EQUAL(i, data->mMaterialFlags.at(i - 100));
       }
 
       for(;i < 300; ++i)
       {
-         CPPUNIT_ASSERT_EQUAL(osg::Vec3(0.0f, 0.0f, i), data.mVertices->at(i - 200));
+         CPPUNIT_ASSERT_EQUAL(osg::Vec3(0.0f, 0.0f, i), data->mVertices.at(i - 200));
       }
 
    }

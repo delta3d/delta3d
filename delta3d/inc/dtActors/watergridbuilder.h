@@ -36,14 +36,17 @@ namespace dtActors
 
       static osg::Node* CreateQuad(osg::Texture2D* texture, int renderBin);
 
-      static osg::Texture2D* CreateTexture(int width, int height);
+      static osg::Texture2D* CreateTexture(int width, int height, bool mipMap);
 
-      static osg::Geometry* BuildRadialGrid(float &outComputedRadialDistance);
+      static osg::Geometry* BuildRadialGrid(float numRows, float numColumns, float& outComputedRadialDistance, float& outNearDistBetweenVerts, float& outFarDistBetweenVerts);
 
-      static void BuildWaves(std::vector<WaterGridActor::Wave>& waveList);
-
+      static void BuildWavesFromSeaState(WaterGridActor::SeaState*, std::vector<WaterGridActor::Wave>& waveList);
+      
       static void BuildTextureWaves(std::vector<WaterGridActor::TextureWave>& waveList);
 
+      static void AddRandomWaves(std::vector<WaterGridActor::Wave>& waveList, float meanWaveLength, float meanAmplitude, float minPeriod, float maxPeriod, unsigned numWaves);
+
+      static void AddDefaultWaves(std::vector<WaterGridActor::Wave>& waveList);
    private:
 
       WaterGridBuilder(){}

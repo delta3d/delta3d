@@ -83,7 +83,7 @@ public:
       // add a motion model
       dtCore::OrbitMotionModel* motionModel = new dtCore::OrbitMotionModel(app.GetKeyboard(), app.GetMouse());
       motionModel->SetTarget(app.GetCamera());
-      motionModel->SetDistance(20.f);
+      motionModel->SetDistance(20.0f);
       motionModel->SetFocalPoint(TARGET_XYZ);
    }
 

@@ -3,27 +3,33 @@
    <!-- MAIN CONTAINER WINDOW (ROOT & BACKGROUND IMAGE) -->
 
    <!-- FRAME -->
-   <Window Name="Root_Help" Type="DefaultWindow">
-      <Property Name="UnifiedSize" Value="{{0.5,0},{1.0,0}}"/>
+
+   <!-- CONTROL PANEL -->
+   <Window Name="Root_Help" Type="WindowsLook/StaticImage">
+      <Property Name="UnifiedSize" Value="{{0.23,0},{0.9,0}}"/>
       <Property Name="UnifiedPosition" Value="{{0.0,0},{0.0,0}}"/>
+      <Property Name="MousePassThroughEnabled" Value="True"/>
       <Property Name="ZOrderChangeEnabled" Value="False"/>
       <Property Name="AlwaysOnTop" Value="True"/>
       <Property Name="HorizontalAlignment" Value="Left"/>
       <Property Name="VerticalAlignment" Value="Top"/>
-      <Property Name="MousePassThroughEnabled" Value="True"/>
+      <Property Name="BackgroundColours" Value="33000000"/>
+      <Property Name="FrameColours" Value="00000000"/>
+      <Property Name="Visible" Value="False"/>
 
       <!-- TEXT - 1 -->
       <Window Name="Help_1" Type="WindowsLook/StaticText">
          <Property Name="UnifiedSize" Value="{{0.8,0},{0.095,0}}"/>
          <Property Name="UnifiedPosition" Value="{{0.0,0},{0.05,0}}"/>
          <Property Name="MousePassThroughEnabled" Value="True"/>
+         <Property Name="ZOrderChangeEnabled" Value="False"/>
          <Property Name="BackgroundEnabled" Value="False"/>
          <Property Name="FrameEnabled" Value="False"/>
          <Property Name="HorizontalAlignment" Value="Centre"/>
          <Property Name="Font" Value="DejaVuSans-10"/>
          <Property Name="AlwaysOnTop" Value="True"/>
          <Property Name="TextColours" Value="FFFFFFFF"/>
-         <Property Name="Text" Value="W/A/S/D: Move"/>
+         <Property Name="Text" Value="C: Control Panel"/>
       </Window>
 
       <!-- TEXT - 2 -->
@@ -31,13 +37,14 @@
          <Property Name="UnifiedSize" Value="{{0.8,0},{0.095,0}}"/>
          <Property Name="UnifiedPosition" Value="{{0.0,0},{0.10,0}}"/>
          <Property Name="MousePassThroughEnabled" Value="True"/>
+         <Property Name="ZOrderChangeEnabled" Value="False"/>
          <Property Name="BackgroundEnabled" Value="False"/>
          <Property Name="FrameEnabled" Value="False"/>
          <Property Name="HorizontalAlignment" Value="Centre"/>
          <Property Name="Font" Value="DejaVuSans-10"/>
          <Property Name="AlwaysOnTop" Value="True"/>
          <Property Name="TextColours" Value="FFFFFFFF"/>
-         <Property Name="Text" Value="Arrows: Move"/>
+         <Property Name="Text" Value="W/A/S/D/Arrows: Move"/>
       </Window>
 
       <!-- TEXT - 3 -->
@@ -45,6 +52,22 @@
          <Property Name="UnifiedSize" Value="{{0.8,0},{0.095,0}}"/>
          <Property Name="UnifiedPosition" Value="{{0.0,0},{0.15,0}}"/>
          <Property Name="MousePassThroughEnabled" Value="True"/>
+         <Property Name="ZOrderChangeEnabled" Value="False"/>
+         <Property Name="BackgroundEnabled" Value="False"/>
+         <Property Name="FrameEnabled" Value="False"/>
+         <Property Name="HorizontalAlignment" Value="Centre"/>
+         <Property Name="Font" Value="DejaVuSans-10"/>
+         <Property Name="AlwaysOnTop" Value="True"/>
+         <Property Name="TextColours" Value="FFFFFFFF"/>
+         <Property Name="Text" Value="+/-: Adjust Speed"/>
+      </Window>
+
+      <!-- TEXT - 4 -->
+      <Window Name="Help_4" Type="WindowsLook/StaticText">
+         <Property Name="UnifiedSize" Value="{{0.8,0},{0.095,0}}"/>
+         <Property Name="UnifiedPosition" Value="{{0.0,0},{0.20,0}}"/>
+         <Property Name="MousePassThroughEnabled" Value="True"/>
+         <Property Name="ZOrderChangeEnabled" Value="False"/>
          <Property Name="BackgroundEnabled" Value="False"/>
          <Property Name="FrameEnabled" Value="False"/>
          <Property Name="HorizontalAlignment" Value="Centre"/>
@@ -54,11 +77,12 @@
          <Property Name="Text" Value="1: Walk Motion"/>
       </Window>
 
-      <!-- TEXT - 4 -->
-      <Window Name="Help_4" Type="WindowsLook/StaticText">
+      <!-- TEXT - 5 -->
+      <Window Name="Help_5" Type="WindowsLook/StaticText">
          <Property Name="UnifiedSize" Value="{{0.8,0},{0.095,0}}"/>
-         <Property Name="UnifiedPosition" Value="{{0.0,0},{0.20,0}}"/>
+         <Property Name="UnifiedPosition" Value="{{0.0,0},{0.25,0}}"/>
          <Property Name="MousePassThroughEnabled" Value="True"/>
+         <Property Name="ZOrderChangeEnabled" Value="False"/>
          <Property Name="BackgroundEnabled" Value="False"/>
          <Property Name="FrameEnabled" Value="False"/>
          <Property Name="HorizontalAlignment" Value="Centre"/>
@@ -68,11 +92,12 @@
          <Property Name="Text" Value="2: Fly Motion"/>
       </Window>
 
-      <!-- TEXT - 5 -->
-      <Window Name="Help_5" Type="WindowsLook/StaticText">
+      <!-- TEXT - 6 -->
+      <Window Name="Help_6" Type="WindowsLook/StaticText">
          <Property Name="UnifiedSize" Value="{{0.8,0},{0.095,0}}"/>
-         <Property Name="UnifiedPosition" Value="{{0.0,0},{0.25,0}}"/>
+         <Property Name="UnifiedPosition" Value="{{0.0,0},{0.30,0}}"/>
          <Property Name="MousePassThroughEnabled" Value="True"/>
+         <Property Name="ZOrderChangeEnabled" Value="False"/>
          <Property Name="BackgroundEnabled" Value="False"/>
          <Property Name="FrameEnabled" Value="False"/>
          <Property Name="HorizontalAlignment" Value="Centre"/>
@@ -82,11 +107,12 @@
          <Property Name="Text" Value="3: UFO Motion"/>
       </Window>
 
-      <!-- TEXT - 6 -->
-      <Window Name="Help_6" Type="WindowsLook/StaticText">
+      <!-- TEXT - 7 -->
+      <Window Name="Help_7" Type="WindowsLook/StaticText">
          <Property Name="UnifiedSize" Value="{{0.8,0},{0.095,0}}"/>
-         <Property Name="UnifiedPosition" Value="{{0.0,0},{0.30,0}}"/>
+         <Property Name="UnifiedPosition" Value="{{0.01,0},{0.35,0}}"/>
          <Property Name="MousePassThroughEnabled" Value="True"/>
+         <Property Name="ZOrderChangeEnabled" Value="False"/>
          <Property Name="BackgroundEnabled" Value="False"/>
          <Property Name="FrameEnabled" Value="False"/>
          <Property Name="HorizontalAlignment" Value="Centre"/>
@@ -96,11 +122,12 @@
          <Property Name="Text" Value="4: Orbit Motion"/>
       </Window>
 
-      <!-- TEXT - 7 -->
-      <Window Name="Help_7" Type="WindowsLook/StaticText">
+      <!-- TEXT - 8 -->
+      <Window Name="Help_8" Type="WindowsLook/StaticText">
          <Property Name="UnifiedSize" Value="{{0.8,0},{0.095,0}}"/>
-         <Property Name="UnifiedPosition" Value="{{0.01,0},{0.35,0}}"/>
+         <Property Name="UnifiedPosition" Value="{{0.01,0},{0.4,0}}"/>
          <Property Name="MousePassThroughEnabled" Value="True"/>
+         <Property Name="ZOrderChangeEnabled" Value="False"/>
          <Property Name="BackgroundEnabled" Value="False"/>
          <Property Name="FrameEnabled" Value="False"/>
          <Property Name="HorizontalAlignment" Value="Centre"/>
@@ -110,32 +137,19 @@
          <Property Name="Text" Value="5: FPS Motion"/>
       </Window>
 
-      <!-- TEXT - 8 -->
-      <Window Name="Help_8" Type="WindowsLook/StaticText">
-         <Property Name="UnifiedSize" Value="{{0.8,0},{0.095,0}}"/>
-         <Property Name="UnifiedPosition" Value="{{0.01,0},{0.4,0}}"/>
-         <Property Name="MousePassThroughEnabled" Value="True"/>
-         <Property Name="BackgroundEnabled" Value="False"/>
-         <Property Name="FrameEnabled" Value="False"/>
-         <Property Name="HorizontalAlignment" Value="Centre"/>
-         <Property Name="Font" Value="DejaVuSans-10"/>
-         <Property Name="AlwaysOnTop" Value="True"/>
-         <Property Name="TextColours" Value="FFFFFFFF"/>
-         <Property Name="Text" Value="6: Collision Motion"/>
-      </Window>
-
       <!-- TEXT - 9 -->
       <Window Name="Help_9" Type="WindowsLook/StaticText">
          <Property Name="UnifiedSize" Value="{{0.8,0},{0.095,0}}"/>
          <Property Name="UnifiedPosition" Value="{{0.01,0},{0.45,0}}"/>
          <Property Name="MousePassThroughEnabled" Value="True"/>
+         <Property Name="ZOrderChangeEnabled" Value="False"/>
          <Property Name="BackgroundEnabled" Value="False"/>
          <Property Name="FrameEnabled" Value="False"/>
          <Property Name="HorizontalAlignment" Value="Centre"/>
          <Property Name="Font" Value="DejaVuSans-10"/>
          <Property Name="AlwaysOnTop" Value="True"/>
          <Property Name="TextColours" Value="FFFFFFFF"/>
-         <Property Name="Text" Value="7: RTS Motion"/>
+         <Property Name="Text" Value="6: RTS Motion"/>
       </Window>
         
       <!-- TEXT - 10 -->
@@ -143,13 +157,14 @@
          <Property Name="UnifiedSize" Value="{{0.8,0},{0.095,0}}"/>
          <Property Name="UnifiedPosition" Value="{{0.01,0},{0.5,0}}"/>
          <Property Name="MousePassThroughEnabled" Value="True"/>
+         <Property Name="ZOrderChangeEnabled" Value="False"/>
          <Property Name="BackgroundEnabled" Value="False"/>
          <Property Name="FrameEnabled" Value="False"/>
          <Property Name="HorizontalAlignment" Value="Centre"/>
          <Property Name="Font" Value="DejaVuSans-10"/>
          <Property Name="AlwaysOnTop" Value="True"/>
          <Property Name="TextColours" Value="FFFFFFFF"/>
-         <Property Name="Text" Value="Enter: Forward Transition"/>
+         <Property Name="Text" Value="Enter: Next Screen"/>
       </Window>
 
       <!-- TEXT - 11 -->
@@ -157,13 +172,29 @@
          <Property Name="UnifiedSize" Value="{{0.8,0},{0.095,0}}"/>
          <Property Name="UnifiedPosition" Value="{{0.01,0},{0.55,0}}"/>
          <Property Name="MousePassThroughEnabled" Value="True"/>
+         <Property Name="ZOrderChangeEnabled" Value="False"/>
          <Property Name="BackgroundEnabled" Value="False"/>
          <Property Name="FrameEnabled" Value="False"/>
          <Property Name="HorizontalAlignment" Value="Centre"/>
          <Property Name="Font" Value="DejaVuSans-10"/>
          <Property Name="AlwaysOnTop" Value="True"/>
          <Property Name="TextColours" Value="FFFFFFFF"/>
-         <Property Name="Text" Value="Esc: Back Transition"/>
+         <Property Name="Text" Value="BackSpace: Prev. Screen"/>
+      </Window>
+
+      <!-- TEXT - 12 -->
+      <Window Name="Help_12" Type="WindowsLook/StaticText">
+         <Property Name="UnifiedSize" Value="{{0.8,0},{0.095,0}}"/>
+         <Property Name="UnifiedPosition" Value="{{0.01,0},{0.6,0}}"/>
+         <Property Name="MousePassThroughEnabled" Value="True"/>
+         <Property Name="ZOrderChangeEnabled" Value="False"/>
+         <Property Name="BackgroundEnabled" Value="False"/>
+         <Property Name="FrameEnabled" Value="False"/>
+         <Property Name="HorizontalAlignment" Value="Centre"/>
+         <Property Name="Font" Value="DejaVuSans-10"/>
+         <Property Name="AlwaysOnTop" Value="True"/>
+         <Property Name="TextColours" Value="FFFFFFFF"/>
+         <Property Name="Text" Value="Esc: Quit"/>
       </Window>
         
 	</Window>

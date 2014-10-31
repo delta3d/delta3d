@@ -102,7 +102,7 @@ namespace dtTerrain
       AddSender(&dtCore::System::GetInstance());
 
       SetCollisionCategoryBits(COLLISION_CATEGORY_MASK_TERRAIN);
-      SetLineOfSightSpacing(25.f); // a bit less than DTED L2
+      SetLineOfSightSpacing(25.0f); // a bit less than DTED L2
    }
 
    //////////////////////////////////////////////////////////////////////////

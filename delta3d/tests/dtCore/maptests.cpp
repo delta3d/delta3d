@@ -116,11 +116,13 @@ class MapTests : public CPPUNIT_NS::TestFixture
       CPPUNIT_TEST(TestMapSaveAndLoadPropertyContainerProperty);
       CPPUNIT_TEST(TestMapSaveAndLoadNestedPropertyContainerArray);
       CPPUNIT_TEST(TestMapSaveAndLoadActorGroups);
+      CPPUNIT_TEST(TestShouldSaveProperty);
       CPPUNIT_TEST(TestLibraryMethods);
       CPPUNIT_TEST(TestWildCard);
       CPPUNIT_TEST(TestEnvironmentMapLoading);
       CPPUNIT_TEST(TestLoadEnvironmentMapIntoScene);
       CPPUNIT_TEST(TestActorProxyRemoveProperties);
+      CPPUNIT_TEST(TestRemovePropertiesByPointer);
       CPPUNIT_TEST(TestCreateMapsMultiContext);
       CPPUNIT_TEST(TestSaveAsMultiContext);
       CPPUNIT_TEST(TestParsingMapHeaderData);
@@ -141,6 +143,7 @@ class MapTests : public CPPUNIT_NS::TestFixture
       void TestMapSaveAndLoadPropertyContainerProperty();
       void TestMapSaveAndLoadNestedPropertyContainerArray();
       void TestMapSaveAndLoadActorGroups();
+      void TestShouldSaveProperty();
       void TestIsMapFileValid();
       void TestLoadMapIntoScene();
       void TestLibraryMethods();
@@ -148,6 +151,7 @@ class MapTests : public CPPUNIT_NS::TestFixture
       void TestLoadEnvironmentMapIntoScene();
       void TestWildCard();
       void TestActorProxyRemoveProperties();
+      void TestRemovePropertiesByPointer();
       void TestCreateMapsMultiContext();
       void TestSaveAsMultiContext();
       void TestParsingMapHeaderData();
@@ -930,12 +934,12 @@ void MapTests::TestMapSaveAndLoad()
    const float TEST_FLOAT(12345.12345f);
    const double TEST_DOUBLE(12345.54321);
    const int TEST_INT(123345);
-   const osg::Vec3 TEST_VEC3(1.f, 2.f, 3.f);
+   const osg::Vec3 TEST_VEC3(1.0f, 2.0f, 3.0f);
    const osg::Vec3 TEST_VEC3F(123.123f, 456.456f, 789.789f);
    const osg::Vec3d TEST_VEC3D(123.123, 456.456, 789.789);
-   const osg::Vec4f TEST_VEC4F(1.f, 2.f, 3.f, 4.f);
+   const osg::Vec4f TEST_VEC4F(1.0f, 2.0f, 3.0f, 4.0f);
    const osg::Vec4d TEST_VEC4D(2.0, 3.0, 4.0, 5.0);
-   const osg::Vec4 TEST_RGBA(255.f, 245.f, 235.f, 1235.f);
+   const osg::Vec4 TEST_RGBA(255.0f, 245.0f, 235.0f, 1235.0f);
    const dtCore::UniqueId TEST_ACTORID;
    const dtCore::ResourceDescriptor TEST_RESOURCE("test", "somethingelse");
    const unsigned int TEST_BIT(0xFF00FF00);
@@ -1572,6 +1576,28 @@ void MapTests::TestMapSaveAndLoadActorGroups()
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////
+void MapTests::TestShouldSaveProperty()
+{
+   const dtCore::ActorType* at = dtCore::LibraryManager::GetInstance().FindActorType("ExampleActors", "TestGamePropertyActor");
+   CPPUNIT_ASSERT(at != NULL);
+
+   dtCore::RefPtr<dtCore::BaseActorObject> actor = dtCore::LibraryManager::GetInstance().CreateActor(*at);
+   dtCore::ActorProperty* prop = actor->GetProperty(dtCore::TransformableActorProxy::PROPERTY_ACTIVE);
+   CPPUNIT_ASSERT_MESSAGE("Property should NOT save because it has the default value", !actor->ShouldPropertySave(*prop));
+   prop->SetAlwaysSave(true);
+   CPPUNIT_ASSERT_MESSAGE("Property SHOULD save because it is set to always save, even though it is the default.", actor->ShouldPropertySave(*prop));
+   prop->SetAlwaysSave(false);
+   prop->FromString("false");
+   CPPUNIT_ASSERT_MESSAGE("Property SHOULD save because it is not the default value.", actor->ShouldPropertySave(*prop));
+   prop->SetIgnoreWhenSaving(true);
+   CPPUNIT_ASSERT_MESSAGE("Property should NOT save because it is set to ignore.", !actor->ShouldPropertySave(*prop));
+   prop->SetIgnoreWhenSaving(false);
+   prop->SetReadOnly(true);
+   CPPUNIT_ASSERT_MESSAGE("Property should NOT save because it is set to read only.", !actor->ShouldPropertySave(*prop));
+   prop->SetReadOnly(false);
+}
+
+///////////////////////////////////////////////////////////////////////////////////////
 void MapTests::TestWildCard()
 {
    CPPUNIT_ASSERT(dtCore::Map::WildMatch("*", "sthsthsth"));
@@ -1781,6 +1807,18 @@ public:
       return (GetProperty(stringToRemove) == NULL);
    }
 
+   bool RemoveTheProperty(dtCore::ActorProperty* prop)
+   {
+      if (prop == NULL) return false;
+      // Save it in a ref ptr because it will be deleted otherwise.
+      dtCore::RefPtr<dtCore::ActorProperty> saveProp = prop;
+      // not in the list
+      if (GetProperty(prop->GetName()) == NULL) return false;
+      // is in the list
+      RemoveProperty(prop);
+      return (GetProperty(saveProp->GetName()) == NULL);
+   }
+
 protected:
    virtual ~OverriddenActorProxy() {}
 };
@@ -1790,13 +1828,28 @@ void MapTests::TestActorProxyRemoveProperties()
 {
    dtCore::RefPtr<OverriddenActorProxy> actorProxy = new OverriddenActorProxy;
    std::string NameToRemove = dtCore::TransformableActorProxy::PROPERTY_ROTATION;
-   std::string DoesntExist = "TeagueHasAHawtMom";
+   std::string DoesntExist = "TeagueGrowsRutabaga";
    CPPUNIT_ASSERT_MESSAGE("Tried to remove a property before initialized should have returned false", actorProxy->RemoveTheProperty(NameToRemove) == false );
    actorProxy->CreateDrawable();
    actorProxy->BuildPropertyMap();
    CPPUNIT_ASSERT_MESSAGE("Tried to remove a property after initialized should have returned true", actorProxy->RemoveTheProperty(NameToRemove) == true );
    CPPUNIT_ASSERT_MESSAGE("Tried to remove a property after initialized for a second time should have returned false", actorProxy->RemoveTheProperty(NameToRemove) == false );
    CPPUNIT_ASSERT_MESSAGE("Tried to remove a property that we know doesnt exist should have returned false", actorProxy->RemoveTheProperty(DoesntExist) == false );
+}
+
+
+///////////////////////////////////////////////////////////////////////////////////////
+void MapTests::TestRemovePropertiesByPointer()
+{
+   dtCore::RefPtr<OverriddenActorProxy> actorProxy = new OverriddenActorProxy;
+   std::string NameToRemove = dtCore::TransformableActorProxy::PROPERTY_ROTATION;
+   CPPUNIT_ASSERT_MESSAGE("Tried to remove a property before initialized should have returned false", actorProxy->RemoveTheProperty(actorProxy->GetProperty(NameToRemove)) == false );
+   actorProxy->CreateDrawable();
+   actorProxy->BuildPropertyMap();
+   CPPUNIT_ASSERT_MESSAGE("Tried to remove a property after initialized should have returned true", actorProxy->RemoveTheProperty(actorProxy->GetProperty(NameToRemove)) == true );
+   CPPUNIT_ASSERT_MESSAGE("Tried to remove a property after initialized for a second time should have returned false", actorProxy->RemoveTheProperty(actorProxy->GetProperty(NameToRemove)) == false );
+   // This shouldn't crash.
+   actorProxy->RemoveProperty(NULL);
 }
 
 void MapTests::TestCreateMapsMultiContext()

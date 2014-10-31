@@ -59,7 +59,7 @@ class _updateCompassCallback  :  public   osg::NodeCallback
             osg::Matrix comp_mat = osg::Matrix::identity();
             comp_mat *= osg::Matrix::inverse( cam_mat );
             comp_mat *= osg::Matrix::rotate( M_PI * -0.5, 1.0f, 0.0f, 0.0f );
-            comp_mat *= osg::Matrix::translate( osg::Vec3( 20.f, 20.f, -100.0f ) );
+            comp_mat *= osg::Matrix::translate( osg::Vec3( 20.0f, 20.0f, -100.0f ) );
 
 
             osg::Projection*  proj  = static_cast<osg::Projection*>(xformNode->getChild( 0L ));

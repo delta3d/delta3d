@@ -131,7 +131,10 @@ namespace dtAnim
       {
           std::string file = dtCore::Project::GetInstance().GetResourcePath(resource);
           result = LoadCharacterFile(file);
-          result->mResource = resource;
+          if (result.valid())
+          {
+             result->mResource = resource;
+          }
       }
       catch(const dtUtil::Exception& ex)
       {
@@ -143,6 +146,8 @@ namespace dtAnim
    /////////////////////////////////////////////////////////////////////////////
    // CLASS CODE
    /////////////////////////////////////////////////////////////////////////////
+   const dtUtil::RefString CharacterFileLoader::CHARACTER_FILE_EXTENSION("dtchar");
+
    dtCore::RefPtr<CharacterFileHandler> CharacterFileLoader::LoadCharacterFile(const std::string& file)
    {
       using namespace dtCore;
@@ -164,11 +169,12 @@ namespace dtAnim
       const osgDB::ReaderWriter::Options* globalOptions = osgReg->getOptions();
 
       // ...if it is the older character format...
-      if (osgDB::getLowerCaseFileExtension(filename) == "xml")
+      std::string extension(osgDB::getLowerCaseFileExtension(filename));
+      if (extension == "xml")
       {
          // ...get the plug-in directly...
          CharacterXMLReaderWriter* charPlugin = dynamic_cast<CharacterXMLReaderWriter*>
-            (osgReg->getReaderWriterForExtension("dtchar"));
+            (osgReg->getReaderWriterForExtension(CHARACTER_FILE_EXTENSION.Get()));
 
          // Open the file as a stream.
          std::ifstream fstream(filename.c_str(), std::ios_base::binary);

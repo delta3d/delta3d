@@ -16,10 +16,10 @@ namespace dtAnim
    /////////////////////////////////////////////////////////////////////////////
    // CLASS CODE
    /////////////////////////////////////////////////////////////////////////////
-   class DT_ANIM_EXPORT Cal3dBoundingSphereCalculator : public osg::Node::ComputeBoundingSphereCallback
+   class DT_ANIM_EXPORT Cal3DBoundingSphereCalculator : public osg::Node::ComputeBoundingSphereCallback
    {
       public:
-         Cal3dBoundingSphereCalculator(dtAnim::Cal3DModelWrapper& wrapper);
+         Cal3DBoundingSphereCalculator(dtAnim::Cal3DModelWrapper& wrapper);
 
          /*virtual*/ osg::BoundingSphere computeBound(const osg::Node&) const;
 
@@ -39,14 +39,14 @@ namespace dtAnim
 
       Cal3dNodeBuilder();
 
-      virtual dtCore::RefPtr<osg::Node> CreateSoftware(dtAnim::Cal3DModelWrapper* wrapper);
-      virtual dtCore::RefPtr<osg::Node> CreateSoftwareNoVBO(dtAnim::Cal3DModelWrapper* wrapper);
-      virtual dtCore::RefPtr<osg::Node> CreateHardware(dtAnim::Cal3DModelWrapper* wrapper);
+      virtual dtCore::RefPtr<osg::Node> CreateSoftware(osg::RenderInfo* renderInfo, dtAnim::Cal3DModelWrapper* wrapper);
+      virtual dtCore::RefPtr<osg::Node> CreateSoftwareNoVBO(osg::RenderInfo* renderInfo, dtAnim::Cal3DModelWrapper* wrapper);
+      virtual dtCore::RefPtr<osg::Node> CreateHardware(osg::RenderInfo* renderInfo, dtAnim::Cal3DModelWrapper* wrapper);
 
    protected:
       virtual ~Cal3dNodeBuilder();
 
-      dtCore::RefPtr<osg::Node> CreateSoftwareInternal(Cal3DModelWrapper* wrapper, bool vbo);
+      dtCore::RefPtr<osg::Node> CreateSoftwareInternal(osg::RenderInfo* renderInfo, Cal3DModelWrapper* wrapper, bool vbo);
 
       void CalcNumVertsAndIndices(Cal3DModelWrapper* wrapper,
                                                 int& numVerts, int& numIndices);

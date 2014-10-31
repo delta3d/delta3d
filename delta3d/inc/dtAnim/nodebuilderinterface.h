@@ -25,9 +25,9 @@ namespace dtAnim
    public:
       NodeBuilderInterface() {}
 
-      virtual dtCore::RefPtr<osg::Node> CreateSoftware(dtAnim::BaseModelWrapper* wrapper) = 0;
-      virtual dtCore::RefPtr<osg::Node> CreateSoftwareNoVBO(dtAnim::BaseModelWrapper* wrapper) = 0;
-      virtual dtCore::RefPtr<osg::Node> CreateHardware(dtAnim::BaseModelWrapper* wrapper) = 0;
+      virtual dtCore::RefPtr<osg::Node> CreateSoftware(osg::RenderInfo* renderInfo, dtAnim::BaseModelWrapper* wrapper) = 0;
+      virtual dtCore::RefPtr<osg::Node> CreateSoftwareNoVBO(osg::RenderInfo* renderInfo, dtAnim::BaseModelWrapper* wrapper) = 0;
+      virtual dtCore::RefPtr<osg::Node> CreateHardware(osg::RenderInfo* renderInfo, dtAnim::BaseModelWrapper* wrapper) = 0;
    
    protected:
       virtual ~NodeBuilderInterface() {}
@@ -47,24 +47,24 @@ namespace dtAnim
 
       BaseNodeBuilder() {}
 
-      virtual dtCore::RefPtr<osg::Node> CreateSoftware(dtAnim::BaseModelWrapper* wrapper)
+      virtual dtCore::RefPtr<osg::Node> CreateSoftware(osg::RenderInfo* renderInfo, dtAnim::BaseModelWrapper* wrapper)
       {
-         return CreateSoftware(dynamic_cast<ModelWrapperType*>(wrapper));
+         return CreateSoftware(renderInfo, dynamic_cast<ModelWrapperType*>(wrapper));
       }
 
-      virtual dtCore::RefPtr<osg::Node> CreateSoftwareNoVBO(dtAnim::BaseModelWrapper* wrapper)
+      virtual dtCore::RefPtr<osg::Node> CreateSoftwareNoVBO(osg::RenderInfo* renderInfo, dtAnim::BaseModelWrapper* wrapper)
       {
-         return CreateSoftwareNoVBO(dynamic_cast<ModelWrapperType*>(wrapper));
+         return CreateSoftwareNoVBO(renderInfo, dynamic_cast<ModelWrapperType*>(wrapper));
       }
 
-      virtual dtCore::RefPtr<osg::Node> CreateHardware(dtAnim::BaseModelWrapper* wrapper)
+      virtual dtCore::RefPtr<osg::Node> CreateHardware(osg::RenderInfo* renderInfo, dtAnim::BaseModelWrapper* wrapper)
       {
-         return CreateHardware(dynamic_cast<ModelWrapperType*>(wrapper));
+         return CreateHardware(renderInfo, dynamic_cast<ModelWrapperType*>(wrapper));
       }
 
-      virtual dtCore::RefPtr<osg::Node> CreateSoftware(ModelWrapperType* wrapper) = 0;
-      virtual dtCore::RefPtr<osg::Node> CreateSoftwareNoVBO(ModelWrapperType* wrapper) = 0;
-      virtual dtCore::RefPtr<osg::Node> CreateHardware(ModelWrapperType* wrapper) = 0;
+      virtual dtCore::RefPtr<osg::Node> CreateSoftware(osg::RenderInfo* renderInfo, ModelWrapperType* wrapper) = 0;
+      virtual dtCore::RefPtr<osg::Node> CreateSoftwareNoVBO(osg::RenderInfo* renderInfo, ModelWrapperType* wrapper) = 0;
+      virtual dtCore::RefPtr<osg::Node> CreateHardware(osg::RenderInfo* renderInfo, ModelWrapperType* wrapper) = 0;
    
    protected:
       virtual ~BaseNodeBuilder() {}

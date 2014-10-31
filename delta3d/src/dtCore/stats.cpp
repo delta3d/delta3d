@@ -7,6 +7,8 @@
 #include <dtCore/stats.h>
 #include <dtCore/system.h>
 
+#include <dtUtil/nodemask.h>
+
 #include <osg/io_utils>
 #include <osg/MatrixTransform>
 
@@ -109,7 +111,7 @@ bool StatsHandler::SelectNextType()
          stats->collectStats("GMNumActorsProcessed", false);
          stats->collectStats("GMNumCompsProcessed", false);
 
-         mCamera->setNodeMask(0x0);
+         mCamera->setNodeMask(dtUtil::NodeMask::NOTHING);
          mSwitch->setAllChildrenOff();
          mInitialized = false;
          break;
@@ -117,7 +119,7 @@ bool StatsHandler::SelectNextType()
    case(FRAME_RATE):
       {
          stats->collectStats("frame_rate",true);
-         mCamera->setNodeMask(0xffffffff);
+         mCamera->setNodeMask(dtUtil::NodeMask::EVERYTHING);
          mSwitch->setValue(mFrameRateChildNum, true);
          break;
       }
@@ -147,14 +149,14 @@ bool StatsHandler::SelectNextType()
             if ((*itr)->getStats()) (*itr)->getStats()->collectStats("gpu",true);
          }
 
-         mCamera->setNodeMask(0xffffffff);
+         mCamera->setNodeMask(dtUtil::NodeMask::EVERYTHING);
          mSwitch->setValue(mViewerChildNum, true);
          break;
       }
 
    case(CAMERA_SCENE_STATS):
       {
-         mCamera->setNodeMask(0xffffffff);
+         mCamera->setNodeMask(dtUtil::NodeMask::EVERYTHING);
          mSwitch->setValue(mCameraSceneChildNum, true);
 
          for(osgViewer::ViewerBase::Cameras::iterator itr = cameras.begin(); itr != cameras.end(); ++itr)
@@ -166,7 +168,7 @@ bool StatsHandler::SelectNextType()
       }
    case(VIEWER_SCENE_STATS):
       {
-         mCamera->setNodeMask(0xffffffff);
+         mCamera->setNodeMask(dtUtil::NodeMask::EVERYTHING);
          mSwitch->setValue(mViewerSceneChildNum, true);
 
          stats->collectStats("scene",true);
@@ -206,7 +208,7 @@ bool StatsHandler::SelectNextType()
          stats->collectStats("GMNumActorsProcessed", true);
          stats->collectStats("GMNumCompsProcessed", true);
 
-         mCamera->setNodeMask(0xffffffff);
+         mCamera->setNodeMask(dtUtil::NodeMask::EVERYTHING);
          mSwitch->setValue(mDeltaSystemChildNum, true);
          break;
       }

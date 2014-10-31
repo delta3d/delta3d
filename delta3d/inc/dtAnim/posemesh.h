@@ -42,7 +42,7 @@ namespace dtAnim
    class BaseModelWrapper;
    struct PoseMeshData;
 
-   class DT_ANIM_EXPORT PoseMesh
+   class DT_ANIM_EXPORT PoseMesh : public osg::Referenced
    {
    public:
 
@@ -52,6 +52,8 @@ namespace dtAnim
          int   mTriangleID;
          float mAzimuth;
          float mElevation;
+
+         TargetTriangle();
       };
 
       struct DT_ANIM_EXPORT Vertex
@@ -89,9 +91,9 @@ namespace dtAnim
          int mTriangleID;
       };
 
-      typedef std::vector<Vertex*>                VertexVector;
+      typedef std::vector<Vertex>                 VertexVector;
       typedef dtUtil::BarycentricSpace<osg::Vec3> Barycentric2D;
-      typedef std::vector<Barycentric2D*>         Barycentric2DVector;
+      typedef std::vector<Barycentric2D>          Barycentric2DVector;
       typedef std::vector<Triangle>               TriangleVector;
       typedef std::vector<TriangleEdge>           TriangleEdgeVector;
       typedef std::vector<std::string>            StringVector;
@@ -101,8 +103,6 @@ namespace dtAnim
       PoseMesh(dtAnim::BaseModelWrapper* model,
                const PoseMeshData& meshData);
 
-      ~PoseMesh();
-
       const std::string& GetName() const                 { return mName;            }
       const std::string& GetEffectorName() const         { return mBoneName;        }
       int GetEffectorID() const                          { return mEffectorID;      }
@@ -111,18 +111,22 @@ namespace dtAnim
       const Barycentric2DVector& GetBarySpaces() const   { return mBarySpaces;      }
       const TriangleVector& GetTriangles() const         { return mTriangles;       }
       const TriangleEdgeVector GetSilhouette() const     { return mSilhouetteEdges; }
+      const osg::Vec3& GetBindPoseForwardVector() const  { return mBindPoseForward; }
       const osg::Vec3& GetRootForwardAxis() const        { return mRootForward;     }
       const osg::Vec3& GetEffectorForwardAxis() const    { return mEffectorForward; }
 
       /**
       *  GetTargetTriangleData Finds the triangle in the mesh for the given azimuth elevation
       *                        if it exists, otherwise it returns the closest triangle and its coordinates
-      *  @param azimuth the horizontal angle between our forward and our target
-      *  @param elevation the vertical angle between our forward and our target
-      *  @return outTriangle struct containing the nearest triangle and it's location
+      *  @param deltaAzimuth the change in horizontal angle between our forward and our target
+      *  @param deltaElevation the change in vertical angle between our forward and our target
+      *  @param outTriangle struct containing the nearest triangle and it's location.  Passing in the last triangle
+      *                      so it can use the old values for azimuth and elevation, or pass in a zeroed one for absolutes.
+      *  @return a pair with the actual delta values.  If the maximums were exceeded, these will not be the same as the values
+      *          passed in.
       */
-      void GetTargetTriangleData(const float azimuth,
-                                 const float elevation,
+      osg::Vec2 GetTargetTriangleData(const float deltaAzimuth,
+                                 const float deltaElevation,
                                  TargetTriangle& outTriangle) const;
 
       /**
@@ -145,6 +149,9 @@ namespace dtAnim
                                     MeshIndexPair& pair1,
                                     MeshIndexPair& pair2) const;
 
+   protected:
+      virtual ~PoseMesh();
+
    private:
 
       std::string mName;
@@ -153,6 +160,7 @@ namespace dtAnim
       int mRootID;
       int mEffectorID;
 
+      osg::Vec3 mBindPoseForward;
       osg::Vec3 mRootForward;
       osg::Vec3 mEffectorForward;
 

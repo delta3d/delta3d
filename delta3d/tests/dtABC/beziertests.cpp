@@ -60,25 +60,25 @@ void BezierTests::TestReachingEndOfPath()
    RefPtr<BezierControlPoint> ctrl3 = new BezierControlPoint();
 
    Transform xform;
-   xform.SetTranslation(0.f, 0.f, 0.f);
+   xform.SetTranslation(0.0f, 0.0f, 0.0f);
    node0->SetTransform(xform);
-   node0->SetTimeToNext(1.f);
+   node0->SetTimeToNext(1.0f);
    node0->SetStep(0.02f);
    node0->SetNext(node1.get());
    node0->SetExit(ctrl0.get());
 
-   xform.SetTranslation(0.f, -10.f, 0.f);
+   xform.SetTranslation(0.0f, -10.0f, 0.0f);
    node1->SetTransform(xform);
-   node1->SetTimeToNext(1.f);
+   node1->SetTimeToNext(1.0f);
    node1->SetStep(0.02f);
    node1->SetNext(node2.get());
    node1->SetEntry(ctrl1.get());
    node1->SetExit(ctrl2.get());
    node1->SetPrev(node0.get());
 
-   xform.SetTranslation(0.f, -20.f, 0.f);
+   xform.SetTranslation(0.0f, -20.0f, 0.0f);
    node2->SetTransform(xform);
-   node2->SetTimeToNext(1.f);
+   node2->SetTimeToNext(1.0f);
    node2->SetStep(0.02f);
    node2->SetEntry(ctrl3.get());
    node2->SetPrev(node1.get());

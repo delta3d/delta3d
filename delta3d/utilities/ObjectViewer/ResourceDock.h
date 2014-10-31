@@ -63,6 +63,8 @@ public:
    QTreeWidgetItem* FindShaderFileItem(const std::string& filename) const;
    QTreeWidgetItem* FindShaderGroupItem(const std::string& groupName, const QTreeWidgetItem* fileItem) const;
 
+   bool RemoveGeometryItem(QTreeWidgetItem* item);
+
    void ReselectCurrentShaderItem();
 
    bool FindShaderFileEntryName(const std::string& entryName) const;
@@ -105,6 +107,7 @@ public slots:
 
    void OnNewMap(const std::string& mapName);
    void OnNewGeometry(const std::string& path, const std::string& filename);
+   void OnNewSkinnedMesh(const std::string& path, const std::string& filename);
    void OnGeometryItemChanged(QTreeWidgetItem* item, int column);
    void OnSaveAs();
 

@@ -1,0 +1,200 @@
+MatrixTransform {
+  DataVariance STATIC
+  name "Scene Root"
+  nodeMask 0xffffffff
+  cullingActive TRUE
+  description "# osgmaxexp material data
+Name	PHYSICS
+Type	Standard
+SelfIlluminationColorMode	0	0
+"
+  StateSet {
+    rendering_hint DEFAULT_BIN
+    renderBinMode INHERIT
+    GL_LIGHTING ON
+    GL_NORMALIZE ON
+  }
+  referenceFrame RELATIVE
+  Matrix {
+    1 0 0 0
+    0 1 0 0
+    0 0 1 0
+    0 0 0 1
+  }
+  num_children 1
+  MatrixTransform {
+    DataVariance STATIC
+    name "PHYSICS_ROOT_PalmTree_Angled"
+    nodeMask 0xffffffff
+    cullingActive TRUE
+    referenceFrame RELATIVE
+    Matrix {
+      1 0 0 0
+      0 1 0 0
+      0 0 1 0
+      0 0 0 1
+    }
+    num_children 1
+    MatrixTransform {
+      DataVariance STATIC
+      name "Physics_Trunk"
+      nodeMask 0xffffffff
+      cullingActive TRUE
+      description "MESH"
+      referenceFrame RELATIVE
+      Matrix {
+        0.0357124 0 0 0
+        0 0.0357124 0 0
+        0 0 0.0357124 0
+        -0.00118741 0.0241656 0 1
+      }
+      num_children 1
+      MatrixTransform {
+        DataVariance STATIC
+        name "Physics_Trunk-OFFSET"
+        nodeMask 0xffffffff
+        cullingActive TRUE
+        referenceFrame RELATIVE
+        Matrix {
+          0.928656 0 0 0
+          0 0.928656 0 0
+          0 0 0.928656 0
+          0 0 0 1
+        }
+        num_children 1
+        Geode {
+          UniqueID Geode_0
+          DataVariance STATIC
+          name "Physics_Trunk-GEODE"
+          nodeMask 0xffffffff
+          cullingActive TRUE
+          num_drawables 1
+          Geometry {
+            name "PHYSICS"
+            StateSet {
+              UniqueID StateSet_1
+              name "PHYSICS"
+              rendering_hint TRANSPARENT_BIN
+              renderBinMode USE
+              binNumber 10
+              binName DepthSortedBin
+              GL_CULL_FACE ON
+              GL_LIGHTING ON
+              GL_NORMALIZE ON
+              GL_BLEND ON
+              Material {
+                ColorMode OFF
+                ambientColor 0.588 0.588 0.588 0.5
+                diffuseColor 1 0 0 0.5
+                specularColor 0 0 0 1
+                emissionColor 0 0 0 0.5
+                shininess 0
+              }
+              BlendFunc {
+                source SRC_ALPHA
+                destination ONE_MINUS_SRC_ALPHA
+              }
+            }
+            useDisplayList TRUE
+            useVertexBufferObjects FALSE
+            PrimitiveSets 1
+            {
+              DrawElementsUShort TRIANGLES 180
+              {
+                0 1 2 2 3 0 2 1 4 4
+                5 2 5 4 6 6 7 5 7 6
+                8 8 9 7 9 8 10 10 11 9
+                11 10 12 12 13 11 13 12 14 14
+                15 13 16 17 18 18 19 16 18 20
+                21 21 19 18 20 22 23 23 21 20
+                22 24 25 25 23 22 24 26 27 27
+                25 24 26 28 29 29 27 26 28 30
+                31 31 29 28 16 0 3 3 17 16
+                30 15 14 14 31 30 31 14 12 12
+                29 31 29 12 10 10 27 29 27 10
+                8 8 25 27 25 8 6 6 23 25
+                23 6 4 4 21 23 21 4 1 1
+                19 21 19 1 0 0 16 19 18 17
+                3 3 2 18 20 18 2 2 5 20
+                22 20 5 5 7 22 24 22 7 7
+                9 24 26 24 9 9 11 26 28 26
+                11 11 13 28 28 13 15 15 30 28
+              }
+            }
+            VertexArray Vec3Array 32
+            {
+              -2.5009 1.84796 0
+              -2.20323 3.70739 14.2153
+              2.16898 3.7142 14.2153
+              2.53515 1.84115 0
+              -2.03434 10.2147 26.395
+              2.00009 10.2215 26.395
+              -2.03386 19.1669 35.9457
+              1.99962 19.1737 35.9457
+              -1.58585 44.5297 57.1195
+              1.55161 44.5365 57.1195
+              -1.46115 56.2178 69.4902
+              1.42691 56.2247 69.4902
+              -1.68583 60.8809 80.877
+              1.65159 60.8878 80.877
+              -2.50091 62.6052 88.487
+              2.46666 62.612 88.487
+              -2.5009 -3.38781 0
+              2.53515 -3.39462 0
+              2.16898 -0.747832 15.9088
+              -2.20323 -0.754645 15.9088
+              2.00009 6.83175 28.0728
+              -2.03434 6.82494 28.0728
+              1.99962 17.2818 38.4943
+              -2.03386 17.275 38.4943
+              1.55161 42.5071 58.3097
+              -1.58585 42.5003 58.3097
+              1.42691 53.826 70.4025
+              -1.46115 53.8192 70.4025
+              1.65159 57.9781 81.0018
+              -1.68583 57.9713 81.0018
+              2.46666 59.0755 90.8251
+              -2.50091 59.0687 90.8251
+            }
+            NormalBinding PER_VERTEX
+            NormalArray Vec3Array 32
+            {
+              -0.590463 0.534826 -0.604413
+              -0.748896 0.635124 -0.189136
+              0.747324 0.63736 -0.187828
+              0.592524 0.533807 -0.603295
+              -0.737235 0.55172 -0.389987
+              0.736312 0.552475 -0.39066
+              -0.722735 0.478002 -0.499167
+              0.721934 0.478532 -0.499818
+              -0.694884 0.497437 -0.51932
+              0.693814 0.498212 -0.520007
+              -0.665086 0.624993 -0.40871
+              0.663618 0.626207 -0.409238
+              -0.675877 0.690766 -0.25697
+              0.670304 0.693425 -0.264299
+              -0.637115 0.722653 0.268061
+              0.630424 0.727075 0.271898
+              -0.57499 -0.625505 -0.52738
+              0.575507 -0.626087 -0.526125
+              0.664509 -0.695331 0.273756
+              -0.664018 -0.696288 0.272514
+              0.680772 -0.570499 0.459434
+              -0.679807 -0.571268 0.459908
+              0.696249 -0.472238 0.540581
+              -0.695446 -0.472802 0.541122
+              0.723245 -0.460552 0.514595
+              -0.722232 -0.461182 0.515454
+              0.75018 -0.561224 0.349653
+              -0.748875 -0.56237 0.350608
+              0.731863 -0.670466 0.121864
+              -0.732618 -0.668628 0.127311
+              0.578797 -0.352946 0.735135
+              -0.58185 -0.353687 0.732364
+            }
+          }
+        }
+      }
+    }
+  }
+}

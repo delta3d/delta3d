@@ -158,6 +158,7 @@ SET(LIB_PUBLIC_HEADERS
                 ${HEADER_PATH}/odeworldwrap.h
                 ${HEADER_PATH}/orbitmotionmodel.h
                 ${HEADER_PATH}/particlesystem.h
+                ${HEADER_PATH}/particleutil.h
                 ${HEADER_PATH}/physical.h
                 ${HEADER_PATH}/physicalactorproxy.h
                 ${HEADER_PATH}/plugin_export.h
@@ -183,7 +184,9 @@ SET(LIB_PUBLIC_HEADERS
                 ${HEADER_PATH}/serializeable.h
                 ${HEADER_PATH}/shadergroup.h
                 ${HEADER_PATH}/shadermanager.h
+                ${HEADER_PATH}/shaderparambool.h
                 ${HEADER_PATH}/shaderparameter.h
+                ${HEADER_PATH}/shaderparameteractorproperty.h
                 ${HEADER_PATH}/shaderparamfloat.h
                 ${HEADER_PATH}/shaderparamint.h
                 ${HEADER_PATH}/shaderparamoscillator.h
@@ -345,6 +348,7 @@ SET(LIB_SOURCES
                 ${SOURCE_PATH}/odeworldwrap.cpp
                 ${SOURCE_PATH}/orbitmotionmodel.cpp
                 ${SOURCE_PATH}/particlesystem.cpp
+                ${SOURCE_PATH}/particleutil.cpp
                 ${SOURCE_PATH}/physical.cpp
                 ${SOURCE_PATH}/physicalactorproxy.cpp
                 ${SOURCE_PATH}/pointaxis.cpp
@@ -364,6 +368,8 @@ SET(LIB_SOURCES
                 ${SOURCE_PATH}/screenshotcallback.cpp
                 ${SOURCE_PATH}/shadergroup.cpp
                 ${SOURCE_PATH}/shadermanager.cpp
+                ${SOURCE_PATH}/shaderparambool.cpp                
+                ${SOURCE_PATH}/shaderparameteractorproperty.cpp
                 ${SOURCE_PATH}/shaderparameter.cpp
                 ${SOURCE_PATH}/shaderparamfloat.cpp
                 ${SOURCE_PATH}/shaderparamint.cpp

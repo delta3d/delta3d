@@ -31,39 +31,17 @@ namespace dtAnim
 {
 
    /**
-    * This class is the game actor for an animated model.
-    * @see GameActor
-    * @see AnimationGameActorProxy
-    */
-   class DT_ANIM_EXPORT AnimationGameActor : public dtGame::GameActor
-   {
-   public:
-      /**
-       * Constructs an AnimationGameActor actor.
-       * @param proxy The actor proxy owning this task actor.
-       */
-      AnimationGameActor(dtGame::GameActorProxy& parent);
-
-      virtual osg::BoundingBox GetBoundingBox();
-
-   protected:
-
-      /// Destroys this actor.
-      virtual ~AnimationGameActor();
-   };
-
-   /**
     * This class is the proxy for an animated model game object.
     * @see GameActorProxy
     * @see AnimationGameActor
     */
-   class DT_ANIM_EXPORT AnimationGameActorProxy : public dtGame::GameActorProxy
+   class DT_ANIM_EXPORT AnimationGameActor : public dtGame::GameActorProxy
    {
    public:
       /**
        * Constructs the proxy.
        */
-      AnimationGameActorProxy();
+      AnimationGameActor();
 
       /**
        * Builds the property map for the task actor proxy.  These properties
@@ -92,9 +70,11 @@ namespace dtAnim
        */
       virtual dtCore::ActorProxyIcon* GetBillBoardIcon();
 
+      virtual osg::BoundingBox GetBoundingBox();
+
    protected:
       /// Destroys the proxy.
-      virtual ~AnimationGameActorProxy();
+      virtual ~AnimationGameActor();
 
       /**
        * Called by the game manager during creation of the proxy.  This method

@@ -39,6 +39,7 @@
 namespace dtAnim
 {
    class BaseModelWrapper;
+   class AnimationHelper;
    class PoseMeshDatabase;
    class PoseMeshUtility;
 }
@@ -52,26 +53,30 @@ class ProceduralAnimationActorProxy;
 
 ////////////////////////////////////////////////////////////////////////////////
 
-class TEST_ANIM_EXPORT ProceduralAnimationActor : public dtAnim::AnimationGameActor
+class TEST_ANIM_EXPORT ProceduralAnimationActor : public dtGame::GameActor
 {
 public:
+   static const dtUtil::RefString POSE_MESH_EYE_LEFT;
+   static const dtUtil::RefString POSE_MESH_EYE_RIGHT;
+   static const dtUtil::RefString POSE_MESH_HEAD;
+   static const dtUtil::RefString POSE_MESH_TORSO;
+   static const dtUtil::RefString POSE_MESH_GUN;
+
    // This class is designed to work with pose meshes
    // that cover both watching and aiming
    enum eMode
    {
+      MODE_NONE = -1,
       MODE_WATCH,
       MODE_AIM
    };
 
    ProceduralAnimationActor(ProceduralAnimationActorProxy& proxy);
 
-   /// Set the source of IK/procedural information
-   void SetPoseMeshDatabase(dtAnim::PoseMeshDatabase* poseMeshDatabase);
-
-   void SetMode(eMode mode) { mMode = mode; }
+   void SetMode(eMode mode);
 
    // Set the point of interest and an option offset from the target
-   void SetTarget(const dtCore::Transformable* target, osg::Vec3* offset = NULL);
+   void SetTarget(dtCore::Transformable* target, osg::Vec3* offset = NULL);
 
    // Set how long the procedural animations should take
    void SetBlendTime(float blendTime);
@@ -90,46 +95,29 @@ protected:
    virtual void OnEnteredWorld();
 
 private:
-   struct ProceduralAnimationData
+   // This actor is set up to work with pose meshes
+   // for each of the following parts
+   enum ePoseMeshPart
    {
-      // This actor is set up to work with pose meshes
-      // for each of the following parts
-      enum ePoseMeshPart
-      {
-         PMP_FIRST = 0,
+      PMP_FIRST = 0,
 
-         LEFT_EYE = PMP_FIRST,
-         RIGHT_EYE,
-         HEAD,
-         TORSO,
-         GUN,
+      LEFT_EYE = PMP_FIRST,
+      RIGHT_EYE,
+      HEAD,
+      TORSO,
+      GUN,
 
-         PMP_TOTAL
-      };
-
-      dtAnim::PoseMesh* mPoseMeshes[PMP_TOTAL];
-      dtAnim::PoseMesh::TargetTriangle mTargetTriangles[PMP_TOTAL];
+      PMP_TOTAL
    };
 
    eMode mMode;
 
-   // Animation IK system variables
-   dtAnim::PoseMeshDatabase*                mPoseMeshDatabase;
-   dtCore::RefPtr<dtAnim::PoseMeshUtility>  mPoseMeshUtil;
-   float                                    mBlendTime;
-
-   /// The source data for IK to operate on
-   ProceduralAnimationData mMarinePoseData;
-   const dtCore::Transformable* mCurrentTarget;
+   dtCore::ObserverPtr<dtCore::Transformable> mCurrentTarget;
 
    /// The relative position of interest from the target
    osg::Vec3 mTargetOffset;
 
-   osg::Vec3 GetPoseMeshEndEffectorDirection(const dtAnim::PoseMesh* poseMesh) const;
-
    void TickIK(float dt);
-
-   void AssemblePoseData();
 
    // The following functions should be refactored for less repetition
    // but they serve as good example for things you might want to do
@@ -140,20 +128,20 @@ private:
    /// Get the direction that the marine is looking in
    osg::Vec3 GetGazeDirection() const;
 
-   /// Get the direction that marine's gun is pointing in
-   osg::Vec3 GetGunDirection() const;
-
-   /// Get the world space position of the gun barrel
-   osg::Vec3 GetGunPosition() const;
-
    /// Get the world space position of the actor
    osg::Vec3 GetWorldPosition() const;
 
+   /// Get the direction that marine's gun is pointing in
+   osg::Vec3 GetDirection(const std::string& poseMeshName) const;
+
    /// Get the world space position of the head bone
-   osg::Vec3 GetHeadPosition() const;
+   osg::Vec3 GetPosition(const std::string& poseMeshName) const;
+
+   dtAnim::AnimationHelper* GetHelper();
+   dtAnim::AnimationHelper* GetHelper() const;
 };
 
-class TEST_ANIM_EXPORT ProceduralAnimationActorProxy: public dtAnim::AnimationGameActorProxy
+class TEST_ANIM_EXPORT ProceduralAnimationActorProxy: public dtAnim::AnimationGameActor
 {
 public:
    /// Constructor

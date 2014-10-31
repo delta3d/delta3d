@@ -99,11 +99,11 @@ void TextLabelComponent::SetFlashing(bool b)
    if (b)
    {
       // Get per frame updates to the OnTickLocal function
-      RegisterForTicks();
+      RegisterForTick();
    }
    else
    {
-      UnregisterForTicks();
+      UnregisterForTick();
       SetHighlighted(false);
    }
 }

@@ -7,7 +7,7 @@ dtCore::ODEBodyWrap::ODEBodyWrap()
   : mBodyID(0)
   , mDynamicsEnabled(false)
 {
-   dMassSetSphere(&mMass, 1.f, 1.f);
+   dMassSetSphere(&mMass, 1.0f, 1.0f);
    SetMass(&mMass);
 }
 

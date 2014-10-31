@@ -29,6 +29,7 @@
 #include <dtCore/export.h>
 #include <dtUtil/getsetmacros.h>
 #include <string>
+#include <algorithm> // for_each in ContextData
 
 namespace dtCore
 {

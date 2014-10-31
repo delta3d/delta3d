@@ -56,7 +56,7 @@ namespace dtAI
 
    void AIActorRegistry::RegisterActorTypes()
    {
-      mActorFactory->RegisterType<dtAI::AIInterfaceActorProxy>(AI_INTERFACE_ACTOR_TYPE.get());
+      mActorFactory->RegisterType<dtAI::AIInterfaceActor>(AI_INTERFACE_ACTOR_TYPE.get());
    }
 
 } //namespace dtAI

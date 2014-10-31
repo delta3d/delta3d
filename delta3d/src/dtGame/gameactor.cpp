@@ -110,87 +110,16 @@ namespace dtGame
    ///////////////////////////////////////////////////////////////////////////////////////////////////////
    void GameActor::OnTickLocal(const TickMessage& tickMessage)
    {
-      //Call to support older code.
-      TickLocal(tickMessage);
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////////////////////
    void GameActor::OnTickRemote(const TickMessage& tickMessage)
-   {
-      //Call to support older code.
-      TickRemote(tickMessage);
-   }
-
-   ///////////////////////////////////////////////////////////////////////////////////////////////////////
-   void GameActor::TickLocal(const Message& tickMessage)
-   {
-   }
-
-   ///////////////////////////////////////////////////////////////////////////////////////////////////////
-   void GameActor::TickRemote(const Message& tickMessage)
    {
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////////////////////
    void GameActor::ProcessMessage(const Message& message)
    {
-   }
-
-   ///////////////////////////////////////////////////////////////////////////////////////////////////////
-   void GameActor::SetShaderGroup(const std::string& groupName)
-   {
-      // Setting the shader group, when it didn't change can cause a massive
-      // hit on performance because it unassigns everything and will make a new
-      // instance of the shader and all its params. Could also cause anomalies with
-      // oscilating shader params.
-      if (groupName != mShaderGroup)
-      {
-         mShaderGroup = groupName;
-         OnShaderGroupChanged();
-      }
-   }
-
-   ///////////////////////////////////////////////////////////////////////////////////////////////////////
-   void GameActor::OnShaderGroupChanged()
-   {
-      // Unassign any old setting on this, if any - works regardless if there's a node or not
-      dtCore::ShaderManager::GetInstance().UnassignShaderFromNode(*GetOSGNode());
-
-      if (mShaderGroup.empty())
-         return; // Do nothing, since we have nothing to load
-
-      //First get the shader group assigned to this actor.
-      const dtCore::ShaderGroup *shaderGroup =
-         dtCore::ShaderManager::GetInstance().FindShaderGroupPrototype(mShaderGroup);
-
-      if (shaderGroup == NULL)
-      {
-         mLogger.LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__, __LINE__,
-                  "Could not find shader group [" + mShaderGroup + "] for actor [" + GetName());
-         return;
-      }
-
-      const dtCore::ShaderProgram *defaultShader = shaderGroup->GetDefaultShader();
-
-      try
-      {
-         if (defaultShader != NULL)
-         {
-            dtCore::ShaderManager::GetInstance().AssignShaderFromPrototype(*defaultShader, *GetOSGNode());
-         }
-         else
-         {
-            mLogger.LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
-                     "Could not find a default shader in shader group: " + mShaderGroup);
-            return;
-         }
-      }
-      catch (const dtUtil::Exception& e)
-      {
-         mLogger.LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
-                  "Caught Exception while assigning shader: " + e.ToString());
-         return;
-      }
    }
 
    ////////////////////////////////////////////////////////////////////////////////

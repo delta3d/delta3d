@@ -167,8 +167,8 @@ namespace dtExample
             //   CEGUI::UVector2(cegui_reldim(1.0),cegui_reldim(1.0)));
 
             CEGUI::Window* frame = CreateWidget("WindowsLook/StaticText","frame");
-            frame->setArea(CEGUI::UVector2(cegui_reldim(0.f),cegui_reldim(0.08f /*0.f*/)),
-                           CEGUI::UVector2(cegui_reldim(1.f),cegui_reldim(0.12f /*0.2f*/)));
+            frame->setArea(CEGUI::UVector2(cegui_reldim(0.0f),cegui_reldim(0.08f /*0.f*/)),
+                           CEGUI::UVector2(cegui_reldim(1.0f),cegui_reldim(0.12f /*0.2f*/)));
             //frame->setProperty("FrameEnabled", "false");
             frame->setProperty("BackgroundEnabled","True");
             frame->setProperty("BackgroundColours","tl:FFDFDFDF tr:FFDFDFDF bl:FFDFDFDF br:FFDFDFDF");

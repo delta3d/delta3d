@@ -51,6 +51,7 @@ class DeltaDrawableTests : public CPPUNIT_NS::TestFixture
       CPPUNIT_TEST(TestAddedAndRemovedCallbacks);
       CPPUNIT_TEST(TestAddingItselfAsAChild);
       CPPUNIT_TEST(TestAddingChildWithExistingParent);
+      CPPUNIT_TEST(TestShaderGroup);
    CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -65,6 +66,7 @@ public:
    void TestAddedAndRemovedCallbacks();
    void TestAddingItselfAsAChild();
    void TestAddingChildWithExistingParent();
+   void TestShaderGroup();
 
 private:
    bool HasChild(dtCore::DeltaDrawable* parent, dtCore::DeltaDrawable* child);
@@ -411,4 +413,52 @@ void DeltaDrawableTests::TestAddingChildWithExistingParent()
 
    bool result = parent2->AddChild(child);
    CPPUNIT_ASSERT_EQUAL_MESSAGE("Should not be able to add a DeltaDrawable as a child if it already has a parent", false, result);
+}
+
+//////////////////////////////////////////////////////////////////////////
+class TestShaderDrawable : public dtCore::DeltaDrawable
+{
+public:
+   typedef dtCore::DeltaDrawable BaseClass;
+
+   bool mShaderGroupChanged;
+
+   TestShaderDrawable(const std::string& name)
+      : BaseClass(name)
+      , mShaderGroupChanged(false)
+   {}
+
+   virtual osg::Node* GetOSGNode() 
+   {
+      return NULL;
+   }
+
+   virtual const osg::Node* GetOSGNode() const
+   {
+      return NULL;
+   }
+
+   virtual void OnShaderGroupChanged()
+   {
+      mShaderGroupChanged = true;
+   }
+
+protected:
+   virtual ~TestShaderDrawable() {}
+};
+
+//////////////////////////////////////////////////////////////////////////
+void DeltaDrawableTests::TestShaderGroup()
+{
+   using namespace dtCore;
+   RefPtr<TestShaderDrawable> obj = new TestShaderDrawable("TestObject");
+
+   CPPUNIT_ASSERT( ! obj->mShaderGroupChanged);
+
+   std::string shaderGroup("MultiMap");
+   CPPUNIT_ASSERT(obj->GetShaderGroup().empty());
+   obj->SetShaderGroup(shaderGroup);
+   CPPUNIT_ASSERT(obj->GetShaderGroup() == shaderGroup);
+
+   CPPUNIT_ASSERT(obj->mShaderGroupChanged);
 }

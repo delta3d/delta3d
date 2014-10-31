@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PoseMeshFile>
+	<PoseMesh name="Poses_Head" root="mPelvis"  rootForwardAxis="0.0 0.0 1.0"
+	          effector="mHead" effectorForwardAxis="0.0 0.0 1.0">	
+		<Triangle>
+			<Animation>poses/HeadDownRight.xaf</Animation>
+			<Animation>poses/HeadDownLeft.xaf</Animation>
+			<Animation>poses/HeadRight.xaf</Animation>
+		</Triangle>	
+		<Triangle>
+			<Animation>poses/HeadRight.xaf</Animation>
+			<Animation>poses/HeadDownLeft.xaf</Animation>
+			<Animation>poses/HeadLeft.xaf</Animation>
+		</Triangle>	
+		<Triangle>
+			<Animation>poses/HeadRight.xaf</Animation>
+			<Animation>poses/HeadLeft.xaf</Animation>
+			<Animation>poses/HeadUpRight.xaf</Animation>
+		</Triangle>	
+		<Triangle>
+			<Animation>poses/HeadUpRight.xaf</Animation>
+			<Animation>poses/HeadLeft.xaf</Animation>
+			<Animation>poses/HeadUpLeft.xaf</Animation>
+		</Triangle>						
+	</PoseMesh>	
+	
+	<PoseMesh name="Poses_LeftEye" root="mPelvis"  rootForwardAxis="0.0 0.0 1.0"
+	          effector="mEyeLeft" effectorForwardAxis="0.0 1.0 0.0">	
+		<Triangle>
+			<Animation>poses/EyeLeftIn.xaf</Animation>
+			<Animation>poses/EyeLeftMidDown.xaf</Animation>
+			<Animation>poses/EyeLeftMidUp.xaf</Animation>
+		</Triangle>	
+		<Triangle>
+			<Animation>poses/EyeLeftIn.xaf</Animation>
+			<Animation>poses/EyeLeftMidUp.xaf</Animation>
+			<Animation>poses/EyeLeftUp.xaf</Animation>
+		</Triangle>	
+		<Triangle>
+			<Animation>poses/EyeLeftIn.xaf</Animation>
+			<Animation>poses/EyeLeftDown.xaf</Animation>
+			<Animation>poses/EyeLeftMidDown.xaf</Animation>
+		</Triangle>	
+		<Triangle>
+			<Animation>poses/EyeLeftOut.xaf</Animation>
+			<Animation>poses/EyeLeftMidUp.xaf</Animation>
+			<Animation>poses/EyeLeftMidDown.xaf</Animation>
+		</Triangle>						
+	</PoseMesh>	
+	
+	<PoseMesh name="Poses_RightEye" root="mPelvis"  rootForwardAxis="0.0 0.0 1.0"
+	          effector="mEyeRight" effectorForwardAxis="0.0 1.0 0.0">	
+		<Triangle>
+			<Animation>poses/EyeRightIn.xaf</Animation>
+			<Animation>poses/EyeRightMidUp.xaf</Animation>
+			<Animation>poses/EyeRightMidDown.xaf</Animation>
+		</Triangle>	
+		<Triangle>
+			<Animation>poses/EyeRightIn.xaf</Animation>
+			<Animation>poses/EyeRightUp.xaf</Animation>
+			<Animation>poses/EyeRightMidUp.xaf</Animation>
+		</Triangle>	
+		<Triangle>
+			<Animation>poses/EyeRightIn.xaf</Animation>
+			<Animation>poses/EyeRightMidDown.xaf</Animation>
+			<Animation>poses/EyeRightDown.xaf</Animation>
+		</Triangle>	
+		<Triangle>
+			<Animation>poses/EyeRightOut.xaf</Animation>
+			<Animation>poses/EyeRightMidDown.xaf</Animation>
+			<Animation>poses/EyeRightMidUp.xaf</Animation>
+		</Triangle>						
+	</PoseMesh>
+
+  <PoseMesh name="Poses_Torso" root="mPelvis"  rootForwardAxis="0.0 0.0 1.0"
+	          effector="mChest" effectorForwardAxis="0.0 0.0 1.0">	
+		<Triangle>
+			<Animation>poses/TorsoDownRight.xaf</Animation>
+			<Animation>poses/TorsoForward.xaf</Animation>
+			<Animation>poses/TorsoUpRight.xaf</Animation>
+		</Triangle>	
+		<Triangle>
+			<Animation>poses/TorsoUpRight.xaf</Animation>
+			<Animation>poses/TorsoForward.xaf</Animation>
+			<Animation>poses/TorsoUpLeft.xaf</Animation>
+		</Triangle>	
+		<Triangle>
+			<Animation>poses/TorsoUpLeft.xaf</Animation>
+			<Animation>poses/TorsoForward.xaf</Animation>
+			<Animation>poses/TorsoDownLeft.xaf</Animation>
+		</Triangle>	
+		<Triangle>
+			<Animation>poses/TorsoDownLeft.xaf</Animation>
+			<Animation>poses/TorsoForward.xaf</Animation>
+			<Animation>poses/TorsoDownRight.xaf</Animation>
+		</Triangle>						
+	</PoseMesh>
+  
+</PoseMeshFile>

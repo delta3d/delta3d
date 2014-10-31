@@ -8,10 +8,10 @@
 //////////////////////////////////////////////////////////////////////////
 dtCore::ODEWorldWrap::ODEWorldWrap()
    : mWorldID(0)
-   , mGravity(0.f, 0.f, 0.f)
+   , mGravity(0.0f, 0.0f, 0.0f)
 {
    mWorldID = dWorldCreate();
-   SetGravity(0.f, 0.f, -9.81f);
+   SetGravity(0.0f, 0.0f, -9.81f);
 }
 
 //////////////////////////////////////////////////////////////////////////

@@ -101,8 +101,8 @@ namespace dtAnim
       virtual ~Cal3dInterfaceObjectCache();
 
    private:
-      typedef std::map<int, Cal3dAnimation*> IDAnimMap;
-      typedef std::map<int, Cal3dBone*> IDBoneMap;
+      typedef std::map<int, dtCore::ObserverPtr<Cal3dAnimation> > IDAnimMap;
+      typedef std::map<int, dtCore::ObserverPtr<Cal3dBone> > IDBoneMap;
 
       IDAnimMap mIDAnimMap;
       IDBoneMap mIDBoneMap;
@@ -136,7 +136,7 @@ namespace dtAnim
 
       virtual osg::Node* GetDrawableNode();
 
-      virtual dtAnim::Cal3DModelData* GetCalModelData();
+      virtual dtAnim::Cal3DModelData* GetCalModelData() const;
 
       virtual dtAnim::AnimationUpdaterInterface* GetAnimator();
 
@@ -208,7 +208,7 @@ namespace dtAnim
       virtual void SetLODLevel(float level);
 
       /// Update the Cal3D system using the CalModel's update.
-      virtual void UpdateAnimations(float deltaTime);
+      virtual void UpdateAnimation(float deltaTime);
       
       /// Remove all existing animations from the mixer
       virtual void ClearAllAnimations(float delay = 0.0f);

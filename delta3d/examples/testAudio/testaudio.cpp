@@ -14,6 +14,7 @@
 #include <dtCore/particlesystem.h>
 #include <dtCore/transform.h>
 #include <dtUtil/datapathutils.h>
+#include <dtUtil/nodemask.h>
 #include <osgGA/GUIEventAdapter>
 
 // name spaces
@@ -621,7 +622,7 @@ TestAudioApp::LoadGfxFile(const char* fname)
    dtCore::RefPtr<osg::Node> filenode = fileobj->GetOSGNode();
    assert(filenode.valid());
 
-   filenode->setNodeMask(0xFFFFFFFF);
+   filenode->setNodeMask(dtUtil::NodeMask::EVERYTHING);
    return fileobj;
 }
 
@@ -675,8 +676,8 @@ void
 TestAudioApp::SetUpCamera()
 {
    osg::Vec3   pos    (0.0f, -150.0f, 30.0f);
-   osg::Vec3   lookat (0.f,     0.f,   0.f);
-   osg::Vec3   up     (0.f,     0.f,   1.f);
+   osg::Vec3   lookat (0.0f,     0.0f,   0.0f);
+   osg::Vec3   up     (0.0f,     0.0f,   1.0f);
 
    Transform   xform;
    xform.Set(pos, lookat, up);

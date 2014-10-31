@@ -1318,7 +1318,7 @@ osg::ref_ptr<osg::Geode> OSGExp::createParticleSystemGeometry(osg::Group* rootTr
 		osgParticle::RadialShooter *shooter = new osgParticle::RadialShooter;
 		speed = speed*9.81f;
 		shooter->setInitialSpeedRange(speed/2.0f, speed);
-		float theta = variation * (PI/30.f);
+		float theta = variation * (PI/30.0f);
 		shooter->setThetaRange(0, theta);
 		emitter->setShooter(shooter);
 		// Add emitter to rootTransform.

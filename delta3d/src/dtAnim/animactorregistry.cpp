@@ -34,6 +34,6 @@ AnimActorRegistry::AnimActorRegistry()
 
 void dtAnim::AnimActorRegistry::RegisterActorTypes()
 {
-   mActorFactory->RegisterType<AnimationGameActorProxy>(ANIMATION_ACTOR_TYPE.get());
+   mActorFactory->RegisterType<AnimationGameActor>(ANIMATION_ACTOR_TYPE.get());
    mActorFactory->RegisterType<AnimationComponent>();
 }

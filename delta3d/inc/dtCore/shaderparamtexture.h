@@ -24,6 +24,7 @@
 
 #include <dtCore/shaderparameter.h>
 #include <dtCore/export.h>
+#include <dtCore/resourcedescriptor.h>
 
 #include <osg/Texture>
 
@@ -154,13 +155,24 @@ namespace dtCore
           * @param path The path to the texture file.  Must be relative to
           *    the current delta3d data file path.
           */
-         virtual void SetTexture(const std::string &path) { mTexturePath = path; SetDirty(true); SetImageSourceDirty(true); }
-
+         virtual void SetTexture(const std::string &path);
+         
          /**
           * Gets the current texture path string.
           * @return A string containing the path to this parameter's texture.
           */
          const std::string &GetTexture() const { return mTexturePath; }
+
+
+         /**
+          * Sets the texture using a project resource descriptor that will convert to a file path.
+          */
+         virtual void SetTextureResource(const dtCore::ResourceDescriptor& value);
+
+         /**
+          * Gets the project resource descriptor that was used to load the texture file.
+          */
+         dtCore::ResourceDescriptor GetTextureResource() const;
 
          /**
           * Sets the texture addressing mode.  This is applied when texture
@@ -244,6 +256,8 @@ namespace dtCore
          const TextureSourceType *mSourceType;
          dtCore::RefPtr<osg::Texture> mTextureObject;
          std::string mTexturePath;
+
+         dtCore::ResourceDescriptor mDescriptor;
 
       private:
          // Disallowed to prevent compile errors on VS2003. It apparently

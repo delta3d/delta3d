@@ -32,6 +32,9 @@ namespace dtActors
    {
       public:
 
+         typedef dtGame::IEnvGameActor BaseClass;
+
+
          class DT_PLUGIN_EXPORT CloudCoverEnum : public dtUtil::Enumeration
          {
             DECLARE_ENUM(CloudCoverEnum);

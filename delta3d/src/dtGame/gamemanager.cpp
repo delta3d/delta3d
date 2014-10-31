@@ -1969,6 +1969,9 @@ namespace dtGame
       NameVector::const_iterator mapItor = mapNames.begin();
       for(; mapItor != mapNames.end(); ++mapItor)
       {
+         if (std::find(mGMImpl->mLoadedMaps.begin(), mGMImpl->mLoadedMaps.end(), *mapItor) != mGMImpl->mLoadedMaps.end())
+            continue;
+
          // check whether this is a good map on the current project
          try
          {

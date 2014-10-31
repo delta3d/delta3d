@@ -31,7 +31,7 @@ namespace dtActors
 {
    void CloudDomeActorProxy::CreateDrawable()
    {
-      SetDrawable(*new CloudDome(6, 1, 6.f, 1.f, 0.3f, 0.96f, 256.f, 1800));
+      SetDrawable(*new CloudDome(6, 1, 6.0f, 1.0f, 0.3f, 0.96f, 256.0f, 1800));
    }
 
    ///////////////////////////////////////////////////////////////////////////////

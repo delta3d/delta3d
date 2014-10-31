@@ -1,47 +1,38 @@
+#version 120
 //////////////////////////////////////////////
-//An under water shader
+//This shader is used to color the far plane with 
+// the underwater color to give the effect of an ocean
 //by Bradley Anderegg
 //////////////////////////////////////////////
-
 uniform float WaterHeight;
 uniform mat4 inverseViewMatrix;
 
-varying vec4 worldSpacePos;
-varying vec3 lightVector;
-varying vec4 camPos;
+varying vec4 worldSpacePos; 
 
-float deepWaterScalar = 0.64;
-float viewDistance = 10.0;
+float deepWaterScalar = 0.85;
+uniform float UnderWaterViewDistance;
 
 uniform vec4 WaterColor;
 vec4 deepWaterColor = deepWaterScalar * WaterColor;
 
 vec3 GetWaterColorAtDepth(float);
-void lightContribution(vec3, vec3, vec3, vec3, out vec3);
 
 void main (void)
 {     
 
-   float depth = WaterHeight - (viewDistance * worldSpacePos.z);
-   depth = clamp(depth, 0.0, viewDistance);
-   float depthScalar = (depth / viewDistance);
-
-   vec3 lightContribFinal;
-   lightContribution(vec3(0.0, 0.0, 1.0), lightVector, gl_LightSource[0].diffuse.xyz, 
-      gl_LightSource[0].ambient.xyz, lightContribFinal);
-
+   float depth = (UnderWaterViewDistance * worldSpacePos.z);
+   depth = clamp(depth, 0.0, UnderWaterViewDistance);
+   float depthScalar = (depth / UnderWaterViewDistance);
    
-   vec3 color = lightContribFinal * GetWaterColorAtDepth(camPos.z);
-   color = mix(color, deepWaterColor.xyz, 0.5 * depthScalar);
-
+   vec3 color = gl_LightSource[0].ambient.xyz * deepWaterColor.xyz;
+   color += gl_LightSource[0].diffuse.xyz * deepWaterColor.xyz;
+   
    if(worldSpacePos.z < WaterHeight)
    {
-      //gl_FragColor = vec4(vec3(lightContribFinal), 1.0);      
       gl_FragColor = vec4(color, 1.0);     
    }
    else
    {
       discard;
-      //gl_FragColor = vec4(color, 0.0);   
    }
 }

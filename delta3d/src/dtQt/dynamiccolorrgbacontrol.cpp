@@ -264,7 +264,7 @@ namespace dtQt
       //clamp to ensure its in the 0..1 range for Qt to use
       for (unsigned int i = 0; i < vectorValue.num_components; ++i)
       {
-         dtUtil::Clamp(vectorValue[i], 0.f, 1.f);
+         dtUtil::Clamp(vectorValue[i], 0.0f, 1.0f);
       }
 
       QColor startColor;

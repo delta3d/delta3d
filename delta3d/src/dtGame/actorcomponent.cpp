@@ -34,6 +34,11 @@
 
 namespace dtGame
 {
+   /////////////////////////////////////////////////////////////////////////////
+   // CONSTANTS
+   /////////////////////////////////////////////////////////////////////////////
+   static const dtUtil::RefString INVOKABLE_PREFIX_TICK_LOCAL("Tick Local ");
+   static const dtUtil::RefString INVOKABLE_PREFIX_TICK_REMOTE("Tick Remote ");
 
 ////////////////////////////////////////////////////////////////////////////////
 ActorComponent::ActorComponent(ActorComponent::ACType type)
@@ -80,26 +85,53 @@ void ActorComponent::Init(const dtCore::ActorType& actorType)
 }
 
 //////////////////////////////////////////////////////////////////////////
-void ActorComponent::RegisterForTicks()
+void ActorComponent::RegisterForTick()
 {
    GameActorProxy* owner = NULL;
    GetOwner(owner);
-   std::string tickInvokable = "Tick Local " + GetType()->GetFullName();
-   if(!owner->GetInvokable(tickInvokable))
+
+   if (owner == NULL) // This should probably be an error log
+      return;
+
+   if (!owner->IsRemote())
    {
-      owner->AddInvokable(*new Invokable(tickInvokable, dtUtil::MakeFunctor(&ActorComponent::OnTickLocal, this)));
+      std::string tickInvokable = INVOKABLE_PREFIX_TICK_LOCAL.Get() + GetType()->GetFullName();
+      if(!owner->GetInvokable(tickInvokable))
+      {
+         owner->AddInvokable(*new Invokable(tickInvokable, dtUtil::MakeFunctor(&ActorComponent::OnTickLocal, this)));
+      }
+      owner->RegisterForMessages(MessageType::TICK_LOCAL, tickInvokable);
    }
-   owner->RegisterForMessages(MessageType::TICK_LOCAL, tickInvokable);
-}
+   else
+   {
+      std::string tickInvokable = INVOKABLE_PREFIX_TICK_REMOTE.Get() + GetType()->GetFullName();
+      if(!owner->GetInvokable(tickInvokable))
+      {
+         owner->AddInvokable(*new Invokable(tickInvokable, dtUtil::MakeFunctor(&ActorComponent::OnTickLocal, this)));
+      }
+      owner->RegisterForMessages(MessageType::TICK_REMOTE, tickInvokable);
+   }
+ }
 
 //////////////////////////////////////////////////////////////////////////
-void ActorComponent::UnregisterForTicks()
+void ActorComponent::UnregisterForTick()
 {
    GameActorProxy* owner = NULL;
    GetOwner(owner);
-   std::string tickInvokable = "Tick Local " + GetType()->GetFullName();
-   owner->UnregisterForMessages(MessageType::TICK_LOCAL, tickInvokable);
-   owner->RemoveInvokable(tickInvokable);
+
+   if (owner == NULL)
+      return;
+
+   if (!owner->IsRemote())
+   {
+      std::string tickInvokable = INVOKABLE_PREFIX_TICK_LOCAL.Get() + GetType()->GetFullName();
+      owner->UnregisterForMessages(MessageType::TICK_LOCAL, tickInvokable);
+   }
+   else
+   {
+      std::string tickInvokable = INVOKABLE_PREFIX_TICK_REMOTE.Get() + GetType()->GetFullName();
+      owner->UnregisterForMessages(MessageType::TICK_REMOTE, tickInvokable);
+   }
 }
 
 ////////////////////////////////////////////////////////////////////////////

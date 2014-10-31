@@ -749,13 +749,6 @@ namespace dtAnim
       BaseClass::SetModelParameters(handler, *modelData);
       CreateAttachments(handler, *modelData);
 
-      // NOTE: Hardware mesh scale will be fixed to the
-      // scale specified in the character file. A shader
-      // uniform for scale will be used for scaling a mesh
-      // in hardware mode. Scale the model before the
-      // hardware drawables are created.
-      coreModel->scale(modelData->GetScaleInFile());
-
       // todo remove this if hardware isn't being used
       LoadHardwareData(calModelData);
 
@@ -773,6 +766,7 @@ namespace dtAnim
    bool Cal3dLoader::Save(const std::string& file, const dtAnim::BaseModelWrapper& wrapper)
    {
       const dtAnim::Cal3DModelWrapper* calWrapper = dynamic_cast<const dtAnim::Cal3DModelWrapper*>(&wrapper);
+      dtAnim::Cal3DModelData* modelData = calWrapper->GetCalModelData();
       const CalModel* calModel = calWrapper->GetCalModel();
 
 #if defined(CAL3D_VERSION) && CAL3D_VERSION >= 1300

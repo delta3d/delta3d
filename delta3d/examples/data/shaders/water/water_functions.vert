@@ -1,3 +1,4 @@
+#version 120
 //////////////////////////////////////////////////////////////////////////////////////////////////
 //The wave parameters are packed into two vec4's like so
 // [Length, Speed, Amplitude, Frequency], [Q, reserved for later use, Direction.x, Direction.y]

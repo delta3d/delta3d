@@ -22,7 +22,10 @@
 #include <dtAI/aiinterfaceactor.h>
 #include <dtAI/deltaaiinterface.h>
 #include <dtAI/waypointtypes.h>
+#include <dtAI/aidebugdrawable.h>
+#include <dtAI/waypointrenderinfo.h>
 #include <dtCore/resourceactorproperty.h>
+#include <dtCore/propertycontaineractorproperty.h>
 #include <dtUtil/datapathutils.h>
 
 namespace dtAI
@@ -30,16 +33,16 @@ namespace dtAI
    /////////////////////////////////////////////////////////////////////////////
    // CLASS CONSTANTS
    /////////////////////////////////////////////////////////////////////////////
-   const dtUtil::RefString AIInterfaceActorProxy::CLASS_NAME("dtAI::AIInterface");
-   const dtUtil::RefString AIInterfaceActorProxy::PROPERTY_WAYPOINT_FILE_NAME("dtAI::WaypointFilename");
+   const dtUtil::RefString AIInterfaceActor::CLASS_NAME("dtAI::AIInterface");
+   const dtUtil::RefString AIInterfaceActor::PROPERTY_WAYPOINT_FILE_NAME("dtAI::WaypointFilename");
+   const dtUtil::RefString AIInterfaceActor::PROPERTY_WAYPOINT_RENDER_INFO("dtAI::WaypointRenderInfo");
 
-
-   ////////////////////////////////////////////////////////////////////////////
-   // ACTOR CODE
-   ////////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
+   // PROXY CODE
+   /////////////////////////////////////////////////////////////////////////////
    AIInterfaceActor::AIInterfaceActor()
    {
-
+      SetClassName(AIInterfaceActor::CLASS_NAME.Get());
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -47,106 +50,93 @@ namespace dtAI
    {
    }
 
-   /////////////////////////////////////////////////////////////////////////////
-   osg::Node* AIInterfaceActor::GetOSGNode()
+   ////////////////////////////////////////////////////////////////////////////
+   void AIInterfaceActor::CreateDrawable()
    {
-      return dtAI::WaypointManager::GetInstance().GetOSGNode();
+
+      mAIInterface = CreateAIInterface();
+
+      mAIInterface->RegisterWaypointType<Waypoint>(WaypointTypes::DEFAULT_WAYPOINT.get());
+      mAIInterface->RegisterWaypointType<NamedWaypoint>(WaypointTypes::NAMED_WAYPOINT.get());
+      mAIInterface->RegisterWaypointType<TacticalWaypoint>(WaypointTypes::TACTICAL_WAYPOINT.get());
+      mAIInterface->RegisterWaypointType<WaypointCollection>(WaypointTypes::WAYPOINT_COLLECTION.get());
+
+      SetDrawable(*mAIInterface->GetDebugDrawable());
+      // Turn off all rendering
+      mAIInterface->GetDebugDrawable()->GetRenderInfo()->SetAllRenderingOptions(false);
+
    }
 
-   /////////////////////////////////////////////////////////////////////////////
-   const osg::Node* AIInterfaceActor::GetOSGNode() const
+   ////////////////////////////////////////////////////////////////////////////
+   AIPluginInterface* AIInterfaceActor::CreateAIInterface()
    {
-      return dtAI::WaypointManager::GetInstance().GetOSGNode();
+      return new DeltaAIInterface();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   void AIInterfaceActor::BuildPropertyMap()
+   {
+      dtCore::BaseActorObject::BuildPropertyMap();
+
+      const dtUtil::RefString GROUPNAME = "AIInterface";
+
+      AIDebugDrawable* debugDrawable = GetDrawable<AIDebugDrawable>();
+      AddProperty(new dtCore::SimplePropertyContainerActorProperty<WaypointRenderInfo>(
+            PROPERTY_WAYPOINT_RENDER_INFO,
+            PROPERTY_WAYPOINT_RENDER_INFO,
+            dtCore::PropertyContainerActorProperty<WaypointRenderInfo>::SetFuncType(debugDrawable, &AIDebugDrawable::SetRenderInfo),
+            dtCore::PropertyContainerActorProperty<WaypointRenderInfo>::GetFuncType(debugDrawable, &AIDebugDrawable::GetRenderInfo),
+            "Draw the waypoint and connectiving graph.", GROUPNAME));
+
+      AddProperty(new dtCore::ResourceActorProperty(dtCore::DataType::STATIC_MESH,
+            PROPERTY_WAYPOINT_FILE_NAME,
+            PROPERTY_WAYPOINT_FILE_NAME,
+            dtCore::ResourceActorProperty::SetDescFuncType(this, &AIInterfaceActor::SetAIFile),
+            dtCore::ResourceActorProperty::GetDescFuncType(this, &AIInterfaceActor::GetAIFile),
+            "Loads the waypoint and connectivity graph.", GROUPNAME));
+
+   }
+
+   DT_IMPLEMENT_ACCESSOR_GETTER(AIInterfaceActor, dtCore::ResourceDescriptor, AIFile);
+   void AIInterfaceActor::SetAIFile(const dtCore::ResourceDescriptor& rd)
+   {
+      mAIFile = rd;
+      LoadFile(dtCore::ResourceActorProperty::GetResourcePath(rd));
    }
 
 
-   /////////////////////////////////////////////////////////////////////////////
-   // PROXY CODE
-   /////////////////////////////////////////////////////////////////////////////
-   AIInterfaceActorProxy::AIInterfaceActorProxy()
+   ////////////////////////////////////////////////////////////////////////////
+   void AIInterfaceActor::LoadFile(const std::string& fileName)
    {
-      SetClassName(AIInterfaceActorProxy::CLASS_NAME.Get());
-   }
+      mAIInterface->ClearMemory();
+      if (!fileName.empty())
+      {
+         std::string fullpath = dtUtil::FindFileInPathList(fileName);
 
-   /////////////////////////////////////////////////////////////////////////////
-    AIInterfaceActorProxy::~AIInterfaceActorProxy()
-    {
-    }
+         bool success = mAIInterface->LoadWaypointFile(fullpath);
 
-    ////////////////////////////////////////////////////////////////////////////
-    void AIInterfaceActorProxy::CreateDrawable()
-    {
-       AIInterfaceActor* actor = new AIInterfaceActor();
-       SetDrawable(*actor);
-
-       mAIInterface = CreateAIInterface();
-
-       mAIInterface->RegisterWaypointType<Waypoint>(WaypointTypes::DEFAULT_WAYPOINT.get());
-       mAIInterface->RegisterWaypointType<NamedWaypoint>(WaypointTypes::NAMED_WAYPOINT.get());
-       mAIInterface->RegisterWaypointType<TacticalWaypoint>(WaypointTypes::TACTICAL_WAYPOINT.get());
-       mAIInterface->RegisterWaypointType<WaypointCollection>(WaypointTypes::WAYPOINT_COLLECTION.get());
-    }
-
-    ////////////////////////////////////////////////////////////////////////////
-    AIPluginInterface* AIInterfaceActorProxy::CreateAIInterface()
-    {
-       return new DeltaAIInterface();
-    }
-
-    ////////////////////////////////////////////////////////////////////////////
-    void AIInterfaceActorProxy::BuildPropertyMap()
-    {
-       dtCore::BaseActorObject::BuildPropertyMap();
-
-       const dtUtil::RefString GROUPNAME = "AIInterface";
-
-       AddProperty(new dtCore::ResourceActorProperty(dtCore::DataType::STATIC_MESH,
-                   PROPERTY_WAYPOINT_FILE_NAME,
-                   PROPERTY_WAYPOINT_FILE_NAME,
-                   dtCore::ResourceActorProperty::SetDescFuncType(this, &AIInterfaceActorProxy::SetAIFile),
-                   dtCore::ResourceActorProperty::GetDescFuncType(this, &AIInterfaceActorProxy::GetAIFile),
-                   "Loads the waypoint and connectivity graph.", GROUPNAME));
-    }
-
-    DT_IMPLEMENT_ACCESSOR_GETTER(AIInterfaceActorProxy, dtCore::ResourceDescriptor, AIFile);
-    void AIInterfaceActorProxy::SetAIFile(const dtCore::ResourceDescriptor& rd)
-    {
-       mAIFile = rd;
-       LoadFile(dtCore::ResourceActorProperty::GetResourcePath(rd));
-    }
-
-    ////////////////////////////////////////////////////////////////////////////
-    void AIInterfaceActorProxy::LoadFile(const std::string& fileName)
-    {
-         mAIInterface->ClearMemory();
-         if (!fileName.empty())
+         if (!success)
          {
-            std::string fullpath = dtUtil::FindFileInPathList(fileName);
-
-            bool success = mAIInterface->LoadWaypointFile(fullpath);
-
-            if (!success)
-            {
-               LOG_ERROR("Unable to load Waypoint File '" + fileName + "'")
-            }
+            LOG_ERROR("Unable to load Waypoint File '" + fileName + "'")
          }
-    }
+      }
+   }
 
-    ////////////////////////////////////////////////////////////////////////////
-    bool AIInterfaceActorProxy::IsPlaceable() const
-    {
-       return false;
-    }
+   ////////////////////////////////////////////////////////////////////////////
+   bool AIInterfaceActor::IsPlaceable() const
+   {
+      return false;
+   }
 
-    ////////////////////////////////////////////////////////////////////////////
-    AIPluginInterface* AIInterfaceActorProxy::GetAIInterface()
-    {
+   ////////////////////////////////////////////////////////////////////////////
+   AIPluginInterface* AIInterfaceActor::GetAIInterface()
+   {
       return mAIInterface.get();
-    }
+   }
 
-    ////////////////////////////////////////////////////////////////////////////
-    const AIPluginInterface* AIInterfaceActorProxy::GetAIInterface() const
-    {
-       return mAIInterface.get();
-    }
+   ////////////////////////////////////////////////////////////////////////////
+   const AIPluginInterface* AIInterfaceActor::GetAIInterface() const
+   {
+      return mAIInterface.get();
+   }
 }

@@ -8,6 +8,7 @@
 #include <dtCore/deltawin.h>
 #include <dtUtil/log.h>
 #include <dtUtil/datapathutils.h>
+#include <dtUtil/nodemask.h>
 
 #include <osg/Drawable>
 #include <osg/StateSet>
@@ -319,6 +320,9 @@ void GUI::_SetupInternalGraph()
    osg::Camera* camera = new osg::Camera();
    mInternalGraph = camera;//new osg::Group();
 
+   //make sure this is indicated as being a post render pass
+   camera->setNodeMask(dtUtil::NodeMask::FOREGROUND);
+
    camera->setClearMask(GL_DEPTH_BUFFER_BIT);
    camera->setRenderOrder(osg::Camera::POST_RENDER, 100);
    //// we don't want the camera to grab event focus from the viewers main camera(s).
@@ -332,6 +336,7 @@ void GUI::_SetupInternalGraph()
    states->setTextureMode(0, GL_TEXTURE_2D, osg::StateAttribute::ON);
 
    osg::Geode* geode = new osg::Geode;
+   
    geode->addDrawable(new HUDDrawable());
    mInternalGraph->addChild(geode);
 }

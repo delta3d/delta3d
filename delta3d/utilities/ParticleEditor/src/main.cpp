@@ -22,6 +22,7 @@ int main(int argc, char **argv)
    win.SetParticleViewer(particleEditorApplication.get());
    win.SetupUI();
    win.show(); //show the UI
+   win.OnInitialization();
 
    //create a little class to ensure Delta3D performs Window "steps"
    dtCore::System::GetInstance().Start();

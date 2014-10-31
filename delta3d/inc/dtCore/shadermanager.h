@@ -393,8 +393,8 @@ namespace dtCore
           */
          virtual ~ShaderManager();
 
-         ShaderManager(const ShaderManager&) { }
-         ShaderManager &operator=(const ShaderManager&) { return *this; }
+         ShaderManager(const ShaderManager&);
+         ShaderManager &operator=(const ShaderManager&);
 
          ///Single instance of this class.
          static dtCore::RefPtr<ShaderManager> mInstance;

@@ -103,32 +103,32 @@ void TestWinApp::BuildGUI(DeltaWin::ResolutionVec& resolutions,
 
          str = ToString<int>((*itr).width);
          CEGUI::ListboxTextItem* item = new CEGUI::ListboxTextItem(str);
-         item->setTextColours(CEGUI::colour(0.f, 0.f, 0.f));
-         item->setSelectionColours(CEGUI::colour(1.f, 0.f, 0.f));
+         item->setTextColours(CEGUI::colour(0.0f, 0.0f, 0.0f));
+         item->setSelectionColours(CEGUI::colour(1.0f, 0.0f, 0.0f));
          item->setSelectionBrushImage("WindowsLook", "Background");
          item->setUserData(static_cast<void*>(&(*itr)));
          list->setItem(item, 0, rowNum);
 
          str = ToString<int>((*itr).height);
          item = new CEGUI::ListboxTextItem(str);
-         item->setTextColours(CEGUI::colour(0.f, 0.f, 0.f));
-         item->setSelectionColours(CEGUI::colour(1.f, 0.f, 0.f));
+         item->setTextColours(CEGUI::colour(0.0f, 0.0f, 0.0f));
+         item->setSelectionColours(CEGUI::colour(1.0f, 0.0f, 0.0f));
          item->setSelectionBrushImage("WindowsLook", "Background");
          item->setUserData(static_cast<void*>(&(*itr)));
          list->setItem(item, 1, rowNum);
 
          str = ToString<int>((*itr).bitDepth);
          item = new CEGUI::ListboxTextItem(str);
-         item->setTextColours(CEGUI::colour(0.f, 0.f, 0.f));
-         item->setSelectionColours(CEGUI::colour(1.f, 0.f, 0.f));
+         item->setTextColours(CEGUI::colour(0.0f, 0.0f, 0.0f));
+         item->setSelectionColours(CEGUI::colour(1.0f, 0.0f, 0.0f));
          item->setSelectionBrushImage("WindowsLook", "Background");
          item->setUserData(static_cast<void*>(&(*itr)));
          list->setItem(item, 2, rowNum);
 
          str = ToString<int>((*itr).refresh);
          item = new CEGUI::ListboxTextItem(str);
-         item->setTextColours(CEGUI::colour(0.f, 0.f, 0.f));
-         item->setSelectionColours(CEGUI::colour(1.f, 0.f, 0.f));
+         item->setTextColours(CEGUI::colour(0.0f, 0.0f, 0.0f));
+         item->setSelectionColours(CEGUI::colour(1.0f, 0.0f, 0.0f));
          item->setSelectionBrushImage("WindowsLook", "Background");
          item->setUserData(static_cast<void*>(&(*itr)));
          list->setItem(item, 3, rowNum);

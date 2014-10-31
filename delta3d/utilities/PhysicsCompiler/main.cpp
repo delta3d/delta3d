@@ -1,134 +1,63 @@
-// made for mts ship fire fighter level. this will prebuild the geometry.
+/* -*-c++-*-
+ * testAPP - Using 'The MIT License'
+ * Copyright (C) 2014, Caper Holdings LLC
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
 
-#include <iostream>
-#include <osg/ArgumentParser>
-#include <osg/Matrix>
-#include <osg/Vec3>
-#include <vector>
-#include <dtCore/refptr.h>
-#include <osg/Node>
-#include <osg/Geode>
-#include <osg/Drawable>
-#include <osg/TriangleFunctor>
-#include <osg/MatrixTransform>
-#include <osg/NodeVisitor>
-#include <osg/Referenced>
-#include <osgDB/ReaderWriter>
+////////////////////////////////////////////////////////////////////////////////
+// INCLUDE DIRECTIVES
+////////////////////////////////////////////////////////////////////////////////
+// OSG
 #include <osgDB/ReadFile>
-#include <sstream>
-#include <osg/io_utils>
-#include <set>
-
-#include <dtCore/scene.h>
-#include <dtCore/system.h>
+// DELTA3D
 #include <dtABC/application.h>
 #include <dtCore/project.h>
+#include <dtCore/scene.h>
+#include <dtCore/system.h>
 #include <dtGame/gamemanager.h>
-#include <dtUtil/log.h>
-#include <dtUtil/stringutils.h>
-#include <dtPhysics/physicsactorregistry.h>
-#include <dtPhysics/physicsmaterialactor.h>
-#include <dtPhysics/physicsreaderwriter.h>
-
-#include <osgUtil/Simplifier>
-
-#include <dtUtil/fileutils.h>
+#include <dtPhysics/palphysicsworld.h>
+#include <dtPhysics/physicscompiler.h>
+#include <dtPhysics/physicscomponent.h>
+#include <dtPhysics/trianglerecordervisitor.h>
 #include <dtUtil/datapathutils.h>
+#include <dtUtil/fileutils.h>
 
-#include <dtCore/project.h>
 
-#include <cmath>
 
-template <typename VecType>
-bool IsVecFinite(const VecType value)
-{
-   for (size_t i = 0; i < VecType::num_components; ++i)
-   {
-#if defined (WIN32) || defined (_WIN32) || defined (__WIN32__)
-      if (!_finite(value[i]))
-      {
-         return false;
-      }
-#else
-      if (!std::isfinite(value[i]))
-      {
-         return false;
-      }
-#endif
-   }
-   return true;
-}
-
-class GeodeCounter : public osg::NodeVisitor
-{
-public:
-
-   GeodeCounter()
-      : osg::NodeVisitor(osg::NodeVisitor::TRAVERSE_ALL_CHILDREN)
-      , mNodeCounter(0)
-      , mGeodeCount(0)
-      , mDrawableCounter(0)
-      , mExportSpecificMaterial(false)
-      , mSkipSpecificMaterial(false)
-   {}
-
-   virtual void apply(osg::Node& node)
-   {
-      ++mNodeCounter;
-      traverse(node);
-   }
-
-   void CheckDesc(osg::Node& node)
-   {
-      if(!node.getDescriptions().empty())
-      {
-         // Use *last* description as material tag
-         mCurrentDescription = node.getDescription(node.getNumDescriptions()-1);
-      }
-      else
-      {
-         mCurrentDescription.clear();
-      }
-   }
-
-   /**
-   * Visits the specified geode.
-   *
-   * @param node the geode to visit
-   */
-   virtual void apply(osg::Geode& node)
-   {
-      CheckDesc(node);
-
-      //allow skipping one specific material or only exporting one material
-      if((mExportSpecificMaterial && (mCurrentDescription != mSpecificDescription)) || (mSkipSpecificMaterial && (mCurrentDescription == mSpecificDescription)))
-      {
-         //std::cout << "Skipping material: " << mCurrentDescription << std::endl;
-         return;
-      }
-
-      ++mGeodeCount;
-      mDrawableCounter += node.getNumDrawables();
-      traverse(node);
-   }
-
-   unsigned mNodeCounter;
-   unsigned mGeodeCount;
-   unsigned mDrawableCounter;
-
-   bool mExportSpecificMaterial, mSkipSpecificMaterial;
-   std::string mSpecificDescription;
-   std::string mCurrentDescription;
-
-};
-
+////////////////////////////////////////////////////////////////////////////////
+// CLASS CODE
+////////////////////////////////////////////////////////////////////////////////
 class ApplicationHandler : public osg::Referenced
 {
 public:
    ApplicationHandler()
-      : mDefaultMatID(0)
-   {
+   {}
 
+   ~ApplicationHandler()
+   {
+      Shutdown();
+   }
+
+   bool IsValid()
+   {
+      return mCompiler.valid();
    }
 
    void Init(const std::string& context)
@@ -144,45 +73,54 @@ public:
 
       mGM = new dtGame::GameManager(*mScene);
       mGM->SetApplication(*mApp);
+      mGM->LoadActorRegistry("dtPhysics");
 
       dtCore::Project::GetInstance().SetContext(context, true);
+
+      /*try
+      {
+         dtCore::RefPtr<dtPhysics::PhysicsWorld> world = new dtPhysics::PhysicsWorld("bullet");
+         world->Init();
+         mPhysicsComp = new dtPhysics::PhysicsComponent(*world, false);
+         mGM->AddComponent(*mPhysicsComp, dtGame::GameManager::ComponentPriority::NORMAL);
+      
+         mCompiler = new dtPhysics::PhysicsCompiler;
+      }
+      catch(dtUtil::Exception& ex)
+      {
+         std::cerr << "Exception: " << ex.ToString() << std::endl;
+      }*/
+
+      mCompiler = new dtPhysics::PhysicsCompiler;
+
+      // Material indices willl be search from material actors.
+      // This is more efficient than setting up a physics world instance.
+      mCompiler->SetMaterialSearchByActor(mGM.get());
+
+      // Set the method for the compiler to call when a geometry's
+      // compilation completes.
+      dtPhysics::GeometryCompiledCallback geomCompileCallback
+         = dtPhysics::GeometryCompiledCallback(this, &ApplicationHandler::OnGeometryCompileCompleted);
+      mCompiler->SetGeometryCompiledCallback(geomCompileCallback);
    }
 
-   dtPhysics::MaterialIndex GetMaterialID(const std::string& commentFlag)
+   void Shutdown()
    {
-      dtPhysics::MaterialIndex index = GetDefaultMaterialIndex();
-
-      if(!commentFlag.empty())
+      if (mApp.valid())
       {
-         typedef std::vector<dtCore::ActorProxy* > ProxyContainer;
-         ProxyContainer proxies;
-
-         mGM->FindActorsByType(*dtPhysics::PhysicsActorRegistry::PHYSICS_MATERIAL_ACTOR_TYPE, proxies);
-
-         bool notFound = true;
-         if(!proxies.empty())
-         {
-            ProxyContainer::iterator iter = proxies.begin();
-            ProxyContainer::iterator iterEnd = proxies.end();
-
-            for(;iter != iterEnd && notFound; ++iter)
-            {
-               dtPhysics::MaterialActor* actor = dynamic_cast<dtPhysics::MaterialActor*>((*iter)->GetDrawable());
-               if(actor != NULL && actor->GetName() == commentFlag)
-               {
-                  index = dtPhysics::MaterialIndex(actor->GetMateralDef().GetMaterialIndex());
-                  notFound = false;
-               }
-            }
-         }
-
-         if(notFound)
-         {
-            LOG_ERROR("Cannot find physics material with the name: " + commentFlag + ".");
-         }
+         mApp->GetScene()->RemoveAllDrawables();
       }
 
-      return index;
+      if (mGM.valid())
+      {
+         mGM->Shutdown();
+         mGM = NULL;
+      }
+   }
+
+   dtPhysics::PhysicsCompiler& GetCompiler()
+   {
+      return *mCompiler;
    }
 
    void LoadMap(const std::string& mapName)
@@ -204,24 +142,13 @@ public:
 
    }
 
-   void SetDefaultMaterial(const std::string& mat)
-   {
-      mDefaultMaterial = mat;
-      mDefaultMatID = GetMaterialID(mDefaultMaterial);
-   }
-
-   dtPhysics::MaterialIndex GetDefaultMaterialIndex()
-   {
-      return dtPhysics::MaterialIndex(mDefaultMatID);
-   }
-
    bool SetDirectory(const std::string& dir)
    {
       bool success = false;
 
       if (!dir.empty())
       {
-         mSaveDirectory = dtCore::Project::GetInstance().GetContext() + "/Terrains/" + dir;
+         mSaveDirectory = dtCore::Project::GetInstance().GetContext() + "/" + dir;
 
          if(!dtUtil::FileUtils::GetInstance().DirExists(mSaveDirectory))
          {
@@ -259,386 +186,72 @@ public:
       return mFilePrefix;
    }
 
+   std::string CreateFilePath(dtPhysics::PhysicsCompileResult& result)
+   {
+      // Construct the path and file name prefix.
+      std::string filepath = GetDirectory() + "/" + GetFilePrefix()
+         + result.mMaterialName;
+
+      // Determine if a suffix should be added.
+      if (result.mPartTotalInProgress > 1)
+      {
+         filepath += "_split" + dtUtil::ToString(result.mPartIndex + 1);
+      }
+
+      filepath += ".dtphys";
+
+      return filepath;
+   }
+
+   void OnGeometryCompileCompleted(dtPhysics::PhysicsCompileResult& result)
+   {
+      std::string filepath(CreateFilePath(result));
+
+      if ( ! WritePhysicsFile(*result.mVertData, filepath))
+      {
+         LOG_ERROR("Failed writing physics file: " + filepath);
+      }
+   }
+
+   bool WritePhysicsFile(dtPhysics::VertexData& objData, const std::string& filepath)
+   {
+      //std::cout << "Parsed data file, resulting vertices: " << mv.mFunctor.mVertices.size() << ", resulting triangles: " << mv.mFunctor.mTriangles.size() << std::endl;
+
+      bool result = dtPhysics::PhysicsReaderWriter::SaveTriangleDataFile(objData, filepath);
+      return result;
+   }
 
 private:
-   unsigned mDefaultMatID;
    std::string mCurrentMap;
    std::string mSaveDirectory;
    std::string mFilePrefix;
    std::string mProjectContext;
-   std::string mDefaultMaterial;
 
    dtCore::RefPtr<dtABC::Application> mApp;
    dtCore::RefPtr<dtGame::GameManager> mGM;
    dtCore::RefPtr<dtCore::Scene> mScene;
+   dtCore::RefPtr<dtPhysics::PhysicsComponent> mPhysicsComp;
+   dtCore::RefPtr<dtPhysics::PhysicsCompiler> mCompiler;
 };
 
 //this is our global instance
 dtCore::RefPtr<ApplicationHandler> GlobalApp;
 
 
-////////////////////////////////////////////////////////////////
-class TriangleRecorder
-{
-protected:
-   ~TriangleRecorder(){}
-
-public:
-   TriangleRecorder()
-      : mCurrentMaterial(0)
-   {
-      mData.mVertices = new osg::Vec3Array();
-      mData.mFaces = new osg::UIntArray();
-      mData.mMaterialFlags = new osg::UIntArray();
-   }
-
-   typedef std::map<osg::Vec3, int> VertexMap;
-
-   int mCurrentMaterial;
-   VertexMap mVertIndexSet;
-   dtPhysics::PhysicsReaderWriter::PhysicsTriangleData mData;
-
-   osg::Matrix mMatrix;
-
-   /**
-   * Called once for each visited triangle.
-   *
-   * @param v1 the triangle's first vertex
-   * @param v2 the triangle's second vertex
-   * @param v3 the triangle's third vertex
-   * @param treatVertexDataAsTemporary whether or not to treat the vertex data
-   * as temporary
-   */
-   void operator()(const osg::Vec3& v1,
-      const osg::Vec3& v2,
-      const osg::Vec3& v3,
-      bool treatVertexDataAsTemporary)
-   {
-      //osg::Vec3 tv1 = osg::Matrix::transform3x3(v1, mMatrix);
-      //osg::Vec3 tv2 = osg::Matrix::transform3x3(v2, mMatrix);
-      //osg::Vec3 tv3 = osg::Matrix::transform3x3(v3, mMatrix);
-      osg::Vec3 tv1 = v1*mMatrix,
-         tv2 = v2*mMatrix,
-         tv3 = v3*mMatrix;
-
-      if(IsVecFinite(tv1) && IsVecFinite(tv2) && IsVecFinite(tv3))
-      {
-         VertexMap::iterator iter1 = mVertIndexSet.find(tv1);
-         VertexMap::iterator iter2 = mVertIndexSet.find(tv2);
-         VertexMap::iterator iter3 = mVertIndexSet.find(tv3);
-
-         int index1, index2, index3;
-         if(iter1 != mVertIndexSet.end())
-         {
-            index1 = (*iter1).second;
-         }
-         else
-         {
-            index1 = mData.mVertices->size();
-            mData.mVertices->push_back(tv1);
-            mVertIndexSet.insert(std::make_pair(tv1, index1));
-         }
-
-         if(iter2 != mVertIndexSet.end())
-         {
-            index2 = (*iter2).second;
-         }
-         else
-         {
-            index2 = mData.mVertices->size();
-            mData.mVertices->push_back(tv2);
-            mVertIndexSet.insert(std::make_pair(tv2, index2));
-         }
-
-         if(iter3 != mVertIndexSet.end())
-         {
-            index3 = (*iter3).second;
-         }
-         else
-         {
-            index3 = mData.mVertices->size();
-            mData.mVertices->push_back(tv3);
-            mVertIndexSet.insert(std::make_pair(tv3, index3));
-         }
-
-         mData.mFaces->push_back(index1);
-         mData.mFaces->push_back(index2);
-         mData.mFaces->push_back(index3);
-
-         mData.mMaterialFlags->push_back(mCurrentMaterial);
-      }
-      else
-      {
-         std::ostringstream ss;
-         ss << "Found non-finite triangle data.  The three vertices of the triangle are \"";
-         ss << tv1 << "\", \"" << tv2 << "\", and \"" << tv3 << "\".";
-         std::cerr << ss.str() << std::endl;
-      }
-   }
-};
-
-void Simplify(osg::Node* n)
-{
-   osgUtil::Simplifier simple;
-   simple.setSmoothing(true);
-   simple.setSampleRatio(0.4f);
-   n->accept(simple);
-}
-
 
 ////////////////////////////////////////////////////////////////
-template< class T >
-class DrawableVisitor : public osg::NodeVisitor
+void CompileAndWritePhysicsFiles(osg::Node& node, dtPhysics::PhysicsCompileOptions& options)
 {
-public:
+   using namespace dtPhysics;
 
-   int mSplit, mSplitCount, mNumGeodes, mGeodeExportCounter;
-   bool mExportSpecificMaterial, mSkipSpecificMaterial;
-   std::string mSpecificDescription;
-   std::string mCurrentDescription;
-   osg::TriangleFunctor<T> mFunctor;
+   VertexDataTable data;
 
-   /**
-   * Constructor.
-   */
-   DrawableVisitor()
-      : osg::NodeVisitor(osg::NodeVisitor::TRAVERSE_ACTIVE_CHILDREN)
-      , mSplit(-1)
-      , mSplitCount(1)
-      , mNumGeodes(0)
-      , mGeodeExportCounter(0)
-      , mExportSpecificMaterial(false)
-      , mSkipSpecificMaterial(false)
-   {}
+   GlobalApp->GetCompiler().CompilePhysicsForNode(node, options, data);
 
-   void CheckDesc(osg::Node& node)
+   if (data.empty())
    {
-      if(!node.getDescriptions().empty())
-      {
-         // Use *last* description as material tag
-         mCurrentDescription = node.getDescription(node.getNumDescriptions()-1);
-      }
-      else
-      {
-         mCurrentDescription.clear();
-      }
-   }
-
-   virtual void apply(osg::Node& node)
-   {
-      CheckDesc(node);
-      osg::NodeVisitor::apply(node);
-   }
-
-   virtual void apply(osg::Group& gnode)
-   {
-      CheckDesc(gnode);
-      osg::NodeVisitor::apply(gnode);
-   }
-
-   /**
-   * Applies this visitor to a geode.
-   *
-   * @param node the geode to visit
-   */
-   virtual void apply(osg::Geode& node)
-   {
-      CheckDesc(node);
-      //allow skipping one specific material or only exporting one material
-      if((mExportSpecificMaterial && (mCurrentDescription != mSpecificDescription))
-         || (mSkipSpecificMaterial && (mCurrentDescription == mSpecificDescription)))
-      {
-         //std::cout << "Skipping material: " << mCurrentDescription << std::endl;
-         return;
-      }
-
-      if(mSplit != -1)
-      {
-         ++mGeodeExportCounter;
-         int divCount = mNumGeodes / mSplitCount;
-         if(((mGeodeExportCounter - 1) / divCount) != mSplit)
-         {
-            //skip this one since we are breaking it up into multiple parts
-            return;
-         }
-         else
-         {
-            //std::cout << "Exporting tile number: " << mGeodeExportCounter << std::endl;
-         }
-      }
-
-      //for some reason if we do this on the whole scene it crashes, so we are doing it per geode
-      //Simplify(&node);
-
-      dtPhysics::MaterialIndex matID = 0;
-      if(GlobalApp.valid())
-      {
-          matID = GlobalApp->GetMaterialID(mSpecificDescription);
-      }
-
-      for(size_t i=0;i<node.getNumDrawables();i++)
-      {
-         osg::Drawable* d = node.getDrawable(i);
-
-         if(d->supports(mFunctor))
-         {
-            osg::NodePath nodePath = getNodePath();
-            mFunctor.mMatrix = osg::computeLocalToWorld(nodePath);
-            mFunctor.mCurrentMaterial = matID;
-            d->accept(mFunctor);
-         }
-      }
-   }
-
-   virtual void apply(osg::Billboard& node)
-   {
-      //do nothing
-   }
-};
-
-////////////////////////////////////////////////////////////////
-class CollectDescVisitor : public osg::NodeVisitor
-{
-public:
-
-   std::string mCurrentDescription;
-   std::set<std::string>& mDescriptionList;
-
-   /**
-   * Constructor.
-   */
-   CollectDescVisitor(std::set<std::string>& desc)
-      : osg::NodeVisitor(osg::NodeVisitor::TRAVERSE_ACTIVE_CHILDREN)
-      , mDescriptionList(desc)
-   {}
-
-   void CheckDesc(osg::Node& node)
-   {
-      if( node.getDescriptions().empty() )
-      {
-         std::cout << "---Geode \"" << node.getName() << "\" has no description" << std::endl;
-         mCurrentDescription.clear();
-      }
-      else
-      {
-         if(node.getNumDescriptions() > 1)
-         {
-             std::cout << "Geode " << node.getName() << " has multiple descriptions" << std::endl;
-             for ( size_t i=0; i<node.getNumDescriptions(); i++ )
-             {
-                 // Use *last* description as material flag
-                 mCurrentDescription = node.getDescription(i);
-                 std::cout << "  \"" << mCurrentDescription << "\"" << std::endl;
-             }
-         }
-         else
-         {
-             mCurrentDescription = node.getDescription(0);
-             std::cout << "Geode " << node.getName() << " has description \"" << node.getDescription(0) << "\"" << std::endl;
-         }
-      }
-   }
-
-   /**
-   * Applies this visitor to a geode.
-   *
-   * @param node the geode to visit
-   */
-   virtual void apply(osg::Geode& node)
-   {
-      CheckDesc(node);
-      mDescriptionList.insert(mCurrentDescription);
-   }
-
-   virtual void apply(osg::Billboard& node)
-   {
-      //do nothing
-   }
-};
-
-bool CookMesh(DrawableVisitor<TriangleRecorder>& mv, const std::string& fileName)
-{
-
-   //std::cout << "Parsed data file, resulting vertices: " << mv.mFunctor.mVertices->size() << ", resulting triangles: " << mv.mFunctor.mTriangles.size() << std::endl;
-
-   bool result = dtPhysics::PhysicsReaderWriter::SaveTriangleDataFile(mv.mFunctor.mData, fileName);
-   return result;
-}
-
-
-////////////////////////////////////////////////////////////////
-void CookPhysicsFromNode(osg::Node* node, float maxPerMesh)
-{
-   /**
-   * This will export each material as a separate physics object
-   */
-   std::set<std::string> descList;
-   CollectDescVisitor cdv(descList);
-   node->accept(cdv);
-
-   //that last line prints out all the descriptions to the console so this will add some space
-   std::cout << std::endl << std::endl << std::endl;
-
-   std::set<std::string>::iterator iter = descList.begin();
-   std::set<std::string>::iterator iterEnd = descList.end();
-   for(;iter != iterEnd; ++iter)
-   {
-      DrawableVisitor<TriangleRecorder> mv;
-      mv.mExportSpecificMaterial = true;
-      mv.mSpecificDescription = (*iter);
-      node->accept(mv);
-      std::string materialName = (*iter);
-      if ( materialName.empty() ) materialName = "_default_";
-
-      //if we have too much geometry break it into multiple pieces
-      if(mv.mFunctor.mData.mFaces->size() > maxPerMesh)
-      {
-         int exportCount = 1 + (mv.mFunctor.mData.mFaces->size() / maxPerMesh);
-         std::cout << "Splitting material \"" << materialName << "\" into " << exportCount
-                   << " pieces because it contains " << mv.mFunctor.mData.mFaces->size()
-                   << " triangles, which exceeds the maximum size." << std::endl;
-
-         GeodeCounter gc;
-         gc.mExportSpecificMaterial = true;
-         gc.mSpecificDescription = (*iter);
-         node->accept(gc);
-
-         for(int i = 0; i <= exportCount; ++i)
-         {
-            DrawableVisitor<TriangleRecorder> mv2;
-            mv2.mExportSpecificMaterial = true;
-            mv2.mSpecificDescription = (*iter);
-            mv2.mSplit = i;
-            mv2.mSplitCount = exportCount;
-            mv2.mNumGeodes = gc.mGeodeCount;
-
-            node->accept(mv2);
-
-            if ( mv2.mFunctor.mData.mFaces->empty() )
-            {
-                std::cout << std::endl << "Finished material: " << materialName << " with " << i << " files." << std::endl;
-                break;
-            }
-            else
-            {
-                std::string fileWithPath = GlobalApp->GetDirectory() + "/" + GlobalApp->GetFilePrefix() + materialName + "_Split" + dtUtil::ToString(i + 1) + ".dtphys";
-                std::cout << std::endl << "Cooking mesh for material name \"" << materialName << "\", with full path \"" << fileWithPath << "\"." << std::endl;
-                if ( !CookMesh(mv2, fileWithPath) )
-                {
-                    std::cout << std::endl << "Error cooking mesh for material: " << materialName << std::endl;
-                }
-            }
-         }
-      }
-      else
-      {
-         std::string fileWithPath = GlobalApp->GetDirectory() + "/" + GlobalApp->GetFilePrefix() + materialName + ".dtphys";
-         std::cout << std::endl << "Cooking mesh for material name \"" << materialName << "\", with full path \"" << fileWithPath << "\"." << std::endl;
-         if(mv.mFunctor.mData.mFaces->empty() || !CookMesh(mv, fileWithPath))
-         {
-            std::cout << std::endl << "Error cooking mesh for material: " << materialName << std::endl;
-         }
-      }
+      LOG_ERROR("Could not create physics geometry for node: " + node.getName());
+      return;
    }
 }
 
@@ -662,6 +275,10 @@ osg::Node* loadFile(const std::string& filename)
 }
 
 
+
+////////////////////////////////////////////////////////////////////////////////
+// MAIN PROGRAM
+////////////////////////////////////////////////////////////////////////////////
 int main(int argc, char** argv)
 {
    osg::ArgumentParser parser(&argc, argv);
@@ -675,9 +292,10 @@ int main(int argc, char** argv)
    parser.getApplicationUsage()->addCommandLineOption("--defaultMaterial", "The name of material to use by default.");
    parser.getApplicationUsage()->addCommandLineOption("--directoryName", "The name of directory within the Terrains folder to save the physics files.");
    parser.getApplicationUsage()->addCommandLineOption("--filePrefix", "The prefix to use for each file saved out, the prefix will be followed directly by the material name.");
-   parser.getApplicationUsage()->addCommandLineOption("--maxPerMesh", "The number of triangles we try to put into each output file: default 300000.");
+   parser.getApplicationUsage()->addCommandLineOption("--maxTianglesPerMesh", "The number of triangles we try to put into each output file: default 300000.");
+   parser.getApplicationUsage()->addCommandLineOption("--maxTriangleEdgeLength", "The maximum length of a triangle edge before it subdivides the triangle.  This helps physics stability: default 20.");
 
-   int maxPerMesh = 300000;
+   dtPhysics::PhysicsCompileOptions options;
 
    if (parser.argc()<=1)
    {
@@ -702,6 +320,12 @@ int main(int argc, char** argv)
    if (parser.read("--projectPath", tempString))
    {
       GlobalApp->Init(tempString);
+
+      if ( ! GlobalApp->IsValid())
+      {
+         std::cerr << "Error: Did not initialize successfully. Exiting program." << std::endl;
+         return 1;
+      }
    }
    else
    {
@@ -721,12 +345,12 @@ int main(int argc, char** argv)
 
    if(parser.read("--defaultMaterial", tempString))
    {
-      GlobalApp->SetDefaultMaterial(tempString);
+      GlobalApp->GetCompiler().SetDefaultMaterialName(tempString);
    }
    else
    {
       //none specified so just use road
-      GlobalApp->SetDefaultMaterial("Mat_Road");
+      GlobalApp->GetCompiler().SetDefaultMaterialName("Mat_Road");
    }
 
    if(parser.read("--directoryName", tempString) && GlobalApp->SetDirectory(tempString))
@@ -743,20 +367,17 @@ int main(int argc, char** argv)
    {
       GlobalApp->SetFilePrefix(tempString);
    }
-   else
-   {
-      std::cerr << "Error: no file prefix specified, e.g. \"--filePrefix Terrain\"" << std::endl;
-      return 1;
-   }
 
    int tempInt = -1;
-   if(parser.read("--maxPerMesh", tempInt))
+   if(parser.read("--maxVertsPerMesh", tempInt))
    {
-       maxPerMesh = tempInt;
+       options.mMaxVertsPerMesh = tempInt;
    }
 
+   parser.read("--maxTriangleEdgeLength", options.mMaxEdgeLength);
+
    osg::Node* ourNode = loadFile(parser[1]);
-   CookPhysicsFromNode(ourNode,maxPerMesh);
+   CompileAndWritePhysicsFiles(*ourNode, options);
 
    return 0;
 }

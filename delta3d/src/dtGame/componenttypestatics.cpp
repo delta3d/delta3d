@@ -66,7 +66,7 @@ namespace dtGame
          "Manages Task Actors.", dtGame::GMComponent::BaseGMComponentType));
    const std::string TaskComponent::DEFAULT_NAME(TaskComponent::TYPE->GetName());
 
-   const dtCore::RefPtr<dtCore::SystemComponentType> GameStateComponent::TYPE(new dtCore::SystemComponentType("TaskComponent","GMComponents",
+   const dtCore::RefPtr<dtCore::SystemComponentType> GameStateComponent::TYPE(new dtCore::SystemComponentType("GameStateComponent","GMComponents",
          "Saves and transitions the game state.", dtGame::GMComponent::BaseGMComponentType));
 
    const std::string GameStateComponent::DEFAULT_NAME(TYPE->GetName());

@@ -23,7 +23,7 @@
 #define __DELTA_ANIMDRIVER_H__
 
 #include <dtAnim/export.h>
-#include <dtCore/refptr.h>
+#include <dtCore/observerptr.h>
 #include <dtAnim/cal3danimator.h>
 #include <dtAnim/ical3ddriver.h>
 
@@ -41,7 +41,7 @@ namespace dtAnim
       virtual ~AnimDriver();
 
    private:
-      dtCore::RefPtr<Cal3DAnimator> mAnimator;
+      dtCore::ObserverPtr<Cal3DAnimator> mAnimator;
    };
 
 } // namespace dtAnim

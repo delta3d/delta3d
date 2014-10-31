@@ -9,6 +9,7 @@
 #include <osg/Material>
 #include <osg/MatrixTransform>
 #include <osg/Texture2D>
+#include <osg/ValueObject>
 
 #include <osgDB/ReadFile>
 #include <osgDB/WriteFile>
@@ -37,8 +38,10 @@
 #include <dtCore/camera.h>
 #include <dtCore/light.h>
 #include <dtCore/compass.h>
+#include <dtCore/shadermanager.h>
 
 #include <dtUtil/datapathutils.h>
+#include <dtUtil/nodemask.h>
 
 ////////////////////////////////////////////////////////////////////////////////
 ParticleViewer::ParticleViewer()
@@ -392,11 +395,11 @@ void ParticleViewer::ToggleReferenceObject(bool enabled)
 
    if (enabled)
    {
-      mpReferenceModel->setNodeMask(0xffffffff);
+      mpReferenceModel->setNodeMask(dtUtil::NodeMask::EVERYTHING);
    }
    else
    {
-      mpReferenceModel->setNodeMask(0x0);
+      mpReferenceModel->setNodeMask(dtUtil::NodeMask::NOTHING);
    }
 }
 
@@ -413,8 +416,16 @@ void ParticleViewer::SaveParticleToFile()
 
       SetTexturePaths(filename.path(), true);
       ResetEmitters();
+
+      // Remove all shaders so that they are not written to file.
+      dtCore::ShaderManager::GetInstance().Clear();
+
       osgDB::writeNodeFile(*mpParticleSystemGroup, mParticleSystemFilename.toStdString());
       SetTexturePaths(filename.path(), false);
+
+      // Signal that the save is complete.
+      // The app should reload and reapply the shaders after this.
+      emit SaveComplete();
    }
 }
 
@@ -436,11 +447,11 @@ void ParticleViewer::ToggleCompass(bool enabled)
 {
    if(enabled)
    {
-      mpCompassTransform->setNodeMask(0xFFFFFFFF);
+      mpCompassTransform->setNodeMask(dtUtil::NodeMask::EVERYTHING);
    }
    else
    {
-      mpCompassTransform->setNodeMask(0x0);
+      mpCompassTransform->setNodeMask(dtUtil::NodeMask::NOTHING);
    }
 }
 
@@ -449,11 +460,11 @@ void ParticleViewer::ToggleXYGrid(bool enabled)
 {
    if(enabled)
    {
-      mpXYGridTransform->setNodeMask(0xFFFFFFFF);
+      mpXYGridTransform->setNodeMask(dtUtil::NodeMask::EVERYTHING);
    }
    else
    {
-      mpXYGridTransform->setNodeMask(0x0);
+      mpXYGridTransform->setNodeMask(dtUtil::NodeMask::NOTHING);
    }
 }
 
@@ -462,11 +473,11 @@ void ParticleViewer::ToggleXZGrid(bool enabled)
 {
    if(enabled)
    {
-      mpXZGridTransform->setNodeMask(0xFFFFFFFF);
+      mpXZGridTransform->setNodeMask(dtUtil::NodeMask::EVERYTHING);
    }
    else
    {
-      mpXZGridTransform->setNodeMask(0x0);
+      mpXZGridTransform->setNodeMask(dtUtil::NodeMask::NOTHING);
    }
 }
 
@@ -475,11 +486,11 @@ void ParticleViewer::ToggleYZGrid(bool enabled)
 {
    if(enabled)
    {
-      mpYZGridTransform->setNodeMask(0xFFFFFFFF);
+      mpYZGridTransform->setNodeMask(dtUtil::NodeMask::EVERYTHING);
    }
    else
    {
-      mpYZGridTransform->setNodeMask(0x0);
+      mpYZGridTransform->setNodeMask(dtUtil::NodeMask::NOTHING);
    }
 }
 
@@ -591,6 +602,8 @@ void ParticleViewer::UpdateSelectionIndex(int newIndex)
       UpdatePlacerTabsValues();
       UpdateShooterTabsValues();
       UpdateProgramTabsValues();
+
+      emit ShaderChanged(GetCurrentShader());
    }
 }
 
@@ -1409,13 +1422,13 @@ void ParticleViewer::MakeGrids()
    mpXZGridTransform->setMatrix(osg::Matrix::rotate(osg::PI_2, 1, 0, 0));
 
    mpXZGridTransform->addChild(geode);
-   mpXZGridTransform->setNodeMask(0x0);
+   mpXZGridTransform->setNodeMask(dtUtil::NodeMask::NOTHING);
 
    mpYZGridTransform = new osg::MatrixTransform;
    mpYZGridTransform->setMatrix(osg::Matrix::rotate(osg::PI_2, 0, 1, 0));
 
    mpYZGridTransform->addChild(geode);
-   mpYZGridTransform->setNodeMask(0x0);
+   mpYZGridTransform->setNodeMask(dtUtil::NodeMask::NOTHING);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -1452,6 +1465,12 @@ void ParticleViewer::UpdateParticleTabsValues()
    // Particle UI
    emit LayerHiddenChanged(mLayers[mLayerIndex].mModularEmitter->isEnabled());
    emit LayerRenderBinChanged(mLayers[mLayerIndex].mParticleSystem->getOrCreateStateSet()->getBinNumber());
+
+   std::string shaderName;
+   mLayers[mLayerIndex].mParticleSystem->getOrCreateStateSet()->getUserValue("ShaderGroup", shaderName);
+   QString qstr(shaderName.c_str());
+   emit ShaderChanged(qstr);
+
    emit AlignmentUpdated((int)mLayers[mLayerIndex].mParticleSystem->getParticleAlignment());
    emit ShapeUpdated(mLayers[mLayerIndex].mpParticle->getShape());
    emit LifeUpdated(mLayers[mLayerIndex].mpParticle->getLifeTime());
@@ -1759,6 +1778,68 @@ void ParticleViewer::SetParticleLayerRenderBin(int value)
    }
 }
 
+//////////////////////////////////////////////////////////////////////////
+void ParticleViewer::SetShader(const QString& shaderName)
+{
+   if (mLayerIndex < mLayers.size())
+   {
+      SetShaderToLayer(shaderName, mLayers[mLayerIndex]);
+   }
+}
+
+//////////////////////////////////////////////////////////////////////////
+void ParticleViewer::SetShaderToLayer(const QString& shaderName, ParticleSystemLayer& layer)
+{
+   osg::Geode* geode = layer.mGeode.get();
+   osgParticle::ParticleSystem* ps = mLayers[mLayerIndex].mParticleSystem.get();
+
+   std::string str(shaderName.toStdString());
+
+   dtCore::ShaderManager& shaderManager = dtCore::ShaderManager::GetInstance();
+   dtCore::ShaderGroup* shaderGroup = shaderManager.FindShaderGroupPrototype(str);
+   if (shaderGroup != NULL)
+   {
+      ps->getOrCreateStateSet()->setUserValue("ShaderGroup", str);
+
+      dtCore::ShaderProgram* program = shaderGroup->GetDefaultShader();
+      shaderManager.AssignShaderFromPrototype(*program, *geode);
+   }
+}
+
+//////////////////////////////////////////////////////////////////////////
+void ParticleViewer::ReapplyShadersToLayers()
+{
+   ParticleSystemLayer* layer = NULL;
+   size_t limit = mLayers.size();
+   for (size_t i = 0; i < limit; ++i)
+   {
+      layer = &mLayers[i];
+
+      std::string str;
+      layer->mParticleSystem->getOrCreateStateSet()->getUserValue("ShaderGroup", str);
+
+      QString shaderName(str.c_str());
+      SetShaderToLayer(shaderName, *layer);
+   }
+}
+
+//////////////////////////////////////////////////////////////////////////
+QString ParticleViewer::GetCurrentShader()
+{
+   QString qstr;
+   
+   if (mLayerIndex < mLayers.size())
+   {
+      std::string str;
+      mLayers[mLayerIndex].mParticleSystem->getOrCreateStateSet()->getUserValue("ShaderGroup", str);
+
+      qstr = str.c_str();
+   }
+
+   return qstr;
+}
+
+//////////////////////////////////////////////////////////////////////////
 bool ParticleViewer::KeyPressed( const dtCore::Keyboard* keyboard, int kc )
 {
    //Nothing to do here, but we want to overwrite the inherited 

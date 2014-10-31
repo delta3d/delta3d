@@ -12,6 +12,7 @@ file(GLOB LIB_PUBLIC_HEADERS
 set(LIB_SOURCES 
 action.cpp
 bodywrapper.cpp
+buoyancyaction.cpp
 charactercontroller.cpp
 charactermotionmodel.cpp
 collisioncontact.cpp
@@ -22,6 +23,7 @@ mechanicstype.cpp
 palphysicsworld.cpp
 physicsactcomp.cpp
 physicsactorregistry.cpp
+physicscompiler.cpp
 physicscomponent.cpp
 physicsinterface.cpp
 physicsmaterialactor.cpp

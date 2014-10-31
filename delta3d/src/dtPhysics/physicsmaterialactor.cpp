@@ -66,8 +66,8 @@ namespace dtPhysics
 
       MaterialActor* actor = dynamic_cast<MaterialActor*>(GetDrawable());
 
-      typedef dtCore::PropertyRegHelper<MaterialActorProxy&, MaterialDef> PropRegType;
-      PropRegType propRegHelper(*this, &actor->GetMateralDef(), GROUP);
+      typedef dtCore::PropertyRegHelper<MaterialActorProxy, MaterialDef> PropRegType;
+      PropRegType propRegHelper(*this, &actor->GetMaterialDef(), GROUP);
 
       DT_REGISTER_PROPERTY(KineticFriction, "Material Setting - coefficient of kinetic friction -- should be in [0, +inf]. If set to greater than staticFriction, "
                "the effective value of staticFriction will be increased to match.", PropRegType, propRegHelper);
@@ -124,13 +124,13 @@ namespace dtPhysics
    }
 
    //////////////////////////////////////////////////////////
-   const MaterialDef& MaterialActor::GetMateralDef() const
+   const MaterialDef& MaterialActor::GetMaterialDef() const
    {
       return mMaterial;
    }
 
    //////////////////////////////////////////////////////////
-   MaterialDef& MaterialActor::GetMateralDef()
+   MaterialDef& MaterialActor::GetMaterialDef()
    {
       return mMaterial;
    }

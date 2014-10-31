@@ -32,11 +32,11 @@
 #include <dtAnim/boneinterface.h>
 #include <dtAnim/materialinterface.h>
 #include <dtAnim/meshinterface.h>
-#include <dtCore/observerptr.h>
 #include <dtCore/refptr.h>
 #include <dtAnim/skeletoninterface.h>
 // OSG
 #include <osg/BoundingBox>
+#include <osg/MatrixTransform>
 #include <osg/Node>
 #include <osg/Quat>
 #include <osg/Vec3>
@@ -53,24 +53,18 @@ namespace dtAnim
    class DT_ANIM_EXPORT BaseModelWrapper : public osg::Referenced
    {
    public:
-      BaseModelWrapper(dtAnim::BaseModelData& modelData)
-         : mModelData(&modelData)
-      {}
+      BaseModelWrapper(dtAnim::BaseModelData& modelData);
 
       virtual dtCore::RefPtr<osg::Node> CreateDrawableNode(bool immediate) = 0;
       virtual osg::Node* GetDrawableNode() = 0;
 
-      virtual dtAnim::BaseModelData* GetModelData() const
-      {
-         return mModelData.get();
-      }
+      virtual dtAnim::BaseModelData* GetModelData() const;
 
       virtual dtAnim::AnimationUpdaterInterface* GetAnimator() = 0;
 
       virtual dtAnim::AnimationInterface* GetAnimationByIndex(int index) const = 0;
       virtual dtAnim::BoneInterface* GetBoneByIndex(int index) const = 0;
 
-      // NEW: BEGIN ---------------------------------------
       virtual dtAnim::AnimationInterface* GetAnimation(const std::string& name) const = 0;
       virtual int GetAnimations(dtAnim::AnimationArray& outAnims) const = 0;
 
@@ -105,19 +99,27 @@ namespace dtAnim
       virtual void SetScale(float scale) = 0;
       virtual float GetScale() const = 0;
       
-      virtual void UpdateAnimations(float deltaTime) = 0;
+      virtual void UpdateAnimation(float deltaTime) = 0;
 
       virtual void ClearAllAnimations(float delay = 0.0f) = 0;
 
       virtual void HandleModelResourceUpdate(dtAnim::ModelResourceType resourceType) = 0;
       
       /**
-       * Method to nofity this object that the associated drawable model has been modified/rebuilt.
+       * Method to notify this object that the associated drawable model has been modified/rebuilt.
        */
-      virtual void HandleModelUpdated() {}
+      virtual void HandleModelUpdated();
+
+      virtual void UpdateScale();
+
+   protected:
+      virtual ~BaseModelWrapper();
+
+      osg::MatrixTransform* GetScaleTransform() const;
 
    private:
-      dtCore::ObserverPtr<dtAnim::BaseModelData> mModelData;
+      dtCore::RefPtr<dtAnim::BaseModelData> mModelData;
+      dtCore::RefPtr<osg::MatrixTransform> mScaleTransform;
    };
 
 } // namespace dtAnim

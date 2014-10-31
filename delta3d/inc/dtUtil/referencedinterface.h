@@ -31,9 +31,9 @@ namespace dtUtil
       virtual ~ReferencedInterface() {}
    public:
       ReferencedInterface(){}
-      virtual void ref() = 0;
-      virtual void unref() = 0;
-      virtual void unref_nodelete() = 0;
+      virtual int ref() = 0;
+      virtual int unref() = 0;
+      virtual int unref_nodelete() = 0;
       virtual osg::ObserverSet* getOrCreateObserverSet() = 0;
    private:
       // Hide copying
@@ -47,10 +47,16 @@ namespace dtUtil
  * Declare this in any class that implements and Referenced interface so that you can map the functions
  * to the ones of referenced
  */
+//#define DT_DECLARE_VIRTUAL_REF_INTERFACE_INLINE \
+//   using osg::Referenced::ref;\
+//   using osg::Referenced::unref;\
+//   using osg::Referenced::unref_nodelete;\
+//   using osg::Referenced::getOrCreateObserverSet;
+
 #define DT_DECLARE_VIRTUAL_REF_INTERFACE_INLINE \
-      virtual void ref() { osg::Referenced::ref(); }\
-      virtual void unref() { osg::Referenced::unref(); }\
-      virtual void unref_nodelete() { osg::Referenced::unref_nodelete(); }\
+      virtual int ref() { return osg::Referenced::ref(); }\
+      virtual int unref() { return osg::Referenced::unref(); }\
+      virtual int unref_nodelete() { return osg::Referenced::unref_nodelete(); }\
       virtual osg::ObserverSet* getOrCreateObserverSet() { return osg::Referenced::getOrCreateObserverSet(); }
 
 #endif //REFERENCED_INTERFACE

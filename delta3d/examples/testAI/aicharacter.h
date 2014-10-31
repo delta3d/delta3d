@@ -30,11 +30,12 @@
 #include <osg/Referenced>
 #include <dtCore/scene.h>
 #include <dtCore/camera.h>
+#include <dtCore/resourcedescriptor.h>
 #include <dtAI/waypointinterface.h>
 #include <dtAI/astarwaypointutils.h>
 #include <string>
 
-#include <dtAnim/characterwrapper.h>
+//#include <dtAnim/characterwrapper.h>
 
 namespace dtAI
 {
@@ -61,8 +62,6 @@ namespace dtAI
 
       const WaypointAStar::config_type& GetConfig() const;
 
-      dtAnim::CharacterWrapper* GetCharacter() const {return mCharacter.get();}
-
    private:
       void ApplyStringPulling();
       void GoToWaypoint(float dt, const WaypointInterface* pWaypoint);
@@ -70,7 +69,6 @@ namespace dtAI
       void SetRotation(float dt, const WaypointInterface* pWaypoint);
 
       unsigned mSpeed;
-      dtCore::RefPtr<dtAnim::CharacterWrapper> mCharacter;
 
       // pathfinding stuff
       const WaypointInterface* mCurrentWaypoint;

@@ -2030,6 +2030,12 @@ namespace dtCore
          std::string("The context is not valid."), __FILE__, __LINE__);
       }
 
+      if (resource == ResourceDescriptor::NULL_RESOURCE)
+      {
+         throw ProjectFileNotFoundException(
+            std::string("An empty resource was passed in to process: [") + resource.GetResourceIdentifier() + "]", __FILE__, __LINE__);
+      }
+
       const std::string& path = mImpl->mResourceHelper.GetResourcePath(resource);
 
 

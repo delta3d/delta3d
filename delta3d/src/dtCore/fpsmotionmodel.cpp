@@ -81,18 +81,18 @@ FPSMotionModel::FPSMotionModel(Keyboard* keyboard,
    , mMaximumSidestepSpeed(maxSidestepSpeed)
    , mHeightAboveTerrain(height)
    , mMaximumStepUpDistance(maxStepUpDist)
-   , mFallingHeight(1.f)
-   , mFallingVec(0.f, 0.f, 0.f)
+   , mFallingHeight(1.0f)
+   , mFallingVec(0.0f, 0.0f, 0.0f)
    , mFalling(false)
    , mInvertMouse(false)
    , mUseWASD(useWASD)
    , mUseArrowKeys(useArrowKeys)
    , mOperateWhenUnfocused(false)
    , mShouldRecenterMouse(true)
-   , mForwardBackCtrl(0.f)
-   , mSidestepCtrl(0.f)
-   , mLookLeftRightCtrl(0.f)
-   , mLookUpDownCtrl(0.f)
+   , mForwardBackCtrl(0.0f)
+   , mSidestepCtrl(0.0f)
+   , mLookLeftRightCtrl(0.0f)
+   , mLookUpDownCtrl(0.0f)
    , mUseMouseButtons(false) // default behavior is NOT to require mouse down to look
 {
    RegisterInstance(this);
@@ -778,14 +778,14 @@ void FPSMotionModel::AdjustElevation(osg::Vec3& xyz, double deltaFrameTime)
       if (xyz[2] <= targetHeight)
       {
          // stop falling
-         mFallingVec.set(0.f, 0.f, 0.f);
+         mFallingVec.set(0.0f, 0.0f, 0.0f);
          xyz[2] = targetHeight;
          mFalling = false;
       }
    }
    else // otherwise, lets clamp to the terrain
    {
-      mFallingVec.set(0.f, 0.f, 0.f);
+      mFallingVec.set(0.0f, 0.0f, 0.0f);
       xyz[2] = targetHeight;
    }
 }

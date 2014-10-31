@@ -1,0 +1,292 @@
+MatrixTransform {
+  DataVariance STATIC
+  name "Scene Root"
+  nodeMask 0xffffffff
+  cullingActive TRUE
+  StateSet {
+    rendering_hint DEFAULT_BIN
+    renderBinMode INHERIT
+    GL_LIGHTING ON
+    GL_NORMALIZE ON
+  }
+  referenceFrame RELATIVE
+  Matrix {
+    1 0 0 0
+    0 1 0 0
+    0 0 1 0
+    0 0 0 1
+  }
+  num_children 1
+  MatrixTransform {
+    DataVariance STATIC
+    name "Box001"
+    nodeMask 0xffffffff
+    cullingActive TRUE
+    referenceFrame RELATIVE
+    Matrix {
+      1 0 0 0
+      0 1 0 0
+      0 0 1 0
+      0 0 0 1
+    }
+    num_children 1
+    MatrixTransform {
+      DataVariance STATIC
+      name "Box001-OFFSET"
+      nodeMask 0xffffffff
+      cullingActive TRUE
+      referenceFrame RELATIVE
+      Matrix {
+        1 0 0 0
+        0 1 0 0
+        0 0 1 0
+        0 0 -0.5 1
+      }
+      num_children 1
+      Geode {
+        UniqueID Geode_0
+        DataVariance STATIC
+        name "Box001-GEODE"
+        nodeMask 0xffffffff
+        cullingActive TRUE
+        num_drawables 1
+        Geometry {
+          name "Material #45"
+          StateSet {
+            UniqueID StateSet_1
+            name "Material #45"
+            rendering_hint DEFAULT_BIN
+            renderBinMode INHERIT
+            GL_CULL_FACE ON
+            GL_LIGHTING ON
+            GL_NORMALIZE ON
+            Material {
+              ColorMode OFF
+              ambientColor 0.588 0.588 0.588 1
+              diffuseColor 1 1 1 1
+              specularColor 0 0 0 1
+              emissionColor 0 0 0 1
+              shininess 0
+            }
+            textureUnit 0 {
+              GL_TEXTURE_2D ON
+              Texture2D {
+                UniqueID Texture2D_2
+                file "images\\Cube_DIFF.png"
+                wrap_s REPEAT
+                wrap_t REPEAT
+                wrap_r CLAMP_TO_EDGE
+                min_filter LINEAR_MIPMAP_LINEAR
+                mag_filter LINEAR
+                maxAnisotropy 1
+                borderColor 0 0 0 0
+                borderWidth 0
+                useHardwareMipMapGeneration TRUE
+                unRefImageDataAfterApply TRUE
+                internalFormatMode USE_S3TC_DXT1_COMPRESSION
+                resizeNonPowerOfTwo TRUE
+                shadowComparison FALSE
+                shadowCompareFunc GL_LEQUAL
+                shadowTextureMode GL_LUMINANCE
+              }
+            }
+            textureUnit 2 {
+              GL_TEXTURE_2D ON
+              Texture2D {
+                UniqueID Texture2D_3
+                file "images\\Cube_SPEC.png"
+                wrap_s REPEAT
+                wrap_t REPEAT
+                wrap_r CLAMP_TO_EDGE
+                min_filter LINEAR_MIPMAP_LINEAR
+                mag_filter LINEAR
+                maxAnisotropy 1
+                borderColor 0 0 0 0
+                borderWidth 0
+                useHardwareMipMapGeneration TRUE
+                unRefImageDataAfterApply TRUE
+                internalFormatMode USE_S3TC_DXT1_COMPRESSION
+                resizeNonPowerOfTwo TRUE
+                shadowComparison FALSE
+                shadowCompareFunc GL_LEQUAL
+                shadowTextureMode GL_LUMINANCE
+              }
+            }
+            textureUnit 4 {
+              GL_TEXTURE_2D ON
+              Texture2D {
+                UniqueID Texture2D_4
+                file "images\\Cube_ILLUM.png"
+                wrap_s REPEAT
+                wrap_t REPEAT
+                wrap_r CLAMP_TO_EDGE
+                min_filter LINEAR_MIPMAP_LINEAR
+                mag_filter LINEAR
+                maxAnisotropy 1
+                borderColor 0 0 0 0
+                borderWidth 0
+                useHardwareMipMapGeneration TRUE
+                unRefImageDataAfterApply TRUE
+                internalFormatMode USE_S3TC_DXT1_COMPRESSION
+                resizeNonPowerOfTwo TRUE
+                shadowComparison FALSE
+                shadowCompareFunc GL_LEQUAL
+                shadowTextureMode GL_LUMINANCE
+              }
+            }
+            textureUnit 1 {
+              GL_TEXTURE_2D ON
+              Texture2D {
+                UniqueID Texture2D_5
+                file "images\\Cube_NORM.png"
+                wrap_s REPEAT
+                wrap_t REPEAT
+                wrap_r CLAMP_TO_EDGE
+                min_filter LINEAR_MIPMAP_LINEAR
+                mag_filter LINEAR
+                maxAnisotropy 1
+                borderColor 0 0 0 0
+                borderWidth 0
+                useHardwareMipMapGeneration TRUE
+                unRefImageDataAfterApply TRUE
+                internalFormatMode USE_S3TC_DXT1_COMPRESSION
+                resizeNonPowerOfTwo TRUE
+                shadowComparison FALSE
+                shadowCompareFunc GL_LEQUAL
+                shadowTextureMode GL_LUMINANCE
+              }
+            }
+          }
+          useDisplayList TRUE
+          useVertexBufferObjects FALSE
+          PrimitiveSets 1
+          {
+            DrawArrays TRIANGLES 0 36
+          }
+          VertexArray Vec3Array 36
+          {
+            -0.5 -0.5 0
+            -0.5 0.5 0
+            0.5 0.5 0
+            0.5 0.5 0
+            0.5 -0.5 0
+            -0.5 -0.5 0
+            -0.5 -0.5 1
+            0.5 -0.5 1
+            0.5 0.5 1
+            0.5 0.5 1
+            -0.5 0.5 1
+            -0.5 -0.5 1
+            -0.5 -0.5 0
+            0.5 -0.5 0
+            0.5 -0.5 1
+            0.5 -0.5 1
+            -0.5 -0.5 1
+            -0.5 -0.5 0
+            0.5 -0.5 0
+            0.5 0.5 0
+            0.5 0.5 1
+            0.5 0.5 1
+            0.5 -0.5 1
+            0.5 -0.5 0
+            0.5 0.5 0
+            -0.5 0.5 0
+            -0.5 0.5 1
+            -0.5 0.5 1
+            0.5 0.5 1
+            0.5 0.5 0
+            -0.5 0.5 0
+            -0.5 -0.5 0
+            -0.5 -0.5 1
+            -0.5 -0.5 1
+            -0.5 0.5 1
+            -0.5 0.5 0
+          }
+          NormalBinding PER_VERTEX
+          NormalArray Vec3Array 36
+          {
+            0 0 -1
+            0 0 -1
+            0 0 -1
+            0 0 -1
+            0 0 -1
+            0 0 -1
+            0 0 1
+            0 -0 1
+            0 0 1
+            0 0 1
+            -0 0 1
+            0 0 1
+            0 -1 0
+            0 -1 0
+            0 -1 0
+            0 -1 0
+            0 -1 0
+            0 -1 0
+            1 0 0
+            1 0 -0
+            1 0 0
+            1 0 0
+            1 -0 0
+            1 0 0
+            0 1 0
+            0 1 0
+            0 1 0
+            0 1 0
+            0 1 0
+            0 1 0
+            -1 0 0
+            -1 0 0
+            -1 0 0
+            -1 0 0
+            -1 -0 -0
+            -1 0 0
+          }
+          TexCoordArray 0 UniqueID Vec2Array_7 Vec2Array 36
+          {
+            0.749558 0.395009
+            0.998558 0.395009
+            0.998558 0.64401
+            0.998558 0.64401
+            0.749558 0.64401
+            0.749558 0.395009
+            0.251558 0.395009
+            0.500558 0.395009
+            0.500558 0.644009
+            0.500558 0.644009
+            0.251558 0.644009
+            0.251558 0.395009
+            0.251557 0.146009
+            0.500557 0.146009
+            0.500558 0.395009
+            0.500558 0.395009
+            0.251558 0.395009
+            0.251557 0.146009
+            0.500558 0.395009
+            0.749558 0.395009
+            0.749558 0.644009
+            0.749558 0.644009
+            0.500557 0.64401
+            0.500558 0.395009
+            0.251558 0.644009
+            0.500558 0.644009
+            0.500558 0.893009
+            0.500558 0.893009
+            0.251558 0.893009
+            0.251558 0.644009
+            0.00255752 0.395009
+            0.251557 0.395009
+            0.251558 0.644009
+            0.251558 0.644009
+            0.00255752 0.644009
+            0.00255752 0.395009
+          }
+          TexCoordArray 1 Use Vec2Array_7
+          TexCoordArray 2 Use Vec2Array_7
+          TexCoordArray 3 Use Vec2Array_7
+          TexCoordArray 4 Use Vec2Array_7
+        }
+      }
+    }
+  }
+}

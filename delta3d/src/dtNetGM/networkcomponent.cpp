@@ -152,7 +152,7 @@ namespace dtNetGM
    {
       BaseClass::BuildPropertyMap();
       dtUtil::RefString NETWORK_SETTINGS_GROUP("Network Settings");
-      typedef dtCore::PropertyRegHelper<NetworkComponent&, NetworkComponent> RegHelperType;
+      typedef dtCore::PropertyRegHelper<NetworkComponent> RegHelperType;
       RegHelperType propReg(*this, this, NETWORK_SETTINGS_GROUP);
 
       DT_REGISTER_PROPERTY(GameName, "The Name of this game from the perspective or the networking.", RegHelperType, propReg);

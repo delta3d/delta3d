@@ -34,7 +34,10 @@
 #include <dtCore/actorproperty.h>
 #include <dtCore/propertycontainer.h>
 #include <dtCore/motioninterface.h>
+#include <dtCore/resourcedescriptor.h>
 #include <dtUtil/getsetmacros.h>
+#include <dtUtil/deprecationmgr.h>
+#include <osg/BoundingBox>
 
 namespace dtPhysics
 {
@@ -79,21 +82,13 @@ namespace dtPhysics
        * @note pass in null for non-mesh initialization.
        * @note You may call this repeatedly to re-initialize the object. It will first cleanup, then re-create everything
        */
-      virtual bool CreateFromProperties(const osg::Node* nodeToLoad = NULL,
-               bool adjustOriginOffsetForGeometry = false, const std::string& cachingKey = Geometry::NO_CACHE_KEY);
+      virtual bool Create(const osg::Node* nodeToLoad = NULL,
+               bool adjustOriginOffsetForGeometry = false, const std::string& cachingKey = VertexData::NO_CACHE_KEY);
 
-      /**
-       * The same as from properties, but the primitive type, the dimensions and the initial position
-       * are all passed in.  Note that the position is given here with no rotation.
-       */
-      bool CreateFromPrimitive(const PrimitiveType& primType, const VectorType& dimensions,
-               const VectorType& initialPosition, const osg::Node* mesh = NULL, const std::string& cachingKey = Geometry::NO_CACHE_KEY);
-      /**
-       * The same as from properties, but the primitive type, the dimensions and the initial position
-       * are all passed in.
-       */
-      virtual bool CreateFromPrimitive(const PrimitiveType& primType, const VectorType& dimensions,
-               const TransformType& initialPosition, const osg::Node* mesh = NULL, const std::string& cachingKey = Geometry::NO_CACHE_KEY);
+      /// Just call Create(...)
+      DEPRECATE_FUNC virtual bool CreateFromProperties(const osg::Node* nodeToLoad = NULL,
+               bool adjustOriginOffsetForGeometry = false, const std::string& cachingKey = VertexData::NO_CACHE_KEY)
+      { return Create(nodeToLoad, false, cachingKey); }
 
       /**
        * Initializes this PhysicsObject with an already created Geometry object.
@@ -104,7 +99,7 @@ namespace dtPhysics
       bool CreateFromGeometry(dtPhysics::Geometry& geometry);
 
       /// Creates this physics object giving it a pre-set and configured body.
-      void CreateWithBody(BaseBodyWrapper& body);
+      void CreateWithBody(GenericBodyWrapper& body);
 
       /**
        * Deletes the internal data structures created in one of the Create methods.
@@ -120,8 +115,13 @@ namespace dtPhysics
 
       /**
        * Get the world position of this physics object/body
+       * @param interpolated Get the position iterpolated for the visual.  The GetTransformAsVisual always does this, but it also
+       *        takes into account the visual to simulated position.  If you are doing physics calculations, the default of false is what you want.
+       *        If you are planning on setting or comparing something with something in a visual, pass true, but GetTransformAsVisual is more likely what you want.
+       *        In System::FixedTimeStep == true this usually won't matter unless the fixed time step and physics step are not clean multiples of each other,
+       *        or if you are doing anything in an action update, where you have to to impulses and the interpolated position isn't up to date.
        */
-      virtual void GetTransform(TransformType&) const;
+      virtual void GetTransform(TransformType&, bool interpolated = false) const;
 
       /**
        * Set the transform of the body, but offset it using the SetVisualToBodyTransform transform.
@@ -184,6 +184,7 @@ namespace dtPhysics
       VectorType GetLinearVelocityAtLocalPoint(const VectorType& relPos) const;
 
       void AddGeometry(Geometry& geometry);
+      Geometry* GetGeometry(unsigned idx);
       void RemoveGeometry(Geometry& geometry);
       unsigned GetNumGeometries() const;
 
@@ -195,7 +196,6 @@ namespace dtPhysics
       /// @return true if this body and whatever collides with it responds to collisions.
       bool IsCollisionResponseEnabled() const;
 
-      BaseBodyWrapper* GetBaseBodyWrapper();
       BodyWrapper* GetBodyWrapper();
       GenericBodyWrapper* GetGenericBodyWrapper();
 
@@ -275,10 +275,27 @@ namespace dtPhysics
        * which will make it use the default material.  Setting it to NULL after that is not defined.
        */
       void SetMaterial(Material*);
+   
+      /**
+       * Convenience method for assigning the material instance by an index.
+       * @param index Id of the material to reference.
+       * @return TRUE if a material is found that matches the specified index.
+       */
+      bool SetMaterialByIndex(dtPhysics::MaterialIndex index);
+
+      /**
+       * This mesh resource will be loaded to set the physics data for a triangle mesh or convex.
+       */
+      DT_DECLARE_ACCESSOR_GET_SET(dtCore::ResourceDescriptor, MeshResource);
+
+      /**
+       * This mesh resource or code supplied osg node will be scaled to this size.
+       */
+      DT_DECLARE_ACCESSOR_GET_SET(VectorType, MeshScale);
 
       //////////////////////////////////////////////////////
       // Build our property functions
-      virtual void BuildPropertyMap(std::vector<dtCore::RefPtr<dtCore::ActorProperty> >& toFillIn);
+      virtual void BuildPropertyMap();
 
       /// forces the automatic activate and deactivate state.  The physics engine normally controls this.
       void SetActive(bool active);
@@ -307,16 +324,27 @@ namespace dtPhysics
 
       /// @return angular damping factor.
       Real GetAngularDamping() const;
-      /// Sets artifical angular body damping. 0 means off, 1 means pretty much don't rotate.
+      /// Sets artificial angular body damping. 0 means off, 1 means pretty much don't rotate.
       void SetAngularDamping(Real);
 
       VectorType TransformToWorldSpace(const VectorType& localSpaceVector);
 
-      static void CalculateOriginAndExtentsForNode(PrimitiveType& type, const osg::Node& node,
+      static void CalculateOriginAndExtentsForNode(PrimitiveType& type, const osg::BoundingBox& bb,
                VectorType& center, VectorType& extents);
 
    protected:
       ~PhysicsObject();
+
+      void CalculateBoundsAndOrigin(const osg::Node* nodeToLoad, bool calcDimensions, bool adjustOriginOffsetForGeometry);
+
+      // If you don't pass a key here, the resource name itself will be used.
+      void GetVertexDataForResource(dtCore::RefPtr<VertexData>& vertDataOut, const std::string& cachingKey);
+
+      /**
+       * Assumes all configuration values are set such as computing bounds, and that the loading does not use a resource.
+       * then creates a body.
+       */
+      virtual bool CreateInternal(VertexData* data);
 
    private:
       // our implementation to the physics engine

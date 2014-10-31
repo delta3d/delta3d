@@ -9,6 +9,7 @@
 #include <dtAnim/basemodeldata.h>
 #include <dtAnim/characterfilehandler.h>
 #include <dtCore/refptr.h>
+#include <dtUtil/refstring.h>
 
 
 
@@ -25,6 +26,8 @@ namespace dtAnim
       typedef CharacterFileHandler::AnimatableOverrideStruct OverrideStruct;
       typedef CharacterFileHandler::AnimatableOverrideStructArray OverrideStructArray;
       typedef CharacterFileHandler::AnimationSequenceStruct AnimationSequenceStruct;
+
+      static const dtUtil::RefString CHARACTER_FILE_EXTENSION;
       
       virtual dtCore::RefPtr<CharacterFileHandler> LoadCharacterFile(const dtCore::ResourceDescriptor& resourde);
       virtual dtCore::RefPtr<CharacterFileHandler> LoadCharacterFile(const std::string& file);

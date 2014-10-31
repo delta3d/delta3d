@@ -206,6 +206,8 @@ namespace dtAnim
    {
       if (fadeTime > 0.0f)
       {
+         // TODO clear poses
+
          dtAnim::OsgAnimation* curAnim = NULL;
          ActionTimeMap::iterator curIter = mActionClearTimers.begin();
          ActionTimeMap::iterator endIter = mActionClearTimers.end();
@@ -243,6 +245,8 @@ namespace dtAnim
 
          mActionClearTimers.clear();
          mCycleInfos.clear();
+
+         // TODO clear poses
 
          // Set the time back to 0.
          SetAnimationTime(0.0f);
@@ -894,6 +898,20 @@ namespace dtAnim
       }
 
       return result;
+   }
+
+   bool OsgAnimator::BlendPose(dtAnim::AnimationInterface& anim, float weight, float delay)
+   {
+      // TODO:
+
+      return false;
+   }
+
+   bool OsgAnimator::ClearPose(dtAnim::AnimationInterface& anim, float delay)
+   {
+      // TODO:
+      
+      return false;
    }
 
 } // namespace dtAnim

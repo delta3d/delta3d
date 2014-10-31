@@ -42,9 +42,8 @@ namespace dtAnim
     * The SequenceMixer's job is to manage animations and animation sequences.
     * Animations are registered with the SequenceMixer using an AnimationHelper
     * on LoadModel().  Once an animation or sequence is registered the user can call
-    * PlayAnimation() by name.  Alternatively the user can create an Animatable using
-    * an AnimationWrapper and call PlayAnimation using that.  To clear the animation
-    * use the name specified by Animatable* GetName(), or the name used to play the animation.
+    * PlayAnimation() by name. To clear the animation use the name specified by
+    * Animatable* GetName(), or the name used to play the animation.
     */
    class DT_ANIM_EXPORT SequenceMixer: public osg::Referenced
    {

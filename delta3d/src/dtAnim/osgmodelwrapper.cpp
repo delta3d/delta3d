@@ -592,7 +592,7 @@ namespace dtAnim
       // TODO:
    }
 
-   void OsgModelWrapper::UpdateAnimations(float deltaTime)
+   void OsgModelWrapper::UpdateAnimation(float deltaTime)
    {
       if (mAnimator.valid())
       {

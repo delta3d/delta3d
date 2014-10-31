@@ -115,7 +115,7 @@ namespace dtGame
 
 
    ////////////////////////////////////////////////////////////////////////////////
-   void DRPublishingActComp::OnTickRemote(const dtGame::TickMessage& tickMessage)
+   void DRPublishingActComp::UpdatePublishingData(const dtGame::TickMessage& tickMessage)
    {
       // Note - We do this behavior for local actors, but it happens during Tick Remote. 
 
@@ -220,7 +220,7 @@ namespace dtGame
       {
          // Now we register for tick remote, so that we guarantee it happens AFTER our actor 
          // It also needs to run AFTER the DeadReckoningComponent
-         mTickInvokable = actor->RegisterForMessages(dtGame::MessageType::TICK_REMOTE, dtUtil::MakeFunctor(&DRPublishingActComp::OnTickRemote, this));
+         mTickInvokable = actor->RegisterForMessages(dtGame::MessageType::TICK_REMOTE, dtUtil::MakeFunctor(&DRPublishingActComp::UpdatePublishingData, this));
 
 
          ResetFullUpdateTimer(true);
@@ -266,7 +266,7 @@ namespace dtGame
    {
       //static const dtUtil::RefString GROUPNAME = "DR Publishing";
 
-      typedef dtCore::PropertyRegHelper<DRPublishingActComp&, DRPublishingActComp> PropRegType;
+      typedef dtCore::PropertyRegHelper<DRPublishingActComp> PropRegType;
       PropRegType propRegHelper(*this, this, "DR Publishing");
 
       DT_REGISTER_PROPERTY_WITH_NAME_AND_LABEL(VelocityAverageFrameCount, "VelocityAveragingFrameCount", "Velocity Averaging Frame Count",
@@ -515,7 +515,7 @@ namespace dtGame
          osg::Vec3 angularVelocity = GetAngularVelocity();
          if (angularVelocity.length2() < 0.00001)  // If close to 0, set to 0 to prevent wiggling/shaking
          {
-            angularVelocity = osg::Vec3(0.f, 0.f, 0.f);
+            angularVelocity = osg::Vec3(0.0f, 0.0f, 0.0f);
          }
          GetDeadReckoningHelper()->SetLastKnownAngularVelocity(angularVelocity);
       }

@@ -1171,9 +1171,9 @@ namespace dtAnim
    {
       // Ensure command execution is defaulted to off and is set enabled
       // for the subsequent tests.
-      CPPUNIT_ASSERT( ! mHelper->IsCommandCallbacksEnabled());
+      CPPUNIT_ASSERT( ! mHelper->GetCommandCallbacksEnabled());
       mHelper->SetCommandCallbacksEnabled(true);
-      CPPUNIT_ASSERT(mHelper->IsCommandCallbacksEnabled());
+      CPPUNIT_ASSERT(mHelper->GetCommandCallbacksEnabled());
 
       // Create test variables
       const std::string testAnim("TestEventsAction");
@@ -1475,7 +1475,7 @@ namespace dtAnim
    {
       // Ensure command execution is enabled for the subsequent tests.
       mHelper->SetCommandCallbacksEnabled(true);
-      CPPUNIT_ASSERT(mHelper->IsCommandCallbacksEnabled());
+      CPPUNIT_ASSERT(mHelper->GetCommandCallbacksEnabled());
 
       SubTestAnimHelperEventCommands("TestEventsAction", "");
    }
@@ -1485,7 +1485,7 @@ namespace dtAnim
    {
       // Ensure command execution is enabled for the subsequent tests.
       mHelper->SetCommandCallbacksEnabled(true);
-      CPPUNIT_ASSERT(mHelper->IsCommandCallbacksEnabled());
+      CPPUNIT_ASSERT(mHelper->GetCommandCallbacksEnabled());
 
       SubTestAnimHelperEventCommands("ActionSequence2", "seq_");
    }

@@ -36,6 +36,7 @@
 #include <dtGame/actorcomponent.h>
 
 #include <dtCore/uniqueid.h>
+#include <dtCore/transformable.h>
 #include <dtUtil/functor.h>
 #include <dtUtil/refstring.h>
 
@@ -71,6 +72,7 @@ namespace dtPhysics
          static const dtUtil::RefString PROPERTY_PHYSICS_DIMENSIONS;
          static const dtUtil::RefString PROPERTY_COLLISION_GROUP;
          static const dtUtil::RefString PROPERTY_MATERIAL_ACTOR;
+         static const dtUtil::RefString PROPERTY_AUTO_CREATE;
 
          typedef dtUtil::Functor<void, TYPELIST_0()> UpdateCallback;
          typedef dtUtil::Functor<void, TYPELIST_1(float)> ActionUpdateCallback;
@@ -157,8 +159,11 @@ namespace dtPhysics
           */
          virtual void CleanUp();
 
-         virtual void OnEnteredWorld();
-         virtual void OnRemovedFromWorld();
+         /*virtual*/ void OnEnteredWorld();
+         /*virtual*/ void OnRemovedFromWorld();
+
+         /*virtual*/ void OnAddedToActor(dtCore::BaseActorObject& /*actor*/);
+         /*virtual*/ void OnRemovedFromActor(dtCore::BaseActorObject& /*actor*/);
 
          void RegisterWithGMComponent();
          void UnregisterWithGMComponent();
@@ -207,6 +212,11 @@ namespace dtPhysics
          /// Sets a collision group for reference in code only.
          void SetDefaultCollisionGroup(CollisionGroup group);
 
+         /// @return the auto create value
+         bool GetAutoCreateOnEnteringWorld() const;
+         /// Initializes all the physics geometry when the object enters the world when true.
+         void SetAutoCreateOnEnteringWorld(bool);
+
          void SetDefaultPrimitiveType(PrimitiveType& p);
          PrimitiveType& GetDefaultPrimitiveType() const;
 
@@ -250,16 +260,21 @@ namespace dtPhysics
       protected:
          ~PhysicsActComp();
 
+         /**
+          * If you don't have a prephysics update, it calls this.
+          */
+         virtual void DefaultPrePhysicsUpdate();
+         /**
+          * If you don't have a postphysics update, it calls this.
+          */
+         virtual void DefaultPostPhysicsUpdate();
+
          //For the actor property
          void SetNameByString(const std::string& name);
          //For the actor property
          const std::string& GetNameAsString() const;
 
       private:
-
-         /// Supports the deprecated property system.
-         void SetKinematic(bool isKinematic);
-         bool IsKinematic() const;
 
          /// name of the physics helper
          dtUtil::RefString mName;
@@ -288,6 +303,11 @@ namespace dtPhysics
          ActionUpdateCallback mActionUpdate;
 
          dtCore::RefPtr<Action> mHelperAction;
+
+         dtCore::ObserverPtr<dtCore::Transformable> mCachedTransformable;
+
+         bool mAutoCreateOnEnteringWorld;
+         bool mIsRemote;
 
          /// hiding copy constructor and operator=
          PhysicsActComp(const PhysicsActComp&);

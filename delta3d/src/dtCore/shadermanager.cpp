@@ -669,4 +669,9 @@ namespace dtCore
       :dtUtil::Exception(message, filename, linenum)
    {
    }
+
+   ////////// Hiding copy and assign ////////////////////
+   ShaderManager::ShaderManager(const ShaderManager&) : mTotalShaderCount(0U) { }
+   ShaderManager& ShaderManager::operator=(const ShaderManager&) { return *this; }
+
 }

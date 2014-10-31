@@ -24,6 +24,7 @@
 #include <dtActors/deltaobjectactorproxy.h>
 #include <dtActors/staticmeshactorproxy.h>
 #include <dtActors/particlesystemactorproxy.h>
+#include <dtActors/dynamicparticlesystemactor.h>
 #include <dtActors/positionallightactorproxy.h>
 #include <dtActors/spotlightactorproxy.h>
 
@@ -31,7 +32,7 @@
 #include <dtActors/infiniteterrainactorproxy.h>
 #include <dtActors/autotriggeractorproxy.h>
 #include <dtActors/backdropactor.h>
-#include <dtActors/beziercontrolleractorproxy.h>
+#include <dtActors/beziercontrolleractor.h>
 #include <dtActors/meshterrainactorproxy.h>
 #include <dtActors/clouddomeactorproxy.h>
 #include <dtActors/cloudplaneactorproxy.h>
@@ -63,7 +64,7 @@
 #include <dtActors/buildingactor.h>
 #include <dtActors/watergridactor.h>
 #include <dtActors/triggervolumeactorproxy.h>
-#include <dtActors/directoractorproxy.h>
+#include <dtActors/directoractor.h>
 #include <dtActors/positiondataactor.h>
 
 
@@ -93,6 +94,7 @@ namespace dtActors
    dtCore::RefPtr<dtCore::ActorType> EngineActorRegistry::SPOT_LIGHT_ACTOR_TYPE(new dtCore::ActorType("Spotlight", "dtcore.Lights", "Spotlight light actor."));
    dtCore::RefPtr<dtCore::ActorType> EngineActorRegistry::STATIC_MESH_ACTOR_TYPE(new dtCore::ActorType("Static Mesh", "dtcore", "Loadable static mesh actor."));
    dtCore::RefPtr<dtCore::ActorType> EngineActorRegistry::PARTICLE_SYSTEM_ACTOR_TYPE(new dtCore::ActorType("Particle System", "dtcore", "dtCore::ParticleSystem actor."));
+   dtCore::RefPtr<dtCore::ActorType> EngineActorRegistry::DYNAMIC_PARTICLE_SYSTEM_ACTOR_TYPE(new dtCore::ActorType("Dynamic Particle System", "dtcore", "dtCore::DynamicParticleSystem actor."));
    dtCore::RefPtr<dtCore::ActorType> EngineActorRegistry::INFINITE_TERRAIN_ACTOR_TYPE(new dtCore::ActorType("Infinite Terrain", "dtcore.Terrain", "dtCore::InfiniteTerrain actor."));
    dtCore::RefPtr<dtCore::ActorType> EngineActorRegistry::MESH_TERRAIN_ACTOR_TYPE(new dtCore::ActorType("Mesh Terrain", "dtcore.Terrain", "An terrain actor who's geometry is represented via a mesh file."));
    dtCore::RefPtr<dtCore::ActorType> EngineActorRegistry::SKY_BOX_ACTOR_TYPE(new dtCore::ActorType("Sky Box", "dtcore.Environment", "dtCore::SkyBox Actor."));
@@ -181,8 +183,9 @@ namespace dtActors
       mActorFactory->RegisterType<SpotlightActorProxy>(SPOT_LIGHT_ACTOR_TYPE.get());
       // Static Mesh...
       mActorFactory->RegisterType<StaticMeshActorProxy>(STATIC_MESH_ACTOR_TYPE.get());
-      // Particle System...
-      mActorFactory->RegisterType<ParticleSystemActorProxy>(PARTICLE_SYSTEM_ACTOR_TYPE.get());
+      // Particle Systems...
+      mActorFactory->RegisterType<ParticleSystemActor>(PARTICLE_SYSTEM_ACTOR_TYPE.get());
+      mActorFactory->RegisterType<DynamicParticleSystemActor>(DYNAMIC_PARTICLE_SYSTEM_ACTOR_TYPE.get());
       // Infinite terrain...
       mActorFactory->RegisterType<InfiniteTerrainActorProxy>(INFINITE_TERRAIN_ACTOR_TYPE.get());
       // Terrain mesh actor...
@@ -196,7 +199,7 @@ namespace dtActors
       // BezierControlPoint actor
       mActorFactory->RegisterType<BezierControlPointActorProxy>(BEZIER_CONTROL_POINT_ACTOR_TYPE.get());
       // BezierController actor
-      mActorFactory->RegisterType<BezierControllerActorProxy>(BEZIER_CONTROLLER_ACTOR_TYPE.get());
+      mActorFactory->RegisterType<BezierControllerActor>(BEZIER_CONTROLLER_ACTOR_TYPE.get());
       // CloudPlane actor...
       mActorFactory->RegisterType<CloudPlaneActorProxy>(CLOUD_PLANE_ACTOR_TYPE.get());
       // CloudDome Actor
@@ -221,11 +224,11 @@ namespace dtActors
       mActorFactory->RegisterType<BuildingActorProxy>(BUILDING_ACTOR_TYPE.get());
       mActorFactory->RegisterType<WaterGridActorProxy>(WATER_GRID_ACTOR_TYPE.get());
       mActorFactory->RegisterType<TriggerVolumeActorProxy>(TRIGGER_VOLUME_ACTOR_TYPE.get());
-      mActorFactory->RegisterType<DirectorActorProxy>(DIRECTOR_ACTOR_TYPE.get());
+      mActorFactory->RegisterType<DirectorActor>(DIRECTOR_ACTOR_TYPE.get());
       mActorFactory->RegisterType<PositionDataActorProxy>(POSITION_DATA_ACTOR_TYPE.get());
 
       // Base Game Mesh actor - typically subclassed (maybe shouldn't even be registered)
-      mActorFactory->RegisterType<GameMeshActorProxy>(GAME_MESH_ACTOR_TYPE.get());
+      mActorFactory->RegisterType<GameMeshActor>(GAME_MESH_ACTOR_TYPE.get());
 
       mActorFactory->RegisterType<DistanceSensorActorProxy>(DISTANCE_SENSOR_ACTOR_TYPE.get());
 

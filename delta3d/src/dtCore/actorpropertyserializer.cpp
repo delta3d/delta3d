@@ -551,14 +551,18 @@ namespace dtCore
    template <typename VecType>
    void ActorPropertySerializer::WriteVec(const VecType& vec, char* numberConversionBuffer, const size_t bufferMax)
    {
-      switch (VecType::num_components) {
-      case 2:
+      enum NumComponents
+      {
+         TWO = 2, THREE, FOUR
+      };
+      switch (NumComponents(VecType::num_components)) {
+      case TWO:
          mWriter->BeginElement(MapXMLConstants::ACTOR_PROPERTY_VEC2_ELEMENT);
          break;
-      case 3:
+      case THREE:
          mWriter->BeginElement(MapXMLConstants::ACTOR_PROPERTY_VEC3_ELEMENT);
          break;
-      case 4:
+      case FOUR:
          mWriter->BeginElement(MapXMLConstants::ACTOR_PROPERTY_VEC4_ELEMENT);
          break;
       default:
