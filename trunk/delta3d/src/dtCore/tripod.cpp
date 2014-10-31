@@ -24,8 +24,8 @@ Tripod::Tripod(Transformable* child, Transformable* parent)
 
    mPosition.set(0.0f, -10.0f, 2.0f);
    mHPR.set(0.0f, 0.0f, 0.0f);
-   mXYZScale.set(1.f, 1.f, 1.f);
-   mHPRScale.set(1.f, 1.f, 1.f);
+   mXYZScale.set(1.0f, 1.0f, 1.0f);
+   mHPRScale.set(1.0f, 1.0f, 1.0f);
 }
 
 Tripod::~Tripod(void)
@@ -190,13 +190,13 @@ void Tripod::Update(double deltaFrameTime) //virtual
       Transform targetXform, lookatXform;
       mLookAtTarget.get()->GetTransform(targetXform);
       osg::Vec3 lookAtXYZ, upVec;
-      upVec.set(0.f, 0.f, 1.f);
+      upVec.set(0.0f, 0.0f, 1.0f);
       targetXform.GetTranslation(lookAtXYZ);
       lookatXform.Set(osg::Vec3(newMat(3,0), newMat(3,1), newMat(3,2)), lookAtXYZ, upVec);
       lookatXform.Get(newMat);
    }
 
-   const osg::Vec3 ident(1.f, 1.f, 1.f);
+   const osg::Vec3 ident(1.0f, 1.0f, 1.0f);
    if (mXYZScale != ident)
    {
       //adjust the new xyz using the xyzScale values

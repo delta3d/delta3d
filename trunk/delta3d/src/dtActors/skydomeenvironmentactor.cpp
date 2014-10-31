@@ -8,12 +8,13 @@
 #include <dtCore/floatactorproperty.h>
 #include <dtCore/functor.h>
 
-using namespace dtActors;
+namespace dtActors
+{
 
-SkyDomeEnvironmentActor::SkyDomeEnvironmentActor( dtGame::GameActorProxy& parent ):
-dtGame::IEnvGameActor(parent),
-mEnv(new dtCore::Environment()),
-mSkyDome(NULL)
+SkyDomeEnvironmentActor::SkyDomeEnvironmentActor( dtGame::GameActorProxy& parent )
+: dtGame::IEnvGameActor(parent)
+, mEnv(new dtCore::Environment())
+, mSkyDome(NULL)
 {
    SetName("SkyDomeEnvironmentActor");
 
@@ -29,13 +30,13 @@ SkyDomeEnvironmentActor::~SkyDomeEnvironmentActor()
 }
 
 
-void SkyDomeEnvironmentActor::AddActor( dtCore::DeltaDrawable &dd )
+void SkyDomeEnvironmentActor::AddActor( dtCore::DeltaDrawable& dd )
 {
    mEnv->AddChild(&dd);
 }
 
 
-void SkyDomeEnvironmentActor::RemoveActor( dtCore::DeltaDrawable &dd )
+void SkyDomeEnvironmentActor::RemoveActor( dtCore::DeltaDrawable& dd )
 {
    mEnv->RemoveChild(&dd);
 }
@@ -175,7 +176,8 @@ void SkyDomeEnvironmentActorProxy::BuildPropertyMap()
 
 void SkyDomeEnvironmentActorProxy::CreateDrawable()
 {
-   dtActors::SkyDomeEnvironmentActor *env = new dtActors::SkyDomeEnvironmentActor( *this );
+   dtActors::SkyDomeEnvironmentActor* env = new dtActors::SkyDomeEnvironmentActor( *this );
    SetDrawable( *env );
 }
 
+}

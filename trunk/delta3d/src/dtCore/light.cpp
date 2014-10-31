@@ -239,7 +239,7 @@ void Light::RemoveChild(DeltaDrawable *child)
 ////////////////////////////////////////////////////////////////////////////////
 void Light::ApplyDefaults()
 {
-   SetDiffuse(osg::Vec4(0.9f, 0.9f, 0.9f, 1.f));
-   SetAmbient(osg::Vec4(0.5f, 0.5f, 0.5f, 1.f));
-   SetSpecular(osg::Vec4(1.f, 1.f, 1.f, 1.f));
+   SetDiffuse(osg::Vec4(0.9f, 0.9f, 0.9f, 1.0f));
+   SetAmbient(osg::Vec4(0.5f, 0.5f, 0.5f, 1.0f));
+   SetSpecular(osg::Vec4(1.0f, 1.0f, 1.0f, 1.0f));
 }

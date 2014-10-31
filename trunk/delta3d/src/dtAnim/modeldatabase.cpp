@@ -346,4 +346,48 @@ namespace dtAnim
       return mNodeBuilder->CreateNode(&model, immediate);
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   /// Each core model needs to work with its own pose mesh database.
+   /// This is not necessary for this example since they all share the same mesh but
+   /// is important in a real application that has more than one core model
+   dtAnim::PoseMeshDatabase* ModelDatabase::GetPoseMeshDatabase(dtAnim::BaseModelWrapper& wrapper)
+   {
+      // Get access to the pose mesh file name
+      dtAnim::ModelDatabase& database = dtAnim::ModelDatabase::GetInstance();
+      dtAnim::BaseModelData* modelData = wrapper.GetModelData();
+      const std::string& poseMeshFile = modelData->GetPoseMeshFilename();
+
+      dtAnim::PoseMeshDatabase* poseDatabase = NULL;
+
+      // See if this core model already has a pose mesh database that can be shared
+      PoseDatabaseMap::iterator mapIter = mPoseMeshMap.find(poseMeshFile);
+
+      if (mapIter != mPoseMeshMap.end())
+      {
+         poseDatabase = mapIter->second.get();
+      }
+      else // Database not found. Try to create one from file.
+      {
+         if ( ! poseMeshFile.empty())
+         {
+            // Load up the pose mesh data
+            dtCore::RefPtr<dtAnim::PoseMeshDatabase> newPoseDatabase
+               = new dtAnim::PoseMeshDatabase(&wrapper);
+            if (newPoseDatabase->LoadFromFile(poseMeshFile))
+            {
+               mPoseMeshMap.insert(std::make_pair(poseMeshFile, newPoseDatabase));
+
+               poseDatabase = newPoseDatabase;
+            }
+
+            if (poseDatabase == NULL)
+            {
+               LOG_ERROR("Cannot access pose mesh data for character model \"" + modelData->GetModelName() + "\"");
+            }
+         }
+      }
+
+      return poseDatabase;
+   }
+
 } // namespace dtAnim

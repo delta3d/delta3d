@@ -188,6 +188,7 @@ namespace dtCore
                extContainer.insert(std::make_pair("dae","Collada"));
                extContainer.insert(std::make_pair("earth", "Earth file."));
                extContainer.insert(std::make_pair("ply", "Stanford point cloud."));
+               extContainer.insert(std::make_pair("dtphys", "dtPhysics compiled physics mesh."));
 
                handler = new DefaultResourceTypeHandler(d, "Static Mesh Files", extContainer);
 

@@ -4,6 +4,7 @@
 #include <dtCore/system.h>
 #include <dtUtil/noisetexture.h>
 #include <dtUtil/log.h>
+#include <dtUtil/nodemask.h>
 
 #include <osg/BlendFunc>
 #include <osg/Fog>
@@ -59,7 +60,7 @@ CloudPlane::CloudPlane(int   octaves,
       mHeight = MAX_HEIGHT;
 
    SetOSGNode(new osg::Group);
-   GetOSGNode()->setNodeMask(0xf0000000);
+   GetOSGNode()->setNodeMask(dtUtil::NodeMask::BACKGROUND);
 
    Create(textureFilePath);
    AddSender(&System::GetInstance());
@@ -92,7 +93,7 @@ CloudPlane::CloudPlane(float height, const std::string& name, const std::string&
    }
 
    SetOSGNode(new osg::Group);
-   GetOSGNode()->setNodeMask(0xf0000000);
+   GetOSGNode()->setNodeMask(dtUtil::NodeMask::BACKGROUND);
 
    Create(textureFilePath);
    AddSender(&System::GetInstance());
@@ -299,7 +300,7 @@ void CloudPlane::Repaint(const osg::Vec3& skyColor,
       mCloudColor.set(1.0f, 1.0f, 1.0f, 1.0f);
    }
    
-   osg::Vec4 fog_color(fogColor, 0.f);
+   osg::Vec4 fog_color(fogColor, 0.0f);
    osg::Vec4 cloud_color(mCloudColor);
    cloud_color[3] = 1.f;
    UpdateColors(fog_color,cloud_color);
@@ -399,7 +400,7 @@ osg::Geometry* CloudPlane::createPlane(float size, float height)
 
    mColors = new osg::Vec4Array(36);
    osg::Vec4 fog_color(0.2f,0.2f,0.4f,0.0f);
-   osg::Vec4 black_color(1.0f,1.0f,1.0f,1.f);
+   osg::Vec4 black_color(1.0f,1.0f,1.0f,1.0f);
    UpdateColors(fog_color, black_color);
 
    /**                    **/

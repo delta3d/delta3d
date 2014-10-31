@@ -88,7 +88,7 @@ private:
 
    dtCore::Transformable* GetTerrain();
 
-   void SetAimTarget(const dtCore::Transformable* transformable);
+   void SetAimTarget(dtCore::Transformable* transformable);
 
    dtAnim::PoseMeshDatabase* GetPoseMeshDatabaseForActor(ProceduralAnimationActor *actor);
 };

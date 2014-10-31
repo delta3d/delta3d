@@ -33,6 +33,7 @@
 
 #include <map>
 #include <vector>
+#include <algorithm>
 
 namespace dtCore
 {
@@ -80,6 +81,16 @@ namespace dtCore
       void AddProperty(ActorProperty* newProp);
 
       /**
+       * Removes a property from this property container by name.
+       */
+      void RemoveProperty(const std::string& nameToRemove);
+
+      /**
+       * Removes a property from this property container.
+       */
+      void RemoveProperty(ActorProperty* newProp);
+
+      /**
        * Inserts a new property into the container at a given index.
        *
        * @param[in]  newProp  The property to insert.
@@ -114,6 +125,10 @@ namespace dtCore
        * is not found.
        */
       const ActorProperty* GetProperty(const std::string& name) const;
+
+      /// Perform the given action for each property.
+      template <typename UnaryFunctor>
+      void ForEachProperty(UnaryFunctor func);
 
       /**
        * This function queries the proxy with any properties not
@@ -156,6 +171,8 @@ namespace dtCore
 
       /**
        * Checks if a given property should be saved out to file data.
+       * The flags on a property can be used to control this, so this shouldn't be needed unless you need to do
+       * something custom.
        *
        * @param[in]  prop  The property.
        *
@@ -171,8 +188,6 @@ namespace dtCore
    protected:
       virtual ~PropertyContainer();
 
-      void RemoveProperty(const std::string& nameToRemove);
-
    private:
       typedef std::map<dtUtil::RefString, dtCore::RefPtr<ActorProperty> > PropertyMapType;
       typedef std::vector<dtCore::RefPtr<ActorProperty> > PropertyVectorType;
@@ -185,6 +200,12 @@ namespace dtCore
    };
 
    typedef RefPtr<PropertyContainer> PropertyContainerPtr;
+
+   template <typename UnaryFunctor>
+   inline void PropertyContainer::ForEachProperty(UnaryFunctor func)
+   {
+      std::for_each(mProperties.begin(), mProperties.end(), func);
+   }
 
 }
 

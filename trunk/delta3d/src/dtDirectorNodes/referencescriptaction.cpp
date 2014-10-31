@@ -316,7 +316,7 @@ namespace dtDirector
             }
             catch (const dtUtil::Exception& e)
             {
-               std::string error = std::string("Unable to parse ") + mScriptResource.GetDisplayName().c_str() + " with error " + e.What().c_str();
+               std::string error = std::string("Unable to parse ") + mScriptResource.GetDisplayName().c_str() + " with error " + e.ToString();
                LOG_ERROR(error.c_str());
 
                // If the script loaded, null out the resource

@@ -76,6 +76,11 @@ MACRO(ADD_DELTA3D_SUBFOLDERS)
       SET(DTPHYSICS_AVAILABLE "YES")
    ENDIF (BUILD_DTPHYSICS)
 
+   IF (BUILD_DTRENDER)
+      ADD_SUBDIRECTORY(src/dtRender)
+      SET(DTRENDER_AVAILABLE "YES")
+   ENDIF (BUILD_DTRENDER)
+
    ADD_SUBDIRECTORY(src/dtActors)
    ADD_SUBDIRECTORY(src/dtUtil)
    ADD_SUBDIRECTORY(src/dtCore)
@@ -126,15 +131,18 @@ set (delta3d_VERSION_PATCH 0)
 
 ################################################################################
 # User Options
+OPTION(BUILD_STATIC          "Builds delta3d as static libraries.(Experimental)" OFF)
+
 OPTION(BUILD_ANIM          "Enables the building of dtAnim (requires CAL3D)" ON)
 OPTION(BUILD_AUDIO         "Enables the building of dtAudio (requires openAL/ALUT)" ON)
 OPTION(BUILD_BINDINGS      "Enabled the building of the bindings (requires Python, Boost.Python)" OFF)
-OPTION(BUILD_DIS           "Enables the building of dtDIS (requires DIS-cpp,HawkNL)" ON)
+OPTION(BUILD_DIS           "Enables the building of dtDIS (requires DIS-cpp,HawkNL)" OFF)
 OPTION(BUILD_GUI           "Enables the building of dtGUI (requires CEGUI)" ON)
 OPTION(BUILD_HLA           "Enables the building of dtHLA related projects (requires RTI)" OFF)
 OPTION(BUILD_PLIB          "Enables the building of dtInputPLIB (Uses internal plib code)" ON)
-OPTION(BUILD_NET           "Enables the building of dtNet/dtNetGM (requires HawkNL,GNE,Boost)" OFF)
-OPTION(BUILD_DTPHYSICS     "Enables the building of dtPhysics (requires PAL)" OFF)
+OPTION(BUILD_NET           "Enables the building of dtNet/dtNetGM (requires HawkNL,GNE,Boost)" ON)
+OPTION(BUILD_DTPHYSICS     "Enables the building of dtPhysics (requires PAL)" ON)
+OPTION(BUILD_DTRENDER      "Enables the building of dtRender for advanced rendering support." ON)
 OPTION(BUILD_TERRAIN       "Enables the building of dtTerrain (requires GDAL)" ON)
 OPTION(BUILD_TESTS         "Enables the building of the unit tests (requires CPPUNIT)" ON)
 

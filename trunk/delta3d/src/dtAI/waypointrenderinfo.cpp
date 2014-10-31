@@ -44,17 +44,28 @@ namespace dtAI
    }
 
    //////////////////////////////////////////////////////////////////////////////
+   bool WaypointRenderInfo::IsAnyRenderingEnabled() const
+   {
+      return mRenderWaypoints || mRenderWaypointID || mRenderWaypointText || mRenderNavMesh || mRenderNavMeshText;
+   }
+
+   //////////////////////////////////////////////////////////////////////////////
+   void WaypointRenderInfo::SetAllRenderingOptions(bool value)
+   {
+      SetRenderWaypoints(value);
+      SetRenderWaypointID(value);
+      SetRenderWaypointText(value);
+      SetRenderNavMesh(value);
+      SetRenderNavMeshText(value);
+   }
+
+   //////////////////////////////////////////////////////////////////////////////
    void WaypointRenderInfo::SetDefaults()
    {
-      //we actually don't want to reset this, simiarly to the Waypoint ID
+      //we actually don't want to reset this, similarly to the Waypoint ID
       //this comes from supporting the pure virtual functions in the base
       //mWorldSpacePos = osg::Vec3(0.0f, 0.0f, 0.0f);
-      mEnableDepthTest = true;
-      mRenderWaypoints = true;
-      mRenderWaypointID = true;
-      mRenderWaypointText = true;
-      mRenderNavMesh = true;
-      mRenderNavMeshText = true;
+      SetAllRenderingOptions(true);
 
       //set the rest to reasonable defaults
       mWaypointSize = 10.0f;
@@ -78,7 +89,7 @@ namespace dtAI
    void WaypointRenderInfo::BuildPropertyMap()
    {
       //TODO Create Properties
-      typedef dtCore::PropertyRegHelper<dtCore::PropertyContainer&, WaypointRenderInfo> RegHelperType;
+      typedef dtCore::PropertyRegHelper<dtCore::PropertyContainer, WaypointRenderInfo> RegHelperType;
 
       RegHelperType regHelper(*this, this, "WaypointRenderInfo");
 

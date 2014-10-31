@@ -69,7 +69,7 @@ namespace dtAnim
          dtCore::RefPtr<dtAnim::Cal3dAnimation> newAnim = new dtAnim::Cal3dAnimation(*mModel, *anim);
          mAnims.insert(std::make_pair(name, newAnim));
 
-         mIDAnimMap.insert(std::make_pair(id, newAnim));
+         mIDAnimMap.insert(std::make_pair(id, newAnim.get()));
       }
    }
 
@@ -91,7 +91,7 @@ namespace dtAnim
          dtCore::RefPtr<dtAnim::Cal3dBone> newBone = new dtAnim::Cal3dBone(*mModel, *bone);
          mBones.insert(std::make_pair(name, newBone));
 
-         mIDBoneMap.insert(std::make_pair(id, newBone));
+         mIDBoneMap.insert(std::make_pair(id, newBone.get()));
       }
    }
 
@@ -172,7 +172,7 @@ namespace dtAnim
       IDAnimMap::iterator foundIter = mIDAnimMap.find(id);
       if (foundIter != mIDAnimMap.end())
       {
-         anim = foundIter->second;
+         anim = foundIter->second.get();
       }
 
       return anim;
@@ -185,7 +185,7 @@ namespace dtAnim
       IDBoneMap::iterator foundIter = mIDBoneMap.find(id);
       if (foundIter != mIDBoneMap.end())
       {
-         bone = foundIter->second;
+         bone = foundIter->second.get();
       }
 
       return bone;
@@ -234,7 +234,7 @@ namespace dtAnim
             }
          }
       }
-      
+      SetScale(modelData.GetScale());
       UpdateInterfaceObjects();
       mAnimator = new Cal3DAnimator(this);
    }
@@ -259,6 +259,17 @@ namespace dtAnim
    dtCore::RefPtr<osg::Node> Cal3DModelWrapper::CreateDrawableNode(bool immediate)
    {
       mDrawable = dtAnim::ModelDatabase::GetInstance().CreateNode(*this, immediate);
+      
+      // Now that the drawable node is accessible from this wrapper, call the
+      // base functionality to commit the scale to the character model.
+      UpdateScale();
+
+      osg::MatrixTransform* scaleNode = GetScaleTransform();
+      if (scaleNode != NULL)
+      {
+         mDrawable = scaleNode;
+      }
+
       return mDrawable.get();
    }
 
@@ -269,7 +280,7 @@ namespace dtAnim
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   dtAnim::Cal3DModelData* Cal3DModelWrapper::GetCalModelData()
+   dtAnim::Cal3DModelData* Cal3DModelWrapper::GetCalModelData() const
    {
       return dynamic_cast<Cal3DModelData*>(GetModelData());
    }
@@ -541,11 +552,10 @@ namespace dtAnim
    /////////////////////////////////////////////////////////////////////////////
    void Cal3DModelWrapper::SetScale(float scale)
    {
-      // TODO: Change this to work per instance
-      // rather than on a shared model.
-
-      GetModelData()->SetScale(scale);
+      // DG - Setting core model scale is problematic for reusing core models because it changes to base vertex data.
       mScale = scale;
+
+      UpdateScale();
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -567,9 +577,8 @@ namespace dtAnim
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void Cal3DModelWrapper::UpdateAnimations(float deltaTime)
+   void Cal3DModelWrapper::UpdateAnimation(float deltaTime)
    {
-      //mCalModel->update(deltaTime);
       mAnimator->Update(deltaTime);
    }
 

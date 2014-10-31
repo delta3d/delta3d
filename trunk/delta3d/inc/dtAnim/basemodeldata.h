@@ -109,8 +109,6 @@ namespace dtAnim
 
       DT_DECLARE_ACCESSOR(float, Scale);
 
-      DT_DECLARE_ACCESSOR(float, ScaleInFile);
-
       DT_DECLARE_ACCESSOR(std::string, ShaderGroupName);
       DT_DECLARE_ACCESSOR(std::string, ShaderName);
       DT_DECLARE_ACCESSOR(std::string, PoseMeshFilename);

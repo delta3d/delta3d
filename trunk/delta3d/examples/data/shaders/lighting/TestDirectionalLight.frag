@@ -1,3 +1,4 @@
+#version 120
 uniform sampler2D baseTexture;
 
 varying vec4 vColorAmbientEmissive;

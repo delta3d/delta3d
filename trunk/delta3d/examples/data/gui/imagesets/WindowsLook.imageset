@@ -162,5 +162,5 @@
 	<Image Name="PopupMenuArrowRight" XPos="61" YPos="75" Width="5" Height="9" />
 	<Image Name="PopupMenuArrowLeft" XPos="68" YPos="75" Width="5" Height="9" />
 
-	<Image Name="MultiListSelectionBrush" XPos="9" YPos="71" Width="14" Height="14" />
+	<Image Name="MultiListSelectionBrush" XPos="20" YPos="20" Width="14" Height="14" />
 </Imageset>

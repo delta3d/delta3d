@@ -150,7 +150,7 @@ void ODEPhysicsTests::TestSettingThePosition()
    dBodyID id = dBodyCreate(worldID);
    wrap->SetBodyID(id);
 
-   const osg::Vec3 startXYZ(1.f, 2.f, 3.f);
+   const osg::Vec3 startXYZ(1.0f, 2.0f, 3.0f);
    wrap->SetPosition(startXYZ);
 
    const dReal *pos = dBodyGetPosition(wrap->GetBodyID());
@@ -174,7 +174,7 @@ void ODEPhysicsTests::TestSettingTheCoG()
    dBodyID id = dBodyCreate(worldID);
    wrap->SetBodyID(id);
 
-   const osg::Vec3 startCog(10.f, 10.f, 10.f);
+   const osg::Vec3 startCog(10.0f, 10.0f, 10.0f);
    wrap->SetCenterOfGravity(startCog);
 
    osg::Vec3 endCog;

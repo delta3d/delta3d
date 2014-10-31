@@ -43,32 +43,15 @@ namespace dtPhysics
 
    class Geometry;
    class BaseBodyWrapperImpl;
+   class GenericBodyWrapper;
 
    class DT_PHYSICS_EXPORT BaseBodyWrapper: public osg::Referenced
    {
    public:
       BaseBodyWrapper(palBodyBase& body);
 
-      static dtCore::RefPtr<BaseBodyWrapper> CreateBox(const TransformType& worldPos,
-               const VectorType& dimensions, Real mass);
-      ///////////////////////////////////////////////////////////////////////////
-      static dtCore::RefPtr<BaseBodyWrapper> CreateStaticBox(const TransformType& worldPos,
-                              const VectorType& dimensions);
-      static dtCore::RefPtr<BaseBodyWrapper> CreateSphere(const TransformType& worldPos,
-               const VectorType& dimensions, Real mass);
-      static dtCore::RefPtr<BaseBodyWrapper> CreateCylinder(const TransformType& worldPos,
-               const VectorType& dimensions, Real mass);
-      static dtCore::RefPtr<BaseBodyWrapper> CreateConvexHull(const TransformType& worldPos,
-               const osg::Node* mesh, Real mass);
-      static dtCore::RefPtr<BaseBodyWrapper> CreateTriangleMesh(const TransformType& worldPos,
-               const osg::Node* mesh, Real mass);
-      static dtCore::RefPtr<BaseBodyWrapper> CreateHeightfield(const TransformType& worldPos,
-               const osg::Node* mesh);
-      static dtCore::RefPtr<BaseBodyWrapper> CreateTerrainMesh(const TransformType& worldPos,
-               const osg::Node* mesh);
-
-      /// Creates a generic body.  Unlike the other versions, you must call Init manually after adding geometry.
-      static dtCore::RefPtr<BaseBodyWrapper> CreateGenericBody(const TransformType& worldPos,
+      /// Creates a generic body.  You must call Init manually after adding geometry.
+      static dtCore::RefPtr<GenericBodyWrapper> CreateGenericBody(const TransformType& worldPos,
                MechanicsType& mechType, CollisionGroup collisionGroup, Real mass);
 
       /// Changes the collision group for the body.
@@ -81,7 +64,8 @@ namespace dtPhysics
 
       palBodyBase& GetPalBodyBase();
 
-      void GetTransform(TransformType& xform) const;
+      /// @see dtPhysics::PhysicsObject::GetTransform
+      void GetTransform(TransformType& xform, bool interpolated) const;
 
    protected:
       ~BaseBodyWrapper();

@@ -4,6 +4,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 // DELTA3D
 #include <dtAnim/cal3dnodebuilder.h>
+#include <dtAnim/animnodebuilder.h>
+#include <dtAnim/constants.h>
 #include <dtAnim/charactershaderbuilder.h>
 #include <dtCore/shaderprogram.h>
 #include <dtUtil/log.h>
@@ -25,11 +27,11 @@ namespace dtAnim
    /////////////////////////////////////////////////////////////////////////////
    // CLASS CODE
    /////////////////////////////////////////////////////////////////////////////
-   Cal3dBoundingSphereCalculator::Cal3dBoundingSphereCalculator(dtAnim::Cal3DModelWrapper& wrapper)
+   Cal3DBoundingSphereCalculator::Cal3DBoundingSphereCalculator(dtAnim::Cal3DModelWrapper& wrapper)
       : mWrapper(&wrapper)
    {}
 
-   osg::BoundingSphere Cal3dBoundingSphereCalculator::computeBound(const osg::Node&) const
+   osg::BoundingSphere Cal3DBoundingSphereCalculator::computeBound(const osg::Node&) const
    {
       osg::BoundingSphere bSphere(mWrapper->GetBoundingBox());
       if (bSphere.radius2() <= FLT_EPSILON)
@@ -50,17 +52,17 @@ namespace dtAnim
    Cal3dNodeBuilder::~Cal3dNodeBuilder()
    {}
    
-   dtCore::RefPtr<osg::Node> Cal3dNodeBuilder::CreateSoftware(dtAnim::Cal3DModelWrapper* wrapper)
+   dtCore::RefPtr<osg::Node> Cal3dNodeBuilder::CreateSoftware(osg::RenderInfo* renderInfo, dtAnim::Cal3DModelWrapper* wrapper)
    {
-      return CreateSoftwareInternal(wrapper, true);
+      return CreateSoftwareInternal(renderInfo, wrapper, true);
    }
 
-   dtCore::RefPtr<osg::Node> Cal3dNodeBuilder::CreateSoftwareNoVBO(dtAnim::Cal3DModelWrapper* wrapper)
+   dtCore::RefPtr<osg::Node> Cal3dNodeBuilder::CreateSoftwareNoVBO(osg::RenderInfo* renderInfo, dtAnim::Cal3DModelWrapper* wrapper)
    {
-      return CreateSoftwareInternal(wrapper, false);
+      return CreateSoftwareInternal(renderInfo, wrapper, false);
    }
 
-   dtCore::RefPtr<osg::Node> Cal3dNodeBuilder::CreateSoftwareInternal(Cal3DModelWrapper* wrapper, bool vbo)
+   dtCore::RefPtr<osg::Node> Cal3dNodeBuilder::CreateSoftwareInternal(osg::RenderInfo* renderInfo, Cal3DModelWrapper* wrapper, bool vbo)
    {
       if (wrapper == NULL)
       {
@@ -70,7 +72,7 @@ namespace dtAnim
 
       dtCore::RefPtr<osg::Geode> geode = new osg::Geode();
 
-      geode->setComputeBoundingSphereCallback(new Cal3dBoundingSphereCalculator(*wrapper));
+      geode->setComputeBoundingSphereCallback(new Cal3DBoundingSphereCalculator(*wrapper));
 
       if (wrapper->BeginRenderingQuery())
       {
@@ -114,12 +116,12 @@ namespace dtAnim
          wrapper->EndRenderingQuery();
       }
 
-      wrapper->UpdateAnimations(0.0f);
+      wrapper->UpdateAnimation(0.0f);
 
       return geode;
    }
 
-   dtCore::RefPtr<osg::Node> Cal3dNodeBuilder::CreateHardware(Cal3DModelWrapper* wrapper)
+   dtCore::RefPtr<osg::Node> Cal3dNodeBuilder::CreateHardware(osg::RenderInfo* renderInfo, Cal3DModelWrapper* wrapper)
    {
       if (wrapper == NULL)
       {
@@ -138,7 +140,7 @@ namespace dtAnim
       dtCore::RefPtr<osg::Geode> geode = new osg::Geode();
 
       wrapper->SetLODLevel(1);
-      wrapper->UpdateAnimations(0.0f);
+      wrapper->UpdateAnimation(0);
 
       if (wrapper->BeginRenderingQuery() == false)
       {
@@ -158,14 +160,11 @@ namespace dtAnim
 
       // Create GPU resources from our source data
       {
-         osg::VertexBufferObject* vertexVBO = modelData->GetVertexBufferObject();
-         osg::ElementBufferObject* indexEBO = modelData->GetElementBufferObject();
+         dtCore::RefPtr<osg::VertexBufferObject> vertexVBO = modelData->GetVertexBufferObject();
+         dtCore::RefPtr<osg::ElementBufferObject> indexEBO = modelData->GetElementBufferObject();
 
-         if (vertexVBO == NULL)
+         if (!vertexVBO.valid() || !indexEBO.valid())
          {
-            // Either both should be NULL, or both non NULL
-            assert(indexEBO == NULL);
-
             vertexVBO = new osg::VertexBufferObject;
             indexEBO = new osg::ElementBufferObject;
 
@@ -180,46 +179,82 @@ namespace dtAnim
             // Allocate the draw elements for the element size that CalIndex defines
             if (sizeof(CalIndex) < 4)
             {
-               // WARNING! Ensure that the array pointer is actually of type short.
-               drawElements = new osg::DrawElementsUShort(GL_TRIANGLES, numIndices, (GLushort*)indexArray->getDataPointer());
+               drawElements = new osg::DrawElementsUShort(GL_TRIANGLES, numIndices, (GLushort*)indexArray);
             }
             else
             {
-               drawElements = new osg::DrawElementsUInt(GL_TRIANGLES, numIndices, (GLuint*)indexArray->getDataPointer());
+               drawElements = new osg::DrawElementsUInt(GL_TRIANGLES, numIndices, (GLuint*)indexArray);
             }
 
             modelData->SetDrawElements(drawElements);
          }
 
-         dtCore::RefPtr<dtAnim::CharacterShaderBuilder> shaderBuilder;
-         //dtCore::ShaderProgram* shadProg =
-         shaderBuilder->LoadShaders(*modelData, *geode);
+         dtCore::ShaderProgram* shadProg
+            = AnimNodeBuilder::LoadShaders(*modelData, *geode);
+
+         /* Begin figure out if this open gl implementation uses [0] on array uniforms
+          * This seems to be an ATI/NVIDIA thing.
+          * This requires me to force the shader to compile.
+          * The latest developer version of Open Scene Graph has a workaround
+          * in the shader program class for this issue, but the current stable
+          * osg release as of this writing (3.0.1) lacks the fix so
+          * include this hack here.
+          */
+         osg::Program* prog = shadProg->GetShaderProgram();
+         prog->compileGLObjects(*renderInfo->getState());
+
+         std::string boneTransformUniform = Constants::BONE_TRANSFORM_UNIFORM;
+
+         if (prog->getPCP(renderInfo->getContextID()) != NULL && prog->getPCP(renderInfo->getContextID())->getUniformLocation(boneTransformUniform) == -1)
+         {
+            if (prog->getPCP(renderInfo->getContextID()) != NULL && prog->getPCP(renderInfo->getContextID())->getUniformLocation(boneTransformUniform + "[0]") == -1)
+            {
+               LOG_ERROR("Can't find uniform named \"" + boneTransformUniform
+                         + "\" which is required for skinning.");
+            }
+            else
+            {
+               boneTransformUniform.append("[0]");
+            }
+         }
          //End check.
 
          // Compute this only once
          osg::BoundingBox boundingBox = wrapper->GetBoundingBox();
-         if (boundingBox.radius2() <= FLT_EPSILON)
+
+         int boneTransformLocation = prog->getPCP(renderInfo->getContextID())->getUniformLocation(boneTransformUniform);
+         int boneWeightsLocation = prog->getPCP(renderInfo->getContextID())->getAttribLocation(Constants::BONE_WEIGHTS_ATTRIB);
+         int boneIndicesLocation = prog->getPCP(renderInfo->getContextID())->getAttribLocation(Constants::BONE_INDICES_ATTRIB);
+         int tangentsLocation = prog->getPCP(renderInfo->getContextID())->getAttribLocation(Constants::TANGENT_SPACE_ATTRIB);
+
+         if (boneTransformLocation == -1) {
+             LOG_ERROR("Can't find uniform named \"" + Constants::BONE_TRANSFORM_UNIFORM
+                 + "\" which is required for skinning.");
+         }
+         else if (boneWeightsLocation== -1) {
+             LOG_ERROR("Can't find attribute named \"" + Constants::BONE_WEIGHTS_ATTRIB
+                 + "\" which is required for skinning.");
+         }
+         else if (boneIndicesLocation == -1) {
+             LOG_ERROR("Can't find attribute named \"" + Constants::BONE_INDICES_ATTRIB
+                 + "\" which is required for skinning.");
+         }
+         else
          {
-            boundingBox.expandBy(osg::Vec3f(1.0f, 1.0f, 1.0f));
+             for (int meshCount = 0; meshCount < hardwareModel->getHardwareMeshCount(); ++meshCount)
+             {
+                 HardwareSubmeshDrawable* drawable = new HardwareSubmeshDrawable(wrapper, hardwareModel,
+                     Constants::BONE_TRANSFORM_UNIFORM, modelData->GetShaderMaxBones(),
+                     meshCount, vertexVBO, indexEBO,
+                     boneWeightsLocation,
+                     boneIndicesLocation,
+                     tangentsLocation);
+                 drawable->SetBoundingBox(boundingBox);
+                 geode->addDrawable(drawable);
+             }
          }
 
-         for (int meshCount = 0; meshCount < hardwareModel->getHardwareMeshCount(); ++meshCount)
-         {
-            HardwareSubmeshDrawable* drawable = new HardwareSubmeshDrawable(wrapper, hardwareModel,
-                                                    CharacterShaderBuilder::BONE_TRANSFORM_UNIFORM, modelData->GetShaderMaxBones(),
-                                                    meshCount, vertexVBO, indexEBO);
-            drawable->setInitialBound(boundingBox);
-            geode->addDrawable(drawable);
-
-            // Register the drawable instance with the associated interface object.
-            dtAnim::Cal3dHardwareMesh* mesh = dynamic_cast<dtAnim::Cal3dHardwareMesh*>(wrapper->GetMeshByIndex(meshCount));
-            if (mesh != NULL)
-            {
-               mesh->SetDrawable(drawable);
-            }
-         }
-
-         geode->setComputeBoundingSphereCallback(new Cal3dBoundingSphereCalculator(*wrapper));
+         geode->setComputeBoundingSphereCallback(new Cal3DBoundingSphereCalculator(*wrapper));
       }
 
       wrapper->EndRenderingQuery();

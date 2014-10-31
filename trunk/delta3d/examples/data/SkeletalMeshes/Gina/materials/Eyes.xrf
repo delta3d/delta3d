@@ -4,4 +4,6 @@
     <SPECULAR>255 255 255 0</SPECULAR>
     <SHININESS>1</SHININESS>
     <MAP>materials/Eye.png</MAP>
+    <MAP>materials/NONE_NORM.png</MAP>
+    <MAP>materials/Eye_SPEC.png</MAP>
 </MATERIAL>

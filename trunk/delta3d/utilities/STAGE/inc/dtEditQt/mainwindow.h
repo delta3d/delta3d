@@ -106,6 +106,11 @@ namespace dtEditQt
       void findAndLoadPreferences();
 
       /**
+       * Saves the preferences to file.
+       */
+      void WritePreferences();
+
+      /**
       * Adds an exclusive tool into the tool mode bar.
       */
       void AddExclusiveToolMode(QAction* action);

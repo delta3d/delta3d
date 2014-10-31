@@ -428,8 +428,8 @@ namespace dtEditQt
       osg::Viewport* viewport = mCamera->getDeltaCamera()->GetOSGCamera()->getViewport();
       if (viewport)
       {
-         pos[0] = dtUtil::MapRangeValue(float(pixelPos.x()), 0.f, float(viewport->width()), -1.f, 1.f);
-         pos[1] = dtUtil::MapRangeValue(float(pixelPos.y()), 0.f, float(viewport->height()), 1.f, -1.f);
+         pos[0] = dtUtil::MapRangeValue(float(pixelPos.x()), 0.0f, float(viewport->width()), -1.0f, 1.0f);
+         pos[1] = dtUtil::MapRangeValue(float(pixelPos.y()), 0.0f, float(viewport->height()), 1.0f, -1.0f);
       }
       return pos;
    }

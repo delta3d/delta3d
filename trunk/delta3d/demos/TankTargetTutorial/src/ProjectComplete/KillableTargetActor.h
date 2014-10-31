@@ -37,7 +37,7 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
-class TUTORIAL_TANK_EXPORT KillableTargetActor : public dtActors::GameMeshActor
+class TUTORIAL_TANK_EXPORT KillableTargetActor : public dtActors::GameMeshDrawable
 {
    class SwitchVisitor : public osg::NodeVisitor
    {
@@ -115,7 +115,7 @@ private:
 
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
-class TUTORIAL_TANK_EXPORT KillableTargetActorProxy : public dtActors::GameMeshActorProxy
+class TUTORIAL_TANK_EXPORT KillableTargetActorProxy : public dtActors::GameMeshActor
 {
 public:
    // Constructs the proxy.

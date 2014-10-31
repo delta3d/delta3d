@@ -39,8 +39,9 @@ namespace dtGame
    //////////////////////////////////////////////////////////////
    // Actor code
    //////////////////////////////////////////////////////////////
-   IEnvGameActor::IEnvGameActor(GameActorProxy& parent) :
-      GameActor(parent, "IEnvGameActor")
+   IEnvGameActor::IEnvGameActor(GameActorProxy& owner)
+   : dtCore::Transformable("IEnvGameActor")
+   , mOwner(&owner)
    {
 
    }
@@ -49,4 +50,6 @@ namespace dtGame
    {
 
    }
+   GameActorProxy* IEnvGameActor::GetOwner() { return mOwner.get(); }
+   const GameActorProxy* IEnvGameActor::GetOwner() const { return mOwner.get(); }
 }

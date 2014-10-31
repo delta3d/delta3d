@@ -92,7 +92,7 @@ void WaypointGraphTests::setUp()
    libMan.LoadActorRegistry("dtAI");
    dtCore::RefPtr<dtCore::BaseActorObject> proxy = libMan.CreateActor(*AIActorRegistry::AI_INTERFACE_ACTOR_TYPE);
 
-   mAIInterface = dynamic_cast<dtAI::AIInterfaceActorProxy*>(proxy.get())->GetAIInterface();
+   mAIInterface = dynamic_cast<dtAI::AIInterfaceActor*>(proxy.get())->GetAIInterface();
 
    mGraph = &mAIInterface->GetWaypointGraph();
 

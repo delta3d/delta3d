@@ -50,11 +50,11 @@ public:
    {
       terr = new InfiniteTerrain();
       terr->SetHorizontalScale(0.01f);
-      terr->SetVerticalScale(25.f);
+      terr->SetVerticalScale(25.0f);
       terr->Regenerate();
 
       LOG_ALWAYS("Creating clouds...");
-      cd = new CloudDome(6, 2, 0.7, 0.5, 0.7, 5, 5500.f, 20);
+      cd = new CloudDome(6, 2, 0.7, 0.5, 0.7, 5, 5500.0f, 20);
       cp[0] = new CloudPlane(6, 0.5, 6, 1, .3, 0.96, 256, 1800);
       cp[1] = new CloudPlane(6, 0.7, 12, 1, .4, 0.95, 512, 1000);
       cp[2] = new CloudPlane(6, 0.8, 20, 1, .2, 0.96, 512, 600);
@@ -68,7 +68,7 @@ public:
       weather->GetEnvironment()->AddEffect(cp[0].get());
       this->AddDrawable(weather->GetEnvironment());
 
-      Transform xform(0.f, 00.f, 30.f, 0.f, 10.f, 0.f);
+      Transform xform(0.0f, 00.0f, 30.0f, 0.0f, 10.0f, 0.0f);
       GetCamera()->SetTransform(xform);
       GetCamera()->SetNearFarCullingMode(dtCore::Camera::BOUNDING_VOLUME_NEAR_FAR);
 

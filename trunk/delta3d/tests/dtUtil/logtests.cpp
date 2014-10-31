@@ -32,6 +32,7 @@
 #include <dtUtil/exception.h>
 #include <dtUtil/fileutils.h>
 #include <dtUtil/logobserver.h>
+#include <dtUtil/datapathutils.h>
 #include <cppunit/extensions/HelperMacros.h>
 
 /**
@@ -46,6 +47,7 @@ class LogTests : public CPPUNIT_NS::TestFixture
       CPPUNIT_TEST(TestLogMessage3);
       CPPUNIT_TEST(TestIsLevelEnabled);
       CPPUNIT_TEST(TestLogFilename);
+      CPPUNIT_TEST(TestLogFilenameWithPath);
       CPPUNIT_TEST(TestOutputStream);
       CPPUNIT_TEST(TestAddingCustomLogObserver);
       CPPUNIT_TEST(TestTriggeringCustomLogObserver);
@@ -74,6 +76,7 @@ class LogTests : public CPPUNIT_NS::TestFixture
       void TestIsLevelEnabled();
 
       void TestLogFilename();
+      void TestLogFilenameWithPath();
 
       void TestOutputStream();
 
@@ -266,7 +269,37 @@ void LogTests::TestIsLevelEnabled()
 //////////////////////////////////////////////////////////////////////////
 void LogTests::TestLogFilename()
 {
-   const std::string newFileName("logtest.html");
+#ifdef __APPLE__
+   std::string newFileName = dtUtil::GetEnvironment("HOME") + "/Library/Logs/delta3d/logtest.html";
+#elif defined(DELTA_WIN32)
+   std::string newFileName = dtUtil::GetEnvironment("SystemDrive") + dtUtil::GetEnvironment("HOMEPATH") +"\\delta3d\\logs\\logtest.html";
+#else
+   std::string newFileName = dtUtil::GetEnvironment("HOME") + "/.delta3d/logs/logtest.html";
+#endif
+   //make sure the file is deleted first
+   if (dtUtil::FileUtils::GetInstance().FileExists(newFileName))
+      dtUtil::FileUtils::GetInstance().FileDelete(newFileName);
+
+   dtUtil::LogFile::SetFileName("logtest.html");
+
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("Filename should be: logtest.html"
+      " but returned: " + dtUtil::LogFile::GetFileName(),
+      std::string("logtest.html"), dtUtil::LogFile::GetFileName() );
+
+   LOG_ALWAYS("Filename test");
+
+   bool exists = dtUtil::FileUtils::GetInstance().FileExists(newFileName);
+   if (exists)
+      dtUtil::FileUtils::GetInstance().FileDelete(newFileName);
+
+   CPPUNIT_ASSERT(exists);
+}
+
+//////////////////////////////////////////////////////////////////////////
+void LogTests::TestLogFilenameWithPath()
+{
+   std::string newFileName = std::string(".") + dtUtil::FileUtils::PATH_SEPARATOR + "logtestWithPath.html";
+
    //make sure the file is deleted first
    if (dtUtil::FileUtils::GetInstance().FileExists(newFileName))
       dtUtil::FileUtils::GetInstance().FileDelete(newFileName);
@@ -280,6 +313,9 @@ void LogTests::TestLogFilename()
    LOG_ALWAYS("Filename test");
 
    bool exists = dtUtil::FileUtils::GetInstance().FileExists(newFileName);
+   //make sure the file is deleted first
+   if (exists)
+      dtUtil::FileUtils::GetInstance().FileDelete(newFileName);
 
    CPPUNIT_ASSERT(exists);
 }

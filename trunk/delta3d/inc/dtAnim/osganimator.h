@@ -114,6 +114,9 @@ namespace dtAnim
 
       const dtAnim::AnimationStateEnum& GetAnimationState(const OsgAnimation& anim) const;
 
+      /*virtual*/ bool BlendPose(dtAnim::AnimationInterface& anim, float weight, float delay);
+      /*virtual*/ bool ClearPose(dtAnim::AnimationInterface& anim, float delay);
+
    protected:
       virtual ~OsgAnimator();
 

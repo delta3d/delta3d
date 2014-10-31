@@ -20,8 +20,8 @@
       <maxVisibleDistance>401.0</maxVisibleDistance>
    </LOD>
    <skinningShader>
-      <shaderGroup>HardwareSkinning</shaderGroup>
-      <shaderName>Default</shaderName>
+      <shaderGroup>MultiMapCharacter</shaderGroup>
+      <shaderName>MultiMapCharacter</shaderName>
       <maxBones>71</maxBones>
    </skinningShader>
    <animationChannel>

@@ -1,18 +1,24 @@
 <?xml version="1.0" ?>
 <GUIScheme Name="testapp">
 
-   <!-- IMAGE SET - WINDOWS LOOK -->
+   <!-- IMAGE SETS -->
    <Imageset Name="WindowsLook" Filename="gui/imagesets/WindowsLook.imageset" />
+   <Imageset Name="TestApp" Filename="gui/imagesets/TestApp.imageset" />
+   <Imageset Name="TestApp_LoadingScreen" Filename="gui/imagesets/TestApp_LoadingScreen.imageset" />
+   <Imageset Name="TestApp_TitleScreen" Filename="gui/imagesets/TestApp_TitleScreen.imageset" />
    
    <!-- FONTS -->
    <Font Name="DejaVuSans-10" Filename="gui/fonts/DejaVuSans-10.font" />
-   
-   <!-- LOOKNFEELS -->
-   <LookNFeel Filename="gui/looknfeel/testapp.looknfeel" />
+   <Font Name="Hobo" Filename="gui/fonts/Hobo.font" />
+   <Imageset Name="Hobo" Filename="gui/fonts/Hobo.imageset" />
 
+   <!-- LOOKNFEELS -->
+   <LookNFeel Filename="gui/looknfeel/WindowsLook.looknfeel" />
+   <LookNFeel Filename="gui/looknfeel/testapp.looknfeel" />
+   
    <!-- MAPPINGS - WINDOW FACTORIES - WINDOWS LOOK -->
    <WindowRendererSet Filename="CEGUIFalagardWRBase" />
-	<FalagardMapping WindowType="WindowsLook/Button"      TargetType="CEGUI/PushButton"  Renderer="Falagard/Button"       LookNFeel="WindowsLook/Button" />
+   <FalagardMapping WindowType="WindowsLook/Button"      TargetType="CEGUI/PushButton"  Renderer="Falagard/Button"       LookNFeel="WindowsLook/Button" />
 	<FalagardMapping WindowType="WindowsLook/Checkbox"    TargetType="CEGUI/Checkbox"    Renderer="Falagard/ToggleButton" LookNFeel="WindowsLook/Checkbox" />
 	<FalagardMapping WindowType="WindowsLook/IconButton"  TargetType="CEGUI/PushButton"  Renderer="Falagard/Button"       LookNFeel="WindowsLook/IconButton" />
 	<FalagardMapping WindowType="WindowsLook/RadioButton" TargetType="CEGUI/RadioButton" Renderer="Falagard/ToggleButton" LookNFeel="WindowsLook/RadioButton" />
@@ -51,5 +57,7 @@
 	<FalagardMapping WindowType="WindowsLook/ListboxItem" TargetType="CEGUI/ItemEntry"   Renderer="Falagard/ItemEntry"   LookNFeel="WindowsLook/ListboxItem" />
 
 	<!-- ADD CUSTOM MAPPINGS HERE -->
+   <FalagardMapping WindowType="TestApp/Button"      TargetType="CEGUI/PushButton"  Renderer="Falagard/Button"       LookNFeel="TestApp/Button" />
+   <FalagardMapping WindowType="TestApp/GuiListItem" TargetType="CEGUI/ItemEntry" Renderer="Falagard/ItemEntry" LookNFeel="TestApp/GuiListItem" />
 
 </GUIScheme>

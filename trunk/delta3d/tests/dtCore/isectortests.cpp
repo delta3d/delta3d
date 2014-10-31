@@ -149,7 +149,7 @@ class IsectorTests : public CPPUNIT_NS::TestFixture
          mIsector->SetEndPosition(point2);
          
          dtCore::RefPtr<dtCore::InfiniteTerrain> terrain = new dtCore::InfiniteTerrain();
-         terrain->SetBuildDistance(1500.f);
+         terrain->SetBuildDistance(1500.0f);
          terrain->SetSegmentDivisions(64);
          mIsector->SetScene(mScene.get());
          mScene->AddChild(terrain.get());

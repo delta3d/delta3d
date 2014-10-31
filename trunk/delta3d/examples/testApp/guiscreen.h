@@ -19,9 +19,6 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
- *
- * This software was developed by Alion Science and Technology Corporation under
- * circumstances in which the U. S. Government may have rights in the software.
  */
 
 #ifndef DELTA_TEST_APP_GUI_SCREEN
@@ -31,6 +28,7 @@
 // INCLUDE DIRECTIVES
 ////////////////////////////////////////////////////////////////////////////////
 #include "export.h"
+#include "guilistitem.h"
 #include <dtCore/refptr.h>
 #include <dtGUI/gui.h>
 #include <osg/Referenced>
@@ -47,6 +45,7 @@ namespace CEGUI
 }
 
 typedef CEGUI::Window GuiNode;
+typedef CEGUI::ItemListbox GuiListbox;
 
 
 
@@ -127,6 +126,22 @@ namespace dtExample
 
          virtual bool SetVisible(const std::string& controlName, bool visible);
          virtual bool IsVisible(const std::string& controlName) const;
+
+         /**
+          * Convenience method for determining a control's type.
+          */
+         bool IsControlOfType(const GuiNode& control, const std::string& typeName) const;
+         
+         /**
+          * Convenience method for accessing a listbox that may exist in the screen layout.
+          */
+         GuiListbox* GetListbox(const std::string& controlName) const;
+
+         /**
+          * Convenience method for adding a control to a list box that maybe part of the screen.
+          */
+         GuiListItem* AddListItem(const std::string& listControlName, GuiNode& itemNode) const;
+         GuiListItem* AddListItem(GuiListbox& listControl, GuiNode& itemNode) const;
 
       protected:
          virtual ~GuiScreen();

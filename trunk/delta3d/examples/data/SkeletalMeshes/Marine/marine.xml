@@ -18,6 +18,11 @@
       <lodEndDistance>500.0</lodEndDistance>
       <maxVisibleDistance>1000.0</maxVisibleDistance>
    </LOD>
+   <skinningShader>
+      <shaderGroup>MultiMapCharacter</shaderGroup>
+      <shaderName>MultiMapCharacter</shaderName>
+      <maxBones>71</maxBones>
+   </skinningShader>
    <animationChannel>
       <name>Run</name>
       <animationName>Run</animationName>

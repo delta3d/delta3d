@@ -90,6 +90,8 @@ class MessageTests : public CPPUNIT_NS::TestFixture
       CPPUNIT_TEST(TestChangeMap);
       CPPUNIT_TEST(TestChangeMapGameEvents);
       CPPUNIT_TEST(TestChangeMapErrorConditions);
+      CPPUNIT_TEST(TestDefaultMessageProcessorWithPauseResumeRequests);
+      CPPUNIT_TEST(TestDefaultMessageProcessorWithMapRequests);
       CPPUNIT_TEST(TestDefaultMessageProcessorWithPauseResumeCommands);
       CPPUNIT_TEST(TestDefaultMessageProcessorWithRemoteActorCreates);
       CPPUNIT_TEST(TestDefaultMessageProcessorWithLocalActorCreates);
@@ -122,6 +124,8 @@ public:
    void TestChangeMapGameEvents();
    void TestChangeMap();
    void TestChangeMapErrorConditions();
+   void TestDefaultMessageProcessorWithPauseResumeRequests();
+   void TestDefaultMessageProcessorWithMapRequests();
    void TestDefaultMessageProcessorWithPauseResumeCommands();
    void TestDefaultMessageProcessorWithRemoteActorCreates();
    void TestDefaultMessageProcessorWithLocalActorCreates();
@@ -1205,8 +1209,8 @@ void MessageTests::TestChangeMap()
       mapB->GetEventManager().AddEvent(*reusedEvent);
 
       mapA->AddLibrary(mTestGameActorLibrary, "1.0");
-      mapB->AddLibrary(mTestActorLibrary, "1.0");
-      mapA->AddLibrary(mTestGameActorLibrary, "1.0");
+      mapA->AddLibrary(mTestActorLibrary, "1.0");
+      mapB->AddLibrary(mTestGameActorLibrary, "1.0");
       mapB->AddLibrary(mTestActorLibrary, "1.0");
 
       map2A->GetEventManager().AddEvent(*new dtCore::GameEvent("event5", "Event"));
@@ -1302,7 +1306,11 @@ void MessageTests::TestChangeMap()
       {
          dtGame::GameActorProxy* gap = gameActorProxyVec[i];
          CPPUNIT_ASSERT(gap != NULL);
-         CPPUNIT_ASSERT_MESSAGE("The game actor proxy should be assigned to the game actor.", &gap->GetGameActor().GetGameActorProxy() == gap);
+         // Not all game actors proxys have game actors now.
+         if (gap->GetDrawable<dtGame::GameActor>() != NULL)
+         {
+            CPPUNIT_ASSERT_MESSAGE("The game actor proxy should be assigned to the game actor.", &gap->GetGameActor().GetGameActorProxy() == gap);
+         }
          std::vector<const dtGame::Invokable*> invokables;
          gap->GetInvokables(invokables);
          CPPUNIT_ASSERT_MESSAGE("There should be invokables on the game actor proxies if BuildInvokables was called.", invokables.size() > 0);
@@ -1428,6 +1436,131 @@ void MessageTests::TestChangeMapErrorConditions()
 
 }
 
+void MessageTests::TestDefaultMessageProcessorWithPauseResumeRequests()
+{
+   dtGame::DefaultMessageProcessor& defMsgProcessor = *new dtGame::DefaultMessageProcessor();
+   mGameManager->AddComponent(defMsgProcessor, dtGame::GameManager::ComponentPriority::NORMAL);
+
+   CPPUNIT_ASSERT(defMsgProcessor.GetAcceptTimeRequests());
+
+   dtCore::RefPtr<dtGame::Message> pauseRequest;
+   mGameManager->GetMessageFactory().CreateMessage(dtGame::MessageType::REQUEST_PAUSE, pauseRequest);
+   mGameManager->SendMessage(*pauseRequest);
+
+   dtCore::System::GetInstance().Step(0.016);
+   CPPUNIT_ASSERT_MESSAGE("The Game Manager should now be paused.", mGameManager->IsPaused());
+
+   defMsgProcessor.SetAcceptTimeRequests(false);
+   CPPUNIT_ASSERT(!defMsgProcessor.GetAcceptTimeRequests());
+
+   dtCore::RefPtr<dtGame::Message> resumeRequest;
+   mGameManager->GetMessageFactory().CreateMessage(dtGame::MessageType::REQUEST_RESUME, resumeRequest);
+   mGameManager->SendMessage(*resumeRequest);
+   dtCore::System::GetInstance().Step(0.016);
+
+   CPPUNIT_ASSERT_MESSAGE("The Game Manager should NOT be resumed because it was disabled.", mGameManager->IsPaused());
+
+   defMsgProcessor.SetAcceptTimeRequests(true);
+   mGameManager->SendMessage(*resumeRequest);
+   dtCore::System::GetInstance().Step(0.016);
+
+   CPPUNIT_ASSERT_MESSAGE("The Game Manager should now be resumed.", !mGameManager->IsPaused());
+
+   defMsgProcessor.SetAcceptTimeRequests(false);
+   mGameManager->SendMessage(*pauseRequest);
+   dtCore::System::GetInstance().Step(0.016);
+
+   CPPUNIT_ASSERT_MESSAGE("The Game Manager should NOT be paused.", !mGameManager->IsPaused());
+}
+
+void MessageTests::TestDefaultMessageProcessorWithMapRequests()
+{
+   dtGame::DefaultMessageProcessor& defMsgProcessor = *new dtGame::DefaultMessageProcessor();
+   mGameManager->AddComponent(defMsgProcessor, dtGame::GameManager::ComponentPriority::NORMAL);
+
+   try
+   {
+      dtCore::Project& project = dtCore::Project::GetInstance();
+      dtGame::GameManager::NameVector mapNamesExpected;
+      mapNamesExpected.push_back("Many Game Actors");
+
+      dtCore::RefPtr<dtCore::Map> mapA = &project.CreateMap(mapNamesExpected[0], "mga");
+
+      mapA->AddLibrary(mTestGameActorLibrary, "1.0");
+      mapA->AddLibrary(mTestActorLibrary, "1.0");
+
+      createActors(*mapA);
+
+      project.SaveMap(*mapA);
+      project.CloseMap(*mapA);
+
+      CPPUNIT_ASSERT(mGameManager->GetNumAllActors() == 0);
+
+      defMsgProcessor.SetAcceptMapLoadRequests(false);
+      dtCore::RefPtr<dtGame::MapMessage> mapMsg;
+      mGameManager->GetMessageFactory().CreateMessage(dtGame::MessageType::REQUEST_LOAD_MAP, mapMsg);
+      mapMsg->SetMapNames(mapNamesExpected);
+      mGameManager->SendMessage(*mapMsg);
+      dtCore::System::GetInstance().Step(0.016);
+
+      CPPUNIT_ASSERT_MESSAGE("No map should have loaded because the requests are DISABLED.", mGameManager->GetNumAllActors() == 0);
+      CPPUNIT_ASSERT(!project.IsMapOpen(mapNamesExpected[0]));
+
+      defMsgProcessor.SetAcceptMapLoadRequests(true);
+      mGameManager->SendMessage(*mapMsg);
+      dtCore::System::GetInstance().Step(0.016);
+
+      CPPUNIT_ASSERT_MESSAGE("The map should have loaded because the requests are ENABLED.", mGameManager->GetNumAllActors() > 0);
+      CPPUNIT_ASSERT(project.IsMapOpen(mapNamesExpected[0]));
+
+      mGameManager->GetMessageFactory().CreateMessage(dtGame::MessageType::REQUEST_UNLOAD_MAP, mapMsg);
+      mapMsg->SetMapNames(mapNamesExpected);
+      defMsgProcessor.SetAcceptMapLoadRequests(false);
+      mGameManager->SendMessage(*mapMsg);
+      dtCore::System::GetInstance().Step(0.016);
+
+      CPPUNIT_ASSERT_MESSAGE("The map should NOT have unloaded because the requests are DISABLED.", mGameManager->GetNumAllActors() > 0);
+      CPPUNIT_ASSERT(project.IsMapOpen(mapNamesExpected[0]));
+
+      defMsgProcessor.SetAcceptMapLoadRequests(true);
+      mGameManager->SendMessage(*mapMsg);
+      dtCore::System::GetInstance().Step(0.016);
+
+      CPPUNIT_ASSERT_MESSAGE("The map should have unloaded because the requests are ENABLED.", mGameManager->GetNumAllActors() == 0);
+      CPPUNIT_ASSERT(!project.IsMapOpen(mapNamesExpected[0]));
+
+      mGameManager->GetMessageFactory().CreateMessage(dtGame::MessageType::REQUEST_CHANGE_MAP, mapMsg);
+      mapMsg->SetMapNames(mapNamesExpected);
+
+      defMsgProcessor.SetAcceptMapChangeRequests(false);
+      mGameManager->SendMessage(*mapMsg);
+      // Change map takes a few frames...
+      dtCore::System::GetInstance().Step(0.016);
+      dtCore::System::GetInstance().Step(0.016);
+      dtCore::System::GetInstance().Step(0.016);
+      CPPUNIT_ASSERT_MESSAGE("No map should have loaded because the requests are DISABLED.", mGameManager->GetNumAllActors() == 0);
+      CPPUNIT_ASSERT(!project.IsMapOpen(mapNamesExpected[0]));
+
+      defMsgProcessor.SetAcceptMapChangeRequests(true);
+      mGameManager->SendMessage(*mapMsg);
+      // Change map takes a few frames...
+      dtCore::System::GetInstance().Step(0.016);
+      CPPUNIT_ASSERT_MESSAGE("No map should have loaded because it a map change takes several frames.", mGameManager->GetNumAllActors() == 0);
+      dtCore::System::GetInstance().Step(0.016);
+      dtCore::System::GetInstance().Step(0.016);
+      CPPUNIT_ASSERT_MESSAGE("The map should have loaded after a few steps.", mGameManager->GetNumAllActors() > 0);
+      CPPUNIT_ASSERT(project.IsMapOpen(mapNamesExpected[0]));
+
+      mGameManager->CloseCurrentMap();
+      dtCore::System::GetInstance().Step(0.016);
+   }
+   catch (const dtUtil::Exception& ex)
+   {
+      CPPUNIT_FAIL(ex.ToString());
+   }
+
+}
+
 void MessageTests::TestDefaultMessageProcessorWithPauseResumeCommands()
 {
    dtGame::DefaultMessageProcessor& defMsgProcessor = *new dtGame::DefaultMessageProcessor();
@@ -1439,16 +1572,14 @@ void MessageTests::TestDefaultMessageProcessorWithPauseResumeCommands()
    mGameManager->GetMessageFactory().CreateMessage(dtGame::MessageType::COMMAND_PAUSE, pauseCommand);
 
    mGameManager->SendMessage(*pauseCommand);
-   dtCore::AppSleep(10);
-   dtCore::System::GetInstance().Step();
+   dtCore::System::GetInstance().Step(0.016);
 
    CPPUNIT_ASSERT_MESSAGE("The Game Manager should now be paused.", mGameManager->IsPaused());
 
    dtCore::RefPtr<dtGame::Message> resumeCommand;
    mGameManager->GetMessageFactory().CreateMessage(dtGame::MessageType::COMMAND_RESUME, resumeCommand);
    mGameManager->SendMessage(*resumeCommand);
-   dtCore::AppSleep(10);
-   dtCore::System::GetInstance().Step();
+   dtCore::System::GetInstance().Step(0.016);
 
    CPPUNIT_ASSERT_MESSAGE("The Game Manager should now be resumed.", !mGameManager->IsPaused());
 

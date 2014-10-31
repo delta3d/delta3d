@@ -82,7 +82,7 @@ namespace dtGame
       BaseClass::BuildPropertyMap();
 
       const dtUtil::RefString GM_COMP_GROUP("GMComponent");
-      typedef dtCore::PropertyRegHelper<GMComponent&, GMComponent> RegHelperType;
+      typedef dtCore::PropertyRegHelper<GMComponent> RegHelperType;
       RegHelperType propReg(*this, this, GM_COMP_GROUP);
 
       DT_REGISTER_PROPERTY(ComponentPriority,
@@ -119,6 +119,9 @@ namespace dtGame
    //////////////////////////////////////////////
    GMComponent::GMComponent(const GMComponent&)
    : mComponentPriority(&GameManager::ComponentPriority::NORMAL)
+   , mType(NULL)
+   , mParent(NULL)
+   , mInitialized(false)
    {
    }
 

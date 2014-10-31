@@ -43,7 +43,6 @@ class CalCoreModel;
 
 namespace dtAnim
 {
-   class AnimationWrapper;
    class Animatable;
    
    ////////////////////////////////////////////////////////////////////////////////

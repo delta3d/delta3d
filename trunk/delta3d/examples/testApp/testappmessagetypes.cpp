@@ -19,9 +19,6 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
- *
- * This software was developed by Alion Science and Technology Corporation under
- * circumstances in which the U. S. Government may have rights in the software.
  */
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -43,16 +40,24 @@ namespace dtExample
       "Message to signal to the rest of the system that the motion model has changed.",
       TEST_APP_MESSAGE_TYPE_ID, DT_MSG_CLASS(MotionModelChangedMessage));
 
+   const TestAppMessageType TestAppMessageType::REQUEST_ATTACH("Request Attach", "TestApp",
+      "Generic message to request that the camera motion model attach to a specified actor.",
+      TEST_APP_MESSAGE_TYPE_ID + 2, DT_MSG_CLASS(RequestAttachMessage));
+
+   const TestAppMessageType TestAppMessageType::REQUEST_TIME_OFFSET("Request Time Offset", "TestApp",
+      "Message to request that the current time of day be offset by a specified amount.",
+      TEST_APP_MESSAGE_TYPE_ID + 3, DT_MSG_CLASS(RequestTimeOffsetMessage));
+
    const TestAppMessageType TestAppMessageType::UI_HIDE("UI Hide", "TestApp",
       "Generic message to command the UI to hide a UI element.",
-      TEST_APP_MESSAGE_TYPE_ID + 1, DT_MSG_CLASS(UIHideMessage));
+      TEST_APP_MESSAGE_TYPE_ID + 4, DT_MSG_CLASS(UIHideMessage));
 
    const TestAppMessageType TestAppMessageType::UI_SHOW("UI Show", "TestApp",
       "Generic message to command the UI to show a UI element.",
-      TEST_APP_MESSAGE_TYPE_ID + 2, DT_MSG_CLASS(UIShowMessage));
+      TEST_APP_MESSAGE_TYPE_ID + 5, DT_MSG_CLASS(UIShowMessage));
 
    const TestAppMessageType TestAppMessageType::UI_TOGGLE("UI Toggle", "TestApp",
       "Generic message to command the UI to toggle a UI element.",
-      TEST_APP_MESSAGE_TYPE_ID + 3, DT_MSG_CLASS(UIToggleMessage));
+      TEST_APP_MESSAGE_TYPE_ID + 6, DT_MSG_CLASS(UIToggleMessage));
   
 }

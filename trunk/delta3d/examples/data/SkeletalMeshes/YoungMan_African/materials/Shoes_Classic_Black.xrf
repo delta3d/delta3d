@@ -4,4 +4,5 @@
     <SPECULAR>8 7 7 0</SPECULAR>
     <SHININESS>1</SHININESS>
     <MAP>materials/Shoes_Classic_Black.png</MAP>
+    <MAP>materials/Shoes_Classic_Normals.png</MAP>
 </MATERIAL>

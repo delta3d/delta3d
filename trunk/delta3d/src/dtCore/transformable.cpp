@@ -7,6 +7,7 @@
 #include <dtCore/collisioncategorydefaults.h>
 #include <dtUtil/log.h>
 #include <dtUtil/matrixutil.h>
+#include <dtUtil/nodemask.h>
 
 #include <osg/Geode>
 #include <osg/MatrixTransform>
@@ -44,7 +45,7 @@ namespace dtCore
          , _haltTraversalAtNode(haltTraversalAtNode)
       {
          //this will force the traversal over nodes that have a mask of 0x0
-         this->setNodeMaskOverride(0xffffffff);
+         this->setNodeMaskOverride(dtUtil::NodeMask::EVERYTHING);
       }
 
       virtual void apply(osg::Node& node)
@@ -496,13 +497,12 @@ void Transformable::SetNormalRescaling(const bool enable)
 ////////////////////////////////////////////////////////////////////////////////
 bool Transformable::GetNormalRescaling() const
 {
-   if(GetOSGNode() == NULL)
+   if (GetOSGNode() != NULL && GetOSGNode()->getStateSet() != NULL)
    {
-      return false;
+      osg::StateAttribute::GLModeValue state = GetOSGNode()->getStateSet()->getMode(GL_RESCALE_NORMAL);
+      return (state & osg::StateAttribute::ON) ? true : false;
    }
-
-   osg::StateAttribute::GLModeValue state = GetOSGNode()->getStateSet()->getMode(GL_RESCALE_NORMAL);
-   return (state & osg::StateAttribute::ON) ? true : false;
+   return false;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

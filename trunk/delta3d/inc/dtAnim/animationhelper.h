@@ -65,6 +65,8 @@ namespace dtAnim
    class AnimationGameActor;
    class AnimationComponent;
    class AnimationUpdaterInterface;
+   class PoseController;
+   class PoseSequence;
 
 
 
@@ -137,12 +139,9 @@ namespace dtAnim
        * and then calls CreateGeode() on the AnimNodeBuilder
        *
        * @param pFilename the name of the file to load
-       * @param immediate Optional parameter to immediately load the character.  True
-       * requires that an OpenGL context is available.  False will defer the loading
-       * until a valid OpenGL context is present. (default = false)
        * @return whether or not we successfully loaded the file
        */
-      bool LoadModel(const dtCore::ResourceDescriptor& resource, bool immediate = false);
+      bool LoadModel(const dtCore::ResourceDescriptor& resource);
 
       /**
        * @note Just because this function returns false doesn't mean you have a loaded
@@ -257,10 +256,18 @@ namespace dtAnim
       void SetAttachmentController(AttachmentController* newController);
 
       /**
+       * Gets a pose controller to manage poses if poses have been loaded.
+       */
+      PoseController* GetPoseController();
+
+      void SetPosesEnabled(bool enabled);
+      bool GetPosesEnabled() const;
+
+      /**
        * Set whether command callbacks should be handled for this helper.
        */
       void SetCommandCallbacksEnabled(bool enable);
-      bool IsCommandCallbacksEnabled() const;
+      bool GetCommandCallbacksEnabled() const;
 
       /**
        * Set the callback that is responsible for sending game events.
@@ -381,11 +388,21 @@ namespace dtAnim
 
       /// Detaches the skeletal mesh node from all osg node parents.
       virtual void DetachNodeFromDrawable();
+
+      // This is public for test reasons.  It may be removed with no deprecation.  It just checks for completion of a background load.
+      virtual void CheckLoadingState();
+
    protected:
       virtual ~AnimationHelper();
 
       virtual void OnLoadCompleted(AnimationHelper*);
       virtual void OnUnloadCompleted(AnimationHelper*);
+
+      virtual bool SetupPoses(const dtAnim::BaseModelData& modelData);
+
+      /*override*/ void OnTickLocal(const dtGame::TickMessage& /*tickMessage*/);
+      /*override*/ void OnTickRemote(const dtGame::TickMessage& /*tickMessage*/);
+
 
    private:
 
@@ -468,10 +485,10 @@ namespace dtAnim
       double mLastUpdateTime;
       std::string mAsyncFile;
       dtCore::RefPtr<osg::Group> mParent;
-      dtCore::RefPtr<osg::Node> mNode;
       dtCore::RefPtr<SequenceMixer> mSequenceMixer;
       dtCore::RefPtr<AttachmentController> mAttachmentController;
       dtCore::RefPtr<dtAnim::BaseModelWrapper> mModelWrapper;
+      dtCore::RefPtr<PoseSequence> mPoseSequence;
 
       typedef std::multimap<std::string, dtCore::RefPtr<TimeOffsetCommand> > CommandMap;
       CommandMap mCommandMap;

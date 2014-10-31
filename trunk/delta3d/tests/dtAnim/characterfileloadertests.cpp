@@ -62,6 +62,7 @@ namespace dtAnim
          CPPUNIT_TEST(TestIsFileValid);
          CPPUNIT_TEST(TestLoadFile);
          CPPUNIT_TEST(TestLODOptions);
+         CPPUNIT_TEST(TestModelScale);
          CPPUNIT_TEST(TestModelData);
          CPPUNIT_TEST(TestModelDataFileRegistration);
       CPPUNIT_TEST_SUITE_END();
@@ -241,11 +242,11 @@ namespace dtAnim
             CPPUNIT_ASSERT_DOUBLES_EQUAL(lodOptions.GetMaxVisibleDistance(), 401.0, 0.1);
 
             std::string testString("abc");
-            CPPUNIT_ASSERT_EQUAL(std::string("Default"), modelData->GetShaderName());
+            CPPUNIT_ASSERT_EQUAL(std::string("MultiMapCharacter"), modelData->GetShaderName());
             modelData->SetShaderName(testString);
             CPPUNIT_ASSERT_EQUAL(testString, modelData->GetShaderName());
 
-            CPPUNIT_ASSERT_EQUAL(std::string("HardwareSkinning"), modelData->GetShaderGroupName());
+            CPPUNIT_ASSERT_EQUAL(std::string("MultiMapCharacter"), modelData->GetShaderGroupName());
             modelData->SetShaderGroupName(testString);
             CPPUNIT_ASSERT_EQUAL(testString, modelData->GetShaderGroupName());
 
@@ -281,6 +282,31 @@ namespace dtAnim
             }
 
             return success;
+         }
+
+         void TestModelScale()
+         {
+            dtCore::ResourceDescriptor modelPath("SkeletalMeshes:Gina:Petunia.dtchar");
+            LoadModel(mHelper, modelPath);
+
+            dtAnim::BaseModelWrapper* wrapper = mHelper->GetModelWrapper();
+            CPPUNIT_ASSERT(wrapper != NULL);
+            BaseModelData* modelData = wrapper->GetModelData();
+            CPPUNIT_ASSERT(modelData != NULL);
+
+            CPPUNIT_ASSERT_DOUBLES_EQUAL(0.1f, modelData->GetScale(), 0.001f);
+            CPPUNIT_ASSERT_DOUBLES_EQUAL(0.1f, wrapper->GetScale(), 0.001f);
+            CPPUNIT_ASSERT(wrapper->GetDrawableNode() != NULL);
+            osg::MatrixTransform* mt = dynamic_cast<osg::MatrixTransform*>(wrapper->GetDrawableNode());
+            CPPUNIT_ASSERT(mt != NULL);
+            osg::Matrix scaleM = mt->getMatrix();
+            osg::Vec3d trans; osg::Quat rot; osg::Vec3d scale; osg::Quat so;
+            scaleM.decompose(trans, rot, scale, so);
+            CPPUNIT_ASSERT_DOUBLES_EQUAL(0.0, trans.length2(), 0.001);
+            for (unsigned i = 0; i < 3; ++i)
+            {
+               CPPUNIT_ASSERT_DOUBLES_EQUAL(modelData->GetScale(), scale[i], 0.001);
+            }
          }
 
          void TestModelDataFileRegistration()

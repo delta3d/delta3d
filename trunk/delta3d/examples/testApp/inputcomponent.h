@@ -19,10 +19,6 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
- *
- * This software was developed by Alion Science and Technology Corporation under
- * circumstances in which the U. S. Government may have rights in the software.
- *
  */
 
 #ifndef DELTA_TEST_APP_INPUT
@@ -40,6 +36,23 @@
 #include <dtCore/transformable.h>
 #include <dtCore/transformableactorproxy.h>
 #include <dtGame/defaultgroundclamper.h>
+#include <dtActors/watergridactor.h>
+#include <dtABC/beziercontroller.h>
+
+
+
+////////////////////////////////////////////////////////////////////////////////
+// FORWARD DECLARATIONS
+////////////////////////////////////////////////////////////////////////////////
+namespace dtInspectorQt
+{
+   class InspectorQt;
+}
+
+namespace dtRender
+{
+   class SceneManager;
+}
 
 
 
@@ -60,9 +73,16 @@ namespace dtExample
          // Constructor
          InputComponent();
 
+         void SetMotionModelEnabled(bool enabled);
+         bool IsMotionModelEnabled() const;
+
          /*override*/ bool HandleKeyPressed(const dtCore::Keyboard* keyboard, int key);
 
          /*override*/ bool HandleKeyReleased(const dtCore::Keyboard* keyboard, int key);
+
+         bool HandleMotionModelKey(int key);
+
+         void HandleGameStateChange(dtGame::GameState::Type& newState);
 
          // General message handler
          virtual void ProcessMessage(const dtGame::Message& message);
@@ -71,17 +91,46 @@ namespace dtExample
 
          void Update(float simTimeDelta, float realTimeDelta);
 
+         void ToggleFireworks();
+
+         void ToggleAIWaypointDrawMode();
+
+         void TogglePhysicsDrawMode();
+
+         void ReloadShaders();
+
+         void SetLampIntensity(float intensity);
+
+         void SetSeaState(dtActors::WaterGridActor::SeaState&);
+         dtActors::WaterGridActor::SeaState& GetSeaState() const;
+         
+         dtActors::WaterGridActor::ChopSettings& GetWaterChop() const;
+         void SetWaterChop(dtActors::WaterGridActor::ChopSettings&);
+
+         void SetAmbience(float amt);
+         float GetAmbience();
+
+         void SetLuminance(float amt);
+         float GetLuminance();
+
       protected:
 
          /// Destructor
          virtual ~InputComponent();
 
+         bool AttachToBezierController(const dtCore::UniqueId&);
+         void DetachFromController();
+
          dtCore::TransformableActorProxy* GetActorByName(const std::string& name);
+         dtCore::TransformableActorProxy* GetActorById(const dtCore::UniqueId& id);
          dtCore::Transformable* GetDrawableByName(const std::string& name);
+         dtCore::Transformable* GetDrawableById(const dtCore::UniqueId& id);
 
          void SetCameraToPlayerStart();
 
-         bool SetCameraPivot(const std::string& actorName);
+         bool SetCameraPivotByName(const std::string& actorName);
+         bool SetCameraPivotById(const dtCore::UniqueId& id);
+         bool SetCameraPivot(dtCore::Transformable* drawable);
 
          void SendTransitionMessage(const dtExample::Transition& transition);
          
@@ -93,19 +142,38 @@ namespace dtExample
 
          void SetMotionModel(const dtExample::MotionModelType& motionModelType);
 
+         void IncrementTime(float numSeconds);
+
+         void IncrementMotionModelSpeed(float increment);
+
+         void SetMotionModelSpeed(
+            const dtExample::MotionModelType& motionModelType,
+            dtCore::MotionModel& motionModel, float speed);
+         
          void DoGroundClamping(float simTime);
 
+         dtRender::SceneManager* GetSceneManager();
+         
+         // TEMP:
+         // This is a temporary method for attaching the banner geometry to the plane.
+         void AttachBanner();
+
       private:
+         float mTimeOffset;
+         float mLampIntensity;
 
          bool mClampCameraEnabled;
-         double mSimSpeedFactor;
       
+         bool mMotionModelsEnabled;
+         float mMotionModelSpeed;
          const dtExample::MotionModelType* mMotionModelMode;
+         const dtExample::MotionModelType* mMotionModelMode_Previous;
          dtCore::RefPtr<dtCore::MotionModel> mMotionModel;
 
          dtCore::RefPtr<dtCore::Transformable> mCamera;
          dtCore::RefPtr<dtCore::Transformable> mCameraPivot;
          dtCore::RefPtr<dtCore::Transformable> mGroundClampedXformable;
+         dtCore::RefPtr<dtABC::BezierController> mCurrentController;
 
          // A reference to an actor is need for ground clamping.
          // Use a transformable actor to hold the camera since clamping
@@ -113,8 +181,12 @@ namespace dtExample
          dtCore::RefPtr<dtCore::TransformableActorProxy> mGroundClampedObject;
 
          dtCore::RefPtr<dtGame::DefaultGroundClamper> mGroundClamper;
-         
-         std::string mAttachActorName;
+
+#if defined(USE_INSPECTOR)
+         dtInspectorQt::InspectorQt* mInspector;
+#endif
+
+         dtCore::UniqueId mAttachActorId;
 
    };
 

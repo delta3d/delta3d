@@ -26,6 +26,7 @@
 #include <dtUtil/log.h>
 #include <osg/Stats>
 #include <sstream>
+#include <cstdio>
 
 namespace dtGame
 {

@@ -36,6 +36,7 @@
 #include <dtAnim/animationhelper.h>
 #include <dtAnim/attachmentcontroller.h>
 #include <dtAnim/cal3dmodelwrapper.h>
+#include <dtAnim/modeldatabase.h>
 
 #include <dtCore/refptr.h>
 #include <dtCore/system.h>
@@ -107,10 +108,18 @@ namespace dtAnim
             dtCore::ResourceDescriptor charModel("SkeletalMeshes:Marine:marine_test.xml");
 
             LoadModel(mAnimHelper, charModel);
+            dtAnim::BaseModelWrapper* wrapper = mAnimHelper->GetModelWrapper();
+            CPPUNIT_ASSERT(wrapper != NULL);
+            float testScale = 0.77f;
+            wrapper->GetModelData()->SetScale(testScale);
+
+            CPPUNIT_ASSERT_DOUBLES_EQUAL(1.0f, mAnimHelper->GetModelWrapper()->GetScale(), 0.01f);
+            mAnimHelper->GetModelWrapper()->SetScale(testScale);
          }
 
          void tearDown()
          {
+            dtAnim::ModelDatabase::GetInstance().TruncateDatabase();
             mAttach = NULL;
             mAnimHelper = NULL;
          }
@@ -208,7 +217,7 @@ namespace dtAnim
             osg::Vec3 boneTrans = bone->GetAbsoluteTranslation();
 
             osg::Quat expectedRot = spotDef.mLocalRotation * boneRot;
-            osg::Vec3 expectedPos = boneTrans + (boneRot * spotDef.mLocalTranslation);
+            osg::Vec3 expectedPos = boneTrans + (boneRot * spotDef.mLocalTranslation) * wrapper->GetScale();
 
             dtCore::Transform xform;
             attachment->GetTransform(xform, dtCore::Transformable::REL_CS);

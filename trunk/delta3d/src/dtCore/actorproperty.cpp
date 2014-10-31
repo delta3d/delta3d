@@ -42,6 +42,12 @@ namespace dtCore
       , mNumberPrecision(16)
       , mReadOnly(readOnly)
       , mMultipleEdit(true)
+      , mSendInPartialUpdate(false)
+      , mSendInFullUpdate(true)
+      , mAdvanced(false)
+      , mIgnoreWhenSaving(false)
+      , mAlwaysSave(false)
+
    {
       groupName->empty() ? SetGroupName("Base") : SetGroupName(groupName);
    }

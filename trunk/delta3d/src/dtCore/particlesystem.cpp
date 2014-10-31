@@ -8,6 +8,7 @@
 #include <dtCore/particlesystem.h>
 #include <dtCore/system.h>
 #include <dtUtil/log.h>
+#include <dtUtil/nodemask.h>
 
 #include <osg/Group>
 #include <osg/NodeVisitor>
@@ -62,8 +63,9 @@ private:
 
 ////////////////////////////////////////////////////////////////////////////////
 ParticleSystem::ParticleSystem(std::string name)
-   : mEnabled(true),
-     mParentRelative(false)
+   : BaseClass(name)
+   , mEnabled(true)
+   , mParentRelative(false)
 {
    SetName(name);
 
@@ -314,8 +316,10 @@ osg::Node* ParticleSystem::LoadFile( const std::string& filename, bool useCache)
    mOriginalLoadedParticleSystem = NULL;
    mParticleSystemUpdater = NULL;
 
+   //set the default node mask for particles
+   GetMatrixNode()->setNodeMask(dtUtil::NodeMask::TRANSPARENT_EFFECTS);
+
    dtCore::RefPtr<osg::Node> node = Loadable::LoadFile(filename, useCache); //force it to use cache
-   //node = Loadable::LoadFile(filename, false); //force it not to use cache
 
    if (node.valid())
    {
@@ -380,6 +384,12 @@ osg::Node* ParticleSystem::LoadFile( const std::string& filename, bool useCache)
       mLoadedFile->accept(pspv);
 
       ResetTime();
+
+      // Re-apply a shader if one had been specified.
+      if ( ! BaseClass::GetShaderGroup().empty())
+      {
+         BaseClass::ApplyShaderGroup();
+      }
    }
    else
    {

@@ -25,6 +25,11 @@
 
 #include <dtPhysics/physicsexport.h>
 #include <dtPhysics/physicstypes.h>
+#include <dtPhysics/physicsreaderwriter.h>
+#include <dtPhysics/physicsmaterials.h>
+#include <dtPhysics/geometry.h>
+#include <dtUtil/functor.h>
+#include <dtUtil/getsetmacros.h>
 #include <vector>
 
 namespace dtPhysics
@@ -37,13 +42,28 @@ namespace dtPhysics
          TriangleRecorder();
          ~TriangleRecorder();
 
-         void Record(const osg::Node& node);
+         typedef dtUtil::Functor<dtPhysics::MaterialIndex, TYPELIST_1(const std::string&)> MaterialLookupFunc;
 
-         std::vector<VectorType> mVertices;
-         std::vector<unsigned> mIndices;
+         /**
+          * Records all the triangles in the buffors on this object for the given node.
+          * @param node The node to traverse.
+          * @param maxEdgeSize  The largest size of a triangle edge before the code will split the triangle in half recursively.
+          *                     Large triangles can give physics engine trouble.
+          * @param materialLookup A functor to use map the descriptions in the nodes to physics material id's.  It will store this
+          *                       data on the triangles.
+          */
+         void Record(const osg::Node& node, Real maxEdgeLength = -1, MaterialLookupFunc materialLookup = MaterialLookupFunc());
+
+         typedef std::map<osg::Vec3, int> VertexMap;
+
+         VertexMap mVertIndexSet;
+         dtCore::RefPtr<VertexData> mData;
 
          const MatrixType& GetMatrix() const;
          void SetMatrix(const MatrixType& m);
+
+         DT_DECLARE_ACCESSOR(dtPhysics::MaterialIndex, CurrentMaterial);
+         DT_DECLARE_ACCESSOR(float, MaxEdgeLength);
 
          /**
           * Called once for each visited triangle.
@@ -60,6 +80,8 @@ namespace dtPhysics
                   bool treatVertexDataAsTemporary);
       private:
          MatrixType mMatrix;
+         int mSplitCount;
+         int mReuseCount;
          bool mMatrixIsIdentity;
    };
 

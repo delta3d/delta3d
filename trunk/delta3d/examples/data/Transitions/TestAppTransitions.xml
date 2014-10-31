@@ -1,15 +1,22 @@
 <?xml version="1.0"?>
 <TransitionList>
+
+   <!-- LOADING STATE -->
+   <Transition>
+      <Event Type="TRANSITION_FORWARD"/>
+      <FromState Type="STATE_LOADING"/>
+      <ToState Type="STATE_TITLE"/>
+   </Transition>
    
    <!-- TITLE STATE -->
    <Transition>
       <Event Type="TRANSITION_FORWARD"/>
       <FromState Type="STATE_TITLE"/>
-      <ToState Type="STATE_MENU"/>
+      <ToState Type="STATE_GAME"/>
    </Transition>
 
    <!-- MENU STATE -->
-   <Transition>
+   <!--Transition>
       <Event Type="TRANSITION_BACK"/>
       <FromState Type="STATE_MENU"/>
       <ToState Type="STATE_TITLE"/>
@@ -19,7 +26,7 @@
       <Event Type="TRANSITION_FORWARD"/>
       <FromState Type="STATE_MENU"/>
       <ToState Type="STATE_GAME"/>
-   </Transition>
+   </Transition-->
 
    <!-- GAME STATE -->
    <Transition>
@@ -45,7 +52,7 @@
    <Transition>
       <Event Type="TRANSITION_FORWARD"/>
       <FromState Type="STATE_GAME_QUIT"/>
-      <ToState Type="STATE_MENU"/>
+      <ToState Type="STATE_TITLE"/>
    </Transition>
    
    <Transition>
@@ -54,5 +61,5 @@
       <ToState Type="STATE_GAME"/>
    </Transition>
 
-   <StartState Type="STATE_TITLE" />
+   <StartState Type="STATE_LOADING" />
 </TransitionList>

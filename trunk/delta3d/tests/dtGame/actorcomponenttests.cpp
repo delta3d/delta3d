@@ -127,6 +127,7 @@ public:
          CPPUNIT_ASSERT_MESSAGE("Searching for an actor component not on the actor should return NULL.", notExists);
 
          dtCore::RefPtr<TestActorComponent1> component = new TestActorComponent1();
+
          actor->AddComponent(*component);
 
          CPPUNIT_ASSERT_MESSAGE("Actor owner not set", component->GetOwner() == actor);

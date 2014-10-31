@@ -40,7 +40,9 @@ DT_DISABLE_WARNING_END
 
 namespace dtAnim
 {
-
+   /////////////////////////////////////////////////////////////////////////////
+   // CLASS CODE
+   /////////////////////////////////////////////////////////////////////////////
    class HardwareSubmeshComputeBound : public osg::Drawable::ComputeBoundingBoxCallback
    {
       public:
@@ -72,7 +74,7 @@ namespace dtAnim
       /** do customized update code.*/
       virtual void update(osg::NodeVisitor*, osg::Drawable* drawable)
       {
-         mUpdateMutex.lock();
+         OpenThreads::ScopedLock<OpenThreads::Mutex> sl(mUpdateMutex);
 
          // select the proper hardware mesh
          if (mHardwareModel->selectHardwareMesh(mHardwareMeshID))
@@ -107,7 +109,6 @@ namespace dtAnim
             }
          }
 
-         mUpdateMutex.unlock();
       }
 
    private:
@@ -120,10 +121,16 @@ namespace dtAnim
    };
 
 ////////////////////////////////////////////////////////////////////////////////
-HardwareSubmeshDrawable::HardwareSubmeshDrawable(Cal3DModelWrapper* wrapper, CalHardwareModel* model,
-      const std::string& boneUniformName, unsigned numBones, unsigned mesh,
-      osg::VertexBufferObject* vertexVBO, osg::ElementBufferObject* indexEBO)
-   : osg::Drawable()
+HardwareSubmeshDrawable::HardwareSubmeshDrawable(
+   Cal3DModelWrapper* wrapper, CalHardwareModel* model,
+   const std::string& boneUniformName,
+   unsigned numBones, unsigned mesh,
+   osg::VertexBufferObject* vertexVBO,
+   osg::ElementBufferObject* indexEBO,
+   int boneWeightsLocation,
+   int boneIndicesLocation,
+   int tangentSpaceLocation)
+   : BaseClass()
    , mWrapper(wrapper)
    , mHardwareModel(model)
    , mScale(new osg::Uniform(osg::Uniform::FLOAT, "scale", 1))
@@ -133,6 +140,9 @@ HardwareSubmeshDrawable::HardwareSubmeshDrawable(Cal3DModelWrapper* wrapper, Cal
    , mMeshID(mesh)
    , mVertexVBO(vertexVBO)
    , mIndexEBO(indexEBO)
+   , mBoneWeightsLocation(boneWeightsLocation)
+   , mBoneIndicesLocation(boneIndicesLocation)
+   , mTangentSpaceLocation(tangentSpaceLocation)
 {
    setUseDisplayList(false);
    setUseVertexBufferObjects(true);
@@ -175,18 +185,26 @@ HardwareSubmeshDrawable::~HardwareSubmeshDrawable(void)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+void HardwareSubmeshDrawable::SetBoundingBox(const osg::BoundingBox& boundingBox)
+{
+   mBoundingBox = boundingBox;
+}
+
+////////////////////////////////////////////////////////////////////////////////
 void HardwareSubmeshDrawable::drawImplementation(osg::RenderInfo& renderInfo) const
 {
-   ((OpenThreads::Mutex&)mUpdateMutex).lock();
+   int faceCount = 0;
+   int startIndex = 0;
+   {
+      OpenThreads::ScopedLock<OpenThreads::Mutex> sl(mUpdateMutex);
       // select the appropriate mesh
       if (!mHardwareModel->selectHardwareMesh(mMeshID))
       {
-         ((OpenThreads::Mutex&)mUpdateMutex).unlock();
          return;
       }
-      const int faceCount = mHardwareModel->getFaceCount();
-      const int startIndex = mHardwareModel->getStartIndex();
-   ((OpenThreads::Mutex&)mUpdateMutex).unlock();
+      faceCount = mHardwareModel->getFaceCount();
+      startIndex = mHardwareModel->getStartIndex();
+   }
 
    osg::State& state = *renderInfo.getState();
 
@@ -219,8 +237,9 @@ void HardwareSubmeshDrawable::drawImplementation(osg::RenderInfo& renderInfo) co
 #endif
 
    // Make the call to render
-   glDrawElements(GL_TRIANGLES,  faceCount * 3, (sizeof(CalIndex) < 4) ?
-                  GL_UNSIGNED_SHORT: GL_UNSIGNED_INT, (void*)(sizeof(CalIndex) * startIndex));
+   glDrawElements(GL_TRIANGLES,  faceCount * 3,
+         (sizeof(CalIndex) < 4) ? GL_UNSIGNED_SHORT: GL_UNSIGNED_INT,
+         (void*)(sizeof(CalIndex) * startIndex));
 
    state.unbindVertexBufferObject();
    state.unbindElementBufferObject();
@@ -241,14 +260,16 @@ void HardwareSubmeshDrawable::drawImplementation(osg::RenderInfo& renderInfo) co
 osg::Object* HardwareSubmeshDrawable::clone(const osg::CopyOp&) const
 {
    return new HardwareSubmeshDrawable(mWrapper.get(), mHardwareModel, mBoneUniformName,
-         mNumBones, mMeshID, mVertexVBO, mIndexEBO);
+         mNumBones, mMeshID, mVertexVBO, mIndexEBO,
+         mBoneWeightsLocation, mBoneIndicesLocation, mTangentSpaceLocation);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 osg::Object* HardwareSubmeshDrawable::cloneType() const
 {
    return new HardwareSubmeshDrawable(mWrapper.get(), mHardwareModel,
-         mBoneUniformName, mNumBones, mMeshID, mVertexVBO, mIndexEBO);
+         mBoneUniformName, mNumBones, mMeshID, mVertexVBO, mIndexEBO,
+         mBoneWeightsLocation, mBoneIndicesLocation, mTangentSpaceLocation);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -323,12 +344,16 @@ void HardwareSubmeshDrawable::SetUpMaterial()
          osg::Texture2D* texture = reinterpret_cast<osg::Texture2D*>(iter->userData);
          if (texture != NULL)
          {
+            // TODO:
+            // OSG seems to assume all PNG files have alpha. For now let the code be simple
+            // and use material alpha to flag a material as translucent.
+
             // Mark the mesh as a transparency if the image is found to have alpha values.
             osg::Image* image = texture->getImage();
-            if(image != NULL && image->isImageTranslucent())
+            /*if(image != NULL && image->isImageTranslucent())
             {
                materialTranslucent = true;
-            }
+            }*/
 
             ss->setTextureAttributeAndModes(i, texture, osg::StateAttribute::ON);
          }
@@ -349,8 +374,6 @@ void HardwareSubmeshDrawable::SetUpMaterial()
 
    mWrapper->EndRenderingQuery();
 }
-
-////////////////////////////////////////////////////////////////////////////////
 
 } //namespace dtAnim
 

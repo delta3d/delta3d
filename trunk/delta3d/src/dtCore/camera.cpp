@@ -14,6 +14,7 @@
 #include <dtUtil/datetime.h>
 #include <dtUtil/log.h>
 #include <dtUtil/functor.h>
+#include <dtUtil/nodemask.h>
 
 #include <osg/Matrix>
 #include <osg/MatrixTransform>
@@ -79,7 +80,7 @@ namespace dtCore
       System* sys = &dtCore::System::GetInstance();
       AddSender(sys);
 
-      SetClearColor(0.2f, 0.2f, 0.6f, 1.f);
+      SetClearColor(0.2f, 0.2f, 0.6f, 1.0f);
 
       SetCollisionCategoryBits(COLLISION_CATEGORY_MASK_CAMERA);
 
@@ -190,7 +191,7 @@ namespace dtCore
       {
          //save off the existing, theoretically enabled, node mask
          mEnabledNodeMask = GetOSGCamera()->getNodeMask();
-         GetOSGCamera()->setNodeMask(0x0);
+         GetOSGCamera()->setNodeMask(dtUtil::NodeMask::NOTHING);
       }
    }
 

@@ -231,15 +231,21 @@ namespace dtAnim
       CPPUNIT_ASSERT_EQUAL(true, animAC->GetLoadModelAsynchronously());
       CPPUNIT_ASSERT_EQUAL(true, animAC->GetEnableAttachingNodeToDrawable());
 
-      animAC->SetLoadModelAsynchronously(false);
+      animAC->SetLoadModelAsynchronously(true);
       animAC->SetEnableAttachingNodeToDrawable(false);
-      CPPUNIT_ASSERT_EQUAL(false, animAC->GetLoadModelAsynchronously());
+      CPPUNIT_ASSERT_EQUAL(true, animAC->GetLoadModelAsynchronously());
       CPPUNIT_ASSERT_EQUAL(false, animAC->GetEnableAttachingNodeToDrawable());
 
       animAC->SetSkeletalMesh(dtCore::ResourceDescriptor("SkeletalMeshes:Marine:marine.xml"));
       CPPUNIT_ASSERT_MESSAGE("It should not load the character until it's added to the GM.", animAC->GetNode() == NULL);
       mGM->AddActor(*mTestGameActor, false, false);
+      for (unsigned i = 0 ; i < 10 && animAC->IsLoadingAsynchronously(); ++i)
+      {
+         dtCore::AppSleep(50);
+         animAC->CheckLoadingState();
+      }
       animAC->Update(0.016f);
+
       CPPUNIT_ASSERT(animAC->GetNode() != NULL);
       CPPUNIT_ASSERT(animAC->GetNode()->getNumParents() == 0);
       animAC->AttachNodeToDrawable();
@@ -258,7 +264,11 @@ namespace dtAnim
       CPPUNIT_ASSERT_EQUAL_MESSAGE("Setting the resource to null with AttachingNodeToDrawable enabled should unparent the node.",
                0U, nodeBackup->getNumParents());
       animAC->SetSkeletalMesh(dtCore::ResourceDescriptor("SkeletalMeshes:Marine:marine.xml"));
-      CPPUNIT_ASSERT_MESSAGE("Right after setting the mesh, the node will be NULL.", animAC->GetNode() == NULL);
+      for (unsigned i = 0 ; i < 10 && animAC->IsLoadingAsynchronously(); ++i)
+      {
+         dtCore::AppSleep(50);
+         animAC->CheckLoadingState();
+      }
       animAC->Update(0.016f);
       CPPUNIT_ASSERT_EQUAL(1U, animAC->GetNode()->getNumParents());
       CPPUNIT_ASSERT(animAC->GetNode()->getParent(0) == mTestGameActor->GetDrawable()->GetOSGNode());

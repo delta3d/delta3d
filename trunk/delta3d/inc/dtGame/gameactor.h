@@ -40,7 +40,8 @@ namespace dtGame
 
    /**
     * @class GameActor
-    * This class will be the main base class for actors being used by the
+    * This drawable subclass is deprecated.  All functionality exists on the GameActorProxy, which can have
+    * any drawable type now and it also holds the components.
     * Game Manager
     * @see dtGame::GameManager
     */
@@ -78,10 +79,8 @@ namespace dtGame
       bool IsGameActorProxyValid() const;
 
       /**
-        * Override this to add your own Actor Components.
-        * Note - actor components do the BuildPropertyMap during the AddComponent method, so set
-        * your default values after you that.
-        */
+       * Override the one on GameActorProxy
+       */
       DEPRECATE_FUNC virtual void BuildActorComponents();
 
       /**
@@ -105,9 +104,6 @@ namespace dtGame
        */
       virtual void OnTickLocal(const TickMessage& tickMessage);
 
-      ///Deprecated, override the one that takes a TickMessage;
-      DEPRECATE_FUNC virtual void TickLocal(const Message& tickMessage);
-
       /**
        * Method for handling remote ticks.  This will called by the "Tick Remote" invokable
        * This is designed to be registered to receive TICK_REMOTE messages, but that registration is not done
@@ -117,29 +113,11 @@ namespace dtGame
        */
       virtual void OnTickRemote(const TickMessage& tickMessage);
 
-      ///Deprecated, override the one that takes a TickMessage;
-      DEPRECATE_FUNC virtual void TickRemote(const Message& tickMessage);
-
       /**
        * This is going away.  It is still the default for the invokable, but
        * it will be removed.  Make your invokables call another function.
        */
       virtual void ProcessMessage(const Message& message);
-
-      /**
-       * Sets the shader group on the game actor.  This implementation uses
-       * the default shader in the group to shade the game actor.
-       * @param groupName The name of the shader group.
-       */
-      virtual void SetShaderGroup(const std::string& groupName);
-
-      /**
-       * Gets the current shader group assigned to this game actor.
-       * @return The name of the group.
-       */
-      std::string GetShaderGroup() const { return mShaderGroup; }
-
-      virtual void OnShaderGroupChanged();
 
       /**
        * This value is set automatically by the GM when an actor is created from prototype.
@@ -245,7 +223,6 @@ namespace dtGame
 
       friend class GameActorProxy;
       dtCore::ObserverPtr<GameActorProxy> mOwner;
-      std::string mShaderGroup;
       dtUtil::Log& mLogger;
    };
 

@@ -35,11 +35,18 @@ const char PoseMeshFileHandler::ANIMATION_NODE[] = { "Animation\0" };
 
 const char PoseMeshFileHandler::NAME_ATTRIBUTE[]             = { "name\0"                };
 const char PoseMeshFileHandler::ROOT_ATTRIBUTE[]             = { "root\0"                };
-const char PoseMeshFileHandler::ROOT_FORWARD_ATTRIBUTE[]     = { "rootForwardAxis\0"     };
+const char PoseMeshFileHandler::BIND_POSE_FORWARD_ATTRIBUTE[]     = { "bindPoseForwardVector\0"     };
+//const char PoseMeshFileHandler::ROOT_FORWARD_ATTRIBUTE[]     = { "rootForwardAxis\0"     };
 const char PoseMeshFileHandler::EFFECTOR_ATTRIBUTE[]         = { "effector\0"            };
-const char PoseMeshFileHandler::EFFECTOR_FORWARD_ATTRIBUTE[] = { "effectorForwardAxis\0" };
+//const char PoseMeshFileHandler::EFFECTOR_FORWARD_ATTRIBUTE[] = { "effectorForwardAxis\0" };
 
 const char PoseMeshFileHandler::DEFAULT_VALUE[] = { "default\0" };
+
+PoseMeshData::PoseMeshData()
+:mBindPoseForward(0.0f, 1.0f, 0.0f)
+{
+
+}
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -157,9 +164,11 @@ void dtAnim::PoseMeshFileHandler::ReadPoseMeshNode(const XERCES_CPP_NAMESPACE_QU
       mCurrentData.mRootName = resultIter->second;
    }
 
+
    // Get the root forward axis direction
-   resultIter = results.find(ROOT_FORWARD_ATTRIBUTE);
-   success = success && (resultIter != results.end());
+   resultIter = results.find(BIND_POSE_FORWARD_ATTRIBUTE);
+   // This is not required.
+   //success = success && (resultIter != results.end());
 
    if (resultIter != results.end())
    {
@@ -170,13 +179,34 @@ void dtAnim::PoseMeshFileHandler::ReadPoseMeshNode(const XERCES_CPP_NAMESPACE_QU
 
       if (!iss.fail())
       {
-         mCurrentData.mRootForward.set(xAxis, yAxis, zAxis);
+         mCurrentData.mBindPoseForward.set(xAxis, yAxis, zAxis);
       }
       else
       {
          LOG_ERROR("Invalid root forward for posemesh.");
       }
    }
+
+//   // Get the root forward axis direction
+//   resultIter = results.find(ROOT_FORWARD_ATTRIBUTE);
+//   success = success && (resultIter != results.end());
+//
+//   if (resultIter != results.end())
+//   {
+//      std::istringstream iss(resultIter->second);
+//      float xAxis, yAxis, zAxis;
+//
+//      iss >> xAxis >> yAxis >> zAxis;
+//
+//      if (!iss.fail())
+//      {
+//         mCurrentData.mRootForward.set(xAxis, yAxis, zAxis);
+//      }
+//      else
+//      {
+//         LOG_ERROR("Invalid root forward for posemesh.");
+//      }
+//   }
 
    // Get the effector bone attribute
    resultIter = results.find(EFFECTOR_ATTRIBUTE);
@@ -187,26 +217,26 @@ void dtAnim::PoseMeshFileHandler::ReadPoseMeshNode(const XERCES_CPP_NAMESPACE_QU
       mCurrentData.mEffectorName = resultIter->second;
    }
 
-   // Get the effector forward axis direction
-   resultIter = results.find(EFFECTOR_FORWARD_ATTRIBUTE);
-   success = success && (resultIter != results.end());
-
-   if (resultIter != results.end())
-   {
-      std::istringstream iss(resultIter->second);
-      float xAxis, yAxis, zAxis;
-
-      iss >> xAxis >> yAxis >> zAxis;
-
-      if (!iss.fail())
-      {
-         mCurrentData.mEffectorForward.set(xAxis, yAxis, zAxis);
-      }
-      else
-      {
-         LOG_ERROR("Invalid effector forward for posemesh.");
-      }
-   }
+//   // Get the effector forward axis direction
+//   resultIter = results.find(EFFECTOR_FORWARD_ATTRIBUTE);
+//   success = success && (resultIter != results.end());
+//
+//   if (resultIter != results.end())
+//   {
+//      std::istringstream iss(resultIter->second);
+//      float xAxis, yAxis, zAxis;
+//
+//      iss >> xAxis >> yAxis >> zAxis;
+//
+//      if (!iss.fail())
+//      {
+//         mCurrentData.mEffectorForward.set(xAxis, yAxis, zAxis);
+//      }
+//      else
+//      {
+//         LOG_ERROR("Invalid effector forward for posemesh.");
+//      }
+//   }
 
    // Report errors
    if (!success)

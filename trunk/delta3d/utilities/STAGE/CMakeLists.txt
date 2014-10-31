@@ -6,6 +6,7 @@ ADD_SUBDIRECTORY(plugins/STFenceTool)
 ADD_SUBDIRECTORY(plugins/STLinkedPointsActorTool)
 ADD_SUBDIRECTORY(plugins/STMapHierarchyEditor)
 ADD_SUBDIRECTORY(plugins/STMapStatistics)
+ADD_SUBDIRECTORY(plugins/STPhysicsCompiler)
 ADD_SUBDIRECTORY(plugins/STPluginDialog)
 ADD_SUBDIRECTORY(plugins/STMassImporter)
 ADD_SUBDIRECTORY(plugins/STRandomActorGenerator)
@@ -38,15 +39,7 @@ SOURCE_GROUP("Generated Files" REGULAR_EXPRESSION qrc_.*cxx|moc_.*cxx)
 
 ADD_PRECOMPILED_HEADER(${APP_NAME} prefix/stageprefix.h prefix/stageprefix.cpp PROG_SOURCES)
 
-ADD_EXECUTABLE(${APP_NAME}
-    ${PROG_HEADERS}
-    ${PROG_SOURCES}
-    ${MOC_SOURCES}
-    ${RCC_SOURCES}
-    ${UI_SOURCES}
-)
-
-LINK_WITH_VARIABLES(${APP_NAME}
+SET(APP_EXTERNAL_DEPS
                     QT_QTCORE_LIBRARY
                     QT_QTGUI_LIBRARY
                     QT_QTOPENGL_LIBRARY
@@ -54,27 +47,20 @@ LINK_WITH_VARIABLES(${APP_NAME}
                     AGL_LIBRARY
 )
 
-TARGET_LINK_LIBRARIES(${APP_NAME}
-                      ${DTUTIL_LIBRARY}
-                      ${DTCORE_LIBRARY}
+SET(APP_DEPS
+                      ${DTACTORS_LIBRARY}
+                      ${DTABC_LIBRARY}
                       ${DTANIM_LIBRARY}
                       ${DTAUDIO_LIBRARY}
-                      ${DTABC_LIBRARY}
+                      ${DTCORE_LIBRARY}
                       ${DTGAME_LIBRARY}
+                      ${DTPHYSICS_LIBRARY}
                       ${DTQT_LIBRARY}
-                      ${DTACTORS_LIBRARY}
+                      ${DTUTIL_LIBRARY}
 )
+SET(PROG_INFO_PLIST ${CMAKE_CURRENT_SOURCE_DIR}/STAGE.plist.in)
 
-SET_TARGET_PROPERTIES(${APP_NAME}
-                     PROPERTIES DEFINE_SYMBOL DT_EDITQT_LIBRARY
-)
-
-#MESSAGE(STATUS ${QT_LIBRARIES})
-
-INCLUDE(ProgramInstall OPTIONAL)
-
-# export symbols so plugins get access
-SET_TARGET_PROPERTIES(${APP_NAME} PROPERTIES ENABLE_EXPORTS true)
+DELTA3D_ADD_PROGRAM(${APP_NAME} MACOSX_BUNDLE DT_EDITQT_LIBRARY)
 
 IF (MSVC)
   SET_TARGET_PROPERTIES(${APP_NAME} PROPERTIES DEBUG_POSTFIX "${CMAKE_DEBUG_POSTFIX}")

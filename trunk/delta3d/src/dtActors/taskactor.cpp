@@ -333,12 +333,7 @@ namespace dtActors
    //////////////////////////////////////////////////////////////////////////////
    void TaskActorProxy::OnEnteredWorld()
    {
-      dtGame::Invokable* mapLoadedInvoke = new dtGame::Invokable("MapLoaded",
-         dtUtil::MakeFunctor(&TaskActorProxy::OnMapLoaded, *this));
-
-      AddInvokable(*mapLoadedInvoke);
-
-      RegisterForMessages(dtGame::MessageType::INFO_MAP_LOADED, "MapLoaded");
+      RegisterForMessages(dtGame::MessageType::INFO_MAP_LOADED, dtUtil::MakeFunctor(&TaskActorProxy::OnMapLoaded, *this));
    }
 
    ////////////////////////////////////////////////////////////////////////////////

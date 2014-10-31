@@ -32,6 +32,7 @@
 #include <dtAnim/basemodelloader.h>
 #include <dtAnim/basemodelwrapper.h>
 #include <dtAnim/characterfileloader.h>
+#include <dtAnim/posemeshdatabase.h>
 #include <dtUtil/threadpool.h>
 #include <dtCore/resourcedescriptor.h>
 
@@ -77,10 +78,6 @@ namespace dtAnim
 
       const dtAnim::BaseModelData* Find(const dtCore::ResourceDescriptor& resource) const;
 
-      dtAnim::BaseModelData* Find(const dtAnim::BaseModelWrapper* model);
-
-      const dtAnim::BaseModelData* Find(const dtAnim::BaseModelWrapper* model) const;
-
       dtCore::RefPtr<dtAnim::BaseModelWrapper> CreateModelWrapper(dtAnim::BaseModelData& data);
 
       dtAnim::BaseModelLoader* GetModelLoader(const std::string& characterSystem) const;
@@ -93,6 +90,8 @@ namespace dtAnim
 
       // Convenience method for wrapping a node builder, if one exists.
       dtCore::RefPtr<osg::Node> CreateNode(dtAnim::BaseModelWrapper& model, bool immediate = true);
+
+      dtAnim::PoseMeshDatabase* GetPoseMeshDatabase(dtAnim::BaseModelWrapper& wrapper);
 
    protected:
       ModelDatabase();
@@ -110,6 +109,10 @@ namespace dtAnim
 
       typedef std::map<std::string, dtCore::RefPtr<dtAnim::BaseModelLoader> > ModelLoaderMap;
       ModelLoaderMap mModelLoaders;
+
+      typedef dtCore::RefPtr<dtAnim::PoseMeshDatabase> PoseDatabase;
+      typedef std::map<std::string, PoseDatabase> PoseDatabaseMap;
+      PoseDatabaseMap mPoseMeshMap;
       
       mutable OpenThreads::Mutex mAsynchronousLoadLock;
       mutable OpenThreads::Mutex mLoadingLock;

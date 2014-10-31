@@ -359,12 +359,12 @@ void PoseMeshItem::BlendPosesFromItemCoordinates(float xCoord, float yCoord)
       {
          // Make sure the skeleton is updated to the current
          // blend before we try to access it
-         modelWrapper->UpdateAnimations(0.0f);
+         modelWrapper->UpdateAnimation(0.0f);
 
          AddBoneLinesToScene(targetTri);
       }
 
-      // Store the last valie visual location of the blend
+      // Store the last valid visual location of the blend
       mLastBlendPos.setX(xCoord);
       mLastBlendPos.setY(yCoord);
       mLastTriangleID = targetTri.mTriangleID;
@@ -427,7 +427,7 @@ void PoseMeshItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* opti
 
    for (size_t vertIndex = 0; vertIndex < verts.size(); ++vertIndex)
    {
-      osg::Vec3 vertPosition = verts[vertIndex]->mData * VERT_SCALE;
+      osg::Vec3 vertPosition = verts[vertIndex].mData * VERT_SCALE;
       vertPosition.x() *= mScaleHoriz;
       vertPosition.y() *= mScaleVert;
 
@@ -601,8 +601,8 @@ void PoseMeshItem::ExtractEdgesFromMesh(const dtAnim::PoseMesh& mesh)
 
       assert(rangeStart != edgeMap.end());
 
-      dtAnim::PoseMesh::Vertex* vert0 = vertList[key.first];
-      dtAnim::PoseMesh::Vertex* vert1 = vertList[key.second];
+      const dtAnim::PoseMesh::Vertex* vert0 = &vertList[key.first];
+      const dtAnim::PoseMesh::Vertex* vert1 = &vertList[key.second];
 
       EdgeInfo newInfo;
       newInfo.first.rx()  = vert0->mData.x() * VERT_SCALE;
@@ -634,7 +634,7 @@ void PoseMeshItem::ExtractErrorFromMesh(const dtAnim::PoseMesh& mesh)
 
    // Make sure no animations are applied
    modelWrapper->ClearAllAnimations();
-   modelWrapper->UpdateAnimations(0.0f);
+   modelWrapper->UpdateAnimation(0.0f);
 
    // Nothing is blended now so remove character lines
    RemoveBoneLinesFromScene();
@@ -735,7 +735,7 @@ float PoseMeshItem::GetErrorSample(const QPointF& samplePoint)
    mMeshUtil->BlendPoses(mPoseMesh, modelWrapper, blendTarget, 0.0f);
 
    // Apply the blended pose for this sample
-   modelWrapper->UpdateAnimations(0.0f);
+   modelWrapper->UpdateAnimation(0.0f);
 
    dtAnim::BoneInterface* rootBone = modelWrapper->GetBoneByIndex(mPoseMesh->GetRootID());
    dtAnim::BoneInterface* effectorBone = modelWrapper->GetBoneByIndex(mPoseMesh->GetEffectorID());
@@ -839,19 +839,19 @@ void PoseMeshItem::GetAnchorBoneDirection(const dtAnim::PoseMesh::TargetTriangle
       mMeshUtil->ClearPoses(mPoseMesh, mModel->GetModelWrapper(), 0.0f);
 
       // Apply the changes to the skeleton
-      modelWrapper->UpdateAnimations(0.0f);
+      modelWrapper->UpdateAnimation(0.0f);
 
       // Get the bone's rotation without this pose mesh's animations applied
       osg::Quat boneRotation = modelWrapper->GetBoneByIndex(mPoseMesh->GetEffectorID())->GetAbsoluteRotation();
 
-      const osg::Vec3 &nativeBoneForward = mPoseMesh->GetEffectorForwardAxis();
+      const osg::Vec3& nativeBoneForward = mPoseMesh->GetEffectorForwardAxis();
 
       // Transform the native forward by base rotation
       outDirection = boneRotation * nativeBoneForward;
 
       // Re-apply the previous animation
       mMeshUtil->BlendPoses(mPoseMesh, mModel->GetModelWrapper(), currentTargetTri, 0.0f);
-      modelWrapper->UpdateAnimations(0.0f);
+      modelWrapper->UpdateAnimation(0.0f);
    }
 }
 
@@ -892,7 +892,7 @@ void PoseMeshItem::UpdateItemBoundingRect()
    // Determine the bounding box for this item
    for (size_t vertIndex = 0; vertIndex < verts.size(); ++vertIndex)
    {
-      osg::Vec3 vertPosition = verts[vertIndex]->mData * VERT_SCALE;
+      osg::Vec3 vertPosition = verts[vertIndex].mData * VERT_SCALE;
       vertPosition.x() *= mScaleHoriz;
       vertPosition.y() *= mScaleVert;
 
@@ -999,15 +999,15 @@ void PoseMeshItem::AssertZeroErrorAtVertices()
 {
    dtAnim::BaseModelWrapper* modelWrapper = mModel->GetModelWrapper();
    modelWrapper->ClearAllAnimations();
-   modelWrapper->UpdateAnimations(0.0f);
+   modelWrapper->UpdateAnimation(0.0f);
 
    const dtAnim::PoseMesh::VertexVector& vertList = mPoseMesh->GetVertices();
 
    for (size_t vertIndex = 0; vertIndex < vertList.size(); ++vertIndex)
    {
       dtAnim::PoseMesh::TargetTriangle trianglePick;
-      mPoseMesh->GetTargetTriangleData(vertList[vertIndex]->mData.x(),
-                                       vertList[vertIndex]->mData.y(),
+      mPoseMesh->GetTargetTriangleData(vertList[vertIndex].mData.x(),
+                                       vertList[vertIndex].mData.y(),
                                        trianglePick);
 
       //osg::Vec3 debugDirection = vertList[vertIndex]->mDebugData;
@@ -1020,13 +1020,13 @@ void PoseMeshItem::AssertZeroErrorAtVertices()
       modelWrapper->ClearAllAnimations();
 
       // Apply the changes to the skeleton
-      modelWrapper->UpdateAnimations(0.0f);
+      modelWrapper->UpdateAnimation(0.0f);
 
       // Apply the animation to test
       mMeshUtil->BlendPoses(mPoseMesh, modelWrapper, trianglePick, 0.0f);
 
       // Apply new blend to skeleton
-      modelWrapper->UpdateAnimations(0.0f);
+      modelWrapper->UpdateAnimation(0.0f);
 
       osg::Vec3 blendDirection;
       osg::Vec3 trueDirection;
@@ -1037,7 +1037,7 @@ void PoseMeshItem::AssertZeroErrorAtVertices()
          //osg::Quat boneRotation = modelWrapper->GetBoneAbsoluteRotationForKeyFrame(animID, mPoseMesh->GetBoneID(), 30);
 
          // Get the direction that points forward for this pose mesh's bone
-         const osg::Vec3 &nativeBoneForward = mPoseMesh->GetEffectorForwardAxis();
+         const osg::Vec3& nativeBoneForward = mPoseMesh->GetEffectorForwardAxis();
 
          // calculate a vector transformed by the rotation data.
          blendDirection = boneRotation * nativeBoneForward;
@@ -1068,7 +1068,7 @@ void PoseMeshItem::AssertZeroErrorAtVertices()
    }
 
    modelWrapper->ClearAllAnimations();
-   modelWrapper->UpdateAnimations(0.0f);
+   modelWrapper->UpdateAnimation(0.0f);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -1076,17 +1076,17 @@ void PoseMeshItem::AssertAzElConversion()
 {
    dtAnim::BaseModelWrapper* modelWrapper = mModel->GetModelWrapper();
    modelWrapper->ClearAllAnimations();
-   modelWrapper->UpdateAnimations(0.0f);
+   modelWrapper->UpdateAnimation(0.0f);
 
    const dtAnim::PoseMesh::VertexVector &vertList = mPoseMesh->GetVertices();
 
    for (size_t vertIndex = 0; vertIndex < vertList.size(); ++vertIndex)
    {
-      float azimuth = vertList[vertIndex]->mData.x();
-      float elevation = vertList[vertIndex]->mData.y();
+      float azimuth = vertList[vertIndex].mData.x();
+      float elevation = vertList[vertIndex].mData.y();
 
-      osg::Vec3 debugDirection = vertList[vertIndex]->mDebugData;
-      osg::Quat debugRotation  = vertList[vertIndex]->mDebugRotation;
+      osg::Vec3 debugDirection = vertList[vertIndex].mDebugData;
+      //const osg::Quat& debugRotation  = vertList[vertIndex].mDebugRotation;
 
       //int animID = vertList[vertIndex]->mAnimID;
 
@@ -1104,6 +1104,6 @@ void PoseMeshItem::AssertAzElConversion()
       float newAzimuth, newElevation;
       dtAnim::GetCelestialCoordinates(directionFromAzEl, -osg::Y_AXIS, newAzimuth, newElevation);
 
-      directionFromAzEl = directionFromAzEl;
+      //directionFromAzEl = directionFromAzEl;
    }
 }

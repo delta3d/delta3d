@@ -70,7 +70,7 @@ void TestDISApp::Config()
    //Assuming that incoming positions are lat/lon and the local terrain is
    //centered around 0,0,0.  Note, this doesn't conform to DIS specs.
    disConfig->GetCoordinateConverter().SetIncomingCoordinateType(dtUtil::IncomingCoordinateType::GEODETIC);
-   disConfig->GetCoordinateConverter().SetFlatEarthOrigin(osg::Vec2(0.f, 0.f));
+   disConfig->GetCoordinateConverter().SetFlatEarthOrigin(osg::Vec2(0.0f, 0.0f));
 
    mDISComponent = new dtDIS::MasterComponent(disConfig);
    mMessageProc = new dtGame::DefaultMessageProcessor(); //need this to get messages routed around

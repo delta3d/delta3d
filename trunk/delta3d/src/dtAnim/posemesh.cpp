@@ -26,7 +26,9 @@
 #include <dtAnim/basemodelwrapper.h>
 #include <dtUtil/log.h>
 #include <dtUtil/mathdefines.h>
+#include <dtUtil/matrixutil.h>
 #include <dtUtil/exception.h>
+#include <dtUtil/stringutils.h>
 
 #include <iostream>
 #include <sstream>
@@ -34,6 +36,22 @@
 
 using namespace dtAnim;
 
+
+
+////////////////////////////////////////////////////////////////////////////////
+// CLASS CODE
+////////////////////////////////////////////////////////////////////////////////
+PoseMesh::TargetTriangle::TargetTriangle()
+   : mIsInside(false)
+   , mTriangleID(-1)
+   , mAzimuth(0.0f)
+   , mElevation(0.0f)
+{}
+
+
+
+////////////////////////////////////////////////////////////////////////////////
+// CLASS CODE
 ////////////////////////////////////////////////////////////////////////////////
 PoseMesh::PoseMesh(dtAnim::BaseModelWrapper* model,
                    const PoseMeshData& meshData)
@@ -43,17 +61,11 @@ PoseMesh::PoseMesh(dtAnim::BaseModelWrapper* model,
    std::vector<unsigned int> animids;
    GetAnimationIDsByName(model, meshData.mAnimations, animids);
 
-   // Create a temporary reverse lookup map to
-   // map an ID back to a bone object.
-   // The array should be sorted.
-   dtAnim::BoneArray bones;
-   model->GetBones(bones);
-
+   dtAnim::AnimationUpdaterInterface* animator = model->GetAnimator();
    dtAnim::BoneInterface* rootBone = model->GetBone(meshData.mRootName);
    dtAnim::BoneInterface* effectorBone = model->GetBone(meshData.mEffectorName);
-
-   mRootID     = rootBone == NULL ? -1 : rootBone->GetID();
-   mEffectorID = effectorBone == NULL ? -1 : effectorBone->GetID();
+   mRootID     = rootBone->GetID();
+   mEffectorID = effectorBone->GetID();
 
    // We need to have valid bones here in order to continue
    if (mRootID == -1 || mEffectorID == -1)
@@ -62,18 +74,24 @@ PoseMesh::PoseMesh(dtAnim::BaseModelWrapper* model,
          "--" + meshData.mRootName + "' for pose mesh", __FILE__, __LINE__);
    }
 
-   // Store off the effector and root axis for this mesh
-   mEffectorForward = meshData.mEffectorForward;
-   mRootForward = meshData.mRootForward;
+   mBindPoseForward = meshData.mBindPoseForward;
 
    // Update the skeleton to initialize bone data
-   dtAnim::AnimationUpdaterInterface* animator = model->GetAnimator();
    animator->ClearAll(0.0f);
    animator->Update(0.0f);
 
    // Calculate the forward direction
    osg::Quat rootRotation = rootBone->GetAbsoluteRotation();
-   osg::Vec3 currentRootForward = rootRotation * meshData.mRootForward;
+
+   mRootForward = rootRotation.inverse() * mBindPoseForward;
+
+   osg::Quat bindRotation = effectorBone->GetAbsoluteRotation();
+
+   mEffectorForward = bindRotation.inverse() * mBindPoseForward;
+
+   // Store off the effector and root axis for this mesh
+   //mEffectorForward = meshData.mEffectorForward;
+   //mRootForward = meshData.mRootForward;
 
    // Allocate space for osg to triangulate our verts
    std::vector<osg::Vec3> posePoints;
@@ -81,68 +99,83 @@ PoseMesh::PoseMesh(dtAnim::BaseModelWrapper* model,
    typedef std::map<unsigned int, unsigned int> AnimVertMap;
    AnimVertMap vertMap;
 
-   typedef std::vector<unsigned int> UIVector;
-   UIVector::const_iterator animID = animids.begin();
-   UIVector::const_iterator endanimID = animids.end();
-   for (unsigned int vertIndex = 0; animID != endanimID; ++animID)
+   typedef unsigned int AnimId;
+   typedef unsigned int VertIndex;
+   typedef std::vector<AnimId> UIVector;
+   UIVector::const_iterator curIter = animids.begin();
+   UIVector::const_iterator endIter = animids.end();
+
+   VertIndex vertIndex = 0;
+   AnimId animID = -1;
+   AnimationInterface* curAnim = NULL;
+   for ( ; curIter != endIter; ++curIter)
    {
+      animID = *curIter;
+
       // If we've already handled this animation,
       // map it to the previously computed data
-      AnimVertMap::iterator mapIter = vertMap.find(*animID);
+      AnimVertMap::iterator mapIter = vertMap.find(animID);
+
+      curAnim = model->GetAnimationByIndex(animID);
+      if (curAnim == NULL)
+      {
+         LOG_ERROR("Could not access pose animation [" + dtUtil::ToString(animID)
+            + "] for character model \"" + model->GetModelData()->GetModelName() + "\"");
+         continue;
+      }
 
       if (mapIter != vertMap.end())
       {
+         vertMap[animID] = mapIter->second;
          continue;
       }
 
       // This anim maps to this vert
-      vertMap[*animID] = vertIndex;
+      vertMap[animID] = vertIndex;
 
-      int curAnimID = *animID;
-      dtAnim::AnimationInterface* anim = model->GetAnimationByIndex(curAnimID);
-      anim->PlayCycle(1.0f, 0.0f);
+      animator->BlendPose(*curAnim, 1.0f, 0.0f);
       animator->Update(0.0f);
 
       osg::Quat finalRotation = effectorBone->GetAbsoluteRotation();
 
-      anim->ClearCycle(0.0f);
+      animator->ClearPose(*curAnim, 0.0f);
       animator->Update(0.0f);
 
       // calculate a vector transformed by the rotation data.
-      osg::Vec3 transformed = finalRotation * mEffectorForward;
-      transformed.normalize();
+      osg::Vec3 worldForward = finalRotation * mEffectorForward;
+      worldForward.normalize();
 
       // calculate the local azimuth and elevation for the transformed vector
-      float az = 0.f;
-      float el = 0.f;
+      float az = 0.0f;
+      float el = 0.0f;
 
-      dtAnim::GetCelestialCoordinates(transformed, currentRootForward, az, el);
+      dtAnim::GetCelestialCoordinates(worldForward, mBindPoseForward, az, el);
 
-      std::string debugName = anim->GetName();
+      std::string debugName = curAnim->GetName();
 
       osg::Vec3 debugDirection;
-      dtAnim::GetCelestialDirection(az, el, currentRootForward, osg::Z_AXIS, debugDirection);
+      dtAnim::GetCelestialDirection(az, el, mBindPoseForward, osg::Z_AXIS, debugDirection);
 
       debugDirection.normalize();
-      float debugDotTranformed = debugDirection * transformed;
+      float debugDotTranformed = debugDirection * worldForward;
       dtUtil::Clamp(debugDotTranformed, -1.0f, 1.0f);
 
       float precision = acosf(debugDotTranformed);
 
       // Store the vert for triangulation
       // - osg::PI_2
-      osg::Vec3 newVertPoint(az, el, 0.f);
+      osg::Vec3 newVertPoint(az, el, 0.0f);
 
       posePoints.push_back(newVertPoint);
 
       // add a (az,el) vertex
-      PoseMesh::Vertex* newVert = new PoseMesh::Vertex(newVertPoint, *animID);
+      PoseMesh::Vertex newVert(newVertPoint, animID);
       mVertices.push_back(newVert);
 
       // Store debug info
-      newVert->mDebugPrecision = precision;
-      newVert->mDebugData      = transformed;
-      newVert->mDebugRotation  = finalRotation;
+      mVertices.back().mDebugPrecision = precision;
+      mVertices.back().mDebugData      = worldForward;
+      mVertices.back().mDebugRotation  = finalRotation;
 
       ++vertIndex;
    }
@@ -153,28 +186,31 @@ PoseMesh::PoseMesh(dtAnim::BaseModelWrapper* model,
    EdgeCountMap edgeCounts;
 
    // Populate the mesh with triangles
-   for (unsigned int vertIndex = 0; vertIndex < animids.size(); vertIndex += 3)
+   for (VertIndex vertIndex = 0; vertIndex < animids.size(); vertIndex += 3)
    {
-      int anim0 = animids.at(vertIndex + 0);
-      int anim1 = animids.at(vertIndex + 1);
-      int anim2 = animids.at(vertIndex + 2);
+      int animId0 = animids.at(vertIndex + 0);
+      int animId1 = animids.at(vertIndex + 1);
+      int animId2 = animids.at(vertIndex + 2);
 
-      int vertIndex0 = vertMap[anim0];
-      int vertIndex1 = vertMap[anim1];
-      int vertIndex2 = vertMap[anim2];
+      int vertIndex0 = vertMap[animId0];
+      int vertIndex1 = vertMap[animId1];
+      int vertIndex2 = vertMap[animId2];
 
-      PoseMesh::VertexVector::value_type vert0 = mVertices[vertIndex0];
-      PoseMesh::VertexVector::value_type vert1 = mVertices[vertIndex1];
-      PoseMesh::VertexVector::value_type vert2 = mVertices[vertIndex2];
+      PoseMesh::VertexVector::value_type& vert0 = mVertices[vertIndex0];
+      PoseMesh::VertexVector::value_type& vert1 = mVertices[vertIndex1];
+      PoseMesh::VertexVector::value_type& vert2 = mVertices[vertIndex2];
 
-      PoseMesh::Triangle newTri(vert0, vert1, vert2, vertIndex0, vertIndex1, vertIndex2);
+      PoseMesh::Triangle newTri(&vert0, &vert1, &vert2, vertIndex0, vertIndex1, vertIndex2);
       mTriangles.push_back(newTri);
 
       // Debug
-      unsigned int triIndex = vertIndex / 3;
-      /*std::string animName0(model->GetCoreAnimationName(mVertices[vertIndex0]->mAnimID));
-      std::string animName1(model->GetCoreAnimationName(mVertices[vertIndex1]->mAnimID));
-      std::string animName2(model->GetCoreAnimationName(mVertices[vertIndex2]->mAnimID));*/
+      VertIndex triIndex = vertIndex / 3;
+      dtAnim::AnimationInterface* anim0 = model->GetAnimationByIndex(mVertices[vertIndex0].mAnimID);
+      dtAnim::AnimationInterface* anim1 = model->GetAnimationByIndex(mVertices[vertIndex1].mAnimID);
+      dtAnim::AnimationInterface* anim2 = model->GetAnimationByIndex(mVertices[vertIndex2].mAnimID);
+      const std::string& animName0 = anim0->GetName();
+      const std::string& animName1 = anim1->GetName();
+      const std::string& animName2 = anim2->GetName();
 
       // Tally the number of edges so that we can determine
       // which ones are the silhouettes
@@ -190,12 +226,15 @@ PoseMesh::PoseMesh(dtAnim::BaseModelWrapper* model,
       edgeCounts[pair1].second = triIndex;
       edgeCounts[pair2].second = triIndex;
 
-      //std::ostringstream oss;
-      //oss << "Triangle #" << triIndex << " contains (" << vertIndex0 << ", " << vertIndex1 <<
-      //   ", " << vertIndex2 << ")" << "  (" << animName0 << ", " << animName1 <<
-      //   ", " << animName2 << ")" << std::endl;
+      if (dtUtil::Log::GetInstance("posemesh.cpp").IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+      {
+         std::ostringstream oss;
+         oss << "Triangle #" << triIndex << " contains (" << vertIndex0 << ", " << vertIndex1 <<
+            ", " << vertIndex2 << ")" << "  (" << animName0 << ", " << animName1 <<
+            ", " << animName2 << ")" << std::endl;
 
-      //LOG_DEBUG(oss.str());
+         LOGN_DEBUG("posemesh.cpp", oss.str());
+      }
    }
 
    // Find all edges that belong to a single face and store them
@@ -223,39 +262,28 @@ PoseMesh::PoseMesh(dtAnim::BaseModelWrapper* model,
    }
 
    ///\todo now also build the barycentric array
-   unsigned int numpolygons = mTriangles.size();
+   size_t numpolygons = mTriangles.size();
    mBarySpaces.resize(numpolygons);
-   for (unsigned int polygon=0; polygon < numpolygons; ++polygon)
+   for (size_t polygon=0; polygon < numpolygons; ++polygon)
    {
       const osg::Vec3& a = mTriangles[polygon].mVertices[0]->mData;
       const osg::Vec3& b = mTriangles[polygon].mVertices[1]->mData;
       const osg::Vec3& c = mTriangles[polygon].mVertices[2]->mData;
-      mBarySpaces[polygon] = new PoseMesh::Barycentric2D(a,b,c);
+      mBarySpaces[polygon] = PoseMesh::Barycentric2D(a,b,c);
    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 PoseMesh::~PoseMesh()
 {
-   VertexVector::iterator endvert = mVertices.end();
-   for (VertexVector::iterator vert=mVertices.begin(); vert!=endvert; ++vert)
-   {
-      delete *vert;
-   }
-
-   // the head data
-   unsigned int numspaces;
-   numspaces = mBarySpaces.size();
-   for (unsigned int space=0; space<numspaces; ++space)
-   {
-      delete mBarySpaces[space];
-   }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 PoseMesh::Vertex::Vertex(const osg::Vec3& data, unsigned int animID)
    : mData(data)
    , mAnimID(animID)
+   , mDebugPrecision()
+
 {
 }
 
@@ -320,11 +348,19 @@ void PoseMesh::GetAnimationIDsByName(const dtAnim::BaseModelWrapper* model,
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void PoseMesh::GetTargetTriangleData(const float azimuth,
-                                     const float elevation,
+osg::Vec2 PoseMesh::GetTargetTriangleData(const float deltaAzimuth,
+                                     const float deltaElevation,
                                      TargetTriangle& outTriangle) const
 {
-   int triangleID = FindPoseTriangleID(azimuth, elevation);
+   float targetAz = outTriangle.mAzimuth + deltaAzimuth;
+   float targetEl = outTriangle.mElevation + deltaElevation;
+   float origAz = outTriangle.mAzimuth;
+   float origEl = outTriangle.mElevation;
+
+   int triangleID = FindPoseTriangleID(targetAz, targetEl);
+
+   //printf ("-Posemesh target Az %f El %f\n", osg::RadiansToDegrees(targetAz), osg::RadiansToDegrees(targetEl));
+   //printf ("    posemesh last Az %f El %f\n", osg::RadiansToDegrees(outTriangle.mAzimuth), osg::RadiansToDegrees(outTriangle.mElevation));
 
    // At this point, we know if we're in or out
    outTriangle.mIsInside = (triangleID != -1);
@@ -335,7 +371,7 @@ void PoseMesh::GetTargetTriangleData(const float azimuth,
       osg::Vec3 closestPoint;
       int closestTriangleID = 0;
 
-      osg::Vec3 refPoint(azimuth, elevation, 0);
+      osg::Vec3 refPoint(targetAz, targetEl, 0);
       float minDistance = FLT_MAX;
 
       const PoseMesh::TriangleEdgeVector& silhouetteList = GetSilhouette();
@@ -344,14 +380,14 @@ void PoseMesh::GetTargetTriangleData(const float azimuth,
          PoseMesh::MeshIndexPair edge = silhouetteList[edgeIndex].mEdge;
          const PoseMesh::VertexVector& vertices = GetVertices();
 
-         osg::Vec3 startPoint = vertices[edge.first]->mData;
-         osg::Vec3 endPoint   = vertices[edge.second]->mData;
+         osg::Vec3 startPoint = vertices[edge.first].mData;
+         osg::Vec3 endPoint   = vertices[edge.second].mData;
 
          osg::Vec3 closestPointToCurrentEdge;
 
          dtAnim::GetClosestPointOnSegment(startPoint, endPoint, refPoint, closestPointToCurrentEdge);
 
-         // We don't need exact distance, just a way too compare (this is faster)
+         // We don't need exact distance, just a way to compare (this is faster)
          float distance = (refPoint - closestPointToCurrentEdge).length2();
 
          if (distance < minDistance)
@@ -359,18 +395,23 @@ void PoseMesh::GetTargetTriangleData(const float azimuth,
             minDistance       = distance;
             closestPoint      = closestPointToCurrentEdge;
             closestTriangleID = silhouetteList[edgeIndex].mTriangleID;
+            //printf ("    posemesh triangle %d distance %f\n", closestTriangleID, distance);
          }
       }
 
       outTriangle.mTriangleID = closestTriangleID;
       outTriangle.mAzimuth    = closestPoint.x();
       outTriangle.mElevation  = closestPoint.y();
-      return;
+      //printf ("  posemesh triangle %d azimuth %f elevation %f\n", closestTriangleID, osg::RadiansToDegrees(closestPoint.x()), osg::RadiansToDegrees(closestPoint.y()));
+      //printf ("  posemesh deltas %d azimuth %f elevation %f\n", closestTriangleID, osg::RadiansToDegrees(closestPoint.x() - origAz), osg::RadiansToDegrees(closestPoint.y() - origEl));
+      return osg::Vec2(closestPoint.x() - origAz, closestPoint.y() - origEl);
    }
 
    outTriangle.mTriangleID = triangleID;
-   outTriangle.mAzimuth    = azimuth;
-   outTriangle.mElevation  = elevation;
+   outTriangle.mAzimuth    = targetAz;
+   outTriangle.mElevation  = targetEl;
+   //printf ("  posemesh triangle %d azimuth %f elevation %f\n", triangleID, osg::RadiansToDegrees(targetAz), osg::RadiansToDegrees(targetEl));
+   return osg::Vec2(deltaAzimuth, deltaElevation);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -399,5 +440,3 @@ int PoseMesh::FindPoseTriangleID(float azimuth, float elevation) const
 
    return animationIndex;
 }
-
-

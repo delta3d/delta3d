@@ -93,7 +93,6 @@ namespace dtCore
       mPrototype = proto;
    }
 
-
    /////////////////////////////////////////////////////////////////////////////
    BaseActorObject& BaseActorObject::operator=(const BaseActorObject& rhs)
    {
@@ -110,21 +109,6 @@ namespace dtCore
       GetActorType();
       GetDrawable();
       BuildPropertyMap();
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   bool BaseActorObject::ShouldPropertySave(const dtCore::ActorProperty& prop) const
-   {
-      bool result = PropertyContainer::ShouldPropertySave(prop);
-
-      // Any properties in this group are saved elsewhere, therefore
-      // we ignore these properties.
-      if (prop.GetGroupName() == "Actor Information")
-      {
-         result = false;
-      }
-
-      return result;
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -436,6 +420,18 @@ namespace dtCore
                      dtCore::BooleanActorProperty::SetFuncType(drawable, &dtCore::DeltaDrawable::SetActive),
                      dtCore::BooleanActorProperty::GetFuncType(drawable, &dtCore::DeltaDrawable::GetActive),
                      "Determines whether the drawable will render.", GROUP_DRAWABLE));
+      }
+
+      if (drawable != NULL)
+      {
+         static const dtUtil::RefString PROPERTY_SHADER_GROUP("ShaderGroup");
+         static const dtUtil::RefString PROPERTY_SHADER_GROUP_DESC("Sets the shader group on the game actor.");
+         static const dtUtil::RefString GROUPNAME("ShaderParams");
+
+         AddProperty(new dtCore::StringActorProperty(PROPERTY_SHADER_GROUP, PROPERTY_SHADER_GROUP,
+            dtCore::StringActorProperty::SetFuncType(drawable, &dtCore::DeltaDrawable::SetShaderGroup),
+            dtCore::StringActorProperty::GetFuncType(drawable, &dtCore::DeltaDrawable::GetShaderGroup),
+            PROPERTY_SHADER_GROUP_DESC,GROUPNAME));
       }
    }
 

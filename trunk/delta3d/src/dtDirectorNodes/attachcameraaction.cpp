@@ -38,7 +38,7 @@ namespace dtDirector
    /////////////////////////////////////////////////////////////////////////////
    AttachCameraAction::AttachCameraAction()
       : ActionNode()
-      , mOffset(0.f, 0.f, 0.f)
+      , mOffset(0.0f, 0.0f, 0.0f)
    {
       mActor = "";
 

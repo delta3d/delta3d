@@ -28,7 +28,10 @@
 #include <dtAnim/submesh.h>
 #include <dtCore/shadergroup.h>
 #include <dtCore/shadermanager.h>
+#include <dtAnim/geometrybuilder.h>
 #include <dtCore/shaderprogram.h>
+#include <dtCore/project.h>
+#include <dtUtil/mathdefines.h>
 #include <dtUtil/log.h>
 
 #include <osg/Geode>
@@ -39,8 +42,11 @@
 #include <osg/GLExtensions>
 #include <osg/ShapeDrawable>
 
+
+
 namespace dtAnim
 {
+   GeometryBuilder AnimNodeBuilder::mGeometryBuilder;
 
    ///Used to delay the building of the animated characters geometry until
    ///it is first rendered, at which point a valid OpenGL context should be valid
@@ -59,20 +65,20 @@ namespace dtAnim
       {
       };
 
-      virtual void drawImplementation(osg::RenderInfo&, const osg::Drawable*) const
+      virtual void drawImplementation(osg::RenderInfo& renderInfo, const osg::Drawable*) const
       {
          if (!mCreatedNode.valid())
          {
-            CreateGeometryDrawCallback* const_this = const_cast<CreateGeometryDrawCallback*>(this);
-            const_this->mCreatedNode = mCreateFunc(mWrapper);
+            mCreatedNode = mCreateFunc(&renderInfo, mWrapper);
+            mWrapper = NULL;
          }
       }
 
-      dtCore::RefPtr<osg::Node> mCreatedNode;
+      mutable dtCore::RefPtr<osg::Node> mCreatedNode;
 
    private:
       AnimNodeBuilder::CreateFunc mCreateFunc;
-      dtCore::RefPtr<dtAnim::BaseModelWrapper> mWrapper;
+      mutable dtCore::RefPtr<dtAnim::BaseModelWrapper> mWrapper;
    };
 
    ///Used to grab the created geometry from the CreateGeometryDrawCallback
@@ -112,13 +118,22 @@ namespace dtAnim
    };
 
 ////////////////////////////////////////////////////////////////////////////////
-AnimNodeBuilder::AnimNodeBuilder()
+AnimNodeBuilder::AnimNodeBuilder(bool useDeprecatedHardwareModel)
+   : mUseDeprecatedHardwareModel(useDeprecatedHardwareModel)
 {
    if (SupportsHardware())
    {
-      SetCreate(CreateFunc(this, &AnimNodeBuilder::CreateHardware));
+      if(mUseDeprecatedHardwareModel)
+      {
+         SetCreate(CreateFunc(this, &AnimNodeBuilder::CreateHardware));
+      }
+      else
+      {
+         SetCreate(CreateFunc(&mGeometryBuilder, &GeometryBuilder::CreateGeometry));
+      }
    }
-   else if (SupportsSoftware())
+   else
+   if (SupportsSoftware())
    {
       SetCreate(CreateFunc(this, &AnimNodeBuilder::CreateSoftware));
    }
@@ -187,6 +202,7 @@ void AnimNodeBuilder::SetCreate(const CreateFunc& pCreate)
 ////////////////////////////////////////////////////////////////////////////////
 dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateNode(dtAnim::BaseModelWrapper* wrapper, bool immediate)
 {
+   dtCore::RefPtr<osg::Node> result;
    if(!immediate)
    {
       ///Add a temporary rendered shape with a draw callback to a Group.  The callback
@@ -197,29 +213,32 @@ dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateNode(dtAnim::BaseModelWrapper* 
       rootNode->setUpdateCallback(new UpdateCallback(createCallback, *rootNode));
 
       osg::Geode* defaultGeode = new osg::Geode();
-      osg::Cylinder* shape = new osg::Cylinder(osg::Vec3(0.f, 0.f, 0.f), 2.f, 4.f);
+      osg::Cylinder* shape = new osg::Cylinder(osg::Vec3(0.0f, 0.0f, 0.0f), 2.0f, 4.0f);
       osg::ShapeDrawable* defaultDrawable = new osg::ShapeDrawable(shape);
       defaultDrawable->setDrawCallback(createCallback);
 
       defaultGeode->addDrawable(defaultDrawable);
       rootNode->addChild(defaultGeode);
-      return rootNode;
+
+      result = rootNode;
    }
    else
    {
-      return mCreateFunc(wrapper);
+      result = mCreateFunc(0, wrapper);
    }
+
+   return result;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateSoftware(dtAnim::BaseModelWrapper* wrapper)
+dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateSoftware(osg::RenderInfo* renderInfo, dtAnim::BaseModelWrapper* wrapper)
 {
    dtCore::RefPtr<osg::Node> node;
    dtCore::RefPtr<dtAnim::NodeBuilderInterface> nodeBuilder = CreateNodeBuilder(*wrapper);
    
    if (nodeBuilder.valid())
    {
-      node = nodeBuilder->CreateSoftware(wrapper);
+      node = nodeBuilder->CreateSoftware(renderInfo, wrapper);
    }
    
    if ( ! node.valid())
@@ -231,14 +250,14 @@ dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateSoftware(dtAnim::BaseModelWrapp
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateSoftwareNoVBO(dtAnim::BaseModelWrapper* wrapper)
+dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateSoftwareNoVBO(osg::RenderInfo* renderInfo, dtAnim::BaseModelWrapper* wrapper)
 {
    dtCore::RefPtr<osg::Node> node;
    dtCore::RefPtr<dtAnim::NodeBuilderInterface> nodeBuilder = CreateNodeBuilder(*wrapper);
    
    if (nodeBuilder.valid())
    {
-      node = nodeBuilder->CreateSoftwareNoVBO(wrapper);
+      node = nodeBuilder->CreateSoftwareNoVBO(renderInfo, wrapper);
    }
    
    if ( ! node.valid())
@@ -250,14 +269,14 @@ dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateSoftwareNoVBO(dtAnim::BaseModel
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateHardware(dtAnim::BaseModelWrapper* wrapper)
+dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateHardware(osg::RenderInfo* renderInfo, dtAnim::BaseModelWrapper* wrapper)
 {
    dtCore::RefPtr<osg::Node> node;
    dtCore::RefPtr<dtAnim::NodeBuilderInterface> nodeBuilder = CreateNodeBuilder(*wrapper);
    
    if (nodeBuilder.valid())
    {
-      node = nodeBuilder->CreateHardware(wrapper);
+      node = nodeBuilder->CreateHardware(renderInfo, wrapper);
    }
    
    if ( ! node.valid())
@@ -269,7 +288,7 @@ dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateHardware(dtAnim::BaseModelWrapp
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateNULL(dtAnim::BaseModelWrapper* wrapper)
+dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateNULL(osg::RenderInfo* renderInfo, dtAnim::BaseModelWrapper* wrapper)
 {
    DTUNREFERENCED_PARAMETER(wrapper);
 
@@ -277,6 +296,67 @@ dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateNULL(dtAnim::BaseModelWrapper* 
 
    //NULL create function.  Used if hardware and software create functions fail.
    return geode;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+dtCore::ShaderProgram* AnimNodeBuilder::LoadShaders(BaseModelData& modelData, osg::Geode& geode)
+{
+   static const std::string hardwareSkinningSPGroup = "HardwareSkinningLegacy";
+   dtCore::ShaderManager& shaderManager = dtCore::ShaderManager::GetInstance();
+   dtCore::ShaderProgram* shaderProgram = NULL;
+   if (!modelData.GetShaderGroupName().empty())
+   {
+      dtCore::ShaderGroup* spGroup = shaderManager.FindShaderGroupPrototype(modelData.GetShaderGroupName());
+      if (spGroup != NULL)
+      {
+         bool editMode = dtCore::Project::GetInstance().GetEditMode();
+
+         if (editMode)
+         {
+            shaderProgram = spGroup->GetEditorShader();
+         }
+
+         if (shaderProgram == NULL && !modelData.GetShaderName().empty())
+         {
+            shaderProgram = spGroup->FindShader(modelData.GetShaderName());
+            if (shaderProgram == NULL)
+            {
+               LOG_ERROR("Shader program \"" + modelData.GetShaderName() + "\" from group \""
+                     + modelData.GetShaderGroupName() + "\" was not found, using the default from the group.");
+            }
+         }
+
+         if (shaderProgram == NULL)
+         {
+            shaderProgram = spGroup->GetDefaultShader();
+            if (shaderProgram == NULL)
+            {
+               LOG_ERROR("Shader Group \""  + modelData.GetShaderGroupName()
+                     + "\" was not found, overriding to use the default group.");
+            }
+         }
+      }
+   }
+
+   //If no shader group is setup, create one.
+   if (shaderProgram == NULL)
+   {
+      dtCore::ShaderGroup* defSPGroup = shaderManager.FindShaderGroupPrototype(hardwareSkinningSPGroup);
+      if (defSPGroup == NULL)
+      {
+         defSPGroup = new dtCore::ShaderGroup(hardwareSkinningSPGroup);
+         shaderProgram = new dtCore::ShaderProgram("Default");
+         shaderProgram->AddVertexShader("shaders/HardwareCharacter.vert");
+         defSPGroup->AddShader(*shaderProgram, true);
+         shaderManager.AddShaderGroupPrototype(*defSPGroup);
+      }
+      else
+      {
+         shaderProgram = defSPGroup->GetDefaultShader();
+      }
+      modelData.SetShaderGroupName(hardwareSkinningSPGroup);
+   }
+   return shaderManager.AssignShaderFromPrototype(*shaderProgram, geode);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

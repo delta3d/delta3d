@@ -189,6 +189,8 @@ namespace dtUtil
        * recursively create all subdirectories needed to create the final directory in
        * the passed in string.
        * @param strDir The directory to create.
+       * @throws all the exceptions that MakeDirectory throws
+       * @see ::MakeDirectory
        */
       void MakeDirectoryEX(std::string strDir);
 

@@ -29,7 +29,7 @@
 #include <dtAnim/animationupdaterinterface.h>
 #include <dtAnim/cal3dmodelwrapper.h>
 #include <dtAnim/ical3ddriver.h>
-#include <dtCore/refptr.h>
+#include <dtCore/observerptr.h>
 #include <osg/Referenced>
 
 
@@ -123,6 +123,9 @@ namespace dtAnim
 
       void SetMinimumBlendTime(float seconds);
       float GetMinimumBlendTime() const;
+
+      /*virtual*/ bool BlendPose(dtAnim::AnimationInterface& anim, float weight, float delay);
+      /*virtual*/ bool ClearPose(dtAnim::AnimationInterface& anim, float delay);
       
       /**
        * Globally set whether characters should be allowed to go back to bind pose
@@ -135,7 +138,7 @@ namespace dtAnim
       virtual ~Cal3DAnimator();
 
    private:
-      dtCore::RefPtr<dtAnim::Cal3DModelWrapper> mWrapper;
+      dtCore::ObserverPtr<dtAnim::Cal3DModelWrapper> mWrapper;
       CalModel* mCalModel;
       CalMixer* mMixer;
       float mMinBlendTime;

@@ -29,6 +29,7 @@
 #include <dtAnim/animnodebuilder.h>
 #include <dtAnim/basemodeldata.h>
 #include <dtAnim/modeldatabase.h>
+#include <dtAnim/posesequence.h>
 
 #include <dtCore/hotspotattachment.h>
 
@@ -69,7 +70,6 @@ AnimationHelper::AnimationHelper()
    , mGroundClamp(false)
    , mEnableCommands(false)
    , mLastUpdateTime(0.0)
-   , mNode(NULL)
    , mSequenceMixer(new SequenceMixer())
    , mAttachmentController(NULL)
 {
@@ -101,21 +101,7 @@ void AnimationHelper::OnRemovedFromWorld()
 /////////////////////////////////////////////////////////////////////////////////
 void AnimationHelper::Update(float dt)
 {
-   ModelLoader::LoadingState loadingState = mModelLoader.valid() ? mModelLoader->GetLoadingState(): ModelLoader::IDLE;
-   if (loadingState == ModelLoader::COMPLETE)
-   {
-      mNode = mModelWrapper->CreateDrawableNode(false);
-
-      mAttachmentController = mModelLoader->GetAttachmentController();
-
-      dtAnim::BaseModelData* modelData = mModelWrapper->GetModelData();
-
-      RegisterAnimations(*modelData);
-
-      // Notify observers that the model has been loaded
-      ModelLoadedSignal(this);
-   }
-
+   ModelLoader::LoadingState loadingState = mModelLoader.valid() ? mModelLoader->GetLoadingState(false): ModelLoader::IDLE;
    // We don't want to check the wrapper if we are curretly loading for threading reasons.
    if (loadingState != ModelLoader::LOADING && mModelWrapper != NULL)
    {
@@ -132,10 +118,46 @@ void AnimationHelper::Update(float dt)
             mAttachmentController->Update(*GetModelWrapper());
          }
       }
+   }
+}
 
+/////////////////////////////////////////////////////////////////////////////////
+void AnimationHelper::CheckLoadingState()
+{
+   ModelLoader::LoadingState loadingState = mModelLoader.valid() ? mModelLoader->GetLoadingState(): ModelLoader::IDLE;
+   if (loadingState == ModelLoader::COMPLETE)
+   {
+      mModelWrapper->CreateDrawableNode(false);
+
+      mAttachmentController = mModelLoader->GetAttachmentController();
+
+      dtAnim::BaseModelData* modelData = mModelWrapper->GetModelData();
+
+      RegisterAnimations(*modelData);
+      SetupPoses(*modelData);
+
+      // Notify observers that the model has been loaded
+      ModelLoadedSignal(this);
    }
 
+   if (loadingState != ModelLoader::LOADING && GetIsInGM())
+   {
+      UnregisterForTick();
+   }
 }
+
+/////////////////////////////////////////////////////////////////////////////////
+void AnimationHelper::OnTickLocal(const dtGame::TickMessage& /*tickMessage*/)
+{
+   CheckLoadingState();
+}
+
+/////////////////////////////////////////////////////////////////////////////////
+void AnimationHelper::OnTickRemote(const dtGame::TickMessage& tickMessage)
+{
+   CheckLoadingState();
+}
+
 
 /////////////////////////////////////////////////////////////////////////////////
 void AnimationHelper::PlayAnimation(const std::string& pAnim)
@@ -196,7 +218,7 @@ void AnimationHelper::LoadSkeletalMesh()
 {
    try
    {
-      LoadModel(mSkeletalMesh, false);
+      LoadModel(mSkeletalMesh);
    }
    catch (const dtUtil::Exception& ex)
    {
@@ -209,7 +231,10 @@ void AnimationHelper::LoadSkeletalMesh()
 bool AnimationHelper::IsLoadingAsynchronously()
 {
    // This can't be const because GetLoadingState isn't const.
-   return mModelLoader.valid() && mModelLoader->GetLoadingState(false) == ModelLoader::LOADING;
+   // We check for complete because the main thread has to handle the complete state and call the callbacks
+   // before it's actually done.
+   return mModelLoader.valid() && (mModelLoader->GetLoadingState(false) == ModelLoader::LOADING ||
+         mModelLoader->GetLoadingState(false) == ModelLoader::COMPLETE);
 }
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -220,33 +245,40 @@ void AnimationHelper::UnloadModel()
    {
       mAttachmentController->Clear();
    }
-   ModelUnloadedSignal(this);
+   if (GetNode() != NULL)
+      ModelUnloadedSignal(this);
    // Set these to null after so that they can be accessed in the callback.
    mModelWrapper = NULL;
    mModelLoader = NULL;
-   mNode = NULL;
 }
 
 /////////////////////////////////////////////////////////////////////////////////
-bool AnimationHelper::LoadModel(const dtCore::ResourceDescriptor& resource, bool immediate)
+bool AnimationHelper::LoadModel(const dtCore::ResourceDescriptor& resource)
 {
    if (!resource.IsEmpty())
    {
-      if (mNode.valid())
-      {
-         UnloadModel();
-      }
+      UnloadModel();
 
       mModelLoader = new dtAnim::ModelLoader();
       mModelLoader->ModelLoaded.connect_slot(this, &AnimationHelper::OnModelLoadCompleted);
       mModelLoader->SetAttachmentController(mAttachmentController);
-      mModelLoader->LoadModel(resource);
-
+      dtCore::Project& proj = dtCore::Project::GetInstance();
+      bool background = mLoadModelAsynchronously && GetIsInGM() && !proj.GetEditMode();
+      mModelLoader->LoadModel(resource, background);
+      if (background)
+      {
+         // Need the regular tick to check for the loaded model.
+         RegisterForTick();
+      }
+      else
+      {
+         CheckLoadingState();
+      }
    }
    else
    {
       UnloadModel();
-  }
+   }
 
    return true;
 }
@@ -259,7 +291,7 @@ void AnimationHelper::AttachNodeToDrawable(osg::Group* parent)
    {
       if (parent == NULL)
       {
-         dtGame::GameActorProxy* gap;
+         dtGame::GameActorProxy* gap = NULL;
          GetOwner(gap);
          if (gap != NULL)
          {
@@ -325,13 +357,13 @@ void AnimationHelper::BuildPropertyMap()
 /////////////////////////////////////////////////////////////////////////////////
 osg::Node* AnimationHelper::GetNode()
 {
-   return mNode.get();
+   return mModelWrapper.valid() ? mModelWrapper->GetDrawableNode() : NULL;
 }
 
 /////////////////////////////////////////////////////////////////////////////////
 const osg::Node* AnimationHelper::GetNode() const
 {
-   return mNode.get();
+   return mModelWrapper.valid() ? mModelWrapper->GetDrawableNode() : NULL;
 }
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -435,7 +467,7 @@ void AnimationHelper::SetCommandCallbacksEnabled(bool enable)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-bool AnimationHelper::IsCommandCallbacksEnabled() const
+bool AnimationHelper::GetCommandCallbacksEnabled() const
 {
    return mEnableCommands;
 }
@@ -893,11 +925,123 @@ void AnimationHelper::OnModelLoadCompleted(dtAnim::BaseModelWrapper* newModel, d
    if (loadState == dtAnim::ModelLoader::COMPLETE)
    {
       mModelWrapper = newModel;
+      if (mModelWrapper->GetDrawableNode() == NULL)
+      {
+         mModelWrapper->CreateDrawableNode(false);
+      }
    }
    else
    {
       LOGN_ERROR("AnimationHelper.cpp", std::string("Loading character model \"") + mModelLoader->GetResourceDescriptor().GetResourceIdentifier() + "\" failed.");
    }
 }
+
+////////////////////////////////////////////////////////////////////////////////
+PoseController* AnimationHelper::GetPoseController()
+{
+   PoseController* controller = NULL;
+
+   if ( ! mPoseSequence.valid())
+   {
+      BaseModelWrapper* model = GetModelWrapper();
+      if (model != NULL && NULL != ModelDatabase::GetInstance().GetPoseMeshDatabase(*model))
+      {
+         mPoseSequence = new PoseSequence;
+         mPoseSequence->SetName("DefaultPoseSequence");
+         mSequenceMixer->RegisterAnimation(mPoseSequence.get());
+      }
+   }
+
+   if (mPoseSequence.valid())
+   {
+      controller = mPoseSequence->GetPoseController();
+   }
+
+   return controller;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void AnimationHelper::SetPosesEnabled(bool enabled)
+{
+   if (GetPosesEnabled() != enabled)
+   {
+      if (mPoseSequence.valid())
+      {
+         if (enabled)
+         {
+            mPoseSequence = static_cast<PoseSequence*>(mPoseSequence->Clone(GetModelWrapper()).get());
+            mSequenceMixer->PlayAnimation(mPoseSequence);
+         }
+         else
+         {
+            float blendTime = mPoseSequence->GetPoseController()->GetBlendTime();
+            mSequenceMixer->ClearAnimation(mPoseSequence->GetName(), blendTime);
+         }
+      }
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+bool AnimationHelper::GetPosesEnabled() const
+{
+   return mPoseSequence.valid() && mSequenceMixer->IsAnimationPlaying(mPoseSequence->GetName());
+}
+
+////////////////////////////////////////////////////////////////////////////////
+bool AnimationHelper::SetupPoses(const dtAnim::BaseModelData& modelData)
+{
+   // Characters may not have pose meshes defined.
+   // Avoid extra work and error reports if this is the case.
+   if (modelData.GetPoseMeshFilename().empty())
+   {
+      return false;
+   }
+
+   bool success = false;
+
+   ModelDatabase& database = ModelDatabase::GetInstance();
+
+   dtCore::TransformableActorProxy* actor = NULL;
+   GetOwner(actor);
+
+   dtCore::Transformable* drawable = NULL;
+   if (actor != NULL)
+   {
+      drawable = actor->GetDrawable()->AsTransformable();
+   }
+
+   BaseModelWrapper* model = GetModelWrapper();
+   if (drawable != NULL && model != NULL)
+   {
+      PoseMeshDatabase* poseDatabase = database.GetPoseMeshDatabase(*model);
+
+      if (poseDatabase == NULL)
+      {
+         std::string modelName;
+         if (model->GetModelData() != NULL)
+         {
+            modelName = model->GetModelData()->GetModelName();
+         }
+
+         LOG_ERROR("Cannot setup PoseController for model \"" + modelName 
+            + "\" because its PoseMeshDatabase is not available.");
+      }
+      else
+      {
+         PoseController* poseController = GetPoseController();
+         
+         poseController->SetPoseMeshDatabase(poseDatabase);
+         poseController->SetPoseDrawable(drawable);
+         poseController->SetModelWrapper(model);
+
+         SetPosesEnabled(true);
+
+         success = true;
+      }
+   }
+
+   return success;
+}
+
 
 } // namespace dtAnim

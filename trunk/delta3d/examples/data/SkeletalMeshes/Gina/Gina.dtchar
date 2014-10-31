@@ -4,6 +4,8 @@
    <animation fileName="animations/Idle.xaf" name="Idle" />
    <animation fileName="animations/Walk.xaf" name="Walk" />
    <animation fileName="animations/Run.xaf" name="Run" />
+   <animation fileName="animations/Sitting_BarStool.xaf" name="Sitting_BarStool" />
+   <animation fileName="animations/Lying_Sunchair.xaf" name="Lying_Sunchair" />
 
    <animation fileName="poses/EyeLeftDown.xaf"/>
    <animation fileName="poses/EyeLeftIn.xaf"/>
@@ -18,10 +20,13 @@
    <animation fileName="poses/EyeRightOut.xaf"/>
    <animation fileName="poses/EyeRightUp.xaf"/>
    <animation fileName="poses/HeadDownLeft.xaf"/>
+   <animation fileName="poses/HeadDown.xaf"/>
    <animation fileName="poses/HeadDownRight.xaf"/>
    <animation fileName="poses/HeadLeft.xaf"/>
+   <animation fileName="poses/HeadForward.xaf"/>
    <animation fileName="poses/HeadRight.xaf"/>
    <animation fileName="poses/HeadUpLeft.xaf"/>
+   <animation fileName="poses/HeadUp.xaf"/>
    <animation fileName="poses/HeadUpRight.xaf"/>
    <animation fileName="poses/TorsoDownLeft.xaf"/>
    <animation fileName="poses/TorsoDownRight.xaf"/>
@@ -45,14 +50,14 @@
    <material fileName="materials/Shoes.xrf" name="Shoes" />
   <material fileName="materials/Eyebrows.xrf" name="Eyebrows" />
   <material fileName="materials/Eyelashes.xrf" name="Eyelashes" />
+  <skinningShader>
+      <shaderGroup>MultiMapCharacter</shaderGroup>
+      <shaderName>MultiMapCharacter</shaderName>
+      <maxBones>200</maxBones>
+   </skinningShader>
    <scale>
       <scalingFactor>0.1</scalingFactor>
    </scale>
-  <skinningShader>
-      <shaderGroup>Human</shaderGroup>
-      <shaderName>Normal</shaderName>
-      <maxBones>200</maxBones>
-   </skinningShader>
    <animationChannel>
       <name>Idle</name>
       <animationName>Idle</animationName>
@@ -89,16 +94,16 @@
     <isAction>0</isAction>
     <isLooping>1</isLooping>
   </animationChannel>
-   <animationSequence>
-      <name>RunWalk</name>
-      <startDelay>0.1</startDelay>
-      <fadeIn>0.2</fadeIn>
-      <fadeOut>0.2</fadeOut>
-      <speed>1.0</speed>
-      <baseWeight>1.0</baseWeight>
-      <children>
-         <child>Run</child>
-         <child>Walk</child>
-      </children>
-   </animationSequence>
+  <animationChannel>
+    <name>Sitting</name>
+    <animationName>Sitting_BarStool</animationName>
+    <startDelay>0.0</startDelay>
+    <fadeIn>0.0</fadeIn>
+    <fadeOut>0.0</fadeOut>
+    <speed>1.0</speed>
+    <baseWeight>1.0</baseWeight>
+    <maxDuration>0.0</maxDuration>
+    <isAction>0</isAction>
+    <isLooping>1</isLooping>
+  </animationChannel>
 </character>

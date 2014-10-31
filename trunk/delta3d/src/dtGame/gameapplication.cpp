@@ -23,6 +23,7 @@
 
 #include <dtUtil/log.h>
 #include <dtUtil/exception.h>
+#include <dtUtil/datapathutils.h>
 
 #include <dtGame/gamemanager.h>
 #include <dtCore/deltawin.h>
@@ -48,6 +49,7 @@ namespace dtGame
       , mCreateFunction(NULL)
       , mDestroyFunction(NULL)
    {
+      dtUtil::RemovePSNCommandLineOption(argc, argv);
    }
 
    /////////////////////////////////////////////////////////////////////////////

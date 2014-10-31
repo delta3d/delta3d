@@ -71,15 +71,6 @@ private:
    PredicatePoseMeshName();
 };
 
-template<typename PtrT>
-struct DeletePointer
-{
-   void operator ()(PtrT ptr)
-   {
-      delete ptr;
-   }
-};
-
 ////////////////////////////////////////////////////////////////////////////////
 PoseMeshDatabase::PoseMeshDatabase(dtAnim::BaseModelWrapper* model)
    : mMeshes()
@@ -90,10 +81,6 @@ PoseMeshDatabase::PoseMeshDatabase(dtAnim::BaseModelWrapper* model)
 ////////////////////////////////////////////////////////////////////////////////
 PoseMeshDatabase::~PoseMeshDatabase()
 {
-   std::for_each(mMeshes.begin(),
-                 mMeshes.end(),
-                 DeletePointer<PoseMeshList::value_type>());
-
    mMeshes.clear();
 }
 
@@ -116,14 +103,15 @@ bool PoseMeshDatabase::LoadFromFile(const std::string& file)
 {
    PoseMeshLoader meshLoader;
    std::vector<PoseMeshData> meshDataVector;
-   bool result = meshLoader.Load(file, meshDataVector);
-   assert(result);
 
-   mMeshes.reserve(mMeshes.size() + meshDataVector.size());
-
-
+   bool result = false;
    try
    {
+      result = meshLoader.Load(file, meshDataVector);
+      assert(result);
+
+      mMeshes.reserve(mMeshes.size() + meshDataVector.size());
+
       std::for_each(meshDataVector.begin(),
                     meshDataVector.end(),
                     PoseBuilderFunctor<PoseMeshList>(mModel.get(), &mMeshes));
@@ -131,11 +119,6 @@ bool PoseMeshDatabase::LoadFromFile(const std::string& file)
    catch (dtUtil::Exception& exception)
    {
       LOG_ERROR(exception.ToString());
-
-      // Mesh is invalid, clear its data
-      std::for_each(mMeshes.begin(),
-                    mMeshes.end(),
-                    DeletePointer<PoseMeshList::value_type>());
 
       mMeshes.clear();
 

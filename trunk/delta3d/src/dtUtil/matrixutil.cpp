@@ -206,7 +206,7 @@ void MatrixUtil::MatrixToHpr(osg::Vec3& hpr, const osg::Matrix& rotation)
       double cr = ClampUnity(-mat(2,1));
       double sr = ClampUnity(mat(0,1));
 
-      if (hpr[1] < 0.f)
+      if (hpr[1] < 0.0f)
       {
          hpr[0] = 180.f;
       }

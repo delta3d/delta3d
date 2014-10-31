@@ -43,20 +43,32 @@ const dtCore::RefPtr<dtCore::SystemComponentType> ProceduralAnimationComponent::
 
 ProceduralAnimationComponent::ProceduralAnimationComponent()
    : dtGame::BaseInputComponent(*TYPE)
-{
-   // nada
-}
+{}
 
 ////////////////////////////////////////////////////////////////////////////////
 ProceduralAnimationComponent::~ProceduralAnimationComponent()
-{
-
-}
+{}
 
 ////////////////////////////////////////////////////////////////////////////////
 void ProceduralAnimationComponent::ProcessMessage(const dtGame::Message& message)
 {
-   if (message.GetMessageType() == dtGame::MessageType::INFO_MAP_LOADED)
+   if (message.GetMessageType() == dtGame::MessageType::TICK_LOCAL)
+   {
+      const dtGame::TickMessage& tickMessage
+         = static_cast<const dtGame::TickMessage&>(message);
+
+      if ( ! mActorList.empty())
+      {
+         typedef std::vector<ProceduralAnimationActor*> AnimActorList;
+         AnimActorList::iterator curIter = mActorList.begin();
+         AnimActorList::iterator endIter = mActorList.end();
+         for ( ; curIter != endIter; ++curIter)
+         {
+            (*curIter)->GetModelWrapper()->UpdateAnimation(tickMessage.GetDeltaSimTime());
+         }
+      }
+   }
+   else if (message.GetMessageType() == dtGame::MessageType::INFO_MAP_LOADED)
    {
       CreateIKActorsForAesthetics();
 
@@ -66,8 +78,8 @@ void ProceduralAnimationComponent::ProcessMessage(const dtGame::Message& message
       // Set the behavior for each of the actors
       for (size_t actorIndex = 0; actorIndex < mActorList.size(); ++actorIndex)
       {
-         ProceduralAnimationActor::eMode mode =
-            (actorIndex % 2) ? ProceduralAnimationActor::MODE_WATCH: ProceduralAnimationActor::MODE_AIM;
+         ProceduralAnimationActor::eMode mode = ProceduralAnimationActor::MODE_WATCH;
+            //(actorIndex % 2) ? ProceduralAnimationActor::MODE_WATCH: ProceduralAnimationActor::MODE_AIM;
 
          mActorList[actorIndex]->SetMode(mode);
          mActorList[actorIndex]->SetTarget(GetGameManager()->GetApplication().GetCamera());
@@ -183,13 +195,7 @@ void ProceduralAnimationComponent::InitializeIKActors()
    // Give all IK actors access to the database
    for (size_t actorIndex = 0; actorIndex < mActorList.size(); ++actorIndex)
    {
-      dtAnim::PoseMeshDatabase* posemeshDatabase = GetPoseMeshDatabaseForActor(mActorList[actorIndex]);
-
-      // IKActors typically have a pose mesh with which to do their IK
-      if (posemeshDatabase)
-      {
-         mActorList[actorIndex]->SetPoseMeshDatabase(posemeshDatabase);
-      }
+      // TODO:
    }
 }
 
@@ -215,7 +221,7 @@ dtCore::Transformable* ProceduralAnimationComponent::GetTerrain()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ProceduralAnimationComponent::SetAimTarget(const dtCore::Transformable* transformable)
+void ProceduralAnimationComponent::SetAimTarget(dtCore::Transformable* transformable)
 {
    // Give all IK actors something to aim at
    for (size_t actorIndex = 0; actorIndex < mActorList.size(); ++actorIndex)

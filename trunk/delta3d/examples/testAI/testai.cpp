@@ -105,7 +105,7 @@ void TestAI::Config()
 
    // set overhead camera offset
    trans.SetTranslation(0.0f, -5.0f, 70.0f);
-   trans.SetRotation(0.0f, -90.f, 0.0f);
+   trans.SetRotation(0.0f, -90.0f, 0.0f);
    trans.Get(mCameraOffset);
    mOverheadCamera->GetMatrixNode()->setMatrix(mCameraOffset);
 
@@ -121,12 +121,12 @@ void TestAI::Config()
 
    dtCore::ResourceDescriptor characterFile("SkeletalMeshes:Marine:marine.xml");
 
-   // spawn our character
+//   // spawn our character
    mCharacter = new dtAI::AICharacter(GetScene(), pWaypoint, characterFile, 3);
-
-   // add the two Cameras as children so they get moved along with the character
-   mCharacter->GetCharacter()->AddChild(GetCamera());
-   mCharacter->GetCharacter()->AddChild(mOverheadCamera.get());
+//
+//   // add the two Cameras as children so they get moved along with the character
+//   mCharacter->GetCharacter()->AddChild(GetCamera());
+//   mCharacter->GetCharacter()->AddChild(mOverheadCamera.get());
 
    GoToWaypoint(1);
 

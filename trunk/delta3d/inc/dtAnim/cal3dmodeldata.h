@@ -62,8 +62,6 @@ namespace dtAnim
       CalCoreModel* GetCoreModel();
       const CalCoreModel* GetCoreModel() const;
 
-      virtual void SetScale(float scale);
-
       virtual float GetAnimationDuration(const std::string& name) const;
 
       /// @return the list of non-character bone attachments

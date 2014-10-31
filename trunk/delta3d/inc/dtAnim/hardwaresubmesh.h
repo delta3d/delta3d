@@ -49,9 +49,26 @@ namespace dtAnim
    class DT_ANIM_EXPORT HardwareSubmeshDrawable: public osg::Drawable
    {
    public:
+      typedef osg::Drawable BaseClass;
+
+      static const unsigned int VBO_OFFSET_POSITION = 0;
+      static const unsigned int VBO_OFFSET_NORMAL = 3;
+      static const unsigned int VBO_OFFSET_TEXCOORD0 = 6;
+      static const unsigned int VBO_OFFSET_TEXCOORD1 = 8;
+      static const unsigned int VBO_OFFSET_WEIGHT = 10;
+      static const unsigned int VBO_OFFSET_BONE_INDEX = 14;
+      static const unsigned int VBO_OFFSET_TANGENT_SPACE = 18;
+      static const unsigned int VBO_STRIDE = 22;
+      static const unsigned int VBO_STRIDE_BYTES = VBO_STRIDE * sizeof(float);
+
       HardwareSubmeshDrawable(Cal3DModelWrapper* wrapper, CalHardwareModel* model,
             const std::string& boneUniformName, unsigned numBones,
-            unsigned mesh, osg::VertexBufferObject* vertexVBO, osg::ElementBufferObject* indexEBO);
+            unsigned mesh, osg::VertexBufferObject* vertexVBO, osg::ElementBufferObject* indexEBO,
+            int boneWeightsLocation,
+            int boneIndicesLocation,
+            int tangentSpaceLocation);
+
+      void SetBoundingBox(const osg::BoundingBox& boundingBox);
 
       virtual void drawImplementation(osg::RenderInfo& renderInfo) const;
 
@@ -69,10 +86,14 @@ namespace dtAnim
       dtCore::RefPtr<osg::Uniform> mScale;
       dtCore::RefPtr<osg::Uniform> mBoneTransforms;
       std::string mBoneUniformName;
+      osg::BoundingBox mBoundingBox;
       unsigned int mNumBones, mMeshID;
-      osg::VertexBufferObject* mVertexVBO;
-      osg::ElementBufferObject* mIndexEBO;
-      OpenThreads::Mutex mUpdateMutex; ///Used to support rendering with multiple threads
+      dtCore::RefPtr<osg::VertexBufferObject> mVertexVBO;
+      dtCore::RefPtr<osg::ElementBufferObject> mIndexEBO;
+      int mBoneWeightsLocation;
+      int mBoneIndicesLocation;
+      int mTangentSpaceLocation;
+      mutable OpenThreads::Mutex mUpdateMutex; ///Used to support rendering with multiple threads
    };
 
 }; //namespace dtAnim

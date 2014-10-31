@@ -35,16 +35,21 @@ namespace dtPhysics
       static PrimitiveType BOX;
       static PrimitiveType SPHERE;
       static PrimitiveType CYLINDER;
-      static PrimitiveType HEIGHTFIELD;
+      static PrimitiveType CAPSULE;
+      static PrimitiveType HEIGHTFIELD; // Not yet supported
       static PrimitiveType CONVEX_HULL;
       static PrimitiveType TRIANGLE_MESH;
       static PrimitiveType TERRAIN_MESH;
 
       /// @return true if this primitive type instance represents a static terrain type.
       bool IsTerrainType() const;
+
+      /// @return if this primitive type refers to a simple shape type as opposed to a mesh.
+      bool IsSimpleShape() const;
    private:
-      PrimitiveType(const std::string& name, bool terrainType);
+      PrimitiveType(const std::string& name, bool terrainType, bool simpleShape);
       bool mTerrainType;
+      bool mSimpleShape;
    };
 }
 #endif /* PRIMITIVE_TYPE_H_ */
