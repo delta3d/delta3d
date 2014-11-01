@@ -87,6 +87,9 @@ namespace dtPhysics
       CPPUNIT_TEST(testPrimitiveType);
       CPPUNIT_TEST(testMaterialActor);
       CPPUNIT_TEST(testGeometryMarginPerEngine);
+      CPPUNIT_TEST(testObjectArray);
+      CPPUNIT_TEST(testObjectOldPropertyNameRemoval);
+      CPPUNIT_TEST(testObjectPropertyNames);
       CPPUNIT_TEST(testObjectPerEngine);
       CPPUNIT_TEST(testObjectConvexPerEngine);
       CPPUNIT_TEST(testObjectCollisionPerEngine);
@@ -119,6 +122,9 @@ namespace dtPhysics
       void testPrimitiveType();
 
       void testGeometryMarginPerEngine();
+      void testObjectArray();
+      void testObjectOldPropertyNameRemoval();
+      void testObjectPropertyNames();
       void testObjectPerEngine();
       void testObjectCollisionPerEngine();
       void testObjectOffsetPerEngine();
@@ -312,6 +318,100 @@ namespace dtPhysics
    {
       std::for_each(GetPhysicsEngineList().begin(), GetPhysicsEngineList().end(),
                dtUtil::MakeFunctor(&dtPhysicsTests::testGeometryMargin, this));
+   }
+
+   /////////////////////////////////////////////////////////
+   // HELPER PRED
+   struct TestPropertyNameCollector
+   {
+      typedef dtCore::RefPtr<dtCore::ActorProperty> PropPtr;
+      typedef dtUtil::Functor<void, TYPELIST_1(PropPtr)> VoidPropPtrFunc;
+
+      typedef std::set<std::string> StrSet;
+      StrSet mNames;
+
+      void operator() (PropPtr prop)
+      {
+         mNames.insert(prop->GetName());
+      }
+
+      VoidPropPtrFunc GetFunc()
+      {
+         return dtUtil::MakeFunctor(&TestPropertyNameCollector::operator(), this);
+      }
+   };
+
+   /////////////////////////////////////////////////////////
+   void dtPhysicsTests::testObjectPropertyNames()
+   {
+      dtCore::PropertyContainer::PropertyVector props;
+
+      std::string objName("testObject");
+      std::string objNamePrefix(objName + ": ");
+      dtCore::RefPtr<PhysicsObject> po = new PhysicsObject(objName);
+
+      // Ensure the old property naming functionality is disabled.
+      CPPUNIT_ASSERT( ! po->IsPropertyNamePrefixEnabled());
+
+      TestPropertyNameCollector pred;
+      CPPUNIT_ASSERT(pred.mNames.empty());
+
+      // Get the property names.
+      po->BuildPropertyMap();
+      po->ForEachProperty(pred.GetFunc());
+      po->GetPropertyList(props);
+
+      CPPUNIT_ASSERT( ! props.empty());
+      CPPUNIT_ASSERT( ! pred.mNames.empty());
+      CPPUNIT_ASSERT(pred.mNames.size() == props.size());
+
+      typedef std::set<std::string> StrSet;
+      std::string str;
+      int numPropNamesFound = 0;
+      StrSet::iterator curIter = pred.mNames.begin();
+      StrSet::iterator endIter = pred.mNames.end();
+      for (; curIter != endIter; ++curIter)
+      {
+         str = *curIter;
+         CPPUNIT_ASSERT(str.find(objName) == std::string::npos);
+         CPPUNIT_ASSERT(str.find(objNamePrefix) == std::string::npos);
+         CPPUNIT_ASSERT(po->GetProperty(str) != NULL);
+         ++numPropNamesFound;
+      }
+
+      CPPUNIT_ASSERT((int)props.size() == numPropNamesFound);
+
+      
+
+      // Test that the old property naming functionality can still work.
+
+      // Renew the object and the property name collector.
+      pred.mNames.clear();
+      po = new PhysicsObject(objName);
+
+      // --- Enabled the old functionality
+      po->SetPropertyNamePrefixEnabled(true);
+      CPPUNIT_ASSERT(po->IsPropertyNamePrefixEnabled());
+
+      // Get the property names.
+      po->BuildPropertyMap();
+      po->ForEachProperty(pred.GetFunc());
+
+      CPPUNIT_ASSERT( ! pred.mNames.empty());
+
+      curIter = pred.mNames.begin();
+      endIter = pred.mNames.end();
+      for (; curIter != endIter; ++curIter)
+      {
+         str = *curIter;
+
+         // DEBUG:
+         printf("Trying to find \"%s\" in \"%s\"\n", objName.c_str(), str.c_str());
+
+         CPPUNIT_ASSERT(str.find(objName) != std::string::npos);
+         CPPUNIT_ASSERT(str.find(objNamePrefix) != std::string::npos);
+         CPPUNIT_ASSERT(po->GetProperty(str) != NULL);
+      }
    }
 
    /////////////////////////////////////////////////////////
@@ -1363,6 +1463,10 @@ namespace dtPhysics
    {
       ChangeEngine(engine);
 
+      std::string name1("mypalFriend1");
+      std::string name2("mypalFriend2");
+      std::string name3("mypalFriend3");
+
       // make object
       dtCore::RefPtr<PhysicsActComp> tehVoodoo = new PhysicsActComp();
 
@@ -1371,9 +1475,9 @@ namespace dtPhysics
       CPPUNIT_ASSERT_MESSAGE("name: should be tehVoodooActorComp", tehVoodoo->GetName() == std::string("tehVoodooActorComp"));
 
       // test adding and removing of objects
-      dtCore::RefPtr<PhysicsObject> physicsObject1 = new PhysicsObject("mypalFriend1");
-      dtCore::RefPtr<PhysicsObject> physicsObject2 = new PhysicsObject("mypalFriend2");
-      dtCore::RefPtr<PhysicsObject> physicsObject3 = new PhysicsObject("mypalFriend3");
+      dtCore::RefPtr<PhysicsObject> physicsObject1 = new PhysicsObject(name1);
+      dtCore::RefPtr<PhysicsObject> physicsObject2 = new PhysicsObject(name2);
+      dtCore::RefPtr<PhysicsObject> physicsObject3 = new PhysicsObject(name3);
 
       CPPUNIT_ASSERT(tehVoodoo->GetMainPhysicsObject() == NULL);
       // adding
@@ -1444,21 +1548,21 @@ namespace dtPhysics
       CPPUNIT_ASSERT(!getAllFunc.mFoundNull);
 
       // see if they exist
-      CPPUNIT_ASSERT_MESSAGE("physics object1 should be on actorComp", tehVoodoo->GetPhysicsObject("mypalFriend1") != NULL);
-      CPPUNIT_ASSERT_MESSAGE("physics object2 should be on actorComp", tehVoodoo->GetPhysicsObject("mypalFriend2") != NULL);
-      CPPUNIT_ASSERT_MESSAGE("physics object3 should be on actorComp", tehVoodoo->GetPhysicsObject("mypalFriend3") != NULL);
+      CPPUNIT_ASSERT_MESSAGE("physics object1 should be on actorComp", tehVoodoo->GetPhysicsObject(name1) != NULL);
+      CPPUNIT_ASSERT_MESSAGE("physics object2 should be on actorComp", tehVoodoo->GetPhysicsObject(name2) != NULL);
+      CPPUNIT_ASSERT_MESSAGE("physics object3 should be on actorComp", tehVoodoo->GetPhysicsObject(name3) != NULL);
 
       // remove one see if u can't get to it, and can get to others
       tehVoodoo->RemovePhysicsObject("mypalFriend2");
-      CPPUNIT_ASSERT_MESSAGE("physics object2 shouldn't be on actorComp", tehVoodoo->GetPhysicsObject("mypalFriend2") == NULL);
-      CPPUNIT_ASSERT_MESSAGE("physics object1 should be on actorComp", tehVoodoo->GetPhysicsObject("mypalFriend1") != NULL);
-      CPPUNIT_ASSERT_MESSAGE("physics object3 should be on actorComp", tehVoodoo->GetPhysicsObject("mypalFriend3") != NULL);
+      CPPUNIT_ASSERT_MESSAGE("physics object2 shouldn't be on actorComp", tehVoodoo->GetPhysicsObject(name2) == NULL);
+      CPPUNIT_ASSERT_MESSAGE("physics object1 should be on actorComp", tehVoodoo->GetPhysicsObject(name1) != NULL);
+      CPPUNIT_ASSERT_MESSAGE("physics object3 should be on actorComp", tehVoodoo->GetPhysicsObject(name3) != NULL);
 
       // clear all, none should on be on the actorComp
       tehVoodoo->ClearAllPhysicsObjects();
-      CPPUNIT_ASSERT_MESSAGE("physics object2 shouldn't be on actorComp", tehVoodoo->GetPhysicsObject("mypalFriend2") == NULL);
-      CPPUNIT_ASSERT_MESSAGE("physics object1 shouldn't be on actorComp", tehVoodoo->GetPhysicsObject("mypalFriend1") == NULL);
-      CPPUNIT_ASSERT_MESSAGE("physics object3 shouldn't be on actorComp", tehVoodoo->GetPhysicsObject("mypalFriend3") == NULL);
+      CPPUNIT_ASSERT_MESSAGE("physics object2 shouldn't be on actorComp", tehVoodoo->GetPhysicsObject(name2) == NULL);
+      CPPUNIT_ASSERT_MESSAGE("physics object1 shouldn't be on actorComp", tehVoodoo->GetPhysicsObject(name1) == NULL);
+      CPPUNIT_ASSERT_MESSAGE("physics object3 shouldn't be on actorComp", tehVoodoo->GetPhysicsObject(name3) == NULL);
 
       tehVoodoo->GetAllPhysicsObjects(toFill);
       CPPUNIT_ASSERT_EQUAL_MESSAGE("GetAllPhysicsObjects Should not clear the vector", size_t(3U), toFill.size());
@@ -1560,6 +1664,155 @@ namespace dtPhysics
       CPPUNIT_ASSERT_EQUAL_MESSAGE("Mass should have changed", actorComp.GetDimensions(),
                newVec);
 
+   }
+
+   /////////////////////////////////////////////////////////
+   void dtPhysicsTests::testObjectArray()
+   {
+      try
+      {
+         dtCore::RefPtr<PhysicsActComp> actCompPtr = new PhysicsActComp();
+         PhysicsActComp& actorComp = *actCompPtr;
+
+         std::string name1("TestObjectA");
+         std::string name2("TestObjectB");
+         std::string name3("TestObjectC");
+
+         CPPUNIT_ASSERT(actorComp.GetPhysicsObjectCount() == 0);
+
+         actorComp.InsertNewPhysicsObject(0);
+         actorComp.InsertNewPhysicsObject(0);
+
+         CPPUNIT_ASSERT(actorComp.GetPhysicsObjectCount() == 2);
+         CPPUNIT_ASSERT(actorComp.GetPhysicsObjectByIndex(0) != NULL);
+         CPPUNIT_ASSERT(actorComp.GetPhysicsObjectByIndex(1) != NULL);
+         CPPUNIT_ASSERT(actorComp.GetPhysicsObjectByIndex(2) == NULL);
+
+         dtCore::RefPtr<PhysicsObject> po1 = actorComp.GetPhysicsObjectByIndex(0);
+         dtCore::RefPtr<PhysicsObject> po3 = actorComp.GetPhysicsObjectByIndex(1);
+         po1->SetName(name1);
+         po3->SetName(name3);
+
+         actorComp.InsertNewPhysicsObject(1);
+         CPPUNIT_ASSERT(actorComp.GetPhysicsObjectCount() == 3);
+         CPPUNIT_ASSERT(actorComp.GetPhysicsObjectByIndex(0) != NULL);
+         CPPUNIT_ASSERT(actorComp.GetPhysicsObjectByIndex(1) != NULL);
+         CPPUNIT_ASSERT(actorComp.GetPhysicsObjectByIndex(2) != NULL);
+         CPPUNIT_ASSERT(actorComp.GetPhysicsObjectByIndex(3) == NULL);
+
+         // Insert a new object between the first and last.
+         dtCore::RefPtr<PhysicsObject> po2 = actorComp.GetPhysicsObjectByIndex(1);
+         po2->SetName(name2);
+
+         CPPUNIT_ASSERT(actorComp.GetPhysicsObjectByIndex(0)->GetName() == name1);
+         CPPUNIT_ASSERT(actorComp.GetPhysicsObjectByIndex(1)->GetName() == name2);
+         CPPUNIT_ASSERT(actorComp.GetPhysicsObjectByIndex(2)->GetName() == name3);
+         CPPUNIT_ASSERT(actorComp.GetPhysicsObject(name1) == po1.get());
+         CPPUNIT_ASSERT(actorComp.GetPhysicsObject(name2) == po2.get());
+         CPPUNIT_ASSERT(actorComp.GetPhysicsObject(name3) == po3.get());
+
+
+         // Test removal
+         actorComp.RemovePhysicsObjectByIndex(1);
+         CPPUNIT_ASSERT(actorComp.GetPhysicsObjectCount() == 2);
+         CPPUNIT_ASSERT(actorComp.GetPhysicsObjectByIndex(0) != NULL);
+         CPPUNIT_ASSERT(actorComp.GetPhysicsObjectByIndex(1) != NULL);
+         CPPUNIT_ASSERT(actorComp.GetPhysicsObjectByIndex(2) == NULL);
+         CPPUNIT_ASSERT(actorComp.GetPhysicsObjectByIndex(0)->GetName() == name1);
+         CPPUNIT_ASSERT(actorComp.GetPhysicsObjectByIndex(1)->GetName() == name3);
+
+         actorComp.RemovePhysicsObjectByIndex(0);
+         CPPUNIT_ASSERT(actorComp.GetPhysicsObjectCount() == 1);
+         CPPUNIT_ASSERT(actorComp.GetPhysicsObjectByIndex(0) != NULL);
+         CPPUNIT_ASSERT(actorComp.GetPhysicsObjectByIndex(1) == NULL);
+         CPPUNIT_ASSERT(actorComp.GetPhysicsObjectByIndex(0)->GetName() == name3);
+
+         // --- Test failed removal
+         actorComp.RemovePhysicsObjectByIndex(2);
+         CPPUNIT_ASSERT(actorComp.GetPhysicsObjectCount() == 1);
+         CPPUNIT_ASSERT(actorComp.GetPhysicsObjectByIndex(0) != NULL);
+         CPPUNIT_ASSERT(actorComp.GetPhysicsObjectByIndex(1) == NULL);
+         CPPUNIT_ASSERT(actorComp.GetPhysicsObjectByIndex(0)->GetName() == name3);
+
+         actorComp.RemovePhysicsObjectByIndex(0);
+         CPPUNIT_ASSERT(actorComp.GetPhysicsObjectCount() == 0);
+         CPPUNIT_ASSERT(actorComp.GetPhysicsObjectByIndex(0) == NULL);
+         CPPUNIT_ASSERT(actorComp.GetPhysicsObjectByIndex(1) == NULL);
+      }
+      catch(dtUtil::Exception& ex)
+      {
+         LOG_ERROR("Exception hit: " + ex.ToString());
+      }
+      catch(...)
+      {
+         LOG_ERROR("Unknown exception encountered.");
+      }
+   }
+
+   /////////////////////////////////////////////////////////
+   void dtPhysicsTests::testObjectOldPropertyNameRemoval()
+   {
+      dtCore::RefPtr<PhysicsActComp> actCompPtr = new PhysicsActComp();
+      PhysicsActComp& actorComp = *actCompPtr;
+
+      CPPUNIT_ASSERT(actorComp.GetPhysicsObjectCount() == 0);
+
+      dtCore::RefPtr<PhysicsObject> po = new PhysicsObject("TestObject");
+      actorComp.AddPhysicsObject(*po);
+
+      // Enable the old property naming functionality.
+      po->SetPropertyNamePrefixEnabled(true);
+      
+      CPPUNIT_ASSERT(actorComp.GetPhysicsObjectCount() == 1);
+
+
+      // Collect property names from the component and
+      // then from the object directly.
+      TestPropertyNameCollector predForObj;
+      TestPropertyNameCollector predForComp;
+      actorComp.BuildPropertyMap();
+      actorComp.ForEachProperty(predForComp.GetFunc());
+      po->ForEachProperty(predForObj.GetFunc());
+
+      CPPUNIT_ASSERT( ! predForObj.mNames.empty());
+      CPPUNIT_ASSERT( ! predForComp.mNames.empty());
+
+      
+      // Verify that the names exist in both containers.
+      typedef std::set<std::string> StrSet;
+      std::string curStr;
+      StrSet oldNames = predForObj.mNames;
+      StrSet::iterator curIter = oldNames.begin();
+      StrSet::iterator endIter = oldNames.end();
+      for (; curIter != endIter; ++curIter)
+      {
+         curStr = *curIter;
+         CPPUNIT_ASSERT(predForComp.mNames.find(curStr) != predForComp.mNames.end());
+      }
+
+
+      int numCompProps = (int)predForComp.mNames.size();
+      int numOldProps = (int)predForObj.mNames.size();
+      CPPUNIT_ASSERT_EQUAL(numOldProps, actorComp.RemoveOldProperties());
+
+      // Re-collect property names.
+      predForComp.mNames.clear();
+      predForObj.mNames.clear();
+      actorComp.ForEachProperty(predForComp.GetFunc());
+      po->ForEachProperty(predForObj.GetFunc());
+
+      int numCompPropsAfterRemoval = (int)predForComp.mNames.size();
+      CPPUNIT_ASSERT_EQUAL(numCompProps - numOldProps, numCompPropsAfterRemoval);
+
+
+      // Verify that the old names do not exist in both containers.
+      curIter = oldNames.begin();
+      endIter = oldNames.end();
+      for (; curIter != endIter; ++curIter)
+      {
+         curStr = *curIter;
+         CPPUNIT_ASSERT(predForComp.mNames.find(curStr) == predForComp.mNames.end());
+      }
    }
 
    /////////////////////////////////////////////////////////

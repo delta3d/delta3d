@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>233</width>
+    <width>239</width>
     <height>684</height>
    </rect>
   </property>
@@ -95,6 +95,56 @@
       <property name="bottomMargin">
        <number>2</number>
       </property>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_14">
+        <property name="spacing">
+         <number>4</number>
+        </property>
+        <item>
+         <widget class="QCheckBox" name="mInputMeshEnabled">
+          <property name="text">
+           <string/>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="mButtonInputMeshFile">
+          <property name="maximumSize">
+           <size>
+            <width>70</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="toolTip">
+           <string>Button to select an alternate mesh to use for compiling physics geometry. Actor geometry is used if this is not set.</string>
+          </property>
+          <property name="text">
+           <string>Input Mesh</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLineEdit" name="mInputMeshFile">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="mAllowDefaultMaterial">
+        <property name="toolTip">
+         <string>If checked, physics geometry referencing the default physics material will be generated for meshes not explicitly flagged with materials.</string>
+        </property>
+        <property name="text">
+         <string>Allow Default Material</string>
+        </property>
+       </widget>
+      </item>
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout_2">
         <property name="spacing">
@@ -549,16 +599,6 @@
      <property name="topMargin">
       <number>0</number>
      </property>
-     <item>
-      <widget class="QCheckBox" name="mAllowDefaultMaterial">
-       <property name="toolTip">
-        <string>If checked, physics geometry referencing the default physics material will be generated for meshes not explicitly flagged with materials.</string>
-       </property>
-       <property name="text">
-        <string>Allow Default Material</string>
-       </property>
-      </widget>
-     </item>
     </layout>
    </item>
    <item>
@@ -612,7 +652,7 @@
         <string>Lists the materials detected and used in the compile process.</string>
        </property>
        <property name="text">
-        <string>Materials</string>
+        <string>Materials Used</string>
        </property>
       </widget>
      </item>

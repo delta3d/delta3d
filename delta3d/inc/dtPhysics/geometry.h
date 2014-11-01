@@ -26,6 +26,7 @@
 #define DTPHYSICS_GEOMETRY_H_
 
 #include <osg/Referenced>
+#include <dtCore/resourcedescriptor.h>
 #include <dtPhysics/physicsexport.h>
 #include <dtPhysics/physicstypes.h>
 #include <dtPhysics/primitivetype.h>
@@ -75,6 +76,7 @@ namespace dtPhysics
       std::vector<unsigned> mIndices;
       std::vector<unsigned> mMaterialFlags;
       VectorType mCurrentScale;
+      dtCore::ResourceDescriptor mOutputFile;
    protected:
       ~VertexData();
    };

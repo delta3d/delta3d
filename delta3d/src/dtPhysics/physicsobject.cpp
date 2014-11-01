@@ -68,6 +68,7 @@ namespace dtPhysics
       ,  mAngularDamping(Real(0.01))
       ,  mActivationSettings(NULL)
       ,  mMeshScale(Real(1.0), Real(1.0), Real(1.0))
+      ,  mPropertyNamePrefixEnabled(false)
       {
       }
       // the mechanics enum  that can say what type of physics object is in the world
@@ -122,6 +123,8 @@ namespace dtPhysics
 
       dtCore::ResourceDescriptor mMeshResource;
       VectorType mMeshScale;
+
+      bool mPropertyNamePrefixEnabled; // Temporary flag for migrating old property names to newer cleaner ones.
 
       std::vector<dtCore::RefPtr<Geometry> > mGeometries;
 
@@ -280,6 +283,21 @@ namespace dtPhysics
    }
 
    /////////////////////////////////////////////////////////////////////////////
+   std::string PhysicsObject::CreatePropertyName(const std::string& baseName) const
+   {
+      if (mDataMembers->mPropertyNamePrefixEnabled)
+      {
+         std::string generatedName;
+         generatedName = GetName(); // Object Name
+         generatedName.append(": ");
+         generatedName.append(baseName); // Property Name
+         return generatedName;
+      }
+
+      return baseName;
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
    void PhysicsObject::BuildPropertyMap()
    {
       // Don't make this static since it's generated.
@@ -288,145 +306,89 @@ namespace dtPhysics
       typedef dtCore::PropertyRegHelper<PhysicsObject> PropRegType;
       PropRegType propRegHelper(*this, this, GROUP);
 
-      std::string generatedName;
-      generatedName.reserve(GetName().size() + 20);
-      generatedName = GetName();
-      generatedName.append(": ");
-      generatedName.append("Collision Group");
-
+      dtUtil::RefString generatedName = CreatePropertyName("Collision Group");
       DT_REGISTER_PROPERTY_WITH_NAME(CollisionGroup, generatedName, "The numeric collision group for this object."
                "Groups can be configured to collide or not collide with each other."
                , PropRegType, propRegHelper);
 
-      generatedName = (GetName());
-      generatedName.append(": ");
-      generatedName.append("Mechanics Type");
-
+      generatedName = CreatePropertyName("Mechanics Type");
       DT_REGISTER_PROPERTY_WITH_NAME(MechanicsType, generatedName,
                "Sets which collision type this actor will use", PropRegType, propRegHelper);
 
-      generatedName = (GetName());
-      generatedName.append(": ");
-      generatedName.append("Primitive Type");
-
+      generatedName = CreatePropertyName("Primitive Type");
       DT_REGISTER_PROPERTY_WITH_NAME(PrimitiveType, generatedName,
                "Sets which primitive type this actor will use", PropRegType, propRegHelper);
 
-      generatedName = (GetName());
-      generatedName.append(": ");
-      generatedName.append("Translation");
-
+      generatedName = CreatePropertyName("Translation");
       DT_REGISTER_PROPERTY_WITH_NAME(Translation, generatedName,
                "Initial Translation", PropRegType, propRegHelper);
 
-      generatedName = (GetName());
-      generatedName.append(": ");
-      generatedName.append("Rotation");
-
+      generatedName = CreatePropertyName("Rotation");
       DT_REGISTER_PROPERTY_WITH_NAME(Rotation, generatedName,
                "Initial Rotation HPR", PropRegType, propRegHelper);
 
-      generatedName = (GetName());
-      generatedName.append(": ");
-      generatedName.append("Origin Offset");
-
+      generatedName = CreatePropertyName("Origin Offset");
       DT_REGISTER_PROPERTY_WITH_NAME(OriginOffset, generatedName,
                "Offsets the origin of the collision geometry relative to the center of mass."
                , PropRegType, propRegHelper);
 
-      generatedName = (GetName());
-      generatedName.append(": ");
-      generatedName.append("Dimensions");
-
+      generatedName = CreatePropertyName("Dimensions");
       DT_REGISTER_PROPERTY_WITH_NAME(Extents, generatedName,
                "Used for determining extents of the collision volume"
                , PropRegType, propRegHelper);
 
-      generatedName = (GetName());
-      generatedName.append(": ");
-      generatedName.append("Mass");
-
+      generatedName = CreatePropertyName("Mass");
       DT_REGISTER_PROPERTY_WITH_NAME(Mass, generatedName,
                "Total Mass of the object"
                , PropRegType, propRegHelper);
 
-      generatedName = (GetName());
-      generatedName.append(": ");
-      generatedName.append("Skin Thickness");
-
+      generatedName = CreatePropertyName("Skin Thickness");
       DT_REGISTER_PROPERTY_WITH_NAME(SkinThickness, generatedName,
                "How far things may penetrate this physics object. Improves stability. Don't make this 0."
                , PropRegType, propRegHelper);
 
-      generatedName = (GetName());
-      generatedName.append(": ");
-      generatedName.append("Notify Collisions");
-
+      generatedName = CreatePropertyName("Notify Collisions");
       DT_REGISTER_PROPERTY_WITH_NAME(NotifyCollisions, generatedName,
                "Set to true to enable collisions notifications for this object."
                , PropRegType, propRegHelper);
 
-      generatedName = (GetName());
-      generatedName.append(": ");
-      generatedName.append("Moment Of Inertia");
-
+      generatedName = CreatePropertyName("Moment Of Inertia");
       DT_REGISTER_PROPERTY_WITH_NAME(MomentOfInertia, generatedName,
                "Sets the moment of inerta tensor 3x3 matrix diagonals.  If any value of this is 0 or negative, "
                "it will be computed from the geometry."
                , PropRegType, propRegHelper);
 
-      generatedName = (GetName());
-      generatedName.append(": ");
-      generatedName.append("ActivationLinearVelocityThreshold");
-
+      generatedName = CreatePropertyName("ActivationLinearVelocityThreshold");
       DT_REGISTER_PROPERTY_WITH_NAME(ActivationLinearVelocityThreshold, generatedName,
                "the linear velocity threshold under which the object will auto-deactivate. -1 means engine default."
                , PropRegType, propRegHelper);
 
-      generatedName = (GetName());
-      generatedName.append(": ");
-      generatedName.append("ActivationAngularVelocityThreshold");
-
+      generatedName = CreatePropertyName("ActivationAngularVelocityThreshold");
       DT_REGISTER_PROPERTY_WITH_NAME(ActivationAngularVelocityThreshold, generatedName,
                "the angular velocity threshold under which the object will auto-deactivate. -1 means engine default."
                , PropRegType, propRegHelper);
 
-      generatedName = (GetName());
-      generatedName.append(": ");
-      generatedName.append("ActivationTimeThreshold");
-
+      generatedName = CreatePropertyName("ActivationTimeThreshold");
       DT_REGISTER_PROPERTY_WITH_NAME(ActivationTimeThreshold, generatedName,
                "The minimum time the object must be under all the activation thresholds before the object will auto-deactivate. -1 means engine default."
                , PropRegType, propRegHelper);
 
-      generatedName = (GetName());
-      generatedName.append(": ");
-      generatedName.append("LinearDamping");
-
+      generatedName = CreatePropertyName("LinearDamping");
       DT_REGISTER_PROPERTY_WITH_NAME(LinearDamping, generatedName,
                "Artifical linear body damping. 0 means off, 1 means pretty much don't move."
                , PropRegType, propRegHelper);
 
-      generatedName = (GetName());
-      generatedName.append(": ");
-      generatedName.append("AngularDamping");
-
+      generatedName = CreatePropertyName("AngularDamping");
       DT_REGISTER_PROPERTY_WITH_NAME(AngularDamping, generatedName,
                "Artifical angular body damping. 0 means off, 1 means pretty much don't move."
                , PropRegType, propRegHelper);
 
-      generatedName = (GetName());
-      generatedName.append(": ");
-      generatedName.append("PhysicsMesh");
-
+      generatedName = CreatePropertyName("PhysicsMesh");
       DT_REGISTER_RESOURCE_PROPERTY_WITH_NAME(dtCore::DataType::STATIC_MESH, MeshResource, generatedName, generatedName,
                "Geometry file to load for the physics to use.  It can be either a renderable mesh or a compiled physics mesh.",
                 PropRegType, propRegHelper);
 
-      generatedName = (GetName());
-      generatedName.append(": ");
-      generatedName.append("PhysicsMeshScale");
-
+      generatedName = CreatePropertyName("PhysicsMeshScale");
       DT_REGISTER_PROPERTY_WITH_NAME(MeshScale, generatedName,
                "If a physics mesh is set, it can be scaled with this property.",
                 PropRegType, propRegHelper);
@@ -1487,6 +1449,18 @@ namespace dtPhysics
          center.set(0.0f, 0.0f, 0.0f);
          extents.set(0.0f, 0.0f, 0.0f);
       }
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void PhysicsObject::SetPropertyNamePrefixEnabled(bool enablePrefix)
+   {
+      mDataMembers->mPropertyNamePrefixEnabled = enablePrefix;
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   bool PhysicsObject::IsPropertyNamePrefixEnabled() const
+   {
+      return mDataMembers->mPropertyNamePrefixEnabled;
    }
 
 
