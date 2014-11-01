@@ -610,6 +610,11 @@ namespace dtPhysics
 
             MaterialIndex matIndex = GetMaterialIndexForGeometry(*curData);
 
+            if ( ! curData->mOutputFile.IsEmpty())
+            {
+               po->SetMeshResource(curData->mOutputFile);
+            }
+
             po->SetPrimitiveType(*primType);
             po->SetMechanicsType(*mechType);
             po->SetMaterialByIndex(matIndex);

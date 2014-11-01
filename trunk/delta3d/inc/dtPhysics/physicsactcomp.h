@@ -59,8 +59,18 @@ namespace dtPhysics
 {
    class MaterialActor;
 
+
+
    /////////////////////////////////////////////////////////////////////////////
-   // Class:
+   // TYPE DEFINITIONS
+   /////////////////////////////////////////////////////////////////////////////
+   typedef dtCore::RefPtr<dtPhysics::PhysicsObject> PhysicsObjectPtr;
+   typedef std::vector<PhysicsObjectPtr> PhysicsObjectArray;
+
+
+
+   /////////////////////////////////////////////////////////////////////////////
+   // CLASS CODE
    /////////////////////////////////////////////////////////////////////////////
    class DT_PHYSICS_EXPORT PhysicsActComp: public dtGame::ActorComponent
    {
@@ -70,13 +80,14 @@ namespace dtPhysics
          static const dtUtil::RefString PROPERTY_PHYSICS_NAME;
          static const dtUtil::RefString PROPERTY_PHYSICS_MASS;
          static const dtUtil::RefString PROPERTY_PHYSICS_DIMENSIONS;
+         static const dtUtil::RefString PROPERTY_PHYSICS_OBJECT;
+         static const dtUtil::RefString PROPERTY_PHYSICS_OBJECT_ARRAY;
          static const dtUtil::RefString PROPERTY_COLLISION_GROUP;
          static const dtUtil::RefString PROPERTY_MATERIAL_ACTOR;
          static const dtUtil::RefString PROPERTY_AUTO_CREATE;
 
          typedef dtUtil::Functor<void, TYPELIST_0()> UpdateCallback;
          typedef dtUtil::Functor<void, TYPELIST_1(float)> ActionUpdateCallback;
-         typedef std::vector<dtCore::RefPtr<PhysicsObject> > PhysicsObjectArray;
 
       public:
          // constructors
@@ -113,6 +124,36 @@ namespace dtPhysics
          void ClearAllPhysicsObjects();
 
          void GetAllPhysicsObjects(std::vector<PhysicsObject*>& toFill);
+
+         /**
+          * Method used by the physics object array property to assign
+          * an object at a specified index.
+          */
+         void SetPhysicsObjectByIndex(int index, PhysicsObject* obj);
+
+         /**
+          * Method used by the physics object array property to acquire
+          * an object at a specified index.
+          */
+         PhysicsObject* GetPhysicsObjectByIndex(int index);
+
+         /**
+          * Method used by the physics object array property to create
+          * a new object at a specified index.
+          */
+         void InsertNewPhysicsObject(int index);
+
+         /**
+          * Method used by the physics object array property to remove
+          * an object at a specified index.
+          */
+         void RemovePhysicsObjectByIndex(int index);
+
+         /**
+          * Method used by the physics object array property to determine
+          * the number of objects in the array.
+          */
+         size_t GetPhysicsObjectCount() const;
 
          /**
           * This virtual method allows the user to move a complete set of perhaps
@@ -226,6 +267,14 @@ namespace dtPhysics
          /// For now, this is used to make dtPhysX properties map in.
          virtual dtCore::RefPtr<dtCore::ActorProperty> GetDeprecatedProperty(const std::string& name);
 
+         /**
+          * Temporary method for removing old physics object property names.
+          * There can be more than one physics object for this component so
+          * physics object properties are managed within an array property.
+          * @return Number of properties removed.
+          */
+         int RemoveOldProperties();
+
          //////////////////////////////////////////////////////////////////////////////////////
          //                                    Utilities                                     //
          //////////////////////////////////////////////////////////////////////////////////////
@@ -308,6 +357,9 @@ namespace dtPhysics
 
          bool mAutoCreateOnEnteringWorld;
          bool mIsRemote;
+
+         typedef std::vector<std::string> StrArray;
+         StrArray mOldPropertyNamesToRemove;
 
          /// hiding copy constructor and operator=
          PhysicsActComp(const PhysicsActComp&);

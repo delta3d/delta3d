@@ -32,6 +32,8 @@
 #include "export.h"
 #include "ui_physicscompilerpanel.h"
 // DELTA
+#include <dtCore/datatype.h>
+#include <dtCore/project.h>
 #include <dtEditQt/mainwindow.h>
 #include <dtEditQt/plugininterface.h>
 #include <dtPhysics/palphysicsworld.h>
@@ -73,9 +75,16 @@ static const int typePhysObjArray = qRegisterMetaType<dtPhysics::PhysicsObjectAr
 ////////////////////////////////////////////////////////////////////////////////
 struct PhysicsFileOptions
 {
+   PhysicsFileOptions();
+
+   void SetTargetDirectory(const std::string& dir);
+
    std::string mFilePrefix;
    std::string mFileSuffix;
    std::string mTargetDir;
+   std::string mTargetDirAsCategory;
+   const dtCore::DataType* mTargetDataType; // STATIC_MESH typically
+   dtCore::Project::ContextSlot mTargetContextSlot;
 };
 
 
@@ -102,14 +111,18 @@ public:
 
    bool IsCompiling() const;
 
+   void SetPanelEnabled(bool enabled);
+   bool IsPanelEnabled() const;
+
    dtPhysics::PhysicsCompiler& GetCompiler() const;
 
    void UpdateUI();
 
-   void UpdateMaterialList();
-
    int AddObjects(dtPhysics::PhysicsObjectArray& objects,
       dtPhysics::PhysicsActComp& actorComp);
+
+   int AddObjectsToActor(dtPhysics::PhysicsObjectArray& objects,
+      dtCore::BaseActorObject& actor);
 
    bool WriteGeometryFile(const PhysicsFileOptions options,
       PhysicsCompileResultPtr result);
@@ -127,9 +140,11 @@ public slots:
    */
    void onActorsSelected(ActorProxyRefPtrVector& actors);
 
-   void OnTargetActor();
+   void OnTargetActorClicked();
 
    void OnCompileClicked();
+   void OnInputMeshEnabledChanged(int checkState);
+   void OnInputMeshFileClicked();
    void OnAllowDefaultMaterialChanged(int checkState);
    void OnMaxVertsPerMeshChanged(int count);
    void OnMaxEdgeLengthChanged(double length);
@@ -171,6 +186,8 @@ private:
    Ui::PhysicsCompilerPanel mUI;
 
    bool mIsCompiling;
+   std::string mInputMeshFile;
+   dtCore::RefPtr<osg::Node> mInputMesh;
    dtPhysics::PhysicsCompileOptions mCompileOptions;
    dtPhysics::PhysicsObjectOptions mObjectOptions;
    PhysicsFileOptions mFileOptions;

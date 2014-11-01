@@ -60,12 +60,110 @@ static const QString SETTING_TARGET_DIRECTORY("TargetDirectory");
 static const QString SETTING_FILE_PREFIX("FilePrefix");
 static const QString SETTING_FILE_SUFFIX("FileSuffix");
 // Compile Settings
+static const QString SETTING_INPUT_MESH_FILE("InputMeshFile");
+static const QString SETTING_INPUT_MESH_FILE_ENABLED("InputMeshFileEnabled");
 static const QString SETTING_MAX_VERTS_PER_MESH("MaxVertsPerMesh");
 static const QString SETTING_MAX_EDGE_LENGTH("MaxEdgeLength");
 // Object Settings
 static const QString SETTING_MASS("Mass");
 static const QString SETTING_COLLISION_MARGIN("CollisionMargin");
 static const QString SETTING_CLEAR_EXISTING_OBJECTS("ClearExistingObjects");
+
+
+
+////////////////////////////////////////////////////////////////////////////////
+// CLASS CODE
+////////////////////////////////////////////////////////////////////////////////
+PhysicsFileOptions::PhysicsFileOptions()
+   : mTargetDataType(&dtCore::DataType::STATIC_MESH)
+   , mTargetContextSlot(dtCore::Project::DEFAULT_SLOT_VALUE)
+{}
+
+void PhysicsFileOptions::SetTargetDirectory(const std::string& dir)
+{
+   mTargetDir = dir;
+
+   std::string contextPath;
+   dtCore::Project::ContextSlot slot = dtCore::Project::DEFAULT_SLOT_VALUE;
+   dtCore::Project& proj = dtCore::Project::GetInstance();
+   try
+   {
+      slot = proj.GetContextSlotForPath(dir);
+      contextPath = proj.GetContext(slot);
+
+      dtUtil::FindAndReplace(contextPath, "\\", "/");
+   }
+   catch (dtUtil::Exception& ex)
+   {
+      LOG_ERROR(ex.ToString());
+   }
+   catch (...)
+   {
+      LOG_ERROR("Unknown exception hit.");
+   }
+
+   if (contextPath.empty())
+   {
+      LOG_ERROR("No context path set.");
+      return;
+   }
+   
+   // Determine a project category from the directory path.
+   std::string category(dir);
+   unsigned index = category.find(contextPath);
+   if (index != std::string::npos)
+   {
+      // Remove the context part of the path.
+      category = category.substr(index + contextPath.length());
+
+      // Trim any leading slash.
+      if (category.at(0) == '/')
+      {
+         category = category.substr(1);
+      }
+
+      // The relative path can be changed to a
+      // descriptor by changing the delimiter.
+      dtUtil::FindAndReplace(category, "/", ":");
+   }
+
+   // Determine the datatype from the category if it exists.
+   // NOTE: This block ought to be removed when datatype is
+   // no longer used to enforce a specific rigid directory structure.
+   // This is yucky but has to be done until a refactor happens.
+   const dtCore::DataType* dataType = &dtCore::DataType::STATIC_MESH;
+   if ( ! category.empty())
+   {
+      std::string typeStr = category;
+      unsigned index = category.find(":");
+      bool hasSubDirectory = index != std::string::npos;
+      if (hasSubDirectory)
+      {
+         // Top directory in project determines datatype.
+         typeStr = category.substr(0, index);
+
+         // Remove the directory from the category string.
+         category = category.substr(index + 1);
+      }
+
+      const dtCore::DataType* actualDataType = dtCore::DataType::GetValueForName(typeStr);
+      if (actualDataType != NULL)
+      {
+         dataType = actualDataType;
+
+         // If the category is the only directory...
+         if ( ! hasSubDirectory)
+         {
+            // ...clear it since it has determined the type.
+            category.clear();
+         }
+      }
+   }
+
+   mTargetDirAsCategory = category;
+   mTargetDataType = dataType;
+   mTargetContextSlot = slot;
+}
 
 
 
@@ -148,6 +246,9 @@ PhysicsCompilerToolPlugin::PhysicsCompilerToolPlugin(dtEditQt::MainWindow* mw)
    CreateConnections();
 
    EnsurePhysicsWorld();
+
+   // Disable until actors are selected.
+   SetPanelEnabled(false);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -172,19 +273,42 @@ bool PhysicsCompilerToolPlugin::IsCompiling() const
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+void PhysicsCompilerToolPlugin::SetPanelEnabled(bool enabled)
+{
+   mUI.mButtonTargetActor->setEnabled(enabled);
+   mUI.mFileOptions->setEnabled(enabled);
+
+   mUI.mButtonTargetActor->setEnabled(enabled);
+   if ( ! IsCompiling())
+   {
+      mUI.mButtonCompile->setEnabled(enabled);
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+bool PhysicsCompilerToolPlugin::IsPanelEnabled() const
+{
+   return mUI.mButtonTargetActor->isEnabled();
+}
+
+////////////////////////////////////////////////////////////////////////////////
 void PhysicsCompilerToolPlugin::CreateConnections()
 {
    // Plugin Interface Connections
    connect(&dtEditQt::EditorEvents::GetInstance(), SIGNAL(selectedActors(ActorProxyRefPtrVector&)),
       this, SLOT(onActorsSelected(ActorProxyRefPtrVector&)));
 
-   // Target Button Connection
-   connect(mUI.mButtonTargetDirectory, SIGNAL(clicked()),
-      this, SLOT(OnTargetDirectoryClicked()));
+   // Target Actor Button Connection
+   connect(mUI.mButtonTargetActor, SIGNAL(clicked()),
+      this, SLOT(OnTargetActorClicked()));
 
    // Compiler Connections
    connect(mUI.mButtonCompile, SIGNAL(clicked()),
       this, SLOT(OnCompileClicked()));
+   connect(mUI.mButtonInputMeshFile, SIGNAL(clicked()),
+      this, SLOT(OnInputMeshFileClicked()));
+   connect(mUI.mInputMeshEnabled, SIGNAL(stateChanged(int)),
+      this, SLOT(OnInputMeshEnabledChanged(int)));
    connect(mUI.mAllowDefaultMaterial, SIGNAL(stateChanged(int)),
       this, SLOT(OnAllowDefaultMaterialChanged(int)));
    connect(mUI.mMaxVertsPerMesh, SIGNAL(valueChanged(int)),
@@ -297,14 +421,6 @@ void PhysicsCompilerToolPlugin::UpdateUI()
    mUI.mTargetDirectory->setText(tr(mFileOptions.mTargetDir.c_str()));
    mUI.mFilePrefix->setText(tr(mFileOptions.mFilePrefix.c_str()));
    mUI.mFileSuffix->setText(tr(mFileOptions.mFileSuffix.c_str()));
-
-   UpdateMaterialList();
-}
-
-////////////////////////////////////////////////////////////////////////////////
-void PhysicsCompilerToolPlugin::UpdateMaterialList()
-{
-   // TODO:
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -318,13 +434,60 @@ int PhysicsCompilerToolPlugin::AddObjects(dtPhysics::PhysicsObjectArray& objArra
       actorComp.ClearAllPhysicsObjects();
    }
 
+   PhysicsObject* curObj = NULL;
    PhysicsObjectArray::iterator curObjIter = objArray.begin();
    PhysicsObjectArray::iterator endObjIter = objArray.end();
    for (; curObjIter != endObjIter; ++curObjIter)
    {
-      actorComp.AddPhysicsObject(*curObjIter->get());
+      curObj = curObjIter->get();
+
+      curObj->BuildPropertyMap();
+      curObj->ForEachProperty(dtUtil::MakeFunctor(&dtCore::PropertyContainer::AddProperty, &actorComp));
+      actorComp.AddPhysicsObject(*curObj);
 
       ++results;
+   }
+
+   /*
+      //Get properties for the physics objects.
+      /*PhysicsObjectArray::iterator i, iend;
+      i = mPhysicsObjects.begin();
+      iend = mPhysicsObjects.end();
+      for(; i != iend; ++i)
+      {
+         PhysicsObject& physObj = **i;
+         physObj.BuildPropertyMap();
+         physObj.ForEachProperty(dtUtil::MakeFunctor(&PropertyContainer::AddProperty, this));
+      }*/
+
+   return results;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+int PhysicsCompilerToolPlugin::AddObjectsToActor(
+   dtPhysics::PhysicsObjectArray& objArray,
+   dtCore::BaseActorObject& actor)
+{
+   int results = 0;
+
+   dtGame::ActorComponentContainer* gameActor
+      = dynamic_cast<dtGame::ActorComponentContainer*>(&actor);
+
+   // Add the objects to the actor component, if one is specified.
+   if (gameActor != NULL && ! objArray.empty())
+   {
+      PhysicsActComp* physActComp = NULL;
+      gameActor->GetComponent(physActComp);
+
+      // Ensure a physics component is available for adding physics objects.
+      if (physActComp == NULL)
+      {
+         physActComp = new PhysicsActComp;
+         gameActor->AddComponent(*physActComp);
+         //physActComp->OnEnteredWorld();
+      }
+
+      results = AddObjects(objArray, *physActComp);
    }
 
    return results;
@@ -338,16 +501,19 @@ bool PhysicsCompilerToolPlugin::WriteGeometryFile(const PhysicsFileOptions optio
 
    bool result = false;
 
-   // Construct the file path from file options.
-   std::stringstream filepath;
-   filepath << options.mTargetDir << "/"
-      << options.mFilePrefix << compileResult->mMaterialName;
-
-   // Add a suffix if the result is one of many.
+   // Construct the file name from file options.
+   std::stringstream resName;
+   resName << options.mFilePrefix << compileResult->mMaterialName;
+   // --- Add a suffix if the result is one of many.
    if (compileResult->mPartTotalInProgress > 1)
    {
-      filepath << options.mFileSuffix << compileResult->mPartIndex;
+      resName << options.mFileSuffix << compileResult->mPartIndex;
    }
+
+   // Construct the fulle file path from file options.
+   std::stringstream filepath;
+   filepath << options.mTargetDir << "/" << resName.str();
+
 
    // Add the extension.
    filepath << ".dtphys";
@@ -355,8 +521,33 @@ bool PhysicsCompilerToolPlugin::WriteGeometryFile(const PhysicsFileOptions optio
    // Attempt writing the file.
    try
    {
+      std::string strFilepath(filepath.str());
+
       result = dtPhysics::PhysicsReaderWriter::SaveTriangleDataFile(
-         *compileResult->mVertData, filepath.str());
+         *compileResult->mVertData, strFilepath);
+
+      if (result)
+      {
+         // The project instance is about to be accessed.
+         // Ensure that other threads do not change it while
+         // attempting to add a new resource descriptor.
+         OpenThreads::ScopedLock<OpenThreads::Mutex> sl(mUiUpdateMutex);
+
+         // Get the resource descriptor.
+         dtCore::Project& proj = dtCore::Project::GetInstance();
+         compileResult->mVertData->mOutputFile = proj.AddResource(
+            resName.str(), strFilepath, options.mTargetDirAsCategory,
+            *options.mTargetDataType, options.mTargetContextSlot);
+
+         // DEBUG:
+         /*printf("ResName: %s\nFile: %s\nCategory: %s\nRes: %s\n\n",
+            resName.str().c_str(), strFilepath.c_str(), category.c_str(),
+            compileResult->mVertData->mOutputFile.GetResourceIdentifier().c_str());*/
+      }
+   }
+   catch(dtUtil::Exception& ex)
+   {
+      LOG_ERROR("Exception writing file \"" + filepath.str() + "\": " + ex.ToString());
    }
    catch(...)
    {
@@ -385,9 +576,16 @@ void PhysicsCompilerToolPlugin::onActorsSelected(ActorProxyRefPtrVector& actors)
    // Clear previous selection references.
    mActors.clear();
 
+   // For now work with a single actor.
+   SetPanelEnabled(actors.size() == 1);
+
    // Avoid any unneccessary processing.
    if (actors.empty())
    {
+      QString qstr;
+      mUI.mTargetActorName->setText(qstr);
+      mUI.mTargetActorName->setToolTip(qstr);
+
       return;
    }
 
@@ -404,14 +602,20 @@ void PhysicsCompilerToolPlugin::onActorsSelected(ActorProxyRefPtrVector& actors)
       curActor = curIter->get();
       mActors.push_back(curActor.get());
 
-      mUI.mTargetActorName->setText(tr(curActor->GetName().c_str()));
+      QString qstr(curActor->GetName().c_str());
+      mUI.mTargetActorName->setText(qstr);
+      mUI.mTargetActorName->setToolTip(qstr);
    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void PhysicsCompilerToolPlugin::OnTargetActor()
+void PhysicsCompilerToolPlugin::OnTargetActorClicked()
 {
-   // TODO:
+   if ( ! mActors.empty())
+   {
+      ActorPtr actor = mActors.front().get();
+      dtEditQt::EditorEvents::GetInstance().emitGotoActor(actor);
+   }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -422,28 +626,91 @@ void PhysicsCompilerToolPlugin::OnCompileClicked()
 
    if ( ! mActors.empty())
    {
+      osg::Node* node = mInputMesh.get();
+
       // TODO: Handle multiple nodes instead of only one.
-      dtCore::DeltaDrawable* drawable = mActors.front()->GetDrawable();
-
-      if (drawable != NULL)
+      if (node == NULL)
       {
-         osg::Node* node = drawable->GetOSGNode();
+         dtCore::DeltaDrawable* drawable = mActors.front()->GetDrawable();
 
-         if (node != NULL)
+         if (drawable != NULL)
          {
-            mUI.mProgress->show();
-            mUI.mButtonCompile->setEnabled(false);
+            node = drawable->GetOSGNode();
+         }
+      }
+      
+      // Compile the specified geometry.
+      if (node != NULL)
+      {
+         mUI.mMaterialList->setRowCount(0);
+         mUI.mProgress->show();
+         mUI.mButtonCompile->setEnabled(false);
 
-            PhysicsCompileOptions options = mCompileOptions;
+         PhysicsCompileOptions options = mCompileOptions;
 
-            mIsCompiling = true;
+         mIsCompiling = true;
 
-            // Compile to a separate thread so UI can update.
-            dtCore::RefPtr<PhysicsCompileThread> compileThread = new PhysicsCompileThread(*this, *node);
-            compileThread->mCompileOptions = mCompileOptions;
-            compileThread->mObjectOptions = mObjectOptions;
-            compileThread->mVertData = &mVertData;
-            dtUtil::ThreadPool::AddTask(*compileThread, dtUtil::ThreadPool::IO);
+         // Compile to a separate thread so UI can update independently.
+         dtCore::RefPtr<PhysicsCompileThread> compileThread = new PhysicsCompileThread(*this, *node);
+         compileThread->mCompileOptions = mCompileOptions;
+         compileThread->mObjectOptions = mObjectOptions;
+         compileThread->mVertData = &mVertData;
+         dtUtil::ThreadPool::AddTask(*compileThread, dtUtil::ThreadPool::IO);
+      }
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void PhysicsCompilerToolPlugin::OnInputMeshEnabledChanged(int checkState)
+{
+   mUI.mButtonInputMeshFile->setEnabled(Qt::Checked == checkState);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void PhysicsCompilerToolPlugin::OnInputMeshFileClicked()
+{
+   QFileDialog dialog;
+   dialog.setWindowTitle("Physics Input Mesh File");
+   dialog.setFileMode(QFileDialog::ExistingFile);
+   dialog.setDirectory(tr(mFileOptions.mTargetDir.c_str()));
+
+   // TODO: Add file filter for supported file types.
+
+   if (dialog.exec())
+   {
+      QStringList files = dialog.selectedFiles();
+      std::string filepath;
+
+      if ( ! files.empty())
+      {
+         filepath = files.at(0).toStdString();
+
+         std::string contextDir = dtCore::Project::GetInstance().GetContext();
+         dtUtil::FindAndReplace(contextDir, "\\", "/");
+
+         // Verify if the selected file is within the project context.
+         if (filepath.find(contextDir) == std::string::npos)
+         {
+            std::string message = "Input mesh file \"" + filepath
+               + "\" is not within the current project context \"" +
+               contextDir + "\".";
+            std::string infoText("Files output to the target directory might not load with the current map on the next reload.");
+
+            ShowWarningMessage(message, infoText);
+         }
+
+         QString qstr(filepath.c_str());
+         mUI.mInputMeshFile->setText(qstr);
+         mUI.mInputMeshFile->setToolTip(qstr);
+
+         // Load the mesh file.
+         mInputMesh = dtUtil::FileUtils::GetInstance().ReadNode(filepath);
+
+         if ( ! mInputMesh.valid())
+         {
+            std::string message = "Geometry could not be loaded for input mesh file \"" + filepath
+               + "\".";
+            ShowWarningMessage(message, "");
          }
       }
    }
@@ -534,7 +801,7 @@ void PhysicsCompilerToolPlugin::OnTargetDirectoryClicked()
          mUI.mTargetDirectory->setText(qstr);
          mUI.mTargetDirectory->setToolTip(qstr);
 
-         mFileOptions.mTargetDir = dir;
+         mFileOptions.SetTargetDirectory(dir);
       }
    }
 }
@@ -578,9 +845,6 @@ void PhysicsCompilerToolPlugin::OnCompileResult(PhysicsCompileResultPtr result)
       mUI.mMaterialList->setItem(row, 0, item);
    }
 
-   // The vertex data table should be updated. Update the material list.
-   UpdateMaterialList();
-
    // Update the progress bar.
    if (result->mPartTotalInProgress > 0)
    {
@@ -600,6 +864,7 @@ void PhysicsCompilerToolPlugin::OnCompileCompleted(dtPhysics::PhysicsObjectArray
    mUI.mProgress->hide();
    mUI.mButtonCompile->setEnabled(true);
 
+   // Inform of any files that failed to write.
    if ( ! mFailedFiles.empty())
    {
       std::stringstream details;
@@ -623,35 +888,22 @@ void PhysicsCompilerToolPlugin::OnCompileCompleted(dtPhysics::PhysicsObjectArray
 
       ShowWarningMessage(message, infoText);
    }
+
+   // Add the objects to selected actors.
+   if ( ! mActors.empty())
+   {
+      // For now work with a single actor.
+      dtCore::BaseActorObject* actor = mActors.front().get();
+      if (actor != NULL)
+      {
+         AddObjectsToActor(objArray, *actor);
+      }
+   }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 void PhysicsCompilerToolPlugin::OnCompileCompleted_CompileThread(dtPhysics::PhysicsObjectArray& objArray)
 {
-   if ( ! mActors.empty())
-   {
-      // TODO: Handle multiple actors instead of only one.
-      dtGame::ActorComponentContainer* actor
-         = dynamic_cast<dtGame::ActorComponentContainer*>(mActors.front().get());
-
-      // Add the objects to the actor component, if one is specified.
-      if (actor != NULL && ! objArray.empty())
-      {
-         PhysicsActComp* physActComp = NULL;
-         actor->GetComponent(physActComp);
-
-         // Ensure a physics component is available for adding physics objects.
-         if (physActComp == NULL)
-         {
-            physActComp = new PhysicsActComp;
-            actor->AddComponent(*physActComp);
-            //physActComp->OnEnteredWorld();
-         }
-
-         AddObjects(objArray, *physActComp);
-      }
-   }
-
    emit SignalCompileCompleted(objArray);
 }
 
@@ -694,6 +946,8 @@ void PhysicsCompilerToolPlugin::SaveSettings()
       settings.setValue(SETTING_FILE_SUFFIX, mFileOptions.mFileSuffix.c_str());
 
       // Compile Settings
+      settings.setValue(SETTING_INPUT_MESH_FILE, mUI.mInputMeshFile->text());
+      settings.setValue(SETTING_INPUT_MESH_FILE_ENABLED, mUI.mInputMeshEnabled->isChecked());
       settings.setValue(SETTING_MAX_VERTS_PER_MESH, mCompileOptions.mMaxVertsPerMesh);
       settings.setValue(SETTING_MAX_EDGE_LENGTH, mCompileOptions.mMaxEdgeLength);
 
@@ -730,6 +984,8 @@ void PhysicsCompilerToolPlugin::LoadSettings()
          mUI.mFileOptions->setChecked(enableFileOptions);
 
          // Compile Settings
+         mUI.mInputMeshFile->setText(settings.value(SETTING_INPUT_MESH_FILE).toString());
+         mUI.mInputMeshEnabled->setChecked(settings.value(SETTING_INPUT_MESH_FILE_ENABLED).toBool());
          mCompileOptions.mMaxVertsPerMesh = settings.value(SETTING_MAX_VERTS_PER_MESH).toUInt();
          mCompileOptions.mMaxEdgeLength = settings.value(SETTING_MAX_EDGE_LENGTH).toFloat();
          

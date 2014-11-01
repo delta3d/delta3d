@@ -20,6 +20,9 @@
  * David Guthrie
  */
 
+////////////////////////////////////////////////////////////////////////////////
+// INCLUDE DIRECTIVES
+////////////////////////////////////////////////////////////////////////////////
 #include <dtPhysics/physicsactcomp.h>
 #include <dtPhysics/physicsmaterialactor.h>
 #include <dtPhysics/palphysicsworld.h>
@@ -27,7 +30,9 @@
 #include <dtPhysics/raycast.h>
 #include <dtPhysics/palutil.h>
 #include <dtGame/gameactor.h>
+#include <dtCore/arrayactorpropertycomplex.h>
 #include <dtCore/enginepropertytypes.h>
+#include <dtCore/propertycontaineractorproperty.h>
 
 #include <dtPhysics/physicscomponent.h>
 
@@ -35,6 +40,9 @@
 
 namespace dtPhysics
 {
+   /////////////////////////////////////////////////////////////////////////////
+   // CONSTANTS
+   /////////////////////////////////////////////////////////////////////////////
    const dtGame::ActorComponent::ACType PhysicsActComp::TYPE(new dtCore::ActorType("PhysicsActComp", "ActorComponents",
          "Physics subsystem actor component.  Requires a GM level PhysicsComponent",
          dtGame::ActorComponent::BaseActorComponentType));
@@ -42,11 +50,16 @@ namespace dtPhysics
    const dtUtil::RefString PhysicsActComp::PROPERTY_PHYSICS_NAME("Physics Name");
    const dtUtil::RefString PhysicsActComp::PROPERTY_PHYSICS_MASS("Physics Mass");
    const dtUtil::RefString PhysicsActComp::PROPERTY_PHYSICS_DIMENSIONS("Physics Dimensions");
+   const dtUtil::RefString PhysicsActComp::PROPERTY_PHYSICS_OBJECT("Physics Object");
+   const dtUtil::RefString PhysicsActComp::PROPERTY_PHYSICS_OBJECT_ARRAY("Physics Object Array");
    const dtUtil::RefString PhysicsActComp::PROPERTY_COLLISION_GROUP("Default Collision Group");
    const dtUtil::RefString PhysicsActComp::PROPERTY_AUTO_CREATE("Auto-Create Physics Objects");
    const dtUtil::RefString PhysicsActComp::PROPERTY_MATERIAL_ACTOR("Material Actor");
 
 
+
+   /////////////////////////////////////////////////////////////////////////////
+   // CLASS CODE
    /////////////////////////////////////////////////////////////////////////////
    class PhysicsActCompAction : public Action
    {
@@ -101,6 +114,27 @@ namespace dtPhysics
          po->Create();
       }
    };
+
+   /////////////////////////////////////////////////////////////////////////////
+   int PhysicsActComp::RemoveOldProperties()
+   {
+      int results = 0;
+
+      if ( ! mOldPropertyNamesToRemove.empty())
+      {
+         StrArray::iterator curIter = mOldPropertyNamesToRemove.begin();
+         StrArray::iterator endIter = mOldPropertyNamesToRemove.end();
+         for (; curIter != endIter; ++curIter)
+         {
+            RemoveProperty(*curIter);
+            ++results;
+         }
+
+         mOldPropertyNamesToRemove.clear();
+      }
+
+      return results;
+   }
 
    /////////////////////////////////////////////////////////////////////////////
    void PhysicsActComp::OnEnteredWorld()
@@ -190,50 +224,103 @@ namespace dtPhysics
    }
 
    /////////////////////////////////////////////////////////////////////////////
+   // HELPER PRED
+   struct PropertyNameCollectorPred
+   {
+      typedef dtCore::RefPtr<dtCore::ActorProperty> PropPtr;
+      typedef dtUtil::Functor<void, TYPELIST_1(PropPtr)> VoidPropPtrFunc;
+
+      typedef std::vector<std::string> StrArray;
+      StrArray mNames;
+
+      void operator() (PropPtr prop)
+      {
+         mNames.push_back(prop->GetName());
+      }
+
+      VoidPropPtrFunc GetFunc()
+      {
+         return dtUtil::MakeFunctor(&PropertyNameCollectorPred::operator(), this);
+      }
+   };
+
+   /////////////////////////////////////////////////////////////////////////////
    void PhysicsActComp::BuildPropertyMap()
    {
       static const dtUtil::RefString GROUP("PhysicsActComp");
 
-      AddProperty(new dtCore::ActorIDActorProperty(PROPERTY_MATERIAL_ACTOR, PROPERTY_MATERIAL_ACTOR,
-            dtCore::ActorIDActorProperty::SetFuncType(this, &PhysicsActComp::SetMaterialActor),
-            dtCore::ActorIDActorProperty::GetFuncType(this, &PhysicsActComp::GetMaterialActor),
-            dtUtil::RefString("dtPhysics::MaterialActor"),
-            dtUtil::RefString("The actor that defines the material properties of this physics helper."), GROUP));
+      using namespace dtCore;
+      using namespace dtUtil;
 
-      static const dtUtil::RefString PROPERTY_PHYSICS_NAME_DESC("The physics reference name.");
-      AddProperty(new dtCore::StringActorProperty(PROPERTY_PHYSICS_NAME, PROPERTY_PHYSICS_NAME, //ActorName
-            dtCore::StringActorProperty::SetFuncType(this, &PhysicsActComp::SetNameByString),
-            dtCore::StringActorProperty::GetFuncType(this, &PhysicsActComp::GetNameAsString),
+      AddProperty(new ActorIDActorProperty(PROPERTY_MATERIAL_ACTOR, PROPERTY_MATERIAL_ACTOR,
+            ActorIDActorProperty::SetFuncType(this, &PhysicsActComp::SetMaterialActor),
+            ActorIDActorProperty::GetFuncType(this, &PhysicsActComp::GetMaterialActor),
+            RefString("dtPhysics::MaterialActor"),
+            RefString("The actor that defines the material properties of this physics helper."), GROUP));
+
+      static const RefString PROPERTY_PHYSICS_NAME_DESC("The physics reference name.");
+      AddProperty(new StringActorProperty(PROPERTY_PHYSICS_NAME, PROPERTY_PHYSICS_NAME, //ActorName
+            StringActorProperty::SetFuncType(this, &PhysicsActComp::SetNameByString),
+            StringActorProperty::GetFuncType(this, &PhysicsActComp::GetNameAsString),
             PROPERTY_PHYSICS_NAME_DESC, GROUP));
 
-      static const dtUtil::RefString PROPERTY_PHYSICS_MASS_DESC("The physics mass.  This is a configuration value, "
+      static const RefString PROPERTY_PHYSICS_MASS_DESC("The physics mass.  This is a configuration value, "
             "and can be use however the developer intends.");
-      AddProperty(new dtCore::FloatActorProperty(PROPERTY_PHYSICS_MASS, PROPERTY_PHYSICS_MASS, //ActorName
-            dtCore::FloatActorProperty::SetFuncType(this, &PhysicsActComp::SetMass),
-            dtCore::FloatActorProperty::GetFuncType(this, &PhysicsActComp::GetMass),
+      AddProperty(new FloatActorProperty(PROPERTY_PHYSICS_MASS, PROPERTY_PHYSICS_MASS, //ActorName
+            FloatActorProperty::SetFuncType(this, &PhysicsActComp::SetMass),
+            FloatActorProperty::GetFuncType(this, &PhysicsActComp::GetMass),
             PROPERTY_PHYSICS_MASS_DESC, GROUP));
 
-      static const dtUtil::RefString PROPERTY_PHYSICS_DIMESNIONS_DESC("The collision dimensions.  This is a configuration value, "
+      static const RefString PROPERTY_PHYSICS_DIMESNIONS_DESC("The collision dimensions.  This is a configuration value, "
             "and can be use however the developer intends.");
-      AddProperty(new dtCore::Vec3ActorProperty(PROPERTY_PHYSICS_DIMENSIONS, PROPERTY_PHYSICS_DIMENSIONS, //ActorName
-            dtCore::Vec3ActorProperty::SetFuncType(this, &PhysicsActComp::SetDimensions),
-            dtCore::Vec3ActorProperty::GetFuncType(this, &PhysicsActComp::GetDimensions),
+      AddProperty(new Vec3ActorProperty(PROPERTY_PHYSICS_DIMENSIONS, PROPERTY_PHYSICS_DIMENSIONS, //ActorName
+            Vec3ActorProperty::SetFuncType(this, &PhysicsActComp::SetDimensions),
+            Vec3ActorProperty::GetFuncType(this, &PhysicsActComp::GetDimensions),
             PROPERTY_PHYSICS_DIMESNIONS_DESC, GROUP));
 
-      static const dtUtil::RefString PROPERTY_PHYSICS_COLLISION_GROUP_DESC("The default group to use for the physics "
+      static const RefString PROPERTY_PHYSICS_COLLISION_GROUP_DESC("The default group to use for the physics "
             "objects.  This is a configuration value, and can be use however the developer intends.");
-      AddProperty(new dtCore::IntActorProperty(PROPERTY_COLLISION_GROUP, PROPERTY_COLLISION_GROUP,
-            dtCore::IntActorProperty::SetFuncType(this, &PhysicsActComp::SetDefaultCollisionGroup),
-            dtCore::IntActorProperty::GetFuncType(this, &PhysicsActComp::GetDefaultCollisionGroup),
+      AddProperty(new IntActorProperty(PROPERTY_COLLISION_GROUP, PROPERTY_COLLISION_GROUP,
+            IntActorProperty::SetFuncType(this, &PhysicsActComp::SetDefaultCollisionGroup),
+            IntActorProperty::GetFuncType(this, &PhysicsActComp::GetDefaultCollisionGroup),
             PROPERTY_PHYSICS_COLLISION_GROUP_DESC, GROUP));
 
-      static const dtUtil::RefString PROPERTY_PHYSICS_AUTO_CREATE("Creates and initializes all the physics objects as configured when "
+      static const RefString PROPERTY_PHYSICS_AUTO_CREATE("Creates and initializes all the physics objects as configured when "
             "the actor enters the world.");
-      AddProperty(new dtCore::BooleanActorProperty(PROPERTY_AUTO_CREATE, PROPERTY_AUTO_CREATE,
-            dtCore::BooleanActorProperty::SetFuncType(this, &PhysicsActComp::SetAutoCreateOnEnteringWorld),
-            dtCore::BooleanActorProperty::GetFuncType(this, &PhysicsActComp::GetAutoCreateOnEnteringWorld),
+      AddProperty(new BooleanActorProperty(PROPERTY_AUTO_CREATE, PROPERTY_AUTO_CREATE,
+            BooleanActorProperty::SetFuncType(this, &PhysicsActComp::SetAutoCreateOnEnteringWorld),
+            BooleanActorProperty::GetFuncType(this, &PhysicsActComp::GetAutoCreateOnEnteringWorld),
             PROPERTY_PHYSICS_COLLISION_GROUP_DESC, GROUP));
 
+      typedef ArrayActorPropertyComplex<dtPhysics::PhysicsObjectPtr> PhysObjArrayProp;
+      dtCore::RefPtr<PhysObjArrayProp> physObjArrayProp =
+         new PhysObjArrayProp(
+         PROPERTY_PHYSICS_OBJECT_ARRAY,
+         PROPERTY_PHYSICS_OBJECT_ARRAY,
+         PhysObjArrayProp::SetFuncType(this, &PhysicsActComp::SetPhysicsObjectByIndex),
+         PhysObjArrayProp::GetFuncType(this, &PhysicsActComp::GetPhysicsObjectByIndex),
+         PhysObjArrayProp::GetSizeFuncType(this, &PhysicsActComp::GetPhysicsObjectCount),
+         PhysObjArrayProp::InsertFuncType(this, &PhysicsActComp::InsertNewPhysicsObject),
+         PhysObjArrayProp::RemoveFuncType(this, &PhysicsActComp::RemovePhysicsObjectByIndex),
+         RefString("Defines physics objects associated with the actor."),
+         GROUP);
+
+      typedef dtCore::SimplePropertyContainerActorProperty<dtPhysics::PhysicsObject> PhysObjProp;
+      dtCore::RefPtr<PhysObjProp> physObjProp =
+         new PhysObjProp(
+         PROPERTY_PHYSICS_OBJECT,
+         PROPERTY_PHYSICS_OBJECT,
+         PhysObjProp::SetFuncType(physObjArrayProp.get(), &PhysObjArrayProp::SetCurrentValue),
+         PhysObjProp::GetFuncType(physObjArrayProp.get(), &PhysObjArrayProp::GetCurrentValue),
+         RefString("Physics object properties"),
+         GROUP);
+
+      physObjArrayProp->SetArrayProperty(*physObjProp);
+
+      AddProperty(physObjArrayProp.get());
+
+
+      // TODO: DEPRECATE and remove
       //Get properties for the physics objects.
       PhysicsObjectArray::iterator i, iend;
       i = mPhysicsObjects.begin();
@@ -241,8 +328,23 @@ namespace dtPhysics
       for(; i != iend; ++i)
       {
          PhysicsObject& physObj = **i;
+
+         // Enable the old yucky property name generation.
+         // This is so that old properties name, in old map files,
+         // will still map to physics objects.
+         physObj.SetPropertyNamePrefixEnabled(true);
+
          physObj.BuildPropertyMap();
          physObj.ForEachProperty(dtUtil::MakeFunctor(&PropertyContainer::AddProperty, this));
+
+         // Collect the old property names so that they can be removed
+         // before they can be saved out to file again. The associated
+         // physics object properties will still be accessible via the
+         // array property.
+         PropertyNameCollectorPred pred;
+         physObj.ForEachProperty(pred.GetFunc());
+         mOldPropertyNamesToRemove.insert(mOldPropertyNamesToRemove.begin(),
+            pred.mNames.begin(), pred.mNames.end());
       }
    }
 
@@ -565,6 +667,52 @@ namespace dtPhysics
    }
 
    //////////////////////////////////////////////////////////////////
+   void PhysicsActComp::SetPhysicsObjectByIndex(int index, PhysicsObject* obj)
+   {
+      if (obj != NULL && mPhysicsObjects.size() > size_t(index) && index >= 0)
+      {
+         mPhysicsObjects[index] = new PhysicsObject(*obj);
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////
+   PhysicsObject* PhysicsActComp::GetPhysicsObjectByIndex(int index)
+   {
+      PhysicsObject* obj = NULL;
+
+      if (index >= 0 && size_t(index) < mPhysicsObjects.size())
+      {
+         obj = mPhysicsObjects[index];
+      }
+
+      return obj;
+   }
+
+   //////////////////////////////////////////////////////////////////
+   void PhysicsActComp::InsertNewPhysicsObject(int index)
+   {
+      if (index >= 0 && size_t(index) <= mPhysicsObjects.size())
+      {
+         mPhysicsObjects.insert(mPhysicsObjects.begin() + index, new PhysicsObject);
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////
+   void PhysicsActComp::RemovePhysicsObjectByIndex(int index)
+   {
+      if (index >= 0 && size_t(index) < mPhysicsObjects.size())
+      {
+         mPhysicsObjects.erase(mPhysicsObjects.begin() + index);
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////
+   size_t PhysicsActComp::GetPhysicsObjectCount() const
+   {
+      return mPhysicsObjects.size();
+   }
+
+   //////////////////////////////////////////////////////////////////
    void PhysicsActComp::SetMultiBodyTransform(const TransformType& xform)
    {
       PhysicsObject* po = GetMainPhysicsObject();
@@ -742,7 +890,7 @@ namespace dtPhysics
             {
                dtCore::Transform xformP;
                physObj->GetTransformAsVisual(xformP);
-               if (!xformP.EpsilonEquals(xform, 0.01))
+               if (!xformP.EpsilonEquals(xform, 0.01f))
                {
                   setTransform = true;
                }

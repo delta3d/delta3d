@@ -332,6 +332,15 @@ namespace dtPhysics
       static void CalculateOriginAndExtentsForNode(PrimitiveType& type, const osg::BoundingBox& bb,
                VectorType& center, VectorType& extents);
 
+      /**
+       * Temporary methods for a temporary flag that determines if the
+       * actor name should be prefixed to the property name when the
+       * property map is built.
+       * NOTE: This should be set before calling BuildPropertyMap.
+       */
+      void SetPropertyNamePrefixEnabled(bool enablePrefix);
+      bool IsPropertyNamePrefixEnabled() const;
+
    protected:
       ~PhysicsObject();
 
@@ -345,6 +354,8 @@ namespace dtPhysics
        * then creates a body.
        */
       virtual bool CreateInternal(VertexData* data);
+
+      std::string CreatePropertyName(const std::string& baseName) const;
 
    private:
       // our implementation to the physics engine
