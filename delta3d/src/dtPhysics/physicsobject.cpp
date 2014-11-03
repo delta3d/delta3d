@@ -291,6 +291,9 @@ namespace dtPhysics
       typedef dtCore::PropertyRegHelper<PhysicsObject> PropRegType;
       PropRegType propRegHelper(*this, this, GROUP);
 
+      DT_REGISTER_PROPERTY(Name,
+               "The name of this physics object.  This can be used to look it up at runtime", PropRegType, propRegHelper);
+
       DT_REGISTER_PROPERTY_WITH_NAME(CollisionGroup, "Collision Group", "The numeric collision group for this object."
                "Groups can be configured to collide or not collide with each other."
                , PropRegType, propRegHelper);
