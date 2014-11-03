@@ -352,19 +352,26 @@ namespace dtPhysics
       TestPropertyNameCollector pred;
       CPPUNIT_ASSERT(pred.mNames.empty());
 
-      // Get the property names.
+      CPPUNIT_ASSERT_EQUAL(0U, po->GetNumProperties());
+
+      // Test that the old property naming functionality can still work.
+      dtCore::RefPtr<PhysicsActComp> pac = new PhysicsActComp();
+      pac->AddPhysicsObject(*po);
+      pac->Init(*PhysicsActComp::TYPE);
+
+      unsigned numProps = po->GetNumProperties();
+      // Just pick a number equal to the number when this was coded.
+      CPPUNIT_ASSERT(numProps >= 19U);
       po->BuildPropertyMap();
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("Calling build property map multiple times shouldn't add more properties, though this is not the same as other objects.",
+            numProps, po->GetNumProperties());
+
       po->ForEachProperty(pred.GetFunc());
       po->GetPropertyList(props);
 
       CPPUNIT_ASSERT( ! props.empty());
       CPPUNIT_ASSERT( ! pred.mNames.empty());
       CPPUNIT_ASSERT(pred.mNames.size() == props.size());
-
-      // Test that the old property naming functionality can still work.
-      dtCore::RefPtr<PhysicsActComp> pac = new PhysicsActComp();
-      pac->AddPhysicsObject(*po);
-      pac->Init(*PhysicsActComp::TYPE);
 
       typedef std::set<std::string> StrSet;
       std::string str;
