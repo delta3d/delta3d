@@ -52,7 +52,7 @@ namespace dtPhysics
    typedef unsigned long CollisionGroupFilter;
 
    typedef palMaterial Material;
-   typedef int MaterialIndex;
+   typedef unsigned MaterialIndex;
    typedef DT_PHYSICS_EXPORT palMaterialInteractionCollisionCallback MaterialInteractionCollisionCallback;
 
    typedef palDebugDraw DebugDraw;

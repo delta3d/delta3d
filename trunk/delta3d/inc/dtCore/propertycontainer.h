@@ -185,6 +185,11 @@ namespace dtCore
        */
       void CopyPropertiesFrom(const PropertyContainer& copyFrom);
 
+      /**
+       * @return the number of properties in this container.
+       */
+      unsigned GetNumProperties() const;
+
    protected:
       virtual ~PropertyContainer();
 

@@ -319,39 +319,22 @@ namespace dtPhysics
 
       AddProperty(physObjArrayProp.get());
 
-
-      // TODO: DEPRECATE and remove
-      //Get properties for the physics objects.
-      PhysicsObjectArray::iterator i, iend;
-      i = mPhysicsObjects.begin();
-      iend = mPhysicsObjects.end();
-      for(; i != iend; ++i)
-      {
-         PhysicsObject& physObj = **i;
-
-         // Enable the old yucky property name generation.
-         // This is so that old properties name, in old map files,
-         // will still map to physics objects.
-         physObj.SetPropertyNamePrefixEnabled(true);
-
-         physObj.BuildPropertyMap();
-         physObj.ForEachProperty(dtUtil::MakeFunctor(&PropertyContainer::AddProperty, this));
-
-         // Collect the old property names so that they can be removed
-         // before they can be saved out to file again. The associated
-         // physics object properties will still be accessible via the
-         // array property.
-         PropertyNameCollectorPred pred;
-         physObj.ForEachProperty(pred.GetFunc());
-         mOldPropertyNamesToRemove.insert(mOldPropertyNamesToRemove.begin(),
-            pred.mNames.begin(), pred.mNames.end());
-      }
    }
 
    //////////////////////////////////////////////////////////////////
    dtCore::RefPtr<dtCore::ActorProperty> PhysicsActComp::GetDeprecatedProperty(const std::string& name)
    {
-      return NULL;
+      dtCore::RefPtr<dtCore::ActorProperty> result;
+      size_t idx = name.find(": ");
+      if ( idx != std::string::npos && idx + 2 < name.length())
+      {
+         PhysicsObject* po = GetPhysicsObject(name.substr(0, idx));
+         if (po != NULL)
+         {
+            result = po->GetProperty(name.substr(idx + 2));
+         }
+      }
+      return result;
    }
 
    //////////////////////////////////////////////////////////////////
@@ -547,6 +530,7 @@ namespace dtPhysics
       }
 
       po.SetUserData(this);
+      po.BuildPropertyMap();
       if (makeMain)
       {
          mPhysicsObjects.insert(mPhysicsObjects.begin(), &po);
@@ -667,20 +651,24 @@ namespace dtPhysics
    }
 
    //////////////////////////////////////////////////////////////////
-   void PhysicsActComp::SetPhysicsObjectByIndex(int index, PhysicsObject* obj)
+   void PhysicsActComp::SetPhysicsObjectByIndex(unsigned index, PhysicsObject* obj)
    {
-      if (obj != NULL && mPhysicsObjects.size() > size_t(index) && index >= 0)
+      if (obj != NULL && mPhysicsObjects.size() > size_t(index))
       {
-         mPhysicsObjects[index] = new PhysicsObject(*obj);
+         // TODO we need a clone
+         mPhysicsObjects[index] = new PhysicsObject(obj->GetName());
+         mPhysicsObjects[index]->BuildPropertyMap();
+         mPhysicsObjects[index]->CopyPropertiesFrom(*obj);
+         mPhysicsObjects[index]->SetUserData(this);
       }
    }
 
    //////////////////////////////////////////////////////////////////
-   PhysicsObject* PhysicsActComp::GetPhysicsObjectByIndex(int index)
+   PhysicsObject* PhysicsActComp::GetPhysicsObjectByIndex(unsigned index)
    {
       PhysicsObject* obj = NULL;
 
-      if (index >= 0 && size_t(index) < mPhysicsObjects.size())
+      if (size_t(index) < mPhysicsObjects.size())
       {
          obj = mPhysicsObjects[index];
       }
@@ -689,19 +677,22 @@ namespace dtPhysics
    }
 
    //////////////////////////////////////////////////////////////////
-   void PhysicsActComp::InsertNewPhysicsObject(int index)
+   void PhysicsActComp::InsertNewPhysicsObject(unsigned index)
    {
-      if (index >= 0 && size_t(index) <= mPhysicsObjects.size())
+      if (size_t(index) <= mPhysicsObjects.size())
       {
          mPhysicsObjects.insert(mPhysicsObjects.begin() + index, new PhysicsObject);
+         mPhysicsObjects[index]->BuildPropertyMap();
+         mPhysicsObjects[index]->SetUserData(this);
       }
    }
 
    //////////////////////////////////////////////////////////////////
-   void PhysicsActComp::RemovePhysicsObjectByIndex(int index)
+   void PhysicsActComp::RemovePhysicsObjectByIndex(unsigned index)
    {
-      if (index >= 0 && size_t(index) < mPhysicsObjects.size())
+      if (size_t(index) < mPhysicsObjects.size())
       {
+         mPhysicsObjects[index]->SetUserData(NULL);
          mPhysicsObjects.erase(mPhysicsObjects.begin() + index);
       }
    }
