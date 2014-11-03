@@ -284,4 +284,11 @@ namespace dtCore
          }
       }
    }
+
+   ///////////////////////////////////////////////////////////////////////////////////////
+   unsigned PropertyContainer::GetNumProperties() const
+   {
+      return mProperties.size();
+   }
+
 }

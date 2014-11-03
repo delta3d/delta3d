@@ -88,7 +88,6 @@ namespace dtPhysics
       CPPUNIT_TEST(testMaterialActor);
       CPPUNIT_TEST(testGeometryMarginPerEngine);
       CPPUNIT_TEST(testObjectArray);
-      CPPUNIT_TEST(testObjectOldPropertyNameRemoval);
       CPPUNIT_TEST(testObjectPropertyNames);
       CPPUNIT_TEST(testObjectPerEngine);
       CPPUNIT_TEST(testObjectConvexPerEngine);
@@ -350,9 +349,6 @@ namespace dtPhysics
       std::string objNamePrefix(objName + ": ");
       dtCore::RefPtr<PhysicsObject> po = new PhysicsObject(objName);
 
-      // Ensure the old property naming functionality is disabled.
-      CPPUNIT_ASSERT( ! po->IsPropertyNamePrefixEnabled());
-
       TestPropertyNameCollector pred;
       CPPUNIT_ASSERT(pred.mNames.empty());
 
@@ -364,6 +360,11 @@ namespace dtPhysics
       CPPUNIT_ASSERT( ! props.empty());
       CPPUNIT_ASSERT( ! pred.mNames.empty());
       CPPUNIT_ASSERT(pred.mNames.size() == props.size());
+
+      // Test that the old property naming functionality can still work.
+      dtCore::RefPtr<PhysicsActComp> pac = new PhysicsActComp();
+      pac->AddPhysicsObject(*po);
+      pac->Init(*PhysicsActComp::TYPE);
 
       typedef std::set<std::string> StrSet;
       std::string str;
@@ -377,41 +378,11 @@ namespace dtPhysics
          CPPUNIT_ASSERT(str.find(objNamePrefix) == std::string::npos);
          CPPUNIT_ASSERT(po->GetProperty(str) != NULL);
          ++numPropNamesFound;
+
+         CPPUNIT_ASSERT(pac->GetDeprecatedProperty(objNamePrefix + str) != NULL);
       }
 
-      CPPUNIT_ASSERT((int)props.size() == numPropNamesFound);
-
-      
-
-      // Test that the old property naming functionality can still work.
-
-      // Renew the object and the property name collector.
-      pred.mNames.clear();
-      po = new PhysicsObject(objName);
-
-      // --- Enabled the old functionality
-      po->SetPropertyNamePrefixEnabled(true);
-      CPPUNIT_ASSERT(po->IsPropertyNamePrefixEnabled());
-
-      // Get the property names.
-      po->BuildPropertyMap();
-      po->ForEachProperty(pred.GetFunc());
-
-      CPPUNIT_ASSERT( ! pred.mNames.empty());
-
-      curIter = pred.mNames.begin();
-      endIter = pred.mNames.end();
-      for (; curIter != endIter; ++curIter)
-      {
-         str = *curIter;
-
-         // DEBUG:
-         printf("Trying to find \"%s\" in \"%s\"\n", objName.c_str(), str.c_str());
-
-         CPPUNIT_ASSERT(str.find(objName) != std::string::npos);
-         CPPUNIT_ASSERT(str.find(objNamePrefix) != std::string::npos);
-         CPPUNIT_ASSERT(po->GetProperty(str) != NULL);
-      }
+      CPPUNIT_ASSERT_EQUAL(numPropNamesFound, (int)props.size());
    }
 
    /////////////////////////////////////////////////////////
@@ -1746,72 +1717,6 @@ namespace dtPhysics
       catch(...)
       {
          LOG_ERROR("Unknown exception encountered.");
-      }
-   }
-
-   /////////////////////////////////////////////////////////
-   void dtPhysicsTests::testObjectOldPropertyNameRemoval()
-   {
-      dtCore::RefPtr<PhysicsActComp> actCompPtr = new PhysicsActComp();
-      PhysicsActComp& actorComp = *actCompPtr;
-
-      CPPUNIT_ASSERT(actorComp.GetPhysicsObjectCount() == 0);
-
-      dtCore::RefPtr<PhysicsObject> po = new PhysicsObject("TestObject");
-      actorComp.AddPhysicsObject(*po);
-
-      // Enable the old property naming functionality.
-      po->SetPropertyNamePrefixEnabled(true);
-      
-      CPPUNIT_ASSERT(actorComp.GetPhysicsObjectCount() == 1);
-
-
-      // Collect property names from the component and
-      // then from the object directly.
-      TestPropertyNameCollector predForObj;
-      TestPropertyNameCollector predForComp;
-      actorComp.BuildPropertyMap();
-      actorComp.ForEachProperty(predForComp.GetFunc());
-      po->ForEachProperty(predForObj.GetFunc());
-
-      CPPUNIT_ASSERT( ! predForObj.mNames.empty());
-      CPPUNIT_ASSERT( ! predForComp.mNames.empty());
-
-      
-      // Verify that the names exist in both containers.
-      typedef std::set<std::string> StrSet;
-      std::string curStr;
-      StrSet oldNames = predForObj.mNames;
-      StrSet::iterator curIter = oldNames.begin();
-      StrSet::iterator endIter = oldNames.end();
-      for (; curIter != endIter; ++curIter)
-      {
-         curStr = *curIter;
-         CPPUNIT_ASSERT(predForComp.mNames.find(curStr) != predForComp.mNames.end());
-      }
-
-
-      int numCompProps = (int)predForComp.mNames.size();
-      int numOldProps = (int)predForObj.mNames.size();
-      CPPUNIT_ASSERT_EQUAL(numOldProps, actorComp.RemoveOldProperties());
-
-      // Re-collect property names.
-      predForComp.mNames.clear();
-      predForObj.mNames.clear();
-      actorComp.ForEachProperty(predForComp.GetFunc());
-      po->ForEachProperty(predForObj.GetFunc());
-
-      int numCompPropsAfterRemoval = (int)predForComp.mNames.size();
-      CPPUNIT_ASSERT_EQUAL(numCompProps - numOldProps, numCompPropsAfterRemoval);
-
-
-      // Verify that the old names do not exist in both containers.
-      curIter = oldNames.begin();
-      endIter = oldNames.end();
-      for (; curIter != endIter; ++curIter)
-      {
-         curStr = *curIter;
-         CPPUNIT_ASSERT(predForComp.mNames.find(curStr) == predForComp.mNames.end());
       }
    }
 

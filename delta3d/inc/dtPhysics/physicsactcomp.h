@@ -129,25 +129,25 @@ namespace dtPhysics
           * Method used by the physics object array property to assign
           * an object at a specified index.
           */
-         void SetPhysicsObjectByIndex(int index, PhysicsObject* obj);
+         void SetPhysicsObjectByIndex(unsigned index, PhysicsObject* obj);
 
          /**
           * Method used by the physics object array property to acquire
           * an object at a specified index.
           */
-         PhysicsObject* GetPhysicsObjectByIndex(int index);
+         PhysicsObject* GetPhysicsObjectByIndex(unsigned index);
 
          /**
           * Method used by the physics object array property to create
           * a new object at a specified index.
           */
-         void InsertNewPhysicsObject(int index);
+         void InsertNewPhysicsObject(unsigned index);
 
          /**
           * Method used by the physics object array property to remove
           * an object at a specified index.
           */
-         void RemovePhysicsObjectByIndex(int index);
+         void RemovePhysicsObjectByIndex(unsigned index);
 
          /**
           * Method used by the physics object array property to determine
