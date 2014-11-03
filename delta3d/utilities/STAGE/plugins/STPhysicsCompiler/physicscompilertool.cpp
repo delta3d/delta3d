@@ -110,7 +110,7 @@ void PhysicsFileOptions::SetTargetDirectory(const std::string& dir)
    
    // Determine a project category from the directory path.
    std::string category(dir);
-   unsigned index = category.find(contextPath);
+   size_t index = category.find(contextPath);
    if (index != std::string::npos)
    {
       // Remove the context part of the path.
@@ -135,7 +135,7 @@ void PhysicsFileOptions::SetTargetDirectory(const std::string& dir)
    if ( ! category.empty())
    {
       std::string typeStr = category;
-      unsigned index = category.find(":");
+      size_t index = category.find(":");
       bool hasSubDirectory = index != std::string::npos;
       if (hasSubDirectory)
       {
@@ -450,7 +450,7 @@ int PhysicsCompilerToolPlugin::AddObjects(dtPhysics::PhysicsObjectArray& objArra
 
    /*
       //Get properties for the physics objects.
-      /*PhysicsObjectArray::iterator i, iend;
+      PhysicsObjectArray::iterator i, iend;
       i = mPhysicsObjects.begin();
       iend = mPhysicsObjects.end();
       for(; i != iend; ++i)
