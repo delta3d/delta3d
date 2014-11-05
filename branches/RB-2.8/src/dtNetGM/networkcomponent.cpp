@@ -107,6 +107,9 @@ namespace dtNetGM
       , mFrameSyncIsEnabled(false)
       , mFrameSyncNumPerSecond(60)
       , mFrameSyncMaxWaitTime(4.0f)
+      , mGameName(gameName)
+      , mGameVersion(gameVersion)
+      , mGNELogFile(logFile)
    {
       mConnections.clear();
 
@@ -115,8 +118,6 @@ namespace dtNetGM
          mGneInitialized = false;
       }
       RegisterInstance(this);
-
-      InitializeNetwork(gameName, gameVersion, logFile);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -127,23 +128,14 @@ namespace dtNetGM
       DeregisterInstance(this);
    }
 
+   DT_IMPLEMENT_ACCESSOR(NetworkComponent, std::string, GameName);
+   DT_IMPLEMENT_ACCESSOR(NetworkComponent, int, GameVersion);
+   DT_IMPLEMENT_ACCESSOR(NetworkComponent, std::string, GNELogFile);
+
    ////////////////////////////////////////////////////////////////////////////////
    void NetworkComponent::OnAddedToGM()
    {
-//      // Just check the first message to see if it was registered.  Unless someone writes code to manually register of
-//      // of the other types in the this method but not the first, this check should prevent double registration.
-//      if (!GetGameManager()->GetMessageFactory().IsMessageTypeSupported(dtGame::MessageType::NETCLIENT_REQUEST_CONNECTION))
-//      {
-//         // Register Network specific messages
-//         GetGameManager()->GetMessageFactory().RegisterMessageType<MachineInfoMessage>(dtGame::MessageType::NETCLIENT_REQUEST_CONNECTION);
-//         GetGameManager()->GetMessageFactory().RegisterMessageType<MachineInfoMessage>(dtGame::MessageType::INFO_CLIENT_CONNECTED);
-//
-//         GetGameManager()->GetMessageFactory().RegisterMessageType<MachineInfoMessage>(dtGame::MessageType::NETSERVER_ACCEPT_CONNECTION);
-//         GetGameManager()->GetMessageFactory().RegisterMessageType<MachineInfoMessage>(dtGame::MessageType::NETCLIENT_NOTIFY_DISCONNECT);
-//
-//         GetGameManager()->GetMessageFactory().RegisterMessageType<ServerSyncControlMessage>(dtGame::MessageType::NETSERVER_SYNC_CONTROL);
-//         GetGameManager()->GetMessageFactory().RegisterMessageType<ServerFrameSyncMessage>(dtGame::MessageType::NETSERVER_FRAME_SYNC);
-//      }
+      InitializeNetwork(GetGameName(), GetGameVersion(), GetGNELogFile());
 
       dtCore::RefPtr<DispatchTask> task = new DispatchTask;
       mDispatchTask = task;
