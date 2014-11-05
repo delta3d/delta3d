@@ -189,7 +189,7 @@ namespace dtRender
 
       SceneManagerImpl()
          : mCreateDefaultScene(true)
-         , mCreateMultipassScene(true)
+         , mCreateMultipassScene(false)
          , mEnableHDR(false)
          , mExposure(1.0f)
          , mLuminance(1.0f)
