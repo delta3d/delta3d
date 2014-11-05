@@ -25,7 +25,6 @@ uniform bool d3d_ShadowOnlyPass = false;
 varying vec3 vLightDir;
 varying vec3 vLightDir2;
 varying vec3 vNormal;
-varying vec3 vLocalPos;
 varying vec3 vPos;
 varying vec3 vWorldNormal;
 varying vec3 vCamera;
@@ -53,16 +52,18 @@ void main(void)
 {
    vec3 model = mat3(osg_ViewMatrixInverse) * vec3(vViewPos.xyz);
    vec3 upDir = normalize(model.xyz);
-   float altitude = vLocalPos.z;   
-
-   if(altitude < WaterHeight)
+   float altitude = vPos.z;   
+   
+   if(ReflectMode < 0.0)
    {
-      if(ReflectMode < 0.0)
+      altitude *= -1.0;
+
+      if(altitude < WaterHeight)
       {
          discard;
       }
    }
-
+   
    //if your shader ever sets the frag depth it must always
    if(d3d_DepthOnlyPass)
    {
@@ -251,4 +252,5 @@ void main(void)
    result = mix(fogColor, result, fogAmt);
 
    gl_FragColor = vec4(result.rgb, 1.0);
+   //gl_FragColor = grassBlendColor;
 }
