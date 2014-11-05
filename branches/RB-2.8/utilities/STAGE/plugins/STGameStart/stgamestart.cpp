@@ -115,12 +115,23 @@ void STGameStartPlugin::RunGameStart()
 
       gamestartRunner->setEnvironment( QProcess::systemEnvironment() );
 
+      if(!args3.isEmpty())
+      {
+         gamestartRunner->start(program, QStringList() << args << "--mapName" << args2  << "--baseMap" << args3);
+
+         if (!gamestartRunner->waitForStarted())
+            qDebug() << "Failed to launch " << program << ", with cmd args " << args << " --mapName" << args2 << " --baseMap" << args3;
+
+      }
+      else
+      {
+         gamestartRunner->start(program, QStringList() << args << "--mapName" << args2 );
+
+         if (!gamestartRunner->waitForStarted())
+            qDebug() << "Failed to launch " << program << ", with cmd args " << args << " --mapName" << args2;
+      }
+
       
-      gamestartRunner->start(program, QStringList() << args << "--mapName" << args2  << "--baseMap" << args3);
-
-      if (!gamestartRunner->waitForStarted())
-         qDebug() << "Failed to launch " << program << ", with cmd args " << args << " --mapName" << args2 << " --baseMap" << args3;
-
       mOutputWindow->clear();
 
       mOutputWindow->append(QString("Application started."));
