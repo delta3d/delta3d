@@ -117,6 +117,10 @@ namespace dtNetGM
        */
       NetworkComponent(const std::string& gameName, const int gameVersion, const std::string& logFile = "");
 
+      DT_DECLARE_ACCESSOR(std::string, GameName);
+      DT_DECLARE_ACCESSOR(int, GameVersion);
+      DT_DECLARE_ACCESSOR(std::string, GNELogFile);
+
       /**
        * Called immediately after a component is added to the GM. Used to register
        * 'additional' Network Messages on the GameManager
