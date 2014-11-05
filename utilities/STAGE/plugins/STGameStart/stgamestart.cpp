@@ -96,9 +96,13 @@ void STGameStartPlugin::RunGameStart()
 
 #if  defined(DELTA_WIN32)
 
-      QString program(dtUtil::GetDeltaRootPath().c_str());
-      program.append("/bin/GameStart.exe");
-      
+      QString program(QApplication::applicationDirPath());
+#ifdef _DEBUG
+      program.append("\\GameStartd.exe");
+#else
+      program.append("\\GameStart.exe");
+#endif 
+
 #else
 
 #endif
