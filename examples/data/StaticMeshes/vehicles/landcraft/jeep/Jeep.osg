@@ -16,7 +16,7 @@ MatrixTransform {
     0 0 1 0
     0 0 0 1
   }
-  num_children 9
+  num_children 10
   MatrixTransform {
     DataVariance STATIC
     name "Lamps"
@@ -86027,6 +86027,87 @@ MatrixTransform {
       multOrder          PRH
       limitationFlags    0x0
       animationOn        FALSE
+    }
+  }
+  MatrixTransform {
+    nodeMask 0xffffffff
+    cullingActive TRUE
+    referenceFrame RELATIVE
+    Matrix {
+      1 0 0 0
+      0 1 0 0
+      0 0 1 0
+      0 -1.09927 1.64584 1
+    }
+    num_children 1
+    osgSim::DOFTransform {
+      DataVariance DYNAMIC
+      name "dof_turret_01"
+      nodeMask 0xffffffff
+      cullingActive TRUE
+      referenceFrame RELATIVE
+      PutMatrix {
+        1 0 0 0
+        0 1 0 0
+        0 0 1 0
+        0 0 0 1
+        }
+      minHPR             0 0 0
+      maxHPR             0 0 0
+      incrementHPR       0 0 0
+      currentHPR         0 0 0
+      minTranslate       0 0 0
+      maxTranslate       0 0 0
+      incrementTranslate 0 0 0
+      currentTranslate   0 0 0
+      minScale           1 1 1
+      maxScale           1 1 1
+      incrementScale     0 0 0
+      currentScale       1 1 1
+      multOrder          PRH
+      limitationFlags    0x0
+      animationOn        FALSE
+      num_children 1
+      MatrixTransform {
+        nodeMask 0xffffffff
+        cullingActive TRUE
+        referenceFrame RELATIVE
+        Matrix {
+          1 0 0 0
+          0 1 0 0
+          0 0 1 0
+          0 0 0.523193 1
+        }
+        num_children 1
+        osgSim::DOFTransform {
+          DataVariance DYNAMIC
+          name "dof_gun_01"
+          nodeMask 0xffffffff
+          cullingActive TRUE
+          referenceFrame RELATIVE
+          PutMatrix {
+            1 0 0 0
+            0 1 0 0
+            0 0 1 0
+            0 0 0 1
+            }
+          minHPR             0 0 0
+          maxHPR             0 0 0
+          incrementHPR       0 0 0
+          currentHPR         0 0 0
+          minTranslate       0 0 0
+          maxTranslate       0 0 0
+          incrementTranslate 0 0 0
+          currentTranslate   0 0 0
+          minScale           1 1 1
+          maxScale           1 1 1
+          incrementScale     0 0 0
+          currentScale       1 1 1
+          multOrder          PRH
+          limitationFlags    0x0
+          animationOn        FALSE
+        }
+      }
     }
   }
 }
