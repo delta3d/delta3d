@@ -10091,7 +10091,7 @@ MatrixTransform {
       num_children 1
       MatrixTransform {
         DataVariance STATIC
-        name "Wheel_BR"
+        name "Wheel_FR"
         nodeMask 0xffffffff
         cullingActive TRUE
         referenceFrame RELATIVE
@@ -10099,12 +10099,12 @@ MatrixTransform {
           1 0 0 0
           0 1 0 0
           0 0 1 0
-          0 -2.36571 0 1
+          0 0 0 1
         }
         num_children 1
         MatrixTransform {
           DataVariance STATIC
-          name "Wheel_BR-OFFSET"
+          name "Wheel_FR-OFFSET"
           nodeMask 0xffffffff
           cullingActive TRUE
           referenceFrame RELATIVE
@@ -10161,7 +10161,7 @@ MatrixTransform {
       num_children 1
       MatrixTransform {
         DataVariance STATIC
-        name "Wheel_FR"
+        name "Wheel_BR"
         nodeMask 0xffffffff
         cullingActive TRUE
         referenceFrame RELATIVE
@@ -10169,12 +10169,12 @@ MatrixTransform {
           1 0 0 0
           0 1 0 0
           0 0 1 0
-          0 2.36571 5.96046e-008 1
+          0 0 5.96046e-008 1
         }
         num_children 1
         MatrixTransform {
           DataVariance STATIC
-          name "Wheel_FR-OFFSET"
+          name "Wheel_BR-OFFSET"
           nodeMask 0xffffffff
           cullingActive TRUE
           referenceFrame RELATIVE
