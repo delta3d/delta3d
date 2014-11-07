@@ -129,6 +129,12 @@ namespace dtQt
    }
 
    /////////////////////////////////////////////////////////////////////////////
+   void BasePropertyEditor::UpdateUI()
+   {
+      refreshSelectedActors();
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
    void BasePropertyEditor::setupUI()
    {
       // create the main widget and the scroll and setup our editor docking window.

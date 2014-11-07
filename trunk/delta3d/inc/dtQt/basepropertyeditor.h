@@ -121,6 +121,8 @@ namespace dtQt
       virtual void OnContainersSelected(const std::vector<dtCore::RefPtr<dtCore::PropertyContainer> >& selection);
 
    public slots:
+      void UpdateUI();
+
       /**
        * Handles the actor selection changed event message from EditorEvents
        */
