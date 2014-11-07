@@ -39,6 +39,8 @@ dynamicstringcontrol.cpp
 dynamicvectorelementcontrol.cpp
 librarypathseditor.cpp
 nodetreepanel.cpp
+objecttypelistpanel.cpp
+objecttypeselectdialog.cpp
 osgadapterwidget.cpp
 osggraphicswindowqt.cpp
 projectcontextdialog.cpp
@@ -55,7 +57,10 @@ INCLUDE_DIRECTORIES(${QT_INCLUDE_DIR}
                     ${CMAKE_CURRENT_BINARY_DIR} # for ui*.h files
                    )
 				   
-qt4_wrap_ui(UI_SOURCES nodetreepanel.ui)
+qt4_wrap_ui(UI_SOURCES basedialog.ui
+                       nodetreepanel.ui
+                       objecttypelistpanel.ui)
+                       
 QT4_WRAP_CPP(MOC_SOURCES ${LIB_PUBLIC_HEADERS})
 
 QT4_ADD_RESOURCES(RCC_SOURCES

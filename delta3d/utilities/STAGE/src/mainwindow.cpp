@@ -53,6 +53,8 @@ DT_DISABLE_WARNING_END
 #include <dtCore/librarymanager.h>
 #include <dtCore/exceptionenum.h>
 #include <dtCore/map.h>
+#include <dtGame/actorcomponent.h>
+#include <dtGame/gameactor.h>
 #include <dtUtil/datapathutils.h>
 #include <dtUtil/fileutils.h>
 #include <dtUtil/mswinmacros.h>
@@ -75,6 +77,8 @@ DT_DISABLE_WARNING_END
 #include <dtEditQt/projectcontextdialog.h>
 #include <dtEditQt/uiresources.h>
 #include <dtEditQt/externaltool.h>
+#include <dtQt/objecttypelistpanel.h>
+#include <dtQt/objecttypeselectdialog.h>
 
 #include <osgDB/FileNameUtils>
 
@@ -86,24 +90,26 @@ namespace dtEditQt
       : mPluginManager(new PluginManager(this))
       , mSTAGEConfigFullPath(stageConfigFile)
       , mVolEditActorProxy()
-      , mFileMenu()
-      , mEditMenu()
-      , mProjectMenu()
-      , mWindowMenu()
-      , mHelpMenu()
-      , mRecentProjs()
-      , mRecentMaps()
-      , mToolsMenu()
-      , mToolModeActionGroup()
-      , mNormalToolMode()
-      , mPerspView()
-      , mTopView()
-      , mSideView()
-      , mFrontView()
-      , mPropertyWindow()
-      , mActorDockWidg()
-      , mActorSearchDockWidg()
-      , mResourceBrowser()
+      , mFileMenu(NULL)
+      , mEditMenu(NULL)
+      , mProjectMenu(NULL)
+      , mWindowMenu(NULL)
+      , mHelpMenu(NULL)
+      , mRecentProjs(NULL)
+      , mRecentMaps(NULL)
+      , mToolsMenu(NULL)
+      , mToolModeActionGroup(NULL)
+      , mNormalToolMode(NULL)
+      , mAddActorComponent(NULL)
+      , mPerspView(NULL)
+      , mTopView(NULL)
+      , mSideView(NULL)
+      , mFrontView(NULL)
+      , mEditorContainer(NULL)
+      , mPropertyWindow(NULL)
+      , mActorDockWidg(NULL)
+      , mActorSearchDockWidg(NULL)
+      , mResourceBrowser(NULL)
    {
       //Read STAGE configuration file
       if (stageConfigFile != "")
@@ -153,6 +159,8 @@ namespace dtEditQt
       dtCore::Project::GetInstance().SetEditMode(true);
 
       ViewportManager::GetInstance();
+
+      mAddActorComponent = new QAction("Add Actor Component...", this);
 
       connectSlots();
       setupDockWindows();
@@ -211,6 +219,8 @@ namespace dtEditQt
       mEditMenu = menuBar()->addMenu(tr("&Edit"));
       mEditMenu->addAction(editorActions.mActionEditUndo);
       mEditMenu->addAction(editorActions.mActionEditRedo);
+      mEditMenu->addSeparator();
+      mEditMenu->addAction(mAddActorComponent);
       mEditMenu->addSeparator();
       mEditMenu->addAction(editorActions.mActionLocalSpace);
       mEditMenu->addSeparator();
@@ -545,6 +555,8 @@ namespace dtEditQt
       const bool hasCurrentMap = (EditorData::GetInstance().getCurrentMap() != NULL);
       const bool hasBoth       = hasProject && hasCurrentMap;
 
+      mAddActorComponent->setEnabled(hasBoth);
+
       EditorActions& ea = EditorActions::GetInstance();
       ea.mActionFileNewMap->setEnabled(hasProject);
       ea.mActionFileOpenMap->setEnabled(hasProject);
@@ -819,6 +831,79 @@ namespace dtEditQt
    }
 
    ///////////////////////////////////////////////////////////////////////////////
+   bool MainWindow::IsActorComponentType(const dtCore::ObjectType& objType) const
+   {
+      return objType.InstanceOf(*dtGame::ActorComponent::BaseActorComponentType);
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void MainWindow::onAddActorComponent()
+   {
+      dtQt::ObjectTypeSelectDialog dialog(this);
+      dialog.setWindowTitle("Add Actor Component");
+
+      dtQt::ObjectTypeListPanel& objTypePanel = dialog.GetObjectTypeListPanel();
+      objTypePanel.SetFilterFunc(dtUtil::MakeFunctor(&MainWindow::IsActorComponentType, this));
+
+      // Ensure the list updates using the filter function to only show
+      // actor component types.
+      dialog.UpdateUI();
+      
+      if (dialog.exec() == QDialog::Accepted)
+      {
+         int results = 0;
+
+         typedef dtQt::ObjectTypeListPanel::ObjectTypeList ObjectTypeList;
+
+         ObjectTypeList compTypes;
+         if (0 < objTypePanel.GetSelection(compTypes))
+         {
+            typedef dtCore::BaseActorObject* ActorPtr;
+            typedef std::vector<ActorPtr> ActorArray;
+            ActorArray actors;
+            dtEditQt::EditorData::GetInstance().GetSelectedActors(actors);
+
+            const dtCore::ActorType* actType = NULL;
+            ObjectTypeList::const_iterator curIter = compTypes.begin();
+            ObjectTypeList::const_iterator endIter = compTypes.end();
+            for (; curIter != endIter; ++curIter)
+            {
+               actType = dynamic_cast<const dtCore::ActorType*>(*curIter);
+
+               if (actType != NULL)
+               {
+                  dtGame::GameActorProxy* curActor = NULL;
+                  ActorArray::iterator curActorIter = actors.begin();
+                  ActorArray::iterator endActorIter = actors.end();
+                  for (; curActorIter != endActorIter; ++curActorIter)
+                  {
+                     curActor = dynamic_cast<dtGame::GameActorProxy*>(*curActorIter);
+
+                     if (curActor == NULL)
+                     {
+                        LOG_ERROR("Could not convert \"" + (*curActorIter)->GetName()
+                           + "\" to a GameActor to add an ActorComponent of type \""
+                           + actType->GetName() + "\".");
+                     }
+                     else
+                     {
+                        curActor->AddComponent(*actType);
+
+                        ++results;
+                     }
+                  }
+               }
+            }
+         }
+
+         if (results > 0)
+         {
+            mPropertyWindow->UpdateUI();
+         }
+      }
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
    void MainWindow::onActorSelection()
    {
       if(mActorDockWidg != NULL)
@@ -915,6 +1000,9 @@ namespace dtEditQt
    void MainWindow::connectSlots()
    {
       EditorActions& editorActions = EditorActions::GetInstance();
+
+      connect(mAddActorComponent, SIGNAL(triggered()),
+         this, SLOT(onAddActorComponent()));
 
       connect(editorActions.mActionWindowsPropertyEditor, SIGNAL(triggered()),
          this, SLOT(onPropertyEditorSelection()));
