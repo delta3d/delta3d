@@ -173,7 +173,6 @@ SET(LIB_PUBLIC_HEADERS
                 ${HEADER_PATH}/propertycontaineractorproperty.h
                 ${HEADER_PATH}/propertymacros.h
                 ${HEADER_PATH}/range.h
-                ${HEADER_PATH}/rangeactorproperty.h
                 ${HEADER_PATH}/recorder.h
                 ${HEADER_PATH}/refptr.h
                 ${HEADER_PATH}/resourceactorproperty.h
@@ -362,7 +361,6 @@ SET(LIB_SOURCES
                 ${SOURCE_PATH}/projectconfigxmlhandler.cpp
                 ${SOURCE_PATH}/propertycontainer.cpp
                 ${SOURCE_PATH}/propertycontaineractorproperty.cpp
-                ${SOURCE_PATH}/rangeactorproperty.cpp
                 ${SOURCE_PATH}/resourceactorproperty.cpp
                 ${SOURCE_PATH}/resourcedescriptor.cpp
                 ${SOURCE_PATH}/resourcehelper.cpp

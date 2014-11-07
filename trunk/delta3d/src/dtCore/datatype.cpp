@@ -77,8 +77,6 @@ namespace dtCore
    DataType DataType::VEC3D("VEC3D", "Vector 3d", false, VEC3D_ID);
    DataType DataType::VEC4D("VEC4D", "Vector 4d", false, VEC4D_ID);
 
-   DataType DataType::RANGE("RANGE", "Range", false, RANGE_ID);
-
    DataType DataType::RGBCOLOR("RGBCOLOR", "RGB Color", false, RGBCOLOR_ID);
    DataType DataType::RGBACOLOR("RGBACOLOR", "RGBA Color", false, RGBACOLOR_ID);
 

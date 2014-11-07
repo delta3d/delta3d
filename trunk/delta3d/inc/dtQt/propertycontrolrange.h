@@ -27,7 +27,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 // INCLUDE DIRECTIVES
 ////////////////////////////////////////////////////////////////////////////////
-#include <dtQt/export.h>
+/*#include <dtQt/export.h>
 #include <dtQt/basepropertycontrol.h>
 
 
@@ -57,19 +57,19 @@ namespace dtQt
 
       virtual ~PropertyControlRange();
 
-      /*virtual*/ QObject* GetControlUI();
+      /*virtual* / QObject* GetControlUI();
 
-      /*virtual*/ QLabel* GetLabel() const;
+      /*virtual* / QLabel* GetLabel() const;
 
       /**
        * Update the UI values from the referenced data.
        */
-      /*virtual*/ void UpdateUI(const PropertyType& prop);
+      /*virtual* / void UpdateUI(const PropertyType& prop);
 
       /**
        * Update the referenced data with values from the UI.
        */
-      /*virtual*/ void UpdateData(PropertyType& propToUpdate);
+      /*virtual* / void UpdateData(PropertyType& propToUpdate);
 
       void UpdateControlLimits();
 
@@ -80,10 +80,10 @@ namespace dtQt
       void OnMaxChanged(double value);
 
    protected:
-      /*virtual*/ void CreateConnections();
+      /*virtual* / void CreateConnections();
 
       Ui::PropertyControlRange* mUI;
    };
-}
+}*/
 
 #endif

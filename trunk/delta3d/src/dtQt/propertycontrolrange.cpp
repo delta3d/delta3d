@@ -24,7 +24,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 // INCLUDE DIRECTIVES
 ////////////////////////////////////////////////////////////////////////////////
-#include "ui_propertycontrolrange.h"
+/*#include "ui_propertycontrolrange.h"
 #include <dtQt/propertycontrolrange.h>
 #include <dtCore/rangeactorproperty.h>
 
@@ -174,4 +174,4 @@ namespace dtQt
       emit SignalUIChanged();
    }
 
-}
+}*/
