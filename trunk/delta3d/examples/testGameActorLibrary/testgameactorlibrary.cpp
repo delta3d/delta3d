@@ -114,4 +114,7 @@ void TestGameActorLibrary::RegisterActorTypes()
    mActorFactory->RegisterType<TestHLAObjectProxy> (TEST_HELICOPTER_GAME_ACTOR_TYPE.get());      
    mActorFactory->RegisterType<TestGameEnvironmentActorProxy> (TEST_ENVIRONMENT_GAME_ACTOR_TYPE.get());
    mActorFactory->RegisterType<TestGamePropertyActor> (TEST_GAME_PROPERTY_TYPE.get());
+      
+   mActorFactory->RegisterType<TestActorComponent1>(TestActorComponent1::TYPE.get());
+   mActorFactory->RegisterType<TestActorComponent2>(TestActorComponent2::TYPE.get());
 }
