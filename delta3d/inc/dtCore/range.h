@@ -27,7 +27,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 // INCLUDE DIRECTIVES
 ////////////////////////////////////////////////////////////////////////////////
-#include <osg/Referenced>
+/*#include <osg/Referenced>
 
 
 
@@ -40,7 +40,7 @@ namespace dtCore
    class RangeT
    {
    public:
-      typedef typename T_Num ValueType;
+      typedef T_Num ValueType;
 
       static const ValueType ZERO;
       static const ValueType ONE;
@@ -186,21 +186,11 @@ namespace dtCore
 
 
    /////////////////////////////////////////////////////////////////////////////
-   // CONSTANTS
-   /////////////////////////////////////////////////////////////////////////////
-   template<typename T_Num>
-   const T_Num RangeT<typename T_Num>::ZERO = T_Num(0);
-   template<typename T_Num>
-   const T_Num RangeT<typename T_Num>::ONE = T_Num(1);
-
-
-
-   /////////////////////////////////////////////////////////////////////////////
    // TYPE DEFINITIONS
    /////////////////////////////////////////////////////////////////////////////
    typedef RangeT<float> Range;
    typedef RangeT<double> RangeD;
    typedef RangeT<int> RangeInt;
-}
+}*/
 
 #endif

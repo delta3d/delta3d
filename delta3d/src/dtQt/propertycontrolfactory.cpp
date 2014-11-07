@@ -73,7 +73,7 @@ namespace dtQt
       RegisterControlForDataType<PropertyControlString>(DataType::STRING);
       RegisterControlForDataType<PropertyControlEnum>(DataType::ENUMERATION);
       RegisterControlForDataType<PropertyControlVec4>(DataType::VEC4F);
-      RegisterControlForDataType<PropertyControlRange>(DataType::RANGE);
+      //RegisterControlForDataType<PropertyControlRange>(DataType::RANGE);
       RegisterControlForDataType<PropertyControlArray>(DataType::ARRAY);
       //RegisterControlForDataType<PropertyControlContainer>(DataType::PROPERTY_CONTAINER);
       

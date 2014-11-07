@@ -887,7 +887,7 @@ namespace dtEditQt
                      }
                      else
                      {
-                        curActor->AddComponent(*actType);
+//                        curActor->AddComponent(*actType);
 
                         ++results;
                      }

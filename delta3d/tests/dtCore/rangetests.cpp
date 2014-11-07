@@ -21,7 +21,7 @@
  * THE SOFTWARE.
  */
 
-#include <prefix/unittestprefix.h>
+/*#include <prefix/unittestprefix.h>
 #include <cppunit/extensions/HelperMacros.h>
 #include <dtCore/range.h>
 
@@ -170,4 +170,4 @@ void RangeTests::TestClamp()
    CPPUNIT_ASSERT(r.GetMax() == -2.0f);
    CPPUNIT_ASSERT(r.GetValue() == -2.0f);
    CPPUNIT_ASSERT(r.GetRatio() == 1.0f);
-}
+}*/
