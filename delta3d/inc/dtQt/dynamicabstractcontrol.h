@@ -408,7 +408,7 @@ namespace dtQt
       int  mArrayIndex;
 
       dtCore::RefPtr<dtCore::PropertyContainer> mPropContainer;
-      dtCore::ActorProperty*                    mBaseProperty;
+      dtCore::ObserverPtr<dtCore::ActorProperty> mBaseProperty;
 
       // Linked properties are a list of all other properties that are
       // determined to "match" the base property by name, type, and category.

@@ -226,7 +226,12 @@ namespace dtEditQt
       /**
        * Slot to handle the AddActorComponent action.
        */
-      void onAddActorComponent();
+      void onAddActorComponents();
+
+      /**
+       * Slot to handle the AddActorComponent action.
+       */
+      void onRemoveActorComponents();
 
       /**
       * This slot will either hide or retrieve the actor dockwidget when
@@ -343,6 +348,7 @@ namespace dtEditQt
       QActionGroup* mToolModeActionGroup;
       QAction* mNormalToolMode;
       QAction* mAddActorComponent;
+      QAction* mRemoveActorComponent;
 
       PerspectiveViewport* mPerspView;
       OrthoViewport* mTopView;
