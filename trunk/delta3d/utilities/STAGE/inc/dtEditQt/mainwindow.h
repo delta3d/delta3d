@@ -38,6 +38,7 @@ DT_DISABLE_WARNING_ALL_START
 DT_DISABLE_WARNING_END
 
 #include <dtCore/actorproxy.h>
+#include <dtCore/objecttype.h>
 #include <dtQt/typedefs.h>
 
 class QSplitter;
@@ -188,6 +189,8 @@ namespace dtEditQt
        */
       dtActors::VolumeEditActorProxy* GetVolumeEditActorProxy();
 
+      bool IsActorComponentType(const dtCore::ObjectType& objType) const;
+
    public slots:
       /**
        * This slot is triggered when the application is started and initialized.
@@ -219,6 +222,11 @@ namespace dtEditQt
        * selected from the main menu
        */
       void onPropertyEditorSelection();
+
+      /**
+       * Slot to handle the AddActorComponent action.
+       */
+      void onAddActorComponent();
 
       /**
       * This slot will either hide or retrieve the actor dockwidget when
@@ -333,7 +341,8 @@ namespace dtEditQt
       QToolBar* mExternalToolsToolBar;
 
       QActionGroup* mToolModeActionGroup;
-      QAction*      mNormalToolMode;
+      QAction* mNormalToolMode;
+      QAction* mAddActorComponent;
 
       PerspectiveViewport* mPerspView;
       OrthoViewport* mTopView;
