@@ -471,6 +471,20 @@ namespace dtGame
       virtual void AddComponent(ActorComponent& component);
 
       /**
+       * Convenience method for creating an actor component by its registered type.
+       * @param actorType Registered type associated with the actor component to create and add.
+       * @return Reference to the new actor component; NULL if the actor component failed to be created or added.
+       */
+      virtual dtGame::ActorComponent* AddComponent(const dtCore::ActorType& actorType);
+      
+      /**
+       * Convenience method for accessing and potentially creating an actor component by its registered type.
+       * @param actorType Registered type associated with the actor component to create and add.
+       * @return Reference to the new actor component; NULL if the actor component failed to be created or added.
+       */
+      virtual dtGame::ActorComponent* GetOrCreateComponent(const dtCore::ActorType& actorType);
+
+      /**
        * Remove component by reference
        * @param component : Reference to the ActorComponent to remove
        */

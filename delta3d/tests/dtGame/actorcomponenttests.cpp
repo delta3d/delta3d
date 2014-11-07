@@ -73,6 +73,8 @@ class ActorComponentTests : public CPPUNIT_NS::TestFixture
    CPPUNIT_TEST_SUITE(ActorComponentTests);
 
       CPPUNIT_TEST(TestAddActorComponent);
+      CPPUNIT_TEST(TestAddActorComponentByType);
+      CPPUNIT_TEST(TestGetOrCreateActorComponent);
       CPPUNIT_TEST(TestActorComponentInitialized);
       CPPUNIT_TEST(TestGetAllActorComponents);
 
@@ -166,6 +168,85 @@ public:
       }
    }
 
+   //////////////////////////////////////////////////////
+   void TestAddActorComponentByType()
+   {
+      try
+      {
+         dtCore::RefPtr<const dtCore::ActorType> actorType = mManager->FindActorType("ExampleActors", "Test1Actor");
+         dtCore::RefPtr<dtCore::BaseActorObject> baseActor = mManager->CreateActor(*actorType);
+         dtCore::RefPtr<dtGame::GameActorProxy> actor = dynamic_cast<dtGame::GameActorProxy*>(baseActor.get());
+
+         dtGame::ActorComponent::ACType actCompType = TestActorComponent1::TYPE;
+
+         std::vector<dtGame::ActorComponent*> components = actor->GetComponents(actCompType);
+         bool notExists = components.empty();
+         CPPUNIT_ASSERT_MESSAGE("Searching for an actor component not on the actor should return NULL.", notExists);
+
+         TestActorComponent1* component = dynamic_cast<TestActorComponent1*>(actor->AddComponent(*actCompType));
+
+         CPPUNIT_ASSERT_MESSAGE("Actor component was not created successfully.", component != NULL);
+         CPPUNIT_ASSERT_MESSAGE("Actor owner not set", component->GetOwner() == actor);
+
+         bool hascomp = actor->HasComponent(actCompType);
+         CPPUNIT_ASSERT_MESSAGE("Actor component not found after it was added!", hascomp);
+
+         components = actor->GetComponents(actCompType);
+         bool found = !components.empty();
+         CPPUNIT_ASSERT_MESSAGE("Could not retrieve actor component after it was added!", found);
+         actor->RemoveAllComponentsOfType(actCompType);
+
+         components = actor->GetComponents(actCompType);
+         bool notfound = components.empty();
+         CPPUNIT_ASSERT_MESSAGE("Searching for removed actor component should return NULL.", notfound);
+      }
+      catch(const dtUtil::Exception& e)
+      {
+         CPPUNIT_FAIL(e.What());
+      }
+   }
+
+   //////////////////////////////////////////////////////
+   void TestGetOrCreateActorComponent()
+   {
+      try
+      {
+         dtCore::RefPtr<const dtCore::ActorType> actorType = mManager->FindActorType("ExampleActors", "Test1Actor");
+         dtCore::RefPtr<dtCore::BaseActorObject> baseActor = mManager->CreateActor(*actorType);
+         dtCore::RefPtr<dtGame::GameActorProxy> actor = dynamic_cast<dtGame::GameActorProxy*>(baseActor.get());
+
+         dtGame::ActorComponent::ACType actCompType = TestActorComponent1::TYPE;
+
+         std::vector<dtGame::ActorComponent*> components = actor->GetComponents(actCompType);
+         bool notExists = components.empty();
+         CPPUNIT_ASSERT_MESSAGE("Searching for an actor component not on the actor should return NULL.", notExists);
+
+         TestActorComponent1* component = dynamic_cast<TestActorComponent1*>(actor->GetOrCreateComponent(*actCompType));
+
+         CPPUNIT_ASSERT_MESSAGE("Actor component was not created successfully.", component != NULL);
+         CPPUNIT_ASSERT_MESSAGE("Actor owner not set", component->GetOwner() == actor);
+
+         bool hascomp = actor->HasComponent(actCompType);
+         CPPUNIT_ASSERT_MESSAGE("Actor component not found after it was added!", hascomp);
+
+         components = actor->GetComponents(actCompType);
+         bool found = !components.empty();
+         CPPUNIT_ASSERT_MESSAGE("Could not retrieve actor component after it was added!", found);
+
+         CPPUNIT_ASSERT_MESSAGE("Second call to GetOrCreateComponent did not return the same reference as the first call to GetOrCreateComponent.",
+            component == actor->GetOrCreateComponent(*actCompType.get()));
+
+         actor->RemoveAllComponentsOfType(actCompType);
+
+         components = actor->GetComponents(actCompType);
+         bool notfound = components.empty();
+         CPPUNIT_ASSERT_MESSAGE("Searching for removed actor component should return NULL.", notfound);
+      }
+      catch(const dtUtil::Exception& e)
+      {
+         CPPUNIT_FAIL(e.What());
+      }
+   }
 
 
    //////////////////////////////////////////////////////

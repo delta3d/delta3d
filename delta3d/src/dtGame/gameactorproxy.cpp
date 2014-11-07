@@ -26,6 +26,7 @@
 #include <dtCore/actortype.h>
 #include <dtCore/booleanactorproperty.h>
 #include <dtCore/enumactorproperty.h>
+#include <dtCore/librarymanager.h>
 #include <dtCore/stringactorproperty.h>
 
 #include <dtGame/actorcomponent.h>
@@ -934,6 +935,48 @@ namespace dtGame
          component.SetIsInGM(true);
          component.OnEnteredWorld();
       }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   dtGame::ActorComponent* GameActorProxy::AddComponent(const dtCore::ActorType& actorType)
+   {
+      dtCore::RefPtr<dtGame::ActorComponent> actComp;
+
+      if (actorType.InstanceOf(*dtGame::ActorComponent::BaseActorComponentType))
+      {
+         actComp = dynamic_cast<dtGame::ActorComponent*>(dtCore::LibraryManager::GetInstance().CreateActor(actorType).get());
+
+         if (actComp.valid())
+         {
+            AddComponent(*actComp);
+         }
+         else
+         {
+            LOG_ERROR("Could not create actor component type \""
+               + actorType.GetName() + "\" for actor \"" + GetName() + "\"");
+         }
+      }
+
+      return actComp.get();
+   }
+   
+   ////////////////////////////////////////////////////////////////////////////////
+   dtGame::ActorComponent* GameActorProxy::GetOrCreateComponent(const dtCore::ActorType& actorType)
+   {
+      dtGame::ActorComponent* actComp = NULL;
+
+      std::vector<ActorComponent*> comps = GetComponents(&actorType);
+      
+      if ( ! comps.empty())
+      {
+         actComp = comps.front();
+      }
+      else // Component not found so add it.
+      {
+         actComp = AddComponent(actorType);
+      }
+
+      return actComp;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
