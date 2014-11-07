@@ -9,7 +9,9 @@ file(GLOB LIB_PUBLIC_HEADERS "${HEADER_PATH}/*.h")
 set(LIB_SOURCES 
 
 baselibrarylisteditor.cpp
+basepropertycontrol.cpp
 basepropertyeditor.cpp
+clickablelabelcontrol.cpp
 deltastepper.cpp
 docbrowser.cpp
 docbrowserxmlreader.cpp
@@ -44,9 +46,24 @@ objecttypeselectdialog.cpp
 osgadapterwidget.cpp
 osggraphicswindowqt.cpp
 projectcontextdialog.cpp
+propertycontrolarray.cpp
+propertycontrolbool.cpp
+propertycontrolbitmask.cpp
+propertycontrolcolor.cpp
+propertycontroldouble.cpp
+propertycontrolfactory.cpp
+propertycontrolenum.cpp
+propertycontrolimage.cpp
+propertycontrolint.cpp
+propertycontrolrange.cpp
+propertycontrolresource.cpp
+propertycontrolstring.cpp
+propertycontrolvec4.cpp
 propertyeditordelegate.cpp
 propertyeditormodel.cpp
 propertyeditortreeview.cpp
+propertypanel.cpp
+propertypanelbuilder.cpp
 resourceselectorwidget.cpp
 qtguiwindowsystemwrapper.cpp
 viewwindow.cpp
@@ -58,8 +75,22 @@ INCLUDE_DIRECTORIES(${QT_INCLUDE_DIR}
                    )
 				   
 qt4_wrap_ui(UI_SOURCES basedialog.ui
+                       basepropertycontrol.ui
                        nodetreepanel.ui
-                       objecttypelistpanel.ui)
+                       objecttypelistpanel.ui
+                       propertycontrolarray.ui
+                       propertycontrolbool.ui
+                       propertycontrolbitmask.ui
+                       propertycontrolcolor.ui
+                       propertycontroldouble.ui
+                       propertycontrolenum.ui
+                       propertycontrolimage.ui
+                       propertycontrolint.ui
+                       propertycontrolrange.ui
+                       propertycontrolresource.ui
+                       propertycontrolstring.ui
+                       propertycontrolvec4.ui
+                       propertypanel.ui)
                        
 QT4_WRAP_CPP(MOC_SOURCES ${LIB_PUBLIC_HEADERS})
 
