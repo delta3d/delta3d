@@ -101,6 +101,7 @@ namespace dtEditQt
       , mToolModeActionGroup(NULL)
       , mNormalToolMode(NULL)
       , mAddActorComponent(NULL)
+      , mRemoveActorComponent(NULL)
       , mPerspView(NULL)
       , mTopView(NULL)
       , mSideView(NULL)
@@ -160,7 +161,8 @@ namespace dtEditQt
 
       ViewportManager::GetInstance();
 
-      mAddActorComponent = new QAction("Add Actor Component...", this);
+      mAddActorComponent = new QAction("Add Actor Components...", this);
+      mRemoveActorComponent = new QAction("Remove Actor Components...", this);
 
       connectSlots();
       setupDockWindows();
@@ -221,6 +223,7 @@ namespace dtEditQt
       mEditMenu->addAction(editorActions.mActionEditRedo);
       mEditMenu->addSeparator();
       mEditMenu->addAction(mAddActorComponent);
+      mEditMenu->addAction(mRemoveActorComponent);
       mEditMenu->addSeparator();
       mEditMenu->addAction(editorActions.mActionLocalSpace);
       mEditMenu->addSeparator();
@@ -556,6 +559,7 @@ namespace dtEditQt
       const bool hasBoth       = hasProject && hasCurrentMap;
 
       mAddActorComponent->setEnabled(hasBoth);
+      mRemoveActorComponent->setEnabled(hasBoth);
 
       EditorActions& ea = EditorActions::GetInstance();
       ea.mActionFileNewMap->setEnabled(hasProject);
@@ -837,7 +841,7 @@ namespace dtEditQt
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void MainWindow::onAddActorComponent()
+   void MainWindow::onAddActorComponents()
    {
       dtQt::ObjectTypeSelectDialog dialog(this);
       dialog.setWindowTitle("Add Actor Component");
@@ -870,24 +874,42 @@ namespace dtEditQt
             {
                actType = dynamic_cast<const dtCore::ActorType*>(*curIter);
 
-               if (actType != NULL)
+               dtGame::ActorComponentBase* curActor = NULL;
+               ActorArray::iterator curActorIter = actors.begin();
+               ActorArray::iterator endActorIter = actors.end();
+               for (; curActorIter != endActorIter; ++curActorIter)
                {
-                  dtGame::GameActorProxy* curActor = NULL;
-                  ActorArray::iterator curActorIter = actors.begin();
-                  ActorArray::iterator endActorIter = actors.end();
-                  for (; curActorIter != endActorIter; ++curActorIter)
-                  {
-                     curActor = dynamic_cast<dtGame::GameActorProxy*>(*curActorIter);
+                  curActor = dynamic_cast<dtGame::ActorComponentBase*>(*curActorIter);
 
-                     if (curActor == NULL)
+                  if (curActor == NULL)
+                  {
+                     LOG_ERROR("Could not convert \"" + (*curActorIter)->GetName()
+                        + "\" to a GameActor to add an ActorComponent of type \""
+                        + actType->GetName() + "\".");
+                  }
+                  // Actor is valid but is the type an actor component.
+                  else if (actType->InstanceOf(*dtGame::ActorComponent::BaseActorComponentType))
+                  {
+                     dtCore::RefPtr<dtCore::BaseActorObject> newComp
+                        = dtCore::LibraryManager::GetInstance().CreateActor(*actType);
+
+                     dtGame::ActorComponent* actComp = dynamic_cast<dtGame::ActorComponent*>(newComp.get());
+
+                     if (actComp == NULL)
                      {
-                        LOG_ERROR("Could not convert \"" + (*curActorIter)->GetName()
-                           + "\" to a GameActor to add an ActorComponent of type \""
-                           + actType->GetName() + "\".");
+                        std::string name;
+                        dtGame::GameActorProxy* gameActor = dynamic_cast<dtGame::GameActorProxy*>(curActor);
+                        if (gameActor != NULL)
+                        {
+                           name = gameActor->GetName();
+                        }
+
+                        LOG_ERROR("Could not add actor type \"" + actType->GetName()
+                           + "\" to actor \"" + name + "\" since the type is not an actor component derived type.");
                      }
                      else
                      {
-//                        curActor->AddComponent(*actType);
+                        curActor->AddComponent(*actComp);
 
                         ++results;
                      }
@@ -900,6 +922,118 @@ namespace dtEditQt
          {
             mPropertyWindow->UpdateUI();
          }
+      }
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void MainWindow::onRemoveActorComponents()
+   {
+      int results = 0;
+
+      typedef std::vector<dtGame::ActorComponent*> ActCompArray;
+      typedef dtQt::ObjectTypeListPanel::ObjectTypeList ObjectTypeList;
+      typedef std::set<const dtCore::ObjectType*> ObjectTypeSet;
+      ObjectTypeSet compTypesFound;
+      ObjectTypeList compTypes;
+
+      typedef std::vector<dtCore::BaseActorObject*> ActorArray;
+      ActorArray actors;
+      dtEditQt::EditorData::GetInstance().GetSelectedActors(actors);
+
+      // Get all unique actor component types from the selected actors.
+      dtGame::ActorComponentBase* curActor = NULL;
+      ActorArray::iterator curActorIter = actors.begin();
+      ActorArray::iterator endActorIter = actors.end();
+      for (; curActorIter != endActorIter; ++curActorIter)
+      {
+         curActor = dynamic_cast<dtGame::ActorComponentBase*>(*curActorIter);
+
+         if (curActor != NULL)
+         {
+            ActCompArray actComps;
+            curActor->GetAllComponents(actComps);
+
+            if ( ! actComps.empty())
+            {
+               // Capture all the actor component types.
+               ActCompArray::iterator curCompIter = actComps.begin();
+               ActCompArray::iterator endCompIter = actComps.end();
+               for (; curCompIter != endCompIter; ++curCompIter)
+               {
+                  compTypesFound.insert(&(*curCompIter)->GetActorType());
+               }
+            }
+         }
+      }
+
+      if ( ! compTypesFound.empty())
+      {
+         compTypes.insert(compTypes.end(), compTypesFound.begin(), compTypesFound.end());
+      }
+
+      // Avoid further processing if there is nothing to work with.
+      if (compTypes.empty())
+      {
+         // TODO: Show message
+         return;
+      }
+
+      dtQt::ObjectTypeSelectDialog dialog(this);
+      dialog.setWindowTitle("Remove Actor Components");
+
+      dtQt::ObjectTypeListPanel& objTypePanel = dialog.GetObjectTypeListPanel();
+      objTypePanel.SetFilterFunc(dtUtil::MakeFunctor(&MainWindow::IsActorComponentType, this));
+      objTypePanel.SetList(compTypes);
+      
+      if (dialog.exec() == QDialog::Accepted)
+      {
+         compTypes.clear();
+         if (0 < objTypePanel.GetSelection(compTypes))
+         {
+            mPropertyWindow->ClearUI();
+
+            // For each actor...
+            curActorIter = actors.begin();
+            endActorIter = actors.end();
+            for (; curActorIter != endActorIter; ++curActorIter)
+            {
+               curActor = dynamic_cast<dtGame::ActorComponentBase*>(*curActorIter);
+
+               if (curActor != NULL)
+               {
+                  // For each actor component type...
+                  const dtCore::ActorType* actType = NULL;
+                  ObjectTypeList::const_iterator curIter = compTypes.begin();
+                  ObjectTypeList::const_iterator endIter = compTypes.end();
+                  for (; curIter != endIter; ++curIter)
+                  {
+                     actType = dynamic_cast<const dtCore::ActorType*>(*curIter);
+
+                     if (actType != NULL)
+                     {
+                        typedef std::vector<dtGame::ActorComponent*> ActCompArray;
+                        ActCompArray comps = curActor->GetComponents(actType);
+
+                        // Remove all actor components of the specified type.
+                        ActCompArray::iterator curCompIter = comps.begin();
+                        ActCompArray::iterator endCompIter = comps.end();
+                        for (; curCompIter != endCompIter; ++curCompIter)
+                        {
+                           curActor->RemoveComponent(*(*curCompIter));
+
+                           ++results;
+                        }
+                     }
+                  }
+
+               }
+            }
+         }
+      }
+
+      if (results > 0)
+      {
+         mPropertyWindow->UpdateUI();
       }
    }
 
@@ -1002,7 +1136,9 @@ namespace dtEditQt
       EditorActions& editorActions = EditorActions::GetInstance();
 
       connect(mAddActorComponent, SIGNAL(triggered()),
-         this, SLOT(onAddActorComponent()));
+         this, SLOT(onAddActorComponents()));
+      connect(mRemoveActorComponent, SIGNAL(triggered()),
+         this, SLOT(onRemoveActorComponents()));
 
       connect(editorActions.mActionWindowsPropertyEditor, SIGNAL(triggered()),
          this, SLOT(onPropertyEditorSelection()));
