@@ -646,8 +646,6 @@ void PhysicsCompilerToolPlugin::OnCompileClicked()
          mUI.mProgress->show();
          mUI.mButtonCompile->setEnabled(false);
 
-         PhysicsCompileOptions options = mCompileOptions;
-
          mIsCompiling = true;
 
          // Compile to a separate thread so UI can update independently.
