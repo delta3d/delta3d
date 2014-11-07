@@ -44,7 +44,7 @@ namespace dtCore
             RGBCOLOR_ID, RGBACOLOR_ID, GROUP_ID, ACTOR_ID, ENUMERATION_ID, GAMEEVENT_ID,
             STATICMESH_ID, TEXTURE_ID, TERRAIN_ID, SOUND_ID, PARTICLESYSTEM_ID,
             SKELETAL_MESH_ID, ARRAY_ID, CONTAINER_ID, CONTAINER_SELECTOR_ID, PROPERTY_CONTAINER_ID, PREFAB_ID,
-            SHADER_ID, DIRECTOR_ID, BIT_MASK_ID
+            SHADER_ID, DIRECTOR_ID, BIT_MASK_ID, RANGE_ID
          };
 
          /**
@@ -159,6 +159,11 @@ namespace dtCore
           * A vector of 2 values.
           */
          static DataType VEC2D;
+
+         /**
+          * A vector of 3 values, for min, max and current value.
+          */
+         static DataType RANGE;
 
          /**
           * A color data type with 3 values, Red, Green, and Blue.
