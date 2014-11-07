@@ -51,7 +51,7 @@ namespace dtPhysics
    const dtUtil::RefString PhysicsActComp::PROPERTY_PHYSICS_MASS("Physics Mass");
    const dtUtil::RefString PhysicsActComp::PROPERTY_PHYSICS_DIMENSIONS("Physics Dimensions");
    const dtUtil::RefString PhysicsActComp::PROPERTY_PHYSICS_OBJECT("Physics Object");
-   const dtUtil::RefString PhysicsActComp::PROPERTY_PHYSICS_OBJECT_ARRAY("Physics Object Array");
+   const dtUtil::RefString PhysicsActComp::PROPERTY_PHYSICS_OBJECT_ARRAY("Physics Objects");
    const dtUtil::RefString PhysicsActComp::PROPERTY_COLLISION_GROUP("Default Collision Group");
    const dtUtil::RefString PhysicsActComp::PROPERTY_AUTO_CREATE("Auto-Create Physics Objects");
    const dtUtil::RefString PhysicsActComp::PROPERTY_MATERIAL_ACTOR("Material Actor");
@@ -529,16 +529,7 @@ namespace dtPhysics
                "or it has a custom user data. Value will be overwritten.");
       }
 
-      po.SetUserData(this);
-      po.BuildPropertyMap();
-      if (makeMain)
-      {
-         mPhysicsObjects.insert(mPhysicsObjects.begin(), &po);
-      }
-      else
-      {
-         mPhysicsObjects.push_back(&po);
-      }
+      InsertPhysicsObject(makeMain ? 0 : mPhysicsObjects.size(), &po);
    }
 
    //////////////////////////////////////////////////////////////////
@@ -656,9 +647,8 @@ namespace dtPhysics
       if (obj != NULL && mPhysicsObjects.size() > size_t(index))
       {
          // TODO we need a clone
-         mPhysicsObjects[index] = new PhysicsObject(obj->GetName());
+         mPhysicsObjects[index] = obj;
          mPhysicsObjects[index]->BuildPropertyMap();
-         mPhysicsObjects[index]->CopyPropertiesFrom(*obj);
          mPhysicsObjects[index]->SetUserData(this);
       }
    }
@@ -677,14 +667,20 @@ namespace dtPhysics
    }
 
    //////////////////////////////////////////////////////////////////
-   void PhysicsActComp::InsertNewPhysicsObject(unsigned index)
+   PhysicsObject* PhysicsActComp::InsertPhysicsObject(unsigned index, PhysicsObject* obj)
    {
-      if (size_t(index) <= mPhysicsObjects.size())
+      if (size_t(index) >= mPhysicsObjects.size())
       {
-         mPhysicsObjects.insert(mPhysicsObjects.begin() + index, new PhysicsObject);
-         mPhysicsObjects[index]->BuildPropertyMap();
-         mPhysicsObjects[index]->SetUserData(this);
+         index = mPhysicsObjects.size();
+         mPhysicsObjects.push_back(obj);
       }
+      else
+      {
+         mPhysicsObjects.insert(mPhysicsObjects.begin() + index, obj);
+      }
+      obj->BuildPropertyMap();
+      obj->SetUserData(this);
+      return obj;
    }
 
    //////////////////////////////////////////////////////////////////
