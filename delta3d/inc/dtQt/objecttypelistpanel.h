@@ -110,7 +110,7 @@ namespace dtQt
        * @param name Name of the type reference to find.
        * @return Reference to an type object that matched the specified name; NULL otherwise.
        */
-      const dtCore::ObjectType* ObjectTypeListPanel::FindObjectType(const std::string& name) const;
+      const dtCore::ObjectType* FindObjectType(const std::string& name) const;
 
       /**
        * Refreshes the UI to list all available items.

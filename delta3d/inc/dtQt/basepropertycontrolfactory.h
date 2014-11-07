@@ -70,10 +70,10 @@ namespace dtQt
    public:
       typedef AbstractPropertyControlFactory BaseClass;
 
-      typedef typename T_DataType Type_DataType;
+      typedef T_DataType Type_DataType;
 
       BasePropertyControlFactory()
-         : mControlFactory(new dtUtil::ObjectFactory<typename T_DataType*, BasePropertyControl>)
+         : mControlFactory(new dtUtil::ObjectFactory<T_DataType*, BasePropertyControl>)
       {
       }
 
@@ -105,7 +105,7 @@ namespace dtQt
       void RegisterControlForDataType(T_DataType& dataType)
       {
          mControlFactory->RemoveType(&dataType);
-         mControlFactory->RegisterType<T_ControlType>(&dataType);
+         mControlFactory->template RegisterType<T_ControlType>(&dataType);
       }
 
    protected:

@@ -26,7 +26,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 #include "ui_propertycontrolbool.h"
 #include <dtQt/propertycontrolbool.h>
-
+#include <dtUtil/stringutils.h>
 
 
 namespace dtQt
@@ -67,7 +67,7 @@ namespace dtQt
 
    void PropertyControlBool::UpdateUI(const PropertyType& prop)
    {
-      bool value = stricmp("true", prop.ToString().c_str()) == 0;
+      bool value = dtUtil::ToType<bool>(prop.ToString().c_str());
       mUI->mValue->setCheckState(value ? Qt::Checked : Qt::Unchecked);
    }
 
