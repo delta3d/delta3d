@@ -29,6 +29,7 @@ namespace dtExample
 
    void MeshObjectActor::OnEnteredWorld()
    {
+      BaseClass::OnEnteredWorld();
       TestAppUtils util;
       util.GenerateTangentsForObject(*this);
    }
