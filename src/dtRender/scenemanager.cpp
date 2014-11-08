@@ -697,7 +697,7 @@ namespace dtRender
       {
          //setup default main scene camera      
          //TODO - WHY Doesnt this work??
-         if (GetOwner()->IsInGM())
+         if (GetGameManager() != NULL)
          {
             mImpl->mSceneCamera = GetGameManager()->GetApplication().GetCamera();
          }
