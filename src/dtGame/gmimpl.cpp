@@ -182,4 +182,32 @@ void GMImpl::SendEnvironmentChangedMessage(GameManager& gm, IEnvGameActorProxy* 
    msg->SetSource(*mMachineInfo);
    gm.SendMessage(*msg);
 }
+
+////////////////////////////////////////////////////////////////////////////////
+void GMImpl::AddActorToWorld(GameManager& gm, dtGame::GameActorProxy& actor)
+{
+   if (actor.IsInGM())
+      return;
+
+   actor.SetIsInGM(true);
+
+   try
+   {
+      // If publishing fails. we need to delete the actor as well.
+      if (actor.IsPublished())
+      {
+         gm.PublishActor(actor);
+      }
+
+      actor.InvokeEnteredWorld();
+   }
+   catch (const dtUtil::Exception& ex)
+   {
+      ex.LogException(dtUtil::Log::LOG_ERROR, *mLogger);
+      gm.DeleteActor(actor);
+      throw;
+   }
+
+}
+
 }

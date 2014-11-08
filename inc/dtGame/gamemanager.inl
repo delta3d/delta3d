@@ -52,11 +52,11 @@ namespace dtGame
       , mSelectedActors(selectedActors)
       {}
 
-      void operator () (dtCore::BaseActorObject& proxy)
+      void operator () (dtCore::BaseActorObject& actor)
       {
-         if (mFunc(proxy))
+         if (mFunc(actor))
          {
-            mSelectedActors.push_back(&proxy);
+            mSelectedActors.push_back(&actor);
          }
       }
 
@@ -66,7 +66,7 @@ namespace dtGame
    };
 
    template <typename UnaryFunctor>
-   inline void GameManager::ForEachActor(UnaryFunctor& func, bool applyOnlyToGameActors /*= false*/) const
+   inline void GameManager::ForEachActor(UnaryFunctor& func, bool applyOnlyToGameActors /*= false*/)
    {
       if (!applyOnlyToGameActors)
       {
@@ -84,12 +84,57 @@ namespace dtGame
       std::for_each(mGMImpl->mPrototypeActors.begin(), mGMImpl->mPrototypeActors.end(), gameActorMapBindFunc);
    }
 
+   class CallAddToWorld
+   {
+   public:
+      CallAddToWorld(GMImpl& impl, GameManager& gm)
+      : mImpl(impl), mGM(gm)
+      {}
+
+      bool operator () (dtCore::BaseActorObject* actor)
+      {
+         bool result = false;
+         if (actor->IsGameActor())
+         {
+            GameActorProxy* gActor = static_cast<GameActorProxy*>(actor);
+            if (!gActor->IsInGM())
+            {
+               try
+               {
+                  mImpl.AddActorToWorld(mGM, *gActor);
+               }
+               catch (const dtUtil::Exception& ex)
+               {
+                  // Actors can just decide to not be added by throwing an exception.  If it's an error, the actor
+                  // should log it as such, but here it's only a warning.
+                  ex.LogException(dtUtil::Log::LOG_WARNING, *mImpl.mLogger);
+                  // delete this item.
+                  result = true;
+               }
+            }
+         }
+         // false means don't delete it.
+         return result;
+      }
+
+   private:
+      GMImpl& mImpl;
+      GameManager& mGM;
+   };
+
    template <typename FindFunctor>
-   inline void GameManager::FindActorsIf(FindFunctor& ifFunc, std::vector<dtCore::BaseActorObject*>& toFill) const
+   inline void GameManager::FindActorsIf(FindFunctor& ifFunc, std::vector<dtCore::BaseActorObject*>& toFill)
    {
       toFill.clear();
       FindFuncWrapper<FindFunctor> findWrapper(ifFunc, toFill);
       ForEachActor(findWrapper);
+      if (mGMImpl->mBatchData.valid())
+      {
+         CallAddToWorld func(*mGMImpl, *this);
+         // It's a remove if because if the AddActorToWorld fails, it will delete the actor, so they need to be removed
+         // from the results.
+         toFill.erase(std::remove_if(toFill.begin(), toFill.end(), func), toFill.end());
+      }
    }
 
    template <typename FindFunctor>

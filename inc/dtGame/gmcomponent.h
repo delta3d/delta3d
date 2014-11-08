@@ -60,14 +60,7 @@ namespace dtGame
        * @return The game manager
        * @see dtGame::GameManager
        */
-      const GameManager* GetGameManager() const { return mParent; }
-
-      /**
-       * Gets the game manager that owns this component
-       * @return The game manager
-       * @see dtGame::GameManager
-       */
-      GameManager* GetGameManager() { return mParent; }
+      GameManager* GetGameManager() const { return mParent; }
 
       /**
        * Get the priority of this component.
