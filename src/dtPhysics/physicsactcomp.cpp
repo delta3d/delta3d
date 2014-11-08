@@ -98,8 +98,17 @@ namespace dtPhysics
    {
       void operator()(dtCore::RefPtr<PhysicsObject>& po)
       {
+         if (po->GetMaterial() == NULL)
+         {
+            const MaterialActor* mat = mPac->LookupMaterialActor();
+            if (mat != NULL)
+            {
+               po->SetMaterial(mat->GetMaterial());
+            }
+         }
          po->Create();
       }
+      PhysicsActComp* mPac;
    };
 
    /////////////////////////////////////////////////////////////////////////////
@@ -116,6 +125,7 @@ namespace dtPhysics
       if (GetAutoCreateOnEnteringWorld())
       {
          CreateFromPropsPhysObj creatFunc;
+         creatFunc.mPac = this;
          ForEachPhysicsObject(creatFunc);
       }
    }
