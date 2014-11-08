@@ -21,6 +21,8 @@
 #ifndef gmimpl_h__
 #define gmimpl_h__
 
+#include <dtGame/export.h>
+
 #include <queue>
 #include <set>
 #include <list>
@@ -68,7 +70,7 @@ namespace dtGame
    };
 
    /// A wrapper for data like stats to prevent includes wherever gamemanager.h is used - uses the pimpl pattern (like system)
-   class GMImpl
+   class DT_GAME_EXPORT GMImpl
    {
    public:
 
