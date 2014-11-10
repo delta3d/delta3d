@@ -99,19 +99,22 @@ TestGameActorLibrary::TestGameActorLibrary() : dtCore::ActorPluginRegistry("Test
 
 void TestGameActorLibrary::RegisterActorTypes()
 {
-   mActorFactory->RegisterType<TestGameActorProxy1> (TEST1_GAME_ACTOR_TYPE.get());
-   mActorFactory->RegisterType<TestGameActorProxy2> (TEST2_GAME_ACTOR_TYPE.get());      
-   mActorFactory->RegisterType<TestGameActorCrashProxy> (TEST_GAME_ACTOR_CRASH_TYPE.get());      
+   mActorFactory->RegisterType<TestGameActor1> (TEST1_GAME_ACTOR_TYPE.get());
+   mActorFactory->RegisterType<TestGameActorProxy2> (TEST2_GAME_ACTOR_TYPE.get());
+   mActorFactory->RegisterType<TestGameActorCrashProxy> (TEST_GAME_ACTOR_CRASH_TYPE.get());
    mActorFactory->RegisterType<TestPlayerProxy>(TEST_PLAYER_GAME_ACTOR_TYPE.get());
    
    //This is the actor type for the task actor located in dtActors.  All custom
    //subclasses should at the very least be a sub actor type of this one.
    mActorFactory->RegisterType<CounterTaskActorProxy>(TEST_COUNTER_TASK_GAME_ACTOR_TYPE.get());
-   mActorFactory->RegisterType<TestHLAObjectProxy> (TEST_TANK_GAME_ACTOR_TYPE.get());      
-   mActorFactory->RegisterType<TestHLAObjectProxy> (TEST_JET_GAME_ACTOR_TYPE.get());      
-   mActorFactory->RegisterType<TestHLAObjectProxy> (TEST_CULTURAL_FEATURE_GAME_ACTOR_TYPE.get());      
-   mActorFactory->RegisterType<TestHLAObjectProxy> (TEST_SENSOR_GAME_ACTOR_TYPE.get());      
-   mActorFactory->RegisterType<TestHLAObjectProxy> (TEST_HELICOPTER_GAME_ACTOR_TYPE.get());      
+   mActorFactory->RegisterType<TestHLAObjectProxy> (TEST_TANK_GAME_ACTOR_TYPE.get());
+   mActorFactory->RegisterType<TestHLAObjectProxy> (TEST_JET_GAME_ACTOR_TYPE.get());
+   mActorFactory->RegisterType<TestHLAObjectProxy> (TEST_CULTURAL_FEATURE_GAME_ACTOR_TYPE.get());
+   mActorFactory->RegisterType<TestHLAObjectProxy> (TEST_SENSOR_GAME_ACTOR_TYPE.get());
+   mActorFactory->RegisterType<TestHLAObjectProxy> (TEST_HELICOPTER_GAME_ACTOR_TYPE.get());
    mActorFactory->RegisterType<TestGameEnvironmentActorProxy> (TEST_ENVIRONMENT_GAME_ACTOR_TYPE.get());
    mActorFactory->RegisterType<TestGamePropertyActor> (TEST_GAME_PROPERTY_TYPE.get());
+
+   mActorFactory->RegisterType<TestActorComponent1>(TestActorComponent1::TYPE.get());
+   mActorFactory->RegisterType<TestActorComponent2>(TestActorComponent2::TYPE.get());
 }

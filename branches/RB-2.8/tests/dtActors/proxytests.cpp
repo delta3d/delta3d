@@ -444,6 +444,12 @@ void ProxyTest::testProp(dtCore::BaseActorObject& proxy, dtCore::ActorProperty* 
       else
       {
          SimpleStringToFromDataStreamCheck(ds, *aidap);
+         aidap->FromString("");
+         CPPUNIT_ASSERT(aidap->GetValue().IsNull());
+         CPPUNIT_ASSERT(aidap->ToString().empty());
+         aidap->FromString("blah");
+         CPPUNIT_ASSERT(!aidap->GetValue().IsNull());
+         CPPUNIT_ASSERT_EQUAL(std::string("blah"), aidap->ToString());
       }
    }
    else if (prop->GetDataType() == DataType::VEC3)

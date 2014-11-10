@@ -86,6 +86,7 @@ namespace dtPhysics
       CPPUNIT_TEST_SUITE(dtPhysicsTests);
       CPPUNIT_TEST(testPrimitiveType);
       CPPUNIT_TEST(testMaterialActor);
+      CPPUNIT_TEST(testAutoCreate);
       CPPUNIT_TEST(testGeometryMarginPerEngine);
       CPPUNIT_TEST(testObjectPerEngine);
       CPPUNIT_TEST(testObjectCollisionPerEngine);
@@ -141,6 +142,7 @@ namespace dtPhysics
       // used so we have a place to test actors
       // not called multiple times like the others.
       void testMaterialActor();
+      void testAutoCreate();
 
    private:
       //Sub Tests
@@ -1683,6 +1685,22 @@ namespace dtPhysics
       CPPUNIT_ASSERT_EQUAL_MESSAGE("Failed to set property", mat->GetMateralDef().GetStaticAnisotropicFriction(), osg::Vec3(1.0, 1.1, 0.3));
       CPPUNIT_ASSERT_EQUAL_MESSAGE("Failed to set property", mat->GetMateralDef().GetKineticAnisotropicFriction(), osg::Vec3(0.9, 1.2, 0.4));
       CPPUNIT_ASSERT_EQUAL_MESSAGE("Failed to set property", mat->GetMateralDef().GetDirOfAnisotropy(), osg::Vec3(0.707, 0.0, 0.707));
+   }
+
+   void dtPhysicsTests::testAutoCreate()
+   {
+      dtCore::RefPtr<PhysicsActComp> une = new PhysicsActComp();
+      dtCore::RefPtr<PhysicsActComp> deux = new PhysicsActComp();
+
+      // fill in their names
+      une->SetName("unus");
+      deux->SetName("duo");
+
+      CPPUNIT_ASSERT(!une->GetAutoCreateOnEnteringWorld());
+      CPPUNIT_ASSERT(!deux->GetAutoCreateOnEnteringWorld());
+      une->SetAutoCreateOnEnteringWorld(true);
+
+
    }
 
    /////////////////////////////////////////////////////////
