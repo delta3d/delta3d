@@ -68,6 +68,36 @@ namespace dtQt
       return mPanel->GetSelection(outList);
    }
 
+   const dtCore::ObjectType* ObjectTypeSelectDialog::GetSelectedType() const
+   {
+      const dtCore::ObjectType* result = NULL;
+
+      ObjectTypeList typeList;
+      GetSelection(typeList);
+
+      if ( ! typeList.empty())
+      {
+         result = typeList.front();
+      }
+      
+      return result;
+   }
+
+   int ObjectTypeSelectDialog::GetItemCount() const
+   {
+      return mPanel->GetItemCount();
+   }
+
+   void ObjectTypeSelectDialog::SetSingleSelectMode(bool singleSelect)
+   {
+      mPanel->SetSingleSelectMode(singleSelect);
+   }
+
+   bool ObjectTypeSelectDialog::IsSingleSelectMode() const
+   {
+      return mPanel->IsSingleSelectMode();
+   }
+
    void ObjectTypeSelectDialog::UpdateUI()
    {
       mPanel->UpdateUI();

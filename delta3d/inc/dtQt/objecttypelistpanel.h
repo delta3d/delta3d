@@ -113,6 +113,22 @@ namespace dtQt
       const dtCore::ObjectType* FindObjectType(const std::string& name) const;
 
       /**
+       * Method for simply determining the number of items in the list.
+       * @return Number of items appearing in the list.
+       */
+      int GetItemCount() const;
+
+      /**
+       * Method to set whether the list will allow multiple selection or single selection.
+       */
+      void SetSingleSelectMode(bool singleSelect);
+
+      /**
+       * Method to determine if the list will allow multiple selection or single selection.
+       */
+      bool IsSingleSelectMode() const;
+
+      /**
        * Refreshes the UI to list all available items.
        */
       virtual void UpdateUI();
