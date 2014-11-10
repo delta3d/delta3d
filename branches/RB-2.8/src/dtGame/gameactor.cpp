@@ -193,7 +193,7 @@ namespace dtGame
    ////////////////////////////////////////////////////////////////////////////////
    dtCore::UniqueId GameActor::GetPrototypeID() const
    {
-      dtCore::UniqueId result("");
+      dtCore::UniqueId result(false);
 
       if (GetGameActorProxy().GetPrototype() != NULL)
          result = GetGameActorProxy().GetPrototype()->GetId();
