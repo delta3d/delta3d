@@ -6,15 +6,18 @@
 
 using namespace dtCore;
 
-UniqueId::UniqueId()
+UniqueId::UniqueId(bool createNewId)
 {
-   uuid_t uuid;
-   uuid_generate( uuid );
+   if (createNewId)
+   {
+      uuid_t uuid;
+      uuid_generate( uuid );
 
-   char buffer[37];
-   uuid_unparse( uuid, buffer );
+      char buffer[37];
+      uuid_unparse( uuid, buffer );
 
-   mId = std::string( buffer );
+      mId = std::string( buffer );
+   }
 }
 
 //bool UniqueId::operator< ( const UniqueId& rhs ) const

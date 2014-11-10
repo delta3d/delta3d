@@ -25,17 +25,20 @@ std::string CFStringRefToStdString(CFStringRef stringRef)
    return result;
 }
 
-UniqueId::UniqueId()
+UniqueId::UniqueId(bool createNewId)
 {
-   CFUUIDRef uuid;
-   CFStringRef string;
-   uuid = CFUUIDCreate( NULL );
-   string = CFUUIDCreateString(NULL, uuid);
+   if (createNewId)
+   {
+      CFUUIDRef uuid;
+      CFStringRef string;
+      uuid = CFUUIDCreate( NULL );
+      string = CFUUIDCreateString(NULL, uuid);
 
-   mId = CFStringRefToStdString(string);
+      mId = CFStringRefToStdString(string);
 
-   if (string) CFRelease(string);
-   CFRelease(uuid);
+      if (string) CFRelease(string);
+      CFRelease(uuid);
+   }
 }
 
 //bool UniqueId::operator< ( const UniqueId& rhs ) const

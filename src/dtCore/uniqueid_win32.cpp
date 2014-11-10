@@ -14,29 +14,32 @@
 
 using namespace dtCore;
    
-UniqueId::UniqueId()
+UniqueId::UniqueId(bool createNewId)
 {
-   GUID guid;
-   
-   if( UuidCreate( &guid ) == RPC_S_OK )
+   if (createNewId)
    {
-      unsigned char* guidChar;
+      GUID guid;
 
-      if( UuidToString( const_cast<UUID*>(&guid), &guidChar ) == RPC_S_OK )
+      if( UuidCreate( &guid ) == RPC_S_OK )
       {
-         mId = std::string( reinterpret_cast<const char*>(guidChar) );
-         if(RpcStringFree(&guidChar) != RPC_S_OK) 
+         unsigned char* guidChar;
+
+         if( UuidToString( const_cast<UUID*>(&guid), &guidChar ) == RPC_S_OK )
          {
-            LOG_ERROR("Could not free memory.");
+            mId = std::string( reinterpret_cast<const char*>(guidChar) );
+            if(RpcStringFree(&guidChar) != RPC_S_OK)
+            {
+               LOG_ERROR("Could not free memory.");
+            }
+         }
+         else
+         {
+            LOG_WARNING("Could not convert UniqueId to std::string." );
          }
       }
       else
       {
-         LOG_WARNING("Could not convert UniqueId to std::string." );
+         LOG_WARNING("Could not generate UniqueId." );
       }
-   }
-   else
-   {
-      LOG_WARNING("Could not generate UniqueId." );
    }
 }

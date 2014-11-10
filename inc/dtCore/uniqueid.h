@@ -44,11 +44,17 @@ namespace dtCore
    class DT_CORE_EXPORT UniqueId
    {
    public:
-      UniqueId();
+      /**
+       * @param createNewId if true, generates a new id.  If not, it sets the id to empty.
+       */
+      explicit UniqueId(bool createNewId = true);
       UniqueId(const UniqueId& toCopy) { mId = toCopy.mId; }
 
       explicit UniqueId(const std::string& stringId) : mId(stringId) {}
+      explicit UniqueId(const char* stringId) : mId(stringId) {}
       virtual ~UniqueId() {}
+
+      bool IsNull() const { return mId.empty(); }
 
       bool operator==(const UniqueId& rhs) const { return mId == rhs.mId; }
       bool operator!=(const UniqueId& rhs) const { return mId != rhs.mId; }
