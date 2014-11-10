@@ -40,6 +40,8 @@ namespace dtQt
       , mUI(new Ui::ObjectTypeListPanel)
    {
       mUI->setupUi(this);
+
+      SetSingleSelectMode(false);
    }
 
    ObjectTypeListPanel::~ObjectTypeListPanel()
@@ -182,6 +184,23 @@ namespace dtQt
       {
          emit SignalSelectionChanged(objTypeList);
       }
+   }
+
+   int ObjectTypeListPanel::GetItemCount() const
+   {
+      return mUI->mList->count();
+   }
+
+   void ObjectTypeListPanel::SetSingleSelectMode(bool singleSelect)
+   {
+      mUI->mList->setSelectionMode(singleSelect
+         ? QAbstractItemView::SingleSelection
+         : QAbstractItemView::MultiSelection);
+   }
+
+   bool ObjectTypeListPanel::IsSingleSelectMode() const
+   {
+      return mUI->mList->selectionMode() == QAbstractItemView::SingleSelection;
    }
 
    void ObjectTypeListPanel::UpdateUI()

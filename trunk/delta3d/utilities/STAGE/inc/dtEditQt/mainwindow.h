@@ -63,6 +63,8 @@ namespace dtEditQt
    class ViewportContainer;
    class EditorSettings;
 
+
+
    /**
     * This class is the main window of the application.  It contains the menu bar,
     * toolbar, statusbar, and main UI interface.
@@ -189,7 +191,15 @@ namespace dtEditQt
        */
       dtActors::VolumeEditActorProxy* GetVolumeEditActorProxy();
 
+      /**
+       * Method used to filter only actor component types.
+       */
       bool IsActorComponentType(const dtCore::ObjectType& objType) const;
+
+      /**
+       * Method used to filter only actor types.
+       */
+      bool IsActorType(const dtCore::ObjectType& objType) const;
 
    public slots:
       /**
@@ -232,6 +242,11 @@ namespace dtEditQt
        * Slot to handle the AddActorComponent action.
        */
       void onRemoveActorComponents();
+
+      /**
+       * Slot to handle the ChangeActorType action.
+       */
+      void onChangeActorType();
 
       /**
       * This slot will either hide or retrieve the actor dockwidget when
@@ -349,6 +364,7 @@ namespace dtEditQt
       QAction* mNormalToolMode;
       QAction* mAddActorComponent;
       QAction* mRemoveActorComponent;
+      QAction* mChangeActorType;
 
       PerspectiveViewport* mPerspView;
       OrthoViewport* mTopView;

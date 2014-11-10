@@ -68,6 +68,14 @@ namespace dtQt
 
       int GetSelection(ObjectTypeList& outList) const;
 
+      const dtCore::ObjectType* GetSelectedType() const;
+
+      int GetItemCount() const;
+
+      void SetSingleSelectMode(bool singleSelect);
+
+      bool IsSingleSelectMode() const;
+
       virtual void UpdateUI();
 
    protected:
