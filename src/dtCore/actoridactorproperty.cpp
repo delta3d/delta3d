@@ -200,8 +200,8 @@ namespace dtCore
 
       if (value.empty() || value == "NULL")
       {
-         dtCore::UniqueId id;
-         id = "";
+         dtCore::UniqueId id(false);
+
          SetValue(id);
          return true;
       }
