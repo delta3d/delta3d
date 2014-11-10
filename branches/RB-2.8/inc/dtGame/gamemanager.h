@@ -436,10 +436,15 @@ namespace dtGame
          proxy = dynamic_cast<ProxyType*>(tmpProxy.get());
       }
 
-      // Game Actors added during a batch will not have OnEnteredWorld called immediately.  All will be called at the
-      // end.  If an actor tries to access one of the actors in the batch, it will be initialized first.
-      // If a batch is still going at the end of a frame, it will be auto-completed.
+      /**
+       * Game Actors added during a batch will not have OnEnteredWorld called immediately.  All will be called at the
+       * end.  If an actor tries to access one of the actors in the batch via find, or another create, the latter will be initialized before being returned
+       * unless there is a dependency loop such as A reference B which reference A.  In that case, A will not be in mid-init.
+       * @see ScopedGMBatchAdd (at the bottom the GM header)
+       */
       void BeginBatchAdd();
+
+      /// @see #BeginBatchAdd
       void CompleteBatchAdd();
 
       /**
@@ -1163,6 +1168,23 @@ namespace dtGame
       // -----------------------------------------------------------------------
       GameManager(const GameManager&);
       GameManager& operator=(const GameManager&);
+   };
+
+   /// Use this class to do a batch add in a function so it will always close the transaction.
+   class ScopedGMBatchAdd
+   {
+   public:
+      ScopedGMBatchAdd(GameManager& gm)
+      : mGM(gm)
+      {
+         mGM.BeginBatchAdd();
+      }
+      ~ScopedGMBatchAdd()
+      {
+         mGM.CompleteBatchAdd();
+      }
+   private:
+      GameManager& mGM;
    };
 
 } // namespace dtGame
