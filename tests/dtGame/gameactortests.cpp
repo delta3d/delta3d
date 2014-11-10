@@ -326,22 +326,22 @@ void GameActorTests::TestInvokables()
       CPPUNIT_ASSERT_MESSAGE("The actor should have an invokable named Reset ",iR != NULL);
 
       dtCore::BooleanActorProperty* prop = NULL;
-      gap->GetProperty("Has Fired", prop);
+      gap->GetProperty("OneIsFired", prop);
 
-      CPPUNIT_ASSERT_MESSAGE("The actor should have a property named \"Has Fired\"", prop != NULL);
+      CPPUNIT_ASSERT_MESSAGE("The actor should have a property named \"OneIsFired\"", prop != NULL);
 
-      CPPUNIT_ASSERT_MESSAGE("Property \"Has Fired\" should be false", !prop->GetValue());
+      CPPUNIT_ASSERT_MESSAGE("Property \"OneIsFired\" should be false", !prop->GetValue());
 
       //need a dummy message
       dtCore::RefPtr<dtGame::Message> message = mManager->GetMessageFactory().CreateMessage(dtGame::MessageType::TICK_LOCAL);
 
       iF->Invoke(*message);
 
-      CPPUNIT_ASSERT_MESSAGE("Property \"Has Fired\" should be true", prop->GetValue());
+      CPPUNIT_ASSERT_MESSAGE("Property \"OneIsFired\" should be true", prop->GetValue());
 
       iR->Invoke(*message);
 
-      CPPUNIT_ASSERT_MESSAGE("Property \"Has Fired\" should be false", !prop->GetValue());
+      CPPUNIT_ASSERT_MESSAGE("Property \"OneIsFired\" should be false", !prop->GetValue());
 
    }
    catch (const dtUtil::Exception& e)
@@ -398,14 +398,14 @@ void GameActorTests::TestInvokableMessageRegistration()
       mManager->AddActor(*gap, false, false);
       mManager->SendMessage(*message);
 
-      CPPUNIT_ASSERT_MESSAGE("Zero local ticks should have been received.", static_cast<dtCore::IntActorProperty*>(gap->GetProperty("Local Tick Count"))->GetValue() == 0);
-      CPPUNIT_ASSERT_MESSAGE("Zero remote ticks should have been received.", static_cast<dtCore::IntActorProperty*>(gap->GetProperty("Remote Tick Count"))->GetValue() == 0);
+      CPPUNIT_ASSERT_MESSAGE("Zero local ticks should have been received.", static_cast<dtCore::IntActorProperty*>(gap->GetProperty("TickLocals"))->GetValue() == 0);
+      CPPUNIT_ASSERT_MESSAGE("Zero remote ticks should have been received.", static_cast<dtCore::IntActorProperty*>(gap->GetProperty("TickRemotes"))->GetValue() == 0);
 
       dtCore::AppSleep(10);
       dtCore::System::GetInstance().Step();
 
-      CPPUNIT_ASSERT_MESSAGE("One local tick should have been received.", static_cast<dtCore::IntActorProperty*>(gap->GetProperty("Local Tick Count"))->GetValue() == 1);
-      CPPUNIT_ASSERT_MESSAGE("Zero remote ticks should have been received.", static_cast<dtCore::IntActorProperty*>(gap->GetProperty("Remote Tick Count"))->GetValue() == 0);
+      CPPUNIT_ASSERT_MESSAGE("One local tick should have been received.", static_cast<dtCore::IntActorProperty*>(gap->GetProperty("TickLocals"))->GetValue() == 1);
+      CPPUNIT_ASSERT_MESSAGE("Zero remote ticks should have been received.", static_cast<dtCore::IntActorProperty*>(gap->GetProperty("TickRemotes"))->GetValue() == 0);
 
    }
    catch (const dtUtil::Exception& e)

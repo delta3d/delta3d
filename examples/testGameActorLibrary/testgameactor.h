@@ -45,6 +45,9 @@ public:
    virtual void OnEnteredWorld();
    virtual void OnRemovedFromWorld();
 
+   DT_DECLARE_ACCESSOR_INLINE(bool, AddAnotherActor);
+   DT_DECLARE_ACCESSOR_INLINE(bool, AddActorInitialized);
+
    bool mWasAdded;
    bool mWasRemoved;
    bool mEnteredWorld;
@@ -70,14 +73,27 @@ public:
    bool mLeftWorld;
 };
 
-class DT_EXAMPLE_EXPORT TestGameActor1 : public dtGame::GameActor
+class DT_EXAMPLE_EXPORT TestGameActor1 : public dtGame::GameActorProxy
 {
    public:
+
       /// Constructor
-      TestGameActor1(dtGame::GameActorProxy& parent);
+      TestGameActor1();
 
       /// Destructor
       virtual ~TestGameActor1();
+
+      /**
+       * Builds the properties associated with this proxy's actor
+       */
+      /*override*/ void BuildPropertyMap();
+
+      /**
+       * Builds the invokable associated with this proxy.
+       */
+      /*override*/ void BuildInvokables();
+
+      void ToggleTicks(const dtGame::Message& message);
 
       void FireOne(const dtGame::Message& message);
       void Reset(const dtGame::Message& message);
@@ -85,14 +101,17 @@ class DT_EXAMPLE_EXPORT TestGameActor1 : public dtGame::GameActor
       /**
        * @see GameActorProxy#TickLocal
        */
-      virtual void OnTickLocal(const dtGame::TickMessage& tickMessage);
+      /*override*/ void OnTickLocal(const dtGame::TickMessage& tickMessage);
 
       /**
        * @see GameActorProxy#TickRemote
        */
-      virtual void OnTickRemote(const dtGame::TickMessage& tickMessage);
+      /*override*/ void OnTickRemote(const dtGame::TickMessage& tickMessage);
+
+      /*override*/ void OnEnteredWorld();
 
       bool OneIsFired() const { return fired; }
+      bool GetOneIsFired() const { return fired; }
       void SetOneIsFired(bool newValue) { fired = newValue; }
 
       int GetTickLocals() const { return tickLocals; }
@@ -101,42 +120,22 @@ class DT_EXAMPLE_EXPORT TestGameActor1 : public dtGame::GameActor
       int GetTickRemotes() const { return tickRemotes; }
       void SetTickRemotes(int newTickRemotes) { tickRemotes = newTickRemotes; }
 
-      void SetTestActorId(const dtCore::UniqueId& id) { mTestId = id; }
+      DT_DECLARE_ACCESSOR_INLINE(dtCore::UniqueId, TestActorId)
+      DT_DECLARE_ACCESSOR_INLINE(std::string, TestActorNameToLookup)
 
-      const dtCore::UniqueId& GetTestActorId() const { return mTestId; }
+      DT_DECLARE_ACCESSOR(bool, TestActorIdFound)
+      DT_DECLARE_ACCESSOR(bool, TestActorIdInitialized)
+      DT_DECLARE_ACCESSOR(bool, TestActorNameFound)
+      DT_DECLARE_ACCESSOR(bool, TestActorNameInitialized)
+      DT_DECLARE_ACCESSOR(bool, CompletedOnEnteredWorld)
+
+   protected:
+      /*override*/ void CreateDrawable();
    private:
+      bool ticksEnabled;
       bool fired;
       int tickLocals;
       int tickRemotes;
-      dtCore::UniqueId mTestId;
-};
-
-class DT_EXAMPLE_EXPORT TestGameActorProxy1 : public dtGame::GameActorProxy
-{
-   public:
-
-      /// Constructor
-      TestGameActorProxy1();
-
-      /// Destructor
-      virtual ~TestGameActorProxy1();
-
-      /**
-       * Builds the properties associated with this proxy's actor
-       */
-      virtual void BuildPropertyMap();
-
-      /**
-       * Builds the invokable associated with this proxy.
-       */
-      virtual void BuildInvokables();
-
-      void ToggleTicks(const dtGame::Message& message);
-
-   protected:
-      virtual void CreateDrawable();
-   private:
-      bool ticksEnabled;
 };
 
 #endif

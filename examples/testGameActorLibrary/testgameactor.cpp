@@ -32,10 +32,11 @@
 #include <dtCore/actoridactorproperty.h>
 #include <dtCore/booleanactorproperty.h>
 #include <dtCore/intactorproperty.h>
-
+#include <dtCore/propertymacros.h>
 #include <dtGame/invokable.h>
 #include <dtGame/messageparameter.h>
 #include <dtGame/messagetype.h>
+#include <dtGame/gamemanager.h>
 
 #include <dtUtil/datastream.h>
 
@@ -49,6 +50,8 @@ const dtGame::ActorComponent::ACType TestActorComponent1::TYPE(new dtCore::Actor
 
 TestActorComponent1::TestActorComponent1()
 : dtGame::ActorComponent(TYPE)
+, mAddAnotherActor(false)
+, mAddActorInitialized(false)
 , mWasAdded(false)
 , mWasRemoved(false)
 , mEnteredWorld(false)
@@ -70,6 +73,14 @@ void TestActorComponent1::OnRemovedFromActor(dtCore::BaseActorObject& /*actor*/)
 void TestActorComponent1::OnEnteredWorld()
 {
    mEnteredWorld = true;
+   if (mAddAnotherActor)
+   {
+      dtGame::GameManager* gm = GetOwner<dtGame::GameActorProxy>()->GetGameManager();
+      dtCore::RefPtr<TestGameActor1> newActor;
+      gm->CreateActor("ExampleActors", "Test1Actor", newActor);
+      gm->AddActor(*newActor, false, false);
+      mAddActorInitialized = newActor->IsInGM();
+   }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -114,80 +125,68 @@ void TestActorComponent2::OnRemovedFromWorld()
 ////////////////////////////////////////////////////////////////////
 // Proxy Code
 ////////////////////////////////////////////////////////////////////
-TestGameActorProxy1::TestGameActorProxy1()
+TestGameActor1::TestGameActor1()
+: mTestActorId(false)
+, mTestActorIdFound(false)
+, mTestActorIdInitialized(false)
+, mTestActorNameFound(false)
+, mTestActorNameInitialized(false)
+, mCompletedOnEnteredWorld(false)
+, ticksEnabled(false)
+, fired(false)
+, tickLocals(0)
+, tickRemotes(0)
 {
    SetClassName("TestGameActor1");
 }
 
-TestGameActorProxy1::~TestGameActorProxy1()
+TestGameActor1::~TestGameActor1()
 {
-
 }
 
-void TestGameActorProxy1::BuildPropertyMap()
+DT_IMPLEMENT_ACCESSOR(TestGameActor1, bool, TestActorIdFound)
+DT_IMPLEMENT_ACCESSOR(TestGameActor1, bool, TestActorIdInitialized)
+DT_IMPLEMENT_ACCESSOR(TestGameActor1, bool, TestActorNameFound)
+DT_IMPLEMENT_ACCESSOR(TestGameActor1, bool, TestActorNameInitialized)
+DT_IMPLEMENT_ACCESSOR(TestGameActor1, bool, CompletedOnEnteredWorld)
+
+
+void TestGameActor1::BuildPropertyMap()
 {
    dtGame::GameActorProxy::BuildPropertyMap();
 
-   TestGameActor1* actor = NULL;
-   GetDrawable(actor);
+   static const dtUtil::RefString GROUPNAME = "TestGameActor1";
 
-   static const dtUtil::RefString PROPERTY_HAS_FIRED("Has Fired");
-   static const dtUtil::RefString PROPERTY_HAS_FIRED_LABEL("Has this actor fired");
-   static const dtUtil::RefString PROPERTY_HAS_FIRED_DESC("Sets/Gets if this actor has fired.");
-   AddProperty(new dtCore::BooleanActorProperty(PROPERTY_HAS_FIRED, PROPERTY_HAS_FIRED_LABEL,
-      dtCore::BooleanActorProperty::SetFuncType(actor, &TestGameActor1::SetOneIsFired),
-      dtCore::BooleanActorProperty::GetFuncType(actor, &TestGameActor1::OneIsFired),
-      PROPERTY_HAS_FIRED_DESC, ""));
+   typedef dtCore::PropertyRegHelper<TestGameActor1&, TestGameActor1> RegHelperType;
+   RegHelperType propReg(*this, this, GROUPNAME);
 
-   static const dtUtil::RefString PROPERTY_LOCAL_TICK_COUNT("Local Tick Count");
-   static const dtUtil::RefString PROPERTY_LOCAL_TICK_COUNT_LABEL("The number of local tick messages received");
-   static const dtUtil::RefString PROPERTY_LOCAL_TICK_COUNT_DESC("Sets/Gets the number of remote tick messages counted.");
-   AddProperty(new dtCore::IntActorProperty(PROPERTY_LOCAL_TICK_COUNT, PROPERTY_LOCAL_TICK_COUNT_LABEL,
-      dtCore::IntActorProperty::SetFuncType(actor, &TestGameActor1::SetTickLocals),
-      dtCore::IntActorProperty::GetFuncType(actor, &TestGameActor1::GetTickLocals),
-      PROPERTY_LOCAL_TICK_COUNT_DESC, ""));
-
-   static const dtUtil::RefString PROPERTY_REMOTE_TICK_COUNT("Remote Tick Count");
-   static const dtUtil::RefString PROPERTY_REMOTE_TICK_COUNT_LABEL("The number of remote tick messages received");
-   static const dtUtil::RefString PROPERTY_REMOTE_TICK_COUNT_DESC("Sets/Gets the number of remote tick messages counted.");
-   AddProperty(new dtCore::IntActorProperty(PROPERTY_REMOTE_TICK_COUNT, PROPERTY_REMOTE_TICK_COUNT_LABEL,
-      dtCore::IntActorProperty::SetFuncType(actor, &TestGameActor1::SetTickRemotes),
-      dtCore::IntActorProperty::GetFuncType(actor, &TestGameActor1::GetTickRemotes),
-      PROPERTY_REMOTE_TICK_COUNT_DESC, ""));
-
-   static const dtUtil::RefString PROPERTY_TEST_ACTOR_ID("Test_Actor_Id");
-   static const dtUtil::RefString PROPERTY_TEST_ACTOR_ID_LABEL("Test Actor Id");
-   static const dtUtil::RefString PROPERTY_TEST_ACTOR_ID_DESC("An example linked actor property");
-   AddProperty(new dtCore::ActorIDActorProperty(*this, PROPERTY_TEST_ACTOR_ID, PROPERTY_TEST_ACTOR_ID_LABEL,
-      dtCore::ActorIDActorProperty::SetFuncType(actor, &TestGameActor1::SetTestActorId),
-      dtCore::ActorIDActorProperty::GetFuncType(actor, &TestGameActor1::GetTestActorId),
-      "dtCore::Transformable",
-      PROPERTY_TEST_ACTOR_ID_DESC, ""));
+   DT_REGISTER_PROPERTY(OneIsFired, "if this actor has fired.", RegHelperType, propReg);
+   DT_REGISTER_PROPERTY(TickRemotes, "the number of remote tick messages counted.", RegHelperType, propReg);
+   DT_REGISTER_PROPERTY(TickLocals, "the number of local tick messages counted.", RegHelperType, propReg);
+   DT_REGISTER_PROPERTY(TestActorId, "An example linked actor property.", RegHelperType, propReg);
+   DT_REGISTER_PROPERTY(TestActorNameToLookup, "An example string property for finding an actor by name.", RegHelperType, propReg);
 
    //add these to the accept filter so the tests can check them
-   AddPropertyToLocalUpdateAcceptFilter(PROPERTY_HAS_FIRED);
-   AddPropertyToLocalUpdateAcceptFilter(PROPERTY_REMOTE_TICK_COUNT);
+   AddPropertyToLocalUpdateAcceptFilter("OneIsFired");
+   AddPropertyToLocalUpdateAcceptFilter("TickRemotes");
 
    // Add and remove a property so the tests can verify this works.
-   AddPropertyToLocalUpdateAcceptFilter(PROPERTY_LOCAL_TICK_COUNT);
-   RemovePropertyFromLocalUpdateAcceptFilter(PROPERTY_LOCAL_TICK_COUNT);
+   AddPropertyToLocalUpdateAcceptFilter("TickLocals");
+   RemovePropertyFromLocalUpdateAcceptFilter("TickLocals");
 }
 
-void TestGameActorProxy1::BuildInvokables()
+void TestGameActor1::BuildInvokables()
 {
    dtGame::GameActorProxy::BuildInvokables();
 
-   TestGameActor1* actor = NULL;
-   GetDrawable(actor);
-
    AddInvokable(*new dtGame::Invokable("Fire One",
-      dtUtil::MakeFunctor(&TestGameActor1::FireOne, *actor)));
+      dtUtil::MakeFunctor(&TestGameActor1::FireOne, *this)));
 
    AddInvokable(*new dtGame::Invokable("Reset",
-      dtUtil::MakeFunctor(&TestGameActor1::Reset, *actor)));
+      dtUtil::MakeFunctor(&TestGameActor1::Reset, *this)));
 
    AddInvokable(*new dtGame::Invokable("Toggle Ticks",
-      dtUtil::MakeFunctor(&TestGameActorProxy1::ToggleTicks, this)));
+      dtUtil::MakeFunctor(&TestGameActor1::ToggleTicks, this)));
 
    //register local tick handles.
    //This is just to test local handler registration.  If you want to
@@ -195,17 +194,34 @@ void TestGameActorProxy1::BuildInvokables()
    //and add code like GetGameManager()->RegisterForMessages(dtGame::MessageType::TICK_LOCAL, *this, "Tick Local")
    RegisterForMessagesAboutSelf(dtGame::MessageType::TICK_LOCAL, dtGame::GameActorProxy::TICK_LOCAL_INVOKABLE);
    RegisterForMessagesAboutSelf(dtGame::MessageType::TICK_REMOTE, dtGame::GameActorProxy::TICK_REMOTE_INVOKABLE);
-   //RegisterMessageHandler(dtGame::MessageType::TICK_LOCAL, "Tick Local");
-   //RegisterMessageHandler(dtGame::MessageType::TICK_REMOTE, "Tick Remote");
    ticksEnabled = true;
 }
 
-void TestGameActorProxy1::CreateDrawable()
+void TestGameActor1::OnEnteredWorld()
 {
-   SetDrawable(*new TestGameActor1(*this));
+   if (!mTestActorId.IsNull())
+   {
+      dtGame::GameActorProxy* toFind = NULL;
+      GetGameManager()->FindActorById(mTestActorId, toFind);
+      mTestActorIdFound = toFind != NULL;
+      mTestActorIdInitialized = toFind->IsInGM();
+   }
+
+   if (!mTestActorNameToLookup.empty())
+   {
+      dtGame::GameActorProxy* toFind = NULL;
+      GetGameManager()->FindActorByName(mTestActorNameToLookup, toFind);
+      mTestActorNameFound = toFind != NULL;
+      mTestActorNameInitialized = toFind->IsInGM();
+   }
 }
 
-void TestGameActorProxy1::ToggleTicks(const dtGame::Message& message)
+void TestGameActor1::CreateDrawable()
+{
+   SetDrawable(*new dtGame::GameActor(*this));
+}
+
+void TestGameActor1::ToggleTicks(const dtGame::Message& message)
 {
    if (ticksEnabled)
    {
@@ -223,17 +239,6 @@ void TestGameActorProxy1::ToggleTicks(const dtGame::Message& message)
          dtGame::GameActorProxy::TICK_REMOTE_INVOKABLE);
       ticksEnabled = true;
    }
-}
-////////////////////////////////////////////////////////////////////
-// Actor Code
-////////////////////////////////////////////////////////////////////
-TestGameActor1::TestGameActor1(dtGame::GameActorProxy& parent): dtGame::GameActor(parent), fired(false), tickLocals(0), tickRemotes(0)
-{
-}
-
-TestGameActor1::~TestGameActor1()
-{
-
 }
 
 void TestGameActor1::FireOne(const dtGame::Message& message)
