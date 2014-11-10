@@ -202,22 +202,6 @@ namespace dtGame
       return success;
    }
 
-   class ScopedGMBatchAdd
-   {
-   public:
-      ScopedGMBatchAdd(GameManager& gm)
-      : mGM(gm)
-      {
-         mGM.BeginBatchAdd();
-      }
-      ~ScopedGMBatchAdd()
-      {
-         mGM.CompleteBatchAdd();
-      }
-   private:
-      GameManager& mGM;
-   };
-
    ///////////////////////////////////////////////////////////////////////////////
    void MapChangeStateData::LoadSingleMapIntoGM(const std::string& mapName)
    {
