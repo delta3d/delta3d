@@ -114,6 +114,7 @@ int main(int argc, char* argv[])
       mainWindow.show();
 
       //create a little class to ensure Delta3D performs Window "steps"
+      dtCore::System::GetInstance().SetUseFixedTimeStep(false);
       dtCore::System::GetInstance().Start();
       dtQt::DeltaStepper stepper;
       stepper.Start();
