@@ -143,6 +143,16 @@ namespace dtQt
    /////////////////////////////////////////////////////////////////////////////////
    DynamicAbstractControl::~DynamicAbstractControl()
    {
+      mParent = NULL;
+      mModel = NULL;
+      mPropertyTree = NULL;
+      mDefaultResetButton = NULL;
+      mShiftUpButton = NULL;
+      mShiftDownButton = NULL;
+      mCopyButton = NULL;
+      mDeleteButton = NULL;
+      mGridLayout = NULL;
+      mWrapper = NULL;
    }
 
    /////////////////////////////////////////////////////////////////////////////////
@@ -512,227 +522,25 @@ namespace dtQt
    ////////////////////////////////////////////////////////////////////////////////
    void DynamicAbstractControl::onShiftUpClicked()
    {
-      if (mArrayIndex <= 0)
-      {
-         return;
-      }
-
-      DynamicArrayControl* parent = static_cast<DynamicArrayControl*>(getParent());
-      if (!parent)
-      {
-         return;
-      }
-
-      dtCore::ArrayActorPropertyBase* arrayProp = parent->GetProperty();
-      if (arrayProp)
-      {
-         if (!arrayProp->CanReorder())
-         {
-            return;
-         }
-
-         NotifyParentOfPreUpdate();
-
-         std::string oldValue = arrayProp->ToString();
-         arrayProp->Swap(mArrayIndex, mArrayIndex - 1);
-
-         emit PropertyAboutToChange(*mPropContainer, *arrayProp,
-            oldValue, arrayProp->ToString());
-         emit PropertyChanged(*mPropContainer, *arrayProp);
-
-         // Now perform the shift operation on each of the linked properties.
-         std::vector<LinkedPropertyData>& linkedProperties = parent->GetLinkedProperties();
-         int linkCount = (int)linkedProperties.size();
-         for (int linkIndex = 0; linkIndex < linkCount; ++linkIndex)
-         {
-            LinkedPropertyData& data = linkedProperties[linkIndex];
-            dtCore::ArrayActorPropertyBase* linkedProp =
-               dynamic_cast<dtCore::ArrayActorPropertyBase*>(data.property);
-            if (linkedProp)
-            {
-               oldValue = linkedProp->ToString();
-               linkedProp->Swap(mArrayIndex, mArrayIndex - 1);
-
-               emit PropertyAboutToChange(*data.propCon.get(), *linkedProp,
-                  oldValue, linkedProp->ToString());
-               emit PropertyChanged(*data.propCon.get(), *linkedProp);
-            }
-         }
-
-         int nextIndex = mArrayIndex - 1;
-         mPropertyTree->closeEditor(mWrapper, QAbstractItemDelegate::NoHint);
-         parent->resizeChildren(true, true);
-         parent->SetIndexFocus(nextIndex);
-      }
+      emit SignalShiftUpClicked(GetArrayIndex());
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    void DynamicAbstractControl::onShiftDownClicked()
    {
-      // Get our parent.
-      DynamicArrayControl* parent = static_cast<DynamicArrayControl*>(getParent());
-      if (!parent)
-      {
-         return;
-      }
-
-      dtCore::ArrayActorPropertyBase* arrayProp = parent->GetProperty();
-      if (arrayProp)
-      {
-         if (!arrayProp->CanReorder() || mArrayIndex + 1 >= arrayProp->GetArraySize())
-         {
-            return;
-         }
-
-         NotifyParentOfPreUpdate();
-
-         std::string oldValue = arrayProp->ToString();
-         arrayProp->Swap(mArrayIndex, mArrayIndex + 1);
-
-         emit PropertyAboutToChange(*mPropContainer, *arrayProp,
-            oldValue, arrayProp->ToString());
-         emit PropertyChanged(*mPropContainer, *arrayProp);
-
-         // Now perform the shift operation on each of the linked properties.
-         std::vector<LinkedPropertyData>& linkedProperties = parent->GetLinkedProperties();
-         int linkCount = (int)linkedProperties.size();
-         for (int linkIndex = 0; linkIndex < linkCount; ++linkIndex)
-         {
-            LinkedPropertyData& data = linkedProperties[linkIndex];
-            dtCore::ArrayActorPropertyBase* linkedProp =
-               dynamic_cast<dtCore::ArrayActorPropertyBase*>(data.property);
-            if (linkedProp)
-            {
-               oldValue = linkedProp->ToString();
-               linkedProp->Swap(mArrayIndex, mArrayIndex + 1);
-
-               emit PropertyAboutToChange(*data.propCon.get(), *linkedProp,
-                  oldValue, linkedProp->ToString());
-               emit PropertyChanged(*data.propCon.get(), *linkedProp);
-            }
-         }
-
-         int nextIndex = mArrayIndex + 1;
-         mPropertyTree->closeEditor(mWrapper, QAbstractItemDelegate::NoHint);
-         parent->resizeChildren(true, true);
-         parent->SetIndexFocus(nextIndex);
-      }
+      emit SignalShiftDownClicked(GetArrayIndex());
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    void DynamicAbstractControl::onCopyClicked()
    {
-      // Get our parent.
-      DynamicArrayControl* parent = static_cast<DynamicArrayControl*>(getParent());
-      if (!parent)
-      {
-         return;
-      }
-
-      dtCore::ArrayActorPropertyBase* arrayProp = parent->GetProperty();
-      if (arrayProp)
-      {
-         int curSize = arrayProp->GetArraySize();
-         int maxSize = arrayProp->GetMaxArraySize();
-         if (maxSize > -1 && curSize >= maxSize)
-         {
-            return;
-         }
-
-         NotifyParentOfPreUpdate();
-
-         std::string oldValue = arrayProp->ToString();
-         arrayProp->Insert(mArrayIndex);
-         arrayProp->Copy(mArrayIndex + 1, mArrayIndex);
-
-         emit PropertyAboutToChange(*mPropContainer, *arrayProp,
-            oldValue, arrayProp->ToString());
-         emit PropertyChanged(*mPropContainer, *arrayProp);
-
-         // Now perform the copy operation on each of the linked properties.
-         std::vector<LinkedPropertyData>& linkedProperties = parent->GetLinkedProperties();
-         int linkCount = (int)linkedProperties.size();
-         for (int linkIndex = 0; linkIndex < linkCount; ++linkIndex)
-         {
-            LinkedPropertyData& data = linkedProperties[linkIndex];
-            dtCore::ArrayActorPropertyBase* linkedProp =
-               dynamic_cast<dtCore::ArrayActorPropertyBase*>(data.property);
-            if (linkedProp)
-            {
-               oldValue = linkedProp->ToString();
-               linkedProp->Insert(mArrayIndex);
-               linkedProp->Copy(mArrayIndex + 1, mArrayIndex);
-
-               emit PropertyAboutToChange(*data.propCon.get(), *linkedProp,
-                  oldValue, linkedProp->ToString());
-               emit PropertyChanged(*data.propCon.get(), *linkedProp);
-            }
-         }
-
-         int nextIndex = mArrayIndex;
-         mPropertyTree->closeEditor(mWrapper, QAbstractItemDelegate::NoHint);
-         parent->resizeChildren(false, true);
-         parent->SetIndexFocus(nextIndex);
-      }
+      emit SignalCopyClicked(GetArrayIndex());
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    void DynamicAbstractControl::onDeleteClicked()
    {
-      // Get our parent.
-      DynamicArrayControl* parent = static_cast<DynamicArrayControl*>(getParent());
-      if (!parent)
-      {
-         return;
-      }
-
-      dtCore::ArrayActorPropertyBase* arrayProp = parent->GetProperty();
-      if (arrayProp)
-      {
-         int curSize = arrayProp->GetArraySize();
-         int minSize = arrayProp->GetMinArraySize();
-         if (minSize > -1 && curSize <= minSize)
-         {
-            return;
-         }
-
-         NotifyParentOfPreUpdate();
-
-         std::string oldValue = arrayProp->ToString();
-         arrayProp->Remove(mArrayIndex);
-
-         emit PropertyAboutToChange(*mPropContainer, *arrayProp,
-            oldValue, arrayProp->ToString());
-         emit PropertyChanged(*mPropContainer, *arrayProp);
-
-         // Now perform the delete operation on each of the linked properties.
-         std::vector<LinkedPropertyData>& linkedProperties = parent->GetLinkedProperties();
-         int linkCount = (int)linkedProperties.size();
-         for (int linkIndex = 0; linkIndex < linkCount; ++linkIndex)
-         {
-            LinkedPropertyData& data = linkedProperties[linkIndex];
-            dtCore::ArrayActorPropertyBase* linkedProp =
-               dynamic_cast<dtCore::ArrayActorPropertyBase*>(data.property);
-            if (linkedProp)
-            {
-               oldValue = linkedProp->ToString();
-               linkedProp->Remove(mArrayIndex);
-
-               emit PropertyAboutToChange(*data.propCon.get(), *linkedProp,
-                  oldValue, linkedProp->ToString());
-               emit PropertyChanged(*data.propCon.get(), *linkedProp);
-            }
-         }
-
-         int nextIndex = mArrayIndex;
-         if (arrayProp->GetArraySize() <= nextIndex)
-         {
-            nextIndex = arrayProp->GetArraySize() - 1;
-         }
-         mPropertyTree->closeEditor(mWrapper, QAbstractItemDelegate::NoHint);
-         parent->resizeChildren(false, true);
-         parent->SetIndexFocus(nextIndex);
-      }
+      emit SignalDeleteClicked(GetArrayIndex());
    }
 
    ////////////////////////////////////////////////////////////////////////////////

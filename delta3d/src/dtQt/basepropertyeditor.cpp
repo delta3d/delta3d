@@ -196,15 +196,21 @@ namespace dtQt
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void BasePropertyEditor::refreshSelectedActors()
+   void BasePropertyEditor::ClearUI()
    {
-      CommitCurrentEdits();
-
       delete propertyTree;
       GetRootControl()->removeAllChildren(propertyModel);
       propertyTree = new PropertyEditorTreeView(propertyModel, actorPropBox);
       dynamicControlLayout->addWidget(propertyTree);
       propertyTree->setRoot(GetRootControl());
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void BasePropertyEditor::refreshSelectedActors()
+   {
+      CommitCurrentEdits();
+
+      ClearUI();
 
       resetGroupBoxLabel();
 

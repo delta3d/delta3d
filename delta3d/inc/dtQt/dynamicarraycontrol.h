@@ -33,6 +33,8 @@
 #include <dtQt/dynamicabstractparentcontrol.h>
 #include <dtQt/dynamicsubwidgets.h>
 
+
+
 namespace dtCore
 {
     class ArrayActorPropertyBase;
@@ -123,6 +125,24 @@ namespace dtQt
        *	Tests whether the base and all linked property arrays match in array size.
        */
       bool doPropertiesMatchInArraySize();
+      
+      void ItemAdd(dtCore::PropertyContainer& container,
+         dtCore::ArrayActorPropertyBase& prop);
+
+      void ItemSwap(dtCore::PropertyContainer& container,
+         dtCore::ArrayActorPropertyBase& prop, int itemIndex, int targetIndex);
+
+      void ItemCopy(dtCore::PropertyContainer& container,
+         dtCore::ArrayActorPropertyBase& prop, int itemIndex);
+
+      void ItemDelete(dtCore::PropertyContainer& container,
+         dtCore::ArrayActorPropertyBase& prop, int itemIndex);
+
+      void ItemClear(dtCore::PropertyContainer& container,
+         dtCore::ArrayActorPropertyBase& prop);
+
+      void NotifyPropertyChange(dtCore::PropertyContainer& container,
+         dtCore::ArrayActorPropertyBase& prop, const std::string& oldValue);
 
    public slots:
       /**
@@ -144,6 +164,11 @@ namespace dtQt
        * Signal when the Reset button has been clicked.
        */
       virtual void onResetClicked();
+
+      virtual void onItemShiftUpClicked(int itemIndex);
+      virtual void onItemShiftDownClicked(int itemIndex);
+      virtual void onItemCopyClicked(int itemIndex);
+      virtual void onItemDeleteClicked(int itemIndex);
 
    private:
       /**
