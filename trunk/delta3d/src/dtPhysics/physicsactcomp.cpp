@@ -304,6 +304,7 @@ namespace dtPhysics
          PhysObjArrayProp::RemoveFuncType(this, &PhysicsActComp::RemovePhysicsObjectByIndex),
          RefString("Defines physics objects associated with the actor."),
          GROUP);
+      physObjArrayProp->SetMinArraySize(1);
 
       typedef dtCore::SimplePropertyContainerActorProperty<dtPhysics::PhysicsObject> PhysObjProp;
       dtCore::RefPtr<PhysObjProp> physObjProp =
