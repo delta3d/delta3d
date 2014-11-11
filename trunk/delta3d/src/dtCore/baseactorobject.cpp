@@ -380,7 +380,7 @@ namespace dtCore
       if (mActorType)
       {
          StringActorProperty* categoryProp = new StringActorProperty(
-            PROPERTY_TYPE_CATEGORY, PROPERTY_TYPE_NAME,
+            PROPERTY_TYPE_CATEGORY, PROPERTY_TYPE_CATEGORY,
             StringActorProperty::SetFuncType(),
             StringActorProperty::GetFuncType(&GetActorType(), &ActorType::GetCategory),
             "The Category Name of the Actor.", GROUP_INFORMATION);
