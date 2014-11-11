@@ -609,6 +609,11 @@ namespace dtGame
        */
       DEPRECATE_FUNC const GameActor& GetGameActor() const;
 
+      /**
+       * If this actor is queued to be deleted.
+       */
+      bool IsDeleted() const;
+      void SetDeleted(bool deleted);
    protected:
       /// Destructor
       virtual ~GameActorProxy();
@@ -669,6 +674,7 @@ namespace dtGame
       bool mPublished;
       bool mRemote;
       bool mDrawableIsAGameActor;
+      bool mDeleted;
 
    };
 }

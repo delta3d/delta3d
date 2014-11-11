@@ -31,16 +31,40 @@ namespace dtGame
    class BindActor
    {
    public:
-      BindActor(UnaryFunctor& func)
+      BindActor(UnaryFunctor& func, GMImpl* impl = NULL, GameManager* gm = NULL)
       : mFunc(func)
+      , mImpl(impl)
+      , mGM(gm)
       {}
 
       void operator () (pairType thePair)
       {
-         mFunc(*thePair.second);
+         dtCore::BaseActorObject* actor = thePair.second;
+         if (mImpl && actor->IsGameActor() && !static_cast<GameActorProxy*>(actor)->IsInGM() && !static_cast<GameActorProxy*>(actor)->IsDeleted())
+         {
+            GameActorProxy* gActor = static_cast<GameActorProxy*>(actor);
+            try
+            {
+               mImpl->AddActorToWorld(*mGM, *gActor);
+               mFunc(*actor);
+            }
+            catch (const dtUtil::Exception& ex)
+            {
+               // Actors can just decide to not be added by throwing an exception.  If it's an error, the actor
+               // should log it as such, but here it's only a warning.
+               ex.LogException(dtUtil::Log::LOG_WARNING, *mImpl->mLogger);
+            }
+         }
+         else
+         {
+            mFunc(*actor);
+         }
       }
    private:
       UnaryFunctor& mFunc;
+      GMImpl* mImpl;
+      GameManager* mGM;
+
    };
 
    template <typename FindFunctor>
@@ -73,7 +97,12 @@ namespace dtGame
          BindActor<UnaryFunctor, GMImpl::ActorMap::value_type> actorMapBindFunc(func);
          std::for_each(mGMImpl->mBaseActorObjectMap.begin(), mGMImpl->mBaseActorObjectMap.end(), actorMapBindFunc);
       }
-      BindActor<UnaryFunctor, GMImpl::GameActorMap::value_type> gameActorMapBindFunc(func);
+      GMImpl* impl = NULL;
+      if (mGMImpl->mBatchData.valid())
+      {
+         impl = mGMImpl;
+      }
+      BindActor<UnaryFunctor, GMImpl::GameActorMap::value_type> gameActorMapBindFunc(func, impl, this);
       std::for_each(mGMImpl->mGameActorProxyMap.begin(), mGMImpl->mGameActorProxyMap.end(), gameActorMapBindFunc);
    }
 
@@ -84,57 +113,12 @@ namespace dtGame
       std::for_each(mGMImpl->mPrototypeActors.begin(), mGMImpl->mPrototypeActors.end(), gameActorMapBindFunc);
    }
 
-   class CallAddToWorld
-   {
-   public:
-      CallAddToWorld(GMImpl& impl, GameManager& gm)
-      : mImpl(impl), mGM(gm)
-      {}
-
-      bool operator () (dtCore::BaseActorObject* actor)
-      {
-         bool result = false;
-         if (actor->IsGameActor())
-         {
-            GameActorProxy* gActor = static_cast<GameActorProxy*>(actor);
-            if (!gActor->IsInGM())
-            {
-               try
-               {
-                  mImpl.AddActorToWorld(mGM, *gActor);
-               }
-               catch (const dtUtil::Exception& ex)
-               {
-                  // Actors can just decide to not be added by throwing an exception.  If it's an error, the actor
-                  // should log it as such, but here it's only a warning.
-                  ex.LogException(dtUtil::Log::LOG_WARNING, *mImpl.mLogger);
-                  // delete this item.
-                  result = true;
-               }
-            }
-         }
-         // false means don't delete it.
-         return result;
-      }
-
-   private:
-      GMImpl& mImpl;
-      GameManager& mGM;
-   };
-
    template <typename FindFunctor>
    inline void GameManager::FindActorsIf(FindFunctor& ifFunc, std::vector<dtCore::BaseActorObject*>& toFill)
    {
       toFill.clear();
       FindFuncWrapper<FindFunctor> findWrapper(ifFunc, toFill);
       ForEachActor(findWrapper);
-      if (mGMImpl->mBatchData.valid())
-      {
-         CallAddToWorld func(*mGMImpl, *this);
-         // It's a remove if because if the AddActorToWorld fails, it will delete the actor, so they need to be removed
-         // from the results.
-         toFill.erase(std::remove_if(toFill.begin(), toFill.end(), func), toFill.end());
-      }
    }
 
    template <typename FindFunctor>

@@ -179,11 +179,14 @@ void GameActorTests::TestActorIsInGM()
       dtCore::RefPtr<dtCore::BaseActorObject> proxy = mManager->CreateActor(*actorType);
       dtCore::RefPtr<dtGame::GameActorProxy> gap = dynamic_cast<dtGame::GameActorProxy*>(proxy.get());
       CPPUNIT_ASSERT_MESSAGE("BaseActorObject should not be NULL", gap != NULL);
-      CPPUNIT_ASSERT_MESSAGE("BaseActorObject Should not be in GM", gap->IsInGM() != true);
+      CPPUNIT_ASSERT_MESSAGE("BaseActorObject Should not be in GM", !gap->IsInGM());
+      CPPUNIT_ASSERT_MESSAGE("BaseActorObject Should not be marked deleted", !gap->IsDeleted());
+      gap->SetDeleted(true);
 
       mManager->AddActor(*gap.get(), false, false);
 
-      CPPUNIT_ASSERT_MESSAGE("BaseActorObject Should be in GM", gap->IsInGM() != false);
+      CPPUNIT_ASSERT_MESSAGE("BaseActorObject Should be in GM", gap->IsInGM());
+      CPPUNIT_ASSERT_MESSAGE("BaseActorObject should have deleted marked false on add.", !gap->IsDeleted());
    }
    catch(const dtUtil::Exception& e)
    {

@@ -1038,6 +1038,7 @@ void GameManagerTests::TestAddActor()
          bool testIsInGM = proxy->IsInGM();
 
          CPPUNIT_ASSERT_MESSAGE("The proxy should not be in the gm", testIsInGM != true);
+         CPPUNIT_ASSERT_MESSAGE("The proxy should not be marked deleted.", proxy->IsDeleted());
 
          CPPUNIT_ASSERT_MESSAGE("The actor should still be in the scene.",
             mGM->GetScene().GetChildIndex(proxy->GetDrawable()) != mGM->GetScene().GetNumberOfAddedDrawable());
@@ -1867,6 +1868,13 @@ void GameManagerTests::TestBatchAdd()
    dtCore::RefPtr<const dtCore::ActorType> type = mGM->FindActorType("ExampleActors","Test1Actor");
    CPPUNIT_ASSERT(type != NULL);
 
+   dtCore::RefPtr<TestGameActor1> deletedActor;
+   mGM->CreateActor(*type.get(), deletedActor);
+   deletedActor->SetName("Deleted");
+   mGM->AddActor(*deletedActor, false, false);
+   mGM->DeleteActor(deletedActor->GetId());
+   CPPUNIT_ASSERT(deletedActor->IsDeleted());
+
    // Create a prototype actor to work with.
    dtCore::RefPtr<TestGameActor1> actors[4];
    for (unsigned i  = 0; i < 4; ++i)
@@ -1894,6 +1902,13 @@ void GameManagerTests::TestBatchAdd()
          CPPUNIT_ASSERT(!actors[i]->GetTestActorIdFound());
          CPPUNIT_ASSERT(!actors[i]->GetTestActorNameFound());
        }
+       // To make sure the batch code doesn't try to reset a deleted actor.
+       CPPUNIT_ASSERT(mGM->FindActorById(deletedActor->GetId()) == deletedActor);
+       dtGame::GameActorProxy* deletedActorPtr;
+       mGM->FindActorByName(deletedActor->GetName(), deletedActorPtr);
+       CPPUNIT_ASSERT(deletedActorPtr == deletedActor);
+       CPPUNIT_ASSERT(!deletedActor->IsInGM());
+       CPPUNIT_ASSERT(deletedActor->IsDeleted());
    }
    // Batch ends
 

@@ -658,7 +658,7 @@ namespace dtGame
       {
          // if we have an about actor, first try to send it to the actor itself
          GameActorProxy* aboutActor = FindGameActorById(message.GetAboutActorId());
-         if (aboutActor != NULL && aboutActor->IsInGM())
+         if (aboutActor != NULL && !aboutActor->IsDeleted())
          {
             InvokeForActorInvokables(message, *aboutActor);
          }
@@ -1304,6 +1304,7 @@ namespace dtGame
 
       // Save the publish value so we don't have to pass it around.
       gameActorProxy.SetPublished(publish);
+      gameActorProxy.SetDeleted(false);
 
       if (!mGMImpl->mBatchData.valid() || mGMImpl->mBatchData->mOkToAddActors )
       {
@@ -1558,6 +1559,7 @@ namespace dtGame
          {
             mGMImpl->mDeleteList.push_back(itor->second);
             gameActorProxy.SetIsInGM(false);
+            gameActorProxy.SetDeleted(true);
 
             if (!gameActorProxy.IsRemote())
             {
@@ -1862,7 +1864,7 @@ namespace dtGame
    {
       GMImpl::GameActorMap::const_iterator itor = mGMImpl->mGameActorProxyMap.find(id);
       GameActorProxy* result = itor == mGMImpl->mGameActorProxyMap.end() ? NULL : itor->second.get();
-      if (result != NULL && mGMImpl->mBatchData.valid() && !result->IsInGM())
+      if (result != NULL && mGMImpl->mBatchData.valid() && !result->IsInGM() && !result->IsDeleted())
       {
          try
          {
