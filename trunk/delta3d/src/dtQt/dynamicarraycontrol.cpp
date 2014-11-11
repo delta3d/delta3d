@@ -47,7 +47,73 @@
 
 namespace dtQt
 {
+   /////////////////////////////////////////////////////////////////////////////
+   // HELPER
+   /////////////////////////////////////////////////////////////////////////////
+   struct ForEachPropertyPred
+   {
+      enum Mode
+      {
+         ADD,
+         SWAP,
+         COPY,
+         DELETE,
+         CLEAR
+      };
 
+      DynamicArrayControl* mControl;
+      Mode mMode;
+      int mIndex;
+      int mTargetIndex;
+
+      ForEachPropertyPred(DynamicArrayControl& control, Mode mode)
+         : mControl(&control)
+         , mMode(mode)
+         , mIndex(0)
+         , mTargetIndex(0)
+      {}
+
+      void HandleProperty(dtCore::PropertyContainer& container, dtCore::ArrayActorPropertyBase& prop)
+      {
+         switch (mMode)
+         {
+         case ADD:
+            mControl->ItemAdd(container, prop);
+            break;
+         case SWAP:
+            mControl->ItemSwap(container, prop, mIndex, mTargetIndex);
+            break;
+         case COPY:
+            mControl->ItemCopy(container, prop, mIndex);
+            break;
+         case DELETE:
+            mControl->ItemDelete(container, prop, mIndex);
+            break;
+         case CLEAR:
+            mControl->ItemClear(container, prop);
+            break;
+         default:
+            break;
+         }
+      }
+
+      void operator() (DynamicAbstractControl::LinkedPropertyData& data)
+      {
+         // Perform an operation on each of the linked properties.
+         dtCore::ArrayActorPropertyBase* linkedProp =
+            dynamic_cast<dtCore::ArrayActorPropertyBase*>(data.property);
+
+         if (linkedProp != NULL)
+         {
+            HandleProperty(*data.propCon, *linkedProp);
+         }
+      }
+   };
+
+
+
+   /////////////////////////////////////////////////////////////////////////////
+   // CLASS CODE
    /////////////////////////////////////////////////////////////////////////////
    DynamicArrayControl::DynamicArrayControl()
       : mTextLabel(NULL)
@@ -279,6 +345,19 @@ namespace dtQt
                   connect(element, SIGNAL(PropertyChanged(dtCore::PropertyContainer&, dtCore::ActorProperty&)),
                      this, SLOT(PropertyChangedPassThrough(dtCore::PropertyContainer&, dtCore::ActorProperty&)));
 
+                  // Connect the buttons of the new control.
+                  connect(element, SIGNAL(SignalShiftUpClicked(int)),
+                     this, SLOT(onItemShiftUpClicked(int)));
+
+                  connect(element, SIGNAL(SignalShiftDownClicked(int)),
+                     this, SLOT(onItemShiftDownClicked(int)));
+
+                  connect(element, SIGNAL(SignalCopyClicked(int)),
+                     this, SLOT(onItemCopyClicked(int)));
+
+                  connect(element, SIGNAL(SignalDeleteClicked(int)),
+                     this, SLOT(onItemDeleteClicked(int)));
+
                   mChildren.push_back(element);
                }
             }
@@ -365,30 +444,12 @@ namespace dtQt
    {
       NotifyParentOfPreUpdate();
 
-      std::string oldValue = mProperty->ToString();
-      mProperty->Insert(mProperty->GetArraySize());
+      ForEachPropertyPred pred(*this, ForEachPropertyPred::ADD);
+      pred.HandleProperty(*mPropContainer, *mProperty);
 
-      PropertyAboutToChange(*mPropContainer, *mProperty,
-         oldValue, mProperty->ToString());
-      PropertyChanged(*mPropContainer, *mProperty);
-
-      // Also add an index to all linked properties.
-      int linkCount = (int)mLinkedProperties.size();
-      for (int linkIndex = 0; linkIndex < linkCount; ++linkIndex)
-      {
-         LinkedPropertyData& data = mLinkedProperties[linkIndex];
-         dtCore::ArrayActorPropertyBase* arrayProp =
-            dynamic_cast<dtCore::ArrayActorPropertyBase*>(data.property);
-         if (arrayProp)
-         {
-            oldValue = arrayProp->ToString();
-            arrayProp->Insert(arrayProp->GetArraySize());
-
-            PropertyAboutToChange(*data.propCon.get(), *arrayProp,
-               oldValue, arrayProp->ToString());
-            PropertyChanged(*data.propCon.get(), *arrayProp);
-         }
-      }
+      // Now perform the add operation on each of the linked properties.
+      std::vector<LinkedPropertyData>& props = GetLinkedProperties();
+      std::for_each(props.begin(), props.end(), pred);
 
       resizeChildren();
    }
@@ -398,30 +459,12 @@ namespace dtQt
    {
       NotifyParentOfPreUpdate();
 
-      std::string oldValue = mProperty->ToString();
-      mProperty->Clear();
+      ForEachPropertyPred pred(*this, ForEachPropertyPred::CLEAR);
+      pred.HandleProperty(*mPropContainer, *mProperty);
 
-      PropertyAboutToChange(*mPropContainer, *mProperty,
-         oldValue, mProperty->ToString());
-      PropertyChanged(*mPropContainer, *mProperty);
-
-      // Also clear all linked properties.
-      int linkCount = (int)mLinkedProperties.size();
-      for (int linkIndex = 0; linkIndex < linkCount; ++linkIndex)
-      {
-         LinkedPropertyData& data = mLinkedProperties[linkIndex];
-         dtCore::ArrayActorPropertyBase* arrayProp =
-            dynamic_cast<dtCore::ArrayActorPropertyBase*>(data.property);
-         if (arrayProp)
-         {
-            oldValue = arrayProp->ToString();
-            arrayProp->Clear();
-
-            PropertyAboutToChange(*data.propCon.get(), *arrayProp,
-               oldValue, arrayProp->ToString());
-            PropertyChanged(*data.propCon.get(), *arrayProp);
-         }
-      }
+      // Now perform the clear operation on each of the linked properties.
+      std::vector<LinkedPropertyData>& props = GetLinkedProperties();
+      std::for_each(props.begin(), props.end(), pred);
 
       resizeChildren();
    }
@@ -488,6 +531,196 @@ namespace dtQt
             mClearButton->setDisabled(false);
          }
       }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void DynamicArrayControl::onItemShiftUpClicked(int itemIndex)
+   {
+      if (itemIndex <= 0)
+      {
+         return;
+      }
+
+      if (mProperty.valid())
+      {
+         if (!mProperty->CanReorder())
+         {
+            return;
+         }
+
+         NotifyParentOfPreUpdate();
+
+         ForEachPropertyPred pred(*this, ForEachPropertyPred::SWAP);
+         pred.mIndex = itemIndex;
+         pred.mTargetIndex = itemIndex - 1;
+         pred.HandleProperty(*mPropContainer, *mProperty);
+
+         // Now perform the shift operation on each of the linked properties.
+         std::vector<LinkedPropertyData>& props = GetLinkedProperties();
+         std::for_each(props.begin(), props.end(), pred);
+
+         int nextIndex = itemIndex - 1;
+         mPropertyTree->closeEditor(mWrapper, QAbstractItemDelegate::NoHint);
+         resizeChildren(true, true);
+         SetIndexFocus(nextIndex);
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void DynamicArrayControl::onItemShiftDownClicked(int itemIndex)
+   {
+      if (mProperty.valid())
+      {
+         if (!mProperty->CanReorder() || itemIndex + 1 >= mProperty->GetArraySize())
+         {
+            return;
+         }
+
+         NotifyParentOfPreUpdate();
+
+         ForEachPropertyPred pred(*this, ForEachPropertyPred::SWAP);
+         pred.mIndex = itemIndex;
+         pred.mTargetIndex = itemIndex + 1;
+         pred.HandleProperty(*mPropContainer, *mProperty);
+
+         // Now perform the shift operation on each of the linked properties.
+         std::vector<LinkedPropertyData>& props = GetLinkedProperties();
+         std::for_each(props.begin(), props.end(), pred);
+
+         int nextIndex = itemIndex + 1;
+         mPropertyTree->closeEditor(mWrapper, QAbstractItemDelegate::NoHint);
+         resizeChildren(true, true);
+         SetIndexFocus(nextIndex);
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void DynamicArrayControl::onItemCopyClicked(int itemIndex)
+   {
+      if (mProperty.valid())
+      {
+         int curSize = mProperty->GetArraySize();
+         int maxSize = mProperty->GetMaxArraySize();
+         if (maxSize > -1 && curSize >= maxSize)
+         {
+            return;
+         }
+
+         NotifyParentOfPreUpdate();
+
+         ForEachPropertyPred pred(*this, ForEachPropertyPred::COPY);
+         pred.mIndex = itemIndex;
+         pred.HandleProperty(*mPropContainer, *mProperty);
+
+         // Now perform the copy operation on each of the linked properties.
+         std::vector<LinkedPropertyData>& props = GetLinkedProperties();
+         std::for_each(props.begin(), props.end(), pred);
+
+         int nextIndex = itemIndex;
+         mPropertyTree->closeEditor(mWrapper, QAbstractItemDelegate::NoHint);
+         resizeChildren(false, true);
+         SetIndexFocus(nextIndex);
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void DynamicArrayControl::onItemDeleteClicked(int itemIndex)
+   {
+      if (mProperty.valid())
+      {
+         int curSize = mProperty->GetArraySize();
+         int minSize = mProperty->GetMinArraySize();
+
+         if (minSize > -1 && curSize <= minSize)
+         {
+            return;
+         }
+
+         // Collapse the control if this is the last item.
+         // It seems a crash will happen if the control is removed
+         // while in the middle of processing the current signal
+         // sent from the control.
+         if (curSize == 1)
+         {
+            QModelIndex myIndex = this->mModel->IndexOf(this);
+            if (myIndex.isValid())
+            {
+               mPropertyTree->collapse(myIndex);
+            }
+         }
+
+         NotifyParentOfPreUpdate();
+
+         ForEachPropertyPred pred(*this, ForEachPropertyPred::DELETE);
+         pred.mIndex = itemIndex;
+         pred.HandleProperty(*mPropContainer, *mProperty);
+
+         // Now perform the delete operation on each of the linked properties.
+         std::vector<LinkedPropertyData>& props = GetLinkedProperties();
+         std::for_each(props.begin(), props.end(), pred);
+
+         int nextIndex = itemIndex;
+         if (mProperty->GetArraySize() <= nextIndex)
+         {
+            nextIndex = mProperty->GetArraySize() - 1;
+         }
+         mPropertyTree->closeEditor(mWrapper, QAbstractItemDelegate::NoHint);
+         resizeChildren(false, true);
+
+         if (nextIndex >= 0)
+         {
+            SetIndexFocus(nextIndex);
+         }
+      }
+   }
+
+   void DynamicArrayControl::ItemAdd(dtCore::PropertyContainer& container, dtCore::ArrayActorPropertyBase& prop)
+   {
+      std::string oldValue = prop.ToString();
+      prop.Insert(prop.GetArraySize());
+
+      NotifyPropertyChange(container, prop, oldValue);
+   }
+
+   void DynamicArrayControl::ItemSwap(dtCore::PropertyContainer& container, dtCore::ArrayActorPropertyBase& prop, int itemIndex, int targetIndex)
+   {
+      std::string oldValue = prop.ToString();
+      prop.Swap(itemIndex, targetIndex);
+
+      NotifyPropertyChange(container, prop, oldValue);
+   }
+   
+   void DynamicArrayControl::ItemCopy(dtCore::PropertyContainer& container, dtCore::ArrayActorPropertyBase& prop, int itemIndex)
+   {
+      std::string oldValue = prop.ToString();
+      prop.Insert(itemIndex);
+      prop.Copy(itemIndex + 1, itemIndex);
+
+      NotifyPropertyChange(container, prop, oldValue);
+   }
+   
+   void DynamicArrayControl::ItemDelete(dtCore::PropertyContainer& container, dtCore::ArrayActorPropertyBase& prop, int itemIndex)
+   {
+      std::string oldValue = prop.ToString();
+      prop.Remove(itemIndex);
+
+      NotifyPropertyChange(container, prop, oldValue);
+   }
+
+   void DynamicArrayControl::ItemClear(dtCore::PropertyContainer& container, dtCore::ArrayActorPropertyBase& prop)
+   {
+      std::string oldValue = prop.ToString();
+      prop.Clear();
+
+      NotifyPropertyChange(container, prop, oldValue);
+   }
+
+   void DynamicArrayControl::NotifyPropertyChange(dtCore::PropertyContainer& container,
+      dtCore::ArrayActorPropertyBase& prop, const std::string& oldValue)
+   {
+      emit PropertyAboutToChange(container, prop,
+         oldValue, prop.ToString());
+      emit PropertyChanged(container, prop);
    }
 
 } // namespace dtEditQt

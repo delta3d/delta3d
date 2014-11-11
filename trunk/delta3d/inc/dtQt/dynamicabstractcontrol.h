@@ -330,6 +330,11 @@ namespace dtQt
       virtual void actorPropertyChanged(dtCore::PropertyContainer& propCon, dtCore::ActorProperty& property);
 
    signals:
+      void SignalShiftUpClicked(int itemIndex);
+      void SignalShiftDownClicked(int itemIndex);
+      void SignalCopyClicked(int itemIndex);
+      void SignalDeleteClicked(int itemIndex);
+
       void PropertyAboutToChange(dtCore::PropertyContainer&, dtCore::ActorProperty& prop,
                std::string oldValue, std::string newValue);
 

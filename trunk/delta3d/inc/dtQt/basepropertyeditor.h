@@ -122,6 +122,7 @@ namespace dtQt
 
    public slots:
       void UpdateUI();
+      void ClearUI();
 
       /**
        * Handles the actor selection changed event message from EditorEvents

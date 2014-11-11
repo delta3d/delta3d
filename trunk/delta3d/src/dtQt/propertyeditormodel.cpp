@@ -127,7 +127,7 @@ namespace dtQt
    {
       DynamicAbstractControl* prop = GetAbstractControlFromIndex(index);
 
-      if (!index.isValid() || prop == NULL || prop == rootControl)
+      if (!index.isValid() || prop == NULL || prop == rootControl || prop->getParent() == NULL)
       {
          return QModelIndex();
       }
