@@ -51,6 +51,7 @@ namespace dtCore
    struct SerializerRuntimeData
    {
       SerializerRuntimeData();
+      ~SerializerRuntimeData();
 
       dtCore::ObserverPtr<PropertyContainer> mPropertyContainer;
       dtCore::RefPtr<ActorProperty> mActorProperty;

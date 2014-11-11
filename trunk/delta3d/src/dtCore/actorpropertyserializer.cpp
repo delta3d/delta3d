@@ -70,6 +70,7 @@ namespace dtCore
 {
    static const std::string logName("actorpropertyserializer.cpp");
 
+   static int depth = 0;
    //////////////////////////////////////////////////////////////////////////
    SerializerRuntimeData::SerializerRuntimeData()
    : mActorPropertyType(NULL)
@@ -81,15 +82,21 @@ namespace dtCore
    {
    }
 
+   SerializerRuntimeData::~SerializerRuntimeData()
+   {
+   }
+
    //////////////////////////////////////////////////////////////////////////
    ActorPropertySerializer::ActorPropertySerializer(BaseXMLWriter* writer)
    : mWriter(writer)
+   , mParser(NULL)
    {
    }
 
    //////////////////////////////////////////////////////////////////////////
    ActorPropertySerializer::ActorPropertySerializer(BaseXMLHandler* parser)
-   : mParser(parser)
+   : mWriter(NULL)
+   , mParser(parser)
    {
    }
 
@@ -335,6 +342,12 @@ namespace dtCore
                EnterPropertyContainer();
             }
          }
+         // Even if the property is NULL, we still need to recurse because otherwise the context gets broken.
+         else if (XMLString::compareString(localname,
+            MapXMLConstants::ACTOR_PROPERTY_PROPERTY_CONTAINER_ELEMENT) == 0)
+         {
+            EnterPropertyContainer();
+         }
 
          return true;
       }
@@ -353,7 +366,7 @@ namespace dtCore
    {
       if (mData.empty())
       {
-         LOG_ERROR("Data stack is empty, can't end and element.");
+         LOG_ERROR(std::string("Data stack is empty, can't end element: ") + dtUtil::XMLStringConverter(localname).ToString());
          return false;
       }
 
@@ -412,7 +425,7 @@ namespace dtCore
 
          if (mData.empty())
          {
-        	 LOG_ERROR("Data stack is empty when completing a property container element in map \"" + mMap->GetName() + "\". This stack should never be empty.");
+            LOG_ERROR("Data stack is empty when completing a property container element in map \"" + mMap->GetName() + "\". This stack should never be empty.");
          }
       }
       else if (data.mInGroupProperty)
@@ -466,7 +479,9 @@ namespace dtCore
    {
       if (mData.empty())
       {
-         LOG_ERROR("Data stack is empty, can't end an element.");
+         std::string data = dtUtil::XMLStringConverter(chars).ToString();
+         dtUtil::Trim(data);
+         LOG_ERROR(std::string("Data stack is empty, can't handle characters: \"") + data + "\"");
          return false;
       }
 
@@ -523,20 +538,22 @@ namespace dtCore
                }
                else if (GetNestedType() != NULL)
                {
+                  DataType* nestedDT = GetNestedType();
                   std::string dataValue = dtUtil::XMLStringConverter(chars).ToString();
 
+                  ActorProperty* nestedProperty = GetNestedProperty();
                   if (mParser->mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
                   {
                      mParser->mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
                         "Setting value of property %s, property type %s, datatype %s, value %s, element name %s.",
-                        GetNestedProperty()->GetName().c_str(),
-                        GetNestedProperty()->GetDataType().GetName().c_str(),
-                        GetNestedType()->GetName().c_str(),
+                        nestedProperty->GetName().c_str(),
+                        nestedProperty->GetDataType().GetName().c_str(),
+                        nestedDT->GetName().c_str(),
                         dataValue.c_str(), dtUtil::XMLStringConverter(topEl.c_str()).c_str());
                   }
 
                   //we now have the property, the type, and the data.
-                  ParsePropertyData(topEl, dataValue, GetNestedType(), GetNestedProperty());
+                  ParsePropertyData(topEl, dataValue, nestedDT, nestedProperty);
                }
             }
          }
@@ -1626,6 +1643,7 @@ namespace dtCore
       BasePropertyContainerActorProperty* pcProp = dynamic_cast<BasePropertyContainerActorProperty*>(actorProperty);
       if (pcProp != NULL)
       {
+
          dtCore::PropertyContainer* pc = pcProp->GetValue();
          if (pc == NULL)
          {
