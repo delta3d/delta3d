@@ -204,7 +204,8 @@ void TestGameActor1::OnEnteredWorld()
       dtGame::GameActorProxy* toFind = NULL;
       GetGameManager()->FindActorById(mTestActorId, toFind);
       mTestActorIdFound = toFind != NULL;
-      mTestActorIdInitialized = toFind->IsInGM();
+      if (mTestActorIdFound)
+         mTestActorIdInitialized = toFind->IsInGM();
    }
 
    if (!mTestActorNameToLookup.empty())
@@ -212,7 +213,8 @@ void TestGameActor1::OnEnteredWorld()
       dtGame::GameActorProxy* toFind = NULL;
       GetGameManager()->FindActorByName(mTestActorNameToLookup, toFind);
       mTestActorNameFound = toFind != NULL;
-      mTestActorNameInitialized = toFind->IsInGM();
+      if (mTestActorNameFound)
+         mTestActorNameInitialized = toFind->IsInGM();
    }
 }
 
