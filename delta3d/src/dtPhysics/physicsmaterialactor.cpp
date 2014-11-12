@@ -1,6 +1,7 @@
 /* -*-c++-*-
  * Delta3D Open Source Game and Simulation Engine
  * Copyright (C) 2006, Alion Science and Technology, BMH Operation
+ * Copyright (C) 2014, Caper Holdings, LLC
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -16,12 +17,15 @@
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
- * @author Allen Danklefsen
- * @author Brad Anderegg
+ * Allen Danklefsen
+ * Brad Anderegg
+ * David Guthrie
  */
 
 #include <dtPhysics/physicsmaterialactor.h>
+#include <dtPhysics/physicscomponent.h>
 #include <dtCore/enginepropertytypes.h>
+#include <dtGame/gamemanager.h>
 #include <dtUtil/funtraits.h>
 #include <dtUtil/typetraits.h>
 
@@ -31,43 +35,67 @@ namespace dtPhysics
    // Proxy code
    //////////////////////////////////////////////////////////
 
-   const dtUtil::RefString MaterialActorProxy::PROPERTY_KINETIC_FRICTION("KineticFriction");
-   const dtUtil::RefString MaterialActorProxy::PROPERTY_STATIC_FRICTION("StaticFriction");
-   const dtUtil::RefString MaterialActorProxy::PROPERTY_RESTITUTION("Restitution");
-   const dtUtil::RefString MaterialActorProxy::PROPERTY_KINETIC_ANISOTROPIC_FRICTION("KineticAnisotropicFriction");
-   const dtUtil::RefString MaterialActorProxy::PROPERTY_STATIC_ANISOTROPIC_FRICTION("StaticAnisotropicFriction");
-   const dtUtil::RefString MaterialActorProxy::PROPERTY_DIRECTION_OF_ANISOTROPY("DirOfAnisotropy");
-   const dtUtil::RefString MaterialActorProxy::PROPERTY_ENABLE_ANISOTROPIC_FRICTION("EnableAnisotropicFriction");
-   const dtUtil::RefString MaterialActorProxy::PROPERTY_DISABLE_STRONG_FRICTION("DisableStrongFriction");
-   const dtUtil::RefString MaterialActorProxy::PROPERTY_MATERIAL_INDEX("MaterialIndex");
+   const dtUtil::RefString MaterialActor::PROPERTY_KINETIC_FRICTION("KineticFriction");
+   const dtUtil::RefString MaterialActor::PROPERTY_STATIC_FRICTION("StaticFriction");
+   const dtUtil::RefString MaterialActor::PROPERTY_RESTITUTION("Restitution");
+   const dtUtil::RefString MaterialActor::PROPERTY_KINETIC_ANISOTROPIC_FRICTION("KineticAnisotropicFriction");
+   const dtUtil::RefString MaterialActor::PROPERTY_STATIC_ANISOTROPIC_FRICTION("StaticAnisotropicFriction");
+   const dtUtil::RefString MaterialActor::PROPERTY_DIRECTION_OF_ANISOTROPY("DirOfAnisotropy");
+   const dtUtil::RefString MaterialActor::PROPERTY_ENABLE_ANISOTROPIC_FRICTION("EnableAnisotropicFriction");
+   const dtUtil::RefString MaterialActor::PROPERTY_DISABLE_STRONG_FRICTION("DisableStrongFriction");
+   const dtUtil::RefString MaterialActor::PROPERTY_MATERIAL_INDEX("MaterialIndex");
 
    //////////////////////////////////////////////////////////
-   MaterialActorProxy::MaterialActorProxy()
+   MaterialActor::MaterialActor()
    {
+      SetName("Material");
       SetClassName("dtPhysics::MaterialActor");
    }
 
    //////////////////////////////////////////////////////////
-   MaterialActorProxy::~MaterialActorProxy()
+   MaterialActor::~MaterialActor()
    {
 
    }
 
    //////////////////////////////////////////////////////////
-   void MaterialActorProxy::CreateActor()
+   void MaterialActor::CreateDrawable()
    {
-      SetDrawable(*new MaterialActor());
+      SetDrawable(*new MaterialDrawable());
    }
 
    //////////////////////////////////////////////////////////
-   void MaterialActorProxy::BuildPropertyMap()
+   void MaterialActor::OnEnteredWorld()
    {
+      PhysicsComponent* physComp;
+      GetGameManager()->GetComponentByName(PhysicsComponent::DEFAULT_NAME, physComp);
+      if (physComp != NULL)
+      {
+         PhysicsMaterials& materials = physComp->GetPhysicsWorld().GetMaterials();
+
+         Material* uniqueMaterial = materials.GetMaterial(GetName());
+         if (uniqueMaterial != NULL)
+         {
+            // If the material already exists, the definition of said material may be changed by setting the materials
+            // interaction with itself. This is weird, and should really be rethought out. -DG
+            materials.SetMaterialInteraction(GetName(), GetName(), GetMaterialDef());
+         }
+         else
+         {
+            materials.NewMaterial(GetName(), GetMaterialDef());
+         }
+      }
+   }
+
+   //////////////////////////////////////////////////////////
+   void MaterialActor::BuildPropertyMap()
+   {
+      SetHideDTCorePhysicsProps(true);
+      BaseClass::BuildPropertyMap();
       static const dtUtil::RefString GROUP = "Material";
 
-      MaterialActor* actor = dynamic_cast<MaterialActor*>(GetDrawable());
-
-      typedef dtCore::PropertyRegHelper<MaterialActorProxy, MaterialDef> PropRegType;
-      PropRegType propRegHelper(*this, &actor->GetMaterialDef(), GROUP);
+      typedef dtCore::PropertyRegHelper<MaterialActor&, MaterialDef> PropRegType;
+      PropRegType propRegHelper(*this, &GetMaterialDef(), GROUP);
 
       DT_REGISTER_PROPERTY(KineticFriction, "Material Setting - coefficient of kinetic friction -- should be in [0, +inf]. If set to greater than staticFriction, "
                "the effective value of staticFriction will be increased to match.", PropRegType, propRegHelper);
@@ -100,27 +128,43 @@ namespace dtPhysics
    //////////////////////////////////////////////////////////
 
    //////////////////////////////////////////////////////////
-   MaterialActor::MaterialActor()
+   MaterialDrawable::MaterialDrawable()
+   : mNode(new osg::Node)
    {
       SetName("Material");
    }
 
    /////////////////////////////////////////////////////
-   MaterialActor::~MaterialActor()
+   MaterialDrawable::~MaterialDrawable()
    {
 
    }
 
    /////////////////////////////////////////////////////
-   osg::Node* MaterialActor::GetOSGNode()
+   osg::Node* MaterialDrawable::GetOSGNode()
    {
       return mNode.get();
    }
 
    /////////////////////////////////////////////////////
-   const osg::Node* MaterialActor::GetOSGNode() const
+   const osg::Node* MaterialDrawable::GetOSGNode() const
    {
       return mNode.get();
+   }
+
+   //////////////////////////////////////////////////////////
+   Material* MaterialActor::GetMaterial() const
+   {
+      Material* uniqueMaterial = NULL;
+      PhysicsComponent* physComp;
+      GetGameManager()->GetComponentByName(PhysicsComponent::DEFAULT_NAME, physComp);
+      if (physComp != NULL)
+      {
+         PhysicsMaterials& materials = physComp->GetPhysicsWorld().GetMaterials();
+
+         uniqueMaterial = materials.GetMaterial(GetName());
+      }
+      return uniqueMaterial;
    }
 
    //////////////////////////////////////////////////////////

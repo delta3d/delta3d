@@ -139,35 +139,30 @@ namespace dtExample
 
       RegisterForTick();
 
-      dtGame::GameActorProxy* owner;
+      dtGame::GameActorProxy* owner = 0;
       GetOwner(owner);
-      owner->RegisterForMessages(dtGame::MessageType::INFO_MAP_CHANGE_LOAD_END, dtUtil::MakeFunctor(&SurfaceVesselActorComponent::OnMapLoaded, this));
-      owner->RegisterForMessages(dtGame::MessageType::INFO_MAPS_OPENED, dtUtil::MakeFunctor(&SurfaceVesselActorComponent::OnMapLoaded, this));
+//      owner->RegisterForMessages(dtGame::MessageType::INFO_MAP_CHANGE_LOAD_END, dtUtil::MakeFunctor(&SurfaceVesselActorComponent::OnMapLoaded, this));
+//      owner->RegisterForMessages(dtGame::MessageType::INFO_MAPS_OPENED, dtUtil::MakeFunctor(&SurfaceVesselActorComponent::OnMapLoaded, this));
       owner->RegisterForMessages(dtGame::MessageType::INFO_GAME_EVENT, dtUtil::MakeFunctor(&SurfaceVesselActorComponent::OnGameEvent, this));
 
       dtPhysics::PhysicsActComp* pac = GetOwner()->GetComponent<dtPhysics::PhysicsActComp>();
       if (pac != NULL)
       {
          mBuoyancyAction->Register(*pac->GetMainPhysicsObject());
+
+         if (mWaterHeightQuery == NULL)
+         {
+            dtActors::WaterGridActorProxy* waterGrid = NULL;
+            owner->GetGameManager()->FindActorByType(*dtActors::EngineActorRegistry::WATER_GRID_ACTOR_TYPE, waterGrid);
+            if (waterGrid != NULL)
+            {
+               mWaterHeightQuery = new WaterActorHeightQuery(*waterGrid->GetDrawable<dtActors::WaterGridActor>());
+               mBuoyancyAction->SetWaterHeightQuery(mWaterHeightQuery);
+            }
+         }
       }
-   }
 
-   //////////////////////////////////////////////////////////
-   void SurfaceVesselActorComponent::OnRemovedFromWorld()
-   {
-      BaseClass::OnRemovedFromWorld();
-      delete mWaterHeightQuery;
-      mWaterHeightQuery = NULL;
-   }
-
-
-   //////////////////////////////////////////////////////////
-   void SurfaceVesselActorComponent::OnMapLoaded(const dtGame::MapMessage& mapMessage)
-   {
       CreateSprayEffects();
-
-      dtGame::GameActorProxy* owner = NULL;
-      GetOwner(owner);
 
       dtCore::Transformable* drawable = NULL;
       owner->GetDrawable(drawable);
@@ -235,17 +230,21 @@ namespace dtExample
 
       // Ensure the particle systems have the current enabled state.
       SetSprayEnabled(mSprayEnabled);
+   }
 
-      if (mWaterHeightQuery == NULL)
-      {
-         dtActors::WaterGridActorProxy* waterGrid = NULL;
-         owner->GetGameManager()->FindActorByType(*dtActors::EngineActorRegistry::WATER_GRID_ACTOR_TYPE, waterGrid);
-         if (waterGrid != NULL)
-         {
-            mWaterHeightQuery = new WaterActorHeightQuery(*waterGrid->GetDrawable<dtActors::WaterGridActor>());
-            mBuoyancyAction->SetWaterHeightQuery(mWaterHeightQuery);
-         }
-      }
+   //////////////////////////////////////////////////////////
+   void SurfaceVesselActorComponent::OnRemovedFromWorld()
+   {
+      BaseClass::OnRemovedFromWorld();
+      delete mWaterHeightQuery;
+      mWaterHeightQuery = NULL;
+   }
+
+
+   //////////////////////////////////////////////////////////
+   void SurfaceVesselActorComponent::OnMapLoaded(const dtGame::MapMessage& mapMessage)
+   {
+
    }
 
    //////////////////////////////////////////////////////////

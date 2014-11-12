@@ -1558,7 +1558,7 @@ namespace dtActors
    ////////////////////////////////////////////////////////////////////////////////
    void WaterGridActorProxy::BuildPropertyMap()
    {
-      const std::string GROUPNAME = "WaterGrid";
+      static const dtUtil::RefString GROUPNAME = "WaterGrid";
 
       BaseClass::BuildPropertyMap();
 

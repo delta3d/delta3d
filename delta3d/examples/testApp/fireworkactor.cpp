@@ -57,9 +57,9 @@ namespace dtExample
    /////////////////////////////////////////////////////////////////////////////
    FireworkActor::FireworkActor()
       : BaseClass()
-      , mDetonateTimeRemaining(0.0f)
       , mSparkLifeTime(0.0f)
       , mSparkLifeTimeRemaining(0.0f)
+      , mDetonateTimeRemaining(0.0f)
       , mDetonateTimeLimit(DEFAULT_DETONATE_TIME_LIMIT)
       , mLayerNameFlare(DEFAULT_LAYER_NAME_FLARE)
       , mLayerNameSparks(DEFAULT_LAYER_NAME_SPARKS)

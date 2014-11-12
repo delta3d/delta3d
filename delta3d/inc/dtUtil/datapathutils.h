@@ -79,11 +79,19 @@ namespace dtUtil
     * This is used internally, and this api is subject to change.
     */
    std::string GetBundleResourcesPath();
+
    /**
     * @return the plugins path inside the current application bundle.
     * This is used internally, and this api is subject to change.
     */
    std::string GetBundlePlugInsPath();
+
+   /**
+    * @return the application bundle path.
+    * This is used internally, and this api is subject to change.
+    */
+   std::string GetBundlePath();
+
 
    void RemovePSNCommandLineOption(int& argc, char**& argv);
 #else

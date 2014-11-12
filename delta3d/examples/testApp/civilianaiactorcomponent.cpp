@@ -45,6 +45,7 @@ namespace dtExample
    , mLookAtCameraRange(15.0f)
    , mEntityIndex(0)
    , mIgnoreRotation()
+   , mEnablePoseMeshes(false)
    , mHasDestination()
    , mHasArrived()
    , mLookedAtNearTarget()
@@ -86,6 +87,7 @@ namespace dtExample
       DT_REGISTER_PROPERTY(AnimationRunSpeed, "The inherent speed of the run animation.", RegHelperType, propReg);
       DT_REGISTER_PROPERTY(AnimationCrawlSpeed, "The inherent speed of the crawl animation.", RegHelperType, propReg);
       DT_REGISTER_PROPERTY(AnimationLowWalkSpeed, "The inherent speed of the low walk animation.", RegHelperType, propReg);
+      DT_REGISTER_PROPERTY(EnablePoseMeshes, "Enables the use of the pose meshes, allowing characters to look at specific targets.", RegHelperType, propReg);
    }
 
    ////////////////////////////////////////////////////////////////////////
@@ -268,14 +270,14 @@ namespace dtExample
                   animHelper->SetPosesEnabled(true);
                   mLookedAtNearTarget = true;
                   gm->SetTimer("StopLooking", GetOwner<dtGame::GameActorProxy>(), 10.0f, false);
-                  LOG_ALWAYS(mTransformable->GetName() + " Starting to look.");
+                  //LOG_ALWAYS(mTransformable->GetName() + " Starting to look.");
                }
                else if (timerMsg.GetTimerName() == "StopLooking")
                {
                   controller->SetTarget(NULL);
                   animHelper->SetPosesEnabled(false);
                   mLookedAtNearTarget = true;
-                  LOG_ALWAYS(mTransformable->GetName() + " Stopping looking.");
+                  //LOG_ALWAYS(mTransformable->GetName() + " Stopping looking.");
                }
                else if (mLookedAtNearTarget && dist.length2() > mLookAtCameraRange * mLookAtCameraRange)
                {
@@ -285,7 +287,7 @@ namespace dtExample
                      animHelper->SetPosesEnabled(false);
                   }
                   mLookedAtNearTarget = false;
-                  LOG_ALWAYS(mTransformable->GetName() + " Out of range reset.");
+                  //LOG_ALWAYS(mTransformable->GetName() + " Out of range reset.");
                }
             }
          }
@@ -389,19 +391,23 @@ namespace dtExample
       actor->GetComponent(animHelper);
 
       // Reset the controller so that old controls do not conflict.
-      dtAnim::PoseController* controller = animHelper->GetPoseController();
-      if (controller != NULL)
+      if(mEnablePoseMeshes)
       {
-         controller->ClearPoseControls();
 
-         controller->AddPoseControl("Poses_LeftEye", 0);
-         controller->AddPoseControl("Poses_RightEye", 0);
-         controller->AddPoseControl("Poses_Head", 1, true);
-         controller->AddPoseControl("Poses_Torso", 2);
-         dtGame::GameManager* gm = actor->GetGameManager();
-         if(gm != NULL)
+         dtAnim::PoseController* controller = animHelper->GetPoseController();
+         if (controller != NULL)
          {
-            gm->SetTimer("LookAtTimer", actor, 1.0f, true);
+            controller->ClearPoseControls();
+
+            controller->AddPoseControl("Poses_LeftEye", 0);
+            controller->AddPoseControl("Poses_RightEye", 0);
+            controller->AddPoseControl("Poses_Head", 1, true);
+            controller->AddPoseControl("Poses_Torso", 2);
+            dtGame::GameManager* gm = actor->GetGameManager();
+            if(gm != NULL)
+            {
+               gm->SetTimer("LookAtTimer", actor, 1.0f, true);
+            }
          }
       }
 

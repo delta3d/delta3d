@@ -146,30 +146,12 @@ namespace dtPhysics
          //const dtGame::TickMessage& tm = static_cast<const dtGame::TickMessage&>(message);
          WaitUntilUpdateCompletes();
       }
-      else if (message.GetMessageType() == dtGame::MessageType::INFO_ACTOR_CREATED)
-      {
-         const dtGame::ActorUpdateMessage& aum = dynamic_cast<const dtGame::ActorUpdateMessage&>(message);
-         const dtCore::ActorType* atype = aum.GetActorType();
-         if (atype != NULL && *atype == *PhysicsActorRegistry::PHYSICS_MATERIAL_ACTOR_TYPE)
-         {
-            MaterialActorProxy* materialActor = NULL;
-            GetGameManager()->FindActorById(aum.GetAboutActorId(), materialActor);
-            if (materialActor != NULL)
-            {
-               AddMaterialActor(*materialActor);
-            }
-         }
-      }
       else if (message.GetMessageType() == dtGame::MessageType::INFO_ACTOR_DELETED)
       {
          mRegisteredActorComps.erase(
                std::remove_if(mRegisteredActorComps.begin(), mRegisteredActorComps.end(),
                      PhysicsComponentRemoveFunc(message.GetAboutActorId())),
                      mRegisteredActorComps.end());
-      }
-      else if(message.GetMessageType() == dtGame::MessageType::INFO_MAP_LOADED)
-      {
-         UpdateMaterials();
       }
       else if(message.GetMessageType() == dtGame::MessageType::INFO_MAP_UNLOAD_BEGIN)
       {
@@ -189,8 +171,6 @@ namespace dtPhysics
       {
          mRegisteredActorComps.clear();
       }
-
-      ClearMaterials();
 
       if (mDebDraw.valid())
       {
@@ -318,51 +298,6 @@ namespace dtPhysics
          }
       }
       return false;
-   }
-
-   /////////////////////////////////////////////////////////////////////////////
-   void PhysicsComponent::UpdateMaterials()
-   {
-      std::vector<dtCore::ActorProxy*> toFill;
-      GetGameManager()->FindActorsByType(*PhysicsActorRegistry::PHYSICS_MATERIAL_ACTOR_TYPE, toFill);
-
-      std::vector<dtCore::ActorProxy*>::iterator i, iend;
-      i = toFill.begin();
-      iend = toFill.end();
-      for (; i != iend; ++i)
-      {
-         dtPhysics::MaterialActorProxy* materialActor = dynamic_cast<dtPhysics::MaterialActorProxy*>(*i);
-         if (materialActor != NULL)
-         {
-            AddMaterialActor(*materialActor);
-         }
-      }
-   }
-
-   /////////////////////////////////////////////////////////////////////////////
-   void PhysicsComponent::AddMaterialActor(MaterialActorProxy& materialActor)
-   {
-      PhysicsMaterials& materials = mImpl->GetMaterials();
-      MaterialActor* drawable = NULL;
-      materialActor.GetDrawable(drawable);
-
-      Material* uniqueMaterial = materials.GetMaterial(drawable->GetName());
-      if (uniqueMaterial != NULL)
-      {
-         materials.SetMaterialDef(*uniqueMaterial, drawable->GetMaterialDef());
-      }
-      else
-      {
-         materials.NewMaterial(materialActor.GetName(), drawable->GetMaterialDef());
-      }
-   }
-
-   /////////////////////////////////////////////////////////////////////////////
-   void PhysicsComponent::ClearMaterials()
-   {
-      //PhysicsMaterials& materials = mImpl->GetMaterials();
-      //TODO this doesn't work unless the physics engine is cycled, which can actually be done, but
-      //     I'm not sure if that's what we want.
    }
 
    /// @see PhysicsWorld::SetGroupCollision

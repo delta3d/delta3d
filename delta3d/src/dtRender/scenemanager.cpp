@@ -189,7 +189,7 @@ namespace dtRender
 
       SceneManagerImpl()
          : mCreateDefaultScene(true)
-         , mCreateMultipassScene(true)
+         , mCreateMultipassScene(false)
          , mEnableHDR(false)
          , mExposure(1.0f)
          , mLuminance(1.0f)
@@ -263,7 +263,7 @@ namespace dtRender
    , mImpl(new SceneManagerImpl())
    {
       SetName("SceneManager");
-
+      
    }
 
 
@@ -697,7 +697,7 @@ namespace dtRender
       {
          //setup default main scene camera      
          //TODO - WHY Doesnt this work??
-         if (GetOwner()->IsInGM())
+         if (GetGameManager() != NULL)
          {
             mImpl->mSceneCamera = GetGameManager()->GetApplication().GetCamera();
          }
@@ -1045,11 +1045,17 @@ namespace dtRender
       }
    }
 
+   bool SceneManager::IsPlaceable() const
+   {
+      return false;
+   }
+
 
    /////////////////////////////////////////////////////////////
    // actor
    SceneManagerActor::SceneManagerActor()
    {
+      SetHideDTCorePhysicsProps(true);
    }
 
    SceneManagerActor::~SceneManagerActor()
@@ -1080,6 +1086,12 @@ namespace dtRender
          "This currently sets the maximum value of accumulated light per pixel.",
          PropRegHelperType, propRegHelper);
 
+
+      //remove unused properties
+      RemoveProperty(dtCore::TransformableActorProxy::PROPERTY_ROTATION);
+      RemoveProperty(dtCore::TransformableActorProxy::PROPERTY_TRANSLATION);
+      RemoveProperty(dtCore::TransformableActorProxy::PROPERTY_NORMAL_RESCALING);
+      RemoveProperty("Render Proxy Node");
    }
 
    void SceneManagerActor::BuildActorComponents()

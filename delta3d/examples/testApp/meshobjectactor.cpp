@@ -11,6 +11,9 @@
 #include <dtPhysics/physicsactcomp.h>
 #include <dtPhysics/physicsobject.h>
 
+#include <dtGame/drpublishingactcomp.h>
+#include <dtGame/deadreckoninghelper.h>
+
 namespace dtExample
 {
 
@@ -26,6 +29,7 @@ namespace dtExample
 
    void MeshObjectActor::OnEnteredWorld()
    {
+      BaseClass::OnEnteredWorld();
       TestAppUtils util;
       util.GenerateTangentsForObject(*this);
    }
@@ -40,6 +44,9 @@ namespace dtExample
       pac->AddPhysicsObject(*phyObj);
       pac->SetAutoCreateOnEnteringWorld(true);
       AddComponent(*pac);
+
+      AddComponent(*new dtGame::DeadReckoningHelper);
+      AddComponent(*new dtGame::DRPublishingActComp);
    }
 
 

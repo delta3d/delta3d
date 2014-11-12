@@ -5,7 +5,6 @@ attribute vec4 tangentAttrib;
 varying vec3 vLightDir;
 varying vec3 vLightDir2;
 varying vec3 vNormal;
-varying vec3 vLocalPos;
 varying vec3 vPos;
 varying vec3 vWorldNormal;
 varying vec3 vCamera;
@@ -20,8 +19,7 @@ void GenerateShadowTexCoords( in vec4 ecPosition );
 void main()
 {   
    //Pass the texture coordinate on through.
-   gl_TexCoord[0] = gl_MultiTexCoord0;
-   vLocalPos = gl_Vertex.xyz;
+   gl_TexCoord[0] = gl_MultiTexCoord0;  
    gl_FrontColor = gl_Color;
 
    vec4  ecPos  = gl_ModelViewMatrix * gl_Vertex;

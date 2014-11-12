@@ -227,8 +227,7 @@ namespace dtPhysics
       // and what are currently "Actors" will be renamed "Drawables";
       // In turn "Proxy" will be renamed to "Actor"
       // These typdefs are here to prevent confusion.
-      typedef dtPhysics::MaterialActorProxy PhysicsMaterialActor;
-      typedef dtPhysics::MaterialActor PhysicsMaterialDrawable;
+      typedef dtPhysics::MaterialActor PhysicsMaterialActor;
 
       dtCore::RefPtr<PhysicsMaterialActor> matA;
       dtCore::RefPtr<PhysicsMaterialActor> matB;
@@ -243,15 +242,9 @@ namespace dtPhysics
       matC->SetName(NAME_C);
 
       // Set the material indices directly since it is not automatic for MaterialDef.
-      PhysicsMaterialDrawable* mA = NULL;
-      PhysicsMaterialDrawable* mB = NULL;
-      PhysicsMaterialDrawable* mC = NULL;
-      matA->GetDrawable(mA);
-      matB->GetDrawable(mB);
-      matC->GetDrawable(mC);
-      mA->GetMaterialDef().SetMaterialIndex(INDEX_A);
-      mB->GetMaterialDef().SetMaterialIndex(INDEX_B);
-      mC->GetMaterialDef().SetMaterialIndex(INDEX_C);
+      matA->GetMaterialDef().SetMaterialIndex(INDEX_A);
+      matB->GetMaterialDef().SetMaterialIndex(INDEX_B);
+      matC->GetMaterialDef().SetMaterialIndex(INDEX_C);
       
       mGM->AddActor(*matA);
       mGM->AddActor(*matB);

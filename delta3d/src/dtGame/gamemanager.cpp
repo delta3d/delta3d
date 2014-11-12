@@ -655,7 +655,7 @@ namespace dtGame
       {
          // if we have an about actor, first try to send it to the actor itself
          GameActorProxy* aboutActor = FindGameActorById(message.GetAboutActorId());
-         if (aboutActor != NULL && aboutActor->IsInGM())
+         if (aboutActor != NULL && !aboutActor->IsDeleted())
          {
             InvokeForActorInvokables(message, *aboutActor);
          }
@@ -1252,6 +1252,45 @@ namespace dtGame
       }
    }
 
+
+   //////////////////////////////////////////////////////////////////////////////
+   void GameManager::BeginBatchAdd()
+   {
+      if (!mGMImpl->mBatchData.valid())
+      {
+         mGMImpl->mBatchData = new BatchData;
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////////////////
+   void GameManager::CompleteBatchAdd()
+   {
+      if (mGMImpl->mBatchData.valid())
+      {
+         // add actor calls made from this point will completely run so actors adding actors in their init will see them initialize all the way.
+         mGMImpl->mBatchData->mOkToAddActors = true;
+
+         std::vector<dtCore::RefPtr<GameActorProxy> >::iterator i, iend;
+         i = mGMImpl->mBatchData->mBatchItems.begin();
+         iend = mGMImpl->mBatchData->mBatchItems.end();
+         for (unsigned i = 0; i < mGMImpl->mBatchData->mBatchItems.size(); ++i)
+         {
+            try
+            {
+               mGMImpl->AddActorToWorld(*this, *mGMImpl->mBatchData->mBatchItems[i]);
+            }
+            catch (const dtUtil::Exception& ex)
+            {
+               // Actors can just decide to not be added by throwing an exception.  If it's an error, the actor
+               // should log it as such, but here it's only a warning.
+               ex.LogException(dtUtil::Log::LOG_WARNING, *mGMImpl->mLogger);
+            }
+         }
+      }
+      mGMImpl->mBatchData = NULL;
+   }
+
+
    ///////////////////////////////////////////////////////////////////////////////
    void GameManager::AddActor(GameActorProxy& gameActorProxy, bool isRemote, bool publish)
    {
@@ -1320,28 +1359,19 @@ namespace dtGame
          SendMessage(*msg);
       }
 
-      gameActorProxy.SetIsInGM(true);
 
-      try
+      // Save the publish value so we don't have to pass it around.
+      gameActorProxy.SetPublished(publish);
+      gameActorProxy.SetDeleted(false);
+
+      if (!mGMImpl->mBatchData.valid() || mGMImpl->mBatchData->mOkToAddActors )
       {
-         // If publishing fails. we need to delete the actor as well.
-         if (publish)
-         {
-            PublishActor(gameActorProxy);
-         }
-         else
-         {
-            // make sure the value is set to false just in case.
-            gameActorProxy.SetPublished(false);
-         }
-
-         gameActorProxy.InvokeEnteredWorld();
+         mGMImpl->AddActorToWorld(*this, gameActorProxy);
       }
-      catch (const dtUtil::Exception& ex)
+      else
       {
-         ex.LogException(dtUtil::Log::LOG_ERROR, *mGMImpl->mLogger);
-         DeleteActor(gameActorProxy);
-         throw;
+         // In a batch, exceptions are just logged, though the actors are still deleted.
+         mGMImpl->mBatchData->mBatchItems.push_back(&gameActorProxy);
       }
    }
 
@@ -1351,7 +1381,6 @@ namespace dtGame
       gameActorProxy.SetGameManager(this);
       mGMImpl->mPrototypeActors.insert(std::make_pair(gameActorProxy.GetId(), &gameActorProxy));
    }
-
 
    ///////////////////////////////////////////////////////////////////////////////
    void GameManager::CreateActorsFromPrefab(const dtCore::ResourceDescriptor& rd, std::vector<dtCore::RefPtr<dtCore::BaseActorObject> >& actorsOut, bool isRemote)
@@ -1588,6 +1617,7 @@ namespace dtGame
          {
             mGMImpl->mDeleteList.push_back(itor->second);
             gameActorProxy.SetIsInGM(false);
+            gameActorProxy.SetDeleted(true);
 
             if (!gameActorProxy.IsRemote())
             {
@@ -1790,7 +1820,7 @@ namespace dtGame
    };
 
    ///////////////////////////////////////////////////////////////////////////////
-   void GameManager::FindActorsByName(const std::string& name, std::vector<dtCore::BaseActorObject*>& toFill) const
+   void GameManager::FindActorsByName(const std::string& name, std::vector<dtCore::BaseActorObject*>& toFill)
    {
       toFill.reserve(mGMImpl->mGameActorProxyMap.size() + mGMImpl->mBaseActorObjectMap.size());
 
@@ -1816,7 +1846,7 @@ namespace dtGame
    };
 
    ///////////////////////////////////////////////////////////////////////////////
-   void GameManager::FindActorsByType(const dtCore::ActorType& type, std::vector<dtCore::BaseActorObject*>& toFill) const
+   void GameManager::FindActorsByType(const dtCore::ActorType& type, std::vector<dtCore::BaseActorObject*>& toFill)
    {
       toFill.reserve(mGMImpl->mGameActorProxyMap.size() + mGMImpl->mBaseActorObjectMap.size());
 
@@ -1843,7 +1873,7 @@ namespace dtGame
 
    ///////////////////////////////////////////////////////////////////////////////
    void GameManager::FindActorsByClassName(const std::string& className,
-      std::vector<dtCore::BaseActorObject*>& toFill) const
+      std::vector<dtCore::BaseActorObject*>& toFill)
    {
       if (!className.empty())
       {
@@ -1888,20 +1918,35 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   GameActorProxy* GameManager::FindGameActorById(const dtCore::UniqueId& id) const
+   GameActorProxy* GameManager::FindGameActorById(const dtCore::UniqueId& id)
    {
       GMImpl::GameActorMap::const_iterator itor = mGMImpl->mGameActorProxyMap.find(id);
-      return itor == mGMImpl->mGameActorProxyMap.end() ? NULL : itor->second.get();
+      GameActorProxy* result = itor == mGMImpl->mGameActorProxyMap.end() ? NULL : itor->second.get();
+      if (result != NULL && mGMImpl->mBatchData.valid() && !result->IsInGM() && !result->IsDeleted())
+      {
+         try
+         {
+            mGMImpl->AddActorToWorld(*this, *result);
+         }
+         catch (const dtUtil::Exception& ex)
+         {
+            // Actors can just decide to not be added by throwing an exception.  If it's an error, the actor
+            // should log it as such, but here it's only a warning.
+            ex.LogException(dtUtil::Log::LOG_WARNING, *mGMImpl->mLogger);
+            result = NULL;
+         }
+      }
+      return result;
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   dtCore::BaseActorObject* GameManager::FindActorById(const dtCore::UniqueId& id) const
+   dtCore::BaseActorObject* GameManager::FindActorById(const dtCore::UniqueId& id)
    {
-      dtCore::BaseActorObject* actorProxy = FindGameActorById(id);
+      dtCore::BaseActorObject* actor = FindGameActorById(id);
 
-      if (actorProxy != NULL)
+      if (actor != NULL)
       {
-         return actorProxy;
+         return actor;
       }
 
       GMImpl::ActorMap::const_iterator itor = mGMImpl->mBaseActorObjectMap.find(id);

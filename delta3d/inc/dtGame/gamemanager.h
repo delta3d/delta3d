@@ -437,6 +437,17 @@ namespace dtGame
       }
 
       /**
+       * Game Actors added during a batch will not have OnEnteredWorld called immediately.  All will be called at the
+       * end.  If an actor tries to access one of the actors in the batch via find, or another create, the latter will be initialized before being returned
+       * unless there is a dependency loop such as A reference B which reference A.  In that case, A will not be in mid-init.
+       * @see ScopedGMBatchAdd (at the bottom the GM header)
+       */
+      void BeginBatchAdd();
+
+      /// @see #BeginBatchAdd
+      void CompleteBatchAdd();
+
+      /**
        * Adds an actor to the list of actors that the game manager knows about
        * @param actorProxy  The actor proxy to add
        */
@@ -564,7 +575,7 @@ namespace dtGame
        * @note you must include dtGame/gamemanager.inl to use the method.
        */
       template <typename UnaryFunctor>
-      void ForEachActor(UnaryFunctor& func, bool applyOnlyToGameActors = false) const;
+      void ForEachActor(UnaryFunctor& func, bool applyOnlyToGameActors = false);
 
       /**
        * Allows performing an operation on each prototype actor in the game manager.
@@ -582,7 +593,7 @@ namespace dtGame
        * @note you must include dtGame/gamemanager.inl to use the method.
        */
       template <typename FindFunctor>
-      void FindActorsIf(FindFunctor& ifFunc, std::vector<dtCore::BaseActorObject*>& toFill) const;
+      void FindActorsIf(FindFunctor& ifFunc, std::vector<dtCore::BaseActorObject*>& toFill);
 
       /**
        * Allows custom searching on each prototype actor in the game manager.
@@ -599,7 +610,7 @@ namespace dtGame
        * @param The name to search for
        * @param The vector to fill
        */
-      void FindActorsByName(const std::string& name, std::vector<dtCore::BaseActorObject*>& toFill) const;
+      void FindActorsByName(const std::string& name, std::vector<dtCore::BaseActorObject*>& toFill);
 
       /**
        * Convenience method to return an actor
@@ -607,7 +618,7 @@ namespace dtGame
        * @param The proxy to cast
        */
       template <class ProxyType>
-      void FindActorByName(const std::string& name, ProxyType*& proxy) const
+      void FindActorByName(const std::string& name, ProxyType*& proxy)
       {
          proxy = NULL;
          std::vector<dtCore::BaseActorObject*> toFill;
@@ -634,7 +645,7 @@ namespace dtGame
        * @param The type to search for
        * @param The vector to fill
        */
-      void FindActorsByType(const dtCore::ActorType& type, std::vector<dtCore::BaseActorObject*>& toFill) const;
+      void FindActorsByType(const dtCore::ActorType& type, std::vector<dtCore::BaseActorObject*>& toFill);
 
       /**
        * Convenience method to return an actor
@@ -642,7 +653,7 @@ namespace dtGame
        * @param The proxy to cast
        */
       template <class ProxyType>
-      void FindActorByType(const dtCore::ActorType& type, ProxyType*& proxy) const
+      void FindActorByType(const dtCore::ActorType& type, ProxyType*& proxy)
       {
          proxy = NULL;
          std::vector<dtCore::BaseActorObject*> toFill;
@@ -658,7 +669,7 @@ namespace dtGame
        * @param className the classname
        * @param toFill The vector to fill
        */
-      void FindActorsByClassName(const std::string& className, std::vector<dtCore::BaseActorObject*>& toFill) const;
+      void FindActorsByClassName(const std::string& className, std::vector<dtCore::BaseActorObject*>& toFill);
 
 
       /**
@@ -666,14 +677,14 @@ namespace dtGame
        * @param id The id of the proxy to find
        * @return The proxy, or NULL if not found
        */
-      GameActorProxy* FindGameActorById(const dtCore::UniqueId& id) const;
+      GameActorProxy* FindGameActorById(const dtCore::UniqueId& id);
 
       /**
        * Getst the game actor proxy whose is matches the parameter
        * @param id The id of the proxy to find
        */
       template<typename ProxyType>
-      void FindGameActorById(const dtCore::UniqueId& id, ProxyType*& proxy) const
+      void FindGameActorById(const dtCore::UniqueId& id, ProxyType*& proxy)
       {
          proxy = dynamic_cast<ProxyType*>(FindGameActorById(id));
       }
@@ -684,7 +695,7 @@ namespace dtGame
        * @param id The id of the proxy to find
        * @return The proxy, or NULL if not found
        */
-      dtCore::BaseActorObject* FindActorById(const dtCore::UniqueId& id) const;
+      dtCore::BaseActorObject* FindActorById(const dtCore::UniqueId& id);
 
       /**
        * Returns the actor proxy whose is matches the parameter. This will search both the game actors and the
@@ -693,7 +704,7 @@ namespace dtGame
        * @return The proxy, or NULL if not found
        */
       template<typename ProxyType>
-      void FindActorById(const dtCore::UniqueId& id, ProxyType*& proxy) const
+      void FindActorById(const dtCore::UniqueId& id, ProxyType*& proxy)
       {
          proxy = dynamic_cast<ProxyType*>(FindActorById(id));
       }
@@ -1157,6 +1168,23 @@ namespace dtGame
       // -----------------------------------------------------------------------
       GameManager(const GameManager&);
       GameManager& operator=(const GameManager&);
+   };
+
+   /// Use this class to do a batch add in a function so it will always close the transaction.
+   class ScopedGMBatchAdd
+   {
+   public:
+      ScopedGMBatchAdd(GameManager& gm)
+      : mGM(gm)
+      {
+         mGM.BeginBatchAdd();
+      }
+      ~ScopedGMBatchAdd()
+      {
+         mGM.CompleteBatchAdd();
+      }
+   private:
+      GameManager& mGM;
    };
 
 } // namespace dtGame

@@ -52,6 +52,6 @@ namespace dtPhysics
    ////////////////////////////////////////////////////////////////////////////
    void PhysicsActorRegistry::RegisterActorTypes()
    {
-      mActorFactory->RegisterType<MaterialActorProxy>(PHYSICS_MATERIAL_ACTOR_TYPE.get());
+      mActorFactory->RegisterType<MaterialActor>(PHYSICS_MATERIAL_ACTOR_TYPE.get());
    }
 }

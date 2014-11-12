@@ -131,7 +131,6 @@ namespace dtNetGM
          mGneInitialized = false;
       }
       RegisterInstance(this);
-
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -142,7 +141,6 @@ namespace dtNetGM
       DeregisterInstance(this);
    }
 
-   ////////////////////////////////////////////////////////////////////////////////
    DT_IMPLEMENT_ACCESSOR(NetworkComponent, std::string, GameName);
    DT_IMPLEMENT_ACCESSOR(NetworkComponent, int, GameVersion);
    DT_IMPLEMENT_ACCESSOR(NetworkComponent, std::string, GNELogFile);

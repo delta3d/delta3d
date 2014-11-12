@@ -246,10 +246,8 @@ namespace dtUtil
       // exist at a time.
       NSAutoreleasePool* mypool = [[NSAutoreleasePool alloc] init];
 
-      NSString* resourcePathNS;
-
       // This is the path to the resources inside the app bundle.
-      resourcePathNS = [[NSBundle mainBundle] resourcePath];
+      NSString* resourcePathNS = [[NSBundle mainBundle] resourcePath];
 
       // Make a c string from the cocoa one tack data on the end.
       std::string result = std::string([resourcePathNS UTF8String]);
@@ -269,10 +267,29 @@ namespace dtUtil
       // exist at a time.
       NSAutoreleasePool* mypool = [[NSAutoreleasePool alloc] init];
 
-      NSString* resourcePathNS;
+      // This is the path to the resources inside the app bundle.
+      NSString* resourcePathNS = [[NSBundle mainBundle] builtInPlugInsPath];
+
+      // Make a c string from the cocoa one tack data on the end.
+      std::string result = std::string([resourcePathNS UTF8String]);
+
+      // Clean up the autorelease pool
+      [mypool release];
+      return result;
+   }
+
+   std::string GetBundlePath()
+   {
+      // Since this is currently the only Objective-C code in the
+      // library, we need an autoreleasepool for obj-c memory management.
+      // If more Obj-C is added, we might move this pool to another
+      // location so it can be shared. Pools seem to be stackable,
+      // so I don't think there will be a problem if multiple pools
+      // exist at a time.
+      NSAutoreleasePool* mypool = [[NSAutoreleasePool alloc] init];
 
       // This is the path to the resources inside the app bundle.
-      resourcePathNS = [[NSBundle mainBundle] builtInPlugInsPath];
+      NSString* resourcePathNS = [[NSBundle mainBundle] bundlePath];
 
       // Make a c string from the cocoa one tack data on the end.
       std::string result = std::string([resourcePathNS UTF8String]);

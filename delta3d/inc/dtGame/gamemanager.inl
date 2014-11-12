@@ -31,16 +31,40 @@ namespace dtGame
    class BindActor
    {
    public:
-      BindActor(UnaryFunctor& func)
+      BindActor(UnaryFunctor& func, GMImpl* impl = NULL, GameManager* gm = NULL)
       : mFunc(func)
+      , mImpl(impl)
+      , mGM(gm)
       {}
 
       void operator () (pairType thePair)
       {
-         mFunc(*thePair.second);
+         dtCore::BaseActorObject* actor = thePair.second;
+         if (mImpl && actor->IsGameActor() && !static_cast<GameActorProxy*>(actor)->IsInGM() && !static_cast<GameActorProxy*>(actor)->IsDeleted())
+         {
+            GameActorProxy* gActor = static_cast<GameActorProxy*>(actor);
+            try
+            {
+               mImpl->AddActorToWorld(*mGM, *gActor);
+               mFunc(*actor);
+            }
+            catch (const dtUtil::Exception& ex)
+            {
+               // Actors can just decide to not be added by throwing an exception.  If it's an error, the actor
+               // should log it as such, but here it's only a warning.
+               ex.LogException(dtUtil::Log::LOG_WARNING, *mImpl->mLogger);
+            }
+         }
+         else
+         {
+            mFunc(*actor);
+         }
       }
    private:
       UnaryFunctor& mFunc;
+      GMImpl* mImpl;
+      GameManager* mGM;
+
    };
 
    template <typename FindFunctor>
@@ -52,11 +76,11 @@ namespace dtGame
       , mSelectedActors(selectedActors)
       {}
 
-      void operator () (dtCore::BaseActorObject& proxy)
+      void operator () (dtCore::BaseActorObject& actor)
       {
-         if (mFunc(proxy))
+         if (mFunc(actor))
          {
-            mSelectedActors.push_back(&proxy);
+            mSelectedActors.push_back(&actor);
          }
       }
 
@@ -66,14 +90,19 @@ namespace dtGame
    };
 
    template <typename UnaryFunctor>
-   inline void GameManager::ForEachActor(UnaryFunctor& func, bool applyOnlyToGameActors /*= false*/) const
+   inline void GameManager::ForEachActor(UnaryFunctor& func, bool applyOnlyToGameActors /*= false*/)
    {
       if (!applyOnlyToGameActors)
       {
          BindActor<UnaryFunctor, GMImpl::ActorMap::value_type> actorMapBindFunc(func);
          std::for_each(mGMImpl->mBaseActorObjectMap.begin(), mGMImpl->mBaseActorObjectMap.end(), actorMapBindFunc);
       }
-      BindActor<UnaryFunctor, GMImpl::GameActorMap::value_type> gameActorMapBindFunc(func);
+      GMImpl* impl = NULL;
+      if (mGMImpl->mBatchData.valid())
+      {
+         impl = mGMImpl;
+      }
+      BindActor<UnaryFunctor, GMImpl::GameActorMap::value_type> gameActorMapBindFunc(func, impl, this);
       std::for_each(mGMImpl->mGameActorProxyMap.begin(), mGMImpl->mGameActorProxyMap.end(), gameActorMapBindFunc);
    }
 
@@ -85,7 +114,7 @@ namespace dtGame
    }
 
    template <typename FindFunctor>
-   inline void GameManager::FindActorsIf(FindFunctor& ifFunc, std::vector<dtCore::BaseActorObject*>& toFill) const
+   inline void GameManager::FindActorsIf(FindFunctor& ifFunc, std::vector<dtCore::BaseActorObject*>& toFill)
    {
       toFill.clear();
       FindFuncWrapper<FindFunctor> findWrapper(ifFunc, toFill);
