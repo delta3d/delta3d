@@ -70,7 +70,6 @@ namespace dtCore
 {
    static const std::string logName("actorpropertyserializer.cpp");
 
-   static int depth = 0;
    //////////////////////////////////////////////////////////////////////////
    SerializerRuntimeData::SerializerRuntimeData()
    : mActorPropertyType(NULL)
@@ -538,7 +537,6 @@ namespace dtCore
                }
                else if (GetNestedType() != NULL)
                {
-                  DataType* nestedDT = GetNestedType();
                   std::string dataValue = dtUtil::XMLStringConverter(chars).ToString();
 
                   ActorProperty* nestedProperty = GetNestedProperty();
@@ -548,12 +546,16 @@ namespace dtCore
                         "Setting value of property %s, property type %s, datatype %s, value %s, element name %s.",
                         nestedProperty->GetName().c_str(),
                         nestedProperty->GetDataType().GetName().c_str(),
-                        nestedDT->GetName().c_str(),
+                        GetNestedType()->GetName().c_str(),
                         dataValue.c_str(), dtUtil::XMLStringConverter(topEl.c_str()).c_str());
                   }
 
                   //we now have the property, the type, and the data.
-                  ParsePropertyData(topEl, dataValue, nestedDT, nestedProperty);
+                  //WARNING:  GetNestedType() must be IN the function call because
+                  // the function actually sets the value, which is returned by reference by GetNestedType()
+                  // This is an ugly evolution from an older version of the code that used to set the datatype back to null
+                  // so that the later code would know it was set and not an empty value.
+                  ParsePropertyData(topEl, dataValue, GetNestedType(), nestedProperty);
                }
             }
          }
@@ -2000,14 +2002,14 @@ namespace dtCore
       // We don't have control over what the string or actor
       // property default value is, but if the data in the
       // xml is empty string, no event is generated.  Thus,
-      // this preemptively set this string to "" so that
+      // this preemptively sets this string to "" so that
       // empty data will work.
       if (data.mActorPropertyType != NULL && !data.mActorProperty->IsReadOnly())
       {
          if (*data.mActorPropertyType == DataType::STRING
             || *data.mActorPropertyType == DataType::ACTOR)
          {
-            data.mActorProperty->FromString("");
+            data.mActorProperty->FromString(std::string());
          }
          else if (*data.mActorPropertyType == DataType::GAME_EVENT)
          {
