@@ -252,7 +252,7 @@ namespace dtPhysics
 
             for (; iter != iterEnd; ++iter)
             {
-               (*iter)->GetDrawable(material);
+               material = dynamic_cast<dtPhysics::MaterialActor*>(*iter);
                if(material != NULL && material->GetName() == desc)
                {
                   index = dtPhysics::MaterialIndex(material->GetMaterialDef().GetMaterialIndex());
