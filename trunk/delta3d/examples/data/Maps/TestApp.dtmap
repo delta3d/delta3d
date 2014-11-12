@@ -7,7 +7,7 @@
         <comment></comment>
         <copyright></copyright>
         <createTimestamp>2014-07-15T22:49:46-05:00</createTimestamp>
-        <lastUpdateTimestamp>2014-10-01T23:24:58-05:00</lastUpdateTimestamp>
+        <lastUpdateTimestamp>2014-10-29T11:54:29-05:00</lastUpdateTimestamp>
         <editorVersion>2.8.0</editorVersion>
         <schemaVersion>1.0</schemaVersion>
     </header>
@@ -819,7 +819,7 @@
                 <vec3>
                     <value1>-662.477173</value1>
                     <value2>-117.292534</value2>
-                    <value3>5.815986</value3>
+                    <value3>4.703697</value3>
                 </vec3>
             </property>
             <property>
@@ -4845,14 +4845,14 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>-0.000000</value2>
-                    <value3>-61.332611</value3>
+                    <value3>-109.321518</value3>
                 </vec3>
             </property>
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-114.768776</value1>
-                    <value2>-322.446198</value2>
+                    <value1>-370.014862</value1>
+                    <value2>-318.829224</value2>
                     <value3>0.000000</value3>
                 </vec3>
             </property>
@@ -7312,14 +7312,14 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>-0.000000</value2>
-                    <value3>-87.266655</value3>
+                    <value3>-87.240013</value3>
                 </vec3>
             </property>
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>645.125916</value1>
-                    <value2>-390.243652</value2>
+                    <value1>870.617859</value1>
+                    <value2>-379.411621</value2>
                     <value3>75.000000</value3>
                 </vec3>
             </property>
@@ -12215,14 +12215,14 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>-0.000000</value2>
-                    <value3>-60.046791</value3>
+                    <value3>-31.818003</value3>
                 </vec3>
             </property>
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-304.971069</value1>
-                    <value2>53.485939</value2>
+                    <value1>-405.113800</value1>
+                    <value2>-152.398239</value2>
                     <value3>0.000000</value3>
                 </vec3>
             </property>
@@ -12248,14 +12248,14 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>-0.000000</value2>
-                    <value3>14.485877</value3>
+                    <value3>47.060513</value3>
                 </vec3>
             </property>
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-104.862137</value1>
-                    <value2>-52.920502</value2>
+                    <value1>76.273575</value1>
+                    <value2>-297.368591</value2>
                     <value3>0.000000</value3>
                 </vec3>
             </property>

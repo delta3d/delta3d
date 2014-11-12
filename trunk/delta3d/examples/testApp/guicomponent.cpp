@@ -478,7 +478,7 @@ namespace dtExample
          listbox->layoutItemWidgets();
 
          // DEBUG:
-         printf("\n\tActor list count: %d\n\n", listbox->getItemCount());
+         printf("\n\tActor list count: %zu\n\n", listbox->getItemCount());
       }
    }
 
@@ -690,7 +690,7 @@ namespace dtExample
       if (checkbox != NULL)
       {
          std::string controlName(checkbox->getName().c_str());
-         bool value = checkbox->isSelected();
+         //bool value = checkbox->isSelected();
 
          // TODO:
       }
@@ -758,7 +758,7 @@ namespace dtExample
             const EnumList& seaStates = SeaState::Enumerate();
 
             SeaState* state = NULL;
-            if (index >= 0 && seaStates.size() > index)
+            if (seaStates.size() > index)
             {
                state = dynamic_cast<SeaState*>(seaStates[index]);
             }
@@ -776,7 +776,7 @@ namespace dtExample
             const EnumList& choppies = Chop::Enumerate();
 
             Chop* chop = NULL;
-            if (index >= 0 && choppies.size() > index)
+            if (choppies.size() > index)
             {
                chop = dynamic_cast<Chop*>(choppies[index]);
             }

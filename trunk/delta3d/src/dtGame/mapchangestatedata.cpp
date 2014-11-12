@@ -223,9 +223,11 @@ namespace dtGame
          }
       }
 
+      ScopedGMBatchAdd batch(*mGameManager);
+
       if (map.GetEnvironmentActor() != NULL)
       {
-         dtGame::IEnvGameActorProxy *eap =
+         dtGame::IEnvGameActorProxy* eap =
             static_cast<dtGame::IEnvGameActorProxy*>(map.GetEnvironmentActor());
 
          mGameManager->SetEnvironmentActor(eap);

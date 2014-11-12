@@ -203,13 +203,10 @@ namespace dtCore
             {
                description = "Skeletal Mesh Files";
 
-               extFilter.insert(std::make_pair("xml","Extensible Markup Language."));
-               handler = new DefaultResourceTypeHandler(d, "Extensible Markup Language.", extFilter);
-               extMap.insert(std::make_pair("xml", dtCore::RefPtr<ResourceTypeHandler>(handler)));
-
-               extFilter.clear();
                extFilter.insert(std::make_pair("dtchar","Delta Character."));
-               handler = new DefaultResourceTypeHandler(d, "Delta Character.", extFilter);
+               extFilter.insert(std::make_pair("xml","Extensible Markup Language."));
+               handler = new DefaultResourceTypeHandler(d, "Delta Character XML.", extFilter);
+               extMap.insert(std::make_pair("xml", dtCore::RefPtr<ResourceTypeHandler>(handler)));
                extMap.insert(std::make_pair("dtchar", dtCore::RefPtr<ResourceTypeHandler>(handler)));
 
                extFilter.clear();
@@ -222,19 +219,13 @@ namespace dtCore
                description = "Static Mesh Terrain Files";
 
                extFilter.insert(std::make_pair("ive","Open Scene Graph binary terrain (old)."));
-               handler = new DefaultResourceTypeHandler(d, "Open Scene Graph binary terrain.", extFilter);
-               extMap.insert(std::make_pair("ive", dtCore::RefPtr<ResourceTypeHandler>(handler)));
-
                extFilter.insert(std::make_pair("osgt","Open Scene Graph binary scene data."));
-               handler = new DefaultResourceTypeHandler(d, "Open Scene Graph binary scene data.", extFilter);
-               extMap.insert(std::make_pair("osgt", dtCore::RefPtr<ResourceTypeHandler>(handler)));
-
                extFilter.insert(std::make_pair("osgb","Open Scene Graph binary scene data."));
-               handler = new DefaultResourceTypeHandler(d, "Open Scene Graph binary scene data.", extFilter);
-               extMap.insert(std::make_pair("osgb", dtCore::RefPtr<ResourceTypeHandler>(handler)));
-
                extFilter.insert(std::make_pair("osg","Open Scene Graph ascii scene data (old)."));
-               handler = new DefaultResourceTypeHandler(d, "Open Scene Graph ascii scene data (old).", extFilter);
+               handler = new DefaultResourceTypeHandler(d, "Open Scene Graph scene data.", extFilter);
+               extMap.insert(std::make_pair("ive", dtCore::RefPtr<ResourceTypeHandler>(handler)));
+               extMap.insert(std::make_pair("osgt", dtCore::RefPtr<ResourceTypeHandler>(handler)));
+               extMap.insert(std::make_pair("osgb", dtCore::RefPtr<ResourceTypeHandler>(handler)));
                extMap.insert(std::make_pair("osg", dtCore::RefPtr<ResourceTypeHandler>(handler)));
 
                extFilter.insert(std::make_pair("dae","Collada"));
@@ -275,13 +266,17 @@ namespace dtCore
                extMap.insert(std::make_pair("bmp", dtCore::RefPtr<ResourceTypeHandler>(handler)));
 
                extFilter.clear();
-               extFilter.insert(std::make_pair("rgb","Red Green Blue Format."));
-               handler = new DefaultResourceTypeHandler(d, "Red Green Blue Format.", extFilter);
-               extMap.insert(std::make_pair("rgb", dtCore::RefPtr<ResourceTypeHandler>(handler)));
+               extFilter.insert(std::make_pair("tif","tiff Format."));
+               extFilter.insert(std::make_pair("tiff","tiff Format."));
+               handler = new DefaultResourceTypeHandler(d, "Tiff Format.", extFilter);
+               extMap.insert(std::make_pair("tiff", dtCore::RefPtr<ResourceTypeHandler>(handler)));
+               extMap.insert(std::make_pair("tif", dtCore::RefPtr<ResourceTypeHandler>(handler)));
 
                extFilter.clear();
+               extFilter.insert(std::make_pair("rgb","Red Green Blue Format."));
                extFilter.insert(std::make_pair("rgba","Red Green Blue Alpha Format."));
-               handler = new DefaultResourceTypeHandler(d, "Red Green Blue Alpha Format.", extFilter);
+               handler = new DefaultResourceTypeHandler(d, "Red Green Blue Format.", extFilter);
+               extMap.insert(std::make_pair("rgb", dtCore::RefPtr<ResourceTypeHandler>(handler)));
                extMap.insert(std::make_pair("rgba", dtCore::RefPtr<ResourceTypeHandler>(handler)));
 
                extFilter.clear();
@@ -294,8 +289,12 @@ namespace dtCore
                description = "Particle Files";
 
                extFilter.insert(std::make_pair("osg", "Open Scene Graph ascii scene data."));
-               handler = new DefaultResourceTypeHandler(d, "Open Scene Graph ascii scene data.", extFilter);
+               extFilter.insert(std::make_pair("osgb", "Open Scene Graph binary scene data."));
+               extFilter.insert(std::make_pair("osgt", "Open Scene Graph ascii scene data."));
+               handler = new DefaultResourceTypeHandler(d, "Open Scene Graph scene data.", extFilter);
                extMap.insert(std::make_pair("osg", dtCore::RefPtr<ResourceTypeHandler>(handler)));
+               extMap.insert(std::make_pair("osgt", dtCore::RefPtr<ResourceTypeHandler>(handler)));
+               extMap.insert(std::make_pair("osgb", dtCore::RefPtr<ResourceTypeHandler>(handler)));
             }
             else if (d == DataType::PREFAB)
             {
@@ -315,13 +314,10 @@ namespace dtCore
             else if (d == DataType::DIRECTOR)
             {
                description = "Director Graphs";
-               extFilter.insert(std::make_pair("dtdir", "XML Director Scripts"));
-               handler = new DefaultResourceTypeHandler(d, "XML Director Scripts", extFilter);
-               extMap.insert(std::make_pair("dtdir", dtCore::RefPtr<ResourceTypeHandler>(handler)));
-
-               extFilter.clear();
                extFilter.insert(std::make_pair("dtdirb", "Binary Director Scripts"));
-               handler = new DefaultResourceTypeHandler(d, "Binary Director Scripts", extFilter);
+               extFilter.insert(std::make_pair("dtdir", "XML Director Scripts"));
+               handler = new DefaultResourceTypeHandler(d, "Director Scripts", extFilter);
+               extMap.insert(std::make_pair("dtdir", dtCore::RefPtr<ResourceTypeHandler>(handler)));
                extMap.insert(std::make_pair("dtdirb", dtCore::RefPtr<ResourceTypeHandler>(handler)));
             }
 

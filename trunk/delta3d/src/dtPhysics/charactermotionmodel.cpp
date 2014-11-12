@@ -160,7 +160,14 @@ namespace dtPhysics
             transform.SetTranslation(position);
             GetTarget()->SetTransform(transform);
 
-            mCharacterController->Walk(movement / deltaTime, 0.25f);
+            if (movement.length() > FLT_EPSILON)
+            {
+               mCharacterController->Walk(movement / deltaTime, 0.25f);
+            }
+            else
+            {
+               mCharacterController->WalkClear();
+            }
             //mCharacterController->Move(movement);
          }
       }

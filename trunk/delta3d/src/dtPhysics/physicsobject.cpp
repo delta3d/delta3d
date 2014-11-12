@@ -50,58 +50,42 @@ namespace dtPhysics
    {
       PhysicsObjectDataMembers(const std::string& name)
       :  mMechanicsType(&MechanicsType::DYNAMIC)
+      ,  mCollisionGroup(0)
       ,  mPrimitiveType(&PrimitiveType::SPHERE)
-      ,  mMaterial(NULL)
-      ,  mActivationSettings(NULL)
-      ,  mName(name)
       ,  mExtents(Real(-1.0), Real(-1.0), Real(-1.0))
       ,  mOriginOffset(Real(0.0), Real(0.0), Real(0.0))
       ,  mMomentOfInertia(Real(-1.0), Real(-1.0), Real(-1.0))
-      ,  mCollisionGroup(0)
+      ,  mName(name)
       ,  mMassOfObject(Real(1.0))
       ,  mSkinThickness(Real(0.02))
+      ,  mTransform()
+      ,  mNotifyCollisions(false)
+      ,  mVisualToBodyIsIdentity(true)
+      ,  mMaterial(NULL)
       ,  mActivationLinearVelocityThreshold(Real(-1.0))
       ,  mActivationAngularVelocityThreshold(Real(-1.0))
       ,  mActivationTimeThreshold(Real(-1.0))
       ,  mLinearDamping(Real(0.01))
       ,  mAngularDamping(Real(0.01))
+      ,  mActivationSettings(NULL)
       ,  mMeshScale(Real(1.0), Real(1.0), Real(1.0))
-      ,  mNotifyCollisions(false)
-      ,  mVisualToBodyIsIdentity(true)
-      ,  mCollisionResponseEnabled(true)
-      ,  mGravityEnabled(true)
       {
       }
-      std::vector<dtCore::RefPtr<Geometry> > mGeometries;
-
-      // we need to make a copy of this for stage.
-      TransformType mTransform;
-
-      MatrixType mVisualToBodyTransform;
-
       // the mechanics enum  that can say what type of physics object is in the world
       // and how it related to everyone else
       MechanicsType* mMechanicsType;
-
-
-      // enum for type
-      PrimitiveType* mPrimitiveType;
-
-      Material* mMaterial;
-      dtCore::RefPtr<GenericBodyWrapper> mGenericBody;
-      palActivationSettings* mActivationSettings;
-
-      // so we can go up the chain
-      dtCore::ObserverPtr<osg::Referenced> mUserData;
-
-      // name of the physics object
-      dtUtil::RefString mName;
 
       // the collision group for the object.  This is a number, not a mask.
       // In some physics engines it is called a scene. objects in different groups
       // will not collide with each other unless the groups marked to do so via a call on the
       // PhysicsWorld
       CollisionGroup mCollisionGroup;
+
+      // enum for type
+      PrimitiveType* mPrimitiveType;
+
+      // so we can go up the chain
+      dtCore::ObserverPtr<osg::Referenced> mUserData;
 
       // extents of the object?
       VectorType mExtents;
@@ -112,23 +96,35 @@ namespace dtPhysics
       // The moment of inertia tensor.
       VectorType mMomentOfInertia;
 
+      // name of the physics object
+      dtUtil::RefString mName;
+
       // the implementation can not always hold onto this.
       Real mMassOfObject;
 
       // the implementation can not always hold onto this.
       Real mSkinThickness;
 
+      // we need to make a copy of this for stage.
+      TransformType mTransform;
+
+      MatrixType mVisualToBodyTransform;
+
+      bool mNotifyCollisions;
+      bool mVisualToBodyIsIdentity;
+
+      Material* mMaterial;
+
       Real mActivationLinearVelocityThreshold, mActivationAngularVelocityThreshold, mActivationTimeThreshold;
       Real mLinearDamping, mAngularDamping;
+
+      dtCore::RefPtr<GenericBodyWrapper> mGenericBody;
+      palActivationSettings* mActivationSettings;
 
       dtCore::ResourceDescriptor mMeshResource;
       VectorType mMeshScale;
 
-
-      bool mNotifyCollisions;
-      bool mVisualToBodyIsIdentity;
-      bool mCollisionResponseEnabled;
-      bool mGravityEnabled;
+      std::vector<dtCore::RefPtr<Geometry> > mGeometries;
 
       void CreateSimpleGeometry(const PrimitiveType& primType, const VectorType& dimensions,
                               const TransformType& geomWorldTransform,
@@ -556,8 +552,6 @@ namespace dtPhysics
       mDataMembers->ApplyActivationSettings();
       SetLinearDamping(mDataMembers->mLinearDamping);
       SetAngularDamping(mDataMembers->mAngularDamping);
-      SetCollisionResponseEnabled(mDataMembers->mCollisionResponseEnabled);
-      SetGravityEnabled(mDataMembers->mGravityEnabled);
 
       return true;
    }
@@ -939,19 +933,18 @@ namespace dtPhysics
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void PhysicsObject::SetGravityEnabled(bool enabled)
+   void PhysicsObject::SetGravityEnabled(bool enable)
    {
       if (mDataMembers->mGenericBody.valid())
       {
-         mDataMembers->mGenericBody->SetGravityEnabled(enabled);
+         mDataMembers->mGenericBody->SetGravityEnabled(enable);
       }
-      mDataMembers->mGravityEnabled = enabled;
    }
 
    /////////////////////////////////////////////////////////////////////////////
    bool PhysicsObject::IsGravityEnabled() const
    {
-      bool result = mDataMembers->mGravityEnabled;
+      bool result = true;
       if (mDataMembers->mGenericBody.valid())
       {
          result = mDataMembers->mGenericBody->IsGravityEnabled();
@@ -966,13 +959,12 @@ namespace dtPhysics
       {
          return mDataMembers->mGenericBody->GetPalGenericBody().SetCollisionResponseEnabled(enabled);
       }
-      mDataMembers->mCollisionResponseEnabled = enabled;
    }
 
    /////////////////////////////////////////////////////////////////////////////
    bool PhysicsObject::IsCollisionResponseEnabled() const
    {
-      bool result = mDataMembers->mCollisionResponseEnabled;
+      bool result = true;
       if (mDataMembers->mGenericBody.valid())
       {
          result = mDataMembers->mGenericBody->GetPalGenericBody().IsCollisionResponseEnabled();

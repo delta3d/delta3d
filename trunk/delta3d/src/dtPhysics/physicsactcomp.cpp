@@ -111,8 +111,17 @@ namespace dtPhysics
    {
       void operator()(dtCore::RefPtr<PhysicsObject>& po)
       {
+         if (po->GetMaterial() == NULL)
+         {
+            const MaterialActor* mat = mPac->LookupMaterialActor();
+            if (mat != NULL)
+            {
+               po->SetMaterial(mat->GetMaterial());
+            }
+         }
          po->Create();
       }
+      PhysicsActComp* mPac;
    };
 
    /////////////////////////////////////////////////////////////////////////////
@@ -150,6 +159,7 @@ namespace dtPhysics
       if (GetAutoCreateOnEnteringWorld())
       {
          CreateFromPropsPhysObj creatFunc;
+         creatFunc.mPac = this;
          ForEachPhysicsObject(creatFunc);
       }
    }
@@ -529,7 +539,16 @@ namespace dtPhysics
                "or it has a custom user data. Value will be overwritten.");
       }
 
-      InsertPhysicsObject(makeMain ? 0 : mPhysicsObjects.size(), &po);
+      po.SetUserData(this);
+      po.BuildPropertyMap();
+      if (makeMain)
+      {
+         mPhysicsObjects.insert(mPhysicsObjects.begin(), &po);
+      }
+      else
+      {
+         mPhysicsObjects.push_back(&po);
+      }
    }
 
    //////////////////////////////////////////////////////////////////
@@ -647,8 +666,9 @@ namespace dtPhysics
       if (obj != NULL && mPhysicsObjects.size() > size_t(index))
       {
          // TODO we need a clone
-         mPhysicsObjects[index] = obj;
+         mPhysicsObjects[index] = new PhysicsObject(obj->GetName());
          mPhysicsObjects[index]->BuildPropertyMap();
+         mPhysicsObjects[index]->CopyPropertiesFrom(*obj);
          mPhysicsObjects[index]->SetUserData(this);
       }
    }
@@ -667,20 +687,14 @@ namespace dtPhysics
    }
 
    //////////////////////////////////////////////////////////////////
-   PhysicsObject* PhysicsActComp::InsertPhysicsObject(unsigned index, PhysicsObject* obj)
+   void PhysicsActComp::InsertNewPhysicsObject(unsigned index)
    {
-      if (size_t(index) >= mPhysicsObjects.size())
+      if (size_t(index) <= mPhysicsObjects.size())
       {
-         index = mPhysicsObjects.size();
-         mPhysicsObjects.push_back(obj);
+         mPhysicsObjects.insert(mPhysicsObjects.begin() + index, new PhysicsObject);
+         mPhysicsObjects[index]->BuildPropertyMap();
+         mPhysicsObjects[index]->SetUserData(this);
       }
-      else
-      {
-         mPhysicsObjects.insert(mPhysicsObjects.begin() + index, obj);
-      }
-      obj->BuildPropertyMap();
-      obj->SetUserData(this);
-      return obj;
    }
 
    //////////////////////////////////////////////////////////////////

@@ -347,10 +347,68 @@ namespace dtExample
          RegisterForTick();
       }
 
-      dtGame::GameActorProxy* owner;
-      GetOwner(owner);
-      owner->RegisterForMessages(dtGame::MessageType::INFO_MAP_CHANGE_LOAD_END, dtUtil::MakeFunctor(&LightActorComponent::OnMapLoaded, this));
-      owner->RegisterForMessages(dtGame::MessageType::INFO_MAPS_OPENED, dtUtil::MakeFunctor(&LightActorComponent::OnMapLoaded, this));
+//      dtGame::GameActorProxy* owner;
+//      GetOwner(owner);
+//      owner->RegisterForMessages(dtGame::MessageType::INFO_MAP_CHANGE_LOAD_END, dtUtil::MakeFunctor(&LightActorComponent::OnMapLoaded, this));
+//      owner->RegisterForMessages(dtGame::MessageType::INFO_MAPS_OPENED, dtUtil::MakeFunctor(&LightActorComponent::OnMapLoaded, this));
+//
+      if ( ! mLight.valid())
+      {
+         // Use a refptr here in case a new light is created.
+         dtCore::RefPtr<dtRender::DynamicLight> light = NULL;
+
+         /*if (mCreateLight)
+         {
+            light = GetOrCreateLight();
+         }
+         else
+         {*/
+            light = GetLightActorById(mLightId);
+         //}
+
+         if ( ! light.valid())
+         {
+            if (mCreateLight)
+            {
+               LOG_ERROR("Could not create light for actor: " + GetName());
+            }
+            else
+            {
+               LOG_ERROR("Could not access light \"" + mLightId.ToString()
+                  + "\" for actor: " + GetName());
+            }
+         }
+         else
+         {
+            // Determine if the referenced actor is a prototype.
+            if (light.valid() && light->GetInitialOwnership() == dtGame::GameActorProxy::Ownership::PROTOTYPE)
+            {
+               dtGame::GameActorProxy* actor = NULL;
+               GetOwner(actor);
+
+               if (actor->GetInitialOwnership() != dtGame::GameActorProxy::Ownership::PROTOTYPE)
+               {
+                  dtGame::GameManager* gm = actor->GetGameManager();
+                  gm->CreateActorFromPrototype(light->GetId(), light);
+
+                  gm->AddActor(*light, false, false);
+               }
+            }
+
+            // Ensure variables related to the light are updated accordingly.
+            SetLight(light);
+         }
+      }
+
+      // Ensure the initial set intensity is applied.
+      if (mLastLightIntensity != 0.0f)
+      {
+         SetLightIntensity(mLastLightIntensity);
+      }
+      else if (mLight.valid()) // Use the intensity from the referenced light.
+      {
+         SetLightIntensity(mLight->GetIntensity());
+      }
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -455,63 +513,6 @@ namespace dtExample
 
    void LightActorComponent::OnMapLoaded(const dtGame::MapMessage& mapMessage)
    {
-      if ( ! mLight.valid())
-      {
-         // Use a refptr here in case a new light is created.
-         dtCore::RefPtr<dtRender::DynamicLight> light = NULL;
-         
-         /*if (mCreateLight)
-         {
-            light = GetOrCreateLight();
-         }
-         else
-         {*/
-            light = GetLightActorById(mLightId);
-         //}
-
-         if ( ! light.valid())
-         {
-            if (mCreateLight)
-            {
-               LOG_ERROR("Could not create light for actor: " + GetName());
-            }
-            else
-            {      
-               LOG_ERROR("Could not access light \"" + mLightId.ToString()
-                  + "\" for actor: " + GetName());
-            }
-         }
-         else
-         {
-            // Determine if the referenced actor is a prototype.
-            if (light.valid() && light->GetInitialOwnership() == dtGame::GameActorProxy::Ownership::PROTOTYPE)
-            {
-               dtGame::GameActorProxy* actor = NULL;
-               GetOwner(actor);
-
-               if (actor->GetInitialOwnership() != dtGame::GameActorProxy::Ownership::PROTOTYPE)
-               {
-                  dtGame::GameManager* gm = actor->GetGameManager();
-                  gm->CreateActorFromPrototype(light->GetId(), light);
-
-                  gm->AddActor(*light, false, false);
-               }
-            }
-
-            // Ensure variables related to the light are updated accordingly.
-            SetLight(light);
-         }
-      }
-
-      // Ensure the initial set intensity is applied.
-      if (mLastLightIntensity != 0.0f)
-      {
-         SetLightIntensity(mLastLightIntensity);
-      }
-      else if (mLight.valid()) // Use the intensity from the referenced light.
-      {
-         SetLightIntensity(mLight->GetIntensity());
-      }
 
    }
 

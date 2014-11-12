@@ -92,6 +92,7 @@ private:
    void ParseCommandLineOptions(int argc, char **argv);
    std::string mProjectPath;
    std::string mMapName;
+   std::string mBaseMapName;
 };
 
 
@@ -259,14 +260,11 @@ void TestApp::OnStartup(dtABC::BaseABC& app, dtGame::GameManager& gameManager)
    cam->GetOSGCamera()->setComputeNearFarMode(osg::CullSettings::DO_NOT_COMPUTE_NEAR_FAR);   
    cam->GetOSGCamera()->setCullingMode(osg::CullSettings::ENABLE_ALL_CULLING);
 
-   // Load the map for this application.
-   const std::string BASE_MAP("BaseMap");
-
-   ValidateMap(BASE_MAP);
+   ValidateMap(mBaseMapName);
    ValidateMap(mMapName);
 
    dtGame::GameManager::NameVector mapNames;
-   mapNames.push_back(BASE_MAP);
+   mapNames.push_back(mBaseMapName);
    mapNames.push_back(mMapName);
 
    gameManager.ChangeMapSet(mapNames);
@@ -304,6 +302,7 @@ void TestApp::ParseCommandLineOptions(int argc, char** argv)
    argParser.getApplicationUsage()->addCommandLineOption("-h or --help","Display command line options");
    argParser.getApplicationUsage()->addCommandLineOption("--projectPath", "The path to the project config or project contexct directory.");
    argParser.getApplicationUsage()->addCommandLineOption("--mapName", "The name of the map to load in. This must be a map that is located within the project path specified");
+   argParser.getApplicationUsage()->addCommandLineOption("--baseMap", "The name of the base map to load in. This must be a map that is located within the project path specified");
 
    if (argParser.read("-h") || argParser.read("--help") || argParser.argc() == 0)
    {
@@ -317,6 +316,11 @@ void TestApp::ParseCommandLineOptions(int argc, char** argv)
    if (!argParser.read("--mapName", mMapName))
    {
       mMapName = "TestApp";
+   }
+
+   if (!argParser.read("--baseMap", mBaseMapName))
+   {
+      mBaseMapName = "BaseMap";
    }
 
 

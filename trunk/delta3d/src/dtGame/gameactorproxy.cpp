@@ -94,6 +94,7 @@ namespace dtGame
    , mPublished(false)
    , mRemote(false)
    , mDrawableIsAGameActor(false)
+   , mDeleted(false)
    {
       SetClassName("dtGame::GameActor");
    }
@@ -270,6 +271,7 @@ namespace dtGame
    void GameActorProxy::SetIsInGM(bool value)
    {
       mIsInGM = value;
+      SetDeleted(false);
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -959,6 +961,7 @@ namespace dtGame
       ActorComponentBase::RemoveComponent(component);
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
    void GameActorProxy::OnTickLocal(const TickMessage& tickMessage)
    {
       if (mDrawableIsAGameActor)
@@ -969,6 +972,7 @@ namespace dtGame
       }
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
    void GameActorProxy::OnTickRemote(const TickMessage& tickMessage)
    {
       if (mDrawableIsAGameActor)
@@ -979,5 +983,8 @@ namespace dtGame
       }
    }
 
-
+   ////////////////////////////////////////////////////////////////////////////////
+   bool GameActorProxy::IsDeleted() const { return mDeleted; }
+   ////////////////////////////////////////////////////////////////////////////////
+   void GameActorProxy::SetDeleted(bool deleted) { mDeleted = deleted; }
 }

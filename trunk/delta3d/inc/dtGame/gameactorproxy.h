@@ -133,12 +133,7 @@ namespace dtGame
       /**
        * @return a const pointer to the parent game manager that owns this actor.
        */
-      const GameManager* GetGameManager() const { return mParent; }
-
-      /**
-       * @return a pointer to the parent game manager that owns this actor.
-       */
-      GameManager* GetGameManager() { return mParent; }
+      GameManager* GetGameManager() const { return mParent; }
 
       /**
        * Creates the properties associated with this proxy
@@ -494,6 +489,38 @@ namespace dtGame
        */
       virtual void OnTickRemote(const TickMessage& tickMessage);
 
+
+
+      /**
+       * Sets if the actor is remote by invoking the actor implementation
+       * User code should not call this.
+       * @param True if the actor should be remote, false if not
+       */
+      void SetRemote(bool remote);
+
+      /**
+       * Sets if the actor is published by invoking the actor implementation
+       * User code should not call this.
+       * @param True if the actor should be remote, false if not
+       */
+      void SetPublished(bool published);
+
+      /**
+       * Invokes the OnEnteredWorld function of the actor, and then the proxy
+       * User code should not call this.
+       */
+      void InvokeEnteredWorld();
+
+      /**
+       * Invokes the OnRemovedFromWorld function of the proxy
+       * User code should not call this.
+       */
+      void InvokeRemovedFromWorld();
+
+      /// This was added so the GameManager can be set on creation.
+      void SetIsInGM(bool value);
+
+
       /**
        * @see dtGame::GameActorProxy::PROCESS_MSG_INVOKABLE
        * This is deprecated because the whole GameActor class being deprecated.
@@ -582,6 +609,11 @@ namespace dtGame
        */
       DEPRECATE_FUNC const GameActor& GetGameActor() const;
 
+      /**
+       * If this actor is queued to be deleted.
+       */
+      bool IsDeleted() const;
+      void SetDeleted(bool deleted);
    protected:
       /// Destructor
       virtual ~GameActorProxy();
@@ -628,32 +660,6 @@ namespace dtGame
       void PopulateActorUpdateImpl(ActorUpdateMessage& update,
                                    const std::vector<dtUtil::RefString>& propNames = std::vector<dtUtil::RefString>());
 
-      /**
-       * Sets if the actor is remote by invoking the actor implementation
-       * @param True if the actor should be remote, false if not
-       */
-      void SetRemote(bool remote);
-
-      /**
-       * Sets if the actor is published by invoking the actor implementation
-       * @param True if the actor should be remote, false if not
-       */
-      void SetPublished(bool published);
-
-      /**
-       * Invokes the OnEnteredWorld function of the actor, and then the proxy
-       */
-      void InvokeEnteredWorld();
-
-      /**
-       * Invokes the OnRemovedFromWorld function of the proxy
-       */
-      void InvokeRemovedFromWorld();
-
-      /// This was added so the GameManager can be set on creation.
-      void SetIsInGM(bool value);
-
-      friend class GameManager;
 
       std::string mPrototypeName;
       dtCore::UniqueId mPrototypeID;
@@ -668,6 +674,7 @@ namespace dtGame
       bool mPublished;
       bool mRemote;
       bool mDrawableIsAGameActor;
+      bool mDeleted;
 
    };
 }

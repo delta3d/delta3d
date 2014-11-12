@@ -1620,10 +1620,10 @@ void MessageTests::TestDefaultMessageProcessorWithLocalOrRemoteActorUpdates(bool
    dtCore::RefPtr<dtGame::GameActorProxy> gap = dynamic_cast<dtGame::GameActorProxy*>(ap.get());
    CPPUNIT_ASSERT(gap != NULL);
 
-   CPPUNIT_ASSERT_MESSAGE("This property should have been in the accept list", gap->ShouldAcceptPropertyInLocalUpdate("Has Fired"));
-   CPPUNIT_ASSERT_MESSAGE("This property should have been in the accept list", gap->ShouldAcceptPropertyInLocalUpdate("Remote Tick Count"));
-   CPPUNIT_ASSERT_MESSAGE("This property should not be in the accept list because it was added, then removed", !gap->ShouldAcceptPropertyInLocalUpdate("Local Tick Count"));
-   CPPUNIT_ASSERT_MESSAGE("This property should not be in the accept list because it was never added", !gap->ShouldAcceptPropertyInLocalUpdate("Test_Actor_Id"));
+   CPPUNIT_ASSERT_MESSAGE("This property should have been in the accept list", gap->ShouldAcceptPropertyInLocalUpdate("OneIsFired"));
+   CPPUNIT_ASSERT_MESSAGE("This property should have been in the accept list", gap->ShouldAcceptPropertyInLocalUpdate("TickRemotes"));
+   CPPUNIT_ASSERT_MESSAGE("This property should not be in the accept list because it was added, then removed", !gap->ShouldAcceptPropertyInLocalUpdate("TickLocals"));
+   CPPUNIT_ASSERT_MESSAGE("This property should not be in the accept list because it was never added", !gap->ShouldAcceptPropertyInLocalUpdate("TestActorId"));
 
    gap->SetLocalActorUpdatePolicy(policy);
 
@@ -1639,16 +1639,19 @@ void MessageTests::TestDefaultMessageProcessorWithLocalOrRemoteActorUpdates(bool
    dtCore::RefPtr<dtGame::ActorUpdateMessage> actorUpdateMsg =
       static_cast<dtGame::ActorUpdateMessage*>(mGameManager->GetMessageFactory().CreateMessage(dtGame::MessageType::INFO_ACTOR_UPDATED).get());
 
-   dtCore::UniqueId oldId(gap->GetProperty("Test_Actor_Id")->ToString());
-   CPPUNIT_ASSERT_MESSAGE("Has Fired should be false.", !oldId.ToString().empty());
-   CPPUNIT_ASSERT_MESSAGE("Has Fired should be false.", gap->GetProperty("Has Fired")->ToString() == "false");
-   CPPUNIT_ASSERT_MESSAGE("Local Tick Count should be 0.", gap->GetProperty("Local Tick Count")->ToString() == "0");
-   CPPUNIT_ASSERT_MESSAGE("Remote Tick Count should be 0.", gap->GetProperty("Remote Tick Count")->ToString() == "0");
+   dtCore::UniqueId oldId(gap->GetProperty("TestActorId")->ToString());
+   CPPUNIT_ASSERT_MESSAGE("The test actor id should be empty.", oldId.ToString().empty());
+   gap->GetProperty("TestActorId")->FromString("33232");
+   oldId = gap->GetProperty("TestActorId")->ToString();
+   CPPUNIT_ASSERT_MESSAGE("The test actor id should not be empty.", !oldId.ToString().empty());
+   CPPUNIT_ASSERT_MESSAGE("OneIsFired should be false.", gap->GetProperty("OneIsFired")->ToString() == "false");
+   CPPUNIT_ASSERT_MESSAGE("TickLocals should be 0.", gap->GetProperty("TickLocals")->ToString() == "0");
+   CPPUNIT_ASSERT_MESSAGE("TickRemotes should be 0.", gap->GetProperty("TickRemotes")->ToString() == "0");
 
    if (partial)
    {
       std::vector<dtUtil::RefString> params;
-      params.push_back("Has Fired");
+      params.push_back("OneIsFired");
       gap->PopulateActorUpdate(*actorUpdateMsg, params);
    }
    else
@@ -1664,30 +1667,30 @@ void MessageTests::TestDefaultMessageProcessorWithLocalOrRemoteActorUpdates(bool
    CPPUNIT_ASSERT(actorUpdateMsg->GetParameter("Actor Type Name")->ToString() == gap->GetActorType().GetName());
    CPPUNIT_ASSERT(actorUpdateMsg->GetParameter("Actor Type Category")->ToString() == gap->GetActorType().GetCategory());
 
-   CPPUNIT_ASSERT(actorUpdateMsg->GetUpdateParameter("Has Fired") != NULL);
-   CPPUNIT_ASSERT(actorUpdateMsg->GetUpdateParameter("Has Fired")->ToString() == "false");
-   actorUpdateMsg->GetUpdateParameter("Has Fired")->FromString("true");
+   CPPUNIT_ASSERT(actorUpdateMsg->GetUpdateParameter("OneIsFired") != NULL);
+   CPPUNIT_ASSERT(actorUpdateMsg->GetUpdateParameter("OneIsFired")->ToString() == "false");
+   actorUpdateMsg->GetUpdateParameter("OneIsFired")->FromString("true");
 
    if (partial)
    {
-      CPPUNIT_ASSERT_MESSAGE("Local Tick Count should not be part of the update.",
-         actorUpdateMsg->GetUpdateParameter("Local Tick Count") == NULL);
-      CPPUNIT_ASSERT_MESSAGE("Remote Tick Count should not be part of the update.",
-         actorUpdateMsg->GetUpdateParameter("Remote Tick Count") == NULL);
+      CPPUNIT_ASSERT_MESSAGE("TickLocals should not be part of the update.",
+         actorUpdateMsg->GetUpdateParameter("TickLocals") == NULL);
+      CPPUNIT_ASSERT_MESSAGE("TickRemotes should not be part of the update.",
+         actorUpdateMsg->GetUpdateParameter("TickRemotes") == NULL);
    }
    else
    {
-      CPPUNIT_ASSERT_MESSAGE("Local Tick Count should be part of the update.",
-         actorUpdateMsg->GetUpdateParameter("Local Tick Count") != NULL);
-      CPPUNIT_ASSERT_MESSAGE("Remote Tick Count should be part of the update.",
-         actorUpdateMsg->GetUpdateParameter("Remote Tick Count") != NULL);
+      CPPUNIT_ASSERT_MESSAGE("TickLocals should be part of the update.",
+         actorUpdateMsg->GetUpdateParameter("TickLocals") != NULL);
+      CPPUNIT_ASSERT_MESSAGE("TickRemotes should be part of the update.",
+         actorUpdateMsg->GetUpdateParameter("TickRemotes") != NULL);
 
-      CPPUNIT_ASSERT(actorUpdateMsg->GetUpdateParameter("Local Tick Count")->ToString() == "0");
-      CPPUNIT_ASSERT(actorUpdateMsg->GetUpdateParameter("Remote Tick Count")->ToString() == "0");
+      CPPUNIT_ASSERT(actorUpdateMsg->GetUpdateParameter("TickLocals")->ToString() == "0");
+      CPPUNIT_ASSERT(actorUpdateMsg->GetUpdateParameter("TickRemotes")->ToString() == "0");
 
-      actorUpdateMsg->GetUpdateParameter("Local Tick Count")->FromString("96");
-      actorUpdateMsg->GetUpdateParameter("Remote Tick Count")->FromString("107");
-      actorUpdateMsg->GetUpdateParameter("Test_Actor_Id")->FromString("3333");
+      actorUpdateMsg->GetUpdateParameter("TickLocals")->FromString("96");
+      actorUpdateMsg->GetUpdateParameter("TickRemotes")->FromString("107");
+      actorUpdateMsg->GetUpdateParameter("TestActorId")->FromString("3333");
 
    }
 
@@ -1697,13 +1700,13 @@ void MessageTests::TestDefaultMessageProcessorWithLocalOrRemoteActorUpdates(bool
       mGameManager->SendMessage(*actorUpdateMsg);
       dtCore::System::GetInstance().Step();
 
-      CPPUNIT_ASSERT_EQUAL_MESSAGE("Message Was Not Remote. Has Fired should still be false.",
-                                    gap->GetProperty("Has Fired")->ToString(), std::string("false"));
-      CPPUNIT_ASSERT_EQUAL_MESSAGE("Message Was Not Remote. Local Tick Count should still be 0.",
-                                    gap->GetProperty("Local Tick Count")->ToString(), std::string("0"));
-      CPPUNIT_ASSERT_EQUAL_MESSAGE("Message Was Not Remote. Remote Tick Count should still be 0.",
-                                    gap->GetProperty("Remote Tick Count")->ToString(), std::string("0"));
-      CPPUNIT_ASSERT_EQUAL_MESSAGE("Message Was Not Remote. The new Id should NOT be set.", oldId.ToString(), gap->GetProperty("Test_Actor_Id")->ToString());
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("Message Was Not Remote. OneIsFired should still be false.",
+                                    gap->GetProperty("OneIsFired")->ToString(), std::string("false"));
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("Message Was Not Remote. TickLocals should still be 0.",
+                                    gap->GetProperty("TickLocals")->ToString(), std::string("0"));
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("Message Was Not Remote. TickRemotes should still be 0.",
+                                    gap->GetProperty("TickRemotes")->ToString(), std::string("0"));
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("Message Was Not Remote. The new Id should NOT be set.", oldId.ToString(), gap->GetProperty("TestActorId")->ToString());
    }
 
    actorUpdateMsg->SetSource(*new dtGame::MachineInfo);
@@ -1714,42 +1717,42 @@ void MessageTests::TestDefaultMessageProcessorWithLocalOrRemoteActorUpdates(bool
    {
       bool acceptWithFilter = !remote && policy == dtGame::GameActorProxy::LocalActorUpdatePolicy::ACCEPT_WITH_PROPERTY_FILTER;
 
-      CPPUNIT_ASSERT_EQUAL_MESSAGE("Has Fired should be changed to true.",
-                             gap->GetProperty("Has Fired")->ToString(), std::string("true"));
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("OneIsFired should be changed to true.",
+                             gap->GetProperty("OneIsFired")->ToString(), std::string("true"));
       if (partial)
       {
-         CPPUNIT_ASSERT_EQUAL_MESSAGE("Local Tick Count should still be 0.",
-                                gap->GetProperty("Local Tick Count")->ToString(), std::string("0"));
-         CPPUNIT_ASSERT_EQUAL_MESSAGE("Remote Tick Count should still be 0.",
-                                gap->GetProperty("Remote Tick Count")->ToString(), std::string("0"));
+         CPPUNIT_ASSERT_EQUAL_MESSAGE("TickLocals should still be 0.",
+                                gap->GetProperty("TickLocals")->ToString(), std::string("0"));
+         CPPUNIT_ASSERT_EQUAL_MESSAGE("TickRemotes should still be 0.",
+                                gap->GetProperty("TickRemotes")->ToString(), std::string("0"));
       }
       else
       {
-         CPPUNIT_ASSERT_EQUAL_MESSAGE("Remote Tick Count should be changed to 107.",
-                                gap->GetProperty("Remote Tick Count")->ToString(), std::string("107"));
+         CPPUNIT_ASSERT_EQUAL_MESSAGE("TickRemotes should be changed to 107.",
+                                gap->GetProperty("TickRemotes")->ToString(), std::string("107"));
          if (!acceptWithFilter)
          {
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Local Tick Count should be changed to 96.",
-                                   gap->GetProperty("Local Tick Count")->ToString(), std::string("96"));
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("The new Id should be set.", std::string("3333"), gap->GetProperty("Test_Actor_Id")->ToString());
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("TickLocals should be changed to 96.",
+                                   gap->GetProperty("TickLocals")->ToString(), std::string("96"));
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("The new Id should be set.", std::string("3333"), gap->GetProperty("TestActorId")->ToString());
          }
          else
          {
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Local Tick Count should still be 0.",
-                                          gap->GetProperty("Local Tick Count")->ToString(), std::string("0"));
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("The new Id should NOT be set.", oldId.ToString(), gap->GetProperty("Test_Actor_Id")->ToString());
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("TickLocals should still be 0.",
+                                          gap->GetProperty("TickLocals")->ToString(), std::string("0"));
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("The new Id should NOT be set.", oldId.ToString(), gap->GetProperty("TestActorId")->ToString());
          }
       }
    }
    else
    {
-      CPPUNIT_ASSERT_EQUAL_MESSAGE("Has Fired should still be false.",
-                                    gap->GetProperty("Has Fired")->ToString(), std::string("false"));
-      CPPUNIT_ASSERT_EQUAL_MESSAGE("Local Tick Count should still be 0.",
-                                    gap->GetProperty("Local Tick Count")->ToString(), std::string("0"));
-      CPPUNIT_ASSERT_EQUAL_MESSAGE("Remote Tick Count should still be 0.",
-                                    gap->GetProperty("Remote Tick Count")->ToString(), std::string("0"));
-      CPPUNIT_ASSERT_EQUAL_MESSAGE("The new Id should NOT be set.", oldId.ToString(), gap->GetProperty("Test_Actor_Id")->ToString());
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("OneIsFired should still be false.",
+                                    gap->GetProperty("OneIsFired")->ToString(), std::string("false"));
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("TickLocals should still be 0.",
+                                    gap->GetProperty("TickLocals")->ToString(), std::string("0"));
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("TickRemotes should still be 0.",
+                                    gap->GetProperty("TickRemotes")->ToString(), std::string("0"));
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("The new Id should NOT be set.", oldId.ToString(), gap->GetProperty("TestActorId")->ToString());
    }
 }
 
@@ -1832,9 +1835,9 @@ void MessageTests::TestDefaultMessageProcessorWithLocalOrRemoteActorCreates(bool
    dtCore::RefPtr<dtGame::ActorUpdateMessage> actorCreateMsg =
       static_cast<dtGame::ActorUpdateMessage*>(mGameManager->GetMessageFactory().CreateMessage(dtGame::MessageType::INFO_ACTOR_CREATED).get());
 
-   CPPUNIT_ASSERT_MESSAGE("Has Fired should be false.", gap->GetProperty("Has Fired")->ToString() == "false");
-   CPPUNIT_ASSERT_MESSAGE("Local Tick Count should be 0.", gap->GetProperty("Local Tick Count")->ToString() == "0");
-   CPPUNIT_ASSERT_MESSAGE("Remote Tick Count should be 0.", gap->GetProperty("Remote Tick Count")->ToString() == "0");
+   CPPUNIT_ASSERT_MESSAGE("OneIsFired should be false.", gap->GetProperty("OneIsFired")->ToString() == "false");
+   CPPUNIT_ASSERT_MESSAGE("TickLocals should be 0.", gap->GetProperty("TickLocals")->ToString() == "0");
+   CPPUNIT_ASSERT_MESSAGE("TickRemotes should be 0.", gap->GetProperty("TickRemotes")->ToString() == "0");
 
    gap->PopulateActorUpdate(*actorCreateMsg);
    if (remote)
@@ -1851,17 +1854,17 @@ void MessageTests::TestDefaultMessageProcessorWithLocalOrRemoteActorCreates(bool
    CPPUNIT_ASSERT(actorCreateMsg->GetParameter("Actor Type Name")->ToString() == gap->GetActorType().GetName());
    CPPUNIT_ASSERT(actorCreateMsg->GetParameter("Actor Type Category")->ToString() == gap->GetActorType().GetCategory());
 
-   CPPUNIT_ASSERT(actorCreateMsg->GetUpdateParameter("Has Fired") != NULL);
-   CPPUNIT_ASSERT(actorCreateMsg->GetUpdateParameter("Local Tick Count") != NULL);
-   CPPUNIT_ASSERT(actorCreateMsg->GetUpdateParameter("Remote Tick Count") != NULL);
+   CPPUNIT_ASSERT(actorCreateMsg->GetUpdateParameter("OneIsFired") != NULL);
+   CPPUNIT_ASSERT(actorCreateMsg->GetUpdateParameter("TickLocals") != NULL);
+   CPPUNIT_ASSERT(actorCreateMsg->GetUpdateParameter("TickRemotes") != NULL);
 
-   CPPUNIT_ASSERT(actorCreateMsg->GetUpdateParameter("Has Fired")->ToString() == "false");
-   CPPUNIT_ASSERT(actorCreateMsg->GetUpdateParameter("Local Tick Count")->ToString() == "0");
-   CPPUNIT_ASSERT(actorCreateMsg->GetUpdateParameter("Remote Tick Count")->ToString() == "0");
+   CPPUNIT_ASSERT(actorCreateMsg->GetUpdateParameter("OneIsFired")->ToString() == "false");
+   CPPUNIT_ASSERT(actorCreateMsg->GetUpdateParameter("TickLocals")->ToString() == "0");
+   CPPUNIT_ASSERT(actorCreateMsg->GetUpdateParameter("TickRemotes")->ToString() == "0");
 
-   actorCreateMsg->GetUpdateParameter("Has Fired")->FromString("true");
-   actorCreateMsg->GetUpdateParameter("Local Tick Count")->FromString("96");
-   actorCreateMsg->GetUpdateParameter("Remote Tick Count")->FromString("107");
+   actorCreateMsg->GetUpdateParameter("OneIsFired")->FromString("true");
+   actorCreateMsg->GetUpdateParameter("TickLocals")->FromString("96");
+   actorCreateMsg->GetUpdateParameter("TickRemotes")->FromString("107");
 
    mGameManager->SendMessage(*actorCreateMsg);
 
@@ -1879,9 +1882,9 @@ void MessageTests::TestDefaultMessageProcessorWithLocalOrRemoteActorCreates(bool
       CPPUNIT_ASSERT_MESSAGE("The remote actor should have the same actor type as the real actor.", gapRemote->GetActorType() == gap->GetActorType());
       CPPUNIT_ASSERT_MESSAGE("The remote actor should have the same name as the real actor.", gapRemote->GetName() == gap->GetName());
 
-      CPPUNIT_ASSERT_MESSAGE("Has Fired should be changed to true.", gapRemote->GetProperty("Has Fired")->ToString() == "true");
-      CPPUNIT_ASSERT_MESSAGE("Local Tick Count should be changed to 96.", gapRemote->GetProperty("Local Tick Count")->ToString() == "96");
-      CPPUNIT_ASSERT_MESSAGE("Remote Tick Count should be changed to 107.", gapRemote->GetProperty("Remote Tick Count")->ToString() == "107");
+      CPPUNIT_ASSERT_MESSAGE("OneIsFired should be changed to true.", gapRemote->GetProperty("OneIsFired")->ToString() == "true");
+      CPPUNIT_ASSERT_MESSAGE("TickLocals should be changed to 96.", gapRemote->GetProperty("TickLocals")->ToString() == "96");
+      CPPUNIT_ASSERT_MESSAGE("TickRemotes should be changed to 107.", gapRemote->GetProperty("TickRemotes")->ToString() == "107");
 
       CPPUNIT_ASSERT_MESSAGE("The created actor should be remote.", gapRemote->IsRemote());
       CPPUNIT_ASSERT_MESSAGE("The created actor should not be published.", !gapRemote->IsPublished());
@@ -1907,33 +1910,32 @@ void MessageTests::TestRemoteActorCreatesFromPrototype()
    CPPUNIT_ASSERT(type != NULL);
 
    // Create a prototype actor to work with.
-   dtCore::RefPtr<TestGameActorProxy1> prototypeProxy;
-   mGameManager->CreateActor(*type.get(), prototypeProxy);
-   CPPUNIT_ASSERT(prototypeProxy != NULL);
-   dtCore::RefPtr<TestGameActor1> prototypeActor = dynamic_cast<TestGameActor1*>(prototypeProxy->GetDrawable());
-   prototypeProxy->SetName("Test1Prototype");
+   dtCore::RefPtr<TestGameActor1> prototypeActor;
+   mGameManager->CreateActor(*type.get(), prototypeActor);
+   CPPUNIT_ASSERT(prototypeActor != NULL);
+   prototypeActor->SetName("Test1Prototype");
    prototypeActor->SetTickLocals(59);
    prototypeActor->SetTickRemotes(41);
    dtCore::UniqueId prototypeId = dtCore::UniqueId("ABCDEFG");
-   prototypeProxy->SetId(prototypeId);
-   mGameManager->AddActorAsAPrototype(*prototypeProxy.get());
+   prototypeActor->SetId(prototypeId);
+   mGameManager->AddActorAsAPrototype(*prototypeActor);
 
    // Now we need to actually create an actor from our prototype. Use that to populate a create message.
    // Note, we don't actually add our temp actor to the GM. It acts like a 'remote' actor on another system.
    dtCore::RefPtr<dtCore::BaseActorObject> tempBogusPrototype = mGameManager->CreateActorFromPrototype(prototypeId);
    dtCore::RefPtr<dtGame::GameActorProxy> tempBogusGameProxy = dynamic_cast<dtGame::GameActorProxy*>(tempBogusPrototype.get());
-   dtCore::RefPtr<TestGameActor1> tempBogusActor = dynamic_cast<TestGameActor1*>(tempBogusPrototype->GetDrawable());
+   dtCore::RefPtr<TestGameActor1> tempBogusActor = dynamic_cast<TestGameActor1*>(tempBogusGameProxy.get());
    tempBogusActor->SetTickLocals(11);
-   tempBogusGameProxy->SetName("MyUpdateActor");
+   tempBogusActor->SetName("MyUpdateActor");
    dtCore::UniqueId createdId = dtCore::UniqueId("1234567890");
-   tempBogusGameProxy->SetId(createdId);
+   tempBogusActor->SetId(createdId);
 
    // Create an actor update message to simulate the creation process from a remote system
    // To do that, we populate the TickLocal property (plus name and Id).
    dtCore::RefPtr<dtGame::ActorUpdateMessage> actorCreateMsg =
       static_cast<dtGame::ActorUpdateMessage*>(mGameManager->GetMessageFactory().CreateMessage(dtGame::MessageType::INFO_ACTOR_CREATED).get());
    std::vector<dtUtil::RefString> params;
-   params.push_back("Local Tick Count");
+   params.push_back("TickLocals");
    tempBogusGameProxy->PopulateActorUpdate(*actorCreateMsg, params);
    //make it remote
    actorCreateMsg->SetSource(*new dtGame::MachineInfo());
@@ -1951,19 +1953,19 @@ void MessageTests::TestRemoteActorCreatesFromPrototype()
 
 
    dtCore::RefPtr<dtGame::GameActorProxy> gapRemote = mGameManager->FindGameActorById(createdId);
-   dtCore::RefPtr<TestGameActor1> gapRemoteActor = dynamic_cast<TestGameActor1*> (gapRemote->GetDrawable());
+   dtCore::RefPtr<TestGameActor1> gapRemoteActor = dynamic_cast<TestGameActor1*> (gapRemote.get());
 
    CPPUNIT_ASSERT_MESSAGE("The remote actor should have been created.", gapRemote != NULL);
    CPPUNIT_ASSERT_MESSAGE("The remote actor should have the same actor type as our prototype.",
-      gapRemote->GetActorType() == prototypeProxy->GetActorType());
+      gapRemote->GetActorType() == prototypeActor->GetActorType());
 
    CPPUNIT_ASSERT_MESSAGE("The create message should not have affected our prototype - name. ",
-      prototypeProxy->GetName() == "Test1Prototype");
+      prototypeActor->GetName() == "Test1Prototype");
    CPPUNIT_ASSERT_MESSAGE("The remote actor should have the value from the update message - name.",
       gapRemote->GetName() == "MyUpdateActor");
 
    CPPUNIT_ASSERT_MESSAGE("The create message should not have affected our prototype - uniqueid. ",
-      prototypeProxy->GetId() == prototypeId);
+      prototypeActor->GetId() == prototypeId);
    CPPUNIT_ASSERT_MESSAGE("The remote actor should have the value from the update message - uniqueid.",
       gapRemote->GetId() == createdId);
 

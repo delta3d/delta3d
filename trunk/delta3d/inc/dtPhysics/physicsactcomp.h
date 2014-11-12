@@ -141,8 +141,7 @@ namespace dtPhysics
           * Method used by the physics object array property to create
           * a new object at a specified index.
           */
-         PhysicsObject* InsertPhysicsObject(unsigned index, PhysicsObject* obj = new PhysicsObject);
-         void InsertNewPhysicsObject(unsigned index) { InsertPhysicsObject(index); }
+         void InsertNewPhysicsObject(unsigned index);
 
          /**
           * Method used by the physics object array property to remove

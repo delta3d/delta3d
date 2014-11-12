@@ -86,6 +86,7 @@ namespace dtPhysics
       CPPUNIT_TEST_SUITE(dtPhysicsTests);
       CPPUNIT_TEST(testPrimitiveType);
       CPPUNIT_TEST(testMaterialActor);
+      CPPUNIT_TEST(testAutoCreate);
       CPPUNIT_TEST(testGeometryMarginPerEngine);
       CPPUNIT_TEST(testObjectArray);
       CPPUNIT_TEST(testObjectPropertyNames);
@@ -148,6 +149,7 @@ namespace dtPhysics
       // used so we have a place to test actors
       // not called multiple times like the others.
       void testMaterialActor();
+      void testAutoCreate();
 
    private:
       //Sub Tests
@@ -854,16 +856,14 @@ namespace dtPhysics
       CPPUNIT_ASSERT_MESSAGE("UserData should be NULL on a physics object after removing it from a actorComp by name",
                physicsObject->GetUserData() == NULL);
 
-      dtCore::RefPtr<dtPhysics::MaterialActorProxy> mat;
+      dtCore::RefPtr<dtPhysics::MaterialActor> mat;
       mGM->CreateActor(*dtPhysics::PhysicsActorRegistry::PHYSICS_MATERIAL_ACTOR_TYPE, mat);
       mat->SetName("Steel");
-      dtPhysics::MaterialActor* matDD = NULL;
-      mat->GetDrawable(matDD);
       CPPUNIT_ASSERT(mat != NULL);
 
       PhysicsMaterials& materials = PhysicsWorld::GetInstance().GetMaterials();
-      materials.NewMaterial(matDD->GetName(), matDD->GetMaterialDef());
-      Material* uniqueMaterial = materials.GetMaterial(matDD->GetName());
+      materials.NewMaterial(mat->GetName(), mat->GetMaterialDef());
+      Material* uniqueMaterial = materials.GetMaterial(mat->GetName());
 
       // Pre set this to make sure it gets set propertly on create from properties.
       physicsObject->SetCollisionGroup(5);
@@ -893,7 +893,7 @@ namespace dtPhysics
 
       
       // Test assignment of a material by index.
-      Material* newMat = materials.NewMaterial("AnotherMaterial", matDD->GetMaterialDef());
+      Material* newMat = materials.NewMaterial("AnotherMaterial", mat->GetMaterialDef());
       MaterialIndex newMatIndex = newMat->GetId();
 
       CPPUNIT_ASSERT(physicsObject->GetMaterial() != newMat);
@@ -1877,44 +1877,57 @@ namespace dtPhysics
    void dtPhysicsTests::testMaterialActor()
    {
       // create proxy
-      dtCore::RefPtr<dtPhysics::MaterialActorProxy> mat;
+      dtCore::RefPtr<dtPhysics::MaterialActor> mat;
       mGM->CreateActor(*dtPhysics::PhysicsActorRegistry::PHYSICS_MATERIAL_ACTOR_TYPE, mat);
 
       // test to see if valid
       CPPUNIT_ASSERT(mat.valid());
 
-      // make sure the actor is valid
-      dtCore::RefPtr<dtPhysics::MaterialActor> matActor = dynamic_cast<dtPhysics::MaterialActor*>(mat->GetDrawable());
-      CPPUNIT_ASSERT_MESSAGE("Failed to create material actor", matActor != NULL);
 
-      CPPUNIT_ASSERT_EQUAL_MESSAGE("The Default is wrong", matActor->GetMaterialDef().GetRestitution(), 0.2f);
-      CPPUNIT_ASSERT_EQUAL_MESSAGE("The Default is wrong", matActor->GetMaterialDef().GetStaticFriction(), 0.5f);
-      CPPUNIT_ASSERT_EQUAL_MESSAGE("The Default is wrong", matActor->GetMaterialDef().GetKineticFriction(), 0.5f);
-      CPPUNIT_ASSERT_MESSAGE("The Default is wrong", !matActor->GetMaterialDef().GetDisableStrongFriction());
-      CPPUNIT_ASSERT_MESSAGE("The Default is wrong", !matActor->GetMaterialDef().GetEnableAnisotropicFriction());
-      CPPUNIT_ASSERT_EQUAL_MESSAGE("The Default is wrong", matActor->GetMaterialDef().GetStaticAnisotropicFriction(), osg::Vec3(1.0f, 1.0f, 1.0f));
-      CPPUNIT_ASSERT_EQUAL_MESSAGE("The Default is wrong", matActor->GetMaterialDef().GetKineticAnisotropicFriction(), osg::Vec3(1.0f, 1.0f, 1.0f));
-      CPPUNIT_ASSERT_EQUAL_MESSAGE("The Default is wrong", matActor->GetMaterialDef().GetDirOfAnisotropy(), osg::Vec3(1.0f, 0.0f, 0.0f));
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("The Default is wrong", mat->GetMaterialDef().GetRestitution(), 0.2f);
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("The Default is wrong", mat->GetMaterialDef().GetStaticFriction(), 0.5f);
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("The Default is wrong", mat->GetMaterialDef().GetKineticFriction(), 0.5f);
+      CPPUNIT_ASSERT_MESSAGE("The Default is wrong", !mat->GetMaterialDef().GetDisableStrongFriction());
+      CPPUNIT_ASSERT_MESSAGE("The Default is wrong", !mat->GetMaterialDef().GetEnableAnisotropicFriction());
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("The Default is wrong", mat->GetMaterialDef().GetStaticAnisotropicFriction(), osg::Vec3(1.0f, 1.0f, 1.0f));
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("The Default is wrong", mat->GetMaterialDef().GetKineticAnisotropicFriction(), osg::Vec3(1.0f, 1.0f, 1.0f));
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("The Default is wrong", mat->GetMaterialDef().GetDirOfAnisotropy(), osg::Vec3(1.0f, 0.0f, 0.0f));
 
       // check properties on the material.
-      matActor->GetMaterialDef().SetRestitution(0.3f);
-      matActor->GetMaterialDef().SetStaticFriction(71.0f);
-      matActor->GetMaterialDef().SetKineticFriction(9.0f);
-      matActor->GetMaterialDef().SetDisableStrongFriction(true);
-      matActor->GetMaterialDef().SetEnableAnisotropicFriction(true);
-      matActor->GetMaterialDef().SetStaticAnisotropicFriction(osg::Vec3(1.0, 1.1, 0.3));
-      matActor->GetMaterialDef().SetKineticAnisotropicFriction(osg::Vec3(0.9, 1.2, 0.4));
-      matActor->GetMaterialDef().SetDirOfAnisotropy(osg::Vec3(0.707, 0.0, 0.707));
+      mat->GetMaterialDef().SetRestitution(0.3f);
+      mat->GetMaterialDef().SetStaticFriction(71.0f);
+      mat->GetMaterialDef().SetKineticFriction(9.0f);
+      mat->GetMaterialDef().SetDisableStrongFriction(true);
+      mat->GetMaterialDef().SetEnableAnisotropicFriction(true);
+      mat->GetMaterialDef().SetStaticAnisotropicFriction(osg::Vec3(1.0, 1.1, 0.3));
+      mat->GetMaterialDef().SetKineticAnisotropicFriction(osg::Vec3(0.9, 1.2, 0.4));
+      mat->GetMaterialDef().SetDirOfAnisotropy(osg::Vec3(0.707, 0.0, 0.707));
 
       // test to see if they were set correctly.
-      CPPUNIT_ASSERT_EQUAL_MESSAGE("Failed to set property", matActor->GetMaterialDef().GetRestitution(), 0.3f);
-      CPPUNIT_ASSERT_EQUAL_MESSAGE("Failed to set property", matActor->GetMaterialDef().GetStaticFriction(), 71.0f);
-      CPPUNIT_ASSERT_EQUAL_MESSAGE("Failed to set property", matActor->GetMaterialDef().GetKineticFriction(), 9.0f);
-      CPPUNIT_ASSERT_MESSAGE("Failed to set property", matActor->GetMaterialDef().GetDisableStrongFriction());
-      CPPUNIT_ASSERT_MESSAGE("Failed to set property", matActor->GetMaterialDef().GetEnableAnisotropicFriction());
-      CPPUNIT_ASSERT_EQUAL_MESSAGE("Failed to set property", matActor->GetMaterialDef().GetStaticAnisotropicFriction(), osg::Vec3(1.0, 1.1, 0.3));
-      CPPUNIT_ASSERT_EQUAL_MESSAGE("Failed to set property", matActor->GetMaterialDef().GetKineticAnisotropicFriction(), osg::Vec3(0.9, 1.2, 0.4));
-      CPPUNIT_ASSERT_EQUAL_MESSAGE("Failed to set property", matActor->GetMaterialDef().GetDirOfAnisotropy(), osg::Vec3(0.707, 0.0, 0.707));
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("Failed to set property", mat->GetMaterialDef().GetRestitution(), 0.3f);
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("Failed to set property", mat->GetMaterialDef().GetStaticFriction(), 71.0f);
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("Failed to set property", mat->GetMaterialDef().GetKineticFriction(), 9.0f);
+      CPPUNIT_ASSERT_MESSAGE("Failed to set property", mat->GetMaterialDef().GetDisableStrongFriction());
+      CPPUNIT_ASSERT_MESSAGE("Failed to set property", mat->GetMaterialDef().GetEnableAnisotropicFriction());
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("Failed to set property", mat->GetMaterialDef().GetStaticAnisotropicFriction(), osg::Vec3(1.0, 1.1, 0.3));
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("Failed to set property", mat->GetMaterialDef().GetKineticAnisotropicFriction(), osg::Vec3(0.9, 1.2, 0.4));
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("Failed to set property", mat->GetMaterialDef().GetDirOfAnisotropy(), osg::Vec3(0.707, 0.0, 0.707));
+   }
+
+   void dtPhysicsTests::testAutoCreate()
+   {
+      dtCore::RefPtr<PhysicsActComp> une = new PhysicsActComp();
+      dtCore::RefPtr<PhysicsActComp> deux = new PhysicsActComp();
+
+      // fill in their names
+      une->SetName("unus");
+      deux->SetName("duo");
+
+      CPPUNIT_ASSERT(!une->GetAutoCreateOnEnteringWorld());
+      CPPUNIT_ASSERT(!deux->GetAutoCreateOnEnteringWorld());
+      une->SetAutoCreateOnEnteringWorld(true);
+
+
    }
 
    /////////////////////////////////////////////////////////

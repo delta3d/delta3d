@@ -21,6 +21,8 @@
 #ifndef gmimpl_h__
 #define gmimpl_h__
 
+#include <dtGame/export.h>
+
 #include <queue>
 #include <set>
 #include <list>
@@ -55,8 +57,20 @@ namespace dtGame
    class GMShutdownException
    { };
 
-   /// A wrapper for data like stats to prevent includes wherever gamemanager.h is used - uses the pimple pattern (like system)
-   class GMImpl
+
+   class BatchData : public osg::Referenced
+   {
+   public:
+      BatchData(): mOkToAddActors() {}
+
+      std::vector<dtCore::RefPtr<GameActorProxy> > mBatchItems;
+      bool mOkToAddActors;
+   protected:
+      ~BatchData() {}
+   };
+
+   /// A wrapper for data like stats to prevent includes wherever gamemanager.h is used - uses the pimpl pattern (like system)
+   class DT_GAME_EXPORT GMImpl
    {
    public:
 
@@ -110,6 +124,11 @@ namespace dtGame
        */
       void SendEnvironmentChangedMessage(GameManager& gm, IEnvGameActorProxy* envActor);
 
+      /**
+       * Adds an actor to the world.  If it throws an exception, it will remove the actor first.
+       */
+      void AddActorToWorld(GameManager& gm, dtGame::GameActorProxy& actor);
+
       typedef dtUtil::HashMap< dtCore::UniqueId, dtCore::RefPtr<GameActorProxy> > GameActorMap;
       typedef dtUtil::HashMap< dtCore::UniqueId, dtCore::RefPtr<dtCore::BaseActorObject> > ActorMap;
 
@@ -154,6 +173,8 @@ namespace dtGame
       dtUtil::Log* mLogger;
 
       dtCore::RefPtr<GMSettings> mGMSettings;
+
+      dtCore::RefPtr<BatchData> mBatchData;
 
       bool mRemoveGameEventsOnMapChange;
       bool mShuttingDown;

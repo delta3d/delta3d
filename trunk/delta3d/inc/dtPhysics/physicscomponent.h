@@ -40,8 +40,6 @@ namespace dtPhysics
 {
    ///////////////////////////
    // forward Declarations
-   class MaterialActorProxy;
-
    /////////////////////////////////////////////////////////////////////////////
    // Class:
    // Notes:
@@ -103,10 +101,6 @@ namespace dtPhysics
        */
       virtual void OnAddedToGM();
       virtual void OnRemovedToGM();
-
-      void UpdateMaterials();
-      void AddMaterialActor(MaterialActorProxy& materialActor);
-      void ClearMaterials();
 
       /// @see PhysicsWorld::SetGroupCollision
       void SetGroupCollision(CollisionGroup one, CollisionGroup two, bool enabled);

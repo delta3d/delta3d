@@ -124,6 +124,7 @@ namespace dtExample
       //DT_DECLARE_ACCESSOR_INLINE(std::string, DirectorPrototypeName)
       DT_DECLARE_ACCESSOR_INLINE(unsigned, EntityIndex)
       DT_DECLARE_ACCESSOR_INLINE(bool, IgnoreRotation)
+      DT_DECLARE_ACCESSOR_INLINE(bool, EnablePoseMeshes);
 
       dtPhysics::CharacterController* GetCharacterController();
       const dtPhysics::CharacterController* GetCharacterController() const;
