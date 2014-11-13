@@ -27,10 +27,6 @@ void main()
    //make the flag move
    pos.y += 1.0 * sin(worldSpace.y * 0.351); 
    pos.x += 1.0 * cos(worldSpace.x * 0.251); 
-   
-   pos.y -= 10.0;
-   pos.y *= 3.0;
-   pos.z *= 3.5;
 
    vec4  ecPos  = gl_ModelViewMatrix * pos;
 
