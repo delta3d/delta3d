@@ -33,6 +33,7 @@
 #include "meshobjectactor.h"
 #include "terrainactor.h"
 #include "vesselactor.h"
+#include "surfacevesselactorcomponent.h"
 #include <dtActors/engineactorregistry.h>
 #include <dtAnim/animactorregistry.h>
 #include <dtCore/shadermanager.h>
@@ -99,5 +100,6 @@ namespace dtExample
 
       mActorFactory->RegisterType<CivilianAIActorComponent>(CivilianAIActorComponent::TYPE.get());
       mActorFactory->RegisterType<LightActorComponent>(LightActorComponent::TYPE.get());
+      mActorFactory->RegisterType<SurfaceVesselActorComponent>(SurfaceVesselActorComponent::TYPE.get());
    }
 }
