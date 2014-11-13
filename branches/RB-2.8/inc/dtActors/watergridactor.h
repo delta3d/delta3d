@@ -198,6 +198,7 @@ namespace dtActors
       virtual bool GetHeightAndNormalAtPoint(const osg::Vec3& detectionPoint,
          float& outHeight, osg::Vec3& outNormal) const;
 
+      void SetRenderUnderWaterPlane(bool b);
 
       void ClearWaves();
       void AddRandomizedWaves(float meanWaveLength, float meanAmplitude, float minPeriod, float maxPeriod, unsigned numWaves);
@@ -248,7 +249,6 @@ namespace dtActors
       float GetAngleBetweenVectors(const osg::Vec3& v1, const osg::Vec3& v2);
 
       void SetRenderWaveTexture(bool b);
-
       void AddReflectionGroup(osg::Camera* cam);
 
       // Loops through the total wave set and determines which N waves will be marked as the 'current'.
@@ -290,6 +290,7 @@ namespace dtActors
       osg::ref_ptr<osg::Camera>   mWaveCameraScreen;
       osg::ref_ptr<osg::Geometry> mGeometry;
       osg::ref_ptr<osg::Geode>	 mGeode;
+      osg::ref_ptr<osg::Node>	    mSubmergedGeometry;
 
       osg::observer_ptr<osg::Camera> mSceneCamera;
 
