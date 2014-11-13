@@ -124,6 +124,8 @@ namespace dtActors
             osg::Uniform* reflectMode = mCamera->getOrCreateStateSet()->getOrCreateUniform("ReflectMode", osg::Uniform::FLOAT);
             reflectMode->set(-1.0f);
 
+            mWaterActor->SetRenderUnderWaterPlane(true);
+
          }
          else
          {
@@ -134,6 +136,9 @@ namespace dtActors
             osg::CullFace* cullState = new osg::CullFace(osg::CullFace::BACK);
             mCamera->getOrCreateStateSet()->setAttributeAndModes(cullState,
                osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE);
+
+            mWaterActor->SetRenderUnderWaterPlane(false);
+
          }
 
          mCamera->setViewMatrix(viewMat);
@@ -621,7 +626,8 @@ namespace dtActors
       osg::BlendFunc* bf = new osg::BlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
       ss->setAttribute(bf);
       //ss->setRenderBinDetails(0, "RenderBin");
-      GetMatrixNode()->addChild(BuildSubmergedGeometry());
+      mSubmergedGeometry = BuildSubmergedGeometry();
+      GetMatrixNode()->addChild(mSubmergedGeometry.get());
       GetMatrixNode()->addChild(mGeode.get());
 
       CreateWaveTexture();
@@ -1482,6 +1488,21 @@ namespace dtActors
       else if(force == 12)
       {
          SetSeaState(SeaState::SeaState_12);            
+      }
+   }
+
+   void WaterGridActor::SetRenderUnderWaterPlane( bool b )
+   {
+      if(mSubmergedGeometry.valid())
+      {
+         if(b)
+         {
+            mSubmergedGeometry->setNodeMask(dtUtil::NodeMask::NOTHING);
+         }
+         else
+         {
+            mSubmergedGeometry->setNodeMask(dtUtil::NodeMask::WATER);
+         }
       }
    }
 
