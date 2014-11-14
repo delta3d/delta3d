@@ -119,7 +119,8 @@ namespace dtRender
          if(!mEphemerisScene.valid())
          {
             mEphemerisScene = dynamic_cast<EphemerisScene*>(mSceneManager->FindSceneByType(*EphemerisScene::EPHEMERIS_SCENE));
-            mShadowScene->SetLightSource(mEphemerisScene->GetLightSource());
+            if (mEphemerisScene.valid())
+               mShadowScene->SetLightSource(mEphemerisScene->GetLightSource());
          }
 
          if(mEphemerisScene.valid())
