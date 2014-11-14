@@ -16,7 +16,7 @@ MatrixTransform {
     0 0 1 0
     0 0 0 1
   }
-  num_children 24
+  num_children 28
   MatrixTransform {
     DataVariance STATIC
     name "CargoShip"
@@ -99170,6 +99170,166 @@ MatrixTransform {
           animationOn        FALSE
         }
       }
+    }
+  }
+  MatrixTransform {
+    nodeMask 0xffffffff
+    cullingActive TRUE
+    referenceFrame RELATIVE
+    Matrix {
+      1 0 0 0
+      0 0.906308 -0.422618 0
+      0 0.422618 0.906308 0
+      0.0851372 -168.026 92.0219 1
+    }
+    num_children 1
+    osgSim::DOFTransform {
+      DataVariance DYNAMIC
+      name "dof_view_02"
+      nodeMask 0xffffffff
+      cullingActive TRUE
+      referenceFrame RELATIVE
+      PutMatrix {
+        1 0 0 0
+        0 1 0 0
+        0 0 1 0
+        0 0 0 1
+        }
+      minHPR             0 0 0
+      maxHPR             0 0 0
+      incrementHPR       0 0 0
+      currentHPR         0 0 0
+      minTranslate       0 0 0
+      maxTranslate       0 0 0
+      incrementTranslate 0 0 0
+      currentTranslate   0 0 0
+      minScale           1 1 1
+      maxScale           1 1 1
+      incrementScale     0 0 0
+      currentScale       1 1 1
+      multOrder          HPR
+      limitationFlags    0x0
+      animationOn        FALSE
+    }
+  }
+  MatrixTransform {
+    nodeMask 0xffffffff
+    cullingActive TRUE
+    referenceFrame RELATIVE
+    Matrix {
+      -1 -1.50996e-007 0 0
+      1.36849e-007 -0.906308 -0.422618 0
+      6.38136e-008 -0.422618 0.906308 0
+      0.0851326 202.17 104.767 1
+    }
+    num_children 1
+    osgSim::DOFTransform {
+      DataVariance DYNAMIC
+      name "dof_view_03"
+      nodeMask 0xffffffff
+      cullingActive TRUE
+      referenceFrame RELATIVE
+      PutMatrix {
+        1 0 0 0
+        0 1 0 0
+        0 0 1 0
+        0 0 0 1
+        }
+      minHPR             0 0 0
+      maxHPR             0 0 0
+      incrementHPR       0 0 0
+      currentHPR         0 0 0
+      minTranslate       0 0 0
+      maxTranslate       0 0 0
+      incrementTranslate 0 0 0
+      currentTranslate   0 0 0
+      minScale           1 1 1
+      maxScale           1 1 1
+      incrementScale     0 0 0
+      currentScale       1 1 1
+      multOrder          HPR
+      limitationFlags    0x0
+      animationOn        FALSE
+    }
+  }
+  MatrixTransform {
+    nodeMask 0xffffffff
+    cullingActive TRUE
+    referenceFrame RELATIVE
+    Matrix {
+      1.94707e-007 -1 0 0
+      0.939693 1.82965e-007 -0.34202 0
+      0.34202 6.65938e-008 0.939693 0
+      -207.881 4.17378 104.767 1
+    }
+    num_children 1
+    osgSim::DOFTransform {
+      DataVariance DYNAMIC
+      name "dof_view_04"
+      nodeMask 0xffffffff
+      cullingActive TRUE
+      referenceFrame RELATIVE
+      PutMatrix {
+        1 0 0 0
+        0 1 0 0
+        0 0 1 0
+        0 0 0 1
+        }
+      minHPR             0 0 0
+      maxHPR             0 0 0
+      incrementHPR       0 0 0
+      currentHPR         0 0 0
+      minTranslate       0 0 0
+      maxTranslate       0 0 0
+      incrementTranslate 0 0 0
+      currentTranslate   0 0 0
+      minScale           1 1 1
+      maxScale           1 1 1
+      incrementScale     0 0 0
+      currentScale       1 1 1
+      multOrder          HPR
+      limitationFlags    0x0
+      animationOn        FALSE
+    }
+  }
+  MatrixTransform {
+    nodeMask 0xffffffff
+    cullingActive TRUE
+    referenceFrame RELATIVE
+    Matrix {
+      -4.64912e-007 1 0 0
+      -0.939693 -4.36875e-007 -0.34202 0
+      -0.34202 -1.59009e-007 0.939693 0
+      208.004 4.17378 104.767 1
+    }
+    num_children 1
+    osgSim::DOFTransform {
+      DataVariance DYNAMIC
+      name "dof_view_05"
+      nodeMask 0xffffffff
+      cullingActive TRUE
+      referenceFrame RELATIVE
+      PutMatrix {
+        1 0 0 0
+        0 1 0 0
+        0 0 1 0
+        0 0 0 1
+        }
+      minHPR             0 0 0
+      maxHPR             0 0 0
+      incrementHPR       0 0 0
+      currentHPR         0 0 0
+      minTranslate       0 0 0
+      maxTranslate       0 0 0
+      incrementTranslate 0 0 0
+      currentTranslate   0 0 0
+      minScale           1 1 1
+      maxScale           1 1 1
+      incrementScale     0 0 0
+      currentScale       1 1 1
+      multOrder          HPR
+      limitationFlags    0x0
+      animationOn        FALSE
     }
   }
 }
