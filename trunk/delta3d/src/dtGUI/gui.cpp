@@ -34,6 +34,8 @@
 #include <CEGUI/RendererModules/OpenGL/CEGUIOpenGLTexture.h>
 #include <CEGUI/falagard/CEGUIFalWidgetLookManager.h>
 
+#include <algorithm>
+
 using namespace dtGUI;
 IMPLEMENT_MANAGEMENT_LAYER(GUI)
 
@@ -58,6 +60,13 @@ std::string GUIFragmentShader =
 
 namespace dtGUI
 {
+   GUI::GUITask::GUITask()
+   {}
+
+   GUI::GUITask::~GUITask()
+   {}
+
+
 
    /**
    * @brief
@@ -627,9 +636,11 @@ void GUI::OnMessage(dtCore::Base::MessageData *data)
    if (data->message == dtCore::System::MESSAGE_PRE_FRAME)
    {
       // deltaTime[0] is simulated time, [1] is real frame rate time
-      const double *deltaTime = static_cast<const double*>(data->userData);
+      const double* deltaTime = static_cast<const double*>(data->userData);
 
       CEGUI::System::getSingletonPtr()->injectTimePulse(static_cast<float>(deltaTime[1]));
+
+      UpdateTasks((float)*deltaTime);
    }
 }
 
@@ -1097,6 +1108,75 @@ void dtGUI::GUI::SetPreRenderGUIToTexture(bool b)
 bool dtGUI::GUI::GetPreRenderGUIToTexture() const
 {
    return mPreRenderToTexture;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+bool GUI::AddTask(GUI::GUITask& task)
+{
+   bool success = false;
+   
+   if ( ! HasTask(task))
+   {
+      mTasks.push_back(&task);
+      success = true;
+   }
+
+   return success;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+bool GUI::RemoveTask(GUI::GUITask& task)
+{
+   bool success = false;
+   GUITaskArray::iterator foundIter = std::find(mTasks.begin(), mTasks.end(), &task);
+
+   if (foundIter != mTasks.end())
+   {
+      mTasks.erase(foundIter);
+      success = true;
+   }
+
+   return success;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+bool GUI::HasTask(GUI::GUITask& task) const
+{
+   return mTasks.end() != std::find(mTasks.begin(), mTasks.end(), &task);
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+GUI::GUITaskArray& GUI::GetTasks()
+{
+   return mTasks;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+const GUI::GUITaskArray& GUI::GetTasks() const
+{
+   return mTasks;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+int GUI::GetTaskCount() const
+{
+   return (int)mTasks.size();
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+int GUI::UpdateTasks(float dt)
+{
+   int results = 0;
+
+   GUITaskArray::iterator curIter = mTasks.begin();
+   GUITaskArray::iterator endIter = mTasks.end();
+   for (; curIter != endIter; ++curIter)
+   {
+      (*curIter)->Update(dt);
+      ++results;
+   }
+
+   return results;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

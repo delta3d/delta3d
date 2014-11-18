@@ -65,6 +65,28 @@ namespace dtGUI
       DECLARE_MANAGEMENT_LAYER(GUI)
 
       /**
+       * Class for handling and ensure UI updates happen
+       * while a graphics context is valid.
+       */
+      class DT_GUI_EXPORT GUITask : public osg::Referenced
+      {
+      public:
+         GUITask();
+
+         /**
+          * Method to be overridden.
+          */
+         virtual void Update(float dt) = 0;
+
+      protected:
+         virtual ~GUITask();
+      };
+
+      typedef std::vector<dtCore::RefPtr<GUITask> > GUITaskArray;
+
+
+
+      /**
        * Create the GUI instance.
        * @param camera The Camera the UI will be rendered to
        * @param keyboard The Keyboard to listen to for events
@@ -423,6 +445,47 @@ namespace dtGUI
       void SetPreRenderGUIToTexture(bool b);
       bool GetPreRenderGUIToTexture() const;
 
+      /**
+       * Adds a GUI update task to the GUI system.
+       * @param task The task instance to add.
+       * @return TRUE if the instance was not found and was added.
+       */
+      bool AddTask(GUITask& task);
+      
+      /**
+       * Removes a specified GUI update task from the GUI system.
+       * @param task The task instance to remove.
+       * @return TRUE if the instance was found and removed.
+       */
+      bool RemoveTask(GUITask& task);
+
+      /**
+       * Determines if a specified GUI update task is in the GUI system.
+       * @param task The task instance in question.
+       * @return TRUE if the instance was found.
+       */
+      bool HasTask(GUITask& task) const;
+
+      /**
+       * Accesses all the GUI update tasks referenced by the GUI system.
+       * @return Collection of all tasks referenced by the GUI system.
+       */
+      GUITaskArray& GetTasks();
+      const GUITaskArray& GetTasks() const;
+
+      /**
+       * Determines how many GUI update tasks are in the GUI system.
+       * @return Number of tasks referenced by the GUI system.
+       */
+      int GetTaskCount() const;
+
+      /**
+       * Method that ticks all GUI update tasks by a specified time step.
+       * @param dt Time delta by which to tick all the tasks.
+       * @return Number of tasks updated.
+       */
+      int UpdateTasks(float dt = 0.0f);
+
    protected:
       virtual ~GUI();
 
@@ -457,6 +520,8 @@ namespace dtGUI
       dtCore::RefPtr<osg::Camera> mGUIPreRenderCamera;
       dtCore::RefPtr<osg::Camera> mGUICameraScreen;
       dtCore::RefPtr<osg::Texture2D> mGUITexture;
+
+      GUITaskArray mTasks;
 
    };
 }
