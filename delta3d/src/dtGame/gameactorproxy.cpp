@@ -979,7 +979,7 @@ namespace dtGame
       {
          GameActor* ga = GetDrawable<GameActor>();
          if (ga != NULL)
-            ga->OnTickLocal(tickMessage);
+            ga->OnTickRemote(tickMessage);
       }
    }
 
