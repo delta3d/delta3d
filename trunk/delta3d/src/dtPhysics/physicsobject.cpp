@@ -40,6 +40,7 @@
 #include <pal/palBodyBase.h>
 #include <pal/palActivation.h>
 #include <pal/palBodies.h>
+#include <pal/palFactory.h>
 
 #include <cstring>
 
@@ -1419,6 +1420,101 @@ namespace dtPhysics
          center.set(0.0f, 0.0f, 0.0f);
          extents.set(0.0f, 0.0f, 0.0f);
       }
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////////////////
+   palRevoluteLink* PhysicsObject::CreateRevoluteJoint ( dtPhysics::PhysicsObject& parent,
+         dtPhysics::PhysicsObject& child,
+         const VectorType&         pivotAnchor,
+         const VectorType&         pivotAxis,
+         bool                      disableCollisionBetweenBodies)
+   {
+      if (parent.GetBodyWrapper() == NULL && child.GetBodyWrapper() == NULL)
+         return NULL;
+
+      palBodyBase* bodyBase1( &(parent.GetBodyWrapper()->GetPalBodyBase()) );
+      palBodyBase* bodyBase2( &(child.GetBodyWrapper()->GetPalBodyBase()) );
+      palRevoluteLink* pivot = dtPhysics::PhysicsWorld::GetInstance().GetPalFactory()->CreateRevoluteLink(bodyBase1, bodyBase2,
+            pivotAnchor[0], pivotAnchor[1], pivotAnchor[2],
+            pivotAxis[0], pivotAxis[1], pivotAxis[2],
+            disableCollisionBetweenBodies);
+
+      return pivot;
+   }
+
+
+   ///////////////////////////////////////////////////////////////////////////////////////////
+   palGenericLink* PhysicsObject::Create6DOFJoint ( dtPhysics::PhysicsObject& parent,
+         dtPhysics::PhysicsObject& child,
+         const VectorType&         pivotAnchor,
+         const VectorType&         pivotAxis,
+         bool                      disableCollisionBetweenBodies)
+   {
+
+      if (parent.GetBodyWrapper() == NULL && child.GetBodyWrapper() == NULL)
+         return NULL;
+
+      dtCore::Transform xform;
+      parent.GetTransform(xform);
+      osg::Vec3 trans;
+      xform.GetTranslation(trans);
+
+      palMatrix4x4 frameA, frameB;
+
+      dtPhysics::VectorType yDir = pivotAxis ^ dtPhysics::VectorType( 1.0, 0.0, 0.0 );
+
+      mat_identity ( &frameA );
+      frameA._11 = 1.0;
+      frameA._12 = 0.0;
+      frameA._13 = 0.0;
+      frameA._21 = yDir.x();
+      frameA._22 = yDir.y();
+      frameA._23 = yDir.z();
+      frameA._31 = pivotAxis.x();
+      frameA._32 = pivotAxis.y();
+      frameA._33 = pivotAxis.z();
+      osg::Vec3 relPos = pivotAnchor - trans ;
+      mat_set_translation(&frameA, relPos.x(), relPos.y(), relPos.z());
+
+      mat_identity ( &frameB );
+      frameB._11 = 1.0;
+      frameB._12 = 0.0;
+      frameB._13 = 0.0;
+      frameB._21 = yDir.x();
+      frameB._22 = yDir.y();
+      frameB._23 = yDir.z();
+      frameB._31 = pivotAxis.x();
+      frameB._32 = pivotAxis.y();
+      frameB._33 = pivotAxis.z();
+      child.GetTransform(xform);
+      xform.GetTranslation(trans);
+      relPos = pivotAnchor - trans;
+      mat_set_translation(&frameB, relPos.x(), relPos.y(), relPos.z());
+
+      palBodyBase* bodyBase1( &(parent.GetBodyWrapper()->GetPalBodyBase()) );
+      palBodyBase* bodyBase2( &(child.GetBodyWrapper()->GetPalBodyBase()) );
+
+
+      // lower is high than upper.  That means free movement.
+      palVector3 lower ( FLT_EPSILON, FLT_EPSILON, FLT_EPSILON ), upper ( 0.0, 0.0, 0.0 );
+      palGenericLink* pivot = dtPhysics::PhysicsWorld::GetInstance().GetPalFactory()->CreateGenericLink(bodyBase1, bodyBase2,
+            frameA, frameB, lower, upper, lower, upper,
+            disableCollisionBetweenBodies);
+
+      return pivot;
+   }
+
+   palRigidLink* PhysicsObject::CreateFixedJoint(dtPhysics::PhysicsObject& parent, dtPhysics::PhysicsObject& child, bool disableCollisionBetweenBodies)
+   {
+      if (parent.GetBodyWrapper() == NULL && child.GetBodyWrapper() == NULL)
+         return NULL;
+
+      palBodyBase* bodyBase1( &(parent.GetBodyWrapper()->GetPalBodyBase()) );
+      palBodyBase* bodyBase2( &(child.GetBodyWrapper()->GetPalBodyBase()) );
+      palRigidLink* joint = dtPhysics::PhysicsWorld::GetInstance().GetPalFactory()->CreateRigidLink(bodyBase1, bodyBase2, disableCollisionBetweenBodies);
+
+      return joint;
+
    }
 
 

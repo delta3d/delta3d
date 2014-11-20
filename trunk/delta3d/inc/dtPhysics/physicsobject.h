@@ -39,6 +39,10 @@
 #include <dtUtil/deprecationmgr.h>
 #include <osg/BoundingBox>
 
+class palRevoluteLink;
+class palGenericLink;
+class palRigidLink;
+
 namespace dtPhysics
 {
    ///////////////////////////
@@ -163,9 +167,9 @@ namespace dtPhysics
       /// Adds a force in local space
       void AddLocalForce(const VectorType& forceToAdd);
       /// Adds a force in global space at a global position
-      void AddForceAtPosition(const VectorType& position, const VectorType& force);
+      void AddForceAtPosition(const VectorType& globalPosition, const VectorType& globalForce);
       /// Adds a force in local space at a local position.
-      void AddLocalForceAtPosition(const VectorType& position, const VectorType& force);
+      void AddLocalForceAtPosition(const VectorType& localPosition, const VectorType& localForce);
       void ApplyImpulse(const VectorType& impulseAmount);
       void ApplyLocalImpulse(const VectorType& impulseAmount);
       void ApplyImpulseAtPosition(const VectorType& position, const VectorType& impulse);
@@ -331,6 +335,43 @@ namespace dtPhysics
 
       static void CalculateOriginAndExtentsForNode(PrimitiveType& type, const osg::BoundingBox& bb,
                VectorType& center, VectorType& extents);
+
+
+      /**
+       * \brief Creates a revolute joint.  The current position of the parent is used to setup the joint.
+       * @return NULL if either physics object is not initialized.
+       *
+       * @param parent            Parent object It is only the parent because the joint is setup in the reference frame of this object.
+       * @param child             Child object
+       * @param pivotAnchor       Position in world space of joint center
+       * @param pivotAxis         Rotational axis of joint
+       *
+       * @note the caller is responsible for deleting the link with delete since it is not a referenced class.
+       *
+       */
+      static palRevoluteLink* CreateRevoluteJoint(dtPhysics::PhysicsObject& parent, dtPhysics::PhysicsObject& child, const VectorType& pivotAnchor, const VectorType& pivotAxis, bool disableCollisionBetweenBodies = true);
+
+      /**
+       * \brief Creates a single 6-degree-of-freedom joint.  The current position of the parent is used to create the frame of reference matrices.
+       * @return NULL if either physics object is not initialized.
+       *
+       * @param parent            parent object ( sprung mass )
+       * @param child             child object ( unsprung mass )
+       * @param pivotAnchor       position of joint center
+       * @param pivotAxis         rotational axis of joint
+       *
+       * @note the caller is responsible for deleting the link with delete since it is not a referenced class.
+       *
+       */
+      static palGenericLink* Create6DOFJoint(dtPhysics::PhysicsObject& parent, dtPhysics::PhysicsObject& child, const VectorType& pivotAnchor, const VectorType& pivotAxis, bool disableCollisionBetweenBodies = true);
+
+      /**
+       * Creates a fixed joint using the current transforms of the physics objects for relative positions.
+       * @return NULL if either physics object is not initialized.
+       *
+       * @note the caller is responsible for deleting the link with delete since it is not a referenced class.
+       */
+      static palRigidLink* CreateFixedJoint(dtPhysics::PhysicsObject& parent, dtPhysics::PhysicsObject& child, bool disableCollisionBetweenBodies = true);
 
    protected:
       ~PhysicsObject();
