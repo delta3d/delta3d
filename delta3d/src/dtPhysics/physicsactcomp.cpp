@@ -304,26 +304,26 @@ namespace dtPhysics
 
       typedef ArrayActorPropertyComplex<dtPhysics::PhysicsObjectPtr> PhysObjArrayProp;
       dtCore::RefPtr<PhysObjArrayProp> physObjArrayProp =
-         new PhysObjArrayProp(
-         PROPERTY_PHYSICS_OBJECT_ARRAY,
-         PROPERTY_PHYSICS_OBJECT_ARRAY,
-         PhysObjArrayProp::SetFuncType(this, &PhysicsActComp::SetPhysicsObjectByIndex),
-         PhysObjArrayProp::GetFuncType(this, &PhysicsActComp::GetPhysicsObjectByIndex),
-         PhysObjArrayProp::GetSizeFuncType(this, &PhysicsActComp::GetPhysicsObjectCount),
-         PhysObjArrayProp::InsertFuncType(this, &PhysicsActComp::InsertNewPhysicsObject),
-         PhysObjArrayProp::RemoveFuncType(this, &PhysicsActComp::RemovePhysicsObjectByIndex),
-         RefString("Defines physics objects associated with the actor."),
-         GROUP);
+            new PhysObjArrayProp(
+                  PROPERTY_PHYSICS_OBJECT_ARRAY,
+                  PROPERTY_PHYSICS_OBJECT_ARRAY,
+                  PhysObjArrayProp::SetFuncType(this, &PhysicsActComp::SetPhysicsObjectByIndex),
+                  PhysObjArrayProp::GetFuncType(this, &PhysicsActComp::GetPhysicsObjectByIndex),
+                  PhysObjArrayProp::GetSizeFuncType(this, &PhysicsActComp::GetPhysicsObjectCount),
+                  PhysObjArrayProp::InsertFuncType(this, &PhysicsActComp::InsertNewPhysicsObject),
+                  PhysObjArrayProp::RemoveFuncType(this, &PhysicsActComp::RemovePhysicsObjectByIndex),
+                  RefString("Defines physics objects associated with the actor."),
+                  GROUP);
 
       typedef dtCore::SimplePropertyContainerActorProperty<dtPhysics::PhysicsObject> PhysObjProp;
       dtCore::RefPtr<PhysObjProp> physObjProp =
-         new PhysObjProp(
-         PROPERTY_PHYSICS_OBJECT,
-         PROPERTY_PHYSICS_OBJECT,
-         PhysObjProp::SetFuncType(physObjArrayProp.get(), &PhysObjArrayProp::SetCurrentValue),
-         PhysObjProp::GetFuncType(physObjArrayProp.get(), &PhysObjArrayProp::GetCurrentValue),
-         RefString("Physics object properties"),
-         GROUP);
+            new PhysObjProp(
+                  PROPERTY_PHYSICS_OBJECT,
+                  PROPERTY_PHYSICS_OBJECT,
+                  PhysObjProp::SetFuncType(physObjArrayProp.get(), &PhysObjArrayProp::SetCurrentValue),
+                  PhysObjProp::GetFuncType(physObjArrayProp.get(), &PhysObjArrayProp::GetCurrentValue),
+                  RefString("Physics object properties"),
+                  GROUP);
 
       physObjArrayProp->SetArrayProperty(*physObjProp);
 
@@ -941,5 +941,6 @@ namespace dtPhysics
          LOGN_ERROR("physicsactcomp.cpp", debugInfo);
       }
    }
+
 
 } // namespace dtPhysics

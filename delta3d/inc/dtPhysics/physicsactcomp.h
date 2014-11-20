@@ -306,6 +306,7 @@ namespace dtPhysics
             return TraceRay(location, direction, outPoint, groupFlags);
          }
 
+
       protected:
          ~PhysicsActComp();
 
