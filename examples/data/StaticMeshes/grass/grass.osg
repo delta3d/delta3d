@@ -90,11 +90,52 @@ MatrixTransform {
                 borderWidth 0
                 useHardwareMipMapGeneration TRUE
                 unRefImageDataAfterApply TRUE
-                internalFormatMode USE_S3TC_DXT5_COMPRESSION
+                internalFormatMode USE_S3TC_DXT1_COMPRESSION
                 resizeNonPowerOfTwo TRUE
                 shadowComparison FALSE
                 shadowCompareFunc GL_LEQUAL
                 shadowTextureMode GL_LUMINANCE
+              }
+            }
+            textureUnit 3 {
+              GL_TEXTURE_2D ON
+              Texture2D {
+                UniqueID Texture2D_3
+                file "images\\Grass_ALPHA.png"
+                wrap_s REPEAT
+                wrap_t REPEAT
+                wrap_r CLAMP_TO_EDGE
+                min_filter LINEAR_MIPMAP_LINEAR
+                mag_filter LINEAR
+                maxAnisotropy 1
+                borderColor 0 0 0 0
+                borderWidth 0
+                useHardwareMipMapGeneration TRUE
+                unRefImageDataAfterApply TRUE
+                internalFormatMode USE_S3TC_DXT1_COMPRESSION
+                resizeNonPowerOfTwo TRUE
+                shadowComparison FALSE
+                shadowCompareFunc GL_LEQUAL
+                shadowTextureMode GL_LUMINANCE
+              }
+              TexEnvCombine {
+                combine_RGB REPLACE
+                combine_Alpha INTERPOLATE
+                source0_RGB PREVIOUS
+                source1_RGB PREVIOUS
+                source2_RGB CONSTANT
+                source0_Alpha TEXTURE
+                source1_Alpha PREVIOUS
+                source2_Alpha CONSTANT
+                operand0_RGB SRC_COLOR
+                operand1_RGB SRC_COLOR
+                operand2_RGB SRC_ALPHA
+                operand0_Alpha SRC_ALPHA
+                operand1_Alpha SRC_ALPHA
+                operand2_Alpha SRC_ALPHA
+                scale_RGB 1
+                scale_Alpha 1
+                constantColor 1 1 1 1
               }
             }
           }
@@ -102,35 +143,39 @@ MatrixTransform {
           useVertexBufferObjects FALSE
           PrimitiveSets 1
           {
-            DrawArrays TRIANGLES 0 6
+            DrawElementsUShort TRIANGLES 6
+            {
+              0 1 2 2 3 0 
+            }
           }
-          VertexArray Vec3Array 6
+          VertexArray Vec3Array 4
           {
             0.5 1.49012e-008 -0.125
             0.5 0.25 -0.125
             0 0.25 -0.125
-            0 0.25 -0.125
             0 1.49012e-008 -0.125
-            0.5 1.49012e-008 -0.125
           }
           NormalBinding PER_VERTEX
-          NormalArray Vec3Array 6
+          NormalArray Vec3Array 4
           {
             0 1 0
             0 1 0
             0 1 0
             0 1 0
-            0 1 0
-            0 1 0
           }
-          TexCoordArray 0 Vec2Array 6
+          TexCoordArray 0 Vec2Array 4
           {
             1 5.96046e-008
             1 0.953877
             0.5 0.953878
+            0.5 5.36442e-007
+          }
+          TexCoordArray 1 Vec2Array 4
+          {
+            1 5.96046e-008
+            1 0.953877
             0.5 0.953878
             0.5 5.36442e-007
-            1 5.96046e-008
           }
         }
       }
@@ -163,7 +208,7 @@ MatrixTransform {
       }
       num_children 1
       Geode {
-        UniqueID Geode_3
+        UniqueID Geode_4
         DataVariance STATIC
         name "Grass_04-GEODE"
         nodeMask 0xffffffff
@@ -176,35 +221,39 @@ MatrixTransform {
           useVertexBufferObjects FALSE
           PrimitiveSets 1
           {
-            DrawArrays TRIANGLES 0 6
+            DrawElementsUShort TRIANGLES 6
+            {
+              0 1 2 2 3 0 
+            }
           }
-          VertexArray Vec3Array 6
+          VertexArray Vec3Array 4
           {
             0 1.49012e-008 -0.125
             0 0.25 -0.125
             -0.5 0.25 -0.125
-            -0.5 0.25 -0.125
             -0.5 1.49012e-008 -0.125
-            0 1.49012e-008 -0.125
           }
           NormalBinding PER_VERTEX
-          NormalArray Vec3Array 6
+          NormalArray Vec3Array 4
           {
             0 1 0
             0 1 0
             0 1 0
             0 1 0
-            0 1 0
-            0 1 0
           }
-          TexCoordArray 0 Vec2Array 6
+          TexCoordArray 0 Vec2Array 4
           {
             0.5 5.36442e-007
             0.5 0.953878
             2.98023e-008 0.953878
+            0 1.01328e-006
+          }
+          TexCoordArray 1 Vec2Array 4
+          {
+            0.5 5.36442e-007
+            0.5 0.953878
             2.98023e-008 0.953878
             0 1.01328e-006
-            0.5 5.36442e-007
           }
         }
       }
@@ -237,7 +286,7 @@ MatrixTransform {
       }
       num_children 1
       Geode {
-        UniqueID Geode_4
+        UniqueID Geode_5
         DataVariance STATIC
         name "Grass_06-GEODE"
         nodeMask 0xffffffff
@@ -250,35 +299,39 @@ MatrixTransform {
           useVertexBufferObjects FALSE
           PrimitiveSets 1
           {
-            DrawArrays TRIANGLES 0 6
+            DrawElementsUShort TRIANGLES 6
+            {
+              0 1 2 2 3 0 
+            }
           }
-          VertexArray Vec3Array 6
+          VertexArray Vec3Array 4
           {
             -1.49012e-008 1.49012e-008 -0.125
             -1.49012e-008 0.25 -0.125
             0.25 0.25 0.308013
-            0.25 0.25 0.308013
             0.25 2.98023e-008 0.308013
-            -1.49012e-008 1.49012e-008 -0.125
           }
           NormalBinding PER_VERTEX
-          NormalArray Vec3Array 6
+          NormalArray Vec3Array 4
           {
             0 1 0
             0 1 0
             0 1 0
             0 1 0
-            0 1 0
-            0 1 0
           }
-          TexCoordArray 0 Vec2Array 6
+          TexCoordArray 0 Vec2Array 4
           {
             0.5 5.36442e-007
             0.5 0.953878
             2.98023e-008 0.953878
+            0 1.01328e-006
+          }
+          TexCoordArray 1 Vec2Array 4
+          {
+            0.5 5.36442e-007
+            0.5 0.953878
             2.98023e-008 0.953878
             0 1.01328e-006
-            0.5 5.36442e-007
           }
         }
       }
@@ -311,7 +364,7 @@ MatrixTransform {
       }
       num_children 1
       Geode {
-        UniqueID Geode_5
+        UniqueID Geode_6
         DataVariance STATIC
         name "Grass_02-GEODE"
         nodeMask 0xffffffff
@@ -324,35 +377,39 @@ MatrixTransform {
           useVertexBufferObjects FALSE
           PrimitiveSets 1
           {
-            DrawArrays TRIANGLES 0 6
+            DrawElementsUShort TRIANGLES 6
+            {
+              0 1 2 2 3 0 
+            }
           }
-          VertexArray Vec3Array 6
+          VertexArray Vec3Array 4
           {
             -1.49012e-008 2.23517e-008 -0.125
             1.49012e-008 0.25 -0.125
             0.25 0.25 -0.558013
-            0.25 0.25 -0.558013
             0.25 0 -0.558013
-            -1.49012e-008 2.23517e-008 -0.125
           }
           NormalBinding PER_VERTEX
-          NormalArray Vec3Array 6
+          NormalArray Vec3Array 4
           {
             0 1 0
             0 1 0
             0 1 0
             0 1 0
-            0 1 0
-            0 1 0
           }
-          TexCoordArray 0 Vec2Array 6
+          TexCoordArray 0 Vec2Array 4
           {
             0.5 5.36442e-007
             0.5 0.953878
             2.98023e-008 0.953878
+            0 1.01328e-006
+          }
+          TexCoordArray 1 Vec2Array 4
+          {
+            0.5 5.36442e-007
+            0.5 0.953878
             2.98023e-008 0.953878
             0 1.01328e-006
-            0.5 5.36442e-007
           }
         }
       }
@@ -385,7 +442,7 @@ MatrixTransform {
       }
       num_children 1
       Geode {
-        UniqueID Geode_6
+        UniqueID Geode_7
         DataVariance STATIC
         name "Grass_05-GEODE"
         nodeMask 0xffffffff
@@ -398,35 +455,39 @@ MatrixTransform {
           useVertexBufferObjects FALSE
           PrimitiveSets 1
           {
-            DrawArrays TRIANGLES 0 6
+            DrawElementsUShort TRIANGLES 6
+            {
+              0 1 2 2 3 0 
+            }
           }
-          VertexArray Vec3Array 6
+          VertexArray Vec3Array 4
           {
             -0.25 4.47035e-008 0.308013
             -0.25 0.25 0.308013
             1.49012e-008 0.25 -0.125
-            1.49012e-008 0.25 -0.125
             -1.49012e-008 2.23517e-008 -0.125
-            -0.25 4.47035e-008 0.308013
           }
           NormalBinding PER_VERTEX
-          NormalArray Vec3Array 6
+          NormalArray Vec3Array 4
           {
             0 1 0
             0 1 0
             0 1 0
             0 1 0
-            0 1 0
-            0 1 0
           }
-          TexCoordArray 0 Vec2Array 6
+          TexCoordArray 0 Vec2Array 4
           {
             1 5.96046e-008
             1 0.953877
             0.5 0.953878
+            0.5 5.36442e-007
+          }
+          TexCoordArray 1 Vec2Array 4
+          {
+            1 5.96046e-008
+            1 0.953877
             0.5 0.953878
             0.5 5.36442e-007
-            1 5.96046e-008
           }
         }
       }
@@ -459,7 +520,7 @@ MatrixTransform {
       }
       num_children 1
       Geode {
-        UniqueID Geode_7
+        UniqueID Geode_8
         DataVariance STATIC
         name "Grass_03-GEODE"
         nodeMask 0xffffffff
@@ -472,35 +533,39 @@ MatrixTransform {
           useVertexBufferObjects FALSE
           PrimitiveSets 1
           {
-            DrawArrays TRIANGLES 0 6
+            DrawElementsUShort TRIANGLES 6
+            {
+              0 1 2 2 3 0 
+            }
           }
-          VertexArray Vec3Array 6
+          VertexArray Vec3Array 4
           {
             -0.25 0 -0.558013
             -0.25 0.25 -0.558013
             -1.49012e-008 0.25 -0.125
-            -1.49012e-008 0.25 -0.125
             -1.49012e-008 1.49012e-008 -0.125
-            -0.25 0 -0.558013
           }
           NormalBinding PER_VERTEX
-          NormalArray Vec3Array 6
+          NormalArray Vec3Array 4
           {
             0 1 0
             0 1 0
             0 1 0
             0 1 0
-            0 1 0
-            0 1 0
           }
-          TexCoordArray 0 Vec2Array 6
+          TexCoordArray 0 Vec2Array 4
           {
             1 5.96046e-008
             1 0.953877
             0.5 0.953878
+            0.5 5.36442e-007
+          }
+          TexCoordArray 1 Vec2Array 4
+          {
+            1 5.96046e-008
+            1 0.953877
             0.5 0.953878
             0.5 5.36442e-007
-            1 5.96046e-008
           }
         }
       }
