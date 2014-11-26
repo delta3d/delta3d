@@ -766,8 +766,7 @@ void FPSMotionModel::AdjustElevation(osg::Vec3& xyz, double deltaFrameTime)
    {
       // adjust the position based on the gravity vector
 
-      osg::Vec3 gravityVec;
-      mScene->GetGravity(gravityVec);
+      osg::Vec3 gravityVec(0.0,0.0,-9.8);
 
       mFallingVec += gravityVec * deltaFrameTime;
 

@@ -27,8 +27,7 @@
 #include <queue>
 #include <list>
 
-#include <dtCore/physical.h>
-
+#include <dtCore/transformable.h>
 #include <dtUtil/enumeration.h>
 
 #include <dtTerrain/geocoordinates.h>
@@ -84,7 +83,7 @@ namespace dtTerrain
     * renderer implements a particular terrain rendering algorithm.  Each of these
     * components can be dynamically changed on each instance of this terrain class.
     */
-   class DT_TERRAIN_EXPORT Terrain : public dtCore::Physical
+   class DT_TERRAIN_EXPORT Terrain : public dtCore::Transformable
    {
       //Help minimize some typing...
       typedef std::map<std::string,dtCore::RefPtr<TerrainDecorationLayer> > TerrainLayerMap;

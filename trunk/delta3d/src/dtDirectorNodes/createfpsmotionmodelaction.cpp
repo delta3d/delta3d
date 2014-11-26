@@ -23,8 +23,7 @@
 
 #include <dtABC/application.h>
 
-#include <dtCore/collisionmotionmodel.h>
-#include <dtCore/collisioncategorydefaults.h>
+#include <dtCore/fpsmotionmodel.h>
 
 #include <dtCore/actoridactorproperty.h>
 #include <dtCore/stringactorproperty.h>
@@ -48,15 +47,11 @@ namespace dtDirector
       mWalkSpeed     = 5.0f;
       mSidestepSpeed = 5.0f;
       mTurnSpeed     = 1.5f;
-      mJumpSpeed     = 5.0f;
       mSlideSpeed    = 5.0f;
       mSmoothingSpeed= 20.0f;
       mSlideThreshold= 0.1f;
       mUseWASD       = true;
       mUseArrows     = true;
-      mAllowJump     = true;
-      mTorsoMask     = COLLISION_CATEGORY_MASK_OBJECT;
-      mFeetMask      = COLLISION_CATEGORY_MASK_OBJECT;
 
       AddAuthor("Jeff P. Houde");
    }
@@ -136,13 +131,6 @@ namespace dtDirector
          "The turn speed of the motion model.");
       AddProperty(turnProp);
 
-      dtCore::FloatActorProperty* jumpSpeedProp = new dtCore::FloatActorProperty(
-         "Jump Speed", "Jump Speed",
-         dtCore::FloatActorProperty::SetFuncType(this, &CreateFPSMotionModelAction::SetJumpSpeed),
-         dtCore::FloatActorProperty::GetFuncType(this, &CreateFPSMotionModelAction::GetJumpSpeed),
-         "The jump speed.");
-      AddProperty(jumpSpeedProp);
-
       dtCore::FloatActorProperty* slideSpeedProp = new dtCore::FloatActorProperty(
          "Slide Speed", "Slide Speed",
          dtCore::FloatActorProperty::SetFuncType(this, &CreateFPSMotionModelAction::SetSlideSpeed),
@@ -178,29 +166,6 @@ namespace dtDirector
          "Allow Arrow Keys for motion model movement.");
       AddProperty(useArrowsProp);
 
-      dtCore::BooleanActorProperty* jumpProp = new dtCore::BooleanActorProperty(
-         "Allow Jump", "Allow Jump",
-         dtCore::BooleanActorProperty::SetFuncType(this, &CreateFPSMotionModelAction::SetAllowJump),
-         dtCore::BooleanActorProperty::GetFuncType(this, &CreateFPSMotionModelAction::GetAllowJump),
-         "Allow jumping with the motion model.");
-      AddProperty(jumpProp);
-
-      dtCore::BitMaskActorProperty* torsoProp = new dtCore::BitMaskActorProperty(
-         "Torso Collision", "Torso Collision",
-         dtCore::BitMaskActorProperty::SetFuncType(this, &CreateFPSMotionModelAction::SetTorsoCollisionMask),
-         dtCore::BitMaskActorProperty::GetFuncType(this, &CreateFPSMotionModelAction::GetTorsoCollisionMask),
-         dtCore::BitMaskActorProperty::GetMaskListFuncType(this, &CreateFPSMotionModelAction::GetCollisionMaskList),
-         "Torso collision bits for the motion model.");
-      AddProperty(torsoProp);
-
-      dtCore::BitMaskActorProperty* feetProp = new dtCore::BitMaskActorProperty(
-         "Feet Collision", "Feet Collision",
-         dtCore::BitMaskActorProperty::SetFuncType(this, &CreateFPSMotionModelAction::SetFeetCollisionMask),
-         dtCore::BitMaskActorProperty::GetFuncType(this, &CreateFPSMotionModelAction::GetFeetCollisionMask),
-         dtCore::BitMaskActorProperty::GetMaskListFuncType(this, &CreateFPSMotionModelAction::GetCollisionMaskList),
-         "Feet collision bits for the motion model.");
-      AddProperty(feetProp);
-
       // This will expose the properties in the editor and allow
       // them to be connected to ValueNodes.
       mValues.push_back(ValueLink(this, actorProp));
@@ -211,15 +176,11 @@ namespace dtDirector
       mValues.push_back(ValueLink(this, walkProp, false, false, true, false));
       mValues.push_back(ValueLink(this, sideProp, false, false, true, false));
       mValues.push_back(ValueLink(this, turnProp, false, false, true, false));
-      mValues.push_back(ValueLink(this, jumpSpeedProp, false, false, true, false));
       mValues.push_back(ValueLink(this, slideSpeedProp, false, false, true, false));
       mValues.push_back(ValueLink(this, slideThresholdProp, false, false, true, false));
       mValues.push_back(ValueLink(this, smoothingProp, false, false, true, false));
       mValues.push_back(ValueLink(this, useWasdProp, false, false, true, false));
       mValues.push_back(ValueLink(this, useArrowsProp, false, false, true, false));
-      mValues.push_back(ValueLink(this, jumpProp, false, false, true, false));
-      mValues.push_back(ValueLink(this, torsoProp, false, false, true, false));
-      mValues.push_back(ValueLink(this, feetProp, false, false, true, false));
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -229,31 +190,23 @@ namespace dtDirector
       std::string modelName = GetString("Motion Model");
       if (app && !modelName.empty())
       {
-         dtCore::CollisionMotionModel* model = dtCore::CollisionMotionModel::GetInstance(modelName);
+         dtCore::FPSMotionModel* model = dtCore::FPSMotionModel::GetInstance(modelName);
          if (model == NULL)
          {
-            mCreatedMotionModel = new dtCore::CollisionMotionModel(
-               GetFloat("Height"),
-               GetFloat("Radius"),
-               GetFloat("Step Height"),
-               app->GetScene(),
+            mCreatedMotionModel = new dtCore::FPSMotionModel(
                app->GetKeyboard(),
                app->GetMouse(),
                GetFloat("Walk Speed"),
                GetFloat("Turn Speed"),
                GetFloat("Sidestep Speed"),
-               GetFloat("Jump Speed"),
-               GetFloat("Slide Speed"),
-               GetFloat("Slide Threshold"),
-               GetBoolean("Allow Jump"),
+               GetFloat("Height"),
+               GetFloat("Step Height"),
                GetBoolean("Use WASD Keys"),
                GetBoolean("Use Arrow Keys"));
 
             model = mCreatedMotionModel.get();
 
             model->SetName(modelName);
-            model->GetFPSCollider().SetCollisionBitsForTorso(GetUInt("Torso Collision"));
-            model->GetFPSCollider().SetCollisionBitsForFeet(GetUInt("Feet Collision"));
 
             dtCore::ActorProxy* actor = GetActor("Actor");
             if (actor)
@@ -269,19 +222,11 @@ namespace dtDirector
          if (model)
          {
             model->SetName(modelName);
-            model->SetCanJump(GetBoolean("Allow Jump"));
             model->SetMaximumWalkSpeed(GetFloat("Walk Speed"));
             model->SetMaximumTurnSpeed(GetFloat("Turn Speed"));
             model->SetMaximumSidestepSpeed(GetFloat("Sidestep Speed"));
             model->SetUseWASD(GetBoolean("Use WASD Keys"));
             model->SetUseArrowKeys(GetBoolean("Use Arrow Keys"));
-            model->GetFPSCollider().SetDimensions(GetFloat("Height"), GetFloat("Radius"), GetFloat("Step Height"));
-            model->GetFPSCollider().SetJumpSpeed(GetFloat("Jump Speed"));
-            model->GetFPSCollider().SetSlideSpeed(GetFloat("Slide Speed"));
-            model->GetFPSCollider().SetSlideThreshold(GetFloat("Slide Threshold"));
-            model->GetFPSCollider().SetSmoothingSpeed(GetFloat("Smoothing Speed"));
-            model->GetFPSCollider().SetCollisionBitsForTorso(GetUInt("Torso Collision"));
-            model->GetFPSCollider().SetCollisionBitsForFeet(GetUInt("Feet Collision"));
             model->SetScene(app->GetScene());
 
             dtCore::ActorProxy* actor = GetActor("Actor");
@@ -398,18 +343,6 @@ namespace dtDirector
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void CreateFPSMotionModelAction::SetJumpSpeed(float value)
-   {
-      mJumpSpeed = value;
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   float CreateFPSMotionModelAction::GetJumpSpeed() const
-   {
-      return mJumpSpeed;
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
    void CreateFPSMotionModelAction::SetSlideSpeed(float value)
    {
       mSlideSpeed = value;
@@ -469,99 +402,6 @@ namespace dtDirector
       return mUseArrows;
    }
 
-   ////////////////////////////////////////////////////////////////////////////////
-   void CreateFPSMotionModelAction::SetAllowJump(bool value)
-   {
-      mAllowJump = value;
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   bool CreateFPSMotionModelAction::GetAllowJump() const
-   {
-      return mAllowJump;
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   void CreateFPSMotionModelAction::SetTorsoCollisionMask(unsigned int value)
-   {
-      mTorsoMask = value;
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   unsigned int CreateFPSMotionModelAction::GetTorsoCollisionMask() const
-   {
-      return mTorsoMask;
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   void CreateFPSMotionModelAction::SetFeetCollisionMask(unsigned int value)
-   {
-      mFeetMask = value;
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   unsigned int CreateFPSMotionModelAction::GetFeetCollisionMask() const
-   {
-      return mFeetMask;
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   void CreateFPSMotionModelAction::GetCollisionMaskList(std::vector<std::string>& names, std::vector<unsigned int>& values)
-   {
-      names.push_back("Proximity Trigger");
-      values.push_back(COLLISION_CATEGORY_MASK_PROXIMITYTRIGGER);
-
-      names.push_back("Camera");
-      values.push_back(COLLISION_CATEGORY_MASK_CAMERA);
-
-      names.push_back("Compass");
-      values.push_back(COLLISION_CATEGORY_MASK_COMPASS);
-
-      names.push_back("Infinite Terrain");
-      values.push_back(COLLISION_CATEGORY_MASK_INFINITETERRAIN);
-
-      names.push_back("ISector");
-      values.push_back(COLLISION_CATEGORY_MASK_ISECTOR);
-
-      names.push_back("Object");
-      values.push_back(COLLISION_CATEGORY_MASK_OBJECT);
-
-      names.push_back("Particle System");
-      values.push_back(COLLISION_CATEGORY_MASK_PARTICLESYSTEM);
-
-      names.push_back("Physical");
-      values.push_back(COLLISION_CATEGORY_MASK_PHYSICAL);
-
-      names.push_back("Point Axis");
-      values.push_back(COLLISION_CATEGORY_MASK_POINTAXIS);
-
-      names.push_back("Positional Light");
-      values.push_back(COLLISION_CATEGORY_MASK_POSITIONALLIGHT);
-
-      names.push_back("Spot Light");
-      values.push_back(COLLISION_CATEGORY_MASK_SPOTLIGHT);
-
-      names.push_back("Transformable");
-      values.push_back(COLLISION_CATEGORY_MASK_TRANSFORMABLE);
-
-      names.push_back("Listener");
-      values.push_back(COLLISION_CATEGORY_MASK_LISTENER);
-
-      names.push_back("Sound");
-      values.push_back(COLLISION_CATEGORY_MASK_SOUND);
-
-      names.push_back("Entity");
-      values.push_back(COLLISION_CATEGORY_MASK_ENTITY);
-
-      names.push_back("Terrain");
-      values.push_back(COLLISION_CATEGORY_MASK_TERRAIN);
-
-      names.push_back("Defaults");
-      values.push_back(COLLISION_CATEGORY_MASK_ALLDEFAULTS);
-
-      names.push_back("All");
-      values.push_back(COLLISION_CATEGORY_MASK_ALL);
-   }
 }
 
 ////////////////////////////////////////////////////////////////////////////////

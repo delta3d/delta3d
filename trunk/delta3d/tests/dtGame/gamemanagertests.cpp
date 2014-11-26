@@ -1278,12 +1278,12 @@ void GameManagerTests::TestComplexScene()
    actors[5]->GetDrawable()->AddChild(actors[2]->GetDrawable());
 
    //create a plain actor so we can make sure it doesn't get moved up.
-   dtCore::RefPtr<dtCore::Physical> ph = new dtCore::Physical;
+   dtCore::RefPtr<dtCore::Transformable> tx = new dtCore::Transformable;
 
    //Add the game actors removed as a child to a regular actor.
    actors[0]->GetDrawable()->AddChild(actors[6]->GetDrawable());
    actors[0]->GetDrawable()->AddChild(actors[7]->GetDrawable());
-   actors[0]->GetDrawable()->AddChild(ph.get());
+   actors[0]->GetDrawable()->AddChild(tx.get());
 
    actors[1]->GetDrawable()->AddChild(actors[8]->GetDrawable());
    actors[1]->GetDrawable()->AddChild(actors[9]->GetDrawable());
@@ -1307,7 +1307,7 @@ void GameManagerTests::TestComplexScene()
    CPPUNIT_ASSERT_MESSAGE("proxy 7 should now be a child of proxy 5.",
       actors[5]->GetDrawable()->GetChildIndex(actors[7]->GetDrawable()) != actors[5]->GetDrawable()->GetNumChildren());
    CPPUNIT_ASSERT_MESSAGE("The physical actor should not be a child of proxy 5.",
-      actors[5]->GetDrawable()->GetChildIndex(ph.get()) == actors[5]->GetDrawable()->GetNumChildren());
+      actors[5]->GetDrawable()->GetChildIndex(tx.get()) == actors[5]->GetDrawable()->GetNumChildren());
 
    //remove proxy 5 to make it's children move up one.
    mGM->DeleteActor(*actors[5]);

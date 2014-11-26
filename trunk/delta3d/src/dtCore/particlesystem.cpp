@@ -3,7 +3,6 @@
 //////////////////////////////////////////////////////////////////////
 
 #include <prefix/dtcoreprefix.h>
-#include <dtCore/collisioncategorydefaults.h>
 #include <dtCore/observerptr.h>
 #include <dtCore/particlesystem.h>
 #include <dtCore/system.h>
@@ -70,8 +69,6 @@ ParticleSystem::ParticleSystem(std::string name)
    SetName(name);
 
    RegisterInstance(this);
-
-   SetCollisionCategoryBits(COLLISION_CATEGORY_MASK_PARTICLESYSTEM);
 
    AddSender(&System::GetInstance());
 }

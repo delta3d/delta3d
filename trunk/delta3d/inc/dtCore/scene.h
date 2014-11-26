@@ -30,9 +30,6 @@
 
 #include <osg/Vec3>
 
-#include <ode/common.h>
-#include <ode/collision_space.h>
-
 #include <osg/GL>
 
 /// @cond DOXYGEN_SHOULD_SKIP_THIS
@@ -55,7 +52,6 @@ namespace dtUtil
 namespace dtCore
 {
    class Transformable;
-   class ODEController;
    class DatabasePager;
    class DeltaDrawable;
    class Light;
@@ -91,15 +87,6 @@ namespace dtCore
        * @param name : Optional string used to name this particular Scene
        */
       Scene(const std::string& name = "scene");
-
-      /**
-       * Scene constructor used to supply a custom physics controller, or NULL, to
-       * use for physics stepping.
-       * @param physicsController : The controller the Scene will use to manage the
-       * physics.  Can be NULL, if no controller is required.
-       * @param name : Optional string used to name this particular Scene
-       */
-      Scene(ODEController* physicsController, const std::string& name = "scene");
 
    protected:
 
@@ -193,30 +180,6 @@ namespace dtCore
        */
       bool GetHeightOfTerrain(float& heightOfTerrain, float x, float y, float maxZ = 10000.0f, float minZ = -10000.0f);
 
-      ///Get the ODE space ID
-      dSpaceID GetSpaceID() const;
-
-      ///Get the ODE world ID
-      dWorldID GetWorldID() const;
-
-      ///Get the ODE contact joint group ID
-      dJointGroupID GetContactJointGroupID() const;
-
-      ///Set the gravity vector
-      void SetGravity(const osg::Vec3& gravity) const;
-
-      ///Set the gravity vector
-      void SetGravity(float x, float y, float z) const { SetGravity(osg::Vec3(x, y, z)); }
-
-      ///Get the gravity vector
-      void GetGravity(osg::Vec3& vec) const;
-
-      ///Get the gravity vector
-      osg::Vec3 GetGravity() const;
-
-      ///Get the gravity vector
-      void GetGravity(float& x, float& y, float& z) const;
-
       ///Performs collision detection and updates physics
       virtual void OnMessage(MessageData* data);
 
@@ -229,34 +192,6 @@ namespace dtCore
          float mDepth; ///<The penetration depth
       };
 
-      ///Supply a user-defined collision callback to replace the internal one
-      void SetUserCollisionCallback(dNearCallback* func, void* data=NULL) const;
-      dNearCallback* GetUserCollisionCallback() const;
-      void* GetUserCollisionData();
-      const void* GetUserCollisionData() const;
-
-      /**
-       * Get the step size of the physics.  The physics will
-       * be updated numerous times per frame based on this number.  For example,
-       * if the delta frame rate is 33ms and the step size is 2ms, the physics
-       * will be updated 16 times.
-       *
-       * @return the step size in seconds
-       * @see SetPhysicsStepSize()
-       */
-      double GetPhysicsStepSize() const;
-
-      /// @see GetPhysicsStepSize()
-      void SetPhysicsStepSize(double stepSize = 0.0) const;
-
-      /// Register a Transformable with the Scene
-      void RegisterCollidable(Transformable* collidable) const;
-
-      /// UnRegister a Transformable with the Scene
-      void UnRegisterCollidable(Transformable* collidable) const;
-
-      /// Get handle to the internal physics controller (could be NULL)
-      dtCore::ODEController* GetPhysicsController() const;
 
       /// Returns a pointer to the light specified by the param number
       Light* GetLight(const int number);

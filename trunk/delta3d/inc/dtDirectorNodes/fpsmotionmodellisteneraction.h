@@ -27,7 +27,7 @@
 #include <dtDirector/latentactionnode.h>
 #include <dtDirectorNodes/nodelibraryexport.h>
 
-#include <dtCore/collisionmotionmodel.h>
+#include <dtCore/fpsmotionmodel.h>
 
 namespace dtDirector
 {
@@ -99,7 +99,7 @@ namespace dtDirector
 
       std::string mModelName;
 
-      dtCore::CollisionMotionModel* mMotionModel;
+      dtCore::FPSMotionModel* mMotionModel;
       int                           mCurrentMode;
    };
 }

@@ -459,7 +459,7 @@ namespace dtPhysics
       }
 
       desc.m_nUpAxis = PAL_Z_AXIS;
-      desc.m_Properties["ODE_NoInitOrShutdown"] = "true";
+      //desc.m_Properties["ODE_NoInitOrShutdown"] = "true";
       desc.m_Properties["Bullet_UseInternalEdgeUtility"] = "true";
 
       if (mImpl->mConfig != NULL)

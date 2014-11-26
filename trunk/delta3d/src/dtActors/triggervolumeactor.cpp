@@ -3,8 +3,6 @@
 
 #include <dtCore/scene.h>
 #include <dtCore/system.h>
-#include <dtCore/collisioncategorydefaults.h>
-#include <dtCore/odecontroller.h>
 
 #include <ode/collision.h>
 
@@ -24,12 +22,6 @@ TriggerVolumeActor::TriggerVolumeActor(dtActors::TriggerVolumeActorProxy& proxy,
 {
    RegisterInstance(this);
 
-   // Give a default collision shape and size.
-   SetCollisionSphere(5.0f);
-
-   // By default, we want the trigger itself to collide with anything
-   SetCollisionCollideBits(COLLISION_CATEGORY_MASK_ALL);
-   SetCollisionCategoryBits(COLLISION_CATEGORY_MASK_PROXIMITYTRIGGER);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -41,31 +33,6 @@ void TriggerVolumeActor::OnMessage(dtCore::Base::MessageData* data)
       return;
    }
 
-   if (data->message == dtCore::ODEController::MESSAGE_PHYSICS_STEP)
-   {
-      mNewCollisions.clear(); //ensure we start with no new collisions
-   }
-}
-
-////////////////////////////////////////////////////////////////////////////////
-bool TriggerVolumeActor::FilterContact(dContact* contact, Transformable* collider)
-{
-   // Do not trigger this event if we have reached our trigger limit.
-   if (mMaxTriggerCount != 0 && mTriggerCount >= mMaxTriggerCount)
-   {
-      return false;
-   }
-
-   // Do not send events in STAGE.
-   if (IsGameActorProxyValid() && GetGameActorProxy().IsInSTAGE())
-   {
-      return false;
-   }
-
-   //store this collision
-   mNewCollisions.insert(collider);
-
-   return false;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -117,9 +84,7 @@ bool TriggerVolumeActor::IsActorInVolume(dtCore::Transformable* actor)
 
    if (actor)
    {
-      dContactGeom contactGeoms[1];
-
-      int numContacts = dCollide(GetGeomID(), actor->GetGeomID(), 1, contactGeoms, sizeof(dContactGeom));
+      int numContacts = 0;
 
       inVolume = numContacts > 0;
    }
@@ -179,60 +144,6 @@ void TriggerVolumeActor::TriggerEvent(dtCore::Transformable* instigator, Trigger
    }
 }
 
-
-////////////////////////////////////////////////////////////////////////////////
-void dtActors::TriggerVolumeActor::PostPhysicsStepUpdate()
-{
-
-   //what's in the new that isn't in the old: these are collidables that just entered the volume
-   {
-      CollidableContainer result;
-
-      CollidableContainer::iterator itr;
-      std::set_difference(mNewCollisions.begin(), mNewCollisions.end(),
-                          mOccupancyList.begin(), mOccupancyList.end(), std::inserter(result, result.begin()));
-
-      CollidableContainer::iterator enteredItr = result.begin();
-      while (enteredItr != result.end())
-      {
-         dtCore::Transformable* occupant = (*enteredItr).get();
-         if (occupant)
-         {
-            TriggerEvent(occupant, ENTER_EVENT);
-         }
-         ++enteredItr;
-      }
-
-   }
-
-   //what's in the old that isn't in the new: these are collidables that just left the volume
-   {
-      CollidableContainer result;
-      std::set_difference(mOccupancyList.begin(), mOccupancyList.end(),
-                          mNewCollisions.begin(), mNewCollisions.end(),std::inserter(result, result.begin()));
-
-      CollidableContainer::iterator leftItr = result.begin();
-      while (leftItr != result.end())
-      {
-         dtCore::Transformable* occupant = (*leftItr).get();
-         if (occupant)
-         {
-            TriggerEvent(occupant, LEAVE_EVENT);
-            CollidableContainer::iterator foundItr = mOccupancyList.find(occupant);
-            if (foundItr != mOccupancyList.end())
-            {
-               mOccupancyList.erase(foundItr);
-            }
-         }
-         ++leftItr;
-      }
-   }
-
-   //Add the newly collided to the old
-   mOccupancyList.insert(mNewCollisions.begin(), mNewCollisions.end());
-
-   dtGame::GameActor::PostPhysicsStepUpdate();
-}
 
 ////////////////////////////////////////////////////////////////////////////////
 void dtActors::TriggerVolumeActor::AddedToScene(dtCore::Scene* scene)

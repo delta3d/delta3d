@@ -139,9 +139,6 @@ void FireFighterGameEntryPoint::OnStartup(dtABC::BaseABC& app, dtGame::GameManag
    gscm.SetNewState(GameState::STATE_MENU);
    gameManager.SendMessage(gscm);
 
-   app.GetScene()->SetPhysicsStepSize(0.01);
-   app.GetScene()->SetGravity(0.0f, 0.0f, -2.0f);
-
    app.GetWindow()->SetPosition(app.GetWindow()->GetPosition());
 }
 

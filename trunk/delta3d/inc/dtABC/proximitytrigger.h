@@ -93,13 +93,6 @@ namespace dtABC
       */
       const Trigger* GetTrigger() const { return mTrigger.get(); }
    
-      /**
-      * Callback from Scene when a contact occurs. This normally is used to 
-      * filter out Transformable that you do not want to perform expensive
-      * physics calculations on, but here we use it to fire our Trigger.
-      */
-      virtual bool FilterContact(dContact* contact, Transformable* collider);
-
       bool IsPointInVolume(float x, float y, float z);
 
 

@@ -35,12 +35,12 @@
 #include <fireFighter/helpwindow.h>
 #include <dtABC/application.h>
 #include <dtAudio/audiomanager.h>
-#include <dtCore/collisionmotionmodel.h>
 #include <dtCore/deltawin.h>
 #include <dtCore/camera.h>
 #include <dtCore/scene.h>
 #include <dtCore/keyboard.h>
 #include <dtCore/system.h>
+#include <dtCore/fpsmotionmodel.h>
 #include <dtGame/basemessages.h>
 #include <dtGame/messagefactory.h>
 #include <dtCore/actorproperty.h>
@@ -70,9 +70,6 @@ InputComponent::InputComponent(dtCore::SystemComponentType& type)
    , mRunSound(NULL)
    , mCrouchSound(NULL)
    , mCurrentIntersectedItem(NULL)
-   , mRadius(0.1f)
-   , mTheta(0.10f)
-   , mK(0.40f)
    , mTasksSetup(false)
 {
 
@@ -186,28 +183,28 @@ void InputComponent::OnIntro()
 void InputComponent::OnGame()
 {
    GetGameManager()->GetApplication().GetMouse()->SetPosition(0.0f, 0.0f);
-   GameLevelActor* gla = NULL;
-   IsActorInGameMap(gla);
-   gla->SetCollisionMesh();
+//   GameLevelActor* gla = NULL;
+//   IsActorInGameMap(gla);
+//   gla->SetCollisionMesh();
 
    dtCore::Transform xform;
    mPlayer->GetTransform(xform);
 
-   if (!mMotionModel.valid())
-   {
-      osg::Vec3 pos;
-      xform.GetTranslation(pos);
-      mMotionModel = new dtCore::CollisionMotionModel(pos.z(),
-         mRadius, mK, mTheta, &GetGameManager()->GetScene(),
-         GetGameManager()->GetApplication().GetKeyboard(),
-         GetGameManager()->GetApplication().GetMouse());
-
-      mMotionModel->SetUseMouseButtons(false);
-      mMotionModel->SetCanJump(false);
-   }
-
-   mMotionModel->SetTarget(mPlayer);
-   mMotionModel->GetFPSCollider().Reset();
+//   if (!mMotionModel.valid())
+//   {
+//      osg::Vec3 pos;
+//      xform.GetTranslation(pos);
+//      mMotionModel = new dtCore::CollisionMotionModel(pos.z(),
+//         mRadius, mK, mTheta, &GetGameManager()->GetScene(),
+//         GetGameManager()->GetApplication().GetKeyboard(),
+//         GetGameManager()->GetApplication().GetMouse());
+//
+//      mMotionModel->SetUseMouseButtons(false);
+//      mMotionModel->SetCanJump(false);
+//   }
+//
+//   mMotionModel->SetTarget(mPlayer);
+//   mMotionModel->GetFPSCollider().Reset();
 
    // Turn off the scene light and use the light maps/shadow maps
    dtCore::Camera& camera = *GetGameManager()->GetApplication().GetCamera();

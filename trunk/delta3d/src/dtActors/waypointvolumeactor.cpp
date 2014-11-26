@@ -24,7 +24,6 @@
 
 #include <dtCore/datatype.h>
 #include <dtCore/floatactorproperty.h>
-#include <dtCore/collisiongeometrytypeenum.h>
 #include <assert.h>
 
 namespace dtActors
@@ -46,64 +45,59 @@ namespace dtActors
    //////////////////////////////////////////////////////////////////////////////
    bool WaypointVolumeActor::IsPointInVolume(float x, float y, float z)
    {
-      dtCore::CollisionGeomType* type = GetCollisionGeomType();
-
-      std::vector<float> dimensions;
-      GetCollisionGeomDimensions(dimensions);
-
       osg::Vec3 point(x, y, z);
 
-      if (type == &dtCore::CollisionGeomType::CUBE)
-      {
-         float halfWidth  = dimensions[0] * 0.5f;
-         float halfLength = dimensions[1] * 0.5f;
-         float halfHeight = dimensions[2] * 0.5f;
-
-         dtCore::Transform transform;
-         GetTransform(transform);
-
-         osg::Vec3 translation;
-         transform.GetTranslation(translation);
-
-         osg::Matrix rotation;
-         transform.GetRotation(rotation);
-
-         rotation.invert(rotation);
-
-         point -= translation;
-         point = point * rotation;
-
-         osg::Vec3 botLeft(-halfWidth, -halfLength, -halfHeight);
-         osg::Vec3 topRight(halfWidth, halfLength, halfHeight);
-
-         if (point.x() > botLeft.x() && point.x() < topRight.x() &&
-             point.y() > botLeft.y() && point.y() < topRight.y() &&
-             point.z() > botLeft.z() && point.z() < topRight.z())
-         {
-            return true;
-         }
-      }
-      else if (type == &dtCore::CollisionGeomType::SPHERE)
-      {
-         dtCore::Transform transform;
-         GetTransform(transform);
-
-         osg::Vec3 translation;
-         transform.GetTranslation(translation);
-
-         float lengthSquared = (point - translation).length2();
-         float radiusSquared = osg::square(dimensions[0]);
-
-         if (lengthSquared < radiusSquared)
-         {
-            return true;
-         }
-      }
-      else
-      {
-         assert(!"Geometry type not supported");
-      }
-
+//      if (type == &dtCore::CollisionGeomType::CUBE)
+//      {
+//         float halfWidth  = dimensions[0] * 0.5f;
+//         float halfLength = dimensions[1] * 0.5f;
+//         float halfHeight = dimensions[2] * 0.5f;
+//
+//         dtCore::Transform transform;
+//         GetTransform(transform);
+//
+//         osg::Vec3 translation;
+//         transform.GetTranslation(translation);
+//
+//         osg::Matrix rotation;
+//         transform.GetRotation(rotation);
+//
+//         rotation.invert(rotation);
+//
+//         point -= translation;
+//         point = point * rotation;
+//
+//         osg::Vec3 botLeft(-halfWidth, -halfLength, -halfHeight);
+//         osg::Vec3 topRight(halfWidth, halfLength, halfHeight);
+//
+//         if (point.x() > botLeft.x() && point.x() < topRight.x() &&
+//             point.y() > botLeft.y() && point.y() < topRight.y() &&
+//             point.z() > botLeft.z() && point.z() < topRight.z())
+//         {
+//            return true;
+//         }
+//      }
+//      else if (type == &dtCore::CollisionGeomType::SPHERE)
+//      {
+//         dtCore::Transform transform;
+//         GetTransform(transform);
+//
+//         osg::Vec3 translation;
+//         transform.GetTranslation(translation);
+//
+//         float lengthSquared = (point - translation).length2();
+//         float radiusSquared = osg::square(dimensions[0]);
+//
+//         if (lengthSquared < radiusSquared)
+//         {
+//            return true;
+//         }
+//      }
+//      else
+//      {
+//         assert(!"Geometry type not supported");
+//      }
+//
       return false;
    }
 

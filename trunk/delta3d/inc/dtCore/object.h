@@ -26,11 +26,12 @@
 //////////////////////////////////////////////////////////////////////
 
 #include <dtCore/loadable.h>
-#include <dtCore/physical.h>
 #include <dtCore/model.h>
+#include <dtCore/transformable.h>
 #include <osg/MatrixTransform>
 #include <osg/NodeCallback>
 #include <osg/Vec3>
+#include <dtUtil/macros.h>
 
 namespace dtCore
 {
@@ -38,7 +39,7 @@ namespace dtCore
     * A visual Object with physical properties. The Object represents a
     * virtual object which is renderable, movable, and has physical properties.
     */
-   class DT_CORE_EXPORT Object : public Loadable, public Physical
+   class DT_CORE_EXPORT Object : public Loadable, public Transformable
    {
       DECLARE_MANAGEMENT_LAYER(Object)
 

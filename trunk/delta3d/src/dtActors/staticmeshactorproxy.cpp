@@ -216,10 +216,6 @@ namespace dtActors
          return;
       }
 
-      //We need this little hack to ensure that when a mesh is loaded, the collision
-      //properties get updated properly.
-      SetCollisionType(GetCollisionType());
-
    }
 
 

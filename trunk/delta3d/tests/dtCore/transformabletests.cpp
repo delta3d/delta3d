@@ -47,10 +47,7 @@ class TransformableTests : public CPPUNIT_NS::TestFixture
    CPPUNIT_TEST_SUITE(TransformableTests);
    CPPUNIT_TEST(TestAbsoluteRelative);
    CPPUNIT_TEST(TestDefaultBools);
-   CPPUNIT_TEST(TestGetCollisionGeomDimensions);
-   CPPUNIT_TEST(TestSetCollisionBox);
    CPPUNIT_TEST(TestEpsilonEquals);
-   CPPUNIT_TEST(TestODEInSyncOnSetTransform);
    CPPUNIT_TEST(TestSetMatrix);
    CPPUNIT_TEST(TestSetPosHPR);
    CPPUNIT_TEST(TestSetPosQuat);
@@ -79,10 +76,7 @@ public:
 
    void TestAbsoluteRelative();
    void TestDefaultBools();
-   void TestGetCollisionGeomDimensions();
-   void TestSetCollisionBox();
    void TestEpsilonEquals();
-   void TestODEInSyncOnSetTransform();
    void TestSetPosHPR();
    void TestSetPosQuat();
    void TestScale();
@@ -134,41 +128,15 @@ void TransformableTests::setUp()
 
 void TransformableTests::tearDown()
 {
-   mTransformable->SetCollisionMesh(NULL);
-   mTransformable->SetCollisionBox(mBoxLengths[0], mBoxLengths[1], mBoxLengths[2]);
    mTransformable = NULL;
    mParentTransformable = NULL;
 }
 
 void TransformableTests::TestDefaultBools()
 {
-   CPPUNIT_ASSERT(!mTransformable->GetRenderCollisionGeometry());
    CPPUNIT_ASSERT(!mTransformable->GetIsRenderingProxyNode());
-   CPPUNIT_ASSERT(!mTransformable->GetCollisionDetection());
 }
 
-void TransformableTests::TestGetCollisionGeomDimensions()
-{
-   std::vector<float> dimensions;
-   mTransformable->GetCollisionGeomDimensions(dimensions);
-
-   CPPUNIT_ASSERT_MESSAGE("Vector filled by GetCollisionGeomDimensions should be empty",
-      dimensions.empty());
-
-   // Box
-   mTransformable->SetCollisionBox(mBoxLengths[0], mBoxLengths[1], mBoxLengths[2]);
-
-   dimensions.clear();
-   mTransformable->GetCollisionGeomDimensions(dimensions);
-
-   CPPUNIT_ASSERT_MESSAGE("Vector filled by GetCollisionGeomDimensions should only have 3 elements (since it's a cube",
-      dimensions.size() ==  3);
-
-   CPPUNIT_ASSERT_MESSAGE("Collision geometry dimensions should be (2.0f, 3.0f, 4.0f)",
-      osg::equivalent(dimensions[0], mBoxLengths[0], 1e-2f) &&
-      osg::equivalent(dimensions[1], mBoxLengths[1], 1e-2f) &&
-      osg::equivalent(dimensions[2], mBoxLengths[2], 1e-2f));
-}
 
 void TransformableTests::TestAbsoluteRelative()
 {
@@ -245,103 +213,6 @@ void TransformableTests::TestEpsilonEquals()
 }
 
 
-void TransformableTests::TestSetCollisionBox()
-{
-   dGeomID geomID = mTransformable->GetGeomID();
-   CPPUNIT_ASSERT_MESSAGE("GeomID should be valid even without a valid collision shape",
-      geomID != 0);
-
-   CPPUNIT_ASSERT_MESSAGE("Collision detection should by false without a valid collision shape",
-      mTransformable->GetCollisionDetection() == false);
-
-   CPPUNIT_ASSERT_MESSAGE("Collision geometry type should be NONE without a collision shape",
-      mTransformable->GetCollisionGeomType() == &CollisionGeomType::NONE);
-
-   mTransformable->SetCollisionBox(mBoxLengths[0], mBoxLengths[1], mBoxLengths[2]);
-
-   geomID = mTransformable->GetGeomID();
-   CPPUNIT_ASSERT_MESSAGE("GeomID should still be valid",
-      geomID != 0);
-
-   CPPUNIT_ASSERT_MESSAGE("Collision detection should by true",
-      mTransformable->GetCollisionDetection() == true);
-
-   CPPUNIT_ASSERT_MESSAGE("Collision geometry type should be CUBE",
-      mTransformable->GetCollisionGeomType() == &CollisionGeomType::CUBE);
-}
-
-void TransformableTests::TestODEInSyncOnSetTransform()
-{
-   // In order to test scale, we must have a valid collsion geom
-   mTransformable->SetCollisionBox(mBoxLengths[0], mBoxLengths[1], mBoxLengths[2]);
-
-   // Verify ODE transforms are initialized correct
-
-   dGeomID geomID = mTransformable->GetGeomID();
-
-   // Position
-   const dReal* odePosition = dGeomGetPosition(geomID);
-   CPPUNIT_ASSERT_MESSAGE("ODE position should be (0.0f,0.0f,0.0f)",
-      osg::equivalent(float(odePosition[0]), 0.0f, 1e-2f) &&
-      osg::equivalent(float(odePosition[1]), 0.0f, 1e-2f) &&
-      osg::equivalent(float(odePosition[2]), 0.0f, 1e-2f));
-
-   // Rotation
-   const dReal* odeRotation = dGeomGetRotation(geomID);
-   CPPUNIT_ASSERT_MESSAGE("ODE's rotation should be zero",
-      osg::equivalent(double(odeRotation[ 0]), 1.0, 1e-2) &&
-      osg::equivalent(double(odeRotation[ 1]), 0.0, 1e-2) &&
-      osg::equivalent(double(odeRotation[ 2]), 0.0, 1e-2) &&
-      osg::equivalent(double(odeRotation[ 4]), 0.0, 1e-2) &&
-      osg::equivalent(double(odeRotation[ 5]), 1.0, 1e-2) &&
-      osg::equivalent(double(odeRotation[ 6]), 0.0, 1e-2) &&
-      osg::equivalent(double(odeRotation[ 8]), 0.0, 1e-2) &&
-      osg::equivalent(double(odeRotation[ 9]), 0.0, 1e-2) &&
-      osg::equivalent(double(odeRotation[10]), 1.0, 1e-2));
-
-   // Scale
-   std::vector<float> dimensions;
-   mTransformable->GetCollisionGeomDimensions(dimensions);
-   CPPUNIT_ASSERT_MESSAGE("Collision geomertry dimensions should be (2.0f, 3.0f, 4.0f)",
-      osg::equivalent(dimensions[0], mBoxLengths[0], 1e-2f) &&
-      osg::equivalent(dimensions[1], mBoxLengths[1], 1e-2f) &&
-      osg::equivalent(dimensions[2], mBoxLengths[2], 1e-2f));
-
-   // Now let's set a real Transform and verify ODE knows about it
-   mTransformable->SetTransform(mTransform);
-
-   // Position
-   osg::Vec3 osgPosition;
-   mTransform.GetTranslation(osgPosition);
-   odePosition = dGeomGetPosition(geomID);
-   CPPUNIT_ASSERT_MESSAGE("ODE and OSG's position should be in sync",
-      osg::equivalent(osgPosition[0], float(odePosition[0]), 1e-2f) &&
-      osg::equivalent(osgPosition[1], float(odePosition[1]), 1e-2f) &&
-      osg::equivalent(osgPosition[2], float(odePosition[2]), 1e-2f));
-
-   // Rotation
-   osg::Matrix osgRotation;
-   mTransform.GetRotation(osgRotation);
-   odeRotation = dGeomGetRotation(geomID);
-   CPPUNIT_ASSERT_MESSAGE("ODE and OSG's rotation should be in sync",
-      osg::equivalent(double(osgRotation(0,0)), double(odeRotation[ 0]), 1e-2) &&
-      osg::equivalent(double(osgRotation(1,0)), double(odeRotation[ 1]), 1e-2) &&
-      osg::equivalent(double(osgRotation(2,0)), double(odeRotation[ 2]), 1e-2) &&
-      osg::equivalent(double(osgRotation(0,1)), double(odeRotation[ 4]), 1e-2) &&
-      osg::equivalent(double(osgRotation(1,1)), double(odeRotation[ 5]), 1e-2) &&
-      osg::equivalent(double(osgRotation(2,1)), double(odeRotation[ 6]), 1e-2) &&
-      osg::equivalent(double(osgRotation(0,2)), double(odeRotation[ 8]), 1e-2) &&
-      osg::equivalent(double(osgRotation(1,2)), double(odeRotation[ 9]), 1e-2) &&
-      osg::equivalent(double(osgRotation(2,2)), double(odeRotation[10]), 1e-2));
-
-   // Scale
-   dimensions.clear();
-   mTransformable->GetCollisionGeomDimensions(dimensions);
-   CPPUNIT_ASSERT_MESSAGE("Collision geomertry dimensions should be (4.0f, 6.0f, 8.0f)",
-      osg::equivalent(dimensions[0], mBoxLengths[0], 1e-2f) &&
-      osg::equivalent(dimensions[1], mBoxLengths[1], 1e-2f) &&
-      osg::equivalent(dimensions[2], mBoxLengths[2], 1e-2f));
-}
 
 bool HasChild(dtCore::DeltaDrawable* parent, dtCore::DeltaDrawable* child)
 {

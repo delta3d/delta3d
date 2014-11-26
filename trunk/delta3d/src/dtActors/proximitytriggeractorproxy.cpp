@@ -28,7 +28,6 @@
 #include <dtCore/actorproxyicon.h>
 #include <dtCore/floatactorproperty.h>
 #include <dtCore/functor.h>
-#include <dtCore/collisiongeometrytypeenum.h>
 
 #include <sstream>
 
@@ -54,38 +53,6 @@ namespace dtActors
       ss << "ProximityTrigger" << mNumTriggers++;
       SetName(ss.str());
 
-      // Find & set default collision shape and dimensions.
-      CollisionGeomType* type = trigger.GetCollisionGeomType();
-
-      std::vector<float> dimensions;
-      trigger.GetCollisionGeomDimensions(dimensions);
-
-      if (type == &CollisionGeomType::SPHERE &&
-         dimensions.size() == 1)
-      {
-         SetCollisionRadius(dimensions[0]);
-      }
-      else if (type == &CollisionGeomType::CYLINDER &&
-         dimensions.size() == 2)
-      {
-         SetCollisionRadius(dimensions[0]);
-         SetCollisionLength(dimensions[1]);
-      }
-      else if (type == &CollisionGeomType::CUBE &&
-         dimensions.size() == 3)
-      {
-         if ((dimensions[0] == dimensions[1]) &&
-             (dimensions[0] == dimensions[2]) &&
-             (dimensions[1] == dimensions[2]))
-         {
-            SetCollisionLength(dimensions[0]);
-         }
-      }
-
-      // The collision type of this actor proxy must be set after the dimensions
-      // have been set. Otherwise it'll always use a default of 0.0 for all of
-      // them and attempt to auto-generate the collision geometry.
-      SetCollisionType(*type);
    }
 
    ///////////////////////////////////////////////////////////////////////////////

@@ -40,7 +40,7 @@ namespace dtActors
    ///////////////////////////////////////////////////////////////////////////////
    void DeltaObjectActorProxy::BuildPropertyMap()
    {
-      PhysicalActorProxy::BuildPropertyMap();
+      dtCore::TransformableActorProxy::BuildPropertyMap();
 
       dtCore::Object *actor = NULL;
       GetDrawable(actor);

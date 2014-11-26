@@ -39,11 +39,6 @@ namespace dtActors
       const std::string &GROUPNAME = "InfiniteTerrain";
       TransformableActorProxy::BuildPropertyMap();
 
-      RemoveProperty(dtCore::TransformableActorProxy::PROPERTY_COLLISION_TYPE);
-      RemoveProperty(dtCore::TransformableActorProxy::PROPERTY_COLLISION_RADIUS);
-      RemoveProperty(dtCore::TransformableActorProxy::PROPERTY_COLLISION_LENGTH);
-      RemoveProperty(dtCore::TransformableActorProxy::PROPERTY_COLLISION_BOX);
-
       InfiniteTerrain *ter = static_cast<InfiniteTerrain*>(GetDrawable());
 
       // This property manipulates the segment size of an InfiniteTerrain.
@@ -87,13 +82,5 @@ namespace dtActors
          FloatActorProperty::GetFuncType(ter, &InfiniteTerrain::GetBuildDistance),
          "Sets the distance away from the camera that terrain is rendered.", GROUPNAME));
 
-      // This property manipulates the collision method of an InfiniteTerrain.
-      // True enables the usage of the underlying noise to determine collision,
-      // as opposed to collision with the actual triangle mesh.
-      // Default is false
-      AddProperty(new BooleanActorProperty("Smooth Collision", "Smooth Collision",
-         BooleanActorProperty::SetFuncType(ter, &InfiniteTerrain::EnableSmoothCollisions),
-         BooleanActorProperty::GetFuncType(ter, &InfiniteTerrain::SmoothCollisionsEnabled),
-         "Toggles smooth collision between a terrain and other dtCore::Transformable", GROUPNAME));
    }
 }

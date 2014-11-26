@@ -30,7 +30,6 @@ namespace dtActors
    PlayerStartActorProxy::PlayerStartActorProxy()
    {
       SetClassName("dtActors::PlayerStartActor");
-      SetHideDTCorePhysicsProps(true);
    }
 
    PlayerStartActorProxy::~PlayerStartActorProxy()

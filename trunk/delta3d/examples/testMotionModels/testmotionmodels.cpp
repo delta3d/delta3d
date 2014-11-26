@@ -22,7 +22,6 @@
 
 #include <dtUtil/log.h>
 #include <dtUtil/datapathutils.h>
-#include <dtCore/collisionmotionmodel.h>
 #include <dtCore/deltawin.h>
 #include <dtCore/flymotionmodel.h>
 #include <dtCore/fpsmotionmodel.h>
@@ -363,7 +362,6 @@ public:
       }
 
 
-      mTown->SetCollisionMesh();
       AddDrawable(mTown.get());
       GetScene()->GetSceneNode()->getOrCreateStateSet()->setMode(GL_LIGHTING, osg::StateAttribute::OVERRIDE | osg::StateAttribute::OFF);
 
@@ -378,10 +376,6 @@ public:
       RefPtr<FPSMotionModel> fmm = new FPSMotionModel(GetKeyboard(), GetMouse());
       fmm->SetScene(GetScene());
       mMotionModels.push_back(fmm.get());
-
-      osg::Vec3 gravity;
-      GetScene()->GetGravity(gravity);
-      mMotionModels.push_back(new CollisionMotionModel(1.5f, 0.4f, 0.1f, GetScene(), GetKeyboard(), GetMouse()));
 
       mMotionModels.push_back(new RTSMotionModel(GetKeyboard(), GetMouse()));
 

@@ -179,7 +179,7 @@ namespace dtGame
    /////////////////////////////////////////////////////////////////////////////
    void GameActorProxy::BuildPropertyMap()
    {
-      dtCore::PhysicalActorProxy::BuildPropertyMap();
+      dtCore::TransformableActorProxy::BuildPropertyMap();
 
       static const dtUtil::RefString PROPERTY_IS_GAME_ACTOR("IsGameActor");
       static const dtUtil::RefString PROPERTY_IS_GAME_ACTOR_LABEL("Is Game Actor");

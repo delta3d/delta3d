@@ -1,6 +1,5 @@
 #include <dtInspectorQt/transformableview.h>
 #include <dtCore/transform.h>
-#include <dtCore/odegeomwrap.h>
 #include "ui_dtinspectorqt.h"
 
 //static
@@ -19,10 +18,6 @@ dtInspectorQt::TransformableView::TransformableView(Ui::InspectorWidget &ui)
    connect(mUI->transREdit, SIGNAL(valueChanged(double)), this, SLOT(OnXYZHPRChanged(double)));
    connect(mUI->transABSRadioButton, SIGNAL(clicked()), this, SLOT(Update()));
    connect(mUI->transRELRadioButton, SIGNAL(clicked()), this, SLOT(Update()));
-   connect(mUI->transCollisionToggle, SIGNAL(stateChanged(int)), this, SLOT(OnCollisionDetection(int)));
-   connect(mUI->transRenderToggle, SIGNAL(stateChanged(int)), this, SLOT(OnRenderCollision(int)));
-   connect(mUI->transCategoryEdit, SIGNAL(textChanged(const QString&)), this, SLOT(OnCategoryBits(const QString&)));
-   connect(mUI->transCollideEdit, SIGNAL(textChanged(const QString&)), this, SLOT(OnCollideBits(const QString&)));
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -66,13 +61,6 @@ void dtInspectorQt::TransformableView::Update()
       mUI->transPEdit->setValue(hpr[1]);
       mUI->transREdit->setValue(hpr[2]);
 
-      //collision detection
-      mUI->transCollisionToggle->setChecked(mOperateOn->GetGeomWrapper()->GetCollisionDetection());
-      mUI->transRenderToggle->setChecked(mOperateOn->GetRenderCollisionGeometry());
-
-      //bits
-      mUI->transCategoryEdit->setText(QString::number(mOperateOn->GetGeomWrapper()->GetCollisionCategoryBits()));
-      mUI->transCollideEdit->setText(QString::number(mOperateOn->GetGeomWrapper()->GetCollisionCollideBits()));
    }
    else
    {
@@ -103,41 +91,6 @@ void dtInspectorQt::TransformableView::OnXYZHPRChanged(double val)
    }
 }
 
-//////////////////////////////////////////////////////////////////////////
-void dtInspectorQt::TransformableView::OnCollisionDetection(int checked)
-{
-   if (mOperateOn.valid())
-   {
-      mOperateOn->GetGeomWrapper()->SetCollisionDetection(checked ? true : false);
-   }
-}
-
-//////////////////////////////////////////////////////////////////////////
-void dtInspectorQt::TransformableView::OnRenderCollision(int checked)
-{
-   if (mOperateOn.valid())
-   {
-      mOperateOn->RenderCollisionGeometry(checked ? true : false);
-   }
-}
-
-//////////////////////////////////////////////////////////////////////////
-void dtInspectorQt::TransformableView::OnCategoryBits(const QString& text)
-{
-   if (mOperateOn.valid())
-   {
-      mOperateOn->GetGeomWrapper()->SetCollisionCategoryBits(text.toULong());
-   }
-}
-
-//////////////////////////////////////////////////////////////////////////
-void dtInspectorQt::TransformableView::OnCollideBits(const QString& text)
-{
-   if (mOperateOn.valid())
-   {
-      mOperateOn->GetGeomWrapper()->SetCollisionCollideBits(text.toULong());
-   }
-}
 
 //////////////////////////////////////////////////////////////////////////
 dtInspectorQt::TransformableView& dtInspectorQt::TransformableView::GetInstance(Ui::InspectorWidget& ui)

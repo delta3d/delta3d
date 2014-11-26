@@ -161,7 +161,6 @@ namespace dtActors
    {
       SetName("Director Graph Actor");
       SetClassName(CLASS_NAME.Get());
-      SetHideDTCorePhysicsProps(true);
    }
 
    /////////////////////////////////////////////////////////////////////////////

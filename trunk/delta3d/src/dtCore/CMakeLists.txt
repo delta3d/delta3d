@@ -55,9 +55,6 @@ SET(LIB_PUBLIC_HEADERS
                 ${HEADER_PATH}/cameradrawcallback.h
                 ${HEADER_PATH}/clouddome.h
                 ${HEADER_PATH}/cloudplane.h
-                ${HEADER_PATH}/collisioncategorydefaults.h
-                ${HEADER_PATH}/collisionmotionmodel.h
-                ${HEADER_PATH}/collisiongeometrytypeenum.h
                 ${HEADER_PATH}/colorrgbaactorproperty.h
                 ${HEADER_PATH}/compass.h
                 ${HEADER_PATH}/containeractorproperty.h
@@ -80,7 +77,6 @@ SET(LIB_PUBLIC_HEADERS
                 ${HEADER_PATH}/export.h
                 ${HEADER_PATH}/floatactorproperty.h
                 ${HEADER_PATH}/flymotionmodel.h
-                ${HEADER_PATH}/fpscollider.h
                 ${HEADER_PATH}/fpsmotionmodel.h
                 ${HEADER_PATH}/functor.h
                 ${HEADER_PATH}/gameevent.h
@@ -151,16 +147,9 @@ SET(LIB_PUBLIC_HEADERS
                 ${HEADER_PATH}/objecttype.h
                 ${HEADER_PATH}/objectmotionmodel.h
                 ${HEADER_PATH}/observerptr.h
-                ${HEADER_PATH}/odebodywrap.h
-                ${HEADER_PATH}/odecontroller.h
-                ${HEADER_PATH}/odegeomwrap.h
-                ${HEADER_PATH}/odespacewrap.h
-                ${HEADER_PATH}/odeworldwrap.h
                 ${HEADER_PATH}/orbitmotionmodel.h
                 ${HEADER_PATH}/particlesystem.h
                 ${HEADER_PATH}/particleutil.h
-                ${HEADER_PATH}/physical.h
-                ${HEADER_PATH}/physicalactorproxy.h
                 ${HEADER_PATH}/plugin_export.h
                 ${HEADER_PATH}/pointaxis.h
                 ${HEADER_PATH}/positionallight.h
@@ -256,8 +245,6 @@ SET(LIB_SOURCES
                 ${SOURCE_PATH}/cameracallbackcontainer.cpp
                 ${SOURCE_PATH}/clouddome.cpp
                 ${SOURCE_PATH}/cloudplane.cpp
-                ${SOURCE_PATH}/collisionmotionmodel.cpp
-                ${SOURCE_PATH}/collisiongeometrytypeenum.cpp
                 ${SOURCE_PATH}/colorrgbaactorproperty.cpp
                 ${SOURCE_PATH}/compass.cpp
                 ${SOURCE_PATH}/containeractorproperty.cpp
@@ -281,7 +268,6 @@ SET(LIB_SOURCES
                 ${SOURCE_PATH}/exceptionenum.cpp
                 ${SOURCE_PATH}/floatactorproperty.cpp
                 ${SOURCE_PATH}/flymotionmodel.cpp
-                ${SOURCE_PATH}/fpscollider.cpp
                 ${SOURCE_PATH}/fpsmotionmodel.cpp
                 ${SOURCE_PATH}/gameevent.cpp
                 ${SOURCE_PATH}/gameeventactorproperty.cpp
@@ -342,16 +328,9 @@ SET(LIB_SOURCES
                 ${SOURCE_PATH}/object.cpp
                 ${SOURCE_PATH}/objectmotionmodel.cpp
                 ${SOURCE_PATH}/objecttype.cpp
-                ${SOURCE_PATH}/odebodywrap.cpp
-                ${SOURCE_PATH}/odecontroller.cpp
-                ${SOURCE_PATH}/odegeomwrap.cpp
-                ${SOURCE_PATH}/odespacewrap.cpp
-                ${SOURCE_PATH}/odeworldwrap.cpp
                 ${SOURCE_PATH}/orbitmotionmodel.cpp
                 ${SOURCE_PATH}/particlesystem.cpp
                 ${SOURCE_PATH}/particleutil.cpp
-                ${SOURCE_PATH}/physical.cpp
-                ${SOURCE_PATH}/physicalactorproxy.cpp
                 ${SOURCE_PATH}/pointaxis.cpp
                 ${SOURCE_PATH}/positionallight.cpp
                 ${SOURCE_PATH}/prefabiconhandler.cpp

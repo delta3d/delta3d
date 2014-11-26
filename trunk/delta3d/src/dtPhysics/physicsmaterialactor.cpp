@@ -90,7 +90,6 @@ namespace dtPhysics
    //////////////////////////////////////////////////////////
    void MaterialActor::BuildPropertyMap()
    {
-      SetHideDTCorePhysicsProps(true);
       BaseClass::BuildPropertyMap();
       static const dtUtil::RefString GROUP = "Material";
 

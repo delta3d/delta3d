@@ -1055,7 +1055,6 @@ namespace dtRender
    // actor
    SceneManagerActor::SceneManagerActor()
    {
-      SetHideDTCorePhysicsProps(true);
    }
 
    SceneManagerActor::~SceneManagerActor()

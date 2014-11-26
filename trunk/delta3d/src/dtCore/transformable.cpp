@@ -1,10 +1,8 @@
 #include <prefix/dtcoreprefix.h>
 #include <dtCore/pointaxis.h>
 #include <dtCore/scene.h>
-#include <dtCore/odegeomwrap.h>
 #include <dtCore/transformable.h>
 #include <dtCore/transform.h>
-#include <dtCore/collisioncategorydefaults.h>
 #include <dtUtil/log.h>
 #include <dtUtil/matrixutil.h>
 #include <dtUtil/nodemask.h>
@@ -25,9 +23,6 @@ using namespace dtCore;
 using namespace dtUtil;
 
 IMPLEMENT_MANAGEMENT_LAYER(Transformable)
-
-const std::string Transformable::COLLISION_GEODE_ID("__DELTA3D_COLLISION_GEOMETRY__");
-
 
 namespace dtCore
 {
@@ -74,17 +69,13 @@ namespace dtCore
    {
    public:
       TransformableImpl(Transformable::TransformableNode& node)
-      : mGeomWrap(new ODEGeomWrap())
-      , mGeomGeod(NULL)
+      : mGeomGeod(NULL)
       , mNode(&node)
       , mRenderingGeometry(false)
       , mRenderProxyNode(false)
       {
 
       }
-      dtCore::RefPtr<ODEGeomWrap> mGeomWrap;
-
-
       /**
        *  Pointer to the collision geometry representation
        */
@@ -141,16 +132,11 @@ void Transformable::Ctor()
 
    SetNormalRescaling(true);
 
-   SetCollisionCategoryBits(COLLISION_CATEGORY_MASK_TRANSFORMABLE);
-
-   // By default, collide with all categories.
-   SetCollisionCollideBits(COLLISION_CATEGORY_MASK_ALL);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 Transformable::~Transformable()
 {
-   mImpl->mGeomWrap = NULL;
    if (mImpl->mPointAxis.valid())
    {
       SetProxyNode(NULL);
@@ -353,8 +339,6 @@ void Transformable::SetTransform(const Transform& xform, CoordSysEnum cs)
    {
      GetMatrixNode()->setMatrix(newMat);
    }
-
-   PrePhysicsStepUpdate();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -505,414 +489,6 @@ bool Transformable::GetNormalRescaling() const
    return false;
 }
 
-////////////////////////////////////////////////////////////////////////////////
-CollisionGeomType* Transformable::GetCollisionGeomType() const
-{
-   //ugly bit of code used to convert the ODEGeomWrap enums to Transformable enums.
-   //This is here to keep from breaking existing Transformable clients.
-
-   if (mImpl->mGeomWrap->GetCollisionGeomType() == &dtCore::CollisionGeomType::NONE)
-   {
-      return &dtCore::CollisionGeomType::NONE;
-   }
-   else if (mImpl->mGeomWrap->GetCollisionGeomType() == &dtCore::CollisionGeomType::SPHERE)
-   {
-      return &dtCore::CollisionGeomType::SPHERE;
-   }
-   else if (mImpl->mGeomWrap->GetCollisionGeomType() == &dtCore::CollisionGeomType::CYLINDER)
-   {
-      return &dtCore::CollisionGeomType::CYLINDER;
-   }
-   else if (mImpl->mGeomWrap->GetCollisionGeomType() == &dtCore::CollisionGeomType::CCYLINDER)
-   {
-      return &dtCore::CollisionGeomType::CCYLINDER;
-   }
-   else if (mImpl->mGeomWrap->GetCollisionGeomType() == &dtCore::CollisionGeomType::CUBE)
-   {
-      return &dtCore::CollisionGeomType::CUBE;
-   }
-   else if (mImpl->mGeomWrap->GetCollisionGeomType() == &dtCore::CollisionGeomType::RAY)
-   {
-      return &dtCore::CollisionGeomType::RAY;
-   }
-   else if (mImpl->mGeomWrap->GetCollisionGeomType() == &dtCore::CollisionGeomType::MESH)
-   {
-      return &dtCore::CollisionGeomType::MESH;
-   }
-   else
-   {
-      return &dtCore::CollisionGeomType::NONE;
-   }
-}
-
-////////////////////////////////////////////////////////////////////////////////
-void Transformable::GetCollisionGeomDimensions(std::vector<float>& dimensions)
-{
-   // Sync up ODE with our OSG transforms.
-   PrePhysicsStepUpdate();
-
-   mImpl->mGeomWrap->GetCollisionGeomDimensions(dimensions);
- }
-
-////////////////////////////////////////////////////////////////////////////////
-void Transformable::SetCollisionCategoryBits(unsigned long bits)
-{
-   mImpl->mGeomWrap->SetCollisionCategoryBits(bits);
-
-   unsigned int count = GetNumChildren();
-   for (unsigned int index = 0; index < count; ++index)
-   {
-      Transformable* child = dynamic_cast<Transformable*>(GetChild(index));
-      if (child)
-      {
-         child->SetCollisionCategoryBits(bits);
-      }
-   }
-}
-
-////////////////////////////////////////////////////////////////////////////////
-unsigned long Transformable::GetCollisionCategoryBits() const
-{
-   return mImpl->mGeomWrap->GetCollisionCategoryBits();
-}
-
-////////////////////////////////////////////////////////////////////////////////
-void Transformable::SetCollisionCollideBits(unsigned long bits)
-{
-   mImpl->mGeomWrap->SetCollisionCollideBits(bits);
-
-   unsigned int count = GetNumChildren();
-   for (unsigned int index = 0; index < count; ++index)
-   {
-      Transformable* child = dynamic_cast<Transformable*>(GetChild(index));
-      if (child)
-      {
-         child->SetCollisionCollideBits(bits);
-      }
-   }
-}
-
-////////////////////////////////////////////////////////////////////////////////
-unsigned long Transformable::GetCollisionCollideBits() const
-{
-   return mImpl->mGeomWrap->GetCollisionCollideBits();
-}
-
-
-////////////////////////////////////////////////////////////////////////////////
-void Transformable::SetCollisionDetection(bool enabled)
-{
-   mImpl->mGeomWrap->SetCollisionDetection(enabled);
-
-   unsigned int count = GetNumChildren();
-   for (unsigned int index = 0; index < count; ++index)
-   {
-      Transformable* child = dynamic_cast<Transformable*>(GetChild(index));
-      if (child)
-      {
-         child->SetCollisionDetection(enabled);
-      }
-   }
-}
-
-////////////////////////////////////////////////////////////////////////////////
-bool Transformable::GetCollisionDetection() const
-{
-   return mImpl->mGeomWrap->GetCollisionDetection();
-}
-
-////////////////////////////////////////////////////////////////////////////////
-dGeomID Transformable::GetGeomID() const
-{
-   return mImpl->mGeomWrap->GetGeomID();
-}
-
-////////////////////////////////////////////////////////////////////////////////
-void Transformable::SetCollisionGeom(dGeomID geom)
-{
-   mImpl->mGeomWrap->SetCollisionGeom(geom);
-
-   RenderCollisionGeometry(mImpl->mRenderingGeometry);
-
-   // Sync-up the transforms on mGeomID
-   PrePhysicsStepUpdate();
-}
-
-////////////////////////////////////////////////////////////////////////////////
-void Transformable::SetCollisionSphere(float radius)
-{
-   mImpl->mGeomWrap->SetCollisionSphere(radius);
-
-   RenderCollisionGeometry(mImpl->mRenderingGeometry);
-
-   mImpl->mGeomWrap->SetCollisionDetection(true);
-
-   // Sync-up the transforms on mGeomID
-   PrePhysicsStepUpdate();
-}
-
-
-////////////////////////////////////////////////////////////////////////////////
-void Transformable::SetCollisionSphere(osg::Node* node)
-{
-   if(node == 0)
-   {
-      node = GetOSGNode();
-   }
-
-   if(node)
-   {
-      // Hmm, do we even need this here? I think this is a hack
-      // to overcome a bug in DrawableVisitor... -osb
-      osg::Matrix oldMatrix = GetMatrixNode()->getMatrix();
-      GetMatrixNode()->setMatrix(osg::Matrix::identity());
-
-      mImpl->mGeomWrap->SetCollisionSphere(node);
-
-      GetMatrixNode()->setMatrix(oldMatrix);
-
-      RenderCollisionGeometry(mImpl->mRenderingGeometry);
-
-      mImpl->mGeomWrap->SetCollisionDetection(true);
-
-      // Sync-up the transforms on mGeomID
-      PrePhysicsStepUpdate();
-   }
-}
-
-////////////////////////////////////////////////////////////////////////////////
-void Transformable::SetCollisionBox(float lx, float ly, float lz)
-{
-   mImpl->mGeomWrap->SetCollisionBox(lx, ly, lz);
-
-   RenderCollisionGeometry(mImpl->mRenderingGeometry);
-   SetCollisionDetection(true);
-
-   // Sync-up the transforms on mGeomID
-   PrePhysicsStepUpdate();
-}
-
-////////////////////////////////////////////////////////////////////////////////
-void Transformable::SetCollisionBox(osg::Node* node)
-{
-   if(node == NULL)
-   {
-      node = GetOSGNode();
-   }
-
-   if(node != NULL)
-   {
-      osg::Matrix oldMatrix = GetMatrixNode()->getMatrix();
-      GetMatrixNode()->setMatrix(osg::Matrix::identity());
-
-      mImpl->mGeomWrap->SetCollisionBox(node);
-
-      GetMatrixNode()->setMatrix(oldMatrix);
-
-      RenderCollisionGeometry(mImpl->mRenderingGeometry);
-      SetCollisionDetection(true);
-
-      PrePhysicsStepUpdate();
-   }
-}
-
-////////////////////////////////////////////////////////////////////////////////
-void Transformable::SetCollisionCylinder(float radius, float length)
-{
-   mImpl->mGeomWrap->SetCollisionCylinder(radius, length);
-
-   RenderCollisionGeometry(mImpl->mRenderingGeometry);
-   SetCollisionDetection(true);
-
-   // Sync-up the transforms on mGeomID
-   PrePhysicsStepUpdate();
-}
-
-////////////////////////////////////////////////////////////////////////////////
-void Transformable::SetCollisionCylinder(osg::Node* node)
-{
-   if(node == NULL)
-   {
-      node = this->GetOSGNode();
-   }
-
-   if(node != NULL)
-   {
-      osg::Matrix oldMatrix = GetMatrixNode()->getMatrix();
-      GetMatrixNode()->setMatrix(osg::Matrix::identity());
-
-      mImpl->mGeomWrap->SetCollisionCylinder(node);
-
-      GetMatrixNode()->setMatrix(oldMatrix);
-
-      RenderCollisionGeometry(mImpl->mRenderingGeometry);
-      SetCollisionDetection(true);
-
-      // Sync-up the transforms on mGeomID
-      PrePhysicsStepUpdate();
-   }
-}
-
-////////////////////////////////////////////////////////////////////////////////
-void Transformable::SetCollisionCappedCylinder(float radius, float length)
-{
-   mImpl->mGeomWrap->SetCollisionCappedCylinder(radius, length);
-
-   RenderCollisionGeometry(mImpl->mRenderingGeometry);
-   SetCollisionDetection(true);
-
-   // Sync-up the transforms on mGeomID
-   PrePhysicsStepUpdate();
-}
-
-
-////////////////////////////////////////////////////////////////////////////////
-void Transformable::SetCollisionCappedCylinder(osg::Node* node)
-{
-   if(node == NULL)
-   {
-      node = this->GetOSGNode();
-   }
-
-   if(node != NULL)
-   {
-      osg::Matrix oldMatrix = GetMatrixNode()->getMatrix();
-      GetMatrixNode()->setMatrix(osg::Matrix::identity());
-
-      mImpl->mGeomWrap->SetCollisionCappedCylinder(node);
-
-      GetMatrixNode()->setMatrix(oldMatrix);
-
-      RenderCollisionGeometry(mImpl->mRenderingGeometry);
-      SetCollisionDetection(true);
-
-      // Sync-up the transforms on mGeomID
-      PrePhysicsStepUpdate();
-   }
-}
-
-////////////////////////////////////////////////////////////////////////////////
-void Transformable::SetCollisionRay(float length)
-{
-   mImpl->mGeomWrap->SetCollisionRay(length);
-
-   RenderCollisionGeometry(mImpl->mRenderingGeometry);
-   SetCollisionDetection(true);
-
-   // Sync-up the transforms on mGeomID
-   PrePhysicsStepUpdate();
-}
-
-
-////////////////////////////////////////////////////////////////////////////////
-void Transformable::SetCollisionMesh(osg::Node* node)
-{
-   if (node == NULL)
-   {
-      node = GetOSGNode();
-   }
-
-   if (node != NULL)
-   {
-      //the following is a workaround to temporarily bypass this Physical's Transform
-      //At this point, we'll set it temporarily to the Identity so it doesn't affect
-      //our creation of the collision mesh.  This Transform will be accounted
-      //for later in PrePhysicsUpdate().
-      osg::Matrix oldMatrix = GetMatrixNode()->getMatrix();
-      GetMatrixNode()->setMatrix(osg::Matrix::identity());
-
-      mImpl->mGeomWrap->SetCollisionMesh(node);
-
-      GetMatrixNode()->setMatrix(oldMatrix);
-
-      RenderCollisionGeometry(mImpl->mRenderingGeometry);
-      SetCollisionDetection(true);
-   }
-}
-
-////////////////////////////////////////////////////////////////////////////////
-void Transformable::ClearCollisionGeometry()
-{
-   mImpl->mGeomWrap->ClearCollisionGeometry();
-
-   //If the collision geometry is valid, this implies the user has
-   //enabled render collision geometry.  Therefore, we just remove
-   //the drawables from the geode.  When the user turns off render
-   //collision geometry, that will remove the geode from this node.
-   if(mImpl->mGeomGeod.valid())
-   {
-      mImpl->mGeomGeod->removeDrawables(0,mImpl->mGeomGeod->getNumDrawables());
-   }
-}
-
-////////////////////////////////////////////////////////////////////////////////
-void Transformable::PrePhysicsStepUpdate()
-{
-   if (mImpl->mGeomWrap->GetCollisionDetection() == false)
-   {
-      return;
-   }
-
-   Transform transform;
-
-   this->GetTransform(transform, Transformable::ABS_CS);
-
-   mImpl->mGeomWrap->UpdateGeomTransform(transform);
-}
-
-////////////////////////////////////////////////////////////////////////////////
-void Transformable::RenderCollisionGeometry(bool enable /* = true */,
-   bool wireFrame /*= false */)
-{
-   TransformableNode* xform = this->GetMatrixNode();
-
-   if(!xform)
-   {
-      return;
-   }
-
-   mImpl->mRenderingGeometry = enable;
-
-   if(enable)
-   {
-      //If there is already an existing rendering of the collision geometry,
-      //remove it before adding a new one.
-      if (mImpl->mGeomGeod.valid())
-      {
-         RemoveRenderedCollisionGeometry();
-      }
-
-      mImpl->mGeomGeod =
-         mImpl->mGeomWrap->CreateRenderedCollisionGeometry(wireFrame);
-
-      if (mImpl->mGeomGeod.valid())
-      {
-         mImpl->mGeomGeod->setName(Transformable::COLLISION_GEODE_ID);
-
-         xform->addChild(mImpl->mGeomGeod.get());
-      }
-   } //end if enabled==true
-   else
-   {
-      this->RemoveRenderedCollisionGeometry();
-   }
-
-   unsigned int count = GetNumChildren();
-   for (unsigned int index = 0; index < count; ++index)
-   {
-      Transformable* child = dynamic_cast<Transformable*>(GetChild(index));
-      if (child)
-      {
-         child->RenderCollisionGeometry(enable);
-      }
-   }
-}
-
-////////////////////////////////////////////////////////////////////////////////
-bool Transformable::GetRenderCollisionGeometry() const
-{
-   return mImpl->mRenderingGeometry;
-}
 
 ////////////////////////////////////////////////////////////////////////////////
 void Transformable::AddedToScene(Scene* scene)
@@ -927,36 +503,9 @@ void Transformable::AddedToScene(Scene* scene)
       }
 
       DeltaDrawable::AddedToScene(scene);
-      scene->RegisterCollidable(this);
    }
    else
    {
-      if(GetSceneParent())
-      {
-         GetSceneParent()->UnRegisterCollidable(this);
-      }
       DeltaDrawable::AddedToScene(NULL);
    }
-}
-
-////////////////////////////////////////////////////////////////////////////////
-void Transformable::RemoveRenderedCollisionGeometry()
-{
-   if(mImpl->mGeomGeod.valid())
-   {
-      GetMatrixNode()->removeChild(mImpl->mGeomGeod.get());
-      mImpl->mGeomGeod = 0;
-   }
-}
-
-////////////////////////////////////////////////////////////////////////////////
-const ODEGeomWrap* Transformable::GetGeomWrapper() const
-{
-   return mImpl->mGeomWrap.get();
-}
-
-////////////////////////////////////////////////////////////////////////////////
-ODEGeomWrap* Transformable::GetGeomWrapper()
-{
-   return mImpl->mGeomWrap.get();
 }

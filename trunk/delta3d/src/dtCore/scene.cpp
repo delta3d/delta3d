@@ -9,7 +9,6 @@
 
 #include <dtCore/infinitelight.h>
 #include <dtCore/system.h>
-#include <dtCore/odecontroller.h>
 #include <dtCore/databasepager.h>
 #include <dtCore/view.h>
 #include <dtCore/batchisector.h>
@@ -24,17 +23,13 @@ namespace dtCore
 class SceneImpl
 {
 public:
-   SceneImpl(dtCore::ODEController* physicsController)
-      : mPhysicsController(physicsController)
-      , mSceneNode(new osg::Group)
+   SceneImpl()
+      : mSceneNode(new osg::Group)
       , mLights(MAX_LIGHTS)
       , mRenderMode(Scene::POINT)
       , mRenderFace(Scene::FRONT)
    {
    }
-
-   ///The physics controller to use for physics integration (can be NULL)
-   dtCore::RefPtr<ODEController> mPhysicsController;
 
    RefPtr<osg::Group> mSceneNode; ///<This will be our Scene
 
@@ -64,16 +59,7 @@ Scene::Scene(const std::string& name)
    : DeltaDrawable(name)
    , mImpl(NULL)
 {
-   mImpl = new SceneImpl(new ODEController(this));
-   Ctor();
-}
-
-//////////////////////////////////////////////////////////////////////////
-Scene::Scene(dtCore::ODEController* physicsController, const std::string& name)
-   : DeltaDrawable(name)
-   , mImpl(NULL)
-{
-   mImpl = new SceneImpl(physicsController);
+   mImpl = new SceneImpl();
    Ctor();
 }
 
@@ -404,24 +390,6 @@ void Scene::SetRenderState(Face face, Mode mode)
 
 
 /////////////////////////////////////////////
-void Scene::RegisterCollidable(Transformable* collidable) const
-{
-   if (mImpl->mPhysicsController.valid())
-   {
-      mImpl->mPhysicsController->RegisterCollidable(collidable);
-   }
-}
-
-/////////////////////////////////////////////
-void Scene::UnRegisterCollidable(Transformable* collidable) const
-{
-   if (mImpl->mPhysicsController.valid())
-   {
-      mImpl->mPhysicsController->UnRegisterCollidable(collidable);
-   }
-}
-
-/////////////////////////////////////////////
 bool Scene::GetHeightOfTerrain(float& heightOfTerrain, float x, float y, float maxZ, float minZ)
 {
    bool heightFound = false;
@@ -450,141 +418,15 @@ bool Scene::GetHeightOfTerrain(float& heightOfTerrain, float x, float y, float m
 }
 
 /////////////////////////////////////////////
-void Scene::SetGravity(const osg::Vec3& gravity) const
-{
-   if (mImpl->mPhysicsController.valid())
-   {
-      mImpl->mPhysicsController->SetGravity(gravity);
-   }
-}
-
-//////////////////////////////////////////////////////////////////////////
-void Scene::GetGravity(osg::Vec3& vec) const
-{
-   if (mImpl->mPhysicsController.valid())
-   {
-      vec = mImpl->mPhysicsController->GetGravity();
-   }
-}
-
-//////////////////////////////////////////////////////////////////////////
-osg::Vec3 Scene::GetGravity() const
-{
-   if (mImpl->mPhysicsController.valid())
-   {
-      return mImpl->mPhysicsController->GetGravity();
-   }
-   else
-   {
-      return osg::Vec3(0.0f, 0.0f, 0.0f);
-   }
-}
-
-//////////////////////////////////////////////////////////////////////////
-void Scene::GetGravity(float& x, float& y, float& z) const
-{
-   if (mImpl->mPhysicsController.valid())
-   {
-      osg::Vec3 grav = mImpl->mPhysicsController->GetGravity();
-      x = grav[0]; y = grav[1]; z = grav[2];
-   }
-}
-
-/////////////////////////////////////////////
-// Get the ODE space ID
-dSpaceID Scene::GetSpaceID() const
-{
-   if (mImpl->mPhysicsController.valid())
-   {
-      return mImpl->mPhysicsController->GetSpaceID();
-   }
-   else
-   {
-      return 0;
-   }
-}
-
-/////////////////////////////////////////////
-// Get the ODE world ID
-dWorldID Scene::GetWorldID() const
-{
-   if (mImpl->mPhysicsController.valid())
-   {
-      return mImpl->mPhysicsController->GetWorldID();
-   }
-   else
-   {
-      return 0;
-   }
-}
-
-
-/////////////////////////////////////////////
-// Get the ODE contact joint group ID
-dJointGroupID Scene::GetContactJointGroupID() const
-{
-   if (mImpl->mPhysicsController.valid())
-   {
-      return mImpl->mPhysicsController->GetContactJointGroupID();
-   }
-   else
-   {
-      return 0;
-   }
-}
-/////////////////////////////////////////////
 // Performs collision detection and updates physics
 void Scene::OnMessage(MessageData* data)
 {
-   if (data->message == dtCore::System::MESSAGE_POST_FRAME)
-   {
-   }
-   else if (data->message == dtCore::System::MESSAGE_PRE_FRAME)
-   {
-      double dt = *static_cast<double*>(data->userData);
-      if (mImpl->mPhysicsController.valid())
-      {
-         mImpl->mPhysicsController->Iterate(dt);
-      }
-   }
-   else if (data->message == dtCore::System::MESSAGE_EXIT)
+   if (data->message == dtCore::System::MESSAGE_EXIT)
    {
       RemoveAllDrawables();
    }
 }
 
-/////////////////////////////////////////////
-/**
- * The supplied function will be used instead of the built-in collision
- *  callback.
- * @param func : The function to handle collision detection
- * @param data : A void pointer to user data.  This gets passed directly to func.
- */
-void Scene::SetUserCollisionCallback(dNearCallback* func, void* data) const
-{
-   if (mImpl->mPhysicsController.valid())
-   {
-      mImpl->mPhysicsController->SetUserCollisionCallback(func, data);
-   }
-}
-
-/////////////////////////////////////////////
-dNearCallback* Scene::GetUserCollisionCallback() const
-{
-   return mImpl->mPhysicsController.valid() ? mImpl->mPhysicsController->GetUserCollisionCallback() : NULL;
-}
-
-/////////////////////////////////////////////
-void* Scene::GetUserCollisionData()
-{
-   return mImpl->mPhysicsController.valid() ? mImpl->mPhysicsController->GetUserCollisionData() : NULL;
-}
-
-/////////////////////////////////////////////
-const void* Scene::GetUserCollisionData() const
-{
-   return mImpl->mPhysicsController.valid() ? mImpl->mPhysicsController->GetUserCollisionData() : NULL;
-}
 
 /////////////////////////////////////////////
 template<typename T>
@@ -740,34 +582,6 @@ void Scene::SetDatabasePager(dtCore::DatabasePager* pager)
    {
       mImpl->mPager->GetOsgDatabasePager()->registerPagedLODs(GetSceneNode());
    }
-}
-
-//////////////////////////////////////////////////////////////////////////
-double Scene::GetPhysicsStepSize() const
-{
-   if (mImpl->mPhysicsController.valid())
-   {
-      return mImpl->mPhysicsController->GetPhysicsStepSize();
-   }
-   else
-   {
-      return 0.0;
-   }
-}
-
-//////////////////////////////////////////////////////////////////////////
-void Scene::SetPhysicsStepSize(double stepSize) const
-{
-   if (mImpl->mPhysicsController.valid())
-   {
-      mImpl->mPhysicsController->SetPhysicsStepSize(stepSize);
-   }
-}
-
-//////////////////////////////////////////////////////////////////////////
-dtCore::ODEController* Scene::GetPhysicsController() const
-{
-   return mImpl->mPhysicsController.get();
 }
 
 //////////////////////////////////////////////////////////////////////////
