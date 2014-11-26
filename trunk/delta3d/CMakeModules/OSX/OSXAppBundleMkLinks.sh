@@ -11,9 +11,6 @@ for token in *.app ; do
    ln -sf ../../../../QtPlugins/imageformats;
    popd;
    pushd Resources; 
-   rm -f deltaData;
-   mkdir deltaData;
-   cp -r ../../../../data/* deltaData;
    ln -sf ../../../../examples;
    popd;
    popd;
