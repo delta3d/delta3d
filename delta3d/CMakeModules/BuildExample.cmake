@@ -2,6 +2,8 @@
 #Expects files to be compiled in TARGET_SRC and TARGET_H.
 #Supply the target name as the first parameter.  Additional
 #parameters will be passed to LINK_WITH_VARIABLES
+include(UtilityMacros)
+
 function(BUILD_EXE_EXAMPLE TGTNAME)
   
    if (APPLE)
@@ -27,6 +29,7 @@ function(BUILD_EXE_EXAMPLE TGTNAME)
              PROPERTIES
              MACOSX_PACKAGE_LOCATION Resources/deltaData
           )
+         ADD_DIRECTORY_TO_BUNDLE(apple_bundle_sources ${CMAKE_SOURCE_DIR}/data Resources/deltaData)
       endif()
    
       ADD_EXECUTABLE(${TGTNAME} MACOSX_BUNDLE
