@@ -71,11 +71,11 @@ dtCore::ActorProxyIcon* GameLevelActorProxy::GetBillBoardIcon()
 
 void GameLevelActorProxy::OnEnteredWorld()
 {
-   dtGame::Invokable* invoke = new dtGame::Invokable("ResetCollisionMesh",
-      dtUtil::MakeFunctor(&GameLevelActor::ResetCollisionMesh,
-            GetDrawable<GameLevelActor>()));
+//   dtGame::Invokable* invoke = new dtGame::Invokable("ResetCollisionMesh",
+//      dtUtil::MakeFunctor(&GameLevelActor::ResetCollisionMesh,
+//            GetDrawable<GameLevelActor>()));
 
-   AddInvokable(*invoke);
+//   AddInvokable(*invoke);
 
    RegisterForMessages(FireFighterMessageType::ITEM_ACTIVATED,   "ResetCollisionMesh");
    RegisterForMessages(FireFighterMessageType::ITEM_DEACTIVATED, "ResetCollisionMesh");
@@ -137,16 +137,4 @@ void GameLevelActor::LoadFile(const std::string& filename)
    }
 
    GetMatrixNode()->addChild(node);
-}
-
-void GameLevelActor::ResetCollisionMesh(const dtGame::Message& msg)
-{
-   dtGame::GameActorProxy* gap = GetGameActorProxy().GetGameManager()->FindGameActorById(msg.GetAboutActorId());
-   HatchActor* ha = gap->GetDrawable<HatchActor>();
-   if (ha == NULL)
-   {
-      return;
-   }
-
-   SetCollisionMesh();
 }

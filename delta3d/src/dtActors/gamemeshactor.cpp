@@ -87,7 +87,6 @@ namespace dtActors
 
          mMeshNode = model;
 
-         GetGameActorProxy().SetCollisionType(GetGameActorProxy().GetCollisionType());
       }
       else
       {

@@ -3,7 +3,6 @@
 //////////////////////////////////////////////////////////////////////
 #include <prefix/dtcoreprefix.h>
 #include <dtCore/object.h>
-#include <dtCore/collisioncategorydefaults.h>
 #include <dtCore/transform.h>
 
 #include <dtUtil/boundingshapeutils.h>
@@ -18,7 +17,7 @@ namespace dtCore
 
    /////////////////////////////////////////////////////////////////////////////
    Object::Object(const std::string& name)
-      : Physical(name)
+      : Transformable(name)
       , mModel(new Model)
       , mRecenterGeometry(false)
    {
@@ -27,7 +26,7 @@ namespace dtCore
 
    /////////////////////////////////////////////////////////////////////////////
    Object::Object(TransformableNode& node, const std::string& name)
-      : Physical(node, name)
+      : Transformable(node, name)
       , mModel(new Model)
       , mRecenterGeometry(false)
    {
@@ -44,7 +43,6 @@ namespace dtCore
 
       GetMatrixNode()->addChild(&mModel->GetMatrixTransform());
 
-      SetCollisionCategoryBits(COLLISION_CATEGORY_MASK_OBJECT);
    }
 
    /////////////////////////////////////////////////////////////////////////////

@@ -178,7 +178,7 @@ namespace dtActors
    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    void WaterGridBuilder::BuildWavesFromSeaState(WaterGridActor::SeaState* seaState, std::vector<WaterGridActor::Wave>& waveList)
    {
-      int numWaves = 16;
+      //int numWaves = 16;
 
       float waveLenMod = 2.0;
       float ampMod = 0.25f;

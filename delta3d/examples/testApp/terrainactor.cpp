@@ -155,7 +155,6 @@ namespace dtExample
    TerrainActor::TerrainActor()
    {
       SetClassName("dtExample::TerrainActor");
-      SetHideDTCorePhysicsProps(true);
    }
 
    /////////////////////////////////////////////////////////////////////////////

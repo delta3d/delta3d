@@ -89,31 +89,31 @@ namespace dtDirector
             std::string modelName = GetString("Motion Model");
             if (!modelName.empty())
             {
-               mMotionModel = dtCore::CollisionMotionModel::GetInstance(modelName);
+               mMotionModel = dtCore::FPSMotionModel::GetInstance(modelName);
             }
          }
 
-         if (mMotionModel)
-         {
-            int currentMode = mMotionModel->GetFPSCollider().GetMode();
-            if (currentMode != mCurrentMode)
-            {
-               GetDirector()->PushStack(this, INPUT_CHANGED_EVENT);
-
-               mCurrentMode = currentMode;
-
-               switch (mCurrentMode)
-               {
-               case dtCore::FPSCollider::IDLE:    ActivateOutput("Idle");    break;
-               case dtCore::FPSCollider::WALKING: ActivateOutput("Walking"); break;
-               case dtCore::FPSCollider::SLIDING: ActivateOutput("Sliding"); break;
-               case dtCore::FPSCollider::JUMPING: ActivateOutput("Jumping"); break;
-               case dtCore::FPSCollider::FALLING: ActivateOutput("Falling"); break;
-               }
-            }
-
-            return true;
-         }
+//         if (mMotionModel)
+//         {
+//            int currentMode = mMotionModel->GetFPSCollider().GetMode();
+//            if (currentMode != mCurrentMode)
+//            {
+//               GetDirector()->PushStack(this, INPUT_CHANGED_EVENT);
+//
+//               mCurrentMode = currentMode;
+//
+//               switch (mCurrentMode)
+//               {
+//               case dtCore::FPSCollider::IDLE:    ActivateOutput("Idle");    break;
+//               case dtCore::FPSCollider::WALKING: ActivateOutput("Walking"); break;
+//               case dtCore::FPSCollider::SLIDING: ActivateOutput("Sliding"); break;
+//               case dtCore::FPSCollider::JUMPING: ActivateOutput("Jumping"); break;
+//               case dtCore::FPSCollider::FALLING: ActivateOutput("Falling"); break;
+//               }
+//            }
+//
+//            return true;
+//         }
       }
       else if (input == INPUT_STOP)
       {

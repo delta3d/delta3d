@@ -15,7 +15,6 @@
 #include <dtCore/transform.h>
 #include <dtCore/pointaxis.h>
 #include <dtCore/camera.h>
-#include <dtCore/collisioncategorydefaults.h>
 
 using namespace dtCore;
 IMPLEMENT_MANAGEMENT_LAYER(Compass)
@@ -110,8 +109,6 @@ Compass::Compass( Camera* cam )
 
    //hookup an update callback on this node
    GetOSGNode()->setUpdateCallback( new _updateCompassCallback( this ) );
-
-   SetCollisionCategoryBits(COLLISION_CATEGORY_MASK_COMPASS);
 
    // set render depth so that it is not culled from scene due to occluding geometry
    osg::StateSet* state = GetOSGNode()->getOrCreateStateSet() ;

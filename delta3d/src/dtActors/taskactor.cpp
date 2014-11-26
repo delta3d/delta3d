@@ -187,7 +187,6 @@ namespace dtActors
       : mSubTaskIndex(0)
    {
       SetClassName(TaskActorProxy::CLASS_NAME);
-      SetHideDTCorePhysicsProps(true);
       mParentTask = NULL;
    }
 
@@ -201,7 +200,6 @@ namespace dtActors
    {
       const std::string GROUPNAME = "BaseTask";
 
-      SetHideDTCorePhysicsProps(true);
       dtGame::GameActorProxy::BuildPropertyMap();
       TaskActor* task = GetDrawable<TaskActor>();
 

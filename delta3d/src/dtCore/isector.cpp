@@ -24,7 +24,6 @@
 
 #include <dtCore/deltadrawable.h>
 #include <dtCore/scene.h>
-#include <dtCore/collisioncategorydefaults.h>
 
 #include <osg/Group>
 #include <osg/Version> // For #ifdef
@@ -46,7 +45,6 @@ namespace dtCore
       , mLineSegment(new osg::LineSegment())
       , mClosestDrawable(0)
    {
-      SetCollisionCategoryBits(COLLISION_CATEGORY_MASK_ISECTOR);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -59,7 +57,6 @@ namespace dtCore
       , mLineSegment(new osg::LineSegment())
       , mClosestDrawable(0)
    {
-      SetCollisionCategoryBits(COLLISION_CATEGORY_MASK_ISECTOR);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -74,8 +71,6 @@ namespace dtCore
    {
       mDirection = end-start;
       mLineLength = mDirection.length();
-
-      SetCollisionCategoryBits(COLLISION_CATEGORY_MASK_ISECTOR);
    }
 
    ///////////////////////////////////////////////////////////////////////////////

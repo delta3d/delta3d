@@ -25,7 +25,6 @@
 #include <dtCore/system.h>
 #include <dtUtil/fileutils.h>
 #include <dtUtil/exception.h>
-#include <dtCore/collisioncategorydefaults.h>
 
 #include <dtTerrain/terrain.h>
 #include <dtTerrain/terraindatareader.h>
@@ -101,7 +100,6 @@ namespace dtTerrain
       SetTerrainTileFactory(*(new PagedTerrainTileFactory()));
       AddSender(&dtCore::System::GetInstance());
 
-      SetCollisionCategoryBits(COLLISION_CATEGORY_MASK_TERRAIN);
       SetLineOfSightSpacing(25.0f); // a bit less than DTED L2
    }
 
@@ -357,7 +355,7 @@ namespace dtTerrain
    void Terrain::OnMessage(dtCore::Base::MessageData *data)
    {
       //Make sure we call our super class implementation of this method.
-      dtCore::Physical::OnMessage(data);
+      dtCore::Transformable::OnMessage(data);
 
       if (data->message == dtCore::System::MESSAGE_PRE_FRAME)
          PreFrame(*(double *)data->userData);

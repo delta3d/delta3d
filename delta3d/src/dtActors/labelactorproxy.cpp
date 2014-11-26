@@ -47,15 +47,5 @@ namespace dtActors
       {
          AddProperty(curProperty->get());
       }
-
-      // REMOVE USELESS PROPERTIES - These properties really should not show in
-      // STAGE and ought to be completely removed from the object.
-      // However, the overhead is part of sub-classing GameActor.
-      RemoveProperty("Show Collision Geometry"); //"ODE Show Collision Geometry"
-      RemoveProperty(TransformableActorProxy::PROPERTY_ENABLE_COLLISION);
-      RemoveProperty(TransformableActorProxy::PROPERTY_COLLISION_TYPE);
-      RemoveProperty(TransformableActorProxy::PROPERTY_COLLISION_RADIUS);
-      RemoveProperty(TransformableActorProxy::PROPERTY_COLLISION_LENGTH);
-      RemoveProperty(TransformableActorProxy::PROPERTY_COLLISION_BOX);
    }
 }

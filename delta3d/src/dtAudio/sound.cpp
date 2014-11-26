@@ -9,9 +9,8 @@
 #include <dtCore/system.h>
 #include <dtCore/transform.h>
 #include <dtCore/project.h>
-#include <dtCore/collisioncategorydefaults.h>
-#include <dtUtil/mathdefines.h>
 #include <dtUtil/serializer.h>
+#include <dtUtil/mathdefines.h>
 
 #include <xercesc/dom/DOMDocument.hpp>
 #include <xercesc/dom/DOMElement.hpp>
@@ -113,8 +112,6 @@ Sound::Sound()
    SetMinGain(0.0f);
    SetMaxGain(1.0f);
    SetReferenceDistance(1.0f); //GK added
-
-   SetCollisionCategoryBits(COLLISION_CATEGORY_MASK_SOUND);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

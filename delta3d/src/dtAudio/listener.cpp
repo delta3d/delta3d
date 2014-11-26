@@ -7,7 +7,6 @@
 #include <dtCore/scene.h>
 #include <dtCore/system.h>
 #include <dtCore/transform.h>
-#include <dtCore/collisioncategorydefaults.h>
 
 #include <dtUtil/mathdefines.h>
 
@@ -75,8 +74,6 @@ Listener::Listener()
    AddSender(&dtCore::System::GetInstance());
 
    RegisterInstance(this);
-
-   SetCollisionCategoryBits(COLLISION_CATEGORY_MASK_LISTENER);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

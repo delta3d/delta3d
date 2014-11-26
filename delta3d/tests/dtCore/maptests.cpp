@@ -70,7 +70,7 @@
 #include <dtCore/namedvectorparameters.h>
 #include <dtCore/namedgroupparameter.h>
 #include <dtCore/namedgroupparameter.inl>
-#include <dtCore/physicalactorproxy.h>
+#include <dtCore/transformableactorproxy.h>
 #include <dtCore/project.h>
 #include <dtCore/resourceactorproperty.h>
 #include <dtCore/stringactorproperty.h>

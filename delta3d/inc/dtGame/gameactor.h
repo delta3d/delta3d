@@ -25,7 +25,7 @@
 #include <dtGame/export.h>
 #include <dtGame/gameactorproxy.h> //needed for private member
 #include <dtCore/observerptr.h>
-#include <dtCore/physical.h>
+#include <dtCore/transformable.h>
 #include <dtGame/actorcomponentbase.h>
 
 namespace dtUtil
@@ -46,10 +46,11 @@ namespace dtGame
     * @see dtGame::GameManager
     */
    class DT_GAME_EXPORT GameActor
-      : public dtCore::Physical
+      : public dtCore::Transformable
       , public dtGame::ActorComponentBase
    {
    public:
+      typedef dtCore::Transformable BaseClass;
       /// Constructor
       GameActor(GameActorProxy& parent, const std::string& name = "GameActor");
 

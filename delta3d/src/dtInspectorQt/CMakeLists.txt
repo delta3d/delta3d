@@ -22,7 +22,6 @@ SET(LIB_PUBLIC_HEADERS
     ${HEADER_PATH}/objectview.h
     ${HEADER_PATH}/osgview.h
     ${HEADER_PATH}/particlesystemview.h
-    ${HEADER_PATH}/physicalview.h
     ${HEADER_PATH}/propertyeditor.h
     ${HEADER_PATH}/sceneview.h
     ${HEADER_PATH}/skydomeview.h
@@ -51,7 +50,6 @@ SET(LIB_SOURCES
     objectview.cpp
     osgview.cpp
     particlesystemview.cpp
-    physicalview.cpp
 	 propertyeditor.cpp
     sceneview.cpp
     skydomeview.cpp

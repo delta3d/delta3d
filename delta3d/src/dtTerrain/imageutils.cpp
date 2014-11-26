@@ -24,7 +24,6 @@
 #include <osg/Vec3>
 #include <osg/Texture2D>
 #include <dtCore/refptr.h>
-#include <dtCore/physical.h>
 #include <dtCore/scene.h>
 #include <dtUtil/log.h>
 #include <osgDB/ReadFile>

@@ -766,7 +766,7 @@ namespace dtAnim
    bool Cal3dLoader::Save(const std::string& file, const dtAnim::BaseModelWrapper& wrapper)
    {
       const dtAnim::Cal3DModelWrapper* calWrapper = dynamic_cast<const dtAnim::Cal3DModelWrapper*>(&wrapper);
-      dtAnim::Cal3DModelData* modelData = calWrapper->GetCalModelData();
+      //dtAnim::Cal3DModelData* modelData = calWrapper->GetCalModelData();
       const CalModel* calModel = calWrapper->GetCalModel();
 
 #if defined(CAL3D_VERSION) && CAL3D_VERSION >= 1300

@@ -1,7 +1,6 @@
 #include <prefix/dtcoreprefix.h>
 #include <dtCore/spotlight.h>
 #include <osg/LightSource>
-#include <dtCore/collisioncategorydefaults.h>
 
 namespace dtCore
 {
@@ -15,8 +14,6 @@ namespace dtCore
       //set some default spotlight parameters
       SetSpotCutoff( 22.5f ); //spot angle of 45 degrees
       SetSpotExponent( 1.0f ); 
-
-      SetCollisionCategoryBits(COLLISION_CATEGORY_MASK_SPOTLIGHT);
    }
 
    SpotLight::SpotLight( const osg::LightSource& osgLightSource, const std::string& name, LightingMode mode )
@@ -27,8 +24,6 @@ namespace dtCore
       //set some default spotlight parameters
       SetSpotCutoff( 22.5f ); //spot angle of 45 degrees
       SetSpotExponent( 1.0f );
-
-      SetCollisionCategoryBits(COLLISION_CATEGORY_MASK_SPOTLIGHT);
    }
 
    SpotLight::~SpotLight()

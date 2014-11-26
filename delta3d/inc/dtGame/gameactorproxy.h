@@ -24,7 +24,7 @@
 #define gameactorproxy_h__
 
 #include <dtGame/export.h>
-#include <dtCore/physicalactorproxy.h>
+#include <dtCore/transformableactorproxy.h>
 #include <dtGame/actorcomponentbase.h>
 #include <dtGame/invokable.h>
 #include <dtGame/messagetype.h>
@@ -49,11 +49,11 @@ namespace dtGame
     * messages and is also a container for ActorComponents.
     * @see dtGame::GameManager
     */
-   class DT_GAME_EXPORT GameActorProxy : public dtCore::PhysicalActorProxy,
+   class DT_GAME_EXPORT GameActorProxy : public dtCore::TransformableActorProxy,
       public dtGame::ActorComponentBase
    {
    public:
-      typedef dtCore::PhysicalActorProxy BaseClass;
+      typedef dtCore::TransformableActorProxy BaseClass;
 
       /**
        * DEPRECATED  Put all your message handling logic on you subclass of GameActorProxy (name change pending) and call that

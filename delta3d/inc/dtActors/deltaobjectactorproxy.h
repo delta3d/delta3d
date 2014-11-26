@@ -22,7 +22,7 @@
 #define DELTA_OBJECT_ACTOR_PROXY
 
 #include <dtCore/plugin_export.h>
-#include <dtCore/physicalactorproxy.h>
+#include <dtCore/transformableactorproxy.h>
 
 namespace dtActors 
 {
@@ -30,7 +30,7 @@ namespace dtActors
    * @class DeltaObjectActorProxy
    * @brief This proxy wraps the Delta3D Object.
    */
-   class DT_PLUGIN_EXPORT DeltaObjectActorProxy : public dtCore::PhysicalActorProxy 
+   class DT_PLUGIN_EXPORT DeltaObjectActorProxy : public dtCore::TransformableActorProxy
    {
       public:
 

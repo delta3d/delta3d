@@ -33,7 +33,7 @@ class PlayerActor;
 
 namespace dtCore
 {
-   class CollisionMotionModel;
+   class FPSMotionModel;
 }
 
 namespace dtAudio
@@ -193,7 +193,7 @@ class FIRE_FIGHTER_EXPORT InputComponent : public dtGame::BaseInputComponent
       GameState* mCurrentState;
       PlayerActor* mPlayer;
 
-      dtCore::RefPtr<dtCore::CollisionMotionModel> mMotionModel;
+      dtCore::RefPtr<dtCore::FPSMotionModel> mMotionModel;
 
       dtAudio::Sound* mBellSound;
       dtAudio::Sound* mDebriefSound;
@@ -201,7 +201,6 @@ class FIRE_FIGHTER_EXPORT InputComponent : public dtGame::BaseInputComponent
       dtAudio::Sound* mRunSound;
       dtAudio::Sound* mCrouchSound;
       GameItemActor* mCurrentIntersectedItem;
-      float mRadius, mTheta, mK;
       dtCore::RefPtr<dtActors::TaskActorOrderedProxy> mMission;
       bool mTasksSetup;
 };

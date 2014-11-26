@@ -3,7 +3,6 @@
 #include <dtCore/transform.h>
 
 #include <dtUtil/matrixutil.h>
-#include <dtCore/collisioncategorydefaults.h>
 
 #include <osg/Light>
 #include <osg/LightSource>
@@ -57,16 +56,12 @@ PositionalLight::PositionalLight( int number, const std::string& name, LightingM
    :  Light( number, name, mode )
 {
    mLightSource->setUpdateCallback( new PositionalLightCallback( this ) );
-
-   SetCollisionCategoryBits(COLLISION_CATEGORY_MASK_POSITIONALLIGHT);
 }
 
 PositionalLight::PositionalLight( const osg::LightSource& osgLightSource, const std::string& name, LightingMode mode )
    : Light( osgLightSource, name, mode )
 {
    mLightSource->setUpdateCallback( new PositionalLightCallback( this ) );
-
-   SetCollisionCategoryBits(COLLISION_CATEGORY_MASK_POSITIONALLIGHT);
 }
 
 PositionalLight::~PositionalLight()

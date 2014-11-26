@@ -7,7 +7,6 @@
 #include <dtCore/deltawin.h>
 #include <dtCore/scene.h>
 #include <dtCore/system.h>
-#include <dtCore/collisioncategorydefaults.h>
 #include <dtCore/cameracallbackcontainer.h>
 #include <dtCore/screenshotcallback.h>
 #include <dtCore/transform.h>
@@ -81,10 +80,6 @@ namespace dtCore
       AddSender(sys);
 
       SetClearColor(0.2f, 0.2f, 0.6f, 1.0f);
-
-      SetCollisionCategoryBits(COLLISION_CATEGORY_MASK_CAMERA);
-
-
    }
 
    //////////////////////////////////////////////////////////////////////////////
@@ -541,6 +536,7 @@ namespace dtCore
       {
          osgViewer::GraphicsWindow* gw = mWindow->GetOsgViewerGraphicsWindow();
          mOsgCamera->setGraphicsContext(gw);
+         gw->getState()->setCheckForGLErrors(osg::State::ONCE_PER_ATTRIBUTE);
 
          const osg::GraphicsContext::Traits* traits = gw->getTraits();
 

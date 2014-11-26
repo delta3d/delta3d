@@ -32,7 +32,6 @@ namespace dtExample
    ////////////////////////////////////////////////
    CivilianActor::CivilianActor()
    {
-      SetHideDTCorePhysicsProps(true);
       SetClassName("dtExample::CivilianActor");
    }
 

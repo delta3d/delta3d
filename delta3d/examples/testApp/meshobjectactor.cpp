@@ -19,8 +19,6 @@ namespace dtExample
 
    MeshObjectActor::MeshObjectActor()
    {
-      SetHideDTCorePhysicsProps(true);
-
    }
 
    MeshObjectActor::~MeshObjectActor()

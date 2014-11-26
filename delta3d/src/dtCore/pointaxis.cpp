@@ -1,6 +1,5 @@
 #include <prefix/dtcoreprefix.h>
 #include <dtCore/pointaxis.h>
-#include <dtCore/collisioncategorydefaults.h>
 
 #include <osg/Geode>
 #include <osg/Geometry>
@@ -76,8 +75,6 @@ PointAxis::PointAxis()
 
    ctor();
    SetName("PointAxis");
-
-   SetCollisionCategoryBits(COLLISION_CATEGORY_MASK_POINTAXIS);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -74,10 +74,7 @@ const dtCore::BaseActorObject::RenderMode& dtActors::TriggerVolumeActorProxy::Ge
 {
    if (IsInSTAGE())
    {
-      if (GetRenderCollisionGeometry() == false)
-      {
-         return dtCore::BaseActorObject::RenderMode::DRAW_BILLBOARD_ICON;
-      }
+      return dtCore::BaseActorObject::RenderMode::DRAW_BILLBOARD_ICON;
    }
 
    return dtGame::GameActorProxy::GetRenderMode();

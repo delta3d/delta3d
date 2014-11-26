@@ -874,17 +874,17 @@ namespace dtActors
       mCameraFoVScalar = (75.0f / avgFoV);
 
       int count = 0;
-      float numWaves = float(mWaves.size());
+      //float numWaves = float(mWaves.size());
       WaveArray::iterator iter = mWaves.begin();
       WaveArray::iterator endIter = mWaves.end();
 
-      float cameraCutPoint = 0.5 + cameraHeight / (24.0 * mModForWaveLength * mCameraFoVScalar * mModForFOV); // Used to pick waves
+      //float cameraCutPoint = 0.5 + cameraHeight / (24.0 * mModForWaveLength * mCameraFoVScalar * mModForFOV); // Used to pick waves
 
 
       // Search for the next wave that is big enough to be worth showing.
       // Camera Cut Point is an estimated value for the cut point - scaled by all the FoV modifiers.
-      bool quitLooking = false;
-      int numIgnored = 0;
+      //bool quitLooking = false;
+      //int numIgnored = 0;
       /*while(iter != endIter && !quitLooking)
       {
          Wave &nextWave = (*iter);
@@ -909,7 +909,7 @@ namespace dtActors
          {
             Wave& wave = (*iter);
             // weaken the amp as it reaches the pop point to hide some of the popping
-            float fadeRatio = sqrt((wave.mWaveLength - cameraCutPoint) / cameraCutPoint);
+            //float fadeRatio = sqrt((wave.mWaveLength - cameraCutPoint) / cameraCutPoint);
             float amp = wave.mAmplitude * mModForAmplitude;
             float waveLength = wave.mWaveLength * mModForWaveLength;
             float speed = wave.mSpeed * mModForSpeed;
@@ -1498,11 +1498,11 @@ namespace dtActors
    const dtUtil::RefString WaterGridActorProxy::INVOKABLE_ACTOR_UPDATE("Actor Updated");
 
    WaterGridActorProxy::WaterGridActorProxy()
-   : mSceneCameraName(dtABC::Application::GetDefaultConfigData().CAMERA_NAME)
-   , mWaveDirection(0.0f)
+   : mWaveDirection(0.0f)
    , mAmplitudeModifier(1.0f)
    , mWavelengthModifier(1.0f)
    , mSpeedModifier(1.0f)
+   , mSceneCameraName(dtABC::Application::GetDefaultConfigData().CAMERA_NAME)
    {
       SetClassName(WaterGridActorProxy::CLASSNAME);
    }

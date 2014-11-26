@@ -26,8 +26,9 @@
 
 #include <dtDirector/actionnode.h>
 #include <dtDirectorNodes/nodelibraryexport.h>
+#include <dtCore/fpsmotionmodel.h>
 #include <dtCore/refptr.h>
-#include <dtCore/collisionmotionmodel.h>
+
 namespace dtDirector
 {
    ////////////////////////////////////////////////////////////////////////////////
@@ -101,9 +102,6 @@ namespace dtDirector
       void SetTurnSpeed(float value);
       float GetTurnSpeed() const;
 
-      void SetJumpSpeed(float value);
-      float GetJumpSpeed() const;
-
       void SetSlideSpeed(float value);
       float GetSlideSpeed() const;
 
@@ -118,16 +116,6 @@ namespace dtDirector
 
       void SetUseArrows(bool value);
       bool GetUseArrows() const;
-
-      void SetAllowJump(bool value);
-      bool GetAllowJump() const;
-
-      void SetTorsoCollisionMask(unsigned int value);
-      unsigned int GetTorsoCollisionMask() const;
-
-      void SetFeetCollisionMask(unsigned int value);
-      unsigned int GetFeetCollisionMask() const;
-      void GetCollisionMaskList(std::vector<std::string>& names, std::vector<unsigned int>& values);
 
    protected:
 
@@ -146,16 +134,12 @@ namespace dtDirector
       float mWalkSpeed;
       float mSidestepSpeed;
       float mTurnSpeed;
-      float mJumpSpeed;
       float mSlideSpeed;
       float mSlideThreshold;
       float mSmoothingSpeed;
       bool  mUseWASD;
       bool  mUseArrows;
-      bool  mAllowJump;
-      unsigned int mTorsoMask;
-      unsigned int mFeetMask;
-      dtCore::RefPtr<dtCore::CollisionMotionModel> mCreatedMotionModel;
+      dtCore::RefPtr<dtCore::FPSMotionModel> mCreatedMotionModel;
    };
 }
 

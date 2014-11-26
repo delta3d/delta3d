@@ -60,7 +60,6 @@ namespace dtRender
       {
          SetName("DynamicLight");
          SetClassName("dtRender::DynamicLight");
-         SetHideDTCorePhysicsProps(true);
       }
 
       //////////////////////////////////////////////////////////
@@ -84,7 +83,6 @@ namespace dtRender
       {
          SetName("DynamicLight");
          SetClassName("dtRender::DynamicLight");
-         SetHideDTCorePhysicsProps(true);
       }
 
 

@@ -875,20 +875,8 @@ namespace dtActors
 
                         dtCore::Transform colTransform;
                         colTransform.Set(mid + offset, prevPos + offset, osg::Vec3(0, 0, 1));
-                        geomData->mCollision->SetTransform(colTransform);
-
-                        geomData->mCollision->SetCollisionBox(width, length, height);
-                        geomData->mCollision->SetCollisionDetection(GetCollisionDetection());
-                        geomData->mCollision->RenderCollisionGeometry(GetRenderCollisionGeometry(), mCollisionWireframe);
-                        geomData->mCollision->SetCollisionCategoryBits(GetCollisionCategoryBits());
-                        geomData->mCollision->SetCollisionCollideBits(GetCollisionCollideBits());
                      }
                   }
-               }
-               else if (geomData->mCollision.valid())
-               {
-                  postMesh->RemoveChild(geomData->mCollision);
-                  geomData->mCollision = NULL;
                }
             }
          }

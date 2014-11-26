@@ -42,7 +42,7 @@ namespace dtGame
 
    ///////////////////////////////////////////////////////////////////////////////////////////////////////
    GameActor::GameActor(GameActorProxy& owner, const std::string& name)
-      : dtCore::Physical(name)
+      : BaseClass(name)
       , mOwner(&owner)
       , mLogger(dtUtil::Log::GetInstance("gameactor.cpp"))
    {
@@ -50,7 +50,7 @@ namespace dtGame
 
    ///////////////////////////////////////////////////////////////////////////////////////////////////////
    GameActor::GameActor(GameActorProxy& owner, TransformableNode& node, const std::string& name)
-      : dtCore::Physical(node, name)
+      : BaseClass(node, name)
       , mOwner(&owner)
       , mLogger(dtUtil::Log::GetInstance("gameactor.cpp"))
    {
@@ -64,7 +64,7 @@ namespace dtGame
    ///////////////////////////////////////////////////////////////////////////////////////////////////////
    /*override*/ void GameActor::SetName(const std::string& name)
    {
-      dtCore::Physical::SetName(name);
+      BaseClass::SetName(name);
       static bool settingName = false;
       if (settingName) return;
       settingName = true;

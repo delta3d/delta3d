@@ -235,62 +235,6 @@ namespace dtCore
           */
          void BuildSegment(int x, int y);
 
-         /**
-          * ODE collision function: Gets the contact points between two
-          * geoms.
-          *
-          * @param o1 the first (InfiniteTerrain) geom
-          * @param o2 the second geom
-          * @param flags collision flags
-          * @param contact the array of contact geoms to fill
-          * @param skip the distance between contact geoms in the array
-          * @return the number of contact points generated
-          */
-         static int Collider(dGeomID o1, dGeomID o2, int flags, dContactGeom* contact, int skip);
-
-         /**
-          * A Helper function for Collider to detect collision with terrain and a sphere
-          *
-          * @param it the the pointer to the infinite terrain we want to collide with
-          * @param pCenter the center of the sphere
-          * @param pRadius the radius of the sphere
-          * @param pContact the ode contact point to fill
-          * @return whether or not a collision occured
-          */
-         static bool CollideSphere(InfiniteTerrain* it, const osg::Vec3& pCenter, float pRadius, dContactGeom* pContact);
-
-         /**
-          * ODE collision function: Finds the collider function appropriate
-          * to detect collisions between InfiniteTerrain geoms and other
-          * geoms.
-          *
-          * @param num the class number of the geom class to check
-          * @return the appropriate collider function, or NULL for none
-          */
-         static dColliderFn* GetColliderFn(int num);
-
-
-         /**
-          * ODE collision function: Computes the axis-aligned bounding box
-          * for InfiniteTerrain instances.
-          *
-          * @param g the geom to check
-          * @param aabb the location in which to store the axis-aligned
-          * bounding box
-          */
-         static void GetAABB(dGeomID g, dReal aabb[6]);
-
-         /**
-          * ODE collision function: Checks whether the specified axis-aligned
-          * bounding box intersects with an InfiniteTerrain instance.
-          *
-          * @param o1 the first (InfiniteTerrain) geom
-          * @param o2 the second geom
-          * @param aabb2 the axis-aligned bounding box of the second geom
-          * @return 1 if it intersects, 0 if it does not
-          */
-         static int AABBTest(dGeomID o1, dGeomID o2, dReal aabb2[6]);
-
 
          //returns an interpolated color based on the height
          osg::Vec4 GetColor(float pHeight);

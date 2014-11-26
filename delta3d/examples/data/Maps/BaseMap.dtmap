@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <map xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="delta3dMap" xsi:schemaLocation="delta3dMap map.xsd">
     <header>
         <name>BaseMap</name>
@@ -7,7 +8,7 @@
         <comment></comment>
         <copyright></copyright>
         <createTimestamp>2014-07-29T11:17:35-05:00</createTimestamp>
-        <lastUpdateTimestamp>2014-10-04T13:13:42-05:00</lastUpdateTimestamp>
+        <lastUpdateTimestamp>2014-11-14T11:43:32-05:00</lastUpdateTimestamp>
         <editorVersion>2.8.0</editorVersion>
         <schemaVersion>1.0</schemaVersion>
     </header>
@@ -23,11 +24,19 @@
             <type>dtRender.Light Scene</type>
             <id>2ab88062-1ccb-4ab2-b460-1dd4378ed6b4</id>
             <name>LightScene_02</name>
+            <property>
+                <name>Name</name>
+                <string>LightScene_02</string>
+            </property>
         </actor>
         <actor>
             <type>dtRender.HDR Scene</type>
             <id>3dde57f3-292b-4001-91f5-52d0642d793b</id>
             <name>HDRScene_01</name>
+            <property>
+                <name>Name</name>
+                <string>HDRScene_01</string>
+            </property>
             <property>
                 <name>MidGrey</name>
                 <float>0.80000001</float>
@@ -38,12 +47,8 @@
             <id>4b29bff2-ed10-4642-968c-ff4dc00083d3</id>
             <name>OceanScene_02</name>
             <property>
-                <name>NumRows</name>
-                <integer>200</integer>
-            </property>
-            <property>
-                <name>NumColumns</name>
-                <integer>200</integer>
+                <name>Name</name>
+                <string>OceanScene_02</string>
             </property>
             <property>
                 <name>AmplitudeModifier</name>
@@ -52,17 +57,6 @@
             <property>
                 <name>Chop</name>
                 <enumerated>CHOP_MILD</enumerated>
-            </property>
-            <property>
-                <name>TexWaveTextureResolution</name>
-                <vec2>
-                    <value1>1024.000000</value1>
-                    <value2>1024.000000</value2>
-                </vec2>
-            </property>
-            <property>
-                <name>TexWaveSpreadScalar</name>
-                <float>1.15</float>
             </property>
             <property>
                 <name>Water Color</name>
@@ -79,6 +73,10 @@
             <id>90c64a56-1ee4-4297-bede-e4b46990fef7</id>
             <name>EphemerisScene_03</name>
             <property>
+                <name>Name</name>
+                <string>EphemerisScene_03</string>
+            </property>
+            <property>
                 <name>Date and Time</name>
                 <string>2014-07-26T05:30:00+00:00</string>
             </property>
@@ -91,6 +89,10 @@
             <type>dtRender.Cube Map Scene</type>
             <id>9e3eddd1-eac7-4258-aeeb-4c16d911ed64</id>
             <name>CubeMapScene_01</name>
+            <property>
+                <name>Name</name>
+                <string>CubeMapScene_01</string>
+            </property>
             <property>
                 <name>FarPlane</name>
                 <integer>15000</integer>
@@ -112,6 +114,10 @@
             <type>dtRender.Scene Manager</type>
             <id>a48fb972-ecf3-4bf3-9d00-0158e95e409e</id>
             <name>SceneManager_01</name>
+            <property>
+                <name>Name</name>
+                <string>SceneManager_01</string>
+            </property>
             <property>
                 <name>Ambience</name>
                 <float>1.25</float>
@@ -141,6 +147,10 @@
             <type>dtRender.Shadow Scene</type>
             <id>f1a51002-513a-4438-ab12-23db818d4794</id>
             <name>ShadowScene_02</name>
+            <property>
+                <name>Name</name>
+                <string>ShadowScene_02</string>
+            </property>
             <property>
                 <name>MaxFarDistance</name>
                 <float>500</float>

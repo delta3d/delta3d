@@ -13,7 +13,6 @@
 #include <dtInspectorQt/objectview.h>
 #include <dtInspectorQt/osgview.h>
 #include <dtInspectorQt/particlesystemview.h>
-#include <dtInspectorQt/physicalview.h>
 #include <dtInspectorQt/sceneview.h>
 #include <dtInspectorQt/skydomeview.h>
 #include <dtInspectorQt/systemview.h>
@@ -57,7 +56,6 @@ dtInspectorQt::InspectorWindow::InspectorWindow(QWidget* parent /* = NULL */)
    //mViewContainer.push_back(new LightView(*ui));
    //mViewContainer.push_back(new ObjectView(*ui));
    //mViewContainer.push_back(new ParticleSystemView(*ui));
-   //mViewContainer.push_back(new PhysicalView(*ui));
    //mViewContainer.push_back(new SceneView(*ui));
    //mViewContainer.push_back(new SkyDomeView(*ui));
    //mViewContainer.push_back(new SystemView(*ui));
@@ -143,7 +141,6 @@ void dtInspectorQt::InspectorWindow::RefreshCurrentItem()
    ui->transformableGroupBox->hide();
    ui->winGroupBox->hide();
    ui->cameraGroupBox->hide();
-   ui->physicalGroupBox->hide();
    ui->objectGroupBox->hide();
    ui->sceneGroupBox->hide();
    ui->viewGroupBox->hide();
