@@ -294,6 +294,21 @@ MACRO(FIND_OSG_VERSION)
 ENDMACRO(FIND_OSG_VERSION)
 
 
+macro(ADD_DIRECTORY_TO_BUNDLE SOURCE_FILES_VAR DIR_SOURCE BUNDLE_TARGET)
+  file(GLOB_RECURSE dataFiles RELATIVE ${DIR_SOURCE} ${DIR_SOURCE}/*)
+  foreach(data_file ${dataFiles})
+     #message("file: " ${DIR_SOURCE}/${data_file})
+     get_filename_component(dirname ${data_file} PATH)
+     LIST(APPEND ${SOURCE_FILES_VAR} ${DIR_SOURCE}/${data_file})
+     SET_SOURCE_FILES_PROPERTIES(
+        ${DIR_SOURCE}/${data_file}
+        PROPERTIES
+        MACOSX_PACKAGE_LOCATION ${BUNDLE_TARGET}/${dirname}
+     )
+  endforeach(data_file)
+endmacro(ADD_DIRECTORY_TO_BUNDLE)
+
+
 MACRO(DELTA3D_ADD_LIBRARY_PROPERTIES LIB_NAME EXPORT_SYMBOL LIBRARY_TYPE)
    if (MSVC_IDE AND LIBRARY_TYPE STREQUAL SHARED)
       SET_TARGET_PROPERTIES(${LIB_NAME}
@@ -358,12 +373,16 @@ MACRO(DELTA3D_ADD_PROGRAM APP_NAME)
           MACOSX_PACKAGE_LOCATION Resources
       )
 
+      # add delta data to the bundle
+      ADD_DIRECTORY_TO_BUNDLE(apple_bundle_sources ${CMAKE_SOURCE_DIR}/data Resources/deltaData)
+
       ADD_EXECUTABLE(${APP_NAME} ${APP_TYPE}
          ${PROG_HEADERS}
          ${PROG_SOURCES}
          ${MOC_SOURCES}
          ${RCC_SOURCES}
          ${UI_SOURCES}
+         ${PROG_BUNDLE_SOURCES}
          ${apple_bundle_sources}
       )
       SET_TARGET_PROPERTIES(${APP_NAME} PROPERTIES
@@ -413,6 +432,8 @@ MACRO (SETUP_PLUGIN_WITH_OUTPUT_DIRS LIB_NAME EXPORT_MACRO SUBFOLDER)
    if (WIN32)
       # This design only makes sense on windows because there is no bin dir for libraries.
       SET(OUTPUT_BINDIR ${PROJECT_BINARY_DIR}/bin/${SUBFOLDER})
+      SET(OUTPUT_LIBDIR ${PROJECT_BINARY_DIR}/lib)
+   elif(APPLE)
       SET(OUTPUT_LIBDIR ${PROJECT_BINARY_DIR}/lib)
    else()
       SET(OUTPUT_LIBDIR ${PROJECT_BINARY_DIR}/lib/${SUBFOLDER})
