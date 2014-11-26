@@ -4,8 +4,6 @@
 #include <dtCore/scene.h>
 #include <dtCore/system.h>
 
-#include <ode/collision.h>
-
 #include <assert.h>
 #include <iostream>
 #include <iterator>
@@ -25,7 +23,7 @@ TriggerVolumeActor::TriggerVolumeActor(dtActors::TriggerVolumeActorProxy& proxy,
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void TriggerVolumeActor::OnMessage(dtCore::Base::MessageData* data)
+void TriggerVolumeActor::OnMessage(dtCore::Base::MessageData* /*data*/)
 {
    // Do not send events in STAGE.
    if (IsGameActorProxyValid() && GetGameActorProxy().IsInSTAGE())

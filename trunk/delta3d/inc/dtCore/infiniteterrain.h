@@ -30,7 +30,6 @@
 #include <dtUtil/noiseutility.h>
 #include <osg/Vec3>
 #include <osg/Vec4>
-#include <ode/collision.h>
 
 namespace dtCore
 {

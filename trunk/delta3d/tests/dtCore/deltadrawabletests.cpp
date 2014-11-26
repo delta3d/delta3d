@@ -31,7 +31,6 @@
 
 #include <osg/MatrixTransform>
 #include <osg/io_utils>
-#include <ode/collision.h>
 #include <sstream>
 
 using namespace dtCore;

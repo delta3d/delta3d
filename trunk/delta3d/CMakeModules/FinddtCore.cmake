@@ -36,13 +36,13 @@ CREATE_LINK_LINES_FOR_TARGETS(DTCORE_LIBRARIES
    OSGVIEWER_LIBRARY
    OSGPARTICLE_LIBRARY
    OSGUTIL_LIBRARY
-   ODE_LIBRARY
+   #ODE_LIBRARY
    XERCES_LIBRARY
 )
     
 SET(DTCORE_INCLUDE_DIRECTORIES ${DELTA3D_INCLUDE_DIR}
                                ${OSG_INCLUDE_DIR}
-                               ${ODE_INCLUDE_DIR}
+                               #${ODE_INCLUDE_DIR}
                                ${OPENGL_INCLUDE_DIR}
     )
 
@@ -55,6 +55,6 @@ FIND_PACKAGE_HANDLE_STANDARD_ARGS(dtCore DEFAULT_MSG DELTA3D_INCLUDE_DIR     DTC
                                                      OSGGA_LIBRARY
                                                      OSGVIEWER_LIBRARY
                                                      OSGPARTICLE_LIBRARY
-                                                     ODE_INCLUDE_DIR         ODE_LIBRARY
+                                                     #ODE_INCLUDE_DIR         ODE_LIBRARY
                                                      XERCES_INCLUDE_DIR XERCES_LIBRARY
                                   )
