@@ -222,11 +222,16 @@ namespace dtCore
                extFilter.insert(std::make_pair("osgt","Open Scene Graph binary scene data."));
                extFilter.insert(std::make_pair("osgb","Open Scene Graph binary scene data."));
                extFilter.insert(std::make_pair("osg","Open Scene Graph ascii scene data (old)."));
-               handler = new DefaultResourceTypeHandler(d, "Open Scene Graph scene data.", extFilter);
+               extFilter.insert(std::make_pair("obj","Wavefront Technologies OBJ format"));              
+               extFilter.insert(std::make_pair("ply", "Stanford point cloud."));
+
+               handler = new DefaultResourceTypeHandler(d, description, extFilter);
                extMap.insert(std::make_pair("ive", dtCore::RefPtr<ResourceTypeHandler>(handler)));
                extMap.insert(std::make_pair("osgt", dtCore::RefPtr<ResourceTypeHandler>(handler)));
                extMap.insert(std::make_pair("osgb", dtCore::RefPtr<ResourceTypeHandler>(handler)));
                extMap.insert(std::make_pair("osg", dtCore::RefPtr<ResourceTypeHandler>(handler)));
+               extMap.insert(std::make_pair("obj", dtCore::RefPtr<ResourceTypeHandler>(handler)));
+               extMap.insert(std::make_pair("ply", dtCore::RefPtr<ResourceTypeHandler>(handler)));
 
                extFilter.insert(std::make_pair("dae","Collada"));
                handler = new DefaultResourceTypeHandler(d, "Collada", extFilter);
