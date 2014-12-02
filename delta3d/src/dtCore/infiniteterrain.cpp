@@ -87,11 +87,6 @@ class InfiniteTerrainCallback : public osg::NodeCallback
 };
 
 /**
- * The ODE InfiniteTerrain class identifier.
- */
-static int dInfiniteTerrainClass = 0;
-
-/**
  * Constructor.
  *
  * @param name the instance name
