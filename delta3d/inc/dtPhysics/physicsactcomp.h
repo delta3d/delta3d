@@ -32,6 +32,7 @@
 #include <dtPhysics/collisioncontact.h>
 #include <dtPhysics/action.h>
 #include <dtPhysics/raycast.h>
+#include <dtPhysics/jointdesc.h>
 
 #include <dtGame/actorcomponent.h>
 
@@ -156,6 +157,11 @@ namespace dtPhysics
          size_t GetPhysicsObjectCount() const;
 
          /**
+          * List of joint descriptions.
+          */
+         DT_DECLARE_ARRAY_ACCESSOR(dtCore::RefPtr<JointDesc>, Joint, Joints);
+
+         /**
           * This virtual method allows the user to move a complete set of perhaps
           * even jointed bodies based on this given transform.  It can be overridden
           * to support whatever system you need to to make the bodies warp to a new position
@@ -266,14 +272,6 @@ namespace dtPhysics
 
          /// For now, this is used to make dtPhysX properties map in.
          virtual dtCore::RefPtr<dtCore::ActorProperty> GetDeprecatedProperty(const std::string& name);
-
-         /**
-          * Temporary method for removing old physics object property names.
-          * There can be more than one physics object for this component so
-          * physics object properties are managed within an array property.
-          * @return Number of properties removed.
-          */
-         int RemoveOldProperties();
 
          //////////////////////////////////////////////////////////////////////////////////////
          //                                    Utilities                                     //

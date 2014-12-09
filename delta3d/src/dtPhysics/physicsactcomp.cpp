@@ -56,7 +56,7 @@ namespace dtPhysics
    const dtUtil::RefString PhysicsActComp::PROPERTY_AUTO_CREATE("Auto-Create Physics Objects");
    const dtUtil::RefString PhysicsActComp::PROPERTY_MATERIAL_ACTOR("Material Actor");
 
-
+   DT_IMPLEMENT_ARRAY_ACCESSOR(PhysicsActComp, dtCore::RefPtr<JointDesc>, Joint, Joints, new JointDesc);
 
    /////////////////////////////////////////////////////////////////////////////
    // CLASS CODE
@@ -123,27 +123,6 @@ namespace dtPhysics
       }
       PhysicsActComp* mPac;
    };
-
-   /////////////////////////////////////////////////////////////////////////////
-   int PhysicsActComp::RemoveOldProperties()
-   {
-      int results = 0;
-
-      if ( ! mOldPropertyNamesToRemove.empty())
-      {
-         StrArray::iterator curIter = mOldPropertyNamesToRemove.begin();
-         StrArray::iterator endIter = mOldPropertyNamesToRemove.end();
-         for (; curIter != endIter; ++curIter)
-         {
-            RemoveProperty(*curIter);
-            ++results;
-         }
-
-         mOldPropertyNamesToRemove.clear();
-      }
-
-      return results;
-   }
 
    /////////////////////////////////////////////////////////////////////////////
    void PhysicsActComp::OnEnteredWorld()
@@ -326,8 +305,37 @@ namespace dtPhysics
                   GROUP);
 
       physObjArrayProp->SetArrayProperty(*physObjProp);
+      physObjArrayProp->SetSendInFullUpdate(false);
+      physObjArrayProp->SetSendInPartialUpdate(false);
 
       AddProperty(physObjArrayProp.get());
+
+
+      typedef dtCore::ArrayActorPropertyComplex<dtCore::RefPtr<JointDesc> > JointArrayPropType;
+      dtCore::RefPtr<JointArrayPropType> jointArrayProp =
+          new JointArrayPropType
+          ("Joints", "Joints",
+                JointArrayPropType::SetFuncType(this, &PhysicsActComp::SetJoint),
+                JointArrayPropType::GetFuncType(this, &PhysicsActComp::GetJoint),
+                JointArrayPropType::GetSizeFuncType(this, &PhysicsActComp::GetNumJoints),
+                JointArrayPropType::InsertFuncType(this, &PhysicsActComp::InsertJoint),
+                JointArrayPropType::RemoveFuncType(this, &PhysicsActComp::RemoveJoint),
+           "Array of Joint Descriptions",
+           GROUP
+           );
+
+      dtCore::RefPtr<dtCore::BasePropertyContainerActorProperty> singleJointProp =
+           new dtCore::SimplePropertyContainerActorProperty<JointDesc>("Joint", "Joint",
+           dtCore::SimplePropertyContainerActorProperty<JointDesc>::SetFuncType(jointArrayProp.get(), &JointArrayPropType::SetCurrentValue),
+           dtCore::SimplePropertyContainerActorProperty<JointDesc>::GetFuncType(jointArrayProp.get(), &JointArrayPropType::GetCurrentValue),
+           "", GROUP);
+
+      jointArrayProp->SetArrayProperty(*singleJointProp);
+      jointArrayProp->SetSendInFullUpdate(false);
+      jointArrayProp->SetSendInPartialUpdate(false);
+
+      AddProperty(jointArrayProp.get());
+
 
    }
 
