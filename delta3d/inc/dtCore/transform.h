@@ -42,6 +42,18 @@ namespace dtCore
 
       /// @return true if the transform is an identity matrix.
       bool IsIdentity() const { return mTransform.isIdentity(); }
+      bool Invert() { return mTransform.invert(mTransform); }
+      osg::Vec3f Multiply(const osg::Vec3f& vec) { return mTransform.preMult(vec); }
+      osg::Vec3d Multiply(const osg::Vec3d& vec) { return mTransform.preMult(vec); }
+      /**
+       *  Multiply the transform by this one and store this result in result Out
+       *  If transform is a normal transformation matrix, this will take this matrix
+       *  and transform it into the space of xform, and store the result in resultOut.
+       */
+      void Multiply(const dtCore::Transform& xform, dtCore::Transform& resultOut)
+      {
+         resultOut.mTransform.mult(this->mTransform, xform.mTransform);
+      }
 
       /// Overwrites this transform with an identity matrix
       void MakeIdentity() { mTransform.makeIdentity(); }
