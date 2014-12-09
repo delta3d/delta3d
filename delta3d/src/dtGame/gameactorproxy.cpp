@@ -93,7 +93,7 @@ namespace dtGame
    , mIsInGM(false)
    , mPublished(false)
    , mRemote(false)
-   , mDrawableIsAGameActor(false)
+   , mDrawableIsAGameActor(true) // It defaults to true so it will try to do the cast early in the init.
    , mDeleted(false)
    {
       SetClassName("dtGame::GameActor");
@@ -118,8 +118,7 @@ namespace dtGame
    {
       BaseClass::Init(actorType);
       GameActor* ga = GetDrawable<GameActor>();
-      if (ga != NULL)
-         mDrawableIsAGameActor = true;
+      mDrawableIsAGameActor = ga != NULL;
 
       BuildInvokables();
       BuildActorComponents();
