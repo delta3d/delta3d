@@ -34,6 +34,10 @@
 #include <dtGame/gameactor.h>
 #include <dtCore/project.h>
 #include <dtUtil/mathdefines.h>
+#include <dtPhysics/palutil.h>
+
+#include <dtPhysics/jointdesc.h>
+#include <dtPhysics/jointtype.h>
 
 #include <osg/ComputeBoundsVisitor>
 
@@ -41,6 +45,7 @@
 #include <pal/palActivation.h>
 #include <pal/palBodies.h>
 #include <pal/palFactory.h>
+#include <pal/palLinks.h>
 
 #include <cstring>
 
@@ -1434,72 +1439,41 @@ namespace dtPhysics
 
       palBodyBase* bodyBase1( &(parent.GetBodyWrapper()->GetPalBodyBase()) );
       palBodyBase* bodyBase2( &(child.GetBodyWrapper()->GetPalBodyBase()) );
-      palRevoluteLink* pivot = dtPhysics::PhysicsWorld::GetInstance().GetPalFactory()->CreateRevoluteLink(bodyBase1, bodyBase2,
-            pivotAnchor[0], pivotAnchor[1], pivotAnchor[2],
-            pivotAxis[0], pivotAxis[1], pivotAxis[2],
-            disableCollisionBetweenBodies);
+      palRevoluteLink* joint = dynamic_cast<palRevoluteLink*>(dtPhysics::PhysicsWorld::GetInstance().GetPalFactory()->CreateLink(PAL_LINK_REVOLUTE, bodyBase1, bodyBase2,
+            palVector3(pivotAnchor[0], pivotAnchor[1], pivotAnchor[2]),
+            palVector3(pivotAxis[0], pivotAxis[1], pivotAxis[2]),
+            disableCollisionBetweenBodies));
 
-      return pivot;
+      return joint;
    }
 
 
    ///////////////////////////////////////////////////////////////////////////////////////////
-   palGenericLink* PhysicsObject::Create6DOFJoint ( dtPhysics::PhysicsObject& parent,
-         dtPhysics::PhysicsObject& child,
-         const VectorType&         pivotAnchor,
-         const VectorType&         pivotAxis,
-         bool                      disableCollisionBetweenBodies)
+   palGenericLink* PhysicsObject::Create6DOFJoint (dtPhysics::PhysicsObject& body1,
+         dtPhysics::PhysicsObject& body2,
+         const dtCore::Transform& frameA,
+         const dtCore::Transform& frameB,
+         bool disableCollisionBetweenBodies)
    {
 
-      if (parent.GetBodyWrapper() == NULL && child.GetBodyWrapper() == NULL)
+      if (body1.GetBodyWrapper() == NULL && body2.GetBodyWrapper() == NULL)
          return NULL;
 
-      dtCore::Transform xform;
-      parent.GetTransform(xform);
-      osg::Vec3 trans;
-      xform.GetTranslation(trans);
+      palMatrix4x4 palFrameA, palFrameB;
 
-      palMatrix4x4 frameA, frameB;
+      // convert to correct matrix
+      TransformToPalMatrix(palFrameA, frameA);
+      TransformToPalMatrix(palFrameB, frameB);
 
-      dtPhysics::VectorType yDir = pivotAxis ^ dtPhysics::VectorType( 1.0, 0.0, 0.0 );
-
-      mat_identity ( &frameA );
-      frameA._11 = 1.0;
-      frameA._12 = 0.0;
-      frameA._13 = 0.0;
-      frameA._21 = yDir.x();
-      frameA._22 = yDir.y();
-      frameA._23 = yDir.z();
-      frameA._31 = pivotAxis.x();
-      frameA._32 = pivotAxis.y();
-      frameA._33 = pivotAxis.z();
-      osg::Vec3 relPos = pivotAnchor - trans ;
-      mat_set_translation(&frameA, relPos.x(), relPos.y(), relPos.z());
-
-      mat_identity ( &frameB );
-      frameB._11 = 1.0;
-      frameB._12 = 0.0;
-      frameB._13 = 0.0;
-      frameB._21 = yDir.x();
-      frameB._22 = yDir.y();
-      frameB._23 = yDir.z();
-      frameB._31 = pivotAxis.x();
-      frameB._32 = pivotAxis.y();
-      frameB._33 = pivotAxis.z();
-      child.GetTransform(xform);
-      xform.GetTranslation(trans);
-      relPos = pivotAnchor - trans;
-      mat_set_translation(&frameB, relPos.x(), relPos.y(), relPos.z());
-
-      palBodyBase* bodyBase1( &(parent.GetBodyWrapper()->GetPalBodyBase()) );
-      palBodyBase* bodyBase2( &(child.GetBodyWrapper()->GetPalBodyBase()) );
+      palBodyBase* bodyBase1( &(body1.GetBodyWrapper()->GetPalBodyBase()) );
+      palBodyBase* bodyBase2( &(body2.GetBodyWrapper()->GetPalBodyBase()) );
 
 
       // lower is high than upper.  That means free movement.
       palVector3 lower ( FLT_EPSILON, FLT_EPSILON, FLT_EPSILON ), upper ( 0.0, 0.0, 0.0 );
-      palGenericLink* pivot = dtPhysics::PhysicsWorld::GetInstance().GetPalFactory()->CreateGenericLink(bodyBase1, bodyBase2,
-            frameA, frameB, lower, upper, lower, upper,
-            disableCollisionBetweenBodies);
+      palGenericLink* pivot = dynamic_cast<palGenericLink*>(dtPhysics::PhysicsWorld::GetInstance().GetPalFactory()->CreateLink(PAL_LINK_GENERIC, bodyBase1, bodyBase2,
+            palFrameA, palFrameB,
+            disableCollisionBetweenBodies));
 
       return pivot;
    }
@@ -1515,6 +1489,43 @@ namespace dtPhysics
 
       return joint;
 
+   }
+
+   palLink* PhysicsObject::CreateJoint(PhysicsObject& one, PhysicsObject& two, const JointDesc& desc)
+   {
+      if (one.GetBodyWrapper() == NULL && two.GetBodyWrapper() == NULL)
+         return NULL;
+
+      int palType = desc.GetJointType().GetPalLinkType();
+      palBodyBase* bodyBase1( &(one.GetBodyWrapper()->GetPalBodyBase()) );
+      palBodyBase* bodyBase2( &(two.GetBodyWrapper()->GetPalBodyBase()) );
+      palMatrix4x4 palFrameA, palFrameB;
+      TransformType frameOne, frameTwo;
+      desc.GetBody1Frame(frameOne);
+      desc.GetBody2Frame(frameTwo);
+      // convert to correct matrix
+      TransformToPalMatrix(palFrameA, frameOne);
+      TransformToPalMatrix(palFrameB, frameTwo);
+
+      palLink* link = dtPhysics::PhysicsWorld::GetInstance().GetPalFactory()->CreateLink(palLinkType(palType), bodyBase1, bodyBase2,
+                  palFrameA, palFrameB,
+                  desc.GetDisableCollisionBetweenBodies());
+
+      if (link->SupportsParameters())
+      {
+         for (unsigned i = 0; i < 3; ++i)
+         {
+            link->SetParam(PAL_LINK_PARAM_DOF_MIN, desc.GetLinearLimitMinimums()[i], i);
+            link->SetParam(PAL_LINK_PARAM_DOF_MAX, desc.GetLinearLimitMaximums()[i], i);
+         }
+         for (unsigned i = 0; i < 3; ++i)
+         {
+            link->SetParam(PAL_LINK_PARAM_DOF_MIN, osg::DegreesToRadians(desc.GetAngularLimitMinimums()[i]), i+3);
+            link->SetParam(PAL_LINK_PARAM_DOF_MAX, osg::DegreesToRadians(desc.GetAngularLimitMaximums()[i]), i+3);
+         }
+      }
+
+      return link;
    }
 
 

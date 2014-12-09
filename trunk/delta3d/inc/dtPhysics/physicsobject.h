@@ -42,6 +42,7 @@
 class palRevoluteLink;
 class palGenericLink;
 class palRigidLink;
+class palLink;
 
 namespace dtPhysics
 {
@@ -50,6 +51,7 @@ namespace dtPhysics
    class BaseBodyWrapper;
    class BodyWrapper;
    class GenericBodyWrapper;
+   class JointDesc;
 
    struct PhysicsObjectDataMembers;
    /////////////////////////////////////////////////////////////////////////////
@@ -100,7 +102,7 @@ namespace dtPhysics
        * see GetOriginOffsetInWorldSpace
        * @see GetOriginOffsetInWorldSpace
        */
-      bool CreateFromGeometry(dtPhysics::Geometry& geometry);
+      bool CreateFromGeometry(Geometry& geometry);
 
       /// Creates this physics object giving it a pre-set and configured body.
       void CreateWithBody(GenericBodyWrapper& body);
@@ -238,7 +240,7 @@ namespace dtPhysics
 
       /**
        * Collision groups are numbers.  By default, bodies in different groups collide with each other, but
-       * that can be disabled by calling dtPhysics::PhysicsWorld::SetGroupCollision.
+       * that can be disabled by calling PhysicsWorld::SetGroupCollision.
        * @return The collision group for the object.
        */
       CollisionGroup GetCollisionGroup() const;
@@ -285,7 +287,7 @@ namespace dtPhysics
        * @param index Id of the material to reference.
        * @return TRUE if a material is found that matches the specified index.
        */
-      bool SetMaterialByIndex(dtPhysics::MaterialIndex index);
+      bool SetMaterialByIndex(MaterialIndex index);
 
       /**
        * This mesh resource will be loaded to set the physics data for a triangle mesh or convex.
@@ -349,21 +351,21 @@ namespace dtPhysics
        * @note the caller is responsible for deleting the link with delete since it is not a referenced class.
        *
        */
-      static palRevoluteLink* CreateRevoluteJoint(dtPhysics::PhysicsObject& parent, dtPhysics::PhysicsObject& child, const VectorType& pivotAnchor, const VectorType& pivotAxis, bool disableCollisionBetweenBodies = true);
+      static palRevoluteLink* CreateRevoluteJoint(PhysicsObject& parent, PhysicsObject& child, const VectorType& pivotAnchor, const VectorType& pivotAxis, bool disableCollisionBetweenBodies = true);
 
       /**
-       * \brief Creates a single 6-degree-of-freedom joint.  The current position of the parent is used to create the frame of reference matrices.
+       * \brief Creates a single 6-degree-of-freedom joint.
        * @return NULL if either physics object is not initialized.
        *
-       * @param parent            parent object ( sprung mass )
-       * @param child             child object ( unsprung mass )
-       * @param pivotAnchor       position of joint center
-       * @param pivotAxis         rotational axis of joint
+       * @param body1             first physics object
+       * @param body2             second physics object
+       * @param frameA            the transform to go from the joint center to the parent body
+       * @param frameB            the transform to go from the joint center to the parent body
        *
        * @note the caller is responsible for deleting the link with delete since it is not a referenced class.
        *
        */
-      static palGenericLink* Create6DOFJoint(dtPhysics::PhysicsObject& parent, dtPhysics::PhysicsObject& child, const VectorType& pivotAnchor, const VectorType& pivotAxis, bool disableCollisionBetweenBodies = true);
+      static palGenericLink* Create6DOFJoint(PhysicsObject& body1, PhysicsObject& body2, const dtCore::Transform& frameA, const dtCore::Transform& frameB, bool disableCollisionBetweenBodies = true);
 
       /**
        * Creates a fixed joint using the current transforms of the physics objects for relative positions.
@@ -371,7 +373,12 @@ namespace dtPhysics
        *
        * @note the caller is responsible for deleting the link with delete since it is not a referenced class.
        */
-      static palRigidLink* CreateFixedJoint(dtPhysics::PhysicsObject& parent, dtPhysics::PhysicsObject& child, bool disableCollisionBetweenBodies = true);
+      static palRigidLink* CreateFixedJoint(PhysicsObject& parent, PhysicsObject& child, bool disableCollisionBetweenBodies = true);
+
+      /**
+       * Creates a joint matching the joint description.  The physics objects need to be resolved first.
+       */
+      static palLink* CreateJoint(PhysicsObject& one, PhysicsObject& two, const JointDesc& desc);
 
    protected:
       ~PhysicsObject();

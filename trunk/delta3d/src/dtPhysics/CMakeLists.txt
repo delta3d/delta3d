@@ -19,6 +19,8 @@ collisioncontact.cpp
 convexhull.cpp
 debugdrawable.cpp
 geometry.cpp
+jointdesc.cpp
+jointtype.cpp
 mechanicstype.cpp
 palphysicsworld.cpp
 physicsactcomp.cpp
