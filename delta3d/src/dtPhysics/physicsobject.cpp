@@ -1081,6 +1081,22 @@ namespace dtPhysics
    }
 
    /////////////////////////////////////////////////////////////////////////////
+   void PhysicsObject::SetMassAndScaleMomentOfInertia(Real newMass)
+   {
+      Real oldMass = GetMass();
+      Real ratio = newMass/oldMass;
+      VectorType moi = GetMomentOfInertia();
+      SetMomentOfInertia(
+            VectorType(
+                  moi.x() > 0.0 ? moi.x() * ratio: -1.0f,
+                  moi.y() > 0.0 ? moi.y() * ratio: -1.0f,
+                  moi.z() > 0.0 ? moi.z() * ratio: -1.0f
+                  )
+            );
+      SetMass(newMass);
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
    void PhysicsObject::SetTransform(const TransformType& t)
    {
       mDataMembers->mTransform = t;

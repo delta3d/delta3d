@@ -1229,17 +1229,37 @@ namespace dtPhysics
       dtCore::RefPtr<PhysicsObject> po = new PhysicsObject("jojo");
       po->SetPrimitiveType(PrimitiveType::SPHERE);
       po->SetExtents(VectorType(1.0f, 0.0f, 0.0f));
-      po->SetMass(30.0f);
+      po->SetMass(45.0f);
+
+      VectorType tensorPreInit = po->GetMomentOfInertia();
+      CPPUNIT_ASSERT(tensorPreInit.x() < 0.0f && tensorPreInit.y() < 0.0f && tensorPreInit.z() < 0.0f);
+      po->SetMassAndScaleMomentOfInertia(64.0f);
+
+      tensorPreInit = po->GetMomentOfInertia();
+      CPPUNIT_ASSERT(tensorPreInit.x() < 0.0f && tensorPreInit.y() < 0.0f && tensorPreInit.z() < 0.0f);
+
+      po->SetMomentOfInertia(VectorType(2.0f, 4.0f, 6.0f));
+      po->SetMassAndScaleMomentOfInertia(32.0f);
+      tensorPreInit = po->GetMomentOfInertia();
+
+      CPPUNIT_ASSERT_DOUBLES_EQUAL(tensorPreInit.x(), 1.0f, 0.01);
+      CPPUNIT_ASSERT_DOUBLES_EQUAL(tensorPreInit.y(), 2.0f, 0.01);
+      CPPUNIT_ASSERT_DOUBLES_EQUAL(tensorPreInit.z(), 3.0f, 0.01);
+
       po->Create();
 
-      VectorType inertia = po->GetMomentOfInertia();
+      VectorType tensor = po->GetMomentOfInertia();
       po->SetMomentOfInertia(VectorType(0.0f, 0.0f, 0.0f));
-      VectorType inertia2 = po->GetMomentOfInertia();
-      CPPUNIT_ASSERT_EQUAL_MESSAGE("The moment of inertia should not have changed.", inertia, inertia2);
+      VectorType tensor2 = po->GetMomentOfInertia();
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("The moment of inertia should not have changed.", tensor, tensor2);
       VectorType newInertia(3.0f, 200.0f, 5000.0f);
       po->SetMomentOfInertia(newInertia);
-      VectorType inertia3 = po->GetMomentOfInertia();
-      CPPUNIT_ASSERT_EQUAL_MESSAGE("The moment of inertia should have changed to the new value.", newInertia, inertia3);
+      VectorType tensor3 = po->GetMomentOfInertia();
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("The moment of inertia should have changed to the new value.", newInertia, tensor3);
+      po->SetMassAndScaleMomentOfInertia(16.0f);
+      newInertia /= 2.0f;
+      tensor3 = po->GetMomentOfInertia();
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("The moment of inertia should have scaled by half.", newInertia, tensor3);
    }
 
    void dtPhysicsTests::testPhysicsObjectActivationDefaults(const std::string& engine)

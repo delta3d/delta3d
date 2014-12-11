@@ -220,6 +220,12 @@ namespace dtPhysics
       //////////////////////////////////////////////////////
       // property functions
       void SetMass(Real);
+      /**
+       * The Moment of inertia changes linearly with the mass, assuming the shape stays the same.
+       * This function will allows one to change the mass of a body that is either initialized already
+       * or has a user-assigned moment of inertia and scale it to match the new mass.
+       */
+      void SetMassAndScaleMomentOfInertia(Real);
       Real GetMass() const;
 
       /**
