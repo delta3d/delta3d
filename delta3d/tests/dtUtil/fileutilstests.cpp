@@ -63,6 +63,7 @@ class FileUtilsTests : public CPPUNIT_NS::TestFixture
 
       CPPUNIT_TEST(testLoadFromArchive);
       CPPUNIT_TEST(testArchiveRelativePath);
+      CPPUNIT_TEST(testIsSameFile);
       CPPUNIT_TEST(testIsSameFileInArchive);
       CPPUNIT_TEST(testDirExistsInArchive);
       CPPUNIT_TEST(testFileExistsInArchive);
@@ -92,6 +93,7 @@ class FileUtilsTests : public CPPUNIT_NS::TestFixture
 
       void testLoadFromArchive();
       void testArchiveRelativePath();
+      void testIsSameFile();
       void testIsSameFileInArchive();
       void testDirExistsInArchive();
       void testFileExistsInArchive();
@@ -626,33 +628,45 @@ void FileUtilsTests::testFileIOCaseInsensitive()
 
 void FileUtilsTests::testRelativePath()
 {
-   std::string file = dtUtil::FindFileInPathList("map.xsd");
-   CPPUNIT_ASSERT(!file.empty());
+   try
+   {
+      std::string file = dtUtil::FindFileInPathList("map.xsd");
+      CPPUNIT_ASSERT(!file.empty());
 
-   std::string deltaRoot = dtUtil::GetDeltaRootPath();
-   CPPUNIT_ASSERT(!deltaRoot.empty());
+      std::string deltaRoot = dtUtil::GetDeltaRootPath();
+      CPPUNIT_ASSERT(!deltaRoot.empty());
 
-   deltaRoot = dtUtil::FileUtils::GetInstance().GetAbsolutePath(deltaRoot);
+      deltaRoot = dtUtil::FileUtils::GetInstance().GetAbsolutePath(deltaRoot);
 
-   std::string fileabs = dtUtil::FileUtils::GetInstance().GetAbsolutePath(file);
-   std::string dirOnlyABS = dtUtil::FileUtils::GetInstance().GetAbsolutePath(file, true);
+      std::string fileabs = dtUtil::FileUtils::GetInstance().GetAbsolutePath(file);
+      std::string dirOnlyABS = dtUtil::FileUtils::GetInstance().GetAbsolutePath(file, true);
 
-   // Normalize directory separators
-   NormalizeDirectorySlashes(file);
+      // Normalize directory separators
+      NormalizeDirectorySlashes(fileabs);
+      NormalizeDirectorySlashes(dirOnlyABS);
+      NormalizeDirectorySlashes(file);
+      NormalizeDirectorySlashes(deltaRoot);
 
-   NormalizeDirectorySlashes(deltaRoot);
+      std::string relativePath = dtUtil::FileUtils::GetInstance().RelativePath(deltaRoot, file);
+      CPPUNIT_ASSERT(!relativePath.empty());
 
-   std::string relativePath = dtUtil::FileUtils::GetInstance().RelativePath(deltaRoot, file);
-   CPPUNIT_ASSERT(!relativePath.empty());
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("The relative path should be: data/map.xsd",
+            std::string("data/map.xsd"), relativePath);
 
-   CPPUNIT_ASSERT_EQUAL_MESSAGE("The relative path should be: data/map.xsd",
-         std::string("data/map.xsd"), relativePath);
+      CPPUNIT_ASSERT_EQUAL(
+            std::string(deltaRoot + "/data/map.xsd"), fileabs);
 
-   CPPUNIT_ASSERT_EQUAL(
-         std::string(deltaRoot + "/data/map.xsd"), fileabs);
-
-   CPPUNIT_ASSERT_EQUAL(
-         std::string(deltaRoot + "/data"), dirOnlyABS);
+      CPPUNIT_ASSERT_EQUAL(
+            std::string(deltaRoot + "/data"), dirOnlyABS);
+   }
+   catch (dtUtil::Exception& ex)
+   {
+      CPPUNIT_FAIL(ex.ToString());
+   }
+   catch (...)
+   {
+      CPPUNIT_FAIL("Unknown exception thrown.");
+   }
 }
 
 void FileUtilsTests::TestAbsolutePath()
@@ -878,6 +892,36 @@ void FileUtilsTests::testArchiveRelativePath()
 
 }
 
+void FileUtilsTests::testIsSameFile()
+{
+   dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
+
+   try
+   {
+      fileUtils.ChangeDirectory(DATA_DIR);
+
+      std::string filename("test_planes.osg");
+      std::string relPath("./StaticMeshes/tests/" + filename);
+      std::string absPath = fileUtils.GetAbsolutePath(relPath);
+
+      CPPUNIT_ASSERT(fileUtils.FileExists(relPath));
+      CPPUNIT_ASSERT( ! absPath.empty());
+      CPPUNIT_ASSERT(fileUtils.FileExists(absPath));
+
+      CPPUNIT_ASSERT( ! fileUtils.IsAbsolutePath(relPath));
+      CPPUNIT_ASSERT(fileUtils.IsAbsolutePath(absPath));
+      CPPUNIT_ASSERT(fileUtils.IsSameFile(absPath, relPath));
+   }
+   catch (dtUtil::Exception& ex)
+   {
+      CPPUNIT_FAIL(ex.ToString());
+   }
+   catch (...)
+   {
+      CPPUNIT_FAIL("Unknown exception thrown.");
+   }
+}
+
 void FileUtilsTests::testIsSameFileInArchive()
 {
 
@@ -888,20 +932,31 @@ void FileUtilsTests::testIsSameFileInArchive()
 
    dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
 
-   fileUtils.ChangeDirectory(TESTS_DIR);
+   try
+   {
+      fileUtils.ChangeDirectory(TESTS_DIR);
 
-   dtUtil::FileInfo info = fileUtils.GetFileInfo(archivePath);
-   CPPUNIT_ASSERT_EQUAL_MESSAGE("The file type for a zip file should be an archive", dtUtil::ARCHIVE, info.fileType);
+      dtUtil::FileInfo info = fileUtils.GetFileInfo(archivePath);
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("The file type for a zip file should be an archive", dtUtil::ARCHIVE, info.fileType);
 
-   dtUtil::DirectoryContents zipContents = fileUtils.DirGetFiles(archivePath);
-   CPPUNIT_ASSERT_EQUAL_MESSAGE("The zip should have 2 folders.", 2, int(zipContents.size()));
+      dtUtil::DirectoryContents zipContents = fileUtils.DirGetFiles(archivePath);
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("The zip should have 2 folders.", 2, int(zipContents.size()));
 
-   fileUtils.ChangeDirectory(archivePath + "/StaticMeshes");
+      fileUtils.ChangeDirectory(archivePath + "/StaticMeshes");
 
-   CPPUNIT_ASSERT_EQUAL_MESSAGE("Given a full path to the file and a relative, it should be able to compare them and find them to be the same",
-                                 true, fileUtils.IsSameFile(pathToFile, filename));
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("Given a full path to the file and a relative, it should be able to compare them and find them to be the same",
+                                    true, fileUtils.IsSameFile(pathToFile, filename));
 
-   fileUtils.ChangeDirectory(TESTS_DIR);
+      fileUtils.ChangeDirectory(TESTS_DIR);
+   }
+   catch (dtUtil::Exception& ex)
+   {
+      CPPUNIT_FAIL(ex.ToString());
+   }
+   catch (...)
+   {
+      CPPUNIT_FAIL("Unknown exception thrown.");
+   }
 }
 
 void FileUtilsTests::testDirExistsInArchive()

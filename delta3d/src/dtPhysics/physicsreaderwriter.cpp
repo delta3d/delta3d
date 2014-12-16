@@ -441,6 +441,7 @@ namespace dtPhysics
 
       ds.Write(PhysicsFileHeader::FILE_START_END_CHAR);
       outfile.write(ds.GetBuffer(), ds.GetBufferSize());
+      outfile.flush();
       outfile.close();
 
       return !outfile.fail();

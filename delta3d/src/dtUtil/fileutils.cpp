@@ -1290,8 +1290,27 @@ namespace dtUtil
 
       if(!fileInfo1.isInArchive && !fileInfo2.isInArchive)
       {
+         std::string tmp1 = file1;
+         std::string tmp2 = file2;
+
+         try
+         {
+            if ( ! fileInfo1.path.empty())
+            {
+               tmp1 = GetAbsolutePath(file1);
+            }
+            if ( ! fileInfo2.path.empty())
+            {
+               tmp2 = GetAbsolutePath(file2);
+            }
+         }
+         catch(...)
+         {
+            // This query method is not a good place to allow an exception through to the caller.
+         }
+
          //the former, and non archive route..
-         result = IsSameFile_Internal(file1, file2);
+         result = IsSameFile_Internal(tmp1, tmp2);
       }
       else
       {
