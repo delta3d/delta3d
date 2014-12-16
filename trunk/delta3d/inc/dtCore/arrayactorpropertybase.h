@@ -29,6 +29,8 @@
 
 namespace dtCore
 {
+   class ObjectType;
+
    /**
     * @brief An ActorProperty that acts like an array of values.
     *
@@ -89,7 +91,7 @@ namespace dtCore
        *
        * @param[in]  keyName  The key for this property.
        */
-      virtual void InitDefault(const std::string& keyName);
+      virtual void InitDefault(ObjectType& keyName);
 
       /**
        * Sets the value of the property based on a string.

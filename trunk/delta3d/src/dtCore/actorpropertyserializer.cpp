@@ -516,7 +516,7 @@ namespace dtCore
                   else
                   {
                      mParser->mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
-                        "No property found for \"(%s, %s).\"", data.mPropertyContainer->GetDefaultPropertyKey().c_str(), propName.c_str());
+                        "No property found for \"(%s, %s).\"", data.mPropertyContainer->GetObjectType().GetFullName().c_str(), propName.c_str());
                   }
                }
             }
@@ -868,22 +868,31 @@ namespace dtCore
    {
       mWriter->BeginElement(MapXMLConstants::ACTOR_PROPERTY_PROPERTY_CONTAINER_ELEMENT);
 
-      const dtCore::PropertyContainer* propCon = propConProp.GetValue();
+      dtCore::PropertyContainer* propCon = propConProp.GetValue();
       // TODO What to write if NULL?
       if (propCon != NULL)
       {
-         std::vector<const dtCore::ActorProperty*> properties;
+         std::vector<dtCore::ActorProperty*> properties;
          propCon->GetPropertyList(properties);
 
-         std::vector<const dtCore::ActorProperty*>::const_iterator i, iend;
+         dtCore::SerializerRuntimeData data;
+         data = Top();
+         data.mPropertyContainer = propCon;
+         mData.push(data);
+
+         std::vector<dtCore::ActorProperty*>::const_iterator i, iend;
          i = properties.begin();
          iend = properties.end();
          // Save out the data for each index.
          for (; i != iend; ++i)
          {
+            data.mActorProperty = *i;
+            data.mActorPropertyType = &(*i)->GetDataType();
             // Write the data for the current property.
             WriteProperty(**i);
          }
+
+         mData.pop();
       }
       mWriter->EndElement();
    }

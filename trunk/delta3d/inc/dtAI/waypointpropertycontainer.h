@@ -232,8 +232,11 @@ namespace dtAI
 
    public:
       WaypointPropertyContainer()
+      : mWaypoint(NULL)
       {
       }
+
+      /*override*/ const dtCore::ObjectType& GetObjectType() const { return mWaypoint->GetWaypointType(); }
 
       virtual ~WaypointPropertyContainer(){}
 

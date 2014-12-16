@@ -32,6 +32,10 @@ namespace dtHLAGM
             ));
    }
 
+   dtCore::RefPtr<dtCore::ObjectType> DDMRegionCalculator::TYPE(new dtCore::ObjectType("DDMRegionCalculator", "dtHLAGM"));
+
+   /*override*/ const dtCore::ObjectType& DDMRegionCalculator::GetObjectType() const { return *TYPE; }
+
    //////////////////////////////////////////////////////////////
    void DDMRegionCalculator::SetName(const std::string& name)
    {

@@ -82,7 +82,7 @@ namespace dtDirector
          mDirector = graph->GetDirector();
       }
 
-      SetType(nodeType);
+      mType = &nodeType;
       SetColorRGB(nodeType.GetColor());
 
       BuildPropertyMap();
@@ -276,23 +276,15 @@ namespace dtDirector
       }
    }
 
-   ////////////////////////////////////////////////////////////////////////////////
-   std::string Node::GetDefaultPropertyKey() const
-   {
-      return std::string("Director Node: ") + mType->GetFullName();
-   }
-
    //////////////////////////////////////////////////////////////////////////
    const NodeType& Node::GetType() const
    {
       return *mType;
    }
 
-   //////////////////////////////////////////////////////////////////////////
-   void Node::SetType(const NodeType& type)
-   {
-      mType = &type;
-   }
+   ////////////////////////////////////////////////////////////////////////////////
+   const dtCore::ObjectType& Node::GetObjectType() const { return  *mType; }
+
 
    ////////////////////////////////////////////////////////////////////////////////
    bool Node::SetID(const ID& id)

@@ -61,19 +61,20 @@ ExampleTestPropertyProxy::TestEnum ExampleTestPropertyProxy::TestEnum::OPTION6("
 
 ///////////////////////////////////////////////////////////////////////////////
 ExampleTestPropertyProxy::ExampleTestPropertyProxy()
-  : mTestFloat(0.0)
+  : mTestFloat()
   , mTestBool(false)
-  , mTestDouble(0.0)
-  , mTestInt(0)
+  , mTestDouble()
+  , mTestInt()
   , mReadOnlyTestInt(5)
-  , mTestLong(0)
+  , mTestLong()
   , mTestString()
   , mTestEnum(&TestEnum::OPTION1)
   , mTestPropertyContainer(new TestPropertyContainer)
   , mGroupParam(new dtCore::NamedGroupParameter("test"))
-  , mStringArrayIndex(0)
-  , mIntArrayIndex(0)
-  , mArrayArrayIndex(0)
+  , mStringArrayIndex()
+  , mContainerArrayIndex()
+  , mIntArrayIndex()
+  , mArrayArrayIndex()
 {
    SetClassName("dtCore::ExampleTestPropertyProxy");
    mTestPropertyContainer->BuildPropertyMap();

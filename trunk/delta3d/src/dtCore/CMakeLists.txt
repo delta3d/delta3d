@@ -61,7 +61,6 @@ SET(LIB_PUBLIC_HEADERS
                 ${HEADER_PATH}/containerselectoractorproperty.h
                 ${HEADER_PATH}/databasepager.h
                 ${HEADER_PATH}/datatype.h
-                ${HEADER_PATH}/defaultpropertymanager.h
                 ${HEADER_PATH}/deltadrawable.h
                 ${HEADER_PATH}/deltawin.h
                 ${HEADER_PATH}/directoryresourcetypehandler.h
@@ -251,7 +250,6 @@ SET(LIB_SOURCES
                 ${SOURCE_PATH}/containerselectoractorproperty.cpp
                 ${SOURCE_PATH}/databasepager.cpp
                 ${SOURCE_PATH}/datatype.cpp
-                ${SOURCE_PATH}/defaultpropertymanager.cpp
                 ${SOURCE_PATH}/deltadrawable.cpp
                 ${SOURCE_PATH}/deltawin.cpp
 #                ${SOURCE_PATH}/deltawin_carbon.cpp
@@ -348,7 +346,7 @@ SET(LIB_SOURCES
                 ${SOURCE_PATH}/screenshotcallback.cpp
                 ${SOURCE_PATH}/shadergroup.cpp
                 ${SOURCE_PATH}/shadermanager.cpp
-                ${SOURCE_PATH}/shaderparambool.cpp                
+                ${SOURCE_PATH}/shaderparambool.cpp
                 ${SOURCE_PATH}/shaderparameteractorproperty.cpp
                 ${SOURCE_PATH}/shaderparameter.cpp
                 ${SOURCE_PATH}/shaderparamfloat.cpp

@@ -43,6 +43,10 @@ TestNestedPropertyContainer::~TestNestedPropertyContainer()
 {
 }
 
+dtCore::RefPtr<dtCore::ObjectType> TestNestedPropertyContainer::TYPE(new dtCore::ObjectType("TestNestedPropertyContainer", "dtExample"));
+
+/*override*/ const dtCore::ObjectType& TestNestedPropertyContainer::GetObjectType() const { return *TYPE; }
+
 /////////////////////////////////////////////////////
 void TestNestedPropertyContainer::BuildPropertyMap()
 {

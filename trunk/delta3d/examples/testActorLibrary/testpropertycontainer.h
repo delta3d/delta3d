@@ -35,6 +35,11 @@ class TestPropertyContainer : public dtCore::PropertyContainer
 public:
    TestPropertyContainer();
 
+   static dtCore::RefPtr<dtCore::ObjectType> TYPE;
+
+   /*override*/ const dtCore::ObjectType& GetObjectType() const;
+public:
+
    // This is not in the base class, it's just there as a pattern.
    virtual void BuildPropertyMap();
 

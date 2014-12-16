@@ -24,17 +24,27 @@
 
 namespace dtCore
 {
+   /////////////////////////////////////////////////////////////////////////////
+   ActorPluginRegistry::ActorPluginRegistry(const std::string& name, const std::string& desc)
+      : mName(name)
+      , mDescription(desc)
+   {
+      mActorFactory = new dtUtil::ObjectFactory<dtCore::RefPtr<const ActorType>, BaseActorObject, ActorType::RefPtrComp>;
+   }
 
    /////////////////////////////////////////////////////////////////////////////
-   void ActorPluginRegistry::GetSupportedActorTypes(std::vector<dtCore::RefPtr<const ActorType> > &actors)
+   ActorPluginRegistry::~ActorPluginRegistry() { }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void ActorPluginRegistry::GetSupportedActorTypes(std::vector<dtCore::RefPtr<const ActorType> >& actors)
    {
       mActorFactory->GetSupportedTypes(actors);
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   bool ActorPluginRegistry::IsActorTypeSupported(dtCore::RefPtr<const ActorType> type)
+   bool ActorPluginRegistry::IsActorTypeSupported(const ActorType& type)
    {
-      return mActorFactory->IsTypeSupported(type);
+      return mActorFactory->IsTypeSupported(&type);
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -45,6 +55,19 @@ namespace dtCore
       proxy->InitDefaults();
       return proxy;
    }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void ActorPluginRegistry::SetName(const std::string& name) { mName = name; }
+
+   /////////////////////////////////////////////////////////////////////////////
+   const std::string& ActorPluginRegistry::GetName() const { return mName; }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void ActorPluginRegistry::SetDescription(const std::string& desc) { mDescription = desc; }
+
+   /////////////////////////////////////////////////////////////////////////////
+   const std::string& ActorPluginRegistry::GetDescription() const { return mDescription; }
+
 
    /////////////////////////////////////////////////////////////////////////////
    void ActorPluginRegistry::GetReplacementActorTypes(ActorPluginRegistry::ActorTypeReplacements& replacements) const

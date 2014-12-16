@@ -339,6 +339,9 @@ namespace dtCore
    }
 
    //////////////////////////////////////////////////////////////////////////////
+   const ObjectType& BaseActorObject::GetObjectType() const { return *mActorType; }
+
+   //////////////////////////////////////////////////////////////////////////////
    void BaseActorObject::OnRemove() const
    {
    }
@@ -374,6 +377,7 @@ namespace dtCore
             StringActorProperty::GetFuncType(this, &BaseActorObject::GetName),
             "The Display Name of the Actor.", GROUP_INFORMATION);
          nameProp->SetMultipleEdit(false);
+         nameProp->SetIgnoreWhenSaving(true);
          AddProperty(nameProp);
       }
 
@@ -435,9 +439,4 @@ namespace dtCore
       }
    }
 
-   /////////////////////////////////////////////////////////////////////////////
-   std::string BaseActorObject::GetDefaultPropertyKey() const
-   {
-      return std::string("Actor: ") + GetActorType().GetFullName();
-   }
 } // namespace dtCore

@@ -191,12 +191,6 @@ namespace dtDirector
        */
       virtual void OnLinkValueChanged(const std::string& linkName);
 
-      /**
-       * Retrieves the key name used to identify this container with the
-       * default property manager.  This method should be overloaded to
-       * provide a valid key based on the container type.
-       */
-      virtual std::string GetDefaultPropertyKey() const;
 
       /**
        * Retrieves the type of this node.
@@ -204,6 +198,9 @@ namespace dtDirector
        * @return  The type of this node.
        */
       const NodeType& GetType() const;
+
+      /*override*/ const dtCore::ObjectType& GetObjectType() const;
+   public:
 
       /**
        * Retrieves the ID of the node.
@@ -728,14 +725,6 @@ namespace dtDirector
        * @return  True if the node is enabled.
        */
       bool GetEnabled() const;
-
-      /**
-       *  Sets the types of the node.
-       * This can only be called from the NodeManager.
-       *
-       * @param[in]  type  The type of the node.
-       */
-      void SetType(const NodeType& type);
 
 
       // Properties.

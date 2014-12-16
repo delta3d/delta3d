@@ -48,9 +48,9 @@ namespace dtCore
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void ContainerActorProperty::InitDefault(const std::string& keyName)
+   void ContainerActorProperty::InitDefault(ObjectType& type)
    {
-      BaseClass::InitDefault(keyName);
+      BaseClass::InitDefault(type);
 
       int count = (int)mProperties.size();
       for (int index = 0; index < count; ++index)
@@ -58,7 +58,7 @@ namespace dtCore
          ActorProperty* prop = mProperties[index];
          if (prop)
          {
-            prop->InitDefault(keyName);
+            prop->InitDefault(type);
          }
       }
    }

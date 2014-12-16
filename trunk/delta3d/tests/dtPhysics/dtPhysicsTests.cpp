@@ -328,7 +328,7 @@ namespace dtPhysics
       typedef dtCore::RefPtr<dtCore::ActorProperty> PropPtr;
       typedef dtUtil::Functor<void, TYPELIST_1(PropPtr)> VoidPropPtrFunc;
 
-      typedef std::set<std::string> StrSet;
+      typedef std::set<dtUtil::RefString> StrSet;
       StrSet mNames;
 
       void operator() (PropPtr prop)
@@ -362,6 +362,7 @@ namespace dtPhysics
       pac->Init(*PhysicsActComp::TYPE);
 
       unsigned numProps = po->GetNumProperties();
+      CPPUNIT_ASSERT(!po->GetObjectType().DefaultsEmpty());
       // Just pick a number equal to the number when this was coded.
       CPPUNIT_ASSERT(numProps >= 19U);
       po->BuildPropertyMap();
@@ -375,20 +376,21 @@ namespace dtPhysics
       CPPUNIT_ASSERT( ! pred.mNames.empty());
       CPPUNIT_ASSERT(pred.mNames.size() == props.size());
 
-      typedef std::set<std::string> StrSet;
-      std::string str;
+      typedef std::set<dtUtil::RefString> StrSet;
+      dtUtil::RefString str;
       int numPropNamesFound = 0;
       StrSet::iterator curIter = pred.mNames.begin();
       StrSet::iterator endIter = pred.mNames.end();
       for (; curIter != endIter; ++curIter)
       {
          str = *curIter;
-         CPPUNIT_ASSERT(str.find(objName) == std::string::npos);
-         CPPUNIT_ASSERT(str.find(objNamePrefix) == std::string::npos);
+         CPPUNIT_ASSERT(str->find(objName) == std::string::npos);
+         CPPUNIT_ASSERT(str->find(objNamePrefix) == std::string::npos);
          CPPUNIT_ASSERT(po->GetProperty(str) != NULL);
          ++numPropNamesFound;
 
          CPPUNIT_ASSERT(pac->GetDeprecatedProperty(objNamePrefix + str) != NULL);
+         CPPUNIT_ASSERT(po->GetObjectType().DefaultExists(str));
       }
 
       CPPUNIT_ASSERT_EQUAL(numPropNamesFound, (int)props.size());

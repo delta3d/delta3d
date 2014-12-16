@@ -25,10 +25,10 @@
 #include <prefix/dtcoreprefix.h>
 #include <dtCore/propertycontainer.h>
 #include <dtCore/exceptionenum.h>
-#include <dtCore/defaultpropertymanager.h>
 #include <dtUtil/exception.h>
 #include <dtUtil/log.h>
 #include <algorithm>
+#include <typeinfo>
 
 namespace dtCore
 {
@@ -44,10 +44,11 @@ namespace dtCore
    ////////////////////////////////////////////////////////////////////////////////
    void PropertyContainer::InitDefaults()
    {
-      std::string keyName = GetDefaultPropertyKey();
+      // Must const cast to be able to set the defaults.
+      ObjectType& type = const_cast<ObjectType&>(GetObjectType());
 
-      // If the key already exists, we don't need to add it again.
-      if (DefaultPropertyManager::GetInstance().KeyExists(keyName))
+      // Assume the defaults don't need to be set again.
+      if (!type.DefaultsEmpty())
       {
          return;
       }
@@ -59,17 +60,12 @@ namespace dtCore
       for (int propIndex = 0; propIndex < propCount; ++propIndex)
       {
          ActorProperty* prop = propList[propIndex];
-         if (prop)
-         {
-            prop->InitDefault(keyName);
-         }
-      }
-   }
+         dtCore::RefPtr<NamedParameter> param = NamedParameter::CreateFromType(
+            prop->GetDataType(), prop->GetName());
 
-   ////////////////////////////////////////////////////////////////////////////////
-   std::string PropertyContainer::GetDefaultPropertyKey() const
-   {
-      return "";
+         param->SetFromProperty(*prop);
+         type.SetDefaultValue(prop->GetName(), *param);
+      }
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////
@@ -216,15 +212,7 @@ namespace dtCore
          return false;
       }
 
-      const NamedParameter* param =
-         DefaultPropertyManager::GetInstance().GetDefaultValue(
-         GetDefaultPropertyKey(), prop.GetName());
-      if (param)
-      {
-         return true;
-      }
-
-      return false;
+      return GetObjectType().DefaultExists(prop.GetName());
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -236,9 +224,8 @@ namespace dtCore
       }
 
       const NamedParameter* param =
-         DefaultPropertyManager::GetInstance().GetDefaultValue(
-         GetDefaultPropertyKey(), prop.GetName());
-      if (param && *param == prop)
+            GetObjectType().GetDefaultValue(prop.GetName());
+      if (param != NULL && *param == prop)
       {
          return true;
       }
@@ -255,8 +242,7 @@ namespace dtCore
       }
 
       const NamedParameter* param =
-         DefaultPropertyManager::GetInstance().GetDefaultValue(
-         GetDefaultPropertyKey(), prop.GetName());
+            GetObjectType().GetDefaultValue(prop.GetName());
       if (param)
       {
          param->ApplyValueToProperty(prop);

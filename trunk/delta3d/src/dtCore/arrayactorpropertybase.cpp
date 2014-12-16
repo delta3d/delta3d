@@ -38,15 +38,15 @@ ArrayActorPropertyBase::~ArrayActorPropertyBase()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ArrayActorPropertyBase::InitDefault(const std::string& keyName)
+void ArrayActorPropertyBase::InitDefault(ObjectType& type)
 {
-   BaseClass::InitDefault(keyName);
+   BaseClass::InitDefault(type);
 
    if (mPropertyType.valid())
    {
       Insert(0);
       SetIndex(0);
-      mPropertyType->InitDefault(keyName);
+      mPropertyType->InitDefault(type);
       Remove(0);
    }
 }

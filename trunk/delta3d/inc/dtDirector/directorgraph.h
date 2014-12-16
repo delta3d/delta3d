@@ -48,6 +48,10 @@ namespace dtDirector
        */
       DirectorGraph(Director* director);
 
+      static dtCore::RefPtr<dtCore::ObjectType> TYPE;
+      /*override*/ const dtCore::ObjectType& GetObjectType() const;
+   public:
+
       /**
        * Clones this graph.
        *
@@ -55,13 +59,6 @@ namespace dtDirector
        */
       dtCore::RefPtr<DirectorGraph> Clone(Director* parent);
       dtCore::RefPtr<DirectorGraph> Clone(DirectorGraph* parent);
-
-      /**
-       * Retrieves the key name used to identify this container with the
-       * default property manager.  This method should be overloaded to
-       * provide a valid key based on the container type.
-       */
-      virtual std::string GetDefaultPropertyKey() const;
 
       /**
        * Checks if a given property should be saved out to file data.

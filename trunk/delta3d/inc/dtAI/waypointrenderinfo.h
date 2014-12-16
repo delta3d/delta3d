@@ -49,6 +49,8 @@ namespace dtAI
       /// sets reasonable defaults to all parameters except position, does not reset the position
       void SetDefaults();
 
+      static dtCore::RefPtr<dtCore::ObjectType> TYPE;
+      /*override*/ const dtCore::ObjectType& GetObjectType() const;
    protected:
       // override this to create properties
       virtual void BuildPropertyMap();

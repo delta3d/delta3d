@@ -32,6 +32,9 @@
 
 namespace dtDirector
 {
+   dtCore::RefPtr<dtCore::ObjectType> DirectorGraph::TYPE(new dtCore::ObjectType("DirectorGraph","dtDirector"));
+   const dtCore::ObjectType& DirectorGraph::GetObjectType() const { return *TYPE; }
+
    //////////////////////////////////////////////////////////////////////////
    DirectorGraph::DirectorGraph(Director* director)
       : mDirector(director)
@@ -370,12 +373,6 @@ namespace dtDirector
             }
          }
       }
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   std::string DirectorGraph::GetDefaultPropertyKey() const
-   {
-      return "Director Graph";
    }
 
    ////////////////////////////////////////////////////////////////////////////////

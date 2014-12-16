@@ -228,6 +228,10 @@ namespace dtPhysics
    {
    }
 
+   dtCore::RefPtr<dtCore::ObjectType> PhysicsObject::TYPE(new dtCore::ObjectType("PhysicsObject", "dtPhysics"));
+
+   /*override*/ const dtCore::ObjectType& PhysicsObject::GetObjectType() const { return *TYPE; }
+
    /////////////////////////////////////////////////////////////////////////////
    PhysicsObject::~PhysicsObject()
    {
@@ -369,6 +373,7 @@ namespace dtPhysics
                "If a physics mesh is set, it can be scaled with this property.",
                 PropRegType, propRegHelper);
 
+      InitDefaults();
    }
 
    void PhysicsObject::CalculateBoundsAndOrigin(const osg::Node* nodeToLoad, bool calcDimensions, bool adjustOriginOffsetForGeometry)

@@ -29,6 +29,7 @@
 #include <dtCore/refptr.h>
 #include <dtCore/export.h>
 #include <dtCore/actorproperty.h>
+#include <dtCore/objecttype.h>
 #include <osg/Referenced>
 
 #include <map>
@@ -46,17 +47,13 @@ namespace dtCore
 
       PropertyContainer();
 
+      ///@return the type of this object.
+      virtual const dtCore::ObjectType& GetObjectType() const = 0;
+   public:
       /**
        * Initializes the default values of this actor.
        */
       void InitDefaults();
-
-      /**
-       * Retrieves the key name used to identify this container with the
-       * default property manager.  This method should be overloaded to
-       * provide a valid key based on the container type.
-       */
-      virtual std::string GetDefaultPropertyKey() const;
 
       /**
        * Gets a list of the properties currently registered for this
@@ -191,9 +188,11 @@ namespace dtCore
       unsigned GetNumProperties() const;
 
    protected:
+
       virtual ~PropertyContainer();
 
    private:
+
       typedef std::map<dtUtil::RefString, dtCore::RefPtr<ActorProperty> > PropertyMapType;
       typedef std::vector<dtCore::RefPtr<ActorProperty> > PropertyVectorType;
 
