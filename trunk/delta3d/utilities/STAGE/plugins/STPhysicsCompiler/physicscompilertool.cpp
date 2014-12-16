@@ -631,11 +631,31 @@ void PhysicsCompilerToolPlugin::OnCompileClicked()
       // TODO: Handle multiple nodes instead of only one.
       if (node == NULL)
       {
-         dtCore::DeltaDrawable* drawable = mActors.front()->GetDrawable();
-
-         if (drawable != NULL)
+         // Try to load the input mesh if it has been specified in settings but not yet loaded.
+         if (mUI.mInputMeshEnabled->checkState() == Qt::Checked
+            && mUI.mInputMeshFile->text().length() > 0)
          {
-            node = drawable->GetOSGNode();
+            std::string filepath = mUI.mInputMeshFile->text().toStdString();
+            try
+            {
+               mInputMesh = dtUtil::FileUtils::GetInstance().ReadNode(filepath);
+               node = mInputMesh.get();
+            }
+            catch (...)
+            {
+               LOG_ERROR("Could not load input mesh: " + filepath);
+            }
+         }
+
+         // Fallback...
+         if (node == NULL)
+         {
+            dtCore::DeltaDrawable* drawable = mActors.front()->GetDrawable();
+
+            if (drawable != NULL)
+            {
+               node = drawable->GetOSGNode();
+            }
          }
       }
       
@@ -897,6 +917,9 @@ void PhysicsCompilerToolPlugin::OnCompileCompleted(dtPhysics::PhysicsObjectArray
          AddObjectsToActor(objArray, *actor);
       }
    }
+
+   // Save settings since compile succeeded.
+   SaveSettings();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -975,12 +998,12 @@ void PhysicsCompilerToolPlugin::LoadSettings()
       if (settings.contains(SETTING_TARGET_DIRECTORY))
       {
          // File Settings
-         mFileOptions.mTargetDir = settings.value(SETTING_TARGET_DIRECTORY).toString().toStdString();
+         mFileOptions.SetTargetDirectory(settings.value(SETTING_TARGET_DIRECTORY).toString().toStdString());
          mFileOptions.mFilePrefix = settings.value(SETTING_FILE_PREFIX).toString().toStdString();
          mFileOptions.mFileSuffix = settings.value(SETTING_FILE_SUFFIX).toString().toStdString();
          bool enableFileOptions = settings.value(SETTING_FILE_OPTIONS_ENABLED).toBool();
          mUI.mFileOptions->setChecked(enableFileOptions);
-
+         
          // Compile Settings
          mUI.mInputMeshFile->setText(settings.value(SETTING_INPUT_MESH_FILE).toString());
          mUI.mInputMeshEnabled->setChecked(settings.value(SETTING_INPUT_MESH_FILE_ENABLED).toBool());
