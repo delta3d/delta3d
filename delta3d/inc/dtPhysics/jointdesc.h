@@ -39,6 +39,11 @@ namespace dtPhysics
    public:
       JointDesc();
 
+      static dtCore::RefPtr<dtCore::ObjectType> JOINT_DESC_TYPE;
+
+      /*override*/ const dtCore::ObjectType& GetObjectType() const;
+   public:
+
       DT_DECLARE_ACCESSOR(std::string, Body1Name);
       DT_DECLARE_ACCESSOR(std::string, Body2Name);
 
@@ -60,6 +65,7 @@ namespace dtPhysics
       DT_DECLARE_ACCESSOR(VectorType, AngularLimitMaximums);
 
       DT_DECLARE_ACCESSOR(bool, DisableCollisionBetweenBodies);
+
 
    protected:
       virtual ~JointDesc();

@@ -229,6 +229,7 @@ namespace dtCore
        *      by the actor registry.
        */
       const ActorType& GetActorType() const;
+      const ObjectType& GetObjectType() const;
 
       /**
        * Gets the drawable associated with this actor.
@@ -314,12 +315,6 @@ namespace dtCore
        */
       virtual void BuildPropertyMap();
 
-      /**
-       * Retrieves the key name used to identify this container with the
-       * default property manager.  This method should be overloaded to
-       * provide a valid key based on the container type.
-       */
-      virtual std::string GetDefaultPropertyKey() const;
 
       /**
        * Not all objects are "placeable" in the scene.  For example, an infinite
@@ -459,30 +454,6 @@ namespace dtCore
 
       ///Hidden assignment operator.
       BaseActorObject& operator=(const BaseActorObject&);
-   public:
-      //Deprecated stuff
-      /// Call GetDrawable
-      DEPRECATE_FUNC dtCore::DeltaDrawable* GetActor() { return GetDrawable(); }
-      /// Call GetDrawable
-      template <typename TPtr>
-      DEPRECATE_FUNC void GetActor(TPtr& drawableType)
-      {
-         drawableType = dynamic_cast<TPtr>(GetDrawable());
-      }
-      /// Call GetDrawable
-      template <typename T>
-      DEPRECATE_FUNC void GetActor(dtCore::RefPtr<T>& drawable)
-      {
-         drawable = static_cast<T*>(GetDrawable());
-      }
-      /// Call GetDrawable
-      DEPRECATE_FUNC const dtCore::DeltaDrawable* GetActor() const { return GetDrawable(); }
-      /// Templated version of GetDrawable() const that static casts the actor to the type passed in.
-      template <typename TPtr>
-      DEPRECATE_FUNC void GetActor(TPtr& drawable) const
-      {
-         drawable = static_cast<TPtr>(GetDrawable());
-      }
 
    };
 }

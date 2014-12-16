@@ -52,7 +52,8 @@ namespace dtGame
 
       // The call to Init should eventually move to an actor component library behavior
       // like actors have, but until then, this is the only other place to do it.
-      component.Init(*component.GetType());
+      // Have to const cast so it can set the property defaults.
+      component.Init(const_cast<dtCore::ActorType&>(*component.GetType()));
 
       // store component
       mComponents.push_back(std::pair<ActorComponent::ACType, dtCore::RefPtr<ActorComponent> >(component.GetType(), &component));

@@ -50,11 +50,18 @@ namespace dtPhysics
       DT_REGISTER_PROPERTY(AngularLimitMaximums, "Angular minimum limits X Y Z. Min = max for locked. Min > max for free motion.", JointDescRegHelper, regHelperLimits);
 
       DT_REGISTER_PROPERTY(DisableCollisionBetweenBodies, "Body2 angular minimum limits X Y Z. Min = max for locked. Min > max for free motion.", JointDescRegHelper, regHelperLimits);
+
+      InitDefaults();
    }
 
    JointDesc::~JointDesc()
    {
    }
+
+   dtCore::RefPtr<dtCore::ObjectType> JointDesc::JOINT_DESC_TYPE(new dtCore::ObjectType("JointDesc", "dtPhysics"));
+
+   /*override*/ const dtCore::ObjectType& JointDesc::GetObjectType() const { return *JOINT_DESC_TYPE; }
+
 
    DT_IMPLEMENT_ACCESSOR(JointDesc, std::string, Body1Name);
    DT_IMPLEMENT_ACCESSOR(JointDesc, std::string, Body2Name);

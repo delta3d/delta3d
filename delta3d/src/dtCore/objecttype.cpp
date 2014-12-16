@@ -87,7 +87,7 @@ namespace dtCore
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   const std::string ObjectType::GetFullName() const
+   std::string ObjectType::GetFullName() const
    {
       return GetCategory() + "." + GetName();
    }
@@ -141,6 +141,42 @@ namespace dtCore
       }
 
       return isInstance;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   bool ObjectType::DefaultExists(const dtUtil::RefString& propName) const
+   {
+      if (propName->empty()) return false;
+
+      ValMap::const_iterator valIter = mDefaultValues.find(propName);
+      if (valIter != mDefaultValues.end())
+      {
+         return true;
+      }
+
+      return false;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   const NamedParameter* ObjectType::GetDefaultValue(const dtUtil::RefString& propName) const
+   {
+      if (propName->empty()) return NULL;
+
+      ValMap::const_iterator valIter = mDefaultValues.find(propName);
+      if (valIter != mDefaultValues.end())
+      {
+         return valIter->second;
+      }
+
+      return NULL;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void ObjectType::SetDefaultValue(const dtUtil::RefString& propName, NamedParameter& defaultValue)
+   {
+      if (propName->empty()) return;
+
+      mDefaultValues[propName] = &defaultValue;
    }
 
    ///////////////////////////////////////////////////////////////////////////

@@ -37,10 +37,14 @@ namespace dtAI
 
    }
 
+   dtCore::RefPtr<dtCore::ObjectType> WaypointRenderInfo::TYPE(new dtCore::ObjectType("WaypointRenderInfo","dtAI"));
+   const dtCore::ObjectType& WaypointRenderInfo::GetObjectType() const { return *TYPE; }
+
    //////////////////////////////////////////////////////////////////////////////
    void WaypointRenderInfo::Init()
    {
       BuildPropertyMap();
+      InitDefaults();
    }
 
    //////////////////////////////////////////////////////////////////////////////
@@ -111,6 +115,7 @@ namespace dtAI
       DT_REGISTER_PROPERTY(NavMeshFontSizeScalar, "Used to change the size of the navmesh font.", RegHelperType, regHelper);
       DT_REGISTER_PROPERTY(NavMeshTextOffsetScalar, "Used to offset the navmesh text.", RegHelperType, regHelper);
       DT_REGISTER_PROPERTY(NavMeshFontColor, "Used to change the navmesh text color.", RegHelperType, regHelper);
+
    }
 
    DT_IMPLEMENT_ACCESSOR(WaypointRenderInfo, bool, EnableDepthTest)

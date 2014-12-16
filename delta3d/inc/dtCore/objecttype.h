@@ -28,6 +28,8 @@
 #include <string>
 #include <osg/Referenced>
 #include <dtCore/refptr.h>
+#include <dtCore/namedparameter.h>
+#include <dtUtil/hashmap.h>
 #include <iosfwd>
 
 namespace dtCore
@@ -138,8 +140,34 @@ namespace dtCore
       bool operator!=(const ObjectType& rhs) const;
 
       ///Get the fully qualified string representation for this ActorType.
-      const std::string GetFullName() const;
+      std::string GetFullName() const;
 
+      /**
+       * Returns whether a default exists.
+       *
+       * @param[in]  propName  The property.
+       */
+      bool DefaultExists(const dtUtil::RefString& propName) const;
+
+      /**
+       * Retrieves the default value of a property.
+       *
+       * @param[in]  propName  The property.
+       *
+       * @return     The default value (or NULL if none exists).
+       */
+      const NamedParameter* GetDefaultValue(const dtUtil::RefString& propName) const;
+
+      /**
+       * Sets the default value of a given property.
+       *
+       * @param[in]  propName      The property.
+       * @param[in]  defaultValue  The default value of the property.
+       */
+      void SetDefaultValue(const dtUtil::RefString& propName, NamedParameter& defaultValue);
+
+      /// This is used to see if the defaults have been initialized.
+      bool DefaultsEmpty() const { return mDefaultValues.empty(); }
 
    protected:
       //Object can only be deleted through the ref_ptr interface.
@@ -162,6 +190,9 @@ namespace dtCore
 
       ///Parent of this actor type.  Null indicates there is no super type to this one.
       const dtCore::RefPtr<const ObjectType> mParentType;
+
+      typedef dtUtil::HashMap<dtUtil::RefString, dtCore::RefPtr<NamedParameter> > ValMap;
+      ValMap mDefaultValues;
    };
 
    ///Provide a method for printing the actor type to a stream.

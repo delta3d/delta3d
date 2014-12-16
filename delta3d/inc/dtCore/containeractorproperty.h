@@ -63,7 +63,7 @@ namespace dtCore
        *
        * @param[in]  keyName  The key for this property.
        */
-      virtual void InitDefault(const std::string& keyName);
+      virtual void InitDefault(ObjectType& type);
 
       /**
       * Sets the value of the property based on a string.

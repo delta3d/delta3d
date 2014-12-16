@@ -35,9 +35,18 @@ namespace dtPhysics
    class CharacterControllerImpl;
    class PhysicsObject;
 
+   /**
+    * This class implements the front end to the physics engine character controller.  It's not a motion model, but
+    * more of a steering class.
+    * TODO:  This should be made into an actor.
+    */
    class DT_PHYSICS_EXPORT CharacterController : public dtCore::PropertyContainer {
    public:
       CharacterController(Geometry& shape);
+
+      static dtCore::RefPtr<dtCore::ObjectType> TYPE;
+
+      /*override*/ const dtCore::ObjectType& GetObjectType() const;
 
       virtual void Init();
 

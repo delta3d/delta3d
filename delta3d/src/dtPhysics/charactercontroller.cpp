@@ -64,6 +64,11 @@ namespace dtPhysics
    {
    }
 
+   dtCore::RefPtr<dtCore::ObjectType> CharacterController::TYPE(new dtCore::ObjectType("CharacterController", "dtPhysics"));
+
+   /*override*/ const dtCore::ObjectType& CharacterController::GetObjectType() const { return *TYPE; }
+
+
    /////////////////////////////////////////////////////////////////////////////
    dtPhysics::Geometry& CharacterController::GetGeometry()
    {
@@ -115,7 +120,7 @@ namespace dtPhysics
    void CharacterController::BuildPropertyMap()
    {
       static const dtUtil::RefString GROUP("CharacterController");
-
+      //InitDefaults();
    }
 
    /////////////////////////////////////////////////////////////////////////////

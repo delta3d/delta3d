@@ -56,7 +56,6 @@
 #include <dtCore/stringactorproperty.h>
 #include <dtCore/vectoractorproperties.h>
 #include <dtCore/bitmaskactorproperty.h>
-#include <dtCore/defaultpropertymanager.h>
 
 #include <dtActors/engineactorregistry.h>
 #include <testActorLibrary/testactorlib.h>

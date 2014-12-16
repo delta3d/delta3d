@@ -170,7 +170,7 @@ namespace dtEditQt
                for (unsigned int j = 0; j < proxies.size(); ++j)
                {
                   dtCore::RefPtr<const dtCore::ActorType> type = &proxies[j]->GetActorType();
-                  if (reg->IsActorTypeSupported(type))
+                  if (reg->IsActorTypeSupported(*type))
                   {
                      ++numActorsInScene;
                   }

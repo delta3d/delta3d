@@ -65,12 +65,7 @@ namespace dtCore
           * Constructs the registry.  Sets the name and description for
           * this registry.
           */
-         ActorPluginRegistry(const std::string& name, const std::string& desc = "")
-            : mName(name)
-            , mDescription(desc)
-         {
-            mActorFactory = new dtUtil::ObjectFactory<dtCore::RefPtr<const ActorType>, BaseActorObject, ActorType::RefPtrComp>;
-         }
+         ActorPluginRegistry(const std::string& name, const std::string& desc = "");
 
          /**
           * Empty destructor. This class is not reference counted since we need
@@ -78,7 +73,7 @@ namespace dtCore
           * corresponding dynamic library, therefore, we need access to the
           * object's destructor.
           */
-         virtual ~ActorPluginRegistry() { }
+         virtual ~ActorPluginRegistry();
 
          /**
           * Registers the actor types that this registry knows how to create.
@@ -101,23 +96,23 @@ namespace dtCore
           * Sets the name of this registry.
           * @param name Name to assign to the registry.
           */
-         void SetName(const std::string& name) { mName = name; }
+         void SetName(const std::string& name);
 
          /**
           * Gets the name currently assigned to this registry.
           */
-         const std::string& GetName() const { return mName; }
+         const std::string& GetName() const;
 
          /**
           * Sets the description for this registry.
           * @param desc Couple sentence description for this actor registry.
           */
-         void SetDescription(const std::string& desc) { mDescription = desc; }
+         void SetDescription(const std::string& desc);
 
          /**
           * Gets the description of this registry.
           */
-         const std::string& GetDescription() const { return mDescription; }
+         const std::string& GetDescription() const;
 
          /**
           * Gets a list of actor types that this registry supports.
@@ -139,14 +134,14 @@ namespace dtCore
           * desired.
           * @param The container to fill out with ActorType replacements
           */
-         virtual void GetReplacementActorTypes(ActorTypeReplacements &replacements) const;
+         virtual void GetReplacementActorTypes(ActorTypeReplacements& replacements) const;
 
          /**
           * Checks to see if this registry supports the given actor type.
           * @param type The type to check support for.
           * @return True if supported, false otherwise.
           */
-         bool IsActorTypeSupported(dtCore::RefPtr<const ActorType> type);
+         bool IsActorTypeSupported(const ActorType& type);
 
          /**
           * Creates a new actor object based on the ActorType given.
@@ -156,7 +151,6 @@ namespace dtCore
           * @throws ExceptionEnum::ObjectFactoryUnknownType
           */
          dtCore::RefPtr<BaseActorObject> CreateActor(const ActorType& type);
-         dtCore::RefPtr<BaseActorObject> CreateActorProxy(const ActorType& type) { return CreateActor(type); }
 
       protected:
          std::string mName;

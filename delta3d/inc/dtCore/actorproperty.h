@@ -31,6 +31,7 @@
 namespace dtCore
 {
    class DataType;
+   class ObjectType;
 
    /**
     * The actor property class provides a get/set mechanism for
@@ -57,7 +58,7 @@ namespace dtCore
           *
           * @param[in]  keyName  The key for this property.
           */
-         virtual void InitDefault(const std::string& keyName);
+         virtual void InitDefault(ObjectType& type);
 
          /**
           * @return Returns an enumeration of the data type that this property

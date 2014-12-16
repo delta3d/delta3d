@@ -35,6 +35,10 @@ TestPropertyContainer::TestPropertyContainer()
 {
 }
 
+dtCore::RefPtr<dtCore::ObjectType> TestPropertyContainer::TYPE(new dtCore::ObjectType("TestPropertyContainer", "dtExample"));
+
+/*override*/ const dtCore::ObjectType& TestPropertyContainer::GetObjectType() const { return *TYPE; }
+
 /////////////////////////////////////////////////////
 TestPropertyContainer::~TestPropertyContainer()
 {
@@ -64,6 +68,7 @@ void TestPropertyContainer::BuildPropertyMap()
 
    GetProperty("Test_Read_Only_Int")->SetReadOnly(true);
 
+   InitDefaults();
 }
 
 /////////////////////////////////////////////////////

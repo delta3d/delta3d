@@ -23,7 +23,7 @@
 #include <prefix/dtcoreprefix.h>
 #include <dtCore/actorproperty.h>
 #include <dtCore/namedparameter.h>
-#include <dtCore/defaultpropertymanager.h>
+#include <dtCore/objecttype.h>
 #include <iostream>
 
 #include <dtCore/refptr.h>
@@ -56,14 +56,8 @@ namespace dtCore
    ActorProperty::~ActorProperty() { }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void ActorProperty::InitDefault(const std::string& keyName)
+   void ActorProperty::InitDefault(ObjectType& type)
    {
-      // Bail if we have no key name.
-      if (keyName.empty())
-      {
-         return;
-      }
-
       // Don't store defaults for properties that are read only.
       if (IsReadOnly())
       {
@@ -75,8 +69,7 @@ namespace dtCore
       if (param)
       {
          param->SetFromProperty(*this);
-         DefaultPropertyManager::GetInstance().SetDefaultValue(
-            keyName, GetName(), param);
+         type.SetDefaultValue(GetName(), *param);
       }
    }
 

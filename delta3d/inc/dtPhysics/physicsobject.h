@@ -66,6 +66,11 @@ namespace dtPhysics
       PhysicsObject();//name will be generated
       PhysicsObject(const std::string& name);
 
+      static dtCore::RefPtr<dtCore::ObjectType> TYPE;
+
+      /*override*/ const dtCore::ObjectType& GetObjectType() const;
+   public:
+
       //PhysicsObject(const PhysicsObject&);
       //const PhysicsObject& operator=(const PhysicsObject&);
 

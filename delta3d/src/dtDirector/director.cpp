@@ -100,6 +100,9 @@ namespace dtDirector
       }
    }
 
+   dtCore::RefPtr<dtCore::ObjectType> Director::DIRECTOR_TYPE(new dtCore::ObjectType("Director", "dtDirector"));
+   const dtCore::ObjectType& Director::GetObjectType() const { return *Director::DIRECTOR_TYPE; }
+
    ////////////////////////////////////////////////////////////////////////////////
    dtCore::RefPtr<Director> Director::Clone(Director* parent)
    {
@@ -222,12 +225,6 @@ namespace dtDirector
 
       mScriptName = "";
       mStarted = false;
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   std::string Director::GetDefaultPropertyKey() const
-   {
-      return "Director";
    }
 
    //////////////////////////////////////////////////////////////////////////

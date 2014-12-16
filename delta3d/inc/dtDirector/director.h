@@ -75,10 +75,14 @@ namespace dtDirector
 
    public:
 
+      static dtCore::RefPtr<dtCore::ObjectType> DIRECTOR_TYPE;
       /**
        * Constructs the Director.
        */
       Director();
+
+
+      /*override*/ const dtCore::ObjectType& GetObjectType() const;
 
       /**
        * Clones an instance of this script.
@@ -101,13 +105,6 @@ namespace dtDirector
        * Clears all data in this Director script.
        */
       virtual void Clear();
-
-      /**
-       * Retrieves the key name used to identify this container with the
-       * default property manager.  This method should be overloaded to
-       * provide a valid key based on the container type.
-       */
-      virtual std::string GetDefaultPropertyKey() const;
 
       /**
        * Accesses the Director Notifier.

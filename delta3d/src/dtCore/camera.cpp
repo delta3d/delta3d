@@ -536,7 +536,6 @@ namespace dtCore
       {
          osgViewer::GraphicsWindow* gw = mWindow->GetOsgViewerGraphicsWindow();
          mOsgCamera->setGraphicsContext(gw);
-         gw->getState()->setCheckForGLErrors(osg::State::ONCE_PER_ATTRIBUTE);
 
          const osg::GraphicsContext::Traits* traits = gw->getTraits();
 
