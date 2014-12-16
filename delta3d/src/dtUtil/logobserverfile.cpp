@@ -81,7 +81,7 @@ void dtUtil::LogObserverFile::OpenFile()
          {
             dtUtil::FileUtils::GetInstance().MakeDirectoryEX(logDir);
          }
-         catch (const dtUtil::Exception& ex)
+         catch (const dtUtil::Exception&)
          {
             std::cerr << "Unable to create the log directory : \""<<logDir<<"\".  The log file will be written to the current working directory if possible." << std::endl;
             logDir.clear();
