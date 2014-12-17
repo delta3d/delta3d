@@ -158,8 +158,7 @@ osg::ref_ptr<osg::Geometry> GeometryBuilder::GeometryCache::CreateMeshSubMesh(Ca
 
       osg::IntArray& sourceIndex = *modelData->GetSourceIndexArray();
       osg::FloatArray& sourceVertex = *modelData->GetSourceVertexArray();
-      bool hasTangents = ! sourceVertex.empty()
-         && 0 == (sourceVertex.size() % dtAnim::HardwareSubmeshDrawable::VBO_STRIDE);
+      bool hasTangents = false;//! sourceVertex.empty() && 0 == (sourceVertex.size() % dtAnim::HardwareSubmeshDrawable::VBO_STRIDE);
 
       osg::ref_ptr<osg::Geometry> geom = new osg::Geometry();
 
