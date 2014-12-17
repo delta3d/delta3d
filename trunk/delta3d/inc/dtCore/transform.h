@@ -38,7 +38,7 @@ namespace dtCore
       Transform(float tx = 0.0f, float ty = 0.0f, float tz = 0.0f,
                 float h = 0.0f, float p = 0.0f, float r = 0.0f);
       Transform(const Transform& that);
-      virtual ~Transform();
+      ~Transform();
 
       /// @return true if the transform is an identity matrix.
       bool IsIdentity() const { return mTransform.isIdentity(); }
@@ -72,16 +72,16 @@ namespace dtCore
       void SetRow(unsigned index, const osg::Vec4& row);
 
       ///Set both translation and rotation methods
-      virtual void Set(float tx, float ty, float tz,
+      void Set(float tx, float ty, float tz,
                        float h, float p, float r);
       ///Set both translation and rotation methods
-      virtual void Set(const osg::Vec3& xyz, const osg::Vec3& hprRotation);
+      void Set(const osg::Vec3& xyz, const osg::Vec3& hprRotation);
       ///Set both translation and rotation methods
-      virtual void Set(const osg::Vec3& xyz, const osg::Quat& quat);
+      void Set(const osg::Vec3& xyz, const osg::Quat& quat);
       ///Set both translation and rotation methods
-      virtual void Set(const osg::Vec3& xyz, const osg::Matrix& rotation);
+      void Set(const osg::Vec3& xyz, const osg::Matrix& rotation);
       ///Set both translation and rotation methods
-      virtual void Set(const osg::Matrix& mat);
+      void Set(const osg::Matrix& mat);
 
       ///Set both translation and rotation using target(lookat) and position
       void Set(const osg::Vec3& xyz, const osg::Vec3& lookAtXYZ, const osg::Vec3& upVec);
@@ -92,11 +92,11 @@ namespace dtCore
                float upVecX, float upVecY, float upVecZ);
 
       ///Set only translation methods
-      virtual void SetTranslation(float tx, float ty, float tz) { SetTranslation(osg::Vec3(tx, ty, tz)); }
+      void SetTranslation(float tx, float ty, float tz) { SetTranslation(osg::Vec3(tx, ty, tz)); }
       ///Set only translation methods
-      virtual void SetTranslation(const osg::Vec3f& xyz) { mTransform.setTrans( xyz ); }
+      void SetTranslation(const osg::Vec3f& xyz) { mTransform.setTrans( xyz ); }
       ///Set only translation methods
-      virtual void SetTranslation(const osg::Vec3d& xyz) { mTransform.setTrans( xyz ); }
+      void SetTranslation(const osg::Vec3d& xyz) { mTransform.setTrans( xyz ); }
 
       /// adjusts the translation by the given vector
       void Move(const osg::Vec3f& distance);
@@ -107,24 +107,24 @@ namespace dtCore
        * Set the rotation using heading, pitch, roll (in degrees)
        * This will wipe out any scale assigned to the matrix.
        */
-      virtual void SetRotation(float h, float p, float r) { SetRotation(osg::Vec3(h, p, r)); }
+      void SetRotation(float h, float p, float r) { SetRotation(osg::Vec3(h, p, r)); }
 
       /**
        * Set the rotation using heading, pitch, roll (in degrees)
        * This will wipe out any scale assigned to the matrix.
        */
-      virtual void SetRotation(const osg::Vec3& hpr);
+      void SetRotation(const osg::Vec3& hpr);
 
       /**
        * Set the rotation using a quaternion
        * This will wipe out any scale assigned to the matrix.
        */
-      virtual void SetRotation(const osg::Quat& quat) { mTransform.setRotate(quat); }
+      void SetRotation(const osg::Quat& quat) { mTransform.setRotate(quat); }
 
       /**
        * Set the rotation using a matrix.  Only the 3x3 portion will be used.
        */
-      virtual void SetRotation(const osg::Matrix& rotation);
+      void SetRotation(const osg::Matrix& rotation);
 
       ///Get translation and rotation methods
       void Get(float& tx, float& ty, float& tz, float& h, float& p, float& r) const;
