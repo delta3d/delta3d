@@ -233,6 +233,10 @@ namespace dtEditQt
       {
          EditorEvents::GetInstance().emitActorPropertyAboutToChange(proxy, &prop, oldValue, newValue);
       }
+      else
+      {
+         EditorEvents::GetInstance().emitActorPropertyAboutToChange(NULL, &prop, oldValue, newValue);
+      }
 
    }
 
@@ -245,6 +249,10 @@ namespace dtEditQt
       if (proxy != NULL)
       {
          EditorEvents::GetInstance().emitActorPropertyChanged(proxy, &prop);
+      }
+      else
+      {
+         EditorEvents::GetInstance().emitActorPropertyChanged(NULL, &prop);
       }
    }
 

@@ -94,14 +94,14 @@ namespace dtEditQt
    void UndoManager::onActorPropertyChanged(dtCore::RefPtr<dtCore::BaseActorObject> proxy,
       dtCore::RefPtr<dtCore::ActorProperty> property)
    {
-      if (!mRecursePrevent)
+      if (!mRecursePrevent && proxy.valid())
       {
          // clear the redo list anytime we add a new item to the undo list.
          clearRedoList();
 
          // verify that the about to change event is the same as this event
          if (mAboutToChangeEvent != NULL && mAboutToChangeEvent->mObjectId ==
-             proxy->GetId().ToString() && mAboutToChangeEvent->mType ==
+             proxy->GetId() && mAboutToChangeEvent->mType ==
              ChangeEvent::PROPERTY_CHANGED && mAboutToChangeEvent->mUndoPropData.size() > 0)
          {
             // double check the actual property.
@@ -123,19 +123,16 @@ namespace dtEditQt
    void UndoManager::actorPropertyAboutToChange(dtCore::RefPtr<dtCore::BaseActorObject> proxy,
       dtCore::RefPtr<dtCore::ActorProperty> property, std::string oldValue, std::string newValue)
    {
-      if (!mRecursePrevent)
+      if (!mRecursePrevent && proxy.valid())
       {
          // clear the redo list anytime we add a new item to the undo list.
          clearRedoList();
 
          ChangeEvent* undoEvent = new ChangeEvent();
          undoEvent->mType       = ChangeEvent::PROPERTY_CHANGED;
-         if (proxy.valid())
-         {
-            undoEvent->mObjectId          = proxy->GetId().ToString();
-            undoEvent->mActorTypeName     = proxy->GetActorType().GetName();
-            undoEvent->mActorTypeCategory = proxy->GetActorType().GetCategory();
-         }
+         undoEvent->mObjectId          = proxy->GetId();
+         undoEvent->mTypeName     = proxy->GetObjectType().GetName();
+         undoEvent->mTypeCategory = proxy->GetObjectType().GetCategory();
 
          UndoPropertyData* propData = new UndoPropertyData();
          propData->mPropertyName    = property->GetName();
@@ -181,11 +178,15 @@ namespace dtEditQt
          mAboutToChangeEvent = NULL;
 
          ChangeEvent* undoEvent       = new ChangeEvent();
-         undoEvent->mType              = ChangeEvent::PROXY_NAME_CHANGED;
-         undoEvent->mObjectId          = proxy.GetId().ToString();
-         undoEvent->mActorTypeName     = proxy.GetActorType().GetName();
-         undoEvent->mActorTypeCategory = proxy.GetActorType().GetCategory();
-         undoEvent->mOldName           = oldName;
+         undoEvent->mType              = ChangeEvent::PROPERTY_CHANGED;
+         undoEvent->mObjectId          = proxy.GetId();
+         undoEvent->mTypeName     = proxy.GetObjectType().GetName();
+         undoEvent->mTypeCategory = proxy.GetObjectType().GetCategory();
+         UndoPropertyData* propData = new UndoPropertyData();
+         propData->mPropertyName    = "Name";
+         propData->mOldValue        = oldName;
+         propData->mNewValue        = proxy.GetName();
+         undoEvent->mUndoPropData.push_back(propData);
 
          // add it to our main undo stack
          mUndoStack.push(undoEvent);
@@ -355,7 +356,7 @@ namespace dtEditQt
          if (!proxy)
          {
             dtActors::VolumeEditActorProxy* volumeProxy = EditorData::GetInstance().getMainWindow()->GetVolumeEditActorProxy();
-            if (volumeProxy && event->mObjectId == volumeProxy->GetId().ToString())
+            if (volumeProxy && event->mObjectId == volumeProxy->GetId())
             {
                proxy = volumeProxy;
             }
@@ -372,9 +373,6 @@ namespace dtEditQt
          {
             switch (event->mType)
             {
-            case ChangeEvent::PROXY_NAME_CHANGED:
-               handleUndoRedoNameChange(event, proxy, isUndo);
-               return; // best to return because event can be modified as a side effect
             case ChangeEvent::PROPERTY_CHANGED:
                handleUndoRedoPropertyValue(event, proxy, isUndo);
                return; // best to return because event can be modified as a side effect
@@ -392,38 +390,6 @@ namespace dtEditQt
             }
          }
       }
-   }
-
-   //////////////////////////////////////////////////////////////////////////////
-   void UndoManager::handleUndoRedoNameChange(ChangeEvent* event, dtCore::BaseActorObject* proxy, bool isUndo)
-   {
-      // NOTE - The undo/redo methods do both the undo and the redo.  If you are modifying
-      // these methods, be VERY careful
-
-      std::string currentName = proxy->GetName();
-
-      // do the undo
-      proxy->SetName(event->mOldName);
-      // notify the world of our change to the data.
-      mRecursePrevent = true;
-      EditorEvents::GetInstance().emitProxyNameChanged(*proxy, currentName);
-      mRecursePrevent = false;
-
-      // now turn the undo into a redo event
-      event->mOldName = currentName;
-
-      if (isUndo)
-      {
-         // add it REDO stack
-         mRedoStack.push(event);
-      }
-      else
-      {
-         // add it UNDO stack
-         mUndoStack.push(event);
-      }
-
-      enableButtons();
    }
 
    //////////////////////////////////////////////////////////////////////////////
@@ -546,7 +512,7 @@ namespace dtEditQt
 
       // figure out the actor type
       dtCore::RefPtr<const dtCore::ActorType> actorType = dtCore::LibraryManager::GetInstance().
-         FindActorType(event->mActorTypeCategory, event->mActorTypeName);
+         FindActorType(event->mTypeCategory, event->mTypeName);
 
       if (currMap.valid() && actorType.valid())
       {
@@ -575,7 +541,6 @@ namespace dtEditQt
             }
 
             proxy->SetId(dtCore::UniqueId(event->mObjectId));
-            proxy->SetName(event->mOldName);
             currMap->AddProxy(*(proxy.get()));
 
             // Tell the proxy that it is finished loading.
@@ -660,9 +625,8 @@ namespace dtEditQt
 
       ChangeEvent* undoEvent       = new ChangeEvent();
       undoEvent->mObjectId          = proxy->GetId().ToString();
-      undoEvent->mActorTypeName     = proxy->GetActorType().GetName();
-      undoEvent->mActorTypeCategory = proxy->GetActorType().GetCategory();
-      undoEvent->mOldName           = proxy->GetName();
+      undoEvent->mTypeName     = proxy->GetActorType().GetName();
+      undoEvent->mTypeCategory = proxy->GetActorType().GetCategory();
 
       // for each property, create a property data object and add it to our event's list.
       proxy->GetPropertyList(propList);

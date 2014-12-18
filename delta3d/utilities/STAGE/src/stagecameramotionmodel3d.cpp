@@ -12,6 +12,10 @@
 #include <dtCore/view.h>
 #include <dtCore/transformable.h>
 
+//dev
+//#include <iostream>
+//#include <osg/io_utils>
+
 namespace dtEditQt
 {
    IMPLEMENT_MANAGEMENT_LAYER(STAGECameraMotionModel3D)

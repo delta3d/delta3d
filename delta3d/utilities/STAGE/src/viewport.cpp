@@ -709,8 +709,8 @@ namespace dtEditQt
       mIsMouseTrapped = true;
       // Put the mouse cursor in the center of the viewport.
       QPoint center((this->GetQGLWidget()->x()+this->GetQGLWidget()->width())/2, (this->GetQGLWidget()->y()+this->GetQGLWidget()->height())/2);
-      mLastMouseUpdateLocation = center;
-      QCursor::setPos(this->GetQGLWidget()->mapToGlobal(center));
+      mLastMouseUpdateLocation = this->GetQGLWidget()->mapToGlobal(center);
+      QCursor::setPos(mLastMouseUpdateLocation);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -749,12 +749,12 @@ namespace dtEditQt
 
       float dx, dy;
 
-      dx = (float)(e->pos().x() - mLastMouseUpdateLocation.x());
-      dy = (float)(e->pos().y() - mLastMouseUpdateLocation.y());
+      dx = (float)(e->globalX() - mLastMouseUpdateLocation.x());
+      dy = (float)(e->globalY() - mLastMouseUpdateLocation.y());
 
       onMouseMoveEvent(e, dx, dy);
 
-      QPoint mousePos = e->pos();
+      QPoint mousePos = e->globalPos();
 
       if ((mIsMouseTrapped) && (this->GetQGLWidget() != NULL))
       {
@@ -768,8 +768,8 @@ namespace dtEditQt
             // Moving the mouse back to the center makes the movement recurse
             // so this is a flag to prevent the recursion
             mouseMoving = true;
-            QCursor::setPos(this->GetQGLWidget()->mapToGlobal(center));
-            mousePos = center;
+            mousePos = this->GetQGLWidget()->mapToGlobal(center);
+            QCursor::setPos(mousePos);
             mouseMoving = false;
          }
       }
