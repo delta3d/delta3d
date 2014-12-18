@@ -155,11 +155,6 @@ namespace dtEditQt
    void EditorEvents::emitActorPropertyChanged(dtCore::RefPtr<dtCore::BaseActorObject> proxy,
       dtCore::RefPtr<dtCore::ActorProperty> property)
    {
-      // I removed logging from this event.  This is called when the user
-      // manipulates actors in the viewports which means the log file is going to have
-      // a ton of messages for this event, thus in my opinion, polluting the
-      // log file and causing unneeded disk IO. -Matt
-      //LOG_INFO("Emitting UI event - [actorPropertyChanged]");
       emit actorPropertyChanged(proxy, property);
    }
 
@@ -167,9 +162,6 @@ namespace dtEditQt
    void EditorEvents::emitActorPropertyAboutToChange(dtCore::RefPtr<dtCore::BaseActorObject> proxy,
       dtCore::RefPtr<dtCore::ActorProperty> property, std::string oldValue, std::string newValue)
    {
-      // no logging here, just like with property changed.
-      // note, if this is not sent out before a property changed event (see above)
-      // then the undo manager will not treat it as a valid change event and will ignore it
       emit actorPropertyAboutToChange(proxy, property, oldValue, newValue);
    }
 

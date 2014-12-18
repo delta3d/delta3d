@@ -190,24 +190,23 @@ namespace dtEditQt
          enum ChangeEventType
          {
             PROPERTY_CHANGED,
-            PROXY_NAME_CHANGED,
             PROXY_CREATED,
             PROXY_DELETED,
             MULTI_UNDO_BEGIN,
             MULTI_UNDO_END,
             GROUP_CREATED,
             GROUP_DELETED,
+            TYPE_UKNOWN
          };
 
-         ChangeEvent() {}
+         ChangeEvent() : mType(TYPE_UKNOWN), mObjectId(false) {}
          virtual ~ChangeEvent() {}
 
          ChangeEventType mType;
          std::vector< dtCore::RefPtr<UndoPropertyData> > mUndoPropData;
-         std::string mObjectId;
-         std::string mActorTypeName;
-         std::string mActorTypeCategory;
-         std::string mOldName; // for proxy name changed events
+         dtCore::UniqueId mObjectId;
+         std::string mTypeName;
+         std::string mTypeCategory;
       };
 
       // variables
@@ -235,12 +234,6 @@ namespace dtEditQt
        * the appropriate undo or redo event.
        */
       void handleUndoRedoPropertyValue(ChangeEvent* event, dtCore::BaseActorObject* proxy, bool isUndo);
-
-      /**
-       * Internal method to handle an undo/redo for a name change event.  Creates
-       * the appropriate undo or redo event.
-       */
-      void handleUndoRedoNameChange(ChangeEvent* event, dtCore::BaseActorObject* proxy, bool isUndo);
 
       /**
        * Internal method to handle an undo/redo of a create proxy, which really

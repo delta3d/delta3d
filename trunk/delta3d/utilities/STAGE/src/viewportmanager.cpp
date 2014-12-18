@@ -571,6 +571,8 @@ namespace dtEditQt
    void ViewportManager::onActorPropertyChanged(dtCore::RefPtr<dtCore::BaseActorObject> proxy,
       dtCore::RefPtr<dtCore::ActorProperty> property)
    {
+      if (!proxy.valid()) return;
+
       unsigned int billBoardIndex, actorIndex;
       const dtCore::BaseActorObject::RenderMode& renderMode = proxy->GetRenderMode();
       dtCore::ActorProxyIcon* billBoard = proxy->GetBillBoardIcon();
