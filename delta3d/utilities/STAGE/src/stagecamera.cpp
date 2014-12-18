@@ -198,9 +198,7 @@ namespace dtEditQt
    {
       dtCore::Transform xform;
       mDeltaCamera->GetTransform(xform);
-      osg::Vec3 right, up, forward;
-      xform.GetOrientation(right, up, forward);
-      return forward;
+      return xform.GetForwardVector();
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -208,9 +206,7 @@ namespace dtEditQt
    {
       dtCore::Transform xform;
       mDeltaCamera->GetTransform(xform);
-      osg::Vec3 right, up, forward;
-      xform.GetOrientation(right, up, forward);
-      return up;
+      return xform.GetUpVector();
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -218,9 +214,7 @@ namespace dtEditQt
    {
       dtCore::Transform xform;
       mDeltaCamera->GetTransform(xform);
-      osg::Vec3 right, up, forward;
-      xform.GetOrientation(right, up, forward);
-      return right;
+      return xform.GetRightVector();
    }
 
    ///////////////////////////////////////////////////////////////////////////////
