@@ -1,6 +1,8 @@
 #ifndef STAGEPREFIX_H__
 #define STAGEPREFIX_H__
 
+#include <dtUtil/warningdisable.h>
+
 #ifdef DT_USE_PCH
 
    #ifdef _MSC_VER
