@@ -55,20 +55,24 @@ namespace dtCore
 
       const NamedArrayParameter& apm = static_cast<const NamedArrayParameter&>(otherParam);
 
-      //wipe out any existing parameters.  It's easier to just recreate them.
-      mParameterList.clear();
+      Resize(apm.GetSize());
 
+      unsigned idx = 0;
       //copy parameters
       NamedArrayParameter::ParameterList::const_iterator i = apm.mParameterList.begin();
       NamedArrayParameter::ParameterList::const_iterator end = apm.mParameterList.end();
-      for (; i != end; ++i)
+      for (; i != end; ++i, ++idx)
       {
-         NamedParameter& cur = **i;
+         NamedParameter* cur = *i;
 
-         dtCore::RefPtr<NamedParameter> newParameter =
-                  AddParameter(cur.GetName(), cur.GetDataType(), cur.IsList());
+         // Don't touch the parameters that are NULL.
+         if (cur != NULL)
+         {
+            dtCore::RefPtr<NamedParameter> newParameter = dtCore::NamedParameter::CreateFromType(cur->GetDataType(), cur->GetName(), cur->IsList());
 
-         newParameter->CopyFrom(cur);
+            newParameter->CopyFrom(*cur);
+            SetParameter(idx, *newParameter);
+         }
       }
    }
 
@@ -82,11 +86,19 @@ namespace dtCore
       NamedArrayParameter::ParameterList::const_iterator end = mParameterList.end();
       for (; i != end; ++i)
       {
-         const NamedParameter& param = **i;
-         stream << param.GetDataType().GetTypeId();
-         stream << param.GetName();
-         stream << param.IsList();
-         param.ToDataStream(stream);
+         const NamedParameter* param = *i;
+         if (param != NULL)
+         {
+            stream << param->GetDataType().GetTypeId();
+            stream << param->GetName();
+            stream << param->IsList();
+            param->ToDataStream(stream);
+         }
+         else
+         {
+            stream << (unsigned char)(dtCore::DataType::UNKNOWN_ID);
+         }
+
       }
    }
 
@@ -98,6 +110,13 @@ namespace dtCore
       // Read in the size of the stream
       unsigned int size;
       stream >> size;
+
+      if (size > 10000U)
+      {
+         LOGN_ERROR("namedarrayparameter.cpp", "For safety sake, the size of this array parameter is being limited to 10000");
+         size = 10000U;
+      }
+      Resize(size);
 
       for (unsigned short int i = 0; i < size; i++)
       {
@@ -114,21 +133,26 @@ namespace dtCore
                break;
             }
          }
-         if (type == NULL) //|| type == &dtCore::DataType::UNKNOWN)
+         if (type == NULL)
          {
             throw dtCore::BaseException( "The datatype was not found in the stream", __FILE__, __LINE__);
             okay = false;
          }
 
-         std::string name;
-         stream >> name;
+         // don't touch the index if it's the unknown type.
+         if (*type != dtCore::DataType::UNKNOWN)
+         {
+            std::string name;
+            stream >> name;
 
-         bool isList;
-         stream >> isList;
+            bool isList;
+            stream >> isList;
 
-         NamedParameter* param = AddParameter(name, *type, isList);
+            dtCore::RefPtr<NamedParameter> param = dtCore::NamedParameter::CreateFromType(*type, name, isList);
 
-         okay = okay && param != NULL && param->FromDataStream(stream);
+            okay = okay && param != NULL && param->FromDataStream(stream);
+            if (okay) SetParameter(i, *param);
+         }
       }
 
       return okay;
@@ -140,30 +164,27 @@ namespace dtCore
    ///////////////////////////////////////////////////////////////////////////////
    const std::string NamedArrayParameter::ToString() const
    {
-      std::string toFill;
+      std::ostringstream ss;
+      ss << OPEN_CHAR << GetSize() << CLOSE_CHAR;
 
       NamedArrayParameter::ParameterList::const_iterator i = mParameterList.begin();
       NamedArrayParameter::ParameterList::const_iterator end = mParameterList.end();
       for (; i!= end; ++i)
       {
-         NamedParameter& param = **i;
-         toFill.append(1, OPEN_CHAR);
-         toFill.append(param.GetName());
-         toFill.append(1, CLOSE_CHAR);
-         toFill.append(1, OPEN_CHAR);
-         toFill.append(dtUtil::ToString(param.GetDataType().GetName()));
-         toFill.append(1, CLOSE_CHAR);
-         // output this boolean as "true" or "false" in the string
-         toFill.append(1, OPEN_CHAR);
-         bool isList = param.IsList();
-         toFill.append(isList ? "true": "false");
-         toFill.append(1, CLOSE_CHAR);
-
-         toFill.append(1, OPEN_CHAR);
-         toFill.append(param.ToString());
-         toFill.append(1, CLOSE_CHAR);
+         NamedParameter* param = i->get();
+         if (param != NULL)
+         {
+            ss << OPEN_CHAR << param->GetDataType().GetName() << CLOSE_CHAR;
+            ss << OPEN_CHAR << param->GetName() << CLOSE_CHAR;
+            ss << OPEN_CHAR << param->IsList() << CLOSE_CHAR;
+            ss << OPEN_CHAR << param->ToString() << CLOSE_CHAR;
+         }
+         else
+         {
+            ss << OPEN_CHAR << dtCore::DataType::UNKNOWN.GetName()<< CLOSE_CHAR;
+         }
       }
-      return toFill;
+      return ss.str();
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -179,22 +200,46 @@ namespace dtCore
       // First read the total size of the array.
       std::string name, datatype, isList, item;
 
-
-      while (!data.empty())
+      if (dtUtil::TakeToken(data, item, OPEN_CHAR, CLOSE_CHAR))
       {
-         result = dtUtil::TakeToken(data, name, OPEN_CHAR, CLOSE_CHAR) &&
-                  dtUtil::TakeToken(data, datatype, OPEN_CHAR, CLOSE_CHAR) &&
-                  dtUtil::TakeToken(data, isList, OPEN_CHAR, CLOSE_CHAR) &&
-                  dtUtil::TakeToken(data, item, OPEN_CHAR, CLOSE_CHAR);
-         dtCore::DataType* dt = dtCore::DataType::GetValueForName(datatype);
-         if (result && dt != NULL)
+         size_t elementCount = dtUtil::ToType<size_t>(item);
+         if (elementCount > 10000U)
          {
-            dtCore::RefPtr<NamedParameter> newParameter =
-                     AddParameter(name, *dt, dtUtil::ToType<bool>(isList));
-
-            result = newParameter->FromString(item);
+            LOGN_ERROR("namedarrayparameter.cpp", "For safety sake, the size of this array parameter is being limited to 10000");
+            elementCount = 10000U;
          }
-         dtUtil::Trim(data);
+
+         Resize(elementCount);
+         for (unsigned i = 0; i < elementCount && !data.empty(); ++i)
+         {
+            result = dtUtil::TakeToken(data, datatype, OPEN_CHAR, CLOSE_CHAR);
+
+            dtCore::DataType* dt = NULL;
+            if (result)
+            {
+               dt = dtCore::DataType::GetValueForName(datatype);
+               if (dt == NULL || *dt == dtCore::DataType::UNKNOWN)
+               {
+                  // Unknown appears by itself make elements as to leave unchanged.
+                  continue;
+               }
+            }
+
+            result = result && dtUtil::TakeToken(data, name, OPEN_CHAR, CLOSE_CHAR) &&
+            dtUtil::TakeToken(data, isList, OPEN_CHAR, CLOSE_CHAR) &&
+            dtUtil::TakeToken(data, item, OPEN_CHAR, CLOSE_CHAR);
+
+            if (result && dt != NULL)
+            {
+               dtCore::RefPtr<NamedParameter> newParameter = dtCore::NamedParameter::CreateFromType(*dt, name, dtUtil::ToType<bool>(isList));
+               result = newParameter->FromString(item);
+               if (result)
+               {
+                  SetParameter(i, *newParameter);
+               }
+            }
+            dtUtil::Trim(data);
+         }
       }
 
       return result;
@@ -208,13 +253,15 @@ namespace dtCore
       const dtCore::ArrayActorPropertyBase* ap = static_cast<const dtCore::ArrayActorPropertyBase*> (&property);
       const dtCore::ActorProperty* internalProp = ap->GetArrayProperty();
       unsigned arraySize = unsigned(ap->GetArraySize());
+      Resize(arraySize);
       dtCore::DataType& type = internalProp->GetDataType();
       dtUtil::RefString paramName = internalProp->GetName();
       for (unsigned i = 0; i < arraySize; ++i)
       {
-         ap->SetIndex(i);
-         NamedParameter* param = AddParameter(paramName, type, false);
-         param->SetFromProperty(*internalProp);
+         ap->SetIndex(int(i));
+         dtCore::RefPtr<NamedParameter> newParameter = dtCore::NamedParameter::CreateFromType(type, paramName, false);
+         newParameter->SetFromProperty(*internalProp);
+         SetParameter(i, *newParameter);
       }
    }
 
@@ -235,7 +282,9 @@ namespace dtCore
       {
          ap->SetIndex(int(i));
          const NamedParameter* param = GetParameter(i);
-         param->ApplyValueToProperty(*internalProp);
+         // Null items mean don't change the value.
+         if (param != NULL)
+            param->ApplyValueToProperty(*internalProp);
       }
    }
 
@@ -289,6 +338,19 @@ namespace dtCore
    }
 
    ///////////////////////////////////////////////////////////////////////////////
+   void NamedArrayParameter::SetParameter(unsigned index, NamedParameter& param)
+   {
+      if (index >= mParameterList.size())
+      {
+         mParameterList.resize(index+1);
+      }
+      if (index < mParameterList.size())
+      {
+         mParameterList[index] = &param;
+      }
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
    NamedParameter* NamedArrayParameter::AddParameter(const dtUtil::RefString& name,
       dtCore::DataType& type, bool createAsList)
    {
@@ -302,6 +364,13 @@ namespace dtCore
    }
 
    ///////////////////////////////////////////////////////////////////////////////
+   void NamedArrayParameter::AddEmptyIndex()
+   {
+      mParameterList.push_back(NULL);
+   }
+
+
+   ///////////////////////////////////////////////////////////////////////////////
    void NamedArrayParameter::AddParameter(NamedParameter& param)
    {
       mParameterList.push_back(&param);
@@ -310,6 +379,10 @@ namespace dtCore
    ///////////////////////////////////////////////////////////////////////////////
    void NamedArrayParameter::InsertParameter(unsigned index, NamedParameter& param)
    {
+      if (index > mParameterList.size())
+      {
+         mParameterList.resize(index);
+      }
       if (index <= mParameterList.size())
       {
          mParameterList.insert(mParameterList.begin() + index, &param);

@@ -225,7 +225,7 @@ namespace dtUtil
       /**
        * Forces the stream to interpret its data contents as little endian.
        * @param force True if the stream should interpret its contents as little endian.
-       * @note This is useful when working with binary files that are gaurenteed to be little
+       * @note This is useful when working with binary files that are guaranteed to be little
        *    endian.  The particular file loading code can therefore, read the file contents
        *    into the data stream and on big endian machines, byte swapping will occur
        *    automatically.

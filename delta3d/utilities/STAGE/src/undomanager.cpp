@@ -586,7 +586,8 @@ namespace dtEditQt
          dtCore::ActorProperty* property = proxy->GetProperty(propData->mPropertyName);
          if (property != NULL)
          {
-            std::string currentValue = property->ToString();
+            //std::string currentValue = property->ToString();
+            std::string currentValue = propData->mNewValue;
             property->FromString(propData->mOldValue);
 
             // notify the world of our change to the data.

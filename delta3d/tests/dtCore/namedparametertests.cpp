@@ -129,6 +129,7 @@ public:
    void TestNamedGroupParameterCopy();
    void TestNamedGroupParameterStream();
    void TestNamedGroupParameterString();
+   void TestNamedGroupParameterStreamOrStream(bool stream);
    void TestNamedGroupParameterWithProperty();
 
    void TestNamedArrayParameterCopy();
@@ -1624,7 +1625,7 @@ void NamedParameterTests::TestNamedGroupParameterCopy()
    }
    catch (const dtUtil::Exception& e)
    {
-      CPPUNIT_FAIL(e.What());
+      CPPUNIT_FAIL(e.ToString());
    }
 //   catch (const std::exception& e)
 //   {
@@ -1653,12 +1654,12 @@ void NamedParameterTests::TestNamedGroupParameterWithProperty()
    }
    catch (const dtUtil::Exception& e)
    {
-      CPPUNIT_FAIL(e.What());
+      CPPUNIT_FAIL(e.ToString());
    }
 
 }
 
-void NamedParameterTests::TestNamedGroupParameterStream()
+void NamedParameterTests::TestNamedGroupParameterStreamOrStream(bool stream)
 {
    try
    {
@@ -1666,41 +1667,48 @@ void NamedParameterTests::TestNamedGroupParameterStream()
       TestNamedGroupParameter(*groupParam);
 
       dtUtil::DataStream ds;
+      std::string data;
 
-      groupParam->ToDataStream(ds);
+      if (stream)
+         groupParam->ToDataStream(ds);
+      else
+         data = groupParam->ToString();
 
       dtCore::RefPtr<dtCore::NamedGroupParameter> groupCopy = new dtCore::NamedGroupParameter("testCopy");
-      groupCopy->FromDataStream(ds);
+
+      dtCore::RefPtr<dtCore::NamedParameter> rightType = new dtCore::NamedStringParameter("test1");
+      dtCore::RefPtr<dtCore::NamedParameter> wrongType = new dtCore::NamedFloatParameter("test2");
+      dtCore::RefPtr<dtCore::NamedParameter> wrongListType = new dtCore::NamedFloatParameter("test3", 0.0f, true);
+      groupCopy->AddParameter(*rightType);
+      groupCopy->AddParameter(*wrongType);
+      groupCopy->AddParameter(*wrongListType);
+
+      if (stream)
+         groupCopy->FromDataStream(ds);
+      else
+         groupCopy->FromString(data);
+
+
+      CPPUNIT_ASSERT_MESSAGE("It should have reused the parameter if it matched the type.", rightType == groupCopy->GetParameter("test1"));
+      CPPUNIT_ASSERT(wrongType != groupCopy->GetParameter("test2"));
+      CPPUNIT_ASSERT(wrongListType != groupCopy->GetParameter("test3"));
 
       TestNamedGroupParameter(*groupCopy);
    }
    catch (const dtUtil::Exception& e)
    {
-      CPPUNIT_FAIL(e.What());
+      CPPUNIT_FAIL(e.ToString());
    }
+}
 
+void NamedParameterTests::TestNamedGroupParameterStream()
+{
+   TestNamedGroupParameterStreamOrStream(true);
 }
 
 void NamedParameterTests::TestNamedGroupParameterString()
 {
-   try
-   {
-      dtCore::RefPtr<dtCore::NamedGroupParameter> groupParam = CreateNamedGroupParameter();
-      TestNamedGroupParameter(*groupParam);
-
-      std::string s;
-
-      s = groupParam->ToString();
-
-      dtCore::RefPtr<dtCore::NamedGroupParameter> groupCopy = new dtCore::NamedGroupParameter("testCopy");
-      groupCopy->FromString(s);
-
-      TestNamedGroupParameter(*groupCopy);
-   }
-   catch (const dtUtil::Exception& e)
-   {
-      CPPUNIT_FAIL(e.What());
-   }
+   TestNamedGroupParameterStreamOrStream(false);
 
 }
 dtCore::RefPtr<dtCore::NamedArrayParameter> NamedParameterTests::CreateNamedArrayParameter()
@@ -1708,48 +1716,58 @@ dtCore::RefPtr<dtCore::NamedArrayParameter> NamedParameterTests::CreateNamedArra
    dtCore::RefPtr<dtCore::NamedArrayParameter> arrayParam;
    arrayParam = new dtCore::NamedArrayParameter("test");
 
+   arrayParam->AddEmptyIndex();
    arrayParam->AddParameter(*new dtCore::NamedStringParameter("test1"));
+   arrayParam->AddEmptyIndex();
    arrayParam->AddParameter("test2", dtCore::DataType::DOUBLE);
    arrayParam->AddParameter(*new dtCore::NamedFloatParameter("test3"));
    arrayParam->AddParameter("test4", dtCore::DataType::INT);
+   arrayParam->AddEmptyIndex();
 
-   CPPUNIT_ASSERT_MESSAGE("Should have received 4 in list for group param messages" , arrayParam->GetSize() == 4);
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("Should have received 7 in list for group param messages" , size_t(7), arrayParam->GetSize());
 
    dtCore::RefPtr<dtCore::NamedArrayParameter> internalArray =
       static_cast<dtCore::NamedArrayParameter*>(arrayParam->AddParameter("test5", dtCore::DataType::ARRAY));
 
    internalArray->AddParameter(*new dtCore::NamedStringParameter("test1"));
+   internalArray->AddEmptyIndex();
    internalArray->AddParameter(*new dtCore::NamedDoubleParameter("test9"));
    return arrayParam;
 }
 
 void NamedParameterTests::TestNamedArrayParameter(dtCore::NamedArrayParameter& arrayParam)
 {
-   CPPUNIT_ASSERT_EQUAL(size_t(5), arrayParam.GetSize());
+   CPPUNIT_ASSERT_EQUAL(size_t(8), arrayParam.GetSize());
 
-   CPPUNIT_ASSERT(arrayParam.GetParameter(0) != NULL);
-   CPPUNIT_ASSERT(arrayParam.GetParameter(0)->GetDataType() == dtCore::DataType::STRING);
+   CPPUNIT_ASSERT(arrayParam.GetParameter(0) == NULL);
+   CPPUNIT_ASSERT(arrayParam.GetParameter(2) == NULL);
+   CPPUNIT_ASSERT(arrayParam.GetParameter(6) == NULL);
 
    CPPUNIT_ASSERT(arrayParam.GetParameter(1) != NULL);
-   CPPUNIT_ASSERT(arrayParam.GetParameter(1)->GetDataType() == dtCore::DataType::DOUBLE);
-
-   CPPUNIT_ASSERT(arrayParam.GetParameter(2) != NULL);
-   CPPUNIT_ASSERT(arrayParam.GetParameter(2)->GetDataType() == dtCore::DataType::FLOAT);
+   CPPUNIT_ASSERT(arrayParam.GetParameter(1)->GetDataType() == dtCore::DataType::STRING);
 
    CPPUNIT_ASSERT(arrayParam.GetParameter(3) != NULL);
-   CPPUNIT_ASSERT(arrayParam.GetParameter(3)->GetDataType() == dtCore::DataType::INT);
+   CPPUNIT_ASSERT(arrayParam.GetParameter(3)->GetDataType() == dtCore::DataType::DOUBLE);
 
    CPPUNIT_ASSERT(arrayParam.GetParameter(4) != NULL);
-   CPPUNIT_ASSERT(arrayParam.GetParameter(4)->GetDataType() == dtCore::DataType::ARRAY);
+   CPPUNIT_ASSERT(arrayParam.GetParameter(4)->GetDataType() == dtCore::DataType::FLOAT);
+
+   CPPUNIT_ASSERT(arrayParam.GetParameter(5) != NULL);
+   CPPUNIT_ASSERT(arrayParam.GetParameter(5)->GetDataType() == dtCore::DataType::INT);
+
+   CPPUNIT_ASSERT(arrayParam.GetParameter(7) != NULL);
+   CPPUNIT_ASSERT(arrayParam.GetParameter(7)->GetDataType() == dtCore::DataType::ARRAY);
 
    dtCore::RefPtr<dtCore::NamedArrayParameter> internalArray =
-      dynamic_cast<dtCore::NamedArrayParameter*>(arrayParam.GetParameter(4));
+      dynamic_cast<dtCore::NamedArrayParameter*>(arrayParam.GetParameter(7));
 
    CPPUNIT_ASSERT(internalArray->GetParameter(0) != NULL);
    CPPUNIT_ASSERT(internalArray->GetParameter(0)->GetDataType() == dtCore::DataType::STRING);
 
-   CPPUNIT_ASSERT(internalArray->GetParameter(1) != NULL);
-   CPPUNIT_ASSERT(internalArray->GetParameter(1)->GetDataType() == dtCore::DataType::DOUBLE);
+   CPPUNIT_ASSERT(internalArray->GetParameter(1) == NULL);
+
+   CPPUNIT_ASSERT(internalArray->GetParameter(2) != NULL);
+   CPPUNIT_ASSERT(internalArray->GetParameter(2)->GetDataType() == dtCore::DataType::DOUBLE);
 
 
    CPPUNIT_ASSERT(arrayParam.GetParameter(51) == NULL);
@@ -1757,8 +1775,10 @@ void NamedParameterTests::TestNamedArrayParameter(dtCore::NamedArrayParameter& a
    //Now test getting parameters as a const group
    const dtCore::NamedArrayParameter& amp = arrayParam;
 
-   CPPUNIT_ASSERT(amp.GetParameter(0) != NULL);
-   CPPUNIT_ASSERT(amp.GetParameter(0)->GetDataType() == dtCore::DataType::STRING);
+   CPPUNIT_ASSERT(amp.GetParameter(0) == NULL);
+
+   CPPUNIT_ASSERT(amp.GetParameter(1) != NULL);
+   CPPUNIT_ASSERT(amp.GetParameter(1)->GetDataType() == dtCore::DataType::STRING);
 
    CPPUNIT_ASSERT(amp.GetParameter(21) == NULL);
 
@@ -1776,7 +1796,7 @@ void NamedParameterTests::TestNamedArrayParameterCopy()
    }
    catch (const dtUtil::Exception& e)
    {
-      CPPUNIT_FAIL(e.What());
+      CPPUNIT_FAIL(e.ToString());
    }
 //   catch (const std::exception& e)
 //   {

@@ -355,16 +355,16 @@ namespace dtQt
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void DynamicAbstractControl::PropertyAboutToChangePassThrough(dtCore::PropertyContainer& proxy, dtCore::ActorProperty& prop,
+   void DynamicAbstractControl::PropertyAboutToChangePassThrough(dtCore::PropertyContainer& pc, dtCore::ActorProperty& prop,
             std::string oldValue, std::string newValue)
    {
-      emit PropertyAboutToChange(proxy, prop, oldValue, newValue);
+      emit PropertyAboutToChange(pc, prop, oldValue, newValue);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void DynamicAbstractControl::PropertyChangedPassThrough(dtCore::PropertyContainer& proxy, dtCore::ActorProperty& prop)
+   void DynamicAbstractControl::PropertyChangedPassThrough(dtCore::PropertyContainer& pc, dtCore::ActorProperty& prop)
    {
-      emit PropertyChanged(proxy, prop);
+      emit PropertyChanged(pc, prop);
    }
 
    ////////////////////////////////////////////////////////////////////////////////

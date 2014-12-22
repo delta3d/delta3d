@@ -341,12 +341,6 @@ namespace dtQt
       void PropertyChanged(dtCore::PropertyContainer&, dtCore::ActorProperty& prop);
 
    public slots:
-      /// This is so child controls can, if desired can be connected to this which will emit the related signal.
-      void PropertyAboutToChangePassThrough(dtCore::PropertyContainer&, dtCore::ActorProperty& prop,
-               std::string oldValue, std::string newValue);
-
-      /// This is so child controls can, if desired can be connected to this which will emit the related signal.
-      void PropertyChangedPassThrough(dtCore::PropertyContainer&, dtCore::ActorProperty& prop);
 
       /// Event handler when the property has changed.
       void OnPropertyChanged(dtCore::PropertyContainer& propCon, dtCore::ActorProperty& prop);
@@ -400,6 +394,14 @@ namespace dtQt
        * Signal when the Delete button has been clicked.
        */
       void onDeleteClicked();
+
+   protected slots:
+      /// This is so child controls can, if desired can be connected to this which will emit the related signal.
+      virtual void PropertyAboutToChangePassThrough(dtCore::PropertyContainer&, dtCore::ActorProperty& prop,
+               std::string oldValue, std::string newValue);
+
+      /// This is so child controls can, if desired can be connected to this which will emit the related signal.
+      virtual void PropertyChangedPassThrough(dtCore::PropertyContainer&, dtCore::ActorProperty& prop);
 
    protected:
 

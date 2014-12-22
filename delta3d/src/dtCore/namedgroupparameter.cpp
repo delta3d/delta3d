@@ -99,10 +99,16 @@ namespace dtCore
          stream >> isList;
 
          dtCore::RefPtr<NamedParameter> param = GetParameter(name);
-         if (param == NULL)
+         if (param.valid() && (param->GetDataType() != *type || param->IsList() != isList))
+         {
+            RemoveParameter(name);
+            param = NULL;
+         }
+         if (!param.valid())
          {
             param = AddParameter(name, *type, isList);
          }
+
 
          okay = okay && param != NULL && param->FromDataStream(stream);
       }
@@ -116,30 +122,21 @@ namespace dtCore
    ///////////////////////////////////////////////////////////////////////////////
    const std::string NamedGroupParameter::ToString() const
    {
-       std::string toFill;
-
-       NamedGroupParameter::ParameterList::const_iterator i = mParameterList.begin();
-       NamedGroupParameter::ParameterList::const_iterator end = mParameterList.end();
-       for (; i!= end; ++i)
-       {
-          NamedParameter& param = *i->second;
-          toFill.append(1, OPEN_CHAR);
-          toFill.append(param.GetName());
-          toFill.append(1, CLOSE_CHAR);
-          toFill.append(1, OPEN_CHAR);
-          toFill.append(dtUtil::ToString(param.GetDataType().GetName()));
-          toFill.append(1, CLOSE_CHAR);
-          // output this boolean as "true" or "false" in the string
-          toFill.append(1, OPEN_CHAR);
-          bool isList = param.IsList();
-          toFill.append(isList ? "true": "false");
-          toFill.append(1, CLOSE_CHAR);
-
-          toFill.append(1, OPEN_CHAR);
-          toFill.append(param.ToString());
-          toFill.append(1, CLOSE_CHAR);
-       }
-       return toFill;
+      std::ostringstream ss;
+      NamedGroupParameter::ParameterList::const_iterator i = mParameterList.begin();
+      NamedGroupParameter::ParameterList::const_iterator end = mParameterList.end();
+      for (; i!= end; ++i)
+      {
+         NamedParameter* param = i->second.get();
+         if (param != NULL)
+         {
+            ss << OPEN_CHAR << param->GetDataType().GetName() << CLOSE_CHAR;
+            ss << OPEN_CHAR << param->GetName() << CLOSE_CHAR;
+            ss << OPEN_CHAR << param->IsList() << CLOSE_CHAR;
+            ss << OPEN_CHAR << param->ToString() << CLOSE_CHAR;
+         }
+      }
+      return ss.str();
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -152,22 +149,33 @@ namespace dtCore
 
 
       // First read the total size of the array.
-      std::string name, datatype, isList, item;
+      std::string name, datatype, list, item;
 
 
       while (!data.empty())
       {
-         result = dtUtil::TakeToken(data, name, OPEN_CHAR, CLOSE_CHAR) &&
-                  dtUtil::TakeToken(data, datatype, OPEN_CHAR, CLOSE_CHAR) &&
-                  dtUtil::TakeToken(data, isList, OPEN_CHAR, CLOSE_CHAR) &&
+         result = dtUtil::TakeToken(data, datatype, OPEN_CHAR, CLOSE_CHAR) &&
+                  dtUtil::TakeToken(data, name, OPEN_CHAR, CLOSE_CHAR) &&
+                  dtUtil::TakeToken(data, list, OPEN_CHAR, CLOSE_CHAR) &&
                   dtUtil::TakeToken(data, item, OPEN_CHAR, CLOSE_CHAR);
-         dtCore::DataType* dt = dtCore::DataType::GetValueForName(datatype);
-         if (result && dt != NULL)
+         dtCore::DataType* type = dtCore::DataType::GetValueForName(datatype);
+         if (result && type != NULL)
          {
-            dtCore::RefPtr<NamedParameter> newParameter =
-                     AddParameter(name, *dt, dtUtil::ToType<bool>(isList));
+            bool isList = dtUtil::ToType<bool>(list);
+            // If the old param is the same type, we want to keep it because complex params can merge data.
+            // in the from string or from datastream.
+            dtCore::RefPtr<NamedParameter> param = GetParameter(name);
+            if (param.valid() && (param->GetDataType() != *type || param->IsList() != isList))
+            {
+               RemoveParameter(name);
+               param = NULL;
+            }
+            if (!param.valid())
+            {
+               param = AddParameter(name, *type, isList);
+            }
 
-            result = newParameter->FromString(item);
+            result = param->FromString(item);
          }
          dtUtil::Trim(data);
       }
@@ -179,8 +187,7 @@ namespace dtCore
    void NamedGroupParameter::CopyFrom(const NamedParameter& otherParam)
    {
       if (otherParam.GetDataType() != GetDataType())
-         throw dtCore::InvalidParameterException(
-         "The msg parameter must be of type GROUP.", __FILE__, __LINE__);
+         throw dtCore::InvalidParameterException("The msg parameter must be the same type.", __FILE__, __LINE__);
 
       const NamedGroupParameter& gpm = static_cast<const NamedGroupParameter&>(otherParam);
 
