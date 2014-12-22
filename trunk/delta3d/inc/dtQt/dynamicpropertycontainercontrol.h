@@ -75,6 +75,12 @@ namespace dtQt
        */
       virtual bool updateData(QWidget* widget);
 
+      ////////////////////////////////////////////////////////////////////////////////
+      void PropertyAboutToChangePassThrough(dtCore::PropertyContainer& pc, dtCore::ActorProperty& prop,
+               std::string oldValue, std::string newValue);
+
+      ////////////////////////////////////////////////////////////////////////////////
+      void PropertyChangedPassThrough(dtCore::PropertyContainer& pc, dtCore::ActorProperty& prop);
 
    private:
 

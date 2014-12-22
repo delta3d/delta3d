@@ -213,7 +213,7 @@ namespace dtUtil
       else if (data.c_str()[0] != openChar)
       {
          outToken = data;
-         data = "";
+         data.clear();
       }
       else
       {

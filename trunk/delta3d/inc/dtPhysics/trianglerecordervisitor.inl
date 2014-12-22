@@ -115,7 +115,7 @@ namespace dtPhysics
       if((mExportSpecificMaterial && (desc != mSpecificDescription))
          || (mSkipSpecificMaterial && (desc == mSpecificDescription)))
       {
-         std::cout << "Skipping material: " << desc << std::endl;
+         //std::cout << "Skipping material: " << desc << std::endl;
          return;
       }
 
@@ -128,11 +128,11 @@ namespace dtPhysics
          {
             //skip this one since we are breaking it up into multiple parts
             return;
-            std::cout << "Skipping tile number: " << mGeodeExportCounter << std::endl;
+            //std::cout << "Skipping tile number: " << mGeodeExportCounter << std::endl;
          }
          else
          {
-            std::cout << "Exporting tile number: " << mGeodeExportCounter << std::endl;
+            //std::cout << "Exporting tile number: " << mGeodeExportCounter << std::endl;
          }
       }
 

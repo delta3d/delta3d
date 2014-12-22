@@ -3,6 +3,7 @@
 #include <dtUtil/log.h>
 #include <dtUtil/stringutils.h>
 #include <dtCore/datatype.h>
+#include <dtCore/namedarrayparameter.h>
 
 #include <cstdio>
 #include <climits>
@@ -10,9 +11,6 @@
 namespace dtCore
 {
 
-
-static const char OPEN_CHAR = '{';
-static const char CLOSE_CHAR = '}';
 
 ////////////////////////////////////////////////////////////////////////////////
 ArrayActorPropertyBase::ArrayActorPropertyBase(const std::string& name,
@@ -63,7 +61,9 @@ void ArrayActorPropertyBase::CopyFrom(const ActorProperty& otherProp)
    const ArrayActorPropertyBase* src = dynamic_cast<const ArrayActorPropertyBase*>(&otherProp);
    if (src)
    {
-      FromString(src->ToString());
+      dtCore::RefPtr<dtCore::NamedArrayParameter> param = new dtCore::NamedArrayParameter(GetName());
+      param->SetFromProperty(*src);
+      param->ApplyValueToProperty(*this);
    }
 }
 
@@ -82,58 +82,27 @@ bool ArrayActorPropertyBase::FromString(const std::string& value)
       return false;
    }
 
-   std::string data = value;
+   dtCore::RefPtr<dtCore::NamedArrayParameter> param = new dtCore::NamedArrayParameter(GetName());
 
-   // First read the total size of the array.
-   std::string token;
-   bool result = dtUtil::TakeToken(data, token, OPEN_CHAR, CLOSE_CHAR);
-
+   bool result = param->FromString(value);
    if (result)
-   {
-      // Make sure our array is the proper size.
-      const int arraySize = dtUtil::ToType<int>(token);
-      const int actualSize = Resize(arraySize);
-
-      for (int index = 0; result && index < arraySize && index < actualSize; index++)
-      {
-         SetIndex(index);
-         result = dtUtil::TakeToken(data, token, OPEN_CHAR, CLOSE_CHAR);
-         if (result)
-         {
-            result = mPropertyType->FromString(token);
-         }
-      }
-   }
+      param->ApplyValueToProperty(*this);
    return result;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 const std::string ArrayActorPropertyBase::ToString() const
 {
-   if (!mPropertyType.valid())
+   std::string result;
+   if (mPropertyType.valid())
    {
-      return "";
+
+      dtCore::RefPtr<dtCore::NamedArrayParameter> param = new dtCore::NamedArrayParameter(GetName());
+
+      param->SetFromProperty(*this);
+      result = param->ToString();
    }
-
-   // Iterate through each index in the array and append the strings.
-   int arraySize = GetArraySize();
-
-   char buffer[20] = {0,};
-   std::string data;
-   data += OPEN_CHAR;
-   snprintf(buffer, 20, "%d", arraySize);
-   data += buffer;
-   data += CLOSE_CHAR;
-
-   for (int index = 0; index < arraySize; index++)
-   {
-      SetIndex(index);
-      data += OPEN_CHAR;
-      data += mPropertyType->ToString();
-      data += CLOSE_CHAR;
-   }
-
-   return data;
+   return result;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

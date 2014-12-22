@@ -24,7 +24,8 @@
 
 #include <prefix/dtqtprefix.h>
 #include <dtQt/dynamicpropertycontainercontrol.h>
-
+#include <dtCore/namedpropertycontainerparameter.h>
+#include <dtCore/namedgroupparameter.inl>
 #include <dtCore/datatype.h>
 #include <dtUtil/log.h>
 
@@ -165,4 +166,28 @@ namespace dtQt
       // this guy doesn't have any editors.  All the data is edited in child controls
       return false;
    }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void DynamicPropertyContainerControl::PropertyAboutToChangePassThrough(dtCore::PropertyContainer& pc, dtCore::ActorProperty& prop,
+            std::string oldValue, std::string newValue)
+   {
+      dtCore::RefPtr<dtCore::NamedPropertyContainerParameter> val = new dtCore::NamedPropertyContainerParameter(mProperty->GetName());
+
+      dtCore::NamedParameter* subParam =  val->AddParameter(prop.GetName(), prop.GetDataType());
+      subParam->FromString(oldValue);
+      // Workaround.  Because the undo/redo system doesn't (yet) support the values of nested properties, I have to change it to
+      // using the containing property and adding the changed property as a value.
+      oldValue = val->ToString();
+      subParam->FromString(newValue);
+      newValue = val->ToString();
+      emit PropertyAboutToChange(*mPropContainer, *mProperty, oldValue, newValue);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void DynamicPropertyContainerControl::PropertyChangedPassThrough(dtCore::PropertyContainer& pc, dtCore::ActorProperty& prop)
+   {
+      emit PropertyChanged(*mPropContainer, *mProperty);
+   }
+
+
 }

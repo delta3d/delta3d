@@ -41,6 +41,7 @@
 #include <dtCore/actorproperty.h>
 #include <dtCore/datatype.h>
 #include <dtCore/arrayactorpropertybase.h>
+#include <dtCore/namedarrayparameter.h>
 #include <dtUtil/log.h>
 #include <QtGui/QLabel>
 #include <QtGui/QPushButton>
@@ -722,5 +723,29 @@ namespace dtQt
          oldValue, prop.ToString());
       emit PropertyChanged(container, prop);
    }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void DynamicArrayControl::PropertyAboutToChangePassThrough(dtCore::PropertyContainer& pc, dtCore::ActorProperty& prop,
+            std::string oldValue, std::string newValue)
+   {
+      dtCore::RefPtr<dtCore::NamedArrayParameter> val = new dtCore::NamedArrayParameter(mProperty->GetName());
+
+      dtCore::NamedParameter* subParam =  val->AddParameter(prop.GetName(), prop.GetDataType());
+      subParam->FromString(oldValue);
+      // Workaround.  Because the undo/redo system doesn't (yet) support the values of nested properties, I have to change it to
+      // using the containing property and adding the changed property as a value.
+      oldValue = val->ToString();
+      subParam->FromString(newValue);
+      newValue = val->ToString();
+
+      BaseClass::PropertyAboutToChangePassThrough(*mPropContainer, *mProperty, oldValue, newValue);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void DynamicArrayControl::PropertyChangedPassThrough(dtCore::PropertyContainer& pc, dtCore::ActorProperty& prop)
+   {
+      BaseClass::PropertyChangedPassThrough(*mPropContainer, *mProperty);
+   }
+
 
 } // namespace dtEditQt

@@ -51,6 +51,8 @@ namespace dtQt
       Q_OBJECT
 
    public:
+      typedef DynamicAbstractParentControl BaseClass;
+
       /**
        * Constructor
        */
@@ -169,6 +171,11 @@ namespace dtQt
       virtual void onItemShiftDownClicked(int itemIndex);
       virtual void onItemCopyClicked(int itemIndex);
       virtual void onItemDeleteClicked(int itemIndex);
+
+      /*override*/ void PropertyAboutToChangePassThrough(dtCore::PropertyContainer& pc, dtCore::ActorProperty& prop,
+               std::string oldValue, std::string newValue);
+
+      /*override*/ void PropertyChangedPassThrough(dtCore::PropertyContainer& pc, dtCore::ActorProperty& prop);
 
    private:
       /**
