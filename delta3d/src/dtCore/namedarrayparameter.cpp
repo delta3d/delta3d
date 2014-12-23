@@ -226,8 +226,8 @@ namespace dtCore
             }
 
             result = result && dtUtil::TakeToken(data, name, OPEN_CHAR, CLOSE_CHAR) &&
-            dtUtil::TakeToken(data, isList, OPEN_CHAR, CLOSE_CHAR) &&
-            dtUtil::TakeToken(data, item, OPEN_CHAR, CLOSE_CHAR);
+                  dtUtil::TakeToken(data, isList, OPEN_CHAR, CLOSE_CHAR) &&
+                  dtUtil::TakeToken(data, item, OPEN_CHAR, CLOSE_CHAR);
 
             if (result && dt != NULL)
             {

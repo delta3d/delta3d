@@ -65,9 +65,24 @@ namespace dtCore
          NamedParameter* GetParameter(unsigned index);
          const NamedParameter* GetParameter(unsigned index) const;
          void AddParameter(NamedParameter& param);
+         // To support doing a partial change, you set indices with empty values.
+         // You can also just insert at a higher index
+         void AddEmptyIndex();
+         /**
+          * Inserts a parameter.  If the index is passed the end, empty indices will be inserted to backfill.
+          */
          void InsertParameter(unsigned index, NamedParameter& param);
+
+         /*
+          * Sets the value of an existing index without inserting.
+          * This is useful for doing a partial change where you set the array to the size you want with Resize, then just
+          * set the values on the indices you want to change.
+          */
+         void SetParameter(unsigned index, NamedParameter& param);
+
          void RemoveParameter(unsigned index);
          size_t GetSize() const;
+         void Resize(unsigned newSize) { mParameterList.resize(newSize); }
 
          virtual bool operator==(const NamedParameter& toCompare) const;
 

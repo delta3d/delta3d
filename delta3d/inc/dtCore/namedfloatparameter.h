@@ -33,7 +33,7 @@ namespace dtCore
    class DT_CORE_EXPORT NamedFloatParameter: public NamedPODParameter<float>
    {
       public:
-         NamedFloatParameter(const dtUtil::RefString& name, float defaultValue = 0.0f, bool isList = false);
+         NamedFloatParameter(const dtUtil::RefString& name, float defaultValue = float(), bool isList = false);
 
          virtual void SetFromProperty(const dtCore::ActorProperty& property);
          virtual void ApplyValueToProperty(dtCore::ActorProperty& property) const;
