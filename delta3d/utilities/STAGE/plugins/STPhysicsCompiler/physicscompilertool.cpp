@@ -107,6 +107,9 @@ void PhysicsFileOptions::SetTargetDirectory(const std::string& dir)
       LOG_ERROR("No context path set.");
       return;
    }
+
+   std::string delimiter;
+   delimiter += dtCore::ResourceDescriptor::DESCRIPTOR_SEPARATOR;
    
    // Determine a project category from the directory path.
    std::string category(dir);
@@ -124,7 +127,7 @@ void PhysicsFileOptions::SetTargetDirectory(const std::string& dir)
 
       // The relative path can be changed to a
       // descriptor by changing the delimiter.
-      dtUtil::FindAndReplace(category, "/", ":");
+      dtUtil::FindAndReplace(category, "/", delimiter);
    }
 
    // Determine the datatype from the category if it exists.
@@ -135,7 +138,7 @@ void PhysicsFileOptions::SetTargetDirectory(const std::string& dir)
    if ( ! category.empty())
    {
       std::string typeStr = category;
-      size_t index = category.find(":");
+      size_t index = category.find(delimiter);
       bool hasSubDirectory = index != std::string::npos;
       if (hasSubDirectory)
       {
@@ -232,7 +235,11 @@ PhysicsCompilerToolPlugin::PhysicsCompilerToolPlugin(dtEditQt::MainWindow* mw)
    
    //add dock widget to STAGE main window
    mw->addDockWidget(Qt::RightDockWidgetArea, this);
+}
 
+////////////////////////////////////////////////////////////////////////////////
+void PhysicsCompilerToolPlugin::Create()
+{
    LoadSettings();
 
    SetupComboboxes();
@@ -535,14 +542,22 @@ bool PhysicsCompilerToolPlugin::WriteGeometryFile(const PhysicsFileOptions optio
 
          // Get the resource descriptor.
          dtCore::Project& proj = dtCore::Project::GetInstance();
-         compileResult->mVertData->mOutputFile = proj.AddResource(
-            resName.str(), strFilepath, options.mTargetDirAsCategory,
-            *options.mTargetDataType, options.mTargetContextSlot);
+         proj.Refresh();
 
-         // DEBUG:
-         /*printf("ResName: %s\nFile: %s\nCategory: %s\nRes: %s\n\n",
-            resName.str().c_str(), strFilepath.c_str(), category.c_str(),
-            compileResult->mVertData->mOutputFile.GetResourceIdentifier().c_str());*/
+         // TODO: Remove the data type part of the path once the
+         // delta3d project system no longer forces certain directories
+         // for data types.
+         const char delimiter = + dtCore::ResourceDescriptor::DESCRIPTOR_SEPARATOR;
+         dtCore::ResourceDescriptor res(options.mTargetDataType->GetName() + delimiter
+            + options.mTargetDirAsCategory + delimiter + resName.str() + ".dtphys");
+         if ( ! proj.GetResourcePath(res).empty())
+         {
+            compileResult->mVertData->mOutputFile = res;
+         }
+         else
+         {
+            LOG_ERROR("Could not create valid resource descriptor for: " + strFilepath);
+         }
       }
    }
    catch(dtUtil::Exception& ex)
@@ -627,13 +642,13 @@ void PhysicsCompilerToolPlugin::OnCompileClicked()
    if ( ! mActors.empty())
    {
       osg::Node* node = mInputMesh.get();
+      bool hasInputFile = mUI.mInputMeshEnabled->checkState() == Qt::Checked
+            && mUI.mInputMeshFile->text().length() > 0;
 
       // TODO: Handle multiple nodes instead of only one.
-      if (node == NULL)
       {
          // Try to load the input mesh if it has been specified in settings but not yet loaded.
-         if (mUI.mInputMeshEnabled->checkState() == Qt::Checked
-            && mUI.mInputMeshFile->text().length() > 0)
+         if (hasInputFile)
          {
             std::string filepath = mUI.mInputMeshFile->text().toStdString();
             try
@@ -644,6 +659,17 @@ void PhysicsCompilerToolPlugin::OnCompileClicked()
             catch (...)
             {
                LOG_ERROR("Could not load input mesh: " + filepath);
+            }
+
+            // WORKAROUND
+            // Project may not have been set when plugin was instantiated, thus
+            // the target directory category may not have been set since the
+            // project path was not accessible. Assuming the target directory is
+            // within the project, this block should ensure that the target directory
+            // can be converted to a resource category.
+            if ( ! mFileOptions.mTargetDir.empty() && mFileOptions.mTargetDirAsCategory.empty())
+            {
+               mFileOptions.SetTargetDirectory(mFileOptions.mTargetDir);
             }
          }
 
@@ -1016,8 +1042,8 @@ void PhysicsCompilerToolPlugin::LoadSettings()
          mObjectOptions.mClearExistingObjects = settings.value(SETTING_CLEAR_EXISTING_OBJECTS).toBool();
 
          // Validate the target directory.
-         if ( ! mFileOptions.mTargetDir.empty()
-            && ! dtUtil::FileUtils::GetInstance().DirExists(mFileOptions.mTargetDir))
+         if (mFileOptions.mTargetDir.empty()
+            || ! dtUtil::FileUtils::GetInstance().DirExists(mFileOptions.mTargetDir))
          {
             std::string message("Target directory could not be found.");
 
