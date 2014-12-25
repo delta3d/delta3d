@@ -107,6 +107,8 @@ public:
 
    ~PhysicsCompilerToolPlugin();
 
+   virtual void Create();
+
    virtual void Destroy();
 
    bool IsCompiling() const;
