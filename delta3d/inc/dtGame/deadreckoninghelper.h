@@ -78,7 +78,7 @@ namespace dtGame
     * Note - this class and its behavior are described in extensive detail in an article in 
     * Game Engine Gems 2 (Mar '11) entitled, 'Believable Dead Reckoning for Networked Games' 
     */
-   class DT_GAME_EXPORT DeadReckoningHelper : public dtGame::ActorComponent , public dtCore::MotionInterface
+   class DT_GAME_EXPORT DeadReckoningActorComponent : public dtGame::ActorComponent , public dtCore::MotionInterface
    {
       public:
          DT_DECLARE_VIRTUAL_REF_INTERFACE_INLINE
@@ -182,11 +182,11 @@ namespace dtGame
                ~DRVec3Util();
 
             public:
-               /// @see DeadReckoningHelper::SetLastKnownTranslation()
+               /// @see DeadReckoningActorComponent::SetLastKnownTranslation()
                void SetLastKnownTranslation(const osg::Vec3& vec);
-               /// @see DeadReckoningHelper::SetLastKnownVelocity()
+               /// @see DeadReckoningActorComponent::SetLastKnownVelocity()
                void SetLastKnownVelocity(const osg::Vec3& vec);
-               /// @see DeadReckoningHelper::SetLastTranslationUpdatedTime()
+               /// @see DeadReckoningActorComponent::SetLastTranslationUpdatedTime()
                void SetLastUpdatedTime(double newUpdatedTime);
                /// Used by DeadReckonPosition for straight blend.
                void DeadReckonUsingLinearBlend(osg::Vec3& pos, dtUtil::Log* pLogger, dtCore::Transformable& txable, bool useAcceleration);
@@ -250,11 +250,11 @@ namespace dtGame
 
 
          ///////////////////////////////////////////////////////////////////////////
-         DeadReckoningHelper();
+         DeadReckoningActorComponent();
 
          // base methods for actor components.
-         virtual void OnAddedToActor(dtGame::GameActor& actor);
-         virtual void OnRemovedFromActor(dtGame::GameActor& actor);
+         virtual void OnAddedToActor(dtCore::BaseActorObject& actor);
+         virtual void OnRemovedFromActor(dtCore::BaseActorObject& actor);
 
          DT_DECLARE_ACCESSOR(bool, AutoRegisterWithGMComponent);
 
@@ -335,7 +335,7 @@ namespace dtGame
 
          /// GROUND CLAMP TYPE - enum property - replaces the old Flying property
          DT_DECLARE_ACCESSOR(dtUtil::EnumerationPointer<dtGame::GroundClampTypeEnum>, GroundClampType);
-         //void SetGroundClampType(DeadReckoningHelper::GroundClampTypeEnum& typeEnum);
+         //void SetGroundClampType(DeadReckoningActorComponent::GroundClampTypeEnum& typeEnum);
 
          /**
           * Sets the entity's minimum Dead Reckoning Algorithm.
@@ -568,7 +568,7 @@ namespace dtGame
          virtual dtCore::RefPtr<dtCore::ActorProperty> GetDeprecatedProperty(const std::string& name);
 
       protected:
-         virtual ~DeadReckoningHelper();// {}
+         virtual ~DeadReckoningActorComponent();// {}
 
          ///perform static dead-reckoning, which means applying the new position directly and ground clamping.  xform will be updated.
          virtual void DRStatic(dtCore::Transformable& txable, dtCore::Transform& xform, dtUtil::Log* pLogger);
@@ -674,8 +674,8 @@ namespace dtGame
          // -----------------------------------------------------------------------
          //  Unimplemented constructors and operators
          // -----------------------------------------------------------------------
-         //DeadReckoningHelper(const DeadReckoningHelper&) {}
-         //DeadReckoningHelper& operator=(const DeadReckoningHelper&) {return *this;}
+         //DeadReckoningActorComponent(const DeadReckoningActorComponent&) {}
+         //DeadReckoningActorComponent& operator=(const DeadReckoningActorComponent&) {return *this;}
    };
 
 }

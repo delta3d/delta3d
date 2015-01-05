@@ -92,8 +92,8 @@ namespace dtGame
          CPPUNIT_ASSERT_EQUAL(0.0f, drp->GetVelocity().length());
          CPPUNIT_ASSERT_EQUAL(0.0f, drp->GetAcceleration().length());
          CPPUNIT_ASSERT_EQUAL(0.0f, drp->GetAngularVelocity().length());
-         CPPUNIT_ASSERT_EQUAL(mActor->GetComponent<DeadReckoningHelper>(), drp->GetDeadReckoningHelper());
-         CPPUNIT_ASSERT(drp->IsDeadReckoningHelperValid());
+         CPPUNIT_ASSERT_EQUAL(mActor->GetComponent<DeadReckoningActorComponent>(), drp->GetDeadReckoningActorComponent());
+         CPPUNIT_ASSERT(drp->IsDeadReckoningActorComponentValid());
          CPPUNIT_ASSERT(drp->GetPublishAngularVelocity());
          CPPUNIT_ASSERT(drp->GetPublishLinearVelocity());
          CPPUNIT_ASSERT(drp->GetDrawable() == NULL);
@@ -174,7 +174,7 @@ namespace dtGame
 
          mGameManager->CreateActor(*dtActors::EngineActorRegistry::GAME_MESH_ACTOR_TYPE, mActor);
 
-         mActor->AddComponent(*new DeadReckoningHelper);
+         mActor->AddComponent(*new DeadReckoningActorComponent);
          mActor->AddComponent(*new TestDRPublishingActComp);
 
          dtCore::System::GetInstance().SetShutdownOnWindowClose(false);

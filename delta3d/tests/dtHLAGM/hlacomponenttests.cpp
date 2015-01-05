@@ -1287,7 +1287,7 @@ void HLAComponentTests::TestReflectAttributes()
       osg::Vec3 expectedRotation = mHLAComponent->GetCoordinateConverter().
          ConvertToLocalRotation(spatial.GetOrientation().GetPsi(), spatial.GetOrientation().GetTheta(), spatial.GetOrientation().GetPhi());
 
-      dtCore::RefPtr<dtGame::DeadReckoningHelper> drHelper;
+      dtCore::RefPtr<dtGame::DeadReckoningActorComponent> drHelper;
       proxy->GetComponent(drHelper);
       osg::Vec3 actualTranslation = drHelper->GetLastKnownTranslation();
       osg::Vec3 actualRotation = drHelper->GetLastKnownRotation();

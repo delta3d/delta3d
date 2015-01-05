@@ -46,39 +46,39 @@ namespace dtGame
       AddInstance(this);
    }
 
-   const float DeadReckoningHelper::DEFAULT_MAX_SMOOTHING_TIME_ROT = 2.0f;
-   const float DeadReckoningHelper::DEFAULT_MAX_SMOOTHING_TIME_POS = 4.0f;
+   const float DeadReckoningActorComponent::DEFAULT_MAX_SMOOTHING_TIME_ROT = 2.0f;
+   const float DeadReckoningActorComponent::DEFAULT_MAX_SMOOTHING_TIME_POS = 4.0f;
 
-   const std::string DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_POSITION("Position");
-   const std::string DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_POSITIONRATE("PositionRate");
-   const std::string DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_EXTENSION("Extension");
-   const std::string DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_EXTENSIONRATE("ExtensionRate");
-   const std::string DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_X("LocationX");
-   const std::string DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_XRATE("LocationXRate");
-   const std::string DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_Y("LocationY");
-   const std::string DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_YRATE("LocationYRate");
-   const std::string DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_Z("LocationZ");
-   const std::string DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_ZRATE("LocationZRate");
-   const std::string DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_AZIMUTH("Azimuth");
-   const std::string DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_AZIMUTHRATE("AzimuthRate");
-   const std::string DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_ELEVATION("Elevation");
-   const std::string DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_ELEVATIONRATE("ElevationRate");
-   const std::string DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_ROTATION("Rotation");
-   const std::string DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_ROTATIONRATE("RotationRate");
+   const std::string DeadReckoningActorComponent::DeadReckoningDOF::REPRESENATION_POSITION("Position");
+   const std::string DeadReckoningActorComponent::DeadReckoningDOF::REPRESENATION_POSITIONRATE("PositionRate");
+   const std::string DeadReckoningActorComponent::DeadReckoningDOF::REPRESENATION_EXTENSION("Extension");
+   const std::string DeadReckoningActorComponent::DeadReckoningDOF::REPRESENATION_EXTENSIONRATE("ExtensionRate");
+   const std::string DeadReckoningActorComponent::DeadReckoningDOF::REPRESENATION_X("LocationX");
+   const std::string DeadReckoningActorComponent::DeadReckoningDOF::REPRESENATION_XRATE("LocationXRate");
+   const std::string DeadReckoningActorComponent::DeadReckoningDOF::REPRESENATION_Y("LocationY");
+   const std::string DeadReckoningActorComponent::DeadReckoningDOF::REPRESENATION_YRATE("LocationYRate");
+   const std::string DeadReckoningActorComponent::DeadReckoningDOF::REPRESENATION_Z("LocationZ");
+   const std::string DeadReckoningActorComponent::DeadReckoningDOF::REPRESENATION_ZRATE("LocationZRate");
+   const std::string DeadReckoningActorComponent::DeadReckoningDOF::REPRESENATION_AZIMUTH("Azimuth");
+   const std::string DeadReckoningActorComponent::DeadReckoningDOF::REPRESENATION_AZIMUTHRATE("AzimuthRate");
+   const std::string DeadReckoningActorComponent::DeadReckoningDOF::REPRESENATION_ELEVATION("Elevation");
+   const std::string DeadReckoningActorComponent::DeadReckoningDOF::REPRESENATION_ELEVATIONRATE("ElevationRate");
+   const std::string DeadReckoningActorComponent::DeadReckoningDOF::REPRESENATION_ROTATION("Rotation");
+   const std::string DeadReckoningActorComponent::DeadReckoningDOF::REPRESENATION_ROTATIONRATE("RotationRate");
 
-   IMPLEMENT_ENUM(DeadReckoningHelper::UpdateMode);
-   DeadReckoningHelper::UpdateMode DeadReckoningHelper::UpdateMode::AUTO("AUTO");
-   DeadReckoningHelper::UpdateMode DeadReckoningHelper::UpdateMode::CALCULATE_ONLY("CALCULATE_ONLY");
-   DeadReckoningHelper::UpdateMode
-      DeadReckoningHelper::UpdateMode::CALCULATE_AND_MOVE_ACTOR("CALCULATE_AND_MOVE_ACTOR");
-   DeadReckoningHelper::UpdateMode::UpdateMode(const std::string& name) : dtUtil::Enumeration(name)
+   IMPLEMENT_ENUM(DeadReckoningActorComponent::UpdateMode);
+   DeadReckoningActorComponent::UpdateMode DeadReckoningActorComponent::UpdateMode::AUTO("AUTO");
+   DeadReckoningActorComponent::UpdateMode DeadReckoningActorComponent::UpdateMode::CALCULATE_ONLY("CALCULATE_ONLY");
+   DeadReckoningActorComponent::UpdateMode
+      DeadReckoningActorComponent::UpdateMode::CALCULATE_AND_MOVE_ACTOR("CALCULATE_AND_MOVE_ACTOR");
+   DeadReckoningActorComponent::UpdateMode::UpdateMode(const std::string& name) : dtUtil::Enumeration(name)
    {
       AddInstance(this);
    }
 
 
    //////////////////////////////////////////////////////////////////////
-   DeadReckoningHelper::DeadReckoningHelper()
+   DeadReckoningActorComponent::DeadReckoningActorComponent()
    : ActorComponent(TYPE)
    , mAutoRegisterWithGMComponent(true)
    , mGroundClampType(&GroundClampTypeEnum::KEEP_ABOVE)
@@ -90,7 +90,7 @@ namespace dtGame
    , mRotationElapsedTimeSinceUpdate(0.0f)
    , mRotationEndSmoothingTime(0.0f)
    , mMinDRAlgorithm(&DeadReckoningAlgorithm::STATIC)
-   , mUpdateMode(&DeadReckoningHelper::UpdateMode::AUTO)
+   , mUpdateMode(&DeadReckoningActorComponent::UpdateMode::AUTO)
    , mRotationInitiated(false)
    , mUpdated(false)
    , mRotationUpdated(false)
@@ -103,18 +103,18 @@ namespace dtGame
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   DeadReckoningHelper::~DeadReckoningHelper()
+   DeadReckoningActorComponent::~DeadReckoningActorComponent()
    {
    }
 
-   DT_IMPLEMENT_ACCESSOR(DeadReckoningHelper, bool, AutoRegisterWithGMComponent);
+   DT_IMPLEMENT_ACCESSOR(DeadReckoningActorComponent, bool, AutoRegisterWithGMComponent);
 
    // GROUND CLAMP TYPE PROPERTY
-   DT_IMPLEMENT_ACCESSOR_GETTER(DeadReckoningHelper, dtUtil::EnumerationPointer<GroundClampTypeEnum>, GroundClampType);
+   DT_IMPLEMENT_ACCESSOR_GETTER(DeadReckoningActorComponent, dtUtil::EnumerationPointer<GroundClampTypeEnum>, GroundClampType);
 
 
    //////////////////////////////////////////////////////////////////////
-   void DeadReckoningHelper::OnEnteredWorld()
+   void DeadReckoningActorComponent::OnEnteredWorld()
    {
       mExtraDataUpdated = false;
 
@@ -126,7 +126,7 @@ namespace dtGame
 
    /// Called when the parent actor leaves the "world".
    //////////////////////////////////////////////////////////////////////
-   void DeadReckoningHelper::OnRemovedFromWorld()
+   void DeadReckoningActorComponent::OnRemovedFromWorld()
    {
       if (mAutoRegisterWithGMComponent)
       {
@@ -135,7 +135,7 @@ namespace dtGame
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void DeadReckoningHelper::RegisterWithGMComponent()
+   void DeadReckoningActorComponent::RegisterWithGMComponent()
    {
       dtGame::DeadReckoningComponent* drc = NULL;
 
@@ -158,7 +158,7 @@ namespace dtGame
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void DeadReckoningHelper::UnregisterWithGMComponent()
+   void DeadReckoningActorComponent::UnregisterWithGMComponent()
    {
       dtGame::DeadReckoningComponent* drc = NULL;
 
@@ -184,39 +184,39 @@ namespace dtGame
    }
 
    //////////////////////////////////////////////////////////////////////
-   DeadReckoningHelper::UpdateMode& DeadReckoningHelper::GetEffectiveUpdateMode(bool isRemote) const
+   DeadReckoningActorComponent::UpdateMode& DeadReckoningActorComponent::GetEffectiveUpdateMode(bool isRemote) const
    {
-      if (*mUpdateMode == DeadReckoningHelper::UpdateMode::AUTO)
+      if (*mUpdateMode == DeadReckoningActorComponent::UpdateMode::AUTO)
       {
          if (isRemote)
-            return DeadReckoningHelper::UpdateMode::CALCULATE_AND_MOVE_ACTOR;
+            return DeadReckoningActorComponent::UpdateMode::CALCULATE_AND_MOVE_ACTOR;
          else
-            return DeadReckoningHelper::UpdateMode::CALCULATE_ONLY;
+            return DeadReckoningActorComponent::UpdateMode::CALCULATE_ONLY;
       }
       return *mUpdateMode;
    }
 
    //////////////////////////////////////////////////////////////////////
-   bool DeadReckoningHelper::IsExtraDataUpdated()
+   bool DeadReckoningActorComponent::IsExtraDataUpdated()
    {
       return mExtraDataUpdated;
    }
 
    //////////////////////////////////////////////////////////////////////
-   void DeadReckoningHelper::SetExtraDataUpdated(bool newValue)
+   void DeadReckoningActorComponent::SetExtraDataUpdated(bool newValue)
    {
       mExtraDataUpdated = newValue;
    }
 
    //////////////////////////////////////////////////////////////////////
-   bool DeadReckoningHelper::IsFlyingDeprecatedProperty()
+   bool DeadReckoningActorComponent::IsFlyingDeprecatedProperty()
    {
       bool result = (GroundClampTypeEnum::NONE == GetGroundClampType());
       return result;
    }
 
    //////////////////////////////////////////////////////////////////////
-   void DeadReckoningHelper::SetFlyingDeprecatedProperty(bool newFlying)
+   void DeadReckoningActorComponent::SetFlyingDeprecatedProperty(bool newFlying)
    {
       // THIS METHOD SUPPORTS THE DEPRECATED PROPERTY IN EXISTING MAPS. USE SetGroundClampType() instead.
       (newFlying) ?
@@ -225,23 +225,23 @@ namespace dtGame
    }
 
    //////////////////////////////////////////////////////////////////////
-   DEPRECATE_FUNC bool DeadReckoningHelper::IsFlying()
+   DEPRECATE_FUNC bool DeadReckoningActorComponent::IsFlying()
    {
-      DEPRECATE("void DeadReckoningHelper::IsFlying()", 
-         " GroundClampTypeEnum DeadReckoningHelper::GetGroundClampType()");
+      DEPRECATE("void DeadReckoningActorComponent::IsFlying()", 
+         " GroundClampTypeEnum DeadReckoningActorComponent::GetGroundClampType()");
       return IsFlyingDeprecatedProperty();
    }
 
    //////////////////////////////////////////////////////////////////////
-   DEPRECATE_FUNC void DeadReckoningHelper::SetFlying(bool newFlying)
+   DEPRECATE_FUNC void DeadReckoningActorComponent::SetFlying(bool newFlying)
    {
-      DEPRECATE("void DeadReckoningHelper::SetFlying(bool)", 
-         " bool DeadReckoningHelper::SetGroundClampType(GroundClampTypeEnum)");
+      DEPRECATE("void DeadReckoningActorComponent::SetFlying(bool)", 
+         " bool DeadReckoningActorComponent::SetGroundClampType(GroundClampTypeEnum)");
       SetFlyingDeprecatedProperty(newFlying);
    }
 
    //////////////////////////////////////////////////////////////////////
-   void DeadReckoningHelper::SetGroundClampType(GroundClampTypeEnum& newType)
+   void DeadReckoningActorComponent::SetGroundClampType(GroundClampTypeEnum& newType)
    {
       if (newType == GetGroundClampType())
          return;
@@ -253,7 +253,7 @@ namespace dtGame
    }
 
    //////////////////////////////////////////////////////////////////////
-   void DeadReckoningHelper::SetAdjustRotationToGround(bool newAdjust)
+   void DeadReckoningActorComponent::SetAdjustRotationToGround(bool newAdjust)
    {
       if (mGroundClampingData.GetAdjustRotationToGround() == newAdjust)
          return;
@@ -262,7 +262,7 @@ namespace dtGame
    }
 
    //////////////////////////////////////////////////////////////////////
-   void DeadReckoningHelper::SetDeadReckoningAlgorithm(DeadReckoningAlgorithm& newAlgorithm)
+   void DeadReckoningActorComponent::SetDeadReckoningAlgorithm(DeadReckoningAlgorithm& newAlgorithm)
    {
       if (mMinDRAlgorithm == &newAlgorithm)
          return;
@@ -273,14 +273,14 @@ namespace dtGame
    }
 
    //////////////////////////////////////////////////////////////////////
-   void DeadReckoningHelper::SetLastKnownTranslation(const osg::Vec3& vec)
+   void DeadReckoningActorComponent::SetLastKnownTranslation(const osg::Vec3& vec)
    {
       mTranslation.SetLastKnownTranslation(vec);
       mUpdated = true;
    }
 
    //////////////////////////////////////////////////////////////////////
-   void DeadReckoningHelper::SetLastKnownRotation(const osg::Vec3& newRot)
+   void DeadReckoningActorComponent::SetLastKnownRotation(const osg::Vec3& newRot)
    {
       // Some objects only care about heading, so we zero out pitch/yaw.
       osg::Vec3 vec = (!mForceUprightRotation) ? (newRot) : (osg::Vec3(newRot.x(), 0.0f, 0.0f));
@@ -307,46 +307,46 @@ namespace dtGame
    }
 
    //////////////////////////////////////////////////////////////////////
-   void DeadReckoningHelper::SetLastKnownVelocity(const osg::Vec3& vec)
+   void DeadReckoningActorComponent::SetLastKnownVelocity(const osg::Vec3& vec)
    {
       mTranslation.SetLastKnownVelocity(vec);
       mUpdated = true;
    }
 
    //////////////////////////////////////////////////////////////////////
-   void DeadReckoningHelper::SetLastKnownAcceleration(const osg::Vec3& vec)
+   void DeadReckoningActorComponent::SetLastKnownAcceleration(const osg::Vec3& vec)
    {
       mTranslation.mAcceleration = vec;
       mUpdated = true;
    }
 
    //////////////////////////////////////////////////////////////////////
-   void DeadReckoningHelper::SetLastKnownAngularVelocity(const osg::Vec3& vec)
+   void DeadReckoningActorComponent::SetLastKnownAngularVelocity(const osg::Vec3& vec)
    {
       mAngularVelocityVector = vec;
       mUpdated = true;
    }
 
    //////////////////////////////////////////////////////////////////////
-   const osg::Vec3& DeadReckoningHelper::GetCurrentInstantVelocity() const
+   const osg::Vec3& DeadReckoningActorComponent::GetCurrentInstantVelocity() const
    {
       return mTranslation.mPreviousInstantVel;
    }
 
    //////////////////////////////////////////////////////////////////////
-   void DeadReckoningHelper::SetForceUprightRotation(bool newValue)
+   void DeadReckoningActorComponent::SetForceUprightRotation(bool newValue)
    {
       mForceUprightRotation = newValue;
    }
 
    //////////////////////////////////////////////////////////////////////
-   bool DeadReckoningHelper::GetForceUprightRotation() const
+   bool DeadReckoningActorComponent::GetForceUprightRotation() const
    {
       return mForceUprightRotation;
    }
 
    //////////////////////////////////////////////////////////////////////
-   void DeadReckoningHelper::SetGroundOffset(float newOffset)
+   void DeadReckoningActorComponent::SetGroundOffset(float newOffset)
    {
       mGroundClampingData.SetGroundOffset(newOffset);
       mUpdated = true;
@@ -355,13 +355,13 @@ namespace dtGame
    }
 
    //////////////////////////////////////////////////////////////////////
-   void DeadReckoningHelper::SetLastTranslationUpdatedTime(double newUpdatedTime)
+   void DeadReckoningActorComponent::SetLastTranslationUpdatedTime(double newUpdatedTime)
    {
       mTranslation.SetLastUpdatedTime(newUpdatedTime);
    }
 
    //////////////////////////////////////////////////////////////////////
-   void DeadReckoningHelper::SetLastRotationUpdatedTime(double newUpdatedTime)
+   void DeadReckoningActorComponent::SetLastRotationUpdatedTime(double newUpdatedTime)
    {
       //the average of the last average and the current time since an update.
       float timeDelta = float(newUpdatedTime - mLastRotationUpdatedTime);
@@ -370,7 +370,7 @@ namespace dtGame
    }
 
    //////////////////////////////////////////////////////////////////////
-   void DeadReckoningHelper::SetTranslationElapsedTimeSinceUpdate(float value)
+   void DeadReckoningActorComponent::SetTranslationElapsedTimeSinceUpdate(float value)
    { 
       /// Compute time delta for this step of DR. Should be the same as DeltaTime in the component
       mCurTimeDelta = dtUtil::Max(value - mTranslation.mElapsedTimeSinceUpdate, 0.0f);
@@ -378,14 +378,14 @@ namespace dtGame
    }
 
    //////////////////////////////////////////////////////////////////////
-   void DeadReckoningHelper::SetModelDimensions(const osg::Vec3& newDimensions)
+   void DeadReckoningActorComponent::SetModelDimensions(const osg::Vec3& newDimensions)
    {
       mGroundClampingData.SetModelDimensions(newDimensions);
       SetUseModelDimensions(true);
    }
 
    //////////////////////////////////////////////////////////////////////
-   void DeadReckoningHelper::AddToDeadReckonDOF(const std::string& dofName,
+   void DeadReckoningActorComponent::AddToDeadReckonDOF(const std::string& dofName,
       const osg::Vec3& position,
       const osg::Vec3& rateOverTime,
       const std::string& metricName)
@@ -442,7 +442,7 @@ namespace dtGame
 
       }
 
-      bool operator()(dtCore::RefPtr<DeadReckoningHelper::DeadReckoningDOF>& toCheck)
+      bool operator()(dtCore::RefPtr<DeadReckoningActorComponent::DeadReckoningDOF>& toCheck)
       {
          return (mName == toCheck->mName);
       }
@@ -452,13 +452,13 @@ namespace dtGame
    };
 
    //////////////////////////////////////////////////////////////////////
-   void DeadReckoningHelper::RemoveAllDRDOFByName(const std::string& removeName)
+   void DeadReckoningActorComponent::RemoveAllDRDOFByName(const std::string& removeName)
    {
       mDeadReckonDOFS.remove_if(RemoveByName(removeName));
    }
 
    //////////////////////////////////////////////////////////////////////
-   void DeadReckoningHelper::RemoveDRDOF(DeadReckoningDOF& obj)
+   void DeadReckoningActorComponent::RemoveDRDOF(DeadReckoningDOF& obj)
    {
       std::list<dtCore::RefPtr<DeadReckoningDOF> >::iterator iterDOF;
       for (iterDOF = mDeadReckonDOFS.begin();iterDOF != mDeadReckonDOFS.end(); ++iterDOF)
@@ -477,7 +477,7 @@ namespace dtGame
    }
 
    //////////////////////////////////////////////////////////////////////
-   void DeadReckoningHelper::RemoveDRDOF(std::list<dtCore::RefPtr<DeadReckoningDOF> >::iterator& iter)
+   void DeadReckoningActorComponent::RemoveDRDOF(std::list<dtCore::RefPtr<DeadReckoningDOF> >::iterator& iter)
    {
       // if theres more after it
       if ((*iter)->mNext != NULL)
@@ -510,44 +510,73 @@ namespace dtGame
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void DeadReckoningHelper::OnAddedToActor(dtGame::GameActor& actor)
+   void DeadReckoningActorComponent::OnAddedToActor(dtCore::BaseActorObject& actor)
    {
+      // publishing the position and rotation properties while dead reckoning is enabled will
+      // cause the deadreckoning to fail to function properly, so this disables the publishing.
+      dtCore::ActorProperty* prop = actor.GetProperty(dtCore::TransformableActorProxy::PROPERTY_ROTATION);
+      if (prop != NULL)
+      {
+         prop->SetSendInFullUpdate(false);
+         prop->SetSendInPartialUpdate(false);
+      }
+      prop = actor.GetProperty(dtCore::TransformableActorProxy::PROPERTY_TRANSLATION);
+      if (prop != NULL)
+      {
+         prop->SetSendInFullUpdate(false);
+         prop->SetSendInPartialUpdate(false);
+      }
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void DeadReckoningHelper::OnRemovedFromActor(dtGame::GameActor& actor)
+   void DeadReckoningActorComponent::OnRemovedFromActor(dtCore::BaseActorObject& actor)
    {
+      dtCore::ActorProperty* prop = actor.GetProperty(dtCore::TransformableActorProxy::PROPERTY_ROTATION);
+      // It would be more correct to set these back to the original values before this actor component was added
+      // but since the code that removes the component will then have to figure out what it wants these values to be, it's
+      // probably just safest to set them to the default.
+      if (prop != NULL)
+      {
+         prop->SetSendInFullUpdate(true);
+         prop->SetSendInPartialUpdate(true);
+      }
+      prop = actor.GetProperty(dtCore::TransformableActorProxy::PROPERTY_TRANSLATION);
+      if (prop != NULL)
+      {
+         prop->SetSendInFullUpdate(true);
+         prop->SetSendInPartialUpdate(true);
+      }
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void DeadReckoningHelper::GetPartialUpdateProperties(std::vector<dtUtil::RefString>& propNamesToFill)
+   void DeadReckoningActorComponent::GetPartialUpdateProperties(std::vector<dtUtil::RefString>& propNamesToFill)
    {
       propNamesToFill.reserve(propNamesToFill.size() + 5U);
-      propNamesToFill.push_back(DeadReckoningHelper::PROPERTY_LAST_KNOWN_TRANSLATION);
-      propNamesToFill.push_back(DeadReckoningHelper::PROPERTY_LAST_KNOWN_ROTATION);
-      propNamesToFill.push_back(DeadReckoningHelper::PROPERTY_VELOCITY_VECTOR);
-      propNamesToFill.push_back(DeadReckoningHelper::PROPERTY_ANGULAR_VELOCITY_VECTOR);
-      propNamesToFill.push_back(DeadReckoningHelper::PROPERTY_ACCELERATION_VECTOR);
+      propNamesToFill.push_back(DeadReckoningActorComponent::PROPERTY_LAST_KNOWN_TRANSLATION);
+      propNamesToFill.push_back(DeadReckoningActorComponent::PROPERTY_LAST_KNOWN_ROTATION);
+      propNamesToFill.push_back(DeadReckoningActorComponent::PROPERTY_VELOCITY_VECTOR);
+      propNamesToFill.push_back(DeadReckoningActorComponent::PROPERTY_ANGULAR_VELOCITY_VECTOR);
+      propNamesToFill.push_back(DeadReckoningActorComponent::PROPERTY_ACCELERATION_VECTOR);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    // PROPERTY NAME DECLARATIONS
    ////////////////////////////////////////////////////////////////////////////////
-   const dtUtil::RefString DeadReckoningHelper::PROPERTY_LAST_KNOWN_TRANSLATION("Last Known Translation");
-   const dtUtil::RefString DeadReckoningHelper::PROPERTY_LAST_KNOWN_ROTATION("Last Known Rotation");
-   const dtUtil::RefString DeadReckoningHelper::PROPERTY_VELOCITY_VECTOR("Velocity Vector");
-   const dtUtil::RefString DeadReckoningHelper::PROPERTY_ACCELERATION_VECTOR("Acceleration Vector");
-   const dtUtil::RefString DeadReckoningHelper::PROPERTY_ANGULAR_VELOCITY_VECTOR("Angular Velocity Vector");
-   const dtUtil::RefString DeadReckoningHelper::PROPERTY_DEAD_RECKONING_ALGORITHM("Dead Reckoning Algorithm");
-   const dtUtil::RefString DeadReckoningHelper::PROPERTY_FLYING("Flying");
-   const dtUtil::RefString DeadReckoningHelper::PROPERTY_GROUND_CLAMP_TYPE("GroundClampType");
-   const dtUtil::RefString DeadReckoningHelper::PROPERTY_GROUND_OFFSET("Ground Offset");
+   const dtUtil::RefString DeadReckoningActorComponent::PROPERTY_LAST_KNOWN_TRANSLATION("Last Known Translation");
+   const dtUtil::RefString DeadReckoningActorComponent::PROPERTY_LAST_KNOWN_ROTATION("Last Known Rotation");
+   const dtUtil::RefString DeadReckoningActorComponent::PROPERTY_VELOCITY_VECTOR("Velocity Vector");
+   const dtUtil::RefString DeadReckoningActorComponent::PROPERTY_ACCELERATION_VECTOR("Acceleration Vector");
+   const dtUtil::RefString DeadReckoningActorComponent::PROPERTY_ANGULAR_VELOCITY_VECTOR("Angular Velocity Vector");
+   const dtUtil::RefString DeadReckoningActorComponent::PROPERTY_DEAD_RECKONING_ALGORITHM("Dead Reckoning Algorithm");
+   const dtUtil::RefString DeadReckoningActorComponent::PROPERTY_FLYING("Flying");
+   const dtUtil::RefString DeadReckoningActorComponent::PROPERTY_GROUND_CLAMP_TYPE("GroundClampType");
+   const dtUtil::RefString DeadReckoningActorComponent::PROPERTY_GROUND_OFFSET("Ground Offset");
 
    ////////////////////////////////////////////////////////////////////////////////
-   void DeadReckoningHelper::BuildPropertyMap()
+   void DeadReckoningActorComponent::BuildPropertyMap()
    {
       static const dtUtil::RefString DEADRECKONING_GROUP = "Dead Reckoning";
-      typedef dtCore::PropertyRegHelper<DeadReckoningHelper> PropRegType;
+      typedef dtCore::PropertyRegHelper<DeadReckoningActorComponent> PropRegType;
       PropRegType propRegHelper(*this, this, DEADRECKONING_GROUP);//"Dead Reckoning");
 
 
@@ -594,7 +623,7 @@ namespace dtGame
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   void DeadReckoningHelper::IncrementTimeSinceUpdate(float simTimeDelta, double curSimulationTime)
+   void DeadReckoningActorComponent::IncrementTimeSinceUpdate(float simTimeDelta, double curSimulationTime)
    {
       //Pretend we were updated on the last tick so we have time delta to work with
       //when calculating movement.
@@ -625,7 +654,7 @@ namespace dtGame
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   bool DeadReckoningHelper::DoDR(dtCore::Transformable& txable, dtCore::Transform& xform,
+   bool DeadReckoningActorComponent::DoDR(dtCore::Transformable& txable, dtCore::Transform& xform,
          dtUtil::Log* pLogger, BaseGroundClamper::GroundClampRangeType*& gcType)
    {
       bool returnValue = false; // indicates we changed the transform
@@ -675,7 +704,7 @@ namespace dtGame
    }
 
    //////////////////////////////////////////////////////////////////////
-   void DeadReckoningHelper::DRStatic(dtCore::Transformable& txable, dtCore::Transform& xform, dtUtil::Log* pLogger)
+   void DeadReckoningActorComponent::DRStatic(dtCore::Transformable& txable, dtCore::Transform& xform, dtUtil::Log* pLogger)
    {
       if (pLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
       {
@@ -701,7 +730,7 @@ namespace dtGame
    }
 
    //////////////////////////////////////////////////////////////////////
-   bool DeadReckoningHelper::DRVelocityAcceleration(dtCore::Transformable& txable, dtCore::Transform& xform, dtUtil::Log* pLogger)
+   bool DeadReckoningActorComponent::DRVelocityAcceleration(dtCore::Transformable& txable, dtCore::Transform& xform, dtUtil::Log* pLogger)
    {
       bool returnValue = false; // indicates that we made a change to the transform
       osg::Vec3 pos;
@@ -774,7 +803,7 @@ namespace dtGame
    }
 
    //////////////////////////////////////////////////////////////////////
-   void DeadReckoningHelper::CalculateSmoothingTimes(const dtCore::Transform& xform)
+   void DeadReckoningActorComponent::CalculateSmoothingTimes(const dtCore::Transform& xform)
    {
       // Dev Note - When the blend time changes drastically (ex 0.1 one time then 
       // 1.0 the next), it can inject significant issues when DR'ing - whether with 
@@ -830,7 +859,7 @@ namespace dtGame
    }
 
    //////////////////////////////////////////////////////////////////////
-   void DeadReckoningHelper::DeadReckonRotation(dtCore::Transform& xform)
+   void DeadReckoningActorComponent::DeadReckonRotation(dtCore::Transform& xform)
    {
       osg::Quat newRot;
       osg::Quat drQuat = mLastQuatRotation; // velocity only just uses the last.
@@ -888,7 +917,7 @@ namespace dtGame
    }
 
    //////////////////////////////////////////////////////////////////////
-   void DeadReckoningHelper::LogDeadReckonStarted(osg::Vec3& unclampedTranslation, osg::Matrix& rot, dtUtil::Log* pLogger)
+   void DeadReckoningActorComponent::LogDeadReckonStarted(osg::Vec3& unclampedTranslation, osg::Matrix& rot, dtUtil::Log* pLogger)
    {
       std::ostringstream ss;
       ss << "Actor passed optimization checks: fully dead-reckoning actor.\n"
@@ -909,28 +938,28 @@ namespace dtGame
    }
 
    ////////////////////////////////////////////////////////////////////////////////////
-   void DeadReckoningHelper::SetInternalLastKnownRotationInXYZ(const osg::Vec3& vec)
+   void DeadReckoningActorComponent::SetInternalLastKnownRotationInXYZ(const osg::Vec3& vec)
    {
       SetLastKnownRotation(osg::Vec3(vec[2], vec[0], vec[1]));
    }
 
    ////////////////////////////////////////////////////////////////////////////////////
-   osg::Vec3 DeadReckoningHelper::GetInternalLastKnownRotationInXYZ() const
+   osg::Vec3 DeadReckoningActorComponent::GetInternalLastKnownRotationInXYZ() const
    {
       const osg::Vec3& result = GetLastKnownRotation();
       return osg::Vec3(result[1], result[2], result[0]);
    }
 
    //////////////////////////////////////////////////////////////////////////
-   dtCore::RefPtr<dtCore::ActorProperty> DeadReckoningHelper::GetDeprecatedProperty(const std::string& name)
+   dtCore::RefPtr<dtCore::ActorProperty> DeadReckoningActorComponent::GetDeprecatedProperty(const std::string& name)
    {
       static const dtUtil::RefString DEADRECKONING_GROUP = "Dead Reckoning";
       dtCore::RefPtr<dtCore::ActorProperty> result;
       if (name == PROPERTY_FLYING)
       {
          result = new dtCore::BooleanActorProperty(name, "Should Not Follow the Ground",
-            dtCore::BooleanActorProperty::SetFuncType(this, &DeadReckoningHelper::SetFlyingDeprecatedProperty),
-            dtCore::BooleanActorProperty::GetFuncType(this, &DeadReckoningHelper::IsFlyingDeprecatedProperty),
+            dtCore::BooleanActorProperty::SetFuncType(this, &DeadReckoningActorComponent::SetFlyingDeprecatedProperty),
+            dtCore::BooleanActorProperty::GetFuncType(this, &DeadReckoningActorComponent::IsFlyingDeprecatedProperty),
             "DEPRECATED - USE GROUNDCLAMPTYPE INSTEAD! ", DEADRECKONING_GROUP);
       }
       return result;
@@ -943,7 +972,7 @@ namespace dtGame
 
 
    //////////////////////////////////////////////////////////////////////
-   DeadReckoningHelper::DRVec3Util::DRVec3Util()
+   DeadReckoningActorComponent::DRVec3Util::DRVec3Util()
       : mLastUpdatedTime(0.0)
       , mAvgTimeBetweenUpdates(0.0f)
       , mMaxSmoothingTime(DEFAULT_MAX_SMOOTHING_TIME_POS)
@@ -956,12 +985,12 @@ namespace dtGame
    }
 
    //////////////////////////////////////////////////////////////////////
-   DeadReckoningHelper::DRVec3Util::~DRVec3Util() 
+   DeadReckoningActorComponent::DRVec3Util::~DRVec3Util() 
    { 
    }
 
    //////////////////////////////////////////////////////////////////////
-   void DeadReckoningHelper::DRVec3Util::SetLastKnownTranslation(const osg::Vec3& vec)
+   void DeadReckoningActorComponent::DRVec3Util::SetLastKnownTranslation(const osg::Vec3& vec)
    {
       if (mInitialized)
       {
@@ -979,7 +1008,7 @@ namespace dtGame
    }
 
    //////////////////////////////////////////////////////////////////////
-   void DeadReckoningHelper::DRVec3Util::SetLastKnownVelocity(const osg::Vec3& vec)
+   void DeadReckoningActorComponent::DRVec3Util::SetLastKnownVelocity(const osg::Vec3& vec)
    {
       // Clamp the instant velocity to never be more than 4x the last velocity. 
       // This prevents a rare issue that occurs when toggling between 
@@ -1004,7 +1033,7 @@ namespace dtGame
    }
 
    //////////////////////////////////////////////////////////////////////
-   void DeadReckoningHelper::DRVec3Util::SetLastUpdatedTime(double newUpdatedTime)
+   void DeadReckoningActorComponent::DRVec3Util::SetLastUpdatedTime(double newUpdatedTime)
    {
       //the average of the last average and the current time since an update.
       float timeDelta = float(newUpdatedTime - mLastUpdatedTime);
@@ -1013,7 +1042,7 @@ namespace dtGame
    }
 
    //////////////////////////////////////////////////////////////////////
-   void DeadReckoningHelper::DRVec3Util::DeadReckonPosition
+   void DeadReckoningActorComponent::DRVec3Util::DeadReckonPosition
       (osg::Vec3& pos, dtUtil::Log* pLogger, dtCore::Transformable& txable,
          bool useAcceleration, float curTimeDelta)
    {
@@ -1059,7 +1088,7 @@ namespace dtGame
    }
 
    //////////////////////////////////////////////////////////////////////
-   void DeadReckoningHelper::DRVec3Util::DeadReckonUsingLinearBlend
+   void DeadReckoningActorComponent::DRVec3Util::DeadReckonUsingLinearBlend
       (osg::Vec3& pos, dtUtil::Log* pLogger, dtCore::Transformable& txable, bool useAcceleration)
    {
       float smoothingFactor = mElapsedTimeSinceUpdate/mEndSmoothingTime;
@@ -1098,7 +1127,7 @@ namespace dtGame
    ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
    //////////////////////////////////////////////////////////////////////
-//   void DeadReckoningHelper::DRVec3Util::DeadReckonUsingSplines
+//   void DeadReckoningActorComponent::DRVec3Util::DeadReckonUsingSplines
 //      (osg::Vec3& pos, dtUtil::Log* pLogger, dtCore::Transformable& txable)
 //   {
 //      //////////////////////////////////////////////////
@@ -1149,7 +1178,7 @@ namespace dtGame
 //
 //
 //   //////////////////////////////////////////////////////////////////////
-//   void DeadReckoningHelper::DRVec3Util::RecomputeTransSplineValues(const osg::Vec3& currentAccel)
+//   void DeadReckoningActorComponent::DRVec3Util::RecomputeTransSplineValues(const osg::Vec3& currentAccel)
 //   {
 //      //const osg::Vec3& transBeforeLastUpdate, const osg::Vec3& velBeforeLastUpdate,
 //      //   const osg::Vec3& lastTrans, const osg::Vec3& lastVel, float transEndSmoothingTime,;

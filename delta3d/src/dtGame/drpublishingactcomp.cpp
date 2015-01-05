@@ -95,11 +95,11 @@ namespace dtGame
 
       // If we are now off, then set our last known value to 0,0,0, in case it was previously set,
       // That way, we don't have to continue setting it to zero every time we publish.
-      if (!mPublishAngularVelocity && IsDeadReckoningHelperValid())
+      if (!mPublishAngularVelocity && IsDeadReckoningActorComponentValid())
       {
          osg::Vec3 zeroAngularVelocity;
          SetAngularVelocity(zeroAngularVelocity);
-         GetDeadReckoningHelper()->SetLastKnownAngularVelocity(zeroAngularVelocity);
+         GetDeadReckoningActorComponent()->SetLastKnownAngularVelocity(zeroAngularVelocity);
       }
    }
 
@@ -154,12 +154,12 @@ namespace dtGame
       }
 
       // If the extra settings on DR Helper changed (like flying), then we need a full update
-      if (IsDeadReckoningHelperValid() && GetDeadReckoningHelper()->IsExtraDataUpdated())
+      if (IsDeadReckoningActorComponentValid() && GetDeadReckoningActorComponent()->IsExtraDataUpdated())
       {
          forceUpdate = true;
          fullUpdate = true;
 
-         GetDeadReckoningHelper()->SetExtraDataUpdated(false);
+         GetDeadReckoningActorComponent()->SetExtraDataUpdated(false);
       }
 
       // Check for update
@@ -228,12 +228,12 @@ namespace dtGame
 
       // Lookup the DR Helper from our actor. If we need it, and don't have it, then report an error one time.
       // This flag allows developers to use the DRPublishing component to JUST do heartbeats, without actual Dead reckoning
-      if (mRequiresDRHelper && !IsDeadReckoningHelperValid())
+      if (mRequiresDRHelper && !IsDeadReckoningActorComponentValid())
       {
-         dtGame::DeadReckoningHelper* deadReckoningHelper = NULL;
+         dtGame::DeadReckoningActorComponent* deadReckoningHelper = NULL;
          actor->GetComponent(deadReckoningHelper);
-         mDeadReckoningHelper = deadReckoningHelper;
-         if (!mDeadReckoningHelper.valid())
+         mDeadReckoningActorComponent = deadReckoningHelper;
+         if (!mDeadReckoningActorComponent.valid())
          {
             std::string error = std::string("Actor \"") + actor->GetName() + "\" is setup to use a Dead Reckoning Helper in the DRPublishingActComp but doesn't have one. If you want one, add it before adding this component. If you don't want one, pass false to the constructor.";
             LOGN_ERROR("DRPublishingActComp.cpp", error);
@@ -258,7 +258,7 @@ namespace dtGame
          actor->UnregisterForMessages(dtGame::MessageType::TICK_REMOTE, mTickInvokable->GetName());
       }
 
-      mDeadReckoningHelper = NULL;
+      mDeadReckoningActorComponent = NULL;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -312,11 +312,11 @@ namespace dtGame
       mMaxUpdateSendRate = maxUpdateSendRate;
 
       // The DR helper should be kept in the loop about the max send rate. 
-      if (IsDeadReckoningHelperValid() && maxUpdateSendRate > 0.0f)
+      if (IsDeadReckoningActorComponentValid() && maxUpdateSendRate > 0.0f)
       {
          // Note - AlwaysUseFixedSmoothingTime is controlled via the BaseEntity and a config option
          float updateRate = dtUtil::Max(0.01f, dtUtil::Min(1.0f, 1.00f/maxUpdateSendRate));
-         GetDeadReckoningHelper()->SetFixedSmoothingTime(updateRate);
+         GetDeadReckoningActorComponent()->SetFixedSmoothingTime(updateRate);
       }
 
    }
@@ -452,21 +452,21 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////////
-   dtGame::DeadReckoningHelper* DRPublishingActComp::GetDeadReckoningHelper()
+   dtGame::DeadReckoningActorComponent* DRPublishingActComp::GetDeadReckoningActorComponent()
    { 
-      return mDeadReckoningHelper.get();
+      return mDeadReckoningActorComponent.get();
    }
 
    ///////////////////////////////////////////////////////////////////////////////////
-   void DRPublishingActComp::SetDeadReckoningHelper(dtGame::DeadReckoningHelper* drHelper) 
+   void DRPublishingActComp::SetDeadReckoningActorComponent(dtGame::DeadReckoningActorComponent* drHelper) 
    { 
-      mDeadReckoningHelper = drHelper; 
+      mDeadReckoningActorComponent = drHelper; 
    }
 
    ///////////////////////////////////////////////////////////////////////////////////
-   bool DRPublishingActComp::IsDeadReckoningHelperValid() const
+   bool DRPublishingActComp::IsDeadReckoningActorComponentValid() const
    { 
-      return (mDeadReckoningHelper.valid()); 
+      return (mDeadReckoningActorComponent.valid()); 
    }
 
 
@@ -474,13 +474,13 @@ namespace dtGame
    void DRPublishingActComp::SetLastKnownValuesBeforePublish(const osg::Vec3& pos, const osg::Vec3& rot)
    {
       // We can't do this without a helper. Reported as an error in OnEnteredWorld().
-      if (!IsDeadReckoningHelperValid())
+      if (!IsDeadReckoningActorComponentValid())
       {
          return; 
       }
 
-      GetDeadReckoningHelper()->SetLastKnownTranslation(pos);
-      GetDeadReckoningHelper()->SetLastKnownRotation(rot);
+      GetDeadReckoningActorComponent()->SetLastKnownTranslation(pos);
+      GetDeadReckoningActorComponent()->SetLastKnownRotation(rot);
 
 
       // Linear Velocity & acceleration - push the current value to the Last Known
@@ -488,7 +488,7 @@ namespace dtGame
       {
          // VELOCITY 
          osg::Vec3 velocity = GetVelocity();
-         GetDeadReckoningHelper()->SetLastKnownVelocity(velocity);
+         GetDeadReckoningActorComponent()->SetLastKnownVelocity(velocity);
 
 
          // ACCELERATION
@@ -506,7 +506,7 @@ namespace dtGame
          mAccelerationCalculatedForLastPublish = curAccel; // Hold for next time (pre-normalized)
 
          // Acceleration is paired with velocity
-         GetDeadReckoningHelper()->SetLastKnownAcceleration(GetAcceleration());
+         GetDeadReckoningActorComponent()->SetLastKnownAcceleration(GetAcceleration());
       }
 
       // Angular Velocity - push the current value to the Last Known
@@ -517,7 +517,7 @@ namespace dtGame
          {
             angularVelocity = osg::Vec3(0.0f, 0.0f, 0.0f);
          }
-         GetDeadReckoningHelper()->SetLastKnownAngularVelocity(angularVelocity);
+         GetDeadReckoningActorComponent()->SetLastKnownAngularVelocity(angularVelocity);
       }
 
    }
@@ -531,7 +531,7 @@ namespace dtGame
       }
 
       // We can't do this without a helper. Reported as an error in OnEnteredWorld().
-      if (!IsDeadReckoningHelperValid())
+      if (!IsDeadReckoningActorComponentValid())
       {
          return; 
       }
@@ -604,7 +604,7 @@ namespace dtGame
    bool DRPublishingActComp::ShouldForceUpdate(const osg::Vec3& pos, const osg::Vec3& rot)
    {
       // We can't do this without a helper. Reported as an error in OnEnteredWorld().
-      if (!IsDeadReckoningHelperValid())
+      if (!IsDeadReckoningActorComponentValid())
       {
          return false; 
       }
@@ -623,11 +623,11 @@ namespace dtGame
          }
          
          // If no DR is occuring, then we don't want to check.
-         else if (GetDeadReckoningHelper()->GetDeadReckoningAlgorithm() != dtGame::DeadReckoningAlgorithm::NONE)
+         else if (GetDeadReckoningActorComponent()->GetDeadReckoningAlgorithm() != dtGame::DeadReckoningAlgorithm::NONE)
          {
             // check to see if it's moved or turned enough to warrant one.
-            osg::Vec3 distanceMoved = pos - GetDeadReckoningHelper()->GetCurrentDeadReckonedTranslation();
-            osg::Vec3 distanceTurned = rot - GetDeadReckoningHelper()->GetCurrentDeadReckonedRotation();
+            osg::Vec3 distanceMoved = pos - GetDeadReckoningActorComponent()->GetCurrentDeadReckonedTranslation();
+            osg::Vec3 distanceTurned = rot - GetDeadReckoningActorComponent()->GetCurrentDeadReckonedRotation();
             if (distanceMoved.length2() > mMaxTranslationError2 || distanceTurned.length2() > mMaxRotationError2)
             {
                // Note the rotation check isn't perfect (ie, not a quaternion), so you might get
@@ -637,7 +637,7 @@ namespace dtGame
             // We passed pos/rot check, now check velocity
             else if (GetUseVelocityInDRUpdateDecision())
             {
-               osg::Vec3 oldVel = GetDeadReckoningHelper()->GetLastKnownVelocity();
+               osg::Vec3 oldVel = GetDeadReckoningActorComponent()->GetLastKnownVelocity();
                osg::Vec3 curVel = GetVelocity();
                float oldMag = oldVel.normalize();
                float curMag = curVel.normalize();

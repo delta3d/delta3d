@@ -114,9 +114,9 @@ namespace dtExample
       {
          GetOwner()->AddComponent(* new dtAnim::AnimationTransitionPlanner);
       }
-      if (!GetOwner()->HasComponent(dtGame::DeadReckoningHelper::TYPE))
+      if (!GetOwner()->HasComponent(dtGame::DeadReckoningActorComponent::TYPE))
       {
-         GetOwner()->AddComponent(* new dtGame::DeadReckoningHelper);
+         GetOwner()->AddComponent(* new dtGame::DeadReckoningActorComponent);
       }
       if (!GetOwner()->HasComponent(dtGame::DRPublishingActComp::TYPE))
       {
@@ -449,7 +449,7 @@ namespace dtExample
       dtCore::RefPtr<dtAnim::WalkRunBlend> newWRBlend;
       if (GetOwner<dtGame::GameActorProxy>()->IsRemote())
       {
-         newWRBlend = new dtAnim::WalkRunBlend(*GetOwner()->GetComponent<dtGame::DeadReckoningHelper>());
+         newWRBlend = new dtAnim::WalkRunBlend(*GetOwner()->GetComponent<dtGame::DeadReckoningActorComponent>());
       }
       else
       {
