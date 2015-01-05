@@ -31,6 +31,7 @@
 #include <dtCore/actorproperty.h>
 #include <dtCore/objecttype.h>
 #include <osg/Referenced>
+#include <dtUtil/breakoverride.h>
 
 #include <map>
 #include <vector>
@@ -191,6 +192,7 @@ namespace dtCore
 
       virtual ~PropertyContainer();
 
+      BREAK_OVERRIDE(GetDefaultPropertyKey() const); // removed 12/2014
    private:
 
       typedef std::map<dtUtil::RefString, dtCore::RefPtr<ActorProperty> > PropertyMapType;
