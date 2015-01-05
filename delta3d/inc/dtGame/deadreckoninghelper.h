@@ -283,13 +283,6 @@ namespace dtGame
           */
          void SetExtraDataUpdated(bool newValue);
 
-         /**  
-          * Adds a list of the KEY properties that you send with every partial update. 
-          * Includes last known trans, last known rot, velocity, angular velocity, & acceleration
-          * Call this from your own GetPartialUpdateProperties() on your actor.
-          */
-         virtual void GetPartialUpdateProperties(std::vector<dtUtil::RefString>& propNamesToFill);
-
          /**
           * This function updates the elapsedTimeSinceUpdate for both the rotation and translation. 
           * @param simTimeDelta the amount of time to increment (sim time elapsed this frame)
