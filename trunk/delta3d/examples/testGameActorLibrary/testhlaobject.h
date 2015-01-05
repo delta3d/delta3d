@@ -76,7 +76,7 @@ public:
    void TestLoadTheMesh(const std::string& value);
    
 private:
-   dtCore::RefPtr<dtGame::DeadReckoningHelper> mDeadReckoningHelper;
+   dtCore::RefPtr<dtGame::DeadReckoningActorComponent> mDeadReckoningActorComponent;
    DamageStateEnum* mDamageState;
 };
 

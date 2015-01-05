@@ -961,8 +961,8 @@ void GameActorTests::TestPartialUpdateFlags()
    std::vector<dtUtil::RefString> names;
    actor1->GetPartialUpdateProperties(names);
 
-   // DG - No properties are in the partial list by default, unless you have a dr helper.
-   CPPUNIT_ASSERT_EQUAL(0U, unsigned(names.size()));
+   // DG - The translation and rotation are added the partial update list by default, unless you have a DR helper.
+   CPPUNIT_ASSERT_EQUAL(2U, unsigned(names.size()));
 //   // Check the list for the required ones.
 //   CPPUNIT_ASSERT(std::find(names.begin(), names.end(), dtCore::TransformableActorProxy::PROPERTY_TRANSLATION) != names.end());
 //   CPPUNIT_ASSERT(std::find(names.begin(), names.end(), dtCore::TransformableActorProxy::PROPERTY_ROTATION) != names.end());

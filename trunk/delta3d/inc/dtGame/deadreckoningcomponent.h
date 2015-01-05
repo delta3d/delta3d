@@ -67,7 +67,7 @@ namespace dtGame
        * @param helper the preconfigured helper object to use.
        * @throws dtUtil::Exception if this actor is already registered with the component.
        */
-      void RegisterActor(dtGame::GameActorProxy& toRegister, DeadReckoningHelper& helper);
+      void RegisterActor(dtGame::GameActorProxy& toRegister, DeadReckoningActorComponent& helper);
 
       /**
        * Registers an actor with this component.  To simplify coding in the actor, specifically when it comes
@@ -125,7 +125,7 @@ namespace dtGame
        * @param xformable the instance to be articulated.
        * @param tickMessage the time data to be used when interpolating.
        */
-      void DoArticulation(dtGame::DeadReckoningHelper& helper,
+      void DoArticulation(dtGame::DeadReckoningActorComponent& helper,
             const dtCore::Transformable& xformable,
             const dtGame::TickMessage& tickMessage) const;
 
@@ -157,7 +157,7 @@ namespace dtGame
             const osg::Vec3& currLocation, const osg::Vec3& currentRate,
             float simTimeDelta, bool isPositional = false) const;
 
-      std::map<dtCore::UniqueId, dtCore::RefPtr<DeadReckoningHelper> > mRegisteredActors;
+      std::map<dtCore::UniqueId, dtCore::RefPtr<DeadReckoningActorComponent> > mRegisteredActors;
       dtCore::RefPtr<dtGame::BaseGroundClamper> mGroundClamper;
 
       dtUtil::Log* mLogger;

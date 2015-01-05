@@ -77,7 +77,7 @@ void TestHLAObjectProxy::BuildInvokables()
 void TestHLAObjectProxy::BuildActorComponents()
 {
    dtGame::GameActorProxy::BuildActorComponents();
-   AddComponent(*new dtGame::DeadReckoningHelper);
+   AddComponent(*new dtGame::DeadReckoningActorComponent);
 }
 
 void TestHLAObjectProxy::CreateDrawable()
@@ -95,7 +95,7 @@ TestHLAObject::DamageStateEnum TestHLAObject::DamageStateEnum::DAMAGED("Damaged"
 TestHLAObject::DamageStateEnum TestHLAObject::DamageStateEnum::DESTROYED("Destroyed");
 
 TestHLAObject::TestHLAObject(dtGame::GameActorProxy& parent): dtGame::GameActor(parent),
-                                                             mDeadReckoningHelper(new dtGame::DeadReckoningHelper),
+                                                             mDeadReckoningActorComponent(new dtGame::DeadReckoningActorComponent),
                                                              mDamageState(&TestHLAObject::DamageStateEnum::NO_DAMAGE)
 {
 }

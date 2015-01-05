@@ -1372,67 +1372,67 @@ namespace dtHLAGM
                   // Capture the metric type via the name of the parameter.
                   // For now, this linear comparison is unavoidable.
                   //(Enumeration (Enumerator "Position")         (Representation 1))
-                  if( paramName == dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_POSITION )
+                  if( paramName == dtGame::DeadReckoningActorComponent::DeadReckoningDOF::REPRESENATION_POSITION )
                   { artParts.SetTypeMetric( 1 ); }
 
                   //(Enumeration (Enumerator "PositionRate")     (Representation 2))
-                  else if( paramName == dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_POSITIONRATE )
+                  else if( paramName == dtGame::DeadReckoningActorComponent::DeadReckoningDOF::REPRESENATION_POSITIONRATE )
                   { artParts.SetTypeMetric( 2 ); }
 
                   //(Enumeration (Enumerator "Extension")        (Representation 3))
-                  else if( paramName == dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_EXTENSION )
+                  else if( paramName == dtGame::DeadReckoningActorComponent::DeadReckoningDOF::REPRESENATION_EXTENSION )
                   { artParts.SetTypeMetric( 3 ); }
 
                   //(Enumeration (Enumerator "ExtensionRate")    (Representation 4))
-                  else if( paramName == dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_EXTENSIONRATE )
+                  else if( paramName == dtGame::DeadReckoningActorComponent::DeadReckoningDOF::REPRESENATION_EXTENSIONRATE )
                   { artParts.SetTypeMetric( 4 ); }
 
                   //(Enumeration (Enumerator "X")                (Representation 5))
-                  else if( paramName == dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_X )
+                  else if( paramName == dtGame::DeadReckoningActorComponent::DeadReckoningDOF::REPRESENATION_X )
                   { artParts.SetTypeMetric( 5 ); }
 
                   //(Enumeration (Enumerator "XRate")            (Representation 6))
-                  else if( paramName == dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_XRATE )
+                  else if( paramName == dtGame::DeadReckoningActorComponent::DeadReckoningDOF::REPRESENATION_XRATE )
                   { artParts.SetTypeMetric( 6 ); }
 
                   //(Enumeration (Enumerator "Y")                (Representation 7))
-                  else if( paramName == dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_Y )
+                  else if( paramName == dtGame::DeadReckoningActorComponent::DeadReckoningDOF::REPRESENATION_Y )
                   { artParts.SetTypeMetric( 7 ); }
 
                   //(Enumeration (Enumerator "YRate")            (Representation 8))
-                  else if( paramName == dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_YRATE )
+                  else if( paramName == dtGame::DeadReckoningActorComponent::DeadReckoningDOF::REPRESENATION_YRATE )
                   { artParts.SetTypeMetric( 8 ); }
 
                   //(Enumeration (Enumerator "Z")                (Representation 9))
-                  else if( paramName == dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_Z )
+                  else if( paramName == dtGame::DeadReckoningActorComponent::DeadReckoningDOF::REPRESENATION_Z )
                   { artParts.SetTypeMetric( 9 ); }
 
                   //(Enumeration (Enumerator "ZRate")            (Representation 10))
-                  else if( paramName == dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_ZRATE )
+                  else if( paramName == dtGame::DeadReckoningActorComponent::DeadReckoningDOF::REPRESENATION_ZRATE )
                   { artParts.SetTypeMetric( 10 ); }
 
                   //(Enumeration (Enumerator "Azimuth")          (Representation 11))
-                  else if( paramName == dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_AZIMUTH )
+                  else if( paramName == dtGame::DeadReckoningActorComponent::DeadReckoningDOF::REPRESENATION_AZIMUTH )
                   { artParts.SetTypeMetric( 11 ); }
 
                   //(Enumeration (Enumerator "AzimuthRate")      (Representation 12))
-                  else if( paramName == dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_AZIMUTHRATE )
+                  else if( paramName == dtGame::DeadReckoningActorComponent::DeadReckoningDOF::REPRESENATION_AZIMUTHRATE )
                   { artParts.SetTypeMetric( 12 ); }
 
                   //(Enumeration (Enumerator "Elevation")        (Representation 13))
-                  else if( paramName == dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_ELEVATION )
+                  else if( paramName == dtGame::DeadReckoningActorComponent::DeadReckoningDOF::REPRESENATION_ELEVATION )
                   { artParts.SetTypeMetric( 13 ); }
 
                   //(Enumeration (Enumerator "ElevationRate")    (Representation 14))
-                  else if( paramName == dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_ELEVATIONRATE )
+                  else if( paramName == dtGame::DeadReckoningActorComponent::DeadReckoningDOF::REPRESENATION_ELEVATIONRATE )
                   { artParts.SetTypeMetric( 14 ); }
 
                   //(Enumeration (Enumerator "Rotation")         (Representation 15))
-                  else if( paramName == dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_ROTATION )
+                  else if( paramName == dtGame::DeadReckoningActorComponent::DeadReckoningDOF::REPRESENATION_ROTATION )
                   { artParts.SetTypeMetric( 15 ); }
 
                   //(Enumeration (Enumerator "RotationRate")     (Representation 16))
-                  else if( paramName == dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_ROTATIONRATE )
+                  else if( paramName == dtGame::DeadReckoningActorComponent::DeadReckoningDOF::REPRESENATION_ROTATIONRATE )
                   { artParts.SetTypeMetric( 16 ); }
                }
 
@@ -2030,80 +2030,80 @@ namespace dtHLAGM
          {
          //(Enumeration (Enumerator "Position")         (Representation 1))
          case 1:
-            newGroupParam->AddValue(dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_POSITION, value);
+            newGroupParam->AddValue(dtGame::DeadReckoningActorComponent::DeadReckoningDOF::REPRESENATION_POSITION, value);
             break;
 
             //(Enumeration (Enumerator "PositionRate")     (Representation 2))
          case 2:
-            newGroupParam->AddValue(dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_POSITIONRATE, value);
+            newGroupParam->AddValue(dtGame::DeadReckoningActorComponent::DeadReckoningDOF::REPRESENATION_POSITIONRATE, value);
             break;
 
             //(Enumeration (Enumerator "Extension")        (Representation 3))
          case 3:
-            newGroupParam->AddValue( dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_EXTENSION, value);
+            newGroupParam->AddValue( dtGame::DeadReckoningActorComponent::DeadReckoningDOF::REPRESENATION_EXTENSION, value);
             break;
 
             //(Enumeration (Enumerator "ExtensionRate")    (Representation 4))
          case 4:
-            newGroupParam->AddValue(dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_EXTENSIONRATE, value);
+            newGroupParam->AddValue(dtGame::DeadReckoningActorComponent::DeadReckoningDOF::REPRESENATION_EXTENSIONRATE, value);
             break;
 
             //(Enumeration (Enumerator "X")                (Representation 5))
          case 5:
-            newGroupParam->AddValue(dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_X, value);
+            newGroupParam->AddValue(dtGame::DeadReckoningActorComponent::DeadReckoningDOF::REPRESENATION_X, value);
             break;
 
             //(Enumeration (Enumerator "XRate")            (Representation 6))
          case 6:
-            newGroupParam->AddValue( dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_XRATE, value);
+            newGroupParam->AddValue( dtGame::DeadReckoningActorComponent::DeadReckoningDOF::REPRESENATION_XRATE, value);
             break;
 
             //(Enumeration (Enumerator "Y")                (Representation 7))
          case 7:
-            newGroupParam->AddValue(dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_Y, value);
+            newGroupParam->AddValue(dtGame::DeadReckoningActorComponent::DeadReckoningDOF::REPRESENATION_Y, value);
             break;
             //(Enumeration (Enumerator "YRate")            (Representation 8))
          case 8:
-            newGroupParam->AddValue( dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_YRATE, value);
+            newGroupParam->AddValue( dtGame::DeadReckoningActorComponent::DeadReckoningDOF::REPRESENATION_YRATE, value);
             break;
             //(Enumeration (Enumerator "Z")                (Representation 9))
          case 9:
-            newGroupParam->AddValue( dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_Z, value);
+            newGroupParam->AddValue( dtGame::DeadReckoningActorComponent::DeadReckoningDOF::REPRESENATION_Z, value);
             break;
 
             //(Enumeration (Enumerator "ZRate")            (Representation 10))
          case 10:
-            newGroupParam->AddValue( dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_ZRATE, value);
+            newGroupParam->AddValue( dtGame::DeadReckoningActorComponent::DeadReckoningDOF::REPRESENATION_ZRATE, value);
             break;
 
             //(Enumeration (Enumerator "Azimuth")          (Representation 11))
          case 11:
-            newGroupParam->AddValue( dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_AZIMUTH, -value);
+            newGroupParam->AddValue( dtGame::DeadReckoningActorComponent::DeadReckoningDOF::REPRESENATION_AZIMUTH, -value);
             break;
 
             //(Enumeration (Enumerator "AzimuthRate")      (Representation 12))
          case 12:
-            newGroupParam->AddValue( dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_AZIMUTHRATE, -value);
+            newGroupParam->AddValue( dtGame::DeadReckoningActorComponent::DeadReckoningDOF::REPRESENATION_AZIMUTHRATE, -value);
             break;
 
             //(Enumeration (Enumerator "Elevation")        (Representation 13))
          case 13:
-            newGroupParam->AddValue( dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_ELEVATION, value);
+            newGroupParam->AddValue( dtGame::DeadReckoningActorComponent::DeadReckoningDOF::REPRESENATION_ELEVATION, value);
             break;
 
             //(Enumeration (Enumerator "ElevationRate")    (Representation 14))
          case 14:
-            newGroupParam->AddValue( dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_ELEVATIONRATE, value);
+            newGroupParam->AddValue( dtGame::DeadReckoningActorComponent::DeadReckoningDOF::REPRESENATION_ELEVATIONRATE, value);
             break;
 
             //(Enumeration (Enumerator "Rotation")         (Representation 15))
          case 15:
-            newGroupParam->AddValue( dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_ROTATION, value);
+            newGroupParam->AddValue( dtGame::DeadReckoningActorComponent::DeadReckoningDOF::REPRESENATION_ROTATION, value);
             break;
 
             //(Enumeration (Enumerator "RotationRate")     (Representation 16))
          case 16:
-            newGroupParam->AddValue( dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_ROTATIONRATE, value);
+            newGroupParam->AddValue( dtGame::DeadReckoningActorComponent::DeadReckoningDOF::REPRESENATION_ROTATIONRATE, value);
             break;
 
          default: // log error

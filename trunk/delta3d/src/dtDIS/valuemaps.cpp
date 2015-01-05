@@ -44,17 +44,17 @@ bool ValueMap::GetArticulationMotionPropertyName(unsigned int motionclass, std::
    {
    case dtDIS::Articulation::MOTION_AZIMUTH:
       {
-         propertyname = dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_AZIMUTH;
+         propertyname = dtGame::DeadReckoningActorComponent::DeadReckoningDOF::REPRESENATION_AZIMUTH;
       } break;
 
    case dtDIS::Articulation::MOTION_AZIMUTH_RATE:
       {
-         propertyname = dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_AZIMUTHRATE;
+         propertyname = dtGame::DeadReckoningActorComponent::DeadReckoningDOF::REPRESENATION_AZIMUTHRATE;
       } break;
 
    case dtDIS::Articulation::MOTION_ELEVATION:
       {
-         propertyname = dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_ELEVATION;
+         propertyname = dtGame::DeadReckoningActorComponent::DeadReckoningDOF::REPRESENATION_ELEVATION;
       } break;
 
    default:

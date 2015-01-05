@@ -239,7 +239,7 @@ namespace dtActors
       //mActorFactory->RegisterType<dtGame::ServerLoggerComponent>();
       mActorFactory->RegisterType<dtGame::TaskComponent>();
 
-      mActorFactory->RegisterType<dtGame::DeadReckoningHelper>();
+      mActorFactory->RegisterType<dtGame::DeadReckoningActorComponent>();
       mActorFactory->RegisterType<dtGame::ShaderActorComponent>();
       mActorFactory->RegisterType<dtGame::DRPublishingActComp>();
       mActorFactory->RegisterType<dtGame::CascadingDeleteActorComponent>();

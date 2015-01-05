@@ -43,7 +43,7 @@ namespace dtExample
       pac->SetAutoCreateOnEnteringWorld(true);
       AddComponent(*pac);
 
-      AddComponent(*new dtGame::DeadReckoningHelper);
+      AddComponent(*new dtGame::DeadReckoningActorComponent);
       AddComponent(*new dtGame::DRPublishingActComp);
    }
 

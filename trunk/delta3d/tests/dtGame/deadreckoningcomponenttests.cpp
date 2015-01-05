@@ -77,7 +77,7 @@ namespace dtGame
             return GetGroundClamper().GetLastEyePoint();
          }
 
-         void InternalCalcTotSmoothingSteps(DeadReckoningHelper& helper, const dtCore::Transform& xform)
+         void InternalCalcTotSmoothingSteps(DeadReckoningActorComponent& helper, const dtCore::Transform& xform)
          {
             helper.CalculateSmoothingTimes(xform);
          }
@@ -98,7 +98,7 @@ namespace dtGame
             return success;
          }
 
-         void DoArticulationPublic(dtGame::DeadReckoningHelper& helper,
+         void DoArticulationPublic(dtGame::DeadReckoningActorComponent& helper,
             const dtCore::Transformable& txable, const dtGame::TickMessage& tickMessage);
 
          void DoArticulationSmoothPublic(osgSim::DOFTransform& dofxform, const osg::Vec3& currLocation,
@@ -109,7 +109,7 @@ namespace dtGame
    };
 
    void TestDeadReckoningComponent::DoArticulationPublic(
-      dtGame::DeadReckoningHelper& helper, const dtCore::Transformable& txable,
+      dtGame::DeadReckoningActorComponent& helper, const dtCore::Transformable& txable,
       const dtGame::TickMessage& tickMessage)
    {
       // The following inherited function was not virtual, so this
@@ -140,8 +140,8 @@ namespace dtGame
    {
       CPPUNIT_TEST_SUITE(DeadReckoningComponentTests);
 
-         CPPUNIT_TEST(TestDeadReckoningHelperDefaults);
-         CPPUNIT_TEST(TestDeadReckoningHelperProperties);
+         CPPUNIT_TEST(TestDeadReckoningActorComponentDefaults);
+         CPPUNIT_TEST(TestDeadReckoningActorComponentProperties);
          CPPUNIT_TEST(TestTerrainProperty);
          CPPUNIT_TEST(TestEyePointProperty);
          CPPUNIT_TEST(TestActorRegistration);
@@ -188,20 +188,20 @@ namespace dtGame
             mDeadReckoningComponent = NULL;
          }
 
-         void TestDeadReckoningHelperDefaults()
+         void TestDeadReckoningActorComponentDefaults()
          {
-            dtCore::RefPtr<DeadReckoningHelper> helper = new DeadReckoningHelper;
+            dtCore::RefPtr<DeadReckoningActorComponent> helper = new DeadReckoningActorComponent;
             CPPUNIT_ASSERT_MESSAGE("Updated flag should default to false", !helper->IsUpdated());
             CPPUNIT_ASSERT_MESSAGE("Updated flag should default to false", !helper->IsUpdated());
             CPPUNIT_ASSERT_MESSAGE("Updated flag should default to false", !helper->IsUpdated());
             CPPUNIT_ASSERT_MESSAGE("DeadReckoning algorithm should default to STATIC.",
                helper->GetDeadReckoningAlgorithm() == DeadReckoningAlgorithm::STATIC);
             CPPUNIT_ASSERT_MESSAGE("The Update Mode should default to AUTO.",
-               helper->GetUpdateMode() == DeadReckoningHelper::UpdateMode::AUTO);
+               helper->GetUpdateMode() == DeadReckoningActorComponent::UpdateMode::AUTO);
             CPPUNIT_ASSERT_MESSAGE("The Effective Update Mode for a local actor should default to CALCULATE_ONLY.",
-               helper->GetEffectiveUpdateMode(false) == DeadReckoningHelper::UpdateMode::CALCULATE_ONLY);
+               helper->GetEffectiveUpdateMode(false) == DeadReckoningActorComponent::UpdateMode::CALCULATE_ONLY);
             CPPUNIT_ASSERT_MESSAGE("The Effective Update Mode for a remote actor should default to CALCULATE_AND_MOVE_ACTOR.",
-               helper->GetEffectiveUpdateMode(true) == DeadReckoningHelper::UpdateMode::CALCULATE_AND_MOVE_ACTOR);
+               helper->GetEffectiveUpdateMode(true) == DeadReckoningActorComponent::UpdateMode::CALCULATE_AND_MOVE_ACTOR);
             CPPUNIT_ASSERT_MESSAGE("Ground Clamp Type should default to Above Ground (previously flying false)", 
                helper->GetGroundClampType() == dtGame::GroundClampTypeEnum::KEEP_ABOVE );
 
@@ -215,16 +215,58 @@ namespace dtGame
             CPPUNIT_ASSERT(helper->GetCurrentInstantVelocity() == vec);
             CPPUNIT_ASSERT(helper->GetGroundOffset() == 0.0f);
             CPPUNIT_ASSERT(helper->GetMaxRotationSmoothingTime() ==
-               dtGame::DeadReckoningHelper::DEFAULT_MAX_SMOOTHING_TIME_ROT);
+               dtGame::DeadReckoningActorComponent::DEFAULT_MAX_SMOOTHING_TIME_ROT);
             CPPUNIT_ASSERT(helper->GetMaxTranslationSmoothingTime() ==
-               dtGame::DeadReckoningHelper::DEFAULT_MAX_SMOOTHING_TIME_POS);
+               dtGame::DeadReckoningActorComponent::DEFAULT_MAX_SMOOTHING_TIME_POS);
             CPPUNIT_ASSERT(helper->GetAdjustRotationToGround());
             CPPUNIT_ASSERT(helper->GetNodeCollector() == NULL);
+
+            dtCore::ActorProperty* prop = mTestGameActor->GetProperty(dtCore::TransformableActorProxy::PROPERTY_ROTATION);
+            CPPUNIT_ASSERT(prop != NULL);
+            CPPUNIT_ASSERT(prop->GetSendInFullUpdate());
+            CPPUNIT_ASSERT(prop->GetSendInPartialUpdate());
+            prop = mTestGameActor->GetProperty(dtCore::TransformableActorProxy::PROPERTY_TRANSLATION);
+            CPPUNIT_ASSERT(prop != NULL);
+            CPPUNIT_ASSERT(prop->GetSendInFullUpdate());
+            CPPUNIT_ASSERT(prop->GetSendInPartialUpdate());
+
+            mTestGameActor->AddComponent(*helper);
+
+            prop = mTestGameActor->GetProperty(dtCore::TransformableActorProxy::PROPERTY_ROTATION);
+            CPPUNIT_ASSERT(prop != NULL);
+            CPPUNIT_ASSERT(!prop->GetSendInFullUpdate());
+            CPPUNIT_ASSERT(!prop->GetSendInPartialUpdate());
+            prop = mTestGameActor->GetProperty(dtCore::TransformableActorProxy::PROPERTY_TRANSLATION);
+            CPPUNIT_ASSERT(prop != NULL);
+            CPPUNIT_ASSERT(!prop->GetSendInFullUpdate());
+            CPPUNIT_ASSERT(!prop->GetSendInPartialUpdate());
+
+            std::vector<dtUtil::RefString> names;
+            mTestGameActor->GetPartialUpdateProperties(names);
+            CPPUNIT_ASSERT(!names.empty());
+            CPPUNIT_ASSERT(std::find(names.begin(), names.end(), dtCore::TransformableActorProxy::PROPERTY_ROTATION) == names.end());
+            CPPUNIT_ASSERT(std::find(names.begin(), names.end(), dtCore::TransformableActorProxy::PROPERTY_TRANSLATION) == names.end());
+            CPPUNIT_ASSERT(std::find(names.begin(), names.end(), dtGame::DeadReckoningActorComponent::PROPERTY_LAST_KNOWN_ROTATION) != names.end());
+            CPPUNIT_ASSERT(std::find(names.begin(), names.end(), dtGame::DeadReckoningActorComponent::PROPERTY_LAST_KNOWN_TRANSLATION) != names.end());
+            CPPUNIT_ASSERT(std::find(names.begin(), names.end(), dtGame::DeadReckoningActorComponent::PROPERTY_VELOCITY_VECTOR) != names.end());
+            CPPUNIT_ASSERT(std::find(names.begin(), names.end(), dtGame::DeadReckoningActorComponent::PROPERTY_ACCELERATION_VECTOR) != names.end());
+            CPPUNIT_ASSERT(std::find(names.begin(), names.end(), dtGame::DeadReckoningActorComponent::PROPERTY_ANGULAR_VELOCITY_VECTOR) != names.end());
+            CPPUNIT_ASSERT(std::find(names.begin(), names.end(), dtGame::DeadReckoningActorComponent::PROPERTY_DEAD_RECKONING_ALGORITHM) != names.end());
+
+            mTestGameActor->RemoveComponent(*helper);
+            prop = mTestGameActor->GetProperty(dtCore::TransformableActorProxy::PROPERTY_ROTATION);
+            CPPUNIT_ASSERT(prop != NULL);
+            CPPUNIT_ASSERT(prop->GetSendInFullUpdate());
+            CPPUNIT_ASSERT(prop->GetSendInPartialUpdate());
+            prop = mTestGameActor->GetProperty(dtCore::TransformableActorProxy::PROPERTY_TRANSLATION);
+            CPPUNIT_ASSERT(prop != NULL);
+            CPPUNIT_ASSERT(prop->GetSendInFullUpdate());
+            CPPUNIT_ASSERT(prop->GetSendInPartialUpdate());
          }
 
-         void TestDeadReckoningHelperProperties()
+         void TestDeadReckoningActorComponentProperties()
          {
-            dtCore::RefPtr<DeadReckoningHelper> helper = new DeadReckoningHelper;
+            dtCore::RefPtr<DeadReckoningActorComponent> helper = new DeadReckoningActorComponent;
             helper->SetGroundClampType(dtGame::GroundClampTypeEnum::NONE); //helper->SetFlying(true);
             CPPUNIT_ASSERT(helper->IsUpdated());
             CPPUNIT_ASSERT(helper->GetGroundClampType() == 
@@ -242,21 +284,21 @@ namespace dtGame
             CPPUNIT_ASSERT(helper->IsUpdated());
             helper->ClearUpdated();
 
-            helper->SetUpdateMode(DeadReckoningHelper::UpdateMode::CALCULATE_ONLY);
+            helper->SetUpdateMode(DeadReckoningActorComponent::UpdateMode::CALCULATE_ONLY);
             CPPUNIT_ASSERT_MESSAGE("The Update Mode should now be CALCULATE_ONLY.",
-               helper->GetUpdateMode() == DeadReckoningHelper::UpdateMode::CALCULATE_ONLY);
+               helper->GetUpdateMode() == DeadReckoningActorComponent::UpdateMode::CALCULATE_ONLY);
             CPPUNIT_ASSERT_MESSAGE("The Effective Update Mode for remote should now be CALCULATE_ONLY.",
-               helper->GetEffectiveUpdateMode(true) == DeadReckoningHelper::UpdateMode::CALCULATE_ONLY);
+               helper->GetEffectiveUpdateMode(true) == DeadReckoningActorComponent::UpdateMode::CALCULATE_ONLY);
             CPPUNIT_ASSERT_MESSAGE("The Effective Update Mode for local should now be CALCULATE_ONLY.",
-               helper->GetEffectiveUpdateMode(false) == DeadReckoningHelper::UpdateMode::CALCULATE_ONLY);
+               helper->GetEffectiveUpdateMode(false) == DeadReckoningActorComponent::UpdateMode::CALCULATE_ONLY);
 
-            helper->SetUpdateMode(DeadReckoningHelper::UpdateMode::CALCULATE_AND_MOVE_ACTOR);
+            helper->SetUpdateMode(DeadReckoningActorComponent::UpdateMode::CALCULATE_AND_MOVE_ACTOR);
             CPPUNIT_ASSERT_MESSAGE("The Update Mode should now be CALCULATE_AND_MOVE_ACTOR.",
-               helper->GetUpdateMode() == DeadReckoningHelper::UpdateMode::CALCULATE_AND_MOVE_ACTOR);
+               helper->GetUpdateMode() == DeadReckoningActorComponent::UpdateMode::CALCULATE_AND_MOVE_ACTOR);
             CPPUNIT_ASSERT_MESSAGE("The Effective Update Mode for remote should now be CALCULATE_AND_MOVE_ACTOR.",
-               helper->GetEffectiveUpdateMode(true) == DeadReckoningHelper::UpdateMode::CALCULATE_AND_MOVE_ACTOR);
+               helper->GetEffectiveUpdateMode(true) == DeadReckoningActorComponent::UpdateMode::CALCULATE_AND_MOVE_ACTOR);
             CPPUNIT_ASSERT_MESSAGE("The Effective Update Mode for local should now be CALCULATE_AND_MOVE_ACTOR.",
-               helper->GetEffectiveUpdateMode(false) == DeadReckoningHelper::UpdateMode::CALCULATE_AND_MOVE_ACTOR);
+               helper->GetEffectiveUpdateMode(false) == DeadReckoningActorComponent::UpdateMode::CALCULATE_AND_MOVE_ACTOR);
 
             osg::Vec3 vec(3.1f, 9900.032f, 493.738f);
 
@@ -396,7 +438,7 @@ namespace dtGame
 
          void TestActorRegistration()
          {
-            dtCore::RefPtr<DeadReckoningHelper> helper = new DeadReckoningHelper;
+            dtCore::RefPtr<DeadReckoningActorComponent> helper = new DeadReckoningActorComponent;
             mDeadReckoningComponent->RegisterActor(*mTestGameActor, *helper);
             CPPUNIT_ASSERT(mDeadReckoningComponent->IsRegisteredActor(*mTestGameActor));
             mDeadReckoningComponent->UnregisterActor(*mTestGameActor);
@@ -409,7 +451,7 @@ namespace dtGame
                      !mDeadReckoningComponent->IsRegisteredActor(*mTestGameActor));
          }
 
-         void TickArticulations(DeadReckoningHelper& helper, const dtCore::Transformable& actor, float timeDelta)
+         void TickArticulations(DeadReckoningActorComponent& helper, const dtCore::Transformable& actor, float timeDelta)
          {
             // Setup a reusable tick message
             // The following message object will be used to test articulation updates
@@ -459,7 +501,7 @@ namespace dtGame
             nodeCollector->AddDOFTransform(dofName2, *dof2);
 
             // Setup the helper
-            dtCore::RefPtr<DeadReckoningHelper> helper = new DeadReckoningHelper;
+            dtCore::RefPtr<DeadReckoningActorComponent> helper = new DeadReckoningActorComponent;
             helper->SetLastKnownTranslation(osg::Vec3(0.0f,0.0f,0.0f));
             helper->SetLastKnownRotation(osg::Vec3(0.0f,0.0f,0.0f));
             helper->SetLastTranslationUpdatedTime(0.0);
@@ -524,7 +566,7 @@ namespace dtGame
             nodeCollector->AddDOFTransform(dofName, *dof);
 
             // Setup the helper
-            dtCore::RefPtr<DeadReckoningHelper> helper = new DeadReckoningHelper;
+            dtCore::RefPtr<DeadReckoningActorComponent> helper = new DeadReckoningActorComponent;
             helper->SetLastKnownTranslation(osg::Vec3(0.0f,0.0f,0.0f));
             helper->SetLastKnownRotation(osg::Vec3(0.0f,0.0f,0.0f));
             helper->SetLastTranslationUpdatedTime(0.0);
@@ -541,7 +583,7 @@ namespace dtGame
             // Test removing dead reckoning stops.
             // Stops are like key frames but the actual term comes from gradients (color stops);
             // this term used only for the sake of comments in this test.
-            typedef std::list<dtCore::RefPtr<DeadReckoningHelper::DeadReckoningDOF> > DOFStopList;
+            typedef std::list<dtCore::RefPtr<DeadReckoningActorComponent::DeadReckoningDOF> > DOFStopList;
             const DOFStopList& dofStops = helper->GetDeadReckoningDOFs();
 
             // --- Zero stops exist until a DOF is passed into the helper for DR.
@@ -615,7 +657,7 @@ namespace dtGame
 
          void TestDoDRNoDR()
          {
-            dtCore::RefPtr<DeadReckoningHelper> helper = new DeadReckoningHelper;
+            dtCore::RefPtr<DeadReckoningActorComponent> helper = new DeadReckoningActorComponent;
 
             InitDoDRTestHelper(*helper, dtCore::System::GetInstance().GetSimulationTime());
 
@@ -640,7 +682,7 @@ namespace dtGame
 
          void TestDoDRVelocityAccelNoMotion()
          {
-            dtCore::RefPtr<DeadReckoningHelper> helper = new DeadReckoningHelper;
+            dtCore::RefPtr<DeadReckoningActorComponent> helper = new DeadReckoningActorComponent;
 
             InitDoDRTestHelper(*helper,dtCore::System::GetInstance().GetSimulationTime());
 
@@ -678,7 +720,7 @@ namespace dtGame
 
          void TestSmoothingStepsCalc()
          {
-            dtCore::RefPtr<DeadReckoningHelper> helper = new DeadReckoningHelper;
+            dtCore::RefPtr<DeadReckoningActorComponent> helper = new DeadReckoningActorComponent;
             dtCore::Transform xform(300.0f, 200.0f, 100.0f, 30.0f, 32.2f, 93.0f);
 
             helper->SetUseFixedSmoothingTime(false);
@@ -726,7 +768,7 @@ namespace dtGame
 
          void TestSmoothingStepsCalcFastUpdate()
          {
-            dtCore::RefPtr<DeadReckoningHelper> helper = new DeadReckoningHelper;
+            dtCore::RefPtr<DeadReckoningActorComponent> helper = new DeadReckoningActorComponent;
             dtCore::Transform xform(300.0f, 200.0f, 100.0f, 30.0f, 32.2f, 93.0f);
 
             helper->SetUseFixedSmoothingTime(false);
@@ -772,7 +814,7 @@ namespace dtGame
             dtCore::System::GetInstance().Step();
          }
 
-         void InitDoDRTestHelper(dtGame::DeadReckoningHelper& helper, double simTime)
+         void InitDoDRTestHelper(dtGame::DeadReckoningActorComponent& helper, double simTime)
          {
             osg::Vec3 trans(1.1, 2.2, 3.3);
             osg::Vec3 rot(1.2, 2.3, 3.4);
@@ -862,15 +904,15 @@ namespace dtGame
 
          void TestSimpleBehavior(bool updateActor)
          {
-            dtCore::RefPtr<DeadReckoningHelper> helper = new DeadReckoningHelper;
+            dtCore::RefPtr<DeadReckoningActorComponent> helper = new DeadReckoningActorComponent;
 
             if (updateActor)
             {
-               helper->SetUpdateMode(DeadReckoningHelper::UpdateMode::CALCULATE_AND_MOVE_ACTOR);
+               helper->SetUpdateMode(DeadReckoningActorComponent::UpdateMode::CALCULATE_AND_MOVE_ACTOR);
             }
             else
             {
-               helper->SetUpdateMode(DeadReckoningHelper::UpdateMode::CALCULATE_ONLY);
+               helper->SetUpdateMode(DeadReckoningActorComponent::UpdateMode::CALCULATE_ONLY);
             }
 
             mGM->AddActor(*mTestGameActor, true, false);
@@ -956,7 +998,7 @@ namespace dtGame
 
          void TestDoDRVelocityAccel(bool flying)
          {
-            dtCore::RefPtr<DeadReckoningHelper> helper = new DeadReckoningHelper;
+            dtCore::RefPtr<DeadReckoningActorComponent> helper = new DeadReckoningActorComponent;
 
             InitDoDRTestHelper(*helper, dtCore::System::GetInstance().GetSimulationTime());
 
@@ -984,7 +1026,7 @@ namespace dtGame
 
          void TestDoDRStaticInitialConditions()
          {
-            dtCore::RefPtr<DeadReckoningHelper> helper = new DeadReckoningHelper;
+            dtCore::RefPtr<DeadReckoningActorComponent> helper = new DeadReckoningActorComponent;
             osg::Vec3 zeroVec(0.0f,0.0f,0.0f);
 
             InitDoDRTestHelper(*helper, 0.016667);
@@ -1011,7 +1053,7 @@ namespace dtGame
 
          void TestDoDRStatic(bool flying)
          {
-            dtCore::RefPtr<DeadReckoningHelper> helper = new DeadReckoningHelper;
+            dtCore::RefPtr<DeadReckoningActorComponent> helper = new DeadReckoningActorComponent;
             osg::Vec3 zeroVec(0.0f,0.0f,0.0f);
             // Seed zero values to make sure it doesn't just have an initialized position.
             helper->SetLastKnownTranslation(zeroVec);

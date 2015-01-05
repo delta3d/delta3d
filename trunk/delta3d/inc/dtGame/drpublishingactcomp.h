@@ -230,10 +230,10 @@ namespace dtGame
       void ResetFullUpdateTimer(bool doRandomOffset = false);
 
       /// The Dead Reckoning Helper is part of the actor and is a requirement to use this actor comp.
-      dtGame::DeadReckoningHelper* GetDeadReckoningHelper();
-      void SetDeadReckoningHelper(dtGame::DeadReckoningHelper* drHelper);
-      /// Since GetDeadReckoningHelper returns a reference, you MUST call this method first.
-      bool IsDeadReckoningHelperValid() const;
+      dtGame::DeadReckoningActorComponent* GetDeadReckoningActorComponent();
+      void SetDeadReckoningActorComponent(dtGame::DeadReckoningActorComponent* drHelper);
+      /// Since GetDeadReckoningActorComponent returns a reference, you MUST call this method first.
+      bool IsDeadReckoningActorComponentValid() const;
 
    protected:
 
@@ -291,7 +291,7 @@ namespace dtGame
       // Note - the helper will eventually be a act comp on the actor and we can look it up
       // Note that the LastKnown values are stored on the DR helper, but we hold the CURRENT
       // values because they are part of publishing. 
-      dtCore::ObserverPtr<dtGame::DeadReckoningHelper> mDeadReckoningHelper;
+      dtCore::ObserverPtr<dtGame::DeadReckoningActorComponent> mDeadReckoningActorComponent;
    };
 } // namespace dtGame
 

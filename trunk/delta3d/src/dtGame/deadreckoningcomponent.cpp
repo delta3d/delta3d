@@ -147,7 +147,7 @@ namespace dtGame
    }
 
    //////////////////////////////////////////////////////////////////////
-   void DeadReckoningComponent::RegisterActor(dtGame::GameActorProxy& toRegister, DeadReckoningHelper& helper)
+   void DeadReckoningComponent::RegisterActor(dtGame::GameActorProxy& toRegister, DeadReckoningActorComponent& helper)
    {
       dtCore::Transformable* xformable = NULL;
       toRegister.GetDrawable(xformable);
@@ -159,16 +159,16 @@ namespace dtGame
                GetName() +  ".\"" , __FILE__, __LINE__);
       }
 
-      DeadReckoningHelper::UpdateMode* updateMode = &helper.GetUpdateMode();
-      if (*updateMode == DeadReckoningHelper::UpdateMode::AUTO)
+      DeadReckoningActorComponent::UpdateMode* updateMode = &helper.GetUpdateMode();
+      if (*updateMode == DeadReckoningActorComponent::UpdateMode::AUTO)
       {
          if (toRegister.IsRemote())
          {
-            updateMode = &DeadReckoningHelper::UpdateMode::CALCULATE_AND_MOVE_ACTOR;
+            updateMode = &DeadReckoningActorComponent::UpdateMode::CALCULATE_AND_MOVE_ACTOR;
          }
          else
          {
-            updateMode = &DeadReckoningHelper::UpdateMode::CALCULATE_AND_MOVE_ACTOR;
+            updateMode = &DeadReckoningActorComponent::UpdateMode::CALCULATE_AND_MOVE_ACTOR;
          }
       }
 
@@ -182,7 +182,7 @@ namespace dtGame
       else if (helper.IsUpdated())
       {
          if (helper.GetEffectiveUpdateMode(toRegister.IsRemote())
-            == DeadReckoningHelper::UpdateMode::CALCULATE_AND_MOVE_ACTOR)
+            == DeadReckoningActorComponent::UpdateMode::CALCULATE_AND_MOVE_ACTOR)
          {
             dtCore::Transform xform;
             if (xformable != NULL)
@@ -200,7 +200,7 @@ namespace dtGame
       // If the actor is local, don't move it, and force the
       // helper to match as if it was just updated.
       if (helper.GetEffectiveUpdateMode(toRegister.IsRemote())
-         == DeadReckoningHelper::UpdateMode::CALCULATE_ONLY)
+         == DeadReckoningActorComponent::UpdateMode::CALCULATE_ONLY)
       {
          dtCore::Transform xform;
          xformable->GetTransform(xform, dtCore::Transformable::REL_CS);
@@ -220,7 +220,7 @@ namespace dtGame
    //////////////////////////////////////////////////////////////////////
    void DeadReckoningComponent::UnregisterActor(dtGame::GameActorProxy& toRegister)
    {
-      std::map<dtCore::UniqueId, dtCore::RefPtr<DeadReckoningHelper> >::iterator itor;
+      std::map<dtCore::UniqueId, dtCore::RefPtr<DeadReckoningActorComponent> >::iterator itor;
       itor = mRegisteredActors.find(toRegister.GetId());
       if (itor != mRegisteredActors.end())
       {
@@ -231,7 +231,7 @@ namespace dtGame
    //////////////////////////////////////////////////////////////////////
    bool DeadReckoningComponent::IsRegisteredActor(dtGame::GameActorProxy& gameActorProxy)
    {
-      std::map<dtCore::UniqueId, dtCore::RefPtr<DeadReckoningHelper> >::iterator itor;
+      std::map<dtCore::UniqueId, dtCore::RefPtr<DeadReckoningActorComponent> >::iterator itor;
       itor = mRegisteredActors.find(gameActorProxy.GetId());
       return itor != mRegisteredActors.end();
    }
@@ -241,7 +241,7 @@ namespace dtGame
    {
       mGroundClamper->UpdateEyePoint();
 
-      for (std::map<dtCore::UniqueId, dtCore::RefPtr<DeadReckoningHelper> >::iterator i = mRegisteredActors.begin();
+      for (std::map<dtCore::UniqueId, dtCore::RefPtr<DeadReckoningActorComponent> >::iterator i = mRegisteredActors.begin();
          i != mRegisteredActors.end(); ++i)
       {
 
@@ -253,7 +253,7 @@ namespace dtGame
 
          dtGame::GameActor* drawable = NULL;
          actor->GetDrawable(drawable);
-         DeadReckoningHelper& helper = *i->second;
+         DeadReckoningActorComponent& helper = *i->second;
 
          if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
          {
@@ -282,7 +282,7 @@ namespace dtGame
          {
             // Only ground clamp and move remote objects.
             if (helper.GetEffectiveUpdateMode(actor->IsRemote())
-                  == DeadReckoningHelper::UpdateMode::CALCULATE_AND_MOVE_ACTOR)
+                  == DeadReckoningActorComponent::UpdateMode::CALCULATE_AND_MOVE_ACTOR)
             {
                osg::Vec3 velocity(helper.GetCurrentInstantVelocity()); //  helper.GetLastKnownVelocity() + helper.GetLastKnownAcceleration() * simTimeDelta );
 
@@ -313,7 +313,7 @@ namespace dtGame
       mGroundClamper->FinishUp();
    }
 
-   void DeadReckoningComponent::DoArticulation(dtGame::DeadReckoningHelper& helper,
+   void DeadReckoningComponent::DoArticulation(dtGame::DeadReckoningActorComponent& helper,
                                                const dtCore::Transformable& xformable,
                                                const dtGame::TickMessage& tickMessage) const
    {
@@ -322,7 +322,7 @@ namespace dtGame
          return;
       }
 
-      typedef std::list<dtCore::RefPtr<DeadReckoningHelper::DeadReckoningDOF> > DRDOFArray;
+      typedef std::list<dtCore::RefPtr<DeadReckoningActorComponent::DeadReckoningDOF> > DRDOFArray;
 
       const DRDOFArray& containerDOFs = helper.GetDeadReckoningDOFs();
       DRDOFArray::const_iterator endDOF = containerDOFs.end();
@@ -335,7 +335,7 @@ namespace dtGame
       // Loop through all the DR stops and remove all those that precede the
       // second to last stop; smoothing should only occur between 2 stops,
       // so the latest stops should be used because they contain the latest data.
-      std::vector<DeadReckoningHelper::DeadReckoningDOF*> deletableDRDOFs;
+      std::vector<DeadReckoningActorComponent::DeadReckoningDOF*> deletableDRDOFs;
       iterDOF = containerDOFs.begin();
       while(iterDOF != endDOF)
       {
@@ -360,7 +360,7 @@ namespace dtGame
       iterDOF = containerDOFs.begin();
       while(iterDOF != endDOF)
       {
-         DeadReckoningHelper::DeadReckoningDOF *currentDOF = (*iterDOF).get();
+         DeadReckoningActorComponent::DeadReckoningDOF *currentDOF = (*iterDOF).get();
 
          // Only process the first DR stop in the chain so that subsequent
          // stops will be used as blending targets.
@@ -388,7 +388,7 @@ namespace dtGame
 
 
             // there is something in the chain
-            bool isPositional = currentDOF->mMetricName == DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_EXTENSION;
+            bool isPositional = currentDOF->mMetricName == DeadReckoningActorComponent::DeadReckoningDOF::REPRESENATION_EXTENSION;
             if(currentDOF->mNext != NULL)
             {
                osgSim::DOFTransform* dofTransform = helper.GetNodeCollector()->GetDOFTransform(currentDOF->mName);
