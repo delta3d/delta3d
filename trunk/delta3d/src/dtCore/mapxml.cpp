@@ -705,7 +705,7 @@ namespace dtCore
 
             //ghost proxies arent saved
             //added 7/10/06 -banderegg
-            if (proxy.IsGhostProxy())
+            if (proxy.IsGhost())
                continue;
 
             mPropSerializer->SetCurrentPropertyContainer(i->second.get());
@@ -1033,7 +1033,7 @@ namespace dtCore
             }
 
             //ghost proxies arent saved
-            if (proxy->IsGhostProxy())
+            if (proxy->IsGhost())
                continue;
 
             // If this is the first proxy, store the translation as the origin.

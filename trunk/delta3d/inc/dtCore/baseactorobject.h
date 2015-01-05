@@ -80,9 +80,9 @@ namespace dtCore
       static const dtUtil::RefString PROPERTY_ACTIVE;
 
       /**
-       * This enumeration defines the different ways an actor proxy can
-       * be rendered in the level editor.  Based on the state of an actor
-       * proxy, it can choose to represent itself in these different ways.
+       * This enumeration defines the different ways an actor can
+       * be rendered in the level editor.  Based on the state of an actor,
+       * it can choose to represent itself in these different ways.
        */
       class DT_CORE_EXPORT RenderMode : public dtUtil::Enumeration
       {
@@ -92,14 +92,14 @@ namespace dtCore
          ///Renders only the actor.
          static const RenderMode DRAW_ACTOR;
 
-         ///Renders a billboard to represent the position and orientatino of the proxy.
+         ///Renders a billboard to represent the position and orientation of the actor.
          static const RenderMode DRAW_BILLBOARD_ICON;
 
          ///Renders both the billboard and the actor at the same time.
          static const RenderMode DRAW_ACTOR_AND_BILLBOARD_ICON;
 
          /**
-          * Lets the system determine how to properly render the actor proxy.  This
+          * Lets the system determine how to properly render the actor.  This
           * basically means that if the underlying actor contains any geometry,
           * the RenderMode will be set to DRAW_ACTOR else it will be set to
           * DRAW_BILLBOARD_ICON.
@@ -134,28 +134,27 @@ namespace dtCore
       virtual void Init(const dtCore::ActorType& actorType);
 
       /**
-       * Gets the UniqueID object assigned to this actor proxy.
+       * Gets the UniqueID object.
        * @return The UniqueID.
        */
       const dtCore::UniqueId& GetId() const;
 
       /**
-       * Sets the UniqueID mapped to this actor proxy.
+       * Sets the UniqueID.
        * @param newId The new ID.
        */
       void SetId(const dtCore::UniqueId& newId);
 
       /**
-       * Gets the name of the actor proxy.  This is actually a wrapper which just
-       * returns the name assigned to the underlying actor.
+       * Gets the name of the actor.  In previous versions, this value was stored on the delta drawable.
+       * This is no longer the case.
        * @return A string identifier.
        */
       const std::string& GetName() const;
 
       /**
-       * Sets the name of this actor proxy.  In actuality, this is setting the
-       * name of the underlying actor this proxy is holding.
-       * @param name The new name to assign to this actor proxy.
+       * Sets the name of this actor.
+       * @param name The new name to assign to this actor.
        */
       void SetName(const std::string& name);
 
@@ -189,8 +188,8 @@ namespace dtCore
 
       /**
        * This is a shortcut to avoid having to dynamic cast to a ActorObject.
-       * It should only be overridded by dtGame::ActorObject.
-       * @return true if this proxy is an instance of dtGame::ActorObject
+       * It should only be overridden by dtGame::GameActorProxy.
+       * @return true if this actor is an instance of dtGame::GameActorProxy
        */
       virtual bool IsGameActor() const { return false; }
 
@@ -200,32 +199,9 @@ namespace dtCore
       virtual bool IsSystemComponent() const { return false; }
 
       /**
-       * Does nothing
-       */
-      DEPRECATE_FUNC virtual ResourceDescriptor GetResource(const std::string& name);
-
-      /**
-       * Does nothing
-       */
-      DEPRECATE_FUNC virtual const ResourceDescriptor GetResource(const std::string& name) const;
-
-      /**
-       * Does nothing
-       */
-      DEPRECATE_FUNC void SetResource(const std::string& name, const ResourceDescriptor& source);
-
-      /**
-       * The WAS used by the ActorActorProperty, also deprecated.  Now this function does nothing
-       * but it exists so old code will still compile.  It's also not necessary for the AAP, so
-       * it's okay that it does nothing.  If you were using this for something else, it won't
-       * work any longer.
-       */
-      DEPRECATE_FUNC void SetLinkedActor(const std::string& name, BaseActorObject* newValue);
-
-      /**
-       * Gets the actor type that represents this actor proxy.
+       * Gets the actor type that represents this actor.
        * @note
-       *      The actor type is assigned to the proxy when it is created
+       *      The actor type is assigned to the actor when it is created
        *      by the actor registry.
        */
       const ActorType& GetActorType() const;
@@ -256,10 +232,10 @@ namespace dtCore
 
       /** Templated version of GetDrawable() that static casts the actor to the type passed in.
        *  @note Make sure the supplied ref pointer is of the correct type which
-       *  matches the proxy!
+       *  matches the actor!
        * @code
        * dtCore::RefPtr<dtCore::InfiniteLight> light;
-       * proxy->GetDrawable(light);
+       * actor->GetDrawable(light);
        * @endcode
        */
       template <typename T>
@@ -284,7 +260,7 @@ namespace dtCore
 
 
       /**
-       * Sets the billboard icon used to represent this actor proxy.
+       * Sets the billboard icon used to represent this actor.
        * @param icon The billboard to use.
        * @note This will only be rendered if the RenderMode is set to
        *  DRAW_BILLBOARD_ICON.
@@ -292,22 +268,22 @@ namespace dtCore
       virtual void SetBillBoardIcon(ActorProxyIcon* icon);
 
       /**
-       * Gets the billboard icon currently assigned to this actor proxy.
+       * Gets the billboard icon currently assigned to this actor.
        * @return The billboard icon.
        */
       virtual ActorProxyIcon* GetBillBoardIcon();
 
       /**
-       * Gets the render mode currently active on this actor proxy.
+       * Gets the render mode currently active on this actor.
        * @return The current render mode.
        */
       virtual const RenderMode& GetRenderMode();
 
       /**
        * This method is called init, which instructs the
-       * proxy to create its properties.  Methods implementing this should
+       * actor to create its properties.  Methods implementing this should
        * be sure to call their parent class's buildPropertyMap method to
-       * ensure all properties in the proxy inheritance hierarchy are
+       * ensure all properties in the actor inheritance hierarchy are
        * correctly added to the property map.
        *
        * @see GetDeprecatedProperty to handle old properties that need
@@ -328,10 +304,10 @@ namespace dtCore
 
 
       /**
-       * if this returns true, this proxy will not be saved into the map
-       * useful for having proxies that own other proxies
+       * if this returns true, this actor will not be saved into the map
+       * useful for having actors that own other actors
        */
-      virtual bool IsGhostProxy() const;
+      virtual bool IsGhost() const;
 
 
       /**
@@ -354,11 +330,11 @@ namespace dtCore
       virtual void OnMapLoadEnd();
 
       /**
-       * Creates a copy of this actor proxy and returns it.  The method uses the
+       * Creates a copy of this actor and returns it.  The method uses the
        * library manager to create the clone and then iterates though the
-       * current state of this proxy's property set and copies their values
+       * current state of this actor's property set and copies their values
        * to the newly created clone.
-       * @return The cloned actor proxy.
+       * @return The cloned actor.
        */
       virtual dtCore::RefPtr<BaseActorObject> Clone();
 
@@ -370,8 +346,8 @@ namespace dtCore
 
       /**
        * Allow access to the ActorPluginRegistry.  This is so it can set the
-       * ActorType of the proxy when it creates it and call any initialization
-       * methods on the actor proxy.
+       * ActorType of the actor when it creates it and call any initialization
+       * methods on the actor.
        */
       friend class ActorPluginRegistry;
 
@@ -394,7 +370,7 @@ namespace dtCore
    protected:
 
       /**
-       * Sets the actor on this proxy. This should be only called from subclasses
+       * Sets the actor on this actor. This should be only called from subclasses
        * @param actor The actor to set
        */
       void SetDrawable(dtCore::DeltaDrawable& drawable);
@@ -425,7 +401,7 @@ namespace dtCore
       void SetClassName(const std::string& name);
 
       /**
-       * Each actor proxy may have a billboard associated with it.  Billboards
+       * Each actor may have a billboard associated with it.  Billboards
        * are displayed in place of the actual actor if the actor has no
        * displayable qualities.  For example, if a static mesh has no mesh
        * currently assigned to it, the billboard will display instead.
@@ -435,9 +411,9 @@ namespace dtCore
    private:
 
 
-      ///Pointer to the Delta3D object (Actor) this proxy is wrapping.
+      ///Pointer to the Delta3D object (Actor) this actor is wrapping.
       dtCore::RefPtr<dtCore::DeltaDrawable> mDrawable;
-      ///ActorType corresponding to this proxy.
+      ///ActorType corresponding to this actor.
       dtCore::RefPtr<const ActorType> mActorType;
       // This needs to be converted to a reference
       dtCore::ObserverPtr<BaseActorObject> mPrototype;
