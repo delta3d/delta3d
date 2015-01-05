@@ -549,17 +549,6 @@ namespace dtGame
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void DeadReckoningActorComponent::GetPartialUpdateProperties(std::vector<dtUtil::RefString>& propNamesToFill)
-   {
-      propNamesToFill.reserve(propNamesToFill.size() + 5U);
-      propNamesToFill.push_back(DeadReckoningActorComponent::PROPERTY_LAST_KNOWN_TRANSLATION);
-      propNamesToFill.push_back(DeadReckoningActorComponent::PROPERTY_LAST_KNOWN_ROTATION);
-      propNamesToFill.push_back(DeadReckoningActorComponent::PROPERTY_VELOCITY_VECTOR);
-      propNamesToFill.push_back(DeadReckoningActorComponent::PROPERTY_ANGULAR_VELOCITY_VECTOR);
-      propNamesToFill.push_back(DeadReckoningActorComponent::PROPERTY_ACCELERATION_VECTOR);
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
    // PROPERTY NAME DECLARATIONS
    ////////////////////////////////////////////////////////////////////////////////
    const dtUtil::RefString DeadReckoningActorComponent::PROPERTY_LAST_KNOWN_TRANSLATION("Last Known Translation");
