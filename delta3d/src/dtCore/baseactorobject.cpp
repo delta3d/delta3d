@@ -201,27 +201,9 @@ namespace dtCore
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   bool BaseActorObject::IsGhostProxy() const
+   bool BaseActorObject::IsGhost() const
    {
       return false;
-   }
-
-   /////////////////////////////////////////////////////////////////////////////
-   ResourceDescriptor BaseActorObject::GetResource(const std::string& name)
-   {
-      return ResourceDescriptor::NULL_RESOURCE;
-   }
-
-   /////////////////////////////////////////////////////////////////////////////
-   const ResourceDescriptor BaseActorObject::GetResource(const std::string& name) const
-   {
-      return ResourceDescriptor::NULL_RESOURCE;
-   }
-
-   /////////////////////////////////////////////////////////////////////////////
-   void BaseActorObject::SetResource(const std::string& name, const ResourceDescriptor& source)
-   {
-
    }
 
    /////////////////////////////////////////////////////////////////////////////
