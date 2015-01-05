@@ -81,7 +81,8 @@ namespace dtCore
                            Vec3ActorProperty::GetFuncType(this, &TransformableActorProxy::GetRotation),
                            "Sets the amount of rotation on a transformable. Represented with pitch, yaw, and roll.",
                            GROUPNAME);
-         AddProperty(newProp);
+          newProp->SetSendInPartialUpdate(true);
+          AddProperty(newProp);
       }
 
       if (IsTranslationPropertyShown())
@@ -91,6 +92,7 @@ namespace dtCore
                   Vec3ActorProperty::GetFuncType(this, &TransformableActorProxy::GetTranslation),
                   "Sets the location of a transformable in 3D space.",
                   GROUPNAME);
+         newProp->SetSendInPartialUpdate(true);
          AddProperty(newProp);
       }
 
