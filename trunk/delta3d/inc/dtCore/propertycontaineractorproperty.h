@@ -110,6 +110,10 @@ namespace dtCore
       GetFuncType mGetFunc;
    };
 
+
+   template <typename T>
+   dtCore::RefPtr<T> CallNew() { return new T(); };
+
    /**
     * This is a concrete PropertyContainerActorProperty template that assumes it will only
     * use one single type for the property container.
@@ -122,20 +126,26 @@ namespace dtCore
       typedef typename BaseClass::SetFuncType SetFuncType;
       typedef typename BaseClass::GetFuncType GetFuncType;
 
+      typedef dtUtil::Functor<dtCore::RefPtr<T>, TYPELIST_0() > CreateFuncType;
+
       SimplePropertyContainerActorProperty(
                const dtUtil::RefString& name,
                const dtUtil::RefString& label,
                SetFuncType set,
                GetFuncType get,
                const dtUtil::RefString& desc,
-               const dtUtil::RefString& groupName)
+               const dtUtil::RefString& groupName,
+               CreateFuncType create = CreateFuncType(&CallNew<T>))
       : PropertyContainerActorProperty<T>(name, label, set, get, desc, groupName)
+      , mCreateFunc(create)
       {
       }
 
-      virtual void CreateNew() { BaseClass::SetValue(new T); }
+      virtual void CreateNew() { BaseClass::SetValue(mCreateFunc()); }
    protected:
       virtual ~SimplePropertyContainerActorProperty() {}
+   private:
+      CreateFuncType mCreateFunc;
    };
 
 
