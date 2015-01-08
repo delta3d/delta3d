@@ -293,9 +293,6 @@ namespace dtPhysics
    /////////////////////////////////////////////////////////////////////////////
    void PhysicsObject::BuildPropertyMap()
    {
-      if (GetNumProperties() > 0) return;
-
-
       static const dtUtil::RefString GROUP("PhysicsObject");
 
       typedef dtCore::PropertyRegHelper<PhysicsObject> PropRegType;
@@ -372,8 +369,6 @@ namespace dtPhysics
       DT_REGISTER_PROPERTY_WITH_NAME(MeshScale, "PhysicsMeshScale",
                "If a physics mesh is set, it can be scaled with this property.",
                 PropRegType, propRegHelper);
-
-      InitDefaults();
    }
 
    void PhysicsObject::CalculateBoundsAndOrigin(const osg::Node* nodeToLoad, bool calcDimensions, bool adjustOriginOffsetForGeometry)

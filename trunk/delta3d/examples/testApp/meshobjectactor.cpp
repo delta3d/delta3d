@@ -36,7 +36,7 @@ namespace dtExample
    {
       BaseClass::BuildActorComponents();
       dtCore::RefPtr<dtPhysics::PhysicsActComp> pac = new dtPhysics::PhysicsActComp;
-      dtCore::RefPtr<dtPhysics::PhysicsObject> phyObj = new dtPhysics::PhysicsObject("Main");
+      dtCore::RefPtr<dtPhysics::PhysicsObject> phyObj = dtPhysics::PhysicsObject::CreateNew("Main");
       phyObj->SetMechanicsType(dtPhysics::MechanicsType::STATIC);
       phyObj->SetPrimitiveType(dtPhysics::PrimitiveType::CONVEX_HULL);
       pac->AddPhysicsObject(*phyObj);

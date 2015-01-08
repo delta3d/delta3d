@@ -865,9 +865,9 @@ namespace dtPhysics
          dtCore::RefPtr<dtPhysics::Geometry> geomB = dtPhysics::Geometry::CreateConcaveGeometry(xform, *data[NAME_B][0], 0.0f);
          dtCore::RefPtr<dtPhysics::Geometry> geomC = dtPhysics::Geometry::CreateConcaveGeometry(xform, *data[NAME_C][0], 0.0f);
 
-         dtCore::RefPtr<PhysicsObject> poA = new PhysicsObject("TestPlanesA");
-         dtCore::RefPtr<PhysicsObject> poB = new PhysicsObject("TestPlanesB");
-         dtCore::RefPtr<PhysicsObject> poC = new PhysicsObject("TestPlanesC");
+         dtCore::RefPtr<PhysicsObject> poA = PhysicsObject::CreateNew("TestPlanesA");
+         dtCore::RefPtr<PhysicsObject> poB = PhysicsObject::CreateNew("TestPlanesB");
+         dtCore::RefPtr<PhysicsObject> poC = PhysicsObject::CreateNew("TestPlanesC");
 
          PrimitiveType& primType = PrimitiveType::TRIANGLE_MESH;
          MechanicsType& mechType = MechanicsType::STATIC;

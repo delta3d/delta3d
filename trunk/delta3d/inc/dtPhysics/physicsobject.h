@@ -63,8 +63,26 @@ namespace dtPhysics
    public:
       DT_DECLARE_VIRTUAL_REF_INTERFACE_INLINE
 
+   protected:
       PhysicsObject();//name will be generated
       PhysicsObject(const std::string& name);
+   public:
+      /**
+       * The constructor is hidden so that the object can be initialized and the defaults generated before it is used.
+       * Call this instead.
+       */
+      static dtCore::RefPtr<PhysicsObject> CreateNew(const std::string& name = std::string("Default"))
+      {
+         dtCore::RefPtr<PhysicsObject> obj = new PhysicsObject(name);
+         obj->BuildPropertyMap();
+         obj->InitDefaults();
+         return obj;
+      }
+
+      /**
+       * This create func exists so a functor can call it with no parameters.
+       */
+      static dtCore::RefPtr<PhysicsObject> CreateNewDefName() { return CreateNew(); }
 
       static dtCore::RefPtr<dtCore::ObjectType> TYPE;
 

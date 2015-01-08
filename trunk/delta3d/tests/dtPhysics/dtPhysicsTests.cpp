@@ -349,12 +349,10 @@ namespace dtPhysics
 
       std::string objName("testObject");
       std::string objNamePrefix(objName + ": ");
-      dtCore::RefPtr<PhysicsObject> po = new PhysicsObject(objName);
+      dtCore::RefPtr<PhysicsObject> po = PhysicsObject::CreateNew(objName);
 
       TestPropertyNameCollector pred;
       CPPUNIT_ASSERT(pred.mNames.empty());
-
-      CPPUNIT_ASSERT_EQUAL(0U, po->GetNumProperties());
 
       // Test that the old property naming functionality can still work.
       dtCore::RefPtr<PhysicsActComp> pac = new PhysicsActComp();
@@ -365,9 +363,6 @@ namespace dtPhysics
       CPPUNIT_ASSERT(!po->GetObjectType().DefaultsEmpty());
       // Just pick a number equal to the number when this was coded.
       CPPUNIT_ASSERT(numProps >= 19U);
-      po->BuildPropertyMap();
-      CPPUNIT_ASSERT_EQUAL_MESSAGE("Calling build property map multiple times shouldn't add more properties, though this is not the same as other objects.",
-            numProps, po->GetNumProperties());
 
       po->ForEachProperty(pred.GetFunc());
       po->GetPropertyList(props);
@@ -626,7 +621,7 @@ namespace dtPhysics
    {
       ChangeEngine(engine);
       // test constructor name
-      dtCore::RefPtr<PhysicsObject> physicsObject = new PhysicsObject("mypalFriend");
+      dtCore::RefPtr<PhysicsObject> physicsObject = PhysicsObject::CreateNew("mypalFriend");
       physicsObject->SetMass(20.0);
       physicsObject->SetPrimitiveType(PrimitiveType::CONVEX_HULL);
       physicsObject->SetMeshResource(dtCore::ResourceDescriptor("StaticMeshes:chairs:sunchair:SunChair_PHYSICS.osg"));
@@ -659,7 +654,7 @@ namespace dtPhysics
    {
       ChangeEngine(engine);
       // test constructor name
-      dtCore::RefPtr<PhysicsObject> physicsObject = new PhysicsObject("mypalFriend");
+      dtCore::RefPtr<PhysicsObject> physicsObject = PhysicsObject::CreateNew("mypalFriend");
       physicsObject->SetMass(20.0);
       physicsObject->SetPrimitiveType(dtPhysics::PrimitiveType::CYLINDER);
       physicsObject->SetExtents(VectorType(3.0, 4.0, 4.0));
@@ -706,8 +701,8 @@ namespace dtPhysics
       ChangeEngine(engine);
 
       dtCore::RefPtr<PhysicsObject> physicsObject[2];
-      physicsObject[0] = new PhysicsObject("mypalFriend");
-      physicsObject[1] = new PhysicsObject("mypallypalFriend");
+      physicsObject[0] = PhysicsObject::CreateNew("mypalFriend");
+      physicsObject[1] = PhysicsObject::CreateNew("mypallypalFriend");
 
       for (unsigned i = 0; i < 2; ++i)
       {
@@ -795,7 +790,7 @@ namespace dtPhysics
       xformVisual.SetTranslation(90.0, 100.0, 34.0);
       xformVisual.SetRotation(45.0, 45.0, 0.0);
 
-      dtCore::RefPtr<PhysicsObject> physicsObject = new PhysicsObject("mypalFriend");
+      dtCore::RefPtr<PhysicsObject> physicsObject = PhysicsObject::CreateNew("mypalFriend");
       physicsObject->SetPrimitiveType(PrimitiveType::SPHERE);
       physicsObject->SetExtents(VectorType(1.0, 1.0, 1.0));
       physicsObject->SetVisualToBodyTransform(xformOffset);
@@ -825,7 +820,7 @@ namespace dtPhysics
       ChangeEngine(engine);
 
       // test constructor name
-      dtCore::RefPtr<PhysicsObject> physicsObject = new PhysicsObject("mypalFriend");
+      dtCore::RefPtr<PhysicsObject> physicsObject = PhysicsObject::CreateNew("mypalFriend");
       CPPUNIT_ASSERT_MESSAGE("name: should be mypalFriend", physicsObject->GetName() == "mypalFriend");
 
       // test name of object
@@ -1024,7 +1019,7 @@ namespace dtPhysics
    void dtPhysicsTests::testPhysicsObjectKinematic(const std::string& engine)
    {
       ChangeEngine(engine);
-      dtCore::RefPtr<PhysicsObject> po = new PhysicsObject("jojo");
+      dtCore::RefPtr<PhysicsObject> po = PhysicsObject::CreateNew("jojo");
 
       po->SetOriginOffset(VectorType(40.0,40.0,40.0));
 
@@ -1062,7 +1057,7 @@ namespace dtPhysics
 
    void dtPhysicsTests::testPhysicsObjectWithOffsetAndShape(dtPhysics::PrimitiveType& shapeType)
    {
-      dtCore::RefPtr<PhysicsObject> po = new PhysicsObject("jojo");
+      dtCore::RefPtr<PhysicsObject> po = PhysicsObject::CreateNew("jojo");
 
       po->SetOriginOffset(VectorType(40.0,40.0,40.0));
 
@@ -1186,7 +1181,7 @@ namespace dtPhysics
          xform.SetTranslation(offsetCenter);
          xformable->SetTransform(xform);
 
-         dtCore::RefPtr<PhysicsObject> po = new PhysicsObject("Brad");
+         dtCore::RefPtr<PhysicsObject> po = PhysicsObject::CreateNew("Brad");
          VectorType originOffset(3.7f, 4.1f, 3.3f);
          po->SetOriginOffset(originOffset);
          po->SetPrimitiveType(PrimitiveType::BOX);
@@ -1210,7 +1205,7 @@ namespace dtPhysics
    void dtPhysicsTests::testPhysicsObjectVelocityAtPoint(const std::string& engine)
    {
       ChangeEngine(engine);
-      dtCore::RefPtr<PhysicsObject> po = new PhysicsObject("jojo");
+      dtCore::RefPtr<PhysicsObject> po = PhysicsObject::CreateNew("jojo");
       po->SetPrimitiveType(PrimitiveType::SPHERE);
       po->SetExtents(VectorType(1.0f, 0.0f, 0.0f));
       po->SetMass(30.0f);
@@ -1228,7 +1223,7 @@ namespace dtPhysics
    void dtPhysicsTests::testPhysicsObjectMomentOfInertia(const std::string& engine)
    {
       ChangeEngine(engine);
-      dtCore::RefPtr<PhysicsObject> po = new PhysicsObject("jojo");
+      dtCore::RefPtr<PhysicsObject> po = PhysicsObject::CreateNew("jojo");
       po->SetPrimitiveType(PrimitiveType::SPHERE);
       po->SetExtents(VectorType(1.0f, 0.0f, 0.0f));
       po->SetMass(45.0f);
@@ -1267,7 +1262,7 @@ namespace dtPhysics
    void dtPhysicsTests::testPhysicsObjectActivationDefaults(const std::string& engine)
    {
       ChangeEngine(engine);
-      dtCore::RefPtr<PhysicsObject> po = new PhysicsObject("jojo");
+      dtCore::RefPtr<PhysicsObject> po = PhysicsObject::CreateNew("jojo");
       po->SetPrimitiveType(PrimitiveType::SPHERE);
       po->SetExtents(VectorType(1.0f, 0.0f, 0.0f));
       po->SetMass(30.0f);
@@ -1316,7 +1311,7 @@ namespace dtPhysics
    void dtPhysicsTests::testPhysicsObjectDampingAccessors(const std::string& engine)
    {
       ChangeEngine(engine);
-      dtCore::RefPtr<PhysicsObject> po = new PhysicsObject("jojo");
+      dtCore::RefPtr<PhysicsObject> po = PhysicsObject::CreateNew("jojo");
       po->SetPrimitiveType(PrimitiveType::SPHERE);
       po->SetExtents(VectorType(1.0f, 0.0f, 0.0f));
       po->SetMass(30.0f);
@@ -1358,11 +1353,11 @@ namespace dtPhysics
    void dtPhysicsTests::testPhysicsObjectDeleteWithConstraints(const std::string& engine)
    {
       ChangeEngine(engine);
-      dtCore::RefPtr<PhysicsObject> poA = new PhysicsObject("jojo");
+      dtCore::RefPtr<PhysicsObject> poA = PhysicsObject::CreateNew("jojo");
       poA->SetMass(30.0f);
       poA->Create();
 
-      dtCore::RefPtr<PhysicsObject> poB = new PhysicsObject("mojo");
+      dtCore::RefPtr<PhysicsObject> poB = PhysicsObject::CreateNew("mojo");
       poB->SetMass(50.0f);
       poB->Create();
 
@@ -1386,7 +1381,7 @@ namespace dtPhysics
    void dtPhysicsTests::testPhysicsObjectActivationInitializeAndChange(const std::string& engine)
    {
       ChangeEngine(engine);
-      dtCore::RefPtr<PhysicsObject> po = new PhysicsObject("jojo");
+      dtCore::RefPtr<PhysicsObject> po = PhysicsObject::CreateNew("jojo");
       po->SetMass(30.0f);
 
       CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("All activation settings should default to -1, engine default",
@@ -1475,9 +1470,9 @@ namespace dtPhysics
       CPPUNIT_ASSERT_MESSAGE("name: should be tehVoodooActorComp", tehVoodoo->GetName() == std::string("tehVoodooActorComp"));
 
       // test adding and removing of objects
-      dtCore::RefPtr<PhysicsObject> physicsObject1 = new PhysicsObject(name1);
-      dtCore::RefPtr<PhysicsObject> physicsObject2 = new PhysicsObject(name2);
-      dtCore::RefPtr<PhysicsObject> physicsObject3 = new PhysicsObject(name3);
+      dtCore::RefPtr<PhysicsObject> physicsObject1 = PhysicsObject::CreateNew(name1);
+      dtCore::RefPtr<PhysicsObject> physicsObject2 = PhysicsObject::CreateNew(name2);
+      dtCore::RefPtr<PhysicsObject> physicsObject3 = PhysicsObject::CreateNew(name3);
 
       CPPUNIT_ASSERT(tehVoodoo->GetMainPhysicsObject() == NULL);
       // adding
@@ -1602,7 +1597,7 @@ namespace dtPhysics
          xform.SetTranslation(offsetCenter);
          xformable->SetTransform(xform);
 
-         dtCore::RefPtr<PhysicsObject> po = new PhysicsObject("Brad");
+         dtCore::RefPtr<PhysicsObject> po = PhysicsObject::CreateNew("Brad");
          VectorType originOffset(3.7f, 4.1f, 3.3f);
          po->SetOriginOffset(originOffset);
          po->SetPrimitiveType(PrimitiveType::CONVEX_HULL);
@@ -1823,7 +1818,7 @@ namespace dtPhysics
       dtCore::RefPtr<PhysicsActComp> tehVoodoo2 = new PhysicsActComp();
 
       // Need to create a physics object because, if not, the physics may not step.
-      dtCore::RefPtr<PhysicsObject> poA = new PhysicsObject("jojo");
+      dtCore::RefPtr<PhysicsObject> poA = PhysicsObject::CreateNew("jojo");
       poA->SetMass(30.0f);
       poA->Create();
 
