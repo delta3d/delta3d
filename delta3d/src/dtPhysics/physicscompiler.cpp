@@ -593,7 +593,9 @@ namespace dtPhysics
       PrimitiveType* primType = const_cast<PrimitiveType*>(options.mPrimitiveType);
       MechanicsType* mechType = const_cast<MechanicsType*>(options.mMechanicsType);
 
+      std::string idxBuffer;
       VertexData* curData = NULL;
+      unsigned padding = unsigned(std::log10(float(vertData.size())));
       VertexDataArray::const_iterator curIter = vertData.begin();
       VertexDataArray::const_iterator endIter = vertData.end();
       for (; curIter != endIter; ++curIter)
@@ -606,7 +608,8 @@ namespace dtPhysics
 
          if (geom.valid())
          {
-            dtCore::RefPtr<PhysicsObject> po = new PhysicsObject("PhysicsObject");
+            dtUtil::MakeIndexString(unsigned(results), idxBuffer, padding);
+            dtCore::RefPtr<PhysicsObject> po = PhysicsObject::CreateNew("PhysicsObject" + idxBuffer);
 
             MaterialIndex matIndex = GetMaterialIndexForGeometry(*curData);
 

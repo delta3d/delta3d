@@ -294,7 +294,7 @@ namespace dtPhysics
                   RefString("Defines physics objects associated with the actor."),
                   GROUP);
 
-      typedef dtCore::SimplePropertyContainerActorProperty<dtPhysics::PhysicsObject> PhysObjProp;
+      typedef dtCore::SimplePropertyContainerActorProperty<PhysicsObject> PhysObjProp;
       dtCore::RefPtr<PhysObjProp> physObjProp =
             new PhysObjProp(
                   PROPERTY_PHYSICS_OBJECT,
@@ -302,7 +302,9 @@ namespace dtPhysics
                   PhysObjProp::SetFuncType(physObjArrayProp.get(), &PhysObjArrayProp::SetCurrentValue),
                   PhysObjProp::GetFuncType(physObjArrayProp.get(), &PhysObjArrayProp::GetCurrentValue),
                   RefString("Physics object properties"),
-                  GROUP);
+                  GROUP,
+                  PhysObjProp::CreateFuncType(&PhysicsObject::CreateNewDefName)
+                  );
 
       physObjArrayProp->SetArrayProperty(*physObjProp);
       physObjArrayProp->SetSendInFullUpdate(false);
@@ -548,7 +550,6 @@ namespace dtPhysics
       }
 
       po.SetUserData(this);
-      po.BuildPropertyMap();
       if (makeMain)
       {
          mPhysicsObjects.insert(mPhysicsObjects.begin(), &po);
@@ -674,8 +675,7 @@ namespace dtPhysics
       if (obj != NULL && mPhysicsObjects.size() > size_t(index))
       {
          // TODO we need a clone
-         mPhysicsObjects[index] = new PhysicsObject(obj->GetName());
-         mPhysicsObjects[index]->BuildPropertyMap();
+         mPhysicsObjects[index] = PhysicsObject::CreateNew(obj->GetName());
          mPhysicsObjects[index]->CopyPropertiesFrom(*obj);
          mPhysicsObjects[index]->SetUserData(this);
       }
@@ -699,8 +699,7 @@ namespace dtPhysics
    {
       if (size_t(index) <= mPhysicsObjects.size())
       {
-         mPhysicsObjects.insert(mPhysicsObjects.begin() + index, new PhysicsObject);
-         mPhysicsObjects[index]->BuildPropertyMap();
+         mPhysicsObjects.insert(mPhysicsObjects.begin() + index, PhysicsObject::CreateNew());
          mPhysicsObjects[index]->SetUserData(this);
       }
    }

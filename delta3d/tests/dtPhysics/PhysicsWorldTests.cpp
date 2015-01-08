@@ -324,7 +324,7 @@ namespace dtPhysics
 
    static dtCore::RefPtr<PhysicsObject> CreateTestPhysObject(const std::string& name, PrimitiveType& type, const VectorType& extents, const VectorType& pos, CollisionGroup g)
    {
-      dtCore::RefPtr<PhysicsObject> obj = new PhysicsObject(name);
+      dtCore::RefPtr<PhysicsObject> obj = PhysicsObject::CreateNew(name);
       obj->SetPrimitiveType(type);
       obj->SetExtents(extents);
       obj->Create();
