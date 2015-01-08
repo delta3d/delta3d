@@ -114,13 +114,15 @@ Keyboard::Keyboard(const std::string& name) : InputDevice(name)
    AddFeature(new Button(this, '/'                                      ,"/"));
    AddFeature(new Button(this, osgGA::GUIEventAdapter::KEY_Shift_R      ,"Right Shift"));
    AddFeature(new Button(this, osgGA::GUIEventAdapter::KEY_Control_L    ,"Left Ctrl"));
-   AddFeature(new Button(this, osgGA::GUIEventAdapter::KEY_Super_L      ,"Left Super"));
+   AddFeature(new Button(this, osgGA::GUIEventAdapter::KEY_Control_R    ,"Right Ctrl"));
    AddFeature(new Button(this, osgGA::GUIEventAdapter::KEY_Space       ,"Space"));
    AddFeature(new Button(this, osgGA::GUIEventAdapter::KEY_Alt_L        ,"Left Alt"));
    AddFeature(new Button(this, osgGA::GUIEventAdapter::KEY_Alt_R        ,"Right Alt"));
+   AddFeature(new Button(this, osgGA::GUIEventAdapter::KEY_Super_L      ,"Left Super"));
    AddFeature(new Button(this, osgGA::GUIEventAdapter::KEY_Super_R      ,"Right Super"));
+   AddFeature(new Button(this, osgGA::GUIEventAdapter::KEY_Meta_L       ,"Left Meta"));
+   AddFeature(new Button(this, osgGA::GUIEventAdapter::KEY_Meta_R       ,"Right Meta"));
    AddFeature(new Button(this, osgGA::GUIEventAdapter::KEY_Menu         ,"Menu"));
-   AddFeature(new Button(this, osgGA::GUIEventAdapter::KEY_Control_R    ,"Right Ctrl"));
    AddFeature(new Button(this, osgGA::GUIEventAdapter::KEY_Print        ,"Print Screen"));
    AddFeature(new Button(this, osgGA::GUIEventAdapter::KEY_Scroll_Lock  ,"Scroll Lock"));
    AddFeature(new Button(this, osgGA::GUIEventAdapter::KEY_Pause        ,"Pause"));
