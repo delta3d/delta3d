@@ -233,6 +233,28 @@ namespace dtPhysics
       }
    };
 
+   class PhysicsObjectPropertyContainerActorProperty : public dtCore::PropertyContainerActorProperty<PhysicsObject>
+   {
+   public:
+	  typedef dtCore::PropertyContainerActorProperty<PhysicsObject> BaseClass;
+      typedef BaseClass::SetFuncType SetFuncType;
+      typedef BaseClass::GetFuncType GetFuncType;
+
+      PhysicsObjectPropertyContainerActorProperty(
+               const dtUtil::RefString& name,
+               const dtUtil::RefString& label,
+               SetFuncType set,
+               GetFuncType get,
+               const dtUtil::RefString& desc,
+               const dtUtil::RefString& groupName)
+      : BaseClass(name, label, set, get, desc, groupName)
+      {
+      }
+	  /*override*/ void CreateNew() { BaseClass::SetValue(PhysicsObject::CreateNew()); }
+   protected:
+      virtual ~PhysicsObjectPropertyContainerActorProperty() {}
+   };
+
    /////////////////////////////////////////////////////////////////////////////
    void PhysicsActComp::BuildPropertyMap()
    {
@@ -294,16 +316,14 @@ namespace dtPhysics
                   RefString("Defines physics objects associated with the actor."),
                   GROUP);
 
-      typedef dtCore::SimplePropertyContainerActorProperty<PhysicsObject> PhysObjProp;
-      dtCore::RefPtr<PhysObjProp> physObjProp =
-            new PhysObjProp(
+      dtCore::RefPtr<PhysicsObjectPropertyContainerActorProperty> physObjProp =
+            new PhysicsObjectPropertyContainerActorProperty(
                   PROPERTY_PHYSICS_OBJECT,
                   PROPERTY_PHYSICS_OBJECT,
-                  PhysObjProp::SetFuncType(physObjArrayProp.get(), &PhysObjArrayProp::SetCurrentValue),
-                  PhysObjProp::GetFuncType(physObjArrayProp.get(), &PhysObjArrayProp::GetCurrentValue),
+                  PhysicsObjectPropertyContainerActorProperty::SetFuncType(physObjArrayProp.get(), &PhysObjArrayProp::SetCurrentValue),
+                  PhysicsObjectPropertyContainerActorProperty::GetFuncType(physObjArrayProp.get(), &PhysObjArrayProp::GetCurrentValue),
                   RefString("Physics object properties"),
-                  GROUP,
-                  PhysObjProp::CreateFuncType(&PhysicsObject::CreateNewDefName)
+                  GROUP
                   );
 
       physObjArrayProp->SetArrayProperty(*physObjProp);
