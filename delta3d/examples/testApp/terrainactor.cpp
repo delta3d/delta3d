@@ -213,7 +213,7 @@ namespace dtExample
 
       dtCore::RefPtr<dtPhysics::PhysicsActComp> physAC = new dtPhysics::PhysicsActComp();
 
-      dtPhysics::PhysicsObject* pobj = dtPhysics::PhysicsObject::CreateNew("Terrain");
+      dtCore::RefPtr<dtPhysics::PhysicsObject> pobj = dtPhysics::PhysicsObject::CreateNew("Terrain");
       pobj->SetPrimitiveType(dtPhysics::PrimitiveType::TERRAIN_MESH);
       pobj->SetMechanicsType(dtPhysics::MechanicsType::STATIC);
       pobj->SetCollisionGroup(COLLISION_GROUP_TERRAIN);
