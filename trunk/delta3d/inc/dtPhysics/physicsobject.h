@@ -310,6 +310,13 @@ namespace dtPhysics
        * which will make it use the default material.  Setting it to NULL after that is not defined.
        */
       void SetMaterial(Material*);
+
+      /**
+       * Convenience method for assigning the material instance by a name.
+       * @param matName Name of the material to reference.
+       * @return TRUE if a material is found that matches the specified name.
+       */
+      bool SetMaterialByName(const std::string& matName);
    
       /**
        * Convenience method for assigning the material instance by an index.

@@ -52,7 +52,7 @@ namespace dtPhysics
       const unsigned TRIANGLE_DATA_FILE_IDENT = 3130317;
       
       const unsigned VERSION_MAJOR = 1;
-      const unsigned VERSION_MINOR = 0;
+      const unsigned VERSION_MINOR = 1; // 1 - added material table section
 
       const char FILE_START_END_CHAR = '!';
    };
@@ -221,12 +221,12 @@ namespace dtPhysics
 
          try
          {
-            //get length of file
+            // Get length of file
             infile.seekg (0, std::ios::end);
             int length = infile.tellg();
             infile.seekg (0, std::ios::beg);
 
-            //read data
+            // Read Data
             char* buffer = new char [length];
             infile.read(buffer, length);
 
@@ -239,10 +239,10 @@ namespace dtPhysics
 
             if(fileStart == PhysicsFileHeader::FILE_START_END_CHAR &&
                fileIdent == PhysicsFileHeader::TRIANGLE_DATA_FILE_IDENT &&
-               vMajor == 1 && vMinor == 0)
+               vMajor == 1)
             {
 
-               //vertex data
+               // Vertex Data
                unsigned numVerts = 0;
                unsigned numIndices = 0;
                unsigned numMaterials = 0;
@@ -258,7 +258,7 @@ namespace dtPhysics
                   }
                }
 
-               //triangle data
+               // Triangle Data
                ds.Read(numIndices);
                {
                   for(unsigned i = 0; i < numIndices; ++i)
@@ -269,7 +269,7 @@ namespace dtPhysics
                   }
                }
 
-               //material data
+               // Material Data
                ds.Read(numMaterials);
                {
                   for(unsigned i = 0; i < numMaterials; ++i)
@@ -277,6 +277,31 @@ namespace dtPhysics
                      unsigned materialID = 0;
                      ds.Read(materialID);
                      triangleData.mMaterialFlags.push_back(materialID);
+                  }
+               }
+
+               // New material section data
+               // Check for old material data section
+               bool oldVersion = vMinor == 0;
+               if ( ! oldVersion)
+               {
+                  unsigned numMaterialEntries = 0;
+                  ds.Read(numMaterialEntries);
+
+                  // Check for a material table (added in version 1.1).
+
+                  // Material Data
+
+                  for(unsigned i = 0; i < numMaterialEntries; ++i)
+                  {
+                     unsigned materialID = 0;
+                     std::string materialName;
+
+                     ds.Read(materialID);
+                     ds.Read(materialName);
+
+                     // Add actual material id-name pairs.
+                     triangleData.SetMaterialName(materialID, materialName);
                   }
                }
 
@@ -380,7 +405,7 @@ namespace dtPhysics
             {
                triangleData.mVertices = tr.mData->mVertices;
                triangleData.mIndices.swap(tr.mData->mIndices);
-               triangleData.mMaterialFlags.swap(tr.mData->mMaterialFlags);
+               triangleData.SwapMaterialTable(*tr.mData);
             }
          }
       }
@@ -403,9 +428,8 @@ namespace dtPhysics
       ds.Write(PhysicsFileHeader::TRIANGLE_DATA_FILE_IDENT);
       ds.Write(PhysicsFileHeader::VERSION_MAJOR);
       ds.Write(PhysicsFileHeader::VERSION_MINOR);
-      
-      
-      //vertex data
+
+      // Vertex Data
       ds.Write(unsigned(triangleData.mVertices.size()));
       {
          std::vector<VectorType>::const_iterator iter = triangleData.mVertices.begin();
@@ -416,7 +440,7 @@ namespace dtPhysics
          }
       }
 
-      //triangle data
+      // Triangle Data
       ds.Write(unsigned(triangleData.mIndices.size()));
       {
          osg::UIntArray::const_iterator iter = triangleData.mIndices.begin();
@@ -427,7 +451,7 @@ namespace dtPhysics
          }
       }
 
-      //material data
+      // Material Data
       ds.Write(unsigned(triangleData.mMaterialFlags.size()));
       {
          osg::UIntArray::const_iterator iter = triangleData.mMaterialFlags.begin();
@@ -435,6 +459,32 @@ namespace dtPhysics
          for(;iter != iterEnd; ++iter)
          {
             ds.Write(*iter);
+         }
+      }
+
+      // Material Name Table (added in version 1.1)
+      // Check for the old way of writing materials.
+      bool oldFormat = PhysicsFileHeader::VERSION_MAJOR < 1
+            || (PhysicsFileHeader::VERSION_MAJOR == 1 && PhysicsFileHeader::VERSION_MINOR == 0);
+      if ( ! oldFormat)
+      {
+         // List materials associated with the geometry,
+         // names mapped to local material indices/flags.
+         const MaterialNameTable& matTable = triangleData.GetMaterialTable();
+
+         ds.Write(unsigned(matTable.size()));
+
+         MaterialIndex matIndex = 0;
+         std::string matName;
+         MaterialNameTable::const_iterator curIter = matTable.begin();
+         MaterialNameTable::const_iterator endIter = matTable.end();
+         for (; curIter != endIter; ++curIter)
+         {
+            matIndex = curIter->first;
+            matName = curIter->second;
+
+            ds.Write(matIndex);
+            ds.Write(matName);
          }
       }
 

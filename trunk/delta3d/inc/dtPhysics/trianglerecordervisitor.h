@@ -47,6 +47,7 @@ namespace dtPhysics
       std::string mCurrentDescription;
       osg::TriangleFunctor<T> mFunctor;
       TriangleRecorder::MaterialLookupFunc mMaterialLookup;
+      TriangleRecorder::MaterialNameFilterFunc mMaterialNameFilter;
 
       TriangleRecorderVisitor(TriangleRecorder::MaterialLookupFunc func);
       virtual ~TriangleRecorderVisitor() {}
@@ -61,6 +62,8 @@ namespace dtPhysics
       void CheckDesc(osg::Node& node);
 
       virtual dtPhysics::MaterialIndex GetMaterialID(const std::string& str);
+
+      virtual std::string GetMaterialNameFiltered(const std::string& str);
 
       virtual void apply(osg::Node& node);
 

@@ -69,6 +69,7 @@ namespace dtPhysics
       mIndices.swap(readerData.mIndices);
       mVertices.swap(readerData.mVertices);
       mMaterialFlags.swap(readerData.mMaterialFlags);
+      mMatNameTable.swap(readerData.mMatNameTable);
 
       return *this;
    }
@@ -111,6 +112,7 @@ namespace dtPhysics
       mIndices = readerData.mIndices;
       mVertices = readerData.mVertices;
       mMaterialFlags = readerData.mMaterialFlags;
+      mMatNameTable = readerData.mMatNameTable;
 
       return *this;
    }
@@ -200,6 +202,89 @@ namespace dtPhysics
    void VertexData::ClearAllCachedData()
    {
       gMeshCache.DeleteAll();
+   }
+
+   ////////////////////////////////////////////////////////////
+   void VertexData::SetMaterialName(dtPhysics::MaterialIndex matIndex, const std::string& materialName)
+   {
+      mMatNameTable[matIndex] = materialName;
+   }
+
+   ////////////////////////////////////////////////////////////
+   dtUtil::RefString VertexData::GetMaterialName(dtPhysics::MaterialIndex matIndex) const
+   {
+      dtUtil::RefString matName;
+
+      MaterialNameTable::const_iterator foundIter = mMatNameTable.find(matIndex);
+
+      if (foundIter != mMatNameTable.end())
+      {
+         matName = foundIter->second;
+      }
+
+      return matName;
+   }
+
+   ////////////////////////////////////////////////////////////
+   dtPhysics::MaterialIndex VertexData::GetMaterialIndex(const std::string& materialName) const
+   {
+      dtPhysics::MaterialIndex matIndex = INVALID_INDEX;
+
+      dtUtil::RefString curName;
+      MaterialNameTable::const_iterator curIter = mMatNameTable.begin();
+      MaterialNameTable::const_iterator endIter = mMatNameTable.end();
+      for (; curIter != endIter; ++curIter)
+      {
+         curName = curIter->second;
+
+         if (curName == materialName)
+         {
+            matIndex = curIter->first;
+         }
+      }
+
+      return matIndex;
+   }
+
+   /////////////////////////////////////////////////
+   int VertexData::GetMaterialCount() const
+   {
+      return (int) mMatNameTable.size();
+   }
+
+   /////////////////////////////////////////////////
+   const MaterialNameTable& VertexData::GetMaterialTable() const
+   {
+      return mMatNameTable;
+   }
+
+   /////////////////////////////////////////////////
+   void VertexData::SwapMaterialTable(VertexData& other)
+   {
+      mMatNameTable.swap(other.mMatNameTable);
+   }
+
+   /////////////////////////////////////////////////
+   int VertexData::ClearMaterialTable()
+   {
+      int count = (int)mMatNameTable.size();
+
+      mMatNameTable.clear();
+
+      return count;
+   }
+
+   /////////////////////////////////////////////////
+   dtPhysics::MaterialIndex VertexData::GetFirstMaterialIndex() const
+   {
+      dtPhysics::MaterialIndex matIndex = INVALID_INDEX;
+
+      if ( ! mMatNameTable.empty())
+      {
+         matIndex = mMatNameTable.begin()->first;
+      }
+
+      return matIndex;
    }
 
    /////////////////////////////////////////////////

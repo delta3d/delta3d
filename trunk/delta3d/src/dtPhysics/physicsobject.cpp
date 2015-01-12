@@ -261,6 +261,26 @@ namespace dtPhysics
    }
 
    /////////////////////////////////////////////////////////////////////////////
+   bool PhysicsObject::SetMaterialByName(const std::string& matName)
+   {
+      bool success = false;
+
+      if (PhysicsWorld::IsInitialized())
+      {
+         dtPhysics::PhysicsMaterials& materials = PhysicsWorld::GetInstance().GetMaterials();
+
+         Material* mat = materials.GetMaterial(matName);
+         if (mat != NULL)
+         {
+            SetMaterial(mat);
+            success = true;
+         }
+      }
+
+      return success;
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
    bool PhysicsObject::SetMaterialByIndex(dtPhysics::MaterialIndex index)
    {
       bool success = false;
@@ -588,6 +608,20 @@ namespace dtPhysics
             data->Scale(mDataMembers->mMeshScale);
 
             mDataMembers->CreateComplexGeometry(GetPrimitiveType(), geometryWorld, *data, GetMass());
+
+            // Attempt to assign a material from the arbitrary triangle data that was loaded.
+            if (data->GetMaterialCount() > 0)
+            {
+               // For now one material can be applied per object.
+               std::string matName = data->GetMaterialName(data->GetFirstMaterialIndex());
+
+               // Try to set the physics material by name.
+               if ( ! matName.empty() && ! SetMaterialByName(matName))
+               {
+                  LOG_ERROR("Could not assign a physics material by name \"" + matName
+                     + "\" for object \"" + GetName() + "\"");
+               }
+            }
          }
          else
          {

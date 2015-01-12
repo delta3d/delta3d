@@ -315,16 +315,16 @@ namespace dtPhysics
       return mDefaultMatId;
    }
 
-   dtPhysics::MaterialIndex PhysicsCompiler::GetMaterialIndexForGeometry(const VertexData& geometry) const
+   std::string PhysicsCompiler::GetMaterialNameForGeometry(const VertexData& geometry) const
    {
-      MaterialIndex index = mDefaultMatId;
+      std::string matName;
 
-      if ( ! geometry.mMaterialFlags.empty())
+      if (geometry.GetMaterialCount() > 0)
       {
-         index = geometry.mMaterialFlags.front();
+         matName = geometry.GetMaterialName(geometry.GetFirstMaterialIndex());
       }
 
-      return index;
+      return matName;
    }
 
    void PhysicsCompiler::SetNodeDescriptionFilter(FilterStringFunc filterFunc)
@@ -438,8 +438,10 @@ namespace dtPhysics
       // Define the function for TriangleRecorders to use for determining
       // node material indices.
       dtPhysics::TriangleRecorder::MaterialLookupFunc materialLookup(this, &PhysicsCompiler::GetMaterialIndex);
+      dtPhysics::TriangleRecorder::MaterialNameFilterFunc matNameFilter(this, &PhysicsCompiler::GetMaterialNameFiltered);
 
       TriangleVisitor mv(materialLookup);
+      mv.mMaterialNameFilter = matNameFilter;
       mv.mFunctor.SetMaxEdgeLength(options.mMaxEdgeLength);
       mv.mExportSpecificMaterial = true;
       // The material name (node description) remains the same as found on a node.
@@ -456,7 +458,7 @@ namespace dtPhysics
          matName = mDefaultMaterialName;
       }
 
-      // The material name (from a node description) may be a a key/value pair.
+      // The material name (from a node description) may be a key/value pair.
       // Ensure that the key and delimiter are removed and whitespace trimmed.
       matName = GetMaterialNameFiltered(matName);
       
@@ -497,6 +499,7 @@ namespace dtPhysics
          for (unsigned i = 0; i <= exportCount; ++i)
          {
             TriangleVisitor mv2(materialLookup);
+            mv2.mMaterialNameFilter = matNameFilter;
             mv2.mExportSpecificMaterial = true;
             mv2.mSpecificDescription = materialName; // use original string
             mv2.mSplit = i;
@@ -611,7 +614,7 @@ namespace dtPhysics
             dtUtil::MakeIndexString(unsigned(results), idxBuffer, padding);
             dtCore::RefPtr<PhysicsObject> po = PhysicsObject::CreateNew("PhysicsObject" + idxBuffer);
 
-            MaterialIndex matIndex = GetMaterialIndexForGeometry(*curData);
+            std::string matName = GetMaterialNameForGeometry(*curData);
 
             if ( ! curData->mOutputFile.IsEmpty())
             {
@@ -620,7 +623,7 @@ namespace dtPhysics
 
             po->SetPrimitiveType(*primType);
             po->SetMechanicsType(*mechType);
-            po->SetMaterialByIndex(matIndex);
+            po->SetMaterialByName(matName);
             po->CreateFromGeometry(*geom);
 
             outObjects.push_back(po.get());

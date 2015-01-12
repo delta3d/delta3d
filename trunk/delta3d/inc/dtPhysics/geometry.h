@@ -26,13 +26,15 @@
 #define DTPHYSICS_GEOMETRY_H_
 
 #include <osg/Referenced>
+#include <dtCore/refptr.h>
 #include <dtCore/resourcedescriptor.h>
 #include <dtPhysics/physicsexport.h>
 #include <dtPhysics/physicstypes.h>
 #include <dtPhysics/primitivetype.h>
 #include <dtPhysics/physicsreaderwriter.h>
+#include <dtUtil/refstring.h>
 
-#include <dtCore/refptr.h>
+#include <climits> // for unsigned INVALID_INDEX
 
 class palGeometry;
 
@@ -40,9 +42,13 @@ namespace dtPhysics
 {
    class GeometryImpl;
 
+   typedef std::map<dtPhysics::MaterialIndex, dtUtil::RefString> MaterialNameTable;
+
    class DT_PHYSICS_EXPORT VertexData : public osg::Referenced
    {
    public:
+      static const dtPhysics::MaterialIndex INVALID_INDEX = UINT_MAX;
+
       VertexData();
 
       VertexData& Swap(VertexData& readerData);
@@ -72,6 +78,22 @@ namespace dtPhysics
 
       static void ClearAllCachedData();
 
+      void SetMaterialName(dtPhysics::MaterialIndex matIndex, const std::string& materialName);
+
+      dtUtil::RefString GetMaterialName(dtPhysics::MaterialIndex matIndex) const;
+
+      dtPhysics::MaterialIndex GetMaterialIndex(const std::string& materialName) const;
+
+      int GetMaterialCount() const;
+
+      const MaterialNameTable& GetMaterialTable() const;
+
+      void SwapMaterialTable(VertexData& other);
+
+      int ClearMaterialTable();
+
+      dtPhysics::MaterialIndex GetFirstMaterialIndex() const;
+
       std::vector<VectorType> mVertices;
       std::vector<unsigned> mIndices;
       std::vector<unsigned> mMaterialFlags;
@@ -79,6 +101,8 @@ namespace dtPhysics
       dtCore::ResourceDescriptor mOutputFile;
    protected:
       ~VertexData();
+
+      MaterialNameTable mMatNameTable;
    };
 
    class DT_PHYSICS_EXPORT Geometry : public osg::Referenced

@@ -121,6 +121,7 @@ namespace dtPhysics
    };
 
    DT_IMPLEMENT_ACCESSOR(TriangleRecorder, dtPhysics::MaterialIndex, CurrentMaterial);
+   DT_IMPLEMENT_ACCESSOR(TriangleRecorder, std::string, CurrentMaterialName);
    DT_IMPLEMENT_ACCESSOR(TriangleRecorder, float, MaxEdgeLength);
 
    //////////////////////////////////////////////////////
@@ -187,7 +188,13 @@ namespace dtPhysics
             //std::cerr << std::endl;
          }
 
+         // For now only one material can be applied to an object.
+         // NOTE: This should be done per vertex when per-vertex
+         // material support becomes available.
          mData->mMaterialFlags.push_back(mCurrentMaterial);
+
+         // Add a mapping of the material index to the material name
+         mData->SetMaterialName(mCurrentMaterial, mCurrentMaterialName);
       }
       else
       {
