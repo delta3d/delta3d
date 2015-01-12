@@ -84,7 +84,8 @@ namespace dtPhysics
    {
       v.mIndices.swap(mNewVertexData->mIndices);
       v.mVertices.swap(mNewVertexData->mVertices);
-      v.mMaterialFlags.clear();
+      v.mMaterialFlags.swap(mNewVertexData->mMaterialFlags);
+      v.SwapMaterialTable(*mNewVertexData);
    }
 
    ////////////////////////////////////////////////////////////

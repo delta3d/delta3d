@@ -96,6 +96,19 @@ namespace dtPhysics
    }
 
    template<class T>
+   std::string TriangleRecorderVisitor<T>::GetMaterialNameFiltered(const std::string& str)
+   {
+      std::string matName;
+
+      if(mMaterialNameFilter.valid())
+      {
+          matName = mMaterialNameFilter(str);
+      }
+
+      return matName;
+   }
+
+   template<class T>
    void TriangleRecorderVisitor<T>::apply(osg::Geode& node)
    {
       // Obtain the description for the current node.
@@ -140,10 +153,12 @@ namespace dtPhysics
       //Simplify(&node);
 
       dtPhysics::MaterialIndex matID = GetMaterialID(mSpecificDescription);
+      std::string matName = GetMaterialNameFiltered(mSpecificDescription);
 
       osg::NodePath nodePath = getNodePath();
       mFunctor.SetMatrix(osg::computeLocalToWorld(nodePath));
       mFunctor.SetCurrentMaterial(matID);
+      mFunctor.SetCurrentMaterialName(matName);
 
       for(size_t i=0;i<node.getNumDrawables();i++)
       {

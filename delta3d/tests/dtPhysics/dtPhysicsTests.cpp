@@ -1950,8 +1950,10 @@ namespace dtPhysics
    /////////////////////////////////////////////////////////
    void dtPhysicsTests::testPhysicsReaderWriter()
    {
-
       dtCore::RefPtr<dtPhysics::VertexData> data = new dtPhysics::VertexData;
+
+      CPPUNIT_ASSERT(data->GetMaterialCount() == 0);
+      CPPUNIT_ASSERT(data->GetMaterialIndex("") == dtPhysics::VertexData::INVALID_INDEX);
       
       unsigned i = 0;
       for(; i < 100; ++i)
@@ -1969,12 +1971,25 @@ namespace dtPhysics
          data->mVertices.push_back(osg::Vec3(0.0f, 0.0f, i));
       }
 
+      const std::string MAT_NAME_A("MatA");
+      const std::string MAT_NAME_B("MatB");
+      const std::string MAT_NAME_C("MatC");
+      data->SetMaterialName(1, MAT_NAME_A);
+      CPPUNIT_ASSERT(data->GetMaterialCount() == 1);
+      data->SetMaterialName(3, MAT_NAME_B);
+      CPPUNIT_ASSERT(data->GetMaterialCount() == 2);
+      data->SetMaterialName(5, MAT_NAME_C);
+      CPPUNIT_ASSERT(data->GetMaterialCount() == 3);
+
+
       std::string filename("temp_dtPhysicsTests.phys");
       dtPhysics::PhysicsReaderWriter::SaveTriangleDataFile(*data, filename);
 
       data->mIndices.clear();
       data->mMaterialFlags.clear();
       data->mVertices.clear();
+      CPPUNIT_ASSERT(data->ClearMaterialTable() == 3);
+      CPPUNIT_ASSERT(data->GetMaterialCount() == 0);
 
       dtPhysics::PhysicsReaderWriter::LoadTriangleDataFile(*data, filename);
 
@@ -1993,5 +2008,9 @@ namespace dtPhysics
          CPPUNIT_ASSERT_EQUAL(osg::Vec3(0.0f, 0.0f, i), data->mVertices.at(i - 200));
       }
 
+      CPPUNIT_ASSERT(data->GetMaterialIndex(MAT_NAME_A) == 1);
+      CPPUNIT_ASSERT(data->GetMaterialIndex(MAT_NAME_B) == 3);
+      CPPUNIT_ASSERT(data->GetMaterialIndex(MAT_NAME_C) == 5);
+      CPPUNIT_ASSERT(data->GetMaterialCount() == 3);
    }
 }

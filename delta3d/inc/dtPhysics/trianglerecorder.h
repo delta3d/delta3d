@@ -43,6 +43,7 @@ namespace dtPhysics
          ~TriangleRecorder();
 
          typedef dtUtil::Functor<dtPhysics::MaterialIndex, TYPELIST_1(const std::string&)> MaterialLookupFunc;
+         typedef dtUtil::Functor<std::string, TYPELIST_1(const std::string&)> MaterialNameFilterFunc;
 
          /**
           * Records all the triangles in the buffors on this object for the given node.
@@ -63,6 +64,7 @@ namespace dtPhysics
          void SetMatrix(const MatrixType& m);
 
          DT_DECLARE_ACCESSOR(dtPhysics::MaterialIndex, CurrentMaterial);
+         DT_DECLARE_ACCESSOR(std::string, CurrentMaterialName);
          DT_DECLARE_ACCESSOR(float, MaxEdgeLength);
 
          /**

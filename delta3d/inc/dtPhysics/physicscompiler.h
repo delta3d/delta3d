@@ -247,9 +247,9 @@ namespace dtPhysics
        * Convenience method for determining the material associated with
        * the specified geometry data.
        * @param geometry Geometric data that may have material data.
-       * @return Index of the physics material associated with the geometry data.
+       * @return Name of the physics material associated with the geometry data.
        */
-      dtPhysics::MaterialIndex GetMaterialIndexForGeometry(const VertexData& geometry) const;
+      std::string GetMaterialNameForGeometry(const VertexData& geometry) const;
 
       /**
        * Convenience method for acquiriing the material object associated with

@@ -841,6 +841,9 @@ namespace dtPhysics
          CPPUNIT_ASSERT(data[NAME_A][0]->mMaterialFlags[0] == mMatA->GetId());
          CPPUNIT_ASSERT(data[NAME_B][0]->mMaterialFlags[0] == mMatB->GetId());
          CPPUNIT_ASSERT(data[NAME_C][0]->mMaterialFlags[0] == mMatC->GetId());
+         CPPUNIT_ASSERT(data[NAME_A][0]->GetFirstMaterialIndex() == mMatA->GetId());
+         CPPUNIT_ASSERT(data[NAME_B][0]->GetFirstMaterialIndex() == mMatB->GetId());
+         CPPUNIT_ASSERT(data[NAME_C][0]->GetFirstMaterialIndex() == mMatC->GetId());
 
          RayCast rayA; // Quadrant 1
          rayA.SetOrigin(VectorType(5.0, 5.0, 1.0));
