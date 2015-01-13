@@ -145,6 +145,12 @@ namespace dtPhysics
        */
       bool SetMargin(Real);
 
+      /**
+       * Returns the vertex data that was used to generate arbitrary geometry,
+       * whether it be convex or concave.
+       */
+      const VertexData* GetVertexData() const;
+
    protected:
 
       Geometry(PrimitiveType& primType);

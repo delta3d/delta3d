@@ -868,6 +868,11 @@ namespace dtPhysics
          dtCore::RefPtr<dtPhysics::Geometry> geomB = dtPhysics::Geometry::CreateConcaveGeometry(xform, *data[NAME_B][0], 0.0f);
          dtCore::RefPtr<dtPhysics::Geometry> geomC = dtPhysics::Geometry::CreateConcaveGeometry(xform, *data[NAME_C][0], 0.0f);
 
+         // --- Ensure the geometry has a reference back to the original vertex data.
+         CPPUNIT_ASSERT(geomA->GetVertexData() == data[NAME_A][0].get());
+         CPPUNIT_ASSERT(geomB->GetVertexData() == data[NAME_B][0].get());
+         CPPUNIT_ASSERT(geomC->GetVertexData() == data[NAME_C][0].get());
+
          dtCore::RefPtr<PhysicsObject> poA = PhysicsObject::CreateNew("TestPlanesA");
          dtCore::RefPtr<PhysicsObject> poB = PhysicsObject::CreateNew("TestPlanesB");
          dtCore::RefPtr<PhysicsObject> poC = PhysicsObject::CreateNew("TestPlanesC");
@@ -881,14 +886,14 @@ namespace dtPhysics
          poB->SetMechanicsType(mechType);
          poC->SetMechanicsType(mechType);
 
-         // TODO: Remove this once materials are assigned via vertex data.
-         poA->SetMaterial(mMatA);
-         poB->SetMaterial(mMatB);
-         poC->SetMaterial(mMatC);
-
          poA->CreateFromGeometry(*geomA);
          poB->CreateFromGeometry(*geomB);
          poC->CreateFromGeometry(*geomC);
+
+         // --- Ensure that the appropriate materials have been set by the geometry.
+         CPPUNIT_ASSERT(poA->GetMaterial() == mMatA);
+         CPPUNIT_ASSERT(poB->GetMaterial() == mMatB);
+         CPPUNIT_ASSERT(poC->GetMaterial() == mMatC);
 
 
          // Cast rays for material detection.
