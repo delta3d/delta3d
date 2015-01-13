@@ -566,6 +566,21 @@ namespace dtPhysics
          return false;
       }
 
+      // Attempt to assign a material from the arbitrary triangle data that may have been loaded.
+      const dtPhysics::VertexData* vertData = geometry.GetVertexData();
+      if (vertData != NULL && vertData->GetMaterialCount() > 0)
+      {
+         // For now one material can be applied per object.
+         std::string matName = vertData->GetMaterialName(vertData->GetFirstMaterialIndex());
+
+         // Try to set the physics material by name.
+         if ( ! matName.empty() && ! SetMaterialByName(matName))
+         {
+            LOG_ERROR("Could not assign a physics material by name \"" + matName
+               + "\" for object \"" + GetName() + "\"");
+         }
+      }
+
       // Set the default material if nothing is set.
       if (GetMaterial() == NULL)
       {

@@ -312,6 +312,7 @@ namespace dtPhysics
       palGeometry* mGeom;
       TransformType mOffsetTransform;
       PrimitiveType* mPrimitiveType;
+      dtCore::ObserverPtr<dtPhysics::VertexData> mVertData;
    };
 
    /////////////////////////////////////
@@ -434,10 +435,14 @@ namespace dtPhysics
 
          //init the geom
          convGeom->Init(palMat, reinterpret_cast<Real*>(&newData->mVertices.front()), newData->mVertices.size(), reinterpret_cast<int*>(&newData->mIndices.front()), newData->mIndices.size(), mass);
+
+         geometry->mImpl->mVertData = newData.get();
       }
       else
       {
          convGeom->Init(palMat, reinterpret_cast<Real*>(&data.mVertices.front()), data.mVertices.size(), reinterpret_cast<int*>(&data.mIndices.front()), data.mIndices.size(), mass);
+         
+         geometry->mImpl->mVertData = &data;
       }
       return geometry;
    }
@@ -455,6 +460,7 @@ namespace dtPhysics
       }
 
       geometry->mImpl->mGeom = convGeom;
+      geometry->mImpl->mVertData = &data;
 
       MatrixType osgMat;
       worldxform.Get(osgMat);
@@ -507,6 +513,12 @@ namespace dtPhysics
    void Geometry::SetMass(Real mass)
    {
       mImpl->mGeom->SetMass(Float(mass));
+   }
+
+   /////////////////////////////////////
+   const VertexData* Geometry::GetVertexData() const
+   {
+      return mImpl->mVertData.get();
    }
 
 }
