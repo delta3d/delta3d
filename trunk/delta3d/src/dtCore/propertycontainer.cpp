@@ -246,6 +246,8 @@ namespace dtCore
       if (param)
       {
          param->ApplyValueToProperty(prop);
+         // This is set when property values are set to the default manually, but resetting needs to clear it.
+         prop.SetAlwaysSave(false);
       }
    }
 

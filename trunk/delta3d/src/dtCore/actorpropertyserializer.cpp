@@ -305,6 +305,10 @@ namespace dtCore
             if (data.mActorPropertyType == NULL)
             {
                data.mActorPropertyType = ParsePropertyType(localname);
+               // If the property value was read from the map, that means we want to resave it.
+               // This makes it so that default values can be forced to save, or not forced to save and that decision
+               // will be retained.
+               data.mActorProperty->SetAlwaysSave(true);
             }
 
             if (data.mInGroupProperty)
