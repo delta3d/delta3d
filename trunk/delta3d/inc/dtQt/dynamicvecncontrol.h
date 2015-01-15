@@ -264,21 +264,21 @@ namespace dtQt
 
          PropertyGetValueType vectorValue = mProperty->GetValue();
 
-         QString result = "(X="  + QString::number(vectorValue.x(), 'f', NUM_DECIMAL_DIGITS) +
-            ", Y=" + QString::number(vectorValue.y(), 'f', NUM_DECIMAL_DIGITS) ;
+         QString result = "(X="  + RealToString(vectorValue.x(), NUM_DECIMAL_DIGITS) +
+            ", Y=" + RealToString(vectorValue.y(), NUM_DECIMAL_DIGITS) ;
 
          // Static if
          if (PropertyGetValueType::num_components > 2)
          {
             //Had to use [] access because the code still must parse for vecs without a .z()
-            result += ", Z=" + QString::number(vectorValue[2], 'f', NUM_DECIMAL_DIGITS) ;
+            result += ", Z=" + RealToString(vectorValue[2], NUM_DECIMAL_DIGITS) ;
          }
 
          // Static if
          if (PropertyGetValueType::num_components > 3)
          {
             //Had to use [] access because the code still must parse for vecs without a .w()
-            result += ", W=" + QString::number(vectorValue[3], 'f', NUM_DECIMAL_DIGITS);
+            result += ", W=" + RealToString(vectorValue[3], NUM_DECIMAL_DIGITS);
          }
 
          result += ")";

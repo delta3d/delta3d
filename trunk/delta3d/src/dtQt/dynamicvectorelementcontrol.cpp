@@ -65,6 +65,10 @@ namespace dtQt
       mActiveProp = newVectorProp;
 
       mWhichType = VEC2F;
+
+      // determine whether we have floats or doubles
+      // Doesn't matter whether this is a vec2, 3, or 4.
+      mIsVecFloat = (sizeof(dtCore::Vec2fActorProperty::GetValueType::value_type) == sizeof(float));
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -84,6 +88,9 @@ namespace dtQt
       mActiveProp = newVectorProp;
 
       mWhichType = VEC2D;
+      // determine whether we have floats or doubles
+      // Doesn't matter whether this is a vec2, 3, or 4.
+      mIsVecFloat = (sizeof(dtCore::Vec2dActorProperty::GetValueType::value_type) == sizeof(float));
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -103,6 +110,7 @@ namespace dtQt
       mActiveProp = newVectorProp;
 
       mWhichType = VEC3F;
+      mIsVecFloat = (sizeof(dtCore::Vec3fActorProperty::GetValueType::value_type) == sizeof(float));
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -122,6 +130,7 @@ namespace dtQt
       mActiveProp = newVectorProp;
 
       mWhichType = VEC3D;
+      mIsVecFloat = (sizeof(dtCore::Vec3dActorProperty::GetValueType::value_type) == sizeof(float));
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -141,6 +150,7 @@ namespace dtQt
       mActiveProp = newVectorProp;
 
       mWhichType = VEC4F;
+      mIsVecFloat = (sizeof(dtCore::Vec4fActorProperty::GetValueType::value_type) == sizeof(float));
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -160,6 +170,7 @@ namespace dtQt
       mActiveProp = newVectorProp;
 
       mWhichType = VEC4D;
+      mIsVecFloat = (sizeof(dtCore::Vec4dActorProperty::GetValueType::value_type) == sizeof(float));
    }
 
    /////////////////////////////////////////////////////////////////////////////////
@@ -172,11 +183,6 @@ namespace dtQt
       PropertyEditorModel* newModel, dtCore::PropertyContainer* newPC, dtCore::ActorProperty* newProperty)
    {
       DynamicAbstractControl::InitializeData(newParent, newModel, newPC, newProperty);
-
-      // determine whether we have floats or doubles
-      // Doesn't matter whether this is a vec2, 3, or 4.
-      osg::Vec3 testVect;
-      mIsVecFloat = (sizeof(testVect.x()) == sizeof(float));
       if (mIsVecFloat)
       {
          mToolTipTypeLabel = "FLOAT";
@@ -185,7 +191,6 @@ namespace dtQt
       {
          mToolTipTypeLabel = "DOUBLE";
       }
-
    }
 
    /////////////////////////////////////////////////////////////////////////////////
@@ -202,7 +207,7 @@ namespace dtQt
          osg::Vec3 testVect;
          const bool isVecFloat = (sizeof(testVect.x()) == sizeof(float));
 
-         QString strValue = QString::number(value, 'f', isVecFloat ? NUM_DECIMAL_DIGITS_FLOAT : NUM_DECIMAL_DIGITS_DOUBLE);
+         QString strValue = RealToString(value, mIsVecFloat ? NUM_DECIMAL_DIGITS_FLOAT : NUM_DECIMAL_DIGITS_DOUBLE);
          mTemporaryEditControl->setText(strValue);
          mTemporaryEditControl->selectAll();
       }
@@ -228,7 +233,7 @@ namespace dtQt
          {
             // Save the data if they are different.  Note, we also need to compare the QString value,
             // else we get epsilon differences that cause the map to be marked dirty with no edits :(
-            QString proxyValue = QString::number(getValue(), 'f', NUM_DECIMAL_DIGITS_DOUBLE);
+            QString proxyValue = RealToString(getValue(), mIsVecFloat ? NUM_DECIMAL_DIGITS_FLOAT : NUM_DECIMAL_DIGITS_DOUBLE);
             QString newValue = editBox->text();
             if (doubleResult != getValue() && proxyValue != newValue)
             {
@@ -259,7 +264,7 @@ namespace dtQt
       //editBox = new QLineEdit(parent);
       mTemporaryEditControl = new SubQLineEdit (parent, this);
       QDoubleValidator* validator = new QDoubleValidator(mTemporaryEditControl);
-      validator->setDecimals(NUM_DECIMAL_DIGITS_DOUBLE);
+      validator->setDecimals(mIsVecFloat ? NUM_DECIMAL_DIGITS_FLOAT : NUM_DECIMAL_DIGITS_DOUBLE);
       mTemporaryEditControl->setValidator(validator);
       mWrapper = mTemporaryEditControl;
 
@@ -304,7 +309,8 @@ namespace dtQt
       if (doPropertiesMatch())
       {
          double value = getValue();
-         return QString::number(value, 'f', NUM_DECIMAL_DIGITS_DOUBLE);
+         QString result = RealToString(value, mIsVecFloat ? NUM_DECIMAL_DIGITS_FLOAT : NUM_DECIMAL_DIGITS_DOUBLE);
+         return result;
       }
       else
       {

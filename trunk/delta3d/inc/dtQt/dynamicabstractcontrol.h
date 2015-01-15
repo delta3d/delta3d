@@ -213,6 +213,11 @@ namespace dtQt
       virtual const QString getValueAsString();
 
       /**
+       * Converts of a float to as string in a consistent manner for the property editor.
+       */
+      static QString RealToString( qreal num, int digits );
+
+      /**
       * Returns true if this control is typically editable.  For instance, a float control is editable,
       * but a group isn't.  Note that the subelements of a vector are editor whereas the vector control
       * itself isn't editable.  If you return true, then you need to be able to delegate a control
