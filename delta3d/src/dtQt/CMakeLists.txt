@@ -27,14 +27,10 @@ dynamiccolorrgbacontrol.cpp
 dynamiccolorelementcontrol.cpp
 dynamiccontainercontrol.cpp
 dynamiccontainerselectorcontrol.cpp
-dynamicdoublecontrol.cpp
 dynamicenumcontrol.cpp
-dynamicfloatcontrol.cpp
 dynamicgameeventcontrol.cpp
 dynamicgroupcontrol.cpp
-dynamicintcontrol.cpp
 dynamiclabelcontrol.cpp
-dynamiclongcontrol.cpp
 dynamicpropertycontainercontrol.cpp
 dynamicresourcecontrol.cpp
 dynamicstringcontrol.cpp

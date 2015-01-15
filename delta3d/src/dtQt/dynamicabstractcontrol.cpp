@@ -41,12 +41,9 @@
 #include <dtQt/dynamiccolorrgbacontrol.h>
 #include <dtQt/dynamiccontainercontrol.h>
 #include <dtQt/dynamiccontainerselectorcontrol.h>
-#include <dtQt/dynamicdoublecontrol.h>
 #include <dtQt/dynamicenumcontrol.h>
-#include <dtQt/dynamicfloatcontrol.h>
-#include <dtQt/dynamicintcontrol.h>
+#include <dtQt/dynamicnumericcontrol.h>
 #include <dtQt/dynamiclabelcontrol.h>
-#include <dtQt/dynamiclongcontrol.h>
 #include <dtQt/dynamicstringcontrol.h>
 #include <dtQt/dynamicvecncontrol.h>
 #include <dtQt/propertyeditortreeview.h>
@@ -74,10 +71,10 @@ namespace dtQt
    {
       // register all the data types with the dynamic control factory
       RegisterControlForDataType<DynamicStringControl>(dtCore::DataType::STRING);
-      RegisterControlForDataType<DynamicFloatControl>(dtCore::DataType::FLOAT);
-      RegisterControlForDataType<DynamicDoubleControl>(dtCore::DataType::DOUBLE);
-      RegisterControlForDataType<DynamicIntControl>(dtCore::DataType::INT);
-      RegisterControlForDataType<DynamicLongControl>(dtCore::DataType::LONGINT);
+      RegisterControlForDataType<DynamicNumericControl<dtCore::FloatActorProperty, QDoubleValidator> >(dtCore::DataType::FLOAT);
+      RegisterControlForDataType<DynamicNumericControl<dtCore::DoubleActorProperty, QDoubleValidator> >(dtCore::DataType::DOUBLE);
+      RegisterControlForDataType<DynamicNumericControl<dtCore::IntActorProperty, QIntValidator> >(dtCore::DataType::INT);
+      RegisterControlForDataType<DynamicNumericControl<dtCore::LongActorProperty, QIntValidator> >(dtCore::DataType::LONGINT);
       RegisterControlForDataType<DynamicBoolControl>(dtCore::DataType::BOOLEAN);
       RegisterControlForDataType<DynamicVecNControl<dtCore::Vec2ActorProperty> >(dtCore::DataType::VEC2);
       RegisterControlForDataType<DynamicVecNControl<dtCore::Vec2fActorProperty> >(dtCore::DataType::VEC2F);
@@ -410,6 +407,17 @@ namespace dtQt
    {
       NotifyParentOfPreUpdate();
       return QString("");
+   }
+
+   /////////////////////////////////////////////////////////////////////////////////
+   QString DynamicAbstractControl::RealToString( qreal num, int digits )
+   {
+       QString str = QString::number( num, 'f', digits );
+
+       str.remove( QRegExp("0+$") ); // Remove any number of trailing 0's
+       str.remove( QRegExp("\\.$") ); // If the last character is just a '.' then remove it
+
+       return str;
    }
 
    /////////////////////////////////////////////////////////////////////////////////
