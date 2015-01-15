@@ -306,7 +306,7 @@ namespace dtQt
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void DynamicAbstractControl::CopyBaseValueToLinkedProperties()
+   void DynamicAbstractControl::CopyBaseValueToLinkedProperties(bool resetAlwaysSave)
    {
       std::string baseValue = mBaseProperty->ToString();
 
@@ -325,6 +325,8 @@ namespace dtQt
                linkedProp->FromString(baseValue);
                emit PropertyAboutToChange(*data.propCon, *linkedProp, oldValue, baseValue);
                emit PropertyChanged(*data.propCon, *linkedProp);
+               if (resetAlwaysSave)
+                  linkedProp->SetAlwaysSave(false);
             }
          }
       }
@@ -515,6 +517,8 @@ namespace dtQt
       emit PropertyAboutToChange(*mPropContainer, *mBaseProperty,
          oldValue, mBaseProperty->ToString());
       emit PropertyChanged(*mPropContainer, *mBaseProperty);
+      // emitting property changed probably flags always save to true, which is the opposite of what we want here.
+      mBaseProperty->SetAlwaysSave(false);
 
       CopyBaseValueToLinkedProperties();
    }
@@ -702,7 +706,7 @@ namespace dtQt
       }
 
       if (!mPropContainer->DoesDefaultExist(*mBaseProperty) ||
-          mPropContainer->IsPropertyDefault(*mBaseProperty))
+          (mPropContainer->IsPropertyDefault(*mBaseProperty) && !mBaseProperty->GetAlwaysSave() ) )
       {
          return true;
       }
@@ -717,5 +721,6 @@ namespace dtQt
    {
       NotifyParentOfPreUpdate();
       updateEditorFromModel(mWrapper);
+      property.SetAlwaysSave(true);
    }
 } // namespace dtEditQt

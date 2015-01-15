@@ -155,7 +155,7 @@ namespace dtQt
        *	Sets the value of all linked properties to the current value
        * of the base property.
        */
-      void CopyBaseValueToLinkedProperties();
+      void CopyBaseValueToLinkedProperties(bool resetAlwaysSave = false);
 
       /**
       * Returns the parent of this control.  NULL if there is no parent.  All controls have
