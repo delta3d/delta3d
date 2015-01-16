@@ -67,16 +67,16 @@ namespace dtQt
                      propertyControl->SetTreeView(mPropertyTree);
                      propertyControl->SetDynamicControlFactory(GetDynamicControlFactory());
 
-                     int linkCount = (int)mLinkedProperties.size();
-                     for (int linkIndex = 0; linkIndex < linkCount; ++linkIndex)
+                     size_t linkCount = mLinkedProperties.size();
+                     for (size_t linkIndex = 0; linkIndex < linkCount; ++linkIndex)
                      {
                         LinkedPropertyData& data = mLinkedProperties[linkIndex];
                         dtCore::BasePropertyContainerActorProperty* linkedProp =
                            dynamic_cast<dtCore::BasePropertyContainerActorProperty*>(data.property);
-                        if (linkedProp)
+                        if (linkedProp != NULL)
                         {
                            dtCore::RefPtr<dtCore::PropertyContainer> linkedCon = linkedProp->GetValue();
-                           if (linkedCon)
+                           if (linkedCon.valid())
                            {
                               propertyControl->AddLinkedProperty(linkedCon, linkedCon->GetProperty(propType->GetName()));
                            }
