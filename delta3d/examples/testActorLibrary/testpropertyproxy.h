@@ -87,6 +87,7 @@ public:
    DT_DECLARE_ACCESSOR_INLINE(long, TestLong)
    DT_DECLARE_ACCESSOR_INLINE(std::string, TestString)
    DT_DECLARE_ACCESSOR_INLINE(std::string, TestStringWithLength)
+   DT_DECLARE_ACCESSOR_INLINE(unsigned int, TestBitmask)
    DT_DECLARE_ACCESSOR_INLINE(osg::Vec2, TestVec2)
    DT_DECLARE_ACCESSOR_INLINE(osg::Vec2f, TestVec2f)
    DT_DECLARE_ACCESSOR_INLINE(osg::Vec2d, TestVec2d)
@@ -143,6 +144,8 @@ public:
    void ArrayArraySetValue(const std::vector<std::vector<int> >& value);
    void SetIntArrayValue(int value);
    int GetIntArrayValue();
+
+   void GetBitMasks(std::vector<std::string>& names, std::vector<unsigned int>& values);
 
 protected:
    virtual ~ExampleTestPropertyProxy() { }
