@@ -265,6 +265,7 @@ namespace dtQt
                         dynamic_cast<dtCore::ArrayActorPropertyBase*>(data.property);
                      if (linkedArrayProp)
                      {
+                        linkedArrayProp->SetIndex(childCount + childIndex);
                         dtCore::ActorProperty* linkedPropType = linkedArrayProp->GetArrayProperty();
                         element->AddLinkedProperty(data.propCon, linkedPropType);
                      }
