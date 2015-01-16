@@ -1,0 +1,56 @@
+<?xml version="1.0" ?>
+<GUILayout>
+   <!-- MAIN CONTAINER WINDOW (ROOT & BACKGROUND IMAGE) -->
+
+   <!-- FRAME -->
+   <Window Name="Root_MenuScreen" Type="DefaultWindow">
+      <Property Name="UnifiedSize" Value="{{1.0,0},{1.0,0}}"/>
+      <Property Name="UnifiedPosition" Value="{{0.0,0},{0.0,0}}"/>
+      <Property Name="MousePassThroughEnabled" Value="True"/>
+      <Property Name="ZOrderChangeEnabled" Value="False"/>
+      <Property Name="AlwaysOnTop" Value="True"/>
+      <Property Name="HorizontalAlignment" Value="Left"/>
+      <Property Name="VerticalAlignment" Value="Bottom"/>
+
+      <!-- TITLE - 1 -->
+      <Window Name="MenuScreen_Title" Type="WindowsLook/StaticText">
+         <Property Name="UnifiedSize" Value="{{0.8,0},{0.095,0}}"/>
+         <Property Name="UnifiedPosition" Value="{{0.0,0},{0.0,0}}"/>
+         <Property Name="MousePassThroughEnabled" Value="True"/>
+         <Property Name="BackgroundEnabled" Value="False"/>
+         <Property Name="FrameEnabled" Value="False"/>
+         <Property Name="HorzFormatting" Value="HorzCentred"/>
+         <Property Name="HorizontalAlignment" Value="Centre"/>
+         <Property Name="VerticalAlignment" Value="Top"/>
+         <Property Name="Font" Value="Hobo"/>
+         <Property Name="AlwaysOnTop" Value="True"/>
+         <Property Name="TextColours" Value="FFFFFFFF"/>
+         <Property Name="Text" Value="Menu Screen"/>
+      </Window>
+
+      <!-- BUTTON -->
+      <Window Name="MenuScreen_Button_Back" Type="TestApp/Button">
+         <Property Name="UnifiedSize" Value="{{0.2,0},{0.075,0}}"/>
+         <Property Name="UnifiedPosition" Value="{{-0.15,0},{-0.05,0}}"/>
+         <Property Name="HorizontalAlignment" Value="Centre"/>
+         <Property Name="VerticalAlignment" Value="Bottom"/>
+         <Property Name="Font" Value="Hobo"/>
+         <Property Name="AlwaysOnTop" Value="True"/>
+         <Property Name="Text" Value="Back"/>
+         <Property Name="Action" Value="TRANSITION_BACK"/>
+      </Window>
+
+      <!-- BUTTON -->
+      <Window Name="MenuScreen_Button_Start" Type="TestApp/Button">
+         <Property Name="UnifiedSize" Value="{{0.2,0},{0.075,0}}"/>
+         <Property Name="UnifiedPosition" Value="{{0.15,0},{-0.05,0}}"/>
+         <Property Name="HorizontalAlignment" Value="Centre"/>
+         <Property Name="VerticalAlignment" Value="Bottom"/>
+         <Property Name="Font" Value="Hobo"/>
+         <Property Name="AlwaysOnTop" Value="True"/>
+         <Property Name="Text" Value="Start"/>
+         <Property Name="Action" Value="TRANSITION_FORWARD"/>
+      </Window>
+        
+	</Window>
+</GUILayout>

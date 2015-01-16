@@ -1,0 +1,31 @@
+<?xml version="1.0" ?>
+<GUILayout>
+   <!-- MAIN CONTAINER WINDOW (ROOT & BACKGROUND IMAGE) -->
+
+   <!-- FRAME -->
+   <Window Name="Root_TitleScreen" Type="WindowsLook/StaticImage">
+      <Property Name="UnifiedSize" Value="{{1.0,0},{1.0,0}}"/>
+      <Property Name="UnifiedPosition" Value="{{0.0,0},{0.0,0}}"/>
+      <Property Name="MousePassThroughEnabled" Value="True"/>
+      <Property Name="ZOrderChangeEnabled" Value="False"/>
+      <Property Name="AlwaysOnTop" Value="True"/>
+      <Property Name="BackgroundEnabled" Value="False"/>
+      <Property Name="FrameEnabled" Value="False"/>
+      <Property Name="ImageColours" Value="FFFFFFFF"/>
+      <Property Name="Image" Value="set:TestApp_TitleScreen image:Background"/>
+
+      
+      <!-- BUTTON -->
+      <Window Name="TitleScreen_Button_Menu" Type="TestApp/Button">
+         <Property Name="UnifiedSize" Value="{{0.2,0},{0.075,0}}"/>
+         <Property Name="UnifiedPosition" Value="{{0.0,0},{-0.05,0}}"/>
+         <Property Name="HorizontalAlignment" Value="Centre"/>
+         <Property Name="VerticalAlignment" Value="Bottom"/>
+         <Property Name="Font" Value="Hobo"/>
+         <Property Name="AlwaysOnTop" Value="True"/>
+         <Property Name="Text" Value="Start"/>
+         <Property Name="Action" Value="TRANSITION_FORWARD"/>
+      </Window>
+        
+	</Window>
+</GUILayout>

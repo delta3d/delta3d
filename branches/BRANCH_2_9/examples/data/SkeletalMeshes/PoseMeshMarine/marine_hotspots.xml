@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<HotSpotFile>
+	<HotSpot name="HotSpot_Nose">
+		<Parent>Bip01 Head</Parent>
+		<LocalTranslation>0.09 0.12 0.0</LocalTranslation>
+		<LocalRotation>0.0 0.0 0.0</LocalRotation>
+	</HotSpot>
+	<HotSpot name="CameraHotSpot">
+		<Parent>Bip01 Head</Parent>
+		<LocalTranslation>0.25 -0.75 0.0</LocalTranslation>
+		<LocalRotation>0.0 0.0 90.0</LocalRotation>
+	</HotSpot>
+	<HotSpot name="HotSpot_Bone_LEye">
+		<Parent>Bone_REye</Parent>
+		<LocalTranslation>0.02 0.0 0.0</LocalTranslation>
+		<LocalRotation>90.0 90.0 0.0</LocalRotation>
+	</HotSpot>
+
+	<HotSpot name="HotSpot_Bone_REye">
+		<Parent>Bone_LEye</Parent>
+		<LocalTranslation>0.02 0.0 0.0</LocalTranslation>
+		<LocalRotation>90.0 90.0 0.0</LocalRotation>
+	</HotSpot>
+
+	<HotSpot name="HotSpot_Head_Initial_Frame">
+		<Parent>Bip01 Neck</Parent>
+		<LocalTranslation>0.125 0.0 0.0</LocalTranslation>
+		<LocalRotation>180.0 0.0 90.0</LocalRotation>
+	</HotSpot>
+
+    <HotSpot name="HotSpot_Torso">
+		<Parent>Bip01 Spine3</Parent>
+		<LocalTranslation>0.0 0.0 0.0</LocalTranslation>
+		<LocalRotation>180.0 0.0 90.0</LocalRotation>
+	</HotSpot>
+	
+    <HotSpot name="HotSpot_Pelvis">
+		<Parent>Bip01 Pelvis</Parent>
+		<LocalTranslation>0.0 0.0 0.0</LocalTranslation>
+		<LocalRotation>0.0 0.0 0.0</LocalRotation>
+	</HotSpot>	
+
+</HotSpotFile>

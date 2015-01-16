@@ -1,0 +1,18 @@
+<?xml version="1.0" ?>
+<GUILayout>
+   <!-- MAIN CONTAINER WINDOW (ROOT & BACKGROUND IMAGE) -->
+
+   <!-- FRAME -->
+   <Window Name="Root_LoadingScreen" Type="WindowsLook/StaticImage">
+      <Property Name="UnifiedSize" Value="{{1.0,0},{1.0,0}}"/>
+      <Property Name="UnifiedPosition" Value="{{0.0,0},{0.0,0}}"/>
+      <Property Name="MousePassThroughEnabled" Value="True"/>
+      <Property Name="ZOrderChangeEnabled" Value="False"/>
+      <Property Name="AlwaysOnTop" Value="True"/>
+      <Property Name="BackgroundEnabled" Value="False"/>
+      <Property Name="FrameEnabled" Value="False"/>
+      <Property Name="ImageColours" Value="FFFFFFFF"/>
+      <Property Name="Image" Value="set:TestApp_LoadingScreen image:Background"/>
+        
+	</Window>
+</GUILayout>

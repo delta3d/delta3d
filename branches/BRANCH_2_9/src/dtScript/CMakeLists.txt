@@ -1,0 +1,30 @@
+
+SET(LIB_NAME     dtScript)
+
+SET(HEADER_PATH ${DELTA3D_SOURCE_DIR}/inc/${LIB_NAME})
+SET(SOURCE_PATH ${DELTA3D_SOURCE_DIR}/src/${LIB_NAME})
+file(GLOB LIB_PUBLIC_HEADERS "${HEADER_PATH}/*.h")
+file(GLOB LIB_SOURCES "*.cpp")
+list(REMOVE_ITEM LIB_SOURCES ${SOURCE_PATH}/precomp.cpp)
+
+INCLUDE_DIRECTORIES( ${PYTHON_INCLUDE_PATH} )
+
+#Use the debug python library, should it exist, otherwise, use the release version
+SET (PYTHON_DEBUG ${PYTHON_DEBUG_LIBRARY})
+
+IF (NOT PYTHON_DEBUG)
+  SET (PYTHON_DEBUG ${PYTHON_LIBRARY})
+ENDIF (NOT PYTHON_DEBUG)
+
+                       
+set(LIB_DEPS
+  ${DTUTIL_LIBRARY}
+  ${DTCORE_LIBRARY}
+  optimized ${PYTHON_LIBRARY} debug ${PYTHON_DEBUG}
+ )
+
+DELTA3D_ADD_LIBRARY(${LIB_NAME} DT_SCRIPT_LIBRARY)
+
+IF (MSVC_IDE)
+  SET(CMAKE_SHARED_LINKER_FLAGS "/NODEFAULTLIB:python25_d /NODEFAULTLIB:python26_d /NODEFAULTLIB:python27_d") #ignore the auto-link library Python adds in
+ENDIF (MSVC_IDE)
