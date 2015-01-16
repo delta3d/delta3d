@@ -32,6 +32,7 @@
 
 #include <dtCore/arrayactorproperty.h>
 #include <dtCore/arrayactorpropertybase.h>
+#include <dtCore/bitmaskactorproperty.h>
 #include <dtCore/colorrgbaactorproperty.h>
 #include <dtCore/containeractorproperty.h>
 #include <dtCore/groupactorproperty.h>
@@ -142,6 +143,12 @@ void ExampleTestPropertyProxy::BuildPropertyMap()
    DT_REGISTER_PROPERTY_WITH_NAME_AND_LABEL(TestStringWithLength, "Test_String2", "Test String (max 10)",
             "Holds a test String property with a max length of 10",
             PropRegHelperType, propRegHelper);
+
+   AddProperty(new BitMaskActorProperty("Test_Bitmask", "Test Bitmask",
+      BitMaskActorProperty::SetFuncType(this, &ExampleTestPropertyProxy::SetTestBitmask),
+      BitMaskActorProperty::GetFuncType(this, &ExampleTestPropertyProxy::GetTestBitmask),
+      BitMaskActorProperty::GetMaskListFuncType(this, &ExampleTestPropertyProxy::GetBitMasks),
+      "Holds a test Bitmask property", GROUPNAME));
 
    static_cast<dtCore::StringActorProperty*>(GetProperty("Test_String2"))->SetMaxLength(10);
 
@@ -468,6 +475,20 @@ int ExampleTestPropertyProxy::GetIntArrayValue()
    }
 
    return 0;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ExampleTestPropertyProxy::GetBitMasks(std::vector<std::string>& names, std::vector<unsigned int>& values)
+{
+   names.push_back("Bit_1");
+   names.push_back("Bit_2");
+   names.push_back("Bit_3");
+   names.push_back("Bit_4");
+
+   values.push_back(1);
+   values.push_back(2);
+   values.push_back(4);
+   values.push_back(8);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
