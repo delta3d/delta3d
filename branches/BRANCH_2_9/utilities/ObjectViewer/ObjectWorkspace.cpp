@@ -23,7 +23,6 @@
 #include <dtQt/basepropertycontrol.h>
 
 #include <dtCore/emptyactor.h>
-#include <dtCore/osgnodeactors.h>
 
 #include <QtGui/QMenuBar>
 #include <QtGui/QAction>
