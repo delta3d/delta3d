@@ -109,14 +109,14 @@ namespace dtPhysics
    {
       static const dtPhysics::Real DEFAULT_COLLISION_MARGIN;
       static const dtPhysics::Real DEFAULT_MASS;
-      static const PrimitiveType *const DEFAULT_PRIMITIVE_TYPE;
-      static const MechanicsType *const DEFAULT_MECHANICS_TYPE;
+      static PrimitiveType *const DEFAULT_PRIMITIVE_TYPE;
+      static MechanicsType *const DEFAULT_MECHANICS_TYPE;
 
       PhysicsObjectOptions();
 
       // Geometry & Object Setup Options
-      const PrimitiveType* mPrimitiveType;
-      const MechanicsType* mMechanicsType;
+      PrimitiveType* mPrimitiveType;
+      MechanicsType* mMechanicsType;
       bool mIsPolytope; // For convex hull only
       bool mClearExistingObjects;
       dtPhysics::Real mMass;

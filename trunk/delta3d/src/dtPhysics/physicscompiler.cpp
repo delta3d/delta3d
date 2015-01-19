@@ -44,8 +44,6 @@ namespace dtPhysics
    ////////////////////////////////////////////////////////////////////////////////
    typedef dtPhysics::TriangleRecorderVisitor<dtPhysics::TriangleRecorder> TriangleVisitor;
 
-
-
    ////////////////////////////////////////////////////////////////////////////////
    // TYPE DEFINITIONS
    ////////////////////////////////////////////////////////////////////////////////
@@ -77,8 +75,8 @@ namespace dtPhysics
    /////////////////////////////////////////////////////////////////////////////
    const dtPhysics::Real PhysicsObjectOptions::DEFAULT_COLLISION_MARGIN(0.02);
    const dtPhysics::Real PhysicsObjectOptions::DEFAULT_MASS(1.0);
-   const PrimitiveType* const PhysicsObjectOptions::DEFAULT_PRIMITIVE_TYPE = &PrimitiveType::TRIANGLE_MESH;
-   const MechanicsType* const PhysicsObjectOptions::DEFAULT_MECHANICS_TYPE = &MechanicsType::STATIC;
+   PrimitiveType* const PhysicsObjectOptions::DEFAULT_PRIMITIVE_TYPE = &PrimitiveType::TRIANGLE_MESH;
+   MechanicsType* const PhysicsObjectOptions::DEFAULT_MECHANICS_TYPE = &MechanicsType::STATIC;
 
    PhysicsObjectOptions::PhysicsObjectOptions()
       : mPrimitiveType(DEFAULT_PRIMITIVE_TYPE)
@@ -590,11 +588,8 @@ namespace dtPhysics
    {
       int results = 0;
             
-      // HACK:
-      // This is not a good thing to do.
-      // Remove this when EnumProperties can take "const" enum values.
-      PrimitiveType* primType = const_cast<PrimitiveType*>(options.mPrimitiveType);
-      MechanicsType* mechType = const_cast<MechanicsType*>(options.mMechanicsType);
+      PrimitiveType* primType = options.mPrimitiveType;
+      MechanicsType* mechType = options.mMechanicsType;
 
       std::string idxBuffer;
       VertexData* curData = NULL;

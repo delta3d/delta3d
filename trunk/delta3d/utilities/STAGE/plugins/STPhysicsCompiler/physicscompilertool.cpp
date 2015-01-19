@@ -448,8 +448,6 @@ int PhysicsCompilerToolPlugin::AddObjects(dtPhysics::PhysicsObjectArray& objArra
    {
       curObj = curObjIter->get();
 
-      curObj->BuildPropertyMap();
-      curObj->ForEachProperty(dtUtil::MakeFunctor(&dtCore::PropertyContainer::AddProperty, &actorComp));
       actorComp.AddPhysicsObject(*curObj);
 
       ++results;
