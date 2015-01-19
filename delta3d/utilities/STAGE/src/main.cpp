@@ -43,6 +43,10 @@
 #include <dtQt/deltastepper.h>
 #include <dtEditQt/stageapplication.h>
 #include <dtEditQt/stageglwidgetfactory.h>
+#include <QtGui/QPlastiqueStyle>
+#include <QtCore/QTextStream>
+
+#include <iostream>
 
 int main(int argc, char* argv[])
 {
@@ -63,7 +67,16 @@ int main(int argc, char* argv[])
       dtUtil::GetDeltaRootPath() + "/utilities/STAGE");
 
    int result;
+   //QApplication::setStyle(new QPlastiqueStyle);
    QApplication app(argc, argv);
+//   QString style(":style/darkorange.qss");
+//   QFile data(style);
+//   if (data.open(QFile::ReadOnly)) {
+//      QTextStream textStream(&data);
+//      QString styleStr = textStream.readAll();
+//      std::cout << styleStr.toStdString() << std::endl;
+//      app.setStyleSheet(styleStr);
+//   }
 
    dtEditQt::UIResources::staticInitialize();
    QPixmap pixmap(dtEditQt::UIResources::SPLASH_SCREEN.c_str());
