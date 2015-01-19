@@ -31,6 +31,7 @@ qt4_wrap_cpp(MOC_SOURCES ${PROG_HEADERS})
 
 QT4_ADD_RESOURCES(RCC_SOURCES
                   stage.qrc
+                  style.qrc
                   docs/help/help.qrc
 )
 
