@@ -58,7 +58,7 @@ namespace dtEditQt
 
    public:
       ///Simplifies the interface to a list of actor proxies.
-      typedef std::vector<dtCore::RefPtr<dtCore::BaseActorObject> > ActorProxyList;
+      typedef dtCore::ActorRefPtrVector ActorProxyList;
 
       /**
        * Constructs the overlay.

@@ -105,7 +105,7 @@ namespace dtCore
          /**
          * Initializes the content handler to load a prefab.
          */
-         void SetPrefabMode(std::vector<dtCore::RefPtr<dtCore::BaseActorObject> >& proxyList, dtCore::Map* map = NULL);
+         void SetPrefabMode(dtCore::ActorRefPtrVector& proxyList, dtCore::Map* map = NULL);
 
          /**
          * Get prefab icon file name.  If there isn't one, returns ""
@@ -174,7 +174,7 @@ namespace dtCore
 
          bool mLoadingPrefab;
          std::string mPrefabIconFileName;
-         std::vector<dtCore::RefPtr<dtCore::BaseActorObject> >* mPrefabProxyList;
+         dtCore::ActorRefPtrVector* mPrefabProxyList;
 
          int                   mPresetCameraIndex;
          Map::PresetCameraData mPresetCameraData;

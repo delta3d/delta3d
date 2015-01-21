@@ -68,13 +68,13 @@ namespace dtActors
 
       void SetPrefab(const std::string& fileName);
 
-      std::vector<dtCore::RefPtr<dtCore::BaseActorObject> >& GetPrefabProxies();
+      dtCore::ActorRefPtrVector& GetPrefabProxies();
 
    protected:
       virtual ~PrefabActorProxy();
 
    private:
-      std::vector<dtCore::RefPtr<dtCore::BaseActorObject> > mActors;
+      dtCore::ActorRefPtrVector mActors;
 
       dtCore::RefPtr<dtCore::Map> mMap;
    };

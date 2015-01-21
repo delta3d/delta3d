@@ -133,7 +133,7 @@ namespace dtCore
       //internal handling for loading a map.
       Map& InternalLoadMap(const MapFileData& fileData, bool backup, bool clearModified);
 
-      void InternalLoadPrefab(const std::string& fullPath, std::vector<dtCore::RefPtr<dtCore::BaseActorObject> >& actorsOut);
+      void InternalLoadPrefab(const std::string& fullPath, dtCore::ActorRefPtrVector& actorsOut);
 
       //internal handling of closing a sincle map.
       void InternalCloseMap(Map& map, bool unloadLibraries);
@@ -785,7 +785,7 @@ namespace dtCore
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void ProjectImpl::InternalLoadPrefab(const std::string& fullPath, std::vector<dtCore::RefPtr<dtCore::BaseActorObject> >& actorsOut)
+   void ProjectImpl::InternalLoadPrefab(const std::string& fullPath, dtCore::ActorRefPtrVector& actorsOut)
    {
       //create the parser after setting the context.
       //because the parser looks for map.xsd in the constructor.
@@ -1052,7 +1052,7 @@ namespace dtCore
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void Project::LoadPrefab(const dtCore::ResourceDescriptor& rd, std::vector<dtCore::RefPtr<dtCore::BaseActorObject> >& actorsOut)
+   void Project::LoadPrefab(const dtCore::ResourceDescriptor& rd, dtCore::ActorRefPtrVector& actorsOut)
    {
       if (!IsContextValid())
       {

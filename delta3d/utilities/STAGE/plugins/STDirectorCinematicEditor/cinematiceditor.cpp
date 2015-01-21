@@ -311,7 +311,7 @@ void DirectorCinematicEditorPlugin::ResetUI()
 
    if (!NEAR_EQUAL(mUI.mTotalTimeEdit->value(), mTotalTime)) mUI.mTotalTimeEdit->setValue(mTotalTime);
 
-   std::vector<dtCore::BaseActorObject*> selection;
+   dtCore::ActorPtrVector selection;
    EditorData::GetInstance().GetSelectedActors(selection);
 
    mUI.mAddActorButton->setEnabled(!selection.empty());
@@ -465,7 +465,7 @@ void DirectorCinematicEditorPlugin::OnActorComboChanged(int index)
 ////////////////////////////////////////////////////////////////////////////////
 void DirectorCinematicEditorPlugin::OnAddActor()
 {
-   std::vector<dtCore::BaseActorObject*> selection;
+   dtCore::ActorPtrVector selection;
    EditorData::GetInstance().GetSelectedActors(selection);
 
    int addCount = (int)selection.size();
@@ -2167,7 +2167,7 @@ void DirectorCinematicEditorPlugin::GotoSelectedActor()
 {
    if (mSelectedActor > -1)
    {
-      std::vector<dtCore::RefPtr<dtCore::BaseActorObject> > selected;
+      dtCore::ActorRefPtrVector selected;
       selected.push_back(mActorData[mSelectedActor].mActor.get());
       EditorEvents::GetInstance().emitActorsSelected(selected);
       //EditorEvents::GetInstance().emitGotoActor(selected[0]);

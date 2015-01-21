@@ -42,7 +42,7 @@ public:
             // loop through all component game actors and
             // get their text label components.
             // Toggle flashing property on components
-            typedef std::vector<dtCore::BaseActorObject*> ProxyList;
+            typedef dtCore::ActorPtrVector ProxyList;
 
             ProxyList proxies;
             GetGameManager()->FindActorsByType(*TestActorLibraryRegistry::COMPONENT_GAME_ACTOR_TYPE.get(), proxies);

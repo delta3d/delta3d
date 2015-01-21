@@ -1383,10 +1383,10 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void GameManager::CreateActorsFromPrefab(const dtCore::ResourceDescriptor& rd, std::vector<dtCore::RefPtr<dtCore::BaseActorObject> >& actorsOut, bool isRemote)
+   void GameManager::CreateActorsFromPrefab(const dtCore::ResourceDescriptor& rd, dtCore::ActorRefPtrVector& actorsOut, bool isRemote)
    {
       dtCore::Project::GetInstance().LoadPrefab(rd, actorsOut);
-      std::vector<dtCore::RefPtr<dtCore::BaseActorObject> >::iterator i, iend;
+      dtCore::ActorRefPtrVector::iterator i, iend;
       i = actorsOut.begin();
       iend = actorsOut.end();
       for (; i != iend; ++i)
@@ -1445,7 +1445,7 @@ namespace dtGame
          // Internal pointer is not valid, we are setting a new environment
          // We need to remove all the drawables from the scene and add them
          // to the new environment
-         std::vector<dtCore::BaseActorObject*> actors;
+         dtCore::ActorPtrVector actors;
          GetAllActors(actors);
          mGMImpl->mScene->RemoveAllDrawables();
          mGMImpl->mScene->UseSceneLight(true);
@@ -1734,7 +1734,7 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void GameManager::GetAllNonGameActors(std::vector<dtCore::BaseActorObject*>& toFill) const
+   void GameManager::GetAllNonGameActors(dtCore::ActorPtrVector& toFill) const
    {
       toFill.clear();
       toFill.reserve(mGMImpl->mBaseActorObjectMap.size());
@@ -1747,7 +1747,7 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void GameManager::GetAllActors(std::vector<dtCore::BaseActorObject*>& toFill) const
+   void GameManager::GetAllActors(dtCore::ActorPtrVector& toFill) const
    {
       toFill.clear();
       toFill.reserve(mGMImpl->mGameActorProxyMap.size() + mGMImpl->mBaseActorObjectMap.size() + mGMImpl->mPrototypeActors.size());
@@ -1777,7 +1777,7 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void GameManager::GetAllPrototypes(std::vector<dtCore::BaseActorObject*>& toFill) const
+   void GameManager::GetAllPrototypes(dtCore::ActorPtrVector& toFill) const
    {
       toFill.clear();
       toFill.reserve(mGMImpl->mPrototypeActors.size());
@@ -1820,7 +1820,7 @@ namespace dtGame
    };
 
    ///////////////////////////////////////////////////////////////////////////////
-   void GameManager::FindActorsByName(const std::string& name, std::vector<dtCore::BaseActorObject*>& toFill)
+   void GameManager::FindActorsByName(const std::string& name, dtCore::ActorPtrVector& toFill)
    {
       toFill.reserve(mGMImpl->mGameActorProxyMap.size() + mGMImpl->mBaseActorObjectMap.size());
 
@@ -1846,7 +1846,7 @@ namespace dtGame
    };
 
    ///////////////////////////////////////////////////////////////////////////////
-   void GameManager::FindActorsByType(const dtCore::ActorType& type, std::vector<dtCore::BaseActorObject*>& toFill)
+   void GameManager::FindActorsByType(const dtCore::ActorType& type, dtCore::ActorPtrVector& toFill)
    {
       toFill.reserve(mGMImpl->mGameActorProxyMap.size() + mGMImpl->mBaseActorObjectMap.size());
 
@@ -1873,7 +1873,7 @@ namespace dtGame
 
    ///////////////////////////////////////////////////////////////////////////////
    void GameManager::FindActorsByClassName(const std::string& className,
-      std::vector<dtCore::BaseActorObject*>& toFill)
+      dtCore::ActorPtrVector& toFill)
    {
       if (!className.empty())
       {
@@ -1888,7 +1888,7 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void GameManager::FindPrototypesByActorType(const dtCore::ActorType& type, std::vector<dtCore::BaseActorObject*>& toFill) const
+   void GameManager::FindPrototypesByActorType(const dtCore::ActorType& type, dtCore::ActorPtrVector& toFill) const
    {
       toFill.reserve(mGMImpl->mPrototypeActors.size());
 
@@ -1897,7 +1897,7 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void GameManager::FindPrototypesByName(const std::string& name, std::vector<dtCore::BaseActorObject*>& toFill) const
+   void GameManager::FindPrototypesByName(const std::string& name, dtCore::ActorPtrVector& toFill) const
    {
       toFill.reserve(mGMImpl->mPrototypeActors.size());
 
@@ -2076,12 +2076,12 @@ namespace dtGame
          dtCore::Map& map = dtCore::Project::GetInstance().GetMap(*mapItor);
 
          // loop on all map's actors
-         std::vector<dtCore::RefPtr<dtCore::BaseActorObject> > proxies;
+         dtCore::ActorRefPtrVector proxies;
          map.GetAllProxies(proxies);
 
          // this call will actually fire the INFO_ACTOR_DELETE message for every deleted actor
          // and will delete actors at the end of this frame.
-         std::vector<dtCore::RefPtr<dtCore::BaseActorObject> >::iterator i, iend;
+         dtCore::ActorRefPtrVector::iterator i, iend;
          i = proxies.begin();
          iend = proxies.end();
          for (; i != iend; ++i)

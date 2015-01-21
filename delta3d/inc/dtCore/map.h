@@ -91,7 +91,7 @@ namespace dtCore
          // Group data.
          struct MapGroupData
          {
-            std::vector<dtCore::BaseActorObject*> actorList;
+            dtCore::ActorPtrVector actorList;
          };
    
          // Preset camera data.

@@ -148,7 +148,7 @@ namespace dtActors
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   std::vector<dtCore::RefPtr<dtCore::BaseActorObject> >& PrefabActorProxy::GetPrefabProxies()
+   dtCore::ActorRefPtrVector& PrefabActorProxy::GetPrefabProxies()
    {
       return mActors;
    }

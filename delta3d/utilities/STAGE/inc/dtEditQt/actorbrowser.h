@@ -73,6 +73,11 @@ namespace dtEditQt
        */
       void handleEnableCreateActor();
 
+      /**
+       * Determines if the switch actor type button should be enabled.
+       */
+      void HandleEnableSwitchActorType();
+
    public slots:
       /**
        * Slot - handles the event when the create button is pressed
@@ -95,6 +100,12 @@ namespace dtEditQt
        * be holding onto memory that has since been removed.  It completely clears the tree.
        */
       void clearActorTypesTree();
+
+      /**
+       * Fires when the button is pushed to switch actor types.  The currently selected actors will be recreated as the new
+       * type, with the properties copied over, the id's assigned to old values, and then switched in the map.
+       */
+      void SwitchActorTypes();
 
    private:
       // known list of actor types
@@ -119,6 +130,7 @@ namespace dtEditQt
 
       ActorDragTree* mTree;
       QPushButton* mCreateActorBtn;
+      QPushButton* mSwitchActorTypeBtn;
 
       ActorTypeTreeWidget* mRootActorType;
 

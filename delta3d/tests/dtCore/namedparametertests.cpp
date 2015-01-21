@@ -1463,7 +1463,7 @@ void NamedParameterTests::TestNamedActorParameter()
 {
    try
    {
-      std::vector<dtCore::RefPtr<dtCore::BaseActorObject> > container;
+      dtCore::ActorRefPtrVector container;
       std::vector<dtCore::RefPtr<dtCore::ActorType> > types;
 
       dtCore::RefPtr<dtCore::BaseActorObject> ap = mManager->CreateActor("dtcore.examples", "Test All Properties");

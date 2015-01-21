@@ -80,7 +80,7 @@ void MapStatisticsPlugin::onCalculateButtonPressed()
 
       // Calculate for the current selection
       {
-         std::vector<dtCore::BaseActorObject*> selectedList;
+         dtCore::ActorPtrVector selectedList;
          EditorData::GetInstance().GetSelectedActors(selectedList);
 
          for (size_t selectIndex = 0; selectIndex < selectedList.size(); ++selectIndex)
@@ -95,7 +95,7 @@ void MapStatisticsPlugin::onCalculateButtonPressed()
       {
          statVisitor->reset();
 
-         std::vector<dtCore::RefPtr<dtCore::BaseActorObject> > proxies;
+         dtCore::ActorRefPtrVector proxies;
          map->GetAllProxies(proxies);
 
          for (int proxyIndex = 0; proxyIndex < (int)proxies.size(); proxyIndex++)

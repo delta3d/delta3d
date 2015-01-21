@@ -44,7 +44,7 @@ private:
    dtCore::RefPtr<dtCore::RTSMotionModel> mMotion;
    std::string mConnectionXml;
    std::string mActorTypeMapping;
-   std::vector<dtCore::BaseActorObject*> mActorsToPublish;
+   dtCore::ActorPtrVector mActorsToPublish;
 
    void FindActorsAndAddComponents();
 };

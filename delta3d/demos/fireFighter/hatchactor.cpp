@@ -215,7 +215,7 @@ void HatchActor::OnMapLoaded(const dtGame::Message& msg)
       {
          mGameMapLoaded = true;
          // Find the game level actor and search with its node
-         std::vector<dtCore::BaseActorObject*> proxies;
+         dtCore::ActorPtrVector proxies;
          GetGameActorProxy().GetGameManager()->FindActorsByType(*EntityActorRegistry::TYPE_GAME_LEVEL_ACTOR, proxies);
          GameLevelActor* gla = dynamic_cast<GameLevelActor*>(proxies[0]->GetDrawable());
          if (gla == NULL)

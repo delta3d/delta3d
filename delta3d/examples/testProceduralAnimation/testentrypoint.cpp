@@ -110,7 +110,7 @@ void TestProceduralAnimation::OnStartup(dtABC::BaseABC& app, dtGame::GameManager
    dtUtil::SetDataFilePathList(dataPath + ";" + dtUtil::GetDeltaRootPath() +
       "/examples/data" + ";" + dtUtil::GetDeltaRootPath() + "/examples/testProceduralAnimation/");
 
-   typedef std::vector<dtCore::BaseActorObject*> ProxyContainer;
+   typedef dtCore::ActorPtrVector ProxyContainer;
    ProxyContainer proxies;
    ProxyContainer groundActor;
 

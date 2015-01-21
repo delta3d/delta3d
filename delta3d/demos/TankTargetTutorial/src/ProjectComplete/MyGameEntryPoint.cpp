@@ -201,7 +201,7 @@ void MyGameEntryPoint::OnStartup(dtABC::BaseABC& app, dtGame::GameManager& gamem
    gamemanager.GetScene().UseSceneLight(true);
 
    // Attach our camera to the tank from the map
-   std::vector<dtCore::BaseActorObject*> tanks;
+   dtCore::ActorPtrVector tanks;
    gamemanager.FindActorsByName("HoverTank", tanks);
    if (tanks.size() > 0 && tanks[0] != NULL)
    {

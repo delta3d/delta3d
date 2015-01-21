@@ -164,10 +164,89 @@ namespace dtEditQt
          mCreateActorBtn->setEnabled(true);
       }
       // disable the button if we got here.
-      else if (mCreateActorBtn != NULL)
+      else
       {
          mCreateActorBtn->setEnabled(false);
       }
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void ActorBrowser::HandleEnableSwitchActorType()
+   {
+      ActorTypeTreeWidget* selectedWidget = getSelectedActorTreeWidget();
+
+      // if we have a leaf, then enable the button
+      if (selectedWidget != NULL && selectedWidget->isLeafNode())
+      {
+         dtCore::ActorPtrVector toFill;
+         EditorData::GetInstance().GetSelectedActors(toFill);
+
+         mSwitchActorTypeBtn->setEnabled(!toFill.empty());
+      }
+      // disable the button if we got here.
+      else
+      {
+         mSwitchActorTypeBtn->setEnabled(false);
+      }
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void ActorBrowser::SwitchActorTypes()
+   {
+      LOG_INFO("User Created an Actor - Slot");
+      dtEditQt::ActorTypeTreeWidget* selectedWidget = getSelectedActorTreeWidget();
+
+      // if we have an actor type, then create the proxy and emit the signal
+      if (selectedWidget != NULL && selectedWidget->getActorType() != NULL)
+      {
+         EditorData::GetInstance().getMainWindow()->startWaitCursor();
+
+         dtCore::ActorPtrVector toFill;
+         EditorData::GetInstance().GetSelectedActors(toFill);
+
+         // add the new proxy to the map
+         dtCore::RefPtr<dtCore::Map> mapPtr = EditorData::GetInstance().getCurrentMap();
+
+         if (mapPtr.valid())
+         {
+            dtCore::ActorPtrVector::iterator i, iend;
+            i = toFill.begin();
+            iend = toFill.end();
+            for (; i != iend; ++i)
+            {
+               dtCore::RefPtr<dtCore::BaseActorObject> oldActor = *i;
+
+               // create our new object
+               dtCore::RefPtr<dtCore::BaseActorObject> newActor =
+                  dtCore::LibraryManager::GetInstance().CreateActor(*selectedWidget->getActorType()).get();
+
+               if (newActor.valid())
+               {
+                  // let the world know that a new proxy exists
+                  EditorEvents::GetInstance().emitBeginChangeTransaction();
+                  EditorEvents::GetInstance().emitActorProxyAboutToBeDestroyed(oldActor);
+                  mapPtr->RemoveProxy(*oldActor);
+                  EditorEvents::GetInstance().emitActorProxyDestroyed(oldActor);
+
+                  newActor->SetId(oldActor->GetId());
+                  newActor->CopyPropertiesFrom(*oldActor);
+
+                  mapPtr->AddProxy(*(newActor.get()), true);
+                  EditorEvents::GetInstance().emitActorProxyCreated(newActor, false);
+                  ViewportManager::GetInstance().placeProxyInFrontOfCamera(newActor);
+                  EditorEvents::GetInstance().emitEndChangeTransaction();
+
+                  // Now, let the world that it should select the new actor proxy.
+                  std::vector< dtCore::RefPtr<dtCore::BaseActorObject> > actors;
+                  actors.push_back(newActor.get());
+                  EditorEvents::GetInstance().emitActorsSelected(actors);
+               }
+            }
+         }
+
+         EditorData::GetInstance().getMainWindow()->endWaitCursor();
+      }
+
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -282,7 +361,7 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    void ActorBrowser::createActorPressed()
    {
-      LOG_INFO("User Created an Actor - Slot");
+      LOGN_INFO("actorbrowser.cpp", "User Created an Actor - Slot");
       dtEditQt::ActorTypeTreeWidget* selectedWidget = getSelectedActorTreeWidget();
 
       // if we have an actor type, then create the proxy and emit the signal
@@ -323,6 +402,7 @@ namespace dtEditQt
    void ActorBrowser::treeSelectionChanged()
    {
       handleEnableCreateActor();
+      HandleEnableSwitchActorType();
    }
 
    ///////////////////////////////////////////////////////////////////////////////

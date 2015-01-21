@@ -433,7 +433,7 @@ namespace dtExample
          // Clear the current listing.
          listbox->resetList();
 
-         typedef std::vector<dtCore::BaseActorObject*> ActorList;
+         typedef dtCore::ActorPtrVector ActorList;
          ActorList actors;
          GetGameManager()->GetAllActors(actors);
 

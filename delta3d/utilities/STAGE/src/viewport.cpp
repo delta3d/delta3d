@@ -273,7 +273,7 @@ namespace dtEditQt
          return;
       }
 
-      std::vector<dtCore::RefPtr<dtCore::BaseActorObject> > toSelect;
+      dtCore::ActorRefPtrVector toSelect;
 
       //ensure that the Brush outline is on (if it turns out the brush is selected it
       //will get disabled later)

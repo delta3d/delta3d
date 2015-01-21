@@ -432,7 +432,7 @@ void MapTests::TestMapAddRemoveProxies()
         CPPUNIT_ASSERT_MESSAGE("The set of actor classes should be empty.",
             map.GetProxyActorClasses().empty());
 
-        std::vector<dtCore::RefPtr<dtCore::BaseActorObject> > proxies;
+        dtCore::ActorRefPtrVector proxies;
         map.GetAllProxies(proxies);
 
         map.AddLibrary(mExampleLibraryName, "1.0");
@@ -489,7 +489,7 @@ void MapTests::TestMapProxySearch()
 
         unsigned maxId = map.GetAllProxies().size();
 
-        std::vector<dtCore::RefPtr<dtCore::BaseActorObject> > results;
+        dtCore::ActorRefPtrVector results;
 
         map.FindProxies(results, "", "dtcore", "");
 
@@ -504,7 +504,7 @@ void MapTests::TestMapProxySearch()
         CPPUNIT_ASSERT_MESSAGE("trailing dots should end with no results.", results.size() == 0);
 
         map.FindProxies(results, "", "", "","", dtCore::Map::Placeable);
-        for (std::vector<dtCore::RefPtr<dtCore::BaseActorObject> >::iterator i = results.begin();
+        for (dtCore::ActorRefPtrVector::iterator i = results.begin();
             i != results.end(); ++i)
         {
             CPPUNIT_ASSERT_MESSAGE(std::string("Proxy ") + (*i)->GetName()
@@ -513,7 +513,7 @@ void MapTests::TestMapProxySearch()
         }
 
         map.FindProxies(results, "", "", "","", dtCore::Map::NotPlaceable);
-        for (std::vector<dtCore::RefPtr<dtCore::BaseActorObject> >::iterator i = results.begin();
+        for (dtCore::ActorRefPtrVector::iterator i = results.begin();
             i != results.end(); ++i)
         {
             CPPUNIT_ASSERT_MESSAGE(std::string("Proxy ") + (*i)->GetName()
@@ -525,14 +525,14 @@ void MapTests::TestMapProxySearch()
         CPPUNIT_ASSERT_MESSAGE("There should be some lights in the results.", results.size() >= 3);
 
 
-        for (std::vector<dtCore::RefPtr<dtCore::BaseActorObject> >::iterator i = results.begin();
+        for (dtCore::ActorRefPtrVector::iterator i = results.begin();
             i != results.end(); ++i)
         {
             CPPUNIT_ASSERT_MESSAGE("All results should be instances of dtCore::Light",
                 (*i)->IsInstanceOf("dtCore::Light"));
         }
 
-        std::vector<dtCore::RefPtr<dtCore::BaseActorObject> > proxies;
+        dtCore::ActorRefPtrVector proxies;
 
         map.GetAllProxies(proxies);
 
@@ -768,7 +768,7 @@ void MapTests::TestMapLibraryHandling()
        reg = dtCore::LibraryManager::GetInstance().GetRegistry(mExampleLibraryName);
        CPPUNIT_ASSERT_MESSAGE("Registry for testActorLibrary should not be NULL.", reg != NULL);
 
-       std::vector<dtCore::RefPtr<dtCore::BaseActorObject> > proxies;
+       dtCore::ActorRefPtrVector proxies;
        //hold onto all the proxies so that the actor libraries can't be closed.
        map->GetAllProxies(proxies);
 
@@ -1249,7 +1249,7 @@ void MapTests::TestMapSaveAndLoadGroup()
 
       dtCore::Map* map = &project.GetMap(mapName);
 
-      std::vector<dtCore::RefPtr<dtCore::BaseActorObject> > toFill;
+      dtCore::ActorRefPtrVector toFill;
       map->GetAllProxies(toFill);
       CPPUNIT_ASSERT_EQUAL_MESSAGE("The map was saved with one proxy.  It should have one when loaded.", toFill.size(), size_t(1));
 
@@ -1683,7 +1683,7 @@ void MapTests::TestEnvironmentMapLoading()
       dtCore::Project &project = dtCore::Project::GetInstance();
       dtCore::Map &map = project.CreateMap("TestEnvironmentMap", "TestEnvironmentMap");
 
-      std::vector<dtCore::RefPtr<dtCore::BaseActorObject> > container;
+      dtCore::ActorRefPtrVector container;
       CPPUNIT_ASSERT(container.empty());
 
       const unsigned int numProxies = 4;
@@ -1702,7 +1702,7 @@ void MapTests::TestEnvironmentMapLoading()
          map.AddProxy(*container[i]);
       }
 
-      std::vector<dtCore::RefPtr<dtCore::BaseActorObject> > mapProxies;
+      dtCore::ActorRefPtrVector mapProxies;
       map.GetAllProxies(mapProxies);
       CPPUNIT_ASSERT_MESSAGE("The map should have the correct number of proxies", mapProxies.size() == numProxies);
 
@@ -1746,7 +1746,7 @@ void MapTests::TestLoadEnvironmentMapIntoScene()
    scene->RemoveAllDrawables();
    CPPUNIT_ASSERT(scene->GetNumberOfAddedDrawable() == 0);
 
-   std::vector<dtCore::RefPtr<dtCore::BaseActorObject> > container;
+   dtCore::ActorRefPtrVector container;
    CPPUNIT_ASSERT(container.empty());
 
    const unsigned int numProxies = 4;
@@ -1765,7 +1765,7 @@ void MapTests::TestLoadEnvironmentMapIntoScene()
       map.AddProxy(*container[i]);
    }
 
-   std::vector<dtCore::RefPtr<dtCore::BaseActorObject> > mapProxies;
+   dtCore::ActorRefPtrVector mapProxies;
    map.GetAllProxies(mapProxies);
    CPPUNIT_ASSERT_MESSAGE("The map should have the correct number of proxies", mapProxies.size() == numProxies);
 

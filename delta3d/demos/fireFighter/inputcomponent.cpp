@@ -608,7 +608,7 @@ void InputComponent::StopSounds()
 void InputComponent::SetupTasks()
 {
    dtGame::GameManager& mgr = *GetGameManager();
-   std::vector<dtCore::BaseActorObject*> proxies;
+   dtCore::ActorPtrVector proxies;
 
    ///////////////////////// Mission Task /////////////////////////////////////
    mgr.FindActorsByName("TaskRootMission", proxies);

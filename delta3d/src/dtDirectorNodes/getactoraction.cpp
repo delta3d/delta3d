@@ -97,7 +97,7 @@ namespace dtDirector
       else if (!mActorName.empty())
       {
          // If we have a name, filter by it first
-         std::vector<dtCore::BaseActorObject*> baseList;
+         dtCore::ActorPtrVector baseList;
          gm->FindActorsByName(mActorName, baseList);
 
          // If we have a type, filter by it second
@@ -119,7 +119,7 @@ namespace dtDirector
       }
       else if (!mClassType.empty())
       {
-         std::vector<dtCore::BaseActorObject*> baseList;
+         dtCore::ActorPtrVector baseList;
          gm->GetAllActors(baseList);
 
          // Find the first actor of the given type

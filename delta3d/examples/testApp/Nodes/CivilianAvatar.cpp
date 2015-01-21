@@ -67,10 +67,10 @@ namespace dtExample
    {
       //   AIComponent* comp = NULL;
       dtGame::GameActorProxy* act = NULL;
-      std::vector<dtCore::RefPtr<dtCore::BaseActorObject> > actors;
+      dtCore::ActorRefPtrVector actors;
       gm.CreateActorsFromPrefab(GetNewActorPrefab(), actors);
 
-      std::vector<dtCore::RefPtr<dtCore::BaseActorObject> >::iterator i, iend;
+      dtCore::ActorRefPtrVector::iterator i, iend;
       i = actors.begin();
       iend = actors.end();
       for (; i != iend; ++i)

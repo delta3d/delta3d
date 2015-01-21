@@ -115,7 +115,7 @@ void ESPduProcessorTests::CreateRemoteActorFromEntityStatePDU()
    dtCore::System::GetInstance().Step();
 
    //at this point, there should be a new Actor out there
-   std::vector<dtCore::BaseActorObject*> proxies;
+   dtCore::ActorPtrVector proxies;
    gm->FindActorsByType(*dtActors::EngineActorRegistry::GAME_MESH_ACTOR_TYPE, proxies );
    CPPUNIT_ASSERT_EQUAL_MESSAGE("Should only be one actor created", size_t(1), proxies.size());
 }
