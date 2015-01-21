@@ -76,6 +76,23 @@ namespace dtPhysics
    }
 
    //////////////////////////////////////
+   Material* PhysicsMaterials::CreateOrUpdateMaterial(const std::string& name, MaterialDef& def)
+   {
+      Material* m = GetMaterial(name);
+      if (m == NULL)
+      {
+         m = NewMaterial(name, def);
+      }
+      else
+      {
+         palMaterialDesc desc;
+         MatDefToPalMatDesc(desc, def);
+         m->SetParameters(desc);
+      }
+      return m;
+   }
+
+   //////////////////////////////////////
    void PhysicsMaterials::SetMaterialInteraction(const std::string& name1, const std::string& name2, const MaterialDef& def)
    {
       palMaterials& pm = mImpl->mPalMaterials;

@@ -104,6 +104,13 @@ namespace dtPhysics
        * @param def the definintion of the material.
        */
       Material* NewMaterial(const std::string& name, MaterialDef& def);
+      /**
+       * Creates a new material with the given name and the definition.
+       * if it exists, it updates the definition to the given one.
+       * @param name The name for the material.
+       * @param def the definintion of the material.
+       */
+      Material* CreateOrUpdateMaterial(const std::string& name, MaterialDef& def);
 
       ///@return a material by name or NULL if it doesn't exist.
       Material* GetMaterial(const std::string& name);
