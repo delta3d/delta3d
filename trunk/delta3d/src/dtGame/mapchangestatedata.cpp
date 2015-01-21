@@ -233,7 +233,7 @@ namespace dtGame
          mGameManager->SetEnvironmentActor(eap);
       }
 
-      std::vector<dtCore::RefPtr<dtCore::BaseActorObject> > proxies;
+      dtCore::ActorRefPtrVector proxies;
       map.GetAllProxies(proxies);
 
       for (unsigned int i = 0; i < proxies.size(); ++i)

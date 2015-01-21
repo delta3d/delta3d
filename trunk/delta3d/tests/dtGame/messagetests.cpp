@@ -1169,7 +1169,7 @@ void MessageTests::CheckMapNames(const dtGame::MapMessage& mapLoadedMsg,
 
 void MessageTests::RemoveOneProxy(dtCore::Map& map)
 {
-   std::vector<dtCore::RefPtr<dtCore::BaseActorObject> > toFill;
+   dtCore::ActorRefPtrVector toFill;
    map.FindProxies(toFill, "", TestGameActorLibrary::TEST_TANK_GAME_ACTOR_TYPE->GetCategory(),
          TestGameActorLibrary::TEST_TANK_GAME_ACTOR_TYPE->GetName());
 

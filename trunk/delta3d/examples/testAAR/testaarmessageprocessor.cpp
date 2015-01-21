@@ -370,7 +370,7 @@ void TestAARMessageProcessor::Reset()
    }
 
    //SetupTasks();
-   std::vector<dtCore::BaseActorObject*> toFill;
+   dtCore::ActorPtrVector toFill;
    GetGameManager()->FindActorsByName("Move Camera", toFill);
 
    if (toFill.size() == 0)

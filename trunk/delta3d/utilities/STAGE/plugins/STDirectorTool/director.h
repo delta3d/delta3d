@@ -92,7 +92,7 @@ public:
     *
     * @return  The current actor selection.
     */
-   virtual std::vector<dtCore::BaseActorObject*> GetActorSelection();
+   virtual dtCore::ActorPtrVector GetActorSelection();
 
 public slots:
 

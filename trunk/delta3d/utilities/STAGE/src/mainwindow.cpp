@@ -90,7 +90,7 @@ DT_DISABLE_WARNING_END
 typedef dtQt::ObjectTypeListPanel::ObjectTypeList ObjectTypeList;
 typedef std::set<const dtCore::ObjectType*> ObjectTypeSet;
 
-typedef std::vector<dtCore::BaseActorObject*> ActorArray;
+typedef dtCore::ActorPtrVector ActorArray;
 typedef std::vector<dtGame::ActorComponent*> ActorCompArray;
 
 

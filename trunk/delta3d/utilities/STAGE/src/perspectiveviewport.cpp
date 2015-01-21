@@ -171,8 +171,8 @@ namespace dtEditQt
    void PerspectiveViewport::updateActorProxyBillboards()
    {
       dtCore::Map* currentMap = EditorData::GetInstance().getCurrentMap();
-      std::vector<dtCore::RefPtr<dtCore::BaseActorObject> > proxies;
-      std::vector<dtCore::RefPtr<dtCore::BaseActorObject> >::iterator itor;
+      dtCore::ActorRefPtrVector proxies;
+      dtCore::ActorRefPtrVector::iterator itor;
 
       if (currentMap == NULL || getCamera() == NULL)
       {

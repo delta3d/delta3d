@@ -159,14 +159,14 @@ namespace dtGame
        * @param The name to search for
        * @param The vector to fill
        */
-      void FindPrototypesByActorType(const dtCore::ActorType& type, std::vector<dtCore::BaseActorObject*>& toFill) const;
+      void FindPrototypesByActorType(const dtCore::ActorType& type, dtCore::ActorPtrVector& toFill) const;
 
       /**
        * Fills a vector with the game proxys whose names match the name parameter
        * @param The name to search for
        * @param The vector to fill
        */
-      void FindPrototypesByName(const std::string& name, std::vector<dtCore::BaseActorObject*>& toFill) const;
+      void FindPrototypesByName(const std::string& name, dtCore::ActorPtrVector& toFill) const;
 
       /**
        * Convenience method to return a single prototype
@@ -176,7 +176,7 @@ namespace dtGame
       template <class ProxyType>
       void FindPrototypeByName(const std::string& name, ProxyType*& proxy) const
       {
-         std::vector<dtCore::BaseActorObject*> toFill;
+         dtCore::ActorPtrVector toFill;
          FindPrototypesByName(name, toFill);
          if (!toFill.empty())
          {
@@ -188,7 +188,7 @@ namespace dtGame
        * Fills a vector with all the templates.
        * @param The vector to fill
        */
-      void GetAllPrototypes(std::vector<dtCore::BaseActorObject*>& toFill) const;
+      void GetAllPrototypes(dtCore::ActorPtrVector& toFill) const;
 
       /**
        * @param The uniqueID to look for or NULL for error
@@ -231,7 +231,7 @@ namespace dtGame
       /**
        * Create actors from a prefab.  It will use the map loaded in the GM or try to fake something.
        */
-      void CreateActorsFromPrefab(const dtCore::ResourceDescriptor&, std::vector<dtCore::RefPtr<dtCore::BaseActorObject> >& actorsOut, bool isRemote = false);
+      void CreateActorsFromPrefab(const dtCore::ResourceDescriptor&, dtCore::ActorRefPtrVector& actorsOut, bool isRemote = false);
 
       /**
        * Wraps up several methods used to lookup and create actors from prototypes.
@@ -548,13 +548,13 @@ namespace dtGame
        * Retrieves all the non game actors added to the GM
        * @param toFill The vector to fill
        */
-      void GetAllNonGameActors(std::vector<dtCore::BaseActorObject*>& toFill) const;
+      void GetAllNonGameActors(dtCore::ActorPtrVector& toFill) const;
 
       /**
        * Retrieves all the actors added to the GM
        * @param toFill The vector to fill
        */
-      void GetAllActors(std::vector<dtCore::BaseActorObject*>& toFill) const;
+      void GetAllActors(dtCore::ActorPtrVector& toFill) const;
 
       /**
        * Get the number of all Actors currently managed.
@@ -593,7 +593,7 @@ namespace dtGame
        * @note you must include dtGame/gamemanager.inl to use the method.
        */
       template <typename FindFunctor>
-      void FindActorsIf(FindFunctor& ifFunc, std::vector<dtCore::BaseActorObject*>& toFill);
+      void FindActorsIf(FindFunctor& ifFunc, dtCore::ActorPtrVector& toFill);
 
       /**
        * Allows custom searching on each prototype actor in the game manager.
@@ -603,14 +603,14 @@ namespace dtGame
        * @note you must include dtGame/gamemanager.inl to use the method.
        */
       template <typename FindFunctor>
-      void FindPrototypesIf(FindFunctor& ifFunc, std::vector<dtCore::BaseActorObject*>& toFill) const;
+      void FindPrototypesIf(FindFunctor& ifFunc, dtCore::ActorPtrVector& toFill) const;
 
       /**
        * Fills a vector with the game proxys whose names match the name parameter
        * @param The name to search for
        * @param The vector to fill
        */
-      void FindActorsByName(const std::string& name, std::vector<dtCore::BaseActorObject*>& toFill);
+      void FindActorsByName(const std::string& name, dtCore::ActorPtrVector& toFill);
 
       /**
        * Convenience method to return an actor
@@ -621,12 +621,12 @@ namespace dtGame
       void FindActorByName(const std::string& name, ProxyType*& proxy)
       {
          proxy = NULL;
-         std::vector<dtCore::BaseActorObject*> toFill;
+         dtCore::ActorPtrVector toFill;
          FindActorsByName(name, toFill);
          if (!toFill.empty())
          {
             // Iterate until we find a proxy of the proper type.
-            for (std::vector<dtCore::BaseActorObject*>::iterator i = toFill.begin();
+            for (dtCore::ActorPtrVector::iterator i = toFill.begin();
                i != toFill.end();
                ++i)
             {
@@ -645,7 +645,7 @@ namespace dtGame
        * @param The type to search for
        * @param The vector to fill
        */
-      void FindActorsByType(const dtCore::ActorType& type, std::vector<dtCore::BaseActorObject*>& toFill);
+      void FindActorsByType(const dtCore::ActorType& type, dtCore::ActorPtrVector& toFill);
 
       /**
        * Convenience method to return an actor
@@ -656,7 +656,7 @@ namespace dtGame
       void FindActorByType(const dtCore::ActorType& type, ProxyType*& proxy)
       {
          proxy = NULL;
-         std::vector<dtCore::BaseActorObject*> toFill;
+         dtCore::ActorPtrVector toFill;
          FindActorsByType(type, toFill);
          if (!toFill.empty())
          {
@@ -669,7 +669,7 @@ namespace dtGame
        * @param className the classname
        * @param toFill The vector to fill
        */
-      void FindActorsByClassName(const std::string& className, std::vector<dtCore::BaseActorObject*>& toFill);
+      void FindActorsByClassName(const std::string& className, dtCore::ActorPtrVector& toFill);
 
 
       /**

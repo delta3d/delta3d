@@ -312,7 +312,7 @@ namespace dtEditQt
             EditorData::GetInstance().getMainWindow()->startWaitCursor();
             EditorEvents::GetInstance().emitBeginChangeTransaction();
 
-            std::vector<dtCore::RefPtr<dtCore::BaseActorObject> > actors;
+            dtCore::ActorRefPtrVector actors;
             dtCore::Project::GetInstance().LoadPrefab(descriptor, actors);
 
             // Auto select all of the proxies.
@@ -441,7 +441,7 @@ namespace dtEditQt
             EditorEvents::GetInstance().emitEndChangeTransaction();
 
             // Now, let the world that it should select the new actor proxy.
-            std::vector<dtCore::RefPtr<dtCore::BaseActorObject> > actors;
+            dtCore::ActorRefPtrVector actors;
             actors.push_back(proxy.get());
             EditorEvents::GetInstance().emitActorsSelected(actors);
          }

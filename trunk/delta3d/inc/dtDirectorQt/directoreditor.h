@@ -283,8 +283,8 @@ namespace dtDirector
        *
        * @return  The current actor selection.
        */
-      virtual std::vector<dtCore::BaseActorObject*> GetActorSelection()
-      {return std::vector<dtCore::BaseActorObject*>();}
+      virtual dtCore::ActorPtrVector GetActorSelection()
+      {return dtCore::ActorPtrVector();}
 
       /**
        * Registers a custom editor tool.

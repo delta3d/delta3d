@@ -41,7 +41,7 @@ void dtInspectorQt::OSGView::Build(QList<EntryData>& itemList)
    BuildChildren(sceneNode->asGroup(), data.children);
    itemList.push_back(data);
 
-   //std::vector<dtCore::BaseActorObject*> actorList;
+   //dtCore::ActorPtrVector actorList;
    //mGameManager->GetAllActors(actorList);
 
    //int count = (int)actorList.size();

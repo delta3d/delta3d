@@ -61,6 +61,9 @@ namespace dtCore
    class GameEvent;
    class ProjectConfig;
 
+   typedef std::vector<RefPtr<BaseActorObject> > ActorRefPtrVector;
+
+
    /**
     * @class Project
     * @brief Represents the project directory structure.
@@ -244,7 +247,7 @@ namespace dtCore
        * @throws FileNotFoundException if the prefab doesn't exist.
        * @throws ProjectInvalidContextException if the context is not set.
        */
-      void LoadPrefab(const dtCore::ResourceDescriptor& rd, std::vector<dtCore::RefPtr<dtCore::BaseActorObject> >& actorsOut);
+      void LoadPrefab(const dtCore::ResourceDescriptor& rd, dtCore::ActorRefPtrVector& actorsOut);
 
 
       /**

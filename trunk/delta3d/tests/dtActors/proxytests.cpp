@@ -87,7 +87,7 @@ public:
 private:
    dtCore::LibraryManager& libMgr;
    std::vector<const dtCore::ActorType*> actors;
-   std::vector<dtCore::RefPtr<dtCore::BaseActorObject> > proxies;
+   dtCore::ActorRefPtrVector proxies;
    static const std::string mExampleLibraryName;
 
    void testProps(dtCore::BaseActorObject& proxy);

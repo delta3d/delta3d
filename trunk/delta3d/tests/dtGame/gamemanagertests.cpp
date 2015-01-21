@@ -275,7 +275,7 @@ void GameManagerTests::tearDown()
 void GameManagerTests::TestFindActorByType()
 {
    const unsigned short int numProxies = 10;
-   std::vector<dtCore::BaseActorObject*> proxies;
+   dtCore::ActorPtrVector proxies;
    for (unsigned short int i = 0; i < numProxies; ++i)
    {
       dtCore::RefPtr<dtActors::GameMeshActor> p;
@@ -349,7 +349,7 @@ void GameManagerTests::TestFindActorByName()
    gameEventProxy->SetName(eventName);
    mGM->AddActor(*gameEventProxy, false, false);
 
-   std::vector<dtCore::BaseActorObject*> proxies;
+   dtCore::ActorPtrVector proxies;
    mGM->FindActorsByName(eventName, proxies);
    CPPUNIT_ASSERT_MESSAGE("GameManager failed to find the actor by name.", !proxies.empty());
 
@@ -373,7 +373,7 @@ void GameManagerTests::TestPrototypeActors()
    mGM->CreateActor(*dtActors::EngineActorRegistry::GAME_MESH_ACTOR_TYPE, toMakeAsAPrototype);
    toMakeAsAPrototype->SetName("PrototypeActorProxy");
 
-   std::vector<dtCore::BaseActorObject*> toFill;
+   dtCore::ActorPtrVector toFill;
    mGM->GetAllPrototypes(toFill);
    CPPUNIT_ASSERT_MESSAGE("GameManager shouldn't have had prototypes in it currently...", toFill.size() == 0);
 
@@ -699,7 +699,7 @@ void GameManagerTests::TestActorSearching()
          gm.AddActor(*proxies[i].get());
       }
 
-      std::vector<dtCore::BaseActorObject*> supportedProxies;
+      dtCore::ActorPtrVector supportedProxies;
 
       gm.FindActorsByType(**supportedTypes.begin(), supportedProxies);
 
@@ -1724,7 +1724,7 @@ void GameManagerTests::TestGMShutdown()
 
       CPPUNIT_ASSERT(mGM->GetCurrentMapSet().empty());
 
-      std::vector<dtCore::BaseActorObject*> proxies;
+      dtCore::ActorPtrVector proxies;
       mGM->GetAllActors(proxies);
       CPPUNIT_ASSERT_MESSAGE("Shut down of the game manager should have deleted the actors",
          proxies.empty());
@@ -1757,7 +1757,7 @@ void GameManagerTests::TestOpenCloseAdditionalMaps()
       const std::string context = "data/ProjectContext";
       project.SetContext(context);
 
-      std::vector<dtCore::RefPtr<dtCore::BaseActorObject> > actorsInMaps;
+      dtCore::ActorRefPtrVector actorsInMaps;
 
       {
          dtCore::Map& m = project.CreateMap("testMap", "testMap");
@@ -1820,7 +1820,7 @@ void GameManagerTests::TestOpenCloseAdditionalMaps()
 
       CPPUNIT_ASSERT(mGM->FindGameActorById(actorNoMap->GetId()) == actorNoMap.get());
 
-      std::vector<dtCore::RefPtr<dtCore::BaseActorObject> >::iterator i, iend;
+      dtCore::ActorRefPtrVector::iterator i, iend;
       i = actorsInMaps.begin();
       iend = actorsInMaps.end();
       for (; i != iend; ++i)
@@ -2070,7 +2070,7 @@ void GameManagerTests::TestGMSettingsServerClientRoles()
    dtCore::System::GetInstance().Step(0.016f);
 
    // Test that there are 4 game actors and 1 prototype in the GM. 
-   std::vector<dtCore::BaseActorObject*> proxies;
+   dtCore::ActorPtrVector proxies;
    mGM->GetAllPrototypes(proxies);
    CPPUNIT_ASSERT_EQUAL_MESSAGE("Should be 1 prototype.",(int) proxies.size(), 1);
 

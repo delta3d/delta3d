@@ -292,7 +292,7 @@ namespace dtAnim
    /////////////////////////////////////////////////////////////////////////////
    void AnimationComponentTests::TestAnimationPerformance()
    {
-      typedef std::vector<dtCore::BaseActorObject*> ProxyContainer;
+      typedef dtCore::ActorPtrVector ProxyContainer;
       ProxyContainer proxies;
       ProxyContainer groundActor;
 

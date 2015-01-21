@@ -323,7 +323,7 @@ void TankActor::CheckForNewTarget()
    dtCore::UniqueId closestId(mNoTargetId);
 
    // Find all the KillableActors and iterator over them, looking for a target...
-   typedef std::vector<dtCore::BaseActorObject*> ActorProxyVector;
+   typedef dtCore::ActorPtrVector ActorProxyVector;
    ActorProxyVector killableActorProxies;
    GetGameActorProxy().GetGameManager()->FindActorsByType(*ActorsRegistry::KILLABLE_ACTOR_TYPE, killableActorProxies);
    for (ActorProxyVector::iterator iter = killableActorProxies.begin();

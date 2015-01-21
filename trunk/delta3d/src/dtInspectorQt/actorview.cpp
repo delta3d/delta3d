@@ -26,7 +26,7 @@ void dtInspectorQt::ActorView::Build(QList<EntryData>& itemList)
       return;
    }
 
-   std::vector<dtCore::BaseActorObject*> actorList;
+   dtCore::ActorPtrVector actorList;
    mGameManager->GetAllActors(actorList);
 
    int count = (int)actorList.size();

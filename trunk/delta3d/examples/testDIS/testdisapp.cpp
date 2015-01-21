@@ -117,7 +117,7 @@ void TestDISApp::FindActorsAndAddComponents()
 {
    FindDISActor findDisActor;
    mGameManager->FindActorsIf(findDisActor, mActorsToPublish);
-   std::vector<dtCore::BaseActorObject*>::iterator itr = mActorsToPublish.begin();
+   dtCore::ActorPtrVector::iterator itr = mActorsToPublish.begin();
    while (itr != mActorsToPublish.end())
    {
       EntityTypeActorComponent* entityTypeComp = new EntityTypeActorComponent(1,1,222,1,2,2);
@@ -138,7 +138,7 @@ void TestDISApp::PostFrame(const double deltaSimTime)
       //find any published GameActors and add some new ActorComponents to them
       if (mActorsToPublish.empty()) { FindActorsAndAddComponents(); }
 
-      std::vector<dtCore::BaseActorObject*>::iterator itr = mActorsToPublish.begin();
+      dtCore::ActorPtrVector::iterator itr = mActorsToPublish.begin();
       while (itr != mActorsToPublish.end())
       {
          //Tell the GameActorProxy to send an ActorUpdateMessage with all of it's ActorProperties

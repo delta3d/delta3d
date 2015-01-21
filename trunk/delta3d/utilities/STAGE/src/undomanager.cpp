@@ -434,7 +434,7 @@ namespace dtEditQt
       EditorActions::GetInstance().deleteProxy(proxy, currMap);
 
       //We are deleting an object, so clear the current selection for safety.
-      std::vector<dtCore::RefPtr<dtCore::BaseActorObject> > emptySelection;
+      dtCore::ActorRefPtrVector emptySelection;
       EditorEvents::GetInstance().emitActorsSelected(emptySelection);
 
       EditorData::GetInstance().getMainWindow()->endWaitCursor();
@@ -474,12 +474,12 @@ namespace dtEditQt
                // Since this is the first actor being grouped, remove our current
                // selection and enable multi-select mode.
 
-               std::vector<dtCore::RefPtr<dtCore::BaseActorObject> > emptySelection;
+               dtCore::ActorRefPtrVector emptySelection;
                EditorEvents::GetInstance().emitActorsSelected(emptySelection);
             }
 
             // Now add the new proxy to the current selection.
-            std::vector<dtCore::RefPtr<dtCore::BaseActorObject> > toSelect;
+            dtCore::ActorRefPtrVector toSelect;
             ViewportOverlay::ActorProxyList& selection = ViewportManager::GetInstance().getViewportOverlay()->getCurrentActorSelection();
 
             for (int index = 0; index < (int)selection.size(); index++)

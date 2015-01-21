@@ -176,19 +176,19 @@ namespace dtEditQt
    }
 
    //////////////////////////////////////////////////////////////////////////////
-   void EditorData::GetSelectedActors(std::vector<dtCore::BaseActorObject*>& toFill)
+   void EditorData::GetSelectedActors(dtCore::ActorPtrVector& toFill)
    {
       PropertyEditor* propEditor = getMainWindow()->GetPropertyEditor();
       if(propEditor != NULL)
       {
-         std::vector<dtCore::PropertyContainer*> toFillPC;
+         dtCore::PropContPtrVector toFillPC;
 
          propEditor->GetSelectedPropertyContainers(toFillPC);
 
-         toFill.clear();
-         toFill.reserve(toFillPC.size());
+         toFill.reserve(toFill.size() + toFillPC.size());
          for (size_t i = 0; i != toFillPC.size(); ++i)
          {
+            // This is very dangerous, but at the moment, necessary.
             toFill.push_back(static_cast<dtCore::BaseActorObject*>(toFillPC[i]));
          }
 

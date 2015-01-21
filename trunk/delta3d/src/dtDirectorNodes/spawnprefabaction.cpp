@@ -158,8 +158,8 @@ namespace dtDirector
             else
             {
                bool setResult = false;
-               std::vector<dtCore::RefPtr<dtCore::BaseActorObject> >& actors = prefabActor->GetPrefabProxies();
-               std::vector<dtCore::RefPtr<dtCore::BaseActorObject> >::iterator i, iend;
+               dtCore::ActorRefPtrVector& actors = prefabActor->GetPrefabProxies();
+               dtCore::ActorRefPtrVector::iterator i, iend;
                i = actors.begin();
                iend = actors.end();
                for (; i != iend; ++i)

@@ -144,7 +144,7 @@ void MassImporterPlugin::CreateActorFromMesh(const dtCore::ActorType& type, cons
    // If not: create a new actor.
    dtCore::RefPtr<dtCore::BaseActorObject> proxy;
    dtCore::RefPtr<dtCore::Map> mapPtr = EditorData::GetInstance().getCurrentMap();
-   std::vector<dtCore::RefPtr<dtCore::BaseActorObject> > proxies;
+   dtCore::ActorRefPtrVector proxies;
    mapPtr->FindProxies(proxies, actorName, type.GetCategory(), type.GetName());
 
    if(proxies.empty())

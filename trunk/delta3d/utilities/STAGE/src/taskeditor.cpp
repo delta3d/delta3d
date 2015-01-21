@@ -294,8 +294,8 @@ namespace dtEditQt
 
       const std::string topLevelProperty("IsTopLevel");
 
-      std::vector<dtCore::RefPtr<dtCore::BaseActorObject> > toFill;
-      std::vector<dtCore::BaseActorObject*> selectedActors;
+      dtCore::ActorRefPtrVector toFill;
+      dtCore::ActorPtrVector selectedActors;
       m->FindProxies(toFill, "", "dtcore.Tasks", "Task Actor");
       EditorData::GetInstance().GetSelectedActors(selectedActors);
 

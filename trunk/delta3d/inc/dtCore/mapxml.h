@@ -33,6 +33,7 @@ namespace dtCore
    class BaseActorObject;
    class ActorPropertySerializer;
    class ActorHierarchyNode;
+   typedef std::vector<RefPtr<BaseActorObject> > ActorRefPtrVector;
 
    /**
     * @class MapParser
@@ -66,7 +67,7 @@ namespace dtCore
          * @param[in]  proxyList  The list of proxies loaded from the prefab.
          * @param[in]  map        The map we are loading the prefab for.
          */
-         bool ParsePrefab(const std::string& path, std::vector<dtCore::RefPtr<dtCore::BaseActorObject> >& actorList, dtCore::Map* map = NULL);
+         bool ParsePrefab(const std::string& path, dtCore::ActorRefPtrVector& actorList, dtCore::Map* map = NULL);
 
          /**
          * Parses only the header of a prefab's xml file and extracts the icon

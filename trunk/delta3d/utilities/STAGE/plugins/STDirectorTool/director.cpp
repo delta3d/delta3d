@@ -134,9 +134,9 @@ DirectorToolEditor::~DirectorToolEditor()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-std::vector<dtCore::BaseActorObject*> DirectorToolEditor::GetActorSelection()
+dtCore::ActorPtrVector DirectorToolEditor::GetActorSelection()
 {
-   std::vector<dtCore::BaseActorObject*> selection;
+   dtCore::ActorPtrVector selection;
    EditorData::GetInstance().GetSelectedActors(selection);
 
    return selection;
@@ -156,7 +156,7 @@ void DirectorToolEditor::OnGotoActor()
 {
    if (mProxy.valid())
    {
-      std::vector<dtCore::RefPtr<dtCore::BaseActorObject> > toSelect;
+      dtCore::ActorRefPtrVector toSelect;
       toSelect.push_back(mProxy);
 
       EditorEvents::GetInstance().emitActorsSelected(toSelect);
@@ -169,7 +169,7 @@ void DirectorToolEditor::OnUseCurrentActor()
 {
    if (mNode && mNode->GetType().GetFullName() == "General.Actor")
    {
-      std::vector<dtCore::BaseActorObject*> selection;
+      dtCore::ActorPtrVector selection;
       EditorData::GetInstance().GetSelectedActors(selection);
 
       if (selection.size())

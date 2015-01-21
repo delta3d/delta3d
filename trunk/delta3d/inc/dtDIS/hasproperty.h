@@ -38,7 +38,7 @@ namespace dtDIS
       class DT_DIS_EXPORT HasProperty
       {
       public:
-         typedef std::vector<dtCore::BaseActorObject*> ActorVector;
+         typedef dtCore::ActorPtrVector ActorVector;
 
          HasProperty(const std::string& prop_name);
          ~HasProperty();

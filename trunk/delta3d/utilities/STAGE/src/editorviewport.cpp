@@ -988,7 +988,7 @@ namespace dtEditQt
    //////////////////////////////////////////////////////////////////////////
    void EditorViewport::slotMoveActorOrCamera(QAction* action)
    {
-      std::vector<dtCore::BaseActorObject*> selected;
+      dtCore::ActorPtrVector selected;
       EditorData::GetInstance().GetSelectedActors(selected);
 
       if (selected.empty()) {return;}
@@ -1003,7 +1003,7 @@ namespace dtEditQt
          saveSelectedActorOrigValues(dtCore::TransformableActorProxy::PROPERTY_TRANSLATION);
          saveSelectedActorOrigValues(dtCore::TransformableActorProxy::PROPERTY_ROTATION);
 
-         std::vector<dtCore::BaseActorObject*>::iterator itr = selected.begin();
+         dtCore::ActorPtrVector::iterator itr = selected.begin();
          while (itr != selected.end())
          {
             if ((*itr)->IsPlaceable())
@@ -1192,7 +1192,7 @@ namespace dtEditQt
 
       if (mapPtr)
       {
-         std::vector<dtCore::RefPtr<dtCore::BaseActorObject> > proxies;
+         dtCore::ActorRefPtrVector proxies;
          EditorEvents::GetInstance().emitBeginChangeTransaction();
          dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
          fileUtils.PushDirectory(dtCore::Project::GetInstance().GetContext());

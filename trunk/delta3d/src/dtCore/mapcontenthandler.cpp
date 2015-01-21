@@ -728,7 +728,7 @@ namespace  dtCore
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void MapContentHandler::SetPrefabMode(std::vector<dtCore::RefPtr<dtCore::BaseActorObject> >& proxyList,
+   void MapContentHandler::SetPrefabMode(dtCore::ActorRefPtrVector& proxyList,
       dtCore::Map* map)
    {
       mLoadingPrefab = true;

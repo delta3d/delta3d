@@ -355,7 +355,7 @@ namespace dtCore
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   bool MapParser::ParsePrefab(const std::string& path, std::vector<dtCore::RefPtr<dtCore::BaseActorObject> >& proxyList, dtCore::Map* map)
+   bool MapParser::ParsePrefab(const std::string& path, dtCore::ActorRefPtrVector& proxyList, dtCore::Map* map)
    {
       mMapHandler->SetPrefabMode(proxyList, map);
       std::ifstream mapfstream(path.c_str());

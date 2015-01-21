@@ -980,7 +980,7 @@ namespace dtExample
 
       mLampIntensity = intensity;
 
-      typedef std::vector<dtCore::BaseActorObject*> ActorList;
+      typedef dtCore::ActorPtrVector ActorList;
       ActorList actors;
 
       dtGame::GameManager* gm = GetGameManager();

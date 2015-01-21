@@ -931,7 +931,7 @@ namespace dtDirector
    ////////////////////////////////////////////////////////////////////////////////
    void EditorScene::OnCreateActorsFromSelection()
    {
-      std::vector<dtCore::BaseActorObject*> proxies = mEditor->GetActorSelection();
+      dtCore::ActorPtrVector proxies = mEditor->GetActorSelection();
 
       int count = (int)proxies.size();
       for (int index = 0; index < count; ++index)
