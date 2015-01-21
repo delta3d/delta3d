@@ -859,8 +859,8 @@ namespace dtPhysics
       CPPUNIT_ASSERT(mat != NULL);
 
       PhysicsMaterials& materials = PhysicsWorld::GetInstance().GetMaterials();
-      materials.NewMaterial(mat->GetName(), mat->GetMaterialDef());
-      Material* uniqueMaterial = materials.GetMaterial(mat->GetName());
+      Material* uniqueMaterial = materials.NewMaterial(mat->GetName(), mat->GetMaterialDef());
+      CPPUNIT_ASSERT(uniqueMaterial == materials.GetMaterial(mat->GetName()));
 
       // Pre set this to make sure it gets set propertly on create from properties.
       physicsObject->SetCollisionGroup(5);
@@ -891,6 +891,7 @@ namespace dtPhysics
       
       // Test assignment of a material by index.
       Material* newMat = materials.NewMaterial("AnotherMaterial", mat->GetMaterialDef());
+
       MaterialIndex newMatIndex = newMat->GetId();
 
       CPPUNIT_ASSERT(physicsObject->GetMaterial() != newMat);

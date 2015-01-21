@@ -30,6 +30,7 @@
 #include <dtUtil/exception.h>
 #include <dtUtil/fileutils.h>
 #include <dtUtil/datapathutils.h>
+#include <dtUtil/mathdefines.h>
 #include <dtCore/system.h>
 
 #include <cctype>
@@ -610,8 +611,20 @@ namespace dtPhysics
       def.SetStaticFriction(Real(0.34));
       def.SetRestitution(Real(0.91));
 
+      MaterialDef def2;
+      def2.SetKineticFriction(Real(0.97));
+      def2.SetStaticFriction(Real(0.44));
+      def2.SetRestitution(Real(0.01));
+      def2.SetDisableStrongFriction(!def.GetDisableStrongFriction());
+      def2.SetDirOfAnisotropy(dtPhysics::VectorType(0.3, 0.2, 0.9));
+      def2.SetEnableAnisotropicFriction(true);
+      def2.SetKineticAnisotropicFriction(dtPhysics::VectorType(0.8, 0.2, 1.1));
+      def2.SetStaticAnisotropicFriction(dtPhysics::VectorType(0.2, 0.8, 1.0));
+
       Material* cheeseMat = materials.NewMaterial(testMaterialName, def);
       CPPUNIT_ASSERT(cheeseMat != NULL);
+      CPPUNIT_ASSERT(materials.GetMaterialCount() == 2);
+      CPPUNIT_ASSERT(cheeseMat == materials.CreateOrUpdateMaterial(testMaterialName, def));
       CPPUNIT_ASSERT(materials.GetMaterialCount() == 2);
       CPPUNIT_ASSERT(cheeseMat->GetId() == def.GetMaterialIndex());
       index = cheeseMat->GetId();
@@ -645,14 +658,14 @@ namespace dtPhysics
       CPPUNIT_ASSERT(test1->GetId() == def.GetMaterialIndex());
       
       def.SetStaticFriction(3.77f);
-      Material* test2 = materials.NewMaterial(testMaterialName +"2", def);
+      Material* test2 = materials.CreateOrUpdateMaterial(testMaterialName +"2", def);
       CPPUNIT_ASSERT(test2 == materials.GetMaterial(testMaterialName +"2"));
       CPPUNIT_ASSERT(test2->GetId() == def.GetMaterialIndex());
       
-      def.SetRestitution(0.61f);
-      Material* test3 = materials.NewMaterial(testMaterialName +"3", def);
+      Material* test3 = materials.CreateOrUpdateMaterial(testMaterialName +"3", def);
       CPPUNIT_ASSERT(test3 == materials.GetMaterial(testMaterialName +"3"));
       CPPUNIT_ASSERT(test3->GetId() == def.GetMaterialIndex());
+      CPPUNIT_ASSERT(test3 == materials.CreateOrUpdateMaterial(testMaterialName +"3", def2));
       
       // 3 more materials were added, so there should be a total of 4.
       CPPUNIT_ASSERT(materials.GetMaterialCount() == 5);
@@ -669,9 +682,19 @@ namespace dtPhysics
       CPPUNIT_ASSERT_EQUAL(3U, test2->GetId());
       CPPUNIT_ASSERT(test2 == materials.GetMaterialByIndex(3U));
 
-      CPPUNIT_ASSERT_DOUBLES_EQUAL(float(test3->m_fKinetic), float(def.GetKineticFriction()), 0.01f);
-      CPPUNIT_ASSERT_DOUBLES_EQUAL(float(test3->m_fStatic), float(def.GetStaticFriction()), 0.01f);
-      CPPUNIT_ASSERT_DOUBLES_EQUAL(float(test3->m_fRestitution), float(def.GetRestitution()), 0.01f);
+      CPPUNIT_ASSERT_DOUBLES_EQUAL(float(test3->m_fKinetic), float(def2.GetKineticFriction()), 0.01f);
+      CPPUNIT_ASSERT_DOUBLES_EQUAL(float(test3->m_fStatic), float(def2.GetStaticFriction()), 0.01f);
+      CPPUNIT_ASSERT_DOUBLES_EQUAL(float(test3->m_fRestitution), float(def2.GetRestitution()), 0.01f);
+      CPPUNIT_ASSERT_EQUAL(test3->m_bDisableStrongFriction, def2.GetDisableStrongFriction());
+      CPPUNIT_ASSERT_EQUAL(test3->m_bEnableAnisotropicFriction, def2.GetEnableAnisotropicFriction());
+      dtPhysics::VectorType tempVec;
+      PalVecToVectorType(tempVec, test3->m_vDirAnisotropy);
+      CPPUNIT_ASSERT(dtUtil::Equivalent(tempVec, def2.GetDirOfAnisotropy(), 0.01f));
+      PalVecToVectorType(tempVec, test3->m_vKineticAnisotropic);
+      CPPUNIT_ASSERT(dtUtil::Equivalent(tempVec, def2.GetKineticAnisotropicFriction(), 0.01f));
+      PalVecToVectorType(tempVec, test3->m_vStaticAnisotropic);
+      CPPUNIT_ASSERT(dtUtil::Equivalent(tempVec, def2.GetStaticAnisotropicFriction(), 0.01f));
+      CPPUNIT_ASSERT_DOUBLES_EQUAL(float(test3->m_fRestitution), float(def2.GetRestitution()), 0.01f);
       CPPUNIT_ASSERT_EQUAL(4U, test3->GetId());
       CPPUNIT_ASSERT(test3 == materials.GetMaterialByIndex(4U));
 
@@ -680,7 +703,6 @@ namespace dtPhysics
       // --- Retrieve the original again.
       CPPUNIT_ASSERT(materials.GetMaterialDef(testMaterialName, def));
       // --- Retrieve the same information by index with another struct.
-      MaterialDef def2;
       CPPUNIT_ASSERT(materials.GetMaterialDefByIndex(index, def2));
       CPPUNIT_ASSERT_DOUBLES_EQUAL(def.GetKineticFriction(), def2.GetKineticFriction(), 0.01f);
       CPPUNIT_ASSERT_DOUBLES_EQUAL(def.GetStaticFriction(), def2.GetStaticFriction(), 0.01f);

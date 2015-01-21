@@ -73,17 +73,7 @@ namespace dtPhysics
       {
          PhysicsMaterials& materials = physComp->GetPhysicsWorld().GetMaterials();
 
-         Material* uniqueMaterial = materials.GetMaterial(GetName());
-         if (uniqueMaterial != NULL)
-         {
-            // If the material already exists, the definition of said material may be changed by setting the materials
-            // interaction with itself. This is weird, and should really be rethought out. -DG
-            materials.SetMaterialInteraction(GetName(), GetName(), GetMaterialDef());
-         }
-         else
-         {
-            materials.NewMaterial(GetName(), GetMaterialDef());
-         }
+         materials.CreateOrUpdateMaterial(GetName(), GetMaterialDef());
       }
    }
 
