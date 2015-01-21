@@ -432,6 +432,9 @@ namespace dtCore
       BaseActorObject& operator=(const BaseActorObject&);
 
    };
+
+   typedef std::vector<BaseActorObject*> ActorPtrVector;
+   typedef std::vector<RefPtr<BaseActorObject> > ActorRefPtrVector;
 }
 
 #endif /* BASEACTOROBJECT_H_ */

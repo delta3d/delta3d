@@ -206,6 +206,8 @@ namespace dtCore
    };
 
    typedef RefPtr<PropertyContainer> PropertyContainerPtr;
+   typedef std::vector<PropertyContainer*> PropContPtrVector;
+   typedef std::vector<PropertyContainerPtr> PropContRefPtrVector;
 
    template <typename UnaryFunctor>
    inline void PropertyContainer::ForEachProperty(UnaryFunctor func)
