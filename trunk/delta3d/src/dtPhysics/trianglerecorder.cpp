@@ -14,8 +14,8 @@ namespace dtPhysics
    : mData(new VertexData)
    , mCurrentMaterial(0)
    , mMaxEdgeLength(20.0)
-   , mSplitCount()
-   , mReuseCount()
+   , mSplitCount(0)
+   , mReuseCount(0)
    , mMatrixIsIdentity(true)
    {
    }
@@ -65,6 +65,11 @@ namespace dtPhysics
 
       bool SplitIf(Real maxEdgeLength, Triangle& newT)
       {
+         if (maxEdgeLength == FLT_MAX || maxEdgeLength <= 0.0f)
+         {
+            return false;
+         }
+
          int longest = 1;
 
          VectorType side1(mV[1] - mV[0]);

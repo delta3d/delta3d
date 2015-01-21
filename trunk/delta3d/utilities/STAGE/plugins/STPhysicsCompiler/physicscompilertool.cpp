@@ -64,6 +64,7 @@ static const QString SETTING_INPUT_MESH_FILE("InputMeshFile");
 static const QString SETTING_INPUT_MESH_FILE_ENABLED("InputMeshFileEnabled");
 static const QString SETTING_MAX_VERTS_PER_MESH("MaxVertsPerMesh");
 static const QString SETTING_MAX_EDGE_LENGTH("MaxEdgeLength");
+static const QString SETTING_TRIANGLE_SUBDIVISION_ENABLED("TriangleSubdivisionEnabled");
 // Object Settings
 static const QString SETTING_MASS("Mass");
 static const QString SETTING_COLLISION_MARGIN("CollisionMargin");
@@ -692,9 +693,19 @@ void PhysicsCompilerToolPlugin::OnCompileClicked()
 
          mIsCompiling = true;
 
+         // Modify compile options non-destrcutively for
+         // other settings that do not translate directly
+         // to explicit options/variables.
+         dtPhysics::PhysicsCompileOptions compileOptions = mCompileOptions;
+         // Determine if trangle splitting should be disabled.
+         if ( ! mUI.mTriangleSubdivisionEnabled->isChecked())
+         {
+            compileOptions.mMaxEdgeLength = 0.0f;
+         }
+
          // Compile to a separate thread so UI can update independently.
          dtCore::RefPtr<PhysicsCompileThread> compileThread = new PhysicsCompileThread(*this, *node);
-         compileThread->mCompileOptions = mCompileOptions;
+         compileThread->mCompileOptions = compileOptions;
          compileThread->mObjectOptions = mObjectOptions;
          compileThread->mVertData = &mVertData;
          dtUtil::ThreadPool::AddTask(*compileThread, dtUtil::ThreadPool::IO);
@@ -995,6 +1006,7 @@ void PhysicsCompilerToolPlugin::SaveSettings()
       settings.setValue(SETTING_INPUT_MESH_FILE_ENABLED, mUI.mInputMeshEnabled->isChecked());
       settings.setValue(SETTING_MAX_VERTS_PER_MESH, mCompileOptions.mMaxVertsPerMesh);
       settings.setValue(SETTING_MAX_EDGE_LENGTH, mCompileOptions.mMaxEdgeLength);
+      settings.setValue(SETTING_TRIANGLE_SUBDIVISION_ENABLED, mUI.mTriangleSubdivisionEnabled->isChecked());
 
       // Object Settings
       settings.setValue(SETTING_MASS, mObjectOptions.mMass);
@@ -1033,6 +1045,7 @@ void PhysicsCompilerToolPlugin::LoadSettings()
          mUI.mInputMeshEnabled->setChecked(settings.value(SETTING_INPUT_MESH_FILE_ENABLED).toBool());
          mCompileOptions.mMaxVertsPerMesh = settings.value(SETTING_MAX_VERTS_PER_MESH).toUInt();
          mCompileOptions.mMaxEdgeLength = settings.value(SETTING_MAX_EDGE_LENGTH).toFloat();
+         mUI.mTriangleSubdivisionEnabled->setChecked(settings.value(SETTING_TRIANGLE_SUBDIVISION_ENABLED).toBool());
          
          // Object Settings
          mObjectOptions.mMass = settings.value(SETTING_MASS).toDouble();
