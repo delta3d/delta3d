@@ -235,7 +235,7 @@ namespace dtQt
             // else we get epsilon differences that cause the map to be marked dirty with no edits :(
             QString proxyValue = RealToString(getValue(), mIsVecFloat ? NUM_DECIMAL_DIGITS_FLOAT : NUM_DECIMAL_DIGITS_DOUBLE);
             QString newValue = editBox->text();
-            if (doubleResult != getValue() && proxyValue != newValue)
+            if ((doubleResult != getValue() && proxyValue != newValue) || !doPropertiesMatch())
             {
                dataChanged = setValue(doubleResult);
             }
@@ -267,6 +267,8 @@ namespace dtQt
       validator->setDecimals(mIsVecFloat ? NUM_DECIMAL_DIGITS_FLOAT : NUM_DECIMAL_DIGITS_DOUBLE);
       mTemporaryEditControl->setValidator(validator);
       mWrapper = mTemporaryEditControl;
+
+      connect(mTemporaryEditControl, SIGNAL(returnPressed()), this, SLOT(enterPressed()));
 
       if (!mInitialized)
       {
