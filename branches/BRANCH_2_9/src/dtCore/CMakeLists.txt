@@ -22,7 +22,6 @@ SET(LIB_PUBLIC_HEADERS
                 ${HEADER_PATH}/abstractparameter.h
                 ${HEADER_PATH}/actoractorproperty.h
                 ${HEADER_PATH}/actorcomponent.h
-                ${HEADER_PATH}/actorcomponentcontainer.h
                 ${HEADER_PATH}/actorhierarchynode.h
                 ${HEADER_PATH}/actoridactorproperty.h
                 ${HEADER_PATH}/actorpluginregistry.h
