@@ -1,7 +1,7 @@
 /* -*-c++-*-
  * Delta3D Simulation Training And Game Editor (STAGE)
- * STAGE - dynamicnumericcontrol (.h & .cpp) - Using 'The MIT License'
- * Copyright (C) 2005-2008, Alion Science and Technology Corporation
+ * STAGE - dynamicnumericcontrol.h - Using 'The MIT License'
+ * Copyright (C) 2015, Caper Holdings LLC.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,9 +21,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  *
- * This software was developed by Alion Science and Technology Corporation under
- * circumstances in which the U. S. Government may have rights in the software.
- *
+ * David Guthrie
+ * Jeff Houde
  * Curtiss Murphy
  */
 #ifndef DELTA_DYNAMICNUMERICCONTROL
@@ -196,7 +195,10 @@ namespace dtQt
       if (widget == mWrapper && mTemporaryEditControl)
       {
          bool success = false;
-         float result = mTemporaryEditControl->text().toFloat(&success);
+         // This is just to test success;
+         mTemporaryEditControl->text().toDouble(&success);
+
+         typename PropertyType::GetValueType result = dtUtil::ToType<typename PropertyType::GetValueType>(mTemporaryEditControl->text().toStdString());
 
          // set our value to our object
          if (success)
