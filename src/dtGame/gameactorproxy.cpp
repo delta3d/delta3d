@@ -94,11 +94,9 @@ namespace dtGame
    , mOwnership(&GameActorProxy::Ownership::SERVER_LOCAL)
    , mLocalActorUpdatePolicy(&GameActorProxy::LocalActorUpdatePolicy::ACCEPT_ALL)
    , mLogger(dtUtil::Log::GetInstance("gameactor.cpp"))
-   , mIsInGM(false)
    , mPublished(false)
    , mRemote(false)
    , mDrawableIsAGameActor(true) // It defaults to true so it will try to do the cast early in the init.
-   , mDeleted(false)
    {
       SetClassName("dtGame::GameActor");
    }
@@ -238,19 +236,6 @@ namespace dtGame
          throw dtGame::InvalidActorStateException("The Drawable for " + GetName() + " is not of type GameActor, but the code called GetGameActor().", __FILE__, __LINE__);
       }
       return *ga;
-   }
-
-   /////////////////////////////////////////////////////////////////////////////
-   bool GameActorProxy::IsInGM() const
-   {
-      return mIsInGM;
-   }
-
-   /////////////////////////////////////////////////////////////////////////////
-   void GameActorProxy::SetIsInGM(bool value)
-   {
-      mIsInGM = value;
-      SetDeleted(false);
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -836,12 +821,12 @@ namespace dtGame
       {
          if (mCallEnteredWorld)
          {
-            actorComp->SetIsInGM(true);
+            actorComp->SetInGM(true);
             actorComp->OnEnteredWorld();
          }
          else
          {
-            actorComp->SetIsInGM(false);
+            actorComp->SetInGM(false);
             actorComp->OnRemovedFromWorld();
          }
 
@@ -949,59 +934,6 @@ namespace dtGame
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   dtCore::RefPtr<dtCore::ActorProperty> GameActorProxy::GetDeprecatedProperty(const std::string& name)
-   {
-      dtCore::RefPtr<dtCore::ActorProperty> prop = BaseClass::GetDeprecatedProperty(name);
-
-      if (!prop.valid())
-      {
-         // Check all of our actor components to see if one of them can support it
-         dtCore::ActorComponent* comp = NULL;
-         dtCore::BaseActorArray components;
-         GetAllComponents(components);
-         unsigned int size = components.size();
-         for (unsigned int i = 0; i < size; i ++)
-         {
-            comp = dynamic_cast<dtCore::ActorComponent*>(components[i].get());
-
-            if (comp == NULL)
-            {
-               dtCore::BaseActorObject* actor = components[i];
-               if (actor != NULL)
-               {
-                  LOG_ERROR("Actor \"" + actor->GetName()
-                     + "\" could not be converted to an ActorComponent.");
-               }
-               else
-               {
-                  LOG_ERROR("NULL reference encountered!");
-               }
-            }
-            else
-            {
-               // Attempt getting the property from the component
-               // since the property could not be found on the actor directly.
-               prop = comp->GetProperty(name);
-
-               // If not found...
-               if ( ! prop.valid())
-               {
-                  // ...try to find it by some other name.
-                  prop = comp->GetDeprecatedProperty(name);
-               }
-
-               if (prop.valid())
-               {
-                  break; // quit looking.
-               }
-            }
-         }
-      }
-
-      return prop;
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
    void GameActorProxy::OnTickLocal(const TickMessage& tickMessage)
    {
       if (mDrawableIsAGameActor)
@@ -1022,10 +954,5 @@ namespace dtGame
             ga->OnTickRemote(tickMessage);
       }
    }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   bool GameActorProxy::IsDeleted() const { return mDeleted; }
-   ////////////////////////////////////////////////////////////////////////////////
-   void GameActorProxy::SetDeleted(bool deleted) { mDeleted = deleted; }
 
 }

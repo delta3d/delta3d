@@ -390,14 +390,16 @@ namespace dtEditQt
          // found by the results of our hard coded search above.
          if (meshActor != NULL)
          {
-            dtCore::RefPtr<dtCore::BaseActorObject> proxy =
-               dtCore::LibraryManager::GetInstance().CreateActor(*meshActor).get();
+            dtCore::RefPtr<dtCore::BaseActor> proxy = dynamic_cast<dtCore::BaseActor*>
+               (dtCore::LibraryManager::GetInstance().CreateActor(*meshActor).get());
 
             // check to make sure both the mesh actor and the proxy are valid.
             // If the user has somehow modified the above hard coded static mesh object
             // the application could potentially be in a dangerous state.
             if (proxy.valid())
             {
+               proxy->AddComponentProperties();
+
                // grab the actor property type
                dtCore::ResourceActorProperty* resourceProp = dynamic_cast<dtCore::ResourceActorProperty *>
                   (proxy->GetProperty("static mesh"));

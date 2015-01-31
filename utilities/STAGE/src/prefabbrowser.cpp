@@ -408,11 +408,13 @@ namespace dtEditQt
          EditorData::GetInstance().getMainWindow()->startWaitCursor();
 
          // create our new object
-         dtCore::RefPtr<dtCore::BaseActorObject> proxy =
-               dtCore::LibraryManager::GetInstance().CreateActor("dtActors", "Prefab");
+         dtCore::RefPtr<dtCore::BaseActor> proxy = dynamic_cast<dtCore::BaseActor*>
+               (dtCore::LibraryManager::GetInstance().CreateActor("dtActors", "Prefab").get());
 
          if (proxy.valid())
          {
+            proxy->AddComponentProperties();
+
             // add the new proxy to the map
             dtCore::RefPtr<dtCore::Map> mapPtr = EditorData::GetInstance().getCurrentMap();
             if (mapPtr.valid())

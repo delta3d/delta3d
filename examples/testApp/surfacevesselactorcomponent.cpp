@@ -140,12 +140,12 @@ namespace dtExample
       RegisterForTick();
 
       dtGame::GameActorProxy* owner = 0;
-      GetOwner(owner);
+      GetParentAs(owner);
 //      owner->RegisterForMessages(dtGame::MessageType::INFO_MAP_CHANGE_LOAD_END, dtUtil::MakeFunctor(&SurfaceVesselActorComponent::OnMapLoaded, this));
 //      owner->RegisterForMessages(dtGame::MessageType::INFO_MAPS_OPENED, dtUtil::MakeFunctor(&SurfaceVesselActorComponent::OnMapLoaded, this));
       owner->RegisterForMessages(dtGame::MessageType::INFO_GAME_EVENT, dtUtil::MakeFunctor(&SurfaceVesselActorComponent::OnGameEvent, this));
 
-      dtPhysics::PhysicsActComp* pac = GetOwner()->GetComponent<dtPhysics::PhysicsActComp>();
+      dtPhysics::PhysicsActComp* pac = GetParent()->GetComponent<dtPhysics::PhysicsActComp>();
       if (pac != NULL)
       {
          mBuoyancyAction->Register(*pac->GetMainPhysicsObject());
@@ -255,7 +255,7 @@ namespace dtExample
       if (gameEvent == mUpdateFromControllerEvent.get())
       {
          dtGame::GameActorProxy* owner = NULL,* bez = NULL;
-         GetOwner(owner);
+         GetParentAs(owner);
          owner->GetGameManager()->FindActorById(gameEventMsg.GetSendingActorId(), bez);
          if (bez != NULL)
          {
@@ -319,7 +319,7 @@ namespace dtExample
       }
 
       dtGame::GameActorProxy* owner = NULL;
-      GetOwner(owner);
+      GetParentAs(owner);
       if (owner == NULL)
       {
          return NULL;
@@ -519,7 +519,7 @@ namespace dtExample
 
          using namespace dtPhysics;
          bool physicsDynamicsWorked = false;
-         PhysicsActComp* pac = GetOwner()->GetComponent<PhysicsActComp>();
+         PhysicsActComp* pac = GetParent()->GetComponent<PhysicsActComp>();
          if (pac != NULL)
          {
             PhysicsObject* po = pac->GetMainPhysicsObject();

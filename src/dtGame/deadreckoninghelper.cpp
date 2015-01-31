@@ -140,7 +140,7 @@ namespace dtGame
       dtGame::DeadReckoningComponent* drc = NULL;
 
       GameActorProxy* act = NULL;
-      GetOwner(act);
+      GetParentAs(act);
 
       act->GetGameManager()->
          GetComponentByName(dtGame::DeadReckoningComponent::DEFAULT_NAME, drc);
@@ -163,7 +163,7 @@ namespace dtGame
       dtGame::DeadReckoningComponent* drc = NULL;
 
       GameActorProxy* act = NULL;
-      GetOwner(act);
+      GetParentAs(act);
       // This is false in some delete cases.
       if (act != NULL)
       {

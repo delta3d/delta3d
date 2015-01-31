@@ -317,7 +317,7 @@ void TestAnim::PlayerLoadCallback(dtAnim::AnimationHelper* helper)
    helper->GetAttachmentController()->AddAttachment(*attachment, hotspotDef);
 
    dtGame::GameActorProxy* actor;
-   helper->GetOwner(actor);
+   helper->GetParentAs(actor);
 
    dtCore::Transformable* tx;
    actor->GetDrawable(tx);

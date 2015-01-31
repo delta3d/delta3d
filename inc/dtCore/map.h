@@ -33,6 +33,7 @@
 #include <dtCore/export.h>
 #include <dtCore/baseactor.h>
 #include <dtCore/gameeventmanager.h>
+#include <dtUtil/functor.h>
 
 namespace dtCore 
 {
@@ -547,6 +548,7 @@ namespace dtCore
          virtual ~Map();
          
        private:
+
          bool mModified;
          //typedef std::multimap<std::string, dtCore::RefPtr<BaseActorObject> > ProxiesByClassMap;
          std::string mName;
@@ -568,7 +570,8 @@ namespace dtCore
          dtCore::RefPtr<GameEventManager> mEventManager;
 
          //ProxiesByClassMap proxiesByClass;
-         std::map<dtCore::UniqueId, dtCore::RefPtr<BaseActorObject> > mProxyMap;
+         typedef std::map<dtCore::UniqueId, dtCore::RefPtr<BaseActorObject> > IdActorMap;
+         IdActorMap mProxyMap;
 
          std::map<std::string, std::string> mLibraryVersionMap;
          std::vector<std::string> mLibraryOrder;
@@ -615,6 +618,51 @@ namespace dtCore
          // -----------------------------------------------------------------------
          Map(const Map&);
          Map& operator=(const Map&);
+
+      public:
+         // Function type for visiting all actors contained in the map.
+         typedef dtUtil::Functor<void, TYPELIST_1(dtCore::BaseActorObject&)> ActorVisitorFunc;
+         
+         // Predicate for iterating over the actor map
+         // that feeds accessed actors to the referenced
+         // function object.
+         template<typename T_MapPair>
+         struct ActorMapPredT
+         {
+            ActorMapPredT(ActorVisitorFunc& func)
+               : mFunc(func)
+            {}
+
+            void operator() (T_MapPair mapPair)
+            {
+               dtCore::BaseActorObject* actor = mapPair.second;
+
+               if (actor != NULL)
+               {
+                  mFunc(*actor);
+               }
+            }
+
+            ActorVisitorFunc mFunc;
+         };
+         typedef ActorMapPredT<IdActorMap::value_type> ActorMapPred;
+         
+         /**
+          * Convenience method for applying a function
+          * to all actors contained in the map.
+          * @param func Function object that will be called for each actor in the map.
+          */
+         void ForEachActor(ActorVisitorFunc& func)
+         {
+            if (func.valid())
+            {
+               // Use a predicate to visit all actors as pairs
+               // and feed only the actors to the specified function.
+               ActorMapPred pred(func);
+
+               std::for_each(mProxyMap.begin(), mProxyMap.end(), pred);
+            }
+         }
    };
 }
 

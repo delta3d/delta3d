@@ -1967,7 +1967,7 @@ void GameManagerTests::TestBatchAddWithAddActor()
          // Adding the actors should not set IsInGM, and should not call on entered world.
          mGM->AddActor(*actors[i], false, false);
          CPPUNIT_ASSERT(!actors[i]->IsInGM());
-         CPPUNIT_ASSERT(!actors[i]->GetComponent<TestActorComponent1>()->GetIsInGM());
+         CPPUNIT_ASSERT(!actors[i]->GetComponent<TestActorComponent1>()->IsInGM());
          CPPUNIT_ASSERT(!actors[i]->GetComponent<TestActorComponent1>()->GetAddActorInitialized());
        }
    }
@@ -1978,7 +1978,7 @@ void GameManagerTests::TestBatchAddWithAddActor()
       // The actor component should enter the world, add an actor, and it should be immediately intialized at the end of the batch.
       mGM->AddActor(*actors[i], false, false);
       CPPUNIT_ASSERT(actors[i]->IsInGM());
-      CPPUNIT_ASSERT(actors[i]->GetComponent<TestActorComponent1>()->GetIsInGM());
+      CPPUNIT_ASSERT(actors[i]->GetComponent<TestActorComponent1>()->IsInGM());
       CPPUNIT_ASSERT(actors[i]->GetComponent<TestActorComponent1>()->GetAddActorInitialized());
    }
 

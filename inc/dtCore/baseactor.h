@@ -169,7 +169,7 @@ namespace dtCore
       }
 
       /**
-       * Gets the first component of the desired type added to the ActorComponentContainer.
+       * Gets the first component of the desired type.
        * NOTE: Class must specify a constant ActorType reference named TYPE.
        * Usage:
        * @code
@@ -188,6 +188,43 @@ namespace dtCore
       int GetAllComponents(BaseActorArray& outComponents) const;
 
       int RemoveChildrenByType(const dtCore::ActorType& actorType, BaseActorArray* outActors = NULL, bool exactMatch = false);
+      
+      /**
+       * This method walks the child actor components to see if one of them
+       * can handle the deprecated property.
+       * @param name Name of the property to find.
+       * @return Property that matches the specified name, or NULL if not found.
+       */
+      /*virtual*/ dtCore::RefPtr<dtCore::ActorProperty>
+         GetDeprecatedProperty(const std::string& name);
+
+      /**
+       * Overrideable method to be called when the actor is added to the world.
+       */
+      virtual void OnEnteredWorld();
+
+      /**
+       * Overrideable method to be called when the actor is removed from the world.
+       */
+      virtual void OnRemovedFromWorld();
+
+      /**
+       * Sets a flag that determines if the actor is in the world/GameManager.
+       */
+      bool IsInGM() const;
+      void SetInGM(bool value);
+
+      /**
+       * If this actor is queued to be deleted.
+       */
+      bool IsDeleted() const;
+      void SetDeleted(bool deleted);
+
+      // TEMP:
+      void AddComponentProperties();
+
+      // TEMP:
+      void RemoveComponentProperties();
 
    protected:
 
@@ -206,7 +243,10 @@ namespace dtCore
 
       ///Hidden assignment operator.
       BaseActor& operator=(const BaseActor&);
-   public:
+
+      bool mIsInGM;
+      bool mDeleted;
+
    };
 }
 

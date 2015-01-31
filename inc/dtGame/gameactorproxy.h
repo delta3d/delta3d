@@ -417,12 +417,6 @@ namespace dtGame
                const std::string& invokableName);
 
       /**
-       * @return True if this GameActorProxy has been added to the GameManager yet,
-       * false otherwise.
-       */
-      bool IsInGM() const;
-
-      /**
        * Moved to public, since map change state data needs to call this now as well.
        * for actors within the map.
        */
@@ -433,14 +427,6 @@ namespace dtGame
        * @see dtGame::GameActorProxy::LocalActorUpdatePolicy::ACCEPT_WITH_PROPERTY_FILTER
        */
       bool ShouldAcceptPropertyInLocalUpdate(const dtUtil::RefString& propName) const;
-
-      /**
-       * This function walks the child actor components to see if one of them
-       * can handle the deprecated property.        *
-       * @param[in]  name  The name of the property queried for.
-       * @return           A property, or NULL if none found.
-       */
-      virtual dtCore::RefPtr<dtCore::ActorProperty> GetDeprecatedProperty(const std::string& name);
 
       /**
        * Method for handling local ticks.  This will called by the "Tick Local" invokable.
@@ -487,10 +473,6 @@ namespace dtGame
        * User code should not call this.
        */
       void InvokeRemovedFromWorld();
-
-      /// This was added so the GameManager can be set on creation.
-      void SetIsInGM(bool value);
-
 
       /**
        * @see dtGame::GameActorProxy::PROCESS_MSG_INVOKABLE
@@ -580,11 +562,6 @@ namespace dtGame
        */
       DEPRECATE_FUNC const GameActor& GetGameActor() const;
 
-      /**
-       * If this actor is queued to be deleted.
-       */
-      bool IsDeleted() const;
-      void SetDeleted(bool deleted);
    protected:
       /// Destructor
       virtual ~GameActorProxy();
@@ -594,7 +571,7 @@ namespace dtGame
        * to register Invokables with MessageTypes.
        * @see RegisterForMessages()
        */
-      virtual void OnEnteredWorld() { }
+      /*virtual*/ void OnEnteredWorld() { }
 
       /**
        * Called when the GM deletes the actor in a NORMAL way, such as DeleteActor().
@@ -604,7 +581,7 @@ namespace dtGame
        * at the end of a 'normal' map change. If you want to find out immediately that you
        * are being deleted, register for the INFO_ACTOR_DELETED with RegisterForMessagesAboutSelf().
        */
-      virtual void OnRemovedFromWorld() { }
+      /*virtual*/ void OnRemovedFromWorld() { }
 
       /**
        * Adds a property to the accept list for local updates.
@@ -653,11 +630,9 @@ namespace dtGame
       std::map<std::string, dtCore::RefPtr<Invokable> > mInvokables;
       std::multimap<const MessageType*, dtCore::RefPtr<Invokable> > mMessageHandlers;
       std::set<dtUtil::RefString> mLocalUpdatePropertyAcceptList;
-      bool mIsInGM;
       bool mPublished;
       bool mRemote;
       bool mDrawableIsAGameActor;
-      bool mDeleted;
 
    };
 }

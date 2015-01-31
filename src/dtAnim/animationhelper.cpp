@@ -140,7 +140,7 @@ void AnimationHelper::CheckLoadingState()
       ModelLoadedSignal(this);
    }
 
-   if (loadingState != ModelLoader::LOADING && GetIsInGM())
+   if (loadingState != ModelLoader::LOADING && IsInGM())
    {
       UnregisterForTick();
    }
@@ -202,7 +202,7 @@ void AnimationHelper::SetSkeletalMesh(const dtCore::ResourceDescriptor& rd)
       mSkeletalMesh = rd;
 
       dtCore::Project& proj = dtCore::Project::GetInstance();
-      if (!rd.IsEmpty() && (GetIsInGM() || proj.GetEditMode()))
+      if (!rd.IsEmpty() && (IsInGM() || proj.GetEditMode()))
       {
          LoadSkeletalMesh();
       }
@@ -263,7 +263,7 @@ bool AnimationHelper::LoadModel(const dtCore::ResourceDescriptor& resource)
       mModelLoader->ModelLoaded.connect_slot(this, &AnimationHelper::OnModelLoadCompleted);
       mModelLoader->SetAttachmentController(mAttachmentController);
       dtCore::Project& proj = dtCore::Project::GetInstance();
-      bool background = mLoadModelAsynchronously && GetIsInGM() && !proj.GetEditMode();
+      bool background = mLoadModelAsynchronously && IsInGM() && !proj.GetEditMode();
       mModelLoader->LoadModel(resource, background);
       if (background)
       {
@@ -292,7 +292,7 @@ void AnimationHelper::AttachNodeToDrawable(osg::Group* parent)
       if (parent == NULL)
       {
          dtGame::GameActorProxy* gap = NULL;
-         GetOwner(gap);
+         GetParentAs(gap);
          if (gap != NULL)
          {
             // This really should make a drawable and add it.
@@ -1002,7 +1002,7 @@ bool AnimationHelper::SetupPoses(const dtAnim::BaseModelData& modelData)
    ModelDatabase& database = ModelDatabase::GetInstance();
 
    dtCore::TransformableActorProxy* actor = NULL;
-   GetOwner(actor);
+   GetParentAs(actor);
 
    dtCore::Transformable* drawable = NULL;
    if (actor != NULL)

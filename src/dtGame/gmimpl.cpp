@@ -190,7 +190,7 @@ void GMImpl::AddActorToWorld(GameManager& gm, dtGame::GameActorProxy& actor)
    if (actor.IsInGM())
       return;
 
-   actor.SetIsInGM(true);
+   actor.SetInGM(true);
 
    try
    {

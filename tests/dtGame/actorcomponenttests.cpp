@@ -46,6 +46,7 @@
 #include <dtCore/intactorproperty.h>
 #include <dtCore/project.h>
 #include <dtCore/resourcedescriptor.h>
+#include <dtCore/stringactorproperty.h>
 
 #include <dtGame/gameactorproxy.h>
 #include <dtGame/gamemanager.h>
@@ -75,6 +76,8 @@ class ActorComponentTests : public CPPUNIT_NS::TestFixture
       CPPUNIT_TEST(TestAddActorComponent);
       CPPUNIT_TEST(TestActorComponentInitialized);
       CPPUNIT_TEST(TestGetAllActorComponents);
+      CPPUNIT_TEST(TestPropertyAdding);
+      CPPUNIT_TEST(TestPropertyRemoving);
 
    CPPUNIT_TEST_SUITE_END();
 
@@ -114,6 +117,18 @@ public:
       }
    }
 
+   void AddTestProperty(dtCore::ActorComponent& comp)
+   {
+      using namespace dtCore;
+
+      RefPtr<ActorProperty> prop = new StringActorProperty(
+         "TestProp", "TestProp",
+         StringActorProperty::SetFuncType(&comp, &ActorComponent::SetName),
+         StringActorProperty::GetFuncType(&comp, &ActorComponent::GetName));
+
+      comp.AddProperty(prop);
+   }
+
    void TestAddActorComponent()
    {
       try
@@ -131,7 +146,7 @@ public:
 
          actor->AddChild(*component);
 
-         CPPUNIT_ASSERT_MESSAGE("Actor owner not set", component->GetOwner() == actor);
+         CPPUNIT_ASSERT_MESSAGE("Actor owner not set", component->GetParent() == actor);
 
          bool hascomp = NULL != actor->GetComponentByType(*TestActorComponent1::TYPE);
          CPPUNIT_ASSERT_MESSAGE("Actor component not found after it was added!", hascomp);
@@ -243,6 +258,56 @@ public:
       actor->GetAllComponents(components);
       CPPUNIT_ASSERT_EQUAL_MESSAGE("Actor didn't return back the number of added ActorComponents",
                                    startingSize + 2, components.size());
+   }
+
+   void TestPropertyAdding()
+   {
+      dtCore::RefPtr<dtGame::GameActorProxy> actor = 
+         dynamic_cast<dtGame::GameActorProxy*>
+         (mManager->CreateActor(*TestGameActorLibrary::TEST1_GAME_ACTOR_TYPE).get());
+      dtCore::RefPtr<TestActorComponent1> comp = new TestActorComponent1();
+      comp->BuildPropertyMap();
+
+      const std::string propName("TestProp");
+
+      CPPUNIT_ASSERT(comp->GetProperty(propName) == NULL);
+
+      AddTestProperty(*comp);
+
+      dtCore::ActorProperty* prop = comp->GetProperty(propName);
+      CPPUNIT_ASSERT(prop != NULL);
+      CPPUNIT_ASSERT(actor->GetProperty(propName) == NULL);
+
+      actor->AddChild(*comp);
+
+      CPPUNIT_ASSERT(actor->GetProperty(propName) == NULL);
+
+      actor->InvokeEnteredWorld();
+    
+      CPPUNIT_ASSERT(actor->GetProperty(propName) == prop);
+   }
+
+   void TestPropertyRemoving()
+   {
+      dtCore::RefPtr<dtGame::GameActorProxy> actor = 
+         dynamic_cast<dtGame::GameActorProxy*>
+         (mManager->CreateActor(*TestGameActorLibrary::TEST1_GAME_ACTOR_TYPE).get());
+      dtCore::RefPtr<TestActorComponent1> comp = new TestActorComponent1();
+      comp->BuildPropertyMap();
+
+      const std::string propName("TestProp");
+      AddTestProperty(*comp);
+      actor->AddChild(*comp);
+      actor->InvokeEnteredWorld();
+
+      dtCore::ActorProperty* prop = comp->GetProperty(propName);
+      CPPUNIT_ASSERT(prop != NULL);
+      CPPUNIT_ASSERT(actor->GetProperty(propName) == prop);
+
+      actor->InvokeRemovedFromWorld();
+
+      CPPUNIT_ASSERT(comp->GetProperty(propName) == prop);
+      CPPUNIT_ASSERT(actor->GetProperty(propName) == NULL);
    }
 
 private:

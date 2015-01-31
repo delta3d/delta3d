@@ -119,7 +119,7 @@ namespace dtPhysics
       bool operator()(dtCore::RefPtr<PhysicsActComp>& actComp)
       {
          dtGame::GameActorProxy* act = NULL;
-         actComp->GetOwner(act);
+         actComp->GetParentAs(act);
          if (act != NULL && act->GetId() == mId)
          {
             actComp->CleanUp();

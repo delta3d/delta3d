@@ -62,23 +62,29 @@ TestActorComponent1::TestActorComponent1()
    UnregisterForTick();
 }
 
-void TestActorComponent1::OnAddedToActor(dtCore::BaseActorObject& /*actor*/)
+void TestActorComponent1::OnAddedToActor(dtCore::BaseActor& actor)
 {
+   BaseClass::OnAddedToActor(actor);
+
    mWasAdded = true;
 }
 
-void TestActorComponent1::OnRemovedFromActor(dtCore::BaseActorObject& /*actor*/)
+void TestActorComponent1::OnRemovedFromActor(dtCore::BaseActor& actor)
 {
+   BaseClass::OnRemovedFromActor(actor);
+   
    mWasRemoved = true;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 void TestActorComponent1::OnEnteredWorld()
 {
+   BaseClass::OnEnteredWorld();
+
    mEnteredWorld = true;
    if (mAddAnotherActor)
    {
-      dtGame::GameManager* gm = GetOwner<dtGame::GameActorProxy>()->GetGameManager();
+      dtGame::GameManager* gm = GetParentAs<dtGame::GameActorProxy>()->GetGameManager();
       dtCore::RefPtr<TestGameActor1> newActor;
       gm->CreateActor("ExampleActors", "Test1Actor", newActor);
       gm->AddActor(*newActor, false, false);
@@ -89,6 +95,8 @@ void TestActorComponent1::OnEnteredWorld()
 ////////////////////////////////////////////////////////////////////////////////
 void TestActorComponent1::OnRemovedFromWorld()
 {
+   BaseClass::OnRemovedFromWorld();
+   
    mLeftWorld = true;
 }
 const dtCore::ActorComponent::ACType TestActorComponent2::TYPE(new dtCore::ActorType("TestActorComponent2", "ActorComponents",
@@ -104,25 +112,33 @@ TestActorComponent2::TestActorComponent2()
 {
 }
 
-void TestActorComponent2::OnAddedToActor(dtCore::BaseActorObject& /*actor*/)
+void TestActorComponent2::OnAddedToActor(dtCore::BaseActor& actor)
 {
+   BaseClass::OnAddedToActor(actor);
+
    mWasAdded = true;
 }
 
-void TestActorComponent2::OnRemovedFromActor(dtCore::BaseActorObject& /*actor*/)
+void TestActorComponent2::OnRemovedFromActor(dtCore::BaseActor& actor)
 {
+   BaseClass::OnRemovedFromActor(actor);
+
    mWasRemoved = true;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 void TestActorComponent2::OnEnteredWorld()
 {
+   BaseClass::OnEnteredWorld();
+
    mEnteredWorld = true;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 void TestActorComponent2::OnRemovedFromWorld()
 {
+   BaseClass::OnRemovedFromWorld();
+
    mLeftWorld = true;
 }
 ////////////////////////////////////////////////////////////////////
@@ -202,6 +218,8 @@ void TestGameActor1::BuildInvokables()
 
 void TestGameActor1::OnEnteredWorld()
 {
+   BaseClass::OnEnteredWorld();
+
    if (!mTestActorId.IsNull())
    {
       dtGame::GameActorProxy* toFind = NULL;

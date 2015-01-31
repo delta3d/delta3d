@@ -174,7 +174,7 @@ namespace dtPhysics
       PhysicsComponent* comp = NULL;
 
       dtGame::GameActorProxy* act = NULL;
-      GetOwner(act);
+      GetParentAs(act);
 
       mIsRemote = act->IsRemote();
 
@@ -199,7 +199,7 @@ namespace dtPhysics
       PhysicsComponent* comp = NULL;
 
       dtGame::GameActorProxy* act = NULL;
-      GetOwner(act);
+      GetParentAs(act);
 
       act->GetGameManager()->
             GetComponentByName(PhysicsComponent::DEFAULT_NAME, comp);
@@ -493,7 +493,7 @@ namespace dtPhysics
       if (!GetMaterialActor().ToString().empty() )
       {
          dtGame::GameActorProxy* gap = NULL;
-         GetOwner(gap);
+         GetParentAs(gap);
          if (gap != NULL)
          {
             gap->GetGameManager()->FindActorById(GetMaterialActor(), result);
@@ -935,7 +935,7 @@ namespace dtPhysics
       else
       {
          BaseActorObject* actor = NULL;
-         GetOwner(actor);
+         GetParentAs(actor);
          std::string debugInfo("Invalid transform on physics actor component: ");
          if (actor)
          {
@@ -964,7 +964,7 @@ namespace dtPhysics
       else
       {
          BaseActorObject* actor = NULL;
-         GetOwner(actor);
+         GetParentAs(actor);
          std::string debugInfo("Invalid transform on physics actor component: ");
          if (actor)
          {

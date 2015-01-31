@@ -118,7 +118,7 @@ namespace dtGame
       mSecsSinceLastUpdateSent += elapsedTime; // We can only send out an update so many times a second.
 
       dtGame::GameActorProxy* actor = NULL;
-      GetOwner(actor);
+      GetParentAs(actor);
 
       dtCore::Transformable* tx = NULL;
       actor->GetDrawable(tx);
@@ -203,7 +203,7 @@ namespace dtGame
    void DRPublishingActComp::OnEnteredWorld()
    {
       dtGame::GameActorProxy* actor = NULL;
-      GetOwner(actor);
+      GetParentAs(actor);
 
       // LOCAL ACTOR -  do our setup
       if (!actor->IsRemote())
@@ -240,7 +240,7 @@ namespace dtGame
    void DRPublishingActComp::OnRemovedFromWorld()
    {
       dtGame::GameActorProxy* actor = NULL;
-      GetOwner(actor);
+      GetParentAs(actor);
 
       // LOCAL ACTOR - cleanup
       if (mTickInvokable.valid())

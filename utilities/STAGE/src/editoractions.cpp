@@ -1867,6 +1867,19 @@ namespace dtEditQt
 
    //////////////////////////////////////////////////////////////////////////////
    //////////////////////////////////////////////////////////////////////////////
+   // HELPER STRUCT
+   struct ActorInitPred
+   {
+      void Init(dtCore::BaseActorObject& actorObject)
+      {
+         dtCore::BaseActor* actor = dynamic_cast<dtCore::BaseActor*>(&actorObject);
+
+         if (actor != NULL)
+         {
+            actor->AddComponentProperties();
+         }
+      }
+   };
 
    //////////////////////////////////////////////////////////////////////////////
    void EditorActions::changeMaps(dtCore::Map* oldMap, dtCore::Map* newMap)
@@ -1938,6 +1951,13 @@ namespace dtEditQt
             dtCore::Project::GetInstance().LoadMapIntoScene(*newMap,
                *(ViewportManager::GetInstance().getMasterScene()), true);
 
+            // TEMP:
+            // Go through all the actors and make sure their
+            // actor components have their properties mapped
+            // on their actors directly.
+            ActorInitPred pred;
+            dtCore::Map::ActorVisitorFunc func(&pred, &ActorInitPred::Init);
+            newMap->ForEachActor(func);
          }
          catch (const dtUtil::Exception& e)
          {

@@ -289,11 +289,12 @@ namespace dtEditQt
          validDrag = true;
          ClearGhostProxy();
 
-         mGhostProxy = dtCore::LibraryManager::GetInstance().CreateActor("dtActors", "Prefab");
+         mGhostProxy = dynamic_cast<dtCore::BaseActor*>(dtCore::LibraryManager::GetInstance().CreateActor("dtActors", "Prefab").get());
          if (mGhostProxy.valid())
          {
             ghostData = event->mimeData()->data("Prefab");
             resourceProp = dynamic_cast<dtCore::ResourceActorProperty*>(mGhostProxy->GetProperty("PrefabResource"));
+            mGhostProxy->AddComponentProperties();
             mGhostProxy->GetDrawable(drawable);
          }
       }
@@ -302,11 +303,12 @@ namespace dtEditQt
          validDrag = true;
          ClearGhostProxy();
 
-         mGhostProxy = dtCore::LibraryManager::GetInstance().CreateActor("dtcore", "Static Mesh");
+         mGhostProxy = dynamic_cast<dtCore::BaseActor*>(dtCore::LibraryManager::GetInstance().CreateActor("dtcore", "Static Mesh").get());
          if (mGhostProxy.valid())
          {
             ghostData = event->mimeData()->data("StaticMesh");
             resourceProp = dynamic_cast<dtCore::ResourceActorProperty*>(mGhostProxy->GetProperty("static mesh"));
+            mGhostProxy->AddComponentProperties();
             mGhostProxy->GetDrawable(drawable);
          }
       }
@@ -315,11 +317,12 @@ namespace dtEditQt
          validDrag = true;
          ClearGhostProxy();
 
-         mGhostProxy = dtCore::LibraryManager::GetInstance().CreateActor("dtanim", "AnimationGameActor");
+         mGhostProxy = dynamic_cast<dtCore::BaseActor*>(dtCore::LibraryManager::GetInstance().CreateActor("dtanim", "AnimationGameActor").get());
          if (mGhostProxy.valid())
          {
             ghostData = event->mimeData()->data("SkeletalMesh");
             resourceProp = dynamic_cast<dtCore::ResourceActorProperty*>(mGhostProxy->GetProperty("Skeletal Mesh"));
+            mGhostProxy->AddComponentProperties();
             mGhostProxy->GetDrawable(drawable);
          }
       }
@@ -328,11 +331,12 @@ namespace dtEditQt
          validDrag = true;
          ClearGhostProxy();
 
-         mGhostProxy = dtCore::LibraryManager::GetInstance().CreateActor("dtcore", "Particle System");
+         mGhostProxy = dynamic_cast<dtCore::BaseActor*>(dtCore::LibraryManager::GetInstance().CreateActor("dtcore", "Particle System").get());
          if (mGhostProxy.valid())
          {
             ghostData = event->mimeData()->data("Particle");
             resourceProp = dynamic_cast<dtCore::ResourceActorProperty*>(mGhostProxy->GetProperty("Particle(s) File"));
+            mGhostProxy->AddComponentProperties();
             mGhostProxy->GetDrawable(drawable);
          }
       }
@@ -341,11 +345,12 @@ namespace dtEditQt
          validDrag = true;
          ClearGhostProxy();
 
-         mGhostProxy = dtCore::LibraryManager::GetInstance().CreateActor("dtcore.Environment", "Sound Actor");
+         mGhostProxy = dynamic_cast<dtCore::BaseActor*>(dtCore::LibraryManager::GetInstance().CreateActor("dtcore.Environment", "Sound Actor").get());
          if (mGhostProxy.valid())
          {
             ghostData = event->mimeData()->data("Sound");
             resourceProp = dynamic_cast<dtCore::ResourceActorProperty*>(mGhostProxy->GetProperty("The Sound Effect"));
+            mGhostProxy->AddComponentProperties();
             mGhostProxy->GetDrawable(drawable);
          }
       }
@@ -359,9 +364,10 @@ namespace dtEditQt
          QString category, name;
          dataStream >> category >> name;
 
-         mGhostProxy = dtCore::LibraryManager::GetInstance().CreateActor(category.toStdString(), name.toStdString());
+         mGhostProxy = dynamic_cast<dtCore::BaseActor*>(dtCore::LibraryManager::GetInstance().CreateActor(category.toStdString(), name.toStdString()).get());
          if (mGhostProxy.valid())
          {
+            mGhostProxy->AddComponentProperties();
             mGhostProxy->GetDrawable(drawable);
          }
       }
@@ -371,7 +377,7 @@ namespace dtEditQt
          validDrag = true;
          ClearGhostProxy();
 
-         mGhostProxy = dtCore::LibraryManager::GetInstance().CreateActor("dtActors", "Director Actor");
+         mGhostProxy = dynamic_cast<dtCore::BaseActor*>(dtCore::LibraryManager::GetInstance().CreateActor("dtActors", "Director Actor").get());
          if (mGhostProxy.valid())
          {
             ghostData = event->mimeData()->data("Director");
@@ -386,6 +392,7 @@ namespace dtEditQt
                arrayProp->SetIndex(0);
                resourceProp = dynamic_cast<dtCore::ResourceActorProperty*>(arrayProp->GetArrayProperty());
             }
+            mGhostProxy->AddComponentProperties();
             mGhostProxy->GetDrawable(drawable);
          }
       }

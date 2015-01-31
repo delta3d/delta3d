@@ -37,11 +37,17 @@ namespace dtCore
    /////////////////////////////////////////////////////////////////////////////
    BaseActor::BaseActor(const ActorType* actorType)
       : BaseClass(actorType)
+      , mIsInGM(false)
+      , mDeleted(false)
    {}
 
    /////////////////////////////////////////////////////////////////////////////
    BaseActor::BaseActor(const BaseActor& actor)
-   {}
+      : mIsInGM(false)
+      , mDeleted(false)
+   {
+      // This copy constructor should not be called.
+   }
 
    /////////////////////////////////////////////////////////////////////////////
    BaseActor::~BaseActor()
@@ -139,6 +145,120 @@ namespace dtCore
    BaseActor& BaseActor::operator=(const BaseActor& rhs)
    {
       return *this;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   dtCore::RefPtr<dtCore::ActorProperty> BaseActor::GetDeprecatedProperty(const std::string& name)
+   {
+      dtCore::RefPtr<dtCore::ActorProperty> prop = BaseClass::GetDeprecatedProperty(name);
+
+      if (!prop.valid())
+      {
+         // Check all of our actor components to see if one of them can support it
+         dtCore::ActorComponent* comp = NULL;
+         dtCore::BaseActorArray components;
+         GetAllComponents(components);
+         unsigned int size = components.size();
+         for (unsigned int i = 0; i < size; i ++)
+         {
+            comp = dynamic_cast<dtCore::ActorComponent*>(components[i].get());
+
+            if (comp == NULL)
+            {
+               dtCore::BaseActorObject* actor = components[i];
+               if (actor != NULL)
+               {
+                  LOG_ERROR("Actor \"" + actor->GetName()
+                     + "\" could not be converted to an ActorComponent.");
+               }
+               else
+               {
+                  LOG_ERROR("NULL reference encountered!");
+               }
+            }
+            else
+            {
+               // Attempt getting the property from the component
+               // since the property could not be found on the actor directly.
+               prop = comp->GetProperty(name);
+
+               // If not found...
+               if ( ! prop.valid())
+               {
+                  // ...try to find it by some other name.
+                  prop = comp->GetDeprecatedProperty(name);
+               }
+
+               if (prop.valid())
+               {
+                  break; // quit looking.
+               }
+            }
+         }
+      }
+
+      return prop;
+   }
+      
+   void BaseActor::OnEnteredWorld()
+   {
+      // OVERRIDE:
+   }
+
+   void BaseActor::OnRemovedFromWorld()
+   {
+      // OVERRIDE:
+   }
+
+   bool BaseActor::IsInGM() const
+   {
+      return mIsInGM;
+   }
+
+   void BaseActor::SetInGM(bool value)
+   {
+      mIsInGM = value;
+      SetDeleted(false);
+   }
+
+   bool BaseActor::IsDeleted() const
+   {
+      return mDeleted;
+   }
+
+   void BaseActor::SetDeleted(bool deleted)
+   {
+      mDeleted = deleted;
+   }
+
+   void BaseActor::AddComponentProperties()
+   {
+      BaseActorArray comps;
+      GetAllComponents(comps);
+
+      ActorComponent* comp = NULL;
+      BaseActorArray::iterator curIter = comps.begin();
+      BaseActorArray::iterator endIter = comps.end();
+      for (; curIter != endIter; ++curIter)
+      {
+         comp = dynamic_cast<ActorComponent*>(curIter->get());
+         comp->AddPropertiesToRootActor();
+      }
+   }
+
+   void BaseActor::RemoveComponentProperties()
+   {
+      BaseActorArray comps;
+      GetAllComponents(comps);
+
+      ActorComponent* comp = NULL;
+      BaseActorArray::iterator curIter = comps.begin();
+      BaseActorArray::iterator endIter = comps.end();
+      for (; curIter != endIter; ++curIter)
+      {
+         comp = dynamic_cast<ActorComponent*>(curIter->get());
+         comp->RemovePropertiesFromRootActor();
+      }
    }
 
 } // namespace dtCore
