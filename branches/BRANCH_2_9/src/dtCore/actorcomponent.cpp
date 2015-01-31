@@ -40,7 +40,6 @@ const dtCore::ActorComponent::ACType dtCore::ActorComponent::BaseActorComponentT
 ////////////////////////////////////////////////////////////////////////////////
 ActorComponent::ActorComponent(ActorComponent::ACType type)
    : BaseClass(type.get())
-   , mIsInGM(false)
 {}
 
 
@@ -54,43 +53,110 @@ ActorComponent::ACType ActorComponent::GetType() const
    return &GetActorType();
 }
 
-////////////////////////////////////////////////////////////////////////////////
-BaseActor* ActorComponent::GetOwner() const
-{
-   return GetParent();
-}
-
-////////////////////////////////////////////////////////////////////////////////
-void ActorComponent::SetOwner(BaseActor* owner)
-{
-   SetParent(owner);
-}
-
-////////////////////////////////////////////////////////////////////////////
-//void ActorComponent::GetOwner(GameActor* ga) const
-//{
-//   LOG_ERROR("Error, you called the GetOwner template, but expected a type derived from GameActor.  "
-//         "This is no longer supported, you need to fix your code.  This will assert in Debug so you can find it more easily.");
-//   throw std::bad_cast();
-//}
-
    
 /////////////////////////////////////////////////////////////////////////////
 void ActorComponent::OnAddedToActor(dtCore::BaseActor& actor)
 {
    // pass the component a pointer to its owner
-   SetOwner(&actor);
+   SetParent(&actor);
 
    // The call to Init should eventually move to an actor component library behavior
    // like actors have, but until then, this is the only other place to do it.
    Init(GetActorType());
+
+   // Determine if OnEnteredWorld needs to be called if adding
+   // this component to an actor that is already in the world.
+   if (actor.IsInGM())
+   {
+      OnEnteredWorld();
+   }
 }
 
 /////////////////////////////////////////////////////////////////////////////
 void ActorComponent::OnRemovedFromActor(dtCore::BaseActor& actor)
 {
+   // Determine if OnRemovedFromWorld needs to be called if removing
+   // this component from an actor that is already in the world.
+   if (actor.IsInGM())
+   {
+      OnRemovedFromWorld();
+   }
 }
 
-//////////////////////////////////////////////////////////////////////////
-DT_IMPLEMENT_ACCESSOR(ActorComponent, bool, IsInGM);
+/////////////////////////////////////////////////////////////////////////////
+void ActorComponent::OnEnteredWorld()
+{
+   // TEMP:
+   // Map properties to the root level actor.
+   // WARNING! Property names have to be unique.
+   AddPropertiesToRootActor();
+}
+
+/////////////////////////////////////////////////////////////////////////////
+void ActorComponent::OnRemovedFromWorld()
+{
+   // TEMP:
+   // Remove properties that were mapped to the root level actor.
+   // WARNING! Property names have to be unique.
+   RemovePropertiesFromRootActor();
+}
+
+/////////////////////////////////////////////////////////////////////////////
+void ActorComponent::AddPropertiesToRootActor()
+{
+   // TEMP: Temporary section for mapping the component properties as
+   // direct properties on the root actor.
+   dtCore::BaseActor* rootActor = GetParent();
+
+   if (rootActor != NULL)
+   {
+      while (rootActor->GetParent() != NULL)
+      {
+         rootActor = rootActor->GetParent();
+      }
+
+      typedef dtCore::PropertyContainer::PropertyVector PropList;
+      PropList props;
+      GetPropertyList(props);
+
+      dtCore::ActorProperty* curProp = NULL;
+      PropList::iterator curIter = props.begin();
+      PropList::iterator endIter = props.end();
+      for (; curIter != endIter; ++curIter)
+      {
+         curProp = *curIter;
+         rootActor->AddProperty(curProp);
+      }
+   }
+}
+
+/////////////////////////////////////////////////////////////////////////////
+void ActorComponent::RemovePropertiesFromRootActor()
+{
+   // TEMP: Temporary section for removing component properties
+   // that may have been mapped directly to the root actor.
+   dtCore::BaseActor* rootActor = GetParent();
+
+   if (rootActor != NULL)
+   {
+      while (rootActor->GetParent() != NULL)
+      {
+         rootActor = rootActor->GetParent();
+      }
+
+      typedef dtCore::PropertyContainer::PropertyVector PropList;
+      PropList props;
+      GetPropertyList(props);
+
+      dtCore::ActorProperty* curProp = NULL;
+      PropList::iterator curIter = props.begin();
+      PropList::iterator endIter = props.end();
+      for (; curIter != endIter; ++curIter)
+      {
+         curProp = *curIter;
+         rootActor->RemoveProperty(curProp);
+      }
+   }
+}
+
 }

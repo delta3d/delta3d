@@ -519,8 +519,8 @@ namespace dtEditQt
          EditorData::GetInstance().getMainWindow()->startWaitCursor();
 
          // recreate the actor!
-         dtCore::RefPtr<dtCore::BaseActorObject> proxy =
-            dtCore::LibraryManager::GetInstance().CreateActor(*actorType.get()).get();
+         dtCore::RefPtr<dtCore::BaseActor> proxy = dynamic_cast<dtCore::BaseActor*>
+            (dtCore::LibraryManager::GetInstance().CreateActor(*actorType.get()).get());
          if (proxy.valid())
          {
             // Tell the proxy that it is loading.
@@ -545,6 +545,8 @@ namespace dtEditQt
 
             // Tell the proxy that it is finished loading.
             proxy->OnMapLoadEnd();
+
+            proxy->AddComponentProperties();
 
             mRecursePrevent = true;
             EditorEvents::GetInstance().emitBeginChangeTransaction();

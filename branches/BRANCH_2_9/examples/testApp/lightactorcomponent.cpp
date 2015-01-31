@@ -92,7 +92,7 @@ namespace dtExample
       if ( ! light.valid())
       {
          dtGame::GameActorProxy* act = NULL;
-         GetOwner(act);
+         GetParentAs(act);
 
          if(act->GetDrawable() != NULL )
          {
@@ -134,7 +134,7 @@ namespace dtExample
       if (light != NULL && light->GetInitialOwnership() != dtGame::GameActorProxy::Ownership::PROTOTYPE && mAttachLightToOwner)
       {
          dtGame::GameActorProxy* actor = NULL;
-         GetOwner(actor);
+         GetParentAs(actor);
 
          dtCore::Transformable* drawable = NULL;
          actor->GetDrawable(drawable);
@@ -181,7 +181,7 @@ namespace dtExample
       dtRender::DynamicLight* light = NULL;
 
       dtGame::GameActorProxy* actor = NULL;
-      GetOwner(actor);
+      GetParentAs(actor);
 
       if (actor != NULL)
       {
@@ -348,7 +348,7 @@ namespace dtExample
       }
 
 //      dtGame::GameActorProxy* owner;
-//      GetOwner(owner);
+//      GetParent(owner);
 //      owner->RegisterForMessages(dtGame::MessageType::INFO_MAP_CHANGE_LOAD_END, dtUtil::MakeFunctor(&LightActorComponent::OnMapLoaded, this));
 //      owner->RegisterForMessages(dtGame::MessageType::INFO_MAPS_OPENED, dtUtil::MakeFunctor(&LightActorComponent::OnMapLoaded, this));
 //
@@ -384,7 +384,7 @@ namespace dtExample
             if (light.valid() && light->GetInitialOwnership() == dtGame::GameActorProxy::Ownership::PROTOTYPE)
             {
                dtGame::GameActorProxy* actor = NULL;
-               GetOwner(actor);
+               GetParentAs(actor);
 
                if (actor->GetInitialOwnership() != dtGame::GameActorProxy::Ownership::PROTOTYPE)
                {
@@ -433,7 +433,7 @@ namespace dtExample
       if ( ! mShader.valid() && ! mShaderParameterName.empty())
       {
          dtCore::BaseActorObject* actor = NULL;
-         GetOwner(actor);
+         GetParentAs(actor);
 
          if (actor != NULL)
          {

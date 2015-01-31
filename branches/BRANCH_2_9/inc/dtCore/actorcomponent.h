@@ -35,15 +35,13 @@
 
 namespace dtCore
 {
-   class ActorComponentContainer;
-
    /**
     * Abstract interface class for ActorComponent. ActorComponent can be retrieved from 
-    * ActorComponentContainer by type. ActorComponent have to register to receive any GameActor messages.
+    * an actor by type. ActorComponent have to register to receive any GameActor messages.
     * ActorComponent implementing this interface have to provide a value
     * for ACType to identify the ActorComponent type.
-    * When the ActorComponent is added to a ActorComponentContainer, it receives a
-    * reference to the ActorComponentContainer through the method SetOwner().
+    * When the ActorComponent is added to an actor, it receives a
+    * reference to the actor.
     *
     * Note - Actor Components can reference each other, but you should not check for another
     * actor component until the OnEnteredWorld() method. This gives each actor component a chance
@@ -76,61 +74,48 @@ namespace dtCore
        */
       ACType GetType() const;
 
-
       /**
        * Called when the parent actor enters the "world".
        */
-      virtual void OnEnteredWorld() {};
+      virtual void OnEnteredWorld();
 
       /** 
        * Called when the parent actor leaves the "world".
        */
-      virtual void OnRemovedFromWorld() {};
+      virtual void OnRemovedFromWorld();
 
       /**
-       * Get ComponentBase this component is a part of
-       * @return The ActorComponentContainer that contains this ActorComponent
-       */
-      BaseActor* GetOwner() const;
-
-      /**
-       * Get ComponentBase this component is a part of. Cast to given pointer type.
+       * Get the actor that owns this component. Cast to given pointer type.
        * Usage example:
        * @code 
-       * MyComponentBaseActor* owner;
-       * mycomponent->GetOwner(owner);
+       * MyComponentBaseActor* parent;
+       * mycomponent->GetParent(parent);
        * @endcode
        */
-      template <typename TOwnerPtr>
-      void GetOwner(TOwnerPtr& ownerPtr) const
+      template <typename T_ParentPtr>
+      void GetParentAs(T_ParentPtr& parentPtr) const
       {
          if (GetParent() == NULL)
          {
-            ownerPtr = NULL;
+            parentPtr = NULL;
          }
          else
          {   
-            ownerPtr = dynamic_cast<TOwnerPtr>(GetParent());
-            if (ownerPtr == NULL)
+            parentPtr = dynamic_cast<T_ParentPtr>(GetParent());
+            if (parentPtr == NULL)
             {
                throw std::bad_cast();
             }
          }
       }
 
-      template <typename TOwner>
-      TOwner* GetOwner() const
+      template <typename T_Parent>
+      T_Parent* GetParentAs() const
       {
-         TOwner* owner = NULL;
-         GetOwner(owner);
-         return owner;
+         T_Parent* parent = NULL;
+         GetParentAs(parent);
+         return parent;
       }
-
-      /**
-       * Set the ComponentBase that this component is a part of.
-       * Don't call this! Should only be called by ComponentBase.
-       */
-      virtual void SetOwner(BaseActor* owner);
 
       /** 
        * Called when this actor gets added to another actor.
@@ -146,15 +131,17 @@ namespace dtCore
        */
       virtual void OnRemovedFromActor(dtCore::BaseActor& actor);
 
+      // TEMP:
+      void AddPropertiesToRootActor();
+
+      // TEMP:
+      void RemovePropertiesFromRootActor();
+
    protected:
 
       virtual ~ActorComponent();
 
       virtual bool IsPlaceable() const { return false; }
-
-   public:
-      /// if this actor component is in the GM.
-      DT_DECLARE_ACCESSOR(bool, IsInGM);
    };
 }
 #endif // DELTA_ACTOR_COMPONENT_H

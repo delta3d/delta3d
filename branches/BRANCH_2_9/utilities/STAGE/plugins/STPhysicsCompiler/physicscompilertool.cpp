@@ -28,13 +28,13 @@
 ////////////////////////////////////////////////////////////////////////////////
 #include "physicscompilertool.h"
 // DELTA
+#include <dtCore/baseactor.h>
 #include <dtCore/deltadrawable.h>
 #include <dtCore/librarymanager.h>
 #include <dtCore/project.h>
 #include <dtEditQt/editorevents.h>
 #include <dtEditQt/mainwindow.h>
 #include <dtEditQt/pluginmanager.h>
-#include <dtGame/actorcomponentcontainer.h>
 #include <dtPhysics/physicsactcomp.h>
 #include <dtUtil/fileutils.h>
 #include <dtUtil/threadpool.h>
@@ -477,8 +477,7 @@ int PhysicsCompilerToolPlugin::AddObjectsToActor(
 {
    int results = 0;
 
-   dtGame::ActorComponentContainer* gameActor
-      = dynamic_cast<dtGame::ActorComponentContainer*>(&actor);
+   dtCore::BaseActor* gameActor = dynamic_cast<dtCore::BaseActor*>(&actor);
 
    // Add the objects to the actor component, if one is specified.
    if (gameActor != NULL && ! objArray.empty())
@@ -490,7 +489,7 @@ int PhysicsCompilerToolPlugin::AddObjectsToActor(
       if (physActComp == NULL)
       {
          physActComp = new PhysicsActComp;
-         gameActor->AddComponent(*physActComp);
+         gameActor->AddChild(*physActComp);
          //physActComp->OnEnteredWorld();
       }
 

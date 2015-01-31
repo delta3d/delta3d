@@ -48,6 +48,7 @@
 #include <dtCore/transformable.h>
 #include <dtCore/transform.h>
 
+#include <dtCore/actorcomponent.h>
 #include <dtCore/actorhierarchynode.h>
 #include <dtCore/actorpropertyserializer.h>
 #include <dtCore/mapxml.h>
@@ -1114,28 +1115,9 @@ namespace dtCore
          EndElement(); // End Actor Name Element.
 
 
-         // PROPERTIES
-         typedef std::vector<const ActorProperty*> PropertyList;
-         PropertyList propList;
-         actor.GetPropertyList(propList);
-
-         PropertyList::const_iterator curIter = propList.begin();
-         for (; curIter != propList.end(); ++curIter)
-         {
-            const ActorProperty* prop = *curIter;
-
-            // If the property is read only and read only is not allowed,
-            // skip the property and go to the next.
-            if (prop->IsReadOnly() && ! allowReadOnlyProps)
-            {
-               continue;
-            }
-
-            mPropSerializer->WriteProperty(*prop);
-
-         }
-
          // CHILDREN
+         // Child components come before direct properties so that all
+         // components exsist before deprecated properties are handled.
          BaseActor* extendedActor = dynamic_cast<BaseActor*>(&actor);
          if (extendedActor != NULL && extendedActor->GetChildCount() > 0)
          {
@@ -1158,6 +1140,34 @@ namespace dtCore
                }
 
             EndElement(); // End Actor Element.
+         }
+
+
+         // PROPERTIES
+         typedef std::vector<const ActorProperty*> PropertyList;
+         PropertyList propList;
+         actor.GetPropertyList(propList);
+
+         // TEMP: Component properties add directly to root actor for now.
+         // Prevent nesting them until editor tools can handle display
+         // and modification of nested properties.
+         bool isComponent = NULL != dynamic_cast<dtCore::ActorComponent*>(&actor);
+
+         PropertyList::const_iterator curIter = propList.begin();
+         for (; curIter != propList.end(); ++curIter)
+         {
+            const ActorProperty* prop = *curIter;
+
+            // If the property is read only and read only is not allowed,
+            // skip the property and go to the next.
+            if ((prop->IsReadOnly() && ! allowReadOnlyProps)
+               || isComponent) // TEMP: Prevent writing properties as nested.
+            {
+               continue;
+            }
+
+            mPropSerializer->WriteProperty(*prop);
+
          }
 
       EndElement(); // End Actor Element.

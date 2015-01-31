@@ -62,13 +62,13 @@ namespace dtGame
    {
       mCurrentShaderResource = shaderResource;
 
-      if (GetOwner() == NULL)
+      if (GetParent() == NULL)
       {
          return;  //no parent GameActor yet!
       }
 
       GameActorProxy* actor = NULL;
-      GetOwner(actor);
+      GetParentAs(actor);
 
       GameActor* drawable = NULL;
       actor->GetDrawable(drawable);

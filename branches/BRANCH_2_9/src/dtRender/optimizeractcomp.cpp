@@ -432,7 +432,7 @@ namespace dtRender
    void OptimzerActComp::Optimize()
    {
       dtGame::GameActorProxy* act = NULL;
-      GetOwner(act);
+      GetParentAs(act);
 
       if(act->GetDrawable() != NULL )
       {
@@ -517,7 +517,7 @@ namespace dtRender
       static const dtUtil::RefString GROUP("OptimzerActComp");
 
       dtGame::GameActorProxy* actor = NULL;
-      GetOwner(actor);
+      GetParentAs(actor);
 
       typedef dtCore::PropertyRegHelper<dtCore::PropertyContainer&, OptimzerActComp> RegHelperType;
       RegHelperType propReg(*actor, this, GROUP);
@@ -545,7 +545,7 @@ namespace dtRender
    void OptimzerActComp::RegisterForMapLoaded()
    {
       dtGame::GameActorProxy* owner = NULL;
-      GetOwner(owner);
+      GetParentAs(owner);
       if (!owner->IsRemote())
       {
          std::string tickInvokable = "Map Loaded " + GetType()->GetFullName();

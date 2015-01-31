@@ -76,7 +76,7 @@ dtABC::BezierController* BezierControllerActorComponent::GetController()
 {
    dtABC::BezierController* controller = NULL;
    BaseActorObject* actor = NULL;
-   GetOwner(actor);
+   GetParentAs(actor);
 
    if (actor != NULL)
    {
@@ -319,7 +319,7 @@ void BezierControllerActorComponent::SendGameEvent(dtCore::GameEvent* gameEvent)
    if (gameEvent != NULL)
    {
       dtGame::GameActorProxy* actor = NULL;
-      GetOwner(actor);
+      GetParentAs(actor);
 
       if (actor != NULL)
       {

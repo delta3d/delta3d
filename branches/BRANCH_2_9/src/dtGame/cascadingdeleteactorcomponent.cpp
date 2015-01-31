@@ -70,7 +70,7 @@ namespace dtGame
    void CascadingDeleteActorComponent::OnRemovedFromWorld()
    {
       dtGame::GameActorProxy* actor = NULL;
-      GetOwner(actor);
+      GetParentAs(actor);
       std::vector<dtCore::UniqueId>::iterator i, iend;
       i = mActorsToDelete.begin();
       iend = mActorsToDelete.end();

@@ -57,7 +57,7 @@ GameActorComponent::~GameActorComponent()
 void GameActorComponent::RegisterForTick()
 {
    GameActorProxy* owner = NULL;
-   GetOwner(owner);
+   GetParentAs(owner);
 
    if (owner == NULL) // This should probably be an error log
       return;
@@ -86,7 +86,7 @@ void GameActorComponent::RegisterForTick()
 void GameActorComponent::UnregisterForTick()
 {
    GameActorProxy* owner = NULL;
-   GetOwner(owner);
+   GetParentAs(owner);
 
    if (owner == NULL)
       return;

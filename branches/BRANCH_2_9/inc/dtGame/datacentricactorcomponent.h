@@ -78,7 +78,7 @@ namespace dtGame
          GMComponentType* gmComp = NULL;
 
          dtGame::GameActorProxy* act;
-         GetOwner(act);
+         GetParentAs(act);
 
          act->GetGameManager()->
                   GetComponentByName(GMComponentType::DEFAULT_NAME, gmComp);

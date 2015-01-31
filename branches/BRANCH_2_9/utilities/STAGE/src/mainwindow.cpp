@@ -659,6 +659,8 @@ namespace dtEditQt
       mVolEditActorProxy =
          dynamic_cast<dtActors::VolumeEditActorProxy*>(dtCore::LibraryManager::GetInstance().CreateActor("dtutil", "Volume Edit").get());
       ViewportManager::GetInstance().getMasterScene()->AddChild(mVolEditActorProxy->GetDrawable());
+            
+      mVolEditActorProxy->AddComponentProperties();
 
       //move the VolumeEditActor away from the Perspective camera so we can see it.
       dtActors::VolumeEditActor* volEditAct =
@@ -1083,11 +1085,13 @@ namespace dtEditQt
                      }
                      else
                      {
-                        dtCore::BaseActor* comp = dynamic_cast<dtCore::BaseActor*>(newComp.get());
+                        dtCore::ActorComponent* comp = dynamic_cast<dtCore::ActorComponent*>(newComp.get());
 
                         if (comp != NULL)
                         {
                            curActor->AddChild(*comp);
+
+                           comp->AddPropertiesToRootActor();
 
                            ++results;
                         }
@@ -1105,6 +1109,8 @@ namespace dtEditQt
          if (results > 0)
          {
             mPropertyWindow->UpdateUI();
+
+            EditorData::GetInstance().getCurrentMap()->SetModified(true);
          }
       }
    }
@@ -1197,11 +1203,16 @@ namespace dtEditQt
                         curActor->GetChildrenByType(*actType, comps);
 
                         // Remove all actor components of the specified type.
+                        dtCore::ActorComponent* actComp = NULL;
                         ActorArray::iterator curCompIter = comps.begin();
                         ActorArray::iterator endCompIter = comps.end();
                         for (; curCompIter != endCompIter; ++curCompIter)
                         {
-                           curActor->RemoveChild(*(*curCompIter));
+                           actComp = dynamic_cast<dtCore::ActorComponent*>(curCompIter->get());
+
+                           actComp->RemovePropertiesFromRootActor();
+
+                           curActor->RemoveChild(*actComp);
 
                            ++results;
                         }
@@ -1216,6 +1227,8 @@ namespace dtEditQt
       if (results > 0)
       {
          mPropertyWindow->UpdateUI();
+
+         EditorData::GetInstance().getCurrentMap()->SetModified(true);
       }
    }
 

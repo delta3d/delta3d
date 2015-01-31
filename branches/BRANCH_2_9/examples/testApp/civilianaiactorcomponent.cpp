@@ -95,7 +95,7 @@ namespace dtExample
    {
       BaseClass::OnEnteredWorld();
       dtGame::GameActorProxy* owner = NULL;
-      GetOwner(owner);
+      GetParentAs(owner);
 
       RegisterForTick();
 
@@ -113,7 +113,7 @@ namespace dtExample
       mTransformable = actor.GetDrawable<dtCore::Transformable>();
       SetName(actor.GetName());
 
-      BaseActor* owner = GetOwner();
+      BaseActor* owner = GetParent();
 
       if (owner->GetComponentByType(*dtAnim::AnimationTransitionPlanner::TYPE) == NULL)
       {
@@ -193,7 +193,7 @@ namespace dtExample
       dtCore::Transform xform;
       mTransformable->GetTransform(xform);
 
-      dtPhysics::PhysicsActComp* pac = GetOwner()->GetComponent<dtPhysics::PhysicsActComp>();
+      dtPhysics::PhysicsActComp* pac = GetParent()->GetComponent<dtPhysics::PhysicsActComp>();
 
       if (pac != NULL && pac->GetMainPhysicsObject() != NULL)
       {
@@ -222,7 +222,7 @@ namespace dtExample
          posValid = true;
       }
 
-      dtPhysics::PhysicsActComp* pac = GetOwner()->GetComponent<dtPhysics::PhysicsActComp>();
+      dtPhysics::PhysicsActComp* pac = GetParent()->GetComponent<dtPhysics::PhysicsActComp>();
 
       if (posValid && pac != NULL && pac->GetMainPhysicsObject() != NULL)
       {
@@ -248,16 +248,16 @@ namespace dtExample
    ///////////////////////////////////////////////////////////////////////////////////
    void CivilianAIActorComponent::OnLookAtTimer(const dtGame::TimerElapsedMessage& timerMsg)
    {
-      dtGame::GameManager* gm = GetOwner<dtGame::GameActorProxy>()->GetGameManager();
+      dtGame::GameManager* gm = GetParentAs<dtGame::GameActorProxy>()->GetGameManager();
       if (gm != NULL)
       {
          dtAnim::AnimationHelper* animHelper = NULL;
-         GetOwner()->GetComponent(animHelper);
+         GetParent()->GetComponent(animHelper);
          // Reset the controller so that old controls do not conflict.
          dtAnim::PoseController* controller = animHelper->GetPoseController();
 
          dtAnim::AnimationTransitionPlanner* transitioner = NULL;
-         GetOwner()->GetComponent(transitioner);
+         GetParent()->GetComponent(transitioner);
 
          // Look
          if (transitioner->GetStance() == dtAnim::BasicStanceEnum::STANDING ||
@@ -278,7 +278,7 @@ namespace dtExample
                   controller->SetTargetOffset(osg::Vec3(0.0f, 0.0f, 11.3f));
                   animHelper->SetPosesEnabled(true);
                   mLookedAtNearTarget = true;
-                  gm->SetTimer("StopLooking", GetOwner<dtGame::GameActorProxy>(), 10.0f, false);
+                  gm->SetTimer("StopLooking", GetParentAs<dtGame::GameActorProxy>(), 10.0f, false);
                   //LOG_ALWAYS(mTransformable->GetName() + " Starting to look.");
                }
                else if (timerMsg.GetTimerName() == "StopLooking")
@@ -350,7 +350,7 @@ namespace dtExample
 
       dtAI::AIInterfaceActor* aiInterfaceActor = NULL;
       dtGame::GameActorProxy* actor = NULL;
-      GetOwner(actor);
+      GetParentAs(actor);
       if (actor != NULL)
       {
          actor->GetGameManager()->FindActorByType(*dtAI::AIActorRegistry::AI_INTERFACE_ACTOR_TYPE, aiInterfaceActor);
@@ -369,7 +369,7 @@ namespace dtExample
       mTransformable->GetTransform(xform);
 
       dtCore::RefPtr<dtPhysics::Geometry> charShape;
-      dtPhysics::PhysicsActComp* pac = GetOwner()->GetComponent<dtPhysics::PhysicsActComp>();
+      dtPhysics::PhysicsActComp* pac = GetParent()->GetComponent<dtPhysics::PhysicsActComp>();
       if (pac != NULL && pac->GetMainPhysicsObject() != NULL && pac->GetMainPhysicsObject()->GetNumGeometries() > 0)
       {
          charShape = pac->GetMainPhysicsObject()->GetGeometry(0);
@@ -395,7 +395,7 @@ namespace dtExample
       dtAnim::AnimationHelper* animHelper = NULL;
 
       dtGame::GameActorProxy* actor = NULL;
-      GetOwner(actor);
+      GetParentAs(actor);
 
       actor->GetComponent(animHelper);
 
@@ -456,13 +456,13 @@ namespace dtExample
          float walkSpeed, float runSpeed)
    {
       dtCore::RefPtr<dtAnim::WalkRunBlend> newWRBlend;
-      if (GetOwner<dtGame::GameActorProxy>()->IsRemote())
+      if (GetParentAs<dtGame::GameActorProxy>()->IsRemote())
       {
-         newWRBlend = new dtAnim::WalkRunBlend(*GetOwner()->GetComponent<dtGame::DeadReckoningActorComponent>());
+         newWRBlend = new dtAnim::WalkRunBlend(*GetParent()->GetComponent<dtGame::DeadReckoningActorComponent>());
       }
       else
       {
-         newWRBlend = new dtAnim::WalkRunBlend(*GetOwner()->GetComponent<dtGame::DRPublishingActComp>());
+         newWRBlend = new dtAnim::WalkRunBlend(*GetParent()->GetComponent<dtGame::DRPublishingActComp>());
       }
       newWRBlend->SetName(OpName);
 
@@ -531,7 +531,7 @@ namespace dtExample
       optionsStand.insert(optionsStand.end(), &animationNamesIdle[0], &animationNamesIdle[7]);
 
       dtAnim::AnimationHelper* animActorComponent = NULL;
-      GetOwner()->GetComponent(animActorComponent);
+      GetParent()->GetComponent(animActorComponent);
 
       SetupWalkRunBlend(animActorComponent, dtAnim::AnimationOperators::ANIM_WALK_READY, optionsWalk, "Walk Ready",
             optionsRun, "Run Ready",

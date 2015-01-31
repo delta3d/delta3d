@@ -65,7 +65,7 @@ namespace dtRender
    void UniformActComp::OnEnteredWorld()
    {
       dtGame::GameActorProxy* act = NULL;
-      GetOwner(act);
+      GetParentAs(act);
 
       if(act->GetDrawable() != NULL )
       {

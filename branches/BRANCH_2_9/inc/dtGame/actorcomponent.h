@@ -33,11 +33,11 @@ namespace dtGame
 
    /**
     * Abstract interface class for ActorComponent. ActorComponent can be retrieved from 
-    * ActorComponentContainer by type. ActorComponent have to register to receive any GameActor messages.
+    * an actor by type. ActorComponent have to register to receive any GameActor messages.
     * ActorComponent implementing this interface have to provide a value
     * for ACType to identify the ActorComponent type.
-    * When the ActorComponent is added to a ActorComponentContainer, it receives a
-    * reference to the ActorComponentContainer through the method SetOwner().
+    * When the ActorComponent is added to an actor, it receives a
+    * reference to the actor.
     *
     * Note - Actor Components can reference each other, but you should not check for another
     * actor component until the OnEnteredWorld() method. This gives each actor component a chance

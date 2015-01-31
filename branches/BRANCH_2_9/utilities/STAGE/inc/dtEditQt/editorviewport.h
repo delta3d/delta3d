@@ -364,7 +364,7 @@ namespace dtEditQt {
       dtCore::RefPtr<STAGECameraMotionModel> mCameraMotionModel;
       dtCore::RefPtr<STAGECameraMotionModel> mDefaultCameraMotionModel;
 
-      dtCore::RefPtr<dtCore::BaseActorObject>      mGhostProxy;
+      dtCore::RefPtr<dtCore::BaseActor>      mGhostProxy;
 
       Qt::MouseButton                        mMouseButton;
       Qt::MouseButtons                       mMouseButtons;

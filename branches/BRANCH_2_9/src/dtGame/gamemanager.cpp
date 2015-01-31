@@ -1526,7 +1526,7 @@ namespace dtGame
    {
       if (gameActorProxy.IsInGM() && gameActorProxy.GetGameManager() == this)
       {
-         gameActorProxy.SetIsInGM(false);
+         gameActorProxy.SetInGM(false);
          try
          {
             gameActorProxy.InvokeRemovedFromWorld();
@@ -1542,7 +1542,7 @@ namespace dtGame
 
          gameActorProxy.SetRemote(!local);
 
-         gameActorProxy.SetIsInGM(true);
+         gameActorProxy.SetInGM(true);
 
          try
          {
@@ -1616,7 +1616,7 @@ namespace dtGame
          if (gameActorProxy.IsInGM())
          {
             mGMImpl->mDeleteList.push_back(itor->second);
-            gameActorProxy.SetIsInGM(false);
+            gameActorProxy.SetInGM(false);
             gameActorProxy.SetDeleted(true);
 
             if (!gameActorProxy.IsRemote())

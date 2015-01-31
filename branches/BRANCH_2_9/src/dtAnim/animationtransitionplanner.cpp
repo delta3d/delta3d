@@ -10,7 +10,6 @@
 #include <dtAnim/animationsequence.h>
 #include <dtAnim/animationhelper.h>
 #include <dtAnim/sequencemixer.h>
-#include <dtCore/actorcomponentcontainer.h>
 #include <dtAI/worldstate.h>
 #include <dtAI/basenpcutils.h>
 #include <dtUtil/log.h>
@@ -380,7 +379,7 @@ namespace dtAnim
    ////////////////////////////////////////////////////////////////////////////////////
    const Animatable* AnimationTransitionPlanner::ApplyOperatorAndGetAnimatable(const dtAI::Operator& op)
    {
-      AnimationHelper* animAC = GetOwner()->GetComponent<AnimationHelper>();
+      AnimationHelper* animAC = GetParent()->GetComponent<AnimationHelper>();
       SequenceMixer& seqMixer = animAC->GetSequenceMixer();
       op.Apply(mPlannerHelper.GetCurrentState());
 
@@ -481,7 +480,7 @@ namespace dtAnim
          gottaSequence = GenerateNewAnimationSequence();
       }
 
-      AnimationHelper* animAC = GetOwner()->GetComponent<AnimationHelper>();
+      AnimationHelper* animAC = GetParent()->GetComponent<AnimationHelper>();
 
       if (gottaSequence)
       {
@@ -535,7 +534,7 @@ namespace dtAnim
                if (animatable != NULL)
                {
                   LOGN_DEBUG("animationtransitionplanner.cpp", std::string("Adding animatable named \"") + animatable->GetName().c_str() + "\".");
-                  newAnim = animatable->Clone(GetOwner()->GetComponent<AnimationHelper>()->GetModelWrapper());
+                  newAnim = animatable->Clone(GetParent()->GetComponent<AnimationHelper>()->GetModelWrapper());
                   newAnim->SetStartDelay(std::max(0.0f, accumulatedStartTime));
                   newAnim->SetFadeIn(blendTime);
                   newAnim->SetFadeOut(blendTime);
@@ -615,12 +614,12 @@ namespace dtAnim
    {
       BaseClass::OnEnteredWorld();
 
-      AnimationHelper* animAC = GetOwner()->GetComponent<AnimationHelper>();
+      AnimationHelper* animAC = GetParent()->GetComponent<AnimationHelper>();
 
       if (animAC == NULL)
       {
          animAC = new dtAnim::AnimationHelper;
-         GetOwner()->AddChild(*animAC);
+         GetParent()->AddChild(*animAC);
       }
 
       if (animAC != NULL)
