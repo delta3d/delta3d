@@ -35,6 +35,8 @@
 #include <QtGui/QKeyEvent>
 #include <QtGui/QPushButton>
 #include <QtGui/QTreeWidgetItem>
+#include <QtGui/QApplication>
+#include <QtGui/QClipboard>
 #include <dtEditQt/actorresultstable.h>
 #include <dtEditQt/editoractions.h>
 #include <dtEditQt/editordata.h>
@@ -140,6 +142,12 @@ namespace dtEditQt
       connect(&EditorEvents::GetInstance(), SIGNAL(selectedActors(ActorProxyRefPtrVector &)),
          this, SLOT(selectedActors(ActorProxyRefPtrVector &)));
 
+      QAction* copySelect = new QAction(tr("&Copy Selection"), this);
+      copySelect->setStatusTip(tr("Copy the names of the selected actors."));
+      connect(copySelect, SIGNAL(triggered()), this, SLOT(ClipboardCopySelectedItems()));
+      QMenu menu(this);
+      mContextMenu.addAction(copySelect);
+
       // make sure buttons and count are correct on start up
       updateResultsCount();
       doEnableButtons();
@@ -202,7 +210,7 @@ namespace dtEditQt
          while (NULL != (item = mResultsTree->topLevelItem(index)))
          {
             ActorResultsTreeItem* treeItem = static_cast<ActorResultsTreeItem*>(item);
-            if (proxy == treeItem->getProxy())
+            if (proxy == treeItem->GetActor())
             {
                QString name(proxy->GetName().c_str());
                QString type(proxy->GetActorType().GetName().c_str());
@@ -240,7 +248,7 @@ namespace dtEditQt
       int index = 0;
 
       // clear any selections - Yes, there is a clearSelection() method, but that method also
-      // resets the current item, which causes wierd keyboard focus issues that will resend
+      // resets the current item, which causes weird keyboard focus issues that will resend
       // a selection event sometimes or cause the selection to flicker...  it's sloppy.  So,
       // the easiest thing to do was just unselect items one at a time.
       while (NULL != (item = mResultsTree->topLevelItem(index)))
@@ -265,7 +273,7 @@ namespace dtEditQt
          ActorResultsTreeItem* item = dynamic_cast<ActorResultsTreeItem*>(itemList[index]);
          if (item)
          {
-            dtCore::RefPtr<dtCore::BaseActorObject> proxy = item->getProxy();
+            dtCore::RefPtr<dtCore::BaseActorObject> proxy = item->GetActor();
             if (proxy.valid())
             {
                resultList.push_back(proxy->GetId());
@@ -275,6 +283,32 @@ namespace dtEditQt
 
       return resultList;
    }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void ActorResultsTable::ClipboardCopySelectedItems()
+   {
+       QList<QTreeWidgetItem*> itemList = mResultsTree->selectedItems();
+
+       QClipboard* clipboard = QApplication::clipboard();
+       QString textData;
+
+       int count = itemList.count();
+       for (int index = 0; index < count; ++index)
+       {
+          ActorResultsTreeItem* item = dynamic_cast<ActorResultsTreeItem*>(itemList[index]);
+          if (item)
+          {
+             dtCore::RefPtr<dtCore::BaseActorObject> actor = item->GetActor();
+             if (actor.valid())
+             {
+                if (index > 0)
+                   textData.append(QString("\n"));
+                textData.append(QString(actor->GetName().c_str()));
+             }
+          }
+       }
+       clipboard->setText(textData);
+    }
 
    ////////////////////////////////////////////////////////////////////////////////
    void ActorResultsTable::setSelectedItems(const std::vector<dtCore::UniqueId>& items)
@@ -294,7 +328,7 @@ namespace dtEditQt
             ActorResultsTreeItem* item = dynamic_cast<ActorResultsTreeItem*>(mResultsTree->topLevelItem(itemIndex));
             if (item)
             {
-               dtCore::RefPtr<dtCore::BaseActorObject> proxy = item->getProxy();
+               dtCore::RefPtr<dtCore::BaseActorObject> proxy = item->GetActor();
                if (proxy.valid() && proxy->GetId() == proxyId)
                {
                   mResultsTree->setItemSelected(item, true);
@@ -307,6 +341,12 @@ namespace dtEditQt
       doEnableButtons();
    }
 
+   ///////////////////////////////////////////////////////////////////////////////
+   void ActorResultsTable::contextMenuEvent(QContextMenuEvent* event)
+   {
+      if (mDeleteBtn->isEnabled())
+         mContextMenu.exec(event->globalPos());
+   }
    ///////////////////////////////////////////////////////////////////////////////
    // SLOTS
    ///////////////////////////////////////////////////////////////////////////////
@@ -331,7 +371,7 @@ namespace dtEditQt
       while (iter.hasNext())
       {
          ActorResultsTreeItem* item = static_cast<ActorResultsTreeItem*>(iter.next());
-         dtCore::RefPtr<dtCore::BaseActorObject> proxyPtr = item->getProxy();
+         dtCore::RefPtr<dtCore::BaseActorObject> proxyPtr = item->GetActor();
          proxyVector.push_back(proxyPtr);
 
          // Also select all other proxies that belong to its group.
@@ -366,7 +406,7 @@ namespace dtEditQt
 
       if (selection != NULL)
       {
-         dtCore::RefPtr<dtCore::BaseActorObject> proxyPtr = selection->getProxy();
+         dtCore::RefPtr<dtCore::BaseActorObject> proxyPtr = selection->GetActor();
 
          // Make sure we are in sync so that we goto the right object.
          sendSelection();
@@ -427,7 +467,7 @@ namespace dtEditQt
       {
          ActorResultsTreeItem* treeItem = static_cast<ActorResultsTreeItem*>(item);
 
-         if (proxy == treeItem->getProxy())
+         if (proxy == treeItem->GetActor())
          {
             mResultsTree->takeTopLevelItem(index);
             updateResultsCount();
@@ -468,7 +508,7 @@ namespace dtEditQt
          for (int listIndex = 0; listIndex < listCount; ++listIndex)
          {
             ActorResultsTreeItem* item = static_cast<ActorResultsTreeItem*>(mResultsTree->topLevelItem(listIndex));
-            dtCore::BaseActorObject* listProxy = item->getProxy().get();
+            dtCore::BaseActorObject* listProxy = item->GetActor().get();
             if (listProxy == actor)
             {
                mResultsTree->setItemSelected(item, true);
@@ -546,9 +586,9 @@ namespace dtEditQt
 
    ///////////////////////////////////////////////////////////////////////////////
    ActorResultsTreeItem::ActorResultsTreeItem(QTreeWidget* parent,
-      dtCore::RefPtr<dtCore::BaseActorObject> proxy)
+      dtCore::RefPtr<dtCore::BaseActorObject> actor)
       : QTreeWidgetItem(parent)
-      , mProxy(proxy)
+      , mActor(actor)
    {
    }
 
