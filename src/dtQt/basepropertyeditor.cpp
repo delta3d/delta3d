@@ -277,7 +277,7 @@ namespace dtQt
       // Use our first selected item as our base.
       dtCore::RefPtr<dtCore::PropertyContainer> basePC = mSelectedPC[0];
       std::vector<dtCore::ActorProperty*> propList;
-      basePC->GetPropertyList(propList);
+      basePC->GetDeepPropertyList(propList);
 
       // Walk the properties that belong to the base container.
       int propCount = (int)propList.size();
@@ -293,14 +293,14 @@ namespace dtQt
          for (int PCIndex = 1; PCIndex < PCCount; ++PCIndex)
          {
             dtCore::PropertyContainer* propCon = mSelectedPC[PCIndex];
-            if (propCon)
+            if (propCon != NULL)
             {
-               dtCore::ActorProperty* linkedProp = propCon->GetProperty(baseProp->GetName());
+               dtCore::ActorProperty* linkedProp = propCon->FindProperty(baseProp->GetName());
 
                // If this container does not contain the base property, has
                // a different group name, or has a different data type then
                // they do not match, so we should not show this property.
-               if (!linkedProp || linkedProp->GetGroupName() != baseProp->GetGroupName() ||
+               if (linkedProp == NULL || linkedProp->GetGroupName() != baseProp->GetGroupName() ||
                   linkedProp->GetDataType() != baseProp->GetDataType())
                {
                   propertyMatch = false;
@@ -341,7 +341,7 @@ namespace dtQt
                      dtCore::RefPtr<dtCore::PropertyContainer> propCon = mSelectedPC[PCIndex];
                      if (propCon.valid())
                      {
-                        dtCore::ActorProperty* linkedProp = propCon->GetProperty(baseProp->GetName());
+                        dtCore::ActorProperty* linkedProp = propCon->FindProperty(baseProp->GetName());
                         newControl->AddLinkedProperty(propCon, linkedProp);
                      }
                   }

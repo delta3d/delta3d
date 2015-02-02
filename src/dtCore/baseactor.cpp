@@ -261,4 +261,90 @@ namespace dtCore
       }
    }
 
+   dtCore::ActorProperty* BaseActor::FindProperty(const std::string& name)
+   {
+      dtCore::ActorProperty* prop = BaseClass::GetProperty(name);
+
+      if (prop == NULL)
+      {
+         BaseActorArray comps;
+         GetAllComponents(comps);
+
+         ActorComponent* comp = NULL;
+         BaseActorArray::iterator curIter = comps.begin();
+         BaseActorArray::iterator endIter = comps.end();
+         for (; curIter != endIter; ++curIter)
+         {
+            prop = curIter->get()->GetProperty(name);
+
+            if (prop != NULL)
+            {
+               break;
+            }
+         }
+      }
+
+      return prop;
+   }
+
+   const dtCore::ActorProperty* BaseActor::FindProperty(const std::string& name) const
+   {
+      const dtCore::ActorProperty* prop = BaseClass::GetProperty(name);
+
+      if (prop == NULL)
+      {
+         BaseActorArray comps;
+         GetAllComponents(comps);
+
+         ActorComponent* comp = NULL;
+         BaseActorArray::iterator curIter = comps.begin();
+         BaseActorArray::iterator endIter = comps.end();
+         for (; curIter != endIter; ++curIter)
+         {
+            prop = curIter->get()->GetProperty(name);
+
+            if (prop != NULL)
+            {
+               break;
+            }
+         }
+      }
+
+      return prop;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void BaseActor::GetDeepPropertyList(PropertyVector& propList)
+   {
+      BaseClass::GetDeepPropertyList(propList);
+
+      BaseActorArray comps;
+      GetAllComponents(comps);
+
+      ActorComponent* comp = NULL;
+      BaseActorArray::iterator curIter = comps.begin();
+      BaseActorArray::iterator endIter = comps.end();
+      for (; curIter != endIter; ++curIter)
+      {
+         curIter->get()->GetDeepPropertyList(propList);
+      }
+   }
+   
+   ////////////////////////////////////////////////////////////////////////////////
+   void BaseActor::GetDeepPropertyList(PropertyConstVector& propList) const
+   {
+      BaseClass::GetDeepPropertyList(propList);
+
+      BaseActorArray comps;
+      GetAllComponents(comps);
+
+      ActorComponent* comp = NULL;
+      BaseActorArray::iterator curIter = comps.begin();
+      BaseActorArray::iterator endIter = comps.end();
+      for (; curIter != endIter; ++curIter)
+      {
+         curIter->get()->GetDeepPropertyList(propList);
+      }
+   }
+
 } // namespace dtCore

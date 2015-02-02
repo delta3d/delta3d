@@ -294,7 +294,6 @@ namespace dtEditQt
          {
             ghostData = event->mimeData()->data("Prefab");
             resourceProp = dynamic_cast<dtCore::ResourceActorProperty*>(mGhostProxy->GetProperty("PrefabResource"));
-            mGhostProxy->AddComponentProperties();
             mGhostProxy->GetDrawable(drawable);
          }
       }
@@ -308,7 +307,6 @@ namespace dtEditQt
          {
             ghostData = event->mimeData()->data("StaticMesh");
             resourceProp = dynamic_cast<dtCore::ResourceActorProperty*>(mGhostProxy->GetProperty("static mesh"));
-            mGhostProxy->AddComponentProperties();
             mGhostProxy->GetDrawable(drawable);
          }
       }
@@ -322,7 +320,6 @@ namespace dtEditQt
          {
             ghostData = event->mimeData()->data("SkeletalMesh");
             resourceProp = dynamic_cast<dtCore::ResourceActorProperty*>(mGhostProxy->GetProperty("Skeletal Mesh"));
-            mGhostProxy->AddComponentProperties();
             mGhostProxy->GetDrawable(drawable);
          }
       }
@@ -336,7 +333,6 @@ namespace dtEditQt
          {
             ghostData = event->mimeData()->data("Particle");
             resourceProp = dynamic_cast<dtCore::ResourceActorProperty*>(mGhostProxy->GetProperty("Particle(s) File"));
-            mGhostProxy->AddComponentProperties();
             mGhostProxy->GetDrawable(drawable);
          }
       }
@@ -350,7 +346,6 @@ namespace dtEditQt
          {
             ghostData = event->mimeData()->data("Sound");
             resourceProp = dynamic_cast<dtCore::ResourceActorProperty*>(mGhostProxy->GetProperty("The Sound Effect"));
-            mGhostProxy->AddComponentProperties();
             mGhostProxy->GetDrawable(drawable);
          }
       }
@@ -367,7 +362,6 @@ namespace dtEditQt
          mGhostProxy = dynamic_cast<dtCore::BaseActor*>(dtCore::LibraryManager::GetInstance().CreateActor(category.toStdString(), name.toStdString()).get());
          if (mGhostProxy.valid())
          {
-            mGhostProxy->AddComponentProperties();
             mGhostProxy->GetDrawable(drawable);
          }
       }
@@ -392,7 +386,6 @@ namespace dtEditQt
                arrayProp->SetIndex(0);
                resourceProp = dynamic_cast<dtCore::ResourceActorProperty*>(arrayProp->GetArrayProperty());
             }
-            mGhostProxy->AddComponentProperties();
             mGhostProxy->GetDrawable(drawable);
          }
       }

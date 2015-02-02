@@ -398,8 +398,6 @@ namespace dtEditQt
             // the application could potentially be in a dangerous state.
             if (proxy.valid())
             {
-               proxy->AddComponentProperties();
-
                // grab the actor property type
                dtCore::ResourceActorProperty* resourceProp = dynamic_cast<dtCore::ResourceActorProperty *>
                   (proxy->GetProperty("static mesh"));

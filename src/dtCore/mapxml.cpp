@@ -1148,11 +1148,6 @@ namespace dtCore
          PropertyList propList;
          actor.GetPropertyList(propList);
 
-         // TEMP: Component properties add directly to root actor for now.
-         // Prevent nesting them until editor tools can handle display
-         // and modification of nested properties.
-         bool isComponent = NULL != dynamic_cast<dtCore::ActorComponent*>(&actor);
-
          PropertyList::const_iterator curIter = propList.begin();
          for (; curIter != propList.end(); ++curIter)
          {
@@ -1160,8 +1155,7 @@ namespace dtCore
 
             // If the property is read only and read only is not allowed,
             // skip the property and go to the next.
-            if ((prop->IsReadOnly() && ! allowReadOnlyProps)
-               || isComponent) // TEMP: Prevent writing properties as nested.
+            if (prop->IsReadOnly() && ! allowReadOnlyProps)
             {
                continue;
             }
