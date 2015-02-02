@@ -69,6 +69,14 @@ namespace dtCore
       void GetPropertyList(PropertyConstVector& propList) const;
 
       /**
+       * Gets all the properties contained in this actor.
+       * This method is intended to be overridden for complex container types.
+       * @param propList Container to capture all the properties.
+       */
+      virtual void GetDeepPropertyList(PropertyVector& propList);
+      virtual void GetDeepPropertyList(PropertyConstVector& propList) const;
+
+      /**
        * Adds a new property to the this proxy's list of properties.
        * This really should not be public.
        * @note
@@ -100,15 +108,20 @@ namespace dtCore
        * Gets a property of the requested name.
        *
        * @param name Name of the property to retrieve.
-       * @return A pointer to the property object or NULL if it
-       * is not found.
+       * @return Property object or NULL if not found.
        */
       ActorProperty* GetProperty(const std::string& name);
 
       /**
+       * Gets a property of the requested name. (const version)
+       * @param name Name of the property to retrieve.
+       * @return Property object or NULL if not found.
+       */
+      const ActorProperty* GetProperty(const std::string& name) const;
+
+      /**
        * Templated version of GetProperty (non-const) that auto casts the property to the desired type.
-       * Warning: this uses a dynamic_cast, so you are able to shoot yourself in the foot
-       * if you pass in the wrong type of ActorProperty.
+       * Warning: this uses a dynamic_cast.
        */
       template<class PropertyType>
       void GetProperty(const std::string& name, PropertyType*& property)
@@ -117,12 +130,26 @@ namespace dtCore
       }
 
       /**
-       * Gets a property of the requested name. (const version)
+       * Templated version of FindProperty (non-const) that auto casts the property to the desired type.
+       * Warning: this uses a dynamic_cast.
+       */
+      template<class PropertyType>
+      void FindProperty(const std::string& name, PropertyType*& property)
+      {
+         property = dynamic_cast<PropertyType*>(FindProperty(name));
+      }
+
+      /**
+       * Gets a property of the requested name.
+       * This method is very similar to GetProperty but is intended to be
+       * Overridden for complex containers to perform deep searches.
+       *
        * @param name Name of the property to retrieve.
        * @return A pointer to the property object or NULL if it
        * is not found.
        */
-      const ActorProperty* GetProperty(const std::string& name) const;
+      virtual ActorProperty* FindProperty(const std::string& name);
+      virtual const ActorProperty* FindProperty(const std::string& name) const;
 
       /// Perform the given action for each property.
       template <typename UnaryFunctor>

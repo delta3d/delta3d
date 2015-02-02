@@ -546,8 +546,6 @@ namespace dtEditQt
             // Tell the proxy that it is finished loading.
             proxy->OnMapLoadEnd();
 
-            proxy->AddComponentProperties();
-
             mRecursePrevent = true;
             EditorEvents::GetInstance().emitBeginChangeTransaction();
             EditorEvents::GetInstance().emitActorProxyCreated(proxy, true);

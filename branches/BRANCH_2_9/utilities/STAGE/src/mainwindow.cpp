@@ -660,8 +660,6 @@ namespace dtEditQt
          dynamic_cast<dtActors::VolumeEditActorProxy*>(dtCore::LibraryManager::GetInstance().CreateActor("dtutil", "Volume Edit").get());
       ViewportManager::GetInstance().getMasterScene()->AddChild(mVolEditActorProxy->GetDrawable());
             
-      mVolEditActorProxy->AddComponentProperties();
-
       //move the VolumeEditActor away from the Perspective camera so we can see it.
       dtActors::VolumeEditActor* volEditAct =
             dynamic_cast<dtActors::VolumeEditActor*>(mVolEditActorProxy->GetDrawable());
@@ -1091,8 +1089,6 @@ namespace dtEditQt
                         {
                            curActor->AddChild(*comp);
 
-                           comp->AddPropertiesToRootActor();
-
                            ++results;
                         }
                         else
@@ -1209,8 +1205,6 @@ namespace dtEditQt
                         for (; curCompIter != endCompIter; ++curCompIter)
                         {
                            actComp = dynamic_cast<dtCore::ActorComponent*>(curCompIter->get());
-
-                           actComp->RemovePropertiesFromRootActor();
 
                            curActor->RemoveChild(*actComp);
 

@@ -184,7 +184,7 @@ namespace dtEditQt
       //}
 
       std::vector<dtCore::ActorProperty*> propList;
-      proxy->GetPropertyList(propList);
+      proxy->GetDeepPropertyList(propList);
 
       ViewportManager::GetInstance().emitModifyPropList(*proxy, propList);
 

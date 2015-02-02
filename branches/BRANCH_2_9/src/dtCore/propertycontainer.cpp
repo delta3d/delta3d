@@ -172,6 +172,18 @@ namespace dtCore
       }
    }
 
+   ///////////////////////////////////////////////////////////////////////////////////////
+   ActorProperty* PropertyContainer::FindProperty(const std::string& name)
+   {
+      return GetProperty(name);
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////////////
+   const ActorProperty* PropertyContainer::FindProperty(const std::string& name) const
+   {
+      return GetProperty(name);
+   }
+
    ////////////////////////////////////////////////////////////////////////////////
    dtCore::RefPtr<ActorProperty> PropertyContainer::GetDeprecatedProperty(const std::string& name)
    {
@@ -182,7 +194,6 @@ namespace dtCore
    ///////////////////////////////////////////////////////////////////////////////////////
    void PropertyContainer::GetPropertyList(PropertyConstVector& propList) const
    {
-      propList.clear();
       propList.reserve(mProperties.size());
 
       for (size_t i = 0; i < mProperties.size(); ++i)
@@ -195,13 +206,24 @@ namespace dtCore
    ///////////////////////////////////////////////////////////////////////////////////////
    void PropertyContainer::GetPropertyList(PropertyVector& propList)
    {
-      propList.clear();
       propList.reserve(mProperties.size());
 
       for (size_t i = 0; i < mProperties.size(); ++i)
       {
          propList.push_back(mProperties[i].get());
       }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void PropertyContainer::GetDeepPropertyList(PropertyVector& propList)
+   {
+      GetPropertyList(propList);
+   }
+   
+   ////////////////////////////////////////////////////////////////////////////////
+   void PropertyContainer::GetDeepPropertyList(PropertyConstVector& propList) const
+   {
+      GetPropertyList(propList);
    }
 
    ////////////////////////////////////////////////////////////////////////////////

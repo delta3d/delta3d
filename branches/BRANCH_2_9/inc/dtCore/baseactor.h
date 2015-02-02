@@ -226,6 +226,23 @@ namespace dtCore
       // TEMP:
       void RemoveComponentProperties();
 
+      /**
+       * Gets a property of the requested name, either directly
+       * from the actor or from any contained actor components.
+       *
+       * @param name Name of the property to retrieve.
+       * @return Property object or NULL if not found.
+       */
+      /*virtual*/ ActorProperty* FindProperty(const std::string& name);
+      /*virtual*/ const ActorProperty* FindProperty(const std::string& name) const;
+      
+      /**
+       * Gets all the properties contained in this actor and its immediate actor components.
+       * @param propList Container to capture all the properties.
+       */
+      /*virtual*/ void GetDeepPropertyList(PropertyVector& propList);
+      /*virtual*/ void GetDeepPropertyList(PropertyConstVector& propList) const;
+
    protected:
 
       ///Keep the destructor protected since we use dtCore::RefPtr to

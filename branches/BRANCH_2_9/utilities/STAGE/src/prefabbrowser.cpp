@@ -413,8 +413,6 @@ namespace dtEditQt
 
          if (proxy.valid())
          {
-            proxy->AddComponentProperties();
-
             // add the new proxy to the map
             dtCore::RefPtr<dtCore::Map> mapPtr = EditorData::GetInstance().getCurrentMap();
             if (mapPtr.valid())
