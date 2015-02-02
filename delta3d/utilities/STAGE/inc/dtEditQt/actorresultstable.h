@@ -33,6 +33,7 @@
 #include <QtGui/QWidget>
 #include <QtGui/QTreeWidget>
 #include <QtGui/QTreeWidgetItem>
+#include <QtGui/QMenu>
 #include <vector>
 #include <dtCore/actorproxy.h>
 #include <dtCore/actorproperty.h>
@@ -41,6 +42,7 @@
 class QGroupBox;
 class QPushButton;
 class QKeyEvent;
+
 
 namespace dtEditQt
 {
@@ -59,7 +61,7 @@ namespace dtEditQt
        * Constructor - showActions lets you indicate whether you should show the
        * buttons for various behaviors such as select and goto.
        */
-      ActorResultsTreeItem(QTreeWidget* parent, dtCore::RefPtr<dtCore::BaseActorObject> proxy);
+      ActorResultsTreeItem(QTreeWidget* parent, dtCore::RefPtr<dtCore::BaseActorObject> actor);
 
       /**
        * Destructor
@@ -69,10 +71,10 @@ namespace dtEditQt
       /**
        * Gets the actor proxy for this tree item
        */
-      dtCore::RefPtr<dtCore::BaseActorObject> getProxy()  {  return mProxy;  }
+      dtCore::RefPtr<dtCore::BaseActorObject> GetActor()  {  return mActor;  }
 
    private:
-      dtCore::RefPtr<dtCore::BaseActorObject> mProxy;
+      dtCore::RefPtr<dtCore::BaseActorObject> mActor;
    };
 
    /**
@@ -132,6 +134,8 @@ namespace dtEditQt
        *	Sets the currently selected item list.
        */
       void setSelectedItems(const std::vector<dtCore::UniqueId>& items);
+
+      void contextMenuEvent(QContextMenuEvent *event);
 
    public slots:
       /**
@@ -194,6 +198,12 @@ namespace dtEditQt
        */
       void keyPressEvent(QKeyEvent* event);
 
+      /**
+       * Sets the selection data to the clipboard
+       */
+      void ClipboardCopySelectedItems();
+
+
    private:
       /**
        * Simple utility to get the currently selected item.  Only one.
@@ -220,6 +230,7 @@ namespace dtEditQt
       // if our parent is a group box, then we can change the title.
       QGroupBox*   mParentBox;
       QString      mParentBaseTitle;
+      QMenu        mContextMenu;
    };
 
 } // namespace dtEditQt

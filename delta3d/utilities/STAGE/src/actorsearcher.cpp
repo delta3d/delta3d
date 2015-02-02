@@ -36,6 +36,8 @@
 #include <QtGui/QLineEdit>
 #include <QtGui/QPushButton>
 #include <QtGui/QTreeView>
+#include <QtGui/QApplication>
+#include <QtGui/QClipboard>
 
 #include <QtCore/QStringList>
 
@@ -296,6 +298,16 @@ namespace dtEditQt
       if (searchClass == mAnyValue)
       {
          searchClass = "";
+      }
+
+      QClipboard* clipboard = QApplication::clipboard();
+      if (!searchName.isEmpty())
+      {
+         clipboard->setText(searchName);
+      }
+      else if (!searchType.isEmpty())
+      {
+         clipboard->setText(searchType);
       }
 
       // search
