@@ -29,7 +29,7 @@
 #include <dtGame/messagetype.h>
 #include <dtCore/map.h>
 #include <dtCore/project.h>
-#include <dtCore/librarymanager.h>
+#include <dtCore/actorfactory.h>
 #include <dtCore/resourceactorproperty.h>
 #include <dtAI/aiactorregistry.h>
 #include <dtAI/aiinterfaceactor.h>
@@ -125,7 +125,7 @@ void AIComponent::AddAIInterfaceToMap(const std::string& map)
    // Make sure the dtAI actor library is loaded
    if (!currentMap.HasLibrary("dtAI"))
    {
-      dtCore::LibraryManager::GetInstance().LoadActorRegistry("dtAI");
+      dtCore::ActorFactory::GetInstance().LoadActorRegistry("dtAI");
       currentMap.AddLibrary("dtAI", "1.0");
    }
 

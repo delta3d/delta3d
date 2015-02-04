@@ -23,7 +23,7 @@
 #include <dtGame/exceptionenum.h>
 #include <dtGame/messageparameter.h>
 #include <dtCore/datatype.h>
-#include <dtCore/librarymanager.h>
+#include <dtCore/actorfactory.h>
 
 namespace dtGame
 {
@@ -131,7 +131,7 @@ namespace dtGame
    /////////////////////////////////////////////////////////////////
    const dtCore::ActorType* ActorUpdateMessage::GetActorType() const
    {
-      return dtCore::LibraryManager::GetInstance().FindActorType(GetActorTypeCategory(), GetActorTypeName());
+      return dtCore::ActorFactory::GetInstance().FindActorType(GetActorTypeCategory(), GetActorTypeName());
    }
 
    /////////////////////////////////////////////////////////////////

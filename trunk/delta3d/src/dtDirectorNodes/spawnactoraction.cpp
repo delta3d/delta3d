@@ -29,7 +29,7 @@
 #include <dtCore/stringselectoractorproperty.h>
 #include <dtCore/containeractorproperty.h>
 #include <dtCore/actortype.h>
-#include <dtCore/librarymanager.h>
+#include <dtCore/actorfactory.h>
 #include <dtCore/vectoractorproperties.h>
 #include <dtCore/containerselectoractorproperty.h>
 
@@ -282,8 +282,8 @@ namespace dtDirector
          std::string name;
          std::string category;
 
-         std::vector<const dtCore::ActorType*> types;
-         dtCore::LibraryManager::GetInstance().GetActorTypes(types);
+         dtCore::ActorTypeVec types;
+         dtCore::ActorFactory::GetInstance().GetActorTypes(types);
          int count = (int)types.size();
          for (int index = 0; index < count; ++index)
          {
@@ -301,7 +301,7 @@ namespace dtDirector
 
          if (!name.empty() && !category.empty())
          {
-            mTemplateActor = dtCore::LibraryManager::GetInstance().CreateActor(category, name);
+            mTemplateActor = dtCore::ActorFactory::GetInstance().CreateActor(category, name);
 
             // Template actors must have this ghost property so it does not
             // become visible in actor selection lists like inspector.
@@ -329,8 +329,8 @@ namespace dtDirector
    {
       std::map<std::string, std::string> listMap;
 
-      std::vector<const dtCore::ActorType*> types;
-      dtCore::LibraryManager::GetInstance().GetActorTypes(types);
+      dtCore::ActorTypeVec types;
+      dtCore::ActorFactory::GetInstance().GetActorTypes(types);
       int count = (int)types.size();
       for (int index = 0; index < count; ++index)
       {

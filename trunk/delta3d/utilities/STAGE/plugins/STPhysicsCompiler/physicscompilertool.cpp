@@ -29,7 +29,7 @@
 #include "physicscompilertool.h"
 // DELTA
 #include <dtCore/deltadrawable.h>
-#include <dtCore/librarymanager.h>
+#include <dtCore/actorfactory.h>
 #include <dtCore/project.h>
 #include <dtEditQt/editorevents.h>
 #include <dtEditQt/mainwindow.h>

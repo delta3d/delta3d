@@ -47,7 +47,7 @@
 #include <dtCore/actortype.h>
 #include <dtCore/project.h>
 #include <dtCore/map.h>
-#include <dtCore/librarymanager.h>
+#include <dtCore/actorfactory.h>
 
 #include <dtCore/system.h>
 #include <dtCore/scene.h>
@@ -127,7 +127,7 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void GameManager::GetActorTypes(std::vector<const dtCore::ActorType*>& actorTypes)
+   void GameManager::GetActorTypes(dtCore::ActorTypeVec& actorTypes)
    {
       mGMImpl->mLibMgr->GetActorTypes(actorTypes);
    }
@@ -1113,7 +1113,7 @@ namespace dtGame
    {
       try
       {
-         dtCore::RefPtr<dtCore::BaseActorObject> ap = dtCore::LibraryManager::GetInstance().CreateActor(actorType).get();
+         dtCore::RefPtr<dtCore::BaseActorObject> ap = dtCore::ActorFactory::GetInstance().CreateActor(actorType).get();
          if (ap->IsInstanceOf("dtGame::GameActor"))
          {
             dtGame::GameActorProxy* gap = dynamic_cast<dtGame::GameActorProxy*>(ap.get());

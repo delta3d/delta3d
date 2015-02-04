@@ -30,7 +30,7 @@
 #include <dtDirector/nodemanager.h>
 
 #include <QtCore/QStringList>
-#include <dtCore/librarymanager.h>
+#include <dtCore/actorfactory.h>
 #include <dtUtil/log.h>
 
 #include <QtGui/QVBoxLayout>

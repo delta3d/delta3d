@@ -41,7 +41,7 @@
 
 #include <dtCore/actoractorproperty.h>
 #include <dtCore/floatactorproperty.h>
-#include <dtCore/librarymanager.h>
+#include <dtCore/actorfactory.h>
 
 #include <dtCore/scene.h>
 #include <dtCore/system.h>

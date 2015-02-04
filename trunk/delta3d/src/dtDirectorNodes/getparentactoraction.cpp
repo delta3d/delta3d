@@ -23,7 +23,7 @@
 
 #include <dtCore/actoridactorproperty.h>
 #include <dtCore/actortype.h>
-#include <dtCore/librarymanager.h>
+#include <dtCore/actorfactory.h>
 #include <dtCore/stringactorproperty.h>
 #include <dtCore/stringselectoractorproperty.h>
 #include <dtCore/deltadrawable.h>

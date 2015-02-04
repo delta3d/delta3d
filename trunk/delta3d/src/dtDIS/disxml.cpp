@@ -3,7 +3,7 @@
 #include <dtDIS/propertyname.h>
 #include <dtUtil/log.h>
 #include <dtUtil/stringutils.h>
-#include <dtCore/librarymanager.h>
+#include <dtCore/actorfactory.h>
 #include <dtCore/exceptionenum.h>
 #include <dtUtil/macros.h>
 #include <xercesc/util/XercesDefs.hpp>  // for xerces namespace definition
@@ -466,9 +466,9 @@ void EntityMapXMLHandler::endElement(const XMLCh* const uri,const XMLCh* const l
          // Load the library.
          try
          {
-            if (dtCore::LibraryManager::GetInstance().GetRegistry(mLibraryName) == NULL)
+            if (dtCore::ActorFactory::GetInstance().GetRegistry(mLibraryName) == NULL)
             {
-               dtCore::LibraryManager::GetInstance().LoadActorRegistry(mLibraryName);
+               dtCore::ActorFactory::GetInstance().LoadActorRegistry(mLibraryName);
             }
          }
          catch (const dtCore::ProjectResourceErrorException &e)
@@ -497,7 +497,7 @@ void EntityMapXMLHandler::endElement(const XMLCh* const uri,const XMLCh* const l
          // modify the actor mapping
 
          // find the actortype
-         const dtCore::ActorType* actortype = dtCore::LibraryManager::GetInstance().FindActorType(mCurrentActorTypeCategory, mCurrentActorTypeName);
+         const dtCore::ActorType* actortype = dtCore::ActorFactory::GetInstance().FindActorType(mCurrentActorTypeCategory, mCurrentActorTypeName);
 
          if (actortype != NULL)
          {

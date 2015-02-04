@@ -41,7 +41,7 @@
 #include <dtCore/refptr.h>
 #include <dtUtil/coordinates.h>
 #include <dtCore/datatype.h>
-#include <dtCore/librarymanager.h>
+#include <dtCore/actorfactory.h>
 #include <dtGame/messagetype.h>
 #include <dtActors/engineactorregistry.h>
 #include <dtActors/coordinateconfigactor.h>
@@ -61,7 +61,7 @@ class CoordinateConfigActorTests : public CPPUNIT_NS::TestFixture
    public:
       void setUp()
       {
-         dtCore::RefPtr<dtCore::BaseActorObject> proxy = dtCore::LibraryManager::GetInstance().
+         dtCore::RefPtr<dtCore::BaseActorObject> proxy = dtCore::ActorFactory::GetInstance().
             CreateActor(*dtActors::EngineActorRegistry::COORDINATE_CONFIG_ACTOR_TYPE);
 
          mCoordinateProxy = dynamic_cast<dtActors::CoordinateConfigActorProxy*>(proxy.get());

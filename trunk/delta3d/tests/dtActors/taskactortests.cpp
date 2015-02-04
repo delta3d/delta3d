@@ -47,7 +47,7 @@
 #include <dtCore/gameeventactorproperty.h>
 #include <dtCore/gameeventmanager.h>
 #include <dtCore/intactorproperty.h>
-#include <dtCore/librarymanager.h>
+#include <dtCore/actorfactory.h>
 #include <dtCore/namedarrayparameter.h>
 #include <dtCore/stringactorproperty.h>
 

@@ -50,7 +50,7 @@ DT_DISABLE_WARNING_END
 #include <dtCore/deltawin.h>
 #include <dtCore/transform.h>
 #include <dtCore/project.h>
-#include <dtCore/librarymanager.h>
+#include <dtCore/actorfactory.h>
 #include <dtCore/exceptionenum.h>
 #include <dtCore/map.h>
 #include <dtGame/actorcomponent.h>
@@ -162,7 +162,7 @@ namespace dtEditQt
       }
 
       // Ensure that the global singletons are lazily instantiated now
-      dtCore::LibraryManager::GetInstance();
+      dtCore::ActorFactory::GetInstance();
       EditorActions::GetInstance();
       EditorEvents::GetInstance();
       EditorData::GetInstance();
@@ -547,7 +547,7 @@ namespace dtEditQt
    {
       //The persistent pseudo-actor that is used for special-purpose editing
       mVolEditActorProxy =
-         dynamic_cast<dtActors::VolumeEditActorProxy*>(dtCore::LibraryManager::GetInstance().CreateActor("dtutil", "Volume Edit").get());
+         dynamic_cast<dtActors::VolumeEditActorProxy*>(dtCore::ActorFactory::GetInstance().CreateActor("dtutil", "Volume Edit").get());
       ViewportManager::GetInstance().getMasterScene()->AddChild(mVolEditActorProxy->GetDrawable());
 
       //move the VolumeEditActor away from the Perspective camera so we can see it.
@@ -912,7 +912,7 @@ namespace dtEditQt
                   else if (actType->InstanceOf(*dtGame::ActorComponent::BaseActorComponentType))
                   {
                      dtCore::RefPtr<dtCore::BaseActorObject> newComp
-                        = dtCore::LibraryManager::GetInstance().CreateActor(*actType);
+                        = dtCore::ActorFactory::GetInstance().CreateActor(*actType);
 
                      dtGame::ActorComponent* actComp = dynamic_cast<dtGame::ActorComponent*>(newComp.get());
 

@@ -21,7 +21,7 @@
 #include <dtPhysics/physicsactorregistry.h>
 #include <dtPhysics/physicsmaterialactor.h>
 // For the autoreg
-#include <dtCore/librarymanager.h>
+#include <dtCore/actorfactory.h>
 
 namespace dtPhysics
 {

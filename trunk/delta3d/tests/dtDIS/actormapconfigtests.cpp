@@ -26,7 +26,7 @@
 #include <DIS/EntityType.h>
 #include <dtDIS/entitymap.h>
 #include <dtDIS/sharedstate.h>
-#include <dtCore/librarymanager.h>
+#include <dtCore/actorfactory.h>
 
 namespace dtDIS
 {
@@ -94,8 +94,8 @@ namespace dtDIS
       eid.setSubcategory(0);
       eid.setSpecific(0);
 
-      std::vector<const dtCore::ActorType*> actorTypes;
-      dtCore::LibraryManager::GetInstance().GetActorTypes(actorTypes);
+      dtCore::ActorTypeVec actorTypes;
+      dtCore::ActorFactory::GetInstance().GetActorTypes(actorTypes);
       
       EntityMap mapping;
       mapping.SetEntityActorType(eid, actorTypes[0]);
@@ -116,8 +116,8 @@ namespace dtDIS
       eid.setSubcategory(0);
       eid.setSpecific(0);
 
-      std::vector<const dtCore::ActorType*> actorTypes;
-      dtCore::LibraryManager::GetInstance().GetActorTypes(actorTypes);
+      dtCore::ActorTypeVec actorTypes;
+      dtCore::ActorFactory::GetInstance().GetActorTypes(actorTypes);
 
       EntityMap mapping;
       mapping.SetEntityActorType(eid, actorTypes[0]);
@@ -140,8 +140,8 @@ namespace dtDIS
       eid.setSubcategory(0);
       eid.setSpecific(0);
 
-      std::vector<const dtCore::ActorType*> actorTypes;
-      dtCore::LibraryManager::GetInstance().GetActorTypes(actorTypes);
+      dtCore::ActorTypeVec actorTypes;
+      dtCore::ActorFactory::GetInstance().GetActorTypes(actorTypes);
       const dtCore::ResourceDescriptor rd("name", "description");
 
       EntityMap mapping;
@@ -214,8 +214,8 @@ namespace dtDIS
       eid.setSubcategory(0);
       eid.setSpecific(0);
 
-      std::vector<const dtCore::ActorType*> actorTypes;
-      dtCore::LibraryManager::GetInstance().GetActorTypes(actorTypes);
+      dtCore::ActorTypeVec actorTypes;
+      dtCore::ActorFactory::GetInstance().GetActorTypes(actorTypes);
       const dtCore::ResourceDescriptor rd("name", "description");
 
       EntityMap mapping;

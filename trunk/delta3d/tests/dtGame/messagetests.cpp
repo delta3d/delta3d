@@ -244,7 +244,7 @@ void MessageTests::createActors(dtCore::Map& map)
 {
    map.ClearProxies();
 
-   std::vector<const dtCore::ActorType*> actorTypes;
+   dtCore::ActorTypeVec actorTypes;
 
    actorTypes.push_back(dtActors::EngineActorRegistry::TASK_ACTOR_TYPE.get());
    actorTypes.push_back(dtActors::EngineActorRegistry::GAME_EVENT_TASK_ACTOR_TYPE.get());

@@ -41,7 +41,7 @@
 #include <dtCore/actorpluginregistry.h>
 #include <dtCore/datatype.h>
 #include <dtCore/project.h>
-#include <dtCore/librarymanager.h>
+#include <dtCore/actorfactory.h>
 #include <dtCore/namedgroupparameter.inl>
 #include <dtGame/messagetype.h>
 #include <dtGame/gamemanager.h>

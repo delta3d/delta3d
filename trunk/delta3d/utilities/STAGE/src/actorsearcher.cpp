@@ -43,7 +43,7 @@
 
 #include <dtCore/actorproxy.h>
 #include <dtCore/actortype.h>
-#include <dtCore/librarymanager.h>
+#include <dtCore/actorfactory.h>
 #include <dtCore/map.h>
 
 #include <dtUtil/log.h>
@@ -179,8 +179,8 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    void ActorSearcher::refreshAll()
    {
-      std::vector<const dtCore::ActorType*> actorTypes;
-      std::vector<const dtCore::ActorType*>::const_iterator actorTypesIter;
+      dtCore::ActorTypeVec actorTypes;
+      dtCore::ActorTypeVec::const_iterator actorTypesIter;
       std::set<dtUtil::RefString>::const_iterator setIter;
       dtCore::Map* map = EditorData::GetInstance().getCurrentMap();
       QStringList categoryList;
@@ -217,7 +217,7 @@ namespace dtEditQt
          EditorData::GetInstance().getMainWindow()->startWaitCursor();
 
          // walk through all the actor types and pull out the unique categories and types
-         dtCore::LibraryManager::GetInstance().GetActorTypes(actorTypes);
+         dtCore::ActorFactory::GetInstance().GetActorTypes(actorTypes);
          for (actorTypesIter = actorTypes.begin(); actorTypesIter != actorTypes.end(); ++actorTypesIter)
          {
             dtCore::RefPtr<const dtCore::ActorType> type = (*actorTypesIter);

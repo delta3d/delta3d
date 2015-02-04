@@ -44,7 +44,7 @@
 #include <dtEditQt/editorevents.h>
 #include <dtEditQt/editoractions.h>
 #include <dtEditQt/mainwindow.h>
-#include <dtCore/librarymanager.h>
+#include <dtCore/actorfactory.h>
 #include <dtCore/actorpluginregistry.h>
 #include <dtCore/map.h>
 #include <dtUtil/log.h>
@@ -80,9 +80,9 @@ namespace dtEditQt
       {
          QListWidgetItem* p = new QListWidgetItem;
          dtCore::ActorPluginRegistry* reg =
-            dtCore::LibraryManager::GetInstance().GetRegistry(libNames[i]);
+            dtCore::ActorFactory::GetInstance().GetRegistry(libNames[i]);
          QString toolTip = tr("File: ") +
-            tr(dtCore::LibraryManager::GetInstance().GetPlatformSpecificLibraryName(libNames[i]).c_str()) +
+            tr(dtCore::ActorFactory::GetInstance().GetPlatformSpecificLibraryName(libNames[i]).c_str()) +
             tr(" \nDescription: ") + tr(reg->GetDescription().c_str());
          p->setText(tr(libNames[i].c_str()));
          p->setToolTip(toolTip);
@@ -127,7 +127,7 @@ namespace dtEditQt
 
       try
       {
-         dtCore::LibraryManager::GetInstance().LoadActorRegistry(libName);
+         dtCore::ActorFactory::GetInstance().LoadActorRegistry(libName);
       }
       catch(const dtUtil::Exception& e)
       {
@@ -163,7 +163,7 @@ namespace dtEditQt
             if (loadedLibs[i] == libToRemove)
             {
                dtCore::ActorPluginRegistry* reg =
-                  dtCore::LibraryManager::GetInstance().GetRegistry(loadedLibs[i]);
+                  dtCore::ActorFactory::GetInstance().GetRegistry(loadedLibs[i]);
 
                unsigned int numActorsInScene = 0;
                // fail if actors are in the library
@@ -186,7 +186,7 @@ namespace dtEditQt
 
                EditorEvents::GetInstance().emitLibraryAboutToBeRemoved();
                curMap->RemoveLibrary(libToRemove);
-               dtCore::LibraryManager::GetInstance().UnloadActorRegistry(libToRemove);
+               dtCore::ActorFactory::GetInstance().UnloadActorRegistry(libToRemove);
                RefreshLibraries();
                EditorEvents::GetInstance().emitMapLibraryRemoved();
                if (curMap->GetAllLibraries().size() > 0)

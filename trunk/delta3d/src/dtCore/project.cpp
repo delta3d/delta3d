@@ -52,7 +52,7 @@
 #include <dtCore/mapxml.h>
 #include <dtCore/datatype.h>
 #include <dtCore/exceptionenum.h>
-#include <dtCore/librarymanager.h>
+#include <dtCore/actorfactory.h>
 #include <dtCore/actorproxyicon.h>
 #include <dtCore/environmentactor.h>
 #include <dtCore/gameevent.h>
@@ -83,7 +83,7 @@ namespace dtCore
       , mResourcesIndexed(false)
       , mEditMode(false)
       {
-         libraryManager = &LibraryManager::GetInstance();
+         libraryManager = &ActorFactory::GetInstance();
          mLogger = &dtUtil::Log::GetInstance(Project::LOG_NAME);
       }
 
@@ -115,7 +115,7 @@ namespace dtCore
 
       //This is here to make sure the library manager is deleted AFTER the maps are closed.
       //so that libraries won't be closed and the proxies deleted out from under the map.
-      dtCore::RefPtr<LibraryManager> libraryManager;
+      dtCore::RefPtr<ActorFactory> libraryManager;
       ResourceHelper mResourceHelper;
 
       dtUtil::Log* mLogger;
@@ -1228,7 +1228,7 @@ namespace dtCore
          if (libMayClose)
          {
             ActorPluginRegistry* aprToClose =
-               LibraryManager::GetInstance().GetRegistry(libToClose);
+               ActorFactory::GetInstance().GetRegistry(libToClose);
 
             if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_INFO))
             {
@@ -1245,7 +1245,7 @@ namespace dtCore
 
                try
                {
-                  ActorPluginRegistry* registry = LibraryManager::GetInstance().GetRegistryForType(proxy->GetActorType());
+                  ActorPluginRegistry* registry = ActorFactory::GetInstance().GetRegistryForType(proxy->GetActorType());
                   //the proxy is found in the library that is about to close.
                   if (aprToClose == registry)
                   {
@@ -1268,7 +1268,7 @@ namespace dtCore
             //if the library may still close.
             if (libMayClose)
             {
-               LibraryManager::GetInstance().UnloadActorRegistry(libToClose);
+               ActorFactory::GetInstance().UnloadActorRegistry(libToClose);
             }
          }
 

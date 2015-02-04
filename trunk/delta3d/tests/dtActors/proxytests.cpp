@@ -46,7 +46,7 @@
 #include <dtCore/gameeventmanager.h>
 #include <dtCore/groupactorproperty.h>
 #include <dtCore/intactorproperty.h>
-#include <dtCore/librarymanager.h>
+#include <dtCore/actorfactory.h>
 #include <dtCore/longactorproperty.h>
 #include <dtCore/namedfloatparameter.h>
 #include <dtCore/namedgroupparameter.h>
@@ -85,8 +85,8 @@ public:
    void TestBezierProxies();
 
 private:
-   dtCore::LibraryManager& libMgr;
-   std::vector<const dtCore::ActorType*> actors;
+   dtCore::ActorFactory& libMgr;
+   dtCore::ActorTypeVec actors;
    dtCore::ActorRefPtrVector proxies;
    static const std::string mExampleLibraryName;
 
@@ -100,7 +100,7 @@ CPPUNIT_TEST_SUITE_REGISTRATION(ProxyTest);
 
 const std::string ProxyTest::mExampleLibraryName="testActorLibrary";
 
-ProxyTest::ProxyTest() : libMgr(dtCore::LibraryManager::GetInstance())
+ProxyTest::ProxyTest() : libMgr(dtCore::ActorFactory::GetInstance())
 {
 }
 
@@ -1383,7 +1383,7 @@ void ProxyTest::TestBezierProxies()
 {
    try
    {
-      dtCore::LibraryManager& libMgr = dtCore::LibraryManager::GetInstance();
+      dtCore::ActorFactory& libMgr = dtCore::ActorFactory::GetInstance();
       RefPtr<const dtCore::ActorType>  at    = libMgr.FindActorType("dtcore.Curve", "Bezier Node");
       CPPUNIT_ASSERT(at != NULL);
 

@@ -58,14 +58,14 @@
 #include <dtCore/scene.h>
 #include <dtCore/object.h>
 #include <dtActors/engineactorregistry.h>
-#include <dtCore/librarymanager.h>
+#include <dtCore/actorfactory.h>
 #include <dtCore/map.h>
 #include <dtCore/datatype.h>
 #include <dtCore/project.h>
 #include <dtCore/mapxml.h>
 #include <dtCore/actorproperty.h>
 #include <dtCore/resourceactorproperty.h>
-#include <dtCore/librarymanager.h>
+#include <dtCore/actorfactory.h>
 #include <dtUtil/datapathutils.h>
 #include <dtUtil/log.h>
 #include <algorithm>
@@ -409,7 +409,7 @@ namespace dtEditQt
 
          // create our new object
          dtCore::RefPtr<dtCore::BaseActorObject> proxy =
-               dtCore::LibraryManager::GetInstance().CreateActor("dtActors", "Prefab");
+               dtCore::ActorFactory::GetInstance().CreateActor("dtActors", "Prefab");
 
          if (proxy.valid())
          {

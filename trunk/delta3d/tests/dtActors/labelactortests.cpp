@@ -38,7 +38,7 @@
 #include <dtActors/labelactorproxy.h>
 #include <dtActors/engineactorregistry.h>
 #include <dtCore/system.h>
-#include <dtCore/librarymanager.h>
+#include <dtCore/actorfactory.h>
 #include <dtUtil/stringutils.h>
 
 extern dtABC::Application& GetGlobalApplication();
@@ -82,7 +82,7 @@ void LabelActorTests::setUp()
       // Make sure we have an active context
       dtCore::System::GetInstance().Step();
       // Create the actor for testing.
-      dtCore::RefPtr<dtCore::BaseActorObject> proxy = dtCore::LibraryManager::GetInstance()
+      dtCore::RefPtr<dtCore::BaseActorObject> proxy = dtCore::ActorFactory::GetInstance()
          .CreateActor(*dtActors::EngineActorRegistry::LABEL_ACTOR_TYPE);
       mLabelProxy = dynamic_cast<dtActors::LabelActorProxy*>(proxy.get());
 

@@ -4,7 +4,7 @@
 #include <assert.h>
 
 #include <dtCore/resourceactorproperty.h>
-#include <dtCore/librarymanager.h>
+#include <dtCore/actorfactory.h>
 #include <dtCore/map.h>
 #include <dtEditQt/editordata.h>
 #include <dtEditQt/editorevents.h>
@@ -35,9 +35,9 @@ MassImporterPlugin::MassImporterPlugin(dtEditQt::MainWindow* mw)
    // open file menu when user presses the button
    connect(ui.mChooseFiles, SIGNAL(clicked()), this, SLOT(OnChooseFiles()));   
 
-   typedef std::vector<const dtCore::ActorType*> TypeList;
+   typedef dtCore::ActorTypeVec TypeList;
    TypeList types;
-   dtCore::LibraryManager::GetInstance().GetActorTypes(types);
+   dtCore::ActorFactory::GetInstance().GetActorTypes(types);
    int idx = 0;
    for(TypeList::const_iterator i = types.begin(); i != types.end(); ++i)
    {
@@ -90,9 +90,9 @@ void MassImporterPlugin::OnChooseFiles()
 
    // search for actor type with given unique id.
    // would be nice if there was a method in the library manager for this
-   typedef std::vector<const dtCore::ActorType*> TypeList;
+   typedef dtCore::ActorTypeVec TypeList;
    TypeList types;
-   dtCore::LibraryManager::GetInstance().GetActorTypes(types);
+   dtCore::ActorFactory::GetInstance().GetActorTypes(types);
    for(TypeList::const_iterator i = types.begin(); i != types.end(); ++i)
    {
       if((*i)->GetUniqueId() == typeId)
@@ -150,7 +150,7 @@ void MassImporterPlugin::CreateActorFromMesh(const dtCore::ActorType& type, cons
    if(proxies.empty())
    {
       // create new actor
-      proxy = dtCore::LibraryManager::GetInstance().CreateActor(type);
+      proxy = dtCore::ActorFactory::GetInstance().CreateActor(type);
       
       proxy->SetName(actorName);
 

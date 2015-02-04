@@ -36,7 +36,7 @@
 #include <dtCore/actorproxy.h>
 #include <dtCore/actorproxyicon.h>
 #include <dtCore/environmentactor.h>
-#include <dtCore/librarymanager.h>
+#include <dtCore/actorfactory.h>
 #include <dtCore/map.h>
 #include <dtCore/mapxml.h>
 #include <dtCore/project.h>
@@ -2125,7 +2125,7 @@ namespace dtEditQt
          {
             errors += QString::fromStdString((*itr));
 
-            std::string replacement = dtCore::LibraryManager::GetInstance().FindActorTypeReplacement((*itr));
+            std::string replacement = dtCore::ActorFactory::GetInstance().FindActorTypeReplacement((*itr));
             if (!replacement.empty())
             {
                errors += tr(" (replace with ") + QString::fromStdString(replacement) + ")";

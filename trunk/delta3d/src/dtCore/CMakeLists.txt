@@ -28,6 +28,7 @@ SET(LIB_PUBLIC_HEADERS
                 ${HEADER_PATH}/actorpropertyserializer.h
                 ${HEADER_PATH}/actorproxy.h
                 ${HEADER_PATH}/actorproxyicon.h
+                ${HEADER_PATH}/actorfactory.h
                 ${HEADER_PATH}/actortype.h
                 ${HEADER_PATH}/arrayactorproperty.h
                 ${HEADER_PATH}/arrayactorpropertybase.h
@@ -152,6 +153,7 @@ SET(LIB_PUBLIC_HEADERS
                 ${HEADER_PATH}/plugin_export.h
                 ${HEADER_PATH}/pointaxis.h
                 ${HEADER_PATH}/positionallight.h
+                ${HEADER_PATH}/prefabactorregistry.h
                 ${HEADER_PATH}/prefabiconhandler.h
                 ${HEADER_PATH}/project.h
                 ${HEADER_PATH}/projectconfig.h
@@ -283,7 +285,7 @@ SET(LIB_SOURCES
                 ${SOURCE_PATH}/isector.cpp
                 ${SOURCE_PATH}/keyboard.cpp
                 ${SOURCE_PATH}/keyboardmousehandler.cpp
-                ${SOURCE_PATH}/librarymanager.cpp
+                ${SOURCE_PATH}/actorfactory.cpp
                 ${SOURCE_PATH}/light.cpp
                 ${SOURCE_PATH}/loadable.cpp
                 ${SOURCE_PATH}/logicalinputdevice.cpp
@@ -332,6 +334,7 @@ SET(LIB_SOURCES
                 ${SOURCE_PATH}/pointaxis.cpp
                 ${SOURCE_PATH}/positionallight.cpp
                 ${SOURCE_PATH}/prefabiconhandler.cpp
+                ${SOURCE_PATH}/prefabactorregistry.cpp
                 ${SOURCE_PATH}/project.cpp
                 ${SOURCE_PATH}/projectconfig.cpp
                 ${SOURCE_PATH}/projectconfigreaderwriter.cpp

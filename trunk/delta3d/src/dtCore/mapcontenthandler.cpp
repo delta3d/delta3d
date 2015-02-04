@@ -34,7 +34,7 @@
 #include <dtCore/gameevent.h>
 #include <dtCore/gameeventmanager.h>
 #include <dtCore/groupactorproperty.h>
-#include <dtCore/librarymanager.h>
+#include <dtCore/actorfactory.h>
 #include <dtCore/mapcontenthandler.h>
 #include <dtCore/map.h>
 #include <dtCore/mapxmlconstants.h>
@@ -550,7 +550,7 @@ namespace  dtCore
          if (mMissingActorTypes.find(actorTypeFullName) == mMissingActorTypes.end())
          {
             dtCore::RefPtr<const ActorType> actorType =
-               LibraryManager::GetInstance().FindActorType(actorTypeCategory, actorTypeName);
+               ActorFactory::GetInstance().FindActorType(actorTypeCategory, actorTypeName);
 
             if (actorType == NULL)
             {
@@ -565,7 +565,7 @@ namespace  dtCore
                                    "Creating actor proxy %s with category %s.",
                                    actorTypeName.c_str(), actorTypeCategory.c_str());
 
-               mBaseActorObject = LibraryManager::GetInstance().CreateActor(*actorType).get();
+               mBaseActorObject = ActorFactory::GetInstance().CreateActor(*actorType).get();
                if (mBaseActorObject == NULL)
                {
                   mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__,  __LINE__,
@@ -916,9 +916,9 @@ namespace  dtCore
 
       try
       {
-         if (LibraryManager::GetInstance().GetRegistry(mLibName) == NULL)
+         if (ActorFactory::GetInstance().GetRegistry(mLibName) == NULL)
          {
-            LibraryManager::GetInstance().LoadActorRegistry(mLibName);
+            ActorFactory::GetInstance().LoadActorRegistry(mLibName);
          }
          if (mMap.valid()) mMap->AddLibrary(mLibName, mLibVersion);
          ClearLibraryValues();

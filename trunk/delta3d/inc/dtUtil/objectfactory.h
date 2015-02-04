@@ -128,14 +128,15 @@ namespace dtUtil
 
       /**
        * Gets a list of types that this factory knows how to create.
+       * It will add to the vector you pass it without clearing.
        */
-      void GetSupportedTypes(std::vector<UniqueIdType> &types) const
+      void GetSupportedTypes(std::vector<UniqueIdType>& addToVec) const
       {
-         types.clear();
+         addToVec.reserve(addToVec.size() + objectTypeMap.size());
          for (ObjTypeItorConst itor=this->objectTypeMap.begin();
             itor != this->objectTypeMap.end(); ++itor)
          {
-            types.push_back(itor->first);
+            addToVec.push_back(itor->first);
          }
       }
 

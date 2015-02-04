@@ -31,7 +31,7 @@
 #include <QtGui/QIcon>
 
 #include <dtEditQt/actortypetreewidget.h>
-#include <dtCore/librarymanager.h>
+#include <dtCore/actorfactory.h>
 #include <dtEditQt/uiresources.h>
 #include <QtCore/QStringList>
 #include <dtUtil/log.h>

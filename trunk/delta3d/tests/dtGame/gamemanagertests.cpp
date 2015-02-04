@@ -666,7 +666,7 @@ void GameManagerTests::TestActorSearching()
       int numActorsSkipped = 0;
       dtGame::GameManager& gm = *mGM;
 
-      std::vector<const dtCore::ActorType*> typeVec;
+      dtCore::ActorTypeVec typeVec;
 
       gm.GetActorTypes(typeVec);
 

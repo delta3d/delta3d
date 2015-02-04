@@ -39,7 +39,7 @@
 #include <QtGui/QTreeView>
 #include <dtCore/actorproxy.h>
 #include <dtCore/actortype.h>
-#include <dtCore/librarymanager.h>
+#include <dtCore/actorfactory.h>
 #include <dtCore/map.h>
 #include <dtEditQt/actorglobalbrowser.h>
 #include <dtEditQt/actorresultstable.h>
