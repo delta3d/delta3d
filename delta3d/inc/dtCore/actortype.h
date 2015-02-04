@@ -99,6 +99,9 @@ namespace dtCore
    private:
       mutable dtCore::RefPtr<SharedClassInfo> mClassInfo;
    };
+
+   typedef dtCore::RefPtr<const ActorType> ActorTypePtr;
+   typedef std::vector<ActorTypePtr> ActorTypeVec;
 }
 
 #endif

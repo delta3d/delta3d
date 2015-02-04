@@ -44,7 +44,7 @@
 #include <dtCore/actorproperty.h>
 #include <dtCore/actorproxy.h>
 #include <dtCore/datatype.h>
-#include <dtCore/librarymanager.h>
+#include <dtCore/actorfactory.h>
 #include <dtCore/map.h>
 
 #include <dtQt/dynamicabstractcontrol.h>

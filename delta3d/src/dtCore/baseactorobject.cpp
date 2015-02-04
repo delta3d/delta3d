@@ -29,7 +29,7 @@
 #include <dtCore/booleanactorproperty.h>
 #include <dtCore/datatype.h>
 
-#include <dtCore/librarymanager.h>
+#include <dtCore/actorfactory.h>
 #include <dtCore/project.h>
 #include <dtCore/stringactorproperty.h>
 
@@ -213,7 +213,7 @@ namespace dtCore
       {
          throw dtUtil::Exception("The ActorType on an BaseActorObject is NULL.  The only way this could happen is "
                   "if the actor was created with the new operator rather than via "
-                  "dtCore::LibraryManager::GetInstance().CreateActor().",
+                  "dtCore::ActorFactory::GetInstance().CreateActor().",
                   __FILE__, __LINE__);
       }
    }
@@ -255,7 +255,7 @@ namespace dtCore
 //      {
 //         throw dtUtil::Exception("The Actor on an BaseActorObject is NULL.  The only ways this could happen is "
 //                  "if the actor was created with the new operator rather than via "
-//                  "dtCore::LibraryManager::GetInstance().CreateActor "
+//                  "dtCore::ActorFactory::GetInstance().CreateActor "
 //                  "or the CreateActor method on the proxy subclass did not call SetActor() with a valid actor.",
 //                  __FILE__, __LINE__);
 //      }
@@ -294,7 +294,7 @@ namespace dtCore
 
       try
       {
-         copy = LibraryManager::GetInstance().CreateActor(*mActorType).get();
+         copy = ActorFactory::GetInstance().CreateActor(*mActorType).get();
       }
       catch(const dtUtil::Exception &e)
       {

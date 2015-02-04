@@ -20,7 +20,7 @@
  */
 #include <prefix/dtcoreprefix.h>
 
-#include <dtCore/librarymanager.h>
+#include <dtCore/actorfactory.h>
 #include <dtCore/actortype.h>
 #include <dtCore/exceptionenum.h>
 
@@ -37,9 +37,9 @@ namespace dtCore
    static const std::string ANIM_ACTOR_LIBRARY("dtAnim");
 
    //Singleton global variable for the library manager.
-   dtCore::RefPtr<LibraryManager> LibraryManager::mInstance(NULL);
+   dtCore::RefPtr<ActorFactory> ActorFactory::mInstance(new ActorFactory());
 
-   LibraryManager::RegistryEntry::RegistryEntry()
+   ActorFactory::RegistryEntry::RegistryEntry()
    : registry(NULL)
    , createFn(NULL)
    , destroyFn(NULL)
@@ -47,9 +47,9 @@ namespace dtCore
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   LibraryManager::LibraryManager()
+   ActorFactory::ActorFactory()
    {
-      mLogger = &dtUtil::Log::GetInstance("librarymanager.cpp");
+      mLogger = &dtUtil::Log::GetInstance("actorfactory.cpp");
       mLogger->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__, __LINE__, "Initializing actor library manager.");
       LoadActorRegistry(ACTOR_LIBRARY);
 
@@ -60,9 +60,9 @@ namespace dtCore
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   LibraryManager::~LibraryManager()
+   ActorFactory::~ActorFactory()
    {
-      mActors.clear();
+      mActorTypeCache.clear();
 
       //We have to manually free the registries so we ensure the memory gets
       //freed in the dynamic libraries since that's where the memory was
@@ -81,7 +81,7 @@ namespace dtCore
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   bool LibraryManager::IsInRegistry(const std::string& libName) const
+   bool ActorFactory::IsInRegistry(const std::string& libName) const
    {
       RegistryMap::const_iterator regItor = mRegistries.find(libName);
       if (regItor != mRegistries.end())
@@ -95,7 +95,7 @@ namespace dtCore
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void LibraryManager::LoadActorRegistry(const std::string& libName)
+   void ActorFactory::LoadActorRegistry(const std::string& libName)
    {
       //Used to format log messages.
       std::ostringstream msg;
@@ -109,7 +109,7 @@ namespace dtCore
          msg.str("");
          msg << "Registry for library with name " << libName <<
             " already exists.  Library must already be loaded.";
-         LOGN_ERROR("librarymanager.cpp", msg.str());
+         LOGN_ERROR("actorfactory.cpp", msg.str());
          return;
       }
 
@@ -183,7 +183,7 @@ namespace dtCore
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   bool LibraryManager::AddRegistryEntry(const std::string& libName, const RegistryEntry& entry)
+   bool ActorFactory::AddRegistryEntry(const std::string& libName, const RegistryEntry& entry)
    {
       //Finally we can actually add the new registry to the library manager.
       //The map key is the system independent library name.
@@ -196,55 +196,42 @@ namespace dtCore
       //Used to format log messages.
       std::ostringstream msg;
 
-      //Second we map actor type to the registry that owns it.
-      std::vector<dtCore::RefPtr<const ActorType> > actorTypes;
+      //Initialize the registry
       entry.registry->RegisterActorTypes();
-      entry.registry->GetSupportedActorTypes(actorTypes);
 
+      // Get the replacements list
       dtCore::ActorPluginRegistry::ActorTypeReplacements replacements;
       entry.registry->GetReplacementActorTypes(replacements);
       mReplacementActors.insert(mReplacementActors.end(), replacements.begin(), replacements.end());
 
-      int numUniqueActors = 0;
-      for (unsigned int i = 0; i < actorTypes.size(); ++i)
+      if (dtUtil::Log::GetInstance("actorfactory.cpp").IsLevelEnabled(dtUtil::Log::LOG_INFO))
       {
-         ActorTypeMapItor itor = mActors.find(dtCore::RefPtr<const ActorType>(actorTypes[i].get()));
-         if (itor != mActors.end())
-         {
-            msg.clear();
-            msg.str("");
-            msg << "Duplicate actor type " << *actorTypes[i] << " found. Will not be added.";
-            LOG_ERROR(msg.str());
-         }
-         else
-         {
-            mActors.insert(std::make_pair(dtCore::RefPtr<const ActorType>(actorTypes[i].get()),entry.registry));
-            ++numUniqueActors;
-         }
+         std::vector<dtCore::RefPtr<const ActorType> > actorTypes;
+         entry.registry->GetSupportedActorTypes(actorTypes);
+         msg.clear();
+         msg.str("");
+         msg << "Loaded actor plugin registry. (Name: " << libName <<
+            ", Number of Actors: " << actorTypes.size() << ")";
+         LOGN_INFO("actorfactory.cpp", msg.str());
       }
-
-      msg.clear();
-      msg.str("");
-      msg << "Loaded actor plugin registry. (Name: " << libName <<
-         ", Number of Actors: " << numUniqueActors << ")";
-      LOG_INFO(msg.str());
 
       return true;
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void LibraryManager::GetActorTypes(std::vector<const ActorType*>& actorTypes) const
+   void ActorFactory::GetActorTypes(ActorTypeList& actorTypes) const
    {
-      actorTypes.clear();
-      actorTypes.reserve(mActors.size());
-      ConstActorTypeMapItor itor = mActors.begin();
-      while (itor != mActors.end())
+      RegistryMapConstItor i, iend;
+      i = mRegistries.begin();
+      iend = mRegistries.end();
+      for( ; i != iend; ++i)
       {
-         actorTypes.push_back(itor->first.get());
-         ++itor;
+         ActorPluginRegistry* curReg = i->second.registry;
+         curReg->GetSupportedActorTypes(actorTypes);
       }
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    struct SortFunctor
    {
       bool operator()(const dtCore::ActorType* a, const dtCore::ActorType* b)
@@ -254,9 +241,9 @@ namespace dtCore
    };
 
    ////////////////////////////////////////////////////////////////////////////////
-   std::vector<std::string> LibraryManager::GetClassTypes() const
+   std::vector<std::string> ActorFactory::GetClassTypes() const
    {
-      std::vector<const dtCore::ActorType*> types;
+      ActorTypeList types;
       GetActorTypes(types);
 
       std::sort(types.begin(), types.end(), SortFunctor());
@@ -273,24 +260,41 @@ namespace dtCore
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   const ActorType* LibraryManager::FindActorType(const std::string& category,
+   const ActorType* ActorFactory::FindActorType(const std::string& category,
                                                   const std::string& name)
    {
-      dtCore::RefPtr<const ActorType> typeToFind = new ActorType(name,category);
-      ActorTypeMapItor itor = mActors.find(typeToFind);
-      if (itor != mActors.end())
+      const ActorType* result = NULL;
+      dtCore::RefPtr<const ActorType> typeToFind = new ActorType(name, category);
+      ActorTypeMapItor itor = mActorTypeCache.find(typeToFind);
+      // Verify the cache is correct.  This is to support dynamically changing actor registries
+      if (itor != mActorTypeCache.end() && itor->second->IsActorTypeSupported(*itor->first))
       {
          typeToFind = itor->first;
-         return typeToFind.get();
+         result = typeToFind.get();
       }
       else
       {
-         return NULL;
+         if (itor != mActorTypeCache.end())
+         {
+            mActorTypeCache.erase(itor);
+         }
+
+         RegistryMapConstItor i, iend;
+         i = mRegistries.begin();
+         iend = mRegistries.end();
+         for (; result == NULL && i != iend; ++i)
+         {
+            ActorPluginRegistry* curReg = i->second.registry;
+            result = curReg->GetActorType(category, name);
+            if (result != NULL)
+               mActorTypeCache.insert(std::make_pair(result, curReg));
+         }
       }
+      return result;
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   std::string LibraryManager::FindActorTypeReplacement(const std::string& fullName) const
+   std::string ActorFactory::FindActorTypeReplacement(const std::string& fullName) const
    {
       ActorPluginRegistry::ActorTypeReplacements::const_iterator itr = mReplacementActors.begin();
       while (itr != mReplacementActors.end())
@@ -306,7 +310,7 @@ namespace dtCore
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   dtCore::RefPtr<BaseActorObject> LibraryManager::CreateActor(const ActorType& actorType)
+   dtCore::RefPtr<BaseActorObject> ActorFactory::CreateActor(const ActorType& actorType)
    {
       ActorPluginRegistry* apr = GetRegistryForType(actorType);
 
@@ -324,7 +328,7 @@ namespace dtCore
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   dtCore::RefPtr<BaseActorObject> LibraryManager::CreateActor(const std::string& category, const std::string& name)
+   dtCore::RefPtr<BaseActorObject> ActorFactory::CreateActor(const std::string& category, const std::string& name)
    {
       dtCore::RefPtr<const ActorType> type = FindActorType(category, name);
       if (!type.valid())
@@ -338,7 +342,7 @@ namespace dtCore
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   ActorPluginRegistry* LibraryManager::GetRegistry(const std::string& name)
+   ActorPluginRegistry* ActorFactory::GetRegistry(const std::string& name)
    {
       if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
       {
@@ -363,7 +367,7 @@ namespace dtCore
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   ActorPluginRegistry* LibraryManager::GetRegistryForType(const ActorType& actorType)
+   ActorPluginRegistry* ActorFactory::GetRegistryForType(const ActorType& actorType)
    {
       std::ostringstream error;
 
@@ -372,19 +376,42 @@ namespace dtCore
       //requested type.
       dtCore::RefPtr<const ActorType> actorTypePtr(&actorType);
 
-      ActorTypeMapItor found = mActors.find(actorTypePtr);
-      if (found == mActors.end())
+      ActorPluginRegistry* result = NULL;
+      ActorTypeMapItor found = mActorTypeCache.find(actorTypePtr);
+      if (found == mActorTypeCache.end() || !found->second->IsActorTypeSupported(actorType))
       {
-         error << "Requested actor type: \"" << actorType.GetCategory() << "." <<  actorType.GetName() <<
-            "\" but is unknown or has not been registered.";
-         throw dtCore::ObjectFactoryUnknownTypeException(error.str(), __FILE__, __LINE__);
+         if (found != mActorTypeCache.end())
+            mActorTypeCache.erase(found);
+
+         for (RegistryMapItor i = mRegistries.begin(); i != mRegistries.end(); ++i)
+         {
+            ActorPluginRegistry* curReg = i->second.registry;
+            if (curReg->IsActorTypeSupported(actorType))
+            {
+               result = curReg;
+               mActorTypeCache.insert(std::make_pair(actorTypePtr, curReg));
+               break;
+            }
+         }
+
+
+         if (result == NULL)
+         {
+            error << "Requested actor type: \"" << actorType.GetCategory() << "." <<  actorType.GetName() <<
+               "\" but is unknown or has not been registered.";
+            throw dtCore::ObjectFactoryUnknownTypeException(error.str(), __FILE__, __LINE__);
+         }
+      }
+      else
+      {
+         result = found->second;
       }
 
-      return found->second;
+      return result;
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   std::string LibraryManager::GetLibraryNameForRegistry(ActorPluginRegistry* registry)
+   std::string ActorFactory::GetLibraryNameForRegistry(ActorPluginRegistry* registry)
    {
       for (RegistryMapItor i = mRegistries.begin(); i != mRegistries.end(); ++i)
       {
@@ -398,7 +425,7 @@ namespace dtCore
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void LibraryManager::UnloadActorRegistry(const std::string& libName)
+   void ActorFactory::UnloadActorRegistry(const std::string& libName)
    {
       if (libName == ACTOR_LIBRARY)
       {
@@ -424,7 +451,7 @@ namespace dtCore
       regEntry.registry->GetSupportedActorTypes(actorTypes);
       for (actorItor=actorTypes.begin(); actorItor!=actorTypes.end(); ++actorItor)
       {
-         mActors.erase(dtCore::RefPtr<const ActorType>(actorItor->get()));
+         mActorTypeCache.erase(dtCore::RefPtr<const ActorType>(actorItor->get()));
       }
 
       ///remove the actor type unloadedReplacements supported by this registry
@@ -466,35 +493,31 @@ namespace dtCore
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   LibraryManager& LibraryManager::GetInstance()
+   ActorFactory& ActorFactory::GetInstance()
    {
-      if (!LibraryManager::mInstance.valid())
-      {
-         LibraryManager::mInstance = new LibraryManager();
-      }
-      return *(LibraryManager::mInstance.get());
+      return *(ActorFactory::mInstance.get());
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void LibraryManager::Destroy()
+   void ActorFactory::Destroy()
    {
-      LibraryManager::mInstance = NULL;
+      ActorFactory::mInstance = NULL;
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   std::string LibraryManager::GetPlatformSpecificLibraryName(const std::string& libBase)
+   std::string ActorFactory::GetPlatformSpecificLibraryName(const std::string& libBase)
    {
       return dtUtil::LibrarySharingManager::GetPlatformSpecificLibraryName(libBase);
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   std::string LibraryManager::GetPlatformIndependentLibraryName(const std::string& libName)
+   std::string ActorFactory::GetPlatformIndependentLibraryName(const std::string& libName)
    {
       return dtUtil::LibrarySharingManager::GetPlatformIndependentLibraryName(libName);
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void LibraryManager::LoadOptionalActorRegistry(const std::string& libName)
+   void ActorFactory::LoadOptionalActorRegistry(const std::string& libName)
    {
       const std::string actualLibName = GetPlatformSpecificLibraryName(libName);
       std::string fullLibraryName = osgDB::findLibraryFile(actualLibName);

@@ -34,7 +34,7 @@
 #include <dtGame/gmsettings.h>
 #include <dtGame/machineinfo.h>
 #include <dtGame/messagefactory.h>
-#include <dtCore/librarymanager.h>
+#include <dtCore/actorfactory.h>
 #include <dtGame/gamemanager.h>
 #include <dtGame/mapchangestatedata.h>
 #include <dtGame/gmcomponent.h>
@@ -163,7 +163,7 @@ namespace dtGame
       std::queue<dtCore::RefPtr<const Message> > mSendMessageQueue;
 
       dtCore::RefPtr<dtCore::Scene> mScene;
-      dtCore::RefPtr<dtCore::LibraryManager> mLibMgr;
+      dtCore::RefPtr<dtCore::ActorFactory> mLibMgr;
       GameManager::NameVector mLoadedMaps;
       dtCore::RefPtr<MapChangeStateData> mMapChangeStateData;
 

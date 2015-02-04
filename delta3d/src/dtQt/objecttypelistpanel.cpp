@@ -26,7 +26,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 #include "ui_objecttypelistpanel.h"
 #include <dtQt/objecttypelistpanel.h>
-#include <dtCore/librarymanager.h>
+#include <dtCore/actorfactory.h>
 
 
 
@@ -205,11 +205,10 @@ namespace dtQt
 
    void ObjectTypeListPanel::UpdateUI()
    {
-      typedef std::vector<const dtCore::ActorType*> ActorTypeList;
-      ActorTypeList actorTypesList;
+      dtCore::ActorTypeVec actorTypesList;
       ObjectTypeList typesList;
 
-      dtCore::LibraryManager& libManager = dtCore::LibraryManager::GetInstance();
+      dtCore::ActorFactory& libManager = dtCore::ActorFactory::GetInstance();
       libManager.GetActorTypes(actorTypesList);
 
       typesList.insert(typesList.end(), actorTypesList.begin(), actorTypesList.end());

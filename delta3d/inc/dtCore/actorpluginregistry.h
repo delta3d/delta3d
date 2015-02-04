@@ -77,7 +77,7 @@ namespace dtCore
 
          /**
           * Registers the actor types that this registry knows how to create.
-          * This method is the first method to get called by the LibraryManager
+          * This method is the first method to get called by the ActorFactory
           * after it loads a dynamic library and gets a pointer to the
           * registry object it contains.
           * Overwrite and use the inherited mActorFactor to register the mapping
@@ -141,16 +141,23 @@ namespace dtCore
           * @param type The type to check support for.
           * @return True if supported, false otherwise.
           */
-         bool IsActorTypeSupported(const ActorType& type);
+         bool IsActorTypeSupported(const ActorType& type) const;
+
+         /**
+          * Finds the actor type for the given name and category
+          * @return the actor type found or NULL if not found.
+          */
+         const ActorType* GetActorType(const std::string& category, const std::string& name) const;
 
          /**
           * Creates a new actor object based on the ActorType given.
+          * One can override this to change the behavior.
           * @param type Type of actor to create.
           * @return Returns a smart pointer to the newly created
           * proxy object.
           * @throws ExceptionEnum::ObjectFactoryUnknownType
           */
-         dtCore::RefPtr<BaseActorObject> CreateActor(const ActorType& type);
+         virtual dtCore::RefPtr<BaseActorObject> CreateActor(const ActorType& type);
 
       protected:
          std::string mName;
@@ -161,8 +168,8 @@ namespace dtCore
           * create proxy objects for each type.
           * @see ObjectFactory
           */
-         dtCore::RefPtr<dtUtil::ObjectFactory<dtCore::RefPtr<const ActorType>,
-            BaseActorObject, ActorType::RefPtrComp> > mActorFactory;
+         typedef dtUtil::ObjectFactory<dtCore::RefPtr<const ActorType>, BaseActorObject, ActorType::RefPtrComp> FactoryType;
+         dtCore::RefPtr<FactoryType> mActorFactory;
    };
 } // namespace dtCore
 

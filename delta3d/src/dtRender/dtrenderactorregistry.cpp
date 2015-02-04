@@ -37,7 +37,7 @@
 
 
 // For the autoreg
-#include <dtCore/librarymanager.h> 
+#include <dtCore/actorfactory.h> 
 
 namespace dtRender
 {

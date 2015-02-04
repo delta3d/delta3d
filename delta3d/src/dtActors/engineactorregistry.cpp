@@ -81,7 +81,7 @@
 #include <dtGame/deadreckoninghelper.h>
 #include <dtGame/drpublishingactcomp.h>
 
-#include <dtCore/librarymanager.h> // for auto register
+#include <dtCore/actorfactory.h> // for auto register
 
 namespace dtActors
 { // "display name", "category", "description/tooltip"
@@ -165,7 +165,7 @@ namespace dtActors
 
       // In this method we will add each of the actor types the engine actor
       // registry supports to the object factory.  These will then get
-      // registered with the LibraryManager.
+      // registered with the ActorFactory.
 
       // Generic Task Actor
       mActorFactory->RegisterType<TaskActorProxy>(TASK_ACTOR_TYPE.get());
@@ -249,7 +249,7 @@ namespace dtActors
    //////////////////////////////////////////////////////////////////////////
    void EngineActorRegistry::GetReplacementActorTypes(dtCore::ActorPluginRegistry::ActorTypeReplacements &replacements) const
    {
-      replacements.push_back(std::make_pair(ENVIRONMENT_ACTOR_TYPE->GetName(), WEATHER_ENVIRONMENT_ACTOR_TYPE->GetName()));
-      replacements.push_back(std::make_pair(ENV_ACTOR_TYPE->GetName(), SKY_DOME_ACTOR_TYPE->GetName()));
+      replacements.push_back(std::make_pair(ENVIRONMENT_ACTOR_TYPE->GetFullName(), WEATHER_ENVIRONMENT_ACTOR_TYPE->GetFullName()));
+      replacements.push_back(std::make_pair(ENV_ACTOR_TYPE->GetFullName(), SKY_DOME_ACTOR_TYPE->GetFullName()));
    }
 } // namespace dtActors

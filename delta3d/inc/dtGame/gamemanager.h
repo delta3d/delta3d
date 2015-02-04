@@ -32,7 +32,6 @@
 #include <dtCore/timer.h>
 #include <dtUtil/enumeration.h> //for ComponentPriority
 
-
 namespace dtUtil
 {
    class Log;
@@ -51,7 +50,7 @@ namespace dtCore
    class BaseActorObject;
    class ActorType;
    class ActorPluginRegistry;
-   class LibraryManager;
+   class ActorFactory;
 }
 
 // Forward declarations
@@ -144,7 +143,7 @@ namespace dtGame
        * to create.
        * @param actorTypes A vector to fill
        */
-      void GetActorTypes(std::vector<const dtCore::ActorType*>& actorTypes);
+      void GetActorTypes(dtCore::ActorTypeVec& actorTypes);
 
       /**
        * Gets a single actor type that matches the name and category specified.

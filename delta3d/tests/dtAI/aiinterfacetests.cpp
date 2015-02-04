@@ -27,7 +27,7 @@
 #include <dtAI/aiplugininterface.h>
 #include <dtAI/aiactorregistry.h>
 #include <dtAI/aiinterfaceactor.h>
-#include <dtCore/librarymanager.h>
+#include <dtCore/actorfactory.h>
 #include <dtCore/refptr.h>
 #include <osg/Vec3>
 
@@ -64,7 +64,7 @@ namespace dtAI
 
    void AIInterfaceTests::setUp()
    {
-      dtCore::LibraryManager& libMan = dtCore::LibraryManager::GetInstance();
+      dtCore::ActorFactory& libMan = dtCore::ActorFactory::GetInstance();
       libMan.LoadActorRegistry("dtAI");
       dtCore::RefPtr<dtCore::BaseActorObject> proxy = libMan.CreateActor(*AIActorRegistry::AI_INTERFACE_ACTOR_TYPE);
 
@@ -74,7 +74,7 @@ namespace dtAI
 
    void AIInterfaceTests::tearDown()
    {
-      dtCore::LibraryManager& libMan = dtCore::LibraryManager::GetInstance();
+      dtCore::ActorFactory& libMan = dtCore::ActorFactory::GetInstance();
       libMan.UnloadActorRegistry("dtAI");
    }
 

@@ -35,7 +35,7 @@
 #include <osg/Math>
 #include <dtUtil/librarysharingmanager.h>
 #include <dtUtil/datapathutils.h>
-#include <dtCore/librarymanager.h>
+#include <dtCore/actorfactory.h>
 #include <dtCore/actortype.h>
 #include <dtCore/actorproperty.h>
 
@@ -64,7 +64,7 @@ public:
          //logger->SetLogLevel(dtUtil::Log::LOG_DEBUG);
            
          //ensure the example library is unloaded.
-         dtCore::LibraryManager::GetInstance().UnloadActorRegistry(mExampleLibraryName);
+         dtCore::ActorFactory::GetInstance().UnloadActorRegistry(mExampleLibraryName);
    
       }
       catch (const dtUtil::Exception& e)
@@ -125,8 +125,8 @@ public:
    
    void TestLibrarySharing()
    {
-      dtCore::LibraryManager& libMgr = dtCore::LibraryManager::GetInstance();
-      std::vector<const dtCore::ActorType*> actors;
+      dtCore::ActorFactory& libMgr = dtCore::ActorFactory::GetInstance();
+      dtCore::ActorTypeVec actors;
       std::vector<dtCore::ActorProperty*> props;
    
       CPPUNIT_ASSERT(libMgr.GetRegistry(mActorLibraryName) != NULL);

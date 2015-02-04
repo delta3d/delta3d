@@ -51,7 +51,7 @@
 #include <dtEditQt/uiresources.h>
 
 #include <dtCore/project.h>
-#include <dtCore/librarymanager.h>
+#include <dtCore/actorfactory.h>
 #include <dtCore/map.h>
 #include <dtCore/resourceactorproperty.h>
 
@@ -385,14 +385,14 @@ namespace dtEditQt
          * actor of this type.
          */
          dtCore::RefPtr<const dtCore::ActorType> meshActor =
-            dtCore::LibraryManager::GetInstance().FindActorType("Animation", "Animation");
+            dtCore::ActorFactory::GetInstance().FindActorType("Animation", "Animation");
 
          // create our new actor proxy from the mesh actor type that was
          // found by the results of our hard coded search above.
          if (meshActor != NULL)
          {
             dtCore::RefPtr<dtCore::BaseActorObject> proxy =
-               dtCore::LibraryManager::GetInstance().CreateActor(*meshActor).get();
+               dtCore::ActorFactory::GetInstance().CreateActor(*meshActor).get();
 
             // check to make sure both the mesh actor and the proxy are valid.
             // If the user has somehow modified the above hard coded static mesh object

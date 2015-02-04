@@ -21,7 +21,7 @@
 #include <prefix/dtdirectornodesprefix.h>
 #include <dtDirectorNodes/foraction.h>
 
-#include <dtCore/librarymanager.h>
+#include <dtCore/actorfactory.h>
 
 #include <dtDirector/director.h>
 

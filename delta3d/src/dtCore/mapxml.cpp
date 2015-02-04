@@ -55,7 +55,7 @@
 #include <dtCore/exceptionenum.h>
 #include <dtCore/gameevent.h>
 #include <dtCore/gameeventmanager.h>
-#include <dtCore/librarymanager.h>
+#include <dtCore/actorfactory.h>
 #include <dtCore/mapxmlconstants.h>
 #include <dtCore/mapcontenthandler.h>
 #include <dtCore/mapheaderhandler.h>
@@ -1004,12 +1004,12 @@ namespace dtCore
             }
 
             const dtCore::ActorType& type = proxy->GetActorType();
-            dtCore::ActorPluginRegistry* registry = dtCore::LibraryManager::GetInstance().GetRegistryForType(type);
+            dtCore::ActorPluginRegistry* registry = dtCore::ActorFactory::GetInstance().GetRegistryForType(type);
             if (registry)
             {
                BeginElement(MapXMLConstants::LIBRARY_ELEMENT);
                BeginElement(MapXMLConstants::LIBRARY_NAME_ELEMENT);
-               AddCharacters(dtCore::LibraryManager::GetInstance().GetLibraryNameForRegistry(registry));
+               AddCharacters(dtCore::ActorFactory::GetInstance().GetLibraryNameForRegistry(registry));
                EndElement(); // End Library Name Element.
                BeginElement(MapXMLConstants::LIBRARY_VERSION_ELEMENT);
                AddCharacters("");

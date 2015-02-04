@@ -39,7 +39,7 @@
 #include <dtEditQt/editorevents.h>
 #include <dtEditQt/editordata.h>
 #include <dtEditQt/mainwindow.h>
-#include <dtCore/librarymanager.h>
+#include <dtCore/actorfactory.h>
 #include <dtCore/map.h>
 #include <dtUtil/log.h>
 
@@ -124,7 +124,7 @@ namespace dtEditQt
       // resets everything and marks the current expansion
       clearActorTypesTree();
 
-      dtCore::LibraryManager::GetInstance().GetActorTypes(mActorTypes);
+      dtCore::ActorFactory::GetInstance().GetActorTypes(mActorTypes);
 
       // recreate our root.
       mRootActorType = new ActorTypeTreeWidget(mTree, tr("Actor Types"));
@@ -218,7 +218,7 @@ namespace dtEditQt
 
                // create our new object
                dtCore::RefPtr<dtCore::BaseActorObject> newActor =
-                  dtCore::LibraryManager::GetInstance().CreateActor(*selectedWidget->getActorType()).get();
+                  dtCore::ActorFactory::GetInstance().CreateActor(*selectedWidget->getActorType()).get();
 
                if (newActor.valid())
                {
@@ -371,7 +371,7 @@ namespace dtEditQt
 
          // create our new object
          dtCore::RefPtr<dtCore::BaseActorObject> proxy =
-            dtCore::LibraryManager::GetInstance().CreateActor(*selectedWidget->getActorType()).get();
+            dtCore::ActorFactory::GetInstance().CreateActor(*selectedWidget->getActorType()).get();
 
          if (proxy.valid())
          {

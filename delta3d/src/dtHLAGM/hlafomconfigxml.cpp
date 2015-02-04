@@ -33,7 +33,7 @@
 #include <dtUtil/xercesutils.h>
 #include <dtUtil/log.h>
 
-#include <dtCore/librarymanager.h>
+#include <dtCore/actorfactory.h>
 #include <dtCore/actorproperty.h>
 #include <dtGame/gamemanager.h>
 #include <dtGame/messagefactory.h>

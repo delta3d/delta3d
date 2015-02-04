@@ -42,9 +42,21 @@ namespace dtCore
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   bool ActorPluginRegistry::IsActorTypeSupported(const ActorType& type)
+   bool ActorPluginRegistry::IsActorTypeSupported(const ActorType& type) const
    {
       return mActorFactory->IsTypeSupported(&type);
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   const ActorType* ActorPluginRegistry::GetActorType(const std::string& category, const std::string& name) const
+   {
+      ActorTypePtr type = new ActorType(name, category);
+      FactoryType::ObjectMap::const_iterator itr = mActorFactory->GetMap().find(type);
+      if (itr != mActorFactory->GetMap().end())
+      {
+         return itr->first.get();
+      }
+      return NULL;
    }
 
    /////////////////////////////////////////////////////////////////////////////

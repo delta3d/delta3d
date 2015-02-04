@@ -1,6 +1,6 @@
 /* -*-c++-*-
  * Delta3D Open Source Game and Simulation Engine
- * Copyright (C) 2015, Caper Holdings, LLC
+ * Copyright (C) 2015, Caper Holdings, Inc
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -19,14 +19,23 @@
  * David Guthrie
  */
 
-#ifndef DELTA_LIBRARY_MANAGER
-#define DELTA_LIBRARY_MANAGER
-
-#include <dtCore/actorfactory.h>
+#include <dtCore/prefabactorregistry.h>
 
 namespace dtCore
 {
-   typedef ActorFactory ActorFactory;
-}
 
-#endif
+   PrefabActorRegistry::PrefabActorRegistry() : ActorPluginRegistry("Prefabs", "Dynamic registry of prefabs in the ")
+   {
+   }
+
+   PrefabActorRegistry::~PrefabActorRegistry()
+   {
+   }
+
+   void PrefabActorRegistry::RegisterActorTypes()
+   {
+
+   }
+
+
+} /* namespace dtCore */

@@ -38,7 +38,7 @@
 #include <dtCore/actorproxy.h>
 #include <dtCore/actortype.h>
 #include <dtCore/actorproperty.h>
-#include <dtCore/librarymanager.h>
+#include <dtCore/actorfactory.h>
 #include <dtCore/map.h>
 #include <dtCore/project.h>
 #include <dtEditQt/mainwindow.h>
@@ -511,7 +511,7 @@ namespace dtEditQt
       dtCore::RefPtr<dtCore::Map> currMap = EditorData::GetInstance().getCurrentMap();
 
       // figure out the actor type
-      dtCore::RefPtr<const dtCore::ActorType> actorType = dtCore::LibraryManager::GetInstance().
+      dtCore::RefPtr<const dtCore::ActorType> actorType = dtCore::ActorFactory::GetInstance().
          FindActorType(event->mTypeCategory, event->mTypeName);
 
       if (currMap.valid() && actorType.valid())
@@ -520,7 +520,7 @@ namespace dtEditQt
 
          // recreate the actor!
          dtCore::RefPtr<dtCore::BaseActorObject> proxy =
-            dtCore::LibraryManager::GetInstance().CreateActor(*actorType.get()).get();
+            dtCore::ActorFactory::GetInstance().CreateActor(*actorType.get()).get();
          if (proxy.valid())
          {
             // Tell the proxy that it is loading.

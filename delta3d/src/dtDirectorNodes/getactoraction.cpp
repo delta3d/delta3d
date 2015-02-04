@@ -23,7 +23,7 @@
 
 #include <dtCore/actoridactorproperty.h>
 #include <dtCore/actortype.h>
-#include <dtCore/librarymanager.h>
+#include <dtCore/actorfactory.h>
 #include <dtCore/stringactorproperty.h>
 #include <dtCore/stringselectoractorproperty.h>
 #include <dtDirector/director.h>
@@ -65,8 +65,8 @@ namespace dtDirector
          "Actor Type", "Actor Type",
          dtCore::StringSelectorActorProperty::SetFuncType(this, &GetActorAction::SetClassType),
          dtCore::StringSelectorActorProperty::GetFuncType(this, &GetActorAction::GetClassType),
-         dtCore::StringSelectorActorProperty::GetListFuncType(&dtCore::LibraryManager::GetInstance(),
-         &dtCore::LibraryManager::GetClassTypes),
+         dtCore::StringSelectorActorProperty::GetListFuncType(&dtCore::ActorFactory::GetInstance(),
+         &dtCore::ActorFactory::GetClassTypes),
          "The type of the actor to get(optional).", "", false);
       AddProperty(classProp);
 

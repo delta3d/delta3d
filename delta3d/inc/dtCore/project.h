@@ -54,7 +54,7 @@ namespace dtCore
    class MapParser;
    class MapWriter;
    class DataType;
-   class LibraryManager;
+   class ActorFactory;
    class BaseActorObject;
    class ResourceDescriptor;
    class ProjectImpl;

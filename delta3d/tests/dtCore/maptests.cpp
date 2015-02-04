@@ -53,7 +53,7 @@
 #include <dtCore/gameeventmanager.h>
 #include <dtCore/groupactorproperty.h>
 #include <dtCore/intactorproperty.h>
-#include <dtCore/librarymanager.h>
+#include <dtCore/actorfactory.h>
 #include <dtCore/map.h>
 #include <dtCore/mapxml.h>
 #include <dtCore/namedactorparameter.h>
@@ -283,9 +283,9 @@ void MapTests::tearDown()
          fileUtils.DirDelete(TEST_PROJECT_DIR_2, true);
       }
 
-      if (dtCore::LibraryManager::GetInstance().GetRegistry(mExampleLibraryName) != NULL)
+      if (dtCore::ActorFactory::GetInstance().GetRegistry(mExampleLibraryName) != NULL)
       {
-         dtCore::LibraryManager::GetInstance().UnloadActorRegistry(mExampleLibraryName);
+         dtCore::ActorFactory::GetInstance().UnloadActorRegistry(mExampleLibraryName);
       }
 
       if (shouldPopDir)
@@ -306,8 +306,8 @@ void MapTests::tearDown()
 ///////////////////////////////////////////////////////////////////////////////////////
 void MapTests::createActors(dtCore::Map& map)
 {
-   dtCore::LibraryManager& libMgr = dtCore::LibraryManager::GetInstance();
-   std::vector<const dtCore::ActorType*> actorTypes;
+   dtCore::ActorFactory& libMgr = dtCore::ActorFactory::GetInstance();
+   dtCore::ActorTypeVec actorTypes;
    std::vector<dtCore::ActorProperty*> props;
 
    libMgr.GetActorTypes(actorTypes);
@@ -383,9 +383,9 @@ void MapTests::TestAddRegistryWithoutLibrary()
    try
    {
       const std::string& TESTREG("MrTestReg");
-      dtCore::LibraryManager& regManager = dtCore::LibraryManager::GetInstance();
+      dtCore::ActorFactory& regManager = dtCore::ActorFactory::GetInstance();
       CPPUNIT_ASSERT(regManager.GetRegistry(TESTREG) == NULL);
-      dtCore::LibraryManager::RegistryEntry entry;
+      dtCore::ActorFactory::RegistryEntry entry;
       entry.registry = new TestObjectRegistry(TESTREG, TESTREG);
       regManager.AddRegistryEntry(TESTREG, entry);
       CPPUNIT_ASSERT(regManager.GetRegistry(TESTREG) != NULL);
@@ -436,21 +436,21 @@ void MapTests::TestMapAddRemoveProxies()
         map.GetAllProxies(proxies);
 
         map.AddLibrary(mExampleLibraryName, "1.0");
-        dtCore::LibraryManager::GetInstance().LoadActorRegistry(mExampleLibraryName);
+        dtCore::ActorFactory::GetInstance().LoadActorRegistry(mExampleLibraryName);
 
-        dtCore::RefPtr<const dtCore::ActorType> exampleType = dtCore::LibraryManager::GetInstance().FindActorType("dtcore.examples", "Test All Properties");
+        dtCore::RefPtr<const dtCore::ActorType> exampleType = dtCore::ActorFactory::GetInstance().FindActorType("dtcore.examples", "Test All Properties");
         CPPUNIT_ASSERT_MESSAGE("The example type is NULL", exampleType.valid());
 
-        dtCore::RefPtr<dtCore::BaseActorObject> proxy1 = dtCore::LibraryManager::GetInstance().CreateActor(*exampleType);
+        dtCore::RefPtr<dtCore::BaseActorObject> proxy1 = dtCore::ActorFactory::GetInstance().CreateActor(*exampleType);
         CPPUNIT_ASSERT_MESSAGE("proxy1 is NULL", proxy1.valid());
 
-        dtCore::RefPtr<dtCore::BaseActorObject> proxy2 = dtCore::LibraryManager::GetInstance().CreateActor(*exampleType);
+        dtCore::RefPtr<dtCore::BaseActorObject> proxy2 = dtCore::ActorFactory::GetInstance().CreateActor(*exampleType);
         CPPUNIT_ASSERT_MESSAGE("proxy2 is NULL", proxy2.valid());
 
-        dtCore::RefPtr<dtCore::BaseActorObject> proxy3 = dtCore::LibraryManager::GetInstance().CreateActor(*exampleType);
+        dtCore::RefPtr<dtCore::BaseActorObject> proxy3 = dtCore::ActorFactory::GetInstance().CreateActor(*exampleType);
         CPPUNIT_ASSERT_MESSAGE("proxy3 is NULL", proxy3.valid());
 
-        dtCore::RefPtr<dtCore::BaseActorObject> proxy4 = dtCore::LibraryManager::GetInstance().CreateActor(*exampleType);
+        dtCore::RefPtr<dtCore::BaseActorObject> proxy4 = dtCore::ActorFactory::GetInstance().CreateActor(*exampleType);
         CPPUNIT_ASSERT_MESSAGE("proxy4 is NULL", proxy4.valid());
 
         map.AddProxy(*proxy1.get());
@@ -749,23 +749,23 @@ void MapTests::TestMapLibraryHandling()
                                     fileNameToTest, map->GetFileName());
 
        map->AddLibrary(mExampleLibraryName, "1.0");
-       dtCore::LibraryManager::GetInstance().LoadActorRegistry(mExampleLibraryName);
+       dtCore::ActorFactory::GetInstance().LoadActorRegistry(mExampleLibraryName);
 
        createActors(*map);
 
-       dtCore::ActorPluginRegistry* reg = dtCore::LibraryManager::GetInstance().GetRegistry(mExampleLibraryName);
+       dtCore::ActorPluginRegistry* reg = dtCore::ActorFactory::GetInstance().GetRegistry(mExampleLibraryName);
        CPPUNIT_ASSERT_MESSAGE("Registry for testActorLibrary should not be NULL.", reg != NULL);
 
        project.SaveMap(*map);
 
        project.CloseMap(*map, true);
 
-       reg = dtCore::LibraryManager::GetInstance().GetRegistry(mExampleLibraryName);
+       reg = dtCore::ActorFactory::GetInstance().GetRegistry(mExampleLibraryName);
        CPPUNIT_ASSERT_MESSAGE("testActorLibrary should have been closed.", reg == NULL);
 
        map = &project.GetMap(mapName);
 
-       reg = dtCore::LibraryManager::GetInstance().GetRegistry(mExampleLibraryName);
+       reg = dtCore::ActorFactory::GetInstance().GetRegistry(mExampleLibraryName);
        CPPUNIT_ASSERT_MESSAGE("Registry for testActorLibrary should not be NULL.", reg != NULL);
 
        dtCore::ActorRefPtrVector proxies;
@@ -774,7 +774,7 @@ void MapTests::TestMapLibraryHandling()
 
        project.CloseMap(*map, true);
 
-       reg = dtCore::LibraryManager::GetInstance().GetRegistry(mExampleLibraryName);
+       reg = dtCore::ActorFactory::GetInstance().GetRegistry(mExampleLibraryName);
        CPPUNIT_ASSERT_MESSAGE("Registry for testActorLibrary should not be NULL.", reg != NULL);
 
        //cleanup the proxies
@@ -788,19 +788,19 @@ void MapTests::TestMapLibraryHandling()
 
        project.CloseMap(*map, true);
 
-       reg = dtCore::LibraryManager::GetInstance().GetRegistry(mExampleLibraryName);
+       reg = dtCore::ActorFactory::GetInstance().GetRegistry(mExampleLibraryName);
        CPPUNIT_ASSERT_MESSAGE("Registry for testActorLibrary should not be NULL.", reg != NULL);
 
        //when the second map is closed, the libraries should not close if false is passed.
        project.CloseMap(project.GetMap(mapName + "1"), false);
 
-       reg = dtCore::LibraryManager::GetInstance().GetRegistry(mExampleLibraryName);
+       reg = dtCore::ActorFactory::GetInstance().GetRegistry(mExampleLibraryName);
        CPPUNIT_ASSERT_MESSAGE("Registry for testActorLibrary should not be NULL.", reg != NULL);
 
        //reopen the map and close it with true to make sure the libraries close.
        project.CloseMap(project.GetMap(mapName), true);
 
-       reg = dtCore::LibraryManager::GetInstance().GetRegistry(mExampleLibraryName);
+       reg = dtCore::ActorFactory::GetInstance().GetRegistry(mExampleLibraryName);
        CPPUNIT_ASSERT_MESSAGE("testActorLibrary should have been closed.", reg == NULL);
 
     }
@@ -912,13 +912,13 @@ void MapTests::TestMapSaveAndLoad()
 
    map->AddLibrary(mExampleLibraryName, "1.0");
 
-   dtCore::LibraryManager::GetInstance().LoadActorRegistry(mExampleLibraryName);
+   dtCore::ActorFactory::GetInstance().LoadActorRegistry(mExampleLibraryName);
 
    //create test actor
    dtCore::RefPtr<dtCore::BaseActorObject> proxy;
    try
    {
-      proxy = dtCore::LibraryManager::GetInstance().CreateActor(*ExampleActorLib::TEST_ACTOR_PROPERTY_TYPE.get());
+      proxy = dtCore::ActorFactory::GetInstance().CreateActor(*ExampleActorLib::TEST_ACTOR_PROPERTY_TYPE.get());
    }
    catch (const dtUtil::Exception& e)
    {
@@ -1195,9 +1195,9 @@ void MapTests::TestMapSaveAndLoadGroup()
       std::string mapName("Neato Map");
       std::string mapFileName("neatomap");
 
-      dtCore::LibraryManager::GetInstance().LoadActorRegistry(mExampleLibraryName);
+      dtCore::ActorFactory::GetInstance().LoadActorRegistry(mExampleLibraryName);
 
-      const dtCore::ActorType* at = dtCore::LibraryManager::GetInstance().FindActorType("dtcore.examples", "Test All Properties");
+      const dtCore::ActorType* at = dtCore::ActorFactory::GetInstance().FindActorType("dtcore.examples", "Test All Properties");
       CPPUNIT_ASSERT(at != NULL);
 
       dtCore::RefPtr<dtCore::NamedGroupParameter> expectedResult = new dtCore::NamedGroupParameter("TestGroup");
@@ -1207,7 +1207,7 @@ void MapTests::TestMapSaveAndLoadGroup()
          dtCore::Map* map = &project.CreateMap(mapName, mapFileName);
          map->AddLibrary(mExampleLibraryName, "1.0");
 
-         dtCore::RefPtr<dtCore::BaseActorObject> proxy = dtCore::LibraryManager::GetInstance().CreateActor(*at);
+         dtCore::RefPtr<dtCore::BaseActorObject> proxy = dtCore::ActorFactory::GetInstance().CreateActor(*at);
        
          dtCore::GroupActorProperty* groupProp;
          proxy->GetProperty("TestGroup", groupProp);
@@ -1330,12 +1330,12 @@ void MapTests::TestMapSaveAndLoadPropertyContainerProperty()
 
       dtCore::Map* map = &project.CreateMap(mapName, mapFileName);
       map->AddLibrary(mExampleLibraryName, "1.0");
-      dtCore::LibraryManager::GetInstance().LoadActorRegistry(mExampleLibraryName);
+      dtCore::ActorFactory::GetInstance().LoadActorRegistry(mExampleLibraryName);
 
-      const dtCore::ActorType* at = dtCore::LibraryManager::GetInstance().FindActorType("dtcore.examples", "Test All Properties");
+      const dtCore::ActorType* at = dtCore::ActorFactory::GetInstance().FindActorType("dtcore.examples", "Test All Properties");
       CPPUNIT_ASSERT(at != NULL);
 
-      dtCore::RefPtr<dtCore::BaseActorObject> actor = dtCore::LibraryManager::GetInstance().CreateActor(*at);
+      dtCore::RefPtr<dtCore::BaseActorObject> actor = dtCore::ActorFactory::GetInstance().CreateActor(*at);
       map->AddProxy(*actor);
       dtCore::UniqueId idToSave = actor->GetId();
 
@@ -1421,12 +1421,12 @@ void MapTests::TestMapSaveAndLoadNestedPropertyContainerArray()
 
       dtCore::Map* map = &project.CreateMap(mapName, mapFileName);
       map->AddLibrary(mExampleGameLibraryName, "1.0");
-      dtCore::LibraryManager::GetInstance().LoadActorRegistry(mExampleGameLibraryName);
+      dtCore::ActorFactory::GetInstance().LoadActorRegistry(mExampleGameLibraryName);
 
-      const dtCore::ActorType* at = dtCore::LibraryManager::GetInstance().FindActorType("ExampleActors", "TestGamePropertyActor");
+      const dtCore::ActorType* at = dtCore::ActorFactory::GetInstance().FindActorType("ExampleActors", "TestGamePropertyActor");
       CPPUNIT_ASSERT(at != NULL);
 
-      dtCore::RefPtr<dtCore::BaseActorObject> actor = dtCore::LibraryManager::GetInstance().CreateActor(*at);
+      dtCore::RefPtr<dtCore::BaseActorObject> actor = dtCore::ActorFactory::GetInstance().CreateActor(*at);
       map->AddProxy(*actor);
       dtCore::UniqueId idToSave = actor->GetId();
 
@@ -1523,7 +1523,7 @@ void MapTests::TestMapSaveAndLoadActorGroups()
 
       dtCore::Map* map = &project.CreateMap(mapName, mapFileName);
 
-      dtCore::LibraryManager& libraryManager = dtCore::LibraryManager::GetInstance();
+      dtCore::ActorFactory& libraryManager = dtCore::ActorFactory::GetInstance();
 
       const dtCore::ActorType* at = libraryManager.FindActorType("dtcore.Tasks", "Task Actor");
       CPPUNIT_ASSERT(at != NULL);
@@ -1578,10 +1578,10 @@ void MapTests::TestMapSaveAndLoadActorGroups()
 ///////////////////////////////////////////////////////////////////////////////////////
 void MapTests::TestShouldSaveProperty()
 {
-   const dtCore::ActorType* at = dtCore::LibraryManager::GetInstance().FindActorType("ExampleActors", "TestGamePropertyActor");
+   const dtCore::ActorType* at = dtCore::ActorFactory::GetInstance().FindActorType("ExampleActors", "TestGamePropertyActor");
    CPPUNIT_ASSERT(at != NULL);
 
-   dtCore::RefPtr<dtCore::BaseActorObject> actor = dtCore::LibraryManager::GetInstance().CreateActor(*at);
+   dtCore::RefPtr<dtCore::BaseActorObject> actor = dtCore::ActorFactory::GetInstance().CreateActor(*at);
    dtCore::ActorProperty* prop = actor->GetProperty(dtCore::TransformableActorProxy::PROPERTY_ACTIVE);
    CPPUNIT_ASSERT_MESSAGE("Property should NOT save because it has the default value", !actor->ShouldPropertySave(*prop));
    prop->SetAlwaysSave(true);
@@ -1679,7 +1679,7 @@ void MapTests::TestEnvironmentMapLoading()
 {
    try
    {
-      dtCore::LibraryManager::GetInstance().LoadActorRegistry(mExampleLibraryName);
+      dtCore::ActorFactory::GetInstance().LoadActorRegistry(mExampleLibraryName);
       dtCore::Project &project = dtCore::Project::GetInstance();
       dtCore::Map &map = project.CreateMap("TestEnvironmentMap", "TestEnvironmentMap");
 
@@ -1690,7 +1690,7 @@ void MapTests::TestEnvironmentMapLoading()
       for (unsigned int i = 0; i < numProxies; ++i)
       {
          dtCore::RefPtr<dtCore::BaseActorObject> p =
-            dtCore::LibraryManager::GetInstance().CreateActor("dtcore.examples", "Test All Properties");
+            dtCore::ActorFactory::GetInstance().CreateActor("dtcore.examples", "Test All Properties");
          CPPUNIT_ASSERT(p.valid());
          container.push_back(p);
       }
@@ -1706,7 +1706,7 @@ void MapTests::TestEnvironmentMapLoading()
       map.GetAllProxies(mapProxies);
       CPPUNIT_ASSERT_MESSAGE("The map should have the correct number of proxies", mapProxies.size() == numProxies);
 
-      dtCore::RefPtr<dtCore::BaseActorObject> envProxy = dtCore::LibraryManager::GetInstance().CreateActor("Test Environment Actor", "Test Environment Actor");
+      dtCore::RefPtr<dtCore::BaseActorObject> envProxy = dtCore::ActorFactory::GetInstance().CreateActor("Test Environment Actor", "Test Environment Actor");
       CPPUNIT_ASSERT(envProxy.valid());
 
       map.SetEnvironmentActor(envProxy.get());
@@ -1738,7 +1738,7 @@ void MapTests::TestEnvironmentMapLoading()
 ///////////////////////////////////////////////////////////////////////////////////////
 void MapTests::TestLoadEnvironmentMapIntoScene()
 {
-   dtCore::LibraryManager::GetInstance().LoadActorRegistry(mExampleLibraryName);
+   dtCore::ActorFactory::GetInstance().LoadActorRegistry(mExampleLibraryName);
    dtCore::Project &project = dtCore::Project::GetInstance();
    dtCore::Map &map = project.CreateMap("TestEnvironmentMap", "TestEnvironmentMap");
    dtCore::RefPtr<dtCore::Scene> scene = new dtCore::Scene;
@@ -1753,7 +1753,7 @@ void MapTests::TestLoadEnvironmentMapIntoScene()
    for (unsigned int i = 0; i < numProxies; ++i)
    {
       dtCore::RefPtr<dtCore::BaseActorObject> p =
-         dtCore::LibraryManager::GetInstance().CreateActor("dtcore.examples", "Test All Properties");
+         dtCore::ActorFactory::GetInstance().CreateActor("dtcore.examples", "Test All Properties");
       CPPUNIT_ASSERT(p.valid());
       container.push_back(p);
    }
@@ -1769,7 +1769,7 @@ void MapTests::TestLoadEnvironmentMapIntoScene()
    map.GetAllProxies(mapProxies);
    CPPUNIT_ASSERT_MESSAGE("The map should have the correct number of proxies", mapProxies.size() == numProxies);
 
-   dtCore::RefPtr<dtCore::BaseActorObject> envProxy = dtCore::LibraryManager::GetInstance().CreateActor("Test Environment Actor", "Test Environment Actor");
+   dtCore::RefPtr<dtCore::BaseActorObject> envProxy = dtCore::ActorFactory::GetInstance().CreateActor("Test Environment Actor", "Test Environment Actor");
    CPPUNIT_ASSERT(envProxy.valid());
 
    project.LoadMapIntoScene(map, *scene);

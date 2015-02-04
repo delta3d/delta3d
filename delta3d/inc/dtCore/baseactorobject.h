@@ -64,7 +64,7 @@ namespace dtCore
     * This is the base class for all actor.
     * @note
     *      Actor objects must be created through the ActorPluginRegistry or
-    *      the LibraryManager. If they are not created in this fashion,
+    *      the ActorFactory. If they are not created in this fashion,
     *      the actor types will not be set correctly.
     */
    class DT_CORE_EXPORT BaseActorObject : public PropertyContainer

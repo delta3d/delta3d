@@ -4,7 +4,7 @@
 #include <dtCore/deltadrawable.h>
 #include <dtCore/transformable.h>
 
-#include <dtCore/librarymanager.h>
+#include <dtCore/actorfactory.h>
 
 #include <dtEditQt/editordata.h>
 #include <dtEditQt/editorevents.h>

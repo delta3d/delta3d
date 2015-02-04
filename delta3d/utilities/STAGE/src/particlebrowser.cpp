@@ -44,7 +44,7 @@
 #include <dtCore/object.h>
 
 #include <dtCore/resourceactorproperty.h>
-#include <dtCore/librarymanager.h>
+#include <dtCore/actorfactory.h>
 #include <dtCore/map.h>
 
 #include <dtEditQt/editordata.h>
@@ -275,14 +275,14 @@ namespace dtEditQt
          * actor of this type.
          */
          dtCore::RefPtr<const dtCore::ActorType> particleActor =
-            dtCore::LibraryManager::GetInstance().FindActorType("dtcore", "Particle System");
+            dtCore::ActorFactory::GetInstance().FindActorType("dtcore", "Particle System");
 
          // create our new actor proxy from the mesh actor type that was
          // found by the results of our hard coded search above.
          if (particleActor != NULL)
          {
             dtCore::RefPtr<dtCore::BaseActorObject> proxy =
-               dtCore::LibraryManager::GetInstance().CreateActor(*particleActor).get();
+               dtCore::ActorFactory::GetInstance().CreateActor(*particleActor).get();
 
             // check to make sure both the mesh actor and the proxy are valid.
             // If the user has somehow modified the above hard coded static mesh object

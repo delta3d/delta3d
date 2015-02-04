@@ -33,7 +33,7 @@
 #include <dtAI/aiplugininterface.h>
 #include <dtAI/aiinterfaceactor.h>
 #include <dtAI/aiactorregistry.h>
-#include <dtCore/librarymanager.h>
+#include <dtCore/actorfactory.h>
 #include <dtCore/project.h>
 
 #include <dtCore/refptr.h>
@@ -88,7 +88,7 @@ CPPUNIT_TEST_SUITE_REGISTRATION( WaypointGraphTests );
 
 void WaypointGraphTests::setUp()
 {
-   dtCore::LibraryManager& libMan = dtCore::LibraryManager::GetInstance();
+   dtCore::ActorFactory& libMan = dtCore::ActorFactory::GetInstance();
    libMan.LoadActorRegistry("dtAI");
    dtCore::RefPtr<dtCore::BaseActorObject> proxy = libMan.CreateActor(*AIActorRegistry::AI_INTERFACE_ACTOR_TYPE);
 
@@ -100,7 +100,7 @@ void WaypointGraphTests::setUp()
 
 void WaypointGraphTests::tearDown()
 {
-   dtCore::LibraryManager& libMan = dtCore::LibraryManager::GetInstance();
+   dtCore::ActorFactory& libMan = dtCore::ActorFactory::GetInstance();
    libMan.UnloadActorRegistry("dtAI");
    mGraph = NULL;  
 }
