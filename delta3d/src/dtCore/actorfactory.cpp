@@ -37,7 +37,7 @@ namespace dtCore
    static const std::string ANIM_ACTOR_LIBRARY("dtAnim");
 
    //Singleton global variable for the library manager.
-   dtCore::RefPtr<ActorFactory> ActorFactory::mInstance(new ActorFactory());
+   dtCore::RefPtr<ActorFactory> ActorFactory::mInstance(NULL);
 
    ActorFactory::RegistryEntry::RegistryEntry()
    : registry(NULL)
@@ -495,6 +495,10 @@ namespace dtCore
    /////////////////////////////////////////////////////////////////////////////
    ActorFactory& ActorFactory::GetInstance()
    {
+      if (!ActorFactory::mInstance.valid())
+      {
+         ActorFactory::mInstance = new ActorFactory();
+      }
       return *(ActorFactory::mInstance.get());
    }
 
