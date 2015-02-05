@@ -89,15 +89,18 @@ namespace dtEditQt
 
       mCreateActorBtn = new QPushButton(tr("Create Actor"), this);
       connect(mCreateActorBtn, SIGNAL(clicked()), this, SLOT(createActorPressed()));
+      mSwitchActorTypeBtn = new QPushButton(tr("Switch Actor Type"), this);
 
       QHBoxLayout* btnLayout = new QHBoxLayout();
       btnLayout->addStretch(1);
       btnLayout->addWidget(mCreateActorBtn);
+      btnLayout->addWidget(mSwitchActorTypeBtn);
       btnLayout->addStretch(1);
 
       QVBoxLayout* mainLayout = new QVBoxLayout(this);
       mainLayout->addWidget(groupBox, 1);
       mainLayout->addLayout(btnLayout);
+
 
       reloadActors();
 
