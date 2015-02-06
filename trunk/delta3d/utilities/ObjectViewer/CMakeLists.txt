@@ -13,6 +13,7 @@ SET(PROG_HEADERS ${SOURCE_PATH}/GeometryTree.h
                  ${SOURCE_PATH}/ObjectViewerData.h
                  ${SOURCE_PATH}/ObjectWorkspace.h
                  ${SOURCE_PATH}/AnimationControlDock.h
+                 ${SOURCE_PATH}/MotionModelToolbar.h
                  ${SOURCE_PATH}/ResourceDock.h
                  ${SOURCE_PATH}/ShaderTree.h
                  ${SOURCE_PATH}/TextEdit.h)
@@ -22,6 +23,7 @@ SET(PROG_SOURCES ${SOURCE_PATH}/GeometryTree.cpp
                  ${SOURCE_PATH}/ObjectViewer.cpp
                  ${SOURCE_PATH}/ObjectWorkspace.cpp
                  ${SOURCE_PATH}/AnimationControlDock.cpp
+                 ${SOURCE_PATH}/MotionModelToolbar.cpp
                  ${SOURCE_PATH}/ResourceDock.cpp
                  ${SOURCE_PATH}/ShaderTree.cpp
                  ${SOURCE_PATH}/TextEdit.cpp
@@ -30,7 +32,8 @@ SET(PROG_SOURCES ${SOURCE_PATH}/GeometryTree.cpp
 
 QT4_ADD_RESOURCES(RCC_SOURCES ObjectViewerResources.qrc)
 qt4_wrap_cpp(MOC_SOURCES ${PROG_HEADERS})
-qt4_wrap_ui(UI_SOURCES AnimationControlPanel.ui)
+qt4_wrap_ui(UI_SOURCES AnimationControlPanel.ui
+      MotionModelToolbar.ui)
 
 SOURCE_GROUP("Generated Files" REGULAR_EXPRESSION qrc_.*cxx|moc_.*cxx)
 

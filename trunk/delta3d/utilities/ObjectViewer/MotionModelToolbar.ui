@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MotionModelToolbar</class>
+ <widget class="QWidget" name="MotionModelToolbar">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>269</width>
+    <height>26</height>
+   </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>269</width>
+    <height>26</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>16777215</width>
+    <height>16777215</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <widget class="QLineEdit" name="mMotionModelName">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="geometry">
+    <rect>
+     <x>2</x>
+     <y>2</y>
+     <width>78</width>
+     <height>22</height>
+    </rect>
+   </property>
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="readOnly">
+    <bool>true</bool>
+   </property>
+  </widget>
+  <widget class="QToolButton" name="mButtonOrbit">
+   <property name="geometry">
+    <rect>
+     <x>85</x>
+     <y>2</y>
+     <width>43</width>
+     <height>22</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Orbit</string>
+   </property>
+  </widget>
+  <widget class="QToolButton" name="mButtonUFO">
+   <property name="geometry">
+    <rect>
+     <x>133</x>
+     <y>2</y>
+     <width>39</width>
+     <height>22</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>UFO</string>
+   </property>
+  </widget>
+  <widget class="QToolButton" name="mButtonFly">
+   <property name="geometry">
+    <rect>
+     <x>177</x>
+     <y>2</y>
+     <width>31</width>
+     <height>22</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Fly</string>
+   </property>
+  </widget>
+  <widget class="QDoubleSpinBox" name="mSpeed">
+   <property name="geometry">
+    <rect>
+     <x>213</x>
+     <y>2</y>
+     <width>54</width>
+     <height>22</height>
+    </rect>
+   </property>
+   <property name="minimum">
+    <double>0.100000000000000</double>
+   </property>
+   <property name="maximum">
+    <double>1000.000000000000000</double>
+   </property>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

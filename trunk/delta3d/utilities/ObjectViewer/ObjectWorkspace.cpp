@@ -1,5 +1,6 @@
 #include "ObjectWorkspace.h"
 #include "AnimationControlDock.h"
+#include "MotionModelToolbar.h"
 #include "ResourceDock.h"
 #include "ObjectViewer.h"
 
@@ -325,6 +326,10 @@ void ObjectWorkspace::CreateToolbars()
    mShaderToolbar->addAction(mOpenGeometryShaderAction);
    mShaderToolbar->addAction(mOpenFragmentShaderAction);
    mShaderToolbar->addAction(mRecompileAction);
+
+   // Add special toolbars
+   mMotionModelToolbar = new MotionModelToolbar;
+   addToolBar(mMotionModelToolbar);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -905,6 +910,10 @@ void ObjectWorkspace::SetupConnectionsWithViewer()
    connect((QObject*)this->mShadedAction, SIGNAL(triggered()), mViewer, SLOT(OnSetShaded()));
    connect((QObject*)this->mWireframeAction, SIGNAL(triggered()), mViewer, SLOT(OnSetWireframe()));
    connect((QObject*)this->mShadedWireAction, SIGNAL(triggered()), mViewer, SLOT(OnSetShadedWireframe()));
+   connect(mMotionModelToolbar, SIGNAL(SignalMotionModelSelected(MotionModelTypeE)),
+      mViewer, SLOT(OnMotionModelSelected(MotionModelTypeE)));
+   connect(mMotionModelToolbar, SIGNAL(SignalMotionModelSpeedChanged(MotionModelTypeE, float)),
+      mViewer, SLOT(OnMotionModelSpeedChanged(MotionModelTypeE, float)));
 
    // Editing connections
    connect((QObject*)this->mWorldSpaceAction, SIGNAL(triggered()), mViewer, SLOT(OnWorldSpaceMode()));

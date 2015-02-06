@@ -28,6 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 class AnimationControlDock;
+class MotionModelToolbar;
 class ResourceDock;
 class QAction;
 class QToolBar;
@@ -129,6 +130,7 @@ private:
    QToolBar* mDisplayToolbar;
    QToolBar* mShaderToolbar;
    QToolBar* mModeToolbar;
+   MotionModelToolbar* mMotionModelToolbar;
 
    AnimationControlDock* mAnimationControlDock;
    ResourceDock* mResourceDock;
