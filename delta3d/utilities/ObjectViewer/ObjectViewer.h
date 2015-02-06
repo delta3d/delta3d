@@ -34,6 +34,8 @@
 
 #include <vector>
 
+#include "MotionModelToolbar.h"
+
 ///////////////////////////////////////////////////////////////////////////////
 
 struct LightInfo;
@@ -42,7 +44,7 @@ class QColor;
 namespace dtCore
 {
    class ObjectMotionModel;
-   class OrbitMotionModel;
+   class MotionModel;
    class Light;
 }
 
@@ -58,8 +60,11 @@ namespace dtAnim
    class CharDrawable;
 }
 
-///////////////////////////////////////////////////////////////////////////////
 
+
+////////////////////////////////////////////////////////////////////////////////
+// CLASS CODE
+////////////////////////////////////////////////////////////////////////////////
 class ObjectViewer: public QObject, public dtABC::Application
 {
    Q_OBJECT
@@ -71,9 +76,14 @@ public:
 
    virtual void Config();
 
+   void ResetMotionModel(float radius, const osg::Vec3& center);
+
    dtCore::Object* GetDeltaObject() {return mObject.get();}
 
 public slots:
+
+   void OnMotionModelSpeedChanged(MotionModelTypeE motionModelType, float speed);
+   void OnMotionModelSelected(MotionModelTypeE motionModelType);
 
    void OnLoadShaderFile(const QString& filename);
    void OnLoadMapFile(const std::string& filename);
@@ -135,7 +145,7 @@ private:
    dtCore::RefPtr<dtAnim::CharDrawable> mCharacter;
    dtCore::RefPtr<dtCore::Compass> mCompass;
 
-   dtCore::RefPtr<dtCore::OrbitMotionModel> mModelMotion;
+   dtCore::RefPtr<dtCore::MotionModel> mMotionModel;
    std::vector<dtCore::RefPtr<dtCore::ObjectMotionModel> > mLightMotion;
 
    dtCore::RefPtr<osg::Group> mShadedScene;

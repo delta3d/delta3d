@@ -21,8 +21,10 @@
 #include <dtCore/transform.h>
 #include <dtCore/scene.h>
 #include <dtCore/camera.h>
+#include <dtCore/flymotionmodel.h>
 #include <dtCore/objectmotionmodel.h>
 #include <dtCore/orbitmotionmodel.h>
+#include <dtCore/ufomotionmodel.h>
 #include <dtCore/light.h>
 #include <dtCore/infinitelight.h>
 #include <dtCore/positionallight.h>
@@ -57,6 +59,8 @@
 #include <assert.h>
 
 #include <osg/AnimationPath>
+
+
 
 /**
  * \brief Visitor to count triangles as simply as possible.
@@ -261,9 +265,7 @@ void ObjectViewer::Config()
    mCompass = new dtCore::Compass(GetCamera());
    GetScene()->GetSceneNode()->addChild(mCompass->GetOSGNode());
 
-   mModelMotion = new dtCore::OrbitMotionModel(GetKeyboard(), GetMouse());
-   mModelMotion->SetTarget(GetCamera());
-   mModelMotion->SetDistance(5.0f);
+   OnMotionModelSelected(MotionModelType::ORBIT.GetValue());
 
    mWireDecorator  = new osg::Group;
    mShadeDecorator = new osg::Group;
@@ -278,6 +280,85 @@ void ObjectViewer::Config()
 
    OnSetShaded();
    OnToggleGrid(true);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ObjectViewer::OnMotionModelSpeedChanged(MotionModelTypeE motionModelType, float speed)
+{
+   if (motionModelType == MM_FLY)
+   {
+      dtCore::FlyMotionModel* fly
+         = dynamic_cast<dtCore::FlyMotionModel*>(mMotionModel.get());
+      
+      if (fly != NULL)
+      {
+         fly->SetMaximumFlySpeed(speed);
+      }
+   }
+   else if (motionModelType == MM_UFO)
+   {
+      dtCore::UFOMotionModel* ufo
+         = dynamic_cast<dtCore::UFOMotionModel*>(mMotionModel.get());
+      
+      if (ufo != NULL)
+      {
+         ufo->SetMaximumFlySpeed(speed);
+      }
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ObjectViewer::OnMotionModelSelected(MotionModelTypeE motionModelType)
+{
+   dtCore::Keyboard* keyboard = GetKeyboard();
+   dtCore::Mouse* mouse = GetMouse();
+
+   switch(motionModelType)
+   {
+   case MM_UFO:
+      mMotionModel = new dtCore::UFOMotionModel(keyboard, mouse);
+      break;
+
+   case MM_FLY:
+      mMotionModel = new dtCore::FlyMotionModel(keyboard, mouse);
+      break;
+
+   default: // ORBIT
+      dtCore::RefPtr<dtCore::OrbitMotionModel> orbit = new dtCore::OrbitMotionModel(keyboard, mouse);
+      orbit->SetDistance(5.0f);
+      mMotionModel = orbit.get();
+      break;
+   }
+
+   mMotionModel->SetTarget(GetCamera());
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ObjectViewer::ResetMotionModel(float radius, const osg::Vec3& center)
+{
+   dtCore::OrbitMotionModel* orbit = dynamic_cast<dtCore::OrbitMotionModel*>(mMotionModel.get());
+
+   if (orbit != NULL)
+   {
+      dtCore::Camera* cam = GetCamera();
+      float distance = 5.0f;
+
+      dtCore::Transform camPos;
+      cam->GetTransform(camPos);
+      osg::Vec3 pos(camPos.GetTranslation());
+
+      pos += camPos.GetForwardVector() * radius;
+
+      osg::Vec3 lookAtXYZ = camPos.GetForwardVector() * (radius * 2.0f);
+      osg::Vec3 upVec (0.0f, 0.0f, 1.0f);
+
+      camPos.Set(pos, lookAtXYZ, upVec);
+
+      GetCamera()->SetTransform(camPos);
+
+      orbit->SetDistance(radius);
+      orbit->SetFocalPoint(center);
+   }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -451,8 +532,7 @@ void ObjectViewer::OnLoadMapFile(const std::string& filename)
          }
 
          // Reset the camera outside the bounding sphere.
-         mModelMotion->SetDistance(radius * 2.0f);
-         mModelMotion->SetFocalPoint(center);
+         ResetMotionModel(radius, center);
       }
    }
 }
@@ -593,8 +673,7 @@ void ObjectViewer::OnLoadGeometryFile(const std::string& filename)
          mObject->GetBoundingSphere(center, radius);
 
          // Reset the camera outside the bounding sphere.
-         mModelMotion->SetDistance(radius * 2.0f);
-         mModelMotion->SetFocalPoint(center);
+         ResetMotionModel(radius, center);
 
          if (mShouldGenerateTangents)
          {
@@ -1140,7 +1219,7 @@ void ObjectViewer::EventTraversal(const double deltaSimTime)
    }
 
    // If we're manipulating lights, disable orbit, otherwise enable
-   mModelMotion->SetEnabled(lightIndex == mLightMotion.size());
+   mMotionModel->SetEnabled(lightIndex == mLightMotion.size());
 }
 
 ////////////////////////////////////////////////////////////////////////////////
