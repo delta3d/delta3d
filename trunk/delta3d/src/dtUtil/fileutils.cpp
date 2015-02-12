@@ -534,10 +534,17 @@ namespace dtUtil
          }
 
          info.extensionlessFileName = osgDB::getStrippedName(choppedStr);
-         info.baseName = osgDB::getSimpleFileName(choppedStr);
-         info.fileName = choppedStr;
          info.path = osgDB::getFilePath(choppedStr);
+         info.baseName = osgDB::getSimpleFileName(choppedStr);
          info.extension = osgDB::getFileExtension(choppedStr);
+         if (info.path.empty())
+         {
+            info.fileName = info.baseName;
+         }
+         else
+         {
+            info.fileName = info.path + PATH_SEPARATOR + info.baseName;
+         }
 
          info.size = tagStat.st_size;
          info.lastModified = tagStat.st_mtime;

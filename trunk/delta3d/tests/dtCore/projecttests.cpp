@@ -505,7 +505,7 @@ void ProjectTests::TestSetupFromProjectConfig()
       CPPUNIT_ASSERT_EQUAL(dtCore::Project::ContextSlot(1), p.GetContextSlotForPath(p.GetContext(1)));
       CPPUNIT_ASSERT_EQUAL(dtCore::Project::ContextSlot(0), p.GetContextSlotForPath(p.GetContext(0)+"/hi/joe.png"));
       CPPUNIT_ASSERT_EQUAL(dtCore::Project::ContextSlot(1), p.GetContextSlotForPath(p.GetContext(1)+"/hi/joe.png"));
-      CPPUNIT_ASSERT_EQUAL_MESSAGE("A garbage path should not be found as being in any project context.", dtCore::Project::ContextSlot(dtCore::Project::DEFAULT_SLOT_VALUE), p.GetContextSlotForPath("/hello/mom"));
+      CPPUNIT_ASSERT_THROW_MESSAGE("A garbage path should not be found as being in any project context.", p.GetContextSlotForPath(TEST_PROJECT_DIR+"/hello/mom"), dtUtil::FileNotFoundException);
 
 
       // If the paths don't match here, it may be that the ForEachContextData failed above.
@@ -978,11 +978,11 @@ void ProjectTests::TestProject()
       }
 
       CPPUNIT_ASSERT_THROW_MESSAGE("passing a non-absolute path with a file that doesn't exist throws an exception.", p.GetContextSlotForPath(TEST_PROJECT_DIR+"/hi/joe.png"), dtUtil::FileNotFoundException);
-
+      CPPUNIT_ASSERT_THROW_MESSAGE("passing a non-absolute path with a directory that doesn't exist throws an exception.", p.GetContextSlotForPath(TEST_PROJECT_DIR+"/hello/mom"), dtUtil::FileNotFoundException);
+      
       CPPUNIT_ASSERT_EQUAL(dtCore::Project::ContextSlot(0), p.GetContextSlotForPath(TEST_PROJECT_DIR));
 
       CPPUNIT_ASSERT_EQUAL(dtCore::Project::ContextSlot(0), p.GetContextSlotForPath(p.GetContext(0)+"/hi/joe.png"));
-      CPPUNIT_ASSERT_EQUAL_MESSAGE("A garbage path should not be found as being in any project context.", dtCore::Project::ContextSlot(dtCore::Project::DEFAULT_SLOT_VALUE), p.GetContextSlotForPath("/hello/mom"));
 
       CPPUNIT_ASSERT_MESSAGE("Project should not be read only.", !p.IsReadOnly());
       CPPUNIT_ASSERT_MESSAGE("Delta3D search path should contain the context.",
