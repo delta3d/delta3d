@@ -22,19 +22,14 @@
 #define DELTA_MOTION_MODEL_TOOLBAR
 
 #include "ui_MotionModelToolbar.h"
+#include <dtUtil/enumeration.h>
 #include <QtGui/QToolBar>
-// DELTA3D
-#include <dtAnim/animclippath.h>
-#include <dtCore/observerptr.h>
-#include <dtCore/object.h>
 
 
 
 /////////////////////////////////////////////////////////////////////////////////
 // FORWARD DECLARATIONS
 /////////////////////////////////////////////////////////////////////////////////
-class QTableWidgetItem;
-
 namespace Ui
 {
    class MotionModelToolbar;
