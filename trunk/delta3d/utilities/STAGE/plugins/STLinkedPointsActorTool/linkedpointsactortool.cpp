@@ -60,8 +60,8 @@ LinkedPointsActorToolPlugin::LinkedPointsActorToolPlugin(MainWindow* mw)
    // Setup our signal slots.
    connect(&EditorEvents::GetInstance(), SIGNAL(actorProxyCreated(ActorProxyRefPtr, bool)),
       this, SLOT(onActorProxyCreated(ActorProxyRefPtr, bool)));
-   connect(&EditorEvents::GetInstance(), SIGNAL(selectedActors(ActorProxyRefPtrVector &)),
-      this, SLOT(onActorsSelected(ActorProxyRefPtrVector &)));
+   connect(&EditorEvents::GetInstance(), SIGNAL(selectedActors(ActorRefPtrVector &)),
+      this, SLOT(onActorsSelected(ActorRefPtrVector &)));
 
    connect(&ViewportManager::GetInstance(), SIGNAL(viewportEnabled(Viewport*, bool, bool*)),
       this, SLOT(onViewportEnabled(Viewport*, bool, bool*)));
@@ -182,7 +182,7 @@ void LinkedPointsActorToolPlugin::onActorProxyCreated(ActorProxyRefPtr proxy, bo
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void LinkedPointsActorToolPlugin::onActorsSelected(ActorProxyRefPtrVector& actors)
+void LinkedPointsActorToolPlugin::onActorsSelected(ActorRefPtrVector& actors)
 {
    // We can only use this editor if the linked points actor is the only one selected.
    if (actors.size() > 0)

@@ -8,6 +8,9 @@
       <file>icons/trashcan.png</file>
       <file>icons/remove.png</file>
       <file>icons/resetproperty.png</file>
+      <file>icons/actors/actor.png</file>
+      <file>icons/actors/drawable.png</file>
+      <file>icons/actors/transform.png</file>
       <file>icons/nodes/bone.png</file>
       <file>icons/nodes/geode.png</file>
       <file>icons/nodes/group.png</file>

@@ -303,8 +303,8 @@ bool PhysicsCompilerToolPlugin::IsPanelEnabled() const
 void PhysicsCompilerToolPlugin::CreateConnections()
 {
    // Plugin Interface Connections
-   connect(&dtEditQt::EditorEvents::GetInstance(), SIGNAL(selectedActors(ActorProxyRefPtrVector&)),
-      this, SLOT(onActorsSelected(ActorProxyRefPtrVector&)));
+   connect(&dtEditQt::EditorEvents::GetInstance(), SIGNAL(selectedActors(ActorRefPtrVector&)),
+      this, SLOT(onActorsSelected(ActorRefPtrVector&)));
 
    // Target Actor Button Connection
    connect(mUI.mButtonTargetActor, SIGNAL(clicked()),
@@ -579,7 +579,7 @@ bool PhysicsCompilerToolPlugin::WriteGeometryFile(const PhysicsFileOptions optio
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void PhysicsCompilerToolPlugin::onActorsSelected(ActorProxyRefPtrVector& actors)
+void PhysicsCompilerToolPlugin::onActorsSelected(ActorRefPtrVector& actors)
 {
    // Avoid changing the target actor if a compilation is in progress.
    if (IsCompiling())

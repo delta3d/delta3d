@@ -52,7 +52,7 @@ public slots:
    *
    * @param[in]  actors  The list of actors being selected.
    */
-   void onActorsSelected(ActorProxyRefPtrVector& actors);
+   void onActorsSelected(ActorRefPtrVector& actors);
 
    /**
    * Handles when to select actors.

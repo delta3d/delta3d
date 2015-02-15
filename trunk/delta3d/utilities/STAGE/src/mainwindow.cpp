@@ -391,8 +391,8 @@ namespace dtEditQt
          mPropertyWindow->setObjectName("PropertyWindow");
 
          // listen for selection changed event
-         connect(&EditorEvents::GetInstance(), SIGNAL(selectedActors(ActorProxyRefPtrVector&)),
-                  mPropertyWindow, SLOT(HandleActorsSelected(ActorProxyRefPtrVector&)));
+         connect(&EditorEvents::GetInstance(), SIGNAL(selectedActors(ActorRefPtrVector&)),
+                  mPropertyWindow, SLOT(HandleActorsSelected(ActorRefPtrVector&)));
 
          // listen for property change events and update the tree.  These can be generated
          // by the viewports, or the tree itself.
@@ -775,8 +775,8 @@ namespace dtEditQt
       if(mPropertyWindow != NULL)
       {
          // listen for selection changed event
-         disconnect(&EditorEvents::GetInstance(), SIGNAL(selectedActors(ActorProxyRefPtrVector&)),
-            mPropertyWindow, SLOT(HandleActorsSelected(ActorProxyRefPtrVector&)));
+         disconnect(&EditorEvents::GetInstance(), SIGNAL(selectedActors(ActorRefPtrVector&)),
+            mPropertyWindow, SLOT(HandleActorsSelected(ActorRefPtrVector&)));
 
          // listen for property change events and update the tree.  These can be generated
          // by the viewports, or the tree itself.

@@ -121,8 +121,8 @@ namespace dtEditQt
       connect(&EditorEvents::GetInstance(), SIGNAL(currentMapChanged()), this, SLOT(slotRestartAutosave()));
 
       connect(&EditorEvents::GetInstance(),
-         SIGNAL(selectedActors(ActorProxyRefPtrVector&)), this,
-         SLOT(slotSelectedActors(ActorProxyRefPtrVector&)));
+         SIGNAL(selectedActors(ActorRefPtrVector&)), this,
+         SLOT(slotSelectedActors(ActorRefPtrVector&)));
 
       mTimer = new QTimer((QWidget*)EditorData::GetInstance().getMainWindow());
       mTimer->setInterval(mSaveMilliSeconds);
@@ -1415,7 +1415,7 @@ namespace dtEditQt
 
          //emitActorsSelected method requires a different data type than what
          //getCurrentActorSelection returned so we'll have to do this little copy:
-         ActorProxyRefPtrVector aplrp;
+         ActorRefPtrVector aplrp;
          for (size_t i = 0; i < apl.size(); ++i)
          {
             aplrp.push_back(apl[i]);

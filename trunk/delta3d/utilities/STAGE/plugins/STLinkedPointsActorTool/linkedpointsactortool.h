@@ -59,7 +59,7 @@ public slots:
    *
    * @param[in]  actors  The list of actors being selected.
    */
-   void onActorsSelected(ActorProxyRefPtrVector& actors);
+   void onActorsSelected(ActorRefPtrVector& actors);
 
    /**
    * Signal used when a viewport has been enabled.

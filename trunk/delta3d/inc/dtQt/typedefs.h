@@ -35,7 +35,7 @@
 
 // TODO: Remove these typedefs that have "Proxy" and "Ref" in the name.
 typedef dtCore::RefPtr<dtCore::BaseActorObject> ActorProxyRefPtr;
-typedef std::vector<ActorProxyRefPtr> ActorProxyRefPtrVector;
+typedef std::vector<ActorProxyRefPtr> ActorRefPtrVector;
 typedef dtCore::RefPtr<dtCore::ActorProperty> ActorPropertyRefPtr;
 
 typedef dtCore::RefPtr<dtCore::BaseActorObject> ActorPtr;

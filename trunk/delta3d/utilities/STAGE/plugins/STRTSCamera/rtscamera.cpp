@@ -34,8 +34,8 @@ RTSCameraPlugin::RTSCameraPlugin(MainWindow* mw)
 
    mMainWindow->GetPerspView()->setCameraMotionModel(mMotionModel);
 
-   connect(&EditorEvents::GetInstance(), SIGNAL(selectedActors(ActorProxyRefPtrVector &)),
-      this, SLOT(onActorsSelected(ActorProxyRefPtrVector &)));
+   connect(&EditorEvents::GetInstance(), SIGNAL(selectedActors(ActorRefPtrVector &)),
+      this, SLOT(onActorsSelected(ActorRefPtrVector &)));
 
    connect(&EditorEvents::GetInstance(), SIGNAL(actorPropertyChanged(ActorProxyRefPtr, ActorPropertyRefPtr)),
       this, SLOT(onActorPropertyChanged(ActorProxyRefPtr, ActorPropertyRefPtr)));
@@ -53,7 +53,7 @@ void RTSCameraPlugin::Destroy()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void RTSCameraPlugin::onActorsSelected(ActorProxyRefPtrVector& actors)
+void RTSCameraPlugin::onActorsSelected(ActorRefPtrVector& actors)
 {
    int count = (int)actors.size();
    if (count > 0)

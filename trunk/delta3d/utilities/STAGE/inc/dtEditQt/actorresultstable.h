@@ -191,7 +191,7 @@ namespace dtEditQt
        * Change our selection if objects get selected somewhere else
        * Note - This slot occurs from EditorEvents.  And is separate from our internal method.
        */
-      void selectedActors(ActorProxyRefPtrVector& actors);
+      void selectedActors(ActorRefPtrVector& actors);
 
       /**
        * Specifically handle key press events when the widget has focus

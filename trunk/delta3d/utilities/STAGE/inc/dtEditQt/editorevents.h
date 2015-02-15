@@ -56,7 +56,7 @@ namespace dtEditQt
        * An actor(s) was selected in the viewport.  This event should cause other UI elements to
        * update if they do anything with the current selected object.
        */
-      void emitActorsSelected(ActorProxyRefPtrVector& actors);
+      void emitActorsSelected(ActorRefPtrVector& actors);
 
       /**
        * All the viewports should center on this actor.  Each visible should maintain
@@ -225,7 +225,7 @@ namespace dtEditQt
       void emitGameEventAboutToBeRemoved();
 
    signals:
-      void selectedActors(ActorProxyRefPtrVector& actors);
+      void selectedActors(ActorRefPtrVector& actors);
       void gotoActor(ActorProxyRefPtr actor);
       void gotoPosition(double x, double y, double z);
       void createActor();

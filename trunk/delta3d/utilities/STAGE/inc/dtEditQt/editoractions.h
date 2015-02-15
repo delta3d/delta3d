@@ -495,7 +495,7 @@ namespace dtEditQt
       // helper method to keep track of the selected actors. this is needed in order to
       // be able to call the goto actor functionality from the menu. The signal requires
       // an argument.
-      void slotSelectedActors(ActorProxyRefPtrVector& actors);
+      void slotSelectedActors(ActorRefPtrVector& actors);
 
       void slotOnActorCreated(ActorProxyRefPtr proxy, bool forceNoAdjustments);
 

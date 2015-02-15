@@ -44,8 +44,8 @@ BuildingToolPlugin::BuildingToolPlugin(MainWindow* mw)
    connect(&EditorEvents::GetInstance(), SIGNAL(actorProxyCreated(ActorProxyRefPtr, bool)),
       this, SLOT(onActorProxyCreated(ActorProxyRefPtr, bool)));
 
-   connect(&EditorEvents::GetInstance(), SIGNAL(selectedActors(ActorProxyRefPtrVector &)),
-      this, SLOT(onActorsSelected(ActorProxyRefPtrVector &)));
+   connect(&EditorEvents::GetInstance(), SIGNAL(selectedActors(ActorRefPtrVector &)),
+      this, SLOT(onActorsSelected(ActorRefPtrVector &)));
 
    connect(&ViewportManager::GetInstance(), SIGNAL(selectActors(Viewport*, QMouseEvent*, bool*)),
       this, SLOT(onSelectActors(Viewport*, QMouseEvent*, bool*)));
@@ -95,7 +95,7 @@ void BuildingToolPlugin::onActorProxyCreated(ActorProxyRefPtr proxy, bool forceN
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void BuildingToolPlugin::onActorsSelected(ActorProxyRefPtrVector& actors)
+void BuildingToolPlugin::onActorsSelected(ActorRefPtrVector& actors)
 {
    // We can only use this editor if the linked points actor is the only one selected.
    if (actors.size() == 1)
