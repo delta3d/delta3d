@@ -41,8 +41,8 @@ FenceToolPlugin::FenceToolPlugin(MainWindow* mw)
    mModeButton = mMainWindow->FindExclusiveToolMode("Linked Points Actor Tool");
 
    // Setup our signal slots.
-   connect(&EditorEvents::GetInstance(), SIGNAL(selectedActors(ActorProxyRefPtrVector &)),
-      this, SLOT(onActorsSelected(ActorProxyRefPtrVector &)));
+   connect(&EditorEvents::GetInstance(), SIGNAL(selectedActors(ActorRefPtrVector &)),
+      this, SLOT(onActorsSelected(ActorRefPtrVector &)));
 
    connect(&ViewportManager::GetInstance(), SIGNAL(selectActors(Viewport*, QMouseEvent*, bool*)),
       this, SLOT(onSelectActors(Viewport*, QMouseEvent*, bool*)));
@@ -67,7 +67,7 @@ void FenceToolPlugin::Destroy()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void FenceToolPlugin::onActorsSelected(ActorProxyRefPtrVector& actors)
+void FenceToolPlugin::onActorsSelected(ActorRefPtrVector& actors)
 {
    // We can only use this editor if the linked points actor is the only one selected.
    if (actors.size() == 1)

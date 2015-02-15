@@ -152,7 +152,7 @@ void NodeButton::OnLeftClickButton()
    if (mBaseActor == NULL)
       return;
 
-   ActorProxyRefPtrVector thisActor;
+   ActorRefPtrVector thisActor;
    thisActor.push_back(mBaseActor);
    dtEditQt::EditorEvents::GetInstance().emitActorsSelected(thisActor);
 }

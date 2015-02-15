@@ -139,8 +139,8 @@ namespace dtEditQt
       // Remove search items that are being destroyed
       connect(&EditorEvents::GetInstance(), SIGNAL(actorProxyAboutToBeDestroyed(ActorProxyRefPtr)),
          this, SLOT(actorProxyAboutToBeDestroyed(ActorProxyRefPtr)));
-      connect(&EditorEvents::GetInstance(), SIGNAL(selectedActors(ActorProxyRefPtrVector &)),
-         this, SLOT(selectedActors(ActorProxyRefPtrVector &)));
+      connect(&EditorEvents::GetInstance(), SIGNAL(selectedActors(ActorRefPtrVector &)),
+         this, SLOT(selectedActors(ActorRefPtrVector &)));
 
       QAction* copySelect = new QAction(tr("&Copy Selection"), this);
       copySelect->setStatusTip(tr("Copy the names of the selected actors."));

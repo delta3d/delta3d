@@ -437,8 +437,8 @@ namespace dtEditQt
    {
       EditorEvents& ge = EditorEvents::GetInstance();
 
-      connect(&ge,   SIGNAL(selectedActors(ActorProxyRefPtrVector&)),
-               this, SLOT(onActorsSelected(ActorProxyRefPtrVector&)));
+      connect(&ge,   SIGNAL(selectedActors(ActorRefPtrVector&)),
+               this, SLOT(onActorsSelected(ActorRefPtrVector&)));
 
       connect(&ge,   SIGNAL(editorPreferencesChanged()),
                this, SLOT(onEditorPreferencesChanged()));

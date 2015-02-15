@@ -54,7 +54,7 @@ public:
 public slots:
    void OnGeneratePushed();
    void OnRefreshActorList();
-   void OnSelectedActorChange(ActorProxyRefPtrVector& actors);
+   void OnSelectedActorChange(ActorRefPtrVector& actors);
 
 private:
    void NewActorProxyInsideVolumeEditor(dtCore::BaseActorObject* proxyToCopy);

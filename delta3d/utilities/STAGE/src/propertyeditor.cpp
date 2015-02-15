@@ -192,7 +192,7 @@ namespace dtEditQt
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   void PropertyEditor::HandleActorsSelected(ActorProxyRefPtrVector& actors)
+   void PropertyEditor::HandleActorsSelected(ActorRefPtrVector& actors)
    {
       PropertyContainerRefPtrVector pcs;
       pcs.reserve(actors.size());

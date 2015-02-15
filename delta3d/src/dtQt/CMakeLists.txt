@@ -8,6 +8,8 @@ file(GLOB LIB_PUBLIC_HEADERS "${HEADER_PATH}/*.h")
 # These files are listed in alphabetical order.
 set(LIB_SOURCES 
 
+actortreepanel.cpp
+actortreewidget.cpp
 baselibrarylisteditor.cpp
 basepropertycontrol.cpp
 basepropertyeditor.cpp
@@ -70,7 +72,8 @@ INCLUDE_DIRECTORIES(${QT_INCLUDE_DIR}
                     ${CMAKE_CURRENT_BINARY_DIR} # for ui*.h files
                    )
 				   
-qt4_wrap_ui(UI_SOURCES basedialog.ui
+qt4_wrap_ui(UI_SOURCES actortreepanel.ui
+                       basedialog.ui
                        basepropertycontrol.ui
                        nodetreepanel.ui
                        objecttypelistpanel.ui

@@ -80,8 +80,8 @@ DirectorCinematicEditorPlugin::~DirectorCinematicEditorPlugin()
 ////////////////////////////////////////////////////////////////////////////////
 void DirectorCinematicEditorPlugin::Initialize()
 {
-   connect(&EditorEvents::GetInstance(), SIGNAL(selectedActors(ActorProxyRefPtrVector &)),
-      this, SLOT(onActorsSelected(ActorProxyRefPtrVector &)));
+   connect(&EditorEvents::GetInstance(), SIGNAL(selectedActors(ActorRefPtrVector &)),
+      this, SLOT(onActorsSelected(ActorRefPtrVector &)));
    connect(&ViewportManager::GetInstance(), SIGNAL(endActorMode(Viewport*, QMouseEvent*, bool*)),
       this, SLOT(onEndActorMode(Viewport*, QMouseEvent*, bool*)));
 
@@ -397,7 +397,7 @@ void DirectorCinematicEditorPlugin::OnUpdate()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void DirectorCinematicEditorPlugin::onActorsSelected(ActorProxyRefPtrVector& actors)
+void DirectorCinematicEditorPlugin::onActorsSelected(ActorRefPtrVector& actors)
 {
    mSelectedActor = -1;
 

@@ -45,8 +45,8 @@ RandomActorGeneratorPlugin::RandomActorGeneratorPlugin(dtEditQt::MainWindow* mw)
    //May want to put this back later
    //connect(mUI.mRefreshBtn, SIGNAL(clicked()), this, SLOT(OnRefreshActorList()));
 
-   connect(&(dtEditQt::EditorEvents::GetInstance()), SIGNAL(selectedActors(ActorProxyRefPtrVector&)),
-            this, SLOT(OnSelectedActorChange(ActorProxyRefPtrVector&)));
+   connect(&(dtEditQt::EditorEvents::GetInstance()), SIGNAL(selectedActors(ActorRefPtrVector&)),
+            this, SLOT(OnSelectedActorChange(ActorRefPtrVector&)));
 
    //seed the random number generator
    srand(time(NULL));
@@ -143,7 +143,7 @@ void RandomActorGeneratorPlugin::OnRefreshActorList()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void RandomActorGeneratorPlugin::OnSelectedActorChange(ActorProxyRefPtrVector& actors)
+void RandomActorGeneratorPlugin::OnSelectedActorChange(ActorRefPtrVector& actors)
 {
    if (!actors.empty())
    {
