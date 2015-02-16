@@ -35,10 +35,12 @@
 #include "dtEditQt/actorsearcher.h"
 #include "dtEditQt/actorglobalbrowser.h"
 #include "dtEditQt/editoractions.h"
-#include <dtEditQt/prefabbrowser.h>
+#include "dtEditQt/editorevents.h"
+#include "dtEditQt/prefabbrowser.h"
 
 #include <QtGui/QWidget>
 #include <QtGui/QAction>
+#include <QtGui/QVBoxLayout>
 
 namespace dtEditQt
 {
@@ -47,6 +49,7 @@ namespace dtEditQt
       : QDockWidget(parent)
       , mTabActorSearch(NULL)
       , mTabGlobalActor(NULL)
+      , mActorTreePanel(NULL)
       , mActorSearchWidget(NULL)
       , mActorGlobalWidget(NULL)
    {
@@ -60,7 +63,11 @@ namespace dtEditQt
       if (ConfigurationManager::GetInstance().GetVariable(ConfigurationManager::LAYOUT, CONF_MGR_SHOW_ACTOR_SEARCH) != "false")
       {
          mTabActorSearch  = new TabWrapper(this);
-         mActorSearchWidget  = new ActorSearcher(this);
+         mActorTreePanel = new dtQt::ActorTreePanel();
+         mActorSearchWidget = new ActorSearcher();
+
+         connect(&EditorEvents::GetInstance(), SIGNAL(selectedActors(ActorRefPtrVector&)),
+                  mActorTreePanel, SLOT(OnActorsSelected(ActorRefPtrVector&)));
       }
 
       if (ConfigurationManager::GetInstance().GetVariable(ConfigurationManager::LAYOUT, CONF_MGR_SHOW_GLOBAL_ACTORS) != "false")
@@ -82,8 +89,15 @@ namespace dtEditQt
    {
       if (mActorSearchWidget != NULL)
       {
+         QWidget* group = new QWidget;
+         QLayout* vlayout = new QVBoxLayout;
+         group->setLayout(vlayout);
+
+         vlayout->addWidget(mActorTreePanel);
+         vlayout->addWidget(mActorSearchWidget);
+
          // Actor Search tab
-         mTabActorSearch->setWidget(mActorSearchWidget);
+         mTabActorSearch->setWidget(group);
          mTabActorSearch->setName("Actor Search");
          mTabC->addTab(mTabActorSearch);
       }

@@ -32,6 +32,7 @@
 #include <QtCore/QObject>
 #include <QtGui/QDockWidget>
 #include <QtGui/QMainWindow>
+#include <dtQt/actortreepanel.h>
 
 class QWidget;
 
@@ -78,6 +79,7 @@ namespace dtEditQt
         TabWrapper*   mTabActorSearch;
         TabWrapper*   mTabGlobalActor;        
         
+        dtQt::ActorTreePanel* mActorTreePanel;
         ActorSearcher*      mActorSearchWidget;
         ActorGlobalBrowser* mActorGlobalWidget;        
 
