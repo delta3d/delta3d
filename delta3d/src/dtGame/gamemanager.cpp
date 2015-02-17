@@ -2118,7 +2118,7 @@ namespace dtGame
 
       if (aboutActor == NULL)
       {
-         t.aboutActor = dtCore::UniqueId("");
+         t.aboutActor = dtCore::UniqueId(false);
       }
       else
       {
