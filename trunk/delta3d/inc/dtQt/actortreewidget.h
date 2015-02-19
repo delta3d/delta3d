@@ -7,6 +7,7 @@
 #include <dtQt/export.h>
 #include <QtGui/qtreewidget.h>
 #include <dtGame/gameactorproxy.h>
+#include <dtQt/typedefs.h>
 
 
 
@@ -16,11 +17,6 @@ namespace dtQt
    // TYPE DEFINITIONS
    /////////////////////////////////////////////////////////////////////////////
    typedef dtCore::BaseActorObject BaseActor;
-   typedef dtCore::RefPtr<BaseActor> ActorPtr;
-   typedef dtCore::ObserverPtr<BaseActor> ActorWeakPtr;
-   typedef std::vector<ActorPtr> ActorRefPtrVector;
-   typedef std::vector<ActorWeakPtr> ActorWeakPtrVector;
-   typedef std::vector<BaseActor*> ActorArray;
 
 
 
@@ -97,7 +93,7 @@ namespace dtQt
       void UpdateDescription();
 
    protected:
-      dtCore::ObserverPtr<BaseActor> mActor;
+      ActorWeakPtr mActor;
    };
 
 
@@ -125,11 +121,15 @@ namespace dtQt
 
       virtual void UpdateUI();
 
+      virtual void mousePressEvent(QMouseEvent* mouseEvent);
+
       virtual void rowsAboutToBeRemoved ( const QModelIndex & parent, int start, int end );
       virtual void rowsInserted ( const QModelIndex & parent, int start, int end );
 
    signals:
       void SignalActorsSelected(ActorRefPtrVector actorArray);
+      void SignalActorAttach(ActorPtr actor, ActorPtr oldParent, ActorPtr newParent);
+      void SignalActorDetach(ActorPtr actor, ActorPtr oldParent);
 
    public slots:
       void UpdateColumns();
@@ -142,6 +142,8 @@ namespace dtQt
       
       ActorWeakPtrVector mActors;
       dtCore::RefPtr<ActorIconProviderBase> mIconProvider;
+
+      bool mMouseDragging;
    };
 
 }

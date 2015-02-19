@@ -143,13 +143,12 @@ namespace dtQt
 
       ActorTreeItem* GetParentItem(BaseActor& actor)
       {
-         // HACK:
-         /*ActorTreeItem* item = NULL;
+         ActorTreeItem* item = NULL;
          dtGame::GameActorProxy* gameActor = dynamic_cast<dtGame::GameActorProxy*>(&actor);
 
          if (gameActor != NULL)
          {
-            BaseActor* parent = gameActor->GetParent();
+            BaseActor* parent = gameActor->GetParentActor();
 
             if (parent != NULL)
             {
@@ -157,8 +156,7 @@ namespace dtQt
             }
          }
 
-         return item;*/
-         return NULL;
+         return item;
       }
 
       ActorTreeItem* CreateItem(BaseActor& actor)
@@ -238,9 +236,7 @@ namespace dtQt
          }
          else
          {
-            // HACK:
-            ProcessActor(actor);
-            /*BaseActor* curActor = NULL;
+            BaseActor* curActor = NULL;
             dtGame::GameActorProxy::iterator curIter = gameActor->begin();
             dtGame::GameActorProxy::iterator endIter = gameActor->end();
             for (; curIter != endIter; ++curIter)
@@ -251,7 +247,7 @@ namespace dtQt
                {
                   ProcessActor(*curActor);
                }
-            }*/
+            }
          }
       }
 
@@ -273,6 +269,7 @@ namespace dtQt
    ActorTreeWidget::ActorTreeWidget(QWidget* parent)
       : BaseClass(parent)
       , mIconProvider(new ActorIconProviderDefault)
+      , mMouseDragging(false)
    {
       CreateConnections();
 
@@ -369,33 +366,81 @@ namespace dtQt
       }
    }
 
-   void ActorTreeWidget::rowsAboutToBeRemoved ( const QModelIndex & parent, int start, int end )
+   void ActorTreeWidget::mousePressEvent(QMouseEvent* mouseEvent)
    {
-      printf("\n\tROW REMOVED\n");
+      BaseClass::mousePressEvent(mouseEvent);
+
+      mMouseDragging = true;
    }
 
-   void ActorTreeWidget::rowsInserted ( const QModelIndex & parentIndex, int start, int end )
+   void ActorTreeWidget::rowsAboutToBeRemoved ( const QModelIndex & parent, int start, int end )
    {
-      printf("\n\tROW INSERTED\n");
+      // DEBUG:
+      //printf("\n\tROW REMOVED\n");
+
+      BaseClass::rowsAboutToBeRemoved(parent, start, end);
+   }
+
+   void ActorTreeWidget::rowsInserted(const QModelIndex & parentIndex, int start, int end )
+   {
+      BaseClass::rowsInserted(parentIndex, start, end);
+
+      if ( ! mMouseDragging)
+      {
+         return;
+      }
+
+      mMouseDragging = false;
+
+      // DEBUG:
+      //printf("\n\tROW INSERTED\n");
 
       ActorTreeItem* itemParent = (ActorTreeItem*)itemFromIndex(parentIndex);
       if (itemParent != NULL)
       {
-         dtGame::GameActorProxy* actorParent = itemParent->GetGameActor();
-         dtGame::GameActorProxy* actor = NULL;
+         ActorPtr oldParent;
+         ActorPtr newParent = itemParent->GetActor();
+         ActorPtr actor;
 
+         // One or more items may have been inserted for this parent.
+         // Attach all actors to the parent that are associated with the child items.
          int childCount = itemParent->childCount();
          for (int i = start; i <= end && i < childCount; ++i)
          {
             ActorTreeItem* item = (ActorTreeItem*)itemParent->child(i);
-            actor = item == NULL ? NULL : item->GetGameActor();
+            actor = item == NULL ? NULL : item->GetActor();
 
-            // HACK:
-            printf("\t\tItem: %s\n", (actor==NULL?"":actor->GetName().c_str()));
-            /*if (actor != NULL && actor->GetParent() != actorParent)
+            dtCore::ActorComponentContainer* gameActor = dynamic_cast<dtCore::ActorComponentContainer*>(actor.get());
+            if (gameActor != NULL)
             {
-               actor->SetParent(actorParent);
-            }*/
+               oldParent = gameActor->GetParentActor();
+            }
+
+            // DEBUG:
+            printf("\t\tItem: %s\n", ( ! actor.valid()?"":actor->GetName().c_str()));
+
+            // Notify the system that the actor hierarchy has changed.
+            emit SignalActorAttach(actor, oldParent, newParent);
+         }
+      }
+      else // Detach because parent is NULL
+      {
+         // Get the root items of the widget.
+         int itemCount = topLevelItemCount();
+         dtCore::RefPtr<dtGame::GameActorProxy> actor;
+         for (int i = start; i <= end && i < itemCount; ++i)
+         {
+            ActorTreeItem* item = (ActorTreeItem*)topLevelItem(i);
+            actor = item == NULL ? NULL : item->GetGameActor();
+         
+            if (actor != NULL)
+            {
+               dtCore::BaseActorObject* oldParent = actor->GetParentActor();
+               if (oldParent != NULL)
+               {
+                  emit SignalActorDetach(actor, oldParent);
+               }
+            }
          }
       }
    }
@@ -406,7 +451,7 @@ namespace dtQt
       //BaseClass::dropMimeData(parent, index, data, action);
 
       // TODO:
-      printf("\n\tDROP - %d\n", currentItem());
+      //printf("\n\tDROP - %d\n", currentItem());
 
       return false;
    }

@@ -34,17 +34,18 @@
 #include <vector>
 
 // TODO: Remove these typedefs that have "Proxy" and "Ref" in the name.
-typedef dtCore::RefPtr<dtCore::BaseActorObject> ActorProxyRefPtr;
-typedef std::vector<ActorProxyRefPtr> ActorRefPtrVector;
-typedef dtCore::RefPtr<dtCore::ActorProperty> ActorPropertyRefPtr;
-
+// Actor Pointers
 typedef dtCore::RefPtr<dtCore::BaseActorObject> ActorPtr;
+typedef dtCore::RefPtr<dtCore::BaseActorObject> ActorRefPtr;
+typedef dtCore::RefPtr<dtCore::BaseActorObject> ActorProxyRefPtr;
 typedef dtCore::ObserverPtr<dtCore::BaseActorObject> ActorWeakPtr;
-
+// Actor Pointer Vectors
 typedef std::vector<ActorPtr> ActorPtrVector;
+typedef std::vector<ActorRefPtr> ActorRefPtrVector;
 typedef std::vector<ActorWeakPtr> ActorWeakPtrVector;
-
+// Property Pointers
 typedef dtCore::RefPtr<dtCore::ActorProperty> ActorPropertyPtr;
+typedef dtCore::RefPtr<dtCore::ActorProperty> ActorPropertyRefPtr;
 typedef dtCore::ObserverPtr<dtCore::ActorProperty> ActorPropertyWeakPtr;
 
 //allows storage in a QVariant
