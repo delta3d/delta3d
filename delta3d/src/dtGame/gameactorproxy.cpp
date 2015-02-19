@@ -150,6 +150,8 @@ namespace dtGame
       {
          // Removed them all by hand because they need a callback.
          RemoveAllComponents();
+
+         DetachChildActors();
       }
       catch (const dtUtil::Exception& ex)
       {
@@ -218,7 +220,7 @@ namespace dtGame
       if (gameActor != NULL)
       {
          // Clone actor components that may not have been built by default.
-         // The actor components on this actor could hav been added dynamically
+         // The actor components on this actor could have been added dynamically
          // and thus would not have been created by the CreateActor method.
          ActorComponentVector comps;
          GetAllComponents(comps);
@@ -286,6 +288,12 @@ namespace dtGame
          if (parentActorTree != NULL)
          {
             parentActorTree->insert_subtree(this, NULL);
+
+            // Attach this actor's drawable to the parent drawable if one exists.
+            if (parentActorTree->GetDrawable() != NULL)
+            {
+               AttachParentDrawable(*parentActorTree);
+            }
          }
          else
          {
@@ -300,6 +308,12 @@ namespace dtGame
 
          if (parentActorTree != NULL)
          {
+            // Detach this actor's drawable from the parent drawable if one exists.
+            if (parentActorTree->GetDrawable() != NULL)
+            {
+               DetachParentDrawable(*parentActorTree);
+            }
+
             parentActorTree->remove_subtree(this);
          }
       }
@@ -331,6 +345,108 @@ namespace dtGame
       {
          RemoveProperty((*i)->GetName());
       }
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   unsigned GameActorProxy::DetachChildActors()
+   {
+      unsigned count = 0;
+
+      dtCore::BaseActorObject* baseActor = NULL;
+      dtGame::GameActorProxy* actor = NULL;
+
+      // Use counter variable to make sure the following while loop
+      // does not get stuck if something is wrong with the tree.
+      unsigned i = 0;
+      unsigned childCount = degree();
+
+      // NOTE: Use a while loop here since the end iterator will
+      // change when a child actor is removed. This loop will keep
+      // going until all children are successfully removed.
+      while (first_child() != NULL && i < childCount)
+      {
+         baseActor = first_child();
+         actor = dynamic_cast<dtGame::GameActorProxy*>(baseActor);
+
+         if (actor != NULL)
+         {
+            actor->SetParentActor(NULL);
+
+            ++count;
+         }
+         // Something is wrong...
+         else
+         {
+            if (baseActor != NULL)
+            {
+               LOG_ERROR("Actor \"" + GetName() + "\" (" + GetActorType().GetName()
+                  + ") could not remove child actor \""
+                  + baseActor->GetName() + "\" (" + baseActor->GetActorType().GetName()
+                  + ") because it could not be cast to a GameActor.");
+            }
+            else
+            {
+               LOG_ERROR("Actor \"" + GetName() + "\" (" + GetActorType().GetName()
+                  + ") could not remove child actor because it is a NULL reference.");
+            }
+         }
+
+         // Keep track of the number of loops completed.
+         ++i;
+      }
+
+      return count;
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   bool GameActorProxy::AttachParentDrawable(dtGame::GameActorProxy& parent, int index)
+   {
+      bool success = false;
+
+      dtCore::DeltaDrawable* parentDrawable = parent.GetDrawable();
+      dtCore::DeltaDrawable* drawable = GetDrawable();
+
+      if (parentDrawable != NULL && drawable != NULL)
+      {
+         drawable->Emancipate();
+
+         success = parentDrawable->AddChild(drawable);
+      }
+      else
+      {
+         LOG_WARNING("Could not attach actor drawable \"" + GetName()
+            + "\" (" + GetActorType().GetName()
+            + ") to parent actor \"" + parent.GetName()
+            + "\" (" + parent.GetActorType().GetName()
+            + ") because the parent actor's drawable could not be cast to a group node.");
+      }
+
+      return success;
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   bool GameActorProxy::DetachParentDrawable(dtGame::GameActorProxy& parent)
+   {
+      bool success = false;
+
+      dtCore::DeltaDrawable* parentDrawable = parent.GetDrawable();
+      dtCore::DeltaDrawable* drawable = GetDrawable();
+
+      if (parentDrawable != NULL && drawable != NULL)
+      {
+         drawable->Emancipate();
+         success = true;
+      }
+      else
+      {
+         LOG_WARNING("Could not detach actor drawable \"" + GetName()
+            + "\" (" + GetActorType().GetName()
+            + ") from parent actor \"" + parent.GetName()
+            + "\" (" + parent.GetActorType().GetName()
+            + ") because the parent actor's drawable could not be cast to a group node.");
+      }
+
+      return success;
    }
 
    /////////////////////////////////////////////////////////////////////////////

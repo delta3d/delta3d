@@ -670,6 +670,11 @@ namespace dtGame
       // TEMP:
       void RemoveActorComponentProperties();
 
+      /**
+       * Removes child actors that are attached directly to this actor.
+       */
+      unsigned DetachChildActors();
+
    protected:
       /// Destructor
       virtual ~GameActorProxy();
@@ -704,6 +709,21 @@ namespace dtGame
        * @see dtGame::GameActorProxy::LocalActorUpdatePolicy::ACCEPT_WITH_PROPERTY_FILTER
        */
       void RemovePropertyFromLocalUpdateAcceptFilter(const dtUtil::RefString& propName);
+
+      /**
+       * Temporary convenience method for attaching this actor's drawable to the parent actor's drawable.
+       * @param parent Actor with a drawable to attach this actor's drawable to.
+       * @param index Index at which to insert the drawable as a child relative to the order of other child drawables.
+       * @return TRUE if the drawable was successfully attached.
+       */
+      bool AttachParentDrawable(dtGame::GameActorProxy& parent, int index = -1);
+
+      /**
+       * Temporary convenience method for detaching this actor's drawable from the parent actor's drawable.
+       * @param parent Actor with a drawable to detach this actor's drawable from.
+       * @return TRUE if the drawable was successfully attached; FALSE if not found or opration failed.
+       */
+      bool DetachParentDrawable(dtGame::GameActorProxy& parent);
 
    private:
 

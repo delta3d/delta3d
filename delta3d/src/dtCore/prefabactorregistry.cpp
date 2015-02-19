@@ -108,19 +108,19 @@ namespace dtCore
             const PrefabActorType& prefType = dynamic_cast<const PrefabActorType&>(type);
             result = dtCore::Project::GetInstance().LoadPrefab(prefType);
          }
-         catch(const InvalidContextException& ex)
+         catch(const InvalidContextException&)
          {
             LOG_ERROR("The Prefab actor registry attempted to create a registered ActorType, but no project contexts are registered: " + type.GetFullName());
          }
-         catch(const dtUtil::FileNotFoundException& ex)
+         catch(const dtUtil::FileNotFoundException&)
          {
             LOG_ERROR("The Prefab actor registry attempted to create a registered ActorType, but the resource doesn't exist: " + type.GetFullName());
          }
-         catch(const MapParsingException& ex)
+         catch(const MapParsingException&)
          {
             LOG_ERROR("The Prefab actor registry attempted to create a registered ActorType, but the prefab resource failed to load: " + type.GetFullName());
          }
-         catch(std::bad_cast& ex)
+         catch(std::bad_cast&)
          {
             LOG_ERROR("The Prefab actor registry attempted to create a registered ActorType, but the type class appears to have been created incorrectly: " + type.GetFullName());
          }
