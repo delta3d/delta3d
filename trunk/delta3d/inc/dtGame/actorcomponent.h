@@ -61,7 +61,7 @@ namespace dtGame
       /**
        *  String used to identify component.
        */
-      typedef dtCore::RefPtr<const dtCore::ActorType> ACType;
+      typedef dtCore::ActorTypePtr ACType;
 
       ///b All derived actor component types must pass this or a descendant as a parent type.
       static const ACType BaseActorComponentType;
@@ -173,6 +173,11 @@ namespace dtGame
        * In the future, this should be called from library initialization behavior, like with Actors
        */
       virtual void Init(const dtCore::ActorType& actorType);
+
+      /// Temporary method to determine if this object (handled as a BaseActorObject)
+      /// is a descendant of ActorComponent.
+      /// Remove this method when ActorComponent has been promoted to dtCore.
+      virtual bool IsActorComponent() const { return true; }
 
    protected:
 

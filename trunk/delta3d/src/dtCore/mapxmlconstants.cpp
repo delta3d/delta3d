@@ -65,6 +65,7 @@ namespace dtCore
 
    XMLCh* MapXMLConstants::HEADER_ELEMENT = NULL;
    XMLCh* MapXMLConstants::NAME_ELEMENT = NULL;
+   XMLCh* MapXMLConstants::PREFAB_ACTOR_TYPE_ELEMENT = NULL;
    XMLCh* MapXMLConstants::DESCRIPTION_ELEMENT = NULL;
    XMLCh* MapXMLConstants::AUTHOR_ELEMENT = NULL;
    XMLCh* MapXMLConstants::COMMENT_ELEMENT = NULL;
@@ -126,7 +127,9 @@ namespace dtCore
    XMLCh* MapXMLConstants::ACTOR_TYPE_ELEMENT = NULL;
    XMLCh* MapXMLConstants::ACTOR_ID_ELEMENT = NULL;
    XMLCh* MapXMLConstants::ACTOR_NAME_ELEMENT = NULL;
+   XMLCh* MapXMLConstants::ACTOR_PARENT_ID_ELEMENT = NULL;
    XMLCh* MapXMLConstants::ACTOR_ENVIRONMENT_ACTOR_ELEMENT = NULL;
+   XMLCh* MapXMLConstants::ACTOR_COMPONENTS_ELEMENT = NULL;
 
    XMLCh* MapXMLConstants::ACTOR_PROPERTY_ELEMENT = NULL;
    XMLCh* MapXMLConstants::ACTOR_PROPERTY_NAME_ELEMENT = NULL;
@@ -218,6 +221,7 @@ namespace dtCore
 
       HEADER_ELEMENT = xercesc::XMLString::transcode("header");
       NAME_ELEMENT = xercesc::XMLString::transcode("name");
+      PREFAB_ACTOR_TYPE_ELEMENT = xercesc::XMLString::transcode("name");
       DESCRIPTION_ELEMENT = xercesc::XMLString::transcode("description");
       AUTHOR_ELEMENT = xercesc::XMLString::transcode("author");
       COMMENT_ELEMENT = xercesc::XMLString::transcode("comment");
@@ -279,7 +283,9 @@ namespace dtCore
       ACTOR_TYPE_ELEMENT = xercesc::XMLString::transcode("type");
       ACTOR_ID_ELEMENT = xercesc::XMLString::transcode("id");
       ACTOR_NAME_ELEMENT = xercesc::XMLString::transcode("name");
+      ACTOR_PARENT_ID_ELEMENT = xercesc::XMLString::transcode("parentId");
       ACTOR_ENVIRONMENT_ACTOR_ELEMENT = xercesc::XMLString::transcode("environmentActor");
+      ACTOR_COMPONENTS_ELEMENT = xercesc::XMLString::transcode("actorComponents");
 
       ACTOR_PROPERTY_ELEMENT = xercesc::XMLString::transcode("property");
       ACTOR_PROPERTY_NAME_ELEMENT = xercesc::XMLString::transcode("name");
@@ -417,7 +423,9 @@ namespace dtCore
       xercesc::XMLString::release(&ACTOR_TYPE_ELEMENT);
       xercesc::XMLString::release(&ACTOR_ID_ELEMENT);
       xercesc::XMLString::release(&ACTOR_NAME_ELEMENT);
+      xercesc::XMLString::release(&ACTOR_PARENT_ID_ELEMENT);
       xercesc::XMLString::release(&ACTOR_ENVIRONMENT_ACTOR_ELEMENT);
+      xercesc::XMLString::release(&ACTOR_COMPONENTS_ELEMENT);
 
       xercesc::XMLString::release(&ACTOR_PROPERTY_ELEMENT);
       xercesc::XMLString::release(&ACTOR_PROPERTY_NAME_ELEMENT);

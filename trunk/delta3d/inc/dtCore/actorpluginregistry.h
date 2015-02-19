@@ -117,7 +117,7 @@ namespace dtCore
          /**
           * Gets a list of actor types that this registry supports.
           */
-         void GetSupportedActorTypes(std::vector<dtCore::RefPtr<const ActorType> >& actors);
+         virtual void GetSupportedActorTypes(std::vector<dtCore::RefPtr<const ActorType> >& actors);
 
          /** 
            * Container of <old, new> ActorType names.  First entry is the full name of the
@@ -141,13 +141,13 @@ namespace dtCore
           * @param type The type to check support for.
           * @return True if supported, false otherwise.
           */
-         bool IsActorTypeSupported(const ActorType& type) const;
+         virtual bool IsActorTypeSupported(const ActorType& type) const;
 
          /**
           * Finds the actor type for the given name and category
           * @return the actor type found or NULL if not found.
           */
-         const ActorType* GetActorType(const std::string& category, const std::string& name) const;
+         virtual const ActorType* GetActorType(const std::string& category, const std::string& name) const;
 
          /**
           * Creates a new actor object based on the ActorType given.
@@ -159,9 +159,11 @@ namespace dtCore
           */
          virtual dtCore::RefPtr<BaseActorObject> CreateActor(const ActorType& type);
 
-      protected:
+      private:
          std::string mName;
          std::string mDescription;
+
+      protected:
 
          /**
           * Factory object which stores the actor types and knows how to

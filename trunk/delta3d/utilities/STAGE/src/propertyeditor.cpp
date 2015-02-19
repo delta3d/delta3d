@@ -55,7 +55,7 @@
 #include <dtQt/propertyeditortreeview.h>
 
 #include <dtUtil/log.h>
-#include <dtUtil/tree.h>
+#include <dtUtil/utiltree.h>
 
 #include <QtCore/QStringList>
 #include <QtGui/QAction>
@@ -184,7 +184,7 @@ namespace dtEditQt
       //}
 
       std::vector<dtCore::ActorProperty*> propList;
-      proxy->GetPropertyList(propList);
+      GetNestedPropertyList(*proxy, propList);
 
       ViewportManager::GetInstance().emitModifyPropList(*proxy, propList);
 

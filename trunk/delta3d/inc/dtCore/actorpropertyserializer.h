@@ -65,6 +65,7 @@ namespace dtCore
       bool mHasDeprecatedProperty;
       bool mInActorProperty;
       bool mInGroupProperty;
+      bool mInActorComponents;
 
       // To handle the nesting of arrays and containers, each nested
       // type is pushed into an array.
@@ -126,6 +127,12 @@ namespace dtCore
       /// Sets the property container to work on.  This will be set the current one on the internal stack.
       void SetCurrentPropertyContainer(dtCore::PropertyContainer* pc);
       bool HasPropertyContainer();
+
+      void PushPropertyContainer(dtCore::PropertyContainer& pc);
+      dtCore::PropertyContainer* PopPropertyContainer();
+      int GetPropertyContainerStackSize() const;
+
+      int ClearPropertyContainerStack();
 
       /**
        * Resets the serializer.
@@ -291,7 +298,10 @@ namespace dtCore
 
       //data for actor linking is not completely available until all actors have been created, so it
       //is stored until the end.
-      std::multimap<dtCore::PropertyContainer*, std::pair<std::string, dtCore::UniqueId> > mActorLinking;
+      typedef dtCore::RefPtr<dtCore::PropertyContainer> PropContainerPtr;
+      typedef std::pair<std::string, dtCore::UniqueId> NameIdPair;
+      typedef std::multimap<PropContainerPtr, NameIdPair> PropContainerToNameIdMultimap;
+      PropContainerToNameIdMultimap mActorLinking;
 
       osg::Vec4 mVecBeingParsed;
    };

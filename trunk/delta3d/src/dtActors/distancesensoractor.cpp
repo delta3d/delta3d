@@ -116,7 +116,7 @@ namespace dtActors
       BaseClass::OnEnteredWorld();
       if (GetAttachToActor() != NULL)
       {
-         if (GetParent() != NULL)
+         if (DeltaDrawable::GetParent() != NULL)
          {
             Emancipate();
          }

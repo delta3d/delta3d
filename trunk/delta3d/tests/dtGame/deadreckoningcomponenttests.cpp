@@ -190,6 +190,7 @@ namespace dtGame
 
          void TestDeadReckoningActorComponentDefaults()
          {
+            mGM->AddActor(*mTestGameActor, false, false);
             dtCore::RefPtr<DeadReckoningActorComponent> helper = new DeadReckoningActorComponent;
             CPPUNIT_ASSERT_MESSAGE("Updated flag should default to false", !helper->IsUpdated());
             CPPUNIT_ASSERT_MESSAGE("Updated flag should default to false", !helper->IsUpdated());
@@ -231,6 +232,7 @@ namespace dtGame
             CPPUNIT_ASSERT(prop->GetSendInPartialUpdate());
 
             mTestGameActor->AddComponent(*helper);
+            CPPUNIT_ASSERT(mTestGameActor->GetProperty(dtGame::DeadReckoningActorComponent::PROPERTY_LAST_KNOWN_ROTATION) != NULL);
 
             prop = mTestGameActor->GetProperty(dtCore::TransformableActorProxy::PROPERTY_ROTATION);
             CPPUNIT_ASSERT(prop != NULL);
@@ -254,6 +256,7 @@ namespace dtGame
             CPPUNIT_ASSERT(std::find(names.begin(), names.end(), dtGame::DeadReckoningActorComponent::PROPERTY_DEAD_RECKONING_ALGORITHM) != names.end());
 
             mTestGameActor->RemoveComponent(*helper);
+            CPPUNIT_ASSERT(mTestGameActor->GetProperty(dtGame::DeadReckoningActorComponent::PROPERTY_LAST_KNOWN_ROTATION) == NULL);
             prop = mTestGameActor->GetProperty(dtCore::TransformableActorProxy::PROPERTY_ROTATION);
             CPPUNIT_ASSERT(prop != NULL);
             CPPUNIT_ASSERT(prop->GetSendInFullUpdate());

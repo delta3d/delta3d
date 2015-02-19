@@ -37,6 +37,7 @@ namespace dtExample
       public:
          typedef dtCore::ActorPluginRegistry BaseClass;
 
+         static dtCore::RefPtr<dtCore::ActorType> EMPTY_ACTOR_TYPE;
          static dtCore::RefPtr<dtCore::ActorType> TERRAIN_ACTOR_TYPE;
          static dtCore::RefPtr<dtCore::ActorType> CIVILIAN_ACTOR_TYPE;
          static dtCore::RefPtr<dtCore::ActorType> FIREWORK_ACTOR_TYPE;

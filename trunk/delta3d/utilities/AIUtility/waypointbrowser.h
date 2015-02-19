@@ -27,7 +27,7 @@
 #include <QtGui/QDockWidget>
 #include <dtCore/transform.h>
 #include <dtCore/objecttype.h>
-#include <dtUtil/tree.h>
+#include <dtUtil/utiltree.h>
 
 /// @cond DOXYGEN_SHOULD_SKIP_THIS
 namespace dtAI

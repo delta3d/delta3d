@@ -361,8 +361,8 @@ namespace dtAI
                      ds.Write(numChildren);
 
                      //write child id's
-                     WaypointCollection::WaypointTree::child_iterator childWpIter = wc->begin_child();
-                     WaypointCollection::WaypointTree::child_iterator childWpIterEnd = wc->end_child();
+                     WaypointTree::child_iterator childWpIter = wc->begin_child();
+                     WaypointTree::child_iterator childWpIterEnd = wc->end_child();
                      for(; childWpIter != childWpIterEnd; ++childWpIter)
                      {
                         WaypointID id = childWpIter->value->GetID();
@@ -453,8 +453,8 @@ namespace dtAI
       {
          WaypointCollection* wc = wpGraph.FindCollection((*iter)->GetID());
 
-         WaypointCollection::WaypointTree::const_child_iterator children = wc->begin_child();
-         WaypointCollection::WaypointTree::const_child_iterator childrenEnd = wc->end_child();
+         WaypointTree::const_child_iterator children = wc->begin_child();
+         WaypointTree::const_child_iterator childrenEnd = wc->end_child();
 
          for(; children != childrenEnd; ++children)
          {

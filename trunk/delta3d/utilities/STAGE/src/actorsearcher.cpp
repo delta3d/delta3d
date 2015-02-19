@@ -45,7 +45,7 @@
 #include <dtCore/actortype.h>
 #include <dtCore/actorfactory.h>
 #include <dtCore/map.h>
-
+#include <dtGame/actorcomponent.h>
 #include <dtUtil/log.h>
 
 #include <dtEditQt/actorsearcher.h>
@@ -271,7 +271,10 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    void ActorSearcher::searchPressed()
    {
-      std::vector< dtCore::RefPtr<dtCore::BaseActorObject> > foundProxies;
+      typedef std::vector< dtCore::RefPtr<dtCore::BaseActorObject> > ActorArray;
+      ActorArray foundActors;
+      ActorArray validActors;
+
       dtCore::Map* map = EditorData::GetInstance().getCurrentMap();
       if (map == NULL)
       {
@@ -300,6 +303,25 @@ namespace dtEditQt
          searchClass = "";
       }
 
+      // Search
+      map->FindProxies(foundActors, searchName.toStdString(), searchCategory.toStdString(),
+         searchType.toStdString(), searchClass.toStdString(), dtCore::Map::Either);
+
+      // Remove actor components.
+      dtGame::ActorComponent* comp = NULL;
+      ActorArray::iterator curIter = foundActors.begin();
+      ActorArray::iterator endIter = foundActors.end();
+      for (; curIter != endIter; ++curIter)
+      {
+         comp = dynamic_cast<dtGame::ActorComponent*>(curIter->get());
+
+         // Only allow actors not actor components directly.
+         if (comp == NULL)
+         {
+            validActors.push_back(curIter->get());
+         }
+      }
+
       QClipboard* clipboard = QApplication::clipboard();
       if (!searchName.isEmpty())
       {
@@ -310,14 +332,10 @@ namespace dtEditQt
          clipboard->setText(searchType);
       }
 
-      // search
-      map->FindProxies(foundProxies, searchName.toStdString(), searchCategory.toStdString(),
-         searchType.toStdString(), searchClass.toStdString(), dtCore::Map::Either);
-
-      // empty out our table before we add stuff
+      // Empty out the table before adding items.
       mResultsTable->clearAll();
       mResultsTable->setUpdatesEnabled(false);
-      mResultsTable->addProxies(foundProxies);
+      mResultsTable->addProxies(validActors);
       mResultsTable->setUpdatesEnabled(true);
       //showResults(foundProxies);
 

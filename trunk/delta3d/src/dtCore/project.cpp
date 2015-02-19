@@ -109,7 +109,7 @@ namespace dtCore
       dtCore::Project::MapTreeData mMapTree;
 
       std::map<std::string, dtCore::RefPtr<Map> > mOpenMaps; //< A vector of the maps currently loaded.
-      mutable dtUtil::tree<ResourceTreeNode> mResources; //< a tree of all the resources.  This is more of a cache.
+      mutable Project::ResourceTree mResources; //< a tree of all the resources.  This is more of a cache.
 
       dtCore::RefPtr<MapParser> mParser;
 
@@ -141,7 +141,7 @@ namespace dtCore
       void UnloadUnusedLibraries(Map& mapToClose);
 
       //internal method to get the pointer to the subtree for a given datatype.
-      dtUtil::tree<ResourceTreeNode>& GetResourcesOfType(const DataType& datatype) const;
+      Project::ResourceTree& GetResourcesOfType(const DataType& datatype) const;
       //Checks to see if a map is actually one the current project knows about.
       Project::ContextSlot CheckMapValidity(const Map& map, bool allowReadonly = false) const;
       //re-reads the map names from project.
@@ -151,7 +151,7 @@ namespace dtCore
       //recursive helper method for the other indexResources
       //The category AND the categoryPath are passed so that
       //they won't have to be converted on every recursive call.
-      void IndexResources(dtUtil::FileUtils& fileUtils, dtUtil::tree<ResourceTreeNode>::iterator& i,
+      void IndexResources(dtUtil::FileUtils& fileUtils, Project::ResourceTree::iterator& i,
                const DataType& dt, const std::string& categoryPath,const std::string& category) const;
 
       //Gets the list of backup map files.
@@ -163,7 +163,7 @@ namespace dtCore
 
       //searches the resource tree for a category node and returns
       //an iterator to it or resources.end() if not found.
-      dtUtil::tree<ResourceTreeNode>::iterator FindTreeNodeFromCategory(
+      Project::ResourceTree::iterator FindTreeNodeFromCategory(
                const DataType* dt, const std::string& category) const;
 
 
@@ -177,8 +177,8 @@ namespace dtCore
       static const std::string EMPTY_STRING;
 
       //Later
-      /*    dtUtil::tree<ResourceTreeNode>* getMatchingBranch(
-         dtUtil::tree<ResourceTreeNode>::iterator level,
+      /*    Project::ResourceTree* getMatchingBranch(
+         Project::ResourceTree::iterator level,
          const DataType& type,
          const std::string& partialName,
          const std::string& extension) const;*/
@@ -1049,6 +1049,20 @@ namespace dtCore
 
       return *map;
 
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   dtCore::RefPtr<BaseActorObject> Project::LoadPrefab(const dtCore::PrefabActorType& actorType)
+   {
+      if (!IsContextValid())
+      {
+         throw dtCore::ProjectInvalidContextException(
+         std::string("The context is not valid."), __FILE__, __LINE__);
+      }
+      std::string fullPath = GetResourcePath(actorType.GetPrefabResource());
+
+      return NULL;
+      //return mImpl->InternalLoadPrefab(fullPath, actorType);
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -2156,8 +2170,8 @@ namespace dtCore
       for (; i != iend; ++i)
       {
          dtUtil::DirectoryPush dt(*i);
-         dtUtil::tree<ResourceTreeNode>* categoryInTree;
-         dtUtil::tree<ResourceTreeNode>* dataTypeTree = NULL;
+         Project::ResourceTree* categoryInTree;
+         Project::ResourceTree* dataTypeTree = NULL;
 
          if (mImpl->mResourcesIndexed)
          {
@@ -2216,7 +2230,7 @@ namespace dtCore
       for (; i != iend; ++i)
       {
          dtUtil::DirectoryPush dp(*i);
-         dtUtil::tree<ResourceTreeNode>* dataTypeTree = NULL;
+         Project::ResourceTree* dataTypeTree = NULL;
          if (mImpl->mResourcesIndexed)
          {
             dataTypeTree = &mImpl->GetResourcesOfType(type);
@@ -2230,7 +2244,7 @@ namespace dtCore
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   const dtUtil::tree<ResourceTreeNode>& Project::GetAllResources() const
+   const Project::ResourceTree& Project::GetAllResources() const
    {
       if (!mImpl->mResourcesIndexed)
       {
@@ -2269,7 +2283,7 @@ namespace dtCore
 
       dtUtil::DirectoryPush dp(mImpl->mContexts[slot]);
       ResourceDescriptor result;
-      dtUtil::tree<ResourceTreeNode>* dataTypeTree = NULL;
+      Project::ResourceTree* dataTypeTree = NULL;
       if (mImpl->mResourcesIndexed)
          dataTypeTree = &mImpl->GetResourcesOfType(type);
 
@@ -2304,7 +2318,7 @@ namespace dtCore
       for (ContextSlot i = first; i < last; ++i)
       {
          dtUtil::DirectoryPush dp(mImpl->mContexts[i]);
-         dtUtil::tree<ResourceTreeNode>* resourceTree = NULL;
+         Project::ResourceTree* resourceTree = NULL;
          if (mImpl->mResourcesIndexed)
          {
             resourceTree = &mImpl->mResources;
@@ -2335,7 +2349,7 @@ namespace dtCore
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   dtUtil::tree<ResourceTreeNode>& ProjectImpl::GetResourcesOfType(const DataType& dataType) const
+   Project::ResourceTree& ProjectImpl::GetResourcesOfType(const DataType& dataType) const
    {
       if (!mResourcesIndexed)
       {
@@ -2343,7 +2357,7 @@ namespace dtCore
       }
 
       ResourceTreeNode tr(dataType.GetName(), "", NULL, 0);
-      dtUtil::tree<ResourceTreeNode>::iterator it = mResources.find(tr);
+      Project::ResourceTree::iterator it = mResources.find(tr);
 
       if (it  == mResources.end())
       {
@@ -2358,7 +2372,7 @@ namespace dtCore
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void Project::GetResourcesOfType(const DataType& type, dtUtil::tree<ResourceTreeNode>& toFill) const
+   void Project::GetResourcesOfType(const DataType& type, Project::ResourceTree& toFill) const
    {
       if (!IsContextValid())
       {
@@ -2376,42 +2390,42 @@ namespace dtCore
 
    }
 
-//     void Project::findmResources(dtUtil::tree<ResourceTreeNode> toFill,
+//     void Project::findmResources(Project::ResourceTree toFill,
 //         const DataType& type,
 //         const std::string& partialName,
 //         const std::string& extension) const {
 //
 //         toFill.clear();
 //
-//         dtUtil::tree<ResourceTreeNode>::const_iterator it = mResources.begin();
+//         Project::ResourceTree::const_iterator it = mResources.begin();
 //         for (; it != mResources.end(); ++it) {
 //             if (it->isCategory() && it->getNodeText() == type.getName()) {
 //
-//                 dtUtil::tree<ResourceTreeNode>* matchingBranch = getMatchingBranch(it.in(), type, partialName, extension);
+//                 Project::ResourceTree* matchingBranch = getMatchingBranch(it.in(), type, partialName, extension);
 //
-//                 //dtUtil::tree<ResourceTreeNode>*
+//                 //Project::ResourceTree*
 //             }
 //         }
 //     }
 
 
 //Later
-/*    dtUtil::tree<ResourceTreeNode>* Project::getMatchingBranch(
-      dtUtil::tree<ResourceTreeNode>::const_iterator level,
+/*    Project::ResourceTree* Project::getMatchingBranch(
+      Project::ResourceTree::const_iterator level,
       const DataType& type,
       const std::string& partialName,
       const std::string& extension) const {
 
-      dtUtil::tree<ResourceTreeNode>::iterator it = level;
+      Project::ResourceTree::iterator it = level;
       for (; it != mResources.end(); ++it) {
       if (it->isCategory() && it->getNodeText() == type.getName()) {
 
-      dtUtil::tree<ResourceTreeNode>* matchingBranch = getMatchingBranch(it.in(), type, partialName, extension);
+      Project::ResourceTree* matchingBranch = getMatchingBranch(it.in(), type, partialName, extension);
 
 
       } else if ((extension != "" && it->getResource().getExtension() == extension) &&
       (partialName != "" && it->getResource().getResourceName().find(partialName) < std::string::npos) ){
-      dtUtil::tree<ResourceTreeNode>* node = new dtUtil::tree<ResourceTreeNode>;
+      Project::ResourceTree* node = new Project::ResourceTree;
       node->data(*it);
       return node;
       }

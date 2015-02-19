@@ -367,6 +367,10 @@ namespace dtCore
       const BaseActorObject* GetPrototype() const;
       void SetPrototype(BaseActorObject* proto);
 
+      /// Temporary method to determine if this object is a descendant of ActorComponent.
+      /// Remove this method when ActorComponent has been promoted to dtCore.
+      virtual bool IsActorComponent() const { return false; }
+
    protected:
 
       /**
@@ -433,6 +437,7 @@ namespace dtCore
 
    };
 
+   typedef dtCore::RefPtr<BaseActorObject> ActorPtr;
    typedef std::vector<BaseActorObject*> ActorPtrVector;
    typedef std::vector<RefPtr<BaseActorObject> > ActorRefPtrVector;
 }

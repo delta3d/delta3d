@@ -58,6 +58,8 @@ namespace dtAI
    public:
       typedef WaypointInterface BaseClass;
 
+      DT_DECLARE_VIRTUAL_REF_INTERFACE_INLINE
+
    public:
       NamedWaypoint();
       NamedWaypoint(const osg::Vec3& pos);
@@ -76,7 +78,7 @@ namespace dtAI
 
       /*virtual*/ void CreateProperties(WaypointPropertyBase& container);
 
-      virtual void ref() const
+      /*virtual void ref() const
       {
          osg::Referenced::ref();
       }
@@ -84,7 +86,7 @@ namespace dtAI
       virtual void unref() const
       {
          osg::Referenced::unref();
-      }
+      }*/
 
    protected:
       // these allow derivatives of named waypoint to pass in their derivated object type

@@ -34,7 +34,7 @@
 
 #include <dtUtil/datetime.h>
 #include <dtUtil/stringutils.h>
-#include <dtUtil/tree.h>
+#include <dtUtil/utiltree.h>
 #include <dtUtil/log.h>
 #include <dtUtil/exception.h>
 #include <dtUtil/datetime.h>
@@ -118,9 +118,9 @@ class ProjectTests : public CPPUNIT_NS::TestFixture
 // Registers the fixture into the 'registry'
 CPPUNIT_TEST_SUITE_REGISTRATION(ProjectTests);
 
-const std::string DATA_DIR = dtUtil::GetDeltaRootPath() + dtUtil::FileUtils::PATH_SEPARATOR+"examples/data";
-const std::string TESTS_DIR = dtUtil::GetDeltaRootPath() + dtUtil::FileUtils::PATH_SEPARATOR+"tests";
-const std::string MAPPROJECTCONTEXT = TESTS_DIR + dtUtil::FileUtils::PATH_SEPARATOR + "dtCore" + dtUtil::FileUtils::PATH_SEPARATOR + "WorkingMapProject";
+static const std::string DATA_DIR = dtUtil::GetDeltaRootPath() + dtUtil::FileUtils::PATH_SEPARATOR+"examples/data";
+static const std::string TESTS_DIR = dtUtil::GetDeltaRootPath() + dtUtil::FileUtils::PATH_SEPARATOR+"tests";
+static const std::string MAPPROJECTCONTEXT = TESTS_DIR + dtUtil::FileUtils::PATH_SEPARATOR + "dtCore" + dtUtil::FileUtils::PATH_SEPARATOR + "WorkingMapProject";
 
 
 void ProjectTests::setUp()

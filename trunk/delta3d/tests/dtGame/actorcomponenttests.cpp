@@ -46,6 +46,7 @@
 #include <dtCore/intactorproperty.h>
 #include <dtCore/project.h>
 #include <dtCore/resourcedescriptor.h>
+#include <dtCore/stringactorproperty.h>
 
 #include <dtGame/gameactorproxy.h>
 #include <dtGame/gamemanager.h>
@@ -55,6 +56,7 @@
 #include <dtGame/messagefactory.h>
 #include <dtGame/messageparameter.h>
 #include <dtGame/messagetype.h>
+#include <dtGame/shaderactorcomponent.h>
 
 #include <dtUtil/datapathutils.h>
 #include <dtUtil/datastream.h>
@@ -68,6 +70,11 @@
 
 extern dtABC::Application& GetGlobalApplication();
 
+static const std::string TESTS_DIR = dtUtil::GetDeltaRootPath() + dtUtil::FileUtils::PATH_SEPARATOR+"tests";
+
+static const std::string PROJECT_CONTEXT = TESTS_DIR + dtUtil::FileUtils::PATH_SEPARATOR + "data" + dtUtil::FileUtils::PATH_SEPARATOR + "ProjectContext";
+
+
 class ActorComponentTests : public CPPUNIT_NS::TestFixture
 {
    CPPUNIT_TEST_SUITE(ActorComponentTests);
@@ -75,6 +82,10 @@ class ActorComponentTests : public CPPUNIT_NS::TestFixture
       CPPUNIT_TEST(TestAddActorComponent);
       CPPUNIT_TEST(TestActorComponentInitialized);
       CPPUNIT_TEST(TestGetAllActorComponents);
+      CPPUNIT_TEST(TestPropertyAdding);
+      CPPUNIT_TEST(TestPropertyRemoving);
+      CPPUNIT_TEST(TestCloning);
+      CPPUNIT_TEST(TestCopyPropertiesOnComponents);
 
    CPPUNIT_TEST_SUITE_END();
 
@@ -91,6 +102,7 @@ public:
          mManager = new dtGame::GameManager(*GetGlobalApplication().GetScene());
          mManager->SetApplication(GetGlobalApplication());
          mManager->LoadActorRegistry(mTestGameActorLibrary);
+         mManager->SetProjectContext(PROJECT_CONTEXT);
       }
       catch (const dtUtil::Exception& e)
       {
@@ -112,6 +124,18 @@ public:
          mManager->UnloadActorRegistry(mTestGameActorLibrary);
          mManager = NULL;
       }
+   }
+
+   void AddTestProperty(dtGame::ActorComponent& comp)
+   {
+      using namespace dtCore;
+
+      RefPtr<ActorProperty> prop = new StringActorProperty(
+         "TestProp", "TestProp",
+         StringActorProperty::SetFuncType(&comp, &dtGame::ActorComponent::SetName),
+         StringActorProperty::GetFuncType(&comp, &dtGame::ActorComponent::GetName));
+
+      comp.AddProperty(prop);
    }
 
    void TestAddActorComponent()
@@ -239,6 +263,132 @@ public:
       actor->GetAllComponents(components);
       CPPUNIT_ASSERT_EQUAL_MESSAGE("Actor didn't return back the number of added ActorComponents",
                                    startingSize + 2, components.size());
+   }
+
+   void TestPropertyAdding()
+   {
+      dtCore::RefPtr<dtGame::GameActorProxy> actor = 
+         dynamic_cast<dtGame::GameActorProxy*>
+         (mManager->CreateActor(*TestGameActorLibrary::TEST1_GAME_ACTOR_TYPE).get());
+      dtCore::RefPtr<TestActorComponent1> comp = new TestActorComponent1();
+      comp->BuildPropertyMap();
+
+      const std::string propName("TestProp");
+
+      CPPUNIT_ASSERT(comp->GetProperty(propName) == NULL);
+
+      AddTestProperty(*comp);
+
+      dtCore::ActorProperty* prop = comp->GetProperty(propName);
+      CPPUNIT_ASSERT(prop != NULL);
+      CPPUNIT_ASSERT(actor->GetProperty(propName) == NULL);
+
+      actor->AddComponent(*comp);
+
+      CPPUNIT_ASSERT(actor->GetProperty(propName) == NULL);
+
+      actor->InvokeEnteredWorld();
+    
+      CPPUNIT_ASSERT(actor->GetProperty(propName) == prop);
+   }
+
+   void TestPropertyRemoving()
+   {
+      dtCore::RefPtr<dtGame::GameActorProxy> actor = 
+         dynamic_cast<dtGame::GameActorProxy*>
+         (mManager->CreateActor(*TestGameActorLibrary::TEST1_GAME_ACTOR_TYPE).get());
+      dtCore::RefPtr<TestActorComponent1> comp = new TestActorComponent1();
+      comp->BuildPropertyMap();
+
+      const std::string propName("TestProp");
+      AddTestProperty(*comp);
+      actor->AddComponent(*comp);
+      actor->InvokeEnteredWorld();
+
+      dtCore::ActorProperty* prop = comp->GetProperty(propName);
+      CPPUNIT_ASSERT(prop != NULL);
+      CPPUNIT_ASSERT(actor->GetProperty(propName) == prop);
+
+      actor->RemoveActorComponentProperties();
+
+      CPPUNIT_ASSERT(comp->GetProperty(propName) == prop);
+      CPPUNIT_ASSERT(actor->GetProperty(propName) == NULL);
+   }
+
+   void TestCloning()
+   {
+      // Game actors should have a defaul shader
+      // component with a property of this name.
+      const std::string propName("CurrentShader");
+
+      dtCore::RefPtr<dtGame::GameActorProxy> actor;
+      mManager->CreateActor(*TestGameActorLibrary::TEST1_GAME_ACTOR_TYPE, actor);
+      dtGame::ShaderActorComponent* comp = actor->GetComponent<dtGame::ShaderActorComponent>();
+
+      dtCore::ActorProperty* prop = comp->GetProperty(propName);
+      CPPUNIT_ASSERT(prop != NULL);
+      CPPUNIT_ASSERT(actor->GetProperty(propName) == NULL);
+
+      // Ensure clone return valid references
+      dtCore::RefPtr<dtGame::GameActorProxy> cloneActor
+         = dynamic_cast<dtGame::GameActorProxy*>(actor->Clone().get());
+      CPPUNIT_ASSERT(cloneActor.valid());
+      dtGame::ShaderActorComponent* cloneComp = cloneActor->GetComponent<dtGame::ShaderActorComponent>();
+      CPPUNIT_ASSERT(cloneComp != NULL);
+      dtCore::ActorProperty* cloneProp = cloneComp->GetProperty(propName);
+      CPPUNIT_ASSERT(cloneProp != NULL);
+
+      // Determine reference distinction.
+      CPPUNIT_ASSERT(cloneActor != actor);
+      CPPUNIT_ASSERT(cloneComp != comp);
+      CPPUNIT_ASSERT(cloneProp != prop);
+
+      // Determine equality
+      CPPUNIT_ASSERT(cloneActor->GetName() == actor->GetName());
+      CPPUNIT_ASSERT(cloneActor->GetActorType() == actor->GetActorType());
+
+      CPPUNIT_ASSERT(cloneComp->GetName() == comp->GetName());
+      CPPUNIT_ASSERT(cloneComp->GetActorType() == comp->GetActorType());
+
+      CPPUNIT_ASSERT(cloneProp->GetName() == propName);
+      CPPUNIT_ASSERT(cloneProp->GetName() == prop->GetName());
+      CPPUNIT_ASSERT(cloneProp->GetValueString() == prop->GetValueString());
+
+      // Ensure the actor cannot access the component's property directly.
+      CPPUNIT_ASSERT(cloneActor->GetProperty(propName) == NULL);
+   }
+
+   void TestCopyPropertiesOnComponents()
+   {
+      // Game actors should have a defaul shader
+      // component with a property of this name.
+      const std::string propName("CurrentShader");
+
+      dtCore::RefPtr<dtGame::GameActorProxy> actor, actorCopyProp;
+      mManager->CreateActor(*TestGameActorLibrary::TEST1_GAME_ACTOR_TYPE, actor);
+      mManager->CreateActor(*TestGameActorLibrary::TEST1_GAME_ACTOR_TYPE, actorCopyProp);
+
+      dtCore::RefPtr<dtGame::ShaderActorComponent> extraComp, extraCompCopyProp;
+      mManager->CreateActor(*dtGame::ShaderActorComponent::TYPE, extraComp);
+      CPPUNIT_ASSERT(extraComp.valid());
+      mManager->CreateActor(*dtGame::ShaderActorComponent::TYPE, extraCompCopyProp);
+      CPPUNIT_ASSERT(extraCompCopyProp.valid());
+
+      actor->AddComponent(*extraComp);
+      actorCopyProp->AddComponent(*extraCompCopyProp);
+
+      dtGame::ShaderActorComponent* comp1 = actor->GetComponent<dtGame::ShaderActorComponent>();
+      CPPUNIT_ASSERT(comp1 != extraComp);
+      dtGame::ShaderActorComponent* comp1CopyProp = actorCopyProp->GetComponent<dtGame::ShaderActorComponent>();
+      CPPUNIT_ASSERT(comp1CopyProp != extraCompCopyProp);
+
+      comp1->GetProperty(propName)->FromString("Shaders:Chicken.dtShader");
+      extraComp->GetProperty(propName)->FromString("Shaders:Tofu.dtShader");
+
+      actorCopyProp->CopyPropertiesFrom(*actor);
+
+      CPPUNIT_ASSERT_EQUAL(comp1->GetProperty(propName)->ToString(), comp1CopyProp->GetProperty(propName)->ToString());
+      CPPUNIT_ASSERT_EQUAL(extraComp->GetProperty(propName)->ToString(), extraCompCopyProp->GetProperty(propName)->ToString());
    }
 
 private:

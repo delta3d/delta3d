@@ -44,6 +44,7 @@
 #include <dtEditQt/mainwindow.h>
 #include <dtEditQt/undomanager.h>
 #include <dtEditQt/viewportoverlay.h>
+#include <dtQt/basepropertyeditor.h>
 
 namespace dtEditQt
 {
@@ -531,7 +532,7 @@ namespace dtEditQt
             {
                dtCore::RefPtr<UndoPropertyData> undoProp = (*undoPropIter);
                // find the prop on the real actor
-               dtCore::ActorProperty* actorProp = proxy->GetProperty(undoProp->mPropertyName);
+               dtCore::ActorProperty* actorProp = dtQt::BasePropertyEditor::FindNestedProperty(*proxy, undoProp->mPropertyName);
 
                // put our value back
                if (actorProp != NULL && !actorProp->IsReadOnly())
@@ -583,7 +584,7 @@ namespace dtEditQt
       dtCore::RefPtr<UndoPropertyData> propData = event->mUndoPropData[0];
       if (propData.valid())
       {
-         dtCore::ActorProperty* property = proxy->GetProperty(propData->mPropertyName);
+         dtCore::ActorProperty* property = dtQt::BasePropertyEditor::FindNestedProperty(*proxy, propData->mPropertyName);
          if (property != NULL)
          {
             //std::string currentValue = property->ToString();
@@ -630,7 +631,7 @@ namespace dtEditQt
       undoEvent->mTypeCategory = proxy->GetActorType().GetCategory();
 
       // for each property, create a property data object and add it to our event's list.
-      proxy->GetPropertyList(propList);
+      dtQt::BasePropertyEditor::GetNestedPropertyList(*proxy, propList);
       for (propIter = propList.begin(); propIter != propList.end(); ++propIter)
       {
          curProp = (*propIter);

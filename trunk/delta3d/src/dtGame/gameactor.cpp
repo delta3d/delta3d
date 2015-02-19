@@ -175,6 +175,7 @@ namespace dtGame
       GetGameActorProxy().AddComponent(component);
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
    void GameActor::RemoveComponent(ActorComponent& component)
    {
       GetGameActorProxy().RemoveComponent(component);

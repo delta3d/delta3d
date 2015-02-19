@@ -197,7 +197,7 @@ namespace dtCore
          * @param registry The registry.
          * @return The name of the actor library.
          */
-         std::string GetLibraryNameForRegistry(ActorPluginRegistry* registry);
+         std::string GetLibraryNameForRegistry(const ActorPluginRegistry& registry) const;
 
          /**
           * Determines which platform we are running on and returns a

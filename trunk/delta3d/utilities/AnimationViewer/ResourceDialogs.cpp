@@ -194,7 +194,7 @@ void ResAddDialog::OnClickedFile()
          std::string resFile = dtCore::Project::GetInstance().GetResourcePath(modelData->GetResource());
          modelContext = osgDB::getFilePath(resFile);
       }
-      catch (const dtUtil::Exception& ex)
+      catch (const dtUtil::Exception&)
       {
          modelContext = ".";
       }

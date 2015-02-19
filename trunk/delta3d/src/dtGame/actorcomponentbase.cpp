@@ -34,6 +34,8 @@ namespace dtGame
 
    /////////////////////////////////////////////////////
    ActorComponentBase::ActorComponentBase()
+      : dtCore::ActorComponentContainer()
+      , dtGame::ActorComponentContainer()
    {
    }
 
@@ -62,25 +64,80 @@ namespace dtGame
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   std::vector<ActorComponent*> ActorComponentBase::GetComponents(ActorComponent::ACType type) const
+   void ActorComponentBase::AddComponent(dtCore::BaseActorObject& component)
    {
-      std::vector<ActorComponent*> foundComponents;
+      ActorComponent* actorComp = dynamic_cast<ActorComponent*>(&component);
 
-      ActorComponentMap::const_iterator iter = mComponents.begin();
-      while (iter != mComponents.end())
+      if (actorComp != NULL)
       {
-         if (iter->first == type)
-         {
-            foundComponents.push_back(iter->second.get());
-         }
-         ++iter;
+         AddComponent(*actorComp);
       }
+      else
+      {
+         LOG_WARNING("Cannot add \"" + component.GetName() + "\" as an ActorComponent.");
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   ActorComponentVector ActorComponentBase::GetComponents(ActorComponent::ACType type) const
+   {
+      ActorComponentVector foundComponents;
+
+      GetComponents(type, foundComponents);
 
       return foundComponents;
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void ActorComponentBase::GetAllComponents(std::vector<ActorComponent*>& toFill)
+   void ActorComponentBase::GetComponents(ActorComponent::ACType type, ActorComponentVector& outComponents) const
+   {
+      ActorComponentMap::const_iterator iter = mComponents.begin();
+      while (iter != mComponents.end())
+      {
+         if (*iter->first == *type)
+         {
+            outComponents.push_back(iter->second.get());
+         }
+         ++iter;
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void ActorComponentBase::GetComponents(dtCore::ActorTypePtr type, dtCore::ActorPtrVector& outComponents) const
+   {
+      ActorComponentVector comps;
+      GetComponents(type, comps);
+      outComponents.insert(outComponents.end(), comps.begin(), comps.end());
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void ActorComponentBase::GetAllComponents(dtGame::ActorComponentVector& toFill)
+   {
+      toFill.reserve(toFill.size() + mComponents.size());
+      ActorComponentMap::iterator i, iend;
+      i = mComponents.begin();
+      iend = mComponents.end();
+      for (; i != iend; ++i)
+      {
+         toFill.push_back(i->second.get());
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void ActorComponentBase::GetAllComponents(dtGame::ActorComponentVectorConst& toFill) const
+   {
+      toFill.reserve(toFill.size() + mComponents.size());
+      ActorComponentMap::const_iterator i, iend;
+      i = mComponents.begin();
+      iend = mComponents.end();
+      for (; i != iend; ++i)
+      {
+         toFill.push_back(i->second.get());
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void ActorComponentBase::GetAllComponents(dtCore::ActorPtrVector& toFill)
    {
       toFill.reserve(toFill.size() + mComponents.size());
       ActorComponentMap::iterator i, iend;
@@ -207,4 +264,5 @@ namespace dtGame
          (*iter).second->BuildPropertyMap();
       }
    }
+
 }

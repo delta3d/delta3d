@@ -46,6 +46,8 @@ namespace dtExample
    ///////////////////////////////////////////////////////////////////////////
    // CONSTANTS
    ///////////////////////////////////////////////////////////////////////////
+   RefPtr<dtCore::ActorType> TestAppActorRegistry::EMPTY_ACTOR_TYPE(
+      new dtCore::ActorType("Empty", "dtExample", "This is a simple empty actor."));
    RefPtr<dtCore::ActorType> TestAppActorRegistry::TERRAIN_ACTOR_TYPE(
       new dtCore::ActorType("Terrain", "dtExample", "This is an example terrain actor with physics."));
    RefPtr<dtCore::ActorType> TestAppActorRegistry::CIVILIAN_ACTOR_TYPE(

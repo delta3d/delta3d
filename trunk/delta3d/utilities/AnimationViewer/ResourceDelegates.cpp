@@ -199,7 +199,7 @@ void FileItemDelegate::OnOpenFile() const
          std::string modelContext(osgDB::getFilePath(resourcePath));
          dir = modelContext.empty() ? "." : modelContext.c_str();
       }
-      catch (dtUtil::Exception& ex)
+      catch (dtUtil::Exception&)
       {
          dir = ".";
       }
@@ -455,7 +455,7 @@ void FileItemDelegate::LoadMaterial(dtAnim::BaseModelWrapper& model, const std::
             std::string resourcePath = dtCore::Project::GetInstance().GetResourcePath(modelData->GetResource());
             path = osgDB::getFilePath(resourcePath);
          }
-         catch (dtUtil::Exception& ex)
+         catch (dtUtil::Exception&)
          {
             path = ".";
          }

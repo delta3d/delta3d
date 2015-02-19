@@ -34,6 +34,7 @@
 class DT_EXAMPLE_EXPORT TestActorComponent1 : public dtGame::ActorComponent
 {
 public:
+   typedef dtGame::ActorComponent BaseClass;
 
    static const ActorComponent::ACType TYPE;
 
@@ -57,6 +58,7 @@ public:
 class DT_EXAMPLE_EXPORT TestActorComponent2 : public dtGame::ActorComponent
 {
 public:
+   typedef dtGame::ActorComponent BaseClass;
 
    static const ActorComponent::ACType TYPE;
 
@@ -76,6 +78,8 @@ public:
 class DT_EXAMPLE_EXPORT TestGameActor1 : public dtGame::GameActorProxy
 {
    public:
+
+      typedef dtGame::GameActorProxy BaseClass;
 
       /// Constructor
       TestGameActor1();

@@ -69,6 +69,13 @@ namespace dtCore
       void GetPropertyList(PropertyConstVector& propList) const;
 
       /**
+       * Method to test if a property instance is contained within this container.
+       * @param prop Property object to find in the container.
+       * @return TRUE if the property instance matches a reference in this container.
+       */
+      bool HasProperty(ActorProperty& prop) const;
+
+      /**
        * Adds a new property to the this proxy's list of properties.
        * This really should not be public.
        * @note
@@ -181,7 +188,7 @@ namespace dtCore
       /**
        * Copies the property values from the passed in property container to it's own properties
        */
-      void CopyPropertiesFrom(const PropertyContainer& copyFrom);
+      virtual void CopyPropertiesFrom(const PropertyContainer& copyFrom);
 
       /**
        * @return the number of properties in this container.

@@ -370,13 +370,13 @@ namespace dtCore
           * @param mName the mName of the library.
           * @return true if this map loads the given library.
           */
-         bool HasLibrary(const std::string& mName) const;
+         bool HasLibrary(const std::string& name) const;
 
          /**
           * @param mName the mName of the library to query.
           * @return the version of the library passed in or "" if that library is not referenced by the map.
           */
-         const std::string GetLibraryVersion(const std::string& mName) const;
+         const std::string GetLibraryVersion(const std::string& name) const;
 
          /**
           * Inserts a library with the given mName at the given position.  If a library of the given mName is already in the map,
@@ -385,22 +385,27 @@ namespace dtCore
           * @param mName the mName of the library
           * @param version the version string of the library.
           */
-         void InsertLibrary(unsigned pos, const std::string& mName, const std::string& version);
+         void InsertLibrary(unsigned pos, const std::string& name, const std::string& version);
 
          /**
-          * This will add the given library to the map.  If a library by the given mName is already in the map, the library
-          * will be placed at the end and the version will be update to the one given.
+          * This will add the given library to the map.  If a library by the given name is already in the map, the library
+          * will be placed at the end and the version will be updated to the one given.
           * @param mName the mName of the library.
           * @param version the version string of the library.
           */
-         void AddLibrary(const std::string& mName, const std::string& version);
+         void AddLibrary(const std::string& name, const std::string& version);
 
          /**
           * Removes a library by mName.
           * @param mName the mName of the library to remove.
           * @return true or false if an item was actually removed.
           */
-         bool RemoveLibrary(const std::string& mName);
+         bool RemoveLibrary(const std::string& name);
+
+         /**
+          * Iterates over all the actors in the map and adds any missing
+          */
+         void CorrectLibraryList(bool removeUnusedLibraries = false);
 
          /**
           * Matches a string against wildcard string.  "*" matches anything.  "?" matches any single character.
@@ -567,7 +572,8 @@ namespace dtCore
          dtCore::RefPtr<GameEventManager> mEventManager;
 
          //ProxiesByClassMap proxiesByClass;
-         std::map<dtCore::UniqueId, dtCore::RefPtr<BaseActorObject> > mProxyMap;
+         typedef std::map<dtCore::UniqueId, dtCore::RefPtr<BaseActorObject> > ActorMap;
+         ActorMap mActorMap;
 
          std::map<std::string, std::string> mLibraryVersionMap;
          std::vector<std::string> mLibraryOrder;

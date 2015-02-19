@@ -37,6 +37,9 @@
 
 namespace dtGame
 {
+   typedef std::vector<ActorComponent*> ActorComponentVector;
+   typedef std::vector<const ActorComponent*> ActorComponentVectorConst;
+
    /**
     * A pure virtual container for ActorComponents.
     * Use multiple inheritance to add this to any actor like class.
@@ -60,7 +63,7 @@ namespace dtGame
       template <typename TComp>
       bool GetComponent(TComp*& compType) const
       {
-         std::vector<ActorComponent*> components = GetComponents(TComp::TYPE);
+         ActorComponentVector components = GetComponents(TComp::TYPE);
          if (!components.empty())
          {
             compType = static_cast<TComp*>(components[0]);
@@ -85,7 +88,7 @@ namespace dtGame
       template <typename TComp>
       bool GetComponent(dtCore::RefPtr<TComp>& compType) const
       {
-         std::vector<ActorComponent*> components = GetComponents(TComp::TYPE);
+         ActorComponentVector components = GetComponents(TComp::TYPE);
          if (!components.empty())
          {
             compType = static_cast<TComp*>(components[0]);
@@ -115,15 +118,9 @@ namespace dtGame
          return component;
       }
 
-      /**
-       * Get component by type string
-       * @param type The type-string of the ActorComponent to get
-       * @return the selected ActorComponent (could be NULL if not found)
-       */
-      //virtual ActorComponent* GetComponent(ActorComponent::ACType type) const = 0;
-   private:
+   //private:
       // Override virtual std::vector<ActorComponent*> GetComponents(ActorComponent::ACType type) const instead
-      BREAK_OVERRIDE(GetComponent(ActorComponent::ACType) const) ///deprecated 4/4/12
+      //BREAK_OVERRIDE(GetComponent(ActorComponent::ACType) const) ///deprecated 4/4/12
    public:
 
       /**
@@ -131,12 +128,18 @@ namespace dtGame
        * @param type The type-string of the ActorComponent to get
        * @return the selected ActorComponents (will be empty if not found)
        */
-      virtual std::vector<ActorComponent*> GetComponents(ActorComponent::ACType type) const = 0;
+      virtual ActorComponentVector GetComponents(ActorComponent::ACType type) const = 0;
+      virtual void GetComponents(ActorComponent::ACType type, ActorComponentVector& outComponents) const = 0;
 
       /**
        * Fill the vector with all the actor components.
        */
-      virtual void GetAllComponents(std::vector<ActorComponent*>& toFill) = 0;
+      virtual void GetAllComponents(ActorComponentVector& toFill) = 0;
+
+      /**
+       * Fill the vector with all the actor components as constant pointers.
+       */
+      virtual void GetAllComponents(ActorComponentVectorConst& toFill) const = 0;
 
       /**
        * Does base contain a component of given type?

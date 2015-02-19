@@ -36,9 +36,12 @@ namespace dtAI
     * and is a place holder for other potential data
     * someone might want to store in a waypoint
     */
-   class DT_AI_EXPORT Waypoint : public WaypointInterface
+   class DT_AI_EXPORT Waypoint : public osg::Referenced, public WaypointInterface
    {
    public:
+
+      DT_DECLARE_VIRTUAL_REF_INTERFACE_INLINE
+
       // render flags will determine how we draw our waypoints
       enum RenderFlag
       {
@@ -77,8 +80,8 @@ namespace dtAI
       float GetAlpha() const;
 
       // these are just no-ops
-      virtual void ref() const{};
-      virtual void unref() const{};
+      //virtual void ref() const{};
+      //virtual void unref() const{};
 
    private:
       mutable RenderFlag mRenderFlag;

@@ -24,16 +24,19 @@
 
 #include <dtCore/export.h>
 #include <dtCore/basexml.h>
+#include <dtCore/baseactorobject.h>
 #include <dtCore/mapheaderdata.h>
+#include <dtUtil/tree.h>
 
 namespace dtCore
 {
    class Map;
    class MapContentHandler;
-   class BaseActorObject;
    class ActorPropertySerializer;
    class ActorHierarchyNode;
-   typedef std::vector<RefPtr<BaseActorObject> > ActorRefPtrVector;
+   class ActorComponentContainer;
+
+   typedef dtUtil::Tree<dtCore::BaseActorObject*> ActorTree;
 
    /**
     * @class MapParser
@@ -162,6 +165,15 @@ namespace dtCore
    protected:
       virtual ~MapWriter(); ///Protected destructor so that this could be subclassed.
 
+      /**
+       * Shared method for writing out an actor definition in XML.
+       * This is a recursive method which allows it to write child actor definitions.
+       * @param actor Actor object with properties to be written.
+       * @param allowReadOnlyProps Flag for determining if read only properties should be written.
+       * @return Number of successfully written actor definitions.
+       */
+      int WriteActor(dtCore::BaseActorObject& actor, bool allowReadOnlyProps);
+
    private:
 
       //disable copy constructor
@@ -169,7 +181,7 @@ namespace dtCore
       //disable operator =
       MapWriter& operator=(const MapWriter&) { return *this; }
 
-      void WriteHierarchyBranch(dtCore::ActorHierarchyNode* hierNode);
+      //void WriteHierarchyBranch(dtCore::ActorComponentContainer& actor);
 
       ActorPropertySerializer* mPropSerializer;
    };

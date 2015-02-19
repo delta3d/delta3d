@@ -42,6 +42,8 @@ namespace dtCore
                           const std::string& desc="",
                           const ObjectType* parentType = NULL);
 
+      static std::pair<std::string, std::string > ParseNameAndCategory(const std::string& fullName);
+
       /**
        * Simple less than comparison function for the ObjectFactory.
        * We cannot use the default comparison function because we

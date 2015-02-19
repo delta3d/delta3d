@@ -47,9 +47,8 @@ extern "C" DT_PLUGIN_EXPORT void DestroyPluginRegistry(dtCore::ActorPluginRegist
       delete registry;
 }
 
-ExampleActorLib::ExampleActorLib() : ActorPluginRegistry("ExampleActors")
+ExampleActorLib::ExampleActorLib() : ActorPluginRegistry("ExampleActors", "These are example actors")
 {
-    mDescription = "These are example actors";
 }
 
 void ExampleActorLib::RegisterActorTypes()
