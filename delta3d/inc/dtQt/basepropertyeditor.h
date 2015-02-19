@@ -33,7 +33,7 @@
 #include <vector>
 
 
-#include <dtUtil/tree.h>
+#include <dtUtil/utiltree.h>
 #include <dtCore/propertycontainer.h>
 #include <dtCore/actorproperty.h>
 #include <dtCore/actortype.h>
@@ -119,6 +119,10 @@ namespace dtQt
 
       ///Event handler for when containers are selected.
       virtual void OnContainersSelected(const std::vector<dtCore::RefPtr<dtCore::PropertyContainer> >& selection);
+
+      static void GetNestedPropertyList(dtCore::PropertyContainer& pc, std::vector<dtCore::ActorProperty*>& toFill);
+
+      static dtCore::ActorProperty* FindNestedProperty(dtCore::PropertyContainer& pc, const std::string& name);
 
    public slots:
       void UpdateUI();

@@ -24,11 +24,13 @@
 #define gameactorproxy_h__
 
 #include <dtGame/export.h>
+#include <dtCore/actorproperty.h>
 #include <dtCore/transformableactorproxy.h>
 #include <dtGame/actorcomponentbase.h>
 #include <dtGame/invokable.h>
 #include <dtGame/messagetype.h>
 #include <dtUtil/getsetmacros.h>
+#include <dtUtil/tree.h>
 
 namespace dtUtil
 {
@@ -42,6 +44,9 @@ namespace dtGame
    class ActorUpdateMessage;
    class ActorComponent;
 
+   class GameActorProxy;
+   typedef dtUtil::Tree<GameActorProxy*, dtCore::TransformableActorProxy> ActorTree;
+
    /**
     * class GameActorProxy
     * This is the base class for all of the actor proxies utilized by the
@@ -49,11 +54,12 @@ namespace dtGame
     * messages and is also a container for ActorComponents.
     * @see dtGame::GameManager
     */
-   class DT_GAME_EXPORT GameActorProxy : public dtCore::TransformableActorProxy,
-      public dtGame::ActorComponentBase
+   class DT_GAME_EXPORT GameActorProxy : public ActorTree, public dtGame::ActorComponentBase
    {
    public:
       typedef dtCore::TransformableActorProxy BaseClass;
+
+      DT_DECLARE_VIRTUAL_REF_INTERFACE_INLINE
 
       /**
        * DEPRECATED  Put all your message handling logic on you subclass of GameActorProxy (name change pending) and call that
@@ -81,6 +87,7 @@ namespace dtGame
          static Ownership SERVER_LOCAL;
          static Ownership CLIENT_LOCAL;
          static Ownership CLIENT_AND_SERVER_LOCAL;
+         static Ownership NOT_MANAGED;
          static Ownership PROTOTYPE;
       protected:
          Ownership(const std::string& name);
@@ -98,11 +105,53 @@ namespace dtGame
          LocalActorUpdatePolicy(const std::string& name);
       };
 
+      /// Internal class to iterate over the actor's tree structure.
+      class GameActorIterator : public dtCore::ActorComponentContainer::ActorIterator
+      {
+      public:
+         typedef dtCore::ActorComponentContainer::ActorIterator BaseClass;
+
+         GameActorIterator(GameActorProxy& actor);
+         GameActorIterator(GameActorIterator& iter);
+
+         virtual ActorIterator& operator++ ();
+         virtual BaseActorObject* operator* () const;
+
+         virtual bool IsAtEnd() const;
+
+      protected:
+         virtual ~GameActorIterator();
+
+         GameActorProxy::iterator mIter;
+         dtCore::ObserverPtr<GameActorProxy> mActor;
+      };
+
       /// Constructor
       GameActorProxy();
 
+      /**
+       * Override of the BaseActorObject Clone, which might be temporary.
+       *
+       * This method performs extra setup required of a GameActor
+       * for a successful clone operation. This is typically used
+       * by the old prototype creation process.
+       */
+      dtCore::RefPtr<dtCore::BaseActorObject> Clone();
+
+      /// Overridden to copy properties from actor components.
+      /*override*/ void CopyPropertiesFrom(const PropertyContainer& copyFrom);
+
       /// Overridden to call BuildInvokables
       virtual void Init(const dtCore::ActorType& actorType);
+
+      /*virtual*/ void SetParentActor(dtCore::BaseActorObject* parent);
+
+      /**
+       * Returns the actor that is the parent to this actor.
+       */
+      /*override*/ dtCore::BaseActorObject* GetParentActor() const;
+
+      /*override*/ dtCore::RefPtr<dtCore::ActorComponentContainer::ActorIterator> GetIterator();
 
       /**
        * The actor component was probably removed. So, we need to remove each of the properties
@@ -614,6 +663,13 @@ namespace dtGame
        */
       bool IsDeleted() const;
       void SetDeleted(bool deleted);
+
+      // TEMP:
+      void AddActorComponentProperties();
+
+      // TEMP:
+      void RemoveActorComponentProperties();
+
    protected:
       /// Destructor
       virtual ~GameActorProxy();
@@ -623,7 +679,7 @@ namespace dtGame
        * to register Invokables with MessageTypes.
        * @see RegisterForMessages()
        */
-      virtual void OnEnteredWorld() { }
+      virtual void OnEnteredWorld();
 
       /**
        * Called when the GM deletes the actor in a NORMAL way, such as DeleteActor().
@@ -633,7 +689,7 @@ namespace dtGame
        * at the end of a 'normal' map change. If you want to find out immediately that you
        * are being deleted, register for the INFO_ACTOR_DELETED with RegisterForMessagesAboutSelf().
        */
-      virtual void OnRemovedFromWorld() { }
+      virtual void OnRemovedFromWorld();
 
       /**
        * Adds a property to the accept list for local updates.
@@ -650,6 +706,11 @@ namespace dtGame
       void RemovePropertyFromLocalUpdateAcceptFilter(const dtUtil::RefString& propName);
 
    private:
+
+      /**
+       * Override of the Tree base class.
+       */
+      GameActorProxy::ref_pointer clone() const;
 
       /**
        * Populates an update message from the actor proxy.

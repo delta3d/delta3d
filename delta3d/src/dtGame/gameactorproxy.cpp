@@ -23,6 +23,7 @@
 #include <dtGame/gameactorproxy.h>
 
 #include <dtCore/actoractorproperty.h>
+#include <dtCore/actoridactorproperty.h>
 #include <dtCore/actortype.h>
 #include <dtCore/booleanactorproperty.h>
 #include <dtCore/enumactorproperty.h>
@@ -38,6 +39,9 @@
 #include <dtGame/messagefactory.h>
 #include <dtGame/messagetype.h>
 #include <dtGame/shaderactorcomponent.h>
+
+#include <dtCore/actortype.h>
+#include <dtCore/actorfactory.h>
 
 #include <dtUtil/functor.h>
 #include <dtUtil/log.h>
@@ -64,6 +68,7 @@ namespace dtGame
    GameActorProxy::Ownership GameActorProxy::Ownership::SERVER_LOCAL("Server Local");
    GameActorProxy::Ownership GameActorProxy::Ownership::CLIENT_LOCAL("Client Local");
    GameActorProxy::Ownership GameActorProxy::Ownership::CLIENT_AND_SERVER_LOCAL("Client and Server Local");
+   GameActorProxy::Ownership GameActorProxy::Ownership::NOT_MANAGED("Not Managed");
    GameActorProxy::Ownership GameActorProxy::Ownership::PROTOTYPE("PROTOTYPE");
 
    ///////////////////////////////////////////
@@ -80,13 +85,49 @@ namespace dtGame
    GameActorProxy::LocalActorUpdatePolicy GameActorProxy::LocalActorUpdatePolicy::ACCEPT_ALL("ACCEPT_ALL");
    GameActorProxy::LocalActorUpdatePolicy GameActorProxy::LocalActorUpdatePolicy::ACCEPT_WITH_PROPERTY_FILTER("ACCEPT_WITH_PROPERTY_FILTER");
 
-   ///////////////////////////////////////////
-   // Actor Proxy code
-   ///////////////////////////////////////////
+
 
    /////////////////////////////////////////////////////////////////////////////
+   // ITERATOR CODE
+   /////////////////////////////////////////////////////////////////////////////
+   GameActorProxy::GameActorIterator::GameActorIterator(GameActorProxy& actor)
+   {
+      mActor = &actor;
+      mIter = actor.begin();
+   }
+   
+   GameActorProxy::GameActorIterator::GameActorIterator(GameActorIterator& iter)
+      : mActor(iter.mActor)
+      , mIter(iter.mIter)
+   {}
+   
+   GameActorProxy::GameActorIterator::~GameActorIterator()
+   {}
+
+   dtCore::ActorComponentContainer::ActorIterator& GameActorProxy::GameActorIterator::operator++ ()
+   {
+      ++mIter;
+      return *this;
+   }
+
+   dtCore::BaseActorObject* GameActorProxy::GameActorIterator::operator* () const
+   {
+      return mIter->value;
+   }
+
+   bool GameActorProxy::GameActorIterator::IsAtEnd() const
+   {
+      return mIter == mActor->end();
+   }
+
+
+
+   /////////////////////////////////////////////////////////////////////////////
+   // Actor Proxy code
+   /////////////////////////////////////////////////////////////////////////////
    GameActorProxy::GameActorProxy()
-   : mParent(NULL)
+   : ActorTree()
+   , mParent(NULL)
    , mOwnership(&GameActorProxy::Ownership::SERVER_LOCAL)
    , mLocalActorUpdatePolicy(&GameActorProxy::LocalActorUpdatePolicy::ACCEPT_ALL)
    , mLogger(dtUtil::Log::GetInstance("gameactor.cpp"))
@@ -96,6 +137,9 @@ namespace dtGame
    , mDrawableIsAGameActor(true) // It defaults to true so it will try to do the cast early in the init.
    , mDeleted(false)
    {
+      // Set the Tree base class value member.
+      value = this;
+
       SetClassName("dtGame::GameActor");
    }
 
@@ -114,6 +158,101 @@ namespace dtGame
    }
 
    /////////////////////////////////////////////////////////////////////////////
+   void GameActorProxy::CopyPropertiesFrom(const PropertyContainer& copyFrom)
+   {
+      BaseClass::CopyPropertiesFrom(copyFrom);
+
+      ActorComponentVectorConst comps;
+      const dtGame::ActorComponentContainer* acc = dynamic_cast<const dtGame::ActorComponentContainer*>(&copyFrom);
+
+      if (acc != NULL)
+      {
+         ActorComponentVector existingComps;
+         acc->GetAllComponents(comps);
+         ActorComponentVectorConst::const_iterator curIter = comps.begin();
+         ActorComponentVectorConst::const_iterator endIter = comps.end();
+         while (curIter != endIter)
+         {
+            existingComps.clear();
+            ActorComponent::ACType curType = (*curIter)->GetType();
+            GetComponents(curType, existingComps);
+
+            ActorComponentVector::iterator curWriteIter,endWriteIter;
+            curWriteIter = existingComps.begin();
+            endWriteIter = existingComps.end();
+
+            for (;curIter != endIter && *curType == *((*curIter)->GetType()); ++curIter)
+            {
+               if (curWriteIter != endWriteIter)
+               {
+                  (*curWriteIter)->CopyPropertiesFrom(**curIter);
+                  ++curWriteIter;
+               }
+            }
+         }
+      }
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   dtCore::RefPtr<dtCore::BaseActorObject> GameActorProxy::Clone()
+   {
+      std::ostringstream error;
+
+      dtCore::RefPtr<BaseActorObject> copy;
+
+      try
+      {
+         copy = dtCore::ActorFactory::GetInstance().CreateActor(GetActorType()).get();
+      }
+      catch(const dtUtil::Exception& e)
+      {
+         error << "Clone of actor proxy: " << GetName() << " failed. Reason was: " << e.What();
+         LOG_ERROR(error.str());
+         return NULL;
+      }
+
+      copy->SetName(GetName());
+
+      GameActorProxy* gameActor = dynamic_cast<GameActorProxy*>(copy.get());
+
+      if (gameActor != NULL)
+      {
+         // Clone actor components that may not have been built by default.
+         // The actor components on this actor could hav been added dynamically
+         // and thus would not have been created by the CreateActor method.
+         ActorComponentVector comps;
+         GetAllComponents(comps);
+
+         ActorComponent* curComp = NULL;
+         ActorComponentVector::iterator curIter = comps.begin();
+         ActorComponentVector::iterator endIter = comps.end();
+         for (; curIter != endIter; ++curIter)
+         {
+            curComp = *curIter;
+
+            if ( ! gameActor->HasComponent(&curComp->GetActorType()))
+            {
+               dtCore::RefPtr<ActorComponent> newComp = dynamic_cast<ActorComponent*>(curComp->Clone().get());
+               gameActor->AddComponent(*newComp);
+            }
+         }
+
+      }
+
+      copy->CopyPropertiesFrom(*this);
+
+      return copy;
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   GameActorProxy::ref_pointer GameActorProxy::clone() const
+   {
+      GameActorProxy::ref_pointer ptr;
+
+      return ptr;
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
    void GameActorProxy::Init(const dtCore::ActorType& actorType)
    {
       BaseClass::Init(actorType);
@@ -129,14 +268,65 @@ namespace dtGame
       }
    }
 
+   /////////////////////////////////////////////////////////////////////////////
+   void GameActorProxy::OnEnteredWorld()
+   {
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void GameActorProxy::OnRemovedFromWorld()
+   {}
+   
+   /////////////////////////////////////////////////////////////////////////////
+   void GameActorProxy::SetParentActor(dtCore::BaseActorObject* parent)
+   {
+      if (parent != NULL)
+      {
+         GameActorProxy* parentActorTree = dynamic_cast<GameActorProxy*>(parent);
+         if (parentActorTree != NULL)
+         {
+            parentActorTree->insert_subtree(this, NULL);
+         }
+         else
+         {
+            LOG_ERROR("Could not set \"" + parent->GetName() + "\" (of type "
+               + parent->GetActorType().GetName() + ") as parent to actor \"" + GetName()
+               + "\" (of type " + GetActorType().GetName() + ")");
+         }
+      }
+      else // Remove from parent
+      {
+         GameActorProxy* parentActorTree = dynamic_cast<GameActorProxy*>(this->parent());
+
+         if (parentActorTree != NULL)
+         {
+            parentActorTree->remove_subtree(this);
+         }
+      }
+   }
+   
+   /////////////////////////////////////////////////////////////////////////////
+   dtCore::BaseActorObject* GameActorProxy::GetParentActor() const
+   {
+      return parent();
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   dtCore::RefPtr<dtCore::ActorComponentContainer::ActorIterator>
+      GameActorProxy::GetIterator()
+   {
+      return new GameActorIterator(*this);
+   }
 
    /////////////////////////////////////////////////////////////////////////////
    void GameActorProxy::RemoveActorComponentProperties(ActorComponent& component)
    {
       // Remove the props from the game actor - Needed because RemoveProperty is protected
-      std::vector<dtCore::ActorProperty*> toFill;
-      component.GetPropertyList(toFill);
-      std::vector<dtCore::ActorProperty*>::iterator i = toFill.begin(), iend = toFill.end();
+      PropertyVector props;
+      component.GetPropertyList(props);
+
+      PropertyVector::iterator i = props.begin();
+      PropertyVector::iterator iend = props.end();
       for (; i != iend; ++i)
       {
          RemoveProperty((*i)->GetName());
@@ -147,33 +337,22 @@ namespace dtGame
    void GameActorProxy::AddActorComponentProperties(ActorComponent& component)
    {
       // Add the props from the game actor - See RemoveActorComponentProperties header method.
-      std::vector<dtCore::ActorProperty*> toFill;
-      component.GetPropertyList(toFill);
-      std::vector<dtCore::ActorProperty*>::iterator i = toFill.begin(), iend = toFill.end();
+      PropertyVector props;
+      component.GetPropertyList(props);
+
+      dtCore::ActorProperty* curProp = NULL;
+      PropertyVector::iterator i = props.begin();
+      PropertyVector::iterator iend = props.end();
       for (; i != iend; ++i)
       {
-         AddProperty(*i);
-      }
-   }
+         curProp = *i;
 
-
-   class AddPropsFunc
-   {
-   public:
-      void operator() (ActorComponent& ac)
-      {
-         std::vector<dtCore::ActorProperty*> toFill;
-         ac.GetPropertyList(toFill);
-         std::vector<dtCore::ActorProperty*>::iterator i, iend;
-         i = toFill.begin();
-         iend = toFill.end();
-         for (; i != iend; ++i)
+         if ( ! HasProperty(*curProp))
          {
-            gap->AddProperty(*i);
+            AddProperty(curProp);
          }
       }
-      GameActorProxy* gap;
-   };
+   }
 
    /////////////////////////////////////////////////////////////////////////////
    void GameActorProxy::BuildPropertyMap()
@@ -225,7 +404,6 @@ namespace dtGame
             dtCore::EnumActorProperty<LocalActorUpdatePolicy>::SetFuncType(this, &GameActorProxy::SetLocalActorUpdatePolicy),
             dtCore::EnumActorProperty<LocalActorUpdatePolicy>::GetFuncType(this, &GameActorProxy::GetLocalActorUpdatePolicy),
             PROPERTY_LOCAL_ACTOR_ACCEPT_UPDATE_POLICY_DESC));
-
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -851,12 +1029,15 @@ namespace dtGame
 
       CallOnEnteredWorldForActorComponents();
 
+      AddActorComponentProperties();
+
       OnEnteredWorld();
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////////////////////
    void GameActorProxy::InvokeRemovedFromWorld()
    {
+      RemoveActorComponentProperties();
       CallOnRemovedFromWorldForActorComponents();
       OnRemovedFromWorld();
    }
@@ -893,10 +1074,20 @@ namespace dtGame
          // Check all of our actor components to see if one of them can support it
          std::vector<ActorComponent*> components;
          GetAllComponents(components);
+
+         ActorComponent* comp = NULL;
          unsigned int size = components.size();
          for (unsigned int i = 0; i < size; i ++)
          {
-            prop = components[i]->GetDeprecatedProperty(name);
+            comp = components[i];
+
+            prop = comp->GetProperty(name);
+
+            if ( ! prop.valid())
+            {
+               prop = comp->GetDeprecatedProperty(name);
+            }
+
             if (prop.valid())
             {
                break; // quit looking.
@@ -912,12 +1103,6 @@ namespace dtGame
    {
       ActorComponentBase::AddComponent(component);
 
-      // add actor component properties to the game actor itself
-      // note - the only reason we do this is to make other parts of the system work (like STAGE).
-      // In the future, STAGE (et al) should use the actor components directly and we won't add them to the game actor
-      // Remove the props from the game actor - This is temporary. See the note in AddComponent()
-      AddActorComponentProperties(component);
-
       // initialize component
       component.OnAddedToActor(*this);
       OnActorComponentAdded(component);
@@ -932,6 +1117,7 @@ namespace dtGame
       // if base class is a game actor and the game actor is already instantiated in game:
       if (IsInGM())
       {
+         AddActorComponentProperties(component);
          component.SetIsInGM(true);
          component.OnEnteredWorld();
       }
@@ -944,6 +1130,7 @@ namespace dtGame
       {
          component.SetIsInGM(false);
          component.OnRemovedFromWorld();
+         RemoveActorComponentProperties(component);
       }
 
       if (mDrawableIsAGameActor)
@@ -954,8 +1141,6 @@ namespace dtGame
       }
 
       component.OnRemovedFromActor(*this);
-
-      RemoveActorComponentProperties(component);
 
       ActorComponentBase::RemoveComponent(component);
    }
@@ -986,4 +1171,37 @@ namespace dtGame
    bool GameActorProxy::IsDeleted() const { return mDeleted; }
    ////////////////////////////////////////////////////////////////////////////////
    void GameActorProxy::SetDeleted(bool deleted) { mDeleted = deleted; }
+   
+   ////////////////////////////////////////////////////////////////////////////////
+   void GameActorProxy::AddActorComponentProperties()
+   {
+      ActorComponentVector comps;
+      GetAllComponents(comps);
+
+      ActorComponent* comp = NULL;
+      ActorComponentVector::iterator curIter = comps.begin();
+      ActorComponentVector::iterator endIter = comps.end();
+      for (; curIter != endIter; ++curIter)
+      {
+         comp = dynamic_cast<ActorComponent*>(*curIter);
+         AddActorComponentProperties(*comp);
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void GameActorProxy::RemoveActorComponentProperties()
+   {
+      ActorComponentVector comps;
+      GetAllComponents(comps);
+
+      ActorComponent* comp = NULL;
+      ActorComponentVector::iterator curIter = comps.begin();
+      ActorComponentVector::iterator endIter = comps.end();
+      for (; curIter != endIter; ++curIter)
+      {
+         comp = dynamic_cast<ActorComponent*>(*curIter);
+         RemoveActorComponentProperties(*comp);
+      }
+   }
+
 }

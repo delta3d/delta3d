@@ -28,7 +28,7 @@
 #include <osg/Referenced>
 
 #include <dtUtil/fileutils.h>
-#include <dtUtil/tree.h>
+#include <dtUtil/utiltree.h>
 
 #include <dtCore/resourcetreenode.h>
 #include <dtCore/export.h>

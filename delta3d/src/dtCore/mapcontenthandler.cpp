@@ -23,6 +23,7 @@
 
 #include <dtCore/deltadrawable.h>
 
+#include <dtCore/actorcomponentcontainer.h>
 #include <dtCore/actorhierarchynode.h>
 #include <dtCore/actorproperty.h>
 #include <dtCore/actorproxy.h>
@@ -39,7 +40,7 @@
 #include <dtCore/map.h>
 #include <dtCore/mapxmlconstants.h>
 #include <dtCore/namedparameter.h>
-
+#include <dtUtil/tree.h>
 #include <dtUtil/xercesutils.h>
 
 #ifdef _MSC_VER
@@ -108,26 +109,67 @@ namespace  dtCore
    /////////////////////////////////////////////////////////////////
    MapContentHandler::MapContentHandler()
       : BaseXMLHandler()
+      , mInMap(false)
+      , mInPrefab(false)
+      , mInHeader(false)
+      , mInLibraries(false)
+      , mInEvents(false)
+      , mInActors(false)
+      , mInActor(false)
+      , mInGroup(false)
+      , mInPresetCameras(false)
+      , mIgnoreCurrentActor(false)
+      , mActorDepth(-1)
+      , mEnvActorId(false)
+      , mParentId(false)
+      , mPropSerializer(new ActorPropertySerializer(this))
       , mBaseActorObject(NULL)
+      , mIgnoreActorDepth(-1)
       , mGroupIndex(-1)
-      , mLoadingPrefab(false)
+      , mFoundMapName()
+      , mLoadingPrefab()
       , mPrefabIconFileName("")
       , mPrefabProxyList(NULL)
+      , mPresetCameraIndex()
+      , mPresetCameraView()
       , mCurrentHierNode(NULL)
    {
-      mPropSerializer = new ActorPropertySerializer(this);
-
-      mEnvActorId = "";
    }
 
    /////////////////////////////////////////////////////////////////
    MapContentHandler::~MapContentHandler()
    {
-      delete mPropSerializer; mPropSerializer = NULL;
+      delete mPropSerializer;
+      mPropSerializer = NULL;
    }
 
    //////////////////////////////////////////////////////////////////////////
-   MapContentHandler::MapContentHandler(const MapContentHandler&) {}
+   MapContentHandler::MapContentHandler(const MapContentHandler&)
+   : mInMap(false)
+   , mInPrefab(false)
+   , mInHeader(false)
+   , mInLibraries(false)
+   , mInEvents(false)
+   , mInActors(false)
+   , mInActor(false)
+   , mInGroup(false)
+   , mInPresetCameras(false)
+   , mIgnoreCurrentActor(false)
+   , mActorDepth(-1)
+   , mEnvActorId(false)
+   , mParentId(false)
+   , mPropSerializer(new ActorPropertySerializer(this))
+   , mBaseActorObject(NULL)
+   , mIgnoreActorDepth(-1)
+   , mGroupIndex(-1)
+   , mFoundMapName()
+   , mLoadingPrefab()
+   , mPrefabIconFileName("")
+   , mPrefabProxyList(NULL)
+   , mPresetCameraIndex()
+   , mPresetCameraView()
+   , mCurrentHierNode(NULL)
+   {}
 
    //////////////////////////////////////////////////////////////////////////
    MapContentHandler& MapContentHandler::operator=(const MapContentHandler&) { return *this;}
@@ -211,16 +253,30 @@ namespace  dtCore
          }
          else if (mInActors)
          {
+            bool isActorElement = XMLString::compareString(localname, MapXMLConstants::ACTOR_ELEMENT) == 0;
+
             if (mInActor)
             {
                if (!mIgnoreCurrentActor)
-                  mPropSerializer->ElementStarted(localname);
+               {
+                  // Determine if this a non-child actor element, such as a property element.
+                  if ( ! isActorElement)
+                  {
+                     mPropSerializer->ElementStarted(localname);
+                  }
+               }
             }
-            else if (XMLString::compareString(localname, MapXMLConstants::ACTOR_ELEMENT) == 0)
+            // Starting fresh with a root level actor...
+            else if (isActorElement)
             {
                mInActor = true;
                ClearActorValues();
-            }            
+            }
+
+            if (isActorElement)
+            {
+               ++mActorDepth;
+            }         
          }
          else if (mInGroup)
          {
@@ -387,6 +443,14 @@ namespace  dtCore
                   //this flag is only used when the parser is just looking for the map name.
                   mFoundMapName = true;
                }
+               else if (topEl == MapXMLConstants::PREFAB_ACTOR_TYPE_ELEMENT)
+               {
+                  std::string actorTypeFullName = dtUtil::XMLStringConverter(chars).ToString();
+                  std::pair<std::string, std::string> typeCatPair = ActorType::ParseNameAndCategory(actorTypeFullName);
+
+                  ActorFactory::GetInstance().FindActorType(typeCatPair.second, typeCatPair.first);
+                  //mMap->SetPrefabActorType();
+               }
                else if (topEl == MapXMLConstants::DESCRIPTION_ELEMENT)
                {
                   mMap->SetDescription(dtUtil::XMLStringConverter(chars).ToString());
@@ -527,30 +591,42 @@ namespace  dtCore
             mBaseActorObject->SetId(dtCore::UniqueId(dtUtil::XMLStringConverter(chars).ToString()));
          }
       }
+      else if (topEl == MapXMLConstants::ACTOR_PARENT_ID_ELEMENT)
+      {
+         mParentId = dtCore::UniqueId(dtUtil::XMLStringConverter(chars).ToString());
+      }
       else if (topEl == MapXMLConstants::ACTOR_TYPE_ELEMENT)
       {
          std::string actorTypeFullName = dtUtil::XMLStringConverter(chars).ToString();
-         size_t index = actorTypeFullName.find_last_of('.');
+         std::pair<std::string, std::string> typeCatPair = ActorType::ParseNameAndCategory(actorTypeFullName);
 
-         std::string actorTypeCategory;
-         std::string actorTypeName;
+         std::string& actorTypeCategory = typeCatPair.second;
+         std::string& actorTypeName = typeCatPair.first;
 
-         if (index == actorTypeFullName.length())
-         {
-            actorTypeName = actorTypeFullName;
-            actorTypeCategory.clear();
-         }
-         else
-         {
-            actorTypeName = actorTypeFullName.substr(index + 1);
-            actorTypeCategory = actorTypeFullName.substr(0, index);
-         }
 
-         //Make sure we have not tried to load this actor type already and failed.
+         // Make sure we have not tried to load this actor type already and failed.
          if (mMissingActorTypes.find(actorTypeFullName) == mMissingActorTypes.end())
          {
-            dtCore::RefPtr<const ActorType> actorType =
+            ActorTypePtr actorType =
                ActorFactory::GetInstance().FindActorType(actorTypeCategory, actorTypeName);
+
+            dtCore::ActorComponentContainer* compContainer
+               = dynamic_cast<dtCore::ActorComponentContainer*>(mBaseActorObject.get());
+
+            if (compContainer && actorType == NULL)
+            {
+               ActorPtrVector existingComponents;
+               ActorTypePtr tempType = new dtCore::ActorType(actorTypeName, actorTypeCategory, std::string());
+               compContainer->GetComponents(tempType, existingComponents);
+               if (!existingComponents.empty())
+               {
+                  actorType = &existingComponents[0]->GetActorType();
+                  mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__,  __LINE__,
+                                      "ActorComponent actorType \"%s\" was not found in the registry, but it was found as an existing component."
+                                      "Please register this type with an actor plugin registry or register the approprate registry to avoid this problem.",
+                                      actorTypeFullName.c_str());
+               }
+            }
 
             if (actorType == NULL)
             {
@@ -558,6 +634,12 @@ namespace  dtCore
                                    "ActorType \"%s\" not found.", actorTypeFullName.c_str());
                mMissingActorTypes.insert(actorTypeFullName);
                mIgnoreCurrentActor = true;
+
+               // Set the level in the actor-to-actor hierarchy to ignore.
+               if (mIgnoreActorDepth < 0)
+               {
+                  mIgnoreActorDepth = mActorDepth;
+               }
             }
             else
             {
@@ -565,32 +647,77 @@ namespace  dtCore
                                    "Creating actor proxy %s with category %s.",
                                    actorTypeName.c_str(), actorTypeCategory.c_str());
 
-               mBaseActorObject = ActorFactory::GetInstance().CreateActor(*actorType).get();
+               if (compContainer != NULL)
+               {
+                  ActorPtrVector existingComponents;
+                  compContainer->GetComponents(actorType, existingComponents);
+                  if (!existingComponents.empty())
+                  {
+                     // TODO This is actually pretty bad because it means you can't load multiple of the same
+                     // type.
+                     mBaseActorObject = existingComponents[0];
+                  }
+                  else
+                  {
+                     mBaseActorObject = NULL;
+                  }
+               }
+               else
+               {
+                  mBaseActorObject = NULL;
+               }
+
+               if (mBaseActorObject == NULL)
+               {
+                  mBaseActorObject = ActorFactory::GetInstance().CreateActor(*actorType).get();
+               }
+
                if (mBaseActorObject == NULL)
                {
                   mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__,  __LINE__,
                      "mActorProxy could not be created for ActorType \"%s\" not found.",
                      actorTypeFullName.c_str());
-               }
+                  mMissingActorTypes.insert(actorTypeFullName);
+                  mIgnoreCurrentActor = true;
 
-               mPropSerializer->SetCurrentPropertyContainer(mBaseActorObject);
-
-               // Notify the proxy that it is being loaded.
-               mBaseActorObject->OnMapLoadBegin();
-
-               // When loading a prefab, all actors are put into a group.
-               if (mLoadingPrefab)
-               {
-                  //if (mGroupIndex == -1)
-                  //{
-                  //   mGroupIndex = mMap->GetGroupCount();
-                  //}
-
-                  //mMap->AddActorToGroup(mGroupIndex, mBaseActorObject.get());
-
-                  if (mPrefabProxyList)
+                  // Set the level in the actor-to-actor hierarchy to ignore.
+                  if (mIgnoreActorDepth < 0)
                   {
-                     mPrefabProxyList->push_back(mBaseActorObject);
+                     mIgnoreActorDepth = mActorDepth;
+                  }
+               }
+               else
+               {
+
+                  mActorStack.push(mBaseActorObject);
+                  mPropSerializer->PushPropertyContainer(*mBaseActorObject);
+
+                  // Notify the actor that it is being loaded.
+                  mBaseActorObject->OnMapLoadBegin();
+
+                  // If a previous actor was set, use it as a parent actor.
+                  if (compContainer != NULL)
+                  {
+                     if (mBaseActorObject.valid())
+                     {
+                        compContainer->AddComponent(*mBaseActorObject);
+                     }
+                  }
+
+                  // When loading a prefab, all actors are put into a group.
+                  if (mLoadingPrefab)
+                  {
+                     //if (mGroupIndex == -1)
+                     //{
+                     //   mGroupIndex = mMap->GetGroupCount();
+                     //}
+
+                     //mMap->AddActorToGroup(mGroupIndex, mBaseActorObject.get());
+
+                     if (mPrefabProxyList)
+                     {
+                        mPrefabProxyList->push_back(mBaseActorObject);
+                     }
                   }
                }
             }
@@ -598,6 +725,12 @@ namespace  dtCore
          else
          {
             mIgnoreCurrentActor = true;
+            
+            // Set the level in the actor-to-actor hierarchy to ignore.
+            if (mIgnoreActorDepth < 0)
+            {
+               mIgnoreActorDepth = mActorDepth;
+            }
          }
       }
    }
@@ -760,6 +893,9 @@ namespace  dtCore
       mInGroup = false;
       mInPresetCameras = false;
       mInActor = false;
+      mActorDepth = -1;
+      mIgnoreActorDepth = -1;
+
       mPresetCameraIndex = -1;
       mPresetCameraData.isValid = false;
       mPresetCameraView = 0;
@@ -774,6 +910,8 @@ namespace  dtCore
 
       mFoundMapName = false;
       mGameEvent = NULL;
+      mPrevActorObject = NULL;
+      mBaseActorObject = NULL;
    }
 
    /////////////////////////////////////////////////////////////////
@@ -789,6 +927,8 @@ namespace  dtCore
       mBaseActorObject = NULL;
       mPropSerializer->SetCurrentPropertyContainer(NULL);
       mIgnoreCurrentActor = false;
+      mIgnoreActorDepth = -1;
+      mActorDepth = -1;
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -805,15 +945,74 @@ namespace  dtCore
    {
       if (mBaseActorObject != NULL)
       {
-         if (!mLoadingPrefab)
+         if ( ! mLoadingPrefab && ! mBaseActorObject->IsActorComponent())
          {
-            mMap->AddProxy(*mBaseActorObject);
+            // Determine if the actor has a parent.
+            BaseActorObject* parent = NULL;
+            if ( ! mParentId.IsNull())
+            {
+               // Due to the order that the map is written and read,
+               // parent actors should load before any children and
+               // thus should be accessible via the previously
+               // processed actor object.
+               parent = FindActorById(mParentId);
+            }
+
+            ActorComponentContainer* extendedActor = dynamic_cast<ActorComponentContainer*>(mBaseActorObject.get());
+
+            // Determine if the current actor can link to a found parent.
+            if (parent != NULL && extendedActor != NULL)
+            {
+               extendedActor->SetParentActor(parent);
+            }
+            else // Root actor, or parent not found.
+            {
+               mMap->AddProxy(*mBaseActorObject);
+            }
+
+            // Keep track of the previous actor.
+            mPrevActorObject = mBaseActorObject.get();
          }
          mBaseActorObject->OnMapLoadEnd(); //notify BaseActorObject we're done loading it
       }
-      mBaseActorObject = NULL;
-      mInActor = false;
-      ClearActorValues();
+
+      // Determine if the current actor was being ignored and that
+      // the end element for the actor is for the proper level in
+      // the actor-to-actor hierarchy.
+      bool wasIgnored = mIgnoreCurrentActor;
+      if (mIgnoreCurrentActor
+         && (mActorDepth == 0 || mIgnoreActorDepth == mActorDepth))
+      {
+         mIgnoreCurrentActor = false;
+         mIgnoreActorDepth = -1;
+      }
+      else // Actor was valid and needs to be popped off the stack.
+      {
+         mBaseActorObject = NULL;
+
+         // Set the current actor pointer to the previous parent actor.
+         if ( ! mActorStack.empty())
+         {
+            mActorStack.pop();
+            if ( ! mActorStack.empty())
+            {
+               mBaseActorObject = mActorStack.top();
+            }
+         }
+         else
+         {
+            LOG_WARNING("Actor stack was already empty.");
+         }
+      }
+
+      --mActorDepth;
+
+      mInActor = mBaseActorObject != NULL;
+
+      if ( ! wasIgnored)
+      {
+         mPropSerializer->PopPropertyContainer();
+      }
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -966,6 +1165,42 @@ namespace  dtCore
    bool MapContentHandler::HasDeprecatedProperty() const
    {
       return mPropSerializer->HasDeprecatedProperty();
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   BaseActorObject* MapContentHandler::FindActorById(const dtCore::UniqueId& id) const
+   {
+      BaseActorObject* foundActor = NULL;
+
+      if (mPrevActorObject.valid())
+      {
+         BaseActorObject* actor = mPrevActorObject.get();
+
+         while (actor != NULL)
+         {
+            if (actor->GetId() == id)
+            {
+               foundActor = actor;
+               break;
+            }
+
+            // Attempt access of the next parent.
+            dtCore::ActorComponentContainer* compContainer
+               = dynamic_cast<dtCore::ActorComponentContainer*>(actor);
+            if (compContainer != NULL)
+            {
+               actor = compContainer->GetParentActor();
+            }
+            else // Cannot get to the next parent so exit loop.
+            {
+               //LOG_ERROR("Could not access the parent for actor \"" + actor->GetName()
+               //   + "\" (id " + actor->GetId().ToString() + ")");
+               break;
+            }
+         }
+      }
+
+      return foundActor;
    }
 
 }

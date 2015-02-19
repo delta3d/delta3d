@@ -37,6 +37,7 @@
 
 #include <dtCore/actorfactory.h>
 #include <dtCore/map.h>
+#include <dtGame/actorcomponentcontainer.h>
 
 #include <dtQt/dynamicabstractcontrol.h>
 #include <dtQt/dynamiccontainercontrol.h>
@@ -47,7 +48,7 @@
 #include <dtQt/propertyeditortreeview.h>
 
 #include <dtUtil/log.h>
-#include <dtUtil/tree.h>
+#include <dtUtil/utiltree.h>
 
 #include <QtCore/QStringList>
 
@@ -263,6 +264,43 @@ namespace dtQt
       actorPropBox->setTitle(GetGroupBoxLabelText(mBaseGroupBoxName));
    }
 
+   /////////////////////////////////////////////////////////////////////////////
+   void BasePropertyEditor::GetNestedPropertyList(dtCore::PropertyContainer& pc, std::vector<dtCore::ActorProperty*>& propList)
+   {
+      pc.GetPropertyList(propList);
+      dtGame::ActorComponentContainer* acc = dynamic_cast<dtGame::ActorComponentContainer*>(&pc);
+      if (acc != NULL)
+      {
+         dtGame::ActorComponentVector acv;
+         acc->GetAllComponents(acv);
+         for (unsigned i = 0; i < acv.size(); ++i)
+         {
+            acv[i]->GetPropertyList(propList);
+         }
+      }
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   dtCore::ActorProperty* BasePropertyEditor::FindNestedProperty(dtCore::PropertyContainer& pc, const std::string& name)
+   {
+      dtCore::ActorProperty* result = pc.GetProperty(name);
+      if (result == NULL)
+      {
+         dtGame::ActorComponentContainer* acc = dynamic_cast<dtGame::ActorComponentContainer*>(&pc);
+         if (acc != NULL)
+         {
+            dtGame::ActorComponentVector acv;
+            acc->GetAllComponents(acv);
+            for (unsigned i = 0; result == NULL && i < acv.size(); ++i)
+            {
+               result = acv[i]->GetProperty(name);
+            }
+         }
+      }
+      return result;
+   }
+
+
    ////////////////////////////////////////////////////////////////////////////////
    void BasePropertyEditor::buildDynamicControls()
    {
@@ -277,7 +315,7 @@ namespace dtQt
       // Use our first selected item as our base.
       dtCore::RefPtr<dtCore::PropertyContainer> basePC = mSelectedPC[0];
       std::vector<dtCore::ActorProperty*> propList;
-      basePC->GetPropertyList(propList);
+      GetNestedPropertyList(*basePC, propList);
 
       // Walk the properties that belong to the base container.
       int propCount = (int)propList.size();
@@ -293,14 +331,14 @@ namespace dtQt
          for (int PCIndex = 1; PCIndex < PCCount; ++PCIndex)
          {
             dtCore::PropertyContainer* propCon = mSelectedPC[PCIndex];
-            if (propCon)
+            if (propCon != NULL)
             {
-               dtCore::ActorProperty* linkedProp = propCon->GetProperty(baseProp->GetName());
+               dtCore::ActorProperty* linkedProp = FindNestedProperty(*propCon, baseProp->GetName());
 
                // If this container does not contain the base property, has
                // a different group name, or has a different data type then
                // they do not match, so we should not show this property.
-               if (!linkedProp || linkedProp->GetGroupName() != baseProp->GetGroupName() ||
+               if (linkedProp == NULL || linkedProp->GetGroupName() != baseProp->GetGroupName() ||
                   linkedProp->GetDataType() != baseProp->GetDataType())
                {
                   propertyMatch = false;
@@ -341,7 +379,7 @@ namespace dtQt
                      dtCore::RefPtr<dtCore::PropertyContainer> propCon = mSelectedPC[PCIndex];
                      if (propCon.valid())
                      {
-                        dtCore::ActorProperty* linkedProp = propCon->GetProperty(baseProp->GetName());
+                        dtCore::ActorProperty* linkedProp = FindNestedProperty(*propCon, baseProp->GetName());
                         newControl->AddLinkedProperty(propCon, linkedProp);
                      }
                   }

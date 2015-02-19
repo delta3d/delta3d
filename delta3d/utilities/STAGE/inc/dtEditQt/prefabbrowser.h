@@ -40,7 +40,7 @@
 #include <dtCore/refptr.h>
 #include <dtCore/actortype.h>
 #include <dtCore/resourcetreenode.h>
-#include <dtUtil/tree.h>
+#include <dtUtil/utiltree.h>
 
 class QAction;
 class QGroupBox;

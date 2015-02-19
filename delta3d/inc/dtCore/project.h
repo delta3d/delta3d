@@ -30,10 +30,11 @@
 #include <osg/Referenced>
 
 #include <dtCore/uniqueid.h>
-#include <dtUtil/tree.h>
+#include <dtUtil/utiltree.h>
 #include <dtCore/mapheaderdata.h>
 #include <dtCore/resourcetreenode.h>
 #include <dtCore/resourcehelper.h>
+#include <dtCore/prefabactortype.h>
 #include <dtCore/export.h>
 
 namespace dtUtil
@@ -74,6 +75,7 @@ namespace dtCore
    class DT_CORE_EXPORT Project : public osg::Referenced
    {
    public:
+      typedef dtUtil::tree<ResourceTreeNode> ResourceTree;
       typedef unsigned ContextSlot;
       static const ContextSlot DEFAULT_SLOT_VALUE = ~0U;
 
@@ -248,6 +250,7 @@ namespace dtCore
        * @throws ProjectInvalidContextException if the context is not set.
        */
       void LoadPrefab(const dtCore::ResourceDescriptor& rd, dtCore::ActorRefPtrVector& actorsOut);
+      dtCore::RefPtr<BaseActorObject> LoadPrefab(const dtCore::PrefabActorType& actorType);
 
 
       /**
@@ -568,7 +571,7 @@ namespace dtCore
        * @see Project#refresh
        * @return all of the resources known to the project.
        */
-      const dtUtil::tree<ResourceTreeNode>& GetAllResources() const;
+      const ResourceTree& GetAllResources() const;
 
       /**
        * @note The data will likely be cached.  See the Project::refresh() method.
@@ -576,7 +579,7 @@ namespace dtCore
        * @param toFill The tree to fill with the results.
        * @return all of the resources known to the project of the given type.
        */
-      void GetResourcesOfType(const DataType& type, dtUtil::tree<ResourceTreeNode>& toFill) const;
+      void GetResourcesOfType(const DataType& type, ResourceTree& toFill) const;
 
       //Add later
       //     void findResources(dtUtil::tree<ResourceTreeNode> toFill,

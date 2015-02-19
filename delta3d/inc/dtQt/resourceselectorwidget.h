@@ -32,7 +32,7 @@
 #include <dtQt/export.h>
 
 #include <dtCore/resourcetreenode.h>
-#include <dtUtil/tree.h>
+#include <dtUtil/utiltree.h>
 
 #include <QtGui/QToolButton>
 

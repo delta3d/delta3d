@@ -49,6 +49,7 @@
 #include <dtCore/transform.h>
 
 #include <dtCore/actorhierarchynode.h>
+#include <dtCore/actorcomponentcontainer.h>
 #include <dtCore/actorpropertyserializer.h>
 #include <dtCore/mapxml.h>
 #include <dtCore/map.h>
@@ -355,9 +356,9 @@ namespace dtCore
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   bool MapParser::ParsePrefab(const std::string& path, dtCore::ActorRefPtrVector& proxyList, dtCore::Map* map)
+   bool MapParser::ParsePrefab(const std::string& path, dtCore::ActorRefPtrVector& actorList, dtCore::Map* map)
    {
-      mMapHandler->SetPrefabMode(proxyList, map);
+      mMapHandler->SetPrefabMode(actorList, map);
       std::ifstream mapfstream(path.c_str());
       if (BaseXMLParser::Parse(mapfstream))
       {
@@ -695,49 +696,60 @@ namespace dtCore
             EndElement(); // End Actor Environment Actor Element.
          }
 
-         const std::map<dtCore::UniqueId, dtCore::RefPtr<BaseActorObject> >& proxies = map.GetAllProxies();
-         for (std::map<dtCore::UniqueId, dtCore::RefPtr<BaseActorObject> >::const_iterator i = proxies.begin();
-              i != proxies.end(); i++)
-         {
-            const BaseActorObject& proxy = *i->second.get();
-            //printf("Proxy pointer %x\n", &proxy);
-            //printf("Actor pointer %x\n", proxy.getActor());
+         typedef std::map<dtCore::UniqueId, dtCore::RefPtr<BaseActorObject> > ActorMap;
+         const ActorMap& actorMap = map.GetAllProxies();
 
+         ActorMap::const_iterator curIter = actorMap.begin();
+         for (; curIter != actorMap.end(); ++curIter)
+         {
+            BaseActorObject* actor = curIter->second.get();
+            ActorComponentContainer* compContainer = NULL;
+            bool isActorComp = actor->IsActorComponent();
+            
+            // Attempt a cast if the object is not an ActorComponent.
+            if ( ! isActorComp)
+            {
+               compContainer = dynamic_cast<ActorComponentContainer*>(actor);
+            }
+
+            // Skip actors that have parents since they will be
+            // written nested within a top level actor definition.
             //ghost proxies arent saved
             //added 7/10/06 -banderegg
-            if (proxy.IsGhost())
+            if (actor->IsGhost() || (compContainer != NULL && compContainer->GetParentActor() != NULL))
+            {
                continue;
-
-            mPropSerializer->SetCurrentPropertyContainer(i->second.get());
-
-            BeginElement(MapXMLConstants::ACTOR_ELEMENT);
-            BeginElement(MapXMLConstants::ACTOR_TYPE_ELEMENT);
-            AddCharacters(proxy.GetActorType().GetFullName());
-            EndElement(); // End Actor Type Element.
-            BeginElement(MapXMLConstants::ACTOR_ID_ELEMENT);
-            AddCharacters(proxy.GetId().ToString());
-            EndElement(); // End Actor ID Element.
-            BeginElement(MapXMLConstants::ACTOR_NAME_ELEMENT);
-            AddCharacters(proxy.GetName());
-            if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
-            {
-               mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
-                                   "Found Proxy Named: %s", proxy.GetName().c_str());
             }
-            EndElement(); // End Actor Name Element.
-            std::vector<const ActorProperty*> propList;
-            proxy.GetPropertyList(propList);
-            //int x = 0;
-            for (std::vector<const ActorProperty*>::const_iterator i = propList.begin();
-                 i != propList.end(); ++i)
+
+            if(isActorComp)
             {
-               //printf("Printing actor property number %d", x++);
-               const ActorProperty& property = *(*i);
-
-               mPropSerializer->WriteProperty(property);
-
+               LOG_ERROR("Cannot write an ActorComponent \"" + actor->GetName()
+                  + "\" (type " + actor->GetActorType().GetName()
+                  + ") directly to the map root. The actor component must be contained within an actor.");
             }
-            EndElement(); // End Actor Element.
+            else if (compContainer == NULL)
+            {
+               LOG_WARNING("Actor \"" + actor->GetName()
+                  + "\" (type " + actor->GetActorType().GetName()
+                  + ") could not be cast to a component container.");
+               
+               WriteActor(*actor, true);
+            }
+            else
+            {
+               dtCore::RefPtr<ActorComponentContainer::ActorIterator> iter = compContainer->GetIterator();
+               
+               // Iterate over the current actor and its children in order.
+               BaseActorObject* curActor = NULL;
+               while ( ! iter->IsAtEnd())
+               {
+                  curActor = *(*iter);
+
+                  WriteActor(*curActor, true);
+
+                  ++(*iter);
+               }
+            }
          }
          EndElement(); // End Actors Element
 
@@ -751,11 +763,11 @@ namespace dtCore
                int actorCount = map.GetGroupActorCount(groupIndex);
                for (int actorIndex = 0; actorIndex < actorCount; actorIndex++)
                {
-                  dtCore::BaseActorObject* proxy = map.GetActorFromGroup(groupIndex, actorIndex);
-                  if (proxy)
+                  dtCore::BaseActorObject* actor = map.GetActorFromGroup(groupIndex, actorIndex);
+                  if (actor != NULL)
                   {
                      BeginElement(MapXMLConstants::ACTOR_GROUP_ACTOR_ELEMENT);
-                     AddCharacters(proxy->GetId().ToString());
+                     AddCharacters(actor->GetId().ToString());
                      EndElement(); // End Groups Actor Size Element.
                   }
                }
@@ -765,13 +777,24 @@ namespace dtCore
          }
          EndElement(); // End Groups Element.
 
-         BeginElement(MapXMLConstants::HIERARCHY_ELEMENT);
-            dtCore::ActorHierarchyNode* hier = map.GetDrawableActorHierarchy();
-            for(unsigned int i = 0; i < hier->GetNumChildren(); ++i)
-            {
-               WriteHierarchyBranch(hier->GetChild(i));
-            }
-         EndElement(); //End Drawable Hierarchy Element
+         /*dtCore::ActorComponentContainer* hier
+            = dynamic_cast<dtCore::ActorComponentContainer*>(map.GetDrawableActorHierarchy());
+         if (hier != NULL)
+         {
+            BeginElement(MapXMLConstants::HIERARCHY_ELEMENT);
+               dtCore::ActorComponentContainer::ActorIterator iter = hier->GetIterator();
+            
+               while ( ! iter.IsAtEnd())
+               {
+                  dtCore::ActorComponentContainer* actor
+                     = dynamic_cast<dtCore::ActorComponentContainer*>(*iter);
+                  if (actor != NULL)
+                  {
+                     WriteHierarchyBranch(*actor);
+                  }
+               }
+            EndElement(); //End Drawable Hierarchy Element
+         }*/
 
          BeginElement(MapXMLConstants::PRESET_CAMERAS_ELEMENT);
          {
@@ -936,25 +959,34 @@ namespace dtCore
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void MapWriter::WriteHierarchyBranch(dtCore::ActorHierarchyNode* hierNode)
+   /*void MapWriter::WriteHierarchyBranch(dtCore::ActorComponentContainer& actor)
    {
       std::string idAtt = "actorID='";
-      idAtt += hierNode->GetBaseActorObject()->GetId().ToString();
+      idAtt += actor.GetId().ToString();
       idAtt += "'";
       XMLCh* unicodeForm = XMLString::transcode(idAtt.c_str());
 
       BeginElement(MapXMLConstants::HIERARCHY_ELEMENT_NODE, unicodeForm);
 
-      for (unsigned int i = 0; i < hierNode->GetNumChildren(); ++i)
+      dtCore::ActorComponentContainer::Iterator iter = actor.GetIterator();
+      dtCore::ActorComponentContainer* curActor = NULL;
+      while ( ! iter.IsAtEnd())
       {
-         WriteHierarchyBranch(hierNode->GetChild(i));
+         curActor = dynamic_cast<dtCore::ActorComponentContainer*>(*iter);
+
+         if (curActor != NULL)
+         {
+            WriteHierarchyBranch(*curActor);
+         }
+
+         ++iter;
       }
 
       EndElement(); //end HIERARCHY_ELEMENT_NODE
-   }
+   }*/
 
    /////////////////////////////////////////////////////////////////////////////
-   void MapWriter::SavePrefab(const std::vector<dtCore::RefPtr<BaseActorObject> > proxyList,
+   void MapWriter::SavePrefab(const std::vector<dtCore::RefPtr<BaseActorObject> > actorList,
                               const std::string& filePath, const std::string& description,
                               const std::string& iconFile /* = "" */)
    {
@@ -993,23 +1025,23 @@ namespace dtCore
          EndElement(); // End Header Element.
 
          BeginElement(MapXMLConstants::LIBRARIES_ELEMENT);
-         for (int proxyIndex = 0; proxyIndex < (int)proxyList.size(); proxyIndex++)
+         for (int actorIndex = 0; actorIndex < (int)actorList.size(); actorIndex++)
          {
-            BaseActorObject* proxy = proxyList[proxyIndex].get();
+            BaseActorObject* actor = actorList[actorIndex].get();
 
-            // We can't do anything without a proxy.
-            if (!proxy)
+            // We can't do anything without a actor.
+            if (actor == NULL)
             {
                continue;
             }
 
-            const dtCore::ActorType& type = proxy->GetActorType();
+            const dtCore::ActorType& type = actor->GetActorType();
             dtCore::ActorPluginRegistry* registry = dtCore::ActorFactory::GetInstance().GetRegistryForType(type);
-            if (registry)
+            if (registry != NULL)
             {
                BeginElement(MapXMLConstants::LIBRARY_ELEMENT);
                BeginElement(MapXMLConstants::LIBRARY_NAME_ELEMENT);
-               AddCharacters(dtCore::ActorFactory::GetInstance().GetLibraryNameForRegistry(registry));
+               AddCharacters(dtCore::ActorFactory::GetInstance().GetLibraryNameForRegistry(*registry));
                EndElement(); // End Library Name Element.
                BeginElement(MapXMLConstants::LIBRARY_VERSION_ELEMENT);
                AddCharacters("");
@@ -1022,81 +1054,48 @@ namespace dtCore
          osg::Vec3 origin;
          bool originSet = false;
          BeginElement(MapXMLConstants::ACTORS_ELEMENT);
-         for (int proxyIndex = 0; proxyIndex < (int)proxyList.size(); proxyIndex++)
+         for (int actorIndex = 0; actorIndex < (int)actorList.size(); actorIndex++)
          {
-            BaseActorObject* proxy = proxyList[proxyIndex].get();
+            BaseActorObject* actor = actorList[actorIndex].get();
 
-            // We can't do anything without a proxy.
-            if (!proxy)
+            if (actor == NULL)
             {
                continue;
             }
 
-            //ghost proxies arent saved
-            if (proxy->IsGhost())
+            // Ghost actors should not be saved.
+            if (actor->IsGhost())
                continue;
 
-            // If this is the first proxy, store the translation as the origin.
-            dtCore::TransformableActorProxy* tProxy = dynamic_cast<dtCore::TransformableActorProxy*>(proxy);
-            if (tProxy)
+            // If this is the first actor, store the translation as the origin.
+            dtCore::TransformableActorProxy* tActor = dynamic_cast<dtCore::TransformableActorProxy*>(actor);
+            if (tActor != NULL)
             {
                if (!originSet)
                {
-                  origin = tProxy->GetTranslation();
+                  origin = tActor->GetTranslation();
                   originSet = true;
                }
 
-               tProxy->SetTranslation(tProxy->GetTranslation() - origin);
+               tActor->SetTranslation(tActor->GetTranslation() - origin);
             }
-
-            BeginElement(MapXMLConstants::ACTOR_ELEMENT);
-            BeginElement(MapXMLConstants::ACTOR_TYPE_ELEMENT);
-            AddCharacters(proxy->GetActorType().GetFullName());
-            EndElement(); // End Actor Type Element.
-            BeginElement(MapXMLConstants::ACTOR_ID_ELEMENT);
-            AddCharacters(proxy->GetId().ToString());
-            EndElement(); // End Actor ID Element.
-            BeginElement(MapXMLConstants::ACTOR_NAME_ELEMENT);
-            AddCharacters(proxy->GetName());
-            if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
-            {
-               mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
-                  "Found Proxy Named: %s", proxy->GetName().c_str());
-            }
-            EndElement(); // End Actor Name Element.
 
             // Initialize the serializer to write out prefab properties
             mPropSerializer->Reset();
-            mPropSerializer->SetCurrentPropertyContainer(proxy);
 
-            std::vector<const ActorProperty*> propList;
-            proxy->GetPropertyList(propList);
-            //int x = 0;
-            for (std::vector<const ActorProperty*>::const_iterator i = propList.begin();
-               i != propList.end(); ++i)
-            {
-               //printf("Printing actor property number %d", x++);
-               const ActorProperty& property = *(*i);
-
-               // If the property is read only, skip it
-               if (property.IsReadOnly())
-                  continue;
-
-               mPropSerializer->WriteProperty(property);
-            }
-            EndElement(); // End Actor Element.
+            WriteActor(*actor, false);
 
             // Now undo the translation.
-            if (tProxy && originSet)
+            if (tActor && originSet)
             {
-               tProxy->SetTranslation(tProxy->GetTranslation() + origin);
+               tActor->SetTranslation(tActor->GetTranslation() + origin);
             }
          }
          EndElement(); // End Actors Element
 
          EndElement(); // End Prefab Element.
 
-         //closes the file.
+         // Close the file.
          mFormatTarget.SetOutputStream(NULL);
       }
       catch (dtUtil::Exception& ex)
@@ -1116,6 +1115,139 @@ namespace dtCore
          throw dtCore::MapSaveException( std::string("Unknown exception saving map \"") + filePath + ("\"."), __FILE__, __LINE__);
       }
    }
+
+   /////////////////////////////////////////////////////////////////////////////
+   int MapWriter::WriteActor(dtCore::BaseActorObject& actor, bool allowReadOnlyProps)
+   {
+      // Ghost actors should not be saved.
+      if (actor.IsGhost())
+      {
+         return 0;
+      }
+
+      int results = 0;
+
+      mPropSerializer->PushPropertyContainer(actor);
+
+      BeginElement(MapXMLConstants::ACTOR_ELEMENT);
+
+         // TYPE
+         BeginElement(MapXMLConstants::ACTOR_TYPE_ELEMENT);
+         AddCharacters(actor.GetActorType().GetFullName());
+         EndElement(); // End Actor Type Element.
+
+         // ID
+         const std::string& id = actor.GetId().ToString();
+         BeginElement(MapXMLConstants::ACTOR_ID_ELEMENT);
+         AddCharacters(id);
+         EndElement(); // End Actor ID Element.
+
+         // NAME
+         const std::string& name = actor.GetName();
+         BeginElement(MapXMLConstants::ACTOR_NAME_ELEMENT);
+         AddCharacters(name);
+         if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+         {
+            mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
+               "Writing Actor Named: %s [%s]", name.c_str(), id.c_str());
+         }
+         EndElement(); // End Actor Name Element.
+
+         // PARENT ID
+         dtCore::ActorComponentContainer* compContainer = dynamic_cast<dtCore::ActorComponentContainer*>(&actor);
+         if (compContainer != NULL)
+         {
+            BaseActorObject* parent = compContainer->GetParentActor();
+            if (parent != NULL)
+            {
+               BeginElement(MapXMLConstants::ACTOR_PARENT_ID_ELEMENT);
+               AddCharacters(parent->GetId().ToString());
+               EndElement(); // End Actor Component Element.
+            }
+         }
+
+
+         // ACTOR COMPONENTS
+         if (compContainer != NULL)
+         {
+            dtCore::ActorPtrVector comps;
+            compContainer->GetAllComponents(comps);
+
+            if ( ! comps.empty())
+            {
+               BeginElement(MapXMLConstants::ACTOR_COMPONENTS_ELEMENT);
+               
+               dtCore::BaseActorObject* curComp = NULL;
+               dtCore::ActorPtrVector::iterator curIter = comps.begin();
+               dtCore::ActorPtrVector::iterator endIter = comps.end();
+               for (; curIter != endIter; ++curIter)
+               {
+                  curComp = *curIter;
+
+                  WriteActor(*curComp, allowReadOnlyProps);
+               }
+
+               EndElement(); // End Actor Component Element.
+            }
+         }
+
+
+         // CHILDREN (Nested)
+         // Child components come before direct properties so that all
+         // components exsist before deprecated properties are handled.
+         /*if (compContainer != NULL)
+         {
+            ActorComponentContainer::ActorIterator iter = compContainer->GetIterator();
+            
+            // Skip the current parent actor.
+            ++iter;
+
+            if ( ! iter.IsAtEnd())
+            {
+               BeginElement(MapXMLConstants::ACTOR_CHILDREN_ELEMENT);
+
+               // Iterate over the child actors.
+               while ( ! iter.IsAtEnd())
+               {
+                  BaseActorObject* child = *iter;
+
+                  WriteActor(*child, allowReadOnlyProps);
+
+                  ++iter;
+               }
+
+               EndElement(); // End Actor Children Element.
+         }*/
+
+
+         // PROPERTIES
+         typedef std::vector<const ActorProperty*> PropertyList;
+         PropertyList propList;
+         actor.GetPropertyList(propList);
+
+         PropertyList::const_iterator curIter = propList.begin();
+         for (; curIter != propList.end(); ++curIter)
+         {
+            const ActorProperty* prop = *curIter;
+
+            // If the property is read only and read only is not allowed,
+            // skip the property and go to the next.
+            if (prop->IsReadOnly() && ! allowReadOnlyProps)
+            {
+               continue;
+            }
+
+            mPropSerializer->WriteProperty(*prop);
+
+         }
+
+      EndElement(); // End Actor Element.
+
+      mPropSerializer->PopPropertyContainer();
+
+      return results;
+   }
+
 }
 
 

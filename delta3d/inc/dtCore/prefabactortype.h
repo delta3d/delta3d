@@ -18,39 +18,26 @@
  *
  * David Guthrie
  */
-#ifndef PREFABACTORREGISTRY_H_
-#define PREFABACTORREGISTRY_H_
+#ifndef PREFABACTORTYPE_H_
+#define PREFABACTORTYPE_H_
 
-#include <dtCore/actorpluginregistry.h>
 #include <dtCore/actortype.h>
-#include <dtCore/project.h>
-#include <dtUtil/hashmap.h>
+#include <dtCore/resourcedescriptor.h>
 
 namespace dtCore
 {
 
-   class PrefabActorRegistry: public ActorPluginRegistry
+   class PrefabActorType: public ActorType
    {
    public:
-      PrefabActorRegistry();
-      virtual ~PrefabActorRegistry();
+      PrefabActorType(const dtCore::ResourceDescriptor& prefabRes, const std::string& description, const ActorType* parentType);
+      virtual ~PrefabActorType();
 
-      virtual void RegisterActorTypes();
-
-      virtual void GetSupportedActorTypes(std::vector<dtCore::RefPtr<const ActorType> >& actorTypes);
-
-      virtual bool IsActorTypeSupported(const ActorType& type) const;
-
-      virtual const ActorType* GetActorType(const std::string& category, const std::string& name) const;
-
-      virtual dtCore::RefPtr<BaseActorObject> CreateActor(const ActorType& type);
-
+      const dtCore::ResourceDescriptor& GetPrefabResource() const { return mPrefabResource; }
    private:
-      void RecursiveAdd(const Project::ResourceTree::const_iterator& iter);
-      typedef dtUtil::HashMap<std::string, ActorTypePtr> TypeListMap;
-      TypeListMap mCurTypeList;
+      dtCore::ResourceDescriptor mPrefabResource;
    };
 
 } /* namespace dtCore */
 
-#endif /* PREFABACTORREGISTRY_H_ */
+#endif /* PREFABACTORTYPE_H_ */

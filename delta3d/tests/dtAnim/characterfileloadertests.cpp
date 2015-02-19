@@ -100,6 +100,8 @@ namespace dtAnim
 
             dtAnim::ModelDatabase& database = dtAnim::ModelDatabase::GetInstance();
             CPPUNIT_ASSERT(database.IsFileValid(validFile));
+
+            std::cout << "\nThe following Exception output is a normal part of this test. Please regard." << std::endl;
             CPPUNIT_ASSERT(!database.IsFileValid(invalidFile));
          }
 
@@ -320,35 +322,35 @@ namespace dtAnim
             CPPUNIT_ASSERT(modelData != NULL);
 
             // Test file extension classification.
-            CPPUNIT_ASSERT(modelData->GetFileType("test.caf") == ModelResourceType::ANIM_FILE);
-            CPPUNIT_ASSERT(modelData->GetFileType("test.xaf") == ModelResourceType::ANIM_FILE);
-            CPPUNIT_ASSERT(modelData->GetFileType("test.crf") == ModelResourceType::MAT_FILE);
-            CPPUNIT_ASSERT(modelData->GetFileType("test.xrf") == ModelResourceType::MAT_FILE);
-            CPPUNIT_ASSERT(modelData->GetFileType("test.cmf") == ModelResourceType::MESH_FILE);
-            CPPUNIT_ASSERT(modelData->GetFileType("test.xmf") == ModelResourceType::MESH_FILE);
-            CPPUNIT_ASSERT(modelData->GetFileType("test.csf") == ModelResourceType::SKEL_FILE);
-            CPPUNIT_ASSERT(modelData->GetFileType("test.xsf") == ModelResourceType::SKEL_FILE);
-            CPPUNIT_ASSERT(modelData->GetFileType("test.zzz") == ModelResourceType::NO_FILE);
+            CPPUNIT_ASSERT(modelData->GetFileType("test.caf") == ANIM_FILE);
+            CPPUNIT_ASSERT(modelData->GetFileType("test.xaf") == ANIM_FILE);
+            CPPUNIT_ASSERT(modelData->GetFileType("test.crf") == MAT_FILE);
+            CPPUNIT_ASSERT(modelData->GetFileType("test.xrf") == MAT_FILE);
+            CPPUNIT_ASSERT(modelData->GetFileType("test.cmf") == MESH_FILE);
+            CPPUNIT_ASSERT(modelData->GetFileType("test.xmf") == MESH_FILE);
+            CPPUNIT_ASSERT(modelData->GetFileType("test.csf") == SKEL_FILE);
+            CPPUNIT_ASSERT(modelData->GetFileType("test.xsf") == SKEL_FILE);
+            CPPUNIT_ASSERT(modelData->GetFileType("test.zzz") == NO_FILE);
 
             // Ensure that the actual files that were loaded are in the file mapping.
             dtAnim::StrArray fileList;
-            CPPUNIT_ASSERT_EQUAL(1U, modelData->GetFileListForFileType(ModelResourceType::SKEL_FILE, fileList));
+            CPPUNIT_ASSERT_EQUAL(1U, modelData->GetFileListForFileType(SKEL_FILE, fileList));
             CPPUNIT_ASSERT(VectorHasValue(fileList, "Skeleton.csf"));
             fileList.clear();
-            CPPUNIT_ASSERT_EQUAL(5U, modelData->GetFileListForFileType(ModelResourceType::ANIM_FILE, fileList));
+            CPPUNIT_ASSERT_EQUAL(5U, modelData->GetFileListForFileType(ANIM_FILE, fileList));
             CPPUNIT_ASSERT(VectorHasValue(fileList, "LowWalk.caf"));
             CPPUNIT_ASSERT(VectorHasValue(fileList, "LowWalk_Wpn.caf"));
             CPPUNIT_ASSERT(VectorHasValue(fileList, "Breath.caf"));
             CPPUNIT_ASSERT(VectorHasValue(fileList, "Run.caf"));
             CPPUNIT_ASSERT(VectorHasValue(fileList, "Walk.caf"));
             fileList.clear();
-            CPPUNIT_ASSERT_EQUAL(4U, modelData->GetFileListForFileType(ModelResourceType::MESH_FILE, fileList));
+            CPPUNIT_ASSERT_EQUAL(4U, modelData->GetFileListForFileType(MESH_FILE, fileList));
             CPPUNIT_ASSERT(VectorHasValue(fileList, "HEAD.cmf"));
             CPPUNIT_ASSERT(VectorHasValue(fileList, "BODY.cmf"));
             CPPUNIT_ASSERT(VectorHasValue(fileList, "Helmet.cmf"));
             CPPUNIT_ASSERT(VectorHasValue(fileList, "M16m80.cmf"));
             fileList.clear();
-            CPPUNIT_ASSERT_EQUAL(4U, modelData->GetFileListForFileType(ModelResourceType::MAT_FILE, fileList));
+            CPPUNIT_ASSERT_EQUAL(4U, modelData->GetFileListForFileType(MAT_FILE, fileList));
             CPPUNIT_ASSERT(VectorHasValue(fileList, "HEAD.crf"));
             CPPUNIT_ASSERT(VectorHasValue(fileList, "BODY.crf"));
             CPPUNIT_ASSERT(VectorHasValue(fileList, "Helmet.crf"));
@@ -357,27 +359,27 @@ namespace dtAnim
 
             // Test name list by file type
             dtAnim::StrArray nameList;
-            CPPUNIT_ASSERT_EQUAL(1U, modelData->GetObjectNameListForFileType(ModelResourceType::SKEL_FILE, nameList));
-            CPPUNIT_ASSERT(modelData->GetFileCount(ModelResourceType::SKEL_FILE) == 1);
+            CPPUNIT_ASSERT_EQUAL(1U, modelData->GetObjectNameListForFileType(SKEL_FILE, nameList));
+            CPPUNIT_ASSERT(modelData->GetFileCount(SKEL_FILE) == 1);
             CPPUNIT_ASSERT(VectorHasValue(nameList, "skeleton"));
             nameList.clear();
-            CPPUNIT_ASSERT_EQUAL(5U, modelData->GetObjectNameListForFileType(ModelResourceType::ANIM_FILE, nameList));
-            CPPUNIT_ASSERT_EQUAL(5U, modelData->GetFileCount(ModelResourceType::ANIM_FILE));
+            CPPUNIT_ASSERT_EQUAL(5U, modelData->GetObjectNameListForFileType(ANIM_FILE, nameList));
+            CPPUNIT_ASSERT_EQUAL(5U, modelData->GetFileCount(ANIM_FILE));
             CPPUNIT_ASSERT(VectorHasValue(nameList, "LowWalk"));
             CPPUNIT_ASSERT(VectorHasValue(nameList, "LowWalk with weapon"));
             CPPUNIT_ASSERT(VectorHasValue(nameList, "Idle"));
             CPPUNIT_ASSERT(VectorHasValue(nameList, "Run"));
             CPPUNIT_ASSERT(VectorHasValue(nameList, "Walk"));
             nameList.clear();
-            CPPUNIT_ASSERT_EQUAL(4U, modelData->GetObjectNameListForFileType(ModelResourceType::MESH_FILE, nameList));
-            CPPUNIT_ASSERT_EQUAL(4U, modelData->GetFileCount(ModelResourceType::MESH_FILE));
+            CPPUNIT_ASSERT_EQUAL(4U, modelData->GetObjectNameListForFileType(MESH_FILE, nameList));
+            CPPUNIT_ASSERT_EQUAL(4U, modelData->GetFileCount(MESH_FILE));
             CPPUNIT_ASSERT(VectorHasValue(nameList, "Head"));
             CPPUNIT_ASSERT(VectorHasValue(nameList, "Body"));
             CPPUNIT_ASSERT(VectorHasValue(nameList, "Helmet"));
             CPPUNIT_ASSERT(VectorHasValue(nameList, "M16"));
             nameList.clear();
-            CPPUNIT_ASSERT_EQUAL(4U, modelData->GetObjectNameListForFileType(ModelResourceType::MAT_FILE, nameList));
-            CPPUNIT_ASSERT_EQUAL (4U, modelData->GetFileCount(ModelResourceType::MAT_FILE));
+            CPPUNIT_ASSERT_EQUAL(4U, modelData->GetObjectNameListForFileType(MAT_FILE, nameList));
+            CPPUNIT_ASSERT_EQUAL (4U, modelData->GetFileCount(MAT_FILE));
             CPPUNIT_ASSERT(VectorHasValue(nameList, "Head Material"));
             CPPUNIT_ASSERT(VectorHasValue(nameList, "Body Material"));
             CPPUNIT_ASSERT(VectorHasValue(nameList, "Helmet Material"));
@@ -385,10 +387,10 @@ namespace dtAnim
             nameList.clear();
 
             // Test access to a file name via an object name and file type.
-            CPPUNIT_ASSERT(modelData->GetFileForObjectName(ModelResourceType::SKEL_FILE, "skeleton") == "Skeleton.csf");
-            CPPUNIT_ASSERT(modelData->GetFileForObjectName(ModelResourceType::MAT_FILE, "Helmet Material") == "Helmet.crf");
-            CPPUNIT_ASSERT(modelData->GetFileForObjectName(ModelResourceType::MESH_FILE, "Head") == "HEAD.cmf");
-            CPPUNIT_ASSERT(modelData->GetFileForObjectName(ModelResourceType::ANIM_FILE, "LowWalk with weapon") == "LowWalk_Wpn.caf");
+            CPPUNIT_ASSERT(modelData->GetFileForObjectName(SKEL_FILE, "skeleton") == "Skeleton.csf");
+            CPPUNIT_ASSERT(modelData->GetFileForObjectName(MAT_FILE, "Helmet Material") == "Helmet.crf");
+            CPPUNIT_ASSERT(modelData->GetFileForObjectName(MESH_FILE, "Head") == "HEAD.cmf");
+            CPPUNIT_ASSERT(modelData->GetFileForObjectName(ANIM_FILE, "LowWalk with weapon") == "LowWalk_Wpn.caf");
 
 
             // Test mapping multiple object names to a single file.
@@ -440,7 +442,7 @@ namespace dtAnim
             CPPUNIT_ASSERT(modelData->RegisterFile(testFile, "D"));
 
             // Test changing an object name.
-            dtAnim::ModelResourceType fileType = dtAnim::ModelResourceType::ANIM_FILE;
+            dtAnim::ModelResourceType fileType = dtAnim::ANIM_FILE;
             CPPUNIT_ASSERT( ! modelData->ReplaceObjectName(fileType, "A", "B"));
             CPPUNIT_ASSERT(modelData->ReplaceObjectName(fileType, "A", "C"));
             CPPUNIT_ASSERT(modelData->GetFileForObjectName(fileType, "C") == testFile);

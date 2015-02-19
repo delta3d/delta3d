@@ -1,1071 +1,1284 @@
-/////////////////////////////////////////////////////////////////////////////
-//
-// This generic tree container is the property of Justin Gottschlich. It may
-// be used freely in commercial software or non-commercial software without
-// explicit permission from Mr. Gottschlich. However this header file comment
-// must always appear in this header file in its entirety.
-//
-// You may use this source code free of charge in any environment, pending
-// you e-mail Justin (justin@nodeka.com) so he is aware of how the tree
-// container is being used and send updates as they are made.
-//
-// (c) 1999-2005 Justin Gottschlich
-//
-/////////////////////////////////////////////////////////////////////////////
+#ifndef DTAI_DELTA_TREE_H
+#define DTAI_DELTA_TREE_H
 
-#ifndef tree_header_file
-#define tree_header_file
+/*
+ * Delta3D Open Source Game and Simulation Engine
+ * Copyright (C) 2009 Alion Science and Technology
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ *
+ * Bradley Anderegg
+ *
+ */
 
-#ifndef NULL
-#define NULL 0
-#endif
+#include <dtUtil/typetraits.h>
+#include <cstddef>
 
-#if WIN32
-#pragma warning( push )
-// Disable warning for multiple operator= defines
-#pragma warning( disable : 4522 )
-#pragma warning( disable : 4786 )
-#endif // WIN32
+#include <dtCore/refptr.h>
+#include <dtCore/observerptr.h>
+#include <dtUtil/referencedinterface.h>
 
-namespace dtUtil {
-
-/////////////////////////////////////////////////////////////////////////////
-// tree_iterator forward declaration
-/////////////////////////////////////////////////////////////////////////////
-template <typename T> class tree_iterator;
-
-/////////////////////////////////////////////////////////////////////////////
-// tree pair object definition
-/////////////////////////////////////////////////////////////////////////////
-template <typename T> class tree
+namespace dtUtil
 {
-public:
 
-    typedef tree_iterator<T> iterator;
-    typedef const tree_iterator<T> const_iterator;
-
-private:
-
-    // Class data
-    mutable T data_;
-
-    // Nobody gets any access to this
-    mutable tree *next_;
-    mutable tree *prev_;
-    mutable tree *in_;
-    mutable tree *out_;
-
-    // What level are we on?
-    mutable size_t level_;
-    mutable size_t size_;
-
-    //////////////////////////////////////////////////////////////////////////
-    // Removes a link to a node ... doesn't destroy the CTree, just rips it
-    // out of it's current location. This is used so it can be placed elsewhere
-    // without trouble.
-    //////////////////////////////////////////////////////////////////////////
-    void disconnect_()
-    {
-        // unlink this from the master node
-        if (this->out_ != NULL) {
-
-            // this->out_ is going to be called alot in succession "register" it
-            tree *out = this->out_;
-
-            // Decrement the size of the outter level
-            --(out->size_);
-
-            if (out->in_ == this) {
-                if (NULL == this->next_) {
-                    // If this is the last node of this level, zap the hidden node
-                    delete this->prev_;
-                    out->in_ = NULL;
-                }
-                else {
-                    // Otherwise, just reattatch the head node to the next node
-                    this->prev_->next_ = this->next_;
-                    this->next_->prev_ = this->prev_;
-                    out->in_ = this->next_;
-                }
-            }
-            else {
-                // We should be able to do this absolutely.
-                this->prev_->next_ = this->next_;
-                if (NULL != this->next_) this->next_->prev_ = this->prev_;
-            }
-        }
-        // Point to nothing
-        this->next_ = this->prev_ = NULL;
-    }
-
-    //////////////////////////////////////////////////////////////////////////
-    // End of the tree list, private only
-    //////////////////////////////////////////////////////////////////////////
-    const tree* end_() const { return (NULL); }
-
-    //////////////////////////////////////////////////////////////////////////
-    // Does the actual insert into the tree
-    //////////////////////////////////////////////////////////////////////////
-    tree& i_insert(tree *inTree, tree *level, bool (*pObj)(const T&, const T&))
-    {
-        // Do NOT move this line beyond this point. The reason is because we must
-        // check to see if the node exists here because we may be removing the ONLY
-        // node in the tree. If it is then NULL == level->in_. DO NOT REMOVE THIS
-        //if (false == level->mDuplicates)
-
-        // never allow duplicate keys
-        level->remove(inTree->data());
-
-        // if there's no inner tree, make it
-        if (NULL == level->in_) {
-            // Dummy node, create it -- if good memory do stuff, if NULL throw
-            if (tree *temp = new tree) {
-                temp->next_ = inTree;
-                inTree->prev_ = temp;
-                level->in_ = inTree;
-            }
-            else throw "allocation failed";
-        }
-        else {
-
-            tree *temp = level->in_->prev_;
-
-            while (true) {
-                if (NULL == temp->next_) {
-                    temp->next_ = inTree;
-                    inTree->prev_ = temp;
-                    break;
-                }
-                else if ( pObj(inTree->data(), temp->next_->data()) ) {
-
-                    tree *hold = temp->next_;
-
-                    // temp -> inTree -> hold
-                    temp->next_ = inTree;
-                    inTree->next_ = hold;
-
-                    // temp <- inTree <- hold
-                    hold->prev_ = inTree;
-                    inTree->prev_ = temp;
-
-                    // If we just inserted on the first node, we need to make sure
-                    // the in pointer goes to inTree
-                    if (hold == level->in_) level->in_ = inTree;
-                    break;
-                }
-                temp = temp->next_;
-            }
-        }
-
-        inTree->out_ = level;
-        ++(level->size_);
-
-        inTree->level_ = level->level() + 1;
-        return (*inTree);
-    }
-
-    //////////////////////////////////////////////////////////////////////////
-    iterator push_back_no_remove(const T &inT)
-    {
-        tree *createdTree = new tree(inT);
-        if (NULL == createdTree) throw "allocation failed";
-        return iterator(i_push_back_no_remove(createdTree, this));
-    }
-
-    //////////////////////////////////////////////////////////////////////////
-    tree& i_push_back_no_remove(tree *inTree, tree *level)
-    {
-        // if there's no inner tree, make it
-        if (NULL == level->in_)
-      {
-            // Dummy node, create it -- if good memory do stuff, if NULL throw
-            if (tree *temp = new tree) {
-                temp->next_ = inTree;
-                inTree->prev_ = temp;
-                level->in_ = inTree;
-            }
-            else throw "allocation failed";
-        }
-        else
-      {
-            tree *temp = level->in_->prev_;
-
-            while (true) {
-                if (NULL == temp->next_) {
-                    temp->next_ = inTree;
-                    inTree->prev_ = temp;
-                    break;
-                }
-                temp = temp->next_;
-            }
-        }
-
-        inTree->out_ = level;
-        ++(level->size_);
-
-        inTree->level_ = level->level() + 1;
-        return *inTree;
-    }
-
-    //////////////////////////////////////////////////////////////////////////
-    tree& i_push_back(tree *inTree, tree *level)
-    {
-        level->remove(inTree->data());
-
-        // if there's no inner tree, make it
-        if (NULL == level->in_)
-      {
-            // Dummy node, create it -- if good memory do stuff, if NULL throw
-            if (tree *temp = new tree) {
-                temp->next_ = inTree;
-                inTree->prev_ = temp;
-                level->in_ = inTree;
-            }
-            else throw "allocation failed";
-        }
-        else
-      {
-            tree *temp = level->in_->prev_;
-
-            while (true) {
-                if (NULL == temp->next_) {
-                    temp->next_ = inTree;
-                    inTree->prev_ = temp;
-                    break;
-                }
-                temp = temp->next_;
-            }
-        }
-
-        inTree->out_ = level;
-        ++(level->size_);
-
-        inTree->level_ = level->level() + 1;
-        return *inTree;
-    }
-
-    //////////////////////////////////////////////////////////////////////////
-    tree& i_push_front(tree *inTree, tree *level)
-    {
-        level->remove(inTree->data());
-
-        // if there's no inner tree, make it
-        if (NULL == level->in_)
-      {
-            // Dummy node, create it -- if good memory do stuff, if NULL throw
-            if (tree *temp = new tree) {
-                temp->next_ = inTree;
-                inTree->prev_ = temp;
-                level->in_ = inTree;
-            }
-            else throw "allocation failed";
-        }
-        else
-      {
-            tree *temp = level->in_->prev_;
-
-            tree *hold = temp->next_;
-            // temp -> inTree -> hold
-            temp->next_ = inTree;
-            inTree->next_ = hold;
-            // temp <- inTree <- hold
-            hold->prev_ = inTree;
-            inTree->prev_ = temp;
-            // If we just inserted on the first node, we need to make sure
-            // the in pointer goes to inTree
-            if (hold == level->in_) level->in_ = inTree;
-        }
-
-        inTree->out_ = level;
-        ++(level->size_);
-
-        inTree->level_ = level->level() + 1;
-        return *inTree;
-    }
-
-    //////////////////////////////////////////////////////////////////////////
-    // No function object
-    //////////////////////////////////////////////////////////////////////////
-    tree& i_insert(tree *inTree, tree *level)
-    {
-        // Do NOT move this line beyond this point. The reason is because we must
-        // check to see if the node exists here because we may be removing the ONLY
-        // node in the tree. If it is then NULL == level->in_. DO NOT REMOVE THIS
-        //if (false == level->mDuplicates)
-        level->remove(inTree->data());
-
-        // if there's no inner tree, make it
-        if (NULL == level->in_) {
-            // Dummy node, create it -- if good memory do stuff, if NULL throw
-            if (tree *temp = new tree) {
-                temp->next_ = inTree;
-                inTree->prev_ = temp;
-                level->in_ = inTree;
-            }
-            else throw "allocation failed";
-        }
-        else {
-
-            tree *temp = level->in_->prev_;
-
-            while (true) {
-                if (NULL == temp->next_) {
-                    temp->next_ = inTree;
-                    inTree->prev_ = temp;
-                    break;
-                }
-                else if ( inTree->data() < temp->next_->data() ) {
-                    tree *hold = temp->next_;
-                    // temp -> inTree -> hold
-                    temp->next_ = inTree;
-                    inTree->next_ = hold;
-                    // temp <- inTree <- hold
-                    hold->prev_ = inTree;
-                    inTree->prev_ = temp;
-                    // If we just inserted on the first node, we need to make sure
-                    // the in pointer goes to inTree
-                    if (hold == level->in_) level->in_ = inTree;
-                    break;
-                }
-                temp = temp->next_;
-            }
-        }
-
-        inTree->out_ = level;
-        ++(level->size_);
-
-        inTree->level_ = level->level() + 1;
-        return (*inTree);
-    }
-
-protected:
-
-    //////////////////////////////////////////////////////////////////////////
-    //////////////////////////////////////////////////////////////////////////
-    size_t size(const tree& in) const { return in.size(); }
-    size_t level(const tree& in) const { return in.level(); }
-
-    //////////////////////////////////////////////////////////////////////////
-    // Points to the beginning of the list and sets the current
-    //////////////////////////////////////////////////////////////////////////
-    iterator begin(const tree& in) const { return iterator( *(in.in_) ); }
-
-    //////////////////////////////////////////////////////////////////////////
-    // Notice that we're returning a const tree* here and not an iterator.
-    // This is because the iterator itself has a member to a pointer. Doing
-    // an iterator constructor here would be less efficient than just
-    // returning a tree* which can be assigned internally inside the iterator
-    // operator--(). Also because no one can call prev from a tree itself
-    // (this is protected), we don't have to worry about safety issues except
-    // for iterator safety.
-    //////////////////////////////////////////////////////////////////////////
-    const tree* prev(const tree& in) const { return (in.prev_); }
-
-    //////////////////////////////////////////////////////////////////////////
-    // Notice that we're returning a const tree* here and not an iterator.
-    // This is because the iterator itself has a member to a pointer. Doing
-    // an iterator constructor here would be less efficient than just
-    // returning a tree* which can be assigned internally inside the iterator
-    // operator++(). Also because no one can call prev from a tree itself
-    // (this is protected), we don't have to worry about safety issues except
-    // for iterator safety.
-    //////////////////////////////////////////////////////////////////////////
-    const tree* next(const tree& in) const { return (in.next_); }
-
-    //////////////////////////////////////////////////////////////////////////
-    iterator in(const tree& in) const { return iterator( *(in.in_) ); }
-
-    //////////////////////////////////////////////////////////////////////////
-    iterator out(const tree& in) const { return iterator( *(in.out_) ); }
-
-public:
-
-    //////////////////////////////////////////////////////////////////////////
-    // Default constructor
-    //////////////////////////////////////////////////////////////////////////
-    tree() : next_(0), prev_(0), in_(0), out_(0), level_(0), size_(0) {}
-
-    //////////////////////////////////////////////////////////////////////////
-    // Paired <T> constructor
-    //////////////////////////////////////////////////////////////////////////
-    tree(const T &inT) : data_(inT), next_(0), prev_(0), in_(0), out_(0), level_(0), size_(0) {}
-
-    //////////////////////////////////////////////////////////////////////////
-    // operator==, expects operator== has been written for both t and u
-    //////////////////////////////////////////////////////////////////////////
-    bool operator==(const tree &inTree) const
-    {
-        if (this->data_ == inTree.data_) return true;
-        return false;
-    }
-
-    //////////////////////////////////////////////////////////////////////////
-    // The operator= which is a real copy, hidden and undefined
-    //////////////////////////////////////////////////////////////////////////
-    const tree& operator=(const tree& in)
-    {
-        this->clear();
-
-        this->data_ = in.data_;
-        this->copy_tree(in);
-
-        return *this;
-    }
-
-    //////////////////////////////////////////////////////////////////////////
-    iterator get_tree_iterator() const { return iterator( *(this) ); }
-    iterator get_tree_iterator() { return iterator( *(this) ); }
-
-    //////////////////////////////////////////////////////////////////////////
-    // copy constructor - now visible
-    //////////////////////////////////////////////////////////////////////////
-    tree(const tree &in) : data_(in.data_), next_(0), prev_(0), in_(0), out_(0),
-        level_(0), size_(0) { *this = in; }
-
-    //////////////////////////////////////////////////////////////////////////
-    // destructor -- cleans out all branches, destroyed entire tree
-    //////////////////////////////////////////////////////////////////////////
-    virtual ~tree()
-    {
-        // Disconnect ourselves -- very important for decrementing the
-        // size of our parent
-        this->disconnect_();
-
-        // Now get rid of our children -- but be smart about it,
-        // right before we destroy it set it's out_ to NULL
-        // that way Disconnect fails immediately -- much faster
-
-        if (this->size() > 0) {
-            tree *cur = this->in_, *prev = this->in_->prev_;
-
-            // Delete the head node
-            prev->out_ = NULL;
-            delete prev;
-
-            for (; this->size_ > 0; --this->size_) {
-
-                prev = cur;
-                cur = cur->next_;
-
-                prev->out_ = NULL;
-                delete prev;
-            }
-        }
-    }
-
-    //////////////////////////////////////////////////////////////////////////
-    void copy_tree(const tree& in)
-    {
-        // for each branch iterate through all nodes and copy them
-        for (iterator i = in.begin(); in.end() != i; ++i) {
-            iterator inserted = this->push_back_no_remove(i.data());
-
-            // for each node, see if there are inners - if so, copy those too
-            if (i.size() != 0) inserted.tree_ptr()->copy_tree(*i.tree_ptr());
-        }
-    }
-
-    //////////////////////////////////////////////////////////////////////////
-    // Returns the first element of our tree
-    //////////////////////////////////////////////////////////////////////////
-    const_iterator begin() const { return iterator( *(this->in_) ); }
-    iterator begin() { return iterator( *(this->in_) ); }
-
-    //////////////////////////////////////////////////////////////////////////
-    // Returns end_of_iterator
-    //////////////////////////////////////////////////////////////////////////
-    iterator& end() const { return tree::iterator::end_iterator(); }
-
-    //////////////////////////////////////////////////////////////////////////
-    // Returns the first element of our tree
-    //////////////////////////////////////////////////////////////////////////
-    const_iterator in() const { return iterator( *(this->in_) ); }
-    iterator in() { return iterator( *(this->in_) ); }
-
-    //////////////////////////////////////////////////////////////////////////
-    // Returns an iterator which steps out one level
-    //////////////////////////////////////////////////////////////////////////
-    const_iterator out() const { return iterator( *(this->out_) ); }
-    iterator out() { return iterator( *(this->out_) ); }
-
-    //////////////////////////////////////////////////////////////////////////
-    // much like destructor with the exception that empty can be called from
-    // an iterator, calling delete on an iterator will only delete the iterator
-    // calling empty from an iterator will delete the tree it's iterating.
-    //////////////////////////////////////////////////////////////////////////
-    void clear()
-    {
-        // Now get rid of our children -- but be smart about it,
-        // right before we destroy it set it's out_ to NULL
-        // that way disconnect_ fails immediately, much faster
-        if (this->size() > 0) {
-            tree *cur = this->in_, *prev = this->in_->prev_;
-
-            // Delete the head node
-            prev->out_ = NULL;
-            delete prev;
-
-            for (; this->size_ > 0; --this->size_) {
-
-                prev = cur;
-                cur = cur->next_;
-
-                prev->out_ = NULL;
-                delete prev;
-            }
-
-            // Set our inner pointer and our size to 0
-            this->in_ = NULL;
-            this->size_ = 0;
-        }
-    }
-
-    T& operator*() { return this->data_; }
-    const T& operator*() const { return this->data_; }
-    T& data() { return this->data_; }
-    const T& data() const { return this->data_; }
-
-    const T& data(const T &inData) { return (this->data_ = inData); }
-
-    //////////////////////////////////////////////////////////////////////////
-    size_t level() const { return (this->level_); }
-
-    //////////////////////////////////////////////////////////////////////////
-    size_t size() const { return this->size_; }
-
-    //////////////////////////////////////////////////////////////////////////
-    iterator push_front(const T &inT)
-    {
-        tree *createdTree = new tree(inT);
-        if (NULL == createdTree) throw "allocation failed";
-        return iterator(i_push_front(createdTree, this));
-    }
-
-    //////////////////////////////////////////////////////////////////////////
-    iterator push_back(const T &inT)
-    {
-        tree *createdTree = new tree(inT);
-        if (NULL == createdTree) throw "allocation failed";
-        return iterator(i_push_back(createdTree, this));
-    }
-
-   //////////////////////////////////////////////////////////////////////////
-    // This creates a new tree node from parameters and then inserts it
-    // Also takes a function object which can be used for sorting on inserts
-    //////////////////////////////////////////////////////////////////////////
-    iterator insert(const T &inT, bool (*pObj)(const T&, const T&))
-    {
-        tree *createdTree = new tree(inT);
-        if (NULL == createdTree) throw "allocation failed";
-        return iterator(i_insert(createdTree, this, pObj));
-    }
-
-    //////////////////////////////////////////////////////////////////////////
-    //////////////////////////////////////////////////////////////////////////
-    iterator insert(const iterator &i)
-    {
-        tree *createdTree = new tree(i.data());
-        if (NULL == createdTree) throw "allocation failed";
-
-        return iterator(i_insert(createdTree, this));
-    }
-
-    //////////////////////////////////////////////////////////////////////////
-    // Insert with no function object
-    //////////////////////////////////////////////////////////////////////////
-    iterator insert(const T &inT)
-    {
-        tree *createdTree = new tree(inT);
-        if (NULL == createdTree) throw "allocation failed";
-        return iterator(i_insert(createdTree, this));
-    }
-
-    //////////////////////////////////////////////////////////////////////////
-    // This takes an existing node, disconnects it from wherever it is, and then
-    // inserts it into a different tree. This does not create a new node from the
-    // passed in data.
-    //////////////////////////////////////////////////////////////////////////
-    iterator reinsert(tree *in, bool (*pObj)(const T&, const T&))
-    {
-        in->disconnect_();
-        return iterator(i_insert(in, this, pObj));
-    }
-
-    //////////////////////////////////////////////////////////////////////////
-    // Reinsert with no function object
-    //////////////////////////////////////////////////////////////////////////
-    iterator reinsert(tree *in)
-    {
-        in->disconnect_();
-        return iterator(i_insert(in, this));
-    }
-
-    //////////////////////////////////////////////////////////////////////////
-    // removes first matching t, returns true if found, otherwise false
-    //////////////////////////////////////////////////////////////////////////
-    bool remove(const T &inData)
-    {
-        if (tree *temp = this->in_) {
-            do {
-                if (inData == temp->data_) {
-                    delete temp;
-                    return true;
-                }
-            } while (NULL != (temp = temp->next_) );
-        }
-        return false;
-    }
-
-    //////////////////////////////////////////////////////////////////////////
-    bool erase(const iterator& i)
-    {
-        if (tree *temp = this->in_) {
-            do {
-                if (temp == i.tree_ptr()) {
-                    delete temp;
-                    return true;
-                }
-            } while (NULL != (temp = temp->next_) );
-        }
-        return false;
-    }
-
-    //////////////////////////////////////////////////////////////////////////
-    iterator operator[](size_t loc) const
-    {
-      tree *temp;
-        for (temp = this->in_; loc > 0; --loc) temp = temp->next_;
-        return iterator(*temp);
-    }
-
-    //////////////////////////////////////////////////////////////////////////
-    iterator operator[](size_t loc)
-    {
-      tree *temp;
-        for (temp = this->in_; loc > 0; --loc) temp = temp->next_;
-        return iterator(*temp);
-    }
-
-    //////////////////////////////////////////////////////////////////////////
-    iterator find(const T &inT) const
-   { return find(inT, iterator(*this->in_)); }
-
-    //////////////////////////////////////////////////////////////////////////
-    iterator find(const T &inT, bool (*obj)(const T&, const T&)) const
-   { return find(inT, iterator(*this->in_), obj); }
-
-    //////////////////////////////////////////////////////////////////////////
-   iterator tree_find_depth(const T &inT) const
-   { return tree_find_depth(inT, iterator(*this->in_)); }
-
-    //////////////////////////////////////////////////////////////////////////
-    iterator tree_find_depth(const T &inT, bool (*obj)(const T&, const T&)) const
-   { return tree_find_depth(inT, iterator(*this->in_), obj); }
-
-    //////////////////////////////////////////////////////////////////////////
-   iterator tree_find_breadth(const T &inT) const
-   { return tree_find_breadth(inT, iterator(*this->in_)); }
-
-    //////////////////////////////////////////////////////////////////////////
-   iterator tree_find_breadth(const T &inT, bool (*obj)(const T&, const T&)) const
-   { return tree_find_breadth(inT, iterator(*this->in_), obj); }
-
-    //////////////////////////////////////////////////////////////////////////
-    // internal_only interface, can't be called even with derived objects due
-    // to its direct reference to tree's private members
-    //////////////////////////////////////////////////////////////////////////
-    iterator find(const T &inT, const iterator &iter) const
-    {
-        if (tree *temp = iter.tree_ptr()) {
-            do {
-                if (inT == temp->data_) return iterator(*temp);
-            } while (NULL != (temp = temp->next_) );
-        }
-        return tree::iterator::end_iterator();
-    }
-
-    //////////////////////////////////////////////////////////////////////////
-    iterator find(const T &inT, const iterator &iter, bool (*obj)(const T&, const T&)) const
-    {
-        if (tree *temp = iter.tree_ptr()) {
-            do {
-                if ( obj(inT, temp->data_) ) return ( iterator(*temp) );
-            } while (NULL != (temp = temp->next_) );
-        }
-        return tree::iterator::end_iterator();
-    }
-
-    //////////////////////////////////////////////////////////////////////////
-    iterator tree_find_depth(const T &inT, const iterator &iter) const
-    {
-        if (tree *temp = iter.tree_ptr()) {
-            do {
-                if (inT == temp->data_) return iterator(*temp);
-            // do a depth search, search it for inT
-            iterator i = temp->tree_find_depth(inT);
-            if (i != tree::iterator::end_iterator()) return i;
-            } while (NULL != (temp = temp->next_) );
-        }
-        return tree::iterator::end_iterator();
-    }
-
-    //////////////////////////////////////////////////////////////////////////
-    iterator tree_find_depth(const T &inT, const iterator &iter, bool (*obj)(const T&, const T&)) const
-    {
-        if (tree *temp = iter.tree_ptr()) {
-            do {
-                if ( obj(inT, temp->data_) ) return ( iterator(*temp) );
-            // do a depth search, search it for inT
-            iterator i = temp->tree_find_depth(inT, obj);
-            if (i != tree::iterator::end_iterator()) return i;
-            } while (NULL != (temp = temp->next_) );
-        }
-        return tree::iterator::end_iterator();
-    }
-
-    //////////////////////////////////////////////////////////////////////////
-   iterator tree_find_breadth(const T &inT, const iterator &iter) const
+   template<class _Node>
+   class TreeIteratorBase
    {
-      // search the entire level for a find first
-        if (tree *temp = iter.tree_ptr()) {
-            do {
-                if (inT == temp->data_) return iterator(*temp);
-            } while (NULL != (temp = temp->next_) );
+   public:
+      typedef _Node value_type;
+      typedef const typename dtUtil::TypeTraits<value_type>::pointer_type const_pointer;
 
-         // now search each branch for the find within it
-         temp = iter.tree_ptr();
-            do {
-            iterator i = temp->tree_find_breadth(inT);
-            if (i != tree::iterator::end_iterator()) return i;
-            } while (NULL != (temp = temp->next_) );
-        }
-        return tree::iterator::end_iterator();
+      TreeIteratorBase(): _ptr(0), _root(0){}
+      ~TreeIteratorBase(){ _ptr = 0; _root = 0;} //note: although this should be virtual, we have nothing to delete
+      // so as an optimization I am going to ignore the virtual
+
+      TreeIteratorBase(value_type* ptr, value_type* root): _ptr(ptr), _root(root){}
+
+      TreeIteratorBase(const TreeIteratorBase& pIter): _ptr(pIter._ptr), _root(pIter._root){}
+
+      TreeIteratorBase& operator=(const TreeIteratorBase& pIter)
+      {
+         _ptr= pIter._ptr;
+         _root = pIter._root;
+         return *this;
+      }
+
+      value_type* get() const{return _ptr;}
+      bool valid() const {return _ptr != NULL;}
+
+      value_type* _ptr;
+      value_type* _root;
+   };
+
+   template<class _Node>
+   class TreeIteratorChildBase
+   {
+   public:
+      typedef _Node value_type;
+      typedef const typename dtUtil::TypeTraits<value_type>::pointer_type const_pointer;
+
+      TreeIteratorChildBase(): _ptr(0), _root(0){}
+      ~TreeIteratorChildBase(){ _ptr = 0; _root = 0;} //note: although this should be virtual, we have nothing to delete
+      // so as an optimization I am going to ignore the virtual
+
+      TreeIteratorChildBase(value_type* ptr, value_type* root): _ptr(ptr), _root(root){}
+
+      TreeIteratorChildBase(const TreeIteratorChildBase& pIter): _ptr(pIter._ptr), _root(pIter._root){}
+
+      TreeIteratorChildBase& operator=(const TreeIteratorChildBase& pIter)
+      {
+         _ptr= pIter._ptr;
+         _root = pIter._root;
+         return *this;
+      }
+
+      value_type* get() const{return _ptr;}
+      bool valid() const {return _ptr != NULL;}
+
+      value_type* _ptr;
+      value_type* _root;
+   };
+
+   template<class _Node>
+   class TreeIteratorBase_Const
+   {
+   public:
+      typedef _Node value_type;
+      // typedef const typename dtUtil::TypeTraits<value_type>::pointer_type const_pointer;
+      typedef const _Node* const_pointer;
+      typedef typename dtUtil::TypeTraits<value_type>::const_reference const_reference;
+
+      TreeIteratorBase_Const(): _ptr(0), _root(0){}
+      ~TreeIteratorBase_Const(){ _ptr = 0; _root = 0;} //note: although this should be virtual, we have nothing to delete
+      // so as an optimization I am going to ignore the virtual
+
+      TreeIteratorBase_Const(const_pointer ptr, const_pointer root): _ptr(ptr), _root(root){}
+
+      TreeIteratorBase_Const(const TreeIteratorBase_Const& pIter): _ptr(pIter._ptr), _root(pIter._root){}
+
+      TreeIteratorBase_Const& operator=(const TreeIteratorBase_Const& pIter)
+      {
+         _ptr= pIter._ptr;
+         _root = pIter._root;
+         return *this;
+      }
+
+      TreeIteratorBase_Const(const TreeIteratorBase<_Node>& pIter): _ptr(pIter._ptr), _root(pIter._root){}
+
+      TreeIteratorBase_Const& operator=(TreeIteratorBase<_Node>& pIter)
+      {
+         _ptr= pIter._ptr;
+         _root = pIter._root;
+         return *this;
+      }
+
+      const_pointer get() const{return _ptr;}
+      bool valid() const {return _ptr != NULL;}
+
+      const_pointer _ptr;
+      const_pointer _root;
+   };
+
+   template<class _Node>
+   class TreeIteratorChildBase_Const
+   {
+   public:
+      typedef _Node value_type;
+      //typedef const typename dtUtil::TypeTraits<value_type>::pointer_type const_pointer;
+      typedef const _Node* const_pointer;
+      typedef typename dtUtil::TypeTraits<value_type>::const_reference const_reference;
+
+      TreeIteratorChildBase_Const(): _ptr(0), _root(0){}
+      ~TreeIteratorChildBase_Const(){ _ptr = 0; _root = 0;} //note: although this should be virtual, we have nothing to delete
+      // so as an optimization I am going to ignore the virtual
+
+      TreeIteratorChildBase_Const(const_pointer ptr, const_pointer root): _ptr(ptr), _root(root){}
+
+      TreeIteratorChildBase_Const(const TreeIteratorChildBase_Const& pIter): _ptr(pIter._ptr), _root(pIter._root){}
+
+      TreeIteratorChildBase_Const& operator=(const TreeIteratorChildBase_Const& pIter)
+      {
+         _ptr= pIter._ptr;
+         _root = pIter._root;
+         return *this;
+      }
+
+      TreeIteratorChildBase_Const(const TreeIteratorChildBase<_Node>& pIter): _ptr(pIter._ptr), _root(pIter._root){}
+
+      TreeIteratorChildBase_Const& operator=(TreeIteratorChildBase<_Node>& pIter)
+      {
+         _ptr= pIter._ptr;
+         _root = pIter._root;
+         return *this;
+      }
+
+      const_pointer get() const{return _ptr;}
+      bool valid() const {return _ptr != NULL;}
+
+      const_pointer _ptr;
+      const_pointer _root;
+   };
+
+   // -----------------------------------------------------------------------------
+   // Reverse Tree Iterator
+   // -----------------------------------------------------------------------------
+
+   template<class _Node>
+   class ReverseTreeIterator: public TreeIteratorBase<_Node>
+   {
+   public:
+      typedef TreeIteratorBase<_Node> BaseClass;
+      typedef ReverseTreeIterator<_Node> MyType;
+      typedef _Node value_type;
+
+      ReverseTreeIterator(){}
+
+      ReverseTreeIterator(const BaseClass& pIter): BaseClass(pIter){}
+
+      ReverseTreeIterator(value_type* ptr, value_type* root): BaseClass(ptr, root){}
+
+      ReverseTreeIterator& operator=(const BaseClass& pIter)
+      {
+         return BaseClass(pIter);
+      }
+
+      ~ReverseTreeIterator(){ BaseClass::_ptr = 0; BaseClass::_root = 0;}
+
+      _Node& operator*() const{ return *BaseClass::_ptr; }
+
+      _Node* operator->() const{return BaseClass::_ptr; }
+
+      bool operator==(const ReverseTreeIterator& pIter) const{ return BaseClass::_ptr == pIter._ptr; }
+
+      bool operator!=(const ReverseTreeIterator& pIter) const{ return !(BaseClass::_ptr == pIter._ptr); }
+
+      ReverseTreeIterator& operator--()
+      {
+         BaseClass::_ptr = BaseClass::_ptr->next();
+         return *this;
+      }
+
+      ReverseTreeIterator& operator++()
+      {
+         if (BaseClass::_ptr) BaseClass::_ptr = BaseClass::_ptr->prev();
+         else BaseClass::_ptr = BaseClass::_root->last_descendant();
+         return *this;
+      }
+   };
+
+   // -----------------------------------------------------------------------------
+   // Forward Tree Child Iterator
+   // -----------------------------------------------------------------------------
+   template<class _Node>
+   class ForwardTreeChildIterator: public TreeIteratorChildBase<_Node>
+   {
+   public:
+      typedef TreeIteratorChildBase<_Node> BaseClass;
+      typedef ForwardTreeChildIterator<_Node> MyType;
+      typedef _Node value_type;
+
+      ForwardTreeChildIterator(){}
+
+      ForwardTreeChildIterator(const BaseClass& pIter): BaseClass(pIter){}
+
+      ForwardTreeChildIterator(value_type* ptr, value_type* root): BaseClass(ptr, root) {}
+
+      ForwardTreeChildIterator& operator=(const BaseClass& pIter)
+      {
+         return BaseClass(pIter);
+      }
+
+      _Node& operator*() const{ return *BaseClass::_ptr; }
+
+      _Node* operator->() const{return BaseClass::_ptr; }
+
+      bool operator==(const ForwardTreeChildIterator& pIter) const{ return BaseClass::_ptr == pIter._ptr; }
+
+      bool operator!=(const ForwardTreeChildIterator& pIter) const{ return !(BaseClass::_ptr == pIter._ptr); }
+
+      ForwardTreeChildIterator& operator++()
+      {
+         BaseClass::_ptr = BaseClass::_ptr->next_sibling();
+         return *this;
+      }
+
+      ForwardTreeChildIterator& operator--()
+      {
+         if(BaseClass::_ptr) BaseClass::_ptr = BaseClass::_ptr->prev_sibling();
+         else BaseClass::_ptr = BaseClass::_root->last_child();
+         return *this;
+      }
+   };
+
+   // -----------------------------------------------------------------------------
+   // Reverse Tree Iterator
+   // -----------------------------------------------------------------------------
+
+   template<class _Node>
+   class ReverseTreeChildIterator: public TreeIteratorChildBase<_Node>
+   {
+   public:
+      typedef TreeIteratorChildBase<_Node> BaseClass;
+      typedef ReverseTreeChildIterator<_Node> MyType;
+      typedef _Node value_type;
+
+      ReverseTreeChildIterator(){}
+
+      ReverseTreeChildIterator(const BaseClass& pIter): BaseClass(pIter){}
+
+      ReverseTreeChildIterator(value_type* ptr, value_type* root): BaseClass(ptr, root){}
+
+      ReverseTreeChildIterator& operator=(const BaseClass& pIter)
+      {
+         return BaseClass(pIter);
+      }
+
+      _Node& operator*() const{ return *BaseClass::_ptr; }
+
+      _Node* operator->() const{return BaseClass::_ptr; }
+
+      bool operator==(const ReverseTreeChildIterator& pIter) const{ return BaseClass::_ptr == pIter._ptr; }
+
+      bool operator!=(const ReverseTreeChildIterator& pIter) const{ return !(BaseClass::_ptr == pIter._ptr); }
+
+      ReverseTreeChildIterator& operator--()
+      {
+         BaseClass::_ptr = BaseClass::_ptr->next_sibling();
+         return *this;
+      }
+
+      ReverseTreeChildIterator& operator++()
+      {
+         if(BaseClass::_ptr) BaseClass::_ptr = BaseClass::_ptr->prev_sibling();
+         else BaseClass::_ptr = BaseClass::_root->last_child();
+         return *this;
+      }
+   };
+
+   // -----------------------------------------------------------------------------
+   // Forward Tree Iterator
+   // -----------------------------------------------------------------------------
+   template<class _Node>
+   class ForwardTreeIterator: public TreeIteratorBase<_Node>
+   {
+   public:
+      typedef TreeIteratorBase<_Node> BaseClass;
+      typedef ForwardTreeIterator<_Node> MyType;
+      typedef _Node value_type;
+
+      ForwardTreeIterator(){}
+
+      ForwardTreeIterator(const BaseClass& pIter): BaseClass(pIter){}
+
+      ForwardTreeIterator(value_type* ptr, value_type* root): BaseClass(ptr, root){}
+
+      ForwardTreeIterator& operator=(const BaseClass& pIter)
+      {
+         return BaseClass(pIter);
+      }
+
+      _Node& operator*() const{ return *BaseClass::_ptr; }
+
+      _Node* operator->() const{return BaseClass::_ptr; }
+
+      bool operator==(const ForwardTreeIterator& pIter) const{ return BaseClass::_ptr == pIter._ptr; }
+
+      bool operator!=(const ForwardTreeIterator& pIter) const{ return !(BaseClass::_ptr == pIter._ptr); }
+
+      ForwardTreeIterator& operator++()
+      {
+         BaseClass::_ptr = BaseClass::_ptr->next();
+         return *this;
+      }
+
+      ForwardTreeIterator& operator--()
+      {
+         if(BaseClass::_ptr) BaseClass::_ptr = BaseClass::_ptr->prev();
+         else BaseClass::_ptr = BaseClass::_root->last_descendant();
+         return *this;
+      }
+   };
+
+   // -----------------------------------------------------------------------------
+   // Const Tree Iterator
+   // -----------------------------------------------------------------------------
+
+   template<class _Node>
+   class ForwardTreeIterator_Const: public TreeIteratorBase_Const<_Node>
+   {
+   public:
+      typedef TreeIteratorBase_Const<_Node> BaseClass;
+      typedef ForwardTreeIterator_Const<_Node> MyType;
+      typedef _Node value_type;
+      typedef const _Node* const_pointer;
+
+      ForwardTreeIterator_Const(): BaseClass(){}
+
+      ForwardTreeIterator_Const(const BaseClass& pIter): BaseClass(pIter){}
+      ForwardTreeIterator_Const(const TreeIteratorBase<_Node>& pIter): BaseClass(pIter){}
+
+      ForwardTreeIterator_Const(const_pointer ptr, const_pointer root): BaseClass(ptr, root){}
+
+      ForwardTreeIterator_Const& operator=(const ForwardTreeIterator_Const& pIter)
+      {
+         return BaseClass::operator=(pIter);
+      }
+
+      ForwardTreeIterator_Const& operator=(const ForwardTreeIterator<_Node>& pIter)
+      {
+         return BaseClass::operator=(pIter);
+      }
+
+      const _Node& operator*() const{ return *BaseClass::_ptr; }
+      const _Node* operator->() const{return BaseClass::_ptr;}
+
+      bool operator==(const ForwardTreeIterator_Const& pIter) const{ return BaseClass::_ptr == pIter._ptr; }
+
+      bool operator!=(const ForwardTreeIterator_Const& pIter) const{ return !(BaseClass::_ptr == pIter._ptr); }
+
+      ForwardTreeIterator_Const& operator++()
+      {
+         BaseClass::_ptr = BaseClass::_ptr->next();
+         return *this;
+      }
+
+      ForwardTreeIterator_Const& operator--()
+      {
+         if(BaseClass::_ptr) BaseClass::_ptr = BaseClass::_ptr->prev();
+         else BaseClass::_ptr = BaseClass::_root->last_descendant();
+         return *this;
+      }
+   };
+
+   // -----------------------------------------------------------------------------
+   // Const Reverse Tree Iterator
+   // -----------------------------------------------------------------------------
+
+   template<class _Node>
+   class ReverseTreeIterator_Const: public TreeIteratorBase_Const<_Node>
+   {
+   public:
+      typedef TreeIteratorBase_Const<_Node> BaseClass;
+      typedef ReverseTreeIterator_Const<_Node> MyType;
+      typedef _Node value_type;
+      typedef const _Node* const_pointer;
+
+      ReverseTreeIterator_Const(): BaseClass(){}
+
+      ReverseTreeIterator_Const(const BaseClass& pIter): BaseClass(pIter){}
+      ReverseTreeIterator_Const(TreeIteratorBase<_Node>& pIter): BaseClass(pIter){}
+
+      ReverseTreeIterator_Const(const_pointer ptr, const_pointer root): BaseClass(ptr, root){}
+
+      ReverseTreeIterator_Const& operator=(const ReverseTreeIterator_Const& pIter)
+      {
+         return BaseClass::operator=(pIter);
+      }
+
+      ReverseTreeIterator_Const& operator=(const ForwardTreeIterator<_Node>& pIter)
+      {
+         return BaseClass::operator=(pIter);
+      }
+
+      ReverseTreeIterator_Const& operator=(const ReverseTreeIterator<_Node>& pIter)
+      {
+         BaseClass::_ptr= pIter._ptr;
+         BaseClass::_root = pIter._root;
+         return *this;
+      }
+
+      const _Node& operator*() const{ return *BaseClass::_ptr; }
+      const _Node* operator->() const{return BaseClass::_ptr;}
+
+      bool operator==(const ReverseTreeIterator_Const& pIter) const{ return BaseClass::_ptr == pIter._ptr; }
+
+      bool operator!=(const ReverseTreeIterator_Const& pIter) const{ return !(BaseClass::_ptr == pIter._ptr); }
+
+      ReverseTreeIterator_Const& operator--()
+      {
+         BaseClass::_ptr = BaseClass::_ptr->next();
+         return *this;
+      }
+
+      ReverseTreeIterator_Const& operator++()
+      {
+         if(BaseClass::_ptr) BaseClass::_ptr = BaseClass::_ptr->prev();
+         else BaseClass::_ptr = BaseClass::_root->last_descendant();
+         return *this;
+      }
+   };
+
+   // -----------------------------------------------------------------------------
+   // Const Tree Iterator
+   // -----------------------------------------------------------------------------
+
+   template<class _Node>
+   class ForwardTreeChildIterator_Const: public TreeIteratorChildBase_Const<_Node>
+   {
+   public:
+      typedef ForwardTreeChildIterator_Const<_Node> MyType;
+      typedef TreeIteratorChildBase_Const<_Node> BaseClass;
+      typedef _Node value_type;
+      typedef const _Node* const_pointer;
+
+      ForwardTreeChildIterator_Const(): BaseClass(){}
+
+      ForwardTreeChildIterator_Const(const BaseClass& pIter): BaseClass(pIter){}
+      ForwardTreeChildIterator_Const(const TreeIteratorChildBase<_Node>& pIter): BaseClass(pIter){}
+
+      ForwardTreeChildIterator_Const(const_pointer ptr, const_pointer root): BaseClass(ptr, root){}
+
+      ForwardTreeChildIterator_Const& operator=(const ForwardTreeChildIterator_Const& pIter)
+      {
+         return BaseClass::operator=(pIter);
+      }
+
+      ForwardTreeChildIterator_Const& operator=(const ForwardTreeIterator<_Node>& pIter)
+      {
+         return BaseClass::operator=(pIter);
+      }
+
+      ForwardTreeChildIterator_Const& operator=(const ReverseTreeIterator<_Node>& pIter)
+      {
+         BaseClass::_ptr= pIter._ptr;
+         BaseClass::_root = pIter._root;
+         return *this;
+      }
+
+      const _Node& operator*() const{ return *BaseClass::_ptr; }
+
+      const _Node* operator->() const{return BaseClass::_ptr;}
+
+      bool operator==(const ForwardTreeChildIterator_Const& pIter) const{ return BaseClass::_ptr == pIter._ptr; }
+
+      bool operator!=(const ForwardTreeChildIterator_Const& pIter) const{ return !(BaseClass::_ptr == pIter._ptr); }
+
+      ForwardTreeChildIterator_Const& operator++()
+      {
+         BaseClass::_ptr = BaseClass::_ptr->next_sibling();
+         return *this;
+      }
+
+      ForwardTreeChildIterator_Const& operator--()
+      {
+         if(BaseClass::_ptr) BaseClass::_ptr = BaseClass::_ptr->prev_sibling();
+         else BaseClass::_ptr = BaseClass::_root->last_child();
+         return *this;
+      }
+   };
+
+   // -----------------------------------------------------------------------------
+   // Const Reverse Tree Iterator
+   // -----------------------------------------------------------------------------
+
+   template<class _Node>
+   class ReverseTreeChildIterator_Const: public TreeIteratorChildBase_Const<_Node>
+   {
+   public:
+      typedef ReverseTreeChildIterator_Const<_Node> MyType;
+      typedef TreeIteratorChildBase_Const<_Node> BaseClass;
+      typedef const _Node* const_pointer;
+
+      ReverseTreeChildIterator_Const(): BaseClass(){}
+
+      ReverseTreeChildIterator_Const(const BaseClass& pIter): BaseClass(pIter){}
+      ReverseTreeChildIterator_Const(const TreeIteratorChildBase<_Node>& pIter): BaseClass(pIter){}
+
+      ReverseTreeChildIterator_Const(const_pointer ptr, const_pointer root): BaseClass(ptr, root){}
+
+      ReverseTreeChildIterator_Const& operator=(const ReverseTreeChildIterator_Const& pIter)
+      {
+         return BaseClass::operator=(pIter);
+      }
+
+      ReverseTreeChildIterator_Const& operator=(const ForwardTreeIterator<_Node>& pIter)
+      {
+         return BaseClass::operator=(pIter);
+      }
+
+      ReverseTreeChildIterator_Const& operator=(const ReverseTreeIterator<_Node>& pIter)
+      {
+         BaseClass::_ptr= pIter._ptr;
+         BaseClass::_root = pIter._root;
+         return *this;
+      }
+
+      _Node& operator*() const{ return *BaseClass::_ptr; }
+      const _Node* operator->() const{return BaseClass::_ptr;}
+
+      bool operator==(const ReverseTreeChildIterator_Const& pIter) const{ return BaseClass::_ptr == pIter._ptr; }
+
+      bool operator!=(const ReverseTreeChildIterator_Const& pIter) const{ return !(BaseClass::_ptr == pIter._ptr); }
+
+      ReverseTreeChildIterator_Const& operator--()
+      {
+         BaseClass::_ptr = BaseClass::_ptr->next_sibling();
+         return *this;
+      }
+
+      ReverseTreeChildIterator_Const& operator++()
+      {
+         if(BaseClass::_ptr) BaseClass::_ptr = BaseClass::_ptr->prev_sibling();
+         else BaseClass::_ptr = BaseClass::_root->last_child();
+         return *this;
+      }
+   };
+
+   template <class T, class T_BaseClass = osg::Referenced>
+   class Tree : public T_BaseClass
+   {
+      ////////////////////////////////////////////////////////////////////////////////////////////
+      //Data Structures
+      ////////////////////////////////////////////////////////////////////////////////////////////
+   public:
+      typedef T_BaseClass BaseClass;
+
+      typedef Tree<T, T_BaseClass> MyType;
+      typedef MyType TreeNode;
+
+      typedef ForwardTreeIterator<TreeNode> iterator;
+      typedef ForwardTreeIterator_Const<TreeNode> const_iterator;
+      typedef ReverseTreeIterator<TreeNode> reverse_iterator;
+      typedef ReverseTreeIterator_Const<TreeNode> const_reverse_iterator;
+
+      typedef ForwardTreeChildIterator<TreeNode> child_iterator;
+      typedef ForwardTreeChildIterator_Const<TreeNode> const_child_iterator;
+      typedef ReverseTreeChildIterator<TreeNode> reverse_child_iterator;
+      typedef ReverseTreeChildIterator_Const<TreeNode> const_reverse_child_iterator;
+
+      typedef typename dtUtil::TypeTraits<T>::value_type value_type;
+      typedef typename dtUtil::TypeTraits<T>::const_reference vt_const_ref;
+      typedef typename dtUtil::TypeTraits<T>::pointer_type vt_ptr;
+
+      typedef MyType& reference;
+      typedef const MyType& const_reference;
+      typedef MyType* pointer;
+      typedef const MyType* const_pointer;
+      typedef dtCore::RefPtr<MyType> ref_pointer;
+
+      /////////////////////////////////////////////////////////////////////////////////////////////
+      //Functions
+      /////////////////////////////////////////////////////////////////////////////////////////////
+   public:
+      Tree();
+      Tree(T pData);
+      Tree(const Tree&);
+      Tree& operator=(const Tree&);
+
+      // If this tree is derived, overload this function and return an instance of your derived class
+      virtual ref_pointer clone() const { return NULL; }
+
+   protected:
+      virtual ~Tree();
+
+   public:
+      void clear();
+
+      bool empty() const;
+
+      //number of decendants
+      unsigned size() const;
+
+      //depth in the tree
+      unsigned level() const;
+
+      //number of children
+      unsigned degree() const;
+
+      bool is_leaf() const;
+      bool is_root() const;
+      bool is_descendant_of(const_reference) const;
+
+      pointer prev() const;
+      pointer next() const;
+      pointer first_child() const;
+      pointer last_child() const;
+      pointer next_sibling() const;
+      pointer prev_sibling() const;
+      pointer last_descendant() const;
+      pointer parent() const;
+
+      reference front();
+      const_reference front() const;
+
+      reference back();
+      const_reference back() const;
+
+      void push_front(ref_pointer subtree);
+      void pop_front();
+
+      void push_back(ref_pointer subtree);
+      void pop_back();
+
+      iterator erase(iterator pWhere);
+      reverse_iterator erase(reverse_iterator pWhere);
+      child_iterator erase(child_iterator pWhere);
+      reverse_child_iterator erase(reverse_child_iterator pWhere);
+
+      iterator insert(ref_pointer subtree, iterator pWhere);
+      reverse_iterator insert(ref_pointer subtree, reverse_iterator pWhere);
+      child_iterator insert(ref_pointer subtree, child_iterator pWhere);
+      reverse_child_iterator insert(ref_pointer subtree, reverse_child_iterator pWhere);
+
+      /**
+       * get an iterator performing a pre-order traversal
+       */
+      iterator begin();
+      const_iterator begin() const;
+
+      /**
+       * get an iterator pointing to the end of the pre-order traversal
+       */
+      iterator end();
+      const_iterator end() const;
+
+      /**
+       * iterate through all immediate children
+       */
+      child_iterator begin_child();
+      const_child_iterator begin_child() const;
+
+      /**
+       * get an iterator pointing to the end of the immediate children
+       */
+      child_iterator end_child();
+      const_child_iterator end_child() const;
+
+      /**
+       * reverse iterator performs a post-order traversal
+       */
+      reverse_iterator rbegin();
+      const_reverse_iterator rbegin() const;
+
+      /**
+       * reverse iterator performs a post-order traversal
+       */
+      reverse_iterator rend();
+      const_reverse_iterator rend() const;
+
+      /**
+       * reverse iterate through all immediate children
+       */
+      reverse_child_iterator rbegin_child();
+      const_reverse_child_iterator rbegin_child() const;
+
+      /**
+       * reverse iterate through all immediate children
+       */
+      reverse_child_iterator rend_child();
+      const_reverse_child_iterator rend_child() const;
+
+      T value;
+
+      void remove_subtree(pointer tree);
+      void insert_subtree(pointer tree, pointer next);
+
+   private:
+      void init();
+      void destroy_decendants();
+      void change_last_descendant(pointer tree);
+
+      void copy_children(const_pointer tree);
+
+      pointer mParent;
+      pointer mPrevSibling;
+      ref_pointer mNext;
+      pointer mLastDecendant;
+   };
+
+   template <class T, class T_BaseClass>
+   Tree<T, T_BaseClass>::Tree()
+      : value()
+   {
+      init();
    }
 
-    //////////////////////////////////////////////////////////////////////////
-   iterator tree_find_breadth(const T &inT, const iterator &iter, bool (*obj)(const T&, const T&)) const
+   template <class T, class T_BaseClass>
+   Tree<T, T_BaseClass>::Tree(T pData)
+      : value(pData)
    {
-      // search the entire level for a find first
-        if (tree *temp = iter.tree_ptr()) {
-            do {
-                if ( obj(inT, temp->data_) ) return iterator(*temp);
-            } while (NULL != (temp = temp->next_) );
-
-         // now search each branch for the find within it
-         temp = iter.tree_ptr();
-            do {
-            iterator i = temp->tree_find_breadth(inT, obj);
-            if (i != tree::iterator::end_iterator()) return i;
-            } while (NULL != (temp = temp->next_) );
-        }
-        return tree::iterator::end_iterator();
+      init();
    }
-};
 
-/////////////////////////////////////////////////////////////////////////////
-// Iterator for the tree
-//
-// Derived from tree<> only so iterator can access tree's protected
-// methods directly and implement them in the way they make sense for the
-// iterator
-//
-// The actual tree base members are never used (nor could they be since they
-// are private to even iterator). When a tree object is created an "iterator"
-// object is automatically created of the specific type. Thus forming the
-// perfect relationship between the tree and the iterator, also keeping the
-// template types defined on the fly for the iterator based specifically on
-// the tree types which are being created.
-/////////////////////////////////////////////////////////////////////////////
-template <typename T>
-class tree_iterator : private tree<T>
-{
-private:
-    typedef tree<T> TreeType;
+   template <class T, class T_BaseClass>
+   Tree<T, T_BaseClass>::Tree(const Tree<T, T_BaseClass>& pTree)
+   {
+      init();
+      copy_children(&pTree);
+   }
 
-    mutable TreeType *current_;
+   template <class T, class T_BaseClass>
+   Tree<T, T_BaseClass>& Tree<T, T_BaseClass>::operator=(const Tree<T, T_BaseClass>& pTree)
+   {
+      clear();
+      init();
+      value = pTree.value;
+      copy_children(&pTree);
+      return *this;
+   }
 
-    static tree_iterator end_of_iterator;
+   template <class T, class T_BaseClass>
+   Tree<T, T_BaseClass>::~Tree()
+   {
+      mParent = NULL;
+      mPrevSibling = NULL;
+      mNext = NULL;
+      mLastDecendant = NULL;
+   }
 
-    //////////////////////////////////////////////////////////////////////////
-    // unaccessible from the outside world
-    //////////////////////////////////////////////////////////////////////////
-    TreeType* operator&();
-    const TreeType* operator&() const;
+   template <class T, class T_BaseClass>
+   void Tree<T, T_BaseClass>::init()
+   {
+      mParent = mNext = 0;
+      mPrevSibling = mLastDecendant = this;
+   }
 
-public:
-    typedef typename tree<T>::iterator iterator;
-    typedef typename tree<T>::const_iterator const_iterator;
+   template <class T, class T_BaseClass>
+   void Tree<T, T_BaseClass>::clear()
+   {
+      destroy_decendants();
 
-    TreeType* tree_ptr() const { return current_; }
-    TreeType& tree_ref() const { return *current_; }
+      mParent = NULL;
+      mPrevSibling = NULL;
+      mNext = NULL;
+      mLastDecendant = NULL;
+   }
 
-    //////////////////////////////////////////////////////////////////////////
-    // Returns the end_of_iterator for this <T,U,V> layout, this really speeds
-    // up things like if (iter != tree.end() ), for (;iter != tree.end(); )
-    //////////////////////////////////////////////////////////////////////////
-    static iterator& end_iterator() { return end_of_iterator; }
+   template <class T, class T_BaseClass>
+   bool Tree<T, T_BaseClass>::empty() const
+   {
+      return degree() == 0;
+   }
 
-    //////////////////////////////////////////////////////////////////////////
-    // Default constructor
-    //////////////////////////////////////////////////////////////////////////
-    tree_iterator() : current_(NULL) {}
 
-    //////////////////////////////////////////////////////////////////////////
-    // Copy constructors for iterators
-    //////////////////////////////////////////////////////////////////////////
-    tree_iterator(const tree_iterator& i) : current_(i.current_) {}
+   template <class T, class T_BaseClass>
+   unsigned Tree<T, T_BaseClass>::size() const
+   {
+      unsigned n = 1;
+      for (const TreeNode* t = this; t != mLastDecendant; t = t->next())
+      {
+         ++n;
+      }
 
-    //////////////////////////////////////////////////////////////////////////
-    // Copy constructor for trees
-    //////////////////////////////////////////////////////////////////////////
-    tree_iterator(TreeType &tree_ref) : current_(&tree_ref) {}
+      return n;
+   }
 
-    //////////////////////////////////////////////////////////////////////////
-    // Copy constructor for trees
-    //////////////////////////////////////////////////////////////////////////
-    tree_iterator(const TreeType &tree_ref) : current_(const_cast<TreeType*>(&tree_ref)) {}
+   template <class T, class T_BaseClass>
+   unsigned Tree<T, T_BaseClass>::level() const
+   {
+      unsigned l = 0;
+      for (const TreeNode* t = mParent; t != NULL; t = t->parent())
+      {
+         ++l;
+      }
 
-    //////////////////////////////////////////////////////////////////////////
-    // Operator= for iterators
-    //////////////////////////////////////////////////////////////////////////
-    iterator& operator=(const tree_iterator& iter)
-    {
-        this->current_ = iter.current_;
-        return (*this);
-    }
+      return l;
+   }
 
-    //////////////////////////////////////////////////////////////////////////
-    // Operator= for iterators
-    //////////////////////////////////////////////////////////////////////////
-    const iterator& operator=(const tree_iterator& iter) const
-    {
-        this->current_ = iter.current_;
-        return (*this);
-    }
+   template <class T, class T_BaseClass>
+   unsigned Tree<T, T_BaseClass>::degree() const
+   {
+      unsigned n = 0;
+      for (const TreeNode* t = first_child(); t; t = t->next_sibling())
+      {
+         ++n;
+      }
+      return n;
+   }
 
-    //////////////////////////////////////////////////////////////////////////
-    //////////////////////////////////////////////////////////////////////////
-    iterator operator[](size_t loc) const
-    { return (*this->current_)[loc]; }
+   template <class T, class T_BaseClass>
+   bool Tree<T, T_BaseClass>::is_leaf() const
+   {
+      return mLastDecendant == this;
+   }
 
-    //////////////////////////////////////////////////////////////////////////
-    //////////////////////////////////////////////////////////////////////////
-    iterator operator[](size_t loc)
-    { return (*this->current_)[loc]; }
+   template <class T, class T_BaseClass>
+   bool Tree<T, T_BaseClass>::is_root() const
+   {
+      return mParent == NULL;
+   }
 
-    //////////////////////////////////////////////////////////////////////////
-    // Operator= for trees
-    //////////////////////////////////////////////////////////////////////////
-    const iterator& operator=(const TreeType& rhs) const
-    {
-        this->current_ = &(const_cast< TreeType& >(rhs) );
-        return (*this);
-    }
+   template <class T, class T_BaseClass>
+   bool Tree<T, T_BaseClass>::is_descendant_of(const_reference ancestor) const
+   {
+      const TreeNode* t = this;
+      for (; t; t = t->parent())
+      {
+         if (t == &ancestor)
+         {
+            break;
+         }
+      }
+      return (t != 0) && t != this;
+   }
 
-    //////////////////////////////////////////////////////////////////////////
-    // Destructor
-    //////////////////////////////////////////////////////////////////////////
-    ~tree_iterator() {};
+   template <class T, class T_BaseClass>
+   typename Tree<T, T_BaseClass>::pointer Tree<T, T_BaseClass>::prev() const
+   {
+      TreeNode* prev = 0;
+      if(mParent != NULL)
+      {
+         if(mParent->next() == this)
+         {
+            prev = mParent;
+         }
+         else
+         {
+            prev = mPrevSibling->mLastDecendant;
+         }
+      }
 
-    //////////////////////////////////////////////////////////////////////////
-    // Operator equals
-    //////////////////////////////////////////////////////////////////////////
-    bool operator==(const tree_iterator& rhs) const
-    {
-        if (this->current_ == rhs.current_) return true;
-        return false;
-    }
+      return prev;
+   }
 
-    //////////////////////////////////////////////////////////////////////////
-    // Operator not equals
-    //////////////////////////////////////////////////////////////////////////
-    bool operator!=(const tree_iterator& rhs) const
-    { return !(*this == rhs); }
+   template <class T, class T_BaseClass>
+   typename Tree<T, T_BaseClass>::pointer Tree<T, T_BaseClass>::next() const
+   {
+      return mNext.get();
+   }
 
-    //////////////////////////////////////////////////////////////////////////
-    // operator++, prefix
-    //////////////////////////////////////////////////////////////////////////
-    const iterator& operator++() const
-    {
-        this->current_ = ( const_cast< TreeType* >
-            ( this->TreeType::next( *current_ ) ) );
-        return (*this);
-    }
+   template <class T, class T_BaseClass>
+   typename Tree<T, T_BaseClass>::pointer Tree<T, T_BaseClass>::parent() const
+   {
+      return mParent;
+   }
 
-    //////////////////////////////////////////////////////////////////////////
-    // operator++, postfix
-    //////////////////////////////////////////////////////////////////////////
-    iterator operator++(int) const
-    {
-        iterator iTemp = *this;
-        ++(*this);
-        return (iTemp);
-    }
+   template <class T, class T_BaseClass>
+   typename Tree<T, T_BaseClass>::pointer Tree<T, T_BaseClass>::first_child() const
+   {
+      TreeNode* child = 0;
+      if(mNext.valid() && (mNext->mParent == this))
+      {
+         child = next();
+      }
+      return child;
+   }
 
-    //////////////////////////////////////////////////////////////////////////
-    // operator--
-    //////////////////////////////////////////////////////////////////////////
-    const iterator& operator--() const
-    {
-        this->current_ = ( const_cast< TreeType* >
-            ( this->TreeType::prev( *current_ ) ) );
-        return (*this);
-    }
+   template <class T, class T_BaseClass>
+   typename Tree<T, T_BaseClass>::pointer Tree<T, T_BaseClass>::last_child() const
+   {
+      TreeNode* lastChild = first_child();
+      if(lastChild)
+      {
+         lastChild = lastChild->mPrevSibling;
+      }
+      return lastChild;
+   }
 
-    //////////////////////////////////////////////////////////////////////////
-    // Begin iteration through the tree
-    //////////////////////////////////////////////////////////////////////////
-    iterator begin() const { return this->TreeType::begin( *current_ ); }
-    iterator begin() { return this->TreeType::begin( *current_ ); }
+   template <class T, class T_BaseClass>
+   typename Tree<T, T_BaseClass>::pointer Tree<T, T_BaseClass>::next_sibling() const
+   {
+      TreeNode* nextSibling = mLastDecendant->next();
+      if(nextSibling && nextSibling->mParent != mParent)
+      {
+         nextSibling = 0;
+      }
+      return nextSibling;
+   }
 
-    //////////////////////////////////////////////////////////////////////////
-    // Return the in iterator of this tree
-    //////////////////////////////////////////////////////////////////////////
-    iterator in() const { return this->TreeType::in( *current_ ); }
-    iterator in() { return this->TreeType::in( *current_ ); }
+   template <class T, class T_BaseClass>
+   typename Tree<T, T_BaseClass>::pointer Tree<T, T_BaseClass>::prev_sibling() const
+   {
+      TreeNode* prevSibling = 0;
+      if(mParent != NULL && (mParent->next() != this))
+      {
+         prevSibling = mPrevSibling;
+      }
+      return prevSibling;
+   }
 
-    //////////////////////////////////////////////////////////////////////////
-    // Return the out iterator of this tree
-    //////////////////////////////////////////////////////////////////////////
-    iterator out() const { return this->TreeType::out( *current_ ); }
-    iterator out() { return this->TreeType::out( *current_ ); }
+   template <class T, class T_BaseClass>
+   typename Tree<T, T_BaseClass>::pointer Tree<T, T_BaseClass>::last_descendant() const
+   {
+      return mLastDecendant;
+   }
 
-    //////////////////////////////////////////////////////////////////////////
-    // Are we at the end?
-    //////////////////////////////////////////////////////////////////////////
-    const iterator& end() const { return this->TreeType::end(); }
+   template <class T, class T_BaseClass>
+   typename Tree<T, T_BaseClass>::reference Tree<T, T_BaseClass>::front()
+   {
+      return *first_child();
+   }
 
-    //////////////////////////////////////////////////////////////////////////
-    // Return the next guy
-    //////////////////////////////////////////////////////////////////////////
-    iterator next() const
-    { return iterator (* const_cast< TreeType* >( this->TreeType::next( *current_ ) ) ); }
+   template <class T, class T_BaseClass>
+   typename Tree<T, T_BaseClass>::reference Tree<T, T_BaseClass>::back()
+   {
+      return *last_child();
+   }
 
-    //////////////////////////////////////////////////////////////////////////
-    iterator push_back(const T& t)
-    { return this->current_->TreeType::push_back(t); }
+   template <class T, class T_BaseClass>
+   typename Tree<T, T_BaseClass>::const_reference Tree<T, T_BaseClass>::front() const
+   {
+      return *first_child();
+   }
 
-    //////////////////////////////////////////////////////////////////////////
-    iterator push_front(const T& t)
-    { return this->current_->TreeType::push_front(t); }
+   template <class T, class T_BaseClass>
+   typename Tree<T, T_BaseClass>::const_reference Tree<T, T_BaseClass>::back() const
+   {
+      return *last_child();
+   }
 
-    //////////////////////////////////////////////////////////////////////////
-    // Insert into the iterator's mTree
-    //////////////////////////////////////////////////////////////////////////
-    iterator insert(const T& t)
-    { return this->current_->TreeType::insert(t); }
+   template <class T, class T_BaseClass>
+   void Tree<T, T_BaseClass>::pop_front()
+   {
+      ref_pointer first = first_child();
+      erase(iterator(first.get(), this));
+   }
 
-    //////////////////////////////////////////////////////////////////////////
-    // Insert into the iterator's mTree (with a function object)
-    //////////////////////////////////////////////////////////////////////////
-    iterator insert(const T& t, bool (*obj)(const T&, const T&))
-    { return this->current_->TreeType::insert(t, obj); }
+   template <class T, class T_BaseClass>
+   void Tree<T, T_BaseClass>::pop_back()
+   {
+      ref_pointer last = last_child();
+      erase(iterator(last.get(), this));
+   }
 
-    //////////////////////////////////////////////////////////////////////////
-    // This takes an existing node, disconnects it from wherever it is, and then
-    // inserts it into a different tree. This does not create a new node from the
-    // passed in data.
-    //////////////////////////////////////////////////////////////////////////
-    iterator reinsert(const iterator &in, bool (*obj)(const T&, const T&))
-    { return this->current_->TreeType::reinsert(in.current_, obj); }
+   template <class T, class T_BaseClass>
+   void Tree<T, T_BaseClass>::push_front(ref_pointer subtree)
+   {
+      ref_pointer next = first_child();
+      insert_subtree(subtree.get(), next);
+   }
 
-    //////////////////////////////////////////////////////////////////////////
-    // Reinsert with no function object
-    //////////////////////////////////////////////////////////////////////////
-    iterator reinsert(const iterator &in)
-    { return this->current_->TreeType::reinsert(in.current_); }
+   template <class T, class T_BaseClass>
+   void Tree<T, T_BaseClass>::push_back(ref_pointer subtree)
+   {
+      insert_subtree(subtree.get(), 0);
+   }
 
-    //////////////////////////////////////////////////////////////////////////
-    // get the data of the iter
-    //////////////////////////////////////////////////////////////////////////
-    T& operator*() { return this->current_->data(); }
-    const T& operator*() const { return this->current_->data(); }
-    T* operator->() { return &this->current_->data(); }
-    const T* operator->() const { return &this->current_->data(); }
-    T& data() { return this->current_->data(); }
-    const T& data() const { return this->current_->data(); }
+   template <class T, class T_BaseClass>
+   typename Tree<T, T_BaseClass>::iterator Tree<T, T_BaseClass>::erase(iterator pWhere)
+   {
+      ref_pointer child = &*pWhere;
+      ref_pointer parent = child->mParent;
+      ref_pointer next = child->next_sibling();
+      parent->remove_subtree(child.get());
+      child->clear();
 
-    //////////////////////////////////////////////////////////////////////////
-    // sets and retrieves the t and u members of the pair
-    //////////////////////////////////////////////////////////////////////////
-    const T& data(const T &inData) const { return this->current_->data(inData); }
+      return iterator(next.get(), this);
+   }
 
-    //////////////////////////////////////////////////////////////////////////
-    // Get the size of the current tree_iter
-    //////////////////////////////////////////////////////////////////////////
-    size_t size() const { return this->TreeType::size( *current_ ); }
+   template <class T, class T_BaseClass>
+   typename Tree<T, T_BaseClass>::reverse_iterator Tree<T, T_BaseClass>::erase(reverse_iterator pWhere)
+   {
+      ref_pointer child = &*pWhere;
+      ref_pointer parent = child->mParent;
+      ref_pointer rev_next = child->prev_sibling();
+      parent->remove_subtree(child.get());
+      child->clear();
 
-    //////////////////////////////////////////////////////////////////////////
-    size_t level() const { return this->TreeType::level( *current_ ); }
+      return reverse_iterator(rev_next.get(), this);
+   }
 
-    //////////////////////////////////////////////////////////////////////////
-    // Removes the first instance of T in the tree
-    //////////////////////////////////////////////////////////////////////////
-    bool remove(const T &inT) { return current_->remove(inT); }
 
-    //////////////////////////////////////////////////////////////////////////
-    // Finds the first instance of T in the tree
-    //////////////////////////////////////////////////////////////////////////
-    iterator find(const T &inT) const { return current_->find(inT); }
+   template <class T, class T_BaseClass>
+   typename Tree<T, T_BaseClass>::child_iterator Tree<T, T_BaseClass>::erase(child_iterator pWhere)
+   {
+      ref_pointer child = &*pWhere;
+      ref_pointer parent = child->mParent;
+      ref_pointer next = child->next_sibling();
+      parent->remove_subtree(child.get());
+      child->clear();
 
-    iterator find(const T &inT, bool (*obj)(const T&, const T&)) const
-    { return current_->find(inT, obj); }
+      return child_iterator(next.get(), this);
+   }
 
-    iterator tree_find_depth(const T &inT) const { return current_->tree_find_depth(inT); }
+   template <class T, class T_BaseClass>
+   typename Tree<T, T_BaseClass>::reverse_child_iterator Tree<T, T_BaseClass>::erase(reverse_child_iterator pWhere)
+   {
+      ref_pointer child = &*pWhere;
+      ref_pointer parent = child->mParent;
+      ref_pointer rev_next = child->prev_sibling();
+      parent->remove_subtree(child.get());
+      child->clear();
 
-    iterator tree_find_depth(const T &inT, bool (*obj)(const T&, const T&)) const
-    { return current_->tree_find_depth(inT, obj); }
+      return reverse_child_iterator(rev_next.get(), this);
+   }
 
-    iterator tree_find_breadth(const T &inT) const { return current_->tree_find_breadth(inT); }
+   template <class T, class T_BaseClass>
+   typename Tree<T, T_BaseClass>::iterator Tree<T, T_BaseClass>::insert(ref_pointer subtree, iterator pIter)
+   {
+      insert_subtree(subtree.get(), &*pIter);   // if end(), append to this
+      return iterator(subtree.get(), this);
+   }
 
-    iterator tree_find_breadth(const T &inT, bool (*obj)(const T&, const T&)) const
-    { return current_->tree_find_breadth(inT, obj); }
+   template <class T, class T_BaseClass>
+   typename Tree<T, T_BaseClass>::reverse_iterator Tree<T, T_BaseClass>::insert(ref_pointer subtree, reverse_iterator pIter)
+   {
+      insert_subtree(subtree.get(), &*pIter);   // if end(), append to this
+      return reverse_iterator(subtree.get(), this);
+   }
 
-    //////////////////////////////////////////////////////////////////////////
-    // Finds the next instance of T based on the iterator passed in
-    //////////////////////////////////////////////////////////////////////////
-    iterator find(const T &inT, const iterator &iter) const
-    { return current_->find(inT, iter); }
+   template <class T, class T_BaseClass>
+   typename Tree<T, T_BaseClass>::child_iterator Tree<T, T_BaseClass>::insert(ref_pointer subtree, child_iterator pIter)
+   {
+      insert_subtree(subtree.get(), &*pIter);   // if end(), append to this
+      return child_iterator(subtree.get(), this);
+   }
 
-    iterator find(const T &inT, const iterator &iter,
-        bool (*obj)(const T&, const T&)) const
-    { return current_->find( inT, iter, obj ); }
+   template <class T, class T_BaseClass>
+   typename Tree<T, T_BaseClass>::reverse_child_iterator Tree<T, T_BaseClass>::insert(ref_pointer subtree, reverse_child_iterator pIter)
+   {
+      insert_subtree(subtree.get(), &*pIter);   // if end(), append to this
+      return reverse_child_iterator(subtree.get(), this);
+   }
 
-    iterator tree_find_depth(const T &inT, const iterator &iter) const
-    { return current_->tree_find_depth(inT, iter); }
+   template <class T, class T_BaseClass>
+   typename Tree<T, T_BaseClass>::iterator Tree<T, T_BaseClass>::begin()
+   {
+      return iterator(this, this);
+   }
 
-    iterator tree_find_depth(const T &inT, const iterator &iter,
-        bool (*obj)(const T&, const T&)) const
-    { return current_->tree_find_depth( inT, iter, obj ); }
+   template <class T, class T_BaseClass>
+   typename Tree<T, T_BaseClass>::const_iterator Tree<T, T_BaseClass>::begin() const
+   {
+      return const_iterator(this, this);
+   }
 
-    iterator tree_find_breadth(const T &inT, const iterator &iter) const
-    { return current_->tree_find_breadth(inT, iter); }
+   template <class T, class T_BaseClass>
+   typename Tree<T, T_BaseClass>::child_iterator Tree<T, T_BaseClass>::begin_child()
+   {
+      return typename Tree<T, T_BaseClass>::child_iterator(first_child(), this);
+   }
 
-    iterator tree_find_breadth(const T &inT, const iterator &iter,
-        bool (*obj)(const T&, const T&)) const
-    { return current_->tree_find_breadth( inT, iter, obj ); }
+   template <class T, class T_BaseClass>
+   typename Tree<T, T_BaseClass>::const_child_iterator Tree<T, T_BaseClass>::begin_child() const
+   {
+      return typename Tree<T, T_BaseClass>::const_child_iterator(first_child(), this);
+   }
 
-    //////////////////////////////////////////////////////////////////////////
-    // Empty this entire tree
-    //////////////////////////////////////////////////////////////////////////
-    void clear_tree() { delete this->current_; this->current_ = NULL; }
+   template <class T, class T_BaseClass>
+   typename Tree<T, T_BaseClass>::reverse_iterator Tree<T, T_BaseClass>::rbegin()
+   {
+      return reverse_iterator(last_descendant(), this);
+   }
 
-    //////////////////////////////////////////////////////////////////////////
-    // Empty this tree's children
-    //////////////////////////////////////////////////////////////////////////
-    void clear_children() { this->current_->clear(); }
-};
+   template <class T, class T_BaseClass>
+   typename Tree<T, T_BaseClass>::const_reverse_iterator Tree<T, T_BaseClass>::rbegin() const
+   {
+      return const_reverse_iterator(last_descendant(), this);
+   }
 
-//////////////////////////////////////////////////////////////////////////
-// Static iterator initialization
-//////////////////////////////////////////////////////////////////////////
-template <typename T>
-tree_iterator<T> tree_iterator<T>::end_of_iterator;
+   template <class T, class T_BaseClass>
+   typename Tree<T, T_BaseClass>::reverse_child_iterator Tree<T, T_BaseClass>::rbegin_child()
+   {
+      return reverse_child_iterator(last_child(), this);
+   }
 
-}
+   template <class T, class T_BaseClass>
+   typename Tree<T, T_BaseClass>::const_reverse_child_iterator Tree<T, T_BaseClass>::rbegin_child() const
+   {
+      return const_reverse_child_iterator(last_child(), this);
+   }
 
-#if WIN32
-#pragma warning( pop )
-#endif // WIN32
+   template <class T, class T_BaseClass>
+   typename Tree<T, T_BaseClass>::iterator Tree<T, T_BaseClass>::end()
+   {
+      return iterator(0, this);
+   }
 
-#endif // tree_header_file
+   template <class T, class T_BaseClass>
+   typename Tree<T, T_BaseClass>::const_iterator Tree<T, T_BaseClass>::end() const
+   {
+      return const_iterator(0, this);
+   }
+
+   template <class T, class T_BaseClass>
+   typename Tree<T, T_BaseClass>::child_iterator Tree<T, T_BaseClass>::end_child()
+   {
+      return typename Tree<T, T_BaseClass>::child_iterator(0, this);
+   }
+
+   template <class T, class T_BaseClass>
+   typename Tree<T, T_BaseClass>::const_child_iterator Tree<T, T_BaseClass>::end_child() const
+   {
+      return typename Tree<T, T_BaseClass>::const_child_iterator(0, this);
+   }
+
+   template <class T, class T_BaseClass>
+   typename Tree<T, T_BaseClass>::reverse_iterator Tree<T, T_BaseClass>::rend()
+   {
+      return reverse_iterator(0, this);
+   }
+
+   template <class T, class T_BaseClass>
+   typename Tree<T, T_BaseClass>::const_reverse_iterator Tree<T, T_BaseClass>::rend() const
+   {
+      return const_reverse_iterator(0, this);
+   }
+
+   template <class T, class T_BaseClass>
+   typename Tree<T, T_BaseClass>::reverse_child_iterator Tree<T, T_BaseClass>::rend_child()
+   {
+      return reverse_child_iterator(0, this);
+   }
+
+   template <class T, class T_BaseClass>
+   typename Tree<T, T_BaseClass>::const_reverse_child_iterator Tree<T, T_BaseClass>::rend_child() const
+   {
+      return const_reverse_child_iterator(0, this);
+   }
+
+   template <class T, class T_BaseClass>
+   void Tree<T, T_BaseClass>::destroy_decendants()
+   {
+      mPrevSibling = mLastDecendant = this;
+      if(mNext.valid() && mLastDecendant != this)
+      {
+         ref_pointer descendant = first_child();
+         ref_pointer end = last_descendant()->next();
+         while (descendant.valid())
+         {
+            pointer next = descendant->next_sibling();
+            descendant->destroy_decendants();
+            descendant = next;
+         }
+
+         mNext = end;
+         mLastDecendant = this;
+      }
+   }
+
+   template <class T, class T_BaseClass>
+   void Tree<T, T_BaseClass>::copy_children(const_pointer pTree)
+   {
+      for (const TreeNode* child = pTree->first_child(); child != NULL; child = child->next_sibling())
+      {
+         insert_subtree(child->clone(), 0);
+      }
+   }
+
+   template <class T, class T_BaseClass>
+   void Tree<T, T_BaseClass>::change_last_descendant(pointer newLast)
+   {
+      ref_pointer oldLast = mLastDecendant;
+      ref_pointer ancestor = this;
+      do
+      {
+         ancestor->mLastDecendant = newLast;
+         ancestor = ancestor->mParent;
+      }
+      while (ancestor.valid() && (ancestor->mLastDecendant == oldLast));
+   }
+
+   template <class T, class T_BaseClass>
+   void Tree<T, T_BaseClass>::remove_subtree(pointer child)
+   {
+      ref_pointer sib = child->next_sibling();
+      if (sib.valid())
+      {
+         sib->mPrevSibling = child->mPrevSibling;
+      }
+      else
+      {
+         first_child()->mPrevSibling = child->mPrevSibling;
+      }
+
+      if (mLastDecendant == child->mLastDecendant)
+      {
+         change_last_descendant(child->prev());
+      }
+
+      if (mNext == child)   // deleting first child?
+      {
+         mNext = child->mLastDecendant->mNext;
+      }
+      else
+      {
+         child->mPrevSibling->mLastDecendant->mNext = child->mLastDecendant->mNext;
+      }
+   }
+
+   template <class T, class T_BaseClass>
+   void Tree<T, T_BaseClass>::insert_subtree(pointer pSubTree, pointer pNext)
+   {
+      if (pNext == NULL)
+      {
+         // append as last child
+         pSubTree->mParent = this;
+         pSubTree->mLastDecendant->mNext = mLastDecendant->mNext;
+         mLastDecendant->mNext = pSubTree;
+
+         pSubTree->mPrevSibling = last_child();
+         if (is_leaf())
+         {
+            mNext = pSubTree;
+         }
+
+         first_child()->mPrevSibling = pSubTree;
+
+         change_last_descendant(pSubTree->mLastDecendant);
+      }
+      else
+      {
+         ref_pointer parent = pNext->mParent;
+         pSubTree->mParent = parent;
+         pSubTree->mPrevSibling = pNext->mPrevSibling;
+
+         pSubTree->mLastDecendant->mNext = pNext;
+         if (parent->mNext == pNext)   // inserting before first subtree?
+         {
+            parent->mNext = pSubTree;
+         }
+         else
+         {
+            pNext->mPrevSibling->mLastDecendant->mNext = pSubTree;
+         }
+
+         pNext->mPrevSibling = pSubTree;
+      }
+   }
+
+} // namespace dtAI
+
+#endif //DTAI_DELTA_TREE_H

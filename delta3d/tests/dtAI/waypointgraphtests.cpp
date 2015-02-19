@@ -42,6 +42,8 @@
 
 namespace dtAI
 {
+   typedef dtCore::ObserverPtr<Waypoint> WaypointWeakPtr;
+
    class WaypointGraphTests : public CPPUNIT_NS::TestFixture
    {
       CPPUNIT_TEST_SUITE(WaypointGraphTests);
@@ -118,13 +120,13 @@ void WaypointGraphTests::destroy()
 
 void WaypointGraphTests::TestAddRemoveWaypoints()
 {
-   Waypoint* wp1 = new Waypoint(osg::Vec3(1.0f, 1.0f, 1.0f));
-   Waypoint* wp2 = new Waypoint(osg::Vec3(2.0f, 2.0f, 2.0f));
-   Waypoint* wp3 = new Waypoint(osg::Vec3(3.0f, 3.0f, 3.0f));
+   WaypointWeakPtr wp1 = new Waypoint(osg::Vec3(1.0f, 1.0f, 1.0f));
+   WaypointWeakPtr wp2 = new Waypoint(osg::Vec3(2.0f, 2.0f, 2.0f));
+   WaypointWeakPtr wp3 = new Waypoint(osg::Vec3(3.0f, 3.0f, 3.0f));
 
-   mGraph->InsertWaypoint(wp1);
-   mGraph->InsertWaypoint(wp2);
-   mGraph->InsertWaypoint(wp3);
+   mGraph->InsertWaypoint(wp1.get());
+   mGraph->InsertWaypoint(wp2.get());
+   mGraph->InsertWaypoint(wp3.get());
 
    CPPUNIT_ASSERT(mGraph->Contains(wp1->GetID()));
    CPPUNIT_ASSERT(mGraph->Contains(wp2->GetID()));
@@ -143,23 +145,24 @@ void WaypointGraphTests::TestAddRemoveWaypoints()
    mGraph->Clear();
    CPPUNIT_ASSERT(mGraph->FindWaypoint(wp3->GetID()) == NULL);
 
-   delete wp1;
-   delete wp2;
-   delete wp3;
+   // Ensure waypoints have been cleared from memory.
+   CPPUNIT_ASSERT( ! wp1.valid());
+   CPPUNIT_ASSERT( ! wp2.valid());
+   CPPUNIT_ASSERT( ! wp3.valid());
 
 }
 
 void WaypointGraphTests::TestAddRemoveEdge()
 {
-   Waypoint* wp1 = new Waypoint(osg::Vec3(1.0f, 1.0f, 1.0f));
-   Waypoint* wp2 = new Waypoint(osg::Vec3(2.0f, 2.0f, 2.0f));
-   Waypoint* wp3 = new Waypoint(osg::Vec3(3.0f, 3.0f, 3.0f));
-   Waypoint* wp4 = new Waypoint(osg::Vec3(4.0f, 4.0f, 4.0f));
+   WaypointWeakPtr wp1 = new Waypoint(osg::Vec3(1.0f, 1.0f, 1.0f));
+   WaypointWeakPtr wp2 = new Waypoint(osg::Vec3(2.0f, 2.0f, 2.0f));
+   WaypointWeakPtr wp3 = new Waypoint(osg::Vec3(3.0f, 3.0f, 3.0f));
+   WaypointWeakPtr wp4 = new Waypoint(osg::Vec3(4.0f, 4.0f, 4.0f));
 
-   mGraph->InsertWaypoint(wp1);
-   mGraph->InsertWaypoint(wp2);
-   mGraph->InsertWaypoint(wp3);
-   mGraph->InsertWaypoint(wp4);
+   mGraph->InsertWaypoint(wp1.get());
+   mGraph->InsertWaypoint(wp2.get());
+   mGraph->InsertWaypoint(wp3.get());
+   mGraph->InsertWaypoint(wp4.get());
 
    mGraph->AddEdge(wp1->GetID(), wp2->GetID());
    mGraph->AddEdge(wp2->GetID(), wp1->GetID());
@@ -177,19 +180,19 @@ void WaypointGraphTests::TestAddRemoveEdge()
    WaypointGraph::ConstWaypointArray waypointArray;
    mGraph->GetAllEdgesFromWaypoint(wp1->GetID(), waypointArray);
    CPPUNIT_ASSERT(waypointArray.size() == 2);
-   CPPUNIT_ASSERT(std::find(waypointArray.begin(), waypointArray.end(), wp2) != waypointArray.end());
-   CPPUNIT_ASSERT(std::find(waypointArray.begin(), waypointArray.end(), wp4) != waypointArray.end());
+   CPPUNIT_ASSERT(std::find(waypointArray.begin(), waypointArray.end(), wp2.get()) != waypointArray.end());
+   CPPUNIT_ASSERT(std::find(waypointArray.begin(), waypointArray.end(), wp4.get()) != waypointArray.end());
 
 
-   Waypoint* wp5 = new Waypoint(osg::Vec3(5.0f, 5.0f, 5.0f));
-   Waypoint* wp6 = new Waypoint(osg::Vec3(6.0f, 6.0f, 6.0f));
-   Waypoint* wp7 = new Waypoint(osg::Vec3(7.0f, 7.0f, 7.0f));
-   Waypoint* wp8 = new Waypoint(osg::Vec3(8.0f, 8.0f, 8.0f));
+   WaypointWeakPtr wp5 = new Waypoint(osg::Vec3(5.0f, 5.0f, 5.0f));
+   WaypointWeakPtr wp6 = new Waypoint(osg::Vec3(6.0f, 6.0f, 6.0f));
+   WaypointWeakPtr wp7 = new Waypoint(osg::Vec3(7.0f, 7.0f, 7.0f));
+   WaypointWeakPtr wp8 = new Waypoint(osg::Vec3(8.0f, 8.0f, 8.0f));
 
-   mGraph->InsertWaypoint(wp5);
-   mGraph->InsertWaypoint(wp6);
-   mGraph->InsertWaypoint(wp7);
-   mGraph->InsertWaypoint(wp8);
+   mGraph->InsertWaypoint(wp5.get());
+   mGraph->InsertWaypoint(wp6.get());
+   mGraph->InsertWaypoint(wp7.get());
+   mGraph->InsertWaypoint(wp8.get());
    
    mGraph->AddEdge(wp5->GetID(), wp6->GetID());
    mGraph->AddEdge(wp7->GetID(), wp8->GetID());
@@ -221,14 +224,15 @@ void WaypointGraphTests::TestAddRemoveEdge()
    
    mGraph->Clear();
 
-   delete wp1;
-   delete wp2;
-   delete wp3;
-   delete wp4;
-   delete wp5;
-   delete wp6;
-   delete wp7;
-   delete wp8;
+   // Ensure waypoints have been cleared from memory.
+   CPPUNIT_ASSERT( ! wp1.valid());
+   CPPUNIT_ASSERT( ! wp2.valid());
+   CPPUNIT_ASSERT( ! wp3.valid());
+   CPPUNIT_ASSERT( ! wp4.valid());
+   CPPUNIT_ASSERT( ! wp5.valid());
+   CPPUNIT_ASSERT( ! wp6.valid());
+   CPPUNIT_ASSERT( ! wp7.valid());
+   CPPUNIT_ASSERT( ! wp8.valid());
 }
 
 void WaypointGraphTests::CreateWaypoints()
@@ -379,15 +383,6 @@ void WaypointGraphTests::TestBuildGraph()
 
    //cleanup
    mGraph->Clear();
-
-   //delete wp1;
-   //delete wp2;
-   //delete wp3;
-   //delete wp4;
-   //delete wp5;
-   //delete wp6;
-   //delete wp7;
-   //delete wp8;
 }
 
 
@@ -400,8 +395,8 @@ void WaypointGraphTests::TestTreeTraversal()
    WaypointCollection* rootNode = mGraph->GetRootParent(wpArray[1]);
    if(rootNode != NULL)
    {
-      dtAI::Tree<const WaypointInterface*>::iterator iter = rootNode->begin();
-      dtAI::Tree<const WaypointInterface*>::iterator iterEnd = rootNode->end();
+      dtUtil::Tree<const WaypointInterface*>::iterator iter = rootNode->begin();
+      dtUtil::Tree<const WaypointInterface*>::iterator iterEnd = rootNode->end();
 
       std::cout << std::endl;
       for(;iter != iterEnd; ++iter)
@@ -415,14 +410,14 @@ void WaypointGraphTests::TestTreeTraversal()
 
 void WaypointGraphTests::TestClearMemory()
 {
-   /*Waypoint* wp1 = new Waypoint(osg::Vec3(1.0f, 1.0f, 1.0f));
-   Waypoint* wp2 = new Waypoint(osg::Vec3(2.0f, 2.0f, 2.0f));
-   Waypoint* wp3 = new Waypoint(osg::Vec3(3.0f, 3.0f, 3.0f));
-   Waypoint* wp4 = new Waypoint(osg::Vec3(4.0f, 4.0f, 4.0f));
-   Waypoint* wp5 = new Waypoint(osg::Vec3(5.0f, 5.0f, 5.0f));
-   Waypoint* wp6 = new Waypoint(osg::Vec3(6.0f, 6.0f, 6.0f));
-   Waypoint* wp7 = new Waypoint(osg::Vec3(7.0f, 7.0f, 7.0f));
-   Waypoint* wp8 = new Waypoint(osg::Vec3(8.0f, 8.0f, 8.0f));
+   /*WaypointWeakPtr wp1 = new Waypoint(osg::Vec3(1.0f, 1.0f, 1.0f));
+   WaypointWeakPtr wp2 = new Waypoint(osg::Vec3(2.0f, 2.0f, 2.0f));
+   WaypointWeakPtr wp3 = new Waypoint(osg::Vec3(3.0f, 3.0f, 3.0f));
+   WaypointWeakPtr wp4 = new Waypoint(osg::Vec3(4.0f, 4.0f, 4.0f));
+   WaypointWeakPtr wp5 = new Waypoint(osg::Vec3(5.0f, 5.0f, 5.0f));
+   WaypointWeakPtr wp6 = new Waypoint(osg::Vec3(6.0f, 6.0f, 6.0f));
+   WaypointWeakPtr wp7 = new Waypoint(osg::Vec3(7.0f, 7.0f, 7.0f));
+   WaypointWeakPtr wp8 = new Waypoint(osg::Vec3(8.0f, 8.0f, 8.0f));
 
    mGraph->InsertWaypoint(wp1);
    mGraph->InsertWaypoint(wp2);
@@ -473,14 +468,15 @@ void WaypointGraphTests::TestClearMemory()
    mGraph->Clear();
 
 
-   delete wp1;
-   delete wp2;
-   delete wp3;
-   delete wp4;
-   delete wp5;
-   delete wp6;
-   delete wp7;
-   delete wp8;*/
+   // Ensure waypoints have been cleared from memory.
+   CPPUNIT_ASSERT( ! wp1.valid());
+   CPPUNIT_ASSERT( ! wp2.valid());
+   CPPUNIT_ASSERT( ! wp3.valid());
+   CPPUNIT_ASSERT( ! wp4.valid());
+   CPPUNIT_ASSERT( ! wp5.valid());
+   CPPUNIT_ASSERT( ! wp6.valid());
+   CPPUNIT_ASSERT( ! wp7.valid());
+   CPPUNIT_ASSERT( ! wp8.valid());*/
 }
 
 

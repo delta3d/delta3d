@@ -48,6 +48,27 @@ namespace dtCore
    {
    }
 
+   ////////////////////////////////////////////////////////////////////////////
+   std::pair<std::string, std::string > ObjectType::ParseNameAndCategory(const std::string& objectTypeFullName)
+   {
+      size_t index = objectTypeFullName.find_last_of('.');
+
+      std::string objectTypeCategory;
+      std::string objectTypeName;
+
+      if (index == objectTypeFullName.length())
+      {
+         objectTypeName = objectTypeFullName;
+         objectTypeCategory.clear();
+      }
+      else
+      {
+         objectTypeName = objectTypeFullName.substr(index + 1);
+         objectTypeCategory = objectTypeFullName.substr(0, index);
+      }
+      return std::make_pair(objectTypeName, objectTypeCategory);
+   }
+
    ///////////////////////////////////////////////////////////////////////////
    void ObjectType::SetName(const std::string& name)
    {

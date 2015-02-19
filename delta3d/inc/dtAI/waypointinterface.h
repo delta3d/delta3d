@@ -27,8 +27,8 @@
 
 #include <dtAI/export.h>
 #include <dtAI/primitives.h>
-
 #include <dtCore/objecttype.h>
+#include <dtUtil/referencedinterface.h>
 
 namespace dtCore
 {
@@ -39,7 +39,7 @@ namespace dtAI
 {
    class WaypointPropertyBase;
 
-   class DT_AI_EXPORT WaypointInterface
+   class DT_AI_EXPORT WaypointInterface : public dtUtil::ReferencedInterface
    {
    public:
       WaypointInterface(const dtCore::ObjectType* wpt);
@@ -69,8 +69,8 @@ namespace dtAI
        *  and overload calling the base functions, or ignore, do nothing, and manage
        *  your own memory.
        */
-      virtual void ref() const = 0;
-      virtual void unref() const = 0;
+      //virtual void ref() const {};
+      //virtual void unref() const {};
 
    protected:
       // for use by property container

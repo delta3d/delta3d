@@ -182,8 +182,7 @@ namespace dtCore
    ///////////////////////////////////////////////////////////////////////////////////////
    void PropertyContainer::GetPropertyList(PropertyConstVector& propList) const
    {
-      propList.clear();
-      propList.reserve(mProperties.size());
+      propList.reserve(propList.size() + mProperties.size());
 
       for (size_t i = 0; i < mProperties.size(); ++i)
       {
@@ -191,17 +190,33 @@ namespace dtCore
       }
    }
 
-
    ///////////////////////////////////////////////////////////////////////////////////////
    void PropertyContainer::GetPropertyList(PropertyVector& propList)
    {
-      propList.clear();
-      propList.reserve(mProperties.size());
+      propList.reserve(propList.size() + mProperties.size());
 
       for (size_t i = 0; i < mProperties.size(); ++i)
       {
          propList.push_back(mProperties[i].get());
       }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   bool PropertyContainer::HasProperty(ActorProperty& prop) const
+   {
+      bool found = false;
+
+      size_t limit = mProperties.size();
+      for (size_t i = 0; i < limit; ++i)
+      {
+         if (&prop == mProperties[i].get())
+         {
+            found = true;
+            break;
+         }
+      }
+
+      return found;
    }
 
    ////////////////////////////////////////////////////////////////////////////////

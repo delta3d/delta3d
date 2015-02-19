@@ -25,6 +25,7 @@
 #define actorcomponentbase_h__
 
 #include <dtGame/export.h>
+#include <dtCore/actorcomponentcontainer.h>
 #include <dtGame/actorcomponentcontainer.h>
 #include <dtUtil/assocvector.h>
 
@@ -39,9 +40,14 @@ namespace dtGame
     * GameActors can be extended with ActorComponentBase (using multiple inheritance) to
     * include component functionality.
     */
-   class DT_GAME_EXPORT ActorComponentBase : public ActorComponentContainer
+   class DT_GAME_EXPORT ActorComponentBase : public dtGame::ActorComponentContainer,
+      // NOTE: Secondary base class of the same name as the first is the intended destination
+      // for the first base class' functionality. The first base class will be removed in the
+      // future. This ugly multiple inheritence is only temporary for gradual migration of code.
+      public virtual dtCore::ActorComponentContainer
    {
    public:
+      typedef dtGame::ActorComponentContainer Baseclass;
 
       /** a map from component type strings to components */
       typedef std::vector< std::pair<ActorComponent::ACType, dtCore::RefPtr<ActorComponent> > > ActorComponentMap;
@@ -57,16 +63,35 @@ namespace dtGame
       void ForEachComponent(UnaryFunctor func) const;
 
       /**
-       * Get all components matching this type string
-       * @param type The type-string of the ActorComponent to get
+       * Get all components matching this type
+       * @param type The type of the ActorComponent to get
        * @return the selected ActorComponents (will be empty if not found)
        */
-      virtual std::vector<ActorComponent*> GetComponents(ActorComponent::ACType type) const;
+      virtual ActorComponentVector GetComponents(ActorComponent::ACType type) const;
+
+      /**
+       * Get all components matching this type
+       * @param type The type of the ActorComponent to get
+       * @return the selected ActorComponents (will be empty if not found)
+       */
+      virtual void GetComponents(ActorComponent::ACType type, ActorComponentVector& outComponents) const;
+
+      /**
+       * Get all components matching this type.
+       * @note This uses base types for use with the code that saves actor components in
+       * maps. There is really no reason to call this in application code
+       * @param type The type of the ActorComponent to get
+       * @return the selected ActorComponents (will be empty if not found)
+       */
+      virtual void GetComponents(dtCore::ActorTypePtr type, dtCore::ActorPtrVector& outComponents) const;
 
       /**
        * Fill the vector with all the actor components.
        */
-      void GetAllComponents(std::vector<ActorComponent*>& toFill);
+      void GetAllComponents(ActorComponentVector& toFill);
+      void GetAllComponents(ActorComponentVectorConst& toFill) const;
+   
+      void GetAllComponents(dtCore::ActorPtrVector& toFill);
 
       /**
        * Does base contain a component of given type?
@@ -80,6 +105,8 @@ namespace dtGame
        * @param component The ActorComponent to try to add
        */
       virtual void AddComponent(ActorComponent& component);
+
+      virtual void AddComponent(dtCore::BaseActorObject& component);
 
       /**
        * Remove component by reference
@@ -124,6 +151,12 @@ namespace dtGame
        * @param component The ActorComponent just removed
        */
       virtual void OnActorComponentRemoved(ActorComponent& /*component*/) {};
+
+      /**
+       * TEMPORARY method to determine if an object has a parent.
+       */
+      virtual dtCore::BaseActorObject* GetParentActor() const { return NULL; }
+      virtual void SetParentActor(dtCore::BaseActorObject* parent) { }
 
    protected:
 

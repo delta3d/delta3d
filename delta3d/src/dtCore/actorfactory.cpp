@@ -411,17 +411,18 @@ namespace dtCore
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   std::string ActorFactory::GetLibraryNameForRegistry(ActorPluginRegistry* registry)
+   std::string ActorFactory::GetLibraryNameForRegistry(const ActorPluginRegistry& registry) const
    {
-      for (RegistryMapItor i = mRegistries.begin(); i != mRegistries.end(); ++i)
+      std::string result;
+      for (RegistryMapConstItor i = mRegistries.begin(); i != mRegistries.end(); ++i)
       {
-         if (i->second.registry == registry)
+         if (i->second.registry == &registry)
          {
-            return i->first;
+            result = i->first;
          }
       }
 
-      return "";
+      return result;
    }
 
    /////////////////////////////////////////////////////////////////////////////

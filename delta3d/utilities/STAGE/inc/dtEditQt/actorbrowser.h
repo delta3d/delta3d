@@ -34,7 +34,7 @@
 #include <vector>
 
 #include <dtCore/refptr.h>
-#include <dtUtil/tree.h>
+#include <dtUtil/utiltree.h>
 #include <dtCore/actortype.h>
 #include <dtEditQt/actortypetreewidget.h>
 #include <dtEditQt/actortreewidget.h>

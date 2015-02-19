@@ -141,6 +141,12 @@ namespace dtCore
          MapContentHandler(const MapContentHandler&);
          MapContentHandler& operator=(const MapContentHandler&);
 
+         /**
+          * Convenience method to find an ancestor actor that matches the 
+          * specified id by traversing up the previously processed actor.
+          */
+         BaseActorObject* FindActorById(const dtCore::UniqueId& id) const;
+
          dtCore::RefPtr<Map> mMap;
 
          bool mInMap;
@@ -153,11 +159,13 @@ namespace dtCore
          bool mInGroup;
          bool mInPresetCameras;
          bool mIgnoreCurrentActor;
+         int mActorDepth;
 
          std::string mLibName;
          std::string mLibVersion;
 
          dtCore::UniqueId mEnvActorId;
+         dtCore::UniqueId mParentId;
 
          std::vector<std::string> mMissingLibraries;
          std::set<std::string> mMissingActorTypes;
@@ -166,7 +174,13 @@ namespace dtCore
 
          dtCore::RefPtr<GameEvent> mGameEvent;
 
-         dtCore::RefPtr<BaseActorObject> mBaseActorObject;
+         typedef dtCore::RefPtr<BaseActorObject> ActorPtr;
+         typedef std::stack<ActorPtr> ActorStack;
+         ActorPtr mPrevActorObject;
+         ActorPtr mBaseActorObject;
+         ActorStack mActorStack;
+
+         int mIgnoreActorDepth;
 
          int mGroupIndex;
 

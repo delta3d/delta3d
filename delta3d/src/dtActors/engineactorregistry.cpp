@@ -153,10 +153,9 @@ namespace dtActors
 
    ///////////////////////////////////////////////////////////////////////////////
    ///////////////////////////////////////////////////////////////////////////////
-   EngineActorRegistry::EngineActorRegistry() : dtCore::ActorPluginRegistry("CoreActors")
+   EngineActorRegistry::EngineActorRegistry() : dtCore::ActorPluginRegistry("CoreActors", "The actors in this registry are the default base "
+         "actors provided by the Delta3D engine.")
    {
-      mDescription = "The actors in this registry are the default base "
-         "actors provided by the Delta3D engine.";
    }
 
    ///////////////////////////////////////////////////////////////////////////////

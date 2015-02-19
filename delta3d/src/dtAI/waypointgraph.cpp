@@ -73,7 +73,7 @@ namespace dtAI
 
          unsigned mLevel;
          WaypointCollection* mParent;
-         dtCore::RefPtr<const WaypointInterface> mWaypoint;
+         dtCore::RefPtr<WaypointInterface> mWaypoint;
       };
 
       typedef std::map<WaypointID, WaypointHolder> WaypointMap;
@@ -94,7 +94,7 @@ namespace dtAI
       }
 
       /////////////////////////////////////////////////////////////////////////////
-      WaypointCollection* CastToCollection(WaypointCollection::WaypointTree* wt)
+      WaypointCollection* CastToCollection(WaypointTree* wt)
       {
          const WaypointCollection* col = dynamic_cast<const WaypointCollection*>(wt);
          if(col != NULL)
@@ -106,7 +106,7 @@ namespace dtAI
       }
 
       /////////////////////////////////////////////////////////////////////////////
-      const WaypointCollection* CastToCollection(const WaypointCollection::WaypointTree* wt) const
+      const WaypointCollection* CastToCollection(const WaypointTree* wt) const
       {
          const WaypointCollection* col = dynamic_cast<const WaypointCollection*>(wt);
 
@@ -210,7 +210,7 @@ namespace dtAI
 
       /////////////////////////////////////////////////////////////////////////////
       //wc can be NULL, if so it will make a new collection and add it
-      void Insert(const WaypointInterface& waypoint, WaypointCollection* wcParent)
+      void Insert(WaypointInterface& waypoint, WaypointCollection* wcParent)
       {
          dtCore::RefPtr<WaypointCollection> wc = wcParent;
 
@@ -253,7 +253,7 @@ namespace dtAI
       //returns the top most node for a specific child
       WaypointCollection* GetRoot(WaypointCollection* wc)
       {
-         WaypointCollection::WaypointTree* rootNode = wc;
+         WaypointTree* rootNode = wc;
 
          while(rootNode->parent() != NULL)
          {
@@ -267,7 +267,7 @@ namespace dtAI
       //returns the top most node for a specific child
       const WaypointCollection* GetRoot(const WaypointCollection* wc) const
       {
-         const WaypointCollection::WaypointTree* rootNode = wc;
+         const WaypointTree* rootNode = wc;
 
          while(rootNode->parent() != NULL)
          {
@@ -286,8 +286,8 @@ namespace dtAI
             WaypointCollection* wc = const_cast<WaypointCollection*>(wcConst);
 
             //erase all children
-            WaypointCollection::WaypointTree::child_iterator iter = wc->begin_child();
-            WaypointCollection::WaypointTree::child_iterator iterEnd = wc->end_child();
+            WaypointTree::child_iterator iter = wc->begin_child();
+            WaypointTree::child_iterator iterEnd = wc->end_child();
             for(;iter != iterEnd; ++iter)
             {
                Remove(iter->value);
@@ -356,8 +356,8 @@ namespace dtAI
 
          if(idLHS >= 0 && idRHS > 0)
          {
-            const WaypointCollection::WaypointTree* lhsParent = &lhs;
-            const WaypointCollection::WaypointTree* rhsParent = &rhs;
+            const WaypointTree* lhsParent = &lhs;
+            const WaypointTree* rhsParent = &rhs;
 
             while(idLHS < idRHS && lhsParent != NULL)
             {
@@ -391,7 +391,7 @@ namespace dtAI
       bool GetNodePath(const WaypointCollection& wp, const WaypointCollection& parentNode,
                        WaypointGraph::ConstWaypointCollectionArray& result) const
       {
-         const WaypointCollection::WaypointTree* curNode = &wp;
+         const WaypointTree* curNode = &wp;
 
          while(curNode != NULL)
          {
@@ -644,8 +644,8 @@ namespace dtAI
    {
       outLeaves.clear();
 
-      dtAI::Tree<const WaypointInterface*>::const_iterator iter = parent->first_child()->begin();
-      dtAI::Tree<const WaypointInterface*>::const_iterator iterEnd = ++parent->last_descendant()->begin();
+      WaypointTree::const_iterator iter = parent->first_child()->begin();
+      WaypointTree::const_iterator iterEnd = ++parent->last_descendant()->begin();
 
       while (iter != iterEnd)
       {
@@ -1110,8 +1110,8 @@ namespace dtAI
 
             wc->ClearEdges();
 
-            WaypointCollection::WaypointTree::const_child_iterator children = wc->begin_child();
-            WaypointCollection::WaypointTree::const_child_iterator childrenEnd = wc->end_child();
+            WaypointTree::const_child_iterator children = wc->begin_child();
+            WaypointTree::const_child_iterator childrenEnd = wc->end_child();
 
             for(; children != childrenEnd; ++children)
             {

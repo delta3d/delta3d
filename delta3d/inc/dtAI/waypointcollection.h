@@ -23,10 +23,9 @@
 #define DELTA_WAYPOINTCOLLECTION
 
 #include <dtAI/export.h>
-#include <dtAI/tree.h>
 #include <dtAI/waypointinterface.h>
-
 #include <dtCore/refptr.h>
+#include <dtUtil/tree.h>
 
 #include <vector>
 #include <map>
@@ -36,19 +35,31 @@ namespace dtAI
 {
    class WaypointPropertyBase;
 
+   /////////////////////////////////////////////////////////////////////////////
+   // TYPE DEFINITIONS
+   /////////////////////////////////////////////////////////////////////////////
    /**
-    *   WaypointCollection is meant to be a container for waypoints that is also
-    * a derivative of the WaypointInterface base.  Semantically all children of
+    * WaypointCollection is meant to be a container for waypoints that is also
+    * a derivative of the WaypointInterface base. Semantically all children of
     * a WaypointCollection can path to all other children, so it adding children
     * implies interconnectivity.
     */
-   class DT_AI_EXPORT WaypointCollection : public dtAI::Tree<const WaypointInterface*>,
-                                           public WaypointInterface
+   typedef dtUtil::Tree<const WaypointInterface*, osg::Referenced> WaypointTree;
+
+
+   
+   /////////////////////////////////////////////////////////////////////////////
+   // CLASS CODE
+   /////////////////////////////////////////////////////////////////////////////
+   class DT_AI_EXPORT WaypointCollection : public WaypointTree, public virtual WaypointInterface
    {
    public:
-      typedef dtAI::Tree<const WaypointInterface*> WaypointTree;
-      typedef dtAI::Tree<const WaypointInterface*>::child_iterator WaypointTreeChildIterator;
-      typedef dtAI::Tree<const WaypointInterface*>::const_child_iterator WaypointTreeConstChildIterator;
+      typedef WaypointTree BaseClass;
+
+      DT_DECLARE_VIRTUAL_REF_INTERFACE_INLINE
+
+      typedef WaypointTree::child_iterator WaypointTreeChildIterator;
+      typedef WaypointTree::const_child_iterator WaypointTreeConstChildIterator;
 
       typedef std::pair<WaypointID, WaypointID> ChildEdge;
       typedef std::multimap<WaypointID, ChildEdge> ChildEdgeMap;
@@ -65,17 +76,6 @@ namespace dtAI
       /*virtual*/ WaypointTree::ref_pointer clone() const;
 
       void CleanUp();
-
-      // these are pure virtual from WaypointInterface
-      virtual void ref() const
-      {
-         osg::Referenced::ref();
-      }
-
-      virtual void unref() const
-      {
-         osg::Referenced::unref();
-      }
 
       /**
        * A collection is marked as a leaf if it has any concrete nodes as children
@@ -123,8 +123,8 @@ namespace dtAI
        * If you specifically know whether you are adding a concrete waypoint or a child collection
        * you can use these functions, else use Insert() and Remove() above.
        */
-      virtual void AddChild(dtCore::RefPtr<const WaypointCollection> waypoint);
-      virtual void RemoveChild(dtCore::RefPtr<const WaypointCollection> waypoint);
+      virtual void AddChild(dtCore::RefPtr<WaypointCollection> waypoint);
+      virtual void RemoveChild(dtCore::RefPtr<WaypointCollection> waypoint);
 
       virtual void InsertWaypoint(const WaypointInterface* waypoint);
       virtual void RemoveWaypoint(const WaypointInterface* waypoint);

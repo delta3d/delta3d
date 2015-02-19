@@ -33,41 +33,34 @@ namespace dtAI
 
    /////////////////////////////////////////////////////////////////////////////
    WaypointCollection::WaypointCollection()
-      : WaypointTree(this)
+      : BaseClass(this)
       , WaypointInterface(WaypointTypes::WAYPOINT_COLLECTION.get())
       , mLeaf (false)
       , mRadius(0.0f)
       , mPosition()
-   {
-
-   }
+   {}
 
    /////////////////////////////////////////////////////////////////////////////
    WaypointCollection::WaypointCollection(const osg::Vec3& pos)
-      : WaypointTree(this)
+      : BaseClass(this)
       , WaypointInterface(WaypointTypes::WAYPOINT_COLLECTION.get())
       , mLeaf (false)
       , mRadius(0.0f)
       , mPosition(pos)
-   {
-
-   }
+   {}
 
    /////////////////////////////////////////////////////////////////////////////
    WaypointCollection::WaypointCollection(const WaypointCollection& way)
-      : WaypointTree(way)
+      : BaseClass(way)
       , WaypointInterface(WaypointTypes::WAYPOINT_COLLECTION.get())
       , mLeaf(way.mLeaf)
       , mRadius(way.mRadius)
       , mPosition(way.mPosition)
-   {
-
-   }
+   {}
 
    /////////////////////////////////////////////////////////////////////////////
    WaypointCollection::~WaypointCollection()
-   {
-   }
+   {}
 
    /////////////////////////////////////////////////////////////////////////////
    void WaypointCollection::CleanUp()
@@ -85,11 +78,11 @@ namespace dtAI
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   WaypointCollection::WaypointTree::ref_pointer WaypointCollection::clone() const
+   WaypointTree::ref_pointer WaypointCollection::clone() const
    {
-      return new WaypointCollection();
+      WaypointTree::ref_pointer ptr = new WaypointCollection();
+      return ptr;
    }
-
 
    /////////////////////////////////////////////////////////////////////////////
    bool WaypointCollection::IsLeaf() const
@@ -145,8 +138,8 @@ namespace dtAI
    {
       children.clear();
 
-      dtAI::Tree<const WaypointInterface*>::const_child_iterator iter = begin_child();
-      dtAI::Tree<const WaypointInterface*>::const_child_iterator iterEnd = end_child();
+      WaypointTree::const_child_iterator iter = begin_child();
+      WaypointTree::const_child_iterator iterEnd = end_child();
 
       while (iter != iterEnd)
       {
@@ -166,7 +159,8 @@ namespace dtAI
 
             if(wc != NULL)
             {
-               AddChild(wc);
+               dtCore::RefPtr<WaypointCollection> ptr = const_cast<WaypointCollection*>(wc);
+               AddChild(ptr);
             }
             else
             {
@@ -189,7 +183,8 @@ namespace dtAI
 
          if(wc != NULL)
          {
-            RemoveChild(wc);
+            dtCore::RefPtr<WaypointCollection> ptr = const_cast<WaypointCollection*>(wc);
+            RemoveChild(ptr);
          }
          else
          {
@@ -226,7 +221,7 @@ namespace dtAI
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void WaypointCollection::AddChild(dtCore::RefPtr<const WaypointCollection> waypoint)
+   void WaypointCollection::AddChild(dtCore::RefPtr<WaypointCollection> waypoint)
    {
       //add to the waypoint tree, it only becomes a leaf by inserting a waypoint into it
       if(mLeaf)
@@ -235,20 +230,19 @@ namespace dtAI
       }
       else
       {
-         WaypointCollection* wc = const_cast<WaypointCollection*>(waypoint.get());
+         WaypointCollection* wc = waypoint.get();
          WaypointTree::insert_subtree(wc, 0);
          Recalculate();
       }
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void WaypointCollection::RemoveChild(dtCore::RefPtr<const WaypointCollection> waypoint)
+   void WaypointCollection::RemoveChild(dtCore::RefPtr<WaypointCollection> waypoint)
    {
       //a check to make sure we are indeed the parent
       if( (waypoint->parent() != NULL) && (waypoint->parent()->value->GetID() == GetID()) )
       {
-         WaypointCollection* wc = const_cast<WaypointCollection*>(waypoint.get());
-         WaypointTree::remove_subtree(wc);
+         WaypointTree::remove_subtree(waypoint.get());
          Recalculate();
       }
    }

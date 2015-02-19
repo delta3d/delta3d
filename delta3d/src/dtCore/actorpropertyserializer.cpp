@@ -78,6 +78,7 @@ namespace dtCore
    , mHasDeprecatedProperty(false)
    , mInActorProperty(false)
    , mInGroupProperty(false)
+   , mInActorComponents(false)
    {
    }
 
@@ -121,6 +122,34 @@ namespace dtCore
    bool ActorPropertySerializer::HasPropertyContainer()
    {
       return Top().mPropertyContainer.valid();
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void ActorPropertySerializer::PushPropertyContainer(dtCore::PropertyContainer& pc)
+   {
+      dtCore::SerializerRuntimeData data;
+      data.mPropertyContainer = &pc;
+      mData.push(data);
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   dtCore::PropertyContainer* ActorPropertySerializer::PopPropertyContainer()
+   {
+      dtCore::PropertyContainer* pc = NULL;
+
+      if ( ! mData.empty())
+      {
+         pc = mData.top().mPropertyContainer.get();
+         mData.pop();
+      }
+
+      return pc;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   int ActorPropertySerializer::GetPropertyContainerStackSize() const
+   {
+      return (int)mData.size();
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -360,6 +389,12 @@ namespace dtCore
          data.mInActorProperty = true;
          return true;
       }
+      else if (XMLString::compareString(localname,
+         MapXMLConstants::ACTOR_COMPONENTS_ELEMENT) == 0)
+      {
+         data.mInActorComponents = true;
+         return true;
+      }
 
       return false;
    }
@@ -471,6 +506,14 @@ namespace dtCore
                data.mActorPropertyType = NULL;
                return true;
             }
+         }
+      }
+      else if (data.mInActorComponents)
+      {
+         if (XMLString::compareString(localname, MapXMLConstants::ACTOR_COMPONENTS_ELEMENT) == 0)
+         {
+            data.mInActorComponents = false;
+            return true;
          }
       }
 
@@ -2181,15 +2224,15 @@ namespace dtCore
       // Can't link actors if we can't find them using the map.
       if (!mMap.valid()) return;
 
-      for (std::multimap<PropertyContainer*, std::pair<std::string, dtCore::UniqueId> >::iterator i = mActorLinking.begin();
+      for (PropContainerToNameIdMultimap::iterator i = mActorLinking.begin();
          i != mActorLinking.end(); ++i)
       {
-         PropertyContainer* propContainer = i->first;
+         PropertyContainer* propContainer = i->first.get();
          if (propContainer == NULL)
          {
             continue;
          }
-         std::pair<std::string, dtCore::UniqueId>& data = i->second;
+         NameIdPair& data = i->second;
          std::string& propertyName = data.first;
          dtCore::UniqueId& propValueId = data.second;
          if (propValueId.ToString().empty())

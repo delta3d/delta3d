@@ -26,6 +26,7 @@
 #include <dtCore/actoridactorproperty.h>
 #include <dtCore/actorhierarchynode.h>
 #include <dtCore/actortype.h>
+#include <dtCore/actorfactory.h>
 #include <dtCore/environmentactor.h>
 #include <dtCore/map.h>
 
@@ -40,6 +41,7 @@ namespace dtCore
 {
    const std::string Map::MAP_FILE_EXTENSION(".dtmap");
 
+   ////////////////////////////////////////////////////////////////////////////////
    Map::Map(const std::string& mFileName, const std::string& name)
       : mModified(true)
       , mName(name)
@@ -51,57 +53,66 @@ namespace dtCore
       mPresetCameras.resize(10);
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
    Map::~Map()
    {
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
    Map::MapGameEvents::MapGameEvents(Map& parent): GameEventManager(), mParent(parent)
    {}
 
+   ////////////////////////////////////////////////////////////////////////////////
    void Map::MapGameEvents::AddEvent(GameEvent& event)
    {
       GameEventManager::AddEvent(event);
       mParent.SetModified(true);
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
    void Map::MapGameEvents::RemoveEvent(GameEvent& event)
    {
       GameEventManager::RemoveEvent(event);
       mParent.SetModified(true);
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
    void Map::MapGameEvents::RemoveEvent(const dtCore::UniqueId& id)
    {
       GameEventManager::RemoveEvent(id);
       mParent.SetModified(true);
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
    void Map::MapGameEvents::ClearAllEvents()
    {
       GameEventManager::ClearAllEvents();
       mParent.SetModified(true);
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
    BaseActorObject* Map::GetProxyById(const dtCore::UniqueId& id)
    {
-      std::map<dtCore::UniqueId, dtCore::RefPtr<BaseActorObject> >::iterator i = mProxyMap.find(id);
-      if (i != mProxyMap.end())
+      std::map<dtCore::UniqueId, dtCore::RefPtr<BaseActorObject> >::iterator i = mActorMap.find(id);
+      if (i != mActorMap.end())
       {
          return i->second.get();
       }
       return NULL;
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
    const BaseActorObject* Map::GetProxyById(const dtCore::UniqueId& id) const
    {
-      std::map<dtCore::UniqueId, dtCore::RefPtr<BaseActorObject> >::const_iterator i = mProxyMap.find(id);
-      if (i != mProxyMap.end())
+      std::map<dtCore::UniqueId, dtCore::RefPtr<BaseActorObject> >::const_iterator i = mActorMap.find(id);
+      if (i != mActorMap.end())
       {
          return i->second.get();
       }
       return NULL;
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
    void Map::SetFileName(const std::string& newFileName)
    {
       //if "" is passed into the constructor is SetFileName
@@ -119,6 +130,7 @@ namespace dtCore
       }
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
    void Map::FindProxies(std::vector<dtCore::RefPtr<BaseActorObject> >& container,
                          const std::string& name,
                          const std::string& category,
@@ -130,8 +142,8 @@ namespace dtCore
 
       if (name != "" || category != "" || typeName != "" || className != "" || placeable != Either )
       {
-         for (std::map<dtCore::UniqueId, dtCore::RefPtr<BaseActorObject> >::iterator i = mProxyMap.begin();
-              i != mProxyMap.end(); ++i)
+         for (std::map<dtCore::UniqueId, dtCore::RefPtr<BaseActorObject> >::iterator i = mActorMap.begin();
+              i != mActorMap.end(); ++i)
          {
             BaseActorObject* ap = i->second.get();
 
@@ -143,9 +155,9 @@ namespace dtCore
       else
       {
          //return everything.
-         container.reserve(mProxyMap.size());
-         for (std::map<dtCore::UniqueId, dtCore::RefPtr<BaseActorObject> >::iterator i = mProxyMap.begin();
-              i != mProxyMap.end(); ++i)
+         container.reserve(mActorMap.size());
+         for (std::map<dtCore::UniqueId, dtCore::RefPtr<BaseActorObject> >::iterator i = mActorMap.begin();
+              i != mActorMap.end(); ++i)
          {
             BaseActorObject* ap = i->second.get();
             container.push_back(ap);
@@ -154,6 +166,7 @@ namespace dtCore
 
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
    void Map::FindProxies(std::vector<dtCore::RefPtr<const BaseActorObject> >& container,
                          const std::string& name,
                          const std::string& category,
@@ -165,8 +178,8 @@ namespace dtCore
 
       if (name != "" || category != "" || typeName != "" || className != "" || placeable != Either)
       {
-         for (std::map<dtCore::UniqueId, dtCore::RefPtr<BaseActorObject> >::const_iterator i = mProxyMap.begin();
-              i != mProxyMap.end(); ++i)
+         for (std::map<dtCore::UniqueId, dtCore::RefPtr<BaseActorObject> >::const_iterator i = mActorMap.begin();
+              i != mActorMap.end(); ++i)
          {
             const BaseActorObject* ap = i->second.get();
 
@@ -178,9 +191,9 @@ namespace dtCore
       else
       {
          //return everything.
-         container.reserve(mProxyMap.size());
-         for (std::map<dtCore::UniqueId, dtCore::RefPtr<BaseActorObject> >::const_iterator i = mProxyMap.begin();
-              i != mProxyMap.end(); ++i)
+         container.reserve(mActorMap.size());
+         for (std::map<dtCore::UniqueId, dtCore::RefPtr<BaseActorObject> >::const_iterator i = mActorMap.begin();
+              i != mActorMap.end(); ++i)
          {
             const BaseActorObject* ap = i->second.get();
             container.push_back(ap);
@@ -188,6 +201,7 @@ namespace dtCore
       }
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
    bool Map::MatchesSearch(const BaseActorObject& actorProxy,
                            const std::string& category,
                            const std::string& typeName,
@@ -233,6 +247,7 @@ namespace dtCore
 
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
    void Map::AddProxy(BaseActorObject& proxy, bool reNumber)
    {
       // TODO this renumber code should not be here at all.  Only editor should do this.
@@ -275,7 +290,7 @@ namespace dtCore
          }
       }
 
-      if (mProxyMap.insert(std::make_pair(proxy.GetId(), dtCore::RefPtr<BaseActorObject>(&proxy))).second)
+      if (mActorMap.insert(std::make_pair(proxy.GetId(), dtCore::RefPtr<BaseActorObject>(&proxy))).second)
       {
          const std::set<dtUtil::RefString>& hierarchy = proxy.GetActorType().GetSharedClassInfo().mClassHierarchy;
          mProxyActorClasses.insert(proxy.GetActorType().GetSharedClassInfo().GetClassName());
@@ -284,11 +299,12 @@ namespace dtCore
       }
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
    bool Map::RemoveProxy(const BaseActorObject& proxy)
    {
       //This needs to be faster.
-      std::map<dtCore::UniqueId, dtCore::RefPtr<BaseActorObject> >::iterator i = mProxyMap.find(proxy.GetId());
-      if (i != mProxyMap.end())
+      std::map<dtCore::UniqueId, dtCore::RefPtr<BaseActorObject> >::iterator i = mActorMap.find(proxy.GetId());
+      if (i != mActorMap.end())
       {
          mModified = true;
 
@@ -325,12 +341,13 @@ namespace dtCore
                }
             }
          }
-         mProxyMap.erase(i);
+         mActorMap.erase(i);
          return true;
       }
       return false;
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
    void Map::OnProxyRenamed(BaseActorObject& proxy)
    {
       std::string proxyName = proxy.GetName();
@@ -355,16 +372,21 @@ namespace dtCore
       }
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
    void Map::ClearProxies()
    {
-      mProxyMap.clear();
+      mActorMap.clear();
       mProxyActorClasses.clear();
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
    void Map::RebuildProxyActorClassSet() const
    {
       mProxyActorClasses.clear();
-      for (std::map<dtCore::UniqueId, dtCore::RefPtr<BaseActorObject> >::const_iterator i = mProxyMap.begin(); i != mProxyMap.end(); ++i)
+      ActorMap::const_iterator i, iend;
+      i = mActorMap.begin();
+      iend = mActorMap.end();
+      for (; i != iend; ++i)
       {
          const BaseActorObject& proxy = *(i->second);
          const std::set<dtUtil::RefString>& hierarchy = proxy.GetActorType().GetSharedClassInfo().mClassHierarchy;
@@ -373,6 +395,7 @@ namespace dtCore
       }
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
    void Map::InsertLibrary(unsigned pos, const std::string& name, const std::string& version)
    {
       std::map<std::string,std::string>::iterator old = mLibraryVersionMap.find(name);
@@ -406,11 +429,13 @@ namespace dtCore
       mModified = true;
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
    void Map::AddLibrary(const std::string& name, const std::string& version)
    {
       InsertLibrary(mLibraryOrder.size(), name, version);
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
    bool Map::RemoveLibrary(const std::string& name)
    {
       std::map<std::string, std::string>::iterator oldMap = mLibraryVersionMap.find(name);
@@ -433,6 +458,29 @@ namespace dtCore
       return true;
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   void Map::CorrectLibraryList(bool removeUnusedLibraries)
+   {
+      const std::string versionNumber("1.0");
+      ActorMap::const_iterator i,iend;
+      i = mActorMap.begin();
+      iend = mActorMap.end();
+      for (; i != iend; ++i)
+      {
+         const BaseActorObject& actor = *(i->second);
+         ActorPluginRegistry* apr = ActorFactory::GetInstance().GetRegistryForType(actor.GetActorType());
+         if (apr != NULL)
+         {
+            std::string libraryName = ActorFactory::GetInstance().GetLibraryNameForRegistry(*apr);
+            if (!libraryName.empty() && !HasLibrary(libraryName))
+            {
+               AddLibrary(libraryName, versionNumber);
+            }
+         }
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
    void Map::ClearModified()
    {
       mModified = false;
@@ -441,21 +489,25 @@ namespace dtCore
       mMissingLibraries.clear();
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
    void Map::AddMissingActorTypes(const std::set<std::string>& types)
    {
       mMissingActorTypes.insert(types.begin(), types.end());
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
    void Map::AddMissingLibraries(const std::vector<std::string>& libs)
    {
       mMissingLibraries.insert(mMissingLibraries.end(), libs.begin(), libs.end());
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
    //osg::Matrix Map::GetPresetCameraMatrix()
    //{
    //   return osg::Matrix();
    //}
 
+   ////////////////////////////////////////////////////////////////////////////////
    bool Map::WildMatch(const std::string& sWild, const std::string& sString)
    {
       char* WildChars = new char[sWild.size() + 1];
@@ -468,16 +520,19 @@ namespace dtCore
       return result;
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
    GameEventManager& Map::GetEventManager()
    {
       return *mEventManager;
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
    const GameEventManager& Map::GetEventManager() const
    {
       return *mEventManager;
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
    void Map::SetEnvironmentActor(BaseActorObject *envActor)
    {
       if (envActor == NULL)
@@ -734,7 +789,7 @@ namespace dtCore
    //////////////////////////////////////////////////////////////////////////
    const std::map<dtCore::UniqueId, dtCore::RefPtr<BaseActorObject> >& Map::GetAllProxies() const
    {
-      return mProxyMap;
+      return mActorMap;
    }
 
    //////////////////////////////////////////////////////////////////////////

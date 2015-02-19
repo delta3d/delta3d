@@ -64,6 +64,7 @@ namespace dtCore
 
          static XMLCh* HEADER_ELEMENT;
          static XMLCh* NAME_ELEMENT;
+         static XMLCh* PREFAB_ACTOR_TYPE_ELEMENT;
          static XMLCh* DESCRIPTION_ELEMENT;
          static XMLCh* AUTHOR_ELEMENT;
          static XMLCh* COMMENT_ELEMENT;
@@ -125,7 +126,9 @@ namespace dtCore
          static XMLCh* ACTOR_TYPE_ELEMENT;
          static XMLCh* ACTOR_ID_ELEMENT;
          static XMLCh* ACTOR_NAME_ELEMENT;
+         static XMLCh* ACTOR_PARENT_ID_ELEMENT;
          static XMLCh* ACTOR_ENVIRONMENT_ACTOR_ELEMENT;
+         static XMLCh* ACTOR_COMPONENTS_ELEMENT;
 
          static XMLCh* ACTOR_PROPERTY_ELEMENT;
          static XMLCh* ACTOR_PROPERTY_NAME_ELEMENT;

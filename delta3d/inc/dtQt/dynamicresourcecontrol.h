@@ -36,7 +36,7 @@
 
 #include <dtCore/resourcetreenode.h>
 
-#include <dtUtil/tree.h>
+#include <dtUtil/utiltree.h>
 
 namespace dtCore
 {

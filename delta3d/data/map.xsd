@@ -16,6 +16,7 @@
   <xsd:complexType name="PrefabType">
     <xsd:sequence>
       <xsd:element name="header" type="HeaderType"/>
+      <xsd:element name="libraries" type="LibrariesType"/>
       <xsd:element name="actors" type="ActorsType"/>
     </xsd:sequence>
   </xsd:complexType>
@@ -36,8 +37,7 @@
   <xsd:complexType name="HeaderType">
     <xsd:sequence>
       <xsd:element name="name"   type="xsd:string"/>     
-      <xsd:element name="waypointFileName" type="xsd:string" minOccurs="0" maxOccurs="1"/>
-      <xsd:element name="createNavMesh" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+      <xsd:element name="prefabActorType" type="xsd:string" minOccurs="0" maxOccurs="1"/>
       <xsd:element name="description" type="xsd:string"/>
       <xsd:element name="author"   type="xsd:string"/>
       <xsd:element name="comment"  type="xsd:string" minOccurs="0"/>
@@ -86,14 +86,23 @@
             <xsd:element name="type" type="xsd:string" />
             <xsd:element name="id" type="xsd:string"/>
             <xsd:element name="name" type="xsd:string"/>
+            <xsd:element name="parentId" type="xsd:string" minOccurs="0" maxOccurs="1"/>
 
-            <xsd:element name="property" minOccurs="0" maxOccurs="unbounded" type="PropertyType"/>
+            <xsd:element name="actorComponents" type="ActorComponentsType" minOccurs="0" maxOccurs="1"/>
+
+            <xsd:element name="property" type="PropertyType" minOccurs="0" maxOccurs="unbounded"/>
 
           </xsd:sequence>
         </xsd:complexType>
       </xsd:element>
     </xsd:sequence>
   </xsd:complexType>
+   
+   <xsd:complexType name="ActorComponentsType">
+      <xsd:sequence>
+         <xsd:element name="actor" type="ActorsType" minOccurs="1" maxOccurs="unbounded"/>
+      </xsd:sequence>
+   </xsd:complexType>
 
   <xsd:complexType name="PropertyType">
     <xsd:sequence>
