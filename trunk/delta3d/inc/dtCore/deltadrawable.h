@@ -97,6 +97,15 @@ namespace dtCore
       unsigned int GetNumChildren() const;
 
       /**
+       * Temporary convenience method for retrieving all child drawables from the transform of
+       * this actor's drawable.
+       * @param outDrawables List container to capture all the drawables.
+       * @return Number of drawable retrieved.
+       */
+      typedef std::list<dtCore::RefPtr<dtCore::DeltaDrawable> > DrawableList;
+      unsigned int GetChildren(DrawableList& outDrawables);
+
+      /**
        * Get the child specified by index (0 to number of children-1)
        *
        * @param idx : The index number of the DeltaDrawable to be retrieved
@@ -120,6 +129,11 @@ namespace dtCore
        * return the number of children.
        */
       unsigned int GetChildIndex(const DeltaDrawable* child) const;
+
+      /**
+       * Determines if the supplied drawable is a child of this drawable.
+       */
+      bool HasChild(const DeltaDrawable& child) const;
 
       /**
        * Check if the supplied DeltaDrawable can actually be a child of this instance.

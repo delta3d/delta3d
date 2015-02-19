@@ -54,6 +54,8 @@ namespace dtCore
 
       unsigned int GetChildIndex(const DeltaDrawable* child) const;
 
+      bool HasChild(const DeltaDrawable& child) const;
+
       bool CanBeChild(DeltaDrawable* child) const;
 
       void RenderProxyNode(bool enable = true);
@@ -202,6 +204,12 @@ namespace dtCore
       }
 
       return mChildList.size(); // node not found.
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   bool DeltaDrawablePrivate::HasChild(const DeltaDrawable& child) const
+   {
+      return GetChildIndex(&child) != mChildList.size();
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -645,6 +653,11 @@ unsigned int DeltaDrawable::GetChildIndex(const DeltaDrawable* child) const
    return mPvt->GetChildIndex(child);
 }
 
+bool DeltaDrawable::HasChild(const DeltaDrawable& child) const
+{
+   return mPvt->HasChild(child);
+}
+
 /*!
  * Check to see if the supplied DeltaDrawable can be a child to this instance.
  * To be valid, it can't already have a parent, can't be this instance, and
@@ -801,6 +814,18 @@ const Scene* dtCore::DeltaDrawable::GetSceneParent() const
 unsigned int dtCore::DeltaDrawable::GetNumChildren() const
 {
    return mPvt->GetNumChildren();
+}
+
+/////////////////////////////////////////////////////////////////////////////
+unsigned int dtCore::DeltaDrawable::GetChildren(dtCore::DeltaDrawable::DrawableList& outDrawables)
+{
+   unsigned int count = mPvt->GetNumChildren();
+   for (unsigned int i = 0; i < count; ++i)
+   {
+      outDrawables.push_back(GetChild(i));
+   }
+
+   return count;
 }
 
 //////////////////////////////////////////////////////////////////////////
