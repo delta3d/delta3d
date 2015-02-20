@@ -956,6 +956,9 @@ namespace  dtCore
                // thus should be accessible via the previously
                // processed actor object.
                parent = FindActorById(mParentId);
+
+               // Reset the id now so that subsequent read actor definitions are not affected.
+               mParentId = dtCore::UniqueId("");
             }
 
             ActorComponentContainer* extendedActor = dynamic_cast<ActorComponentContainer*>(mBaseActorObject.get());
