@@ -535,7 +535,7 @@ void ActorHierarchyTests::TestMapSaveLoad()
       loadedMap->GetAllProxies(actors);
       CPPUNIT_ASSERT(actors.size() == 7);
 
-      GameActorPtr loadedActorTree = dynamic_cast<dtGame::GameActorProxy*>(actors[0].get());
+      GameActorPtr loadedActorTree = dynamic_cast<dtGame::GameActorProxy*>(loadedMap->GetProxyById(actorA->GetId()));
       CPPUNIT_ASSERT(loadedActorTree.valid());
 
       // Verify that the actor structure and order has been maintained.
