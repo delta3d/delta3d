@@ -282,6 +282,26 @@ namespace dtGame
    /////////////////////////////////////////////////////////////////////////////
    void GameActorProxy::SetParentActor(dtCore::BaseActorObject* parent)
    {
+      dtCore::BaseActorObject* parentActor = this->parent();
+
+      // Remove from current parent.
+      if (parentActor != parent)
+      {
+         GameActorProxy* parentActorTree = dynamic_cast<GameActorProxy*>(parentActor);
+
+         if (parentActorTree != NULL)
+         {
+            // Detach this actor's drawable from the parent drawable if one exists.
+            if (parentActorTree->GetDrawable() != NULL)
+            {
+               DetachParentDrawable(*parentActorTree);
+            }
+
+            parentActorTree->remove_subtree(this);
+         }
+      }
+
+      // Attach to the new parent.
       if (parent != NULL)
       {
          GameActorProxy* parentActorTree = dynamic_cast<GameActorProxy*>(parent);
@@ -300,21 +320,6 @@ namespace dtGame
             LOG_ERROR("Could not set \"" + parent->GetName() + "\" (of type "
                + parent->GetActorType().GetName() + ") as parent to actor \"" + GetName()
                + "\" (of type " + GetActorType().GetName() + ")");
-         }
-      }
-      else // Remove from parent
-      {
-         GameActorProxy* parentActorTree = dynamic_cast<GameActorProxy*>(this->parent());
-
-         if (parentActorTree != NULL)
-         {
-            // Detach this actor's drawable from the parent drawable if one exists.
-            if (parentActorTree->GetDrawable() != NULL)
-            {
-               DetachParentDrawable(*parentActorTree);
-            }
-
-            parentActorTree->remove_subtree(this);
          }
       }
    }

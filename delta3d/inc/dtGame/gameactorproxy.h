@@ -45,7 +45,15 @@ namespace dtGame
    class ActorComponent;
 
    class GameActorProxy;
+
+   /////////////////////////////////////////////////////////////////////////////
+   // TYPE DEFINITIONS
+   /////////////////////////////////////////////////////////////////////////////
    typedef dtUtil::Tree<GameActorProxy*, dtCore::TransformableActorProxy> ActorTree;
+   typedef dtCore::RefPtr<dtGame::GameActorProxy> GameActorPtr;
+   typedef dtCore::ObserverPtr<dtGame::GameActorProxy> GameActorWeakPtr;
+
+
 
    /**
     * class GameActorProxy
