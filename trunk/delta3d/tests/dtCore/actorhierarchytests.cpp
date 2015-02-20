@@ -36,9 +36,6 @@ using namespace dtCore;
  
 
 
-typedef dtCore::RefPtr<dtGame::GameActorProxy> GameActorPtr;
-typedef dtCore::ObserverPtr<dtGame::GameActorProxy> GameActorWeakPtr;
-
 ////////////////////////////////////////////////////////////////////////////////
 // CLASS CODE
 ////////////////////////////////////////////////////////////////////////////////
@@ -46,6 +43,7 @@ class ActorHierarchyTests : public CPPUNIT_NS::TestFixture
 {
    CPPUNIT_TEST_SUITE(ActorHierarchyTests);
       CPPUNIT_TEST(TestActorLinking);
+      CPPUNIT_TEST(TestActorLinkingParentSwap);
       CPPUNIT_TEST(TestDrawableLinking);
       CPPUNIT_TEST(TestActorTraversal);
       CPPUNIT_TEST(TestActorDeletes);
@@ -60,6 +58,7 @@ class ActorHierarchyTests : public CPPUNIT_NS::TestFixture
 
       void TestActorLinking();
       void TestDrawableLinking();
+      void TestActorLinkingParentSwap();
       void TestActorTraversal();
       void TestActorDeletes();
       void TestMapSaveLoad();
@@ -160,6 +159,68 @@ void ActorHierarchyTests::TestActorLinking()
    CPPUNIT_ASSERT(actorD->is_leaf());
 
    CPPUNIT_ASSERT(actorB->next_sibling() == actorC.get());
+}
+
+//////////////////////////////////////////////////////////////////////////
+void ActorHierarchyTests::TestActorLinkingParentSwap()
+{
+   GameActorPtr actorA = CreateTestActor("A");
+   GameActorPtr actorB = CreateTestActor("B");
+   GameActorPtr actorC = CreateTestActor("C");
+   GameActorPtr actorX = CreateTestActor("X");
+   GameActorPtr actorY = CreateTestActor("Y");
+   GameActorPtr actorZ = CreateTestActor("Z");
+
+   typedef dtCore::DeltaDrawable Drawable;
+   Drawable* drawableA = actorA->GetDrawable();
+   Drawable* drawableB = actorB->GetDrawable();
+   Drawable* drawableC = actorC->GetDrawable();
+   Drawable* drawableX = actorX->GetDrawable();
+   Drawable* drawableY = actorY->GetDrawable();
+   Drawable* drawableZ = actorZ->GetDrawable();
+
+   actorB->SetParentActor(actorA);
+   actorC->SetParentActor(actorA);
+   actorY->SetParentActor(actorX);
+   actorZ->SetParentActor(actorX);
+   
+   CPPUNIT_ASSERT(actorA->GetParentActor() == actorB.get());
+   CPPUNIT_ASSERT(actorA->GetParentActor() == actorC.get());
+   CPPUNIT_ASSERT(actorX->GetParentActor() == actorY.get());
+   CPPUNIT_ASSERT(actorX->GetParentActor() == actorZ.get());
+
+   CPPUNIT_ASSERT(drawableA->HasChild(*drawableB));
+   CPPUNIT_ASSERT(drawableA->HasChild(*drawableC));
+   CPPUNIT_ASSERT( ! drawableA->HasChild(*drawableX));
+   CPPUNIT_ASSERT( ! drawableA->HasChild(*drawableY));
+   CPPUNIT_ASSERT( ! drawableA->HasChild(*drawableZ));
+   CPPUNIT_ASSERT(drawableX->HasChild(*drawableY));
+   CPPUNIT_ASSERT(drawableX->HasChild(*drawableZ));
+   CPPUNIT_ASSERT( ! drawableX->HasChild(*drawableA));
+   CPPUNIT_ASSERT( ! drawableX->HasChild(*drawableB));
+   CPPUNIT_ASSERT( ! drawableX->HasChild(*drawableC));
+
+
+   // Swap parents.
+   actorY->SetParentActor(actorB);
+   actorZ->SetParentActor(actorC);
+
+   CPPUNIT_ASSERT(actorY->GetParentActor() == actorB.get());
+   CPPUNIT_ASSERT(actorZ->GetParentActor() == actorC.get());
+
+   CPPUNIT_ASSERT(drawableA->HasChild(*drawableB));
+   CPPUNIT_ASSERT(drawableA->HasChild(*drawableC));
+   CPPUNIT_ASSERT(drawableB->HasChild(*drawableY));
+   CPPUNIT_ASSERT(drawableC->HasChild(*drawableZ));
+   CPPUNIT_ASSERT( ! drawableA->HasChild(*drawableX));
+   CPPUNIT_ASSERT( ! drawableA->HasChild(*drawableY));
+   CPPUNIT_ASSERT( ! drawableA->HasChild(*drawableZ));
+   CPPUNIT_ASSERT( ! drawableB->HasChild(*drawableX));
+   CPPUNIT_ASSERT( ! drawableB->HasChild(*drawableZ));
+   CPPUNIT_ASSERT( ! drawableC->HasChild(*drawableX));
+   CPPUNIT_ASSERT( ! drawableC->HasChild(*drawableY));
+   CPPUNIT_ASSERT( ! drawableX->HasChild(*drawableY));
+   CPPUNIT_ASSERT( ! drawableX->HasChild(*drawableZ));
 }
 
 //////////////////////////////////////////////////////////////////////////
