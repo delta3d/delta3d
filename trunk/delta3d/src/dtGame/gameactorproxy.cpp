@@ -249,6 +249,7 @@ namespace dtGame
 
       }
 
+      // This is done after the actor components because it's done in this order at map load time. that keeps it consistent.
       copy->CopyPropertiesFrom(*this);
 
       return copy;
