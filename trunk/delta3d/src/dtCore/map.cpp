@@ -319,6 +319,8 @@ namespace dtCore
       }
       else // GameActor that may have children.
       {
+         gameActor->SetParentActor(NULL);
+
          unsigned int count = 0;
 
          typedef dtCore::ActorComponentContainer::ActorIterator ActorIterator;
