@@ -314,7 +314,7 @@ namespace dtCore
           * @param proxy the proxy to remove.
           * @return true if the proxy passed in was actually removed.
           */
-         bool RemoveProxy(const BaseActorObject& proxy);
+         bool RemoveProxy(BaseActorObject& proxy);
 
          /**
          * Should be called when a proxy has been renamed.
@@ -614,6 +614,8 @@ namespace dtCore
          * @return     The returned string value of the number.
          */
          std::string NumberToString(int number);
+
+         bool RemoveProxy_Internal(const BaseActorObject& proxy);
 
          // -----------------------------------------------------------------------
          //  Unimplemented constructors and operators

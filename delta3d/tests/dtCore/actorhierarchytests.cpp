@@ -36,6 +36,9 @@ using namespace dtCore;
  
 
 
+typedef dtCore::RefPtr<dtGame::GameActorProxy> GameActorPtr;
+typedef dtCore::ObserverPtr<dtGame::GameActorProxy> GameActorWeakPtr;
+
 ////////////////////////////////////////////////////////////////////////////////
 // CLASS CODE
 ////////////////////////////////////////////////////////////////////////////////
@@ -184,10 +187,10 @@ void ActorHierarchyTests::TestActorLinkingParentSwap()
    actorY->SetParentActor(actorX);
    actorZ->SetParentActor(actorX);
    
-   CPPUNIT_ASSERT(actorA->GetParentActor() == actorB.get());
-   CPPUNIT_ASSERT(actorA->GetParentActor() == actorC.get());
-   CPPUNIT_ASSERT(actorX->GetParentActor() == actorY.get());
-   CPPUNIT_ASSERT(actorX->GetParentActor() == actorZ.get());
+   CPPUNIT_ASSERT(actorB->GetParentActor() == actorA.get());
+   CPPUNIT_ASSERT(actorC->GetParentActor() == actorA.get());
+   CPPUNIT_ASSERT(actorY->GetParentActor() == actorX.get());
+   CPPUNIT_ASSERT(actorZ->GetParentActor() == actorX.get());
 
    CPPUNIT_ASSERT(drawableA->HasChild(*drawableB));
    CPPUNIT_ASSERT(drawableA->HasChild(*drawableC));
@@ -528,9 +531,9 @@ void ActorHierarchyTests::TestMapSaveLoad()
       dtCore::ActorRefPtrVector actors;
 
       // One complex actor written should be loaded as a single complex actor.
-      // All child actors should already be attached.
+      // All child actors should already be attached and available in the map.
       loadedMap->GetAllProxies(actors);
-      CPPUNIT_ASSERT(actors.size() == 1);
+      CPPUNIT_ASSERT(actors.size() == 7);
 
       GameActorPtr loadedActorTree = dynamic_cast<dtGame::GameActorProxy*>(actors[0].get());
       CPPUNIT_ASSERT(loadedActorTree.valid());
