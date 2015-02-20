@@ -232,10 +232,18 @@ namespace dtGame
          {
             curComp = *curIter;
 
-            if ( ! gameActor->HasComponent(&curComp->GetActorType()))
+            if ( ! gameActor->HasComponent(&curComp->GetActorType()) && curComp->IsActorComponent())
             {
                dtCore::RefPtr<ActorComponent> newComp = dynamic_cast<ActorComponent*>(curComp->Clone().get());
-               gameActor->AddComponent(*newComp);
+               if (newComp != NULL)
+               {
+                  gameActor->AddComponent(*newComp);
+               }
+               else
+               {
+                  LOGN_ERROR("gameactorproxy.cpp", "Attempt to clone an actor component \"" + curComp->GetActorType().GetFullName() +
+                        "\" failed.  It may not be registered with the component registry.");
+               }
             }
          }
 
