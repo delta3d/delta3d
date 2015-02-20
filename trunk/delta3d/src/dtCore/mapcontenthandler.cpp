@@ -965,10 +965,8 @@ namespace  dtCore
             {
                extendedActor->SetParentActor(parent);
             }
-            else // Root actor, or parent not found.
-            {
-               mMap->AddProxy(*mBaseActorObject);
-            }
+            
+            mMap->AddProxy(*mBaseActorObject);
 
             // Keep track of the previous actor.
             mPrevActorObject = mBaseActorObject.get();

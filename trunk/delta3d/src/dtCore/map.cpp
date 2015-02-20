@@ -23,6 +23,7 @@
 #include <dtCore/deltadrawable.h>
 
 #include <dtCore/actoractorproperty.h>
+#include <dtCore/actorcomponentcontainer.h>
 #include <dtCore/actoridactorproperty.h>
 #include <dtCore/actorhierarchynode.h>
 #include <dtCore/actortype.h>
@@ -300,7 +301,53 @@ namespace dtCore
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   bool Map::RemoveProxy(const BaseActorObject& proxy)
+   bool Map::RemoveProxy(BaseActorObject& actor)
+   {
+      bool success = false;
+
+      // If the map is the only reference to this actor,
+      // keep it in existence with a temporary pointer
+      // so that the reference stays valid through to
+      // method completion.
+      dtCore::ActorPtr tmp = &actor;
+
+      dtCore::ActorComponentContainer* gameActor = dynamic_cast<dtCore::ActorComponentContainer*>(&actor);
+
+      if (gameActor == NULL)
+      {
+         success = RemoveProxy_Internal(actor);
+      }
+      else // GameActor that may have children.
+      {
+         unsigned int count = 0;
+
+         typedef dtCore::ActorComponentContainer::ActorIterator ActorIterator;
+         dtCore::RefPtr<ActorIterator> iter = gameActor->GetIterator();
+
+         dtCore::BaseActorObject* curActor = NULL;
+         while ( ! iter->IsAtEnd())
+         {
+            curActor = *(*iter);
+
+            if (curActor != NULL)
+            {
+               if (RemoveProxy_Internal(*curActor))
+               {
+                  ++count;
+               }
+            }
+
+            ++(*iter);
+         }
+
+         success = count > 0;
+      }
+
+      return success;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   bool Map::RemoveProxy_Internal(const BaseActorObject& proxy)
    {
       //This needs to be faster.
       std::map<dtCore::UniqueId, dtCore::RefPtr<BaseActorObject> >::iterator i = mActorMap.find(proxy.GetId());
