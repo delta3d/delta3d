@@ -35,6 +35,7 @@
 
 #include <dtCore/actorproxy.h>
 #include <dtCore/actorproxyicon.h>
+#include <dtCore/actorcomponentcontainer.h>
 #include <dtCore/environmentactor.h>
 #include <dtCore/actorfactory.h>
 #include <dtCore/map.h>
@@ -119,6 +120,10 @@ namespace dtEditQt
 
       connect(&EditorEvents::GetInstance(), SIGNAL(projectChanged()),    this, SLOT(slotPauseAutosave()));
       connect(&EditorEvents::GetInstance(), SIGNAL(currentMapChanged()), this, SLOT(slotRestartAutosave()));
+
+      // Listen for map load to update child actor references to the map.
+      connect(&EditorEvents::GetInstance(), SIGNAL(currentMapChanged()),
+         this, SLOT(slotAddActorChildrenToMap()));
 
       connect(&EditorEvents::GetInstance(),
          SIGNAL(selectedActors(ActorRefPtrVector&)), this,
@@ -939,7 +944,7 @@ namespace dtEditQt
          }
 
          // Add the new proxy to the map and send out a create event.
-         currMap->AddProxy(*copy, true);
+         AddActorToMap(*copy, *currMap, true);
 
          EditorEvents::GetInstance().emitActorProxyCreated(copy, false);
 
@@ -1090,7 +1095,7 @@ namespace dtEditQt
 
             currMap->SetEnvironmentActor(NULL);
 
-            if (!currMap->RemoveProxy(*proxy))
+            if ( ! RemoveActorFromMap(*proxy, *currMap))
             {
                LOG_ERROR("Unable to remove actor proxy: " + proxy->GetName());
             }
@@ -1113,7 +1118,7 @@ namespace dtEditQt
 
          EditorEvents::GetInstance().emitActorProxyAboutToBeDestroyed(tempRef);
 
-         if (!currMap->RemoveProxy(*proxy))
+         if ( ! RemoveActorFromMap(*proxy, *currMap))
          {
             LOG_ERROR("Unable to remove actor proxy: " + proxy->GetName());
          }
@@ -2084,6 +2089,61 @@ namespace dtEditQt
    }
 
    //////////////////////////////////////////////////////////////////////////
+   void EditorActions::slotChangeActorParent(ActorPtr actor, ActorPtr oldParent, ActorPtr newParent)
+   {
+      bool changed = newParent != oldParent;
+
+      dtCore::ActorComponentContainer* gameActor = dynamic_cast<dtCore::ActorComponentContainer*>(actor.get());
+
+      dtCore::DeltaDrawable* drawable = actor->GetDrawable();
+
+      if (changed && gameActor != NULL && drawable != NULL)
+      {
+         // Get the actor's current position in the scene.
+         dtCore::Transform xform;
+         dtCore::Transformable* trans = drawable->AsTransformable();
+         if (trans != NULL)
+         {
+            trans->GetTransform(xform, dtCore::Transformable::ABS_CS);
+         }
+
+         // Get the scene root before detaching.
+         dtCore::DeltaDrawable* sceneRoot = drawable->GetSceneParent();
+
+         // Detach from current parent.
+         gameActor->SetParentActor(NULL);
+
+         // Attach to new parent.
+         bool attached = false;
+         if (newParent.valid())
+         {
+            gameActor->SetParentActor(newParent.get());
+            attached = true;
+         }
+
+         // Ensure that the actor is set back to the proper place in the scene.
+         if (trans != NULL)
+         {
+            // Attach to the scene root if not attached to a parent actor.
+            if ( ! attached && sceneRoot)
+            {
+               sceneRoot->AddChild(drawable);
+            }
+
+            trans->SetTransform(xform, dtCore::Transformable::ABS_CS);
+         }
+      
+         emit SignalActorHierarchyUpdated(actor);
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void EditorActions::slotDetachActorParent(ActorPtr actor, ActorPtr oldParent)
+   {
+      slotChangeActorParent(actor, oldParent, NULL);
+   }
+
+   //////////////////////////////////////////////////////////////////////////
    void EditorActions::HandleMissingLibraries(const dtCore::Map& newMap) const
    {
       const std::vector<std::string>& missingLibs = newMap.GetMissingLibraries();
@@ -2138,4 +2198,25 @@ namespace dtEditQt
          QMessageBox::warning(EditorData::GetInstance().getMainWindow(), tr("Missing ActorTypes"), errors, tr("OK"));
       }
    }
+
+   //////////////////////////////////////////////////////////////////////////
+   void EditorActions::AddActorToMap(dtCore::BaseActorObject& actor, dtCore::Map& map, bool renumber)
+   {
+      map.AddProxy(actor, renumber);
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   bool EditorActions::RemoveActorFromMap(dtCore::BaseActorObject& actor, dtCore::Map& map)
+   {
+      // The actor is being removed from the editor.
+      // Ensure that its parent no longer references it.
+      dtCore::ActorComponentContainer* gameActor = dynamic_cast<dtCore::ActorComponentContainer*>(&actor);
+      if (gameActor != NULL)
+      {
+         gameActor->SetParentActor(NULL);
+      }
+
+      return map.RemoveProxy(actor);
+   }
+
 } // namespace dtEditQt

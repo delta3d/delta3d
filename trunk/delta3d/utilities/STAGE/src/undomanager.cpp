@@ -542,7 +542,7 @@ namespace dtEditQt
             }
 
             proxy->SetId(dtCore::UniqueId(event->mObjectId));
-            currMap->AddProxy(*(proxy.get()));
+            EditorActions::GetInstance().AddActorToMap(*proxy, *currMap);
 
             // Tell the proxy that it is finished loading.
             proxy->OnMapLoadEnd();

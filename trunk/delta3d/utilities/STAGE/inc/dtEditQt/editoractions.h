@@ -142,6 +142,27 @@ namespace dtEditQt
       void setBrushShape(const dtActors::VolumeEditActor::VolumeShapeType& shapeType);
 
       /**
+       * Method to call for over seeing actor insertion into a map.
+       * This method enables the editor to perform proper book keeping
+       * so that all other parts of the application can function as intended.
+       * @param actor Actor to be added to the map.
+       * @param map The map object to which to add the specified actor.
+       * @param renumber Optional parameter used by the map to determine if the actor needs a unique number suffix added to the actor name.
+       */
+      void AddActorToMap(dtCore::BaseActorObject& actor, dtCore::Map& map, bool renumber = false);
+   
+      /**
+       * Method to call for over seeing actor removal from a map.
+       * This method enables the editor to perform proper book keeping
+       * so that all other parts of the application can function as intended.
+       * @param actor Actor to be removed from the map.
+       * @param map The map object from which to remove the specified actor.
+       * @return TRUE if the actor was found and successfully removed from the map.
+       */
+      bool RemoveActorFromMap(dtCore::BaseActorObject& actor, dtCore::Map& map);
+
+
+      /**
        * The actions for this class are public.  Essentially, this whole class is here
        * to create these, trap their events, and expose them.
        */
@@ -501,11 +522,15 @@ namespace dtEditQt
 
       void slotGetGotoPosition();
 
+      void slotChangeActorParent(ActorPtr actor, ActorPtr oldParent, ActorPtr newParent);
+      void slotDetachActorParent(ActorPtr actor, ActorPtr oldParent);
 
    signals:
       void ExternalToolsModified(const QList<QAction*>&);
 
       void PrefabExported();
+
+      void SignalActorHierarchyUpdated(ActorRefPtr actor);
 
    protected:
       /**
