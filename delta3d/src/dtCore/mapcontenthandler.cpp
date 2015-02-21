@@ -667,6 +667,7 @@ namespace  dtCore
                   mBaseActorObject = NULL;
                }
 
+               bool newActorComponent = mBaseActorObject == NULL;
                if (mBaseActorObject == NULL)
                {
                   mBaseActorObject = ActorFactory::GetInstance().CreateActor(*actorType).get();
@@ -696,12 +697,9 @@ namespace  dtCore
                   mBaseActorObject->OnMapLoadBegin();
 
                   // If a previous actor was set, use it as a parent actor.
-                  if (compContainer != NULL)
+                  if (compContainer != NULL && newActorComponent)
                   {
-                     if (mBaseActorObject.valid())
-                     {
-                        compContainer->AddComponent(*mBaseActorObject);
-                     }
+                     compContainer->AddComponent(*mBaseActorObject);
                   }
 
                   // When loading a prefab, all actors are put into a group.

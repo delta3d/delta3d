@@ -58,6 +58,11 @@ namespace dtGame
       component.Init(const_cast<dtCore::ActorType&>(*component.GetType()));
 
       // store component
+      for (ActorComponentMap::const_iterator i = mComponents.begin(); i != mComponents.end(); ++i)
+      {
+         if (i->second == &component)
+            return;
+      }
       mComponents.push_back(std::pair<ActorComponent::ACType, dtCore::RefPtr<ActorComponent> >(component.GetType(), &component));
 
       OnActorComponentAdded(component);
