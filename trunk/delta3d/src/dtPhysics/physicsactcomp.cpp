@@ -43,10 +43,6 @@ namespace dtPhysics
    /////////////////////////////////////////////////////////////////////////////
    // CONSTANTS
    /////////////////////////////////////////////////////////////////////////////
-   const dtGame::ActorComponent::ACType PhysicsActComp::TYPE(new dtCore::ActorType("PhysicsActComp", "ActorComponents",
-         "Physics subsystem actor component.  Requires a GM level PhysicsComponent",
-         dtGame::ActorComponent::BaseActorComponentType));
-
    const dtUtil::RefString PhysicsActComp::PROPERTY_PHYSICS_NAME("Physics Name");
    const dtUtil::RefString PhysicsActComp::PROPERTY_PHYSICS_MASS("Physics Mass");
    const dtUtil::RefString PhysicsActComp::PROPERTY_PHYSICS_DIMENSIONS("Physics Dimensions");
@@ -78,9 +74,9 @@ namespace dtPhysics
    };
 
    /////////////////////////////////////////////////////////////////////////////
-   PhysicsActComp::PhysicsActComp()
-   : dtGame::ActorComponent(PhysicsActComp::TYPE)
-   , mMaterialActorId("")
+   PhysicsActComp::PhysicsActComp(const dtGame::ActorComponent::ACType& type)
+   : dtGame::ActorComponent(type)
+   , mMaterialActorId(false)
    , mMass(0.0f)
    , mDefaultCollisionGroup(0)
    , mDefaultPrimitiveType(&PrimitiveType::BOX)

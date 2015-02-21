@@ -99,7 +99,7 @@ namespace dtGame
       ActorComponentMap::const_iterator iter = mComponents.begin();
       while (iter != mComponents.end())
       {
-         if (*iter->first == *type)
+         if (iter->first->InstanceOf(*type))
          {
             outComponents.push_back(iter->second.get());
          }
@@ -160,7 +160,7 @@ namespace dtGame
       ActorComponentMap::const_iterator iter = mComponents.begin();
       while (iter != mComponents.end())
       {
-         if (iter->first == type)
+         if (iter->first->InstanceOf(*type))
          {
             return true;
          }
@@ -200,7 +200,7 @@ namespace dtGame
    {
       for (int componentIndex = mComponents.size() - 1; componentIndex >= 0; --componentIndex)
       {
-         if (mComponents[componentIndex].first == type)
+         if (mComponents[componentIndex].first->InstanceOf(*type))
          {
             RemoveComponent(*mComponents[componentIndex].second);
          }
