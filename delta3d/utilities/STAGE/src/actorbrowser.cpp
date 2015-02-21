@@ -36,6 +36,7 @@
 #include <dtEditQt/actorbrowser.h>
 #include <dtEditQt/viewportmanager.h>
 #include <dtEditQt/actortypetreewidget.h>
+#include <dtEditQt/editoractions.h>
 #include <dtEditQt/editorevents.h>
 #include <dtEditQt/editordata.h>
 #include <dtEditQt/mainwindow.h>
@@ -228,13 +229,13 @@ namespace dtEditQt
                   // let the world know that a new proxy exists
                   EditorEvents::GetInstance().emitBeginChangeTransaction();
                   EditorEvents::GetInstance().emitActorProxyAboutToBeDestroyed(oldActor);
-                  mapPtr->RemoveProxy(*oldActor);
+                  EditorActions::GetInstance().RemoveActorFromMap(*oldActor, *mapPtr);
                   EditorEvents::GetInstance().emitActorProxyDestroyed(oldActor);
 
                   newActor->SetId(oldActor->GetId());
                   newActor->CopyPropertiesFrom(*oldActor);
 
-                  mapPtr->AddProxy(*(newActor.get()), true);
+                  EditorActions::GetInstance().AddActorToMap(*newActor, *mapPtr, true);
                   EditorEvents::GetInstance().emitActorProxyCreated(newActor, false);
                   ViewportManager::GetInstance().placeProxyInFrontOfCamera(newActor);
                   EditorEvents::GetInstance().emitEndChangeTransaction();
@@ -382,7 +383,7 @@ namespace dtEditQt
             dtCore::RefPtr<dtCore::Map> mapPtr = EditorData::GetInstance().getCurrentMap();
             if (mapPtr.valid())
             {
-               mapPtr->AddProxy(*(proxy.get()), true);
+               EditorActions::GetInstance().AddActorToMap(*proxy, *mapPtr, true);
             }
 
             // let the world know that a new proxy exists

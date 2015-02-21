@@ -538,7 +538,7 @@ namespace dtEditQt
             return;
          }
 
-         mapPtr->AddProxy(*mGhostProxy.get(), true);
+         EditorActions::GetInstance().AddActorToMap(*mGhostProxy, *mapPtr, true);
 
          // let the world know that a new proxy exists
          EditorEvents::GetInstance().emitBeginChangeTransaction();
@@ -1208,7 +1208,7 @@ namespace dtEditQt
             {
                dtCore::BaseActorObject* proxy = proxies[proxyIndex].get();
 
-               mapPtr->AddProxy(*proxy, true);
+               EditorActions::GetInstance().AddActorToMap(*proxy, *mapPtr, true);
                mapPtr->AddActorToGroup(groupIndex, proxy);
 
                tProxy = dynamic_cast<dtCore::TransformableActorProxy*>(proxy);

@@ -355,7 +355,7 @@ namespace dtEditQt
             {
                dtCore::BaseActorObject* actor = actors[proxyIndex].get();
 
-               currMap->AddProxy(*actor, true);
+               EditorActions::GetInstance().AddActorToMap(*actor, *currMap, true);
                currMap->AddActorToGroup(groupIndex, actor);
 
                // Notify the creation of the proxies.
@@ -417,7 +417,7 @@ namespace dtEditQt
             dtCore::RefPtr<dtCore::Map> mapPtr = EditorData::GetInstance().getCurrentMap();
             if (mapPtr.valid())
             {
-               mapPtr->AddProxy(*(proxy.get()), true);
+               EditorActions::GetInstance().AddActorToMap(*proxy, *mapPtr, true);
             }
 
             dtActors::PrefabActorProxy* prefabProxy = dynamic_cast<dtActors::PrefabActorProxy*>(proxy.get());

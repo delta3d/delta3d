@@ -42,6 +42,7 @@
 #include <dtEditQt/skeletalmeshbrowser.h>
 #include <dtEditQt/resourcetreewidget.h>
 #include <dtEditQt/editordata.h>
+#include <dtEditQt/editoractions.h>
 #include <dtEditQt/editorevents.h>
 #include <dtEditQt/mainwindow.h>
 #include <dtEditQt/perspectiveviewport.h>
@@ -412,7 +413,7 @@ namespace dtEditQt
                dtCore::RefPtr<dtCore::Map> mapPtr = EditorData::GetInstance().getCurrentMap();
                if (mapPtr.valid())
                {
-                  mapPtr->AddProxy(*proxy, true);
+                  EditorActions::GetInstance().AddActorToMap(*proxy, *mapPtr, true);
                }
 
                // Let the world know that a new proxy exists

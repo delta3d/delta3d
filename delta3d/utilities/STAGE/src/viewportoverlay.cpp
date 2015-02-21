@@ -229,6 +229,10 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    void ViewportOverlay::select(dtCore::DeltaDrawable* drawable)
    {
+      // HACK: Temporarily disable object highlighting until
+      // it can be fixed to work well with actor hierarchies.
+      if (true) return;
+
       //osg::StateSet* ss = mSelectionDecorator->getOrCreateStateSet();
 
       if (drawable == NULL || drawable->GetOSGNode() == NULL)
