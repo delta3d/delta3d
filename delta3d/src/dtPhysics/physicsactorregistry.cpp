@@ -16,10 +16,12 @@
 * along with this library; if not, write to the Free Software Foundation, Inc.,
 * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 *
-* @author Allen Danklefsen
+* Allen Danklefsen
+* David Guthrie
 */
 #include <dtPhysics/physicsactorregistry.h>
 #include <dtPhysics/physicsmaterialactor.h>
+#include <dtPhysics/physicsactcomp.h>
 // For the autoreg
 #include <dtCore/actorfactory.h>
 
@@ -27,6 +29,10 @@ namespace dtPhysics
 {
    dtCore::RefPtr<dtCore::ActorType> PhysicsActorRegistry::PHYSICS_MATERIAL_ACTOR_TYPE(new dtCore::ActorType
       ("Physics Material", "Physics Actors", "Friction, restitution, and other physics material properties - assign this to other actors to get material properties.")); 
+
+   const dtGame::ActorComponent::ACType PhysicsActComp::TYPE(new dtCore::ActorType("PhysicsActComp", "ActorComponents",
+         "Physics subsystem actor component.  Requires a GM level PhysicsComponent",
+         dtGame::ActorComponent::BaseActorComponentType));
 
    // Must be after the types or it will crash.
    //dtCore::AutoLibraryRegister<PhysicsActorRegistry> gAutoReg("dtPhysics");
@@ -46,12 +52,12 @@ namespace dtPhysics
    ////////////////////////////////////////////////////////////////////////////
    PhysicsActorRegistry::PhysicsActorRegistry() : dtCore::ActorPluginRegistry("dtPhysics", "This library will store Physics Material actors")
    {
-      
    }
 
    ////////////////////////////////////////////////////////////////////////////
    void PhysicsActorRegistry::RegisterActorTypes()
    {
       mActorFactory->RegisterType<MaterialActor>(PHYSICS_MATERIAL_ACTOR_TYPE.get());
+      mActorFactory->RegisterType<PhysicsActComp>();
    }
 }

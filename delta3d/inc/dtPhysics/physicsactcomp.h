@@ -92,7 +92,7 @@ namespace dtPhysics
 
       public:
          // constructors
-         PhysicsActComp();
+         PhysicsActComp(const dtGame::ActorComponent::ACType& type = TYPE);
 
          /// set the name of this set of physics objects, 1 container class
          void SetName(const dtUtil::RefString& n);
