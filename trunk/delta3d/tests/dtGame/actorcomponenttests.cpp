@@ -152,6 +152,8 @@ public:
 
          dtCore::RefPtr<TestActorComponent1> component = new TestActorComponent1();
 
+         // Add it twice.  We want to make sure it doesn't insert it twice.
+         actor->AddComponent(*component);
          actor->AddComponent(*component);
 
          CPPUNIT_ASSERT_MESSAGE("Actor owner not set", component->GetOwner() == actor);
@@ -159,9 +161,11 @@ public:
          bool hascomp = actor->HasComponent(TestActorComponent1::TYPE);
          CPPUNIT_ASSERT_MESSAGE("Actor component not found after it was added!", hascomp);
 
-         components = actor->GetComponents(TestActorComponent1::TYPE);
+         actor->GetComponents(TestActorComponent1::TYPE, components);
          bool found = !components.empty();
          CPPUNIT_ASSERT_MESSAGE("Could not retrieve actor component after it was added!", found);
+         CPPUNIT_ASSERT_MESSAGE("Adding the some component twice should not put it in the list twice.", components.size() == 1U);
+
 
          dtCore::RefPtr<TestActorComponent1> component2 = new TestActorComponent1();
          actor->AddComponent(*component2);
