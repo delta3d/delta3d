@@ -613,6 +613,11 @@ namespace  dtCore
             dtCore::ActorComponentContainer* compContainer
                = dynamic_cast<dtCore::ActorComponentContainer*>(mBaseActorObject.get());
 
+            if (actorType == NULL)
+            {
+               actorType = ActorFactory::GetInstance().FindActorTypeReplacement(actorTypeCategory, actorTypeName);
+            }
+
             if (compContainer && actorType == NULL)
             {
                ActorPtrVector existingComponents;

@@ -28,7 +28,7 @@
 namespace dtPhysics
 {
    dtCore::RefPtr<dtCore::ActorType> PhysicsActorRegistry::PHYSICS_MATERIAL_ACTOR_TYPE(new dtCore::ActorType
-      ("Physics Material", "Physics Actors", "Friction, restitution, and other physics material properties - assign this to other actors to get material properties.")); 
+      ("PhysicsMaterial", "dtPhysics", "Friction, restitution, and other physics material properties - assign this to other actors to get material properties."));
 
    const dtGame::ActorComponent::ACType PhysicsActComp::TYPE(new dtCore::ActorType("PhysicsActComp", "ActorComponents",
          "Physics subsystem actor component.  Requires a GM level PhysicsComponent",
@@ -60,4 +60,11 @@ namespace dtPhysics
       mActorFactory->RegisterType<MaterialActor>(PHYSICS_MATERIAL_ACTOR_TYPE.get());
       mActorFactory->RegisterType<PhysicsActComp>();
    }
+
+   ////////////////////////////////////////////////////////////////////////////
+   void PhysicsActorRegistry::GetReplacementActorTypes(ActorTypeReplacements& replacements) const
+   {
+       replacements.push_back(std::make_pair("Physics Actors.Physics Material", "dtPhysics.PhysicsMaterial"));
+   }
+
 }

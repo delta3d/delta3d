@@ -244,6 +244,9 @@ namespace dtPhysics
          // Looks up the material actor object using the stored id.
          const MaterialActor* LookupMaterialActor();
 
+         // Looks up the material actor object by name.
+         const MaterialActor* LookupMaterialActor(const std::string& matName);
+
          /// Changes the configured mass.  This is for reference only so that code may be data driven.
          void SetMass(Real mass);
          /// @return the configured mass.  This is for reference only so that code may be data driven.

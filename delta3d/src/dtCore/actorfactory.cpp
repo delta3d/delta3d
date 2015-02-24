@@ -108,7 +108,7 @@ namespace dtCore
          msg.clear();
          msg.str("");
          msg << "Registry for library with name " << libName <<
-            " already exists.  Library must already be loaded.";
+               " already exists.  Library must already be loaded.";
          LOGN_ERROR("actorfactory.cpp", msg.str());
          return;
       }
@@ -152,7 +152,7 @@ namespace dtCore
             msg.clear();
             msg.str("");
             msg << "Actor plugin libraries must implement the function " <<
-               " CreatePluginRegistry.";
+                  " CreatePluginRegistry.";
             throw dtCore::ProjectResourceErrorException(msg.str(), __FILE__, __LINE__);
          }
 
@@ -161,7 +161,7 @@ namespace dtCore
             msg.clear();
             msg.str("");
             msg << "Actor plugin libraries must implement the function " <<
-               " DestroyPluginRegistry.";
+                  " DestroyPluginRegistry.";
             throw dtCore::ProjectResourceErrorException(msg.str(), __FILE__, __LINE__);
          }
 
@@ -176,7 +176,7 @@ namespace dtCore
             msg.clear();
             msg.str("");
             msg << "Can't add Registry Entry: " << libName << " to Registry. " <<
-               "Possibly it might have been added already.";
+                  "Possibly it might have been added already.";
             throw dtCore::ProjectResourceErrorException( msg.str(), __FILE__, __LINE__);
          }
       }
@@ -211,7 +211,7 @@ namespace dtCore
          msg.clear();
          msg.str("");
          msg << "Loaded actor plugin registry. (Name: " << libName <<
-            ", Number of Actors: " << actorTypes.size() << ")";
+               ", Number of Actors: " << actorTypes.size() << ")";
          LOGN_INFO("actorfactory.cpp", msg.str());
       }
 
@@ -261,7 +261,7 @@ namespace dtCore
 
    /////////////////////////////////////////////////////////////////////////////
    const ActorType* ActorFactory::FindActorType(const std::string& category,
-                                                  const std::string& name)
+         const std::string& name) const
    {
       const ActorType* result = NULL;
       dtCore::RefPtr<const ActorType> typeToFind = new ActorType(name, category);
@@ -294,19 +294,35 @@ namespace dtCore
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   std::string ActorFactory::FindActorTypeReplacement(const std::string& fullName) const
+   std::string ActorFactory::FindActorTypeReplacementName(const std::string& fullName) const
    {
+      std::string resultName;
       ActorPluginRegistry::ActorTypeReplacements::const_iterator itr = mReplacementActors.begin();
       while (itr != mReplacementActors.end())
       {
          if ((*itr).first == fullName)
          {
-            return((*itr).second);
+            resultName = ((*itr).second);
          }
          ++itr;
       }
 
-      return std::string();
+      return resultName;
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   const ActorType* ActorFactory::FindActorTypeReplacement(const std::string& category, const std::string& name) const
+   {
+      std::string fullName = category + "." + name;
+      std::string resultName = FindActorTypeReplacementName(fullName);
+      const ActorType* result = NULL;
+      if (!resultName.empty())
+      {
+         std::pair<std::string, std::string> replacementName = ActorType::ParseNameAndCategory(resultName);
+         result = FindActorType(replacementName.second, replacementName.first);
+      }
+
+      return result;
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -317,8 +333,8 @@ namespace dtCore
       if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
       {
          mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
-            "Creating actor proxy of type \"%s\".",
-            actorType.GetFullName().c_str());
+               "Creating actor proxy of type \"%s\".",
+               actorType.GetFullName().c_str());
       }
 
       //Now we know which registry to use, so tell the registry to
@@ -334,8 +350,8 @@ namespace dtCore
       if (!type.valid())
       {
          throw dtCore::ObjectFactoryUnknownTypeException(
-         "No actor exists of the specified name [" + name + "] and category[" +
-         category + "].", __FILE__, __LINE__);
+               "No actor exists of the specified name [" + name + "] and category[" +
+               category + "].", __FILE__, __LINE__);
       }
 
       return CreateActor(*type);
@@ -349,8 +365,8 @@ namespace dtCore
          for (RegistryMapItor i = mRegistries.begin(); i != mRegistries.end(); ++i)
          {
             mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
-                              "Library manager has loaded registry library \"%s\"",
-                              i->first.c_str());
+                  "Library manager has loaded registry library \"%s\"",
+                  i->first.c_str());
          }
       }
 
@@ -398,7 +414,7 @@ namespace dtCore
          if (result == NULL)
          {
             error << "Requested actor type: \"" << actorType.GetCategory() << "." <<  actorType.GetName() <<
-               "\" but is unknown or has not been registered.";
+                  "\" but is unknown or has not been registered.";
             throw dtCore::ObjectFactoryUnknownTypeException(error.str(), __FILE__, __LINE__);
          }
       }
@@ -431,7 +447,7 @@ namespace dtCore
       if (libName == ACTOR_LIBRARY)
       {
          mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
-            "Unloading the default actor library \"%s\".", ACTOR_LIBRARY.c_str());
+               "Unloading the default actor library \"%s\".", ACTOR_LIBRARY.c_str());
       }
 
       RegistryMapItor regItor = mRegistries.find(libName);
@@ -439,8 +455,8 @@ namespace dtCore
       if (regItor == mRegistries.end())
       {
          mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
-            "Attempted to unload actor registry \"%s\" which was not loaded.",
-            libName.c_str());
+               "Attempted to unload actor registry \"%s\" which was not loaded.",
+               libName.c_str());
          return;
       }
 
@@ -464,8 +480,8 @@ namespace dtCore
       {
          ActorPluginRegistry::ActorTypeReplacements::iterator found;
          found = std::find(mReplacementActors.begin(),
-                           mReplacementActors.end(),
-                           (*unloadedReplacementsItr));
+               mReplacementActors.end(),
+               (*unloadedReplacementsItr));
 
          if (found != mReplacementActors.end())
          {

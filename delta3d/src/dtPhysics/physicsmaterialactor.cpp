@@ -50,6 +50,7 @@ namespace dtPhysics
    {
       SetName("Material");
       SetClassName("dtPhysics::MaterialActor");
+      SetInitialOwnership(dtGame::GameActorProxy::Ownership::CLIENT_AND_SERVER_LOCAL);
    }
 
    //////////////////////////////////////////////////////////

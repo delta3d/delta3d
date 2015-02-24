@@ -27,6 +27,7 @@
 
 #include <dtPhysics/physicsobject.h>
 #include <dtPhysics/physicsmaterialactor.h>
+#include <dtPhysics/physicsactcomp.h>
 #include <dtPhysics/palphysicsworld.h>
 #include <dtPhysics/bodywrapper.h>
 #include <dtPhysics/geometry.h>
@@ -270,6 +271,17 @@ namespace dtPhysics
          dtPhysics::PhysicsMaterials& materials = PhysicsWorld::GetInstance().GetMaterials();
 
          Material* mat = materials.GetMaterial(matName);
+         // ugly, ugly hack.
+         if (mat == NULL)
+         {
+            dtPhysics::PhysicsActComp* owner = dynamic_cast<dtPhysics::PhysicsActComp*>(GetUserData());
+            if (owner != NULL)
+            {
+               owner->LookupMaterialActor(matName);
+               mat = materials.GetMaterial(matName);
+            }
+         }
+
          if (mat != NULL)
          {
             SetMaterial(mat);

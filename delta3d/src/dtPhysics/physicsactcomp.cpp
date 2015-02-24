@@ -494,6 +494,19 @@ namespace dtPhysics
    }
 
    //////////////////////////////////////////////////////////////////
+   const MaterialActor* PhysicsActComp::LookupMaterialActor(const std::string& matName)
+   {
+      const MaterialActor* result = NULL;
+      dtGame::GameActorProxy* gap = NULL;
+      GetOwner(gap);
+      if (gap != NULL)
+      {
+         gap->GetGameManager()->FindActorByName(matName, result);
+      }
+      return result;
+   }
+
+   //////////////////////////////////////////////////////////////////
    void PhysicsActComp::SetMass(Real mass)
    {
       mMass = mass;
