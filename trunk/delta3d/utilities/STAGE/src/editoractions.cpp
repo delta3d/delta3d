@@ -2185,7 +2185,7 @@ namespace dtEditQt
          {
             errors += QString::fromStdString((*itr));
 
-            std::string replacement = dtCore::ActorFactory::GetInstance().FindActorTypeReplacement((*itr));
+            std::string replacement = dtCore::ActorFactory::GetInstance().FindActorTypeReplacementName(*itr);
             if (!replacement.empty())
             {
                errors += tr(" (replace with ") + QString::fromStdString(replacement) + ")";

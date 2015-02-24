@@ -62,6 +62,7 @@
 #include <dtPhysics/bodywrapper.h>
 #include <dtPhysics/physicsreaderwriter.h>
 #include <dtPhysics/geometry.h>
+#include <dtPhysics/palutil.h>
 
 #include <osg/Geode>
 #include <osg/Shape>
@@ -1894,13 +1895,16 @@ namespace dtPhysics
    /////////////////////////////////////////////////////////
    void dtPhysicsTests::testMaterialActor()
    {
+      ChangeEngine(GetPhysicsEngineList()[0]);
       // create proxy
       dtCore::RefPtr<dtPhysics::MaterialActor> mat;
       mGM->CreateActor(*dtPhysics::PhysicsActorRegistry::PHYSICS_MATERIAL_ACTOR_TYPE, mat);
+      CPPUNIT_ASSERT_MESSAGE("Materials should be created on the client and server.", mat->GetInitialOwnership() == dtGame::GameActorProxy::Ownership::CLIENT_AND_SERVER_LOCAL);
 
       // test to see if valid
       CPPUNIT_ASSERT(mat.valid());
 
+      mat->SetName("Malange");
 
       CPPUNIT_ASSERT_EQUAL_MESSAGE("The Default is wrong", mat->GetMaterialDef().GetRestitution(), 0.2f);
       CPPUNIT_ASSERT_EQUAL_MESSAGE("The Default is wrong", mat->GetMaterialDef().GetStaticFriction(), 0.5f);
@@ -1930,6 +1934,27 @@ namespace dtPhysics
       CPPUNIT_ASSERT_EQUAL_MESSAGE("Failed to set property", mat->GetMaterialDef().GetStaticAnisotropicFriction(), osg::Vec3(1.0, 1.1, 0.3));
       CPPUNIT_ASSERT_EQUAL_MESSAGE("Failed to set property", mat->GetMaterialDef().GetKineticAnisotropicFriction(), osg::Vec3(0.9, 1.2, 0.4));
       CPPUNIT_ASSERT_EQUAL_MESSAGE("Failed to set property", mat->GetMaterialDef().GetDirOfAnisotropy(), osg::Vec3(0.707, 0.0, 0.707));
+
+      PhysicsMaterials& materials = dtPhysics::PhysicsWorld::GetInstance().GetMaterials();
+
+      CPPUNIT_ASSERT(materials.GetMaterial("Malange") == NULL);
+      mGM->AddActor(*mat);
+      dtPhysics::Material* materialM = materials.GetMaterial("Malange");
+      CPPUNIT_ASSERT(materialM != NULL);
+      // test to see if they were set correctly.
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("Failed to set property", mat->GetMaterialDef().GetRestitution(), materialM->m_fRestitution);
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("Failed to set property", mat->GetMaterialDef().GetStaticFriction(), materialM->m_fStatic);
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("Failed to set property", mat->GetMaterialDef().GetKineticFriction(), materialM->m_fKinetic);
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("Failed to set property", mat->GetMaterialDef().GetDisableStrongFriction(), materialM->m_bDisableStrongFriction);
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("Failed to set property", mat->GetMaterialDef().GetEnableAnisotropicFriction(), materialM->m_bEnableAnisotropicFriction);
+      dtPhysics::VectorType testVec;
+      dtPhysics::PalVecToVectorType(testVec, materialM->m_vStaticAnisotropic);
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("Failed to set property", mat->GetMaterialDef().GetStaticAnisotropicFriction(), testVec);
+      dtPhysics::PalVecToVectorType(testVec, materialM->m_vKineticAnisotropic);
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("Failed to set property", mat->GetMaterialDef().GetKineticAnisotropicFriction(), testVec);
+      dtPhysics::PalVecToVectorType(testVec, materialM->m_vDirAnisotropy);
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("Failed to set property", mat->GetMaterialDef().GetDirOfAnisotropy(), testVec);
+
    }
 
    void dtPhysicsTests::testAutoCreate()

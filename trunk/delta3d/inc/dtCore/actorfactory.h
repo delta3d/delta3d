@@ -147,7 +147,13 @@ namespace dtCore
           * @return A pointer if the actor type was found or NULL if not.
           */
          const ActorType* FindActorType(const std::string& category,
-                                        const std::string& name);
+                                        const std::string& name) const;
+
+         /**
+          * Try to lookup the actual actor type a replacement references.  This may not work if the library of the replace
+          * is different.
+          */
+         const ActorType* FindActorTypeReplacement(const std::string& category, const std::string& name) const;
 
          /**
           *  Given the supplied ActorType full name, see if an ActorType
@@ -155,7 +161,7 @@ namespace dtCore
           * @param fullName : The fullName of an older, deprecated ActorType
           * @return The full ActorType name to use instead (or empty, if nothing is registered)
           */
-         std::string FindActorTypeReplacement(const std::string& fullName) const;
+         std::string FindActorTypeReplacementName(const std::string& fullName) const;
 
          /**
           * Creates a new actor object.  The actor type is used by the library
@@ -244,7 +250,7 @@ namespace dtCore
          static dtCore::RefPtr<ActorFactory> mInstance;
 
          ///Maps an actor type to the registry that created it last.
-         ActorTypeMap mActorTypeCache;
+         mutable ActorTypeMap mActorTypeCache;
 
          ActorPluginRegistry::ActorTypeReplacements mReplacementActors;
 
