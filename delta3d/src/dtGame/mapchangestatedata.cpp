@@ -306,7 +306,7 @@ namespace dtGame
          mGameManager->SetPaused(false);
 
          SendMapMessage(MessageType::INFO_MAPS_OPENED, mNewMapNames);
-         SendMapMessage(MessageType::INFO_MAP_LOADED, mNewMapNames);
+         SendMapMessage(MessageType::INFO_MAP_CHANGE_LOAD_END, mNewMapNames);
          SendMapMessage(MessageType::INFO_MAP_CHANGED, mNewMapNames);
          mCurrentState = &MapChangeState::IDLE;
       }
