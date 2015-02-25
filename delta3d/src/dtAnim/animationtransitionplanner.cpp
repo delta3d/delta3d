@@ -197,6 +197,7 @@ namespace dtAnim
          )
    , mAnimOperators(mPlannerHelper)
    , mResetNextTick(false)
+   , mIsAnimHelperSetup(false)
    {
       std::vector<dtAnim::BasicStanceEnum*> basicStances = dtAnim::BasicStanceEnum::EnumerateType();
       for (unsigned i = 0; i < basicStances.size(); ++i)
@@ -231,7 +232,20 @@ namespace dtAnim
       dtAI::WorldState initialState;
 
       BasicStanceState* stanceState = new BasicStanceState();
-      stanceState->SetStance(BasicStanceEnum::STANDING);
+
+      // This is a STAGE workaround to ensure the newly set stance is
+      // the only pose considered, since a full plan is excessive.
+      // This simply sets the set stance as the default so that STAGE
+      // can get directly to the stance result.
+      // TODO: Remove when STAGE is fixed and this component is more data driven and not so hard coded.
+      if (IsInSTAGE())
+      {
+         stanceState->SetStance(*mStance);
+      }
+      else // Normal stance setup
+      {
+         stanceState->SetStance(BasicStanceEnum::STANDING);
+      }
 
       initialState.AddState(STATE_BASIC_STANCE,         stanceState);
 
@@ -250,7 +264,6 @@ namespace dtAnim
       initialState.AddState(STATE_LYING_ACTION_COUNT,    new dtAI::StateVar<unsigned>(0U));
       initialState.AddState(STATE_PRONE_ACTION_COUNT,    new dtAI::StateVar<unsigned>(0U));
       initialState.AddState(STATE_DYING,                  new dtAI::StateVariable(false));
-
 
       mPlannerHelper.SetCurrentState(initialState);
    }
@@ -467,7 +480,7 @@ namespace dtAnim
    {
       const float blendTime = 0.2f;
 
-      const dtAI::StateVariable* deadState;
+      const dtAI::StateVariable* deadState = NULL;
       mPlannerHelper.GetCurrentState()->GetState(STATE_DEAD, deadState);
 
       //if we WERE dead and now we are not, we have to reset our state.
@@ -565,6 +578,15 @@ namespace dtAnim
          animAC->PlayAnimation(AnimationOperators::ANIM_WALK_DEPLOYED);
          SignalAnimationsTransitioning.emit_signal(*this);
       }
+      
+      // Ensure that the mixer has at least one update in STAGE
+      // so that the initial state can take effect.
+      // TODO: Remove this once STAGE has its own way to update actors
+      // through normal program flow.
+      if (IsInSTAGE() && animAC != NULL)
+      {
+         animAC->Update(blendTime);
+      }
    }
 
    ////////////////////////////////////////////////////////////////////////////
@@ -611,9 +633,12 @@ namespace dtAnim
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   void AnimationTransitionPlanner::OnEnteredWorld()
+   void AnimationTransitionPlanner::SetupAnimationHelper()
    {
-      BaseClass::OnEnteredWorld();
+      if (mIsAnimHelperSetup)
+      {
+         return;
+      }
 
       AnimationHelper* animAC = GetOwner()->GetComponent<AnimationHelper>();
 
@@ -637,12 +662,29 @@ namespace dtAnim
 
          animAC->ModelLoadedSignal.connect_slot(this, &AnimationTransitionPlanner::OnModelLoaded);
          animAC->ModelUnloadedSignal.connect_slot(this, &AnimationTransitionPlanner::OnModelUnloaded);
+
+         mIsAnimHelperSetup = true;
       }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   void AnimationTransitionPlanner::OnEnteredWorld()
+   {
+      BaseClass::OnEnteredWorld();
+
+      SetupAnimationHelper();
+
       RegisterForTick();
    }
 
    ////////////////////////////////////////////////////////////////////////
    void AnimationTransitionPlanner::OnTickLocal(const dtGame::TickMessage& /*tickMessage*/)
+   {
+      Update();
+   }
+
+   ////////////////////////////////////////////////////////////////////////
+   void AnimationTransitionPlanner::Update()
    {
       if (mResetNextTick)
       {
@@ -657,6 +699,40 @@ namespace dtAnim
    }
 
    ////////////////////////////////////////////////////////////////////////
+   void AnimationTransitionPlanner::OnAddedToActor(dtCore::BaseActorObject& actor)
+   {
+      BaseClass::OnAddedToActor(actor);
+
+      SetupAnimationHelper();
+
+      if ( ! mIsAnimHelperSetup)
+      {
+         LOG_ERROR("Could not setup the AnimationHelper at this point.");
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////
+   void AnimationTransitionPlanner::OnRemovedFromActor(dtCore::BaseActorObject& actor)
+   {
+      BaseClass::OnRemovedFromActor(actor);
+
+      AnimationHelper* animAC = GetOwner()->GetComponent<AnimationHelper>();
+
+      if (animAC != NULL)
+      {
+         animAC->ModelLoadedSignal.disconnect(this);
+         animAC->ModelUnloadedSignal.disconnect(this);
+      }
+
+      if (mIsAnimHelperSetup)
+      {
+         LOG_ERROR("Could not disconnect from original AnimationHelper since it can no longer be accessed from the owner.");
+      }
+
+      mIsAnimHelperSetup = false;
+   }
+
+   ////////////////////////////////////////////////////////////////////////
    void AnimationTransitionPlanner::OnTickRemote(const dtGame::TickMessage& /*tickMessage*/)
    {
       CheckAndUpdateAnimationState();
@@ -668,6 +744,13 @@ namespace dtAnim
       // Have to wait until the next tick because other listeners may get this message and do things that
       // will change the results of this.
       mResetNextTick = true;
+
+      // This ensures that the initial stance is set on the model when it
+      // is loaded in STAGE.
+      if (IsInSTAGE())
+      {
+         Update();
+      }
    }
 
    ////////////////////////////////////////////////////////////////////////
@@ -677,8 +760,33 @@ namespace dtAnim
    }
 
    ////////////////////////////////////////////////////////////////////////
+   void AnimationTransitionPlanner::SetStance(dtAnim::BasicStanceEnum& stance)
+   {
+      if (mStance.get() != &stance)
+      {
+         mStance = &stance;
+
+         // This was recommended temporarily for getting animations to
+         // work in STAGE. This allows the newly set stance to be set
+         // in the planner and update called at least once so that the
+         // character assumes the initial animation pose.
+         // TODO: Remove when STAGE has been fixed to generically work with animations.
+         if (IsInSTAGE())
+         {
+            OnModelLoaded(NULL);
+         }
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////
+   dtAnim::BasicStanceEnum& AnimationTransitionPlanner::GetStance() const
+   {
+      return *mStance;
+   }
+
+   ////////////////////////////////////////////////////////////////////////
    DT_IMPLEMENT_ACCESSOR(AnimationTransitionPlanner, bool, IsDead);
-   DT_IMPLEMENT_ACCESSOR(AnimationTransitionPlanner, dtUtil::EnumerationPointer<BasicStanceEnum>, Stance);
+   //DT_IMPLEMENT_ACCESSOR(AnimationTransitionPlanner, dtUtil::EnumerationPointer<BasicStanceEnum>, Stance);
    DT_IMPLEMENT_ACCESSOR(AnimationTransitionPlanner, dtUtil::EnumerationPointer<WeaponStateEnum>, WeaponState);
    DT_IMPLEMENT_ACCESSOR(AnimationTransitionPlanner, double, MaxTimePerIteration);
 

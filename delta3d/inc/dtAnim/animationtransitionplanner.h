@@ -184,6 +184,10 @@ namespace dtAnim
 
       /*override*/ void BuildPropertyMap();
 
+      virtual void OnAddedToActor(dtCore::BaseActorObject& actor);
+
+      virtual void OnRemovedFromActor(dtCore::BaseActorObject& actor);
+
    protected:
 
       /*override*/ ~AnimationTransitionPlanner();
@@ -199,6 +203,13 @@ namespace dtAnim
       /*override*/ void OnTickRemote(const dtGame::TickMessage& /*tickMessage*/);
 
    private:
+
+      // TEMP:
+      void Update();
+
+      // TEMP:
+      void SetupAnimationHelper();
+
       dtAI::PlannerHelper mPlannerHelper;
       dtAI::Planner mPlanner;
       dtAI::Planner::OperatorList mCurrentPlan;
@@ -208,6 +219,9 @@ namespace dtAnim
       ExecuteActionCountMap mExecutedActionCounts;
       std::string mSequenceId;
       bool mResetNextTick;
+
+      // TEMP:
+      bool mIsAnimHelperSetup;
    };
 
 

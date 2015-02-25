@@ -163,26 +163,29 @@ void AnimationChannel::Update(float dt)
    {
       SetPrune(true);
    }
-   else if (!IsActive())
+   else if (mAnim.valid())
    {
-      if (IsAction())
+      if (!IsActive())
       {
-         mAnim->PlayAction(GetFadeIn(), GetFadeOut(), GetBaseWeight());
+         if (IsAction())
+         {
+            mAnim->PlayAction(GetFadeIn(), GetFadeOut(), GetBaseWeight());
+         }
+         else
+         {
+            mAnim->PlayCycle(GetCurrentWeight(), 0.0f);
+            mLastWeight = GetCurrentWeight();
+         }
+
+         SetActive(true);
       }
       else
       {
-         mAnim->PlayCycle(GetCurrentWeight(), 0.0f);
-         mLastWeight = GetCurrentWeight();
-      }
-
-      SetActive(true);
-   }
-   else
-   {
-      if (!IsAction() && !osg::equivalent(mLastWeight, GetCurrentWeight()))
-      {
-         mAnim->PlayCycle(GetCurrentWeight(), 0.0f);
-         mLastWeight = GetCurrentWeight();
+         if (!IsAction() && !osg::equivalent(mLastWeight, GetCurrentWeight()))
+         {
+            mAnim->PlayCycle(GetCurrentWeight(), 0.0f);
+            mLastWeight = GetCurrentWeight();
+         }
       }
    }
 
