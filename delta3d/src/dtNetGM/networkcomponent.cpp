@@ -114,6 +114,9 @@ namespace dtNetGM
    ////////////////////////////////////////////////////////////////////////////////
    NetworkComponent::NetworkComponent(const std::string& gameName, const int gameVersion, const std::string& logFile)
    : dtGame::GMComponent(*TYPE)
+   , mGameName(gameName)
+   , mGameVersion(gameVersion)
+   , mGNELogFile(logFile)
    , mShuttingDown(false)
    , mReliable(true)
    , mRateOut(0)
@@ -122,9 +125,6 @@ namespace dtNetGM
    , mFrameSyncIsEnabled(false)
    , mFrameSyncNumPerSecond(60)
    , mFrameSyncMaxWaitTime(4.0f)
-   , mGameName(gameName)
-   , mGameVersion(gameVersion)
-   , mGNELogFile(logFile)
    {
       if (GetInstanceCount() == 0)
       {
@@ -468,8 +468,7 @@ namespace dtNetGM
          }
          else
          {
-            LOGN_ERROR("dtNetGM","Waited 100 milliseconds for the background message task to complete before sending any "
-                  "remaining messages, but it timed out.  ");
+            LOGN_ERROR("dtNetGM", "Waited 100 milliseconds for the background message task to complete before sending any remaining messages, but it timed out.");
          }
 
       }
