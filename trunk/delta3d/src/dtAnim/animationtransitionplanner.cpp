@@ -723,8 +723,7 @@ namespace dtAnim
          animAC->ModelLoadedSignal.disconnect(this);
          animAC->ModelUnloadedSignal.disconnect(this);
       }
-
-      if (mIsAnimHelperSetup)
+      else
       {
          LOG_ERROR("Could not disconnect from original AnimationHelper since it can no longer be accessed from the owner.");
       }
