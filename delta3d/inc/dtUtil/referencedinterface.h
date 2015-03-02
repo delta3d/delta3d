@@ -34,7 +34,7 @@ namespace dtUtil
       virtual int ref() = 0;
       virtual int unref() = 0;
       virtual int unref_nodelete() = 0;
-      virtual osg::ObserverSet* getOrCreateObserverSet() = 0;
+      virtual osg::ObserverSet* getOrCreateObserverSet() const = 0;
    private:
       // Hide copying
       ReferencedInterface(ReferencedInterface&) {}
@@ -57,6 +57,6 @@ namespace dtUtil
       virtual int ref() { return osg::Referenced::ref(); }\
       virtual int unref() { return osg::Referenced::unref(); }\
       virtual int unref_nodelete() { return osg::Referenced::unref_nodelete(); }\
-      virtual osg::ObserverSet* getOrCreateObserverSet() { return osg::Referenced::getOrCreateObserverSet(); }
+      virtual osg::ObserverSet* getOrCreateObserverSet() const { return osg::Referenced::getOrCreateObserverSet(); }
 
 #endif //REFERENCED_INTERFACE
