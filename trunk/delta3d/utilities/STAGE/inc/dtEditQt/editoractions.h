@@ -278,6 +278,9 @@ namespace dtEditQt
       // Action - Actor Search - Hides/Brings back the actor tab window
       QAction* mActionWindowsActorSearch;
 
+      // Action - Actor Tree Panel - Hides/Brings back the actor tree panel window
+      QAction* mActionWindowsActorTreePanel;
+
       // Action - Resource Browser - Hides/Brings back the resource browser window
       QAction* mActionWindowsResourceBrowser;
 

@@ -27,6 +27,7 @@ static const dtUtil::RefString CONF_MGR_SHOW_ACTOR_BROWSER("ShowActorBrowserTab"
 static const dtUtil::RefString CONF_MGR_SHOW_PREFAB_BROWSER("ShowPrefabBrowserTab");
 static const dtUtil::RefString CONF_MGR_SHOW_SEARCH_DOCKWIDGET("ShowSearchDockWidget");
 static const dtUtil::RefString CONF_MGR_SHOW_ACTOR_SEARCH("ShowActorSearchTab");
+static const dtUtil::RefString CONF_MGR_SHOW_ACTOR_TREE_DOCK("ShowActorTreeDock");
 static const dtUtil::RefString CONF_MGR_SHOW_GLOBAL_ACTORS("ShowGlobalActorsTab");
 static const dtUtil::RefString CONF_MGR_SHOW_RESOURCE_BROWSER("ShowResourceBrowser");
 static const dtUtil::RefString CONF_MGR_SHOW_PROPERTY_EDITOR("ShowPropertyEditor");

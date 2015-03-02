@@ -34,6 +34,7 @@
 
 DT_DISABLE_WARNING_ALL_START
 #include <QtGui/QMainWindow>
+#include <QtGui/QDockWidget>
 #include <QtCore/QMap>
 DT_DISABLE_WARNING_END
 
@@ -50,18 +51,23 @@ namespace dtActors
    class VolumeEditActorProxy;
 }
 
+namespace dtQt
+{
+   class ActorTreePanel;
+}
+
 namespace dtEditQt
 {
-   class PerspectiveViewport;
-   class OrthoViewport;
-   class PropertyEditor;
    class ActorDockWidget;
    class ActorSearchDockWidget;
-   class ResourceBrowser;
-   class PluginManager;
-   class EditorViewportContainer;
-   class ViewportContainer;
    class EditorSettings;
+   class EditorViewportContainer;
+   class OrthoViewport;
+   class PerspectiveViewport;
+   class PluginManager;
+   class PropertyEditor;
+   class ResourceBrowser; // OLD
+   class ViewportContainer;
 
 
 
@@ -377,6 +383,10 @@ namespace dtEditQt
       ActorDockWidget*        mActorDockWidg;
       ActorSearchDockWidget*  mActorSearchDockWidg;
       ResourceBrowser* mResourceBrowser;
+
+      QDockWidget* mActorTreeDock;
+      dtQt::ActorTreePanel* mActorTreePanel;
+      
 
       QWidget*          mMainViewportParent;
       QList<QSplitter*> mSplitters;
