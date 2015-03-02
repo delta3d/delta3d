@@ -49,7 +49,7 @@ public slots:
     * @param[in]  proxy     The proxy with the property that changed.
     * @param[in]  property  The property that was changed.
     */
-   void onActorPropertyChanged(ActorProxyRefPtr proxy, ActorPropertyRefPtr property);
+   void onActorPropertyChanged(ActorPtr proxy, ActorPropertyRefPtr property);
 
 private:
 

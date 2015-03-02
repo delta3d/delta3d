@@ -58,8 +58,8 @@ LinkedPointsActorToolPlugin::LinkedPointsActorToolPlugin(MainWindow* mw)
    mFinishedButton            = ui.mFinishedButton;
 
    // Setup our signal slots.
-   connect(&EditorEvents::GetInstance(), SIGNAL(actorProxyCreated(ActorProxyRefPtr, bool)),
-      this, SLOT(onActorProxyCreated(ActorProxyRefPtr, bool)));
+   connect(&EditorEvents::GetInstance(), SIGNAL(actorProxyCreated(ActorPtr, bool)),
+      this, SLOT(onActorProxyCreated(ActorPtr, bool)));
    connect(&EditorEvents::GetInstance(), SIGNAL(selectedActors(ActorRefPtrVector &)),
       this, SLOT(onActorsSelected(ActorRefPtrVector &)));
 
@@ -165,7 +165,7 @@ void LinkedPointsActorToolPlugin::closeEvent(QCloseEvent* event)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void LinkedPointsActorToolPlugin::onActorProxyCreated(ActorProxyRefPtr proxy, bool forceNoAdjustments)
+void LinkedPointsActorToolPlugin::onActorProxyCreated(ActorPtr proxy, bool forceNoAdjustments)
 {
    dtActors::LinkedPointsActorProxy* linkedPointsProxy = dynamic_cast<dtActors::LinkedPointsActorProxy*>(proxy.get());
 

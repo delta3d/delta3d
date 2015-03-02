@@ -278,14 +278,14 @@ namespace dtEditQt
        * @param proxy The proxy that was changed.
        * @param property The property of the proxy that was modified.
        */
-      void onActorPropertyChanged(ActorProxyRefPtr proxy, ActorPropertyRefPtr property);
+      void onActorPropertyChanged(ActorPtr proxy, ActorPropertyRefPtr property);
 
       /// Updates the window title
       void updateWindowTitle();
 
-      void onActorProxyCreated(ActorProxyRefPtr proxy, bool forceNoAdjustments);
+      void onActorProxyCreated(ActorPtr proxy, bool forceNoAdjustments);
 
-      void onActorProxyDestroyed(ActorProxyRefPtr proxy);
+      void onActorProxyDestroyed(ActorPtr proxy);
 
       void onActorProxyNameChanged(dtCore::BaseActorObject& proxy, std::string oldName);
 

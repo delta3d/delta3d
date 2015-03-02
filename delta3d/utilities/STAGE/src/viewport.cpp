@@ -786,7 +786,7 @@ namespace dtEditQt
       // Connect the global actions we want to track.
       EditorEvents&  ge = EditorEvents::GetInstance();
 
-      connect(&ge, SIGNAL(gotoActor(ActorProxyRefPtr)),          this, SLOT(onGotoActor(ActorProxyRefPtr)));
+      connect(&ge, SIGNAL(gotoActor(ActorPtr)),          this, SLOT(onGotoActor(ActorPtr)));
       connect(&ge, SIGNAL(gotoPosition(double, double, double)), this, SLOT(onGotoPosition(double,double,double)));
       connect(&ge, SIGNAL(beginChangeTransaction()),             this, SLOT(onBeginChangeTransaction()));
       connect(&ge, SIGNAL(endChangeTransaction()),               this, SLOT(onEndChangeTransaction()));
@@ -798,7 +798,7 @@ namespace dtEditQt
       //Disconnect from all our global actions we were previously tracking.
       EditorEvents& ge = EditorEvents::GetInstance();
 
-      disconnect(&ge, SIGNAL(gotoActor(ActorProxyRefPtr)), this, SLOT(onGotoActor(ActorProxyRefPtr)));
+      disconnect(&ge, SIGNAL(gotoActor(ActorPtr)), this, SLOT(onGotoActor(ActorPtr)));
    }
 
    ///////////////////////////////////////////////////////////////////////////////

@@ -74,17 +74,17 @@ namespace dtEditQt
       /**
        * When a new actor is created, we may have to add to the global list
        */
-      void onActorProxyCreated(ActorProxyRefPtr proxy, bool forceNoAdjustments);
+      void onActorProxyCreated(ActorPtr proxy, bool forceNoAdjustments);
 
       /**
        * Called when an actor proxy is deleted
        */
-      void onActorProxyDestroyed(ActorProxyRefPtr proxy);
+      void onActorProxyDestroyed(ActorPtr proxy);
 
       /**
        * Called when a property changes to update the list
        */
-      void onActorPropertyChanged(ActorProxyRefPtr proxy, ActorPropertyRefPtr property);
+      void onActorPropertyChanged(ActorPtr proxy, ActorPropertyRefPtr property);
 
       /**
        * Called when a proxy's name is changed
