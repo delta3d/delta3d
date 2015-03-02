@@ -41,6 +41,7 @@ namespace dtQt
 
    public slots:
       void OnActorsSelected(ActorRefPtrVector& actors);
+      void OnTreeWidgetUpdated();
 
    protected:
       virtual void CreateConnections();

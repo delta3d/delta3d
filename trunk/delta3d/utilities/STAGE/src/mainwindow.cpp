@@ -444,7 +444,8 @@ namespace dtEditQt
       {
          mActorTreeDock = new QDockWidget(this);
          mActorTreeDock->setObjectName("ActorTreeDock");
-         mActorTreeDock->setFeatures(QDockWidget::AllDockWidgetFeatures);
+         mActorTreeDock->setWindowTitle(tr("Actor Tree"));
+         mActorTreeDock->setFeatures(QDockWidget::DockWidgetMovable | QDockWidget::DockWidgetClosable);
 
          mActorTreePanel = new dtQt::ActorTreePanel();
          mActorTreeDock->setWidget(mActorTreePanel);

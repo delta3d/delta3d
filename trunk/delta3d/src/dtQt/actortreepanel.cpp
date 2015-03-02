@@ -37,6 +37,10 @@ namespace dtQt
          mUI->mTree, SLOT(expandAll()));
       connect(mUI->mButtonCollapseAll, SIGNAL(clicked()),
          mUI->mTree, SLOT(collapseAll()));
+
+      // TREE
+      connect(mUI->mTree, SIGNAL(SignalUpdatedUI()),
+         this, SLOT(OnTreeWidgetUpdated()));
    }
    
    ActorTreeWidget& ActorTreePanel::GetTreeWidget()
@@ -67,6 +71,11 @@ namespace dtQt
    {
       mUI->mTree->UpdateUI();
 
+      // NOTE: Other UI updates will be triggered when the tree widget is updated.
+   }
+
+   void ActorTreePanel::OnTreeWidgetUpdated()
+   {
       QString qstr = QString::number(mUI->mTree->GetActorCount());
       mUI->mActorCount->setText(qstr);
    }

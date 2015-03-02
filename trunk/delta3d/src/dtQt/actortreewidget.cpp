@@ -332,8 +332,8 @@ namespace dtQt
 
       ActorTreeBuilder builder(*this, *mIconProvider);
       builder.Traverse(mActors);
-      
-      UpdateColumns();
+
+      emit SignalUpdatedUI();
    }
 
    void ActorTreeWidget::OnItemSelectionChanged()
@@ -443,6 +443,8 @@ namespace dtQt
             }
          }
       }
+
+      emit SignalUpdatedUI();
    }
 
    bool ActorTreeWidget::dropMimeData(QTreeWidgetItem* parent, int index,
