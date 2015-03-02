@@ -521,7 +521,7 @@ namespace dtEditQt
       // an argument.
       void slotSelectedActors(ActorRefPtrVector& actors);
 
-      void slotOnActorCreated(ActorProxyRefPtr proxy, bool forceNoAdjustments);
+      void slotOnActorCreated(ActorPtr proxy, bool forceNoAdjustments);
 
       void slotGetGotoPosition();
 

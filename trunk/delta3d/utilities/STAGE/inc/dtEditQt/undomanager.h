@@ -118,12 +118,12 @@ namespace dtEditQt
       /**
       * Creates a group actor event.
       */
-      void groupActor(ActorProxyRefPtr proxy);
+      void groupActor(ActorPtr proxy);
 
       /**
       * Creates an ungroup actor event.
       */
-      void unGroupActor(ActorProxyRefPtr proxy);
+      void unGroupActor(ActorPtr proxy);
 
    protected:
 
@@ -134,25 +134,25 @@ namespace dtEditQt
        * @param proxy The proxy that was changed.
        * @param property The property of the proxy that was modified.
        */
-      void onActorPropertyChanged(ActorProxyRefPtr proxy,
+      void onActorPropertyChanged(ActorPtr proxy,
          ActorPropertyRefPtr property);
 
       /**
        * An actor property is about to change.  We create the change event object, but
        * don't add it to the undo list until we get the actual changed event.
        */
-      void actorPropertyAboutToChange(ActorProxyRefPtr proxy,
+      void actorPropertyAboutToChange(ActorPtr proxy,
          ActorPropertyRefPtr property, std::string oldValue, std::string newValue);
 
       /**
        * When an actor is created, we add a create event to the undo list.
        */
-      void onActorProxyCreated(ActorProxyRefPtr proxy, bool forceNoAdjustments);
+      void onActorProxyCreated(ActorPtr proxy, bool forceNoAdjustments);
 
       /**
        * When an actor is destroyed, we add a destroy event to the undo list.
        */
-      void onActorProxyDestroyed(ActorProxyRefPtr proxy);
+      void onActorProxyDestroyed(ActorPtr proxy);
 
       /**
        * When the name changes, trap this event.

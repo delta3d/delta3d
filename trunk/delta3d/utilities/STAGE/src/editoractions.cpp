@@ -130,8 +130,8 @@ namespace dtEditQt
       connect(mTimer, SIGNAL(timeout()), this, SLOT(slotAutosave()));
 
       connect(&EditorEvents::GetInstance(),
-         SIGNAL(actorProxyCreated(ActorProxyRefPtr, bool)), this,
-         SLOT(slotOnActorCreated(ActorProxyRefPtr, bool)));
+         SIGNAL(actorProxyCreated(ActorPtr, bool)), this,
+         SLOT(slotOnActorCreated(ActorPtr, bool)));
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -1134,7 +1134,7 @@ namespace dtEditQt
    }
 
    //////////////////////////////////////////////////////////////////////////////
-   void EditorActions::slotOnActorCreated(ActorProxyRefPtr actor, bool forceNoAdjustments)
+   void EditorActions::slotOnActorCreated(ActorPtr actor, bool forceNoAdjustments)
    {
       dtCore::IEnvironmentActor* envActor =
          dynamic_cast<dtCore::IEnvironmentActor*>(actor->GetDrawable());

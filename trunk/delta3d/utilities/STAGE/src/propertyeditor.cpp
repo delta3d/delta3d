@@ -205,7 +205,7 @@ namespace dtEditQt
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   void PropertyEditor::ActorPropertyChanged(ActorProxyRefPtr proxy, ActorPropertyRefPtr property)
+   void PropertyEditor::ActorPropertyChanged(ActorPtr proxy, ActorPropertyRefPtr property)
    {
       BaseClass::ActorPropertyChanged(*proxy, *property);
    }

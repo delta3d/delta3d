@@ -79,8 +79,8 @@ namespace dtEditQt
          this, SLOT(refreshAll()));
       connect(&EditorEvents::GetInstance(), SIGNAL(projectChanged()),
          this, SLOT(refreshAll()));
-      connect(&EditorEvents::GetInstance(), SIGNAL(actorProxyCreated(ActorProxyRefPtr, bool)),
-         this, SLOT(onActorProxyCreated(ActorProxyRefPtr, bool)));
+      connect(&EditorEvents::GetInstance(), SIGNAL(actorProxyCreated(ActorPtr, bool)),
+         this, SLOT(onActorProxyCreated(ActorPtr, bool)));
    }
 
    ///////////////////////////////////////////////////////////////////////////////

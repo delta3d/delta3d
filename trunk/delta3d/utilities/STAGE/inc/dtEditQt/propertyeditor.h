@@ -82,7 +82,7 @@ namespace dtEditQt
       void PropertyChangedFromControl(dtCore::PropertyContainer& propCon, dtCore::ActorProperty& prop);
    public slots:
       void HandleActorsSelected(ActorRefPtrVector&);
-      void ActorPropertyChanged(ActorProxyRefPtr proxy, ActorPropertyRefPtr property);
+      void ActorPropertyChanged(ActorPtr proxy, ActorPropertyRefPtr property);
    protected:
       virtual void buildDynamicControls();
 

@@ -52,7 +52,7 @@ public slots:
    * @param[in]  proxy               The proxy that was created.
    * @param[in]  forceNoAdjustments  If true, all slots catching this event should not change the proxy.
    */
-   void onActorProxyCreated(ActorProxyRefPtr proxy, bool forceNoAdjustments);
+   void onActorProxyCreated(ActorPtr proxy, bool forceNoAdjustments);
 
    /**
    * Handles when actors are selected.

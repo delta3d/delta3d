@@ -137,8 +137,8 @@ namespace dtEditQt
       connect(&EditorEvents::GetInstance(), SIGNAL(mapLibraryImported()),
          this, SLOT(clearAll()));
       // Remove search items that are being destroyed
-      connect(&EditorEvents::GetInstance(), SIGNAL(actorProxyAboutToBeDestroyed(ActorProxyRefPtr)),
-         this, SLOT(actorProxyAboutToBeDestroyed(ActorProxyRefPtr)));
+      connect(&EditorEvents::GetInstance(), SIGNAL(actorProxyAboutToBeDestroyed(ActorPtr)),
+         this, SLOT(actorProxyAboutToBeDestroyed(ActorPtr)));
       connect(&EditorEvents::GetInstance(), SIGNAL(selectedActors(ActorRefPtrVector &)),
          this, SLOT(selectedActors(ActorRefPtrVector &)));
 

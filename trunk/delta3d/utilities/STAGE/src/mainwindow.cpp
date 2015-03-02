@@ -405,8 +405,8 @@ namespace dtEditQt
 
          // listen for property change events and update the tree.  These can be generated
          // by the viewports, or the tree itself.
-         connect(&EditorEvents::GetInstance(), SIGNAL(actorPropertyChanged(ActorProxyRefPtr, ActorPropertyRefPtr)),
-                  mPropertyWindow, SLOT(ActorPropertyChanged(ActorProxyRefPtr, ActorPropertyRefPtr)));
+         connect(&EditorEvents::GetInstance(), SIGNAL(actorPropertyChanged(ActorPtr, ActorPropertyRefPtr)),
+                  mPropertyWindow, SLOT(ActorPropertyChanged(ActorPtr, ActorPropertyRefPtr)));
 
          // listen for name changes so we can update our group box label or handle undo changes
          connect(&EditorEvents::GetInstance(), SIGNAL(ProxyNameChanged(dtCore::BaseActorObject&, std::string)),
@@ -825,9 +825,9 @@ namespace dtEditQt
 
          // listen for property change events and update the tree.  These can be generated
          // by the viewports, or the tree itself.
-         disconnect(&EditorEvents::GetInstance(), SIGNAL(actorPropertyChanged(ActorProxyRefPtr,
+         disconnect(&EditorEvents::GetInstance(), SIGNAL(actorPropertyChanged(ActorPtr,
             ActorPropertyRefPtr)),
-            mPropertyWindow, SLOT(ActorPropertyChanged(ActorProxyRefPtr,
+            mPropertyWindow, SLOT(ActorPropertyChanged(ActorPtr,
             ActorPropertyRefPtr)));
 
          // listen for name changes so we can update our group box label or handle undo changes
@@ -1291,13 +1291,13 @@ namespace dtEditQt
          this, SLOT(onMapPropertyChanged()));
       connect(editorActions.mActionWindowsResetWindows, SIGNAL(triggered()),
          this, SLOT(onResetWindows()));
-      connect(&EditorEvents::GetInstance(), SIGNAL(actorProxyDestroyed(ActorProxyRefPtr)),
-         this, SLOT(onActorProxyDestroyed(ActorProxyRefPtr)));
-      connect(&EditorEvents::GetInstance(), SIGNAL(actorProxyCreated(ActorProxyRefPtr, bool)),
-         this, SLOT(onActorProxyCreated(ActorProxyRefPtr, bool)));
+      connect(&EditorEvents::GetInstance(), SIGNAL(actorProxyDestroyed(ActorPtr)),
+         this, SLOT(onActorProxyDestroyed(ActorPtr)));
+      connect(&EditorEvents::GetInstance(), SIGNAL(actorProxyCreated(ActorPtr, bool)),
+         this, SLOT(onActorProxyCreated(ActorPtr, bool)));
       connect(&EditorEvents::GetInstance(),
-         SIGNAL(actorPropertyChanged(ActorProxyRefPtr, ActorPropertyRefPtr)),
-         this, SLOT(onActorPropertyChanged(ActorProxyRefPtr, ActorPropertyRefPtr)));
+         SIGNAL(actorPropertyChanged(ActorPtr, ActorPropertyRefPtr)),
+         this, SLOT(onActorPropertyChanged(ActorPtr, ActorPropertyRefPtr)));
       connect(&EditorEvents::GetInstance(), SIGNAL(ProxyNameChanged(dtCore::BaseActorObject&, std::string)),
          this, SLOT(onActorProxyNameChanged(dtCore::BaseActorObject&, std::string)));
       connect(&EditorEvents::GetInstance(), SIGNAL(showStatusBarMessage(const QString, int)),

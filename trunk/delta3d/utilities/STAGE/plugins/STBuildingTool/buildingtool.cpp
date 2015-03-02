@@ -41,8 +41,8 @@ BuildingToolPlugin::BuildingToolPlugin(MainWindow* mw)
    mModeButton = mMainWindow->FindExclusiveToolMode("Linked Points Actor Tool");
 
    // Setup our signal slots.
-   connect(&EditorEvents::GetInstance(), SIGNAL(actorProxyCreated(ActorProxyRefPtr, bool)),
-      this, SLOT(onActorProxyCreated(ActorProxyRefPtr, bool)));
+   connect(&EditorEvents::GetInstance(), SIGNAL(actorProxyCreated(ActorPtr, bool)),
+      this, SLOT(onActorProxyCreated(ActorPtr, bool)));
 
    connect(&EditorEvents::GetInstance(), SIGNAL(selectedActors(ActorRefPtrVector &)),
       this, SLOT(onActorsSelected(ActorRefPtrVector &)));
@@ -70,7 +70,7 @@ void BuildingToolPlugin::Destroy()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void BuildingToolPlugin::onActorProxyCreated(ActorProxyRefPtr proxy, bool forceNoAdjustments)
+void BuildingToolPlugin::onActorProxyCreated(ActorPtr proxy, bool forceNoAdjustments)
 {
    //// Only do something if the tool is active.
    //if (!mModeButton || !mModeButton->isChecked())
