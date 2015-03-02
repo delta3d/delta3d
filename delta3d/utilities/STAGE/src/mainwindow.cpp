@@ -77,6 +77,7 @@ DT_DISABLE_WARNING_END
 #include <dtEditQt/projectcontextdialog.h>
 #include <dtEditQt/uiresources.h>
 #include <dtEditQt/externaltool.h>
+#include <dtQt/actortreepanel.h>
 #include <dtQt/objecttypelistpanel.h>
 #include <dtQt/objecttypeselectdialog.h>
 
@@ -123,6 +124,8 @@ namespace dtEditQt
       , mActorDockWidg(NULL)
       , mActorSearchDockWidg(NULL)
       , mResourceBrowser(NULL)
+      , mActorTreeDock(NULL)
+      , mActorTreePanel(NULL)
    {
       //Read STAGE configuration file
       if (stageConfigFile != "")
@@ -263,28 +266,32 @@ namespace dtEditQt
       mEditMenu->addAction(editorActions.mActionFileEditPreferences);
 
       mWindowMenu = menuBar()->addMenu(tr("&Window"));
-      if(ConfigurationManager::GetInstance().GetVariable(ConfigurationManager::LAYOUT,
-                                             CONF_MGR_SHOW_PROPERTY_EDITOR) != "false")
+
+      ConfigurationManager& config = ConfigurationManager::GetInstance();
+      ConfigurationManager::SectionType layoutSection = ConfigurationManager::LAYOUT;
+
+      if(config.GetVariable(layoutSection, CONF_MGR_SHOW_PROPERTY_EDITOR) != "false")
       {
          mWindowMenu->addAction(editorActions.mActionWindowsPropertyEditor);
       }
 
-      if(ConfigurationManager::GetInstance().GetVariable(ConfigurationManager::LAYOUT,
-                                         CONF_MGR_SHOW_ACTOR_BROWSER) != "false" ||
-         ConfigurationManager::GetInstance().GetVariable(ConfigurationManager::LAYOUT,
-                                         CONF_MGR_SHOW_PREFAB_BROWSER) != "false")
+      if(config.GetVariable(layoutSection, CONF_MGR_SHOW_ACTOR_BROWSER) != "false"
+         || config.GetVariable(layoutSection, CONF_MGR_SHOW_PREFAB_BROWSER) != "false")
       {
          mWindowMenu->addAction(editorActions.mActionWindowsActor);
       }
 
-      if(ConfigurationManager::GetInstance().GetVariable(ConfigurationManager::LAYOUT,
-         CONF_MGR_SHOW_ACTOR_SEARCH) != "false")
+      if(config.GetVariable(layoutSection, CONF_MGR_SHOW_ACTOR_SEARCH) != "false")
       {
          mWindowMenu->addAction(editorActions.mActionWindowsActorSearch);
       }
 
-      if(ConfigurationManager::GetInstance().GetVariable(ConfigurationManager::LAYOUT,
-         CONF_MGR_SHOW_RESOURCE_BROWSER) != "false")
+      if(config.GetVariable(layoutSection, CONF_MGR_SHOW_ACTOR_TREE_DOCK) != "false")
+      {
+         mWindowMenu->addAction(editorActions.mActionWindowsActorTreePanel);
+      }
+
+      if(config.GetVariable(layoutSection, CONF_MGR_SHOW_RESOURCE_BROWSER) != "false")
       {
          mWindowMenu->addAction(editorActions.mActionWindowsResourceBrowser);
       }
@@ -383,8 +390,10 @@ namespace dtEditQt
       // setup the layout of the dock windows
       setCorner(Qt::TopLeftCorner, Qt::LeftDockWidgetArea/*Qt::DockWindowAreaLeft*/);
 
-      if(ConfigurationManager::GetInstance().GetVariable(ConfigurationManager::LAYOUT,
-                                            CONF_MGR_SHOW_PROPERTY_EDITOR) != "false")
+      ConfigurationManager& config = ConfigurationManager::GetInstance();
+      ConfigurationManager::SectionType layoutSection = ConfigurationManager::LAYOUT;
+
+      if(config.GetVariable(layoutSection, CONF_MGR_SHOW_PROPERTY_EDITOR) != "false")
       {
          // create the main left dock window
          mPropertyWindow = new PropertyEditor(this);
@@ -407,7 +416,7 @@ namespace dtEditQt
          addDockWidget(Qt::LeftDockWidgetArea,  mPropertyWindow);
       }
 
-      if(ConfigurationManager::GetInstance().GetVariable(ConfigurationManager::LAYOUT, CONF_MGR_SHOW_ACTOR_DOCKWIDGET) != "false")
+      if(config.GetVariable(layoutSection, CONF_MGR_SHOW_ACTOR_DOCKWIDGET) != "false")
       {
          mActorDockWidg = new ActorDockWidget(this);
          mActorDockWidg->setObjectName("ActorDockWidget");
@@ -415,7 +424,7 @@ namespace dtEditQt
          addDockWidget(Qt::LeftDockWidgetArea, mActorDockWidg);
       }
 
-      if(ConfigurationManager::GetInstance().GetVariable(ConfigurationManager::LAYOUT, CONF_MGR_SHOW_SEARCH_DOCKWIDGET) != "false")
+      if(config.GetVariable(layoutSection, CONF_MGR_SHOW_SEARCH_DOCKWIDGET) != "false")
       {
          mActorSearchDockWidg = new ActorSearchDockWidget(this);
          mActorSearchDockWidg->setObjectName("ActorSearchDockWidget");
@@ -423,12 +432,35 @@ namespace dtEditQt
          addDockWidget(Qt::LeftDockWidgetArea, mActorSearchDockWidg);
       }
 
-      if(ConfigurationManager::GetInstance().GetVariable(ConfigurationManager::LAYOUT, CONF_MGR_SHOW_RESOURCE_BROWSER) != "false")
+      if(config.GetVariable(layoutSection, CONF_MGR_SHOW_RESOURCE_BROWSER) != "false")
       {
          mResourceBrowser = new ResourceBrowser(this);
          mResourceBrowser->setObjectName("ResourceBrowser");
          mResourceBrowser->setFeatures(QDockWidget::AllDockWidgetFeatures);
          addDockWidget(Qt::RightDockWidgetArea, mResourceBrowser);
+      }
+
+      if(config.GetVariable(layoutSection, CONF_MGR_SHOW_ACTOR_TREE_DOCK) != "false")
+      {
+         mActorTreeDock = new QDockWidget(this);
+         mActorTreeDock->setObjectName("ActorTreeDock");
+         mActorTreeDock->setFeatures(QDockWidget::AllDockWidgetFeatures);
+
+         mActorTreePanel = new dtQt::ActorTreePanel();
+         mActorTreeDock->setWidget(mActorTreePanel);
+
+         EditorActions& editorActions = EditorActions::GetInstance();
+         connect(&EditorEvents::GetInstance(), SIGNAL(selectedActors(ActorRefPtrVector&)),
+                  mActorTreePanel, SLOT(OnActorsSelected(ActorRefPtrVector&)));
+         connect(&mActorTreePanel->GetTreeWidget(), SIGNAL(SignalActorAttach(ActorPtr,ActorPtr,ActorPtr)),
+                  &editorActions, SLOT(slotChangeActorParent(ActorPtr,ActorPtr,ActorPtr)));
+         connect(&mActorTreePanel->GetTreeWidget(), SIGNAL(SignalActorDetach(ActorPtr,ActorPtr)),
+                  &editorActions, SLOT(slotDetachActorParent(ActorPtr,ActorPtr)));
+         
+         connect(editorActions.mActionWindowsActorTreePanel, SIGNAL(triggered(bool)),
+            mActorTreeDock, SLOT(setVisible(bool)));
+         connect(mActorTreeDock, SIGNAL(visibilityChanged(bool)),
+            editorActions.mActionWindowsActorTreePanel, SLOT(setChecked(bool)));
       }
 
       // Create the viewports, assign them to splitters, and embed the splitters
@@ -602,6 +634,7 @@ namespace dtEditQt
 
       ea.mActionWindowsActor->setEnabled(hasBoth);
       ea.mActionWindowsActorSearch->setEnabled(hasBoth);
+      ea.mActionWindowsActorTreePanel->setEnabled(hasBoth);
       ea.mActionWindowsPropertyEditor->setEnabled(hasBoth);
       ea.mActionWindowsResourceBrowser->setEnabled(hasBoth);
       ea.mActionWindowsResetWindows->setEnabled(true);
@@ -624,6 +657,11 @@ namespace dtEditQt
       if (mActorSearchDockWidg != NULL)
       {
          mActorSearchDockWidg->setEnabled(hasBoth);
+      }
+
+      if (mActorTreeDock != NULL)
+      {
+         mActorTreeDock->setEnabled(hasBoth);
       }
 
       if(mResourceBrowser != NULL)
@@ -662,6 +700,13 @@ namespace dtEditQt
          mActorSearchDockWidg->setVisible(true);
          EditorActions::GetInstance().mActionWindowsActorSearch->setChecked(true);
          addDockWidget(Qt::LeftDockWidgetArea,  mActorSearchDockWidg);
+      }
+
+      if (mActorTreeDock != NULL)
+      {
+         mActorTreeDock->setFloating(false);
+         mActorTreeDock->setVisible(true);
+         addDockWidget(Qt::LeftDockWidgetArea,  mActorTreeDock);
       }
 
       if (mResourceBrowser != NULL)
@@ -1994,7 +2039,7 @@ namespace dtEditQt
       std::string pluginPath;
       if (dtUtil::IsEnvironment("STAGE_PLUGIN_PATH"))
       {
-         pluginPath = dtUtil::GetEnvironment("STAGE_PLUGIN_PATH");;
+         pluginPath = dtUtil::GetEnvironment("STAGE_PLUGIN_PATH");
       }
 
       if (pluginPath.empty())

@@ -121,10 +121,6 @@ namespace dtEditQt
       connect(&EditorEvents::GetInstance(), SIGNAL(projectChanged()),    this, SLOT(slotPauseAutosave()));
       connect(&EditorEvents::GetInstance(), SIGNAL(currentMapChanged()), this, SLOT(slotRestartAutosave()));
 
-      // Listen for map load to update child actor references to the map.
-      connect(&EditorEvents::GetInstance(), SIGNAL(currentMapChanged()),
-         this, SLOT(slotAddActorChildrenToMap()));
-
       connect(&EditorEvents::GetInstance(),
          SIGNAL(selectedActors(ActorRefPtrVector&)), this,
          SLOT(slotSelectedActors(ActorRefPtrVector&)));
@@ -365,27 +361,33 @@ namespace dtEditQt
    {
       mActionWindowsPropertyEditor = new QAction(tr("Property Editor"), this);
       mActionWindowsPropertyEditor->setShortcut(tr("Alt+1"));
-      mActionWindowsPropertyEditor->setStatusTip(tr("Hides and retrieves the actor property editor"));
+      mActionWindowsPropertyEditor->setStatusTip(tr("Toggles visibility of the actor property editor"));
       mActionWindowsPropertyEditor->setCheckable(true);
       mActionWindowsPropertyEditor->setChecked(true);
 
       mActionWindowsActor = new QAction(tr("Actor"), this);
       mActionWindowsActor->setShortcut(tr("Alt+2"));
-      mActionWindowsActor->setStatusTip(tr("Hides and retrieves the actor search window"));
+      mActionWindowsActor->setStatusTip(tr("Toggles visibility of the actor search window"));
       mActionWindowsActor->setCheckable(true);
       mActionWindowsActor->setChecked(true);
 
       mActionWindowsActorSearch = new QAction(tr("Actor Search"), this);
       mActionWindowsActorSearch->setShortcut(tr("Alt+3"));
-      mActionWindowsActorSearch->setStatusTip(tr("Hides and retrieves the actor search window"));
+      mActionWindowsActorSearch->setStatusTip(tr("Toggles visibility of the actor search window"));
       mActionWindowsActorSearch->setCheckable(true);
       mActionWindowsActorSearch->setChecked(true);
 
       mActionWindowsResourceBrowser = new QAction(tr("Resource Browser"), this);
       mActionWindowsResourceBrowser->setShortcut(tr("Alt+4"));
-      mActionWindowsResourceBrowser->setStatusTip(tr("Hides and retrieves the resource browser"));
+      mActionWindowsResourceBrowser->setStatusTip(tr("Toggles visibility of the resource browser"));
       mActionWindowsResourceBrowser->setCheckable(true);
       mActionWindowsResourceBrowser->setChecked(true);
+
+      mActionWindowsActorTreePanel = new QAction(tr("Actor Tree Panel"), this);
+      mActionWindowsActorTreePanel->setShortcut(tr("Alt+5"));
+      mActionWindowsActorTreePanel->setStatusTip(tr("Toggles visibility of the actor search window"));
+      mActionWindowsActorTreePanel->setCheckable(true);
+      mActionWindowsActorTreePanel->setChecked(true);
 
       mActionWindowsResetWindows = new QAction(tr("Reset Windows"), this);
       mActionWindowsResetWindows->setShortcut(tr("Ctrl+R"));

@@ -344,6 +344,7 @@ void ConfigurationManager::SetDefaultConfigValues()
    mLayoutVariables[CONF_MGR_SHOW_ACTOR_BROWSER] = "true";
    mLayoutVariables[CONF_MGR_SHOW_PREFAB_BROWSER] = "true";
    mLayoutVariables[CONF_MGR_SHOW_SEARCH_DOCKWIDGET] = "true";
+   mLayoutVariables[CONF_MGR_SHOW_ACTOR_TREE_DOCK] = "true";
    mLayoutVariables[CONF_MGR_SHOW_ACTOR_SEARCH] = "true";
    mLayoutVariables[CONF_MGR_SHOW_GLOBAL_ACTORS] = "true";
    mLayoutVariables[CONF_MGR_SHOW_RESOURCE_BROWSER] = "true";

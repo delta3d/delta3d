@@ -63,15 +63,7 @@ namespace dtEditQt
       if (ConfigurationManager::GetInstance().GetVariable(ConfigurationManager::LAYOUT, CONF_MGR_SHOW_ACTOR_SEARCH) != "false")
       {
          mTabActorSearch  = new TabWrapper(this);
-         mActorTreePanel = new dtQt::ActorTreePanel();
          mActorSearchWidget = new ActorSearcher();
-
-         connect(&EditorEvents::GetInstance(), SIGNAL(selectedActors(ActorRefPtrVector&)),
-                  mActorTreePanel, SLOT(OnActorsSelected(ActorRefPtrVector&)));
-         connect(&mActorTreePanel->GetTreeWidget(), SIGNAL(SignalActorAttach(ActorPtr,ActorPtr,ActorPtr)),
-                  &EditorActions::GetInstance(), SLOT(slotChangeActorParent(ActorPtr,ActorPtr,ActorPtr)));
-         connect(&mActorTreePanel->GetTreeWidget(), SIGNAL(SignalActorDetach(ActorPtr,ActorPtr)),
-                  &EditorActions::GetInstance(), SLOT(slotDetachActorParent(ActorPtr,ActorPtr)));
       }
 
       if (ConfigurationManager::GetInstance().GetVariable(ConfigurationManager::LAYOUT, CONF_MGR_SHOW_GLOBAL_ACTORS) != "false")
@@ -97,7 +89,6 @@ namespace dtEditQt
          QLayout* vlayout = new QVBoxLayout;
          group->setLayout(vlayout);
 
-         vlayout->addWidget(mActorTreePanel);
          vlayout->addWidget(mActorSearchWidget);
 
          // Actor Search tab
