@@ -127,6 +127,7 @@ namespace dtQt
       virtual void rowsInserted ( const QModelIndex & parent, int start, int end );
 
    signals:
+      void SignalUpdatedUI();
       void SignalActorsSelected(ActorRefPtrVector actorArray);
       void SignalActorAttach(ActorPtr actor, ActorPtr oldParent, ActorPtr newParent);
       void SignalActorDetach(ActorPtr actor, ActorPtr oldParent);
