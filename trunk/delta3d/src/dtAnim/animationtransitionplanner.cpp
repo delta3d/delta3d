@@ -637,6 +637,7 @@ namespace dtAnim
    {
       if (mIsAnimHelperSetup)
       {
+         LOG_WARNING("Called SetupAnimationHelper more than once.");
          return;
       }
 
@@ -703,11 +704,16 @@ namespace dtAnim
    {
       BaseClass::OnAddedToActor(actor);
 
-      SetupAnimationHelper();
-
-      if ( ! mIsAnimHelperSetup)
+      // TEMP: This is a temporary workaround to initialize the AnimationHelper
+      // for the sake of showing stances in STAGE.
+      if (IsInSTAGE())
       {
-         LOG_ERROR("Could not setup the AnimationHelper at this point.");
+         SetupAnimationHelper();
+
+         if ( ! mIsAnimHelperSetup)
+         {
+            LOG_ERROR("Could not setup the AnimationHelper at this point.");
+         }
       }
    }
 
