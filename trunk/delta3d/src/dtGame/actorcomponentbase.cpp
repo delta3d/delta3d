@@ -212,7 +212,7 @@ namespace dtGame
    {
       while (!mComponents.empty())
       {
-         RemoveComponent(*(*mComponents.begin()).second);
+         RemoveComponent(*(mComponents.back()).second);
       }
    }
 

@@ -23,11 +23,13 @@
 
 #include <dtPhysics/physicsmaterials.h>
 #include <dtPhysics/palutil.h>
+#include <dtUtil/hashmap.h>
 #include <pal/pal.h>
 
 namespace dtPhysics
 {
-   typedef std::map<std::string, Material*> NameToMaterialMap;
+   typedef dtUtil::HashMap<std::string, Material*> NameToMaterialMap;
+   typedef dtUtil::HashMap<std::string, std::string> AliasMap;
 
    class PhysicsMaterialsImpl
    {
@@ -38,6 +40,7 @@ namespace dtPhysics
       }
       palMaterials& mPalMaterials;
       NameToMaterialMap mMaterialMap;
+      AliasMap mAliasMap;
    };
 
 
@@ -69,16 +72,16 @@ namespace dtPhysics
          def.SetMaterialIndex(mat->GetId());
 
          mImpl->mMaterialMap.insert(std::make_pair(name, mat));
+         mImpl->mAliasMap.erase(name);
       }
-
 
       return mat;
    }
 
    //////////////////////////////////////
-   Material* PhysicsMaterials::CreateOrUpdateMaterial(const std::string& name, MaterialDef& def)
+   Material* PhysicsMaterials::CreateOrUpdateMaterial(const std::string& name, MaterialDef& def, bool ignoreAliases)
    {
-      Material* m = GetMaterial(name);
+      Material* m = GetMaterial(name, ignoreAliases);
       if (m == NULL)
       {
          m = NewMaterial(name, def);
@@ -119,16 +122,34 @@ namespace dtPhysics
    }
 
    //////////////////////////////////////
-   Material* PhysicsMaterials::GetMaterial(const std::string& name)
+   Material* PhysicsMaterials::GetMaterial(const std::string& name, bool ignoreAliases)
    {
       palMaterials& pm = mImpl->mPalMaterials;
-      return pm.GetMaterial(name);
+      Material* result = pm.GetMaterial(name);
+      if (result == NULL && !ignoreAliases)
+      {
+         AliasMap::const_iterator ci = mImpl->mAliasMap.find(name);
+         if (ci != mImpl->mAliasMap.end())
+         {
+            result = pm.GetMaterial(ci->second);
+         }
+      }
+      return result;
    }
 
    //////////////////////////////////////
    const Material* PhysicsMaterials::GetMaterial(const std::string& name) const
    {
       palMaterials& pm = mImpl->mPalMaterials;
+      const Material* result = pm.GetMaterial(name);
+      if (result == NULL)
+      {
+         AliasMap::const_iterator ci = mImpl->mAliasMap.find(name);
+         if (ci != mImpl->mAliasMap.end())
+         {
+            result = pm.GetMaterial(ci->second);
+         }
+      }
       return pm.GetMaterial(name);
    }
 
@@ -169,10 +190,39 @@ namespace dtPhysics
    }
 
    //////////////////////////////////////
+   void PhysicsMaterials::SetMaterialAlias(const std::string& name, const std::string& aliasName)
+   {
+      mImpl->mAliasMap[aliasName] = name;
+   }
+
+   //////////////////////////////////////
+   void PhysicsMaterials::RemoveAlias(const std::string& aliasName)
+   {
+      mImpl->mAliasMap.erase(aliasName);
+   }
+
+   //////////////////////////////////////
+   void PhysicsMaterials::ClearAliases()
+   {
+      mImpl->mAliasMap.clear();
+   }
+
+   //////////////////////////////////////
    bool PhysicsMaterials::GetMaterialInteraction(const std::string& name1, const std::string& name2, MaterialDef& defToFill)
    {
       palMaterials& pm = mImpl->mPalMaterials;
       palMaterialInteraction* pMI = pm.GetMaterialInteraction(name1, name2);
+      if (pMI == NULL)
+      {
+         //try with aliases
+         Material* mat1,* mat2;
+         mat1 = GetMaterial(name1);
+         mat2 = GetMaterial(name2);
+         if (mat1 != NULL & mat2 != NULL)
+         {
+            pMI = pm.GetMaterialInteraction(mat1, mat2);
+         }
+      }
       if (pMI != NULL)
       {
          PalMatDescToMatDef(defToFill, *pMI);
@@ -248,6 +298,7 @@ namespace dtPhysics
    , mDirOfAnisotropy(1.0f, 0.0f, 0.0f)
    , mEnableAnisotropicFriction(false)
    , mDisableStrongFriction(false)
+   , mMaterialIndex(0)
    {
    };
    //////////////////////////////////////////////////////////

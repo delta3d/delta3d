@@ -99,6 +99,7 @@ namespace dtPhysics
       /**
        * Creates a new material with the given name and the definition.
        * If the named material already exists, nothing happens.
+       * If there is an alias with this name, it deletes the alias in favor of the material.
        * TODO I may revise this to throw an exception.
        * @param name The name for the new material.
        * @param def the definintion of the material.
@@ -109,11 +110,12 @@ namespace dtPhysics
        * if it exists, it updates the definition to the given one.
        * @param name The name for the material.
        * @param def the definintion of the material.
+       * @param ignoreAliases defaults to true because the code normally calling this would want to create a new material and drop the alias.
        */
-      Material* CreateOrUpdateMaterial(const std::string& name, MaterialDef& def);
+      Material* CreateOrUpdateMaterial(const std::string& name, MaterialDef& def, bool ignoreAliases = true);
 
-      ///@return a material by name or NULL if it doesn't exist.
-      Material* GetMaterial(const std::string& name);
+      ///@return a material by name (or aliases if desired) or NULL if it doesn't exist.
+      Material* GetMaterial(const std::string& name, bool ignoreAliases = false);
       ///@return a material by name or NULL if it doesn't exist.
       const Material* GetMaterial(const std::string& name) const;
 
@@ -124,6 +126,15 @@ namespace dtPhysics
        * @return TRUE if a material was found and modified.
        */
       bool SetMaterialDef(const std::string& name, const MaterialDef& def);
+
+      /**
+       * Loaded physics data will often have material data with names that haven't been configured in a
+       * material object, or one may temporarily want to use the same definition for multiple materials.
+       * This allows one to do that without the data duplication.
+       */
+      void SetMaterialAlias(const std::string& name, const std::string& aliasName);
+      void RemoveAlias(const std::string& aliasName);
+      void ClearAliases();
 
       /// Changes the definition of a material directly.
       void SetMaterialDef(Material& mat, const MaterialDef& def);
