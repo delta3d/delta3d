@@ -104,6 +104,7 @@ namespace dtPhysics
       CPPUNIT_TEST(TestNULLStaticInstance);
       CPPUNIT_TEST(TestMaterialsPerEngine);
       CPPUNIT_TEST(TestMaterialInteractionsPerEngine);
+      CPPUNIT_TEST(TestMaterialAliasesPerEngine);
       CPPUNIT_TEST_SUITE_END();
 
    public:
@@ -119,6 +120,7 @@ namespace dtPhysics
       void TestNULLStaticInstance();
       void TestMaterialsPerEngine();
       void TestMaterialInteractionsPerEngine();
+      void TestMaterialAliasesPerEngine();
 
    private:
       //Sub Tests
@@ -132,6 +134,7 @@ namespace dtPhysics
 
       void TestMaterials();
       void TestMaterialInteractions();
+      void TestMaterialAliases();
 
       bool RayCallbackTest(const RayCast::Report& report);
       bool RayCallbackThrow(const RayCast::Report& report);
@@ -592,6 +595,17 @@ namespace dtPhysics
    }
 
    /////////////////////////////////////////////////////////
+   void PhysicsWorldTests::TestMaterialAliasesPerEngine()
+   {
+      for (unsigned i = 0; i < GetPhysicsEngineList().size(); ++i)
+      {
+         mCurrentEngine = GetPhysicsEngineList()[i];
+         ChangeEngine();
+         TestMaterialAliases();
+      }
+   }
+
+   /////////////////////////////////////////////////////////
    void PhysicsWorldTests::TestMaterials()
    {
       PhysicsMaterials& materials = mPhysWorld->GetMaterials();
@@ -714,6 +728,61 @@ namespace dtPhysics
       // Test that accessing an unrecognized material should fail.
       CPPUNIT_ASSERT(NULL == materials.GetMaterialByIndex(12345));
       CPPUNIT_ASSERT( ! materials.GetMaterialDefByIndex(12345, def));
+   }
+
+   /////////////////////////////////////////////////////////
+   void PhysicsWorldTests::TestMaterialAliases()
+   {
+      PhysicsMaterials& materials = mPhysWorld->GetMaterials();
+
+      const std::string cheeseMaterialName("cheese");
+      const std::string cheddarMaterialAlias("chedder");
+      const std::string brieMaterialAlias("brie");
+      const std::string steelMaterialName("steel");
+      const std::string ironMaterialAlias("iron");
+
+      MaterialDef def;
+      def.SetKineticFriction(Real(0.55));
+      def.SetStaticFriction(Real(0.34));
+      def.SetRestitution(Real(0.97));
+      dtPhysics::Material* mat1 = materials.NewMaterial(cheeseMaterialName, def);
+
+      def.SetKineticFriction(Real(0.8));
+      def.SetStaticFriction(Real(0.9));
+      def.SetRestitution(Real(0.78));
+      dtPhysics::Material* mat2 = materials.NewMaterial(steelMaterialName, def);
+
+      materials.SetMaterialAlias(cheeseMaterialName, cheddarMaterialAlias);
+      materials.SetMaterialAlias(cheeseMaterialName, brieMaterialAlias);
+      materials.SetMaterialAlias(steelMaterialName, ironMaterialAlias);
+
+      CPPUNIT_ASSERT(materials.GetMaterial(cheddarMaterialAlias) == mat1);
+      CPPUNIT_ASSERT(materials.GetMaterial(brieMaterialAlias) == mat1);
+      CPPUNIT_ASSERT(materials.GetMaterial(ironMaterialAlias) == mat2);
+
+      def.SetKineticFriction(Real(1.55));
+      def.SetStaticFriction(Real(1.34));
+      def.SetRestitution(Real(0.97));
+
+      MaterialDef defRead;
+      materials.SetMaterialInteraction(cheeseMaterialName, steelMaterialName, def);
+      materials.GetMaterialInteraction(brieMaterialAlias, ironMaterialAlias, defRead);
+      CPPUNIT_ASSERT_EQUAL(def.GetKineticFriction(), defRead.GetKineticFriction());
+      CPPUNIT_ASSERT_EQUAL(def.GetStaticFriction(), defRead.GetStaticFriction());
+      CPPUNIT_ASSERT_EQUAL(def.GetRestitution(), defRead.GetRestitution());
+
+
+      materials.CreateOrUpdateMaterial(cheddarMaterialAlias, def);
+      materials.RemoveAlias(ironMaterialAlias);
+      CPPUNIT_ASSERT(materials.GetMaterial(cheddarMaterialAlias) != NULL);
+      CPPUNIT_ASSERT(materials.GetMaterial(cheddarMaterialAlias) != mat1);
+      CPPUNIT_ASSERT(materials.GetMaterial(brieMaterialAlias) == mat1);
+      CPPUNIT_ASSERT(materials.GetMaterial(ironMaterialAlias) == NULL);
+
+      materials.ClearAliases();
+      CPPUNIT_ASSERT_MESSAGE("Cheddar is no longer an alias. it should still exist after aliases are cleared", materials.GetMaterial(cheddarMaterialAlias) != NULL);
+      CPPUNIT_ASSERT(materials.GetMaterial(brieMaterialAlias) == NULL);
+      CPPUNIT_ASSERT(materials.GetMaterial(ironMaterialAlias) == NULL);
    }
 
    /////////////////////////////////////////////////////////

@@ -80,6 +80,7 @@ namespace dtPhysics
       VectorTypeToPalVec(desc.m_vDirAnisotropy, def.GetDirOfAnisotropy());
       desc.m_bEnableAnisotropicFriction = def.GetEnableAnisotropicFriction();
       desc.m_bDisableStrongFriction = def.GetDisableStrongFriction();
+      // pal sets the id, so converting it doesn't make sense.
    }
 
    ///////////////////////////////////////////////////////////////////////////
