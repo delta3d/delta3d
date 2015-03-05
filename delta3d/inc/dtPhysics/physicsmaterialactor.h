@@ -28,7 +28,7 @@
 #include <dtPhysics/physicstypes.h>
 #include <dtCore/deltadrawable.h>
 #include <dtGame/gameactorproxy.h>
-#include <dtCore/propertymacros.h>
+#include <dtUtil/getsetmacros.h>
 #include <dtPhysics/physicsmaterials.h>
 #include <dtUtil/refstring.h>
 #include <osg/Node>
@@ -44,6 +44,7 @@ namespace dtPhysics
    class DT_PHYSICS_EXPORT  MaterialActor : public dtGame::GameActorProxy
    {
    public:
+      static const dtUtil::RefString PROPERTY_ALIASES;
       static const dtUtil::RefString PROPERTY_KINETIC_FRICTION;
       static const dtUtil::RefString PROPERTY_STATIC_FRICTION;
       static const dtUtil::RefString PROPERTY_RESTITUTION;
@@ -70,8 +71,7 @@ namespace dtPhysics
       /// Registers the material
       /*override*/ void OnEnteredWorld();
 
-      /// Don't want any.
-      /*override*/ void BuildActorComponents() {}
+      /*override*/ void OnRemovedFromWorld();
 
       /// @return the material object this actor registered.
       Material* GetMaterial() const;
@@ -82,6 +82,7 @@ namespace dtPhysics
       /// @return the material def object with all the data.
       MaterialDef& GetMaterialDef();
 
+      DT_DECLARE_ARRAY_ACCESSOR(std::string, Alias, Aliases);
    protected:
       MaterialDef mMaterial;
       virtual ~MaterialActor();

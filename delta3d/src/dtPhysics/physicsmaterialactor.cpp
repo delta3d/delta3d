@@ -24,7 +24,8 @@
 
 #include <dtPhysics/physicsmaterialactor.h>
 #include <dtPhysics/physicscomponent.h>
-#include <dtCore/enginepropertytypes.h>
+#include <dtCore/propertymacros.h>
+#include <dtCore/arrayactorpropertycomplex.h>
 #include <dtGame/gamemanager.h>
 #include <dtUtil/funtraits.h>
 #include <dtUtil/typetraits.h>
@@ -32,9 +33,10 @@
 namespace dtPhysics
 {
    //////////////////////////////////////////////////////////
-   // Proxy code
+   // Actor code
    //////////////////////////////////////////////////////////
 
+   const dtUtil::RefString MaterialActor::PROPERTY_ALIASES("Aliases");
    const dtUtil::RefString MaterialActor::PROPERTY_KINETIC_FRICTION("KineticFriction");
    const dtUtil::RefString MaterialActor::PROPERTY_STATIC_FRICTION("StaticFriction");
    const dtUtil::RefString MaterialActor::PROPERTY_RESTITUTION("Restitution");
@@ -75,6 +77,25 @@ namespace dtPhysics
          PhysicsMaterials& materials = physComp->GetPhysicsWorld().GetMaterials();
 
          materials.CreateOrUpdateMaterial(GetName(), GetMaterialDef());
+         for (unsigned i = 0; i < mAliases.size(); ++i)
+         {
+            materials.SetMaterialAlias(GetName(), mAliases[i]);
+         }
+      }
+   }
+
+   //////////////////////////////////////////////////////////
+   void MaterialActor::OnRemovedFromWorld()
+   {
+      PhysicsComponent* physComp;
+      GetGameManager()->GetComponentByName(PhysicsComponent::DEFAULT_NAME, physComp);
+      if (physComp != NULL)
+      {
+         PhysicsMaterials& materials = physComp->GetPhysicsWorld().GetMaterials();
+         for (unsigned i = 0; i < mAliases.size(); ++i)
+         {
+            materials.RemoveAlias(mAliases[i]);
+         }
       }
    }
 
@@ -111,37 +132,30 @@ namespace dtPhysics
 
       DT_REGISTER_PROPERTY(MaterialIndex, "The material index is a unique identifier for this material type.", PropRegType, propRegHelper);
 
+      typedef dtCore::ArrayActorPropertyComplex<std::string> AliasArrayPropType;
+      dtCore::RefPtr<AliasArrayPropType> arrayProp =
+               new AliasArrayPropType
+                  (PROPERTY_ALIASES, PROPERTY_ALIASES,
+                   AliasArrayPropType::SetFuncType(this, &MaterialActor::SetAlias),
+                   AliasArrayPropType::GetFuncType(this, &MaterialActor::GetAlias),
+                   AliasArrayPropType::GetSizeFuncType(this, &MaterialActor::GetNumAliases),
+                   AliasArrayPropType::InsertFuncType(this, &MaterialActor::InsertAlias),
+                   AliasArrayPropType::RemoveFuncType(this, &MaterialActor::RemoveAlias),
+                   "Aliases names for this material.",
+                   GROUP
+                  );
+
+      dtCore::RefPtr<dtCore::StringActorProperty> nestedPropertyContainer =
+               new dtCore::StringActorProperty("NestedAliasProperty",
+                     "NestedAliasProperty",
+                     dtCore::StringActorProperty::SetFuncType(arrayProp.get(), &AliasArrayPropType::SetCurrentValue),
+                     dtCore::StringActorProperty::GetFuncType(arrayProp.get(), &AliasArrayPropType::GetCurrentValue),
+                     "", GROUP);
+
+      arrayProp->SetArrayProperty(*nestedPropertyContainer);
+      AddProperty(arrayProp);
+
    }
-
-   //////////////////////////////////////////////////////////
-   // Actor code
-   //////////////////////////////////////////////////////////
-
-   //////////////////////////////////////////////////////////
-   MaterialDrawable::MaterialDrawable()
-   : mNode(new osg::Node)
-   {
-      SetName("Material");
-   }
-
-   /////////////////////////////////////////////////////
-   MaterialDrawable::~MaterialDrawable()
-   {
-
-   }
-
-   /////////////////////////////////////////////////////
-   osg::Node* MaterialDrawable::GetOSGNode()
-   {
-      return mNode.get();
-   }
-
-   /////////////////////////////////////////////////////
-   const osg::Node* MaterialDrawable::GetOSGNode() const
-   {
-      return mNode.get();
-   }
-
    //////////////////////////////////////////////////////////
    Material* MaterialActor::GetMaterial() const
    {
@@ -167,6 +181,38 @@ namespace dtPhysics
    MaterialDef& MaterialActor::GetMaterialDef()
    {
       return mMaterial;
+   }
+
+   DT_IMPLEMENT_ARRAY_ACCESSOR(MaterialActor, std::string, Alias, Aliases, std::string());
+
+
+   //////////////////////////////////////////////////////////
+   // Stub Drawable code
+   //////////////////////////////////////////////////////////
+
+   //////////////////////////////////////////////////////////
+   MaterialDrawable::MaterialDrawable()
+   : mNode(new osg::Node)
+   {
+      SetName("Material");
+   }
+
+   /////////////////////////////////////////////////////
+   MaterialDrawable::~MaterialDrawable()
+   {
+
+   }
+
+   /////////////////////////////////////////////////////
+   osg::Node* MaterialDrawable::GetOSGNode()
+   {
+      return mNode.get();
+   }
+
+   /////////////////////////////////////////////////////
+   const osg::Node* MaterialDrawable::GetOSGNode() const
+   {
+      return mNode.get();
    }
 
 }

@@ -1904,7 +1904,9 @@ namespace dtPhysics
       // test to see if valid
       CPPUNIT_ASSERT(mat.valid());
 
-      mat->SetName("Malange");
+      mat->SetName("Melange");
+      mat->AddAlias("Spice");
+      mat->AddAlias("Control");
 
       CPPUNIT_ASSERT_EQUAL_MESSAGE("The Default is wrong", mat->GetMaterialDef().GetRestitution(), 0.2f);
       CPPUNIT_ASSERT_EQUAL_MESSAGE("The Default is wrong", mat->GetMaterialDef().GetStaticFriction(), 0.5f);
@@ -1937,10 +1939,12 @@ namespace dtPhysics
 
       PhysicsMaterials& materials = dtPhysics::PhysicsWorld::GetInstance().GetMaterials();
 
-      CPPUNIT_ASSERT(materials.GetMaterial("Malange") == NULL);
+      CPPUNIT_ASSERT(materials.GetMaterial("Melange") == NULL);
       mGM->AddActor(*mat);
-      dtPhysics::Material* materialM = materials.GetMaterial("Malange");
+      dtPhysics::Material* materialM = materials.GetMaterial("Melange");
       CPPUNIT_ASSERT(materialM != NULL);
+      CPPUNIT_ASSERT(materials.GetMaterial("Spice") == materialM);
+      CPPUNIT_ASSERT(materials.GetMaterial("Control") == materialM);
       // test to see if they were set correctly.
       CPPUNIT_ASSERT_EQUAL_MESSAGE("Failed to set property", mat->GetMaterialDef().GetRestitution(), materialM->m_fRestitution);
       CPPUNIT_ASSERT_EQUAL_MESSAGE("Failed to set property", mat->GetMaterialDef().GetStaticFriction(), materialM->m_fStatic);
@@ -1955,6 +1959,11 @@ namespace dtPhysics
       dtPhysics::PalVecToVectorType(testVec, materialM->m_vDirAnisotropy);
       CPPUNIT_ASSERT_EQUAL_MESSAGE("Failed to set property", mat->GetMaterialDef().GetDirOfAnisotropy(), testVec);
 
+      mGM->DeleteActor(*mat);
+      dtCore::System::GetInstance().Step(0.01667f);
+      dtCore::System::GetInstance().Step(0.01667f);
+      CPPUNIT_ASSERT(materials.GetMaterial("Spice") == NULL);
+      CPPUNIT_ASSERT(materials.GetMaterial("Control") == NULL);
    }
 
    void dtPhysicsTests::testAutoCreate()
