@@ -2,6 +2,8 @@
 #include <dtAnim/animationgameactor.h>
 
 #include <dtAnim/animationcomponent.h>
+#include <dtAnim/animationhelper.h>
+#include <dtAnim/animationtransitionplanner.h>
 
 using namespace dtAnim;
 
@@ -23,6 +25,13 @@ dtCore::RefPtr<dtCore::ActorType> AnimActorRegistry::ANIMATION_ACTOR_TYPE(new dt
 
 const dtCore::RefPtr<dtCore::SystemComponentType> AnimationComponent::TYPE(new dtCore::SystemComponentType("AnimationComponent","GMComponents",
       "Controls the updating of character animations.  It has a collection of Animation Actor Components.", dtGame::GMComponent::BaseGMComponentType));
+const dtGame::ActorComponent::ACType AnimationHelper::TYPE(new dtCore::ActorType("AnimationActorComponent", "ActorComponents",
+       "Encapsulates skeletal mesh support and control.",
+       dtGame::ActorComponent::BaseActorComponentType));
+const dtGame::ActorComponent::ACType AnimationTransitionPlanner::TYPE(new dtCore::ActorType("dtAnim", "StancePlanner",
+      "An AI planner for chaining animation transitions together for stances and weapons.",
+      dtGame::ActorComponent::BaseActorComponentType));
+
 /////////////////////////////////////////////////////////////
 const std::string AnimationComponent::DEFAULT_NAME(TYPE->GetName());
 
@@ -36,4 +45,6 @@ void dtAnim::AnimActorRegistry::RegisterActorTypes()
 {
    mActorFactory->RegisterType<AnimationGameActor>(ANIMATION_ACTOR_TYPE.get());
    mActorFactory->RegisterType<AnimationComponent>();
+   mActorFactory->RegisterType<AnimationHelper>();
+   mActorFactory->RegisterType<AnimationTransitionPlanner>();
 }

@@ -25,7 +25,7 @@
 namespace dtCore
 {
 
-   const SystemComponentType SystemComponentType::BaseSystemComponentType("Base", "SystemComponents", "Base type for system components.", NULL);
+   dtCore::RefPtr<const SystemComponentType>  SystemComponentType::BaseSystemComponentType(new SystemComponentType("Base", "SystemComponents", "Base type for system components.", NULL));
 
    SystemComponentType::SystemComponentType(const std::string& name,
          const std::string& component,

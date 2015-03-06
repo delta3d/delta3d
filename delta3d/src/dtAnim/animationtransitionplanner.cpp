@@ -168,11 +168,6 @@ namespace dtAnim
 
    ////////////////////////////////////////////////////////////////////////////
 
-   const dtGame::ActorComponent::ACType AnimationTransitionPlanner::TYPE(new dtCore::ActorType("dtAnim", "StancePlanner",
-         "An AI planner for chaining animation transitions together for stances and weapons.",
-         dtGame::ActorComponent::BaseActorComponentType));
-
-
    const dtUtil::RefString AnimationTransitionPlanner::STATE_BASIC_STANCE("BasicStanceState");
    const dtUtil::RefString AnimationTransitionPlanner::STATE_WEAPON("WeaponState");
    const dtUtil::RefString AnimationTransitionPlanner::STATE_DEAD("DeadState");

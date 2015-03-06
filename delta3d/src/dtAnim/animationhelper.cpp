@@ -57,10 +57,6 @@ namespace dtAnim
 /////////////////////////////////////////////////////////////////////////////////
 const std::string AnimationHelper::PROPERTY_SKELETAL_MESH("Skeletal Mesh");
 
-const dtGame::ActorComponent::ACType AnimationHelper::TYPE(new dtCore::ActorType("AnimationActorComponent", "ActorComponents",
-       "Encapsulates skeletal mesh support and control.",
-       dtGame::ActorComponent::BaseActorComponentType));
-
 /////////////////////////////////////////////////////////////////////////////////
 AnimationHelper::AnimationHelper()
    : BaseClass(TYPE)
