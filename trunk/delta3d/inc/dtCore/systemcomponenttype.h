@@ -23,6 +23,7 @@
 #define SYSTEMCOMPONENTTYPE_H_
 
 #include <dtCore/actortype.h>
+#include <dtCore/refptr.h>
 #include <string>
 
 namespace dtCore
@@ -31,12 +32,12 @@ namespace dtCore
    class DT_CORE_EXPORT SystemComponentType: public dtCore::ActorType
    {
    public:
-      static const SystemComponentType BaseSystemComponentType;
+      static dtCore::RefPtr<const SystemComponentType> BaseSystemComponentType;
 
       SystemComponentType(const std::string& name,
             const std::string& component = "SystemComponents",
             const std::string& desc="",
-            const SystemComponentType* parentType = &BaseSystemComponentType);
+            const SystemComponentType* parentType = BaseSystemComponentType);
    protected:
       virtual ~SystemComponentType();
    };
