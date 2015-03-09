@@ -716,7 +716,7 @@ namespace dtCore
             // written nested within a top level actor definition.
             //ghost proxies arent saved
             //added 7/10/06 -banderegg
-            if (actor->IsGhost() || (compContainer != NULL && compContainer->GetParentActor() != NULL))
+            if (actor->IsGhost() || (compContainer != NULL && compContainer->GetParentBaseActor() != NULL))
             {
                continue;
             }
@@ -1157,7 +1157,7 @@ namespace dtCore
          dtCore::ActorComponentContainer* compContainer = dynamic_cast<dtCore::ActorComponentContainer*>(&actor);
          if (compContainer != NULL)
          {
-            BaseActorObject* parent = compContainer->GetParentActor();
+            BaseActorObject* parent = compContainer->GetParentBaseActor();
             if (parent != NULL)
             {
                BeginElement(MapXMLConstants::ACTOR_PARENT_ID_ELEMENT);

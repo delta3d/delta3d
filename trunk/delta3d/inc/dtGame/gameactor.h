@@ -26,7 +26,7 @@
 #include <dtGame/gameactorproxy.h> //needed for private member
 #include <dtCore/observerptr.h>
 #include <dtCore/transformable.h>
-#include <dtGame/actorcomponentbase.h>
+#include <dtGame/actorcomponentcontainer.h>
 
 namespace dtUtil
 {
@@ -47,7 +47,7 @@ namespace dtGame
     */
    class DT_GAME_EXPORT GameActor
       : public dtCore::Transformable
-      , public dtGame::ActorComponentBase
+      , public dtGame::ActorComponentContainer
    {
    public:
       typedef dtCore::Transformable BaseClass;
@@ -149,11 +149,13 @@ namespace dtGame
        * @return the selected ActorComponents (will be empty if not found)
        */
       DEPRECATE_FUNC virtual std::vector<ActorComponent*> GetComponents(ActorComponent::ACType type) const;
+      DEPRECATE_FUNC virtual void GetComponents(ActorComponent::ACType type, ActorComponentVector& toFill) const;
 
       /**
        * Fill the vector with all the actor components.
        */
-      DEPRECATE_FUNC virtual void GetAllComponents(std::vector<ActorComponent*>& toFill);
+      DEPRECATE_FUNC virtual void GetAllComponents(ActorComponentVector& toFill);
+      DEPRECATE_FUNC virtual void GetAllComponents(ActorComponentVectorConst& toFill) const;
 
       /**
        * Does base contain a component of given type?

@@ -51,6 +51,7 @@ class ActorHierarchyTests : public CPPUNIT_NS::TestFixture
       CPPUNIT_TEST(TestActorTraversal);
       CPPUNIT_TEST(TestActorDeletes);
       CPPUNIT_TEST(TestMapSaveLoad);
+      CPPUNIT_TEST(TestClone);
    CPPUNIT_TEST_SUITE_END();
    
    public:
@@ -65,6 +66,7 @@ class ActorHierarchyTests : public CPPUNIT_NS::TestFixture
       void TestActorTraversal();
       void TestActorDeletes();
       void TestMapSaveLoad();
+      void TestClone();
 
       GameActorPtr CreateTestActor(const std::string& name) const;
 
@@ -433,6 +435,67 @@ void ActorHierarchyTests::TestActorDeletes()
    CPPUNIT_ASSERT( ! weakPtrD.valid());
    CPPUNIT_ASSERT( ! weakPtrE.valid());
 }
+
+//////////////////////////////////////////////////////////////////////////
+void ActorHierarchyTests::TestClone()
+{
+   GameActorPtr actorA = CreateTestActor("A");
+   GameActorPtr actorB = CreateTestActor("B");
+   GameActorPtr actorC = CreateTestActor("C");
+   GameActorPtr actorX = CreateTestActor("X");
+   GameActorPtr actorY = CreateTestActor("Y");
+   GameActorPtr actorZ = CreateTestActor("Z");
+
+   std::set<std::string> toFind;
+   toFind.insert("A");
+   toFind.insert("B");
+   toFind.insert("C");
+   toFind.insert("X");
+   toFind.insert("Y");
+   toFind.insert("Z");
+
+   actorB->SetParentActor(actorA);
+   actorC->SetParentActor(actorA);
+   actorX->SetParentActor(actorB);
+   actorY->SetParentActor(actorX);
+   actorZ->SetParentActor(actorC);
+
+   GameActorPtr theClone = actorA->CloneGameActor();
+   dtGame::GameActorProxy::iterator i,iend;
+   i = theClone->begin();
+   iend = theClone->end();
+   for (; i != iend; ++i)
+   {
+      CPPUNIT_ASSERT(toFind.find(i->GetName()) != toFind.end());
+      toFind.erase(i->GetName());
+      if (i->parent() == NULL)
+      {
+         CPPUNIT_ASSERT_EQUAL(std::string("A"), i->GetName());
+      }
+      else if (i->GetName() == "B")
+      {
+         CPPUNIT_ASSERT_EQUAL(std::string("A"), i->parent()->GetName());
+      }
+      else if (i->GetName() == "C")
+      {
+         CPPUNIT_ASSERT_EQUAL(std::string("A"), i->parent()->GetName());
+      }
+      else if (i->GetName() == "X")
+      {
+         CPPUNIT_ASSERT_EQUAL(std::string("B"), i->parent()->GetName());
+      }
+      else if (i->GetName() == "Y")
+      {
+         CPPUNIT_ASSERT_EQUAL(std::string("X"), i->parent()->GetName());
+      }
+      else if (i->GetName() == "Z")
+      {
+         CPPUNIT_ASSERT_EQUAL(std::string("C"), i->parent()->GetName());
+      }
+   }
+   CPPUNIT_ASSERT(toFind.empty());
+}
+
 
 //////////////////////////////////////////////////////////////////////////
 // HELPER FUNCTIONS

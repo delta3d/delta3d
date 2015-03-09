@@ -71,7 +71,7 @@ namespace dtGame
 
       /**
        * DEPRECATED  Put all your message handling logic on you subclass of GameActorProxy (name change pending) and call that
-       * your actor.  The class that is a descendent of DeltaDrawable or GameActor (slated for eventual remove) is your drawable
+       * your actor.  The class that is a descendant of DeltaDrawable or GameActor (deprecated) is your drawable
        * and should do only rendering related things.
        */
       static const std::string PROCESS_MSG_INVOKABLE;
@@ -144,7 +144,13 @@ namespace dtGame
        * for a successful clone operation. This is typically used
        * by the old prototype creation process.
        */
-      dtCore::RefPtr<dtCore::BaseActorObject> Clone();
+      /*override*/ dtCore::RefPtr<dtCore::BaseActorObject> Clone();
+
+      /**
+       * This version of close returns this class to avoid some casting in the implementation.
+       * The Clone() version from the base class calls this function.
+       */
+      virtual dtCore::RefPtr<dtGame::GameActorProxy> CloneGameActor();
 
       /// Overridden to copy properties from actor components.
       /*override*/ void CopyPropertiesFrom(const PropertyContainer& copyFrom);
@@ -152,12 +158,14 @@ namespace dtGame
       /// Overridden to call BuildInvokables
       virtual void Init(const dtCore::ActorType& actorType);
 
-      /*virtual*/ void SetParentActor(dtCore::BaseActorObject* parent);
+
+      virtual void SetParentActor(dtGame::GameActorProxy* parent);
 
       /**
        * Returns the actor that is the parent to this actor.
        */
-      /*override*/ dtCore::BaseActorObject* GetParentActor() const;
+      virtual dtGame::GameActorProxy* GetParentActor() const;
+
 
       /*override*/ dtCore::RefPtr<dtCore::ActorComponentContainer::ActorIterator> GetIterator();
 
@@ -683,6 +691,25 @@ namespace dtGame
        */
       unsigned DetachChildActors();
 
+      /**
+       * This is a temporary override from dtCore so it can set the parent/child relationships
+       */
+      /*virtual*/ bool SetParentBaseActor(dtCore::BaseActorObject* parent)
+      {
+         GameActorProxy* newParent = dynamic_cast<GameActorProxy*>(parent);
+         if (newParent != NULL)
+         {
+            SetParentActor(newParent);
+            return true;
+         }
+         return false;
+      }
+
+      /**
+       * Returns the actor that is the parent to this actor as a base actor object.
+       * Call GetParentActor instead.  This exists just for the map loading code.
+       */
+      /*override*/ dtCore::BaseActorObject* GetParentBaseActor() const { return GetParentActor(); }
    protected:
       /// Destructor
       virtual ~GameActorProxy();

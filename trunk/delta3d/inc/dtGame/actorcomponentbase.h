@@ -152,12 +152,6 @@ namespace dtGame
        */
       virtual void OnActorComponentRemoved(ActorComponent& /*component*/) {};
 
-      /**
-       * TEMPORARY method to determine if an object has a parent.
-       */
-      virtual dtCore::BaseActorObject* GetParentActor() const { return NULL; }
-      virtual void SetParentActor(dtCore::BaseActorObject* parent) { }
-
    protected:
 
       virtual ~ActorComponentBase();

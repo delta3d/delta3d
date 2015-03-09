@@ -89,8 +89,8 @@ namespace dtCore
       /**
        * TEMPORARY method to determine if an object has a parent.
        */
-      virtual dtCore::BaseActorObject* GetParentActor() const = 0;
-      virtual void SetParentActor(dtCore::BaseActorObject* parent) = 0;
+      virtual dtCore::BaseActorObject* GetParentBaseActor() const = 0;
+      virtual bool SetParentBaseActor(dtCore::BaseActorObject* parent) = 0;
 
    protected:
       virtual ~ActorComponentContainer() {}

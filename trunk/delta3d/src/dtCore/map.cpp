@@ -319,7 +319,7 @@ namespace dtCore
       }
       else // GameActor that may have children.
       {
-         gameActor->SetParentActor(NULL);
+         gameActor->SetParentBaseActor(NULL);
 
          unsigned int count = 0;
 

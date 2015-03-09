@@ -157,10 +157,23 @@ namespace dtGame
    }
 
    ////////////////////////////////////////////////////////////////////////////////
+   void GameActor::GetComponents(ActorComponent::ACType type, ActorComponentVector& toFill) const
+   {
+      GetGameActorProxy().GetComponents(type, toFill);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
    void GameActor::GetAllComponents(std::vector<ActorComponent*>& toFill)
    {
       GetGameActorProxy().GetAllComponents(toFill);
    }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void GameActor::GetAllComponents(ActorComponentVectorConst& toFill) const
+   {
+      GetGameActorProxy().GetAllComponents(toFill);
+   }
+
 
    ////////////////////////////////////////////////////////////////////////////////
    bool GameActor::HasComponent(ActorComponent::ACType type) const
