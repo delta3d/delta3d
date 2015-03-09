@@ -413,7 +413,7 @@ namespace dtQt
             dtCore::ActorComponentContainer* gameActor = dynamic_cast<dtCore::ActorComponentContainer*>(actor.get());
             if (gameActor != NULL)
             {
-               oldParent = gameActor->GetParentActor();
+               oldParent = gameActor->GetParentBaseActor();
             }
 
             // DEBUG:

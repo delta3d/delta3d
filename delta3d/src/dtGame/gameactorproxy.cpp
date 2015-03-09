@@ -198,6 +198,13 @@ namespace dtGame
    /////////////////////////////////////////////////////////////////////////////
    dtCore::RefPtr<dtCore::BaseActorObject> GameActorProxy::Clone()
    {
+      dtCore::RefPtr<dtCore::BaseActorObject> result = CloneGameActor().get();
+      return result;
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   dtCore::RefPtr<dtGame::GameActorProxy> GameActorProxy::CloneGameActor()
+   {
       std::ostringstream error;
 
       dtCore::RefPtr<BaseActorObject> copy;
@@ -213,12 +220,15 @@ namespace dtGame
          return NULL;
       }
 
-      copy->SetName(GetName());
 
+      // If it's not a gameActor, this function essentially fails, so it will just return null and the object will be
+      // deleted.
       GameActorProxy* gameActor = dynamic_cast<GameActorProxy*>(copy.get());
 
       if (gameActor != NULL)
       {
+         gameActor->SetName(GetName());
+
          // Clone actor components that may not have been built by default.
          // The actor components on this actor could have been added dynamically
          // and thus would not have been created by the CreateActor method.
@@ -238,6 +248,7 @@ namespace dtGame
                if (newComp != NULL)
                {
                   gameActor->AddComponent(*newComp);
+                  newComp->CopyPropertiesFrom(*curComp);
                }
                else
                {
@@ -247,12 +258,19 @@ namespace dtGame
             }
          }
 
+         // This is done after the actor components because it's done in this order at map load time. that keeps it consistent.
+         copy->CopyPropertiesFrom(*this);
+
+         GameActorProxy::child_iterator i, iend;
+         i = begin_child();
+         iend = end_child();
+         for (; i != iend; ++i)
+         {
+            i->value->CloneGameActor()->SetParentActor(gameActor);
+         }
       }
 
-      // This is done after the actor components because it's done in this order at map load time. that keeps it consistent.
-      copy->CopyPropertiesFrom(*this);
-
-      return copy;
+      return gameActor;
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -289,54 +307,39 @@ namespace dtGame
    {}
    
    /////////////////////////////////////////////////////////////////////////////
-   void GameActorProxy::SetParentActor(dtCore::BaseActorObject* parent)
+   void GameActorProxy::SetParentActor(GameActorProxy* newParent)
    {
-      dtCore::BaseActorObject* parentActor = this->parent();
+      GameActorProxy* curParent = parent() != NULL ? parent()->value: NULL;
 
       // Remove from current parent.
-      if (parentActor != parent)
+      if (curParent != newParent && curParent != NULL)
       {
-         GameActorProxy* parentActorTree = dynamic_cast<GameActorProxy*>(parentActor);
-
-         if (parentActorTree != NULL)
+         // Detach this actor's drawable from the parent drawable if one exists.
+         if (curParent->GetDrawable() != NULL)
          {
-            // Detach this actor's drawable from the parent drawable if one exists.
-            if (parentActorTree->GetDrawable() != NULL)
-            {
-               DetachParentDrawable(*parentActorTree);
-            }
-
-            parentActorTree->remove_subtree(this);
+            DetachParentDrawable(*curParent);
          }
+
+         curParent->remove_subtree(this);
       }
 
       // Attach to the new parent.
-      if (parent != NULL)
+      if (newParent != NULL)
       {
-         GameActorProxy* parentActorTree = dynamic_cast<GameActorProxy*>(parent);
-         if (parentActorTree != NULL)
-         {
-            parentActorTree->insert_subtree(this, NULL);
+         newParent->insert_subtree(this, NULL);
 
-            // Attach this actor's drawable to the parent drawable if one exists.
-            if (parentActorTree->GetDrawable() != NULL)
-            {
-               AttachParentDrawable(*parentActorTree);
-            }
-         }
-         else
+         // Attach this actor's drawable to the parent drawable if one exists.
+         if (newParent->GetDrawable() != NULL)
          {
-            LOG_ERROR("Could not set \"" + parent->GetName() + "\" (of type "
-               + parent->GetActorType().GetName() + ") as parent to actor \"" + GetName()
-               + "\" (of type " + GetActorType().GetName() + ")");
+            AttachParentDrawable(*newParent);
          }
       }
    }
    
    /////////////////////////////////////////////////////////////////////////////
-   dtCore::BaseActorObject* GameActorProxy::GetParentActor() const
+   GameActorProxy* GameActorProxy::GetParentActor() const
    {
-      return parent();
+      return parent() != NULL ? parent()->value: NULL;
    }
 
    /////////////////////////////////////////////////////////////////////////////

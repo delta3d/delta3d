@@ -969,7 +969,7 @@ namespace  dtCore
             // Determine if the current actor can link to a found parent.
             if (parent != NULL && extendedActor != NULL)
             {
-               extendedActor->SetParentActor(parent);
+               extendedActor->SetParentBaseActor(parent);
             }
             
             mMap->AddProxy(*mBaseActorObject);
@@ -1193,7 +1193,7 @@ namespace  dtCore
                = dynamic_cast<dtCore::ActorComponentContainer*>(actor);
             if (compContainer != NULL)
             {
-               actor = compContainer->GetParentActor();
+               actor = compContainer->GetParentBaseActor();
             }
             else // Cannot get to the next parent so exit loop.
             {

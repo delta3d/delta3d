@@ -2113,13 +2113,13 @@ namespace dtEditQt
          dtCore::DeltaDrawable* sceneRoot = drawable->GetSceneParent();
 
          // Detach from current parent.
-         gameActor->SetParentActor(NULL);
+         gameActor->SetParentBaseActor(NULL);
 
          // Attach to new parent.
          bool attached = false;
          if (newParent.valid())
          {
-            gameActor->SetParentActor(newParent.get());
+            gameActor->SetParentBaseActor(newParent.get());
             attached = true;
          }
 
@@ -2215,7 +2215,7 @@ namespace dtEditQt
       dtCore::ActorComponentContainer* gameActor = dynamic_cast<dtCore::ActorComponentContainer*>(&actor);
       if (gameActor != NULL)
       {
-         gameActor->SetParentActor(NULL);
+         gameActor->SetParentBaseActor(NULL);
       }
 
       return map.RemoveProxy(actor);
