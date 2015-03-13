@@ -53,7 +53,7 @@ void ClientMessageProcessor::ProcessMessage(const dtGame::Message& msg)
 
    if (msg.GetSource() != GetGameManager()->GetMachineInfo())
    {
-      LOG_INFO(msg.GetMessageType().GetName() + " message received from: " + msg.GetSource().GetName() + " [" + msg.GetSource().GetHostName() + "]");
+      LOG_ALWAYS(msg.GetMessageType().GetName() + " message received from: " + msg.GetSource().GetName() + " [" + msg.GetSource().GetHostName() + "]");
    }
 
     if (msg.GetMessageType() == dtGame::MessageType::NETCLIENT_NOTIFY_DISCONNECT  ||
