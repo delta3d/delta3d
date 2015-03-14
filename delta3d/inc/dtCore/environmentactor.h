@@ -20,9 +20,10 @@
 #ifndef DELTA_DAL_ENVIRONMENT_ACTOR
 #define DELTA_DAL_ENVIRONMENT_ACTOR
 
-#include <dtCore/actorproxy.h>
+#include <dtCore/baseactorobject.h>
 #include <dtCore/export.h>
 #include <dtUtil/referencedinterface.h>
+#include <dtCore/deltadrawable.h>
 
 namespace dtCore
 {
@@ -66,7 +67,7 @@ namespace dtCore
           * Gets all the actors associated with this environment
           * @param vec The vector to fill
           */
-         virtual void GetAllActors(std::vector<dtCore::DeltaDrawable*>& vec) = 0;
+         virtual void GetAllActors(dtCore::DeltaDrawable::DrawableList& vec) = 0;
 
    
          /**

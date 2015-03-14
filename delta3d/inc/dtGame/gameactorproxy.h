@@ -751,14 +751,14 @@ namespace dtGame
        * @param index Index at which to insert the drawable as a child relative to the order of other child drawables.
        * @return TRUE if the drawable was successfully attached.
        */
-      bool AttachParentDrawable(dtGame::GameActorProxy& parent, int index = -1);
+      bool AttachDrawableToParent(dtGame::GameActorProxy& parent, int index = -1);
 
       /**
        * Temporary convenience method for detaching this actor's drawable from the parent actor's drawable.
        * @param parent Actor with a drawable to detach this actor's drawable from.
        * @return TRUE if the drawable was successfully attached; FALSE if not found or opration failed.
        */
-      bool DetachParentDrawable(dtGame::GameActorProxy& parent);
+      bool DetachDrawableFromParent(dtGame::GameActorProxy& parent);
 
    private:
 

@@ -492,7 +492,7 @@ namespace dtGame
       // DELETE ACTORS
       // IT IS CRUCIAL TO SAVE OFF THE SIZE BECAUSE ACTORS CAN DELETE OTHER ACTORS IN THE OnRemovedFromWorld
       // AND THEIR INFO_ACTOR_DELETED MESSAGES MUST BE HANDLED BEFORE ACTUALLY DELETING THEM.
-      // This means that the function can only remove the actors that are in the vector at the time the function stars
+      // This means that the function can only remove the actors that are in the vector at the time the function starts
       // even though the vector can grow during the execution.
       unsigned deleteSize = mGMImpl->mDeleteList.size();
       for (unsigned int i = 0; i < deleteSize; ++i)
@@ -524,7 +524,15 @@ namespace dtGame
             id = itor->first;
             UnregisterAllMessageListenersForActor(gameActorProxy);
             mGMImpl->mGameActorProxyMap.erase(itor);
-            mGMImpl->RemoveActorFromScene(*this, gameActorProxy);
+            mGMImpl->ReparentDanglingDrawables(*this, gameActorProxy.GetDrawable());
+            gameActorProxy.SetParentActor(NULL);
+
+            //mGMImpl->RemoveActorFromScene(*this, gameActorProxy);
+            dtCore::DeltaDrawable* dd = gameActorProxy.GetDrawable();
+            if ( dd != NULL )
+            {
+               dd->Emancipate();
+            }
             mGMImpl->ClearTimersForActor(mGMImpl->mSimulationTimers, gameActorProxy);
             mGMImpl->ClearTimersForActor(mGMImpl->mRealTimeTimers, gameActorProxy);
          }
@@ -1214,41 +1222,9 @@ namespace dtGame
       }
       else
       {
+         mGMImpl->AddActorToScene(actor);
 
-         bool hasDrawable = actor.GetDrawable() != NULL;
-
-         bool hasNoParent = hasDrawable && actor.GetDrawable()->GetParent() == NULL;
-
-         if (hasDrawable && mGMImpl->mEnvironment.valid())
-         {
-            if (mGMImpl->mEnvironment.get() != &actor)
-            {
-               IEnvGameActor* ea = dynamic_cast<IEnvGameActor*>(mGMImpl->mEnvironment->GetDrawable());
-               if (ea == NULL)
-               {
-                  LOG_ERROR("An environment actor has an invalid drawable");
-                  return;
-               }
-               if (hasNoParent)
-               {
-                  ea->AddActor(*actor.GetDrawable());
-               }
-               mGMImpl->mBaseActorObjectMap.insert(std::make_pair(actor.GetId(), &actor));
-            }
-            else
-            {
-               mGMImpl->mBaseActorObjectMap.insert(std::make_pair(mGMImpl->mEnvironment->GetId(), mGMImpl->mEnvironment.get()));
-               mGMImpl->SendEnvironmentChangedMessage(*this, mGMImpl->mEnvironment.get());
-            }
-         }
-         else
-         {
-            mGMImpl->mBaseActorObjectMap.insert(std::make_pair(actor.GetId(), &actor));
-            if (hasDrawable && hasNoParent)
-            {
-               mGMImpl->mScene->AddChild(actor.GetDrawable());
-            }
-         }
+         mGMImpl->mBaseActorObjectMap.insert(std::make_pair(actor.GetId(), &actor));
       }
    }
 
@@ -1292,86 +1268,68 @@ namespace dtGame
 
 
    ///////////////////////////////////////////////////////////////////////////////
-   void GameManager::AddActor(GameActorProxy& gameActorProxy, bool isRemote, bool publish)
+   void GameManager::AddActor(GameActorProxy& actorRoot, bool isRemote, bool publish)
    {
-      if (gameActorProxy.GetId().ToString().empty())
+      GameActorProxy::iterator i, iend;
+      i = actorRoot.begin();
+      iend = actorRoot.end();
+      for (;i != iend; ++i)
       {
-         throw dtGame::InvalidActorStateException(
-            "Actors may not be added the GM with an empty unique id", __FILE__, __LINE__);
-      }
+         GameActorProxy& actor = *i->value;
+         if (actor.IsInGM())
+            return;
 
-      // Fail early here so that it doesn't fail is PublishActor and need to wait a tick to
-      // clean up the actor.
-      if (publish && isRemote)
-      {
-         throw dtGame::ActorIsRemoteException( "A remote game actor may not be published", __FILE__, __LINE__);
-      }
-
-      if (gameActorProxy.GetInitialOwnership() == dtGame::GameActorProxy::Ownership::PROTOTYPE)
-      {
-         // don't leave it as prototype.
-         gameActorProxy.SetInitialOwnership(dtGame::GameActorProxy::Ownership::SERVER_LOCAL);
-      }
-
-      gameActorProxy.SetGameManager(this);
-      gameActorProxy.SetRemote(isRemote);
-
-      bool hasDrawable = gameActorProxy.GetDrawable() != NULL;
-
-      bool hasNoParent = hasDrawable && gameActorProxy.GetDrawable()->GetParent() == NULL;
-
-      if (hasDrawable && mGMImpl->mEnvironment.valid())
-      {
-         if (mGMImpl->mEnvironment.get() != &gameActorProxy)
+         if (actor.GetId().IsNull())
          {
-            IEnvGameActor* ea = static_cast<IEnvGameActor*>(mGMImpl->mEnvironment->GetDrawable());
-            if (hasNoParent)
-            {
-               ea->AddActor(*gameActorProxy.GetDrawable());
-            }
-            mGMImpl->mGameActorProxyMap.insert(std::make_pair(gameActorProxy.GetId(), &gameActorProxy));
+            throw dtGame::InvalidActorStateException(
+               "Actors may not be added the GM with an empty unique id", __FILE__, __LINE__);
+         }
+
+         // Fail early here so that it doesn't fail is PublishActor and need to wait a tick to
+         // clean up the actor.
+         if (publish && isRemote)
+         {
+            throw dtGame::ActorIsRemoteException( "A remote game actor may not be published", __FILE__, __LINE__);
+         }
+
+         if (actor.GetInitialOwnership() == dtGame::GameActorProxy::Ownership::PROTOTYPE)
+         {
+            // don't leave it as prototype.
+            actor.SetInitialOwnership(dtGame::GameActorProxy::Ownership::SERVER_LOCAL);
+         }
+
+         actor.SetGameManager(this);
+         actor.SetRemote(isRemote);
+
+         bool envChanged = mGMImpl->AddActorToScene(actor);
+
+         mGMImpl->mGameActorProxyMap.insert(std::make_pair(actor.GetId(), &actor));
+         if (envChanged) mGMImpl->SendEnvironmentChangedMessage(*this, mGMImpl->mEnvironment.get());
+
+
+         // Remote actors are normally created in response to a create message, so sending another is silly.
+         // Also, this doen't currently send messages when loading a map, so check here for that state.
+         if (!isRemote && mGMImpl->mMapChangeStateData->GetCurrentState() == MapChangeStateData::MapChangeState::IDLE)
+         {
+            dtCore::RefPtr<Message> msg = mGMImpl->mFactory.CreateMessage(MessageType::INFO_ACTOR_CREATED);
+            actor.PopulateActorUpdate(static_cast<ActorUpdateMessage&>(*msg));
+            SendMessage(*msg);
+         }
+
+
+         // Save the publish value so we don't have to pass it around.
+         actor.SetPublished(publish);
+         actor.SetDeleted(false);
+
+         if (!mGMImpl->mBatchData.valid() || mGMImpl->mBatchData->mOkToAddActors )
+         {
+            mGMImpl->AddActorToWorld(*this, actor);
          }
          else
          {
-            mGMImpl->mGameActorProxyMap.insert(std::make_pair(mGMImpl->mEnvironment->GetId(), mGMImpl->mEnvironment.get()));
-            if (hasDrawable && hasNoParent)
-            {
-               mGMImpl->mScene->AddChild(mGMImpl->mEnvironment->GetDrawable());
-            }
-            mGMImpl->SendEnvironmentChangedMessage(*this, mGMImpl->mEnvironment.get());
+            // In a batch, exceptions are just logged, though the actors are still deleted.
+            mGMImpl->mBatchData->mBatchItems.push_back(&actor);
          }
-      }
-      else
-      {
-         mGMImpl->mGameActorProxyMap.insert(std::make_pair(gameActorProxy.GetId(), &gameActorProxy));
-         if (hasDrawable && hasNoParent)
-         {
-            mGMImpl->mScene->AddChild(gameActorProxy.GetDrawable());
-         }
-      }
-
-      // Remote actors are normally created in response to a create message, so sending another is silly.
-      // Also, this doen't currently send messages when loading a map, so check here for that state.
-      if (!isRemote && mGMImpl->mMapChangeStateData->GetCurrentState() == MapChangeStateData::MapChangeState::IDLE)
-      {
-         dtCore::RefPtr<Message> msg = mGMImpl->mFactory.CreateMessage(MessageType::INFO_ACTOR_CREATED);
-         gameActorProxy.PopulateActorUpdate(static_cast<ActorUpdateMessage&>(*msg));
-         SendMessage(*msg);
-      }
-
-
-      // Save the publish value so we don't have to pass it around.
-      gameActorProxy.SetPublished(publish);
-      gameActorProxy.SetDeleted(false);
-
-      if (!mGMImpl->mBatchData.valid() || mGMImpl->mBatchData->mOkToAddActors )
-      {
-         mGMImpl->AddActorToWorld(*this, gameActorProxy);
-      }
-      else
-      {
-         // In a batch, exceptions are just logged, though the actors are still deleted.
-         mGMImpl->mBatchData->mBatchItems.push_back(&gameActorProxy);
       }
    }
 
@@ -1430,8 +1388,6 @@ namespace dtGame
             return;
          }
 
-         IEnvGameActor* ea = static_cast<IEnvGameActor*>(envActor->GetDrawable());
-
          dtCore::RefPtr<IEnvGameActorProxy> oldProxy = mGMImpl->mEnvironment;
 
          if (mGMImpl->mEnvironment.valid())
@@ -1442,31 +1398,49 @@ namespace dtGame
             DeleteActor(*mGMImpl->mEnvironment);
          }
 
+         IEnvGameActor* ea = NULL;
+         envActor->GetDrawable(ea);
+
          // Internal pointer is not valid, we are setting a new environment
          // We need to remove all the drawables from the scene and add them
          // to the new environment
          dtCore::ActorPtrVector actors;
-         GetAllActors(actors);
+         GetAllNonGameActors(actors);
          mGMImpl->mScene->RemoveAllDrawables();
          mGMImpl->mScene->UseSceneLight(true);
          size_t actorsSize = actors.size();
          for (size_t i = 0; i < actorsSize; i++)
          {
-            if (actors[i] != oldProxy.get() && actors[i]->GetDrawable()->GetParent() == NULL)
+            dtCore::BaseActorObject* curActor = actors[i];
+            dtCore::DeltaDrawable* dd = curActor->GetDrawable();
+            if (dd != NULL && dd->GetParent() == NULL)
             {
-               ea->AddActor(*actors[i]->GetDrawable());
+               if (ea != NULL)
+               {
+                  ea->AddActor(*dd);
+               }
+               else
+               {
+                  ea->AddChild(dd);
+               }
+            }
+         }
+
+         std::vector<GameActorProxy*> gameActors;
+         GetAllGameActors(gameActors);
+         actorsSize = gameActors.size();
+         for (size_t i = 0; i < actorsSize; i++)
+         {
+            GameActorProxy* curActor = gameActors[i];
+            if (curActor != oldProxy.get() && curActor->GetParentActor() == NULL)
+            {
+               curActor->SetParentActor(envActor);
             }
          }
 
          mGMImpl->mEnvironment = envActor;
          mGMImpl->mEnvironment->SetGameManager(this);
          AddActor(*mGMImpl->mEnvironment, false, false);
-         ea = dynamic_cast<IEnvGameActor*>(mGMImpl->mEnvironment->GetDrawable());
-         if (ea == NULL)
-         {
-            LOG_ERROR("The environment actor parameter has an invalid drawable");
-            return;
-         }
       }
       else
       {
@@ -1580,57 +1554,86 @@ namespace dtGame
 
          if (itor != mGMImpl->mBaseActorObjectMap.end())
          {
-            mGMImpl->RemoveActorFromScene(*this, *itor->second);
-            mGMImpl->mBaseActorObjectMap.erase(itor);
+            dtCore::DeltaDrawable* dd = itor->second->GetDrawable();
+            if (dd != NULL)
+            {
+               //mGMImpl->RemoveActorFromScene(*this, *itor->second);
+               dd->Emancipate();
+               mGMImpl->ReparentDanglingDrawables(*this, dd);
+               mGMImpl->mBaseActorObjectMap.erase(itor);
+            }
          }
       }
       else
       {
-         GameActorProxy& gameActorProxy = *itor->second;
-
-         // Is it an environment actor?
-         IEnvGameActorProxy* eap = dynamic_cast<IEnvGameActorProxy*>(&gameActorProxy);
-         if (eap != NULL && mGMImpl->mScene->GetChildIndex(eap->GetDrawable()) != mGMImpl->mScene->GetNumberOfAddedDrawable())
+         GameActorProxy& gameActorRoot = *itor->second;
+         if (&gameActorRoot == mGMImpl->mEnvironment.get())
          {
-            // First we have to remove all of the actors from it
-            IEnvGameActor* e = NULL;
-            eap->GetDrawable(e);
-            std::vector<dtCore::DeltaDrawable*> actors;
-            e->GetAllActors(actors);
-            e->RemoveAllActors();
+            mGMImpl->mEnvironment = NULL;
 
-            // Now that all the old actors are removed add them back to the scene
-            // Also invalidate the delete environment parent by calling Emancipate
-            for (size_t i = 0; i < actors.size(); ++i)
+            // First un hook the game actors and add them to the scene.  They have code to clean up from being in an environment actor.
+            GameActorProxy::child_iterator i, iend;
+            i = gameActorRoot.begin_child();
+            iend = gameActorRoot.end_child();
+            while (i != iend)
             {
-               mGMImpl->mScene->AddChild(actors[i]);
+               GameActorProxy::child_iterator cur = i;
+               ++i;
+               cur->value->SetParentActor(NULL);
+               mGMImpl->AddActorToScene(*cur);
             }
 
-            // Are we deleting the environment pointer?
-            if (eap == mGMImpl->mEnvironment.get())
+            dtCore::DeltaDrawable::DrawableList drawables;
+            // The environment actor is a special case where we don't want to do a cascading delete.
+            // Is it THE environment actor?
+            IEnvGameActorProxy* eap = dynamic_cast<IEnvGameActorProxy*>(&gameActorRoot);
+            if (eap != NULL && mGMImpl->mScene->GetChildIndex(eap->GetDrawable()) != mGMImpl->mScene->GetNumberOfAddedDrawable())
             {
-               mGMImpl->mEnvironment = NULL;
+
+               // Next remove any other drawables and add them to the scene.
+               IEnvGameActor* e = NULL;
+               eap->GetDrawable(e);
+               e->GetAllActors(drawables);
+               e->RemoveAllActors();
             }
-         }
-
-         if (gameActorProxy.IsInGM())
-         {
-            mGMImpl->mDeleteList.push_back(itor->second);
-            gameActorProxy.SetIsInGM(false);
-            gameActorProxy.SetDeleted(true);
-
-            if (!gameActorProxy.IsRemote())
+            else
             {
-               dtCore::RefPtr<Message> msg = mGMImpl->mFactory.CreateMessage(MessageType::INFO_ACTOR_DELETED);
-               msg->SetAboutActorId(id);
-
-               SendMessage(*msg);
+               dtCore::DeltaDrawable* dd = gameActorRoot.GetDrawable();
+               if (dd != NULL)
+               {
+                  dd->GetChildren(drawables);
+                  // Now that all the old actors are removed add them back to the scene
+                  for (size_t i = 0; i < drawables.size(); ++i)
+                  {
+                     drawables[i]->Emancipate();
+                     dtCore::BaseActorObject* actor = FindActorById(drawables[i]->GetUniqueId());
+                     if (actor != NULL)
+                     {
+                        mGMImpl->AddActorToScene(*actor);
+                     }
+                  }
+              }
             }
+
+            mGMImpl->InternalMarkSingleActorForRemoval(*this, gameActorRoot);
          }
          else
          {
-            LOG_INFO("Deleting Actor twice: \"" + id.ToString() + "\" Name: \"" + gameActorProxy.GetName() +
-               "\" Type: \"" + gameActorProxy.GetActorType().GetFullName() + "\".");
+            GameActorProxy::reverse_iterator i, iend;
+            i = gameActorRoot.rbegin();
+            iend = gameActorRoot.rend();
+            for (; i != iend; ++i)
+            {
+               GameActorProxy& gameActor = *i->value;
+               mGMImpl->InternalMarkSingleActorForRemoval(*this, gameActor);
+               // It will keep traversing Up beyond the actor that is the root here
+               // even though rend() would sort of suggest it would stop there, it actually stops
+               // at the root of the entire tree, so I have to short-circuit it.
+               if (&gameActor == &gameActorRoot)
+               {
+                  break;
+               }
+            }
          }
       }
    }
@@ -1786,18 +1789,6 @@ namespace dtGame
       for (itor = mGMImpl->mPrototypeActors.begin(); itor != mGMImpl->mPrototypeActors.end(); ++itor)
       {
          toFill.push_back(itor->second.get());
-      }
-   }
-
-   ///////////////////////////////////////////////////////////////////////////////
-   void GameManager::GetActorsInScene(std::vector<dtCore::DeltaDrawable*>& vec) const
-   {
-      vec.clear();
-      vec.reserve(mGMImpl->mScene->GetNumberOfAddedDrawable());
-
-      for (unsigned int i = 0; i < mGMImpl->mScene->GetNumberOfAddedDrawable(); i++)
-      {
-         vec.push_back(mGMImpl->mScene->GetChild(i));
       }
    }
 

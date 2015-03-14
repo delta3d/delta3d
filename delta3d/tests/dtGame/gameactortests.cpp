@@ -643,7 +643,7 @@ void GameActorTests::TestAddRemoveFromEnvActor()
       // SET ENVIRONMENT ACTOR TESTS
       mManager->SetEnvironmentActor(eap.get());
       //One cannot enable paging without a window.
-      dtCore::System::GetInstance().Step();
+      dtCore::System::GetInstance().Step(0.0167f);
 
       // --- TEST GM REMOVAL --- START --- //
       // Re-insert environment actor for this sub-test
@@ -651,9 +651,13 @@ void GameActorTests::TestAddRemoveFromEnvActor()
       // Add actor 1
       ap = mManager->CreateActor(*type);
       mManager->AddActor(*ap);
+      CPPUNIT_ASSERT(dynamic_cast<dtGame::GameActorProxy*>(ap.get())->GetParentActor() == eap);
+      CPPUNIT_ASSERT_EQUAL(3, ap->referenceCount());
       // Add actor 2
       dtCore::RefPtr<dtCore::BaseActorObject> ap2 = mManager->CreateActor(*type);
       mManager->AddActor(*ap2);
+      CPPUNIT_ASSERT(dynamic_cast<dtGame::GameActorProxy*>(ap2.get())->GetParentActor() == eap);
+      CPPUNIT_ASSERT_EQUAL(3, ap2->referenceCount());
 
       osg::observer_ptr<dtCore::BaseActorObject> apObserver1 = ap.get();
       osg::observer_ptr<dtCore::BaseActorObject> apObserver2 = ap2.get();
@@ -663,50 +667,33 @@ void GameActorTests::TestAddRemoveFromEnvActor()
          ea->GetNumEnvironmentChildren() == 2);
 
       // Remove actor 2
-      ea->RemoveActor(*ap2->GetDrawable());
+      dynamic_cast<dtGame::GameActorProxy*>(ap2.get())->SetParentActor(NULL);
       CPPUNIT_ASSERT_MESSAGE("The actor 2 should be removed from the scene", ! ea->ContainsActor(*ap2->GetDrawable()) );
       CPPUNIT_ASSERT_MESSAGE("The game manager should have 1 actor in its scene",
          ea->GetNumEnvironmentChildren() == 1);
 
       // Add actor 2 as child to actor 1
-      ap->GetDrawable()->AddChild(ap2->GetDrawable());
+      dynamic_cast<dtGame::GameActorProxy*>(ap2.get())->SetParentActor(dynamic_cast<dtGame::GameActorProxy*>(ap.get()));
 
       // Delete actor 1 from GM
       mManager->DeleteActor(*ap);
-      dtCore::System::GetInstance().Step();
+      dtCore::System::GetInstance().Step(0.0167f);
 
-      // Ensure environment contains actor 2.
-      CPPUNIT_ASSERT_MESSAGE("The environment actor should have actor 2 as a child", ea->ContainsActor(*ap2->GetDrawable()) );
+      // ap 2 should have been deleted as well.
+      CPPUNIT_ASSERT(mManager->FindActorById(ap2->GetId()) == NULL);
 
       std::vector<dtCore::DeltaDrawable*> actors;
       std::vector<dtCore::DeltaDrawable*> drawables;
-
-      // Ensure actor 2 is also returned in the list of actors returned by the environment.
-      bool foundActor = false;
-      ea->GetAllActors(actors);
-      for (unsigned int i = 0; i < actors.size(); ++i)
-      {
-         if (ap2->GetId() == actors[i]->GetUniqueId())
-         {
-            foundActor = true;
-            break;
-         }
-      }
-      actors.clear();
-      CPPUNIT_ASSERT_MESSAGE("The environment actor should return actor 2 in the list returned from GetAllActors().", foundActor );
-
-
-      // Remove actor 2 so no actors are in the GM for the next section of this test function.
-      mManager->DeleteActor(*ap2);
-      dtCore::System::GetInstance().Step();
-
       // Ensure environment has removed actor 2.
       CPPUNIT_ASSERT_MESSAGE("The environment actor should have removed actor 2", ! ea->ContainsActor(*ap2->GetDrawable()) );
+      CPPUNIT_ASSERT_MESSAGE("The environment actor should have removed actor 2", !ea->HasChild(ap2->GetDrawable()) );
 
       // Ensure all actors are removed from the environment
       ea->GetAllActors(actors);
       CPPUNIT_ASSERT(actors.empty());
       dtCore::RefPtr<osg::ObserverSet> obSet = ap->getOrCreateObserverSet();
+
+      CPPUNIT_ASSERT(dynamic_cast<dtGame::GameActorProxy*>(ap2.get())->GetParentActor() == NULL);
 
       CPPUNIT_ASSERT_EQUAL(1, ap->referenceCount());
       CPPUNIT_ASSERT_EQUAL(1, ap2->referenceCount());
@@ -718,7 +705,8 @@ void GameActorTests::TestAddRemoveFromEnvActor()
       CPPUNIT_ASSERT_MESSAGE("Actor 2 should have been deleted.", !apObserver2.valid());
 
       mManager->DeleteAllActors(true);
-      mManager->GetActorsInScene(drawables);
+      drawables.clear();
+      mManager->GetScene().GetChildren(drawables);
       // It's 1 because the scene has 1 in it and the GM only deletes what was added.
       CPPUNIT_ASSERT_EQUAL(size_t(1), drawables.size());
       // --- TEST GM REMOVAL --- END --- //
@@ -756,6 +744,11 @@ void GameActorTests::TestSetEnvironmentActor()
       ea->GetAllActors(actors);
       CPPUNIT_ASSERT(actors.empty());
 
+      drawables.clear();
+      mManager->GetScene().GetChildren(drawables);
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("The game manager should have the correct number of actors in it",
+            0U, unsigned(drawables.size() - 1));
+
       type = mManager->FindActorType("ExampleActors", "TestPlayer");
       CPPUNIT_ASSERT_MESSAGE("Should have been able to find the test player actor in the game manager", type.valid());
 
@@ -765,15 +758,20 @@ void GameActorTests::TestSetEnvironmentActor()
          ap = mManager->CreateActor(*type);
          CPPUNIT_ASSERT_MESSAGE("The game manager should be able to create the test player actor", ap.valid());
          mManager->AddActor(*ap);
+         drawables.clear();
+         mManager->GetScene().GetChildren(drawables);
+         CPPUNIT_ASSERT_EQUAL_MESSAGE("The game manager should have the correct number of actors in it",
+               i+1, unsigned(drawables.size() - 1));
       }
 
-      mManager->GetActorsInScene(drawables);
+      drawables.clear();
+      mManager->GetScene().GetChildren(drawables);
       CPPUNIT_ASSERT_EQUAL_MESSAGE("The game manager should have the correct number of actors in it",
             numActors, unsigned(drawables.size() - 1));
 
       // SET ENVIRONMENT ACTOR TESTS
       mManager->SetEnvironmentActor(eap.get());
-      dtCore::System::GetInstance().Step();
+      dtCore::System::GetInstance().Step(0.016f);
       std::vector<dtCore::RefPtr<const dtGame::Message> > msgs = tc->GetReceivedProcessMessages();
       bool wasMessage = false;
       for (unsigned int i = 0; i < msgs.size(); ++i)
@@ -784,17 +782,16 @@ void GameActorTests::TestSetEnvironmentActor()
          }
       }
       CPPUNIT_ASSERT_MESSAGE("An environment change message should have been sent", wasMessage);
-      mManager->GetActorsInScene(drawables);
-      CPPUNIT_ASSERT_MESSAGE("An environment actor was added.  The game manager should only have "
-         " the environment actor and the default scene light.", drawables.size() == 2);
+      drawables.clear();
+      mManager->GetScene().GetChildren(drawables);
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("An environment actor was added.  The game manager should only have "
+         " the environment actor and the default scene light.", 2U, unsigned(drawables.size()));
       ea->GetAllActors(actors);
       CPPUNIT_ASSERT_MESSAGE("The environment actor should now have the number of actors in it", actors.size() == numActors);
       mManager->SetEnvironmentActor(NULL);
-      //CPPUNIT_ASSERT(mManager->GetScene().IsPagingEnabled());
-      //mManager->GetScene().DisablePaging();
       msgs.clear();
       tc->reset();
-      dtCore::System::GetInstance().Step();
+      dtCore::System::GetInstance().Step(0.016f);
       msgs = tc->GetReceivedProcessMessages();
       wasMessage = false;
       for (unsigned int i = 0; i < msgs.size(); ++i)
@@ -805,16 +802,17 @@ void GameActorTests::TestSetEnvironmentActor()
          }
       }
       CPPUNIT_ASSERT_MESSAGE("An environment change message should NOT have been sent", !wasMessage);
-      mManager->GetActorsInScene(drawables);
-      CPPUNIT_ASSERT_MESSAGE("Set the environment actor to NULL. The game manager should now have the correct "
-            "number of actors in it", drawables.size()-1 == numActors);
+      drawables.clear();
+      mManager->GetScene().GetChildren(drawables);
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("Set the environment actor to NULL. The game manager should now have the correct "
+            "number of drawables in it", size_t(numActors), drawables.size()-1U);
       ea->GetAllActors(actors);
       CPPUNIT_ASSERT_MESSAGE("The environment actor should not have any actors in it", actors.empty());
       mManager->SetEnvironmentActor(NULL);
       //CPPUNIT_ASSERT(!mManager->GetScene().IsPagingEnabled());
       msgs.clear();
       tc->reset();
-      dtCore::System::GetInstance().Step();
+      dtCore::System::GetInstance().Step(0.016f);
       msgs = tc->GetReceivedProcessMessages();
       wasMessage = false;
       for (unsigned int i = 0; i < msgs.size(); ++i)
@@ -827,7 +825,8 @@ void GameActorTests::TestSetEnvironmentActor()
       CPPUNIT_ASSERT_MESSAGE("An environment change message should NOT have been sent, it was a no-op", !wasMessage);
       ea->GetAllActors(actors);
       CPPUNIT_ASSERT_MESSAGE("Setting the environment from NULL to NULL should not have done anything", actors.empty());
-      mManager->GetActorsInScene(drawables);
+      drawables.clear();
+      mManager->GetScene().GetChildren(drawables);
       CPPUNIT_ASSERT_MESSAGE("Setting the environment from NULL to NULL should not have done anything", drawables.size()-1 == numActors);
 
       type = mManager->FindActorType("ExampleActors", "TestEnvironmentActor");
@@ -843,7 +842,8 @@ void GameActorTests::TestSetEnvironmentActor()
       //CPPUNIT_ASSERT(!mManager->GetScene().IsPagingEnabled());
       ea->GetAllActors(actors);
       CPPUNIT_ASSERT_MESSAGE("Once again, the environment actor should now have all the actors", actors.size() == numActors);
-      mManager->GetActorsInScene(drawables);
+      drawables.clear();
+      mManager->GetScene().GetChildren(drawables);
       CPPUNIT_ASSERT_MESSAGE("Once again, the game manager should have no actors in the scene except the environment actor", drawables.size() == 2);
       //One cannot enable paging without a window.
       //mManager->GetScene().EnablePaging();
@@ -862,7 +862,8 @@ void GameActorTests::TestSetEnvironmentActor()
          }
       }
       CPPUNIT_ASSERT_MESSAGE("An environment change message should have been sent", wasMessage);
-      mManager->GetActorsInScene(drawables);
+      drawables.clear();
+      mManager->GetScene().GetChildren(drawables);
       CPPUNIT_ASSERT_MESSAGE("Setting the environment actor on the game manager from one to another should NOT add any actors to the game manager", drawables.size() == 2);
       ea->GetAllActors(actors);
       CPPUNIT_ASSERT_MESSAGE("The environment actor was set to another, this environment actor should NOT have any actors", actors.empty());
@@ -888,10 +889,12 @@ void GameActorTests::TestSetEnvironmentActor()
       CPPUNIT_ASSERT(actors.empty());
       ea2->GetAllActors(actors);
       CPPUNIT_ASSERT_MESSAGE("The previous environment actor should not have any actors", actors.empty());
-      mManager->GetActorsInScene(drawables);
+      drawables.clear();
+      mManager->GetScene().GetChildren(drawables);
       CPPUNIT_ASSERT_MESSAGE("The game manager should now have all the actors", drawables.size() - 1 == numActors);
       mManager->DeleteAllActors(true);
-      mManager->GetActorsInScene(drawables);
+      drawables.clear();
+      mManager->GetScene().GetChildren(drawables);
       // It's 1 because it starts out with 1 and the GM only deletes actors it added
       CPPUNIT_ASSERT_EQUAL(size_t(1), drawables.size());
    }

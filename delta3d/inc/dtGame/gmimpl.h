@@ -116,7 +116,9 @@ namespace dtGame
        * Removes the proxy from the scene
        * @param proxy the proxy to remove from the scene.
        */
-      void RemoveActorFromScene(GameManager& gm, dtCore::BaseActorObject& proxy);
+      //void RemoveActorFromScene(GameManager& gm, dtCore::BaseActorObject& proxy);
+
+      void InternalMarkSingleActorForRemoval(GameManager& gm, GameActorProxy& gameActor);
 
       /**
        * Private helper method to send an environment changed message
@@ -128,6 +130,12 @@ namespace dtGame
        * Adds an actor to the world.  If it throws an exception, it will remove the actor first.
        */
       void AddActorToWorld(GameManager& gm, dtGame::GameActorProxy& actor);
+
+      void AddActorToScene(dtCore::BaseActorObject& actor);
+      // Adds a actor to the scene.  The return bool is if it changed the environment actor.
+      bool AddActorToScene(GameActorProxy& actor);
+
+      void ReparentDanglingDrawables(GameManager& gm, dtCore::DeltaDrawable* dd);
 
       typedef dtUtil::HashMap< dtCore::UniqueId, dtCore::RefPtr<GameActorProxy> > GameActorMap;
       typedef dtUtil::HashMap< dtCore::UniqueId, dtCore::RefPtr<dtCore::BaseActorObject> > ActorMap;

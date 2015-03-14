@@ -194,16 +194,16 @@ void ActorHierarchyTests::TestActorLinkingParentSwap()
    CPPUNIT_ASSERT(actorY->GetParentActor() == actorX.get());
    CPPUNIT_ASSERT(actorZ->GetParentActor() == actorX.get());
 
-   CPPUNIT_ASSERT(drawableA->HasChild(*drawableB));
-   CPPUNIT_ASSERT(drawableA->HasChild(*drawableC));
-   CPPUNIT_ASSERT( ! drawableA->HasChild(*drawableX));
-   CPPUNIT_ASSERT( ! drawableA->HasChild(*drawableY));
-   CPPUNIT_ASSERT( ! drawableA->HasChild(*drawableZ));
-   CPPUNIT_ASSERT(drawableX->HasChild(*drawableY));
-   CPPUNIT_ASSERT(drawableX->HasChild(*drawableZ));
-   CPPUNIT_ASSERT( ! drawableX->HasChild(*drawableA));
-   CPPUNIT_ASSERT( ! drawableX->HasChild(*drawableB));
-   CPPUNIT_ASSERT( ! drawableX->HasChild(*drawableC));
+   CPPUNIT_ASSERT(drawableA->HasChild(drawableB));
+   CPPUNIT_ASSERT(drawableA->HasChild(drawableC));
+   CPPUNIT_ASSERT( ! drawableA->HasChild(drawableX));
+   CPPUNIT_ASSERT( ! drawableA->HasChild(drawableY));
+   CPPUNIT_ASSERT( ! drawableA->HasChild(drawableZ));
+   CPPUNIT_ASSERT(drawableX->HasChild(drawableY));
+   CPPUNIT_ASSERT(drawableX->HasChild(drawableZ));
+   CPPUNIT_ASSERT( ! drawableX->HasChild(drawableA));
+   CPPUNIT_ASSERT( ! drawableX->HasChild(drawableB));
+   CPPUNIT_ASSERT( ! drawableX->HasChild(drawableC));
 
 
    // Swap parents.
@@ -213,19 +213,19 @@ void ActorHierarchyTests::TestActorLinkingParentSwap()
    CPPUNIT_ASSERT(actorY->GetParentActor() == actorB.get());
    CPPUNIT_ASSERT(actorZ->GetParentActor() == actorC.get());
 
-   CPPUNIT_ASSERT(drawableA->HasChild(*drawableB));
-   CPPUNIT_ASSERT(drawableA->HasChild(*drawableC));
-   CPPUNIT_ASSERT(drawableB->HasChild(*drawableY));
-   CPPUNIT_ASSERT(drawableC->HasChild(*drawableZ));
-   CPPUNIT_ASSERT( ! drawableA->HasChild(*drawableX));
-   CPPUNIT_ASSERT( ! drawableA->HasChild(*drawableY));
-   CPPUNIT_ASSERT( ! drawableA->HasChild(*drawableZ));
-   CPPUNIT_ASSERT( ! drawableB->HasChild(*drawableX));
-   CPPUNIT_ASSERT( ! drawableB->HasChild(*drawableZ));
-   CPPUNIT_ASSERT( ! drawableC->HasChild(*drawableX));
-   CPPUNIT_ASSERT( ! drawableC->HasChild(*drawableY));
-   CPPUNIT_ASSERT( ! drawableX->HasChild(*drawableY));
-   CPPUNIT_ASSERT( ! drawableX->HasChild(*drawableZ));
+   CPPUNIT_ASSERT(drawableA->HasChild(drawableB));
+   CPPUNIT_ASSERT(drawableA->HasChild(drawableC));
+   CPPUNIT_ASSERT(drawableB->HasChild(drawableY));
+   CPPUNIT_ASSERT(drawableC->HasChild(drawableZ));
+   CPPUNIT_ASSERT( ! drawableA->HasChild(drawableX));
+   CPPUNIT_ASSERT( ! drawableA->HasChild(drawableY));
+   CPPUNIT_ASSERT( ! drawableA->HasChild(drawableZ));
+   CPPUNIT_ASSERT( ! drawableB->HasChild(drawableX));
+   CPPUNIT_ASSERT( ! drawableB->HasChild(drawableZ));
+   CPPUNIT_ASSERT( ! drawableC->HasChild(drawableX));
+   CPPUNIT_ASSERT( ! drawableC->HasChild(drawableY));
+   CPPUNIT_ASSERT( ! drawableX->HasChild(drawableY));
+   CPPUNIT_ASSERT( ! drawableX->HasChild(drawableZ));
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -252,21 +252,21 @@ void ActorHierarchyTests::TestDrawableLinking()
    actorD->SetParentActor(actorC.get());
 
    // Test the HAS method.
-   CPPUNIT_ASSERT(drawableA->HasChild(*drawableB));
-   CPPUNIT_ASSERT(drawableA->HasChild(*drawableC));
-   CPPUNIT_ASSERT( ! drawableA->HasChild(*drawableD));
+   CPPUNIT_ASSERT(drawableA->HasChild(drawableB));
+   CPPUNIT_ASSERT(drawableA->HasChild(drawableC));
+   CPPUNIT_ASSERT( ! drawableA->HasChild(drawableD));
 
-   CPPUNIT_ASSERT( ! drawableB->HasChild(*drawableA));
-   CPPUNIT_ASSERT( ! drawableB->HasChild(*drawableC));
-   CPPUNIT_ASSERT( ! drawableB->HasChild(*drawableD));
+   CPPUNIT_ASSERT( ! drawableB->HasChild(drawableA));
+   CPPUNIT_ASSERT( ! drawableB->HasChild(drawableC));
+   CPPUNIT_ASSERT( ! drawableB->HasChild(drawableD));
 
-   CPPUNIT_ASSERT( ! drawableC->HasChild(*drawableA));
-   CPPUNIT_ASSERT( ! drawableC->HasChild(*drawableB));
-   CPPUNIT_ASSERT(drawableC->HasChild(*drawableD));
+   CPPUNIT_ASSERT( ! drawableC->HasChild(drawableA));
+   CPPUNIT_ASSERT( ! drawableC->HasChild(drawableB));
+   CPPUNIT_ASSERT(drawableC->HasChild(drawableD));
 
-   CPPUNIT_ASSERT( ! drawableD->HasChild(*drawableA));
-   CPPUNIT_ASSERT( ! drawableD->HasChild(*drawableB));
-   CPPUNIT_ASSERT( ! drawableD->HasChild(*drawableC));
+   CPPUNIT_ASSERT( ! drawableD->HasChild(drawableA));
+   CPPUNIT_ASSERT( ! drawableD->HasChild(drawableB));
+   CPPUNIT_ASSERT( ! drawableD->HasChild(drawableC));
 
 
    // Test the GET method.
@@ -287,9 +287,9 @@ void ActorHierarchyTests::TestDrawableLinking()
    CPPUNIT_ASSERT(drawableA->GetChildren(drawableList) == 2);
    CPPUNIT_ASSERT(drawableList.size() == 2);
    dtCore::DeltaDrawable::DrawableList::iterator iter = drawableList.begin();
-   CPPUNIT_ASSERT(iter->get() == drawableB);
+   CPPUNIT_ASSERT(*iter == drawableB);
    ++iter;
-   CPPUNIT_ASSERT(iter->get() == drawableC);
+   CPPUNIT_ASSERT(*iter == drawableC);
    drawableList.clear();
 
    CPPUNIT_ASSERT(drawableB->GetChildren(drawableList) == 0);
@@ -298,7 +298,7 @@ void ActorHierarchyTests::TestDrawableLinking()
    CPPUNIT_ASSERT(drawableC->GetChildren(drawableList) == 1);
    CPPUNIT_ASSERT(drawableList.size() == 1);
    iter = drawableList.begin();
-   CPPUNIT_ASSERT(iter->get() == drawableD);
+   CPPUNIT_ASSERT(*iter == drawableD);
    drawableList.clear();
 
    CPPUNIT_ASSERT(drawableD->GetChildren(drawableList) == 0);
@@ -307,15 +307,15 @@ void ActorHierarchyTests::TestDrawableLinking()
 
    // Test drawable detachment.
    actorC->SetParentActor(NULL);
-   CPPUNIT_ASSERT(drawableC->HasChild(*drawableD));
-   CPPUNIT_ASSERT(drawableA->HasChild(*drawableB));
-   CPPUNIT_ASSERT( ! drawableA->HasChild(*drawableC));
+   CPPUNIT_ASSERT(drawableC->HasChild(drawableD));
+   CPPUNIT_ASSERT(drawableA->HasChild(drawableB));
+   CPPUNIT_ASSERT( ! drawableA->HasChild(drawableC));
 
    actorD->SetParentActor(NULL);
-   CPPUNIT_ASSERT( ! drawableC->HasChild(*drawableD));
+   CPPUNIT_ASSERT( ! drawableC->HasChild(drawableD));
 
    actorB->SetParentActor(NULL);
-   CPPUNIT_ASSERT( ! drawableA->HasChild(*drawableD));
+   CPPUNIT_ASSERT( ! drawableA->HasChild(drawableD));
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -377,30 +377,30 @@ void ActorHierarchyTests::TestActorDeletes()
    actorG->SetParentActor(actorC.get());
 
    // Quick verification that the tree has expected references.
-   CPPUNIT_ASSERT(drawableA->HasChild(*drawableB));
-   CPPUNIT_ASSERT(drawableA->HasChild(*drawableC));
-   CPPUNIT_ASSERT(drawableB->HasChild(*drawableD));
-   CPPUNIT_ASSERT(drawableB->HasChild(*drawableE));
-   CPPUNIT_ASSERT(drawableC->HasChild(*drawableF));
-   CPPUNIT_ASSERT(drawableC->HasChild(*drawableG));
+   CPPUNIT_ASSERT(drawableA->HasChild(drawableB.get()));
+   CPPUNIT_ASSERT(drawableA->HasChild(drawableC.get()));
+   CPPUNIT_ASSERT(drawableB->HasChild(drawableD.get()));
+   CPPUNIT_ASSERT(drawableB->HasChild(drawableE.get()));
+   CPPUNIT_ASSERT(drawableC->HasChild(drawableF.get()));
+   CPPUNIT_ASSERT(drawableC->HasChild(drawableG.get()));
 
 
    // Test the detach method.
    CPPUNIT_ASSERT(actorA->DetachChildActors() == 2);
    CPPUNIT_ASSERT(actorB->GetParentActor() == NULL);
    CPPUNIT_ASSERT(actorC->GetParentActor() == NULL);
-   CPPUNIT_ASSERT( ! drawableA->HasChild(*drawableB));
-   CPPUNIT_ASSERT( ! drawableA->HasChild(*drawableC));
+   CPPUNIT_ASSERT( ! drawableA->HasChild(drawableB.get()));
+   CPPUNIT_ASSERT( ! drawableA->HasChild(drawableC.get()));
 
    // Verify that the other children were not affected.
    CPPUNIT_ASSERT(actorD->GetParentActor() == actorB.get());
    CPPUNIT_ASSERT(actorE->GetParentActor() == actorB.get());
    CPPUNIT_ASSERT(actorF->GetParentActor() == actorC.get());
    CPPUNIT_ASSERT(actorG->GetParentActor() == actorC.get());
-   CPPUNIT_ASSERT(drawableB->HasChild(*drawableD));
-   CPPUNIT_ASSERT(drawableB->HasChild(*drawableE));
-   CPPUNIT_ASSERT(drawableC->HasChild(*drawableF));
-   CPPUNIT_ASSERT(drawableC->HasChild(*drawableG));
+   CPPUNIT_ASSERT(drawableB->HasChild(drawableD.get()));
+   CPPUNIT_ASSERT(drawableB->HasChild(drawableE.get()));
+   CPPUNIT_ASSERT(drawableC->HasChild(drawableF.get()));
+   CPPUNIT_ASSERT(drawableC->HasChild(drawableG.get()));
 
 
    // Test delete C to make sure F & G and their drawables still exist.
@@ -427,8 +427,8 @@ void ActorHierarchyTests::TestActorDeletes()
    CPPUNIT_ASSERT(weakPtrE.valid());
    CPPUNIT_ASSERT(weakPtrD->GetParentActor() == actorB.get());
    CPPUNIT_ASSERT(weakPtrE->GetParentActor() == actorB.get());
-   CPPUNIT_ASSERT(drawableB->HasChild(*drawableD));
-   CPPUNIT_ASSERT(drawableB->HasChild(*drawableE));
+   CPPUNIT_ASSERT(drawableB->HasChild(drawableD.get()));
+   CPPUNIT_ASSERT(drawableB->HasChild(drawableE.get()));
 
    // Test the tree delete.
    actorB = NULL;
@@ -535,12 +535,12 @@ void ActorHierarchyTests::TestMapSaveLoad()
 
 
    // Verify drawable hierarchy.
-   CPPUNIT_ASSERT(drawableA->HasChild(*drawableB));
-   CPPUNIT_ASSERT(drawableA->HasChild(*drawableC));
-   CPPUNIT_ASSERT(drawableB->HasChild(*drawableD));
-   CPPUNIT_ASSERT(drawableB->HasChild(*drawableE));
-   CPPUNIT_ASSERT(drawableC->HasChild(*drawableF));
-   CPPUNIT_ASSERT(drawableC->HasChild(*drawableG));
+   CPPUNIT_ASSERT(drawableA->HasChild(drawableB));
+   CPPUNIT_ASSERT(drawableA->HasChild(drawableC));
+   CPPUNIT_ASSERT(drawableB->HasChild(drawableD));
+   CPPUNIT_ASSERT(drawableB->HasChild(drawableE));
+   CPPUNIT_ASSERT(drawableC->HasChild(drawableF));
+   CPPUNIT_ASSERT(drawableC->HasChild(drawableG));
 
 
    // Set test trasforms.
@@ -638,31 +638,31 @@ void ActorHierarchyTests::TestMapSaveLoad()
       drawableF = actorF->GetDrawable();
       drawableG = actorG->GetDrawable();
 
-      CPPUNIT_ASSERT(drawableA->HasChild(*drawableB));
-      CPPUNIT_ASSERT(drawableA->HasChild(*drawableC));
-      CPPUNIT_ASSERT(drawableB->HasChild(*drawableD));
-      CPPUNIT_ASSERT(drawableB->HasChild(*drawableE));
-      CPPUNIT_ASSERT(drawableC->HasChild(*drawableF));
-      CPPUNIT_ASSERT(drawableC->HasChild(*drawableG));
+      CPPUNIT_ASSERT(drawableA->HasChild(drawableB));
+      CPPUNIT_ASSERT(drawableA->HasChild(drawableC));
+      CPPUNIT_ASSERT(drawableB->HasChild(drawableD));
+      CPPUNIT_ASSERT(drawableB->HasChild(drawableE));
+      CPPUNIT_ASSERT(drawableC->HasChild(drawableF));
+      CPPUNIT_ASSERT(drawableC->HasChild(drawableG));
 
       // Ensure that other references have not been set.
-      CPPUNIT_ASSERT( ! drawableA->HasChild(*drawableA));
-      CPPUNIT_ASSERT( ! drawableA->HasChild(*drawableD));
-      CPPUNIT_ASSERT( ! drawableA->HasChild(*drawableE));
-      CPPUNIT_ASSERT( ! drawableA->HasChild(*drawableF));
-      CPPUNIT_ASSERT( ! drawableA->HasChild(*drawableG));
+      CPPUNIT_ASSERT( ! drawableA->HasChild(drawableA));
+      CPPUNIT_ASSERT( ! drawableA->HasChild(drawableD));
+      CPPUNIT_ASSERT( ! drawableA->HasChild(drawableE));
+      CPPUNIT_ASSERT( ! drawableA->HasChild(drawableF));
+      CPPUNIT_ASSERT( ! drawableA->HasChild(drawableG));
 
-      CPPUNIT_ASSERT( ! drawableB->HasChild(*drawableA));
-      CPPUNIT_ASSERT( ! drawableB->HasChild(*drawableB));
-      CPPUNIT_ASSERT( ! drawableB->HasChild(*drawableC));
-      CPPUNIT_ASSERT( ! drawableB->HasChild(*drawableF));
-      CPPUNIT_ASSERT( ! drawableB->HasChild(*drawableG));
+      CPPUNIT_ASSERT( ! drawableB->HasChild(drawableA));
+      CPPUNIT_ASSERT( ! drawableB->HasChild(drawableB));
+      CPPUNIT_ASSERT( ! drawableB->HasChild(drawableC));
+      CPPUNIT_ASSERT( ! drawableB->HasChild(drawableF));
+      CPPUNIT_ASSERT( ! drawableB->HasChild(drawableG));
 
-      CPPUNIT_ASSERT( ! drawableC->HasChild(*drawableA));
-      CPPUNIT_ASSERT( ! drawableC->HasChild(*drawableB));
-      CPPUNIT_ASSERT( ! drawableC->HasChild(*drawableC));
-      CPPUNIT_ASSERT( ! drawableC->HasChild(*drawableD));
-      CPPUNIT_ASSERT( ! drawableC->HasChild(*drawableE));
+      CPPUNIT_ASSERT( ! drawableC->HasChild(drawableA));
+      CPPUNIT_ASSERT( ! drawableC->HasChild(drawableB));
+      CPPUNIT_ASSERT( ! drawableC->HasChild(drawableC));
+      CPPUNIT_ASSERT( ! drawableC->HasChild(drawableD));
+      CPPUNIT_ASSERT( ! drawableC->HasChild(drawableE));
 
 
       // Ensure proper transforms.

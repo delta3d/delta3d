@@ -238,9 +238,14 @@ namespace dtGame
 
       for (unsigned int i = 0; i < proxies.size(); ++i)
       {
-         dtCore::BaseActorObject& aProxy = *proxies[i];
-         // Ensure that we don't try and add the environment actor
-         if (map.GetEnvironmentActor() == &aProxy)
+         dtCore::BaseActorObject& curAddActor = *proxies[i];
+         // Ensure that we don't add the environment actor
+         if (map.GetEnvironmentActor() == &curAddActor)
+         {
+            continue;
+         }
+         // Child actors are added when the parents are.
+         else if (curAddActor.IsGameActor() && static_cast<GameActorProxy&>(curAddActor).GetParentActor() != NULL)
          {
             continue;
          }
@@ -248,13 +253,13 @@ namespace dtGame
          {
             try
             {
-               mGameManager->AddActor(aProxy);
+               mGameManager->AddActor(curAddActor);
             }
             catch (const dtUtil::Exception& ex)
             {
                dtUtil::Log::GetInstance("mapchangestatedata.cpp").LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
                      "A problem occurred adding Actor with name \"%s\" of type \"%s\" to the GameManager.",
-                     aProxy.GetName().c_str(), aProxy.GetActorType().GetFullName().c_str());
+                     curAddActor.GetName().c_str(), curAddActor.GetActorType().GetFullName().c_str());
                ex.LogException(dtUtil::Log::LOG_ERROR, dtUtil::Log::GetInstance("mapchangestatedata.cpp"));
             }
          }

@@ -127,50 +127,95 @@ void GMImpl::ProcessTimers(GameManager& gm, std::set<TimerInfo>& listToProcess, 
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void GMImpl::RemoveActorFromScene(GameManager& gm, dtCore::BaseActorObject& proxy)
+void GMImpl::ReparentDanglingDrawables(GameManager& gm, dtCore::DeltaDrawable* dd)
 {
-   dtCore::DeltaDrawable& dd = *proxy.GetDrawable();
-
-   if (dd.GetSceneParent() != mScene.get())
+   if (dd == NULL || dd->GetParent() == NULL) return;
+   for (unsigned c = 0; c < dd->GetNumChildren();)
    {
-      return;
-   }
-
-   // find all of the children that have actor proxies associated with them to move them up
-   // one level in the scene.
-   std::vector< dtCore::RefPtr<dtCore::BaseActorObject> > childrenToMove;
-   for (unsigned i = 0; i < dd.GetNumChildren(); ++i)
-   {
-      dtCore::DeltaDrawable& child = *dd.GetChild(i);
-      dtCore::BaseActorObject* childProxy = gm.FindActorById(child.GetUniqueId());
-      if (childProxy != NULL)
+      dtCore::DeltaDrawable* curChildDD = dd->GetChild(c);
+      dtCore::BaseActorObject* actorWithDrawableAsChild = gm.FindActorById(curChildDD->GetUniqueId());
+      if (actorWithDrawableAsChild != NULL && curChildDD == actorWithDrawableAsChild->GetDrawable())
       {
-         childrenToMove.push_back(childProxy);
+         curChildDD->Emancipate();
+         if (actorWithDrawableAsChild->IsGameActor())
+         {
+            if (AddActorToScene(*static_cast<GameActorProxy*>(actorWithDrawableAsChild)))
+            {
+               // This happens when the actor passed is the environment actor.
+               LOG_ERROR("Internal Error:  The environment was is the subscene.  This shouldn't be possible.");
+            }
+         }
+         else
+         {
+            AddActorToScene(*actorWithDrawableAsChild);
+         }
+      }
+      else
+      {
+         ++c;
       }
    }
+}
 
-   if (dd.GetParent() == NULL)
+////////////////////////////////////////////////////////////////////////////////
+//void GMImpl::RemoveActorFromScene(GameManager& gm, dtCore::BaseActorObject& proxy)
+//{
+//   // All of the this behavior is deprecated. Only the base actor objects do this.
+//
+//   dtCore::DeltaDrawable& dd = *proxy.GetDrawable();
+//
+//   if (dd.GetSceneParent() != mScene.get())
+//   {
+//      return;
+//   }
+//
+//   // find all of the children that have actor proxies associated with them to move them up
+//   // one level in the scene.
+//   std::vector< dtCore::RefPtr<dtCore::BaseActorObject> > childrenToMove;
+//   for (unsigned i = 0; i < dd.GetNumChildren(); ++i)
+//   {
+//      dtCore::DeltaDrawable& child = *dd.GetChild(i);
+//      dtCore::BaseActorObject* childProxy = gm.FindActorById(child.GetUniqueId());
+//      if (childProxy != NULL)
+//      {
+//         childrenToMove.push_back(childProxy);
+//      }
+//   }
+//
+//   if (dd.GetParent() != NULL)
+//   {
+//      // add all the children to the parent drawable.
+//      for (size_t i = 0; i < childrenToMove.size(); ++i)
+//      {
+//         dtCore::DeltaDrawable* child = childrenToMove[i]->GetDrawable();
+//         child->Emancipate();
+//         dd.GetParent()->AddChild(child);
+//      }
+//      // remove the proxy drawable from the parent.
+//      dd.Emancipate();
+//   }
+//}
+
+////////////////////////////////////////////////////////////////////////////////
+void GMImpl::InternalMarkSingleActorForRemoval(GameManager& gm, GameActorProxy& gameActor)
+{
+   if (gameActor.IsInGM())
    {
-      // remove the proxy drawable
-      mScene->RemoveChild(&dd);
-
-      // put all the children in the base scene.
-      for (size_t i = 0; i < childrenToMove.size(); ++i)
+      mDeleteList.push_back(&gameActor);
+      gameActor.SetIsInGM(false);
+      gameActor.SetDeleted(true);
+      if (!gameActor.IsRemote())
       {
-         mScene->AddChild(childrenToMove[i]->GetDrawable());
+         dtCore::RefPtr<Message> msg = mFactory.CreateMessage(MessageType::INFO_ACTOR_DELETED);
+         msg->SetAboutActorId(gameActor.GetId());
+
+         gm.SendMessage(*msg);
       }
    }
    else
    {
-      // add all the children to the parent drawable.
-      for (size_t i = 0; i < childrenToMove.size(); ++i)
-      {
-         dtCore::DeltaDrawable* child = childrenToMove[i]->GetDrawable();
-         child->Emancipate();
-         dd.GetParent()->AddChild(child);
-      }
-      // remove the proxy drawable from the parent.
-      dd.Emancipate();
+      LOG_INFO("Deleting Actor twice: \"" + gameActor.GetId().ToString() + "\" Name: \"" + gameActor.GetName() +
+         "\" Type: \"" + gameActor.GetActorType().GetFullName() + "\".");
    }
 }
 
@@ -208,6 +253,74 @@ void GMImpl::AddActorToWorld(GameManager& gm, dtGame::GameActorProxy& actor)
       throw;
    }
 
+}
+void GMImpl::AddActorToScene(dtCore::BaseActorObject& actor)
+{
+   bool hasDrawable = actor.GetDrawable() != NULL;
+
+   bool hasNoParent = hasDrawable && actor.GetDrawable()->GetParent() == NULL;
+
+   if (hasDrawable && mEnvironment.valid())
+   {
+      if (mEnvironment.get() != &actor)
+      {
+         IEnvGameActor* ea = NULL;
+         mEnvironment->GetDrawable(ea);
+         if (ea == NULL)
+         {
+            LOG_ERROR("An environment actor has an invalid drawable");
+            return;
+         }
+         if (hasNoParent)
+         {
+            ea->AddActor(*actor.GetDrawable());
+         }
+      }
+      else
+      {
+         LOG_ERROR("The environment actor was passed as base actor object internally.");
+      }
+   }
+   else
+   {
+      if (hasDrawable && hasNoParent)
+      {
+         mScene->AddChild(actor.GetDrawable());
+      }
+   }
+}
+
+// Adds a actor to the scene.  The return bool is if it changed the environment actor.
+bool GMImpl::AddActorToScene(GameActorProxy& actor)
+{
+   bool hasNoParent = actor.GetParentActor() == NULL;
+   //TODO - Drawable shouldn't be referenced here.
+   bool hasDrawable = actor.GetDrawable() != NULL;
+   bool envChanged = false;
+
+   if (mEnvironment.valid())
+   {
+      if (mEnvironment.get() != &actor && hasNoParent)
+      {
+         actor.SetParentActor(mEnvironment);
+      }
+      else
+      {
+         if (hasDrawable && hasNoParent)
+         {
+            mScene->AddChild(mEnvironment->GetDrawable());
+         }
+         envChanged = true;
+      }
+   }
+   else
+   {
+      if (hasDrawable && hasNoParent)
+      {
+         mScene->AddChild(actor.GetDrawable());
+      }
+   }
+   return envChanged;
 }
 
 }

@@ -28,7 +28,7 @@ const dtCore::RefPtr<dtCore::SystemComponentType> AnimationComponent::TYPE(new d
 const dtGame::ActorComponent::ACType AnimationHelper::TYPE(new dtCore::ActorType("AnimationActorComponent", "ActorComponents",
        "Encapsulates skeletal mesh support and control.",
        dtGame::ActorComponent::BaseActorComponentType));
-const dtGame::ActorComponent::ACType AnimationTransitionPlanner::TYPE(new dtCore::ActorType("dtAnim", "StancePlanner",
+const dtGame::ActorComponent::ACType AnimationTransitionPlanner::TYPE(new dtCore::ActorType("AnimationStancePlanner", "ActorComponents",
       "An AI planner for chaining animation transitions together for stances and weapons.",
       dtGame::ActorComponent::BaseActorComponentType));
 

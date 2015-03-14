@@ -102,7 +102,7 @@ namespace dtCore
        * @param outDrawables List container to capture all the drawables.
        * @return Number of drawable retrieved.
        */
-      typedef std::list<dtCore::RefPtr<dtCore::DeltaDrawable> > DrawableList;
+      typedef std::vector<dtCore::DeltaDrawable* > DrawableList;
       unsigned int GetChildren(DrawableList& outDrawables);
 
       /**
@@ -133,7 +133,7 @@ namespace dtCore
       /**
        * Determines if the supplied drawable is a child of this drawable.
        */
-      bool HasChild(const DeltaDrawable& child) const;
+      bool HasChild(const DeltaDrawable* child) const;
 
       /**
        * Check if the supplied DeltaDrawable can actually be a child of this instance.
