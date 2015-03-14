@@ -735,7 +735,7 @@ namespace dtUtil
       pointer mParent;
       pointer mPrevSibling;
       ref_pointer mNext;
-      pointer mLastDecendant;
+      pointer mLastDescendant;
    };
 
    template <class T, class T_BaseClass>
@@ -743,7 +743,7 @@ namespace dtUtil
       : value(NULL)
       , mParent(NULL)
       , mPrevSibling(NULL)
-      , mLastDecendant(NULL)
+      , mLastDescendant(NULL)
    {
       init();
    }
@@ -753,7 +753,7 @@ namespace dtUtil
       : value(pData)
       , mParent(NULL)
       , mPrevSibling(NULL)
-      , mLastDecendant(NULL)
+      , mLastDescendant(NULL)
    {
       init();
    }
@@ -781,14 +781,14 @@ namespace dtUtil
       mParent = NULL;
       mPrevSibling = NULL;
       mNext = NULL;
-      mLastDecendant = NULL;
+      mLastDescendant = NULL;
    }
 
    template <class T, class T_BaseClass>
    void Tree<T, T_BaseClass>::init()
    {
       mParent = mNext = 0;
-      mPrevSibling = mLastDecendant = this;
+      mPrevSibling = mLastDescendant = this;
    }
 
    template <class T, class T_BaseClass>
@@ -799,7 +799,7 @@ namespace dtUtil
       mParent = NULL;
       mPrevSibling = NULL;
       mNext = NULL;
-      mLastDecendant = NULL;
+      mLastDescendant = NULL;
    }
 
    template <class T, class T_BaseClass>
@@ -813,7 +813,7 @@ namespace dtUtil
    unsigned Tree<T, T_BaseClass>::size() const
    {
       unsigned n = 1;
-      for (const TreeNode* t = this; t != mLastDecendant; t = t->next())
+      for (const TreeNode* t = this; t != mLastDescendant; t = t->next())
       {
          ++n;
       }
@@ -847,7 +847,7 @@ namespace dtUtil
    template <class T, class T_BaseClass>
    bool Tree<T, T_BaseClass>::is_leaf() const
    {
-      return mLastDecendant == this;
+      return mLastDescendant == this;
    }
 
    template <class T, class T_BaseClass>
@@ -882,7 +882,7 @@ namespace dtUtil
          }
          else
          {
-            prev = mPrevSibling->mLastDecendant;
+            prev = mPrevSibling->mLastDescendant;
          }
       }
 
@@ -926,7 +926,7 @@ namespace dtUtil
    template <class T, class T_BaseClass>
    typename Tree<T, T_BaseClass>::pointer Tree<T, T_BaseClass>::next_sibling() const
    {
-      TreeNode* nextSibling = mLastDecendant->next();
+      TreeNode* nextSibling = mLastDescendant->next();
       if(nextSibling && nextSibling->mParent != mParent)
       {
          nextSibling = 0;
@@ -948,7 +948,7 @@ namespace dtUtil
    template <class T, class T_BaseClass>
    typename Tree<T, T_BaseClass>::pointer Tree<T, T_BaseClass>::last_descendant() const
    {
-      return mLastDecendant;
+      return mLastDescendant;
    }
 
    template <class T, class T_BaseClass>
@@ -1178,8 +1178,8 @@ namespace dtUtil
    template <class T, class T_BaseClass>
    void Tree<T, T_BaseClass>::destroy_decendants()
    {
-      mPrevSibling = mLastDecendant = this;
-      if(mNext.valid() && mLastDecendant != this)
+      mPrevSibling = mLastDescendant = this;
+      if(mNext.valid() && mLastDescendant != this)
       {
          ref_pointer descendant = first_child();
          ref_pointer end = last_descendant()->next();
@@ -1191,7 +1191,7 @@ namespace dtUtil
          }
 
          mNext = end;
-         mLastDecendant = this;
+         mLastDescendant = this;
       }
    }
 
@@ -1212,18 +1212,18 @@ namespace dtUtil
       // deletion problems.
       if (newLast == this)
       {
-         mLastDecendant = this;
+         mLastDescendant = this;
       }
       else
       {
-         ref_pointer oldLast = mLastDecendant;
+         ref_pointer oldLast = mLastDescendant;
          ref_pointer ancestor = this;
          do
          {
-            ancestor->mLastDecendant = newLast;
+            ancestor->mLastDescendant = newLast;
             ancestor = ancestor->mParent;
          }
-         while (ancestor.valid() && (ancestor->mLastDecendant == oldLast));
+         while (ancestor.valid() && (ancestor->mLastDescendant == oldLast));
       }
    }
 
@@ -1240,7 +1240,7 @@ namespace dtUtil
          first_child()->mPrevSibling = child->mPrevSibling;
       }
 
-      if (mLastDecendant == child->mLastDecendant)
+      if (mLastDescendant == child->mLastDescendant)
       {
          change_last_descendant(child->prev());
       }
@@ -1254,11 +1254,11 @@ namespace dtUtil
 
       if (mNext == child)   // deleting first child?
       {
-         mNext = child->mLastDecendant->mNext;
+         mNext = child->mLastDescendant->mNext;
       }
       else
       {
-         child->mPrevSibling->mLastDecendant->mNext = child->mLastDecendant->mNext;
+         child->mPrevSibling->mLastDescendant->mNext = child->mLastDescendant->mNext;
       }
 
       if (child->mParent == this)
@@ -1270,10 +1270,10 @@ namespace dtUtil
       // sibling in the current tree, make sure its next pointer is
       // nullified so that it does not hold onto the sibling inadvertantly.
       // The current tree's next should be the next sibling to the child being removed.
-      if (child->mLastDecendant != NULL
-         && child->mLastDecendant->mNext == mNext)
+      if (child->mLastDescendant != NULL
+         && child->mLastDescendant->mNext == mNext)
       {
-         child->mLastDecendant->mNext = NULL;
+         child->mLastDescendant->mNext = NULL;
       }
 
       // Cleanup.
@@ -1289,8 +1289,8 @@ namespace dtUtil
       {
          // append as last child
          pSubTree->mParent = this;
-         pSubTree->mLastDecendant->mNext = mLastDecendant->mNext;
-         mLastDecendant->mNext = pSubTree;
+         pSubTree->mLastDescendant->mNext = mLastDescendant->mNext;
+         mLastDescendant->mNext = pSubTree;
 
          pSubTree->mPrevSibling = last_child();
          if (is_leaf())
@@ -1300,7 +1300,7 @@ namespace dtUtil
 
          first_child()->mPrevSibling = pSubTree;
 
-         change_last_descendant(pSubTree->mLastDecendant);
+         change_last_descendant(pSubTree->mLastDescendant);
       }
       else
       {
@@ -1308,14 +1308,14 @@ namespace dtUtil
          pSubTree->mParent = parent;
          pSubTree->mPrevSibling = pNext->mPrevSibling;
 
-         pSubTree->mLastDecendant->mNext = pNext;
+         pSubTree->mLastDescendant->mNext = pNext;
          if (parent->mNext == pNext)   // inserting before first subtree?
          {
             parent->mNext = pSubTree;
          }
          else
          {
-            pNext->mPrevSibling->mLastDecendant->mNext = pSubTree;
+            pNext->mPrevSibling->mLastDescendant->mNext = pSubTree;
          }
 
          pNext->mPrevSibling = pSubTree;

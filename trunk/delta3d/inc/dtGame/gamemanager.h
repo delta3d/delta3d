@@ -453,7 +453,7 @@ namespace dtGame
       void AddActor(dtCore::BaseActorObject& actorProxy);
 
       /**
-       * Adds a game actor to the list of actors that the game manager knows about
+       * Adds a game actor and all its tree children to the list of actors that the game manager knows about
        * @param actorProxy The actor proxy to add
        * @param isRemote true if the actor is remotely controlled, false if not.  If a GameActor
        *                 is remote, then it is assumed it will be controlled via
@@ -561,12 +561,6 @@ namespace dtGame
        * managed by this GameManager.
        */
       size_t GetNumAllActors() const;
-
-      /**
-       * Fills a vector with actors that are currently in the scene
-       * @param vec The vector to fill
-       */
-      void GetActorsInScene(std::vector<dtCore::DeltaDrawable*>& vec) const;
 
       /**
        * Allows performing an operation on each actor, excluding prototypes, in the game manager.

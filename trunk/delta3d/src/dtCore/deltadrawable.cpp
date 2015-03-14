@@ -54,8 +54,6 @@ namespace dtCore
 
       unsigned int GetChildIndex(const DeltaDrawable* child) const;
 
-      bool HasChild(const DeltaDrawable& child) const;
-
       bool CanBeChild(DeltaDrawable* child) const;
 
       void RenderProxyNode(bool enable = true);
@@ -204,12 +202,6 @@ namespace dtCore
       }
 
       return mChildList.size(); // node not found.
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   bool DeltaDrawablePrivate::HasChild(const DeltaDrawable& child) const
-   {
-      return GetChildIndex(&child) != mChildList.size();
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -653,9 +645,9 @@ unsigned int DeltaDrawable::GetChildIndex(const DeltaDrawable* child) const
    return mPvt->GetChildIndex(child);
 }
 
-bool DeltaDrawable::HasChild(const DeltaDrawable& child) const
+bool DeltaDrawable::HasChild(const DeltaDrawable* child) const
 {
-   return mPvt->HasChild(child);
+   return GetChildIndex(child) < GetNumChildren();
 }
 
 /*!

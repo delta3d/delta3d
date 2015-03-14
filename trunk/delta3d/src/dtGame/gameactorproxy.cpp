@@ -28,6 +28,7 @@
 #include <dtCore/booleanactorproperty.h>
 #include <dtCore/enumactorproperty.h>
 #include <dtCore/stringactorproperty.h>
+#include <dtGame/environmentactor.h>
 
 #include <dtGame/actorcomponent.h>
 #include <dtGame/actorupdatemessage.h>
@@ -317,7 +318,7 @@ namespace dtGame
          // Detach this actor's drawable from the parent drawable if one exists.
          if (curParent->GetDrawable() != NULL)
          {
-            DetachParentDrawable(*curParent);
+            DetachDrawableFromParent(*curParent);
          }
 
          curParent->remove_subtree(this);
@@ -326,12 +327,13 @@ namespace dtGame
       // Attach to the new parent.
       if (newParent != NULL)
       {
-         newParent->insert_subtree(this, NULL);
+         if (curParent != newParent)
+            newParent->insert_subtree(this, NULL);
 
          // Attach this actor's drawable to the parent drawable if one exists.
          if (newParent->GetDrawable() != NULL)
          {
-            AttachParentDrawable(*newParent);
+            AttachDrawableToParent(*newParent);
          }
       }
    }
@@ -416,22 +418,42 @@ namespace dtGame
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   bool GameActorProxy::AttachParentDrawable(dtGame::GameActorProxy& parent, int index)
+   bool GameActorProxy::AttachDrawableToParent(dtGame::GameActorProxy& parent, int index)
    {
       bool success = false;
+      dtCore::DeltaDrawable* parentDrawable = NULL;
 
-      dtCore::DeltaDrawable* parentDrawable = parent.GetDrawable();
       dtCore::DeltaDrawable* drawable = GetDrawable();
+      if (drawable != NULL)
+      {
+         dtGame::GameActorProxy* curParent = &parent;
 
-      if (parentDrawable != NULL && drawable != NULL)
+         while (parentDrawable == NULL && curParent != NULL)
+         {
+            parentDrawable = curParent->GetDrawable();
+            curParent = curParent->GetParentActor();
+         }
+      }
+
+      if (drawable != NULL && parentDrawable != NULL)
       {
          drawable->Emancipate();
 
-         success = parentDrawable->AddChild(drawable);
+         // TODO This env interface really needs to go away.
+         IEnvGameActor* ea = dynamic_cast<IEnvGameActor*>(parentDrawable);
+         if (ea != NULL)
+         {
+            ea->AddActor(*drawable);
+            success = true;
+         }
+         else
+         {
+            success = parentDrawable->AddChild(drawable);
+         }
       }
       else
       {
-         LOG_WARNING("Could not attach actor drawable \"" + GetName()
+         LOGN_INFO("gameactorproxy.cpp", "Could not attach actor drawable \"" + GetName()
             + "\" (" + GetActorType().GetName()
             + ") to parent actor \"" + parent.GetName()
             + "\" (" + parent.GetActorType().GetName()
@@ -442,25 +464,26 @@ namespace dtGame
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   bool GameActorProxy::DetachParentDrawable(dtGame::GameActorProxy& parent)
+   bool GameActorProxy::DetachDrawableFromParent(dtGame::GameActorProxy& parent)
    {
       bool success = false;
 
-      dtCore::DeltaDrawable* parentDrawable = parent.GetDrawable();
       dtCore::DeltaDrawable* drawable = GetDrawable();
 
-      if (parentDrawable != NULL && drawable != NULL)
+      if (drawable != NULL)
       {
-         drawable->Emancipate();
+         // TODO This env interface really needs to go away.
+         IEnvGameActor* ea = dynamic_cast<IEnvGameActor*>(parent.GetDrawable());
+         if (ea != NULL)
+         {
+            ea->RemoveActor(*drawable);
+         }
+         else
+         {
+            drawable->Emancipate();
+         }
+
          success = true;
-      }
-      else
-      {
-         LOG_WARNING("Could not detach actor drawable \"" + GetName()
-            + "\" (" + GetActorType().GetName()
-            + ") from parent actor \"" + parent.GetName()
-            + "\" (" + parent.GetActorType().GetName()
-            + ") because the parent actor's drawable could not be cast to a group node.");
       }
 
       return success;

@@ -59,6 +59,7 @@
 #include <dtGame/exceptionenum.h>
 #include <dtGame/gameactor.h>
 #include <dtGame/gamemanager.h>
+#include <dtGame/gamemanager.inl>
 #include <dtGame/gmsettings.h>
 #include <dtGame/machineinfo.h>
 #include <dtGame/messagefactory.h>
@@ -100,6 +101,8 @@ class GameManagerTests : public CPPUNIT_NS::TestFixture
         CPPUNIT_TEST(TestAddActorCrash);
         CPPUNIT_TEST(TestCascadedDelete);
         CPPUNIT_TEST(TestCreateRemoteActor);
+        CPPUNIT_TEST(TestGameActorTreeAddDelete);
+        CPPUNIT_TEST(TestGameActorTreeRemote);
         CPPUNIT_TEST(TestComplexScene);
         CPPUNIT_TEST(TestAddRemoveComponents);
         CPPUNIT_TEST(TestComponentPriority);
@@ -145,6 +148,8 @@ public:
    void TestCascadedDelete();
 
    void TestCreateRemoteActor();
+   void TestGameActorTreeAddDelete();
+   void TestGameActorTreeRemote();
    void TestComplexScene();
    void TestAddRemoveComponents();
    void TestComponentPriority();
@@ -1228,6 +1233,68 @@ void GameManagerTests::TestCascadedDelete()
                           "the first tick.",
                           size_t(0), actors.size());
 }
+/////////////////////////////////////////////////
+void GameManagerTests::TestGameActorTreeAddDelete()
+{
+   std::vector< dtGame::GameActorPtr > actors;
+
+   for (unsigned i = 0; i < 10; ++i)
+   {
+      dtGame::GameActorPtr newActor;
+      mGM->CreateActor(*dtActors::EngineActorRegistry::GAME_MESH_ACTOR_TYPE, newActor);
+      if (i > 0)
+         newActor->SetParentActor(actors[i-1]);
+      actors.push_back(newActor);
+   }
+
+   mGM->AddActor(*actors[0]);
+   CPPUNIT_ASSERT_EQUAL(size_t(10), mGM->GetNumGameActors());
+   CPPUNIT_ASSERT_EQUAL(2U, mGM->GetScene().GetNumChildren());
+   mGM->DeleteActor(*actors[5]);
+   dtCore::System::GetInstance().Step(0.0167f);
+
+   CPPUNIT_ASSERT_EQUAL(size_t(5), mGM->GetNumGameActors());
+   CPPUNIT_ASSERT_EQUAL(2U, mGM->GetScene().GetNumChildren());
+   for (unsigned i = 0; i < actors.size(); ++i)
+   {
+      CPPUNIT_ASSERT_EQUAL(i < 5, actors[i]->IsInGM());
+      CPPUNIT_ASSERT_EQUAL(i >= 5, actors[i]->IsDeleted());
+   }
+}
+
+/////////////////////////////////////////////////
+struct IsRemoteFunc
+{
+   IsRemoteFunc():count(0){}
+
+   void operator()(dtCore::BaseActorObject& actor)
+   {
+      ++count;
+      CPPUNIT_ASSERT(actor.IsGameActor());
+      CPPUNIT_ASSERT(static_cast<dtGame::GameActorProxy&>(actor).IsRemote());
+   }
+   int count;
+};
+
+/////////////////////////////////////////////////
+void GameManagerTests::TestGameActorTreeRemote()
+{
+   std::vector< dtGame::GameActorPtr > actors;
+
+   for (unsigned i = 0; i < 10; ++i)
+   {
+      dtGame::GameActorPtr newActor;
+      mGM->CreateActor(*dtActors::EngineActorRegistry::GAME_MESH_ACTOR_TYPE, newActor);
+      if (i > 0)
+         newActor->SetParentActor(actors[i-1]);
+      actors.push_back(newActor);
+   }
+
+   mGM->AddActor(*actors[0], true, false);
+   IsRemoteFunc func;
+   mGM->ForEachActor(func, true);
+   CPPUNIT_ASSERT_EQUAL(10, func.count);
+}
 
 /////////////////////////////////////////////////
 void GameManagerTests::TestComplexScene()
@@ -1295,19 +1362,19 @@ void GameManagerTests::TestComplexScene()
 
    //check current children.
    CPPUNIT_ASSERT_MESSAGE("proxy 0 should not be a child of proxy 5.",
-      actors[5]->GetDrawable()->GetChildIndex(actors[0]->GetDrawable()) == actors[5]->GetDrawable()->GetNumChildren());
+      !actors[5]->GetDrawable()->HasChild(actors[0]->GetDrawable()));
    CPPUNIT_ASSERT_MESSAGE("proxy 1 should still be a child of proxy 5.",
-      actors[5]->GetDrawable()->GetChildIndex(actors[1]->GetDrawable()) != actors[5]->GetDrawable()->GetNumChildren());
+      actors[5]->GetDrawable()->HasChild(actors[1]->GetDrawable()));
    CPPUNIT_ASSERT_MESSAGE("proxy 0 should not be in the scene.",
       actors[0]->GetDrawable()->GetSceneParent() == NULL);
 
    //check that old children of 0 were moved up when they are supposed to.
-   CPPUNIT_ASSERT_MESSAGE("proxy 6 should now be a child of proxy 5.",
-      actors[5]->GetDrawable()->GetChildIndex(actors[6]->GetDrawable()) != actors[5]->GetDrawable()->GetNumChildren());
-   CPPUNIT_ASSERT_MESSAGE("proxy 7 should now be a child of proxy 5.",
-      actors[5]->GetDrawable()->GetChildIndex(actors[7]->GetDrawable()) != actors[5]->GetDrawable()->GetNumChildren());
-   CPPUNIT_ASSERT_MESSAGE("The physical actor should not be a child of proxy 5.",
-      actors[5]->GetDrawable()->GetChildIndex(tx.get()) == actors[5]->GetDrawable()->GetNumChildren());
+   CPPUNIT_ASSERT_MESSAGE("proxy 6 should now be a child of the scene.",
+         actors[6]->GetDrawable()->GetParent() == actors[7]->GetDrawable()->GetSceneParent());
+   CPPUNIT_ASSERT_MESSAGE("proxy 7 should now be a child of the scene.",
+         actors[7]->GetDrawable()->GetParent() == actors[7]->GetDrawable()->GetSceneParent());
+   CPPUNIT_ASSERT_MESSAGE("The physical actor should not be a child of anything.",
+         tx->GetSceneParent() == NULL);
 
    //remove proxy 5 to make it's children move up one.
    mGM->DeleteActor(*actors[5]);
@@ -1332,9 +1399,9 @@ void GameManagerTests::TestComplexScene()
 
    //check that children of 1 are still that way.
    CPPUNIT_ASSERT_MESSAGE("proxy 8 should still be a child of proxy 1.",
-      actors[1]->GetDrawable()->GetChildIndex(actors[8]->GetDrawable()) != actors[1]->GetDrawable()->GetNumChildren());
+      actors[1]->GetDrawable()->HasChild(actors[8]->GetDrawable()));
    CPPUNIT_ASSERT_MESSAGE("proxy 9 should still be a child of proxy 1.",
-      actors[1]->GetDrawable()->GetChildIndex(actors[9]->GetDrawable()) != actors[1]->GetDrawable()->GetNumChildren());
+      actors[1]->GetDrawable()->HasChild(actors[9]->GetDrawable()));
 
    actors[1]->GetDrawable()->Emancipate();
 
@@ -1343,9 +1410,9 @@ void GameManagerTests::TestComplexScene()
 
    //check that children of 1 are still that way, and that the GM didn't crash or try to add these drawables as children of something else.
     CPPUNIT_ASSERT_MESSAGE("proxy 8 should still be a child of proxy 1.",
-       actors[1]->GetDrawable()->GetChildIndex(actors[8]->GetDrawable()) != actors[1]->GetDrawable()->GetNumChildren());
+       actors[1]->GetDrawable()->HasChild(actors[8]->GetDrawable()));
     CPPUNIT_ASSERT_MESSAGE("proxy 9 should still be a child of proxy 1.",
-       actors[1]->GetDrawable()->GetChildIndex(actors[9]->GetDrawable()) != actors[1]->GetDrawable()->GetNumChildren());
+       actors[1]->GetDrawable()->HasChild(actors[9]->GetDrawable()));
 }
 
 /////////////////////////////////////////////////
@@ -1685,14 +1752,21 @@ void GameManagerTests::TestGMShutdown()
       dtCore::Map& m = project.CreateMap("testMap", "aa");
 
       const unsigned int numActors = 20;
+      std::vector<dtGame::GameActorPtr> backList;
       for (unsigned int i = 0; i < numActors; ++i)
       {
-         dtCore::RefPtr<dtCore::BaseActorObject> proxy =
-            mGM->CreateActor(*dtActors::EngineActorRegistry::GAME_MESH_ACTOR_TYPE);
+         dtGame::GameActorPtr newActor;
+         mGM->CreateActor(*dtActors::EngineActorRegistry::GAME_MESH_ACTOR_TYPE, newActor);
 
-         CPPUNIT_ASSERT(proxy.valid());
+         CPPUNIT_ASSERT(newActor.valid());
 
-         m.AddProxy(*proxy);
+         backList.push_back(newActor);
+         if (i > 0)
+         {
+            newActor->SetParentActor(backList[i-1]);
+         }
+         m.AddProxy(*newActor);
+
       }
 
       project.SaveMap(m);
@@ -1758,23 +1832,44 @@ void GameManagerTests::TestOpenCloseAdditionalMaps()
       project.SetContext(context);
 
       dtCore::ActorRefPtrVector actorsInMaps;
+      dtCore::ActorRefPtrVector prototypes;
 
       {
          dtCore::Map& m = project.CreateMap("testMap", "testMap");
          dtCore::Map& m2 = project.CreateMap("testMap2", "testMap2");
+         dtCore::Map& mp = project.CreateMap("testPrototypeMap", "testPrototypeMap");
 
+         dtCore::RefPtr<dtGame::GameActorProxy> envActor;
+         dtCore::ActorTypePtr type = mGM->FindActorType("ExampleActors", "TestEnvironmentActor");
+         CPPUNIT_ASSERT(type.valid());
+         mGM->CreateActor(*type, envActor);
+         CPPUNIT_ASSERT(envActor.valid());
+         envActor->SetName("ENV");
+         m.AddProxy(*envActor, false);
+         m.SetEnvironmentActor(envActor);
 
-         for (unsigned i = 0; i < 10; ++i)
+         const unsigned int numActors = 10;
+         std::vector<dtGame::GameActorPtr> backList;
+         backList.reserve(numActors);
+         actorsInMaps.reserve(numActors * 2);
+         for (unsigned int i = 0; i < numActors; ++i)
          {
-            dtCore::RefPtr<dtCore::BaseActorObject> actor =
-               mGM->CreateActor(*dtActors::EngineActorRegistry::GAME_MESH_ACTOR_TYPE);
-            CPPUNIT_ASSERT(actor.valid());
-            m.AddProxy(*actor);
+            dtGame::GameActorPtr newActor;
+            mGM->CreateActor(*dtActors::EngineActorRegistry::GAME_MESH_ACTOR_TYPE, newActor);
 
-            actorsInMaps.push_back(actor);
+            CPPUNIT_ASSERT(newActor.valid());
+
+            backList.push_back(newActor);
+            if (i > 0)
+            {
+               newActor->SetParentActor(backList[i-1]);
+            }
+            m.AddProxy(*newActor);
+
+            actorsInMaps.push_back(newActor);
          }
 
-         for (unsigned i = 0; i < 10; ++i)
+         for (unsigned i = 0; i < numActors; ++i)
          {
             dtCore::RefPtr<dtCore::BaseActorObject> actor =
                mGM->CreateActor(*dtActors::EngineActorRegistry::GAME_MESH_ACTOR_TYPE);
@@ -1784,11 +1879,34 @@ void GameManagerTests::TestOpenCloseAdditionalMaps()
             actorsInMaps.push_back(actor);
          }
 
+         backList.clear();
+         prototypes.reserve(numActors);
+         for (unsigned int i = 0; i < numActors; ++i)
+         {
+            dtGame::GameActorPtr newActor;
+            mGM->CreateActor(*dtActors::EngineActorRegistry::GAME_MESH_ACTOR_TYPE, newActor);
+
+            CPPUNIT_ASSERT(newActor.valid());
+
+            backList.push_back(newActor);
+            if (i > 0)
+            {
+               newActor->SetParentActor(backList[i-1]);
+            }
+            m.AddProxy(*newActor);
+
+            prototypes.push_back(newActor);
+         }
+
+         backList[0]->SetInitialOwnership(dtGame::GameActorProxy::Ownership::PROTOTYPE);
+
          project.SaveMap(m);
          project.SaveMap(m2);
+         project.SaveMap(mp);
 
          project.CloseMap(m);
          project.CloseMap(m2);
+         project.CloseMap(mp);
       }
 
       dtCore::RefPtr<dtGame::GameActorProxy> actorNoMap;
@@ -1801,6 +1919,7 @@ void GameManagerTests::TestOpenCloseAdditionalMaps()
       std::vector<std::string> mapNames;
       mapNames.push_back("testMap");
       mapNames.push_back("testMap2");
+      mapNames.push_back("testPrototypeMap");
 
       mGM->OpenAdditionalMapSet(mapNames);
       // process the messages.
@@ -1818,7 +1937,13 @@ void GameManagerTests::TestOpenCloseAdditionalMaps()
 
       tc->reset();
 
+      dtGame::GameActorPtr envActor = mGM->GetEnvironmentActor();
+      CPPUNIT_ASSERT(envActor != NULL);
+      CPPUNIT_ASSERT_EQUAL(std::string("ENV"), envActor->GetName());
+
       CPPUNIT_ASSERT(mGM->FindGameActorById(actorNoMap->GetId()) == actorNoMap.get());
+      CPPUNIT_ASSERT(actorNoMap->GetParentActor() != NULL);
+      CPPUNIT_ASSERT(actorNoMap->GetParentActor() == envActor);
 
       dtCore::ActorRefPtrVector::iterator i, iend;
       i = actorsInMaps.begin();
@@ -1826,7 +1951,31 @@ void GameManagerTests::TestOpenCloseAdditionalMaps()
       for (; i != iend; ++i)
       {
          dtCore::BaseActorObject* bao = i->get();
-         CPPUNIT_ASSERT(mGM->FindGameActorById(bao->GetId()) != NULL);
+         dtGame::GameActorPtr curActor = mGM->FindGameActorById(bao->GetId());
+         CPPUNIT_ASSERT(curActor.valid());
+         CPPUNIT_ASSERT(curActor->is_descendant_of(*envActor));
+      }
+
+
+      bool foundProto = false;
+      i = prototypes.begin();
+      iend = prototypes.end();
+      for (; i != iend; ++i)
+      {
+         dtCore::BaseActorObject* bao = i->get();
+         CPPUNIT_ASSERT_MESSAGE("None of the actors in the prototype tree should be found, even though only the root is marked as such.",
+               mGM->FindActorById(bao->GetId()) == NULL);
+         if (!foundProto)
+         {
+            CPPUNIT_ASSERT_MESSAGE("Only the first of the actors in the prototype tree should be found.",
+                  mGM->FindPrototypeByID(bao->GetId()) != NULL);
+            foundProto = true;
+         }
+         else
+         {
+            CPPUNIT_ASSERT_MESSAGE("Only one of the actors in the prototype tree should be found.",
+                  mGM->FindPrototypeByID(bao->GetId()) == NULL);
+         }
       }
 
       mGM->CloseAdditionalMapSet(mapNames);
@@ -1857,19 +2006,24 @@ void GameManagerTests::TestOpenCloseAdditionalMaps()
          CPPUNIT_ASSERT(mGM->FindGameActorById(bao->GetId()) == NULL);
       }
 
+
+
       project.DeleteMap("testMap");
       project.DeleteMap("testMap2");
+      project.DeleteMap("testPrototypeMap");
    }
    catch (const dtUtil::Exception& ex)
    {
       project.DeleteMap("testMap");
       project.DeleteMap("testMap2");
+      project.DeleteMap("testPrototypeMap");
       CPPUNIT_FAIL(ex.ToString());
    }
    catch (...)
    {
       project.DeleteMap("testMap");
       project.DeleteMap("testMap2");
+      project.DeleteMap("testPrototypeMap");
       throw;
    }
 }
