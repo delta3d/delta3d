@@ -67,6 +67,7 @@ namespace dtPhysics
       ,  mSkinThickness(Real(0.02))
       ,  mTransform()
       ,  mNotifyCollisions(false)
+      ,  mCollisionResponseEnabled(true)
       ,  mVisualToBodyIsIdentity(true)
       ,  mMaterial(NULL)
       ,  mActivationLinearVelocityThreshold(Real(-1.0))
@@ -118,6 +119,7 @@ namespace dtPhysics
       MatrixType mVisualToBodyTransform;
 
       bool mNotifyCollisions;
+      bool mCollisionResponseEnabled;
       bool mVisualToBodyIsIdentity;
 
       Material* mMaterial;
@@ -673,6 +675,7 @@ namespace dtPhysics
       }
       SetSkinThickness(mDataMembers->mSkinThickness);
       SetNotifyCollisions(GetNotifyCollisions());
+      SetCollisionResponseEnabled(mDataMembers->mCollisionResponseEnabled);
 
       CreateWithBody(*mDataMembers->mGenericBody);
 
@@ -1022,6 +1025,7 @@ namespace dtPhysics
    /////////////////////////////////////////////////////////////////////////////
    void PhysicsObject::SetCollisionResponseEnabled(bool enabled)
    {
+      mDataMembers->mCollisionResponseEnabled = enabled;
       if (mDataMembers->mGenericBody.valid())
       {
          return mDataMembers->mGenericBody->GetPalGenericBody().SetCollisionResponseEnabled(enabled);
@@ -1031,7 +1035,7 @@ namespace dtPhysics
    /////////////////////////////////////////////////////////////////////////////
    bool PhysicsObject::IsCollisionResponseEnabled() const
    {
-      bool result = true;
+      bool result = mDataMembers->mCollisionResponseEnabled;
       if (mDataMembers->mGenericBody.valid())
       {
          result = mDataMembers->mGenericBody->GetPalGenericBody().IsCollisionResponseEnabled();
