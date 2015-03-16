@@ -191,8 +191,9 @@ void STAGEObjectMotionModel::OnRotate(float delta, const osg::Vec3& axis)
             matrix *= rotation;
             osg::Vec3 newPos = (offset * rotation) + center;
 
-            targetProxy->SetRotationFromMatrix(matrix);
-            targetProxy->SetTranslation(newPos);
+            transform.SetTranslation(newPos);
+            transform.SetRotation(matrix);
+            target->SetTransform(transform);
          }
       }
    }

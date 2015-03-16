@@ -1968,7 +1968,7 @@ void ObjectMotionModel::OnTranslate(const osg::Vec3& delta)
    {
       dtCore::Transform transform;
       target->GetTransform(transform);
-      transform.SetTranslation(transform.GetTranslation() + delta);
+      transform.Move(delta);
       target->SetTransform(transform);
    }
 }

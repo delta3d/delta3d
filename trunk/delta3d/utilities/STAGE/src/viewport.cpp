@@ -638,16 +638,19 @@ namespace dtEditQt
 
 
    ///////////////////////////////////////////////////////////////////////////////
-   void Viewport::onGotoActor(dtCore::RefPtr<dtCore::BaseActorObject> proxy)
+   void Viewport::onGotoActor(dtCore::RefPtr<dtCore::BaseActorObject> actor)
    {
-      dtCore::TransformableActorProxy* tProxy = dynamic_cast<dtCore::TransformableActorProxy*>(proxy.get());
+      dtCore::Transformable* tx;
+      actor->GetDrawable(tx);
 
-      if (tProxy != NULL && getCamera()!= NULL)
+      if (tx != NULL && getCamera()!= NULL)
       {
          osg::Vec3 viewDir = getCamera()->getViewDir();
+         dtCore::Transform xform;
+         tx->GetTransform(xform, dtCore::Transformable::ABS_CS);
 
-         osg::Vec3 translation = tProxy->GetTranslation();
-         const osg::BoundingSphere& bs = tProxy->GetDrawable()->GetOSGNode()->getBound();
+         osg::Vec3 translation = xform.GetTranslation();
+         const osg::BoundingSphere& bs = tx->GetOSGNode()->getBound();
          float actorCreationOffset = EditorData::GetInstance().GetActorCreationOffset();
          float offset = (bs.radius() < 1000.0f) ? bs.radius() : 1.0f;
          if (offset <= 0.0f)
