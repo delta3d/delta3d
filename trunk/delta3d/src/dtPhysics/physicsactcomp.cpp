@@ -956,7 +956,7 @@ namespace dtPhysics
          return;
       dtCore::Transform xform;
       dtPhysics::PhysicsObject* physObj = GetMainPhysicsObject();
-      if (physObj == NULL || physObj->GetMechanicsType() == MechanicsType::STATIC)
+      if (physObj == NULL || physObj->GetMechanicsType() == MechanicsType::STATIC || physObj->GetBodyWrapper() == NULL)
          return;
 
       physObj->GetTransformAsVisual(xform);
