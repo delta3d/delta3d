@@ -69,6 +69,9 @@ void EchoClient::Config()
    mMessageProcessor = new ClientMessageProcessor();
    mClientGM->AddComponent(*mMessageProcessor, dtGame::GameManager::ComponentPriority::HIGHEST);
 
+   mEvent = new dtCore::GameEvent("TestMessage");
+   dtCore::GameEventManager::GetInstance().AddEvent(*(mEvent.get()));
+
    bool bConnected = mClientNetwComp->SetupClient("localhost", 5555);
    if (bConnected)
    {
@@ -81,9 +84,7 @@ void EchoClient::Config()
       return;
    }
 
-   mEvent = new dtCore::GameEvent("TestMessage");
-   dtCore::GameEventManager::GetInstance().AddEvent(*(mEvent.get()));
-
+   
 }
 
 bool EchoClient::KeyPressed(const dtCore::Keyboard *kb, int key)
