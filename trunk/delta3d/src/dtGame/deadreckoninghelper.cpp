@@ -188,7 +188,7 @@ namespace dtGame
    {
       if (*mUpdateMode == DeadReckoningActorComponent::UpdateMode::AUTO)
       {
-         if (isRemote)
+         if (isRemote && GetDeadReckoningAlgorithm() != DeadReckoningAlgorithm::NONE)
             return DeadReckoningActorComponent::UpdateMode::CALCULATE_AND_MOVE_ACTOR;
          else
             return DeadReckoningActorComponent::UpdateMode::CALCULATE_ONLY;
