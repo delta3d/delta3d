@@ -680,6 +680,12 @@ namespace dtAnim
    }
 
    ////////////////////////////////////////////////////////////////////////
+   void AnimationTransitionPlanner::OnTickRemote(const dtGame::TickMessage& /*tickMessage*/)
+   {
+      Update();
+   }
+
+   ////////////////////////////////////////////////////////////////////////
    void AnimationTransitionPlanner::Update()
    {
       if (mResetNextTick)
@@ -730,12 +736,6 @@ namespace dtAnim
       }
 
       mIsAnimHelperSetup = false;
-   }
-
-   ////////////////////////////////////////////////////////////////////////
-   void AnimationTransitionPlanner::OnTickRemote(const dtGame::TickMessage& /*tickMessage*/)
-   {
-      CheckAndUpdateAnimationState();
    }
 
    ////////////////////////////////////////////////////////////////////////
