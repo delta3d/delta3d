@@ -398,9 +398,9 @@ namespace dtQt
       ActorTreeItem* itemParent = (ActorTreeItem*)itemFromIndex(parentIndex);
       if (itemParent != NULL)
       {
-         ActorPtr oldParent;
-         ActorPtr newParent = itemParent->GetActor();
-         ActorPtr actor;
+         dtCore::ActorPtr oldParent;
+         dtCore::ActorPtr newParent = itemParent->GetActor();
+         dtCore::ActorPtr actor;
 
          // One or more items may have been inserted for this parent.
          // Attach all actors to the parent that are associated with the child items.

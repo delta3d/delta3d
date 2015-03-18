@@ -179,7 +179,7 @@ namespace dtEditQt
       /**
        * Remove an item from our search results if it's about to be destroyed
        */
-      void actorProxyAboutToBeDestroyed(ActorPtr proxy);
+      void actorProxyAboutToBeDestroyed(dtCore::ActorPtr proxy);
 
       /**
        * Handle the selection changed event in the tree table.  Should enable/disable buttons

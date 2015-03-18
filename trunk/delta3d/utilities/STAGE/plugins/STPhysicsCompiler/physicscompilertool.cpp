@@ -604,13 +604,13 @@ void PhysicsCompilerToolPlugin::onActorsSelected(ActorRefPtrVector& actors)
    }
 
    // Copy the new selection references just to be safe.
-   ActorPtrVector tmpActors;
+   dtCore::ActorRefPtrVector tmpActors;
    tmpActors = actors;
    mActors.reserve(tmpActors.size());
 
-   ActorPtr curActor;
-   ActorPtrVector::iterator curIter = tmpActors.begin();
-   ActorPtrVector::iterator endIter = tmpActors.end();
+   dtCore::ActorPtr curActor;
+   dtCore::ActorRefPtrVector::iterator curIter = tmpActors.begin();
+   dtCore::ActorRefPtrVector::iterator endIter = tmpActors.end();
    for (; curIter != endIter; ++curIter)
    {
       curActor = curIter->get();
@@ -627,7 +627,7 @@ void PhysicsCompilerToolPlugin::OnTargetActorClicked()
 {
    if ( ! mActors.empty())
    {
-      ActorPtr actor = mActors.front().get();
+      dtCore::ActorPtr actor = mActors.front().get();
       dtEditQt::EditorEvents::GetInstance().emitGotoActor(actor);
    }
 }

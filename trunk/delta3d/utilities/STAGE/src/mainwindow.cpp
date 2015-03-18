@@ -405,8 +405,8 @@ namespace dtEditQt
 
          // listen for property change events and update the tree.  These can be generated
          // by the viewports, or the tree itself.
-         connect(&EditorEvents::GetInstance(), SIGNAL(actorPropertyChanged(ActorPtr, ActorPropertyRefPtr)),
-                  mPropertyWindow, SLOT(ActorPropertyChanged(ActorPtr, ActorPropertyRefPtr)));
+         connect(&EditorEvents::GetInstance(), SIGNAL(actorPropertyChanged(dtCore::ActorPtr, ActorPropertyRefPtr)),
+                  mPropertyWindow, SLOT(MarkEdited()));
 
          // listen for name changes so we can update our group box label or handle undo changes
          connect(&EditorEvents::GetInstance(), SIGNAL(ProxyNameChanged(dtCore::BaseActorObject&, std::string)),
@@ -453,10 +453,10 @@ namespace dtEditQt
          EditorActions& editorActions = EditorActions::GetInstance();
          connect(&EditorEvents::GetInstance(), SIGNAL(selectedActors(ActorRefPtrVector&)),
                   mActorTreePanel, SLOT(OnActorsSelected(ActorRefPtrVector&)));
-         connect(&mActorTreePanel->GetTreeWidget(), SIGNAL(SignalActorAttach(ActorPtr,ActorPtr,ActorPtr)),
-                  &editorActions, SLOT(slotChangeActorParent(ActorPtr,ActorPtr,ActorPtr)));
-         connect(&mActorTreePanel->GetTreeWidget(), SIGNAL(SignalActorDetach(ActorPtr,ActorPtr)),
-                  &editorActions, SLOT(slotDetachActorParent(ActorPtr,ActorPtr)));
+         connect(&mActorTreePanel->GetTreeWidget(), SIGNAL(SignalActorAttach(dtCore::ActorPtr,dtCore::ActorPtr,dtCore::ActorPtr)),
+                  &editorActions, SLOT(slotChangeActorParent(dtCore::ActorPtr,dtCore::ActorPtr,dtCore::ActorPtr)));
+         connect(&mActorTreePanel->GetTreeWidget(), SIGNAL(SignalActorDetach(dtCore::ActorPtr,dtCore::ActorPtr)),
+                  &editorActions, SLOT(slotDetachActorParent(dtCore::ActorPtr,dtCore::ActorPtr)));
          
          connect(editorActions.mActionWindowsActorTreePanel, SIGNAL(triggered(bool)),
             mActorTreeDock, SLOT(setVisible(bool)));
@@ -826,9 +826,9 @@ namespace dtEditQt
 
          // listen for property change events and update the tree.  These can be generated
          // by the viewports, or the tree itself.
-         disconnect(&EditorEvents::GetInstance(), SIGNAL(actorPropertyChanged(ActorPtr,
+         disconnect(&EditorEvents::GetInstance(), SIGNAL(actorPropertyChanged(dtCore::ActorPtr,
             ActorPropertyRefPtr)),
-            mPropertyWindow, SLOT(ActorPropertyChanged(ActorPtr,
+            mPropertyWindow, SLOT(ActorPropertyChanged(dtCore::ActorPtr,
             ActorPropertyRefPtr)));
 
          // listen for name changes so we can update our group box label or handle undo changes
@@ -840,8 +840,7 @@ namespace dtEditQt
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void MainWindow::onActorPropertyChanged(dtCore::RefPtr<dtCore::BaseActorObject> proxy,
-      dtCore::RefPtr<dtCore::ActorProperty> property)
+   void MainWindow::MarkEdited()
    {
       if (!dtCore::Project::GetInstance().IsContextValid())
       {
@@ -1191,42 +1190,10 @@ namespace dtEditQt
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void MainWindow::onActorProxyDestroyed(dtCore::RefPtr<dtCore::BaseActorObject> proxy)
-   {
-      EditorData::GetInstance().getCurrentMap()->SetModified(true);
-      updateWindowTitle();
-
-      // JPH: Moved this into the undo manager, it's very important
-      // that this undo event is created before the destroy event.
-      //// Remove this actor from any groups it may have been.
-      //dtCore::Map* map = EditorData::GetInstance().getCurrentMap();
-      //if (map)
-      //{
-      //   map->RemoveActorFromGroups(proxy.get());
-      //   EditorData::GetInstance().getUndoManager().unGroupActor(proxy);
-      //}
-   }
-
-   ///////////////////////////////////////////////////////////////////////////////
    void MainWindow::onActorProxyNameChanged(dtCore::BaseActorObject& proxy, std::string oldName)
    {
       EditorData::GetInstance().getCurrentMap()->OnProxyRenamed(proxy);
-      EditorData::GetInstance().getCurrentMap()->SetModified(true);
-      updateWindowTitle();
-   }
-
-   ///////////////////////////////////////////////////////////////////////////////
-   void MainWindow::onActorProxyCreated(dtCore::RefPtr<dtCore::BaseActorObject> proxy, bool forceNoAdjustments)
-   {
-      EditorData::GetInstance().getCurrentMap()->SetModified(true);
-      updateWindowTitle();
-   }
-
-   ///////////////////////////////////////////////////////////////////////////////
-   void MainWindow::onMapPropertyChanged()
-   {
-      EditorData::GetInstance().getCurrentMap()->SetModified(true);
-      updateWindowTitle();
+      MarkEdited();
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -1289,16 +1256,19 @@ namespace dtEditQt
       connect(&EditorEvents::GetInstance(), SIGNAL(mapLibraryRemoved()),
          this, SLOT(updateWindowTitle()));
       connect(&EditorEvents::GetInstance(), SIGNAL(mapPropertyChanged()),
-         this, SLOT(onMapPropertyChanged()));
+         this, SLOT(MarkEdited()));
       connect(editorActions.mActionWindowsResetWindows, SIGNAL(triggered()),
          this, SLOT(onResetWindows()));
-      connect(&EditorEvents::GetInstance(), SIGNAL(actorProxyDestroyed(ActorPtr)),
-         this, SLOT(onActorProxyDestroyed(ActorPtr)));
-      connect(&EditorEvents::GetInstance(), SIGNAL(actorProxyCreated(ActorPtr, bool)),
-         this, SLOT(onActorProxyCreated(ActorPtr, bool)));
+      connect(&EditorEvents::GetInstance(), SIGNAL(actorProxyDestroyed(dtCore::ActorPtr)),
+         this, SLOT(MarkEdited()));
+      connect(&EditorEvents::GetInstance(), SIGNAL(actorProxyCreated(dtCore::ActorPtr, bool)),
+         this, SLOT(MarkEdited()));
       connect(&EditorEvents::GetInstance(),
-         SIGNAL(actorPropertyChanged(ActorPtr, ActorPropertyRefPtr)),
-         this, SLOT(onActorPropertyChanged(ActorPtr, ActorPropertyRefPtr)));
+         SIGNAL(actorPropertyChanged(dtCore::ActorPtr, ActorPropertyRefPtr)),
+         this, SLOT(MarkEdited()));
+      connect(&EditorEvents::GetInstance(),
+         SIGNAL(actorHierarchyUpdated(dtCore::ActorPtr, dtCore::ActorPtr)),
+         this, SLOT(MarkEdited()));
       connect(&EditorEvents::GetInstance(), SIGNAL(ProxyNameChanged(dtCore::BaseActorObject&, std::string)),
          this, SLOT(onActorProxyNameChanged(dtCore::BaseActorObject&, std::string)));
       connect(&EditorEvents::GetInstance(), SIGNAL(showStatusBarMessage(const QString, int)),

@@ -130,8 +130,8 @@ namespace dtEditQt
       connect(mTimer, SIGNAL(timeout()), this, SLOT(slotAutosave()));
 
       connect(&EditorEvents::GetInstance(),
-         SIGNAL(actorProxyCreated(ActorPtr, bool)), this,
-         SLOT(slotOnActorCreated(ActorPtr, bool)));
+         SIGNAL(actorProxyCreated(dtCore::ActorPtr, bool)), this,
+         SLOT(slotOnActorCreated(dtCore::ActorPtr, bool)));
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -1134,7 +1134,7 @@ namespace dtEditQt
    }
 
    //////////////////////////////////////////////////////////////////////////////
-   void EditorActions::slotOnActorCreated(ActorPtr actor, bool forceNoAdjustments)
+   void EditorActions::slotOnActorCreated(dtCore::ActorPtr actor, bool forceNoAdjustments)
    {
       dtCore::IEnvironmentActor* envActor =
          dynamic_cast<dtCore::IEnvironmentActor*>(actor->GetDrawable());
@@ -2091,7 +2091,7 @@ namespace dtEditQt
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void EditorActions::slotChangeActorParent(ActorPtr actor, ActorPtr oldParent, ActorPtr newParent)
+   void EditorActions::slotChangeActorParent(dtCore::ActorPtr actor, dtCore::ActorPtr oldParent, dtCore::ActorPtr newParent)
    {
       bool changed = newParent != oldParent;
 
@@ -2135,12 +2135,12 @@ namespace dtEditQt
             trans->SetTransform(xform, dtCore::Transformable::ABS_CS);
          }
       
-         emit SignalActorHierarchyUpdated(actor);
+         EditorEvents::GetInstance().emitActorHierarchyChanged(actor, oldParent);
       }
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void EditorActions::slotDetachActorParent(ActorPtr actor, ActorPtr oldParent)
+   void EditorActions::slotDetachActorParent(dtCore::ActorPtr actor, dtCore::ActorPtr oldParent)
    {
       slotChangeActorParent(actor, oldParent, NULL);
    }
@@ -2215,6 +2215,7 @@ namespace dtEditQt
       dtCore::ActorComponentContainer* gameActor = dynamic_cast<dtCore::ActorComponentContainer*>(&actor);
       if (gameActor != NULL)
       {
+
          gameActor->SetParentBaseActor(NULL);
       }
 

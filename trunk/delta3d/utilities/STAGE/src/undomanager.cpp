@@ -70,17 +70,17 @@ namespace dtEditQt
          this, SLOT(clearAllHistories()));
 
       // trap destry, create, change, and about to change
-      connect(&EditorEvents::GetInstance(), SIGNAL(actorProxyDestroyed(ActorPtr)),
-         this, SLOT(onActorProxyDestroyed(ActorPtr)));
-      connect(&EditorEvents::GetInstance(), SIGNAL(actorProxyCreated(ActorPtr, bool)),
-         this, SLOT(onActorProxyCreated(ActorPtr, bool)));
+      connect(&EditorEvents::GetInstance(), SIGNAL(actorProxyDestroyed(dtCore::ActorPtr)),
+         this, SLOT(onActorProxyDestroyed(dtCore::ActorPtr)));
+      connect(&EditorEvents::GetInstance(), SIGNAL(actorProxyCreated(dtCore::ActorPtr, bool)),
+         this, SLOT(onActorProxyCreated(dtCore::ActorPtr, bool)));
       connect(&EditorEvents::GetInstance(),
-         SIGNAL(actorPropertyChanged(ActorPtr, ActorPropertyRefPtr)),
-         this, SLOT(onActorPropertyChanged(ActorPtr, ActorPropertyRefPtr)));
+         SIGNAL(actorPropertyChanged(dtCore::ActorPtr, ActorPropertyRefPtr)),
+         this, SLOT(onActorPropertyChanged(dtCore::ActorPtr, ActorPropertyRefPtr)));
       connect(&EditorEvents::GetInstance(),
-         SIGNAL(actorPropertyAboutToChange(ActorPtr, ActorPropertyRefPtr,
+         SIGNAL(actorPropertyAboutToChange(dtCore::ActorPtr, ActorPropertyRefPtr,
          std::string, std::string)),
-         this, SLOT(actorPropertyAboutToChange(ActorPtr, ActorPropertyRefPtr,
+         this, SLOT(actorPropertyAboutToChange(dtCore::ActorPtr, ActorPropertyRefPtr,
          std::string, std::string)));
       connect(&EditorEvents::GetInstance(), SIGNAL(ProxyNameChanged(dtCore::BaseActorObject&, std::string)),
          this, SLOT(onProxyNameChanged(dtCore::BaseActorObject&, std::string)));
@@ -592,11 +592,11 @@ namespace dtEditQt
             property->FromString(propData->mOldValue);
 
             // notify the world of our change to the data.
-            dtCore::RefPtr<dtCore::BaseActorObject> ActorPtr = proxy;
+            dtCore::ActorPtr actorPtr = proxy;
             dtCore::RefPtr<dtCore::ActorProperty> ActorPropertyRefPtr = property;
             mRecursePrevent = true;
             EditorData::GetInstance().getMainWindow()->startWaitCursor();
-            EditorEvents::GetInstance().emitActorPropertyChanged(ActorPtr, ActorPropertyRefPtr);
+            EditorEvents::GetInstance().emitActorPropertyChanged(actorPtr, ActorPropertyRefPtr);
             EditorData::GetInstance().getMainWindow()->endWaitCursor();
             mRecursePrevent = false;
 
@@ -715,7 +715,7 @@ namespace dtEditQt
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void UndoManager::groupActor(ActorPtr proxy)
+   void UndoManager::groupActor(dtCore::ActorPtr proxy)
    {
       ChangeEvent* undoEvent = new ChangeEvent();
       undoEvent->mType       = ChangeEvent::GROUP_CREATED;
@@ -730,7 +730,7 @@ namespace dtEditQt
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void UndoManager::unGroupActor(ActorPtr proxy)
+   void UndoManager::unGroupActor(dtCore::ActorPtr proxy)
    {
       ChangeEvent* undoEvent = new ChangeEvent();
       undoEvent->mType       = ChangeEvent::GROUP_DELETED;

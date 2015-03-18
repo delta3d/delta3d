@@ -170,7 +170,7 @@ namespace dtEditQt {
       *
       * @param[in]  proxy  The actor proxy to look at.
       */
-      void onGotoActor(ActorPtr proxy);
+      void onGotoActor(dtCore::ActorPtr proxy);
 
       /**
       * Moves the camera to a position.

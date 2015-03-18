@@ -129,8 +129,8 @@ namespace dtQt
    signals:
       void SignalUpdatedUI();
       void SignalActorsSelected(ActorRefPtrVector actorArray);
-      void SignalActorAttach(ActorPtr actor, ActorPtr oldParent, ActorPtr newParent);
-      void SignalActorDetach(ActorPtr actor, ActorPtr oldParent);
+      void SignalActorAttach(dtCore::ActorPtr actor, dtCore::ActorPtr oldParent, dtCore::ActorPtr newParent);
+      void SignalActorDetach(dtCore::ActorPtr actor, dtCore::ActorPtr oldParent);
 
    public slots:
       void UpdateColumns();
