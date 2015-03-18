@@ -70,15 +70,15 @@ namespace dtEditQt
          this, SLOT(refreshAll()));
       connect(&EditorEvents::GetInstance(), SIGNAL(mapLibraryAboutToBeRemoved()),
          this, SLOT(refreshAll()));
-      connect(&EditorEvents::GetInstance(), SIGNAL(actorProxyCreated(ActorPtr, bool)),
-         this, SLOT(onActorProxyCreated(ActorPtr, bool)));
-      connect(&EditorEvents::GetInstance(), SIGNAL(actorProxyDestroyed(ActorPtr)),
-         this, SLOT(onActorProxyDestroyed(ActorPtr)));
+      connect(&EditorEvents::GetInstance(), SIGNAL(actorProxyCreated(dtCore::ActorPtr, bool)),
+         this, SLOT(onActorProxyCreated(dtCore::ActorPtr, bool)));
+      connect(&EditorEvents::GetInstance(), SIGNAL(actorProxyDestroyed(dtCore::ActorPtr)),
+         this, SLOT(onActorProxyDestroyed(dtCore::ActorPtr)));
 
       connect(&EditorEvents::GetInstance(),
-         SIGNAL(actorPropertyChanged(ActorPtr, ActorPropertyRefPtr)),
+         SIGNAL(actorPropertyChanged(dtCore::ActorPtr, ActorPropertyRefPtr)),
          this,
-         SLOT(onActorPropertyChanged(ActorPtr, ActorPropertyRefPtr)));
+         SLOT(onActorPropertyChanged(dtCore::ActorPtr, ActorPropertyRefPtr)));
 
       connect(&EditorEvents::GetInstance(),
          SIGNAL(ProxyNameChanged(dtCore::BaseActorObject&, std::string)),
@@ -152,7 +152,7 @@ namespace dtEditQt
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void ActorGlobalBrowser::onActorPropertyChanged(ActorPtr proxy, ActorPropertyRefPtr /*property*/)
+   void ActorGlobalBrowser::onActorPropertyChanged(dtCore::ActorPtr proxy, ActorPropertyRefPtr /*property*/)
    {
       mResultsTable->HandleProxyUpdated(proxy);
    }

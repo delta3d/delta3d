@@ -468,7 +468,7 @@ namespace dtEditQt
 
    public slots:
       ///Moves the camera such that the actor is clearly visible.
-      virtual void onGotoActor(ActorPtr proxy);
+      virtual void onGotoActor(dtCore::ActorPtr proxy);
 
       virtual void onGotoPosition(double x, double y, double z);
 

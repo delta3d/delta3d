@@ -579,7 +579,7 @@ namespace dtEditQt
        * @param proxy
        * @param property
        */
-      void onActorPropertyChanged(ActorPtr proxy,
+      void onActorPropertyChanged(dtCore::ActorPtr proxy,
          ActorPropertyRefPtr property);
 
       /**
@@ -587,7 +587,7 @@ namespace dtEditQt
        * then inserts the new actor proxy into the current scene.
        * @param proxy The newly created actor proxy.
        */
-      void onActorProxyCreated(ActorPtr proxy, bool forceNoAdjustments);
+      void onActorProxyCreated(dtCore::ActorPtr proxy, bool forceNoAdjustments);
 
       /**
        * Called when the current map being edited has changed.  This causes the scene

@@ -521,19 +521,17 @@ namespace dtEditQt
       // an argument.
       void slotSelectedActors(ActorRefPtrVector& actors);
 
-      void slotOnActorCreated(ActorPtr proxy, bool forceNoAdjustments);
+      void slotOnActorCreated(dtCore::ActorPtr proxy, bool forceNoAdjustments);
 
       void slotGetGotoPosition();
 
-      void slotChangeActorParent(ActorPtr actor, ActorPtr oldParent, ActorPtr newParent);
-      void slotDetachActorParent(ActorPtr actor, ActorPtr oldParent);
+      void slotChangeActorParent(dtCore::ActorPtr actor, dtCore::ActorPtr oldParent, dtCore::ActorPtr newParent);
+      void slotDetachActorParent(dtCore::ActorPtr actor, dtCore::ActorPtr oldParent);
 
    signals:
       void ExternalToolsModified(const QList<QAction*>&);
 
       void PrefabExported();
-
-      void SignalActorHierarchyUpdated(ActorRefPtr actor);
 
    protected:
       /**

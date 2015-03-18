@@ -62,7 +62,7 @@ namespace dtEditQt
        * All the viewports should center on this actor.  Each visible should maintain
        * their current focus.
        */
-      void emitGotoActor(ActorPtr actor);
+      void emitGotoActor(dtCore::ActorPtr actor);
 
       /**
        * All the viewports should center on this location.
@@ -85,7 +85,7 @@ namespace dtEditQt
        * from positioning an object that was created by undoing a delete event in front of the camera.
        * @note The forceNoAdjustments flag is no longer really used.  It has value, but isn't currently used.
        */
-      void emitActorProxyCreated(ActorPtr, bool forceNoAdjustments);
+      void emitActorProxyCreated(dtCore::ActorPtr, bool forceNoAdjustments);
 
       /**
        * An BaseActorObject is about to be destroyed.  The user has previously selected an object and
@@ -94,7 +94,7 @@ namespace dtEditQt
        * delete message (below).
        * @param proxy The proxy that is about to be destroyed is sent with the signal.
        */
-      void emitActorProxyAboutToBeDestroyed(ActorPtr proxy);
+      void emitActorProxyAboutToBeDestroyed(dtCore::ActorPtr proxy);
 
       /**
        * An BaseActorObject has been destroyed.  The user or some code has deleted it.
@@ -103,7 +103,8 @@ namespace dtEditQt
        * If you want that, then trap the about to be destroyed message above.
        * @param proxy The proxy that is about to be destroyed is sent with the signal.
        */
-      void emitActorProxyDestroyed(ActorPtr proxy);
+      void emitActorProxyDestroyed(dtCore::ActorPtr proxy);
+
 
       /**
        * This event is sent after the UI is basically initialized.  Elements should listen for
@@ -152,16 +153,22 @@ namespace dtEditQt
        * is valid and that it is different than what it was before.  NULL may be valid in some
        * cases.
        */
-      void emitActorPropertyChanged(ActorPtr proxy,
+      void emitActorPropertyChanged(dtCore::ActorPtr proxy,
          ActorPropertyRefPtr property);
 
       /**
        * A property is about to be changed.  This message holds the old and new toString()
        * values of the property.  It is primarily used by the undo process.
        */
-      void emitActorPropertyAboutToChange(ActorPtr proxy,
+      void emitActorPropertyAboutToChange(dtCore::ActorPtr proxy,
          ActorPropertyRefPtr property, std::string oldValue, std::string newValue);
 
+      /**
+       * The parent child relationships have been modified.
+       * @param actor the actor who's parent was modified.
+       * @param oldParent the old parent of the actor, or NULL.
+       */
+      void emitActorHierarchyChanged(dtCore::ActorPtr actor, dtCore::ActorPtr oldParent);
 
       /**
        * Several emits are about to be sent and the sender wants you to treat them as one big batch.
@@ -226,26 +233,28 @@ namespace dtEditQt
 
    signals:
       void selectedActors(ActorRefPtrVector& actors);
-      void gotoActor(ActorPtr actor);
+      void gotoActor(dtCore::ActorPtr actor);
       void gotoPosition(double x, double y, double z);
       void createActor();
-      void actorProxyCreated(ActorPtr proxy, bool forceNoAdjustments);
-      void actorProxyAboutToBeDestroyed(ActorPtr proxy);
-      void actorProxyDestroyed(ActorPtr proxy);
+      void actorProxyCreated(dtCore::ActorPtr proxy, bool forceNoAdjustments);
+      void actorProxyAboutToBeDestroyed(dtCore::ActorPtr proxy);
+      void actorProxyDestroyed(dtCore::ActorPtr proxy);
       void editorInitiationEvent();
       void projectChanged();
       void currentMapChanged();
       void currentMapSaved();      
       void viewportsChanged();
-      void actorPropertyChanged(ActorPtr proxy, ActorPropertyRefPtr property);
-      void actorPropertyAboutToChange(ActorPtr proxy,
+      void actorPropertyChanged(dtCore::ActorPtr proxy, ActorPropertyRefPtr property);
+      void actorPropertyAboutToChange(dtCore::ActorPtr proxy,
          ActorPropertyRefPtr property, std::string oldValue, std::string newValue);
+      void actorHierarchyUpdated(dtCore::ActorPtr actor, dtCore::ActorPtr oldParent);
       void ProxyNameChanged(dtCore::BaseActorObject& proxy, std::string oldName);
       void beginChangeTransaction();
       void endChangeTransaction();
       void mapLibraryImported();
       void mapLibraryRemoved();
       void mapLibraryAboutToBeRemoved();
+
 
       void mapGameEventAdded();
       void mapGameEventEdited();

@@ -48,14 +48,14 @@ namespace dtEditQt
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void EditorEvents::emitActorsSelected(std::vector< dtCore::RefPtr<dtCore::BaseActorObject> >& actors)
+   void EditorEvents::emitActorsSelected(std::vector< dtCore::ActorPtr >& actors)
    {
       LOG_INFO("Emitting UI event - [actorsSelected]");
       emit selectedActors(actors);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void EditorEvents::emitGotoActor(dtCore::RefPtr<dtCore::BaseActorObject> actor)
+   void EditorEvents::emitGotoActor(dtCore::ActorPtr actor)
    {
       LOG_INFO("Emitting UI event - [gotoActor]");
       emit gotoActor(actor);
@@ -74,21 +74,21 @@ namespace dtEditQt
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void EditorEvents::emitActorProxyCreated(dtCore::RefPtr<dtCore::BaseActorObject> proxy, bool forceNoAdjustments)
+   void EditorEvents::emitActorProxyCreated(dtCore::ActorPtr proxy, bool forceNoAdjustments)
    {
       LOG_INFO("Emitting UI event - [actorProxyCreated]");
       emit actorProxyCreated(proxy, forceNoAdjustments);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void EditorEvents::emitActorProxyAboutToBeDestroyed(dtCore::RefPtr<dtCore::BaseActorObject> proxy)
+   void EditorEvents::emitActorProxyAboutToBeDestroyed(dtCore::ActorPtr proxy)
    {
       LOG_INFO("Emitting UI event - [actorProxyAboutToBeDestroyed]");
       emit actorProxyAboutToBeDestroyed(proxy);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void EditorEvents::emitActorProxyDestroyed(dtCore::RefPtr<dtCore::BaseActorObject> proxy)
+   void EditorEvents::emitActorProxyDestroyed(dtCore::ActorPtr proxy)
    {
       LOG_INFO("Emitting UI event - [actorProxyDestroyed]");
       emit actorProxyDestroyed(proxy);
@@ -152,17 +152,23 @@ namespace dtEditQt
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void EditorEvents::emitActorPropertyChanged(dtCore::RefPtr<dtCore::BaseActorObject> proxy,
+   void EditorEvents::emitActorPropertyChanged(dtCore::ActorPtr proxy,
       dtCore::RefPtr<dtCore::ActorProperty> property)
    {
       emit actorPropertyChanged(proxy, property);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void EditorEvents::emitActorPropertyAboutToChange(dtCore::RefPtr<dtCore::BaseActorObject> proxy,
+   void EditorEvents::emitActorPropertyAboutToChange(dtCore::ActorPtr proxy,
       dtCore::RefPtr<dtCore::ActorProperty> property, std::string oldValue, std::string newValue)
    {
       emit actorPropertyAboutToChange(proxy, property, oldValue, newValue);
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void EditorEvents::emitActorHierarchyChanged(dtCore::ActorPtr actor, dtCore::ActorPtr oldParent)
+   {
+      emit actorHierarchyUpdated(actor, oldParent);
    }
 
    ///////////////////////////////////////////////////////////////////////////////

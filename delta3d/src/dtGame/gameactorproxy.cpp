@@ -345,6 +345,22 @@ namespace dtGame
    }
 
    /////////////////////////////////////////////////////////////////////////////
+   bool GameActorProxy::SetParentBaseActor(dtCore::BaseActorObject* parent)
+   {
+      GameActorProxy* newParent = dynamic_cast<GameActorProxy*>(parent);
+      if (newParent != NULL || parent == NULL)
+      {
+         SetParentActor(newParent);
+         return true;
+      }
+      return false;
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   dtCore::BaseActorObject* GameActorProxy::GetParentBaseActor() const { return GetParentActor(); }
+
+
+   /////////////////////////////////////////////////////////////////////////////
    dtCore::RefPtr<dtCore::ActorComponentContainer::ActorIterator>
       GameActorProxy::GetIterator()
    {

@@ -694,22 +694,13 @@ namespace dtGame
       /**
        * This is a temporary override from dtCore so it can set the parent/child relationships
        */
-      /*virtual*/ bool SetParentBaseActor(dtCore::BaseActorObject* parent)
-      {
-         GameActorProxy* newParent = dynamic_cast<GameActorProxy*>(parent);
-         if (newParent != NULL)
-         {
-            SetParentActor(newParent);
-            return true;
-         }
-         return false;
-      }
+      /*virtual*/ bool SetParentBaseActor(dtCore::BaseActorObject* parent);
 
       /**
        * Returns the actor that is the parent to this actor as a base actor object.
        * Call GetParentActor instead.  This exists just for the map loading code.
        */
-      /*override*/ dtCore::BaseActorObject* GetParentBaseActor() const { return GetParentActor(); }
+      /*override*/ dtCore::BaseActorObject* GetParentBaseActor() const;
    protected:
       /// Destructor
       virtual ~GameActorProxy();

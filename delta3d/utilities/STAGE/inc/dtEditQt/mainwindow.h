@@ -278,18 +278,12 @@ namespace dtEditQt
        * @param proxy The proxy that was changed.
        * @param property The property of the proxy that was modified.
        */
-      void onActorPropertyChanged(ActorPtr proxy, ActorPropertyRefPtr property);
+      void MarkEdited();
 
       /// Updates the window title
       void updateWindowTitle();
 
-      void onActorProxyCreated(ActorPtr proxy, bool forceNoAdjustments);
-
-      void onActorProxyDestroyed(ActorPtr proxy);
-
       void onActorProxyNameChanged(dtCore::BaseActorObject& proxy, std::string oldName);
-
-      void onMapPropertyChanged();
 
       /**
        * Starts a new wait cursor.  You MUST call endWaitCursor() for each

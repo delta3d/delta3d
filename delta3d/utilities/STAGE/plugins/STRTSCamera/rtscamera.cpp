@@ -37,8 +37,8 @@ RTSCameraPlugin::RTSCameraPlugin(MainWindow* mw)
    connect(&EditorEvents::GetInstance(), SIGNAL(selectedActors(ActorRefPtrVector &)),
       this, SLOT(onActorsSelected(ActorRefPtrVector &)));
 
-   connect(&EditorEvents::GetInstance(), SIGNAL(actorPropertyChanged(ActorProxyRefPtr, ActorPropertyRefPtr)),
-      this, SLOT(onActorPropertyChanged(ActorProxyRefPtr, ActorPropertyRefPtr)));
+   connect(&EditorEvents::GetInstance(), SIGNAL(actorPropertyChanged(dtCore::ActorPtr, ActorPropertyRefPtr)),
+      this, SLOT(onActorPropertyChanged(dtCore::ActorPtr, ActorPropertyRefPtr)));
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -92,7 +92,7 @@ void RTSCameraPlugin::onActorsSelected(ActorRefPtrVector& actors)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void RTSCameraPlugin::onActorPropertyChanged(ActorProxyRefPtr proxy, ActorPropertyRefPtr property)
+void RTSCameraPlugin::onActorPropertyChanged(dtCore::ActorPtr proxy, ActorPropertyRefPtr property)
 {
    if (!mMotionModel.valid())
    {

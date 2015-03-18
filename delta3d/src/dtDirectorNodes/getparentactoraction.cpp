@@ -83,19 +83,19 @@ namespace dtDirector
       dtGame::GameManager* gm = GetDirector()->GetGameManager();
 
       // Get the actor that corresponds to this id
-      dtCore::BaseActorObject* actorToGet = gm->FindActorById(GetActorID("Actor"));
-      dtCore::DeltaDrawable* parent = NULL;
+      dtGame::GameActorProxy* actorToGet = NULL, * parentActor = NULL;
+      gm->FindGameActorById(GetActorID("Actor"), actorToGet);
 
       // If we've found the actor, try to get its parent
-      if (actorToGet)
+      if (actorToGet != NULL)
       {
-         parent = actorToGet->GetDrawable()->GetParent();
+         parentActor = actorToGet->GetParentActor();
       }
 
       // Set the parent if we found it
-      if (parent)
+      if (parentActor != NULL)
       {
-         SetActorID(parent->GetUniqueId(), "Parent Actor");
+         SetActorID(parentActor->GetId(), "Parent Actor");
 
          // Fire the "out"
          ActionNode::Update(simDelta, delta, input, firstUpdate);
