@@ -920,7 +920,7 @@ namespace dtPhysics
             dtPhysics::PhysicsObject* physObj = mPhysicsObjects[i];
             bool setTransform = physObj->GetMechanicsType() == MechanicsType::KINEMATIC;
 
-            // It's in efficient to set the position of static objects
+            // It's inefficient to set the position of static objects
             // and it can mess up dynamic objects to set the position every frame
             // so we check to see if you moved it since the last update before setting the value.
             if (!setTransform)
