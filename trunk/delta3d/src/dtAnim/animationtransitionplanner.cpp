@@ -543,9 +543,6 @@ namespace dtAnim
 
                if (animatable != NULL)
                {
-                  // DEBUG:
-                  printf("Adding anim: %s\n", animatable->GetName().c_str());
-
                   LOGN_DEBUG("animationtransitionplanner.cpp", std::string("Adding animatable named \"") + animatable->GetName().c_str() + "\".");
                   newAnim = animatable->Clone(GetOwner()->GetComponent<AnimationHelper>()->GetModelWrapper());
                   newAnim->SetStartDelay(std::max(0.0f, accumulatedStartTime));
@@ -584,9 +581,6 @@ namespace dtAnim
       // through normal program flow.
       if (IsInSTAGE() && animAC != NULL && animatable != NULL)
       {
-         // DEBUG:
-         printf("Playing anim: %s\n\n", animatable->GetName().c_str());
-
          animAC->ClearAll(0.0f);
          animAC->PlayAnimation(animatable->GetName());
          animAC->Update(blendTime);
