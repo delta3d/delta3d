@@ -489,6 +489,7 @@ namespace dtAnim
          gottaSequence = GenerateNewAnimationSequence();
       }
 
+      const Animatable* animatable = NULL;
       AnimationHelper* animAC = GetOwner()->GetComponent<AnimationHelper>();
 
       if (gottaSequence)
@@ -538,7 +539,7 @@ namespace dtAnim
                   }
                }
 
-               const Animatable* animatable = ApplyOperatorAndGetAnimatable(**i);
+               animatable = ApplyOperatorAndGetAnimatable(**i);
 
                if (animatable != NULL)
                {
@@ -578,8 +579,10 @@ namespace dtAnim
       // so that the initial state can take effect.
       // TODO: Remove this once STAGE has its own way to update actors
       // through normal program flow.
-      if (IsInSTAGE() && animAC != NULL)
+      if (IsInSTAGE() && animAC != NULL && animatable != NULL)
       {
+         animAC->ClearAll(0.0f);
+         animAC->PlayAnimation(animatable->GetName());
          animAC->Update(blendTime);
       }
    }
