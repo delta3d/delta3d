@@ -543,6 +543,9 @@ namespace dtAnim
 
                if (animatable != NULL)
                {
+                  // DEBUG:
+                  printf("Adding anim: %s\n", animatable->GetName().c_str());
+
                   LOGN_DEBUG("animationtransitionplanner.cpp", std::string("Adding animatable named \"") + animatable->GetName().c_str() + "\".");
                   newAnim = animatable->Clone(GetOwner()->GetComponent<AnimationHelper>()->GetModelWrapper());
                   newAnim->SetStartDelay(std::max(0.0f, accumulatedStartTime));
@@ -581,6 +584,9 @@ namespace dtAnim
       // through normal program flow.
       if (IsInSTAGE() && animAC != NULL && animatable != NULL)
       {
+         // DEBUG:
+         printf("Playing anim: %s\n\n", animatable->GetName().c_str());
+
          animAC->ClearAll(0.0f);
          animAC->PlayAnimation(animatable->GetName());
          animAC->Update(blendTime);
@@ -788,9 +794,34 @@ namespace dtAnim
    }
 
    ////////////////////////////////////////////////////////////////////////
+   void AnimationTransitionPlanner::SetWeaponState(dtAnim::WeaponStateEnum& weaponState)
+   {
+      if (mWeaponState.get() != &weaponState)
+      {
+         mWeaponState = &weaponState;
+
+         // This was recommended temporarily for getting animations to
+         // work in STAGE. This allows the newly set stance to be set
+         // in the planner and update called at least once so that the
+         // character assumes the initial animation pose.
+         // TODO: Remove when STAGE has been fixed to generically work with animations.
+         if (IsInSTAGE())
+         {
+            OnModelLoaded(NULL);
+         }
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////
+   dtAnim::WeaponStateEnum& AnimationTransitionPlanner::GetWeaponState() const
+   {
+      return *mWeaponState;
+   }
+
+   ////////////////////////////////////////////////////////////////////////
    DT_IMPLEMENT_ACCESSOR(AnimationTransitionPlanner, bool, IsDead);
    //DT_IMPLEMENT_ACCESSOR(AnimationTransitionPlanner, dtUtil::EnumerationPointer<BasicStanceEnum>, Stance);
-   DT_IMPLEMENT_ACCESSOR(AnimationTransitionPlanner, dtUtil::EnumerationPointer<WeaponStateEnum>, WeaponState);
+   //DT_IMPLEMENT_ACCESSOR(AnimationTransitionPlanner, dtUtil::EnumerationPointer<WeaponStateEnum>, WeaponState);
    DT_IMPLEMENT_ACCESSOR(AnimationTransitionPlanner, double, MaxTimePerIteration);
 
 
