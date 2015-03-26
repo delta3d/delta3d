@@ -2153,9 +2153,9 @@ void GameManagerTests::TestGMSettingsServerClientRoles()
    dtCore::Map& m = project.CreateMap("testMap", "bbbb");
 
    CPPUNIT_ASSERT_MESSAGE("Client role should default to true", 
-      mGM->GetGMSettings().IsClientRole());
+      mGM->GetGMSettings().GetClientRole());
    CPPUNIT_ASSERT_MESSAGE("Server role should default to true", 
-      mGM->GetGMSettings().IsServerRole());
+      mGM->GetGMSettings().GetServerRole());
 
    // Test with client off, server on
    mGM->GetGMSettings().SetClientRole(false);

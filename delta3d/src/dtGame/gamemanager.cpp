@@ -1197,8 +1197,8 @@ namespace dtGame
                bool isRemote = gameActor->IsRemote();
                bool shouldPublish = !isRemote && gameActor->GetInitialOwnership() == GameActorProxy::Ownership::SERVER_PUBLISHED;
 
-               bool isClient = GetGMSettings().IsClientRole();
-               bool isServer = GetGMSettings().IsServerRole();
+               bool isClient = GetGMSettings().GetClientRole();
+               bool isServer = GetGMSettings().GetServerRole();
                bool shouldAddActor = isRemote ||
                   (isClient && gameActor->GetInitialOwnership() == GameActorProxy::Ownership::CLIENT_LOCAL)
                   || ((isClient || isServer) && gameActor->GetInitialOwnership() == GameActorProxy::Ownership::CLIENT_AND_SERVER_LOCAL)
@@ -1270,6 +1270,12 @@ namespace dtGame
    ///////////////////////////////////////////////////////////////////////////////
    void GameManager::AddActor(GameActorProxy& actorRoot, bool isRemote, bool publish)
    {
+      if (GetGMSettings().GetEditorMode())
+      {
+         isRemote = true;
+         publish = false;
+      }
+
       GameActorProxy::iterator i, iend;
       i = actorRoot.begin();
       iend = actorRoot.end();
