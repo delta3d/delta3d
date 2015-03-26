@@ -30,6 +30,7 @@ namespace dtGame
    GMSettings::GMSettings()
       : mServerRole(true)
       , mClientRole(true)
+      , mEditorMode(false)
    {
    }
 
@@ -38,29 +39,11 @@ namespace dtGame
    {
    }
 
-   ///////////////////////////////////////////////////////////////////////////////
-   bool GMSettings::IsServerRole() const
-   {
-      return mServerRole;
-   }
+   DT_IMPLEMENT_ACCESSOR(GMSettings, bool, ServerRole);
 
-   ///////////////////////////////////////////////////////////////////////////////
-   void GMSettings::SetServerRole(bool newValue)
-   {
-      mServerRole = newValue;
-   }
+   DT_IMPLEMENT_ACCESSOR(GMSettings, bool, ClientRole);
 
-   ///////////////////////////////////////////////////////////////////////////////
-   bool GMSettings::IsClientRole() const
-   {
-      return mClientRole;
-   }
-
-   ///////////////////////////////////////////////////////////////////////////////
-   void GMSettings::SetClientRole(bool newValue)
-   {
-      mClientRole = newValue;
-   }
+   DT_IMPLEMENT_ACCESSOR(GMSettings, bool, EditorMode);
 
 
 } // namespace dtGame

@@ -142,7 +142,7 @@ void GMImpl::ReparentDanglingDrawables(GameManager& gm, dtCore::DeltaDrawable* d
             if (AddActorToScene(*static_cast<GameActorProxy*>(actorWithDrawableAsChild)))
             {
                // This happens when the actor passed is the environment actor.
-               LOG_ERROR("Internal Error:  The environment was is the subscene.  This shouldn't be possible.");
+               LOG_ERROR("Internal Error:  The environment was in the subscene.  This shouldn't be possible.");
             }
          }
          else
@@ -306,11 +306,11 @@ bool GMImpl::AddActorToScene(GameActorProxy& actor)
       }
       else
       {
-         if (hasDrawable && hasNoParent)
+         if (mEnvironment.get() == &actor && hasDrawable && actor.GetDrawable()->GetParent() != mScene)
          {
             mScene->AddChild(mEnvironment->GetDrawable());
+            envChanged = true;
          }
-         envChanged = true;
       }
    }
    else

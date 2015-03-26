@@ -25,6 +25,7 @@
 #include <dtGame/export.h>
 #include <dtCore/refptr.h>
 #include <osg/Referenced>
+#include <dtUtil/getsetmacros.h>
 
 /**
  * A simple data class that has configurable settings used by the GM. Separated out as a class
@@ -49,15 +50,7 @@ namespace dtGame
        * By default, the settings are true for both server and client.
        * @return true if server role is on. 
        */
-      bool IsServerRole() const;
-
-      /**
-       * Sets whether the gm acts as a server or not. Among other things,
-       * the server role applies when loading a map to handle InitialOwnership. 
-       * By default, the settings are true for both server and client.
-       * @param newValue true for server or false if not. 
-       */
-      void SetServerRole(bool newValue);
+      DT_DECLARE_ACCESSOR(bool, ServerRole);
 
       /**
        * Returns true if the gm was setup with the client role. Among other things,
@@ -65,20 +58,14 @@ namespace dtGame
        * By default, the settings are true for both server and client.
        * @return true if client role is on. 
        */
-      bool IsClientRole() const;
+      DT_DECLARE_ACCESSOR(bool, ClientRole);
 
       /**
-       * Sets whether the gm acts as a client or not. Among other things,
-       * the server role applies when loading a map to handle InitialOwnership. 
-       * By default, the settings are true for both server and client.
-       * @param newValue true for client or false if not. 
+       * Editor mode calls a different init function and sends a different tick message.
        */
-      void SetClientRole(bool newValue);
-
+      DT_DECLARE_ACCESSOR(bool, EditorMode);
 
    private:
-      bool mServerRole; // defaults to true
-      bool mClientRole; // defaults to true
    };
 
 } // namespace dtGame
