@@ -49,13 +49,14 @@ SkyBox::SkyBox(const std::string& name, RenderProfileEnum pRenderProfile)
    : EnvEffect(name)
    , mRenderProfilePreference(pRenderProfile)
    , mRenderProfile(0)
+   , mConfigCallback(new SkyBox::ConfigCallback(this))
    , mInitializedTextures(false)
 {
    RegisterInstance(this);
 
    SetOSGNode(new osg::Group());
 
-   GetOSGNode()->setUpdateCallback(new SkyBox::ConfigCallback(this));
+   GetOSGNode()->setUpdateCallback(mConfigCallback.get());
 
    CheckHardware();
 
@@ -71,8 +72,6 @@ SkyBox::~SkyBox()
 ////////////////////////////////////////////////////////////////////////////////
 void SkyBox::Config()
 {
-   GetOSGNode()->setCullCallback(0);
-
    SetRenderProfile(mRenderProfilePreference);
 
    if(mInitializedTextures)
@@ -87,6 +86,8 @@ void SkyBox::Config()
    }
 
    mRenderProfile->Config(GetOSGNode()->asGroup());
+
+   GetOSGNode()->removeUpdateCallback(mConfigCallback.get());
 }
 
 ////////////////////////////////////////////////////////////////////////////////

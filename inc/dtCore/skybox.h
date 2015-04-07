@@ -188,7 +188,7 @@ namespace dtCore
       RenderProfileEnum mRenderProfilePreference;
       bool mSupportedProfiles[RP_COUNT];
       dtCore::RefPtr<RenderProfile> mRenderProfile;
-
+      dtCore::RefPtr<ConfigCallback> mConfigCallback;
       bool mInitializedTextures;
       std::string mTexList[6];
       bool mTexPreSetList[6];
