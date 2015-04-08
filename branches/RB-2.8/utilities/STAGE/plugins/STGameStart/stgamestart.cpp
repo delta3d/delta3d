@@ -94,17 +94,25 @@ void STGameStartPlugin::RunGameStart()
    
       QProcess* gamestartRunner = new QProcess(this);
 
-#if  defined(DELTA_WIN32)
-
       QString program(QApplication::applicationDirPath());
+
+#if  defined(DELTA_WIN32)
 #ifdef _DEBUG
       program.append("\\GameStartd.exe");
 #else
       program.append("\\GameStart.exe");
-#endif 
-
+#endif
+#elif defined(__APPLE__)
+      if (program.indexOf(QString(".app")) >= 0)
+      {
+         program = (dtUtil::GetBundlePath() + "/GameStart.app/Contents/MacOS/GameStart").c_str();
+      }
+      else
+      {
+         program.append("/GameStart");
+      }
 #else
-
+      program.append("/GameStart");
 #endif
 
       gamestartRunner->setWorkingDirectory(mWorkingDirEdit->text());
