@@ -1,0 +1,885 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<shaderlist>
+
+   <shadergroup name="SimpleShader">  
+      <shader name="TestAppDefaultShader" default="yes">
+         <source type="Vertex">shaders/base/simpleshader.vert</source>
+         <source type="Vertex">shaders/base/vertex_functions.vert</source>
+       <source type="Vertex">shaders/shadow/shadow_functions.vert</source>
+         <source type="Fragment">shaders/base/simpleshader.frag</source>
+         <source type="Fragment">shaders/base/fragment_functions.frag</source>      
+       <source type="Fragment">shaders/shadow/shadow_functions.frag</source>
+      </shader>
+      <shader name="TestAppDefaultShader_Editor" editor="yes">
+         <source type="Vertex">shaders/base/simpleshader.vert</source>
+         <source type="Vertex">shaders/base/vertex_functions.vert</source>
+         <source type="Vertex">shaders/shadow/shadow_functions.vert</source>
+         <source type="Fragment">shaders/base/simpleshader.frag</source>
+         <source type="Fragment">shaders/base/fragment_functions.frag</source>
+         <source type="Fragment">shaders/shadow/shadow_functions.frag</source>
+      </shader>
+   </shadergroup>
+   
+   <shadergroup name="EphemerisGroup">
+      <shader name="Ephemeris" default="yes">
+         <source type="Vertex">shaders/base/ephemeris.vert</source>
+         <source type="Vertex">shaders/base/vertex_functions.vert</source>
+         <source type="Fragment">shaders/base/ephemeris.frag</source>
+         <source type="Vertex">shaders/base/fragment_functions.frag</source>
+      </shader>
+   </shadergroup>
+
+
+   <shadergroup name="MultiMapCharacter">
+      <shader name="MultiMapCharacter" default="yes">
+         <source type="Vertex">shaders/base/character.vert</source>
+         <source type="Vertex">shaders/base/vertex_functions.vert</source>
+         <source type="Vertex">shaders/shadow/shadow_functions.vert</source>
+         <source type="Fragment">shaders/base/fragment_functions.frag</source>
+         <source type="Fragment">shaders/base/character.frag</source>
+         <source type="Fragment">shaders/base/multimap_functions.frag</source>
+         <source type="Fragment">shaders/lighting/dynamic_light_functions.frag</source>
+         <source type="Fragment">shaders/shadow/shadow_functions.frag</source>
+
+         <parameter name="effectScales">
+            <!-- 
+               X: Alpha
+               Y: Illuminance -->
+            <vec4 defaultValue="1 1 1 1" />
+         </parameter>
+
+         <parameter name="diffuseTexture">
+            <texture2D textureUnit="0">
+               <source type="Auto"/>
+            </texture2D>
+         </parameter>
+         <parameter name="normalTexture">
+            <texture2D textureUnit="1">
+               <source type="Image">textures/ShaderBase/NONE_NORM.png</source>
+            </texture2D>
+         </parameter>
+         <parameter name="specularTexture">
+            <texture2D textureUnit="2">
+               <source type="Image">textures/ShaderBase/NONE.png</source>
+            </texture2D>
+         </parameter>
+         <parameter name="alphaTexture">
+            <texture2D textureUnit="3">
+               <source type="Image">textures/ShaderBase/NONE_ALPHA.png</source>
+            </texture2D>
+         </parameter>
+         <parameter name="illumTexture">
+            <texture2D textureUnit="4">
+               <source type="Image">textures/ShaderBase/NONE.png</source>
+            </texture2D>
+         </parameter>
+         <parameter name="shadowTexture">
+            <texture2D textureUnit="5">
+               <source type="Auto"/>
+            </texture2D>
+         </parameter>
+         <!--parameter name="d3d_ReflectionCubeMap">
+            <textureCubeMap textureUnit="10">
+               <source type="ImagePositiveX">textures/right.jpg</source>
+               <source type="ImageNegativeX">textures/left.jpg</source>
+               <source type="ImagePositiveY">textures/front.jpg</source>
+               <source type="ImageNegativeY">textures/back.jpg</source>
+               <source type="ImagePositiveZ">textures/top.jpg</source>
+               <source type="ImageNegativeZ">textures/bottom.jpg</source>
+               <wrap axis="S" mode="Repeat"/>
+               <wrap axis="T" mode="Repeat"/>
+            </textureCubeMap>
+         </parameter-->
+
+      </shader>
+      <shader name="MultiMapCharacterEditor" editor="yes">
+         <source type="Vertex">shaders/base/character_editor.vert</source>         
+         <source type="Fragment">shaders/base/character_editor.frag</source>
+
+         <parameter name="effectScales">
+            <!-- 
+               X: Alpha
+               Y: Illuminance -->
+            <vec4 defaultValue="1 1 1 1" />
+         </parameter>
+
+         <parameter name="diffuseTexture">
+            <texture2D textureUnit="0">
+               <source type="Auto"/>
+            </texture2D>
+         </parameter>
+         <parameter name="normalTexture">
+            <texture2D textureUnit="1">
+               <source type="Image">textures/ShaderBase/NONE_NORM.png</source>
+            </texture2D>
+         </parameter>
+         <parameter name="specularTexture">
+            <texture2D textureUnit="2">
+               <source type="Image">textures/ShaderBase/NONE.png</source>
+            </texture2D>
+         </parameter>
+         <parameter name="alphaTexture">
+            <texture2D textureUnit="3">
+               <source type="Image">textures/ShaderBase/NONE_ALPHA.png</source>
+            </texture2D>
+         </parameter>
+         <parameter name="illumTexture">
+            <texture2D textureUnit="4">
+               <source type="Image">textures/ShaderBase/NONE.png</source>
+            </texture2D>
+         </parameter>
+         <!--parameter name="d3d_ReflectionCubeMap">
+            <textureCubeMap textureUnit="10">
+               <source type="ImagePositiveX">textures/right.jpg</source>
+               <source type="ImageNegativeX">textures/left.jpg</source>
+               <source type="ImagePositiveY">textures/front.jpg</source>
+               <source type="ImageNegativeY">textures/back.jpg</source>
+               <source type="ImagePositiveZ">textures/top.jpg</source>
+               <source type="ImageNegativeZ">textures/bottom.jpg</source>
+               <wrap axis="S" mode="Repeat"/>
+               <wrap axis="T" mode="Repeat"/>
+            </textureCubeMap>
+         </parameter-->
+      </shader>
+   </shadergroup>
+
+
+   <shadergroup name="MultiMap">
+      <shader name="MultiMap" default="yes">
+         <source type="Vertex">shaders/base/multimap.vert</source>
+         <source type="Vertex">shaders/base/vertex_functions.vert</source>
+         <source type="Vertex">shaders/shadow/shadow_functions.vert</source>
+         <source type="Fragment">shaders/base/multimap_functions.frag</source>
+         <source type="Fragment">shaders/base/multimap.frag</source>
+         <source type="Fragment">shaders/base/fragment_functions.frag</source>
+         <source type="Fragment">shaders/lighting/dynamic_light_functions.frag</source>
+         <source type="Fragment">shaders/shadow/shadow_functions.frag</source>
+
+         <parameter name="effectScales">
+            <!-- 
+               X: Alpha
+               Y: Illuminance -->
+            <vec4 defaultValue="1 1 1 1" />
+         </parameter>
+
+         <parameter name="diffuseTexture">
+            <texture2D textureUnit="0">
+               <source type="Auto"/>
+            </texture2D>
+         </parameter>
+         <parameter name="normalTexture">
+            <texture2D textureUnit="1">
+               <source type="Image">textures/ShaderBase/NONE_NORM.png</source>
+            </texture2D>
+         </parameter>
+         <parameter name="specularTexture">
+            <texture2D textureUnit="2">
+               <source type="Image">textures/ShaderBase/NONE.png</source>
+            </texture2D>
+         </parameter>
+         <parameter name="alphaTexture">
+            <texture2D textureUnit="3">
+               <source type="Image">textures/ShaderBase/NONE_ALPHA.png</source>
+               <wrap axis="S" mode="Repeat"/>
+               <wrap axis="T" mode="Repeat"/>
+            </texture2D>
+         </parameter>
+         <parameter name="illumTexture">
+            <texture2D textureUnit="4">
+               <source type="Image">textures/ShaderBase/NONE.png</source>
+            </texture2D>
+         </parameter>
+         <parameter name="shadowTexture">
+            <texture2D textureUnit="5">
+               <source type="Auto"/>
+            </texture2D>
+         </parameter>
+         <!--parameter name="d3d_ReflectionCubeMap">
+            <textureCubeMap textureUnit="10">
+               <source type="ImagePositiveX">textures/right.jpg</source>
+               <source type="ImageNegativeX">textures/left.jpg</source>
+               <source type="ImagePositiveY">textures/front.jpg</source>
+               <source type="ImageNegativeY">textures/back.jpg</source>
+               <source type="ImagePositiveZ">textures/top.jpg</source>
+               <source type="ImageNegativeZ">textures/bottom.jpg</source>
+               <wrap axis="S" mode="Repeat"/>
+               <wrap axis="T" mode="Repeat"/>
+            </textureCubeMap>
+         </parameter-->
+      </shader>
+      <shader name="MultiMapEditor" editor="yes">
+         <source type="Vertex">shaders/base/multimap_editor.vert</source>
+         <source type="Fragment">shaders/base/multimap_editor.frag</source>
+
+         <parameter name="effectScales">
+            <!-- 
+               X: Alpha
+               Y: Illuminance -->
+            <vec4 defaultValue="1 1 1 1" />
+         </parameter>
+
+         <parameter name="diffuseTexture">
+            <texture2D textureUnit="0">
+               <source type="Auto"/>
+            </texture2D>
+         </parameter>
+         <parameter name="normalTexture">
+            <texture2D textureUnit="1">
+               <source type="Image">textures/ShaderBase/NONE_NORM.png</source>
+            </texture2D>
+         </parameter>
+         <parameter name="specularTexture">
+            <texture2D textureUnit="2">
+               <source type="Image">textures/ShaderBase/NONE.png</source>
+            </texture2D>
+         </parameter>
+         <parameter name="alphaTexture">
+            <texture2D textureUnit="3">
+               <source type="Image">textures/ShaderBase/NONE_ALPHA.png</source>
+               <wrap axis="S" mode="Repeat"/>
+               <wrap axis="T" mode="Repeat"/>
+            </texture2D>
+         </parameter>
+         <parameter name="illumTexture">
+            <texture2D textureUnit="4">
+               <source type="Image">textures/ShaderBase/NONE.png</source>
+            </texture2D>
+         </parameter>
+         <!--parameter name="d3d_ReflectionCubeMap">
+            <textureCubeMap textureUnit="10">
+               <source type="ImagePositiveX">textures/right.jpg</source>
+               <source type="ImageNegativeX">textures/left.jpg</source>
+               <source type="ImagePositiveY">textures/front.jpg</source>
+               <source type="ImageNegativeY">textures/back.jpg</source>
+               <source type="ImagePositiveZ">textures/top.jpg</source>
+               <source type="ImageNegativeZ">textures/bottom.jpg</source>
+               <wrap axis="S" mode="Repeat"/>
+               <wrap axis="T" mode="Repeat"/>
+            </textureCubeMap>
+         </parameter-->
+      </shader>
+   </shadergroup>
+
+
+   <shadergroup name="MultiMapWater">
+      <shader name="MultiMapWater_Default" default="yes">
+         <source type="Fragment">shaders/base/multimapwater.frag</source>
+         <source type="Vertex">shaders/base/multimap.vert</source>
+         <source type="Vertex">shaders/base/vertex_functions.vert</source>
+         <source type="Vertex">shaders/shadow/shadow_functions.vert</source>
+         <source type="Fragment">shaders/base/multimap_functions.frag</source>
+         <source type="Fragment">shaders/base/fragment_functions.frag</source>
+         <source type="Fragment">shaders/lighting/dynamic_light_functions.frag</source>
+         <source type="Fragment">shaders/shadow/shadow_functions.frag</source>
+
+         <parameter name="effectScales">
+            <!-- 
+               X: Alpha
+               Y: Illuminance -->
+            <vec4 defaultValue="1 1 1 1" />
+         </parameter>
+
+         <parameter name="diffuseTexture">
+            <texture2D textureUnit="0">
+               <source type="Auto"/>
+            </texture2D>
+         </parameter>
+         <parameter name="normalTexture">
+            <texture2D textureUnit="1">
+               <source type="Image">textures/ShaderBase/NONE_NORM.png</source>
+            </texture2D>
+         </parameter>
+         <parameter name="specularTexture">
+            <texture2D textureUnit="2">
+               <source type="Image">textures/ShaderBase/NONE.png</source>
+            </texture2D>
+         </parameter>
+         <parameter name="alphaTexture">
+            <texture2D textureUnit="3">
+               <source type="Image">textures/ShaderBase/NONE_ALPHA.png</source>
+               <wrap axis="S" mode="Repeat"/>
+               <wrap axis="T" mode="Repeat"/>
+            </texture2D>
+         </parameter>
+         <parameter name="illumTexture">
+            <texture2D textureUnit="4">
+               <source type="Image">textures/ShaderBase/NONE.png</source>
+            </texture2D>
+         </parameter>
+         <parameter name="shadowTexture">
+            <texture2D textureUnit="5">
+               <source type="Auto"/>
+            </texture2D>
+         </parameter>
+         <!--parameter name="d3d_ReflectionCubeMap">
+            <textureCubeMap textureUnit="10">
+               <source type="ImagePositiveX">textures/right.jpg</source>
+               <source type="ImageNegativeX">textures/left.jpg</source>
+               <source type="ImagePositiveY">textures/front.jpg</source>
+               <source type="ImageNegativeY">textures/back.jpg</source>
+               <source type="ImagePositiveZ">textures/top.jpg</source>
+               <source type="ImageNegativeZ">textures/bottom.jpg</source>
+               <wrap axis="S" mode="Repeat"/>
+               <wrap axis="T" mode="Repeat"/>
+            </textureCubeMap>
+         </parameter-->
+      </shader>
+      <shader name="MultiMapWater_Editor" editor="yes">
+
+         <source type="Vertex">shaders/base/multimap_editor.vert</source>
+         <source type="Fragment">shaders/base/multimap_editor.frag</source>
+
+         <parameter name="effectScales">
+            <!-- 
+               X: Alpha
+               Y: Illuminance -->
+            <vec4 defaultValue="1 1 1 1" />
+         </parameter>
+
+         <parameter name="diffuseTexture">
+            <texture2D textureUnit="0">
+               <source type="Auto"/>
+            </texture2D>
+         </parameter>
+         <parameter name="normalTexture">
+            <texture2D textureUnit="1">
+               <source type="Image">textures/ShaderBase/NONE_NORM.png</source>
+            </texture2D>
+         </parameter>
+         <parameter name="specularTexture">
+            <texture2D textureUnit="2">
+               <source type="Image">textures/ShaderBase/NONE.png</source>
+            </texture2D>
+         </parameter>
+         <parameter name="alphaTexture">
+            <texture2D textureUnit="3">
+               <source type="Image">textures/ShaderBase/NONE_ALPHA.png</source>
+               <wrap axis="S" mode="Repeat"/>
+               <wrap axis="T" mode="Repeat"/>
+            </texture2D>
+         </parameter>
+         <parameter name="illumTexture">
+            <texture2D textureUnit="4">
+               <source type="Image">textures/ShaderBase/NONE.png</source>
+            </texture2D>
+         </parameter>
+         <parameter name="shadowTexture">
+            <texture2D textureUnit="5">
+               <source type="Auto"/>
+            </texture2D>
+         </parameter>
+         <!--parameter name="d3d_ReflectionCubeMap">
+            <textureCubeMap textureUnit="10">
+               <source type="ImagePositiveX">textures/right.jpg</source>
+               <source type="ImageNegativeX">textures/left.jpg</source>
+               <source type="ImagePositiveY">textures/front.jpg</source>
+               <source type="ImageNegativeY">textures/back.jpg</source>
+               <source type="ImagePositiveZ">textures/top.jpg</source>
+               <source type="ImageNegativeZ">textures/bottom.jpg</source>
+               <wrap axis="S" mode="Repeat"/>
+               <wrap axis="T" mode="Repeat"/>
+            </textureCubeMap>
+         </parameter-->
+      </shader>
+   </shadergroup>
+   
+   <shadergroup name="BRDF">
+      <shader name="BRDF" default="yes">
+         <source type="Vertex">shaders/base/brdf.vert</source>
+         <source type="Fragment">shaders/base/brdf.frag</source>
+         <source type="Vertex">shaders/base/vertex_functions.vert</source>
+         <source type="Fragment">shaders/base/fragment_functions.frag</source>
+         <source type="Fragment">shaders/base/brdf_functions.frag</source>
+         <source type="Fragment">shaders/base/brdf_fresnel_functions.frag</source>
+         <source type="Fragment">shaders/base/brdf_normal_functions.frag</source>
+         <source type="Fragment">shaders/base/brdf_geometric_functions.frag</source>
+         <source type="Fragment">shaders/base/brdf_specular_functions.frag</source>
+
+         <parameter name="diffuseTexture">
+            <texture2D textureUnit="0">
+               <source type="Auto"/>
+            </texture2D>
+         </parameter>
+         <parameter name="normalTexture">
+            <texture2D textureUnit="1">
+               <source type="Image">textures/ShaderBase/NONE_NORM.png</source>
+            </texture2D>
+         </parameter>
+         <parameter name="specularTexture">
+            <texture2D textureUnit="2">
+               <source type="Image">textures/ShaderBase/NONE.png</source>
+            </texture2D>
+         </parameter>
+         <parameter name="alphaTexture">
+            <texture2D textureUnit="3">
+               <source type="Image">textures/ShaderBase/NONE_ALPHA.png</source>
+               <wrap axis="S" mode="Repeat"/>
+               <wrap axis="T" mode="Repeat"/>
+            </texture2D>
+         </parameter>
+         <parameter name="illumTexture">
+            <texture2D textureUnit="4">
+               <source type="Image">textures/ShaderBase/NONE.png</source>
+            </texture2D>
+         </parameter>
+         <parameter name="roughnessTexture">
+            <texture2D textureUnit="5">
+               <source type="Image">textures/ShaderBase/NONE.png</source>
+            </texture2D>
+         </parameter>
+         <parameter name="irradianceTexture">
+            <texture2D textureUnit="6">
+               <source type="Image">textures/ShaderBase/NONE.png</source>
+            </texture2D>
+         </parameter>
+         <parameter name="shadowTexture">
+            <texture2D textureUnit="7">
+               <source type="Auto"/>
+            </texture2D>
+         </parameter>
+         <!--parameter name="envTexture">
+            <texture2D textureUnit="5">
+               <source type="Auto"/>
+               <wrap axis="S" mode="Repeat"/>
+               <wrap axis="T" mode="Repeat"/>
+            </texture2D>
+         </parameter-->
+
+         <parameter name="g_PBRValues">
+            <!-- 
+               X: Roughness
+               Y: Metallic -->
+            <vec4 defaultValue="0 0 0 0" />
+         </parameter>
+         <parameter name="g_LightingParameters">
+            <!-- 
+               X: Light Intensity
+               Y: Ambient Light Intensity
+               Z: Reflection Intensity -->
+            <vec4 defaultValue="50000 0.5 0.5 0" />
+         </parameter>
+         <parameter name="g_BRDFParam1">
+            <!-- 
+               X: Subsurface
+               Y: Specular
+               Z: Specular Tint
+               W: Anisotropic -->
+            <vec4 defaultValue="0 0 0 0" />
+         </parameter>
+         <parameter name="g_BRDFParam2">
+            <!-- 
+               X: Sheen
+               Y: Sheen Tint
+               Z: Clear Coat
+               W: Clear Coat Gloss -->
+            <vec4 defaultValue="0 0 0 0" />
+         </parameter>
+
+         <parameter name="g_specDistributionMode">
+            <integer defaultValue="0" />
+         </parameter>
+         <parameter name="g_specFresnelMode">
+            <integer defaultValue="0" />
+         </parameter>
+         <parameter name="g_specGeometricMode">
+            <integer defaultValue="0" />
+         </parameter>
+
+      </shader>
+   </shadergroup>
+
+  <shadergroup name="TestShaders">
+
+      <shader name="TestBumpMap" default="yes">
+         <source type="Vertex">shaders/lighting/TestBumpMap.vert</source>
+         <source type="Fragment">shaders/lighting/TestBumpMap.frag</source>
+		 
+         <parameter name="diffuseTexture">
+            <texture2D textureUnit="0">
+               <source type="Auto"/>
+            </texture2D>
+         </parameter>
+	 
+	     <parameter name="normalTexture">
+            <texture2D textureUnit="1">
+               <source type="Auto"/>
+            </texture2D>
+         </parameter>
+		 
+		 <parameter name="specTexture">
+            <texture2D textureUnit="2">
+               <source type="Auto"/>
+            </texture2D>
+         </parameter>
+       
+       <parameter name="mode">
+   		<integer defaultValue="0"/>
+   	 </parameter>
+
+      </shader>
+
+	  <shader name="AttributelessBump" default="no">
+         <source type="Vertex">shaders/lighting/AttributelessBump.vert</source>	
+         <source type="Fragment">shaders/lighting/AttributelessBump.frag</source>
+
+         <parameter name="diffuseTexture">
+            <texture2D textureUnit="0">
+               <source type="Auto"/>
+            </texture2D>
+         </parameter>
+
+         <parameter name="normalTexture">
+            <texture2D textureUnit="1">
+               <source type="Auto"/>
+            </texture2D>
+         </parameter>
+
+         <parameter name="uViewPosition">
+            <vec4 defaultValue="0 0 0 0" />
+         </parameter>
+
+		<parameter name="uViewDirection">
+			<vec4 defaultValue="0 0 0 0" />
+		 </parameter>
+
+		<parameter name="mode">
+			<integer defaultValue="0" />
+		 </parameter>
+	     
+      </shader>
+   </shadergroup>
+
+  <shadergroup name="Terrains">
+    <shader name="TerrainAltitude" default="yes">
+      <source type="Vertex">shaders/terrain/TerrainAltitude.vert</source>
+       <source type="Vertex">shaders/shadow/shadow_functions.vert</source>
+       <source type="Vertex">shaders/base/vertex_functions.vert</source>
+       <source type="Fragment">shaders/terrain/TerrainAltitude.frag</source>
+       <source type="Fragment">shaders/water/water_functions.frag</source>
+       <source type="Fragment">shaders/base/fragment_functions.frag</source>
+       <source type="Fragment">shaders/shadow/shadow_functions.frag</source>
+       <source type="Fragment">shaders/lighting/dynamic_light_functions.frag</source>
+
+      <parameter name="Altitudes">
+        <vec4 defaultValue="3.8 12.5 50 70" />
+      </parameter>
+      <parameter name="TextureScales">
+        <vec4 defaultValue="150 200 20 70" />
+      </parameter>
+       <!-->parameter name="WaterColor">  This is an actual uniform set by the water
+        <vec4 defaultValue="0 0.35 0.5 0.75" />
+      </parameter-->
+      <parameter name="AltitudeScale">
+        <float defaultValue="1" />
+      </parameter>
+      <parameter name="DetailScale">
+        <float defaultValue="3.0" />
+      </parameter>
+       
+       <parameter name="diffuseTexture">
+        <texture2D textureUnit="0">
+          <source type="Auto"/>
+        </texture2D>
+      </parameter>      
+       <parameter name="SandTexture">
+        <texture2D textureUnit="1">
+          <source type="Image">textures/ShaderBase/TerrainAltitude_Sand.png</source>
+          <wrap axis="S" mode="Repeat"/>
+          <wrap axis="T" mode="Repeat"/>
+        </texture2D>
+      </parameter>
+      <parameter name="GrassTexture">
+        <texture2D textureUnit="2">
+          <source type="Image">textures/ShaderBase/TerrainAltitude_Grass.png</source>
+          <wrap axis="S" mode="Repeat"/>
+          <wrap axis="T" mode="Repeat"/>
+        </texture2D>
+      </parameter>
+      <parameter name="RockTexture">
+        <texture2D textureUnit="3">
+          <source type="Image">textures/ShaderBase/TerrainAltitude_Rock.png</source>
+          <wrap axis="S" mode="Repeat"/>
+          <wrap axis="T" mode="Repeat"/>
+        </texture2D>
+      </parameter>
+      <parameter name="BlendMaskTexture">
+        <texture2D textureUnit="4">
+          <source type="Image">textures/ShaderBase/TerrainAltitude_BlendMask.tga</source>
+          <wrap axis="S" mode="Repeat"/>
+          <wrap axis="T" mode="Repeat"/>
+        </texture2D>
+      </parameter>
+       <parameter name="shadowTexture">
+        <texture2D textureUnit="5">
+          <source type="Auto"/>
+        </texture2D>
+      </parameter>       
+       <parameter name="MountainsideTexture">
+          <texture2D textureUnit="8">
+             <source type="Image">textures/ShaderBase/TerrainAltitude_Mountainside.png</source>
+             <wrap axis="S" mode="Repeat"/>
+             <wrap axis="T" mode="Repeat"/>
+          </texture2D>
+       </parameter>
+    <parameter name="UnderWaterSandTexture">
+        <texture2D textureUnit="9">
+          <source type="Image">textures/ShaderBase/TerrainAltitude_UnderWaterSand.png</source>
+          <wrap axis="S" mode="Repeat"/>
+          <wrap axis="T" mode="Repeat"/>
+        </texture2D>
+      </parameter>
+      
+    </shader>
+     <shader name="TerrainAltitudeEditor" editor="yes">
+        <source type="Vertex">shaders/terrain/TerrainAltitude_editor.vert</source>
+        <source type="Fragment">shaders/terrain/TerrainAltitude_editor.frag</source>
+
+        <parameter name="Altitudes">
+           <vec4 defaultValue="3.8 12.5 50 70" />
+        </parameter>
+        <parameter name="TextureScales">
+           <vec4 defaultValue="150 200 20 70" />
+        </parameter>
+        <parameter name="WaterColor">  
+        <vec4 defaultValue="0 0.35 0.5 0.75" />
+      </parameter>
+        <parameter name="WaterHeight">
+           <float defaultValue="0.0" />
+        </parameter>
+        <parameter name="AltitudeScale">
+           <float defaultValue="1" />
+        </parameter>
+        <parameter name="DetailScale">
+           <float defaultValue="3.0" />
+        </parameter>
+
+        <parameter name="diffuseTexture">
+           <texture2D textureUnit="0">
+              <source type="Auto"/>
+           </texture2D>
+        </parameter>
+        <parameter name="SandTexture">
+           <texture2D textureUnit="1">
+              <source type="Image">textures/ShaderBase/TerrainAltitude_Sand.png</source>
+              <wrap axis="S" mode="Repeat"/>
+              <wrap axis="T" mode="Repeat"/>
+           </texture2D>
+        </parameter>
+        <parameter name="GrassTexture">
+           <texture2D textureUnit="2">
+              <source type="Image">textures/ShaderBase/TerrainAltitude_Grass.png</source>
+              <wrap axis="S" mode="Repeat"/>
+              <wrap axis="T" mode="Repeat"/>
+           </texture2D>
+        </parameter>
+        <parameter name="RockTexture">
+           <texture2D textureUnit="3">
+              <source type="Image">textures/ShaderBase/TerrainAltitude_Rock.png</source>
+              <wrap axis="S" mode="Repeat"/>
+              <wrap axis="T" mode="Repeat"/>
+           </texture2D>
+        </parameter>
+        <parameter name="BlendMaskTexture">
+           <texture2D textureUnit="4">
+              <source type="Image">textures/ShaderBase/TerrainAltitude_BlendMask.tga</source>
+              <wrap axis="S" mode="Repeat"/>
+              <wrap axis="T" mode="Repeat"/>
+           </texture2D>
+        </parameter>
+        <parameter name="MountainsideTexture">
+           <texture2D textureUnit="8">
+              <source type="Image">textures/ShaderBase/TerrainAltitude_Mountainside.png</source>
+              <wrap axis="S" mode="Repeat"/>
+              <wrap axis="T" mode="Repeat"/>
+           </texture2D>
+        </parameter>
+        <parameter name="UnderWaterSandTexture">
+           <texture2D textureUnit="9">
+              <source type="Image">textures/ShaderBase/TerrainAltitude_UnderWaterSand.png</source>
+              <wrap axis="S" mode="Repeat"/>
+              <wrap axis="T" mode="Repeat"/>
+           </texture2D>
+        </parameter>
+
+     </shader>
+  </shadergroup>
+   
+   <shadergroup name="Particles">
+      <shader name="Particles" default="yes">
+         <source type="Vertex">shaders/lighting/dynamic_light_functions.frag</source>
+         <source type="Vertex">shaders/base/vertex_functions.vert</source>
+         <source type="Fragment">shaders/base/fragment_functions.frag</source>
+         <source type="Vertex">shaders/base/particle_non_emissive.vert</source>
+         <source type="Fragment">shaders/base/particle_non_emissive.frag</source>
+      </shader>
+   </shadergroup>
+
+   <shadergroup name="ParticlesEmissive">
+      <shader name="ParticlesEmissive" default="yes">
+         <source type="Vertex">shaders/lighting/dynamic_light_functions.frag</source>
+         <source type="Vertex">shaders/base/vertex_functions.vert</source>
+         <source type="Fragment">shaders/base/fragment_functions.frag</source>
+         <source type="Vertex">shaders/base/particle_emissive.vert</source>
+         <source type="Fragment">shaders/base/particle_emissive.frag</source>
+      </shader>
+   </shadergroup>
+
+   <shadergroup name="ParticleWaterSpray">
+      <shader name="ParticleWaterSpray" default="yes">
+         <source type="Vertex">shaders/lighting/dynamic_light_functions.frag</source>
+         <source type="Vertex">shaders/base/vertex_functions.vert</source>
+         <source type="Fragment">shaders/base/fragment_functions.frag</source>
+         <source type="Vertex">shaders/base/particle_non_emissive.vert</source>
+         <source type="Fragment">shaders/base/particle_non_emissive.frag</source>
+         
+         <parameter name="aboveWaterOnly">
+            <float defaultValue="1.0" />
+         </parameter>
+      </shader>
+   </shadergroup>
+
+   <shadergroup name="VolumetricParticles">
+      <shader name="VolumetricParticles" default="yes">
+         <source type="Vertex">shaders/lighting/dynamic_light_functions.frag</source>
+         <source type="Vertex">shaders/base/vertex_functions.vert</source>
+         <source type="Fragment">shaders/base/fragment_functions.frag</source>
+         <!--source type="Vertex">shaders/base/particle_non_emissive.vert</source>
+         <source type="Fragment">shaders/base/particle_non_emissive.frag</source-->
+         <source type="Vertex">shaders/base/particle_volume.vert</source>
+         <source type="Fragment">shaders/base/particle_volume.frag</source>
+
+         <parameter name="ScreenDimensions">
+            <vec4 defaultValue="600 600 0 0" />
+         </parameter>
+         <parameter name="volumeParticlePos">
+            <vec4 defaultValue="0 0 0 0" />
+         </parameter>
+         <parameter name="volumeParticleColor">
+            <vec4 defaultValue="1 1 1 1" />
+         </parameter>
+         <parameter name="volumeParticleRadius">
+            <float defaultValue="10" />
+         </parameter>
+         <parameter name="volumeParticleIntensity">
+            <float defaultValue="1" />
+         </parameter>
+         <parameter name="volumeParticleDensity">
+            <float defaultValue="1" />
+         </parameter>
+         <parameter name="volumeParticleVelocity">
+            <float defaultValue="1" />
+         </parameter>
+         <parameter name="volumeParticleNoiseScale">
+            <float defaultValue="1" />
+         </parameter>
+         <parameter name="noiseTexture">
+            <texture2D textureUnit="6">
+               <source type="Image">textures/ShaderBase/Noise.png</source>
+               <wrap axis="S" mode="Repeat"/>
+               <wrap axis="T" mode="Repeat"/>
+            </texture2D>
+         </parameter>
+      </shader>
+   </shadergroup>
+
+   <shadergroup name="WaterGroup">
+      <shader name="WaterShader" default="yes">
+         <source type="Vertex">shaders/water/water_functions.vert</source>
+         <source type="Vertex">shaders/water/water.vert</source>
+         <source type="Vertex">shaders/base/vertex_functions.vert</source>
+         <source type="Vertex">shaders/base/fragment_functions.frag</source>         
+         <source type="Fragment">shaders/water/water_functions.frag</source>
+         <source type="Fragment">shaders/water/water.frag</source>
+         <source type="Fragment">shaders/base/fragment_functions.frag</source>
+         <source type="Fragment">shaders/lighting/dynamic_light_functions.frag</source>
+
+      </shader>
+      <shader name="TextureWave" default="no">
+         <source type="Vertex">shaders/water/water_functions.vert</source>
+         <source type="Vertex">shaders/water/texture_wave.vert</source>
+         <source type="Fragment">shaders/water/texture_wave.frag</source>
+      </shader>
+      <shader name="WaveTest" default="no">
+         <source type="Vertex">shaders/water/water_functions.vert</source>
+         <source type="Vertex">shaders/water/wave_test.vert</source>
+         <source type="Fragment">shaders/water/wave_test.frag</source>
+      </shader>
+      <shader name="UnderWater" default="no">
+         <source type="Vertex">shaders/water/water_functions.vert</source>
+         <source type="Vertex">shaders/water/underwater.vert</source>
+         <source type="Fragment">shaders/water/water_functions.frag</source>
+         <source type="Fragment">shaders/water/underwater.frag</source>
+         <source type="Fragment">shaders/base/fragment_functions.frag</source>
+      </shader>
+   </shadergroup>
+
+
+
+   <shadergroup name="MultiMap_Flag">
+      <shader name="FlagShader" default="yes">
+         <source type="Vertex">shaders/base/flag_shader.vert</source>
+         <source type="Vertex">shaders/base/vertex_functions.vert</source>
+         <source type="Vertex">shaders/shadow/shadow_functions.vert</source>
+         <source type="Fragment">shaders/base/multimap_functions.frag</source>
+         <source type="Fragment">shaders/base/flag_shader.frag</source>
+         <source type="Fragment">shaders/base/fragment_functions.frag</source>
+         <source type="Fragment">shaders/lighting/dynamic_light_functions.frag</source>
+         <source type="Fragment">shaders/shadow/shadow_functions.frag</source>
+
+         <parameter name="effectScales">
+            <!-- 
+               X: Alpha
+               Y: Illuminance -->
+            <vec4 defaultValue="1 1 1 1" />
+         </parameter>
+
+         <parameter name="diffuseTexture">
+            <texture2D textureUnit="0">
+               <source type="Auto"/>
+            </texture2D>
+         </parameter>
+         <parameter name="normalTexture">
+            <texture2D textureUnit="1">
+               <source type="Image">textures/ShaderBase/NONE_NORM.png</source>
+            </texture2D>
+         </parameter>
+         <parameter name="specularTexture">
+            <texture2D textureUnit="2">
+               <source type="Image">textures/ShaderBase/NONE.png</source>
+            </texture2D>
+         </parameter>
+         <parameter name="alphaTexture">
+            <texture2D textureUnit="3">
+               <source type="Image">textures/ShaderBase/NONE_ALPHA.png</source>
+               <wrap axis="S" mode="Repeat"/>
+               <wrap axis="T" mode="Repeat"/>
+            </texture2D>
+         </parameter>
+         <parameter name="illumTexture">
+            <texture2D textureUnit="4">
+               <source type="Image">textures/ShaderBase/NONE.png</source>
+            </texture2D>
+         </parameter>
+         <parameter name="shadowTexture">
+            <texture2D textureUnit="5">
+               <source type="Auto"/>
+            </texture2D>
+         </parameter>
+         <!--parameter name="d3d_ReflectionCubeMap">
+            <textureCubeMap textureUnit="10">
+               <source type="ImagePositiveX">textures/right.jpg</source>
+               <source type="ImageNegativeX">textures/left.jpg</source>
+               <source type="ImagePositiveY">textures/front.jpg</source>
+               <source type="ImageNegativeY">textures/back.jpg</source>
+               <source type="ImagePositiveZ">textures/top.jpg</source>
+               <source type="ImageNegativeZ">textures/bottom.jpg</source>
+               <wrap axis="S" mode="Repeat"/>
+               <wrap axis="T" mode="Repeat"/>
+            </textureCubeMap>
+         </parameter-->
+      </shader>
+   </shadergroup>
+
+
+</shaderlist>
