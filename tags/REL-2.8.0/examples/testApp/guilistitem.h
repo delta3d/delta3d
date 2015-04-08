@@ -1,0 +1,79 @@
+/* -*-c++-*-
+ * testAPP - Using 'The MIT License'
+ * Copyright (C) 2014, Caper Holdings LLC
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
+#ifndef DELTA_TEST_APP_GUI_LIST_ITEM
+#define DELTA_TEST_APP_GUI_LIST_ITEM
+
+
+
+////////////////////////////////////////////////////////////////////////////////
+// INCLUDE DIRECTIVES
+////////////////////////////////////////////////////////////////////////////////
+#include "export.h"
+#include <dtUtil/refstring.h>
+
+#ifdef None
+#undef None
+#endif
+#include <CEGUI/CEGUI.h>
+#include <CEGUI/CEGUIWindowFactory.h>
+
+
+
+namespace dtExample
+{
+   //////////////////////////////////////////////////////////////////////////
+   // LIST ITEM CODE
+   //////////////////////////////////////////////////////////////////////////
+   class TEST_APP_EXPORT GuiListItem : public CEGUI::ItemEntry
+   {
+      public:
+         typedef CEGUI::ItemEntry BaseClass;
+
+         static const CEGUI::String WidgetTypeName;
+         static const dtUtil::RefString WIDGET_TYPE;
+         static const dtUtil::RefString LISTBOX_TYPE;
+
+         GuiListItem(CEGUI::String type, CEGUI::String name);
+
+         virtual ~GuiListItem();
+
+         static GuiListItem* Create(const std::string& itemName);
+
+         static void BindFactory();
+
+      protected:
+         virtual CEGUI::Size getItemPixelSize(void) const;
+   };
+
+
+
+   //////////////////////////////////////////////////////////////////////////
+   // CUSTOM WINDOW FACTORIES
+   //////////////////////////////////////////////////////////////////////////
+   using namespace CEGUI;
+   CEGUI_DECLARE_WINDOW_FACTORY(GuiListItem)
+
+}
+
+#endif

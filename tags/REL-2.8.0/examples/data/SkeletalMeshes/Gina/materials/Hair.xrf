@@ -1,0 +1,9 @@
+<MATERIAL VERSION="1000" NUMMAPS="1">
+    <AMBIENT>0 0 0 0</AMBIENT>
+    <DIFFUSE>204 204 204 254</DIFFUSE>
+    <SPECULAR>51 51 51 0</SPECULAR>
+    <SHININESS>1</SHININESS>
+    <MAP>materials/Hair.png</MAP>
+    <MAP>materials/Hair_Normals.png</MAP>
+    <MAP>materials/NONE_SPEC.png</MAP>
+</MATERIAL>

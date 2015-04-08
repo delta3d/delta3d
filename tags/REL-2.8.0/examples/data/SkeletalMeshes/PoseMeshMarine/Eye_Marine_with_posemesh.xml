@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<character name="eye_marine">
+     <skinningShader>
+		<shaderGroup>CharacterGroup</shaderGroup>
+		<shaderName>Default</shaderName>
+		<maxBones>71</maxBones>
+   </skinningShader>
+   
+   <poseMesh fileName="Eye_Marine_PoseMesh.xml" />
+   
+   <skeleton fileName="Skeleton.XSF" />   
+  
+   <animation fileName="ET_Pose_Legs.XAF" name="stand" />
+   <animation fileName="ECradle_UpperBody.XAF" name="cradle" />
+   
+   <animation fileName="EHeadRight.XAF" />
+   <animation fileName="EHeadLeft.XAF" />
+   <animation fileName="EHeadDownLeft.XAF" />
+   <animation fileName="EHeadDownRight.XAF" />
+   <animation fileName="EHeadUpLeft.XAF" />
+   <animation fileName="EHeadUpRight.XAF" />
+   
+   <animation fileName="ELeftIn.XAF" />
+   <animation fileName="ELeftOut.XAF" />
+   <animation fileName="ELeftDown.XAF" />
+   <animation fileName="ELeftUp.XAF" />
+   <animation fileName="ELeftMidUp.XAF" />
+   <animation fileName="ELeftMidDown.XAF" />
+   
+   <animation fileName="ERightIn.XAF" />
+   <animation fileName="ERightOut.XAF" />  
+   <animation fileName="ERightDown.XAF" />
+   <animation fileName="ERightUp.XAF" />
+   <animation fileName="ERightMidUp.XAF" />
+   <animation fileName="ERightMidDown.XAF" />
+   
+   <animation fileName="EStand_Aim2_Right.XAF" />
+   <animation fileName="Estand_Aim2_Front.XAF" />
+   <animation fileName="Estand_Aim2_Left.XAF" />
+   <animation fileName="Estand_Aim2_RightDw.XAF" />
+   <animation fileName="Estand_Aim2_FrontDw.XAF" />
+   <animation fileName="Estand_Aim2_LeftDw.XAF" />
+   <animation fileName="Estand_Aim2_RightUp.XAF" />
+   <animation fileName="Estand_Aim2_FrontUp.XAF" />
+   <animation fileName="Estand_Aim2_LeftUp.XAF" />
+   
+   <animation fileName="AtEase_rightdown.XAF" />
+   <animation fileName="AtEase_leftdown.XAF" />
+   <animation fileName="AtEase_rightup.XAF" />
+   <animation fileName="AtEase_leftup.XAF" />
+   <animation fileName="AtEase_straight.XAF" />
+  
+   <animation fileName="ELowWalkNoHead.XAF" name="walk" />   
+   <animation fileName="ERunIP_Hold.XAF" name="run"/>   
+ 
+   <animation fileName="Esquat.XAF" /> 
+   <animation fileName="ESquat1a.XAF" />
+   <animation fileName="Esquat2.XAF" />
+   <animation fileName="Esquat3.XAF" />  
+   
+   <animation fileName="Squat_Aim_Ft.XAF" />
+   <animation fileName="Squat_Aim_FtDwn.XAF" />
+   <animation fileName="Squat_Aim_FtUp.XAF" />
+   <animation fileName="Squat_Aim_LeftDwn.XAF" />
+   <animation fileName="Squat_Aim_LeftUp.XAF" />
+   <animation fileName="Squat_Aim_Left.XAF" />
+   <animation fileName="Squat_Aim_RghtDwn.XAF" />
+   <animation fileName="Squat_Aim_Rght.XAF" />
+   <animation fileName="Squat_Aim_RghtUp.XAF" />
+  
+   <mesh fileName="BODY.XMF" />
+   <mesh fileName="HEAD.XMF" />
+   <mesh fileName="Helmet.XMF" />
+   <mesh fileName="LEye.XMF" />
+   <mesh fileName="REye.XMF" />
+   <!--mesh fileName="Ak47.XMF" /-->
+   <mesh fileName="M16.XMF" />
+  
+   <material fileName="BODY.XRF" />
+   <material fileName="HEAD.XRF" />
+   <material fileName="Helmet.XRF" />
+   <material fileName="LEye.XRF" />
+   <material fileName="REye.XRF" />
+   <material fileName="Ak47.XRF" />
+   <material fileName="M16.XRF" />
+
+   
+</character>

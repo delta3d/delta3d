@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<shaderlist>
+   <shadergroup name="DemoShaders">
+      <shader name="TestShader" default="yes" verticesout="3">
+         <source type="Vertex">Shaders/test/testshader.vert</source>
+         <source type="Geometry">Shaders/test/testshader.geom</source>
+         <source type="Fragment">Shaders/test/testshader.frag</source>
+      </shader>
+      
+      <shader name="TestShaderWithoutGeomShader" default="no">
+         <source type="Vertex">Shaders/test/testshader.vert</source>
+         <source type="Fragment">Shaders/test/testshaderAlternate.frag</source>
+      </shader>
+   </shadergroup>
+</shaderlist>

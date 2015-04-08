@@ -1,0 +1,9 @@
+<MATERIAL VERSION="1000" NUMMAPS="1">
+    <AMBIENT>0 0 0 0</AMBIENT>
+    <DIFFUSE>204 204 204 255</DIFFUSE>
+    <SPECULAR>127 127 127 0</SPECULAR>
+    <SHININESS>1</SHININESS>
+    <MAP>materials/Shorts_Jogger_Green.png</MAP>
+    <MAP>materials/NONE_NORM.png</MAP>
+    <MAP>materials/NONE_SPEC.png</MAP>
+</MATERIAL>

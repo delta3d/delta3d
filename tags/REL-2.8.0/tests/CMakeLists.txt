@@ -1,0 +1,204 @@
+
+SET(APP_NAME     allTests)
+
+INCLUDE_DIRECTORIES( ${CMAKE_SOURCE_DIR}/examples
+                     ${CMAKE_SOURCE_DIR}/utilities) 
+
+ADD_DEFINITIONS(-DTEST_ROOT=${CMAKE_SOURCE_DIR})
+
+SET(DIRS dtABC dtAI dtActors dtCore dtDirector dtGame dtLMS dtUtil)
+
+IF(DTDIS_AVAILABLE)
+  SET(DIRS ${DIRS} dtDIS)
+  INCLUDE_DIRECTORIES( ${DIS_INCLUDE_DIR} ${DIS_CPPUTILS_INCLUDE_DIR}
+                     ${HAWKNL_INCLUDE_DIR} ) 
+ENDIF(DTDIS_AVAILABLE)
+
+
+IF (DTDIRECTOR_NODES_AVAILABLE)
+  SET (DIRS ${DIRS} dtDirectorNodes)
+ENDIF (DTDIRECTOR_NODES_AVAILABLE)
+
+file(GLOB TEMP_SOURCES "*.cpp" "*.h")
+SET(ALL_SOURCES ${TEMP_SOURCES})
+
+
+IF (DTHLAGM_AVAILABLE)
+  #INCLUDE_DIRECTORIES(${RTI_INCLUDE_DIR}) 
+  SET (DIRS ${DIRS} dtHLAGM)
+ENDIF (DTHLAGM_AVAILABLE)
+
+if (DTAUDIO_AVAILABLE)
+  INCLUDE_DIRECTORIES(${OPENAL_INCLUDE_DIR} ${ALUT_INCLUDE_DIR}) 
+endif()
+
+IF (BUILD_NET)
+  INCLUDE_DIRECTORIES( ${GNE_INCLUDE_DIR}  
+                       ${HAWKNL_INCLUDE_DIR}
+                       ${Boost_INCLUDE_DIR})
+  SET (DIRS ${DIRS} dtNetGM)
+ENDIF (BUILD_NET)
+
+IF (BUILD_DEMOS AND NOT BUILD_WITH_OLD_CEGUI AND DTAUDIO_AVAILABLE AND DTGUI_AVAILABLE)
+  SET(DIRS ${DIRS} "demos/firefighter")
+ENDIF (BUILD_DEMOS AND NOT BUILD_WITH_OLD_CEGUI AND DTAUDIO_AVAILABLE AND DTGUI_AVAILABLE)
+
+IF (DTANIM_AVAILABLE)
+  SET(DIRS ${DIRS} dtAnim)
+ENDIF (DTANIM_AVAILABLE)
+  
+IF (DTAUDIO_AVAILABLE)
+  SET(DIRS ${DIRS} dtAudio)
+ENDIF (DTAUDIO_AVAILABLE)
+
+IF (DTPHYSICS_AVAILABLE)
+  INCLUDE_DIRECTORIES(${PAL_INCLUDE_DIR})
+  SET(DIRS ${DIRS} dtPhysics)
+ENDIF (DTPHYSICS_AVAILABLE)
+
+IF (DTGUI_AVAILABLE)
+  SET(DIRS ${DIRS} dtGUI)
+ENDIF (DTGUI_AVAILABLE)
+
+IF (DTRENDER_AVAILABLE)
+  SET(DIRS ${DIRS} dtRender)
+ENDIF (DTRENDER_AVAILABLE)
+
+FOREACH(varname ${DIRS}) 
+  file(GLOB TEMP_SOURCES "${varname}/*.cpp" "${varname}/*.h")
+  SOURCE_GROUP( ${varname} FILES ${TEMP_SOURCES} )
+  SET(ALL_SOURCES ${ALL_SOURCES} ${TEMP_SOURCES})
+ENDFOREACH(varname)
+
+
+INCLUDE_DIRECTORIES( ${CEGUI_INCLUDE_DIR} #for dtGUI
+                                    ${CAL3D_INCLUDE_DIR} #for dtAnim
+                                    )
+
+ADD_PRECOMPILED_HEADER(${APP_NAME} prefix/unittestprefix.h prefix/unittestprefix.cpp ALL_SOURCES)
+
+#SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+#SET(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+#SET(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+
+# For each configuration (Debug, Release, MinSizeRel... and/or anything the user chooses) 
+#foreach(CONF ${CMAKE_CONFIGURATION_TYPES}) 
+# Go uppercase (DEBUG, RELEASE...) 
+#STRING(TOUPPER "${CONF}" CONF) 
+#set("CMAKE_ARCHIVE_OUTPUT_DIRECTORY_${CONF}" "${CMAKE_CURRENT_SOURCE_DIR}") 
+#set("CMAKE_RUNTIME_OUTPUT_DIRECTORY_${CONF}" "${CMAKE_CURRENT_SOURCE_DIR}") 
+#if(WIN32) 
+#set("CMAKE_LIBRARY_OUTPUT_DIRECTORY_${CONF}" "${CMAKE_CURRENT_SOURCE_DIR}") 
+#else() 
+#set("CMAKE_LIBRARY_OUTPUT_DIRECTORY_${CONF}" "${CMAKE_CURRENT_SOURCE_DIR}") 
+#endif() 
+#endforeach() 
+
+ADD_EXECUTABLE(${APP_NAME}
+    ${ALL_SOURCES}
+)
+
+LINK_WITH_VARIABLES(${APP_NAME}
+                     CPPUNIT_LIBRARY)
+
+TARGET_LINK_LIBRARIES( ${APP_NAME}
+                       ${DTUTIL_LIBRARY}
+                       ${DTCORE_LIBRARY}
+                       ${DTAI_LIBRARY}
+                       ${DTLMS_LIBRARY}
+                       ${DTACTORS_LIBRARY}
+                       ${DTABC_LIBRARY}
+                       ${TEST_ACTOR_LIBRARY}
+                       ${TEST_GAME_ACTOR_LIBRARY}
+                     )
+
+IF(DTDIRECTOR_NODES_AVAILABLE)
+  TARGET_LINK_LIBRARIES(${APP_NAME}
+                        ${DTDIRECTORNODES_LIBRARY})
+ENDIF(DTDIRECTOR_NODES_AVAILABLE)
+					 
+IF(DTDIS_AVAILABLE)
+   TARGET_LINK_LIBRARIES(${APP_NAME}
+                         ${DTDIS_LIBRARY}
+                        )
+ENDIF(DTDIS_AVAILABLE)
+
+IF (DTPHYSICS_AVAILABLE)
+   TARGET_LINK_LIBRARIES(${APP_NAME}
+                         ${DTPHYSICS_LIBRARY}
+                        )
+ENDIF(DTPHYSICS_AVAILABLE)
+
+IF (DTRENDER_AVAILABLE)
+   TARGET_LINK_LIBRARIES(${APP_NAME}
+                         ${DTRENDER_LIBRARY}
+                        )
+ENDIF(DTRENDER_AVAILABLE)
+
+IF (DTHLAGM_AVAILABLE)
+  TARGET_LINK_LIBRARIES(${APP_NAME}  
+                        ${DTHLAGM_LIBRARY}
+                        )
+
+  if (DTHLAGM_RTI1516E_LIB_BUILT)
+     add_Dependencies(${APP_NAME} ${DTHLAGM_RTI1516E_LIB_BUILT})
+     ADD_DEFINITIONS(-DDT_WITH_RTI1516E)
+  endif()
+  if (DTHLAGM_RTI13_LIB_BUILT)
+     add_Dependencies(${APP_NAME} ${DTHLAGM_RTI13_LIB_BUILT})
+     ADD_DEFINITIONS(-DDT_WITH_RTI13)
+  endif()
+                        
+ENDIF (DTHLAGM_AVAILABLE)
+
+IF (BUILD_DEMOS AND NOT BUILD_WITH_OLD_CEGUI AND DTAUDIO_AVAILABLE AND DTGUI_AVAILABLE)
+    TARGET_LINK_LIBRARIES( ${APP_NAME} 
+                           ${FIREFIGHTER_DEMO_LIBRARY}
+                         )
+    #fireFighter needs the demos folder added for #include search paths
+    INCLUDE_DIRECTORIES("${CMAKE_SOURCE_DIR}/demos")  
+ENDIF (BUILD_DEMOS AND NOT BUILD_WITH_OLD_CEGUI AND DTAUDIO_AVAILABLE AND DTGUI_AVAILABLE)
+
+IF (DTANIM_AVAILABLE)
+  TARGET_LINK_LIBRARIES( ${APP_NAME}
+                         ${DTANIM_LIBRARY}
+                       )
+ENDIF (DTANIM_AVAILABLE)
+                       
+IF (DTAUDIO_AVAILABLE)
+  TARGET_LINK_LIBRARIES( ${APP_NAME}
+                         ${DTAUDIO_LIBRARY}
+                       )
+ENDIF (DTAUDIO_AVAILABLE)
+
+IF (DTGUI_AVAILABLE)
+  TARGET_LINK_LIBRARIES( ${APP_NAME}
+                         ${DTGUI_LIBRARY}
+                       )
+ENDIF (DTGUI_AVAILABLE)
+
+IF (MSVC)
+  SET_TARGET_PROPERTIES(${APP_NAME} PROPERTIES DEBUG_POSTFIX "${CMAKE_DEBUG_POSTFIX}")#tack on the "d" for debug executables
+  SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4290") #ignore the C4290 warning
+#ELSE (MSVC)
+#  SET_TARGET_PROPERTIES(${APP_NAME} PROPERTIES PREFIX "../tests/")
+ENDIF (MSVC)
+
+include(ProgramInstall OPTIONAL)
+
+#This will automatically run the unit test executable upon successfull compile/link
+IF (AUTO_RUN_TESTS)
+  IF (MSVC)
+    ADD_CUSTOM_COMMAND(TARGET ${APP_NAME}
+                          POST_BUILD
+                          COMMAND $(TargetPath)
+                          COMMENT "Run the unit tests")  
+  ELSE (MSVC)
+     ADD_CUSTOM_COMMAND(TARGET ${APP_NAME}
+                          POST_BUILD
+                          COMMAND ${CMAKE_BINARY_DIR}/bin/allTests
+                          WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+                          COMMENT Run the unit tests)
+  ENDIF (MSVC)
+ENDIF (AUTO_RUN_TESTS)
+
