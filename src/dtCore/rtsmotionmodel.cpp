@@ -9,6 +9,8 @@
 #include <dtUtil/matrixutil.h>
 #include <osg/Node>
 
+#include <algorithm> //needed for std::max and std::min in VS2013
+
 ////////////////////////////////////////////////////////////////////////////////
 using namespace dtCore;
 
