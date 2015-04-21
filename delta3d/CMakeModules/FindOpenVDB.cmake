@@ -1,0 +1,42 @@
+# Locate OpenEXR
+# This module defines
+# OPENVDB_LIBRARY
+# OPENVDB_FOUND, if false, do not try to link to OpenEXR 
+# OPENVDB_INCLUDE_DIR, where to find the headers
+#
+# $OPENVDB_DIR can be a supplied environment variable that would be the prefix path
+#
+# Created by David Guthrie. 
+FIND_PATH(OPENVDB_INCLUDE_DIR openvdb/openvdb.h
+    PATH_SUFFIXES include inc
+    HINTS
+    $ENV{OPENVDB_DIR}
+    ${DELTA3D_EXT_DIR}
+    $ENV{DELTA_ROOT}/ext
+)
+MARK_AS_ADVANCED(OPENVDB_INCLUDE_DIR)
+
+MACRO(FIND_OPENVDB_LIBRARY MYLIBRARY MYLIBRARYNAMES)
+
+FIND_LIBRARY(${MYLIBRARY}
+    NAMES ${MYLIBRARYNAMES}
+    PATH_SUFFIXES lib
+    HINTS
+    ${OPENVDB_DIR}
+    $ENV{OPENVDB_DIR}
+    ${DELTA3D_EXT_DIR}
+    $ENV{DELTA_ROOT}/ext
+)
+MARK_AS_ADVANCED(${MYLIBRARY})
+ENDMACRO()
+
+
+FIND_OPENVDB_LIBRARY(OPENVDB_LIBRARY openvdb)
+
+SET(OPENVDB_FOUND "NO")
+IF(OPENVDB_INCLUDE_DIR AND OPENVDB_LIBRARY)
+    SET(OPENVDB_LIBRARIES
+        ${OPENVDB_LIBRARY}
+    )
+    SET(OPENVDB_FOUND "YES")
+ENDIF()
