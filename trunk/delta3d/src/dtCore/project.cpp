@@ -25,15 +25,6 @@
 #include <set>
 #include <cassert>
 
-#ifdef _MSC_VER
-#   pragma warning(push)
-#   pragma warning(disable : 4267) // for warning C4267: 'argument' : conversion from 'size_t' to 'const unsigned int', possible loss of data
-#endif
-
-#ifdef _MSC_VER
-#   pragma warning(pop)
-#endif
-
 #include <osgDB/FileNameUtils>
 
 #include <dtCore/scene.h>

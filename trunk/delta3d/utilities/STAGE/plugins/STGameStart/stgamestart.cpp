@@ -105,7 +105,7 @@ void STGameStartPlugin::RunGameStart()
 #elif defined(__APPLE__)
       if (program.indexOf(QString(".app")) >= 0)
       {
-         program = (dtUtil::GetBundlePath() + "/GameStart.app/Contents/MacOS/GameStart").c_str();
+         program = (dtUtil::GetBundlePath() + "/../GameStart.app/Contents/MacOS/GameStart").c_str();
       }
       else
       {
@@ -124,23 +124,25 @@ void STGameStartPlugin::RunGameStart()
 
       QString args3(mBaseMapEdit->text());
 
+      QString args4(dtEditQt::EditorData::GetInstance().getCurrentProjectContext().c_str());
 
       gamestartRunner->setEnvironment( QProcess::systemEnvironment() );
 
+      QStringList arguments;
       if(!args3.isEmpty())
       {
-         gamestartRunner->start(program, QStringList() << args << "--mapName" << args2  << "--baseMap" << args3);
-
-         if (!gamestartRunner->waitForStarted())
-            qDebug() << "Failed to launch " << program << ", with cmd args " << args << " --mapName" << args2 << " --baseMap" << args3;
-
+         arguments << args << "--mapName" << args2  << "--baseMap" << args3 << "--projectPath" << args4;
       }
       else
       {
-         gamestartRunner->start(program, QStringList() << args << "--mapName" << args2 );
+         arguments << args << "--mapName" << args2 << "--projectPath" << args4;
+      }
 
-         if (!gamestartRunner->waitForStarted())
-            qDebug() << "Failed to launch " << program << ", with cmd args " << args << " --mapName" << args2;
+      gamestartRunner->start(program, arguments);
+
+      if (!gamestartRunner->waitForStarted())
+      {
+         qDebug() << "Failed to launch " << program << ", with cmd args " << arguments;
       }
 
       
@@ -148,7 +150,6 @@ void STGameStartPlugin::RunGameStart()
 
       mOutputWindow->append(QString("Application started."));
 
-     
       connect(gamestartRunner, SIGNAL(readyReadStandardOutput()), this, SLOT(ReadOut()) );
       connect(gamestartRunner, SIGNAL(readyReadStandardError()), this, SLOT(ReadErr()) );
 

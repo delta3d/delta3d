@@ -24,23 +24,17 @@
 #include <string>
 #include <cmath>
 
-#ifdef _MSC_VER
-#   pragma warning(push)
-#   pragma warning(disable : 4267) // for warning C4267: 'argument' : conversion from 'size_t' to 'const unsigned int', possible loss of data
-#endif
+#include <dtUtil/deprecationmgr.h>
+DT_DISABLE_WARNING_ALL_START
 
 #include <xercesc/util/XMLString.hpp>
 #include <xercesc/util/OutOfMemoryException.hpp>
 #include <xercesc/sax2/XMLReaderFactory.hpp>
 #include <xercesc/framework/LocalFileInputSource.hpp>
-#if XERCES_VERSION_MAJOR < 3
-#include <xercesc/internal/XMLGrammarPoolImpl.hpp>
-#endif
 #include <xercesc/sax/SAXParseException.hpp>
 
-#ifdef _MSC_VER
-#   pragma warning(pop)
-#endif
+#include <osgDB/FileNameUtils>
+DT_DISABLE_WARNING_END
 
 #include <dtCore/exceptionenum.h>
 #include <dtCore/map.h>

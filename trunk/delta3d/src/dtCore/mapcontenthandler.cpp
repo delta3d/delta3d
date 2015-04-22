@@ -43,18 +43,15 @@
 #include <dtUtil/tree.h>
 #include <dtUtil/xercesutils.h>
 
-#ifdef _MSC_VER
-#   pragma warning(push)
-#   pragma warning(disable : 4267) // for warning C4267: 'argument' : conversion from 'size_t' to 'const unsigned int', possible loss of data
-#endif
+
+#include <dtUtil/deprecationmgr.h>
+DT_DISABLE_WARNING_ALL_START
 
 #include <xercesc/util/XMLString.hpp>
 #include <xercesc/util/OutOfMemoryException.hpp>
 #include <xercesc/sax/SAXParseException.hpp>
 
-#ifdef _MSC_VER
-#   pragma warning(pop)
-#endif
+DT_DISABLE_WARNING_END
 
 #include <osg/Vec2f>
 #include <osg/Vec2d>
@@ -65,44 +62,6 @@
 #include <typeinfo>
 
 XERCES_CPP_NAMESPACE_USE
-
-
-// Default iimplementation of char_traits<XMLCh>, needed for gcc3.3
-#if (__GNUC__ == 3 && __GNUC_MINOR__ <= 3)
-/// @cond DOXYGEN_SHOULD_SKIP_THIS
-namespace std
-{
-   template<>
-   struct char_traits<unsigned short>
-   {
-      typedef unsigned short char_type;
-
-      static void
-         assign(char_type& __c1, const char_type& __c2)
-      { __c1 = __c2; }
-
-      static int
-         compare(const char_type* __s1, const char_type* __s2, size_t __n)
-      {
-         for (;__n > 0; ++__s1, ++__s2, --__n) {
-            if (*__s1 < *__s2) return -1;
-            if (*__s1 > *__s2) return +1;
-         }
-         return 0;
-      }
-
-      static size_t
-         length(const char_type* __s)
-      { size_t __n = 0; while (*__s++) ++__n; return __n; }
-
-      static char_type*
-         copy(char_type* __s1, const char_type* __s2, size_t __n)
-      {  return static_cast<char_type*>(memcpy(__s1, __s2, __n * sizeof(char_type))); }
-
-   };
-}
-/// @endcond
-#endif
 
 namespace  dtCore
 {

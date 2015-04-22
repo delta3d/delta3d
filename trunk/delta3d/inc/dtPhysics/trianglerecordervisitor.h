@@ -30,7 +30,6 @@
 #include <osg/NodeVisitor>
 #include <osg/TriangleFunctor>
 #include <osg/NodeVisitor>
-#include <osg/TriangleFunctor>
 #include <osg/Geode>
 #include <osg/Geometry>
 

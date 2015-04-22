@@ -31,8 +31,9 @@
 #define DELTA_SOUND_BROWSER
 
 #include <dtEditQt/resourceabstractbrowser.h>
+#include <dtUtil/mswinmacros.h>
 
-#if defined(_MSC_VER)
+#if defined(DELTA_WIN32)
 #   include <alc.h>
 #   include <al.h>
 #elif defined(__APPLE__)

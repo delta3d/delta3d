@@ -25,6 +25,7 @@
 #include <osgDB/FileUtils>
 #include <dtUtil/fileutils.h>
 #include <osgDB/FileNameUtils>             // for file extension code
+#include <dtUtil/mswinmacros.h>
 
 namespace dtDIS
 {
@@ -68,7 +69,7 @@ namespace dtDIS
                osgDB::DirectoryContents files = filefinder.DirGetFiles( dir );
 
                // filter out based on extension
-#ifdef WIN32
+#ifdef DELTA_WIN32
                std::string ext("dll");
 #else
                std::string ext("so");

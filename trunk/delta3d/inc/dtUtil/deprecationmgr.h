@@ -22,18 +22,17 @@
 #ifndef _DEPRECATIONMGR_H_
 #define _DEPRECATIONMGR_H_
 
-#include <dtUtil/mswinmacros.h>
 #include <dtUtil/export.h>
 
 //This will generate a compile-time warning when a function is prefaced.
-#if defined (DELTA_WIN32)
+#if defined (_MSC_VER)
    #define DEPRECATE_FUNC  __declspec(deprecated)
 #elif __GNUC__
    #define DEPRECATE_FUNC __attribute__ ((deprecated))
 #endif
 
 
-#if defined( _DEBUG) && (defined DELTA_WIN32) && !defined(_WIN64)
+#if defined( _DEBUG) && (defined _MSC_VER) && !defined(_WIN64)
    #define DEPRECATE(a,b) {                                            \
       void * fptr;                                                     \
       __asm { mov fptr, ebp }                                           \

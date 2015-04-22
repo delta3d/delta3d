@@ -24,18 +24,14 @@
 
 #include <dtUtil/version.h>
 
+
+#include <dtUtil/deprecationmgr.h>
+DT_DISABLE_WARNING_ALL_START
 #include <xercesc/util/XMLUniDefs.hpp>
 #include <xercesc/util/XMLUni.hpp>
 #include <xercesc/util/XMLString.hpp>
+DT_DISABLE_WARNING_END
 
-#ifdef _MSC_VER
-#   pragma warning(push)
-#   pragma warning(disable : 4267) // for warning C4267: 'argument' : conversion from 'size_t' to 'const unsigned int', possible loss of data
-#endif
-
-#ifdef _MSC_VER
-#   pragma warning(pop)
-#endif
 
 namespace dtCore
 {

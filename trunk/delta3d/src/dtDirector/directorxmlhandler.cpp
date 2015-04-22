@@ -36,18 +36,12 @@
 
 #include <dtUtil/xercesutils.h>
 
-#ifdef _MSC_VER
-#   pragma warning(push)
-#   pragma warning(disable : 4267) // for warning C4267: 'argument' : conversion from 'size_t' to 'const unsigned int', possible loss of data
-#endif
-
+#include <dtUtil/deprecationmgr.h>
+DT_DISABLE_WARNING_ALL_START
 #include <xercesc/util/XMLString.hpp>
 #include <xercesc/util/OutOfMemoryException.hpp>
 #include <xercesc/sax/SAXParseException.hpp>
-
-#ifdef _MSC_VER
-#   pragma warning(pop)
-#endif
+DT_DISABLE_WARNING_END
 
 #include <osg/Vec2f>
 #include <osg/Vec2d>
