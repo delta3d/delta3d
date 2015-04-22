@@ -59,7 +59,7 @@ MACRO(ADD_DELTA3D_SUBFOLDERS)
       ADD_SUBDIRECTORY(src/dtNetGM)
       SET(DTNET_AVAILABLE "YES")
       SET(DTNETGM_AVAILABLE "YES")
-   ENDIF (BUILD_NET)
+   ENDIF ()
 
    IF (BUILD_TERRAIN)
       FIND_PACKAGE(GDAL)    #for dtTerrain
@@ -68,18 +68,18 @@ MACRO(ADD_DELTA3D_SUBFOLDERS)
       MARK_AS_ADVANCED(GDAL_LIBRARY)
       ADD_SUBDIRECTORY(src/dtTerrain)
       SET(DTTERRAIN_AVAILABLE "YES")
-   ENDIF (BUILD_TERRAIN)
+   ENDIF ()
 
    IF (BUILD_DTPHYSICS)
       FIND_PACKAGE(Pal)
       ADD_SUBDIRECTORY(src/dtPhysics)
       SET(DTPHYSICS_AVAILABLE "YES")
-   ENDIF (BUILD_DTPHYSICS)
+   ENDIF ()
 
    IF (BUILD_DTRENDER)
       ADD_SUBDIRECTORY(src/dtRender)
       SET(DTRENDER_AVAILABLE "YES")
-   ENDIF (BUILD_DTRENDER)
+   ENDIF ()
 
    ADD_SUBDIRECTORY(src/dtActors)
    ADD_SUBDIRECTORY(src/dtUtil)
@@ -92,11 +92,11 @@ MACRO(ADD_DELTA3D_SUBFOLDERS)
    IF (DTANIM_AVAILABLE)
       ADD_SUBDIRECTORY(src/dtDirectorAnimNodes)
       SET(DTDIRECTOR_NODES_AVAILABLE "YES")
-   ENDIF (DTANIM_AVAILABLE)
+   ENDIF ()
 
    IF (DTAUDIO_AVAILABLE)
       ADD_SUBDIRECTORY(src/dtDirectorAudioNodes)
-   ENDIF (DTAUDIO_AVAILABLE)
+   ENDIF ()
 
    ADD_SUBDIRECTORY(src/dtGame)
    #ADD_SUBDIRECTORY(src/dtInputISense)
@@ -107,14 +107,21 @@ MACRO(ADD_DELTA3D_SUBFOLDERS)
       SET(DTQT_AVAILABLE "YES")
       ADD_SUBDIRECTORY(src/dtDirectorQt)
       ADD_SUBDIRECTORY(src/dtInspectorQt)
-   ENDIF (QT4_FOUND)
+   ENDIF ()
 
    IF (BUILD_TESTS)
       OPTION(AUTO_RUN_TESTS "Automatically runs the unit tests upon successful compile and link" ON)
 
       FIND_PACKAGE(CPPUNIT) #for unit tests
       ADD_SUBDIRECTORY(tests)
-   ENDIF (BUILD_TESTS)
+   ENDIF ()
+
+   if (BUILD_WITH_OPENVDB)
+      FIND_PACKAGE(OpenEXR REQUIRED)
+      FIND_PACKAGE(TBB REQUIRED)
+      FIND_PACKAGE(OpenVDB REQUIRED)
+      ADD_SUBDIRECTORY(utilities/OpenVDBCompiler)
+   endif()
 
    ADD_SUBDIRECTORY(demos)
    ADD_SUBDIRECTORY(examples)
@@ -151,6 +158,10 @@ OPTION(BUILD_DEMOS         "Enables the building of the Delta3D demo projects" O
 OPTION(BUILD_WITH_QT       "Enables the building of projects that require Qt" OFF)
 OPTION(BUILD_3DSMAX_PLUGIN "Build the Autodesk 3ds Max exporter plugin" OFF)
 OPTION(BUILD_WITH_PCH      "Enables use of precomplied headers, experimental" OFF)
+
+include(CMakeDependentOption)
+CMAKE_DEPENDENT_OPTION(BUILD_WITH_OPENVDB  "Enables a basic integration with openvdb and builds a utility to convert 3D meshes into voxel grids or octrees" OFF
+                       "BUILD_DTPHYSICS" OFF)
 MARK_AS_ADVANCED(BUILD_WITH_PCH)
 
 OPTION(BUILD_WITH_MULTITHREAD_FIX_HACK_BREAKS_CEGUI "Fixes a multithreading problem that only affect some machine.  THE FIX BREAKS CEGUI!")
