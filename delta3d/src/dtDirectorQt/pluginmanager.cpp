@@ -54,7 +54,7 @@ namespace dtDirector
    {
       // find out library extension for this system
       // take care of debug/release library stuff on windows
-      #if defined(_MSC_VER) || defined(__CYGWIN__) || defined(__MINGW32__) || defined( __BCPLUSPLUS__)  || defined( __MWERKS__)
+      #if DELTA_WIN32
          std::string libExtension = ".dll";
       #else
          std::string libExtension = ".so";

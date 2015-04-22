@@ -20,12 +20,12 @@
 #define NULL 0
 #endif
 
-#if WIN32
+#ifdef _MSC_VER
 #pragma warning( push )
 // Disable warning for multiple operator= defines
 #pragma warning( disable : 4522 )
 #pragma warning( disable : 4786 )
-#endif // WIN32
+#endif // _MSC_VER
 
 namespace dtUtil {
 
@@ -1064,8 +1064,8 @@ tree_iterator<T> tree_iterator<T>::end_of_iterator;
 
 }
 
-#if WIN32
+#if _MSC_VER
 #pragma warning( pop )
-#endif // WIN32
+#endif // _MSC_VER
 
 #endif // tree_header_file

@@ -62,13 +62,7 @@ _CRTIMP extern int errno;
 #include <sys/stat.h>
 #include <iostream>
 
-//this ArchiveExtended header will be part of osg 3.0 so we will no longer need it after the 3.0 release
-#if defined(OSG_VERSION_MAJOR) && defined(OSG_VERSION_MINOR) && OSG_VERSION_MAJOR < 3
-#include "../utilities/ZipPlugin/ArchiveExtended"
-#else
 #include <osgDB/Archive>
-#endif
-
 #include <osgDB/FileUtils>
 #include <osgDB/FileNameUtils>
 

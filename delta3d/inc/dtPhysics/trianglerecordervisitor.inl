@@ -21,7 +21,6 @@
  *
  * David Guthrie
  */
-#include <iostream>
 namespace dtPhysics
 {
    template<class T>
