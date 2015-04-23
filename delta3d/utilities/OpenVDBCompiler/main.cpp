@@ -167,13 +167,13 @@ namespace {
          triList.push_back(tri);
       }
 
-      openvdb::math::Transform xform;
-      xform.voxelSize(openvdb::Vec3d(resolution, resolution, resolution));
+      openvdb::math::Transform::Ptr xform = openvdb::math::Transform::createLinearTransform(resolution);;
+      //xform.voxelSize(openvdb::Vec3d(resolution, resolution, resolution));
       typename FloatGrid::Ptr result;
       try {
          //result = openvdb::tools::meshToLevelSet<FloatGrid>(xform, pointList, triList);
          std::vector<Vec4I> quads(0);
-         result = openvdb::tools::doMeshConversion<openvdb::FloatGrid>(xform, pointList, triList, quads, 0.01f, 0.5f, false);
+         result = openvdb::tools::doMeshConversion<openvdb::FloatGrid>(*xform, pointList, triList, quads, 0.01f, 0.5f, false);
       } catch (openvdb::Exception& e) {
          OPENVDB_LOG_ERROR(e.what() << " (" << filename << ")");
       }
