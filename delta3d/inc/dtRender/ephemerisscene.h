@@ -69,7 +69,7 @@ namespace dtRender
       void SetDateTimeAsString(const std::string& timeAndDate);
       std::string GetDateTimeAsString() const;
       
-      void SetDateTime(dtUtil::DateTime&);
+      void SetDateTime(const dtUtil::DateTime&);
       dtUtil::DateTime GetDateTime() const;
 
       void SetTimeFromSystem();
@@ -96,6 +96,7 @@ namespace dtRender
 
       DT_DECLARE_ACCESSOR_INLINE(bool, SetToLocalTime)
       DT_DECLARE_ACCESSOR_INLINE(bool, SetTimeFromSystem)
+      //DT_DECLARE_ACCESSOR_INLINE(bool, AutoComputeFogColor)
       DT_DECLARE_ACCESSOR_INLINE(osg::Vec2, LatLong)
 
       

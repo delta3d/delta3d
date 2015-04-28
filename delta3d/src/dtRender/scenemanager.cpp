@@ -1063,7 +1063,7 @@ namespace dtRender
 
    void SceneManagerActor::BuildPropertyMap()
    {
-      dtGame::GameActorProxy::BuildPropertyMap();
+      BaseClass::BuildPropertyMap();
 
       SceneManager *env;
       GetDrawable(env);
