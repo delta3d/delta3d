@@ -300,6 +300,7 @@ namespace dtRender
    : BaseClass(*EPHEMERIS_SCENE, SceneEnum::BACKGROUND)   
    , mSetToLocalTime(false)
    , mSetTimeFromSystem(false)
+   //, mAutoComputeFogColor(true)
    , mLatLong(19.3333f, 81.2167f)
    , mImpl(new EphemerisImpl())
    {
@@ -566,7 +567,7 @@ namespace dtRender
       return mImpl->mVisibility;
    }
 
-   void EphemerisScene::SetDateTime( dtUtil::DateTime& dt)
+   void EphemerisScene::SetDateTime(const dtUtil::DateTime& dt)
    {
       mImpl->mDateTime = dt;
       
@@ -587,7 +588,13 @@ namespace dtRender
          {
             mImpl->mEphemerisModel->setDateTime(osgEphemeris::DateTime(dt.GetYear(),
                  dt.GetMonth(), dt.GetDay(), dt.GetHour(), dt.GetMinute(), int(dt.GetSecond())));
+
+            /*if (mAutoComputeFogColor)
+            {
+
+            }*/
          }
+
       }
    }
 
@@ -627,7 +634,7 @@ namespace dtRender
 
          if (shaderGroup == NULL)
          {
-            LOG_INFO("Could not find shader group: WaterGroup");
+            LOG_INFO("Could not find shader group: EphemerisGroup");
             return;
          }
       }
@@ -723,6 +730,10 @@ namespace dtRender
       DT_REGISTER_PROPERTY_WITH_NAME_AND_LABEL(FogColor, "Fog Color", "Fog Color", 
          "The color of the fog.",
          PropRegHelperType, propRegHelper);
+
+      /*DT_REGISTER_PROPERTY_WITH_NAME_AND_LABEL(AutoComputeFogColor, "AutoComputeFogColor", "AutoComputeFogColor",
+          "Setting this property auto changes the fog color based on the time of day.",
+          PropRegHelperType, propRegHelper);*/
 
       DT_REGISTER_PROPERTY_WITH_NAME_AND_LABEL(Visibility, "Visibility", "Visibility", 
          "How far things are visible before they become the full fog color.",
