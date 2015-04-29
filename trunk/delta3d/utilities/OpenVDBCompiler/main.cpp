@@ -73,7 +73,10 @@ namespace {
             "Which: prints information about OpenVDB grids\n" <<
             "Options:\n" <<
             "    -b,            convert to a bool grid or tree (default).\n" <<
-            "    -f{N},         convert to a float grid or tree.\n" <<
+            "    -f,            convert to a float grid or tree.\n" <<
+            "    -r{N},         voxel size in x,y,z (Z can be overridden)."
+            "    -z{N},         z Thickness, or use the -r value by default."
+            "    -t{N},         Mesh thickness.  How thick to make the mesh walls internally."
             "    -s{N},         subdivisions to break the file into.  This will also reduce he memory usage at create time..\n";
       exit(exitStatus);
    }
@@ -164,7 +167,7 @@ namespace {
        int mLastPercent;
    };
 
-   typename FloatGrid::Ptr convertToLevelSet(std::vector<Vec3s> pointList, std::vector<Vec4I> triList, float resolution, float zres, const std::string& filename)
+   typename FloatGrid::Ptr convertToLevelSet(std::vector<Vec3s> pointList, std::vector<Vec4I> triList, float resolution, float zres, float thickness, const std::string& filename)
    {
 
       Mat4R m;
@@ -183,7 +186,7 @@ namespace {
          }
 
          float exWidth(0.01f);
-         float inWidth(0.15 - exWidth);
+         float inWidth(thickness - exWidth);
 
 
          math::Transform::Ptr transform = xform->copy();
@@ -204,7 +207,7 @@ namespace {
    /// If @a metadata is true, include file-level metadata key, value pairs.
    template<typename LevelSetType>
    inline
-   void printLongListing(const StringVec& filenames, float resolution, float zres, size_t splits)
+   void printLongListing(const StringVec& filenames, float resolution, float zres, size_t splits, float thickness)
    {
       bool oneFile = (filenames.size() == 1), firstFile = true;
 
@@ -261,7 +264,7 @@ namespace {
                triList.push_back(tri);
             }
 
-            FloatGrid::Ptr gridInitial = convertToLevelSet(pointList, triList, resolution, zres, filename);
+            FloatGrid::Ptr gridInitial = convertToLevelSet(pointList, triList, resolution, zres, thickness, filename);
 
             pointList.clear();
             triList.clear();
@@ -358,7 +361,7 @@ main(int argc, char *argv[])
    if (argc == 1) usage();
 
    bool useBoolean = false, useFloat = false, useGrid = true;
-   float gridResolution = 1.0f, zres = -1.0f;
+   float gridResolution = 1.0f, zres = -1.0f, thickness = 0.15f;
    unsigned subdivisions = 1;
    StringVec filenames;
    for (int i = 1; i < argc; ++i) {
@@ -417,6 +420,21 @@ main(int argc, char *argv[])
                std::cerr << gProgName << ": \"" << arg << "\" requires an int as argument.\n";
                usage();
             }
+         } else if (arg.substr(0,2) == "-t") {
+            if (arg.length() == 2 && i + 1 < argc)
+            {
+               thickness = dtUtil::ToType<int>(argv[i+1]);
+               ++i;
+            }
+            else if (arg.length() > 2)
+            {
+               thickness = dtUtil::ToType<int>(arg.substr(2));
+            }
+            else
+            {
+               std::cerr << gProgName << ": \"" << arg << "\" requires an int as argument.\n";
+               usage();
+            }
          } else if (arg == "-h" || arg == "-help" || arg == "--help") {
             usage(EXIT_SUCCESS);
          } else {
@@ -453,11 +471,11 @@ main(int argc, char *argv[])
       {
          if (useFloat)
          {
-            printLongListing<FloatGrid>(filenames, gridResolution, zres, subdivisions);
+            printLongListing<FloatGrid>(filenames, gridResolution, zres, subdivisions, thickness);
          }
          else
          {
-            printLongListing<BoolGrid>(filenames, gridResolution, zres, subdivisions);
+            printLongListing<BoolGrid>(filenames, gridResolution, zres, subdivisions, thickness);
          }
       }
       //        else
