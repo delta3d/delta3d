@@ -384,7 +384,7 @@ DT_DISABLE_WARNING_END
    ///////////////////////////////////////////////////////////////////////////////
    string LibrarySharingManager::GetPlatformSpecificLibraryName(const string &libBase, bool assumeModule)
    {
-#if DELTA_WIN32
+#if defined DELTA_WIN32
    #ifdef _DEBUG
       return libBase + "d.dll";
    #else
