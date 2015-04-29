@@ -65,7 +65,7 @@ DT_DISABLE_WARNING_END
 #include <dtUtil/datetime.h>
 #include <dtUtil/xercesutils.h>
 #include <dtUtil/log.h>
-
+#include <dtUtil/mswinmacros.h>
 
 #include <osgDB/FileUtils>
 #include <osgDB/FileNameUtils>
