@@ -73,8 +73,8 @@ namespace {
             "Which: prints information about OpenVDB grids\n" <<
             "Options:\n" <<
             "    -b,            convert to a bool grid or tree (default).\n" <<
-            "    -f,            convert to a float grid or tree.\n" <<
-            "    -m, -metadata  print per-file and per-grid metadata\n";
+            "    -f{N},         convert to a float grid or tree.\n" <<
+            "    -s{N},         subdivisions to break the file into.  This will also reduce he memory usage at create time..\n";
       exit(exitStatus);
    }
 
@@ -137,43 +137,64 @@ namespace {
    //    }
    //    return ostr.str();
    //}
-
-   typename FloatGrid::Ptr convertToLevelSet(const std::string& filename, float resolution)
+   struct PrintInterrupter
    {
-      osg::ref_ptr<osg::Node> node = osgDB::readNodeFile(filename, NULL);
-      if (!node.valid())
-      {
-         std::cout << "error loading." << std::endl;
-         return typename FloatGrid::Ptr();
-      }
+       /// Default constructor
+       PrintInterrupter (): mLastPercent(0) {}
+       /// Signal the start of an interruptible operation.
+       /// @param name  an optional descriptive name for the operation
+       void start(const char* name = NULL) { (void)name; }
+       /// Signal the end of an interruptible operation.
+       void end() {}
+       /// Check if an interruptible operation should be aborted.
+       /// @param percent  an optional (when >= 0) percentage indicating
+       ///     the fraction of the operation that has been completed
+       /// @note this method is assumed to be thread-safe. The current
+       /// implementation is clearly a NOOP and should compile out during
+       /// optimization!
+       inline bool wasInterrupted(int percent = -1)
+       {
+          if (percent > mLastPercent)
+          {
+             mLastPercent = percent;
+             std::cout << percent << "%" << std::endl; return false;
+          }
+          return false;
+       }
+       int mLastPercent;
+   };
 
-      dtPhysics::TriangleRecorder tr;
-      tr.Record(*node, 200.0f);
+   typename FloatGrid::Ptr convertToLevelSet(std::vector<Vec3s> pointList, std::vector<Vec4I> triList, float resolution, float zres, const std::string& filename)
+   {
 
-      std::vector<Vec3s> pointList;
-      std::vector<Vec3I> triList;
-      pointList.reserve(tr.mData->mVertices.size());
-      triList.reserve(tr.mData->mIndices.size() / 3);
-      for (unsigned i = 0; i < tr.mData->mVertices.size(); ++i)
-      {
-         const osg::Vec3& point = tr.mData->mVertices[i];
-         Vec3s pointvdb(point.x(), point.y(), point.z());
-         pointList.push_back(pointvdb);
-      }
+      Mat4R m;
+      m.setToScale(Vec3R(resolution, resolution, zres));
+      openvdb::math::Transform::Ptr xform = openvdb::math::Transform::createLinearTransform(m);
+      xform->voxelSize(Vec3R(resolution, resolution, zres));
 
-      for (unsigned i = 0; i < tr.mData->mIndices.size(); i+=3)
-      {
-         Vec3I tri(tr.mData->mIndices[i], tr.mData->mIndices[i+1], tr.mData->mIndices[i+2]);
-         triList.push_back(tri);
-      }
-
-      openvdb::math::Transform::Ptr xform = openvdb::math::Transform::createLinearTransform(resolution);;
       //xform.voxelSize(openvdb::Vec3d(resolution, resolution, resolution));
       typename FloatGrid::Ptr result;
       try {
+         std::vector<Vec3s> indexSpacePoints(pointList.size());
+
+         { // Copy and transform (required for MeshToVolume) points to grid space.
+            openvdb::tools::internal::PointTransform ptnXForm(pointList, indexSpacePoints, *xform);
+            ptnXForm.run();
+         }
+
+         float exWidth(0.01f);
+         float inWidth(0.15 - exWidth);
+
+
+         math::Transform::Ptr transform = xform->copy();
+         openvdb::tools::MeshToVolume<FloatGrid, PrintInterrupter> vol(transform, 0, new PrintInterrupter);
+
+         vol.convertToLevelSet(indexSpacePoints, triList, exWidth, inWidth);
+
+         return vol.distGridPtr();
          //result = openvdb::tools::meshToLevelSet<FloatGrid>(xform, pointList, triList);
-         std::vector<Vec4I> quads(0);
-         result = openvdb::tools::doMeshConversion<openvdb::FloatGrid>(*xform, pointList, triList, quads, 0.01f, 0.5f, false);
+         //std::vector<Vec4I> quads(0);
+         //result = openvdb::tools::doMeshConversion<openvdb::FloatGrid>(*xform, pointList, triList, quads, 0.01f, 0.5f, false);
       } catch (openvdb::Exception& e) {
          OPENVDB_LOG_ERROR(e.what() << " (" << filename << ")");
       }
@@ -183,11 +204,11 @@ namespace {
    /// If @a metadata is true, include file-level metadata key, value pairs.
    template<typename LevelSetType>
    inline
-   void printLongListing(const StringVec& filenames, float resolution)
+   void printLongListing(const StringVec& filenames, float resolution, float zres, size_t splits)
    {
       bool oneFile = (filenames.size() == 1), firstFile = true;
 
-      for (size_t i = 0, N = filenames.size(); i < N; ++i, firstFile = false) {
+      for (size_t f = 0, N = filenames.size(); f < N; ++f, firstFile = false) {
          //openvdb::io::File file(filenames[i]);
          //std::string version;
          //        openvdb::GridPtrVecPtr grids;
@@ -202,77 +223,118 @@ namespace {
          //            OPENVDB_LOG_ERROR(e.what() << " (" << filenames[i] << ")");
          //        }
 
-         std::cout << filenames[i] << ' ' << resolution << std::endl;
+         const std::string& filename = filenames[f];
+         std::cout << filename << ' ' << resolution << ' ' << zres << std::endl;
 
-         openvdb::GridPtrVec gridsvec;
-         openvdb::GridPtrVecPtr grids(&gridsvec);
-         FloatGrid::Ptr gridInitial = convertToLevelSet(filenames[i], resolution);
 
-         if(gridInitial && gridInitial->isType<LevelSetType>())
+         osg::ref_ptr<osg::Node> node = osgDB::readNodeFile(filename, NULL);
+         if (!node.valid())
          {
-            grids->push_back(gridInitial);
+            std::cout << "error loading." << std::endl;
+            return;
          }
-         else
+
+         dtPhysics::TriangleRecorder tr;
+         tr.Record(*node, 200.0f);
+
+         std::vector<Vec3s> pointList;
+         std::vector<Vec4I> triList;
+         pointList.reserve(tr.mData->mVertices.size());
+         size_t numTriangles = tr.mData->mIndices.size() / 3;
+         size_t numTrisPerSplit = (numTriangles / splits) + (numTriangles / splits != 0 ? 1 : 0);
+         triList.reserve(numTrisPerSplit);
+
+         for (unsigned split = 0; split < splits; ++split)
          {
-            // Define a local function that, given an iterator pointing to a vector value
-            // in an input grid, sets the corresponding tile or voxel in a scalar,
-            // floating-point output grid to the length of the vector.
-            struct Local {
-               static inline void op(
-                     const openvdb::FloatGrid::ValueOnCIter& iter,
-                     typename LevelSetType::Accessor& accessor)
-               {
-                  if (iter.isVoxelValue()) { // set a single voxel
-                     accessor.setValue(iter.getCoord(), openvdb::math::Abs(*iter) > FLT_EPSILON);
-                  } else { // fill an entire tile
-                     openvdb::CoordBBox bbox;
-                     iter.getBoundingBox(bbox);
-                     accessor.getTree()->fill(bbox, openvdb::math::Abs(*iter) > FLT_EPSILON);
+            openvdb::GridPtrVecPtr grids(new openvdb::GridPtrVec);
+
+            for (unsigned i = 0; i < tr.mData->mVertices.size(); ++i)
+            {
+               const osg::Vec3& point = tr.mData->mVertices[i];
+               Vec3s pointvdb(point.x(), point.y(), point.z());
+               pointList.push_back(pointvdb);
+            }
+
+            for (unsigned i = split * numTrisPerSplit * 3; i < tr.mData->mIndices.size() && i < (split + 1) * numTrisPerSplit * 3; i+=3)
+            {
+               Vec4I tri(tr.mData->mIndices[i], tr.mData->mIndices[i+1], tr.mData->mIndices[i+2], util::INVALID_IDX);
+               triList.push_back(tri);
+            }
+
+            FloatGrid::Ptr gridInitial = convertToLevelSet(pointList, triList, resolution, zres, filename);
+
+            pointList.clear();
+            triList.clear();
+
+            if (gridInitial && gridInitial->isType<LevelSetType>())
+            {
+               gridInitial->setSaveFloatAsHalf(true);
+               grids->push_back(gridInitial);
+               gridInitial = NULL;
+            }
+            else if (gridInitial)
+            {
+               // Define a local function that, given an iterator pointing to a vector value
+               // in an input grid, sets the corresponding tile or voxel in a scalar,
+               // floating-point output grid to the length of the vector.
+               struct Local {
+                  static inline void op(
+                        const openvdb::FloatGrid::ValueOnCIter& iter,
+                        typename LevelSetType::Accessor& accessor)
+                  {
+                     if (iter.isVoxelValue()) { // set a single voxel
+                        accessor.setValue(iter.getCoord(), openvdb::math::Abs(*iter) > FLT_EPSILON);
+                     } else { // fill an entire tile
+                        openvdb::CoordBBox bbox;
+                        iter.getBoundingBox(bbox);
+                        accessor.getTree()->fill(bbox, openvdb::math::Abs(*iter) > FLT_EPSILON);
+                     }
                   }
+               };
+
+               // Create a scalar grid to hold the transformed values.
+               typename LevelSetType::Ptr outGrid = LevelSetType::create();
+               outGrid->setTransform(gridInitial->transformPtr());
+               // Populate the output grid with transformed values.
+               openvdb::tools::transformValues(gridInitial->cbeginValueOn(), *outGrid, &Local::op);
+               gridInitial = NULL;
+               outGrid->setSaveFloatAsHalf(true);
+               grids->push_back(outGrid);
+            }
+
+            if (grids->empty()) continue;
+
+            std::string outFile;
+            if (splits > 1)
+               outFile = filename + dtUtil::ToString(split) + ".vdb";
+            else
+               outFile = filename + ".vdb";
+
+            openvdb::io::File file(outFile);
+            file.write(*grids);
+
+
+            if (!oneFile) {
+               if (!firstFile) {
+                  std::cout << "\n" << std::string(40, '-') << "\n\n";
                }
-            };
-
-            // Create a scalar grid to hold the transformed values.
-            typename LevelSetType::Ptr outGrid = LevelSetType::create();
-            // Populate the output grid with transformed values.
-            openvdb::tools::transformValues(gridInitial->cbeginValueOn(), *outGrid, &Local::op);
-            gridInitial = NULL;
-            grids->push_back(outGrid);
-         }
-
-         openvdb::MetaMap::Ptr meta;
-
-         openvdb::io::File file(filenames[i] + ".vdb");
-         file.write(*grids);
-
-         if (!grids) continue;
-
-         if (!oneFile) {
-            if (!firstFile) {
-               std::cout << "\n" << std::string(40, '-') << "\n\n";
+               std::cout << filename << "\n\n";
             }
-            std::cout << filenames[i] << "\n\n";
-         }
 
-         // Print file-level metadata.
-         //std::cout << "VDB version: " << version << "\n";
-         if (meta) {
-            std::string str = meta->str();
-            if (!str.empty()) std::cout << str << "\n";
-         }
-         std::cout << "\n";
+            std::cout << "\n";
 
-         // For each grid in the file...
-         bool firstGrid = true;
-         for (openvdb::GridPtrVec::const_iterator it = grids->begin(); it != grids->end(); ++it) {
-            if (openvdb::GridBase::ConstPtr grid = *it) {
-               if (!firstGrid) std::cout << "\n\n";
-               std::cout << "Name: " << grid->getName() << std::endl;
-               grid->print(std::cout, /*verboseLevel=*/11);
-               firstGrid = false;
+            // For each grid in the file...
+            bool firstGrid = true;
+            for (openvdb::GridPtrVec::const_iterator it = grids->begin(); it != grids->end(); ++it) {
+               if (openvdb::GridBase::ConstPtr grid = *it) {
+                  if (!firstGrid) std::cout << "\n\n";
+                  std::cout << "Name: " << grid->getName() << std::endl;
+                  grid->print(std::cout, /*verboseLevel=*/11);
+                  firstGrid = false;
+               }
             }
-         }
-      }
+         } // For each split
+      } // For each file
    }
 
 } // unnamed namespace
@@ -296,7 +358,8 @@ main(int argc, char *argv[])
    if (argc == 1) usage();
 
    bool useBoolean = false, useFloat = false, useGrid = true;
-   float gridResolution = 1.0f;
+   float gridResolution = 1.0f, zres = -1.0f;
+   unsigned subdivisions = 1;
    StringVec filenames;
    for (int i = 1; i < argc; ++i) {
       std::string arg = argv[i];
@@ -324,6 +387,36 @@ main(int argc, char *argv[])
                std::cerr << gProgName << ": \"" << arg << "\" requires a float as argument.\n";
                usage();
             }
+         } else if (arg.substr(0,2) == "-z") {
+            if (arg.length() == 2 && i + 1 < argc)
+            {
+               zres = dtUtil::ToType<float>(argv[i+1]);
+               ++i;
+            }
+            else if (arg.length() > 2)
+            {
+               zres = dtUtil::ToType<float>(arg.substr(2));
+            }
+            else
+            {
+               std::cerr << gProgName << ": \"" << arg << "\" requires a float as argument.\n";
+               usage();
+            }
+         } else if (arg.substr(0,2) == "-s") {
+            if (arg.length() == 2 && i + 1 < argc)
+            {
+               subdivisions = dtUtil::ToType<int>(argv[i+1]);
+               ++i;
+            }
+            else if (arg.length() > 2)
+            {
+               subdivisions = dtUtil::ToType<int>(arg.substr(2));
+            }
+            else
+            {
+               std::cerr << gProgName << ": \"" << arg << "\" requires an int as argument.\n";
+               usage();
+            }
          } else if (arg == "-h" || arg == "-help" || arg == "--help") {
             usage(EXIT_SUCCESS);
          } else {
@@ -338,6 +431,7 @@ main(int argc, char *argv[])
       std::cerr << gProgName << ": expected one or more mesh files\n";
       usage();
    }
+   if (zres < 0.0f) zres = gridResolution;
 
    try {
       openvdb::initialize();
@@ -359,11 +453,11 @@ main(int argc, char *argv[])
       {
          if (useFloat)
          {
-            printLongListing<FloatGrid>(filenames, gridResolution);
+            printLongListing<FloatGrid>(filenames, gridResolution, zres, subdivisions);
          }
          else
          {
-            printLongListing<BoolGrid>(filenames, gridResolution);
+            printLongListing<BoolGrid>(filenames, gridResolution, zres, subdivisions);
          }
       }
       //        else
