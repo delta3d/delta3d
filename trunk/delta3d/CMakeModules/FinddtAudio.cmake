@@ -6,9 +6,9 @@ INCLUDE(delta3d_common)
 #variable names of the individual Delta3D libraries.  Can be used in application cmakelist.txt files.
 FIND_DELTA3D_LIBRARY(DTAUDIO_LIBRARY         dtAudio)
 
-if (FIND_dtAnim_REQUIRED)
+if (FIND_dtAudio_REQUIRED)
    FIND_PACKAGE(OpenAL REQUIRED)
-elseif(FIND_dtAnim_QUIETLY)
+elseif(FIND_dtAudio_QUIETLY)
    FIND_PACKAGE(OpenAL QUIETLY)
 else()
    FIND_PACKAGE(OpenAL)
