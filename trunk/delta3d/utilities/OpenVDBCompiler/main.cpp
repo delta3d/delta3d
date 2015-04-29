@@ -74,9 +74,9 @@ namespace {
             "Options:\n" <<
             "    -b,            convert to a bool grid or tree (default).\n" <<
             "    -f,            convert to a float grid or tree.\n" <<
-            "    -r{N},         voxel size in x,y,z (Z can be overridden)."
-            "    -z{N},         z Thickness, or use the -r value by default."
-            "    -t{N},         Mesh thickness.  How thick to make the mesh walls internally."
+            "    -r{N},         voxel size in x,y,z (Z can be overridden).\n" <<
+            "    -z{N},         z Thickness, or use the -r value by default.\n"<<
+            "    -t{N},         Mesh thickness.  How thick to make the mesh walls internally.\n" <<
             "    -s{N},         subdivisions to break the file into.  This will also reduce he memory usage at create time..\n";
       exit(exitStatus);
    }
