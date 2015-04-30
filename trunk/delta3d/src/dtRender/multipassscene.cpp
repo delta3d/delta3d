@@ -915,7 +915,7 @@ namespace dtRender
          "Setting this true saves a depth buffer with the main draw.",
          PropRegHelperType, propRegHelper);
 
-      DT_REGISTER_PROPERTY_WITH_NAME_AND_LABEL(EnablePreDepthPass, "EnablePreDepthPass", "Enables a depth pass before rendering a view in the scene.",
+      DT_REGISTER_PROPERTY_WITH_NAME_AND_LABEL(EnablePreDepthPass, "EnablePreDepthPass", "Enable Pre Depth Pass.",
          "Setting this true computes a predepth pass.",
          PropRegHelperType, propRegHelper);
 
