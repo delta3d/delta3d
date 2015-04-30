@@ -167,7 +167,7 @@ namespace {
        int mLastPercent;
    };
 
-   typename FloatGrid::Ptr convertToLevelSet(std::vector<Vec3s> pointList, std::vector<Vec4I> triList, float resolution, float zres, float thickness, const std::string& filename)
+   FloatGrid::Ptr convertToLevelSet(std::vector<Vec3s> pointList, std::vector<Vec4I> triList, float resolution, float zres, float thickness, const std::string& filename)
    {
 
       Mat4R m;
@@ -176,7 +176,7 @@ namespace {
       xform->voxelSize(Vec3R(resolution, resolution, zres));
 
       //xform.voxelSize(openvdb::Vec3d(resolution, resolution, resolution));
-      typename FloatGrid::Ptr result;
+      FloatGrid::Ptr result;
       try {
          std::vector<Vec3s> indexSpacePoints(pointList.size());
 
@@ -299,7 +299,7 @@ namespace {
                typename LevelSetType::Ptr outGrid = LevelSetType::create();
                outGrid->setTransform(gridInitial->transformPtr());
                // Populate the output grid with transformed values.
-               openvdb::tools::transformValues(gridInitial->cbeginValueOn(), *outGrid, &Local::op);
+               openvdb::tools::transformValues(gridInitial->cbeginValueOn(), *outGrid, Local::op);
                gridInitial = NULL;
                outGrid->setSaveFloatAsHalf(true);
                grids->push_back(outGrid);
