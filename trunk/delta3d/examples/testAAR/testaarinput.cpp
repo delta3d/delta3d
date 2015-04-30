@@ -49,9 +49,8 @@
 
 #include <iostream>
 
-#if _MSC_VER
-#define snprintf _snprintf
-#endif
+//for snprintf
+#include <dtUtil/mswinmacros.h>
 
 const dtCore::RefPtr<dtCore::SystemComponentType> TestAARInput::TYPE(new dtCore::SystemComponentType("TestAARInput", "GMComponents", "Test AAR Input", dtGame::BaseInputComponent::DEFAULT_TYPE));
 

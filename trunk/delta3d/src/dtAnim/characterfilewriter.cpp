@@ -31,9 +31,8 @@
 #include <dtUtil/xercesutils.h>
 #include <sstream>
 
-#if _MSC_VER
-#define snprintf _snprintf
-#endif
+//for snprintf
+#include <dtUtil/mswinmacros.h>
 
 
 namespace dtAnim
