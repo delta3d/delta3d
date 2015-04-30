@@ -36,6 +36,11 @@
 #include <CEGUI/CEGUIWindow.h>
 #include <CEGUI/CEGUIPropertyHelper.h>
 #include <CEGUI/CEGUIExceptions.h>
+
+#if _MSC_VER
+#define snprintf _snprintf
+#endif
+
 //////////////////////////////////////////////////////////////////////////
 HUDComponent::HUDComponent(dtABC::BaseABC& app)
    : dtGame::GMComponent("Hud")
