@@ -21,6 +21,8 @@
 
 #include <dtPhysics/jointdesc.h>
 #include <dtCore/propertymacros.h>
+#include <dtCore/arrayactorpropertycomplex.h>
+#include <dtCore/propertycontaineractorproperty.h>
 
 namespace dtPhysics
 {
@@ -36,7 +38,8 @@ namespace dtPhysics
       JointDescRegHelper regHelper(*this, this, GROUP);
       DT_REGISTER_PROPERTY(Body1Name, "Name of the first body attached to the joint.", JointDescRegHelper, regHelper);
       DT_REGISTER_PROPERTY(Body2Name, "Name of the second body attached to the joint.", JointDescRegHelper, regHelper);
-      DT_REGISTER_PROPERTY(JointType, "Name of the second body attached to the joint.", JointDescRegHelper, regHelper);
+      DT_REGISTER_PROPERTY(VisualNodeName, "Name of the second transform node this joint should be moving in the visual model.", JointDescRegHelper, regHelper);
+      DT_REGISTER_PROPERTY(JointType, "The type of joint this should be.", JointDescRegHelper, regHelper);
 
       DT_REGISTER_PROPERTY(Body1RelativeTranslation, "The relative translation from body 1 to the joint center.", JointDescRegHelper, regHelper);
       DT_REGISTER_PROPERTY(Body1RelativeRotationHPR, "The relative rotation from body 1 to the joint center.", JointDescRegHelper, regHelper);
@@ -50,6 +53,31 @@ namespace dtPhysics
       DT_REGISTER_PROPERTY(AngularLimitMaximums, "Angular minimum limits X Y Z. Min = max for locked. Min > max for free motion.", JointDescRegHelper, regHelperLimits);
 
       DT_REGISTER_PROPERTY(DisableCollisionBetweenBodies, "Body2 angular minimum limits X Y Z. Min = max for locked. Min > max for free motion.", JointDescRegHelper, regHelperLimits);
+
+      typedef dtCore::ArrayActorPropertyComplex<dtCore::RefPtr<MotorDesc> > MotorArrayPropType;
+      dtCore::RefPtr<MotorArrayPropType> motorArrayProp =
+          new MotorArrayPropType
+          ("Motors", "Motors",
+                MotorArrayPropType::SetFuncType(this, &JointDesc::SetMotor),
+                MotorArrayPropType::GetFuncType(this, &JointDesc::GetMotor),
+                MotorArrayPropType::GetSizeFuncType(this, &JointDesc::GetNumMotors),
+                MotorArrayPropType::InsertFuncType(this, &JointDesc::InsertMotor),
+                MotorArrayPropType::RemoveFuncType(this, &JointDesc::RemoveMotor),
+           "Array of Motor Descriptions",
+           GROUP
+           );
+
+      dtCore::RefPtr<dtCore::BasePropertyContainerActorProperty> singleMotorProp =
+           new dtCore::SimplePropertyContainerActorProperty<MotorDesc>("Motor", "Motor",
+           dtCore::SimplePropertyContainerActorProperty<MotorDesc>::SetFuncType(motorArrayProp.get(), &MotorArrayPropType::SetCurrentValue),
+           dtCore::SimplePropertyContainerActorProperty<MotorDesc>::GetFuncType(motorArrayProp.get(), &MotorArrayPropType::GetCurrentValue),
+           "", GROUP);
+
+      motorArrayProp->SetArrayProperty(*singleMotorProp);
+      motorArrayProp->SetSendInFullUpdate(false);
+      motorArrayProp->SetSendInPartialUpdate(false);
+
+      AddProperty(motorArrayProp.get());
 
       InitDefaults();
    }
@@ -65,6 +93,7 @@ namespace dtPhysics
 
    DT_IMPLEMENT_ACCESSOR(JointDesc, std::string, Body1Name);
    DT_IMPLEMENT_ACCESSOR(JointDesc, std::string, Body2Name);
+   DT_IMPLEMENT_ACCESSOR(JointDesc, std::string, VisualNodeName);
 
    DT_IMPLEMENT_ACCESSOR(JointDesc, dtUtil::EnumerationPointer<JointType>, JointType);
 
@@ -102,5 +131,8 @@ namespace dtPhysics
    DT_IMPLEMENT_ACCESSOR(JointDesc, VectorType, AngularLimitMaximums);
 
    DT_IMPLEMENT_ACCESSOR(JointDesc, bool, DisableCollisionBetweenBodies);
+
+   DT_IMPLEMENT_ARRAY_ACCESSOR(JointDesc, MotorDescPtr, Motor, Motors, new MotorDesc);
+
 
 } /* namespace dtPhysics */

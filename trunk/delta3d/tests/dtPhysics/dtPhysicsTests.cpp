@@ -178,7 +178,6 @@ namespace dtPhysics
       void testPhysicsWorld(const std::string& engine);
       void testCallbacks(const std::string& engine);
       void testMass(dtPhysics::PhysicsActComp& actorComp);
-      void testDimensions(dtPhysics::PhysicsActComp& actorComp);
 
       void ChangeEngine(const std::string& engine)
       {
@@ -1569,7 +1568,6 @@ namespace dtPhysics
                size_t(0U), toFill.size());
 
       testMass(*tehVoodoo);
-      testDimensions(*tehVoodoo);
    }
 
    /////////////////////////////////////////////////////////
@@ -1647,19 +1645,6 @@ namespace dtPhysics
       actorComp.SetMass(newVal);
       CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("Mass should have changed", actorComp.GetMass(),
                newVal, 1e-3f);
-
-   }
-
-   /////////////////////////////////////////////////////////
-   void dtPhysicsTests::testDimensions(dtPhysics::PhysicsActComp& actorComp)
-   {
-      const VectorType defaultVec;
-      CPPUNIT_ASSERT_EQUAL_MESSAGE("dimensions should default to 0, 0, 0", actorComp.GetDimensions(),
-               defaultVec);
-      const VectorType newVec(71.77f, 437.01f, -89.99);
-      actorComp.SetDimensions(newVec);
-      CPPUNIT_ASSERT_EQUAL_MESSAGE("Mass should have changed", actorComp.GetDimensions(),
-               newVec);
 
    }
 

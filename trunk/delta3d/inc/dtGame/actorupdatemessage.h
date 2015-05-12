@@ -49,6 +49,7 @@ namespace dtGame
          static const dtUtil::RefString ACTOR_TYPE_CATEGORY_PARAMETER;
          static const dtUtil::RefString PROTOTYPE_NAME_PARAMETER;
          static const dtUtil::RefString PROTOTYPE_ID_PARAMETER;
+         static const dtUtil::RefString PARENT_ID_PARAMETER;
          static const dtUtil::RefString IS_PARTIAL_UPDATE_PARAMETER;
          static const dtUtil::RefString UPDATE_GROUP_PARAMETER;
 
@@ -203,7 +204,7 @@ namespace dtGame
          */
          void SetPrototypeName(const std::string& newPrototypeName);
 
-                  /**
+         /**
           * This value is used for updating/creating remote actors that need to be recreated from prototype
           * @return The name of the prototype this actor is created from, if any. 
           */
@@ -217,6 +218,20 @@ namespace dtGame
          * @param newName The name of the prototype this actor is created from, if any.
          */
          void SetPrototypeID(const dtCore::UniqueId& newPrototypeID);
+
+         /**
+          * This value is used for updating/creating remote actors that need a parent actor id.
+          */
+         const dtCore::UniqueId& GetParentID() const;
+
+         /**
+         * This value is used for updating/creating remote actors that need a parent actor id.
+         * This value comes from the actor, but is set automatically by the GM when an actor is created
+         * from a prototype. If the prototype is non-null, then when the actor is created by the message
+         * processor, then it will attempt to look up the prototype first. Extremely useful for networking.
+         * @param newName The name of the prototype this actor is created from, if any.
+         */
+         void SetParentID(const dtCore::UniqueId& newPrototypeID);
 
          /**
           * This templated function exposes the for each parameter on the update parameters data member.

@@ -43,6 +43,7 @@ class palRevoluteLink;
 class palGenericLink;
 class palRigidLink;
 class palLink;
+class palMotor;
 
 namespace dtPhysics
 {
@@ -52,6 +53,7 @@ namespace dtPhysics
    class BodyWrapper;
    class GenericBodyWrapper;
    class JointDesc;
+   class MotorDesc;
 
    struct PhysicsObjectDataMembers;
    /////////////////////////////////////////////////////////////////////////////
@@ -416,6 +418,11 @@ namespace dtPhysics
        */
       static palLink* CreateJoint(PhysicsObject& one, PhysicsObject& two, const JointDesc& desc);
 
+      /**
+       * Creates a motor for a joint given the motor description.
+       */
+      static palMotor* CreateMotor(palLink& joint, const MotorDesc& desc);
+
    protected:
       ~PhysicsObject();
 
@@ -435,6 +442,7 @@ namespace dtPhysics
       PhysicsObjectDataMembers* mDataMembers;
    };
 
+   typedef dtCore::RefPtr<PhysicsObject> PhysicsObjectPtr;
 
 } // namespace dtPhysics
 

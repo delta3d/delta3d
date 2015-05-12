@@ -45,7 +45,6 @@ namespace dtPhysics
    /////////////////////////////////////////////////////////////////////////////
    const dtUtil::RefString PhysicsActComp::PROPERTY_PHYSICS_NAME("Physics Name");
    const dtUtil::RefString PhysicsActComp::PROPERTY_PHYSICS_MASS("Physics Mass");
-   const dtUtil::RefString PhysicsActComp::PROPERTY_PHYSICS_DIMENSIONS("Physics Dimensions");
    const dtUtil::RefString PhysicsActComp::PROPERTY_PHYSICS_OBJECT("Physics Object");
    const dtUtil::RefString PhysicsActComp::PROPERTY_PHYSICS_OBJECT_ARRAY("Physics Objects");
    const dtUtil::RefString PhysicsActComp::PROPERTY_COLLISION_GROUP("Default Collision Group");
@@ -53,6 +52,7 @@ namespace dtPhysics
    const dtUtil::RefString PhysicsActComp::PROPERTY_MATERIAL_ACTOR("Material Actor");
 
    DT_IMPLEMENT_ARRAY_ACCESSOR(PhysicsActComp, dtCore::RefPtr<JointDesc>, Joint, Joints, new JointDesc);
+   DT_IMPLEMENT_ARRAY_ACCESSOR(PhysicsActComp, dtCore::RefPtr<TransformJointUpdater>, TransformJointUpdater, TransformJointUpdaters, NULL);
 
    /////////////////////////////////////////////////////////////////////////////
    // CLASS CODE
@@ -277,13 +277,6 @@ namespace dtPhysics
             FloatActorProperty::SetFuncType(this, &PhysicsActComp::SetMass),
             FloatActorProperty::GetFuncType(this, &PhysicsActComp::GetMass),
             PROPERTY_PHYSICS_MASS_DESC, GROUP));
-
-      static const RefString PROPERTY_PHYSICS_DIMESNIONS_DESC("The collision dimensions.  This is a configuration value, "
-            "and can be use however the developer intends.");
-      AddProperty(new Vec3ActorProperty(PROPERTY_PHYSICS_DIMENSIONS, PROPERTY_PHYSICS_DIMENSIONS, //ActorName
-            Vec3ActorProperty::SetFuncType(this, &PhysicsActComp::SetDimensions),
-            Vec3ActorProperty::GetFuncType(this, &PhysicsActComp::GetDimensions),
-            PROPERTY_PHYSICS_DIMESNIONS_DESC, GROUP));
 
       static const RefString PROPERTY_PHYSICS_COLLISION_GROUP_DESC("The default group to use for the physics "
             "objects.  This is a configuration value, and can be use however the developer intends.");
@@ -519,18 +512,6 @@ namespace dtPhysics
    }
 
    //////////////////////////////////////////////////////////////////
-   void PhysicsActComp::SetDimensions(const VectorType& dim)
-   {
-      mDimensions = dim;
-   }
-
-   //////////////////////////////////////////////////////////////////
-   const VectorType& PhysicsActComp::GetDimensions() const
-   {
-      return mDimensions;
-   }
-
-   //////////////////////////////////////////////////////////////////
    CollisionGroup PhysicsActComp::GetDefaultCollisionGroup() const
    {
       return mDefaultCollisionGroup;
@@ -747,6 +728,47 @@ namespace dtPhysics
    size_t PhysicsActComp::GetPhysicsObjectCount() const
    {
       return mPhysicsObjects.size();
+   }
+
+   //////////////////////////////////////////////////////////////////
+   palLink* PhysicsActComp::CreateJoint(dtPhysics::JointDesc& desc, osg::Transform* refNode)
+   {
+      TransformType frameParent, visualToBody;
+      dtPhysics::PhysicsObject* body1 = GetPhysicsObject(desc.GetBody1Name());
+      dtPhysics::PhysicsObject* body2 = GetPhysicsObject(desc.GetBody2Name());
+      if (body1 == NULL || body1->GetBodyWrapper() == NULL || body2 == NULL || body2->GetBodyWrapper() == NULL)
+         return NULL;
+      if (refNode != NULL)
+      {
+         body1->GetVisualToBodyTransform(visualToBody);
+         ComputeLocalOffsetMatrixForNode(frameParent, *refNode, visualToBody);
+         desc.SetBody1Frame(frameParent);
+      }
+
+      return dtPhysics::PhysicsObject::CreateJoint(*body1, *body2, desc);
+   }
+
+   //////////////////////////////////////////////////////////////////
+   void PhysicsActComp::ComputeLocalOffsetMatrixForNode(TransformType& frameOut, const osg::Node& node, const TransformType& visualToBodyTransform, const osg::Vec3& externalScale)
+   {
+      osg::Matrix wcMatrix, vtb;
+      frameOut.Get(wcMatrix);
+      if (node.getNumParents() > 0)
+      {
+         const osg::Transform* parentNode = node.getParent(0)->asTransform();
+         if (parentNode != NULL)
+         {
+            parentNode->computeLocalToWorldMatrix(wcMatrix, NULL);
+         }
+      }
+
+      osg::Vec3d unscaledTrans = wcMatrix.getTrans();
+      wcMatrix.setTrans(osg::Vec3d(unscaledTrans.x() * externalScale.x(),  unscaledTrans.y() * externalScale.y(), unscaledTrans.z() * externalScale.z()));
+
+      visualToBodyTransform.Get(vtb);
+      vtb.invert(vtb);
+      wcMatrix.preMult(vtb);
+      frameOut.Set(wcMatrix);
    }
 
    //////////////////////////////////////////////////////////////////

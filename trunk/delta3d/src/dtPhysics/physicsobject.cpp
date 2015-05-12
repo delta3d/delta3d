@@ -1572,6 +1572,16 @@ namespace dtPhysics
 
    }
 
+   palMotor* PhysicsObject::CreateMotor(palLink& joint, const MotorDesc& desc)
+   {
+      palMotor* result = dtPhysics::PhysicsWorld::GetInstance().GetPalFactory()->CreateMotor(&joint, desc.GetAxis().GetIndex() + (desc.GetIsAngular() ? 3 : 0));
+      if (result != NULL)
+      {
+         result->Update(desc.GetTargetVelocity(), desc.GetMaxForce());
+      }
+      return result;
+   }
+
    palLink* PhysicsObject::CreateJoint(PhysicsObject& one, PhysicsObject& two, const JointDesc& desc)
    {
       if (one.GetBodyWrapper() == NULL && two.GetBodyWrapper() == NULL)

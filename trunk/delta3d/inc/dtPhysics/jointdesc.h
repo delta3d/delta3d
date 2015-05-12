@@ -26,6 +26,7 @@
 #include <dtPhysics/physicsexport.h>
 #include <dtPhysics/jointtype.h>
 #include <dtPhysics/physicstypes.h>
+#include <dtPhysics/motordesc.h>
 #include <dtUtil/getsetmacros.h>
 
 namespace dtPhysics
@@ -44,32 +45,36 @@ namespace dtPhysics
       /*override*/ const dtCore::ObjectType& GetObjectType() const;
    public:
 
-      DT_DECLARE_ACCESSOR(std::string, Body1Name);
-      DT_DECLARE_ACCESSOR(std::string, Body2Name);
+      DT_DECLARE_ACCESSOR(std::string, Body1Name)
+      DT_DECLARE_ACCESSOR(std::string, Body2Name)
+      DT_DECLARE_ACCESSOR(std::string, VisualNodeName)
 
-      DT_DECLARE_ACCESSOR(dtUtil::EnumerationPointer<JointType>, JointType);
+      DT_DECLARE_ACCESSOR(dtUtil::EnumerationPointer<JointType>, JointType)
 
-      DT_DECLARE_ACCESSOR(VectorType, Body1RelativeTranslation);
-      DT_DECLARE_ACCESSOR(VectorType, Body1RelativeRotationHPR);
+      DT_DECLARE_ACCESSOR(VectorType, Body1RelativeTranslation)
+      DT_DECLARE_ACCESSOR(VectorType, Body1RelativeRotationHPR)
       void GetBody1Frame(TransformType& xform) const;
       void SetBody1Frame(const TransformType& xform);
 
-      DT_DECLARE_ACCESSOR(VectorType, Body2RelativeTranslation);
-      DT_DECLARE_ACCESSOR(VectorType, Body2RelativeRotationHPR);
+      DT_DECLARE_ACCESSOR(VectorType, Body2RelativeTranslation)
+      DT_DECLARE_ACCESSOR(VectorType, Body2RelativeRotationHPR)
       void GetBody2Frame(TransformType& xform) const;
       void SetBody2Frame(const TransformType& xform);
 
-      DT_DECLARE_ACCESSOR(VectorType, LinearLimitMinimums);
-      DT_DECLARE_ACCESSOR(VectorType, LinearLimitMaximums);
-      DT_DECLARE_ACCESSOR(VectorType, AngularLimitMinimums);
-      DT_DECLARE_ACCESSOR(VectorType, AngularLimitMaximums);
+      DT_DECLARE_ACCESSOR(VectorType, LinearLimitMinimums)
+      DT_DECLARE_ACCESSOR(VectorType, LinearLimitMaximums)
+      DT_DECLARE_ACCESSOR(VectorType, AngularLimitMinimums)
+      DT_DECLARE_ACCESSOR(VectorType, AngularLimitMaximums)
 
-      DT_DECLARE_ACCESSOR(bool, DisableCollisionBetweenBodies);
+      DT_DECLARE_ACCESSOR(bool, DisableCollisionBetweenBodies)
 
+      DT_DECLARE_ARRAY_ACCESSOR(MotorDescPtr, Motor, Motors)
 
    protected:
       virtual ~JointDesc();
    };
+
+   typedef dtCore::RefPtr<JointDesc> JointDescPtr;
 
 } /* namespace dtPhysics */
 

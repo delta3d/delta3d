@@ -95,6 +95,7 @@ class MessageTests : public CPPUNIT_NS::TestFixture
       CPPUNIT_TEST(TestDefaultMessageProcessorWithPauseResumeCommands);
       CPPUNIT_TEST(TestDefaultMessageProcessorWithRemoteActorCreates);
       CPPUNIT_TEST(TestDefaultMessageProcessorWithLocalActorCreates);
+      CPPUNIT_TEST(TestDefaultMessageProcessorWithRemoteActorCreatesNoParent);
       CPPUNIT_TEST(TestDefaultMessageProcessorWithRemoteActorUpdates);
       CPPUNIT_TEST(TestDefaultMessageProcessorWithLocalActorUpdates);
       CPPUNIT_TEST(TestDefaultMessageProcessorWithRemoteActorDeletes);
@@ -128,6 +129,7 @@ public:
    void TestDefaultMessageProcessorWithMapRequests();
    void TestDefaultMessageProcessorWithPauseResumeCommands();
    void TestDefaultMessageProcessorWithRemoteActorCreates();
+   void TestDefaultMessageProcessorWithRemoteActorCreatesNoParent();
    void TestDefaultMessageProcessorWithLocalActorCreates();
    void TestDefaultMessageProcessorWithRemoteActorUpdates();
    void TestDefaultMessageProcessorWithLocalActorUpdates();
@@ -146,7 +148,7 @@ private:
    void createActors(dtCore::Map& map);
    void RemoveOneProxy(dtCore::Map& map);
 
-   void TestDefaultMessageProcessorWithLocalOrRemoteActorCreates(bool remote);
+   void TestDefaultMessageProcessorWithLocalOrRemoteActorCreates(bool remote, bool parent);
    void TestDefaultMessageProcessorWithLocalOrRemoteActorUpdates(bool remote, bool partial,
             dtGame::GameActorProxy::LocalActorUpdatePolicy& policy = dtGame::GameActorProxy::LocalActorUpdatePolicy::ACCEPT_ALL);
    void TestDefaultMessageProcessorWithLocalOrRemoteActorDeletes(bool remote);
@@ -1615,10 +1617,18 @@ void MessageTests::TestDefaultMessageProcessorWithLocalOrRemoteActorUpdates(bool
 
    CPPUNIT_ASSERT(type != NULL);
    dtCore::RefPtr<dtCore::BaseActorObject> ap = mGameManager->CreateActor(*type);
+   dtCore::RefPtr<dtCore::BaseActorObject> apParent = mGameManager->CreateActor(*type);
+   dtCore::RefPtr<dtCore::BaseActorObject> apSecondParent = mGameManager->CreateActor(*type);
 
    CPPUNIT_ASSERT(ap->IsGameActor());
-   dtCore::RefPtr<dtGame::GameActorProxy> gap = dynamic_cast<dtGame::GameActorProxy*>(ap.get());
+   CPPUNIT_ASSERT(apParent->IsGameActor());
+   CPPUNIT_ASSERT(apSecondParent->IsGameActor());
+    dtCore::RefPtr<dtGame::GameActorProxy> gap = dynamic_cast<dtGame::GameActorProxy*>(ap.get());
+   dtCore::RefPtr<dtGame::GameActorProxy> gapParent = dynamic_cast<dtGame::GameActorProxy*>(apParent.get());
+   dtCore::RefPtr<dtGame::GameActorProxy> gapSecondParent = dynamic_cast<dtGame::GameActorProxy*>(apSecondParent.get());
    CPPUNIT_ASSERT(gap != NULL);
+   CPPUNIT_ASSERT(gapParent != NULL);
+   CPPUNIT_ASSERT(gapSecondParent != NULL);
 
    CPPUNIT_ASSERT_MESSAGE("This property should have been in the accept list", gap->ShouldAcceptPropertyInLocalUpdate("OneIsFired"));
    CPPUNIT_ASSERT_MESSAGE("This property should have been in the accept list", gap->ShouldAcceptPropertyInLocalUpdate("TickRemotes"));
@@ -1626,10 +1636,12 @@ void MessageTests::TestDefaultMessageProcessorWithLocalOrRemoteActorUpdates(bool
    CPPUNIT_ASSERT_MESSAGE("This property should not be in the accept list because it was never added", !gap->ShouldAcceptPropertyInLocalUpdate("TestActorId"));
 
    gap->SetLocalActorUpdatePolicy(policy);
-
+   gap->SetParentActor(gapParent);
    try
    {
       mGameManager->AddActor(*gap, remote, false);
+      mGameManager->AddActor(*gapParent, remote, false);
+      mGameManager->AddActor(*gapSecondParent, remote, false);
    }
    catch (const dtUtil::Exception&)
    {
@@ -1653,10 +1665,12 @@ void MessageTests::TestDefaultMessageProcessorWithLocalOrRemoteActorUpdates(bool
       std::vector<dtUtil::RefString> params;
       params.push_back("OneIsFired");
       gap->PopulateActorUpdate(*actorUpdateMsg, params);
+      actorUpdateMsg->SetParentID(dtCore::UniqueId(false));
    }
    else
    {
       gap->PopulateActorUpdate(*actorUpdateMsg);
+      actorUpdateMsg->SetParentID(gapSecondParent->GetId());
    }
 
    CPPUNIT_ASSERT(actorUpdateMsg->GetParameter("Name") != NULL);
@@ -1725,6 +1739,8 @@ void MessageTests::TestDefaultMessageProcessorWithLocalOrRemoteActorUpdates(bool
                                 gap->GetProperty("TickLocals")->ToString(), std::string("0"));
          CPPUNIT_ASSERT_EQUAL_MESSAGE("TickRemotes should still be 0.",
                                 gap->GetProperty("TickRemotes")->ToString(), std::string("0"));
+
+         CPPUNIT_ASSERT(gap->GetParentActor() == NULL);
       }
       else
       {
@@ -1742,6 +1758,8 @@ void MessageTests::TestDefaultMessageProcessorWithLocalOrRemoteActorUpdates(bool
                                           gap->GetProperty("TickLocals")->ToString(), std::string("0"));
             CPPUNIT_ASSERT_EQUAL_MESSAGE("The new Id should NOT be set.", oldId.ToString(), gap->GetProperty("TestActorId")->ToString());
          }
+
+         CPPUNIT_ASSERT(gap->GetParentActor() == gapSecondParent);
       }
    }
    else
@@ -1753,6 +1771,8 @@ void MessageTests::TestDefaultMessageProcessorWithLocalOrRemoteActorUpdates(bool
       CPPUNIT_ASSERT_EQUAL_MESSAGE("TickRemotes should still be 0.",
                                     gap->GetProperty("TickRemotes")->ToString(), std::string("0"));
       CPPUNIT_ASSERT_EQUAL_MESSAGE("The new Id should NOT be set.", oldId.ToString(), gap->GetProperty("TestActorId")->ToString());
+
+      CPPUNIT_ASSERT(gap->GetParentActor() == gapParent);
    }
 }
 
@@ -1810,15 +1830,20 @@ void MessageTests::TestDefaultMessageProcessorWithLocalOrRemoteActorDeletes(bool
 
 void MessageTests::TestDefaultMessageProcessorWithRemoteActorCreates()
 {
-   TestDefaultMessageProcessorWithLocalOrRemoteActorCreates(true);
+   TestDefaultMessageProcessorWithLocalOrRemoteActorCreates(true, true);
+}
+
+void MessageTests::TestDefaultMessageProcessorWithRemoteActorCreatesNoParent()
+{
+   TestDefaultMessageProcessorWithLocalOrRemoteActorCreates(true, false);
 }
 
 void MessageTests::TestDefaultMessageProcessorWithLocalActorCreates()
 {
-   TestDefaultMessageProcessorWithLocalOrRemoteActorCreates(false);
+   TestDefaultMessageProcessorWithLocalOrRemoteActorCreates(false, true);
 }
 
-void MessageTests::TestDefaultMessageProcessorWithLocalOrRemoteActorCreates(bool remote)
+void MessageTests::TestDefaultMessageProcessorWithLocalOrRemoteActorCreates(bool remote, bool addParent)
 {
    dtGame::DefaultMessageProcessor& defMsgProcessor = *new dtGame::DefaultMessageProcessor();
    mGameManager->AddComponent(defMsgProcessor, dtGame::GameManager::ComponentPriority::NORMAL);
@@ -1826,11 +1851,17 @@ void MessageTests::TestDefaultMessageProcessorWithLocalOrRemoteActorCreates(bool
    dtCore::RefPtr<const dtCore::ActorType> type = mGameManager->FindActorType("ExampleActors","Test1Actor");
 
    CPPUNIT_ASSERT(type != NULL);
+   dtCore::RefPtr<dtCore::BaseActorObject> apParent = mGameManager->CreateActor(*type);
    dtCore::RefPtr<dtCore::BaseActorObject> ap = mGameManager->CreateActor(*type);
 
+   CPPUNIT_ASSERT(apParent->IsGameActor());
    CPPUNIT_ASSERT(ap->IsGameActor());
+   dtCore::RefPtr<dtGame::GameActorProxy> gapParent = dynamic_cast<dtGame::GameActorProxy*>(apParent.get());
    dtCore::RefPtr<dtGame::GameActorProxy> gap = dynamic_cast<dtGame::GameActorProxy*>(ap.get());
+   CPPUNIT_ASSERT(gapParent != NULL);
    CPPUNIT_ASSERT(gap != NULL);
+   mGameManager->AddActor(*gapParent, false, true);
+   gap->SetParentActor(gapParent);
 
    dtCore::RefPtr<dtGame::ActorUpdateMessage> actorCreateMsg =
       static_cast<dtGame::ActorUpdateMessage*>(mGameManager->GetMessageFactory().CreateMessage(dtGame::MessageType::INFO_ACTOR_CREATED).get());
@@ -1846,13 +1877,15 @@ void MessageTests::TestDefaultMessageProcessorWithLocalOrRemoteActorCreates(bool
       actorCreateMsg->SetSource(*new dtGame::MachineInfo());
    }
 
-   CPPUNIT_ASSERT(actorCreateMsg->GetParameter("Name") != NULL);
-   CPPUNIT_ASSERT(actorCreateMsg->GetParameter("Actor Type Name") != NULL);
-   CPPUNIT_ASSERT(actorCreateMsg->GetParameter("Actor Type Category") != NULL);
+   CPPUNIT_ASSERT(actorCreateMsg->GetParameter(dtGame::ActorUpdateMessage::NAME_PARAMETER) != NULL);
+   CPPUNIT_ASSERT(actorCreateMsg->GetParameter(dtGame::ActorUpdateMessage::ACTOR_TYPE_NAME_PARAMETER) != NULL);
+   CPPUNIT_ASSERT(actorCreateMsg->GetParameter(dtGame::ActorUpdateMessage::ACTOR_TYPE_CATEGORY_PARAMETER) != NULL);
+   CPPUNIT_ASSERT(actorCreateMsg->GetParameter(dtGame::ActorUpdateMessage::PARENT_ID_PARAMETER) != NULL);
 
-   CPPUNIT_ASSERT(actorCreateMsg->GetParameter("Name")->ToString() == gap->GetName());
-   CPPUNIT_ASSERT(actorCreateMsg->GetParameter("Actor Type Name")->ToString() == gap->GetActorType().GetName());
-   CPPUNIT_ASSERT(actorCreateMsg->GetParameter("Actor Type Category")->ToString() == gap->GetActorType().GetCategory());
+   CPPUNIT_ASSERT(actorCreateMsg->GetParameter(dtGame::ActorUpdateMessage::NAME_PARAMETER)->ToString() == gap->GetName());
+   CPPUNIT_ASSERT(actorCreateMsg->GetParameter(dtGame::ActorUpdateMessage::ACTOR_TYPE_NAME_PARAMETER)->ToString() == gap->GetActorType().GetName());
+   CPPUNIT_ASSERT(actorCreateMsg->GetParameter(dtGame::ActorUpdateMessage::ACTOR_TYPE_CATEGORY_PARAMETER)->ToString() == gap->GetActorType().GetCategory());
+   CPPUNIT_ASSERT(actorCreateMsg->GetParameter(dtGame::ActorUpdateMessage::PARENT_ID_PARAMETER)->ToString() == gapParent->GetId().ToString());
 
    CPPUNIT_ASSERT(actorCreateMsg->GetUpdateParameter("OneIsFired") != NULL);
    CPPUNIT_ASSERT(actorCreateMsg->GetUpdateParameter("TickLocals") != NULL);
@@ -1870,8 +1903,8 @@ void MessageTests::TestDefaultMessageProcessorWithLocalOrRemoteActorCreates(bool
 
    CPPUNIT_ASSERT(mGameManager->FindGameActorById(gap->GetId()) == NULL);
 
-   dtCore::AppSleep(10);
-   dtCore::System::GetInstance().Step();
+   dtCore::System::GetInstance().Step(0.01667);
+
 
    dtCore::RefPtr<dtGame::GameActorProxy> gapRemote = mGameManager->FindGameActorById(gap->GetId());
 
@@ -1885,6 +1918,8 @@ void MessageTests::TestDefaultMessageProcessorWithLocalOrRemoteActorCreates(bool
       CPPUNIT_ASSERT_MESSAGE("OneIsFired should be changed to true.", gapRemote->GetProperty("OneIsFired")->ToString() == "true");
       CPPUNIT_ASSERT_MESSAGE("TickLocals should be changed to 96.", gapRemote->GetProperty("TickLocals")->ToString() == "96");
       CPPUNIT_ASSERT_MESSAGE("TickRemotes should be changed to 107.", gapRemote->GetProperty("TickRemotes")->ToString() == "107");
+
+      CPPUNIT_ASSERT(gapRemote->GetParentActor() == gapParent);
 
       CPPUNIT_ASSERT_MESSAGE("The created actor should be remote.", gapRemote->IsRemote());
       CPPUNIT_ASSERT_MESSAGE("The created actor should not be published.", !gapRemote->IsPublished());
