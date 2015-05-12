@@ -33,9 +33,9 @@
 #include <dtPhysics/action.h>
 #include <dtPhysics/raycast.h>
 #include <dtPhysics/jointdesc.h>
+#include <dtPhysics/transformjointupdater.h>
 
 #include <dtGame/actorcomponent.h>
-
 #include <dtCore/uniqueid.h>
 #include <dtCore/transformable.h>
 #include <dtUtil/functor.h>
@@ -80,7 +80,6 @@ namespace dtPhysics
 
          static const dtUtil::RefString PROPERTY_PHYSICS_NAME;
          static const dtUtil::RefString PROPERTY_PHYSICS_MASS;
-         static const dtUtil::RefString PROPERTY_PHYSICS_DIMENSIONS;
          static const dtUtil::RefString PROPERTY_PHYSICS_OBJECT;
          static const dtUtil::RefString PROPERTY_PHYSICS_OBJECT_ARRAY;
          static const dtUtil::RefString PROPERTY_COLLISION_GROUP;
@@ -159,7 +158,43 @@ namespace dtPhysics
          /**
           * List of joint descriptions.
           */
-         DT_DECLARE_ARRAY_ACCESSOR(dtCore::RefPtr<JointDesc>, Joint, Joints);
+         DT_DECLARE_ARRAY_ACCESSOR(JointDescPtr, Joint, Joints);
+
+         /**
+          * List of updater objects to use to update the transforms on nodes.
+          */
+         DT_DECLARE_ARRAY_ACCESSOR(TransformJointUpdaterPtr, TransformJointUpdater, TransformJointUpdaters);
+
+         /**
+          *  Creates a joint object based on the description, sets the parent frame to match that on the given node.
+          *  It's templated on the updater type so it can be subclassed, though it must be a subclass of TransformJointUpdater.
+          */
+         template<typename UpdaterType = TransformJointUpdater>
+         UpdaterType* CreateJointAndRegisterUpdater(dtPhysics::JointDesc& desc, osg::Transform& refNodeToUpdate)
+         {
+            dtCore::RefPtr<UpdaterType> result;
+            palLink* newLink = CreateJoint(desc, &refNodeToUpdate);
+            if (newLink == NULL)
+               return NULL;
+
+            result = new UpdaterType(*newLink, refNodeToUpdate);
+
+            AddTransformJointUpdater(result);
+
+            return result;
+         }
+
+         /**
+          * Computes a matrix that is the offset from the given node with its parent transform and a visual to body transform
+          * which offsets the frame to the body transform, rather than what is the visual origin. It does not incorporate any
+          * transform on the node itself because that is assumed to be a starting position.  That is, if this frame is used to create a joint,
+          * then the joint parent frame would be from the body to the provided node if it was the equivalent of an identity matrix.
+          * A scale may be provided, and it will be applied before the visualToBodyTransform, which is assumed to be used unscaled.
+          * The scale does NOT create a scaled matrix, since the physics won't like that.  It just multiplies into the translation prior to applying the visualToBodyTransform.  That
+          * means that the visualToBodyTransform will be used as entered in the property values, but the visual model can be still scaled without messing
+          * up the joints, visually speaking.
+          */
+         static void ComputeLocalOffsetMatrixForNode(TransformType& frameOut, const osg::Node& node, const TransformType& visualToBodyTransform, const osg::Vec3& externalScale = osg::Vec3(1.0f,1.0f,1.0f));
 
          /**
           * This virtual method allows the user to move a complete set of perhaps
@@ -252,11 +287,6 @@ namespace dtPhysics
          /// @return the configured mass.  This is for reference only so that code may be data driven.
          Real GetMass() const;
 
-         /// Changes the configured collision dimensions.  This is for reference only so that code may be data driven.
-         void SetDimensions(const VectorType& dim);
-         /// @return the configured collision dimensions.  This is for reference only so that code may be data driven.
-         const VectorType& GetDimensions() const;
-
          /// @return the collision group for reference in code only.
          CollisionGroup GetDefaultCollisionGroup() const;
          /// Sets a collision group for reference in code only.
@@ -273,7 +303,7 @@ namespace dtPhysics
          // build property maps, for editor.
          virtual void BuildPropertyMap();
 
-         /// For now, this is used to make dtPhysX properties map in.
+         /// For now, this is used to make the old dtPhysX properties map in.
          virtual dtCore::RefPtr<dtCore::ActorProperty> GetDeprecatedProperty(const std::string& name);
 
          //////////////////////////////////////////////////////////////////////////////////////
@@ -300,13 +330,6 @@ namespace dtPhysics
          float TraceRay(const VectorType& location,
             const VectorType& direction , VectorType& outPoint, CollisionGroupFilter groupFlags);
 
-         /// @see TraceRay
-         float FindClosestIntersectionUsingDirection(const VectorType& location,
-                  const VectorType& direction , VectorType& outPoint, CollisionGroupFilter groupFlags)
-         {
-            return TraceRay(location, direction, outPoint, groupFlags);
-         }
-
 
       protected:
          ~PhysicsActComp();
@@ -325,6 +348,12 @@ namespace dtPhysics
          //For the actor property
          const std::string& GetNameAsString() const;
 
+         /**
+          * This is like the CreateJoint on PhysicsObject except that it looks up the physics objects, and set
+          * the joint description body1frame to match the transform in the ref node.
+          */
+         palLink* CreateJoint(dtPhysics::JointDesc& desc, osg::Transform* refNode = NULL);
+
       private:
 
          /// name of the physics helper
@@ -337,9 +366,6 @@ namespace dtPhysics
 
          CollisionGroup mDefaultCollisionGroup;
          PrimitiveType* mDefaultPrimitiveType;
-
-         /// The configured collision dimensions of the actor
-         VectorType mDimensions;
 
          /// all of our objects contained by this helper
          PhysicsObjectArray mPhysicsObjects;
@@ -359,9 +385,6 @@ namespace dtPhysics
 
          bool mAutoCreateOnEnteringWorld;
          bool mIsRemote;
-
-         typedef std::vector<std::string> StrArray;
-         StrArray mOldPropertyNamesToRemove;
 
          /// hiding copy constructor and operator=
          PhysicsActComp(const PhysicsActComp&);

@@ -38,7 +38,7 @@ namespace dtCore
    {
       public:
          NamedActorParameter(const dtUtil::RefString& name,
-          const dtCore::UniqueId& defaultValue = dtCore::UniqueId(""), bool isList = false);
+          const dtCore::UniqueId& defaultValue = dtCore::UniqueId(false), bool isList = false);
 
          virtual const std::string ToString() const;
          virtual bool FromString(const std::string& value);

@@ -22,6 +22,7 @@ geometry.cpp
 jointdesc.cpp
 jointtype.cpp
 mechanicstype.cpp
+motordesc.cpp
 palphysicsworld.cpp
 physicsactcomp.cpp
 physicsactorregistry.cpp
@@ -34,6 +35,7 @@ physicsobject.cpp
 physicsreaderwriter.cpp
 primitivetype.cpp
 raycast.cpp
+transformjointupdater.cpp
 trianglerecorder.cpp
 )
 

@@ -36,6 +36,7 @@ SET(LIB_PUBLIC_HEADERS
                 ${HEADER_PATH}/arrayactorpropertycomplex.h
                 ${HEADER_PATH}/autolodscalecameracallback.h
                 ${HEADER_PATH}/axis.h
+                ${HEADER_PATH}/axisenum.h
                 ${HEADER_PATH}/axishandler.h
                 ${HEADER_PATH}/axislistener.h
                 ${HEADER_PATH}/axisobserver.h
@@ -235,6 +236,7 @@ SET(LIB_SOURCES
                 arrayactorpropertybase.cpp
                 autolodscalecameracallback.cpp
                 axis.cpp
+                axisenum.cpp
                 axistoaxistransformation.cpp
                 base.cpp
                 baseactorobject.cpp

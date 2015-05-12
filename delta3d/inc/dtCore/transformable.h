@@ -37,7 +37,6 @@ namespace osg
 
 namespace dtCore
 {
-   class ODEGeomWrap;
    class PointAxis;
 
    class Transform;

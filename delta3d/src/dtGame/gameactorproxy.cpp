@@ -774,6 +774,8 @@ namespace dtGame
          update.SetPrototypeID(proto->GetId());
          update.SetPrototypeName(proto->GetName());
       }
+      if (GetParentActor() != NULL)
+         update.SetParentID(GetParentActor()->GetId());
 
       update.SetSendingActorId(GetId());
       update.SetAboutActorId(GetId());
@@ -936,8 +938,7 @@ namespace dtGame
             mLogger.LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
                   "Setting name on actor type \"%s\" to value \"%s\"",
                   GetActorType().GetFullName().c_str(),
-                  nameInMessage.c_str()
-            );
+                  nameInMessage.c_str() );
          }
          // we prevent users from setting an empty name because there are many cases where a component will
          // generate an actor update message without knowing what the actor's name is (for instance the HLA
@@ -947,6 +948,30 @@ namespace dtGame
          if (msg.GetMessageType() == MessageType::INFO_ACTOR_CREATED || !nameInMessage.empty())
          {
             SetName(nameInMessage);
+         }
+      }
+
+      GameActorProxy* gap = GetParentActor();
+      const dtCore::UniqueId& parentId = msg.GetParentID();
+      if (parentId.IsNull())
+      {
+         if (gap != NULL)
+            SetParentActor(NULL);
+      }
+      else if (gap == NULL || gap->GetId() != parentId)
+      {
+         GameActorProxy* newParent = GetGameManager()->FindGameActorById(parentId);
+         if (newParent != NULL)
+         {
+            SetParentActor(newParent);
+         }
+         else if (mLogger.IsLevelEnabled(dtUtil::Log::LOG_ERROR))
+         {
+            mLogger.LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
+                  "Setting the parent actor on type\"%s\":name\"%s\" to value \"%s\" failed because the parent actor could not be found.",
+                  GetActorType().GetFullName().c_str(),
+                  GetName().c_str(),
+                  parentId.ToString().c_str() );
          }
       }
 

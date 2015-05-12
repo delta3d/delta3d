@@ -33,6 +33,7 @@ namespace dtGame
    const dtUtil::RefString ActorUpdateMessage::UPDATE_GROUP_PARAMETER("Update Group Parameter");
    const dtUtil::RefString ActorUpdateMessage::PROTOTYPE_NAME_PARAMETER("Prototype Parameter");
    const dtUtil::RefString ActorUpdateMessage::PROTOTYPE_ID_PARAMETER("Prototype ID Parameter");
+   const dtUtil::RefString ActorUpdateMessage::PARENT_ID_PARAMETER("Parent ID Parameter");
    const dtUtil::RefString ActorUpdateMessage::IS_PARTIAL_UPDATE_PARAMETER("Is Partial Update");
 
 
@@ -44,8 +45,9 @@ namespace dtGame
       AddParameter(new StringMessageParameter(ACTOR_TYPE_CATEGORY_PARAMETER));
       AddParameter(new StringMessageParameter(PROTOTYPE_NAME_PARAMETER));
       AddParameter(new ActorMessageParameter(PROTOTYPE_ID_PARAMETER));
+      AddParameter(new ActorMessageParameter(PARENT_ID_PARAMETER));
 
-      // Default the partial update param to true and assume all actor updates
+      // Default the partial update param to false and assume all actor updates
       // are full unless set explicitly (see GameActorProxy->NotifyPartialActorUpdate())
       BooleanMessageParameter* partialParam = new BooleanMessageParameter(IS_PARTIAL_UPDATE_PARAMETER);
       partialParam->SetValue(false);
@@ -98,32 +100,32 @@ namespace dtGame
    }
 
    /////////////////////////////////////////////////////////////////
-   dtCore::NamedParameter* ActorUpdateMessage::AddUpdateParameter(const std::string &name,
-                                                            dtCore::DataType &type)
+   dtCore::NamedParameter* ActorUpdateMessage::AddUpdateParameter(const std::string& name,
+                                                            dtCore::DataType& type)
    {
       return mUpdateParameters->AddParameter(name, type);
    }
 
    /////////////////////////////////////////////////////////////////
-   dtCore::NamedParameter* ActorUpdateMessage::GetUpdateParameter( const std::string &name )
+   dtCore::NamedParameter* ActorUpdateMessage::GetUpdateParameter( const std::string& name )
    {
       return mUpdateParameters->GetParameter(name);
    }
 
    /////////////////////////////////////////////////////////////////
-   const dtCore::NamedParameter* ActorUpdateMessage::GetUpdateParameter(const std::string &name) const
+   const dtCore::NamedParameter* ActorUpdateMessage::GetUpdateParameter(const std::string& name) const
    {
       return mUpdateParameters->GetParameter(name);
    }
 
    /////////////////////////////////////////////////////////////////
-   void ActorUpdateMessage::GetUpdateParameters(std::vector<MessageParameter*> &toFill)
+   void ActorUpdateMessage::GetUpdateParameters(std::vector<MessageParameter*>& toFill)
    {
       mUpdateParameters->GetParameters(toFill);
    }
 
    /////////////////////////////////////////////////////////////////
-   void ActorUpdateMessage::GetUpdateParameters(std::vector<const MessageParameter*> &toFill) const
+   void ActorUpdateMessage::GetUpdateParameters(std::vector<const MessageParameter*>& toFill) const
    {
       mUpdateParameters->GetParameters(toFill);
    }
@@ -163,6 +165,18 @@ namespace dtGame
    void ActorUpdateMessage::SetPrototypeID(const dtCore::UniqueId& newPrototypeID)
    {
       static_cast<ActorMessageParameter*>(GetParameter(PROTOTYPE_ID_PARAMETER))->SetValue(newPrototypeID);
+   }
+
+   /////////////////////////////////////////////////////////////////
+   const dtCore::UniqueId& ActorUpdateMessage::GetParentID() const
+   {
+      return static_cast<const ActorMessageParameter*>(GetParameter(PARENT_ID_PARAMETER))->GetValue();
+   }
+
+   /////////////////////////////////////////////////////////////////
+   void ActorUpdateMessage::SetParentID(const dtCore::UniqueId& newPrototypeID)
+   {
+      static_cast<ActorMessageParameter*>(GetParameter(PARENT_ID_PARAMETER))->SetValue(newPrototypeID);
    }
 
    /////////////////////////////////////////////////////////////////
