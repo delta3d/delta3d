@@ -34,6 +34,8 @@ namespace dtABC
     * what can collide with this ProximityTrigger use SetCollisionCollideBits
     * as the OR of all the CollisionCategories you want. A ProximityTrigger
     * is fired only once per touch of a Transformable.
+    *
+    * @note  This class currently does not work!  It may be replaced by other functionality or fixed before the next release.
     */
    class DT_ABC_EXPORT ProximityTrigger : public dtCore::Transformable
    {
