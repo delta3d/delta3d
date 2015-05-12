@@ -32,7 +32,7 @@ namespace dtCore
    /**
     * A type safe enumeration representing an axis.
     */
-   class AxisEnum: public dtUtil::Enumeration
+   class DT_CORE_EXPORT AxisEnum : public dtUtil::Enumeration
    {
    public:
       DECLARE_ENUM(AxisEnum)
