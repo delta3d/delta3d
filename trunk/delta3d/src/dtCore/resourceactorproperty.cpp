@@ -161,7 +161,14 @@ namespace dtCore
       }
       else
       {
-         SetDescPropFunctor(value);
+         try
+         {
+            SetDescPropFunctor(value);
+         }
+         catch (const dtUtil::Exception& ex)
+         {
+            LOGN_ERROR("ResourceActorProperty.cpp", "Exception thrown setting resource property named \"" + GetName() +"\" : "  + ex.ToString());
+         }
       }
    }
 
