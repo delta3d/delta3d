@@ -165,12 +165,19 @@ namespace dtRender
       void AddResizeCallback(ResizeCallback& cb);
       void RemoveResizeCallback(ResizeCallback& cb);
 
+      /***
+      * Removes buffer attachments and creates FBO attachments for color and / or depth
+      */
+      void SetupMultipassCamera(osg::Camera& camera, osg::Viewport& vp, bool use_color, bool use_depth, dtCore::RefPtr<osg::Texture2D>& colorTexture, dtCore::RefPtr<osg::Texture2D>& depthTexture);
+
+      /***
+      * Used by SetupMultipassCamera(), useful for creating osg texture objects
+      */
+      osg::Texture2D* CreateRenderTexture(int tex_width, int tex_height, bool depth, bool nearest, int imageFormat);
+
    protected:
       void SetFirstUnit(osgPPU::Unit&);
       void SetLastUnit(osgPPU::Unit&);
-
-      void SetupMultipassCamera(osg::Camera& camera, osg::Viewport& vp , bool use_color, bool use_depth, dtCore::RefPtr<osg::Texture2D>& colorTexture, dtCore::RefPtr<osg::Texture2D>& depthTexture);
-      osg::Texture2D* CreateRenderTexture(int tex_width, int tex_height, bool depth, bool nearest, int imageFormat);
 
       void DetachRenderer(osg::Camera& camera);
 
