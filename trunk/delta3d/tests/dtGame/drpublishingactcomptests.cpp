@@ -48,13 +48,9 @@
 
 #include <dtActors/engineactorregistry.h>
 
-#include <dtGame/testcomponent.h>
-
-#include <cppunit/extensions/HelperMacros.h>
+#include "basegmtests.h"
 
 #include <dtABC/application.h>
-
-extern dtABC::Application& GetGlobalApplication();
 
 namespace dtGame
 {
@@ -69,8 +65,9 @@ namespace dtGame
       }
    };
 
-   class DRPublishingActCompTests : public CPPUNIT_NS::TestFixture
+   class DRPublishingActCompTests : public BaseGMTestFixture
    {
+      typedef BaseGMTestFixture BaseClass;
       CPPUNIT_TEST_SUITE(DRPublishingActCompTests);
 
          CPPUNIT_TEST(TestBasics);
@@ -79,8 +76,8 @@ namespace dtGame
       CPPUNIT_TEST_SUITE_END();
 
    public:
-      void setUp();
-      void tearDown();
+      /*override*/ void setUp();
+      /*override*/ void tearDown();
 
       void TestBasics()
       {
@@ -142,11 +139,6 @@ namespace dtGame
 
    private:
 
-      dtUtil::Log* mLogger;
-
-      dtCore::RefPtr<GameManager> mGameManager;
-      dtCore::RefPtr<DefaultMessageProcessor> mDefMsgProc;
-      dtCore::RefPtr<TestComponent> mTestComp;
       dtCore::RefPtr<GameActorProxy> mActor;
 
    };
@@ -158,21 +150,12 @@ namespace dtGame
    //////////////////////////////////////////////////////////////////////////
    void DRPublishingActCompTests::setUp()
    {
+
+      BaseClass::setUp();
+
       try
       {
-         dtUtil::SetDataFilePathList(dtUtil::GetDeltaDataPathList());
-         mLogger = &dtUtil::Log::GetInstance("dtpublishingactcomptests.cpp");
-
-         mGameManager = new dtGame::GameManager(*GetGlobalApplication().GetScene());
-         mGameManager->SetApplication(GetGlobalApplication());
-
-         mDefMsgProc = new DefaultMessageProcessor;
-         mTestComp = new TestComponent;
-
-         mGameManager->AddComponent(*mDefMsgProc, GameManager::ComponentPriority::HIGHEST);
-         mGameManager->AddComponent(*mTestComp, GameManager::ComponentPriority::NORMAL);
-
-         mGameManager->CreateActor(*dtActors::EngineActorRegistry::GAME_MESH_ACTOR_TYPE, mActor);
+         mGM->CreateActor(*dtActors::EngineActorRegistry::GAME_MESH_ACTOR_TYPE, mActor);
 
          mActor->AddComponent(*new DeadReckoningActorComponent);
          mActor->AddComponent(*new TestDRPublishingActComp);
@@ -182,7 +165,7 @@ namespace dtGame
 
          mTestComp->reset();
          //Publish the actor.
-         mGameManager->AddActor(*mActor, false, false);
+         mGM->AddActor(*mActor, false, false);
          dtCore::System::GetInstance().Step();
       }
       catch (const dtUtil::Exception& ex)
@@ -195,25 +178,7 @@ namespace dtGame
    //////////////////////////////////////////////////////////////////////////
    void DRPublishingActCompTests::tearDown()
    {
-      if (mGameManager.valid())
-      {
-         try
-         {
-            dtCore::System::GetInstance().SetPause(false);
-            dtCore::System::GetInstance().Stop();
-
-            mGameManager->DeleteAllActors(true);
-
-            mGameManager = NULL;
-            mDefMsgProc  = NULL;
-            mTestComp    = NULL;
-         }
-         catch(const dtUtil::Exception& e)
-         {
-            CPPUNIT_FAIL((std::string("Error: ") + e.ToString()).c_str());
-         }
-      }
-
+      BaseClass::tearDown();
    }
 
 }

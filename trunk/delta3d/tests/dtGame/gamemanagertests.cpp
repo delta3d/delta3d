@@ -53,7 +53,6 @@
 
 #include <dtGame/actorupdatemessage.h>
 #include <dtGame/basemessages.h>
-#include <dtGame/defaultmessageprocessor.h>
 #include <dtGame/defaultnetworkpublishingcomponent.h>
 #include <dtGame/environmentactor.h>
 #include <dtGame/exceptionenum.h>
@@ -71,7 +70,7 @@
 #include <dtUtil/datastream.h>
 #include <dtUtil/log.h>
 
-#include <cppunit/extensions/HelperMacros.h>
+#include "basegmtests.h"
 
 #include <osg/Endian>
 #include <osg/io_utils>
@@ -80,9 +79,7 @@
 #include <cstdlib>
 #include <iostream>
 
-extern dtABC::Application& GetGlobalApplication();
-
-class GameManagerTests : public CPPUNIT_NS::TestFixture
+class GameManagerTests : public dtGame::BaseGMTestFixture
 {
    CPPUNIT_TEST_SUITE(GameManagerTests);
 
@@ -129,9 +126,6 @@ class GameManagerTests : public CPPUNIT_NS::TestFixture
 
 public:
 
-   void setUp();
-   void tearDown();
-
    void TestFindActorByType();
    void TestFindActorByWrongType();
    void TestFindActorByName();
@@ -175,9 +169,6 @@ public:
 
 private:
 
-   static const std::string mTestGameActorLibrary;
-   static const std::string mTestActorLibrary;
-   dtCore::RefPtr<dtGame::GameManager> mGM;
 };
 
 
@@ -185,7 +176,9 @@ class TestOrderComponent: public dtGame::GMComponent
 {
    public:
       TestOrderComponent()
-         : dtGame::GMComponent("order")
+      : dtGame::GMComponent("order")
+      , mCountWhenReceived()
+      , locked()
       {}
 
       virtual void ProcessMessage(const dtGame::Message& msg)
@@ -227,54 +220,7 @@ int TestOrderComponent::MessageCounter(0);
 // Registers the fixture into the 'registry'
 CPPUNIT_TEST_SUITE_REGISTRATION(GameManagerTests);
 
-const std::string GameManagerTests::mTestGameActorLibrary="testGameActorLibrary";
-const std::string GameManagerTests::mTestActorLibrary="testActorLibrary";
 
-/////////////////////////////////////////////////
-void GameManagerTests::setUp()
-{
-   dtUtil::SetDataFilePathList(dtUtil::GetDeltaDataPathList());
-   try
-   {
-      //dtUtil::Log* logger;
-      //logger = &dtUtil::Log::GetInstance("MessageParameter");
-      //logger->SetLogLevel(dtUtil::Log::LOG_DEBUG);
-
-      mGM = new dtGame::GameManager(*GetGlobalApplication().GetScene());
-      CPPUNIT_ASSERT(!mGM->IsShuttingDown());
-      //some tests depend on the application not being set.
-      //mGM->SetApplication(GetGlobalApplication());
-      mGM->LoadActorRegistry(mTestGameActorLibrary);
-      mGM->LoadActorRegistry(mTestActorLibrary);
-      dtCore::System::GetInstance().SetShutdownOnWindowClose(false);
-      dtCore::System::GetInstance().Start();
-   }
-   catch (const dtUtil::Exception& e)
-   {
-      CPPUNIT_FAIL((std::string("Error: ") + e.What()).c_str());
-   }
-}
-
-/////////////////////////////////////////////////
-void GameManagerTests::tearDown()
-{
-   if (mGM.valid())
-   {
-      try
-      {
-         mGM->Shutdown();
-         CPPUNIT_ASSERT(mGM->IsShuttingDown());
-         mGM->UnloadActorRegistry(mTestGameActorLibrary);
-         mGM->UnloadActorRegistry(mTestActorLibrary);
-         mGM = NULL;
-         dtCore::System::GetInstance().Stop();
-      }
-      catch (const dtUtil::Exception& e)
-      {
-         CPPUNIT_FAIL((std::string("Error: ") + e.What()).c_str());
-      }
-   }
-}
 
 /////////////////////////////////////////////////
 void GameManagerTests::TestFindActorByType()
@@ -440,27 +386,14 @@ void GameManagerTests::TestPrototypeActors()
 /////////////////////////////////////////////////
 void GameManagerTests::TestApplicationMember()
 {
-
-   CPPUNIT_ASSERT_THROW_MESSAGE("Trying to get the application when it's NULL should fail.",
-                                mGM->GetApplication(), dtGame::GeneralGameManagerException);
-
-
-   dtCore::RefPtr<dtABC::Application> app = &GetGlobalApplication();
+   dtCore::RefPtr<dtABC::Application> app = &mGM->GetApplication();
 
    app->SetConfigPropertyValue(dtGame::GameManager::CONFIG_STATISTICS_INTERVAL, "4");
    app->SetConfigPropertyValue(dtGame::GameManager::CONFIG_STATISTICS_TO_CONSOLE, "false");
    app->SetConfigPropertyValue(dtGame::GameManager::CONFIG_STATISTICS_OUTPUT_FILE, "testOut.txt");
 
+   // Reset the app so we can test the config properties
    mGM->SetApplication(*app);
-
-   try
-   {
-      CPPUNIT_ASSERT(app == &mGM->GetApplication());
-   }
-   catch (const dtUtil::Exception&)
-   {
-      CPPUNIT_FAIL("The application should not be NULL.");
-   }
 
    CPPUNIT_ASSERT_EQUAL(mGM->GetStatisticsInterval(), 4);
    CPPUNIT_ASSERT(!mGM->GetStatisticsToConsole());
@@ -747,33 +680,41 @@ void GameManagerTests::TestActorSearching()
 /////////////////////////////////////////////////
 void GameManagerTests::TestAddRemoveComponents()
 {
-   dtCore::RefPtr<dtGame::DefaultNetworkPublishingComponent> rc = new dtGame::DefaultNetworkPublishingComponent();
-   dtCore::RefPtr<dtGame::DefaultMessageProcessor> dmc = new dtGame::DefaultMessageProcessor();
+   dtGame::TestComponent* tc = NULL;
+   mGM->GetComponentByName("TestComponent", tc);
+   dtGame::DefaultMessageProcessor* dmc = NULL;
+   mGM->GetComponentByName(dtGame::DefaultMessageProcessor::DEFAULT_NAME, dmc);
+
+   CPPUNIT_ASSERT(tc != NULL);
+   CPPUNIT_ASSERT(dmc != NULL);
+
+   mGM->RemoveComponent(*tc);
+   mGM->RemoveComponent(*dmc);
 
    //check default names.
-   CPPUNIT_ASSERT_EQUAL(rc->GetName(), dtGame::DefaultNetworkPublishingComponent::DEFAULT_NAME);
+   CPPUNIT_ASSERT_EQUAL(tc->GetName(), std::string("TestComponent"));
    CPPUNIT_ASSERT_EQUAL(dmc->GetName(), dtGame::DefaultMessageProcessor::DEFAULT_NAME);
 
-   rc->SetName("rulesComp");
+   tc->SetName("rulesComp");
    dmc->SetName("defaultComp");
 
    //check default names.
-   CPPUNIT_ASSERT(rc->GetName() == "rulesComp");
+   CPPUNIT_ASSERT(tc->GetName() == "rulesComp");
    CPPUNIT_ASSERT(dmc->GetName() == "defaultComp");
 
-   CPPUNIT_ASSERT(!rc->GetId().ToString().empty());
+   CPPUNIT_ASSERT(!tc->GetId().ToString().empty());
    CPPUNIT_ASSERT(!dmc->GetId().ToString().empty());
 
-   CPPUNIT_ASSERT(rc->GetGameManager() == NULL);
+   CPPUNIT_ASSERT(tc->GetGameManager() == NULL);
    CPPUNIT_ASSERT(dmc->GetGameManager() == NULL);
 
-   CPPUNIT_ASSERT(rc->GetComponentPriority() == dtGame::GameManager::ComponentPriority::NORMAL);
-   CPPUNIT_ASSERT(dmc->GetComponentPriority() == dtGame::GameManager::ComponentPriority::NORMAL);
+   CPPUNIT_ASSERT(tc->GetComponentPriority() == dtGame::GameManager::ComponentPriority::NORMAL);
+   CPPUNIT_ASSERT(dmc->GetComponentPriority() == dtGame::GameManager::ComponentPriority::HIGHEST);
 
    dtGame::GMComponent* comp = mGM->GetComponentByName("defaultComp");
    CPPUNIT_ASSERT_MESSAGE("No components have been added, the return value should be NULL", comp == NULL);
 
-   mGM->AddComponent(*rc, dtGame::GameManager::ComponentPriority::LOWER);
+   mGM->AddComponent(*tc, dtGame::GameManager::ComponentPriority::LOWER);
 
    try
    {
@@ -787,23 +728,23 @@ void GameManagerTests::TestAddRemoveComponents()
    }
 
 
-   CPPUNIT_ASSERT(rc->GetGameManager() == mGM.get());
-   CPPUNIT_ASSERT(rc->GetComponentPriority() == dtGame::GameManager::ComponentPriority::LOWER);
+   CPPUNIT_ASSERT(tc->GetGameManager() == mGM.get());
+   CPPUNIT_ASSERT(tc->GetComponentPriority() == dtGame::GameManager::ComponentPriority::LOWER);
 
    //test regular get all
    std::vector<dtGame::GMComponent*> toFill;
    mGM->GetAllComponents(toFill);
    CPPUNIT_ASSERT_MESSAGE("There should be exactly one component in the GameManager.",toFill.size() == 1);
-   CPPUNIT_ASSERT_MESSAGE("The one component should be the rules component.", toFill[0] == rc.get());
+   CPPUNIT_ASSERT_MESSAGE("The one component should be the rules component.", toFill[0] == tc);
 
    comp = mGM->GetComponentByName("rulesComp");
-   CPPUNIT_ASSERT_MESSAGE("Finding the rules component by name should return the correct pointer", comp == rc.get());
+   CPPUNIT_ASSERT_MESSAGE("Finding the rules component by name should return the correct pointer", comp == tc);
 
-   mGM->AddComponent(*dmc, dtGame::GameManager::ComponentPriority::HIGHEST);
-   CPPUNIT_ASSERT(dmc->GetComponentPriority() == dtGame::GameManager::ComponentPriority::HIGHEST);
+   mGM->AddComponent(*dmc, dtGame::GameManager::ComponentPriority::HIGHER);
+   CPPUNIT_ASSERT(dmc->GetComponentPriority() == dtGame::GameManager::ComponentPriority::HIGHER);
 
    comp = mGM->GetComponentByName("defaultComp");
-   CPPUNIT_ASSERT_MESSAGE("Finding the default component by name should return the correct pointer", comp == dmc.get());
+   CPPUNIT_ASSERT_MESSAGE("Finding the default component by name should return the correct pointer", comp == dmc);
 
    comp = mGM->GetComponentByName("whack");
    CPPUNIT_ASSERT_MESSAGE("No component named whack was added. The pointer should be NULL", comp == NULL);
@@ -812,19 +753,19 @@ void GameManagerTests::TestAddRemoveComponents()
    std::vector<const dtGame::GMComponent*> toFill2;
    mGM->GetAllComponents(toFill2);
    CPPUNIT_ASSERT_MESSAGE("There should be exactly 2 components in the GameManager.",toFill2.size() == 2);
-   CPPUNIT_ASSERT_MESSAGE("The first component should be the default message processor, it has a higher priority.", toFill2[0] == dmc.get());
-   CPPUNIT_ASSERT_MESSAGE("The second component should be the rules component.", toFill2[1] == rc.get());
+   CPPUNIT_ASSERT_MESSAGE("The first component should be the default message processor, it has a higher priority.", toFill2[0] == dmc);
+   CPPUNIT_ASSERT_MESSAGE("The second component should be the rules component.", toFill2[1] == tc);
 
-   CPPUNIT_ASSERT(rc->GetGameManager() == mGM.get());
+   CPPUNIT_ASSERT(tc->GetGameManager() == mGM.get());
    CPPUNIT_ASSERT(dmc->GetGameManager() == mGM.get());
 
-   mGM->RemoveComponent(*rc);
+   mGM->RemoveComponent(*tc);
 
    mGM->GetAllComponents(toFill);
    CPPUNIT_ASSERT_EQUAL_MESSAGE("There should be exactly one component in the GameManager.", size_t(1), toFill.size());
-   CPPUNIT_ASSERT_MESSAGE("The one component should be the default message processor.", toFill[0] == dmc.get());
+   CPPUNIT_ASSERT_MESSAGE("The one component should be the default message processor.", toFill[0] == dmc);
 
-   CPPUNIT_ASSERT(rc->GetGameManager() == NULL);
+   CPPUNIT_ASSERT(tc->GetGameManager() == NULL);
    CPPUNIT_ASSERT(dmc->GetGameManager() == mGM.get());
 
    //make sure the method doesn't crash when it's the last one holding onto the component.
@@ -845,6 +786,9 @@ void GameManagerTests::TestAddRemoveComponents()
 /////////////////////////////////////////////////
 void GameManagerTests::TestComponentPriority()
 {
+   mGM->RemoveComponent(*mTestComp);
+   mGM->RemoveComponent(*mDefMsgProc);
+
    std::vector<dtCore::RefPtr<TestOrderComponent> > tocList;
 
    for (unsigned i = 0; i < 10; ++i)
@@ -1145,12 +1089,8 @@ void GameManagerTests::TestAddActor()
 void GameManagerTests::TestCascadedDelete()
 {
    dtCore::RefPtr<dtGame::DefaultNetworkPublishingComponent> dnpc = new dtGame::DefaultNetworkPublishingComponent();
-   dtCore::RefPtr<dtGame::DefaultMessageProcessor> dmc = new dtGame::DefaultMessageProcessor();
 
-   dtCore::RefPtr<dtGame::TestComponent> tc = new dtGame::TestComponent;
-   mGM->AddComponent(*tc, dtGame::GameManager::ComponentPriority::NORMAL);
    mGM->AddComponent(*dnpc, dtGame::GameManager::ComponentPriority::NORMAL);
-   mGM->AddComponent(*dmc, dtGame::GameManager::ComponentPriority::HIGHEST);
 
    std::vector< dtCore::RefPtr<dtGame::GameActorProxy> > actors;
 
@@ -1182,7 +1122,7 @@ void GameManagerTests::TestCascadedDelete()
 
    std::vector< dtCore::RefPtr<dtGame::GameActorProxy> > backup = actors;
 
-   std::vector<dtCore::RefPtr<const dtGame::Message> > messages = tc->GetReceivedProcessMessages();
+   std::vector<dtCore::RefPtr<const dtGame::Message> > messages = mTestComp->GetReceivedProcessMessages();
    for (unsigned m = 0 ; m < messages.size(); ++m)
    {
       if (messages[m]->GetMessageType() == dtGame::MessageType::INFO_ACTOR_DELETED)
@@ -1210,7 +1150,7 @@ void GameManagerTests::TestCascadedDelete()
    // Get the actor list back for a second pass to look at network dispatch.
    actors = backup;
 
-   messages = tc->GetReceivedDispatchNetworkMessages();
+   messages = mTestComp->GetReceivedDispatchNetworkMessages();
    for (unsigned m = 0 ; m < messages.size(); ++m)
    {
       if (messages[m]->GetMessageType() == dtGame::MessageType::INFO_ACTOR_DELETED)
@@ -1418,6 +1358,9 @@ void GameManagerTests::TestComplexScene()
 /////////////////////////////////////////////////
 void GameManagerTests::TestIfOnAddedToGMIsCalled()
 {
+   // Remove the default one in the tests so we can add a different one.
+   mGM->RemoveComponent(*mTestComp);
+
    dtCore::RefPtr<dtGame::TestComponent> tc = new dtGame::TestComponent;
    CPPUNIT_ASSERT_MESSAGE("OnAddedToGM should not be called until added to the GM.",
       !(tc->mWasOnAddedToGMCalled));
@@ -1432,21 +1375,10 @@ void GameManagerTests::TestIfOnAddedToGMIsCalled()
 /////////////////////////////////////////////////
 void GameManagerTests::TestIfGMSendsRestartedMessage()
 {
-   dtCore::RefPtr<dtGame::TestComponent> tc = new dtGame::TestComponent;
-
-   mGM->AddComponent(*tc.get(), dtGame::GameManager::ComponentPriority::NORMAL);
-
    dtCore::System::GetInstance().Step(0.016f);
    CPPUNIT_ASSERT_MESSAGE("GM should have sent RESTARTED message on startup.",
-                           tc->FindProcessMessageOfType(dtGame::MessageType::INFO_RESTARTED).valid());
+                           mTestComp->FindProcessMessageOfType(dtGame::MessageType::INFO_RESTARTED).valid());
 
-   //Note: this is invalid now, since other messages can be sent before the
-   //queued INFO_RESTARTED.
-   //std::vector<dtCore::RefPtr<const dtGame::Message> > msgs = tc->GetReceivedProcessMessages();
-   //CPPUNIT_ASSERT_MESSAGE("INFO_RESTARTED should be very first message from GM. Always.",
-   //   msgs[0]->GetMessageType() == dtGame::MessageType::INFO_RESTARTED);
-
-   mGM->RemoveComponent(*tc);
 }
 
 /////////////////////////////////////////////////
@@ -1460,9 +1392,6 @@ void GameManagerTests::TestTimersGetDeleted()
 
 
    mGM->AddActor(*proxy, false, false);
-
-   dtCore::RefPtr<dtGame::TestComponent> tc = new dtGame::TestComponent;
-   mGM->AddComponent(*tc.get(), dtGame::GameManager::ComponentPriority::NORMAL);
 
    mGM->SetTimer("SimTimer1", proxy.get(), 0.07f);
    mGM->SetTimer("RepeatingTimer1", proxy.get(), 0.07f, true, true);
@@ -1497,7 +1426,7 @@ void GameManagerTests::TestTimersGetDeleted()
    msg2 << "(" << currentRealTime << ") should be > than (" <<expectedRealTime << ")";
    CPPUNIT_ASSERT_MESSAGE(msg2.str(), currentRealTime > expectedRealTime);
 
-   std::vector<dtCore::RefPtr<const dtGame::Message> > msgs = tc->GetReceivedProcessMessages();
+   std::vector<dtCore::RefPtr<const dtGame::Message> > msgs = mTestComp->GetReceivedProcessMessages();
 
    for (unsigned int i = 0; i < msgs.size(); ++i)
    {
@@ -1532,9 +1461,6 @@ void GameManagerTests::TestTimers()
 
    mGM->AddActor(*proxy, false, false);
 
-   dtCore::RefPtr<dtGame::TestComponent> tc = new dtGame::TestComponent;
-   mGM->AddComponent(*tc.get(), dtGame::GameManager::ComponentPriority::NORMAL);
-
    mGM->SetTimer("SimTimer1", proxy.get(), 0.001f);
    mGM->SetTimer("RepeatingTimer1", proxy.get(), 0.001f, true, true);
 
@@ -1563,7 +1489,7 @@ void GameManagerTests::TestTimers()
    const dtCore::Timer_t lateSimTime  = currentSimTime  - expectedSimTime;
    const dtCore::Timer_t lateRealTime = currentRealTime - expectedRealTime;
 
-   std::vector<dtCore::RefPtr<const dtGame::Message> > msgs = tc->GetReceivedProcessMessages();
+   std::vector<dtCore::RefPtr<const dtGame::Message> > msgs = mTestComp->GetReceivedProcessMessages();
    bool foundTimeMsg = false;
 
    for (unsigned int i = 0; i < msgs.size(); ++i)
@@ -1599,9 +1525,9 @@ void GameManagerTests::TestTimers()
    CPPUNIT_ASSERT_MESSAGE("There should have been a timer elapsed message found", foundTimeMsg);
 
    msgs.clear();
-   tc->reset();
+   mTestComp->reset();
    dtCore::System::GetInstance().Step(0.016f);
-   msgs = tc->GetReceivedProcessMessages();
+   msgs = mTestComp->GetReceivedProcessMessages();
    foundTimeMsg = false;
    for (unsigned int i = 0; i < msgs.size(); ++i)
    {
@@ -1634,9 +1560,9 @@ void GameManagerTests::TestTimers()
    mGM->ClearTimer("RepeatingTimer1", proxy.get());
 
    msgs.clear();
-   tc->reset();
+   mTestComp->reset();
    dtCore::System::GetInstance().Step(0.016f);
-   msgs = tc->GetReceivedProcessMessages();
+   msgs = mTestComp->GetReceivedProcessMessages();
    unsigned int msgCount = 0;
    for (unsigned int i = 0; i < msgs.size(); ++i)
    {
@@ -1657,12 +1583,12 @@ void GameManagerTests::TestTimers()
    }
 
    msgs.clear();
-   tc->reset();
+   mTestComp->reset();
 
    dtCore::System::GetInstance().Step(0.016f);
    dtCore::System::GetInstance().Step(0.016f);
 
-   msgs = tc->GetReceivedProcessMessages();
+   msgs = mTestComp->GetReceivedProcessMessages();
    msgCount = 0;
    for (unsigned int i = 0; i < msgs.size(); ++i)
    {
@@ -1673,8 +1599,6 @@ void GameManagerTests::TestTimers()
    }
 
    CPPUNIT_ASSERT_MESSAGE("The number of received messages should be equal to the number of timers set", msgCount == numToTest);
-
-   mGM->RemoveComponent(*tc);
 }
 
 /////////////////////////////////////////////////
@@ -1741,8 +1665,6 @@ void GameManagerTests::TestGMShutdown()
 {
    CPPUNIT_ASSERT(mGM.valid());
 
-   dtCore::RefPtr<dtGame::TestComponent> tc = new dtGame::TestComponent;
-   mGM->AddComponent(*tc, dtGame::GameManager::ComponentPriority::NORMAL);
    dtCore::Project& project = dtCore::Project::GetInstance();
    try
    {
@@ -1791,10 +1713,10 @@ void GameManagerTests::TestGMShutdown()
       CPPUNIT_ASSERT(mGM->IsShuttingDown());
 
       CPPUNIT_ASSERT_MESSAGE("Shutdown of the game manager should have flipped the removed from GM flag on the component",
-         tc->mWasOnRemovedFromGMCalled);
+         mTestComp->mWasOnRemovedFromGMCalled);
 
       CPPUNIT_ASSERT_MESSAGE("Shutdown of the game manager should have removed the test component",
-         mGM->GetComponentByName(tc->GetName()) == NULL);
+         mGM->GetComponentByName(mTestComp->GetName()) == NULL);
 
       CPPUNIT_ASSERT(mGM->GetCurrentMapSet().empty());
 
@@ -1821,8 +1743,6 @@ void GameManagerTests::TestGMShutdown()
 void GameManagerTests::TestOpenCloseAdditionalMaps()
 {
    CPPUNIT_ASSERT(mGM.valid());
-   dtCore::RefPtr<dtGame::TestComponent> tc = new dtGame::TestComponent;
-   mGM->AddComponent(*tc, dtGame::GameManager::ComponentPriority::NORMAL);
 
    dtCore::Project& project = dtCore::Project::GetInstance();
 
@@ -1925,7 +1845,7 @@ void GameManagerTests::TestOpenCloseAdditionalMaps()
       // process the messages.
       dtCore::System::GetInstance().Step(0.016f);
 
-      dtCore::RefPtr<const dtGame::Message> msg = tc->FindProcessMessageOfType(dtGame::MessageType::INFO_MAPS_OPENED);
+      dtCore::RefPtr<const dtGame::Message> msg = mTestComp->FindProcessMessageOfType(dtGame::MessageType::INFO_MAPS_OPENED);
       std::vector<std::string> retrievedMaps;
       CPPUNIT_ASSERT(msg.valid());
       dynamic_cast<const dtGame::MapMessage*>(msg.get())->GetMapNames(retrievedMaps);
@@ -1935,7 +1855,7 @@ void GameManagerTests::TestOpenCloseAdditionalMaps()
          CPPUNIT_ASSERT_EQUAL(mapNames[i], retrievedMaps[i]);
       }
 
-      tc->reset();
+      mTestComp->reset();
 
       dtGame::GameActorPtr envActor = mGM->GetEnvironmentActor();
       CPPUNIT_ASSERT(envActor != NULL);
@@ -1983,7 +1903,7 @@ void GameManagerTests::TestOpenCloseAdditionalMaps()
       //Make sure the actor deletes complete.
       dtCore::System::GetInstance().Step(0.016f);
 
-      msg = tc->FindProcessMessageOfType(dtGame::MessageType::INFO_MAPS_CLOSED);
+      msg = mTestComp->FindProcessMessageOfType(dtGame::MessageType::INFO_MAPS_CLOSED);
       CPPUNIT_ASSERT(msg.valid());
       dynamic_cast<const dtGame::MapMessage*>(msg.get())->GetMapNames(retrievedMaps);
       CPPUNIT_ASSERT_EQUAL(retrievedMaps.size(), mapNames.size());
@@ -1992,7 +1912,7 @@ void GameManagerTests::TestOpenCloseAdditionalMaps()
          CPPUNIT_ASSERT_EQUAL(mapNames[i], retrievedMaps[i]);
       }
 
-      tc->reset();
+      mTestComp->reset();
 
 
       CPPUNIT_ASSERT_MESSAGE("this on actor should still be in the gm.", mGM->FindGameActorById(actorNoMap->GetId()) == actorNoMap.get());
@@ -2144,12 +2064,8 @@ void GameManagerTests::TestGMSettingsServerClientRoles()
 {
    CPPUNIT_ASSERT(mGM.valid());
 
-   dtCore::RefPtr<dtGame::TestComponent> tc = new dtGame::TestComponent;
-   mGM->AddComponent(*tc, dtGame::GameManager::ComponentPriority::NORMAL);
    dtCore::Project& project = dtCore::Project::GetInstance();
 
-   const std::string context = "data/ProjectContext";
-   project.SetContext(context);
    dtCore::Map& m = project.CreateMap("testMap", "bbbb");
 
    CPPUNIT_ASSERT_MESSAGE("Client role should default to true", 
@@ -2248,7 +2164,6 @@ void GameManagerTests::TestGMSettingsServerClientRoles()
    CPPUNIT_ASSERT_MESSAGE("CLIENT_AND_SERVER_LOCAL should NOT be published.", !testMeshProxy->IsPublished());
 
 
-   mGM->Shutdown();
    dtCore::Project::GetInstance().DeleteMap("testMap");
 }
 
