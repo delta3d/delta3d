@@ -46,21 +46,19 @@
 #include <dtGame/gamemanager.h>
 #include <dtGame/actorupdatemessage.h>
 #include <dtGame/defaultnetworkpublishingcomponent.h>
-#include <dtGame/defaultmessageprocessor.h>
 
 #include <dtActors/engineactorregistry.h>
 
-#include <dtGame/testcomponent.h>
-
-#include <cppunit/extensions/HelperMacros.h>
+#include "basegmtests.h"
 
 #include <dtABC/application.h>
-extern dtABC::Application& GetGlobalApplication();
 
 namespace dtGame
 {
-   class DefaultNetworkPublishingComponentTests : public CPPUNIT_NS::TestFixture
+   class DefaultNetworkPublishingComponentTests : public BaseGMTestFixture
    {
+      typedef BaseGMTestFixture BaseClass;
+
       CPPUNIT_TEST_SUITE(DefaultNetworkPublishingComponentTests);
 
          CPPUNIT_TEST(TestPublishActor);
@@ -85,12 +83,7 @@ namespace dtGame
 
    private:
 
-      dtUtil::Log* mLogger;
-
-      dtCore::RefPtr<GameManager> mGameManager;
       dtCore::RefPtr<DefaultNetworkPublishingComponent> mNetPubComp;
-      dtCore::RefPtr<DefaultMessageProcessor> mDefMsgProc;
-      dtCore::RefPtr<TestComponent> mTestComp;
       dtCore::RefPtr<GameActorProxy> mGameActorProxy;
 
    };
@@ -102,30 +95,17 @@ namespace dtGame
    //////////////////////////////////////////////////////////////////////////
    void DefaultNetworkPublishingComponentTests::setUp()
    {
+      BaseClass::setUp();
       try
       {
-         dtUtil::SetDataFilePathList(dtUtil::GetDeltaDataPathList());
-         mLogger = &dtUtil::Log::GetInstance("defaultnetworkpublishingcomponenttests.cpp");
-
-         mGameManager = new dtGame::GameManager(*GetGlobalApplication().GetScene());
-         mGameManager->SetApplication(GetGlobalApplication());
-
          mNetPubComp = new DefaultNetworkPublishingComponent;
-         mDefMsgProc = new DefaultMessageProcessor;
-         mTestComp = new TestComponent;
 
-         mGameManager->AddComponent(*mDefMsgProc, GameManager::ComponentPriority::HIGHEST);
-         mGameManager->AddComponent(*mNetPubComp, GameManager::ComponentPriority::NORMAL);
-         mGameManager->AddComponent(*mTestComp, GameManager::ComponentPriority::NORMAL);
+         mGM->AddComponent(*mNetPubComp, GameManager::ComponentPriority::NORMAL);
 
-         mGameManager->CreateActor(*dtActors::EngineActorRegistry::GAME_MESH_ACTOR_TYPE, mGameActorProxy);
+         mGM->CreateActor(*dtActors::EngineActorRegistry::GAME_MESH_ACTOR_TYPE, mGameActorProxy);
 
-         dtCore::System::GetInstance().SetShutdownOnWindowClose(false);
-         dtCore::System::GetInstance().Start();
-
-         mTestComp->reset();
          //Publish the actor.
-         mGameManager->AddActor(*mGameActorProxy, false, false);
+         mGM->AddActor(*mGameActorProxy, false, false);
          dtCore::System::GetInstance().Step();
       }
       catch (const dtUtil::Exception& ex)
@@ -138,34 +118,16 @@ namespace dtGame
    //////////////////////////////////////////////////////////////////////////
    void DefaultNetworkPublishingComponentTests::tearDown()
    {
-      if (mGameManager.valid())
-      {
-         try
-         {
-            dtCore::System::GetInstance().SetPause(false);
-            dtCore::System::GetInstance().Stop();
-
-            mGameManager->DeleteAllActors(true);
-
-            mGameManager = NULL;
-            mNetPubComp  = NULL;
-            mDefMsgProc  = NULL;
-            mTestComp    = NULL;
-         }
-         catch(const dtUtil::Exception& e)
-         {
-            CPPUNIT_FAIL((std::string("Error: ") + e.ToString()).c_str());
-         }
-      }
-
+      mNetPubComp  = NULL;
+      BaseClass::tearDown();
    }
 
    //////////////////////////////////////////////////////////////////////////
    void DefaultNetworkPublishingComponentTests::TestPublishActor()
    {
-      mGameManager->PublishActor(*mGameActorProxy);
-      dtCore::System::GetInstance().Step();
-      dtCore::System::GetInstance().Step();
+      mGM->PublishActor(*mGameActorProxy);
+      dtCore::System::GetInstance().Step(0.016f);
+      dtCore::System::GetInstance().Step(0.016f);
 
       CPPUNIT_ASSERT_EQUAL(1U, unsigned(mTestComp->GetReceivedDispatchNetworkMessages().size()));
       const ActorUpdateMessage* createMessage = dynamic_cast<const ActorUpdateMessage*>(mTestComp->GetReceivedDispatchNetworkMessages()[0].get());
@@ -190,8 +152,8 @@ namespace dtGame
    {
       mNetPubComp->AddMessageTypeToPublish(MessageType::INFO_GAME_EVENT);
       dtCore::RefPtr<GameEventMessage> gaMsg;
-      mGameManager->GetMessageFactory().CreateMessage(MessageType::INFO_GAME_EVENT, gaMsg);
-      mGameManager->SendMessage(*gaMsg);
+      mGM->GetMessageFactory().CreateMessage(MessageType::INFO_GAME_EVENT, gaMsg);
+      mGM->SendMessage(*gaMsg);
       dtCore::System::GetInstance().Step();
       dtCore::System::GetInstance().Step();
 
@@ -202,7 +164,7 @@ namespace dtGame
 
       dtCore::RefPtr<MachineInfo> mi = new MachineInfo("some other info");
       gaMsg->SetSource(*mi);
-      mGameManager->SendMessage(*gaMsg);
+      mGM->SendMessage(*gaMsg);
       dtCore::System::GetInstance().Step();
       dtCore::System::GetInstance().Step();
 
@@ -211,9 +173,9 @@ namespace dtGame
 
       mTestComp->reset();
 
-      gaMsg->SetSource(mGameManager->GetMachineInfo());
+      gaMsg->SetSource(mGM->GetMachineInfo());
       mNetPubComp->RemoveMessageTypeToPublish(MessageType::INFO_GAME_EVENT);
-      mGameManager->SendMessage(*gaMsg);
+      mGM->SendMessage(*gaMsg);
       dtCore::System::GetInstance().Step();
       dtCore::System::GetInstance().Step();
 
@@ -224,13 +186,13 @@ namespace dtGame
    //////////////////////////////////////////////////////////////////////////
    void DefaultNetworkPublishingComponentTests::TestDeleteActor()
    {
-      mGameManager->PublishActor(*mGameActorProxy);
+      mGM->PublishActor(*mGameActorProxy);
       dtCore::System::GetInstance().Step();
       dtCore::System::GetInstance().Step();
 
       mTestComp->reset();
 
-      mGameManager->DeleteActor(*mGameActorProxy);
+      mGM->DeleteActor(*mGameActorProxy);
       dtCore::System::GetInstance().Step();
       dtCore::System::GetInstance().Step();
 
@@ -244,7 +206,7 @@ namespace dtGame
    //////////////////////////////////////////////////////////////////////////
    void DefaultNetworkPublishingComponentTests::TestUpdateActor()
    {
-      mGameManager->PublishActor(*mGameActorProxy);
+      mGM->PublishActor(*mGameActorProxy);
       dtCore::System::GetInstance().Step();
       dtCore::System::GetInstance().Step();
 
@@ -270,7 +232,7 @@ namespace dtGame
 
       CPPUNIT_ASSERT_EQUAL(0U, unsigned(mTestComp->GetReceivedDispatchNetworkMessages().size()));
 
-      mGameManager->DeleteActor(*mGameActorProxy);
+      mGM->DeleteActor(*mGameActorProxy);
       dtCore::System::GetInstance().Step();
       dtCore::System::GetInstance().Step();
 

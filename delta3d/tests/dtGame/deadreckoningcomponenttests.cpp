@@ -27,7 +27,6 @@
  */
 
 #include <prefix/unittestprefix.h>
-#include <cppunit/extensions/HelperMacros.h>
 
 #include <osg/Vec3>
 #include <osg/Math>
@@ -60,7 +59,7 @@
 
 #include <dtActors/engineactorregistry.h>
 
-extern dtABC::Application& GetGlobalApplication();
+#include "basegmtests.h"
 
 namespace dtGame
 {
@@ -136,8 +135,10 @@ namespace dtGame
       BaseClass::DoArticulationPrediction(dofxform, currLocation, currentRate, currentTimeStep);
    }
 
-   class DeadReckoningComponentTests : public CPPUNIT_NS::TestFixture
+   class DeadReckoningComponentTests : public BaseGMTestFixture
    {
+      typedef BaseGMTestFixture BaseClass;
+
       CPPUNIT_TEST_SUITE(DeadReckoningComponentTests);
 
          CPPUNIT_TEST(TestDeadReckoningActorComponentDefaults);
@@ -161,31 +162,21 @@ namespace dtGame
 
       public:
 
-         void setUp()
+         /*override*/ void setUp()
          {
-            dtCore::System::GetInstance().SetShutdownOnWindowClose(false);
-            dtCore::System::GetInstance().Start();
-            mGM = new dtGame::GameManager(*GetGlobalApplication().GetScene());
-            mGM->SetApplication(GetGlobalApplication());
+            BaseClass::setUp();
+
             mDeadReckoningComponent = new TestDeadReckoningComponent();
             mGM->AddComponent(*mDeadReckoningComponent, GameManager::ComponentPriority::NORMAL);
-            mGM->LoadActorRegistry(mTestGameActorRegistry);
 
             mGM->CreateActor(*dtActors::EngineActorRegistry::GAME_MESH_ACTOR_TYPE, mTestGameActor);
             CPPUNIT_ASSERT(mTestGameActor.valid());
          }
 
-         void tearDown()
+         /*override*/ void tearDown()
          {
-            dtCore::System::GetInstance().Stop();
-            if (mGM.valid())
-            {
-               mTestGameActor = NULL;
-               mGM->DeleteAllActors(true);
-               mGM->UnloadActorRegistry(mTestGameActorRegistry);
-               mGM = NULL;
-            }
             mDeadReckoningComponent = NULL;
+            BaseClass::tearDown();
          }
 
          void TestDeadReckoningActorComponentDefaults()
@@ -1123,14 +1114,10 @@ namespace dtGame
             CPPUNIT_ASSERT(helper->GetCurrentInstantVelocity().length2() <= FLT_EPSILON);
          }
 
-         dtCore::RefPtr<GameManager> mGM;
          dtCore::RefPtr<TestDeadReckoningComponent> mDeadReckoningComponent;
          dtCore::RefPtr<GameActorProxy> mTestGameActor;
-         static const std::string mTestGameActorRegistry;
    };
 
    CPPUNIT_TEST_SUITE_REGISTRATION(DeadReckoningComponentTests);
-
-   const std::string DeadReckoningComponentTests::mTestGameActorRegistry("testGameActorLibrary");
 
 }

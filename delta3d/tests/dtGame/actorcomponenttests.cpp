@@ -64,18 +64,11 @@
 
 #include <osg/Math>
 
-#include <cppunit/extensions/HelperMacros.h>
+#include "basegmtests.h"
 
 #include <iostream>
 
-extern dtABC::Application& GetGlobalApplication();
-
-static const std::string TESTS_DIR = dtUtil::GetDeltaRootPath() + dtUtil::FileUtils::PATH_SEPARATOR+"tests";
-
-static const std::string PROJECT_CONTEXT = TESTS_DIR + dtUtil::FileUtils::PATH_SEPARATOR + "data" + dtUtil::FileUtils::PATH_SEPARATOR + "ProjectContext";
-
-
-class ActorComponentTests : public CPPUNIT_NS::TestFixture
+class ActorComponentTests : public dtGame::BaseGMTestFixture
 {
    CPPUNIT_TEST_SUITE(ActorComponentTests);
 
@@ -90,41 +83,6 @@ class ActorComponentTests : public CPPUNIT_NS::TestFixture
    CPPUNIT_TEST_SUITE_END();
 
 public:
-   ////////////////////////////////////////////////////////////////////////
-   void setUp()
-   {
-      try
-      {
-         dtCore::System::GetInstance().SetShutdownOnWindowClose(false);
-         dtCore::System::GetInstance().Start();
-         dtUtil::SetDataFilePathList(dtUtil::GetDeltaDataPathList());
-
-         mManager = new dtGame::GameManager(*GetGlobalApplication().GetScene());
-         mManager->SetApplication(GetGlobalApplication());
-         mManager->LoadActorRegistry(mTestGameActorLibrary);
-         mManager->SetProjectContext(PROJECT_CONTEXT);
-      }
-      catch (const dtUtil::Exception& e)
-      {
-         CPPUNIT_FAIL((std::string("Error: ") + e.What()).c_str());
-      }
-      catch (const std::exception& ex)
-      {
-         CPPUNIT_FAIL(std::string("Error: ") + ex.what());
-      }
-   }
-
-   ////////////////////////////////////////////////////////////////////////
-   void tearDown()
-   {
-      dtCore::System::GetInstance().Stop();
-      if (mManager.valid())
-      {
-         mManager->DeleteAllActors(true);
-         mManager->UnloadActorRegistry(mTestGameActorLibrary);
-         mManager = NULL;
-      }
-   }
 
    void AddTestProperty(dtGame::ActorComponent& comp)
    {
@@ -142,8 +100,8 @@ public:
    {
       try
       {
-         dtCore::RefPtr<const dtCore::ActorType> actorType = mManager->FindActorType("ExampleActors", "Test1Actor");
-         dtCore::RefPtr<dtCore::BaseActorObject> baseActor = mManager->CreateActor(*actorType);
+         dtCore::RefPtr<const dtCore::ActorType> actorType = mGM->FindActorType("ExampleActors", "Test1Actor");
+         dtCore::RefPtr<dtCore::BaseActorObject> baseActor = mGM->CreateActor(*actorType);
          dtCore::RefPtr<dtGame::GameActorProxy> actor = dynamic_cast<dtGame::GameActorProxy*>(baseActor.get());
 
          std::vector<dtGame::ActorComponent*> components = actor->GetComponents(TestActorComponent1::TYPE);
@@ -201,7 +159,7 @@ public:
    {
       try
       {
-         dtCore::RefPtr<dtCore::BaseActorObject> baseactor = mManager->CreateActor(*TestGameActorLibrary::TEST1_GAME_ACTOR_TYPE);
+         dtCore::RefPtr<dtCore::BaseActorObject> baseactor = mGM->CreateActor(*TestGameActorLibrary::TEST1_GAME_ACTOR_TYPE);
          dtCore::RefPtr<dtGame::GameActorProxy> actor = dynamic_cast<dtGame::GameActorProxy*>(baseactor.get());
 
          dtCore::RefPtr<TestActorComponent1> component1 = new TestActorComponent1();
@@ -209,7 +167,7 @@ public:
          CPPUNIT_ASSERT_EQUAL_MESSAGE("ActorComponent didn't get called when added to actor", true, component1->mWasAdded);
 
 
-         mManager->AddActor(*actor, true, false);
+         mGM->AddActor(*actor, true, false);
 
          //component 1 should have entered the world now
          CPPUNIT_ASSERT_EQUAL_MESSAGE("ActorComponent didn't enter the world, after being added to the GM", true, component1->mEnteredWorld);
@@ -226,7 +184,7 @@ public:
          CPPUNIT_ASSERT_MESSAGE("Actor component2 should be de-initialized when removed from actor!", component2->mWasRemoved);
 
          CPPUNIT_ASSERT_MESSAGE("Actor component should not be removed yet!", !component1->mWasRemoved);
-         mManager->DeleteActor(*actor);
+         mGM->DeleteActor(*actor);
 
          dtCore::System::GetInstance().Step();
 
@@ -247,9 +205,9 @@ public:
    ////////////////////////////////////////////////////////////////////////////////
    void TestGetAllActorComponents()
    {
-      dtCore::RefPtr<dtCore::BaseActorObject> baseActor = mManager->CreateActor(*TestGameActorLibrary::TEST1_GAME_ACTOR_TYPE);
+      dtCore::RefPtr<dtCore::BaseActorObject> baseActor = mGM->CreateActor(*TestGameActorLibrary::TEST1_GAME_ACTOR_TYPE);
       dtCore::RefPtr<dtGame::GameActorProxy> actor = dynamic_cast<dtGame::GameActorProxy*>(baseActor.get());
-      mManager->AddActor(*actor, true, false);
+      mGM->AddActor(*actor, true, false);
 
 
       std::vector<dtGame::ActorComponent*> components;
@@ -273,7 +231,7 @@ public:
    {
       dtCore::RefPtr<dtGame::GameActorProxy> actor = 
          dynamic_cast<dtGame::GameActorProxy*>
-         (mManager->CreateActor(*TestGameActorLibrary::TEST1_GAME_ACTOR_TYPE).get());
+         (mGM->CreateActor(*TestGameActorLibrary::TEST1_GAME_ACTOR_TYPE).get());
       dtCore::RefPtr<TestActorComponent1> comp = new TestActorComponent1();
       comp->BuildPropertyMap();
 
@@ -300,7 +258,7 @@ public:
    {
       dtCore::RefPtr<dtGame::GameActorProxy> actor = 
          dynamic_cast<dtGame::GameActorProxy*>
-         (mManager->CreateActor(*TestGameActorLibrary::TEST1_GAME_ACTOR_TYPE).get());
+         (mGM->CreateActor(*TestGameActorLibrary::TEST1_GAME_ACTOR_TYPE).get());
       dtCore::RefPtr<TestActorComponent1> comp = new TestActorComponent1();
       comp->BuildPropertyMap();
 
@@ -326,7 +284,7 @@ public:
       const std::string propName("CurrentShader");
 
       dtCore::RefPtr<dtGame::GameActorProxy> actor;
-      mManager->CreateActor(*TestGameActorLibrary::TEST1_GAME_ACTOR_TYPE, actor);
+      mGM->CreateActor(*TestGameActorLibrary::TEST1_GAME_ACTOR_TYPE, actor);
       dtGame::ShaderActorComponent* comp = actor->GetComponent<dtGame::ShaderActorComponent>();
 
       dtCore::ActorProperty* prop = comp->GetProperty(propName);
@@ -369,13 +327,13 @@ public:
       const std::string propName("CurrentShader");
 
       dtCore::RefPtr<dtGame::GameActorProxy> actor, actorCopyProp;
-      mManager->CreateActor(*TestGameActorLibrary::TEST1_GAME_ACTOR_TYPE, actor);
-      mManager->CreateActor(*TestGameActorLibrary::TEST1_GAME_ACTOR_TYPE, actorCopyProp);
+      mGM->CreateActor(*TestGameActorLibrary::TEST1_GAME_ACTOR_TYPE, actor);
+      mGM->CreateActor(*TestGameActorLibrary::TEST1_GAME_ACTOR_TYPE, actorCopyProp);
 
       dtCore::RefPtr<dtGame::ShaderActorComponent> extraComp, extraCompCopyProp;
-      mManager->CreateActor(*dtGame::ShaderActorComponent::TYPE, extraComp);
+      mGM->CreateActor(*dtGame::ShaderActorComponent::TYPE, extraComp);
       CPPUNIT_ASSERT(extraComp.valid());
-      mManager->CreateActor(*dtGame::ShaderActorComponent::TYPE, extraCompCopyProp);
+      mGM->CreateActor(*dtGame::ShaderActorComponent::TYPE, extraCompCopyProp);
       CPPUNIT_ASSERT(extraCompCopyProp.valid());
 
       actor->AddComponent(*extraComp);
@@ -396,17 +354,11 @@ public:
    }
 
 private:
-   static const std::string mTestGameActorLibrary;
-   static const std::string mTestActorLibrary;
-   dtCore::RefPtr<dtGame::GameManager> mManager;
 };
 
 
 // Registers the fixture into the 'registry'
 CPPUNIT_TEST_SUITE_REGISTRATION(ActorComponentTests);
-
-const std::string ActorComponentTests::mTestGameActorLibrary = "testGameActorLibrary";
-const std::string ActorComponentTests::mTestActorLibrary     = "testActorLibrary";
 
 
 
