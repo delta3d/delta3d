@@ -382,7 +382,7 @@ namespace dtABC
    {
       if (mAutoBackSize)
       {
-         osg::BoundingBox bounds = mTextNode->getBound();
+         osg::BoundingBox bounds = mTextNode->getBoundingBox();
 
          (*mBackdropVerts)[0].set(bounds.xMin() - mBackBorderSize.x(), bounds.yMin() - mBackBorderSize.y(), 0.0f); // LEFT-BOTTOM
          (*mBackdropVerts)[1].set(bounds.xMax() + mBackBorderSize.x(), bounds.yMin() - mBackBorderSize.y(), 0.0f); // RIGHT-BOTTOM

@@ -377,8 +377,6 @@ bool AnimNodeBuilder::SupportsSoftware() const
 bool AnimNodeBuilder::SupportsVertexBuffers() const
 {
    //see if we can support vertex buffer objects
-   osg::Drawable::getExtensions(0, true);
-
    return (osg::isGLExtensionSupported(0, "GL_ARB_vertex_buffer_object"));
 }
 

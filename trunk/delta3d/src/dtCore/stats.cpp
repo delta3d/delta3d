@@ -1041,8 +1041,9 @@ void StatsHandler::SetUpScene(osgViewer::ViewerBase* viewer)
       if ((*citr)->getGraphicsContext())
       {
          unsigned int contextID = (*citr)->getGraphicsContext()->getState()->getContextID();
-         const osg::Drawable::Extensions* extensions = osg::Drawable::getExtensions(contextID, false);
-         if (extensions && extensions->isTimerQuerySupported())
+
+         const osg::GLExtensions* extensions = osg::GLExtensions::Get(contextID, true);
+         if (extensions && extensions->isTimerQuerySupported)
          {
             ++numCamrasWithTimerQuerySupport;
          }
@@ -1090,7 +1091,7 @@ void StatsHandler::SetUpScene(osgViewer::ViewerBase* viewer)
       frameRateLabel->setPosition(pos);
       frameRateLabel->setText("Frame Rate: ");
 
-      pos.x() = frameRateLabel->getBound().xMax();
+      pos.x() = frameRateLabel->getBoundingBox().xMax();
 
       osg::ref_ptr<osgText::Text> frameRateValue = new osgText::Text;
       geode->addDrawable( frameRateValue.get() );
@@ -1157,7 +1158,7 @@ void StatsHandler::SetUpScene(osgViewer::ViewerBase* viewer)
          eventLabel->setPosition(pos);
          eventLabel->setText("Event: ");
 
-         pos.x() = eventLabel->getBound().xMax();
+         pos.x() = eventLabel->getBoundingBox().xMax();
 
          osg::ref_ptr<osgText::Text> eventValue = new osgText::Text;
          geode->addDrawable(eventValue.get());
@@ -1189,7 +1190,7 @@ void StatsHandler::SetUpScene(osgViewer::ViewerBase* viewer)
          updateLabel->setPosition(pos);
          updateLabel->setText("Update: ");
 
-         pos.x() = updateLabel->getBound().xMax();
+         pos.x() = updateLabel->getBoundingBox().xMax();
 
          osg::ref_ptr<osgText::Text> updateValue = new osgText::Text;
          geode->addDrawable(updateValue.get());
@@ -1300,7 +1301,7 @@ void StatsHandler::SetUpScene(osgViewer::ViewerBase* viewer)
             averageLabel->setPosition(pos);
             averageLabel->setText("DatabasePager time to merge new tiles - average: ");
 
-            pos.x() = averageLabel->getBound().xMax();
+            pos.x() = averageLabel->getBoundingBox().xMax();
 
             osg::ref_ptr<osgText::Text> averageValue = new osgText::Text;
             geode->addDrawable( averageValue.get() );
@@ -1311,7 +1312,7 @@ void StatsHandler::SetUpScene(osgViewer::ViewerBase* viewer)
             averageValue->setPosition(pos);
             averageValue->setText("1000");
 
-            pos.x() = averageValue->getBound().xMax() + 2.0f*characterSize;
+            pos.x() = averageValue->getBoundingBox().xMax() + 2.0f*characterSize;
 
             osg::ref_ptr<osgText::Text> minLabel = new osgText::Text;
             geode->addDrawable( minLabel.get() );
@@ -1322,7 +1323,7 @@ void StatsHandler::SetUpScene(osgViewer::ViewerBase* viewer)
             minLabel->setPosition(pos);
             minLabel->setText("min: ");
 
-            pos.x() = minLabel->getBound().xMax();
+            pos.x() = minLabel->getBoundingBox().xMax();
 
             osg::ref_ptr<osgText::Text> minValue = new osgText::Text;
             geode->addDrawable(minValue.get());
@@ -1333,7 +1334,7 @@ void StatsHandler::SetUpScene(osgViewer::ViewerBase* viewer)
             minValue->setPosition(pos);
             minValue->setText("1000");
 
-            pos.x() = minValue->getBound().xMax() + 2.0f*characterSize;
+            pos.x() = minValue->getBoundingBox().xMax() + 2.0f*characterSize;
 
 
             osg::ref_ptr<osgText::Text> maxLabel = new osgText::Text;
@@ -1345,7 +1346,7 @@ void StatsHandler::SetUpScene(osgViewer::ViewerBase* viewer)
             maxLabel->setPosition(pos);
             maxLabel->setText("max: ");
 
-            pos.x() = maxLabel->getBound().xMax();
+            pos.x() = maxLabel->getBoundingBox().xMax();
 
             osg::ref_ptr<osgText::Text> maxValue = new osgText::Text;
             geode->addDrawable(maxValue.get());
@@ -1356,7 +1357,7 @@ void StatsHandler::SetUpScene(osgViewer::ViewerBase* viewer)
             maxValue->setPosition(pos);
             maxValue->setText("1000");
 
-            pos.x() = maxValue->getBound().xMax();
+            pos.x() = maxValue->getBoundingBox().xMax();
 
             osg::ref_ptr<osgText::Text> requestsLabel = new osgText::Text;
             geode->addDrawable( requestsLabel.get() );
@@ -1367,7 +1368,7 @@ void StatsHandler::SetUpScene(osgViewer::ViewerBase* viewer)
             requestsLabel->setPosition(pos);
             requestsLabel->setText("requests: ");
 
-            pos.x() = requestsLabel->getBound().xMax();
+            pos.x() = requestsLabel->getBoundingBox().xMax();
 
             osg::ref_ptr<osgText::Text> requestList = new osgText::Text;
             geode->addDrawable( requestList.get() );
@@ -1378,7 +1379,7 @@ void StatsHandler::SetUpScene(osgViewer::ViewerBase* viewer)
             requestList->setPosition(pos);
             requestList->setText("0");
 
-            pos.x() = requestList->getBound().xMax() + 2.0f*characterSize;;
+            pos.x() = requestList->getBoundingBox().xMax() + 2.0f*characterSize;;
 
             osg::ref_ptr<osgText::Text> compileLabel = new osgText::Text;
             geode->addDrawable( compileLabel.get() );
@@ -1389,7 +1390,7 @@ void StatsHandler::SetUpScene(osgViewer::ViewerBase* viewer)
             compileLabel->setPosition(pos);
             compileLabel->setText("tocompile: ");
 
-            pos.x() = compileLabel->getBound().xMax();
+            pos.x() = compileLabel->getBoundingBox().xMax();
 
             osg::ref_ptr<osgText::Text> compileList = new osgText::Text;
             geode->addDrawable( compileList.get() );
@@ -1400,7 +1401,7 @@ void StatsHandler::SetUpScene(osgViewer::ViewerBase* viewer)
             compileList->setPosition(pos);
             compileList->setText("0");
 
-            pos.x() = maxLabel->getBound().xMax();
+            pos.x() = maxLabel->getBoundingBox().xMax();
 
             geode->setCullCallback(new PagerCallback(dp, minValue.get(), maxValue.get(), averageValue.get(), requestList.get(), compileList.get(), 1000.0));
          }
@@ -1578,7 +1579,7 @@ void StatsHandler::SetUpScene(osgViewer::ViewerBase* viewer)
       // MESSAGE_EVENT_TRAVERSAL
       pos.x() = leftPos;
       text = CreateTextControl(geode, colorDelta, font, characterSize, pos, "Input Events: "); // label
-      pos.x() = text->getBound().xMax();
+      pos.x() = text->getBoundingBox().xMax();
       text = CreateTextControl(geode, colorDelta, font, characterSize, pos, "0.0"); // Value
       text->setDrawCallback(new AveragedValueTextDrawCallback(stats,System::MESSAGE_EVENT_TRAVERSAL,-1, true, 1.0));
       pos.y() -= characterSize * 1.5f;
@@ -1586,7 +1587,7 @@ void StatsHandler::SetUpScene(osgViewer::ViewerBase* viewer)
       // MESSAGE_POST_EVENT_TRAVERSAL
       pos.x() = leftPos;
       text = CreateTextControl(geode, colorDelta, font, characterSize, pos, "Post Event: "); // label
-      pos.x() = text->getBound().xMax();
+      pos.x() = text->getBoundingBox().xMax();
       text = CreateTextControl(geode, colorDelta, font, characterSize, pos, "0.0"); // Value
       text->setDrawCallback(new AveragedValueTextDrawCallback(stats,System::MESSAGE_POST_EVENT_TRAVERSAL,-1, true, 1.0));
       pos.y() -= characterSize * 1.5f;
@@ -1594,51 +1595,51 @@ void StatsHandler::SetUpScene(osgViewer::ViewerBase* viewer)
       // MESSAGE_PRE_FRAME
       pos.x() = leftPos;
       text = CreateTextControl(geode, colorDelta, font, characterSize, pos, "Pre Frame: "); // label
-      pos.x() = text->getBound().xMax();
+      pos.x() = text->getBoundingBox().xMax();
       text = CreateTextControl(geode, colorDelta, font, characterSize, pos, "12.34  "); // Value
       text->setDrawCallback(new AveragedValueTextDrawCallback(stats,System::MESSAGE_PRE_FRAME,-1, true, 1.0));
-      pos.x() = text->getBound().xMax();
+      pos.x() = text->getBoundingBox().xMax();
 
       // The GameManager part of PreFrame - GM [Total: 12.34  Comps: 12.34 (99)  Actors: 12.34 (100/999)]
       // GM Total -- GM [Total: 12.34
       //pos.x() += 60.0f;
       text = CreateTextControl(geode, colorDelta, font, characterSize, pos, "GM [Total: "); // label
-      pos.x() = text->getBound().xMax();
+      pos.x() = text->getBoundingBox().xMax();
       text = CreateTextControl(geode, colorDelta, font, characterSize, pos, "12.34  "); // Value
       text->setDrawCallback(new AveragedValueTextDrawCallback(stats,"GMTotalTime",-1, true, 1.0));
-      pos.x() = text->getBound().xMax(); /* 65.0f */ // "12.34" is about the right size
+      pos.x() = text->getBoundingBox().xMax(); /* 65.0f */ // "12.34" is about the right size
       // GM Components -- Comps: 12.34 (99)
       text = CreateTextControl(geode, colorDelta, font, characterSize, pos, "Comps: "); // label
-      pos.x() = text->getBound().xMax();
+      pos.x() = text->getBoundingBox().xMax();
       text = CreateTextControl(geode, colorDelta, font, characterSize, pos, "12.34 "); // Value
       text->setDrawCallback(new AveragedValueTextDrawCallback(stats,"GMComponentsTime",-1, true, 1.0));
-      pos.x() = text->getBound().xMax(); // "12.34" is about the right size
+      pos.x() = text->getBoundingBox().xMax(); // "12.34" is about the right size
       text = CreateTextControl(geode, colorDelta, font, characterSize, pos, "(99)  "); // Value
       text->setDrawCallback(new SimpleIntTextDrawCallback(stats, "GMNumCompsProcessed", true));
       // GM Actors -- Actors: 12.34 (100/999) ]
-      pos.x() = text->getBound().xMax(); /* 50.0f */ // "(99)" is about the right size
+      pos.x() = text->getBoundingBox().xMax(); /* 50.0f */ // "(99)" is about the right size
       text = CreateTextControl(geode, colorDelta, font, characterSize, pos, "Actors: "); // label
-      pos.x() = text->getBound().xMax();
+      pos.x() = text->getBoundingBox().xMax();
       text = CreateTextControl(geode, colorDelta, font, characterSize, pos, "12.34 "); // Value
       text->setDrawCallback(new AveragedValueTextDrawCallback(stats,"GMActorsTime",-1, true, 1.0));
-      pos.x() = text->getBound().xMax(); // "12.34" is about the right size
+      pos.x() = text->getBoundingBox().xMax(); // "12.34" is about the right size
       text = CreateTextControl(geode, colorDelta, font, characterSize, pos, "("); // label
-      pos.x() = text->getBound().xMax();
+      pos.x() = text->getBoundingBox().xMax();
       text = CreateTextControl(geode, colorDelta, font, characterSize, pos, "999 "); // Value
       text->setDrawCallback(new SimpleIntTextDrawCallback(stats, "GMNumActorsProcessed", false));
-      pos.x() = text->getBound().xMax(); // "999" is about the right size
+      pos.x() = text->getBoundingBox().xMax(); // "999" is about the right size
       text = CreateTextControl(geode, colorDelta, font, characterSize, pos, "/"); // label
-      pos.x() = text->getBound().xMax();
+      pos.x() = text->getBoundingBox().xMax();
       text = CreateTextControl(geode, colorDelta, font, characterSize, pos, "999 "); // Value
       text->setDrawCallback(new SimpleIntTextDrawCallback(stats, "GMTotalNumActors", false));
-      pos.x() = text->getBound().xMax(); // "999" is about the right size
+      pos.x() = text->getBoundingBox().xMax(); // "999" is about the right size
       text = CreateTextControl(geode, colorDelta, font, characterSize, pos, ") ]"); // label
       pos.y() -= characterSize * 1.5f;
 
       // MESSAGE_CAMERA_SYNCH
       pos.x() = leftPos;
       text = CreateTextControl(geode, colorDelta, font, characterSize, pos, "Camera Sync: "); // label
-      pos.x() = text->getBound().xMax();
+      pos.x() = text->getBoundingBox().xMax();
       text = CreateTextControl(geode, colorDelta, font, characterSize, pos, "0.0"); // Value
       text->setDrawCallback(new AveragedValueTextDrawCallback(stats,System::MESSAGE_CAMERA_SYNCH,-1, true, 1.0));
       pos.y() -= characterSize * 1.5f;
@@ -1646,7 +1647,7 @@ void StatsHandler::SetUpScene(osgViewer::ViewerBase* viewer)
       // MESSAGE_FRAME_SYNCH
       pos.x() = leftPos;
       text = CreateTextControl(geode, colorDelta, font, characterSize, pos, "Frame Sync: "); // label
-      pos.x() = text->getBound().xMax();
+      pos.x() = text->getBoundingBox().xMax();
       text = CreateTextControl(geode, colorDelta, font, characterSize, pos, "0.0"); // Value
       text->setDrawCallback(new AveragedValueTextDrawCallback(stats,System::MESSAGE_FRAME_SYNCH,-1, true, 1.0));
       pos.y() -= characterSize * 1.5f;
@@ -1654,17 +1655,17 @@ void StatsHandler::SetUpScene(osgViewer::ViewerBase* viewer)
       // MESSAGE_FRAME  --  Frame: 12.34  RenderTime: 12.34  Diff: 12.34
       pos.x() = leftPos;
       text = CreateTextControl(geode, colorDelta, font, characterSize, pos, "Frame: "); // label
-      pos.x() = text->getBound().xMax();
+      pos.x() = text->getBoundingBox().xMax();
       text = CreateTextControl(geode, colorDelta, font, characterSize, pos, "12.34 "); // Value
       text->setDrawCallback(new AveragedValueTextDrawCallback(stats,System::MESSAGE_FRAME,-1, true, 1.0));
-      pos.x() = 15.0f + text->getBound().xMax(); // "12.34" is about the right size
+      pos.x() = 15.0f + text->getBoundingBox().xMax(); // "12.34" is about the right size
       text = CreateTextControl(geode, colorDelta, font, characterSize, pos, "UpdatePlusDraw: "); // label
-      pos.x() = text->getBound().xMax();
+      pos.x() = text->getBoundingBox().xMax();
       text = CreateTextControl(geode, colorDelta, font, characterSize, pos, "12.34 "); // Value
       text->setDrawCallback(new AveragedValueTextDrawCallback(stats,"UpdatePlusDrawTime",-1, true, 1.0));
-      pos.x() = 10.0f + text->getBound().xMax(); // "12.34" is about the right size
+      pos.x() = 10.0f + text->getBoundingBox().xMax(); // "12.34" is about the right size
       text = CreateTextControl(geode, colorDelta, font, characterSize, pos, "Diff: "); // label
-      pos.x() = text->getBound().xMax();
+      pos.x() = text->getBoundingBox().xMax();
       text = CreateTextControl(geode, colorDelta, font, characterSize, pos, "12.34 "); // Value
       text->setDrawCallback(new AveragedValueTextDrawCallback(stats,"FrameMinusDrawAndUpdateTime",-1, true, 1.0));
       pos.y() -= characterSize * 1.5f;
@@ -1673,7 +1674,7 @@ void StatsHandler::SetUpScene(osgViewer::ViewerBase* viewer)
       // MESSAGE_POST_FRAME
       pos.x() = leftPos;
       text = CreateTextControl(geode, colorDelta, font, characterSize, pos, "Post Frame: "); // label
-      pos.x() = text->getBound().xMax();
+      pos.x() = text->getBoundingBox().xMax();
       text = CreateTextControl(geode, colorDelta, font, characterSize, pos, "0.0"); // Value
       text->setDrawCallback(new AveragedValueTextDrawCallback(stats,System::MESSAGE_POST_FRAME,-1, true, 1.0));
       pos.y() -= characterSize * 1.5f;
@@ -1681,7 +1682,7 @@ void StatsHandler::SetUpScene(osgViewer::ViewerBase* viewer)
       // TOTAL
       pos.x() = leftPos;
       text = CreateTextControl(geode, colorTotal, font, characterSize, pos, "Total: "); // label
-      pos.x() = text->getBound().xMax();
+      pos.x() = text->getBoundingBox().xMax();
       text = CreateTextControl(geode, colorTotal, font, characterSize, pos, "0.0"); // Value
       text->setDrawCallback(new AveragedValueTextDrawCallback(stats,"FullDeltaFrameTime",-1, true, 1.0));
       pos.y() -= characterSize * 1.5f;
@@ -1742,7 +1743,7 @@ osg::Node* StatsHandler::CreateCameraTimeStats(const std::string& font, osg::Vec
       cullLabel->setPosition(pos);
       cullLabel->setText("Cull: ");
 
-      pos.x() = cullLabel->getBound().xMax();
+      pos.x() = cullLabel->getBoundingBox().xMax();
 
       osg::ref_ptr<osgText::Text> cullValue = new osgText::Text;
       geode->addDrawable( cullValue.get() );
@@ -1775,7 +1776,7 @@ osg::Node* StatsHandler::CreateCameraTimeStats(const std::string& font, osg::Vec
       drawLabel->setPosition(pos);
       drawLabel->setText("Draw: ");
 
-      pos.x() = drawLabel->getBound().xMax();
+      pos.x() = drawLabel->getBoundingBox().xMax();
 
       osg::ref_ptr<osgText::Text> drawValue = new osgText::Text;
       geode->addDrawable( drawValue.get() );
@@ -1810,7 +1811,7 @@ osg::Node* StatsHandler::CreateCameraTimeStats(const std::string& font, osg::Vec
       gpuLabel->setPosition(pos);
       gpuLabel->setText("GPU: ");
 
-      pos.x() = gpuLabel->getBound().xMax();
+      pos.x() = gpuLabel->getBoundingBox().xMax();
 
       osg::ref_ptr<osgText::Text> gpuValue = new osgText::Text;
       geode->addDrawable( gpuValue.get() );

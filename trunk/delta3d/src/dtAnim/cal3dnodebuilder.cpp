@@ -203,11 +203,13 @@ namespace dtAnim
          osg::Program* prog = shadProg->GetShaderProgram();
          prog->compileGLObjects(*renderInfo->getState());
 
+         osg::Program::PerContextProgram* pcp = prog->getPCP(*renderInfo->getState());
+
          std::string boneTransformUniform = Constants::BONE_TRANSFORM_UNIFORM;
 
-         if (prog->getPCP(renderInfo->getContextID()) != NULL && prog->getPCP(renderInfo->getContextID())->getUniformLocation(boneTransformUniform) == -1)
+         if (pcp != NULL && pcp->getUniformLocation(boneTransformUniform) == -1)
          {
-            if (prog->getPCP(renderInfo->getContextID()) != NULL && prog->getPCP(renderInfo->getContextID())->getUniformLocation(boneTransformUniform + "[0]") == -1)
+            if (pcp != NULL && pcp->getUniformLocation(boneTransformUniform + "[0]") == -1)
             {
                LOG_ERROR("Can't find uniform named \"" + boneTransformUniform
                          + "\" which is required for skinning.");
@@ -222,10 +224,10 @@ namespace dtAnim
          // Compute this only once
          osg::BoundingBox boundingBox = wrapper->GetBoundingBox();
 
-         int boneTransformLocation = prog->getPCP(renderInfo->getContextID())->getUniformLocation(boneTransformUniform);
-         int boneWeightsLocation = prog->getPCP(renderInfo->getContextID())->getAttribLocation(Constants::BONE_WEIGHTS_ATTRIB);
-         int boneIndicesLocation = prog->getPCP(renderInfo->getContextID())->getAttribLocation(Constants::BONE_INDICES_ATTRIB);
-         int tangentsLocation = prog->getPCP(renderInfo->getContextID())->getAttribLocation(Constants::TANGENT_SPACE_ATTRIB);
+         int boneTransformLocation = pcp->getUniformLocation(boneTransformUniform);
+         int boneWeightsLocation = pcp->getAttribLocation(Constants::BONE_WEIGHTS_ATTRIB);
+         int boneIndicesLocation = pcp->getAttribLocation(Constants::BONE_INDICES_ATTRIB);
+         int tangentsLocation = pcp->getAttribLocation(Constants::TANGENT_SPACE_ATTRIB);
 
          if (boneTransformLocation == -1) {
              LOG_ERROR("Can't find uniform named \"" + Constants::BONE_TRANSFORM_UNIFORM

@@ -539,16 +539,12 @@ namespace dtAnim
    {
       int count = 0;
 
-      typedef osg::Geode::DrawableList DrawableList;
-      const DrawableList& drawables = mGeode->getDrawableList();
-
       osg::Array* verts = NULL;
-      osg::Geometry* geom = NULL;
-      DrawableList::const_iterator curIter = drawables.begin();
-      DrawableList::const_iterator endIter = drawables.end();
-      for (; curIter != endIter; ++curIter)
+
+      int numDrawables = mGeode->getNumDrawables();
+      for (int i = 0; i < numDrawables; ++i)
       {
-         geom = (*curIter)->asGeometry();
+         osg::Geometry* geom = mGeode->getDrawable(i)->asGeometry();
          if (geom != NULL)
          {
             verts = geom->getVertexArray();
@@ -566,15 +562,11 @@ namespace dtAnim
    {
       int count = 0;
 
-      typedef osg::Geode::DrawableList DrawableList;
-      const DrawableList& drawables = mGeode->getDrawableList();
-
       osg::Geometry* geom = NULL;
-      DrawableList::const_iterator curIter = drawables.begin();
-      DrawableList::const_iterator endIter = drawables.end();
-      for (; curIter != endIter; ++curIter)
+      int numDrawables = mGeode->getNumDrawables();
+      for (int i = 0; i < numDrawables; ++i)
       {
-         geom = (*curIter)->asGeometry();
+         geom = mGeode->getDrawable(i)->asGeometry();
          if (geom != NULL)
          {
             count += GetTriangleCount(*geom);
@@ -586,7 +578,7 @@ namespace dtAnim
 
    int OsgMesh::GetSubmeshCount() const
    {
-      return (int)(mGeode->getDrawableList().size());
+       return mGeode->getNumDrawables();
    }
 
    // HELPER TEMPLATE FUNCTION
@@ -597,16 +589,12 @@ namespace dtAnim
    {
       int results = 0;
       
-      typedef osg::Geode::DrawableList DrawableList;
-      const DrawableList& drawables = geode.getDrawableList();
-
       osg::Drawable* drawable = NULL;
       T_Geom* geom = NULL;
-      DrawableList::const_iterator curIter = drawables.begin();
-      DrawableList::const_iterator endIter = drawables.end();
-      for (; curIter != endIter; ++curIter)
+      int numDrawables = geode.getNumDrawables();
+      for (int i = 0; i < numDrawables; ++i)
       {
-         drawable = (*curIter);
+         drawable = geode.getDrawable(i);
 
          if (strcmp(drawable->className(), geomClassName.c_str()) == 0)
          {

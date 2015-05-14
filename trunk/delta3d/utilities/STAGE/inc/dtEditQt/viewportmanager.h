@@ -205,12 +205,6 @@ namespace dtEditQt
        */
       void initializeGL();
 
-      /**
-       * Gets the number of available texture units.
-       * @return The number of texture units.
-       */
-      int getNumTextureUnits() const { return mNumTextureUnits; }
-
 
       /**
       * Retrieves the nearest snap position to the given position.
@@ -672,7 +666,6 @@ namespace dtEditQt
       dtCore::RefPtr<ViewportOverlay> mViewportOverlay;
       dtCore::RefPtr<dtCore::Scene>   mMasterScene;
       dtCore::RefPtr<StageCamera>     mWorldCamera;
-      int                             mNumTextureUnits;
       bool                            mInChangeTransaction;
       dtCore::RefPtr<dtABC::Application> mApplication;
    };
