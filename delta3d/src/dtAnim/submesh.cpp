@@ -476,7 +476,7 @@ namespace dtAnim
 
             mWrapper->SetLODLevel(finalLOD);
 
-            const Extensions* glExt = getExtensions(state.getContextID(), true);
+            const osg::GLExtensions* glExt = osg::GLExtensions::Get(state.getContextID(), true);
 
 #if defined(OPENSCENEGRAPH_MAJOR_VERSION) && OPENSCENEGRAPH_MAJOR_VERSION >= 3
             state.bindVertexBufferObject(mMeshVBO->getOrCreateGLBufferObject(renderInfo.getContextID()));

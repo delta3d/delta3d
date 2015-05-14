@@ -26,7 +26,7 @@
 #include <dtCore/skybox.h>
 #include <dtCore/refptr.h>
 
-#include <osg/CameraNode>
+#include <osg/Camera>
 #include <osg/Drawable>
 #include <osg/NodeCallback>
 #include <osgUtil/RenderStage>

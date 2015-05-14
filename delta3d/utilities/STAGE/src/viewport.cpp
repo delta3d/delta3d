@@ -200,7 +200,7 @@ namespace dtEditQt
    void Viewport::setRenderStyle(const RenderStyle& style, bool refreshView)
    {
       int i;
-      int numTextureUnits = ViewportManager::GetInstance().getNumTextureUnits();
+      int numTextureUnits = 8;
 
       mRenderStyle = &style;
 

@@ -244,17 +244,6 @@ namespace dtEditQt
       if (!hasBeenInitialized)
       {
          hasBeenInitialized = true;
-
-         //Get the texture extensions so we can query for some device information.
-         osg::Texture::Extensions* ext = osg::Texture::getExtensions(0, true);
-         if (ext != NULL)
-         {
-            mNumTextureUnits = ext->numTextureUnits();
-         }
-         else
-         {
-            mNumTextureUnits = 2;
-         }
       }
    }
 

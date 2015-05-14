@@ -34,7 +34,7 @@ namespace dtAnim
 
    void OsgModelResourceFinder::AcquireAnimationManager(osg::Node& node)
    {
-      osg::NodeCallback* ucb = node.getUpdateCallback();
+      osg::Callback* ucb = node.getUpdateCallback();
 
       if (ucb != NULL)
       {
@@ -42,11 +42,11 @@ namespace dtAnim
       }
    }
 
-   void OsgModelResourceFinder::AcquireAnimationManagerFromCallback(osg::NodeCallback& callback, osg::Node& node)
+   void OsgModelResourceFinder::AcquireAnimationManagerFromCallback(osg::Callback& callback, osg::Node& node)
    {
       if (mMode == SEARCH_ALL || mMode == SEARCH_ANIMATIONS || mMode == SEARCH_MORPHS)
       {
-         osg::NodeCallback* curCallback = &callback;
+         osg::Callback* curCallback = &callback;
 
          while (curCallback != NULL)
          {
@@ -55,7 +55,7 @@ namespace dtAnim
                if (mMode == SEARCH_ALL || mMode == SEARCH_ANIMATIONS)
                {
                   osgAnimation::BasicAnimationManager* animManager
-                     = static_cast<osgAnimation::BasicAnimationManager*>(curCallback);
+                     = dynamic_cast<osgAnimation::BasicAnimationManager*>(curCallback);
                   mAnimManagers.push_back(animManager);
                   mAnimNodes.push_back(&node);
                }
@@ -65,7 +65,7 @@ namespace dtAnim
                if (mMode == SEARCH_ALL || mMode == SEARCH_MORPHS)
                {
                   osgAnimation::UpdateMorph* morphManager
-                     = static_cast<osgAnimation::UpdateMorph*>(curCallback);
+                      = dynamic_cast<osgAnimation::UpdateMorph*>(curCallback);
                   mMorphManagers.insert(std::make_pair(morphManager, &node));
                }
             }
@@ -93,20 +93,17 @@ namespace dtAnim
    {
       if (mMode == SEARCH_ALL || mMode == SEARCH_MATERIALS)
       {
-         typedef osg::Geode::DrawableList GeometryList;
-         GeometryList geoms = geode.getDrawableList();
-
-         GeometryList::iterator curIter = geoms.begin();
-         GeometryList::iterator endIter = geoms.end();
-         for (; curIter != endIter; ++curIter)
+         int numDrawables = geode.getNumDrawables();
+         for (int i = 0; i < numDrawables; ++i)
          {
-            osg::StateSet* stateSet = (*curIter)->getStateSet();
+            osg::Drawable* geom = geode.getDrawable(i);
+            osg::StateSet* stateSet = geom->getStateSet();
 
             // Add the stateset/material if unique.
             if (stateSet != NULL && std::find(mMaterials.begin(), mMaterials.end(), stateSet) == mMaterials.end())
             {
                mMaterials.push_back(stateSet);
-               mMaterialToObjectMap.insert(std::make_pair(stateSet, curIter->get()));
+               mMaterialToObjectMap.insert(std::make_pair(stateSet, geom));
             }
          }
       }
@@ -114,17 +111,14 @@ namespace dtAnim
 
    void OsgModelResourceFinder::AcquireMorphs(osg::Geode& geode)
    {
-      osg::Drawable* curDrawable = NULL;
-      const osg::Geode::DrawableList& geoms = geode.getDrawableList();
-      osg::Geode::DrawableList::const_iterator curIter = geoms.begin();
-      osg::Geode::DrawableList::const_iterator endIter = geoms.end();
-      for (; curIter != endIter; ++curIter)
-      {
-         curDrawable = curIter->get();
-         if (0 == strcmp(curDrawable->className(), "MorphGeometry"))
+       int numDrawables = geode.getNumDrawables();
+       for (int i = 0; i < numDrawables; ++i)
+       {
+         osg::Drawable* geom = geode.getDrawable(i);
+         if (0 == strcmp(geom->className(), "MorphGeometry"))
          {
             osgAnimation::MorphGeometry* morph
-               = static_cast<osgAnimation::MorphGeometry*>(curDrawable);
+               = static_cast<osgAnimation::MorphGeometry*>(geom);
             mMorphs.push_back(morph);
          }
       }

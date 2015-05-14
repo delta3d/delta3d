@@ -76,7 +76,7 @@ namespace dtAnim
          return NULL;
       }
 
-      virtual osg::NodeCallback* operator() (const osg::NodeCallback* nodecallback) const
+      virtual osg::Callback* operator() (const osg::Callback* nodecallback) const
       {
          if (nodecallback == NULL)
          {
@@ -623,11 +623,11 @@ namespace dtAnim
          // If there are rig geometries, make sure they have references
          // to the currently loaded skeleton.
          osgAnimation::RigGeometry* rigGeom = NULL;
-         const osg::Geode::DrawableList& geoms = geode->getDrawableList();
-         osg::Geode::DrawableList::const_iterator curIter = geoms.begin();
-         osg::Geode::DrawableList::const_iterator endIter = geoms.end();
-         for (; curIter != endIter; ++curIter)
+
+         int numDrawables = geode->getNumDrawables();
+         for (int i = 0; i < numDrawables; ++i)
          {
+            osg::Drawable* geom = geode->getDrawable(i)->asGeometry();
             rigGeom = dynamic_cast<osgAnimation::RigGeometry*>(curIter->get());
             if (rigGeom != NULL)
             {

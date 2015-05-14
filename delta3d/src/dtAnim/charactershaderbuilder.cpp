@@ -102,12 +102,13 @@ namespace dtAnim
          tmpState->setContextID(0);
          prog->compileGLObjects(*tmpState);
 
+         //Cannot do getPCP(0) anymore, it takes a state& now, commented out until we know if we still need this -bga
          // TODO: Change OSG implementation to use the same shader code.
-         std::string boneTransformUniform = BONE_TRANSFORM_UNIFORM;
-
-         if (prog->getPCP(0) != NULL && prog->getPCP(0)->getUniformLocation(boneTransformUniform) == -1)
+         /*std::string boneTransformUniform = BONE_TRANSFORM_UNIFORM;
+         osg::Program::PerContextProgram* pcp = prog->getPCP(0);
+         if (pcp != NULL && pcp->getUniformLocation(boneTransformUniform) == -1)
          {
-            if (prog->getPCP(0) != NULL && prog->getPCP(0)->getUniformLocation(boneTransformUniform + "[0]") == -1)
+            if (pcp != NULL && pcp->getUniformLocation(boneTransformUniform + "[0]") == -1)
             {
                LOG_ERROR("Can't find uniform named \"" + boneTransformUniform
                          + "\" which is required for skinning.");
@@ -116,7 +117,7 @@ namespace dtAnim
             {
                boneTransformUniform.append("[0]");
             }
-         }
+         }*/
       }
 
       return shadProg;

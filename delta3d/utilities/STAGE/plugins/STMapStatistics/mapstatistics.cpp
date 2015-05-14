@@ -148,11 +148,10 @@ void MapStatisticsPlugin::GetGeometryMetrics(GeodeNodeMap& nodeMap, unsigned int
    GeodeNodeMap::iterator iter = nodeMap.begin();
    while (iter != nodeMap.end())
    {
-      const osg::Geode::DrawableList& drawables = iter->second->getDrawableList();
-
-      for (size_t geomIndex = 0; geomIndex < drawables.size(); ++geomIndex)
+      int numDrawables = iter->second->getNumDrawables();
+      for (int geomIndex = 0; geomIndex < numDrawables; ++geomIndex)
       {
-         osg::Geometry* geom = drawables[geomIndex]->asGeometry();
+          osg::Geometry* geom = iter->second->getDrawable(geomIndex)->asGeometry();
 
          if (geom)
          {

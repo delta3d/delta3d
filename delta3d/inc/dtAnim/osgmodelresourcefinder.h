@@ -63,7 +63,7 @@ namespace dtAnim
       
       // Finds animation managers
       void AcquireAnimationManager(osg::Node& node);
-      void AcquireAnimationManagerFromCallback(osg::NodeCallback& callback, osg::Node& node);
+      void AcquireAnimationManagerFromCallback(osg::Callback& callback, osg::Node& node);
 
       // Finds materials on nodes
       void AcquireMaterial(osg::Node& geode);
