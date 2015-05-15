@@ -22,34 +22,45 @@
 #include <dtUtil/exception.h>
 #include <dtUtil/coordinates.h>
 #include <dtCore/refptr.h>
+#include <dtVoxel/voxelactor.h>
+#include <dtVoxel/voxelactorregistry.h>
 #include "../dtGame/basegmtests.h"
 
 namespace dtVoxel
 {
-   class VectorActorTests : public dtGame::BaseGMTestFixture
+   class VoxelActorTests : public dtGame::BaseGMTestFixture
    {
       typedef dtGame::BaseGMTestFixture BaseClass;
-      CPPUNIT_TEST_SUITE(VectorActorTests);
+      CPPUNIT_TEST_SUITE(VoxelActorTests);
 
+         CPPUNIT_TEST(testVoxelActor);
 
       CPPUNIT_TEST_SUITE_END();
 
    public:
-      /*override*/ void GetRequireLibraries(NameVector& names)
+      /*override*/ void GetRequiredLibraries(NameVector& names)
       {
          static const std::string voxelLib("dtVoxel");
          names.push_back(voxelLib);
       }
 
-      /*override*/ void setUp()
+      void testVoxelActor()
       {
-         BaseClass::setUp();
-      }
-
-      /*override*/ void tearDown()
-      {
-         BaseClass::tearDown();
+         try
+         {
+            dtCore::RefPtr<dtVoxel::VoxelActor> voxelActor;
+            mGM->CreateActor(*VoxelActorRegistry::VOXEL_ACTOR_TYPE, voxelActor);
+            CPPUNIT_ASSERT_EQUAL(voxelActor->GetNumGrids(), size_t(0U));
+            voxelActor->SetDatabase(dtCore::ResourceDescriptor("StaticMeshes:delta3d_island.vdb"));
+            CPPUNIT_ASSERT_EQUAL(voxelActor->GetNumGrids(), size_t(1U));
+         }
+         catch(const dtUtil::Exception& ex)
+         {
+            CPPUNIT_FAIL(ex.ToString());
+         }
       }
    };
+
+   CPPUNIT_TEST_SUITE_REGISTRATION(VoxelActorTests);
 
 } /* namespace dtVoxel */

@@ -23,7 +23,7 @@
 
 namespace dtVoxel
 { // "display name", "category", "description/tooltip"
-   dtCore::RefPtr<dtCore::ActorType> VoxelActorRegistry::VOXEL_ACTOR_TYPE(new dtCore::ActorType("Voxel Actor", "dtVoxel","Actor for loading OpenVDB voxel grids."));
+   dtCore::RefPtr<dtCore::ActorType> VoxelActorRegistry::VOXEL_ACTOR_TYPE(new dtCore::ActorType("Voxel Actor", "dtVoxel", "Actor for loading OpenVDB voxel grids."));
 
 
    extern "C" DT_PLUGIN_EXPORT dtCore::ActorPluginRegistry* CreatePluginRegistry()
@@ -47,6 +47,7 @@ namespace dtVoxel
    ///////////////////////////////////////////////////////////////////////////////
    VoxelActorRegistry::VoxelActorRegistry() : dtCore::ActorPluginRegistry("VoxelActors", "The actors in this registry work with open vdb voxel grids ")
    {
+      openvdb::initialize();
    }
 
    ///////////////////////////////////////////////////////////////////////////////

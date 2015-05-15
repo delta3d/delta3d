@@ -17,11 +17,15 @@
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-#ifndef INC_DTVOXEL_VOXELACTOR_H_
-#define INC_DTVOXEL_VOXELACTOR_H_
+#ifndef DTVOXEL_VOXELACTOR_H_
+#define DTVOXEL_VOXELACTOR_H_
 
 #include <dtVoxel/export.h>
 #include <dtGame/gameactorproxy.h>
+#include <dtUtil/getsetmacros.h>
+//Really need to fine grain this.
+#include <openvdb/openvdb.h>
+#include <osg/BoundingBox>
 
 namespace dtVoxel
 {
@@ -33,11 +37,26 @@ namespace dtVoxel
 
       /*override*/ void BuildPropertyMap();
 
+      DT_DECLARE_ACCESSOR(dtCore::ResourceDescriptor, Database);
+
+      openvdb::GridPtrVecPtr GetGrids();
+      openvdb::GridBase::Ptr GetGrid(int i);
+      size_t GetNumGrids() const;
+
+      void CollideWithAABB(osg::BoundingBox& bb);
+
    protected:
+      /**
+       * Loads the voxel mesh.
+       * @throw dtUtil::FileNotFoundException if the resource does not exist.
+       */
+      virtual void LoadGrid(const dtCore::ResourceDescriptor& rd);
       virtual ~VoxelActor();
       /*override*/ void CreateDrawable();
+   private:
+      openvdb::GridPtrVecPtr mGrids;
    };
 
 } /* namespace dtVoxel */
 
-#endif /* INC_DTVOXEL_VOXELACTOR_H_ */
+#endif /* DTVOXEL_VOXELACTOR_H_ */
