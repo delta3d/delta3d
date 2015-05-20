@@ -22,8 +22,6 @@ CREATE_LINK_LINES_FOR_TARGETS(DTRENDER_LIBRARIES
         XERCES_LIBRARY
         )
 
-list(APPEND DTRENDER_LIBRARIES    )
-
 # handle the QUIETLY and REQUIRED arguments and set DELTA3D_FOUND to TRUE if 
 # all listed variables are TRUE
 INCLUDE(FindPackageHandleStandardArgs)
