@@ -32,7 +32,7 @@ class palLink;
 
 namespace dtPhysics
 {
-   class TransformJointUpdater: public osg::Referenced
+   class DT_PHYSICS_EXPORT TransformJointUpdater : public osg::Referenced
    {
    public:
       TransformJointUpdater(palLink& mJoint, osg::Transform& mTransformNode);
