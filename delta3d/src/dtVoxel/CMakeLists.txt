@@ -11,6 +11,9 @@ file(GLOB LIB_PUBLIC_HEADERS
 SET( LIB_SOURCES
   voxelactor.cpp
   voxelactorregistry.cpp
+  voxelcell.cpp
+  voxelblock.cpp
+  voxelgrid.cpp
 ) 
 
 INCLUDE_DIRECTORIES(${OPENEXR_INCLUDE_DIR} ${TBB_INCLUDE_DIR} ${OPENVDB_INCLUDE_DIR})
@@ -23,6 +26,12 @@ SET(LIB_DEPS
     ${OPENEXR_Half_LIBRARY}
     ${OPENVDB_LIBRARIES}
 )
+
+
+SET(LIB_EXTERNAL_DEPS
+   OSGVOLUME_LIBRARY 
+)
+
 
 if (MSVC)
    # PCH doesn't help with dtUtil on g++.

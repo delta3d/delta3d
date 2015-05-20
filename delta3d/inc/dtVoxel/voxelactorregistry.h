@@ -21,7 +21,7 @@
 #define DELTA_VOXEL_ACTOR_REGISTRY
 
 #include <dtCore/actorpluginregistry.h>
-#include <dtCore/plugin_export.h>
+#include <dtVoxel/export.h>
 
 /** 
  * @namespace dtVoxel
@@ -31,7 +31,7 @@ namespace dtVoxel
    /**
     * This actor registry handles the actors in this library
     */
-   class DT_PLUGIN_EXPORT VoxelActorRegistry : public dtCore::ActorPluginRegistry
+   class DT_VOXEL_EXPORT VoxelActorRegistry : public dtCore::ActorPluginRegistry
    {
    public:
 
