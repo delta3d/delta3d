@@ -156,6 +156,9 @@ namespace dtPhysics
       Geometry(PrimitiveType& primType);
       virtual ~Geometry();
 
+      // Subclasses can call this to set the internal implementation.
+      void SetPalGeometry(palGeometry& geom);
+
    private:
       GeometryImpl* mImpl;
    };

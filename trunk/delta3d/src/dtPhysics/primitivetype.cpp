@@ -32,6 +32,7 @@ namespace dtPhysics
    PrimitiveType PrimitiveType::HEIGHTFIELD("Heightfield", true, false);
    PrimitiveType PrimitiveType::TRIANGLE_MESH("Triangle Mesh", false, false);
    PrimitiveType PrimitiveType::TERRAIN_MESH("Terrain Mesh", true, false);
+   PrimitiveType PrimitiveType::CUSTOM_CONCAVE_MESH("Custom Concave Mesh", false, false);
 
    PrimitiveType::PrimitiveType(const std::string& name, bool terrainType, bool simpleShape)
    : dtUtil::Enumeration(name)

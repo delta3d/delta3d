@@ -492,6 +492,12 @@ namespace dtPhysics
    }
 
    /////////////////////////////////////
+   void Geometry::SetPalGeometry(palGeometry& geom)
+   {
+      mImpl->mGeom = &geom;
+   }
+
+   /////////////////////////////////////
    Real Geometry::GetMargin() const
    {
       return Real(mImpl->mGeom->GetMargin());

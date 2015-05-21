@@ -40,6 +40,7 @@ namespace dtPhysics
       static PrimitiveType CONVEX_HULL;
       static PrimitiveType TRIANGLE_MESH;
       static PrimitiveType TERRAIN_MESH;
+      static PrimitiveType CUSTOM_CONCAVE_MESH;
 
       /// @return true if this primitive type instance represents a static terrain type.
       bool IsTerrainType() const;

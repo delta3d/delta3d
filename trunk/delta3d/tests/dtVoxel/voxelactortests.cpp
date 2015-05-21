@@ -24,6 +24,7 @@
 #include <dtCore/refptr.h>
 #include <dtVoxel/voxelactor.h>
 #include <dtVoxel/voxelactorregistry.h>
+#include <dtVoxel/aabbintersector.h>
 #include "../dtGame/basegmtests.h"
 
 namespace dtVoxel
@@ -34,6 +35,7 @@ namespace dtVoxel
       CPPUNIT_TEST_SUITE(VoxelActorTests);
 
          CPPUNIT_TEST(testVoxelActor);
+         CPPUNIT_TEST(testVoxelColliderAABB);
 
       CPPUNIT_TEST_SUITE_END();
 
@@ -53,6 +55,48 @@ namespace dtVoxel
             CPPUNIT_ASSERT_EQUAL(voxelActor->GetNumGrids(), size_t(0U));
             voxelActor->SetDatabase(dtCore::ResourceDescriptor("StaticMeshes:delta3d_island.vdb"));
             CPPUNIT_ASSERT_EQUAL(voxelActor->GetNumGrids(), size_t(1U));
+         }
+         catch(const dtUtil::Exception& ex)
+         {
+            CPPUNIT_FAIL(ex.ToString());
+         }
+      }
+      void testVoxelColliderAABB()
+      {
+         try
+         {
+            dtCore::RefPtr<dtVoxel::VoxelActor> voxelActor;
+            mGM->CreateActor(*VoxelActorRegistry::VOXEL_ACTOR_TYPE, voxelActor);
+            CPPUNIT_ASSERT_EQUAL(voxelActor->GetNumGrids(), size_t(0U));
+            voxelActor->SetDatabase(dtCore::ResourceDescriptor("StaticMeshes:delta3d_island.vdb"));
+            CPPUNIT_ASSERT_EQUAL(voxelActor->GetNumGrids(), size_t(1U));
+
+            openvdb::BoolGrid::Ptr grid = boost::dynamic_pointer_cast<openvdb::BoolGrid>(voxelActor->GetGrid(0));
+            CPPUNIT_ASSERT(grid);
+
+            AABBIntersector<openvdb::BoolGrid> aabb(grid);
+            openvdb::Index64 leafVoxelsStart = grid->tree().activeLeafVoxelCount();
+            openvdb::CoordBBox indexBox(openvdb::Coord(10,10,0), openvdb::Coord(12,12,50));
+
+            openvdb::BoolGrid::TreePtrType testTree(new openvdb::BoolGrid::TreeType);
+            testTree->fill(indexBox, true, true);
+
+            aabb.SetIndexBB(indexBox);
+            aabb.Intersect();
+            CPPUNIT_ASSERT_EQUAL(leafVoxelsStart, grid->tree().activeLeafVoxelCount());
+            openvdb::BoolGrid::Ptr hitGrid1 = aabb.GetHits();
+            CPPUNIT_ASSERT(hitGrid1->tree().activeLeafVoxelCount() < testTree->activeLeafVoxelCount());
+            CPPUNIT_ASSERT_EQUAL(openvdb::Index64(22), hitGrid1->tree().activeLeafVoxelCount());
+
+
+            osg::BoundingBox bb;
+            bb.set(osg::Vec3(12.0f, 16.0f, 0.0f), osg::Vec3(12.1f, 16.1f, 33.0f));
+            openvdb::GridBase::Ptr gridBase = voxelActor->CollideWithAABB(bb, 0);
+            CPPUNIT_ASSERT(gridBase);
+            openvdb::BoolGrid::Ptr hitGrid2 = boost::dynamic_pointer_cast<openvdb::BoolGrid>(gridBase);
+            CPPUNIT_ASSERT(hitGrid2);
+            CPPUNIT_ASSERT_EQUAL(openvdb::Index64(3), hitGrid2->tree().activeLeafVoxelCount());
+
          }
          catch(const dtUtil::Exception& ex)
          {

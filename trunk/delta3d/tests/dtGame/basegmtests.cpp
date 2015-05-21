@@ -36,7 +36,7 @@ namespace dtGame
    const std::string BaseGMTestFixture::mTestGameActorLibrary = "testGameActorLibrary";
    const std::string BaseGMTestFixture::mTestActorLibrary     = "testActorLibrary";
 
-   BaseGMTestFixture::BaseGMTestFixture() {}
+   BaseGMTestFixture::BaseGMTestFixture(): mLogger(NULL) {}
    BaseGMTestFixture::~BaseGMTestFixture() {}
 
    void BaseGMTestFixture::setUp()
@@ -83,6 +83,7 @@ namespace dtGame
          }
          mTestComp->reset();
          mGM->SetProjectContext(PROJECT_CONTEXT);
+         dtCore::Project::GetInstance().AddContext(dtUtil::GetDeltaRootPath() + "/examples/data");
       }
       catch (const dtUtil::Exception& e)
       {
