@@ -22,6 +22,7 @@
 #include <dtCore/propertymacros.h>
 #include <openvdb/openvdb.h>
 #include <dtCore/project.h>
+#include <dtVoxel/aabbintersector.h>
 
 namespace dtVoxel
 {
@@ -91,9 +92,25 @@ namespace dtVoxel
    }
 
    /////////////////////////////////////////////////////
-   void VoxelActor::CollideWithAABB(osg::BoundingBox& bb)
+   openvdb::GridBase::Ptr VoxelActor::CollideWithAABB(osg::BoundingBox& bb, int gridIdx)
    {
-
+      openvdb::GridBase::Ptr result(NULL);
+      openvdb::BBoxd bbox(openvdb::Vec3d(bb.xMin(), bb.yMin(), bb.zMin()), openvdb::Vec3d(bb.xMax(), bb.yMax(), bb.zMax()));
+      if (openvdb::BoolGrid::Ptr gridB = boost::dynamic_pointer_cast<openvdb::BoolGrid>(GetGrid(gridIdx)))
+      {
+         AABBIntersector<openvdb::BoolGrid> aabb(gridB);
+         aabb.SetWorldBB(bbox);
+         aabb.Intersect();
+         result = aabb.GetHits();
+       }
+      else if (openvdb::FloatGrid::Ptr gridF = boost::dynamic_pointer_cast<openvdb::FloatGrid>(GetGrid(gridIdx)))
+      {
+         AABBIntersector<openvdb::FloatGrid> aabb(gridF);
+         aabb.SetWorldBB(bbox);
+         aabb.Intersect();
+         result = aabb.GetHits();
+      }
+      return result;
    }
 
    /////////////////////////////////////////////////////

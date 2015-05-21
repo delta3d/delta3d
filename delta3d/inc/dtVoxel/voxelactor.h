@@ -43,7 +43,10 @@ namespace dtVoxel
       openvdb::GridBase::Ptr GetGrid(int i);
       size_t GetNumGrids() const;
 
-      void CollideWithAABB(osg::BoundingBox& bb);
+      /**
+       * Returns a new grid that contains the collision set of the given bounding box.
+       */
+      openvdb::GridBase::Ptr CollideWithAABB(osg::BoundingBox& bb, int gridIdx = 0);
 
    protected:
       /**

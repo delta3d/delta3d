@@ -21,7 +21,8 @@
  */
 #include <prefix/unittestprefix.h>
 
-#include <cppunit/extensions/HelperMacros.h>
+
+#include "basedtphysicstestfixture.h"
 
 #include <dtCore/project.h>
 #include <dtCore/datatype.h>
@@ -30,11 +31,8 @@
 #include <dtCore/gameevent.h>
 #include <dtCore/actortype.h>
 
-#include <dtGame/gamemanager.h>
 #include <dtGame/message.h>
 #include <dtGame/basemessages.h>
-#include <dtGame/gmcomponent.h>
-#include <dtGame/defaultmessageprocessor.h>
 
 #include <dtCore/system.h>
 #include <dtCore/scene.h>
@@ -74,15 +72,9 @@
 #include <pal/palActivation.h>
 
 #include <osgDB/ReadFile>
-
-static const std::string DTPHYSICS_REGISTRY = "dtPhysics";
-extern dtABC::Application& GetGlobalApplication();
-extern const std::vector<std::string>& GetPhysicsEngineList();
-
 namespace dtPhysics
 {
-
-   class dtPhysicsTests : public CPPUNIT_NS::TestFixture
+   class dtPhysicsTests : public BaseDTPhysicsTestFixture
    {
       CPPUNIT_TEST_SUITE(dtPhysicsTests);
       CPPUNIT_TEST(testPrimitiveType);
@@ -117,8 +109,11 @@ namespace dtPhysics
       dtPhysicsTests() {}
       ~dtPhysicsTests() {}
 
-      void setUp();
-      void tearDown();
+      /*override*/ void GetRequiredLibraries(NameVector& names)
+      {
+         static const std::string DTPHYSICS_REGISTRY = "dtPhysics";
+         names.push_back(DTPHYSICS_REGISTRY);
+      }
 
       void testPrimitiveType();
 
@@ -179,35 +174,6 @@ namespace dtPhysics
       void testCallbacks(const std::string& engine);
       void testMass(dtPhysics::PhysicsActComp& actorComp);
 
-      void ChangeEngine(const std::string& engine)
-      {
-         try
-         {
-            dtGame::GMComponent* comp = mGM->GetComponentByName(PhysicsComponent::DEFAULT_NAME);
-            if (comp != NULL)
-            {
-               mGM->RemoveComponent(*comp);
-            }
-            mPhysicsComp = NULL;
-
-            dtCore::RefPtr<PhysicsWorld> world = new PhysicsWorld(engine);
-            world->Init();
-
-            mPhysicsComp = new PhysicsComponent(*world, false);
-
-            mGM->AddComponent(*mPhysicsComp, dtGame::GameManager::ComponentPriority::NORMAL);
-         }
-         catch (dtUtil::Exception& ex)
-         {
-            CPPUNIT_FAIL(ex.ToString());
-         }
-      }
-
-
-      dtCore::RefPtr<dtPhysics::PhysicsComponent> mPhysicsComp;
-      dtCore::RefPtr<dtGame::GameManager> mGM;
-      dtCore::RefPtr<dtUtil::Log> mLogger;
-
    };
 
    CPPUNIT_TEST_SUITE_REGISTRATION(dtPhysicsTests);
@@ -249,49 +215,6 @@ namespace dtPhysics
       private:
          bool mCalledPre, mCalledPost, mCalledActionUpdate;
    };
-
-   /////////////////////////////////////////////////////////
-   void dtPhysicsTests::setUp()
-   {
-      try
-      {
-         mLogger = &dtUtil::Log::GetInstance("dtPhysicsTests.cpp");
-
-         dtCore::System::GetInstance().SetShutdownOnWindowClose(false);
-         dtCore::System::GetInstance().Start();
-
-         dtCore::Project::GetInstance().SetContext(dtUtil::GetDeltaRootPath() + "/examples/data", true);
-
-         mGM = new dtGame::GameManager(*GetGlobalApplication().GetScene());
-         mGM->SetApplication(GetGlobalApplication());
-         mGM->LoadActorRegistry(DTPHYSICS_REGISTRY);
-
-         dtCore::System::GetInstance().Step(0.1667);
-         //SimCore::MessageType::RegisterMessageTypes(mGM->GetMessageFactory());
-      }
-      catch(const dtUtil::Exception& ex)
-      {
-         CPPUNIT_FAIL(ex.ToString());
-      }
-
-   }
-
-   /////////////////////////////////////////////////////////
-   void dtPhysicsTests::tearDown()
-   {
-      dtCore::System::GetInstance().Stop();
-
-      mPhysicsComp = NULL;
-
-      if (mGM.valid())
-      {
-         mGM->DeleteAllActors(true);
-         mGM->UnloadActorRegistry(DTPHYSICS_REGISTRY);
-         mGM = NULL;
-      }
-      dtCore::Project::GetInstance().ClearAllContexts();
-
-   }
 
    /////////////////////////////////////////////////////////
    void dtPhysicsTests::testPrimitiveType()
