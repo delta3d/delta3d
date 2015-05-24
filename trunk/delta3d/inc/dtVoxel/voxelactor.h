@@ -29,10 +29,13 @@
 
 namespace dtVoxel
 {
+   class VoxelGrid;
 
    class DT_VOXEL_EXPORT VoxelActor: public dtGame::GameActorProxy
    {
    public:
+      typedef dtGame::GameActorProxy BaseClass;
+
       VoxelActor();
 
       /*override*/ void BuildPropertyMap();
@@ -43,10 +46,17 @@ namespace dtVoxel
       openvdb::GridBase::Ptr GetGrid(int i);
       size_t GetNumGrids() const;
 
+      virtual void OnEnteredWorld();
+
       /**
        * Returns a new grid that contains the collision set of the given bounding box.
        */
       openvdb::GridBase::Ptr CollideWithAABB(osg::BoundingBox& bb, int gridIdx = 0);
+
+      DT_DECLARE_ACCESSOR_INLINE(osg::Vec3, GridDimensions)
+      DT_DECLARE_ACCESSOR_INLINE(osg::Vec3, BlockDimensions)
+      DT_DECLARE_ACCESSOR_INLINE(osg::Vec3, CellDimensions)
+      DT_DECLARE_ACCESSOR_INLINE(osg::Vec3, TextureResolution)
 
    protected:
       /**
@@ -57,6 +67,7 @@ namespace dtVoxel
       virtual ~VoxelActor();
       /*override*/ void CreateDrawable();
    private:
+      dtCore::RefPtr<VoxelGrid> mGrid;
       openvdb::GridPtrVecPtr mGrids;
    };
 

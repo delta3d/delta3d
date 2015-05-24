@@ -41,9 +41,9 @@ namespace dtVoxel
       
       const osg::Vec3& GetOffset();
       
-      void Allocate(const osg::Vec3i& textureResolution);
+      void Allocate(VoxelActor& voxelActor, openvdb::GridBase::Ptr localGrid, const osg::Vec3i& textureResolution);
       
-      void AllocateCell(const osg::Vec3& pos, const osg::Vec3i& textureResolution);
+      //void AllocateCell(const osg::Vec3& pos, const osg::Vec3i& textureResolution);
       
       VoxelCell* GetCellFromIndex(int x, int y, int z);      
       VoxelCell* GetCellFromPos(const osg::Vec3& pos);
@@ -55,6 +55,8 @@ namespace dtVoxel
 
    protected:
    
+      openvdb::GridBase::Ptr ConvertToLocalResolutionGrid(openvdb::GridBase::Ptr);
+
    private:
       osg::Vec3 mWSDimensions;
       osg::Vec3 mWSCellDimensions;

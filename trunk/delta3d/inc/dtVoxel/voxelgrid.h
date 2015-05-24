@@ -23,7 +23,7 @@
 #include <dtVoxel/export.h>
 #include <dtVoxel/voxelblock.h>
 #include <dtUtil/getsetmacros.h>
-#include <dtCore/baseactorobject.h>
+#include <dtCore/deltadrawable.h>
 
 #include <osg/Group>
 
@@ -32,7 +32,7 @@ namespace dtVoxel
     /***
     *  A VoxelGrid represents a 3d grid of VoxelBlocks.  
     */
-   class DT_VOXEL_EXPORT VoxelGrid //: public dtCore::BaseActorObject
+   class DT_VOXEL_EXPORT VoxelGrid : public dtCore::DeltaDrawable
    {
    public:
       VoxelGrid();
@@ -40,11 +40,19 @@ namespace dtVoxel
       ///Call Init() before CreateVoxelGrid()
       void Init(const osg::Vec3& grid_offset, const osg::Vec3& dimensions, const osg::Vec3& block_dimensions, const osg::Vec3& cellDimensions, const osg::Vec3i& textureResolution);
       
-      void CreateVoxelGrid(osg::Node* sceneRoot);
+      void CreateGridFromActor(VoxelActor& voxelActor);
       
       VoxelBlock* GetBlockFromIndex(int index);
+      VoxelBlock* GetBlockFromIndex(int x, int y, int z);
       VoxelBlock* GetBlockFromPos(const osg::Vec3& pos);
+      
+      /*virtual*/ osg::Node* GetOSGNode();
+      /*virtual*/ const osg::Node* GetOSGNode() const;
 
+
+      DT_DECLARE_ACCESSOR_INLINE(int, BlocksX)
+      DT_DECLARE_ACCESSOR_INLINE(int, BlocksY)
+      DT_DECLARE_ACCESSOR_INLINE(int, BlocksZ)
       DT_DECLARE_ACCESSOR_INLINE(int, NumBlocks)
       DT_DECLARE_ACCESSOR_INLINE(osg::Vec3, GridOffset)
       DT_DECLARE_ACCESSOR_INLINE(osg::Vec3, WSDimensions)
@@ -54,6 +62,9 @@ namespace dtVoxel
       const osg::Vec3i& GetTextureResolution() const;
 
    protected:
+      DT_DECLARE_ACCESSOR_INLINE(bool, Initialized)
+
+      openvdb::GridBase::Ptr ConvertToLocalResolutionGrid(openvdb::GridBase::Ptr);
       
       virtual ~VoxelGrid();
    

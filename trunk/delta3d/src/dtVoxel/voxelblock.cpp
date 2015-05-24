@@ -43,8 +43,6 @@ namespace dtVoxel
       mOffset = ws_offset;
       mWSCellDimensions = cellSize;
 
-      mVolume = new osgVolume::Volume;
-
    }
 
    bool VoxelBlock::IsAllocated() const
@@ -57,8 +55,9 @@ namespace dtVoxel
       return mOffset;
    }
 
-   void VoxelBlock::Allocate(const osg::Vec3i& textureResolution)
+   void VoxelBlock::Allocate(VoxelActor& voxelActor, openvdb::GridBase::Ptr localGrid, const osg::Vec3i& textureResolution)
    {
+      mVolume = new osgVolume::Volume;
 
       osg::Vec3 gridDim(
          int(std::floor(mWSDimensions[0] / mWSCellDimensions[0])),
@@ -68,57 +67,60 @@ namespace dtVoxel
       int numCells = gridDim[0] * gridDim[1] * gridDim[2];
       //todo catch out of memory exception here
       mCells = new VoxelCell[numCells];
+     
 
-      //osg::Vec3 halfCell = mWSCellDimensions * 0.5f;
-
-      osg::Vec3 offset = mOffset;
-      //offset[0] = halfCell[0] + std::floor(mWSDimensions[0] / 2.0f);
-      //offset[1] = halfCell[1] + std::floor(mWSDimensions[1] / 2.0f);
-      //offset[2] = halfCell[2] + std::floor(mWSDimensions[2] / 2.0f);
-
-      VoxelCell* cellToInit = &mCells[0];
-      for (int z = 0; z < gridDim[2]; ++z)
+      //VoxelCell* cellToInit = &mCells[0];
+      for (unsigned int z = 0; z < gridDim[2]; ++z)
       {
-         for (int y = 0; y < gridDim[1]; ++y)
+         for (unsigned int y = 0; y < gridDim[1]; ++y)
          {
             for (unsigned int x = 0; x < gridDim[0]; ++x)
             {
                osg::Vec3 pos(x * mWSCellDimensions[0], y * mWSCellDimensions[1], z * mWSCellDimensions[2]);
+               osg::Vec3 offsetFrom = pos + mOffset;
+               osg::Vec3 offsetTo = offsetFrom + mWSCellDimensions;
 
                osg::Matrix transform;
                transform.makeScale(1.0f, 1.0f, 1.0f); //compute offset
-               transform.setTrans(pos + offset);
+               transform.setTrans(offsetFrom);
 
-               //keeping a pointer and incrementing it should be much faster for a large contiguous dataset
-               //int cellIndex = (z * mGridDimensions[1] * mGridDimensions[0]) + (y * mGridDimensions[0]) + x;
+               //todo using local grid should be faster
+               osg::BoundingBox bb(offsetFrom, offsetTo);
+               openvdb::GridBase::Ptr vdbGrid = voxelActor.CollideWithAABB(bb);
 
-               cellToInit->Init(transform, mWSCellDimensions, textureResolution);
+               if (vdbGrid != NULL && !vdbGrid->empty())
+               {
+                  //keeping a pointer and incrementing it should be much faster for a large contiguous dataset
+                  int cellIndex = (z * gridDim[1] * gridDim[0]) + (y * gridDim[0]) + x;
 
-               //if (hackycount++ < 10)
-               mVolume->addChild(cellToInit->GetVolumeTile());
+                  //cellToInit->Init(transform, mWSCellDimensions, textureResolution);
+                  mCells[cellIndex].Init(vdbGrid, transform, mWSCellDimensions, textureResolution);
 
+                  //todo- should these be spatialized?
+                  mVolume->addChild(mCells[cellIndex].GetVolumeTile());
+               }
 
-               ++cellToInit;
+               //++cellToInit;
             }
          }
       }
 
    }
 
-   void VoxelBlock::AllocateCell(const osg::Vec3& pos, const osg::Vec3i& textureResolution)
-   {
-      VoxelCell* cell = GetCellFromPos(pos);
-      if (cell != NULL)
-      {
-         //todo avoid allocation here
-         cell->AllocateImage(textureResolution[0], textureResolution[1], textureResolution[2]);
-      }
-      else
-      {
-         LOG_ERROR("Cell position out of range.");
-      }
+   //void VoxelBlock::AllocateCell(const osg::Vec3& pos, const osg::Vec3i& textureResolution)
+   //{
+   //   VoxelCell* cell = GetCellFromPos(pos);
+   //   if (cell != NULL)
+   //   {
+   //      //todo avoid allocation here
+   //      cell->AllocateImage(textureResolution[0], textureResolution[1], textureResolution[2]);
+   //   }
+   //   else
+   //   {
+   //      LOG_ERROR("Cell position out of range.");
+   //   }
 
-   }
+   //}
 
 
    VoxelCell* VoxelBlock::GetCellFromIndex(int x, int y, int z)
