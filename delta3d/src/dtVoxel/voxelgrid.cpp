@@ -18,13 +18,24 @@
  */
 
 #include <dtVoxel/voxelgrid.h>
+#include <dtUtil/log.h>
 #include <iostream>
 
 namespace dtVoxel
 {
 
    VoxelGrid::VoxelGrid()
-      : mNumBlocks(0)
+      : mBlocksX(0)
+      , mBlocksY(0)
+      , mBlocksZ(0)
+      , mNumBlocks(0)
+      , mGridOffset()
+      , mWSDimensions()
+      , mBlockDimensions()
+      , mCellDimensions()
+      , mInitialized(false)
+      , mTextureResolution()
+      , mRootNode(NULL)
       , mBlocks(NULL)
    {
    }
@@ -41,37 +52,66 @@ namespace dtVoxel
       mCellDimensions = cellDimensions;
       mTextureResolution = textureResolution;
 
-      int blocksX = int(std::floor(mWSDimensions[0] / mBlockDimensions[0]));
-      int blocksY = int(std::floor(mWSDimensions[1] / mBlockDimensions[1]));
+      mBlocksX = int(std::floor(mWSDimensions[0] / mBlockDimensions[0]));
+      mBlocksY = int(std::floor(mWSDimensions[1] / mBlockDimensions[1]));
+      mBlocksZ = int(std::floor(mWSDimensions[2] / mBlockDimensions[2]));
 
-      mNumBlocks = blocksX * blocksY;
+      mNumBlocks = mBlocksX * mBlocksY * mBlocksZ;
+
+      mInitialized = true;
    }
 
-   void VoxelGrid::CreateVoxelGrid(osg::Node* sceneRoot)
+   void VoxelGrid::CreateGridFromActor(VoxelActor& voxelActor)
    {
+      if (!mInitialized)
+      {
+         LOG_ERROR("VoxelGrid has not been initialized.");
+         return;
+      }
+
       mRootNode = new osg::Group();
 
       mBlocks = new VoxelBlock[mNumBlocks];
 
-      int blocksX = int(std::floor(mWSDimensions[0] / mBlockDimensions[0]));
-      int blocksY = int(std::floor(mWSDimensions[1] / mBlockDimensions[1]));
-
       dtCore::RefPtr<osg::Group> currentGroup = NULL;
-      for (int x = 0; x < blocksX; x++)
+      
+      for (int z = 0; z < mBlocksZ; z++)
       {
-         for (int y = 0; y < blocksY; y++)
+         for (int y = 0; y < mBlocksY; y++)         
          {
-            osg::Vec3 offset = mGridOffset;
-            offset[0] += x * mBlockDimensions[0];
-            offset[1] += y * mBlockDimensions[1];
-            mBlocks[(x * blocksY) + y].Init(mBlockDimensions, offset, mCellDimensions);
-            mBlocks[(x * blocksY) + y].Allocate(mTextureResolution);
+            for (int x = 0; x < mBlocksX; x++)
+            {
+               VoxelBlock* curBlock = GetBlockFromIndex(x, y, z);
 
-            mRootNode->addChild(mBlocks[(x * blocksY) + y].GetOSGVolume());
+               osg::Vec3 offsetFrom = mGridOffset;
+               offsetFrom[0] += x * mBlockDimensions[0];
+               offsetFrom[1] += y * mBlockDimensions[1];
+               offsetFrom[2] += z * mBlockDimensions[2];
+
+               osg::Vec3 offsetTo = offsetFrom + mBlockDimensions;
+
+               curBlock->Init(mBlockDimensions, offsetFrom, mCellDimensions);
+
+               osg::BoundingBox bb(offsetFrom, offsetTo);
+               openvdb::GridBase::Ptr vdbGrid = voxelActor.CollideWithAABB(bb);
+
+               if (vdbGrid != NULL && !vdbGrid->empty())
+               {
+                  curBlock->Allocate(voxelActor, vdbGrid, mTextureResolution);
+
+                  //todo- spatially subdivide
+                  mRootNode->addChild(curBlock->GetOSGVolume());
+               }
+            }
          }
       }
+   }
 
-      sceneRoot->asGroup()->addChild(mRootNode);
+   VoxelBlock* VoxelGrid::GetBlockFromIndex(int x, int y, int z)
+   {
+      int index = (z * mBlocksY * mBlocksX) + (y * mBlocksX) + x;
+      
+      return &mBlocks[index];
    }
 
 
@@ -104,5 +144,14 @@ namespace dtVoxel
       return mTextureResolution;
    }
 
+   osg::Node* VoxelGrid::GetOSGNode()
+   {
+      return mRootNode.get();
+   }
+
+   const osg::Node* VoxelGrid::GetOSGNode() const
+   {
+      return mRootNode.get();
+   }
 
 } /* namespace dtVoxel */

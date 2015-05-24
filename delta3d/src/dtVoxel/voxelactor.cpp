@@ -18,6 +18,7 @@
  */
 
 #include <dtVoxel/voxelactor.h>
+#include <dtVoxel/voxelgriddebugdrawable.h>
 #include <dtCore/transformable.h>
 #include <dtCore/propertymacros.h>
 #include <openvdb/openvdb.h>
@@ -64,9 +65,17 @@ namespace dtVoxel
    /////////////////////////////////////////////////////
    void VoxelActor::BuildPropertyMap()
    {
+      BaseClass::BuildPropertyMap();
+
       typedef dtCore::PropertyRegHelper<VoxelActor> RegHelper;
       static dtUtil::RefString GROUP("VoxelActor");
       RegHelper regHelper(*this, this, GROUP);
+      
+      DT_REGISTER_PROPERTY_WITH_NAME_AND_LABEL(GridDimensions, "Grid Dimensions", "Grid Dimensions", "The size of the grid to allocate into blocks.", RegHelper, regHelper);
+      DT_REGISTER_PROPERTY_WITH_NAME_AND_LABEL(BlockDimensions, "Block Dimensions", "Block Dimensions", "The size of the blocks within the grid.", RegHelper, regHelper);
+      DT_REGISTER_PROPERTY_WITH_NAME_AND_LABEL(CellDimensions, "Cell Dimensions", "Cell Dimensions", "The size of the cells within the blocks", RegHelper, regHelper);
+      DT_REGISTER_PROPERTY_WITH_NAME_AND_LABEL(TextureResolution, "Texture Resolution", "Texture Resolution", "The dimensions of the 3d texture which holds individual voxels within a single cell.", RegHelper, regHelper);
+
       DT_REGISTER_RESOURCE_PROPERTY(dtCore::DataType::TERRAIN, Database, "Database", "Voxel database file", RegHelper, regHelper);
    }
 
@@ -116,8 +125,33 @@ namespace dtVoxel
    /////////////////////////////////////////////////////
    void VoxelActor::CreateDrawable()
    {
-      // This is temporary
-      SetDrawable(*new dtCore::Transformable("VoxelDrawable"));
+      dtCore::RefPtr<VoxelGridDebugDrawable> dd = new VoxelGridDebugDrawable();
+
+      SetDrawable(*dd);
    }
+
+
+   void VoxelActor::OnEnteredWorld()
+   {
+      mGrid = new VoxelGrid();
+
+      /*SetDatabase(dtCore::ResourceDescriptor("StaticMeshes:delta3d_island.vdb"));
+      osg::Vec3 offset(0.0, 0.0, -100.0);
+      osg::Vec3 dim(500, 500, 200);
+      osg::Vec3 blockDim(25, 25, 25);
+      osg::Vec3 cellDim(5, 5, 5);
+      osg::Vec3i texRes(16, 16, 16);*/
+
+      osg::Vec3 offset = GetTranslation();
+      osg::Vec3i texRes(int(mTextureResolution.x()), int(mTextureResolution.y()), int(mTextureResolution.z()));
+
+      mGrid->Init(offset, mGridDimensions, mBlockDimensions, mCellDimensions, texRes);
+      mGrid->CreateGridFromActor(*this);
+
+      VoxelGridDebugDrawable* dd = GetDrawable<VoxelGridDebugDrawable>();
+      dd->CreateDebugDrawable(*mGrid);
+
+   }
+
 
 } /* namespace dtVoxel */

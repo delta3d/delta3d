@@ -21,11 +21,14 @@
 #define DTVOXEL_VOXELCELL_H_
 
 #include <dtVoxel/export.h>
+#include <dtVoxel/voxelactor.h>
 #include <dtUtil/getsetmacros.h>
 
 #include <osg/Vec3>
 #include <osg/Matrix>
 #include <osgVolume/VolumeTile>
+
+#include <openvdb/openvdb.h>
 
 namespace dtVoxel
 {
@@ -38,8 +41,10 @@ namespace dtVoxel
       VoxelCell();
       virtual ~VoxelCell();
 
-      void Init(osg::Matrix& transform, const osg::Vec3& cellSize, const osg::Vec3i& texture_resolution);
-      void AllocateImage(int width, int height, int slices);
+      void Init(openvdb::GridBase::Ptr localGrid, osg::Matrix& transform, const osg::Vec3& cellSize, const osg::Vec3i& texture_resolution);
+      void AllocateImage(openvdb::GridBase::Ptr gridPtr, const osg::Vec3& cellSize, int width, int height, int slices);
+
+      bool IsAllocated();
 
       osgVolume::ImageLayer* GetImageLayer();
       const osgVolume::ImageLayer* GetImageLayer() const;
@@ -49,6 +54,7 @@ namespace dtVoxel
 
    protected:
       
+      //openvdb::GridBase::Ptr CreateLocalResolutionGrid(openvdb::GridBase::Ptr gridPtr, const osg::Vec3& cellSize);
    
    private:
        dtCore::RefPtr<osgVolume::ImageLayer> mImage;

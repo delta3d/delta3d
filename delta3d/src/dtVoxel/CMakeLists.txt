@@ -14,6 +14,7 @@ SET( LIB_SOURCES
   voxelcell.cpp
   voxelblock.cpp
   voxelgrid.cpp
+  voxelgriddebugdrawable.cpp
 ) 
 
 INCLUDE_DIRECTORIES(${OPENEXR_INCLUDE_DIR} ${TBB_INCLUDE_DIR} ${OPENVDB_INCLUDE_DIR})

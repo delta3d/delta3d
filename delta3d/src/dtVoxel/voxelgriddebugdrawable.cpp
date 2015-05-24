@@ -61,22 +61,26 @@ namespace dtVoxel
          osg::Vec3 offset = grid.GetGridOffset();
 
          dtVoxel::VoxelBlock* curBlock = grid.GetBlockFromIndex(blockCount);
-
-         for (unsigned int x = 0; x < dim[0]; ++x)
+         if (curBlock->IsAllocated())
          {
-            for (unsigned int y = 0; y < dim[1]; ++y)
+            for (unsigned int x = 0; x < dim[0]; ++x)
             {
-               for (unsigned int z = 0; z < dim[2]; ++z)
+               for (unsigned int y = 0; y < dim[1]; ++y)
                {
-                  dtVoxel::VoxelCell* curCell = curBlock->GetCellFromIndex(x, y, z);
+                  for (unsigned int z = 0; z < dim[2]; ++z)
+                  {
+                     dtVoxel::VoxelCell* curCell = curBlock->GetCellFromIndex(x, y, z);
+                     if (curCell->IsAllocated())
+                     {
+                        osg::Vec3 pos = curCell->GetOffset();
 
-                  osg::Vec3 pos = curCell->GetOffset();
-
-                  osg::Box* box = new osg::Box(pos, mCellSize.x(), mCellSize.y(), mCellSize.z());
-                  osg::ShapeDrawable* sd = new osg::ShapeDrawable(box);
-                  osg::Geode* sdg = new osg::Geode();
-                  sdg->addDrawable(sd);
-                  mSceneRoot->addChild(sdg);
+                        osg::Box* box = new osg::Box(pos, mCellSize.x(), mCellSize.y(), mCellSize.z());
+                        osg::ShapeDrawable* sd = new osg::ShapeDrawable(box);
+                        osg::Geode* sdg = new osg::Geode();
+                        sdg->addDrawable(sd);
+                        mSceneRoot->addChild(sdg);
+                     }
+                  }
                }
             }
          }

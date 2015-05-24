@@ -21,7 +21,7 @@
 #define DTVOXEL_VoxelGridDebugDrawable_H_
 
 #include <dtVoxel/export.h>
-#include <dtCore/deltadrawable.h>
+#include <dtCore/transformable.h>
 
 #include <dtVoxel/voxelgrid.h>
 
@@ -30,7 +30,7 @@ namespace dtVoxel
     /***
     *  VoxelGridDebugDrawable is a DeltaDrawable that performs debug rendering of a VoxelGrid
     */
-   class DT_VOXEL_EXPORT VoxelGridDebugDrawable : public dtCore::DeltaDrawable
+   class DT_VOXEL_EXPORT VoxelGridDebugDrawable : public dtCore::Transformable
    {
    public:
       VoxelGridDebugDrawable();
