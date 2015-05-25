@@ -9,6 +9,7 @@ file(GLOB LIB_PUBLIC_HEADERS
    )
 
 SET( LIB_SOURCES
+  volumescene.cpp
   voxelactor.cpp
   voxelactorregistry.cpp
   voxelcell.cpp
@@ -22,6 +23,7 @@ INCLUDE_DIRECTORIES(${OPENEXR_INCLUDE_DIR} ${TBB_INCLUDE_DIR} ${OPENVDB_INCLUDE_
 SET(LIB_DEPS 
     ${DTUTIL_LIBRARY}
     ${DTCORE_LIBRARY}
+    ${DTRENDER_LIBRARY}
     ${DTPHYSICS_LIBRARY}
     ${TBB_LIBRARIES}
     ${OPENEXR_Half_LIBRARY}

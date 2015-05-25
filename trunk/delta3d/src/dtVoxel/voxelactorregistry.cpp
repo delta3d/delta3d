@@ -18,12 +18,15 @@
  */
 #include <dtVoxel/voxelactorregistry.h>
 #include <dtVoxel/voxelactor.h>
+#include <dtVoxel/volumescene.h>
 
 #include <dtCore/actorfactory.h> // for auto register
 
 namespace dtVoxel
 { // "display name", "category", "description/tooltip"
    dtCore::RefPtr<dtCore::ActorType> VoxelActorRegistry::VOXEL_ACTOR_TYPE(new dtCore::ActorType("Voxel Actor", "dtVoxel", "Actor for loading OpenVDB voxel grids."));
+   
+   dtCore::RefPtr<dtCore::ActorType> VoxelActorRegistry::VOLUME_SCENE_ACTOR_TYPE(new dtCore::ActorType("Volume Scene Actor", "dtVoxel", "A scene for rendering OSG Volumes."));
 
 
    extern "C" DT_VOXEL_EXPORT dtCore::ActorPluginRegistry* CreatePluginRegistry()
@@ -56,6 +59,7 @@ namespace dtVoxel
 
       // Generic Task Actor
       mActorFactory->RegisterType<VoxelActor>(VOXEL_ACTOR_TYPE.get());
+      mActorFactory->RegisterType<VolumeSceneActor>(VOLUME_SCENE_ACTOR_TYPE.get());
    }
 
    //////////////////////////////////////////////////////////////////////////
