@@ -36,6 +36,7 @@ namespace dtVoxel
    public:
 
       static dtCore::RefPtr<dtCore::ActorType> VOXEL_ACTOR_TYPE;
+      static dtCore::RefPtr<dtCore::ActorType> VOLUME_SCENE_ACTOR_TYPE;
 
       /**
        * Constructs the voxel actor registry.
