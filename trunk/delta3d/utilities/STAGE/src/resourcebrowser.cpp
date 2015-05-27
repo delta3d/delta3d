@@ -28,17 +28,15 @@
  */
 #include <prefix/stageprefix.h>
 #include <QtGui/QAction>
+#include <QtCore/QString>
 
 #include <dtEditQt/resourcebrowser.h>
 #include <dtEditQt/tabcontainer.h>
 #include <dtEditQt/tabwrapper.h>
 #include <dtEditQt/staticmeshbrowser.h>
 #include <dtEditQt/skeletalmeshbrowser.h>
-#include <dtEditQt/particlebrowser.h>
 #include <dtEditQt/texturebrowser.h>
 #include <dtEditQt/soundbrowser.h>
-//#include <dtEditQt/characterbrowser.h>
-#include <dtEditQt/terrainbrowser.h>
 #include <dtEditQt/shaderbrowser.h>
 #include <dtEditQt/directorbrowser.h>
 #include <dtEditQt/editoractions.h>
@@ -56,27 +54,16 @@ namespace dtEditQt
       // container
       mTabC              = new TabContainer(this);
 
-      // tabs
-      mTabMesh          = new TabWrapper(this);
-      mTabSkeletal      = new TabWrapper(this);
-      mTabSound         = new TabWrapper(this);
-      mTabParticle      = new TabWrapper(this);
-      mTabTexture       = new TabWrapper(this);
-      mTabTerrain       = new TabWrapper(this);
-      mTabShader        = new TabWrapper(this);
-      mTabDirector      = new TabWrapper(this);
-
       // widgets
-      mMeshWidget       = new StaticMeshBrowser(dtCore::DataType::STATIC_MESH, this);
-      mSkeletalWidget   = new SkeletalMeshBrowser(dtCore::DataType::SKELETAL_MESH, this);
-      mSoundWidget      = new SoundBrowser(dtCore::DataType::SOUND, this);
-      mParticleWidget   = new ParticleBrowser(dtCore::DataType::PARTICLE_SYSTEM, this);
-      mTextureWidget    = new TextureBrowser(dtCore::DataType::TEXTURE, this);
-      mTerrainWidget    = new TerrainBrowser(dtCore::DataType::TERRAIN, this);
-      mShaderWidget     = new ShaderBrowser(dtCore::DataType::SHADER, this);
-      mDirectorWidget   = new DirectorBrowser(dtCore::DataType::DIRECTOR, this);
-
-      addTabs();
+      addTab(new StaticMeshBrowser(dtCore::DataType::STATIC_MESH, this, true, true));
+      addTab(new SkeletalMeshBrowser(dtCore::DataType::SKELETAL_MESH, this));
+      addTab(new SoundBrowser(dtCore::DataType::SOUND, this));
+      addTab(new StaticMeshBrowser(dtCore::DataType::PARTICLE_SYSTEM, this, true, true));
+      addTab(new TextureBrowser(dtCore::DataType::TEXTURE, this));
+      addTab(new StaticMeshBrowser(dtCore::DataType::VOLUME, this, false, false));
+      addTab(new StaticMeshBrowser(dtCore::DataType::TERRAIN, this, false, false));
+      addTab(new ShaderBrowser(dtCore::DataType::SHADER, this));
+      addTab(new DirectorBrowser(dtCore::DataType::DIRECTOR, this));
 
       setWidget(mTabC->getWidget());
    }
@@ -85,58 +72,14 @@ namespace dtEditQt
    ResourceBrowser::~ResourceBrowser() {}
 
    /////////////////////////////////////////////////////////////////////////////////
-   void ResourceBrowser::addTabs()
+   void ResourceBrowser::addTab(ResourceAbstractBrowser* rab)
    {
+      TabWrapper* tabW = new TabWrapper();
       // Static Mesh tab
-      mTabMesh->setWidget(mMeshWidget);
-      mTabMesh->setName("Static Mesh");
-      mTabC->addTab(mTabMesh);
-      //mTabC->addTab(mTabMesh, UIResources::ICON_STATICMESH_TAB.c_str());
-
-      // Skeletal Mesh tab
-      mTabSkeletal->setWidget(mSkeletalWidget);
-      mTabSkeletal->setName("Skeletal Mesh");
-      mTabC->addTab(mTabSkeletal);
-
-      // Sound tab
-      mTabSound->setWidget(mSoundWidget);
-      mTabSound->setName("Sound");
-      mTabC->addTab(mTabSound);
-      //mTabC->addTab(mTabSound, UIResources::ICON_SOUND_TAB.c_str());
-
-      // Particle tab
-      mTabParticle->setWidget(mParticleWidget);
-      mTabParticle->setName("Particle");
-      mTabC->addTab(mTabParticle);
-      //mTabC->addTab(mTabParticle, UIResources::ICON_PARTICLE_TAB.c_str());
-
-      // Texture tab
-      mTabTexture->setWidget(mTextureWidget);
-      mTabTexture->setName("Texture");
-      mTabC->addTab(mTabTexture);
-      //mTabC->addTab(mTabTexture, UIResources::ICON_TEXTURE_TAB.c_str());
-
-      //// Character tab
-      //mTabCharacter->setWidget(mCharacterWidget);
-      //mTabCharacter->setName("Characters");
-      //mTabC->addTab(mTabCharacter);
-      //mTabC->addTab(mTabCharacter, UIResources::ICON_CHARACTER_TAB.c_str());
-
-      //// Terrain tab
-      mTabTerrain->setWidget(mTerrainWidget);
-      mTabTerrain->setName("Terrain");
-      mTabC->addTab(mTabTerrain);
-      //mTabC->addTab(mTabTerrain, UIResources::ICON_TERRAIN_TAB.c_str());
-
-      // Shader tab
-      mTabShader->setWidget(mShaderWidget);
-      mTabShader->setName("Shader");
-      mTabC->addTab(mTabShader);
-
-      // Director tab
-      mTabDirector->setWidget(mDirectorWidget);
-      mTabDirector->setName("Director");
-      mTabC->addTab(mTabDirector);
+      tabW->setWidget(rab);
+      QString name = tr(rab->GetResourceType().GetDisplayName().c_str());
+      tabW->setName(name);
+      mTabC->addTab(tabW);
    }
 
    /////////////////////////////////////////////////////////////////////////////////

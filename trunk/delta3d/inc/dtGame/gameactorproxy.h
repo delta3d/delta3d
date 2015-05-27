@@ -65,7 +65,7 @@ namespace dtGame
    class DT_GAME_EXPORT GameActorProxy : public ActorTree, public dtGame::ActorComponentBase
    {
    public:
-      typedef dtCore::TransformableActorProxy BaseClass;
+      typedef ActorTree BaseClass;
 
       DT_DECLARE_VIRTUAL_REF_INTERFACE_INLINE
 

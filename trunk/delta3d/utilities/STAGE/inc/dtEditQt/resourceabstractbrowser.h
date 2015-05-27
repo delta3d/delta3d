@@ -77,6 +77,8 @@ namespace dtEditQt
        */
       virtual ~ResourceAbstractBrowser(){}
 
+      dtCore::DataType& GetResourceType() const { return *mResourceType; }
+
       /**
        * Adds a tree node
        * @brief This adds a new node to the tree

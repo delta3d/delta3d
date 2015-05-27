@@ -432,14 +432,6 @@ namespace dtEditQt
          addDockWidget(Qt::LeftDockWidgetArea, mActorSearchDockWidg);
       }
 
-      if(config.GetVariable(layoutSection, CONF_MGR_SHOW_RESOURCE_BROWSER) != "false")
-      {
-         mResourceBrowser = new ResourceBrowser(this);
-         mResourceBrowser->setObjectName("ResourceBrowser");
-         mResourceBrowser->setFeatures(QDockWidget::AllDockWidgetFeatures);
-         addDockWidget(Qt::RightDockWidgetArea, mResourceBrowser);
-      }
-
       if(config.GetVariable(layoutSection, CONF_MGR_SHOW_ACTOR_TREE_DOCK) != "false")
       {
          mActorTreeDock = new QDockWidget(this);
@@ -468,6 +460,14 @@ namespace dtEditQt
       // in the central widget of the main window.
       mMainViewportParent = setupViewports();
       setCentralWidget(mMainViewportParent);
+
+      if(config.GetVariable(layoutSection, CONF_MGR_SHOW_RESOURCE_BROWSER) != "false")
+      {
+         mResourceBrowser = new ResourceBrowser(this);
+         mResourceBrowser->setObjectName("ResourceBrowser");
+         mResourceBrowser->setFeatures(QDockWidget::AllDockWidgetFeatures);
+         addDockWidget(Qt::RightDockWidgetArea, mResourceBrowser);
+      }
    }
 
    ///////////////////////////////////////////////////////////////////////////////

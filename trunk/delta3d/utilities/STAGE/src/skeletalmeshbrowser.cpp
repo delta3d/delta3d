@@ -80,9 +80,6 @@ namespace dtEditQt
       // create a new scene for the skeletal mesh viewport
       meshScene = new dtCore::Scene();
 
-      camera = new StageCamera();
-      camera->makePerspective(60.0f,1.333f,0.01f,100000.0f);
-
       QSplitter* splitter = new QSplitter(Qt::Vertical,this);
 
       splitter->addWidget(previewGroup());
@@ -127,6 +124,8 @@ namespace dtEditQt
 
       // Assign the viewport a new scene
       perspView->setScene(meshScene.get());
+      camera = perspView->getCamera();
+      camera->makePerspective(60.0f,1.333f,0.01f,100000.0f);
 
       // By default, perspective viewports have their camera set to the world view
       // camera.  The world view camera is what is used in the main perspective view.

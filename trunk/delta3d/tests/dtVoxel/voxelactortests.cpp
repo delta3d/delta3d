@@ -22,6 +22,7 @@
 #include <dtUtil/exception.h>
 #include <dtUtil/coordinates.h>
 #include <dtCore/refptr.h>
+#include <dtCore/project.h>
 #include <dtVoxel/voxelactor.h>
 #include <dtVoxel/voxelactorregistry.h>
 #include <dtVoxel/aabbintersector.h>
@@ -34,6 +35,7 @@ namespace dtVoxel
       typedef dtGame::BaseGMTestFixture BaseClass;
       CPPUNIT_TEST_SUITE(VoxelActorTests);
 
+         CPPUNIT_TEST(testVolumeLibraryExtRegistration);
          CPPUNIT_TEST(testVoxelActor);
          CPPUNIT_TEST(testVoxelColliderAABB);
 
@@ -46,6 +48,19 @@ namespace dtVoxel
          names.push_back(voxelLib);
       }
 
+      void testVolumeLibraryExtRegistration()
+      {
+         dtCore::Project::ResourceTree rt;
+         dtCore::Project::GetInstance().GetResourcesOfType(dtCore::DataType::VOLUME, rt);
+         CPPUNIT_ASSERT(rt.size() > 0);
+         bool found = false;
+         dtCore::Project::ResourceTree::iterator ti = rt.get_tree_iterator();
+         dtCore::ResourceDescriptor rd("Volumes:delta3d_island.vdb");
+         ti = ti.tree_ref().find(dtCore::ResourceTreeNode("delta3d_island.vdb", "Volumes", &rd, 0));
+         found = ti != rt.end() && ti->getResource().GetResourceIdentifier() == "Volumes:delta3d_island.vdb";
+         CPPUNIT_ASSERT(found);
+      }
+
       void testVoxelActor()
       {
          try
@@ -53,7 +68,7 @@ namespace dtVoxel
             dtCore::RefPtr<dtVoxel::VoxelActor> voxelActor;
             mGM->CreateActor(*VoxelActorRegistry::VOXEL_ACTOR_TYPE, voxelActor);
             CPPUNIT_ASSERT_EQUAL(voxelActor->GetNumGrids(), size_t(0U));
-            voxelActor->SetDatabase(dtCore::ResourceDescriptor("StaticMeshes:delta3d_island.vdb"));
+            voxelActor->SetDatabase(dtCore::ResourceDescriptor("Volumes:delta3d_island.vdb"));
             CPPUNIT_ASSERT_EQUAL(voxelActor->GetNumGrids(), size_t(1U));
          }
          catch(const dtUtil::Exception& ex)
@@ -68,7 +83,7 @@ namespace dtVoxel
             dtCore::RefPtr<dtVoxel::VoxelActor> voxelActor;
             mGM->CreateActor(*VoxelActorRegistry::VOXEL_ACTOR_TYPE, voxelActor);
             CPPUNIT_ASSERT_EQUAL(voxelActor->GetNumGrids(), size_t(0U));
-            voxelActor->SetDatabase(dtCore::ResourceDescriptor("StaticMeshes:delta3d_island.vdb"));
+            voxelActor->SetDatabase(dtCore::ResourceDescriptor("Volumes:delta3d_island.vdb"));
             CPPUNIT_ASSERT_EQUAL(voxelActor->GetNumGrids(), size_t(1U));
 
             openvdb::BoolGrid::Ptr grid = boost::dynamic_pointer_cast<openvdb::BoolGrid>(voxelActor->GetGrid(0));

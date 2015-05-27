@@ -211,20 +211,11 @@ namespace {
    {
       bool oneFile = (filenames.size() == 1), firstFile = true;
 
-      for (size_t f = 0, N = filenames.size(); f < N; ++f, firstFile = false) {
-         //openvdb::io::File file(filenames[i]);
-         //std::string version;
-         //        openvdb::GridPtrVecPtr grids;
-         //        openvdb::MetaMap::Ptr meta;
-         //        try {
-         //            file.open();
-         //            grids = file.getGrids();
-         //            meta = file.getMetadata();
-         //            version = file.version();
-         //            file.close();
-         //        } catch (openvdb::Exception& e) {
-         //            OPENVDB_LOG_ERROR(e.what() << " (" << filenames[i] << ")");
-         //        }
+      std::vector<std::string> outFiles;
+
+      for (size_t f = 0, N = filenames.size(); f < N; ++f, firstFile = false)
+      {
+         outFiles.clear();
 
          const std::string& filename = filenames[f];
          std::cout << filename << ' ' << resolution << ' ' << zres << std::endl;
@@ -309,13 +300,18 @@ namespace {
 
             std::string outFile;
             if (splits > 1)
+            {
                outFile = filename + dtUtil::ToString(split) + ".vdb";
+               outFiles.push_back(outFile);
+            }
             else
+            {
                outFile = filename + ".vdb";
+            }
+
 
             openvdb::io::File file(outFile);
             file.write(*grids);
-
 
             if (!oneFile) {
                if (!firstFile) {
@@ -337,7 +333,43 @@ namespace {
                }
             }
          } // For each split
+
+         if (!outFiles.empty())
+         {
+            GridPtrVec grids;
+            for (auto i = outFiles.cbegin(), iend = outFiles.cend(); i != iend; ++i)
+            {
+               const std::string& name = *i;
+               try
+               {
+                  openvdb::io::File file(name);
+                  file.open();
+                  GridPtrVecPtr fileGrids = file.getGrids();
+                  file.close();
+                  grids.insert(grids.end(), fileGrids->begin(), fileGrids->end());
+               }
+               catch (const openvdb::IoError& ioe)
+               {
+                  std::cerr << "Error reopening: " << name << " for merging.  Aborting." << std::endl;
+                  return;
+               }
+            }
+            while (grids.size() > 1)
+            {
+               typename LevelSetType::Ptr bg = boost::dynamic_pointer_cast<LevelSetType>(grids.front());
+               typename LevelSetType::Ptr bg2 = boost::dynamic_pointer_cast<LevelSetType>(grids.back());
+               bg->merge(*bg2);
+               grids.pop_back();
+            }
+            if (!grids.empty())
+            {
+               openvdb::io::File file(filename + ".vdb");
+               file.write(grids);
+            }
+         }
+
       } // For each file
+
    }
 
 } // unnamed namespace

@@ -52,6 +52,8 @@ namespace dtVoxel
          mHitGrid->pruneGrid();
       }
 
+      typename GridType::Ptr GetGrid() const { return mGrid; }
+
       inline void SetIndexBB(const openvdb::math::CoordBBox& box)
       {
          mCollideBox = box;

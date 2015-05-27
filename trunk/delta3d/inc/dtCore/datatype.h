@@ -42,7 +42,7 @@ namespace dtCore
             ULONGINT_ID, SHORTINT_ID, USHORTINT_ID, STRING_ID, BOOLEAN_ID,
             VEC4_ID, VEC3_ID, VEC2_ID, VEC4F_ID, VEC3F_ID, VEC2F_ID, VEC4D_ID, VEC3D_ID, VEC2D_ID,
             RGBCOLOR_ID, RGBACOLOR_ID, GROUP_ID, ACTOR_ID, ENUMERATION_ID, GAMEEVENT_ID,
-            STATICMESH_ID, TEXTURE_ID, TERRAIN_ID, SOUND_ID, PARTICLESYSTEM_ID,
+            STATICMESH_ID, VOLUME_ID, TEXTURE_ID, TERRAIN_ID, SOUND_ID, PARTICLESYSTEM_ID,
             SKELETAL_MESH_ID, ARRAY_ID, CONTAINER_ID, CONTAINER_SELECTOR_ID, PROPERTY_CONTAINER_ID, PREFAB_ID,
             SHADER_ID, DIRECTOR_ID, BIT_MASK_ID
          };
@@ -217,6 +217,11 @@ namespace dtCore
          static DataType STATIC_MESH;
 
          /**
+          * A volume of voxels, point, particles, etc.
+          */
+         static DataType VOLUME;
+
+         /**
           * A Skeletal Mesh
           */
          static DataType SKELETAL_MESH;
@@ -285,16 +290,17 @@ namespace dtCore
       protected:
          virtual int Compare(const std::string& nameString) const;
 
-       private:
          /**
           * Private constructor which registers a new DataType enumeration
           * with the static list of available DataType enumerations.
           */
-          DataType(const std::string& name, const std::string& displayName, bool resource = false, unsigned char id = 0, std::string extensions = "", const std::string& alias = "__NONE__");
+          DataType(const std::string& name, const std::string& displayName, bool resource = false, unsigned char id = 0, const std::string& alias = "__NONE__");
+       private:
 
           bool mResource;
           std::string mAltName, mDisplayName;
           unsigned char mId;
+
    };
 }
 

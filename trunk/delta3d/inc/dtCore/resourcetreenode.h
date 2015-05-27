@@ -36,7 +36,7 @@ namespace dtCore
    class DT_CORE_EXPORT ResourceTreeNode 
    {
       public:
-         ResourceTreeNode() {}
+         ResourceTreeNode(): category(false), mContextSlot(0) {}
 
          ResourceTreeNode(const std::string& nodeText,
                         const std::string& fullCategory, ResourceDescriptor* resource, unsigned slot)

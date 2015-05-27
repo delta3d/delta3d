@@ -36,91 +36,82 @@
 
 namespace dtCore
 {
-   class DefaultResourceTypeHandler: public ResourceTypeHandler
+
+   DefaultResourceTypeHandler::DefaultResourceTypeHandler(DataType& dataType, const std::string& description, const std::map<std::string, std::string>& fileFilters):
+   mDataType(&dataType), mFileFilters(fileFilters), mDescription(description)
    {
-   public:
-      DefaultResourceTypeHandler(DataType& dataType, const std::string& description, const std::map<std::string, std::string>& fileFilters):
-      mDataType(&dataType), mFileFilters(fileFilters), mDescription(description)
+   }
+
+   DefaultResourceTypeHandler::~DefaultResourceTypeHandler()
+   {
+   }
+
+   bool DefaultResourceTypeHandler::HandlesFile(const std::string& path, dtUtil::FileType type) const
+   {
+      if (type != dtUtil::REGULAR_FILE)
+         return false;
+
+      const std::string extension = osgDB::getLowerCaseFileExtension(path);
+      return mFileFilters.find(extension) != mFileFilters.end() || mFileFilters.find("") != mFileFilters.end();
+   }
+
+   ResourceDescriptor DefaultResourceTypeHandler::CreateResourceDescriptor(const std::string& category, const std::string& fileName) const
+   {
+      std::string resultString = mDataType->GetName() + ResourceDescriptor::DESCRIPTOR_SEPARATOR;
+
+      if (!category.empty())
       {
+         resultString += category + ResourceDescriptor::DESCRIPTOR_SEPARATOR;
+      }
+      resultString += fileName;
+
+      return ResourceDescriptor(resultString,resultString);
+   }
+
+   const std::string DefaultResourceTypeHandler::ImportResourceToPath(const std::string& newName, const std::string& srcPath,
+                                                  const std::string& destCategoryPath) const
+   {
+      dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
+      dtUtil::FileType ftype = fileUtils.GetFileInfo(srcPath).fileType;
+
+      if (ftype != dtUtil::REGULAR_FILE)
+      {
+         throw dtCore::ProjectFileNotFoundException(
+                std::string("No such file:\"") + srcPath + "\".", __FILE__, __LINE__);
       }
 
-      virtual ~DefaultResourceTypeHandler()
-      {
-      }
+      std::string extension = osgDB::getFileExtension(srcPath);
+      std::string resourceFileName = newName + '.' + extension;
 
-      virtual bool HandlesFile(const std::string& path, dtUtil::FileType type) const
-      {
-         if (type != dtUtil::REGULAR_FILE)
-            return false;
+      fileUtils.FileCopy(srcPath, destCategoryPath + dtUtil::FileUtils::PATH_SEPARATOR + resourceFileName, true);
+      return resourceFileName;
+   }
 
-         const std::string extension = osgDB::getLowerCaseFileExtension(path);
-         return mFileFilters.find(extension) != mFileFilters.end() || mFileFilters.find("") != mFileFilters.end();
-      }
+   void DefaultResourceTypeHandler::RemoveResource(const std::string& resourcePath) const
+   {
+      dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
+      if (fileUtils.FileExists(resourcePath))
+         fileUtils.FileDelete(resourcePath);
+   }
 
-      virtual ResourceDescriptor CreateResourceDescriptor(
-         const std::string& category, const std::string& fileName) const
-      {
-         std::string resultString = mDataType->GetName() + ResourceDescriptor::DESCRIPTOR_SEPARATOR;
+   bool DefaultResourceTypeHandler::ImportsDirectory() const { return false; }
 
-         if (!category.empty())
-         {
-            resultString += category + ResourceDescriptor::DESCRIPTOR_SEPARATOR;
-         }
-         resultString += fileName;
+   bool DefaultResourceTypeHandler::ResourceIsDirectory() const { return false; }
 
-         return ResourceDescriptor(resultString,resultString);
-      }
+   //this returns false because the resources is not a directory
+   const std::string& DefaultResourceTypeHandler::GetResourceDirectoryExtension() const { return mResourceDirExt; };
 
-      virtual const std::string ImportResourceToPath(const std::string& newName, const std::string& srcPath,
-                                                     const std::string& destCategoryPath) const
-      {
-         dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
-         dtUtil::FileType ftype = fileUtils.GetFileInfo(srcPath).fileType;
+   const std::map<std::string, std::string>& DefaultResourceTypeHandler::GetFileFilters() const
+   {
+      return mFileFilters;
+   }
 
-         if (ftype != dtUtil::REGULAR_FILE)
-         {
-            throw dtCore::ProjectFileNotFoundException(
-                   std::string("No such file:\"") + srcPath + "\".", __FILE__, __LINE__);
-         }
+   const std::string& DefaultResourceTypeHandler::GetTypeHandlerDescription() const
+   {
+      return mDescription;
+   }
 
-         std::string extension = osgDB::getFileExtension(srcPath);
-         std::string resourceFileName = newName + '.' + extension;
-
-         fileUtils.FileCopy(srcPath, destCategoryPath + dtUtil::FileUtils::PATH_SEPARATOR + resourceFileName, true);
-         return resourceFileName;
-      }
-
-      virtual void RemoveResource(const std::string& resourcePath) const
-      {
-         dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
-         if (fileUtils.FileExists(resourcePath))
-            fileUtils.FileDelete(resourcePath);
-      }
-
-      virtual bool ImportsDirectory() const { return false; }
-
-      virtual bool ResourceIsDirectory() const { return false; }
-
-      //this returns false because the resources is not a directory
-      virtual const std::string& GetResourceDirectoryExtension() const { return mResourceDirExt; };
-
-      virtual const std::map<std::string, std::string>& GetFileFilters() const
-      {
-         return mFileFilters;
-      }
-
-      virtual const std::string& GetTypeHandlerDescription() const
-      {
-         return mDescription;
-      }
-
-      virtual const DataType& GetResourceType() const { return *mDataType; }
-   private:
-      DataType* mDataType;
-      std::map<std::string, std::string> mFileFilters;
-      const std::string mResourceDirExt;
-      const std::string mDescription;
-   };
+   const DataType& DefaultResourceTypeHandler::GetResourceType() const { return *mDataType; }
 
    ////////////////////////////////////////////////////////////////////////////////
    class ToLowerClass
@@ -360,6 +351,7 @@ namespace dtCore
    {
       if (resourceType.IsResource())
       {
+         LOGN_DEBUG("resourcehelper.cpp", "Examing handler for file: " + filePath);
          //file and directories handled by handlers MUST have extensions.
          std::string ext = osgDB::getLowerCaseFileExtension(filePath);
 
