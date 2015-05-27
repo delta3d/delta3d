@@ -129,7 +129,7 @@ namespace dtCore
    /**
     * This is a simple case handler that deals with single files.
     */
-   class DefaultResourceTypeHandler: public ResourceTypeHandler
+   class DT_CORE_EXPORT DefaultResourceTypeHandler : public ResourceTypeHandler
    {
    public:
       DefaultResourceTypeHandler(DataType& dataType, const std::string& description, const std::map<std::string, std::string>& fileFilters);
