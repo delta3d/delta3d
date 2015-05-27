@@ -60,6 +60,8 @@
 #include <dtCore/actorfactory.h>
 #include <dtCore/map.h>
 #include <dtCore/resourceactorproperty.h>
+#include <dtGame/actorcomponent.h>
+#include <dtGame/actorcomponentcontainer.h>
 
 #include <dtCore/scene.h>
 #include <dtCore/object.h>
@@ -100,8 +102,6 @@ namespace dtEditQt
       {
          // create a new scene for the static mesh viewport
          meshScene = new dtCore::Scene();
-         previewObject = new dtCore::Object();
-         meshScene->AddChild(previewObject.get());
 
          QSplitter* splitter = new QSplitter(Qt::Vertical, this);
 
@@ -285,46 +285,28 @@ namespace dtEditQt
    void StaticMeshBrowser::displaySelection()
    {
       ResourceTreeWidget* selection = currentSelection();
-      bool validFile = false;
 
       if (selection != NULL)
       {
-         QString file;
-         QString context;
-
-         dtCore::Project& project = dtCore::Project::GetInstance();
-
          // Find the currently selected tree item
          dtCore::ResourceDescriptor resource = EditorData::GetInstance().getCurrentResource(*mResourceType);
 
-         try
+         if (meshScene != nullptr && !resource.IsEmpty())
          {
-            file = QString(project.GetResourcePath(resource).c_str());
-            validFile = true;
-         }
-         catch (dtUtil::Exception&)
-         {
-            validFile = false;
-         }
-
-         if (meshScene != nullptr && file != NULL && validFile == true)
-         {
-            // The following is performed to comply with linux and windows file systems
-            file.replace("\\","/");
-
-            if (meshScene->GetChildIndex(previewObject.get()) == (unsigned)meshScene->GetNumberOfAddedDrawable())
+            if (previewObject != nullptr && previewObject->GetDrawable() != nullptr)
             {
-               meshScene->AddChild(previewObject.get());
+               meshScene->RemoveChild(previewObject->GetDrawable());
             }
 
-            if (previewObject != NULL)
+            previewObject = CreateActor(resource);
+
+            if (previewObject != nullptr && previewObject->GetDrawable<dtCore::Transformable>() != NULL)
             {
-               // Load the new file.
-               previewObject->LoadFile(file.toStdString());
-               previewObject->RecenterGeometryUponLoad();
+               meshScene->AddChild(previewObject->GetDrawable());
+
                perspView->refresh();
 
-               SetCameraLookAt(*camera, *previewObject);
+               SetCameraLookAt(*camera, *previewObject->GetDrawable<dtCore::Transformable>());
 
                perspView->refresh();
                perspView->GetQGLWidget()->setFocus();
@@ -345,7 +327,8 @@ namespace dtEditQt
       if (meshScene != nullptr)
       {
          // When any item is selected, clear the scene
-         meshScene->RemoveChild(previewObject.get());
+         if (previewObject != nullptr && previewObject->GetDrawable() != nullptr)
+            meshScene->RemoveChild(previewObject->GetDrawable());
          perspView->refresh();
       }
 
@@ -410,10 +393,74 @@ namespace dtEditQt
       if (mSelection->isResource() && meshScene != nullptr)
       {
          // When any item is selected, clear the scene
-         meshScene->RemoveChild(previewObject.get());
+         if (previewObject != nullptr && previewObject->GetDrawable() != nullptr)
+            meshScene->RemoveChild(previewObject->GetDrawable());
          perspView->refresh();
          previewBtn->setDisabled(true);
       }
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   dtCore::RefPtr<dtCore::BaseActorObject> StaticMeshBrowser::CreateActor(const dtCore::ResourceDescriptor& rd)
+   {
+      dtCore::RefPtr<dtCore::BaseActorObject> result;
+
+      /**
+       * This nonsense needs to be replaced with simply a Game Actor that has a specific resource added.
+       */
+      dtCore::RefPtr<const dtCore::ActorType> meshActor;
+      std::string propertyName;
+      dtCore::ResourceActorProperty* resourceProp = NULL;
+      if (*mResourceType == dtCore::DataType::PARTICLE_SYSTEM)
+      {
+         meshActor = dtCore::ActorFactory::GetInstance().FindActorType("dtcore", "Particle System");
+         propertyName = "Particle(s) File";
+      }
+      else if (*mResourceType == dtCore::DataType::SKELETAL_MESH)
+      {
+         dtCore::ActorFactory::GetInstance().LoadActorRegistry("dtAnim");
+         meshActor = dtCore::ActorFactory::GetInstance().FindActorType("dtanim", "AnimationGameActor");
+         propertyName = "Skeletal Mesh";
+      }
+      else
+      {
+         meshActor = dtCore::ActorFactory::GetInstance().FindActorType("dtcore","Static Mesh");
+         propertyName = "static mesh";
+      }
+
+
+      if (meshActor.valid())
+      {
+         result = dtCore::ActorFactory::GetInstance().CreateActor(*meshActor).get();
+         if (result.valid())
+         {
+
+            result->GetProperty(propertyName, resourceProp);
+            if (resourceProp == nullptr)
+            {
+               dtGame::ActorComponentVector comps;
+               dtGame::ActorComponentContainer* acc = dynamic_cast<dtGame::ActorComponentContainer*>(result.get());
+               if (acc)
+               {
+                  acc->GetAllComponents(comps);
+               }
+
+               for (unsigned i = 0; i < comps.size() && resourceProp == nullptr; ++i)
+               {
+                  comps[i]->GetProperty(propertyName, resourceProp);
+               }
+            }
+
+            // check to make sure both the mesh actor and the proxy are valid.
+            // If the user has somehow modified the above hard coded static mesh object
+            // the application could potentially be in a dangerous state.
+            if (resourceProp != nullptr)
+            {
+               resourceProp->SetValue(rd);
+            }
+         }
+      }
+      return result;
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -425,66 +472,28 @@ namespace dtEditQt
       {
          LOG_INFO("User Created an Actor - Slot");
 
+         dtCore::RefPtr<dtCore::BaseActorObject> newActor = CreateActor(mSelection->getResourceDescriptor());
 
-         /**
-          * This nonsense needs to be replaced with simply a Game Actor that has a specific resource added.
-          */
-         dtCore::RefPtr<const dtCore::ActorType> meshActor;
-         if (*mResourceType == dtCore::DataType::PARTICLE_SYSTEM)
+         if (newActor.valid())
          {
-            meshActor = dtCore::ActorFactory::GetInstance().FindActorType("dtcore", "Particle System");
-         }
-         else
-         {
-            meshActor = dtCore::ActorFactory::GetInstance().FindActorType("dtcore","Static Mesh");
-         }
-
-
-         // create our new actor proxy from the mesh actor type that was
-         // found by the results of our hard coded search above.
-         if (meshActor != NULL)
-         {
-            dtCore::RefPtr<dtCore::BaseActorObject> proxy =
-               dtCore::ActorFactory::GetInstance().CreateActor(*meshActor).get();
-
-            // check to make sure both the mesh actor and the proxy are valid.
-            // If the user has somehow modified the above hard coded static mesh object
-            // the application could potentially be in a dangerous state.
-            if (proxy.valid())
+            // add the new proxy to the map
+            dtCore::RefPtr<dtCore::Map> mapPtr = EditorData::GetInstance().getCurrentMap();
+            if (mapPtr.valid())
             {
-               // grab the actor property type
-               dtCore::ResourceActorProperty* resourceProp = dynamic_cast<dtCore::ResourceActorProperty *>
-                  (proxy->GetProperty("static mesh"));
-               if (resourceProp == NULL)
-               {
-                  resourceProp = dynamic_cast<dtCore::ResourceActorProperty*>
-                     (proxy->GetProperty("particle file"));
-               }
-
-               if (resourceProp != NULL)
-               {
-                  resourceProp->SetValue(mSelection->getResourceDescriptor());
-               }
-
-               // add the new proxy to the map
-               dtCore::RefPtr<dtCore::Map> mapPtr = EditorData::GetInstance().getCurrentMap();
-               if (mapPtr.valid())
-               {
-                  EditorActions::GetInstance().AddActorToMap(*proxy, *mapPtr, true);
-               }
-
-               // Let the world know that a new proxy exists
-               EditorEvents::GetInstance().emitBeginChangeTransaction();
-               EditorEvents::GetInstance().emitActorProxyCreated(proxy, false);
-               ViewportManager::GetInstance().placeProxyInFrontOfCamera(proxy.get());
-               EditorEvents::GetInstance().emitEndChangeTransaction();
-
-               // Now, let the world that it should select the new actor proxy.
-               std::vector< dtCore::RefPtr<dtCore::BaseActorObject> > actors;
-
-               actors.push_back(proxy);
-               EditorEvents::GetInstance().emitActorsSelected(actors);
+               EditorActions::GetInstance().AddActorToMap(*newActor, *mapPtr, true);
             }
+
+            // Let the world know that a new newActor exists
+            EditorEvents::GetInstance().emitBeginChangeTransaction();
+            EditorEvents::GetInstance().emitActorProxyCreated(newActor, false);
+            ViewportManager::GetInstance().placeProxyInFrontOfCamera(newActor.get());
+            EditorEvents::GetInstance().emitEndChangeTransaction();
+
+            // Now, let the world that it should select the new actor newActor.
+            std::vector< dtCore::RefPtr<dtCore::BaseActorObject> > actors;
+
+            actors.push_back(newActor);
+            EditorEvents::GetInstance().emitActorsSelected(actors);
          }
          EditorData::GetInstance().getMainWindow()->endWaitCursor();
       }

@@ -188,7 +188,7 @@ namespace dtEditQt
    {
       getCamera()->update();
 
-      // Make sure the billboards of any actor proxies are oriented towards the
+      // Make sure the billboards of any actor are oriented towards the
       // camera in this viewport.
       if (getAutoSceneUpdate())
       {
