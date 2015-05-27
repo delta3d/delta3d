@@ -9,6 +9,7 @@ file(GLOB LIB_PUBLIC_HEADERS
    )
 
 SET( LIB_SOURCES
+  marchingcubes.cpp
   volumescene.cpp
   voxelactor.cpp
   voxelactorregistry.cpp

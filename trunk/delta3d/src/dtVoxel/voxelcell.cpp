@@ -18,9 +18,16 @@
  */
 
 #include <dtVoxel/voxelcell.h>
+#include <osgVolume/VolumeTile>
 #include <osgVolume/MultipassTechnique>
+#include <osgVolume/RayTracedTechnique>
+#include <osgVolume/FixedFunctionTechnique>
 #include <osg/Texture2D>
+#include <osg/Geometry>
 
+#include <dtVoxel/marchingcubes.h>
+
+#include <dtVoxel/aabbintersector.h>
 #include <openvdb/tools/Interpolation.h>
 
 #include <iostream>
@@ -28,29 +35,132 @@
 namespace dtVoxel
 {
 
+   class VoxelCellImpl
+   {
+   public:
+      dtCore::RefPtr<osg::Geode> mMeshNode;
+      dtCore::RefPtr<osgVolume::ImageLayer> mImage;
+      dtCore::RefPtr<osgVolume::VolumeTile> mVolumeTile;
+   };
+
    VoxelCell::VoxelCell()
+      : mImpl(new VoxelCellImpl())
    {
    }
 
    VoxelCell::~VoxelCell()
    {
+      delete mImpl;
    }
 
    bool VoxelCell::IsAllocated()
    {
-      return mVolumeTile.valid();
+      return (mImpl->mVolumeTile.valid() || mImpl->mMeshNode.valid());
    }
 
-   void VoxelCell::Init(openvdb::GridBase::Ptr localGrid, osg::Matrix& transform, const osg::Vec3& cellSize, const osg::Vec3i& texture_resolution)
+   void VoxelCell::CreateMesh(VoxelActor& voxelActor, openvdb::GridBase::Ptr localGrid, osg::Matrix& transform, const osg::Vec3& cellSize, const osg::Vec3i& resolution)
+   {
+      mImpl->mMeshNode = new osg::Geode();
+
+      dtCore::RefPtr<osg::Geometry> geom = new osg::Geometry();
+      dtCore::RefPtr<osg::Vec3Array> vertArray = new osg::Vec3Array();
+      dtCore::RefPtr<osg::Vec3Array> normalArray = new osg::Vec3Array();
+      dtCore::RefPtr<osg::DrawElementsUInt> drawElements = new osg::DrawElementsUInt(GL_TRIANGLES);
+
+      osg::Vec3 pos = transform.getTrans();
+      
+      osg::Vec3 texelSize(cellSize[0] / float(resolution[0]), cellSize[1] / float(resolution[1]), cellSize[2] / float(resolution[2]));
+
+
+      openvdb::BoolGrid::Ptr gridB = boost::dynamic_pointer_cast<openvdb::BoolGrid>(localGrid);
+
+      openvdb::BoolGrid::ConstAccessor accessor = gridB->getConstAccessor();
+
+      openvdb::tools::GridSampler<openvdb::BoolGrid::ConstAccessor, openvdb::tools::BoxSampler>
+         fastSampler(accessor, gridB->transform());
+
+      float isolevel = 1.0;
+
+      for (int i = 0; i < resolution[0]; ++i)
+      {
+         for (int j = 0; j < resolution[1]; ++j)
+         {
+            for (int k = 0; k < resolution[2]; ++k)
+            {
+               double worldX = pos[0] + (i * texelSize[0]);
+               double worldY = pos[1] + (j * texelSize[1]);
+               double worldZ = pos[2] + (k * texelSize[2]);
+
+               osg::Vec3 from(worldX, worldY, worldZ);
+               
+               GRIDCELL grid;
+               TRIANGLE triangles[5];
+
+               grid.p[0] = from;
+               grid.val[0] = fastSampler.wsSample(openvdb::Vec3R(grid.p[0].x(), grid.p[0].y(), grid.p[0].z()));
+
+               grid.p[1].set(from[0] + texelSize[0], from[1], from[2]);
+               grid.val[1] = fastSampler.wsSample(openvdb::Vec3R(grid.p[1].x(), grid.p[1].y(), grid.p[1].z()));
+
+               grid.p[2].set(from[0] + texelSize[0], from[1] + texelSize[1], from[2]);
+               grid.val[2] = fastSampler.wsSample(openvdb::Vec3R(grid.p[2].x(), grid.p[2].y(), grid.p[2].z()));
+
+               grid.p[3].set(from[0], from[1] + texelSize[1], from[2]);
+               grid.val[3] = fastSampler.wsSample(openvdb::Vec3R(grid.p[3].x(), grid.p[3].y(), grid.p[3].z()));
+
+               grid.p[4].set(from[0], from[1], from[2] + texelSize[2]);
+               grid.val[4] = fastSampler.wsSample(openvdb::Vec3R(grid.p[4].x(), grid.p[4].y(), grid.p[4].z()));
+
+               grid.p[5].set(from[0] + texelSize[0], from[1], from[2] + texelSize[2]);
+               grid.val[5] = fastSampler.wsSample(openvdb::Vec3R(grid.p[5].x(), grid.p[5].y(), grid.p[5].z()));
+
+               grid.p[6].set(from[0] + texelSize[0], from[1] + texelSize[1], from[2] + texelSize[2]);
+               grid.val[6] = fastSampler.wsSample(openvdb::Vec3R(grid.p[6].x(), grid.p[6].y(), grid.p[6].z()));
+
+               grid.p[7].set(from[0], from[1] + texelSize[1], from[2] + texelSize[2]);
+               grid.val[7] = fastSampler.wsSample(openvdb::Vec3R(grid.p[7].x(), grid.p[7].y(), grid.p[7].z()));
+
+               int numTriangles = PolygonizeCube(grid, isolevel, triangles);
+
+               for (int n = 0; n < numTriangles; ++n)
+               {
+                  drawElements->addElement(vertArray->size());
+                  vertArray->push_back(triangles[n].p[0]);
+
+                  drawElements->addElement(vertArray->size());
+                  vertArray->push_back(triangles[n].p[1]);
+
+                  drawElements->addElement(vertArray->size());
+                  vertArray->push_back(triangles[n].p[2]);
+
+                  normalArray->push_back(triangles[n].n[0]);
+                  normalArray->push_back(triangles[n].n[1]);
+                  normalArray->push_back(triangles[n].n[2]);
+               }
+            }
+         }
+      }
+
+
+      geom->setVertexArray(vertArray);
+      geom->setNormalArray(normalArray);
+      geom->setNormalBinding(osg::Geometry::BIND_PER_VERTEX);
+      geom->addPrimitiveSet(drawElements);
+      
+      mImpl->mMeshNode->addDrawable(geom);
+      
+   }
+
+   void VoxelCell::CreateImage(VoxelActor& voxelActor, openvdb::GridBase::Ptr localGrid, osg::Matrix& transform, const osg::Vec3& cellSize, const osg::Vec3i& texture_resolution)
    {
        static int count = 0;
 
        std::cout << "Creating Voxel Cell " << count++ << std::endl;
 
-       mVolumeTile = new osgVolume::VolumeTile;
+       mImpl->mVolumeTile = new osgVolume::VolumeTile;
 
        dtCore::RefPtr<osgVolume::Locator> locator = new osgVolume::Locator();
-       mVolumeTile->setLocator(locator.get());
+       mImpl->mVolumeTile->setLocator(locator.get());
 
        osg::Vec3 pos = transform.getTrans();
 
@@ -60,34 +170,41 @@ namespace dtVoxel
           pos.z() + (-cellSize.z() / 2.0), pos.z() + (cellSize.z() / 2.0));
 
 
-       AllocateImage(localGrid, cellSize, texture_resolution[0], texture_resolution[1], texture_resolution[2]);
+       AllocateImage(voxelActor, localGrid, cellSize, texture_resolution[0], texture_resolution[1], texture_resolution[2]);
 
-       mImage->setLocator(locator.get());
-       mVolumeTile->setLayer(mImage.get());
-       mVolumeTile->setVolumeTechnique(new osgVolume::MultipassTechnique());
-
+       mImpl->mImage->setLocator(locator.get());
+       mImpl->mVolumeTile->setLayer(mImpl->mImage.get());
+       
        osg::ref_ptr<osgVolume::AlphaFuncProperty> ap = new
-           osgVolume::AlphaFuncProperty(0.1f);
+           osgVolume::AlphaFuncProperty(0.02f);
+       
        osg::ref_ptr<osgVolume::TransparencyProperty> tp = new
-           osgVolume::TransparencyProperty(0.0f);
+           osgVolume::TransparencyProperty(1.0f);
 
        osg::ref_ptr<osgVolume::SampleRatioProperty> sr =
            new osgVolume::SampleRatioProperty(1.0);
 
-       osg::ref_ptr<osgVolume::ExteriorTransparencyFactorProperty> etfp = new
-           osgVolume::ExteriorTransparencyFactorProperty(0.99f);
+
+       osgVolume::IsoSurfaceProperty* isop = new osgVolume::IsoSurfaceProperty(1.0);
+
+       //osg::ref_ptr<osgVolume::ExteriorTransparencyFactorProperty> etfp = new
+         //  osgVolume::ExteriorTransparencyFactorProperty(0.0f);
 
        osg::ref_ptr<osgVolume::CompositeProperty> cp = new
            osgVolume::CompositeProperty;
 
-       cp->addProperty(ap.get());
-       cp->addProperty(sr.get());
-       cp->addProperty(tp.get());
-       cp->addProperty(etfp.get());
+       //cp->addProperty(new osgVolume::LightingProperty);
 
-       mImage->addProperty(cp.get());
+       cp->addProperty(ap.get());
+       cp->addProperty(tp.get());
+       cp->addProperty(sr.get());
+       cp->addProperty(isop);
+       //cp->addProperty(etfp.get());
+
+       mImpl->mImage->addProperty(cp.get());
        //mImage->setDefaultValue(osg::Vec4(1.0f, 0.0f, 1.0f, 1.0f));
 
+       mImpl->mVolumeTile->setVolumeTechnique(new osgVolume::MultipassTechnique());
 
 
        //create hull
@@ -101,11 +218,11 @@ namespace dtVoxel
 
    }
 
-   void VoxelCell::AllocateImage(openvdb::GridBase::Ptr gridPtr, const osg::Vec3& cellSize, int width, int height, int slices)
+   void VoxelCell::AllocateImage(VoxelActor& voxelActor, openvdb::GridBase::Ptr gridPtr, const osg::Vec3& cellSize, int width, int height, int slices)
    {
        dtCore::RefPtr<osg::Image> image = new osg::Image;
 
-       GLenum pixelFormat = GL_ALPHA;  // GL_ALPHA, GL_LUMINANCE, GL_RGB or GL_RGBA
+       GLenum pixelFormat = GL_RGBA;  // GL_ALPHA, GL_LUMINANCE, GL_RGB or GL_RGBA
        GLenum dataType = GL_UNSIGNED_BYTE;
        int components = osg::Image::computeNumComponents(pixelFormat);
 
@@ -123,13 +240,20 @@ namespace dtVoxel
        openvdb::tools::GridSampler<openvdb::BoolGrid::ConstAccessor, openvdb::tools::BoxSampler>
           fastSampler(accessor, gridB->transform());
        
-       const osg::Matrixd& mat = mVolumeTile->getLocator()->getTransform();
+       const osg::Matrixd& mat = mImpl->mVolumeTile->getLocator()->getTransform();
        osg::Vec3 offset = mat.getTrans();
        
-       osg::Vec3 halfCell = cellSize * 0.5;
+       std::cout << "Cell Offset: " << offset[0] << " " << offset[1] << " " << offset[2] << std::endl;
 
+       osg::Vec3 texelSize(cellSize[0] / float(width), cellSize[1] / float(height), cellSize[2] / float(slices));
+       osg::Vec3 halfTexel = texelSize * 0.5;
+              
+       AABBIntersector<openvdb::BoolGrid> aabb(boost::dynamic_pointer_cast<openvdb::BoolGrid>(gridPtr));
+       
        //this one we will increment as we set
        ptr = dataPtr;
+       
+       int numCellsVacant = 0;
 
        for (int i = 0; i < slices; ++i)
        {
@@ -137,27 +261,50 @@ namespace dtVoxel
            {
                for (int k = 0; k < width; ++k)
                {
-                  double worldX = offset[0] + halfCell[0] + (k * cellSize[0]);
-                  double worldY = offset[1] + halfCell[1] + (k * cellSize[1]);
-                  double worldZ = offset[2] + halfCell[2] + (k * cellSize[2]);
-                  
-                  bool worldValue = fastSampler.wsSample(openvdb::Vec3R(worldX, worldY, worldZ));
-                  if (worldValue)
+                  double worldX = offset[0] + (k * texelSize[0]);
+                  double worldY = offset[1] + (j * texelSize[1]);
+                  double worldZ = offset[2] + (i * texelSize[2]);
+
+                  osg::Vec3 from(worldX, worldY, worldZ);
+                  osg::Vec3 to = from + texelSize;
+
+                  osg::BoundingBox bb(from, to);
+
+                  openvdb::BBoxd bbox(openvdb::Vec3d(bb.xMin(), bb.yMin(), bb.zMin()), openvdb::Vec3d(bb.xMax(), bb.yMax(), bb.zMax()));
+
+                  openvdb::GridBase::Ptr gridPtr = voxelActor.CollideWithAABB(bb);
+
+                  aabb.SetWorldBB(bbox);
+                  aabb.Intersect();
+                  openvdb::GridBase::Ptr grid2Ptr = aabb.GetHits();
+
+
+                  if (grid2Ptr != NULL && !grid2Ptr->empty())
                   {
+                     *(ptr++) = (unsigned char)255;// voxel;
+                     *(ptr++) = (unsigned char)255;// voxel;
+                     *(ptr++) = (unsigned char)255;// voxel;
                      *(ptr++) = (unsigned char)255;// voxel;
                   }
                   else
                   {
                      *(ptr++) = (unsigned char)0;// voxel;
+                     *(ptr++) = (unsigned char)0;// voxel;
+                     *(ptr++) = (unsigned char)0;// voxel;
+                     *(ptr++) = (unsigned char)0;// voxel;
+
+                     ++numCellsVacant;
                   }
                }
            }
        }
 
+       std::cout << "Percent Cells Vacant = " << float(numCellsVacant) / float(slices * height * width) << std::endl;
+
        image->setImage(width, height, slices, pixelFormat, pixelFormat, dataType,
            dataPtr, osg::Image::USE_NEW_DELETE);
 
-       mImage = new osgVolume::ImageLayer(image.get());
+       mImpl->mImage = new osgVolume::ImageLayer(image.get());
    }
 
    /*openvdb::GridBase::Ptr VoxelCell::CreateLocalResolutionGrid(openvdb::GridBase::Ptr gridPtr, const osg::Vec3& cellSize)
@@ -190,34 +337,27 @@ namespace dtVoxel
 
       return outGrid;
    }*/
-
-   osgVolume::ImageLayer* VoxelCell::GetImageLayer()
+   
+   osg::Node* VoxelCell::GetOSGNode()
    {
-       return mImage.get();
+       return mImpl->mVolumeTile.get();
    }
 
-   const osgVolume::ImageLayer* VoxelCell::GetImageLayer() const
+   const osg::Node* VoxelCell::GetOSGNode() const
    {
-       return mImage.get();
-   }
-
-   osgVolume::VolumeTile* VoxelCell::GetVolumeTile()
-   {
-       return mVolumeTile.get();
-   }
-
-   const osgVolume::VolumeTile* VoxelCell::GetVolumeTile() const
-   {
-       return mVolumeTile.get();
+      return mImpl->mVolumeTile.get();
    }
 
    osg::Vec3 VoxelCell::GetOffset() const
    {
        osg::Vec3 result;
-       osgVolume::Locator* locator = mVolumeTile->getLocator();
-       if (locator != NULL)
+       if (mImpl->mVolumeTile.valid())
        {
-           result = locator->getTransform().getTrans();
+          osgVolume::Locator* locator = mImpl->mVolumeTile->getLocator();
+          if (locator != NULL)
+          {
+             result = locator->getTransform().getTrans();
+          }
        }
 
        return result;

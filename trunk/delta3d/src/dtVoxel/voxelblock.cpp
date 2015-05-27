@@ -94,10 +94,10 @@ namespace dtVoxel
                   int cellIndex = (z * gridDim[1] * gridDim[0]) + (y * gridDim[0]) + x;
 
                   //cellToInit->Init(transform, mWSCellDimensions, textureResolution);
-                  mCells[cellIndex].Init(vdbGrid, transform, mWSCellDimensions, textureResolution);
+                  mCells[cellIndex].CreateImage(voxelActor, vdbGrid, transform, mWSCellDimensions, textureResolution);
 
                   //todo- should these be spatialized?
-                  mVolume->addChild(mCells[cellIndex].GetVolumeTile());
+                  mVolume->addChild(mCells[cellIndex].GetOSGNode());
                }
 
                //++cellToInit;
