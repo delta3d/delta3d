@@ -237,22 +237,18 @@ namespace dtCore
       case dtCore::DataType::CONTAINER_SELECTOR_ID:
          param = new NamedContainerSelectorParameter(name);
          break;
-      case dtCore::DataType::STATICMESH_ID:
-      case dtCore::DataType::TEXTURE_ID:
-      case dtCore::DataType::TERRAIN_ID:
-      case dtCore::DataType::SOUND_ID:
-      case dtCore::DataType::PARTICLESYSTEM_ID:
-      case dtCore::DataType::SKELETAL_MESH_ID:
-      case dtCore::DataType::PREFAB_ID:
-      case dtCore::DataType::SHADER_ID:
-      case dtCore::DataType::DIRECTOR_ID:
-         param = new NamedResourceParameter(type,name,isList);
-         break;
       case dtCore::DataType::BIT_MASK_ID:
          param = new NamedBitMaskParameter(name,0,isList);
          break;
       default:
-         throw dtCore::InvalidParameterException( "Type " + type.GetName() + " is not supported by the MessageParameter class.", __FILE__, __LINE__);
+         if (type.IsResource())
+         {
+            param = new NamedResourceParameter(type,name,isList);
+         }
+         else
+         {
+            throw dtCore::InvalidParameterException( "Type " + type.GetName() + " is not supported by the MessageParameter class.", __FILE__, __LINE__);
+         }
          break;
       }
 

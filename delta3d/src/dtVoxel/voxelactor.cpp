@@ -76,7 +76,7 @@ namespace dtVoxel
       DT_REGISTER_PROPERTY_WITH_NAME_AND_LABEL(CellDimensions, "Cell Dimensions", "Cell Dimensions", "The size of the cells within the blocks", RegHelper, regHelper);
       DT_REGISTER_PROPERTY_WITH_NAME_AND_LABEL(TextureResolution, "Texture Resolution", "Texture Resolution", "The dimensions of the 3d texture which holds individual voxels within a single cell.", RegHelper, regHelper);
 
-      DT_REGISTER_RESOURCE_PROPERTY(dtCore::DataType::TERRAIN, Database, "Database", "Voxel database file", RegHelper, regHelper);
+      DT_REGISTER_RESOURCE_PROPERTY(dtCore::DataType::VOLUME, Database, "Database", "Voxel database file", RegHelper, regHelper);
    }
 
    /////////////////////////////////////////////////////

@@ -89,14 +89,14 @@ namespace dtEditQt
        * @param type The DataType of the resource that's selected
        * @param selectedResource The ResourceDescriptor of what's selected
        */
-      void setCurrentResource(const dtCore::DataType& type,
+      void setCurrentResource(dtCore::DataType& type,
                               const dtCore::ResourceDescriptor& selectedResource);
 
       /** 
        * Get the currently selected resource, based on supplied DataType.
        * @param type The DataType describing the Resource you're looking for.
        */
-      dtCore::ResourceDescriptor getCurrentResource(const dtCore::DataType& type);
+      dtCore::ResourceDescriptor getCurrentResource(dtCore::DataType& type);
       
       /**
        * Gets the current grid size.
@@ -249,162 +249,6 @@ namespace dtEditQt
       EditorData(const EditorData& rhs);
       EditorData& operator=(EditorData& rhs);
 
-      /**
-       * Sets the currently selected Sound resource.  This is called when the user is
-       * using the resource browser and is selecting resources.  It is used by the
-       * property editor when the user selects 'Use Current'.
-       *
-       * @param The currently selected resource.  If none, then pass in ResourceDescriptor()
-       * with empty strings.
-       * @see setMeshResource, setTextureResource, setParticleResource
-       */
-      void setCurrentSoundResource(const dtCore::ResourceDescriptor selectedResource);
-
-      /**
-       * Gets the currently selected Sound resource.  This is used by the
-       * property editor when the user selects 'Use Current'.
-       *
-       * @return The currently selected resource descriptor.  Check
-       * resource.getResourceIdentifier().empty() to see if it's actually none.
-       * @see setSoundResource, setMeshResource, setTextureResource
-       */
-      dtCore::ResourceDescriptor getCurrentSoundResource() { return mSoundResource; }
-
-      /**
-       * Sets the currently selected Mesh resource.  This is called when the user is
-       * using the resource browser and is selecting resources.  It is used by the
-       * property editor when the user selects 'Use Current'.
-       *
-       * @param The currently selected resource.  If none, then pass in ResourceDescriptor()
-       * with empty strings.
-       * @see setSoundResource, setTextureResource, setParticleResource
-       */
-      void setCurrentMeshResource(const dtCore::ResourceDescriptor selectedResource);
-
-      /**
-       * Gets the currently selected Mesh resource.  This is used by the
-       * property editor when the user selects 'Use Current'.
-       *
-       * @return The currently selected resource descriptor.  Check
-       * resource.getResourceIdentifier().empty() to see if it's actually none.
-       * @see setSoundResource, setMeshResource, setTextureResource
-       */
-      dtCore::ResourceDescriptor getCurrentMeshResource() { return mMeshResource; }
-
-      /**
-       * Sets the currently selected Texture resource.  This is called when the user is
-       * using the resource browser and is selecting resources.  It is used by the
-       * property editor when the user selects 'Use Current'.
-       *
-       * @param The currently selected resource.  If none, then pass in ResourceDescriptor()
-       * with empty strings.
-       * @see setSoundResource, setMeshResource, setParticleResource, setTerrainResource
-       */
-      void setCurrentTextureResource(const dtCore::ResourceDescriptor selectedResource);
-      
-      /**
-       * Gets the currently selected Texture resource.  This is used by the
-       * property editor when the user selects 'Use Current'.
-       *
-       * @return The currently selected resource descriptor.  Check
-       * resource.getResourceIdentifier().empty() to see if it's actually none.
-       * @see setSoundResource, setMeshResource, setTextureResource
-       */
-      dtCore::ResourceDescriptor getCurrentTextureResource() { return mTextureResource; }
-
-      /**
-       * Sets the currently selected Particle resource.  This is called when the user is
-       * using the resource browser and is selecting resources.  It is used by the
-       * property editor when the user selects 'Use Current'.
-       *
-       * @param The currently selected resource.  If none, then pass in ResourceDescriptor()
-       * with empty strings.
-       * @see setSoundResource, setMeshResource, setTextureResource, setTerrainResource
-       */
-      void setCurrentParticleResource(const dtCore::ResourceDescriptor selectedResource);
-
-      /**
-       * Gets the currently selected Particle resource.  This is used by the
-       * property editor when the user selects 'Use Current'.
-       *
-       * @return The currently selected resource descriptor.  Check
-       * resource.getResourceIdentifier().empty() to see if it's actually none.
-       * @see setSoundResource, setMeshResource, setTextureResource
-       */
-      dtCore::ResourceDescriptor getCurrentParticleResource() { return mParticleResource; }
-
-      /**
-       * Sets the currently selected Skeletal Model resource.  This is called when the user is
-       * using the resource browser and is selecting resources.  It is used by the
-       * property editor when the user selects 'Use Current'.
-       *
-       * @param The currently selected resource.  If none, then pass in ResourceDescriptor()
-       * with empty strings.
-       * @see setSoundResource, setMeshResource, setTextureResource, setTerrainResource
-       */
-      void setCurrentSkeletalModelResource(const dtCore::ResourceDescriptor selectedResource);
-
-      /**
-       * Gets the currently selected skeletal model resource.  This is used by the
-       * property editor when the user selects 'Use Current'.
-       *
-       * @return The currently selected resource descriptor.  Check
-       * resource.getResourceIdentifier().empty() to see if it's actually none.
-       * @see setSoundResource, setMeshResource, setTextureResource
-       */
-      dtCore::ResourceDescriptor getCurrentSkeletalModelResource() { return mSkeletalModelResource; }
-
-      /**
-       * Sets the currently selected terrain resource.  This is called when the user is
-       * using the resource browser and is selecting resources.  It is used by the
-       * property editor when the user selects 'Use Current'.
-       *
-       * @param The currently selected resource.  If none, then pass in ResourceDescriptor()
-       * with empty strings.
-       * @see setSoundResource, setMeshResource, setTextureResource
-       */
-      void setCurrentTerrainResource(const dtCore::ResourceDescriptor selectedResource);
- 
-      /**
-       * Gets the currently selected terrain resource.  This is used by the
-       * property editor when the user selects 'Use Current'.
-       *
-       * @return The currently selected resource descriptor.  Check
-       * resource.getResourceIdentifier().empty() to see if it's actually none.
-       * @see getSoundResource, getMeshResource, getTextureResource, getTerrainResource
-       */
-      dtCore::ResourceDescriptor getCurrentTerrainResource() { return mTerrainResource; }
-
-      /**
-      * Sets the currently selected prefab resource.  This is called when the user is
-      * using the resource browser and is selecting resources.  It is used by the
-      * property editor when the user selects 'Use Current'.
-      *
-      * @param The currently selected resource.  If none, then pass in ResourceDescriptor()
-      * with empty strings.
-      * @see setSoundResource, setMeshResource, setTextureResource
-      */
-      void setCurrentPrefabResource(const dtCore::ResourceDescriptor selectedResource);
-
-      /**
-      * Gets the currently selected prefab resource.  This is used by the
-      * property editor when the user selects 'Use Current'.
-      *
-      * @return The currently selected resource descriptor.  Check
-      * resource.getResourceIdentifier().empty() to see if it's actually none.
-      * @see getSoundResource, getMeshResource, getTextureResource, getTerrainResource
-      */
-      dtCore::ResourceDescriptor getCurrentPrefabResource() { return mPrefabResource; }
-
-      void setCurrentShaderResource(const dtCore::ResourceDescriptor selectedResource);
-
-      dtCore::ResourceDescriptor getCurrentShaderResource() { return mShaderResource; }
-
-      void setCurrentDirectorResource(const dtCore::ResourceDescriptor selectedResource);
-
-      dtCore::ResourceDescriptor getCurrentDirectorResource() { return mDirectorResource; }
-
-
 
       // Singleton instance of this class.
       static dtCore::RefPtr<EditorData> sInstance;
@@ -417,15 +261,7 @@ namespace dtEditQt
       std::string mCurrentLibraryDirectory;
       std::string mCurrentProjectContext;
 
-      dtCore::ResourceDescriptor mSoundResource;
-      dtCore::ResourceDescriptor mMeshResource;
-      dtCore::ResourceDescriptor mTextureResource;
-      dtCore::ResourceDescriptor mParticleResource;
-      dtCore::ResourceDescriptor mTerrainResource;
-      dtCore::ResourceDescriptor mSkeletalModelResource;
-      dtCore::ResourceDescriptor mPrefabResource;
-      dtCore::ResourceDescriptor mShaderResource;
-      dtCore::ResourceDescriptor mDirectorResource;
+      std::map<dtCore::DataType*, dtCore::ResourceDescriptor> mCurrentResources;
 
       std::list<std::string> mRecentMaps;
       std::list<std::string> mRecentProjects;

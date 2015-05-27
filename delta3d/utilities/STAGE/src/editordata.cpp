@@ -195,144 +195,16 @@ namespace dtEditQt
       }
    }
 
-   //////////////////////////////////////////////////////////////////////////////
-   void EditorData::setCurrentSoundResource(dtCore::ResourceDescriptor newResource)
-   {
-      mSoundResource = newResource;
-   }
-
-   //////////////////////////////////////////////////////////////////////////////
-   void EditorData::setCurrentMeshResource(dtCore::ResourceDescriptor newResource)
-   {
-      mMeshResource = newResource;
-   }
-
-   //////////////////////////////////////////////////////////////////////////////
-   void EditorData::setCurrentTextureResource(dtCore::ResourceDescriptor newResource)
-   {
-      mTextureResource = newResource;
-   }
-
-   //////////////////////////////////////////////////////////////////////////////
-   void EditorData::setCurrentParticleResource(dtCore::ResourceDescriptor newResource)
-   {
-      mParticleResource = newResource;
-   }
-
-   //////////////////////////////////////////////////////////////////////////////
-   void EditorData::setCurrentTerrainResource(dtCore::ResourceDescriptor newResource)
-   {
-      mTerrainResource = newResource;
-   }
-
    ////////////////////////////////////////////////////////////////////////////////
-   void EditorData::setCurrentPrefabResource(dtCore::ResourceDescriptor newResource)
-   {
-      mPrefabResource = newResource;
-   }
-
-   //////////////////////////////////////////////////////////////////////////////
-   void EditorData::setCurrentSkeletalModelResource(const dtCore::ResourceDescriptor selectedResource)
-   {
-      mSkeletalModelResource = selectedResource;
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   void EditorData::setCurrentShaderResource(const dtCore::ResourceDescriptor selectedResource)
-   {
-      mShaderResource = selectedResource;
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   void EditorData::setCurrentDirectorResource(const dtCore::ResourceDescriptor selectedResource)
-   {
-      mDirectorResource = selectedResource;
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   void EditorData::setCurrentResource(const dtCore::DataType& type,
+   void EditorData::setCurrentResource(dtCore::DataType& type,
                                        const dtCore::ResourceDescriptor& selectedResource)
    {
-      if (type == dtCore::DataType::SOUND)
-      {
-         setCurrentSoundResource(selectedResource);
-      }
-      else if (type == dtCore::DataType::STATIC_MESH)
-      {
-         setCurrentMeshResource(selectedResource);
-      }
-      else if (type == dtCore::DataType::TEXTURE)
-      {
-         setCurrentTextureResource(selectedResource);
-      }
-      else if (type == dtCore::DataType::PARTICLE_SYSTEM)
-      {
-         setCurrentParticleResource(selectedResource);
-      }
-      else if (type == dtCore::DataType::TERRAIN)
-      {
-         setCurrentTerrainResource(selectedResource);
-      }
-      else if (type == dtCore::DataType::SKELETAL_MESH)
-      {
-         setCurrentSkeletalModelResource(selectedResource);
-      }
-      else if (type == dtCore::DataType::SHADER)
-      {
-         setCurrentShaderResource(selectedResource);
-      }
-      else if (type == dtCore::DataType::PREFAB)
-      {
-         setCurrentPrefabResource(selectedResource);
-      }
-      else if (type == dtCore::DataType::DIRECTOR)
-      {
-         setCurrentDirectorResource(selectedResource);
-      }
+      mCurrentResources[&type] = selectedResource;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   dtCore::ResourceDescriptor EditorData::getCurrentResource(const dtCore::DataType& type)
+   dtCore::ResourceDescriptor EditorData::getCurrentResource(dtCore::DataType& type)
    {
-      if (type == dtCore::DataType::SOUND)
-      {
-         return getCurrentSoundResource();
-      }
-      else if (type == dtCore::DataType::STATIC_MESH)
-      {
-         return getCurrentMeshResource();
-      }
-      else if (type == dtCore::DataType::TEXTURE)
-      {
-         return getCurrentTextureResource();
-      }
-      else if (type == dtCore::DataType::PARTICLE_SYSTEM)
-      {
-         return getCurrentParticleResource();
-      }
-      else if (type == dtCore::DataType::TERRAIN)
-      {
-         return getCurrentTerrainResource();
-      }
-      else if (type == dtCore::DataType::SKELETAL_MESH)
-      {
-         return getCurrentSkeletalModelResource();
-      }
-      else if (type == dtCore::DataType::SHADER)
-      {
-         return getCurrentShaderResource();
-      }
-      else if (type == dtCore::DataType::PREFAB)
-      {
-         return getCurrentPrefabResource();
-      }
-      else if (type == dtCore::DataType::DIRECTOR)
-      {
-         return getCurrentDirectorResource();
-      }
-      else
-      {
-         return dtCore::ResourceDescriptor();
-      }
+      return mCurrentResources[&type];
    }
 } // namespace dtEditQt

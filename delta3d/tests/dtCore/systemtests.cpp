@@ -440,7 +440,7 @@ void SystemTests::TestSimMode()
    mDummyNode->ResetState();
    mDummyDrawable->ResetState();
 
-   dtCore::System::GetInstance().Step();
+   dtCore::System::GetInstance().Step(0.016f);
 
    CPPUNIT_ASSERT(!mDummyCallback->mCallbackCalled);
    CPPUNIT_ASSERT(!mDummyNode->mDrawCalled);
@@ -455,13 +455,13 @@ void SystemTests::TestSimMode()
 
    System::GetInstance().SetSystemStages(System::STAGES_DEFAULT);
 
-   dtCore::System::GetInstance().Step();
+   dtCore::System::GetInstance().Step(0.016f);
 
    CPPUNIT_ASSERT(mDummyCallback->mCallbackCalled);
-   CPPUNIT_ASSERT(mDummyNode->mDrawCalled);
    CPPUNIT_ASSERT(mDummyDrawable->mPreframeCalled);
    CPPUNIT_ASSERT(mDummyDrawable->mPostFrameCalled);
    CPPUNIT_ASSERT(mDummyDrawable->mFrameCalled);
+   CPPUNIT_ASSERT(mDummyNode->mDrawCalled);
 }
 
 //////////////////////////////////////////////////////////////////////////

@@ -127,6 +127,44 @@ namespace dtCore
    };
 
    /**
+    * This is a simple case handler that deals with single files.
+    */
+   class DefaultResourceTypeHandler: public ResourceTypeHandler
+   {
+   public:
+      DefaultResourceTypeHandler(DataType& dataType, const std::string& description, const std::map<std::string, std::string>& fileFilters);
+      virtual ~DefaultResourceTypeHandler();
+
+      virtual bool HandlesFile(const std::string& path, dtUtil::FileType type) const;
+
+      virtual ResourceDescriptor CreateResourceDescriptor(
+         const std::string& category, const std::string& fileName) const;
+
+      virtual const std::string ImportResourceToPath(const std::string& newName, const std::string& srcPath,
+                                                     const std::string& destCategoryPath) const;
+
+      virtual void RemoveResource(const std::string& resourcePath) const;
+
+      virtual bool ImportsDirectory() const;
+
+      virtual bool ResourceIsDirectory() const;
+
+      //this returns false because the resources is not a directory
+      virtual const std::string& GetResourceDirectoryExtension() const;
+
+      virtual const std::map<std::string, std::string>& GetFileFilters() const;
+
+      virtual const std::string& GetTypeHandlerDescription() const;
+
+      virtual const DataType& GetResourceType() const;
+   private:
+      DataType* mDataType;
+      std::map<std::string, std::string> mFileFilters;
+      const std::string mResourceDirExt;
+      const std::string mDescription;
+   };
+
+   /**
     * @class ResourceHelper
     * @brief This class is a registry of file types with handlers to allow file type specifice resource handling.
     */

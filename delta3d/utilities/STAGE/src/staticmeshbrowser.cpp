@@ -1,21 +1,28 @@
-/*
- * Delta3D Open Source Game and Simulation Engine
- * Simulation, Training, and Game Editor (STAGE)
- * Copyright (C) 2005, BMH Associates, Inc.
+/* -*-c++-*-
+ * Delta3D Simulation Training And Game Editor (STAGE)
+ * STAGE - This source file (.h & .cpp) - Using 'The MIT License'
+ * Copyright (C) 2005-2008, Alion Science and Technology Corporation
  *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
  *
- * You should have received a copy of the GNU General Public License
- * along with this library; if not, write to the Free Software Foundation, Inc.,
- * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ *
+ * This software was developed by Alion Science and Technology Corporation under
+ * circumstances in which the U. S. Government may have rights in the software.
  *
  * Teague Coonan
  */
@@ -66,32 +73,50 @@ namespace dtEditQt
 {
 
    ///////////////////////////////////////////////////////////////////////////////
-   StaticMeshBrowser::StaticMeshBrowser(dtCore::DataType& type, QWidget* parent)
+   StaticMeshBrowser::StaticMeshBrowser(dtCore::DataType& type, QWidget* parent, bool allowPreview, bool allowActorCreate)
       : ResourceAbstractBrowser(&type, parent)
+      , container(nullptr)
+      , perspView(nullptr)
+      , meshScene(nullptr)
+      , camera(nullptr)
+      , previewObject(nullptr)
+      , previewChk(nullptr)
+      , previewBtn(nullptr)
+      , setCreateAction(nullptr)
+      , setSGPreviewAction(nullptr)
+      , setOSGDump(nullptr)
+      , mAllowPreview(allowPreview)
+      , mAllowCreateActor(allowActorCreate)
    {
       // This sets our resource icon that is visible on leaf nodes
       QIcon resourceIcon;
       resourceIcon.addPixmap(QPixmap(UIResources::ICON_STATICMESH_RESOURCE.c_str()));
       ResourceAbstractBrowser::mResourceIcon = resourceIcon;
 
-      // create a new scene for the static mesh viewport
-      meshScene = new dtCore::Scene();
-      previewObject = new dtCore::Object();
-      meshScene->AddChild(previewObject.get());
-      camera = new StageCamera();
-      camera->makePerspective(60.0f,1.333f,0.01f,100000.0f);
-
-      QSplitter* splitter = new QSplitter(Qt::Vertical, this);
-
-      splitter->addWidget(previewGroup());
-      splitter->addWidget(listGroup());
-
-      splitter->setStretchFactor(0,1);
-      splitter->setStretchFactor(1,1);
-
+      QWidget* listWidget = listGroup(allowPreview);
       // setup the grid layouts
       grid = new QGridLayout(this);
-      grid->addWidget(splitter, 0, 0);
+      if (allowPreview)
+      {
+         // create a new scene for the static mesh viewport
+         meshScene = new dtCore::Scene();
+         previewObject = new dtCore::Object();
+         meshScene->AddChild(previewObject.get());
+
+         QSplitter* splitter = new QSplitter(Qt::Vertical, this);
+
+         splitter->addWidget(previewGroup());
+         splitter->addWidget(listWidget);
+
+         splitter->setStretchFactor(0,1);
+         splitter->setStretchFactor(1,1);
+
+         grid->addWidget(splitter, 0, 0);
+      }
+      else
+      {
+         grid->addWidget(listWidget);
+      }
       grid->addWidget(standardButtons(QString("Resource Tools")), 1, 0, Qt::AlignCenter);
 
       createActions();
@@ -125,6 +150,8 @@ namespace dtEditQt
 
       // Assign the viewport a new scene
       perspView->setScene(meshScene.get());
+      camera = perspView->getCamera();
+      camera->makePerspective(60.0f,1.333f,0.01f,100000.0f);
 
       //By default, perspective viewports have their camera set to the world view
       //camera.  The world view camera is what is used in the main perspective view.
@@ -144,27 +171,30 @@ namespace dtEditQt
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   QGroupBox* StaticMeshBrowser::listGroup()
+   QGroupBox* StaticMeshBrowser::listGroup(bool allowPreview)
    {
-      QGroupBox*   groupBox = new QGroupBox(tr("Static Meshes"));
+      QGroupBox*   groupBox = new QGroupBox(tr(mResourceType->GetDisplayName().c_str()));
       QGridLayout* grid     = new QGridLayout(groupBox);
       QHBoxLayout* hbox     = new QHBoxLayout();
 
-      // Checkbox for auto preview
-      previewChk = new QCheckBox(tr("Auto Preview"), groupBox);
-      connect(previewChk, SIGNAL(stateChanged(int)), this, SLOT(checkBoxSelected()));
-      previewChk->setChecked(false);
+      if (allowPreview)
+      {
+         // Checkbox for auto preview
+         previewChk = new QCheckBox(tr("Auto Preview"), groupBox);
+         connect(previewChk, SIGNAL(stateChanged(int)), this, SLOT(checkBoxSelected()));
+         previewChk->setChecked(false);
 
-      // Preview button for a selected mesh
-      previewBtn = new QPushButton("Preview", groupBox);
-      connect(previewBtn, SIGNAL(clicked()), this, SLOT(displaySelection()));
-      previewBtn->setDisabled(true);
+         // Preview button for a selected mesh
+         previewBtn = new QPushButton("Preview", groupBox);
+         connect(previewBtn, SIGNAL(clicked()), this, SLOT(displaySelection()));
+         previewBtn->setDisabled(true);
+         hbox->addWidget(previewChk, 0, Qt::AlignLeft);
+         hbox->addWidget(previewBtn, 0, Qt::AlignRight);
+         grid->addLayout(hbox, 0, 0);
+      }
 
-      hbox->addWidget(previewChk, 0, Qt::AlignLeft);
-      hbox->addWidget(previewBtn, 0, Qt::AlignRight);
-      grid->addLayout(hbox, 0, 0);
       grid->addWidget(mTree, 1, 0);
-      mTree->setResourceName("StaticMesh");
+      mTree->setResourceName(mResourceType->GetDisplayName());
 
 
       return groupBox;
@@ -219,28 +249,34 @@ namespace dtEditQt
    {
       ResourceAbstractBrowser::createActions();
 
-      setCreateAction = new QAction(tr("&Create Actor"),getCurrentParent());
-      setCreateAction->setCheckable(false);
-      connect(setCreateAction, SIGNAL(triggered()),this,SLOT(createActor()));
-      setCreateAction->setEnabled(false);
+      if (mAllowCreateActor)
+      {
+         setCreateAction = new QAction(tr("&Create Actor"),getCurrentParent());
+         setCreateAction->setCheckable(false);
+         connect(setCreateAction, SIGNAL(triggered()),this,SLOT(createActor()));
+         setCreateAction->setEnabled(false);
+      }
 
-      // Allow the preview of the scene graph for an ive file
-      setSGPreviewAction = new QAction(tr("Preview Scene Graph"), getCurrentParent());
-      //setSGPreviewAction->setCheckable(false);
-      connect(setSGPreviewAction, SIGNAL(triggered()),this,SLOT(viewSceneGraph()));
-      //setSGPreviewAction->setEnabled(false);
+      if (mAllowPreview)
+      {
+         // Allow the preview of the scene graph for an ive file
+         setSGPreviewAction = new QAction(tr("Preview Scene Graph"), getCurrentParent());
+         //setSGPreviewAction->setCheckable(false);
+         connect(setSGPreviewAction, SIGNAL(triggered()),this,SLOT(viewSceneGraph()));
+         //setSGPreviewAction->setEnabled(false);
 
-      setOSGDump = new QAction(tr("Preview OSG File"), getCurrentParent());
-      connect(setOSGDump, SIGNAL(triggered()), this, SLOT(viewOSGContents()));
+         setOSGDump = new QAction(tr("Preview OSG File"), getCurrentParent());
+         connect(setOSGDump, SIGNAL(triggered()), this, SLOT(viewOSGContents()));
+      }
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    void StaticMeshBrowser::createContextMenu()
    {
       ResourceAbstractBrowser::createContextMenu();
-      mContextMenu->addAction(setCreateAction);
-      mContextMenu->addAction(setSGPreviewAction);
-      mContextMenu->addAction(setOSGDump);
+      if (setCreateAction != nullptr) mContextMenu->addAction(setCreateAction);
+      if (setSGPreviewAction != nullptr) mContextMenu->addAction(setSGPreviewAction);
+      if (setOSGDump != nullptr) mContextMenu->addAction(setOSGDump);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -259,7 +295,7 @@ namespace dtEditQt
          dtCore::Project& project = dtCore::Project::GetInstance();
 
          // Find the currently selected tree item
-         dtCore::ResourceDescriptor resource = EditorData::GetInstance().getCurrentResource(dtCore::DataType::STATIC_MESH);
+         dtCore::ResourceDescriptor resource = EditorData::GetInstance().getCurrentResource(*mResourceType);
 
          try
          {
@@ -271,7 +307,7 @@ namespace dtEditQt
             validFile = false;
          }
 
-         if (file != NULL && validFile == true)
+         if (meshScene != nullptr && file != NULL && validFile == true)
          {
             // The following is performed to comply with linux and windows file systems
             file.replace("\\","/");
@@ -281,15 +317,18 @@ namespace dtEditQt
                meshScene->AddChild(previewObject.get());
             }
 
-            // Load the new file.
-            previewObject->LoadFile(file.toStdString());
-            previewObject->RecenterGeometryUponLoad();
-            perspView->refresh();
+            if (previewObject != NULL)
+            {
+               // Load the new file.
+               previewObject->LoadFile(file.toStdString());
+               previewObject->RecenterGeometryUponLoad();
+               perspView->refresh();
 
-            SetCameraLookAt(*camera, *previewObject);
+               SetCameraLookAt(*camera, *previewObject);
 
-            perspView->refresh();
-            perspView->GetQGLWidget()->setFocus();
+               perspView->refresh();
+               perspView->GetQGLWidget()->setFocus();
+            }
          }
       }
    }
@@ -301,33 +340,43 @@ namespace dtEditQt
       ResourceAbstractBrowser::selectionChanged();
 
       // Let's assume that the map could be closed
-      setCreateAction->setEnabled(false);
+      if (setCreateAction != nullptr) setCreateAction->setEnabled(false);
 
-      // When any item is selected, clear the scene
-      meshScene->RemoveChild(previewObject.get());
-      perspView->refresh();
+      if (meshScene != nullptr)
+      {
+         // When any item is selected, clear the scene
+         meshScene->RemoveChild(previewObject.get());
+         perspView->refresh();
+      }
 
       if (mSelection != NULL)
       {
          if (mSelection->isResource())
          {
-            // auto preview
-            if (previewChk->isChecked())
+            if (meshScene != nullptr)
             {
-               displaySelection();
+               // auto preview
+               if (previewChk->isChecked())
+               {
+                  displaySelection();
+               }
+               previewBtn->setDisabled(false);
             }
-            previewBtn->setDisabled(false);
 
             if (EditorData::GetInstance().getCurrentMap() != NULL)
             {
-               setCreateAction->setEnabled(true);
+               if (setCreateAction != nullptr)
+                  setCreateAction->setEnabled(true);
             }
          }
          else
          {
-            perspView->refresh();
-            previewBtn->setDisabled(true);
-            setCreateAction->setEnabled(false);
+            if (perspView != nullptr)
+               perspView->refresh();
+            if (previewBtn != nullptr)
+               previewBtn->setDisabled(true);
+            if (setCreateAction != nullptr)
+               setCreateAction->setEnabled(false);
          }
       }
    }
@@ -335,7 +384,7 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    void StaticMeshBrowser::checkBoxSelected()
    {
-      if (previewChk->isChecked())
+      if (mAllowPreview && previewChk->isChecked())
       {
          if (mSelection->isResource())
          {
@@ -349,7 +398,7 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    void StaticMeshBrowser::doubleClickEvent()
    {
-      if (mSelection->isResource())
+      if (mAllowPreview && mSelection->isResource())
       {
          displaySelection();
       }
@@ -358,7 +407,7 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    void StaticMeshBrowser::deleteItemEvent()
    {
-      if (mSelection->isResource())
+      if (mSelection->isResource() && meshScene != nullptr)
       {
          // When any item is selected, clear the scene
          meshScene->RemoveChild(previewObject.get());
@@ -376,16 +425,20 @@ namespace dtEditQt
       {
          LOG_INFO("User Created an Actor - Slot");
 
-         // if we have an actor type, then create the proxy and emit the signal
-         /*
-         * The following code finds the actor type by a hard-coded string for the
-         * category and name. This means that if the actor for Static Mesh Object
-         * is changed in any way that the following code will break. This was
-         * implemented as a quick and dirty solution to assigning meshes to an
-         * actor of this type.
-         */
-         dtCore::RefPtr<const dtCore::ActorType> meshActor =
-            dtCore::ActorFactory::GetInstance().FindActorType("dtcore","Static Mesh");
+
+         /**
+          * This nonsense needs to be replaced with simply a Game Actor that has a specific resource added.
+          */
+         dtCore::RefPtr<const dtCore::ActorType> meshActor;
+         if (*mResourceType == dtCore::DataType::PARTICLE_SYSTEM)
+         {
+            meshActor = dtCore::ActorFactory::GetInstance().FindActorType("dtcore", "Particle System");
+         }
+         else
+         {
+            meshActor = dtCore::ActorFactory::GetInstance().FindActorType("dtcore","Static Mesh");
+         }
+
 
          // create our new actor proxy from the mesh actor type that was
          // found by the results of our hard coded search above.
@@ -402,6 +455,11 @@ namespace dtEditQt
                // grab the actor property type
                dtCore::ResourceActorProperty* resourceProp = dynamic_cast<dtCore::ResourceActorProperty *>
                   (proxy->GetProperty("static mesh"));
+               if (resourceProp == NULL)
+               {
+                  resourceProp = dynamic_cast<dtCore::ResourceActorProperty*>
+                     (proxy->GetProperty("particle file"));
+               }
 
                if (resourceProp != NULL)
                {

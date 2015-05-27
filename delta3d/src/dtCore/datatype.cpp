@@ -26,7 +26,7 @@ namespace dtCore
 {
    IMPLEMENT_ENUM(DataType);
    //////////////////////////////////////
-   DataType::DataType(const std::string& name, const std::string& displayName, bool resource, unsigned char id, std::string extensions, const std::string& altName)
+   DataType::DataType(const std::string& name, const std::string& displayName, bool resource, unsigned char id, const std::string& altName)
    : dtUtil::Enumeration(name)
    , mResource(resource)
    , mAltName(altName)
@@ -65,9 +65,9 @@ namespace dtCore
    DataType DataType::STRING("STRING", "String", false, STRING_ID);
    DataType DataType::BOOLEAN("BOOLEAN", "Boolean", false, BOOLEAN_ID);
 
-   DataType DataType::VEC2F("VEC2F", "Vector 2f", false, VEC2F_ID, "", "VEC2");
-   DataType DataType::VEC3F("VEC3F", "Vector 3f", false, VEC3F_ID, "", "VEC3");
-   DataType DataType::VEC4F("VEC4F", "Vector 4f", false, VEC4F_ID, "", "VEC4");
+   DataType DataType::VEC2F("VEC2F", "Vector 2f", false, VEC2F_ID, "VEC2");
+   DataType DataType::VEC3F("VEC3F", "Vector 3f", false, VEC3F_ID, "VEC3");
+   DataType DataType::VEC4F("VEC4F", "Vector 4f", false, VEC4F_ID, "VEC4");
 
    DataType& DataType::VEC2(DataType::VEC2F);
    DataType& DataType::VEC3(DataType::VEC3F);
@@ -90,6 +90,7 @@ namespace dtCore
    DataType DataType::ACTOR("ACTOR", "Actor", false, ACTOR_ID);
 
    DataType DataType::STATIC_MESH("StaticMeshes", "Static Mesh", true, STATICMESH_ID);
+   DataType DataType::VOLUME("Volumes", "Volume", true, VOLUME_ID);
    DataType DataType::SKELETAL_MESH("SkeletalMeshes", "Skeletal Mesh", true, SKELETAL_MESH_ID);
    DataType DataType::TEXTURE("Textures", "Texture", true, TEXTURE_ID);
    DataType DataType::TERRAIN("Terrains", "Terrain", true, TERRAIN_ID);

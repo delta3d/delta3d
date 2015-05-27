@@ -16,10 +16,11 @@ SET( LIB_SOURCES
   voxelcell.cpp
   voxelblock.cpp
   voxelgrid.cpp
+  voxelgeometry.cpp
   voxelgriddebugdrawable.cpp
 ) 
 
-INCLUDE_DIRECTORIES(${OPENEXR_INCLUDE_DIR} ${TBB_INCLUDE_DIR} ${OPENVDB_INCLUDE_DIR})
+INCLUDE_DIRECTORIES(${OPENEXR_INCLUDE_DIR} ${TBB_INCLUDE_DIR} ${OPENVDB_INCLUDE_DIR} ${PAL_INCLUDE_DIR}) 
 
 SET(LIB_DEPS 
     ${DTUTIL_LIBRARY}

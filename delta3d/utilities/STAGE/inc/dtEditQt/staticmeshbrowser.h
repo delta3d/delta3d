@@ -65,7 +65,7 @@ namespace dtEditQt
       /**
        * Constructor
        */
-      StaticMeshBrowser(dtCore::DataType& type, QWidget* parent = 0);
+      StaticMeshBrowser(dtCore::DataType& type, QWidget* parent = 0, bool allowPreview = true, bool allowActorCreate = true);
 
       /**
        * Destructor
@@ -143,7 +143,7 @@ namespace dtEditQt
        * This defines the layout for the static mesh list
        * @return QGroupBox layout widget
        */
-      QGroupBox* listGroup();
+      QGroupBox* listGroup(bool allowPreview);
 
       /**
        * This defines the layout for the static mesh preview
@@ -173,6 +173,8 @@ namespace dtEditQt
       QAction* setCreateAction;
       QAction* setSGPreviewAction;
       QAction* setOSGDump;
+      bool mAllowPreview;
+      bool mAllowCreateActor;
    };
 
 } // namespace dtEditQt

@@ -21,6 +21,8 @@
 #include <dtVoxel/volumescene.h>
 
 #include <dtCore/actorfactory.h> // for auto register
+#include <dtCore/project.h>
+#include <dtCore/resourcehelper.h>
 
 namespace dtVoxel
 { // "display name", "category", "description/tooltip"
@@ -50,7 +52,17 @@ namespace dtVoxel
    ///////////////////////////////////////////////////////////////////////////////
    VoxelActorRegistry::VoxelActorRegistry() : dtCore::ActorPluginRegistry("VoxelActors", "The actors in this registry work with open vdb voxel grids ")
    {
-      openvdb::initialize();
+      static bool initRun = false;
+      if (!initRun)
+      {
+         openvdb::initialize();
+         std::map<std::string, std::string> extFilter;
+
+         extFilter.insert(std::make_pair("vdb","Voxel Database Archive."));
+         dtCore::RefPtr<dtCore::DefaultResourceTypeHandler> handler = new dtCore::DefaultResourceTypeHandler(dtCore::DataType::VOLUME, "Open VDB Format.", extFilter);
+         dtCore::Project::GetInstance().RegisterResourceTypeHander(*handler);
+         initRun = true;
+      }
    }
 
    ///////////////////////////////////////////////////////////////////////////////
