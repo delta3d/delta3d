@@ -109,7 +109,7 @@ namespace dtCore
          msg.str("");
          msg << "Registry for library with name " << libName <<
                " already exists.  Library must already be loaded.";
-         LOGN_ERROR("actorfactory.cpp", msg.str());
+         LOGN_DEBUG("actorfactory.cpp", msg.str());
          return;
       }
 
