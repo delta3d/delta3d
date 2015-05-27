@@ -34,7 +34,6 @@
 #include <dtEditQt/tabcontainer.h>
 #include <dtEditQt/tabwrapper.h>
 #include <dtEditQt/staticmeshbrowser.h>
-#include <dtEditQt/skeletalmeshbrowser.h>
 #include <dtEditQt/texturebrowser.h>
 #include <dtEditQt/soundbrowser.h>
 #include <dtEditQt/shaderbrowser.h>
@@ -54,11 +53,13 @@ namespace dtEditQt
       // container
       mTabC              = new TabContainer(this);
 
+      bool enablePreview = false;
+      bool enableCreateActor = false;
       // widgets
-      addTab(new StaticMeshBrowser(dtCore::DataType::STATIC_MESH, this, true, true));
-      addTab(new SkeletalMeshBrowser(dtCore::DataType::SKELETAL_MESH, this));
+      addTab(new StaticMeshBrowser(dtCore::DataType::STATIC_MESH, this, enablePreview, enableCreateActor));
+      addTab(new StaticMeshBrowser(dtCore::DataType::SKELETAL_MESH, this, enablePreview, enableCreateActor));
       addTab(new SoundBrowser(dtCore::DataType::SOUND, this));
-      addTab(new StaticMeshBrowser(dtCore::DataType::PARTICLE_SYSTEM, this, true, true));
+      addTab(new StaticMeshBrowser(dtCore::DataType::PARTICLE_SYSTEM, this, enablePreview, enableCreateActor));
       addTab(new TextureBrowser(dtCore::DataType::TEXTURE, this));
       addTab(new StaticMeshBrowser(dtCore::DataType::VOLUME, this, false, false));
       addTab(new StaticMeshBrowser(dtCore::DataType::TERRAIN, this, false, false));

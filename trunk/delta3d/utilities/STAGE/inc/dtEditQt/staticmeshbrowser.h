@@ -116,6 +116,8 @@ namespace dtEditQt
        */
       bool eventFilter(QObject* target, QEvent* e);
 
+      dtCore::RefPtr<dtCore::BaseActorObject> CreateActor(const dtCore::ResourceDescriptor& rd);
+
    private:
       /**
        * Overridden function to create our own context menu items for this browser
@@ -158,7 +160,7 @@ namespace dtEditQt
       PerspectiveViewport*           perspView;
       dtCore::RefPtr<dtCore::Scene>  meshScene;
       dtCore::RefPtr<StageCamera>    camera;
-      dtCore::RefPtr<dtCore::Object> previewObject;
+      dtCore::RefPtr<dtCore::BaseActorObject> previewObject;
 
       // Layout Objects
       QGridLayout* grid;
