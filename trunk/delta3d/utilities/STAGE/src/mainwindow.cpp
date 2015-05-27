@@ -987,6 +987,7 @@ namespace dtEditQt
          if (results > 0)
          {
             mPropertyWindow->UpdateUI();
+            MarkEdited();
          }
       }
    }
@@ -1095,6 +1096,7 @@ namespace dtEditQt
       if (results > 0)
       {
          mPropertyWindow->UpdateUI();
+         MarkEdited();
       }
    }
 
