@@ -26,7 +26,6 @@
 
 #include <osg/Vec3>
 #include <osg/Matrix>
-#include <osgVolume/VolumeTile>
 
 #include <openvdb/openvdb.h>
 
@@ -35,30 +34,33 @@ namespace dtVoxel
     /***
     *  A VoxelCell represents a 3d grid of individual voxels stored in a 3d texture.    
     */
+   class VoxelCellImpl;
+
    class DT_VOXEL_EXPORT VoxelCell
    {
    public:
       VoxelCell();
       virtual ~VoxelCell();
 
-      void Init(openvdb::GridBase::Ptr localGrid, osg::Matrix& transform, const osg::Vec3& cellSize, const osg::Vec3i& texture_resolution);
-      void AllocateImage(openvdb::GridBase::Ptr gridPtr, const osg::Vec3& cellSize, int width, int height, int slices);
-
+      void CreateImage(VoxelActor& voxelActor, openvdb::GridBase::Ptr localGrid, osg::Matrix& transform, const osg::Vec3& cellSize, const osg::Vec3i& texture_resolution);
+      
+      void CreateMesh(VoxelActor& voxelActor, openvdb::GridBase::Ptr localGrid, osg::Matrix& transform, const osg::Vec3& cellSize, const osg::Vec3i& resolution);
+      
       bool IsAllocated();
 
-      osgVolume::ImageLayer* GetImageLayer();
-      const osgVolume::ImageLayer* GetImageLayer() const;
-      osgVolume::VolumeTile* GetVolumeTile();
-      const osgVolume::VolumeTile* GetVolumeTile() const;
       osg::Vec3 GetOffset() const;
+
+      osg::Node* GetOSGNode();
+      const osg::Node* GetOSGNode() const;
 
    protected:
       
-      //openvdb::GridBase::Ptr CreateLocalResolutionGrid(openvdb::GridBase::Ptr gridPtr, const osg::Vec3& cellSize);
+      void AllocateImage(VoxelActor& voxelActor, openvdb::GridBase::Ptr gridPtr, const osg::Vec3& cellSize, int width, int height, int slices);
+      void AllocateMesh(VoxelActor& voxelActor, openvdb::GridBase::Ptr gridPtr, const osg::Vec3& cellSize, int width, int height, int slices);
+
    
    private:
-       dtCore::RefPtr<osgVolume::ImageLayer> mImage;
-       dtCore::RefPtr<osgVolume::VolumeTile> mVolumeTile;
+      VoxelCellImpl* mImpl;
    };
 
 } /* namespace dtVoxel */
