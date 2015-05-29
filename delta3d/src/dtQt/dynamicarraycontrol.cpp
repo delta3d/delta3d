@@ -506,7 +506,7 @@ namespace dtQt
       {
          mAddButton->setEnabled(false);
          mClearButton->setEnabled(true);
-         mDefaultResetButton->setEnabled(false);
+         if (mDefaultResetButton != NULL) mDefaultResetButton->setEnabled(false);
       }
       else
       {
