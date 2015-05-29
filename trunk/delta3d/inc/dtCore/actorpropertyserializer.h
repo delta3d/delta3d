@@ -185,7 +185,7 @@ namespace dtCore
 
    private:
 
-      inline SerializerRuntimeData& Top() { return mData.top(); }
+      SerializerRuntimeData& Top();
 
       /**
        * Writes a Vector actor property.
